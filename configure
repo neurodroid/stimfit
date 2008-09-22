@@ -20257,7 +20257,6 @@ echo "${ECHO_T}no" >&6; }
   SET_MAKE="MAKE=${MAKE-make}"
 fi
 
-# AC_PROG_RANLIB
 { echo "$as_me:$LINENO: checking for a thread-safe mkdir -p" >&5
 echo $ECHO_N "checking for a thread-safe mkdir -p... $ECHO_C" >&6; }
 if test -z "$MKDIR_P"; then
