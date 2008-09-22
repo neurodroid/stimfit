@@ -11,7 +11,12 @@ echo \ done
 echo -n Running autoheader...
 autoheader
 echo \ done
+echo -n Running libtoolize...
+libtoolize --force
+echo \ done
+echo 
 echo You can build stimfit now:
 echo ./configure [options]
 echo make
 echo sudo make install
+echo 
