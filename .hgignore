@@ -17,6 +17,8 @@ syntax: glob
 *.ind
 *.out
 *.log
+config.status
+config.log
 .deps/*
 build/*
 doc/stfbook.ps
