@@ -1,0 +1,542 @@
+Version History: Stimfit for Linux/Unix/Win32
+=============================================
+version 0.8.14, 08/29/08, CSH----------------------------------------------------------------
+0.9 development version.
+1. Corrected printing to match latest wx svn.
+2. Added numpy check to configure script.
+	
+version 0.8.13, 08/18/08, CSH----------------------------------------------------------------
+0.9 development version.
+1. Corrected some event detection bugs. Thanks to Stefanie Heigele for reporting.
+   - Corrected a bug when inserting an event before an unchecked event.
+   - Corrected a bug when an event was inserted after the last pre-existing event.	
+2. Append more data points at the end of extracted events.
+3. Adapt combo box size for template selection to string length.
+	
+version 0.8.12, 08/11/08, CSH----------------------------------------------------------------
+0.9 development version.
+1. Export of x units in Igor binary waves.
+2. Batch conversion to Igor binary waves.
+3. Re-vamped About dialog
+4. New Python function:
+   Close currently displayed file (close_this)
+   
+version 0.8.11, 08/03/08, CSH----------------------------------------------------------------
+0.9 development version.
+1. Corrected a bug when false-positive events where unselected during event extraction.
+2. Stop wait cursor from being shown once a fit has been performed.
+3. New python functions:
+   a) cut traces (cut_traces and cut_traces_multi)
+   b) set markers (set_marker)
+   c) close all open files (close_all)
+   d) save a file (file_save)
+   e) new window with selected traces from all files (new_window_selected_all)
+   f) set new sampling interval (set_sampling_interval)
+	
+version 0.8.10, 06/01/08, CSH----------------------------------------------------------------
+0.9 development version.
+1. Toggle visibility of the Python shell.
+
+version 0.8.9, 05/30/08, CSH-----------------------------------------------------------------
+0.9 development version.
+1. Corrected a bug when reading abf files: sampling interval has to be multiplied by the
+   number of channels for multiplexed data. Thanks to Dominique Engel for reporting.
+
+version 0.8.8, 05/20/08, CSH-----------------------------------------------------------------
+0.9 development version.
+1. Fitted functions were not plotted any more... sorry!
+
+version 0.8.7, 05/12/08, CSH-----------------------------------------------------------------
+0.9 development version.
+1. Corrected an uncaught exception in the "Unselect/Select some traces" dialogs. Thanks to
+   Michael Barz for the bug report.
+2. Added a Hodgkin-Huxley g_Na function to the function library.
+3. Removed a memory leak detected by valgrind.
+4. Corrected a severe bug when printing selected traces.
+
+version 0.8.6, 04/29/08, CSH-----------------------------------------------------------------
+0.9 development version.
+1. Multipass non-linear regression: restore previous parameters if chisqr is NaN. Make max.
+   number of passes a user-defined value.
+2. Use QRLS decomposition from LAPACK for non-linear regression.
+3. Corrected a severe bug when printing fitted functions.
+4. Print fits of selected functions if "Plot selected" is checked.
+
+version 0.8.5, 04/22/08, CSH-----------------------------------------------------------------
+Still a 0.9 development version.
+1. Updated documentation.
+
+version 0.8.4, 04/15/08, CSH-----------------------------------------------------------------
+Yet another development version for 0.9.
+1. NSIS-based installer for Windows.
+2. Some more functions accessible from Python. Corrected a few bugs in existing functions.
+	
+version 0.8.3, 04/13/08, CSH-----------------------------------------------------------------
+Development version for 0.9.
+1. Integration of a python shell, allowing low-level access to data as NumPy arrays.
+   Started with a couple of basic functions. Type "stf." at the shell prompt to see
+   a list. Opening a bracket (as in "get_trace( ") will pop up a documentation window.
+2. Changes to the GUI: Single row for tool bars, channel selection possible at any
+   time, no channel selection at startup
+3. New window from selected traces of the current file (as opposed to all files).
+4. Maximal slope of rise in inactive channel can be restricted to the peak window.
+5. Non-linear regression:
+   - Don't use Jacobian if a function is not continuously differentiable.
+   - Multi-pass fit: Best-fit parameters from the previous pass are re-used with a smaller
+     initial step size until no further decrease in the error can be achieved.
+   - Decreased initial step size. Seems to be more robust most of the time, especially
+     when used with the multi-pass algorithm.
+   - Draw smooth fit curves between sampling points.
+   
+version 0.8.2, 02/13/08, CSH-----------------------------------------------------------------
+1. Fit start cursor can follow the peak automatically (Edit->Cursor settings...->Decay). 
+2. Installer for Windows.
+3. Fixed some printing issues in Windows. Print preview still produces bogus
+   (Linux & Windows), was therefore temporarily removed.
+4. Smarter initialisation for multi-exponential functions. Better warning messages for
+   non-linear regression.
+5. Updated enhanced metafile to be compatible with wxWidgets 2.9.
+	
+version 0.8.1, 01/19/08, CSH-----------------------------------------------------------------
+1. Corrected a severe bug in the non-linear regression dialog. 
+2. Updated levmar to 2.2. 
+
+version 0.8.0, 01/16/08, CSH-----------------------------------------------------------------
+1. Link everything statically (as far as possible) so that a single, monolithic executable
+   is produced. This will avoid several severe bugs that were due to multiple shared library 
+   versions on the same machine. The Windows executable can now be used from a USB stick.
+   This is not possible with the Linux version because several libraries are still shared.
+2. New event editing mode: Once some events have been detected, false positives can be 
+   unselected (using checkboxes) and false negatives can be corrected using a right click.
+   After editing, events can be extracted into a new window.
+3. Removed a bug when the number of points for mean peak calculation were read from the 
+   cursors settings dialog.
+4. Unselect some traces at regular intervals.
+5. Added Doxygen-documentation to the code.
+6. Re-organised the code for monolithic compilation (see 1.). 
+7. Integrated the levmar source.
+
+version 0.7.13, 10/22/07, CSH----------------------------------------------------------------
+1. Fixed several severe bugs in the Linux version: Dialog entries were read incorrectly,
+   files could not be saved, etc.
+2. Made the configure script slightly more user-friendly
+
+version 0.7.12, 07/02/07, CSH----------------------------------------------------------------
+1. Removed another annoying bug in the cursor settings dialog...
+
+version 0.7.11, 06/30/07, CSH----------------------------------------------------------------
+1. Removed an annoying bug in the cursor settings dialog
+
+version 0.7.10, 06/12/07, CSH----------------------------------------------------------------
+1. Integration (Simpson and trapezium) & differentiation
+2. Removed bugs & inconsistencies concerning latency cursor selection
+3. Zoom window expansion now performed through a popup menu
+4. Status bar showing some information about menu items
+
+version 0.7.09, 06/05/07, CSH----------------------------------------------------------------
+1. Corrected a bug when opening file series
+2. Corrected a bug when saving re-ordered multi-channel files: channel units are re-ordered
+   as well now
+3. Corrected a bug when copying & pasting tables: an empty column and row were added
+4. Copying from tables with Ctrl + 'c'  
+5. Pad sections in ATF files with zeros when exporting files with variable section sizes
+
+version 0.7.08, 05/31/07, CSH----------------------------------------------------------------
+1. Save multiple channels to binary file
+2. Support for large abf files
+
+version 0.7.07, 05/12/07, CSH----------------------------------------------------------------
+1. Batch conversion from cfs to atf (File->Convert file series)
+
+version 0.7.06, 05/02/07, CSH----------------------------------------------------------------
+1. Results to be shown in results table can be chosen
+2. Igor binary wave export
+
+version 0.7.05, 05/02/07, CSH----------------------------------------------------------------
+1. Average of all channels is calculated. Channel names are preserved.
+2. Analysis results notebook:
+   -not shown upon program start
+   -pages are activated when added
+   -can be closed
+
+version 0.7.04, 04/30/07, CSH----------------------------------------------------------------
+1. SVG export
+2. Match y-scale and baseline of 2nd channel simultaneously
+3. Channel 2 drawn within screen limits only.
+
+version 0.7.03, 04/23/07, CSH----------------------------------------------------------------
+1. Event detection by threshold crossing
+2. Inter-event interval is calculated after template matching
+3. Latency cursors can be defined in various ways
+4. Corrected a bug in the Linux version of template matching
+
+version 0.7.02, 04/15/07, CSH----------------------------------------------------------------
+1. Ported to Unix/Linux. Modified cfs/abf libraries so that they can be called from Unix. 
+   Known restrictions: Some problems with std::valarray (because it's not automatically
+   resized during copy operations in the gcc implementation); no atf support; menu is too
+   large and covers parts of the toolbars.
+
+version 0.7.01, 03/21/07, CSH----------------------------------------------------------------
+1. Copy (vectorized) wmf to clipboard
+2. Aligned average
+3. Export postscript files directly (without printing)
+4. Some more image formats for exporting files
+5. ATF file export re-implemented
+
+version 0.7.00, 03/17/07, CSH----------------------------------------------------------------
+1. Switched to new GUI toolkit (wxWidgets/wxAUI)
+2. Spreadsheets for results, selection can be copied to clipboard
+3. Print preview, new print layout that resembles screen output more closely
+4. Event detection can use an existing fit directly (without reading it from
+   a file). Event timings are shown in a spreadsheet instead of being written to 
+   a file. A single dialog is now sufficient for all settings.
+5. Progress bars for some functions (file import, event detection)
+6. File preview for text import
+7. Image export to file
+8. Snapshot of traces to clipboard
+9. Plenty of minor changes
+
+version 0.6.29, 02/25/07, CSH---------------------------------------------------------------
+1. Files that are dragged & dropped into the main frame can be imported into a single
+   window.
+
+version 0.6.28, 02/21/07, CSH---------------------------------------------------------------
+1. Initial parameters for non-linear regression can be edited. A fit preview can be 
+   obtained.
+2. Initial scaling factor and stopping criteria for non-linear regression can be changed.
+3. Corrected maximal length allowed for file names of CFS files.
+
+version 0.6.27, 02/20/07, CSH---------------------------------------------------------------
+1. Weighted taus calculated for n-exponential fits
+
+version 0.6.26, 02/17/07, CSH---------------------------------------------------------------
+1. Switched back to the lapack version of levmar, might be better for small datasets and 
+   large squared errors.
+2. Hopefully smarter initial conditions for n-exponential fits.
+
+version 0.6.25, 02/16/07, CSH---------------------------------------------------------------
+1. Print out fit information (if gimmicks are selected)
+
+version 0.6.24, 02/11/07, CSH---------------------------------------------------------------
+1. Eliminated several (potential) heap corruptions because different runtime libraries were
+   used across the dlls.
+2. Eliminated some potential buffer under-/overflows.
+
+version 0.6.23, 02/05/07, CSH---------------------------------------------------------------
+1. Corrected a bug when closing child windows.
+2. Text import catches negative sampling intervals.
+3. Text import settings can be applied to all files.
+
+version 0.6.22, 02/04/07, CSH---------------------------------------------------------------
+1. Several severe bugs (related to the new cursor dialog) have been corrected.
+
+version 0.6.21, 02/02/07, CSH---------------------------------------------------------------
+1. Cursor settings are now in a single, tabbed dialog (Settings->Cursor). You can choose
+   between units (pts or ms). The dialog applies to the currently active file 
+   (==View/Document). When switching between child windows, the settings will be updated.
+   
+version 0.6.20, 01/30/07, CSH---------------------------------------------------------------
+1. Introduced a measurement cursor that will show the value of data at a specific time. It
+   is selected by pressing 'm'. The cursor will be shown as a crosshair. Results are shown
+   as the first entry in the results dialog bar.
+2. In coordinate-mode, time=0 can be set to beginning of trace (View->synchronize x scale).
+
+version 0.6.19, 01/24/07, CSH---------------------------------------------------------------
+1. No of points for peak calculation written to registry not only upon closing a file, but
+   whenever it is changed in the dialog.
+
+version 0.6.18, 01/24/07, CSH---------------------------------------------------------------
+1. No of points for peak calculation are read/written from/to registry upon opening/closing
+   a file
+   
+version 0.6.17, 01/21/07, CSH---------------------------------------------------------------
+1. Added support for user-defined routines, similar to the function library (see 0.6.13).
+   Users can add routines to a dll (extend.dll).
+   
+version 0.6.16, 01/08/07, CSH---------------------------------------------------------------
+1. Changed application and source code file names to "Stimfit" instead of "SFWinMDI"
+2. Corrected a bug in linear interpolation - still unstable at times, will need further
+   debugging.
+   
+version 0.6.15, 12/22/06, CSH---------------------------------------------------------------
+1. Bessel filter function adjusted so that cutoff frequency is at -3 dB
+2. Added Gaussian filter, calculated in frequency domain (according to Colquhoun & Sigworth,
+   ch. 19 of Single Channel Recording).
+
+version 0.6.14, 12/19/06, CSH---------------------------------------------------------------
+1. Corrected a bug: Y-Scale bar label of second channel was wrong.
+2. Corrected a bug: Align-mode while averaging two channels didn't work properly.
+3. Sections are now given descriptions when a new window is created via New from...
+   The sections' descriptions are written into Yt-files.
+4. Fits are stored with the trace so that the fit can be seen if the
+   trace is activated again.
+5. Adaptive ASCII import, as suggested by Bill Anderson. Known restriction: x-units
+   setting has no effect.
+   
+version 0.6.13, 12/07/06, CSH---------------------------------------------------------------
+1. Function library for non-linear regression can now be extended (more easily) by the user:
+   Functions are now in a dll (funclib.dll) that can be compiled with a free compiler
+   (Visual C++ Express) since there is no MFC stuff in it. I haven't tested other compilers
+   (such as gcc or Borland) yet, however, I suppose they won't work because the format 
+   of exported C++ functions in shared libraries is different between compilers.
+2. Very basic reading of WinLTP *.P0 files
+3. Speed of trace drawing increased for large traces (>50000 sampling points): first, only
+   the part that can actually be seen in the window is drawn; second, traces can optionally
+   be downsampled by unchecking View->Full resolution.
+4. Results of last fit can now be recovered (View->Results->Last fit)
+5. All traces from all open windows can now be collected in a new window. The sequence of
+   traces depends on the sequence of file opening.
+6. Revised large parts of the code; this version is therefore "experimental", because nobody
+   has thoroughly tested it yet.
+    
+version 0.6.12, 11/26/06, CSH---------------------------------------------------------------
+1. Minor changes to the code
+
+version 0.6.11, 11/24/06, CSH---------------------------------------------------------------
+1. Minor changes to the code
+
+version 0.6.10, 11/13/06, CSH---------------------------------------------------------------
+1. Corrected a bug when New from selected was performed on non-CFS files.
+2. Support for Axon text files (*.atf)
+
+version 0.6.9, 11/13/06, CSH----------------------------------------------------------------
+1. Basic support for reading Axon binary files (*.abf).
+2. Improved file I/O exception handling.
+3. Some loops have been parallelized using OpenMP. Has not been evaluated yet.
+4. New compiler (Visual Studio 2005).
+ 
+version 0.6.7, 11/05/06, CSH----------------------------------------------------------------
+1. Only double precision versions of fftw are used now, making the installer package con-
+   siderably smaller.
+2. levmar code compiled directly into the executable instead of linking against levmar.lib;
+   the executable is now only 380 KB in size.
+   
+version 0.6.6, 11/03/06, CSH----------------------------------------------------------------
+1. Coordinates can be chosen instead of scale bars
+2. Scale bar labels aligned to bars
+
+version 0.6.5, 10/30/06, CSH----------------------------------------------------------------
+1. Corrected a bug: Save Yt didn't use correct number of points for peak calculation
+
+version 0.6.4, 10/25/06, CSH----------------------------------------------------------------
+1. Corrected a bug when zoom window is drawn invertedly
+2. Extract events using correlation coefficient (Jonas et al.)
+
+version 0.6.3, 10/24/06, CSH----------------------------------------------------------------
+1. Fit with delay corrected
+
+version 0.5.7.4, 09/11/06, CSH--------------------------------------------------------------
+1. Advanced averaging uses 2 channels (if available)
+2. New from selected uses all available channels
+
+version 0.5.7.3, 09/11/06, CSH--------------------------------------------------------------
+1. Dashed latency cursor line set to exact value instead of neighbouring sampling point
+
+version 0.5.7.2, 09/10/06, CSH--------------------------------------------------------------
+1. Circles around half duration and rise time are now at the correct positions, even when
+   traces are highly magnified.
+2. Latency1 can be set to timepoint of half-maximal amplitude instead of beginning of event.
+
+version 0.5.7.1, 09/10/06, CSH--------------------------------------------------------------
+1. Swap active/inactive channel (Edit->Swap channels)
+
+version 0.5.7.0, 08/25/06, CSH--------------------------------------------------------------
+1. Power spectrum estimation according to Welch
+2. Corrected several bugs when printing 2 channels
+3. The 2nd channel's scaling can be matched to the 1st channel 
+
+version 0.5.6.9, 08/16/06, CSH--------------------------------------------------------------
+1. New child windows will now be titled according to the file they originated from
+2. The new "Window" menu entry allows to arrange and select child windows
+
+version 0.5.6.8, 08/02/06, CSH--------------------------------------------------------------
+1. New from selected will check whether something actually has been selected
+2. Double-clicking a file in the explorer will finally open it without any 
+   apparent loss of speed at runtime (see bug report in 0.52).
+   
+version 0.5.6.7, 08/02/06, CSH--------------------------------------------------------------
+1. Removed a bug when clicking the mouse radio buttons. Only one of them should be selected
+   now.
+2. Selected traces are printed in a darker grey.
+   
+version 0.5.6.6, 07/28/06, CSH--------------------------------------------------------------
+1. LM code made significantly more compact and readable
+
+version 0.5.6.5, 07/20/06, CSH--------------------------------------------------------------
+1. Fitting exponential functions with offset fixed to baseline
+
+version 0.56e, 07/19/06, CSH----------------------------------------------------------------
+1. Export currently shown trace as an ASCII file
+2. Functions for fitting shown as plain text
+3. Offset for alpha function
+
+version 0.56d, 07/17/06, CSH----------------------------------------------------------------
+1. Changed to John Burkardt's version of the cubic spline algorithm. For reasons, see 0.53
+
+version 0.56c, 07/12/06, CSH----------------------------------------------------------------
+1. Finally removed the infinite "Peak cursors are reversed" message box bug when opening
+   a file.
+   
+version 0.56a-b, 07/10/06, CSH--------------------------------------------------------------
+1. Event detection by template matching according to Clements & Bekkers
+2. Added a triexponential function for fitting
+3. Concatenation of traces
+4. Differentiation of data
+5. Interpolation ( using NR's cubic spline algorithm while looking for an open source 
+   version)
+6. Export of the fit as a text file (needed for event detection)
+
+version 0.55c, 04/04/06, CSH----------------------------------------------------------------
+1. Bootstrapping according to Husser & Roth into a text file
+2. Multiplication with a fixed factor
+
+version 0.55a-b, 03/25/06, CSH--------------------------------------------------------------
+1. Traces can be shifted with CTRL+LEFT/RIGHT, horizontal zooming is now possible with
+   CTRL + '+'/'-', vertical zooming with '+'/'-'
+2. Starting conditions for biexponential fit changed so that the fast tau is computed
+   more robustly.
+3. Removed a bug when reading 4-byte CFS files (such as files created by Stimfit itself).
+4. Export of average, standard deviation and variance as an ASCII file.
+
+version 0.54f-j, 03/22/06, CSH--------------------------------------------------------------
+1. Further code changes according to Myers.
+2. Implemented a myriad of feature requests by D. Doischer, mainly concerning the 2-channel
+   mode. Ask him for details.
+3. Sorted out a few bugs discovered by D. Doischer.
+4. Adapted some parts of the code to Stimfit for DOS 2002
+5. Bug #6 of version 0.52 still present (until further notice)
+
+version 0.54a-e, 03/08/06, CSH--------------------------------------------------------------
+1. Made some changes according to Myers' "Effective C++"
+2. This entrained some bugs had to be removed
+3. Same known bugs as in 0.52 
+
+version 0.53, 02/13/06, CSH-----------------------------------------------------------------
+1. Switched to Lourakis' implementation of the Levenberg-Marquardt algorithm, first, because
+   it's open source (in contrast to the NR code), second, because it's more robust than the 
+   NR version.
+2. Switched to fftw instead of the NR implementation of the ft. Same reasons apply.
+3. Down-sampling option when printing
+4. The first window's settings (zoom, calculation limits) can be applied to all other open 
+   windows
+5. Same known bugs as in 0.52
+
+version 0.52, 01/18/06, CSH-----------------------------------------------------------------
+1. Alignment option for average calculation in 2-channel mode: traces of the active channel 
+   will be aligned to the steepest rise of the inactive channel
+2. Fixed a bug when calculating the average in single-channel mode
+3. Increased speed of average calculation (SD not determined by default any more, switched 
+   from 8-byte to 4-byte array)
+4. Dialog bars updated when switching between child windows
+5. Known bug: The radio button selection for mouse actions (peak/base/...) will disappear
+   when selecting one of the zoom modes (C1/C2/C1+2). Haven't found a workaround yet.
+6. Known bug: program will run slower when files are opened by double-clicking them
+
+version 0.51, 01/10/06, CSH-----------------------------------------------------------------
+1. Basic 2-channel support, at least for viewing. No change to the SDI-version's 2-channel-
+   support.
+2. Increased character array size for CFS file variables from 200 to 1024. Should be enough
+   for Igor Scripts.
+
+version 0.50, 12/14/05, CSH-----------------------------------------------------------------
+1. MDI
+   I've finally implemented a multiple document interface (MDI). Whenever
+   the data is manipulated (e.g. filtered or averaged), a new child window 
+   will pop up showing the result. The new data can then be saved into a 
+   file.
+2. Dialog bars
+   I've eliminated the infamous Trace Navigator. Its contents have been
+   moved to two dialog bars. The results are now shown in a dialog bar as
+   well. In addition, you can choose which results to show from the menu
+   (View->Results). Your settings will be written to the registry so that
+   they will be recovered next time you start the program.
+3. Advanced averaging
+   Every n-th trace can now be averaged; thereby, n averages will be created
+   (and shown in a new child window, as mentioned earlier)
+4. Code
+   I've revised large parts of the code. The most significant change is
+   the introduction of the "Recording" template class where all the data is
+   stored and managed.
+
+version 0.34, 09/23/04, CSH-----------------------------------------------------------------
+1. First decay cursor can automatically be set to peak
+2. Fit results in Yt-file
+
+>0.34: C. Schmidt-Hieber
+0.28 - 0.33: M. Saltzer
+
+version 0.33b, 04/02/04---------------------------------------------------------------------
+1. SaveYt only for stored traces
+
+version 0.33a, 04/02/04---------------------------------------------------------------------
+1. physical separation of source code - also changed in IDE 
+(integrated Desktop environment)
+
+version 0.33, 04/02/04----------------------------------------------------------------------
+1. 2-channel control via keys (1-ch1,2-ch2,3-both), F/2 separated to the radio btn. control
+2. external scale control for print out implemented
+3. store traces - overflow fixed
+4. introduction of delete all traces routine (no short cut available)
+5. introduction of remove average routine and button in the trace navigator(no short cut 
+   available)
+6. advanced storage implemented, but for one average only!
+7. removal of old routines and empty buttons, e.g. current clamp, etc.
+8. several bug fixes
+
+version 0.28, 03/15/04 (by M. Saltzer)------------------------------------------------------
+1. Extended 2-channel supprot; radio button control for scaling in y-direction.
+2. Off, Peak, Rise mode for the latency cursor - peak and rise calc. on the 2nd channel); 
+3. Selection for the latency mode by checkboxes in the menu.
+4. Scalable code for print out (external control NOT implemented). 
+5. Several bug fixes
+
+Version 0.20, 02/19/04----------------------------------------------------------------------
+1. Source code commented by M. Saltzer
+2. Several bug fixes by M. Saltzer
+3. Basic 2-channel support; 2nd channel is only displayed
+4. New results dialog
+5. Weighted tau is calculated for biexponential fits
+
+>0.20: M. Saltzer
+<0.20: C. Schmidt-Hieber
+
+Version 0.15a, 02/01/04---------------------------------------------------------------------
+1. First version with new MS-Compiler (MS VC++ 7 (.NET))
+2. Latency cursor
+3. P/n export
+4. Average export updated
+5. Partial filtering now possible with the Math->FFT menu
+
+Version 0.14a, 11/24/03---------------------------------------------------------------------
+1. Peak window detects changing section sizes; upper limit can be fixed to end of section.
+2. Export of filtered data to a CFS-file
+3. Threshold for Yt-table
+4. Basic exception handling
+
+Version 0.13b, 10/27/03---------------------------------------------------------------------
+1. More error messages and "user error" handling
+2. Polyline(...) for printing (traces are grouped in Postscript)
+3. Checkbox for showing the standard deviation
+
+Version 0.13, 10/27/03----------------------------------------------------------------------
+1. Started conversion of arrays to containers
+2. Eliminated some memory allocation/deallocation bugs
+3. Started rudimentary ASCII-file support
+
+Version 0.12, 10/21/03----------------------------------------------------------------------
+Eliminated some major file-handling bugs
+
+Version 0.11b, 05/08/03---------------------------------------------------------------------
+1. Added user-defined cutting limits
+2. stored traces printed in no-gimmick-printing
+
+Version 0.11,  04/30/03---------------------------------------------------------------------
+1. Graphical output slightly faster (MoveTo and LineTo instead of Polyline)
+2. 2 byte- and 4-byte data both stored in a float array after offset and scaling 
+3. Fit results, file name and path, averaging info now visible in the results dialog
+4. Some basic error messages
+5. Printing in the right orientation by default
+6. No-gimmick printing option
+
+Versions prior to 0.11: no documentation
+

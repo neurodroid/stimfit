@@ -1,0 +1,89 @@
+% This is a slightly modified version of the namedplus style, which fully conforms
+% with the Journal of Neuroscience citation style.
+% Last modified 2004 April 06 by Matthias Hennig (hennig@cn.stir.ac.uk)
+%
+% version = 1.00 of jneurosci.bst 2004 April 06
+%
+% The following citation labels are implemented:
+%
+% \citeauthoryear{author-info}{year}:
+%   these labels are processed by the following commands: 
+% \cite{key}: 
+%   which produces citations with both author and year, enclosed in parens. 
+% \shortcite{key}: 
+%   which produces citations with year only, enclosed in parens 
+% \citeauthor{key}: 
+%   which produces the author information only 
+% \citeyear{key}: 
+%   which produces the year information only 
+% \citetext{key}: 
+%   which produces Author (Year) 
+% \citenoparens{key}: 
+%   which produces Author, Year 
+% 
+% The output looks like that:
+% \cite{key}:
+%   (Strettoi and Masland, 1996; Kolb, 1997; Masland, 2001) and (Fisher et al., 1975)
+% \citetext{key}:
+%   for reviews, see McNaughton (1990); Müller and Kaupp (1998); Fain et al. (2001).
+%
+% The bibliography follows J Neurosci conventions, e.g.:
+% Koch C (1999) Biophysics of Computation: Information Processing in Single Neurons Oxford University Press.
+% Enroth-Cugell C, Robson JG (1966) The contrast sensitivity of retinal ganglion cells of the cat. J Physiol 187:517-552. 
+% 
+% This is a modified version of the namedplus style by:
+% -----------------------------------------------------
+% A. David Redish		adr@nsma.arizona.edu
+% Post-doc		http://www.cs.cmu.edu/~dredish
+% Neural Systems, Memory and Aging, Univ of AZ, Tucson AZ
+% -----------------------------------------------------
+%
+% which was in turn modified by:
+% Oren Patashnik (PATASHNIK@SCORE.STANFORD.EDU)
+%
+% and finally modified by:
+% Matthias H Hennig, University of Edinburgh, mhennig at inf.ed.ac.uk
+
+\def\@biblabel#1{}
+
+\let\@internalcite\cite
+
+\def\cite{\def\@citeseppen{-1000}%
+ \def\@cite##1##2{(\nobreak\hskip 0in{##1\if@tempswa , ##2\fi})}%
+ \def\citeauthoryear##1##2{##1, ##2}\@internalcite}
+
+\def\citetext{\def\@citeseppen{-1000}%
+ \def\@cite##1##2{\nobreak\hskip 0in{##1\if@tempswa , ##2\fi}}%
+ \def\citeauthoryear##1##2{##1~(##2)}\@internalcite}
+
+\def\citenoparens{\def\@citeseppen{-1000}%
+ \def\@cite##1##2{\nobreak\hskip 0in{##1\if@tempswa , ##2\fi}}%
+ \def\citeauthoryear##1##2{##1, ##2}\@internalcite}
+
+\def\shortcite{\def\@citeseppen{1000}%
+ \def\@cite##1##2{({##1\if@tempswa , ##2\fi})}%
+ \def\citeauthoryear##1##2{##2}\@internalcite}
+
+\def\citeauthor#1{\def\@cite##1##2{{##1\if@tempswa , ##2\fi}}%
+ \def\citeauthoryear##1##2{##1}\@citedata{#1}}
+
+\def\citeyear#1{\def\@cite##1##2{{##1\if@tempswa , ##2\fi}}%
+ \def\citeauthoryear##1##2{##2}\@citedata{#1}}
+
+\def\@citedata#1{\@tempswafalse%
+ \if@filesw\immediate\write\@auxout{\string\citation{#1}}\fi
+  \def\@citea{}\@cite{\@for\@citeb:=#1\do
+    {\@citea\def\@citea{;\penalty\@citeseppen\ }\@ifundefined
+       {b@\@citeb}{{\bf ?}\@warning
+       {Citation `\@citeb' on page \thepage \space undefined}}%
+{\csname b@\@citeb\endcsname}}}{}}
+
+% don't box citations, separate with ; and a space
+% also, make the penalty between citations negative: a good place to break
+\def\@citex[#1]#2{\if@filesw\immediate\write\@auxout{\string\citation{#2}}\fi
+  \def\@citea{}\@cite{\@for\@citeb:=#2\do
+    {\@citea\def\@citea{;\penalty\@citeseppen\ }\@ifundefined
+       {b@\@citeb}{{\bf ?}\@warning
+       {Citation `\@citeb' on page \thepage \space undefined}}%
+{\csname b@\@citeb\endcsname}}}{#1}}
+

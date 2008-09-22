@@ -1,0 +1,17 @@
+#! /bin/bash
+echo -n Running aclocal...
+aclocal
+echo \ done
+echo -n Running automake...
+automake --add-missing
+echo \ done
+echo -n Running autoconf...
+autoconf
+echo \ done
+echo -n Running autoheader...
+autoheader
+echo \ done
+echo You can build stimfit now:
+echo ./configure [options]
+echo make
+echo sudo make install
