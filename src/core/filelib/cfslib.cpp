@@ -307,13 +307,8 @@ int stf::exportCFSFile(const wxString& fName, const Recording& WData) {
 }
 
 void stf::importCFSFile(const wxString& fName, Recording& ReturnData) {
-    wxProgressDialog progDlg(
-        wxT("CED filing system import"),
-        wxT("Starting file import"),
-        100,
-        NULL,
-        wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL
-        );
+    wxProgressDialog progDlg( wxT("CED filing system import"), wxT("Starting file import"),
+        100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
     wxString errorMsg;
     // Open old CFS File (read only) - see manual of CFS file system
     CFS_IFile CFSFile(fName);

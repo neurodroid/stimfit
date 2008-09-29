@@ -512,12 +512,12 @@ def inact_recov_batch():
    
     return stf.show_table_dictlist( inactDict )
 
-def inact_onset_batch():
+def inact_onset_batch( show_table = True ):
     """Determines onset of inactivation."""
 
     if ( not(stf.check_doc()) ):
         print "Couldn't find an open file; aborting now."
-        return False
+        return -1
 
     # Some ugly definitions for the time being
     gPeakWindowSize = 0.5
@@ -531,28 +531,28 @@ def inact_onset_batch():
     dict_values = N.empty( (gDictSize, gPulses) )
 
     if ( not(stf.set_peak_mean( 4 )) ):
-        return False
+        return -1
     if ( not(stf.set_peak_direction( "down" )) ):
-        return False
+        return -1
 
     for n in range( 0, gPulses ):
 
         if ( stf.set_trace( n ) == False ):
             print "Couldn't set a new trace; aborting now."
-            return False
+            return -1
         
         print "Analyzing pulse ", n+1, " of ", stf.get_size_channel()
         
         # set the test pulse window cursors:
         if ( not(stf.set_peak_start( gDurations[n]+70.12, True )) ):
-            return False
+            return -1
         if ( not(stf.set_peak_end( gDurations[n]+70.12+gPeakWindowSize, True )) ):
-            return False
+            return -1
 
         if ( not(stf.set_base_start( gDurations[n]+70-1, True )) ):
-            return False
+            return -1
         if ( not(stf.set_base_end( gDurations[n]+70, True )) ):
-            return False
+            return -1
 
         # Update calculations:
         stf.measure()
@@ -566,5 +566,9 @@ def inact_onset_batch():
     for elem in dict_keys:
         inactDict[ elem ] = dict_values[entry].tolist()
         entry = entry+1
-   
-    return stf.show_table_dictlist( inactDict )
+    
+    if show_table:
+        if not stf.show_table_dictlist( inactDict ):
+            return -1
+
+    return dict_values[0]

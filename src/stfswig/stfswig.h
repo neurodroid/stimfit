@@ -13,6 +13,8 @@ int get_size_trace( int trace = -1, int channel = -1 );
 int get_size_channel( int channel = -1 );
 double get_sampling_interval( );
 bool set_sampling_interval( double si );
+const char* get_recording_time( );
+const char* get_recording_date( );
 
 bool select_trace( int trace = -1 );
 void select_all( );

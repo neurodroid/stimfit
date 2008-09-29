@@ -320,6 +320,20 @@ bool file_save( const char* filename );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) get_recording_time;
+%feature("docstring", "Returns the time at which the recording was 
+started as a string.") get_recording_time;
+const char* get_recording_time( );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) get_recording_date;
+%feature("docstring", "Returns the date at which the recording was 
+started as a string.") get_recording_date;
+const char* get_recording_date( );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %feature("autodoc", 0) close_all;
 %feature("docstring", "Closes all open files.
    

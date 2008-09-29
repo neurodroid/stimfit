@@ -20,6 +20,7 @@ syntax: glob
 config.status
 config.log
 .deps/*
+.externalToolBuilders/*
 build/*
 doc/stfbook.ps
 doc/html/*

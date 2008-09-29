@@ -729,7 +729,7 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
 	std::vector< wxString > choices(2);
 	choices[0] = wxT("Axon text file (*.atf)");
 	choices[1] = wxT("Igor binary wave (*.ibw)");
-	wxSingleChoiceDialog typeDlg(this, wxT("Please specify the export file type:"), 
+	wxSingleChoiceDialog typeDlg(this, wxT("Please specify the export file type:"),
 		wxT("Choose file type"), 2, &choices[0]);
 	if (typeDlg.ShowModal() != wxID_OK)
 		return;
@@ -738,7 +738,7 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
 	case 0:
 		eft = stf::atf;
 		break;
-	case 1: 
+	case 1:
 		eft = stf::igor;
 		break;
 	default:
@@ -1437,6 +1437,17 @@ stf::cursor_type wxStfParentFrame::GetMouseQual() const {
 }
 
 void wxStfParentFrame::SetMouseQual(stf::cursor_type value) {
+
+    // Need to set everything to false explicitly first:
+    m_cursorToolBar->ToggleTool(wxID_TOOL_MEASURE,false);
+    m_cursorToolBar->ToggleTool(wxID_TOOL_PEAK,false);
+    m_cursorToolBar->ToggleTool(wxID_TOOL_BASE,false);
+    m_cursorToolBar->ToggleTool(wxID_TOOL_DECAY,false);
+    m_cursorToolBar->ToggleTool(wxID_TOOL_LATENCY,false);
+    m_cursorToolBar->ToggleTool(wxID_TOOL_ZOOM,false);
+    m_cursorToolBar->ToggleTool(wxID_TOOL_EVENT,false);
+
+    // Then set the state of the selected button:
     if (value==stf::measure_cursor)
         m_cursorToolBar->ToggleTool(wxID_TOOL_MEASURE,true);
     if (value==stf::peak_cursor)
@@ -1479,8 +1490,8 @@ void wxStfParentFrame::SetZoomQual(stf::zoom_channels value) {
     }
 }
 
-wxStfAppAboutDialog::wxStfAppAboutDialog( wxWindow* parent, int id, wxString title, wxPoint pos, 
-										 wxSize size, int style ) 
+wxStfAppAboutDialog::wxStfAppAboutDialog( wxWindow* parent, int id, wxString title, wxPoint pos,
+										 wxSize size, int style )
 										 : wxDialog( parent, id, title, pos, size, style )
 {
     this->SetSize(464,464);
@@ -1569,12 +1580,7 @@ wxStfGrid* wxStfChildFrame::CreateTable() {
     wxStfGrid* ctrl = new wxStfGrid( this, wxID_ANY,
             wxDefaultPosition, wxDefaultSize,
             wxVSCROLL | wxHSCROLL );
-    wxFont font(
-        8,
-        wxFONTFAMILY_MODERN,
-        wxFONTSTYLE_NORMAL,
-        wxFONTWEIGHT_NORMAL
-        );
+    wxFont font( 8, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
     ctrl->SetDefaultCellFont(font);
     ctrl->SetDefaultColSize(108);
     ctrl->SetColLabelSize(20);

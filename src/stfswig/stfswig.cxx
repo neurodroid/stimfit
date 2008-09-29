@@ -208,6 +208,16 @@ int get_size_channel( int channel ) {
     return size;
 }
 
+const char* get_recording_time( ) {
+    if ( !check_doc() ) return 0;
+    return actDoc()->GetTime().utf8_str();
+}
+
+const char* get_recording_date( ) {
+    if ( !check_doc() ) return 0;
+    return actDoc()->GetDate().utf8_str();
+}
+
 bool select_trace( int trace ) {
     if ( !check_doc() ) return false;
     int max_size = (int)actDoc()->at(actDoc()->GetCurCh()).size();
