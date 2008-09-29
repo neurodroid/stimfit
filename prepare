@@ -1,4 +1,7 @@
 #! /bin/bash
+echo -n Running libtoolize...
+libtoolize --force
+echo \ done
 echo -n Running aclocal...
 aclocal
 echo \ done
@@ -10,9 +13,6 @@ autoconf
 echo \ done
 echo -n Running autoheader...
 autoheader
-echo \ done
-echo -n Running libtoolize...
-libtoolize --force
 echo \ done
 echo 
 echo You can build stimfit now:

@@ -26,6 +26,6 @@ install-exec-hook:
 	cp $(srcdir)/minidemo.py ${PYTHON_SITE_PKG}/stimfit
 	cp $(srcdir)/charlie.py ${PYTHON_SITE_PKG}/stimfit
 	cp $(srcdir)/stf.py ${PYTHON_SITE_PKG}/stimfit
-	$(ECHO) stimfit > ${PYTHON_SITE_PKG}/stimfit.pth
+	echo stimfit > ${PYTHON_SITE_PKG}/stimfit.pth
 
 endif
