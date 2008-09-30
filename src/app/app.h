@@ -27,7 +27,7 @@
 
 #ifdef _WINDOWS
 #define STFVERSION "0.8.14"
-#define STFDATE "Fri Aug 29 17:46:33 CEST 2008"
+#define STFDATE "Tue Sep 30 17:46:33 CEST 2008"
 #endif
 
 //! Event ids

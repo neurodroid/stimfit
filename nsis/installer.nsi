@@ -154,7 +154,7 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
 !ifndef UPDATE
   File "${WXPDIR}\dist\wxPython-2.9.0.0.win32-py2.5.exe"
   File "${WXPDIR}\dist\wxPython-common-2.9.0.0.win32.exe"
-  File "${STFDIR}\stimfit_VS03\stimfit_exe\Release\libfftw3-3.dll"
+  File "${STFDIR}\stimfit_VS03\libfftw3-3.dll"
   File "${WXWDIR}\lib\vc_dll\wxmsw290u_core_vc_custom.dll"
   File "${WXWDIR}\lib\vc_dll\wxbase290u_vc_custom.dll"
   File "${WXWDIR}\lib\vc_dll\wxmsw290u_aui_vc_custom.dll"

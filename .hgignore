@@ -26,7 +26,6 @@ doc/stfbook.ps
 doc/html/*
 doc/latex/*
 autom4te.cache/*
-nsis/*.exe
 stimfit_VS03/stfswig/Debug/*
 stimfit_VS03/stfswig/Release/*
 stimfit_VS03/stimfit/Debug/*
