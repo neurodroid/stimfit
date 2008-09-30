@@ -272,8 +272,11 @@ int wxStfApp::OnExit()
 void wxStfApp::wxWriteProfileInt(const wxString& main,const wxString& sub, int value) const {
     // create a wxConfig-compatible path:
     wxString path=wxT("/")+main+wxT("/")+sub;
-    if (!config->Write(path,(long)value))
+    if (!config->Write(path,(long)value)) {
         ErrorMsg(wxT("Couldn't write application settings"));
+        return;
+    }
+    config->Flush();
 }
 
 int wxStfApp::wxGetProfileInt(const wxString& main,const wxString& sub, int default_) const {
@@ -281,22 +284,17 @@ int wxStfApp::wxGetProfileInt(const wxString& main,const wxString& sub, int defa
     return config->Read(path,default_);
 }
 
-void wxStfApp::wxWriteProfileString(
-        const wxString& main,
-        const wxString& sub,
-        const wxString& value
-) const {
+void wxStfApp::wxWriteProfileString( const wxString& main, const wxString& sub, const wxString& value ) const {
     // create a wxConfig-compatible path:
     wxString path=wxT("/")+main+wxT("/")+sub;
-    if (!config->Write(path,value))
+    if (!config->Write(path,value)) {
         ErrorMsg(wxT("Couldn't write application settings"));
+        return;
+    }
+    config->Flush();
 }
 
-wxString wxStfApp::wxGetProfileString(
-        const wxString& main,
-        const wxString& sub,
-        const wxString& default_
-) const {
+wxString wxStfApp::wxGetProfileString( const wxString& main, const wxString& sub, const wxString& default_) const {
     wxString path=wxT("/")+main+wxT("/")+sub;
     return config->Read(path,default_);
 }

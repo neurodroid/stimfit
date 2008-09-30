@@ -96,8 +96,8 @@
 #include "./../icons/zoom_in.xpm"
 #include "./../icons/zoom_out.xpm"
 
-IMPLEMENT_CLASS(wxStfParentFrame, wxDocMDIParentFrame)
-BEGIN_EVENT_TABLE(wxStfParentFrame, wxDocMDIParentFrame)
+IMPLEMENT_CLASS(wxStfParentFrame, wxStfParentType)
+BEGIN_EVENT_TABLE(wxStfParentFrame, wxStfParentType)
 EVT_MENU(wxID_ABOUT, wxStfParentFrame::OnAbout)
 EVT_MENU(wxID_TOOL_FIRST, wxStfParentFrame::OnToolFirst)
 EVT_MENU(wxID_TOOL_NEXT, wxStfParentFrame::OnToolNext)
@@ -157,12 +157,11 @@ EVT_MENU( wxID_LATENCYEND_PEAK, wxStfParentFrame::OnLEndPeak )
 EVT_MENU( wxID_LATENCYEND_HALFRISE, wxStfParentFrame::OnLEndHalfrise )
 EVT_MENU( wxID_LATENCYEND_MANUAL, wxStfParentFrame::OnLEndManual )
 EVT_MENU( wxID_LATENCYWINDOW, wxStfParentFrame::OnLWindow )
-
 END_EVENT_TABLE()
 
 wxStfParentFrame::wxStfParentFrame(wxDocManager *manager, wxFrame *frame, const wxString& title,
                  const wxPoint& pos, const wxSize& size, long type):
-wxDocMDIParentFrame(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
+wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 {
     ::wxInitAllImageHandlers();
     m_mgr.SetManagedWindow(this);
@@ -272,6 +271,9 @@ wxDocMDIParentFrame(manager, frame, wxID_ANY, title, pos, size, type, _T("myFram
 
 wxStfParentFrame::~wxStfParentFrame() {
     // deinitialize the frame manager
+    // write visiblity of the shell to config:
+    bool shell_state = m_mgr.GetPane(wxT("pythonShell")).IsShown();
+    wxGetApp().wxWriteProfileInt( wxT("Settings"),wxT("ViewShell"), int(shell_state) );
     m_mgr.UnInit();
 }
 
@@ -1161,10 +1163,11 @@ void wxStfParentFrame::OnRestoreperspective(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void wxStfParentFrame::OnViewshell(wxCommandEvent& WXUNUSED(event)) {
+    // Save the current visibility state:
+    bool old_state = m_mgr.GetPane(wxT("pythonShell")).IsShown();
     // Toggle python shell visibility:
-    m_mgr.GetPane(wxT("pythonShell")).Show( !(m_mgr.GetPane(wxT("pythonShell")).IsShown()) );
-    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("ViewShell"),
-            int(m_mgr.GetPane(wxT("pythonShell")).IsShown()));
+    m_mgr.GetPane(wxT("pythonShell")).Show( !old_state );
+    wxGetApp().wxWriteProfileInt( wxT("Settings"),wxT("ViewShell"), int(!old_state) );
     m_mgr.Update();
 }
 
@@ -1539,9 +1542,9 @@ Thanks to Bill Anderson (www.winltp.com) for helpful suggestions"));
 
 }
 
-IMPLEMENT_CLASS(wxStfChildFrame, wxDocMDIChildFrame)
+IMPLEMENT_CLASS(wxStfChildFrame, wxStfChildType)
 
-BEGIN_EVENT_TABLE(wxStfChildFrame, wxDocMDIChildFrame)
+BEGIN_EVENT_TABLE(wxStfChildFrame, wxStfChildType)
 EVT_COMBOBOX( wxCOMBOTRACES, wxStfChildFrame::OnComboTraces )
 EVT_COMBOBOX( wxCOMBOACTCHANNEL, wxStfChildFrame::OnComboActChannel )
 EVT_COMBOBOX( wxCOMBOINACTCHANNEL, wxStfChildFrame::OnComboInactChannel )
@@ -1550,10 +1553,10 @@ EVT_CHECKBOX( wxID_PLOTSELECTED, wxStfChildFrame::OnPlotselected )
 EVT_MENU_HIGHLIGHT_ALL( wxStfChildFrame::OnMenuHighlight )
 END_EVENT_TABLE()
 
-wxStfChildFrame::wxStfChildFrame(wxDocument* doc, wxView* view, wxDocMDIParentFrame* parent,
+wxStfChildFrame::wxStfChildFrame(wxDocument* doc, wxView* view, wxStfParentType* parent,
         wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size,
         long style, const wxString& name) :
-            wxDocMDIChildFrame(doc,view,parent,id,title,pos,size,style,name),
+            wxStfChildType(doc,view,parent,id,title,pos,size,style,name),
             m_notebook(NULL)
 {
     m_mgr.SetManagedWindow(this);

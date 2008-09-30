@@ -36,6 +36,14 @@ class wxStfGraph;
 class wxStfTable;
 class wxStfGrid;
 
+#ifdef WITH_AUIDOCVIEW
+typedef wxAuiDocMDIParentFrame wxStfParentType;
+typedef wxAuiDocMDIChildFrame wxStfChildType;
+#else
+typedef wxDocMDIParentFrame wxStfParentType;
+typedef wxDocMDIChildFrame wxStfChildType;
+#endif
+
 //! Default perspective string.
 /*! Can be loaded to restore the default AUI perspective. */
 const wxString defaultPersp =
@@ -48,10 +56,10 @@ name=Traces;caption=Traces;state=18428;dir=5;layer=0;row=0;pos=0;prop=100000; \
 bestw=20;besth=20;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|");
 
 //! Provides the child frame for displaying documents on separate windows.
-/*! This class can only be used for MDI child frames. It is part of the document/view 
+/*! This class can only be used for MDI child frames. It is part of the document/view
  *  framework supported by wxWidgets.
  */
-class StfDll wxStfChildFrame : public wxDocMDIChildFrame
+class StfDll wxStfChildFrame : public wxStfChildType
 {
     DECLARE_CLASS( wxStfChildFrame )
 public:
@@ -67,14 +75,14 @@ public:
      *  \param name Name of this frame.
      */
     wxStfChildFrame(
-            wxDocument* doc, 
-            wxView* view, 
-            wxDocMDIParentFrame* parent, 
-            wxWindowID id, 
-            const wxString& title, 
-            const wxPoint& pos = wxDefaultPosition, 
-            const wxSize& size = wxDefaultSize, 
-            long style = wxDEFAULT_FRAME_STYLE, 
+            wxDocument* doc,
+            wxView* view,
+            wxStfParentType* parent,
+            wxWindowID id,
+            const wxString& title,
+            const wxPoint& pos = wxDefaultPosition,
+            const wxSize& size = wxDefaultSize,
+            long style = wxDEFAULT_FRAME_STYLE,
             const wxString& name = wxT("frame")
     );
     //! Destructor
@@ -85,7 +93,7 @@ public:
      *  \param caption The title of the new table in the notebook.
      */
     void ShowTable(const stf::Table& table,const wxString& caption);
-    
+
     //! Retrieves the current trace from the trace selection combo box.
     /*! \return The 0-based index of the currently selected trace.
      */
@@ -95,13 +103,13 @@ public:
     /*! \return The 0-based index of the trace to be selected.
      */
     void SetCurTrace(std::size_t);
-    
+
     //! Creates the trace selection combo box.
     /*! \param value The number of traces in the combo box drop-down list.
      */
     void CreateComboTraces(std::size_t value);
-    
-    
+
+
     //! Creates the channel selection combo boxes.
     /*! \param value The channel names for the combo box drop-down list.
      */
@@ -117,7 +125,7 @@ public:
      *  \param inact Index of the inactive channel.
      */
     void SetChannels( std::size_t act, std::size_t inact );
-    
+
     //! Updates the channels according to the current combo boy selection.
     void UpdateChannels( );
 
@@ -126,7 +134,7 @@ public:
      *  Don't call this directly; use wxStfApp::OnPeakcalcexecMsg() instead.
      */
     void UpdateResults();
-    
+
     //! Retrieve the wxAuiManager.
     /*! \return A pointer to the wxAuiManager.
      */
@@ -136,7 +144,7 @@ public:
     /*! \return A pointer to the grid.
      */
     wxStfGrid* GetCopyGrid() {return m_table;}
-    
+
     //! Write the current AUI perspective to the configuration
     void Saveperspective();
 
@@ -145,8 +153,8 @@ public:
 
     //! Restore the default AUI perspective.
     void Restoreperspective();
-    
-    //! Indicates whether all selected traces should be plotted. 
+
+    //! Indicates whether all selected traces should be plotted.
     /*! \return true if they should be plotted, false otherwise.
      */
     bool PlotSelected() const {return pPlotSelected->IsChecked();}
@@ -186,24 +194,24 @@ protected:
 #endif
 
 //! Provides the top-level frame.
-/*! It is part of the of the document/view framework implemented in wxWidgets. 
+/*! It is part of the of the document/view framework implemented in wxWidgets.
  *  This class can only be used for MDI parent frames.
  */
-class wxStfParentFrame : public wxDocMDIParentFrame {
+class wxStfParentFrame : public wxStfParentType {
     DECLARE_CLASS(wxStfParentFrame)
 public:
     //! Constructor
     /*! \param manager Pointer to the document manager.
-     *  \param frame Pointer to the parent frame (should be NULL, because this is 
+     *  \param frame Pointer to the parent frame (should be NULL, because this is
      *         the top-level frame
      *  \param title Title of this frame.
      *  \param pos Initial position of this frame.
-     *  \param size Initial size of this frame. 
+     *  \param size Initial size of this frame.
      *  \param style Window style.
      */
     wxStfParentFrame(wxDocManager *manager, wxFrame *frame, const wxString& title, const wxPoint& pos, const wxSize& size,
             long style);
-    
+
     //! Destructor
     ~wxStfParentFrame();
 
@@ -211,8 +219,8 @@ public:
     /*! \param event The menu event that made the call.
      */
     void OnAbout(wxCommandEvent& event);
-    
-    
+
+
     //! Creates a new graph.
     /*! Called from view.cpp when a new drawing view is created.
      *  \param view Pointer to the attached view.
@@ -220,7 +228,7 @@ public:
      *  \return A pointer to the newly created graph.
      */
     wxStfGraph *CreateGraph(wxView *view, wxStfChildFrame *parent);
-    
+
     //! Retrieve the current mouse mode.
     /*! \return The current mouse cursor mode.
      */
@@ -241,7 +249,7 @@ public:
      */
     void SetZoomQual(stf::zoom_channels value);
 
-    //! Set the zoom buttons to single- or multi-channel mode. 
+    //! Set the zoom buttons to single- or multi-channel mode.
     /*! \param value Set to true for single- or false for multi-channel mode.
      */
     void SetSingleChannel(bool value);
@@ -255,6 +263,11 @@ public:
     /*! \return Pointer to the page setup data.
      */
     wxPageSetupDialogData* GetPageSetup() { return m_pageSetupData.get(); }
+
+    //! Retrieve the wxAuiManager.
+    /*! \return A reference to the wxAuiManager.
+     */
+    wxAuiManager& GetMgr() { return m_mgr; }
 
 private:
     wxAuiManager m_mgr;
@@ -276,35 +289,35 @@ private:
 
     void RedirectStdio();
     wxWindow* DoPythonStuff(wxWindow* parent);
-    
+
     void OnToolFirst(wxCommandEvent& event);
     void OnToolNext(wxCommandEvent& event);
     void OnToolPrevious(wxCommandEvent& event);
     void OnToolLast(wxCommandEvent& event);
-    void OnToolXenl(wxCommandEvent& event); 
-    void OnToolXshrink(wxCommandEvent& event); 
-    void OnToolYenl(wxCommandEvent& event); 
-    void OnToolYshrink(wxCommandEvent& event); 
-    void OnToolUp(wxCommandEvent& event); 
-    void OnToolDown(wxCommandEvent& event); 
-    void OnToolFit(wxCommandEvent& event); 
-    void OnToolLeft(wxCommandEvent& event); 
-    void OnToolRight(wxCommandEvent& event); 
-    void OnToolCh1(wxCommandEvent& event); 
-    void OnToolCh2(wxCommandEvent& event); 
+    void OnToolXenl(wxCommandEvent& event);
+    void OnToolXshrink(wxCommandEvent& event);
+    void OnToolYenl(wxCommandEvent& event);
+    void OnToolYshrink(wxCommandEvent& event);
+    void OnToolUp(wxCommandEvent& event);
+    void OnToolDown(wxCommandEvent& event);
+    void OnToolFit(wxCommandEvent& event);
+    void OnToolLeft(wxCommandEvent& event);
+    void OnToolRight(wxCommandEvent& event);
+    void OnToolCh1(wxCommandEvent& event);
+    void OnToolCh2(wxCommandEvent& event);
     void OnToolSnapshot(wxCommandEvent& event);
 
 #ifdef _WINDOWS
     void OnToolSnapshotwmf(wxCommandEvent& event);
 #endif
 
-//    void OnSwapChannels(wxCommandEvent& event); 
-    void OnCh2base(wxCommandEvent& event); 
-    void OnCh2pos(wxCommandEvent& event); 
+//    void OnSwapChannels(wxCommandEvent& event);
+    void OnCh2base(wxCommandEvent& event);
+    void OnCh2pos(wxCommandEvent& event);
     void OnCh2zoom(wxCommandEvent& event);
     void OnCh2basezoom(wxCommandEvent& event);
-    void OnAverage(wxCommandEvent& event); 
-    void OnAlignedAverage(wxCommandEvent& event); 
+    void OnAverage(wxCommandEvent& event);
+    void OnAlignedAverage(wxCommandEvent& event);
     void OnExportfile(wxCommandEvent& event);
     void OnExportatf(wxCommandEvent& event);
     void OnExportigor(wxCommandEvent& event);
@@ -322,25 +335,25 @@ private:
     void OnPrintPreview(wxCommandEvent& event);
     void OnPageSetup(wxCommandEvent& event);
     void OnViewResults(wxCommandEvent& event);
-    void OnSaveperspective(wxCommandEvent& event); 
-    void OnLoadperspective(wxCommandEvent& event); 
-    void OnRestoreperspective(wxCommandEvent& event); 
-    void OnViewshell(wxCommandEvent& event); 
-    void OnLStartMaxslope(wxCommandEvent& event); 
-    void OnLStartHalfrise(wxCommandEvent& event); 
-    void OnLStartPeak(wxCommandEvent& event); 
-    void OnLStartManual(wxCommandEvent& event); 
-    void OnLEndFoot(wxCommandEvent& event); 
-    void OnLEndMaxslope(wxCommandEvent& event); 
-    void OnLEndHalfrise(wxCommandEvent& event); 
-    void OnLEndPeak(wxCommandEvent& event); 
-    void OnLEndManual(wxCommandEvent& event); 
-    void OnLWindow(wxCommandEvent& event); 
+    void OnSaveperspective(wxCommandEvent& event);
+    void OnLoadperspective(wxCommandEvent& event);
+    void OnRestoreperspective(wxCommandEvent& event);
+    void OnViewshell(wxCommandEvent& event);
+    void OnLStartMaxslope(wxCommandEvent& event);
+    void OnLStartHalfrise(wxCommandEvent& event);
+    void OnLStartPeak(wxCommandEvent& event);
+    void OnLStartManual(wxCommandEvent& event);
+    void OnLEndFoot(wxCommandEvent& event);
+    void OnLEndMaxslope(wxCommandEvent& event);
+    void OnLEndHalfrise(wxCommandEvent& event);
+    void OnLEndPeak(wxCommandEvent& event);
+    void OnLEndManual(wxCommandEvent& event);
+    void OnLWindow(wxCommandEvent& event);
     DECLARE_EVENT_TABLE()
 };
 
 //! App information Dialog
-class wxStfAppAboutDialog : public wxDialog 
+class wxStfAppAboutDialog : public wxDialog
 {
 private:
     wxStdDialogButtonSizer* m_sdbSizer;
