@@ -1,9 +1,12 @@
 Version History: Stimfit for Linux/Unix/Win32
 =============================================
-version 0.8.14, 08/29/08, CSH----------------------------------------------------------------
+version 0.8.14, 09/30/08, CSH----------------------------------------------------------------
 0.9 development version.
-1. Corrected printing to match latest wx svn.
-2. Added numpy check to configure script.
+1. Visibility of the Python shell is stored correctly to the config/registry when closing
+   the program.
+2. Added get_recording_time() and get_recording_date() to Python interface.
+3. Corrected printing to match latest wx svn.
+4. Added numpy check to configure script.
 	
 version 0.8.13, 08/18/08, CSH----------------------------------------------------------------
 0.9 development version.
