@@ -19,7 +19,8 @@
 #include "./../core/recording.h"
 #include "./../core/fitlib.h"
 
-std::vector< std::valarray<double> > gVector;
+std::vector< std::vector< std::valarray<double> > > gMatrix;
+std::vector< wxString > gNames;
 
 void ShowExcept(const std::exception& e) {
     wxString msg;
@@ -47,6 +48,12 @@ bool check_doc( ) {
         return false;
     }
     return true;
+}
+
+const char* get_filename( ) {
+    if ( !check_doc() ) return "";
+
+    return actDoc()->GetFilename();
 }
 
 bool refresh_graph() {
@@ -111,17 +118,38 @@ void new_window( double* invec, int size ) {
     }
 }
 
-void _new_window_gVector( ) {
-    if ( !check_doc() ) return;
+void _new_window_gMatrix( ) {
+    bool open_doc = true;
+    if (actDoc() == NULL)
+        open_doc = false;
 
-    Channel ch( gVector.size() );
-    for ( std::size_t n_c = 0; n_c < gVector.size(); ++n_c ) {
-        ch.InsertSection( Section(gVector[n_c]), n_c );
+    Recording new_rec( gMatrix.size() );
+    for (std::size_t n_c=0; n_c < new_rec.size(); ++n_c) {
+        Channel ch( gMatrix[n_c].size() );
+        for ( std::size_t n_s = 0; n_s < ch.size(); ++n_s ) {
+            ch.InsertSection( Section(gMatrix[n_c][n_s]), n_s );
+        }
+        wxString yunits = wxT("");
+        if (open_doc) {
+            yunits = actDoc()->at( actDoc()->GetCurCh() ).GetYUnits();
+        }
+        ch.SetYUnits( yunits );
+        if ( !gNames.empty() ) {
+            ch.SetChannelName(gNames[n_c]);
+        }
+        new_rec.InsertChannel( ch, n_c );
     }
-    ch.SetYUnits( actDoc()->at( actDoc()->GetCurCh() ).GetYUnits() );
-    Recording new_rec( ch );
-    new_rec.SetXScale( actDoc()->GetXScale() );
-    wxStfDoc* testDoc = wxGetApp().NewChild( new_rec, actDoc(), wxT("From python") );
+    gNames.resize(0);    
+    double xscale = 1.0;
+    if (open_doc) {
+        xscale =  actDoc()->GetXScale();
+    }
+    new_rec.SetXScale( xscale );
+    wxStfDoc* pDoc = NULL;
+    if ( open_doc ) {
+        pDoc = actDoc();
+    }
+    wxStfDoc* testDoc = wxGetApp().NewChild( new_rec, pDoc, wxT("From python") );
     if ( testDoc == NULL ) {
         ShowError( wxT("Failed to create a new window.") );
     }
@@ -208,6 +236,11 @@ int get_size_channel( int channel ) {
     return size;
 }
 
+int get_size_recording( ) {
+    if ( !check_doc() ) return 0;
+    return actDoc()->size();
+}
+
 const char* get_recording_time( ) {
     if ( !check_doc() ) return 0;
     return actDoc()->GetTime().utf8_str();
@@ -216,6 +249,31 @@ const char* get_recording_time( ) {
 const char* get_recording_date( ) {
     if ( !check_doc() ) return 0;
     return actDoc()->GetDate().utf8_str();
+}
+
+std::string get_recording_comment( ) {
+    if ( !check_doc() ) return "";
+    wxString comment = wxT("");
+    comment << actDoc()->GetFileDescription() << actDoc()->GetGlobalSectionDescription();
+    return std::string(comment);
+}
+
+bool set_recording_comment( const char* comment ) {
+    if ( !check_doc() ) return false;
+    actDoc()->SetFileDescription(comment);
+    return true;
+}
+
+bool set_recording_date( const char* date ) {
+    if ( !check_doc() ) return false;
+    actDoc()->SetDate(date);
+    return true;
+}
+
+bool set_recording_time( const char* time ) {
+    if ( !check_doc() ) return false;
+    actDoc()->SetTime(time);
+    return true;
 }
 
 bool select_trace( int trace ) {
@@ -326,6 +384,61 @@ int get_channel_index( bool active ) {
         return actDoc()->GetCurCh();
     else
         return actDoc()->GetSecCh();        
+}
+
+const char* get_channel_name( int index ) {
+    if ( !check_doc() ) return "";
+
+    if (index < 0) {
+        index = actDoc()->GetCurCh();
+    }
+    try {
+        return actDoc()->at( index ).GetChannelName();
+    }
+    catch (const std::out_of_range& e) {
+        wxString msg(wxT("Index out of range in get_channel_name:\n"));
+        msg+=wxString( e.what(), wxConvLocal );
+        ShowError( msg );
+        return "";
+    }
+}
+
+bool set_channel_name( const char* name, int index ) {
+    if ( !check_doc() ) return "";
+
+    if (index < 0) {
+        index = actDoc()->GetCurCh();
+    }
+    try {
+        actDoc()->at( index ).SetChannelName( name );
+    }
+    catch (const std::out_of_range& e) {
+        wxString msg(wxT("Index out of range in get_channel_name:\n"));
+        msg+=wxString( e.what(), wxConvLocal );
+        ShowError( msg );
+        return false;
+    }
+    return true;
+}
+
+const char* get_trace_name( int trace, int channel ) {
+    if ( !check_doc() ) return "";
+
+    if (channel < 0) {
+        channel = actDoc()->GetCurCh();
+    }
+    if (trace < 0) {
+        trace = actDoc()->GetCurSec();
+    }
+    try {
+        return actDoc()->at( channel ).at( trace ).GetSectionDescription();
+    }
+    catch (const std::out_of_range& e) {
+        wxString msg(wxT("Index out of range in get_trace_name:\n"));
+        msg+=wxString( e.what(), wxConvLocal );
+        ShowError( msg );
+        return "";
+    }
 }
 
 bool subtract_base( ) {
@@ -661,6 +774,71 @@ double get_sampling_interval( ) {
     return actDoc()->GetXScale();
 }
 
+const char* get_xunits( int trace, int channel ) {
+    if ( !check_doc() ) return "";
+
+    if (channel < 0) {
+        channel = actDoc()->GetCurCh();
+    }
+    if (trace < 0) {
+        trace = actDoc()->GetCurSec();
+    }
+    return "ms";
+}
+
+const char* get_yunits( int trace, int channel ) {
+    if ( !check_doc() ) return "";
+
+    if (channel < 0) {
+        channel = actDoc()->GetCurCh();
+    }
+    if (trace < 0) {
+        trace = actDoc()->GetCurSec();
+    }
+    try {
+        return actDoc()->at( channel ).GetYUnits();
+    }
+    catch (const std::out_of_range& e) {
+        wxString msg(wxT("Index out of range in get_yunits:\n"));
+        msg+=wxString( e.what(), wxConvLocal );
+        ShowError( msg );
+        return "";
+    }
+}
+
+bool set_xunits( const char* units, int trace, int channel ) {
+    if ( !check_doc() ) return "";
+
+    if (channel < 0) {
+        channel = actDoc()->GetCurCh();
+    }
+    if (trace < 0) {
+        trace = actDoc()->GetCurSec();
+    }
+    return false;
+}
+
+bool set_yunits( const char* units, int trace, int channel ) {
+    if ( !check_doc() ) return "";
+
+    if (channel < 0) {
+        channel = actDoc()->GetCurCh();
+    }
+    if (trace < 0) {
+        trace = actDoc()->GetCurSec();
+    }
+    try {
+        actDoc()->at( channel ).SetYUnits( units );
+    }
+    catch (const std::out_of_range& e) {
+        wxString msg(wxT("Index out of range in set_yunits:\n"));
+        msg+=wxString( e.what(), wxConvLocal );
+        ShowError( msg );
+        return false;
+    }
+    return true;
+}
+
 bool set_sampling_interval( double si ) {
     if ( !check_doc() ) return false;
 
@@ -717,16 +895,44 @@ double get_peak( ) {
     return actDoc()->GetPeak();
 }
 
-void _gVector_resize( std::size_t size ) {
-    gVector.resize( size );   
+void _gMatrix_resize( std::size_t channels, std::size_t sections ) {
+    gMatrix.resize( channels );
+    std::vector< std::vector< std::valarray<double> > >::iterator it;
+    for (it = gMatrix.begin(); it != gMatrix.end(); ++it) {
+        it->resize( sections );
+    }
 }
 
-void _gVector_at( double* invec, int size, int at ) {
+void _gMatrix_at( double* invec, int size, int channel, int section ) {
     std::valarray< double > va(size);
     std::copy( &invec[0], &invec[size], &va[0] );
 
-    gVector[at].resize( va.size() );
-    gVector[at] = va;
+    try{
+        gMatrix.at(channel).at(section).resize( va.size() );
+        gMatrix[channel][section] = va;
+    }
+    catch (const std::out_of_range& e) {
+        wxString msg(wxT("Out of range exception in _gMatrix_at:\n"));
+        msg+=wxString( e.what(), wxConvLocal );
+        ShowError( msg );
+        return;
+    }
+}
+
+void _gNames_resize( std::size_t channels ) {
+    gNames.resize( channels );
+}
+
+void _gNames_at( const char* name, int channel ) {
+    try{
+        gNames.at(channel) = name;
+    }
+    catch (const std::out_of_range& e) {
+        wxString msg(wxT("Out of range exception in _gNames_at:\n"));
+        msg+=wxString( e.what(), wxConvLocal );
+        ShowError( msg );
+        return;
+    }
 }
 
 void align_selected(  double (*alignment)( bool ), bool active ) {
@@ -811,7 +1017,7 @@ void align_selected(  double (*alignment)( bool ), bool active ) {
         ch.SetChannelName( pDoc->at(n_ch).GetChannelName() );
         ch.SetYUnits(  pDoc->at(n_ch).GetYUnits() );
         std::size_t n_sec = 0;
-		int_it it3 = shift.begin();
+        int_it it3 = shift.begin();
         for ( c_st_it sel_it = pDoc->GetSelectedSections().begin(); 
               sel_it != pDoc->GetSelectedSections().end() && it3 != shift.end();
               ++sel_it )

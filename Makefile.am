@@ -3,7 +3,7 @@ SUBDIRS = src
 bin_PROGRAMS = stimfit
 stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
 	    ./src/core/core.cpp ./src/core/fitlib.cpp ./src/core/filelib/asciilib.cpp \
-	    ./src/core/filelib/cfslib.cpp ./src/core/filelib/cfs.c \
+	    ./src/core/filelib/cfslib.cpp ./src/core/filelib/hdf5lib.cpp ./src/core/filelib/cfs.c \
             ./src/core/filelib/abflib.cpp ./src/core/filelib/atflib.cpp \
 	    ./src/core/filelib/axon/AxAbfFio32/abffiles.cpp \
 	    ./src/core/filelib/axon/AxAbfFio32/csynch.cpp \
@@ -29,7 +29,7 @@ stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/reco
 
 noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
             ./src/core/stimdefs.h ./src/core/fitlib.h ./src/core/spline.h ./src/core/measlib.h \
-            ./src/core/filelib/asciilib.h ./src/core/filelib/cfslib.h \
+            ./src/core/filelib/asciilib.h ./src/core/filelib/cfslib.h ./src/core/filelib/hdf5lib.h\
             ./src/core/filelib/abflib.h ./src/core/filelib/atflib.h \
             ./src/core/filelib/cfs.h ./src/core/filelib/machine.h \
             ./src/core/filelib/axon/AxAbfFio32/abffiles.h \
@@ -126,5 +126,5 @@ else
 endif
 
 stimfit_CXXFLAGS = $(OPT_CXXFLAGS)
-stimfit_LDFLAGS = $(WX_LIBS) $(LIBLAPACK_LDFLAGS) -lfftw3 $(PYTHON_ADDLDFLAGS)
+stimfit_LDFLAGS = $(WX_LIBS) $(LIBLAPACK_LDFLAGS) -lfftw3 -lhdf5 -lhdf5_hl $(PYTHON_ADDLDFLAGS)
 stimfit_LDADD = $(PYTHON_ADDLIBS) ./src/app/libstimfit.a

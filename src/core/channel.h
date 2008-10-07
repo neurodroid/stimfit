@@ -126,7 +126,7 @@ public:
     //! Sets the channel name
     /*! \param value The channel name.
      */
-    void SetChannelName(const wxString& value) { channel_name=value; }
+    void SetChannelName(const wxString& value) { channel_name = value; }
     
     //! Sets the y units string
     /*! \param value The new y units string.

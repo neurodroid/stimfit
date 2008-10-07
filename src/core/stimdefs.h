@@ -423,7 +423,8 @@ enum filetype {
     ascii, /*!< Generic text file. */
     cfs,   /*!< CED filing system. */
     igor,  /*!< Igor binary wave. */
-    son    /*!< CED Son files. */
+    son,   /*!< CED Son files. */
+    hdf5   /*!< hdf5 files. */
 };
 
 //! The direction of peak calculations

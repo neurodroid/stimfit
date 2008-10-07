@@ -41,7 +41,7 @@ class StfDll wxStfDoc: public wxDocument, public Recording
     DECLARE_DYNAMIC_CLASS(wxStfDoc)
 #endif
 private:
-    bool peakAtEnd, initialized;
+    bool peakAtEnd, initialized, progress;
     Recording Average;
     int InitCursors();
     void PostInit();
@@ -51,7 +51,7 @@ private:
         return (check>=cur().size() || check<0);
     }
     void Focus();
-    void OnNewfromselectedThisMenu( wxCommandEvent& event ) { OnNewfromselectedThis( ); } 
+    void OnNewfromselectedThisMenu( wxCommandEvent& event ) { OnNewfromselectedThis( ); }
     void Selectsome(wxCommandEvent& event);
     void Unselectsome(wxCommandEvent& event);
     void Concatenate(wxCommandEvent& event);
@@ -60,17 +60,17 @@ private:
     void OnAnalysisDifferentiate( wxCommandEvent& event );
     void OnSwapChannels( wxCommandEvent& event );
     void Multiply(wxCommandEvent& event);
-    void SubtractBaseMenu( wxCommandEvent& event ) { SubtractBase( ); } 
+    void SubtractBaseMenu( wxCommandEvent& event ) { SubtractBase( ); }
     void LFit(wxCommandEvent& event);
     void LnTransform(wxCommandEvent& event);
-    void Filter(wxCommandEvent& event);	
+    void Filter(wxCommandEvent& event);
     void Spectrum(wxCommandEvent& event);
     void P_over_N(wxCommandEvent& event);
     void Plotcriterion(wxCommandEvent& event);
     void Plotcorrelation(wxCommandEvent& event);
     void MarkEvents(wxCommandEvent& event);
     void Threshold(wxCommandEvent& event);
-    void Viewtable(wxCommandEvent& event); 
+    void Viewtable(wxCommandEvent& event);
     void Fileinfo(wxCommandEvent& event);
 
 protected:
@@ -91,6 +91,13 @@ public:
      */
     virtual bool OnOpenDocument(const wxString& filename);
 
+    //! Open document without progress dialog.
+    /*! Attempts to identify the file type from the filter extension (such as "*.dat")
+     *  \param filename Full path of the file.
+     *  \return true if successfully opened, false otherwise.
+     */
+    virtual bool OnOpenPyDocument(const wxString& filename);
+
     //! Override default file saving.
     /*! \param filename Full path of the file.
      *  \return true if successfully saved, false otherwise.
@@ -107,7 +114,7 @@ public:
     /*! \return true if successfully closed, false otherwise.
      */
     virtual bool OnNewDocument();
-    
+
     //! Sets the content of a newly created file.
     /*! \param c_Data The data that is used for the new file.
      *  \param Sender Pointer to the document that generated this file.
@@ -128,7 +135,7 @@ public:
     //! Indicates whether the the document is fully initialised.
     /*! The document has to be fully initialized before other parts of the
      *  program start accessing it; for example, the graph might start reading out values
-     *  before they exist. 
+     *  before they exist.
      *  \return true if the document is fully initialised, false otherwise.
      */
     bool IsInitialized() const { return initialized; }
@@ -137,7 +144,7 @@ public:
     /*! \param value determines whether the peak cursor should be at the end of a trace.
      */
     void SetPeakAtEnd(bool value) { peakAtEnd=value; }
-    
+
     //! Retrieves the average trace(s).
     /*! \return The average trace as a Recording object.
      */
@@ -145,7 +152,7 @@ public:
 
     //! Checks whether any cursor is reversed or out of range and corrects it if required.
     void CheckBoundaries();
-    
+
     //! Updates the check marks in the latency mode menu
     void UpdateMenuCheckmarks();
 
@@ -154,11 +161,11 @@ public:
      *  \param section The 0-based index of the new section
      */
     bool SetSection(std::size_t section);
-    
+
     //! Creates a new window containing the selected sections of this file.
     /*! \return true upon success, false otherwise.
      */
-    bool OnNewfromselectedThis( ); 
+    bool OnNewfromselectedThis( );
 
     //! Selects all sections
     /*! \param event The menu event that made the call.
@@ -176,7 +183,7 @@ public:
      *         false otherwise.
      */
     void CreateAverage( bool calcSD, bool align );
-    
+
     //! Applies a user-defined function to the current data set
     /*! \param id The id of the user-defined function
      */
@@ -186,22 +193,22 @@ public:
     /*! \param event The menu event that made the call.
      */
     void OnSelect(wxCommandEvent& event);
-    
+
     //! Unselects the current section if previously selected
     /*! \param event The menu event that made the call.
      */
     void OnRemove(wxCommandEvent& event);
-    
+
     //! Creates a new document from the checked events
     /*! \param event The menu event that made the call.
      */
     void Extract(wxCommandEvent& event);
-    
+
     //! Erases all events, independent of whether they are checked or not
     /*! \param event The menu event that made the call.
      */
     void EraseEvents(wxCommandEvent& event);
-    
+
     //! Adds an event at the current eventPos
     /*! \param event The menu event that made the call.
      */

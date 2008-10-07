@@ -10,6 +10,7 @@ application from the embedded python shell."
 #include "stfswig.h"
 %}
 %include "numpy.i"
+%include "std_string.i"
 %init %{
 import_array();
 %}
@@ -57,10 +58,10 @@ void new_window( double* invec, int size );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-%feature("autodoc", 0) _new_window_gVector;
-%feature("docstring", "Creates a new window from the global vector.
-Do not use directly.") _new_window_gVector;
-void _new_window_gVector( );
+%feature("autodoc", 0) _new_window_gMatrix;
+%feature("docstring", "Creates a new window from the global matrix.
+Do not use directly.") _new_window_gMatrix;
+void _new_window_gMatrix( );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -158,12 +159,92 @@ int get_size_channel( int channel = -1 );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) get_size_recording;
+%feature("docstring", "Retrieves the number of channels in a 
+recording.
+   
+Returns:
+The number of channels in a recording.") get_size_recording;
+int get_size_recording( );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %feature("autodoc", 0) get_sampling_interval;
 %feature("docstring", "Returns the sampling interval.
 
 Returns:
 The sampling interval.") get_sampling_interval;
 double get_sampling_interval( );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) get_xunits;
+%feature("docstring", "Returns the x units of the specified section.
+X units are not allowed to change between sections at present, and
+they are hard-coded to \"ms\". This function is for future extension.
+
+
+Arguments:
+trace -- The zero-based index of the trace of interest. If < 0, the
+      	   name of the active trace will be returned.
+channel -- The zero-based index of the channel of interest. If < 0, the
+      	   active channel will be used.
+
+Returns:
+The x units as a string.") get_xunits;
+const char* get_xunits( int trace = -1, int channel = -1 );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) get_yunits;
+%feature("docstring", "Returns the y units of the specified trace.
+Y units are not allowed to change between traces at present.
+
+Arguments:
+trace -- The zero-based index of the trace of interest. If < 0, the
+      	   name of the active trace will be returned.
+channel -- The zero-based index of the channel of interest. If < 0, the
+      	   active channel will be used.
+
+Returns:
+The x units as a string.") get_yunits;
+const char* get_yunits( int trace = -1, int channel = -1 );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) set_xunits;
+%feature("docstring", "Sets the x unit string of the specified section.
+X units are not allowed to change between sections at present, and
+they are hard-coded to \"ms\". This function is for future extension.
+
+
+Arguments:
+units --   The new x unit string.
+trace --   The zero-based index of the trace of interest. If < 0, the
+      	   name of the active trace will be returned.
+channel -- The zero-based index of the channel of interest. If < 0, the
+      	   active channel will be used.
+
+Returns:
+True if successful.") set_xunits;
+bool set_xunits( const char* units, int trace = -1, int channel = -1 );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) set_yunits;
+%feature("docstring", "Sets the y unit string of the specified trace.
+Y units are not allowed to change between traces at present.
+
+Arguments:
+units --   The new y unit string.
+trace --   The zero-based index of the trace of interest. If < 0, the
+      	   name of the active trace will be returned.
+channel -- The zero-based index of the channel of interest. If < 0, the
+      	   active channel will be used.
+
+Returns:
+True if successful.") set_yunits;
+bool set_yunits( const char* units, int trace = -1, int channel = -1 );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -261,22 +342,56 @@ bool check_doc( );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-%feature("autodoc", 0) _gVector_resize;
-%feature("docstring", "Resizes the global vector. Do not use directly.
-   
-Arguments:
-size -- New size of the global vector.") _gVector_resize;
-void _gVector_resize( std::size_t size );
+%feature("autodoc", 0) get_filename;
+%feature("docstring",
+"Returns the name of the current file.") get_filename;
+const char* get_filename( );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-%feature("autodoc", 0) _gVector_at;
-%feature("docstring", "Sets the valarray at the specified position of
-the global vector. Do not use directly.
+%feature("autodoc", 0) _gMatrix_resize;
+%feature("docstring", "Resizes the global matrix. Do not use directly.
+   
 Arguments:
-invec -- The NumPy array to be used.
-at --    The position within the global vector.") _gVector_at;
-void _gVector_at( double* invec, int size, int at );
+channels -- New number of channels of the global matrix.
+sections -- New number of sections of the global matrix.
+
+") _gMatrix_resize;
+void _gMatrix_resize( std::size_t channels, std::size_t sections );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) _gMatrix_at;
+%feature("docstring", "Sets the valarray at the specified position of
+the global matrix. Do not use directly.
+Arguments:
+invec --   The NumPy array to be used.
+channel -- The channel index within the global matrix.
+section -- The seciton index within the global matrix.
+") _gMatrix_at;
+void _gMatrix_at( double* invec, int size, int channel, int section );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) _gNames_resize;
+%feature("docstring", "Resizes the global names. Do not use directly.
+   
+Arguments:
+channels -- New number of channels of the global names.
+
+") _gNames_resize;
+void _gNames_resize( std::size_t channels );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) _gNames_at;
+%feature("docstring", "Sets the channel name of the specifies channel.
+Do not use directly.
+Arguments:
+name --   The new channel name
+channel -- The channel index within the global names.
+") _gNames_at;
+void _gNames_at( const char* name, int channel );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -331,6 +446,61 @@ const char* get_recording_time( );
 %feature("docstring", "Returns the date at which the recording was 
 started as a string.") get_recording_date;
 const char* get_recording_date( );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) get_recording_comment;
+%feature("docstring", "Returns a comment about the recording.
+") get_recording_comment;
+std::string get_recording_comment( );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) set_recording_date;
+%feature("docstring", "Sets a date about the recording.
+
+Argument:
+date -- A date string.
+
+Returns:
+True upon successful completion.") set_recording_date;
+bool set_recording_date( const char* date );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) set_recording_time;
+%feature("docstring", "Sets a time about the recording.
+
+Argument:
+time -- A time string.
+
+Returns:
+True upon successful completion.") set_recording_time;
+bool set_recording_time( const char* time );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) set_recording_comment;
+%feature("docstring", "Sets a comment about the recording.
+
+Argument:
+comment -- A comment string.
+
+Returns:
+True upon successful completion.") set_recording_comment;
+bool set_recording_comment( const char* comment );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) set_recording_comment;
+%feature("docstring", "Sets a comment about the recording.
+
+Argument:
+comment -- A comment string.
+
+Returns:
+True upon successful completion.") set_recording_comment;
+bool set_recording_comment( const char* comment );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -742,6 +912,52 @@ int get_channel_index( bool active = true );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) get_channel_name;
+%feature("docstring", "Returns the name of the channel with the 
+specified index.
+
+Arguments:
+
+index -- The zero-based index of the channel of interest. If < 0, the
+      	 name of the active channel will be returned.
+
+Returns:
+the name of the channel with the specified index.") get_channel_name;
+const char* get_channel_name( int index = -1 );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) set_channel_name;
+%feature("docstring", "Sets the name of the channel with the 
+specified index.
+
+Arguments:
+name  -- The new name of the channel.
+index -- The zero-based index of the channel of interest. If < 0, the
+      	 active channel will be used.
+
+Returns:
+True upon success.") set_channel_name;
+bool set_channel_name( const char* name, int index = -1 );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) get_trace_name;
+%feature("docstring", "Returns the name of the trace with the 
+specified index.
+
+Arguments:
+trace -- The zero-based index of the trace of interest. If < 0, the
+      	   name of the active trace will be returned.
+channel -- The zero-based index of the channel of interest. If < 0, the
+      	   active channel will be used.
+
+Returns:
+the name of the trace with the specified index.") get_trace_name;
+const char* get_trace_name( int trace = -1, int channel = -1 );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %feature("autodoc", 0) align_selected;
 %feature("docstring", "Aligns the selected traces to the index that is 
 returned by the alignment function, and then creates a new window 
@@ -814,21 +1030,54 @@ def get_trace(trace = -1, channel = -1):
     return _get_trace_fixedsize(get_size_trace(trace, channel), trace, channel)
     
 def new_window_list( array_list ):
-    """Creates a new window showing a list of
-    1D NumPy arrays. As opposed to new_window_matrix(), this
+    """Creates a new window showing a sequence of
+    1D NumPy arrays, or a sequence of a sequence of 1D
+    NumPy arrays. As opposed to new_window_matrix(), this
     has the advantage that the arrays need not have equal sizes.
       
     Arguments:       
-    array_list -- A tuple of numpy arrays.
+    array_list -- A sequence (e.g. list or tuple) of numpy arrays, or
+                  a sequence of a sequence of numpy arrays.
     """
+    # Check whether first dimension is a sequence (required):
+    try: 
+        it = iter(array_list)
+    except TypeError: 
+        print "Argument is not a sequence"
+        return
 
-    _gVector_resize( len(array_list) )
-    n = 0
-    for a in array_list:
-        _gVector_at( a, n )
-        n = n+1
+    # Check whether second dimension is a sequence (required):
+    try: 
+        it = iter(array_list[0])
+    except TypeError: 
+        print "Argument is not a sequence of sequences."
+        print "You can either pass a sequence of 1D NumPy arrays,"
+        print "Or a sequence of sequences of 1D NumPy arrays."
+        return
+        
+    # Check whether third dimension is a sequence (optional):
+    is_3d = True
+    try: 
+        it = iter(array_list[0][0])
+    except TypeError: 
+        is_3d = False
+        n_channels = 1
 
-    _new_window_gVector( )
+    if is_3d:
+        n_channels = len(array_list)
+
+    if is_3d:
+        _gMatrix_resize( n_channels, len(array_list[0]) )
+        for (n_c, c) in enumerate(array_list):
+            for (n_s, s) in enumerate(c):
+                _gMatrix_at( s, n_c, n_s )
+        
+    else:
+        _gMatrix_resize( n_channels, len(array_list) )
+        for (n, a) in enumerate(array_list):
+            _gMatrix_at( a, 0, n )
+
+    _new_window_gMatrix( )
 
 def cut_traces( pt ):
     """Cuts the selected traces at the sampling point pt,

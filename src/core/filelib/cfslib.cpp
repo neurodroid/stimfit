@@ -12,11 +12,13 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+
 #include "wx/wxprec.h"
 #include "wx/progdlg.h"
 #include <wx/msgdlg.h>
 
 #include "./cfslib.h"
+#include "./cfs.h"
 
 namespace stf {
 
@@ -52,7 +54,7 @@ stf::CFS_IFile::CFS_IFile(const wxString& filename) {
     myHandle=OpenCFSFile(filename.char_str(),0,1);
 }
 
-stf::CFS_IFile::~CFS_IFile() { 
+stf::CFS_IFile::~CFS_IFile() {
     if (myHandle>0) {
         CloseCFSFile(myHandle);
     }
@@ -65,7 +67,7 @@ stf::CFS_OFile::CFS_OFile(const wxString& filename,const wxString& comment,std::
     c_DSArray=NULL;
     c_fileArray=NULL;
     myHandle=CreateCFSFile(filename.char_str(), comment.char_str(), 512, (short)nChannels,
-        c_fileArray, c_DSArray, 0/*number of file vars*/, 
+        c_fileArray, c_DSArray, 0/*number of file vars*/,
         0/*number of section vars*/);
 }
 
@@ -131,7 +133,7 @@ bool stf::CFSError(wxString& errorMsg) {
         case (-25): errorMsg += wxT("Invalid variable kind (not 0 for file variable or 1 for DS variable)."); break;
         case (-26): errorMsg += wxT("Invalid variable number."); break;
         case (-27): errorMsg += wxT("Data size specified is out of the correct range."); break;
-        case (-30): case (-31): case (-32): case (-33): case (-34): case (-35): case (-36): case (-37): case (-38): 
+        case (-30): case (-31): case (-32): case (-33): case (-34): case (-35): case (-36): case (-37): case (-38):
         case (-39): errorMsg += wxT("Wrong CFS version number in file"); break;
         default   : errorMsg += wxT("An unknown error occurred"); break;
     }
@@ -141,12 +143,12 @@ bool stf::CFSError(wxString& errorMsg) {
 wxString stf::CFSReadVar(short fHandle,short varNo,short varKind) {
     wxString errorMsg;
     wxString outputstream;
-    TUnits units; 
+    TUnits units;
     char description[22];
     short varSize=0;
     TDataType varType;
     //Get description of a particular file variable
-    //- see manual of CFS file system 
+    //- see manual of CFS file system
     GetVarDesc(fHandle,varNo,varKind,&varSize,&varType,units,description);
     if (CFSError(errorMsg)) throw std::runtime_error(std::string(errorMsg.char_str()));
     //I haven't found a way to directly pass a std::string to GetVarDesc;
@@ -194,7 +196,7 @@ wxString stf::CFSReadVar(short fHandle,short varNo,short varKind) {
                 }
                 break;
                        }
-            default: break;	
+            default: break;
         }	//End switch 'varType'
     }
     if (s_description.substr(0,11) != wxT("ScriptBlock") ) {
@@ -261,7 +263,7 @@ int stf::exportCFSFile(const wxString& fName, const Recording& WData) {
                 0  /* yOffset */,
                 (float)WData.GetXScale(),
                 0 /* x offset */
-                ); 
+                );
             if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
         }
 
@@ -271,7 +273,7 @@ int stf::exportCFSFile(const wxString& fName, const Recording& WData) {
         nBlocks=(int)(((WData[0][n_section].size()*4-1)/maxBytes) + 1);
 
         for (int b=0; b < nBlocks; b++) {
-            // Block loop			
+            // Block loop
             nStartByteOffset=b*maxBytes*(int)WData.size();
             if (b == nBlocks -1)
                 nBlockBytes=(int)WData[0][n_section].size()*(int)WData.size()*4 -
@@ -295,7 +297,7 @@ int stf::exportCFSFile(const wxString& fName, const Recording& WData) {
                 CFSFile.myHandle,
                 0  /* "0" means current section */,
                 nStartByteOffset /* byte offset */,
-                (WORD)nBlockBytes, 
+                (WORD)nBlockBytes,
                 &faverage_small[0]
             );
             if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
@@ -306,7 +308,7 @@ int stf::exportCFSFile(const wxString& fName, const Recording& WData) {
     return CFSFile.myHandle;
 }
 
-void stf::importCFSFile(const wxString& fName, Recording& ReturnData) {
+void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progress ) {
     wxProgressDialog progDlg( wxT("CED filing system import"), wxT("Starting file import"),
         100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
     wxString errorMsg;
@@ -318,12 +320,12 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData) {
         throw std::runtime_error(std::string(errorMsg.char_str()));
     }
 
-    //Get general Info of the file - see manual of CFS file system 
+    //Get general Info of the file - see manual of CFS file system
     TDesc time, date;
     TComment comment;
     GetGenInfo(CFSFile.myHandle, time, date, comment);
     if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
-    //Get characteristics of the file - see manual of CFS file system 
+    //Get characteristics of the file - see manual of CFS file system
     short channelsAvail=0, fileVars=0, DSVars=0;
     unsigned short dataSections=0;
     GetFileInfo(CFSFile.myHandle, &channelsAvail, &fileVars, &DSVars, &dataSections);
@@ -337,7 +339,7 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData) {
         section_description; //Data section variable
 
     //1. Read file variables
-    for (short n_filevar=0; n_filevar < fileVars; ++n_filevar) {   
+    for (short n_filevar=0; n_filevar < fileVars; ++n_filevar) {
         //Begin loop: read file variables
         try {
             file_description += CFSReadVar(CFSFile.myHandle,n_filevar,FILEVAR);
@@ -348,7 +350,7 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData) {
     }//End loop: read file variables
 
     //2. Data Section variables
-    for (short n_sectionvar=0; n_sectionvar < DSVars; ++n_sectionvar) 
+    for (short n_sectionvar=0; n_sectionvar < DSVars; ++n_sectionvar)
     {   //Begin loop: read data section variables
         try {
             section_description+=CFSReadVar(CFSFile.myHandle,n_sectionvar,DSVAR);
@@ -358,7 +360,7 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData) {
         }
     }	//End loop read: data section variables
 
-    //3. Description of scaling factors and offsets 
+    //3. Description of scaling factors and offsets
     //can't be read with GetVarVal() since they might change from section
     //to section
     wxString scaling;
@@ -374,8 +376,8 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData) {
         //see manual of CFS file system.
         std::vector<char> vchannel_name(22),vyUnits(10),vxUnits(10);
         long startOffset;
-        GetFileChan(CFSFile.myHandle, n_channel, &vchannel_name[0], 
-            &vyUnits[0], &vxUnits[0], &dataType, &dataKind, 
+        GetFileChan(CFSFile.myHandle, n_channel, &vchannel_name[0],
+            &vyUnits[0], &vxUnits[0], &dataType, &dataKind,
             &spacing, &other);
         if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
         wxString channel_name(wxString( &vchannel_name[0], wxConvLocal )),
@@ -390,7 +392,7 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData) {
         scaling += outputstream;
         //Get the channel information for a data section or a file
         //- see manual of CFS file system
-        GetDSChan(CFSFile.myHandle, n_channel /*first channel*/, 1 /*first section*/, &startOffset, 
+        GetDSChan(CFSFile.myHandle, n_channel /*first channel*/, 1 /*first section*/, &startOffset,
             &points[0], &yScale, &yOffset,&xScale,&xOffset);
         if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
         //Write the formatted string from 'yScale' to 'buffer'
@@ -410,21 +412,23 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData) {
         outputstream << wxT("XOffset=") <<  xOffset << wxT("\n");
         scaling += outputstream;
 
-        Channel TempChannel(dataSections); 
+        Channel TempChannel(dataSections);
         TempChannel.SetChannelName(channel_name);
         TempChannel.SetYUnits(yUnits);
         std::size_t empty_sections=0;
         for (int n_section=0; n_section < dataSections; ++n_section) {
             wxString progStr;
-            progStr << wxT("Reading channel #") << n_channel + 1 << wxT(" of ") << channelsAvail
-                << wxT(", Section #") << n_section+1 << wxT(" of ") << dataSections;
-            progDlg.Update(
-                // Channel contribution:
-                (int)(((double)n_channel/(double)channelsAvail)*100.0+
-                // Section contribution:
-                (double)n_section/(double)dataSections*(100.0/channelsAvail)),
-                progStr
-                );
+            if (progress) {
+                progStr << wxT("Reading channel #") << n_channel + 1 << wxT(" of ") << channelsAvail
+                        << wxT(", Section #") << n_section+1 << wxT(" of ") << dataSections;
+                progDlg.Update(
+                               // Channel contribution:
+                               (int)(((double)n_channel/(double)channelsAvail)*100.0+
+                                     // Section contribution:
+                                     (double)n_section/(double)dataSections*(100.0/channelsAvail)),
+                               progStr
+                               );
+            }
             //Begin loop: n_sections
             //Get the channel information for a data section or a file
             //- see manual of CFS file system
@@ -433,14 +437,14 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData) {
             GetDSChan(CFSFile.myHandle,(short)n_channel,(WORD)n_section+1,&startOffset,
                 &points[n_section],&yScale,&yOffset,&xScale,&xOffset);
             if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
-            wxString label; 
+            wxString label;
             label << stf::noPath(fName) << wxT(", Section # ") << n_section+1;
             Section TempSection(
                 (int)(points[n_section]),
                 label
             );
             //-----------------------------------------------------
-            //The following part was modified to read data sections 
+            //The following part was modified to read data sections
             //larger than 64 KB as e.g. produced by Igor.
             //Adopted from FPCfs.ipf by U Froebe
             //Sections with a size larger than 64 KB have been made
@@ -458,9 +462,9 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData) {
 
             for (int b=0; b < nBlocks; ++b) {
                 //Begin loop: storage of blocks
-                if (dataType == RL4) {	
+                if (dataType == RL4) {
                     //4 byte data
-                    //Read data of the current channel and data section 
+                    //Read data of the current channel and data section
                     //- see manual of CFS file system
                     //Temporary arrays to store blocks:
                     if (b == nBlocks - 1)
@@ -468,37 +472,37 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData) {
                     else
                         nBlockBytes=CFSMAXBYTES;
                     std::valarray<float> fTempSection_small(nBlockBytes);
-                    GetChanData(CFSFile.myHandle, (short)n_channel, (WORD)n_section+1, 
-                        b*CFSMAXBYTES/4, (WORD)nBlockBytes/4, &fTempSection_small[0], 
+                    GetChanData(CFSFile.myHandle, (short)n_channel, (WORD)n_section+1,
+                        b*CFSMAXBYTES/4, (WORD)nBlockBytes/4, &fTempSection_small[0],
                         4*(points[n_section]+1));
                     if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
                     for (int n=0; n<nBlockBytes/4; ++n) {
                         TempSection[n + b*CFSMAXBYTES/4]=
-                            fTempSection_small[n]* yScale + 
+                            fTempSection_small[n]* yScale +
                             yOffset;
                     }
-                } else {	
+                } else {
                     //2 byte data
-                    //Read data of the current channel and data section 
+                    //Read data of the current channel and data section
                     //- see manual of CFS file system
                     if (b == nBlocks - 1)
                         nBlockBytes=points[n_section]*2 - b*CFSMAXBYTES;
                     else
                         nBlockBytes=CFSMAXBYTES;
                     std::valarray<short> TempSection_small(nBlockBytes);
-                    GetChanData(CFSFile.myHandle, (short)n_channel, (WORD)n_section+1, 
-                        b*CFSMAXBYTES/2, (WORD)nBlockBytes/2, &TempSection_small[0], 
+                    GetChanData(CFSFile.myHandle, (short)n_channel, (WORD)n_section+1,
+                        b*CFSMAXBYTES/2, (WORD)nBlockBytes/2, &TempSection_small[0],
                         2*(points[n_section]+1));
                     if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
                     for (int n=0; n<nBlockBytes/2; ++n) {
                         TempSection[n + b*CFSMAXBYTES/2]=
-                            TempSection_small[n]* yScale + 
+                            TempSection_small[n]* yScale +
                             yOffset;
                     }
                 }
             }	//End loop: storage of blocks
-            //----------------------------------------------------- 
-            //End of the modified part to read data sections larger than 
+            //-----------------------------------------------------
+            //End of the modified part to read data sections larger than
             //64kB (as produced e.g. by Igor)
             //-----------------------------------------------------
             try {

@@ -149,6 +149,11 @@ bool wxStfApp::OnInit(void)
             wxT("CFS Document"), wxT("CFS View"), CLASSINFO(wxStfDoc),
             CLASSINFO(wxStfView) );
 
+    m_hdf5Template=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
+            wxT("hdf5 file"), wxT("*.h5"), wxT(""), wxT("h5"),
+            wxT("HDF5 Document"), wxT("HDF5 View"), CLASSINFO(wxStfDoc),
+            CLASSINFO(wxStfView) );
+
     m_abfTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
             wxT("Axon binary file"), wxT("*.abf"), wxT(""), wxT("abf"),
             wxT("ABF Document"), wxT("ABF View"), CLASSINFO(wxStfDoc),
@@ -436,6 +441,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     wxMenu* exportSub=new wxMenu;
     exportSub->Append(wxID_EXPORTFILE, wxT("as text file series..."));
     exportSub->Append(wxID_EXPORTATF, wxT("as ATF file..."));
+    exportSub->Append(wxID_EXPORTHDF5, wxT("as HDF5 file..."));
     exportSub->Append(wxID_EXPORTIGOR, wxT("as Igor binary waves..."));
 
     file_menu->AppendSubMenu(exportSub, wxT("Export..."));
@@ -1090,7 +1096,7 @@ bool wxStfApp::OpenFilePy(const wxString& filename) {
         return false;
     }
     NewDoc->SetDocumentTemplate(templ);
-    if (!NewDoc->OnOpenDocument(filename)) {
+    if (!NewDoc->OnOpenPyDocument(filename)) {
         ErrorMsg(wxT("Couldn't open file, aborting file import"));
         m_docManager->CloseDocument(NewDoc);
         return false;

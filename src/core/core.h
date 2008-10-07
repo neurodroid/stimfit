@@ -137,6 +137,7 @@ findType(const wxString& ext);
  *  \param type The file type. 
  *  \param ReturnData Will contain the file data on return.
  *  \param txtImport The text import filter settings.
+ *  \param txtImport Set to true if a progress dialog should be shown.
  *  \return true if the file has successfully been read, false otherwise.
  */
 bool
@@ -144,7 +145,8 @@ importFile(
         const wxString& fName,
         stf::filetype type,
         Recording& ReturnData,
-        const stf::txtImportSettings& txtImport
+        const stf::txtImportSettings& txtImport,
+        bool progress=true
 );
 
 //! Differentiate data.

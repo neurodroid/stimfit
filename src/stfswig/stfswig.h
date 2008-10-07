@@ -1,7 +1,8 @@
 #ifndef _STFSWIG_H
 #define _STFSWIG_H
 
-void _get_trace_fixedsize( double* outvec, int size, int trace = -1, int channel = -1 );
+#include <wx/wx.h>
+
 void new_window( double* invec, int size );
 void new_window_matrix( double* inarr, int traces, int size );
 bool new_window_selected_this( );
@@ -11,10 +12,20 @@ bool show_table_dictlist( PyObject* dict, const char* caption  = "Python table",
 
 int get_size_trace( int trace = -1, int channel = -1 );
 int get_size_channel( int channel = -1 );
+int get_size_recording( );
+
 double get_sampling_interval( );
 bool set_sampling_interval( double si );
+const char* get_xunits( int trace = -1, int channel = -1 );
+const char* get_yunits( int trace = -1, int channel = -1 );
+bool set_xunits( const char* units, int trace = -1, int channel = -1 );
+bool set_yunits( const char* units, int trace = -1, int channel = -1 );
 const char* get_recording_time( );
 const char* get_recording_date( );
+std::string get_recording_comment( );
+bool set_recording_comment( const char* comment );
+bool set_recording_time( const char* time );
+bool set_recording_date( const char* date );
 
 bool select_trace( int trace = -1 );
 void select_all( );
@@ -24,6 +35,9 @@ PyObject* get_selected_indices( );
 bool set_trace( int trace );
 int get_trace_index();
 int get_channel_index( bool active = true );
+const char* get_channel_name( int index = -1 );
+bool set_channel_name( const char* name, int index = -1 );
+const char* get_trace_name( int trace = -1, int channel = -1 );
 
 void align_selected(  double (*alignment)( bool ), bool active = false );
 
@@ -33,6 +47,7 @@ int leastsq_param_size( int fselect );
 PyObject* leastsq( int fselect, bool refresh = true );
 
 bool check_doc( );
+const char* get_filename( );
 bool file_open( const char* filename );
 bool file_save( const char* filename );
 bool close_all( );
@@ -69,8 +84,11 @@ bool set_base_start( double pos, bool is_time = false );
 double get_base_end( bool is_time = false );
 bool set_base_end( double pos, bool is_time = false );
 
-void _gVector_resize( std::size_t size );
-void _gVector_at( double* invec, int size, int at );
-void _new_window_gVector( );
+void _get_trace_fixedsize( double* outvec, int size, int trace = -1, int channel = -1 );
+void _gMatrix_resize( std::size_t channels, std::size_t sections );
+void _gNames_resize( std::size_t channels );
+void _gMatrix_at( double* invec, int size, int channel, int section );
+void _gNames_at( const char* name, int channel );
+void _new_window_gMatrix( );
 
 #endif

@@ -27,12 +27,12 @@ doc/stfbook.ps
 doc/html/*
 doc/latex/*
 autom4te.cache/*
-stimfit_VS03/stfswig/Debug/*
-stimfit_VS03/stfswig/Release/*
-stimfit_VS03/stimfit/Debug/*
-stimfit_VS03/stimfit/Release/*
-stimfit_VS03/stimfit_exe/Debug/*
-stimfit_VS03/stimfit_exe/Release/*
+stimfit_VS03/stfswig/Debug
+stimfit_VS03/stfswig/Release
+stimfit_VS03/stimfit/Debug
+stimfit_VS03/stimfit/Release
+stimfit_VS03/stimfit_exe/Debug
+stimfit_VS03/stimfit_exe/Release
 
 syntax: regexp
 .*\#.*\#$

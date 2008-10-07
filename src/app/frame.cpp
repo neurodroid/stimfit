@@ -59,6 +59,7 @@
 #include "./copygrid.h"
 #include "./../core/filelib/cfslib.h"
 #include "./../core/filelib/atflib.h"
+#include "./../core/filelib/hdf5lib.h"
 #include "./../core/filelib/asciilib.h"
 #ifdef _WINDOWS
 #include "./../core/filelib/igorlib.h"
@@ -121,6 +122,7 @@ EVT_MENU(wxID_TOOL_CH2, wxStfParentFrame::OnToolCh2)
 EVT_MENU(wxID_EXPORTFILE, wxStfParentFrame::OnExportfile)
 EVT_MENU(wxID_EXPORTATF, wxStfParentFrame::OnExportatf)
 EVT_MENU(wxID_EXPORTIGOR, wxStfParentFrame::OnExportigor)
+EVT_MENU(wxID_EXPORTHDF5, wxStfParentFrame::OnExporthdf5)
 EVT_MENU(wxID_EXPORTIMAGE, wxStfParentFrame::OnExportimage)
 EVT_MENU(wxID_EXPORTPS, wxStfParentFrame::OnExportps)
 #if wxCHECK_VERSION(2, 9, 0)
@@ -682,6 +684,24 @@ void wxStfParentFrame::OnExportigor(wxCommandEvent& WXUNUSED(event) ) {
 #else
     wxGetApp().ErrorMsg( wxT("Igor file export only available in Windows version") );
 #endif
+}
+
+void wxStfParentFrame::OnExporthdf5(wxCommandEvent& WXUNUSED(event) ) {
+    wxFileDialog SelectFileDialog( this, wxT("Set file base for Igor binary waves"),
+        wxT(""), wxT(""), wxT("*.*"), wxFD_SAVE );
+    if(SelectFileDialog.ShowModal()==wxID_OK) {
+        //Get path of the current file
+        wxString traceFilename(SelectFileDialog.GetPath());
+        wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
+        if (pDoc!=NULL) {
+            try {
+                stf::exportHDF5File(traceFilename,*pDoc);
+            }
+            catch (const std::runtime_error& e) {
+                wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+            }
+        }
+    }
 }
 
 void wxStfParentFrame::OnExportimage(wxCommandEvent& WXUNUSED(event) ) {

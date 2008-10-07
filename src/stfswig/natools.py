@@ -431,7 +431,7 @@ def deact_batch( filename="" ):
     
     return True
 
-def inact_recov_batch():
+def inact_recov_batch( show_table = True ):
     """Determines recovery from inactivation."""
 
     if ( not(stf.check_doc()) ):
@@ -465,8 +465,6 @@ def inact_recov_batch():
             print "Couldn't set a new trace; aborting now."
             return False
         
-        print "Analyzing control pulse ", n+1, " of ", stf.get_size_channel()
-        
         # set the control pulse window cursors:
         if ( not(stf.set_peak_start( gPeakStartCtrl, True )) ):
             return False
@@ -484,8 +482,6 @@ def inact_recov_batch():
         # Store values:
         dict_values[0][n] = stf.get_peak() - stf.get_base()
         
-        print "Analyzing test pulse ", n+1, " of ", stf.get_size_channel()
- 
         # set the test pulse window cursors:
         if ( not(stf.set_peak_start( gDurations[n]+100.16, True )) ):
             return False
@@ -510,7 +506,10 @@ def inact_recov_batch():
         inactDict[ elem ] = dict_values[entry].tolist()
         entry = entry+1
    
-    return stf.show_table_dictlist( inactDict )
+    if show_table:
+        if not stf.show_table_dictlist( inactDict ):
+            return -1
+    return dict_values
 
 def inact_onset_batch( show_table = True ):
     """Determines onset of inactivation."""

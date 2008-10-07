@@ -21,12 +21,7 @@
 #ifndef _CFSLIB_H
 #define _CFSLIB_H
 
-#include <string>
-#include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/shared_array.hpp>
 #include "../core.h"
-#include "./cfs.h"
 
 namespace stf {
 
@@ -34,8 +29,9 @@ namespace stf {
 /*! \param fName Full path to the file to be read.
  *  \param ReturnData On entry, an empty Recording object. On exit,
  *         the data stored in \e fName.
+ *  \param progress Set tu true if a progress dialog should be shown.
  */
-void importCFSFile(const wxString& fName, Recording& ReturnData);
+void importCFSFile(const wxString& fName, Recording& ReturnData, bool progress = true );
 
 //! Export a Recording to a CFS file.
 /*! \param fName Full path to the file to be written.

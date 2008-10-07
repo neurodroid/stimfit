@@ -321,6 +321,7 @@ private:
     void OnExportfile(wxCommandEvent& event);
     void OnExportatf(wxCommandEvent& event);
     void OnExportigor(wxCommandEvent& event);
+    void OnExporthdf5(wxCommandEvent& event);
     void OnExportimage(wxCommandEvent& event);
     void OnExportps(wxCommandEvent& event);
     void OnExportlatex(wxCommandEvent& event);

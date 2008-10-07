@@ -1,8 +1,4 @@
 
-<!doctype html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><title>Python: module stf</title>
-</head><body bgcolor="#f0f0f8">
-
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
 <tr bgcolor="#7799ee">
 <td valign=bottom>&nbsp;<br>
@@ -130,7 +126,7 @@ The&nbsp;zero-based&nbsp;index&nbsp;of&nbsp;the&nbsp;foot&nbsp;of&nbsp;an&nbsp;e
 points.&nbsp;Interpolates&nbsp;between&nbsp;sampling&nbsp;points.<br>
 Returns&nbsp;a&nbsp;negative&nbsp;value&nbsp;upon&nbsp;failure.<br>
 &nbsp;<br>
-swig_ptr:&nbsp;_e038fcb6_p_f_bool__double</tt></dd></dl>
+swig_ptr:&nbsp;_009b81b7_p_f_bool__double</tt></dd></dl>
  <dl><dt><a name="-get_base"><strong>get_base</strong></a>(*args)</dt><dd><tt><a href="#-get_base">get_base</a>()&nbsp;-&gt;&nbsp;double<br>
 &nbsp;<br>
 Returns&nbsp;the&nbsp;current&nbsp;baseline&nbsp;value.&nbsp;Uses&nbsp;the&nbsp;<br>
@@ -169,6 +165,22 @@ Arguments:<br>
 &nbsp;<br>
 active&nbsp;--&nbsp;If&nbsp;True,&nbsp;returns&nbsp;the&nbsp;index&nbsp;of&nbsp;the&nbsp;active&nbsp;(black)&nbsp;channel.<br>
 If&nbsp;False,&nbsp;returns&nbsp;the&nbsp;index&nbsp;of&nbsp;the&nbsp;inactive&nbsp;(red)&nbsp;channel.</tt></dd></dl>
+ <dl><dt><a name="-get_channel_name"><strong>get_channel_name</strong></a>(...)</dt><dd><tt><a href="#-get_channel_name">get_channel_name</a>(index=-1)&nbsp;-&gt;&nbsp;char<br>
+<a href="#-get_channel_name">get_channel_name</a>()&nbsp;-&gt;&nbsp;char<br>
+&nbsp;<br>
+Returns&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;channel&nbsp;with&nbsp;the&nbsp;<br>
+specified&nbsp;index.<br>
+&nbsp;<br>
+Arguments:<br>
+&nbsp;<br>
+index&nbsp;--&nbsp;The&nbsp;zero-based&nbsp;index&nbsp;of&nbsp;the&nbsp;channel&nbsp;of&nbsp;interest.&nbsp;If&nbsp;&lt;&nbsp;0,&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;of&nbsp;the&nbsp;active&nbsp;channel&nbsp;will&nbsp;be&nbsp;returned.<br>
+&nbsp;<br>
+Returns:<br>
+the&nbsp;name&nbsp;of&nbsp;the&nbsp;channel&nbsp;with&nbsp;the&nbsp;specified&nbsp;index.</tt></dd></dl>
+ <dl><dt><a name="-get_filename"><strong>get_filename</strong></a>(*args)</dt><dd><tt><a href="#-get_filename">get_filename</a>()&nbsp;-&gt;&nbsp;char<br>
+&nbsp;<br>
+Returns&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;current&nbsp;file.</tt></dd></dl>
  <dl><dt><a name="-get_fit_end"><strong>get_fit_end</strong></a>(...)</dt><dd><tt><a href="#-get_fit_end">get_fit_end</a>(is_time=False)&nbsp;-&gt;&nbsp;double<br>
 <a href="#-get_fit_end">get_fit_end</a>()&nbsp;-&gt;&nbsp;double<br>
 &nbsp;<br>
@@ -217,6 +229,14 @@ Arguments:<br>
 is_time&nbsp;--&nbsp;If&nbsp;False&nbsp;(default),&nbsp;returns&nbsp;the&nbsp;zero-based&nbsp;index.&nbsp;If&nbsp;True,<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;returns&nbsp;the&nbsp;time&nbsp;from&nbsp;the&nbsp;beginning&nbsp;of&nbsp;the&nbsp;trace&nbsp;to&nbsp;the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cursor&nbsp;position.</tt></dd></dl>
+ <dl><dt><a name="-get_recording_date"><strong>get_recording_date</strong></a>(*args)</dt><dd><tt><a href="#-get_recording_date">get_recording_date</a>()&nbsp;-&gt;&nbsp;char<br>
+&nbsp;<br>
+Returns&nbsp;the&nbsp;date&nbsp;at&nbsp;which&nbsp;the&nbsp;recording&nbsp;was&nbsp;<br>
+started&nbsp;as&nbsp;a&nbsp;string.</tt></dd></dl>
+ <dl><dt><a name="-get_recording_time"><strong>get_recording_time</strong></a>(*args)</dt><dd><tt><a href="#-get_recording_time">get_recording_time</a>()&nbsp;-&gt;&nbsp;char<br>
+&nbsp;<br>
+Returns&nbsp;the&nbsp;time&nbsp;at&nbsp;which&nbsp;the&nbsp;recording&nbsp;was&nbsp;<br>
+started&nbsp;as&nbsp;a&nbsp;string.</tt></dd></dl>
  <dl><dt><a name="-get_sampling_interval"><strong>get_sampling_interval</strong></a>(*args)</dt><dd><tt><a href="#-get_sampling_interval">get_sampling_interval</a>()&nbsp;-&gt;&nbsp;double<br>
 &nbsp;<br>
 Returns&nbsp;the&nbsp;sampling&nbsp;interval.<br>
@@ -240,6 +260,13 @@ channel&nbsp;--&nbsp;ZERO-BASED&nbsp;index&nbsp;of&nbsp;the&nbsp;channel.&nbsp;D
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;will&nbsp;use&nbsp;the&nbsp;current&nbsp;channel.&nbsp;<br>
 Returns:<br>
 The&nbsp;number&nbsp;traces&nbsp;in&nbsp;a&nbsp;channel.</tt></dd></dl>
+ <dl><dt><a name="-get_size_recording"><strong>get_size_recording</strong></a>(*args)</dt><dd><tt><a href="#-get_size_recording">get_size_recording</a>()&nbsp;-&gt;&nbsp;int<br>
+&nbsp;<br>
+Retrieves&nbsp;the&nbsp;number&nbsp;of&nbsp;channels&nbsp;in&nbsp;a&nbsp;<br>
+recording.<br>
+&nbsp;&nbsp;&nbsp;<br>
+Returns:<br>
+The&nbsp;number&nbsp;of&nbsp;channels&nbsp;in&nbsp;a&nbsp;recording.</tt></dd></dl>
  <dl><dt><a name="-get_size_trace"><strong>get_size_trace</strong></a>(*args)</dt><dd><tt><a href="#-get_size_trace">get_size_trace</a>(trace=-1,&nbsp;channel=-1)&nbsp;-&gt;&nbsp;int<br>
 <a href="#-get_size_trace">get_size_trace</a>(trace=-1)&nbsp;-&gt;&nbsp;int<br>
 <a href="#-get_size_trace">get_size_trace</a>()&nbsp;-&gt;&nbsp;int<br>
@@ -273,6 +300,53 @@ The&nbsp;trace&nbsp;as&nbsp;a&nbsp;1D&nbsp;NumPy&nbsp;array.</tt></dd></dl>
 &nbsp;<br>
 Returns&nbsp;the&nbsp;ZERO-BASED&nbsp;index&nbsp;of&nbsp;the&nbsp;currently<br>
 displayed&nbsp;trace&nbsp;(this&nbsp;is&nbsp;one&nbsp;less&nbsp;than&nbsp;what&nbsp;is&nbsp;shown&nbsp;in&nbsp;the&nbsp;combo&nbsp;box).</tt></dd></dl>
+ <dl><dt><a name="-get_trace_name"><strong>get_trace_name</strong></a>(...)</dt><dd><tt><a href="#-get_trace_name">get_trace_name</a>(trace=-1,&nbsp;channel=-1)&nbsp;-&gt;&nbsp;char<br>
+<a href="#-get_trace_name">get_trace_name</a>(trace=-1)&nbsp;-&gt;&nbsp;char<br>
+<a href="#-get_trace_name">get_trace_name</a>()&nbsp;-&gt;&nbsp;char<br>
+&nbsp;<br>
+Returns&nbsp;the&nbsp;name&nbsp;of&nbsp;the&nbsp;trace&nbsp;with&nbsp;the&nbsp;<br>
+specified&nbsp;index.<br>
+&nbsp;<br>
+Arguments:<br>
+trace&nbsp;--&nbsp;The&nbsp;zero-based&nbsp;index&nbsp;of&nbsp;the&nbsp;trace&nbsp;of&nbsp;interest.&nbsp;If&nbsp;&lt;&nbsp;0,&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;of&nbsp;the&nbsp;active&nbsp;trace&nbsp;will&nbsp;be&nbsp;returned.<br>
+channel&nbsp;--&nbsp;The&nbsp;zero-based&nbsp;index&nbsp;of&nbsp;the&nbsp;channel&nbsp;of&nbsp;interest.&nbsp;If&nbsp;&lt;&nbsp;0,&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;active&nbsp;channel&nbsp;will&nbsp;be&nbsp;used.<br>
+&nbsp;<br>
+Returns:<br>
+the&nbsp;name&nbsp;of&nbsp;the&nbsp;trace&nbsp;with&nbsp;the&nbsp;specified&nbsp;index.</tt></dd></dl>
+ <dl><dt><a name="-get_xunits"><strong>get_xunits</strong></a>(*args)</dt><dd><tt><a href="#-get_xunits">get_xunits</a>(trace=-1,&nbsp;channel=-1)&nbsp;-&gt;&nbsp;char<br>
+<a href="#-get_xunits">get_xunits</a>(trace=-1)&nbsp;-&gt;&nbsp;char<br>
+<a href="#-get_xunits">get_xunits</a>()&nbsp;-&gt;&nbsp;char<br>
+&nbsp;<br>
+Returns&nbsp;the&nbsp;x&nbsp;units&nbsp;of&nbsp;the&nbsp;specified&nbsp;section.<br>
+X&nbsp;units&nbsp;are&nbsp;not&nbsp;allowed&nbsp;to&nbsp;change&nbsp;between&nbsp;sections&nbsp;at&nbsp;present,&nbsp;and<br>
+they&nbsp;are&nbsp;hard-coded&nbsp;to&nbsp;"ms".&nbsp;This&nbsp;function&nbsp;is&nbsp;for&nbsp;future&nbsp;extension.<br>
+&nbsp;<br>
+&nbsp;<br>
+Arguments:<br>
+trace&nbsp;--&nbsp;The&nbsp;zero-based&nbsp;index&nbsp;of&nbsp;the&nbsp;trace&nbsp;of&nbsp;interest.&nbsp;If&nbsp;&lt;&nbsp;0,&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;of&nbsp;the&nbsp;active&nbsp;trace&nbsp;will&nbsp;be&nbsp;returned.<br>
+channel&nbsp;--&nbsp;The&nbsp;zero-based&nbsp;index&nbsp;of&nbsp;the&nbsp;channel&nbsp;of&nbsp;interest.&nbsp;If&nbsp;&lt;&nbsp;0,&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;active&nbsp;channel&nbsp;will&nbsp;be&nbsp;used.<br>
+&nbsp;<br>
+Returns:<br>
+The&nbsp;x&nbsp;units&nbsp;as&nbsp;a&nbsp;string.</tt></dd></dl>
+ <dl><dt><a name="-get_yunits"><strong>get_yunits</strong></a>(*args)</dt><dd><tt><a href="#-get_yunits">get_yunits</a>(trace=-1,&nbsp;channel=-1)&nbsp;-&gt;&nbsp;char<br>
+<a href="#-get_yunits">get_yunits</a>(trace=-1)&nbsp;-&gt;&nbsp;char<br>
+<a href="#-get_yunits">get_yunits</a>()&nbsp;-&gt;&nbsp;char<br>
+&nbsp;<br>
+Returns&nbsp;the&nbsp;y&nbsp;units&nbsp;of&nbsp;the&nbsp;specified&nbsp;trace.<br>
+Y&nbsp;units&nbsp;are&nbsp;not&nbsp;allowed&nbsp;to&nbsp;change&nbsp;between&nbsp;traces&nbsp;at&nbsp;present.<br>
+&nbsp;<br>
+Arguments:<br>
+trace&nbsp;--&nbsp;The&nbsp;zero-based&nbsp;index&nbsp;of&nbsp;the&nbsp;trace&nbsp;of&nbsp;interest.&nbsp;If&nbsp;&lt;&nbsp;0,&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;of&nbsp;the&nbsp;active&nbsp;trace&nbsp;will&nbsp;be&nbsp;returned.<br>
+channel&nbsp;--&nbsp;The&nbsp;zero-based&nbsp;index&nbsp;of&nbsp;the&nbsp;channel&nbsp;of&nbsp;interest.&nbsp;If&nbsp;&lt;&nbsp;0,&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;active&nbsp;channel&nbsp;will&nbsp;be&nbsp;used.<br>
+&nbsp;<br>
+Returns:<br>
+The&nbsp;x&nbsp;units&nbsp;as&nbsp;a&nbsp;string.</tt></dd></dl>
  <dl><dt><a name="-leastsq"><strong>leastsq</strong></a>(*args)</dt><dd><tt><a href="#-leastsq">leastsq</a>(fselect,&nbsp;refresh=True)&nbsp;-&gt;&nbsp;PyObject<br>
 <a href="#-leastsq">leastsq</a>(fselect)&nbsp;-&gt;&nbsp;PyObject<br>
 &nbsp;<br>
@@ -320,7 +394,7 @@ The&nbsp;zero-based&nbsp;index&nbsp;of&nbsp;the&nbsp;maximal&nbsp;slope&nbsp;of&
 sampling&nbsp;points.&nbsp;Interpolated&nbsp;between&nbsp;adjacent&nbsp;sampling&nbsp;points.<br>
 Returns&nbsp;a&nbsp;negative&nbsp;value&nbsp;upon&nbsp;failure.<br>
 &nbsp;<br>
-swig_ptr:&nbsp;_9039fcb6_p_f_bool__double</tt></dd></dl>
+swig_ptr:&nbsp;_b09b81b7_p_f_bool__double</tt></dd></dl>
  <dl><dt><a name="-measure"><strong>measure</strong></a>(...)</dt><dd><tt><a href="#-measure">measure</a>()&nbsp;-&gt;&nbsp;bool<br>
 &nbsp;<br>
 Updates&nbsp;all&nbsp;measurements&nbsp;(e.g.&nbsp;peak,&nbsp;baseline,&nbsp;<br>
@@ -379,7 +453,7 @@ The&nbsp;zero-based&nbsp;index&nbsp;in&nbsp;units&nbsp;of&nbsp;sampling&nbsp;poi
 if&nbsp;more&nbsp;than&nbsp;one&nbsp;point&nbsp;is&nbsp;used&nbsp;for&nbsp;the&nbsp;peak&nbsp;calculation.&nbsp;Returns&nbsp;a&nbsp;<br>
 negative&nbsp;value&nbsp;upon&nbsp;failure.<br>
 &nbsp;<br>
-swig_ptr:&nbsp;_503afcb6_p_f_bool__double</tt></dd></dl>
+swig_ptr:&nbsp;_709c81b7_p_f_bool__double</tt></dd></dl>
  <dl><dt><a name="-select_all"><strong>select_all</strong></a>(*args)</dt><dd><tt><a href="#-select_all">select_all</a>()<br>
 &nbsp;<br>
 Selects&nbsp;all&nbsp;traces&nbsp;in&nbsp;the&nbsp;current&nbsp;file.&nbsp;Stores&nbsp;<br>
@@ -595,7 +669,7 @@ The&nbsp;zero-based&nbsp;index&nbsp;of&nbsp;the&nbsp;left&nbsp;half-maximal&nbsp
 sampling&nbsp;points.&nbsp;Interpolates&nbsp;between&nbsp;sampling&nbsp;points.&nbsp;Returns&nbsp;a&nbsp;<br>
 negative&nbsp;value&nbsp;upon&nbsp;failure.<br>
 &nbsp;<br>
-swig_ptr:&nbsp;_2038fcb6_p_f_bool__double</tt></dd></dl>
+swig_ptr:&nbsp;_409a81b7_p_f_bool__double</tt></dd></dl>
  <dl><dt><a name="-t50right_index"><strong>t50right_index</strong></a>(...)</dt><dd><tt><a href="#-t50right_index">t50right_index</a>(active=True)&nbsp;-&gt;&nbsp;double<br>
 <a href="#-t50right_index">t50right_index</a>()&nbsp;-&gt;&nbsp;double<br>
 &nbsp;<br>
@@ -616,7 +690,7 @@ The&nbsp;zero-based&nbsp;index&nbsp;of&nbsp;the&nbsp;right&nbsp;half-maximal&nbs
 sampling&nbsp;points.&nbsp;Interpolates&nbsp;between&nbsp;sampling&nbsp;points.&nbsp;Returns&nbsp;a&nbsp;<br>
 negative&nbsp;value&nbsp;upon&nbsp;failure.<br>
 &nbsp;<br>
-swig_ptr:&nbsp;_9037fcb6_p_f_bool__double</tt></dd></dl>
+swig_ptr:&nbsp;_b09981b7_p_f_bool__double</tt></dd></dl>
  <dl><dt><a name="-unselect_all"><strong>unselect_all</strong></a>(*args)</dt><dd><tt><a href="#-unselect_all">unselect_all</a>()<br>
 &nbsp;<br>
 Unselects&nbsp;all&nbsp;previously&nbsp;selected&nbsp;traces&nbsp;in&nbsp;the<br>
@@ -628,9 +702,8 @@ current&nbsp;file.</tt></dd></dl>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><strong>foot_index_cb</strong> = &lt;Swig Object of type 'double (*)(bool)' at 0xb6fc38e0&gt;<br>
-<strong>maxrise_index_cb</strong> = &lt;Swig Object of type 'double (*)(bool)' at 0xb6fc3990&gt;<br>
-<strong>peak_index_cb</strong> = &lt;Swig Object of type 'double (*)(bool)' at 0xb6fc3a50&gt;<br>
-<strong>t50left_index_cb</strong> = &lt;Swig Object of type 'double (*)(bool)' at 0xb6fc3820&gt;<br>
-<strong>t50right_index_cb</strong> = &lt;Swig Object of type 'double (*)(bool)' at 0xb6fc3790&gt;</td></tr></table>
-</body></html>
+<td width="100%"><strong>foot_index_cb</strong> = &lt;Swig Object of type 'double (*)(bool)' at 0xb7819b00&gt;<br>
+<strong>maxrise_index_cb</strong> = &lt;Swig Object of type 'double (*)(bool)' at 0xb7819bb0&gt;<br>
+<strong>peak_index_cb</strong> = &lt;Swig Object of type 'double (*)(bool)' at 0xb7819c70&gt;<br>
+<strong>t50left_index_cb</strong> = &lt;Swig Object of type 'double (*)(bool)' at 0xb7819a40&gt;<br>
+<strong>t50right_index_cb</strong> = &lt;Swig Object of type 'double (*)(bool)' at 0xb78199b0&gt;</td></tr></table>

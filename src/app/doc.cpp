@@ -83,13 +83,20 @@ END_EVENT_TABLE()
 static const int baseline=100;
 
 wxStfDoc::wxStfDoc() :
-    Recording(),peakAtEnd(false),initialized(false),Average(0)
+    Recording(),peakAtEnd(false),initialized(false),progress(true),Average(0)
 {
 
 }
 
 wxStfDoc::~wxStfDoc()
 {}
+
+bool wxStfDoc::OnOpenPyDocument(const wxString& filename) {
+    progress = false;
+    bool success = OnOpenDocument( filename );
+    progress = true;
+    return success;
+}
 
 bool wxStfDoc::OnOpenDocument(const wxString& filename) {
     // Check whether the file exists:
@@ -117,7 +124,7 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
             }
         }
         try {
-            stf::importFile(filename,type,*this,wxGetApp().GetTxtImport());
+            stf::importFile(filename,type,*this,wxGetApp().GetTxtImport(),progress);
         }
         catch (const std::runtime_error& e) {
             wxString errorMsg(wxT("Error opening file\n"));

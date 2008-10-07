@@ -28,6 +28,7 @@
 #include "core.h"
 #include "./filelib/asciilib.h"
 #include "./filelib/cfslib.h"
+#include "./filelib/hdf5lib.h"
 #include "./filelib/abflib.h"
 #include "./filelib/atflib.h"
 #if 0
@@ -454,6 +455,7 @@ stf::filetype
 stf::findType(const wxString& ext) {
     if (ext==wxT("*.dat") || ext==wxT("*.cfs")) return stf::cfs;
     else if (ext==wxT("*.abf")) return stf::abf;
+    else if (ext==wxT("*.h5")) return stf::hdf5;
     else if (ext==wxT("*.atf")) return stf::atf;
     else if (ext==wxT("*.smr")) return stf::son;
     else return stf::ascii;
@@ -463,12 +465,17 @@ bool stf::importFile(
         const wxString& fName,
         stf::filetype type,
         Recording& ReturnData,
-        const stf::txtImportSettings& txtImport
+        const stf::txtImportSettings& txtImport,
+        bool progress
 ) {
     try {
         switch (type) {
         case stf::cfs: {
-            stf::importCFSFile(fName, ReturnData);
+            stf::importCFSFile(fName, ReturnData, progress);
+            break;
+        } 
+        case stf::hdf5: {
+            stf::importHDF5File(fName, ReturnData);
             break;
         } 
         case stf::abf: {
