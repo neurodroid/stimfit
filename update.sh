@@ -1,1 +1,1 @@
-hg -v pull -u /media/bischof/cs/stimfit
+hg -v pull -u /media/dendrite/Christoph/stimfit
