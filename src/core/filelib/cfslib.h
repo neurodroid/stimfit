@@ -29,7 +29,7 @@ namespace stf {
 /*! \param fName Full path to the file to be read.
  *  \param ReturnData On entry, an empty Recording object. On exit,
  *         the data stored in \e fName.
- *  \param progress Set tu true if a progress dialog should be shown.
+ *  \param progress Set to true if a progress dialog should be updated.
  */
 void importCFSFile(const wxString& fName, Recording& ReturnData, bool progress = true );
 

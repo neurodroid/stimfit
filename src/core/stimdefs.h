@@ -420,6 +420,7 @@ struct ofstreamMan {
 enum filetype {
     atf,   /*!< Axon text file. */
     abf,   /*!< Axon binary file. */
+    axg,   /*!< Axograph binary file. */
     ascii, /*!< Generic text file. */
     cfs,   /*!< CED filing system. */
     igor,  /*!< Igor binary wave. */

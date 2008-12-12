@@ -32,6 +32,7 @@ libstfcore_la_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp \
 	    ./filelib/axon/AxAbfFio32/abferror.cpp \
             ./filelib/axon/AxAtfFio32/axatffio32.cpp \
             ./filelib/axon/AxAtfFio32/fileio.cpp $(PYTHON_ADDSOURCES) \
+            ./filelib/axg/AxoGraph_ReadWrite.cpp \
             ./levmar/lm.c ./levmar/Axb.c ./levmar/misc.c ./levmar/lmlec.c ./levmar/lmbc.c 
 
 if BUILD_PYTHON
@@ -68,6 +69,7 @@ noinst_HEADERS =  ./channel.h ./section.h ./recording.h ./core.h \
             ./filelib/axon/Common/adcdac.h \
             ./filelib/axon/Common/ArrayPtr.hpp \
             ./filelib/axon/Common/wincpp.hpp $(PYTHON_ADDHEADERS) \
+            ./filelib/axg/AxoGraph_ReadWrite.h \
             ./levmar/lm.h ./levmar/misc.h 
 
 

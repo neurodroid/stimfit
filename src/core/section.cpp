@@ -28,15 +28,12 @@ Section::Section(void)
       storeIntBeg(0),storeIntEnd(0),bestFit(0,0),
 	  data(0) {}
 
-Section::Section(
-	const std::valarray<double>& valA,
-	const wxString& label
-) :	
+Section::Section( const std::valarray<double>& valA, const wxString& label ) :	
     eventList(),pyMarkers(),section_description(label),
-	x_scale(1.0),
-	isFitted(false),isIntegrated(false),fitFunc(NULL),bestFitP(0),quad_p(0),storeFitBeg(0),storeFitEnd(0),
+    x_scale(1.0),
+    isFitted(false),isIntegrated(false),fitFunc(NULL),bestFitP(0),quad_p(0),storeFitBeg(0),storeFitEnd(0),
     storeIntBeg(0),storeIntEnd(0),bestFit(0,0),
-	data(valA) {}
+    data(valA) {}
 
 
 Section::Section(

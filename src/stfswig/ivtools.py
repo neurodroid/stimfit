@@ -34,7 +34,7 @@ def analyze_iv( pulses, trace_start = 0, factor = 1.0 ):
     channel = list()
     for m in range(pulses):
         # A temporary array to calculate the average:
-        set = N.empty( (int((stf.get_size_channel()-m-1-trace_start)/pulses)+1, \
+        set = N.empty( (int((stf.get_size_channel()-m-1-trace_start)/pulses)+1,
                         stf.get_size_trace( trace_start+m )) )
         n_set = 0
         for n in range( trace_start+m, stf.get_size_channel(), pulses ):

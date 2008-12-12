@@ -10,15 +10,15 @@
 \contentsline {chapter}{\numberline {2}The Python shell}{11}{chapter.2}
 \contentsline {section}{\numberline {2.1}Before you start}{11}{section.2.1}
 \contentsline {section}{\numberline {2.2}The Python shell}{11}{section.2.2}
-\contentsline {section}{\numberline {2.3}Accessing data from the Python shell}{12}{section.2.3}
+\contentsline {section}{\numberline {2.3}Accessing data from the Python shell}{11}{section.2.3}
 \contentsline {section}{\numberline {2.4}Using NumPy with stimfit}{12}{section.2.4}
 \contentsline {section}{\numberline {2.5}Control stimfit from the Python shell}{14}{section.2.5}
 \contentsline {subsection}{\numberline {2.5.1}Cursors}{14}{subsection.2.5.1}
 \contentsline {subsection}{\numberline {2.5.2}Trace selection and navigation}{15}{subsection.2.5.2}
 \contentsline {subsection}{\numberline {2.5.3}File I/O}{16}{subsection.2.5.3}
-\contentsline {subsection}{\numberline {2.5.4}Define your own functions}{17}{subsection.2.5.4}
+\contentsline {subsection}{\numberline {2.5.4}Define your own functions}{16}{subsection.2.5.4}
 \contentsline {section}{\numberline {2.6}Some recipes for commonly requested features}{17}{section.2.6}
-\contentsline {subsection}{\numberline {2.6.1}Cutting traces to arbitrary lengths}{18}{subsection.2.6.1}
+\contentsline {subsection}{\numberline {2.6.1}Cutting traces to arbitrary lengths}{17}{subsection.2.6.1}
 \contentsline {chapter}{\numberline {3}Latency measurements}{21}{chapter.3}
 \contentsline {section}{\numberline {3.1}Measurement of synaptic delay}{21}{section.3.1}
 \contentsline {section}{\numberline {3.2}Trace alignment}{22}{section.3.2}
@@ -31,7 +31,7 @@
 \contentsline {subsection}{\numberline {4.2.3}Create the final template}{28}{subsection.4.2.3}
 \contentsline {subsection}{\numberline {4.2.4}Extract all events}{28}{subsection.4.2.4}
 \contentsline {subsection}{\numberline {4.2.5}Edit detected events}{29}{subsection.4.2.5}
-\contentsline {subsection}{\numberline {4.2.6}Analyse extracted events}{30}{subsection.4.2.6}
+\contentsline {subsection}{\numberline {4.2.6}Analyse extracted events}{29}{subsection.4.2.6}
 \contentsline {subsection}{\numberline {4.2.7}Adjusting event detection settings}{30}{subsection.4.2.7}
 \contentsline {chapter}{Keyboard shortcuts}{31}{chapter*.3}
 \contentsline {chapter}{Bibliography}{33}{chapter*.4}

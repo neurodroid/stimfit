@@ -74,10 +74,10 @@ wxString stf::timeToStr(long time) {
     return timeStream;
 }
 
-void stf::importABFFile(const wxString &fName, Recording &ReturnData) {
+void stf::importABFFile(const wxString &fName, Recording &ReturnData, bool progress) {
     wxProgressDialog progDlg( wxT("Axon binary file import"), wxT("Starting file import"),
         100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
-    int hFile; 
+    int hFile;
     ABFFileHeader FH;
     UINT uMaxSamples;
     DWORD dwMaxEpi;
@@ -103,16 +103,18 @@ void stf::importABFFile(const wxString &fName, Recording &ReturnData) {
     for (int nChannel=0;nChannel<numberChannels;++nChannel) {
         Channel TempChannel(numberSections);
         for (DWORD dwEpisode=1;dwEpisode<=(DWORD)numberSections;++dwEpisode) {
-            wxString progStr;
-            progStr << wxT("Reading channel #") << nChannel + 1 << wxT(" of ") << numberChannels
-                << wxT(", Section #") << dwEpisode << wxT(" of ") << numberSections;
-            progDlg.Update(
-                // Channel contribution:
-                (int)(((double)nChannel/(double)numberChannels)*100.0+
-                // Section contribution:
-                (double)(dwEpisode-1)/(double)numberSections*(100.0/numberChannels)),
-                progStr
-            );
+            if (progress) {
+                wxString progStr;
+                progStr << wxT("Reading channel #") << nChannel + 1 << wxT(" of ") << numberChannels
+                    << wxT(", Section #") << dwEpisode << wxT(" of ") << numberSections;
+                progDlg.Update(
+                        // Channel contribution:
+                        (int)(((double)nChannel/(double)numberChannels)*100.0+
+                                // Section contribution:
+                                (double)(dwEpisode-1)/(double)numberSections*(100.0/numberChannels)),
+                                progStr
+                );
+            }
             unsigned int uNumSamples=0;
             if (!ABF_GetNumSamples(hFile,&FH,dwEpisode,&uNumSamples,&nError)) {
                 wxString errorMsg( wxT("Exception while calling ABF_GetNumSamples():\n") );
@@ -136,7 +138,7 @@ void stf::importABFFile(const wxString &fName, Recording &ReturnData) {
             if (uNumSamples!=uNumSamplesW) {
                 throw std::runtime_error("Exception while calling ABF_ReadChannel()");
             }
-            wxString label; 
+            wxString label;
             label << stf::noPath(fName) << wxT(", Section # ") << dwEpisode;
             Section TempSectionT(TempSection.size(),label);
             std::copy(TempSection.begin(),TempSection.end(),&TempSectionT[0]);

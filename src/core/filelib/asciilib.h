@@ -35,17 +35,19 @@ namespace stf {
  *  \param hLinesToSkip Header lines to skip.
  *  \param nColumns Number of columns.
  *  \param firstIsTime true if the first column contains time values, false otherwise.
- *  \param toSection true if the columns should be put into different sections, 
+ *  \param toSection true if the columns should be put into different sections,
  *         false if they should be put into different channels.
  *  \param ReturnRec On entry, an empty Recording object. On exit,
  *         the data stored in \e fName.
+ *  \param progress True if the progress dialog should be updated.
  */
 void importASCIIFile(const wxString& fName,
         int hLinesToSkip,
         int nColumns,
         bool firstIsTime,
         bool toSection,
-        Recording& ReturnRec);
+        Recording& ReturnRec,
+        bool progress = true);
 
 //! Export a Section to a text file.
 /*! \param fName Full path to the file to be written.

@@ -300,6 +300,17 @@ bool subtract_base( );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) subtract_base;
+%feature("docstring", "Subtracts the baseline from the selected traces
+of the current file, then displays the subtracted
+traces in a new window.
+
+Returns:
+True if the subtraction was successful, False otherwise.") subtract_base;
+bool subtract_base( );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %feature("autodoc", 0) leastsq;
 %feature("docstring", "Fits a function to the data between the current
 fit cursors.

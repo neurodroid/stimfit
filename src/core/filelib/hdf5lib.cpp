@@ -76,6 +76,10 @@ int stf::exportHDF5File(const wxString& fName, const Recording& WData) {
     wxString desc; desc << "Description of " << file.GetFullName();
     herr_t status = H5TBmake_table( desc.c_str(), file_id, "description", (hsize_t)NFIELDS, (hsize_t)NRECORDS, sizeof(rt),
                            field_names, rt_offset, field_type, 10, NULL, 0, &p_data  );
+    if (status < 0) {
+        wxString errorMsg(wxT("Exception while writing description in stf::exportHDF5File"));
+        throw std::runtime_error(std::string(errorMsg.char_str()));
+    }
 
     hid_t comment_group = H5Gcreate(file_id, "/comment", 0 );
 
@@ -87,6 +91,10 @@ int stf::exportHDF5File(const wxString& fName, const Recording& WData) {
     std::vector<char> data(WData.GetFileDescription().length());
     std::copy(WData.GetFileDescription().begin(), WData.GetFileDescription().end(), data.begin());
     status = H5LTmake_dataset(file_id, "/comment/comment", 1, dims, string_type3, &data[0]);
+    if (status < 0) {
+        wxString errorMsg(wxT("Exception while writing comment in stf::exportHDF5File"));
+        throw std::runtime_error(std::string(errorMsg.char_str()));
+    }
 
     std::vector<wxString> channel_name(WData.size());
     hid_t channel_group = H5Gcreate(file_id, "/channels", 0 );
@@ -104,6 +112,10 @@ int stf::exportHDF5File(const wxString& fName, const Recording& WData) {
         std::copy(channel_name[n_c].begin(),channel_name[n_c].end(), datac.begin());
         wxString desc_path; desc_path << wxT("/channels/ch") << (n_c);
         status = H5LTmake_dataset(file_id, desc_path.utf8_str(), 1, dimsc, string_typec, &datac[0]);
+        if (status < 0) {
+            wxString errorMsg(wxT("Exception while writing channel name in stf::exportHDF5File"));
+            throw std::runtime_error(std::string(errorMsg.char_str()));
+        }
 
         wxString channel_path; channel_path << "/" << channel_name[n_c];
         hid_t channel_group = H5Gcreate( file_id, channel_path.utf8_str(), 0 );
@@ -121,6 +133,10 @@ int stf::exportHDF5File(const wxString& fName, const Recording& WData) {
         c_desc << wxT("Description of channel ") << n_c;
         status = H5TBmake_table( c_desc.c_str(), channel_group, "description", (hsize_t)1, (hsize_t)1, ct_size,
                                cfield_names, ct_offset, cfield_type, 10, NULL, 0, &c_data  );
+        if (status < 0) {
+            wxString errorMsg(wxT("Exception while writing channel description in stf::exportHDF5File"));
+            throw std::runtime_error(std::string(errorMsg.char_str()));
+        }
 
         int max_log10 = 0;
         if (WData[n_c].size() > 1) {
@@ -167,6 +183,10 @@ int stf::exportHDF5File(const wxString& fName, const Recording& WData) {
                 data_cp[n_cp] = float(WData[n_c][n_s][n_cp]);
             }
             status = H5LTmake_dataset(file_id, data_path.utf8_str(), 1, dims, H5T_IEEE_F32LE, &data_cp[0]);
+            if (status < 0) {
+                wxString errorMsg(wxT("Exception while writing data in stf::exportHDF5File"));
+                throw std::runtime_error(std::string(errorMsg.char_str()));
+            }
 
             const int NSRECORDS = 1;
             const int NSFIELDS = 3;
@@ -199,16 +219,24 @@ int stf::exportHDF5File(const wxString& fName, const Recording& WData) {
             wxString sdesc; sdesc << "Description of " << section_name;
             status = H5TBmake_table( sdesc.c_str(), section_group, "description", (hsize_t)NSFIELDS, (hsize_t)NSRECORDS, st_size,
                                    sfield_names, st_offset, sfield_type, 10, NULL, 0, &s_data  );
+            if (status < 0) {
+                wxString errorMsg(wxT("Exception while writing section description in stf::exportHDF5File"));
+                throw std::runtime_error(std::string(errorMsg.char_str()));
+            }
         }
     }
 
     /* Terminate access to the file. */
     status = H5Fclose(file_id);
+    if (status < 0) {
+        wxString errorMsg(wxT("Exception while closing file in stf::exportHDF5File"));
+        throw std::runtime_error(std::string(errorMsg.char_str()));
+    }
     return status;
 
 }
 
-void stf::importHDF5File(const wxString& fName, Recording& ReturnData) {
+void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool progress) {
     wxProgressDialog progDlg( wxT("HDF5 import"), wxT("Starting file import"),
         100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
 
@@ -228,6 +256,10 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData) {
                                   sizeof( rt_buf[0].date),
                                   sizeof( rt_buf[0].time)};
     herr_t status=H5TBread_table( file_id, "description", sizeof(rt), rt_offset, rt_sizes, rt_buf );
+    if (status < 0) {
+        wxString errorMsg(wxT("Exception while reading description in stf::importHDF5File"));
+        throw std::runtime_error(std::string(errorMsg.char_str()));
+    }
     int numberChannels =rt_buf[0].channels;
     ReturnData.SetDate( rt_buf[0].date );
     ReturnData.SetTime( rt_buf[0].date );
@@ -238,10 +270,18 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData) {
     size_t type_size;
 
     status = H5LTget_dataset_info( file_id, "/comment/comment", &dims, &class_id, &type_size );
+    if (status < 0) {
+        wxString errorMsg(wxT("Exception while reading comment in stf::importHDF5File"));
+        throw std::runtime_error(std::string(errorMsg.char_str()));
+    }
     hid_t string_type3 = H5Tcopy( H5T_C_S1 );
     H5Tset_size( string_type3,  type_size );
     std::vector<char> comment( type_size );
     status = H5LTread_dataset (file_id, "/comment/comment", string_type3, &comment[0]);
+    if (status < 0) {
+        wxString errorMsg(wxT("Exception while reading comment in stf::importHDF5File"));
+        throw std::runtime_error(std::string(errorMsg.char_str()));
+    }
     wxString wxComment;
     for (int c=0; c<type_size; ++c) {
         wxComment << wxChar(comment[c]);
@@ -261,10 +301,18 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData) {
         size_t ctype_size;
         wxString desc_path; desc_path << wxT("/channels/ch") << (n_c);
         status = H5LTget_dataset_info( file_id, desc_path.utf8_str(), &cdims, &cclass_id, &ctype_size );
+        if (status < 0) {
+            wxString errorMsg(wxT("Exception while reading channel in stf::importHDF5File"));
+            throw std::runtime_error(std::string(errorMsg.char_str()));
+        }
         hid_t string_typec= H5Tcopy( H5T_C_S1 );
         H5Tset_size( string_typec,  ctype_size );
         std::vector<char> szchannel_name( ctype_size );
         status = H5LTread_dataset(file_id, desc_path.utf8_str(), string_typec, &szchannel_name[0]);
+        if (status < 0) {
+            wxString errorMsg(wxT("Exception while reading channel name in stf::importHDF5File"));
+            throw std::runtime_error(std::string(errorMsg.char_str()));
+        }
         wxString channel_name;
         for (int c=0; c<ctype_size; ++c) {
             channel_name << wxChar(szchannel_name[c]);
@@ -273,6 +321,10 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData) {
         wxString channel_path; channel_path << "/" << channel_name;
         hid_t channel_group = H5Gopen(file_id, channel_path.utf8_str() );
         status=H5TBread_table( channel_group, "description", sizeof(ct), ct_offset, ct_sizes, ct_buf );
+        if (status < 0) {
+            wxString errorMsg(wxT("Exception while reading channel description in stf::importHDF5File"));
+            throw std::runtime_error(std::string(errorMsg.char_str()));
+        }
         Channel TempChannel(ct_buf[0].n_sections);
         TempChannel.SetChannelName( channel_name );
         int max_log10 = 0;
@@ -281,17 +333,18 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData) {
         }
 
         for (std::size_t n_s=0; n_s < ct_buf[0].n_sections; ++n_s) {
-            wxString progStr;
-            progStr << wxT("Reading channel #") << n_c + 1 << wxT(" of ") << numberChannels
-                << wxT(", Section #") << n_s+1 << wxT(" of ") << ct_buf[0].n_sections;
-            progDlg.Update(
-                // Channel contribution:
-                (int)(((double)n_c/(double)numberChannels)*100.0+
-                // Section contribution:
-                (double)(n_s)/(double)ct_buf[0].n_sections*(100.0/numberChannels)),
-                progStr
-            );
-
+            if (progress) {
+                wxString progStr;
+                progStr << wxT("Reading channel #") << n_c + 1 << wxT(" of ") << numberChannels
+                        << wxT(", Section #") << n_s+1 << wxT(" of ") << ct_buf[0].n_sections;
+                progDlg.Update(
+                        // Channel contribution:
+                        (int)(((double)n_c/(double)numberChannels)*100.0+
+                                // Section contribution:
+                                (double)(n_s)/(double)ct_buf[0].n_sections*(100.0/numberChannels)),
+                                progStr
+                );
+            }
             // construct a number with leading zeros:
             int n10 = 0;
             if (n_s > 0) {
@@ -314,8 +367,16 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData) {
             H5T_class_t sclass_id;
             size_t stype_size;
             status = H5LTget_dataset_info( file_id, data_path.utf8_str(), &sdims, &sclass_id, &stype_size );
+            if (status < 0) {
+                wxString errorMsg(wxT("Exception while reading data information in stf::importHDF5File"));
+                throw std::runtime_error(std::string(errorMsg.char_str()));
+            }
             std::vector<float> TempSection(sdims);
             status = H5LTread_dataset(file_id, data_path.utf8_str(), H5T_IEEE_F32LE, &TempSection[0]);
+            if (status < 0) {
+                wxString errorMsg(wxT("Exception while reading data in stf::importHDF5File"));
+                throw std::runtime_error(std::string(errorMsg.char_str()));
+            }
 
             Section TempSectionT(TempSection.size(), section_name);
             for (std::size_t cp = 0; cp < TempSectionT.size(); ++cp) {
@@ -342,7 +403,11 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData) {
             size_t st_sizes[NSFIELDS] = { sizeof( st_buf[0].dt),
                                           sizeof( st_buf[0].xunits),
                                           sizeof( st_buf[0].yunits)};
-            herr_t status=H5TBread_table( section_group, "description", sizeof(st), st_offset, st_sizes, st_buf );
+            status=H5TBread_table( section_group, "description", sizeof(st), st_offset, st_sizes, st_buf );
+            if (status < 0) {
+                wxString errorMsg(wxT("Exception while reading data description in stf::importHDF5File"));
+                throw std::runtime_error(std::string(errorMsg.char_str()));
+            }
             dt = st_buf[0].dt;
             yunits = st_buf[0].yunits;
         }
@@ -361,4 +426,9 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData) {
     ReturnData.SetXScale(dt);
     /* Terminate access to the file. */
     status = H5Fclose(file_id);
+    if (status < 0) {
+        wxString errorMsg(wxT("Exception while closing file in stf::importHDF5File"));
+        throw std::runtime_error(std::string(errorMsg.char_str()));
+    }
+
 }

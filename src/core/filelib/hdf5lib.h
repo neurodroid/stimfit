@@ -29,8 +29,9 @@ namespace stf {
 /*! \param fName Full path to the file to be read.
  *  \param ReturnData On entry, an empty Recording object. On exit,
  *         the data stored in \e fName.
+ *  \param progress True if the progress dialog should be updated.
  */
-void importHDF5File(const wxString& fName, Recording& ReturnData);
+void importHDF5File(const wxString& fName, Recording& ReturnData, bool progress = true);
 
 //! Export a Recording to a HDF5 file.
 /*! \param fName Full path to the file to be written.

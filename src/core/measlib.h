@@ -179,21 +179,12 @@ T  maxDecay(const std::valarray<T>& data,
 }
 
 template <typename T>
-T stf::base(
-        T& var,
-        const std::valarray<T>& data,
-        std::size_t llb,
-        std::size_t ulb,
-        std::size_t llp,
-        std::size_t ulp,
-        bool baseToSlope,
-        T slope
-) {
+T stf::base( T& var, const std::valarray<T>& data, std::size_t llb, std::size_t ulb,
+             std::size_t llp, std::size_t ulp, bool baseToSlope, T slope)
+{
     if (data.size()==0) return 0;
-    if (llb>ulb || 
-            ulb>=data.size()) {
-        throw (std::out_of_range("Exception:\n"
-                "Index out of range in stf::base()"));
+    if (llb>ulb || ulb>=data.size()) {
+        throw (std::out_of_range("Exception:\n Index out of range in stf::base()"));
     }
     T base=0.0;
     if (!baseToSlope) {
@@ -264,51 +255,45 @@ T stf::base(
 }
 
 template <typename T>
-T stf::peak(const std::valarray<T>& data,
-        T base,
-        std::size_t llp,
-        std::size_t ulp,
-        int pM,
-        stf::direction dir,
-        T& maxT)
+T stf::peak(const std::valarray<T>& data, T base, std::size_t llp, std::size_t ulp,
+            int pM, stf::direction dir, T& maxT)
 {
-    if (llp>ulp ||
-            ulp>data.size()) {
-        throw (std::out_of_range("Exception:\n"
-                "Index out of range in stf::peak()"));
+    if (llp>ulp || ulp>data.size()) {
+        throw (std::out_of_range("Exception:\n Index out of range in stf::peak()"));
     }
+    
     T max=data[llp];
     maxT=(double)llp;
     T peak=0.0;
+
     if (pM > 0) {
-        for (std::size_t i=llp+1; i <=ulp; i++)
-        {	//Begin loop: data points
+        for (std::size_t i=llp+1; i <=ulp; i++) {
             //Calculate peak as the average over pM points around the point i
             peak=0.0;
             div_t Div1=div((int)pM-1, 2);
             for (std::size_t j=i-Div1.quot; j <=i-Div1.quot+pM-1; j++) 
                 peak+=data[j];
-            peak /=pM;
+            peak /= pM;
             //Set peak for BOTH
-            if (dir==stf::both && fabs(peak-base) > fabs (max-base))
+            if (dir == stf::both && fabs(peak-base) > fabs (max-base))
             {
-                max=peak;
-                maxT=(double)i;
+                max = peak;
+                maxT = (double)i;
             }
             //Set peak for UP
-            if (dir==stf::up && peak-base > max-base)
+            if (dir == stf::up && peak-base > max-base)
             {
-                max=peak;
-                maxT=(double)i;
+                max = peak;
+                maxT = (double)i;
             }
             //Set peak for DOWN
-            if (dir==stf::down && peak-base < max-base)
+            if (dir == stf::down && peak-base < max-base)
             {
-                max=peak;
-                maxT=(double)i;
+                max = peak;
+                maxT = (double)i;
             }
         }	//End loop: data points
-        peak=max;
+        peak = max;
         //End peak and base calculation
         //-------------------------------
     } else {

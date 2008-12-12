@@ -45,7 +45,7 @@ wxString stf::NextWord( wxString& str ) {
 #endif
 
 void stf::importASCIIFile( const wxString& fName, int hLinesToSkip, int nColumns,
-        bool firstIsTime, bool toSection, Recording& ReturnRec )
+        bool firstIsTime, bool toSection, Recording& ReturnRec, bool progress )
 {
     wxProgressDialog progDlg( wxT("Importing text file"), wxT("Starting..."), 100,
             NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_SKIP );
@@ -54,7 +54,7 @@ void stf::importASCIIFile( const wxString& fName, int hLinesToSkip, int nColumns
 
     wxFileInputStream fStream( fName );
     wxTextInputStream tStream( fStream );
-    
+
     // Read header:
     wxString header;
     for(int n_h=0; n_h<hLinesToSkip; n_h++) {
@@ -86,9 +86,11 @@ void stf::importASCIIFile( const wxString& fName, int hLinesToSkip, int nColumns
                 ReturnRec.resize(0);
                 throw std::runtime_error("File import aborted by user.");
             }
-            wxString progMsg( wxT("Reading line #") );
-            progMsg << nline;
-            progDlg.Pulse( progMsg, &skip );
+            if (progress) {
+                wxString progMsg( wxT("Reading line #") );
+                progMsg << nline;
+                progDlg.Pulse( progMsg, &skip );
+            }
         }
         // calculate sampling rate from first two time values:
         if (firstIsTime) {
@@ -97,7 +99,7 @@ void stf::importASCIIFile( const wxString& fName, int hLinesToSkip, int nColumns
                 time[n_time++]=tempTime;
             }
         }
-        
+
         if (fStream.Eof())
             break;
         for (int n_col=0;n_col<nColumns-int(firstIsTime);++n_col) {
@@ -129,7 +131,7 @@ void stf::importASCIIFile( const wxString& fName, int hLinesToSkip, int nColumns
                 TempSection.SetSectionDescription( label );
                 TempChannel[0].InsertSection(TempSection,n_insert);
             } else {
-                wxString label; 
+                wxString label;
                 label << fName << wxT(", Section # 1");
                 TempSection.SetSectionDescription( label );
                 TempChannel[n_insert].InsertSection(TempSection,0);
@@ -180,6 +182,6 @@ bool stf::exportASCIIFile(const wxString& fName, const Channel& Export) {
         );
         ofstreamMan ASCIIfile( newFName );
         ASCIIfile.myStream.Write( stf::sectionToString(Export[n_s]) );
-    }   
+    }
     return true;
 }

@@ -165,6 +165,10 @@ bool wxStfApp::OnInit(void)
             wxT("Axon text file"), wxT("*.atf"), wxT(""), wxT("atf"),
             wxT("ATF Document"), wxT("ATF View"), CLASSINFO(wxStfDoc),
             CLASSINFO(wxStfView) );
+    m_axgTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
+            wxT("Axograph binary file"), wxT("*.axgd"), wxT(""), wxT("axgd"),
+            wxT("AXG Document"), wxT("AXG View"), CLASSINFO(wxStfDoc),
+            CLASSINFO(wxStfView) );
 #if 0
     m_sonTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
             wxT("CED Spike 2 (SON) file"), wxT("*.smr"), wxT(""), wxT(""),
@@ -1162,3 +1166,5 @@ wxStfParentFrame *GetMainFrame(void)
     return frame;
 }
 
+
+//  LocalWords:  wxStfView

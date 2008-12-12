@@ -4,7 +4,7 @@ bin_PROGRAMS = stimfit
 stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
 	    ./src/core/core.cpp ./src/core/fitlib.cpp ./src/core/filelib/asciilib.cpp \
 	    ./src/core/filelib/cfslib.cpp ./src/core/filelib/hdf5lib.cpp ./src/core/filelib/cfs.c \
-            ./src/core/filelib/abflib.cpp ./src/core/filelib/atflib.cpp \
+            ./src/core/filelib/abflib.cpp ./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
 	    ./src/core/filelib/axon/AxAbfFio32/abffiles.cpp \
 	    ./src/core/filelib/axon/AxAbfFio32/csynch.cpp \
 	    ./src/core/filelib/axon/AxAbfFio32/filedesc.cpp \
@@ -19,6 +19,10 @@ stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/reco
 	    ./src/core/filelib/axon/AxAbfFio32/abferror.cpp \
             ./src/core/filelib/axon/AxAtfFio32/axatffio32.cpp \
             ./src/core/filelib/axon/AxAtfFio32/fileio.cpp \
+            ./src/core/filelib/axg/AxoGraph_ReadWrite.cpp \
+            ./src/core/filelib/axg/fileUtils.cpp \
+            ./src/core/filelib/axg/stringUtils.cpp \
+            ./src/core/filelib/axg/byteswap.cpp \
             ./src/core/levmar/lm.c ./src/core/levmar/Axb.c ./src/core/levmar/misc.c ./src/core/levmar/lmlec.c ./src/core/levmar/lmbc.c \
             ./src/app/app.cpp ./src/app/doc.cpp ./src/app/stfcheckbox.cpp ./src/app/copygrid.cpp ./src/app/graph.cpp \
             ./src/app/dclatex.cpp ./src/app/printout.cpp ./src/app/frame.cpp ./src/app/view.cpp ./src/app/table.cpp ./src/app/zoom.cpp \
@@ -30,7 +34,7 @@ stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/reco
 noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
             ./src/core/stimdefs.h ./src/core/fitlib.h ./src/core/spline.h ./src/core/measlib.h \
             ./src/core/filelib/asciilib.h ./src/core/filelib/cfslib.h ./src/core/filelib/hdf5lib.h\
-            ./src/core/filelib/abflib.h ./src/core/filelib/atflib.h \
+            ./src/core/filelib/abflib.h ./src/core/filelib/atflib.h ./src/core/filelib/axglib.h \
             ./src/core/filelib/cfs.h ./src/core/filelib/machine.h \
             ./src/core/filelib/axon/AxAbfFio32/abffiles.h \
             ./src/core/filelib/axon/AxAbfFio32/csynch.hpp \
@@ -55,6 +59,10 @@ noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.
             ./src/core/filelib/axon/Common/adcdac.h \
             ./src/core/filelib/axon/Common/ArrayPtr.hpp \
             ./src/core/filelib/axon/Common/wincpp.hpp \
+            ./src/core/filelib/axg/AxoGraph_ReadWrite.h \
+            ./src/core/filelib/axg/fileUtils.h \
+            ./src/core/filelib/axg/stringUtils.h \
+            ./src/core/filelib/axg/byteswap.h \
             ./src/core/levmar/lm.h ./src/core/levmar/misc.h \
             ./src/app/app.h ./src/app/stfcheckbox.h \
             ./src/app/copygrid.h ./src/app/graph.h \

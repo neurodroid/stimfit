@@ -106,7 +106,6 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
         wxGetApp().ErrorMsg( msg );
         return false;
     }
-
     if (wxDocument::OnOpenDocument(filename)) { //calls base class function
         // Detect type of file according to filter:
         wxString filter(GetDocumentTemplate()->GetFileFilter());

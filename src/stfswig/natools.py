@@ -3,7 +3,6 @@
 Batch analysis of Na IVs
 """
 
-import stf
 import numpy as N
 from scipy.io import write_array
 
@@ -17,6 +16,7 @@ def dens_batch( nFunc = 0 ):
              10 is the HH gNa function,
              5  is a sum of two exponentials with a delay."""
 
+    stf = __import__("stf")
     # Some ugly definitions for the time being
     gFitStart = 70.56
     gFSelect  =  nFunc    # HH function
@@ -117,6 +117,7 @@ def act_batch( nFunc = 5, filename="", lat=60 ):
     filename -- If not an empty string, stores the best-fit parameters
                 in this file."""
 
+    stf = __import__("stf")
     # Some ugly definitions for the time being
     gFitStart = 70.5 + lat/1000.0 # fit end cursor is variable
     gFSelect  =  nFunc    # HH function
@@ -216,6 +217,8 @@ def act_batch( nFunc = 5, filename="", lat=60 ):
 def inact_batch():
     """Determines peak amplitudes for inactivation protocol."""
 
+    stf = __import__("stf")
+
     # Some ugly definitions for the time being
     gDictSize =  1 # Parameters, chisqr, peak value
     gBaseStartCtrl  = 69 # Start and end of the baseline before the control pulse, in ms
@@ -277,6 +280,7 @@ def deact_batch( filename="" ):
     filename -- If not an empty string, stores the best-fit parameters
                 in this file."""
 
+    stf = __import__("stf")
     # Some ugly definitions for the time being
     gNMono = 5   # Monoexponential fits 
     gNBi   = 4   # Biexponential fits
@@ -434,6 +438,8 @@ def deact_batch( filename="" ):
 def inact_recov_batch( show_table = True ):
     """Determines recovery from inactivation."""
 
+    stf = __import__("stf")
+
     if ( not(stf.check_doc()) ):
         print "Couldn't find an open file; aborting now."
         return False
@@ -513,6 +519,8 @@ def inact_recov_batch( show_table = True ):
 
 def inact_onset_batch( show_table = True ):
     """Determines onset of inactivation."""
+
+    stf = __import__("stf")
 
     if ( not(stf.check_doc()) ):
         print "Couldn't find an open file; aborting now."

@@ -31,6 +31,7 @@
 #include "./filelib/hdf5lib.h"
 #include "./filelib/abflib.h"
 #include "./filelib/atflib.h"
+#include "./filelib/axglib.h"
 #if 0
 #include "./filelib/sonlib.h"
 #endif
@@ -58,7 +59,7 @@ double stf::fgauss(double x, const std::valarray<double>& pars) {
     return y;
 }
 
-double stf::fboltz(double x, const std::valarray<double>& pars) { 
+double stf::fboltz(double x, const std::valarray<double>& pars) {
     double arg=(pars[0]-x)/pars[1];
     double ex=exp(arg);
     return 1/(1+ex);
@@ -72,7 +73,7 @@ double stf::fbessel(double x, int n) {
         int fac3=stf::fac(k);
         sum+=fac1/(fac2*fac3)*pow(x,k)/pow2(n-k);
     }
-    return sum;	
+    return sum;
 }
 
 double stf::fbessel4(double x, const std::valarray<double>& pars) {
@@ -106,7 +107,7 @@ stf::filter( const std::valarray<double>& data, std::size_t filter_start,
     double SI=1.0/SR; //the sampling interval
 
     double *in;
-    //fftw_complex is a double[2]; hence, out is an array of 
+    //fftw_complex is a double[2]; hence, out is an array of
     //double[2] with out[n][0] being the real and out[n][1] being
     //the imaginary part.
     fftw_complex *out;
@@ -122,7 +123,7 @@ stf::filter( const std::valarray<double>& data, std::size_t filter_start,
     double offset_step=offset_1 / (filter_size-1);
 
     //fill the input array with data removing the offset:
-    for (std::size_t n_point=0;n_point<filter_size;++n_point) {	
+    for (std::size_t n_point=0;n_point<filter_size;++n_point) {
         in[n_point]=data[n_point+filter_start]-(offset_0 + offset_step*n_point);
     }
 
@@ -136,7 +137,7 @@ stf::filter( const std::valarray<double>& data, std::size_t filter_start,
         double rslt= (!inverse? func(f,a) : 1.0-func(f,a));
         out[n_point][0] *= rslt;
         out[n_point][1] *= rslt;
-    }	
+    }
 
     //do the reverse fft:
     p2=fftw_plan_dft_c2r_1d((int)filter_size,out,in,FFTW_ESTIMATE);
@@ -206,10 +207,10 @@ stf::spectrum(
         fftw_execute(p1);
         // Instead of normalizing A right here, we will do this after summing up.
 
-        // Add segment periodogram to spectrum (the intermediate variable I 
-        // from Welch's paper is not needed because we add the periodograms 
+        // Add segment periodogram to spectrum (the intermediate variable I
+        // from Welch's paper is not needed because we add the periodograms
         // directly to P here).
-        // Treat the 0-component separately (because there is no corresponding 
+        // Treat the 0-component separately (because there is no corresponding
         // negative part):
         P[0]+=SQR(A[0][0])+SQR(A[0][1]);
         for (int i_out=1;i_out<spec_size;++i_out) {
@@ -303,7 +304,7 @@ stf::detectionCriterion(const std::valarray<double>& data, const std::valarray<d
 }
 
 std::vector<int>
-stf::peakIndices(const std::valarray<double>& data, 
+stf::peakIndices(const std::valarray<double>& data,
         double threshold,
         int minDistance)
 {
@@ -348,7 +349,7 @@ stf::peakIndices(const std::valarray<double>& data,
 }
 
 std::valarray<double>
-stf::linCorr(const std::valarray<double>& data, const std::valarray<double>& templ)  
+stf::linCorr(const std::valarray<double>& data, const std::valarray<double>& templ)
 {
     wxProgressDialog progDlg( wxT("Template matching"), wxT("Starting template matching"),
             100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_SKIP );
@@ -430,7 +431,7 @@ stf::linCorr(const std::valarray<double>& data, const std::valarray<double>& tem
         // Get correlation:
         double r=0.0;
         for (int i=0;i<(int)templ.size();++i) {
-            r+=(data[i+n_data]-mean_data)*(templ[i]*scale+offset-mean_optTempl);			   
+            r+=(data[i+n_data]-mean_data)*(templ[i]*scale+offset-mean_optTempl);
         }
         r/=((templ.size()-1)*sd_data*sd_templ);
         Corr[n_data]=r;
@@ -455,6 +456,7 @@ stf::filetype
 stf::findType(const wxString& ext) {
     if (ext==wxT("*.dat") || ext==wxT("*.cfs")) return stf::cfs;
     else if (ext==wxT("*.abf")) return stf::abf;
+    else if (ext==wxT("*.axgd")) return stf::axg;
     else if (ext==wxT("*.h5")) return stf::hdf5;
     else if (ext==wxT("*.atf")) return stf::atf;
     else if (ext==wxT("*.smr")) return stf::son;
@@ -473,17 +475,21 @@ bool stf::importFile(
         case stf::cfs: {
             stf::importCFSFile(fName, ReturnData, progress);
             break;
-        } 
+        }
         case stf::hdf5: {
-            stf::importHDF5File(fName, ReturnData);
+            stf::importHDF5File(fName, ReturnData, progress);
             break;
-        } 
+        }
         case stf::abf: {
-            stf::importABFFile(fName, ReturnData);
+            stf::importABFFile(fName, ReturnData, progress);
             break;
         }
         case stf::atf: {
-            stf::importATFFile(fName, ReturnData);
+            stf::importATFFile(fName, ReturnData, progress);
+            break;
+        }
+        case stf::axg: {
+            stf::importAXGFile(fName, ReturnData, progress);
             break;
         }
 #if 0
@@ -537,7 +543,7 @@ double stf::integrate_simpson(
     bool even = std::div((int)i2-(int)i1,2).rem==0;
 
     // use Simpson's rule for the even part:
-    if (!even)  
+    if (!even)
         i2--;
     std::size_t n=i2-i1;
     double a=i1*x_scale;
@@ -579,8 +585,8 @@ double stf::integrate_trapezium(
     for (std::size_t n=i1+1; n<i2; ++n) {
         sum += 2*input[n];
     }
-    sum *= (b-a)/2/(i2-i1);   
-    return sum;    
+    sum *= (b-a)/2/(i2-i1);
+    return sum;
 }
 
 int
@@ -707,7 +713,7 @@ stf::Table::Table(const std::map< wxString, double >& map)
 rowLabels(map.size(),wxT("\0")), colLabels(1,wxT("Results"))
 {
     std::map< wxString, double >::const_iterator cit;
-    wxs_it it1 = rowLabels.begin(); 
+    wxs_it it1 = rowLabels.begin();
     std::vector< std::vector< double > >::iterator it2 = values.begin();
     for (cit = map.begin();
          cit != map.end() && it1 != rowLabels.end() && it2 != values.end();

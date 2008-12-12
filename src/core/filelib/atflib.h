@@ -34,8 +34,9 @@ namespace stf {
 /*! \param fName Full path to the file to be read.
  *  \param ReturnData On entry, an empty Recording object. On exit,
  *         the data stored in \e fName.
+ *  \param progress True if the progress dialog should be updated.
  */
-void importATFFile(const wxString& fName, Recording& ReturnData);
+void importATFFile(const wxString& fName, Recording& ReturnData, bool progress = true);
 
 //! Export a Recording to an ATF file.
 /*! \param fName Full path to the file to be written.

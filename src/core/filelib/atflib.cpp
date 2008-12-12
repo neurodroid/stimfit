@@ -79,7 +79,7 @@ void stf::exportATFFile(const wxString& fName, const Recording& WData) {
                     throw std::runtime_error(std::string(errorMsg.char_str()));
                 }
             } else {
-                double toWrite = (n_l < (int)WData[0][n_c-1].size()) ? 
+                double toWrite = (n_l < (int)WData[0][n_c-1].size()) ?
                         (double)WData[0][n_c-1][n_l] :
                 0.0;
                         if (!ATF_WriteDataRecord1(nFileNum,toWrite,&nError)) {
@@ -102,7 +102,7 @@ void stf::exportATFFile(const wxString& fName, const Recording& WData) {
     }
 }
 
-void stf::importATFFile(const wxString &fName, Recording &ReturnData) {
+void stf::importATFFile(const wxString &fName, Recording &ReturnData, bool progress) {
     wxProgressDialog progDlg(
             wxT("Axon text file import"),
             wxT("Starting file import"),
@@ -165,14 +165,16 @@ void stf::importATFFile(const wxString &fName, Recording &ReturnData) {
     ReturnData.resize(1);
     Channel TempChannel(nColumns-timeInFirstColumn);
     for (int n_c=timeInFirstColumn;n_c<nColumns;++n_c) {
-        wxString progStr;
-        progStr << wxT("Section #") << n_c+1-timeInFirstColumn << wxT(" of ") << nColumns-timeInFirstColumn;
-        progDlg.Update(
-                // Section contribution:
-                (double)100.0*(n_c+1-timeInFirstColumn)/(double)(nColumns-timeInFirstColumn),
-                progStr
-        );
-        wxString label; 
+        if (progress) {
+            wxString progStr;
+            progStr << wxT("Section #") << n_c+1-timeInFirstColumn << wxT(" of ") << nColumns-timeInFirstColumn;
+            progDlg.Update(
+                    // Section contribution:
+                    (double)100.0*(n_c+1-timeInFirstColumn)/(double)(nColumns-timeInFirstColumn),
+                    progStr
+            );
+        }
+        wxString label;
         label << stf::noPath(fName) << wxT(", Section # ") << n_c-timeInFirstColumn+1;
         Section TempSection(sectionSize,label);
         for (int n_l=0;n_l<sectionSize;++n_l) {

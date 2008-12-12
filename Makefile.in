@@ -58,15 +58,18 @@ am_stimfit_OBJECTS = stimfit-channel.$(OBJEXT) \
 	stimfit-asciilib.$(OBJEXT) stimfit-cfslib.$(OBJEXT) \
 	stimfit-hdf5lib.$(OBJEXT) cfs.$(OBJEXT) \
 	stimfit-abflib.$(OBJEXT) stimfit-atflib.$(OBJEXT) \
-	stimfit-abffiles.$(OBJEXT) stimfit-csynch.$(OBJEXT) \
-	stimfit-filedesc.$(OBJEXT) stimfit-FileReadCache.$(OBJEXT) \
-	stimfit-FileIO.$(OBJEXT) stimfit-abfheadr.$(OBJEXT) \
-	stimfit-abfhwave.$(OBJEXT) stimfit-Oldheadr.$(OBJEXT) \
-	stimfit-abfutil.$(OBJEXT) stimfit-msbincvt.$(OBJEXT) \
-	unix.$(OBJEXT) stimfit-abferror.$(OBJEXT) \
-	stimfit-axatffio32.$(OBJEXT) stimfit-fileio.$(OBJEXT) \
-	lm.$(OBJEXT) Axb.$(OBJEXT) misc.$(OBJEXT) lmlec.$(OBJEXT) \
-	lmbc.$(OBJEXT) stimfit-app.$(OBJEXT) stimfit-doc.$(OBJEXT) \
+	stimfit-axglib.$(OBJEXT) stimfit-abffiles.$(OBJEXT) \
+	stimfit-csynch.$(OBJEXT) stimfit-filedesc.$(OBJEXT) \
+	stimfit-FileReadCache.$(OBJEXT) stimfit-FileIO.$(OBJEXT) \
+	stimfit-abfheadr.$(OBJEXT) stimfit-abfhwave.$(OBJEXT) \
+	stimfit-Oldheadr.$(OBJEXT) stimfit-abfutil.$(OBJEXT) \
+	stimfit-msbincvt.$(OBJEXT) unix.$(OBJEXT) \
+	stimfit-abferror.$(OBJEXT) stimfit-axatffio32.$(OBJEXT) \
+	stimfit-fileio.$(OBJEXT) stimfit-AxoGraph_ReadWrite.$(OBJEXT) \
+	stimfit-fileUtils.$(OBJEXT) stimfit-stringUtils.$(OBJEXT) \
+	stimfit-byteswap.$(OBJEXT) lm.$(OBJEXT) Axb.$(OBJEXT) \
+	misc.$(OBJEXT) lmlec.$(OBJEXT) lmbc.$(OBJEXT) \
+	stimfit-app.$(OBJEXT) stimfit-doc.$(OBJEXT) \
 	stimfit-stfcheckbox.$(OBJEXT) stimfit-copygrid.$(OBJEXT) \
 	stimfit-graph.$(OBJEXT) stimfit-dclatex.$(OBJEXT) \
 	stimfit-printout.$(OBJEXT) stimfit-frame.$(OBJEXT) \
@@ -270,7 +273,7 @@ SUBDIRS = src
 stimfit_SOURCES = ./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
 	    ./src/core/core.cpp ./src/core/fitlib.cpp ./src/core/filelib/asciilib.cpp \
 	    ./src/core/filelib/cfslib.cpp ./src/core/filelib/hdf5lib.cpp ./src/core/filelib/cfs.c \
-            ./src/core/filelib/abflib.cpp ./src/core/filelib/atflib.cpp \
+            ./src/core/filelib/abflib.cpp ./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
 	    ./src/core/filelib/axon/AxAbfFio32/abffiles.cpp \
 	    ./src/core/filelib/axon/AxAbfFio32/csynch.cpp \
 	    ./src/core/filelib/axon/AxAbfFio32/filedesc.cpp \
@@ -285,6 +288,10 @@ stimfit_SOURCES = ./src/core/channel.cpp ./src/core/section.cpp ./src/core/recor
 	    ./src/core/filelib/axon/AxAbfFio32/abferror.cpp \
             ./src/core/filelib/axon/AxAtfFio32/axatffio32.cpp \
             ./src/core/filelib/axon/AxAtfFio32/fileio.cpp \
+            ./src/core/filelib/axg/AxoGraph_ReadWrite.cpp \
+            ./src/core/filelib/axg/fileUtils.cpp \
+            ./src/core/filelib/axg/stringUtils.cpp \
+            ./src/core/filelib/axg/byteswap.cpp \
             ./src/core/levmar/lm.c ./src/core/levmar/Axb.c ./src/core/levmar/misc.c ./src/core/levmar/lmlec.c ./src/core/levmar/lmbc.c \
             ./src/app/app.cpp ./src/app/doc.cpp ./src/app/stfcheckbox.cpp ./src/app/copygrid.cpp ./src/app/graph.cpp \
             ./src/app/dclatex.cpp ./src/app/printout.cpp ./src/app/frame.cpp ./src/app/view.cpp ./src/app/table.cpp ./src/app/zoom.cpp \
@@ -296,7 +303,7 @@ stimfit_SOURCES = ./src/core/channel.cpp ./src/core/section.cpp ./src/core/recor
 noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
             ./src/core/stimdefs.h ./src/core/fitlib.h ./src/core/spline.h ./src/core/measlib.h \
             ./src/core/filelib/asciilib.h ./src/core/filelib/cfslib.h ./src/core/filelib/hdf5lib.h\
-            ./src/core/filelib/abflib.h ./src/core/filelib/atflib.h \
+            ./src/core/filelib/abflib.h ./src/core/filelib/atflib.h ./src/core/filelib/axglib.h \
             ./src/core/filelib/cfs.h ./src/core/filelib/machine.h \
             ./src/core/filelib/axon/AxAbfFio32/abffiles.h \
             ./src/core/filelib/axon/AxAbfFio32/csynch.hpp \
@@ -321,6 +328,10 @@ noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.
             ./src/core/filelib/axon/Common/adcdac.h \
             ./src/core/filelib/axon/Common/ArrayPtr.hpp \
             ./src/core/filelib/axon/Common/wincpp.hpp \
+            ./src/core/filelib/axg/AxoGraph_ReadWrite.h \
+            ./src/core/filelib/axg/fileUtils.h \
+            ./src/core/filelib/axg/stringUtils.h \
+            ./src/core/filelib/axg/byteswap.h \
             ./src/core/levmar/lm.h ./src/core/levmar/misc.h \
             ./src/app/app.h ./src/app/stfcheckbox.h \
             ./src/app/copygrid.h ./src/app/graph.h \
@@ -461,6 +472,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lmbc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lmlec.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/misc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-AxoGraph_ReadWrite.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-FileIO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-FileReadCache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-Oldheadr.Po@am__quote@
@@ -474,6 +486,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-asciilib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-atflib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-axatffio32.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-axglib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-byteswap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-cfslib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-channel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-copygrid.Po@am__quote@
@@ -483,6 +497,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-dclatex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-doc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-eventdlg.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-fileUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-filedesc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-fileio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-fitlib.Po@am__quote@
@@ -498,6 +513,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-section.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-smalldlgs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-stfcheckbox.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-stringUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-table.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-usrdlg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-view.Po@am__quote@
@@ -784,6 +800,20 @@ stimfit-atflib.obj: ./src/core/filelib/atflib.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-atflib.obj `if test -f './src/core/filelib/atflib.cpp'; then $(CYGPATH_W) './src/core/filelib/atflib.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/atflib.cpp'; fi`
 
+stimfit-axglib.o: ./src/core/filelib/axglib.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-axglib.o -MD -MP -MF $(DEPDIR)/stimfit-axglib.Tpo -c -o stimfit-axglib.o `test -f './src/core/filelib/axglib.cpp' || echo '$(srcdir)/'`./src/core/filelib/axglib.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-axglib.Tpo $(DEPDIR)/stimfit-axglib.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axglib.cpp' object='stimfit-axglib.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-axglib.o `test -f './src/core/filelib/axglib.cpp' || echo '$(srcdir)/'`./src/core/filelib/axglib.cpp
+
+stimfit-axglib.obj: ./src/core/filelib/axglib.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-axglib.obj -MD -MP -MF $(DEPDIR)/stimfit-axglib.Tpo -c -o stimfit-axglib.obj `if test -f './src/core/filelib/axglib.cpp'; then $(CYGPATH_W) './src/core/filelib/axglib.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axglib.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-axglib.Tpo $(DEPDIR)/stimfit-axglib.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axglib.cpp' object='stimfit-axglib.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-axglib.obj `if test -f './src/core/filelib/axglib.cpp'; then $(CYGPATH_W) './src/core/filelib/axglib.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axglib.cpp'; fi`
+
 stimfit-abffiles.o: ./src/core/filelib/axon/AxAbfFio32/abffiles.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-abffiles.o -MD -MP -MF $(DEPDIR)/stimfit-abffiles.Tpo -c -o stimfit-abffiles.o `test -f './src/core/filelib/axon/AxAbfFio32/abffiles.cpp' || echo '$(srcdir)/'`./src/core/filelib/axon/AxAbfFio32/abffiles.cpp
 @am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-abffiles.Tpo $(DEPDIR)/stimfit-abffiles.Po
@@ -965,6 +995,62 @@ stimfit-fileio.obj: ./src/core/filelib/axon/AxAtfFio32/fileio.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axon/AxAtfFio32/fileio.cpp' object='stimfit-fileio.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-fileio.obj `if test -f './src/core/filelib/axon/AxAtfFio32/fileio.cpp'; then $(CYGPATH_W) './src/core/filelib/axon/AxAtfFio32/fileio.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axon/AxAtfFio32/fileio.cpp'; fi`
+
+stimfit-AxoGraph_ReadWrite.o: ./src/core/filelib/axg/AxoGraph_ReadWrite.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-AxoGraph_ReadWrite.o -MD -MP -MF $(DEPDIR)/stimfit-AxoGraph_ReadWrite.Tpo -c -o stimfit-AxoGraph_ReadWrite.o `test -f './src/core/filelib/axg/AxoGraph_ReadWrite.cpp' || echo '$(srcdir)/'`./src/core/filelib/axg/AxoGraph_ReadWrite.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-AxoGraph_ReadWrite.Tpo $(DEPDIR)/stimfit-AxoGraph_ReadWrite.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axg/AxoGraph_ReadWrite.cpp' object='stimfit-AxoGraph_ReadWrite.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-AxoGraph_ReadWrite.o `test -f './src/core/filelib/axg/AxoGraph_ReadWrite.cpp' || echo '$(srcdir)/'`./src/core/filelib/axg/AxoGraph_ReadWrite.cpp
+
+stimfit-AxoGraph_ReadWrite.obj: ./src/core/filelib/axg/AxoGraph_ReadWrite.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-AxoGraph_ReadWrite.obj -MD -MP -MF $(DEPDIR)/stimfit-AxoGraph_ReadWrite.Tpo -c -o stimfit-AxoGraph_ReadWrite.obj `if test -f './src/core/filelib/axg/AxoGraph_ReadWrite.cpp'; then $(CYGPATH_W) './src/core/filelib/axg/AxoGraph_ReadWrite.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axg/AxoGraph_ReadWrite.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-AxoGraph_ReadWrite.Tpo $(DEPDIR)/stimfit-AxoGraph_ReadWrite.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axg/AxoGraph_ReadWrite.cpp' object='stimfit-AxoGraph_ReadWrite.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-AxoGraph_ReadWrite.obj `if test -f './src/core/filelib/axg/AxoGraph_ReadWrite.cpp'; then $(CYGPATH_W) './src/core/filelib/axg/AxoGraph_ReadWrite.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axg/AxoGraph_ReadWrite.cpp'; fi`
+
+stimfit-fileUtils.o: ./src/core/filelib/axg/fileUtils.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-fileUtils.o -MD -MP -MF $(DEPDIR)/stimfit-fileUtils.Tpo -c -o stimfit-fileUtils.o `test -f './src/core/filelib/axg/fileUtils.cpp' || echo '$(srcdir)/'`./src/core/filelib/axg/fileUtils.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-fileUtils.Tpo $(DEPDIR)/stimfit-fileUtils.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axg/fileUtils.cpp' object='stimfit-fileUtils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-fileUtils.o `test -f './src/core/filelib/axg/fileUtils.cpp' || echo '$(srcdir)/'`./src/core/filelib/axg/fileUtils.cpp
+
+stimfit-fileUtils.obj: ./src/core/filelib/axg/fileUtils.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-fileUtils.obj -MD -MP -MF $(DEPDIR)/stimfit-fileUtils.Tpo -c -o stimfit-fileUtils.obj `if test -f './src/core/filelib/axg/fileUtils.cpp'; then $(CYGPATH_W) './src/core/filelib/axg/fileUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axg/fileUtils.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-fileUtils.Tpo $(DEPDIR)/stimfit-fileUtils.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axg/fileUtils.cpp' object='stimfit-fileUtils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-fileUtils.obj `if test -f './src/core/filelib/axg/fileUtils.cpp'; then $(CYGPATH_W) './src/core/filelib/axg/fileUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axg/fileUtils.cpp'; fi`
+
+stimfit-stringUtils.o: ./src/core/filelib/axg/stringUtils.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-stringUtils.o -MD -MP -MF $(DEPDIR)/stimfit-stringUtils.Tpo -c -o stimfit-stringUtils.o `test -f './src/core/filelib/axg/stringUtils.cpp' || echo '$(srcdir)/'`./src/core/filelib/axg/stringUtils.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-stringUtils.Tpo $(DEPDIR)/stimfit-stringUtils.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axg/stringUtils.cpp' object='stimfit-stringUtils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-stringUtils.o `test -f './src/core/filelib/axg/stringUtils.cpp' || echo '$(srcdir)/'`./src/core/filelib/axg/stringUtils.cpp
+
+stimfit-stringUtils.obj: ./src/core/filelib/axg/stringUtils.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-stringUtils.obj -MD -MP -MF $(DEPDIR)/stimfit-stringUtils.Tpo -c -o stimfit-stringUtils.obj `if test -f './src/core/filelib/axg/stringUtils.cpp'; then $(CYGPATH_W) './src/core/filelib/axg/stringUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axg/stringUtils.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-stringUtils.Tpo $(DEPDIR)/stimfit-stringUtils.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axg/stringUtils.cpp' object='stimfit-stringUtils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-stringUtils.obj `if test -f './src/core/filelib/axg/stringUtils.cpp'; then $(CYGPATH_W) './src/core/filelib/axg/stringUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axg/stringUtils.cpp'; fi`
+
+stimfit-byteswap.o: ./src/core/filelib/axg/byteswap.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-byteswap.o -MD -MP -MF $(DEPDIR)/stimfit-byteswap.Tpo -c -o stimfit-byteswap.o `test -f './src/core/filelib/axg/byteswap.cpp' || echo '$(srcdir)/'`./src/core/filelib/axg/byteswap.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-byteswap.Tpo $(DEPDIR)/stimfit-byteswap.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axg/byteswap.cpp' object='stimfit-byteswap.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-byteswap.o `test -f './src/core/filelib/axg/byteswap.cpp' || echo '$(srcdir)/'`./src/core/filelib/axg/byteswap.cpp
+
+stimfit-byteswap.obj: ./src/core/filelib/axg/byteswap.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-byteswap.obj -MD -MP -MF $(DEPDIR)/stimfit-byteswap.Tpo -c -o stimfit-byteswap.obj `if test -f './src/core/filelib/axg/byteswap.cpp'; then $(CYGPATH_W) './src/core/filelib/axg/byteswap.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axg/byteswap.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-byteswap.Tpo $(DEPDIR)/stimfit-byteswap.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axg/byteswap.cpp' object='stimfit-byteswap.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-byteswap.obj `if test -f './src/core/filelib/axg/byteswap.cpp'; then $(CYGPATH_W) './src/core/filelib/axg/byteswap.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axg/byteswap.cpp'; fi`
 
 stimfit-app.o: ./src/app/app.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-app.o -MD -MP -MF $(DEPDIR)/stimfit-app.Tpo -c -o stimfit-app.o `test -f './src/app/app.cpp' || echo '$(srcdir)/'`./src/app/app.cpp
