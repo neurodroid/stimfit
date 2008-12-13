@@ -28,7 +28,7 @@ wxString stf::ATFError(const wxString& fName, int nError) {
     return wxString( &errorMsg[0], wxConvLocal );
 }
 
-void stf::exportATFFile(const wxString& fName, const Recording& WData) {
+bool stf::exportATFFile(const wxString& fName, const Recording& WData) {
     int nColumns=1+(int)WData[0].size() /*time + number of sections*/, nFileNum;
     int nError;
     if (!ATF_OpenFile(fName.char_str(),ATF_WRITEONLY,&nColumns,&nFileNum,&nError)) {
@@ -100,6 +100,7 @@ void stf::exportATFFile(const wxString& fName, const Recording& WData) {
         errorMsg += wxT("Error while closing ATF file");
         throw std::runtime_error(std::string(errorMsg.char_str()));
     }
+    return true;
 }
 
 void stf::importATFFile(const wxString &fName, Recording &ReturnData, bool progress) {

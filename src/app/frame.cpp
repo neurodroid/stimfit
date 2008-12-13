@@ -57,13 +57,6 @@
 #include "./printout.h"
 #include "./dlgs/smalldlgs.h"
 #include "./copygrid.h"
-#include "./../core/filelib/cfslib.h"
-#include "./../core/filelib/atflib.h"
-#include "./../core/filelib/hdf5lib.h"
-#include "./../core/filelib/asciilib.h"
-#ifdef _WINDOWS
-#include "./../core/filelib/igorlib.h"
-#endif
 #include "./frame.h"
 
 #include "./../icons/16-em-down.xpm"
@@ -119,10 +112,6 @@ EVT_MENU(wxID_TOOL_SNAPSHOT_WMF, wxStfParentFrame::OnToolSnapshotwmf)
 #endif
 EVT_MENU(wxID_TOOL_CH1, wxStfParentFrame::OnToolCh1)
 EVT_MENU(wxID_TOOL_CH2, wxStfParentFrame::OnToolCh2)
-EVT_MENU(wxID_EXPORTFILE, wxStfParentFrame::OnExportfile)
-EVT_MENU(wxID_EXPORTATF, wxStfParentFrame::OnExportatf)
-EVT_MENU(wxID_EXPORTIGOR, wxStfParentFrame::OnExportigor)
-EVT_MENU(wxID_EXPORTHDF5, wxStfParentFrame::OnExporthdf5)
 EVT_MENU(wxID_EXPORTIMAGE, wxStfParentFrame::OnExportimage)
 EVT_MENU(wxID_EXPORTPS, wxStfParentFrame::OnExportps)
 #if wxCHECK_VERSION(2, 9, 0)
@@ -621,87 +610,6 @@ Christoph Schmidt-Hieber, Physiology Department, University of Freiburg\n\
 Published under the GNU general public license (http://www.gnu.org/licenses/gpl.html)"));
 
 	wxAboutBox(info);
-}
-
-void wxStfParentFrame::OnExportfile(wxCommandEvent& WXUNUSED(event) ) {
-    wxFileDialog exportDialog(
-        this,
-        wxT("Save channel as file series"),
-        wxT(""),
-        wxT(""),
-        wxT("File series (*.*)|*.*"),
-        wxFD_SAVE
-        );
-    if (exportDialog.ShowModal()!=wxID_OK) return;
-    wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
-    if (pDoc!=NULL) {
-        wxString traceFilename(exportDialog.GetPath());
-        stf::exportASCIIFile(traceFilename,pDoc->get()[pDoc->GetCurCh()]);
-    }
-}
-
-void wxStfParentFrame::OnExportatf(wxCommandEvent& WXUNUSED(event) ) {
-    wxFileDialog SelectFileDialog(
-        this,
-        wxT("Export channel as ATF file"),
-        wxT(""),
-        wxT(""),
-        wxT("*.atf"),
-        wxFD_SAVE
-        );
-    if(SelectFileDialog.ShowModal()==wxID_OK) {
-        //Get path of the current file
-        wxString traceFilename(SelectFileDialog.GetPath());
-        wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
-        if (pDoc!=NULL) {
-            try {
-                stf::exportATFFile(traceFilename,*pDoc);
-            }
-            catch (const std::runtime_error& e) {
-                wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
-            }
-        }
-    }
-}
-
-void wxStfParentFrame::OnExportigor(wxCommandEvent& WXUNUSED(event) ) {
-#ifdef _WINDOWS
-    wxFileDialog SelectFileDialog( this, wxT("Set file base for Igor binary waves"),
-        wxT(""), wxT(""), wxT("*.*"), wxFD_SAVE );
-    if(SelectFileDialog.ShowModal()==wxID_OK) {
-        //Get path of the current file
-        wxString traceFilename(SelectFileDialog.GetPath());
-        wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
-        if (pDoc!=NULL) {
-            try {
-                stf::exportIGORFile(traceFilename,*pDoc);
-            }
-            catch (const std::runtime_error& e) {
-                wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
-            }
-        }
-    }
-#else
-    wxGetApp().ErrorMsg( wxT("Igor file export only available in Windows version") );
-#endif
-}
-
-void wxStfParentFrame::OnExporthdf5(wxCommandEvent& WXUNUSED(event) ) {
-    wxFileDialog SelectFileDialog( this, wxT("Set file base for Igor binary waves"),
-        wxT(""), wxT(""), wxT("*.*"), wxFD_SAVE );
-    if(SelectFileDialog.ShowModal()==wxID_OK) {
-        //Get path of the current file
-        wxString traceFilename(SelectFileDialog.GetPath());
-        wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
-        if (pDoc!=NULL) {
-            try {
-                stf::exportHDF5File(traceFilename,*pDoc);
-            }
-            catch (const std::runtime_error& e) {
-                wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
-            }
-        }
-    }
 }
 
 void wxStfParentFrame::OnExportimage(wxCommandEvent& WXUNUSED(event) ) {

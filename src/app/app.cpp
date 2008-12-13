@@ -83,8 +83,8 @@ EVT_MENU( wxID_APPLYTOALL, wxStfApp::OnApplytoall )
 END_EVENT_TABLE()
 
 
-wxStfApp::wxStfApp(void) :
-directTxtImport(false), isBars(true), isHires(false), txtImport(), funcLib(), pluginLib(), CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ) {}
+wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isHires(false), txtImport(), funcLib(),
+    pluginLib(), CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ), m_file_menu(0) {}
 
 bool wxStfApp::OnInit(void)
 {
@@ -141,11 +141,12 @@ bool wxStfApp::OnInit(void)
     // Config:
     config.reset(new wxConfig(wxT("Stimfit")));
 
+
     //// Create a document manager
     m_docManager.reset(new wxDocManager);
     //// Create a template relating drawing documents to their views
     m_cfsTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
-            wxT("CED filing system"), wxT("*.dat"), wxT(""), wxT("dat"),
+            wxT("CED filing system"), wxT("*.dat;*.cfs"), wxT(""), wxT("dat;cfs"),
             wxT("CFS Document"), wxT("CFS View"), CLASSINFO(wxStfDoc),
             CLASSINFO(wxStfView) );
 
@@ -166,7 +167,7 @@ bool wxStfApp::OnInit(void)
             wxT("ATF Document"), wxT("ATF View"), CLASSINFO(wxStfDoc),
             CLASSINFO(wxStfView) );
     m_axgTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
-            wxT("Axograph binary file"), wxT("*.axgd"), wxT(""), wxT("axgd"),
+            wxT("Axograph binary file"), wxT("*.axgd;*.axgx"), wxT(""), wxT("axgd;axgx"),
             wxT("AXG Document"), wxT("AXG View"), CLASSINFO(wxStfDoc),
             CLASSINFO(wxStfView) );
 #if 0
@@ -193,18 +194,20 @@ bool wxStfApp::OnInit(void)
 #endif
 
     //// Make a menubar
-    wxMenu *file_menu = new wxMenu;
+    m_file_menu = new wxMenu;
     //	wxMenu *edit_menu = (wxMenu *) NULL;
 
-    file_menu->Append(wxID_OPEN, wxT("&Open...\tCtrl-X"));
+    m_file_menu->Append(wxID_OPEN, wxT("&Open...\tCtrl-X"));
 
-    file_menu->AppendSeparator();
-    file_menu->Append(ID_CONVERT, wxT("&Convert file series..."));
-    file_menu->AppendSeparator();
-    file_menu->Append(wxID_EXIT, wxT("E&xit\tAlt-X"));
+    m_file_menu->AppendSeparator();
+    m_file_menu->Append(ID_CONVERT, wxT("&Convert file series..."));
+    m_file_menu->AppendSeparator();
+    m_file_menu->Append(wxID_EXIT, wxT("E&xit\tAlt-X"));
 
     // A nice touch: a history of files visited. Use this menu.
-    m_docManager->FileHistoryUseMenu(file_menu);
+    m_docManager->FileHistoryLoad( *config );
+    m_docManager->FileHistoryUseMenu(m_file_menu);
+    m_docManager->FileHistoryAddFilesToMenu();
 
     wxMenu *help_menu = new wxMenu;
     help_menu->Append(wxID_ABOUT, wxT("&About\tF1"));
@@ -215,7 +218,7 @@ bool wxStfApp::OnInit(void)
 
     wxMenuBar *menu_bar = new wxMenuBar;
 
-    menu_bar->Append(file_menu, wxT("&File"));
+    menu_bar->Append(m_file_menu, wxT("&File"));
     /*	if (edit_menu)
 		menu_bar->Append(edit_menu, wxT("&Edit"));
      */
@@ -274,6 +277,7 @@ int wxStfApp::OnExit()
 #ifdef WITH_PYTHON
     Exit_wxPython();
 #endif
+    m_docManager->FileHistorySave( *config );
     return wxApp::OnExit();
 }
 
@@ -442,13 +446,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     //	file_menu->Append(wxID_SAVE, wxT("&Save"));
     file_menu->Append(wxID_SAVEAS, wxT("Save &As..."));
     file_menu->AppendSeparator();
-    wxMenu* exportSub=new wxMenu;
-    exportSub->Append(wxID_EXPORTFILE, wxT("as text file series..."));
-    exportSub->Append(wxID_EXPORTATF, wxT("as ATF file..."));
-    exportSub->Append(wxID_EXPORTHDF5, wxT("as HDF5 file..."));
-    exportSub->Append(wxID_EXPORTIGOR, wxT("as Igor binary waves..."));
 
-    file_menu->AppendSubMenu(exportSub, wxT("Export..."));
     file_menu->Append(wxID_EXPORTIMAGE, wxT("Export &image..."));
 
     wxMenu* vectorSub=new wxMenu;
@@ -457,7 +455,6 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     vectorSub->Append(wxID_EXPORTSVG, wxT("Export &svg..."));
     file_menu->AppendSubMenu(vectorSub, wxT("Export &vector graphics"));
 
-
     file_menu->Append(ID_CONVERT, wxT("&Convert file series..."));
     file_menu->AppendSeparator();
     file_menu->Append(wxID_FILEINFO, wxT("File information..."));
@@ -465,16 +462,14 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     file_menu->AppendSeparator();
     file_menu->Append(WXPRINT_PRINT, wxT("&Print..."));
     file_menu->Append(WXPRINT_PAGE_SETUP, wxT("Print &Setup..."));
-#if 0
-    file_menu->Append(WXPRINT_PREVIEW, wxT("Print Pre&view"));
-#endif
-    /*
-    file_menu->Append(wxID_PRINT, wxT("&Print..."));
-    file_menu->Append(wxID_PRINT_SETUP, wxT("Print &Setup..."));
-    file_menu->Append(wxID_PREVIEW, wxT("Print Pre&view"));
-     */
+
     file_menu->AppendSeparator();
     file_menu->Append(wxID_EXIT, wxT("E&xit"));
+
+    ((wxStfDoc*)doc)->SetFileMenu( file_menu );
+    m_docManager->FileHistoryUseMenu(file_menu);
+    m_docManager->FileHistoryAddFilesToMenu( file_menu );
+
     wxMenu* m_edit_menu=new wxMenu;
     m_edit_menu->Append(
             wxID_CURSORS,
@@ -579,6 +574,8 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     m_view_menu->AppendSeparator();
     m_view_menu->Append(wxID_VIEW_SHELL, wxT("&Toggle Python shell"),
             wxT("Shows or hides the Python shell"));
+
+
 
     wxMenu *analysis_menu = new wxMenu;
     wxMenu *fitSub = new wxMenu;
@@ -1111,11 +1108,15 @@ bool wxStfApp::OpenFilePy(const wxString& filename) {
 void wxStfApp::OnCloseDocument() {
     // count open docs:
     if (m_docManager->GetDocuments().GetCount()==1) {
+        // Clean up if this was the last document:
         if (CursorsDialog!=NULL) {
             CursorsDialog->Destroy();
             CursorsDialog=NULL;
         }
     }
+    // Remove menu from file history menu list:
+    // m_docManager->FileHistoryUseMenu(m_file_menu);
+    // m_docManager->FileHistoryAddFilesToMenu();
 }
 
 std::vector<Section*> wxStfApp::GetSectionsWithFits() const {

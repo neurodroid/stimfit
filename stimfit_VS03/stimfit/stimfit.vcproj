@@ -22,7 +22,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				ImproveFloatingPointConsistency="FALSE"
-				AdditionalIncludeDirectories="C:\wxWidgets\lib\vc_dll\mswud;C:\wxWidgets\include;C:\Users\cs\stimfit\include;C:\wxPython\include"
+				AdditionalIncludeDirectories="C:\wxPython\include;&quot;C:\Dokumente und Einstellungen\cs\stimfit\include&quot;;C:\wxWidgets\include\msvc;C:\wxWidgets\include;C:\hdf5\include"
 				PreprocessorDefinitions="_DEBUG;__WXDEBUG__;_UNICODE;WXUSINGDLL;__STF__;__WIN32__;WIN32;__WXMSW__;WXP_USE_THREAD=1;NOPCH;STFDLL;_CRT_SECURE_NO_DEPRECATE;_STFDEBUG;WITH_PYTHON;HAVE_LAPACK;_WINDOWS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -38,7 +38,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wxmsw29ud_aui.lib wxmsw29ud_html.lib wxmsw29ud_adv.lib wxmsw29ud_core.lib wxbase29ud_xml.lib wxbase29ud.lib wxtiffd.lib wxjpegd.lib wxpngd.lib wxzlibd.lib wxregexud.lib wxexpatd.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib clapackd.lib libf2cd.lib BLASd.lib libfftw3-3.lib"
+				AdditionalDependencies="hdf5.lib hdf5_cpp.lib"
 				OutputFile="../stimfit_exe/$(OutDir)/stimfitd.dll"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\libs&quot;;C:\Python25\libs;C:\wxWidgets\lib\vc_dll"
 				IgnoreDefaultLibraryNames="libcmtd.lib"
@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				AdditionalIncludeDirectories="C:\wxWidgets\lib\vc_dll\mswu;C:\wxWidgets\include;&quot;$(SolutionDir)..\include&quot;;C:\wxPython\include;&quot;$(SolutionDir)\icons&quot;"
+				AdditionalIncludeDirectories="C:\hdf5\include;C:\wxWidgets\lib\vc_dll\mswu;C:\wxWidgets\include;&quot;$(SolutionDir)..\include&quot;;C:\wxPython\include"
 				PreprocessorDefinitions="_UNICODE;WXUSINGDLL;__STF__;__WIN32__;WIN32;__WXMSW__;WXP_USE_THREAD=1;NOPCH;STFDLL;_CRT_SECURE_NO_DEPRECATE;WITH_PYTHON;HAVE_LAPACK;_WINDOWS"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
@@ -88,10 +88,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wxmsw29u_aui.lib wxmsw29u_html.lib wxmsw29u_adv.lib wxmsw29u_core.lib wxbase29u_xml.lib wxbase29u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregexu.lib wxexpat.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib clapack.lib libf2c.lib BLAS.lib libfftw3-3.lib"
+				AdditionalDependencies="wxmsw29u_aui.lib wxmsw29u_html.lib wxmsw29u_adv.lib wxmsw29u_core.lib wxbase29u_xml.lib wxbase29u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregexu.lib wxexpat.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib clapack.lib libf2c.lib BLAS.lib libfftw3-3.lib hdf5.lib hdf5_hl.lib szlib.lib"
 				OutputFile="../stimfit_exe/$(OutDir)/stimfit.dll"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\libs&quot;;C:\Python25\libs;C:\wxWidgets\lib\vc_dll"
-				IgnoreDefaultLibraryNames="libcmt.lib"
+				IgnoreAllDefaultLibraries="FALSE"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				ImportLibrary="$(OutDir)/stimfit.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -234,10 +235,16 @@
 						RelativePath="..\..\src\core\filelib\atflib.cpp">
 					</File>
 					<File
+						RelativePath="..\..\src\core\filelib\axglib.cpp">
+					</File>
+					<File
 						RelativePath="..\..\src\core\filelib\cfs.c">
 					</File>
 					<File
 						RelativePath="..\..\src\core\filelib\cfslib.cpp">
+					</File>
+					<File
+						RelativePath="..\..\src\core\filelib\hdf5lib.cpp">
 					</File>
 					<File
 						RelativePath="..\..\src\core\filelib\igorlib.cpp">
@@ -310,6 +317,22 @@
 							RelativePath="..\..\src\core\filelib\igor\WriteWave.c">
 						</File>
 					</Filter>
+					<Filter
+						Name="axg"
+						Filter="">
+						<File
+							RelativePath="..\..\src\core\filelib\axg\AxoGraph_ReadWrite.cpp">
+						</File>
+						<File
+							RelativePath="..\..\src\core\filelib\axg\byteswap.cpp">
+						</File>
+						<File
+							RelativePath="..\..\src\core\filelib\axg\fileUtils.cpp">
+						</File>
+						<File
+							RelativePath="..\..\src\core\filelib\axg\stringUtils.cpp">
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="levmar"
@@ -372,6 +395,53 @@
 					<File
 						RelativePath="..\..\src\core\levmar\misc.h">
 					</File>
+				</Filter>
+				<Filter
+					Name="filelib"
+					Filter="">
+					<File
+						RelativePath="..\..\src\core\filelib\abflib.h">
+					</File>
+					<File
+						RelativePath="..\..\src\core\filelib\asciilib.h">
+					</File>
+					<File
+						RelativePath="..\..\src\core\filelib\atflib.h">
+					</File>
+					<File
+						RelativePath="..\..\src\core\filelib\axglib.h">
+					</File>
+					<File
+						RelativePath="..\..\src\core\filelib\cfs.h">
+					</File>
+					<File
+						RelativePath="..\..\src\core\filelib\cfslib.h">
+					</File>
+					<File
+						RelativePath="..\..\src\core\filelib\hdf5lib.h">
+					</File>
+					<File
+						RelativePath="..\..\src\core\filelib\igorlib.h">
+					</File>
+					<File
+						RelativePath="..\..\src\core\filelib\machine.h">
+					</File>
+					<Filter
+						Name="axg"
+						Filter="">
+						<File
+							RelativePath="..\..\src\core\filelib\axg\AxoGraph_ReadWrite.h">
+						</File>
+						<File
+							RelativePath="..\..\src\core\filelib\axg\byteswap.h">
+						</File>
+						<File
+							RelativePath="..\..\src\core\filelib\axg\fileUtils.h">
+						</File>
+						<File
+							RelativePath="..\..\src\core\filelib\axg\stringUtils.h">
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter

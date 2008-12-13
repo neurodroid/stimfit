@@ -205,7 +205,7 @@ wxString stf::CFSReadVar(short fHandle,short varNo,short varKind) {
     return outputstream;
 }
 
-int stf::exportCFSFile(const wxString& fName, const Recording& WData) {
+bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
     wxProgressDialog progDlg(
         wxT("CED filing system export"),
         wxT("Starting file export"),
@@ -305,7 +305,7 @@ int stf::exportCFSFile(const wxString& fName, const Recording& WData) {
         InsertDS(CFSFile.myHandle, 0, noFlags);
         if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
     }	//End section loop
-    return CFSFile.myHandle;
+    return true;
 }
 
 void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progress ) {

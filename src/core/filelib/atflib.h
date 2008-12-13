@@ -42,7 +42,7 @@ void importATFFile(const wxString& fName, Recording& ReturnData, bool progress =
 /*! \param fName Full path to the file to be written.
  *  \param WData The data to be exported.
  */
-void exportATFFile(const wxString& fName, const Recording& WData);
+bool exportATFFile(const wxString& fName, const Recording& WData);
 
 }
 

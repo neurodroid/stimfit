@@ -26,8 +26,8 @@
  */
 
 #ifdef _WINDOWS
-#define STFVERSION "0.8.14"
-#define STFDATE "Tue Sep 30 17:46:33 CEST 2008"
+#define STFVERSION "0.8.15"
+#define STFDATE "Fri Dec 12 16:50:22 CEST 2008"
 #endif
 
 //! Event ids
@@ -75,10 +75,6 @@ enum {
     wxID_VIEW_CURSORS,
     wxID_VIEW_SHELL,
     wxID_FILEINFO,
-    wxID_EXPORTFILE,
-    wxID_EXPORTATF,
-    wxID_EXPORTIGOR,
-    wxID_EXPORTHDF5,
     wxID_EXPORTIMAGE,
     wxID_EXPORTPS,
     wxID_EXPORTLATEX,
@@ -434,6 +430,10 @@ public:
      */
     void OnNewfromselected( wxCommandEvent& event );
 
+    //! Access the document manager
+    /*! \return A pointer to the document manager.
+     */
+    wxDocManager* GetDocManager() { return m_docManager.get(); }
 protected:
     //! Pointer to the document manager.
     boost::shared_ptr< wxDocManager > m_docManager;
@@ -464,7 +464,8 @@ private:
     // Pointer to the peak calculation dialog box
     wxStfCursorsDlg* CursorsDialog;
     wxDocTemplate* m_cfsTemplate, *m_hdf5Template, *m_txtTemplate,*m_abfTemplate,*m_atfTemplate,*m_axgTemplate,*m_sonTemplate;
-	stf::storedFunc storedLinFunc;
+    stf::storedFunc storedLinFunc;
+    wxMenu* m_file_menu;
 
 #ifdef WITH_PYTHON
     PyThreadState* m_mainTState;

@@ -30,7 +30,7 @@ namespace stf {
  *  \param WData The data to be exported.
  *  \return At present, always returns 0.
  */
-int
+bool
 exportIGORFile(const wxString& fName, const Recording& WData);
 
 }

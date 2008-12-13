@@ -11,7 +11,7 @@
 
 ;--------------------------------
 
-!define PRODUCT_VERSION "0.8.14"
+!define PRODUCT_VERSION "0.8.15"
 !define EXE_NAME "stimfit"
 !define REG_NAME "Stimfit"
 !define PRODUCT_PUBLISHER "Christoph Schmidt-Hieber"

@@ -38,7 +38,7 @@ void importCFSFile(const wxString& fName, Recording& ReturnData, bool progress =
  *  \param WData The data to be exported.
  *  \return The CFS file handle.
  */
-int exportCFSFile(const wxString& fName, const Recording& WData);
+bool exportCFSFile(const wxString& fName, const Recording& WData);
 
 }
 

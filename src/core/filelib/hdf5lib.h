@@ -38,7 +38,7 @@ void importHDF5File(const wxString& fName, Recording& ReturnData, bool progress 
  *  \param WData The data to be exported.
  *  \return The HDF5 file handle.
  */
-int exportHDF5File(const wxString& fName, const Recording& WData);
+bool exportHDF5File(const wxString& fName, const Recording& WData);
 
 }
 

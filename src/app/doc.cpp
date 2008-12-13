@@ -42,6 +42,12 @@
 #include "./../core/fitlib.h"
 #include "./../core/measlib.h"
 #include "./../core/filelib/cfslib.h"
+#include "./../core/filelib/atflib.h"
+#include "./../core/filelib/hdf5lib.h"
+#include "./../core/filelib/asciilib.h"
+#ifdef _WINDOWS
+#include "./../core/filelib/igorlib.h"
+#endif
 #include "./usrdlg/usrdlg.h"
 #include "./doc.h"
 #include "./graph.h"
@@ -496,13 +502,60 @@ bool wxStfDoc::OnCloseDocument() {
     if (!get().empty()) {
         WriteToReg();
     }
+    // Remove file menu from file menu list:
+    wxGetApp().GetDocManager()->GetFileHistory()->RemoveMenu( doc_file_menu );
+
     // Tell the App:
     wxGetApp().OnCloseDocument();
     return wxDocument::OnCloseDocument();
     //Note that the base class version will delete all the document's data
 }
 
-bool wxStfDoc::OnSaveDocument(const wxString& filename) {
+bool wxStfDoc::SaveAs() {
+    // Override file save dialog to display only writeable
+    // file types
+    wxString filters;
+    filters += wxT("hdf5 file (*.h5)|*.h5|");
+    filters += wxT("CED filing system (*.dat;*.cfs)|*.dat;*.cfs|");
+    filters += wxT("Axon text file (*.atf)|*.atf|");
+    filters += wxT("Igor binary wave (*.*)|*.*|");
+    filters += wxT("Text file series (*.*)|*.*|");
+    wxFileDialog SelectFileDialog( GetDocumentWindow(), wxT("Save file"), wxT(""), wxT(""), filters,
+            wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_PREVIEW );
+    if(SelectFileDialog.ShowModal()==wxID_OK) {
+        wxString filename = SelectFileDialog.GetPath();
+        Recording writeRec(ReorderChannels());
+        if (writeRec.size() == 0) return false;
+        try {
+            switch (SelectFileDialog.GetFilterIndex()) {
+            case 1:
+                return stf::exportCFSFile(filename, writeRec);
+            case 2:
+                return stf::exportATFFile(filename, writeRec);
+            case 3:
+#ifdef _WINDOWS
+                return stf::exportIGORFile(filename, writeRec);
+#else
+                wxGetApp().ErrorMsg( wxT("Igor file export only implemented on Windows platforms") );
+                return false;
+#endif
+            case 4:
+                return stf::exportASCIIFile(filename, get()[GetCurCh()]);
+            case 0:
+            default:
+                return stf::exportHDF5File(filename, writeRec);
+            }
+        }
+        catch (const std::runtime_error& e) {
+            wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
+Recording wxStfDoc::ReorderChannels() {
     // Re-order channels?
     std::vector< wxString > channelNames(size());
     wxs_it it = channelNames.begin();
@@ -517,7 +570,7 @@ bool wxStfDoc::OnSaveDocument(const wxString& filename) {
     if (size()>1) {
         wxStfOrderChannelsDlg orderDlg(GetDocumentWindow(),channelNames);
         if (orderDlg.ShowModal() != wxID_OK) {
-            return false;
+            return Recording(0);
         }
         channelOrder=orderDlg.GetChannelOrder();
     } else {
@@ -535,8 +588,14 @@ bool wxStfDoc::OnSaveDocument(const wxString& filename) {
         // correct units:
         writeRec[n_c++].SetYUnits( at(*cit2).GetYUnits() );
     }
+    return writeRec;
+}
+
+bool wxStfDoc::DoSaveDocument(const wxString& filename) {
+    Recording writeRec(ReorderChannels());
+    if (writeRec.size() == 0) return false;
     try {
-        if (stf::exportCFSFile(filename, writeRec))
+        if (stf::exportHDF5File(filename, writeRec))
             return true;
         else
             return false;

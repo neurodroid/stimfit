@@ -72,6 +72,9 @@ private:
     void Threshold(wxCommandEvent& event);
     void Viewtable(wxCommandEvent& event);
     void Fileinfo(wxCommandEvent& event);
+    Recording ReorderChannels();
+
+    wxMenu* doc_file_menu;
 
 protected:
 
@@ -99,10 +102,15 @@ public:
     virtual bool OnOpenPyDocument(const wxString& filename);
 
     //! Override default file saving.
+    /*! \return true if successfully saved, false otherwise.
+     */
+    virtual bool SaveAs();
+
+    //! Override default file saving.
     /*! \param filename Full path of the file.
      *  \return true if successfully saved, false otherwise.
      */
-    virtual bool OnSaveDocument(const wxString& filename);
+    virtual bool DoSaveDocument(const wxString& filename);
 
     //! Override default file closing.
     /*! Writes settings to the config file or registry before closing.
@@ -221,6 +229,10 @@ public:
 
     void FitDecay(wxCommandEvent& event);
 
+    //! Sets a pointer to the file menu attached to this document.
+    /*! \param menu The menu to be attached.
+     */
+    void SetFileMenu( wxMenu* menu ) { doc_file_menu = menu; }
     DECLARE_EVENT_TABLE()
 };
 

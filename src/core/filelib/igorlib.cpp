@@ -89,7 +89,7 @@ stf::CheckComp(const Recording& Data) {
     return true;
 }
 
-int
+bool
 stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
 {
     // Check compatibility:
@@ -161,7 +161,7 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
         }
 
         // Write the data:
-        std::vector<double> cpData(wh.npnts);	
+        std::vector<double> cpData(wh.npnts);
 
         // One unnecessary copy operation due to const-correctness (couldn't const_cast<>)
         Channel TempChannel(Data[n_c]);
@@ -184,9 +184,9 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
         if ( err=WriteVersion5NumericWave( fr, &wh, &cpData[0], waveNote.c_str(),
                 (long)strlen(waveNote.c_str()) ) )
         {
-            throw std::runtime_error( std::string(IGORError("Error in WriteVersion5NumericWave()\n", err).char_str()) );	
+            throw std::runtime_error( std::string(IGORError("Error in WriteVersion5NumericWave()\n", err).char_str()) );
         }
         CPCloseFile(fr);
     }
-    return 0;
+    return true;
 }

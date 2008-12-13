@@ -454,9 +454,9 @@ wxString stf::noPath(const wxString& fName) {
 
 stf::filetype
 stf::findType(const wxString& ext) {
-    if (ext==wxT("*.dat") || ext==wxT("*.cfs")) return stf::cfs;
+    if (ext==wxT("*.dat;*.cfs")) return stf::cfs;
     else if (ext==wxT("*.abf")) return stf::abf;
-    else if (ext==wxT("*.axgd")) return stf::axg;
+    else if (ext==wxT("*.axgd;*.axgx")) return stf::axg;
     else if (ext==wxT("*.h5")) return stf::hdf5;
     else if (ext==wxT("*.atf")) return stf::atf;
     else if (ext==wxT("*.smr")) return stf::son;

@@ -39,7 +39,7 @@
         char yunits[16];
     } st;
 
-int stf::exportHDF5File(const wxString& fName, const Recording& WData) {
+bool stf::exportHDF5File(const wxString& fName, const Recording& WData) {
     wxProgressDialog progDlg( wxT("HDF5 export"), wxT("Starting file export"),
         100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
 
@@ -140,7 +140,7 @@ int stf::exportHDF5File(const wxString& fName, const Recording& WData) {
 
         int max_log10 = 0;
         if (WData[n_c].size() > 1) {
-            max_log10 = int(log10(WData[n_c].size()-1));
+            max_log10 = int(log10((double)WData[n_c].size()-1.0));
         }
 
         for (std::size_t n_s=0; n_s < WData[n_c].size(); ++n_s) {
@@ -158,7 +158,7 @@ int stf::exportHDF5File(const wxString& fName, const Recording& WData) {
             // construct a number with leading zeros:
             int n10 = 0;
             if (n_s > 0) {
-                n10 = int(log10(n_s));
+                n10 = int(log10((double)n_s));
             }
             wxString strZero = wxT("");
             for (std::size_t n_z=n10; n_z < max_log10; ++n_z) {
@@ -232,7 +232,7 @@ int stf::exportHDF5File(const wxString& fName, const Recording& WData) {
         wxString errorMsg(wxT("Exception while closing file in stf::exportHDF5File"));
         throw std::runtime_error(std::string(errorMsg.char_str()));
     }
-    return status;
+    return (status >= 0);
 
 }
 
@@ -329,7 +329,7 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
         TempChannel.SetChannelName( channel_name );
         int max_log10 = 0;
         if (ct_buf[0].n_sections > 1) {
-            max_log10 = int(log10(ct_buf[0].n_sections-1));
+            max_log10 = int(log10((double)ct_buf[0].n_sections-1.0));
         }
 
         for (std::size_t n_s=0; n_s < ct_buf[0].n_sections; ++n_s) {
@@ -348,7 +348,7 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
             // construct a number with leading zeros:
             int n10 = 0;
             if (n_s > 0) {
-                n10 = int(log10(n_s));
+                n10 = int(log10((double)n_s));
             }
             wxString strZero = wxT("");
             for (int n_z=n10; n_z < max_log10; ++n_z) {
