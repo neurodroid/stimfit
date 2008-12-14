@@ -1,5 +1,21 @@
-Version History: Stimfit for Linux/Unix/Win32
-=============================================
+Version History: Stimfit for GNU/Linux and Win32
+================================================
+version 0.8.15, 12/14/08, CSH----------------------------------------------------------------
+	* Moved export menu entries to "Save as" dialog. 
+	* Use hdf5 as default format for file saving. 
+	* Correctly display the file history.
+	* Added Axograph file support.
+	* Added hdf5 file format, accessible both from the main program as well as from 
+	Python (indepndently of a running stimfit instance). Requires PyTables for the
+	Python toolbox (hdf5tools.py). 
+	* Removed progress dialog when opening files from python. 
+	* Added new python funtions:
+	- get/set_recording_time/date/comment
+	- get/set_xunits/yunits
+	- get/set_trace/channel_name
+	- get_size_recording
+	- new_window_list now accepts nested list representing more than 1 channel.
+
 version 0.8.14, 09/30/08, CSH----------------------------------------------------------------
 0.9 development version.
 1. Visibility of the Python shell is stored correctly to the config/registry when closing
