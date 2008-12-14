@@ -18,7 +18,7 @@
 #include <wx/msgdlg.h>
 #include "hdf5.h"
 #include "H5TA.h"
-#include <boost/array.hpp>
+#include <boost/shared_ptr.hpp>
 #include <cmath>
 
 #include "./hdf5lib.h"
@@ -67,8 +67,12 @@ bool stf::exportHDF5File(const wxString& fName, const Recording& WData) {
     /* Initialize the field field_type */
     hid_t string_type1 = H5Tcopy( H5T_C_S1 );
     hid_t string_type2 = H5Tcopy( H5T_C_S1 );
-    H5Tset_size( string_type1,  WData.GetDate().length());
-    H5Tset_size( string_type2,  WData.GetTime().length());
+	std::size_t date_length = WData.GetDate().length();
+	std::size_t time_length = WData.GetTime().length();
+    if (date_length <= 0) date_length = 1; 
+    if (time_length <= 0) time_length = 1; 
+    H5Tset_size( string_type1,  date_length);
+    H5Tset_size( string_type2,  time_length);
     field_type[0] = H5T_NATIVE_INT;
     field_type[1] = string_type1;
     field_type[2] = string_type2;
@@ -86,7 +90,9 @@ bool stf::exportHDF5File(const wxString& fName, const Recording& WData) {
     /* File comment. */
     hsize_t dims[1] = { 1 };
     hid_t string_type3 = H5Tcopy( H5T_C_S1 );
-    H5Tset_size( string_type3,  WData.GetFileDescription().length());
+    std::size_t file_desc_length = WData.GetFileDescription().length();
+	if (file_desc_length <= 0) file_desc_length = 1;
+    H5Tset_size( string_type3, file_desc_length);
 
     std::vector<char> data(WData.GetFileDescription().length());
     std::copy(WData.GetFileDescription().begin(), WData.GetFileDescription().end(), data.begin());
@@ -104,9 +110,11 @@ bool stf::exportHDF5File(const wxString& fName, const Recording& WData) {
         if ( channel_name[n_c] == wxT("") ) {
             channel_name[n_c] << wxT("ch") << (n_c);
         }
-        hsize_t dimsc[1] = { WData.size() };
+        hsize_t dimsc[1] = { 1 };
         hid_t string_typec = H5Tcopy( H5T_C_S1 );
-        H5Tset_size( string_typec, channel_name[n_c].length() );
+		std::size_t cn_length = channel_name[n_c].length();
+		if (cn_length <= 0) cn_length = 1;
+        H5Tset_size( string_typec, cn_length );
 
         std::vector<char> datac(channel_name[n_c].length());
         std::copy(channel_name[n_c].begin(),channel_name[n_c].end(), datac.begin());
@@ -145,13 +153,13 @@ bool stf::exportHDF5File(const wxString& fName, const Recording& WData) {
 
         for (std::size_t n_s=0; n_s < WData[n_c].size(); ++n_s) {
             wxString progStr;
-            progStr << wxT("Reading channel #") << n_c + 1 << wxT(" of ") << WData.size()
+            progStr << wxT("Writing channel #") << n_c + 1 << wxT(" of ") << WData.size()
                 << wxT(", Section #") << n_s << wxT(" of ") << WData[n_c].size();
             progDlg.Update(
                 // Channel contribution:
                 (int)(((double)n_c/(double)WData.size())*100.0+
                 // Section contribution:
-                (double)(n_s-1)/(double)WData[n_c].size()*(100.0/WData.size())),
+                (double)(n_s)/(double)WData[n_c].size()*(100.0/WData.size())),
                 progStr
             );
 
@@ -211,7 +219,10 @@ bool stf::exportHDF5File(const wxString& fName, const Recording& WData) {
             hid_t string_type4 = H5Tcopy( H5T_C_S1 );
             hid_t string_type5 = H5Tcopy( H5T_C_S1 );
             H5Tset_size( string_type4,  2);
-            H5Tset_size( string_type5,  WData[n_c].GetYUnits().length());
+			std::size_t yu_length = WData[n_c].GetYUnits().length();
+			if (yu_length <= 0) yu_length = 1;
+
+            H5Tset_size( string_type5, yu_length );
             sfield_type[0] = H5T_NATIVE_DOUBLE;
             sfield_type[1] = string_type4;
             sfield_type[2] = string_type5;
@@ -262,7 +273,7 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
     }
     int numberChannels =rt_buf[0].channels;
     ReturnData.SetDate( rt_buf[0].date );
-    ReturnData.SetTime( rt_buf[0].date );
+    ReturnData.SetTime( rt_buf[0].time );
 
     /* Create the data space for the dataset. */
     hsize_t dims;
@@ -307,17 +318,17 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
         }
         hid_t string_typec= H5Tcopy( H5T_C_S1 );
         H5Tset_size( string_typec,  ctype_size );
-        std::vector<char> szchannel_name( ctype_size );
-        status = H5LTread_dataset(file_id, desc_path.utf8_str(), string_typec, &szchannel_name[0]);
+		boost::shared_ptr<char> szchannel_name;
+		szchannel_name.reset( new char[ctype_size] );
+        status = H5LTread_dataset(file_id, desc_path.utf8_str(), string_typec, szchannel_name.get() );
         if (status < 0) {
             wxString errorMsg(wxT("Exception while reading channel name in stf::importHDF5File"));
             throw std::runtime_error(std::string(errorMsg.char_str()));
         }
-        wxString channel_name;
+		wxString channel_name;
         for (int c=0; c<ctype_size; ++c) {
-            channel_name << wxChar(szchannel_name[c]);
+            channel_name << wxChar(szchannel_name.get()[c]);
         }
-
         wxString channel_path; channel_path << "/" << channel_name;
         hid_t channel_group = H5Gopen(file_id, channel_path.utf8_str() );
         status=H5TBread_table( channel_group, "description", sizeof(ct), ct_offset, ct_sizes, ct_buf );
@@ -410,6 +421,7 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
             }
             dt = st_buf[0].dt;
             yunits = st_buf[0].yunits;
+			H5Gclose( section_group );
         }
         try {
             if ((int)ReturnData.size()<numberChannels) {
@@ -422,6 +434,7 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
             ReturnData.resize(0);
             throw;
         }
+		H5Gclose( channel_group );
     }
     ReturnData.SetXScale(dt);
     /* Terminate access to the file. */

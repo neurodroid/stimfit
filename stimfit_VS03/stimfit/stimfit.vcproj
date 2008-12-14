@@ -43,6 +43,9 @@
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\libs&quot;;C:\Python25\libs;C:\wxWidgets\lib\vc_dll"
 				IgnoreDefaultLibraryNames="libcd.lib;libcmtd.lib"
 				GenerateDebugInformation="TRUE"
+				GenerateMapFile="TRUE"
+				MapExports="TRUE"
+				MapLines="TRUE"
 				ImportLibrary="$(OutDir)/stimfitd.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>

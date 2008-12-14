@@ -519,7 +519,7 @@ bool wxStfDoc::SaveAs() {
     filters += wxT("CED filing system (*.dat;*.cfs)|*.dat;*.cfs|");
     filters += wxT("Axon text file (*.atf)|*.atf|");
     filters += wxT("Igor binary wave (*.*)|*.*|");
-    filters += wxT("Text file series (*.*)|*.*|");
+    filters += wxT("Text file series (*.*)|*.*");
     wxFileDialog SelectFileDialog( GetDocumentWindow(), wxT("Save file"), wxT(""), wxT(""), filters,
             wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_PREVIEW );
     if(SelectFileDialog.ShowModal()==wxID_OK) {
