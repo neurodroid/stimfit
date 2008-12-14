@@ -120,19 +120,19 @@ int SetFilePosition( filehandle dataRefNum, int posn )
 #endif
 }
 
-int ReadFromFile( filehandle dataRefNum, long *count, void *dataToRead )
+int ReadFromFile( filehandle dataRefNum, long count, void *dataToRead )
 {
 #ifdef __WXMAC__
-    return FSRead( dataRefNum, count, dataToRead );
+    return FSRead( dataRefNum, &count, dataToRead );
 #endif
 #ifndef _WINDOWS
-    if ( fread( dataToRead, 1, *count, dataRefNum ) == *count )
+    if ( fread( dataToRead, 1, count, dataRefNum ) == count )
         return 0;
     else
         return 1;
 #else
     DWORD   dwRead;
-	short res = ReadFile(dataRefNum, dataToRead, *count, &dwRead, NULL);
+	short res = ReadFile(dataRefNum, dataToRead, count, &dwRead, NULL);
     if (res)
         return 0;
     else

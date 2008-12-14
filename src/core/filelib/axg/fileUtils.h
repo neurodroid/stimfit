@@ -23,6 +23,6 @@ filehandle OpenFile( const char *fileName );
 void CloseFile( filehandle dataRefNum );
 
 int SetFilePosition( filehandle dataRefNum, int posn );
-int ReadFromFile( filehandle dataRefNum, long *count, void *dataToRead );
+int ReadFromFile( filehandle dataRefNum, long count, void *dataToRead );
 
 #endif

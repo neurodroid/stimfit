@@ -29,7 +29,7 @@ int AG_GetFileFormat( filehandle refNum, int *fileFormat )
     // Read the 4-byte prefix present in all AxoGraph file formats
     unsigned char AxoGraphFileID[4];
     long bytes = 4;	// 4 byte identifier
-    result = ReadFromFile( refNum, &bytes, AxoGraphFileID );
+    result = ReadFromFile( refNum, bytes, AxoGraphFileID );
     if ( result )
         return result;
 
@@ -39,7 +39,7 @@ int AG_GetFileFormat( filehandle refNum, int *fileFormat )
         // Got an AxoGraph version 4 format file. Read the file type.
         short version;
         bytes = sizeof( short );
-        result = ReadFromFile( refNum, &bytes, &version );
+        result = ReadFromFile( refNum, bytes, &version );
         if ( result )
             return result;
 
@@ -59,7 +59,7 @@ int AG_GetFileFormat( filehandle refNum, int *fileFormat )
         // Got an AxoGraph X format file. Check the file version.
         long version;
         bytes = sizeof( long );
-        result = ReadFromFile( refNum, &bytes, &version );
+        result = ReadFromFile( refNum, bytes, &version );
         if ( result )
             return result;
 
@@ -98,7 +98,7 @@ int AG_GetNumberOfColumns( filehandle refNum, const int fileFormat, long *number
         // Read the number of columns (short integer in AxoGraph 4 files)
         short nColumns;
         long bytes = 2;
-        int result = ReadFromFile( refNum, &bytes, &nColumns);
+        int result = ReadFromFile( refNum, bytes, &nColumns);
         if ( result )
             return result;
 
@@ -114,7 +114,7 @@ int AG_GetNumberOfColumns( filehandle refNum, const int fileFormat, long *number
         // Read the number of columns (long integer in AxoGraph X files)
         long nColumns;
         long bytes = 4;
-        int result = ReadFromFile( refNum, &bytes, &nColumns);
+        int result = ReadFromFile( refNum, bytes, &nColumns);
         if ( result )
             return result;
 
@@ -136,7 +136,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
 {
     // Initialize in case of error during read
     columnData->points = 0;
-    columnData->title = NULL;
+    columnData->title = wxT("");
 
     switch ( fileFormat )
     {
@@ -145,7 +145,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
              // Read the standard column header
              ColumnHeader columnHeader;
              long bytes = sizeof( ColumnHeader );
-             int result = ReadFromFile( refNum, &bytes, &columnHeader );
+             int result = ReadFromFile( refNum, bytes, &columnHeader );
              if ( result )
                  return result;
 
@@ -156,21 +156,21 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
              // Retrieve the title and number of points in the column
              columnData->type = FloatArrayType;
              columnData->points = columnHeader.points;
-             columnData->title = ( unsigned char * )malloc( 80 );
+             columnData->title.resize( 80 );
              PascalToCString( columnHeader.title );
-             memcpy( columnData->title, columnHeader.title, 80 );
+             columnData->title = wxString( columnHeader.title );
 
              // create a new pointer to receive the data
              long columnBytes = columnHeader.points * sizeof( float );
-             columnData->floatArray = ( float * )malloc( columnBytes );
-             if ( columnData->floatArray == NULL )
+             columnData->floatArray.resize( columnHeader.points );
+             if ( columnData->floatArray.empty() )
                  return kAG_MemoryErr;
 
              // Read in the column's data
-             result = ReadFromFile( refNum, &columnBytes, columnData->floatArray );
+             result = ReadFromFile( refNum, columnBytes, &(columnData->floatArray[0]) );
 
 #ifdef __LITTLE_ENDIAN__
-             ByteSwapFloatArray( columnData->floatArray, columnHeader.points );
+             ByteSwapFloatArray( &(columnData->floatArray[0]), columnHeader.points );
 #endif
 
              return result;
@@ -183,7 +183,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  // Read the column header
                  DigitizedFirstColumnHeader columnHeader;
                  long bytes = sizeof( DigitizedFirstColumnHeader );
-                 int result = ReadFromFile( refNum, &bytes, &columnHeader );
+                 int result = ReadFromFile( refNum, bytes, &columnHeader );
                  if ( result )
                      return result;
 
@@ -196,9 +196,9 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  // Retrieve the title, number of points in the column, and sample interval
                  columnData->type = SeriesArrayType;
                  columnData->points = columnHeader.points;
-                 columnData->title = ( unsigned char * )malloc( 80 );
+                 columnData->title.resize( 80 );
                  PascalToCString( columnHeader.title );
-                 memcpy( columnData->title, columnHeader.title, 80 );
+                 columnData->title = wxString( columnHeader.title );
 
                  columnData->seriesArray.firstValue = columnHeader.firstPoint;
                  columnData->seriesArray.increment = columnHeader.sampleInterval;
@@ -209,7 +209,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  // Read the column header
                  DigitizedColumnHeader columnHeader;
                  long bytes = sizeof( DigitizedColumnHeader );
-                 int result = ReadFromFile( refNum, &bytes, &columnHeader );
+                 int result = ReadFromFile( refNum, bytes, &columnHeader );
                  if ( result )
                      return result;
 
@@ -221,24 +221,24 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  // Retrieve the title and number of points in the column
                  columnData->type = ScaledShortArrayType;
                  columnData->points = columnHeader.points;
-                 columnData->title = ( unsigned char * )malloc( 80 );
+                 columnData->title.resize( 80 );
                  PascalToCString( columnHeader.title );
-                 memcpy( columnData->title, columnHeader.title, 80 );
+                 columnData->title = wxString( columnHeader.title );
 
                  columnData->scaledShortArray.scale = columnHeader.scalingFactor;
                  columnData->scaledShortArray.offset = 0;
 
                  // create a new pointer to receive the data
                  long columnBytes = columnHeader.points * sizeof( short );
-                 columnData->scaledShortArray.shortArray = ( short * )malloc( columnBytes );
-                 if ( columnData->scaledShortArray.shortArray == NULL )
+                 columnData->scaledShortArray.shortArray.resize( columnHeader.points );
+                 if ( columnData->scaledShortArray.shortArray.empty() )
                      return kAG_MemoryErr;
 
                  // Read in the column's data
-                 result = ReadFromFile( refNum, &columnBytes, columnData->scaledShortArray.shortArray );
+                 result = ReadFromFile( refNum, columnBytes, &(columnData->scaledShortArray.shortArray[0]) );
 
 #ifdef __LITTLE_ENDIAN__
-                 ByteSwapShortArray( columnData->scaledShortArray.shortArray, columnHeader.points );
+                 ByteSwapShortArray( &(columnData->scaledShortArray.shortArray[0]), columnHeader.points );
 #endif
 
                  return result;
@@ -250,7 +250,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
              // Read the column header
              AxoGraphXColumnHeader columnHeader;
              long bytes = sizeof( AxoGraphXColumnHeader );
-             int result = ReadFromFile( refNum, &bytes, &columnHeader );
+             int result = ReadFromFile( refNum, bytes, &columnHeader );
              if ( result )
                  return result;
 
@@ -270,12 +270,12 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
 
              // Read the column title
              columnData->titleLength = columnHeader.titleLength;
-             columnData->title = ( unsigned char * )malloc( columnHeader.titleLength );
-             result = ReadFromFile( refNum, &columnHeader.titleLength, columnData->title );
+             columnData->title.resize( columnHeader.titleLength );
+             result = ReadFromFile( refNum, columnHeader.titleLength, wxStringBuffer( columnData->title, columnHeader.titleLength) );
              if ( result )
                  return result;
 
-             UnicodeToCString( columnData->title, columnData->titleLength );
+             // UnicodeToCString( columnData->title, columnData->titleLength );
 
              switch ( columnHeader.dataType )
              {
@@ -283,15 +283,15 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                   {
                       // create a new pointer to receive the data
                       long columnBytes = columnHeader.points * sizeof( short );
-                      columnData->shortArray = ( short * )malloc( columnBytes );
-                      if ( columnData->shortArray == NULL )
+                      columnData->shortArray.resize( columnHeader.points );
+                      if ( columnData->shortArray.empty() )
                           return kAG_MemoryErr;
 
                       // Read in the column's data
-                      result = ReadFromFile( refNum, &columnBytes, columnData->shortArray );
+                      result = ReadFromFile( refNum, columnBytes, &(columnData->shortArray[0]) );
 
 #ifdef __LITTLE_ENDIAN__
-                      ByteSwapShortArray( columnData->shortArray, columnHeader.points );
+                      ByteSwapShortArray( &(columnData->shortArray[0]), columnHeader.points );
 #endif
 
                       return result;
@@ -300,15 +300,15 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                   {
                       // create a new pointer to receive the data
                       long columnBytes = columnHeader.points * sizeof( int );
-                      columnData->intArray = ( int * )malloc( columnBytes );
-                      if ( columnData->intArray == NULL )
+                      columnData->intArray.resize( columnHeader.points );
+                      if ( columnData->intArray.empty() )
                           return kAG_MemoryErr;
 
                       // Read in the column's data
-                      result = ReadFromFile( refNum, &columnBytes, columnData->intArray );
+                      result = ReadFromFile( refNum, columnBytes, &(columnData->intArray[0]) );
 
 #ifdef __LITTLE_ENDIAN__
-                      ByteSwapLongArray( (long *)columnData->intArray, columnHeader.points );
+                      ByteSwapLongArray( (long *)&(columnData->intArray[0]), columnHeader.points );
 #endif
 
                       return result;
@@ -317,15 +317,15 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                   {
                       // create a new pointer to receive the data
                       long columnBytes = columnHeader.points * sizeof( float );
-                      columnData->floatArray = ( float * )malloc( columnBytes );
-                      if ( columnData->floatArray == NULL )
+                      columnData->floatArray.resize( columnHeader.points );
+                      if ( columnData->floatArray.empty() )
                           return kAG_MemoryErr;
 
                       // Read in the column's data
-                      result = ReadFromFile( refNum, &columnBytes, columnData->floatArray );
+                      result = ReadFromFile( refNum, columnBytes, &(columnData->floatArray[0]) );
 
 #ifdef __LITTLE_ENDIAN__
-                      ByteSwapFloatArray( columnData->floatArray, columnHeader.points );
+                      ByteSwapFloatArray( &(columnData->floatArray[0]), columnHeader.points );
 #endif
 
                       return result;
@@ -334,15 +334,15 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                   {
                       // create a new pointer to receive the data
                       long columnBytes = columnHeader.points * sizeof( double );
-                      columnData->doubleArray = ( double * )malloc( columnBytes );
-                      if ( columnData->doubleArray == NULL )
+                      columnData->doubleArray.resize( columnHeader.points );
+                      if ( columnData->doubleArray.empty() )
                           return kAG_MemoryErr;
 
                       // Read in the column's data
-                      result = ReadFromFile( refNum, &columnBytes, columnData->doubleArray );
+                      result = ReadFromFile( refNum, columnBytes, &(columnData->doubleArray[0]) );
 
 #ifdef __LITTLE_ENDIAN__
-                      ByteSwapDoubleArray( columnData->doubleArray, columnHeader.points );
+                      ByteSwapDoubleArray( &(columnData->doubleArray[0]), columnHeader.points );
 #endif
 
                       return result;
@@ -351,7 +351,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                   {
                       SeriesArray seriesParameters;
                       long bytes = sizeof( SeriesArray );
-                      result = ReadFromFile( refNum, &bytes, &seriesParameters );
+                      result = ReadFromFile( refNum, bytes, &seriesParameters );
 
 #ifdef __LITTLE_ENDIAN__
                       ByteSwapDouble( &seriesParameters.firstValue );
@@ -366,8 +366,8 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                   {
                       double scale, offset;
                       long bytes = sizeof( double );
-                      result = ReadFromFile( refNum, &bytes, &scale );
-                      result = ReadFromFile( refNum, &bytes, &offset );
+                      result = ReadFromFile( refNum, bytes, &scale );
+                      result = ReadFromFile( refNum, bytes, &offset );
 
 #ifdef __LITTLE_ENDIAN__
                       ByteSwapDouble( &scale );
@@ -379,15 +379,15 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
 
                       // create a new pointer to receive the data
                       long columnBytes = columnHeader.points * sizeof( short );
-                      columnData->scaledShortArray.shortArray = ( short * )malloc( columnBytes );
-                      if ( columnData->scaledShortArray.shortArray == NULL )
+                      columnData->scaledShortArray.shortArray.resize( columnHeader.points );
+                      if ( columnData->scaledShortArray.shortArray.empty() )
                           return kAG_MemoryErr;
 
                       // Read in the column's data
-                      result = ReadFromFile( refNum, &columnBytes, columnData->scaledShortArray.shortArray );
+                      result = ReadFromFile( refNum, columnBytes, &(columnData->scaledShortArray.shortArray[0]) );
 
 #ifdef __LITTLE_ENDIAN__
-                      ByteSwapShortArray( columnData->scaledShortArray.shortArray, columnHeader.points );
+                      ByteSwapShortArray( &(columnData->scaledShortArray.shortArray[0]), columnHeader.points );
 #endif
 
                       return result;
@@ -412,49 +412,19 @@ int AG_ReadFloatColumn( filehandle refNum, const int fileFormat, const int colum
     {
      case ShortArrayType:
          {
-             // create a new pointer to receive the converted data
-             long columnBytes = columnData->points * sizeof( float );
-             short *shortArray = columnData->shortArray;
-             float *floatArray = ( float * )malloc( columnBytes );
-             if ( floatArray == NULL )
-                 return kAG_MemoryErr;
-
              // Convert in the column data
-             for ( long i = 0; i < columnData->points; i++ )
-             {
-                 floatArray[i] = shortArray[i];
-             }
-
-             // free old short array
-             free( columnData->shortArray );
-             columnData->shortArray = NULL;
-
-             // pass in new float array
-             columnData->floatArray = floatArray;
+             columnData->floatArray.resize( columnData->points );
+             std::copy( columnData->shortArray.begin(), columnData->shortArray.end(), columnData->floatArray.begin() );
+             columnData->shortArray.resize(0);
              columnData->type = FloatArrayType;
              return result;
          }
      case IntArrayType:
          {
-             // create a new pointer to receive the converted data
-             long columnBytes = columnData->points * sizeof( float );
-             int *intArray = columnData->intArray;
-             float *floatArray = ( float * )malloc( columnBytes );
-             if ( floatArray == NULL )
-                 return kAG_MemoryErr;
-
              // Convert in the column data
-             for ( long i = 0; i < columnData->points; i++ )
-             {
-                 floatArray[i] = intArray[i];
-             }
-
-             // free old short array
-             free( columnData->intArray );
-             columnData->intArray = NULL;
-
-             // pass in new float array
-             columnData->floatArray = floatArray;
+             columnData->floatArray.resize( columnData->points );
+             std::copy( columnData->intArray.begin(), columnData->intArray.end(), columnData->intArray.begin() );
+             columnData->intArray.resize(0);
              columnData->type = FloatArrayType;
              return result;
          }
@@ -465,72 +435,46 @@ int AG_ReadFloatColumn( filehandle refNum, const int fileFormat, const int colum
          }
      case DoubleArrayType:
          {
-             // create a new pointer to receive the converted data
-             long columnBytes = columnData->points * sizeof( float );
-             double *doubleArray = columnData->doubleArray;
-             float *floatArray = ( float * )malloc( columnBytes );
-             if ( floatArray == NULL )
-                 return kAG_MemoryErr;
-
              // Convert in the column data
-             for ( long i = 0; i < columnData->points; i++ )
-             {
-                 floatArray[i] = doubleArray[i];
-             }
-
-             // free old short array
-             free( columnData->doubleArray );
-             columnData->doubleArray = NULL;
-
-             // pass in new float array
-             columnData->floatArray = floatArray;
+             columnData->floatArray.resize( columnData->points );
+             std::copy( columnData->doubleArray.begin(), columnData->doubleArray.end(), columnData->doubleArray.begin() );
+             columnData->doubleArray.resize(0);
              columnData->type = FloatArrayType;
              return result;
          }
      case SeriesArrayType:
          {
              // create a new pointer to receive the converted data
-             long columnBytes = columnData->points * sizeof( float );
              double firstValue = columnData->seriesArray.firstValue;
              double increment = columnData->seriesArray.increment;
-             float *floatArray = ( float * )malloc( columnBytes );
-             if ( floatArray == NULL )
-                 return kAG_MemoryErr;
-
+             columnData->floatArray.resize( columnData->points );
+             
              // Convert in the column data
              for ( long i = 0; i < columnData->points; i++ )
              {
-                 floatArray[i] = firstValue + i * increment;
+                 columnData->floatArray[i] = firstValue + i * increment;
              }
 
-             // pass in new float array
-             columnData->floatArray = floatArray;
              columnData->type = FloatArrayType;
              return result;
          }
      case ScaledShortArrayType:
          {
              // create a new pointer to receive the converted data
-             long columnBytes = columnData->points * sizeof( float );
              double scale = columnData->scaledShortArray.scale;
              double offset = columnData->scaledShortArray.offset;
-             short *shortArray = columnData->scaledShortArray.shortArray;
-             float *floatArray = ( float * )malloc( columnBytes );
-             if ( floatArray == NULL )
-                 return kAG_MemoryErr;
+             columnData->floatArray.resize( columnData->points );
 
              // Convert in the column data
              for ( long i = 0; i < columnData->points; i++ )
              {
-                 floatArray[i] = shortArray[i] * scale + offset;
+                 columnData->floatArray[i] = columnData->scaledShortArray.shortArray[i] * scale + offset;
              }
 
              // free old short array
-             free( columnData->scaledShortArray.shortArray );
-             columnData->scaledShortArray.shortArray = NULL;
+             columnData->scaledShortArray.shortArray.resize(0);
 
              // pass in new float array
-             columnData->floatArray = floatArray;
              columnData->type = FloatArrayType;
              return result;
          }

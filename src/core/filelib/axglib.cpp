@@ -114,17 +114,17 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
         if ( columnNumber == 0 ) {
             xscale = column.seriesArray.increment * 1.0e3;
 
-		} else {
-            section_list.push_back( Section(column.points, column.title) );
+        } else {
+            section_list.push_back( Section(column.points, column.title ) );
             std::size_t last = section_list.size()-1;
 
             std::copy(&(column.floatArray[0]),&(column.floatArray[column.points]),&(section_list[last].get_w()[0]));
             // check whether this is a new channel:
             bool isnew = true;
-            wxString test_name( column.title );
+
             // test whether this name has been used before:
             for (std::size_t n_c=0; n_c < channel_names.size(); ++n_c) {
-                if ( test_name == channel_names[n_c] || test_name.StartsWith( wxT("Column") ) ) {
+                if ( column.title == channel_names[n_c] || column.title.StartsWith( wxT("Column") ) ) {
                     isnew = false;
                     break;
                 }
@@ -136,11 +136,9 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
                 std::size_t right = units.find_last_of( wxT(")") );
                 yunits = units.substr(left, right-left);
                 channel_units.push_back( yunits );
-                channel_names.push_back( test_name );
+                channel_names.push_back( column.title );
             }
         }
-        free( column.floatArray );
-        free( column.title );
     }
     // Distribute Sections to Channels:
     std::size_t sectionsPerChannel = (numberOfColumns-1) / numberOfChannels;
