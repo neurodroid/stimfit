@@ -3,6 +3,9 @@
 #endif
 
 #include "fileUtils.h"
+#ifdef _WINDOWS
+#include <wx/wx.h>
+#endif
 
 // Mac-specific file access functions
 // On other platforms, replace the following with equivalent functions
@@ -42,9 +45,9 @@ OSStatus GetApplicationDirectory( short *vRefNum, long *dirID )
 }
 #endif
 
-#ifdef __WXMAC__
-int OpenFile( const char *fileName )
+filehandle OpenFile( const char *fileName )
 {
+#ifdef __WXMAC__
     short dataRefNum = 0;
     short vRefNum;
     long dirID;
@@ -80,51 +83,59 @@ int OpenFile( const char *fileName )
     }
 
     return dataRefNum;
-}
-#else
-FILE* OpenFile( const char *fileName )
-{
+#endif
+#ifndef _WINDOWS
     return fopen( fileName, "r" );
-}
+#else
+	wxString fileNameU( fileName );
+	HANDLE file = CreateFile(fileNameU.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    return file;
 #endif
+}
 
-#ifdef __WXMAC__
-void CloseFile( int dataRefNum )
+void CloseFile( filehandle dataRefNum )
 {
+#ifdef __WXMAC__
     FSClose( dataRefNum );
-}
-#else
-void CloseFile( FILE* fh )
-{
-    fclose( fh );
-}
 #endif
+#ifndef _WINDOWS
+    fclose( dataRefNum );
+#else
+    CloseHandle(dataRefNum);
+#endif
+}
 
-#ifdef __WXMAC__
-int SetFilePosition( int dataRefNum, int posn )
+int SetFilePosition( filehandle dataRefNum, int posn )
 {
+#ifdef __WXMAC__
     return SetFPos( dataRefNum, fsFromStart, posn );		// Position the mark
-}
-#else
-int SetFilePosition( FILE* fh, int posn )
-{
-    return fseek( fh, posn, SEEK_SET );
-}
 #endif
-
-
-#ifdef __WXMAC__
-int ReadFromFile( int dataRefNum, long *count, void *dataToRead )
-{
-    return FSRead( dataRefNum, count, dataToRead );
-}
+#ifndef _WINDOWS
+    return fseek( dataRefNum, posn, SEEK_SET );
 #else
-int ReadFromFile( FILE* fh, long *count, void *dataToRead )
+    if (SetFilePointer(dataRefNum, posn, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER)
+        return 1;
+    else
+        return 0;
+#endif
+}
+
+int ReadFromFile( filehandle dataRefNum, long *count, void *dataToRead )
 {
-    int res = fread( dataToRead, 1, *count, fh );
-    if ( res == *count )
+#ifdef __WXMAC__
+    return FSRead( dataRefNum, count, dataToRead );
+#endif
+#ifndef _WINDOWS
+    if ( fread( dataToRead, 1, *count, dataRefNum ) == *count )
         return 0;
     else
         return 1;
-}
+#else
+    DWORD   dwRead;
+	short res = ReadFile(dataRefNum, dataToRead, *count, &dwRead, NULL);
+    if (res)
+        return 0;
+    else
+        return 1;
 #endif
+}

@@ -57,6 +57,11 @@
 #include "./printout.h"
 #include "./dlgs/smalldlgs.h"
 #include "./copygrid.h"
+#ifdef _WINDOWS
+#include "./../core/filelib/atflib.h"
+#include "./../core/filelib/igorlib.h"
+#endif
+
 #include "./frame.h"
 
 #include "./../icons/16-em-down.xpm"

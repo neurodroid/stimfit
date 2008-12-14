@@ -1,7 +1,9 @@
 #ifndef _STFSWIG_H
 #define _STFSWIG_H
+#undef _DEBUG
 
 #include <wx/wx.h>
+#undef _DEBUG
 
 void new_window( double* invec, int size );
 void new_window_matrix( double* inarr, int traces, int size );

@@ -184,13 +184,7 @@ Header for each trace
 // uncomment the following line to run on little endian hardware ( byte swaps data before reading or writing )
 #define __LITTLE_ENDIAN__
 
-#ifdef __WXMAC__
-typedef const int filehandle;
-#else
-#include <cstdio>
-
-typedef FILE* filehandle;
-#endif
+#include "fileUtils.h"
 
 // errors numbers
 const short kAG_MemoryErr = -21;

@@ -264,7 +264,25 @@ Section "Uninstall"
   StrCmp $R0 "${REG_NAME}" 0 +3
     ReadRegStr $R0 HKCR ".cfs" "AM_OLD_VALUE"
     WriteRegStr HKCR ".cfs" "" $R0
+
+  ; --> .h5
+  ReadRegStr $R0 HKCR ".h5" ""
+  StrCmp $R0 "${REG_NAME}" 0 +3
+    ReadRegStr $R0 HKCR ".h5" "AM_OLD_VALUE"
+    WriteRegStr HKCR ".h5" "" $R0
+
+  ; --> .axgd
+  ReadRegStr $R0 HKCR ".axgd" ""
+  StrCmp $R0 "${REG_NAME}" 0 +3
+    ReadRegStr $R0 HKCR ".axgd" "AM_OLD_VALUE"
+    WriteRegStr HKCR ".axgd" "" $R0
 	
+  ; --> .axgx
+  ReadRegStr $R0 HKCR ".axgx" ""
+  StrCmp $R0 "${REG_NAME}" 0 +3
+    ReadRegStr $R0 HKCR ".axgx" "AM_OLD_VALUE"
+    WriteRegStr HKCR ".axgx" "" $R0
+
   ; --> .abf
   ReadRegStr $R0 HKCR ".abf" ""
   StrCmp $R0 "${REG_NAME}" 0 +3
@@ -303,6 +321,36 @@ Section ".cfs (CED filing system)" SecAssCFS
   no_stf:
     WriteRegStr HKCR ".cfs" "AM_OLD_VALUE" $R0
   WriteRegStr HKCR ".cfs" "" "${REG_NAME}"
+  already_stf:
+SectionEnd
+
+; --> .h5
+Section ".h5 (HDF5)" SecAssH5
+  ReadRegStr $R0 HKCR ".h5" ""
+  StrCmp $R0 "${REG_NAME}" already_stf no_stf
+  no_stf:
+    WriteRegStr HKCR ".h5" "AM_OLD_VALUE" $R0
+  WriteRegStr HKCR ".h5" "" "${REG_NAME}"
+  already_stf:
+SectionEnd
+
+; --> .axgd
+Section ".axgd (Axograph digitized)" SecAssAxgd
+  ReadRegStr $R0 HKCR ".axgd" ""
+  StrCmp $R0 "${REG_NAME}" already_stf no_stf
+  no_stf:
+    WriteRegStr HKCR ".axgd" "AM_OLD_VALUE" $R0
+  WriteRegStr HKCR ".axgd" "" "${REG_NAME}"
+  already_stf:
+SectionEnd
+
+; --> .axgx
+Section ".axgx (Axograph X)" SecAssAxgx
+  ReadRegStr $R0 HKCR ".axgx" ""
+  StrCmp $R0 "${REG_NAME}" already_stf no_stf
+  no_stf:
+    WriteRegStr HKCR ".axgx" "AM_OLD_VALUE" $R0
+  WriteRegStr HKCR ".axgx" "" "${REG_NAME}"
   already_stf:
 SectionEnd
 

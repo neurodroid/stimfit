@@ -22,8 +22,8 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				ImproveFloatingPointConsistency="FALSE"
-				AdditionalIncludeDirectories="C:\wxPython\include;&quot;C:\Dokumente und Einstellungen\cs\stimfit\include&quot;;C:\wxWidgets\include\msvc;C:\wxWidgets\include;C:\hdf5\include"
-				PreprocessorDefinitions="_DEBUG;__WXDEBUG__;_UNICODE;WXUSINGDLL;__STF__;__WIN32__;WIN32;__WXMSW__;WXP_USE_THREAD=1;NOPCH;STFDLL;_CRT_SECURE_NO_DEPRECATE;_STFDEBUG;WITH_PYTHON;HAVE_LAPACK;_WINDOWS"
+				AdditionalIncludeDirectories="C:\hdf5\include;C:\wxWidgets\lib\vc_dll\mswu;C:\wxWidgets\include;&quot;$(SolutionDir)..\include&quot;;C:\wxPython\include"
+				PreprocessorDefinitions="_DEBUG;__WXDEBUG__;_UNICODE;WXUSINGDLL;__STF__;__WIN32__;WIN32;__WXMSW__;WXP_USE_THREAD=1;NOPCH;STFDLL;_CRT_SECURE_NO_DEPRECATE;_STFDEBUG;HAVE_LAPACK;_WINDOWS"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -38,10 +38,11 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="hdf5.lib hdf5_cpp.lib"
+				AdditionalDependencies="wxmsw29ud_aui.lib wxmsw29ud_html.lib wxmsw29ud_adv.lib wxmsw29ud_core.lib wxbase29ud_xml.lib wxbase29ud.lib wxtiffd.lib wxjpegd.lib wxpngd.lib wxzlibd.lib wxregexud.lib wxexpatd.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib clapackd.lib libf2cd.lib BLASd.lib libfftw3-3.lib hdf5.lib hdf5_hl.lib szlib.lib"
 				OutputFile="../stimfit_exe/$(OutDir)/stimfitd.dll"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\libs&quot;;C:\Python25\libs;C:\wxWidgets\lib\vc_dll"
-				IgnoreDefaultLibraryNames="libcmtd.lib"
+				IgnoreDefaultLibraryNames="libcd.lib;libcmtd.lib"
+				GenerateDebugInformation="TRUE"
 				ImportLibrary="$(OutDir)/stimfitd.lib"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -52,7 +53,8 @@
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
-				Name="VCResourceCompilerTool"/>
+				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="$(SolutionDir)..\src\icons;C:\wxWidgets\include"/>
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool

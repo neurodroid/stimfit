@@ -11,7 +11,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "fileUtils.h"
 #include "stringUtils.h"
 #include "byteswap.h"
 

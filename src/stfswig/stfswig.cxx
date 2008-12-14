@@ -5,8 +5,20 @@
 #include "wx/wx.h"
 #endif
 
+#ifdef _WINDOWS
+    #ifdef _DEBUG
+        #undef _DEBUG
+        #define _UNDEBUG
+    #endif
+#endif
+
 #include <Python.h>
 #include <wx/wxPython/wxPython.h>
+#ifdef _WINDOWS
+    #ifdef _UNDEBUG
+        #define _DEBUG
+    #endif
+#endif
 
 #include "stfswig.h"
 

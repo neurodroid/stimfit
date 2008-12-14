@@ -113,12 +113,12 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
         }
         if ( columnNumber == 0 ) {
             xscale = column.seriesArray.increment * 1.0e3;
-        } else {
+
+		} else {
             section_list.push_back( Section(column.points, column.title) );
             std::size_t last = section_list.size()-1;
 
             std::copy(&(column.floatArray[0]),&(column.floatArray[column.points]),&(section_list[last].get_w()[0]));
-
             // check whether this is a new channel:
             bool isnew = true;
             wxString test_name( column.title );
@@ -139,6 +139,8 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
                 channel_names.push_back( test_name );
             }
         }
+        free( column.floatArray );
+        free( column.title );
     }
     // Distribute Sections to Channels:
     std::size_t sectionsPerChannel = (numberOfColumns-1) / numberOfChannels;
@@ -174,15 +176,6 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
             throw;
         }
     }
-
-    // wxString channel_name( FH.sADCChannelName[FH.nADCSamplingSeq[nChannel]], wxConvLocal );
-
-//     ReturnData[nChannel].SetChannelName(channel_name);
-
-//     wxString channel_units( FH.sADCUnits[FH.nADCSamplingSeq[nChannel]], wxConvLocal );
-
-//     ReturnData[nChannel].SetYUnits(channel_units);
-
 
     // Apparently, the sample interval has to be multiplied by
     // the number of channels for multiplexed data. Thanks to

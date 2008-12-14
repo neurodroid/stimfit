@@ -7,21 +7,22 @@
 #define kAGX_Creator 'AxGX'
 #define kAGX_DocType  'axgx'
 
-
 #ifdef __WXMAC__
-int OpenFile( const char *fileName );
-void CloseFile( int dataRefNum );
-
-int SetFilePosition( int dataRefNum, int posn );
-int ReadFromFile( int dataRefNum, long *count, void *dataToRead );
+    typedef const int filehandle;
 #else
-#include <cstdio>
-
-FILE* OpenFile( const char *fileName );
-void CloseFile( FILE* fh );
-
-int SetFilePosition( FILE* fh, int posn );
-int ReadFromFile( FILE* fh, long *count, void *dataToRead );
+    #ifndef _WINDOWS
+        #include <cstdio>
+        typedef FILE* filehandle;
+    #else
+        #include "Windows.h"
+        typedef HANDLE filehandle;
+    #endif
 #endif
+
+filehandle OpenFile( const char *fileName );
+void CloseFile( filehandle dataRefNum );
+
+int SetFilePosition( filehandle dataRefNum, int posn );
+int ReadFromFile( filehandle dataRefNum, long *count, void *dataToRead );
 
 #endif
