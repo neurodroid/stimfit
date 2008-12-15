@@ -270,11 +270,15 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
 
              // Read the column title
              columnData->titleLength = columnHeader.titleLength;
-             columnData->title.resize( columnHeader.titleLength );
-             result = ReadFromFile( refNum, columnHeader.titleLength, wxStringBuffer( columnData->title, columnHeader.titleLength) );
+             // columnData->title.resize( columnHeader.titleLength );
+             std::vector< unsigned char > charBuffer( columnHeader.titleLength, '\0' );
+             result = ReadFromFile( refNum, columnHeader.titleLength, &charBuffer[0] );
              if ( result )
                  return result;
-
+             // Copy characters one by one into title (tedious but safe)
+             for (std::vector< unsigned char >::const_iterator c = charBuffer.begin()+1; c < charBuffer.end(); c += 2) {
+                 columnData->title << *c;
+             }
              // UnicodeToCString( columnData->title, columnData->titleLength );
 
              switch ( columnHeader.dataType )
@@ -448,7 +452,7 @@ int AG_ReadFloatColumn( filehandle refNum, const int fileFormat, const int colum
              double firstValue = columnData->seriesArray.firstValue;
              double increment = columnData->seriesArray.increment;
              columnData->floatArray.resize( columnData->points );
-             
+
              // Convert in the column data
              for ( long i = 0; i < columnData->points; i++ )
              {

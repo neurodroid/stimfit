@@ -15374,7 +15374,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 BUILDDATE=`date`
 CPPFLAGS=""
-CXXFLAGS="-Wall -D__UNIX__ -DSTFVERSION='\"0.8.15\"' -DSTFDATE='\"${BUILDDATE}\"'"
+CXXFLAGS="-Wno-deprecated -D__UNIX__ -DSTFVERSION='\"0.8.15\"' -DSTFDATE='\"${BUILDDATE}\"'"
 CFLAGS="-D__UNIX__ -DHAVE_LAPACK"
 
 # Checks for libraries.
