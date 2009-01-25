@@ -204,7 +204,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 noinst_LIBRARIES = libstimfit.a
 libstimfit_a_SOURCES = unopt.cpp
-libstimfit_a_CXXFLAGS = -O0 -g
+libstimfit_a_CXXFLAGS = $(OPT_CXXFLAGS) # -O0 -g
 @BUILD_PYTHON_FALSE@PYTHON_ADDINCLUDES = 
 
 # the application source, library search path, and link libraries

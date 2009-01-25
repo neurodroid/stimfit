@@ -2,7 +2,7 @@ noinst_LIBRARIES = libstimfit.a
 
 libstimfit_a_SOURCES = unopt.cpp
 
-libstimfit_a_CXXFLAGS = -O0 -g
+libstimfit_a_CXXFLAGS = $(OPT_CXXFLAGS) # -O0 -g
 
 # the application source, library search path, and link libraries
 if BUILD_PYTHON

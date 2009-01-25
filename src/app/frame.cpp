@@ -215,23 +215,36 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
                  << wxT("sys.path.append('.')\n")
                  << wxT("import wx\n")
                  << wxT("from wx.py import shell, version\n")
-#ifndef TEST_MINIMAL
                  << wxT("import stf\n")
                  << wxT("import numpy\n")
-#endif
-				 << wxT("\n")
+                 << wxT("try:\n")
+                 << wxT("    import stf_init\n")
+                 << wxT("except ImportError:\n")
+                 << wxT("    loaded = \"\\nNo custom initialization script found\"\n")
+                 << wxT("except SyntaxError:\n")
+                 << wxT("    loaded = \"\\nSyntax error in custom initialization script stf_init.py\"\n")
+                 << wxT("else:\n")
+                 << wxT("    loaded = \"\\nSuccessfully loaded custom initialization script stf_init.py\"\n")
+		 << wxT("\n")
                  << wxT("class MyPanel(wx.Panel):\n")
                  << wxT("    def __init__(self, parent):\n")
                  << wxT("        wx.Panel.__init__(self, parent, -1, style=wx.SUNKEN_BORDER)\n")
                  << wxT("\n")
                  << wxT("        version_s = \'NumPy \%s, wxPython \%s\' \% (numpy.version.version, wx.version())\n")
                  << wxT("        intro = '") << wxGetApp().GetVersionString() << wxT(", using \%s' \% version_s \n")
-                 << wxT("        pycrust = shell.Shell(self, -1, introText=intro)\n")
-#ifndef TEST_MINIMAL
+                 << wxT("        pycrust = shell.Shell(self, -1, introText=intro + loaded)\n")
                  << wxT("        pycrust.push('import numpy as N', silent=True)\n")
                  << wxT("        pycrust.push('import stf', silent=True)\n")
                  << wxT("        pycrust.push('from stf import *', silent=True)\n")
-#endif
+                 << wxT("        pycrust.push('try:', silent=True)\n")
+                 << wxT("        pycrust.push('    from stf_init import *', silent=True)\n")
+                 << wxT("        pycrust.push('except ImportError:', silent=True)\n")
+                 << wxT("        pycrust.push('    pass', silent=True)\n")
+                 << wxT("        pycrust.push('except SyntaxError:', silent=True)\n")
+                 << wxT("        pycrust.push('    pass', silent=True)\n")
+                 << wxT("        pycrust.push('else:', silent=True)\n")
+                 << wxT("        pycrust.push('    pass', silent=True)\n")
+                 << wxT("        pycrust.push('', silent=True)\n")
                  << wxT("        sizer = wx.BoxSizer(wx.VERTICAL)\n")
                  << wxT("        sizer.Add(pycrust, 1, wx.EXPAND|wx.BOTTOM|wx.LEFT|wx.RIGHT, 10)\n")
                  << wxT("\n")
@@ -1616,14 +1629,15 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     pActChannel = new wxComboBox( m_channelCounter, wxCOMBOACTCHANNEL, wxT("0"),
         wxDefaultPosition, wxSize(64,24), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
     pChannelSizer->Add( pActChannel );
-
+    
     wxStaticText* pInactIndex = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Inactive channel index: ") );
+    pInactIndex->SetForegroundColour( *wxRED );
     pChannelSizer->Add( pInactIndex );
 
     pInactChannel = new wxComboBox( m_channelCounter, wxCOMBOINACTCHANNEL, wxT("1"),
             wxDefaultPosition, wxSize(64,24), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
     pChannelSizer->Add( pInactChannel );
-
+    
     m_channelCounter->SetSizer( pChannelSizer );
     m_channelCounter->Layout();
 
