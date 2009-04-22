@@ -26,7 +26,7 @@ enum {
     wxTEXTPM,
     wxRADIOALL,
     wxRADIOMEAN,
-    wxMEASCURSOR, 
+    wxMEASCURSOR,
     wxPEAKATEND,
     wxPEAKMEAN,
     wxDIRECTION,
@@ -52,11 +52,11 @@ EVT_RADIOBUTTON( wxRADIOALL, wxStfCursorsDlg::OnRadioAll )
 EVT_RADIOBUTTON( wxRADIOMEAN, wxStfCursorsDlg::OnRadioMean )
 END_EVENT_TABLE()
 
-wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, int id, wxString title, wxPoint pos,
+wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wxString title, wxPoint pos,
         wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ), cursorMIsTime(true),
 cursor1PIsTime(true),cursor2PIsTime(true), cursor1BIsTime(true),cursor2BIsTime(true),
-cursor1DIsTime(true),cursor2DIsTime(true), actDoc(wxGetApp().GetActiveDoc())
+cursor1DIsTime(true),cursor2DIsTime(true), actDoc(initDoc)
 {
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
@@ -121,10 +121,10 @@ wxNotebookPage* wxStfCursorsDlg::CreateMeasurePage() {
     nbPage=new wxPanel(m_notebook);
     wxBoxSizer* pageSizer;
     pageSizer=new wxBoxSizer(wxVERTICAL);
-    pageSizer->Add( CreateCursorInput( nbPage, wxTEXTM, -1, wxCOMBOUM, 
+    pageSizer->Add( CreateCursorInput( nbPage, wxTEXTM, -1, wxCOMBOUM,
             -1, 1, 10 ), 0, wxALIGN_CENTER | wxALL, 2 );
-    wxCheckBox* pMeasCursor=new wxCheckBox( nbPage, wxMEASCURSOR, 
-            wxT("Vertical ruler through cursor"), wxDefaultPosition, 
+    wxCheckBox* pMeasCursor=new wxCheckBox( nbPage, wxMEASCURSOR,
+            wxT("Vertical ruler through cursor"), wxDefaultPosition,
             wxDefaultSize, 0 );
     pageSizer->Add( pMeasCursor, 0, wxALIGN_CENTER | wxALL, 2);
 
@@ -139,11 +139,11 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     nbPage=new wxPanel(m_notebook);
     wxBoxSizer* pageSizer;
     pageSizer=new wxBoxSizer(wxVERTICAL);
-    pageSizer->Add( CreateCursorInput( nbPage, wxTEXT1P, wxTEXT2P, wxCOMBOU1P, 
+    pageSizer->Add( CreateCursorInput( nbPage, wxTEXT1P, wxTEXT2P, wxCOMBOU1P,
             wxCOMBOU2P, 1, 10 ), 0, wxALIGN_CENTER | wxALL, 2 );
 
-    wxCheckBox* pPeakAtEnd=new wxCheckBox( nbPage, wxPEAKATEND, 
-            wxT("Peak window ends at end of trace"), wxDefaultPosition, 
+    wxCheckBox* pPeakAtEnd=new wxCheckBox( nbPage, wxPEAKATEND,
+            wxT("Peak window ends at end of trace"), wxDefaultPosition,
             wxDefaultSize, 0 );
     pPeakAtEnd->SetValue(false);
     pageSizer->Add( pPeakAtEnd, 0, wxALIGN_CENTER | wxALL, 2);
@@ -155,8 +155,8 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     wxStaticBoxSizer* peakPointsSizer = new wxStaticBoxSizer(
             wxVERTICAL, nbPage, wxT("Number of points for peak") );
     // Direction of peak calculation:
-    wxRadioButton* pAllPoints = new wxRadioButton( nbPage, wxRADIOALL, 
-            wxT("All points within peak window"), wxDefaultPosition, 
+    wxRadioButton* pAllPoints = new wxRadioButton( nbPage, wxRADIOALL,
+            wxT("All points within peak window"), wxDefaultPosition,
             wxDefaultSize, wxRB_GROUP );
     peakPointsSizer->Add( pAllPoints, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
     pAllPoints->SetValue(false);
@@ -196,7 +196,7 @@ wxNotebookPage* wxStfCursorsDlg::CreateBasePage() {
 
     wxFlexGridSizer* baseSettingsGrid;
     baseSettingsGrid=new wxFlexGridSizer(1,3,0,0);
-    wxCheckBox* pBaseToSlope=new wxCheckBox( nbPage, wxBASETOSLOPE, wxT("Set base to slope:"), 
+    wxCheckBox* pBaseToSlope=new wxCheckBox( nbPage, wxBASETOSLOPE, wxT("Set base to slope:"),
             wxDefaultPosition, wxDefaultSize, 0 );
     baseSettingsGrid->Add( pBaseToSlope, 0, wxALIGN_CENTER | wxALL, 2);
     // user entry
@@ -222,16 +222,16 @@ wxNotebookPage* wxStfCursorsDlg::CreateDecayPage() {
     nbPage=new wxPanel(m_notebook);
     wxBoxSizer* pageSizer;
     pageSizer=new wxBoxSizer(wxVERTICAL);
-    pageSizer->Add( CreateCursorInput( nbPage, wxTEXT1D, wxTEXT2D, wxCOMBOU1D, 
+    pageSizer->Add( CreateCursorInput( nbPage, wxTEXT1D, wxTEXT2D, wxCOMBOU1D,
             wxCOMBOU2D, 1, 10 ), 0, wxALIGN_CENTER | wxALL, 2 );
-    
+
     wxFlexGridSizer* decaySettingsGrid = new wxFlexGridSizer(1,3,0,0);
-    wxCheckBox* pStartFitAtPeak = new wxCheckBox( nbPage, wxSTARTFITATPEAK, 
+    wxCheckBox* pStartFitAtPeak = new wxCheckBox( nbPage, wxSTARTFITATPEAK,
             wxT("Start fit at peak"),  wxDefaultPosition,  wxDefaultSize, 0  );
     decaySettingsGrid->Add( pStartFitAtPeak, 0, wxALIGN_CENTER | wxALL, 2);
- 
+
     pageSizer->Add( decaySettingsGrid, 0, wxALIGN_CENTER | wxALL, 2 );
-    
+
     pageSizer->SetSizeHints(nbPage);
     nbPage->SetSizer( pageSizer );
     nbPage->Layout();
@@ -261,8 +261,8 @@ wxFlexGridSizer* wxStfCursorsDlg::CreateCursorInput( wxPanel* nbPage, wxWindowID
     // units
     wxString szUnits[] = { wxT("ms"), wxT("pts") };
     int szUnitsSize = sizeof( szUnits ) / sizeof( wxString );
-    wxComboBox* comboU1 = new wxComboBox( nbPage, comboU1id,  wxT("ms"), wxDefaultPosition, 
-                wxSize(64,20), szUnitsSize, szUnits, wxCB_DROPDOWN | wxCB_READONLY ); 
+    wxComboBox* comboU1 = new wxComboBox( nbPage, comboU1id,  wxT("ms"), wxDefaultPosition,
+                wxSize(64,20), szUnitsSize, szUnits, wxCB_DROPDOWN | wxCB_READONLY );
     cursorGrid->Add( comboU1, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
     // Cursor 2:
@@ -271,7 +271,7 @@ wxFlexGridSizer* wxStfCursorsDlg::CreateCursorInput( wxPanel* nbPage, wxWindowID
         // Description
         Cursor2 = new wxStaticText( nbPage, wxID_ANY, wxT("Second cursor:"),
                 wxDefaultPosition, wxDefaultSize, wxTE_LEFT );
-        cursorGrid->Add( Cursor2, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );		
+        cursorGrid->Add( Cursor2, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
         // user entry
         strc2 << (int)c2;
@@ -279,18 +279,18 @@ wxFlexGridSizer* wxStfCursorsDlg::CreateCursorInput( wxPanel* nbPage, wxWindowID
                 wxSize(64,20), wxTE_RIGHT );
         cursorGrid->Add( textC2, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
         // units
-        wxComboBox* comboU2 = new wxComboBox( nbPage, comboU2id, wxT("ms"), wxDefaultPosition, 
-                    wxSize(64,20), szUnitsSize, szUnits, wxCB_DROPDOWN | wxCB_READONLY ); 
-        cursorGrid->Add( comboU2, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );	
+        wxComboBox* comboU2 = new wxComboBox( nbPage, comboU2id, wxT("ms"), wxDefaultPosition,
+                    wxSize(64,20), szUnitsSize, szUnits, wxCB_DROPDOWN | wxCB_READONLY );
+        cursorGrid->Add( comboU2, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
     }
     return cursorGrid;
 }
 
 
-void wxStfCursorsDlg::OnPeakcalcexec( wxCommandEvent& event ) 
+void wxStfCursorsDlg::OnPeakcalcexec( wxCommandEvent& event )
 {
     event.Skip();
-    wxGetApp().OnPeakcalcexecMsg();
+    wxGetApp().OnPeakcalcexecMsg(actDoc);
 }
 
 int wxStfCursorsDlg::ReadCursor(wxWindowID textId, bool isTime) const {
@@ -364,7 +364,7 @@ int wxStfCursorsDlg::GetPeakPoints() const
     }
 }
 
-void wxStfCursorsDlg::SetPeakPoints(int peakPoints) 
+void wxStfCursorsDlg::SetPeakPoints(int peakPoints)
 {
     wxRadioButton* pRadioButtonAll = (wxRadioButton*)FindWindow(wxRADIOALL);
     wxRadioButton* pRadioButtonMean = (wxRadioButton*)FindWindow(wxRADIOMEAN);
@@ -387,7 +387,7 @@ void wxStfCursorsDlg::SetPeakPoints(int peakPoints)
     pRadioButtonAll->SetValue(false);
     pRadioButtonMean->SetValue(true);
     pTextPM->Enable();
-    pTextPM->SetValue( entry );	
+    pTextPM->SetValue( entry );
 }
 
 stf::direction wxStfCursorsDlg::GetDirection() const {
@@ -399,8 +399,8 @@ stf::direction wxStfCursorsDlg::GetDirection() const {
     switch (pDirection->GetSelection()) {
     case 0: return stf::up;
     case 1: return stf::down;
-    case 2: return stf::both; 
-    default: return stf::undefined_direction;	
+    case 2: return stf::both;
+    default: return stf::undefined_direction;
     }
 }
 
@@ -411,7 +411,7 @@ void wxStfCursorsDlg::SetDirection(stf::direction direction) {
         return;
     }
     switch (direction) {
-    case stf::up:	
+    case stf::up:
         pDirection->SetSelection(0);
         break;
     case stf::down:
@@ -610,7 +610,7 @@ void wxStfCursorsDlg::UpdateCursors() {
     }
 
     if (select!=stf::measure_cursor && pText2 != NULL) {
-        wxString strNewValue2; 
+        wxString strNewValue2;
         if (cursor2isTime) {
             strNewValue2 << fNewValue2;
         } else {

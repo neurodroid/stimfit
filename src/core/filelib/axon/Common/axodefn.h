@@ -96,13 +96,13 @@
 ** Add other compiler dependant code HERE!
 */
 
-#if defined(__UNIX__) || defined(__STF__) 
+#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__)
 #define COMPILER "gcc"
 
 #include "unix.h"
 
 
-#endif /*__UNIX__*/
+#endif /*__LINUX__*/
 
 //===============================================================================================
 //
@@ -150,8 +150,14 @@
    #include "..\common\msdos.h"
 #elif defined(_WINDOWS)
    #error "ERROR: WIN16 is not supported any more."
-#elif defined(__UNIX__)
+#elif defined(__LINUX__)
    #define PLATFORM "Unix"
+#elif defined(__WXMAC__) 
+   #define PLATFORM "Mac"
+#elif defined(__APPLE__)
+   #define __WXMAC__
+   #define PLATFORM "Mac"
+   #define PLATFORM "Mac"
 #else
    #error "Platform not recognised... check AXODEFN.H"
 #endif

@@ -1,5 +1,10 @@
 Version History: Stimfit for GNU/Linux and Win32
 ================================================
+version 0.8.16, 03/27/09, CSH----------------------------------------------------------------
+	* Support to build against Python 2.6
+	* Support to build on Mac OS X
+	* wxAUIToolbar instead of wxToolbar
+
 version 0.8.15, 12/14/08, CSH----------------------------------------------------------------
 	* Moved export menu entries to "Save as" dialog. 
 	* Use hdf5 as default format for file saving. 

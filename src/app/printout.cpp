@@ -26,7 +26,7 @@
 
 #include "./app.h"
 #include "./view.h"
-#include "./frame.h"
+#include "./parentframe.h"
 #include "./doc.h"
 #include "./printout.h"
 #include "./graph.h"

@@ -18,15 +18,15 @@ EXTRA_DIST = stfswig.i ivtools.py mintools.py natools.py plottools.py minidemo.p
 
 install-exec-hook:
 	$(MKDIR_P) ${PYTHON_SITE_PKG}/stimfit
-	$(LN_S) -f ${prefix}/lib/libstf.so.0.0.0 ${PYTHON_SITE_PKG}/stimfit/_stf.so
-	cp $(srcdir)/ivtools.py ${PYTHON_SITE_PKG}/stimfit
-	cp $(srcdir)/mintools.py ${PYTHON_SITE_PKG}/stimfit
-	cp $(srcdir)/natools.py ${PYTHON_SITE_PKG}/stimfit
-	cp $(srcdir)/plottools.py ${PYTHON_SITE_PKG}/stimfit
-	cp $(srcdir)/minidemo.py ${PYTHON_SITE_PKG}/stimfit
-	cp $(srcdir)/charlie.py ${PYTHON_SITE_PKG}/stimfit
-	cp $(srcdir)/hdf5tools.py ${PYTHON_SITE_PKG}/stimfit
-	cp $(srcdir)/stf.py ${PYTHON_SITE_PKG}/stimfit
+	$(LN_S) -f ${prefix}/lib/${STF_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stimfit/_stf.so
+	cp -p $(srcdir)/ivtools.py ${PYTHON_SITE_PKG}/stimfit
+	cp -p $(srcdir)/mintools.py ${PYTHON_SITE_PKG}/stimfit
+	cp -p $(srcdir)/natools.py ${PYTHON_SITE_PKG}/stimfit
+	cp -p $(srcdir)/plottools.py ${PYTHON_SITE_PKG}/stimfit
+	cp -p $(srcdir)/minidemo.py ${PYTHON_SITE_PKG}/stimfit
+	cp -p $(srcdir)/charlie.py ${PYTHON_SITE_PKG}/stimfit
+	cp -p $(srcdir)/hdf5tools.py ${PYTHON_SITE_PKG}/stimfit
+	cp -p $(srcdir)/stf.py ${PYTHON_SITE_PKG}/stimfit
 	echo stimfit > ${PYTHON_SITE_PKG}/stimfit.pth
 
 endif

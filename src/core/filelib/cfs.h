@@ -20,10 +20,10 @@
 
 #include "machine.h"
 
-#ifdef macintosh                /* define CFSCONVERT in here if you want it */
-    #include <types.h>
-    #include <files.h>
-    #include <errors.h>
+#if 0 //def macintosh                /* define CFSCONVERT in here if you want it */
+    // #include <types.h>
+    // #include <files.h>
+    // #include <errors.h>
     #define  USEHANDLES
     #define  CFSAPI(type) type
     #undef   LLIO                   /* LLIO is not used for Mac             */
@@ -59,9 +59,11 @@
     #endif
 #endif
 
-#ifdef __UNIX__
+#if defined(__LINUX__) || defined(__WXMAC__)
     #define  qDebug 0               /* only used to debug Mac stuff         */
-    #include <malloc.h>
+    #ifdef __LINUX__
+        #include <malloc.h>
+    #endif
     #include <stdio.h>                         /* MSC I/O function definitions */
     #include <fcntl.h>
     #include <errno.h>
@@ -135,7 +137,7 @@ typedef struct
    short     vSize;  /* for type lstr gives no. of chars +1 for length byte */
 } TVarDesc;
 
-#ifdef __UNIX__
+#if defined(__linux__) || defined(__WXMAC__)
 typedef char            * TpStr;
 typedef const char      * TpCStr;
 typedef short           * TpShort;
@@ -168,7 +170,7 @@ typedef signed char    FAR * TpSStr;
 typedef WORD           FAR * TpUShort;
 #endif
 
-#ifdef macintosh
+#if 0 //def macintosh
     typedef int     fDef;        /* file handle means something else on Mac */
 #else
   #ifdef WIN32
@@ -191,7 +193,6 @@ extern "C" {
 ** Now definitions of the functions defined in the code
 */
 
-#if defined(_IS_MSDOS_) || defined(_IS_WINDOWS_) || defined(__UNIX__)
 CFSAPI(short) CreateCFSFile(TpCStr   fname,
                             TpCStr   comment,
                             WORD     blocksize,
@@ -200,22 +201,6 @@ CFSAPI(short) CreateCFSFile(TpCStr   fname,
                             TpCVDesc DSArray,
                             short    fileVars,
                             short    DSVars);
-#endif
-
-#ifdef macintosh
-CFSAPI(short) CreateCFSFile(ConstStr255Param   fname,          
-                            TpCStr   comment,   
-                            WORD     blockSize, 
-                            short    channels,  
-                            TpCVDesc fileArray, 
-                            TpCVDesc DSArray,   
-                            short    fileVars,  
-                            short    DSVars,    
-                            short    vRefNum,   
-                            long     dirID,     
-                            OSType   creator,   
-                            OSType   fileType);  
-#endif
 
 CFSAPI(void)  SetFileChan(short     handle,
                           short     channel,
@@ -274,20 +259,9 @@ CFSAPI(void)  SetVarVal(short  handle,
 CFSAPI(short) CloseCFSFile(short  handle);
 
 
-#if defined(_IS_MSDOS_) || defined(_IS_WINDOWS_) || defined(__UNIX__)
 CFSAPI(short) OpenCFSFile(TpCStr  fname,
                           short   enableWrite,
                           short   memoryTable);
-#endif
-
-#ifdef macintosh
-CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
-                          short   enableWrite,
-                          short   memoryTable,    
-                          short   vRefNum,   
-                          long    dirID);
-
-#endif
 
 CFSAPI(void) GetGenInfo(short   handle,
                         TpStr   time,

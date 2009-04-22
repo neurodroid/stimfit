@@ -25,11 +25,6 @@
  *  @{
  */
 
-#ifdef _WINDOWS
-#define STFVERSION "0.8.15"
-#define STFDATE "Fri Dec 12 16:50:22 CEST 2008"
-#endif
-
 //! Event ids
 enum {
     wxID_TOOL_FIRST,
@@ -81,9 +76,6 @@ enum {
     wxID_EXPORTSVG,
     wxID_TRACES,
     wxID_PLOTSELECTED,
-    wxCOMBOTRACES,
-    wxCOMBOACTCHANNEL,
-    wxCOMBOINACTCHANNEL,
     wxID_CURSORS,
     wxID_AVERAGE,
     wxID_ALIGNEDAVERAGE,
@@ -146,27 +138,9 @@ enum {
     wxID_EVENT_ADDEVENT,
     wxID_EVENT_EXTRACT,
     wxID_EVENT_ERASE,
-    wxID_USERDEF1,
-    wxID_USERDEF2,
-    wxID_USERDEF3,
-    wxID_USERDEF4,
-    wxID_USERDEF5,
-    wxID_USERDEF6,
-    wxID_USERDEF7,
-    wxID_USERDEF8,
-    wxID_USERDEF9,
-    wxID_USERDEF10,
-    wxID_USERDEF11,
-    wxID_USERDEF12,
-    wxID_USERDEF13,
-    wxID_USERDEF14,
-    wxID_USERDEF15,
-    wxID_USERDEF16,
-    wxID_USERDEF17,
-    wxID_USERDEF18,
-    wxID_USERDEF19,
-    wxID_USERDEF20,
-    wxID_USERDEF21
+    wxCOMBOTRACES,
+    wxCOMBOACTCHANNEL,
+    wxCOMBOINACTCHANNEL
 };
 
 #include "wx/mdi.h"
@@ -372,7 +346,7 @@ public:
      *  cursor positions or trace selections, are modified, this function
      *  needs to be called to update the results table.
      */
-    void OnPeakcalcexecMsg();
+    void OnPeakcalcexecMsg(wxStfDoc* actDoc = 0);
 
     //! Destroys the last cursor settings dialog when the last document is closed
     /*! Do not use this function directly. It only needs to be called from wxStfDoc::OnCloseDocument().

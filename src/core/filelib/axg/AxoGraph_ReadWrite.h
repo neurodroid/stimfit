@@ -184,7 +184,9 @@
    ---------------------------------------------------------------------------------- */
 
 // uncomment the following line to run on little endian hardware ( byte swaps data before reading or writing )
+#ifndef __LITTLE_ENDIAN__
 #define __LITTLE_ENDIAN__
+#endif
 
 #include "fileUtils.h"
 
@@ -202,21 +204,21 @@ const short kAxoGraph_Digitized_Format = 2;
 const short kAxoGraph_X_Format = 6;
 const short kAxoGraph_X_Digitized_Format = 6;
 
-const unsigned char kAxoGraph4DocType[4] = { 'A', 'x', 'G', 'r' };
-const unsigned char kAxoGraphXDocType[4] = { 'a', 'x', 'g', 'x' };
+const axgchar kAxoGraph4DocType[4] = { 'A', 'x', 'G', 'r' };
+const axgchar kAxoGraphXDocType[4] = { 'a', 'x', 'g', 'x' };
 
 // column header for AxoGraph graph files
 struct ColumnHeader
 {
     long points;
-    unsigned char title[80];
+    axgchar title[80];
 };
 
 // x-axis column header for AxoGraph digitized files
 struct DigitizedFirstColumnHeader
 {
     long points;
-    unsigned char title[80];
+    axgchar title[80];
     float firstPoint;
     float sampleInterval;
 };
@@ -225,7 +227,7 @@ struct DigitizedFirstColumnHeader
 struct DigitizedColumnHeader
 {
     long points;
-    unsigned char title[80];
+    axgchar title[80];
     float scalingFactor;
 };
 

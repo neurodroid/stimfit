@@ -26,7 +26,8 @@
 #include "./../app/doc.h"
 #include "./../app/view.h"
 #include "./../app/graph.h"
-#include "./../app/frame.h"
+#include "./../app/parentframe.h"
+#include "./../app/childframe.h"
 #include "./../app/dlgs/cursorsdlg.h"
 #include "./../core/recording.h"
 #include "./../core/fitlib.h"
@@ -65,7 +66,7 @@ bool check_doc( ) {
 const char* get_filename( ) {
     if ( !check_doc() ) return "";
 
-    return actDoc()->GetFilename();
+    return actDoc()->GetFilename().utf8_str();
 }
 
 bool refresh_graph() {
@@ -267,24 +268,24 @@ std::string get_recording_comment( ) {
     if ( !check_doc() ) return "";
     wxString comment = wxT("");
     comment << actDoc()->GetFileDescription() << actDoc()->GetGlobalSectionDescription();
-    return std::string(comment);
+    return std::string(comment.utf8_str());
 }
 
 bool set_recording_comment( const char* comment ) {
     if ( !check_doc() ) return false;
-    actDoc()->SetFileDescription(comment);
+    actDoc()->SetFileDescription( wxString(comment, wxConvLocal) );
     return true;
 }
 
 bool set_recording_date( const char* date ) {
     if ( !check_doc() ) return false;
-    actDoc()->SetDate(date);
+    actDoc()->SetDate( wxString(date,wxConvLocal) );
     return true;
 }
 
 bool set_recording_time( const char* time ) {
     if ( !check_doc() ) return false;
-    actDoc()->SetTime(time);
+    actDoc()->SetTime( wxString(time,wxConvLocal));
     return true;
 }
 
@@ -405,7 +406,7 @@ const char* get_channel_name( int index ) {
         index = actDoc()->GetCurCh();
     }
     try {
-        return actDoc()->at( index ).GetChannelName();
+        return actDoc()->at( index ).GetChannelName().utf8_str();
     }
     catch (const std::out_of_range& e) {
         wxString msg(wxT("Index out of range in get_channel_name:\n"));
@@ -422,7 +423,7 @@ bool set_channel_name( const char* name, int index ) {
         index = actDoc()->GetCurCh();
     }
     try {
-        actDoc()->at( index ).SetChannelName( name );
+        actDoc()->at( index ).SetChannelName( wxString(name,wxConvLocal) );
     }
     catch (const std::out_of_range& e) {
         wxString msg(wxT("Index out of range in get_channel_name:\n"));
@@ -443,7 +444,7 @@ const char* get_trace_name( int trace, int channel ) {
         trace = actDoc()->GetCurSec();
     }
     try {
-        return actDoc()->at( channel ).at( trace ).GetSectionDescription();
+        return actDoc()->at( channel ).at( trace ).GetSectionDescription().utf8_str();
     }
     catch (const std::out_of_range& e) {
         wxString msg(wxT("Index out of range in get_trace_name:\n"));
@@ -808,7 +809,7 @@ const char* get_yunits( int trace, int channel ) {
         trace = actDoc()->GetCurSec();
     }
     try {
-        return actDoc()->at( channel ).GetYUnits();
+        return actDoc()->at( channel ).GetYUnits().utf8_str();
     }
     catch (const std::out_of_range& e) {
         wxString msg(wxT("Index out of range in get_yunits:\n"));
@@ -840,7 +841,7 @@ bool set_yunits( const char* units, int trace, int channel ) {
         trace = actDoc()->GetCurSec();
     }
     try {
-        actDoc()->at( channel ).SetYUnits( units );
+        actDoc()->at( channel ).SetYUnits( wxString(units,wxConvLocal) );
     }
     catch (const std::out_of_range& e) {
         wxString msg(wxT("Index out of range in set_yunits:\n"));
@@ -896,15 +897,19 @@ bool measure( ) {
 }
 
 double get_base( ) {
-    if ( !check_doc() ) return 0.0;
     
+    if ( !check_doc() ) return 0.0;
+
     return actDoc()->GetBase();
+
 }
 
 double get_peak( ) {
-    if ( !check_doc() ) return 0.0;
     
+    if ( !check_doc() ) return 0.0;
+
     return actDoc()->GetPeak();
+    
 }
 
 void _gMatrix_resize( std::size_t channels, std::size_t sections ) {
@@ -937,7 +942,7 @@ void _gNames_resize( std::size_t channels ) {
 
 void _gNames_at( const char* name, int channel ) {
     try{
-        gNames.at(channel) = name;
+        gNames.at(channel) = wxString( name, wxConvLocal );
     }
     catch (const std::out_of_range& e) {
         wxString msg(wxT("Out of range exception in _gNames_at:\n"));
@@ -1071,9 +1076,10 @@ int leastsq_param_size( int fselect ) {
 }
 
 PyObject* leastsq( int fselect, bool refresh ) {
-    if ( !check_doc() ) return false;
-   
+    if ( !check_doc() ) return NULL;
+
     wxStfDoc* pDoc = actDoc();
+    
     wxCommandEvent wce;
 
     int n_params = 0;
@@ -1140,6 +1146,7 @@ PyObject* leastsq( int fselect, bool refresh ) {
                 PyFloat_FromDouble( params[n_dict] ) );
     }
     PyDict_SetItemString( retDict, "SSE", PyFloat_FromDouble( chisqr ) );
+    
     return retDict;
 }
 

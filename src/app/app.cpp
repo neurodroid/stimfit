@@ -49,26 +49,32 @@
     #include <wx/wxPython/wxPython.h>
 #endif
 
+#include "stfconf.h"
 #include "./app.h"
 #include "./doc.h"
 #include "./view.h"
-#include "./frame.h"
+#include "./parentframe.h"
+#include "./childframe.h"
 #include "./graph.h"
 #include "./dlgs/cursorsdlg.h"
 #include "./dlgs/smalldlgs.h"
 #include "./funclib/funclib.h"
 #include "./plugins/plugins.h"
-#ifdef __UNIX__
+#if defined(__LINUX__) || defined(__WXMAC__)
 #include "./../core/filelib/axon/Common/axodefn.h"
 #include "./../core/filelib/axon/AxAbfFio32/abffiles.h"
 #endif
 #include "./../core/fitlib.h"
 
+#ifdef __WXMAC__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 #ifdef _WINDOWS
-	extern wxStfApp& wxGetApp();
-	wxStfApp& wxGetApp() {
-		return *wx_static_cast( wxStfApp*, wxApp::GetInstance() );
-	}
+extern wxStfApp& wxGetApp();
+wxStfApp& wxGetApp() {
+    return *wx_static_cast( wxStfApp*, wxApp::GetInstance() );
+}
 #else
 IMPLEMENT_APP(wxStfApp)
 #endif
@@ -82,27 +88,31 @@ EVT_MENU( wxID_NEWFROMALL, wxStfApp::OnNewfromall )
 EVT_MENU( wxID_APPLYTOALL, wxStfApp::OnApplytoall )
 END_EVENT_TABLE()
 
-
 wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isHires(false), txtImport(), funcLib(),
     pluginLib(), CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ), m_file_menu(0) {}
 
 bool wxStfApp::OnInit(void)
 {
+    if (!wxApp::OnInit()) {
+        return false;
+    }
+
+
 #if wxCHECK_VERSION(2, 9, 0)
     static const wxCmdLineEntryDesc s_cmdLineDesc[] =
-    {
-        { wxCMD_LINE_SWITCH, "h", "help", "Show this help message.", wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_HELP    },
-        { wxCMD_LINE_OPTION, "d", "dir", "Working directory to change to." },
-        { wxCMD_LINE_PARAM, NULL, NULL, "File to open.", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-        { wxCMD_LINE_NONE }
-    };
+        {
+            { wxCMD_LINE_SWITCH, "h", "help", "Show this help message.", wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_HELP    },
+            { wxCMD_LINE_OPTION, "d", "dir", "Working directory to change to." },
+            { wxCMD_LINE_PARAM, NULL, NULL, "File to open.", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+            { wxCMD_LINE_NONE }
+        };
 #else
     static const wxCmdLineEntryDesc s_cmdLineDesc[] =
-    {
-        { wxCMD_LINE_SWITCH, wxT("h"), wxT("help"), wxT("Show this help message."), wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_HELP  },
-        { wxCMD_LINE_PARAM, wxT(""), wxT(""), wxT("File to open."), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-        { wxCMD_LINE_NONE }
-    };
+        {
+            { wxCMD_LINE_SWITCH, wxT("h"), wxT("help"), wxT("Show this help message."), wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_HELP  },
+            { wxCMD_LINE_PARAM, wxT(""), wxT(""), wxT("File to open."), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+            { wxCMD_LINE_NONE }
+        };
 #endif
     // Parse command line
     wxCmdLineParser parser( s_cmdLineDesc, argc, argv );
@@ -146,52 +156,55 @@ bool wxStfApp::OnInit(void)
     m_docManager.reset(new wxDocManager);
     //// Create a template relating drawing documents to their views
     m_cfsTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
-            wxT("CED filing system"), wxT("*.dat;*.cfs"), wxT(""), wxT("dat;cfs"),
-            wxT("CFS Document"), wxT("CFS View"), CLASSINFO(wxStfDoc),
-            CLASSINFO(wxStfView) );
+                                     wxT("CED filing system"), wxT("*.dat;*.cfs"), wxT(""), wxT("dat;cfs"),
+                                     wxT("CFS Document"), wxT("CFS View"), CLASSINFO(wxStfDoc),
+                                     CLASSINFO(wxStfView) );
 
     m_hdf5Template=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
-            wxT("hdf5 file"), wxT("*.h5"), wxT(""), wxT("h5"),
-            wxT("HDF5 Document"), wxT("HDF5 View"), CLASSINFO(wxStfDoc),
-            CLASSINFO(wxStfView) );
+                                      wxT("hdf5 file"), wxT("*.h5"), wxT(""), wxT("h5"),
+                                      wxT("HDF5 Document"), wxT("HDF5 View"), CLASSINFO(wxStfDoc),
+                                      CLASSINFO(wxStfView) );
 
     m_abfTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
-            wxT("Axon binary file"), wxT("*.abf"), wxT(""), wxT("abf"),
-            wxT("ABF Document"), wxT("ABF View"), CLASSINFO(wxStfDoc),
-            CLASSINFO(wxStfView) );
-#ifdef __UNIX__
+                                     wxT("Axon binary file"), wxT("*.abf"), wxT(""), wxT("abf"),
+                                     wxT("ABF Document"), wxT("ABF View"), CLASSINFO(wxStfDoc),
+                                     CLASSINFO(wxStfView) );
+#if defined(__LINUX__) || defined(__WXMAC__)
     ABF_Initialize();
 #endif
     m_atfTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
-            wxT("Axon text file"), wxT("*.atf"), wxT(""), wxT("atf"),
-            wxT("ATF Document"), wxT("ATF View"), CLASSINFO(wxStfDoc),
-            CLASSINFO(wxStfView) );
+                                     wxT("Axon text file"), wxT("*.atf"), wxT(""), wxT("atf"),
+                                     wxT("ATF Document"), wxT("ATF View"), CLASSINFO(wxStfDoc),
+                                     CLASSINFO(wxStfView) );
     m_axgTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
-            wxT("Axograph binary file"), wxT("*.axgd;*.axgx"), wxT(""), wxT("axgd;axgx"),
-            wxT("AXG Document"), wxT("AXG View"), CLASSINFO(wxStfDoc),
-            CLASSINFO(wxStfView) );
+                                     wxT("Axograph binary file"), wxT("*.axgd;*.axgx"), wxT(""), wxT("axgd;axgx"),
+                                     wxT("AXG Document"), wxT("AXG View"), CLASSINFO(wxStfDoc),
+                                     CLASSINFO(wxStfView) );
 #if 0
     m_sonTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
-            wxT("CED Spike 2 (SON) file"), wxT("*.smr"), wxT(""), wxT(""),
-            wxT("SON Document"), wxT("SON View"), CLASSINFO(wxStfDoc),
-            CLASSINFO(wxStfView) );
+                                     wxT("CED Spike 2 (SON) file"), wxT("*.smr"), wxT(""), wxT(""),
+                                     wxT("SON Document"), wxT("SON View"), CLASSINFO(wxStfDoc),
+                                     CLASSINFO(wxStfView) );
 #endif
     m_txtTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
-            wxT("General text file import"), wxT("*.*"), wxT(""), wxT(""),
-            wxT("Text Document"), wxT("Text View"), CLASSINFO(wxStfDoc),
-            CLASSINFO(wxStfView) );
+                                     wxT("General text file import"), wxT("*.*"), wxT(""), wxT(""),
+                                     wxT("Text Document"), wxT("Text View"), CLASSINFO(wxStfDoc),
+                                     CLASSINFO(wxStfView) );
 
     //// Create the main frame window
-    frame = new wxStfParentFrame((wxDocManager *) m_docManager.get(), (wxFrame *) NULL,
-            wxT("Stimfit"), /*wxPoint(0, 0)*/wxDefaultPosition, wxSize(1024, 768),
-            wxDEFAULT_FRAME_STYLE | wxFULL_REPAINT_ON_RESIZE | wxMAXIMIZE);
-
-#ifdef _WINDOWS
+    frame = new wxStfParentFrame((wxDocManager *) m_docManager.get(), (wxFrame *)NULL,
+                                 wxT("Stimfit"), wxDefaultPosition,
+#ifndef __WXMAC__
+                                 wxSize(1024, 768),
+#else
+                                 wxSize(640, 480),
+#endif
+                                 wxDEFAULT_FRAME_STYLE | wxFULL_REPAINT_ON_RESIZE | wxMAXIMIZE);
+                                 
+#if 0
     frame->SetIcon( wxICON(sample) );
 #endif
-#ifdef __X__
     frame->SetIcon(wxIcon(wxT("doc.xbm")));
-#endif
 
     //// Make a menubar
     m_file_menu = new wxMenu;
@@ -214,62 +227,59 @@ bool wxStfApp::OnInit(void)
 
     wxMenu *m_view_menu = new wxMenu;
     m_view_menu->Append(wxID_VIEW_SHELL, wxT("&Toggle Python shell"),
-            wxT("Shows or hides the Python shell"));
+                        wxT("Shows or hides the Python shell"));
 
     wxMenuBar *menu_bar = new wxMenuBar;
 
     menu_bar->Append(m_file_menu, wxT("&File"));
     /*	if (edit_menu)
-		menu_bar->Append(edit_menu, wxT("&Edit"));
-     */
+        menu_bar->Append(edit_menu, wxT("&Edit"));
+    */
     menu_bar->Append(m_view_menu, wxT("&View"));
 
     menu_bar->Append(help_menu, wxT("&Help"));
 
 #ifdef __WXMAC__
-     wxMenuBar::MacSetCommonMenuBar(menu_bar);
+    // wxApp::SetExitOnFrameDelete(false);
+    wxMenuBar::MacSetCommonMenuBar(menu_bar);
 #endif //def __WXMAC__
-     //// Associate the menu bar with the frame
-     frame->SetMenuBar(menu_bar);
+    //// Associate the menu bar with the frame
+    frame->SetMenuBar(menu_bar);
 
-     frame->Centre(wxBOTH);
+    frame->Centre(wxBOTH);
 
-     /*    pStatusBar = new wxStatusBar(frame);
-    frame->SetStatusBar(pStatusBar);
-      */
-#ifndef __WXMAC__
-     frame->Show(true);
+    /*    pStatusBar = new wxStatusBar(frame);
+          frame->SetStatusBar(pStatusBar);
+    */
+#if 1 //ndef __WXMAC__
+    frame->Show(true);
 #endif //ndef __WXMAC__
 
-     // load user-defined plugins:
-     pluginLib = stf::GetPluginLib();
-     // load fit function library:
-     funcLib = stf::GetFuncLib();
+    // load user-defined plugins:
+    pluginLib = stf::GetPluginLib();
+    // load fit function library:
+    funcLib = stf::GetFuncLib();
 
-     SetTopWindow(frame);
+    SetTopWindow(frame);
 
-     // Get file to load
-     wxString fileToLoad = wxEmptyString;
-     if ( parser.GetParamCount() > 0 ) {
-         fileToLoad = parser.GetParam();
-     }
-
-     if (!fileToLoad.empty()) {
-         wxDocTemplate* templ=m_docManager->FindTemplateForPath(fileToLoad);
-         wxStfDoc* NewDoc=(wxStfDoc*)templ->CreateDocument(fileToLoad,wxDOC_NEW);
-         NewDoc->SetDocumentTemplate(templ);
-         if (!NewDoc->OnOpenDocument(fileToLoad)) {
-             ErrorMsg(wxT("Couldn't open file, aborting file import"));
-             m_docManager->CloseDocument(NewDoc);
-             return false;
-         }
-     }
-
-/*    if (!wxApp::OnInit()) {
-       return false;
+    // Get file to load
+    wxString fileToLoad = wxEmptyString;
+    if ( parser.GetParamCount() > 0 ) {
+        fileToLoad = parser.GetParam();
     }
-*/
-     return true;
+
+    if (!fileToLoad.empty()) {
+        wxDocTemplate* templ=m_docManager->FindTemplateForPath(fileToLoad);
+        wxStfDoc* NewDoc=(wxStfDoc*)templ->CreateDocument(fileToLoad,wxDOC_NEW);
+        NewDoc->SetDocumentTemplate(templ);
+        if (!NewDoc->OnOpenDocument(fileToLoad)) {
+            ErrorMsg(wxT("Couldn't open file, aborting file import"));
+            m_docManager->CloseDocument(NewDoc);
+            return false;
+        }
+    }
+
+    return true;
 }
 
 int wxStfApp::OnExit()
@@ -313,48 +323,57 @@ wxString wxStfApp::wxGetProfileString( const wxString& main, const wxString& sub
 }
 
 
-void wxStfApp::OnPeakcalcexecMsg() {
-    wxStfDoc* actDoc = GetActiveDoc();
-    wxStfView* actView = GetActiveView();
-    if (actView!=NULL) actView->GetGraph()->Refresh();
+void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
+    if (actDoc==0) {
+        actDoc = GetActiveDoc();
+    }
+    wxStfView* actView = (wxStfView*)actDoc->GetFirstView();
+
+    if (actView!=NULL) {
+        wxStfGraph* pGraph = actView->GetGraph();
+        if (pGraph != NULL)
+            pGraph->Refresh();
+        else
+            return;
+    }
     bool baseToSlope=false;
     double slope=0.0;
     if (CursorsDialog != NULL &&
-            CursorsDialog->IsShown() &&
-            actView!=NULL &&
+        CursorsDialog->IsShown() &&
+        actView!=NULL &&
         actDoc!=NULL &&
         actDoc->IsInitialized())
     {
         CursorsDialog->SetActiveDoc(actDoc);
         switch (CursorsDialog->CurrentCursor()) {
-        case stf::measure_cursor: {
-            actDoc->SetMeasCursor(CursorsDialog->GetCursorM());// * GetDocument()->GetSR()));
-            break;
-        }
-        //Get limits for peak calculation from the dialog box:
-        case stf::peak_cursor: {
-            actDoc->SetPeakBeg(CursorsDialog->GetCursor1P());// * GetDocument()->GetSR()));
-            actDoc->SetPeakEnd(CursorsDialog->GetCursor2P());// * GetDocument()->GetSR()));
-            actDoc->CheckBoundaries();
-            break;
-        }
-        case stf::base_cursor: {
-            actDoc->SetBaseBeg(CursorsDialog->GetCursor1B());
-            actDoc->SetBaseEnd(CursorsDialog->GetCursor2B());
-            break;
-        }
-        case stf::decay_cursor: {
-            actDoc->SetFitBeg(CursorsDialog->GetCursor1D());
-            actDoc->SetFitEnd(CursorsDialog->GetCursor2D());
-            break;
-        }
-        case stf::undefined_cursor:
-        {
-            ErrorMsg(wxT("Undefined cursor in MyApp::OnPeakcalcexecMsg()"));
-            return;
-        }
-        default:
-            break;
+         case stf::measure_cursor: {
+             actDoc->SetMeasCursor(CursorsDialog->GetCursorM());// * GetDocument()->GetSR()));
+             break;
+         }
+             //Get limits for peak calculation from the dialog box:
+         case stf::peak_cursor: {
+             actDoc->SetPeakBeg(CursorsDialog->GetCursor1P());// * GetDocument()->GetSR()));
+             actDoc->SetPeakEnd(CursorsDialog->GetCursor2P());// * GetDocument()->GetSR()));
+             actDoc->CheckBoundaries();
+             break;
+         }
+         case stf::base_cursor: {
+             actDoc->SetBaseBeg(CursorsDialog->GetCursor1B());
+             actDoc->SetBaseEnd(CursorsDialog->GetCursor2B());
+             break;
+         }
+         case stf::decay_cursor: {
+             actDoc->SetFitBeg(CursorsDialog->GetCursor1D());
+             actDoc->SetFitEnd(CursorsDialog->GetCursor2D());
+             break;
+         }
+         case stf::undefined_cursor:
+             {
+                 ErrorMsg(wxT("Undefined cursor in MyApp::OnPeakcalcexecMsg()"));
+                 return;
+             }
+         default:
+             break;
         }
         //Update edit peak limits in the peak calculation dialog box
         if (CursorsDialog->GetPeakAtEnd())
@@ -423,13 +442,24 @@ void wxStfApp::OnPeakcalcexecMsg() {
 wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
 {
     //// Make a child frame
+    int xpos = (GetDocCount()-1) * 16 + 64;
+    int ypos = (GetDocCount()-1) * 16 + 80;
     wxStfChildFrame *subframe = new wxStfChildFrame(
-            doc, view, GetMainFrame(), wxID_ANY, doc->GetTitle(),
-            wxDefaultPosition, wxDefaultSize,
-            wxDEFAULT_FRAME_STYLE |
-            wxNO_FULL_REPAINT_ON_RESIZE |
-            wxWANTS_CHARS | wxMAXIMIZE
-    );
+                                                    doc, view, 
+#ifdef __WXMAC__
+                                                    GetMainFrame(), wxID_ANY, doc->GetTitle(),
+                                                    wxPoint(xpos,ypos), wxSize(800,600),
+                                                    wxDEFAULT_FRAME_STYLE |
+                                                    // wxNO_FULL_REPAINT_ON_RESIZE |
+                                                    wxWANTS_CHARS | wxMAXIMIZE
+#else
+                                                    GetMainFrame(), wxID_ANY, doc->GetTitle(),
+                                                    wxDefaultPosition, wxDefaultSize,
+                                                    wxDEFAULT_FRAME_STYLE |
+                                                    // wxNO_FULL_REPAINT_ON_RESIZE |
+                                                    wxWANTS_CHARS | wxMAXIMIZE
+#endif
+                                                    );
 
 #ifdef __WXMSW__
     subframe->SetIcon(wxString(wxT("chart")));
@@ -472,53 +502,53 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
 
     wxMenu* m_edit_menu=new wxMenu;
     m_edit_menu->Append(
-            wxID_CURSORS,
-            wxT("&Cursor settings..."),
-            wxT("Set cursor position, direction, etc.")
-    );
+                        wxID_CURSORS,
+                        wxT("&Cursor settings..."),
+                        wxT("Set cursor position, direction, etc.")
+                        );
     m_edit_menu->AppendSeparator();
     m_edit_menu->Append(
-            wxID_MYSELECTALL,
-            wxT("&Select all traces"),
-            wxT("Select all traces in this file")
-    );
+                        wxID_MYSELECTALL,
+                        wxT("&Select all traces"),
+                        wxT("Select all traces in this file")
+                        );
     m_edit_menu->Append(
-            wxID_SELECTSOME,
-            wxT("S&elect some traces..."),
-            wxT("Select every n-th trace in this file")
-    );
+                        wxID_SELECTSOME,
+                        wxT("S&elect some traces..."),
+                        wxT("Select every n-th trace in this file")
+                        );
     m_edit_menu->Append(
-            wxID_UNSELECTALL,
-            wxT("&Unselect all traces"),
-            wxT("Unselect all traces in this file")
-    );
+                        wxID_UNSELECTALL,
+                        wxT("&Unselect all traces"),
+                        wxT("Unselect all traces in this file")
+                        );
     m_edit_menu->Append(
-            wxID_UNSELECTSOME,
-            wxT("U&nselect some traces"),
-            wxT("Unselect some traces in this file")
-    );
+                        wxID_UNSELECTSOME,
+                        wxT("U&nselect some traces"),
+                        wxT("Unselect some traces in this file")
+                        );
     wxMenu *editSub=new wxMenu;
     editSub->Append(
-            wxID_NEWFROMSELECTEDTHIS,
-            wxT("&selected traces from this file"),
-            wxT("Create a new window showing all selected traces from this file")
-    );
+                    wxID_NEWFROMSELECTEDTHIS,
+                    wxT("&selected traces from this file"),
+                    wxT("Create a new window showing all selected traces from this file")
+                    );
     editSub->Append(
-            wxID_NEWFROMSELECTED,
-            wxT("&selected traces from all files"),
-            wxT("Create a new window showing all selected traces from all files")
-    );
+                    wxID_NEWFROMSELECTED,
+                    wxT("&selected traces from all files"),
+                    wxT("Create a new window showing all selected traces from all files")
+                    );
     editSub->Append(wxID_NEWFROMALL,
-            wxT("&all traces from all files"),
-            wxT("Create a new window showing all traces from all files")
-    );
+                    wxT("&all traces from all files"),
+                    wxT("Create a new window showing all traces from all files")
+                    );
     m_edit_menu->AppendSeparator();
     m_edit_menu->AppendSubMenu(editSub,wxT("New window with..."));
     m_edit_menu->Append(
-            wxID_CONCATENATE,
-            wxT("&Concatenate selected traces"),
-            wxT("Create one large trace by merging selected traces in this file")
-    );
+                        wxID_CONCATENATE,
+                        wxT("&Concatenate selected traces"),
+                        wxT("Create one large trace by merging selected traces in this file")
+                        );
     wxMenu *latencyStartSub=new wxMenu;
     latencyStartSub->AppendCheckItem(wxID_LATENCYSTART_MAXSLOPE, wxT("max. slope of second channel"));
     latencyStartSub->AppendCheckItem(wxID_LATENCYSTART_HALFRISE, wxT("half-maximal amplitude of second channel"));
@@ -532,106 +562,106 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     latencyEndSub->AppendCheckItem(wxID_LATENCYEND_MANUAL, wxT("Manual"));
     m_edit_menu->AppendSeparator();
     m_edit_menu->AppendSubMenu(
-            latencyStartSub,
-            wxT("Measure latency from..."),
-            wxT("Choose starting point of latency measurement")
-    );
+                               latencyStartSub,
+                               wxT("Measure latency from..."),
+                               wxT("Choose starting point of latency measurement")
+                               );
     m_edit_menu->AppendSubMenu(
-            latencyEndSub,
-            wxT("Measure latency to..."),
-            wxT("Choose ending point of latency measurement")
-    );
+                               latencyEndSub,
+                               wxT("Measure latency to..."),
+                               wxT("Choose ending point of latency measurement")
+                               );
     m_edit_menu->AppendCheckItem(
-            wxID_LATENCYWINDOW,
-            wxT("Use peak window for latency cursor"),
-            wxT("Uses the current peak window to measure the peak in the inactive channel")
-    );
+                                 wxID_LATENCYWINDOW,
+                                 wxT("Use peak window for latency cursor"),
+                                 wxT("Uses the current peak window to measure the peak in the inactive channel")
+                                 );
     wxMenu* m_view_menu = new wxMenu;
     m_view_menu->Append(
-            wxID_VIEW_RESULTS,
-            wxT("&Results..."),
-            wxT("Select analysis results to be shown in the results table")
-    );
+                        wxID_VIEW_RESULTS,
+                        wxT("&Results..."),
+                        wxT("Select analysis results to be shown in the results table")
+                        );
     m_view_menu->Append(
-            wxID_APPLYTOALL,
-            wxT("&Apply scaling to all windows"),
-            wxT("Apply this trace's scaling to all other windows")
-    );
+                        wxID_APPLYTOALL,
+                        wxT("&Apply scaling to all windows"),
+                        wxT("Apply this trace's scaling to all other windows")
+                        );
     m_view_menu->AppendCheckItem(
-            wxID_SCALE,
-            wxT("&View scale bars"),
-            wxT("If checked, use scale bars rather than coordinates")
-    );
+                                 wxID_SCALE,
+                                 wxT("&View scale bars"),
+                                 wxT("If checked, use scale bars rather than coordinates")
+                                 );
     m_view_menu->AppendCheckItem(
-            wxID_HIRES,
-            wxT("View &full resolution"),
-            wxT("If checked, plot large traces at high resolution")
-    );
+                                 wxID_HIRES,
+                                 wxT("View &full resolution"),
+                                 wxT("If checked, plot large traces at high resolution")
+                                 );
     m_view_menu->AppendSeparator();
     m_view_menu->Append(wxID_SAVEPERSPECTIVE,wxT("&Save window positions"));
     m_view_menu->Append(wxID_LOADPERSPECTIVE,wxT("&Load window positions"));
     m_view_menu->Append(wxID_RESTOREPERSPECTIVE,wxT("&Restore default window positions"));
     m_view_menu->AppendSeparator();
     m_view_menu->Append(wxID_VIEW_SHELL, wxT("&Toggle Python shell"),
-            wxT("Shows or hides the Python shell"));
+                        wxT("Shows or hides the Python shell"));
 
 
 
     wxMenu *analysis_menu = new wxMenu;
     wxMenu *fitSub = new wxMenu;
     fitSub->Append(
-            wxID_FIT,
-            wxT("&Nonlinear regression..."),
-            wxT("Fit a function to this trace between fit cursors")
-    );
+                   wxID_FIT,
+                   wxT("&Nonlinear regression..."),
+                   wxT("Fit a function to this trace between fit cursors")
+                   );
     fitSub->Append(
-            wxID_LFIT,
-            wxT("&Linear fit..."),
-            wxT("Fit a linear function to this trace between fit cursors")
-    );
+                   wxID_LFIT,
+                   wxT("&Linear fit..."),
+                   wxT("Fit a linear function to this trace between fit cursors")
+                   );
     analysis_menu->AppendSubMenu(fitSub, wxT("&Fit"));
     wxMenu *transformSub = new wxMenu;
     transformSub->Append(
-            wxID_LOG,
-            wxT("&Logarithmic (base e)..."),
-            wxT("Transform selected traces logarithmically")
-    );
+                         wxID_LOG,
+                         wxT("&Logarithmic (base e)..."),
+                         wxT("Transform selected traces logarithmically")
+                         );
     analysis_menu->AppendSubMenu(transformSub, wxT("&Transform"));
     analysis_menu->Append(
-            wxID_MULTIPLY,
-            wxT("&Multiply..."),
-            wxT("Multiply selected traces")
-    );
+                          wxID_MULTIPLY,
+                          wxT("&Multiply..."),
+                          wxT("Multiply selected traces")
+                          );
     analysis_menu->Append(
-            wxID_INTEGRATE,
-            wxT("&Integrate"),
-            wxT("Integrate this trace between fit cursors")
-    );
+                          wxID_INTEGRATE,
+                          wxT("&Integrate"),
+                          wxT("Integrate this trace between fit cursors")
+                          );
     analysis_menu->Append(
-            wxID_DIFFERENTIATE,
-            wxT("&Differentiate"),
-            wxT("Differentiate selected traces")
-    );
+                          wxID_DIFFERENTIATE,
+                          wxT("&Differentiate"),
+                          wxT("Differentiate selected traces")
+                          );
     analysis_menu->Append(
-            wxID_SUBTRACTBASE,
-            wxT("&Subtract baseline"),
-            wxT("Subtract baseline from selected traces")
-    );
+                          wxID_SUBTRACTBASE,
+                          wxT("&Subtract baseline"),
+                          wxT("Subtract baseline from selected traces")
+                          );
     analysis_menu->Append(
-            wxID_FILTER,
-            wxT("F&ilter..."),
-            wxT("Filter selected traces")
-    );
+                          wxID_FILTER,
+                          wxT("F&ilter..."),
+                          wxT("Filter selected traces")
+                          );
     analysis_menu->Append(
-            wxID_SPECTRUM,
-            wxT("&Power spectrum..."),
-            wxT("Compute an estimate of the power spectrum of the selected traces")
-    );
+                          wxID_SPECTRUM,
+                          wxT("&Power spectrum..."),
+                          wxT("Compute an estimate of the power spectrum of the selected traces")
+                          );
     analysis_menu->Append(
-            wxID_POVERN,
-            wxT("P over &N correction..."),
-            wxT("Apply P over N correction to all traces of this file")
-    );
+                          wxID_POVERN,
+                          wxT("P over &N correction..."),
+                          wxT("Apply P over N correction to all traces of this file")
+                          );
     wxMenu* eventPlotSub = new wxMenu;
     eventPlotSub->Append(wxID_PLOTCRITERION, wxT("&Detection criterion..."));
     eventPlotSub->Append(wxID_PLOTCORRELATION, wxT("&Correlation coefficient..."));
@@ -641,20 +671,20 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     eventSub->Append(wxID_THRESHOLD,wxT("Threshold &crossing..."));
     analysis_menu->AppendSubMenu(eventSub,wxT("Event detection"));
     analysis_menu->Append(
-            wxID_BATCH,
-            wxT("&Batch analysis..."),
-            wxT("Analyze selected traces and show results in a table")
-    );
+                          wxID_BATCH,
+                          wxT("&Batch analysis..."),
+                          wxT("Analyze selected traces and show results in a table")
+                          );
+#if 0
     wxMenu* userdefSub=new wxMenu;
-
     for (std::size_t n=0;n<GetPluginLib().size();++n) {
         userdefSub->Append(
-                wxID_USERDEF1+(int)n,
-                GetPluginLib()[n].menuEntry
-        );
+                           wxID_USERDEF1+(int)n,
+                           GetPluginLib()[n].menuEntry
+                           );
     }
     analysis_menu->AppendSubMenu(userdefSub,wxT("User-defined functions"));
-
+#endif
     wxMenu *help_menu = new wxMenu;
     help_menu->Append(wxID_ABOUT, wxT("&About"));
 
@@ -673,10 +703,10 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
 }
 
 wxStfDoc* wxStfApp::NewChild(
-        const Recording& NewData,
-        const wxStfDoc* Sender,
-        const wxString& title
-) {
+                             const Recording& NewData,
+                             const wxStfDoc* Sender,
+                             const wxString& title
+                             ) {
     wxStfDoc* NewDoc=(wxStfDoc*)m_cfsTemplate->CreateDocument(title,wxDOC_NEW);
     NewDoc->SetDocumentName(title);
     NewDoc->SetTitle(title);
@@ -722,7 +752,7 @@ wxStfDoc* wxStfApp::GetActiveDoc() const {
 void wxStfApp::OnCursorSettings( wxCommandEvent& WXUNUSED(event) ) {
     wxStfDoc* actDoc=GetActiveDoc();
     if (CursorsDialog==NULL && actDoc!=NULL) {
-        CursorsDialog=new wxStfCursorsDlg(frame);
+        CursorsDialog=new wxStfCursorsDlg(frame, actDoc);
         CursorsDialog->Show();
         CursorsDialog->SetActiveDoc(actDoc);
         //set CEdit controls to given values
@@ -758,6 +788,7 @@ void wxStfApp::OnCursorSettings( wxCommandEvent& WXUNUSED(event) ) {
 }
 
 void wxStfApp::OnNewfromselected( wxCommandEvent& WXUNUSED(event) ) {
+
     // number of selected traces across all open documents:
     std::size_t nwxT=0;
     // Search the document's template list for open documents:
@@ -768,9 +799,11 @@ void wxStfApp::OnNewfromselected( wxCommandEvent& WXUNUSED(event) ) {
     }
     // Since random access is expensive, go through the list node by node:
     // Get first node:
-    wxNode *curNode=docList.GetFirst();
+    wxObjectList::compatibility_iterator curNode=docList.GetFirst();
     std::size_t n_channels=((wxStfDoc*)curNode->GetData())->size();
+
     while (curNode!=NULL) {
+
         wxStfDoc* pDoc=(wxStfDoc*)curNode->GetData();
         if (pDoc->size()!=n_channels) {
             ErrorMsg(wxT("Can't combine files: different numbers of channels"));
@@ -792,8 +825,9 @@ void wxStfApp::OnNewfromselected( wxCommandEvent& WXUNUSED(event) ) {
     Recording Selected(n_channels,nwxT);
     // Do the same iteration once again filling the channel with data:
     curNode=docList.GetFirst();
-    nwxT=0;
     wxStfDoc* pDoc=NULL;
+
+    nwxT=0;
     std::vector<std::vector<wxString> > channel_names(n_channels);
     while (curNode!=NULL) {
         pDoc=(wxStfDoc*)curNode->GetData();
@@ -803,9 +837,9 @@ void wxStfApp::OnNewfromselected( wxCommandEvent& WXUNUSED(event) ) {
                 for (std::size_t n=0; n<pDoc->GetSelectedSections().size(); ++n) {
                     try {
                         Selected[n_c].InsertSection(
-                                pDoc->get()[n_c][pDoc->GetSelectedSections()[n]],
-                                n+nwxT
-                        );
+                                                    pDoc->get()[n_c][pDoc->GetSelectedSections()[n]],
+                                                    n+nwxT
+                                                    );
                     }
                     catch (const std::out_of_range& e) {
                         ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -857,7 +891,7 @@ void wxStfApp::OnNewfromall( wxCommandEvent& WXUNUSED(event) ) {
     }
     // Since random access is expensive, go through the list node by node:
     // Get first node:
-    wxNode *curNode=docList.GetFirst();
+    wxObjectList::compatibility_iterator curNode=docList.GetFirst();
     std::size_t n_channels=((wxStfDoc*)curNode->GetData())->size();
     while (curNode!=NULL) {
         wxStfDoc* pDoc=(wxStfDoc*)curNode->GetData();
@@ -955,7 +989,7 @@ void wxStfApp::OnApplytoall( wxCommandEvent& WXUNUSED(event) ) {
 
     // Since random access is expensive, go through the list node by node:
     // Get first node:
-    wxNode *curNode=docList.GetFirst();
+    wxObjectList::compatibility_iterator curNode=docList.GetFirst();
     while (curNode!=NULL) {
         wxStfDoc* OpenDoc=(wxStfDoc*)curNode->GetData();
         if (OpenDoc==NULL)
@@ -991,28 +1025,28 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
     if (nFiles!=1) {
         // Ask whether to put files into a single window:
         singleWindow=(wxMessageDialog(
-                frame,
-                wxT("Put files into a single window?"),
-                wxT("File series import"),
-                wxYES_NO
-        ).ShowModal() == wxID_YES);
+                                      frame,
+                                      wxT("Put files into a single window?"),
+                                      wxT("File series import"),
+                                      wxYES_NO
+                                      ).ShowModal() == wxID_YES);
     }
     wxProgressDialog progDlg(
-            wxT("Importing file series"),
-            wxT("Starting file import"),
-            100,
-            frame,
-            wxPD_SMOOTH | wxPD_AUTO_HIDE
-    );
+                             wxT("Importing file series"),
+                             wxT("Starting file import"),
+                             100,
+                             frame,
+                             wxPD_SMOOTH | wxPD_AUTO_HIDE
+                             );
     int n_opened=0;
     Recording seriesRec;
     while (n_opened!=nFiles) {
         wxString progStr;
         progStr << wxT("Reading file #") << n_opened + 1 << wxT(" of ") << nFiles;
         progDlg.Update(
-                (int)((double)n_opened/(double)nFiles*100.0),
-                progStr
-        );
+                       (int)((double)n_opened/(double)nFiles*100.0),
+                       progStr
+                       );
         if (!singleWindow) {
             wxDocTemplate* templ=m_docManager->FindTemplateForPath(fNameArray[n_opened]);
             wxStfDoc* NewDoc=(wxStfDoc*)templ->CreateDocument(fNameArray[n_opened],wxDOC_NEW);
@@ -1033,11 +1067,11 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
             if (type==stf::ascii) {
                 if (!get_directTxtImport()) {
                     wxStfTextImportDlg ImportDlg(
-                            NULL,
-                            stf::CreatePreview(fNameArray[n_opened]),
-                            1,
-                            true
-                    );
+                                                 NULL,
+                                                 stf::CreatePreview(fNameArray[n_opened]),
+                                                 1,
+                                                 true
+                                                 );
                     if (ImportDlg.ShowModal()!=wxID_OK) {
                         return false;
                     }
@@ -1128,7 +1162,7 @@ std::vector<Section*> wxStfApp::GetSectionsWithFits() const {
     std::vector<Section*> sectionList;
     // Since random access is expensive, go through the list node by node:
     // Get first node:
-    wxNode *curNode=docList.GetFirst();
+    wxObjectList::compatibility_iterator curNode=docList.GetFirst();
     while (curNode!=NULL) {
         wxStfDoc* pDoc=(wxStfDoc*)curNode->GetData();
         try {
@@ -1150,11 +1184,11 @@ std::vector<Section*> wxStfApp::GetSectionsWithFits() const {
 wxString wxStfApp::GetVersionString() const {
     wxString verString;
     verString << wxT("Stimfit ")
-              << wxT(STFVERSION)
+              << wxString(VERSION, wxConvLocal)
 #ifdef _STFDEBUG
               << wxT(", debug build, ");
 #else
-              << wxT(", release build, ");
+    << wxT(", release build, ");
 #endif
 
     verString << wxT(STFDATE);

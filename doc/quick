@@ -1,6 +1,0 @@
-#! /bin/bash
-latex stf_book.tex
-dvips stf_book.dvi
-ps2pdf stf_book.ps
-acroread stf_book.pdf &
-

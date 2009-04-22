@@ -25,7 +25,6 @@
 #include "wx/checkbox.h"
 
 #include "./app.h"
-#include "./frame.h"
 #include "./doc.h"
 #include "./view.h"
 #include "./graph.h"

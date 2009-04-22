@@ -29,7 +29,7 @@
 #include "./../AxoUtils32/AxoUtils32.h"     // for AXU_* functions
 #include "./../Common/crc.h"
 
-#ifndef __UNIX__
+#ifndef __LINUX__
 	#include <objbase.h>                 // UuidCreate
 #endif
 
@@ -44,7 +44,7 @@
 
 #define ABF_DEFAULTCHUNKSIZE  8192     // Default chunk size for reading gap-free amd var-len files.
 
-#if defined(__UNIX__) || defined(__STF__)
+#if defined(__LINUX__) || defined(__STF__) || defined(__WXMAC__)
 	#define max(a,b)   (((a) > (b)) ? (a) : (b))
 	#define min(a,b)   (((a) < (b)) ? (a) : (b))
 #endif

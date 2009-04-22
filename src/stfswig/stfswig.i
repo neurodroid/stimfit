@@ -537,7 +537,7 @@ bool close_this( );
 %feature("docstring", "Returns the current baseline value. Uses the 
 currently measured values, i.e. does not update measurements if the 
 peak or base window cursors have changed.
-         
+
 Returns:
 The current baseline.") get_base;
 double get_base( );

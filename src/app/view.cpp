@@ -37,7 +37,8 @@
 #include "./app.h"
 #include "./doc.h"
 #include "./view.h"
-#include "./frame.h"
+#include "./parentframe.h"
+#include "./childframe.h"
 #include "./graph.h"
 #include "./dlgs/cursorsdlg.h"
 
@@ -48,30 +49,38 @@ END_EVENT_TABLE()
 
 extern wxStfParentFrame* frame;
 
-wxStfView::wxStfView() : 
+wxStfView::wxStfView() :
     graph((wxStfGraph *) NULL),
     childFrame((wxStfChildFrame *) NULL)
-    { 
-    }
+{
+}
+
 // What to do when a view is created. Creates actual
 // windows for displaying the view.
 bool wxStfView::OnCreate(wxDocument *doc, long WXUNUSED(flags) )
 {
     childFrame = wxGetApp().CreateChildFrame(doc, this);
+    if (childFrame==NULL) {
+        return false;
+    }
     // extract file name:
     wxFileName fn(doc->GetFilename());
     childFrame->SetTitle(fn.GetName());
-
     graph = GetMainFrame()->CreateGraph(this, childFrame);
-#ifdef __X__
+    if (graph==NULL) {
+        return false;
+    }
+    childFrame->GetMgr()->AddPane( graph, wxAuiPaneInfo().Caption(wxT("Traces")).Name(wxT("Traces")).CaptionVisible(true).
+            CloseButton(false).Centre().PaneBorder(true)  );
+    childFrame->GetMgr()->Update();
+
+    // childFrame->ActivateGraph();
+#if defined(__X__) || defined(__WXMAC__)
     // X seems to require a forced resize
-    int x, y;
-    childFrame->GetSize(&x, &y);
-    childFrame->SetSize(wxDefaultCoord, wxDefaultCoord, x, y);
+    // childFrame->SetClientSize(800,600);
 #endif
     childFrame->Show(true);
     Activate(true);
-
     return true;
 }
 
@@ -87,8 +96,9 @@ void wxStfView::OnDraw(wxDC *WXUNUSED(pDC)) {
 
 void wxStfView::OnUpdate(wxView *WXUNUSED(sender), wxObject *WXUNUSED(hint))
 {
-    if (graph)
+    if (graph) {
         graph->Refresh();
+    }
 }
 
 // Clean up windows used for displaying the view.

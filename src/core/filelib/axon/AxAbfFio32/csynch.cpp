@@ -17,7 +17,7 @@
 #include "../Common/FileIO.hpp"
 #include "./abfutil.h"
 
-#if defined(__UNIX__) || defined(__STF__)
+#if defined(__LINUX__) || defined(__STF__) || defined(__WXMAC__)
 	#define max(a,b)   (((a) > (b)) ? (a) : (b))
 	#define min(a,b)   (((a) < (b)) ? (a) : (b))
 #endif

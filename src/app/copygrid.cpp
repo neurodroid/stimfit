@@ -27,8 +27,9 @@
 
 
 #include "./app.h"
-#include "./frame.h"
 #include "./doc.h"
+#include "./parentframe.h"
+#include "./childframe.h"
 #include "./view.h"
 #include "./graph.h"
 #include "./copygrid.h"

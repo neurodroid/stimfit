@@ -98,7 +98,7 @@ std::valarray<double>
 stf::filter( const std::valarray<double>& data, std::size_t filter_start,
         std::size_t filter_end, const std::valarray<double> &a, int SR,
         Func func, bool inverse ) {
-    if (data.size()<=0 || filter_start>=data.size() || filter_end>=data.size()) {
+    if (data.size()<=0 || filter_start>=data.size() || filter_end > data.size()) {
         std::out_of_range e("subscript out of range in stf::filter()");
         throw e;
     }

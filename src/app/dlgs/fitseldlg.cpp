@@ -18,30 +18,29 @@ EVT_LIST_ITEM_SELECTED( wxID_LIST, wxStfFitSelDlg::OnListItemSelected )
 EVT_BUTTON( wxID_PREVIEW, wxStfFitSelDlg::OnButtonClick )
 END_EVENT_TABLE()
 
-wxStfFitSelDlg::wxStfFitSelDlg(wxWindow* parent, int id, wxString title, wxPoint pos,
-        wxSize size, int style) : 
+wxStfFitSelDlg::wxStfFitSelDlg(wxWindow* parent, wxStfDoc* doc, int id, wxString title, wxPoint pos,
+        wxSize size, int style) :
             wxDialog( parent, id, title, pos, size, style ),
             m_fselect(18),init_p(0),opts(6),noInput(false),
             paramDescArray(MAXPAR),
-            paramEntryArray(MAXPAR)
-{
+            paramEntryArray(MAXPAR), pDoc(doc)
+ {
     // Respectively the scale factor for initial \mu,
     // stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2,
     // maxIter, maxPass
     opts[0]=5*1E-3; //default: 1E-03;
     opts[1]=1E-17; //default: 1E-17;
     opts[2]=1E-17; //default: 1E-17;
-    opts[3]=1E-17; //default: 1E-17;
+    opts[3]=1E-32; //default: 1E-17;
     opts[4]=64; //default: 64;
     opts[5]=16;
-    
+
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
 
     // 2-column sizer for funcs (left) and settings (right)
-    wxFlexGridSizer* mainGrid;
-    mainGrid=new wxFlexGridSizer(1,2,0,5);
-    m_listCtrl = new wxListCtrl( this, wxID_LIST, wxDefaultPosition, wxSize(240,360), 
+    wxFlexGridSizer* mainGrid = new wxFlexGridSizer(1,2,0,5);
+    m_listCtrl = new wxListCtrl( this, wxID_LIST, wxDefaultPosition, wxSize(240,360),
             wxLC_LIST );
     int n_f = 0;
     for (c_stfunc_it cit = wxGetApp().GetFuncLib().begin(); cit != wxGetApp().GetFuncLib().end(); cit++) {
@@ -59,7 +58,7 @@ wxStfFitSelDlg::wxStfFitSelDlg(wxWindow* parent, int id, wxString title, wxPoint
     // grid for parameters:
     wxFlexGridSizer* paramGrid;
     paramGrid=new wxFlexGridSizer(0,4,0,4);
-    
+
     // add parameter boxes:
     std::vector< wxStaticText* >::iterator it1;
     std::vector< wxTextCtrl* >::iterator it2 = paramEntryArray.begin();
@@ -92,7 +91,7 @@ wxStfFitSelDlg::wxStfFitSelDlg(wxWindow* parent, int id, wxString title, wxPoint
     topSizer->Add( mainGrid, 0, wxALIGN_CENTER_HORIZONTAL| wxALL, 5 );
     // Ok / Cancel / Preview:
     wxButton* previewButton;
-    previewButton = new wxButton( this, wxID_PREVIEW, wxT("Preview"), wxDefaultPosition, 
+    previewButton = new wxButton( this, wxID_PREVIEW, wxT("Preview"), wxDefaultPosition,
             wxDefaultSize, 0 );
     topSizer->Add( previewButton, 0, wxALIGN_CENTER | wxALL, 5 );
 
@@ -121,7 +120,7 @@ void wxStfFitSelDlg::EndModal(int retCode) {
         }
         break;
     case wxID_CANCEL:
-        wxGetApp().GetActiveDoc()->cur().DeleteFit();
+        pDoc->cur().DeleteFit();
         break;
     default:
         ;
@@ -133,7 +132,7 @@ bool wxStfFitSelDlg::OnOK() {
     Update_fselect();
     read_init_p();
     read_opts();
-//    wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
+//    wxStfDoc* pDoc=pDoc;
 //    pDoc->cur().SetIsFitted(false);
 //    pDoc->cur().SetFit(std::valarray<double>(0));
     return true;
@@ -208,13 +207,16 @@ void wxStfFitSelDlg::InitOptions(wxFlexGridSizer* optionsGrid) {
 }
 
 void wxStfFitSelDlg::OnButtonClick( wxCommandEvent& event ) {
-    event.Skip(); 
+    event.Skip();
     // Make sure we are up-to-date:
     Update_fselect();
     // read in parameters:
     read_init_p();
     // tell the document that a fit has been performed:
-    wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
+    if (pDoc==0) {
+        wxGetApp().ErrorMsg(wxT("Couldn't connect to document"));
+        return;
+    }
     // calculate a graph from the current parameters:
     std::size_t fitSize=
         pDoc->GetFitEnd()-pDoc->GetFitBeg();
@@ -237,7 +239,8 @@ void wxStfFitSelDlg::OnButtonClick( wxCommandEvent& event ) {
     pDoc->cur().SetIsFitted( init_p, wxGetApp().GetFuncLibPtr(m_fselect), 0,
             pDoc->GetFitBeg(), pDoc->GetFitEnd() );
     // tell the view to draw the fit:
-    wxGetApp().GetActiveView()->GetGraph()->Refresh();
+    ((wxStfView*)pDoc->GetFirstView())->GetGraph()->Refresh();
+     // wxGetApp().GetActiveView()->GetGraph()->Refresh();
 }
 
 void wxStfFitSelDlg::SetPars() {
@@ -245,7 +248,6 @@ void wxStfFitSelDlg::SetPars() {
     // get parameter names from selected function:
     try {
         // fill a temporary array:
-        wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
         if (pDoc==NULL) return;
         std::size_t fitSize=
             pDoc->GetFitEnd()-pDoc->GetFitBeg();
@@ -266,7 +268,7 @@ void wxStfFitSelDlg::SetPars() {
         std::size_t n_p = 0;
         for (it1 = paramDescArray.begin();
              it1 != paramDescArray.end() && it2 != paramEntryArray.end();
-             it1++) { 
+             it1++) {
             if (n_p < wxGetApp().GetFuncLib().at(m_fselect).pInfo.size()) {
                 (*it1)->Show();
                 (*it2)->Show();
@@ -317,7 +319,7 @@ void wxStfFitSelDlg::read_init_p() {
     for (std::size_t n_p=0;n_p<init_p.size();++n_p) {
         wxString entryInit = paramEntryArray[n_p]->GetValue();
         entryInit.ToDouble( &init_p[n_p] );
-    }		
+    }
 }
 
 void wxStfFitSelDlg::read_opts() {

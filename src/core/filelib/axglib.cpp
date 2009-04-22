@@ -12,7 +12,11 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-
+#ifndef __WXMAC__
+    #ifdef __APPLE__
+        #define __WXMAC__
+    #endif
+#endif
 
 #include <string>
 #include <iomanip>
@@ -20,10 +24,10 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
 #include "./../core.h"
-#include "wx/wx.h"
-#include "wx/progdlg.h"
-#include "./axg/AxoGraph_ReadWrite.h"
+#include <wx/wx.h>
+#include <wx/progdlg.h>
 #include "./axg/fileUtils.h"
+#include "./axg/AxoGraph_ReadWrite.h"
 #include "./axglib.h"
 
 void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progress) {
@@ -39,7 +43,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     // =====================================================================================================================
 
     // Open the example file
-    filehandle dataRefNum = OpenFile( fName.c_str() );
+    filehandle dataRefNum = OpenFile( fName.utf8_str() );
     if ( dataRefNum == 0 )
     {
         errorMsg += wxT("\n\nError: Could not find file.");

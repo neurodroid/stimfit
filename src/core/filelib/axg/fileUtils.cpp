@@ -1,4 +1,10 @@
-#ifdef __WXMAC__
+#ifndef __WXMAC__
+    #ifdef __APPLE__
+        #define __WXMAC__
+    #endif
+#endif
+
+#if 0
 #include <Carbon/Carbon.h>
 #endif
 
@@ -13,7 +19,7 @@
 /* GetApplicationDirectory returns the volume reference number
    and directory ID for the demo application's directory. */
 
-#ifdef __WXMAC__
+#if 0
 OSStatus GetApplicationDirectory( short *vRefNum, long *dirID )
 {
     ProcessSerialNumber PSN;
@@ -47,7 +53,7 @@ OSStatus GetApplicationDirectory( short *vRefNum, long *dirID )
 
 filehandle OpenFile( const char *fileName )
 {
-#ifdef __WXMAC__
+#if 0
     short dataRefNum = 0;
     short vRefNum;
     long dirID;
@@ -84,35 +90,41 @@ filehandle OpenFile( const char *fileName )
 
     return dataRefNum;
 #endif
-#ifndef _WINDOWS
+#if defined(__WXMAC__) || defined(__LINUX__)
     return fopen( fileName, "r" );
-#else
-	wxString fileNameU( fileName );
-	HANDLE file = CreateFile(fileNameU.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+#endif
+#ifdef _WINDOWS
+    wxString fileNameU( fileName );
+    HANDLE file = CreateFile(fileNameU.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     return file;
 #endif
 }
 
 void CloseFile( filehandle dataRefNum )
 {
-#ifdef __WXMAC__
+#if 0
     FSClose( dataRefNum );
+    return;
 #endif
-#ifndef _WINDOWS
+#if defined(__WXMAC__) || defined(__LINUX__)
     fclose( dataRefNum );
-#else
+    return;
+#endif
+#ifdef _WINDOWS
     CloseHandle(dataRefNum);
+    return;
 #endif
 }
 
 int SetFilePosition( filehandle dataRefNum, int posn )
 {
-#ifdef __WXMAC__
+#if 0
     return SetFPos( dataRefNum, fsFromStart, posn );		// Position the mark
 #endif
-#ifndef _WINDOWS
+#if defined(__WXMAC__) || defined(__LINUX__)
     return fseek( dataRefNum, posn, SEEK_SET );
-#else
+#endif
+#ifdef _WINDOWS
     if (SetFilePointer(dataRefNum, posn, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER)
         return 1;
     else
@@ -122,15 +134,16 @@ int SetFilePosition( filehandle dataRefNum, int posn )
 
 int ReadFromFile( filehandle dataRefNum, long count, void *dataToRead )
 {
-#ifdef __WXMAC__
+#if 0
     return FSRead( dataRefNum, &count, dataToRead );
 #endif
-#ifndef _WINDOWS
+#if defined(__WXMAC__) || defined(__LINUX__)
     if ( fread( dataToRead, 1, count, dataRefNum ) == count )
         return 0;
     else
         return 1;
-#else
+#endif
+#ifdef _WINDOWS
     DWORD   dwRead;
 	short res = ReadFile(dataRefNum, dataToRead, count, &dwRead, NULL);
     if (res)

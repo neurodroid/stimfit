@@ -28,7 +28,7 @@
 
 #include <assert.h>
 
-#ifndef __UNIX__
+#ifdef __WIN32__
 	#include <crtdbg.h>
 #endif
 

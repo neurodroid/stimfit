@@ -34,7 +34,8 @@
 
 #include "./app.h"
 #include "./view.h"
-#include "./frame.h"
+#include "./parentframe.h"
+#include "./childframe.h"
 #include "./dlgs/smalldlgs.h"
 #include "./dlgs/fitseldlg.h"
 #include "./dlgs/eventdlg.h"
@@ -416,14 +417,19 @@ void wxStfDoc::PostInit() {
     SetViewLatency(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewLatency"),1)==1);
     SetViewCursors(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewCursors"),1)==1);
 
-    initialized=true;
     // refresh the view once we are through:
+    initialized=true;
     wxStfView* pView=(wxStfView*)GetFirstView();
     if (pView != NULL) {
-        pView->GetGraph()->Refresh();
-        // Set the focus:
-        pView->GetGraph()->SetFocus();
+        wxStfGraph* pGraph = pView->GetGraph();
+        if (pGraph != NULL) {
+            pGraph->Refresh();
+            // Set the focus:
+            pGraph->SetFocus();
+        }
     }
+    wxGetApp().OnPeakcalcexecMsg();
+    pFrame->SetCurTrace(0);
 }
 
 //Dialog box to select channel to be displayed
@@ -882,7 +888,7 @@ void wxStfDoc::CreateAverage(
 
 void wxStfDoc::FitDecay(wxCommandEvent& WXUNUSED(event)) {
     int fselect=-2;
-    wxStfFitSelDlg FitSelDialog(GetDocumentWindow());
+    wxStfFitSelDlg FitSelDialog(GetDocumentWindow(), this);
     if (FitSelDialog.ShowModal() != wxID_OK) return;
     wxBeginBusyCursor();
     fselect=FitSelDialog.GetFSelect();
@@ -1147,7 +1153,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
 
     int fselect=-2;
     std::size_t n_params=0;
-    wxStfFitSelDlg FitSelDialog(GetDocumentWindow());
+    wxStfFitSelDlg FitSelDialog(GetDocumentWindow(), this);
     if (SaveYtDialog.PrintFitResults()) {
         while (fselect<0) {
             FitSelDialog.SetNoInput(true);

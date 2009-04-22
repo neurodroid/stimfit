@@ -7,7 +7,13 @@
 #define kAGX_Creator 'AxGX'
 #define kAGX_DocType  'axgx'
 
-#ifdef __WXMAC__
+#ifndef __WXMAC__
+    #ifdef __APPLE__
+        #define __WXMAC__
+    #endif
+#endif
+
+#if 0
     typedef const int filehandle;
 #else
     #ifndef _WINDOWS
@@ -18,6 +24,8 @@
         typedef HANDLE filehandle;
     #endif
 #endif
+
+#include "stringUtils.h"
 
 filehandle OpenFile( const char *fileName );
 void CloseFile( filehandle dataRefNum );

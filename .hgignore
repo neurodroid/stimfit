@@ -18,6 +18,7 @@ syntax: glob
 *.out
 *.log
 *.exe
+.DS_Store
 config.status
 config.log
 .deps/*
@@ -26,6 +27,7 @@ build/*
 doc/stfbook.ps
 doc/html/*
 doc/latex/*
+doc/sphinx/build/*
 autom4te.cache/*
 stimfit_VS03/stfswig/Debug
 stimfit_VS03/stfswig/Release

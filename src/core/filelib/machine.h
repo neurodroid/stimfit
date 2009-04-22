@@ -63,8 +63,12 @@
 #ifndef __MACHINE__
     #define __MACHINE__
 
-    #ifdef macintosh
-        #include <types.h>        /* Needed for various types               */
+    #ifdef __WXMAC__
+        // #define macintosh
+    #endif
+
+    #if 0 //def macintosh
+        // #include <types.h>        /* Needed for various types               */
         #include <memory.h>       /* for NewHandle etc                      */
         #include <string.h>       /* for string manipulations               */
     #else
@@ -246,7 +250,7 @@
         #define M_GetMemSize(x)   GetHandleSize(x)
     #endif  /* macintosh */
 
-    #ifdef __UNIX__
+#if defined(__LINUX__) || defined(__WXMAC__)
         #define F_memcpy memcpy
         #define F_memmove memmove
         #define F_strlen strlen

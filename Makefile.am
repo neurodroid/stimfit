@@ -18,14 +18,14 @@ stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/reco
 	    ./src/core/filelib/axon/Common/unix.c \
 	    ./src/core/filelib/axon/AxAbfFio32/abferror.cpp \
             ./src/core/filelib/axon/AxAtfFio32/axatffio32.cpp \
-            ./src/core/filelib/axon/AxAtfFio32/fileio.cpp \
+            ./src/core/filelib/axon/AxAtfFio32/fileio2.cpp \
             ./src/core/filelib/axg/AxoGraph_ReadWrite.cpp \
             ./src/core/filelib/axg/fileUtils.cpp \
             ./src/core/filelib/axg/stringUtils.cpp \
             ./src/core/filelib/axg/byteswap.cpp \
             ./src/core/levmar/lm.c ./src/core/levmar/Axb.c ./src/core/levmar/misc.c ./src/core/levmar/lmlec.c ./src/core/levmar/lmbc.c \
             ./src/app/app.cpp ./src/app/doc.cpp ./src/app/stfcheckbox.cpp ./src/app/copygrid.cpp ./src/app/graph.cpp \
-            ./src/app/dclatex.cpp ./src/app/printout.cpp ./src/app/frame.cpp ./src/app/view.cpp ./src/app/table.cpp ./src/app/zoom.cpp \
+            ./src/app/printout.cpp ./src/app/parentframe.cpp ./src/app/childframe.cpp ./src/app/view.cpp ./src/app/table.cpp ./src/app/zoom.cpp \
             ./src/app/dlgs/cursorsdlg.cpp ./src/app/dlgs/eventdlg.cpp \
 	    ./src/app/dlgs/fitseldlg.cpp ./src/app/dlgs/smalldlgs.cpp \
             ./src/app/plugins/plugins.cpp ./src/app/funclib/funclib.cpp \
@@ -66,8 +66,8 @@ noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.
             ./src/core/levmar/lm.h ./src/core/levmar/misc.h \
             ./src/app/app.h ./src/app/stfcheckbox.h \
             ./src/app/copygrid.h ./src/app/graph.h \
-            ./src/app/wx/dclatex.h ./src/app/printout.h \
-            ./src/app/doc.h ./src/app/frame.h ./src/app/view.h \
+            ./src/app/printout.h \
+            ./src/app/doc.h ./src/app/parentframe.h ./src/app/childframe.h ./src/app/view.h \
             ./src/app/table.h ./src/app/zoom.h \
             ./src/app/dlgs/cursorsdlg.h ./src/app/dlgs/eventdlg.h \
 	    ./src/app/dlgs/fitseldlg.h ./src/app/dlgs/smalldlgs.h \
@@ -111,28 +111,44 @@ EXTRA_DIST+= ./src/core/levmar/LICENSE
 EXTRA_DIST+= ./src/core/levmar/README.txt
 EXTRA_DIST+= ./Doxyfile
 EXTRA_DIST+= ./acsite.m4
-EXTRA_DIST+= ./prepare
+EXTRA_DIST+= ./bootstrap
+EXTRA_DIST+= ./conf_mac.sh
+EXTRA_DIST+= ./macosx/app.r
+EXTRA_DIST+= ./macosx/wxmac.icns
 
-# the application source, library search path, and link libraries
 if BUILD_PYTHON
     PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
-else
-    PYTHON_ADDINCLUDES = 
-endif
-INCLUDES = $(PYTHON_ADDINCLUDES)
-
-if BUILD_PYTHON
     PYTHON_ADDLDFLAGS = $(LIBPYTHON_LDFLAGS)
-else
-    PYTHON_ADDLDFLAGS = 
-endif
-
-if BUILD_PYTHON
     PYTHON_ADDLIBS = ./src/stfswig/libstf.la
 else
+    PYTHON_ADDLDFLAGS = 
     PYTHON_ADDLIBS = 
+    PYTHON_ADDINCLUDES = 
 endif
+
+INCLUDES = $(PYTHON_ADDINCLUDES)
 
 stimfit_CXXFLAGS = $(OPT_CXXFLAGS)
 stimfit_LDFLAGS = $(WX_LIBS) $(LIBLAPACK_LDFLAGS) -lfftw3 -lhdf5 -lhdf5_hl $(PYTHON_ADDLDFLAGS)
 stimfit_LDADD = $(PYTHON_ADDLIBS) ./src/app/libstimfit.a
+
+# wxMac resource fork/unbundled app
+stimfit.app: stimfit
+	mkdir -p stimfit.app/Contents
+	mkdir -p stimfit.app/Contents/MacOS
+	mkdir -p stimfit.app/Contents/Resources
+	
+	
+	echo $(top_srcdir)/stimfit.plist.in >stimfit.app/Contents/Info.plist
+	
+	
+	echo -n "APPL????" >stimfit.app/Contents/PkgInfo
+	
+	rm -f stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
+	cp -p -f .libs/stimfit$(EXEEXT) stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
+	$(POSTLINK_COMMAND) stimfit.app/Contents/MacOS/stimfit$(EXEEXT) \
+	                    $(srcdir)/macosx/app.r
+	$(MACSETFILE) -a C stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
+	
+	
+	cp -f $(top_srcdir)/macosx/wxmac.icns stimfit.app/Contents/Resources/wxmac.icns

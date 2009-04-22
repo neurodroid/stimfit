@@ -31,7 +31,7 @@
 class wxStfDoc;
 
 //! Cursor settings non-modal dialog
-class StfDll wxStfCursorsDlg : public wxDialog 
+class StfDll wxStfCursorsDlg : public wxDialog
 {
     DECLARE_EVENT_TABLE()
 
@@ -87,19 +87,20 @@ public:
      */
     wxStfCursorsDlg(
             wxWindow* parent,
+            wxStfDoc* initDoc,
             int id = wxID_ANY,
             wxString title = wxT("Cursor settings"),
             wxPoint pos = wxDefaultPosition,
             wxSize size = wxDefaultSize,
             int style = wxCAPTION
     );
-    
+
     //! Called upon ending a modal dialog.
     /*! \param retCode The dialog button id that ended the dialog
      *         (e.g. wxID_OK)
      */
     virtual void EndModal(int retCode);
-    
+
     //! Called when data should be transferred from the non-modal dialog (e.g. when OK is pressed)
     /*! Note that a non-modal dialog won't be destroyed when OK is clicked,
      *  it will only disappear from sight. This function will then apply the current
@@ -109,37 +110,37 @@ public:
     virtual bool TransferDataFromWindow();
 
     //! Get the measurement cursor x-position
-    /*! \return The measurement cursor x-position in units of sampling points. 
+    /*! \return The measurement cursor x-position in units of sampling points.
      */
     int GetCursorM() const;
 
     //! Get the left peak cursor x-position
-    /*! \return The left peak cursor x-position in units of sampling points. 
+    /*! \return The left peak cursor x-position in units of sampling points.
      */
     int GetCursor1P() const;
 
     //! Get the right peak cursor x-position
-    /*! \return The right peak cursor x-position in units of sampling points. 
+    /*! \return The right peak cursor x-position in units of sampling points.
      */
     int GetCursor2P() const;
 
     //! Get the left base cursor x-position
-    /*! \return The left base cursor x-position in units of sampling points. 
+    /*! \return The left base cursor x-position in units of sampling points.
      */
     int GetCursor1B() const;
 
     //! Get the right base cursor x-position
-    /*! \return The right base cursor x-position in units of sampling points. 
+    /*! \return The right base cursor x-position in units of sampling points.
      */
     int GetCursor2B() const;
 
     //! Get the left fit cursor x-position
-    /*! \return The left fit cursor x-position in units of sampling points. 
+    /*! \return The left fit cursor x-position in units of sampling points.
      */
     int GetCursor1D() const;
 
     //! Get the right fit cursor x-position
-    /*! \return The right fit cursor x-position in units of sampling points. 
+    /*! \return The right fit cursor x-position in units of sampling points.
      */
     int GetCursor2D() const;
 

@@ -158,7 +158,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
              columnData->points = columnHeader.points;
              columnData->title.resize( 80 );
              PascalToCString( columnHeader.title );
-             columnData->title = wxString( columnHeader.title );
+             columnData->title = wxString( (wxChar*)columnHeader.title );
 
              // create a new pointer to receive the data
              long columnBytes = columnHeader.points * sizeof( float );
@@ -198,7 +198,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  columnData->points = columnHeader.points;
                  columnData->title.resize( 80 );
                  PascalToCString( columnHeader.title );
-                 columnData->title = wxString( columnHeader.title );
+                 columnData->title = wxString( (wxChar*)columnHeader.title );
 
                  columnData->seriesArray.firstValue = columnHeader.firstPoint;
                  columnData->seriesArray.increment = columnHeader.sampleInterval;
@@ -223,7 +223,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  columnData->points = columnHeader.points;
                  columnData->title.resize( 80 );
                  PascalToCString( columnHeader.title );
-                 columnData->title = wxString( columnHeader.title );
+                 columnData->title = wxString( (wxChar*)columnHeader.title );
 
                  columnData->scaledShortArray.scale = columnHeader.scalingFactor;
                  columnData->scaledShortArray.offset = 0;
@@ -277,7 +277,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  return result;
              // Copy characters one by one into title (tedious but safe)
              for (std::vector< unsigned char >::const_iterator c = charBuffer.begin()+1; c < charBuffer.end(); c += 2) {
-                 columnData->title << *c;
+                 columnData->title << wxChar(*c);
              }
              // UnicodeToCString( columnData->title, columnData->titleLength );
 

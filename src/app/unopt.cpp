@@ -10,7 +10,42 @@
 #include <wx/wxPython/wxPython.h>
 
 #include "./app.h"
-#include "./frame.h"
+#include "./parentframe.h"
+
+#ifdef __WXMAC__
+// Code to find executable path. Retrieved from:
+// http://www.wxwidgets.org/docs/technote/install.htm
+
+#include <ApplicationServices/ApplicationServices.h>
+
+#if wxCHECK_VERSION(2, 9, 0)
+#include <wx/osx/carbon/private.h>
+#else
+#include <wx/mac/carbon/private.h>
+#endif
+#include <wx/filename.h>
+
+wxString GetExecutablePath()
+{
+    static bool found = false;
+    static wxString path;
+
+    ProcessInfoRec processinfo;
+    ProcessSerialNumber procno ;
+    FSSpec fsSpec;
+    
+    procno.highLongOfPSN = NULL ;
+    procno.lowLongOfPSN = kCurrentProcess ;
+    processinfo.processInfoLength = sizeof(ProcessInfoRec);
+    processinfo.processName = NULL;
+    processinfo.processAppSpec = &fsSpec;
+    
+    GetProcessInformation( &procno , &processinfo ) ;
+    path = wxMacFSSpec2MacFilename(&fsSpec);
+    found = true;
+    return path;
+}
+#endif
 
 bool wxStfApp::Init_wxPython()
 {
@@ -18,9 +53,69 @@ bool wxStfApp::Init_wxPython()
     Py_Initialize();
     PyEval_InitThreads();
 
+#ifdef __WXMAC__
+    // Add the cwd to the present path:
+    wxString app_path = wxFileName( GetExecutablePath() ).GetPath();
+    wxString cwd;
+    cwd << wxT("import os\n");
+    cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks\"\n");
+    cwd << wxT("import sys\n");
+    cwd << wxT("sys.path.append(cwd)\n");
+    cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks/stimfit\"\n");
+    cwd << wxT("sys.path.append(cwd)\n");
+    cwd << wxT("print cwd\n");
+    int cwd_result = PyRun_SimpleString(cwd.utf8_str());
+    if (cwd_result!=0) {
+        PyErr_Print();
+        ErrorMsg( wxT("Couldn't modify Python path") );
+        Py_Finalize();
+        return false;
+    }
+#endif
+    
     // Load the wxPython core API.  Imports the wx._core_ module and sets a
     // local pointer to a function table located there.  The pointer is used
     // internally by the rest of the API functions.
+    
+    // Specify version of the wx module to be imported
+    PyObject* wxversion = PyImport_ImportModule("wxversion");
+    if (wxversion==NULL) {
+        PyErr_Print();
+        ErrorMsg( wxT("Couldn't import wxversion") );
+        Py_Finalize();
+        return false;
+    }
+    PyObject* wxselect = PyObject_GetAttrString(wxversion, "select");
+    Py_DECREF(wxversion);
+    if (!PyCallable_Check(wxselect)) {
+        PyErr_Print();
+        ErrorMsg( wxT("Couldn't select correct version of wx") );
+        Py_Finalize();
+        return false;
+    }
+#if wxCHECK_VERSION(2, 9, 0)
+    PyObject* ver_string = Py_BuildValue("ss","2.9.0.0","");
+#else
+    PyObject* ver_string = Py_BuildValue("ss","2.8","");
+#endif
+    PyObject* result = PyEval_CallObject(wxselect, ver_string);
+    Py_DECREF(ver_string);
+    if (result == NULL) {
+        PyErr_Print();
+        ErrorMsg( wxT("Couldn't call wxversion.select") );
+        Py_Finalize();
+        return false;
+    }
+
+    long iresult = PyInt_AsLong(result);
+    Py_DECREF(result);
+    if (iresult == 0) {
+        PyErr_Print();
+        ErrorMsg( wxT("Couldn't select correct version of wx") );
+        Py_Finalize();
+        return false;
+    }
+    
     if ( ! wxPyCoreAPI_IMPORT() ) {
         PyErr_Print();
         wxString errormsg;

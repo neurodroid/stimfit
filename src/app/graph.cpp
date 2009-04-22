@@ -25,7 +25,7 @@
 #include <wx/image.h>
 #include <wx/clipbrd.h>
 #include <wx/dcps.h>
-#ifndef _WINDOWS
+#if 0
 #include "wx/dclatex.h"
 #endif
 #include <wx/metafile.h>
@@ -35,10 +35,16 @@
 #include <wx/dcsvg.h>
 #endif
 
+#ifdef _STFDEBUG
+#include <iostream>
+#endif
+
+
 #include "./app.h"
 #include "./doc.h"
 #include "./view.h"
-#include "./frame.h"
+#include "./parentframe.h"
+#include "./childframe.h"
 #include "./printout.h"
 #include "./stfcheckbox.h"
 #include "./dlgs/cursorsdlg.h"
@@ -53,12 +59,15 @@ EVT_MENU(wxID_ZOOMH,wxStfGraph::OnZoomH)
 EVT_MENU(wxID_ZOOMV,wxStfGraph::OnZoomV)
 EVT_MOUSE_EVENTS(wxStfGraph::OnMouseEvent)
 EVT_KEY_DOWN( wxStfGraph::OnKeyDown )
+#if defined __WXMAC__ && !(wxCHECK_VERSION(2, 9, 0))
+EVT_PAINT( wxStfGraph::OnPaint )
+#endif
 END_EVENT_TABLE()
 
 // Define a constructor for my canvas
 wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, const wxSize& size, long style):
     wxScrolledWindow(frame, wxID_ANY, pos, size, style),pFrame(frame),
-    isZoomRect(false),no_gimmicks(false),isPrinted(false),isLatex(false),firstPass(true),isSyncx(false),resLimit(50000),
+    isZoomRect(false),no_gimmicks(false),isPrinted(false),isLatex(false),firstPass(true),isSyncx(false),resLimit(100000),
     printScale(1.0),printRect(),boebbel(boebbelStd),boebbelPrint(boebbelStd),
     printSizePen1(4),printSizePen2(8),printSizePen4(16),downsampling(1),eventPos(0),
     llz_x(0.0),ulz_x(1.0),llz_y(0.0),ulz_y(1.0),llz_y2(0.0),ulz_y2(1.0),
@@ -108,6 +117,7 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     latencyPrintPen(*wxBLUE,printSizePen1,wxDOT),//Dotted violett line
     baseBrush(*wxLIGHT_GREY,wxBDIAGONAL_HATCH),
     zeroBrush(*wxLIGHT_GREY,wxFDIAGONAL_HATCH),
+    lastLDown(0,0),
     m_zoomContext( new wxMenu ),
     m_eventContext( new wxMenu )
 {
@@ -130,7 +140,7 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
         frame->GetMgr()->LoadPerspective(defaultPersp);
     }
 */
-    }
+}
 
 wxStfParentFrame* wxStfGraph::ParentFrame() {
     return (wxStfParentFrame*)wxGetApp().GetTopWindow();
@@ -139,6 +149,7 @@ wxStfParentFrame* wxStfGraph::ParentFrame() {
 // Defines the repainting behaviour
 void wxStfGraph::OnDraw( wxDC& DC )
 {
+
     if ( !view || Doc()->get().empty() || !Doc()->IsInitialized() )
         return;
     wxRect WindowRect(GetRect());
@@ -169,12 +180,12 @@ void wxStfGraph::OnDraw( wxDC& DC )
     if (firstPass) {
         firstPass = false;
 
-        wxAuiPaneInfo graphInfo;
+/*        wxAuiPaneInfo graphInfo;
         pFrame->GetMgr()->AddPane( this, graphInfo.Caption(wxT("Traces")).Name(wxT("Traces")).CaptionVisible(true).
                 CloseButton(false).Centre().PaneBorder(true) );
         pFrame->GetMgr()->Update();
         pFrame->ActivateGraph();
-
+*/
         if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewScaleBars"),1)) {
             pFrame->GetMenuBar()->GetMenu(2)->Check(wxID_SCALE,true);
             wxGetApp().set_isBars(true);
@@ -193,7 +204,11 @@ void wxStfGraph::OnDraw( wxDC& DC )
 
         if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewHiRes"),1)) {
             pFrame->GetMenuBar()->GetMenu(2)->Check(wxID_HIRES,true);
+#ifndef __WXMAC__
             wxGetApp().set_isHires(true);
+#else
+            wxGetApp().set_isHires(false);
+#endif
         } else {
             pFrame->GetMenuBar()->GetMenu(2)->Check(wxID_HIRES,false);
             wxGetApp().set_isHires(false);
@@ -517,11 +532,11 @@ void wxStfGraph::OnDraw( wxDC& DC )
         {	//Draw current trace on display
             //For display use point to point drawing
             DC.SetPen(standardPen2);
-            PlotTraceCh2(&DC,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get());
+            PlotTrace(&DC,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(), true);
         } else {	//Draw second channel for print out
             //For print out use polyline tool
             DC.SetPen(standardPrintPen2);
-            PrintTraceCh2(&DC,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get());
+            PrintTrace(&DC,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(), true);
         }	// End display or print out
     }		//End plot of the second channel
 
@@ -554,7 +569,7 @@ void wxStfGraph::OnDraw( wxDC& DC )
     view->OnDraw(& DC);
 }
 
-void wxStfGraph::PlotTrace( wxDC* pDC, const std::valarray<double>& trace ) {
+void wxStfGraph::PlotTrace( wxDC* pDC, const std::valarray<double>& trace, bool isSecond ) {
     // speed up drawing by omitting points that are outside the window:
 
     // find point before left window border:
@@ -581,54 +596,56 @@ void wxStfGraph::PlotTrace( wxDC* pDC, const std::valarray<double>& trace ) {
         step=div(int(end-start),resLimit).quot;
     }
 
-    for (std::size_t n=start; n<end-step; n+=step) {
-        pDC->DrawLine(
-                xFormat(n),
-                yFormat(trace[n]),
-                xFormat(n+step),
-                yFormat(trace[n+step])
-        );
+    // apply filter at half the new sampling frequency:
+    DoPlot(pDC, trace, start, end, step, isSecond);
+}
+
+void wxStfGraph::DoPlot( wxDC* pDC, const std::valarray<double> trace, int start, int end, int step, bool isSecond ) {
+    boost::function<int(double)> yFormatFunc;
+    
+    if (!isSecond) {
+        yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD), this);
+    } else {
+        yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatDSecond), this);
+    }
+
+    int x_last = xFormat(start);
+    int y_last = yFormatFunc( trace[start] );
+    int y_max = y_last;
+    int y_min = y_last;
+    int x_next = 0;
+    int y_next = 0;
+    for (int n=start; n<end-1; ++n) {
+        x_next = xFormat(n+1);
+        y_next = yFormatFunc( trace[n+1] );
+        // if we are still at the same pixel column, only draw if this is an extremum:
+        if (x_next == x_last) {
+            if (y_next < y_min) {
+                y_min = y_next;
+            }
+            if (y_next > y_max) {
+                y_max = y_next;
+            }
+        } else {
+            // else, always draw and reset extrema:
+            if (y_min != y_next) {
+                pDC->DrawLine( x_last, y_last, x_last, y_min );
+                y_last = y_min;
+            }
+            if (y_max != y_next) {
+                pDC->DrawLine( x_last, y_min, x_last, y_max );
+                y_last = y_max;
+            }
+            pDC->DrawLine( x_last, y_last, x_next, y_next );
+            y_min = y_next;
+            y_max = y_next;
+            x_last = x_next;
+            y_last = y_next;
+        }
     }
 }
 
-void wxStfGraph::PlotTraceCh2( wxDC* pDC, const std::valarray<double>& trace ) {
-    // speed up drawing by omitting points that are outside the window:
-
-    // find point before left window border:
-    // xFormat=toFormat * zoom.xZoom + zoom.startPosX
-    // for xFormat==0:
-    // toFormat=-zoom.startPosX/zoom.xZoom
-    std::size_t start=0;
-    int x0i=int(-SPX()/XZ());
-    if (x0i>=0 && x0i<(int)trace.size()-1) start=x0i;
-    // find point after right window border:
-    // for xFormat==right:
-    // toFormat=(right-zoom.startPosX)/zoom.xZoom
-    std::size_t end=trace.size();
-    wxRect WindowRect=GetRect();
-    if (isPrinted) WindowRect=wxRect(printRect);
-    int right=WindowRect.width;
-    int xri=int((right-SPX())/XZ())+1;
-    if (xri>=0 && xri<(int)trace.size()-1) end=xri;
-
-    // speed up drawing by down-sampling large traces:
-    int step=1;
-    if ((int)(end-start)>resLimit && !wxGetApp().get_isHires()) {
-        // truncate:
-        step=div(int(end-start),resLimit).quot;
-    }
-
-    for (std::size_t n=start; n<end-step; n+=step) {
-        pDC->DrawLine(
-                xFormat(n),
-                yFormatSecond(trace[n]),
-                xFormat(n+step),
-                yFormatSecond(trace[n+step])
-        );
-    }
-}
-
-void wxStfGraph::PrintTrace( wxDC* pDC, const std::valarray<double>& trace ) {
+void wxStfGraph::PrintTrace( wxDC* pDC, const std::valarray<double>& trace, bool isSecond ) {
     // speed up drawing by omitting points that are outside the window:
 
     // find point before left window border:
@@ -648,44 +665,49 @@ void wxStfGraph::PrintTrace( wxDC* pDC, const std::valarray<double>& trace ) {
     int right=WindowRect.width;
     int xri=int((right-SPX())/XZ())+1;
     if (xri>=0 && xri<(int)trace.size()-1) end=xri;
-
-    std::vector<wxPoint> points((end-start)/downsampling);
-    std::size_t m=0;
-    for (std::size_t n=start; n<end; n+=downsampling) {
-        if (m<points.size()) {
-            points[m].x=xFormat(n);
-            points[m++].y=yFormat(trace[n]);
-        }
-    }
-    pDC->DrawLines((int)points.size(),&points[0]);
+    DoPrint(pDC, trace, start, end, downsampling, isSecond);
 }
 
-void wxStfGraph::PrintTraceCh2( wxDC* pDC, const std::valarray<double>& trace ) {
-    // speed up drawing by omitting points that are outside the window:
-
-    // find point before left window border:
-    // xFormat=toFormat * zoom.xZoom + zoom.startPosX
-    // for xFormat==0:
-    // toFormat=-zoom.startPosX/zoom.xZoom
-    std::size_t start=0;
-    int x0i=int(-SPX()/XZ());
-    if (x0i>=0 && x0i<(int)trace.size()-1) start=x0i;
-    // find point after right window border:
-    // for xFormat==right:
-    // toFormat=(right-zoom.startPosX)/zoom.xZoom
-    std::size_t end=trace.size();
-    wxRect WindowRect=GetRect();
-    if (isPrinted) WindowRect=wxRect(printRect);
-    int right=WindowRect.width;
-    int xri=int((right-SPX())/XZ())+1;
-    if (xri>=0 && xri<(int)trace.size()-1) end=xri;
-
-    std::vector<wxPoint> points((end-start)/downsampling);
-    std::size_t m=0;
-    for (std::size_t n=start; n<end; n+=downsampling) {
-        if (m<points.size()) {
-            points[m].x=xFormat(n);
-            points[m++].y=yFormatSecond(trace[n]);
+void wxStfGraph::DoPrint( wxDC* pDC, const std::valarray<double> trace, int start, int end, int downsampling, bool isSecond ) {
+    boost::function<int(double)> yFormatFunc;
+    
+    if (!isSecond) {
+        yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD), this);
+    } else {
+        yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatDSecond), this);
+    }
+    
+    std::vector<wxPoint> points;
+    int x_last = xFormat(start);
+    int y_last = yFormatFunc( trace[start] );
+    int y_max = y_last;
+    int y_min = y_last;
+    int x_next = 0;
+    int y_next = 0;
+    points.push_back( wxPoint(x_last,y_last) );
+    for (int n=start; n<end-downsampling; n+=downsampling) {
+        x_next = xFormat(n+downsampling);
+        y_next = yFormatFunc( trace[n+downsampling] );
+        // if we are still at the same pixel column, only draw if this is an extremum:
+        if (x_next == x_last) {
+            if (y_next < y_min) {
+                y_min = y_next;
+            }
+            if (y_next > y_max) {
+                y_max = y_next;
+            }
+        } else {
+            // else, always draw and reset extrema:
+            if (y_min != y_next) {
+                points.push_back( wxPoint(x_last, y_min) );
+            }
+            if (y_max != y_next) {
+                points.push_back( wxPoint(x_last, y_max) );
+            }
+            points.push_back( wxPoint(x_next, y_next) );
+            y_min = y_next;
+            y_max = y_next;
+            x_last = x_next;
         }
     }
     pDC->DrawLines((int)points.size(),&points[0]);
@@ -1004,7 +1026,7 @@ void wxStfGraph::Exportps() {
 }
 
 void wxStfGraph::Exportlatex() {
-#ifndef _WINDOWS
+#if 0
     wxStfPreprintDlg myDlg(this,true);
     if (myDlg.ShowModal()!=wxID_OK) return;
 
@@ -1197,27 +1219,24 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
     event.Skip();
     wxClientDC dc(this);
     PrepareDC(dc);
-    wxPoint point(event.GetLogicalPosition(dc));
+    lastLDown = event.GetLogicalPosition(dc);
     switch (ParentFrame()->GetMouseQual())
     {	//Depending on the radio buttons (Mouse field)
     //in the (trace navigator) control box
     case stf::measure_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetMeasCursor( stf::round( ((double)point.x - (double)SPX())/XZ() ) ); //second 'double' added
+        Doc()->SetMeasCursor( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
         // in this case, update results string without waiting for "Return":
         pFrame->UpdateResults();
-        Refresh();
         break;
     case stf::peak_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetPeakBeg( stf::round( ((double)point.x - (double)SPX())/XZ() ) ); //second 'double' added
+        Doc()->SetPeakBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
         //Set x-value as lower limit of the peak calculation dialog box
-        Refresh();
         break;
     case stf::base_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetBaseBeg( stf::round( ((double)point.x - (double)SPX())/XZ() ) ); //second 'double' added
-        Refresh();
+        Doc()->SetBaseBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
         break;
     case stf::decay_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
@@ -1227,8 +1246,7 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
             );
             break;
         }
-        Doc()->SetFitBeg( stf::round( ((double)point.x - (double)SPX())/XZ() ) ); //second 'double' added
-        Refresh();
+        Doc()->SetFitBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
         break;
     case stf::latency_cursor:
         if (Doc()->GetLatencyStartMode() != stf::manualMode) {
@@ -1237,12 +1255,11 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
             );
             break;
         }
-        Doc()->SetLatencyBeg(((double)point.x-(double)SPX())/XZ());
-        Refresh();
+        Doc()->SetLatencyBeg(((double)lastLDown.x-(double)SPX())/XZ());
         break;
     case stf::zoom_cursor:
-        llz_x=(double)point.x;
-        llz_y=(double)point.y;
+        llz_x=(double)lastLDown.x;
+        llz_y=(double)lastLDown.y;
         llz_y2=llz_y;
         break;
     default: break;
@@ -1320,7 +1337,33 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
     wxClientDC dc(this);
     PrepareDC(dc);
     wxPoint point(event.GetLogicalPosition(dc));
+    if (point == lastLDown) {
+        Refresh();
+        return;
+    }
     switch (ParentFrame()->GetMouseQual()) {
+    case stf::peak_cursor:
+        //conversion of pixel on screen to time (inversion of xFormat())
+        Doc()->SetPeakEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        break;
+    case stf::base_cursor:
+        //conversion of pixel on screen to time (inversion of xFormat())
+        Doc()->SetBaseEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        break;
+    case stf::decay_cursor:
+        //conversion of pixel on screen to time (inversion of xFormat())
+        Doc()->SetFitEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        break;
+    case stf::latency_cursor:
+        if (Doc()->GetLatencyEndMode() != stf::manualMode) {
+            wxGetApp().ErrorMsg(
+                    wxT("The latency cursor can not be set in the current mode\n \
+                    Choose manual mode to set the latency cursor manually")
+            );
+            break;
+        }
+        Doc()->SetLatencyEnd(((double)point.x-(double)SPX())/XZ());
+        break;
     case stf::zoom_cursor:
         ulz_x=(double)point.x;
         ulz_y=(double)point.y;
@@ -1329,16 +1372,21 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
         if (llz_y>ulz_y) std::swap(llz_y,ulz_y);
         if (llz_y2>ulz_y2) std::swap(llz_y2,ulz_y2);
         isZoomRect=true;
-        Refresh();
         break;
-    default: break;
+     default: break;
+         
     }
+    Refresh();
 }
 
 void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
     event.Skip();
     wxRect WindowRect(GetRect());
-    switch (event.GetKeyCode()) {
+    int kc = event.GetKeyCode();
+#ifdef _STFDEBUG
+    std::cout << "User pressed " << wxString(event.GetUnicodeKey()) << ", corresponding keycode is " << kc << std::endl;
+#endif
+    switch (kc) {
     case WXK_LEFT:	//left cursor
         if (event.ControlDown()) {
             OnLeft();
@@ -1364,107 +1412,112 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
         OnNext();
         break;
     }
-    case WXK_DOWN:	//down cursor
+    case WXK_DOWN:   //down cursor
         OnDown();
         break;
-    case WXK_UP:	//up cursor
+     case WXK_UP:     //up cursor
         OnUp();
         break;
-    case 43:    //'+'
+     case 49: //1
+         ParentFrame()->SetZoomQual(stf::zoomch1);
+         //Child()->SetActiveWindow();
+         break;
+     case 50:  //2
+         if (Doc()->size()>1)
+             ParentFrame()->SetZoomQual(stf::zoomch2);
+         //Child()->SetActiveWindow();
+         break;
+     case 51: //3
+         if (Doc()->size()>1)
+             ParentFrame()->SetZoomQual(stf::zoomboth);
+         //Child()->SetActiveWindow();
+         break;
+     case 69: // e
+     case 101:
+         ParentFrame()->SetMouseQual(stf::event_cursor);
+         //Child()->SetActiveWindow();
+         break;
+     case 70:
+     case 102: // f
+         Fittowindow(true);
+         //Child()->SetActiveWindow();
+         break;
+     case 77:  // m
+     case 109:
+         ParentFrame()->SetMouseQual(stf::measure_cursor);
+         //Child()->SetActiveWindow();
+         break;
+     case 80: // p
+     case 112:
+         ParentFrame()->SetMouseQual(stf::peak_cursor);
+         //Child()->SetActiveWindow();
+         break;
+     case 65: // 'a'
+     case 97:
+         // Select all traces:
+         if (event.ControlDown()) {
+             wxCommandEvent com;
+             Doc()->Selectall(com);
+             break;
+         }
+         break;
+     case 66:  // b
+     case 98:
+         ParentFrame()->SetMouseQual(stf::base_cursor);
+         //Child()->SetActiveWindow();
+         break;
+     case 68:  // d
+     case 100:
+         ParentFrame()->SetMouseQual(stf::decay_cursor);
+         //Child()->SetActiveWindow();
+         break;
+     case 90:  // z
+     case 122:
+         ParentFrame()->SetMouseQual(stf::zoom_cursor);
+         //Child()->SetActiveWindow();
+         break;
+     case 76:  // l
+     case 108:
+         ParentFrame()->SetMouseQual(stf::latency_cursor);
+         //Child()->SetActiveWindow();
+         break;
+     case WXK_RETURN:    //Enter or Return
+     {
+         wxGetApp().OnPeakcalcexecMsg();
+         pFrame->UpdateResults();
+         break;
+     }
+     case 83: // Invalidate();//s
+     case 115: {
+         wxCommandEvent wce;
+         Doc()->OnSelect(wce);
+         break;
+     }
+     case 82: // Invalidate();//r
+     case 114: {
+         wxCommandEvent wce;
+         Doc()->OnRemove(wce);
+         break;
+     }
+    }
+
+    switch (event.GetUnicodeKey()) {
+    case wxT('0'):
+    case wxT('='):
+    case wxT('+'):
         if (event.ControlDown()) {
             OnXenllo();
             break;
         }
         OnYenllo();
         break;
-    case 45:	//'-'
+    case wxT('-'):
         if (event.ControlDown()) {
             OnXshrinklo();
             break;
         }
         OnYshrinklo();
         break;
-    case 49: //1
-        ParentFrame()->SetZoomQual(stf::zoomch1);
-        //Child()->SetActiveWindow();
-        break;
-    case 50:  //2
-        if (Doc()->size()>1)
-            ParentFrame()->SetZoomQual(stf::zoomch2);
-        //Child()->SetActiveWindow();
-        break;
-    case 51: //3
-        if (Doc()->size()>1)
-            ParentFrame()->SetZoomQual(stf::zoomboth);
-        //Child()->SetActiveWindow();
-        break;
-    case 69: // e
-    case 101:
-        ParentFrame()->SetMouseQual(stf::event_cursor);
-        //Child()->SetActiveWindow();
-        break;
-    case 70:
-    case 102: // f
-        Fittowindow(true);
-        //Child()->SetActiveWindow();
-        break;
-    case 77:  // m
-    case 109:
-        ParentFrame()->SetMouseQual(stf::measure_cursor);
-        //Child()->SetActiveWindow();
-        break;
-    case 80: // p
-    case 112:
-        ParentFrame()->SetMouseQual(stf::peak_cursor);
-        //Child()->SetActiveWindow();
-        break;
-    case 65: // 'a'
-    case 97:
-        // Select all traces:
-        if (event.ControlDown()) {
-            wxCommandEvent com;
-            Doc()->Selectall(com);
-            break;
-        }
-        break;
-    case 66:  // b
-    case 98:
-        ParentFrame()->SetMouseQual(stf::base_cursor);
-        //Child()->SetActiveWindow();
-        break;
-    case 68:  // d
-    case 100:
-        ParentFrame()->SetMouseQual(stf::decay_cursor);
-        //Child()->SetActiveWindow();
-        break;
-    case 90:  // z
-    case 122:
-        ParentFrame()->SetMouseQual(stf::zoom_cursor);
-        //Child()->SetActiveWindow();
-        break;
-    case 76:  // l
-    case 108:
-        ParentFrame()->SetMouseQual(stf::latency_cursor);
-        //Child()->SetActiveWindow();
-        break;
-    case WXK_RETURN:	//Enter or Return
-    {
-        wxGetApp().OnPeakcalcexecMsg();
-        pFrame->UpdateResults();
-        break;
-    }
-    case 83: // Invalidate();//s
-    case 115: {
-        wxCommandEvent wce;
-        Doc()->OnSelect(wce);
-        break;
-    }
-    case 82: // Invalidate();//r
-    case 114: {
-        wxCommandEvent wce;
-        Doc()->OnRemove(wce);
-        break;
-    }
     }
 }
 
@@ -1495,6 +1548,13 @@ void wxStfGraph::OnZoomV(wxCommandEvent& WXUNUSED(event)) {
     SPY2W()=(int)(WindowRect.height + ulz_y2 * YZ2());
     isZoomRect=false;
 }
+
+#if defined __WXMAC__ && !(wxCHECK_VERSION(2, 9, 0))
+void wxStfGraph::OnPaint(wxPaintEvent &WXUNUSED(event)) {
+    wxPaintDC PDC(this);
+    OnDraw(PDC);
+}
+#endif
 
 void wxStfGraph::CreateScale(wxDC* pDC)
 {
@@ -1634,7 +1694,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         if (!isLatex) {
             pDC->DrawLabel( scaleXString,TextFrameX,wxALIGN_CENTRE_HORIZONTAL | wxALIGN_TOP );
         } else {
-#ifndef _WINDOWS
+#if 0
             wxLatexDC* pLatexDC = (wxLatexDC*)pDC;
             pLatexDC->DrawLabelLatex( scaleXString, TextFrameX,wxALIGN_CENTRE_HORIZONTAL | wxALIGN_TOP );
 #endif
@@ -1650,7 +1710,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         if (!isLatex) {
             pDC->DrawLabel(scaleYString,TextFrameY,wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL);
         } else {
-#ifndef _WINDOWS
+#if 0
             wxLatexDC* pLatexDC = (wxLatexDC*)pDC;
             pLatexDC->DrawLabelLatex(scaleYString,TextFrameY,wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL);
 #endif
@@ -1669,7 +1729,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
             if (!isLatex) {
                 pDC->DrawLabel(scaleYStringSecond,TextFrameY2,wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
             } else {
-#ifndef _WINDOWS
+#if 0
                 wxLatexDC* pLatexDC = (wxLatexDC*)pDC;
                 pLatexDC->DrawLabelLatex(scaleYStringSecond,TextFrameY2,wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 #endif
@@ -1966,7 +2026,6 @@ void wxStfGraph::Fittowindow(bool refresh)
         break;
     }
     if (refresh) Refresh();
-    //	if ((CChildFrame*)GetOwner()!=NULL) (CChildFrame*)GetOwner()->SetFocus();
 }
 
 void wxStfGraph::FitToWindowSecCh(bool refresh)
@@ -1995,7 +2054,6 @@ void wxStfGraph::OnPrevious() {
     Doc()->SetSection(curSection);
     wxGetApp().OnPeakcalcexecMsg();
     pFrame->SetCurTrace(curSection);
-    //	if ((CChildFrame*)GetOwner()!=NULL) (CChildFrame*)GetOwner()->SetFocus();
     Refresh();
 }
 
@@ -2004,7 +2062,6 @@ void wxStfGraph::OnFirst() {
     Doc()->SetSection(0);
     wxGetApp().OnPeakcalcexecMsg();
     pFrame->SetCurTrace(0);
-    //	if ((CChildFrame*)GetOwner()!=NULL) (CChildFrame*)GetOwner()->SetFocus();
     Refresh();
 }
 
@@ -2014,7 +2071,6 @@ void wxStfGraph::OnLast() {
     Doc()->SetSection(curSection);
     wxGetApp().OnPeakcalcexecMsg();
     pFrame->SetCurTrace(curSection);
-    //	if ((CChildFrame*)GetOwner()!=NULL) (CChildFrame*)GetOwner()->SetFocus();
     Refresh();
 }
 
@@ -2026,7 +2082,6 @@ void wxStfGraph::OnNext() {
     Doc()->SetSection(curSection);
     wxGetApp().OnPeakcalcexecMsg();
     pFrame->SetCurTrace(curSection);
-    //	if ((CChildFrame*)GetOwner()!=NULL) (CChildFrame*)GetOwner()->SetFocus();
     Refresh();
 }
 
@@ -2052,7 +2107,6 @@ void wxStfGraph::OnUp() {
         SPYW()=SPY() - 20;
         break;
     }
-    //	if ((CChildFrame*)GetOwner()!=NULL) (CChildFrame*)GetOwner()->SetFocus();
     Refresh();
 }
 
@@ -2077,19 +2131,16 @@ void wxStfGraph::OnDown() {
         SPYW()=SPY() + 20;
         break;
     }
-    //	if ((CChildFrame*)GetOwner()!=NULL) (CChildFrame*)GetOwner()->SetFocus();
     Refresh();
 }
 
 void wxStfGraph::OnRight() {
     SPXW()=SPX() + 20;
-    //	if ((CChildFrame*)GetOwner()!=NULL) (CChildFrame*)GetOwner()->SetFocus();
     Refresh();
 }
 
 void wxStfGraph::OnLeft() {
     SPXW()=SPX() - 20;
-    //	if ((CChildFrame*)GetOwner()!=NULL) (CChildFrame*)GetOwner()->SetFocus();
     Refresh();
 }
 
@@ -2119,7 +2170,6 @@ void wxStfGraph::ChangeXScale(double factor) {
 
     //calculation of new start position
     SPXW()=(int)(WindowRect.width/2.0 - middle * XZ());
-    //	if ((CChildFrame*)GetOwner()!=NULL) (CChildFrame*)GetOwner()->SetFocus();
     Refresh();
 }
 
@@ -2171,7 +2221,6 @@ void wxStfGraph::ChangeYScale(double factor) {
         YZW()=YZ() * factor;
         break;
     }
-    //	if ((CChildFrame*)GetOwner()!=NULL) (CChildFrame*)GetOwner()->SetFocus();
     Refresh();
 }
 

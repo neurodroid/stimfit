@@ -23,7 +23,7 @@
 #include "wx/wx.h"
 #include "wx/progdlg.h"
 
-#if defined(__UNIX__) || defined(__STF__)
+#if defined(__LINUX__) || defined(__STF__) || defined(__WXMAC__)
 #include "./axon/Common/axodefn.h"
 #include "./axon/AxAbfFio32/abffiles.h"
 #endif

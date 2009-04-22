@@ -31,7 +31,7 @@
 #include "./../../core/stimdefs.h"
 
 //! Non-linear regression settings dialog
-class wxStfFitSelDlg : public wxDialog 
+class wxStfFitSelDlg : public wxDialog
 {
     DECLARE_EVENT_TABLE()
 
@@ -59,6 +59,8 @@ private:
     std::vector< wxStaticText* > paramDescArray;
     std::vector< wxTextCtrl* > paramEntryArray;
 
+    wxStfDoc* pDoc;
+
     //! Only called when a modal dialog is closed with the OK button.
     /*! \return true if all dialog entries could be read successfully
      */
@@ -75,13 +77,14 @@ public:
      */
     wxStfFitSelDlg(
             wxWindow* parent,
+            wxStfDoc* doc,
             int id = wxID_ANY,
             wxString title = wxT("Non-linear regression"),
             wxPoint pos = wxDefaultPosition,
             wxSize size = wxDefaultSize,
             int style = wxCAPTION
     );
-    
+
     //! Called upon ending a modal dialog.
     /*! \param retCode The dialog button id that ended the dialog
      *         (e.g. wxID_OK)
@@ -92,17 +95,17 @@ public:
     /*! \return The index of the selected fit function.
      */
     int GetFSelect() const {return m_fselect;}
-    
+
     //! Get the initial parameters.
     /*! \return A valarray containing the initial parameter set to start the fit.
      */
     std::valarray<double> GetInitP() const {return init_p;}
-    
+
     //! Get options for the algorithm.
     /*! \return A valarray containing the initial parameters for the algorithm.
      */
     std::valarray<double> GetOpts() const {return opts;}
-    
+
     //! Determines whether user-defined initial parameters are allowed.
     /*! \param noInput_ Set to true if the user may set the initial parameters, false otherwise.
      *         Needed for batch analysis.

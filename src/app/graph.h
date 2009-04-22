@@ -327,14 +327,16 @@ private:
         slopePrintPen, resultsPrintPen, latencyPrintPen, alignPrintPen;
 
     wxBrush baseBrush, zeroBrush;
-
+    
+    wxPoint lastLDown;
+    
     boost::shared_ptr<wxMenu> m_zoomContext;
     boost::shared_ptr<wxMenu> m_eventContext;
     std::vector<wxStfCheckBox*> cbList;
-    void PlotTrace( wxDC* pDC, const std::valarray<double>& trace );
-    void PrintTrace( wxDC* pDC, const std::valarray<double>& trace );
-    void PlotTraceCh2( wxDC* pDC, const std::valarray<double>& trace ) ;
-    void PrintTraceCh2( wxDC* pDC, const std::valarray<double>& trace );
+    void PlotTrace( wxDC* pDC, const std::valarray<double>& trace, bool isSecond=false );
+    void DoPlot( wxDC* pDC, const std::valarray<double> trace, int start, int end, int step, bool isSecond );
+    void PrintTrace( wxDC* pDC, const std::valarray<double>& trace, bool isSecond=false );
+    void DoPrint( wxDC* pDC, const std::valarray<double> trace, int start, int end, int downsampling, bool isSecond );
     void DrawCircle(wxDC* pDC, double x, double y);
     void DrawVLine(wxDC* pDC, double x);
     void DrawHLine(wxDC* pDC, double y);
@@ -347,15 +349,16 @@ private:
     // Function receives the x-coordinate of a point and returns 
     // its formatted value according to the current Zoom settings
     int xFormat(double);
-
     int xFormat(int); 
     int xFormat(std::size_t); 
     // The same for the y coordinates
     int yFormat(double);
     int yFormat(int);
+    int yFormatD(double f) { return yFormat(f); }
     // The same for the y coordinates of the second channel
     int yFormatSecond(double);
     int yFormatSecond(int);
+    int yFormatDSecond(double f) { return yFormatSecond(f); }
 
     void FitToWindowSecCh(bool refresh);
 
@@ -376,7 +379,9 @@ private:
     void OnZoomHV(wxCommandEvent& event);
     void OnZoomH(wxCommandEvent& event);
     void OnZoomV(wxCommandEvent& event);
-    
+#if defined __WXMAC__ && !(wxCHECK_VERSION(2, 9, 0))
+    void OnPaint(wxPaintEvent &event);
+#endif
     int SPX() { return Doc()->GetXZoom().startPosX; }
     int& SPXW() { return Doc()->GetXZoomW().startPosX; } 
     int SPY() { return Doc()->at(Doc()->GetCurCh()).GetYZoom().startPosY; }

@@ -31,8 +31,14 @@
 /* common suffix for BLAS subroutines */
 #ifdef _WINDOWS
     #define LM_BLAS_SUFFIX _ // define empty if a f2c_ or cblas_ prefix was defined for LM_BLAS_PREFIX above
-#else
+#endif
+#ifdef __LINUX__
     #define LM_BLAS_SUFFIX _ // use this in case of no BLAS prefix
+#endif
+
+#ifdef __APPLE__
+    #define LM_BLAS_PREFIX 
+    #define LM_BLAS_SUFFIX
 #endif
 
 #define LCAT_(a, b)    #a b
