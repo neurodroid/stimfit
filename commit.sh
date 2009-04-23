@@ -1,5 +1,5 @@
 #! /bin/bash
-echo hg add
+echo hg addremove
 hg addremove
 echo hg ci
 hg ci
