@@ -266,16 +266,8 @@ wxStfFilterSelDlg::wxStfFilterSelDlg(wxWindow* parent, int id, wxString title, w
             wxT("Low pass (Gaussian)") 
     };
     int m_radioBoxNChoices = sizeof( m_radioBoxChoices ) / sizeof( wxString );
-    m_radioBox = new wxRadioBox(
-            this,
-            wxID_ANY,
-            wxT("Select filter function"),
-            wxDefaultPosition,
-            wxDefaultSize,
-            m_radioBoxNChoices,
-            m_radioBoxChoices,
-            3,
-            wxRA_SPECIFY_ROWS );
+    m_radioBox = new wxRadioBox( this, wxID_ANY, wxT("Select filter function"), wxDefaultPosition,
+            wxDefaultSize, m_radioBoxNChoices, m_radioBoxChoices, 3, wxRA_SPECIFY_ROWS );
     topSizer->Add( m_radioBox, 0, wxALL, 5 );
 
     m_sdbSizer = new wxStdDialogButtonSizer();
@@ -577,26 +569,12 @@ wxStfGaussianDlg::wxStfGaussianDlg(wxWindow* parent, int id, wxString title, wxP
     wxFlexGridSizer *gridSizer;
     gridSizer=new wxFlexGridSizer(3,2,0,0);
     wxStaticText* staticTextAmp;
-    staticTextAmp=new wxStaticText(
-            this,
-            wxID_ANY,
-            wxT("Amplitude:"),
-            wxDefaultPosition,
-            wxDefaultSize,
-            0
-    );
+    staticTextAmp=new wxStaticText( this, wxID_ANY, wxT("Amplitude:"), wxDefaultPosition,
+            wxDefaultSize, 0);
     gridSizer->Add( staticTextAmp, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
-    m_slider = new wxSlider(
-            this,
-            wxID_ANY, 
-            100, 
-            0,
-            100, 
-            wxDefaultPosition, 
-            wxDefaultSize, 
-            wxSL_HORIZONTAL 
-    );
+    m_slider = new wxSlider( this, wxID_ANY, 100, 0, 100, 
+                             wxDefaultPosition, wxSize(128,-1), wxSL_HORIZONTAL );
     gridSizer->Add( m_slider, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
     wxStaticText* staticTextCenter;
