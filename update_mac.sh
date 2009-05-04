@@ -1,4 +1,4 @@
 #! /bin/bash
-REMOTE=http://code.google.com/p/stimfit/source/checkout/
+REMOTE=http://stimfit.googlecode.com/hg
 hg -v pull -u $REMOTE
 
