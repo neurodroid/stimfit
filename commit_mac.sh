@@ -1,5 +1,5 @@
 #! /bin/bash
-REMOTE=https://christoph.schmidt-hieber:Xe9Vr2Jf2Xd9@stimfit.googlecode.com/hg
+REMOTE=https://christoph.schmidthieber@stimfit.googlecode.com/hg
 echo hg addremove
 hg addremove
 echo hg ci
