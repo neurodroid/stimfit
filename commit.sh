@@ -1,7 +1,8 @@
 #! /bin/bash
+REMOTE=https://christoph.schmidthieber@stimfit.googlecode.com/hg
 echo hg addremove
 hg addremove
 echo hg ci
 hg ci
-echo sudo hg push /media/dendrite/Christoph/stimfit
-sudo hg push /media/dendrite/Christoph/stimfit
+echo hg --debug push $REMOTE
+hg --debug push $REMOTE
