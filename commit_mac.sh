@@ -1,5 +1,5 @@
 #! /bin/bash
-REMOTE=http://code.google.com/p/stimfit/source/checkout/
+REMOTE=https://christsc@gmx.de@stimfit.googlecode.com/hg/
 echo hg addremove
 hg addremove
 echo hg ci
