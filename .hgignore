@@ -27,7 +27,8 @@ build/*
 doc/stfbook.ps
 doc/html/*
 doc/latex/*
-doc/sphinx/build/*
+doc/sphinx/.build/*
+doc/sphinx/.static/*
 autom4te.cache/*
 stimfit_VS03/stfswig/Debug
 stimfit_VS03/stfswig/Release

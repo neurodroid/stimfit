@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Stimfit Manual documentation build configuration file, created by
-# sphinx-quickstart on Sun Apr 19 15:22:01 2009.
+# Stimfit documentation documentation build configuration file, created by
+# sphinx-quickstart on Mon May  4 17:57:05 2009.
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #
@@ -26,7 +26,7 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.intersphinx']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.intersphinx','sphinx.ext.pngmath']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['.templates']
@@ -38,10 +38,10 @@ source_suffix = '.rst'
 #source_encoding = 'utf-8'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = 'contents'
 
 # General information about the project.
-project = u'Stimfit Manual'
+project = u'Stimfit'
 copyright = u'2009, Christoph Schmidt-Hieber'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -68,7 +68,7 @@ release = '0.8.19'
 
 # List of directories, relative to source directory, that shouldn't be searched
 # for source files.
-exclude_trees = []
+exclude_trees = ['.build']
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 #default_role = None
@@ -101,7 +101,7 @@ html_style = 'default.css'
 #html_title = None
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-#html_short_title = None
+html_short_title = 'Stimfit documentation'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
@@ -119,24 +119,24 @@ html_static_path = ['.static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-#html_last_updated_fmt = '%b %d, %Y'
+html_last_updated_fmt = '%b %d, %Y'
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
 #html_use_smartypants = True
 
 # Custom sidebar templates, maps document names to template names.
-#html_sidebars = {}
+html_sidebars = {}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
-#html_additional_pages = {}
+html_additional_pages = {'index':'index.html'}
 
 # If false, no module index is generated.
 #html_use_modindex = True
 
 # If false, no index is generated.
-#html_use_index = True
+html_use_index = True
 
 # If true, the index is split into individual pages for each letter.
 #html_split_index = False
@@ -153,7 +153,7 @@ html_static_path = ['.static']
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'StimfitManualdoc'
+htmlhelp_basename = 'Stimfitdoc'
 
 
 # Options for LaTeX output
@@ -168,7 +168,7 @@ htmlhelp_basename = 'StimfitManualdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', 'StimfitManual.tex', ur'Stimfit Manual Documentation',
+  ('contents', 'Stimfitdocumentation.tex', ur'Stimfit Documentation',
    ur'Christoph Schmidt-Hieber', 'manual'),
 ]
 

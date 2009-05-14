@@ -2,20 +2,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Stimfit Manual
-==============
-
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
-   preface
-   getting_started
-   python
-   latency_measurements
-   event_extraction
+
+   manual/index
 
 Indices and tables
 ==================

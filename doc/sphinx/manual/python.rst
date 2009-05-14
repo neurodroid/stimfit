@@ -21,7 +21,7 @@ access to the Python interpreter. For instance, you could type:
     >>> stf.
  
 which will pop up a window showing all the available functions from the
-stimfit module (abreviated stf). For example, you could now check
+Stimfit module (abbreviated stf). For example, you could now check
 whether a file is open by selecting the check_doc function from that
 list:
 
@@ -34,7 +34,7 @@ The function documentation will pop up when you type in the opening
 bracket. The function returns the boolean False because you have not
 opened any file yet. Since the sft module is imported in the namespace,
 you can omit the initial ```stf.``` when calling functions. Thus, you
-could get the same result by simply typing
+could get just the same result by simply typing
 
 ::
 
@@ -51,7 +51,7 @@ Accessing data from the Python shell
 **get_trace(trace=1, channel=1)**
 
 The ``get_trace`` function returns the currently displayed trace as a
-one-dimension [NumPy] array when called without arguments:
+one-dimension [NumPy]_ array when called without arguments:
 
 ::
 
@@ -88,7 +88,7 @@ trace within a file. The default values of trace = -1 and channel = -1
 will return the currently displayed trace of the active channel. By
 passing a value of 1 as the first argument, you could access the second
 trace within your file (assuming it contains more than one trace
-course). Remember that indices are zero-based!
+course). Remember that index are zero-based!
 
 ::
 
@@ -96,7 +96,7 @@ course). Remember that indices are zero-based!
     >>> print b[234]
     >>> -23.7731933594
 
-Using NumPy with stimfit
+Using NumPy with Stimfit
 ========================
 [NumPy]_ allows you to efficiently perform array computations from the ``Python`` shell. For example, you can multiply an array with a scalar:
 
@@ -153,11 +153,11 @@ Although using a 2D_NumPy array is very efficient, there are a few drawbacks: th
     >>> python_list.append( N.concatenate( (get_trace(), get_trace()) ) )
     >>> new_window_list(python_list)
 
-Note that items in Python list are writeen between *squared* brakets, and that a comma is required at the end of single-item lists.
+Note that items in Python list are written between *squared* brakes, and that a comma is required at the end of single-item lists.
 
-The Scipy library, which is build on top of NumPy, provides a huge amount of numericall tools, such as special functions, integration, ordinary differential equation solvers, gradient optimization, genetic algorithms or parallel programming tools. Due to its size, it is no packeged with ``stimfit`` by default, but I highly recommend installing it for more advanced numerical analyses.
+The Scipy library, which is build on top of NumPy, provides a huge amount of numerical tools, such as special functions, integration, ordinary differential equation solvers, gradient optimization, genetic algorithms or parallel programming tools. Due to its size, it is no packaged with ``Stimfit`` by default, but I highly recommend installing it for more advanced numerical analyses.
 
-Control stimfit from the Python shell
+Control Stimfit from the Python shell
 =====================================
 
 Cursors
@@ -165,9 +165,9 @@ Cursors
 
 Cursors can be positioned from the Python shell using one of the ``set_[xy]_start`` or ``set_[xy]_end`` functions, where ``[xy]`` stands for one of peak, base or fit, depending on which cursor you want to set. Correspondingly, the ``get_[xy]_start`` or ``get_[xy]_end`` functions can be used to retrieve the current cursor positions.
 
-**set_[xy]_start(pos, is_time = False)** and **set_[xy]_end(pos, is_time = False)** take one or two arguments. ``pos`` specifies the new cursor position. ``is_time`` inidcates whether ``pos`` is an index, i.e. in units of sampling points (False, default), or in units of time (True), with the trace starting at t=0 ms. If there was an error, such as an out-of-bounds-index, these functions will return False.
+**set_[xy]_start(pos, is_time = False)** and **set_[xy]_end(pos, is_time = False)** take one or two arguments. ``pos`` specifies the new cursor position. ``is_time`` indicates whether ``pos`` is an index, i.e. in units of sampling points (False, default), or in units of time (True), with the trace starting at t=0 ms. If there was an error, such as an out-of-bounds-index, these functions will return False.
 
-**get_[xy]_start(pos, is_time = False)** and **get_[xy]_end(pos, is_time = False)** optionally take a single argument that indicates wheter the return value should be in units of sampling points (``is_time = False``,default) or in units of time (``is_time = True``). Again, traces start at t=0 ms. These functions will return -1 if no file is opened at the time of the function call. Indices can be converted inot time values by multiplying with ``get_sampling_interval()``. For example:
+**get_[xy]_start(pos, is_time = False)** and **get_[xy]_end(pos, is_time = False)** optionally take a single argument that indicates whether the return value should be in units of sampling points (``is_time = False``,default) or in units of time (``is_time = True``). Again, traces start at t=0 ms. These functions will return -1 if no file is opened at the time of the function call. Indices can be converted into time values by multiplying with ``get_sampling_interval()``. For example:
 
 ::
 
@@ -190,7 +190,7 @@ Trace selection and navigation
 ------------------------------
 
 **select_trace(trace = -1)**
-You can select any trace within a file by passing its zero-based index to ``select-tracre``. The function will return ``False`` if there was an error. The default value of -1 will select the currently displayed trace as if you had pressed **S**. If you wnated to select every fifth trace, starting with an index of 0 and ending with an index of 9 (corresponding to numbers 1 to 10 in the drop-down box), you could do:
+You can select any trace within a file by passing its zero-based index to ``select-trace``. The function will return ``False`` if there was an error. The default value of -1 will select the currently displayed trace as if you had pressed **S**. If you wanted to select every fifth trace, starting with an index of 0 and ending with an index of 9 (corresponding to numbers 1 to 10 in the drop-down box), you could do:
 
 ::
 
@@ -202,9 +202,9 @@ You can select any trace within a file by passing its zero-based index to ``sele
 Note that the Python range function omits the end point. 
 
 ** unselect_all() select_all() get_selected_traces() new_window_selected_this()**
-The list of selected traces can be cleared using ``unselect_all()``, and conversersely, all traces can be selected using ``select_all()``. ``get_selected_indices()`` returns the indices of all selected traces as a Python tuple. Finally, the selected traces within a file can be shown in a new window using ``new_window_selected_this()``.
+The list of selected traces can be cleared using ``unselect_all()``, and conversely, all traces can be selected using ``select_all()``. ``get_selected_indices()`` returns the indices of all selected traces as a Python tuple. Finally, the selected traces within a file can be shown in a new window using ``new_window_selected_this()``.
 
-**get_size_trace(trace=-1, channel=-1)** and **get_size_channel(channel=-1)** return the number of sampling points in a trace a the number of traces in a channel, respectively. ``trace`` and ``channel`` have the same maning as in ``get_trace``. These functions can be used to iterate over an entire file or to check ranges;
+**get_size_trace(trace=-1, channel=-1)** and **get_size_channel(channel=-1)** return the number of sampling points in a trace a the number of traces in a channel, respectively. ``trace`` and ``channel`` have the same meaning as in ``get_trace``. These functions can be used to iterate over an entire file or to check ranges;
 
 ::
 
@@ -224,11 +224,11 @@ The list of selected traces can be cleared using ``unselect_all()``, and convers
 sets the currently displayed trace to the specified zero-based index and returns ``False`` if there was an error. This will update the peak, base and latency values, so there is need to call ``measure()`` directly after this function.
 
 **get_trace_index()**
-Correspondingly, ``get_trace_index()`` allows you to retrive the zero-based index of the currently displayed trace. There is a slight inconsistency in function naming here: do not confound this function with ``get_trace()``.
+Correspondingly, ``get_trace_index()`` allows you to retrieve the zero-based index of the currently displayed trace. There is a slight inconsistency in function naming here: do not confound this function with ``get_trace()``.
 
 File I/O
 --------
-**file_open(filename)** and **file_save(filename)** will open or save a file specified by ``filename``. On windows, use double backslashes (\\) between directories to avoid conversion to special characteres, such as \t or \n; for example:
+**file_open(filename)** and **file_save(filename)** will open or save a file specified by ``filename``. On windows, use double backslashes (\\) between directories to avoid conversion to special charactered, such as \t or \n; for example:
 
 ::
 
@@ -252,19 +252,19 @@ Define your own functions
 -------------------------
 By defining you won functions, you can apply identical complex analyses to different traces and files. The following steps are required to make use of your own Python files:
  
-1. Create a Python file in a directory that the Python interpreter will find. If you do not know where that is , use the stimfit program directory (tipically, this will be C:\Program Files\Stimfit in Windows or /usr/lib/phython2-5/site-packages/stimfit in Linux). You will find some example files in that directory that you can use as a template, but you should not touch stf.py which is the core stimfit module.
-2. Import the stimfit module in your file:
+1. Create a Python file in a directory that the Python interpreter will find. If you do not know where that is , use the Stimfit program directory (typically, this will be C:\Program Files\Stimfit in Windows or /usr/lib/phython2-5/site-packages/Stimfit in Linux). You will find some example files in that directory that you can use as a template, but you should not touch stf.py which is the core Stimfit module.
+2. Import the Stimfit module in your file:
 
 ::
     import stf
 
-3. Start ``stimfit`` and import your file in the embedded Python shell. Assuming that your file is called ``myFile.py``, you would do:
+3. Start ``Stimfit`` and import your file in the embedded Python shell. Assuming that your file is called ``myFile.py``, you would do:
 
 ::
 
     >>> import myFile
 
-4. If you have applied changes to your file, there is no need to restart stimfit. Just do:
+4. If you have applied changes to your file, there is no need to restart Stimfit. Just do:
 
 ::
 
@@ -274,7 +274,7 @@ To give you an example, this program shows a function that returns the sum of th
 
 ::
 
-    # import the stimfit core module:
+    # import the Stimfit core module:
     import stf
 
     def get_amp():
@@ -312,14 +312,14 @@ To import and use this file, you would do:
     >>> myFile.sqr_amp()
     497.70163353882447
 
-Some recipies for commonly requested features
+Some recipes for commonly requested features
 =============================================
 
 Some often-requested features could not be integrated into the program easily without cluttering up the user interface. The following sections will show how the Python shell can be used to solve these problems.
 
 Cutting traces to arbitrary lengths
 -----------------------------------
-Cutting traces is best done using the squared bracked operators ([]) to slice a NumPy array. For example, if you wanted to cut a trace at the 100th sampling point, you could do:
+Cutting traces is best done using the squared braked operators ([]) to slice a NumPy array. For example, if you wanted to cut a trace at the 100th sampling point, you could do:
 
 ::
 
@@ -330,7 +330,7 @@ Cutting traces is best done using the squared bracked operators ([]) to slice a 
 In this example, a[:100] refers to a sliced NumPy array that comprises all sampling points from index 0 to index 99, and a[100:] refers to an array from index 100 to the last sampling point.
 
 **cut_traces(pt)** and **cut_traces_multi(pt_list)**
-These functions cut all selected traces at a single sampling pont (pt) or at multiple samplint points (pt_list). The cut traces will be shown in a new window. Both functions are included in the **stf namespace** from version 0.8.11 on. The code for ``cut_traces()`` is listed here. 
+These functions cut all selected traces at a single sampling point (pt) or at multiple sampling points (pt_list). The cut traces will be shown in a new window. Both functions are included in the **stf namespace** from version 0.8.11 on. The code for ``cut_traces()`` is listed here. 
 
 ::
 
