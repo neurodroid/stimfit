@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+{% set title = 'Stimfit Documentation v0.8.19' %}
+{% block body %}
+
+   <h1>{{ docstitle }}</h1>
+
+   <table class="contentstable" align="center">
+      <tr valign="top"><td width="50%">
+      <p class="biglink">
+         <a class="biglink" href="manual/index.html">
+            Manual</a><br>
+         <span class="linkdescr">
+            The {{project}} manual.
+         </span></p>
+
+      <p class="biglink">
+         <a class="biglink" href="{{ pathto('install') }}">
+            Linux Installation Guide</a><br>
+         <span class="linkdescr">
+            A detalled guide to quickly build and install 
+            {{project}} in to your GNU/Linux system.
+         </span></p>
+
+      <p class="biglink">
+         <a class="biglink" href="{{ pathto('developers') }}">
+            Developers Reference</a><br>
+         <span class="linkdescr">
+            Overview of what's in {{project}} and how to use it.
+         </span></p>
+
+   </td><td width="50%">
+
+      <p class="biglink">
+         <a class="biglink" href="{{ pathto('changelog') }}">
+            What's new in {{project}}?</a><br>
+         <span class="linkdescr">
+            Changes made in each {{project}} release.
+         </span></p>
+
+      <p class="biglink">
+         <a class="biglink" href="{{ pathto('license') }}">
+            License Info</a><br>
+         <span class="linkdescr">
+            How you can use this software and the source code.
+         </span></p>
+
+   </td></tr></table>
+
+{% endblock %}

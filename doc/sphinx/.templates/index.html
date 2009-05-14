@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{%- block sidebar2 %}
+{% endblock %}
+
+{% block body %}
+  <h1>{{ docstitle|e }}</h1>
+  {% block tables %}
+  <table class="contentstable" align="center" cellspacing="20">
+    <tr valign="top">
+      <td width="50%">
+        <p class="biglink"><a class="biglink" href="manual/index.html">Manual</a><br>
+        <span class="linkdescr">This manual is the best way to
+        become familiar with {{project}} in only a few hours. </span></p>
+      </td>
+      <td width="50%">
+        <p class="biglink"><a class="biglink" href="constructions">A Python Primer for the stf User</a><br>
+        <span class="linkdescr">The basis of the
+        python programming language for the {{project}} advanced user.
+        </span></p>
+      </td>
+    </tr>
+    <tr valign="top">     
+      <td width="50%">
+        <p class="biglink"><a class="biglink" href="linux_install_guide/index.html">GNU/Linux Installation Guide</a><br>
+
+        <span class="linkdescr">This document describes how to build
+        wxWidgets and wxPython to install the current {{project}} version in GNU/Linux systems.
+        </span>
+
+        </p>
+
+      </td>
+      <td width="50%">
+        <p class="biglink"><a class="biglink" href="stf_reference/stf.html">Stf Reference Module</a><br>
+        <span class="linkdescr">
+        This is a reference to the <B>stf module</B>. The stf module allow to access a running stimfit application from the embedded python shell.
+        </span>
+
+        </p>
+      </td>
+    </tr>
+  </table>
+
+  {% endblock %}
+{% endblock %}
