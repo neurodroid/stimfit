@@ -27,6 +27,7 @@ build/*
 doc/stfbook.ps
 doc/html/*
 doc/latex/*
+doc/doxygen/*
 doc/sphinx/.build/*
 doc/sphinx/.static/*
 autom4te.cache/*

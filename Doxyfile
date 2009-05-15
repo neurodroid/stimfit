@@ -31,14 +31,14 @@ PROJECT_NAME           = stimfit
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = 0.8.12
+PROJECT_NUMBER         = 0.8.20
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
 # If a relative path is entered, it will be relative to the location 
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = doc
+OUTPUT_DIRECTORY       = doc/doxygen
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 
 # 4096 sub-directories (in 2 levels) under the output directory of each output 
@@ -516,7 +516,8 @@ WARN_LOGFILE           =
 INPUT                  = ./src/app/app.h \
                          ./src/app/copygrid.h \
                          ./src/app/doc.h \
-                         ./src/app/frame.h \
+                         ./src/app/childframe.h \
+                         ./src/app/parentframe.h \
                          ./src/app/graph.h \
                          ./src/app/printout.h \
                          ./src/app/stfcheckbox.h \
@@ -533,7 +534,9 @@ INPUT                  = ./src/app/app.h \
                          ./src/core/filelib/abflib.h \
                          ./src/core/filelib/asciilib.h \
                          ./src/core/filelib/atflib.h \
+                         ./src/core/filelib/axglib.h \
                          ./src/core/filelib/cfslib.h \
+                         ./src/core/filelib/hdf5lib.h \
                          ./src/core/filelib/igorlib.h \
                          ./src/app/dlgs/cursorsdlg.h \
                          ./src/app/dlgs/eventdlg.h \
