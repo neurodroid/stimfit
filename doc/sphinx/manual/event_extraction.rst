@@ -53,7 +53,7 @@ This will take care of the appropriate cursor positions and the biexponential fi
 Extract exemplary events
 ------------------------
 
-We now use the bait example to fish some more large and isolate events. Choose "Analysis"->"Event detection"->"Template matching..." form the menu. 
+We now use the bait example to fish some more large and isolate events. Choose "Analysis"->"Event detection"->"Template matching..." from the menu. 
 
 
     .. figure:: images/eventdetectionsettings.png
@@ -135,7 +135,7 @@ To analyze all traces efficiently, you can now perform a "batch analysis" on all
 
         **Fig. 28:** Batch analysis settings.
 
-Form the dialog (Fig 28) choose the analysis functions that you want to apply to your data. Click "OK" once your are done. A new table will appear to the left of the traces. You can copy and paste values from the tables to spreadsheet programs for further analysis.
+From the dialog (Fig 28) choose the analysis functions that you want to apply to your data. Click "OK" once your are done. A new table will appear to the left of the traces. You can copy and paste values from the tables to spreadsheet programs for further analysis.
 
 
 Adjusting event detection settings

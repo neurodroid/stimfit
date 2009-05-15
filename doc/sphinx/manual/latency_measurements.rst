@@ -8,10 +8,10 @@ Measurement of synaptic delay
 
 .. math::
 
-    I_{m}=I_{cap}+I_{ionic} = C_m\frac{dV_m}{dt} + I_{ionic} = 0, \mbox{and hence}
+    I_{\text{m}}=I_{\text{cap}}+I_{\text{ionic}} = C_\text{m}\frac{\text{d}V_\text{m}}{\text{d}t} + I_{\text{ionic}} = 0, \mbox{and hence}
 
 
-    I_{ionic}=-I_{cap}=-C_{m}\frac{dV_{m}}{dt}
+    I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{d}t}
 
 The commencement (sometimes called "foot") of the postsynaptic current can robustly be estimated from the extrapolated intersection of the baseline with a line through the two points of time when the current in 20 and 80% of the peak current (Jonas et al., 1993, Bartos et al., 2001).
 

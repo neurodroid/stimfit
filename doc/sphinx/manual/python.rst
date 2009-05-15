@@ -13,7 +13,7 @@ The Python shell
 ================
 
 When you start up ``Stimfit``,  you will find an embedded Python shell in
-the lower part of the program window. Form this shell, you have full
+the lower part of the program window. From this shell, you have full
 access to the Python interpreter. For instance, you could type:
 
 ::
@@ -32,7 +32,7 @@ list:
 
 The function documentation will pop up when you type in the opening
 bracket. The function returns the boolean False because you have not
-opened any file yet. Since the sft module is imported in the namespace,
+opened any file yet. Since the stf module is imported in the namespace,
 you can omit the initial ```stf.``` when calling functions. Thus, you
 could get just the same result by simply typing
 
@@ -65,7 +65,7 @@ specify the index. For example:
     >>> print a[123]
     -26.3671875
 
-print out the y-value of the sampling point with index 123. Note that
+prints out the y-value of the sampling point with index 123. Note that
 indices in ``Python`` are *zero-based*, i.e. the first sampling point
 has the index 0.
 
@@ -88,7 +88,7 @@ trace within a file. The default values of trace = -1 and channel = -1
 will return the currently displayed trace of the active channel. By
 passing a value of 1 as the first argument, you could access the second
 trace within your file (assuming it contains more than one trace
-course). Remember that index are zero-based!
+course). Remember that indices are zero-based!
 
 ::
 
@@ -174,14 +174,14 @@ Cursors can be positioned from the Python shell using one of the ``set_[xy]_star
     >>> print "Peak start cursor index:", get_peak_start()
     Peak start cursor index: 254
     >>> print "corresponds to t =", get_peak_start(True), "ms"
-    corresponds to t= 2.54 ms
+    corresponds to t = 2.54 ms
     >>> print "=", get_peak_start()*get_sampling_interval(), "ms"
     = 2.54 ms
     >>> set_peak_start(10, True)
     True
     >>> print "new cursor position:", get_peak_start()
     new cursor position: 1000.0
-    >>> print "at t=", get_peak_start(True), "ms"
+    >>> print "at t =", get_peak_start(True), "ms"
     at t = 10 ms
 
 The peak, baseline and latency values will not be updated until you either select a new trace, press **Enter** in the main window or call ``measure()`` from the Python shell.
@@ -228,7 +228,7 @@ Correspondingly, ``get_trace_index()`` allows you to retrieve the zero-based ind
 
 File I/O
 --------
-**file_open(filename)** and **file_save(filename)** will open or save a file specified by ``filename``. On windows, use double backslashes (\\) between directories to avoid conversion to special charactered, such as \t or \n; for example:
+**file_open(filename)** and **file_save(filename)** will open or save a file specified by ``filename``. On windows, use double backslashes (\\\\) between directories to avoid conversion to special characters, such as \\t or \\n; for example:
 
 ::
 
@@ -250,7 +250,7 @@ closes all open files.
 
 Define your own functions
 -------------------------
-By defining you won functions, you can apply identical complex analyses to different traces and files. The following steps are required to make use of your own Python files:
+By defining your own functions, you can apply identical complex analyses to different traces and files. The following steps are required to make use of your own Python files:
  
 1. Create a Python file in a directory that the Python interpreter will find. If you do not know where that is , use the Stimfit program directory (typically, this will be C:\Program Files\Stimfit in Windows or /usr/lib/phython2-5/site-packages/Stimfit in Linux). You will find some example files in that directory that you can use as a template, but you should not touch stf.py which is the core Stimfit module.
 2. Import the Stimfit module in your file:
