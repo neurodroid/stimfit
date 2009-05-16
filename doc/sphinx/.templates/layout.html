@@ -8,7 +8,9 @@
 {% endblock %}
 #}
 
+{# to show the bar on the left side #}
 {{ sidebar() }}
+
 {# show the relbar only before the document
 {% block relbar2 %}{{ sidebar() }}{% endblock %}
 #}
@@ -17,7 +19,6 @@
 {# update static links in the relbar #}
 {% block rootrellink %}
     <li><a href="http://www.stimfit.org">Stimfit Homepage</a> | &nbsp; </li>
-    <li><a href={{ pathto('index') }}>Stf documentation</a> |&nbsp;</li>
+    <li><a href={{ pathto('index') }}>Stf doc v0.8.19</a> |&nbsp;</li>
     <li><a href={{ pathto(master_doc) }}>TOC </a> |&nbsp;</li>
-    <li><a href={{ pathto('search') }}>Search </a></li>
 {% endblock %}
