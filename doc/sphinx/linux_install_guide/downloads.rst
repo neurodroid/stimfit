@@ -15,7 +15,7 @@ After download the tar.gz file into a local directory (for example /usr/local) a
 
 ::
 
-    >>> tar -xzf stimfit-0.8.19.tar.gz
+    >>> tar xvfz stimfit-0.8.19.tar.gz
 
 this will create the directory /stimfit-0.8.19/ in your directory, for example /usr/local/stimfit-0.8.19/. 
 
