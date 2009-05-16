@@ -1,0 +1,26 @@
+**********************************
+Recommendations for system updates
+**********************************
+
+If you plan to upgrade/update your system after the installation of Stimfit, you should be sure that the versions of libraries of wxpython and wxwidgets remains the same. If not, you will find the message "Segmentation fault" after running stimfit in your terminal.
+
+::
+
+    >>> echo package hold|dpkg --set-selections
+
+To take a package off Hold
+
+::
+
+    >>> echo package install|dpkg --set-selections
+
+To list packages on hold:
+
+::
+
+    >>> dpkg --get-selections | grep hold
+
+I collect here a list of debian packages that you should hold 
+
+    * python-wxgtk2.8
+    * python-wxgtk2.6

@@ -155,7 +155,7 @@ Although using a 2D_NumPy array is very efficient, there are a few drawbacks: th
 
 Note that items in Python list are written between *squared* brakes, and that a comma is required at the end of single-item lists.
 
-The Scipy library, which is build on top of NumPy, provides a huge amount of numerical tools, such as special functions, integration, ordinary differential equation solvers, gradient optimization, genetic algorithms or parallel programming tools. Due to its size, it is no packaged with ``Stimfit`` by default, but I highly recommend installing it for more advanced numerical analyses.
+The [Scipy]_ library, which is build on top of [NumPy]_, provides a huge amount of numerical tools, such as special functions, integration, ordinary differential equation solvers, gradient optimization, genetic algorithms or parallel programming tools. Due to its size, it is no packaged with ``Stimfit`` by default, but I highly recommend installing it for more advanced numerical analyses.
 
 Control Stimfit from the Python shell
 =====================================
@@ -201,7 +201,7 @@ You can select any trace within a file by passing its zero-based index to ``sele
 
 Note that the Python range function omits the end point. 
 
-** unselect_all() select_all() get_selected_traces() new_window_selected_this()**
+**unselect_all() select_all() get_selected_traces() new_window_selected_this()**
 The list of selected traces can be cleared using ``unselect_all()``, and conversely, all traces can be selected using ``select_all()``. ``get_selected_indices()`` returns the indices of all selected traces as a Python tuple. Finally, the selected traces within a file can be shown in a new window using ``new_window_selected_this()``.
 
 **get_size_trace(trace=-1, channel=-1)** and **get_size_channel(channel=-1)** return the number of sampling points in a trace a the number of traces in a channel, respectively. ``trace`` and ``channel`` have the same meaning as in ``get_trace``. These functions can be used to iterate over an entire file or to check ranges;
@@ -256,7 +256,8 @@ By defining your own functions, you can apply identical complex analyses to diff
 2. Import the Stimfit module in your file:
 
 ::
-    import stf
+
+    >>> import stf
 
 3. Start ``Stimfit`` and import your file in the embedded Python shell. Assuming that your file is called ``myFile.py``, you would do:
 
@@ -274,34 +275,34 @@ To give you an example, this program shows a function that returns the sum of th
 
 ::
 
-    # import the Stimfit core module:
-    import stf
+    >>> # import the Stimfit core module:
+    >>> import stf
 
-    def get_amp():
-        """ Returns the amplitude (peak-base)"""
-        return stf.get_peak()-stf.get_base()
+    >>> def get_amp():
+    ...    """ Returns the amplitude (peak-base)"""
+    ...    return stf.get_peak()-stf.get_base()
     
-    def sqr_amp()
-        """ Returns the sum of squared amplitudes of all
-        selected traces, or -1 if there was an error. Uses
-        the current settings for the peak direction and 
-        cursor positions."""
+    >>> def sqr_amp()
+    ...    """ Returns the sum of squared amplitudes of all
+    ...    selected traces, or -1 if there was an error. Uses
+    ...    the current settings for the peak direction and 
+    ...    cursor positions."""
 
-        # store the current trace index:
-        old_index = stf.get_trace_index()
+    ...    # store the current trace index:
+    ...    old_index = stf.get_trace_index()
 
-        sum_sqr = 0
-        for n in stf.get_selected_indices():
-            # setting a trace will update all measurements
-            # so there is no need to call measure()
-            if (not(set.set_trace(n)) ):
-                return -1
-            sum_sqr += get_amp()**2
+    ...    sum_sqr = 0
+    ...     for n in stf.get_selected_indices():
+    ...        # setting a trace will update all measurements
+    ...        # so there is no need to call measure()
+    ...        if (not(set.set_trace(n)) ):
+    ...            return -1
+    ...        sum_sqr += get_amp()**2
 
-        # restore the displayed trace:
-        set.set_trace(old_index)
+    ...    # restore the displayed trace:
+    ...    set.set_trace(old_index)
 
-        return sum_sqr
+    ...    return sum_sqr
         
         
 To import and use this file, you would do:
@@ -319,7 +320,7 @@ Some often-requested features could not be integrated into the program easily wi
 
 Cutting traces to arbitrary lengths
 -----------------------------------
-Cutting traces is best done using the squared braked operators ([]) to slice a NumPy array. For example, if you wanted to cut a trace at the 100th sampling point, you could do:
+Cutting traces is best done using the squared braked operators ([]) to slice a [NumPy]_ array. For example, if you wanted to cut a trace at the 100th sampling point, you could do:
 
 ::
 
@@ -334,30 +335,33 @@ These functions cut all selected traces at a single sampling point (pt) or at mu
 
 ::
 
-    import stf
-    import numpy as N
+    >>> import stf
+    >>> import numpy as N
 
-    def cut_traces( pt ):
-        """Cuts the selected traces at the sampling point pt, and shows the cut traces in a new window.
-        Returns True upon success, False upon failure."""
+    >>> def cut_traces( pt ):
+    ...    """Cuts the selected traces at the sampling point pt, 
+    ...     and shows the cut traces in a new window.
+    ...     Returns True upon success, False upon failure."""
 
-    # Check whether anything has been selected:
-    if not stf.get_selected_indices():
-        return False
-    new_list = list()
-    for n in stf.get_selected_indices():
-        if not stf.get_set_trace(n): return False
+    ...     # Check whether anything has been selected:
+    ...     if not stf.get_selected_indices():
+    ...     return False
+    ...     new_list = list()
+    
+    ...     for n in stf.get_selected_indices():
+    ...        if not stf.get_set_trace(n): return False
 
-        # Check for out of range:
-        if pt < stf.get_size_trace():
-            new_list.append( stf.get_trace()[:pt] )
-            new_list.append( stf.get_trace()[pt:] )
-        else
-            print "Cutting point", pt, "is out of range"
-    # Do not create a new window if everything was out of range
-    if len(new_list) > 0 : stf.new_window_list( new_list )
+    ...     # Check for out of range:
+    ...     if pt < stf.get_size_trace():
+    ...        new_list.append( stf.get_trace()[:pt] )
+    ...        new_list.append( stf.get_trace()[pt:] )
+    ...    else
+    ...        print "Cutting point", pt, "is out of range"
+    
+    ...     # Do not create a new window if everything was out of range
+    ...     if len(new_list) > 0 : stf.new_window_list( new_list )
 
-    return True
+    ..      return True
 
 For example:
 
@@ -374,6 +378,6 @@ will cut all selected traces at sampling points 100 and 900 and show the cut tra
 will cut the selected traces at every 100th sampling point, starting with the 100th and ending with the 1900th.
 
 .. [Python-tutorial] http://docs.python.org/tut/
-
 .. [Python-website]  http://www.python.org/doc/
-.. [NumPy]  http:://www.scipy.org/
+.. [NumPy] http://numpy.scipy.org/
+.. [Scipy] http://www.scipy.org/
