@@ -19,4 +19,3 @@ Contents:
    building
    updates
 
-.. [wxWidgets] http:://wxwidgets.org

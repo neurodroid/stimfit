@@ -10,6 +10,7 @@ Contents:
 
 
    manual/index
+   linux_install_guide/index
 
 Indices and tables
 ==================

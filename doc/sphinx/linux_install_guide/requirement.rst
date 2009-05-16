@@ -2,7 +2,7 @@
 Prerequisites
 *************
 
-This document describes the installation of ''Stimfit'' on a GNU/Debian testing/unstable system, with a 2.6 kernel, with support for python 2.5. It should work on other Debian-based systems (e.g Ubuntu) as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) already instelled in your system. Please, check that both versions match. For our installation we will use gcc-4.2.4 and the same version of g++. Any other installation should be carefully accomplished reading the manual of your corresponding GNU/Linux distribution.
+This document describes the installation of ``Stimfit`` on a GNU/Debian testing/unstable system, with a 2.6 kernel, with support for python 2.5. It should work on other Debian-based systems (e.g Ubuntu) as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) already instelled in your system. Please, check that both versions match. For our installation we will use gcc-4.2.4 and the same version of g++. Any other installation should be carefully accomplished reading the manual of your corresponding GNU/Linux distribution.
 
 To install ``Stimifit`` we first need:
 

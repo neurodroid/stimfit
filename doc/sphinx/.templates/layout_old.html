@@ -1,0 +1,12 @@
+{% extends "!layout.html" %}
+
+{# put the sidebar before the body #}
+{% block sidebar1 %}{{ sidebar() }}{% endblock %}
+{% block sidebar2 %}{% endblock %}
+
+{# update static links in the relbar #}
+{% block rootrellink %}
+<li><a href={{ pathto('index') }}>Stf documentation</a> |&nbsp;</li>
+<li><a href={{ pathto(master_doc) }}>TOC </a> |&nbsp;</li>
+<li><a href={{ pathto('search') }}>Search </a></li>
+{% endblock %}
