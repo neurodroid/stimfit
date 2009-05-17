@@ -1,6 +1,8 @@
 :mod:`stf`
 ==========
 
+:Release: |version|
+:Date:  |today|
 
 .. module:: stf
     :synopsis: The stf module allows to access a running stimfit application from the embedded python shell.
