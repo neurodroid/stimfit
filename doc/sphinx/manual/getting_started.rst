@@ -116,7 +116,7 @@ An "event" can be anything from an EPSC to an action potential. In this case, we
 
     You have to press **Enter** after changing any cursor position to
     update all calculations. Otherwise, you will see the results of your
-    previous cursors settings. Alternatively, you can call measure()
+    previous cursors settings. Alternatively, you can call :func:`stf.measure()`
     from the Python shell.
 
 The peak value will be determined between the two peak window cursors (vertical red dashed lines). To move the cursors press **P**. The corresponding tool-bar button will be highlighted. Set the left cursor by clicking the left mouse button where you ant the peak detection to start. Set the right cursor by clicking the right mouse button where you want the peak detection to end. Press **Enter**. The result of the peak calculation is displayed in the results bar. "Peak (from base)" is the difference between the peak value and the baseline, and "Peak (from 0)" is the "raw" value of the peak, measured from zero, without any subtraction. A horizontal red dashed line will indicate the peak value, and a vertical dashed line will indicate the point in time when this peak value has been detected (Fig. 11).
@@ -127,21 +127,21 @@ The peak value will be determined between the two peak window cursors (vertical 
         
         **Fig. 11:** Setting the peak window cursors.
 
-There are three ways the peak value can be calculated: As a default, it is calculated as the maximal absolute value measured from baseline; hence, both positive- or negative-going events may be detected, whichever is larger. If you want only positive-going events to be detected, select "Edit"->"Cursor settings" from the menu. A dialog will appear. Select the "Peak" tab, and then check "Up" radio button (Fig. 12). Click the "Apply" button to measure the peak using your new settings. If you only want negative-going events to be detected, select "Down" instead. Selecting "Both" resets the peak calculation to the default mode. If you want to set the peak direction from the **Python** shell, you can call **set_peak_direction(direction)**, where direction can be one of "up","down" or "both". The Python shell will be explained in some more detail in chapter 2.
+There are three ways the peak value can be calculated: As a default, it is calculated as the maximal absolute value measured from baseline; hence, both positive- or negative-going events may be detected, whichever is larger. If you want only positive-going events to be detected, select "Edit"->"Cursor settings" from the menu. A dialog will appear. Select the "Peak" tab, and then check "Up" radio button (Fig. 12). Click the "Apply" button to measure the peak using your new settings. If you only want negative-going events to be detected, select "Down" instead. Selecting "Both" resets the peak calculation to the default mode. If you want to set the peak direction from the **Python** shell, you can call :func:`stf.set_peak_direction()`, where direction can be one of "up","down" or "both". The Python shell will be explained in some more detail in chapter 2.
 
     .. figure:: images/cursorsettings.png
         :align: center
         
         **Fig. 12:** Setting the peak calculation properties.
 
-In case the event you want to analyze is noisy, it may be helpful to use the average of several neighboring sampling points for the peak calculation instead of a single sampling point. A moving average algorithm will then be used to calculate the peak value. The number of sampling points can either be set in the cursor settings dialog (Fig. 12) or from the **Python** shell using **set_peak_mean(pts)**, where pts is the number of sampling points.
+In case the event you want to analyze is noisy, it may be helpful to use the average of several neighboring sampling points for the peak calculation instead of a single sampling point. A moving average algorithm will then be used to calculate the peak value. The number of sampling points can either be set in the cursor settings dialog (Fig. 12) or from the **Python** shell using :func:`stf.set_peak_mean()`, where pts is the number of sampling points.
 
 Some other values describing the event can be found in the results table (Fig. 13):
 
-* "RT(20_80%)" refers to the time required for the signal to change from 20% to 80% of the peak value (measured from the baseline), commonly called the "20-to-80%-rise time". The points corresponding to 20 and 80% of the peak value are indicated by green circles. They are determined by linear interpolation between neighboring sampling points.
-* "t1/2" refers to the full width of the signal at half-maximal amplitude (measured from the baseline), commonly called "half-duration". The points where the signal reaches its half-maximal amplitude are indicated by blue circles. Again, this is determined by linear interpolation between neighboring sampling points.
-* "Rise" and "Decay" refer to the maximal slope during the rising and the falling phase of the signal, respectively. The corresponding points are indicated by violet circles.
-* "R/D" is the ratio of the maximal slopes during the rising and the falling phase of the signal
+* **RT(20_80%)** refers to the time required for the signal to change from 20% to 80% of the peak value (measured from the baseline), commonly called the "20-to-80%-rise time". The points corresponding to 20 and 80% of the peak value are indicated by green circles. They are determined by linear interpolation between neighboring sampling points.
+* **t1/2** refers to the full width of the signal at half-maximal amplitude (measured from the baseline), commonly called "half-duration". The points where the signal reaches its half-maximal amplitude are indicated by blue circles. Again, this is determined by linear interpolation between neighboring sampling points.
+* **Rise** and **Decay** refer to the maximal slope during the rising and the falling phase of the signal, respectively. The corresponding points are indicated by violet circles.
+* **R/D** is the ratio of the maximal slopes during the rising and the falling phase of the signal
 
 
 .. note::
@@ -200,5 +200,5 @@ Fitting functions to data
        **Fig. 17:** Results of a non-linear regression using a bi-exponential function.
     
        
-**leastsq(fselect,refresh=True)** can be called from the **Python** shell to fit the function with index *fselect* to the data. *fselect* refers to the number that you can find in front of the function in the fit settings dialog (see Fig. 16). If refresh=False, the trace will not be re-drawn, which can be useful to avoid flicker when performing a series of fits. 
+:func:`stf.leastsq()` can be called from the **Python** shell to fit the function with index *fselect* to the data. *fselect* refers to the number that you can find in front of the function in the fit settings dialog (see Fig. 16). If refresh=False, the trace will not be re-drawn, which can be useful to avoid flicker when performing a series of fits. 
 

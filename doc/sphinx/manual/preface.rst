@@ -15,7 +15,7 @@ and curve fitting. This allowed to analyze data with surprising
 efficiency once the keyboard shortcuts were mastered. However, the
 Borland Pascal compiler imposed some significant restrictions which
 became apparent with increasing data size and computing power: for
-instance, arrays were not allowed to be longer than 10,000  elements, and
+instance, arrays were not allowed to be longer than :math:`10^{4}`  elements, and
 faster processors had to be artificially slowed down to avoid runtime
 errors.
 

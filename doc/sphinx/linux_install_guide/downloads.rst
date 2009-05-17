@@ -5,19 +5,19 @@ Downloads
 Downloading and unpacking the sources of Stimfit
 ================================================
 
-You can visit the `Stimfit homepage <http://www.stimfit.org>`_ and click on the menu downloads. There you will find the Linux/Unix link which redirects you to the download zone of the different Stimfit verstions. For this guide we will download the version 0.8.19 for Linux. Just click on it or type the following in your terminal:
+You can visit the `Stimfit homepage <http://www.stimfit.org>`_ and click on the menu downloads. There you will find the Linux/Unix link which redirects you to the download zone of the different Stimfit verstions. For this guide we will download the ``Stimfit`` version |version| for Linux. Just click on it or type the following in your terminal:
 
 ::
 
-    >>> wget http://www.stimfit.org/stimfit-0.8.19.tar.gz
+    >>> wget http://www.stimfit.org/stimfit-version.tar.gz
 
-After download the tar.gz file into a local directory (for example /usr/local) and type the following command to uncompress/untar:
+Where **version** is the current ``Stimifit`` version (|version| in our case). After download the tar.gz file into a local directory (for example /usr/local) and type the following command to uncompress/untar:
 
 ::
 
-    >>> tar xvfz stimfit-0.8.19.tar.gz
+    >>> tar xvfz stimfit-version.tar.gz
 
-this will create the directory /stimfit-0.8.19/ in your directory, for example /usr/local/stimfit-0.8.19/. 
+this will create the directory /stimfit-|version|/ in your directory, for example /usr/local/stimfit-|version|/. 
 
 Download wxWidgets and wxPython via svn
 =======================================
@@ -58,31 +58,31 @@ Additional packages
 
 These dependencies are required to build stimfit.
 
-1. Boost: C++ libraries
+1. **Boost:** C++ libraries
 
 ::
 
       >>> apt-get install libboost-dev
 
-2. Lapack: A package for linear algebra. To install it just type as root:
+2. **Lapack:** A package for linear algebra. To install it just type as root:
 
 ::
 
       >>> apt-get install liblapack-dev
 
-3. fftw: The C subroutine library for computing the discrete Fourier transformations. To install the package type as root:
+3. **fftw:** The C subroutine library for computing the discrete Fourier transformations. To install the package type as root:
 
 ::
 
       >>> apt-get install libfftw3-3 libfftw3-dev
 
-4. NumPy: This package allows easy array computations from the Python shell.
+4. **NumPy:** This package allows easy array computations from the Python shell.
 
 ::
 
       >>> apt-get install python-numpy
 
-5. HDF5 This is the hierarchical Data Format 5 (HDF5) to manage large amount of data.
+5. **HDF5:** This is the hierarchical Data Format 5 (HDF5) to manage large amount of data.
 
 ::
 

@@ -22,7 +22,7 @@ access to the Python interpreter. For instance, you could type:
  
 which will pop up a window showing all the available functions from the
 Stimfit module (abbreviated stf). For example, you could now check
-whether a file is open by selecting the check_doc function from that
+whether a file is open by selecting the :func:`stf.check_doc()` function from that
 list:
 
 ::
@@ -48,9 +48,9 @@ useful when you want to call a function several times in a row.
 Accessing data from the Python shell
 ====================================
 
-**get_trace(trace=1, channel=1)**
+* **get_trace(trace=1, channel=1)**
 
-The ``get_trace`` function returns the currently displayed trace as a
+The :func:`stf.get_trace()` function returns the currently displayed trace as 
 one-dimension [NumPy]_ array when called without arguments:
 
 ::
@@ -83,7 +83,7 @@ Python will check for indices that are out of range. For example,
       File "<input>", line 1, in <module>
     IndexError: index out of bounds
 
-You can use the get_trace(trace=1,channel=1) function to return any
+You can use the :func:`stf.get_trace()` function to return any
 trace within a file. The default values of trace = -1 and channel = -1
 will return the currently displayed trace of the active channel. By
 passing a value of 1 as the first argument, you could access the second
@@ -119,8 +119,9 @@ Or multiply two arrays:
     >>> print a[234], "*",b[234], "=", c[234]
     -27.0385742188 * -23.7731933594 = 642.793253064
     
-**new_window()**
-You can now display the results of the operation in a new window by passing a 1D-NumPy array to the new_window function:
+* **new_window()**
+
+You can now display the results of the operation in a new window by passing a 1D-NumPy array to the :func:`stf.new_window()` function:
 
 ::
 
@@ -132,8 +133,9 @@ The sampling rate and units will be copied from the window of origin. A short wa
 
     >>> new_window(get_trace() * get_trace(1))
     
-**new_window_matrix()**
-You can pass a 2D-NumPy array to ``new_window_matrix``. The first dimension will be translated into individual traces, the second dimension into sampling points. This example will put the current trace and its square root into subsequent traces of a new window:
+* **new_window_matrix()**
+
+You can pass a 2D-NumPy array to :func:`stf.new_window_matrix()`. The first dimension will be translated into individual traces, the second dimension into sampling points. This example will put the current trace and its square root into subsequent traces of a new window:
 
 ::
 
@@ -142,10 +144,11 @@ You can pass a 2D-NumPy array to ``new_window_matrix``. The first dimension will
     >>> numpy_matrix[1] = N.sqrt( N.abs(get_trace()) )
     >>> new_window_matrix(numpy_matrix)
 
-In this example, N is the NumPy namespace. Typing N. at the command prompt will show you all available NumPy functions. **get_size_trace** will be explained later on.
+In this example, N is the NumPy namespace. Typing N. at the command prompt will show you all available NumPy functions. :func:`stf.get_size_trace()` will be explained later on.
 
-**new_window_list()**
-Although using a 2D_NumPy array is very efficient, there are a few drawbacks: the size of the array has to be know at construction time, and all traces have to be of equal lengths. Both problems can be avoided using **new_window_list**, albeit at the price of a significant performance loss. **new_window_list** takes a Python list of 1D-NumPy arrays as an argument:
+* **new_window_list()**
+
+Although using a 2D_NumPy array is very efficient, there are a few drawbacks: the size of the array has to be know at construction time, and all traces have to be of equal lengths. Both problems can be avoided using :func:`stf.new_window_list()`, albeit at the price of a significant performance loss. :func:`stf.new_window_list()` takes a Python list of 1D-NumPy arrays as an argument:
 
 ::
 
@@ -184,13 +187,14 @@ Cursors can be positioned from the Python shell using one of the ``set_[xy]_star
     >>> print "at t =", get_peak_start(True), "ms"
     at t = 10 ms
 
-The peak, baseline and latency values will not be updated until you either select a new trace, press **Enter** in the main window or call ``measure()`` from the Python shell.
+The peak, baseline and latency values will not be updated until you either select a new trace, press **Enter** in the main window or call :func:`stf.measure()` from the Python shell.
 
 Trace selection and navigation
 ------------------------------
 
-**select_trace(trace = -1)**
-You can select any trace within a file by passing its zero-based index to ``select-trace``. The function will return ``False`` if there was an error. The default value of -1 will select the currently displayed trace as if you had pressed **S**. If you wanted to select every fifth trace, starting with an index of 0 and ending with an index of 9 (corresponding to numbers 1 to 10 in the drop-down box), you could do:
+* **select_trace(trace = -1)**
+
+You can select any trace within a file by passing its zero-based index to :func:`stf.select_trace()`. The function will return ``False`` if there was an error. The default value of -1 will select the currently displayed trace as if you had pressed **S**. If you wanted to select every fifth trace, starting with an index of 0 and ending with an index of 9 (corresponding to numbers 1 to 10 in the drop-down box), you could do:
 
 ::
 
@@ -201,10 +205,14 @@ You can select any trace within a file by passing its zero-based index to ``sele
 
 Note that the Python range function omits the end point. 
 
-**unselect_all() select_all() get_selected_traces() new_window_selected_this()**
-The list of selected traces can be cleared using ``unselect_all()``, and conversely, all traces can be selected using ``select_all()``. ``get_selected_indices()`` returns the indices of all selected traces as a Python tuple. Finally, the selected traces within a file can be shown in a new window using ``new_window_selected_this()``.
+* **unselect_all() select_all() get_selected_traces() new_window_selected_this()**
 
-**get_size_trace(trace=-1, channel=-1)** and **get_size_channel(channel=-1)** return the number of sampling points in a trace a the number of traces in a channel, respectively. ``trace`` and ``channel`` have the same meaning as in ``get_trace``. These functions can be used to iterate over an entire file or to check ranges;
+The list of selected traces can be cleared using :func:`stf.unselect_all()`, and conversely, all traces can be selected using :func:`stf.select_all()`. :func:`stf.get_selected_indices()` returns the indices of all selected traces as a Python tuple. Finally, the selected traces within a file can be shown in a new window using :func:`stf.new_window_selected_this()`.
+
+* **get_size_trace(trace=-1, channel=-1)** and **get_size_channel(channel=-1)** 
+
+Return the number of sampling points in a trace a the number of traces in a channel, respectively. ``trace`` and ``channel`` have the same meaning as in :func:`stf.get_trace()`. These functions can be used to iterate over an entire file or to check ranges;
+
 
 ::
 
@@ -220,15 +228,19 @@ The list of selected traces can be cleared using ``unselect_all()``, and convers
     Length of trace 0 : 13050
     Length of trace 1 : 13050
 
-**set_trace(trace)**
-sets the currently displayed trace to the specified zero-based index and returns ``False`` if there was an error. This will update the peak, base and latency values, so there is need to call ``measure()`` directly after this function.
+* **set_trace(trace)**
 
-**get_trace_index()**
-Correspondingly, ``get_trace_index()`` allows you to retrieve the zero-based index of the currently displayed trace. There is a slight inconsistency in function naming here: do not confound this function with ``get_trace()``.
+sets the currently displayed trace to the specified zero-based index and returns ``False`` if there was an error. This will update the peak, base and latency values, so there is need to call :func:`stf.measure()` directly after this function.
+
+* **get_trace_index()**
+
+Correspondingly, :func:`stf.get_trace_index()` allows you to retrieve the zero-based index of the currently displayed trace. There is a slight inconsistency in function naming here: do not confound this function with :func:`stf.get_trace()`.
 
 File I/O
 --------
-**file_open(filename)** and **file_save(filename)** will open or save a file specified by ``filename``. On windows, use double backslashes (\\\\) between directories to avoid conversion to special characters, such as \\t or \\n; for example:
+* **file_open(filename)** and **file_save(filename)**
+
+will open or save a file specified by ``filename``. On windows, use double backslashes (\\\\) between directories to avoid conversion to special characters, such as \\t or \\n; for example:
 
 ::
 
@@ -242,11 +254,13 @@ in Windows or
     
 in GNU/Linux.
 
-**close_this()**
-will close the currently displayed file, whereas
+* **close_this()**
 
-**close_all()**
-closes all open files.
+:func:`stf.close_this()` will close the currently displayed file, whereas
+
+* **close_all()**
+
+:func:`stf.close_all()` closes all open files.
 
 Define your own functions
 -------------------------
@@ -320,6 +334,7 @@ Some often-requested features could not be integrated into the program easily wi
 
 Cutting traces to arbitrary lengths
 -----------------------------------
+
 Cutting traces is best done using the squared braked operators ([]) to slice a [NumPy]_ array. For example, if you wanted to cut a trace at the 100th sampling point, you could do:
 
 ::
@@ -330,8 +345,9 @@ Cutting traces is best done using the squared braked operators ([]) to slice a [
 
 In this example, a[:100] refers to a sliced NumPy array that comprises all sampling points from index 0 to index 99, and a[100:] refers to an array from index 100 to the last sampling point.
 
-**cut_traces(pt)** and **cut_traces_multi(pt_list)**
-These functions cut all selected traces at a single sampling point (pt) or at multiple sampling points (pt_list). The cut traces will be shown in a new window. Both functions are included in the **stf namespace** from version 0.8.11 on. The code for ``cut_traces()`` is listed here. 
+* **cut_traces(pt)** and **cut_traces_multi(pt_list)**
+
+These functions cut all selected traces at a single sampling point (pt) or at multiple sampling points (pt_list). The cut traces will be shown in a new window. Both functions are included in the **stf namespace** from version 0.8.11 on. The code for :func:`stf.cut_traces()` is listed here. 
 
 ::
 

@@ -25,25 +25,32 @@ Although the method described above yields reliable results when both the pre- a
 
 Trace alignment
 ===============
+
 It may sometimes be useful to align traces before measuring the latency, either for visualization purposes or to create an average without temporal jitter. Although an aligned average can be created using a tool-bar button, the recommended way to align traces is to use the Python shell.
 
-**align_selected(alignment, active=False)**
-This function aligns the selected traces to point that is determined by the user-supplied function alignment and then shows the aligned traces in a new window. The alignment function is applied to the active channel if ``active=True`` or to the inactive channel if ``active=False``. The alignment function has to return an index within a traces, and it should adhere to the general form ``index(active)``, where ``active`` is a boolean indicating whether the active or the inactive channel should be used. The most common alignment functions are build into the program:
+* **align_selected(alignment, active=False)**
 
-**maxrise_index(active)**
-returns the zero-based index of the maximal slope of the rise in units of sampling points (see Fig. 13), interpolated between adjacent sampling points, or a negative value upon failure.
+:func:`stf.align_selected()` aligns the selected traces to point that is determined by the user-supplied function alignment and then shows the aligned traces in a new window. The alignment function is applied to the active channel if *active=True* or to the inactive channel if *active=False*. The alignment function has to return an index within a traces, and it should adhere to the general form ``index(active)``, where ``active`` is a boolean indicating whether the active or the inactive channel should be used. The most common alignment functions are build into the program:
 
-**peak_index(active)**
-returns the zero-based index of the peak value in units of sampling points (see Fig. 13) or a negative value upon failure. The return value may be interpolated if a moving average is used for the peak calculation.
+* **maxrise_index(active)**
 
-**foot_index(active)**
-returns the zero-based index of the foot of an event, as described in Fig. 18, or a negative value upon failure.
+:func:`stf.maxrise_index()` returns the zero-based index of the maximal slope of the rise in units of sampling points (see Fig. 13), interpolated between adjacent sampling points, or a negative value upon failure.
 
-**t50left_index(active)**
-returns the zero-based index of the left half-maximal amplitude in units of sampling points (see Fig. 13), or a negative value upon failure. The return value will be interpolated between sampling points.
+* **peak_index(active)**
 
-**t50right_index(active)**
-returns the zero-based index of he right half-maximal amplitude in units of sampling points (see Fig. 13), or a negative value upon failure. The return value will be interpolated between sampling points.
+:func:`stf.peak_index()` returns the zero-based index of the peak value in units of sampling points (see Fig. 13) or a negative value upon failure. The return value may be interpolated if a moving average is used for the peak calculation.
+
+* **foot_index(active)**
+
+:func:`stf.foot_index()` returns the zero-based index of the foot of an event, as described in Fig. 18, or a negative value upon failure.
+
+* **t50left_index(active)**
+
+:func:`stf.t50left_index()` returns the zero-based index of the left half-maximal amplitude in units of sampling points (see Fig. 13), or a negative value upon failure. The return value will be interpolated between sampling points.
+
+* **t50right_index(active)**
+
+:func:`stf.t50right_index()` returns the zero-based index of he right half-maximal amplitude in units of sampling points (see Fig. 13), or a negative value upon failure. The return value will be interpolated between sampling points.
 
 The following code can be used to align all traces within a file to the maximal slope o rise in the inactive channel.
 
@@ -89,4 +96,4 @@ The latency cursors (plotted as dotted vertical blue lines) can either be set au
         **Fig. 20:** The latency between maximal slope of rise of an action potential (red) and the foot of an EPSC (black) is indicated by a horizontal double-headed arrow.
 
 
-To confirm your latency cursor settings and measure latencies, you can either press **Enter** or call ``measurement()`` from the shell. The latency, i.e. the time interval between the first and the second latency cursor, will be shown in the results table as long as you activated this value. The latency will be indicated as double-headed arrow connecting the two latency cursors (Fig. 20).
+To confirm your latency cursor settings and measure latencies, you can either press **Enter** or call :func:`stf.measure()` from the shell. The latency, i.e. the time interval between the first and the second latency cursor, will be shown in the results table as long as you activated this value. The latency will be indicated as double-headed arrow connecting the two latency cursors (Fig. 20).

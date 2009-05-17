@@ -4,13 +4,13 @@ Event extraction by template matching
 
 Introduction
 =============================
-To isolate individual events such as EPSCs or EPSPs from recorded data, ``Stimfit`` uses a template matching algorithm as described by Jonas et al., (1993), with some implementation details adopted from Clemens and Bekkers (1997). The template consists of a waveform *p(t)* with a length of *n* sampling points that represents the time course of a typical event. The template is a slid over the trace or recorded values *r(t)*, and at each sampling point with index *s*, it is multiplied by a scaling factor *m* and an offset *c* is added or subtracted so that the sum of squared errors *X^2*(t_s)* between the trace and the template is minimized:
+To isolate individual events such as EPSCs or EPSPs from recorded data, ``Stimfit`` uses a template matching algorithm as described by Jonas et al., (1993), with some implementation details adopted from Clemens and Bekkers (1997). The template consists of a waveform :math:`p(t)` with a length of :math:`n` sampling points that represents the time course of a typical event. The template is a slid over the trace or recorded values :math:`r(t)`, and at each sampling point with index :math:`s`, it is multiplied by a scaling factor :math:`m` and an offset :math:`c` is added or subtracted so that the sum of squared errors :math:`\chi^2(t_s)` between the trace and the template is minimized:
 
 .. math::
 
     {\displaystyle \chi^2(t_s)= \sum^{n=1}_{k=0}[r(t_{s+k}-(m\cdotp(t_k)+c)]}
     
-As can be seen from this equation, this amounts to the fairly simple operation fitting a straight line that relates *p(t)* and *r(t)* at every sampling point.
+As can be seen from this equation, this amounts to the fairly simple operation fitting a straight line that relates :math:`p(t)` and :math:`r(t)` at every sampling point.
 
 Finally, some detection criterion has to be applied to decide whether an event has occurred at a sampling point. Two options are available in ``Stimfit``: Jonas et al.,(1993) suggests to use the linear correlation coefficient between the optimally scaled template and the data, whereas Clements and Bekkers (1997) compare the scaling factor with the noise standard deviation.
 

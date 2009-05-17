@@ -5,7 +5,12 @@
 
 Stimfit manual
 ==============
+
+:Release: |version|
+:Date:    |today|
+
 Contents:
+
 
 .. toctree::
    :maxdepth: 2
