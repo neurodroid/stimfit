@@ -40,6 +40,7 @@ public:
     double yZoom; /*!< The y-scaling. */
     bool isLogScaleY; /*!< Currently unused. */
     
+    //! Overloaded multiplication operator.
     YZoom operator*( double factor );
 };
 
@@ -62,6 +63,7 @@ public:
     double xZoom; /*!< The x-scaling. */
     bool isLogScaleX; /*!< Currently unused. */
    
+    //! Overloaded multiplication operator.
     XZoom operator*( double factor );
 };
 

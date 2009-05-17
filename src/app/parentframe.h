@@ -12,10 +12,10 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-/*! \file frame.h
+/*! \file parentframe.h
  *  \author Christoph Schmidt-Hieber
  *  \date 2008-01-16
- *  \brief Declares wxStfParentFrame and wxStfChildFrame.
+ *  \brief Declares wxStfParentFrame.
  */
 
 #ifndef _PARENTFRAME_H
@@ -37,12 +37,18 @@ class wxStfTable;
 class wxStfGrid;
 class wxStfFileDrop;
 
+//! child frame type; depends on whether aui is used for the doc/view interface
 #ifdef WITH_AUIDOCVIEW
-typedef wxAuiDocMDIParentFrame wxStfParentType;
 typedef wxAuiDocMDIChildFrame wxStfChildType;
 #else
-typedef wxDocMDIParentFrame wxStfParentType;
 typedef wxDocMDIChildFrame wxStfChildType;
+#endif
+
+//! parent frame type; depends on whether aui is used for the doc/view interface
+#ifdef WITH_AUIDOCVIEW
+typedef wxAuiDocMDIParentFrame wxStfParentType;
+#else
+typedef wxDocMDIParentFrame wxStfParentType;
 #endif
 
 //! Provides the top-level frame.

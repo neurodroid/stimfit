@@ -50,6 +50,7 @@ public:
      *  memory re-allocations.
      *  \param c_n_channels The number of channels.
      *  \param c_n_sections The number of sections.
+     *  \param c_n_points The number of sampling points per section.
      */
     explicit Recording( std::size_t c_n_channels, std::size_t c_n_sections = 0, std::size_t c_n_points = 0 );
 

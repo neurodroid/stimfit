@@ -362,8 +362,8 @@ public:
      */
     bool OpenFileSeries(const wxArrayString& fNameArray);
 
-    //! Opens a file in a new window.
-    /*! \param filename Full path to the file to be opened.
+    //! Opens a file in a new window, to be called from Python.
+    /*! \param fNameArray An array of file names to be opened.
      *  \return true upon successful opening, false otherwise.
      */
     bool OpenFilePy(const wxString& fNameArray);
@@ -449,6 +449,7 @@ private:
 };
 
 #ifdef _WINDOWS
+//! Returns a reference to the application.
 extern StfDll wxStfApp& wxGetApp();
 #else
 DECLARE_APP(wxStfApp)

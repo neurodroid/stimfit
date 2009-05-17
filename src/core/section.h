@@ -139,8 +139,12 @@ public:
     //! Deletes the current fit, sete isFitted to false;
     void DeleteFit();
     
-    //! Determines whether a fit has been performed on this section.
-    /*! \param value true if a fit has been performed, false otherwise.
+    //! Sets the best-fit parameters when a fit has been performed on this section.
+    /*! \param bestFitP_ The best-fit parameters
+        \param fitFunc_ The function used for fitting
+        \param chisqr The sum of squared errors
+        \param fitBeg Sampling point index where the fit starts
+        \param fitEnd Sampling point index where the fit ends
      */
     void SetIsFitted( const std::valarray<double>& bestFitP_, stf::storedFunc* fitFunc_,
             double chisqr, std::size_t fitBeg, std::size_t fitEnd );

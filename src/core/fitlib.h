@@ -79,6 +79,8 @@ double flin(double x, const std::valarray<double>& p);
 void flin_init(const std::valarray<double>& data, double base, double peak,
         double dt, std::valarray<double>& pInit );
 
+//! initializes a linear function
+/*! \return An stf::storedFunc that can be used to store a linear function after a fit */
 stf::storedFunc initLinFunc();
 
 }

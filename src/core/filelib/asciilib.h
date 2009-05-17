@@ -62,8 +62,10 @@ bool exportASCIIFile(const wxString& fName, const Section& Export);
  *  \return true upon success, false otherwise.
  */
 bool exportASCIIFile(const wxString& fName, const Channel& Export);
-
+ 
+#if 0
 wxString NextWord( wxString& str );
+#endif
 
 }
 

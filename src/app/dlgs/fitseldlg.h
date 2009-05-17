@@ -69,6 +69,7 @@ private:
 public:
     //! Constructor
     /*! \param parent Pointer to parent window.
+     *  \param doc Pointer to the document the call originated from.
      *  \param id Window id.
      *  \param title Dialog title.
      *  \param pos Initial position.

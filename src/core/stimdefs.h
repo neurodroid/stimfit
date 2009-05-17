@@ -29,6 +29,7 @@
 #pragma warning( disable : 4996 )  // Disable warning messages
 #endif
 
+//! Defines dll export or import functions for Windows
 #ifdef _WINDOWS
     #ifdef STFDLL
         #define StfDll __declspec( dllexport )
@@ -177,6 +178,9 @@ struct parInfo {
     /*! \param desc_ Parameter description string
      *  \param toFit_ true if this parameter should be fitted, false if
      *         it should be kept fixed. 
+     *  \param constrained_ true if this is a constrained fit
+     *  \param constr_lb_ lower bound for constrained fit
+     *  \param constr_ub_ upper bound for constrained fit
      */
     parInfo( const wxString& desc_, bool toFit_, bool constrained_ = false, 
             double constr_lb_ = 0, double constr_ub_ = 0)
@@ -199,6 +203,7 @@ typedef boost::function<double(double, const std::valarray<double>&)> Func;
 //! The jacobian of a stf::Func.
 typedef boost::function<std::valarray<double>(double, const std::valarray<double>&)> Jac;
 
+//! Dummy function, serves as a placeholder to initialize functions without a Jacobian.
 std::valarray<double> nojac( double x, const std::valarray<double>& p);
 
 //! Initialising function for the parameters in stf::Func to start a fit.
@@ -230,6 +235,7 @@ struct StfDll storedFunc {
      *  \param pInfo_ A vector containing information about the function parameters.
      *  \param func_ The function that will be fitted to the data.
      *  \param jac_ Jacobian of func_.
+     *  \param hasJac_ true if a Jacobian is available.
      *  \param init_ A function for initialising the parameters.
      *  \param output_ Output of the fit.
      */

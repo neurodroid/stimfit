@@ -227,6 +227,9 @@ public:
      */
     bool SubtractBase( );
 
+    //! Fit a function to the data.
+    /*! \param event The menu event that made the call.
+     */
     void FitDecay(wxCommandEvent& event);
 
     //! Sets a pointer to the file menu attached to this document.

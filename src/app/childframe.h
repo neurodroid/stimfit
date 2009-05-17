@@ -12,10 +12,10 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-/*! \file frame.h
+/*! \file childframe.h
  *  \author Christoph Schmidt-Hieber
  *  \date 2008-01-16
- *  \brief Declares wxStfParentFrame and wxStfChildFrame.
+ *  \brief Declares wxStfChildFrame.
  */
 
 #ifndef _CHILDFRAME_H
@@ -36,12 +36,18 @@ class wxStfGraph;
 class wxStfTable;
 class wxStfGrid;
 
+//! child frame type; depends on whether aui is used for the doc/view interface
 #ifdef WITH_AUIDOCVIEW
-typedef wxAuiDocMDIParentFrame wxStfParentType;
 typedef wxAuiDocMDIChildFrame wxStfChildType;
 #else
-typedef wxDocMDIParentFrame wxStfParentType;
 typedef wxDocMDIChildFrame wxStfChildType;
+#endif
+
+//! parent frame type; depends on whether aui is used for the doc/view interface
+#ifdef WITH_AUIDOCVIEW
+typedef wxAuiDocMDIParentFrame wxStfParentType;
+#else
+typedef wxDocMDIParentFrame wxStfParentType;
 #endif
 
 //! Default perspective string.
@@ -118,7 +124,7 @@ public:
 
 
     //! Creates the channel selection combo boxes.
-    /*! \param value The channel names for the combo box drop-down list.
+    /*! \param channelNames The channel names for the combo box drop-down list.
      */
     void CreateComboChannels( const wxArrayString& channelNames );
 
@@ -166,6 +172,7 @@ public:
      */
     bool PlotSelected() const {return pPlotSelected->IsChecked();}
 
+    //! Activated the current graph
     void ActivateGraph();
 
 private:
