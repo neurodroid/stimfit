@@ -151,4 +151,4 @@ Adjusting event detection settings
 +-----------------------------------------------------------------------------+----------------------------------------------------------+
 
 
-.. [#f1] Note that the product of two exponentials can equivalently be expressed as the sum of two exponentials.
+.. [#f1] Note that the product of two exponentials :math:`{\displaystyle f(t)=a(1-e^{-\frac{t}{\tau_1}})e^{-\frac{t}{\tau_2}}}` can equivalently be expressed as the sum of two exponentials: :math:`{\displaystyle f(t)=a(e^{-\frac{t}{\tau_2}}-e^{-\frac{t}{\tau_3}}) }`, with :math:`{\displaystyle \tau_3=\frac{\tau_2 \tau_1}{\tau_2-\tau_1}}`.

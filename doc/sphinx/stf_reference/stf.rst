@@ -65,6 +65,8 @@ The :mod:`stf` module defines the following functions:
 
 .. function:: erase_markers()
 
+    Delete the markes created with :func:`set_marker()`
+
 .. function:: file_open(\*args)
 
     Opens a file.
