@@ -13,15 +13,15 @@ Measurement of synaptic delay
 
     I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{d}t}
 
-The commencement (sometimes called "foot") of the postsynaptic current can robustly be estimated from the extrapolated intersection of the baseline with a line through the two points of time when the current in 20 and 80% of the peak current (Jonas et al., 1993, Bartos et al., 2001).
+The commencement (sometimes called "foot") of the postsynaptic current can robustly be estimated from the extrapolated intersection of the baseline with a line through the two points of time when the current is 20 and 80% of the peak current (Jonas et al., 1993, Bartos et al., 2001).
 
 
     .. figure:: images/foot.png
         :align: center
 
-        **Fig. 18:** Foot of an EPSC (red circle), estimated from the extrapolated intersection of the baseline with a line through the two points o time when the current is 20 and 80% or the peak current (black open circles).
+        **Fig. 18:** Foot of an EPSC (red circle), estimated from the extrapolated intersection of the baseline with a line through the two points of time when the current is 20 and 80% of the peak current (black open circles).
 
-Although the method described above yields reliable results when both the pre- and the postsynaptic whole-cell recording show little noise and few artifacts, it may sometimes be favorable to use other estimates for the pre- and postsynaptic signals, for example, when extracellular stimulation was used or when there are a lot o failures in the postsynaptic response. The following sections will explain who this is done in practice.
+Although the method described above yields reliable results when both the pre- and the postsynaptic whole-cell recording show little noise and few artifacts, it may sometimes be favorable to use other estimates for the pre- and postsynaptic signals, for example, when extracellular stimulation was used or when there are a lot o failures in the postsynaptic response. The following sections will explain how this is done in practice.
 
 Trace alignment
 ===============
@@ -30,7 +30,7 @@ It may sometimes be useful to align traces before measuring the latency, either 
 
 * **align_selected(alignment, active=False)**
 
-:func:`stf.align_selected()` aligns the selected traces to point that is determined by the user-supplied function alignment and then shows the aligned traces in a new window. The alignment function is applied to the active channel if *active=True* or to the inactive channel if *active=False*. The alignment function has to return an index within a traces, and it should adhere to the general form ``index(active)``, where ``active`` is a boolean indicating whether the active or the inactive channel should be used. The most common alignment functions are build into the program:
+:func:`stf.align_selected()` aligns the selected traces to a point that is determined by the user-supplied function ``alignment`` and then shows the aligned traces in a new window. The alignment function is applied to the active channel if *active=True* or to the inactive channel if *active=False*. The alignment function has to return an index within a traces, and it should adhere to the general form ``index(active)``, where ``active`` is a boolean indicating whether the active or the inactive channel should be used. The most common alignment functions are built into the program:
 
 * **maxrise_index(active)**
 
@@ -52,7 +52,7 @@ It may sometimes be useful to align traces before measuring the latency, either 
 
 :func:`stf.t50right_index()` returns the zero-based index of he right half-maximal amplitude in units of sampling points (see Fig. 13), or a negative value upon failure. The return value will be interpolated between sampling points.
 
-The following code can be used to align all traces within a file to the maximal slope o rise in the inactive channel.
+The following code can be used to align all traces within a file to the maximal slope of rise in the inactive channel.
 
 ::
 
