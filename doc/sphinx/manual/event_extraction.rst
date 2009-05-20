@@ -33,7 +33,7 @@ This procedure will be explained in some more detail in the following sections.
 Create a preliminary template
 -----------------------------
 
-In general, the template waveform *p(t)* can be of arbitrary shape. A typical way of creating such a template is to fit a function with a time course matching the event kinetics to some exemplary events. For example, EPSCs can typically be modeled with the sum or the product of two exponential functions [#f1]_. In practice, a robust estimate for a template can be obtained using an iterative approach, which will be illustrated here using a recording of miniature EPSCs that you can download `here <http://stimfit.org/tutorial/minis.dat>`_.
+In general, the template waveform :math:'p(t)' can be of arbitrary shape. A typical way of creating such a template is to fit a function with a time course matching the event kinetics to some exemplary events. For example, EPSCs can typically be modeled with the sum or the product of two exponential functions [#f1]_. In practice, a robust estimate for a template can be obtained using an iterative approach, which will be illustrated here using a recording of miniature EPSCs that you can download `here <http://stimfit.org/tutorial/minis.dat>`_.
 
     .. figure:: images/bait_template.png
         :align: center
