@@ -5,13 +5,13 @@ Downloads
 Downloading and unpacking the sources of Stimfit
 ================================================
 
-You can visit the `Stimfit homepage <http://www.stimfit.org>`_ and click on the menu downloads. There you will find the Linux/Unix link which redirects you to the download zone of the different Stimfit verstions. For this guide we will download the ``Stimfit`` version |version| for Linux. Just click on it or type the following in your terminal:
+You can visit the `Stimfit homepage <http://www.stimfit.org>`_ and click on the menu downloads. There you will find the Linux/Unix link which redirects you to the download zone of the different Stimfit versions. For this guide we will download the ``Stimfit`` version |version| for Linux. Just click on it or type the following in your terminal:
 
 ::
 
     >>> wget http://www.stimfit.org/stimfit-version.tar.gz
 
-Where **version** is the current ``Stimifit`` version (|version| in our case). After download the tar.gz file into a local directory (for example /usr/local) and type the following command to uncompress/untar:
+Where **version** is the current ``Stimfit`` version (|version| in our case). After download the tar.gz file into a local directory (for example /usr/local) and type the following command to uncompress/untar:
 
 ::
 

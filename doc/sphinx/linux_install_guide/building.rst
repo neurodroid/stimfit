@@ -23,7 +23,7 @@ We type --with-gtkprint --without-gnomeprint because we need latest version of w
 
     >>>  *** Could not run GTK+ test program, checking why...
         *** The test program failed to compile or link. See the file config.log for the
-        *** exact error that occured. This usually means GTK+ is incorrectly installed.
+        *** exact error that occurred. This usually means GTK+ is incorrectly installed.
         configure: error:
         The development files for GTK+ were not found. For GTK+ 2, please
         ensure that pkg-config is in the path and that gtk+-2.0.pc is
@@ -72,7 +72,7 @@ Remember that you need first to have installed the python development libraries 
 
 With that, you have built and installed wxWidgets and wxPython. We now only need to build Stimfit.
 
-Building Stimifit
+Building Stimfit
 =================
 
 Go to the directory where you unpacked your version of Stimfit (in our example /usr/local/stimfit-0.8.19/ and type:
