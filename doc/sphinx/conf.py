@@ -177,7 +177,7 @@ htmlhelp_basename = 'Stimfitdoc'
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
   ('contents', 'Stimfitdocumentation.tex', ur'Stimfit Documentation',
-   ur'Christoph Schmidt-Hieber', 'manual'),
+   ur'Christoph Schmidt-Hieber \& Jose Guzman', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
