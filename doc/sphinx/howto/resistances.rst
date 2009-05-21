@@ -9,8 +9,8 @@ The resistance can be easily calculated using Ohm's law. Currents passing throug
     {\displaystyle R=\frac{\Delta V}{I} }
 
 
-Resitance can be calculated when recording the current once the voltage difference is known. A python routine should calculate the current difference, and resistance will be calculated giving the amplitude of the voltage current.  
-The following routine can be found in the ``Stimfit`` program directory (C:\\Program Files\\Stimfit in Windows or /usr/lib/python2.5/site-packages/Stimfit in Linux, assuming python2.5 is your current python environmen is your current python environment). You can find it with the name **charlie.py** (in acknowledgemt to Charlie, for her contribution to development of the given routine). 
+Resistance can be calculated when recording the current once the voltage difference is known. A python routine should calculate the current difference, and resistance will be calculated giving the amplitude of the voltage current.  
+The following routine can be found in the ``Stimfit`` program directory (C:\\Program Files\\Stimfit in Windows or /usr/lib/python2.5/site-packages/Stimfit in Linux, assuming python2.5 is your current python environment is your current python environment). You can find it with the name **charlie.py** (in acknowledgment to Charlie, for her contribution to the development of the given routine). 
 
 
 =======================
@@ -46,7 +46,7 @@ Note that this function assumes that current is recorded in pA. It sets the stf 
             return 0
 
         #A temporary array to calculate the average:
-        set = N.empyt( (stf.get_size_channel(), stf.get_size_trace()) )
+        set = N.empty( (stf.get_size_channel(), stf.get_size_trace()) )
         for n in range( 0,  stf.get_size_channel() ):
             # Add this trace to set:
             set[n] = stf.get_trace( n )
@@ -71,7 +71,7 @@ Note that this function assumes that current is recorded in pA. It sets the stf 
         return amplitude / (stf.get_peak()-stf.get_base())
 
 
-Now, you can use this function for different porpouses. For example, you may want to test the value of the series resistance in response to a 5 mV hyperpolarazing pulse. First, let's assume that your recording has the current peak between the 10700 and 10999 sampling points. You should set the baseline (for example between 0 and 999) and then peak between 10700 and 10999. After that, and given that 5 mV is the voltage difference, you simply type:
+Now, you can use this function for different porpoises. For example, you may want to test the value of the series resistance in response to a 5 mV hyperpolarizing pulse. First, let's assume that your recording has the current peak between the 10700 and 10999 sampling points. You should set the baseline (for example between 0 and 999) and then peak between 10700 and 10999. After that, and given that 5 mV is the voltage difference, you simply type:
 
 ::
 
