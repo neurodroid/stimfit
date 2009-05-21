@@ -9,15 +9,15 @@ The resistance can be easily calculated using Ohm's law. Currents passing throug
     {\displaystyle R=\frac{\Delta V}{I} }
 
 
-Resistance can be calculated when recording the current once the voltage difference is known. A python routine should calculate the current difference, and resistance will be calculated giving the amplitude of the voltage current.  
-The following routine can be found in the ``Stimfit`` program directory (C:\\Program Files\\Stimfit in Windows or /usr/lib/python2.5/site-packages/Stimfit in Linux, assuming python2.5 is your current python environment is your current python environment). You can find it with the name **charlie.py** (in acknowledgment to Charlie, for her contribution to the development of the given routine). 
+In voltage clamp, resistance can be calculated by recording the current once the voltage difference is known. This Python routine should calculate the current difference, and resistance will be calculated given the voltage amplitude.  
+The following routine can be found in the ``Stimfit`` program directory (C:\\Program Files\\Stimfit in Windows or /usr/lib/python2.5/site-packages/Stimfit in Linux, assuming python2.5 is your current python environment). You can find it with the name **charlie.py** (in acknowledgment to Charlie, for her contribution to the development of the given routine). 
 
 
 =======================
 The resistance function
 =======================
 
-Note that this function assumes that current is recorded in pA. It sets the stf cursors (peak and baseline) to calculate the current deviation in response to the voltage difference. Finally, the voltage **amplitude** should be enter in mV. 
+Note that this function assumes that current is recorded in pA. It sets the stf cursors (peak and baseline) to calculate the current deviation in response to the voltage difference. Finally, the voltage **amplitude** should be entered in mV. 
 
 
 ::
@@ -41,7 +41,7 @@ Note that this function assumes that current is recorded in pA. It sets the stf 
         The resistance.
         """
 
-        if (stf.check_doc() == False):
+        if !stf.check_doc():
             print "Couldn't find an open file; aborting now."
             return 0
 
@@ -56,13 +56,13 @@ Note that this function assumes that current is recorded in pA. It sets the stf 
         stf.new_window( N.average(set,0) )
         
         # set peak cursors:
-        if ( not(stf.set_peak_mean(-1)) ): return False # -1 means all points within peak window.
-        if ( not(stf.set_peak_start(peak_start)) ): return False
-        if ( not(stf.set_peak_end(peak_end)) ): return False
+        if !stf.set_peak_mean(-1): return False # -1 means all points within peak window.
+        if !stf.set_peak_start(peak_start): return False
+        if !stf.set_peak_end(peak_end): return False
     
         # set base cursors:
-        if ( not(stf.set_base_start(base_start)) ): return False
-        if ( not(stf.set_base_end(base_end)) ): return False
+        if !stf.set_base_start(base_start): return False
+        if !stf.set_base_end(base_end): return False
     
         # measure everything:
         stf.measure()
@@ -71,15 +71,15 @@ Note that this function assumes that current is recorded in pA. It sets the stf 
         return amplitude / (stf.get_peak()-stf.get_base())
 
 
-Now, you can use this function for different porpoises. For example, you may want to test the value of the series resistance in response to a 5 mV hyperpolarizing pulse. First, let's assume that your recording has the current peak between the 10700 and 10999 sampling points. You should set the baseline (for example between 0 and 999) and then peak between 10700 and 10999. After that, and given that 5 mV is the voltage difference, you simply type:
+Now, you can use this function for different purposes. For example, you may want to test the value of the series resistance in response to a 5 mV hyperpolarizing pulse. First, let's assume that your recording has the current peak between the 10700 and 10999 sampling points. You should set the baseline (for example between 0 and 999) and then peak between 10700 and 10999. After that, and given that 5 mV is the voltage difference, you simply type:
 
 ::
 
     >>> myfile.resistance(0,999,10700,1999,-5)
 
-Note that charlie.py has a routine called **r_in(amplitude=-5)** that makes exactly this.
+Note that charlie.py has a routine called **r_in(amplitude=-5)** that does exactly this.
 
-In the same way, if you want to calculate the value of the seal resistance (given this is the lower resistance value of the circuit, no current will flow through other resistance). You can test with a higher voltage pulse.
+In the same way, if you wanted to calculate the value of the seal resistance (if this is the smallest resistance in the circuit, no current will flow through any other resistance), you could test it with a larger voltage pulse.
 
 ::
 
