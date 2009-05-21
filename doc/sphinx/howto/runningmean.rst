@@ -2,7 +2,7 @@
 Running mean
 ************
 
-Running mean (or running average) is a way to smooth the data. Given a certain set of points, a running average will create a new set of data points which will be computed by adding a series of averages of different subsets of the full data set.
+The running mean (or running average) is a way to smooth the data. Given a certain set of points, a running average will create a new set of data points which will be computed by adding a series of averages of different subsets of the full data set.
 
 Given for example a sequence :math:`X_i` of :math:`n` points.
 
@@ -10,7 +10,7 @@ Given for example a sequence :math:`X_i` of :math:`n` points.
 
     {\displaystyle \sum^{i=n}_{i=1} X_i}
 
-we can create a new set of data points :math:`S_i` simply taking the average of a subset of :math:`w` points from the original data set:
+we can create a new set of data points :math:`S_i` by simply taking the average of a subset of :math:`w` points from the original data set:
 
 .. math::
 
@@ -20,7 +20,7 @@ we can create a new set of data points :math:`S_i` simply taking the average of 
 The running mean function
 =========================
 
-The following python function perform the running mean of the current channel. Both trace and channel can be selected as zero-based indices. The width of the running average (refereed here as binwidth) can be selected. The resulting average will appear in a new ``Stimfit`` window.
+The following Python function calculates the running mean of the current channel. Both trace and channel can be selected as zero-based indices. The width of the running average (refered to here as binwidth) can be selected. The resulting average will appear in a new ``Stimfit`` window.
 
 ::
     
@@ -28,14 +28,13 @@ The following python function perform the running mean of the current channel. B
     import stf
 
     # load NumPy for numerical analysis
-    import numpy as np
+    import numpy as N
 
-    def rmean(binwidth, trace=1,channel=-1):
+    def rmean(binwidth, trace=-1,channel=-1):
         """
-        perform a running mean of the current trace 
-        in the channel to smooth the trace. 
+        Calculates a running mean of a single trace
     
-        Keyword arguments:
+        Arguments:
 
         binwidth    -- size of the bin in sampling points (pt). 
         Obviously, it should be smaller than the length of the trace.
@@ -56,7 +55,7 @@ The following python function perform the running mean of the current channel. B
         # loads the current trace of the channel in a 1D Numpy Array
         sweep = stf.get_trace(trace,channel)
 
-        # creates a destiny python list to append the data 
+        # creates a destination python list to append the data 
         dsweep = [] 
 
         # running mean algorithm
@@ -64,9 +63,9 @@ The following python function perform the running mean of the current channel. B
         
             if ( (len(sweep)-i) > binwidth):
                 # append to list the running mean of `binwidth` values
-                # np.mean(sweep) makes the mean of list
-                # sweep[p0:p10] takes the values in the vector p0 and p10 (zero-based) 
-                dsweep.append(np.mean(sweep[i:(binwidth+i)]))
+                # N.mean(sweep) calculates the mean of list
+                # sweep[p0:p10] takes the values in the vector between p0 and p10 (zero-based) 
+                dsweep.append( N.mean(sweep[i:(binwidth+i)]) )
 
             else:
                 break
