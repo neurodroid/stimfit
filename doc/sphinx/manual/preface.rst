@@ -2,6 +2,8 @@
 Preface
 *******
 
+.. sectionauthor:: Christoph Schmidt-Hieber <christsc@gmx.de>
+
 ``Stimfit`` was originally written by Peter Jonas, University of Freiburg,
 in the early 1990s. It was primarily designed to analyze the kinetics of
 evoked excitatory postsynaptic potentials (EPSCs; Jonas et al., 1993).

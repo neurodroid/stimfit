@@ -2,6 +2,8 @@
 The python shell
 ****************
 
+.. sectionauthor:: Christoph Schmidt-Hieber <christsc@gmx.de>
+
 Before you start
 ================
 

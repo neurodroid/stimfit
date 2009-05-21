@@ -6,6 +6,8 @@
 Stimfit manual
 ==============
 
+.. sectionauthor:: Christoph Schmidt-Hieber <christsc@gmx.de>
+
 :Release: |version|
 :Date:    |today|
 

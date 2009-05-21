@@ -2,6 +2,8 @@
 Latency measurements
 ********************
 
+.. sectionauthor:: Christoph Schmidt-Hieber <christsc@gmx.de>
+
 Measurement of synaptic delay
 =============================
 ``Stimfit`` is frequently used to measure the delay between a synaptic signal and a post-synaptic response. Classically, this synaptic delay or latency is defined as "the time interval between the peak of the inward current through the synaptic membrane and commencement of inward current through the postsynaptic membrane" (Katz and Miledi, 1965). Neglecting cable properties of neurons for a while, the maximal inward current during an action potential is expected to flow at the time of maximal slope during the rising phase (Jack et al., 1983), since

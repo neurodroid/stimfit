@@ -2,6 +2,8 @@
 Getting started
 ***************
 
+.. sectionauthor:: Christoph Schmidt-Hieber <christsc@gmx.de>
+
 File opening
 ============
 This tutorial will cover the basic program functionality from opening a

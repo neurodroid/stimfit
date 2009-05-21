@@ -6,6 +6,8 @@
 Howto Python in Stimfit 
 =======================
 
+.. sectionauthor:: Jose Guzman <>
+
 :Release: |version|
 :Date:    |today|
 

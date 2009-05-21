@@ -2,6 +2,8 @@
 Resistance Calculation
 **********************
 
+.. sectionauthor:: Jose Guzman <>
+
 The resistance can be easily calculated using Ohm's law. Currents passing through the pipette will be proportional to the applied voltage difference. This proportional factor is the resistance.  
 
 .. math::

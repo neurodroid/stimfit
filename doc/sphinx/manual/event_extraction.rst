@@ -2,6 +2,8 @@
 Event extraction by template matching
 *************************************
 
+.. sectionauthor:: Christoph Schmidt-Hieber <christsc@gmx.de>
+
 Introduction
 =============================
 To isolate individual events such as EPSCs or EPSPs from recorded data, ``Stimfit`` uses a template matching algorithm as described by Jonas et al., (1993), with some implementation details adopted from Clemens and Bekkers (1997). The template consists of a waveform :math:`p(t)` with a length of :math:`n` sampling points that represents the time course of a typical event. The template is a slid over the trace or recorded values :math:`r(t)`, and at each sampling point with index :math:`s`, it is multiplied by a scaling factor :math:`m` and an offset :math:`c` is added or subtracted so that the sum of squared errors :math:`\chi^2(t_s)` between the trace and the template is minimized:
