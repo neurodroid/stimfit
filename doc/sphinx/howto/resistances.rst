@@ -41,7 +41,7 @@ Note that this function assumes that current is recorded in pA. It sets the stf 
         The resistance.
         """
 
-        if !stf.check_doc():
+        if not stf.check_doc():
             print "Couldn't find an open file; aborting now."
             return 0
 
@@ -56,13 +56,13 @@ Note that this function assumes that current is recorded in pA. It sets the stf 
         stf.new_window( N.average(set,0) )
         
         # set peak cursors:
-        if !stf.set_peak_mean(-1): return False # -1 means all points within peak window.
-        if !stf.set_peak_start(peak_start): return False
-        if !stf.set_peak_end(peak_end): return False
+        if not stf.set_peak_mean(-1): return False # -1 means all points within peak window.
+        if not stf.set_peak_start(peak_start): return False
+        if not stf.set_peak_end(peak_end): return False
     
         # set base cursors:
-        if !stf.set_base_start(base_start): return False
-        if !stf.set_base_end(base_end): return False
+        if not stf.set_base_start(base_start): return False
+        if not stf.set_base_end(base_end): return False
     
         # measure everything:
         stf.measure()
