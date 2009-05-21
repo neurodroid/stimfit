@@ -1,7 +1,7 @@
 {% extends "!layout.html" %}
-
 {# put the sidebar before the body #}
 
+{{ sidebar() }}
 {#
 {% block sidebar1 %}{{ sidebar() }}{% endblock %}
 {% block sidebar2 %}
@@ -9,16 +9,22 @@
 #}
 
 {# to show the bar on the left side #}
-{{ sidebar() }}
+{#{{ sidebar() }}#}
 
 {# show the relbar only before the document
 {% block relbar2 %}{{ sidebar() }}{% endblock %}
 #}
 
 
+
 {# update static links in the relbar #}
 {% block rootrellink %}
-    <li><a href="http://www.stimfit.org">Stimfit Homepage</a> | &nbsp; </li>
-    <li><a href={{ pathto('index') }}>Stf doc v0.8.19</a> |&nbsp;</li>
-    <li><a href={{ pathto(master_doc) }}>TOC </a> |&nbsp;</li>
+    <li><a href={{ pathto('index') }}>Homepage</a> | &nbsp; </li>
+    <li><a href="http://code.google.com/p/stimfit/">Google Code Project</a> |&nbsp;</li>
+    {#<li><a href={{ pathto(master_doc) }}>TOC </a> |&nbsp;</li>#}
 {% endblock %}
+{#
+{% block relbaritems %}
+    <li><a href="http://code.google.com/p/stimfit/">Download <B>Stimfit</B></a> |&nbsp;</li>
+{% endblock %}
+#}

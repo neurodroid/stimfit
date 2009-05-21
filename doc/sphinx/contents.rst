@@ -11,6 +11,7 @@ Contents:
 
    manual/index
    linux_install_guide/index
+   howto/index
    stf_reference/stf
 
 Indices and tables

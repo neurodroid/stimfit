@@ -158,7 +158,7 @@ Although using a 2D_NumPy array is very efficient, there are a few drawbacks: th
 
 Note that items in Python list are written between *squared* brakes, and that a comma is required at the end of single-item lists.
 
-The [Scipy]_ library, which is build on top of [NumPy]_, provides a huge amount of numerical tools, such as special functions, integration, ordinary differential equation solvers, gradient optimization, genetic algorithms or parallel programming tools. Due to its size, it is no packaged with ``Stimfit`` by default, but I highly recommend installing it for more advanced numerical analyses.
+The [Scipy]_ library, which is build on top of [NumPy]_, provides a huge amount of numerical tools, such as special functions, integration, ordinary differential equation solvers, gradient optimization, genetic algorithms or parallel programming tools. Due to its size, it is no packaged with ``Stimfit`` by default, but I highly recommend installing it for more advanced numerical analysis.
 
 Control Stimfit from the Python shell
 =====================================
@@ -264,9 +264,9 @@ in GNU/Linux.
 
 Define your own functions
 -------------------------
-By defining your own functions, you can apply identical complex analyses to different traces and files. The following steps are required to make use of your own Python files:
+By defining your own functions, you can apply identical complex analysis to different traces and files. The following steps are required to make use of your own Python files:
  
-1. Create a Python file in a directory that the Python interpreter will find. If you do not know where that is , use the Stimfit program directory (typically, this will be C:\Program Files\Stimfit in Windows or /usr/lib/phython2-5/site-packages/Stimfit in Linux). You will find some example files in that directory that you can use as a template, but you should not touch stf.py which is the core Stimfit module.
+1. Create a Python file in a directory that the Python interpreter will find. If you do not know where that is , use the Stimfit program directory (typically, this will be C:\\Program Files\\Stimfit in Windows or /usr/lib/phython2.5/site-packages/Stimfit in GNU/Linux, assuming that python 2.5 is your current python environment). You will find some example files in that directory that you can use as a template, but you should not touch stf.py which is the core Stimfit module.
 2. Import the Stimfit module in your file:
 
 ::
