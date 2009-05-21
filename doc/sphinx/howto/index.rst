@@ -9,11 +9,11 @@ Howto Python in Stimfit
 :Release: |version|
 :Date:    |today|
 
-This document collects the answers to some questions like "How do I make ... in ``Stimfit`` with python?". Though much of the material can be easily found in the ``Stimfit`` manual, the examples provided here are a good way for the casual user to start using Python in ``Stimfit``. 
+This document collects answers to some questions like "How do I make ... in ``Stimfit`` with python?". Though much of the material can be easily found in the ``Stimfit`` manual, the examples provided here are a good way for the casual user to start using Python in ``Stimfit``. 
 
-It assumes a basic knowledge of the embeded python shell of ``Stimfit``. A previous running Python knowledge and a substantial profiency in ``Stimfit`` are recommendable. Please, note that this is not a Python manual, but a way to use python for some basic analysis tasks with provided with ``Stimfit``. For a detailed Python manual, we encourage the user to visit official Python documentation in the [Python-website]_ and going through the ``Stimfit`` manual.
+It assumes a basic knowledge of the embedded Python shell of ``Stimfit``. Some Python knowledge and a substantial profiency in ``Stimfit`` are recommendable. Please note that this is not a Python manual, but a way to use Python for some basic analysis tasks provided with ``Stimfit``. For a detailed Python manual, we encourage the user to visit the official Python documentation on the [Python-website]_ and going through the ``Stimfit`` manual.
 
-In this document we assumed that the given function of interested will be saved in a file called myfile.py, and imported in the embeded python shell with:
+In this document we assume that functions will be saved in a file called myfile.py, and imported in the embedded Python shell with:
 
 ::
 
