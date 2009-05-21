@@ -4,13 +4,7 @@ Running mean
 
 The running mean (or running average) is a way to smooth the data. Given a certain set of points, a running average will create a new set of data points which will be computed by adding a series of averages of different subsets of the full data set.
 
-Given for example a sequence :math:`X_i` of :math:`n` points.
-
-.. math::
-
-    {\displaystyle \sum^{i=n}_{i=1} X_i}
-
-we can create a new set of data points :math:`S_i` by simply taking the average of a subset of :math:`w` points from the original data set:
+Given for example a sequence :math:`X` of :math:`n` points, we can create a new set of data points :math:`S` of length :math:`n` by simply taking the average of a subset of :math:`w` points from the original data set for every point :math:`S_i` within the set:
 
 .. math::
 
