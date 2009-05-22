@@ -19,6 +19,9 @@ stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/reco
 	    ./src/core/filelib/axon/AxAbfFio32/abferror.cpp \
             ./src/core/filelib/axon/AxAtfFio32/axatffio32.cpp \
             ./src/core/filelib/axon/AxAtfFio32/fileio2.cpp \
+            ./src/core/filelib/axon2/ProtocolReaderABF2.cpp \
+            ./src/core/filelib/axon2/SimpleStringCache.cpp \
+	    ./src/core/filelib/axon2/abf2headr.cpp \
             ./src/core/filelib/axg/AxoGraph_ReadWrite.cpp \
             ./src/core/filelib/axg/fileUtils.cpp \
             ./src/core/filelib/axg/stringUtils.cpp \
@@ -59,6 +62,10 @@ noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.
             ./src/core/filelib/axon/Common/adcdac.h \
             ./src/core/filelib/axon/Common/ArrayPtr.hpp \
             ./src/core/filelib/axon/Common/wincpp.hpp \
+            ./src/core/filelib/axon2/ProtocolReaderABF2.hpp \
+            ./src/core/filelib/axon2/SimpleStringCache.hpp \
+            ./src/core/filelib/axon2/ProtocolStructs.h \
+	    ./src/core/filelib/axon2/abf2headr.h \
             ./src/core/filelib/axg/AxoGraph_ReadWrite.h \
             ./src/core/filelib/axg/fileUtils.h \
             ./src/core/filelib/axg/stringUtils.h \

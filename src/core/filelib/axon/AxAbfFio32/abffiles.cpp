@@ -16,6 +16,7 @@
 
 #include "../Common/wincpp.hpp"
 #include "abffiles.h"
+#include "../../axon2/abf2headr.h"
 /*
 #include "abfutil.h"                // Large memory allocation/free
 #include "StringResource.h"         // Access to string resources.
@@ -32,12 +33,12 @@
 #ifndef __LINUX__
 	#include <objbase.h>                 // UuidCreate
 #endif
+*/
 
 //
 // Set the maximum number of files that can be open simultaneously.
 // This can be overridden from the compiler command line.
 //
-*/
 #ifndef ABF_MAXFILES
    #define ABF_MAXFILES 64
 #endif
@@ -85,7 +86,7 @@ static BOOL ErrorReturn(int *pnError, int nErrorNum)
 // FUNCTION: GetNewFileDescriptor
 // PURPOSE:  Allocate a new file descriptor and return it.
 //
-static BOOL GetNewFileDescriptor(CFileDescriptor **ppFI, int *pnFile, int *pnError)
+ BOOL GetNewFileDescriptor(CFileDescriptor **ppFI, int *pnFile, int *pnError)
 {
 //   WPTRASSERT(ppFI);
 //   WPTRASSERT(pnFile);
@@ -120,7 +121,7 @@ static BOOL GetNewFileDescriptor(CFileDescriptor **ppFI, int *pnFile, int *pnErr
 // FUNCTION: GetFileDescriptor
 // PURPOSE:  Retreive an existing file descriptor.
 //
-static BOOL GetFileDescriptor(CFileDescriptor **ppFI, int nFile, int *pnError)
+ BOOL GetFileDescriptor(CFileDescriptor **ppFI, int nFile, int *pnError)
 {
 //   WPTRASSERT(ppFI);
 
@@ -142,7 +143,7 @@ static BOOL GetFileDescriptor(CFileDescriptor **ppFI, int nFile, int *pnError)
 // FUNCTION: ReleaseFileDescriptor
 // PURPOSE:  Release an existing file descriptor.
 //
-static void ReleaseFileDescriptor(int nFile)
+ void ReleaseFileDescriptor(int nFile)
 {
    delete g_FileData[nFile];
    g_FileData[nFile] = NULL;
@@ -153,6 +154,16 @@ static void ReleaseFileDescriptor(int nFile)
 // PURPOSE:  Get the sample size used in the data described by the header.
 //
 static UINT SampleSize(const ABFFileHeader *pFH)
+{
+//   ABFH_ASSERT(pFH);
+   return (pFH->nDataFormat != ABF_INTEGERDATA) ? sizeof(float) : sizeof(short);
+}
+
+//===============================================================================================
+// FUNCTION: SampleSize
+// PURPOSE:  Get the sample size used in the data described by the header.
+//
+static UINT ABF2_SampleSize(const ABF2FileHeader *pFH)
 {
 //   ABFH_ASSERT(pFH);
    return (pFH->nDataFormat != ABF_INTEGERDATA) ? sizeof(float) : sizeof(short);
@@ -175,6 +186,25 @@ static long GetDataOffset(const ABFFileHeader *pFH)
       
    return lDataOffset;
 }
+
+//===============================================================================================
+// FUNCTION: GetDataOffset
+// PURPOSE:  Get the file offset to the data allowing for "ignored" points from old AxoLab files.
+//
+static long ABF2_GetDataOffset(const ABF2FileHeader *pFH)
+{
+//   ABFH_ASSERT(pFH);
+   long lDataOffset = pFH->lDataSectionPtr * ABF_BLOCKSIZE;
+   
+   // Adjust the data pointer for any garbage data words at the start of
+   // the data portion of the file. (Created by AxoLab in continuous
+   // files only)
+   if (pFH->nOperationMode == ABF_GAPFREEFILE)
+      lDataOffset += pFH->nNumPointsIgnored * ABF2_SampleSize(pFH);
+      
+   return lDataOffset;
+}
+
 /*
 //==============================================================================================
 // FUNCTION: CalculateCRC
@@ -1478,6 +1508,39 @@ static BOOL GetSynchEntry( const ABFFileHeader *pFH, CFileDescriptor *pFI, UINT 
    return pFI->GetSynchEntry( uEpisode, pSynchEntry );
 }
 
+//===============================================================================================
+// FUNCTION: GetSynchEntry
+// PURPOSE:  Gets a synch entry describing the requested episode (if possible).
+// RETURNS:  TRUE = OK, FALSE = Episode number out of range.
+// NOTES:    Episode number is one-relative!
+//
+static BOOL ABF2_GetSynchEntry( const ABF2FileHeader *pFH, CFileDescriptor *pFI, UINT uEpisode, 
+                           Synch *pSynchEntry )
+{
+   if (!pFI->CheckEpisodeNumber(uEpisode))
+      return FALSE;
+      
+   // If a synch array is not present, create a synch entry for this chunk,
+   // otherwise, read it from the synch array.
+   if (pFI->GetSynchCount() == 0)
+   {
+      UINT uSampleSize = ABF2_SampleSize(pFH);
+      UINT uChunkSize  = UINT(pFH->lNumSamplesPerEpisode);    // Chunk size in samples
+      
+      // In continuous files, the last episode may be smaller than the episode size used
+      // for the rest of the file. This is calculated in the ABF.Open routine.
+      if ((pFH->nOperationMode == ABF_GAPFREEFILE) && (uEpisode == pFI->GetAcquiredEpisodes()))
+         pSynchEntry->dwLength = pFI->GetLastEpiSize();
+      else
+         pSynchEntry->dwLength = uChunkSize;
+         
+      pSynchEntry->dwFileOffset = uChunkSize * uSampleSize * (uEpisode - 1);
+      pSynchEntry->dwStart      = pSynchEntry->dwFileOffset / uSampleSize;
+            
+      return TRUE;
+   }
+   return pFI->GetSynchEntry( uEpisode, pSynchEntry );
+}
 
 //===============================================================================================
 // FUNCTION: ABF_MultiplexRead
@@ -1535,6 +1598,64 @@ BOOL WINAPI ABF_MultiplexRead(int nFile, const ABFFileHeader *pFH, DWORD dwEpiso
 
    return TRUE;
 }
+
+//===============================================================================================
+// FUNCTION: ABF_MultiplexRead
+// PURPOSE:  This routine reads an episode of data from the data file previously opened.
+//
+// INPUT:
+//   nFile          the file index into the g_FileData structure array
+//   dwEpisode      the episode number to be read. Episodes start at 1
+// 
+// OUTPUT:
+//   pvBuffer       the data buffer for the data
+//   puSizeInSamples the number of valid points in the data buffer
+// 
+BOOL WINAPI ABF2_MultiplexRead(int nFile, const ABF2FileHeader *pFH, DWORD dwEpisode, 
+                              void *pvBuffer, UINT *puSizeInSamples, int *pnError)
+{
+//   ABFH_ASSERT(pFH);
+   CFileDescriptor *pFI = NULL;
+   if (!GetFileDescriptor(&pFI, nFile, pnError))
+      return FALSE;
+   
+   if (!pFI->CheckEpisodeNumber(dwEpisode))
+      ERRORRETURN(pnError, ABF_EEPISODERANGE);
+
+   // Set the sample size in the data.
+   UINT uSampleSize = ABF2_SampleSize(pFH);
+   UINT uBytesPerEpisode = UINT(pFH->lNumSamplesPerEpisode) * uSampleSize;
+
+   // If a synch array is not present, create a synch entry for this chunk,
+   // otherwise, read it from the synch array.
+   Synch SynchEntry;
+   if (!ABF2_GetSynchEntry( pFH, pFI, dwEpisode, &SynchEntry ))
+      ERRORRETURN(pnError, ABF_EEPISODERANGE);
+      
+   // return the size of the episode to be read.
+   if (puSizeInSamples)
+      *puSizeInSamples = UINT(SynchEntry.dwLength);
+
+   // Add the distance to the start of the data to the data offset
+   LONGLONG lFileOffset = LONGLONG(ABF2_GetDataOffset(pFH)) + SynchEntry.dwFileOffset;
+
+   // Seek to the calculated file position.
+   VERIFY(pFI->Seek(lFileOffset, FILE_BEGIN));
+
+   UINT uSizeInBytes = SynchEntry.dwLength * uSampleSize;
+//   ARRAYASSERT((BYTE *)pvBuffer, uSizeInBytes);
+
+   // Do the file read
+   if (!pFI->Read(pvBuffer, uSizeInBytes))
+      ERRORRETURN(pnError, ABF_EREADDATA);
+
+   // If episode is not full, pad it out with 0's
+   if (uSizeInBytes < uBytesPerEpisode)
+      memset((char *)pvBuffer + uSizeInBytes, '\0', uBytesPerEpisode - uSizeInBytes);
+
+   return TRUE;
+}
+
 /*
 //===============================================================================================
 // FUNCTION: SynchCountToSamples
@@ -1773,6 +1894,27 @@ static void ConvertADCToFloats( const ABFFileHeader *pFH, int nChannel, UINT uCh
 }
 
 //===============================================================================================
+// FUNCTION: ConvertADCToFloats
+// PURPOSE:  Convert an array of ADC values to UserUnits.
+//
+static void ABF2_ConvertADCToFloats( const ABF2FileHeader *pFH, int nChannel, UINT uChannelOffset, 
+                                float *pfDestination, short *pnSource )
+{
+//   ABFH_ASSERT(pFH);
+//   ARRAYASSERT(pfDestination, (UINT)(pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels));
+//   ARRAYASSERT(pnSource, (UINT)(pFH->lNumSamplesPerEpisode));
+   
+   UINT uSkip      = (UINT)pFH->nADCNumChannels;
+   UINT uSourceLen = (UINT)pFH->lNumSamplesPerEpisode;
+   
+   float fValToUUFactor, fValToUUShift;
+   ABF2H_GetADCtoUUFactors( pFH, nChannel, &fValToUUFactor, &fValToUUShift);
+
+   for (UINT i=uChannelOffset; i<uSourceLen; i+=uSkip)
+      *pfDestination++ = pnSource[i] * fValToUUFactor + fValToUUShift;
+}
+
+//===============================================================================================
 // FUNCTION: ConvertInPlace
 // PURPOSE:  Convert a single channel of two byte integers to floats, in-place.
 //
@@ -1786,6 +1928,25 @@ static void ConvertInPlace(const ABFFileHeader *pFH, int nChannel, UINT uNumSamp
    
    float fValToUUFactor, fValToUUShift;
    ABFH_GetADCtoUUFactors( pFH, nChannel, &fValToUUFactor, &fValToUUShift);
+
+   for (int i=uNumSamples-1; i>=0; i--)
+      pfDestination[i] = pnSource[i] * fValToUUFactor + fValToUUShift;
+}
+
+//===============================================================================================
+// FUNCTION: ConvertInPlace
+// PURPOSE:  Convert a single channel of two byte integers to floats, in-place.
+//
+static void ABF2_ConvertInPlace(const ABF2FileHeader *pFH, int nChannel, UINT uNumSamples, void *pvBuffer)
+{
+//   ABFH_ASSERT(pFH);
+//   ARRAYASSERT((float *)pvBuffer, uNumSamples);
+   
+   ADC_VALUE *pnSource      = ((ADC_VALUE *)pvBuffer);
+   float     *pfDestination = ((float *)pvBuffer);
+   
+   float fValToUUFactor, fValToUUShift;
+   ABF2H_GetADCtoUUFactors( pFH, nChannel, &fValToUUFactor, &fValToUUShift);
 
    for (int i=uNumSamples-1; i>=0; i--)
       pfDestination[i] = pnSource[i] * fValToUUFactor + fValToUUShift;
@@ -1836,6 +1997,50 @@ static BOOL ConvertADCToResults(const ABFFileHeader *pFH, float *pfDestination, 
 }
 
 //===============================================================================================
+// FUNCTION: ConvertADCToResults
+// PURPOSE:  Get the results array for the math channel.
+//
+static BOOL ABF2_ConvertADCToResults(const ABF2FileHeader *pFH, float *pfDestination, short *pnSource)
+{
+//   ABFH_ASSERT(pFH);
+//   ARRAYASSERT(pfDestination, (UINT)(pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels));
+//   ARRAYASSERT(pnSource, (UINT)(pFH->lNumSamplesPerEpisode));
+   UINT uAOffset, uBOffset;
+   short *pnSourceA, *pnSourceB;
+
+   int nChannelA = pFH->nArithmeticADCNumA;
+   int nChannelB = pFH->nArithmeticADCNumB;
+
+   UINT i, uSkip = pFH->nADCNumChannels;
+   UINT uSourceArrayLen = (UINT)pFH->lNumSamplesPerEpisode;
+
+   float fValToUUFactorA, fValToUUShiftA;
+   float fValToUUFactorB, fValToUUShiftB;
+   float fUserUnitA, fUserUnitB;
+
+   if (!ABF2H_GetChannelOffset(pFH, nChannelA, &uAOffset))
+      return FALSE;
+
+   if (!ABF2H_GetChannelOffset(pFH, nChannelB, &uBOffset))
+      return FALSE;
+
+   ABF2H_GetADCtoUUFactors( pFH, nChannelA, &fValToUUFactorA, &fValToUUShiftA);
+   ABF2H_GetADCtoUUFactors( pFH, nChannelB, &fValToUUFactorB, &fValToUUShiftB);
+
+   pnSourceA = pnSource + uAOffset;  // adjust the starting offset
+   pnSourceB = pnSource + uBOffset;  // adjust the starting offset
+   uSourceArrayLen -= max(uAOffset, uBOffset);
+   for (i=0; i<uSourceArrayLen; i+=uSkip)
+   {
+      fUserUnitA = pnSourceA[i] * fValToUUFactorA + fValToUUShiftA;
+      fUserUnitB = pnSourceB[i] * fValToUUFactorB + fValToUUShiftB;
+
+      ABF2H_GetMathValue(pFH, fUserUnitA, fUserUnitB, pfDestination++);
+   }
+   return TRUE;
+}
+
+//===============================================================================================
 // FUNCTION: ConvertToResults
 // PURPOSE:  Fills the math channel array from a multichannel buffer of float's.
 //
@@ -1862,6 +2067,36 @@ static BOOL ConvertToResults(const ABFFileHeader *pFH, float *pfDestination, flo
    uSourceArrayLen -= max(uAOffset, uBOffset);
    for (UINT i=0; i<uSourceArrayLen; i+=uSkip)
       ABFH_GetMathValue(pFH, pfSourceA[i], pfSourceB[i], pfDestination++);
+   return TRUE;
+}
+
+//===============================================================================================
+// FUNCTION: ConvertToResults
+// PURPOSE:  Fills the math channel array from a multichannel buffer of float's.
+//
+static BOOL ABF2_ConvertToResults(const ABF2FileHeader *pFH, float *pfDestination, float *pfSource)
+{
+//   ARRAYASSERT(pfDestination, pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels);
+//   ARRAYASSERT(pfSource, pFH->lNumSamplesPerEpisode);
+   
+   int nChannelA = pFH->nArithmeticADCNumA;
+   int nChannelB = pFH->nArithmeticADCNumB;
+
+   UINT uSkip           = pFH->nADCNumChannels;
+   UINT uSourceArrayLen = (UINT)pFH->lNumSamplesPerEpisode;
+
+   UINT uAOffset, uBOffset;
+   if (!ABF2H_GetChannelOffset(pFH, nChannelA, &uAOffset))
+      return FALSE;
+
+   if (!ABF2H_GetChannelOffset(pFH, nChannelB, &uBOffset))
+      return FALSE;
+
+   float *pfSourceA = pfSource + uAOffset;  // adjust the starting offset
+   float *pfSourceB = pfSource + uBOffset;  // adjust the starting offset
+   uSourceArrayLen -= max(uAOffset, uBOffset);
+   for (UINT i=0; i<uSourceArrayLen; i+=uSkip)
+      ABF2H_GetMathValue(pFH, pfSourceA[i], pfSourceB[i], pfDestination++);
    return TRUE;
 }
 
@@ -1955,6 +2190,98 @@ BOOL WINAPI ABF_ReadChannel(int nFile, const ABFFileHeader *pFH, int nChannel, D
       *puNumSamples = uEpisodeSize / pFH->nADCNumChannels;
    return TRUE;
 }
+
+//===============================================================================================
+// FUNCTION: ABF_ReadChannel
+// PURPOSE:  This function reads a complete multiplexed episode from the data file and
+//           then converts a single de-multiplexed channel to "UserUnits" in pfBuffer.
+//
+// The required size of the passed buffer is:
+// pfBuffer     -> pFH->lNumSamplesPerEpisode / pFH->nADCNumChannels  (floats)
+//
+BOOL WINAPI ABF2_ReadChannel(int nFile, const ABF2FileHeader *pFH, int nChannel, DWORD dwEpisode, 
+                            float *pfBuffer, UINT *puNumSamples, int *pnError)
+{
+//   ABFH_ASSERT(pFH);
+//   ARRAYASSERT(pfBuffer, (UINT)(pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels));
+   CFileDescriptor *pFI = NULL;
+   if (!GetFileDescriptor(&pFI, nFile, pnError))
+      return FALSE;
+
+   if (!pFI->CheckEpisodeNumber(dwEpisode))
+      ERRORRETURN(pnError, ABF_EEPISODERANGE);
+
+   // Get the offset into the multiplexed data array for the first point
+   UINT uChannelOffset;
+   if (!ABF2H_GetChannelOffset(pFH, nChannel, &uChannelOffset))
+      ERRORRETURN(pnError, ABF_EINVALIDCHANNEL);
+
+   // If there is only one channel, read the data directly into the passed buffer,
+   // converting it in-place if required.
+   if ((pFH->nADCNumChannels == 1) && (nChannel >= 0))
+   {
+      if (!ABF2_MultiplexRead(nFile, pFH, dwEpisode, pfBuffer, puNumSamples, pnError))
+         return FALSE;
+
+      if (pFH->nDataFormat == ABF_INTEGERDATA)      // if data is 2byte ints, convert to floats
+         ABF2_ConvertInPlace(pFH, nChannel, *puNumSamples, pfBuffer);
+      return TRUE;
+   }      
+
+   // Set the sample size in the data.
+   UINT uSampleSize = ABF2_SampleSize(pFH);
+
+   // Only create the read buffer on demand, it is freed when the file is closed.
+   if (!pFI->GetReadBuffer())
+   {      
+       if (!pFI->AllocReadBuffer(pFH->lNumSamplesPerEpisode * uSampleSize))
+           ERRORRETURN(pnError, ABF_OUTOFMEMORY);
+   }
+
+   // Read the whole episode from the ABF file only if it is not already cached.
+   UINT uEpisodeSize = pFI->GetCachedEpisodeSize();
+   if (dwEpisode != pFI->GetCachedEpisode())
+   {         
+      uEpisodeSize = (UINT)pFH->lNumSamplesPerEpisode;
+      if (!ABF2_MultiplexRead(nFile, pFH, dwEpisode, pFI->GetReadBuffer(), &uEpisodeSize, pnError))
+      {
+         pFI->SetCachedEpisode(UINT(-1), 0);
+         return FALSE;
+      }
+      pFI->SetCachedEpisode(dwEpisode, uEpisodeSize);
+   }
+   
+   // if data is 2byte ints, convert to floats
+   if (pFH->nDataFormat == ABF_INTEGERDATA)
+   {
+      // Cast the read buffer to the appropriate format.
+      ADC_VALUE *pnReadBuffer = (ADC_VALUE *)pFI->GetReadBuffer();
+
+      // A channel number of -1 refers to the results channel
+      if (nChannel >= 0)
+         ABF2_ConvertADCToFloats(pFH, nChannel, uChannelOffset, pfBuffer, pnReadBuffer);
+      else if (!ABF2_ConvertADCToResults(pFH, pfBuffer, pnReadBuffer))
+         ERRORRETURN(pnError, ABF_BADMATHCHANNEL);
+   }
+   else     // Data is 4-byte floats.
+   {
+      // Cast the read buffer to the appropriate format.
+      float *pfReadBuffer = (float *)pFI->GetReadBuffer();
+
+      // A channel number of -1 refers to the results channel
+      if (nChannel >= 0)
+         PackSamples(pfReadBuffer, pfBuffer, uEpisodeSize, uChannelOffset,
+                     uSampleSize, pFH->nADCNumChannels);
+      else if (!ABF2_ConvertToResults(pFH, pfBuffer, pfReadBuffer))
+         ERRORRETURN(pnError, ABF_BADMATHCHANNEL);
+   }
+   
+   // Return the length of the data block.
+   if (puNumSamples)
+      *puNumSamples = uEpisodeSize / pFH->nADCNumChannels;
+   return TRUE;
+}
+
 /*
 //===============================================================================================
 // FUNCTION: ABF_ReadRawChannel
@@ -2845,6 +3172,42 @@ BOOL WINAPI ABF_GetNumSamples(int nFile, const ABFFileHeader *pFH, DWORD dwEpiso
    *puNumSamples = uRealSize / pFH->nADCNumChannels;
    return TRUE;
 }
+
+//===============================================================================================
+// FUNCTION: ABF_GetNumSamples
+// PURPOSE:  This routine returns the number of samples per channel in a given episode.
+// INPUT:
+//   nFile          the file index into the g_FileData structure array
+//   dwEpisode      the episode number of interest
+// 
+// OUTPUT:
+//   NumSamples%    the number of data points in this episode
+// 
+BOOL WINAPI ABF2_GetNumSamples(int nFile, const ABF2FileHeader *pFH, DWORD dwEpisode, 
+                              UINT *puNumSamples, int *pnError)
+{
+//   ABFH_ASSERT(pFH);
+   UINT uRealSize;
+   CFileDescriptor *pFI = NULL;
+   if (!GetFileDescriptor(&pFI, nFile, pnError))
+      return FALSE;
+
+   if (!pFI->CheckEpisodeNumber(dwEpisode))
+      ERRORRETURN(pnError, ABF_EEPISODERANGE);
+
+   if (pFI->GetSynchCount() == 0) /// (ABF_WAVEFORMFILE or ABF_GAPFREEFILE)
+   {
+      if ((pFH->nOperationMode == ABF_GAPFREEFILE) && (dwEpisode == pFI->GetAcquiredEpisodes()))
+         uRealSize = pFI->GetLastEpiSize();
+      else
+         uRealSize = UINT(pFH->lNumSamplesPerEpisode);
+   }
+   else
+      uRealSize = (UINT)pFI->EpisodeLength(dwEpisode);
+   *puNumSamples = uRealSize / pFH->nADCNumChannels;
+   return TRUE;
+}
+
 /*
 //===============================================================================================
 // FUNCTION: ABF_GetEpisodeDuration

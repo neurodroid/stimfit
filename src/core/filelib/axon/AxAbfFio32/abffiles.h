@@ -1,4 +1,4 @@
- //***********************************************************************************************
+//***********************************************************************************************
 //
 //    Copyright (c) 1993-2003 Axon Instruments.
 //    All rights reserved.
@@ -14,7 +14,10 @@
 // Include the description of the ABFFileHeader structure
 #ifndef RC_INVOKED
 #include "../AxAbfFio32/abfheadr.h"
+#include "../../axon2/abf2headr.h"
 #endif
+
+// #include "../AxAbfFio32/filedesc.hpp"    // File descriptors for ABF files.
 
 #ifdef __cplusplus
 extern "C" {
@@ -115,6 +118,8 @@ BOOL WINAPI ABF_Close(int nFile, int *pnError);
 
 BOOL WINAPI ABF_MultiplexRead(int nFile, const ABFFileHeader *pFH, DWORD dwEpisode, 
                               void *pvBuffer, UINT *puSizeInSamples, int *pnError);
+BOOL WINAPI ABF2_MultiplexRead(int nFile, const ABF2FileHeader *pFH, DWORD dwEpisode, 
+                              void *pvBuffer, UINT *puSizeInSamples, int *pnError);
 /*
 BOOL WINAPI ABF_MultiplexWrite(int nFile, ABFFileHeader *pFH, UINT uFlags, const void *pvBuffer, 
                                DWORD dwEpiStart, UINT uSizeInSamples, int *pnError);
@@ -122,6 +127,8 @@ BOOL WINAPI ABF_MultiplexWrite(int nFile, ABFFileHeader *pFH, UINT uFlags, const
 BOOL WINAPI ABF_WriteRawData(int nFile, const void *pvBuffer, DWORD dwSizeInBytes, int *pnError);
 */
 BOOL WINAPI ABF_ReadChannel(int nFile, const ABFFileHeader *pFH, int nChannel, DWORD dwEpisode, 
+                            float *pfBuffer, UINT *puNumSamples, int *pnError);
+BOOL WINAPI ABF2_ReadChannel(int nFile, const ABF2FileHeader *pFH, int nChannel, DWORD dwEpisode, 
                             float *pfBuffer, UINT *puNumSamples, int *pnError);
 /*                                   
 BOOL WINAPI ABF_ReadRawChannel(int nFile, const ABFFileHeader *pFH, int nChannel, DWORD dwEpisode, 
@@ -168,6 +175,8 @@ BOOL WINAPI ABF_GetMissingSynchCount(int nFile, const ABFFileHeader *pFH, DWORD 
 BOOL WINAPI ABF_HasOverlappedData(int nFile, BOOL *pbHasOverlapped, int *pnError);
 */
 BOOL WINAPI ABF_GetNumSamples(int nFile, const ABFFileHeader *pFH, DWORD dwEpisode, 
+                              UINT *puNumSamples, int *pnError);
+BOOL WINAPI ABF2_GetNumSamples(int nFile, const ABF2FileHeader *pFH, DWORD dwEpisode, 
                               UINT *puNumSamples, int *pnError);
 /*
 BOOL WINAPI ABF_GetStartTime(int nFile, const ABFFileHeader *pFH, int nChannel, DWORD dwEpisode, 
@@ -250,6 +259,17 @@ BOOL WINAPI ABF_ParseStringAnnotation( LPCSTR pszAnn, LPSTR pszName, UINT uSizeN
 
 BOOL WINAPI ABF_ValidateFileCRC(  int nFile, int *pnError );
 */
+    
+//===============================================================================================
+// Macros and functions to deal with returning error return codes through a pointer if given.
+
+#define ERRORRETURN(p, e)  return ErrorReturn(p, e);
+    // BOOL ErrorReturn(int *pnError, int nErrorNum);
+
+//===============================================================================================
+// FUNCTION: GetNewFileDescriptor
+// PURPOSE:  Allocate a new file descriptor and return it.
+//
 
 #ifdef __cplusplus
 }

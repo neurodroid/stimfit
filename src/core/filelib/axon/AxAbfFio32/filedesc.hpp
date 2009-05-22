@@ -15,7 +15,6 @@
 /*
 #include "./../Common/BufferedArray.hpp"  // Virtual item array objects
 */
-#include "abffiles.h"               // ABF file I/O API and error codes.
 #include "./../Common/FileIO.hpp"     // Low-level file I/O services
 #include "csynch.hpp"               // Virtual synch array object
 /*
@@ -228,6 +227,7 @@ inline void CFileDescriptor::IncreaseEventLength( UINT uIncrease )
    m_VSynch.IncreaseLastLength( uIncrease );
 }
 */   
+
 //===============================================================================================
 // FUNCTION: GetSynchEntry
 // PURPOSE:  Gets the Synch information for a particular episode.

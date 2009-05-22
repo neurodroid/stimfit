@@ -616,6 +616,8 @@ void WINAPI ABFH_GetADCtoUUFactors( const ABFFileHeader *pFH, int nChannel,
    *pfADCToUUFactor = fInputRange / pFH->lADCResolution;
    *pfADCToUUShift  = -fInputOffset;
 }
+
+
 /*
 //==============================================================================================
 // FUNCTION:   ABFH_GetADCDisplayRange

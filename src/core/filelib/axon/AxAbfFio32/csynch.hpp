@@ -128,7 +128,7 @@ inline BOOL CSynch::Read(LPVOID lpBuf, DWORD dwFirstEntry, DWORD dwEntriesToRead
    // Debug error messages.
    if( !bOK )
    {
-      TRACE( "CSynch::Read - ReadFile failed");// with the following error:\n" );
+       TRACE( (char*)"CSynch::Read - ReadFile failed");// with the following error:\n" );
 //      SHOW_SYSTEM_ERROR( GetLastError() );
    }
 

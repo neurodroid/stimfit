@@ -52,6 +52,14 @@ CFileIO::CFileIO(FILEHANDLE hFile)
    m_dwLastError   = 0;
 }
 
+CFileIO::CFileIO(HANDLE hFile)
+{
+   //MEMBERASSERT();
+    m_hFileHandle   = (FILEHANDLE)hFile;
+   m_szFileName[0] = '\0';
+   m_dwLastError   = 0;
+}
+
 //===============================================================================================
 // FUNCTION: Destructor
 // PURPOSE:  Cleanup the object when it is deleted.
@@ -393,7 +401,7 @@ DWORD CFileIO::GetLastError() const
    /*MEMBERASSERT();*/
    return m_dwLastError;
 }
-/*
+
 //###############################################################################################
 //###############################################################################################
 //###
@@ -408,7 +416,7 @@ DWORD CFileIO::GetLastError() const
 // PURPOSE:  Object initialization.
 //
 CFileIO_NoClose::CFileIO_NoClose(HANDLE hFile)
-   : CFileIO(hFile)
+    : CFileIO(hFile)
 {
 }
 
@@ -421,6 +429,7 @@ CFileIO_NoClose::~CFileIO_NoClose()
    Release();
 }
 
+#if 0
 //###############################################################################################
 //###############################################################################################
 //###
@@ -541,4 +550,4 @@ int main(int argc, char **argv)
 }
 
 #endif  // TESTBED
-*/
+#endif

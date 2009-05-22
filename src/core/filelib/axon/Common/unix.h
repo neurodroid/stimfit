@@ -45,11 +45,11 @@ typedef FILE* FILEHANDLE;
 
 // Handle declarations.
 typedef void          *HANDLE;
-	typedef HANDLE         HINSTANCE;
-	typedef HINSTANCE      HMODULE;
+typedef HANDLE         HINSTANCE;
+typedef HINSTANCE      HMODULE;
 
-	typedef void          *LPOVERLAPPED;
-	typedef void          *LPSECURITY_ATTRIBUTES;
+typedef void          *LPOVERLAPPED;
+typedef void          *LPSECURITY_ATTRIBUTES;
 
 typedef long long      LONGLONG;
 typedef unsigned int   UINT_PTR;
@@ -60,22 +60,25 @@ typedef unsigned int   UINT_PTR;
 #define FILE_END                            2
 #define FILE_ATTRIBUTE_NORMAL      0x00000080
 
-	#define GENERIC_READ               0x80000000
-	#define GENERIC_WRITE              0x40000000
+#define GENERIC_READ               0x80000000
+#define GENERIC_WRITE              0x40000000
 
 #define CREATE_ALWAYS                       2
 #define OPEN_EXISTING                       3
 
-	#define FILE_SHARE_READ           0x00000001L
+#define FILE_SHARE_READ           0x00000001L
 
-	#define NO_ERROR                            0
-	#define ERROR_HANDLE_EOF                   38
+#define NO_ERROR                            0
+#define ERROR_HANDLE_EOF                   38
 
 #define TRUE  1
 #define FALSE 0
 
-
 #define LOBYTE(w)              ((BYTE)((DWORD_PTR)(w) & 0xFF))
+#define HIBYTE(w)              ((BYTE)((DWORD_PTR)(w) >> 8))
+
+#define LOWORD(l)              ((WORD)((DWORD_PTR)(l) & 0xFFFF))
+#define HIWORD(l)              ((WORD)((DWORD_PTR)(l) >> 16))
 
 #ifndef _MAX_PATH
 #define _MAX_DRIVE          3
@@ -87,10 +90,10 @@ typedef unsigned int   UINT_PTR;
 #define ERROR_TOO_MANY_OPEN_FILES       4
 
 
-	#define __stdcall __attribute__((__stdcall__))
-	// gcc uses cdecl as a standard:
-	#define cdecl
-	#define WINAPI __stdcall
+#define __stdcall __attribute__((__stdcall__))
+// gcc uses cdecl as a standard:
+#define cdecl
+#define WINAPI __stdcall
 
 typedef struct _GUID
 {
@@ -99,12 +102,13 @@ typedef struct _GUID
     unsigned short Data3;
     unsigned char  Data4[ 8 ];
 } GUID;
+#define GUID_DEFINED
 
 void _splitpath(const char* inpath, char * drv, char * dir,
                 char* fname, char * ext );
 int _strnicmp( LPCSTR str1, LPCSTR str2, size_t n );
 inline int strnicmp( const char* s1, const char* s2, size_t n ) { 
-	return _strnicmp( s1, s2, n );
+    return _strnicmp( s1, s2, n );
 }
 void _makepath( char * path, const char * drive,
                 const char *directory, const char * filename,
@@ -116,11 +120,11 @@ void _makepath( char * path, const char * drive,
 typedef struct _FILETIME
 {
 #ifdef WORDS_BIGENDIAN
-DWORD  dwHighDateTime;
-DWORD  dwLowDateTime;
+    DWORD  dwHighDateTime;
+    DWORD  dwLowDateTime;
 #else
-DWORD  dwLowDateTime;
-DWORD  dwHighDateTime;
+    DWORD  dwLowDateTime;
+    DWORD  dwHighDateTime;
 #endif
 } FILETIME, *PFILETIME, *LPFILETIME;
 #endif /* _FILETIME_ */
@@ -147,8 +151,8 @@ extern HINSTANCE g_hInstance;
 BOOL  WINAPI c_WriteFile( FILEHANDLE hFile, LPCVOID buffer, DWORD bytesToWrite,
                           LPDWORD bytesWritten, LPOVERLAPPED overlapped );
 FILEHANDLE WINAPI c_CreateFileA( LPCSTR filename, DWORD access, DWORD sharing,
-                            LPSECURITY_ATTRIBUTES sa, DWORD creation,
-                            DWORD attributes_, HANDLE templ);
+                                 LPSECURITY_ATTRIBUTES sa, DWORD creation,
+                                 DWORD attributes_, HANDLE templ);
 DWORD WINAPI c_SetFilePointer( FILEHANDLE hFile, LONG distance, LONG *highword, DWORD method );
 BOOL  WINAPI c_ReadFile( FILEHANDLE hFile, LPVOID buffer, DWORD bytesToRead,
                          LPDWORD bytesRead, LPOVERLAPPED overlapped );

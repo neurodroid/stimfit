@@ -66,7 +66,10 @@ am_stimfit_OBJECTS = stimfit-channel.$(OBJEXT) \
 	stimfit-Oldheadr.$(OBJEXT) stimfit-abfutil.$(OBJEXT) \
 	stimfit-msbincvt.$(OBJEXT) unix.$(OBJEXT) \
 	stimfit-abferror.$(OBJEXT) stimfit-axatffio32.$(OBJEXT) \
-	stimfit-fileio2.$(OBJEXT) stimfit-AxoGraph_ReadWrite.$(OBJEXT) \
+	stimfit-fileio2.$(OBJEXT) stimfit-ProtocolReaderABF2.$(OBJEXT) \
+	stimfit-SimpleStringCache.$(OBJEXT) \
+	stimfit-abf2headr.$(OBJEXT) \
+	stimfit-AxoGraph_ReadWrite.$(OBJEXT) \
 	stimfit-fileUtils.$(OBJEXT) stimfit-stringUtils.$(OBJEXT) \
 	stimfit-byteswap.$(OBJEXT) lm.$(OBJEXT) Axb.$(OBJEXT) \
 	misc.$(OBJEXT) lmlec.$(OBJEXT) lmbc.$(OBJEXT) \
@@ -289,6 +292,9 @@ stimfit_SOURCES = ./src/core/channel.cpp ./src/core/section.cpp ./src/core/recor
 	    ./src/core/filelib/axon/AxAbfFio32/abferror.cpp \
             ./src/core/filelib/axon/AxAtfFio32/axatffio32.cpp \
             ./src/core/filelib/axon/AxAtfFio32/fileio2.cpp \
+            ./src/core/filelib/axon2/ProtocolReaderABF2.cpp \
+            ./src/core/filelib/axon2/SimpleStringCache.cpp \
+	    ./src/core/filelib/axon2/abf2headr.cpp \
             ./src/core/filelib/axg/AxoGraph_ReadWrite.cpp \
             ./src/core/filelib/axg/fileUtils.cpp \
             ./src/core/filelib/axg/stringUtils.cpp \
@@ -329,6 +335,10 @@ noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.
             ./src/core/filelib/axon/Common/adcdac.h \
             ./src/core/filelib/axon/Common/ArrayPtr.hpp \
             ./src/core/filelib/axon/Common/wincpp.hpp \
+            ./src/core/filelib/axon2/ProtocolReaderABF2.hpp \
+            ./src/core/filelib/axon2/SimpleStringCache.hpp \
+            ./src/core/filelib/axon2/ProtocolStructs.h \
+	    ./src/core/filelib/axon2/abf2headr.h \
             ./src/core/filelib/axg/AxoGraph_ReadWrite.h \
             ./src/core/filelib/axg/fileUtils.h \
             ./src/core/filelib/axg/stringUtils.h \
@@ -478,6 +488,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-FileIO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-FileReadCache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-Oldheadr.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-ProtocolReaderABF2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-SimpleStringCache.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-abf2headr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-abferror.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-abffiles.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stimfit-abfheadr.Po@am__quote@
@@ -997,6 +1010,48 @@ stimfit-fileio2.obj: ./src/core/filelib/axon/AxAtfFio32/fileio2.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axon/AxAtfFio32/fileio2.cpp' object='stimfit-fileio2.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-fileio2.obj `if test -f './src/core/filelib/axon/AxAtfFio32/fileio2.cpp'; then $(CYGPATH_W) './src/core/filelib/axon/AxAtfFio32/fileio2.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axon/AxAtfFio32/fileio2.cpp'; fi`
+
+stimfit-ProtocolReaderABF2.o: ./src/core/filelib/axon2/ProtocolReaderABF2.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-ProtocolReaderABF2.o -MD -MP -MF $(DEPDIR)/stimfit-ProtocolReaderABF2.Tpo -c -o stimfit-ProtocolReaderABF2.o `test -f './src/core/filelib/axon2/ProtocolReaderABF2.cpp' || echo '$(srcdir)/'`./src/core/filelib/axon2/ProtocolReaderABF2.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-ProtocolReaderABF2.Tpo $(DEPDIR)/stimfit-ProtocolReaderABF2.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axon2/ProtocolReaderABF2.cpp' object='stimfit-ProtocolReaderABF2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-ProtocolReaderABF2.o `test -f './src/core/filelib/axon2/ProtocolReaderABF2.cpp' || echo '$(srcdir)/'`./src/core/filelib/axon2/ProtocolReaderABF2.cpp
+
+stimfit-ProtocolReaderABF2.obj: ./src/core/filelib/axon2/ProtocolReaderABF2.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-ProtocolReaderABF2.obj -MD -MP -MF $(DEPDIR)/stimfit-ProtocolReaderABF2.Tpo -c -o stimfit-ProtocolReaderABF2.obj `if test -f './src/core/filelib/axon2/ProtocolReaderABF2.cpp'; then $(CYGPATH_W) './src/core/filelib/axon2/ProtocolReaderABF2.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axon2/ProtocolReaderABF2.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-ProtocolReaderABF2.Tpo $(DEPDIR)/stimfit-ProtocolReaderABF2.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axon2/ProtocolReaderABF2.cpp' object='stimfit-ProtocolReaderABF2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-ProtocolReaderABF2.obj `if test -f './src/core/filelib/axon2/ProtocolReaderABF2.cpp'; then $(CYGPATH_W) './src/core/filelib/axon2/ProtocolReaderABF2.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axon2/ProtocolReaderABF2.cpp'; fi`
+
+stimfit-SimpleStringCache.o: ./src/core/filelib/axon2/SimpleStringCache.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-SimpleStringCache.o -MD -MP -MF $(DEPDIR)/stimfit-SimpleStringCache.Tpo -c -o stimfit-SimpleStringCache.o `test -f './src/core/filelib/axon2/SimpleStringCache.cpp' || echo '$(srcdir)/'`./src/core/filelib/axon2/SimpleStringCache.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-SimpleStringCache.Tpo $(DEPDIR)/stimfit-SimpleStringCache.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axon2/SimpleStringCache.cpp' object='stimfit-SimpleStringCache.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-SimpleStringCache.o `test -f './src/core/filelib/axon2/SimpleStringCache.cpp' || echo '$(srcdir)/'`./src/core/filelib/axon2/SimpleStringCache.cpp
+
+stimfit-SimpleStringCache.obj: ./src/core/filelib/axon2/SimpleStringCache.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-SimpleStringCache.obj -MD -MP -MF $(DEPDIR)/stimfit-SimpleStringCache.Tpo -c -o stimfit-SimpleStringCache.obj `if test -f './src/core/filelib/axon2/SimpleStringCache.cpp'; then $(CYGPATH_W) './src/core/filelib/axon2/SimpleStringCache.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axon2/SimpleStringCache.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-SimpleStringCache.Tpo $(DEPDIR)/stimfit-SimpleStringCache.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axon2/SimpleStringCache.cpp' object='stimfit-SimpleStringCache.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-SimpleStringCache.obj `if test -f './src/core/filelib/axon2/SimpleStringCache.cpp'; then $(CYGPATH_W) './src/core/filelib/axon2/SimpleStringCache.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axon2/SimpleStringCache.cpp'; fi`
+
+stimfit-abf2headr.o: ./src/core/filelib/axon2/abf2headr.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-abf2headr.o -MD -MP -MF $(DEPDIR)/stimfit-abf2headr.Tpo -c -o stimfit-abf2headr.o `test -f './src/core/filelib/axon2/abf2headr.cpp' || echo '$(srcdir)/'`./src/core/filelib/axon2/abf2headr.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-abf2headr.Tpo $(DEPDIR)/stimfit-abf2headr.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axon2/abf2headr.cpp' object='stimfit-abf2headr.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-abf2headr.o `test -f './src/core/filelib/axon2/abf2headr.cpp' || echo '$(srcdir)/'`./src/core/filelib/axon2/abf2headr.cpp
+
+stimfit-abf2headr.obj: ./src/core/filelib/axon2/abf2headr.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-abf2headr.obj -MD -MP -MF $(DEPDIR)/stimfit-abf2headr.Tpo -c -o stimfit-abf2headr.obj `if test -f './src/core/filelib/axon2/abf2headr.cpp'; then $(CYGPATH_W) './src/core/filelib/axon2/abf2headr.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axon2/abf2headr.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/stimfit-abf2headr.Tpo $(DEPDIR)/stimfit-abf2headr.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/core/filelib/axon2/abf2headr.cpp' object='stimfit-abf2headr.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -c -o stimfit-abf2headr.obj `if test -f './src/core/filelib/axon2/abf2headr.cpp'; then $(CYGPATH_W) './src/core/filelib/axon2/abf2headr.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/core/filelib/axon2/abf2headr.cpp'; fi`
 
 stimfit-AxoGraph_ReadWrite.o: ./src/core/filelib/axg/AxoGraph_ReadWrite.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(stimfit_CXXFLAGS) $(CXXFLAGS) -MT stimfit-AxoGraph_ReadWrite.o -MD -MP -MF $(DEPDIR)/stimfit-AxoGraph_ReadWrite.Tpo -c -o stimfit-AxoGraph_ReadWrite.o `test -f './src/core/filelib/axg/AxoGraph_ReadWrite.cpp' || echo '$(srcdir)/'`./src/core/filelib/axg/AxoGraph_ReadWrite.cpp

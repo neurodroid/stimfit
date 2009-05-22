@@ -21,7 +21,7 @@
 #include "abfutil.h"                // Utility functions.
 #include <math.h>
 #include <float.h>
- 
+#include <iostream> 
 
 #define ABF_OLDPARAMSIZE      260   // size of old acquisition parameter array
 //#define (sz)   OemToCharBuff(sz, sz, sizeof(sz))
@@ -113,6 +113,10 @@ BOOL OLDH_GetFileVersion( FILEHANDLE hFile, UINT *puFileType, float *pfFileVersi
    // Read top of file, to determine the file version
    if (!ABFU_ReadFile(hFile, &TOF, sizeof(TOF)))
       return FALSE;
+   
+#ifdef _STFDEBUG
+   std::cout << "Detected ABF Version " << TOF.ABF.fFileVersionNumber << std::endl;
+#endif
 
    // If the file is byte swapped, return as invalid file.
    // Big-endian computers are no longer supported.
@@ -131,6 +135,7 @@ BOOL OLDH_GetFileVersion( FILEHANDLE hFile, UINT *puFileType, float *pfFileVersi
    if ((TOF.ABF.lFileSignature & ATF_MASK) == ATF_SIGNATURE)
       return FALSE;
 
+   
    // Now we must determine if the file is an old pCLAMP file (< V6.0).
    // Check whether the file is in old MS binary format. This was a floating point format
    // with a different exponent and mantissa length than IEEE.

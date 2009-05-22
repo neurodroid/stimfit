@@ -21,56 +21,57 @@
 
 class CFileIO
 {
-private:    // Member variables and constants.
-   char         m_szFileName[_MAX_PATH]; // The complete filename of the file
-   FILEHANDLE       m_hFileHandle;           // The DOS file handle for data file
-	DWORD        m_dwLastError;           // Error number for last error.
+  private:    // Member variables and constants.
+    char         m_szFileName[_MAX_PATH]; // The complete filename of the file
+    FILEHANDLE       m_hFileHandle;           // The DOS file handle for data file
+    DWORD        m_dwLastError;           // Error number for last error.
 
-private:    // Prevent default copy constructor and operator=()
-   CFileIO(const CFileIO &FI);
-   const CFileIO &operator=(const CFileIO &FI);
+  private:    // Prevent default copy constructor and operator=()
+    CFileIO(const CFileIO &FI);
+    const CFileIO &operator=(const CFileIO &FI);
 
-private:    // Internal functions.
-   BOOL  SeekFailure(DWORD dwOffset);
+  private:    // Internal functions.
+    BOOL  SeekFailure(DWORD dwOffset);
    
-public:   
-   CFileIO();
-   CFileIO(FILEHANDLE hFile);
-   ~CFileIO();
+  public:   
+    CFileIO();
+    CFileIO(FILEHANDLE hFile);
+    CFileIO(HANDLE hFile);
+    ~CFileIO();
    
-   BOOL  Create(LPCSTR szFileName, BOOL bReadOnly, DWORD dwAttributes=FILE_ATTRIBUTE_NORMAL);
-   BOOL  CreateEx(LPCSTR szFileName, DWORD dwDesiredAccess, DWORD dwShareMode,
-                  DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes);
-   BOOL  Close();
-/*   BOOL  IsOpen() const;
+    BOOL  Create(LPCSTR szFileName, BOOL bReadOnly, DWORD dwAttributes=FILE_ATTRIBUTE_NORMAL);
+    BOOL  CreateEx(LPCSTR szFileName, DWORD dwDesiredAccess, DWORD dwShareMode,
+                   DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes);
+    BOOL  Close();
+    /*   BOOL  IsOpen() const;
 
-   BOOL  Write(const void *pvBuffer, DWORD dwSizeInBytes, DWORD *pdwBytesWritten=NULL);
-*/   BOOL  Read(void *pvBuffer, DWORD dwSizeInBytes, DWORD *pdwBytesRead=NULL);
-   BOOL  Seek(LONGLONG lOffset, UINT uFlag=FILE_BEGIN, LONGLONG *plNewOffset=NULL);
-/*   BOOL  GetCurrentPosition(LONGLONG *plCurrentPosition);
-   BOOL  Flush();
+         BOOL  Write(const void *pvBuffer, DWORD dwSizeInBytes, DWORD *pdwBytesWritten=NULL);
+    */   BOOL  Read(void *pvBuffer, DWORD dwSizeInBytes, DWORD *pdwBytesRead=NULL);
+    BOOL  Seek(LONGLONG lOffset, UINT uFlag=FILE_BEGIN, LONGLONG *plNewOffset=NULL);
+    /*   BOOL  GetCurrentPosition(LONGLONG *plCurrentPosition);
+         BOOL  Flush();
 
-   BOOL     SetEndOfFile();
-*/   LONGLONG GetFileSize();
-/*
-   BOOL   GetFileTime( LPFILETIME pCreationTime, LPFILETIME pLastAccessTime=NULL, 
-                       LPFILETIME pLastWriteTime=NULL);
-   BOOL   SetFileTime( LPFILETIME pCreationTime, LPFILETIME pLastAccessTime=NULL, 
-                       LPFILETIME pLastWriteTime=NULL);
+         BOOL     SetEndOfFile();
+    */   LONGLONG GetFileSize();
+    /*
+      BOOL   GetFileTime( LPFILETIME pCreationTime, LPFILETIME pLastAccessTime=NULL, 
+      LPFILETIME pLastWriteTime=NULL);
+      BOOL   SetFileTime( LPFILETIME pCreationTime, LPFILETIME pLastAccessTime=NULL, 
+      LPFILETIME pLastWriteTime=NULL);
 
-   BOOL   GetFileInformation(LPBY_HANDLE_FILE_INFORMATION lpFileInformation);
+      BOOL   GetFileInformation(LPBY_HANDLE_FILE_INFORMATION lpFileInformation);
 
-*/   void   SetFileHandle(FILEHANDLE hFile);
-   FILEHANDLE GetFileHandle() const;   
-   LPCSTR GetFileName() const;
-   FILEHANDLE Release();   
-/*
-   BOOL   Duplicate(CFileIO *pNewFile, BOOL bInheritable=TRUE);
-   BOOL   SetInheritable(BOOL bInheritable=TRUE);
-*/   
-   BOOL   SetLastError();
-   BOOL   SetLastError(DWORD nError);
-   DWORD  GetLastError() const;
+    */   void   SetFileHandle(FILEHANDLE hFile);
+    FILEHANDLE GetFileHandle() const;   
+    LPCSTR GetFileName() const;
+    FILEHANDLE Release();   
+    /*
+      BOOL   Duplicate(CFileIO *pNewFile, BOOL bInheritable=TRUE);
+      BOOL   SetInheritable(BOOL bInheritable=TRUE);
+    */   
+    BOOL   SetLastError();
+    BOOL   SetLastError(DWORD nError);
+    DWORD  GetLastError() const;
 
 };
 
@@ -80,8 +81,8 @@ public:
 //
 inline LPCSTR CFileIO::GetFileName() const
 {
-//   MEMBERASSERT();
-   return m_szFileName;
+    //   MEMBERASSERT();
+    return m_szFileName;
 }
 
 //===============================================================================================
@@ -90,10 +91,10 @@ inline LPCSTR CFileIO::GetFileName() const
 //
 inline FILEHANDLE CFileIO::GetFileHandle() const
 {
-//   MEMBERASSERT();
-   return m_hFileHandle;
+    //   MEMBERASSERT();
+    return m_hFileHandle;
 }
-/*
+#if 0
 
 //===============================================================================================
 // FUNCTION: IsOpen
@@ -101,8 +102,8 @@ inline FILEHANDLE CFileIO::GetFileHandle() const
 //
 inline BOOL CFileIO::IsOpen() const
 {
-   MEMBERASSERT();
-   return (m_hFileHandle != INVALID_HANDLE_VALUE);
+    MEMBERASSERT();
+    return (m_hFileHandle != INVALID_HANDLE_VALUE);
 }
 
 //===============================================================================================
@@ -111,11 +112,11 @@ inline BOOL CFileIO::IsOpen() const
 //
 inline BOOL CFileIO::SetEndOfFile()
 {
-   MEMBERASSERT();
-   return ::SetEndOfFile(m_hFileHandle) ? TRUE : SetLastError();
+    MEMBERASSERT();
+    return ::SetEndOfFile(m_hFileHandle) ? TRUE : SetLastError();
 }
 
-
+#endif
 //===============================================================================================
 // CLASS:   CFileIO_NoClose
 // PURPOSE: Derivation of CFileIO that does not close the file when destroyed.
@@ -123,15 +124,15 @@ inline BOOL CFileIO::SetEndOfFile()
 //
 class CFileIO_NoClose : public CFileIO
 {
-private:    // Prevent default copy constructor and operator=()
-   CFileIO_NoClose(const CFileIO_NoClose &FI);
-   const CFileIO_NoClose &operator=(const CFileIO_NoClose &FI);
+  private:    // Prevent default copy constructor and operator=()
+    CFileIO_NoClose(const CFileIO_NoClose &FI);
+    const CFileIO_NoClose &operator=(const CFileIO_NoClose &FI);
 
-public:   
-   CFileIO_NoClose(HANDLE hFile);
-   ~CFileIO_NoClose();
+  public:   
+    CFileIO_NoClose(HANDLE hFile);
+    ~CFileIO_NoClose();
 };
-
+#if 0
 //===============================================================================================
 // CLASS:   CFileIO_Pipe
 // PURPOSE: Class wrapper around a Win32 pipe.
@@ -139,21 +140,22 @@ public:
 //
 class CFileIO_Pipe
 {
-private:
-   CFileIO  m_ReadPipe;
-   CFileIO  m_WritePipe;
+  private:
+    CFileIO  m_ReadPipe;
+    CFileIO  m_WritePipe;
 
-private:    // Prevent default copy constructor and operator=()
-   CFileIO_Pipe(const CFileIO_Pipe &);
-   const CFileIO_Pipe &operator=(const CFileIO_Pipe &);
+  private:    // Prevent default copy constructor and operator=()
+    CFileIO_Pipe(const CFileIO_Pipe &);
+    const CFileIO_Pipe &operator=(const CFileIO_Pipe &);
 
-public:
-   CFileIO_Pipe();
-   ~CFileIO_Pipe();
+  public:
+    CFileIO_Pipe();
+    ~CFileIO_Pipe();
 
-   BOOL Create(BOOL bInheritable);
-   CFileIO *GetReadPipe();
-   CFileIO *GetWritePipe();
+    BOOL Create(BOOL bInheritable);
+    CFileIO *GetReadPipe();
+    CFileIO *GetWritePipe();
 };
-*/
+#endif
+
 #endif   // INC_FileIO_HPP
