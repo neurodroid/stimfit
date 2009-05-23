@@ -147,7 +147,9 @@ private:
 
     void RedirectStdio();
     wxWindow* DoPythonStuff(wxWindow* parent);
-
+    
+    void OnHelp(wxCommandEvent& event);
+    
     void OnToolFirst(wxCommandEvent& event);
     void OnToolNext(wxCommandEvent& event);
     void OnToolPrevious(wxCommandEvent& event);

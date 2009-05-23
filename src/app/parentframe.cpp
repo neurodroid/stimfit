@@ -102,6 +102,7 @@
 
 IMPLEMENT_CLASS(wxStfParentFrame, wxStfParentType)
 BEGIN_EVENT_TABLE(wxStfParentFrame, wxStfParentType)
+EVT_MENU(wxID_HELP, wxStfParentFrame::OnHelp)
 EVT_MENU(wxID_ABOUT, wxStfParentFrame::OnAbout)
 
 EVT_TOOL(wxID_TOOL_FIRST, wxStfParentFrame::OnToolFirst)
@@ -638,8 +639,8 @@ Peter Jonas, Physiology Department, University of Freiburg\n\n\
 Fourier transform:\nFFTW, http://www.fftw.org\n\n\
 Levenberg-Marquardt non-linear regression:\n\
 Manolis Lourakis, http://www.ics.forth.gr/~lourakis/levmar/ \n\n\
-Cubic spline interpolation:\n\
-John Burkardt, http://www.scs.fsu.edu/~burkardt/index.html \n\n\
+Documentation:\n\
+Jose Guzman\n\n\
 Event detection by template matching:\n\
 Jonas, P., Major, G. & Sakmann B. (1993) J Physiol 472:615-63\n\
 Clements, J. D. & Bekkers, J. M. (1997) Biophys J 73:220-229\n\n\
@@ -650,6 +651,11 @@ Christoph Schmidt-Hieber, Physiology Department, University of Freiburg\n\
 Published under the GNU general public license (http://www.gnu.org/licenses/gpl.html)"));
 
 	wxAboutBox(info);
+}
+
+void wxStfParentFrame::OnHelp(wxCommandEvent& WXUNUSED(event) )
+{
+    wxLaunchDefaultBrowser( "file:///home/cs/stimfit/doc/sphinx/.build/html/index.html" );
 }
 
 void wxStfParentFrame::OnExportimage(wxCommandEvent& WXUNUSED(event) ) {

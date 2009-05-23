@@ -132,8 +132,8 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
         abf2.Close();
     }
             
-#ifdef _STFDEBUG
     const ABF2FileHeader* pFH = abf2.GetFileHeader();
+#ifdef _STFDEBUG
     std::cout << "ABF2 file information" << std::endl
               << "File version " <<  pFH->fFileVersionNumber << std::endl
               << "Data format " << pFH->nDataFormat << std::endl
