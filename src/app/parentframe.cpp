@@ -71,13 +71,11 @@
 
 #include "./../icons/16-em-down.xpm"
 #include "./../icons/16-em-open.xpm"
-#include "./../icons/accept.xpm"
 #include "./../icons/arrow_down.xpm"
 #include "./../icons/arrow_left.xpm"
 #include "./../icons/arrow_out.xpm"
 #include "./../icons/arrow_right.xpm"
 #include "./../icons/arrow_up.xpm"
-#include "./../icons/bin.xpm"
 #include "./../icons/camera.xpm"
 #ifdef _WINDOWS
 #include "./../icons/camera_ps.xpm"
@@ -346,8 +344,8 @@ wxAuiToolBar* wxStfParentFrame::CreateStdTb() {
                  wxT("Open"),
                  wxArtProvider::GetBitmap(
                                           wxART_FILE_OPEN,
-                                          wxART_OTHER,
-                                          wxSize(16,16)
+                                          wxART_TOOLBAR,
+                                          wxSize(20,20)
                                           ),
                  wxT("Open file"),
                  wxITEM_NORMAL
@@ -357,8 +355,8 @@ wxAuiToolBar* wxStfParentFrame::CreateStdTb() {
         wxT("Save"),
         wxArtProvider::GetBitmap(
         wxART_FILE_SAVE_AS,
-        wxART_OTHER,
-        wxSize(16,16)
+        wxART_TOOLBAR,
+        wxSize(20,20)
         ),
         wxT("Save traces"),
         wxITEM_NORMAL
@@ -368,8 +366,8 @@ wxAuiToolBar* wxStfParentFrame::CreateStdTb() {
         wxT("Print"),
         wxArtProvider::GetBitmap(
         wxART_PRINT,
-        wxART_OTHER,
-        wxSize(16,16)
+        wxART_TOOLBAR,
+        wxSize(20,20)
         ),
         wxT("Print traces"),
         wxITEM_NORMAL
@@ -548,14 +546,22 @@ wxAuiToolBar* wxStfParentFrame::CreateCursorTb() {
     cursorToolBar->AddTool(
         wxID_TOOL_SELECT,
         wxT("Select"),
-        wxBitmap(acceptbmp),
+        wxArtProvider::GetBitmap(
+                                 wxART_ADD_BOOKMARK,
+                                 wxART_TOOLBAR,
+                                 wxSize(20,20)
+                                 ),
         wxT("Select this trace (\"S\")"),
         wxITEM_NORMAL
         );
     cursorToolBar->AddTool(
         wxID_TOOL_REMOVE,
         wxT("Unselect"),
-        wxBitmap(bin),
+        wxArtProvider::GetBitmap(
+                                 wxART_DEL_BOOKMARK,
+                                 wxART_TOOLBAR,
+                                 wxSize(20,20)
+                                 ),
         wxT("Unselect this trace (\"R\")"),
         wxITEM_NORMAL
         );
