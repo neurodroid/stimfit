@@ -413,7 +413,7 @@ wxStfBatchDlg::wxStfBatchDlg(wxWindow* parent, int id, wxString title, wxPoint p
         }
         catch (const std::out_of_range& e) {
             wxString errorMsg( wxT("Error while populating checkbox list:\n") );
-            errorMsg += e.what();
+            errorMsg += wxString(e.what(), wxConvLocal);
             wxGetApp().ExceptMsg( errorMsg );
         }
     };

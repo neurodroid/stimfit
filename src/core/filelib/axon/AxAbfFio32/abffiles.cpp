@@ -417,6 +417,7 @@ BOOL WINAPI ABF_ReadOpen(LPCSTR szFileName, int *phFile, UINT fFlags, ABFFileHea
    // Read the data file parameters.
    if (!ABFH_ParamReader(pFI->GetFileHandle(), &NewFH, &nError))
    {
+      
       nError = (nError == ABFH_EUNKNOWNFILETYPE) ? ABF_EUNKNOWNFILETYPE : ABF_EBADPARAMETERS;
       goto RCloseAndAbort;
    }

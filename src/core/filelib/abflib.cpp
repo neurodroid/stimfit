@@ -164,7 +164,7 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
             std::cout << pFH->nADCNumChannels << std::endl;
             if (!ABF2_GetNumSamples(hFile, pFH, nEpisode, &uNumSamples, &nError)) {
                 wxString errorMsg( wxT("Exception while calling ABF_GetNumSamples() ") );
-                errorMsg += wxT("for episode # "); errorMsg << nEpisode; errorMsg += "\n";
+                errorMsg += wxT("for episode # "); errorMsg << nEpisode; errorMsg += wxT("\n");
                 errorMsg += ABF1Error(fName, nError);
                 ReturnData.resize(0);
                 ABF_Close(hFile,&nError);
