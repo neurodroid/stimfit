@@ -787,16 +787,10 @@ double get_sampling_interval( ) {
     return actDoc()->GetXScale();
 }
 
-const char* get_xunits( int trace, int channel ) {
+const char* get_xunits( ) {
     if ( !check_doc() ) return "";
 
-    if (channel < 0) {
-        channel = actDoc()->GetCurCh();
-    }
-    if (trace < 0) {
-        trace = actDoc()->GetCurSec();
-    }
-    return "ms";
+    return actDoc()->GetXUnits().utf8_str();
 }
 
 const char* get_yunits( int trace, int channel ) {
@@ -819,20 +813,15 @@ const char* get_yunits( int trace, int channel ) {
     }
 }
 
-bool set_xunits( const char* units, int trace, int channel ) {
-    if ( !check_doc() ) return "";
+bool set_xunits( const char* units ) {
+    if ( !check_doc() ) return false;
 
-    if (channel < 0) {
-        channel = actDoc()->GetCurCh();
-    }
-    if (trace < 0) {
-        trace = actDoc()->GetCurSec();
-    }
-    return false;
+    actDoc()->SetXUnits( wxString(units,wxConvLocal) );
+    return true;
 }
 
 bool set_yunits( const char* units, int trace, int channel ) {
-    if ( !check_doc() ) return "";
+    if ( !check_doc() ) return false;
 
     if (channel < 0) {
         channel = actDoc()->GetCurCh();

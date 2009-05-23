@@ -34,7 +34,7 @@
  *  all the metadata such as time, date, samling rate and comments are stored here.
  */
 class StfDll Recording {
-public:
+ public:
 
     //ctor/dtor-------------------------------------------------------
     //! Default constuctor
@@ -104,6 +104,11 @@ public:
     /*! \return A string containing a comment.
      */
     const wxString& GetComment() const { return comment; }
+    
+    //! Retrieves the x units.
+    /*! \return The x units. Currently hard-coded to be "ms".
+     */
+    const wxString& GetXUnits() const { return xUnits; }
     
     //! Retrieves the size of the channel array.
     /*! \return The size of the channel array.
@@ -391,7 +396,17 @@ public:
     /*! \return true if it should be shown, false otherwise.
      */
     bool GetViewCursors() const { return viewCursors; }
+    
+    //! Indicates whether the baseline should be set to where the slope of rise exceeds a certain value.
+    /*! \return true if the baseline should be set to a certain slope of rise.
+     */
+    bool GetBaseToSlope() const { return baseToSlope; }
 
+    //! Returns the slope where the baseline should be set.
+    /*! \return The slope value where the baseline should be set.
+     */
+    double GetSlopeForBase() const { return slopeForBase; }
+    
     //! Retrieves the indices of the selected sections (read-only).
     /*! \return A vector containing the indices of the selected sections.
      */
@@ -480,6 +495,11 @@ public:
      *  \param value A string containing the y units.
      */
     void SetGlobalYUnits(std::size_t n_channel, const wxString& value);
+
+    //! Sets the x units.
+    /*! \param value A string containing the x units.
+     */
+    void SetXUnits(const wxString& value) { xUnits=value; }
 
     //! Sets the x scaling.
     /*! Note that setting the global x-scale will set it for all sections
@@ -673,6 +693,16 @@ public:
      */
     void SetViewCursors(bool value) { viewCursors=value; }
 
+    //! Determines whether the baseline should be set to where the slope of rise exceeds a certain value.
+    /*! \param value Set to true if the baseline should be set to a certain slope of rise.
+     */
+    void SetBaseToSlope(bool value) { baseToSlope=value; }
+
+    //! Sets the slope where the baseline should be set.
+    /*! \param value The slope value where the baseline shoudl be set.
+     */
+    void SetSlopeForBase(double value) { slopeForBase=value; }
+    
     //misc-----------------------------------------------------------
 
     //! Resize the Recording to a new number of channels.
@@ -708,11 +738,8 @@ public:
     /*! This will measure the baseline, peak values, 20 to 80% rise time, 
      *  half duration, maximal slopes during rise and decay, the ratio of these slopes 
      *  and the latency.
-     *  \param baseToSlope Set this to true if the baseline should be fixed
-     *         to a certain slope; useful for measurements from threshold.
-     *  \param slope If baseToSlope == true, this is the slope at which the baseline should be fixed.
      */
-    void Measure(bool baseToSlope = false, double slope = 0.0);
+    void Measure();
 
     //! Calculates an average of several traces.
     /*! \param AverageReturn The average will be returned in this variable by passing 
@@ -728,13 +755,9 @@ public:
      *  \param shift A vector indicating by how many data points each section should be
      *         shifted before averaging.
      */
-    void MakeAverage(
-            Section& AverageReturn,
-            Section& SigReturn,
-            std::size_t channel,
-            const std::vector<std::size_t>& section_index,
-            bool isSig,
-            const std::vector<int>& shift) const;
+    void MakeAverage( Section& AverageReturn, Section& SigReturn, std::size_t channel,
+                      const std::vector<std::size_t>& section_index, bool isSig,
+                      const std::vector<int>& shift) const;
 
     //! Add a Recording at the end of this Recording.
     /*! \param toAdd The Recording to be added.
@@ -771,9 +794,9 @@ public:
      */
     const Channel& operator[](std::size_t at) const { return ChannelArray[at]; }
 
-private:
+ private:
     wxString file_description, global_section_description,
-    scaling,time,date,comment;
+        scaling,time,date,comment, xUnits;
     double x_scale;
     stf::latency_mode latencyStartMode, latencyEndMode;
     stf::latency_window_mode latencyWindowMode;
@@ -787,13 +810,13 @@ private:
     std::size_t cs;
 
     std::size_t baseBeg,baseEnd,peakBeg,peakEnd,fitBeg,fitEnd,measCursor;
-    double 	latencyStartCursor,
-    latencyEndCursor,
-    latency,	 //time from latency cursor to beginning of event
-    base,baseSD,peak,APPeak,t20Real,t80Real,t50LeftReal,t50RightReal,
-    maxT, maxRiseY, maxRiseT, maxDecayY, maxDecayT, maxRise, maxDecay,
-    t50Y, APMaxT, APMaxRise, APMaxRiseT, APt50LeftReal, 
-    rt2080, halfDuration, slopeRatio,t0Real;
+    double latencyStartCursor,
+        latencyEndCursor,
+        latency,	 //time from latency cursor to beginning of event
+        base,baseSD,slopeForBase,peak,APPeak,t20Real,t80Real,t50LeftReal,t50RightReal,
+        maxT, maxRiseY, maxRiseT, maxDecayY, maxDecayT, maxRise, maxDecay,
+        t50Y, APMaxT, APMaxRise, APMaxRiseT, APt50LeftReal, 
+        rt2080, halfDuration, slopeRatio,t0Real;
     // cursor windows:
     int pM;  //peakMean, number of points used for averaging
 
@@ -807,7 +830,7 @@ private:
     std::vector<Channel> ChannelArray;
 
     bool viewCrosshair,viewBaseline,viewBaseSD,viewPeakzero,viewPeakbase,viewRT2080,
-    viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,viewCursors;
+        viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,viewCursors,baseToSlope;
 
     XZoom zoom;
 

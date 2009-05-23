@@ -18,9 +18,9 @@ int get_size_recording( );
 
 double get_sampling_interval( );
 bool set_sampling_interval( double si );
-const char* get_xunits( int trace = -1, int channel = -1 );
+const char* get_xunits( );
 const char* get_yunits( int trace = -1, int channel = -1 );
-bool set_xunits( const char* units, int trace = -1, int channel = -1 );
+bool set_xunits( const char* units );
 bool set_yunits( const char* units, int trace = -1, int channel = -1 );
 const char* get_recording_time( );
 const char* get_recording_date( );

@@ -479,7 +479,7 @@ enum latency_window_mode {
 //! Text file import filter settings
 struct txtImportSettings {
     txtImportSettings() : hLines(1),toSection(true),firstIsTime(true),ncolumns(2),
-    sr(20),yUnits(wxT("mV")),yUnitsCh2(wxT("pA")),xUnits(wxT("ms")) {}
+          sr(20),yUnits(wxT("mV")),yUnitsCh2(wxT("pA")),xUnits(wxT("ms")) {}
 
     int hLines;            /*!< Number of header lines. */
     bool toSection;        /*!< Import columns into separate sections rather than separate channels. */

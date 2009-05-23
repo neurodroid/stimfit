@@ -50,13 +50,14 @@ EVT_COMBOBOX( wxCOMBOU2D, wxStfCursorsDlg::OnComboBoxU2D )
 EVT_BUTTON( wxID_APPLY, wxStfCursorsDlg::OnPeakcalcexec )
 EVT_RADIOBUTTON( wxRADIOALL, wxStfCursorsDlg::OnRadioAll )
 EVT_RADIOBUTTON( wxRADIOMEAN, wxStfCursorsDlg::OnRadioMean )
+EVT_CHECKBOX( wxBASETOSLOPE, wxStfCursorsDlg::OnBasetoslope )
 END_EVENT_TABLE()
 
 wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wxString title, wxPoint pos,
-        wxSize size, int style)
+                                 wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ), cursorMIsTime(true),
-cursor1PIsTime(true),cursor2PIsTime(true), cursor1BIsTime(true),cursor2BIsTime(true),
-cursor1DIsTime(true),cursor2DIsTime(true), actDoc(initDoc)
+    cursor1PIsTime(true),cursor2PIsTime(true), cursor1BIsTime(true),cursor2BIsTime(true),
+    cursor1DIsTime(true),cursor2DIsTime(true), actDoc(initDoc)
 {
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
@@ -259,9 +260,9 @@ wxFlexGridSizer* wxStfCursorsDlg::CreateCursorInput( wxPanel* nbPage, wxWindowID
             wxSize(64,20), wxTE_RIGHT );
     cursorGrid->Add( textC1, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
     // units
-    wxString szUnits[] = { wxT("ms"), wxT("pts") };
+    wxString szUnits[] = { actDoc->GetXUnits(), wxT("pts") };
     int szUnitsSize = sizeof( szUnits ) / sizeof( wxString );
-    wxComboBox* comboU1 = new wxComboBox( nbPage, comboU1id,  wxT("ms"), wxDefaultPosition,
+    wxComboBox* comboU1 = new wxComboBox( nbPage, comboU1id,  actDoc->GetXUnits(), wxDefaultPosition,
                 wxSize(64,20), szUnitsSize, szUnits, wxCB_DROPDOWN | wxCB_READONLY );
     cursorGrid->Add( comboU1, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
@@ -279,7 +280,7 @@ wxFlexGridSizer* wxStfCursorsDlg::CreateCursorInput( wxPanel* nbPage, wxWindowID
                 wxSize(64,20), wxTE_RIGHT );
         cursorGrid->Add( textC2, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
         // units
-        wxComboBox* comboU2 = new wxComboBox( nbPage, comboU2id, wxT("ms"), wxDefaultPosition,
+        wxComboBox* comboU2 = new wxComboBox( nbPage, comboU2id, actDoc->GetXUnits(), wxDefaultPosition,
                     wxSize(64,20), szUnitsSize, szUnits, wxCB_DROPDOWN | wxCB_READONLY );
         cursorGrid->Add( comboU2, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
     }
@@ -510,11 +511,26 @@ void wxStfCursorsDlg::OnRadioMean( wxCommandEvent& event ) {
     wxRadioButton* pRadioMean = (wxRadioButton*)FindWindow(wxRADIOMEAN);
     wxTextCtrl* pTextPM = (wxTextCtrl*)FindWindow(wxTEXTPM);
     if (pTextPM==NULL || pRadioMean==NULL || pRadioAll==NULL) {
-        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioAll()"));
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioMean()"));
         return;
     }
     pTextPM->Enable(true);
     pRadioAll->SetValue(false);
+}
+
+void wxStfCursorsDlg::OnBasetoslope( wxCommandEvent& event ) {
+    event.Skip();
+    wxTextCtrl* pSlope =(wxTextCtrl*) FindWindow(wxSLOPE);
+    if ( pSlope == NULL ) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnBasetoslope()"));
+        return;
+    }
+    if ( GetBaseToSlope() ) {
+        // enable slope text edit:
+        pSlope->Enable();
+    } else {
+        pSlope->Enable( false );
+    }
 }
 
 void wxStfCursorsDlg::UpdateUnits(wxWindowID comboId, bool& setTime, wxWindowID textId) {
@@ -618,6 +634,11 @@ void wxStfCursorsDlg::UpdateCursors() {
         }
         pText2->SetValue( strNewValue2 );
     }
+    wxString slopeUnits;
+    slopeUnits += actDoc->at(actDoc->GetCurCh()).GetYUnits();
+    slopeUnits += wxT("/");
+    slopeUnits += actDoc->GetXUnits();
+    SetSlopeUnits(slopeUnits);
 }
 
 stf::cursor_type wxStfCursorsDlg::CurrentCursor() const {
@@ -647,11 +668,9 @@ double wxStfCursorsDlg::GetSlope() const {
 
 void wxStfCursorsDlg::SetSlopeUnits(const wxString& units) {
     wxStaticText* pSlopeUnits = (wxStaticText*)FindWindow(wxSLOPEUNITS);
-    if (pSlopeUnits == NULL) {
-        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::SetSlopeUnits()"));
-        return;
+    if (pSlopeUnits != NULL) {
+        pSlopeUnits->SetLabel(units);
     }
-    pSlopeUnits->SetLabel(units);
 }
 
 bool wxStfCursorsDlg::GetBaseToSlope() const {

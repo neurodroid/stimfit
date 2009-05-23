@@ -42,7 +42,7 @@ bool stf::exportATFFile(const wxString& fName, const Recording& WData) {
         wxString columnTitle,columnUnits;
         if (n_c==0) {
             columnTitle = wxT("Time");
-            columnUnits = wxT("ms");
+            columnUnits = WData.GetXUnits();
         } else {
             wxString titleStr;
             titleStr << wxT("Section[") << n_c-1 << wxT("]");

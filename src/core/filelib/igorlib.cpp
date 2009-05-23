@@ -135,7 +135,7 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
         wh.type = NT_FP64;							// double precision floating point.
 		strcpy(wh.bname, channel_name[n_c].char_str());
         strcpy(wh.dataUnits, Data[n_c].GetYUnits().char_str());
-        strcpy(wh.dimUnits[0], "ms");
+        strcpy(wh.dimUnits[0], Data.GetXUnits().char_str());
         wh.npnts = (long)(Data[n_c][0].size()*Data[n_c].size());
         wh.nDim[0] = (long)Data[n_c][0].size();
         wh.nDim[1] = (long)Data[n_c].size();

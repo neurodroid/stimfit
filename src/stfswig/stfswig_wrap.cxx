@@ -3850,60 +3850,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_get_xunits__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  int arg1 ;
-  int arg2 ;
-  int val1 ;
-  int ecode1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  char *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:get_xunits",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_int(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "get_xunits" "', argument " "1"" of type '" "int""'");
-  } 
-  arg1 = static_cast< int >(val1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "get_xunits" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  result = (char *)get_xunits(arg1,arg2);
-  resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_get_xunits__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  int arg1 ;
-  int val1 ;
-  int ecode1 = 0 ;
-  PyObject * obj0 = 0 ;
-  char *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:get_xunits",&obj0)) SWIG_fail;
-  ecode1 = SWIG_AsVal_int(obj0, &val1);
-  if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "get_xunits" "', argument " "1"" of type '" "int""'");
-  } 
-  arg1 = static_cast< int >(val1);
-  result = (char *)get_xunits(arg1);
-  resultobj = SWIG_FromCharPtr((const char *)result);
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_get_xunits__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_get_xunits(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   char *result = 0 ;
   
@@ -3912,56 +3859,6 @@ SWIGINTERN PyObject *_wrap_get_xunits__SWIG_2(PyObject *SWIGUNUSEDPARM(self), Py
   resultobj = SWIG_FromCharPtr((const char *)result);
   return resultobj;
 fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_get_xunits(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[3];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = (int)PyObject_Length(args);
-  for (ii = 0; (ii < argc) && (ii < 2); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 0) {
-    return _wrap_get_xunits__SWIG_2(self, args);
-  }
-  if (argc == 1) {
-    int _v;
-    {
-      int res = SWIG_AsVal_int(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      return _wrap_get_xunits__SWIG_1(self, args);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    {
-      int res = SWIG_AsVal_int(argv[0], NULL);
-      _v = SWIG_CheckState(res);
-    }
-    if (_v) {
-      {
-        int res = SWIG_AsVal_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_get_xunits__SWIG_0(self, args);
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'get_xunits'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    get_xunits(int,int)\n"
-    "    get_xunits(int)\n"
-    "    get_xunits()\n");
   return NULL;
 }
 
@@ -4078,171 +3975,6 @@ fail:
     "    get_yunits(int,int)\n"
     "    get_yunits(int)\n"
     "    get_yunits()\n");
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_set_xunits__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  char *arg1 = (char *) 0 ;
-  int arg2 ;
-  int arg3 ;
-  int res1 ;
-  char *buf1 = 0 ;
-  int alloc1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  int val3 ;
-  int ecode3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  bool result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:set_xunits",&obj0,&obj1,&obj2)) SWIG_fail;
-  res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "set_xunits" "', argument " "1"" of type '" "char const *""'");
-  }
-  arg1 = reinterpret_cast< char * >(buf1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "set_xunits" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  ecode3 = SWIG_AsVal_int(obj2, &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "set_xunits" "', argument " "3"" of type '" "int""'");
-  } 
-  arg3 = static_cast< int >(val3);
-  result = (bool)set_xunits((char const *)arg1,arg2,arg3);
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
-  return resultobj;
-fail:
-  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_set_xunits__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  char *arg1 = (char *) 0 ;
-  int arg2 ;
-  int res1 ;
-  char *buf1 = 0 ;
-  int alloc1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  bool result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:set_xunits",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "set_xunits" "', argument " "1"" of type '" "char const *""'");
-  }
-  arg1 = reinterpret_cast< char * >(buf1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "set_xunits" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  result = (bool)set_xunits((char const *)arg1,arg2);
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
-  return resultobj;
-fail:
-  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_set_xunits__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  char *arg1 = (char *) 0 ;
-  int res1 ;
-  char *buf1 = 0 ;
-  int alloc1 = 0 ;
-  PyObject * obj0 = 0 ;
-  bool result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:set_xunits",&obj0)) SWIG_fail;
-  res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "set_xunits" "', argument " "1"" of type '" "char const *""'");
-  }
-  arg1 = reinterpret_cast< char * >(buf1);
-  result = (bool)set_xunits((char const *)arg1);
-  resultobj = SWIG_From_bool(static_cast< bool >(result));
-  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
-  return resultobj;
-fail:
-  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_set_xunits(PyObject *self, PyObject *args) {
-  int argc;
-  PyObject *argv[4];
-  int ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = (int)PyObject_Length(args);
-  for (ii = 0; (ii < argc) && (ii < 3); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 1) {
-    int _v;
-    int res = SWIG_AsCharPtrAndSize(argv[0], 0, NULL, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      return _wrap_set_xunits__SWIG_2(self, args);
-    }
-  }
-  if (argc == 2) {
-    int _v;
-    int res = SWIG_AsCharPtrAndSize(argv[0], 0, NULL, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        int res = SWIG_AsVal_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        return _wrap_set_xunits__SWIG_1(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    int res = SWIG_AsCharPtrAndSize(argv[0], 0, NULL, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        int res = SWIG_AsVal_int(argv[1], NULL);
-        _v = SWIG_CheckState(res);
-      }
-      if (_v) {
-        {
-          int res = SWIG_AsVal_int(argv[2], NULL);
-          _v = SWIG_CheckState(res);
-        }
-        if (_v) {
-          return _wrap_set_xunits__SWIG_0(self, args);
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'set_xunits'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    set_xunits(char const *,int,int)\n"
-    "    set_xunits(char const *,int)\n"
-    "    set_xunits(char const *)\n");
   return NULL;
 }
 
@@ -4408,6 +4140,31 @@ fail:
     "    set_yunits(char const *,int,int)\n"
     "    set_yunits(char const *,int)\n"
     "    set_yunits(char const *)\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_set_xunits(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  char *arg1 = (char *) 0 ;
+  int res1 ;
+  char *buf1 = 0 ;
+  int alloc1 = 0 ;
+  PyObject * obj0 = 0 ;
+  bool result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:set_xunits",&obj0)) SWIG_fail;
+  res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "set_xunits" "', argument " "1"" of type '" "char const *""'");
+  }
+  arg1 = reinterpret_cast< char * >(buf1);
+  result = (bool)set_xunits((char const *)arg1);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  return resultobj;
+fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
   return NULL;
 }
 
@@ -7130,20 +6887,10 @@ static PyMethodDef SwigMethods[] = {
 		"The sampling interval.\n"
 		""},
 	 { (char *)"get_xunits", _wrap_get_xunits, METH_VARARGS, (char *)"\n"
-		"get_xunits(trace=-1, channel=-1) -> char\n"
-		"get_xunits(trace=-1) -> char\n"
 		"get_xunits() -> char\n"
 		"\n"
 		"Returns the x units of the specified section.\n"
-		"X units are not allowed to change between sections at present, and\n"
-		"they are hard-coded to \"ms\". This function is for future extension.\n"
-		"\n"
-		"\n"
-		"Arguments:\n"
-		"trace -- The zero-based index of the trace of interest. If < 0, the\n"
-		"      	   name of the active trace will be returned.\n"
-		"channel -- The zero-based index of the channel of interest. If < 0, the\n"
-		"      	   active channel will be used.\n"
+		"X units are assumed to be the same for the entire file.\n"
 		"\n"
 		"Returns:\n"
 		"The x units as a string.\n"
@@ -7165,26 +6912,6 @@ static PyMethodDef SwigMethods[] = {
 		"Returns:\n"
 		"The x units as a string.\n"
 		""},
-	 { (char *)"set_xunits", _wrap_set_xunits, METH_VARARGS, (char *)"\n"
-		"set_xunits(units, trace=-1, channel=-1) -> bool\n"
-		"set_xunits(units, trace=-1) -> bool\n"
-		"set_xunits(units) -> bool\n"
-		"\n"
-		"Sets the x unit string of the specified section.\n"
-		"X units are not allowed to change between sections at present, and\n"
-		"they are hard-coded to \"ms\". This function is for future extension.\n"
-		"\n"
-		"\n"
-		"Arguments:\n"
-		"units --   The new x unit string.\n"
-		"trace --   The zero-based index of the trace of interest. If < 0, the\n"
-		"      	   name of the active trace will be returned.\n"
-		"channel -- The zero-based index of the channel of interest. If < 0, the\n"
-		"      	   active channel will be used.\n"
-		"\n"
-		"Returns:\n"
-		"True if successful.\n"
-		""},
 	 { (char *)"set_yunits", _wrap_set_yunits, METH_VARARGS, (char *)"\n"
 		"set_yunits(units, trace=-1, channel=-1) -> bool\n"
 		"set_yunits(units, trace=-1) -> bool\n"
@@ -7199,6 +6926,17 @@ static PyMethodDef SwigMethods[] = {
 		"      	   name of the active trace will be returned.\n"
 		"channel -- The zero-based index of the channel of interest. If < 0, the\n"
 		"      	   active channel will be used.\n"
+		"\n"
+		"Returns:\n"
+		"True if successful.\n"
+		""},
+	 { (char *)"set_xunits", _wrap_set_xunits, METH_VARARGS, (char *)"\n"
+		"set_xunits(units) -> bool\n"
+		"\n"
+		"Sets the x unit string for the entire file.\n"
+		"\n"
+		"Arguments:\n"
+		"units --   The new x unit string.\n"
 		"\n"
 		"Returns:\n"
 		"True if successful.\n"

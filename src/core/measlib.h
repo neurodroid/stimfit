@@ -53,16 +53,8 @@ namespace stf {
  *  \return The baseline value.
  */
 template <typename T>
-T base(
-        T& var,
-        const std::valarray<T>& data,
-        std::size_t llb,
-        std::size_t ulb,
-        std::size_t llp=0,
-        std::size_t ulp=0,
-        bool baseToSlope=false,
-        T slope=0.0
-);
+T base( T& var, const std::valarray<T>& data, std::size_t llb, std::size_t ulb,
+        std::size_t llp=0, std::size_t ulp=0, bool baseToSlope=false, T slope=0.0 );
 
 //! Find the peak value of \e data between \e llp and \e ulp.
 /*! Note that peaks will be detected by measuring from \e base, but the return value
@@ -82,13 +74,8 @@ T base(
  *  \return The peak value, measured from 0.
  */
 template <typename T>
-T peak(const std::valarray<T>& data,
-        T base,
-        std::size_t llp,
-        std::size_t ulp,
-        int pM,
-        stf::direction,
-        T& maxT);
+T peak( const std::valarray<T>& data, T base, std::size_t llp, std::size_t ulp,
+        int pM, stf::direction, T& maxT);
 
 //! Find 20 to 80% rise time of an event in \e data.
 /*! Although t80real is not explicitly returned, it can be calculated
@@ -105,14 +92,8 @@ T peak(const std::valarray<T>& data,
  *  \return The rise time.
  */
 template <typename T>
-T risetime(const std::valarray<T>& data,
-        T base,
-        T ampl,
-        T left,
-        T right,
-        std::size_t& t20Id,
-        std::size_t& t80Id,
-        T& t20Real);
+T risetime( const std::valarray<T>& data, T base, T ampl, T left, T right,
+            std::size_t& t20Id, std::size_t& t80Id, T& t20Real );
 
 //! Find the full width at half-maximal amplitude of an event within \e data.
 /*! Although t50RightReal is not explicitly returned, it can be calculated
@@ -132,15 +113,9 @@ T risetime(const std::valarray<T>& data,
  *  \return The full width at half-maximal amplitude.
  */
 template <typename T>
-T t_half(const std::valarray<T>& data,
-        T base,
-        T ampl,
-        T left,
-        T right,
-        T center,
-        std::size_t& t50LeftId,
-        std::size_t& t50RightId,
-        T& t50LeftReal);
+T t_half( const std::valarray<T>& data, T base, T ampl, T left, T right,
+          T center, std::size_t& t50LeftId, std::size_t& t50RightId,
+          T& t50LeftReal );
 
 //! Find the maximal slope during the rising phase of an event within \e data.
 /*! \param data The data waveform to be analysed.
@@ -152,11 +127,8 @@ T t_half(const std::valarray<T>& data,
  *  \return The maximal slope during the rising phase.
  */
 template <typename T>
-T  maxRise(const std::valarray<T>& data,
-        T left,
-        T right,
-        T& maxRiseT,
-        T& maxRiseY);
+T  maxRise( const std::valarray<T>& data, T left, T right, T& maxRiseT,
+            T& maxRiseY);
 
 //! Find the maximal slope during the decaying phase of an event within \e data.
 /*! \param data The data waveform to be analysed.
@@ -168,11 +140,8 @@ T  maxRise(const std::valarray<T>& data,
  *  \return The maximal slope during the decaying phase.
  */
 template <typename T>
-T  maxDecay(const std::valarray<T>& data,
-        T left,
-        T right,
-        T& maxDecayT,
-        T& maxDecayY);
+T  maxDecay( const std::valarray<T>& data, T left, T right, T& maxDecayT,
+             T& maxDecayY);
 
 /*@}*/
 

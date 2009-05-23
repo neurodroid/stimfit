@@ -508,6 +508,7 @@ bool stf::importFile(
                 ReturnData[0].SetYUnits(txtImport.yUnits);
             if (ReturnData.size()>1)
                 ReturnData[1].SetYUnits(txtImport.yUnitsCh2);
+            ReturnData.SetXUnits( txtImport.xUnits );
             break;
         }
         default:

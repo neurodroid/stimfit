@@ -158,6 +158,32 @@ def get_sampling_interval(*args):
     """
   return _stf.get_sampling_interval(*args)
 
+def get_xunits(*args):
+  """
+    get_xunits() -> char
+
+    Returns the x units of the specified section.
+    X units are assumed to be the same for the entire file.
+
+    Returns:
+    The x units as a string.
+    """
+  return _stf.get_xunits(*args)
+
+def set_xunits(*args):
+  """
+    set_xunits(units) -> bool
+
+    Sets the x unit string for the entire file.
+
+    Arguments:
+    units --   The new x unit string.
+
+    Returns:
+    True if successful.
+    """
+  return _stf.set_xunits(*args)
+
 def set_sampling_interval(*args):
   """
     set_sampling_interval(si) -> bool
@@ -657,28 +683,6 @@ def get_size_channel(*args):
     """
   return _stf.get_size_channel(*args)
 
-def get_xunits(*args):
-  """
-    get_xunits(trace=-1, channel=-1) -> char
-    get_xunits(trace=-1) -> char
-    get_xunits() -> char
-
-    Returns the x units of the specified section.
-    X units are not allowed to change between sections at present, and
-    they are hard-coded to "ms". This function is for future extension.
-
-
-    Arguments:
-    trace -- The zero-based index of the trace of interest. If < 0, the
-          	   name of the active trace will be returned.
-    channel -- The zero-based index of the channel of interest. If < 0, the
-          	   active channel will be used.
-
-    Returns:
-    The x units as a string.
-    """
-  return _stf.get_xunits(*args)
-
 def get_yunits(*args):
   """
     get_yunits(trace=-1, channel=-1) -> char
@@ -698,29 +702,6 @@ def get_yunits(*args):
     The x units as a string.
     """
   return _stf.get_yunits(*args)
-
-def set_xunits(*args):
-  """
-    set_xunits(units, trace=-1, channel=-1) -> bool
-    set_xunits(units, trace=-1) -> bool
-    set_xunits(units) -> bool
-
-    Sets the x unit string of the specified section.
-    X units are not allowed to change between sections at present, and
-    they are hard-coded to "ms". This function is for future extension.
-
-
-    Arguments:
-    units --   The new x unit string.
-    trace --   The zero-based index of the trace of interest. If < 0, the
-          	   name of the active trace will be returned.
-    channel -- The zero-based index of the channel of interest. If < 0, the
-          	   active channel will be used.
-
-    Returns:
-    True if successful.
-    """
-  return _stf.set_xunits(*args)
 
 def set_yunits(*args):
   """

@@ -208,8 +208,8 @@ bool stf::exportHDF5File(const wxString& fName, const Recording& WData) {
             /* Define an array of root tables */
             st s_data;
             s_data.dt = WData.GetXScale();
-            strcpy( s_data.xunits, "ms");
-            strcpy( s_data.yunits, WData[n_c].GetYUnits().utf8_str());
+            strcpy( s_data.xunits, WData.GetXUnits().utf8_str() );
+            strcpy( s_data.yunits, WData[n_c].GetYUnits().utf8_str() );
 
             /* Define field information */
             const char *sfield_names[NSFIELDS]  =  { "dt", "xunits", "yunits" };

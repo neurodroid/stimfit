@@ -336,8 +336,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
         else
             return;
     }
-    bool baseToSlope=false;
-    double slope=0.0;
+
     if (CursorsDialog != NULL &&
         CursorsDialog->IsShown() &&
         actView!=NULL &&
@@ -396,9 +395,9 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
         //Get direction from the dialog box
         actDoc->SetDirection(CursorsDialog->GetDirection());
         wxWriteProfileInt(wxT("Settings"),wxT("Direction"),CursorsDialog->GetDirection());
-        baseToSlope=CursorsDialog->GetBaseToSlope();
-        if (baseToSlope) {
-            slope=CursorsDialog->GetSlope();
+        actDoc->SetBaseToSlope( CursorsDialog->GetBaseToSlope() );
+        if ( actDoc->GetBaseToSlope() ) {
+            actDoc->SetSlopeForBase( CursorsDialog->GetSlope() );
         }
     }
 
@@ -406,7 +405,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
     // ratio of rise/slope and maximum slope.
     try {
         if (actDoc != NULL)
-            actDoc->Measure(baseToSlope,slope);
+            actDoc->Measure( );
     }
     catch (const std::out_of_range& e) {
         ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -442,8 +441,10 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
 wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
 {
     //// Make a child frame
+#ifdef __WXMAC__
     int xpos = (GetDocCount()-1) * 16 + 64;
     int ypos = (GetDocCount()-1) * 16 + 80;
+#endif
     wxStfChildFrame *subframe = new wxStfChildFrame(
                                                     doc, view, 
 #ifdef __WXMAC__

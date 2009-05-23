@@ -180,19 +180,11 @@ double get_sampling_interval( );
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_xunits;
 %feature("docstring", "Returns the x units of the specified section.
-X units are not allowed to change between sections at present, and
-they are hard-coded to \"ms\". This function is for future extension.
-
-
-Arguments:
-trace -- The zero-based index of the trace of interest. If < 0, the
-      	   name of the active trace will be returned.
-channel -- The zero-based index of the channel of interest. If < 0, the
-      	   active channel will be used.
+X units are assumed to be the same for the entire file.
 
 Returns:
 The x units as a string.") get_xunits;
-const char* get_xunits( int trace = -1, int channel = -1 );
+const char* get_xunits( );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -212,25 +204,6 @@ const char* get_yunits( int trace = -1, int channel = -1 );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-%feature("autodoc", 0) set_xunits;
-%feature("docstring", "Sets the x unit string of the specified section.
-X units are not allowed to change between sections at present, and
-they are hard-coded to \"ms\". This function is for future extension.
-
-
-Arguments:
-units --   The new x unit string.
-trace --   The zero-based index of the trace of interest. If < 0, the
-      	   name of the active trace will be returned.
-channel -- The zero-based index of the channel of interest. If < 0, the
-      	   active channel will be used.
-
-Returns:
-True if successful.") set_xunits;
-bool set_xunits( const char* units, int trace = -1, int channel = -1 );
-//--------------------------------------------------------------------
-
-//--------------------------------------------------------------------
 %feature("autodoc", 0) set_yunits;
 %feature("docstring", "Sets the y unit string of the specified trace.
 Y units are not allowed to change between traces at present.
@@ -245,6 +218,18 @@ channel -- The zero-based index of the channel of interest. If < 0, the
 Returns:
 True if successful.") set_yunits;
 bool set_yunits( const char* units, int trace = -1, int channel = -1 );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) set_xunits;
+%feature("docstring", "Sets the x unit string for the entire file.
+
+Arguments:
+units --   The new x unit string.
+
+Returns:
+True if successful.") set_xunits;
+bool set_xunits( const char* units );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------

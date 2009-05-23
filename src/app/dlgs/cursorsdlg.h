@@ -40,15 +40,10 @@ private:
     wxNotebookPage* CreatePeakPage();
     wxNotebookPage* CreateBasePage();
     wxNotebookPage* CreateDecayPage();
-    wxFlexGridSizer* CreateCursorInput(
-            wxPanel* nbPage,
-            wxWindowID textC1,
-            wxWindowID textC2,
-            wxWindowID comboU1,
-            wxWindowID comboU2,
-            std::size_t c1,
-            std::size_t c2
-    );
+    wxFlexGridSizer*
+        CreateCursorInput( wxPanel* nbPage, wxWindowID textC1, wxWindowID textC2,
+                           wxWindowID comboU1, wxWindowID comboU2, std::size_t c1,
+                           std::size_t c2 );
 
     int ReadCursor(wxWindowID textId, bool isTime) const;
     void UpdateUnits(wxWindowID comboId, bool& setTime, wxWindowID textID);
@@ -70,7 +65,8 @@ private:
     void OnRadioAll( wxCommandEvent& event );
     void OnRadioMean( wxCommandEvent& event );
     void OnPeakcalcexec( wxCommandEvent& event );
-
+    void OnBasetoslope( wxCommandEvent& event );
+    
     //! Only called when a modal dialog is closed with the OK button.
     /*! \return true if all dialog entries could be read successfully
      */
@@ -86,15 +82,9 @@ public:
      *  \param size Initial size.
      *  \param style Dialog style.
      */
-    wxStfCursorsDlg(
-            wxWindow* parent,
-            wxStfDoc* initDoc,
-            int id = wxID_ANY,
-            wxString title = wxT("Cursor settings"),
-            wxPoint pos = wxDefaultPosition,
-            wxSize size = wxDefaultSize,
-            int style = wxCAPTION
-    );
+    wxStfCursorsDlg( wxWindow* parent, wxStfDoc* initDoc, int id = wxID_ANY,
+                     wxString title = wxT("Cursor settings"), wxPoint pos = wxDefaultPosition,
+                     wxSize size = wxDefaultSize, int style = wxCAPTION );
 
     //! Called upon ending a modal dialog.
     /*! \param retCode The dialog button id that ended the dialog

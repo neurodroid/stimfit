@@ -1938,7 +1938,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                         WindowRect.height-bottomDist+tickLength+(int)(40*printScale)
                 )
         );
-        pDC->DrawLabel(wxT("ms"),xTextFrame,wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL);
+        pDC->DrawLabel(Doc()->GetXUnits(),xTextFrame,wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL);
     }
 }
 
