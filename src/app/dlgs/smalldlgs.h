@@ -213,7 +213,7 @@ public:
 class wxStfTransformDlg : public wxDialog 
 {
     DECLARE_EVENT_TABLE()
-
+        
 private:
     int m_fSelect;
     wxRadioBox* m_radioBox;
@@ -283,22 +283,30 @@ public:
     );
 };
 
+//! small struct representing a batch dialog option
+struct BatchOption {
+    //! Default constructor
+  BatchOption( ) : label( wxT("\0") ), selection(false), index(-1) {}
+    
+    //! Constructor
+    //! \param lab Checkbox label
+    //! \param sel Checkbox status
+    //! \param id  Index in dialog
+  BatchOption(const wxString& lab, bool sel, int id) : label(lab), selection(sel), index(id) {}
+    
+    wxString label; //! Checkbox label
+    bool selection; //! Checkbox status
+    int index;      //! Index within dialog
+};
+
 //! Dialog for batch analysis settings.
 class wxStfBatchDlg : public wxDialog 
 {
     DECLARE_EVENT_TABLE()
 
-private:
-    bool m_PrintAmp;
-    bool m_PrintBase;
-    bool m_PrintBaseSD;
-    bool m_PrintPeak;
-    bool m_PrintRt2080;
-    bool m_PrintThalf;
-    bool m_PrintSlope;
-    bool m_PrintThr;
-    bool m_PrintLatencies;
-    bool m_PrintFitResults;
+    private:
+    std::vector<BatchOption> batchOptions;
+    
     wxCheckListBox*	m_checkList;	
     wxStdDialogButtonSizer* m_sdbSizer;
 
@@ -306,7 +314,21 @@ private:
     /*! \return true if all dialog entries could be read successfully
      */
     bool OnOK();
+    BatchOption LookUp( int index ) const;
 
+    enum {
+        id_amp = 0,
+        id_base,
+        id_basesd,
+        id_peak,
+        id_rt2080,
+        id_t50,
+        id_slopes,
+        id_latencies,
+        id_fit,
+        id_crossings
+    };
+    
 public:
     //! Constructor
     /*! \param parent Pointer to parent window.
@@ -328,52 +350,52 @@ public:
     //! Indicates whether the amplitude should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
-    bool PrintAmp() const {return m_PrintAmp;}
+    bool PrintAmp() const {return LookUp(id_amp).selection;}
 
     //! Indicates whether the baseline should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
-    bool PrintBase() const {return m_PrintBase;}
+    bool PrintBase() const {return LookUp(id_base).selection;}
 
     //! Indicates whether the standard deviation of the baseline should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
-    bool PrintBaseSD() const {return m_PrintBaseSD;}
+    bool PrintBaseSD() const {return LookUp(id_basesd).selection;}
 
     //! Indicates whether the peak value should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
-    bool PrintPeak() const {return m_PrintPeak;}
+    bool PrintPeak() const {return LookUp(id_peak).selection;}
 
     //! Indicates whether the 20-80% rise time should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
-    bool PrintRT2080() const {return m_PrintRt2080;}
+    bool PrintRT2080() const {return LookUp(id_rt2080).selection;}
 
     //! Indicates whether the half duration should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
-    bool PrintT50() const {return  m_PrintThalf;}
+    bool PrintT50() const {return  LookUp(id_t50).selection;}
 
     //! Indicates whether the maximal slopes should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
-    bool PrintSlope() const {return  m_PrintSlope;}
+    bool PrintSlopes() const {return  LookUp(id_slopes).selection;}
 
     //! Indicates whether a threshold crossing should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
-    bool PrintThr() const {return m_PrintThr;}
+    bool PrintThr() const {return LookUp(id_crossings).selection;}
 
     //! Indicates whether the latency should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
-    bool PrintLatencies() const {return m_PrintLatencies;}
+    bool PrintLatencies() const {return LookUp(id_latencies).selection;}
 
     //! Indicates whether the fit results should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
-    bool PrintFitResults() const {return m_PrintFitResults;}
+    bool PrintFitResults() const {return LookUp(id_fit).selection;}
     
     //! Called upon ending a modal dialog.
     /*! \param retCode The dialog button id that ended the dialog

@@ -1141,14 +1141,11 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
     if (SaveYtDialog.PrintT50()) {
         colTitles.push_back(wxT("t 1/2"));
     }
-    if (SaveYtDialog.PrintSlope()) {
-        colTitles.push_back(wxT("Slope"));
+    if (SaveYtDialog.PrintSlopes()) {
+        colTitles.push_back(wxT("Slopes"));
     }
     if (SaveYtDialog.PrintLatencies()) {
         colTitles.push_back(wxT("Latency"));
-    }
-    if (SaveYtDialog.PrintThr()) {
-        colTitles.push_back(wxT("peak>thr"));
     }
 
     int fselect=-2;
@@ -1176,7 +1173,10 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         for (std::size_t n_pf=0;n_pf<n_params;++n_pf) {
             colTitles.push_back( wxGetApp().GetFuncLib()[fselect].pInfo[n_pf].desc );
         }
-        colTitles.push_back(wxT("Warning code"));
+        colTitles.push_back(wxT("Fit warning code"));
+    }
+    if (SaveYtDialog.PrintThr()) {
+        colTitles.push_back(wxT("# of thr. crossings"));
     }
     double threshold=0.0;
     if (SaveYtDialog.PrintThr()) {
@@ -1293,7 +1293,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
                 table.at(n_s,nCol++)=GetRT2080();
             if (SaveYtDialog.PrintT50())
                 table.at(n_s,nCol++)=GetHalfDuration();
-            if (SaveYtDialog.PrintSlope())
+            if (SaveYtDialog.PrintSlopes())
                 table.at(n_s,nCol++)=GetMaxRise();
             if (SaveYtDialog.PrintLatencies()) {
                 table.at(n_s,nCol++)=GetLatency()*GetXScale();

@@ -390,46 +390,39 @@ END_EVENT_TABLE()
 
 wxStfBatchDlg::wxStfBatchDlg(wxWindow* parent, int id, wxString title, wxPoint pos,
         wxSize size, int style)
-: wxDialog( parent, id, wxT("Choose values"), pos, size, style ), m_PrintAmp(true), m_PrintBase(true),
-m_PrintBaseSD(false), m_PrintPeak(true), m_PrintRt2080(false), m_PrintThalf(false),
-m_PrintSlope(false), m_PrintThr(false), m_PrintLatencies(false), m_PrintFitResults(false)
+: wxDialog( parent, id, wxT("Choose values"), pos, size, style ), batchOptions( 0 )
 {
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
 
-    wxString m_checkListChoices[] = {
-            wxT("Amplitude"),
-            wxT("Base"),
-            wxT("Base SD"),
-            wxT("Peak"),
-            wxT("20-80% risetime"),
-            wxT("Half duration"),
-            wxT("Slope"),
-            wxT("Latencies"),
-            wxT("Fit results"),
-            wxT("Threshold crossings")
+    batchOptions.push_back( BatchOption( wxT("Amplitude"), true, id_amp ) );
+    batchOptions.push_back( BatchOption( wxT("Base"), true, id_base ) );
+    batchOptions.push_back( BatchOption( wxT("Base SD"), false, id_basesd ) );
+    batchOptions.push_back( BatchOption( wxT("Peak"), true, id_peak ) );
+    batchOptions.push_back( BatchOption( wxT("20-80% risetime"), false, id_rt2080 ) );
+    batchOptions.push_back( BatchOption( wxT("Half duration"), false, id_t50 ) );
+    batchOptions.push_back( BatchOption( wxT("Slopes"), false, id_slopes ) );
+    batchOptions.push_back( BatchOption( wxT("Latencies"), false, id_latencies ) );
+    batchOptions.push_back( BatchOption( wxT("Fit results"), false, id_fit ) );
+    batchOptions.push_back( BatchOption( wxT("Threshold crossings"), false, id_crossings ) );
+    std::vector<BatchOption>::const_iterator bo_it;
+    std::vector<wxString> checkListChoices(batchOptions.size());
+    for (bo_it = batchOptions.begin(); bo_it != batchOptions.end(); ++bo_it) {
+        try {
+            checkListChoices.at(bo_it->index) = bo_it->label;
+        }
+        catch (const std::out_of_range& e) {
+            wxString errorMsg( wxT("Error while populating checkbox list:\n") );
+            errorMsg += e.what();
+            wxGetApp().ExceptMsg( errorMsg );
+        }
     };
-    int m_checkListNChoices = sizeof( m_checkListChoices ) / sizeof( wxString );
-    m_checkList = new wxCheckListBox(
-            this, 
-            wxID_ANY, 
-            wxDefaultPosition, 
-            wxSize(160,128), 
-            m_checkListNChoices, 
-            m_checkListChoices, 
-            0
-    );
-    m_checkList->Check(0,true);
-    m_checkList->Check(1,true);
-    m_checkList->Check(2,false);
-    m_checkList->Check(3,true);
-    m_checkList->Check(4,false);
-    m_checkList->Check(5,false);
-    m_checkList->Check(6,false);
-    m_checkList->Check(7,false);
-    m_checkList->Check(8,false);
-    m_checkList->Check(9,false);
-
+    m_checkList =
+        new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxSize(160,128), 
+                            checkListChoices.size(), &checkListChoices[0], 0 );
+    for (bo_it = batchOptions.begin(); bo_it != batchOptions.end(); ++bo_it) {
+        m_checkList->Check(bo_it->index, wxGetApp().wxGetProfileInt( wxT("Batch Dialog"), bo_it->label, bo_it->selection) );
+    }
     topSizer->Add( m_checkList, 0, wxALIGN_CENTER | wxALL, 5 );
 
     m_sdbSizer = new wxStdDialogButtonSizer();
@@ -456,17 +449,22 @@ void wxStfBatchDlg::EndModal(int retCode) {
 }
 
 bool wxStfBatchDlg::OnOK() {
-    m_PrintAmp=m_checkList->IsChecked(0);
-    m_PrintBase=m_checkList->IsChecked(1);
-    m_PrintBaseSD=m_checkList->IsChecked(2);
-    m_PrintPeak=m_checkList->IsChecked(3);
-    m_PrintRt2080=m_checkList->IsChecked(4);
-    m_PrintThalf=m_checkList->IsChecked(5);
-    m_PrintSlope=m_checkList->IsChecked(6);
-    m_PrintLatencies=m_checkList->IsChecked(7);
-    m_PrintFitResults=m_checkList->IsChecked(8);
-    m_PrintThr=m_checkList->IsChecked(9);
+    std::vector<BatchOption>::iterator bo_it;
+    for (bo_it = batchOptions.begin(); bo_it != batchOptions.end(); ++bo_it) {
+        bo_it->selection = m_checkList->IsChecked( bo_it->index );
+        wxGetApp().wxWriteProfileInt( wxT("Batch Dialog"), bo_it->label, bo_it->selection );
+    }
     return true;
+}
+
+BatchOption wxStfBatchDlg::LookUp( int index ) const {
+    std::vector<BatchOption>::const_iterator bo_it;
+    for (bo_it = batchOptions.begin(); bo_it != batchOptions.end(); ++bo_it) {
+        if ( bo_it->index == index ) {
+            return *bo_it;
+        }
+    }
+    return BatchOption( wxT(""), false, -1 );
 }
 
 BEGIN_EVENT_TABLE( wxStfPreprintDlg, wxDialog )
