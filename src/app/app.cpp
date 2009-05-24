@@ -223,7 +223,7 @@ bool wxStfApp::OnInit(void)
     m_docManager->FileHistoryAddFilesToMenu();
 
     wxMenu *help_menu = new wxMenu;
-    help_menu->Append(wxID_HELP, wxT("&Help\tF1"));
+    help_menu->Append(wxID_HELP, wxT("Online &help\tF1"));
     help_menu->Append(wxID_ABOUT, wxT("&About"));
 
     wxMenu *m_view_menu = new wxMenu;
@@ -688,7 +688,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     analysis_menu->AppendSubMenu(userdefSub,wxT("User-defined functions"));
 #endif
     wxMenu *help_menu = new wxMenu;
-    help_menu->Append(wxID_HELP, wxT("&Help\tF1"));
+    help_menu->Append(wxID_HELP, wxT("Online &help\tF1"));
     help_menu->Append(wxID_ABOUT, wxT("&About"));
 
     wxMenuBar *menu_bar = new wxMenuBar;

@@ -655,7 +655,7 @@ Published under the GNU general public license (http://www.gnu.org/licenses/gpl.
 
 void wxStfParentFrame::OnHelp(wxCommandEvent& WXUNUSED(event) )
 {
-    wxLaunchDefaultBrowser( wxT("file:///home/cs/stimfit/doc/sphinx/.build/html/index.html") );
+    wxLaunchDefaultBrowser( wxT("http://www.stimfit.org/doc/sphinx/index.html") );
 }
 
 void wxStfParentFrame::OnExportimage(wxCommandEvent& WXUNUSED(event) ) {
