@@ -2,7 +2,8 @@
 Running mean
 ************
 
-.. sectionauthor:: Jose Guzman <>
+:Author: Jose Guzman
+:Date:  |today|
 
 The running mean (or running average) is a way to smooth the data. Given a certain set of points, a running average will create a new set of data points which will be computed by adding a series of averages of different subsets of the full data set.
 

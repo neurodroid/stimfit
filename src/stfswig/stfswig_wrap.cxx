@@ -3312,6 +3312,7 @@ SWIGINTERN PyObject *_wrap_new_window(PyObject *SWIGUNUSEDPARM(self), PyObject *
   PyArrayObject *array1 = NULL ;
   int is_new_object1 = 0 ;
   PyObject * obj0 = 0 ;
+  bool result;
   
   if (!PyArg_ParseTuple(args,(char *)"O:new_window",&obj0)) SWIG_fail;
   {
@@ -3323,8 +3324,8 @@ SWIGINTERN PyObject *_wrap_new_window(PyObject *SWIGUNUSEDPARM(self), PyObject *
     arg1 = (double*) array_data(array1);
     arg2 = (int) array_size(array1,0);
   }
-  new_window(arg1,arg2);
-  resultobj = SWIG_Py_Void();
+  result = (bool)new_window(arg1,arg2);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
   {
     if (is_new_object1 && array1)
     {
@@ -3345,10 +3346,11 @@ fail:
 
 SWIGINTERN PyObject *_wrap__new_window_gMatrix(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
+  bool result;
   
   if (!PyArg_ParseTuple(args,(char *)":_new_window_gMatrix")) SWIG_fail;
-  _new_window_gMatrix();
-  resultobj = SWIG_Py_Void();
+  result = (bool)_new_window_gMatrix();
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
   return resultobj;
 fail:
   return NULL;
@@ -3363,6 +3365,7 @@ SWIGINTERN PyObject *_wrap_new_window_matrix(PyObject *SWIGUNUSEDPARM(self), PyO
   PyArrayObject *array1 = NULL ;
   int is_new_object1 = 0 ;
   PyObject * obj0 = 0 ;
+  bool result;
   
   if (!PyArg_ParseTuple(args,(char *)"O:new_window_matrix",&obj0)) SWIG_fail;
   {
@@ -3375,8 +3378,8 @@ SWIGINTERN PyObject *_wrap_new_window_matrix(PyObject *SWIGUNUSEDPARM(self), PyO
     arg2 = (int) array_size(array1,0);
     arg3 = (int) array_size(array1,1);
   }
-  new_window_matrix(arg1,arg2,arg3);
-  resultobj = SWIG_Py_Void();
+  result = (bool)new_window_matrix(arg1,arg2,arg3);
+  resultobj = SWIG_From_bool(static_cast< bool >(result));
   {
     if (is_new_object1 && array1)
     {
@@ -6762,22 +6765,25 @@ static PyMethodDef SwigMethods[] = {
 		"The trace as a 1D NumPy array.\n"
 		""},
 	 { (char *)"new_window", _wrap_new_window, METH_VARARGS, (char *)"\n"
-		"new_window(invec)\n"
+		"new_window(invec) -> bool\n"
 		"\n"
 		"Creates a new window showing a\n"
 		"1D NumPy array.\n"
 		"      \n"
 		"Arguments:\n"
 		"invec --   The NumPy array to be shown.\n"
+		"\n"
+		"Returns:\n"
+		"True upon successful completion, false otherwise.\n"
 		""},
 	 { (char *)"_new_window_gMatrix", _wrap__new_window_gMatrix, METH_VARARGS, (char *)"\n"
-		"_new_window_gMatrix()\n"
+		"_new_window_gMatrix() -> bool\n"
 		"\n"
 		"Creates a new window from the global matrix.\n"
 		"Do not use directly.\n"
 		""},
 	 { (char *)"new_window_matrix", _wrap_new_window_matrix, METH_VARARGS, (char *)"\n"
-		"new_window_matrix(inarr)\n"
+		"new_window_matrix(inarr) -> bool\n"
 		"\n"
 		"Creates a new window showing a\n"
 		"2D NumPy array.\n"
@@ -6786,6 +6792,9 @@ static PyMethodDef SwigMethods[] = {
 		"inarr --   The NumPy array to be shown. First dimension\n"
 		"           are the traces, second dimension the sampling\n"
 		"           points within the traces.\n"
+		"\n"
+		"Returns:\n"
+		"True upon successful completion, false otherwise.\n"
 		""},
 	 { (char *)"new_window_selected_this", _wrap_new_window_selected_this, METH_VARARGS, (char *)"\n"
 		"new_window_selected_this() -> bool\n"

@@ -2,7 +2,8 @@
 Recommendations for system updates
 **********************************
 
-.. sectionauthor:: Jose Guzman <>
+:Author: Jose Guzman
+:Date:    |today|
 
 If you plan to upgrade/update your system after the installation of Stimfit, you should be sure that the versions of libraries of wxpython and wxwidgets remains the same. If not, you will find the message "Segmentation fault" after running stimfit in your terminal.
 

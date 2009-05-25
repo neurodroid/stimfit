@@ -5,7 +5,8 @@ Building wxWidgets, wxPython and Stimfit
 Building wxWidgets
 ==================
 
-.. sectionauthor:: Jose Guzman <>
+:Author: Jose Guzman
+:Date:  |today|
 
 Assuming that we created a directory in /usr/local/wxWidgets to build the sources, we will create a build directory inside
 ::

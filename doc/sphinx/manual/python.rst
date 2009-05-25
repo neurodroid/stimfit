@@ -1,8 +1,20 @@
 ****************
-The python shell
+The Python shell
 ****************
 
-.. sectionauthor:: Christoph Schmidt-Hieber <christsc@gmx.de>
+:Author: Christoph Schmidt-Hieber (christsc at gmx.de)
+:Date: |today|
+
+Why use Python?
+===============
+Why would you want to use Python (or more specifically SciPy) to analyse neuroscientific data? Here are a couple of reasons:
+
+* Widely used, general-purpose programming language with interfaces to the most common scientific programming environments
+* `Predicted to become the major programming language in neurosciences <http://www.frontiersin.org/neuroinformatics/specialtopics/8/>`_
+* `About to replace hoc as the standard NEURON interpreter <http://www.frontiersin.org/neuroinformatics/paper/10.3389/neuro.11/001.2009/>`_, allowing to analyse the output from NEURON simulations in a single, integrated development environment
+* `Favoured by the German Neuroinformatics Node as the standard neural data analysis language <http://www.sciencedirect.com/science?_ob=ArticleURL&_udi=B6T08-4SRCJN1-1&_user=125795&_rdoc=1&_fmt=&_orig=search&_sort=d&view=c&_acct=C000010182&_version=1&_urlVersion=0&_userid=125795&md5=3e6b8a3ab362b67480225d83cc17a9ef>`_
+* has a reputation of having a `cleaner syntax <http://www.larssono.com/musings/matmatpy/index.html>`_ than most other scientific programming languages
+* Free software
 
 Before you start
 ================
@@ -291,34 +303,34 @@ To give you an example, this program shows a function that returns the sum of th
 
 ::
 
-    >>> # import the Stimfit core module:
-    >>> import stf
+    # import the Stimfit core module:
+    import stf
 
-    >>> def get_amp():
-    ...    """ Returns the amplitude (peak-base)"""
-    ...    return stf.get_peak()-stf.get_base()
+    def get_amp():
+       """ Returns the amplitude (peak-base)"""
+       return stf.get_peak()-stf.get_base()
     
-    >>> def sqr_amp()
-    ...    """ Returns the sum of squared amplitudes of all
-    ...    selected traces, or -1 if there was an error. Uses
-    ...    the current settings for the peak direction and 
-    ...    cursor positions."""
+    def sqr_amp()
+       """ Returns the sum of squared amplitudes of all
+       selected traces, or -1 if there was an error. Uses
+       the current settings for the peak direction and 
+       cursor positions."""
 
-    ...    # store the current trace index:
-    ...    old_index = stf.get_trace_index()
+       # store the current trace index:
+       old_index = stf.get_trace_index()
 
-    ...    sum_sqr = 0
-    ...     for n in stf.get_selected_indices():
-    ...        # setting a trace will update all measurements
-    ...        # so there is no need to call measure()
-    ...        if (not(set.set_trace(n)) ):
-    ...            return -1
-    ...        sum_sqr += get_amp()**2
+       sum_sqr = 0
+       for n in stf.get_selected_indices():
+           # setting a trace will update all measurements
+           # so there is no need to call measure()
+           if not stf.set_trace(n):
+               return -1
+           sum_sqr += get_amp()**2
 
-    ...    # restore the displayed trace:
-    ...    set.set_trace(old_index)
+       # restore the displayed trace:
+       stf.set_trace(old_index)
 
-    ...    return sum_sqr
+       return sum_sqr
         
         
 To import and use this file, you would do:
@@ -353,33 +365,34 @@ These functions cut all selected traces at a single sampling point (pt) or at mu
 
 ::
 
-    >>> import stf
-    >>> import numpy as N
+    import stf
+    import numpy as N
 
-    >>> def cut_traces( pt ):
-    ...    """Cuts the selected traces at the sampling point pt, 
-    ...     and shows the cut traces in a new window.
-    ...     Returns True upon success, False upon failure."""
+    def cut_traces( pt ):
+        """Cuts the selected traces at the sampling point pt, 
+        and shows the cut traces in a new window.
+        Returns True upon success, False upon failure."""
 
-    ...     # Check whether anything has been selected:
-    ...     if not stf.get_selected_indices():
-    ...     return False
-    ...     new_list = list()
+        # Check whether anything has been selected:
+        if not stf.get_selected_indices():
+            return False
+        new_list = list()
     
-    ...     for n in stf.get_selected_indices():
-    ...        if not stf.get_set_trace(n): return False
+        for n in stf.get_selected_indices():
+            if not stf.set_trace(n): return False
 
-    ...     # Check for out of range:
-    ...     if pt < stf.get_size_trace():
-    ...        new_list.append( stf.get_trace()[:pt] )
-    ...        new_list.append( stf.get_trace()[pt:] )
-    ...    else
-    ...        print "Cutting point", pt, "is out of range"
+            # Check for out of range:
+            if pt < stf.get_size_trace():
+                new_list.append( stf.get_trace()[:pt] )
+                new_list.append( stf.get_trace()[pt:] )
+            else
+                print "Cutting point", pt, "is out of range"
     
-    ...     # Do not create a new window if everything was out of range
-    ...     if len(new_list) > 0 : stf.new_window_list( new_list )
-
-    ..      return True
+        # Don't create a new window if everything was out of range
+        if len(new_list) > 0: 
+            return stf.new_window_list( new_list )
+        else:
+            return False
 
 For example:
 

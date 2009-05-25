@@ -6,10 +6,9 @@
 Howto Python in Stimfit 
 =======================
 
-.. sectionauthor:: Jose Guzman <>
-
+:Author: Jose Guzman
 :Release: |version|
-:Date:    |today|
+:Date:  |today|
 
 This document collects answers to some questions like "How do I make ... in ``Stimfit`` with python?". Though much of the material can be easily found in the ``Stimfit`` manual, the examples provided here are a good way for the casual user to start using Python in ``Stimfit``. 
 

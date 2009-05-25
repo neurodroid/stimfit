@@ -2,7 +2,8 @@
 Latency measurements
 ********************
 
-.. sectionauthor:: Christoph Schmidt-Hieber <christsc@gmx.de>
+:Author: Christoph Schmidt-Hieber (christsc at gmx.de)
+:Date: |today|
 
 Measurement of synaptic delay
 =============================

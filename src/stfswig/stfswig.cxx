@@ -115,8 +115,8 @@ void _get_trace_fixedsize( double* outvec, int size, int trace, int channel ) {
          outvec);
 }
 
-void new_window( double* invec, int size ) {
-    if ( !check_doc() ) return;
+bool new_window( double* invec, int size ) {
+    if ( !check_doc() ) return false;
 
     std::valarray< double > va(size);
     std::copy( &invec[0], &invec[size], &va[0] );
@@ -128,10 +128,12 @@ void new_window( double* invec, int size ) {
     wxStfDoc* testDoc = wxGetApp().NewChild( new_rec, actDoc(), wxT("From python") );
     if ( testDoc == NULL ) {
         ShowError( wxT("Failed to create a new window.") );
+        return false;
     }
+    return true;
 }
 
-void _new_window_gMatrix( ) {
+bool _new_window_gMatrix( ) {
     bool open_doc = true;
     if (actDoc() == NULL)
         open_doc = false;
@@ -165,11 +167,13 @@ void _new_window_gMatrix( ) {
     wxStfDoc* testDoc = wxGetApp().NewChild( new_rec, pDoc, wxT("From python") );
     if ( testDoc == NULL ) {
         ShowError( wxT("Failed to create a new window.") );
+        return false;
     }
+    return true;
 }
 
-void new_window_matrix( double* invec, int traces, int size ) {
-    if ( !check_doc() ) return;
+bool new_window_matrix( double* invec, int traces, int size ) {
+    if ( !check_doc() ) return false;
     Channel ch( traces );
     for (int n = 0; n < traces; ++n) {
         std::size_t offset = n * size;
@@ -184,7 +188,9 @@ void new_window_matrix( double* invec, int traces, int size ) {
     wxStfDoc* testDoc = wxGetApp().NewChild( new_rec, actDoc(), wxT("From python") );
     if ( testDoc == NULL ) {
         ShowError( wxT("Failed to create a new window.") );
+        return false;
     }
+    return true;
 }
 
 bool new_window_selected_this( ) {

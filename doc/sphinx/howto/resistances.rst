@@ -2,7 +2,8 @@
 Resistance Calculation
 **********************
 
-.. sectionauthor:: Jose Guzman <>
+:Author: Jose Guzman
+:Date:  |today|
 
 The resistance can be easily calculated using Ohm's law. Currents passing through the pipette will be proportional to the applied voltage difference. This proportional factor is the resistance.  
 
@@ -58,13 +59,13 @@ Note that this function assumes that current is recorded in pA. It sets the stf 
         stf.new_window( N.average(set,0) )
         
         # set peak cursors:
-        if not stf.set_peak_mean(-1): return False # -1 means all points within peak window.
-        if not stf.set_peak_start(peak_start): return False
-        if not stf.set_peak_end(peak_end): return False
+        if not stf.set_peak_mean(-1): return 0 # -1 means all points within peak window.
+        if not stf.set_peak_start(peak_start): return 0
+        if not stf.set_peak_end(peak_end): return 0
     
         # set base cursors:
-        if not stf.set_base_start(base_start): return False
-        if not stf.set_base_end(base_end): return False
+        if not stf.set_base_start(base_start): return 0
+        if not stf.set_base_end(base_end): return 0
     
         # measure everything:
         stf.measure()

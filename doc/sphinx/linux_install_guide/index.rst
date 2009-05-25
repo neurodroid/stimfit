@@ -6,8 +6,7 @@
 GNU/Linux Installation Guide
 ============================
 
-.. sectionauthor:: Jose Guzman <>
-
+:Author: Jose Guzman
 :Release: |version|
 :Date:    |today|
 

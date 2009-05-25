@@ -5,8 +5,8 @@
 #include <wx/wx.h>
 #undef _DEBUG
 
-void new_window( double* invec, int size );
-void new_window_matrix( double* inarr, int traces, int size );
+bool new_window( double* invec, int size );
+bool new_window_matrix( double* inarr, int traces, int size );
 bool new_window_selected_this( );
 bool new_window_selected_all( );
 bool show_table( PyObject* dict, const char* caption = "Python table" );
@@ -91,6 +91,6 @@ void _gMatrix_resize( std::size_t channels, std::size_t sections );
 void _gNames_resize( std::size_t channels );
 void _gMatrix_at( double* invec, int size, int channel, int section );
 void _gNames_at( const char* name, int channel );
-void _new_window_gMatrix( );
+bool _new_window_gMatrix( );
 
 #endif

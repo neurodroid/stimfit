@@ -80,19 +80,22 @@ def _get_trace_fixedsize(*args):
 
 def new_window(*args):
   """
-    new_window(invec)
+    new_window(invec) -> bool
 
     Creates a new window showing a
     1D NumPy array.
           
     Arguments:
     invec --   The NumPy array to be shown.
+
+    Returns:
+    True upon successful completion, false otherwise.
     """
   return _stf.new_window(*args)
 
 def _new_window_gMatrix(*args):
   """
-    _new_window_gMatrix()
+    _new_window_gMatrix() -> bool
 
     Creates a new window from the global matrix.
     Do not use directly.
@@ -101,7 +104,7 @@ def _new_window_gMatrix(*args):
 
 def new_window_matrix(*args):
   """
-    new_window_matrix(inarr)
+    new_window_matrix(inarr) -> bool
 
     Creates a new window showing a
     2D NumPy array.
@@ -110,6 +113,9 @@ def new_window_matrix(*args):
     inarr --   The NumPy array to be shown. First dimension
                are the traces, second dimension the sampling
                points within the traces.
+
+    Returns:
+    True upon successful completion, false otherwise.
     """
   return _stf.new_window_matrix(*args)
 
@@ -521,13 +527,16 @@ def new_window_list( array_list ):
     Arguments:       
     array_list -- A sequence (e.g. list or tuple) of numpy arrays, or
                   a sequence of a sequence of numpy arrays.
+
+    Returns:
+    True upon successful completion, false otherwise.
     """
     
     try: 
         it = iter(array_list)
     except TypeError: 
         print "Argument is not a sequence"
-        return
+        return False
 
     
     try: 
@@ -536,7 +545,7 @@ def new_window_list( array_list ):
         print "Argument is not a sequence of sequences."
         print "You can either pass a sequence of 1D NumPy arrays,"
         print "Or a sequence of sequences of 1D NumPy arrays."
-        return
+        return False
         
     
     is_3d = True
@@ -560,7 +569,7 @@ def new_window_list( array_list ):
         for (n, a) in enumerate(array_list):
             _gMatrix_at( a, 0, n )
 
-    _new_window_gMatrix( )
+    return _new_window_gMatrix( )
 
 def cut_traces( pt ):
     """Cuts the selected traces at the sampling point pt,

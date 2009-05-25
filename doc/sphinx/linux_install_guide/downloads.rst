@@ -2,7 +2,8 @@
 Downloads
 *********
 
-.. sectionauthor:: Jose Guzman <>
+:Author: Jose Guzman
+:Date:  |today|
 
 Downloading and unpacking the sources of Stimfit
 ================================================

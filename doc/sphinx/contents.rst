@@ -17,7 +17,8 @@ Contents:
 Indices and tables
 ==================
 
-.. sectionauthor:: Christoph Schmidt-Hieber <christsc@gmx.de> and Jose Guzman <>
+:Author: Christoph Schmidt-Hieber (christsc at gmx.de) and Jose Guzman
+:Date: |today|
 
 * :ref:`genindex`
 * :ref:`modindex`

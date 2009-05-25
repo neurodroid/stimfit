@@ -2,7 +2,8 @@
 Preface
 *******
 
-.. sectionauthor:: Christoph Schmidt-Hieber <christsc@gmx.de>
+:Author: Christoph Schmidt-Hieber (christsc at gmx.de)
+:Date: |today|
 
 ``Stimfit`` was originally written by Peter Jonas, University of Freiburg,
 in the early 1990s. It was primarily designed to analyze the kinetics of

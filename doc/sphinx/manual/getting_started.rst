@@ -2,7 +2,8 @@
 Getting started
 ***************
 
-.. sectionauthor:: Christoph Schmidt-Hieber <christsc@gmx.de>
+:Author: Christoph Schmidt-Hieber (christsc at gmx.de)
+:Date: |today|
 
 File opening
 ============
@@ -198,6 +199,7 @@ Fitting functions to data
 * The fitted function will be displayed as a thick gray line, and a table showing the best-fit parameters and the sum of squared errors (SSE) will pop up (Fig. 17).
 
     .. figure:: images/fit.png
+        :align: center
 
        **Fig. 17:** Results of a non-linear regression using a bi-exponential function.
     

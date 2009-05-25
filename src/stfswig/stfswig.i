@@ -53,15 +53,18 @@ void _get_trace_fixedsize( double* outvec, int size, int trace, int channel );
 1D NumPy array.
       
 Arguments:
-invec --   The NumPy array to be shown.") new_window;
-void new_window( double* invec, int size );
+invec --   The NumPy array to be shown.
+
+Returns:
+True upon successful completion, false otherwise.") new_window;
+bool new_window( double* invec, int size );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) _new_window_gMatrix;
 %feature("docstring", "Creates a new window from the global matrix.
 Do not use directly.") _new_window_gMatrix;
-void _new_window_gMatrix( );
+bool _new_window_gMatrix( );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -72,8 +75,11 @@ void _new_window_gMatrix( );
 Arguments:
 inarr --   The NumPy array to be shown. First dimension
            are the traces, second dimension the sampling
-           points within the traces.") new_window_matrix;
-void new_window_matrix( double* inarr, int traces, int size );
+           points within the traces.
+
+Returns:
+True upon successful completion, false otherwise.") new_window_matrix;
+bool new_window_matrix( double* inarr, int traces, int size );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -1034,13 +1040,16 @@ def new_window_list( array_list ):
     Arguments:       
     array_list -- A sequence (e.g. list or tuple) of numpy arrays, or
                   a sequence of a sequence of numpy arrays.
+
+    Returns:
+    True upon successful completion, false otherwise.
     """
     # Check whether first dimension is a sequence (required):
     try: 
         it = iter(array_list)
     except TypeError: 
         print "Argument is not a sequence"
-        return
+        return False
 
     # Check whether second dimension is a sequence (required):
     try: 
@@ -1049,7 +1058,7 @@ def new_window_list( array_list ):
         print "Argument is not a sequence of sequences."
         print "You can either pass a sequence of 1D NumPy arrays,"
         print "Or a sequence of sequences of 1D NumPy arrays."
-        return
+        return False
         
     # Check whether third dimension is a sequence (optional):
     is_3d = True
@@ -1073,7 +1082,7 @@ def new_window_list( array_list ):
         for (n, a) in enumerate(array_list):
             _gMatrix_at( a, 0, n )
 
-    _new_window_gMatrix( )
+    return _new_window_gMatrix( )
 
 def cut_traces( pt ):
     """Cuts the selected traces at the sampling point pt,
