@@ -5,7 +5,7 @@ Calculations on selected traces
 :Author: Jose Guzman
 :Date:  |today|
 
-A very commonly used feature of ``Stimfit`` is to select some traces of interest within a file and make some calculations on them (average, peaks, amplitudes, etc..). The batch-analysis of ``Stimfit`` does precisely that. However, in some cases we can enhance its possibilities writing our custom functions in Python for the selected traces. 
+A widely used feature of ``Stimfit`` is the selection of some traces of interest within a file to make some calculations on them (average, peaks, amplitudes, etc..). The batch-analysis of ``Stimfit`` does precisely that. However, in some cases we can enhance its possibilities writing our custom functions in Python for the selected traces. 
 
 In ``Stimfit`` selected traces can be easily identified by its zero-based index with the stf function :func:`stf.get_selected_indices()`. This function returns a tuple with the selected indices. 
 
@@ -16,14 +16,14 @@ In ``Stimfit`` selected traces can be easily identified by its zero-based index 
 
 In this case, we selected the 2nd, 3rd and 4th trace in the file (note the zero-based index!).
 
-The routine described bellow perform a simple algorithm only on the traces selected previously (either with the menu bar or with typing **S**). We took a very simple calculation (amplitude of the signal) for didactic purposes, but a more complex function can be write.
+The routine described bellow perform a simple algorithm only on the traces selected previously (either with the menu bar or with typing **S**). We took a very simple calculation (amplitude of the signal) for didactic purposes, but a more complex function can be writen.
 
 
 ===========================
 Function on selected traces
 ===========================
 
-In the following function we calculate the amplitude of the signal on the selected traces. One of the key arguments of the function (trace=None) will select the trace that we want to use to make the calculation. Note that this is an optional argument; by default it will accept the current trace (or sweep) of the file, but if not, you can enter the zero-based index of the traces in the channel. This is described within the function:
+In the following function we calculate the amplitude of the signal on the selected traces. One of the key arguments of the function (*trace=None*) will select the trace that we want to use to make the calculation. Note that this is an optional argument; by default it will accept the current trace (or sweep) of the file, but if not, you can enter the zero-based index of the traces in the channel. This is controled by this if-block within the function:
 
 ::
 
@@ -34,7 +34,7 @@ In the following function we calculate the amplitude of the signal on the select
 
 
 
-The amplitude function will be only calculated on the traces selected by this argument. Here the function.
+The amplitude function will be calculated based on the traces selected by *trace*. Here the function.
 
 
 ::
@@ -89,7 +89,7 @@ The amplitude function will be only calculated on the traces selected by this ar
 Usage
 =====
 
-The function accepts an optional trace argument. That means, that we do not need to declare it when using the function, and in that case, the function will only work on the current trace. For example, if we want to calculate the amplitude between a baseline (500+10) msec and a peak between 750 and 760 msec on the current trace, we simply enter:
+The function accepts an optional *trace* argument. That means, that we do not need to declare it when using the function. In that case, the function will work on the current trace. For example, if we want to calculate the amplitude between a baseline between (500+10) msec and a peak between 750 and 760 msec on the current trace, we simply enter:
 
 ::
 
@@ -101,11 +101,13 @@ To calculate the same amplitude in the trace number 10 (zero-based index is 9) w
 
     >>> myfile.get_amplitude(500,750,10,9)
 
-More interesting is to get the amplitude in the selected traces, we can pass the tuple of selected traces to the function as follows:
+More interesting is to get the amplitude in the selected traces, we can pass the tuple of selected traces to the *trace* argument and thereby calculate the amplitude on our selected traces:
 
 ::
 
-    amplitudes_list = [myfile.get_amplitude(0,500,750,i) for i in stf.get_selected_index()]
+    amplitudes_list = [myfile.get_amplitude(500,750,10,i) for i in stf.get_selected_index()]
 
-In this way the tuple of selected indices is passed to the by the for loop to the function, and everything is wrapped in a Python list called amplitudes_list. Note that you can write similar function with the same reasoning. The optional argument trace=None allows us to control the input to our function. 
+In this way the tuple of selected indices is passed by the for loop to the function. Next, everything is wrapped in a Python list called amplitudes_list. 
+
+Note that you can write similar function with the same reasoning. The optional argument trace=None allows us to control the input to our function. 
 
