@@ -5,9 +5,9 @@ Calculations on selected traces
 :Author: Jose Guzman
 :Date:  |today|
 
-A widely used feature of ``Stimfit`` is the selection of some traces of interest within a file to make some calculations on them (average, peaks, amplitudes, etc..). The batch-analysis of ``Stimfit`` does precisely that. However, in some cases we can enhance its possibilities writing our custom functions in Python for the selected traces. 
+A widely used feature of ``Stimfit`` is the selection of some traces of interest within a file to make some calculations on them (average, peaks, amplitudes, etc.). The batch-analysis of ``Stimfit`` does precisely that. However, in some cases we can enhance its possibilities writing our custom functions in Python for the selected traces. 
 
-In ``Stimfit`` selected traces can be easily identified by its zero-based index with the stf function :func:`stf.get_selected_indices()`. This function returns a tuple with the selected indices. 
+In ``Stimfit``, the indices of selected traces can be easily retrieved using :func:`stf.get_selected_indices()`. This function returns a tuple with the selected indices. 
 
 ::
 
@@ -16,14 +16,14 @@ In ``Stimfit`` selected traces can be easily identified by its zero-based index 
 
 In this case, we selected the 2nd, 3rd and 4th trace in the file (note the zero-based index!).
 
-The routine described bellow perform a simple algorithm only on the traces selected previously (either with the menu bar or with typing **S**). We took a very simple calculation (amplitude of the signal) for didactic purposes, but a more complex function can be writen.
+The routine described below performs a simple algorithm only on the traces selected previously (either with the menu bar or with typing **S**). I've chosen a very simple calculation (amplitude of the signal) for didactic purposes, but a more complex function can be writen.
 
 
-===========================
-Function on selected traces
-===========================
+=====================
+Using selected traces
+=====================
 
-In the following function we calculate the amplitude of the signal on the selected traces. One of the key arguments of the function (*trace=None*) will select the trace that we want to use to make the calculation. Note that this is an optional argument; by default it will accept the current trace (or sweep) of the file, but if not, you can enter the zero-based index of the traces in the channel. This is controled by this if-block within the function:
+In the following function we calculate the amplitude of the signal of the selected traces. One of the arguments of the function (*trace=None*) will select the trace that we want to use to make the calculation. Note that this is an optional argument; by default it will accept the current trace (or sweep) of the file, but if not, you can enter the zero-based index of the traces in the channel. This is controled by this if-block within the function:
 
 ::
 
@@ -34,7 +34,7 @@ In the following function we calculate the amplitude of the signal on the select
 
 
 
-The amplitude function will be calculated based on the traces selected by *trace*. Here the function.
+The amplitude function will be calculated based on the traces selected by *trace*. Here is the function:
 
 
 ::
@@ -46,7 +46,7 @@ The amplitude function will be calculated based on the traces selected by *trace
     def get_amplitude(base, peak, delta, trace=None):
         """ Calculates the amplitude deviation (peak-base) in units of the Y-axis
 
-        Keyword arguments:
+        Arguments:
         base        -- Starting point (in ms) of the baseline cursor.
         peak        -- Starting point (in ms) of the peak cursor.
         delta       -- Time interval to calculate baseline/find the peak.
@@ -105,9 +105,16 @@ More interesting is to get the amplitude in the selected traces, we can pass the
 
 ::
 
-    amplitudes_list = [myfile.get_amplitude(500,750,10,i) for i in stf.get_selected_indices()]
+    >>> amplitudes_list = [myfile.get_amplitude(500,750,10,i) for i in stf.get_selected_indices()]
 
 In this way the tuple of selected indices is passed by the for loop to the function. Next, everything is wrapped in a Python list called amplitudes_list. 
 
-Note that you can write similar function with the same reasoning. The optional argument trace=None allows us to control the input to our function. 
+For further analysis in spreadsheet programs (Calc, Gnumeric, Excel or similar), the values can be printed into a table that allows to copy and paste the contents. :func:`stf.show_table` takes a dictionary as its first argument. The dictionary has to be composed of strings as keys and numbers as values. You could use it as follows:
 
+::
+
+    >>> table = dict()
+    >>> for i in stf.get_selected_indices(): table["Trace %.3d" % i] = amplitudes_list[i]
+    >>> show_table(table)
+
+Note that the dictionary will be sorted alphabetically according to its keys. Therefore, using "%.3d" is used to keep the table in the same order as the traces. If you wanted to print out more than one value for each trace, you could use :func:`stf.show_table_dictlist` that uses a similar syntax, but requires a list of numbers as the values of the dictionary.
