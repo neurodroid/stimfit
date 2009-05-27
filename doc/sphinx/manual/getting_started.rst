@@ -198,10 +198,11 @@ Fitting functions to data
 
 * The fitted function will be displayed as a thick gray line, and a table showing the best-fit parameters and the sum of squared errors (SSE) will pop up (Fig. 17).
 
+
     .. figure:: images/fit.png
         :align: center
 
-       **Fig. 17:** Results of a non-linear regression using a bi-exponential function.
+        **Fig. 17:** Results of a non-linear regression using a bi-exponential function.
     
        
 :func:`stf.leastsq()` can be called from the **Python** shell to fit the function with index *fselect* to the data. *fselect* refers to the number that you can find in front of the function in the fit settings dialog (see Fig. 16). If refresh=False, the trace will not be re-drawn, which can be useful to avoid flicker when performing a series of fits. 

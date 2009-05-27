@@ -5,7 +5,7 @@ Resistance Calculation
 :Author: Jose Guzman
 :Date:  |today|
 
-The resistance can be easily calculated using Ohm's law. Currents passing through the pipette will be proportional to the applied voltage difference. This proportional factor is the resistance.  
+The resistance can be simply calculated using Ohm's law. Currents passing through the pipette will be proportional to the applied voltage difference. This proportional factor is the resistance.  
 
 .. math::
 
@@ -73,7 +73,9 @@ Note that this function assumes that current is recorded in pA. It sets the stf 
         # calculate r_seal and return:
         return amplitude / (stf.get_peak()-stf.get_base())
 
-
+=====
+Usage
+=====
 Now, you can use this function for different purposes. For example, you may want to test the value of the series resistance in response to a 5 mV hyperpolarizing pulse. First, let's assume that your recording has the current peak between the 10700 and 10999 sampling points. You should set the baseline (for example between 0 and 999) and then peak between 10700 and 10999. After that, and given that 5 mV is the voltage difference, you simply type:
 
 ::
@@ -82,7 +84,7 @@ Now, you can use this function for different purposes. For example, you may want
 
 Note that charlie.py has a routine called **r_in(amplitude=-5)** that does exactly this.
 
-In the same way, if you wanted to calculate the value of the seal resistance (if this is the smallest resistance in the circuit, no current will flow through any other resistance), you could test it with a larger voltage pulse.
+In the same way, if you wanted to calculate the value of the seal resistance (assuming this is the smallest resistance in the circuit, so no current will flow through any other resistance), you could test it with a larger voltage pulse.
 
 ::
 

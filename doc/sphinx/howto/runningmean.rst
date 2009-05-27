@@ -5,7 +5,7 @@ Running mean
 :Author: Jose Guzman
 :Date:  |today|
 
-The running mean (or running average) is a way to smooth the data. Given a certain set of points, a running average will create a new set of data points which will be computed by adding a series of averages of different subsets of the full data set.
+The running mean (or running average) is simple way to smooth the data. Given a certain set of points, a running average will create a new set of data points which will be computed by adding a series of averages of different subsets of the full data set.
 
 Given for example a sequence :math:`X` of :math:`n` points, we can create a new set of data points :math:`S` of length :math:`n` by simply taking the average of a subset of :math:`w` points from the original data set for every point :math:`S_i` within the set:
 
@@ -71,9 +71,13 @@ The following Python function calculates the running mean of the current channel
 
         stf.new_window(dsweep)
 
-
+=====
+Usage
+=====
 To perform the running average of 10 sampling points of the current trace, simply type:
 
 ::
 
     >>> myfile.rmean(10)
+
+A new window with the running mean will appear.
