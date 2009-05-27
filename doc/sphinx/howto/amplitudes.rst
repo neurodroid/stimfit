@@ -105,7 +105,7 @@ More interesting is to get the amplitude in the selected traces, we can pass the
 
 ::
 
-    amplitudes_list = [myfile.get_amplitude(500,750,10,i) for i in stf.get_selected_index()]
+    amplitudes_list = [myfile.get_amplitude(500,750,10,i) for i in stf.get_selected_indices()]
 
 In this way the tuple of selected indices is passed by the for loop to the function. Next, everything is wrapped in a Python list called amplitudes_list. 
 
