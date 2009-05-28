@@ -1,9 +1,0 @@
-Remove portal stuff (logo, download links) from sphinx documentation for the time being. 
-
-HG: Enter commit message.  Lines beginning with 'HG:' are removed.
-HG: --
-HG: user: Christoph Schmidt-Hieber <christsc@gmx.de>
-HG: branch 'default'
-HG: changed doc/sphinx/.templates/index.html
-HG: changed doc/sphinx/.templates/layout.html
-HG: changed doc/sphinx/conf.py
