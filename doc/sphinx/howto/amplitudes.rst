@@ -23,16 +23,7 @@ The routine described below performs a simple algorithm only on the traces selec
 Using selected traces
 =====================
 
-In the following function we calculate the amplitude of the signal of the selected traces. One of the arguments of the function (*trace=None*) will select the trace that we want to use to make the calculation. Note that this is an optional argument; by default it will accept the current trace (or sweep) of the file, but if not, you can enter the zero-based index of the traces in the channel. This is controled by this if-block within the function:
-
-::
-
-    if trace is None:
-        sweep = stf.get_trace_index()
-    else:
-        sweep = trace
-
-
+In the following function we calculate the amplitude of the signal of the selected traces. One of the arguments of the function (*trace=None*) will select the trace that we want to use to make the calculation. Note that this is an optional argument; by default it will accept the current trace (or sweep) of the file, but if not, you can enter the zero-based index of the traces in the channel. 
 
 The amplitude function will be calculated based on the traces selected by *trace*. Here is the function:
 
@@ -84,6 +75,19 @@ The amplitude function will be calculated based on the traces selected by *trace
 
         return amplitude
 
+
+Code commented
+**************
+*None* is a Python built-in constant. It is used in to represent the absence of a value. Therefore, in our example, when the argument *trace* is empty (its value is *None*) we will simply select the current trace with :func:`stf.get_trace_index()` and store it in the variable **sweep**. If not, the variable **sweep** will take the value taken by *trace*. This iscontroled by the following if-block within the function:
+
+::
+
+    if trace is None:
+        sweep = stf.get_trace_index()
+    else:
+        sweep = trace
+
+Note that after setting the stf cursors, we update the measurements in the trace whose index is given by the local variable **sweep** with :func:`stf.set_trace()`.
 
 =====
 Usage
