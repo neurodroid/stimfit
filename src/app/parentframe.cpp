@@ -256,8 +256,8 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
                  << wxT("sys.path.append('.')\n")
                  << wxT("import wx\n")
                  << wxT("from wx.py import shell, version\n")
-                 << wxT("import stf\n")
                  << wxT("import numpy\n")
+                 << wxT("import stf\n")
                  << wxT("try:\n")
                  << wxT("    import stf_init\n")
                  << wxT("except ImportError:\n")
@@ -333,298 +333,200 @@ wxStfParentFrame::~wxStfParentFrame() {
 }
 
 wxAuiToolBar* wxStfParentFrame::CreateStdTb() {
-    wxAuiToolBar* tb1=new wxAuiToolBar(
-        this,
-        wxID_ANY,
-        wxDefaultPosition,
-        wxDefaultSize,
-        wxAUI_TB_DEFAULT_STYLE
-        );
+    wxAuiToolBar* tb1=new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                        wxAUI_TB_DEFAULT_STYLE );
     tb1->SetToolBitmapSize(wxSize(20,20));
-    tb1->AddTool(
-                 wxID_OPEN,
-                 wxT("Open"),
-                 wxArtProvider::GetBitmap(
-                                          wxART_FILE_OPEN,
-                                          wxART_TOOLBAR,
-                                          wxSize(16,16)
-                                          ),
-                 wxT("Open file"),
-                 wxITEM_NORMAL
-                 );
-    tb1->AddTool(
-        wxID_SAVEAS,
-        wxT("Save"),
-        wxArtProvider::GetBitmap(
-        wxART_FILE_SAVE_AS,
-        wxART_TOOLBAR,
-        wxSize(16,16)
-        ),
-        wxT("Save traces"),
-        wxITEM_NORMAL
-        );
-    tb1->AddTool(
-        WXPRINT_PRINT,
-        wxT("Print"),
-        wxArtProvider::GetBitmap(
-        wxART_PRINT,
-        wxART_TOOLBAR,
-        wxSize(16,16)
-        ),
-        wxT("Print traces"),
-        wxITEM_NORMAL
-        );
+    tb1->AddTool( wxID_OPEN,
+                  wxT("Open"),
+                  wxArtProvider::GetBitmap( wxART_FILE_OPEN, wxART_TOOLBAR, wxSize(16,16) ),
+                  wxT("Open file"),
+                  wxITEM_NORMAL );
+    tb1->AddTool( wxID_SAVEAS,
+                  wxT("Save"),
+                  wxArtProvider::GetBitmap( wxART_FILE_SAVE_AS, wxART_TOOLBAR, wxSize(16,16) ),
+                  wxT("Save traces"),
+                  wxITEM_NORMAL );
+    tb1->AddTool( WXPRINT_PRINT,
+                  wxT("Print"),
+                  wxArtProvider::GetBitmap( wxART_PRINT, wxART_TOOLBAR, wxSize(16,16) ),
+                  wxT("Print traces"),
+                  wxITEM_NORMAL );
     return tb1;
 }
 
 wxAuiToolBar* wxStfParentFrame::CreateScaleTb() {
-    wxAuiToolBar* scaleToolBar = new wxAuiToolBar(
-        this,
-        wxID_ANY,
-        wxDefaultPosition,
-        wxDefaultSize,
-        wxAUI_TB_DEFAULT_STYLE
-        );
+    wxAuiToolBar* scaleToolBar =
+        new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_DEFAULT_STYLE );
     scaleToolBar->SetToolBitmapSize(wxSize(20,20));
-    scaleToolBar->AddTool(
-        wxID_TOOL_FIRST,
-        wxT("First"),
-        wxBitmap(resultset_first),
-        wxT("Go to first trace"),
-        wxITEM_NORMAL
-        );
-    scaleToolBar->AddTool(
-        wxID_TOOL_PREVIOUS,
-        wxT("Prev."),
-        wxBitmap(resultset_previous),
-        wxT("Go to previous trace (left cursor)"),
-        wxITEM_NORMAL
-        );
-    scaleToolBar->AddTool(
-        wxID_TOOL_NEXT,
-        wxT("Next"),
-        wxBitmap(resultset_next),
-        wxT("Go to next trace (right cursor)"),
-        wxITEM_NORMAL
-        );
-    scaleToolBar->AddTool(
-        wxID_TOOL_LAST,
-        wxT("Last"),
-        wxBitmap(resultset_last),
-        wxT("Go to last trace"),
-        wxITEM_NORMAL
-        );
+    scaleToolBar->AddTool( wxID_TOOL_FIRST,
+                           wxT("First"),
+                           wxBitmap(resultset_first),
+                           wxT("Go to first trace"),
+                           wxITEM_NORMAL );
+    scaleToolBar->AddTool( wxID_TOOL_PREVIOUS,
+                           wxT("Prev."),
+                           wxBitmap(resultset_previous),
+                           wxT("Go to previous trace (left cursor)"),
+                           wxITEM_NORMAL );
+    scaleToolBar->AddTool( wxID_TOOL_NEXT,
+                           wxT("Next"),
+                           wxBitmap(resultset_next),
+                           wxT("Go to next trace (right cursor)"),
+                           wxITEM_NORMAL );
+    scaleToolBar->AddTool( wxID_TOOL_LAST,
+                           wxT("Last"),
+                           wxBitmap(resultset_last),
+                           wxT("Go to last trace"),
+                           wxITEM_NORMAL );
     scaleToolBar->AddSeparator();
-    scaleToolBar->AddTool(
-        wxID_TOOL_LEFT,
-        wxT("Left"),
-        wxBitmap(arrow_left),
-        wxT("Move traces left (CTRL+left cursor)"),
-        wxITEM_NORMAL
-        );
-    scaleToolBar->AddTool(
-        wxID_TOOL_RIGHT,
-        wxT("Right"),
-        wxBitmap(arrow_right),
-        wxT("Move traces right (CTRL+right cursor)"),
-        wxITEM_NORMAL
-        );
-    scaleToolBar->AddTool(
-        wxID_TOOL_FIT,
-        wxT("Fit"),
-        wxBitmap(arrow_out),
-        wxT("Fit traces to window (\"F\")"),
-        wxITEM_NORMAL
-        );
-    scaleToolBar->AddTool(
-        wxID_TOOL_UP,
-        wxT("Up"),
-        wxBitmap(arrow_up),
-        wxT("Move traces up (up cursor)"),
-        wxITEM_NORMAL
-        );
-    scaleToolBar->AddTool(
-        wxID_TOOL_DOWN,
-        wxT("Down"),
-        wxBitmap(arrow_down),
-        wxT("Move traces down (down cursor)"),
-        wxITEM_NORMAL
-        );
-    scaleToolBar->AddTool(
-        wxID_TOOL_XENL,
-        wxT("Zoom X"),
-        wxBitmap(zoom_in),
-        wxT("Enlarge x-scale (CTRL + \"+\")"),
-        wxITEM_NORMAL
-        );
-    scaleToolBar->AddTool(
-        wxID_TOOL_XSHRINK,
-        wxT("Shrink X"),
-        wxBitmap(zoom_out),
-        wxT("Shrink x-scale (CTRL + \"-\")"),
-        wxITEM_NORMAL
-        );
-    scaleToolBar->AddTool(
-        wxID_TOOL_YENL,
-        wxT("Zoom Y"),
-        wxBitmap(zoom_in),
-        wxT("Enlarge y-scale (\"+\")"),
-        wxITEM_NORMAL
-        );
-    scaleToolBar->AddTool(
-        wxID_TOOL_YSHRINK,
-        wxT("Shrink Y"),
-        wxBitmap(zoom_out),
-        wxT("Shrink y-scale (\"-\")"),
-        wxITEM_NORMAL
-        );
+    scaleToolBar->AddTool( wxID_TOOL_LEFT,
+                           wxT("Left"),
+                           wxBitmap(arrow_left),
+                           wxT("Move traces left (CTRL+left cursor)"),
+                           wxITEM_NORMAL );
+    scaleToolBar->AddTool( wxID_TOOL_RIGHT,
+                           wxT("Right"),
+                           wxBitmap(arrow_right),
+                           wxT("Move traces right (CTRL+right cursor)"),
+                           wxITEM_NORMAL );
+    scaleToolBar->AddTool( wxID_TOOL_FIT,
+                           wxT("Fit"),
+                           wxBitmap(arrow_out),
+                           wxT("Fit traces to window (\"F\")"),
+                           wxITEM_NORMAL );
+    scaleToolBar->AddTool( wxID_TOOL_UP,
+                           wxT("Up"),
+                           wxBitmap(arrow_up),
+                           wxT("Move traces up (up cursor)"),
+                           wxITEM_NORMAL );
+    scaleToolBar->AddTool( wxID_TOOL_DOWN,
+                           wxT("Down"),
+                           wxBitmap(arrow_down),
+                           wxT("Move traces down (down cursor)"),
+                           wxITEM_NORMAL );
+    scaleToolBar->AddTool( wxID_TOOL_XENL,
+                           wxT("Zoom X"),
+                           wxBitmap(zoom_in),
+                           wxT("Enlarge x-scale (CTRL + \"+\")"),
+                           wxITEM_NORMAL );
+    scaleToolBar->AddTool( wxID_TOOL_XSHRINK,
+                           wxT("Shrink X"),
+                           wxBitmap(zoom_out),
+                           wxT("Shrink x-scale (CTRL + \"-\")"),
+                           wxITEM_NORMAL );
+    scaleToolBar->AddTool( wxID_TOOL_YENL,
+                           wxT("Zoom Y"),
+                           wxBitmap(zoom_in),
+                           wxT("Enlarge y-scale (\"+\")"),
+                           wxITEM_NORMAL );
+    scaleToolBar->AddTool( wxID_TOOL_YSHRINK,
+                           wxT("Shrink Y"),
+                           wxBitmap(zoom_out),
+                           wxT("Shrink y-scale (\"-\")"),
+                           wxITEM_NORMAL );
     scaleToolBar->AddSeparator();
-    scaleToolBar->AddTool(
-        wxID_TOOL_CH1,
-        wxT("Ch 1"),
-        wxBitmap(ch_),
-        wxT("Scaling applies to active (black) channel (\"1\")"),
-        wxITEM_CHECK
-        );
-    scaleToolBar->AddTool(
-        wxID_TOOL_CH2,
-        wxT("Ch 2"),
-        wxBitmap(ch2_),
-        wxT("Scaling applies to inactive (red) channel (\"2\")"),
-        wxITEM_CHECK
-        );
+    scaleToolBar->AddTool( wxID_TOOL_CH1,
+                           wxT("Ch 1"),
+                           wxBitmap(ch_),
+                           wxT("Scaling applies to active (black) channel (\"1\")"),
+                           wxITEM_CHECK );
+    scaleToolBar->AddTool( wxID_TOOL_CH2,
+                           wxT("Ch 2"),
+                           wxBitmap(ch2_),
+                           wxT("Scaling applies to inactive (red) channel (\"2\")"),
+                           wxITEM_CHECK );
     return scaleToolBar;
 }
 
 wxAuiToolBar* wxStfParentFrame::CreateEditTb() {
-    wxAuiToolBar* tb4= new wxAuiToolBar(
-        this,
-        wxID_ANY,
-        wxDefaultPosition,
-        wxDefaultSize,
-        wxAUI_TB_DEFAULT_STYLE
-        );
+    wxAuiToolBar* tb4= new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                         wxAUI_TB_DEFAULT_STYLE );
     tb4->SetToolBitmapSize(wxSize(20,20));
-    tb4->AddTool(
-        wxID_AVERAGE,
-        wxT("Mean"),
-        wxBitmap(sum_new),
-        wxT("Average of selected traces"),
-        wxITEM_NORMAL
-        );
-    tb4->AddTool(
-        wxID_ALIGNEDAVERAGE,
-        wxT("Aligned"),
-        wxBitmap(sum_new_aligned),
-        wxT("Aligned average of selected traces"),
-        wxITEM_NORMAL
-        );
-    tb4->AddTool(
-        wxID_FIT,
-        wxT("Fit"),
-        wxBitmap(fit),//chart_line),
-        wxT("Fit function to data"),
-        wxITEM_NORMAL
-        );
-    tb4->AddTool(
-        wxID_VIEWTABLE,
-        wxT("Table"),
-        wxBitmap(table),
-        wxT("View current trace as a table"),
-        wxITEM_NORMAL
-        );
+    tb4->AddTool( wxID_AVERAGE,
+                  wxT("Mean"),
+                  wxBitmap(sum_new),
+                  wxT("Average of selected traces"),
+                  wxITEM_NORMAL );
+    tb4->AddTool( wxID_ALIGNEDAVERAGE,
+                  wxT("Aligned"),
+                  wxBitmap(sum_new_aligned),
+                  wxT("Aligned average of selected traces"),
+                  wxITEM_NORMAL );
+    tb4->AddTool( wxID_FIT,
+                  wxT("Fit"),
+                  wxBitmap(fit),//chart_line),
+                  wxT("Fit function to data"),
+                  wxITEM_NORMAL );
+    tb4->AddTool( wxID_VIEWTABLE,
+                  wxT("Table"),
+                  wxBitmap(table),
+                  wxT("View current trace as a table"),
+                  wxITEM_NORMAL );
     return tb4;
 }
 
 wxAuiToolBar* wxStfParentFrame::CreateCursorTb() {
-    wxAuiToolBar* cursorToolBar = new wxAuiToolBar(
-        this,
-        wxID_ANY,
-        wxDefaultPosition,
-        wxDefaultSize,
-        wxAUI_TB_DEFAULT_STYLE
-        );
+    wxAuiToolBar* cursorToolBar = new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                                    wxAUI_TB_DEFAULT_STYLE );
     cursorToolBar->SetToolBitmapSize(wxSize(20,20));
-    cursorToolBar->AddTool(
-        wxID_TOOL_SELECT,
-        wxT("Select"),
-        wxBitmap( acceptbmp ),
-        wxT("Select this trace (\"S\")"),
-        wxITEM_NORMAL
-        );
-    cursorToolBar->AddTool(
-        wxID_TOOL_REMOVE,
-        wxT("Unselect"),
-        wxBitmap( bin ),
-        wxT("Unselect this trace (\"R\")"),
-        wxITEM_NORMAL
-        );
-    cursorToolBar->AddTool(
-        wxID_TOOL_SNAPSHOT,
-        wxT("Snapshot"),
-        wxBitmap(camera),
-        wxT("Copy bitmap image to clipboard"),
-        wxITEM_NORMAL
-        );
+    cursorToolBar->AddTool( wxID_TOOL_SELECT,
+                            wxT("Select"),
+                            wxBitmap( acceptbmp ),
+                            wxT("Select this trace (\"S\")"),
+                            wxITEM_NORMAL );
+    cursorToolBar->AddTool( wxID_TOOL_REMOVE,
+                            wxT("Unselect"),
+                            wxBitmap( bin ),
+                            wxT("Unselect this trace (\"R\")"),
+                            wxITEM_NORMAL );
+    cursorToolBar->AddTool( wxID_TOOL_SNAPSHOT,
+                            wxT("Snapshot"),
+                            wxBitmap(camera),
+                            wxT("Copy bitmap image to clipboard"),
+                            wxITEM_NORMAL );
 #ifdef _WINDOWS
-    cursorToolBar->AddTool(
-        wxID_TOOL_SNAPSHOT_WMF,
-        wxT("WMF Snapshot"),
-        wxBitmap(camera_ps),
-        wxT("Copy vectorized image to clipboard"),
-        wxITEM_NORMAL
-        );
+    cursorToolBar->AddTool( wxID_TOOL_SNAPSHOT_WMF,
+                            wxT("WMF Snapshot"),
+                            wxBitmap(camera_ps),
+                            wxT("Copy vectorized image to clipboard"),
+                            wxITEM_NORMAL );
 #endif
     cursorToolBar->AddSeparator();
-    cursorToolBar->AddTool(
-        wxID_TOOL_MEASURE,
-        _T("Measure"),
-        wxBitmap(cursor),
-        wxT("Mouse selects measurement (crosshair) cursor (\"M\")"),
-        wxITEM_CHECK
-        );
-    cursorToolBar->AddTool(
-        wxID_TOOL_PEAK,
-        _T("Peak"),
-        wxBitmap(___em_open),
-        wxT("Mouse selects peak cursors (\"P\")"),
-        wxITEM_CHECK
-        );
-    cursorToolBar->AddTool(
-        wxID_TOOL_BASE,
-        _T("Base"),
-        wxBitmap(___em_down),
-        wxT("Mouse selects base cursors (\"B\")"),
-        wxITEM_CHECK
-        );
-    cursorToolBar->AddTool(
-        wxID_TOOL_DECAY,
-        _T("Fit"),
-        wxBitmap(fit_lim),//chart_curve),
-        wxT("Mouse selects fit cursors (\"D\")"),
-        wxITEM_CHECK
-        );
-    cursorToolBar->AddTool(
-        wxID_TOOL_LATENCY,
-        _T("Latency"),
-        wxBitmap(latency_lim),//chart_curve),
-        wxT("Mouse selects latency cursors (\"L\")"),
-        wxITEM_CHECK
-        );
-    cursorToolBar->AddTool(
-        wxID_TOOL_ZOOM,
-        _T("Zoom"),
-        wxBitmap(zoom),
-        wxT("Draw a zoom window with left mouse button (\"Z\")"),
-        wxITEM_CHECK
-        );
-    cursorToolBar->AddTool(
-        wxID_TOOL_EVENT,
-        _T("Events"),
-        wxBitmap(event),
-        wxT( "Add, erase or extract events manually with right mouse button (\"E\")" ),
-        wxITEM_CHECK
-        );
+    cursorToolBar->AddTool( wxID_TOOL_MEASURE,
+                            _T("Measure"),
+                            wxBitmap(cursor),
+                            wxT("Mouse selects measurement (crosshair) cursor (\"M\")"),
+                            wxITEM_CHECK );
+    cursorToolBar->AddTool( wxID_TOOL_PEAK,
+                            _T("Peak"),
+                            wxBitmap(___em_open),
+                            wxT("Mouse selects peak cursors (\"P\")"),
+                            wxITEM_CHECK );
+    cursorToolBar->AddTool( wxID_TOOL_BASE,
+                            _T("Base"),
+                            wxBitmap(___em_down),
+                            wxT("Mouse selects base cursors (\"B\")"),
+                            wxITEM_CHECK );
+    cursorToolBar->AddTool( wxID_TOOL_DECAY,
+                            _T("Fit"),
+                            wxBitmap(fit_lim),//chart_curve),
+                            wxT("Mouse selects fit cursors (\"D\")"),
+                            wxITEM_CHECK );
+    cursorToolBar->AddTool( wxID_TOOL_LATENCY,
+                            _T("Latency"),
+                            wxBitmap(latency_lim),//chart_curve),
+                            wxT("Mouse selects latency cursors (\"L\")"),
+                            wxITEM_CHECK );
+    cursorToolBar->AddTool( wxID_TOOL_ZOOM,
+                            _T("Zoom"),
+                            wxBitmap(zoom),
+                            wxT("Draw a zoom window with left mouse button (\"Z\")"),
+                            wxITEM_CHECK );
+    cursorToolBar->AddTool( wxID_TOOL_EVENT,
+                            _T("Events"),
+                            wxBitmap(event),
+                            wxT( "Add, erase or extract events manually with right mouse button (\"E\")" ),
+                            wxITEM_CHECK );
     return cursorToolBar;
 }
 

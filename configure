@@ -16720,7 +16720,7 @@ if test -n "$vers" && test "$vers" -ge 2008000; then
 	WX_CPPFLAGS="`$WXCONFIG --cppflags`"
 	WX_CXXFLAGS="`$WXCONFIG --cxxflags`"
 	if test "$STFKERNEL" = "darwin" ; then
-	    WX_LIBS="`$WXCONFIG --libs`"
+	    WX_LIBS="`$WXCONFIG --libs base,core,adv,aui`"
         else
 	    WX_LIBS="`$WXCONFIG --libs base,core,adv,aui`"
         fi

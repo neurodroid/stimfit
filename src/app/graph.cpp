@@ -1384,7 +1384,7 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
     wxRect WindowRect(GetRect());
     int kc = event.GetKeyCode();
 #ifdef _STFDEBUG
-    std::cout << "User pressed " << wxString(event.GetUnicodeKey()) << ", corresponding keycode is " << kc << std::endl;
+    std::cout << "User pressed " << wxString(event.GetUnicodeKey()).char_str() << ", corresponding keycode is " << kc << std::endl;
 #endif
     switch (kc) {
     case WXK_LEFT:	//left cursor
