@@ -66,6 +66,7 @@ noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.
             ./src/core/filelib/axon2/SimpleStringCache.hpp \
             ./src/core/filelib/axon2/ProtocolStructs.h \
 	    ./src/core/filelib/axon2/abf2headr.h \
+	    ./src/core/filelib/axon2/abffio.h \
             ./src/core/filelib/axg/AxoGraph_ReadWrite.h \
             ./src/core/filelib/axg/fileUtils.h \
             ./src/core/filelib/axg/stringUtils.h \
