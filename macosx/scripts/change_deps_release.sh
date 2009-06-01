@@ -1,7 +1,7 @@
 #! /bin/bash
 
-WX_CONFIG=/Users/cs/wxWidgets/bld/wx-config
-WXPY_DIR=/Users/cs/wxWidgets/wxPython
+WX_CONFIG=/Users/cs/wxWidgets2.8/build2.8/wx-config
+WXPY_DIR=/Users/cs/wxWidgets2.8/wxPython
 
 make stimfit.app
 
