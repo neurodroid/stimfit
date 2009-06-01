@@ -372,7 +372,10 @@ EXTRA_DIST = ./src/icons/16-em-down.xpm ./src/icons/16-em-open.xpm \
 	./src/core/levmar/lmdemo.c ./src/core/levmar/lmlec_core.c \
 	./src/core/levmar/misc_core.c ./src/core/levmar/LICENSE \
 	./src/core/levmar/README.txt ./Doxyfile ./acsite.m4 \
-	./bootstrap ./conf_mac.sh ./macosx/app.r ./macosx/wxmac.icns
+	./bootstrap ./macosx/scripts/conf_mac_release.sh \
+	./macosx/scripts/conf_mac_debug.sh \
+	./macosx/scripts/change_deps_release.sh ./macosx/app.r \
+	./macosx/wxmac.icns
 @BUILD_PYTHON_FALSE@PYTHON_ADDINCLUDES = 
 @BUILD_PYTHON_TRUE@PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
 @BUILD_PYTHON_FALSE@PYTHON_ADDLDFLAGS = 

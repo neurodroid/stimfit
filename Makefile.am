@@ -119,7 +119,9 @@ EXTRA_DIST+= ./src/core/levmar/README.txt
 EXTRA_DIST+= ./Doxyfile
 EXTRA_DIST+= ./acsite.m4
 EXTRA_DIST+= ./bootstrap
-EXTRA_DIST+= ./conf_mac.sh
+EXTRA_DIST+= ./macosx/scripts/conf_mac_release.sh
+EXTRA_DIST+= ./macosx/scripts/conf_mac_debug.sh
+EXTRA_DIST+= ./macosx/scripts/change_deps_release.sh
 EXTRA_DIST+= ./macosx/app.r
 EXTRA_DIST+= ./macosx/wxmac.icns
 
