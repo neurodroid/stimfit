@@ -293,6 +293,52 @@ void wxStfGraph::OnDraw( wxDC& DC )
             return;
         }
 
+        // crosshair through threshold:
+        int thrCrosshairSize = crosshairSize / 2.0;        
+        if (Doc()->GetThrT() >= 0) {
+            if (!isPrinted) {
+                DC.SetPen(peakPen);
+            } else {
+                DC.SetPen(peakPrintPen);
+                thrCrosshairSize=(int)(thrCrosshairSize*printScale);
+            }
+            try {
+                // circle:
+                wxPoint corner(xFormat(Doc()->GetThrT())-thrCrosshairSize,
+                               yFormat(Doc()->GetThreshold())-thrCrosshairSize);
+                wxRect frame(
+                             wxPoint( xFormat(Doc()->GetThrT())-thrCrosshairSize,
+                                      yFormat(Doc()->GetThreshold())-thrCrosshairSize ),
+                             wxPoint( xFormat(Doc()->GetThrT())+thrCrosshairSize,
+                                      yFormat(Doc()->GetThreshold())+thrCrosshairSize )
+                             );
+                DC.DrawEllipse(frame);//, corner, corner);
+                // vertical part:
+                DC.DrawLine( xFormat(Doc()->GetThrT()),
+                             yFormat(Doc()->GetThreshold())-thrCrosshairSize,
+                             xFormat(Doc()->GetThrT()),
+                             yFormat(Doc()->GetThreshold())+thrCrosshairSize );
+                if (wxGetApp().GetCursorsDialog()!=NULL &&
+                    wxGetApp().GetCursorsDialog()->IsShown())
+                {
+                    if (wxGetApp().GetCursorsDialog()->GetRuler())
+                    {
+                        DrawVLine(&DC,Doc()->GetThrT());
+                    }
+                }
+                
+                // horizontal part:
+                DC.DrawLine( xFormat(Doc()->GetThrT())-thrCrosshairSize,
+                             yFormat(Doc()->GetThreshold()),
+                             xFormat(Doc()->GetThrT())+thrCrosshairSize,
+                             yFormat(Doc()->GetThreshold()) );
+            }
+            catch (const std::out_of_range& e) {
+                wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
+                return;
+            }
+        }
+
         //creates red vertical and horizontal dashed lines through the peak
         if (!isPrinted)
             DC.SetPen(peakPen);
@@ -866,9 +912,7 @@ void wxStfGraph::DrawIntegral(wxDC* pDC) {
     std::size_t n_qt=0;
     quadTrace[n_qt++]=wxPoint(firstPixel,yFormat(Doc()->GetBase()));
     // "Simpson part" (piecewise quadratic functions through three adjacent points):
-    for (int n_pixel=firstPixel;
-    n_pixel < lastPixel;
-    ++n_pixel) {
+    for (int n_pixel=firstPixel; n_pixel < lastPixel; ++n_pixel) {
         // (lower) index corresponding to pixel:
         int n_relIndex =
             (int)(((double)n_pixel-(double)SPX())/(double)XZ()-Doc()->cur().GetStoreIntBeg());

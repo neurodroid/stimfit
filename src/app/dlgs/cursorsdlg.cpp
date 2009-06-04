@@ -30,7 +30,6 @@ enum {
     wxPEAKATEND,
     wxPEAKMEAN,
     wxDIRECTION,
-    wxBASETOSLOPE,
     wxSLOPE,
     wxSLOPEUNITS,
     wxSTARTFITATPEAK,
@@ -50,7 +49,6 @@ EVT_COMBOBOX( wxCOMBOU2D, wxStfCursorsDlg::OnComboBoxU2D )
 EVT_BUTTON( wxID_APPLY, wxStfCursorsDlg::OnPeakcalcexec )
 EVT_RADIOBUTTON( wxRADIOALL, wxStfCursorsDlg::OnRadioAll )
 EVT_RADIOBUTTON( wxRADIOMEAN, wxStfCursorsDlg::OnRadioMean )
-EVT_CHECKBOX( wxBASETOSLOPE, wxStfCursorsDlg::OnBasetoslope )
 END_EVENT_TABLE()
 
 wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wxString title, wxPoint pos,
@@ -180,6 +178,24 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     pDirection->SetSelection(1);
     peakSettingsGrid->Add( pDirection, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
     pageSizer->Add(peakSettingsGrid, 0, wxALIGN_CENTER | wxALL, 2);
+    
+    // Threshold slope
+    wxStaticBoxSizer* slopeSizer =
+        new wxStaticBoxSizer( wxVERTICAL, nbPage, wxT("Threshold slope") );
+
+    wxFlexGridSizer* slopeGrid = new wxFlexGridSizer(1,2,0,0);
+    // user entry
+    wxTextCtrl* pSlope=new wxTextCtrl( nbPage, wxSLOPE, wxT(""), wxDefaultPosition,
+            wxSize(64,20), wxTE_RIGHT );
+    slopeGrid->Add( pSlope, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+
+    // Units
+    wxStaticText* pSlopeUnits=new wxStaticText( nbPage, wxSLOPEUNITS, wxT("      "),
+            wxDefaultPosition, wxDefaultSize, wxTE_LEFT );
+    slopeGrid->Add( pSlopeUnits, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    slopeSizer->Add( slopeGrid, 0, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+
+    pageSizer->Add( slopeSizer, 0, wxALIGN_CENTER | wxALL, 2 );
 
     pageSizer->SetSizeHints(nbPage);
     nbPage->SetSizer( pageSizer );
@@ -194,23 +210,6 @@ wxNotebookPage* wxStfCursorsDlg::CreateBasePage() {
     pageSizer=new wxBoxSizer(wxVERTICAL);
     pageSizer->Add( CreateCursorInput( nbPage, wxTEXT1B, wxTEXT2B, wxCOMBOU1B,
             wxCOMBOU2B, 1, 10 ), 0, wxALIGN_CENTER | wxALL, 2 );
-
-    wxFlexGridSizer* baseSettingsGrid;
-    baseSettingsGrid=new wxFlexGridSizer(1,3,0,0);
-    wxCheckBox* pBaseToSlope=new wxCheckBox( nbPage, wxBASETOSLOPE, wxT("Set base to slope:"),
-            wxDefaultPosition, wxDefaultSize, 0 );
-    baseSettingsGrid->Add( pBaseToSlope, 0, wxALIGN_CENTER | wxALL, 2);
-    // user entry
-    wxTextCtrl* pSlope=new wxTextCtrl( nbPage, wxSLOPE, wxT(""), wxDefaultPosition,
-            wxSize(64,20), wxTE_RIGHT );
-    baseSettingsGrid->Add( pSlope, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
-    pSlope->Enable(false);
-    // Units
-    wxStaticText* pSlopeUnits=new wxStaticText( nbPage, wxSLOPEUNITS, wxT("      "),
-            wxDefaultPosition, wxDefaultSize, wxTE_LEFT );
-    baseSettingsGrid->Add( pSlopeUnits, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
-
-    pageSizer->Add( baseSettingsGrid, 0, wxALIGN_CENTER | wxALL, 2 );
 
     pageSizer->SetSizeHints(nbPage);
     nbPage->SetSizer( pageSizer );
@@ -518,21 +517,6 @@ void wxStfCursorsDlg::OnRadioMean( wxCommandEvent& event ) {
     pRadioAll->SetValue(false);
 }
 
-void wxStfCursorsDlg::OnBasetoslope( wxCommandEvent& event ) {
-    event.Skip();
-    wxTextCtrl* pSlope =(wxTextCtrl*) FindWindow(wxSLOPE);
-    if ( pSlope == NULL ) {
-        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnBasetoslope()"));
-        return;
-    }
-    if ( GetBaseToSlope() ) {
-        // enable slope text edit:
-        pSlope->Enable();
-    } else {
-        pSlope->Enable( false );
-    }
-}
-
 void wxStfCursorsDlg::UpdateUnits(wxWindowID comboId, bool& setTime, wxWindowID textId) {
     // Read current entry:
     wxString strRead;
@@ -634,6 +618,14 @@ void wxStfCursorsDlg::UpdateCursors() {
         }
         pText2->SetValue( strNewValue2 );
     }
+    
+    wxTextCtrl* pSlope = (wxTextCtrl*)FindWindow(wxSLOPE);
+    double fSlope = actDoc->GetSlopeForThreshold();
+    wxString wxsSlope;
+    wxsSlope << fSlope;
+    if ( pSlope != NULL )
+        pSlope->SetValue( wxsSlope );
+    
     wxString slopeUnits;
     slopeUnits += actDoc->at(actDoc->GetCurCh()).GetYUnits();
     slopeUnits += wxT("/");
@@ -671,15 +663,6 @@ void wxStfCursorsDlg::SetSlopeUnits(const wxString& units) {
     if (pSlopeUnits != NULL) {
         pSlopeUnits->SetLabel(units);
     }
-}
-
-bool wxStfCursorsDlg::GetBaseToSlope() const {
-    wxCheckBox* pBaseToSlope = (wxCheckBox*)FindWindow(wxBASETOSLOPE);
-    if (pBaseToSlope == NULL) {
-        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::GetBaseToSlope()"));
-        return false;
-    }
-    return pBaseToSlope->IsChecked();
 }
 
 bool wxStfCursorsDlg::GetRuler() const {

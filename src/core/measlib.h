@@ -47,14 +47,11 @@ namespace stf {
  *  \param ulb Index of the last data point included in the average (legacy of the PASCAL version).
  *  \param llp Lower limit of the peak window (see stf::peak()).
  *  \param ulp Upper limit of the peak window (see stf::peak()). 
- *  \param baseToSlope If true, the baseline will be set to the point where the slope within
- *         the peak window exceeds a user-specified value (\e slope).
- *  \param slope If \e baseToSlope == true, this is the slope at which the baseline should be fixed.
  *  \return The baseline value.
  */
 template <typename T>
 T base( T& var, const std::valarray<T>& data, std::size_t llb, std::size_t ulb,
-        std::size_t llp=0, std::size_t ulp=0, bool baseToSlope=false, T slope=0.0 );
+        std::size_t llp=0, std::size_t ulp=0 );
 
 //! Find the peak value of \e data between \e llp and \e ulp.
 /*! Note that peaks will be detected by measuring from \e base, but the return value
@@ -76,6 +73,18 @@ T base( T& var, const std::valarray<T>& data, std::size_t llb, std::size_t ulb,
 template <typename T>
 T peak( const std::valarray<T>& data, T base, std::size_t llp, std::size_t ulp,
         int pM, stf::direction, T& maxT);
+ 
+//! Find the value within \e data between \e llp and \e ulp at which \e slope is exceeded.
+/*! \param data The data waveform to be analysed.
+ *  \param llp Lower limit of the peak window.
+ *  \param ulp Upper limit of the peak window. 
+ *  \param thrT On exit, The interpolated time point of the threshold crossing
+ *              in units of sampling points, or a negative value if the threshold
+                wasn't found.
+ *  \return The interpolated threshold value.
+ */
+template <typename T>
+T threshold( const std::valarray<T>& data, std::size_t llp, std::size_t ulp, T slope, T& thrT );
 
 //! Find 20 to 80% rise time of an event in \e data.
 /*! Although t80real is not explicitly returned, it can be calculated
@@ -149,77 +158,40 @@ T  maxDecay( const std::valarray<T>& data, T left, T right, T& maxDecayT,
 
 template <typename T>
 T stf::base( T& var, const std::valarray<T>& data, std::size_t llb, std::size_t ulb,
-             std::size_t llp, std::size_t ulp, bool baseToSlope, T slope)
+             std::size_t llp, std::size_t ulp)
 {
     if (data.size()==0) return 0;
     if (llb>ulb || ulb>=data.size()) {
         throw (std::out_of_range("Exception:\n Index out of range in stf::base()"));
     }
     T base=0.0;
-    if (!baseToSlope) {
-        T sumY=0.0;
-        //according to the pascal version, every value 
-        //within the window shall be summed up:
+
+    T sumY=0.0;
+    //according to the pascal version, every value 
+    //within the window shall be summed up:
 #ifdef _OPENMP
 #pragma omp parallel for reduction(+:sumY)
 #endif
-        for (int i=(int)llb; i<=(int)ulb;++i) {
-            sumY+=data[i];
-        }
-        int n=(int)(ulb-llb+1);
-        base=sumY/n;
-        // second pass to calculate the variance:
-        T varS=0.0;
-        T corr=0.0;
-#ifdef _OPENMP
-#pragma omp parallel for reduction(+:varS,corr)
-#endif
-        for (int i=(int)llb; i<=(int)ulb;++i) {
-            T diff=data[i]-base;
-            varS+=diff*diff;
-            // correct for floating point inaccuracies:
-            corr+=diff;
-        }
-        corr=(corr*corr)/n;
-        var = (varS-corr)/(n-1);
-    } else {
-        // find Slope within peak window:
-        bool slopeFound=false;
-        for (std::size_t i=llp;i<ulp && !slopeFound;++i) {
-            T diff=data[i+1]-data[i];
-            if (diff>slope) {
-                base=(data[i+1]+data[i])/(T)2.0;
-                slopeFound=true;
-            }
-        }
-        // calculate standard base if no slope was found
-        if (!slopeFound) {
-            T sumY=0.0;
-            //according to the pascal version, every value 
-            //within the window shall be summed up:
-#ifdef _OPENMP
-#pragma omp parallel for reduction(+:sumY)
-#endif
-            for (int i=(int)llb; i<=(int)ulb;++i) {
-                sumY+=data[i];
-            }
-            int n=(int)(ulb-llb+1);
-            base=sumY/n;
-            T varS=0.0;
-            T corr=0.0;
-#ifdef _OPENMP
-#pragma omp parallel for reduction(+:varS,corr)
-#endif
-            for (int i=(int)llb; i<=(int)ulb;++i) {
-                T diff=data[i]-base;
-                varS+=diff*diff;
-                // correct for floating point inaccuracies:
-                corr+=diff;
-            }
-            corr=(corr*corr)/n;
-            var = (varS-corr)/(n-1);
-        }
+    for (int i=(int)llb; i<=(int)ulb;++i) {
+        sumY+=data[i];
     }
+    int n=(int)(ulb-llb+1);
+    base=sumY/n;
+    // second pass to calculate the variance:
+    T varS=0.0;
+    T corr=0.0;
+#ifdef _OPENMP
+#pragma omp parallel for reduction(+:varS,corr)
+#endif
+    for (int i=(int)llb; i<=(int)ulb;++i) {
+        T diff=data[i]-base;
+        varS+=diff*diff;
+        // correct for floating point inaccuracies:
+        corr+=diff;
+    }
+    corr=(corr*corr)/n;
+    var = (varS-corr)/(n-1);
+
     return base;
 }
 
@@ -284,6 +256,33 @@ T stf::peak(const std::valarray<T>& data, T base, std::size_t llp, std::size_t u
         }
     }
     return peak;
+}
+
+template <typename T>
+T stf::threshold( const std::valarray<T>& data, std::size_t llp, std::size_t ulp, T slope, T& thrT )
+{
+    thrT = -1;
+    
+    if (data.size()==0) return 0;
+
+    // ulb has to be < data.size()-1 (data[i+1] will be used)
+    if (llp > ulp || ulp >= data.size()) {
+        throw (std::out_of_range("Exception:\n Index out of range in stf::threshold()"));
+    }
+    
+    T threshold = 0.0;
+
+    // find Slope within peak window:
+    for (std::size_t i=llp; i < ulp; ++i) {
+        T diff=data[i+1]-data[i];
+        if (diff>slope) {
+            threshold=(data[i+1]+data[i])/(T)2.0;
+            thrT=(T)(i+0.5);
+            break;
+        }
+    }
+
+    return threshold;
 }
 
 template <typename T>

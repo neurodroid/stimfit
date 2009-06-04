@@ -297,10 +297,21 @@ class StfDll Recording {
      */
     double GetBaseSD() const { return baseSD; }
     
+    //! Retrieves the value at which the threshold slope is crossed.
+    /*! \return The standard deviation of the baseline.
+     */
+    double GetThreshold() const { return threshold; }
+    
     //! Retrieves the time point at which the peak is found.
     /*! \return The time point at which the peak is found, expressed in units of data points.
      */
     double GetMaxT() const { return maxT; }
+    
+    //! Retrieves the time point at which the threshold slope is crossed.
+    /*! \return The time point at which the threshold slope is crossed, or
+     *          a negative value if the threshold is not attained.
+     */
+    double GetThrT() const { return thrT; }
     
     //! Retrieves the 20 to 80% rise time.
     /*! \return The difference between GetT80Real() and GetT20Real(), expressed in units o data points.
@@ -362,6 +373,11 @@ class StfDll Recording {
      */
     bool GetViewPeakBase() const { return viewPeakbase; }
 
+    //! Indicates whether the peak value (measured from threshold) should be shown in the results table.
+    /*! \return true if it should be shown, false otherwise.
+     */
+    bool GetViewPeakThreshold() const { return viewPeakthreshold; }
+
     //! Indicates whether the 20 to 80% rise time should be shown in the results table.
     /*! \return true if it should be shown, false otherwise.
      */
@@ -397,15 +413,10 @@ class StfDll Recording {
      */
     bool GetViewCursors() const { return viewCursors; }
     
-    //! Indicates whether the baseline should be set to where the slope of rise exceeds a certain value.
-    /*! \return true if the baseline should be set to a certain slope of rise.
+    //! Returns the slope for threshold detection.
+    /*! \return The slope value for threshold detection.
      */
-    bool GetBaseToSlope() const { return baseToSlope; }
-
-    //! Returns the slope where the baseline should be set.
-    /*! \return The slope value where the baseline should be set.
-     */
-    double GetSlopeForBase() const { return slopeForBase; }
+    double GetSlopeForThreshold() const { return slopeForThreshold; }
     
     //! Retrieves the indices of the selected sections (read-only).
     /*! \return A vector containing the indices of the selected sections.
@@ -658,6 +669,11 @@ class StfDll Recording {
      */
     void SetViewPeakBase(bool value) { viewPeakbase=value; }
 
+    //! Determines whether the peak value (measured from threshold) should be shown in the results table.
+    /*! \param value Set to true if it should be shown, false otherwise.
+     */
+    void SetViewPeakThreshold(bool value) { viewPeakthreshold=value; }
+
     //! Determines whether the 20 to 80% rise time should be shown in the results table.
     /*! \param value Set to true if it should be shown, false otherwise.
      */
@@ -693,15 +709,10 @@ class StfDll Recording {
      */
     void SetViewCursors(bool value) { viewCursors=value; }
 
-    //! Determines whether the baseline should be set to where the slope of rise exceeds a certain value.
-    /*! \param value Set to true if the baseline should be set to a certain slope of rise.
-     */
-    void SetBaseToSlope(bool value) { baseToSlope=value; }
-
     //! Sets the slope where the baseline should be set.
     /*! \param value The slope value where the baseline shoudl be set.
      */
-    void SetSlopeForBase(double value) { slopeForBase=value; }
+    void SetSlopeForThreshold(double value) { slopeForThreshold=value; }
     
     //misc-----------------------------------------------------------
 
@@ -813,8 +824,8 @@ class StfDll Recording {
     double latencyStartCursor,
         latencyEndCursor,
         latency,	 //time from latency cursor to beginning of event
-        base,baseSD,slopeForBase,peak,APPeak,t20Real,t80Real,t50LeftReal,t50RightReal,
-        maxT, maxRiseY, maxRiseT, maxDecayY, maxDecayT, maxRise, maxDecay,
+        base, baseSD, threshold, slopeForThreshold, peak,APPeak,t20Real,t80Real,t50LeftReal,t50RightReal,
+        maxT, thrT, maxRiseY, maxRiseT, maxDecayY, maxDecayT, maxRise, maxDecay,
         t50Y, APMaxT, APMaxRise, APMaxRiseT, APt50LeftReal, 
         rt2080, halfDuration, slopeRatio,t0Real;
     // cursor windows:
@@ -829,13 +840,15 @@ class StfDll Recording {
 
     std::vector<Channel> ChannelArray;
 
-    bool viewCrosshair,viewBaseline,viewBaseSD,viewPeakzero,viewPeakbase,viewRT2080,
-        viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,viewCursors,baseToSlope;
+    bool viewCrosshair,viewBaseline,viewBaseSD,viewPeakzero,viewPeakbase,viewPeakthreshold, viewRT2080,
+        viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,viewCursors;
 
     XZoom zoom;
 
     void correctRangeR(int& value);
     void correctRangeR(std::size_t& value);
+
+    void init();
 };
 
 /*@}*/

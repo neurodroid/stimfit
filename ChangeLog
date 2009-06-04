@@ -1,5 +1,12 @@
 Version History: Stimfit for GNU/Linux and Win32
 ================================================
+version 0.8.17-0.8.20, 06/01/09, CSH---------------------------------------------------------
+	* abf2 support for files produced by pClamp 10
+	* documentation added by Jose Guzman
+	* various bug fixes, especially for Mac OSX port
+	* fixed several bugs in batch analysis. Thanks to Imre Vida for reporting.
+        * all new_window* Python functions now consistently return booleans
+	
 version 0.8.16, 03/27/09, CSH----------------------------------------------------------------
 	* Support to build against Python 2.6
 	* Support to build on Mac OS X

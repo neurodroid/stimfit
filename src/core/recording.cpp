@@ -18,53 +18,98 @@
 #include "./measlib.h"
 
 Recording::Recording(void)
-: file_description(wxT("\0")),global_section_description(wxT("\0")),scaling(wxT("\0")),
-  time(wxT("\0")),date(wxT("\0")),comment(wxT("\0")), xUnits( wxT("ms") ), x_scale(1.0),
-latencyStartMode(stf::riseMode),latencyEndMode(stf::footMode),latencyWindowMode(stf::defaultMode),
-  /*resetLatency(0),lat1Begin(true),*/direction(stf::both),cc(0),sc(0),cs(0),baseBeg(0),baseEnd(0),peakBeg(0),peakEnd(0),fitBeg(0),fitEnd(0),measCursor(0),latencyStartCursor(0.0),latencyEndCursor(0.0),latency(0.0),base(0.0),baseSD(0.0),slopeForBase(0.0),peak(0.0),APPeak(0.0),
-t20Real(0),t80Real(0),t50LeftReal(0),t50RightReal(0),maxT(0.0),
-maxRiseY(0.0),maxRiseT(0.0),maxDecayY(0.0),maxDecayT(0.0),maxRise(0.0),maxDecay(0.0),
-t50Y(0.0),APMaxT(0.0),APMaxRise(0.0),APMaxRiseT(0.0),APt50LeftReal(0.0),rt2080(0.0),
-halfDuration(0.0),slopeRatio(0.0),t0Real(0.0),
-pM(1),selectedSections(0),selectBase(0),t20Index(0),t80Index(0),
-t50LeftIndex(0),t50RightIndex(0),ChannelArray(0),viewCrosshair(true),
-viewBaseline(true),viewBaseSD(true),viewPeakzero(true),viewPeakbase(true),viewRT2080(true),
-viewT50(true),viewRD(true),viewSloperise(true),viewSlopedecay(true),
-  viewLatency(true),viewCursors(true), baseToSlope(false), zoom(0, 0.1, false) {}
+    : ChannelArray(0)
+{
+    init();
+}
 
 Recording::Recording(const Channel& c_Channel)
-: file_description(wxT("\0")),global_section_description(wxT("\0")),scaling(wxT("\0")),
-time(wxT("\0")),date(wxT("\0")),comment(wxT("\0")), xUnits( wxT("ms") ),
-  x_scale(1.0),latencyStartMode(stf::riseMode),latencyEndMode(stf::footMode),latencyWindowMode(stf::defaultMode),/*resetLatency(0),lat1Begin(true),*/direction(stf::both),cc(0),sc(0),cs(0),baseBeg(0),baseEnd(0),peakBeg(0),peakEnd(0),fitBeg(0),fitEnd(0),measCursor(0),latencyStartCursor(0.0),latencyEndCursor(0.0),latency(0.0),base(0.0),baseSD(0.0),slopeForBase(0.0),peak(0.0),APPeak(0.0),
-t20Real(0),t80Real(0),t50LeftReal(0),t50RightReal(0),maxT(0.0),
-maxRiseY(0.0),maxRiseT(0.0),maxDecayY(0.0),maxDecayT(0.0),maxRise(0.0),maxDecay(0.0),
-t50Y(0.0),APMaxT(0.0),APMaxRise(0.0),APMaxRiseT(0.0),APt50LeftReal(0.0),rt2080(0.0),
-halfDuration(0.0),slopeRatio(0.0),t0Real(0.0),
-pM(1),selectedSections(0),selectBase(0),t20Index(0),t80Index(0),
-t50LeftIndex(0),t50RightIndex(0),ChannelArray(1,c_Channel),viewCrosshair(true),
-viewBaseline(true),viewBaseSD(true),viewPeakzero(true),viewPeakbase(true),viewRT2080(true),
-viewT50(true),viewRD(true),viewSloperise(true),viewSlopedecay(true),
-  viewLatency(true),viewCursors(true), baseToSlope(false), zoom(0, 0.1, false) {}
+    : ChannelArray(1,c_Channel)
+{
+    init();
+}
 
 Recording::Recording(std::size_t c_n_channels, std::size_t c_n_sections, std::size_t c_n_points)
-: file_description(wxT("\0")),
-global_section_description(wxT("\0")),
-scaling(wxT("\0")),
-time(wxT("\0")),
-date(wxT("\0")),
-comment(wxT("\0")), xUnits( wxT("ms") ),
-x_scale(1.0),latencyStartMode(stf::riseMode),latencyEndMode(stf::footMode),latencyWindowMode(stf::defaultMode),direction(stf::both),cc(0),sc(0),cs(0),baseBeg(0),baseEnd(0),peakBeg(0),peakEnd(0),
-  fitBeg(0),fitEnd(0),measCursor(0),latencyStartCursor(0.0),latencyEndCursor(0.0),latency(0.0),base(0.0),baseSD(0.0),slopeForBase(0.0),peak(0.0),APPeak(0.0),
-t20Real(0),t80Real(0),t50LeftReal(0),t50RightReal(0),maxT(0.0),
-maxRiseY(0.0),maxRiseT(0.0),maxDecayY(0.0),maxDecayT(0.0),maxRise(0.0),maxDecay(0.0),
-t50Y(0.0),APMaxT(0.0),APMaxRise(0.0),APMaxRiseT(0.0),APt50LeftReal(0.0),rt2080(0.0),
-halfDuration(0.0),slopeRatio(0.0),t0Real(0.0),
-pM(1),selectedSections(0),selectBase(0),t20Index(0),t80Index(0),
-t50LeftIndex(0),t50RightIndex(0),ChannelArray(c_n_channels, Channel(c_n_sections, c_n_points)),viewCrosshair(true),
-viewBaseline(true),viewBaseSD(true),viewPeakzero(true),viewPeakbase(true),viewRT2080(true),
-viewT50(true),viewRD(true),viewSloperise(true),viewSlopedecay(true),
-  viewLatency(true),viewCursors(true),baseToSlope(false), zoom(0, 0.1, false) 
-{}
+  : ChannelArray(c_n_channels, Channel(c_n_sections, c_n_points))
+{
+    init();    
+}
+
+void Recording::init() {
+    file_description = wxT("\0");
+    global_section_description = wxT("\0");
+    scaling = wxT("\0");
+    time = wxT("\0");
+    date = wxT("\0");
+    comment = wxT("\0");
+    xUnits =  wxT("ms") ;
+    x_scale = 1.0;
+    latencyStartMode = stf::riseMode;
+    latencyEndMode = stf::footMode;
+    latencyWindowMode = stf::defaultMode;
+    direction = stf::both;    
+    cc = 0;
+    sc = 0;
+    cs = 0;
+    baseBeg = 0;
+    baseEnd = 0;
+    peakBeg = 0;
+    peakEnd = 0;
+    fitBeg = 0;
+    fitEnd = 0;
+    measCursor = 0;
+    latencyStartCursor = 0.0;
+    latencyEndCursor = 0.0;
+    latency = 0.0;
+    base = 0.0;
+    baseSD = 0.0;
+    threshold = 0.0;
+    slopeForThreshold = 20.0;
+    peak = 0.0;
+    APPeak = 0.0;
+    t20Real = 0;
+    t80Real = 0;
+    t50LeftReal = 0;
+    t50RightReal = 0;
+    maxT = 0.0;
+    thrT = -1.0;
+    maxRiseY = 0.0;
+    maxRiseT = 0.0;
+    maxDecayY = 0.0;
+    maxDecayT = 0.0;
+    maxRise = 0.0;
+    maxDecay = 0.0;
+    t50Y = 0.0;
+    APMaxT = 0.0;
+    APMaxRise = 0.0;
+    APMaxRiseT = 0.0;
+    APt50LeftReal = 0.0;
+    rt2080 = 0.0;
+    halfDuration = 0.0;
+    slopeRatio = 0.0;
+    t0Real = 0.0;
+    pM = 1;
+    selectedSections = std::vector<std::size_t>(0);
+    selectBase = std::vector<double>(0);
+    t20Index = 0;
+    t80Index = 0;
+    t50LeftIndex = 0;
+    t50RightIndex = 0;
+    viewCrosshair = true;
+    viewBaseline = true;
+    viewBaseSD = true;
+    viewPeakzero = true;
+    viewPeakbase = true;
+    viewPeakthreshold = false;
+    viewRT2080 = true;
+    viewT50 = true;
+    viewRD = true;
+    viewSloperise = true;
+    viewSlopedecay = true;
+    viewLatency = true;
+    viewCursors = true;
+    zoom = XZoom(0, 0.1, false);
+}
 
 Recording::~Recording() {
 }
@@ -413,11 +458,11 @@ void Recording::Measure( )
     //Begin peak and base calculation
     //-------------------------------
     try {
-        base=stf::base(var,cur().get(),baseBeg,baseEnd,peakBeg,peakEnd,
-                       baseToSlope,slopeForBase / GetSR());
+        base=stf::base(var,cur().get(),baseBeg,baseEnd,peakBeg,peakEnd);
         baseSD=sqrt(var);
         peak=stf::peak(cur().get(),base,
-                peakBeg,peakEnd,pM,direction,maxT);
+                       peakBeg,peakEnd,pM,direction,maxT);
+        threshold = stf::threshold( cur().get(), peakBeg, peakEnd, slopeForThreshold/GetSR(), thrT );
     }
     catch (const std::out_of_range& e) {
         base=0.0;
@@ -634,6 +679,7 @@ stf::Table Recording::CurResultsTable() const {
     if (viewBaseSD) n_cols++;
     if (viewPeakzero) n_cols++;
     if (viewPeakbase) n_cols++;
+    if (viewPeakthreshold) n_cols++;
     if (viewRT2080) n_cols++;
     if (viewT50) n_cols++;
     if (viewRD) n_cols++;
@@ -656,6 +702,7 @@ stf::Table Recording::CurResultsTable() const {
     if (viewBaseSD) table.SetColLabel(nCol++,wxT("Base SD"));
     if (viewPeakzero) table.SetColLabel(nCol++,wxT("Peak (from 0)"));
     if (viewPeakbase) table.SetColLabel(nCol++,wxT("Peak (from base)"));
+    if (viewPeakthreshold) table.SetColLabel(nCol++,wxT("Peak (from threshold)"));
     if (viewRT2080) table.SetColLabel(nCol++,wxT("RT (20-80%)"));
     if (viewT50) table.SetColLabel(nCol++,wxT("t50"));
     if (viewRD) table.SetColLabel(nCol++,wxT("Rise/Decay"));
@@ -696,73 +743,87 @@ stf::Table Recording::CurResultsTable() const {
     }
 
     // peak
-    if (viewPeakzero) {	table.at(0,nCol)=GetPeak();
-    if (viewCursors) {
-        table.at(1,nCol)=GetPeakBeg()*GetXScale();
-        table.at(2,nCol)=GetPeakEnd()*GetXScale();
+    if (viewPeakzero) {
+        table.at(0,nCol)=GetPeak();
+        if (viewCursors) {
+            table.at(1,nCol)=GetPeakBeg()*GetXScale();
+            table.at(2,nCol)=GetPeakEnd()*GetXScale();
+        }
+        nCol++;
     }
-    nCol++;
+    if (viewPeakbase) {
+        table.at(0,nCol)=GetPeak()-GetBase();
+        if (viewCursors) {
+            table.at(1,nCol)=GetPeakBeg()*GetXScale();
+            table.at(2,nCol)=GetPeakEnd()*GetXScale();
+        }
+        nCol++;
     }
-    if (viewPeakbase) {table.at(0,nCol)=GetPeak()-GetBase();
-    if (viewCursors) {
-        table.at(1,nCol)=GetPeakBeg()*GetXScale();
-        table.at(2,nCol)=GetPeakEnd()*GetXScale();
-    }
-    nCol++;
+    if (viewPeakthreshold) {
+        if (thrT >= 0) {
+            table.at(0,nCol) = GetPeak()-GetThreshold();
+        } else {
+            table.at(0,nCol) = 0;
+        }
+        if (viewCursors) {
+            table.at(1,nCol)=GetPeakBeg()*GetXScale();
+            table.at(2,nCol)=GetPeakEnd()*GetXScale();
+        }
+        nCol++;
     }
 
     // RT (20-80%)
     if (viewRT2080) {table.at(0,nCol)=GetRT2080();
-    if (viewCursors) {
-        table.at(1,nCol)=GetT20Real()*GetXScale();
-        table.at(2,nCol)=GetT80Real()*GetXScale();
-    }
-    nCol++;
+        if (viewCursors) {
+            table.at(1,nCol)=GetT20Real()*GetXScale();
+            table.at(2,nCol)=GetT80Real()*GetXScale();
+        }
+        nCol++;
     }
 
     // Half duration
     if (viewT50) {table.at(0,nCol)=GetHalfDuration();
-    if (viewCursors) {
-        table.at(1,nCol)=GetT50LeftReal()*GetXScale();
-        table.at(2,nCol)=GetT50RightReal()*GetXScale();
-    }
-    nCol++;
+        if (viewCursors) {
+            table.at(1,nCol)=GetT50LeftReal()*GetXScale();
+            table.at(2,nCol)=GetT50RightReal()*GetXScale();
+        }
+        nCol++;
     }
 
     // Rise/decay
     if (viewRD) {table.at(0,nCol)=GetSlopeRatio();
-    if (viewCursors) {
-        table.at(1,nCol)=GetMaxRiseT()*GetXScale();
-        table.at(2,nCol)=GetMaxDecayT()*GetXScale();
-    }
-    nCol++;
+        if (viewCursors) {
+            table.at(1,nCol)=GetMaxRiseT()*GetXScale();
+            table.at(2,nCol)=GetMaxDecayT()*GetXScale();
+        }
+        nCol++;
     }
 
     // Max rise
     if (viewSloperise) {table.at(0,nCol)=GetMaxRise();
-    if (viewCursors) {
-        table.at(1,nCol)=GetMaxRiseT()*GetXScale();
-        table.SetEmpty(2,nCol,true);
-    }
-    nCol++;
+        if (viewCursors) {
+            table.at(1,nCol)=GetMaxRiseT()*GetXScale();
+            table.SetEmpty(2,nCol,true);
+        }
+        nCol++;
     }
 
     // Max decay
     if (viewSlopedecay) {table.at(0,nCol)=GetMaxDecay();
-    if (viewCursors) {
-        table.at(1,nCol)=GetMaxDecayT()*GetXScale();
-        table.SetEmpty(2,nCol,true);
-    }
-    nCol++;
+        if (viewCursors) {
+            table.at(1,nCol)=GetMaxDecayT()*GetXScale();
+            table.SetEmpty(2,nCol,true);
+        }
+        nCol++;
     }
 
     // Latency
     if (viewLatency) {table.at(0,nCol)=GetLatency()*GetXScale();
-    if (viewCursors) {
-        table.at(1,nCol)=GetLatencyBeg()*GetXScale();
-        table.at(2,nCol)=GetLatencyEnd()*GetXScale();
-    }
-    nCol++;
+        if (viewCursors) {
+            table.at(1,nCol)=GetLatencyBeg()*GetXScale();
+            table.at(2,nCol)=GetLatencyEnd()*GetXScale();
+        }
+        nCol++;
     }
 
     return table;

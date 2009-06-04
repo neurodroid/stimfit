@@ -75,22 +75,22 @@ void Section::SetIsIntegrated(bool value, std::size_t begin, std::size_t end) {
     if (end<=begin) {
         throw std::out_of_range("integration limits out of range in Section::set_isIntegrated");
     }
-    std::size_t n_intervals=std::div((int)end-(int)begin,2).quot;
+    int n_intervals=std::div((int)end-(int)begin,2).quot;
     quad_p.resize(n_intervals*3);
-    std::size_t n_q=0;
+    int n_q=0;
     if (begin-end>1) {
-        for (std::size_t n=begin;n<end-1;n+=2) {
+        for (int n=begin; n<(int)end-1; n+=2) {
             std::valarray<double> A(9);
             std::valarray<double> B(3);
     
             // solve linear equation system:
             // use column-major order (Fortran)
-            A[0]=n*n;
-            A[1]=(n+1)*(n+1);
-            A[2]=(n+2)*(n+2);
-            A[3]=n;
-            A[4]=n+1;
-            A[5]=n+2;
+            A[0]=(double)n*(double)n;
+            A[1]=((double)n+1.0)*((double)n+1.0);
+            A[2]=((double)n+2.0)*((double)n+2.0);
+            A[3]=(double)n;
+            A[4]=(double)n+1.0;
+            A[5]=(double)n+2.0;
             A[6]=1.0;
             A[7]=1.0;
             A[8]=1.0;

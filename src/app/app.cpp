@@ -395,15 +395,18 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
         }
         //Get number of peak points from the dialog box...
         actDoc->SetPM(CursorsDialog->GetPeakPoints());
-        //.. and write to reg:
         wxWriteProfileInt(wxT("Settings"),wxT("PeakMean"),(int)actDoc->GetPM());
+        
         //Get direction from the dialog box
         actDoc->SetDirection(CursorsDialog->GetDirection());
-        wxWriteProfileInt(wxT("Settings"),wxT("Direction"),CursorsDialog->GetDirection());
-        actDoc->SetBaseToSlope( CursorsDialog->GetBaseToSlope() );
-        if ( actDoc->GetBaseToSlope() ) {
-            actDoc->SetSlopeForBase( CursorsDialog->GetSlope() );
-        }
+        wxWriteProfileInt(wxT("Settings"),wxT("Direction"), CursorsDialog->GetDirection());
+        
+        // Get slope for threshold:
+        actDoc->SetSlopeForThreshold( CursorsDialog->GetSlope() );
+        wxString wxsSlope;
+        wxsSlope << CursorsDialog->GetSlope();
+        wxWriteProfileString(wxT("Settings"), wxT("Slope"), wxsSlope);
+
     }
 
     // Calculate peak, base, 20/80 rise time, half duration,

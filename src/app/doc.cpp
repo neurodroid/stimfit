@@ -318,6 +318,11 @@ int wxStfDoc::InitCursors() {
     // Set corresponding menu checkmarks:
     UpdateMenuCheckmarks();
     SetPM(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakMean"),1));
+    wxString wxsSlope = wxGetApp().wxGetProfileString(wxT("Settings"),wxT("Slope"),wxT("20.0"));
+    double fSlope = 0.0;
+    wxsSlope.ToDouble(&fSlope);
+    SetSlopeForThreshold( fSlope );
+    
     if (!(get().size()>1) &&
             GetLatencyStartMode()!=stf::manualMode &&
             GetLatencyEndMode()!=stf::manualMode)
@@ -409,6 +414,7 @@ void wxStfDoc::PostInit() {
     SetViewBaseSD(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewBaseSD"),1)==1);
     SetViewPeakZero(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPeakzero"),1)==1);
     SetViewPeakBase(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPeakbase"),1)==1);
+    SetViewPeakThreshold(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPeakthreshold"),1)==1);
     SetViewRT2080(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewRT2080"),1)==1);
     SetViewT50(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewT50"),1)==1);
     SetViewRD(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewRD"),1)==1);
@@ -615,8 +621,8 @@ bool wxStfDoc::DoSaveDocument(const wxString& filename) {
 void wxStfDoc::WriteToReg() {
     //Write file length
     wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("FirstPoint"), 1);
-    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("LastPoint"),
-            (int)cur().size()-1);
+    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("LastPoint"), (int)cur().size()-1);
+    
     //Write cursors
     if (!outOfRange(GetBaseBeg()))
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("BaseBegin"), (int)GetBaseBeg());
@@ -627,6 +633,9 @@ void wxStfDoc::WriteToReg() {
     if (!outOfRange(GetPeakEnd()))
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("PeakEnd"), (int)GetPeakEnd());
     wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("PeakMean"),(int)GetPM());
+    wxString wxsSlope;
+    wxsSlope << GetSlopeForThreshold();
+    wxGetApp().wxWriteProfileString(wxT("Settings"),wxT("Slope"),wxsSlope);
     if (wxGetApp().GetCursorsDialog() != NULL) {
         wxGetApp().wxWriteProfileInt(
                 wxT("Settings"),wxT("StartFitAtPeak"),(int)wxGetApp().GetCursorsDialog()->GetStartFitAtPeak()
@@ -1142,7 +1151,8 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         colTitles.push_back(wxT("t 1/2"));
     }
     if (SaveYtDialog.PrintSlopes()) {
-        colTitles.push_back(wxT("Slopes"));
+        colTitles.push_back(wxT("Max. slope rise"));
+        colTitles.push_back(wxT("Max. slope decay"));
     }
     if (SaveYtDialog.PrintLatencies()) {
         colTitles.push_back(wxT("Latency"));
@@ -1295,6 +1305,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
                 table.at(n_s,nCol++)=GetHalfDuration();
             if (SaveYtDialog.PrintSlopes())
                 table.at(n_s,nCol++)=GetMaxRise();
+                table.at(n_s,nCol++)=GetMaxDecay();
             if (SaveYtDialog.PrintLatencies()) {
                 table.at(n_s,nCol++)=GetLatency()*GetXScale();
             }

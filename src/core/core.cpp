@@ -696,7 +696,7 @@ stf::linsolv( int m, int n, int nrhs, std::valarray<double>& A,
     if (info<0) {
         wxString error_msg;
         error_msg << wxT("Argument ") << -info << wxT(" had an illegal value in LAPACK's dgetrs_");
-		throw std::runtime_error(std::string(error_msg.char_str()));
+        throw std::runtime_error(std::string(error_msg.char_str()));
     }
 #endif
     return 0;

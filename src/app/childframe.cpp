@@ -363,6 +363,7 @@ void wxStfChildFrame::ShowTable(const stf::Table &table,const wxString& caption)
 void wxStfChildFrame::UpdateResults() {
     wxStfDoc* pDoc=(wxStfDoc*)GetDocument();
     stf::Table table(pDoc->CurResultsTable());
+    
     // Delete or append columns:
     if (m_table->GetNumberCols()<(int)table.nCols()) {
         m_table->AppendCols((int)table.nCols()-(int)m_table->GetNumberCols());
