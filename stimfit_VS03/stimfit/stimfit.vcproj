@@ -1,125 +1,186 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.10"
+	Version="9.00"
 	Name="stimfit_lib"
 	ProjectGUID="{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}"
 	RootNamespace="stimfit"
-	Keyword="Win32Proj">
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="2"
-			CharacterSet="1">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				InlineFunctionExpansion="0"
-				ImproveFloatingPointConsistency="FALSE"
 				AdditionalIncludeDirectories="C:\hdf5\include;C:\wxWidgets\lib\vc_dll\mswu;C:\wxWidgets\include;&quot;$(SolutionDir)..\include&quot;;C:\wxPython\include"
 				PreprocessorDefinitions="_DEBUG;__WXDEBUG__;_UNICODE;WXUSINGDLL;__STF__;__WIN32__;WIN32;__WXMSW__;WXP_USE_THREAD=1;NOPCH;STFDLL;_CRT_SECURE_NO_DEPRECATE;_STFDEBUG;HAVE_LAPACK;_WINDOWS"
-				MinimalRebuild="TRUE"
+				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				EnableEnhancedInstructionSet="0"
-				TreatWChar_tAsBuiltInType="FALSE"
-				RuntimeTypeInfo="TRUE"
+				TreatWChar_tAsBuiltInType="false"
+				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="3"/>
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="3"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				AdditionalIncludeDirectories="$(SolutionDir)..\src\icons;C:\wxWidgets\include"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="wxmsw29ud_aui.lib wxmsw29ud_html.lib wxmsw29ud_adv.lib wxmsw29ud_core.lib wxbase29ud_xml.lib wxbase29ud.lib wxtiffd.lib wxjpegd.lib wxpngd.lib wxzlibd.lib wxregexud.lib wxexpatd.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib clapackd.lib libf2cd.lib BLASd.lib libfftw3-3.lib hdf5.lib hdf5_hl.lib szlib.lib"
 				OutputFile="../stimfit_exe/$(OutDir)/stimfitd.dll"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\libs&quot;;C:\Python25\libs;C:\wxWidgets\lib\vc_dll"
 				IgnoreDefaultLibraryNames="libcd.lib;libcmtd.lib"
-				GenerateDebugInformation="TRUE"
-				GenerateMapFile="TRUE"
-				MapExports="TRUE"
-				MapLines="TRUE"
-				ImportLibrary="$(OutDir)/stimfitd.lib"/>
+				GenerateDebugInformation="true"
+				GenerateMapFile="true"
+				MapExports="true"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				ImportLibrary="$(OutDir)/stimfitd.lib"
+			/>
 			<Tool
-				Name="VCMIDLTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCManifestTool"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCXDCMakeTool"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCBscMakeTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir)..\src\icons;C:\wxWidgets\include"/>
+				Name="VCFxCopTool"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCAppVerifierTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="Release"
 			IntermediateDirectory="Release"
 			ConfigurationType="2"
-			CharacterSet="1">
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				AdditionalIncludeDirectories="C:\hdf5\include;C:\wxWidgets\lib\vc_dll\mswu;C:\wxWidgets\include;&quot;$(SolutionDir)..\include&quot;;C:\wxPython\include"
-				PreprocessorDefinitions="_UNICODE;WXUSINGDLL;__STF__;__WIN32__;WIN32;__WXMSW__;WXP_USE_THREAD=1;NOPCH;STFDLL;_CRT_SECURE_NO_DEPRECATE;WITH_PYTHON;HAVE_LAPACK;_WINDOWS"
+				AdditionalIncludeDirectories="C:\Users\cs\hdf5\include;&quot;$(SolutionDir)..\include&quot;;C:\Users\cs\wxPython\include"
+				PreprocessorDefinitions="_UNICODE;__WXDEBUG__;WXUSINGDLL;__STF__;__WIN32__;WIN32;__WXMSW__;WXP_USE_THREAD=1;NOPCH;STFDLL;_CRT_SECURE_NO_DEPRECATE;WITH_PYTHON;HAVE_LAPACK;_WINDOWS;STFDATE=\&quot;Wed Jun 3 16:24:20 CEST\&quot;"
 				RuntimeLibrary="2"
-				BufferSecurityCheck="FALSE"
-				EnableFunctionLevelLinking="FALSE"
-				TreatWChar_tAsBuiltInType="FALSE"
+				BufferSecurityCheck="false"
+				EnableFunctionLevelLinking="false"
+				TreatWChar_tAsBuiltInType="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="TRUE"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="0"
-				CompileAs="0"/>
+				CompileAs="0"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="wxmsw29u_aui.lib wxmsw29u_html.lib wxmsw29u_adv.lib wxmsw29u_core.lib wxbase29u_xml.lib wxbase29u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregexu.lib wxexpat.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib clapack.lib libf2c.lib BLAS.lib libfftw3-3.lib hdf5.lib hdf5_hl.lib szlib.lib"
-				OutputFile="../stimfit_exe/$(OutDir)/stimfit.dll"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\libs&quot;;C:\Python25\libs;C:\wxWidgets\lib\vc_dll"
-				IgnoreAllDefaultLibraries="FALSE"
-				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
-				ImportLibrary="$(OutDir)/stimfit.lib"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="$(SolutionDir)..\src\icons;C:\wxWidgets\include"/>
+				AdditionalIncludeDirectories="$(SolutionDir)..\src\icons;C:\wxWidgets\include"
+			/>
 			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
+				Name="VCLinkerTool"
+				AdditionalDependencies="wxmsw29uh_aui.lib wxmsw29uh_html.lib wxmsw29uh_adv.lib wxmsw29uh_core.lib wxbase29uh_xml.lib wxbase29uh.lib wxtiffh.lib wxjpegh.lib wxpngh.lib wxzlibh.lib wxregexuh.lib wxexpath.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib clapack.lib libf2c.lib BLAS.lib libfftw3-3.lib hdf5.lib hdf5_hl.lib szlib.lib"
+				OutputFile="../stimfit_exe/$(OutDir)/stimfit.dll"
+				AdditionalLibraryDirectories="C:\Users\cs\szip\lib;C:\Users\cs\hdf5\lib;&quot;$(SolutionDir)..\libs&quot;;C:\Python26\libs;C:\Users\cs\wxWidgets\lib\vc_dll"
+				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				ImportLibrary="$(OutDir)/stimfit.lib"
+			/>
 			<Tool
-				Name="VCWebDeploymentTool"/>
+				Name="VCALinkTool"
+			/>
 			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
+				Name="VCManifestTool"
+			/>
 			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -128,234 +189,313 @@
 		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
+			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			>
 			<Filter
 				Name="app"
-				Filter="">
+				>
 				<File
-					RelativePath="..\..\src\app\app.cpp">
+					RelativePath="..\..\src\app\app.cpp"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\copygrid.cpp">
+					RelativePath="..\..\src\app\childframe.cpp"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\doc.cpp">
+					RelativePath="..\..\src\app\copygrid.cpp"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\frame.cpp">
+					RelativePath="..\..\src\app\doc.cpp"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\graph.cpp">
+					RelativePath="..\..\src\app\graph.cpp"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\printout.cpp">
+					RelativePath="..\..\src\app\parentframe.cpp"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\stfcheckbox.cpp">
+					RelativePath="..\..\src\app\printout.cpp"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\table.cpp">
+					RelativePath="..\..\src\app\stfcheckbox.cpp"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\unopt.cpp">
+					RelativePath="..\..\src\app\table.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\app\unopt.cpp"
+					>
 					<FileConfiguration
-						Name="Release|Win32">
+						Name="Release|Win32"
+						>
 						<Tool
 							Name="VCCLCompilerTool"
-							Optimization="0"/>
+							Optimization="0"
+						/>
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\src\app\view.cpp">
+					RelativePath="..\..\src\app\view.cpp"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\zoom.cpp">
+					RelativePath="..\..\src\app\zoom.cpp"
+					>
 				</File>
 				<Filter
 					Name="dlgs"
-					Filter="">
+					>
 					<File
-						RelativePath="..\..\src\app\dlgs\cursorsdlg.cpp">
+						RelativePath="..\..\src\app\dlgs\cursorsdlg.cpp"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\app\dlgs\eventdlg.cpp">
+						RelativePath="..\..\src\app\dlgs\eventdlg.cpp"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\app\dlgs\fitseldlg.cpp">
+						RelativePath="..\..\src\app\dlgs\fitseldlg.cpp"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\app\dlgs\smalldlgs.cpp">
+						RelativePath="..\..\src\app\dlgs\smalldlgs.cpp"
+						>
 					</File>
 				</Filter>
 				<Filter
 					Name="funclib"
-					Filter="">
+					>
 					<File
-						RelativePath="..\..\src\app\funclib\funclib.cpp">
+						RelativePath="..\..\src\app\funclib\funclib.cpp"
+						>
 					</File>
 				</Filter>
 				<Filter
 					Name="usrdlg"
-					Filter="">
+					>
 					<File
-						RelativePath="..\..\src\app\usrdlg\usrdlg.cpp">
+						RelativePath="..\..\src\app\usrdlg\usrdlg.cpp"
+						>
 					</File>
 				</Filter>
 				<Filter
 					Name="plugins"
-					Filter="">
+					>
 					<File
-						RelativePath="..\..\src\app\plugins\plugins.cpp">
+						RelativePath="..\..\src\app\plugins\plugins.cpp"
+						>
 					</File>
 				</Filter>
 			</Filter>
 			<Filter
 				Name="core"
-				Filter="">
+				>
 				<File
-					RelativePath="..\..\src\core\channel.cpp">
+					RelativePath="..\..\src\core\channel.cpp"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\core\core.cpp">
+					RelativePath="..\..\src\core\core.cpp"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\core\fitlib.cpp">
+					RelativePath="..\..\src\core\fitlib.cpp"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\core\recording.cpp">
+					RelativePath="..\..\src\core\recording.cpp"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\core\section.cpp">
+					RelativePath="..\..\src\core\section.cpp"
+					>
 				</File>
 				<Filter
 					Name="filelib"
-					Filter="">
+					>
 					<File
-						RelativePath="..\..\src\core\filelib\abflib.cpp">
+						RelativePath="..\..\src\core\filelib\abflib.cpp"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\filelib\asciilib.cpp">
+						RelativePath="..\..\src\core\filelib\asciilib.cpp"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\filelib\atflib.cpp">
+						RelativePath="..\..\src\core\filelib\atflib.cpp"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\filelib\axglib.cpp">
+						RelativePath="..\..\src\core\filelib\axglib.cpp"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\filelib\cfs.c">
+						RelativePath="..\..\src\core\filelib\cfs.c"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\filelib\cfslib.cpp">
+						RelativePath="..\..\src\core\filelib\cfslib.cpp"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\filelib\hdf5lib.cpp">
+						RelativePath="..\..\src\core\filelib\hdf5lib.cpp"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\filelib\igorlib.cpp">
+						RelativePath="..\..\src\core\filelib\igorlib.cpp"
+						>
 					</File>
 					<Filter
 						Name="axon"
-						Filter="">
+						>
 						<Filter
 							Name="AxAbfFio32"
-							Filter="">
+							>
 							<File
-								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\abferror.cpp">
+								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\abferror.cpp"
+								>
 							</File>
 							<File
-								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\abffiles.cpp">
+								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\abffiles.cpp"
+								>
 							</File>
 							<File
-								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\abfheadr.cpp">
+								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\abfheadr.cpp"
+								>
 							</File>
 							<File
-								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\abfhwave.cpp">
+								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\abfhwave.cpp"
+								>
 							</File>
 							<File
-								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\abfutil.cpp">
+								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\abfutil.cpp"
+								>
 							</File>
 							<File
-								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\csynch.cpp">
+								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\csynch.cpp"
+								>
 							</File>
 							<File
-								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\filedesc.cpp">
+								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\filedesc.cpp"
+								>
 							</File>
 							<File
-								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\msbincvt.cpp">
+								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\msbincvt.cpp"
+								>
 							</File>
 							<File
-								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\Oldheadr.cpp">
+								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\Oldheadr.cpp"
+								>
 							</File>
 						</Filter>
 						<Filter
 							Name="AxAtfFio32"
-							Filter="">
+							>
 							<File
-								RelativePath="..\..\src\core\filelib\axon\AxAtfFio32\axatffio32.cpp">
+								RelativePath="..\..\src\core\filelib\axon\AxAtfFio32\axatffio32.cpp"
+								>
 							</File>
 							<File
-								RelativePath="..\..\src\core\filelib\axon\AxAtfFio32\fileio2.cpp">
+								RelativePath="..\..\src\core\filelib\axon\AxAtfFio32\fileio2.cpp"
+								>
 							</File>
 						</Filter>
 						<Filter
 							Name="Common"
-							Filter="">
+							>
 							<File
-								RelativePath="..\..\src\core\filelib\axon\Common\FileIO.cpp">
+								RelativePath="..\..\src\core\filelib\axon\Common\FileIO.cpp"
+								>
 							</File>
 							<File
-								RelativePath="..\..\src\core\filelib\axon\Common\FileReadCache.cpp">
+								RelativePath="..\..\src\core\filelib\axon\Common\FileReadCache.cpp"
+								>
 							</File>
 							<File
-								RelativePath="..\..\src\core\filelib\axon\Common\unix.c">
+								RelativePath="..\..\src\core\filelib\axon\Common\unix.c"
+								>
 							</File>
 						</Filter>
 					</Filter>
 					<Filter
 						Name="igor"
-						Filter="">
+						>
 						<File
-							RelativePath="..\..\src\core\filelib\igor\CrossPlatformFileIO.c">
+							RelativePath="..\..\src\core\filelib\igor\CrossPlatformFileIO.c"
+							>
 						</File>
 						<File
-							RelativePath="..\..\src\core\filelib\igor\WriteWave.c">
+							RelativePath="..\..\src\core\filelib\igor\WriteWave.c"
+							>
 						</File>
 					</Filter>
 					<Filter
 						Name="axg"
-						Filter="">
+						>
 						<File
-							RelativePath="..\..\src\core\filelib\axg\AxoGraph_ReadWrite.cpp">
+							RelativePath="..\..\src\core\filelib\axg\AxoGraph_ReadWrite.cpp"
+							>
 						</File>
 						<File
-							RelativePath="..\..\src\core\filelib\axg\byteswap.cpp">
+							RelativePath="..\..\src\core\filelib\axg\byteswap.cpp"
+							>
 						</File>
 						<File
-							RelativePath="..\..\src\core\filelib\axg\fileUtils.cpp">
+							RelativePath="..\..\src\core\filelib\axg\fileUtils.cpp"
+							>
 						</File>
 						<File
-							RelativePath="..\..\src\core\filelib\axg\stringUtils.cpp">
+							RelativePath="..\..\src\core\filelib\axg\stringUtils.cpp"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="axon2"
+						>
+						<File
+							RelativePath="..\..\src\core\filelib\axon2\abf2headr.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\core\filelib\axon2\ProtocolReaderABF2.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\core\filelib\axon2\SimpleStringCache.cpp"
+							>
 						</File>
 					</Filter>
 				</Filter>
 				<Filter
 					Name="levmar"
-					Filter="">
+					>
 					<File
-						RelativePath="..\..\src\core\levmar\Axb.c">
+						RelativePath="..\..\src\core\levmar\Axb.c"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\levmar\lm.c">
+						RelativePath="..\..\src\core\levmar\lm.c"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\levmar\lmbc.c">
+						RelativePath="..\..\src\core\levmar\lmbc.c"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\levmar\lmlec.c">
+						RelativePath="..\..\src\core\levmar\lmlec.c"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\levmar\misc.c">
+						RelativePath="..\..\src\core\levmar\misc.c"
+						>
 					</File>
 				</Filter>
 			</Filter>
@@ -363,139 +503,213 @@
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			>
+			<File
+				RelativePath="..\..\stfconf.h"
+				>
+			</File>
 			<Filter
 				Name="core"
-				Filter="">
+				>
 				<File
-					RelativePath="..\..\src\core\channel.h">
+					RelativePath="..\..\src\core\channel.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\core\core.h">
+					RelativePath="..\..\src\core\core.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\core\fitlib.h">
+					RelativePath="..\..\src\core\fitlib.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\core\measlib.h">
+					RelativePath="..\..\src\core\measlib.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\core\recording.h">
+					RelativePath="..\..\src\core\recording.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\core\section.h">
+					RelativePath="..\..\src\core\section.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\core\spline.h">
+					RelativePath="..\..\src\core\spline.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\core\stimdefs.h">
+					RelativePath="..\..\src\core\stimdefs.h"
+					>
 				</File>
 				<Filter
 					Name="levmar"
-					Filter="">
+					>
 					<File
-						RelativePath="..\..\src\core\levmar\lm.h">
+						RelativePath="..\..\src\core\levmar\lm.h"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\levmar\misc.h">
+						RelativePath="..\..\src\core\levmar\misc.h"
+						>
 					</File>
 				</Filter>
 				<Filter
 					Name="filelib"
-					Filter="">
+					>
 					<File
-						RelativePath="..\..\src\core\filelib\abflib.h">
+						RelativePath="..\..\src\core\filelib\abflib.h"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\filelib\asciilib.h">
+						RelativePath="..\..\src\core\filelib\asciilib.h"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\filelib\atflib.h">
+						RelativePath="..\..\src\core\filelib\atflib.h"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\filelib\axglib.h">
+						RelativePath="..\..\src\core\filelib\axglib.h"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\filelib\cfs.h">
+						RelativePath="..\..\src\core\filelib\cfs.h"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\filelib\cfslib.h">
+						RelativePath="..\..\src\core\filelib\cfslib.h"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\filelib\hdf5lib.h">
+						RelativePath="..\..\src\core\filelib\hdf5lib.h"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\filelib\igorlib.h">
+						RelativePath="..\..\src\core\filelib\igorlib.h"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\core\filelib\machine.h">
+						RelativePath="..\..\src\core\filelib\machine.h"
+						>
 					</File>
 					<Filter
 						Name="axg"
-						Filter="">
+						>
 						<File
-							RelativePath="..\..\src\core\filelib\axg\AxoGraph_ReadWrite.h">
+							RelativePath="..\..\src\core\filelib\axg\AxoGraph_ReadWrite.h"
+							>
 						</File>
 						<File
-							RelativePath="..\..\src\core\filelib\axg\byteswap.h">
+							RelativePath="..\..\src\core\filelib\axg\byteswap.h"
+							>
 						</File>
 						<File
-							RelativePath="..\..\src\core\filelib\axg\fileUtils.h">
+							RelativePath="..\..\src\core\filelib\axg\fileUtils.h"
+							>
 						</File>
 						<File
-							RelativePath="..\..\src\core\filelib\axg\stringUtils.h">
+							RelativePath="..\..\src\core\filelib\axg\stringUtils.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="axon2"
+						>
+						<File
+							RelativePath="..\..\src\core\filelib\axon2\abf2headr.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\core\filelib\axon2\abffio.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\core\filelib\axon2\ProtocolReaderABF2.hpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\core\filelib\axon2\ProtocolStructs.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\src\core\filelib\axon2\SimpleStringCache.hpp"
+							>
 						</File>
 					</Filter>
 				</Filter>
 			</Filter>
 			<Filter
 				Name="app"
-				Filter="">
+				>
 				<File
-					RelativePath="..\..\src\app\app.h">
+					RelativePath="..\..\src\app\app.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\copygrid.h">
+					RelativePath="..\..\src\app\childframe.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\doc.h">
+					RelativePath="..\..\src\app\copygrid.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\frame.h">
+					RelativePath="..\..\src\app\doc.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\graph.h">
+					RelativePath="..\..\src\app\frame.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\printout.h">
+					RelativePath="..\..\src\app\graph.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\stfcheckbox.h">
+					RelativePath="..\..\src\app\parentframe.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\table.h">
+					RelativePath="..\..\src\app\printout.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\view.h">
+					RelativePath="..\..\src\app\stfcheckbox.h"
+					>
 				</File>
 				<File
-					RelativePath="..\..\src\app\zoom.h">
+					RelativePath="..\..\src\app\table.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\app\view.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\app\zoom.h"
+					>
 				</File>
 				<Filter
 					Name="dlgs"
-					Filter="">
+					>
 					<File
-						RelativePath="..\..\src\app\dlgs\cursorsdlg.h">
+						RelativePath="..\..\src\app\dlgs\cursorsdlg.h"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\app\dlgs\eventdlg.h">
+						RelativePath="..\..\src\app\dlgs\eventdlg.h"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\app\dlgs\fitseldlg.h">
+						RelativePath="..\..\src\app\dlgs\fitseldlg.h"
+						>
 					</File>
 					<File
-						RelativePath="..\..\src\app\dlgs\smalldlgs.h">
+						RelativePath="..\..\src\app\dlgs\smalldlgs.h"
+						>
 					</File>
 				</Filter>
 			</Filter>
@@ -503,14 +717,18 @@
 		<Filter
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			>
 			<File
-				RelativePath="..\..\src\res\stimfit.rc">
+				RelativePath="..\..\src\res\stimfit.rc"
+				>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
 						Name="VCResourceCompilerTool"
-						AdditionalIncludeDirectories="$(SolutionDir)..\src\icons;C:\wxWidgets\include"/>
+						AdditionalIncludeDirectories="$(SolutionDir)..\src\icons;C:\wxWidgets\include"
+					/>
 				</FileConfiguration>
 			</File>
 		</Filter>

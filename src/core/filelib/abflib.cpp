@@ -77,11 +77,13 @@ wxString stf::timeToStr(long time) {
 }
 
 void stf::importABFFile(const wxString &fName, Recording &ReturnData, bool progress) {
-    
+    ABF2_FileInfo fileInfo;
+
     // Open file:
+#ifndef _WINDOWS
     FILE* fh = fopen( fName.char_str(), "r" );
-    if (!fh) {
-        wxString errorMsg(wxT("Exception while calling import ABF2File():\nCouldn't open file"));
+	if (!fh) {
+        wxString errorMsg(wxT("Exception while calling importABFFile():\nCouldn't open file"));
         fclose(fh);
         throw std::runtime_error(std::string(errorMsg.char_str()));
     }
@@ -89,18 +91,44 @@ void stf::importABFFile(const wxString &fName, Recording &ReturnData, bool progr
     // attempt to read first chunk of data:
     int res = fseek( fh, 0, SEEK_SET);
     if (res != 0) {
-        wxString errorMsg(wxT("Exception while calling import ABF2File():\nCouldn't open file"));
+        wxString errorMsg(wxT("Exception while calling importABFFile():\nCouldn't open file"));
         fclose(fh);
         throw std::runtime_error(std::string(errorMsg.char_str()));
     }
-    ABF2_FileInfo fileInfo;
     res = fread( &fileInfo, sizeof( fileInfo ), 1, fh );
     if (res != 1) {
-        wxString errorMsg(wxT("Exception while calling import ABF2File():\nCouldn't open file"));
+        wxString errorMsg(wxT("Exception while calling importABFFile():\nCouldn't open file"));
         fclose(fh);
         throw std::runtime_error(std::string(errorMsg.char_str()));
     }
     fclose(fh);
+#else
+	HANDLE hFile = CreateFile(fName, GENERIC_READ, FILE_SHARE_READ, NULL,
+                       OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+ 
+    if (hFile == INVALID_HANDLE_VALUE) { 
+        wxString errorMsg(wxT("Exception while calling importABFFile():\nCouldn't open file"));
+        CloseHandle(hFile);
+        throw std::runtime_error(std::string(errorMsg.char_str()));
+    }
+
+	// Read one character less than the buffer size to save room for
+    // the terminating NULL character.
+    DWORD dwBytesRead = 0;
+
+    if( FALSE == ReadFile(hFile, &fileInfo, sizeof( fileInfo ), &dwBytesRead, NULL) ) {
+        wxString errorMsg(wxT("Exception while calling importABFFile():\nCouldn't open file"));
+        CloseHandle(hFile);
+        throw std::runtime_error(std::string(errorMsg.char_str()));
+    }
+
+	if (dwBytesRead <= 0) {
+        wxString errorMsg(wxT("Exception while calling importABFFile():\nCouldn't open file"));
+        CloseHandle(hFile);
+        throw std::runtime_error(std::string(errorMsg.char_str()));
+    }
+    CloseHandle(hFile);
+#endif
     
     if (CABF2ProtocolReader::CanOpen( (void*)&fileInfo, sizeof(fileInfo) )) {
         importABF2File( fName, ReturnData, progress );
@@ -116,7 +144,7 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
     
     CABF2ProtocolReader abf2;
     if (!abf2.Open( fName.char_str() )) {
-        wxString errorMsg(wxT("Exception while calling import ABF2File():\nCouldn't open file"));
+        wxString errorMsg(wxT("Exception while calling importABF2File():\nCouldn't open file"));
         throw std::runtime_error(std::string(errorMsg.char_str()));
         abf2.Close();
     }
@@ -127,7 +155,7 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
 #endif
     int nError = 0;
     if (!abf2.Read( &nError )) {
-        wxString errorMsg(wxT("Exception while calling import ABF2File():\nCouldn't read file"));
+        wxString errorMsg(wxT("Exception while calling importABF2File():\nCouldn't read file"));
         throw std::runtime_error(std::string(errorMsg.char_str()));
         abf2.Close();
     }

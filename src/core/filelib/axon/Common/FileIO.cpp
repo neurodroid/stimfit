@@ -52,6 +52,7 @@ CFileIO::CFileIO(FILEHANDLE hFile)
    m_dwLastError   = 0;
 }
 
+#ifndef _WINDOWS
 CFileIO::CFileIO(HANDLE hFile)
 {
    //MEMBERASSERT();
@@ -59,6 +60,7 @@ CFileIO::CFileIO(HANDLE hFile)
    m_szFileName[0] = '\0';
    m_dwLastError   = 0;
 }
+#endif
 
 //===============================================================================================
 // FUNCTION: Destructor

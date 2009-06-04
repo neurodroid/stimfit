@@ -1,7 +1,6 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C++ Express 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stimfit_lib", "stimfit\stimfit.vcproj", "{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stfswig", "stfswig\stfswig.vcproj", "{A14ABDD1-AB61-4EA3-8A46-0170E7DB4EA0}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -15,27 +14,24 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stimfit_exe", "stimfit_exe\
 	EndProjectSection
 EndProject
 Global
-	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		Release = Release
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
 	EndGlobalSection
-	GlobalSection(ProjectDependencies) = postSolution
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}.Debug|Win32.Build.0 = Debug|Win32
+		{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}.Release|Win32.ActiveCfg = Release|Win32
+		{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}.Release|Win32.Build.0 = Release|Win32
+		{A14ABDD1-AB61-4EA3-8A46-0170E7DB4EA0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A14ABDD1-AB61-4EA3-8A46-0170E7DB4EA0}.Release|Win32.ActiveCfg = Release|Win32
+		{A14ABDD1-AB61-4EA3-8A46-0170E7DB4EA0}.Release|Win32.Build.0 = Release|Win32
+		{4D16AB04-2431-4357-A898-1F0D6BDC9CB0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4D16AB04-2431-4357-A898-1F0D6BDC9CB0}.Debug|Win32.Build.0 = Debug|Win32
+		{4D16AB04-2431-4357-A898-1F0D6BDC9CB0}.Release|Win32.ActiveCfg = Release|Win32
+		{4D16AB04-2431-4357-A898-1F0D6BDC9CB0}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}.Debug.ActiveCfg = Debug|Win32
-		{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}.Debug.Build.0 = Debug|Win32
-		{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}.Release.ActiveCfg = Release|Win32
-		{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}.Release.Build.0 = Release|Win32
-		{A14ABDD1-AB61-4EA3-8A46-0170E7DB4EA0}.Debug.ActiveCfg = Debug|Win32
-		{A14ABDD1-AB61-4EA3-8A46-0170E7DB4EA0}.Release.ActiveCfg = Release|Win32
-		{A14ABDD1-AB61-4EA3-8A46-0170E7DB4EA0}.Release.Build.0 = Release|Win32
-		{4D16AB04-2431-4357-A898-1F0D6BDC9CB0}.Debug.ActiveCfg = Debug|Win32
-		{4D16AB04-2431-4357-A898-1F0D6BDC9CB0}.Debug.Build.0 = Debug|Win32
-		{4D16AB04-2431-4357-A898-1F0D6BDC9CB0}.Release.ActiveCfg = Release|Win32
-		{4D16AB04-2431-4357-A898-1F0D6BDC9CB0}.Release.Build.0 = Release|Win32
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

@@ -36,7 +36,9 @@ class CFileIO
   public:   
     CFileIO();
     CFileIO(FILEHANDLE hFile);
+#ifndef _WINDOWS
     CFileIO(HANDLE hFile);
+#endif
     ~CFileIO();
    
     BOOL  Create(LPCSTR szFileName, BOOL bReadOnly, DWORD dwAttributes=FILE_ATTRIBUTE_NORMAL);

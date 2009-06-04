@@ -11,18 +11,18 @@
 
 ;--------------------------------
 
-!define PRODUCT_VERSION "0.8.15"
+!define PRODUCT_VERSION "0.9.0-rc1"
 !define EXE_NAME "stimfit"
 !define REG_NAME "Stimfit"
 !define PRODUCT_PUBLISHER "Christoph Schmidt-Hieber"
 !define PRODUCT_WEB_SITE "http://www.stimfit.org"
-!define STFDIR "C:\Dokumente und Einstellungen\cs\stimfit"
-!define MSIDIR "C:\Dokumente und Einstellungen\cs\Eigene Dateien"
-!define WXWDIR "C:\wxWidgets"
-!define WXPDIR "C:\wxPython"
+!define STFDIR "C:\Users\cs\stimfit"
+!define MSIDIR "C:\Users\cs\Downloads"
+!define WXWDIR "C:\Users\cs\wxWidgets"
+!define WXPDIR "C:\Users\cs\wxPython"
 !define FULL_WELCOME "This wizard will guide you through the installation \
 of ${REG_NAME} ${PRODUCT_VERSION} and wxPython. You can optionally \
-install Python 2.5.2 and NumPy 1.0.4 \
+install Python 2.6.2 and NumPy 1.3.0 \
 if you don't have them on your machine."
 !define UPDATE_WELCOME "This wizard will update an existing installation of \
 of ${REG_NAME} to version ${PRODUCT_VERSION}."
@@ -43,7 +43,7 @@ InstallDir "$PROGRAMFILES\${REG_NAME}"
 ; Request application privileges for Windows Vista
 RequestExecutionLevel admin
 
-!define STRING_PYTHON_NOT_FOUND "Python 2.5 is not installed on this system. \
+!define STRING_PYTHON_NOT_FOUND "Python 2.6 is not installed on this system. \
 $\nPlease install Python first. \
 $\nClick OK to cancel installation and remove installation files."
 
@@ -88,33 +88,33 @@ Var StrNoUsablePythonFound
 
 ; The stuff to install
 !ifndef UPDATE
-Section "Python 2.5.2" 0
+Section "Python 2.6.2" 0
 
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
 
   ; Put installer into installation dir temporarily
-  File "${MSIDIR}\python-2.5.2.msi"
+  File "${MSIDIR}\python-2.6.2.msi"
 
-  ExecWait '"Msiexec.exe" /i "$INSTDIR\python-2.5.2.msi"'
+  ExecWait '"Msiexec.exe" /i "$INSTDIR\python-2.6.2.msi"'
   
   ; Delete installer once we are done
-  Delete "$INSTDIR\python-2.5.2.msi"
+  Delete "$INSTDIR\python-2.6.2.msi"
 
 SectionEnd
 
-Section "NumPy 1.0.4" 1
+Section "NumPy 1.3.0" 1
 
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
 
   ; Put installer into installation dir temporarily
-  File "${MSIDIR}\numpy-1.0.4.win32-py2.5.msi"
+  File "${MSIDIR}\numpy-1.3.0-win32-superpack-python2.6.exe"
 
-  ExecWait '"Msiexec.exe" /i "$INSTDIR\numpy-1.0.4.win32-py2.5.msi"'
+  ExecWait '"$INSTDIR\numpy-1.3.0-win32-superpack-python2.6.exe"'
   
   ; Delete installer once we are done
-  Delete "$INSTDIR\numpy-1.0.4.win32-py2.5.msi"
+  Delete "$INSTDIR\numpy-1.3.0-win32-superpack-python2.6.exe"
 
 SectionEnd
 !endif
@@ -128,14 +128,14 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   StrCpy $StrNoUsablePythonFound "${STRING_PYTHON_NOT_FOUND}"
 
   ClearErrors
-  ReadRegStr $9 HKEY_LOCAL_MACHINE "SOFTWARE\Python\PythonCore\2.5\InstallPath" ""
+  ReadRegStr $9 HKEY_LOCAL_MACHINE "SOFTWARE\Python\PythonCore\2.6\InstallPath" ""
     
   IfErrors 0 +3
     MessageBox MB_OK "$StrNoUsablePythonFound"
     Quit    
 
   ClearErrors
-  DetailPrint "Found a Python 2.5 installation at '$9'"
+  DetailPrint "Found a Python 2.6 installation at '$9'"
   
   ; Add a path to the installation directory in the python site-packages folder
   FileOpen $0 $9\Lib\site-packages\stimfit.pth w
@@ -152,19 +152,19 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   SetOutPath $INSTDIR
   
 !ifndef UPDATE
-  File "${WXPDIR}\dist\wxPython-2.9.0.0.win32-py2.5.exe"
+  File "${WXPDIR}\dist\wxPython-2.9.0.0.win32-py2.6.exe"
   File "${WXPDIR}\dist\wxPython-common-2.9.0.0.win32.exe"
   File "${STFDIR}\stimfit_VS03\libfftw3-3.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290u_core_vc_custom.dll"
-  File "${WXWDIR}\lib\vc_dll\wxbase290u_vc_custom.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290u_aui_vc_custom.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290u_adv_vc_custom.dll"
-  File "${WXWDIR}\lib\vc_dll\wxbase290u_net_vc_custom.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290u_html_vc_custom.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290u_stc_vc_custom.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290u_stc_vc_custom.dll"
-  File "C:\Windows\system32\msvcp71.dll"
-  File "C:\Windows\system32\msvcr71.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290uh_core_vc.dll"
+  File "${WXWDIR}\lib\vc_dll\wxbase290uh_vc.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290uh_aui_vc.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290uh_adv_vc.dll"
+  File "${WXWDIR}\lib\vc_dll\wxbase290uh_net_vc.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290uh_html_vc.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290uh_stc_vc.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290uh_stc_vc.dll"
+  File "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll"
+  File "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
 !endif
   File "${STFDIR}\stimfit_VS03\stimfit_exe\Release\${EXE_NAME}.exe"
   File "${STFDIR}\stimfit_VS03\stimfit_exe\Release\stimfit.dll"
@@ -215,11 +215,11 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
 !ifndef UPDATE
   ; Install wxPython
   ExecWait '"$INSTDIR\wxPython-common-2.9.0.0.win32.exe"'
-  ExecWait '"$INSTDIR\wxPython-2.9.0.0.win32-py2.5.exe"'
+  ExecWait '"$INSTDIR\wxPython-2.9.0.0.win32-py2.6.exe"'
 
   ; Remove wxPython installation files
   Delete "$INSTDIR\wxPython-common-2.9.0.0.win32.exe"
-  Delete "$INSTDIR\wxPython-2.9.0.0.win32-py2.5.exe"
+  Delete "$INSTDIR\wxPython-2.9.0.0.win32-py2.6.exe"
 !endif
 SectionEnd ; end the section
 
@@ -383,7 +383,7 @@ SubSectionEnd
   ;Assign descriptions to sections
 !ifndef UPDATE
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT 0 "Python 2.5 is required to run stimfit. Unselect this if it's already installed on your system."
+    !insertmacro MUI_DESCRIPTION_TEXT 0 "Python 2.6 is required to run stimfit. Unselect this if it's already installed on your system."
     !insertmacro MUI_DESCRIPTION_TEXT 1 "NumPy is required for efficient numeric computations in python. Unselect this if you already have NumPy on your system."
     !insertmacro MUI_DESCRIPTION_TEXT 2 "The core program files and wxPython 2.9 (mandatory)."
     !insertmacro MUI_DESCRIPTION_TEXT 3 "Selects Stimfit as the default application for files of these types."

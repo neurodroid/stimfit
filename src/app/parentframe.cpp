@@ -51,8 +51,11 @@
     #include <Python.h>
     #include <wx/wxPython/wxPython.h>
 #endif
-
+#ifdef _WINDOWS
+#include "../../stfconf.h"
+#else
 #include "stfconf.h"
+#endif
 #include "./app.h"
 #include "./doc.h"
 #include "./view.h"
