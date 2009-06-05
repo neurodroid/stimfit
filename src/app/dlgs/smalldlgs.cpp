@@ -395,10 +395,12 @@ wxStfBatchDlg::wxStfBatchDlg(wxWindow* parent, int id, wxString title, wxPoint p
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
 
-    batchOptions.push_back( BatchOption( wxT("Amplitude"), true, id_amp ) );
     batchOptions.push_back( BatchOption( wxT("Base"), true, id_base ) );
     batchOptions.push_back( BatchOption( wxT("Base SD"), false, id_basesd ) );
-    batchOptions.push_back( BatchOption( wxT("Peak"), true, id_peak ) );
+    batchOptions.push_back( BatchOption( wxT("Threshold"), true, id_threshold ) );
+    batchOptions.push_back( BatchOption( wxT("Peak (from 0)"), true, id_peakzero ) );
+    batchOptions.push_back( BatchOption( wxT("Peak (from base)"), true, id_peakbase ) );
+    batchOptions.push_back( BatchOption( wxT("Peak (from threshold)"), true, id_peakthreshold ) );
     batchOptions.push_back( BatchOption( wxT("20-80% risetime"), false, id_rt2080 ) );
     batchOptions.push_back( BatchOption( wxT("Half duration"), false, id_t50 ) );
     batchOptions.push_back( BatchOption( wxT("Slopes"), false, id_slopes ) );

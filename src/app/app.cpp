@@ -393,13 +393,17 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
             }
             actDoc->SetPeakAtEnd(true);
         }
-        //Get number of peak points from the dialog box...
+        // Get number of peak points from the dialog box...
         actDoc->SetPM(CursorsDialog->GetPeakPoints());
         wxWriteProfileInt(wxT("Settings"),wxT("PeakMean"),(int)actDoc->GetPM());
         
-        //Get direction from the dialog box
+        // Get direction from the dialog box
         actDoc->SetDirection(CursorsDialog->GetDirection());
         wxWriteProfileInt(wxT("Settings"),wxT("Direction"), CursorsDialog->GetDirection());
+        
+        // Get reference for AP kinetics from the dialog box
+        actDoc->SetFromBase(CursorsDialog->GetFromBase());
+        wxWriteProfileInt(wxT("Settings"),wxT("FromBase"), CursorsDialog->GetFromBase());
         
         // Get slope for threshold:
         actDoc->SetSlopeForThreshold( CursorsDialog->GetSlope() );
@@ -776,6 +780,8 @@ void wxStfApp::OnCursorSettings( wxCommandEvent& WXUNUSED(event) ) {
         //set CButton to given direction
         CursorsDialog->SetDirection(actDoc->GetDirection());
         CursorsDialog->SetPeakPoints((int)actDoc->GetPM());
+        CursorsDialog->SetFromBase(actDoc->GetFromBase());
+        CursorsDialog->SetSlope( actDoc->GetSlopeForThreshold() );
         return;
     }
 
@@ -793,6 +799,8 @@ void wxStfApp::OnCursorSettings( wxCommandEvent& WXUNUSED(event) ) {
         //set CButton to given direction
         CursorsDialog->SetDirection(actDoc->GetDirection());
         CursorsDialog->SetPeakPoints((int)actDoc->GetPM());
+        CursorsDialog->SetFromBase(actDoc->GetFromBase());
+        CursorsDialog->SetSlope( actDoc->GetSlopeForThreshold() );
     }
 
 }

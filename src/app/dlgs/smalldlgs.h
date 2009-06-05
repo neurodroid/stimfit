@@ -317,10 +317,12 @@ class wxStfBatchDlg : public wxDialog
     BatchOption LookUp( int index ) const;
 
     enum {
-        id_amp = 0,
-        id_base,
+        id_base=0,
         id_basesd,
-        id_peak,
+        id_threshold,
+        id_peakzero,
+        id_peakbase,
+        id_peakthreshold,
         id_rt2080,
         id_t50,
         id_slopes,
@@ -347,11 +349,6 @@ public:
             int style = wxCAPTION
     );
 
-    //! Indicates whether the amplitude should be printed in the batch analysis table.
-    /*! \return true if it should be printed, false otherwise.
-     */
-    bool PrintAmp() const {return LookUp(id_amp).selection;}
-
     //! Indicates whether the baseline should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
@@ -362,11 +359,26 @@ public:
      */
     bool PrintBaseSD() const {return LookUp(id_basesd).selection;}
 
-    //! Indicates whether the peak value should be printed in the batch analysis table.
+    //! Indicates whether the threshold should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
-    bool PrintPeak() const {return LookUp(id_peak).selection;}
+    bool PrintThreshold() const {return LookUp(id_threshold).selection;}
 
+    //! Indicates whether the peak (from 0) value should be printed in the batch analysis table.
+    /*! \return true if it should be printed, false otherwise.
+     */
+    bool PrintPeakZero() const {return LookUp(id_peakzero).selection;}
+
+    //! Indicates whether the peak (from baseline) value should be printed in the batch analysis table.
+    /*! \return true if it should be printed, false otherwise.
+     */
+    bool PrintPeakBase() const {return LookUp(id_peakbase).selection;}
+    
+    //! Indicates whether the peak value (from threshold) should be printed in the batch analysis table.
+    /*! \return true if it should be printed, false otherwise.
+     */
+    bool PrintPeakThreshold() const {return LookUp(id_peakthreshold).selection;}
+    
     //! Indicates whether the 20-80% rise time should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */

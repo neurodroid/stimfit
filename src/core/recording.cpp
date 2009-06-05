@@ -95,9 +95,11 @@ void Recording::init() {
     t80Index = 0;
     t50LeftIndex = 0;
     t50RightIndex = 0;
+    fromBase = true;
     viewCrosshair = true;
     viewBaseline = true;
     viewBaseSD = true;
+    viewThreshold = false;
     viewPeakzero = true;
     viewPeakbase = true;
     viewPeakthreshold = false;
@@ -470,14 +472,20 @@ void Recording::Measure( )
         peak=0.0;
         throw e;
     }
-    double ampl=peak-base;
 
     //Begin 20 to 80% Rise Time calculation
     //-------------------------------------
+    // 2009-06-05: reference is either from baseline or from threshold
+    double reference = base;
+    if (!fromBase && thrT >= 0) {
+        reference = threshold;
+    }
+    double ampl=peak-reference;
+    
     t20Real=0.0;
     try {
         // 2008-04-27: changed limits to start from the beginning of the trace
-        rt2080=stf::risetime(cur().get(),base,ampl, (double)0/*(double)baseEnd*/,
+        rt2080=stf::risetime(cur().get(),reference,ampl, (double)0/*(double)baseEnd*/,
                 maxT,t20Index,t80Index,t20Real);
     }
     catch (const std::out_of_range& e) {
@@ -493,12 +501,12 @@ void Recording::Measure( )
     t50LeftReal=0.0;
     // 2008-04-27: changed limits to start from the beginning of the trace
     //             and to stop at the end of the trace
-    halfDuration=stf::t_half(cur().get(),base,ampl, (double)0 /*(double)baseBeg*/,
+    halfDuration = stf::t_half(cur().get(), reference, ampl, (double)0 /*(double)baseBeg*/,
             (double)cur().size()-1 /*(double)peakEnd*/,maxT, t50LeftIndex,t50RightIndex,t50LeftReal);
 
     t50RightReal=t50LeftReal+halfDuration;
     halfDuration/=GetSR();
-    t50Y=0.5*ampl + base;
+    t50Y=0.5*ampl + reference;
 
     //Calculate the beginning of the event by linear extrapolation:
     if (latencyEndMode==stf::footMode) {
@@ -509,7 +517,7 @@ void Recording::Measure( )
 
     //Begin Ratio of slopes rise/decay calculation
     //--------------------------------------------
-    double left_rise=peakBeg>t0Real-1 ? peakBeg : t0Real-1;
+    double left_rise = (peakBeg > t0Real-1 || !fromBase) ? peakBeg : t0Real-1;
     maxRise=stf::maxRise(cur().get(),left_rise,maxT,maxRiseT,maxRiseY);
     double t_half_3=t50RightIndex+2.0*(t50RightIndex-t50LeftIndex);
     double right_decay=peakEnd<=t_half_3 ? peakEnd : t_half_3+1;
@@ -677,6 +685,7 @@ stf::Table Recording::CurResultsTable() const {
     if (viewCrosshair) n_cols++;
     if (viewBaseline) n_cols++;
     if (viewBaseSD) n_cols++;
+    if (viewThreshold) n_cols++;
     if (viewPeakzero) n_cols++;
     if (viewPeakbase) n_cols++;
     if (viewPeakthreshold) n_cols++;
@@ -700,6 +709,7 @@ stf::Table Recording::CurResultsTable() const {
     if (viewCrosshair) table.SetColLabel(nCol++, wxT("Crosshair"));
     if (viewBaseline) table.SetColLabel(nCol++,wxT("Baseline"));
     if (viewBaseSD) table.SetColLabel(nCol++,wxT("Base SD"));
+    if (viewThreshold) table.SetColLabel(nCol++,wxT("Threshold"));
     if (viewPeakzero) table.SetColLabel(nCol++,wxT("Peak (from 0)"));
     if (viewPeakbase) table.SetColLabel(nCol++,wxT("Peak (from base)"));
     if (viewPeakthreshold) table.SetColLabel(nCol++,wxT("Peak (from threshold)"));
@@ -742,6 +752,16 @@ stf::Table Recording::CurResultsTable() const {
         nCol++;
     }
 
+    // threshold
+    if (viewThreshold) {
+        table.at(0,nCol)=GetThreshold();
+        if (viewCursors) {
+            table.at(1,nCol)=GetPeakBeg()*GetXScale();
+            table.at(2,nCol)=GetPeakEnd()*GetXScale();
+        }
+        nCol++;
+    }
+    
     // peak
     if (viewPeakzero) {
         table.at(0,nCol)=GetPeak();
@@ -751,6 +771,7 @@ stf::Table Recording::CurResultsTable() const {
         }
         nCol++;
     }
+
     if (viewPeakbase) {
         table.at(0,nCol)=GetPeak()-GetBase();
         if (viewCursors) {

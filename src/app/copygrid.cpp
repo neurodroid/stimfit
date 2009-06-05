@@ -41,9 +41,11 @@ BEGIN_EVENT_TABLE(wxStfGrid, wxGrid)
 	EVT_MENU(wxID_COPYINTABLE,wxStfGrid::Copy)
 	EVT_MENU(wxID_VIEW_MEASURE,wxStfGrid::ViewCrosshair)
 	EVT_MENU(wxID_VIEW_BASELINE,wxStfGrid::ViewBaseline)
-	EVT_MENU(wxID_VIEW_BASESD,wxStfGrid::ViewBaseSD)
+        EVT_MENU(wxID_VIEW_BASESD,wxStfGrid::ViewBaseSD)
+        EVT_MENU(wxID_VIEW_THRESHOLD,wxStfGrid::ViewThreshold)
 	EVT_MENU(wxID_VIEW_PEAKZERO,wxStfGrid::ViewPeakzero)
 	EVT_MENU(wxID_VIEW_PEAKBASE,wxStfGrid::ViewPeakbase)
+	EVT_MENU(wxID_VIEW_PEAKTHRESHOLD,wxStfGrid::ViewPeakthreshold)
 	EVT_MENU(wxID_VIEW_RT2080,wxStfGrid::ViewRT2080)
 	EVT_MENU(wxID_VIEW_T50,wxStfGrid::ViewT50)
 	EVT_MENU(wxID_VIEW_RD,wxStfGrid::ViewRD)
@@ -73,8 +75,10 @@ wxStfGrid::wxStfGrid(
 	m_labelContext->AppendCheckItem(wxID_VIEW_MEASURE,wxT("Crosshair"));
 	m_labelContext->AppendCheckItem(wxID_VIEW_BASELINE,wxT("Baseline"));
 	m_labelContext->AppendCheckItem(wxID_VIEW_BASESD,wxT("Base SD"));
+	m_labelContext->AppendCheckItem(wxID_VIEW_THRESHOLD,wxT("Threshold"));
 	m_labelContext->AppendCheckItem(wxID_VIEW_PEAKZERO,wxT("Peak (from 0)"));
 	m_labelContext->AppendCheckItem(wxID_VIEW_PEAKBASE,wxT("Peak (from base)"));
+	m_labelContext->AppendCheckItem(wxID_VIEW_PEAKTHRESHOLD,wxT("Peak (from threshold)"));
 	m_labelContext->AppendCheckItem(wxID_VIEW_RT2080,wxT("RT (20-80%)"));
 	m_labelContext->AppendCheckItem(wxID_VIEW_T50,wxT("t50"));
 	m_labelContext->AppendCheckItem(wxID_VIEW_RD,wxT("Rise/Decay"));
@@ -137,8 +141,10 @@ void wxStfGrid::OnLabelRClick(wxGridEvent& event) {
 	m_labelContext->Check(wxID_VIEW_MEASURE,wxGetApp().GetActiveDoc()->GetViewCrosshair());
 	m_labelContext->Check(wxID_VIEW_BASELINE,wxGetApp().GetActiveDoc()->GetViewBaseline());
 	m_labelContext->Check(wxID_VIEW_BASESD,wxGetApp().GetActiveDoc()->GetViewBaseSD());
+	m_labelContext->Check(wxID_VIEW_THRESHOLD,wxGetApp().GetActiveDoc()->GetViewThreshold());
 	m_labelContext->Check(wxID_VIEW_PEAKZERO,wxGetApp().GetActiveDoc()->GetViewPeakZero());
 	m_labelContext->Check(wxID_VIEW_PEAKBASE,wxGetApp().GetActiveDoc()->GetViewPeakBase());
+	m_labelContext->Check(wxID_VIEW_PEAKTHRESHOLD,wxGetApp().GetActiveDoc()->GetViewPeakThreshold());
 	m_labelContext->Check(wxID_VIEW_RT2080,wxGetApp().GetActiveDoc()->GetViewRT2080());
 	m_labelContext->Check(wxID_VIEW_T50,wxGetApp().GetActiveDoc()->GetViewT50());
 	m_labelContext->Check(wxID_VIEW_RD,wxGetApp().GetActiveDoc()->GetViewRD());
@@ -172,8 +178,10 @@ void wxStfGrid::ViewResults() {
 	m_labelContext->Check(wxID_VIEW_MEASURE,wxGetApp().GetActiveDoc()->GetViewCrosshair());
 	m_labelContext->Check(wxID_VIEW_BASELINE,wxGetApp().GetActiveDoc()->GetViewBaseline());
 	m_labelContext->Check(wxID_VIEW_BASESD,wxGetApp().GetActiveDoc()->GetViewBaseSD());
+	m_labelContext->Check(wxID_VIEW_THRESHOLD,wxGetApp().GetActiveDoc()->GetViewThreshold());
 	m_labelContext->Check(wxID_VIEW_PEAKZERO,wxGetApp().GetActiveDoc()->GetViewPeakZero());
 	m_labelContext->Check(wxID_VIEW_PEAKBASE,wxGetApp().GetActiveDoc()->GetViewPeakBase());
+	m_labelContext->Check(wxID_VIEW_PEAKTHRESHOLD,wxGetApp().GetActiveDoc()->GetViewPeakThreshold());
 	m_labelContext->Check(wxID_VIEW_RT2080,wxGetApp().GetActiveDoc()->GetViewRT2080());
 	m_labelContext->Check(wxID_VIEW_T50,wxGetApp().GetActiveDoc()->GetViewT50());
 	m_labelContext->Check(wxID_VIEW_RD,wxGetApp().GetActiveDoc()->GetViewRD());
@@ -203,6 +211,12 @@ void wxStfGrid::ViewBaseSD(wxCommandEvent& event) {
 	SetCheckmark(wxT("ViewBaseSD"),wxID_VIEW_BASESD);
 }
 
+void wxStfGrid::ViewThreshold(wxCommandEvent& event) {
+	event.Skip();
+	wxGetApp().GetActiveDoc()->SetViewThreshold(m_labelContext->IsChecked(wxID_VIEW_THRESHOLD));
+	SetCheckmark(wxT("ViewThreshold"),wxID_VIEW_THRESHOLD);
+}
+
 void wxStfGrid::ViewPeakzero(wxCommandEvent& event) {
 	event.Skip();
 	wxGetApp().GetActiveDoc()->SetViewPeakZero(m_labelContext->IsChecked(wxID_VIEW_PEAKZERO));
@@ -213,6 +227,12 @@ void wxStfGrid::ViewPeakbase(wxCommandEvent& event) {
 	event.Skip();
 	wxGetApp().GetActiveDoc()->SetViewPeakBase(m_labelContext->IsChecked(wxID_VIEW_PEAKBASE));
 	SetCheckmark(wxT("ViewPeakbase"),wxID_VIEW_PEAKBASE);
+}
+
+void wxStfGrid::ViewPeakthreshold(wxCommandEvent& event) {
+	event.Skip();
+	wxGetApp().GetActiveDoc()->SetViewPeakThreshold(m_labelContext->IsChecked(wxID_VIEW_PEAKTHRESHOLD));
+	SetCheckmark(wxT("ViewPeakthreshold"),wxID_VIEW_PEAKTHRESHOLD);
 }
 
 void wxStfGrid::ViewRT2080(wxCommandEvent& event) {

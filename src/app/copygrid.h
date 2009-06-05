@@ -68,8 +68,10 @@ private:
     void ViewCrosshair(wxCommandEvent& event);
     void ViewBaseline(wxCommandEvent& event);
     void ViewBaseSD(wxCommandEvent& event);
+    void ViewThreshold(wxCommandEvent& event);
     void ViewPeakzero(wxCommandEvent& event);
     void ViewPeakbase(wxCommandEvent& event);
+    void ViewPeakthreshold(wxCommandEvent& event);
     void ViewRT2080(wxCommandEvent& event);
     void ViewT50(wxCommandEvent& event);
     void ViewRD(wxCommandEvent& event);

@@ -347,6 +347,11 @@ class StfDll Recording {
     /*! \return The current direction of peak calculations.
      */
     stf::direction GetDirection() const { return direction; }
+    
+    //! Indicates whether to use the baseline as a reference for AP kinetics.
+    /*! \return true if the baseline should be used, false if the threshold should be used.
+     */
+    bool GetFromBase() const { return fromBase; }
 
     //! Indicates whether the measurement cursor (crosshair) value should be shown in the results table.
     /*! \return true if it should be shown, false otherwise.
@@ -362,6 +367,11 @@ class StfDll Recording {
     /*! \return true if it should be shown, false otherwise.
      */
     bool GetViewBaseSD() const { return viewBaseSD; }
+
+    //! Indicates whether the threshold should be shown in the results table.
+    /*! \return true if it should be shown, false otherwise.
+     */
+    bool GetViewThreshold() const { return viewThreshold; }
 
     //! Indicates whether the peak value (measured from zero) should be shown in the results table.
     /*! \return true if it should be shown, false otherwise.
@@ -644,6 +654,11 @@ class StfDll Recording {
      */
     void SetDirection(stf::direction value) { direction=value; }
 
+    //! Sets the reference for AP kinetics measurements.
+    /*! \param frombase true if the baseline should be used, false if the threshold should be used.
+     */
+    void SetFromBase(bool frombase) { fromBase = frombase; }
+    
     //! Determines whether the measurement cursor (crosshair) value should be shown in the results table.
     /*! \param value Set to true if it should be shown, false otherwise.
      */
@@ -658,6 +673,11 @@ class StfDll Recording {
     /*! \param value Set to true if it should be shown, false otherwise.
      */
     void SetViewBaseSD(bool value) { viewBaseSD=value; }
+
+    //! Determines whether the threshold should be shown in the results table.
+    /*! \param value Set to true if it should be shown, false otherwise.
+     */
+    void SetViewThreshold(bool value) { viewThreshold=value; }
 
     //! Determines whether the peak value (measured from zero) should be shown in the results table.
     /*! \param value Set to true if it should be shown, false otherwise.
@@ -840,7 +860,7 @@ class StfDll Recording {
 
     std::vector<Channel> ChannelArray;
 
-    bool viewCrosshair,viewBaseline,viewBaseSD,viewPeakzero,viewPeakbase,viewPeakthreshold, viewRT2080,
+    bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold, viewRT2080,
         viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,viewCursors;
 
     XZoom zoom;

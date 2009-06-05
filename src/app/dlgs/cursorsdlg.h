@@ -150,11 +150,21 @@ public:
      */
     stf::direction GetDirection() const;
 
+    //! Indicates whether to use the baseline as a reference for AP kinetics.
+    /*! \return true if the baseline should be used, false if the threshold should be used.
+     */
+    bool GetFromBase() const;
+    
     //! Sets the direction of peak calculations.
-    /*! \return The new direction of peak calculations.
+    /*! \param direction The new direction of peak calculations.
      */
     void SetDirection(stf::direction direction);
 
+    //! Sets the reference for AP kinetics measurements.
+    /*! \param frombase true if the baseline should be used, false if the threshold should be used.
+     */
+    void SetFromBase(bool frombase);
+    
     //! Indicates whether the right peak cursor should always be at the end of the trace.
     /*! \return true if the peak cursor should always be at the end of the trace.
      */
@@ -177,6 +187,11 @@ public:
     /*! \return The slope at which the baseline should be fixed.
      */
     double GetSlope() const;
+
+    //! Set the threshold slope.
+    /*! \param slope The new threshold slope.
+     */
+    void SetSlope( double slope );
 
     //! Set the units of the slope.
     /*! \param units The units of the slope.

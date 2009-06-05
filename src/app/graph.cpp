@@ -477,8 +477,13 @@ void wxStfGraph::OnDraw( wxDC& DC )
             DC.SetPen(rtPen);
         else
             DC.SetPen(rtPrintPen);
-        DrawCircle(&DC,Doc()->GetT20Real(),0.8*Doc()->GetBase()+0.2*Doc()->GetPeak());
-        DrawCircle(&DC,Doc()->GetT80Real(),0.2*Doc()->GetBase()+0.8*Doc()->GetPeak());
+
+        double reference = Doc()->GetBase();
+        if ( !Doc()->GetFromBase() && Doc()->GetThrT() >= 0 ) {
+            reference = Doc()->GetThreshold();
+        }
+        DrawCircle(&DC,Doc()->GetT20Real(),0.8*reference+0.2*Doc()->GetPeak());
+        DrawCircle(&DC,Doc()->GetT80Real(),0.2*reference+0.8*Doc()->GetPeak());
 
         //draws circles around the half duration limits
         if (!isPrinted)

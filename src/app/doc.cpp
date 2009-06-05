@@ -247,6 +247,7 @@ void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const w
         UpdateMenuCheckmarks();
         //Get value of the peak direction dialog box
         SetDirection( Sender->GetDirection() );
+        SetFromBase( Sender->GetFromBase() );
         CheckBoundaries();
     } else {
         if (InitCursors()!=wxID_OK) {
@@ -308,6 +309,7 @@ int wxStfDoc::InitCursors() {
     case 2: SetDirection(stf::both); break;
     default: SetDirection(stf::undefined_direction);
     }
+    SetFromBase( wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FromBase"),1) );
     SetFitBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FitBegin"), 10));
     SetFitEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FitEnd"), 100));
     SetLatencyBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyStartCursor"), 0));	/*CSH*/
@@ -412,6 +414,7 @@ void wxStfDoc::PostInit() {
     SetViewCrosshair(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewCrosshair"),1)==1);
     SetViewBaseline(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewBaseline"),1)==1);
     SetViewBaseSD(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewBaseSD"),1)==1);
+    SetViewThreshold(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewThreshold"),1)==1);
     SetViewPeakZero(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPeakzero"),1)==1);
     SetViewPeakBase(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPeakbase"),1)==1);
     SetViewPeakThreshold(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPeakthreshold"),1)==1);
@@ -1132,17 +1135,23 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
     if (SaveYtDialog.ShowModal()!=wxID_OK) return;
     std::vector<wxString> colTitles;
     //Write the header of the SaveYt file in a string
-    if (SaveYtDialog.PrintAmp()) {
-        colTitles.push_back(wxT("Amplitude"));
-    }
     if (SaveYtDialog.PrintBase()) {
         colTitles.push_back(wxT("Base"));
     }
     if (SaveYtDialog.PrintBaseSD()) {
         colTitles.push_back(wxT("Base SD"));
     }
-    if (SaveYtDialog.PrintPeak()) {
-        colTitles.push_back(wxT("Peak"));
+    if (SaveYtDialog.PrintThreshold()) {
+        colTitles.push_back(wxT("Threshold"));
+    }
+    if (SaveYtDialog.PrintPeakZero()) {
+        colTitles.push_back(wxT("Peak (from 0)"));
+    }
+    if (SaveYtDialog.PrintPeakBase()) {
+        colTitles.push_back(wxT("Peak (from baseline)"));
+    }
+    if (SaveYtDialog.PrintPeakThreshold()) {
+        colTitles.push_back(wxT("Peak (from threshold)"));
     }
     if (SaveYtDialog.PrintRT2080()) {
         colTitles.push_back(wxT("RT 20-80%"));
@@ -1291,14 +1300,18 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         //Write the variables of the current channel in a string
         try {
             table.SetRowLabel(n_s,cur().GetSectionDescription());
-            if (SaveYtDialog.PrintAmp())
-                table.at(n_s,nCol++)=GetPeak()-GetBase();
             if (SaveYtDialog.PrintBase())
                 table.at(n_s,nCol++)=GetBase();
             if (SaveYtDialog.PrintBaseSD())
                 table.at(n_s,nCol++)=GetBaseSD();
-            if (SaveYtDialog.PrintPeak())
+            if (SaveYtDialog.PrintThreshold())
+                table.at(n_s,nCol++)=GetThreshold();
+            if (SaveYtDialog.PrintPeakZero())
                 table.at(n_s,nCol++)=GetPeak();
+            if (SaveYtDialog.PrintPeakBase())
+                table.at(n_s,nCol++)=GetPeak()-GetBase();
+            if (SaveYtDialog.PrintPeakThreshold())
+                table.at(n_s,nCol++)=GetPeak()-GetThreshold();
             if (SaveYtDialog.PrintRT2080())
                 table.at(n_s,nCol++)=GetRT2080();
             if (SaveYtDialog.PrintT50())

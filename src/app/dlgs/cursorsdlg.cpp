@@ -32,6 +32,7 @@ enum {
     wxDIRECTION,
     wxSLOPE,
     wxSLOPEUNITS,
+    wxREFERENCE,
     wxSTARTFITATPEAK,
     wxID_STARTFITATPEAK,
     wxIDNOTEBOOK
@@ -153,7 +154,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     peakSettingsGrid=new wxFlexGridSizer(1,3,0,0);
     wxStaticBoxSizer* peakPointsSizer = new wxStaticBoxSizer(
             wxVERTICAL, nbPage, wxT("Number of points for peak") );
-    // Direction of peak calculation:
+    // Number of points for peak calculation:
     wxRadioButton* pAllPoints = new wxRadioButton( nbPage, wxRADIOALL,
             wxT("All points within peak window"), wxDefaultPosition,
             wxDefaultSize, wxRB_GROUP );
@@ -179,6 +180,8 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     peakSettingsGrid->Add( pDirection, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
     pageSizer->Add(peakSettingsGrid, 0, wxALIGN_CENTER | wxALL, 2);
     
+    wxFlexGridSizer* slopeSettingsGrid = new wxFlexGridSizer(1,2,0,0);
+    
     // Threshold slope
     wxStaticBoxSizer* slopeSizer =
         new wxStaticBoxSizer( wxVERTICAL, nbPage, wxT("Threshold slope") );
@@ -194,8 +197,18 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
             wxDefaultPosition, wxDefaultSize, wxTE_LEFT );
     slopeGrid->Add( pSlopeUnits, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
     slopeSizer->Add( slopeGrid, 0, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
-
-    pageSizer->Add( slopeSizer, 0, wxALIGN_CENTER | wxALL, 2 );
+    slopeSettingsGrid->Add( slopeSizer, 0, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    
+    // Ap kinetics reference
+    wxString referenceChoices[] = { wxT("From baseline"), wxT("From threshold") };
+    int referenceNChoices = sizeof( referenceChoices ) / sizeof( wxString );
+    wxRadioBox* pReference = new wxRadioBox( nbPage, wxREFERENCE, wxT("Measure AP kinetics:"),
+            wxDefaultPosition, wxDefaultSize, referenceNChoices, referenceChoices,
+            0, wxRA_SPECIFY_ROWS );
+    pReference->SetSelection(0);
+    slopeSettingsGrid->Add( pReference, 0, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    
+    pageSizer->Add( slopeSettingsGrid, 0, wxALIGN_CENTER | wxALL, 2 );
 
     pageSizer->SetSizeHints(nbPage);
     nbPage->SetSizer( pageSizer );
@@ -424,6 +437,32 @@ void wxStfCursorsDlg::SetDirection(stf::direction direction) {
     }
 }
 
+bool wxStfCursorsDlg::GetFromBase() const {
+    wxRadioBox* pReference = (wxRadioBox*)FindWindow(wxREFERENCE);
+    if (pReference == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::GetFromBase()"));
+        return true;
+    }
+    switch (pReference->GetSelection()) {
+     case 0: return true;
+     case 1: return false;
+     default: return true;
+    }
+}
+
+void wxStfCursorsDlg::SetFromBase(bool fromBase) {
+    wxRadioBox* pReference = (wxRadioBox*)FindWindow(wxREFERENCE);
+    if (pReference == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::SetFromBase()"));
+        return;
+    }
+    if (fromBase) {
+        pReference->SetSelection(0);
+    } else {
+        pReference->SetSelection(1);
+    }
+}
+
 bool wxStfCursorsDlg::GetPeakAtEnd() const
 {	//Check if 'Upper limit at end of trace' is selected
     wxCheckBox* pPeakAtEnd = (wxCheckBox*)FindWindow(wxPEAKATEND);
@@ -575,6 +614,7 @@ void wxStfCursorsDlg::UpdateCursors() {
         // Update the mean peak points and direction:
         SetPeakPoints( actDoc->GetPM() );
         SetDirection( actDoc->GetDirection() );
+        SetFromBase( actDoc->GetFromBase() );
         break;
     case stf::base_cursor: // Base
         iNewValue1=(int)actDoc->GetBaseBeg();
@@ -619,12 +659,7 @@ void wxStfCursorsDlg::UpdateCursors() {
         pText2->SetValue( strNewValue2 );
     }
     
-    wxTextCtrl* pSlope = (wxTextCtrl*)FindWindow(wxSLOPE);
-    double fSlope = actDoc->GetSlopeForThreshold();
-    wxString wxsSlope;
-    wxsSlope << fSlope;
-    if ( pSlope != NULL )
-        pSlope->SetValue( wxsSlope );
+    SetSlope( actDoc->GetSlopeForThreshold() );
     
     wxString slopeUnits;
     slopeUnits += actDoc->at(actDoc->GetCurCh()).GetYUnits();
@@ -656,6 +691,14 @@ double wxStfCursorsDlg::GetSlope() const {
     entry << pSlope->GetValue();
     entry.ToDouble( &f );
     return f;
+}
+
+void wxStfCursorsDlg::SetSlope( double fSlope ) {
+    wxTextCtrl* pSlope = (wxTextCtrl*)FindWindow(wxSLOPE);
+    wxString wxsSlope;
+    wxsSlope << fSlope;
+    if ( pSlope != NULL )
+        pSlope->SetValue( wxsSlope );
 }
 
 void wxStfCursorsDlg::SetSlopeUnits(const wxString& units) {
