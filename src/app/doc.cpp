@@ -113,6 +113,9 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
         wxGetApp().ErrorMsg( msg );
         return false;
     }
+	// Store directory: 
+	wxFileName wxfFilename( filename );
+	wxGetApp().wxWriteProfileString( wxT("Settings"), wxT("Last directory"), wxfFilename.GetPath() );
     if (wxDocument::OnOpenDocument(filename)) { //calls base class function
         // Detect type of file according to filter:
         wxString filter(GetDocumentTemplate()->GetFileFilter());
@@ -341,19 +344,21 @@ int wxStfDoc::InitCursors() {
 void wxStfDoc::UpdateMenuCheckmarks() {
     // get menu bar:
     wxStfChildFrame *pChildFrame = (wxStfChildFrame*)GetDocumentWindow();
-    wxMenuBar *pBar=pChildFrame->GetMenuBar();
+	if (pChildFrame) {
+        wxMenuBar *pBar=pChildFrame->GetMenuBar();
 
-    if (pBar!=NULL) {
-        pBar->FindItem(wxID_LATENCYSTART_MAXSLOPE)->Check(GetLatencyStartMode()==stf::riseMode);
-        pBar->FindItem(wxID_LATENCYSTART_HALFRISE)->Check(GetLatencyStartMode()==stf::halfMode);
-        pBar->FindItem(wxID_LATENCYSTART_PEAK)->Check(GetLatencyStartMode()==stf::peakMode);
-        pBar->FindItem(wxID_LATENCYSTART_MANUAL)->Check(GetLatencyStartMode()==stf::manualMode);
-        pBar->FindItem(wxID_LATENCYEND_FOOT)->Check(GetLatencyEndMode()==stf::footMode);
-        pBar->FindItem(wxID_LATENCYEND_MAXSLOPE)->Check(GetLatencyEndMode()==stf::riseMode);
-        pBar->FindItem(wxID_LATENCYEND_HALFRISE)->Check(GetLatencyEndMode()==stf::halfMode);
-        pBar->FindItem(wxID_LATENCYEND_PEAK)->Check(GetLatencyEndMode()==stf::peakMode);
-        pBar->FindItem(wxID_LATENCYEND_MANUAL)->Check(GetLatencyEndMode()==stf::manualMode);
-        pBar->FindItem(wxID_LATENCYWINDOW)->Check(GetLatencyWindowMode()==stf::windowMode);
+        if (pBar) {
+            pBar->FindItem(wxID_LATENCYSTART_MAXSLOPE)->Check(GetLatencyStartMode()==stf::riseMode);
+            pBar->FindItem(wxID_LATENCYSTART_HALFRISE)->Check(GetLatencyStartMode()==stf::halfMode);
+            pBar->FindItem(wxID_LATENCYSTART_PEAK)->Check(GetLatencyStartMode()==stf::peakMode);
+            pBar->FindItem(wxID_LATENCYSTART_MANUAL)->Check(GetLatencyStartMode()==stf::manualMode);
+            pBar->FindItem(wxID_LATENCYEND_FOOT)->Check(GetLatencyEndMode()==stf::footMode);
+            pBar->FindItem(wxID_LATENCYEND_MAXSLOPE)->Check(GetLatencyEndMode()==stf::riseMode);
+            pBar->FindItem(wxID_LATENCYEND_HALFRISE)->Check(GetLatencyEndMode()==stf::halfMode);
+            pBar->FindItem(wxID_LATENCYEND_PEAK)->Check(GetLatencyEndMode()==stf::peakMode);
+            pBar->FindItem(wxID_LATENCYEND_MANUAL)->Check(GetLatencyEndMode()==stf::manualMode);
+            pBar->FindItem(wxID_LATENCYWINDOW)->Check(GetLatencyWindowMode()==stf::windowMode);
+	    }
     }
 }
 
@@ -1543,7 +1548,9 @@ void wxStfDoc::Deleteselected(wxCommandEvent &WXUNUSED(event)) {
 void wxStfDoc::Focus() {
     // refresh the view once we are through:
     wxStfView* pView=(wxStfView*)GetFirstView();
-    pView->GetGraph()->SetFocus();
+	if (pView != NULL && pView->GetGraph() != NULL) {
+        pView->GetGraph()->SetFocus();
+	}
 }
 
 void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {

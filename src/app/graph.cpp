@@ -1439,114 +1439,114 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
     case WXK_LEFT:	//left cursor
         if (event.ControlDown()) {
             OnLeft();
-            break;
+            return;
         }
         if (event.ShiftDown()) {
             SPXW() = SPX()-WindowRect.width;
             Refresh();
-            break;
+            return;
         }
         OnPrevious();
-        break;
+        return;
     case WXK_RIGHT:	{//right cursor
         if (event.ControlDown()) {
             OnRight();
-            break;
+            return;
         }
         if (event.ShiftDown()) {
             SPXW() = SPX()+WindowRect.width;
             Refresh();
-            break;
+            return;
         }
         OnNext();
-        break;
+        return;
     }
     case WXK_DOWN:   //down cursor
         OnDown();
-        break;
+        return;
      case WXK_UP:     //up cursor
         OnUp();
-        break;
+        return;
      case 49: //1
          ParentFrame()->SetZoomQual(stf::zoomch1);
          //Child()->SetActiveWindow();
-         break;
+         return;
      case 50:  //2
          if (Doc()->size()>1)
              ParentFrame()->SetZoomQual(stf::zoomch2);
          //Child()->SetActiveWindow();
-         break;
+         return;
      case 51: //3
          if (Doc()->size()>1)
              ParentFrame()->SetZoomQual(stf::zoomboth);
          //Child()->SetActiveWindow();
-         break;
+         return;
      case 69: // e
      case 101:
          ParentFrame()->SetMouseQual(stf::event_cursor);
          //Child()->SetActiveWindow();
-         break;
+         return;
      case 70:
      case 102: // f
          Fittowindow(true);
          //Child()->SetActiveWindow();
-         break;
+         return;
      case 77:  // m
      case 109:
          ParentFrame()->SetMouseQual(stf::measure_cursor);
          //Child()->SetActiveWindow();
-         break;
+         return;
      case 80: // p
      case 112:
          ParentFrame()->SetMouseQual(stf::peak_cursor);
          //Child()->SetActiveWindow();
-         break;
+         return;
      case 65: // 'a'
      case 97:
          // Select all traces:
          if (event.ControlDown()) {
              wxCommandEvent com;
              Doc()->Selectall(com);
-             break;
+             return;
          }
-         break;
+         return;
      case 66:  // b
      case 98:
          ParentFrame()->SetMouseQual(stf::base_cursor);
          //Child()->SetActiveWindow();
-         break;
+         return;
      case 68:  // d
      case 100:
          ParentFrame()->SetMouseQual(stf::decay_cursor);
          //Child()->SetActiveWindow();
-         break;
+         return;
      case 90:  // z
      case 122:
          ParentFrame()->SetMouseQual(stf::zoom_cursor);
          //Child()->SetActiveWindow();
-         break;
+         return;
      case 76:  // l
      case 108:
          ParentFrame()->SetMouseQual(stf::latency_cursor);
          //Child()->SetActiveWindow();
-         break;
+         return;
      case WXK_RETURN:    //Enter or Return
      {
          wxGetApp().OnPeakcalcexecMsg();
          pFrame->UpdateResults();
-         break;
+         return;
      }
      case 83: // Invalidate();//s
      case 115: {
          wxCommandEvent wce;
          Doc()->OnSelect(wce);
-         break;
+         return;
      }
      case 82: // Invalidate();//r
      case 114: {
          wxCommandEvent wce;
          Doc()->OnRemove(wce);
-         break;
+         return;
      }
     }
 
@@ -1556,17 +1556,17 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
     case '+':
         if (event.ControlDown()) {
             OnXenllo();
-            break;
+            return;
         }
         OnYenllo();
-        break;
+        return;
     case '-':
         if (event.ControlDown()) {
             OnXshrinklo();
-            break;
+            return;
         }
         OnYshrinklo();
-        break;
+        return;
     }
 }
 

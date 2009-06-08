@@ -218,7 +218,7 @@ BOOL CABF2ProtocolReader::Read( int* pnError )
 BOOL CABF2ProtocolReader::GetString( UINT uIndex, LPSTR pszText, UINT uBufSize )
 {
     MEMBERASSERT();
-    LPSZASSERT( pszText );
+    // LPSZASSERT( pszText );
     WARRAYASSERT( pszText, uBufSize );
    
     ABFU_SetABFString( pszText, "", uBufSize );

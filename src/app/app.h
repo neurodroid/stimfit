@@ -356,7 +356,7 @@ public:
     void OnCloseDocument();
 
     //! Closes all documents
-    bool CloseAll() { return m_docManager->CloseDocuments(); }
+    bool CloseAll() { return GetDocManager()->CloseDocuments(); }
 
     //! Opens a series of files. Optionally, files can be put into a single window.
     /*! \param fNameArray An array of file names to be opened.
@@ -373,7 +373,7 @@ public:
     //! Returns the number of currently opened documents.
     /*! \return The number of currently opened documents.
      */
-    int GetDocCount() const { return (int)m_docManager->GetDocuments().GetCount(); }
+    int GetDocCount() { return (int)GetDocManager()->GetDocuments().GetCount(); }
 
     //! Determine whether scale bars or coordinates should be shown.
     /*! \param value Set to true for scale bars, false for coordinates.
@@ -409,10 +409,8 @@ public:
     //! Access the document manager
     /*! \return A pointer to the document manager.
      */
-    wxDocManager* GetDocManager() { return m_docManager.get(); }
+    wxDocManager* GetDocManager() const { return wxDocManager::GetDocumentManager(); }
 protected:
-    //! Pointer to the document manager.
-    boost::shared_ptr< wxDocManager > m_docManager;
 
 private:
     void OnCursorSettings( wxCommandEvent& event );

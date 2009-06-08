@@ -3,7 +3,7 @@
 ; NSI script for stimfit 
 
 ; This may slightly reduce the executable size, but compression is slower.
-; SetCompressor lzma
+SetCompressor lzma
 
 ;--------------------------------
 ; Use modern interface
@@ -11,9 +11,9 @@
 
 ;--------------------------------
 
-!define PRODUCT_VERSION "0.9.0-rc3"
+!define PRODUCT_VERSION "0.9.0-rc4"
 !define EXE_NAME "stimfit"
-!define REG_NAME "Stimfit"
+!define REG_NAME "Stimfit 0.9"
 !define PRODUCT_PUBLISHER "Christoph Schmidt-Hieber"
 !define PRODUCT_WEB_SITE "http://www.stimfit.org"
 !define STFDIR "C:\Users\cs\stimfit"
@@ -21,10 +21,10 @@
 !define WXWDIR "C:\Users\cs\wxWidgets"
 !define WXPDIR "C:\Users\cs\wxPython"
 !define FULL_WELCOME "This wizard will guide you through the installation \
-of ${REG_NAME} ${PRODUCT_VERSION} and wxPython. You can optionally \
+of ${REG_NAME} and wxPython. You can optionally \
 install Python 2.6.2 and NumPy 1.3.0 \
 if you don't have them on your machine."
-!define UPDATE_WELCOME "This wizard will update an existing installation of \
+!define UPDATE_WELCOME "This wizard will update an existing installation \
 of ${REG_NAME} to version ${PRODUCT_VERSION}."
 ; The name of the installer
 Name "${REG_NAME}"
@@ -155,14 +155,14 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   File "${WXPDIR}\dist\wxPython-2.9.0.0.win32-py2.6.exe"
   File "${WXPDIR}\dist\wxPython-common-2.9.0.0.win32.exe"
   File "${STFDIR}\stimfit_VS03\libfftw3-3.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290uh_core_vc.dll"
-  File "${WXWDIR}\lib\vc_dll\wxbase290uh_vc.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290uh_aui_vc.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290uh_adv_vc.dll"
-  File "${WXWDIR}\lib\vc_dll\wxbase290uh_net_vc.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290uh_html_vc.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290uh_stc_vc.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290uh_stc_vc.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290u_core_vc.dll"
+  File "${WXWDIR}\lib\vc_dll\wxbase290u_vc.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290u_aui_vc.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290u_adv_vc.dll"
+  File "${WXWDIR}\lib\vc_dll\wxbase290u_net_vc.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290u_html_vc.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290u_stc_vc.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290u_stc_vc.dll"
   File "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll"
   File "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
 !endif
@@ -205,12 +205,12 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
     ; Create shortcuts
     CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\${EXE_NAME}.lnk" "$INSTDIR\${EXE_NAME}.exe"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\${REG_NAME}.lnk" "$INSTDIR\${EXE_NAME}.exe"
  
  !insertmacro MUI_STARTMENU_WRITE_END
 
   ; Create desktop link
-  CreateShortCut "$DESKTOP\${EXE_NAME}.lnk" "$INSTDIR\${EXE_NAME}.exe"
+  CreateShortCut "$DESKTOP\${REG_NAME}.lnk" "$INSTDIR\${EXE_NAME}.exe"
  
 !ifndef UPDATE
   ; Install wxPython

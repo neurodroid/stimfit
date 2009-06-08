@@ -257,8 +257,10 @@ void wxStfChildFrame::OnComboTraces(wxCommandEvent& WXUNUSED(event)) {
     indStr << wxT("Zero-based index: ") << GetCurTrace();
     pTraceIndex->SetLabel( indStr );
     wxGetApp().OnPeakcalcexecMsg();
-    pView->GetGraph()->Refresh();
-    pView->GetGraph()->SetFocus();
+	if (pView->GetGraph() != NULL) {
+        pView->GetGraph()->Refresh();
+        pView->GetGraph()->SetFocus();
+	}
 }
 
 void wxStfChildFrame::OnComboActChannel(wxCommandEvent& WXUNUSED(event)) {
@@ -313,22 +315,29 @@ void wxStfChildFrame::UpdateChannels( ) {
             wxGetApp().ErrorMsg( wxT("View is zero in wxStfDoc::SwapChannels"));
             return;
         }
-        pView->GetGraph()->Refresh();
-        pView->GetGraph()->SetFocus();
+		if (pView->GetGraph() != NULL) {
+			pView->GetGraph()->Refresh();
+			pView->GetGraph()->SetFocus();
+		}
     }
 }
 
 void wxStfChildFrame::OnPlotselected(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=(wxStfView*)GetView();
-    pView->GetGraph()->Refresh();
-    pView->GetGraph()->SetFocus();
+	if (pView != NULL && pView->GetGraph()!= NULL) { 
+        pView->GetGraph()->Refresh();
+        pView->GetGraph()->SetFocus();
+	}
 }
 
 void wxStfChildFrame::ActivateGraph() {
        wxStfView* pView=(wxStfView*)GetView();
        // Set the focus somewhere else:
-       m_traceCounter->SetFocus();
-       pView->GetGraph()->SetFocus();
+       if (m_traceCounter != NULL) 
+		   m_traceCounter->SetFocus();
+	   if (pView != NULL && pView->GetGraph()!= NULL) { 
+           pView->GetGraph()->SetFocus();
+	   }
 }
 
 void wxStfChildFrame::ShowTable(const stf::Table &table,const wxString& caption) {
@@ -357,7 +366,9 @@ void wxStfChildFrame::ShowTable(const stf::Table &table,const wxString& caption)
     // "commit" all changes made to wxAuiManager
     m_mgr.Update();
     wxStfView* pView=(wxStfView*)GetView();
-    pView->GetGraph()->SetFocus();
+	if (pView != NULL && pView->GetGraph()!= NULL) { 
+        pView->GetGraph()->SetFocus();
+	}
 }
 
 void wxStfChildFrame::UpdateResults() {

@@ -27,6 +27,7 @@
 #include <wx/evtloop.h>
 #include <wx/init.h>
 #include <wx/datetime.h>
+#include <wx/filename.h>
 
 #ifdef __BORLANDC__
 #pragma hdrstop
@@ -76,10 +77,9 @@
 
 #ifdef _WINDOWS
 extern wxStfApp& wxGetApp();
-wxStfApp& wxGetApp() {
-    return *wx_static_cast( wxStfApp*, wxApp::GetInstance() );
-}
-#else
+wxStfApp& wxGetApp() { return *static_cast<wxStfApp*>(wxApp::GetInstance()); }
+#endif
+#ifndef _WINDOWS
 IMPLEMENT_APP(wxStfApp)
 #endif
 
@@ -157,46 +157,53 @@ bool wxStfApp::OnInit(void)
 
 
     //// Create a document manager
-    m_docManager.reset(new wxDocManager);
+    wxDocManager* docManager = new wxDocManager;
     //// Create a template relating drawing documents to their views
-    m_cfsTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
+    m_cfsTemplate=new wxDocTemplate( docManager,
                                      wxT("CED filing system"), wxT("*.dat;*.cfs"), wxT(""), wxT("dat;cfs"),
                                      wxT("CFS Document"), wxT("CFS View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 
-    m_hdf5Template=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
+    m_hdf5Template=new wxDocTemplate( docManager,
                                       wxT("hdf5 file"), wxT("*.h5"), wxT(""), wxT("h5"),
                                       wxT("HDF5 Document"), wxT("HDF5 View"), CLASSINFO(wxStfDoc),
                                       CLASSINFO(wxStfView) );
 
-    m_abfTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
+    m_abfTemplate=new wxDocTemplate( docManager,
                                      wxT("Axon binary file"), wxT("*.abf"), wxT(""), wxT("abf"),
                                      wxT("ABF Document"), wxT("ABF View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #if defined(__LINUX__) || defined(__WXMAC__)
     ABF_Initialize();
 #endif
-    m_atfTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
+    m_atfTemplate=new wxDocTemplate( docManager,
                                      wxT("Axon text file"), wxT("*.atf"), wxT(""), wxT("atf"),
                                      wxT("ATF Document"), wxT("ATF View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
-    m_axgTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
+    m_axgTemplate=new wxDocTemplate( docManager,
                                      wxT("Axograph binary file"), wxT("*.axgd;*.axgx"), wxT(""), wxT("axgd;axgx"),
                                      wxT("AXG Document"), wxT("AXG View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #if 0
-    m_sonTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
+    m_sonTemplate=new wxDocTemplate( docManager,
                                      wxT("CED Spike 2 (SON) file"), wxT("*.smr"), wxT(""), wxT(""),
                                      wxT("SON Document"), wxT("SON View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #endif
-    m_txtTemplate=new wxDocTemplate( (wxDocManager *)m_docManager.get(),
+    m_txtTemplate=new wxDocTemplate( docManager,
                                      wxT("General text file import"), wxT("*.*"), wxT(""), wxT(""),
                                      wxT("Text Document"), wxT("Text View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 
+	// read last directory from config:
+	wxString lastDir = wxGetProfileString( wxT("Settings"), wxT("Last directory"), wxT("") );
+	if (lastDir == wxT("") || !wxFileName::DirExists( lastDir )) {
+		lastDir = wxFileName::GetCwd();
+	}
+	docManager->SetLastDirectory( lastDir );
+
     //// Create the main frame window
-    frame = new wxStfParentFrame((wxDocManager *) m_docManager.get(), (wxFrame *)NULL,
+    frame = new wxStfParentFrame(docManager, (wxFrame *)NULL,
                                  wxT("Stimfit"), wxDefaultPosition,
 #ifndef __WXMAC__
                                  wxSize(1024, 768),
@@ -222,9 +229,9 @@ bool wxStfApp::OnInit(void)
     m_file_menu->Append(wxID_EXIT, wxT("E&xit\tAlt-X"));
 
     // A nice touch: a history of files visited. Use this menu.
-    m_docManager->FileHistoryLoad( *config );
-    m_docManager->FileHistoryUseMenu(m_file_menu);
-    m_docManager->FileHistoryAddFilesToMenu();
+    GetDocManager()->FileHistoryLoad( *config );
+    GetDocManager()->FileHistoryUseMenu(m_file_menu);
+    GetDocManager()->FileHistoryAddFilesToMenu();
 
     wxMenu *help_menu = new wxMenu;
     help_menu->Append(wxID_HELP, wxT("Online &help\tF1"));
@@ -274,12 +281,12 @@ bool wxStfApp::OnInit(void)
     }
 
     if (!fileToLoad.empty()) {
-        wxDocTemplate* templ=m_docManager->FindTemplateForPath(fileToLoad);
+        wxDocTemplate* templ=GetDocManager()->FindTemplateForPath(fileToLoad);
         wxStfDoc* NewDoc=(wxStfDoc*)templ->CreateDocument(fileToLoad,wxDOC_NEW);
         NewDoc->SetDocumentTemplate(templ);
         if (!NewDoc->OnOpenDocument(fileToLoad)) {
             ErrorMsg(wxT("Couldn't open file, aborting file import"));
-            m_docManager->CloseDocument(NewDoc);
+            GetDocManager()->CloseDocument(NewDoc);
             return false;
         }
     }
@@ -292,7 +299,8 @@ int wxStfApp::OnExit()
 #ifdef WITH_PYTHON
     Exit_wxPython();
 #endif
-    m_docManager->FileHistorySave( *config );
+    GetDocManager()->FileHistorySave( *config );
+    delete wxDocManager::GetDocumentManager();
     return wxApp::OnExit();
 }
 
@@ -441,7 +449,9 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
         wxStfChildFrame* pChild=(wxStfChildFrame*)actView->GetFrame();
         if (pChild != NULL)
             pChild->UpdateResults();
-        actView->GetGraph()->SetFocus();
+        wxStfGraph* pGraph = actView->GetGraph();
+		if (pGraph != NULL) 
+			pGraph->SetFocus();
     }
 }
 
@@ -510,8 +520,8 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     file_menu->Append(wxID_EXIT, wxT("E&xit"));
 
     ((wxStfDoc*)doc)->SetFileMenu( file_menu );
-    m_docManager->FileHistoryUseMenu(file_menu);
-    m_docManager->FileHistoryAddFilesToMenu( file_menu );
+    GetDocManager()->FileHistoryUseMenu(file_menu);
+    GetDocManager()->FileHistoryAddFilesToMenu( file_menu );
 
     wxMenu* m_edit_menu=new wxMenu;
     m_edit_menu->Append(
@@ -752,15 +762,15 @@ wxStfDoc* wxStfApp::NewChild(
 }
 
 wxStfView* wxStfApp::GetActiveView() const {
-    return (wxStfView*)m_docManager->GetCurrentView();
+    return (wxStfView*)GetDocManager()->GetCurrentView();
 }
 
 wxStfDoc* wxStfApp::GetActiveDoc() const {
-    if ( m_docManager == 0) {
+    if ( GetDocManager() == 0) {
         ErrorMsg( wxT("Couldn't access the document manager"));
         return NULL;
     }
-    return (wxStfDoc*)m_docManager->GetCurrentDocument();
+    return (wxStfDoc*)GetDocManager()->GetCurrentDocument();
 }
 
 void wxStfApp::OnCursorSettings( wxCommandEvent& WXUNUSED(event) ) {
@@ -810,7 +820,7 @@ void wxStfApp::OnNewfromselected( wxCommandEvent& WXUNUSED(event) ) {
     // number of selected traces across all open documents:
     std::size_t nwxT=0;
     // Search the document's template list for open documents:
-    wxList docList=m_docManager->GetDocuments();
+    wxList docList=GetDocManager()->GetDocuments();
     if (docList.IsEmpty()) {
         ErrorMsg(wxT("No traces were found"));
         return;
@@ -902,7 +912,7 @@ void wxStfApp::OnNewfromall( wxCommandEvent& WXUNUSED(event) ) {
     std::size_t nwxT=0;
     // minimal number of channels:
     // Search the document's template list for open documents:
-    wxList docList=m_docManager->GetDocuments();
+    wxList docList=GetDocManager()->GetDocuments();
     if (docList.IsEmpty()) {
         ErrorMsg(wxT("No traces were found"));
         return;
@@ -985,7 +995,7 @@ void wxStfApp::OnApplytoall( wxCommandEvent& WXUNUSED(event) ) {
     // which one is active:
 
     // Search the document's template list for open documents:
-    wxList docList=m_docManager->GetDocuments();
+    wxList docList=GetDocManager()->GetDocuments();
     if (docList.IsEmpty()) {
         ErrorMsg(wxT("No traces were found"));
         return;
@@ -1066,18 +1076,18 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
                        progStr
                        );
         if (!singleWindow) {
-            wxDocTemplate* templ=m_docManager->FindTemplateForPath(fNameArray[n_opened]);
+            wxDocTemplate* templ=GetDocManager()->FindTemplateForPath(fNameArray[n_opened]);
             wxStfDoc* NewDoc=(wxStfDoc*)templ->CreateDocument(fNameArray[n_opened],wxDOC_NEW);
             NewDoc->SetDocumentTemplate(templ);
             if (!NewDoc->OnOpenDocument(fNameArray[n_opened++])) {
                 ErrorMsg(wxT("Couldn't open file, aborting file import"));
-                m_docManager->CloseDocument(NewDoc);
+                GetDocManager()->CloseDocument(NewDoc);
                 return false;
             }
         } else {
             // Add to recording first:
             // Find a template:
-            wxDocTemplate* templ=m_docManager->FindTemplateForPath(fNameArray[n_opened]);
+            wxDocTemplate* templ=GetDocManager()->FindTemplateForPath(fNameArray[n_opened]);
             // Use this template only for type recognition:
             wxString filter(templ->GetFileFilter());
             stf::filetype type=
@@ -1138,7 +1148,7 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
 }
 
 bool wxStfApp::OpenFilePy(const wxString& filename) {
-    wxDocTemplate* templ = m_docManager->FindTemplateForPath( filename );
+    wxDocTemplate* templ = GetDocManager()->FindTemplateForPath( filename );
     if ( templ == NULL ) {
         ErrorMsg(wxT("Couldn't open file, aborting file import"));
         return false;
@@ -1151,7 +1161,7 @@ bool wxStfApp::OpenFilePy(const wxString& filename) {
     NewDoc->SetDocumentTemplate(templ);
     if (!NewDoc->OnOpenPyDocument(filename)) {
         ErrorMsg(wxT("Couldn't open file, aborting file import"));
-        m_docManager->CloseDocument(NewDoc);
+        GetDocManager()->CloseDocument(NewDoc);
         return false;
     }
     return true;
@@ -1159,7 +1169,7 @@ bool wxStfApp::OpenFilePy(const wxString& filename) {
 
 void wxStfApp::OnCloseDocument() {
     // count open docs:
-    if (m_docManager->GetDocuments().GetCount()==1) {
+    if (GetDocManager() && GetDocManager()->GetDocuments().GetCount()==1) {
         // Clean up if this was the last document:
         if (CursorsDialog!=NULL) {
             CursorsDialog->Destroy();
@@ -1167,13 +1177,13 @@ void wxStfApp::OnCloseDocument() {
         }
     }
     // Remove menu from file history menu list:
-    // m_docManager->FileHistoryUseMenu(m_file_menu);
-    // m_docManager->FileHistoryAddFilesToMenu();
+    // GetDocManager()->FileHistoryUseMenu(m_file_menu);
+    // GetDocManager()->FileHistoryAddFilesToMenu();
 }
 
 std::vector<Section*> wxStfApp::GetSectionsWithFits() const {
     // Search the document's template list for open documents:
-    wxList docList=m_docManager->GetDocuments();
+    wxList docList=GetDocManager()->GetDocuments();
     if (docList.IsEmpty()) {
         return std::vector<Section*>(0);
     }

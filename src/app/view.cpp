@@ -104,23 +104,18 @@ void wxStfView::OnUpdate(wxView *WXUNUSED(sender), wxObject *WXUNUSED(hint))
 // Clean up windows used for displaying the view.
 bool wxStfView::OnClose(bool deleteWindow)
 {
-    if (!GetDocument()->Close())
+	if ( !GetDocument()->Close() )
         return false;
-
-    wxString s(wxTheApp->GetAppName());
-    if (childFrame)
-        childFrame->SetTitle(s);
-
-    SetFrame((wxFrame*)NULL);
 
     Activate(false);
 
-    if (deleteWindow)
-    {
-        delete childFrame;
-        return true;
-    }
+    if ( deleteWindow )
+        wxDELETE(childFrame);
+
+    SetFrame(NULL);
+
     return true;
+
 }
 
 void wxStfView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView) {
