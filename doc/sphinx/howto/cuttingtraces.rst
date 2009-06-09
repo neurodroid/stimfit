@@ -5,7 +5,7 @@ Cutting traces
 :Author: Jose Guzman
 :Date:  |today|
 
-As described in :doc:`/manual/python` chapter of the :doc:`/manual/index`, a very often requested feature of ``Stimfit`` is to cut an original trace to show it in a presentation or publication. This feature, however, has been only integrated into the stf module, and not in the ``Stimfit`` main menubar. With this, ``Stimfit`` preservers its user interface as clear and user-friendly as possible.
+As described in :doc:`/manual/python` chapter of the :doc:`/manual/index`, a very often requested feature of ``Stimfit`` is to cut an original trace to show it in a presentation or publication. This feature, however, has been only integrated into the stf module, and not in the ``Stimfit`` main menubar. With this, ``Stimfit`` preserves its user interface as clear and user-friendly as possible.
 
 We can use the built-in stf function :func:`stf.new_window()` to show a new stf window with the current trace within an interval. For example, 
 ::
@@ -17,23 +17,23 @@ presents a new window with the current trace between the sampling points 1600 an
 
     >>> stf.get_trace()[1600:3200]
     
-Note that sampling points and time are related as follows.
+Note that the index :math:`i` of a sampling point and the corresponding time :math:`t`, measured from the start of the trace, are related as follows:
 
 .. math::
 
-      {\displaystyle p(i)=\frac{t}{dt}}  
+      {\displaystyle i=\frac{t}{\Delta t}}  
 
-where **dt** can be obtained with the following function:
+where the sampling interval :math:`\Delta t` can be obtained with the following function:
 ::
 
     >>> dt = stf.get_sampling_interval()
 
-Then, if our sampling interval (dt) is 0.05 msec, the points selected correspond to 80 and 160 msec respectively. Alternatively, one could have though about this command:
+Then, if our sampling interval (dt) is 0.05 msec, the points selected correspond to 80 and 160 msec respectively. Alternatively, one could have thought about this command:
 ::
 
-    >>> stf.get_trace()[80/dt,160/dt]
+    >>> stf.get_trace()[80/dt:160/dt]
 
-However this will not work.  Slicing requires integers arguments and not floats (both 80/dt and 160/dt are floats). So we have to transform this ratio to integer. Besides that, the float precision of python will play against us here. If we make dt = stf.get_sampling_interval, we will find that dt = 0.05000000074505806 rather than 0.05. Note that if you do not round up (with ceil) before int(80/dt) you will get one sampling point less that expected.   
+However this will not work.  Slicing requires integers arguments and not floats (both 80/dt and 160/dt are floats). So we have to transform this ratio to integer. Besides that, the float precision of python will play against us here. If we make dt = stf.get_sampling_interval, we will find that dt = 0.05000000074505806 rather than 0.05. Note that if you do not round up (with ceil) before int(80/dt) you will get one sampling point less than expected.   
 
 ::
 
