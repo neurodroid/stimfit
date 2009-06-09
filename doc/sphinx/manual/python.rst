@@ -372,28 +372,30 @@ These functions cut all selected traces at a single sampling point (pt) or at mu
         """Cuts the selected traces at the sampling point pt, 
         and shows the cut traces in a new window.
         Returns True upon success, False upon failure."""
-
+        
         # Check whether anything has been selected:
         if not stf.get_selected_indices():
             return False
+        
         new_list = list()
-    
+        
         for n in stf.get_selected_indices():
             if not stf.set_trace(n): return False
-
-            # Check for out of range:
-            if pt < stf.get_size_trace():
-                new_list.append( stf.get_trace()[:pt] )
-                new_list.append( stf.get_trace()[pt:] )
-            else
-                print "Cutting point", pt, "is out of range"
-    
+                
+        # Check for out of range:
+        if pt < stf.get_size_trace():
+            new_list.append( stf.get_trace()[:pt] )
+            new_list.append( stf.get_trace()[pt:] )
+            
+        else:
+            print "Cutting point", pt, "is out of range"
+        
         # Don't create a new window if everything was out of range
         if len(new_list) > 0: 
             return stf.new_window_list( new_list )
         else:
             return False
-
+            
 For example:
 
 ::
