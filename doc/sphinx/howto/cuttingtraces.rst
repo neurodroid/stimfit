@@ -33,9 +33,7 @@ Then, if our sampling interval (dt) is 0.05 ms, the points selected correspond t
 
     >>> stf.get_trace()[80/dt:160/dt]
 
-However this will not work.  Slicing requires integers as arguments and not floats (both 80/dt and 160/dt are floats). So we have to transform this ratios to integers with int(80/dt) and int(160/dt). Besides that, the float precision of python will play against us here. If we make dt = stf.get_sampling_interval and get a value dt = 0.05000000074505806 (rather than 0.05) then the corresponding values for 80/dt will be 1599.99. The function int() will take only the value without decimal and will take erroneously 1599 in stead of 1600.
-
-Note that you can round up dt (with round(float,ndigits)) or the ratio 80/dt. In any case, always before int() takes the integer part of the real number.  
+However this will not work.  Slicing requires integers as argument and not floats (both 80/dt and 160/dt are floats). So we have to transform this ratios to integers with int(80/dt) and int(160/dt). Besides that, the float precision of python will play against us here. If we make dt = stf.get_sampling_interval and get a value dt = 0.05000000074505806 (rather than 0.05) then the corresponding values for 80/dt will be 1599.99. The function int() will take only the value without decimal and will take erroneously 1599 in stead of 1600. We have to use the python function **round(float,ndigits)** to round up this value.
 
 ::
 
@@ -44,12 +42,14 @@ Note that you can round up dt (with round(float,ndigits)) or the ratio 80/dt. In
     >>> pend =  int(160/dt) # now 160/dt=32.0  before that it was 3199.99
     >>> stf.get_trace()[pstart:pend] # now the slicing withing the integer values
 
+.. note::
+    You can round up dt with **round(dt,ndigits)** or the ratio 80/dt with **round(80/dt,ndigits)** (with *ndigits=2* for example). In any case, do it always before int() takes the integer part of the real number.  
 
 ============================
 The cutting traces  function
 ============================
 
-In the chapter devoted to Python (:doc:`/manual/index`)  in  :doc:`/manual/index` you can find a function to cut a given trace within the sampling points. This function is slightly different. As described above, we would take times and not sampling points as argument. After that, we will take list of traces and not a single trace to cut. This function will use :func:`stf.new_window_list()` which takes a list of 1D-Numpy arrays to present a new stf window.
+In the chapter devoted to Python (:doc:`/manual/python`)  in  :doc:`/manual/index` you can find a function to cut a given trace within the sampling points. This function is slightly different. As described above, we would take times and not sampling points as argument. After that, we will take list of traces and not a single trace to cut. This function will use :func:`stf.new_window_list()` which takes a list of 1D-Numpy arrays to present a new stf window.
 
 ::
     
@@ -104,7 +104,7 @@ In the chapter devoted to Python (:doc:`/manual/index`)  in  :doc:`/manual/index
 Code commented
 **************
 
-We provide some flexibility with the argument *sequence*. If we do not provide any argument to *sequence*, we will select every trace in the channel.
+We provide some flexibility with the argument *sequence*. If we do not give any argument to *sequence*, we will select every trace in the channel with the function :func:`stf.get_size_channel()`, which returns the number of traces in the channel.
 
 ::
 
