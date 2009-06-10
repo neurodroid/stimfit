@@ -38,7 +38,7 @@ However this will not work.  Slicing requires integers as argument and not float
 ::
 
     >>> pstart = int( round(80/dt) ) # now round(80/dt) = 1600.0 instead of 1599.99
-    >>> pend =  int( round(160/dt) ) # now round(160/dt) = 32.0 instead of 3199.99
+    >>> pend =  int( round(160/dt) ) # now round(160/dt) = 3200.0 instead of 3199.99
     >>> stf.get_trace()[pstart:pend] # now the slicing withing the integer values
 
 .. note::
