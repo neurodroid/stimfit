@@ -11,7 +11,7 @@ SetCompressor lzma
 
 ;--------------------------------
 
-!define PRODUCT_VERSION "0.9.0-rc4"
+!define PRODUCT_VERSION "0.9.0-rc5"
 !define EXE_NAME "stimfit"
 !define REG_NAME "Stimfit 0.9"
 !define PRODUCT_PUBLISHER "Christoph Schmidt-Hieber"
@@ -19,7 +19,7 @@ SetCompressor lzma
 !define STFDIR "C:\Users\cs\stimfit"
 !define MSIDIR "C:\Users\cs\Downloads"
 !define WXWDIR "C:\Users\cs\wxWidgets"
-!define WXPDIR "C:\Users\cs\wxPython"
+!define WXPDIR "C:\Users\cs\wxPython\final.build\Python26\Lib\site-packages"
 !define FULL_WELCOME "This wizard will guide you through the installation \
 of ${REG_NAME} and wxPython. You can optionally \
 install Python 2.6.2 and NumPy 1.3.0 \
@@ -152,8 +152,6 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   SetOutPath $INSTDIR
   
 !ifndef UPDATE
-  File "${WXPDIR}\dist\wxPython-2.9.0.0.win32-py2.6.exe"
-  File "${WXPDIR}\dist\wxPython-common-2.9.0.0.win32.exe"
   File "${STFDIR}\stimfit_VS03\libfftw3-3.dll"
   File "${WXWDIR}\lib\vc_dll\wxmsw290u_core_vc.dll"
   File "${WXWDIR}\lib\vc_dll\wxbase290u_vc.dll"
@@ -165,6 +163,7 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   File "${WXWDIR}\lib\vc_dll\wxmsw290u_stc_vc.dll"
   File "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll"
   File "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
+  File /r "${WXPDIR}\wx*"
 !endif
   File "${STFDIR}\stimfit_VS03\stimfit_exe\Release\${EXE_NAME}.exe"
   File "${STFDIR}\stimfit_VS03\stimfit_exe\Release\stimfit.dll"
@@ -177,9 +176,11 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   File "${STFDIR}\src\stfswig\minidemo.py"
   File "${STFDIR}\src\stfswig\charlie.py"
   File "${STFDIR}\src\stfswig\hdf5tools.py"
+  File /r "${STFDIR}\src"
   
   ;Store installation folder
   WriteRegStr HKCU "Software\${REG_NAME}" "" $INSTDIR 
+  WriteRegStr HKCU "Software\${REG_NAME}" "InstallLocation" $INSTDIR 
   WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${REG_NAME}" "UninstallString" '"$INSTDIR\Uninstall.exe"'
   WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${REG_NAME}" "InstallLocation" "$INSTDIR"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${REG_NAME}" "DisplayName" "${REG_NAME}"
@@ -212,15 +213,6 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   ; Create desktop link
   CreateShortCut "$DESKTOP\${REG_NAME}.lnk" "$INSTDIR\${EXE_NAME}.exe"
  
-!ifndef UPDATE
-  ; Install wxPython
-  ExecWait '"$INSTDIR\wxPython-common-2.9.0.0.win32.exe"'
-  ExecWait '"$INSTDIR\wxPython-2.9.0.0.win32-py2.6.exe"'
-
-  ; Remove wxPython installation files
-  Delete "$INSTDIR\wxPython-common-2.9.0.0.win32.exe"
-  Delete "$INSTDIR\wxPython-2.9.0.0.win32-py2.6.exe"
-!endif
 SectionEnd ; end the section
 
 Section "Uninstall"

@@ -47,6 +47,48 @@ wxString GetExecutablePath()
 }
 #endif
 
+#ifdef _WINDOWS
+#include <winreg.h>
+#include <wx/filename.h>
+
+wxString GetExecutablePath() {
+
+    HKEY keyHandle;
+
+    if( RegOpenKeyEx( HKEY_CURRENT_USER, wxT("Software\\Stimfit 0.9"), 0, 
+		              KEY_QUERY_VALUE, &keyHandle) == ERROR_SUCCESS)
+    {
+        DWORD BufferSize = 8192;
+        DWORD cbData = BufferSize;
+        		
+		wxCharTypeBuffer<wxChar> data( BufferSize );
+        DWORD dwRet = RegQueryValueEx( keyHandle, TEXT("InstallLocation"),
+                             NULL, NULL, (LPBYTE) data.data(), &cbData );
+        while( dwRet == ERROR_MORE_DATA )
+        {
+            // Get a buffer that is big enough.
+
+            BufferSize += 4096;
+            data.extend( BufferSize );
+            cbData = BufferSize;
+
+            dwRet = RegQueryValueEx( keyHandle, TEXT("InstallLocation"),
+                                     NULL, NULL, (LPBYTE) data.data(), &cbData );
+        }
+		if( dwRet == ERROR_SUCCESS ) {
+            RegCloseKey(keyHandle);
+	        return wxString( data );
+	    } else {
+	        wxGetApp().ErrorMsg( wxT("Couldn't read registry key for Stimfit") );
+		    return wxT("");
+		}
+	} else {
+	    wxGetApp().ErrorMsg( wxT("Couldn't open registry key for Stimfit") );
+		return wxT("");
+	}
+}
+#endif
+
 bool wxStfApp::Init_wxPython()
 {
     // Initialize Python
@@ -70,7 +112,18 @@ bool wxStfApp::Init_wxPython()
     cwd << wxT("import numpy\n");
     cwd << wxT("print numpy.version.version\n");
 #endif
-    int cwd_result = PyRun_SimpleString(cwd.utf8_str());
+#endif
+#ifdef _WINDOWS
+    // Add the cwd to the present path:
+    wxString app_path = GetExecutablePath();
+    wxString cwd;
+	cwd << wxT("cwd = \"") << app_path.BeforeFirst( wxUniChar('\0') ) 
+		<< wxT("\\wx-2.9.0-msw-unicode\"\nimport sys\nsys.path.insert(0,cwd)\n");
+	cwd << wxT("cwd = \"") << app_path.BeforeFirst( wxUniChar('\0') ) 
+		<< wxT("\"\nimport sys\nsys.path.insert(0,cwd)\n");
+#endif
+#if defined(_WINDOWS) || defined(__WXMAC__)
+	int cwd_result = PyRun_SimpleString(cwd.utf8_str());
     if (cwd_result!=0) {
         PyErr_Print();
         ErrorMsg( wxT("Couldn't modify Python path") );
