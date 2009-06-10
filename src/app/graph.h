@@ -291,16 +291,16 @@ private:
 //    Zoom zoomPrint;
 
     //Variables for the scaling of the print out
-    double printScale;
     wxRect printRect;
 
     //Printout graphic variables
     static const int
         boebbelStd=6;//Size of circles for display output
     int
-        boebbel,//Size of circles (for peak, 2080rise time, etc.)
-        boebbelPrint,//Size of circles for scalable print out
-        printSizePen1,//Size of pens for scalable print out 
+        boebbel, //Size of circles (for peak, 2080rise time, etc.)
+        boebbelPrint; //Size of circles for scalable print out
+    double printScale;
+    int  printSizePen1,//Size of pens for scalable print out 
         printSizePen2,
         printSizePen4,
         downsampling,

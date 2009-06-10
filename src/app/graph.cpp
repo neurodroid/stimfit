@@ -68,8 +68,13 @@ END_EVENT_TABLE()
 wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, const wxSize& size, long style):
     wxScrolledWindow(frame, wxID_ANY, pos, size, style),pFrame(frame),
     isZoomRect(false),no_gimmicks(false),isPrinted(false),isLatex(false),firstPass(true),isSyncx(false),resLimit(100000),
-    printScale(1.0),printRect(),boebbel(boebbelStd),boebbelPrint(boebbelStd),
-    printSizePen1(4),printSizePen2(8),printSizePen4(16),downsampling(1),eventPos(0),
+    printRect(),boebbel(boebbelStd),boebbelPrint(boebbelStd),
+#ifdef __WXGTK__
+    printScale(1.0),printSizePen1(4),printSizePen2(8),printSizePen4(16),
+#else
+    printScale(1.0),printSizePen1(4),printSizePen2(8),printSizePen4(16),
+#endif
+    downsampling(1),eventPos(0),
     llz_x(0.0),ulz_x(1.0),llz_y(0.0),ulz_y(1.0),llz_y2(0.0),ulz_y2(1.0),
     results1(wxT("\0")),results2(wxT("\0")),results3(wxT("\0")),results4(wxT("\0")),results5(wxT("\0")),results6(wxT("\0")),
     standardPen(*wxBLACK,1,wxSOLID), //Solid black line
@@ -294,8 +299,8 @@ void wxStfGraph::OnDraw( wxDC& DC )
         }
 
         // crosshair through threshold:
-        int thrCrosshairSize = crosshairSize / 2.0;        
         if (Doc()->GetThrT() >= 0) {
+            int thrCrosshairSize = crosshairSize / 2.0;        
             if (!isPrinted) {
                 DC.SetPen(peakPen);
             } else {
@@ -2343,6 +2348,9 @@ void wxStfGraph::set_isPrinted(bool value) {
         printScale=1.0;
         no_gimmicks=false;
     } else {
+#ifdef __WXGTK__
+        printScale=0.25;
+#endif        
         // store zoom settings upon switching from normal to print view:
         if (isPrinted==false) {
             //            zoomOld=zoom;
