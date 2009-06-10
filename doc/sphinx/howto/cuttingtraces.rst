@@ -81,10 +81,7 @@ In the chapter devoted to Python (:doc:`/manual/python`)  in  :doc:`/manual/inde
         # select every trace in the channel if not selection is given in sequence
         if sequence is None:
             sequence = range(stf.get_size_channel())
-        else:
-            if type(sequence) != list:
-                list(sequence)
-        
+
         # transform time into sampling points
         dt = stf.get_sampling_interval()
 
@@ -105,12 +102,6 @@ We provide some flexibility with the argument *sequence*. If we do not give any 
 
     if sequence is None:
         sequence = range(stf.get_size_channel())
-
-    else:
-        if type(sequence) != list:
-            list(sequence)
-
-but if we want to use a python type other than a list (for example a tuple) we have to cast it to a list before. This will allow us to use :func:`stf.get_selected_indices` as argument for the function (remember that :func:`stf.get_selected_indices()` returns a tuple with the indices of the selected traces in a channel).
 
 Finally we add to the list the 1D-NumPy arrays whose index is described in the sequence.
 
