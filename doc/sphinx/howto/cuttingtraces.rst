@@ -37,9 +37,8 @@ However this will not work.  Slicing requires integers as argument and not float
 
 ::
 
-    >>> dt =round(dt,2) # we round dt to 2 floats (i.e dt=0.05)
-    >>> pstart = int(80/dt) # now 80/dt=1600.0 before that it was 1599.99
-    >>> pend =  int(160/dt) # now 160/dt=32.0  before that it was 3199.99
+    >>> pstart = int( round(80/dt) ) # now round(80/dt) = 1600.0 instead of 1599.99
+    >>> pend =  int( round(160/dt) ) # now round(160/dt) = 32.0 instead of 3199.99
     >>> stf.get_trace()[pstart:pend] # now the slicing withing the integer values
 
 .. note::
@@ -87,17 +86,13 @@ In the chapter devoted to Python (:doc:`/manual/python`)  in  :doc:`/manual/inde
                 list(sequence)
         
         # transform time into sampling points
-        dt = round(stf.get_sampling_interval(),2)
+        dt = stf.get_sampling_interval()
 
-        pstart = int(start/dt)
-        pdelta = int(delta/dt)
+        pstart = int( round(start/dt) )
+        pdelta = int( round(delta/dt) )
 
-        # creates a destination python list to append the data 
-        dlist = [] 
-
-        # creates a sequence of 1D-NumPy arrays
-        for i in sequence:
-            dlist.append(stf.get_trace(i)[pstart:(pstart+pdelta)])        
+        # creates a destination python list
+        dlist = [ stf.get_trace(i)[pstart:(pstart+pdelta)] for i in sequence ] 
 
         return stf.new_window_list(dlist)
 
@@ -121,8 +116,7 @@ Finally we add to the list the 1D-NumPy arrays whose index is described in the s
 
 ::
 
-    for i in sequence:
-        dlist.append(stf.get_trace(i)[pstart:(pstart+pdelta)])
+    dlist = [ stf.get_trace(i)[pstart:(pstart+pdelta)] for i in sequence ]
 
 and slice the 1D-NumPy array as described above.
 
