@@ -333,10 +333,10 @@ private:
     boost::shared_ptr<wxMenu> m_zoomContext;
     boost::shared_ptr<wxMenu> m_eventContext;
     std::vector<wxStfCheckBox*> cbList;
-    void PlotTrace( wxDC* pDC, const std::valarray<double>& trace, bool isSecond=false );
-    void DoPlot( wxDC* pDC, const std::valarray<double> trace, int start, int end, int step, bool isSecond );
-    void PrintTrace( wxDC* pDC, const std::valarray<double>& trace, bool isSecond=false );
-    void DoPrint( wxDC* pDC, const std::valarray<double> trace, int start, int end, int downsampling, bool isSecond );
+    void PlotTrace( wxDC* pDC, const std::valarray<double>& trace, bool is2=false );
+    void DoPlot( wxDC* pDC, const std::valarray<double> trace, int start, int end, int step, bool is2 );
+    void PrintTrace( wxDC* pDC, const std::valarray<double>& trace, bool is2=false );
+    void DoPrint( wxDC* pDC, const std::valarray<double> trace, int start, int end, int downsampling, bool is2 );
     void DrawCircle(wxDC* pDC, double x, double y);
     void DrawVLine(wxDC* pDC, double x);
     void DrawHLine(wxDC* pDC, double y);
@@ -356,9 +356,9 @@ private:
     int yFormat(int);
     int yFormatD(double f) { return yFormat(f); }
     // The same for the y coordinates of the second channel
-    int yFormatSecond(double);
-    int yFormatSecond(int);
-    int yFormatDSecond(double f) { return yFormatSecond(f); }
+    int yFormat2(double);
+    int yFormat2(int);
+    int yFormatD2(double f) { return yFormat2(f); }
 
     void FitToWindowSecCh(bool refresh);
 

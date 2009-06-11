@@ -48,8 +48,8 @@
 #endif
 
 #ifdef WITH_PYTHON
-    #include <Python.h>
-    #include <wx/wxPython/wxPython.h>
+#include <Python.h>
+#include <wx/wxPython/wxPython.h>
 #endif
 
 #include "./app.h"
@@ -74,6 +74,7 @@ EVT_COMBOBOX( wxCOMBOTRACES, wxStfChildFrame::OnComboTraces )
 EVT_COMBOBOX( wxCOMBOACTCHANNEL, wxStfChildFrame::OnComboActChannel )
 EVT_COMBOBOX( wxCOMBOINACTCHANNEL, wxStfChildFrame::OnComboInactChannel )
 EVT_CHECKBOX( wxID_PLOTSELECTED, wxStfChildFrame::OnPlotselected )
+EVT_CHECKBOX( wxID_SHOWSECOND, wxStfChildFrame::OnShowsecond )
 // workaround for status bar:
 EVT_MENU_HIGHLIGHT_ALL( wxStfChildFrame::OnMenuHighlight )
 END_EVENT_TABLE()
@@ -99,8 +100,8 @@ wxStfGrid* wxStfChildFrame::CreateTable() {
     wxSize client_size = GetClientSize();
 
     wxStfGrid* ctrl = new wxStfGrid( this, wxID_ANY,
-            wxDefaultPosition, wxDefaultSize,
-            wxVSCROLL | wxHSCROLL );
+                                     wxDefaultPosition, wxDefaultSize,
+                                     wxVSCROLL | wxHSCROLL );
     wxFont font( 8, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
     ctrl->SetDefaultCellFont(font);
     ctrl->SetDefaultColSize(108);
@@ -121,8 +122,8 @@ wxAuiNotebook* wxStfChildFrame::CreateNotebook() {
         wxNO_BORDER;
 
     wxAuiNotebook* ctrl = new wxAuiNotebook( this, wxID_ANY,
-            wxPoint(client_size.x, client_size.y), wxSize(200,200),
-            m_notebook_style );
+                                             wxPoint(client_size.x, client_size.y), wxSize(200,200),
+                                             m_notebook_style );
 
     return ctrl;
 }
@@ -138,11 +139,10 @@ wxPanel* wxStfChildFrame::CreateTraceCounter() {
 }
 
 wxPanel* wxStfChildFrame::CreateChannelCounter() {
-    wxString label = wxT("Channel counter");
     wxPanel* ctrl = new wxPanel( this, wxID_ANY, wxDefaultPosition,
-                                 wxSize(224,88) );
+                                 wxSize(320,88) );
 
-    pChannelSizer = new wxFlexGridSizer( 2, 2, 2, 2 );
+    pChannelSizer = new wxFlexGridSizer( 2, 3, 2, 2 );
 
     return ctrl;
 }
@@ -194,7 +194,7 @@ void wxStfChildFrame::CreateComboTraces(const std::size_t value) {
     m_table=CreateTable();
 
     m_mgr.AddPane( m_table, wxAuiPaneInfo().Caption(wxT("Results")).Position(pDoc->size()).
-            CloseButton(false).Floatable().Dock().Top().Name(wxT("Results")) );
+                   CloseButton(false).Floatable().Dock().Top().Name(wxT("Results")) );
     m_mgr.Update();
     Refresh();
 }
@@ -206,17 +206,24 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     pChannelSizer->Add( pActIndex );
 
     pActChannel = new wxComboBox( m_channelCounter, wxCOMBOACTCHANNEL, wxT("0"),
-        wxDefaultPosition, wxSize(64,24), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
+                                  wxDefaultPosition, wxSize(64,24), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
     pChannelSizer->Add( pActChannel );
+    pChannelSizer->AddStretchSpacer( );
 
     wxStaticText* pInactIndex = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Inactive channel index: ") );
     pInactIndex->SetForegroundColour( *wxRED );
     pChannelSizer->Add( pInactIndex );
 
     pInactChannel = new wxComboBox( m_channelCounter, wxCOMBOINACTCHANNEL, wxT("1"),
-            wxDefaultPosition, wxSize(64,24), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
+                                    wxDefaultPosition, wxSize(64,24), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
     pChannelSizer->Add( pInactChannel );
+    
+    pShowSecond = new wxCheckBox( m_channelCounter, wxID_PLOTSELECTED, wxT("Show") );
+    pShowSecond->SetValue(true);
+    pChannelSizer->Add( pShowSecond );
 
+    // Checkbox to hide inactive channel:
+    
     m_channelCounter->SetSizer( pChannelSizer );
     m_channelCounter->Layout();
 
@@ -257,10 +264,10 @@ void wxStfChildFrame::OnComboTraces(wxCommandEvent& WXUNUSED(event)) {
     indStr << wxT("Zero-based index: ") << GetCurTrace();
     pTraceIndex->SetLabel( indStr );
     wxGetApp().OnPeakcalcexecMsg();
-	if (pView->GetGraph() != NULL) {
+    if (pView->GetGraph() != NULL) {
         pView->GetGraph()->Refresh();
         pView->GetGraph()->SetFocus();
-	}
+    }
 }
 
 void wxStfChildFrame::OnComboActChannel(wxCommandEvent& WXUNUSED(event)) {
@@ -315,29 +322,37 @@ void wxStfChildFrame::UpdateChannels( ) {
             wxGetApp().ErrorMsg( wxT("View is zero in wxStfDoc::SwapChannels"));
             return;
         }
-		if (pView->GetGraph() != NULL) {
-			pView->GetGraph()->Refresh();
-			pView->GetGraph()->SetFocus();
-		}
+        if (pView->GetGraph() != NULL) {
+            pView->GetGraph()->Refresh();
+            pView->GetGraph()->SetFocus();
+        }
     }
 }
 
 void wxStfChildFrame::OnPlotselected(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=(wxStfView*)GetView();
-	if (pView != NULL && pView->GetGraph()!= NULL) { 
+    if (pView != NULL && pView->GetGraph()!= NULL) { 
         pView->GetGraph()->Refresh();
         pView->GetGraph()->SetFocus();
-	}
+    }
+}
+
+void wxStfChildFrame::OnShowsecond(wxCommandEvent& WXUNUSED(event)) {
+    wxStfView* pView=(wxStfView*)GetView();
+    if (pView != NULL && pView->GetGraph()!= NULL) { 
+        pView->GetGraph()->Refresh();
+        pView->GetGraph()->SetFocus();
+    }
 }
 
 void wxStfChildFrame::ActivateGraph() {
-       wxStfView* pView=(wxStfView*)GetView();
-       // Set the focus somewhere else:
-       if (m_traceCounter != NULL) 
-		   m_traceCounter->SetFocus();
-	   if (pView != NULL && pView->GetGraph()!= NULL) { 
-           pView->GetGraph()->SetFocus();
-	   }
+    wxStfView* pView=(wxStfView*)GetView();
+    // Set the focus somewhere else:
+    if (m_traceCounter != NULL) 
+        m_traceCounter->SetFocus();
+    if (pView != NULL && pView->GetGraph()!= NULL) { 
+        pView->GetGraph()->SetFocus();
+    }
 }
 
 void wxStfChildFrame::ShowTable(const stf::Table &table,const wxString& caption) {
@@ -346,7 +361,7 @@ void wxStfChildFrame::ShowTable(const stf::Table &table,const wxString& caption)
     if (m_notebook==NULL && !m_mgr.GetPane(m_notebook).IsOk()) {
         m_notebook=CreateNotebook();
         m_mgr.AddPane( m_notebook, wxAuiPaneInfo().Caption(wxT("Analysis results")).
-            Floatable().Dock().Left().Name( wxT("Notebook") ) );
+                       Floatable().Dock().Left().Name( wxT("Notebook") ) );
     } else {
         // Re-open notebook if it has been closed:
         if (!m_mgr.GetPane(m_notebook).IsShown()) {
@@ -366,9 +381,9 @@ void wxStfChildFrame::ShowTable(const stf::Table &table,const wxString& caption)
     // "commit" all changes made to wxAuiManager
     m_mgr.Update();
     wxStfView* pView=(wxStfView*)GetView();
-	if (pView != NULL && pView->GetGraph()!= NULL) { 
+    if (pView != NULL && pView->GetGraph()!= NULL) { 
         pView->GetGraph()->SetFocus();
-	}
+    }
 }
 
 void wxStfChildFrame::UpdateResults() {

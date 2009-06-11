@@ -235,9 +235,9 @@ void wxStfGraph::OnDraw( wxDC& DC )
         if ((Doc()->get().size()>1))
         {	//Second channel is not part of the settings dialog =>read from registry
             SPY2W() =
-                wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("Zoom.startPosYSecond"), 1);
+                wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("Zoom.startPosY2"), 1);
             YZ2W() =
-                (double)(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("Zoom.yZoomSecond"), 1)
+                (double)(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("Zoom.yZoom2"), 1)
                         / 100000.0);
             //Ensure proper dimensioning
             if (YZ2() <=0)
@@ -582,7 +582,7 @@ void wxStfGraph::OnDraw( wxDC& DC )
 
     //Plot of the second channel
     //Trace one when displayed first time
-    if ((Doc()->get().size()>1))
+    if ((Doc()->get().size()>1) && pFrame->ShowSecond())
     {
         if (!isPrinted)
         {	//Draw current trace on display
@@ -625,7 +625,7 @@ void wxStfGraph::OnDraw( wxDC& DC )
     view->OnDraw(& DC);
 }
 
-void wxStfGraph::PlotTrace( wxDC* pDC, const std::valarray<double>& trace, bool isSecond ) {
+void wxStfGraph::PlotTrace( wxDC* pDC, const std::valarray<double>& trace, bool is2 ) {
     // speed up drawing by omitting points that are outside the window:
 
     // find point before left window border:
@@ -653,16 +653,16 @@ void wxStfGraph::PlotTrace( wxDC* pDC, const std::valarray<double>& trace, bool 
     }
 
     // apply filter at half the new sampling frequency:
-    DoPlot(pDC, trace, start, end, step, isSecond);
+    DoPlot(pDC, trace, start, end, step, is2);
 }
 
-void wxStfGraph::DoPlot( wxDC* pDC, const std::valarray<double> trace, int start, int end, int step, bool isSecond ) {
+void wxStfGraph::DoPlot( wxDC* pDC, const std::valarray<double> trace, int start, int end, int step, bool is2 ) {
     boost::function<int(double)> yFormatFunc;
     
-    if (!isSecond) {
+    if (!is2) {
         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD), this);
     } else {
-        yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatDSecond), this);
+        yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD2), this);
     }
 
     int x_last = xFormat(start);
@@ -701,7 +701,7 @@ void wxStfGraph::DoPlot( wxDC* pDC, const std::valarray<double> trace, int start
     }
 }
 
-void wxStfGraph::PrintTrace( wxDC* pDC, const std::valarray<double>& trace, bool isSecond ) {
+void wxStfGraph::PrintTrace( wxDC* pDC, const std::valarray<double>& trace, bool is2 ) {
     // speed up drawing by omitting points that are outside the window:
 
     // find point before left window border:
@@ -721,16 +721,16 @@ void wxStfGraph::PrintTrace( wxDC* pDC, const std::valarray<double>& trace, bool
     int right=WindowRect.width;
     int xri=int((right-SPX())/XZ())+1;
     if (xri>=0 && xri<(int)trace.size()-1) end=xri;
-    DoPrint(pDC, trace, start, end, downsampling, isSecond);
+    DoPrint(pDC, trace, start, end, downsampling, is2);
 }
 
-void wxStfGraph::DoPrint( wxDC* pDC, const std::valarray<double> trace, int start, int end, int downsampling, bool isSecond ) {
+void wxStfGraph::DoPrint( wxDC* pDC, const std::valarray<double> trace, int start, int end, int downsampling, bool is2 ) {
     boost::function<int(double)> yFormatFunc;
     
-    if (!isSecond) {
+    if (!is2) {
         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD), this);
     } else {
-        yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatDSecond), this);
+        yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD2), this);
     }
     
     std::vector<wxPoint> points;
@@ -1610,6 +1610,32 @@ void wxStfGraph::OnPaint(wxPaintEvent &WXUNUSED(event)) {
 }
 #endif
 
+double prettyNumber( double fDistance, double pixelDistance, int limit ) {
+    double fScaled = 1.0;
+    for (;;)
+    {
+        //set stepsize
+        int nZeros = (int)log10(fScaled);
+        int prev10e = (int)(pow(10.0, nZeros));
+        int next10e = prev10e * 10;
+        int step = prev10e < 1 ? 1 : prev10e;
+        
+        if ( fScaled / prev10e  > 5 ) {
+            fScaled = next10e;
+            step = next10e;
+        }
+        
+        //check whether f scale is ok
+        if ((fScaled/fDistance) * pixelDistance > limit)
+            break;
+        else {
+            //suggest a new f scale:
+            fScaled += step;
+        }
+    }
+    return fScaled;
+}
+
 void wxStfGraph::CreateScale(wxDC* pDC)
 {
     // catch bizarre y-Zooms:
@@ -1647,22 +1673,9 @@ void wxStfGraph::CreateScale(wxDC* pDC)
     double timeDistance=1.0/Doc()->GetSR();
     //i.e., 1 timeDistance corresponds to 1 pixelDistance
 
-    //get an entire time value which comes close to 150 pixels:
-    double timeScaled =1.0;
+    //get an integer time value which comes close to 150 pixels:
     int limit=(int)(100*printScale);
-    for (;;)
-    {
-        //set stepsize
-        int step=(int)(pow(10.0, (int)log10(timeScaled)));
-        if (step < 1) step=1;
-        //check whether time scale is ok
-        if ((timeScaled/timeDistance) * pixelDistance > limit)
-            break;
-        else
-            //suggest a new time scale:
-            timeScaled += step;
-
-    }
+    double timeScaled = prettyNumber(timeDistance, pixelDistance, limit);
     int barLength=(int)((timeScaled/timeDistance) * pixelDistance);
 
     //2. creation of y-(voltage- or current-)scale
@@ -1672,46 +1685,24 @@ void wxStfGraph::CreateScale(wxDC* pDC)
     //real distance (difference) between two neighboured Values:
     double realDistanceY=1.0;
 
-    //get an entire y-value which comes close to 150 pixels:
-    double yScaled =1.0;
-    for(;;)	{
-        //set stepsize
-        int step=(int)(pow(10.0,(int)log10(yScaled)));
-        if (step < 1) step=1;
-        //check whether y-scale is ok
-        if ((yScaled/realDistanceY) * pixelDistanceY > limit)
-            break;
-        else
-            //suggest a new y-scale:
-            yScaled += step;
-    }
+    //get an integer y-value which comes close to 150 pixels:
+    double yScaled = prettyNumber(realDistanceY, pixelDistanceY, limit);
     int barLengthY=(int)((yScaled/realDistanceY) * pixelDistanceY);
 
     //3. creation of y-scale for the second channel
     //Fit scale of second channel to window
     //distance between two neigboured yValues in pixels:
-    int barLengthYSecond=100;
-    double yScaledSecond =1;
-    double pixelDistanceYSecond=YZ2();
+    int barLengthY2=100;
+    double yScaled2 =1.0;
+    double pixelDistanceY2=YZ2();
     //real distance (difference) between two neighboured Values:
-    double realDistanceYSecond=1;
+    double realDistanceY2 = 1.0;
     if ((Doc()->get().size()>1))
     {
         //get an entire y-value which comes close to 150 pixels:
-        for (;;) {
-            //set stepsize
-            int step=(int)(pow(10.0,(int)log10(yScaledSecond)));
-            if (step < 1) step=1;
-            //check whether y-scale is ok
-            if ((yScaledSecond/realDistanceYSecond) * pixelDistanceYSecond > limit)
-                break;
-            else
-                //suggest a new y-scale:
-                yScaledSecond += step;
-        }
-        barLengthYSecond=(int)((yScaledSecond/realDistanceYSecond)
-                * pixelDistanceYSecond);
-    }	//End creation y-scale of the Second Channel
+        yScaled2 = prettyNumber(realDistanceY2, pixelDistanceY2, limit);
+        barLengthY2=(int)((yScaled2/realDistanceY2) * pixelDistanceY2);
+    }	//End creation y-scale of the 2nd Channel
 
     if (wxGetApp().get_isBars()) {
         // Use scale bars
@@ -1733,7 +1724,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
             Scale[3]=wxPoint(WindowRect.width-rightDist/2,
                     WindowRect.height-bottomDist);
             Scale[4]=wxPoint(WindowRect.width-rightDist/2,
-                    WindowRect.height-bottomDist-barLengthYSecond);
+                    WindowRect.height-bottomDist-barLengthY2);
         }
 
         // Set scalebar labels
@@ -1770,8 +1761,8 @@ void wxStfGraph::CreateScale(wxDC* pDC)
 #endif
         }
         if ((Doc()->get().size()>1))	{
-            wxString scaleYStringSecond;
-            scaleYStringSecond << (int)yScaledSecond << wxT(" ")
+            wxString scaleYString2;
+            scaleYString2 << (int)yScaled2 << wxT(" ")
             << Doc()->at(Doc()->GetSecCh()).GetYUnits();
             // Center of y2-scalebar:
             int y2Center=WindowRect.height-bottomDist-(Scale[3].y-Scale[4].y)/2;
@@ -1781,11 +1772,11 @@ void wxStfGraph::CreateScale(wxDC* pDC)
             );
             pDC->SetTextForeground(*wxRED);
             if (!isLatex) {
-                pDC->DrawLabel(scaleYStringSecond,TextFrameY2,wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
+                pDC->DrawLabel(scaleYString2,TextFrameY2,wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
             } else {
 #if 0
                 wxLatexDC* pLatexDC = (wxLatexDC*)pDC;
-                pLatexDC->DrawLabelLatex(scaleYStringSecond,TextFrameY2,wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
+                pLatexDC->DrawLabelLatex(scaleYString2,TextFrameY2,wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 #endif
             }
             pDC->SetTextForeground(*wxBLACK);
@@ -1885,30 +1876,30 @@ void wxStfGraph::CreateScale(wxDC* pDC)
             // Get y-value of bottomDist:
             double y2Bottom=(SPY2()-(WindowRect.height-bottomDist))/YZ2();
             // Find next-higher integer multiple of barLengthY:
-            int nextTickMult=(int)(y2Bottom/yScaledSecond);
+            int nextTickMult=(int)(y2Bottom/yScaled2);
             // nextTickMult is truncated; hence, negative and positive values
             // have to be treated separately:
             if (y2Bottom>0) {
                 nextTickMult++;
             }
             // pixel position of this tick:
-            double y2First=nextTickMult*yScaledSecond;
-            int y2FirstTick=yFormatSecond(y2First);
+            double y2First=nextTickMult*yScaled2;
+            int y2FirstTick=yFormat2(y2First);
             // How many times does the y-scale bar fit into the window?
-            int y2ScaleInWindow=(y2FirstTick-topDist)/barLengthYSecond;
+            int y2ScaleInWindow=(y2FirstTick-topDist)/barLengthY2;
             // y-Axis ticks:
             for (int n_tick_y=0;n_tick_y<=y2ScaleInWindow;++n_tick_y) {
                 pDC->DrawLine(leftDist*2-tickLength,
-                        y2FirstTick-n_tick_y*barLengthYSecond,
+                        y2FirstTick-n_tick_y*barLengthY2,
                         leftDist*2,
-                        y2FirstTick-n_tick_y*barLengthYSecond);
+                        y2FirstTick-n_tick_y*barLengthY2);
                 // Create a rectangle from the left window border to the tick:
                 wxRect TextFrame2(
-                        wxPoint(0,y2FirstTick-n_tick_y*barLengthYSecond-(int)(10*printScale)),
-                        wxPoint(leftDist*2-tickLength-1,y2FirstTick-n_tick_y*barLengthYSecond+(int)(10*printScale))
+                        wxPoint(0,y2FirstTick-n_tick_y*barLengthY2-(int)(10*printScale)),
+                        wxPoint(leftDist*2-tickLength-1,y2FirstTick-n_tick_y*barLengthY2+(int)(10*printScale))
                 );
                 // Draw Text:
-                int y2=(int)(yScaledSecond*n_tick_y+y2First);
+                int y2=(int)(yScaled2*n_tick_y+y2First);
                 wxString y2Label;
                 y2Label << y2;
                 pDC->SetTextForeground(*wxRED);
@@ -2016,11 +2007,11 @@ inline int wxStfGraph::yFormat(int toFormat) {
     return (int)(SPY() - toFormat * YZ());
 }
 
-inline int wxStfGraph::yFormatSecond(double toFormat) {
+inline int wxStfGraph::yFormat2(double toFormat) {
     return (int)(SPY2() - toFormat * YZ2());
 }
 
-inline int wxStfGraph::yFormatSecond(int toFormat){
+inline int wxStfGraph::yFormat2(int toFormat){
     return (int)(SPY2() - toFormat * YZ2());
 }
 
@@ -2292,11 +2283,11 @@ void wxStfGraph::Ch2base() {
         }
         double base1=Doc()->GetBase();
         int base1_onScreen=yFormat(base1);
-        // Adjust startPosYSecond so that base2 is the same as base1 on the screen;
-        // i.e. yFormatSecond(base2) == yFormat(base1)
-        // this is what yFormatSecond(toFormat) does:
-        // return (int)(zoom.startPosYSecond - toFormat * zoom.yZoomSecond);
-        // Solved for startPosYSecond, this gets:
+        // Adjust startPosY2 so that base2 is the same as base1 on the screen;
+        // i.e. yFormat2(base2) == yFormat(base1)
+        // this is what yFormat2(toFormat) does:
+        // return (int)(zoom.startPosY2 - toFormat * zoom.yZoom2);
+        // Solved for startPosY2, this gets:
         SPY2W()=(int)(base1_onScreen+base2*YZ2());
         Refresh();
     }
@@ -2333,11 +2324,11 @@ void wxStfGraph::Ch2basezoom() {
         }
         double base1=Doc()->GetBase();
         int base1_onScreen=yFormat(base1);
-        // Adjust startPosYSecond so that base2 is the same as base1 on the screen;
-        // i.e. yFormatSecond(base2) == yFormat(base1)
-        // this is what yFormatSecond(toFormat) does:
-        // return (int)(zoom.startPosYSecond - toFormat * zoom.yZoomSecond);
-        // Solved for startPosYSecond, this gets:
+        // Adjust startPosY2 so that base2 is the same as base1 on the screen;
+        // i.e. yFormat2(base2) == yFormat(base1)
+        // this is what yFormat2(toFormat) does:
+        // return (int)(zoom.startPosY2 - toFormat * zoom.yZoom2);
+        // Solved for startPosY2, this gets:
         SPY2W()=(int)(base1_onScreen+base2*YZ2());
         Refresh();
     }
@@ -2348,7 +2339,7 @@ void wxStfGraph::set_isPrinted(bool value) {
         printScale=1.0;
         no_gimmicks=false;
     } else {
-#ifdef __WXGTK__
+#if defined __WXGTK__ || defined __WXMAC__
         printScale=0.25;
 #endif        
         // store zoom settings upon switching from normal to print view:

@@ -172,6 +172,11 @@ public:
      */
     bool PlotSelected() const {return pPlotSelected->IsChecked();}
 
+    //! Indicates whether the second channel should be plotted.
+    /*! \return true if it should be plotted, false otherwise.
+     */
+    bool ShowSecond() const {return pShowSecond->IsChecked();}
+
     //! Activated the current graph
     void ActivateGraph();
 
@@ -184,7 +189,7 @@ private:
     wxStaticText *pSelected, *pSize, *pTraceIndex;
     wxComboBox *pTraces, *pActChannel, *pInactChannel;
     wxStfGrid* m_table;
-    wxCheckBox* pPlotSelected;
+    wxCheckBox *pPlotSelected, *pShowSecond;
     wxFlexGridSizer *pTraceSizer, *pChannelSizer;
     wxFlexGridSizer *pTraceNumberSizer;
     bool firstResize;
@@ -195,6 +200,7 @@ private:
     wxStfGrid* CreateTable();
     void OnMenuHighlight(wxMenuEvent& event);
     void OnPlotselected(wxCommandEvent& event);
+    void OnShowsecond(wxCommandEvent& event);
     void OnComboTraces(wxCommandEvent& event);
     void OnComboActChannel(wxCommandEvent& event);
     void OnComboInactChannel(wxCommandEvent& event);

@@ -312,7 +312,7 @@ int wxStfDoc::InitCursors() {
     case 2: SetDirection(stf::both); break;
     default: SetDirection(stf::undefined_direction);
     }
-    SetFromBase( wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FromBase"),1) );
+    SetFromBase( true ); // reset at every program start   wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FromBase"),1) );
     SetFitBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FitBegin"), 10));
     SetFitEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FitEnd"), 100));
     SetLatencyBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyStartCursor"), 0));	/*CSH*/
@@ -665,8 +665,8 @@ void wxStfDoc::WriteToReg() {
     wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.startPosY"),at(GetCurCh()).GetYZoom().startPosY);
     if ((get().size()>1))
     {
-        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.yZoomSecond"),(int)at(GetSecCh()).GetYZoom().yZoom*100000);
-        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.startPosYSecond"),at(GetSecCh()).GetYZoom().startPosY);
+        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.yZoom2"),(int)at(GetSecCh()).GetYZoom().yZoom*100000);
+        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.startPosY2"),at(GetSecCh()).GetYZoom().startPosY);
     }
 }
 

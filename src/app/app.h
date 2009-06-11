@@ -78,6 +78,7 @@ enum {
     wxID_EXPORTSVG,
     wxID_TRACES,
     wxID_PLOTSELECTED,
+    wxID_SHOWSECOND,
     wxID_CURSORS,
     wxID_AVERAGE,
     wxID_ALIGNEDAVERAGE,
