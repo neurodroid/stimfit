@@ -1321,9 +1321,10 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
                 table.at(n_s,nCol++)=GetRT2080();
             if (SaveYtDialog.PrintT50())
                 table.at(n_s,nCol++)=GetHalfDuration();
-            if (SaveYtDialog.PrintSlopes())
+            if (SaveYtDialog.PrintSlopes()) {
                 table.at(n_s,nCol++)=GetMaxRise();
                 table.at(n_s,nCol++)=GetMaxDecay();
+            }
             if (SaveYtDialog.PrintLatencies()) {
                 table.at(n_s,nCol++)=GetLatency()*GetXScale();
             }

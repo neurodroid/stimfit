@@ -140,7 +140,7 @@ wxPanel* wxStfChildFrame::CreateTraceCounter() {
 
 wxPanel* wxStfChildFrame::CreateChannelCounter() {
     wxPanel* ctrl = new wxPanel( this, wxID_ANY, wxDefaultPosition,
-                                 wxSize(320,88) );
+                                 wxSize(256,88) );
 
     pChannelSizer = new wxFlexGridSizer( 2, 3, 2, 2 );
 
@@ -202,7 +202,7 @@ void wxStfChildFrame::CreateComboTraces(const std::size_t value) {
 void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     m_channelCounter = CreateChannelCounter();
 
-    wxStaticText* pActIndex  = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Active channel index: ") );
+    wxStaticText* pActIndex  = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Active channel: ") );
     pChannelSizer->Add( pActIndex );
 
     pActChannel = new wxComboBox( m_channelCounter, wxCOMBOACTCHANNEL, wxT("0"),
@@ -210,7 +210,7 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     pChannelSizer->Add( pActChannel );
     pChannelSizer->AddStretchSpacer( );
 
-    wxStaticText* pInactIndex = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Inactive channel index: ") );
+    wxStaticText* pInactIndex = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Inactive channel: ") );
     pInactIndex->SetForegroundColour( *wxRED );
     pChannelSizer->Add( pInactIndex );
 
@@ -218,11 +218,10 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
                                     wxDefaultPosition, wxSize(64,24), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
     pChannelSizer->Add( pInactChannel );
     
+    // Checkbox to hide inactive channel:
     pShowSecond = new wxCheckBox( m_channelCounter, wxID_PLOTSELECTED, wxT("Show") );
     pShowSecond->SetValue(true);
     pChannelSizer->Add( pShowSecond );
-
-    // Checkbox to hide inactive channel:
     
     m_channelCounter->SetSizer( pChannelSizer );
     m_channelCounter->Layout();
