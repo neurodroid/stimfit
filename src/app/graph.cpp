@@ -689,7 +689,7 @@ void wxStfGraph::DoPlot( wxDC* pDC, const std::valarray<double> trace, int start
                 y_last = y_min;
             }
             if (y_max != y_next) {
-                pDC->DrawLine( x_last, y_min, x_last, y_max );
+                pDC->DrawLine( x_last, y_last, x_last, y_max );
                 y_last = y_max;
             }
             pDC->DrawLine( x_last, y_last, x_next, y_next );
