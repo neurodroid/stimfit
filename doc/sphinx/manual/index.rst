@@ -20,4 +20,6 @@ Contents:
    python
    latency_measurements
    event_extraction
+   bibliography
+
 

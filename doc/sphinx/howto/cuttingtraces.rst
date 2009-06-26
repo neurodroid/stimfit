@@ -93,8 +93,9 @@ In the chapter devoted to Python (:doc:`/manual/python`)  in  :doc:`/manual/inde
 
         return stf.new_window_list(dlist)
 
+==============
 Code commented
-**************
+==============
 
 We provide some flexibility with the argument *sequence*. If we do not give any argument to *sequence*, we will select every trace in the channel with the function :func:`stf.get_size_channel()`, which returns the number of traces in the channel.
 
@@ -118,19 +119,19 @@ In any case, a new stf window with the traces cut will appear
 
 ::
 
-    >>> myfile.cut_sweeps(200,300)
+    >>> myFile.cut_sweeps(200,300)
 
 will create a new window with all the traces of the channel cut between t=200 ms and t=500 ms.
 
 ::
 
-    >>> myfile.cut_sweeps(200,300,range(30,60))
+    >>> myFile.cut_sweeps(200,300,range(30,60))
 
 will create a new window with the same selection, but only between the traces 30 and 60.
 
 ::
 
-    >>> myfile.cut_sweeps(200,300,stf.get_selected_indices())
+    >>> myFile.cut_sweeps(200,300,stf.get_selected_indices())
 
 will create a new window with the cut traces only if they were previously selected.
 

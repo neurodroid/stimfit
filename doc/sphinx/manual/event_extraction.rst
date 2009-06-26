@@ -7,7 +7,7 @@ Event extraction by template matching
 
 Introduction
 =============================
-To isolate individual events such as EPSCs or EPSPs from recorded data, ``Stimfit`` uses a template matching algorithm as described by Jonas et al., (1993), with some implementation details adopted from Clemens and Bekkers (1997). The template consists of a waveform :math:`p(t)` with a length of :math:`n` sampling points that represents the time course of a typical event. The template is a slid over the trace or recorded values :math:`r(t)`, and at each sampling point with index :math:`s`, it is multiplied by a scaling factor :math:`m` and an offset :math:`c` is added or subtracted so that the sum of squared errors :math:`\chi^2(t_s)` between the trace and the template is minimized:
+To isolate individual events such as EPSCs or EPSPs from recorded data, ``Stimfit`` uses a template matching algorithm as described by Jonas et al., (1993 [#Jonas1993]_), with some implementation details adopted from Clemens and Bekkers (1997) [#ClemensBekkers1997]_. The template consists of a waveform :math:`p(t)` with a length of :math:`n` sampling points that represents the time course of a typical event. The template is a slid over the trace or recorded values :math:`r(t)`, and at each sampling point with index :math:`s`, it is multiplied by a scaling factor :math:`m` and an offset :math:`c` is added or subtracted so that the sum of squared errors :math:`\chi^2(t_s)` between the trace and the template is minimized:
 
 .. math::
 
@@ -15,7 +15,7 @@ To isolate individual events such as EPSCs or EPSPs from recorded data, ``Stimfi
     
 As can be seen from this equation, this amounts to the fairly simple operation fitting a straight line that relates :math:`p(t)` and :math:`r(t)` at every sampling point.
 
-Finally, some detection criterion has to be applied to decide whether an event has occurred at a sampling point. Two options are available in ``Stimfit``: Jonas et al.,(1993) suggests to use the linear correlation coefficient between the optimally scaled template and the data, whereas Clements and Bekkers (1997) compare the scaling factor with the noise standard deviation.
+Finally, some detection criterion has to be applied to decide whether an event has occurred at a sampling point. Two options are available in ``Stimfit``: Jonas et al.,(1993) [#Jonas1993]_suggests to use the linear correlation coefficient between the optimally scaled template and the data, whereas Clements and Bekkers (1997) [#ClemensBekkers1997]_ compare the scaling factor with the noise standard deviation.
 
 A practical guide to event detection
 ====================================
@@ -36,7 +36,7 @@ This procedure will be explained in some more detail in the following sections.
 Create a preliminary template
 -----------------------------
 
-In general, the template waveform :math:'p(t)' can be of arbitrary shape. A typical way of creating such a template is to fit a function with a time course matching the event kinetics to some exemplary events. For example, EPSCs can typically be modeled with the sum or the product of two exponential functions [#f1]_. In practice, a robust estimate for a template can be obtained using an iterative approach, which will be illustrated here using a recording of miniature EPSCs that you can download `here <http://stimfit.org/tutorial/minis.dat>`_.
+In general, the template waveform :math:`p(t)` can be of arbitrary shape. A typical way of creating such a template is to fit a function with a time course matching the event kinetics to some exemplary events. For example, EPSCs can typically be modeled with the sum or the product of two exponential functions [#f1]_. In practice, a robust estimate for a template can be obtained using an iterative approach, which will be illustrated here using a recording of miniature EPSCs that you can download `here <http://stimfit.org/tutorial/minis.dat>`_.
 
     .. figure:: images/bait_template.png
         :align: center
@@ -153,5 +153,9 @@ Adjusting event detection settings
 | 4. Closely spaced events are not detected separately                        | 4. Decrease the number of sampling points between events |
 +-----------------------------------------------------------------------------+----------------------------------------------------------+
 
+
+.. [#Jonas1993]  Jonas P, Major G, Sakman B. (1993) Quantal components of unitary EPSCs at the mossy fibre synapse on CA3 pyramidal cells of rat hippocampus. J Physiol. 472, 615-663.
+
+.. [#ClemensBekkers1997] Clements JD, Bekkers JM. (1997) Detection of spontaneous synaptic events with an optimally scaled template. Biophys J 73:220–229.
 
 .. [#f1] Note that the product of two exponentials :math:`{\displaystyle f(t)=a(1-e^{-\frac{t}{\tau_1}})e^{-\frac{t}{\tau_2}}}` can equivalently be expressed as the sum of two exponentials: :math:`{\displaystyle f(t)=a(e^{-\frac{t}{\tau_2}}-e^{-\frac{t}{\tau_3}}) }`, with :math:`{\displaystyle \tau_3=\frac{\tau_2 \tau_1}{\tau_2-\tau_1}}`.

@@ -182,9 +182,9 @@ Cursors
 
 Cursors can be positioned from the Python shell using one of the ``set_[xy]_start`` or ``set_[xy]_end`` functions, where ``[xy]`` stands for one of peak, base or fit, depending on which cursor you want to set. Correspondingly, the ``get_[xy]_start`` or ``get_[xy]_end`` functions can be used to retrieve the current cursor positions.
 
-**set_[xy]_start(pos, is_time = False)** and **set_[xy]_end(pos, is_time = False)** take one or two arguments. ``pos`` specifies the new cursor position. ``is_time`` indicates whether ``pos`` is an index, i.e. in units of sampling points (False, default), or in units of time (True), with the trace starting at t=0 ms. If there was an error, such as an out-of-bounds-index, these functions will return False.
+* **set_[xy]_start(pos, is_time = False)** and **set_[xy]_end(pos, is_time = False)** take one or two arguments. ``pos`` specifies the new cursor position. ``is_time`` indicates whether ``pos`` is an index, i.e. in units of sampling points (False, default), or in units of time (True), with the trace starting at t=0 ms. If there was an error, such as an out-of-bounds-index, these functions will return False.
 
-**get_[xy]_start(pos, is_time = False)** and **get_[xy]_end(pos, is_time = False)** optionally take a single argument that indicates whether the return value should be in units of sampling points (``is_time = False``,default) or in units of time (``is_time = True``). Again, traces start at t=0 ms. These functions will return -1 if no file is opened at the time of the function call. Indices can be converted into time values by multiplying with ``get_sampling_interval()``. For example:
+* **get_[xy]_start(pos, is_time = False)** and **get_[xy]_end(pos, is_time = False)** optionally take a single argument that indicates whether the return value should be in units of sampling points (``is_time = False``,default) or in units of time (``is_time = True``). Again, traces start at t=0 ms. These functions will return -1 if no file is opened at the time of the function call. Indices can be converted into time values by multiplying with :func:`stf.get_sampling_interval()`. For example:
 
 ::
 
@@ -310,7 +310,7 @@ To give you an example, this program shows a function that returns the sum of th
        """ Returns the amplitude (peak-base)"""
        return stf.get_peak()-stf.get_base()
     
-    def sqr_amp()
+    def sqr_amp():
        """ Returns the sum of squared amplitudes of all
        selected traces, or -1 if there was an error. Uses
        the current settings for the peak direction and 

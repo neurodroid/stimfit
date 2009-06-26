@@ -7,7 +7,7 @@ Preface
 
 ``Stimfit`` was originally written by Peter Jonas, University of Freiburg,
 in the early 1990s. It was primarily designed to analyze the kinetics of
-evoked excitatory postsynaptic potentials (EPSCs; Jonas et al., 1993).
+evoked excitatory postsynaptic potentials (EPSCs; Jonas et al., 1993 [#Jonas1993]_).
 The name ``Stimfit`` was chosen because the program allowed to *fit*
 exponential functions to the decay of EPSCs evoked by extracellular
 *stim*-ulation. The program was written in Borland Pascal, running under
@@ -47,3 +47,4 @@ reports were filed by Emmanuel Eggermann and Daniel Boischer. The
 `Levenberg-Marquartdt-algorithm <http://www.ics.forth.gr/~lourakis/levmar>`_  used for curve fitting was implemented
 by Manolis Lourakis.
 
+.. [#Jonas1993] Jonas P, Major G, Sakman B. (1993) Quantal components of unitary EPSCs at the mossy fibre synapse on CA3 pyramidal cells of rat hippocampus. J Physiol. 472, 615-63.

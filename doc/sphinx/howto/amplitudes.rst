@@ -46,7 +46,7 @@ The amplitude function will be calculated based on the traces selected by *trace
         
 
         Returns:
-        A float with the variation of the amplitude
+        A float with the variation of the amplitude. False if  
 
         Example:
         get_amplitude(980,1005,10,i) returns the variation of the Y unit of the trace i between 
@@ -57,6 +57,9 @@ The amplitude function will be calculated based on the traces selected by *trace
         if trace is None:
             sweep = stf.get_trace_index()
         else:
+            if typ(trace) != int:
+                print "trace argument admits only intergers"
+                return False
             sweep = trace 
     
 
@@ -75,9 +78,10 @@ The amplitude function will be calculated based on the traces selected by *trace
 
         return amplitude
 
-
+==============
 Code commented
-**************
+==============
+
 *None* is a Python built-in constant. It is used in to represent the absence of a value. Therefore, in our example, when the argument *trace* is empty (its value is *None*) we will simply select the current trace with :func:`stf.get_trace_index()` and store it in the variable **sweep**. If not, the variable **sweep** will take the value taken by *trace*. This iscontroled by the following if-block within the function:
 
 ::
@@ -85,7 +89,18 @@ Code commented
     if trace is None:
         sweep = stf.get_trace_index()
     else:
+        if type(trace) !=int:
+            print "trace argument admits only integers"
+            return False
         sweep = trace
+
+An additional if block inside the else instruction allows us to control that trace will be an integer. 
+
+..
+
+    >>> if type(trace) !=int:
+
+If the argument traces is not an integer, the function will be cancell and returns False.
 
 Note that after setting the stf cursors, we update the measurements in the trace whose index is given by the local variable **sweep** with :func:`stf.set_trace()`.
 
@@ -97,19 +112,19 @@ The function accepts an optional *trace* argument. That means, that we do not ne
 
 ::
 
-    >>> myfile.get_amplitude(500,750,10)
+    >>> myFile.get_amplitude(500,750,10)
 
 To calculate the same amplitude in the trace number 10 (zero-based index is 9) we can type:
 
 ::
 
-    >>> myfile.get_amplitude(500,750,10,9)
+    >>> myFile.get_amplitude(500,750,10,9)
 
 More interesting is to get the amplitude in the selected traces, we can pass the tuple of selected traces to the *trace* argument and thereby calculate the amplitude on our selected traces:
 
 ::
 
-    >>> amplitudes_list = [myfile.get_amplitude(500,750,10,i) for i in stf.get_selected_indices()]
+    >>> amplitudes_list = [myFile.get_amplitude(500,750,10,i) for i in stf.get_selected_indices()]
 
 In this way the tuple of selected indices is passed by the for loop to the function. Next, everything is wrapped in a Python list called amplitudes_list. 
 
@@ -117,8 +132,8 @@ For further analysis in spreadsheet programs (Calc, Gnumeric, Excel or similar),
 
 ::
 
-    >>> table = dict()
-    >>> for i in stf.get_selected_indices(): table["Trace %.3d" % i] = amplitudes_list[i]
-    >>> show_table(table)
+    >>> mytable = dict()
+    >>> for i in stf.get_selected_indices(): mytable["Trace %.3d" % i] = amplitudes_list[i]
+    >>> stf.show_table(mytable)
 
 Note that the dictionary will be sorted alphabetically according to its keys. Therefore, using "%.3d" is used to keep the table in the same order as the traces. If you wanted to print out more than one value for each trace, you could use :func:`stf.show_table_dictlist` that uses a similar syntax, but requires a list of numbers as the values of the dictionary.

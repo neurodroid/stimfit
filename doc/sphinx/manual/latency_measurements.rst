@@ -7,7 +7,7 @@ Latency measurements
 
 Measurement of synaptic delay
 =============================
-``Stimfit`` is frequently used to measure the delay between a synaptic signal and a post-synaptic response. Classically, this synaptic delay or latency is defined as "the time interval between the peak of the inward current through the synaptic membrane and commencement of inward current through the postsynaptic membrane" (Katz and Miledi, 1965). Neglecting cable properties of neurons for a while, the maximal inward current during an action potential is expected to flow at the time of maximal slope during the rising phase (Jack et al., 1983), since
+``Stimfit`` is frequently used to measure the delay between a synaptic signal and a post-synaptic response. Classically, this synaptic delay or latency is defined as "the time interval between the peak of the inward current through the synaptic membrane and commencement of inward current through the postsynaptic membrane" (Katz and Miledi, 1965 [#KatzMiledi1965]_). Neglecting cable properties of neurons for a while, the maximal inward current during an action potential is expected to flow at the time of maximal slope during the rising phase (Jack et al., 1983 [#Jack1983]_), since
 
 .. math::
 
@@ -16,7 +16,7 @@ Measurement of synaptic delay
 
     I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{d}t}
 
-The commencement (sometimes called "foot") of the postsynaptic current can robustly be estimated from the extrapolated intersection of the baseline with a line through the two points of time when the current is 20 and 80% of the peak current (Jonas et al., 1993, Bartos et al., 2001).
+The commencement (sometimes called "foot") of the postsynaptic current can robustly be estimated from the extrapolated intersection of the baseline with a line through the two points of time when the current is 20 and 80% of the peak current (Jonas et al., 1993 [#Jonas1993]_, Bartos et al., 2001 [#Bartos2001]_).
 
 
     .. figure:: images/foot.png
@@ -100,3 +100,13 @@ The latency cursors (plotted as dotted vertical blue lines) can either be set au
 
 
 To confirm your latency cursor settings and measure latencies, you can either press **Enter** or call :func:`stf.measure()` from the shell. The latency, i.e. the time interval between the first and the second latency cursor, will be shown in the results table as long as you activated this value. The latency will be indicated as double-headed arrow connecting the two latency cursors (Fig. 20).
+
+
+.. [#KatzMiledi1965] Katz B, Miledi R. (1965) The measurement of synaptic delay, and the time course of acetylcholine release at the neuromuscular junction. Proc R Soc Lond B Biol Sci. 161:483-495.
+
+.. [#Jack1983] Jack JJB, Noble D, Tsien RW (1983) Electric current flow in excitable cells. Oxford University Press, Oxford, UK.
+
+.. [#Bartos2001] Bartos M, Vida I, Frotscher M, Geiger JRP, Jonas P (2001) Rapid signaling at inhibitory synapses in a dentate gyrus interneuron network. J Neurosci 21:2687–2698.
+
+.. [#Jonas1993] Jonas P, Major G, Sakman B. (1993) Quantal components of unitary EPSCs at the mossy fibre synapse on CA3 pyramidal cells of rat hippocampus. J Physiol. 472, 615-663.
+

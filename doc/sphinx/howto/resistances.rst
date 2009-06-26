@@ -13,7 +13,7 @@ The resistance can be simply calculated using Ohm's law. Currents passing throug
 
 
 In voltage clamp, resistance can be calculated by recording the current once the voltage difference is known. This Python routine should calculate the current difference, and resistance will be calculated given the voltage amplitude.  
-The following routine can be found in the ``Stimfit`` program directory (C:\\Program Files\\Stimfit in Windows or /usr/lib/python2.5/site-packages/Stimfit in Linux, assuming python2.5 is your current python environment). You can find it with the name **charlie.py** (in acknowledgment to Charlie, for her contribution to the development of the given routine). 
+The following routine can be found in the ``Stimfit`` program directory (C:\\Program Files\\Stimfit in Windows or /usr/lib/python2.5/site-packages/Stimfit in GNU/Linux, assuming python2.5 is your current python environment). You can find it with the name **charlie.py** (in acknowledgment to Charlie, for her contribution to the development of the given routine). 
 
 
 =======================
@@ -73,6 +73,25 @@ Note that this function assumes that current is recorded in pA. It sets the stf 
         # calculate r_seal and return:
         return amplitude / (stf.get_peak()-stf.get_base())
 
+==============
+Code commented
+==============
+
+The stf functions :func:`stf.set_base_start()` and :func:`stf.set_base_end()` set the corresponding baseline cursors. The functions :func:`stf.set_peak_start()` and :func:`stf.set_peak_end()` set the corresponding peak cursors. These functions returns the Boolean **True** if the cursor was properly set in the desired position, and **False** if the cursors can not be set (for example, they are out of the limits of the trace). This was designed to provide a control of the cursor positioning.
+
+It is a good practice to test the correct position of the cursors with the conditional sentence **if**.
+
+..
+
+    >>> if not stf.set_base_start(): return 0
+
+* if the stf function returns **False** the if condition will be **True** (not False means True).  Our defined function will be finished with return and give the value 0.
+    
+* In contrary, if the stf function returns **True** the if condition will be **False** (not True means False). In our function, the if condition will not be executed (does not read the return 0) and continue the operations.
+
+.. note::
+    :func:`stf.set_base_start()`, :func:`stf.set_base_end()`,:func:`stf.set_peak_start()` and :func:`stf.set_peak_end()` do not upgrade the measurements. For that reason, we call :func:`stf.measure()` (this is analogous to hit **Enter** in the main window). Thereby the values of :func:`stf.get_peak()` and :func:`stf.get_base()` are updated. 
+  
 =====
 Usage
 =====
@@ -80,7 +99,7 @@ Now, you can use this function for different purposes. For example, you may want
 
 ::
 
-    >>> myfile.resistance(0,999,10700,1999,-5)
+    >>> myFile.resistance(0,999,10700,1999,-5)
 
 Note that charlie.py has a routine called **r_in(amplitude=-5)** that does exactly this.
 
@@ -88,6 +107,6 @@ In the same way, if you wanted to calculate the value of the seal resistance (as
 
 ::
 
-    >>> myfile.resistance(0,199,1050,1199,50)
+    >>> myFile.resistance(0,199,1050,1199,50)
 
 In the same way, charlie.py has a routine called **r_seal(50)** to calculate the seal resistance. Just change the parameters (baseline and peaks) to adapt it for your recordings.

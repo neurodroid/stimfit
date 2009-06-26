@@ -17,7 +17,7 @@ Given for example a sequence :math:`X` of :math:`n` points, we can create a new 
 The running mean function
 =========================
 
-The following Python function calculates the running mean of the current channel. Both trace and channel can be selected as zero-based indices. The width of the running average (refered to here as binwidth) can be selected. The resulting average will appear in a new ``Stimfit`` window.
+The following Python function calculates the running mean of the current channel. Both trace and channel can be selected as zero-based indices. The width of the running average (refereed to here as binwidth) can be selected. The resulting average will appear in a new ``Stimfit`` window.
 
 ::
     
@@ -71,13 +71,34 @@ The following Python function calculates the running mean of the current channel
 
         stf.new_window(dsweep)
 
+==============
+Code commented
+==============
+
+``Stimfit`` commonly uses the value -1 to set the current trace/Channel. In this function the default argument values are -1 (see the function arguments *trace=-1* and *channel=-1*). 
+
+..
+
+    >>> sweep = stf.get_trace(trace,channel)
+
+:func:`stf.get_trace()` simply imports the **trace** of the **channel** into a 1D-Numpy array that we called sweep. The default values provided by the function are -1. This means that by default, the current trace/channel will be imported.
+
+We create a new stf window with the following 
+
+..
+
+    >>> stf.new_window(dsweep)
+
+where dsweep is the 1D-NumPy array obtained after performing  the running average.
+
 =====
 Usage
 =====
+
 To perform the running average of 10 sampling points of the current trace, simply type:
 
 ::
 
-    >>> myfile.rmean(10)
+    >>> myFile.rmean(10)
 
 A new window with the running mean will appear.
