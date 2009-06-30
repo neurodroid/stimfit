@@ -38,9 +38,9 @@ The following function counts the number of events (e.g action potentials) by de
          
         Examples:
         count_events(500,1000) returns the number of events found between t=500 ms and t=1500 ms 
-            above 0 in the current trace and show a stf marker.
+            above 0 in the current trace and shows a stf marker.
         count_events(500,1000,0,False,-10,i) returns the number of events found below -10 in the
-            trace i and show the corresponding stf markers.
+            trace i and shows the corresponding stf markers.
         """
 
         # sets the current trace or the one given in trace.
@@ -125,7 +125,7 @@ As in :doc:`/howto/amplitudes` we can use the function in different ways:
 
     >>> myFile.count_events(start=500,delta=1000)
 
-will return the number of events above 0 mV in the current trace/channel between t=500 ms and t=1500 ms, and show a blue stf marker 
+will return the number of events above 0 mV in the current trace/channel between t=500 ms and t=1500 ms, and shows a blue stf marker 
 
 ::
 
