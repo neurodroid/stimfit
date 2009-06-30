@@ -109,7 +109,7 @@ The while loop allows us to move within the indices of the array called selectio
     
 This second loop is very important, because it moves within the array until the value crosses the threshold again in the other direction, and skips every value until the threshold is crossed again. If we do not write this while there, the if condition will be True for all values after the threshold crossing, and the counter would give us the number of sampling points between threshold crossings (and not the number of events). 
 
-Finally, we move the index one to the next position in the array to look for the next event whenever the position is not larger that the length of the array. Note that preserving the Python indentation is extremely important here. The last i+=1 belongs to the first while condition (while i<len(selection), and allows us to perform the loop appropriately.
+Finally, we move the index one to the next position in the array to look for the next event whenever the position is not larger that the length of the array. Note that preserving the Python indentation is extremely important here. The last i+=1 belongs to the first while condition (while i<len(selection), and allows us to perform the loop appropiately.
 
 .. note::
 
@@ -131,7 +131,7 @@ will return the number of events above 0 mV in the current trace/channel between
 
     >>> myFile.count_events(start=500,delta=1000,threshold=-40,up=False,trace=10,mark=False)
 
-this will look for events below the value -40 but not in the current trace, only in the trace 11 (zero-based index is 10) in the downwards direction. Here a blue marker around the point found bellow the threshold will be shown too. Note that functions with a large number of arguments are difficult to remember. You can always change the order of the arguments if you describe the arguments in the function. For example, the following sentence has the same effect as the one above, but shows a different argument order:
+this will look for events below the value -40 but not in the current trace, only in the trace 11 (zero-based index is 10) in the downwards direction. Here a blue marker around the point found bellow the threshold will be shown too. Note that functions with a large number of arguments are dificult to remember. You can always change the order of the arguments if you describe the arguments in the function. For example, the following sentence has the same effect as the one above, but shows a different argument order:
 
 ::
 
@@ -154,8 +154,18 @@ this creates a table with 2 columns with the trace number a number of spikes fou
 
 Obviously, the function could be extended to return the time points of threshold crossings so that the interspike intervals can be calculated. This is left as an exercise to the reader.
 
-.. note::
 
-    Use the :func:`stf.erase_markers()` to clean the blue markers on the main stf window. If not, every time that you call the routine in the given trace, a series of blue markers showing the crossing points of the different threshold will overlap with each other. Alternatively, you can add :func:`stf.erase_markers()` in the beginning of count_events() to delete any marker presented previously:
+Use the :func:`stf.erase_marker()` function to clean the blue markers on the main stf window. If not, every time that you call the routine in the given trace, a series of blue markers will overlap with each other. For example, considering the following sentence:
 
+::
+
+    >>> myFile.count_event(start=500,delta=1000,threshold=0,up=True,trace=10,mark=True)
+
+if you now type this:
     
+::
+
+    >>> myFile.count_events(start=500,delta=1000,=threshold=-40,up=True,trace=10, mark=True)
+    
+The number of events found above 0 and bellow -40 in the trace 11  will overlap. To avoid this you can write stf.erase_marker() in the beginning of the function or call stf.erase_marker() from the Python console when necessary.
+
