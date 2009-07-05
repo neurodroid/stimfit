@@ -13,6 +13,8 @@ Contents:
    linux_install_guide/index
    howto/index
    stf_reference/stf
+   references/index
+   links/index
 
 Indices and tables
 ==================

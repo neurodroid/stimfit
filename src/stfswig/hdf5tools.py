@@ -152,7 +152,7 @@ def export_hdf5( filename="" ):
 
 def import_hdf5( filename ):
     """
-    Imports a file in hdf5 format stored by stimfit using PyTables, returns a numpy array.
+    Imports a file in hdf5 format stored by stimfit using PyTables, returns a Recording object.
     """
     h5file = tables.openFile( filename, mode='r' )
 
