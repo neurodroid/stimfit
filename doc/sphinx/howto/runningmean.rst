@@ -99,6 +99,6 @@ To perform the running average of 10 sampling points of the current trace, simpl
 
 ::
 
-    >>> myFile.rmean(10)
+    >>> spells.rmean(10)
 
 A new window with the running mean will appear.

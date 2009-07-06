@@ -123,25 +123,25 @@ As in :doc:`/howto/amplitudes` we can use the function in different ways:
 
 ::
 
-    >>> myFile.count_events(start=500,delta=1000)
+    >>> spells.count_events(start=500,delta=1000)
 
 will return the number of events above 0 mV in the current trace/channel between t=500 ms and t=1500 ms, and shows a blue stf marker 
 
 ::
 
-    >>> myFile.count_events(start=500,delta=1000,threshold=-40,up=False,trace=10,mark=False)
+    >>> spells.count_events(start=500,delta=1000,threshold=-40,up=False,trace=10,mark=False)
 
 this will look for events below the value -40 but not in the current trace, only in the trace 11 (zero-based index is 10) in the downwards direction. Here a blue marker around the point found bellow the threshold will be shown too. Note that functions with a large number of arguments are difficult to remember. You can always change the order of the arguments if you describe the arguments in the function. For example, the following sentence has the same effect as the one above, but shows a different argument order:
 
 ::
 
-    >>> myFile.count_events(threshold=-40,start=500,up=False,delta=1000,mark=False,trace=10)
+    >>> spells.count_events(threshold=-40,start=500,up=False,delta=1000,mark=False,trace=10)
 
 If you want to create a list of events with the events found in a selection of traces, you can simply type:
 
 ::
 
-    >>> spikes_list= [myFile.count_events(500,1000,0,True,i,False) for i in stf.get_selected_indices()]
+    >>> spikes_list= [spells.count_events(500,1000,0,True,i,False) for i in stf.get_selected_indices()]
 
 this will create a Python list with the number of events (e.g spikes) found between t=500ms and t=1500ms above 0 in the selected traces and no marker will be shown. In the same way as described previously in , you can create a table to copy the results.
 ::
