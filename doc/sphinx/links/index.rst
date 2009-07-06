@@ -26,7 +26,7 @@ Free electrophysiology software
     Suite of programs for recording and analysing signals from intracellular electrophysiology experiments. Runs under Windows.
 
 ================================
-Electrophsyiology software sites
+Electrophysiology software sites
 ================================
 `Neurohost <http://www.neurohost.org>`_ 
     José Guzmán's neuroscience web site. Maintains up-to-date instructions how to build and install stimfit on GNU/Linux (see Troubleshooting).
