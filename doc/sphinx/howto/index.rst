@@ -15,17 +15,17 @@ This document collects answers to some questions like "How do I make ... in ``St
 
 It assumes a basic knowledge of the embedded Python shell of ``Stimfit``. Some Python knowledge and a substantial proficiency in ``Stimfit`` are recommendable. Please note that this is not a Python manual, but a way to use Python for some basic analysis tasks provided with ``Stimfit``. For a detailed Python manual, we encourage the user to visit the official Python documentation on the [Python-website]_ and going through the :doc:`/manual/index`.
 
-In this document we assume that functions will be saved in a file called myfile.py (where myfile can be any custom made), and imported in the embedded Python shell with:
+Every function described along this document is available in your current ``Stimfit`` version. To make use of them you have simply to type the following line in the ``Stimfit`` embedded Python shell:
 
 ::
 
-    >>> import myFile
+    >>> import spells 
     
-For example, a function called rmean() would be saved in **myFile.py** and after importing, called in this way:
+For example, the function called rmean() would simply called in this way:
 
 ::
 
-    >>> myFile.rmean(10)
+    >>> spells.rmean(10)
 
 Finally, the contents of this document are organized with increased level of complexity, assuming some of the last chapters concepts and topics described in the first chapters. Thus, we encourage the newcomer to follow the order exposed bellow or to visit the section **code commented** in previous chapters. 
 

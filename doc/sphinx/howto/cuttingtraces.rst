@@ -119,19 +119,19 @@ In any case, a new stf window with the traces cut will appear
 
 ::
 
-    >>> myFile.cut_sweeps(200,300)
+    >>> spells.cut_sweeps(200,300)
 
 will create a new window with all the traces of the channel cut between t=200 ms and t=500 ms.
 
 ::
 
-    >>> myFile.cut_sweeps(200,300,range(30,60))
+    >>> spells.cut_sweeps(200,300,range(30,60))
 
 will create a new window with the same selection, but only between the traces 30 and 60.
 
 ::
 
-    >>> myFile.cut_sweeps(200,300,stf.get_selected_indices())
+    >>> spells.cut_sweeps(200,300,stf.get_selected_indices())
 
 will create a new window with the cut traces only if they were previously selected.
 

@@ -12,13 +12,14 @@ The resistance can be simply calculated using Ohm's law. Currents passing throug
     {\displaystyle R=\frac{\Delta V}{I} }
 
 
-In voltage clamp, resistance can be calculated by recording the current once the voltage difference is known. This Python routine should calculate the current difference, and resistance will be calculated given the voltage amplitude.  
-The following routine can be found in the ``Stimfit`` program directory (C:\\Program Files\\Stimfit in Windows or /usr/lib/python2.5/site-packages/Stimfit in GNU/Linux, assuming python2.5 is your current python environment). You can find it with the name **charlie.py** (in acknowledgment to Charlie, for her contribution to the development of the given routine). 
-
+In voltage clamp, resistance can be calculated by recording the current once the voltage difference is known. This Python routine should calculate the current difference, and resistance will be calculated given the voltage amplitude.
 
 =======================
 The resistance function
 =======================
+.. note::
+
+    You can find different routines to calculate the resistance in the file **charlie.py**. This file an be found in the ``Stimfit`` program directory (C:\\Program Files\\Stimfit in Windows or /usr/lib/python2.5/site-packages/Stimfit in GNU/Linux, assuming python2.5 is your current python environment). The name **charlie.py** is in acknowledgment to Charlie, for her contribution to the development of the given routines. 
 
 Note that this function assumes that current is recorded in pA. It sets the stf cursors (peak and baseline) to calculate the current deviation in response to the voltage difference. Finally, the voltage **amplitude** should be entered in mV. 
 
@@ -99,14 +100,14 @@ Now, you can use this function for different purposes. For example, you may want
 
 ::
 
-    >>> myFile.resistance(0,999,10700,1999,-5)
+    >>> spells.resistance(0,999,10700,1999,-5)
 
-Note that charlie.py has a routine called **r_in(amplitude=-5)** that does exactly this.
+Note that **charlie.py** has a routine called **r_in(amplitude=-5)** that does exactly this.
 
 In the same way, if you wanted to calculate the value of the seal resistance (assuming this is the smallest resistance in the circuit, so no current will flow through any other resistance), you could test it with a larger voltage pulse.
 
 ::
 
-    >>> myFile.resistance(0,199,1050,1199,50)
+    >>> spells.resistance(0,199,1050,1199,50)
 
-In the same way, charlie.py has a routine called **r_seal(50)** to calculate the seal resistance. Just change the parameters (baseline and peaks) to adapt it for your recordings.
+In the same way, the file **charlie.py** has a routine called **r_seal(50)** to calculate the seal resistance. Just change the parameters (baseline and peaks) to adapt it for your recordings.

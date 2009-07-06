@@ -112,19 +112,19 @@ The function accepts an optional *trace* argument. That means, that we do not ne
 
 ::
 
-    >>> myFile.get_amplitude(500,750,10)
+    >>> spells.get_amplitude(500,750,10)
 
 To calculate the same amplitude in the trace number 10 (zero-based index is 9) we can type:
 
 ::
 
-    >>> myFile.get_amplitude(500,750,10,9)
+    >>> spells.get_amplitude(500,750,10,9)
 
 More interesting is to get the amplitude in the selected traces, we can pass the tuple of selected traces to the *trace* argument and thereby calculate the amplitude on our selected traces:
 
 ::
 
-    >>> amplitudes_list = [myFile.get_amplitude(500,750,10,i) for i in stf.get_selected_indices()]
+    >>> amplitudes_list = [spells.get_amplitude(500,750,10,i) for i in stf.get_selected_indices()]
 
 In this way the tuple of selected indices is passed by the for loop to the function. Next, everything is wrapped in a Python list called amplitudes_list. 
 
