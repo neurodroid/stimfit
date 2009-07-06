@@ -21,7 +21,7 @@ Every function described along this document is available in your current ``Stim
 
     >>> import spells 
     
-For example, the function called rmean() would simply called in this way:
+After that, every function can be called with the dot notation, just typing the word **spells** before the desired function . For example, the function called rmean() would simply called in this way:
 
 ::
 
