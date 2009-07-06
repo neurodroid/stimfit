@@ -27,6 +27,7 @@ install-exec-hook:
 	cp -p $(srcdir)/charlie.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/hdf5tools.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/stf.py ${PYTHON_SITE_PKG}/stimfit
+	cp -p $(srcdir)/spells.py ${PYTHON_SITE_PKG}/stimfit
 	echo stimfit > ${PYTHON_SITE_PKG}/stimfit.pth
 
 endif

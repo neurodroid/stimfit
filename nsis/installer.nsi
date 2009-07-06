@@ -176,6 +176,7 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   File "${STFDIR}\src\stfswig\minidemo.py"
   File "${STFDIR}\src\stfswig\charlie.py"
   File "${STFDIR}\src\stfswig\hdf5tools.py"
+  File "${STFDIR}\src\stfswig\spells.py"
   File /r "${STFDIR}\src"
   
   ;Store installation folder
