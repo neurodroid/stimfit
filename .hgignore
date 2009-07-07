@@ -19,6 +19,7 @@ syntax: glob
 *.out
 *.log
 *.exe
+*.swp
 .DS_Store
 config.status
 config.log
