@@ -7,7 +7,7 @@ Latency measurements
 
 Measurement of synaptic delay
 =============================
-``Stimfit`` is frequently used to measure the delay between a synaptic signal and a post-synaptic response. Classically, this synaptic delay or latency is defined as "the time interval between the peak of the inward current through the synaptic membrane and commencement of inward current through the postsynaptic membrane" (Katz and Miledi, 1965 [#KatzMiledi1965]_). Neglecting cable properties of neurons for a while, the maximal inward current during an action potential is expected to flow at the time of maximal slope during the rising phase (Jack et al., 1983 [#Jack1983]_), since
+`Stimfit <http://www.stimfit.org>`_ is frequently used to measure the delay between a synaptic signal and a post-synaptic response. Classically, this synaptic delay or latency is defined as "the time interval between the peak of the inward current through the synaptic membrane and commencement of inward current through the postsynaptic membrane" (Katz and Miledi, 1965 [#KatzMiledi1965]_). Neglecting cable properties of neurons for a while, the maximal inward current during an action potential is expected to flow at the time of maximal slope during the rising phase (Jack et al., 1983 [#Jack1983]_), since
 
 .. math::
 
@@ -104,7 +104,7 @@ To confirm your latency cursor settings and measure latencies, you can either pr
 
 .. [#KatzMiledi1965] Katz B, Miledi R. (1965) The measurement of synaptic delay, and the time course of acetylcholine release at the neuromuscular junction. Proc R Soc Lond B Biol Sci. 161:483-495.
 
-.. [#Jack1983] Jack JJB, Noble D, Tsien RW (1983) Electric current flow in excitable cells. Oxford University Press, Oxford, UK.
+.. [#Jack1983] Jack JB, Noble D, Tsien RW (1983) Electric current flow in excitable cells. Oxford University Press, Oxford, UK.
 
 .. [#Bartos2001] Bartos M, Vida I, Frotscher M, Geiger JRP, Jonas P (2001) Rapid signaling at inhibitory synapses in a dentate gyrus interneuron network. J Neurosci 21:2687–2698.
 

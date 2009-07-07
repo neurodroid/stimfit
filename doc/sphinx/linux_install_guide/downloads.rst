@@ -8,13 +8,13 @@ Downloads
 Downloading and unpacking the sources of Stimfit
 ================================================
 
-You can visit the `Stimfit homepage <http://www.stimfit.org>`_ and click on the menu downloads. There you will find the Linux/Unix link which redirects you to the download zone of the different Stimfit versions. For this guide we will download the ``Stimfit`` version |version| for Linux. Just click on it or type the following in your terminal:
+You can visit the `Stimfit homepage <http://www.stimfit.org>`_ and click on the menu downloads. There you will find the Linux/Unix link which redirects you to the download zone of the different Stimfit versions. For this guide we will download the `Stimfit <http://www.stimfit.org>`_ version |version| for Linux. Just click on it or type the following in your terminal:
 
 ::
 
     >>> wget http://www.stimfit.org/stimfit-version.tar.gz
 
-Where **version** is the current ``Stimfit`` version (|version| in our case). After download the tar.gz file into a local directory (for example /usr/local) and type the following command to uncompress/untar:
+Where **version** is the current `Stimfit <http://www.stimfit.org>`_ version (|version| in our case). After download the tar.gz file into a local directory (for example /usr/local) and type the following command to uncompress/untar:
 
 ::
 
@@ -54,7 +54,7 @@ Now you're going to need OpenGL. The development libraries to get would be: libg
 
     >>> apt-get install libgl1-mesa-dev libglu1-mesa-dev. 
 
-If you are interested in programming graphics, you might want to go ahead and install libsdl-image1.2 and libsdl-image1.2-dev SDL_image will make loading textures for SDL and OpenGL a breeze (in all kinds of formats too), but this last is not necessary for ``Stimfit``.
+If you are interested in programming graphics, you might want to go ahead and install libsdl-image1.2 and libsdl-image1.2-dev SDL_image will make loading textures for SDL and OpenGL a breeze (in all kinds of formats too), but this last is not necessary for `Stimfit <http://www.stimfit.org>`_.
 
 Additional packages
 ===================

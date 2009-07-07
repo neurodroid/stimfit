@@ -10,7 +10,7 @@ File opening
 This tutorial will cover the basic program functionality from opening a
 file to fitting functions to data.
 
-* Download the `Stimfit setup program <http://www.stimfit.org>`_ and install ``Stimfit`` on your computer.
+* Download the `Stimfit setup program <http://www.stimfit.org>`_ and install `Stimfit <http://www.stimfit.org>`_ on your computer.
 
 * Download the `Stimfit sample <http://stimfit.org/tutorial/minis.dat>`_ data file.
 
@@ -49,7 +49,7 @@ Trace scaling
 * Enlarge the vertical scale: Press **+**. Depending on which channel(s) you selected, the vertical scale will be enlarged by a factor of 10%. Shrink the scale back to its original value by pressing **-**.
 
 
-* Enlarge the time scale: Press **Ctrl** and **+** simultaneously. The time scale will be enlarged for both channels, regardless of which channel you have chosen, because ``Stimfit`` assumes that both channels have been sampled at the same time and frequency.
+* Enlarge the time scale: Press **Ctrl** and **+** simultaneously. The time scale will be enlarged for both channels, regardless of which channel you have chosen, because `Stimfit <http://www.stimfit.org>`_ assumes that both channels have been sampled at the same time and frequency.
 
 * Shrink the time scale back to its original value by pressing **Ctrl** and **-** simultaneously.
 
@@ -100,7 +100,7 @@ Analysis of individual events
 =============================
 An "event" can be anything from an EPSC to an action potential. In this case, we will analyze a large spontaneous EPSC in trace no. 12 of the second channel. Navigate to trace number 12, swap channels, and zoom into the large EPSC as described above. All results are displayed in the results table (Fig. 9). You can select which results to show in the bar by right-clicking on one of the column or row title labels, and then selecting or unselecting the corresponding items.
 
-``Stimfit`` uses cursors to define measurement windows. Cursors are represented by vertical dashed lines extending throughout the window, similar as on an oscilloscope. For example, the baseline is calculated as the average of all sampling points between the two base window cursors (vertical two dashed lines). To move the cursors by clicking the left mouse button where you want the baseline calculation to start. Set the right cursor by clicking the right mouse button where you want the baseline calculation to end. Press **Enter**. The result of the baseline calculation is displayed in the results table, and the baseline is plotted as a horizontal green dashed line (Fig. 10).
+`Stimfit <http://www.stimfit.org>`_ uses cursors to define measurement windows. Cursors are represented by vertical dashed lines extending throughout the window, similar as on an oscilloscope. For example, the baseline is calculated as the average of all sampling points between the two base window cursors (vertical two dashed lines). To move the cursors by clicking the left mouse button where you want the baseline calculation to start. Set the right cursor by clicking the right mouse button where you want the baseline calculation to end. Press **Enter**. The result of the baseline calculation is displayed in the results table, and the baseline is plotted as a horizontal green dashed line (Fig. 10).
 
 
 

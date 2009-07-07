@@ -5,7 +5,7 @@ Cutting traces
 :Author: Jose Guzman
 :Date:  |today|
 
-As described in :doc:`/manual/python` chapter of the :doc:`/manual/index`, a very often requested feature of ``Stimfit`` is to cut an original trace to show it in a presentation or publication. This feature, however, has been only integrated into the stf module, and not in the ``Stimfit`` main menubar. With this, ``Stimfit`` preserves its user interface as clear and user-friendly as possible.
+As described in :doc:`/manual/python` chapter of the :doc:`/manual/index`, a very often requested feature of `Stimfit <http://www.stimfit.org>`_ is to cut an original trace to show it in a presentation or publication. This feature, however, has been only integrated into the stf module, and not in the `Stimfit <http://www.stimfit.org>`_ main menubar. With this, `Stimfit <http://www.stimfit.org>`_ preserves its user interface as clear and user-friendly as possible.
 
 We can use the built-in stf function :func:`stf.new_window()` to show a new stf window with the current trace within an interval. For example, 
 ::

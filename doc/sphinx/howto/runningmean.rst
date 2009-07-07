@@ -17,7 +17,7 @@ Given for example a sequence :math:`X` of :math:`n` points, we can create a new 
 The running mean function
 =========================
 
-The following Python function calculates the running mean of the current channel. Both trace and channel can be selected as zero-based indices. The width of the running average (refereed to here as binwidth) can be selected. The resulting average will appear in a new ``Stimfit`` window.
+The following Python function calculates the running mean of the current channel. Both trace and channel can be selected as zero-based indices. The width of the running average (refereed to here as binwidth) can be selected. The resulting average will appear in a new `Stimfit <http://www.stimfit.org>`_ window.
 
 ::
     
@@ -75,7 +75,7 @@ The following Python function calculates the running mean of the current channel
 Code commented
 ==============
 
-``Stimfit`` commonly uses the value -1 to set the current trace/Channel. In this function the default argument values are -1 (see the function arguments *trace=-1* and *channel=-1*). 
+`Stimfit <http://www.stimfit.org>`_ commonly uses the value -1 to set the current trace/Channel. In this function the default argument values are -1 (see the function arguments *trace=-1* and *channel=-1*). 
 
 ..
 

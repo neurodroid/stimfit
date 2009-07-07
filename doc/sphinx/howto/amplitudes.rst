@@ -5,9 +5,9 @@ Calculations on selected traces
 :Author: Jose Guzman
 :Date:  |today|
 
-A widely used feature of ``Stimfit`` is the selection of some traces of interest within a file to make some calculations on them (average, peaks, amplitudes, etc.). The batch-analysis of ``Stimfit`` does precisely that. However, in some cases we can enhance its possibilities writing our custom functions in Python for the selected traces. 
+A widely used feature of `Stimfit <http://www.stimfit.org>`_ is the selection of some traces of interest within a file to make some calculations on them (average, peaks, amplitudes, etc.). The batch-analysis of `Stimfit <http://www.stimfit.org>`_ does precisely that. However, in some cases we can enhance its possibilities writing our custom functions in Python for the selected traces. 
 
-In ``Stimfit``, the indices of selected traces can be easily retrieved using :func:`stf.get_selected_indices()`. This function returns a tuple with the selected indices. 
+In `Stimfit <http://www.stimfit.org>`_, the indices of selected traces can be easily retrieved using :func:`stf.get_selected_indices()`. This function returns a tuple with the selected indices. 
 
 ::
 

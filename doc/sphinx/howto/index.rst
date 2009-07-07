@@ -11,11 +11,11 @@ The Stimfit book of spells
 :Release: |version|
 :Date:  |today|
 
-This document collects answers to some questions like "How do I make ... in ``Stimfit`` with python?". Though much of the material can be easily found in the :doc:`/manual/index`, the examples provided here are a good way for the casual user to start using Python in ``Stimfit``. 
+This document collects answers to some questions like "How do I make ... in `Stimfit <http://www.stimfit.org>`_ with python?". Though much of the material can be easily found in the :doc:`/manual/index`, the examples provided here are a good way for the casual user to start using Python in `Stimfit <http://www.stimfit.org>`_. 
 
-It assumes a basic knowledge of the embedded Python shell of ``Stimfit``. Some Python knowledge and a substantial proficiency in ``Stimfit`` are recommendable. Please note that this is not a Python manual, but a way to use Python for some basic analysis tasks provided with ``Stimfit``. For a detailed Python manual, we encourage the user to visit the official Python documentation on the [Python-website]_ and going through the :doc:`/manual/index`.
+It assumes a basic knowledge of the embedded Python shell of `Stimfit <http://www.stimfit.org>`_. Some Python knowledge and a substantial proficiency in `Stimfit <http://www.stimfit.org>`_ are recommendable. Please note that this is not a Python manual, but a way to use Python for some basic analysis tasks provided with `Stimfit <http://www.stimfit.org>`_. For a detailed Python manual, we encourage the user to visit the official Python documentation on the [Python-website]_ and going through the :doc:`/manual/index`.
 
-Every function described along this document is available in your current ``Stimfit`` version. To make use of them you have simply to type the following line in the ``Stimfit`` embedded Python shell:
+Every function described along this document is available in your current `Stimfit <http://www.stimfit.org>`_ version. To make use of them you have simply to type the following line in the `Stimfit <http://www.stimfit.org>`_ embedded Python shell:
 
 ::
 

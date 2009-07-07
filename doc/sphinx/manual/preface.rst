@@ -5,10 +5,10 @@ Preface
 :Author: Christoph Schmidt-Hieber (christsc at gmx.de)
 :Date: |today|
 
-``Stimfit`` was originally written by Peter Jonas, University of Freiburg,
+`Stimfit <http://www.stimfit.org>`_ was originally written by Peter Jonas, University of Freiburg,
 in the early 1990s. It was primarily designed to analyze the kinetics of
 evoked excitatory postsynaptic potentials (EPSCs; Jonas et al., 1993 [#Jonas1993]_).
-The name ``Stimfit`` was chosen because the program allowed to *fit*
+The name `Stimfit <http://www.stimfit.org>`_ was chosen because the program allowed to *fit*
 exponential functions to the decay of EPSCs evoked by extracellular
 *stim*-ulation. The program was written in Borland Pascal, running under
 DOS and entirely controlled using keyboards shortcuts. The user
@@ -38,7 +38,7 @@ clicking the right mouse button will usually set a cursor position
 rather than popping up a context menu.
 
 A number of people have contributed to the program: First, I would like
-to thank Peter Jonas for the original ``Stimfit`` code. Josef
+to thank Peter Jonas for the original `Stimfit <http://www.stimfit.org>`_ code. Josef
 Bischofberger has added some functions to the DOS version which I have
 adopted. Bill Anderson has made helpful suggestions concerning the user
 interface and provided some very large files that have been recorded

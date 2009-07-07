@@ -21,12 +21,12 @@ Before you start
 
 If you are new to ``Python``, I suggest that you first have a look at the
 [Python-tutorial]_. If that is not enough, abundant documentation is freely
-available on the [Python-website]_. If you are new to ``Stimfit``, I recommend going through the tutorial in chapter 1 of this manual first.
+available on the [Python-website]_. If you are new to `Stimfit <http://www.stimfit.org>`_, I recommend going through the tutorial in chapter 1 of this manual first.
 
 The Python shell
 ================
 
-When you start up ``Stimfit``,  you will find an embedded Python shell in
+When you start up `Stimfit <http://www.stimfit.org>`_,  you will find an embedded Python shell in
 the lower part of the program window. From this shell, you have full
 access to the Python interpreter. For instance, you could type:
 
@@ -172,7 +172,7 @@ Although using a 2D_NumPy array is very efficient, there are a few drawbacks: th
 
 Note that items in Python list are written between *squared* brakes, and that a comma is required at the end of single-item lists.
 
-The [Scipy]_ library, which is build on top of [NumPy]_, provides a huge amount of numerical tools, such as special functions, integration, ordinary differential equation solvers, gradient optimization, genetic algorithms or parallel programming tools. Due to its size, it is no packaged with ``Stimfit`` by default, but I highly recommend installing it for more advanced numerical analysis.
+The [Scipy]_ library, which is build on top of [NumPy]_, provides a huge amount of numerical tools, such as special functions, integration, ordinary differential equation solvers, gradient optimization, genetic algorithms or parallel programming tools. Due to its size, it is no packaged with `Stimfit <http://www.stimfit.org>`_ by default, but I highly recommend installing it for more advanced numerical analysis.
 
 Control Stimfit from the Python shell
 =====================================
@@ -287,7 +287,7 @@ By defining your own functions, you can apply identical complex analysis to diff
 
     >>> import stf
 
-3. Start ``Stimfit`` and import your file in the embedded Python shell. Assuming that your file is called ``myFile.py``, you would do:
+3. Start `Stimfit <http://www.stimfit.org>`_ and import your file in the embedded Python shell. Assuming that your file is called ``myFile.py``, you would do:
 
 ::
 

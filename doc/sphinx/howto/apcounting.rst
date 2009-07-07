@@ -8,7 +8,7 @@ Event counting
 Counting the number of events (for example action potentials) within a time window is a very common task in electrophysiology. In its simplest form, the user would like to know how many spikes occur following the onset of a stimulus (i.e current injection). We can write a simple Python function which automatically performs this calculation with a simple event detection routine. 
 
 .. note::
-    Stimfit has built-in functions to count the number of events (i.e action potentials). From the menu, select Analysis -> event detection-> threshold crossing... or alternatively with the Analysis-> Batch analysis->threshold crossing. However, this Python script allows for more flexibility while counting events, such as detecting positive- or negative-going events.
+    `Stimfit <http://www.stimfit.org>`_ has built-in functions to count the number of events (i.e action potentials). From the menu, select Analysis -> event detection-> threshold crossing... or alternatively with the Analysis-> Batch analysis->threshold crossing. However, this Python script allows for more flexibility while counting events, such as detecting positive- or negative-going events.
     
 ==========================
 The counter event function
@@ -113,7 +113,7 @@ Finally, we move the index one to the next position in the array to look for the
 
 .. note::
 
-    Do not try to write while loops in the embedded python console of ``Stimfit`` unless you are very familiar with while loops in Python or in any other language. While loops, if written incorrectly, may run infinite iterations and block the Python terminal of ``Stimfit``. For that reason, it is a good idea to explore while loops in an independent python terminal before using them in ``Stimfit``. 
+    Do not try to write while loops in the embedded python console of ```Stimfit <http://www.stimfit.org>`_`` unless you are very familiar with while loops in Python or in any other language. While loops, if written incorrectly, may run infinite iterations and block the Python terminal of ```Stimfit <http://www.stimfit.org>`_``. For that reason, it is a good idea to explore while loops in an independent python terminal before using them in ```Stimfit <http://www.stimfit.org>`_``. 
 
 =====
 Usage

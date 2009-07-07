@@ -7,7 +7,7 @@ Event extraction by template matching
 
 Introduction
 =============================
-To isolate individual events such as EPSCs or EPSPs from recorded data, ``Stimfit`` uses a template matching algorithm as described by Jonas et al., (1993 [#Jonas1993]_), with some implementation details adopted from Clemens and Bekkers (1997) [#ClemensBekkers1997]_. The template consists of a waveform :math:`p(t)` with a length of :math:`n` sampling points that represents the time course of a typical event. The template is a slid over the trace or recorded values :math:`r(t)`, and at each sampling point with index :math:`s`, it is multiplied by a scaling factor :math:`m` and an offset :math:`c` is added or subtracted so that the sum of squared errors :math:`\chi^2(t_s)` between the trace and the template is minimized:
+To isolate individual events such as EPSCs or EPSPs from recorded data, `Stimfit <http://www.stimfit.org>`_ uses a template matching algorithm as described by Jonas et al., (1993 [#Jonas1993]_), with some implementation details adopted from Clemens and Bekkers (1997) [#ClemensBekkers1997]_. The template consists of a waveform :math:`p(t)` with a length of :math:`n` sampling points that represents the time course of a typical event. The template is a slid over the trace or recorded values :math:`r(t)`, and at each sampling point with index :math:`s`, it is multiplied by a scaling factor :math:`m` and an offset :math:`c` is added or subtracted so that the sum of squared errors :math:`\chi^2(t_s)` between the trace and the template is minimized:
 
 .. math::
 
@@ -15,11 +15,11 @@ To isolate individual events such as EPSCs or EPSPs from recorded data, ``Stimfi
 
 As can be seen from this equation, this amounts to the fairly simple operation fitting a straight line that relates :math:`p(t)` and :math:`r(t)` at every sampling point.
 
-Finally, some detection criterion has to be applied to decide whether an event has occurred at a sampling point. Two options are available in ``Stimfit``: Jonas et al.,(1993) [#Jonas1993]_suggests to use the linear correlation coefficient between the optimally scaled template and the data, whereas Clements and Bekkers (1997) [#ClemensBekkers1997]_ compare the scaling factor with the noise standard deviation.
+Finally, some detection criterion has to be applied to decide whether an event has occurred at a sampling point. Two options are available in `Stimfit <http://www.stimfit.org>`_ ; Jonas et al.,(1993) [#Jonas1993]_ suggests to use the linear correlation coefficient between the optimally scaled template and the data, whereas Clements and Bekkers (1997) [#ClemensBekkers1997]_ compare the scaling factor with the noise standard deviation.
 
 A practical guide to event detection
 ====================================
-In practice, the following steps need to be performed to extract events with ``Stimfit``:
+In practice, the following steps need to be performed to extract events with `Stimfit <http://www.stimfit.org>`_:
 
 1. Create a preliminary template by fitting a function to a single, large and isolated event.
 
@@ -43,7 +43,7 @@ In general, the template waveform :math:`p(t)` can be of arbitrary shape. A typi
 
         **Fig. 21:** Creation of a "bait" template.
 
-First, we fit a function to a single large an isolated event to create a preliminary "bait" template. In this case, we will use the EPSC that can be found roughly between t = 20990 ms and t = 21050 ms. Then, we fit the sum of two exponential functions with a delay to this EPSC. To obtain the same template as in the example, you can call the function ``preliminary`` from the ``minidemo`` module that comes  bundled with ``Stimfit``
+First, we fit a function to a single large an isolated event to create a preliminary "bait" template. In this case, we will use the EPSC that can be found roughly between t = 20990 ms and t = 21050 ms. Then, we fit the sum of two exponential functions with a delay to this EPSC. To obtain the same template as in the example, you can call the function ``preliminary`` from the ``minidemo`` module that comes  bundled with `Stimfit <http://www.stimfit.org>`_
 
 ::
 
