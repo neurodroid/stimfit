@@ -537,6 +537,7 @@ uninstall-am: uninstall-libLTLIBRARIES
 @BUILD_PYTHON_TRUE@	cp -p $(srcdir)/charlie.py ${PYTHON_SITE_PKG}/stimfit
 @BUILD_PYTHON_TRUE@	cp -p $(srcdir)/hdf5tools.py ${PYTHON_SITE_PKG}/stimfit
 @BUILD_PYTHON_TRUE@	cp -p $(srcdir)/stf.py ${PYTHON_SITE_PKG}/stimfit
+@BUILD_PYTHON_TRUE@	cp -p $(srcdir)/spells.py ${PYTHON_SITE_PKG}/stimfit
 @BUILD_PYTHON_TRUE@	echo stimfit > ${PYTHON_SITE_PKG}/stimfit.pth
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

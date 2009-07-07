@@ -11,8 +11,8 @@ To isolate individual events such as EPSCs or EPSPs from recorded data, ``Stimfi
 
 .. math::
 
-    {\displaystyle \chi^2(t_s)= \sum^{n=1}_{k=0}[r(t_{s+k}-(m\cdotp(t_k)+c)]}
-    
+    {\displaystyle \chi^2(t_s)= \sum_{k=0}^{n-1}\left[r(t_{s+k})-\left(m{\cdot}p(t_k)+c\right)\right]^2}
+
 As can be seen from this equation, this amounts to the fairly simple operation fitting a straight line that relates :math:`p(t)` and :math:`r(t)` at every sampling point.
 
 Finally, some detection criterion has to be applied to decide whether an event has occurred at a sampling point. Two options are available in ``Stimfit``: Jonas et al.,(1993) [#Jonas1993]_suggests to use the linear correlation coefficient between the optimally scaled template and the data, whereas Clements and Bekkers (1997) [#ClemensBekkers1997]_ compare the scaling factor with the noise standard deviation.
