@@ -202,8 +202,8 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
             // request memory:
             std::vector<float> TempSection(uNumSamples);
             unsigned int uNumSamplesW;
-            if (!ABF2_ReadChannel(hFile, pFH, pFH->nADCSamplingSeq[nChannel],nEpisode,&TempSection[0],
-                &uNumSamplesW,&nError))
+            if (!ABF2_ReadChannel(hFile, pFH, pFH->nADCSamplingSeq[nChannel],nEpisode,TempSection,
+                                  &uNumSamplesW,&nError))
             {
                 wxString errorMsg(wxT("Exception while calling ABF_ReadChannel():\n"));
                 errorMsg += ABF1Error(fName, nError);
@@ -329,8 +329,8 @@ void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool prog
             // request memory:
             std::vector<float> TempSection(uNumSamples);
             unsigned int uNumSamplesW;
-            if (!ABF_ReadChannel(hFile,&FH,FH.nADCSamplingSeq[nChannel],dwEpisode,&TempSection[0],
-                &uNumSamplesW,&nError))
+            if (!ABF_ReadChannel(hFile, &FH, FH.nADCSamplingSeq[nChannel], dwEpisode, TempSection,
+                                 &uNumSamplesW, &nError))
             {
                 wxString errorMsg(wxT("Exception while calling ABF_ReadChannel():\n"));
                 errorMsg += ABF1Error(fName, nError);

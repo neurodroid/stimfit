@@ -16,6 +16,7 @@
 #include "../AxAbfFio32/abfheadr.h"
 #include "../../axon2/abf2headr.h"
 #endif
+#include <vector>
 
 // #include "../AxAbfFio32/filedesc.hpp"    // File descriptors for ABF files.
 
@@ -117,9 +118,9 @@ BOOL WINAPI ABF_HasData(int nFile, const ABFFileHeader *pFH);
 BOOL WINAPI ABF_Close(int nFile, int *pnError);
 
 BOOL WINAPI ABF_MultiplexRead(int nFile, const ABFFileHeader *pFH, DWORD dwEpisode, 
-                              void *pvBuffer, UINT *puSizeInSamples, int *pnError);
+                              void *pvBuffer, UINT uBufferSize, UINT *puSizeInSamples, int *pnError);
 BOOL WINAPI ABF2_MultiplexRead(int nFile, const ABF2FileHeader *pFH, DWORD dwEpisode, 
-                              void *pvBuffer, UINT *puSizeInSamples, int *pnError);
+                               void *pvBuffer, UINT uBufferSize, UINT *puSizeInSamples, int *pnError);
 /*
 BOOL WINAPI ABF_MultiplexWrite(int nFile, ABFFileHeader *pFH, UINT uFlags, const void *pvBuffer, 
                                DWORD dwEpiStart, UINT uSizeInSamples, int *pnError);
@@ -127,9 +128,9 @@ BOOL WINAPI ABF_MultiplexWrite(int nFile, ABFFileHeader *pFH, UINT uFlags, const
 BOOL WINAPI ABF_WriteRawData(int nFile, const void *pvBuffer, DWORD dwSizeInBytes, int *pnError);
 */
 BOOL WINAPI ABF_ReadChannel(int nFile, const ABFFileHeader *pFH, int nChannel, DWORD dwEpisode, 
-                            float *pfBuffer, UINT *puNumSamples, int *pnError);
+                            std::vector<float>& pfBuffer, UINT *puNumSamples, int *pnError);
 BOOL WINAPI ABF2_ReadChannel(int nFile, const ABF2FileHeader *pFH, int nChannel, DWORD dwEpisode, 
-                            float *pfBuffer, UINT *puNumSamples, int *pnError);
+                             std::vector<float>& pfBuffer, UINT *puNumSamples, int *pnError);
 /*                                   
 BOOL WINAPI ABF_ReadRawChannel(int nFile, const ABFFileHeader *pFH, int nChannel, DWORD dwEpisode, 
                                void *pvBuffer, UINT *puNumSamples, int *pnError);
