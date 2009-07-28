@@ -73,14 +73,15 @@ The following function counts the number of events (e.g action potentials) by de
         else:
             comp = lambda a, b: a < b
 
-        # run the loop
+    # run the loop
 	while i<len(selection):
-            if comp(selection[i],threshold):
+        if comp(selection[i],threshold):
                 EventCounter +=1
-		if mark:
-		    stf.set_marker(pstart+i, selection[i])
-                while comp(selection[i],threshold):
+		    if mark:
+		        stf.set_marker(pstart+i, selection[i])
+                while i<len(selection) and comp(selection[i],threshold):
                     i+=1 # skip values until the value is below or above threshold again
+        else:
             i+=1
 
         return EventCounter 

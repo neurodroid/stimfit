@@ -241,9 +241,10 @@ def count_events(start, delta, threshold=0, up=True, trace=None, mark=True):
             EventCounter +=1
             if mark:
                 stf.set_marker(pstart+i, selection[i])
-            while comp(selection[i],threshold):
+            while i<len(selection) and comp(selection[i],threshold):
                 i+=1 # skip values until the value is below or above threshold again
-        i+=1
+        else:
+            i+=1
 
     return EventCounter
 
