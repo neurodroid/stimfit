@@ -67,22 +67,22 @@ The following function counts the number of events (e.g action potentials) by de
         # algorithm to detect events
         EventCounter,i = 0,0 # set counter and index to zero
 
-	# choose comparator according to direction:
-	if up:
-	    comp = lambda a, b: a > b
+    	# choose comparator according to direction:
+    	if up:
+            comp = lambda a, b: a > b
         else:
             comp = lambda a, b: a < b
 
-    # run the loop
-	while i<len(selection):
-        if comp(selection[i],threshold):
+        # run the loop
+        while i<len(selection):
+            if comp(selection[i],threshold):
                 EventCounter +=1
-		    if mark:
-		        stf.set_marker(pstart+i, selection[i])
+                if mark:
+                    stf.set_marker(pstart+i, selection[i])
                 while i<len(selection) and comp(selection[i],threshold):
-                    i+=1 # skip values until the value is below or above threshold again
-        else:
-            i+=1
+                    i+=1 # skip values if index in bounds AND until the value is below/above threshold again
+            else:
+                i+=1
 
         return EventCounter 
                     
@@ -97,20 +97,21 @@ The traces are selected by the optional argument trace, as explained in :doc:`/h
     while i<len(selection):
         if comp(selection[i], threshold):
             EventCounter +=1
-            while comp(selection[i], threshold): 
-                i+=1 # skip values until the value is below or above threshold again
-        i+=1
+            while i<len(selection) and comp(selection[i], threshold): 
+                i+=1 # skip if index in bounds AND values until the value is below or above threshold again
+        else:
+            i+=1
 
 The while loop allows us to move within the indices of the array called selection. We insert an if-block inside to test whether the threshold is crossed at [i]. In this case we will add 1 to the counter (EventCounter +=1) and move to the second while loop. 
 
 ::
 
-    while comp(selection[i], threshold): 
-        i+=1 # jump until the value is below or above threshold again
+    while i<len(selection) and comp(selection[i], threshold): 
+        i+=1 # skip if index in bounds AND values until the value is below or above threshold again
     
-This second loop is very important, because it moves within the array until the value crosses the threshold again in the other direction, and skips every value until the threshold is crossed again. If we do not write this while there, the if condition will be True for all values after the threshold crossing, and the counter would give us the number of sampling points between threshold crossings (and not the number of events). 
+This second loop is very important. The index moves within the array until the value crosses the threshold again in the other direction. We have to skip every value until the threshold is crossed again. If we do do this while here, the if condition will be True for all values after the threshold crossing, and the counter would give us the number of sampling points between threshold crossings (and not the number of events). Finally, it is important to do this loop whenever the index is inside the limits of the selection.
 
-Finally, we move the index one to the next position in the array to look for the next event whenever the position is not larger that the length of the array. Note that preserving the Python indentation is extremely important here. The last i+=1 belongs to the first while condition (while i<len(selection), and allows us to perform the loop appropriately.
+Finally, if the condition is not true, the else statement will move the index one possition next in the array. The main while loop (while i<len(selection)) will evaluate for every point if the threshold is achieved. Note that preserving the Python indentation is extremely important here. 
 
 .. note::
 
