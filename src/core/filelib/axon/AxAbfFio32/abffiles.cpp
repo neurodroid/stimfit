@@ -508,7 +508,7 @@ BOOL WINAPI ABF_ReadOpen(LPCSTR szFileName, int *phFile, UINT fFlags, ABFFileHea
     pFI->SetAcquiredSamples(NewFH.lActualAcqLength);
 
     // Seek to start of Data section
-    //   VERIFY(pFI->Seek(GetDataOffset(&NewFH), FILE_BEGIN));
+    pFI->Seek(GetDataOffset(&NewFH), FILE_BEGIN);
 
     // Restore the original header.
     ABFH_DemoteHeader( pFH, &NewFH );
@@ -1600,9 +1600,11 @@ BOOL WINAPI ABF_MultiplexRead(int nFile, const ABFFileHeader *pFH, DWORD dwEpiso
         return ErrorReturn(pnError, ABF_EREADDATA);
 
     // If episode is not full, pad it out with 0's
+    // Make sure that it is zero-padded to avoid this adventurous memset
+#if 0
     if (uSizeInBytes < uBufferSize * uSampleSize)
         memset((char *)pvBuffer + uSizeInBytes, '\0', uBufferSize*uSampleSize - uSizeInBytes);
-
+#endif
     return TRUE;
 }
 

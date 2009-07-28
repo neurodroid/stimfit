@@ -103,8 +103,8 @@ void stf::importABFFile(const wxString &fName, Recording &ReturnData, bool progr
     }
     fclose(fh);
 #else
-	HANDLE hFile = CreateFile(fName, GENERIC_READ, FILE_SHARE_READ, NULL,
-                       OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    HANDLE hFile = CreateFile(fName, GENERIC_READ, FILE_SHARE_READ, NULL,
+                              OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
  
     if (hFile == INVALID_HANDLE_VALUE) { 
         wxString errorMsg(wxT("Exception while calling importABFFile():\nCouldn't open file"));
@@ -327,7 +327,7 @@ void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool prog
             // Use a vector here because memory allocation can
             // be controlled more easily:
             // request memory:
-            std::vector<float> TempSection(uNumSamples);
+            std::vector<float> TempSection(uNumSamples, 0);
             unsigned int uNumSamplesW;
             if (!ABF_ReadChannel(hFile, &FH, FH.nADCSamplingSeq[nChannel], dwEpisode, TempSection,
                                  &uNumSamplesW, &nError))

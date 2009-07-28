@@ -980,8 +980,10 @@ public:
 
    ABFFileHeader();
 };   // Size = 6144
+    
 // This structure is persisted, so the size MUST NOT CHANGE
-//CSH STATIC_ASSERT(sizeof(ABFFileHeader) == 6144);
+# define C_ASSERT(e) extern void __C_ASSERT__(int [(e)?1:-1])
+C_ASSERT(sizeof(ABFFileHeader) == 6144);
 
 inline ABFFileHeader::ABFFileHeader()
 {
