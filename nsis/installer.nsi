@@ -11,7 +11,7 @@ SetCompressor lzma
 
 ;--------------------------------
 
-!define PRODUCT_VERSION "0.9.0-rc5"
+!define PRODUCT_VERSION "0.9.0"
 !define EXE_NAME "stimfit"
 !define REG_NAME "Stimfit 0.9"
 !define PRODUCT_PUBLISHER "Christoph Schmidt-Hieber"
@@ -20,6 +20,7 @@ SetCompressor lzma
 !define MSIDIR "C:\Users\cs\Downloads"
 !define WXWDIR "C:\Users\cs\wxWidgets"
 !define WXPDIR "C:\Users\cs\wxPython\final.build\Python26\Lib\site-packages"
+!define PRODIR "C:\Programme"
 !define FULL_WELCOME "This wizard will guide you through the installation \
 of ${REG_NAME} and wxPython. You can optionally \
 install Python 2.6.2 and NumPy 1.3.0 \
@@ -153,16 +154,15 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   
 !ifndef UPDATE
   File "${STFDIR}\stimfit_VS03\libfftw3-3.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290u_core_vc.dll"
-  File "${WXWDIR}\lib\vc_dll\wxbase290u_vc.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290u_aui_vc.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290u_adv_vc.dll"
-  File "${WXWDIR}\lib\vc_dll\wxbase290u_net_vc.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290u_html_vc.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290u_stc_vc.dll"
-  File "${WXWDIR}\lib\vc_dll\wxmsw290u_stc_vc.dll"
-  File "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll"
-  File "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290u_core_vc_custom.dll"
+  File "${WXWDIR}\lib\vc_dll\wxbase290u_vc_custom.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290u_aui_vc_custom.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290u_adv_vc_custom.dll"
+  File "${WXWDIR}\lib\vc_dll\wxbase290u_net_vc_custom.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290u_html_vc_custom.dll"
+  File "${WXWDIR}\lib\vc_dll\wxmsw290u_stc_vc_custom.dll"
+  File "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll"
+  File "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
   File /r "${WXPDIR}\wx*"
 !endif
   File "${STFDIR}\stimfit_VS03\stimfit_exe\Release\${EXE_NAME}.exe"

@@ -17,7 +17,6 @@
 // 2007-12-27, Christoph Schmidt-Hieber, University of Freiburg
 
 // For compilers that support precompilation, includes "wx/wx.h".
-
 #include <wx/wxprec.h>
 
 #include <wx/memory.h>
