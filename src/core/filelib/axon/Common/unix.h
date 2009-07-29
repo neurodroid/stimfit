@@ -23,6 +23,10 @@ typedef HANDLE FILEHANDLE;
 
 #include <stdio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
 //
 // Commonly used typedefs & constants from windows.h.
 //
@@ -33,13 +37,83 @@ typedef unsigned long *LPDWORD;
 typedef unsigned int   UINT;
 typedef int            INT;
 typedef int            BOOL;
-typedef long           LONG;
 typedef long          *PLONG;
-typedef char          *LPSTR;
 typedef unsigned char *LPBYTE;
-typedef const char    *LPCSTR;
 typedef void          *LPVOID;
 typedef const void    *LPCVOID;
+
+//
+// Basics
+//
+
+#ifndef VOID
+#define VOID void
+typedef char CHAR;
+typedef short SHORT;
+typedef long LONG;
+#endif
+
+//
+// UNICODE (Wide Character) types
+//
+
+#ifndef _MAC
+typedef wchar_t WCHAR;    // wc,   16-bit UNICODE character
+#else
+// some Macintosh compilers don't define wchar_t in a convenient location, or define it as a char
+typedef unsigned short WCHAR;    // wc,   16-bit UNICODE character
+#endif
+
+typedef WCHAR *PWCHAR;
+typedef WCHAR *LPWCH, *PWCH;
+typedef const WCHAR *LPCWCH, *PCWCH;
+typedef WCHAR *NWPSTR;
+typedef WCHAR *LPWSTR, *PWSTR;
+
+typedef const WCHAR *LPCWSTR, *PCWSTR;
+
+//
+// ANSI (Multi-byte Character) types
+//
+typedef CHAR *PCHAR;
+typedef CHAR *LPCH, *PCH;
+
+typedef const CHAR *LPCCH, *PCCH;
+typedef CHAR *NPSTR;
+typedef CHAR *LPSTR, *PSTR;
+typedef const CHAR *LPCSTR, *PCSTR;
+
+//
+// Neutral ANSI/UNICODE types and macros
+//
+#if defined(UNICODE) || defined (__LINUX__)                     // r_winnt
+
+#ifndef _TCHAR_DEFINED
+typedef WCHAR TCHAR, *PTCHAR;
+typedef WCHAR TBYTE , *PTBYTE ;
+#define _TCHAR_DEFINED
+#endif /* !_TCHAR_DEFINED */
+
+typedef LPWSTR LPTCH, PTCH;
+typedef LPWSTR PTSTR, LPTSTR;
+typedef LPCWSTR LPCTSTR;
+typedef LPWSTR LP;
+#define __TEXT(quote) L##quote      // r_winnt
+
+#else   /* UNICODE */               // r_winnt
+
+#ifndef _TCHAR_DEFINED
+typedef char TCHAR, *PTCHAR;
+typedef unsigned char TBYTE , *PTBYTE ;
+#define _TCHAR_DEFINED
+#endif /* !_TCHAR_DEFINED */
+
+typedef LPSTR LPTCH, PTCH;
+typedef LPSTR PTSTR, LPTSTR;
+typedef LPCSTR LPCTSTR;
+#define __TEXT(quote) quote         // r_winnt
+
+#endif /* UNICODE */                // r_winnt
 
 typedef FILE* FILEHANDLE;
 
@@ -147,10 +221,11 @@ extern HINSTANCE g_hInstance;
 //
 // Function wrappers
 //
-
+    
+int WINAPI AXODBG_printf( char *lpsz, ... );
 BOOL  WINAPI c_WriteFile( FILEHANDLE hFile, LPCVOID buffer, DWORD bytesToWrite,
                           LPDWORD bytesWritten, LPOVERLAPPED overlapped );
-FILEHANDLE WINAPI c_CreateFileA( LPCSTR filename, DWORD access, DWORD sharing,
+FILEHANDLE WINAPI c_CreateFile( LPCSTR filename, DWORD access, DWORD sharing,
                                  LPSECURITY_ATTRIBUTES sa, DWORD creation,
                                  DWORD attributes_, HANDLE templ);
 DWORD WINAPI c_SetFilePointer( FILEHANDLE hFile, LONG distance, LONG *highword, DWORD method );
@@ -161,3 +236,6 @@ BOOL  WINAPI c_CloseHandle( FILEHANDLE handle );
 INT   WINAPI c_LoadString( HINSTANCE instance, UINT resource_id,
                            LPSTR buffer, INT buflen );
 
+#ifdef __cplusplus
+}
+#endif

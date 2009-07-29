@@ -1,7 +1,8 @@
 #include "../Common/axodefn.h"
 #include <string.h>
+#include <wchar.h>
 
-int cdecl AXODBG_printf( char *lpsz, ... ) {printf(lpsz);return 0;}
+int WINAPI AXODBG_printf( char *lpsz, ... ) {printf(lpsz);return 0;}
 /*********************************************************************
  *           CloseW32Handle (KERNEL.474)
  *           CloseHandle    (KERNEL32.@)
@@ -17,11 +18,11 @@ int cdecl AXODBG_printf( char *lpsz, ... ) {printf(lpsz);return 0;}
  */
 BOOL WINAPI c_CloseHandle( FILEHANDLE handle )
 {
-	// returns the opposite of the Windows-function
+    // returns the opposite of the Windows-function
 #ifndef _WINDOWS
-	return (!fclose(handle));
+    return (!fclose(handle));
 #else
-	return CloseHandle( handle );
+    return CloseHandle( handle );
 #endif
 }
 
@@ -43,17 +44,17 @@ DWORD WINAPI c_GetFileSize( FILEHANDLE hFile, LPDWORD filesizehigh )
 {
 #ifndef _WINDOWS
     long lSize;
-	fpos_t cur;
-	if (fgetpos(hFile,&cur)!=0)
-		return -1;
-	if (fseek (hFile, 0, SEEK_END)!=0)
-		return -1;
-   	lSize=ftell (hFile);
-	if (fsetpos(hFile,&cur)!=0)
-		return -1;
+    fpos_t cur;
+    if (fgetpos(hFile,&cur)!=0)
+        return -1;
+    if (fseek (hFile, 0, SEEK_END)!=0)
+        return -1;
+    lSize=ftell (hFile);
+    if (fsetpos(hFile,&cur)!=0)
+        return -1;
     return lSize;
 #else
-	return GetFileSize( hFile, filesizehigh );
+    return GetFileSize( hFile, filesizehigh );
 #endif
 }
 
@@ -64,13 +65,13 @@ BOOL WINAPI c_ReadFile( FILEHANDLE hFile, LPVOID buffer, DWORD bytesToRead,
                         LPDWORD bytesRead, LPOVERLAPPED overlapped )
 {
 #ifndef _WINDOWS
-        *bytesRead=(DWORD)fread(buffer,1,bytesToRead,hFile);
-		if ( *bytesRead != bytesToRead)
-            return FALSE;
-        else
-            return TRUE;
+    *bytesRead=(DWORD)fread(buffer,1,bytesToRead,hFile);
+    if ( *bytesRead != bytesToRead)
+        return FALSE;
+    else
+        return TRUE;
 #else
-	return ReadFile( hFile, buffer, bytesToRead, bytesRead, overlapped );
+    return ReadFile( hFile, buffer, bytesToRead, bytesRead, overlapped );
 #endif
 }
 
@@ -86,17 +87,17 @@ DWORD WINAPI c_SetFilePointer( FILEHANDLE hFile, LONG distance, LONG *highword, 
 
     switch (method)
     {
-            case FILE_BEGIN : origin = SEEK_SET;                    /* start of file */
-                     break;
-            case FILE_CURRENT : origin = SEEK_CUR; /* current position of file pointer */
-                     break;
-            case FILE_END : origin = SEEK_END;                      /* end of file */
-                     break;
+     case FILE_BEGIN : origin = SEEK_SET;                    /* start of file */
+         break;
+     case FILE_CURRENT : origin = SEEK_CUR; /* current position of file pointer */
+         break;
+     case FILE_END : origin = SEEK_END;                      /* end of file */
+         break;
     }
     res = fseek (hFile, distance, origin);                 /* stdio read */
     return (DWORD) ftell(hFile);
 #else
-	return SetFilePointer( hFile, distance, highword, method );
+    return SetFilePointer( hFile, distance, highword, method );
 #endif
 }
 #ifndef _WINDOWS
@@ -116,7 +117,7 @@ DWORD WINAPI c_SetFilePointer( FILEHANDLE hFile, LONG distance, LONG *highword, 
  *  Nothing.
  */
 void /*CSH __cdecl */ _splitpath(const char* inpath, char * drv, char * dir,
-                        char* fname, char * ext )
+                                 char* fname, char * ext )
 {
     const char *p, *end;
 
@@ -191,8 +192,8 @@ void cdecl _makepath(char * path, const char * drive,
 {
     char ch;
 
-//    TRACE("(%s %s %s %s)\n", debugstr_a(drive), debugstr_a(directory),
-//          debugstr_a(filename), debugstr_a(extension) );
+    //    TRACE("(%s %s %s %s)\n", debugstr_a(drive), debugstr_a(directory),
+    //          debugstr_a(filename), debugstr_a(extension) );
 
     if ( !path )
         return;
@@ -221,7 +222,7 @@ void cdecl _makepath(char * path, const char * drive,
             strcat(path,extension);
         }
     }
- //   TRACE("returning %s\n",path);
+    //   TRACE("returning %s\n",path);
 }
 #endif
 
@@ -233,10 +234,10 @@ BOOL WINAPI c_WriteFile( FILEHANDLE hFile, LPCVOID buffer, DWORD bytesToWrite,
                          LPDWORD bytesWritten, LPOVERLAPPED overlapped )
 {
 #ifndef _WINDOWS
-	*bytesWritten=(DWORD)fwrite(buffer, 1, bytesToWrite, hFile);
-	return (*bytesWritten==bytesToWrite);
+    *bytesWritten=(DWORD)fwrite(buffer, 1, bytesToWrite, hFile);
+    return (*bytesWritten==bytesToWrite);
 #else
-	return WriteFile( hFile, buffer, bytesToWrite, bytesWritten, overlapped );
+    return WriteFile( hFile, buffer, bytesToWrite, bytesWritten, overlapped );
 #endif
 }
 
@@ -245,30 +246,26 @@ BOOL WINAPI c_WriteFile( FILEHANDLE hFile, LPCVOID buffer, DWORD bytesToWrite,
  *
  * See CreateFileW.
  */
-
-FILEHANDLE WINAPI c_CreateFileA( LPCSTR filename, DWORD access, DWORD sharing,
-                           LPSECURITY_ATTRIBUTES sa, DWORD creation,
-                           DWORD attributes, HANDLE templ)
+FILEHANDLE WINAPI c_CreateFile( LPCSTR filename, DWORD access, DWORD sharing,
+                                LPSECURITY_ATTRIBUTES sa, DWORD creation,
+                                DWORD attributes, HANDLE templ)
 {
 #ifndef _WINDOWS
-	char    fname[70];          /* To get near variable holding string */
-    char*     omode;
+    char    fname[70];          /* To get near variable holding string */
+    char*   omode;
 
     switch (access)                /* use C library constants to set mode */
     {
-        case GENERIC_WRITE: omode = "w";
-                 break;
-        case GENERIC_READ | GENERIC_WRITE: omode = "w+";
-                 break;
-        default: omode = "r";
-                 break;
-     }
-
-     strcpy(fname, filename);              /* Get filename in near var */
-     return fopen(fname,omode);
+     case GENERIC_WRITE: omode = "w";
+         break;
+     case GENERIC_READ | GENERIC_WRITE: omode = "w+";
+         break;
+     default: omode = "r";
+         break;
+    }
+    strcpy(fname, filename);              /* Get filename in near var */
+    return fopen(fname,omode);
 #else
-	return CreateFileA( filename, access, sharing, sa, creation, attributes, templ);
+    return CreateFile( filename, access, sharing, sa, creation, attributes, templ);
 #endif
 }
-
-

@@ -13,6 +13,10 @@
 #include "../Common/wincpp.hpp"
 #include "filedesc.hpp"
 
+#ifdef __LINUX__
+#include <wchar.h>
+#endif
+
 //===============================================================================================
 // FUNCTION: Constructor
 // PURPOSE:  Initialize the object

@@ -138,7 +138,7 @@ HANDLE CreateFileBuf(ATF_FILEINFO *pATF, DWORD dwDesiredAccess, DWORD dwShareMod
     pATF->hFile = CreateFileA(pATF->pszFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes,
                             dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 #else
-    pATF->hFile = c_CreateFileA(pATF->pszFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes,
+    pATF->hFile = c_CreateFile(pATF->pszFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes,
                             dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 #endif
    if (pATF->hFile != INVALID_HANDLE_VALUE)

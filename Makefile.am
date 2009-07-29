@@ -15,7 +15,7 @@ stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/reco
 	    ./src/core/filelib/axon/AxAbfFio32/Oldheadr.cpp \
 	    ./src/core/filelib/axon/AxAbfFio32/abfutil.cpp \
 	    ./src/core/filelib/axon/AxAbfFio32/msbincvt.cpp \
-	    ./src/core/filelib/axon/Common/unix.c \
+	    ./src/core/filelib/axon/Common/unix.cpp \
 	    ./src/core/filelib/axon/AxAbfFio32/abferror.cpp \
             ./src/core/filelib/axon/AxAtfFio32/axatffio32.cpp \
             ./src/core/filelib/axon/AxAtfFio32/fileio2.cpp \
