@@ -115,7 +115,7 @@ Finally, if the condition is not true, the else statement will move the index on
 
 .. note::
 
-    Do not try to write while loops in the embedded python console of ```Stimfit <http://www.stimfit.org>`_`` unless you are very familiar with while loops in Python or in any other language. While loops, if written incorrectly, may run infinite iterations and block the Python terminal of ```Stimfit <http://www.stimfit.org>`_``. For that reason, it is a good idea to explore while loops in an independent python terminal before using them in ```Stimfit <http://www.stimfit.org>`_``. 
+    Do not try to write while loops in the embedded python console of `Stimfit <http://www.stimfit.org>`_ unless you are very familiar with while loops in Python or in any other language. While loops, if written incorrectly, may run infinite iterations and block the Python terminal of `Stimfit <http://www.stimfit.org>`_. For that reason, it is a good idea to explore while loops in an independent python terminal before using them in `Stimfit <http://www.stimfit.org>`_. 
 
 =====
 Usage
