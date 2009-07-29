@@ -16,6 +16,7 @@
 #define USE_AXOVDATE
 #endif
 
+
 #define  ABFU_VALID_SIG_CHARS     " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_#"
 
 #if defined(__LINUX__) || defined(__STF__) || defined(__WXMAC__)
@@ -54,7 +55,11 @@ UINT WINAPI ABFU_GetTempFileName(LPCSTR szPrefix, UINT uUnique, LPSTR lpTempName
 BOOL WINAPI ABFU_ReadFile(FILEHANDLE hFile, LPVOID lpBuf, DWORD dwBytesToRead)
 {
    DWORD dwBytesRead;
+#ifdef _WINDOWS
+   BOOL bOK = ReadFile(hFile, lpBuf, dwBytesToRead, &dwBytesRead, NULL);
+#else
    BOOL bOK = c_ReadFile(hFile, lpBuf, dwBytesToRead, &dwBytesRead, NULL);
+#endif
    return (bOK && (dwBytesRead==dwBytesToRead));
 }
 /*

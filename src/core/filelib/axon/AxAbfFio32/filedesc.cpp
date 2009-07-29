@@ -66,11 +66,11 @@ BOOL CFileDescriptor::TestFlag(UINT uFlag)
 // FUNCTION: Open
 // PURPOSE:  Opens an existing file for read or write access.
 //
-BOOL CFileDescriptor::Open(const char *szFileName, BOOL bReadOnly)
+BOOL CFileDescriptor::Open(LPCTSTR szFileName, BOOL bReadOnly)
 {
 #ifdef _WINDOWS
    MEMBERASSERT();
-//   LPSZASSERT(szFileName);
+   // LPSZASSERT(szFileName);
 #endif
    if (!m_File.Create(szFileName, bReadOnly))
    {
@@ -78,7 +78,7 @@ BOOL CFileDescriptor::Open(const char *szFileName, BOOL bReadOnly)
       return SetLastError(bTooManyFiles ? ABF_NODOSFILEHANDLES : ABF_EOPENFILE);
    }
    m_uFlags = bReadOnly ? FI_READONLY : FI_WRITEONLY;
-   strncpy(m_szFileName, szFileName, _MAX_PATH-1);
+   wcsncpy(m_szFileName, szFileName, _MAX_PATH-1);
    m_szFileName[_MAX_PATH-1] = '\0';
 
    if (!m_VSynch.OpenFile())

@@ -88,7 +88,8 @@ void AXODBG_SystemErrorMsg(DWORD dwSystemError, LPCSTR psFile, int nLine);
 /*   #define ASSERT(exp)               (void)( (exp) || (AXODBG_assert(#exp, __FILE__, __LINE__), 0) )*/
 	#define ASSERT(exp) assert(exp)
 #else
-   #define ASSERT(exp)              ((void)0)
+    // #define ASSERT(exp)              ((void)0)
+    #define ASSERT(exp) assert(exp)
 #endif
 #endif   // ASSERT
 

@@ -24,6 +24,7 @@
 #define DEFAULT_LEVEL_HYSTERESIS 64    // Two LSBits of level hysteresis.
 #define DEFAULT_TIME_HYSTERESIS  1     // Two sequences of time hysteresis.
 
+
 #if defined(__LINUX__) || defined(__STF__) || defined(__WXMAC__)
 	#define max(a,b)   (((a) > (b)) ? (a) : (b))
 	#define min(a,b)   (((a) < (b)) ? (a) : (b))
@@ -968,8 +969,13 @@ BOOL WINAPI ABFH_ParamReader(FILEHANDLE hFile, ABFFileHeader *pFH, int *pnError)
       ERRORRETURN(pnError, ABFH_EUNKNOWNFILETYPE);
 
    // Get the file length for parameter validation, then seek back to the start of the file.
+#ifdef _WINDOWS
+   long lFileLength = SetFilePointer(hFile, 0, NULL, FILE_END);
+   SetFilePointer(hFile, 0L, NULL, FILE_BEGIN);
+#else
    long lFileLength = c_SetFilePointer(hFile, 0, NULL, FILE_END);
    c_SetFilePointer(hFile, 0L, NULL, FILE_BEGIN);
+#endif
 
    // If the file is not an ABF file, read in the file header and convert it to the current
    // header structure.
@@ -1136,11 +1142,18 @@ BOOL WINAPI ABFH_GetErrorText( int nError, char *sTxtBuf, UINT uMaxLen)
    }
 
    BOOL rval = TRUE;        // OK return value
+#ifdef _WINDOWS
+   if (!LoadStringA(g_hInstance, nError, sTxtBuf, uMaxLen))
+#else
    if (!c_LoadString(g_hInstance, nError, sTxtBuf, uMaxLen))
+#endif
    {
       char szTemplate[80];
+#ifdef _WINDOWS
+      LoadStringA(g_hInstance, IDS_ENOMESSAGESTR, szTemplate, sizeof(szTemplate));
+#else
       c_LoadString(g_hInstance, IDS_ENOMESSAGESTR, szTemplate, sizeof(szTemplate));
-
+#endif
       char szErrorMsg[128];
       sprintf(szErrorMsg, szTemplate, nError);
 //      ERRORMSG(szErrorMsg);

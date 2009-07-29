@@ -143,7 +143,7 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
         100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
     
     CABF2ProtocolReader abf2;
-    if (!abf2.Open( fName.char_str() )) {
+    if (!abf2.Open( fName )) {
         wxString errorMsg(wxT("Exception while calling importABF2File():\nCouldn't open file"));
         throw std::runtime_error(std::string(errorMsg.char_str()));
         abf2.Close();
@@ -200,7 +200,7 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
             // Use a vector here because memory allocation can
             // be controlled more easily:
             // request memory:
-            std::vector<float> TempSection(uNumSamples);
+            std::vector<float> TempSection(uNumSamples, 0.0);
             unsigned int uNumSamplesW;
             if (!ABF2_ReadChannel(hFile, pFH, pFH->nADCSamplingSeq[nChannel],nEpisode,TempSection,
                                   &uNumSamplesW,&nError))
@@ -275,13 +275,13 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
 void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool progress) {
     wxProgressDialog progDlg( wxT("Axon binary file 1.x import"), wxT("Starting file import"),
         100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
-    int hFile;
+    int hFile = 0;
     ABFFileHeader FH;
-    UINT uMaxSamples;
-    DWORD dwMaxEpi;
-    int nError;
-    if (!ABF_ReadOpen(fName.char_str(), &hFile, ABF_DATAFILE, &FH,
-        &uMaxSamples, &dwMaxEpi, &nError))
+    UINT uMaxSamples = 0;
+    DWORD dwMaxEpi = 0;
+    int nError = 0;
+    if (!ABF_ReadOpen(fName, &hFile, ABF_DATAFILE, &FH,
+                      &uMaxSamples, &dwMaxEpi, &nError))
     {
         wxString errorMsg(wxT("Exception while calling ABF_ReadOpen():\n"));
         errorMsg+=ABF1Error(fName,nError);
@@ -327,8 +327,8 @@ void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool prog
             // Use a vector here because memory allocation can
             // be controlled more easily:
             // request memory:
-            std::vector<float> TempSection(uNumSamples, 0);
-            unsigned int uNumSamplesW;
+            std::vector<float> TempSection(uNumSamples, 0.0);
+            unsigned int uNumSamplesW=0;
             if (!ABF_ReadChannel(hFile, &FH, FH.nADCSamplingSeq[nChannel], dwEpisode, TempSection,
                                  &uNumSamplesW, &nError))
             {
@@ -395,3 +395,6 @@ void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool prog
     ReturnData.SetDate(dateToStr(FH.lFileStartDate));
     ReturnData.SetTime(timeToStr(FH.lFileStartTime));
 }
+#ifdef _WINDOWS
+#pragma optimize ("", on)
+#endif

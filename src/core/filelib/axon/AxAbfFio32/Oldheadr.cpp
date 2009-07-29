@@ -22,6 +22,7 @@
 #include <math.h>
 #include <float.h>
 #include <iostream> 
+#include <wx/convauto.h>
 
 #define ABF_OLDPARAMSIZE      260   // size of old acquisition parameter array
 //#define (sz)   OemToCharBuff(sz, sz, sizeof(sz))
@@ -108,7 +109,11 @@ BOOL OLDH_GetFileVersion( FILEHANDLE hFile, UINT *puFileType, float *pfFileVersi
    *pbMSBinFormat = FALSE;
 
    // Seek to the start of the file.
+#ifdef _WINDOWS
+   SetFilePointer(hFile, 0L, NULL, FILE_BEGIN);
+#else
    c_SetFilePointer(hFile, 0L, NULL, FILE_BEGIN);
+#endif
 
    // Read top of file, to determine the file version
    if (!ABFU_ReadFile(hFile, &TOF, sizeof(TOF)))
@@ -191,7 +196,7 @@ static void CorrectDACFilePath(ABFFileHeader *pFH)
    // Get the old DACFileName from the header.
    char szOldName[ABF_OLDDACFILENAMELEN+1];
    ABFU_GetABFString(szOldName, sizeof(szOldName), 
-                     pFH->_sDACFilePath, ABF_OLDDACFILENAMELEN);
+       pFH->_sDACFilePath, ABF_OLDDACFILENAMELEN);
 
    // Split it into filename and extension components.
    char szName[_MAX_FNAME];
@@ -252,7 +257,8 @@ static void CorrectDACScaling(ABFFileHeader *pFH)
       UINT uMaxSamples = 0;
       DWORD dwMaxEpi = 0;
       int hFile;
-      if (!ABF_ReadOpen(szFilename, &hFile, ABF_DATAFILE, 
+      wxConvAuto wca;
+      if (!ABF_ReadOpen(wca.cMB2WX(szFilename), &hFile, ABF_DATAFILE, 
                         &DH, &uMaxSamples, &dwMaxEpi, NULL))
          return;
       ABF_Close(hFile, NULL);
@@ -674,8 +680,11 @@ static void GetOldADCUnits(char *Label, char *ADCLabel)
 static BOOL ReadADCInfo(FILEHANDLE hFile, float *Param, char *ADCLabel )
 {
    // Seek to the start of the ADC channel information.
+#ifdef _WINDOWS
+	SetFilePointer(hFile, 640L, NULL, FILE_BEGIN);
+#else
 	c_SetFilePointer(hFile, 640L, NULL, FILE_BEGIN);
-
+#endif
    // Read the ADC channel information and display parameters (97-160).
 
    // 4 arrays of ABF_ADCCOUNT x 4 byte floats
@@ -741,8 +750,11 @@ static BOOL ReadADCInfo(FILEHANDLE hFile, float *Param, char *ADCLabel )
 static BOOL ReadADCNames(FILEHANDLE hFile, char *ChannelName)
 {
    // Seek to the channel names area.
+#ifdef _WINDOWS
+   SetFilePointer(hFile, 480L, NULL, FILE_BEGIN);
+#else
    c_SetFilePointer(hFile, 480L, NULL, FILE_BEGIN);
-
+#endif
    // Read the ADC channel name strings into a single string.
    return ABFU_ReadFile(hFile, ChannelName, ABF_ADCCOUNT * ABF_ADCNAMELEN);
 }
@@ -1158,7 +1170,11 @@ static BOOL FetchexConvert( FILEHANDLE hFile, ABFFileHeader *pFH, float *Param,
          {
             // Seek to start of tag entries block
             long lNumBytes = (long)(Param[F53_TAGSECTIONPTR]) * 512L;
+#ifdef _WINDOWS
+			SetFilePointer(hFile, lNumBytes, NULL, FILE_BEGIN);
+#else
 			c_SetFilePointer(hFile, lNumBytes, NULL, FILE_BEGIN);
+#endif
             if (!ABFU_ReadFile(hFile, &nNumTags, 2))
                ERRORRETURN(pnError, ABFH_EHEADERREAD);
          }
@@ -1226,7 +1242,11 @@ static BOOL FetchexConvert( FILEHANDLE hFile, ABFFileHeader *pFH, float *Param,
 static BOOL ReadCondit(FILEHANDLE hFile, char *Condit)
 {
    // Seek to the presweep (conditioning) string
+#ifdef _WINDOWS
+	SetFilePointer(hFile, 512L, NULL, FILE_BEGIN);
+#else
 	c_SetFilePointer(hFile, 512L, NULL, FILE_BEGIN);
+#endif
 
    // Read the presweep (conditioning) pulse string.
    return ABFU_ReadFile(hFile, Condit, ABF_OLDCONDITLEN);

@@ -40,7 +40,7 @@ class CABF2ProtocolReader
     CABF2ProtocolReader( );
     virtual ~CABF2ProtocolReader();
 
-    virtual BOOL Open( const char* fName );
+    virtual BOOL Open( LPCTSTR fName );
     virtual BOOL Close( );
     
     static BOOL CanOpen( const void *pFirstBlock, UINT uBytes );

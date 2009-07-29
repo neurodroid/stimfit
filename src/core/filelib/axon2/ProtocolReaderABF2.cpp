@@ -15,6 +15,8 @@
 #include "ProtocolReaderABF2.hpp"
 #include "../axon/AxAbfFio32/abfutil.h"
 #include "../axon/AxAbfFio32/abffiles.h"
+#include <wx/string.h>
+#include <wx/convauto.h>
 
 #if defined(__LINUX__) || defined(__STF__) || defined(__WXMAC__)
 #define max(a,b)   (((a) > (b)) ? (a) : (b))
@@ -259,6 +261,7 @@ BOOL CABF2ProtocolReader::ReadFileInfo()
     MEMBERASSERT();
 
     BOOL bOK = TRUE;
+    wxConvAuto wxCA;
 
     short nMajor = MAJOR( m_FileInfo.uFileVersionNumber );
     short nMinor = MINOR( m_FileInfo.uFileVersionNumber );
@@ -274,7 +277,7 @@ BOOL CABF2ProtocolReader::ReadFileInfo()
     m_pFH->nCreatorMinorVersion   = MINOR ( m_FileInfo.uCreatorVersion );
     m_pFH->nCreatorBugfixVersion  = BUGFIX( m_FileInfo.uCreatorVersion );
     m_pFH->nCreatorBuildVersion   = BUILD ( m_FileInfo.uCreatorVersion );
-    bOK &= GetString( m_FileInfo.uCreatorNameIndex,  m_pFH->sCreatorInfo,  ELEMENTS_IN( m_pFH->sCreatorInfo ) );
+    bOK &= GetString( m_FileInfo.uCreatorNameIndex, m_pFH->sCreatorInfo,  ELEMENTS_IN( m_pFH->sCreatorInfo ) );
 
     m_pFH->nModifierMajorVersion  = MAJOR ( m_FileInfo.uModifierVersion );
     m_pFH->nModifierMinorVersion  = MINOR ( m_FileInfo.uModifierVersion );
@@ -786,7 +789,7 @@ BOOL CABF2ProtocolReader::ValidateCRC()
 }
 #endif
 
-BOOL CABF2ProtocolReader::Open( const char* fName ) {
+BOOL CABF2ProtocolReader::Open( LPCTSTR fName ) {
     
     int nError = 0;
     

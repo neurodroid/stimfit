@@ -118,7 +118,7 @@ UINT CSimpleStringCache::Add(LPCSTR psz)
 {
    MEMBERASSERT();
 
-   UINT uLen = strlen(psz);
+   std::size_t uLen = strlen(psz);
    LPSTR pszText = new char[uLen+1];
    strcpy( pszText, psz );
 
@@ -157,10 +157,10 @@ UINT CSimpleStringCache::GetTotalSize() const
    MEMBERASSERT();
 
    UINT uSize = sizeof(SimpleStringCacheHeader);
-   for( UINT i=0; i<m_Cache.size(); i++ )
+   for( std::size_t i=0; i<m_Cache.size(); i++ )
    {
       LPCSTR pszText = m_Cache[i];
-      uSize += strlen( pszText ) + 1;     // Allow for the the terminator.
+      uSize += (UINT)strlen( pszText ) + 1;     // Allow for the the terminator.
    }
 
    return uSize;
@@ -284,6 +284,6 @@ UINT CSimpleStringCache::GetNumStrings() const
 {
    MEMBERASSERT();
    
-   return m_Cache.size();
+   return (UINT)m_Cache.size();
 }
 

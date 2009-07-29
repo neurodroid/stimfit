@@ -76,10 +76,10 @@ CFileIO::~CFileIO()
 // FUNCTION: Create
 // PURPOSE:  Opens a file and stores the filename if successful.
 //
-BOOL CFileIO::Create(LPCSTR szFileName, BOOL bReadOnly, DWORD dwAttributes)
+BOOL CFileIO::Create(LPCTSTR szFileName, BOOL bReadOnly, DWORD dwAttributes)
 {
    //MEMBERASSERT();
-//   LPSZASSERT(szFileName);
+   //LPSZASSERT(szFileName);
    ASSERT(m_hFileHandle == FILE_NULL);
 
    DWORD dwFlags    = GENERIC_READ;
@@ -96,19 +96,24 @@ BOOL CFileIO::Create(LPCSTR szFileName, BOOL bReadOnly, DWORD dwAttributes)
 // FUNCTION: CreateEx
 // PURPOSE:  Opens a file and stores the filename if successful.
 //
-BOOL CFileIO::CreateEx(LPCSTR szFileName, DWORD dwDesiredAccess, DWORD dwShareMode,
+BOOL CFileIO::CreateEx(LPCTSTR szFileName, DWORD dwDesiredAccess, DWORD dwShareMode,
                        DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes)
 {
    //MEMBERASSERT();
-//   LPSZASSERT(szFileName);
+   //LPSZASSERT(szFileName);
    ASSERT(m_hFileHandle == FILE_NULL);
+#ifdef _WINDOWS
+   m_hFileHandle = ::CreateFile(szFileName, dwDesiredAccess, dwShareMode, NULL, 
+                                dwCreationDisposition, dwFlagsAndAttributes, NULL);
+#else
    m_hFileHandle = ::c_CreateFileA(szFileName, dwDesiredAccess, dwShareMode, NULL, 
                                 dwCreationDisposition, dwFlagsAndAttributes, NULL);
+#endif
    if (m_hFileHandle == FILE_NULL)
       return SetLastError();
       
 // TRACE1("Create(%s)\n", szFileName);
-   strncpy(m_szFileName, szFileName, _MAX_PATH-1);
+   wcsncpy(m_szFileName, szFileName, _MAX_PATH-1);
    m_szFileName[_MAX_PATH-1] = '\0';
    return TRUE;
 }
@@ -168,7 +173,11 @@ BOOL CFileIO::Read(LPVOID lpBuf, DWORD dwBytesToRead, DWORD *pdwBytesRead)
    ASSERT(m_hFileHandle != FILE_NULL);
 
    DWORD dwBytesRead = 0;
+#ifdef _WINDOWS
+   BOOL bRval = ::ReadFile(m_hFileHandle, lpBuf, dwBytesToRead, &dwBytesRead, NULL);
+#else
    BOOL bRval = ::c_ReadFile(m_hFileHandle, lpBuf, dwBytesToRead, &dwBytesRead, NULL);
+#endif
    if (pdwBytesRead)
       *pdwBytesRead = dwBytesRead;
    if (!bRval)
@@ -188,7 +197,11 @@ BOOL CFileIO::Close()
    //MEMBERASSERT();
    if (m_hFileHandle != NULL)
    {
+#ifdef _WINDOWS
       if (!::c_CloseHandle(m_hFileHandle))
+#else
+      if (!::CloseHandle(m_hFileHandle))
+#endif
          return SetLastError();
 
       // TRACE1("Close(%s)\n", m_szFileName);
@@ -287,14 +300,7 @@ LONGLONG CFileIO::GetFileSize()
 #ifndef _WINDOWS
    return c_GetFileSize(m_hFileHandle,NULL);
 #else
-   LARGE_INTEGER FileSize;
-   FileSize.QuadPart = 0;
-
-   FileSize.u.LowPart = ::GetFileSize(m_hFileHandle, LPDWORD(&FileSize.u.HighPart));
-   if (SeekFailure(FileSize.u.LowPart))
-      return 0;
-
-   return FileSize.QuadPart;
+   return ::GetFileSize(m_hFileHandle,NULL);
 #endif
 }
 /*      

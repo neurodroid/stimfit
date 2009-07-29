@@ -22,7 +22,7 @@
 class CFileIO
 {
   private:    // Member variables and constants.
-    char         m_szFileName[_MAX_PATH]; // The complete filename of the file
+    TCHAR         m_szFileName[_MAX_PATH]; // The complete filename of the file
     FILEHANDLE       m_hFileHandle;           // The DOS file handle for data file
     DWORD        m_dwLastError;           // Error number for last error.
 
@@ -41,8 +41,8 @@ class CFileIO
 #endif
     ~CFileIO();
    
-    BOOL  Create(LPCSTR szFileName, BOOL bReadOnly, DWORD dwAttributes=FILE_ATTRIBUTE_NORMAL);
-    BOOL  CreateEx(LPCSTR szFileName, DWORD dwDesiredAccess, DWORD dwShareMode,
+    BOOL  Create(LPCTSTR szFileName, BOOL bReadOnly, DWORD dwAttributes=FILE_ATTRIBUTE_NORMAL);
+    BOOL  CreateEx(LPCTSTR szFileName, DWORD dwDesiredAccess, DWORD dwShareMode,
                    DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes);
     BOOL  Close();
     /*   BOOL  IsOpen() const;
@@ -65,7 +65,7 @@ class CFileIO
 
     */   void   SetFileHandle(FILEHANDLE hFile);
     FILEHANDLE GetFileHandle() const;   
-    LPCSTR GetFileName() const;
+    LPCTSTR GetFileName() const;
     FILEHANDLE Release();   
     /*
       BOOL   Duplicate(CFileIO *pNewFile, BOOL bInheritable=TRUE);
@@ -81,7 +81,7 @@ class CFileIO
 // FUNCTION: GetFileName
 // PURPOSE:  Get the name of the file.
 //
-inline LPCSTR CFileIO::GetFileName() const
+inline LPCTSTR CFileIO::GetFileName() const
 {
     //   MEMBERASSERT();
     return m_szFileName;

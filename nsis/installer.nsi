@@ -19,6 +19,7 @@ SetCompressor lzma
 !define STFDIR "C:\Users\cs\stimfit"
 !define MSIDIR "C:\Users\cs\Downloads"
 !define WXWDIR "C:\Users\cs\wxWidgets"
+!define FFTDIR "C:\Users\cs\fftw"
 !define WXPDIR "C:\Users\cs\wxPython\final.build\Python26\Lib\site-packages"
 !define PRODIR "C:\Programme"
 !define FULL_WELCOME "This wizard will guide you through the installation \
@@ -153,7 +154,7 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   SetOutPath $INSTDIR
   
 !ifndef UPDATE
-  File "${STFDIR}\stimfit_VS03\libfftw3-3.dll"
+  File "${FFTDIR}\dll\libfftw3-3.dll"
   File "${WXWDIR}\lib\vc_dll\wxmsw290u_core_vc_custom.dll"
   File "${WXWDIR}\lib\vc_dll\wxbase290u_vc_custom.dll"
   File "${WXWDIR}\lib\vc_dll\wxmsw290u_aui_vc_custom.dll"
@@ -177,7 +178,7 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   File "${STFDIR}\src\stfswig\charlie.py"
   File "${STFDIR}\src\stfswig\hdf5tools.py"
   File "${STFDIR}\src\stfswig\spells.py"
-  File /r "${STFDIR}\src"
+  File /r /x .hg "${STFDIR}\src"
   
   ;Store installation folder
   WriteRegStr HKCU "Software\${REG_NAME}" "" $INSTDIR 

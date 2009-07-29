@@ -169,7 +169,7 @@ bool stf::exportHDF5File(const wxString& fName, const Recording& WData) {
                 n10 = int(log10((double)n_s));
             }
             wxString strZero = wxT("");
-            for (std::size_t n_z=n10; n_z < max_log10; ++n_z) {
+            for (int n_z=n10; n_z < max_log10; ++n_z) {
                 strZero << wxT("0");
             }
 
@@ -294,7 +294,7 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
         throw std::runtime_error(std::string(errorMsg.char_str()));
     }
     wxString wxComment;
-    for (int c=0; c<type_size; ++c) {
+	for (std::size_t c=0; c<type_size; ++c) {
         wxComment << wxChar(comment[c]);
     }
     ReturnData.SetFileDescription( wxComment );
@@ -326,7 +326,7 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
             throw std::runtime_error(std::string(errorMsg.char_str()));
         }
         wxString channel_name;
-        for (int c=0; c<ctype_size; ++c) {
+		for (std::size_t c=0; c<ctype_size; ++c) {
             channel_name << wxChar(szchannel_name.get()[c]);
         }
         wxString channel_path; channel_path << wxT("/") << channel_name;
@@ -343,7 +343,7 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
             max_log10 = int(log10((double)ct_buf[0].n_sections-1.0));
         }
 
-        for (std::size_t n_s=0; n_s < ct_buf[0].n_sections; ++n_s) {
+        for (int n_s=0; n_s < ct_buf[0].n_sections; ++n_s) {
             if (progress) {
                 wxString progStr;
                 progStr << wxT("Reading channel #") << n_c + 1 << wxT(" of ") << numberChannels

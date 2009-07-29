@@ -13,7 +13,6 @@
 // Compile with the large memory model option.
 // (e.g. CL -c -AL ABFFILES.C)
 
-
 #include "../Common/wincpp.hpp"
 #include "abffiles.h"
 #include "../../axon2/abf2headr.h"
@@ -390,11 +389,11 @@ void ABF_Cleanup(void)
  //   pdwMaxEpi      the number of episodes of puMaxSamples points that exist
  //                  in the data file.
  // 
-BOOL WINAPI ABF_ReadOpen(LPCSTR szFileName, int *phFile, UINT fFlags, ABFFileHeader *pFH, 
+BOOL WINAPI ABF_ReadOpen(LPCTSTR szFileName, int *phFile, UINT fFlags, ABFFileHeader *pFH, 
                          UINT *puMaxSamples, DWORD *pdwMaxEpi, int *pnError)
 {
-    // CSH  LPSZASSERT(szFileName);
-    // CSH  WPTRASSERT(phFile);
+    //LPSZASSERT(szFileName);
+    WPTRASSERT(phFile);
     // CSH  ABFH_WASSERT(pFH);
 
     // Take a copy of the passed in header to ensure it is 6k long.
@@ -1133,7 +1132,6 @@ static BOOL _SetChunkSize( CFileDescriptor *pFI, ABFFileHeader *pFH,
     pFH->lActualEpisodes = *pdwMaxEpi;
     pFI->SetAcquiredEpisodes(*pdwMaxEpi);
     pFI->FreeReadBuffer();
-
     return TRUE;
 }
 
@@ -1282,9 +1280,9 @@ static BOOL _SetOverlap(CFileDescriptor *pFI, const ABFFileHeader *pFH, BOOL bAl
 static BOOL ReadEDFixLenSynch(CFileDescriptor *pFI, const ABFFileHeader *pFH, DWORD *pdwMaxEpi, 
                               BOOL bAllowOverlap, int *pnError)
 {
-    //   WPTRASSERT(pFI);
+    WPTRASSERT(pFI);
+    WPTRASSERT(pdwMaxEpi);
     //   ABFH_ASSERT(pFH);
-    //   WPTRASSERT(pdwMaxEpi);
     if ((pFH->lSynchArraySize <= 0) || (pFH->lSynchArrayPtr <= 0))
     {
         // Only waveform files can optionally have a synch array.
@@ -1659,9 +1657,11 @@ BOOL WINAPI ABF2_MultiplexRead(int nFile, const ABF2FileHeader *pFH, DWORD dwEpi
         return ErrorReturn(pnError, ABF_EREADDATA);
 
     // If episode is not full, pad it out with 0's
+    // Make sure that it is zero-padded to avoid this adventurous memset
+#if 0
     if (uSizeInBytes < uBufferSize * uSampleSize)
         memset((char *)pvBuffer + uSizeInBytes, '\0', uBufferSize*uSampleSize - uSizeInBytes);
-
+#endif
     return TRUE;
 }
 
@@ -1887,11 +1887,11 @@ static void PackSamples(void *pvSource, void *pvDestination, UINT uSourceLen, UI
 // PURPOSE:  Convert an array of ADC values to UserUnits.
 //
 static void ConvertADCToFloats( const ABFFileHeader *pFH, int nChannel, UINT uChannelOffset, 
-                                float *pfDestination, short *pnSource )
+                               float *pfDestination, UINT uDestArrayLen, short *pnSource )
 {
     //   ABFH_ASSERT(pFH);
     //   ARRAYASSERT(pfDestination, (UINT)(pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels));
-    //   ARRAYASSERT(pnSource, (UINT)(pFH->lNumSamplesPerEpisode));
+    ARRAYASSERT(pnSource, (UINT)(pFH->lNumSamplesPerEpisode));
    
     UINT uSkip      = (UINT)pFH->nADCNumChannels;
     UINT uSourceLen = (UINT)pFH->lNumSamplesPerEpisode;
@@ -1899,7 +1899,7 @@ static void ConvertADCToFloats( const ABFFileHeader *pFH, int nChannel, UINT uCh
     float fValToUUFactor, fValToUUShift;
     ABFH_GetADCtoUUFactors( pFH, nChannel, &fValToUUFactor, &fValToUUShift);
 
-    for (UINT i=uChannelOffset; i<uSourceLen; i+=uSkip)
+    for (UINT i=uChannelOffset; i<uSourceLen && (i-uChannelOffset)/uSkip < uDestArrayLen; i+=uSkip)
         *pfDestination++ = pnSource[i] * fValToUUFactor + fValToUUShift;
 }
 
@@ -1908,7 +1908,7 @@ static void ConvertADCToFloats( const ABFFileHeader *pFH, int nChannel, UINT uCh
 // PURPOSE:  Convert an array of ADC values to UserUnits.
 //
 static void ABF2_ConvertADCToFloats( const ABF2FileHeader *pFH, int nChannel, UINT uChannelOffset, 
-                                     float *pfDestination, short *pnSource )
+                                     float *pfDestination, UINT uDestArrayLen, short *pnSource )
 {
     //   ABFH_ASSERT(pFH);
     //   ARRAYASSERT(pfDestination, (UINT)(pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels));
@@ -1920,7 +1920,7 @@ static void ABF2_ConvertADCToFloats( const ABF2FileHeader *pFH, int nChannel, UI
     float fValToUUFactor, fValToUUShift;
     ABF2H_GetADCtoUUFactors( pFH, nChannel, &fValToUUFactor, &fValToUUShift);
 
-    for (UINT i=uChannelOffset; i<uSourceLen; i+=uSkip)
+    for (UINT i=uChannelOffset; i<uSourceLen && (i-uChannelOffset)/uSkip < uDestArrayLen; i+=uSkip)
         *pfDestination++ = pnSource[i] * fValToUUFactor + fValToUUShift;
 }
 
@@ -1931,7 +1931,7 @@ static void ABF2_ConvertADCToFloats( const ABF2FileHeader *pFH, int nChannel, UI
 static void ConvertInPlace(const ABFFileHeader *pFH, int nChannel, UINT uNumSamples, void *pvBuffer)
 {
     //   ABFH_ASSERT(pFH);
-    //   ARRAYASSERT((float *)pvBuffer, uNumSamples);
+    ARRAYASSERT((float *)pvBuffer, uNumSamples);
    
     ADC_VALUE *pnSource      = ((ADC_VALUE *)pvBuffer);
     float     *pfDestination = ((float *)pvBuffer);
@@ -1966,11 +1966,11 @@ static void ABF2_ConvertInPlace(const ABF2FileHeader *pFH, int nChannel, UINT uN
 // FUNCTION: ConvertADCToResults
 // PURPOSE:  Get the results array for the math channel.
 //
-static BOOL ConvertADCToResults(const ABFFileHeader *pFH, float *pfDestination, short *pnSource)
+static BOOL ConvertADCToResults(const ABFFileHeader *pFH, float *pfDestination, UINT uDestArrayLen, short *pnSource)
 {
     //   ABFH_ASSERT(pFH);
     //   ARRAYASSERT(pfDestination, (UINT)(pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels));
-    //   ARRAYASSERT(pnSource, (UINT)(pFH->lNumSamplesPerEpisode));
+    ARRAYASSERT(pnSource, (UINT)(pFH->lNumSamplesPerEpisode));
     UINT uAOffset, uBOffset;
     short *pnSourceA, *pnSourceB;
 
@@ -1996,7 +1996,7 @@ static BOOL ConvertADCToResults(const ABFFileHeader *pFH, float *pfDestination, 
     pnSourceA = pnSource + uAOffset;  // adjust the starting offset
     pnSourceB = pnSource + uBOffset;  // adjust the starting offset
     uSourceArrayLen -= max(uAOffset, uBOffset);
-    for (i=0; i<uSourceArrayLen; i+=uSkip)
+    for (i=0; i<uSourceArrayLen && i/uSkip < uDestArrayLen; i+=uSkip)
     {
         fUserUnitA = pnSourceA[i] * fValToUUFactorA + fValToUUShiftA;
         fUserUnitB = pnSourceB[i] * fValToUUFactorB + fValToUUShiftB;
@@ -2010,11 +2010,11 @@ static BOOL ConvertADCToResults(const ABFFileHeader *pFH, float *pfDestination, 
 // FUNCTION: ConvertADCToResults
 // PURPOSE:  Get the results array for the math channel.
 //
-static BOOL ABF2_ConvertADCToResults(const ABF2FileHeader *pFH, float *pfDestination, short *pnSource)
+static BOOL ABF2_ConvertADCToResults(const ABF2FileHeader *pFH, float *pfDestination, UINT uDestArrayLen, short *pnSource)
 {
     //   ABFH_ASSERT(pFH);
-    //   ARRAYASSERT(pfDestination, (UINT)(pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels));
-    //   ARRAYASSERT(pnSource, (UINT)(pFH->lNumSamplesPerEpisode));
+    // ARRAYASSERT(pfDestination, (UINT)(pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels));
+    ARRAYASSERT(pnSource, (UINT)(pFH->lNumSamplesPerEpisode));
     UINT uAOffset, uBOffset;
     short *pnSourceA, *pnSourceB;
 
@@ -2040,7 +2040,7 @@ static BOOL ABF2_ConvertADCToResults(const ABF2FileHeader *pFH, float *pfDestina
     pnSourceA = pnSource + uAOffset;  // adjust the starting offset
     pnSourceB = pnSource + uBOffset;  // adjust the starting offset
     uSourceArrayLen -= max(uAOffset, uBOffset);
-    for (i=0; i<uSourceArrayLen; i+=uSkip)
+    for (i=0; i<uSourceArrayLen && i/uSkip < uDestArrayLen; i+=uSkip)
     {
         fUserUnitA = pnSourceA[i] * fValToUUFactorA + fValToUUShiftA;
         fUserUnitB = pnSourceB[i] * fValToUUFactorB + fValToUUShiftB;
@@ -2054,10 +2054,10 @@ static BOOL ABF2_ConvertADCToResults(const ABF2FileHeader *pFH, float *pfDestina
 // FUNCTION: ConvertToResults
 // PURPOSE:  Fills the math channel array from a multichannel buffer of float's.
 //
-static BOOL ConvertToResults(const ABFFileHeader *pFH, float *pfDestination, float *pfSource)
+static BOOL ConvertToResults(const ABFFileHeader *pFH, float *pfDestination, UINT uDestArrayLen, float *pfSource)
 {
-    //   ARRAYASSERT(pfDestination, pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels);
-    //   ARRAYASSERT(pfSource, pFH->lNumSamplesPerEpisode);
+    // ARRAYASSERT(pfDestination, pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels);
+    ARRAYASSERT(pfSource, pFH->lNumSamplesPerEpisode);
    
     int nChannelA = pFH->nArithmeticADCNumA;
     int nChannelB = pFH->nArithmeticADCNumB;
@@ -2075,7 +2075,7 @@ static BOOL ConvertToResults(const ABFFileHeader *pFH, float *pfDestination, flo
     float *pfSourceA = pfSource + uAOffset;  // adjust the starting offset
     float *pfSourceB = pfSource + uBOffset;  // adjust the starting offset
     uSourceArrayLen -= max(uAOffset, uBOffset);
-    for (UINT i=0; i<uSourceArrayLen; i+=uSkip)
+    for (UINT i=0; i<uSourceArrayLen && i/uSkip < uDestArrayLen; i+=uSkip)
         ABFH_GetMathValue(pFH, pfSourceA[i], pfSourceB[i], pfDestination++);
     return TRUE;
 }
@@ -2084,10 +2084,10 @@ static BOOL ConvertToResults(const ABFFileHeader *pFH, float *pfDestination, flo
 // FUNCTION: ConvertToResults
 // PURPOSE:  Fills the math channel array from a multichannel buffer of float's.
 //
-static BOOL ABF2_ConvertToResults(const ABF2FileHeader *pFH, float *pfDestination, float *pfSource)
+static BOOL ABF2_ConvertToResults(const ABF2FileHeader *pFH, float *pfDestination, UINT uDestArrayLen, float *pfSource)
 {
-    //   ARRAYASSERT(pfDestination, pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels);
-    //   ARRAYASSERT(pfSource, pFH->lNumSamplesPerEpisode);
+    // ARRAYASSERT(pfDestination, pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels);
+    ARRAYASSERT(pfSource, pFH->lNumSamplesPerEpisode);
    
     int nChannelA = pFH->nArithmeticADCNumA;
     int nChannelB = pFH->nArithmeticADCNumB;
@@ -2105,7 +2105,7 @@ static BOOL ABF2_ConvertToResults(const ABF2FileHeader *pFH, float *pfDestinatio
     float *pfSourceA = pfSource + uAOffset;  // adjust the starting offset
     float *pfSourceB = pfSource + uBOffset;  // adjust the starting offset
     uSourceArrayLen -= max(uAOffset, uBOffset);
-    for (UINT i=0; i<uSourceArrayLen; i+=uSkip)
+    for (UINT i=0; i<uSourceArrayLen && i/uSkip < uDestArrayLen; i+=uSkip)
         ABF2H_GetMathValue(pFH, pfSourceA[i], pfSourceB[i], pfDestination++);
     return TRUE;
 }
@@ -2121,8 +2121,10 @@ static BOOL ABF2_ConvertToResults(const ABF2FileHeader *pFH, float *pfDestinatio
 BOOL WINAPI ABF_ReadChannel(int nFile, const ABFFileHeader *pFH, int nChannel, DWORD dwEpisode, 
                             std::vector<float>& pfBuffer, UINT *puNumSamples, int *pnError)
 {
-    //   ABFH_ASSERT(pFH);
-    //   ARRAYASSERT(pfBuffer, (UINT)(pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels));
+#ifdef _WINDOWS
+    // ABFH_ASSERT(pFH);
+    // ARRAYASSERT(&pfBuffer[0], (UINT)(pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels));
+#endif
     CFileDescriptor *pFI = NULL;
     if (!GetFileDescriptor(&pFI, nFile, pnError))
         return FALSE;
@@ -2139,7 +2141,7 @@ BOOL WINAPI ABF_ReadChannel(int nFile, const ABFFileHeader *pFH, int nChannel, D
     // converting it in-place if required.
     if ((pFH->nADCNumChannels == 1) && (nChannel >= 0))
     {
-        if (!ABF_MultiplexRead(nFile, pFH, dwEpisode, &pfBuffer[0], pfBuffer.size(), puNumSamples, pnError))
+        if (!ABF_MultiplexRead(nFile, pFH, dwEpisode, &pfBuffer[0], (UINT)pfBuffer.size(), puNumSamples, pnError))
             return FALSE;
 
         if (pFH->nDataFormat == ABF_INTEGERDATA)      // if data is 2byte ints, convert to floats
@@ -2178,8 +2180,8 @@ BOOL WINAPI ABF_ReadChannel(int nFile, const ABFFileHeader *pFH, int nChannel, D
 
         // A channel number of -1 refers to the results channel
         if (nChannel >= 0)
-            ConvertADCToFloats(pFH, nChannel, uChannelOffset, &pfBuffer[0], pnReadBuffer);
-        else if (!ConvertADCToResults(pFH, &pfBuffer[0], pnReadBuffer))
+            ConvertADCToFloats(pFH, nChannel, uChannelOffset, &pfBuffer[0], (UINT)pfBuffer.size(), pnReadBuffer);
+        else if (!ConvertADCToResults(pFH, &pfBuffer[0], (UINT)pfBuffer.size(), pnReadBuffer))
             return ErrorReturn(pnError, ABF_BADMATHCHANNEL);
     }
     else     // Data is 4-byte floats.
@@ -2191,7 +2193,7 @@ BOOL WINAPI ABF_ReadChannel(int nFile, const ABFFileHeader *pFH, int nChannel, D
         if (nChannel >= 0)
             PackSamples(pfReadBuffer, &pfBuffer[0], uEpisodeSize, uChannelOffset,
                         uSampleSize, pFH->nADCNumChannels);
-        else if (!ConvertToResults(pFH, &pfBuffer[0], pfReadBuffer))
+        else if (!ConvertToResults(pFH, &pfBuffer[0], (UINT)pfBuffer.size(), pfReadBuffer))
             return ErrorReturn(pnError, ABF_BADMATHCHANNEL);
     }
    
@@ -2230,7 +2232,7 @@ BOOL WINAPI ABF2_ReadChannel(int nFile, const ABF2FileHeader *pFH, int nChannel,
     // converting it in-place if required.
     if ((pFH->nADCNumChannels == 1) && (nChannel >= 0))
     {
-        if (!ABF2_MultiplexRead(nFile, pFH, dwEpisode, &pfBuffer[0], pfBuffer.size(), puNumSamples, pnError))
+        if (!ABF2_MultiplexRead(nFile, pFH, dwEpisode, &pfBuffer[0], (UINT)pfBuffer.size(), puNumSamples, pnError))
             return FALSE;
 
         if (pFH->nDataFormat == ABF_INTEGERDATA)      // if data is 2byte ints, convert to floats
@@ -2269,8 +2271,8 @@ BOOL WINAPI ABF2_ReadChannel(int nFile, const ABF2FileHeader *pFH, int nChannel,
 
         // A channel number of -1 refers to the results channel
         if (nChannel >= 0)
-            ABF2_ConvertADCToFloats(pFH, nChannel, uChannelOffset, &pfBuffer[0], pnReadBuffer);
-        else if (!ABF2_ConvertADCToResults(pFH, &pfBuffer[0], pnReadBuffer))
+            ABF2_ConvertADCToFloats(pFH, nChannel, uChannelOffset, &pfBuffer[0], (UINT)pfBuffer.size(), pnReadBuffer);
+        else if (!ABF2_ConvertADCToResults(pFH, &pfBuffer[0], (UINT)pfBuffer.size(), pnReadBuffer))
             return ErrorReturn(pnError, ABF_BADMATHCHANNEL);
     }
     else     // Data is 4-byte floats.
@@ -2282,7 +2284,7 @@ BOOL WINAPI ABF2_ReadChannel(int nFile, const ABF2FileHeader *pFH, int nChannel,
         if (nChannel >= 0)
             PackSamples(pfReadBuffer, &pfBuffer[0], uEpisodeSize, uChannelOffset,
                         uSampleSize, pFH->nADCNumChannels);
-        else if (!ABF2_ConvertToResults(pFH, &pfBuffer[0], pfReadBuffer))
+        else if (!ABF2_ConvertToResults(pFH, &pfBuffer[0], (UINT)pfBuffer.size(), pfReadBuffer))
             return ErrorReturn(pnError, ABF_BADMATHCHANNEL);
     }
    
@@ -3667,10 +3669,18 @@ BOOL WINAPI ABF_BuildErrorText(int nErrorNum, const char *szFileName, char *sTxt
 
     BOOL rval = TRUE;        // OK return value
     char szTemplate[128];
+#ifdef _WINDOWS
+    if (!LoadStringA(g_hInstance, nErrorNum, szTemplate, sizeof(szTemplate)))
+#else
     if (!c_LoadString(g_hInstance, nErrorNum, szTemplate, sizeof(szTemplate)))
+#endif
     {
         char szErrorMsg[128];
+#ifdef _WINDOWS
+        LoadStringA(g_hInstance, IDS_ENOMESSAGESTR, szTemplate, sizeof(szTemplate));
+#else
         c_LoadString(g_hInstance, IDS_ENOMESSAGESTR, szTemplate, sizeof(szTemplate));
+#endif
         sprintf(szErrorMsg, szTemplate, nErrorNum);
         //     ERRORMSG(szErrorMsg);
 

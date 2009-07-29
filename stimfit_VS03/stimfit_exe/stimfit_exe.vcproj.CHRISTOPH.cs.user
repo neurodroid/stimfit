@@ -65,7 +65,7 @@
 			Name="stf debug|Win32"
 			>
 			<DebugSettings
-				Command="$(TargetPath)"
+				Command="$(TargetPath)/stimfit.exe"
 				WorkingDirectory=""
 				CommandArguments=""
 				Attach="false"
@@ -78,7 +78,7 @@
 				SQLDebugging=""
 				Environment=""
 				EnvironmentMerge="true"
-				DebuggerFlavor=""
+				DebuggerFlavor="0"
 				MPIRunCommand=""
 				MPIRunArguments=""
 				MPIRunWorkingDirectory=""

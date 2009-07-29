@@ -982,7 +982,9 @@ public:
 };   // Size = 6144
     
 // This structure is persisted, so the size MUST NOT CHANGE
-# define C_ASSERT(e) extern void __C_ASSERT__(int [(e)?1:-1])
+#ifndef _WINDOWS
+    #define C_ASSERT(e) extern void __C_ASSERT__(int [(e)?1:-1])
+#endif
 C_ASSERT(sizeof(ABFFileHeader) == 6144);
 
 inline ABFFileHeader::ABFFileHeader()

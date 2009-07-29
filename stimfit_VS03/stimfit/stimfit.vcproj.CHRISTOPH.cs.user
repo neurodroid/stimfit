@@ -37,8 +37,8 @@
 			Name="Release|Win32"
 			>
 			<DebugSettings
-				Command=""
-				WorkingDirectory=""
+				Command="C:\Programme\Stimfit 0.9\stimfit.exe"
+				WorkingDirectory="C:\Programme\Stimfit 0.9"
 				CommandArguments=""
 				Attach="false"
 				DebuggerType="3"
@@ -50,7 +50,7 @@
 				SQLDebugging=""
 				Environment=""
 				EnvironmentMerge="true"
-				DebuggerFlavor=""
+				DebuggerFlavor="0"
 				MPIRunCommand=""
 				MPIRunArguments=""
 				MPIRunWorkingDirectory=""
@@ -65,7 +65,7 @@
 			Name="stf debug|Win32"
 			>
 			<DebugSettings
-				Command=""
+				Command="C:\Users\cs\stimfit\stimfit_VS03\stimfit_exe\stf debug\stimfit.exe"
 				WorkingDirectory=""
 				CommandArguments=""
 				Attach="false"

@@ -103,7 +103,7 @@ BOOL ABF_Initialize();
 /*
 void ABF_Cleanup(void);
 */
-BOOL WINAPI ABF_ReadOpen( LPCSTR szFileName, int *phFile, UINT fFlags, ABFFileHeader *pFH, 
+BOOL WINAPI ABF_ReadOpen( LPCTSTR szFileName, int *phFile, UINT fFlags, ABFFileHeader *pFH, 
                           UINT *puMaxSamples, DWORD *pdwMaxEpi, int *pnError );
 /*
 BOOL WINAPI ABF_WriteOpen( LPCSTR szFileName, int *phFile, UINT fFlags, ABFFileHeader *pFH, int *pnError );

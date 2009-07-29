@@ -50,7 +50,7 @@ private:    // Member variables.
    UINT           m_uCachedEpisodeSize; // Size of the cached episode.
    UINT           m_uLastEpiSize;       // The size of the last episode for continuous files
    BOOL           m_bHasOverlappedData; // TRUE if the file contains overlapped data.
-   char           m_szFileName[_MAX_PATH];
+   TCHAR          m_szFileName[_MAX_PATH];
    
 //   CSimpleStringCache   m_Annotations;        // The annotations writing object.
    
@@ -66,7 +66,7 @@ public:
    BOOL  TestFlag(UINT uFlag);
    
    BOOL  IsOK();
-   BOOL  Open(const char *szFileName, BOOL bReadOnly);
+   BOOL  Open(LPCTSTR szFileName, BOOL bReadOnly);
 /*   BOOL  Reopen(BOOL bReadOnly);
    
    BOOL  FillToNextBlock( long *plBlockNum );

@@ -168,7 +168,11 @@ void CSynch::SetMode(eMODE eMode)
       Read( m_SynchBuffer, m_uCacheStart, uCount );
 
       // Set the current position to the start of the bit we last read, and truncate the file here.
+#ifdef _WINDOWS
+      SetFilePointer(m_hfSynchFile, m_uCacheStart * sizeof(Synch), NULL, FILE_BEGIN);
+#else
       c_SetFilePointer(m_hfSynchFile, m_uCacheStart * sizeof(Synch), NULL, FILE_BEGIN);
+#endif
       //TRACE1( "CSynch::SetMode file position is %d.\n",
       //         SetFilePointer(m_hfSynchFile, 0, NULL, FILE_CURRENT) );
 //      VERIFY(SetEndOfFile(m_hfSynchFile));
@@ -319,8 +323,11 @@ BOOL CSynch::_Flush()
 
       // Write out the current contents of the cache.
       UINT  uBytesToWrite = m_uCacheCount * sizeof(Synch);
+#ifdef _WINDOWS
+      bRval = WriteFile(m_hfSynchFile, m_SynchBuffer, uBytesToWrite, &dwBytesWritten, NULL);
+#else
       bRval = c_WriteFile(m_hfSynchFile, m_SynchBuffer, uBytesToWrite, &dwBytesWritten, NULL);
-      
+#endif      
       //TRACE1( "CSynch::_Flush current file pointer is %d after WriteFile.\n",
       //         SetFilePointer(m_hfSynchFile, 0, NULL, FILE_CURRENT) );
    }
