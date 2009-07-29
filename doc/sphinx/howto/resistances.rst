@@ -20,7 +20,7 @@ The resistance function
 .. note::
 
 
-    You can find different routines to calculate the resistance in the file **charlie.py**. This file an be found in the Stimfit program directory (C:\\Program Files\\Stimfit in Windows or /usr/lib/python2.5/site-packages/Stimfit in GNU/Linux, assuming python2.5 is your current python environment). The name **charlie.py** is in acknowledgment to Charlie, for her contribution to the development of the given routines. 
+    You can find different routines to calculate the resistance in the file **charlie.py**. This file can be found in the Stimfit program directory (C:\\Program Files\\Stimfit in Windows or /usr/lib/python2.5/site-packages/Stimfit in GNU/Linux, assuming python2.5 is your current python environment). The name **charlie.py** is in acknowledgment to Charlie, for her contribution to the development of the given routines. 
 
 Note that this function assumes that current is recorded in pA. It sets the stf cursors (peak and baseline) to calculate the current deviation in response to the voltage difference. Finally, the voltage **amplitude** should be entered in mV. 
 
@@ -83,32 +83,33 @@ The stf functions :func:`stf.set_base_start()` and :func:`stf.set_base_end()` se
 
 It is a good practice to test the correct position of the cursors with the conditional sentence **if**.
 
-..
-
-    >>> if not stf.set_base_start(): return 0
+>>> if not stf.set_base_start(base_start): return 0
 
 * if the stf function returns **False** the if condition will be **True** (not False means True).  Our defined function will be finished with return and give the value 0.
     
 * In contrary, if the stf function returns **True** the if condition will be **False** (not True means False). In our function, the if condition will not be executed (does not read the return 0) and continue the operations.
 
+We can enter directly the x-value (e.g ms) as argument, in stead of using the zero-based index of the sampling points. By adding the argument *is_time==True* to the function we set the cursor in the give time position:
+
+>>> if not setf.set_base_start(base_start,True) : return 0
+
+Now base_starts should be given in units of x (i.e ms). This is more intiutive if you are using the stf interface.
+
 .. note::
-    :func:`stf.set_base_start()`, :func:`stf.set_base_end()`,:func:`stf.set_peak_start()` and :func:`stf.set_peak_end()` do not upgrade the measurements. For that reason, we call :func:`stf.measure()` (this is analogous to hit **Enter** in the main window). Thereby the values of :func:`stf.get_peak()` and :func:`stf.get_base()` are updated. 
+    :func:`stf.set_base_start()`, :func:`stf.set_base_end()`, :func:`stf.set_peak_start()` and :func:`stf.set_peak_end()` do not upgrade the measurements. For that reason, we call :func:`stf.measure()` (this is analogous to hit **Enter** in the main window). Thereby the values of :func:`stf.get_peak()` and :func:`stf.get_base()` are updated. 
   
 =====
 Usage
 =====
 Now, you can use this function for different purposes. For example, you may want to test the value of the series resistance in response to a 5 mV hyperpolarizing pulse. First, let's assume that your recording has the current peak between the 10700 and 10999 sampling points. You should set the baseline (for example between 0 and 999) and then peak between 10700 and 10999. After that, and given that 5 mV is the voltage difference, you simply type:
 
-::
 
-    >>> spells.resistance(0,999,10700,1999,-5)
+>>> spells.resistance(0,999,10700,1999,-5)
 
 Note that **charlie.py** has a routine called **r_in(amplitude=-5)** that does exactly this.
 
 In the same way, if you wanted to calculate the value of the seal resistance (assuming this is the smallest resistance in the circuit, so no current will flow through any other resistance), you could test it with a larger voltage pulse.
 
-::
+>>> spells.resistance(0,199,1050,1199,50)
 
-    >>> spells.resistance(0,199,1050,1199,50)
-
-In the same way, the file **charlie.py** has a routine called **r_seal(50)** to calculate the seal resistance. Just change the parameters (baseline and peaks) to adapt it for your recordings.
+Again, the file **charlie.py** has a routine called **r_seal(50)** to calculate the seal resistance. Just change the parameters (baseline and peaks) to adapt it for your recordings.

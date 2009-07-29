@@ -26,7 +26,13 @@ errors.
         :align: center        
         :alt: The original Stimfit for DOS
 
-        **Fig. 1:** The original Stimfit for DOS.
+        **Fig. 0:** The original Stimfit for DOS.
+
+    .. figure:: images/test.png
+        :align: center        
+        :alt: The actual platform independent Stimfit
+
+        **Fig. 1:** The actual platform-independent Stimfit.
 
 When I converted the original Pascal program to C/C++, I rewrote the
 code almost entirely from scratch. Only the algorithms to calculate

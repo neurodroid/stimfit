@@ -12,7 +12,7 @@ In `Stimfit <http://www.stimfit.org>`_, the indices of selected traces can be ea
 ::
 
     >>> stf.get_selected_indices()
-    >>> (1,2,3)
+    >>> (1,2,3) # traces 2,3 and 4 were selected
 
 In this case, we selected the 2nd, 3rd and 4th trace in the file (note the zero-based index!).
 
