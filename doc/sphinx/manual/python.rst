@@ -9,12 +9,12 @@ Why use Python?
 ===============
 Why would you want to use Python (or more specifically SciPy) to analyse neuroscientific data? Here are a couple of reasons:
 
-* Widely used, general-purpose programming language with interfaces to the most common scientific programming environments
+* `Widely used <http://www.python.org/about/success/>`_, `general-purpose <http://www.python.org/about/>`_ programming language
 * `Predicted to become the major programming language in neurosciences <http://www.frontiersin.org/neuroinformatics/specialtopics/8/>`_
 * `About to replace hoc as the standard NEURON interpreter <http://www.frontiersin.org/neuroinformatics/paper/10.3389/neuro.11/001.2009/>`_, allowing to analyse the output from NEURON simulations in a single, integrated development environment
 * `Favoured by the German Neuroinformatics Node as the standard neural data analysis language <http://www.sciencedirect.com/science?_ob=ArticleURL&_udi=B6T08-4SRCJN1-1&_user=125795&_rdoc=1&_fmt=&_orig=search&_sort=d&view=c&_acct=C000010182&_version=1&_urlVersion=0&_userid=125795&md5=3e6b8a3ab362b67480225d83cc17a9ef>`_
 * has a reputation of having a `cleaner syntax <http://www.larssono.com/musings/matmatpy/index.html>`_ than most other scientific programming languages
-* Free software
+* `Free software <http://www.python.org/psf/license/>`_
 
 Before you start
 ================
@@ -102,7 +102,7 @@ trace within a file. The default values of trace = -1 and channel = -1
 will return the currently displayed trace of the active channel. By
 passing a value of 1 as the first argument, you could access the second
 trace within your file (assuming it contains more than one trace
-course). Remember that indices are zero-based!
+of course). Remember that indices are zero-based!
 
 ::
 

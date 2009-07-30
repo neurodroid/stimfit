@@ -32,7 +32,7 @@ errors.
         :align: center        
         :alt: The actual platform independent Stimfit
 
-        **Fig. 1:** The actual platform-independent Stimfit.
+        **Fig. 1:** The current platform-independent Stimfit.
 
 When I converted the original Pascal program to C/C++, I rewrote the
 code almost entirely from scratch. Only the algorithms to calculate
