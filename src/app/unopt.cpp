@@ -180,16 +180,23 @@ bool wxStfApp::Init_wxPython()
         wxString errormsg;
         errormsg << wxT("Couldn't load wxPython core API.\n");
 #ifdef _WINDOWS
-        errormsg << wxT("You need to set the current working directory\n");
-        errormsg << wxT("to the program directory so that all shared\n");
-        errormsg << wxT("libraries can be found.\n");
-        errormsg << wxT("If you used a shortcut, right-click on it,\n");
-        errormsg << wxT("choose \"Properties\", select the \"Shortcut\"\n");
-        errormsg << wxT("tab, then set \"Run in...\" to the stimfit program\n");
-        errormsg << wxT("directory (typically C:\\Program Files\\Stimfit).\n");
-        errormsg << wxT("If you started stimfit from the command line, you\n");
-        errormsg << wxT("have to set the current working directory using the\n");
-        errormsg << wxT("\"/d\" option (e.g. /d=C:\\Program Files\\Stimfit)\n");
+        errormsg << wxT("Try the following steps:\n");
+        errormsg << wxT("1.\tUninstall a previous Stimfit installation\n");
+        errormsg << wxT("\t(Control Panel->Software)\n");
+        errormsg << wxT("2.\tUninstall a previous wxPython installation\n");
+        errormsg << wxT("\t(Control Panel->Software)\n");
+        errormsg << wxT("3.\tUninstall a previous Python 2.5 installation\n");
+        errormsg << wxT("\t(Control Panel->Software)\n");
+        errormsg << wxT("4.\tSet the current working directory\n");
+        errormsg << wxT("\tto the program directory so that all shared\n");
+        errormsg << wxT("\tlibraries can be found.\n");
+        errormsg << wxT("\tIf you used a shortcut, right-click on it,\n");
+        errormsg << wxT("\tchoose \"Properties\", select the \"Shortcut\"\n");
+        errormsg << wxT("\ttab, then set \"Run in...\" to the stimfit program\n");
+        errormsg << wxT("\tdirectory (typically C:\\Program Files\\Stimfit).\n");
+        errormsg << wxT("\tIf you started stimfit from the command line, you\n");
+        errormsg << wxT("\thave to set the current working directory using the\n");
+        errormsg << wxT("\t\"/d\" option (e.g. /d=C:\\Program Files\\Stimfit)\n");
 #endif
         ErrorMsg( errormsg );
         Py_Finalize();

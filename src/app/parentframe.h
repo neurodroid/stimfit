@@ -31,12 +31,12 @@
 
 #include "./../core/core.h"
 
-// Define a new frame
 class wxStfGraph;
 class wxStfTable;
 class wxStfGrid;
 class wxStfFileDrop;
-
+class wxProgressDialog;
+    
 //! child frame type; depends on whether aui is used for the doc/view interface
 #ifdef WITH_AUIDOCVIEW
 typedef wxAuiDocMDIChildFrame wxStfChildType;
@@ -126,7 +126,12 @@ public:
     /*! \return A reference to the wxAuiManager.
      */
     wxAuiManager& GetMgr() { return m_mgr; }
-
+    
+    //! Checks for updates.
+    /*! \param progDlg An optional progress dialog
+     */
+    void CheckUpdate( wxProgressDialog* progDlg=NULL ) const;
+    
 private:
     wxAuiManager m_mgr;
     wxAuiToolBar *m_cursorToolBar, *m_scaleToolBar;
@@ -149,6 +154,7 @@ private:
     wxWindow* DoPythonStuff(wxWindow* parent);
     
     void OnHelp(wxCommandEvent& event);
+    void OnCheckUpdate(wxCommandEvent& event);
     
     void OnToolFirst(wxCommandEvent& event);
     void OnToolNext(wxCommandEvent& event);

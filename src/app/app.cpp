@@ -150,7 +150,7 @@ bool wxStfApp::OnInit(void)
         return false;
     }
 #endif
-
+    
     // Config:
     config.reset(new wxConfig(wxT("Stimfit")));
 
@@ -234,6 +234,7 @@ bool wxStfApp::OnInit(void)
 
     wxMenu *help_menu = new wxMenu;
     help_menu->Append(wxID_HELP, wxT("Online &help\tF1"));
+    help_menu->Append(wxID_UPDATE, wxT("&Check for updates"));
     help_menu->Append(wxID_ABOUT, wxT("&About"));
 
     wxMenu *m_view_menu = new wxMenu;
@@ -265,7 +266,10 @@ bool wxStfApp::OnInit(void)
 #if 1 //ndef __WXMAC__
     frame->Show(true);
 #endif //ndef __WXMAC__
-
+    
+    // check for updates in background:
+    frame->CheckUpdate();
+    
     // load user-defined plugins:
     pluginLib = stf::GetPluginLib();
     // load fit function library:

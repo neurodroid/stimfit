@@ -30,6 +30,9 @@
 #include <wx/splitter.h>
 #include <wx/choicdlg.h>
 #include <wx/aboutdlg.h>
+#include <wx/protocol/http.h>
+#include <wx/sstream.h>
+#include <wx/progdlg.h>
 
 #ifdef __BORLANDC__
 #pragma hdrstop
@@ -106,6 +109,7 @@
 IMPLEMENT_CLASS(wxStfParentFrame, wxStfParentType)
 BEGIN_EVENT_TABLE(wxStfParentFrame, wxStfParentType)
 EVT_MENU(wxID_HELP, wxStfParentFrame::OnHelp)
+EVT_MENU(wxID_UPDATE, wxStfParentFrame::OnCheckUpdate)
 EVT_MENU(wxID_ABOUT, wxStfParentFrame::OnAbout)
 
 EVT_TOOL(wxID_TOOL_FIRST, wxStfParentFrame::OnToolFirst)
@@ -561,6 +565,131 @@ Published under the GNU general public license (http://www.gnu.org/licenses/gpl.
 void wxStfParentFrame::OnHelp(wxCommandEvent& WXUNUSED(event) )
 {
     wxLaunchDefaultBrowser( wxT("http://www.stimfit.org/doc/sphinx/index.html") );
+}
+
+std::vector<int> ParseVersionString( const wxString& VersionString ) {
+    std::vector<int> VersionInt(5);
+    
+    const char pt = '.';
+    
+    // Major version:
+    long major=0;
+    wxString sMajor = VersionString.BeforeFirst(pt);
+    if ( sMajor.length() == VersionString.length() ) {
+        major = 0;
+    } else {
+        sMajor.ToLong( &major );
+    }
+    VersionInt[0] = major;
+
+    // Minor version:
+    long minor=0;
+    wxString sMinor1 = VersionString.AfterFirst(pt);
+    if ( sMinor1.empty() ) {
+        minor = 0;
+    } else {
+        wxString sMinor = sMinor1.BeforeFirst(pt);
+        if ( sMinor1.length() == sMinor.length() ) {
+            minor = 0;
+        } else {
+            sMinor.ToLong( &minor );
+        }
+    }
+    VersionInt[1] = minor;
+
+    // Build version:
+    long build=0;
+    wxString sBuild = VersionString.AfterLast(pt);
+    if ( sBuild.empty() ) {
+        build = 0;
+    } else {
+        sBuild.ToLong( &build );
+    }
+    VersionInt[2] = build;
+    
+    return VersionInt;
+}
+
+bool CompVersion( const std::vector<int>& version ) {
+    // Get current version:
+    wxString currentString(VERSION, wxConvLocal);
+    std::vector<int> current = ParseVersionString(currentString);
+    
+    if (version[0] > current[0]) {
+        return true;
+    } else if (version[1] > current[1]) {
+        return true;
+    } else if (version[2] > current[2]) {
+        return true;
+    }
+    return false;
+}
+
+void wxStfParentFrame::CheckUpdate( wxProgressDialog* progDlg ) const {
+    
+#ifdef __LINUX__
+    wxString address(wxT("/latest_linux"));
+#elif defined (_WINDOWS)
+    wxString address(wxT("/latest_windows"));
+#elif defined (__WXMAC__)
+    wxString address(wxT("/latest_mac"));
+#else
+    return;
+#endif
+    
+    wxHTTP http;
+    http.SetHeader( wxT("Accept") , wxT("text/*") );
+    http.SetHeader( wxT("User-Agent"), wxT("Mozilla") );
+    http.SetTimeout( 1 ); // seconds
+
+    // Note that Connect() wants a host address, not an URL. 80 is the server's port.
+    wxString server( wxT("www.stimfit.org") );
+    if( http.Connect(server) )  {
+        if(wxInputStream* in_stream = http.GetInputStream (address)) {
+            wxString verS;
+            int c_int = in_stream->GetC();
+            while ( c_int != wxEOF ) {
+                if (progDlg != NULL) {
+                    progDlg->Pulse( wxT("Reading version information...") );
+                }
+                verS << char(c_int);
+                c_int = in_stream->GetC();
+            }
+            wxDELETE(in_stream);
+            std::vector<int> version = ParseVersionString( verS );
+            if ( CompVersion(version) ) {
+                wxString msg;
+                msg << wxT("A newer version of Stimfit (")
+                    << verS << wxT(") is available. ")
+                    << wxT("Would you like to download it now?");
+                wxMessageDialog newversion( NULL, msg, wxT("New version available"), wxYES_NO );
+                if ( newversion.ShowModal() == wxID_YES ) {
+                    wxLaunchDefaultBrowser( wxT("http://code.google.com/p/stimfit/downloads/list") );
+                }
+            } else {
+                if (progDlg != NULL) {
+                    wxMessageDialog newversion( NULL, wxT("You already have the newest version"), wxT("No new version available"), wxOK );
+                    newversion.ShowModal();
+                }
+            }
+        } else {
+            if (progDlg != NULL) {
+                wxGetApp().ErrorMsg( wxT("Couldn't retrieve update information. Are you connected to the internet?") );
+            }
+        }
+    } else {
+        if (progDlg != NULL) {
+            wxGetApp().ErrorMsg( wxT("Couldn't connect to server. Are you connected to the internet?") );
+        }
+    }
+}
+
+void wxStfParentFrame::OnCheckUpdate(wxCommandEvent& WXUNUSED(event) )
+{
+    wxProgressDialog progDlg( wxT("Checking for updates"), wxT("Connecting to server..."),
+                              100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE );
+    
+    CheckUpdate( &progDlg );
 }
 
 void wxStfParentFrame::OnExportimage(wxCommandEvent& WXUNUSED(event) ) {
