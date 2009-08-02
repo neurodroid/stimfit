@@ -606,7 +606,6 @@ std::vector<int> ParseVersionString( const wxString& VersionString ) {
         sBuild.ToLong( &build );
     }
     VersionInt[2] = build;
-    
     return VersionInt;
 }
 
@@ -614,15 +613,29 @@ bool CompVersion( const std::vector<int>& version ) {
     // Get current version:
     wxString currentString(VERSION, wxConvLocal);
     std::vector<int> current = ParseVersionString(currentString);
-    
     if (version[0] > current[0]) {
         return true;
-    } else if (version[1] > current[1]) {
-        return true;
-    } else if (version[2] > current[2]) {
-        return true;
+    } else {
+        if (version[0] == current[0]) {
+            if (version[1] > current[1]) {
+                return true;
+            } else {
+                if (version[1] == current[1]) {
+                    if (version[2] > current[2]) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    // version[0] == current[0] && version[1] < current[1]
+                    return false;
+                }
+            }
+        } else {
+            // version[0] < current[0]
+            return false;
+        }
     }
-    return false;
 }
 
 void wxStfParentFrame::CheckUpdate( wxProgressDialog* progDlg ) const {
@@ -652,7 +665,7 @@ void wxStfParentFrame::CheckUpdate( wxProgressDialog* progDlg ) const {
                 if (progDlg != NULL) {
                     progDlg->Pulse( wxT("Reading version information...") );
                 }
-                verS << char(c_int);
+                verS << wxChar(c_int);
                 c_int = in_stream->GetC();
             }
             wxDELETE(in_stream);
