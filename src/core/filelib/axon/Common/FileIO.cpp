@@ -28,7 +28,7 @@
 #include "wincpp.hpp"
 #include "FileIO.hpp"
 
-#ifdef __LINUX__
+#if defined (__LINUX__) || defined(__WXMAC__)
 #include <wchar.h>
 #include <wx/convauto.h>
 #endif

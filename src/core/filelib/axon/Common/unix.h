@@ -86,7 +86,7 @@ typedef const CHAR *LPCSTR, *PCSTR;
 //
 // Neutral ANSI/UNICODE types and macros
 //
-#if defined(UNICODE) || defined (__LINUX__)                     // r_winnt
+#if defined(UNICODE) || defined (__LINUX__) || defined (__WXMAC__)                     // r_winnt
 
 #ifndef _TCHAR_DEFINED
 typedef WCHAR TCHAR, *PTCHAR;
