@@ -246,11 +246,12 @@ BOOL WINAPI c_WriteFile( FILEHANDLE hFile, LPCVOID buffer, DWORD bytesToWrite,
  *
  * See CreateFileW.
  */
+#ifndef _WINDOWS
 FILEHANDLE WINAPI c_CreateFile( LPCSTR filename, DWORD access, DWORD sharing,
                                 LPSECURITY_ATTRIBUTES sa, DWORD creation,
                                 DWORD attributes, HANDLE templ)
 {
-#ifndef _WINDOWS
+
     char    fname[70];          /* To get near variable holding string */
     char*   omode;
 
@@ -265,7 +266,5 @@ FILEHANDLE WINAPI c_CreateFile( LPCSTR filename, DWORD access, DWORD sharing,
     }
     strcpy(fname, filename);              /* Get filename in near var */
     return fopen(fname,omode);
-#else
-    return CreateFile( filename, access, sharing, sa, creation, attributes, templ);
-#endif
 }
+#endif

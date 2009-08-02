@@ -10,6 +10,9 @@
 #define FILE_NULL NULL
 #define IDS_ENOMESSAGESTR               4
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #ifdef _WINDOWS
 #include <windows.h>
@@ -22,11 +25,6 @@ typedef HANDLE FILEHANDLE;
 #endif
 
 #include <stdio.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-    
 //
 // Commonly used typedefs & constants from windows.h.
 //
