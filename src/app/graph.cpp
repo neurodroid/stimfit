@@ -656,7 +656,7 @@ void wxStfGraph::PlotTrace( wxDC* pDC, const std::valarray<double>& trace, bool 
     DoPlot(pDC, trace, start, end, step, is2);
 }
 
-void wxStfGraph::DoPlot( wxDC* pDC, const std::valarray<double> trace, int start, int end, int step, bool is2 ) {
+void wxStfGraph::DoPlot( wxDC* pDC, const std::valarray<double>& trace, int start, int end, int step, bool is2 ) {
     boost::function<int(double)> yFormatFunc;
     
     if (!is2) {
