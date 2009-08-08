@@ -22,17 +22,18 @@ instance, arrays were not allowed to be longer than :math:`10^{4}`  elements, an
 faster processors had to be artificially slowed down to avoid runtime
 errors.
 
+
+    .. figure:: images/test.png
+        :align: center        
+        :alt: The actual platform-independent Stimfit
+
+        The current platform-independent Stimfit.
+
     .. figure:: images/stimfit_dos.png
         :align: center        
         :alt: The original Stimfit for DOS
 
-        **Fig. 0:** The original Stimfit for DOS.
-
-    .. figure:: images/test.png
-        :align: center        
-        :alt: The actual platform independent Stimfit
-
-        **Fig. 1:** The current platform-independent Stimfit.
+        **Fig. 1:** Above the current platform-independent Stimfit. Bellow, the original Stimfit for MS-DOS.
 
 When I converted the original Pascal program to C/C++, I rewrote the
 code almost entirely from scratch. Only the algorithms to calculate
