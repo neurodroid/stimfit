@@ -19,6 +19,27 @@
     text-indent: 0px;
     text-transform: none;
 }
+.BodyInv {
+    color: #000000;
+    font-family: 'ArialMT', 'Arial', sans-serif;
+    font-size: 15px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 20px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    opacity: 1.00;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    text-align: left;
+    text-decoration: none;
+    text-indent: 0px;
+    text-transform: none;
+}
 .Header {
     color: #ffffff;
     font-family: 'ArialMT', 'Arial', sans-serif;
@@ -171,28 +192,16 @@ a.class1:hover {
     color: #ffffff;
     text-decoration: none;
 }
-a.class2 {
-    color: #d8d8d8;
+a.class1Inv {
+    color: #121212;
     text-decoration: none;
 }
-a.class2:visited {
-    color: #ffffff;
+a.class1Inv:visited {
+    color: #000000;
     text-decoration: underline;
 }
-a.class2:hover {
-    color: #ffffff;
-    text-decoration: none;
-}
-a.class3 {
-    color: #d8d8d8;
-    text-decoration: none;
-}
-a.class3:visited {
-    color: #ffffff;
-    text-decoration: underline;
-}
-a.class3:hover {
-    color: #ffffff;
+a.class1Inv:hover {
+    color: #000000;
     text-decoration: none;
 }
 a:hover {
