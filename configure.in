@@ -1,4 +1,4 @@
-AC_INIT([stimfit],[0.9.0])
+AC_INIT([stimfit],[0.9.1])
 AC_CONFIG_SRCDIR(src/app/app.cpp)
 AM_INIT_AUTOMAKE
 AC_CONFIG_MACRO_DIR([m4])
@@ -164,7 +164,7 @@ WXTEST
 
 # Verify minimus requires
 AC_MSG_CHECKING(for wxWidgets libraries)
-vers=`echo $wxversion | $AWK 'BEGIN { FS = "."; } { printf "% d", ($1 * 1000 + $2) * 1000 + $3;}'`
+vers=`echo $wxversion | $AWK 'BEGIN { FS = "."; } { printf "% d", ($2 * 1000 + $2) * 1000 + $3;}'`
 if test -n "$vers" && test "$vers" -ge 2008000; then
 	WX_CPPFLAGS="`$WXCONFIG --cppflags`"
 	WX_CXXFLAGS="`$WXCONFIG --cxxflags`"
