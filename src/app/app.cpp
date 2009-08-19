@@ -92,37 +92,20 @@ EVT_MENU( wxID_APPLYTOALL, wxStfApp::OnApplytoall )
 END_EVENT_TABLE()
 
 wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isHires(false), txtImport(), funcLib(),
-    pluginLib(), CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ), m_file_menu(0) {}
+    pluginLib(), CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ), m_file_menu(0), m_fileToLoad(wxEmptyString) {}
 
-bool wxStfApp::OnInit(void)
+void wxStfApp::OnInitCmdLine(wxCmdLineParser& parser)
 {
-    if (!wxApp::OnInit()) {
-        return false;
-    }
+    wxApp::OnInitCmdLine(parser);
 
+    parser.AddOption("d", "dir",
+                     "Working directory to change to", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+    parser.AddParam("File to open",
+                    wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+}
 
-#if wxCHECK_VERSION(2, 9, 0)
-    static const wxCmdLineEntryDesc s_cmdLineDesc[] =
-        {
-            { wxCMD_LINE_SWITCH, "h", "help", "Show this help message.", wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_HELP    },
-            { wxCMD_LINE_OPTION, "d", "dir", "Working directory to change to." },
-            { wxCMD_LINE_PARAM, NULL, NULL, "File to open.", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-            { wxCMD_LINE_NONE }
-        };
-#else
-    static const wxCmdLineEntryDesc s_cmdLineDesc[] =
-        {
-            { wxCMD_LINE_SWITCH, wxT("h"), wxT("help"), wxT("Show this help message."), wxCMD_LINE_VAL_STRING, wxCMD_LINE_OPTION_HELP  },
-            { wxCMD_LINE_PARAM, wxT(""), wxT(""), wxT("File to open."), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-            { wxCMD_LINE_NONE }
-        };
-#endif
-    // Parse command line
-    wxCmdLineParser parser( s_cmdLineDesc, argc, argv );
-    if ( parser.Parse() != 0 )
-        return false;
-
-#ifdef _WINDOWS
+bool wxStfApp::OnCmdLineParsed(wxCmdLineParser& parser)
+{
     // Check if we should change the working directory:
     wxString new_cwd( wxT("\0") );
     if ( parser.Found( wxT("dir"), &new_cwd ) ) {
@@ -142,7 +125,21 @@ bool wxStfApp::OnInit(void)
             return false;
         }
     }
-#endif
+    
+    // Get file to load
+    if ( parser.GetParamCount() > 0 ) {
+        m_fileToLoad = parser.GetParam();
+    }
+
+    return wxApp::OnCmdLineParsed(parser);
+}
+
+bool wxStfApp::OnInit(void)
+{
+    if (!wxApp::OnInit()) {
+        return false;
+    }
+
 
 #ifdef WITH_PYTHON
     if ( !Init_wxPython() ) {
@@ -277,17 +274,12 @@ bool wxStfApp::OnInit(void)
 
     SetTopWindow(frame);
 
-    // Get file to load
-    wxString fileToLoad = wxEmptyString;
-    if ( parser.GetParamCount() > 0 ) {
-        fileToLoad = parser.GetParam();
-    }
 
-    if (!fileToLoad.empty()) {
-        wxDocTemplate* templ=GetDocManager()->FindTemplateForPath(fileToLoad);
-        wxStfDoc* NewDoc=(wxStfDoc*)templ->CreateDocument(fileToLoad,wxDOC_NEW);
+    if (!m_fileToLoad.empty()) {
+        wxDocTemplate* templ=GetDocManager()->FindTemplateForPath(m_fileToLoad);
+        wxStfDoc* NewDoc=(wxStfDoc*)templ->CreateDocument(m_fileToLoad,wxDOC_NEW);
         NewDoc->SetDocumentTemplate(templ);
-        if (!NewDoc->OnOpenDocument(fileToLoad)) {
+        if (!NewDoc->OnOpenDocument(m_fileToLoad)) {
             ErrorMsg(wxT("Couldn't open file, aborting file import"));
             GetDocManager()->CloseDocument(NewDoc);
             return false;
@@ -384,7 +376,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
          }
          case stf::undefined_cursor:
              {
-                 ErrorMsg(wxT("Undefined cursor in MyApp::OnPeakcalcexecMsg()"));
+                 ErrorMsg(wxT("Undefined cursor in wxStfApp::OnPeakcalcexecMsg()"));
                  return;
              }
          default:

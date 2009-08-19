@@ -412,6 +412,11 @@ public:
     /*! \return A pointer to the document manager.
      */
     wxDocManager* GetDocManager() const { return wxDocManager::GetDocumentManager(); }
+    
+    virtual void OnInitCmdLine(wxCmdLineParser& parser);
+    virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
+
+   
 protected:
 
 private:
@@ -442,7 +447,8 @@ private:
     wxDocTemplate* m_cfsTemplate, *m_hdf5Template, *m_txtTemplate,*m_abfTemplate,*m_atfTemplate,*m_axgTemplate,*m_sonTemplate;
     stf::storedFunc storedLinFunc;
     wxMenu* m_file_menu;
-
+    wxString m_fileToLoad;
+    
 #ifdef WITH_PYTHON
     PyThreadState* m_mainTState;
 #endif
