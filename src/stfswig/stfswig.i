@@ -790,6 +790,16 @@ bool set_peak_mean( int pts );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) get_peak_mean;
+%feature("docstring", "Returns the number of sampling points used for
+the peak calculation.
+
+Returns:
+False upon failure (i.e no file opened). -1 means of all sampling points between the peak cursors.") get_peak_mean;
+int get_peak_mean( );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %feature("autodoc", 0) set_peak_direction;
 %feature("docstring", "Sets the direction of the peak detection.
 

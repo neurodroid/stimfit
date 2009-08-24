@@ -705,6 +705,12 @@ bool set_peak_mean( int pts ) {
     return update_cursor_dialog();
 }
 
+int get_peak_mean() {
+    if ( !check_doc() ) return false;
+
+    return (int)actDoc()->GetPM();
+}
+
 bool set_peak_direction( const char* direction ) {
     if ( !check_doc() ) return false;
 
