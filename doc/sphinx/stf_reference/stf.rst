@@ -563,6 +563,7 @@ The :mod:`stf` module defines the following functions:
         **Returns:**
 
         False upon failure (such as out-of-range).
+
     
 .. function:: set_peak_mean(pts) 
 
@@ -576,6 +577,14 @@ The :mod:`stf` module defines the following functions:
 
         False upon failure (such as out-of-range).
     
+.. function:: get_peak_mean()
+
+    Returns the number of sampling points used for peak calculation.
+
+        **Returns:**
+ 
+        0 upon failure (i.e no file opened). -1 means average of all sampling points.
+
 
 .. function:: set_peak_start(pos, is_time=False) 
        

@@ -795,7 +795,8 @@ bool set_peak_mean( int pts );
 the peak calculation.
 
 Returns:
-False upon failure (i.e no file opened). -1 means of all sampling points between the peak cursors.") get_peak_mean;
+0 upon failure (i.e no file opened). -1 means average of all sampling 
+points.") get_peak_mean;
 int get_peak_mean( );
 //--------------------------------------------------------------------
 

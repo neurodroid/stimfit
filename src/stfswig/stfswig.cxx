@@ -706,7 +706,7 @@ bool set_peak_mean( int pts ) {
 }
 
 int get_peak_mean() {
-    if ( !check_doc() ) return false;
+    if ( !check_doc() ) return 0;
 
     return (int)actDoc()->GetPM();
 }
