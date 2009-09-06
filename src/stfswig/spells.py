@@ -32,23 +32,29 @@ def resistance( base_start, base_end, peak_start, peak_end, amplitude):
         return 0
 
     #A temporary array to calculate the average:
-    set = N.empty( (stf.get_size_channel(), stf.get_size_trace()) )
+    array = N.empty( (stf.get_size_channel(), stf.get_size_trace()) )
     for n in range( 0,  stf.get_size_channel() ):
         # Add this trace to set:
-        set[n] = stf.get_trace( n )
+        array[n] = stf.get_trace( n )
 
 
     # calculate average and create a new section from it:
-    stf.new_window( N.average(set,0) )
+    stf.new_window( N.average(set, 0) )
 
     # set peak cursors:
-    if not stf.set_peak_mean(-1): return 0 # -1 means all points within peak window.
-    if not stf.set_peak_start(peak_start): return 0
-    if not stf.set_peak_end(peak_end): return 0
+    # -1 means all points within peak window.
+    if not stf.set_peak_mean(-1): 
+        return 0 
+    if not stf.set_peak_start(peak_start): 
+        return 0
+    if not stf.set_peak_end(peak_end): 
+        return 0
 
     # set base cursors:
-    if not stf.set_base_start(base_start): return 0
-    if not stf.set_base_end(base_end): return 0
+    if not stf.set_base_start(base_start): 
+        return 0
+    if not stf.set_base_end(base_end): 
+        return 0
 
     # measure everything:
     stf.measure()
@@ -56,7 +62,7 @@ def resistance( base_start, base_end, peak_start, peak_end, amplitude):
     # calculate r_seal and return:
     return amplitude / (stf.get_peak()-stf.get_base())
 
-def rmean(binwidth, trace=-1,channel=-1):
+def rmean(binwidth, trace=-1, channel=-1):
     """
     Calculates a running mean of a single trace
 
@@ -79,7 +85,7 @@ def rmean(binwidth, trace=-1,channel=-1):
 
     """
     # loads the current trace of the channel in a 1D Numpy Array
-    sweep = stf.get_trace(trace,channel)
+    sweep = stf.get_trace(trace, channel)
 
     # creates a destination python list to append the data
     dsweep = N.empty((len(sweep)))
@@ -90,7 +96,6 @@ def rmean(binwidth, trace=-1,channel=-1):
         if (len(sweep)-i) > binwidth:
             # append to list the running mean of `binwidth` values
             # N.mean(sweep) calculates the mean of list
-            # sweep[p0:p10] takes the values in the vector between p0 and p10 (zero-based)
             dsweep[i] = N.mean( sweep[i:(binwidth+i)] )
 
         else:
@@ -115,7 +120,8 @@ def get_amplitude(base, peak, delta, trace=None):
     A float with the variation of the amplitude. False if
 
     Example:
-    get_amplitude(980,1005,10,i) returns the variation of the Y unit of the trace i between
+    get_amplitude(980,1005,10,i) returns the variation of the Y unit of the
+        trace i between
     peak value (10050+10) msec and baseline (980+10) msec
     """
 
@@ -123,19 +129,23 @@ def get_amplitude(base, peak, delta, trace=None):
     if trace is None:
         sweep = stf.get_trace_index()
     else:
-        if typ(trace) != int:
+        if type(trace) != int:
             print "trace argument admits only intergers"
             return False
         sweep = trace
 
 
     # set base cursors:
-    if not(stf.set_base_start(base,True)): return False # out-of range
-    if not(stf.set_base_end(base+delta,True)): return False
+    if not(stf.set_base_start(base, True)): 
+        return False # out-of range
+    if not(stf.set_base_end(base+delta, True)): 
+        return False
 
     # set peak cursors:
-    if not(stf.set_peak_start(peak,True)): return False # out-of range
-    if not(stf.set_peak_end(peak+delta,True)): return False
+    if not(stf.set_peak_start(peak, True)): 
+        return False # out-of range
+    if not(stf.set_peak_end(peak+delta, True)): 
+        return False
 
     # update measurements
     stf.set_trace(sweep)
@@ -160,10 +170,11 @@ def cut_sweeps(start, delta, sequence=None):
     A new window with the traced cut.
 
     Examples:
-    cut_sweeps(200,300) cut the traces between t=200 ms and t=500 ms within the whole channel.
-    cut_sweeps(200,300,range(30,60)) the same as above, but only between traces 30 and 60.
-    cut_sweeps(200,300,stf.get_selected_indices()) cut between 200 ms and 500 ms
-        only in the selected traces.
+    cut_sweeps(200,300) cut the traces between t=200 ms and t=500 ms 
+        within the whole channel.
+    cut_sweeps(200,300,range(30,60)) the same as above, but only between 
+        traces 30 and 60.
+    cut_sweeps(200,300,stf.get_selected_indices()) cut between 200 ms               and 500 ms only in the selected traces.
 
     """
 
@@ -191,18 +202,21 @@ def count_events(start, delta, threshold=0, up=True, trace=None, mark=True):
     start       -- starting time (in ms) to look for events.
     delta       -- time interval (in ms) to look for events.
     threshold   -- (optional) detection threshold (default = 0).
-    up          -- (optional) True (default) will look for upward events, False downwards.
-    trace       -- (optional) zero-based index of the trace in the current channel,
-                   if None, the current trace is selected.
-    mark        -- (optional) if True (default), set a mark at the point of threshold crossing
+    up          -- (optional) True (default) will look for upward events,
+                    False downwards.
+    trace       -- (optional) zero-based index of the trace in the current 
+                    channel, if None, the current trace is selected.
+    mark        -- (optional) if True (default), set a mark at the point 
+                    of threshold crossing
     Returns:
     An integer with the number of events.
 
     Examples:
-    count_events(500,1000) returns the number of events found between t=500 ms and t=1500 ms
-        above 0 in the current trace and shows a stf marker.
-    count_events(500,1000,0,False,-10,i) returns the number of events found below -10 in the
-        trace i and shows the corresponding stf markers.
+    count_events(500,1000) returns the number of events found between t=500
+         ms and t=1500 ms above 0 in the current trace and shows a stf 
+         marker.
+    count_events(500,1000,0,False,-10,i) returns the number of events found
+         below -10 in the trace i and shows the corresponding stf markers.
     """
 
     # sets the current trace or the one given in trace.
@@ -227,7 +241,7 @@ def count_events(start, delta, threshold=0, up=True, trace=None, mark=True):
     selection = stf.get_trace()[pstart:(pstart+pdelta)]
 
     # algorithm to detect events
-    EventCounter,i = 0,0 # set counter and index to zero
+    event_counter, i = 0, 0 # set counter and index to zero
 
     # choose comparator according to direction:
     if up:
@@ -236,15 +250,15 @@ def count_events(start, delta, threshold=0, up=True, trace=None, mark=True):
         comp = lambda a, b: a < b
 
     # run the loop
-    while i<len(selection):
-        if comp(selection[i],threshold):
-            EventCounter +=1
+    while i < len(selection):
+        if comp(selection[i], threshold):
+            event_counter += 1
             if mark:
                 stf.set_marker(pstart+i, selection[i])
-            while i<len(selection) and comp(selection[i],threshold):
-                i+=1 # skip values until the value is below or above threshold again
+            while i < len(selection) and comp(selection[i], threshold):
+                i += 1 # skip  until value is below/above threshold
         else:
-            i+=1
+            i += 1
 
-    return EventCounter
+    return event_counter
 
