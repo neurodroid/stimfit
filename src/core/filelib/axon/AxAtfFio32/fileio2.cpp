@@ -18,7 +18,7 @@
 #include "axatffio32.h"
 #include <wx/convauto.h>
 
-#if defined(__LINUX__) || defined(__STF__) || defined(__WXMAC__)
+#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__)
 	#define max(a,b)   (((a) > (b)) ? (a) : (b))
 	#define min(a,b)   (((a) < (b)) ? (a) : (b))
 #endif
