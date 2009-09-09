@@ -13,37 +13,11 @@
 #include "./parentframe.h"
 
 #ifdef __WXMAC__
-// Code to find executable path. Retrieved from:
-// http://www.wxwidgets.org/docs/technote/install.htm
-
-#include <ApplicationServices/ApplicationServices.h>
-
-#if wxCHECK_VERSION(2, 9, 0)
-#include <wx/osx/carbon/private.h>
-#else
-#include <wx/mac/carbon/private.h>
-#endif
-#include <wx/filename.h>
+#include <wx/stdpaths.h>
 
 wxString GetExecutablePath()
 {
-    static bool found = false;
-    static wxString path;
-
-    ProcessInfoRec processinfo;
-    ProcessSerialNumber procno ;
-    FSSpec fsSpec;
-    
-    procno.highLongOfPSN = NULL ;
-    procno.lowLongOfPSN = kCurrentProcess ;
-    processinfo.processInfoLength = sizeof(ProcessInfoRec);
-    processinfo.processName = NULL;
-    processinfo.processAppSpec = &fsSpec;
-    
-    GetProcessInformation( &procno , &processinfo ) ;
-    path = wxMacFSSpec2MacFilename(&fsSpec);
-    found = true;
-    return path;
+    return  wxStandardPaths::Get( ).GetExecutablePath();
 }
 #endif
 
@@ -100,12 +74,12 @@ bool wxStfApp::Init_wxPython()
     wxString app_path = wxFileName( GetExecutablePath() ).GetPath();
     wxString cwd;
     cwd << wxT("import os\n");
-    cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks\"\n");
+    cwd << wxT("cwd=\"") << app_path << wxT("/stimfit.app/Contents/Frameworks\"\n");
     cwd << wxT("import sys\n");
     cwd << wxT("sys.path.append(cwd)\n");
-    cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks/stimfit\"\n");
+    cwd << wxT("cwd=\"") << app_path << wxT("/stimfit.app/Contents/Frameworks/stimfit\"\n");
     cwd << wxT("sys.path.append(cwd)\n");
-    cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks/numpy\"\n");
+    cwd << wxT("cwd=\"") << app_path << wxT("/stimfit.app/Contents/Frameworks/numpy\"\n");
     cwd << wxT("sys.path.insert(0,cwd)\n");
 #ifdef _STFDEBUG
     cwd << wxT("print sys.path\n");

@@ -152,10 +152,9 @@
    #error "ERROR: WIN16 is not supported any more."
 #elif defined(__LINUX__)
    #define PLATFORM "Unix"
-#elif defined(__WXMAC__) 
+#elif defined(__APPLE__) 
    #define PLATFORM "Mac"
 #elif defined(__APPLE__)
-   #define __WXMAC__
    #define PLATFORM "Mac"
    #define PLATFORM "Mac"
 #else

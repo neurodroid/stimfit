@@ -63,7 +63,7 @@
 #ifndef __MACHINE__
     #define __MACHINE__
 
-    #ifdef __WXMAC__
+    #ifdef __APPLE__
         // #define macintosh
     #endif
 
@@ -250,7 +250,7 @@
         #define M_GetMemSize(x)   GetHandleSize(x)
     #endif  /* macintosh */
 
-#if defined(__LINUX__) || defined(__WXMAC__)
+#if defined(__LINUX__) || defined(__APPLE__)
         #define F_memcpy memcpy
         #define F_memmove memmove
         #define F_strlen strlen

@@ -265,8 +265,9 @@ bool wxStfApp::OnInit(void)
 #endif //ndef __WXMAC__
     
     // check for updates in background:
+#ifndef __WXMAC__
     frame->CheckUpdate();
-    
+#endif
     // load user-defined plugins:
     pluginLib = stf::GetPluginLib();
     // load fit function library:
@@ -706,6 +707,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     wxMenu *help_menu = new wxMenu;
     help_menu->Append(wxID_HELP, wxT("Online &help\tF1"));
     help_menu->Append(wxID_ABOUT, wxT("&About"));
+    help_menu->Append(wxID_UPDATE, wxT("&Check for updates"));
 
     wxMenuBar *menu_bar = new wxMenuBar;
 

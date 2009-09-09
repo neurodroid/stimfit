@@ -7,12 +7,6 @@
 #define kAGX_Creator 'AxGX'
 #define kAGX_DocType  'axgx'
 
-#ifndef __WXMAC__
-    #ifdef __APPLE__
-        #define __WXMAC__
-    #endif
-#endif
-
 #if 0
     typedef const int filehandle;
 #else
