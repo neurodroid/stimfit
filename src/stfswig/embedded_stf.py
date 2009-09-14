@@ -13,9 +13,9 @@ starting code to embed wxPython into the stf application.
 import wx
 from wx.py import shell
 
+# access current versions of NumPy and Stimfit
 from numpy.version import version as numpy_version
-# by default the stf module is loaded, so we can access stf functions
-import stf
+from stf import get_versionstring
 
 # test if stf_init was loaded
 try:
@@ -36,7 +36,7 @@ class MyPanel(wx.Panel):
             style = wx.BORDER_NONE | wx.MAXIMIZE)
 
         version_s = "NumPy %s, wxPython %s" % (numpy_version, wx.version()) 
-        intro = '%s, using %s' % (stf.get_versionstring(), version_s)
+        intro = '%s, using %s' % (get_versionstring(), version_s)
 
         # the Pycrust shell object
         pycrust = shell.Shell(self, -1, introText = intro + LOADED)
