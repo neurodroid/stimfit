@@ -26,6 +26,13 @@ import_array();
 %apply_numpy_typemaps(double)
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) get_versionstring;
+%feature("docstring",
+"Returns the current version of Stimfit.") get_versionstring;
+const char* get_versionstring( );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %feature("autodoc", 0) _get_trace_fixedsize;
 %feature("docstring", "Returns a trace as a 1-dimensional NumPy array.
 This returns an array of a given size.

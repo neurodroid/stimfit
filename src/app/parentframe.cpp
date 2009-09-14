@@ -12,7 +12,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-// frame.cpp
+// parentframe.cpp
 // These are the top-level and child windows of the application.
 // 2007-12-27, Christoph Schmidt-Hieber, University of Freiburg
 
@@ -261,45 +261,10 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 #ifdef WITH_PYTHON
     python_code2 << wxT("import sys\n")
                  << wxT("sys.path.append('.')\n")
-                 << wxT("import wx\n")
-                 << wxT("from wx.py import shell, version\n")
-                 << wxT("import numpy\n")
-                 << wxT("import stf\n")
-                 << wxT("try:\n")
-                 << wxT("    import stf_init\n")
-                 << wxT("except ImportError:\n")
-                 << wxT("    loaded = \"\"\n")
-                 << wxT("except SyntaxError:\n")
-                 << wxT("    loaded = \"\\nSyntax error in custom initialization script stf_init.py\"\n")
-                 << wxT("else:\n")
-                 << wxT("    loaded = \"\\nSuccessfully loaded custom initialization script stf_init.py\"\n")
-                 << wxT("\n")
-                 << wxT("class MyPanel(wx.Panel):\n")
-                 << wxT("    def __init__(self, parent):\n")
-                 << wxT("        wx.Panel.__init__(self, parent, -1, style=wx.BORDER_NONE | wx.MAXIMIZE)\n")
-                 << wxT("\n")
-                 << wxT("        version_s = \'NumPy \%s, wxPython \%s\' \% (numpy.version.version, wx.version())\n")
-                 << wxT("        intro = '") << wxGetApp().GetVersionString() << wxT(", using \%s' \% version_s \n")
-                 << wxT("        pycrust = shell.Shell(self, -1, introText=intro + loaded)\n")
-                 << wxT("        pycrust.push('import numpy as N', silent=True)\n")
-                 << wxT("        pycrust.push('import stf', silent=True)\n")
-                 << wxT("        pycrust.push('from stf import *', silent=True)\n")
-                 << wxT("        pycrust.push('try:', silent=True)\n")
-                 << wxT("        pycrust.push('    from stf_init import *', silent=True)\n")
-                 << wxT("        pycrust.push('except ImportError:', silent=True)\n")
-                 << wxT("        pycrust.push('    pass', silent=True)\n")
-                 << wxT("        pycrust.push('except SyntaxError:', silent=True)\n")
-                 << wxT("        pycrust.push('    pass', silent=True)\n")
-                 << wxT("        pycrust.push('else:', silent=True)\n")
-                 << wxT("        pycrust.push('    pass', silent=True)\n")
-                 << wxT("        pycrust.push('', silent=True)\n")
-                 << wxT("        sizer = wx.BoxSizer(wx.VERTICAL)\n")
-                 << wxT("        sizer.Add(pycrust, 1, wx.EXPAND|wx.BOTTOM|wx.LEFT|wx.RIGHT, 10)\n")
-                 << wxT("\n")
-                 << wxT("        self.SetSizer(sizer)\n")
+                 << wxT("import embedded_stf\n")
                  << wxT("\n")
                  << wxT("def makeWindow(parent):\n")
-                 << wxT("    win = MyPanel(parent)\n")
+                 << wxT("    win = embedded_stf.MyPanel(parent)\n")
                  << wxT("    return win\n");
 
 

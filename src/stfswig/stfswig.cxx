@@ -87,6 +87,10 @@ bool refresh_graph() {
     return true;
 }
 
+const char* get_versionstring() {
+    return wxGetApp().GetVersionString();
+}
+
 void _get_trace_fixedsize( double* outvec, int size, int trace, int channel ) {
     if ( !check_doc() ) return;
 

@@ -5,6 +5,8 @@
 #include <wx/wx.h>
 #undef _DEBUG
 
+const char* get_versionstring( );
+
 bool new_window( double* invec, int size );
 bool new_window_matrix( double* inarr, int traces, int size );
 bool new_window_selected_this( );
