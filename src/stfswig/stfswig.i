@@ -803,7 +803,7 @@ the peak calculation.
 
 Returns:
 0 upon failure (i.e no file opened). -1 means average of all sampling 
-points.") get_peak_mean;
+points within the peak window.") get_peak_mean;
 int get_peak_mean( );
 //--------------------------------------------------------------------
 

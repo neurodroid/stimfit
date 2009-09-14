@@ -1,17 +1,3 @@
-<<<<<<< local
-#if 0 //ndef __WXMAC__
-=======
-#ifndef __APPLE__
->>>>>>> other
-    #ifdef __APPLE__
-        #define __APPLE__
-    #endif
-#endif
-
-#if 0
-#include <Carbon/Carbon.h>
-#endif
-
 #include "fileUtils.h"
 #ifdef _WINDOWS
 #include <wx/wx.h>
