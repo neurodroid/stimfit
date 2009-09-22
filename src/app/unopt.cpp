@@ -67,6 +67,7 @@ bool wxStfApp::Init_wxPython()
 {
     // Initialize Python
     Py_Initialize();
+    
     PyEval_InitThreads();
 
 #ifdef __WXMAC__
@@ -148,6 +149,14 @@ bool wxStfApp::Init_wxPython()
         Py_Finalize();
         return false;
     }
+    
+#ifdef IPYTHON
+    // Set a dummy sys.argv for IPython
+    wxPyBlock_t blocked = wxPyBeginBlockThreads();
+    char* argv = "\0";
+    PySys_SetArgv(1, &argv);
+    wxPyEndBlockThreads(blocked);
+#endif
     
     if ( ! wxPyCoreAPI_IMPORT() ) {
         PyErr_Print();

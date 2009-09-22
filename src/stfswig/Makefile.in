@@ -226,7 +226,7 @@ top_srcdir = @top_srcdir@
 @BUILD_PYTHON_TRUE@libstf_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
 @BUILD_PYTHON_TRUE@libstf_la_CXXFLAGS = $(OPT_CXXFLAGS)
 @BUILD_PYTHON_TRUE@libstf_la_LDFLAGS = $(WX_LIBS) $(LIBPYTHON_LDFLAGS)
-@BUILD_PYTHON_TRUE@EXTRA_DIST = stfswig.i ivtools.py mintools.py natools.py plottools.py minidemo.py charlie.py stf.py mintools.py hdf5tools.py spells.py embedded_stf.py Doxyfile
+@BUILD_PYTHON_TRUE@EXTRA_DIST = stfswig.i ivtools.py mintools.py natools.py plottools.py minidemo.py charlie.py stf.py mintools.py hdf5tools.py spells.py embedded_stf.py embedded_ipython.py wx_frontend.py console_widget.py Doxyfile
 all: all-am
 
 .SUFFIXES:
@@ -539,6 +539,9 @@ uninstall-am: uninstall-libLTLIBRARIES
 @BUILD_PYTHON_TRUE@	cp -p $(srcdir)/stf.py ${PYTHON_SITE_PKG}/stimfit
 @BUILD_PYTHON_TRUE@	cp -p $(srcdir)/spells.py ${PYTHON_SITE_PKG}/stimfit
 @BUILD_PYTHON_TRUE@	cp -p $(srcdir)/embedded_stf.py ${PYTHON_SITE_PKG}/stimfit
+@BUILD_PYTHON_TRUE@	cp -p $(srcdir)/embedded_ipython.py ${PYTHON_SITE_PKG}/stimfit
+@BUILD_PYTHON_TRUE@	cp -p $(srcdir)/wx_frontend.py ${PYTHON_SITE_PKG}/stimfit
+@BUILD_PYTHON_TRUE@	cp -p $(srcdir)/console_widget.py ${PYTHON_SITE_PKG}/stimfit
 @BUILD_PYTHON_TRUE@	echo stimfit > ${PYTHON_SITE_PKG}/stimfit.pth
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

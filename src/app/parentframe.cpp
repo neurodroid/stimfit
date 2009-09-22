@@ -261,10 +261,18 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 #ifdef WITH_PYTHON
     python_code2 << wxT("import sys\n")
                  << wxT("sys.path.append('.')\n")
+#ifdef IPYTHON
+                 << wxT("import embedded_ipython\n")
+#else
                  << wxT("import embedded_stf\n")
+#endif
                  << wxT("\n")
                  << wxT("def makeWindow(parent):\n")
+#ifdef IPYTHON
+                 << wxT("    win = embedded_ipython.MyPanel(parent)\n")
+#else
                  << wxT("    win = embedded_stf.MyPanel(parent)\n")
+#endif
                  << wxT("    return win\n");
 
 

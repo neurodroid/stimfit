@@ -179,6 +179,9 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   File "${STFDIR}\src\stfswig\hdf5tools.py"
   File "${STFDIR}\src\stfswig\spells.py"
   File "${STFDIR}\src\stfswig\embedded_stf.py"
+  File "${STFDIR}\src\stfswig\embedded_ipython.py"
+  File "${STFDIR}\src\stfswig\wx_frontend.py"
+  File "${STFDIR}\src\stfswig\console_widget.py"
   File /r /x .hg "${STFDIR}\src"
   
   ;Store installation folder

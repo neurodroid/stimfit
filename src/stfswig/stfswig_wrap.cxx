@@ -7608,7 +7608,7 @@ static PyMethodDef SwigMethods[] = {
 		"\n"
 		"Returns:\n"
 		"0 upon failure (i.e no file opened). -1 means average of all sampling \n"
-		"points.\n"
+		"points within the peak window.\n"
 		""},
 	 { (char *)"set_peak_direction", _wrap_set_peak_direction, METH_VARARGS, (char *)"\n"
 		"set_peak_direction(direction) -> bool\n"
