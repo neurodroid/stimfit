@@ -11,7 +11,7 @@ starting code to embed wxPython into the stf application.
 """
 
 import wx
-import wx_frontend
+from IPython.frontend.wx.wx_frontend import WxController
 
 # access current versions of NumPy and Stimfit
 from numpy.version import version as numpy_version
@@ -39,7 +39,7 @@ class MyPanel(wx.Panel):
         intro = '%s, using %s' % (get_versionstring(), version_s)
 
         # the Pycrust shell object
-        ipython_shell = wx_frontend.WxController(self)
+        ipython_shell = WxController(self)
 #         pycrust.push("import numpy as N", silent = True)
 #         pycrust.push("import stf", silent = True)
 #         pycrust.push("from stf import *", silent = True)
