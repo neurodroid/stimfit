@@ -975,6 +975,23 @@ static UINT SamplesToSynchCounts(const ABFFileHeader *pFH, UINT uSamples)
 }
 
 //===============================================================================================
+// FUNCTION: SamplesToSynchCounts
+// PURPOSE:  Converts a value in multiplexed samples to Synch Time Units.
+//
+static UINT ABF2_SamplesToSynchCounts(const ABF2FileHeader *pFH, UINT uSamples)
+{
+    DWORD dwLengthInSynchUnits = uSamples;
+    if( pFH->fSynchTimeUnit != 0.0F ) 
+    {
+        double dLen = dwLengthInSynchUnits * ABF2H_GetFirstSampleInterval(pFH)  * pFH->nADCNumChannels / 1E3;
+        dLen = floor( dLen + 0.5 );
+        dwLengthInSynchUnits = DWORD( dLen );
+    }
+
+    return dwLengthInSynchUnits;
+}
+
+//===============================================================================================
 // FUNCTION: ExpandSynchEntry
 // PURPOSE:  Unpacks a synch entry into one or more chunks no greater than the max chunk size.
 //
@@ -988,6 +1005,26 @@ static void ExpandSynchEntry(const ABFFileHeader *pFH, CSynch &SynchArray, Synch
     {
         SynchArray.Put(uStart, uChunkSize, uFileOffset);
         uStart      += SamplesToSynchCounts( pFH, uChunkSize );
+        uFileOffset += uChunkSize * uSampleSize;
+        uLength     -= uChunkSize;
+    }
+    SynchArray.Put(uStart, uLength, uFileOffset);
+}
+
+//===============================================================================================
+// FUNCTION: ExpandSynchEntry
+// PURPOSE:  Unpacks a synch entry into one or more chunks no greater than the max chunk size.
+//
+static void ABF2_ExpandSynchEntry(const ABF2FileHeader *pFH, CSynch &SynchArray, Synch *pItem, UINT uChunkSize, UINT uSampleSize)
+{
+    UINT uStart      = pItem->dwStart;
+    UINT uLength     = pItem->dwLength;
+    UINT uFileOffset = pItem->dwFileOffset;
+
+    while (uLength > uChunkSize)
+    {
+        SynchArray.Put(uStart, uChunkSize, uFileOffset);
+        uStart      += ABF2_SamplesToSynchCounts( pFH, uChunkSize );
         uFileOffset += uChunkSize * uSampleSize;
         uLength     -= uChunkSize;
     }
@@ -1115,6 +1152,147 @@ static BOOL _SetChunkSize( CFileDescriptor *pFI, ABFFileHeader *pFH,
         }
 
         ExpandSynchEntry(pFH, NewSynchArray, &LastItem, uMaxChunkSize, uSampleSize);
+
+        if (pFI->TestFlag(FI_READONLY))
+            NewSynchArray.SetMode(CSynch::eREADMODE);
+      
+        pFI->ChangeSynchArray(&NewSynchArray);
+
+        *pdwMaxEpi = pFI->GetSynchCount();
+    }
+    else
+    {
+        //      ERRORMSG("ABF_SetChunkSize should only be used on ABF_GAPFREEFILE or ABF_VARLENEVENTS ABF files");
+    }
+
+    // Set header variable for the number of episodes in the file.
+    pFH->lActualEpisodes = *pdwMaxEpi;
+    pFI->SetAcquiredEpisodes(*pdwMaxEpi);
+    pFI->FreeReadBuffer();
+    return TRUE;
+}
+
+//===============================================================================================
+// FUNCTION: _SetChunkSize
+// PURPOSE:  This routine can be called on files of type ABF_GAPFREEFILE or ABF_VARLENEVENTS to change
+//           the size of the data chunks returned by the read routines.
+// INPUT:
+//   hFile          ABF file number of this file (NOT the DOS handle)
+//   pFH            the current acquisition parameters for the data file
+//   puMaxSamples   points to the requested size of data blocks to be returned.
+//                  This is only used in the case of GAPFREE and EVENT-DETECTED-
+//                  VARIABLE-LENGTH acquisitions. Otherwise the size of the
+//                  Episode is used. 80x86 limitations require this to be 
+//                  less than or equal to 64k.
+//   pdwMaxEpi      The maximum number of episodes to be read.
+// OUTPUT:
+//   pFH            the acquisition parameters that were read from the data file
+//   puMaxSamples   the maximum number of samples that can be read contiguously
+//                  from the data file.
+//   pdwMaxEpi      the number of episodes of puMaxSamples points that exist
+//                  in the data file.
+// 
+static BOOL ABF2_SetChunkSize( CFileDescriptor *pFI, ABF2FileHeader *pFH, 
+                               UINT *puMaxSamples, DWORD *pdwMaxEpi, int *pnError )
+{
+    // Check for valid parameters.
+    //   WPTRASSERT(puMaxSamples);
+    //   WPTRASSERT(pdwMaxEpi);
+
+    // Check that requested chunk size is reasonable.
+    // If chunk-size is zero, it is treated as a request for ABF to set a reasonable 
+    // chunk-size. An error is returned if chunk-size is given but too small. 
+    // If the size given is too big, it is set to the largest possible size.
+
+    UINT uLimSamples = PCLAMP7_MAXSWEEPLEN_PERCHAN;
+    UINT uMaxSamples = *puMaxSamples;
+   
+    // if uMaxSamples == -1, restore the chunk size to the "raw" value (i.e. from disk).
+    if ((int)uMaxSamples != -1 )
+    {
+        if (uMaxSamples == 0)
+            uMaxSamples = ABF_DEFAULTCHUNKSIZE / pFH->nADCNumChannels;
+        else if (uMaxSamples > uLimSamples)
+            uMaxSamples = uLimSamples;
+    }
+
+    UINT uAcqLenPerChannel = UINT(pFH->lActualAcqLength / pFH->nADCNumChannels);
+    if (uMaxSamples > uAcqLenPerChannel)
+        uMaxSamples = uAcqLenPerChannel;
+
+    pFH->lNumSamplesPerEpisode = long(uMaxSamples * pFH->nADCNumChannels);
+   
+    // Set the return value for the read chunk size.
+    *puMaxSamples = (UINT)(pFH->lNumSamplesPerEpisode / pFH->nADCNumChannels);
+
+    // Scan through the synch array building up into full event sizes and then
+    // subdividing down into multiples of the chunk size.
+    if (pFI->GetSynchCount() <= 0)
+    {
+        // Only ABF_GAPFREEFILEs and ABF_WAVEFORMFILEs can optionally have synch arrays.
+        ASSERT((pFH->nOperationMode == ABF_GAPFREEFILE) ||
+               (pFH->nOperationMode == ABF_WAVEFORMFILE));
+
+        // Gap-free files only have synch arrays if they have been paused during recording
+        // If there is no synch array, work out how many chunks we have etc.
+        //
+        // Gapfree files without synch arrays need to know the size of the last episode 
+        // (this can be less than the episode size for gap-free data)
+
+        UINT uMaxEpi      = uAcqLenPerChannel / uMaxSamples;
+        UINT uLastEpiSize = uAcqLenPerChannel % uMaxSamples;
+
+        if (uLastEpiSize > 0)
+        {
+            uMaxEpi++;
+            ASSERT(pFH->nOperationMode == ABF_GAPFREEFILE);
+        }
+        else
+            uLastEpiSize = uMaxSamples;
+
+        *pdwMaxEpi = uMaxEpi;
+        pFI->SetLastEpiSize(uLastEpiSize * pFH->nADCNumChannels);
+    }
+    else if ((pFH->nOperationMode == ABF_GAPFREEFILE) || (pFH->nOperationMode == ABF_VARLENEVENTS))
+    {
+        // Create a new synch array that we can build from the old one.
+        CSynch NewSynchArray;
+        if (!NewSynchArray.OpenFile())
+            return ErrorReturn(pnError, ABF_BADTEMPFILE);
+
+        // Cache some useful constants
+        const UINT uSampleSize   = ABF2_SampleSize(pFH);      
+        const UINT uSynchCount   = pFI->GetSynchCount();
+        const UINT uMaxChunkSize = *puMaxSamples * UINT(pFH->nADCNumChannels);
+
+        // Get the first entry.
+        Synch LastItem = { 0 };
+        pFI->GetSynchEntry(1, &LastItem);
+
+        // Loop through the rest of the entries.
+        for (UINT i=2; i<=uSynchCount; i++)
+        {
+            // For event detected variable length data files, episodes may be larger then 
+            // wFullEpisodeSize. These will be broken up into multiple units of length 
+            // uMaxChunkSize or less, and the Synch array adjusted accordingly.
+
+            // Calculate file offsets and expand out any episodes longer than
+            // uMaxChunkSize to span multiple Synch entries.
+   
+            Synch SynchItem;
+            pFI->GetSynchEntry(i, &SynchItem);
+
+            // if there are no missing samples, add this length to the previous entry.
+            if( SynchItem.dwStart == LastItem.dwStart + ABF2_SamplesToSynchCounts(pFH, LastItem.dwLength) )
+                LastItem.dwLength += SynchItem.dwLength;
+            else
+            {
+                ABF2_ExpandSynchEntry(pFH, NewSynchArray, &LastItem, uMaxChunkSize, uSampleSize);
+                LastItem = SynchItem;
+            }
+        }
+
+        ABF2_ExpandSynchEntry(pFH, NewSynchArray, &LastItem, uMaxChunkSize, uSampleSize);
 
         if (pFI->TestFlag(FI_READONLY))
             NewSynchArray.SetMode(CSynch::eREADMODE);
@@ -3849,9 +4027,10 @@ BOOL WINAPI ABF_UpdateEpisodeSamples(int nFile, const ABFFileHeader *pFH, int nC
 
     return TRUE;
 }
+#endif
 
 //===============================================================================================
-// FUNCTION: ABF_SetChunkSize
+// FUNCTION: ABF2_SetChunkSize
 // PURPOSE:  This routine can be called on files of type ABF_GAPFREEFILE or ABF_VARLENEVENTS to change
 //           the size of the data chunks returned by the read routines.
 // INPUT:
@@ -3870,18 +4049,19 @@ BOOL WINAPI ABF_UpdateEpisodeSamples(int nFile, const ABFFileHeader *pFH, int nC
 //   pdwMaxEpi      the number of episodes of puMaxSamples points that exist
 //                  in the data file.
 // 
-BOOL WINAPI ABF_SetChunkSize( int nFile, ABFFileHeader *pFH, UINT *puMaxSamples, 
+BOOL WINAPI ABF2_SetChunkSize( int nFile, ABF2FileHeader *pFH, UINT *puMaxSamples, 
                               DWORD *pdwMaxEpi, int *pnError )
 {
-    ASSERT(nFile != ABF_INVALID_HANDLE);
+    // ASSERT(nFile != ABF_INVALID_HANDLE);
 
     CFileDescriptor *pFI = NULL;
     if (!GetFileDescriptor(&pFI, nFile, pnError))
         return FALSE;
 
-    return _SetChunkSize( pFI, pFH, puMaxSamples, pdwMaxEpi, pnError );
+    return ABF2_SetChunkSize( pFI, pFH, puMaxSamples, pdwMaxEpi, pnError );
 }
 
+#if 0
 //===============================================================================================
 // FUNCTION: ABF_SetOverlap
 // PURPOSE:  Changes the overlap flag and processes the synch array to edit redundant data out if no overlap.

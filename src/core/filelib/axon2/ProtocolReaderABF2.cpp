@@ -204,7 +204,11 @@ BOOL CABF2ProtocolReader::Read( int* pnError )
     }
 
     // Set header variable for the number of episodes in the file.
-    m_pFI->SetAcquiredEpisodes(m_pFH->lActualEpisodes);
+    if( m_pFH->nOperationMode == ABF2_GAPFREEFILE )
+        m_pFI->SetAcquiredEpisodes(1);
+    else
+        m_pFI->SetAcquiredEpisodes(m_pFH->lActualEpisodes);
+    
     m_pFI->SetAcquiredSamples(m_pFH->lActualAcqLength);
 
     // CSH   RemoveExtraChannels( m_pFH, fFlags );

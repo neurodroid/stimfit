@@ -160,19 +160,26 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
         abf2.Close();
     }
             
-    const ABF2FileHeader* pFH = abf2.GetFileHeader();
+    ABF2FileHeader* pFH = abf2.GetFileHeaderW();
 #ifdef _STFDEBUG
     std::cout << "ABF2 file information" << std::endl
               << "File version " <<  pFH->fFileVersionNumber << std::endl
+              << "Header version " <<  pFH->fHeaderVersionNumber << std::endl
               << "Data format " << pFH->nDataFormat << std::endl
               << "Number of channels " << pFH->nADCNumChannels << std::endl
               << "Number of sweeps " << pFH->lActualEpisodes << std::endl
-              << "Sampling points per sweep " << pFH->lNumSamplesPerEpisode << std::endl;
+              << "Sampling points per sweep " << pFH->lNumSamplesPerEpisode << std::endl
+              << "File type " << pFH->nOperationMode << std::endl;
 #endif
     
     int numberChannels = pFH->nADCNumChannels;
     long numberSections = pFH->lActualEpisodes;
+    bool gapfree = (pFH->nOperationMode == ABF2_GAPFREEFILE);
+    if (gapfree) {
+        numberSections = 1;
+    }
     int hFile = abf2.GetFileNumber();
+    
     for (int nChannel=0; nChannel < numberChannels; ++nChannel) {
         Channel TempChannel(numberSections);
         for (int nEpisode=1; nEpisode<=numberSections;++nEpisode) {
@@ -188,14 +195,27 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
                                 progStr
                 );
             }
-            unsigned int uNumSamples=0;
-            if (!ABF2_GetNumSamples(hFile, pFH, nEpisode, &uNumSamples, &nError)) {
-                wxString errorMsg( wxT("Exception while calling ABF_GetNumSamples() ") );
-                errorMsg += wxT("for episode # "); errorMsg << nEpisode; errorMsg += wxT("\n");
-                errorMsg += ABF1Error(fName, nError);
-                ReturnData.resize(0);
-                ABF_Close(hFile,&nError);
-                throw std::runtime_error(std::string(errorMsg.char_str()));
+            UINT uNumSamples = 0;
+            if (gapfree) {
+                uNumSamples = pFH->lNumSamplesPerEpisode/numberChannels;
+                DWORD dwMaxEpi = numberSections;
+                if (!ABF2_SetChunkSize( hFile, pFH, &uNumSamples, &dwMaxEpi,  &nError )) {
+                    wxString errorMsg( wxT("Exception while calling ABF2_GetNumSamples() ") );
+                    errorMsg += wxT("for episode # "); errorMsg << nEpisode; errorMsg += wxT("\n");
+                    errorMsg += ABF1Error(fName, nError);
+                    ReturnData.resize(0);
+                    ABF_Close(hFile,&nError);
+                    throw std::runtime_error(std::string(errorMsg.char_str()));
+                }
+            } else {
+                if (!ABF2_GetNumSamples(hFile, pFH, nEpisode, &uNumSamples, &nError)) {
+                    wxString errorMsg( wxT("Exception while calling ABF2_GetNumSamples() ") );
+                    errorMsg += wxT("for episode # "); errorMsg << nEpisode; errorMsg += wxT("\n");
+                    errorMsg += ABF1Error(fName, nError);
+                    ReturnData.resize(0);
+                    ABF_Close(hFile,&nError);
+                    throw std::runtime_error(std::string(errorMsg.char_str()));
+                }
             }
             // Use a vector here because memory allocation can
             // be controlled more easily:
@@ -205,15 +225,18 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
             if (!ABF2_ReadChannel(hFile, pFH, pFH->nADCSamplingSeq[nChannel],nEpisode,TempSection,
                                   &uNumSamplesW,&nError))
             {
-                wxString errorMsg(wxT("Exception while calling ABF_ReadChannel():\n"));
+                wxString errorMsg(wxT("Exception while calling ABF2_ReadChannel():\n"));
                 errorMsg += ABF1Error(fName, nError);
                 ReturnData.resize(0);
                 ABF_Close(hFile,&nError);
                 throw std::runtime_error(std::string(errorMsg.char_str()));
             }
-            if (uNumSamples!=uNumSamplesW) {
+#ifdef _STFDEBUG
+            std::cout << "Read samples " << uNumSamplesW << std::endl;
+#endif
+            if (uNumSamples!=uNumSamplesW && !gapfree) {
                 ABF_Close(hFile,&nError);
-                throw std::runtime_error("Exception while calling ABF_ReadChannel()");
+                throw std::runtime_error("Exception while calling ABF2_ReadChannel()");
             }
             wxString label;
             label << stf::noPath(fName) << wxT(", Section # ") << nEpisode;

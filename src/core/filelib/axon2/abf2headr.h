@@ -1085,7 +1085,10 @@ BOOL WINAPI ABF2H_GetEpochLimits(const ABF2FileHeader *pFH, int nADCChannel, UIN
 #endif
 // Get the offset in the sampling sequence for the given physical channel.
 BOOL WINAPI ABF2H_GetChannelOffset( const ABF2FileHeader *pFH, int nChannel, UINT *puChannelOffset );
-    
+
+// Gets the first sample interval, expressed as a double.
+double WINAPI ABF2H_GetFirstSampleInterval( const ABF2FileHeader *pFH );
+
 #if 0
 // This function forms the de-multiplexed DAC output waveform for the
 // particular channel in the pfBuffer, in DAC UserUnits.

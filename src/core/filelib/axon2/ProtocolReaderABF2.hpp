@@ -48,6 +48,7 @@ class CABF2ProtocolReader
     virtual BOOL Read( int* pnError);
     virtual const ABF2_FileInfo *GetFileInfo() const      { return &m_FileInfo; }
     virtual const ABF2FileHeader* GetFileHeader() const      { return m_pFH.get(); }
+    virtual ABF2FileHeader* GetFileHeaderW() { return m_pFH.get(); }
     virtual int GetFileNumber() const { return nFile; }
     // virtual BOOL ValidateCRC();
 };

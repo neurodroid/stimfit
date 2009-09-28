@@ -345,3 +345,41 @@ BOOL WINAPI ABF2H_GetMathValue(const ABF2FileHeader *pFH, float fA, float fB, fl
       *pfRval = (float)dResult;
    return bRval;
 }
+
+//===============================================================================================
+// FUNCTION: GetSampleInterval
+// PURPOSE:  Gets the sample interval expressed as a double.
+//           This prevents round off errors in modifiable ABF files, 
+//           where sample intervals are not constrained to be in multiples of 0.5 us.
+//
+static double GetSampleInterval( const ABF2FileHeader *pFH, const UINT uInterval )
+{
+//   ABFH_ASSERT( pFH );
+   ASSERT( uInterval == 1 ||
+           uInterval == 2 );
+
+   float fInterval = 0;
+   if( uInterval == 1 )
+      fInterval = pFH->fLegacyADCSequenceInterval;
+   else if( uInterval == 2 ) 
+      fInterval = pFH->fLegacyADCSecondSequenceInterval;
+   else ;
+      //ERRORMSG( "ABFH_GetSampleInterval called with invalid parameters !\n" );
+
+   
+   // Modifiable ABF allows sample intervals which are not multiples of 0.5 us
+   // Attempt to reconstruct the original sample interval to 0.1 us resolution
+   // This has no adverse effect for acquisition files and prevents rounding errors in modifable ABF files.
+   double dInterval = int((fInterval * pFH->nADCNumChannels) * 10 + 0.5);
+   dInterval /= 10 * pFH->nADCNumChannels;
+
+   return dInterval;
+}
+
+//===============================================================================================
+// FUNCTION: ABFH_GetFirstSampleInterval
+// PURPOSE:  Gets the first sample interval expressed as a double.
+double WINAPI ABF2H_GetFirstSampleInterval( const ABF2FileHeader *pFH )
+{
+   return GetSampleInterval( pFH, 1 );
+}

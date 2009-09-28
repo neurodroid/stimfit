@@ -230,9 +230,9 @@ BOOL WINAPI ABF_AppendOpen(LPCSTR szFileName, int *phFile, ABFFileHeader *pFH,
 
 BOOL WINAPI ABF_UpdateEpisodeSamples(int nFile, const ABFFileHeader *pFH, int nChannel, UINT uEpisode, 
                                      UINT uStartSample, UINT uNumSamples, float *pfBuffer, int *pnError);
-
-BOOL WINAPI ABF_SetChunkSize( int hFile, ABFFileHeader *pFH, UINT *puMaxSamples, DWORD *pdwMaxEpi, int *pnError );
-
+*/
+BOOL WINAPI ABF2_SetChunkSize( int hFile, ABF2FileHeader *pFH, UINT *puMaxSamples, DWORD *pdwMaxEpi, int *pnError );
+    /*
 BOOL WINAPI ABF_SetOverlap(int nFile, const ABFFileHeader *pFH, BOOL bAllowOverlap, int *pnError);
 
 BOOL WINAPI ABF_SetEpisodeStart(int nFile, UINT uEpisode, UINT uEpiStart, int *pnError);
