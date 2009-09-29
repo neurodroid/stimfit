@@ -5,7 +5,7 @@
 #include <wx/wx.h>
 #undef _DEBUG
 
-const char* get_versionstring( );
+std::string get_versionstring( );
 
 bool new_window( double* invec, int size );
 bool new_window_matrix( double* inarr, int traces, int size );
@@ -51,7 +51,7 @@ int leastsq_param_size( int fselect );
 PyObject* leastsq( int fselect, bool refresh = true );
 
 bool check_doc( );
-const char* get_filename( );
+std::string get_filename( );
 bool file_open( const char* filename );
 bool file_save( const char* filename );
 bool close_all( );

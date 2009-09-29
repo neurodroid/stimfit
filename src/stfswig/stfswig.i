@@ -29,7 +29,7 @@ import_array();
 %feature("autodoc", 0) get_versionstring;
 %feature("docstring",
 "Returns the current version of Stimfit.") get_versionstring;
-const char* get_versionstring( );
+std::string get_versionstring( );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -354,7 +354,7 @@ bool check_doc( );
 %feature("autodoc", 0) get_filename;
 %feature("docstring",
 "Returns the name of the current file.") get_filename;
-const char* get_filename( );
+std::string get_filename( );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------

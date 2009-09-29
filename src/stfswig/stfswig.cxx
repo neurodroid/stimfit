@@ -63,10 +63,10 @@ bool check_doc( ) {
     return true;
 }
 
-const char* get_filename( ) {
-    if ( !check_doc() ) return "";
+std::string get_filename( ) {
+    if ( !check_doc() ) return 0;
 
-    return actDoc()->GetFilename().utf8_str();
+	return std::string(actDoc()->GetFilename());
 }
 
 bool refresh_graph() {
@@ -87,8 +87,8 @@ bool refresh_graph() {
     return true;
 }
 
-const char* get_versionstring() {
-    return wxGetApp().GetVersionString();
+std::string get_versionstring() {
+	return std::string(wxGetApp().GetVersionString());
 }
 
 void _get_trace_fixedsize( double* outvec, int size, int trace, int channel ) {
