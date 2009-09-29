@@ -197,7 +197,7 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
             }
             UINT uNumSamples = 0;
             if (gapfree) {
-                uNumSamples = pFH->lNumSamplesPerEpisode/numberChannels;
+                uNumSamples = pFH->lActualAcqLength;
                 DWORD dwMaxEpi = numberSections;
                 if (!ABF2_SetChunkSize( hFile, pFH, &uNumSamples, &dwMaxEpi,  &nError )) {
                     wxString errorMsg( wxT("Exception while calling ABF2_GetNumSamples() ") );
@@ -281,10 +281,9 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
         ReturnData.resize(0);
         throw std::runtime_error(std::string(errorMsg.char_str()));
     }
-    // Apparently, the sample interval has to be multiplied by
-    // the number of channels for multiplexed data. Thanks to
-    // Dominique Engel for noticing.
-    ReturnData.SetXScale((double)(pFH->fADCSequenceInterval/1000.0)*(double)numberChannels);
+    
+    ReturnData.SetXScale((double)(pFH->fADCSequenceInterval/1000.0));
+    
     wxString comment(wxT("Created with "));
     comment += wxString( pFH->sCreatorInfo, wxConvLocal );
     ReturnData.SetComment(comment);
