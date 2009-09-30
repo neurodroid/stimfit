@@ -160,7 +160,7 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
         abf2.Close();
     }
             
-    ABF2FileHeader* pFH = abf2.GetFileHeaderW();
+    const ABF2FileHeader* pFH = abf2.GetFileHeader();
 #ifdef _STFDEBUG
     std::cout << "ABF2 file information" << std::endl
               << "File version " <<  pFH->fFileVersionNumber << std::endl
@@ -174,14 +174,21 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
     
     int numberChannels = pFH->nADCNumChannels;
     long numberSections = pFH->lActualEpisodes;
+    long finalSections = numberSections;
     bool gapfree = (pFH->nOperationMode == ABF2_GAPFREEFILE);
     if (gapfree) {
-        numberSections = 1;
+        finalSections = 1;
     }
     int hFile = abf2.GetFileNumber();
-    
     for (int nChannel=0; nChannel < numberChannels; ++nChannel) {
-        Channel TempChannel(numberSections);
+        Channel TempChannel(finalSections);
+        int grandsize = 0;
+        wxString label;
+        label << stf::noPath(fName) << wxT(", gapfree section");
+        if (gapfree) {
+            grandsize = pFH->lActualAcqLength / numberChannels;
+        }
+        Section TempSectionGrand(grandsize, label);
         for (int nEpisode=1; nEpisode<=numberSections;++nEpisode) {
             if (progress) {
                 wxString progStr;
@@ -197,15 +204,13 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
             }
             UINT uNumSamples = 0;
             if (gapfree) {
-                uNumSamples = pFH->lActualAcqLength;
-                DWORD dwMaxEpi = numberSections;
-                if (!ABF2_SetChunkSize( hFile, pFH, &uNumSamples, &dwMaxEpi,  &nError )) {
-                    wxString errorMsg( wxT("Exception while calling ABF2_GetNumSamples() ") );
-                    errorMsg += wxT("for episode # "); errorMsg << nEpisode; errorMsg += wxT("\n");
-                    errorMsg += ABF1Error(fName, nError);
-                    ReturnData.resize(0);
-                    ABF_Close(hFile,&nError);
-                    throw std::runtime_error(std::string(errorMsg.char_str()));
+                if (nEpisode == numberSections) {
+                    uNumSamples = grandsize - (nEpisode-1) * pFH->lNumSamplesPerEpisode / numberChannels;
+#ifdef _STFDEBUG
+                    std::cout << "Last section size " << uNumSamples << std::endl;
+#endif
+                } else {
+                    uNumSamples = pFH->lNumSamplesPerEpisode / numberChannels;
                 }
             } else {
                 if (!ABF2_GetNumSamples(hFile, pFH, nEpisode, &uNumSamples, &nError)) {
@@ -231,19 +236,36 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
                 ABF_Close(hFile,&nError);
                 throw std::runtime_error(std::string(errorMsg.char_str()));
             }
-#ifdef _STFDEBUG
-            std::cout << "Read samples " << uNumSamplesW << std::endl;
-#endif
             if (uNumSamples!=uNumSamplesW && !gapfree) {
                 ABF_Close(hFile,&nError);
                 throw std::runtime_error("Exception while calling ABF2_ReadChannel()");
             }
-            wxString label;
-            label << stf::noPath(fName) << wxT(", Section # ") << nEpisode;
-            Section TempSectionT(TempSection.size(),label);
-            std::copy(TempSection.begin(),TempSection.end(),&TempSectionT[0]);
+            if (!gapfree) {
+                wxString label;
+                label << stf::noPath(fName) << wxT(", Section # ") << nEpisode;
+                Section TempSectionT(TempSection.size(),label);
+                std::copy(TempSection.begin(),TempSection.end(),&TempSectionT[0]);
+                try {
+                    TempChannel.InsertSection(TempSectionT,nEpisode-1);
+                }
+                catch (...) {
+                    ABF_Close(hFile,&nError);
+                    throw;
+                }
+            } else {
+                if ((nEpisode-1) * pFH->lNumSamplesPerEpisode / numberChannels + TempSection.size() <= TempSectionGrand.size()) {
+                    std::copy(TempSection.begin(),TempSection.end(),&TempSectionGrand[(nEpisode-1) * pFH->lNumSamplesPerEpisode / numberChannels]);
+                }
+#ifdef _STFDEBUG
+                else {
+                    std::cout << "Overflow while copying gapfree sections" << std::endl;
+                }
+#endif
+            }
+        }
+        if (gapfree) {
             try {
-                TempChannel.InsertSection(TempSectionT,nEpisode-1);
+                TempChannel.InsertSection(TempSectionGrand,0);
             }
             catch (...) {
                 ABF_Close(hFile,&nError);

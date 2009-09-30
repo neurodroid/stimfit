@@ -17,6 +17,7 @@
 #include "../axon/AxAbfFio32/abffiles.h"
 #include <wx/string.h>
 #include <wx/convauto.h>
+#include <math.h>
 
 #if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__)
 #define max(a,b)   (((a) > (b)) ? (a) : (b))
@@ -204,11 +205,16 @@ BOOL CABF2ProtocolReader::Read( int* pnError )
     }
 
     // Set header variable for the number of episodes in the file.
-    if( m_pFH->nOperationMode == ABF2_GAPFREEFILE )
-        m_pFI->SetAcquiredEpisodes(1);
-    else
-        m_pFI->SetAcquiredEpisodes(m_pFH->lActualEpisodes);
+    if( m_pFH->nOperationMode == ABF2_GAPFREEFILE ) {
+        double fdiv = (double)m_pFH->lActualAcqLength / m_pFH->lNumSamplesPerEpisode;
+        DWORD dwMaxEpi = ceil(fdiv);
+#ifdef _STFDEBUG
+        std::cout << "Total number of samples " << m_pFH->lActualAcqLength << std::endl;
+#endif
+        m_pFH->lActualEpisodes = dwMaxEpi;
+    }
     
+    m_pFI->SetAcquiredEpisodes(m_pFH->lActualEpisodes);
     m_pFI->SetAcquiredSamples(m_pFH->lActualAcqLength);
 
     // CSH   RemoveExtraChannels( m_pFH, fFlags );
