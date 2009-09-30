@@ -7,15 +7,15 @@ Event extraction by template matching
 
 Introduction
 =============================
-To isolate individual events such as EPSCs or EPSPs from recorded data, `Stimfit <http://www.stimfit.org>`_ uses a template matching algorithm as described by Jonas et al., (1993 [#Jonas1993]_), with some implementation details adopted from Clemens and Bekkers (1997) [#ClemensBekkers1997]_. The template consists of a waveform :math:`p(t)` with a length of :math:`n` sampling points that represents the time course of a typical event. The template is a slid over the trace or recorded values :math:`r(t)`, and at each sampling point with index :math:`s`, it is multiplied by a scaling factor :math:`m` and an offset :math:`c` is added or subtracted so that the sum of squared errors :math:`\chi^2(t_s)` between the trace and the template is minimized:
+To isolate individual events such as EPSCs or EPSPs from recorded data, `Stimfit <http://www.stimfit.org>`_ uses a template matching algorithm as described by Jonas et al. (1993) [#Jonas1993]_, with some implementation details adopted from Clemens and Bekkers (1997) [#ClemensBekkers1997]_. The template consists of a waveform :math:`p(t)` with a length of :math:`n` sampling points that represents the time course of a typical event. The template is slid over the trace of recorded values :math:`r(t)`, and at each sampling point with index :math:`s`, it is multiplied by a scaling factor :math:`m` and an offset :math:`c` is added or subtracted so that the sum of squared errors :math:`\chi^2(t_s)` between the trace and the template is minimized:
 
 .. math::
 
     {\displaystyle \chi^2(t_s)= \sum_{k=0}^{n-1}\left[r(t_{s+k})-\left(m{\cdot}p(t_k)+c\right)\right]^2}
 
-As can be seen from this equation, this amounts to the fairly simple operation fitting a straight line that relates :math:`p(t)` and :math:`r(t)` at every sampling point.
+As can be seen from this equation, this amounts to the fairly simple operation of fitting a straight line that relates :math:`p(t)` and :math:`r(t)` at every sampling point. 
 
-Finally, some detection criterion has to be applied to decide whether an event has occurred at a sampling point. Two options are available in `Stimfit <http://www.stimfit.org>`_ ; Jonas et al.,(1993) [#Jonas1993]_ suggests to use the linear correlation coefficient between the optimally scaled template and the data, whereas Clements and Bekkers (1997) [#ClemensBekkers1997]_ compare the scaling factor with the noise standard deviation.
+Finally, some detection criterion has to be applied to decide whether an event has occurred at a sampling point. Two options are available in `Stimfit <http://www.stimfit.org>`_: Jonas et al. (1993) [#Jonas1993]_ suggest to use the linear correlation coefficient between the optimally scaled template and the data, whereas Clements and Bekkers (1997) [#ClemensBekkers1997]_ compare the scaling factor with the noise standard deviation.
 
 A practical guide to event detection
 ====================================
