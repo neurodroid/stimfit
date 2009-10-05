@@ -30,15 +30,15 @@
 #pragma pack(1)                     // pack structure on byte boundaries
 struct ABFTopOfFile
 {
-   long     lFileSignature;
+   ABFLONG     lFileSignature;
    float    fFileVersionNumber;
    short    nOperationMode;
-   long     lActualAcqLength;
+   ABFLONG     lActualAcqLength;
    short    nNumPointsIgnored;
-   long     lActualEpisodes;
-   long     lFileStartDate;
-   long     lFileStartTime;
-   long     lStopwatchTime;
+   ABFLONG     lActualEpisodes;
+   ABFLONG     lFileStartDate;
+   ABFLONG     lFileStartTime;
+   ABFLONG     lStopwatchTime;
    float    fHeaderVersionNumber;
    short    nFileType;
    short    nMSBinFormat;
@@ -845,7 +845,7 @@ static BOOL FetchexToV5_3( float *Param )
 // FUNCTION: DataResolution
 // PURPOSE:  Return the data resolution given the number of bits used.
 //   
-static long DataResolution( float fNumberOfBits )
+static ABFLONG DataResolution( float fNumberOfBits )
 {
    switch (short(fNumberOfBits))
    {
@@ -863,7 +863,7 @@ static void FetchexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
                              char *ChannelName, char *Comment, ABFFileHeader *pFH )
 {
    short i, n;
-   long OldSynchArraySize;
+   ABFLONG OldSynchArraySize;
 
    // Initialize structure to all NULL's
    ABFH_Initialize(pFH);
@@ -871,16 +871,16 @@ static void FetchexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
    pFH->lFileSignature           = ABF_OLDPCLAMP;
    pFH->lActualEpisodes          = 1;    // Gap-free, EventLen files fixed later
    pFH->lActualAcqLength         = 
-      (long)(Param[F53_SAMPLESPEREPISODE]) *
-      (long)(Param[F53_ACTUALEPISODESPERFILE]) -
-      (long)(Param[F53_NUMPOINTSIGNORED]) -
-      (long)(Param[F53_INVALIDLASTDATA]);
-   pFH->lFileStartTime           = (long)(Param[F53_FILESTARTTIME]);
+      (ABFLONG)(Param[F53_SAMPLESPEREPISODE]) *
+      (ABFLONG)(Param[F53_ACTUALEPISODESPERFILE]) -
+      (ABFLONG)(Param[F53_NUMPOINTSIGNORED]) -
+      (ABFLONG)(Param[F53_INVALIDLASTDATA]);
+   pFH->lFileStartTime           = (ABFLONG)(Param[F53_FILESTARTTIME]);
    pFH->lStopwatchTime           =
-      (long)(Param[F53_FILESTARTTIME] - Param[F53_FILEELAPSEDTIME]);
+      (ABFLONG)(Param[F53_FILESTARTTIME] - Param[F53_FILEELAPSEDTIME]);
    pFH->fFileVersionNumber       = Param[F53_FILEVERSIONNUMBER];
    pFH->fHeaderVersionNumber     = ABF_CURRENTVERSION;
-   pFH->lFileStartDate           = (long)(Param[F53_FILESTARTDATE]);
+   pFH->lFileStartDate           = (ABFLONG)(Param[F53_FILESTARTDATE]);
 
    pFH->nExperimentType          = ABF_VOLTAGECLAMP;  // Voltage Clamp
    pFH->fADCSecondSampleInterval = 0.0F;              // CLAMPEX only
@@ -893,7 +893,7 @@ static void FetchexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
       pFH->nOperationMode = ABF_VARLENEVENTS;
       pFH->fSecondsPerRun = 0.0F;
       pFH->lPreTriggerSamples =
-         (long)((1.0F-Param[F53_POSTTRIGGERPORTION]) * Param[F53_SAMPLESPEREPISODE]);
+         (ABFLONG)((1.0F-Param[F53_POSTTRIGGERPORTION]) * Param[F53_SAMPLESPEREPISODE]);
    }
    else
    {
@@ -904,12 +904,12 @@ static void FetchexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
    }
 
    pFH->nNumPointsIgnored        = short(Param[F53_NUMPOINTSIGNORED]);
-   pFH->lTagSectionPtr           = long(Param[F53_TAGSECTIONPTR]);
-   pFH->lNumTagEntries           = long(Param[F53_NUMTAGENTRIES]);
+   pFH->lTagSectionPtr           = ABFLONG(Param[F53_TAGSECTIONPTR]);
+   pFH->lNumTagEntries           = ABFLONG(Param[F53_NUMTAGENTRIES]);
    if (Param[F53_SEGMENTSPEREPISODE] > 4) // Fixup for AXOTAPE bug.
       pFH->lNumSamplesPerEpisode = 512L;
    else
-      pFH->lNumSamplesPerEpisode = (long)(Param[F53_SEGMENTSPEREPISODE]) * 512L;
+      pFH->lNumSamplesPerEpisode = (ABFLONG)(Param[F53_SEGMENTSPEREPISODE]) * 512L;
 
    pFH->lClockChange             = 0;     // CLAMPEX only
    pFH->_lDACFilePtr             = 0;     // CLAMPEX only
@@ -1084,7 +1084,7 @@ static void FetchexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
 
    if (pFH->nOperationMode != ABF_GAPFREEFILE)
    {
-      pFH->lActualEpisodes = (long)(Param[F53_ACTUALEPISODESPERFILE]);
+      pFH->lActualEpisodes = (ABFLONG)(Param[F53_ACTUALEPISODESPERFILE]);
       pFH->lSynchArraySize = pFH->lActualEpisodes;
 
       if (Param[F53_FILEVERSIONNUMBER] >= 5.0F)
@@ -1169,7 +1169,7 @@ static BOOL FetchexConvert( FILEHANDLE hFile, ABFFileHeader *pFH, float *Param,
          if (Param[F53_TAGSECTIONPTR] >= 3.0F)
          {
             // Seek to start of tag entries block
-            long lNumBytes = (long)(Param[F53_TAGSECTIONPTR]) * 512L;
+            ABFLONG lNumBytes = (ABFLONG)(Param[F53_TAGSECTIONPTR]) * 512L;
 #ifdef _WINDOWS
 			SetFilePointer(hFile, lNumBytes, NULL, FILE_BEGIN);
 #else
@@ -1475,15 +1475,15 @@ static void ClampexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
    ABFH_Initialize(pFH);
 
    pFH->lFileSignature           = ABF_OLDPCLAMP;
-   pFH->lActualEpisodes          = (long)(Param[C52_EPISODESPERFILE]);            // 4
-   pFH->lActualAcqLength         = (long)(Param[C52_SAMPLESPEREPISODE]) *
-                                   (long)(Param[C52_EPISODESPERFILE]);
-   pFH->lFileStartTime           = (long)(Param[C52_FILESTARTTIME]);
+   pFH->lActualEpisodes          = (ABFLONG)(Param[C52_EPISODESPERFILE]);            // 4
+   pFH->lActualAcqLength         = (ABFLONG)(Param[C52_SAMPLESPEREPISODE]) *
+                                   (ABFLONG)(Param[C52_EPISODESPERFILE]);
+   pFH->lFileStartTime           = (ABFLONG)(Param[C52_FILESTARTTIME]);
    pFH->lStopwatchTime           = 
-      (long)(Param[F53_FILESTARTTIME] - Param[F53_FILEELAPSEDTIME]);
+      (ABFLONG)(Param[F53_FILESTARTTIME] - Param[F53_FILEELAPSEDTIME]);
    pFH->fFileVersionNumber       = Param[C52_FILEVERSIONNUMBER];
    pFH->fHeaderVersionNumber     = ABF_CURRENTVERSION;
-   pFH->lFileStartDate           = (long)(Param[C52_FILESTARTDATE]);
+   pFH->lFileStartDate           = (ABFLONG)(Param[C52_FILESTARTDATE]);
 
    pFH->nExperimentType          = ABF_VOLTAGECLAMP;              // Voltage Clamp
    pFH->fADCSecondSampleInterval = Param[C52_SECONDCLOCKPERIOD];  
@@ -1494,7 +1494,7 @@ static void ClampexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
    pFH->nNumPointsIgnored        = 0;                       // Fetchex only
    pFH->lTagSectionPtr           = 0;
    pFH->lNumTagEntries           = 0;
-   pFH->lNumSamplesPerEpisode    = (long)(Param[C52_SEGMENTSPEREPISODE]) * 512L;
+   pFH->lNumSamplesPerEpisode    = (ABFLONG)(Param[C52_SEGMENTSPEREPISODE]) * 512L;
    pFH->lClockChange             = 0;
    pFH->fSecondsPerRun           = 0.0F;
    pFH->_lDACFilePtr             = 0;
@@ -1504,7 +1504,7 @@ static void ClampexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
    pFH->nMultiColor              = 1;
    if (Param[C52_DISPLAYSEGMENTNUM] != 0.0F)
    {
-      pFH->lFinishDisplayNum = (long)(Param[C52_DISPLAYSEGMENTNUM]) * 512L;
+      pFH->lFinishDisplayNum = (ABFLONG)(Param[C52_DISPLAYSEGMENTNUM]) * 512L;
       pFH->lStartDisplayNum = pFH->lFinishDisplayNum - 511L;
    }
 
@@ -1548,9 +1548,9 @@ static void ClampexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
 
    pFH->_fAutosampleFilter        = Param[C52_FILTERCUTOFF];               // 41  
    pFH->_nAutosampleADCNum        = short(Param[C52_AUTOSAMPLEADCNUM]);           // 96
-   pFH->lNumberOfTrials          = long(Param[C52_NUMTRIALS]);           // 16  
-   pFH->lRunsPerTrial            = long(Param[C52_RUNSPERFILE]);         // 12  
-   pFH->lEpisodesPerRun          = long(Param[C52_EPISODESPERRUN]);      // 13  
+   pFH->lNumberOfTrials          = ABFLONG(Param[C52_NUMTRIALS]);           // 16  
+   pFH->lRunsPerTrial            = ABFLONG(Param[C52_RUNSPERFILE]);         // 12  
+   pFH->lEpisodesPerRun          = ABFLONG(Param[C52_EPISODESPERRUN]);      // 13  
    pFH->nADCNumChannels          = short(Param[C52_ADCNUMCHANNELS]);
    pFH->nFirstEpisodeInRun       = short(Param[C52_STARTEPISODENUM]);     // 17  
    pFH->fTrialStartToStart       = 0.0F;
@@ -1583,7 +1583,7 @@ static void ClampexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
    pFH->nTriggerAction           = ABF_TRIGGER_STARTEPISODE;      // Start one episode
    pFH->nUndoRunCount            = 0;      // Disabled
    pFH->lDataSectionPtr          = 2;
-   pFH->lAverageCount            = (long)(Param[C52_RUNSPERFILE]);
+   pFH->lAverageCount            = (ABFLONG)(Param[C52_RUNSPERFILE]);
    pFH->fStatisticsPeriod        = pFH->lCalculationPeriod * pFH->fADCSampleInterval / 1E3F;
 
    strncpy(pFH->_sFileComment, Comment, ABF_OLDFILECOMMENTLEN);
@@ -1735,7 +1735,7 @@ static void ClampexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
    else
       pFH->_nConditEnable = 0;
    pFH->_nConditChannel           = 0;
-   pFH->_lConditNumPulses         = (long)(Param[C52_PULSESINTRAIN]);
+   pFH->_lConditNumPulses         = (ABFLONG)(Param[C52_PULSESINTRAIN]);
    pFH->_fBaselineDuration        = Param[C52_PRECONDURATION];     
    pFH->_fBaselineLevel           = Param[C52_PRECONLEVEL];     
    pFH->_fStepDuration            = Param[C52_CONDURATION];     
@@ -1917,7 +1917,7 @@ static int ClampexConvert( FILEHANDLE hFile, ABFFileHeader *pFH, float *Param,
 // PURPOSE:  This is the main routine to read old FETCHEX and CLAMPEX data headers.
 //
 BOOL OLDH_ReadOldHeader( FILEHANDLE hFile, UINT uFileType, int bMSBinFormat,
-                         ABFFileHeader *pFH, long lFileLength, int *pnError)
+                         ABFFileHeader *pFH, ABFLONG lFileLength, int *pnError)
 {
 //   ABFH_WASSERT(pFH);
    int     i;
@@ -1960,12 +1960,12 @@ BOOL OLDH_ReadOldHeader( FILEHANDLE hFile, UINT uFileType, int bMSBinFormat,
    // Check data length against the length of the file. Some old versions of AXOTAPE
    // incorrectly set the number of 512 byte blocks per episode to 512.
    //
-   long lMaxLength = (lFileLength - pFH->lDataSectionPtr * 512L - pFH->lSynchArraySize * 8L) / 2L;
+   ABFLONG lMaxLength = (lFileLength - pFH->lDataSectionPtr * 512L - pFH->lSynchArraySize * 8L) / 2L;
    if (pFH->lActualAcqLength > lMaxLength)
    {
       if ((pFH->nOperationMode != ABF_VARLENEVENTS) && (pFH->nOperationMode != ABF_GAPFREEFILE))
       {
-         long lNumEpisodes = lMaxLength / pFH->lNumSamplesPerEpisode;
+         ABFLONG lNumEpisodes = lMaxLength / pFH->lNumSamplesPerEpisode;
          pFH->lActualEpisodes = lNumEpisodes;
 
          if (pFH->lSynchArraySize != 0L)

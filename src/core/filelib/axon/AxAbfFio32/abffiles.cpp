@@ -172,10 +172,10 @@ static UINT ABF2_SampleSize(const ABF2FileHeader *pFH)
 // FUNCTION: GetDataOffset
 // PURPOSE:  Get the file offset to the data allowing for "ignored" points from old AxoLab files.
 //
-static long GetDataOffset(const ABFFileHeader *pFH)
+static ABFLONG GetDataOffset(const ABFFileHeader *pFH)
 {
     //   ABFH_ASSERT(pFH);
-    long lDataOffset = pFH->lDataSectionPtr * ABF_BLOCKSIZE;
+    ABFLONG lDataOffset = pFH->lDataSectionPtr * ABF_BLOCKSIZE;
    
     // Adjust the data pointer for any garbage data words at the start of
     // the data portion of the file. (Created by AxoLab in continuous
@@ -190,10 +190,10 @@ static long GetDataOffset(const ABFFileHeader *pFH)
 // FUNCTION: GetDataOffset
 // PURPOSE:  Get the file offset to the data allowing for "ignored" points from old AxoLab files.
 //
-static long ABF2_GetDataOffset(const ABF2FileHeader *pFH)
+static ABFLONG ABF2_GetDataOffset(const ABF2FileHeader *pFH)
 {
     //   ABFH_ASSERT(pFH);
-    long lDataOffset = pFH->lDataSectionPtr * ABF_BLOCKSIZE;
+    ABFLONG lDataOffset = pFH->lDataSectionPtr * ABF_BLOCKSIZE;
    
     // Adjust the data pointer for any garbage data words at the start of
     // the data portion of the file. (Created by AxoLab in continuous
@@ -209,7 +209,7 @@ static long ABF2_GetDataOffset(const ABF2FileHeader *pFH)
 // FUNCTION: CalculateCRC
 // PURPOSE:  Return checksum Cyclic Redundancy Code CRC.
 //
-unsigned long CalculateCRC( CFileDescriptor *pFI )
+unsigned ABFLONG CalculateCRC( CFileDescriptor *pFI )
 {
     WPTRASSERT( pFI);
 
@@ -259,7 +259,7 @@ static BOOL ValidateFileCRC( CFileDescriptor *pFI, ABFFileHeader *pFH, int nSize
     if( pFH->fFileVersionNumber < ABF_V182 )
         return TRUE; // Valid and no checking.
 
-    unsigned long ulExpectedCRC    = 0L;
+    unsigned ABFLONG ulExpectedCRC    = 0L;
     LONGLONG llReadPointer         = 0L;
     BOOL bReadOk                   = FALSE;
     char acBuffer[ ABF_BLOCKSIZE ] = {0};
@@ -298,7 +298,7 @@ static BOOL ValidateFileCRC( CFileDescriptor *pFI, ABFFileHeader *pFH, int nSize
     // Set pointer at the beggining.
     VERIFY(pFI->Seek( 0L, FILE_BEGIN));
 
-    unsigned long ulFileCRC = crc.Value();
+    unsigned ABFLONG ulFileCRC = crc.Value();
 
     // Compare expected CRC with file CRC.
     if ( ulFileCRC != ulExpectedCRC )
@@ -920,7 +920,7 @@ BOOL WINAPI ABF_UpdateHeader(int nFile, ABFFileHeader *pFH, int *pnError)
         return ErrorReturn(pnError, ABF_EDISKFULL);
 
     // Update the current file length. 
-    long lCurrentFileSize = (long)pFI->GetFileSize();
+    ABFLONG lCurrentFileSize = (ABFLONG)pFI->GetFileSize();
    
     // Pad with zeroes to the nearest block boundary. 
     pFI->FillToNextBlock( &lCurrentFileSize );
@@ -1079,7 +1079,7 @@ static BOOL _SetChunkSize( CFileDescriptor *pFI, ABFFileHeader *pFH,
     if (uMaxSamples > uAcqLenPerChannel)
         uMaxSamples = uAcqLenPerChannel;
 
-    pFH->lNumSamplesPerEpisode = long(uMaxSamples * pFH->nADCNumChannels);
+    pFH->lNumSamplesPerEpisode = ABFLONG(uMaxSamples * pFH->nADCNumChannels);
    
     // Set the return value for the read chunk size.
     *puMaxSamples = (UINT)(pFH->lNumSamplesPerEpisode / pFH->nADCNumChannels);
@@ -1220,7 +1220,7 @@ static BOOL ABF2_SetChunkSize( CFileDescriptor *pFI, ABF2FileHeader *pFH,
     if (uMaxSamples > uAcqLenPerChannel)
         uMaxSamples = uAcqLenPerChannel;
 
-    pFH->lNumSamplesPerEpisode = long(uMaxSamples * pFH->nADCNumChannels);
+    pFH->lNumSamplesPerEpisode = ABFLONG(uMaxSamples * pFH->nADCNumChannels);
    
     // Set the return value for the read chunk size.
     *puMaxSamples = (UINT)(pFH->lNumSamplesPerEpisode / pFH->nADCNumChannels);
@@ -1517,7 +1517,7 @@ static BOOL ReadEDFixLenSynch(CFileDescriptor *pFI, const ABFFileHeader *pFH, DW
 
             // Some versions of AxoTape produced negative entries in the synch array.
             // DEMOTAPE (Axotape-for-DOS demo version) creates corrupted synch arrays...
-            if (long(uStart) < 0)
+            if (ABFLONG(uStart) < 0)
                 return ErrorReturn(pnError, ABF_EBADSYNCH);
             
             // Check for redundant data in following episodes
@@ -1574,7 +1574,7 @@ static BOOL ReadOldSynchArray(CFileDescriptor *pFI, ABFFileHeader *pFH,
     }
 
     // Get the length of the file.
-    long lFileLength = long(pFI->GetFileSize());
+    ABFLONG lFileLength = ABFLONG(pFI->GetFileSize());
     ASSERT(lFileLength > 0);
 
     // Old Csynch arrays must be converted to the new style Synch array.
@@ -1598,14 +1598,14 @@ static BOOL ReadOldSynchArray(CFileDescriptor *pFI, ABFFileHeader *pFH,
     // Convert old Synch array to new Synch array, checking for edited
     // (missing) episodes in older file versions.
     UINT  uMissing = 0;
-    long  lStart = 0L;
+    ABFLONG  lStart = 0L;
     short *pn = pnOldSynch;
-    for (long lSrc=0; lSrc < pFH->lSynchArraySize; lSrc++)
+    for (ABFLONG lSrc=0; lSrc < pFH->lSynchArraySize; lSrc++)
     {
         int nCount  = *pn++;
         int nLength = *pn++;
 
-        long lFileOffset = pFH->lNumSamplesPerEpisode * sizeof(short) * lSrc;
+        ABFLONG lFileOffset = pFH->lNumSamplesPerEpisode * sizeof(short) * lSrc;
 
         if (nLength < 0)
         {
@@ -1621,7 +1621,7 @@ static BOOL ReadOldSynchArray(CFileDescriptor *pFI, ABFFileHeader *pFH,
         }
         else
         {
-            long lLength, lSkip;
+            ABFLONG lLength, lSkip;
          
             if (nCount == 0)
             {
@@ -1634,7 +1634,7 @@ static BOOL ReadOldSynchArray(CFileDescriptor *pFI, ABFFileHeader *pFH,
             {
                 // If count is != 0 a full episode was acquired, with possibly missing data before it started.
                 lLength = pFH->lNumSamplesPerEpisode;
-                lSkip   = pFH->lNumSamplesPerEpisode * long(nCount-1) + long(nLength / sizeof(short));
+                lSkip   = pFH->lNumSamplesPerEpisode * ABFLONG(nCount-1) + ABFLONG(nLength / sizeof(short));
 
                 // Old fetchan source code disregards MissingSamples if they are less than zero.
                 if (lSkip < 0)
@@ -1644,7 +1644,7 @@ static BOOL ReadOldSynchArray(CFileDescriptor *pFI, ABFFileHeader *pFH,
             lStart += lSkip;
 
             // Check that episode is within the physical file.
-            if (lFileOffset+lLength*long(sizeof(short)) > lFileLength-1024)
+            if (lFileOffset+lLength*ABFLONG(sizeof(short)) > lFileLength-1024)
                 return ErrorReturn(pnError, ABF_EBADSYNCH);
 
             pFI->PutSynchEntry(lStart, lLength, lFileOffset);
@@ -1958,8 +1958,8 @@ BOOL WINAPI ABF_MultiplexWrite(int nFile, ABFFileHeader *pFH, UINT uFlags, const
 
     uAcquiredSamples += uSizeInSamples;
     pFI->SetAcquiredSamples(uAcquiredSamples);
-    pFH->lActualAcqLength = (long)uAcquiredSamples;
-    pFH->lActualEpisodes = (long)pFI->GetAcquiredEpisodes();
+    pFH->lActualAcqLength = (ABFLONG)uAcquiredSamples;
+    pFH->lActualEpisodes = (ABFLONG)pFI->GetAcquiredEpisodes();
 
     return TRUE;
 }
@@ -2053,8 +2053,8 @@ static void PackSamples(void *pvSource, void *pvDestination, UINT uSourceLen, UI
     else 
     {
         // adjust the starting offset
-        long *plSource      = (long *)pvSource;
-        long *plDestination = (long *)pvDestination;
+        ABFLONG *plSource      = (ABFLONG *)pvSource;
+        ABFLONG *plDestination = (ABFLONG *)pvDestination;
         for (UINT i=uFirstSample; i<uSourceLen; i+=uSkip)
             *plDestination++ = plSource[i];
     }
@@ -2572,7 +2572,7 @@ BOOL WINAPI ABF_ReadDACFileEpiEx(int nFile, const ABFFileHeader *pFH, short *pnD
         return FALSE;
 
     // If the requested episode is after the last one, then use the last one in the file.
-    if( NewFH.lDACFileNumEpisodes[nChannel] < (long)dwEpisode )
+    if( NewFH.lDACFileNumEpisodes[nChannel] < (ABFLONG)dwEpisode )
         dwEpisode = (DWORD) NewFH.lDACFileNumEpisodes[nChannel];
 
     if (NewFH.lDACFilePtr[nChannel]==0)
@@ -2839,16 +2839,16 @@ BOOL WINAPI ABF_ReadTags(int nFile, const ABFFileHeader *pFH, DWORD dwFirstTag,
     {
         // Seek to the start of the requested segment (first entry is the count of tags, this is
         // placed in pFH->lNumTagEntries when the header is read).
-        UINT uSeekPos = UINT(pFH->lTagSectionPtr) * ABF_BLOCKSIZE + dwFirstTag * sizeof(long) + sizeof(long);
+        UINT uSeekPos = UINT(pFH->lTagSectionPtr) * ABF_BLOCKSIZE + dwFirstTag * sizeof(ABFLONG) + sizeof(ABFLONG);
         VERIFY(pFI->Seek(uSeekPos, FILE_BEGIN));
 
         // Allocate a temporary buffer to read the old tags into.      
-        CArrayPtr<long> plTags(uNumTags);
+        CArrayPtr<ABFLONG> plTags(uNumTags);
         if (!plTags)
             return ErrorReturn(pnError, ABF_OUTOFMEMORY);
       
         // Do the read.   
-        if (!pFI->Read(plTags, uNumTags * sizeof(long)))
+        if (!pFI->Read(plTags, uNumTags * sizeof(ABFLONG)))
         {
             TRACE( "Tags could not be read from the file.\n" );
             // Do not flag the error - this allows the tags to be quietly ignored.
@@ -2919,7 +2919,7 @@ static char *GetTagComment(ABFTag *pTag)
 // PURPOSE:  This function reads a tag TagArray section and formats it as ASCII text.
 // NOTE:     If tag number -1 is requested, the ASCII text returns column headings.
 //
-BOOL WINAPI ABF_FormatTag(int nFile, const ABFFileHeader *pFH, long lTagNumber, 
+BOOL WINAPI ABF_FormatTag(int nFile, const ABFFileHeader *pFH, ABFLONG lTagNumber, 
                           char *pszBuffer, UINT uSize, int *pnError)
 {
     ABFH_ASSERT(pFH);
@@ -3506,11 +3506,11 @@ static void _UpdateOldDisplayEntries(ABFFileHeader *pFH, const ABFScopeConfig *p
 {
     if ((pFH->nOperationMode == ABF_WAVEFORMFILE) || (pFH->nOperationMode == ABF_HIGHSPEEDOSC))
     {
-        pFH->lStartDisplayNum = long(pCfg->fDisplayStart);
-        pFH->lFinishDisplayNum= long(pCfg->fDisplayEnd);
+        pFH->lStartDisplayNum = ABFLONG(pCfg->fDisplayStart);
+        pFH->lFinishDisplayNum= ABFLONG(pCfg->fDisplayEnd);
     }
     else
-        pFH->lSamplesPerTrace = long(pCfg->fDisplayEnd);
+        pFH->lSamplesPerTrace = ABFLONG(pCfg->fDisplayEnd);
    
     for (int i=0; i<int(pFH->nADCNumChannels); i++)
     {
@@ -3784,7 +3784,7 @@ BOOL WINAPI ABF_ReadStatisticsConfig( int nFile, const ABFFileHeader *pFH, ABFSc
 // FUNCTION: ABF_SaveVoiceTag
 // PURPOSE:  Saves a reference to a temporary file containing a voice tag.
 //
-BOOL WINAPI ABF_SaveVoiceTag( int nFile, LPCSTR pszFileName, long lDataOffset,
+BOOL WINAPI ABF_SaveVoiceTag( int nFile, LPCSTR pszFileName, ABFLONG lDataOffset,
                               ABFVoiceTagInfo *pVTI, int *pnError)
 {
     LPSZASSERT(pszFileName);
@@ -3807,7 +3807,7 @@ BOOL WINAPI ABF_SaveVoiceTag( int nFile, LPCSTR pszFileName, long lDataOffset,
 // PURPOSE:  Retrieves a voice tag into a new file, leaving space for a header.
 //
 BOOL WINAPI ABF_GetVoiceTag( int nFile, const ABFFileHeader *pFH, UINT uTag, LPCSTR pszFileName, 
-                             long lDataOffset, ABFVoiceTagInfo *pVTI, int *pnError)
+                             ABFLONG lDataOffset, ABFVoiceTagInfo *pVTI, int *pnError)
 {
     LPSZASSERT(pszFileName);
     WPTRASSERT(pVTI);
@@ -3817,7 +3817,7 @@ BOOL WINAPI ABF_GetVoiceTag( int nFile, const ABFFileHeader *pFH, UINT uTag, LPC
     if (!GetFileDescriptor(&pFI, nFile, pnError))
         return FALSE;
       
-    if (long(uTag) >= pFH->lVoiceTagEntries)
+    if (ABFLONG(uTag) >= pFH->lVoiceTagEntries)
         return ErrorReturn( pnError, ABF_EREADTAG );
 
     if (!pFI->GetVoiceTag( uTag, pszFileName, lDataOffset, pVTI, pFH->lVoiceTagPtr ))

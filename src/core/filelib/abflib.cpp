@@ -36,8 +36,8 @@ namespace stf {
 
 wxString ABF1Error(const wxString& fName, int nError);
 
-wxString dateToStr(long date);
-wxString timeToStr(long time);
+wxString dateToStr(ABFLONG date);
+wxString timeToStr(ABFLONG time);
 
 }
 
@@ -50,21 +50,21 @@ wxString stf::ABF1Error(const wxString& fName, int nError) {
     return wxString( &errorMsg[0], wxConvLocal );
 }
 
-wxString stf::dateToStr(long date) {
+wxString stf::dateToStr(ABFLONG date) {
     wxString dateStream;
-    ldiv_t year=ldiv(date,(long)10000);
+    ldiv_t year=ldiv(date,(ABFLONG)10000);
     dateStream << year.quot;
-    ldiv_t month=ldiv(year.rem,(long)100);
+    ldiv_t month=ldiv(year.rem,(ABFLONG)100);
     dateStream << wxT("/") << month.quot;
     dateStream << wxT("/") << month.rem;
     return dateStream;
 }
 
-wxString stf::timeToStr(long time) {
+wxString stf::timeToStr(ABFLONG time) {
     wxString timeStream;
-    ldiv_t hours=ldiv(time,(long)3600);
+    ldiv_t hours=ldiv(time,(ABFLONG)3600);
     timeStream << hours.quot;
-    ldiv_t minutes=ldiv(hours.rem,(long)60);
+    ldiv_t minutes=ldiv(hours.rem,(ABFLONG)60);
     if (minutes.quot<10)
         timeStream << wxT(":") << wxT('0') << minutes.quot;
     else
@@ -173,8 +173,8 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
 #endif
     
     int numberChannels = pFH->nADCNumChannels;
-    long numberSections = pFH->lActualEpisodes;
-    long finalSections = numberSections;
+    ABFLONG numberSections = pFH->lActualEpisodes;
+    ABFLONG finalSections = numberSections;
     bool gapfree = (pFH->nOperationMode == ABF2_GAPFREEFILE);
     if (gapfree) {
         finalSections = 1;
@@ -339,7 +339,7 @@ void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool prog
     }
     */
     int numberChannels=FH.nADCNumChannels;
-    long numberSections=FH.lActualEpisodes;
+    ABFLONG numberSections=FH.lActualEpisodes;
     if ((DWORD)numberSections>dwMaxEpi) {
         ABF_Close(hFile,&nError);
         throw std::runtime_error("Error while calling stf::importABFFile():\n"

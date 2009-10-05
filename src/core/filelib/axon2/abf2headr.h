@@ -15,6 +15,14 @@
 #ifndef INC_ABFHEADR2_H
 #define INC_ABFHEADR2_H
 
+#include <limits.h>
+
+#if ( __WORDSIZE == 64 )
+    #define ABFLONG int
+#else
+    #define ABFLONG long
+#endif
+
 #include "abffio.h"
 //#include "\AxonDev\Comp\AxABFFIO32\ABFHeadr.h"
 
@@ -601,34 +609,34 @@ public:
    // GROUP #1 - File ID and size information
    float    fFileVersionNumber;
    short    nOperationMode;
-   long     lActualAcqLength;
+   ABFLONG     lActualAcqLength;
    short    nNumPointsIgnored;
-   long     lActualEpisodes;
+   ABFLONG     lActualEpisodes;
    UINT     uFileStartDate;         // YYYYMMDD
    UINT     uFileStartTimeMS;
-   long     lStopwatchTime;
+   ABFLONG     lStopwatchTime;
    float    fHeaderVersionNumber;
    short    nFileType;
 
    // GROUP #2 - File Structure
-   long     lDataSectionPtr;
-   long     lTagSectionPtr;
-   long     lNumTagEntries;
-   long     lScopeConfigPtr;
-   long     lNumScopes;
-   long     lDeltaArrayPtr;
-   long     lNumDeltas;
-   long     lVoiceTagPtr;
-   long     lVoiceTagEntries;
-   long     lSynchArrayPtr;
-   long     lSynchArraySize;
+   ABFLONG     lDataSectionPtr;
+   ABFLONG     lTagSectionPtr;
+   ABFLONG     lNumTagEntries;
+   ABFLONG     lScopeConfigPtr;
+   ABFLONG     lNumScopes;
+   ABFLONG     lDeltaArrayPtr;
+   ABFLONG     lNumDeltas;
+   ABFLONG     lVoiceTagPtr;
+   ABFLONG     lVoiceTagEntries;
+   ABFLONG     lSynchArrayPtr;
+   ABFLONG     lSynchArraySize;
    short    nDataFormat;
    short    nSimultaneousScan;
-   long     lStatisticsConfigPtr;
-   long     lAnnotationSectionPtr;
-   long     lNumAnnotations;
-   long     lDACFilePtr[ABF2_DACCOUNT];
-   long     lDACFileNumEpisodes[ABF2_DACCOUNT];
+   ABFLONG     lStatisticsConfigPtr;
+   ABFLONG     lAnnotationSectionPtr;
+   ABFLONG     lNumAnnotations;
+   ABFLONG     lDACFilePtr[ABF2_DACCOUNT];
+   ABFLONG     lDACFileNumEpisodes[ABF2_DACCOUNT];
 
    // GROUP #3 - Trial hierarchy information
    short    nADCNumChannels;
@@ -637,11 +645,11 @@ public:
    bool     bEnableFileCompression;
    float    fSynchTimeUnit;
    float    fSecondsPerRun;
-   long     lNumSamplesPerEpisode;
-   long     lPreTriggerSamples;
-   long     lEpisodesPerRun;
-   long     lRunsPerTrial;
-   long     lNumberOfTrials;
+   ABFLONG     lNumSamplesPerEpisode;
+   ABFLONG     lPreTriggerSamples;
+   ABFLONG     lEpisodesPerRun;
+   ABFLONG     lRunsPerTrial;
+   ABFLONG     lNumberOfTrials;
    short    nAveragingMode;
    short    nUndoRunCount;
    short    nFirstEpisodeInRun;
@@ -653,26 +661,26 @@ public:
    float    fEpisodeStartToStart;
    float    fRunStartToStart;
    float    fTrialStartToStart;
-   long     lAverageCount;
+   ABFLONG     lAverageCount;
    short    nAutoTriggerStrategy;
    float    fFirstRunDelayS;
 
    // GROUP #4 - Display Parameters
    short    nDataDisplayMode;
    short    nChannelStatsStrategy;
-   long     lSamplesPerTrace;
-   long     lStartDisplayNum;
-   long     lFinishDisplayNum;
+   ABFLONG     lSamplesPerTrace;
+   ABFLONG     lStartDisplayNum;
+   ABFLONG     lFinishDisplayNum;
    short    nShowPNRawData;
    float    fStatisticsPeriod;
-   long     lStatisticsMeasurements;
+   ABFLONG     lStatisticsMeasurements;
    short    nStatisticsSaveStrategy;
 
    // GROUP #5 - Hardware information
    float    fADCRange;
    float    fDACRange;
-   long     lADCResolution;
-   long     lDACResolution;
+   ABFLONG     lADCResolution;
+   ABFLONG     lDACResolution;
    short    nDigitizerADCs;
    short    nDigitizerDACs;
    short    nDigitizerTotalDigitalOuts;
@@ -703,7 +711,7 @@ public:
 
    GUID     FileGUID;
    float    fInstrumentHoldingLevel[ABF2_DACCOUNT];
-   unsigned long ulFileCRC;
+   unsigned ABFLONG ulFileCRC;
    short    nCRCEnable;
 
    // GROUP #7 - Multi-channel information
@@ -747,19 +755,19 @@ public:
    short    nEpochType[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
    float    fEpochInitLevel[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
    float    fEpochLevelInc[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
-   long     lEpochInitDuration[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
-   long     lEpochDurationInc[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
+   ABFLONG     lEpochInitDuration[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
+   ABFLONG     lEpochDurationInc[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
 
    // GROUP #10 - DAC Output File
    float    fDACFileScale[ABF2_DACCOUNT];
    float    fDACFileOffset[ABF2_DACCOUNT];
-   long     lDACFileEpisodeNum[ABF2_DACCOUNT];
+   ABFLONG     lDACFileEpisodeNum[ABF2_DACCOUNT];
    short    nDACFileADCNum[ABF2_DACCOUNT];
    char     sDACFilePath[ABF2_DACCOUNT][ABF2_PATHLEN];
 
    // GROUP #11 - Presweep (conditioning) pulse train
    short    nConditEnable[ABF2_DACCOUNT];
-   long     lConditNumPulses[ABF2_DACCOUNT];
+   ABFLONG     lConditNumPulses[ABF2_DACCOUNT];
    float    fBaselineDuration[ABF2_DACCOUNT];
    float    fBaselineLevel[ABF2_DACCOUNT];
    float    fStepDuration[ABF2_DACCOUNT];
@@ -784,11 +792,11 @@ public:
    short    nStatsSmoothingEnable;
    short    nStatsBaseline;
    short    nStatsBaselineDAC;                      // If mode is epoch, then this holds the DAC
-   long     lStatsBaselineStart;
-   long     lStatsBaselineEnd;
-   long     lStatsMeasurements[ABF2_STATS_REGIONS];  // Measurement bit flag for each region
-   long     lStatsStart[ABF2_STATS_REGIONS];
-   long     lStatsEnd[ABF2_STATS_REGIONS];
+   ABFLONG     lStatsBaselineStart;
+   ABFLONG     lStatsBaselineEnd;
+   ABFLONG     lStatsMeasurements[ABF2_STATS_REGIONS];  // Measurement bit flag for each region
+   ABFLONG     lStatsStart[ABF2_STATS_REGIONS];
+   ABFLONG     lStatsEnd[ABF2_STATS_REGIONS];
    short    nRiseBottomPercentile[ABF2_STATS_REGIONS];
    short    nRiseTopPercentile[ABF2_STATS_REGIONS];
    short    nDecayBottomPercentile[ABF2_STATS_REGIONS];
@@ -825,7 +833,7 @@ public:
 
    // GROUP #16 - Miscellaneous variables
    short    nLevelHysteresis;
-   long     lTimeHysteresis;
+   ABFLONG     lTimeHysteresis;
    short    nAllowExternalTags;
    short    nAverageAlgorithm;
    float    fAverageWeighting;
@@ -833,12 +841,12 @@ public:
    short    nTrialTriggerSource;
    short    nStatisticsDisplayStrategy;
    short    nExternalTagType;
-   long     lHeaderSize;
+   ABFLONG     lHeaderSize;
    short    nStatisticsClearStrategy;
    
    // GROUP #17 - Trains parameters
-   long     lEpochPulsePeriod[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
-   long     lEpochPulseWidth [ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
+   ABFLONG     lEpochPulsePeriod[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
+   ABFLONG     lEpochPulseWidth [ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
 
    // GROUP #18 - Application version data
    short    nCreatorMajorVersion;
@@ -871,8 +879,8 @@ public:
    // GROUP #24 - Legacy gear shift info
    float    fLegacyADCSequenceInterval;
    float    fLegacyADCSecondSequenceInterval;
-   long     lLegacyClockChange;
-   long     lLegacyNumSamplesPerEpisode;
+   ABFLONG     lLegacyClockChange;
+   ABFLONG     lLegacyNumSamplesPerEpisode;
 
    ABF2FileHeader();
 };   
@@ -976,7 +984,7 @@ inline ABFScopeConfig::ABFScopeConfig()
 //
 struct ABFTag
 {
-   long    lTagTime;          // Time at which the tag was entered in fSynchTimeUnit units.
+   ABFLONG    lTagTime;          // Time at which the tag was entered in fSynchTimeUnit units.
    char    sComment[ABF2_TAGCOMMENTLEN];   // Optional tag comment.
    short   nTagType;          // Type of tag ABF2_TIMETAG, ABF2_COMMENTTAG, ABF2_EXTERNALTAG, ABF2_VOICETAG, ABF2_NEWFILETAG or ABF2_ANNOTATIONTAG
    union 
@@ -991,13 +999,13 @@ struct ABFTag
 //
 struct ABFVoiceTagInfo
 {
-   long  lTagNumber;          // The tag number that corresponds to this VoiceTag
-   long  lFileOffset;         // Offset to this tag within the VoiceTag block
-   long  lUncompressedSize;   // Size of the voice tag expanded.
-   long  lCompressedSize;     // Compressed size of the tag.
+   ABFLONG  lTagNumber;          // The tag number that corresponds to this VoiceTag
+   ABFLONG  lFileOffset;         // Offset to this tag within the VoiceTag block
+   ABFLONG  lUncompressedSize;   // Size of the voice tag expanded.
+   ABFLONG  lCompressedSize;     // Compressed size of the tag.
    short nCompressionType;    // Compression method used.
    short nSampleSize;         // Size of the samples acquired.
-   long  lSamplesPerSecond;   // Rate at which the sound was acquired.
+   ABFLONG  lSamplesPerSecond;   // Rate at which the sound was acquired.
    DWORD dwCRC;               // CRC used to check data integrity.
    WORD  wChannels;           // Number of channels in the tag (usually 1).
    WORD  wUnused;             // Unused space.
@@ -1008,11 +1016,11 @@ struct ABFVoiceTagInfo
 //
 struct ABFDelta
 {
-   long    lDeltaTime;        // Time at which the parameter was changed in fSynchTimeUnit units.
-   long    lParameterID;      // Identifier for the parameter changed
+   ABFLONG    lDeltaTime;        // Time at which the parameter was changed in fSynchTimeUnit units.
+   ABFLONG    lParameterID;      // Identifier for the parameter changed
    union
    {
-      long  lNewParamValue;   // Depending on the value of lParameterID
+      ABFLONG  lNewParamValue;   // Depending on the value of lParameterID
       float fNewParamValue;   // this entry may be either a float or a long.
    };
 }; // Size = 12
@@ -1022,8 +1030,8 @@ struct ABFDelta
 //
 struct ABF2Synch
 {
-   long    lStart;            // Start of the episode/event in fSynchTimeUnit units.
-   long    lLength;           // Length of the episode/event in multiplexed samples.
+   ABFLONG    lStart;            // Start of the episode/event in fSynchTimeUnit units.
+   ABFLONG    lLength;           // Length of the episode/event in multiplexed samples.
 }; // Size = 8
 
 #ifndef RC_INVOKED

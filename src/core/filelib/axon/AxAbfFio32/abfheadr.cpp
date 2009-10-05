@@ -32,7 +32,7 @@
 
 const char c_szValidOperators[] = "+-*/";
 
-const long c_lMaxShort          = 30000;
+const ABFLONG c_lMaxShort          = 30000;
 
 //-----------------------------------------------------------------------------------------------
 // Uncomment the following line to display interface structure sizes.
@@ -94,7 +94,7 @@ void WINAPI ABFH_Initialize( ABFFileHeader *pFH )
    NewFH.nAutoTriggerStrategy  = 1;   // Allow auto triggering.
    NewFH.nChannelStatsStrategy = 0;   // Don't calculate channel statistics.
    NewFH.fStatisticsPeriod     = 1.0F;
-   NewFH.lCalculationPeriod    = long(NewFH.fStatisticsPeriod / NewFH.fADCSampleInterval * 1E3F);
+   NewFH.lCalculationPeriod    = ABFLONG(NewFH.fStatisticsPeriod / NewFH.fADCSampleInterval * 1E3F);
    NewFH.lStatisticsMeasurements = ABF_STATISTICS_ABOVETHRESHOLD | ABF_STATISTICS_MEANOPENTIME;
    
    NewFH.lSamplesPerTrace      = 16384;
@@ -970,10 +970,10 @@ BOOL WINAPI ABFH_ParamReader(FILEHANDLE hFile, ABFFileHeader *pFH, int *pnError)
 
    // Get the file length for parameter validation, then seek back to the start of the file.
 #ifdef _WINDOWS
-   long lFileLength = SetFilePointer(hFile, 0, NULL, FILE_END);
+   ABFLONG lFileLength = SetFilePointer(hFile, 0, NULL, FILE_END);
    SetFilePointer(hFile, 0L, NULL, FILE_BEGIN);
 #else
-   long lFileLength = c_SetFilePointer(hFile, 0, NULL, FILE_END);
+   ABFLONG lFileLength = c_SetFilePointer(hFile, 0, NULL, FILE_END);
    c_SetFilePointer(hFile, 0L, NULL, FILE_BEGIN);
 #endif
 
@@ -1208,9 +1208,9 @@ BOOL WINAPI ABFH_IsNewHeader(const ABFFileHeader *pFH)
 // FUNCTION: ClipToShort
 // PURPOSE:  Forces a long value to a short, clipping it if needed.
 //
-static short ClipToShort( long lValue )
+static short ClipToShort( ABFLONG lValue )
 {
-   long lClipped = min( lValue , c_lMaxShort );
+   ABFLONG lClipped = min( lValue , c_lMaxShort );
 
    return short(lClipped);
 }

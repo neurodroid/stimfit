@@ -493,7 +493,7 @@ BOOL CSynch::Update( UINT uEntry, const Synch *pSynch )
    ASSERT(m_hfSynchFile != INVALID_HANDLE_VALUE);
 
    // Save current file position.
-   long lCurrentPos = SetFilePointer(m_hfSynchFile, 0, NULL, FILE_CURRENT);
+   ABFLONG lCurrentPos = SetFilePointer(m_hfSynchFile, 0, NULL, FILE_CURRENT);
    //TRACE1( "CSynch::Update current file pointer is %d on entry.\n",
    //         SetFilePointer(m_hfSynchFile, 0, NULL, FILE_CURRENT) );
    if (lCurrentPos == INVALID_SEEK_VALUE)

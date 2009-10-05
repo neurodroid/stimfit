@@ -20,6 +20,6 @@ void OLDH_ABFtoCurrentVersion(ABFFileHeader *pFH);
 void OLDH_CorrectScopeConfig(ABFFileHeader *pFH, ABFScopeConfig *pCfg);
 */
 BOOL OLDH_ReadOldHeader( FILEHANDLE hFile, UINT uFileType, int bMSBinFormat,
-                         ABFFileHeader *pFH, long lFileLength, int *pnError);
+                         ABFFileHeader *pFH, ABFLONG lFileLength, int *pnError);
 
 #endif   /* __OLDHEADR_H__ */

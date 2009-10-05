@@ -69,7 +69,7 @@ public:
    BOOL  Open(LPCTSTR szFileName, BOOL bReadOnly);
 /*   BOOL  Reopen(BOOL bReadOnly);
    
-   BOOL  FillToNextBlock( long *plBlockNum );
+   BOOL  FillToNextBlock( ABFLONG *plBlockNum );
    BOOL  Write(const void *pvBuffer, UINT uSizeInBytes);
 */   BOOL  Read(void *pvBuffer, UINT uSizeInBytes);
    BOOL  Seek(LONGLONG llOffset, UINT uFlag, LONGLONG *pllOffset=NULL);
@@ -103,7 +103,7 @@ public:
    void  SetEpisodeStart(UINT uEpisode, UINT uSynchTime);
 */   UINT  EpisodeLength( UINT uEpisode);
 /*   UINT  FileOffset( UINT uEpisode);
-   BOOL  WriteSynchArray( long *plBlockNum, long *plCount, UINT uSampleSize );
+   BOOL  WriteSynchArray( ABFLONG *plBlockNum, ABFLONG *plCount, UINT uSampleSize );
 */   UINT  GetSynchCount() const;
    void  SetSynchMode(CSynch::eMODE eMode);
 /*   CSynch *GetSynchObject();
@@ -112,34 +112,34 @@ public:
    // Tag array functions.
    BOOL  PutTag( const ABFTag *pTag );
    UINT  GetTagCount() const;
-   BOOL  WriteTags( long *plBlockNum, long *plCount );
+   BOOL  WriteTags( ABFLONG *plBlockNum, ABFLONG *plCount );
    BOOL  UpdateTag(UINT uTag, const ABFTag *pTag);
    BOOL  ReadTags( UINT uFirstTag, ABFTag *pTagArray, UINT uNumTags);
    
    // Voice tag functions.
-   BOOL  SaveVoiceTag( LPCSTR pszFileName, long lDataOffset, ABFVoiceTagInfo *pVTI);
-   BOOL  WriteVoiceTags( long *plBlockNum, long *plCount );
-   BOOL  GetVoiceTag( UINT uTag, LPCSTR pszFileName, long lDataOffset, 
-                      ABFVoiceTagInfo *pVTI, long lVoiceTagPtr);
+   BOOL  SaveVoiceTag( LPCSTR pszFileName, ABFLONG lDataOffset, ABFVoiceTagInfo *pVTI);
+   BOOL  WriteVoiceTags( ABFLONG *plBlockNum, ABFLONG *plCount );
+   BOOL  GetVoiceTag( UINT uTag, LPCSTR pszFileName, ABFLONG lDataOffset, 
+                      ABFVoiceTagInfo *pVTI, ABFLONG lVoiceTagPtr);
 
    // Delta functions.
    BOOL  PutDelta(const ABFDelta *pDelta);
    UINT  GetDeltaCount() const;
-   BOOL  WriteDeltas( long *plBlockNum, long *plCount );
+   BOOL  WriteDeltas( ABFLONG *plBlockNum, ABFLONG *plCount );
    BOOL  ReadDeltas(UINT uFirstDelta, ABFDelta *pDeltaArray, UINT uNumDeltas);
 
    // DAC file functions.
    BOOL  PutDACFileSweep( UINT uDACChannel, UINT uSweep, const DAC_VALUE *pnData, UINT uLength );
    BOOL  GetDACFileSweep(UINT uDACChannel, UINT uSweep, DAC_VALUE *pnData, UINT uMaxLength);
    UINT  GetDACFileSweepCount( UINT uDACChannel ) const;
-   BOOL  WriteDACFileSweeps( UINT uDACChannel, long *plBlockNum, long *plCount );
+   BOOL  WriteDACFileSweeps( UINT uDACChannel, ABFLONG *plBlockNum, ABFLONG *plCount );
 
    // Annotations functions.
    BOOL  PutAnnotation( LPCSTR pszText );
    UINT  GetAnnotationCount() const;
-   BOOL  WriteAnnotations( long *plBlockNum, long *plCount );
+   BOOL  WriteAnnotations( ABFLONG *plBlockNum, ABFLONG *plCount );
    BOOL  ReadAnnotation( UINT uIndex, LPSTR pszText, UINT uBufSize );
-   BOOL  ReadAllAnnotations( long lBlockNum );
+   BOOL  ReadAllAnnotations( ABFLONG lBlockNum );
    UINT  GetMaxAnnotationSize() const;
 */
    FILEHANDLE GetFileHandle();   

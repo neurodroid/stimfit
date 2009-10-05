@@ -139,7 +139,7 @@ LPCSTR CFileDescriptor::GetFileName() const
 // FUNCTION: FillToNextBlock
 // PURPOSE:  Pads the data file out to the next ABF_BLOCKSIZE byte boundary.
 //
-BOOL CFileDescriptor::FillToNextBlock( long *plBlockNum )
+BOOL CFileDescriptor::FillToNextBlock( ABFLONG *plBlockNum )
 {
    WPTRASSERT(plBlockNum);
    
@@ -154,7 +154,7 @@ BOOL CFileDescriptor::FillToNextBlock( long *plBlockNum )
          return FALSE;
       llOffset += uFillLastBlock;
    }
-   *plBlockNum = long(llOffset / ABF_BLOCKSIZE);
+   *plBlockNum = ABFLONG(llOffset / ABF_BLOCKSIZE);
    return TRUE;
 }
 
@@ -170,7 +170,7 @@ BOOL CFileDescriptor::Write(const void *pvBuffer, UINT uSizeInBytes)
    while (!m_File.Write( pvBuffer, uSizeInBytes, &dwBytesWritten ))
    {
       // If the write failed, step the file pointer back to the start of the write.
-      VERIFY(m_File.Seek( -long(dwBytesWritten), FILE_CURRENT));
+      VERIFY(m_File.Seek( -ABFLONG(dwBytesWritten), FILE_CURRENT));
       m_File.SetEndOfFile();
       SetLastError(ABF_EDISKFULL);
 
@@ -376,7 +376,7 @@ UINT CFileDescriptor::FileOffset( UINT uEpisode)
 // FUNCTION: WriteSynchArray
 // PURPOSE:  Writes the synch array out to disk.
 //
-BOOL CFileDescriptor::WriteSynchArray( long *plBlockNum, long *plCount, UINT uSampleSize )
+BOOL CFileDescriptor::WriteSynchArray( ABFLONG *plBlockNum, ABFLONG *plCount, UINT uSampleSize )
 {
    //MEMBERASSERT();
    *plBlockNum = 0;
@@ -468,7 +468,7 @@ UINT CFileDescriptor::GetTagCount() const
 // FUNCTION: WriteTags
 // PURPOSE:  Writes the tag array out to disk.
 //
-BOOL CFileDescriptor::WriteTags( long *plBlockNum, long *plCount )
+BOOL CFileDescriptor::WriteTags( ABFLONG *plBlockNum, ABFLONG *plCount )
 {
    //MEMBERASSERT();
    *plBlockNum = 0;
@@ -517,7 +517,7 @@ BOOL CFileDescriptor::ReadTags( UINT uFirstTag, ABFTag *pTagArray, UINT uNumTags
 // FUNCTION: SaveVoiceTag
 // PURPOSE:  Adds a voice tag descriptor to the pending list.
 //
-BOOL CFileDescriptor::SaveVoiceTag( LPCSTR pszFileName, long lDataOffset, ABFVoiceTagInfo *pVTI)
+BOOL CFileDescriptor::SaveVoiceTag( LPCSTR pszFileName, ABFLONG lDataOffset, ABFVoiceTagInfo *pVTI)
 {
    CVoiceTag *pVoiceTag = new CVoiceTag( pszFileName, lDataOffset, pVTI );
    if (!pVoiceTag)
@@ -531,7 +531,7 @@ BOOL CFileDescriptor::SaveVoiceTag( LPCSTR pszFileName, long lDataOffset, ABFVoi
 // FUNCTION: WriteVoiceTags
 // PURPOSE:  Create a new catalog for ABFVoiceTagInfo structures and save the tags from the list.
 //
-BOOL CFileDescriptor::WriteVoiceTags( long *plBlockNum, long *plCount )
+BOOL CFileDescriptor::WriteVoiceTags( ABFLONG *plBlockNum, ABFLONG *plCount )
 {
    //MEMBERASSERT();
    *plBlockNum = 0;
@@ -559,8 +559,8 @@ BOOL CFileDescriptor::WriteVoiceTags( long *plBlockNum, long *plCount )
 // FUNCTION: GetVoiceTag
 // PURPOSE:  Retrieves a voice tag into a new file, leaving space for a header.
 //
-BOOL CFileDescriptor::GetVoiceTag( UINT uTag, LPCSTR pszFileName, long lDataOffset, 
-                                  ABFVoiceTagInfo *pVTI, long lVoiceTagPtr)
+BOOL CFileDescriptor::GetVoiceTag( UINT uTag, LPCSTR pszFileName, ABFLONG lDataOffset, 
+                                  ABFVoiceTagInfo *pVTI, ABFLONG lVoiceTagPtr)
 {
    //MEMBERASSERT();
    VERIFY(Seek(lVoiceTagPtr*ABF_BLOCKSIZE + uTag*sizeof(ABFVoiceTagInfo), FILE_BEGIN));
@@ -604,7 +604,7 @@ UINT CFileDescriptor::GetDeltaCount() const
 // FUNCTION: WriteDeltas
 // PURPOSE:  Writes the Delta array out to disk.
 //
-BOOL CFileDescriptor::WriteDeltas( long *plBlockNum, long *plCount )
+BOOL CFileDescriptor::WriteDeltas( ABFLONG *plBlockNum, ABFLONG *plCount )
 {
    //MEMBERASSERT();
    *plBlockNum = 0;
@@ -668,7 +668,7 @@ UINT CFileDescriptor::GetDACFileSweepCount( UINT uDACChannel ) const
 // FUNCTION: WriteDACFileSweeps
 // PURPOSE:  Writes the DAC file data out to disk.
 //
-BOOL CFileDescriptor::WriteDACFileSweeps( UINT uDACChannel, long *plBlockNum, long *plCount )
+BOOL CFileDescriptor::WriteDACFileSweeps( UINT uDACChannel, ABFLONG *plBlockNum, ABFLONG *plCount )
 {
    //MEMBERASSERT();
    ASSERT( uDACChannel < ABF_WAVEFORMCOUNT );
@@ -801,7 +801,7 @@ UINT CFileDescriptor::GetAnnotationCount() const
 // FUNCTION: WriteAnnotations
 // PURPOSE:  Write the annotations from the cache to the file.
 //
-BOOL CFileDescriptor::WriteAnnotations( long *plBlockNum, long *plCount )
+BOOL CFileDescriptor::WriteAnnotations( ABFLONG *plBlockNum, ABFLONG *plCount )
 {
    MEMBERASSERT();
    
@@ -856,7 +856,7 @@ BOOL CFileDescriptor::ReadAnnotation( UINT uIndex, LPSTR pszText, UINT uBufSize 
 // FUNCTION: ReadAllAnnotations
 // PURPOSE:  Read the annotations from the file into the cache.
 //
-BOOL CFileDescriptor::ReadAllAnnotations( long lBlockNum )
+BOOL CFileDescriptor::ReadAllAnnotations( ABFLONG lBlockNum )
 {
    //MEMBERASSERT();
    

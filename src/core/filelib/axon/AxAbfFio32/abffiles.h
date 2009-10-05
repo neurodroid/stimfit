@@ -158,7 +158,7 @@ BOOL WINAPI ABF_UpdateTag(int nFile, UINT uTag, const ABFTag *pTag, int *pnError
 BOOL WINAPI ABF_ReadTags(int nFile, const ABFFileHeader *pFH, DWORD dwFirstTag, ABFTag *pTagArray, 
                          UINT uNumTags, int *pnError);
 
-BOOL WINAPI ABF_FormatTag(int nFile, const ABFFileHeader *pFH, long lTagNumber, 
+BOOL WINAPI ABF_FormatTag(int nFile, const ABFFileHeader *pFH, ABFLONG lTagNumber, 
                           char *pszBuffer, UINT uSize, int *pnError);
 
 BOOL WINAPI ABF_EpisodeFromSynchCount(int nFile, const ABFFileHeader *pFH, DWORD *pdwSynchCount, 
@@ -200,11 +200,11 @@ BOOL WINAPI ABF_WriteStatisticsConfig( int nFile, ABFFileHeader *pFH,
                                         
 BOOL WINAPI ABF_ReadStatisticsConfig( int nFile, const ABFFileHeader *pFH, ABFScopeConfig *pCfg, int *pnError);
 
-BOOL WINAPI ABF_SaveVoiceTag( int nFile, LPCSTR pszFileName, long lDataOffset,
+BOOL WINAPI ABF_SaveVoiceTag( int nFile, LPCSTR pszFileName, ABFLONG lDataOffset,
                               ABFVoiceTagInfo *pVTI, int *pnError);
                               
 BOOL WINAPI ABF_GetVoiceTag( int nFile, const ABFFileHeader *pFH, UINT uTag, LPCSTR pszFileName, 
-                             long lDataOffset, ABFVoiceTagInfo *pVTI, int *pnError);
+                             ABFLONG lDataOffset, ABFVoiceTagInfo *pVTI, int *pnError);
                               
 BOOL WINAPI ABF_PlayVoiceTag( int nFile, const ABFFileHeader *pFH, UINT uTag, int *pnError);
 
