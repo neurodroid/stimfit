@@ -44,12 +44,22 @@
 //   1.81 - Added multi input signal P / N leak subtraction
 //   1.82 - Cyclic Redundancy Code (CRC).
 //   1.83 - Added Modifier application name / version number
+//
+// Added 64bit support according to Jakub Nowacki's implementation in libaxon:
+// http://libaxon.sourceforge.net
 
 #ifndef INC_ABFHEADR_H
 #define INC_ABFHEADR_H
 
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
+
+#if ( __WORDSIZE == 64 )
+    #define ABFLONG int
+#else
+    #define ABFLONG long
+#endif
 
 #include "AxAbffio32.h"
 
@@ -558,40 +568,40 @@ struct ABFFileHeader               // The total header length = 6144 bytes.
 {
 public:
    // GROUP #1 - File ID and size information. (40 bytes)
-   long     lFileSignature;
+   ABFLONG     lFileSignature;
    float    fFileVersionNumber;
    short    nOperationMode;
-   long     lActualAcqLength;
+   ABFLONG     lActualAcqLength;
    short    nNumPointsIgnored;
-   long     lActualEpisodes;
-   long     lFileStartDate;         // YYYYMMDD
-   long     lFileStartTime;
-   long     lStopwatchTime;
+   ABFLONG     lActualEpisodes;
+   ABFLONG     lFileStartDate;         // YYYYMMDD
+   ABFLONG     lFileStartTime;
+   ABFLONG     lStopwatchTime;
    float    fHeaderVersionNumber;
    short    nFileType;
    short    nMSBinFormat;
 
    // GROUP #2 - File Structure (78 bytes)
-   long     lDataSectionPtr;
-   long     lTagSectionPtr;
-   long     lNumTagEntries;
-   long     lScopeConfigPtr;
-   long     lNumScopes;
-   long     _lDACFilePtr;
-   long     _lDACFileNumEpisodes;
+   ABFLONG     lDataSectionPtr;
+   ABFLONG     lTagSectionPtr;
+   ABFLONG     lNumTagEntries;
+   ABFLONG     lScopeConfigPtr;
+   ABFLONG     lNumScopes;
+   ABFLONG     _lDACFilePtr;
+   ABFLONG     _lDACFileNumEpisodes;
    char     sUnused001[4];
-   long     lDeltaArrayPtr;
-   long     lNumDeltas;
-   long     lVoiceTagPtr;
-   long     lVoiceTagEntries;
-   long     lUnused002;
-   long     lSynchArrayPtr;
-   long     lSynchArraySize;
+   ABFLONG     lDeltaArrayPtr;
+   ABFLONG     lNumDeltas;
+   ABFLONG     lVoiceTagPtr;
+   ABFLONG     lVoiceTagEntries;
+   ABFLONG     lUnused002;
+   ABFLONG     lSynchArrayPtr;
+   ABFLONG     lSynchArraySize;
    short    nDataFormat;
    short    nSimultaneousScan;
-   long     lStatisticsConfigPtr;
-   long     lAnnotationSectionPtr;
-   long     lNumAnnotations;
+   ABFLONG     lStatisticsConfigPtr;
+   ABFLONG     lAnnotationSectionPtr;
+   ABFLONG     lNumAnnotations;
    char     sUnused003[2];
 
    // GROUP #3 - Trial hierarchy information (82 bytes)
@@ -631,11 +641,11 @@ public:
    *
    * If you want the samples per episode for one channel, you must divide this by get_channel_count_recorded().
    */
-   long     lNumSamplesPerEpisode;
-   long     lPreTriggerSamples;
-   long     lEpisodesPerRun;
-   long     lRunsPerTrial;
-   long     lNumberOfTrials;
+   ABFLONG     lNumSamplesPerEpisode;
+   ABFLONG     lPreTriggerSamples;
+   ABFLONG     lEpisodesPerRun;
+   ABFLONG     lRunsPerTrial;
+   ABFLONG     lNumberOfTrials;
    short    nAveragingMode;
    short    nUndoRunCount;
    short    nFirstEpisodeInRun;
@@ -647,8 +657,8 @@ public:
    float    fEpisodeStartToStart;
    float    fRunStartToStart;
    float    fTrialStartToStart;
-   long     lAverageCount;
-   long     lClockChange;
+   ABFLONG     lAverageCount;
+   ABFLONG     lClockChange;
    short    nAutoTriggerStrategy;
 
    // GROUP #4 - Display Parameters (44 bytes)
@@ -656,23 +666,23 @@ public:
    short    nTiledDisplay;
    short    nEraseStrategy;           // N.B. Discontinued. Use scope config entry instead.
    short    nDataDisplayMode;
-   long     lDisplayAverageUpdate;
+   ABFLONG     lDisplayAverageUpdate;
    short    nChannelStatsStrategy;
-   long     lCalculationPeriod;       // N.B. Discontinued. Use fStatisticsPeriod.
-   long     lSamplesPerTrace;
-   long     lStartDisplayNum;
-   long     lFinishDisplayNum;
+   ABFLONG     lCalculationPeriod;       // N.B. Discontinued. Use fStatisticsPeriod.
+   ABFLONG     lSamplesPerTrace;
+   ABFLONG     lStartDisplayNum;
+   ABFLONG     lFinishDisplayNum;
    short    nMultiColor;
    short    nShowPNRawData;
    float    fStatisticsPeriod;
-   long     lStatisticsMeasurements;
+   ABFLONG     lStatisticsMeasurements;
    short    nStatisticsSaveStrategy;
 
    // GROUP #5 - Hardware information (16 bytes)
    float    fADCRange;
    float    fDACRange;
-   long     lADCResolution;
-   long     lDACResolution;
+   ABFLONG     lADCResolution;
+   ABFLONG     lDACResolution;
 
    // GROUP #6 Environmental Information (118 bytes)
    short    nExperimentType;
@@ -750,7 +760,7 @@ public:
    // GROUP #11 - Presweep (conditioning) pulse train (44 bytes)
    short    _nConditEnable;
    short    _nConditChannel;
-   long     _lConditNumPulses;
+   ABFLONG     _lConditNumPulses;
    float    _fBaselineDuration;
    float    _fBaselineLevel;
    float    _fStepDuration;
@@ -768,15 +778,15 @@ public:
    short    _nAutopeakPolarity;
    short    _nAutopeakADCNum;
    short    _nAutopeakSearchMode;
-   long     _lAutopeakStart;
-   long     _lAutopeakEnd;
+   ABFLONG     _lAutopeakStart;
+   ABFLONG     _lAutopeakEnd;
    short    _nAutopeakSmoothing;
    short    _nAutopeakBaseline;
    short    _nAutopeakAverage;
    char     sUnavailable1866[2];     // Was nAutopeakSaveStrategy, use nStatisticsSaveStrategy
-   long     _lAutopeakBaselineStart;
-   long     _lAutopeakBaselineEnd;
-   long     _lAutopeakMeasurements;
+   ABFLONG     _lAutopeakBaselineStart;
+   ABFLONG     _lAutopeakBaselineEnd;
+   ABFLONG     _lAutopeakMeasurements;
 
    // GROUP #14 - Channel Arithmetic (52 bytes)
    short    nArithmeticEnable;
@@ -814,7 +824,7 @@ public:
    short    nBellRepetitions[ABF_BELLCOUNT];
    
    short    nLevelHysteresis;
-   long     lTimeHysteresis;
+   ABFLONG     lTimeHysteresis;
    short    nAllowExternalTags;
    
    char     nLowpassFilterType[ABF_ADCCOUNT];
@@ -825,15 +835,15 @@ public:
    short    nTrialTriggerSource;
    short    nStatisticsDisplayStrategy;
    short    nExternalTagType;
-   long     lHeaderSize;
+   ABFLONG     lHeaderSize;
    double   dFileDuration;
    short    nStatisticsClearStrategy;
    // Size of v1.5 header = 2048
 
    // Extra parameters in v1.6
    // EXTENDED GROUP #2 - File Structure (26 bytes)
-   long     lDACFilePtr[ABF_WAVEFORMCOUNT];
-   long     lDACFileNumEpisodes[ABF_WAVEFORMCOUNT];
+   ABFLONG     lDACFilePtr[ABF_WAVEFORMCOUNT];
+   ABFLONG     lDACFileNumEpisodes[ABF_WAVEFORMCOUNT];
 
    // EXTENDED GROUP #3 - Trial Hierarchy
    float    fFirstRunDelay;
@@ -845,8 +855,8 @@ public:
    char     sUnused011[30];
 
    // GROUP #17 - Trains parameters (160 bytes)
-   long     lEpochPulsePeriod[ABF_WAVEFORMCOUNT][ABF_EPOCHCOUNT];
-   long     lEpochPulseWidth [ABF_WAVEFORMCOUNT][ABF_EPOCHCOUNT];
+   ABFLONG     lEpochPulsePeriod[ABF_WAVEFORMCOUNT][ABF_EPOCHCOUNT];
+   ABFLONG     lEpochPulseWidth [ABF_WAVEFORMCOUNT][ABF_EPOCHCOUNT];
 
    // EXTENDED GROUP #9 - Epoch Waveform and Pulses ( 412 bytes)
    short    nWaveformEnable[ABF_WAVEFORMCOUNT];
@@ -855,8 +865,8 @@ public:
    short    nEpochType[ABF_WAVEFORMCOUNT][ABF_EPOCHCOUNT];
    float    fEpochInitLevel[ABF_WAVEFORMCOUNT][ABF_EPOCHCOUNT];
    float    fEpochLevelInc[ABF_WAVEFORMCOUNT][ABF_EPOCHCOUNT];
-   long     lEpochInitDuration[ABF_WAVEFORMCOUNT][ABF_EPOCHCOUNT];
-   long     lEpochDurationInc[ABF_WAVEFORMCOUNT][ABF_EPOCHCOUNT];
+   ABFLONG     lEpochInitDuration[ABF_WAVEFORMCOUNT][ABF_EPOCHCOUNT];
+   ABFLONG     lEpochDurationInc[ABF_WAVEFORMCOUNT][ABF_EPOCHCOUNT];
    short    nDigitalTrainValue[ABF_EPOCHCOUNT];                         // 2 * 10 = 20 bytes
    short    nDigitalTrainActiveLogic;                                   // 2 bytes
    char     sUnused012[18];
@@ -864,14 +874,14 @@ public:
    // EXTENDED GROUP #10 - DAC Output File (552 bytes)
    float    fDACFileScale[ABF_WAVEFORMCOUNT];
    float    fDACFileOffset[ABF_WAVEFORMCOUNT];
-   long     lDACFileEpisodeNum[ABF_WAVEFORMCOUNT];
+   ABFLONG     lDACFileEpisodeNum[ABF_WAVEFORMCOUNT];
    short    nDACFileADCNum[ABF_WAVEFORMCOUNT];
    char     sDACFilePath[ABF_WAVEFORMCOUNT][ABF_PATHLEN];
    char     sUnused013[12];
 
    // EXTENDED GROUP #11 - Presweep (conditioning) pulse train (100 bytes)
    short    nConditEnable[ABF_WAVEFORMCOUNT];
-   long     lConditNumPulses[ABF_WAVEFORMCOUNT];
+   ABFLONG     lConditNumPulses[ABF_WAVEFORMCOUNT];
    float    fBaselineDuration[ABF_WAVEFORMCOUNT];
    float    fBaselineLevel[ABF_WAVEFORMCOUNT];
    float    fStepDuration[ABF_WAVEFORMCOUNT];
@@ -912,7 +922,7 @@ public:
    char     sFileComment[ABF_FILECOMMENTLEN];
    GUID     FileGUID;
    float    fInstrumentHoldingLevel[ABF_DACCOUNT];
-   unsigned long ulFileCRC;
+   unsigned ABFLONG ulFileCRC;
    char     sModifierInfo[ABF_CREATORINFOLEN];
    char     sUnused017[76];
 
@@ -925,11 +935,11 @@ public:
    short    nStatsSmoothing;
    short    nStatsSmoothingEnable;
    short    nStatsBaseline;
-   long     lStatsBaselineStart;
-   long     lStatsBaselineEnd;
-   long     lStatsMeasurements[ABF_STATS_REGIONS];  // Measurement bit flag for each region
-   long     lStatsStart[ABF_STATS_REGIONS];
-   long     lStatsEnd[ABF_STATS_REGIONS];
+   ABFLONG     lStatsBaselineStart;
+   ABFLONG     lStatsBaselineEnd;
+   ABFLONG     lStatsMeasurements[ABF_STATS_REGIONS];  // Measurement bit flag for each region
+   ABFLONG     lStatsStart[ABF_STATS_REGIONS];
+   ABFLONG     lStatsEnd[ABF_STATS_REGIONS];
    short    nRiseBottomPercentile[ABF_STATS_REGIONS];
    short    nRiseTopPercentile[ABF_STATS_REGIONS];
    short    nDecayBottomPercentile[ABF_STATS_REGIONS];
@@ -1172,8 +1182,8 @@ inline ABFScopeConfig::ABFScopeConfig()
 
 struct ABFSynch
 {
-   long    lStart;            // Start of the episode/event in fSynchTimeUnit units.
-   long    lLength;           // Length of the episode/event in multiplexed samples.
+   ABFLONG    lStart;            // Start of the episode/event in fSynchTimeUnit units.
+   ABFLONG    lLength;           // Length of the episode/event in multiplexed samples.
 }; // Size = 8
 
 //
@@ -1192,7 +1202,7 @@ struct ABFSynch
 //
 struct ABFTag
 {
-   long    lTagTime;          // Time at which the tag was entered in fSynchTimeUnit units.
+   ABFLONG    lTagTime;          // Time at which the tag was entered in fSynchTimeUnit units.
    char    sComment[ABF_TAGCOMMENTLEN];   // Optional tag comment.
    short   nTagType;          // Type of tag ABF_TIMETAG, ABF_COMMENTTAG, ABF_EXTERNALTAG, ABF_VOICETAG, ABF_NEWFILETAG or ABF_ANNOTATIONTAG
    union 
@@ -1218,13 +1228,13 @@ struct ABFTag
 //
 struct ABFVoiceTagInfo
 {
-   long  lTagNumber;          // The tag number that corresponds to this VoiceTag
-   long  lFileOffset;         // Offset to this tag within the VoiceTag block
-   long  lUncompressedSize;   // Size of the voice tag expanded.
-   long  lCompressedSize;     // Compressed size of the tag.
+   ABFLONG  lTagNumber;          // The tag number that corresponds to this VoiceTag
+   ABFLONG  lFileOffset;         // Offset to this tag within the VoiceTag block
+   ABFLONG  lUncompressedSize;   // Size of the voice tag expanded.
+   ABFLONG  lCompressedSize;     // Compressed size of the tag.
    short nCompressionType;    // Compression method used.
    short nSampleSize;         // Size of the samples acquired.
-   long  lSamplesPerSecond;   // Rate at which the sound was acquired.
+   ABFLONG  lSamplesPerSecond;   // Rate at which the sound was acquired.
    DWORD dwCRC;               // CRC used to check data integrity.
    WORD  wChannels;           // Number of channels in the tag (usually 1).
    WORD  wUnused;             // Unused space.
@@ -1255,11 +1265,11 @@ struct ABFVoiceTagInfo
 
 struct ABFDelta
 {
-   long    lDeltaTime;        // Time at which the parameter was changed in fSynchTimeUnit units.
-   long    lParameterID;      // Identifier for the parameter changed
+   ABFLONG    lDeltaTime;        // Time at which the parameter was changed in fSynchTimeUnit units.
+   ABFLONG    lParameterID;      // Identifier for the parameter changed
    union
    {
-      long  lNewParamValue;   // Depending on the value of lParameterID
+      ABFLONG  lNewParamValue;   // Depending on the value of lParameterID
       float fNewParamValue;   // this entry may be either a float or a long.
    };
 }; // Size = 12

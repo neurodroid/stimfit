@@ -9,13 +9,21 @@
 // MODULE:     ProtocolStructs.HPP
 // ABF structs: used to describe the actual file contents.
 //
-
+// Added 64bit support according to Jakub Nowacki's implementation in libaxon:
+// http://libaxon.sourceforge.net
 
 #ifndef INC_PROTOCOLSTRUCTS_HPP
 #define INC_PROTOCOLSTRUCTS_HPP
 
 #include "../axon/Common/axodebug.h"
 #include <iostream>
+#include <limits.h>
+
+#if ( __WORDSIZE == 64 )
+    #define ABFLONG int
+#else
+    #define ABFLONG long
+#endif
 
 #pragma once
 #pragma pack(push, 1)
@@ -26,7 +34,7 @@
 typedef struct _GUID
 {
    akxjsbasd
-    unsigned long  Data1;
+    unsigned ABFLONG  Data1;
     unsigned short Data2;
     unsigned short Data3;
     unsigned char  Data4[8];
@@ -41,11 +49,11 @@ struct ABF_Section
 {
    UINT     uBlockIndex;            // ABF block number of the first entry
    UINT     uBytes;                 // size in bytes of of each entry
-   LONGLONG llNumEntries;           // number of entries in this section
+   long long llNumEntries;           // number of entries in this section
 
    ABF_Section();
    long GetNumEntries();
-   void Set( const UINT p_uBlockIndex, const UINT p_uBytes, const LONGLONG p_llNumEntries );
+   void Set( const UINT p_uBlockIndex, const UINT p_uBytes, const long long p_llNumEntries );
 
 };
 
@@ -53,7 +61,7 @@ struct ABF_Section
 
 inline ABF_Section::ABF_Section() { MEMSET_CTOR; }
 
-inline void ABF_Section::Set( const UINT p_uBlockIndex, const UINT p_uBytes, const LONGLONG p_llNumEntries )
+inline void ABF_Section::Set( const UINT p_uBlockIndex, const UINT p_uBytes, const long long p_llNumEntries )
 {
    uBytes       = 0;
    llNumEntries = 0;
@@ -148,11 +156,11 @@ struct ABF_ProtocolInfo
 
    float fSynchTimeUnit;
    float fSecondsPerRun;
-   long  lNumSamplesPerEpisode;
-   long  lPreTriggerSamples;
-   long  lEpisodesPerRun;
-   long  lRunsPerTrial;
-   long  lNumberOfTrials;
+   ABFLONG  lNumSamplesPerEpisode;
+   ABFLONG  lPreTriggerSamples;
+   ABFLONG  lEpisodesPerRun;
+   ABFLONG  lRunsPerTrial;
+   ABFLONG  lNumberOfTrials;
    short nAveragingMode;
    short nUndoRunCount;
    short nFirstEpisodeInRun;
@@ -163,29 +171,29 @@ struct ABF_ProtocolInfo
    float fScopeOutputInterval;
    float fEpisodeStartToStart;
    float fRunStartToStart;
-   long  lAverageCount;
+   ABFLONG  lAverageCount;
    float fTrialStartToStart;
    short nAutoTriggerStrategy;
    float fFirstRunDelayS;
 
    short nChannelStatsStrategy;
-   long  lSamplesPerTrace;
-   long  lStartDisplayNum;
-   long  lFinishDisplayNum;
+   ABFLONG  lSamplesPerTrace;
+   ABFLONG  lStartDisplayNum;
+   ABFLONG  lFinishDisplayNum;
    short nShowPNRawData;
    float fStatisticsPeriod;
-   long  lStatisticsMeasurements;
+   ABFLONG  lStatisticsMeasurements;
    short nStatisticsSaveStrategy;
 
    float fADCRange;
    float fDACRange;
-   long  lADCResolution;
-   long  lDACResolution;
+   ABFLONG  lADCResolution;
+   ABFLONG  lDACResolution;
    
    short nExperimentType;
    short nManualInfoStrategy;
    short nCommentsEnable;
-   long  lFileCommentIndex;            
+   ABFLONG  lFileCommentIndex;            
    short nAutoAnalyseEnable;
    short nSignalType;
 
@@ -200,7 +208,7 @@ struct ABF_ProtocolInfo
    short nStatisticsClearStrategy;
 
    short nLevelHysteresis;
-   long  lTimeHysteresis;
+   ABFLONG  lTimeHysteresis;
    short nAllowExternalTags;
    short nAverageAlgorithm;
    float fAverageWeighting;
@@ -286,8 +294,8 @@ struct ABF_ADCInfo
 
    short nStatsChannelPolarity;
 
-   long  lADCChannelNameIndex;
-   long  lADCUnitsIndex;
+   ABFLONG  lADCChannelNameIndex;
+   ABFLONG  lADCUnitsIndex;
 
    char  sUnused[46];         // size = 128 bytes
    
@@ -311,11 +319,11 @@ struct ABF_DACInfo
    float fDACCalibrationFactor;
    float fDACCalibrationOffset;
 
-   long  lDACChannelNameIndex;
-   long  lDACChannelUnitsIndex;
+   ABFLONG  lDACChannelNameIndex;
+   ABFLONG  lDACChannelUnitsIndex;
 
-   long  lDACFilePtr;
-   long  lDACFileNumEpisodes;
+   ABFLONG  lDACFilePtr;
+   ABFLONG  lDACFileNumEpisodes;
 
    short nWaveformEnable;
    short nWaveformSource;
@@ -323,11 +331,11 @@ struct ABF_DACInfo
 
    float fDACFileScale;
    float fDACFileOffset;
-   long  lDACFileEpisodeNum;
+   ABFLONG  lDACFileEpisodeNum;
    short nDACFileADCNum;
 
    short nConditEnable;
-   long  lConditNumPulses;
+   ABFLONG  lConditNumPulses;
    float fBaselineDuration;
    float fBaselineLevel;
    float fStepDuration;
@@ -348,7 +356,7 @@ struct ABF_DACInfo
    short nLTPUsageOfDAC;
    short nLTPPresynapticPulses;
 
-   long  lDACFilePathIndex;
+   ABFLONG  lDACFilePathIndex;
 
    float fMembTestPreSettlingTimeMS;
    float fMembTestPostSettlingTimeMS;
@@ -374,10 +382,10 @@ struct ABF_EpochInfoPerDAC
    short nEpochType;
    float fEpochInitLevel;
    float fEpochLevelInc;
-   long  lEpochInitDuration;  
-   long  lEpochDurationInc;
-   long  lEpochPulsePeriod;
-   long  lEpochPulseWidth;
+   ABFLONG  lEpochInitDuration;  
+   ABFLONG  lEpochDurationInc;
+   ABFLONG  lEpochPulsePeriod;
+   ABFLONG  lEpochPulseWidth;
 
    char  sUnused[18];      // size = 48 bytes
    
@@ -421,13 +429,13 @@ struct ABF_StatsRegionInfo
    short nStatsSmoothing;
    short nStatsSmoothingEnable;
    short nStatsBaseline;
-   long  lStatsBaselineStart;
-   long  lStatsBaselineEnd;
+   ABFLONG  lStatsBaselineStart;
+   ABFLONG  lStatsBaselineEnd;
 
    // Describes one stats region
-   long  lStatsMeasurements;
-   long  lStatsStart;
-   long  lStatsEnd;
+   ABFLONG  lStatsMeasurements;
+   ABFLONG  lStatsStart;
+   ABFLONG  lStatsEnd;
    short nRiseBottomPercentile;
    short nRiseTopPercentile;
    short nDecayBottomPercentile;
@@ -454,7 +462,7 @@ struct ABF_UserListInfo
    short nULEnable;
    short nULParamToVary;
    short nULRepeat;
-   long  lULParamValueListIndex;
+   ABFLONG  lULParamValueListIndex;
 
    char  sUnused[52];   // size = 64 bytes
    
