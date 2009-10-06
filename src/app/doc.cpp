@@ -778,12 +778,6 @@ void wxStfDoc::Select() {
     }
 
     Focus();
-
-    // Set status of selection button:
-    wxStfParentFrame* parentFrame = GetMainFrame();
-    if (parentFrame) {
-        parentFrame->SetSelectedButton( true );
-    }
 }
 
 void wxStfDoc::Remove() {
@@ -797,12 +791,6 @@ void wxStfDoc::Remove() {
     }
 
     Focus();
-
-    // Set status of selection button:
-    wxStfParentFrame* parentFrame = GetMainFrame();
-    if (parentFrame) {
-        parentFrame->SetSelectedButton( false );
-    }
 
 }
 
@@ -1538,6 +1526,7 @@ void wxStfDoc::Selectsome(wxCommandEvent &WXUNUSED(event)) {
     }
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
     pFrame->SetSelected(GetSelectedSections().size());
+    Focus();
 }
 
 void wxStfDoc::Unselectsome(wxCommandEvent &WXUNUSED(event)) {
@@ -1564,6 +1553,7 @@ void wxStfDoc::Unselectsome(wxCommandEvent &WXUNUSED(event)) {
     }
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
     pFrame->SetSelected(GetSelectedSections().size());
+    Focus();
 }
 
 void wxStfDoc::Selectall(wxCommandEvent& event) {
@@ -1603,6 +1593,23 @@ void wxStfDoc::Focus() {
 	if (pView != NULL && pView->GetGraph() != NULL) {
         pView->GetGraph()->SetFocus();
 	}
+    
+    //control whether trace has selected been selected:
+    bool selected=false;
+    for (c_st_it cit = GetSelectedSections().begin();
+         cit != GetSelectedSections().end() && !selected;
+         ++cit) {
+        if (*cit == GetCurSec()) {
+            selected = true;
+        }
+    }
+
+    // Set status of selection button:
+    wxStfParentFrame* parentFrame = GetMainFrame();
+    if (parentFrame) {
+        parentFrame->SetSelectedButton( selected );
+    }
+
 }
 
 void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {

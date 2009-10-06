@@ -16,11 +16,11 @@ SetCompressor lzma
 !define REG_NAME "Stimfit 0.9"
 !define PRODUCT_PUBLISHER "Christoph Schmidt-Hieber"
 !define PRODUCT_WEB_SITE "http://www.stimfit.org"
-!define STFDIR "C:\Users\cs\stimfit"
-!define MSIDIR "C:\Users\cs\Downloads"
-!define WXWDIR "C:\Users\cs\wxWidgets"
-!define FFTDIR "C:\Users\cs\fftw"
-!define WXPDIR "C:\Users\cs\wxPython\final.build\Python26\Lib\site-packages"
+!define STFDIR "D:\Users\cs\stimfit"
+!define MSIDIR "D:\Users\cs\Downloads"
+!define WXWDIR "D:\Users\cs\wxWidgets"
+!define FFTDIR "D:\Users\cs\fftw"
+!define WXPDIR "D:\Users\cs\wxPython\final.build\Python26\Lib\site-packages"
 !define PRODIR "C:\Program Files"
 !define FULL_WELCOME "This wizard will guide you through the installation \
 of ${REG_NAME} and wxPython. You can optionally \
