@@ -112,6 +112,7 @@ EVT_MENU(wxID_HELP, wxStfParentFrame::OnHelp)
 EVT_MENU(wxID_UPDATE, wxStfParentFrame::OnCheckUpdate)
 EVT_MENU(wxID_ABOUT, wxStfParentFrame::OnAbout)
 
+EVT_TOOL(wxID_TOOL_SELECT,wxStfParentFrame::OnToggleSelect)
 EVT_TOOL(wxID_TOOL_FIRST, wxStfParentFrame::OnToolFirst)
 EVT_TOOL(wxID_TOOL_NEXT, wxStfParentFrame::OnToolNext)
 EVT_TOOL(wxID_TOOL_PREVIOUS, wxStfParentFrame::OnToolPrevious)
@@ -452,13 +453,14 @@ wxAuiToolBar* wxStfParentFrame::CreateCursorTb() {
     cursorToolBar->AddTool( wxID_TOOL_SELECT,
                             wxT("Select"),
                             wxBitmap( acceptbmp ),
-                            wxT("Select this trace (\"S\")"),
-                            wxITEM_NORMAL );
-    cursorToolBar->AddTool( wxID_TOOL_REMOVE,
-                            wxT("Unselect"),
-                            wxBitmap( bin ),
-                            wxT("Unselect this trace (\"R\")"),
-                            wxITEM_NORMAL );
+                            wxT("Select or unselect this trace (\"S\")"),
+                            wxITEM_CHECK );
+    // cursorToolBar->AddTool( wxID_TOOL_REMOVE,
+    //                         wxT("Unselect"),
+    //                         wxBitmap( bin ),
+    //                         wxT("Unselect this trace (\"R\")"),
+    //                         wxITEM_NORMAL );
+    cursorToolBar->AddSeparator();
     cursorToolBar->AddTool( wxID_TOOL_SNAPSHOT,
                             wxT("Snapshot"),
                             wxBitmap(camera),
@@ -916,6 +918,13 @@ void wxStfParentFrame::OnPageSetup(wxCommandEvent& WXUNUSED(event))
 
     (*m_printData) = pageSetupDialog.GetPageSetupDialogData().GetPrintData();
     (*m_pageSetupData) = pageSetupDialog.GetPageSetupDialogData();
+}
+
+void wxStfParentFrame::OnToggleSelect(wxCommandEvent& WXUNUSED(event)) {
+    wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
+    if (pDoc!=NULL) {
+        pDoc->ToggleSelect();
+    }
 }
 
 void wxStfParentFrame::OnToolFirst(wxCommandEvent& WXUNUSED(event)) {
@@ -1489,6 +1498,11 @@ void wxStfParentFrame::SetMouseQual(stf::cursor_type value) {
     if (value==stf::event_cursor)
         m_cursorToolBar->ToggleTool(wxID_TOOL_EVENT,true);
 
+    m_cursorToolBar->Refresh();
+}
+
+void wxStfParentFrame::SetSelectedButton(bool selected) {
+    m_cursorToolBar->ToggleTool(wxID_TOOL_SELECT, selected);
     m_cursorToolBar->Refresh();
 }
 

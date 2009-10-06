@@ -57,8 +57,7 @@ IMPLEMENT_DYNAMIC_CLASS(wxStfDoc, wxDocument)
 
 BEGIN_EVENT_TABLE( wxStfDoc, wxDocument )
 EVT_MENU( wxID_SWAPCHANNELS, wxStfDoc::OnSwapChannels )
-EVT_MENU( wxID_TOOL_SELECT,wxStfDoc::OnSelect)
-EVT_MENU( wxID_TOOL_REMOVE, wxStfDoc::OnRemove)
+// EVT_MENU( wxID_TOOL_REMOVE, wxStfDoc::OnRemove)
 EVT_MENU( wxID_FILEINFO, wxStfDoc::Fileinfo)
 EVT_MENU( wxID_NEWFROMSELECTEDTHIS, wxStfDoc::OnNewfromselectedThisMenu  )
 EVT_MENU( wxID_MYSELECTALL, wxStfDoc::Selectall )
@@ -154,7 +153,7 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
             get().clear();
             return false;
         }
-        wxStfParentFrame* pFrame = (wxStfParentFrame*)(GetDocumentWindow()->GetParent());
+        wxStfParentFrame* pFrame = GetMainFrame();
         if (pFrame == NULL) {
             throw std::runtime_error("pFrame is 0 in wxStfDoc::OnOpenDocument");
         }
@@ -224,7 +223,7 @@ void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const w
         throw e;
     }
 
-    wxStfParentFrame* pFrame = (wxStfParentFrame*)(GetDocumentWindow()->GetParent());
+    wxStfParentFrame* pFrame = GetMainFrame();
     if (pFrame == NULL) {
         throw std::runtime_error("pFrame is 0 in wxStfDoc::SetData");
     }
@@ -699,6 +698,23 @@ bool wxStfDoc::SetSection(std::size_t section){
     }
     CheckBoundaries();
     SetCurSec(section);
+
+    //control whether trace has selected been selected:
+    bool selected=false;
+    for (c_st_it cit = GetSelectedSections().begin();
+         cit != GetSelectedSections().end() && !selected;
+         ++cit) {
+        if (*cit == GetCurSec()) {
+            selected = true;
+        }
+    }
+
+    // Set status of selection button:
+    wxStfParentFrame* parentFrame = GetMainFrame();
+    if (parentFrame) {
+        parentFrame->SetSelectedButton( selected );
+    }
+    
     return true;
 }
 
@@ -715,7 +731,27 @@ void wxStfDoc::OnSwapChannels(wxCommandEvent& WXUNUSED(event)) {
     }
 }
 
-void wxStfDoc::OnSelect(wxCommandEvent& WXUNUSED(event)) {
+void wxStfDoc::ToggleSelect() {
+    // get current selection status of this trace:
+
+    bool selected = false;
+    for (c_st_it cit = GetSelectedSections().begin();
+         cit != GetSelectedSections().end() && !selected;
+         ++cit) {
+        if (*cit == GetCurSec()) {
+            selected = true;
+        }
+    }
+
+    if (selected) {
+        Remove();
+    } else {
+        Select();
+    }
+
+}
+
+void wxStfDoc::Select() {
     if (GetSelectedSections().size() == get()[GetCurCh()].size()) {
         wxGetApp().ErrorMsg(wxT("No more traces can be selected\nAll traces are selected"));
         return;
@@ -740,10 +776,17 @@ void wxStfDoc::OnSelect(wxCommandEvent& WXUNUSED(event)) {
         wxGetApp().ErrorMsg(wxT("Trace is already selected"));
         return;
     }
+
     Focus();
+
+    // Set status of selection button:
+    wxStfParentFrame* parentFrame = GetMainFrame();
+    if (parentFrame) {
+        parentFrame->SetSelectedButton( true );
+    }
 }
 
-void wxStfDoc::OnRemove(wxCommandEvent& WXUNUSED(event)) {
+void wxStfDoc::Remove() {
     if (UnselectTrace(GetCurSec())) {
         //Message update in the trace navigator
         wxStfChildFrame* pFrame = (wxStfChildFrame*)GetDocumentWindow();
@@ -752,7 +795,15 @@ void wxStfDoc::OnRemove(wxCommandEvent& WXUNUSED(event)) {
     } else {
         wxGetApp().ErrorMsg(wxT("Trace is not selected"));
     }
+
     Focus();
+
+    // Set status of selection button:
+    wxStfParentFrame* parentFrame = GetMainFrame();
+    if (parentFrame) {
+        parentFrame->SetSelectedButton( false );
+    }
+
 }
 
 void wxStfDoc::Concatenate(wxCommandEvent &WXUNUSED(event)) {
@@ -2013,7 +2064,11 @@ void wxStfDoc::Extract( wxCommandEvent& WXUNUSED(event) ) {
 }
 
 void wxStfDoc::EraseEvents( wxCommandEvent& WXUNUSED(event) ) {
-    cur().EraseEvents();
+    if (wxMessageDialog( GetDocumentWindow(), wxT("Do you really want to erase all events?"),
+                         wxT("Erase all events"), wxYES_NO ).ShowModal()==wxID_YES)
+    {
+        cur().EraseEvents();
+    }
 }
 
 void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {

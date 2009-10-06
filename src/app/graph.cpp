@@ -1543,14 +1543,12 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
      }
      case 83: // Invalidate();//s
      case 115: {
-         wxCommandEvent wce;
-         Doc()->OnSelect(wce);
+         Doc()->Select();
          return;
      }
      case 82: // Invalidate();//r
      case 114: {
-         wxCommandEvent wce;
-         Doc()->OnRemove(wce);
+         Doc()->Remove();
          return;
      }
     }

@@ -97,6 +97,11 @@ public:
      */
     void SetMouseQual(stf::cursor_type value);
 
+    //! Sets status of the toolbar's selection button.
+    /*! \param selected The desired toggle status of the selection button.
+     */
+    void SetSelectedButton(bool selected);
+
     //! Retrieve which channels will be affected by scaling operations
     /*! \return The channels affected by scaling operations.
      */
@@ -156,6 +161,7 @@ private:
     void OnHelp(wxCommandEvent& event);
     void OnCheckUpdate(wxCommandEvent& event);
     
+    void OnToggleSelect(wxCommandEvent& event);
     void OnToolFirst(wxCommandEvent& event);
     void OnToolNext(wxCommandEvent& event);
     void OnToolPrevious(wxCommandEvent& event);

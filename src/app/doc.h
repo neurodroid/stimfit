@@ -197,15 +197,14 @@ public:
      */
     void Userdef(std::size_t id);
 
+    //! Toggles the selection status of the current section
+    void ToggleSelect( );
+
     //! Selects the current section if previously unselected
-    /*! \param event The menu event that made the call.
-     */
-    void OnSelect(wxCommandEvent& event);
+    void Select();
 
     //! Unselects the current section if previously selected
-    /*! \param event The menu event that made the call.
-     */
-    void OnRemove(wxCommandEvent& event);
+    void Remove();
 
     //! Creates a new document from the checked events
     /*! \param event The menu event that made the call.
