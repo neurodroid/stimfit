@@ -133,6 +133,7 @@ void wxStfView::OnActivateView(bool activate, wxView *activeView, wxView *deacti
 
         // Update menu checks:
         Doc()->UpdateMenuCheckmarks();
+        Doc()->UpdateSelectedButton();
         frame->SetSingleChannel(Doc()->size()<2);
         if (graph)
             graph->SetFocus();

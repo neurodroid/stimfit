@@ -185,6 +185,9 @@ public:
      */
     void Deleteselected(wxCommandEvent& event);
 
+    //! Updates the status of the selection button
+    void UpdateSelectedButton();
+
     //! Creates an average trace from the selected sections
     /*! \param calcSD Set to true if the standard deviation should be calculated as well, false otherwise
      *  \param align Set to true if traces should be aligned to the point of steepest rise of the inactive channel,

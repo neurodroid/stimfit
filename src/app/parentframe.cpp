@@ -453,7 +453,7 @@ wxAuiToolBar* wxStfParentFrame::CreateCursorTb() {
     cursorToolBar->AddTool( wxID_TOOL_SELECT,
                             wxT("Select"),
                             wxBitmap( acceptbmp ),
-                            wxT("Select or unselect this trace (\"S\")"),
+                            wxT("Select or unselect this trace (\"S\" / \"R\")"),
                             wxITEM_CHECK );
     // cursorToolBar->AddTool( wxID_TOOL_REMOVE,
     //                         wxT("Unselect"),

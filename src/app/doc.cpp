@@ -443,6 +443,7 @@ void wxStfDoc::PostInit() {
     }
     wxGetApp().OnPeakcalcexecMsg();
     pFrame->SetCurTrace(0);
+    UpdateSelectedButton();
 }
 
 //Dialog box to select channel to be displayed
@@ -698,23 +699,8 @@ bool wxStfDoc::SetSection(std::size_t section){
     }
     CheckBoundaries();
     SetCurSec(section);
+    UpdateSelectedButton();
 
-    //control whether trace has selected been selected:
-    bool selected=false;
-    for (c_st_it cit = GetSelectedSections().begin();
-         cit != GetSelectedSections().end() && !selected;
-         ++cit) {
-        if (*cit == GetCurSec()) {
-            selected = true;
-        }
-    }
-
-    // Set status of selection button:
-    wxStfParentFrame* parentFrame = GetMainFrame();
-    if (parentFrame) {
-        parentFrame->SetSelectedButton( selected );
-    }
-    
     return true;
 }
 
@@ -1590,10 +1576,14 @@ void wxStfDoc::Deleteselected(wxCommandEvent &WXUNUSED(event)) {
 void wxStfDoc::Focus() {
     // refresh the view once we are through:
     wxStfView* pView=(wxStfView*)GetFirstView();
-	if (pView != NULL && pView->GetGraph() != NULL) {
+    if (pView != NULL && pView->GetGraph() != NULL) {
         pView->GetGraph()->SetFocus();
-	}
+    }
     
+    UpdateSelectedButton();
+}
+
+void wxStfDoc::UpdateSelectedButton() {
     //control whether trace has selected been selected:
     bool selected=false;
     for (c_st_it cit = GetSelectedSections().begin();
