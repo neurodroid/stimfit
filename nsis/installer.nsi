@@ -21,7 +21,7 @@ SetCompressor lzma
 !define WXWDIR "D:\Users\cs\wxWidgets"
 !define FFTDIR "D:\Users\cs\fftw"
 !define WXPDIR "D:\Users\cs\wxPython\final.build\Python26\Lib\site-packages"
-!define PRODIR "C:\Program Files"
+!define PRODIR "C:\Programme"
 !define FULL_WELCOME "This wizard will guide you through the installation \
 of ${REG_NAME} and wxPython. You can optionally \
 install Python 2.6.2 and NumPy 1.3.0 \
