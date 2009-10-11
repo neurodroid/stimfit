@@ -65,6 +65,12 @@ case `uname` in
         AC_MSG_RESULT(darwin)
         STF_PYTHON_LIBNAME="libstf.0.dylib"
         STFKERNEL="darwin"
+	ARCH_FLAGS="-isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5"
+        CFLAGS="${CFLAGS} ${ARCH_FLAGS}"
+        CXXFLAGS="${CXXFLAGS} ${ARCH_FLAGS}"
+        LDFLAGS="${LDFLAGS} ${ARCH_FLAGS}"
+        OBJCFLAGS="${OBJCFLAGS} ${ARCH_FLAGS}"
+        OBJCXXFLAGS="${OBJCXXFLAGS} ${ARCH_FLAGS}"
     ;;
     Linux)
         AC_MSG_RESULT(linux)

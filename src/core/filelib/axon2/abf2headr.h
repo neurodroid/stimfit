@@ -15,16 +15,7 @@
 #ifndef INC_ABFHEADR2_H
 #define INC_ABFHEADR2_H
 
-#include <limits.h>
-
-#if ( __WORDSIZE == 64 )
-    #define ABFLONG int
-#else
-    #define ABFLONG long
-#endif
-
-#include "abffio.h"
-//#include "\AxonDev\Comp\AxABFFIO32\ABFHeadr.h"
+#include "../axon/AxAbfFio32/AxAbffio32.h"
 
 #ifdef __cplusplus
 extern "C" {

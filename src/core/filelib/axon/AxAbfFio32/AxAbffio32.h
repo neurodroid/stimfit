@@ -13,5 +13,12 @@
 #define INC_AXABFFIO32_H
 
 // __declspec(dllexport) retired for DLLs given to 3rd parties because of the name mangling on exports.
+#include <limits.h>
+
+#if ( __WORDSIZE == 64 ) || defined (__APPLE__)
+    #define ABFLONG int
+#else
+    #define ABFLONG long
+#endif
 
 #endif   /* INC_AXABFFIO32_H */

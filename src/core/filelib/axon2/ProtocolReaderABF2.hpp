@@ -12,15 +12,9 @@
 #include "abf2headr.h"
 #include "SimpleStringCache.hpp"
 #include "ProtocolStructs.h"            // Struct definitions for actual file contents
+#include "../axon/AxAbfFio32/AxAbffio32.h"
 #include "../axon/AxAbfFio32/filedesc.hpp"
 #include <boost/shared_ptr.hpp>
-#include <limits.h>
-
-#if ( __WORDSIZE == 64 )
-    #define ABFLONG int
-#else
-    #define ABFLONG long
-#endif
 
 //===============================================================================================
 class CABF2ProtocolReader

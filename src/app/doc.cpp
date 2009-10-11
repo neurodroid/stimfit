@@ -112,12 +112,17 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
         wxGetApp().ErrorMsg( msg );
         return false;
     }
-	// Store directory: 
-	wxFileName wxfFilename( filename );
-	wxGetApp().wxWriteProfileString( wxT("Settings"), wxT("Last directory"), wxfFilename.GetPath() );
+    // Store directory: 
+    wxFileName wxfFilename( filename );
+    wxGetApp().wxWriteProfileString( wxT("Settings"), wxT("Last directory"), wxfFilename.GetPath() );
     if (wxDocument::OnOpenDocument(filename)) { //calls base class function
         // Detect type of file according to filter:
+#ifndef __APPLE__        
         wxString filter(GetDocumentTemplate()->GetFileFilter());
+#else
+        wxString filter = wxT("*.");
+        filter << wxfFilename.GetExt();
+#endif
         stf::filetype type = stf::findType(filter);
         if (type==stf::ascii) {
             if (!wxGetApp().get_directTxtImport()) {

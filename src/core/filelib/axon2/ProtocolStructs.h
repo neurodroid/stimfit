@@ -16,14 +16,9 @@
 #define INC_PROTOCOLSTRUCTS_HPP
 
 #include "../axon/Common/axodebug.h"
-#include <iostream>
-#include <limits.h>
+#include "../axon/AxAbfFio32/AxAbffio32.h"
 
-#if ( __WORDSIZE == 64 )
-    #define ABFLONG int
-#else
-    #define ABFLONG long
-#endif
+#include <iostream>
 
 #pragma once
 #pragma pack(push, 1)

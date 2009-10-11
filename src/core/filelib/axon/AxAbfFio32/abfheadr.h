@@ -53,13 +53,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <limits.h>
-
-#if ( __WORDSIZE == 64 )
-    #define ABFLONG int
-#else
-    #define ABFLONG long
-#endif
 
 #include "AxAbffio32.h"
 

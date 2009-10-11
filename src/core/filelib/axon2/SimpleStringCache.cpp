@@ -142,8 +142,9 @@ LPCSTR CSimpleStringCache::Get(UINT uIndex) const
       LPCSTR pszText = m_Cache[uIndex];
       return pszText;
    }
-
+#ifndef __APPLE__
    std::cerr << "Bad index passed to CSimpleStringCache (" << uIndex << ")";
+#endif
    return NULL;
 }
 
