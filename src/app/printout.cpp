@@ -128,10 +128,11 @@ void wxStfPrintout::DrawPageOne()
     if (!store_noGimmicks) {
         PrintHeader(GetDC(),hScale);
     }
+#ifndef __APPLE__
     // create a font that looks similar to the screen font:
     wxFont font( (int)(6.0 * (double)x/72.0), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
     GetDC()->SetFont(font);
-
+#endif
     OffsetLogicalOrigin(xoff, (int)(yoff+headerSizeY));
     wxGetApp().GetActiveView()->GetGraph()->OnDraw(*GetDC());
     wxGetApp().GetActiveView()->GetGraph()->set_isPrinted(false);
@@ -148,10 +149,11 @@ void wxStfPrintout::PrintHeader(wxDC* pDC, double scale) {
 #endif
     int xstart=0;
     int ystart=0;
+#ifndef __APPLE__
     // create a font that looks similar to the screen font:
     wxFont font( fontScale, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD );
     GetDC()->SetFont(font);
-
+#endif
     // File name and section number:
     wxString description;
     description << Doc()->GetFilename()
@@ -161,8 +163,10 @@ void wxStfPrintout::PrintHeader(wxDC* pDC, double scale) {
 
     // Results:
     stf::Table table(Doc()->CurResultsTable());
+#ifndef __APPLE__
     font.SetWeight(wxFONTWEIGHT_NORMAL);
     pDC->SetFont(font);
+#endif
     int xpos=xstart;
     for (std::size_t nRow=0;nRow<1;/*table.nRows()*/++nRow) {
         // row label:

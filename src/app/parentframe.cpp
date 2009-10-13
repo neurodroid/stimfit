@@ -284,11 +284,13 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     } else {
         bool show = wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewShell"), 1);
         m_mgr.AddPane( pPython, wxAuiPaneInfo().Name(wxT("pythonShell")).
-                       CloseButton(true).Show(show).
-#ifndef __WXMAC__
-                       Caption(wxT("Python Shell")).Dockable(true).Bottom().BestSize(GetClientSize().GetWidth(),GetClientSize().GetHeight()/5) );
+#ifndef __APPLE__
+                       CloseButton(true).
+                       Show(show).Caption(wxT("Python Shell")).Dockable(true).Bottom().
+                       BestSize(GetClientSize().GetWidth(),GetClientSize().GetHeight()/5) );
 #else
-                       CenterPane().Floatable(false).CaptionVisible(false).MinSize(GetClientSize().GetWidth(),GetClientSize().GetHeight()) );
+                       CenterPane().Floatable(false).CaptionVisible(false).
+                       BestSize(GetClientSize().GetWidth(),GetClientSize().GetHeight()).Fixed() );
 #endif
     }
 
@@ -619,7 +621,7 @@ void wxStfParentFrame::CheckUpdate( wxProgressDialog* progDlg ) const {
     wxString address(wxT("/latest_linux"));
 #elif defined (_WINDOWS)
     wxString address(wxT("/latest_windows"));
-#elif defined (__WXMAC__)
+#elif defined (__APPLE__)
     wxString address(wxT("/latest_mac"));
 #else
     return;
@@ -832,7 +834,7 @@ wxStfGraph *wxStfParentFrame::CreateGraph(wxView *view, wxStfChildFrame *parent)
     wxStfGraph *graph = new wxStfGraph(
         view,
         parent,
-#ifndef __WXMAC__
+#ifndef __APPLE__
         wxPoint(0, 0),
 #else
         wxDefaultPosition,
@@ -1146,7 +1148,7 @@ void wxStfParentFrame::OnHires(wxCommandEvent& WXUNUSED(event)) {
     if (pView!=NULL) {
         if (GetActiveChild()->GetMenuBar()->GetMenu(2)->IsChecked(wxID_HIRES)) {
             wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("ViewHiRes"),1);
-#ifndef __WXMAC__
+#ifndef __APPLE__
             wxGetApp().set_isHires(true);
 #else
             wxGetApp().set_isHires(false);
@@ -1285,11 +1287,8 @@ void wxStfParentFrame::OnLStartPeak(wxCommandEvent& WXUNUSED(event)) {
         // Check manual mode:
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_MANUAL,true);
         }
-        */		wxGetApp().wxWriteProfileInt(
-        wxT("Settings"),
-        wxT("LatencyStartMode"),
-        pDoc->GetLatencyStartMode()
-        );
+        */
+        wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyStartMode"), pDoc->GetLatencyStartMode() );
         pView->GetGraph()->Refresh();
     }
 }

@@ -24,14 +24,16 @@ typedef HANDLE FILEHANDLE;
 #define INVALID_HANDLE_VALUE ((HANDLE)0xFFFFFFFF)
 #endif
 
+#include "../AxAbfFio32/AxAbffio32.h"
+    
 #include <stdio.h>
 //
 // Commonly used typedefs & constants from windows.h.
 //
 typedef unsigned char  BYTE;
 typedef unsigned short WORD;
-typedef unsigned long  DWORD;
-typedef unsigned long *LPDWORD;
+typedef unsigned ABFLONG  DWORD;
+typedef unsigned ABFLONG *LPDWORD;
 typedef unsigned int   UINT;
 typedef int            INT;
 typedef int            BOOL;

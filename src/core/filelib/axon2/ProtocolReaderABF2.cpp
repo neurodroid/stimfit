@@ -86,7 +86,7 @@ static BOOL RemoveExtraChannels( ABF2FileHeader *pFH, UINT uFlags )
         bFudge = true;
     else
     {
-        long lActualSamplesPerEpisode = pFH->lActualAcqLength / pFH->lActualEpisodes;
+        ABFLONG lActualSamplesPerEpisode = pFH->lActualAcqLength / pFH->lActualEpisodes;
         if( lActualSamplesPerEpisode != pFH->lNumSamplesPerEpisode )
             bFudge = true;
     }

@@ -1863,6 +1863,7 @@ stimfit.app: stimfit
 	mkdir -p stimfit.app/Contents
 	mkdir -p stimfit.app/Contents/MacOS
 	mkdir -p stimfit.app/Contents/Resources
+	mkdir -p stimfit.app/Contents/Resources/English.lproj
 
 	echo $(top_srcdir)/stimfit.plist.in >stimfit.app/Contents/Info.plist
 

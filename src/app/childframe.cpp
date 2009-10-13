@@ -103,8 +103,10 @@ wxStfGrid* wxStfChildFrame::CreateTable() {
     wxStfGrid* ctrl = new wxStfGrid( this, wxID_ANY,
                                      wxDefaultPosition, wxDefaultSize,
                                      wxVSCROLL | wxHSCROLL );
-    wxFont font( 8, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
+#ifndef __APPLE__
+    wxFont font( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
     ctrl->SetDefaultCellFont(font);
+#endif
     ctrl->SetDefaultColSize(108);
     ctrl->SetColLabelSize(20);
     ctrl->SetDefaultCellAlignment(wxALIGN_RIGHT,wxALIGN_CENTRE);

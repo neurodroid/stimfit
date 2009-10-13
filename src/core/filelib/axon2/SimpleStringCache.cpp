@@ -41,7 +41,7 @@ struct SimpleStringCacheHeader
    DWORD dwVersion;
    UINT  uNumStrings;
    UINT  uMaxSize;
-   long  lTotalBytes;
+   ABFLONG  lTotalBytes;
    UINT  uUnused[6];
 
    SimpleStringCacheHeader()
@@ -219,7 +219,7 @@ BOOL CSimpleStringCache::Write(HANDLE hFile, UINT &uOffset) const
    LONGLONG lSavePos = 0;
    File.GetCurrentPosition(&lSavePos);
 
-   Header.lTotalBytes = long( lSavePos - lPostHeaderPos );
+   Header.lTotalBytes = ABFLONG( lSavePos - lPostHeaderPos );
    Header.uNumStrings = m_Cache.size();
    File.Seek(lHeaderPos);
    File.Write(&Header, sizeof(Header));
@@ -253,7 +253,7 @@ BOOL CSimpleStringCache::Read(HANDLE hFile, UINT uOffset)
 
    if ((Header.dwSignature != c_dwSIGNATURE) || (Header.dwVersion != c_dwCURRENT_VERSION))
       return false;
-
+   
    m_uMaxSize = Header.uMaxSize;
 
    // Read everything into a buffer.

@@ -47,7 +47,7 @@ struct ABF_Section
    long long llNumEntries;           // number of entries in this section
 
    ABF_Section();
-   long GetNumEntries();
+   ABFLONG GetNumEntries();
    void Set( const UINT p_uBlockIndex, const UINT p_uBytes, const long long p_llNumEntries );
 
 };
@@ -68,7 +68,7 @@ inline void ABF_Section::Set( const UINT p_uBlockIndex, const UINT p_uBytes, con
    }
 }
 
-inline long ABF_Section::GetNumEntries()
+inline ABFLONG ABF_Section::GetNumEntries()
 {
    // If this assert goes off, then files longer than 2 gigasamples need to be handled.
    if( llNumEntries > LONG_MAX )
@@ -77,7 +77,7 @@ inline long ABF_Section::GetNumEntries()
                  << "megasamples which exceeds current limit (" << (int)(LONG_MAX / 1000000L) << ").";
    }
 
-   return long(llNumEntries);
+   return ABFLONG(llNumEntries);
 }
 
 #define ABF2_FILESIGNATURE   0x32464241      // PC="ABF2", MAC="2FBA"

@@ -1642,6 +1642,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         SPYW()=0;
     if (fabs(YZ())>1e15)
         YZW()=1.0;
+#ifndef __APPLE__
     if (!isPrinted) {
         wxFont font(
                 (int)(8*printScale),
@@ -1651,7 +1652,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         );
         pDC->SetFont(font);
     }
-
+#endif
     //Copy main window coordinates to 'WindowRect'
     wxRect WindowRect(GetRect());
     if (isPrinted)
