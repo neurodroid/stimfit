@@ -149,10 +149,10 @@ stimfit.app: stimfit
 	mkdir -p stimfit.app/Contents/Resources/English.lproj
 	
 	
-	echo $(top_srcdir)/stimfit.plist.in >stimfit.app/Contents/Info.plist
+	cp $(top_srcdir)/stimfit.plist.in stimfit.app/Contents/Info.plist
 	
 	
-	echo -n "APPL????" >stimfit.app/Contents/PkgInfo
+	echo "APPL????\c" > stimfit.app/Contents/PkgInfo
 	
 	rm -f stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
 	cp -p -f .libs/stimfit$(EXEEXT) stimfit.app/Contents/MacOS/stimfit$(EXEEXT)

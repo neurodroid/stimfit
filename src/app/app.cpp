@@ -759,6 +759,10 @@ wxStfDoc* wxStfApp::NewChild(
 }
 
 wxStfView* wxStfApp::GetActiveView() const {
+    if ( GetDocManager() == 0) {
+        ErrorMsg( wxT("Couldn't access the document manager"));
+        return NULL;
+    }
     return (wxStfView*)GetDocManager()->GetCurrentView();
 }
 

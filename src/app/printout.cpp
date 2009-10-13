@@ -37,6 +37,21 @@ wxStfPrintout::wxStfPrintout(const wxChar *title) :
 wxPrintout(title) ,
 store_noGimmicks(false)
 {
+    wxStfDoc* pDoc = wxGetApp().GetActiveDoc();
+    if (!pDoc) {
+        wxGetApp().ErrorMsg(wxT("Null pointer (pDoc) in wxStfPrintout::wxStfPrintout()\nAborting printing"));
+        return;
+    }
+    wxStfView* pView = (wxStfView*)pDoc->GetFirstView();
+    if (!pView) {
+        wxGetApp().ErrorMsg(wxT("Null pointer (pView) in wxStfPrintout::wxStfPrintout()\nAborting printing"));
+        return;
+    }
+    wxStfGraph* pGraph = pView->GetGraph();
+    if (!pGraph) {
+        wxGetApp().ErrorMsg(wxT("Null pointer (pGraph) in wxStfPrintout::wxStfPrintout()\nAborting printing"));
+        return;
+    }
     store_noGimmicks=wxGetApp().GetActiveView()->GetGraph()->get_noGimmicks();
 }
 
@@ -79,7 +94,22 @@ void wxStfPrintout::DrawPageOne()
     int x,y;
     GetPPIPrinter(&x,&y);
     // Get size of Graph, in pixels:
-    wxRect screenRect(wxGetApp().GetActiveView()->GetGraph()->GetRect());
+    wxStfDoc* pDoc = wxGetApp().GetActiveDoc();
+    if (!pDoc) {
+        wxGetApp().ErrorMsg(wxT("Null pointer (pDoc) in wxStfPrintout::DrawPageOne()\nAborting printing"));
+        return;
+    }
+    wxStfView* pView = (wxStfView*)pDoc->GetFirstView();
+    if (!pView) {
+        wxGetApp().ErrorMsg(wxT("Null pointer (pView) in wxStfPrintout::DrawPageOne()\nAborting printing"));
+        return;
+    }
+    wxStfGraph* pGraph = pView->GetGraph();
+    if (!pGraph) {
+        wxGetApp().ErrorMsg(wxT("Null pointer (pGraph) in wxStfPrintout::DrawPageOne()\nAborting printing"));
+        return;
+    }
+    wxRect screenRect(pGraph->GetRect());
     // Get size of page, in pixels:
     wxRect printRect=GetLogicalPageMarginsRect(*(frame->GetPageSetup()));
 
@@ -90,7 +120,7 @@ void wxStfPrintout::DrawPageOne()
     if (!store_noGimmicks) {
         headerSizeY=30.0*hScale;
     } else {
-        wxGetApp().GetActiveView()->GetGraph()->set_noGimmicks(true);
+        pGraph->set_noGimmicks(true);
     }
 
     // Fit to width or fit to height?
@@ -119,23 +149,23 @@ void wxStfPrintout::DrawPageOne()
     xoff = 0;
 #endif
 
-    wxGetApp().GetActiveView()->GetGraph()->set_isPrinted(true);
+    pGraph->set_isPrinted(true);
 
-    wxGetApp().GetActiveView()->GetGraph()->set_printScale(scale);
+    pGraph->set_printScale(scale);
     // construct a rectangle with the same proportion as the graph on screen:
-    wxGetApp().GetActiveView()->GetGraph()->set_printRect(propPrintRect);
+    pGraph->set_printRect(propPrintRect);
 
     if (!store_noGimmicks) {
         PrintHeader(GetDC(),hScale);
     }
-#ifndef __APPLE__
+
     // create a font that looks similar to the screen font:
     wxFont font( (int)(6.0 * (double)x/72.0), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
     GetDC()->SetFont(font);
-#endif
+
     OffsetLogicalOrigin(xoff, (int)(yoff+headerSizeY));
-    wxGetApp().GetActiveView()->GetGraph()->OnDraw(*GetDC());
-    wxGetApp().GetActiveView()->GetGraph()->set_isPrinted(false);
+    pGraph->OnDraw(*GetDC());
+    pGraph->set_isPrinted(false);
 }
 
 void wxStfPrintout::PrintHeader(wxDC* pDC, double scale) {
@@ -149,11 +179,11 @@ void wxStfPrintout::PrintHeader(wxDC* pDC, double scale) {
 #endif
     int xstart=0;
     int ystart=0;
-#ifndef __APPLE__
+
     // create a font that looks similar to the screen font:
     wxFont font( fontScale, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD );
     GetDC()->SetFont(font);
-#endif
+
     // File name and section number:
     wxString description;
     description << Doc()->GetFilename()
@@ -163,10 +193,10 @@ void wxStfPrintout::PrintHeader(wxDC* pDC, double scale) {
 
     // Results:
     stf::Table table(Doc()->CurResultsTable());
-#ifndef __APPLE__
+
     font.SetWeight(wxFONTWEIGHT_NORMAL);
     pDC->SetFont(font);
-#endif
+
     int xpos=xstart;
     for (std::size_t nRow=0;nRow<1;/*table.nRows()*/++nRow) {
         // row label:

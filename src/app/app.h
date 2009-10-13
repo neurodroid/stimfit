@@ -151,6 +151,12 @@ enum {
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/config.h"
+#include "wx/settings.h"
+
+#ifdef __WXMAC__
+#undef wxFontDialog
+#include "wx/osx/fontdlg.h"
+#endif
 
 #include "./../core/stimdefs.h"
 #ifdef WITH_PYTHON

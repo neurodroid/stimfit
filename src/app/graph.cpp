@@ -209,7 +209,7 @@ void wxStfGraph::OnDraw( wxDC& DC )
 
         if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewHiRes"),1)) {
             pFrame->GetMenuBar()->GetMenu(2)->Check(wxID_HIRES,true);
-#ifndef __WXMAC__
+#ifndef __APPLE__
             wxGetApp().set_isHires(true);
 #else
             wxGetApp().set_isHires(false);
@@ -1642,7 +1642,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         SPYW()=0;
     if (fabs(YZ())>1e15)
         YZW()=1.0;
-#ifndef __APPLE__
+
     if (!isPrinted) {
         wxFont font(
                 (int)(8*printScale),
@@ -1652,7 +1652,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         );
         pDC->SetFont(font);
     }
-#endif
+
     //Copy main window coordinates to 'WindowRect'
     wxRect WindowRect(GetRect());
     if (isPrinted)
@@ -2338,7 +2338,7 @@ void wxStfGraph::set_isPrinted(bool value) {
         printScale=1.0;
         no_gimmicks=false;
     } else {
-#if defined __WXGTK__ || defined __WXMAC__
+#if defined __WXGTK__ || defined __APPLE__
         printScale=0.25;
 #endif        
         // store zoom settings upon switching from normal to print view:
