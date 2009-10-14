@@ -143,9 +143,9 @@ void wxStfPrintout::DrawPageOne()
 
     wxCoord xoff =(printRect.width - maxX) / 2.0;
     wxCoord yoff =(printRect.height - maxY) / 2.0;
-#if __WXGTK__
-    xoff += printRect.x;
-    OffsetLogicalOrigin(xoff, -printRect.height);
+#ifdef __WXGTK__
+    xoff = -printRect.width*0.8;
+    OffsetLogicalOrigin(xoff, 0);
     xoff = 0;
 #endif
 
