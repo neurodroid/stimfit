@@ -144,7 +144,10 @@ enum {
     wxID_EVENT_ERASE,
     wxCOMBOTRACES,
     wxCOMBOACTCHANNEL,
-    wxCOMBOINACTCHANNEL
+    wxCOMBOINACTCHANNEL,
+#ifdef WITH_PYTHON
+    wxID_IMPORTPYTHON
+#endif
 };
 
 #include "wx/mdi.h"
@@ -421,6 +424,8 @@ public:
     
     virtual void OnInitCmdLine(wxCmdLineParser& parser);
     virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
+
+    void OnPythonImport(const wxString& pythonpath);
 
    
 protected:

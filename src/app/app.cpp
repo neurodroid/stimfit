@@ -694,6 +694,14 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
                           wxT("&Batch analysis..."),
                           wxT("Analyze selected traces and show results in a table")
                           );
+#ifdef WITH_PYTHON
+    analysis_menu->Append(
+                          wxID_IMPORTPYTHON,
+                          wxT("&Import module...\tCtrl-I"),
+                          wxT("Import user-defined Python modules")
+                          );
+#endif
+
 #if 0
     wxMenu* userdefSub=new wxMenu;
     for (std::size_t n=0;n<GetPluginLib().size();++n) {

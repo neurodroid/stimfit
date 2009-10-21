@@ -84,6 +84,7 @@ EVT_MENU( wxID_VIEWTABLE, wxStfDoc::Viewtable)
 EVT_MENU( wxID_EVENT_EXTRACT, wxStfDoc::Extract )
 EVT_MENU( wxID_EVENT_ERASE, wxStfDoc::EraseEvents )
 EVT_MENU( wxID_EVENT_ADDEVENT, wxStfDoc::AddEvent )
+EVT_MENU( wxID_IMPORTPYTHON, wxStfDoc::OnLoadPythonModule )
 END_EVENT_TABLE()
 
 static const int baseline=100;
@@ -2165,6 +2166,34 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
         pChild->ShowTable(events,wxT("Extracted events"));
     }
 }
+
+void wxStfDoc::OnLoadPythonModule(wxCommandEvent& WXUNUSED(event)) {
+    // show a File Dialog menu.
+    wxString pyFilter; // file filter only show *.py
+    pyFilter = wxT("Python file (*.py)|*.py|");
+    wxFileDialog LoadModuleDialog (GetDocumentWindow(),
+                wxT("Import Python module"),
+                wxT(""),
+                wxT(""),
+                pyFilter,
+                wxFD_OPEN | wxFD_OVERWRITE_PROMPT | wxFD_PREVIEW );
+
+    if (LoadModuleDialog.ShowModal() == wxID_OK) {
+        wxString modulename = LoadModuleDialog.GetPath();
+
+        wxGetApp().OnPythonImport(modulename); // see src/app/unopt.cpp
+
+        #ifdef _STFDEBUG
+        std::cout << "[DEBUG]: File Selection: "
+        << std::string( modulename.char_str() ) << std::endl;
+        #endif // _STFDEBUG
+    }
+
+    else {
+        return;
+    }
+}
+
 
 void wxStfDoc::Userdef(std::size_t id) {
     wxBusyCursor wc;

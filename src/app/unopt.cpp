@@ -193,7 +193,37 @@ bool wxStfApp::Init_wxPython()
     return true;
 }
 
+void wxStfApp::OnPythonImport(const wxString &pythonpath) {
+    
+    // Get path and filename from pythonpath
+    wxString py_path = wxFileName(pythonpath).GetPath();
+    wxString py_file = wxFileName(pythonpath).GetName();
+
+    // Grab the Global Interpreter Lock.
+    wxPyBlock_t blocked = wxPyBeginBlockThreads();
+
+    // Python code to import the module
+    wxString python_import;
+    python_import << _T("import sys\n");
+    python_import << _T("sys.path.append(\"") << py_path << _T("\")\n");
+    python_import << _T("import ") << py_file << _T("\n");
+    python_import << _T("sys.path.remove(\"") << py_path << _T("\")\n");
+    // python_import << _T("sys.path.pop()\n");
+    python_import << _T("del sys\n");
+
+    PyRun_SimpleString(python_import);
+
+    // Release the Global Interpreter Lock
+    wxPyEndBlockThreads(blocked);
+
+    #ifdef _STFDEBUG
+    std::cout << "[DEBUG]: python file: " << py_file << std::endl;
+    std::cout << "[DEBUG]: python path: " << py_path << std::endl;
+    #endif //_STFDEBUG
+}
+
 bool wxStfApp::Exit_wxPython()
+
 {
     wxPyEndAllowThreads(m_mainTState);
     Py_Finalize();
@@ -210,6 +240,7 @@ import sys\n\
 import wx\n\
 output = wx.PyOnDemandOutputWindow()\n\
 sys.stdin = sys.stderr = output\n\
+del sys, wx\n\
 ";
     wxPyBlock_t blocked = wxPyBeginBlockThreads();
     PyRun_SimpleString(python_redirect);
