@@ -700,7 +700,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
                           wxT("&Import module...\tCtrl-I"),
                           wxT("Import user-defined Python modules")
                           );
-#endif
+#endif // WITH_PYTHON
 
 #if 0
     wxMenu* userdefSub=new wxMenu;
@@ -1240,3 +1240,55 @@ wxStfParentFrame *GetMainFrame(void)
 
 
 //  LocalWords:  wxStfView
+
+#ifdef WITH_PYTHON
+void wxStfApp::OnPythonImport(wxCommandEvent& WXUNUSED(event)) {
+
+    // show a file selection dialog menu.
+    wxString pyFilter; // file filter only show *.py
+    pyFilter = wxT("Python file (*.py)|*.py|");
+    wxFileDialog LoadModuleDialog (frame,
+                wxT("Import Python module"),
+                wxT(""),
+                wxT(""),
+                pyFilter,
+                wxFD_OPEN | wxFD_OVERWRITE_PROMPT | wxFD_PREVIEW );
+
+    if (LoadModuleDialog.ShowModal() == wxID_OK) {
+        wxString modulelocation = LoadModuleDialog.GetPath();
+
+        // Get path and filename from modulelocation 
+        wxString python_path = wxFileName(modulelocation).GetPath();
+        wxString python_file = wxFileName(modulelocation).GetName();
+        
+        ImportPythontmp(modulelocation); // see in /src/app/unopt.cpp L196
+        
+        /*
+        // --> Python import code starts here
+        // Grab the Global Interpreter Lock.
+        wxPyBlock_t blocked = wxPyBeginBlockThreads();
+
+        // Python code to import the module starts here
+        wxString python_import;
+        python_import << wxT("import sys\n");
+        python_import << wxT("sys.path.append(\"") << python_path << wxT("\")\n");
+        python_import << wxT("import ") << python_file << wxT("\n");
+        python_import << wxT("sys.path.remove(\"") << python_path << _T("\")\n");
+        python_import << wxT("del sys\n");
+
+        PyRun_SimpleString(python_import);
+
+        // Release the Global Interpreter Lock
+        wxPyEndBlockThreads(blocked);
+
+        // --> Python import code ends here.
+        */
+        
+    }
+
+    else {
+        return;
+    }
+}
+
+#endif // WITH_PYTHON

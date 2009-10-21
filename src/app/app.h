@@ -163,7 +163,8 @@ enum {
 
 #include "./../core/stimdefs.h"
 #ifdef WITH_PYTHON
-#include <Python.h>
+    #include <Python.h>
+    #include <wx/wxPython/wxPython.h>
 #endif
 #include <boost/shared_ptr.hpp>
 
@@ -425,8 +426,7 @@ public:
     virtual void OnInitCmdLine(wxCmdLineParser& parser);
     virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
 
-    void OnPythonImport(const wxString& pythonpath);
-
+    void OnPythonImport( wxCommandEvent& event);
    
 protected:
 
@@ -435,6 +435,10 @@ private:
     void OnNewfromall( wxCommandEvent& event );
     void OnApplytoall( wxCommandEvent& event );
     void OnProcessCustom( wxCommandEvent& event );
+
+#ifdef WITH_PYTHON
+    void ImportPythontmp(const wxString& modulelocation); //temporal!!!
+#endif // WITH_PYTHON
 
 #ifdef _WINDOWS
 #pragma optimize( "", off )

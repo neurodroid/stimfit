@@ -1,6 +1,5 @@
 syntax: glob
 *~
-*.o
 *.obj
 *.ncb
 *.aux
@@ -21,19 +20,22 @@ syntax: glob
 *.log
 *.exe
 *.swp
-*.rst.swp
+
 .DS_Store
 config.status
-config.log
 .deps/*
 .externalToolBuilders/*
 build/*
+
+# doc build
+
 doc/stfbook.ps
 doc/html/*
 doc/latex/*
 doc/doxygen/*
 doc/sphinx/.build/*
 doc/sphinx/.static/*
+
 autom4te.cache/*
 stimfit_VS03/stfswig/Debug
 stimfit_VS03/stfswig/stf\ debug
@@ -44,6 +46,24 @@ stimfit_VS03/stimfit/Release
 stimfit_VS03/stimfit_exe/Debug
 stimfit_VS03/stimfit_exe/stf\ debug
 stimfit_VS03/stimfit_exe/Release
+
+# build files
+
+*.o
+*.a
+*.la
+*.lai
+*.so*
+Makefile
+libtool
+stimfit.plist
+stimfit
+stamp-h1
+
+.libs/
+src/stfswig/.libs/
+
+
 
 syntax: regexp
 .*\#.*\#$
