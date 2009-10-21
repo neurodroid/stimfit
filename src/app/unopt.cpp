@@ -336,40 +336,5 @@ wxWindow* wxStfParentFrame::DoPythonStuff(wxWindow* parent)
     return window;
 }
 
-
-/*void wxStfApp::ImportPythontmp(const wxString& modulelocation) {
-        
-        // Get path and filename from modulelocation 
-        wxString py_path = wxFileName(modulelocation).GetPath();
-        wxString py_file = wxFileName(modulelocation).GetName();
-
-
-        // --> Python import code starts here
-        // Grab the Global Interpreter Lock.
-        wxPyBlock_t blocked = wxPyBeginBlockThreads();
-
-        // Python code to import the module starts here
-        wxString py_import;
-        py_import << wxT("import numpy as np\n");
-        //py_import << wxT("import sys\n");
-        //py_import << wxT("sys.path.append(\"") << py_path << wxT("\")\n");
-        //py_import << wxT("import ") << py_file << wxT("\n");
-        //py_import << wxT("sys.path.remove(\"") << py_path << _T("\")\n");
-        //py_import << wxT("del sys\n");
-
-        PyRun_SimpleString(py_import);
-
-        // Release the Global Interpreter Lock
-        wxPyEndBlockThreads(blocked);
-
-        #ifdef _STFDEBUG
-        std::cout << "[DEBUG]: python file: " << py_file << std::endl;
-        std::cout << "[DEBUG]: python path: " << py_path << std::endl;
-        #endif // _STFDEBUG
-
-        // --> Python import code ends here.
-
-}
-*/
 #endif // WITH_PYTHON
 
