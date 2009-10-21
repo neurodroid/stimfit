@@ -166,7 +166,9 @@ EVT_MENU( WXPRINT_PAGE_SETUP, wxStfParentFrame::OnPageSetup)
 EVT_MENU( wxID_SAVEPERSPECTIVE, wxStfParentFrame::OnSaveperspective )
 EVT_MENU( wxID_LOADPERSPECTIVE, wxStfParentFrame::OnLoadperspective )
 EVT_MENU( wxID_RESTOREPERSPECTIVE, wxStfParentFrame::OnRestoreperspective )
+#ifdef _WITH_PYTHON
 EVT_MENU( wxID_VIEW_SHELL, wxStfParentFrame::OnViewshell )
+#endif
 EVT_MENU( wxID_LATENCYSTART_MAXSLOPE, wxStfParentFrame::OnLStartMaxslope )
 EVT_MENU( wxID_LATENCYSTART_HALFRISE, wxStfParentFrame::OnLStartHalfrise )
 EVT_MENU( wxID_LATENCYSTART_PEAK, wxStfParentFrame::OnLStartPeak )
@@ -309,9 +311,11 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 
 wxStfParentFrame::~wxStfParentFrame() {
     // deinitialize the frame manager
+#ifdef WITH_PYTHON
     // write visiblity of the shell to config:
     bool shell_state = m_mgr.GetPane(wxT("pythonShell")).IsShown();
     wxGetApp().wxWriteProfileInt( wxT("Settings"),wxT("ViewShell"), int(shell_state) );
+#endif
     m_mgr.UnInit();
 }
 
@@ -1205,6 +1209,7 @@ void wxStfParentFrame::OnRestoreperspective(wxCommandEvent& WXUNUSED(event)) {
     }
 }
 
+#ifdef WITH_PYTHON
 void wxStfParentFrame::OnViewshell(wxCommandEvent& WXUNUSED(event)) {
     // Save the current visibility state:
     bool old_state = m_mgr.GetPane(wxT("pythonShell")).IsShown();
@@ -1213,6 +1218,7 @@ void wxStfParentFrame::OnViewshell(wxCommandEvent& WXUNUSED(event)) {
     wxGetApp().wxWriteProfileInt( wxT("Settings"),wxT("ViewShell"), int(!old_state) );
     m_mgr.Update();
 }
+#endif
 
 void wxStfParentFrame::OnLStartMaxslope(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();

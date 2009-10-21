@@ -141,8 +141,11 @@ private:
     wxAuiManager m_mgr;
     wxAuiToolBar *m_cursorToolBar, *m_scaleToolBar;
     wxStfFileDrop* m_drop;
+#ifdef WITH_PYTHON
     wxString python_code2;
-
+    void RedirectStdio();
+    wxWindow* DoPythonStuff(wxWindow* parent);
+#endif
     // print data, to remember settings during the session
     boost::shared_ptr<wxPrintData> m_printData;
 
@@ -155,9 +158,6 @@ private:
     wxAuiToolBar* CreateEditTb();
     wxAuiToolBar* CreateCursorTb();
 
-    void RedirectStdio();
-    wxWindow* DoPythonStuff(wxWindow* parent);
-    
     void OnHelp(wxCommandEvent& event);
     void OnCheckUpdate(wxCommandEvent& event);
     
@@ -218,7 +218,9 @@ private:
     void OnSaveperspective(wxCommandEvent& event);
     void OnLoadperspective(wxCommandEvent& event);
     void OnRestoreperspective(wxCommandEvent& event);
+#ifdef WITH_PYTHON
     void OnViewshell(wxCommandEvent& event);
+#endif
     void OnLStartMaxslope(wxCommandEvent& event);
     void OnLStartHalfrise(wxCommandEvent& event);
     void OnLStartPeak(wxCommandEvent& event);

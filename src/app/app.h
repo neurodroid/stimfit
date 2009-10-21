@@ -376,12 +376,6 @@ public:
      */
     bool OpenFileSeries(const wxArrayString& fNameArray);
 
-    //! Opens a file in a new window, to be called from Python.
-    /*! \param fNameArray An array of file names to be opened.
-     *  \return true upon successful opening, false otherwise.
-     */
-    bool OpenFilePy(const wxString& fNameArray);
-
     //! Returns the number of currently opened documents.
     /*! \return The number of currently opened documents.
      */
@@ -426,8 +420,16 @@ public:
     virtual void OnInitCmdLine(wxCmdLineParser& parser);
     virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
 
+#ifdef WITH_PYTHON
+    //! Opens a file in a new window, to be called from Python.
+    /*! \param fNameArray An array of file names to be opened.
+     *  \return true upon successful opening, false otherwise.
+     */
+    bool OpenFilePy(const wxString& fNameArray);
+    
     void OnPythonImport( wxCommandEvent& event);
-   
+#endif
+    
 protected:
 
 private:
@@ -437,15 +439,14 @@ private:
     void OnProcessCustom( wxCommandEvent& event );
 
 #ifdef WITH_PYTHON
-    void ImportPythontmp(const wxString& modulelocation); //temporal!!!
+    void ImportPython(const wxString& modulelocation);
+    bool Init_wxPython();
+    bool Exit_wxPython();
 #endif // WITH_PYTHON
 
 #ifdef _WINDOWS
 #pragma optimize( "", off )
 #endif
-
-    bool Init_wxPython();
-    bool Exit_wxPython();
 
 #ifdef _WINDOWS
 #pragma optimize( "", on )

@@ -193,14 +193,12 @@ bool wxStfApp::Init_wxPython()
     return true;
 }
 
-void wxStfApp::ImportPythontmp(const wxString &modulelocation) {
+void wxStfApp::ImportPython(const wxString &modulelocation) {
         
     // Get path and filename from modulelocation 
     wxString python_path = wxFileName(modulelocation).GetPath();
     wxString python_file = wxFileName(modulelocation).GetName();
 
-
-    // --> Python import code starts here
     // Grab the Global Interpreter Lock.
     wxPyBlock_t blocked = wxPyBeginBlockThreads();
 
@@ -216,15 +214,6 @@ void wxStfApp::ImportPythontmp(const wxString &modulelocation) {
 
     // Release the Global Interpreter Lock
     wxPyEndBlockThreads(blocked);
-
-    /*
-    #ifdef _STFDEBUG
-    std::cout << "[DEBUG]: python file: " << python_file << std::endl;
-    std::cout << "[DEBUG]: python path: " << python_path << std::endl;
-    #endif // _STFDEBUG
-    */
-
-    // --> Python import code ends here.
 
 }
 

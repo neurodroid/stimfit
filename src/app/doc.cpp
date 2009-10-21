@@ -84,9 +84,6 @@ EVT_MENU( wxID_VIEWTABLE, wxStfDoc::Viewtable)
 EVT_MENU( wxID_EVENT_EXTRACT, wxStfDoc::Extract )
 EVT_MENU( wxID_EVENT_ERASE, wxStfDoc::EraseEvents )
 EVT_MENU( wxID_EVENT_ADDEVENT, wxStfDoc::AddEvent )
-#ifdef WITH_PYTHON
-EVT_MENU( wxID_IMPORTPYTHON, wxStfApp::OnPythonImport)
-#endif // WITH_PYTHON
 END_EVENT_TABLE()
 
 static const int baseline=100;

@@ -89,6 +89,9 @@ EVT_MENU( wxID_CURSORS, wxStfApp::OnCursorSettings )
 EVT_MENU( wxID_NEWFROMSELECTED, wxStfApp::OnNewfromselected )
 EVT_MENU( wxID_NEWFROMALL, wxStfApp::OnNewfromall )
 EVT_MENU( wxID_APPLYTOALL, wxStfApp::OnApplytoall )
+#ifdef WITH_PYTHON
+EVT_MENU( wxID_IMPORTPYTHON, wxStfApp::OnPythonImport)
+#endif // WITH_PYTHON
 END_EVENT_TABLE()
 
 wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isHires(false), txtImport(), funcLib(),
@@ -221,6 +224,14 @@ bool wxStfApp::OnInit(void)
 
     m_file_menu->AppendSeparator();
     m_file_menu->Append(ID_CONVERT, wxT("&Convert file series..."));
+    m_file_menu->AppendSeparator();
+#ifdef WITH_PYTHON
+    m_file_menu->Append(
+                        wxID_IMPORTPYTHON,
+                        wxT("&Import Python module...\tCtrl-I"),
+                        wxT("Import user-defined Python modules")
+                        );
+#endif // WITH_PYTHON
     m_file_menu->AppendSeparator();
     m_file_menu->Append(wxID_EXIT, wxT("E&xit\tAlt-X"));
 
@@ -513,6 +524,15 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     file_menu->Append(WXPRINT_PAGE_SETUP, wxT("Print &Setup..."));
 
     file_menu->AppendSeparator();
+#ifdef WITH_PYTHON
+    file_menu->Append(
+                          wxID_IMPORTPYTHON,
+                          wxT("&Import Python module...\tCtrl-I"),
+                          wxT("Import user-defined Python modules")
+                          );
+#endif // WITH_PYTHON
+
+    file_menu->AppendSeparator();
     file_menu->Append(wxID_EXIT, wxT("E&xit"));
 
     ((wxStfDoc*)doc)->SetFileMenu( file_menu );
@@ -694,13 +714,6 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
                           wxT("&Batch analysis..."),
                           wxT("Analyze selected traces and show results in a table")
                           );
-#ifdef WITH_PYTHON
-    analysis_menu->Append(
-                          wxID_IMPORTPYTHON,
-                          wxT("&Import module...\tCtrl-I"),
-                          wxT("Import user-defined Python modules")
-                          );
-#endif // WITH_PYTHON
 
 #if 0
     wxMenu* userdefSub=new wxMenu;
@@ -1256,34 +1269,7 @@ void wxStfApp::OnPythonImport(wxCommandEvent& WXUNUSED(event)) {
 
     if (LoadModuleDialog.ShowModal() == wxID_OK) {
         wxString modulelocation = LoadModuleDialog.GetPath();
-
-        // Get path and filename from modulelocation 
-        wxString python_path = wxFileName(modulelocation).GetPath();
-        wxString python_file = wxFileName(modulelocation).GetName();
-        
-        ImportPythontmp(modulelocation); // see in /src/app/unopt.cpp L196
-        
-        /*
-        // --> Python import code starts here
-        // Grab the Global Interpreter Lock.
-        wxPyBlock_t blocked = wxPyBeginBlockThreads();
-
-        // Python code to import the module starts here
-        wxString python_import;
-        python_import << wxT("import sys\n");
-        python_import << wxT("sys.path.append(\"") << python_path << wxT("\")\n");
-        python_import << wxT("import ") << python_file << wxT("\n");
-        python_import << wxT("sys.path.remove(\"") << python_path << _T("\")\n");
-        python_import << wxT("del sys\n");
-
-        PyRun_SimpleString(python_import);
-
-        // Release the Global Interpreter Lock
-        wxPyEndBlockThreads(blocked);
-
-        // --> Python import code ends here.
-        */
-        
+        ImportPython(modulelocation); // see in /src/app/unopt.cpp L196
     }
 
     else {
