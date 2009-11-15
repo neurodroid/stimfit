@@ -687,7 +687,7 @@ double get_threshold_time( bool is_time = false );
 %feature("autodoc", 0) get_threshold_value;
 %feature("docstring", "Returns the value found at the threshold 
 slope. Note that this value is not updated after changing the AP 
-threshold. Call measure or hit enter to update the cursors.
+threshold. Call measure or hit enter to update the threshold.
 ") get_threshold_value;
 double get_threshold_value( );
 //--------------------------------------------------------------------
