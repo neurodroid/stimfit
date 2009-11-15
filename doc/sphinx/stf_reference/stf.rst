@@ -307,7 +307,27 @@ The :mod:`stf` module defines the following functions:
         **Returns:**
 
         the name of the trace with the specified index.
-    
+
+.. function:: get_threshold_time(is_time=False) 
+
+    Returns the crossing value of the threshold slope. Note that this value is not update after changing the AP threshold. Call :func:`measure()` or hit enter in the main window to update the cursors.
+        
+        **Arguments:**
+        
+        *is_time* -- If false (default), returns the zero-based index at which the threshold slope is crossed. If True, returns the time at which the threshold slope is crossed (e.g. in units of the y-axis). A negative number is returned upon failure.
+        
+        **Returns:**
+
+        False upon failure (such as out-of-range).
+
+.. function:: get_threshold_value() 
+
+    Returns value found at the threshold slope. Note that this value is not update after changing the AP threshold. Calle :func:`measure()` or hit enter in the main window to update the cursors.
+        
+        **Returns:**
+
+        False upon failure (such as out-of-range).
+
     
 .. function:: get_xunits(trace=-1, channel=-1) 
 
@@ -482,6 +502,18 @@ The :mod:`stf` module defines the following functions:
         **Returns:**
 
         False upon failure (such as out-of-range).
+
+.. function:: set_channel(channel)
+
+    Sets the currently displayed channel to a new index. Subsequently updatges all measurements (e.g. peak, base, latency, i.e. you do not have to call :func:`measure()` yourself.)
+
+        **Arguments:**
+
+        *channel*-- The zero-based index of the new trace to be displayed.
+
+        **Returns:**
+
+        True upon sucess, false otherwise (such as out-of-range).
     
 .. function:: set_channel_name(name, index=-1)
 
@@ -647,6 +679,19 @@ The :mod:`stf` module defines the following functions:
         **Returns:**
 
         False upon failure.
+
+.. function:: set_slope(slope)
+
+    Sets the AP threshold to the value given by the slope and takes it as reference for AP kinetic measurements. Note that you have to either call :func:`measure()` or hit enter to update calculations.
+
+        **Argument:**
+
+        *slope* --  Slope value in mV/ms
+
+        **Returns:**
+
+        False upon failure (such as out-of-range)
+
     
 .. function:: set_trace(trace)
         
@@ -753,10 +798,11 @@ The :mod:`stf` module defines the following functions:
                   
         **Returns:**
 
-        The zero-based index of the right half-maximal amplitude in units of sampling points. Interpolates between sampling points. Returns a 
-        negative value upon failure.
+        The zero-based index of the right half-maximal amplitude in units of sampling points. Interpolates between sampling points. Returns a negative value upon failure.
         
     
 .. function:: unselect_all(\*args)
 
     Unselects all previously selected traces in the current file.
+
+

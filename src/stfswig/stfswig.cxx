@@ -611,13 +611,21 @@ bool update_cursor_dialog( ) {
 
     return refresh_graph();
 }
-double get_threshold( bool is_time ) {
+
+double get_threshold_time( bool is_time ) {
     if ( !check_doc() ) return -1;
 
     if ( !is_time )
-        return actDoc()->GetThreshold();
+        return actDoc()->GetThrT();
     else
         return (double)actDoc()->GetThrT() * actDoc()->GetXScale();
+}
+
+double get_threshold_value() {
+    if ( !check_doc() ) return -1;
+
+    return actDoc()->GetThreshold()
+
 }
 
 double get_fit_start( bool is_time ) {
