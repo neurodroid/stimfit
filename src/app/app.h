@@ -427,6 +427,9 @@ public:
      */
     bool OpenFilePy(const wxString& fNameArray);
     
+    //! Opens a dialog to import a Python module
+    /*! \param event The associated menu event
+     */
     void OnPythonImport( wxCommandEvent& event);
 #endif
     

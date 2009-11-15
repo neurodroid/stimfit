@@ -291,6 +291,11 @@ class StfDll Recording {
     /*! \return The baseline value.
      */
     double GetBase() const { return base; }
+
+    //! Retrieves the baseline in the second channel.
+    /*! \return The baseline value in the second channel.
+     */
+    double GetAPBase() const { return APBase; }
     
     //! Retrieves the standard deviation of the baseline.
     /*! \return The standard deviation of the baseline.
@@ -844,7 +849,7 @@ class StfDll Recording {
     double latencyStartCursor,
         latencyEndCursor,
         latency,	 //time from latency cursor to beginning of event
-        base, baseSD, threshold, slopeForThreshold, peak,APPeak,t20Real,t80Real,t50LeftReal,t50RightReal,
+        base, APBase, baseSD, threshold, slopeForThreshold, peak,APPeak,t20Real,t80Real,t50LeftReal,t50RightReal,
         maxT, thrT, maxRiseY, maxRiseT, maxDecayY, maxDecayT, maxRise, maxDecay,
         t50Y, APMaxT, APMaxRise, APMaxRiseT, APt50LeftReal, 
         rt2080, halfDuration, slopeRatio,t0Real;

@@ -20,10 +20,12 @@ int get_size_recording( );
 
 double get_sampling_interval( );
 bool set_sampling_interval( double si );
+
 const char* get_xunits( );
 const char* get_yunits( int trace = -1, int channel = -1 );
 bool set_xunits( const char* units );
 bool set_yunits( const char* units, int trace = -1, int channel = -1 );
+
 const char* get_recording_time( );
 const char* get_recording_date( );
 std::string get_recording_comment( );
@@ -38,10 +40,12 @@ PyObject* get_selected_indices( );
 
 bool set_trace( int trace );
 int get_trace_index();
+const char* get_trace_name( int trace = -1, int channel = -1 );
+
+bool set_channel( int channel);
 int get_channel_index( bool active = true );
 const char* get_channel_name( int index = -1 );
 bool set_channel_name( const char* name, int index = -1 );
-const char* get_trace_name( int trace = -1, int channel = -1 );
 
 void align_selected(  double (*alignment)( bool ), bool active = false );
 
@@ -59,8 +63,9 @@ bool close_this( );
 
 bool measure( );
 
-double get_base( );
+double get_base( bool active = true );
 double get_peak( );
+double get_threshold( bool is_time = false );
 
 double peak_index( bool active = true );
 double maxrise_index( bool active = true );
@@ -88,6 +93,8 @@ double get_base_start( bool is_time = false );
 bool set_base_start( double pos, bool is_time = false );
 double get_base_end( bool is_time = false );
 bool set_base_end( double pos, bool is_time = false );
+
+bool set_slope(double slope);
 
 void _get_trace_fixedsize( double* outvec, int size, int trace = -1, int channel = -1 );
 void _gMatrix_resize( std::size_t channels, std::size_t sections );

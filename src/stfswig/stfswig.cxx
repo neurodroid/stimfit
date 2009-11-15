@@ -375,8 +375,9 @@ PyObject* get_selected_indices() {
     // no reference count decrement should be performed here.
     return retObj;
 }
-
 bool set_trace( int trace ) {
+    if ( !check_doc() ) return false; // use only with open document
+
     if ( !actDoc()->SetSection( trace ) ) {
         return false;
     }
@@ -408,6 +409,45 @@ int get_channel_index( bool active ) {
     else
         return actDoc()->GetSecCh();        
 }
+
+bool set_channel(int channel) {
+    if ( !check_doc() ) return false; // use only with open document
+
+    // channel negative  
+    if (channel<0) {
+        ShowError( wxT("Negative value is not allowed") );
+        return false;
+    }
+    
+    // only if we want to change the active channel
+    if ((unsigned int)channel == actDoc()->GetCurCh() ) {
+        return true;
+    }
+
+    int inactive_ch = actDoc()->GetCurCh();  
+        
+    // catch exceptions (i.e out of range)
+    try {
+        actDoc()->SetCurCh(channel); 
+    }
+    catch (const std::out_of_range& e) {
+        ShowError( wxT("Value exceeds the number of available channels") );
+        return false;
+    }
+
+    // Pointer to wxStfChildFrame to access Channel selection combo
+    wxStfChildFrame* pFrame = (wxStfChildFrame*)actDoc()->GetDocumentWindow();
+    if (!pFrame) {
+        ShowError( wxT("Pointer to frame is zero") );
+        return false;
+    }
+    // set the channel selection combo 
+    //pFrame->SetChannels( actDoc()->GetCurCh(), actDoc()->GetSecCh()); 
+    pFrame->SetChannels( actDoc()->GetCurCh(), inactive_ch); 
+    pFrame->UpdateChannels(); // update according to the combo
+    return refresh_graph();
+}
+
 
 const char* get_channel_name( int index ) {
     if ( !check_doc() ) return "";
@@ -570,6 +610,14 @@ bool update_cursor_dialog( ) {
     }
 
     return refresh_graph();
+}
+double get_threshold( bool is_time ) {
+    if ( !check_doc() ) return -1;
+
+    if ( !is_time )
+        return actDoc()->GetThreshold();
+    else
+        return (double)actDoc()->GetThrT() * actDoc()->GetXScale();
 }
 
 double get_fit_start( bool is_time ) {
@@ -797,6 +845,14 @@ bool set_base_end( double pos, bool is_time ) {
     return update_cursor_dialog();
 }
 
+bool set_slope(double slope) {
+    if ( !check_doc() ) return false;
+
+    actDoc()->SetSlopeForThreshold( slope );
+    actDoc()->SetFromBase( false );
+    return update_cursor_dialog();
+}
+
 double get_sampling_interval( ) {
     if ( !check_doc() ) return -1.0;
 
@@ -901,12 +957,20 @@ bool measure( ) {
     return true;
 }
 
-double get_base( ) {
+double get_base( bool active ) {
     
-    if ( !check_doc() ) return 0.0;
+    if ( !check_doc() ) return -1.0;
 
-    return actDoc()->GetBase();
-
+    if ( active ) {
+        return actDoc()->GetBase();
+    } else {
+        // Test wheter a second channel is available at all:
+        if ( actDoc()->size() < 2) {
+            ShowError( wxT("No second channel was found") );
+            return -1.0;
+        }
+        return actDoc()->GetAPBase();
+    }
 }
 
 double get_peak( ) {

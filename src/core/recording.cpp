@@ -62,6 +62,7 @@ void Recording::init() {
     latencyEndCursor = 0.0;
     latency = 0.0;
     base = 0.0;
+    APBase = 0.0;
     baseSD = 0.0;
     threshold = 0.0;
     slopeForThreshold = 20.0;

@@ -536,9 +536,13 @@ bool close_this( );
 currently measured values, i.e. does not update measurements if the 
 peak or base window cursors have changed.
 
+Arguments:
+active -- If True, returns the baseline in the active channel. If False
+          returns the baseline within the inactive channel.
+
 Returns:
 The current baseline.") get_base;
-double get_base( );
+double get_base( bool active = true);
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -662,6 +666,22 @@ negative value upon failure.") t50right_index;
 double t50right_index( bool active = true );
 %nocallback;
 //--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) get_threshold;
+%feature("docstring", "Returns the crossing value of the threshold 
+slope. Note that this value is not updated after changing the AP 
+threshold. Call measure or hit enter to update the cursors.
+
+Arguments:
+is_time -- If False (default), returns the value at which the 
+           threshold slope is crossed (e.g in mV). If True,
+           returns the time point at wich the threshold slope is 
+           crossed. A negative number is returned upon failure. 
+") get_threshold;
+double get_threshold( bool is_time = false );
+//--------------------------------------------------------------------
+
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_fit_start;
@@ -880,6 +900,19 @@ bool set_base_end( double pos, bool is_time = false );
 
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) set_slope;
+%feature("docstring", "Sets the AP threshold to the value given by the
+slope and takes it as reference for AP kinetic measurements. 
+
+Arguments:
+slope --  slope value in mV/ms  
+
+Returns:
+False upon failure (such as out-of-range).") set_slope;
+bool set_slope( double slope);
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %feature("autodoc", 0) measure;
 %feature("docstring", "Updates all measurements (e.g. peak, baseline, 
 latency) according to the current cursor settings. As if you had
@@ -945,6 +978,21 @@ Returns:
 the name of the channel with the specified index.") get_channel_name;
 const char* get_channel_name( int index = -1 );
 //--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) set_channel;
+%feature("docstring", "Sets the currently displayed channel to a new
+index. Subsequently updates all measurements (e.g. peak, base,
+latency, i.e. you don't need to call measure() yourself.)
+
+Arguments:
+channel -- The zero-based index of the new trace to be displayed.
+
+Returns:
+True upon success, false otherwise (such as out-of-range).") set_channel;
+bool set_channel( int channel);
+//--------------------------------------------------------------------
+
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) set_channel_name;
