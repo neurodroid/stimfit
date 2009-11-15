@@ -504,6 +504,18 @@ foot_index_cb = _stf.foot_index_cb
 t50left_index_cb = _stf.t50left_index_cb
 t50right_index_cb = _stf.t50right_index_cb
 
+def get_threshold_value():
+  """
+    get_threshold_value() -> double
+
+    Returns the value found at the threshold 
+    slope. Note that this value is not updated after changing the AP 
+    threshold. Call measure or hit enter to update the cursors.
+
+    """
+  return _stf.get_threshold_value()
+get_threshold_value = _stf.get_threshold_value
+
 def set_peak_mean(*args):
   """
     set_peak_mean(pts) -> bool
@@ -559,7 +571,8 @@ def set_slope(*args):
     set_slope(slope) -> bool
 
     Sets the AP threshold to the value given by the
-    slope and takes it as reference for AP kinetic measurements. 
+    slope and takes it as reference for AP kinetic measurements. Note that 
+    you have to either call measure() or hit enter to update calculations.
 
     Arguments:
     slope --  slope value in mV/ms  
@@ -1071,24 +1084,24 @@ def t50right_index(active = True):
   return _stf.t50right_index(active)
 t50right_index = _stf.t50right_index
 
-def get_threshold(is_time = False):
+def get_threshold_time(is_time = False):
   """
-    get_threshold(is_time = False) -> double
-    get_threshold() -> double
+    get_threshold_time(is_time = False) -> double
+    get_threshold_time() -> double
 
     Returns the crossing value of the threshold 
     slope. Note that this value is not updated after changing the AP 
-    threshold. Call measure or hit enter to update the cursors.
+    threshold. Call measure() or hit enter to update the cursors.
 
     Arguments:
-    is_time -- If False (default), returns the value at which the 
-               threshold slope is crossed (e.g in mV). If True,
-               returns the time point at wich the threshold slope is 
+    is_time -- If False (default), returns the zero-based index at which 
+               the threshold slope is crossed (e.g in mV). If True,
+               returns the time point at which the threshold slope is 
                crossed. A negative number is returned upon failure. 
 
     """
-  return _stf.get_threshold(is_time)
-get_threshold = _stf.get_threshold
+  return _stf.get_threshold_time(is_time)
+get_threshold_time = _stf.get_threshold_time
 
 def get_fit_start(is_time = False):
   """

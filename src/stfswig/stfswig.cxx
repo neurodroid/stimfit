@@ -621,10 +621,10 @@ double get_threshold_time( bool is_time ) {
         return (double)actDoc()->GetThrT() * actDoc()->GetXScale();
 }
 
-double get_threshold_value() {
+double get_threshold_value( ) {
     if ( !check_doc() ) return -1;
 
-    return actDoc()->GetThreshold()
+    return actDoc()->GetThreshold();
 
 }
 

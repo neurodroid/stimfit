@@ -689,7 +689,7 @@ double get_threshold_time( bool is_time = false );
 slope. Note that this value is not updated after changing the AP 
 threshold. Call measure or hit enter to update the cursors.
 ") get_threshold_value;
-double get_threshold_value( bool is_time = false );
+double get_threshold_value( );
 //--------------------------------------------------------------------
 
 

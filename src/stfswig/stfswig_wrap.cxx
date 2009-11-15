@@ -5551,7 +5551,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_get_threshold__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_get_threshold_time__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   bool arg1 ;
   bool val1 ;
@@ -5559,13 +5559,13 @@ SWIGINTERN PyObject *_wrap_get_threshold__SWIG_0(PyObject *SWIGUNUSEDPARM(self),
   PyObject * obj0 = 0 ;
   double result;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:get_threshold",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:get_threshold_time",&obj0)) SWIG_fail;
   ecode1 = SWIG_AsVal_bool(obj0, &val1);
   if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "get_threshold" "', argument " "1"" of type '" "bool""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "get_threshold_time" "', argument " "1"" of type '" "bool""'");
   } 
   arg1 = static_cast< bool >(val1);
-  result = (double)get_threshold(arg1);
+  result = (double)get_threshold_time(arg1);
   resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
@@ -5573,12 +5573,12 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_get_threshold__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_get_threshold_time__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   double result;
   
-  if (!PyArg_ParseTuple(args,(char *)":get_threshold")) SWIG_fail;
-  result = (double)get_threshold();
+  if (!PyArg_ParseTuple(args,(char *)":get_threshold_time")) SWIG_fail;
+  result = (double)get_threshold_time();
   resultobj = SWIG_From_double(static_cast< double >(result));
   return resultobj;
 fail:
@@ -5586,7 +5586,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_get_threshold(PyObject *self, PyObject *args) {
+SWIGINTERN PyObject *_wrap_get_threshold_time(PyObject *self, PyObject *args) {
   int argc;
   PyObject *argv[2];
   int ii;
@@ -5597,7 +5597,7 @@ SWIGINTERN PyObject *_wrap_get_threshold(PyObject *self, PyObject *args) {
     argv[ii] = PyTuple_GET_ITEM(args,ii);
   }
   if (argc == 0) {
-    return _wrap_get_threshold__SWIG_1(self, args);
+    return _wrap_get_threshold_time__SWIG_1(self, args);
   }
   if (argc == 1) {
     int _v;
@@ -5606,15 +5606,28 @@ SWIGINTERN PyObject *_wrap_get_threshold(PyObject *self, PyObject *args) {
       _v = SWIG_CheckState(res);
     }
     if (_v) {
-      return _wrap_get_threshold__SWIG_0(self, args);
+      return _wrap_get_threshold_time__SWIG_0(self, args);
     }
   }
   
 fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'get_threshold'.\n"
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number of arguments for overloaded function 'get_threshold_time'.\n"
     "  Possible C/C++ prototypes are:\n"
-    "    get_threshold(bool)\n"
-    "    get_threshold()\n");
+    "    get_threshold_time(bool)\n"
+    "    get_threshold_time()\n");
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_get_threshold_value(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  double result;
+  
+  if (!PyArg_ParseTuple(args,(char *)":get_threshold_value")) SWIG_fail;
+  result = (double)get_threshold_value();
+  resultobj = SWIG_From_double(static_cast< double >(result));
+  return resultobj;
+fail:
   return NULL;
 }
 
@@ -7855,19 +7868,27 @@ static PyMethodDef SwigMethods[] = {
 		"sampling points. Interpolates between sampling points. Returns a \n"
 		"negative value upon failure.\n"
 		"\nswig_ptr: t50right_index_cb"},
-	 { (char *)"get_threshold", _wrap_get_threshold, METH_VARARGS, (char *)"\n"
-		"get_threshold(is_time = False) -> double\n"
-		"get_threshold() -> double\n"
+	 { (char *)"get_threshold_time", _wrap_get_threshold_time, METH_VARARGS, (char *)"\n"
+		"get_threshold_time(is_time = False) -> double\n"
+		"get_threshold_time() -> double\n"
 		"\n"
 		"Returns the crossing value of the threshold \n"
 		"slope. Note that this value is not updated after changing the AP \n"
-		"threshold. Call measure or hit enter to update the cursors.\n"
+		"threshold. Call measure() or hit enter to update the cursors.\n"
 		"\n"
 		"Arguments:\n"
-		"is_time -- If False (default), returns the value at which the \n"
-		"           threshold slope is crossed (e.g in mV). If True,\n"
-		"           returns the time point at wich the threshold slope is \n"
+		"is_time -- If False (default), returns the zero-based index at which \n"
+		"           the threshold slope is crossed (e.g in mV). If True,\n"
+		"           returns the time point at which the threshold slope is \n"
 		"           crossed. A negative number is returned upon failure. \n"
+		"\n"
+		""},
+	 { (char *)"get_threshold_value", _wrap_get_threshold_value, METH_VARARGS, (char *)"\n"
+		"get_threshold_value() -> double\n"
+		"\n"
+		"Returns the value found at the threshold \n"
+		"slope. Note that this value is not updated after changing the AP \n"
+		"threshold. Call measure or hit enter to update the cursors.\n"
 		"\n"
 		""},
 	 { (char *)"get_fit_start", _wrap_get_fit_start, METH_VARARGS, (char *)"\n"
@@ -8086,7 +8107,8 @@ static PyMethodDef SwigMethods[] = {
 		"set_slope(slope) -> bool\n"
 		"\n"
 		"Sets the AP threshold to the value given by the\n"
-		"slope and takes it as reference for AP kinetic measurements. \n"
+		"slope and takes it as reference for AP kinetic measurements. Note that \n"
+		"you have to either call measure() or hit enter to update calculations.\n"
 		"\n"
 		"Arguments:\n"
 		"slope --  slope value in mV/ms  \n"
