@@ -68,11 +68,11 @@ void stf::importASCIIFile( const wxString& fName, int hLinesToSkip, int nColumns
     double time[2];
     // Read data:
     // use vectors temporarily to push back values:
-    std::vector<std::vector<double> > tempVec(nColumns-int(firstIsTime));
-    std::vector<std::vector<double> >::iterator it_vd;
+    std::vector<Vector_double > tempVec(nColumns-int(firstIsTime));
+    std::vector<Vector_double >::iterator it_vd;
     // Reserve memory right here to speed up file reading a little:
     for ( it_vd = tempVec.begin(); it_vd != tempVec.end(); ++it_vd ) {
-        it_vd->reserve( 32768 );
+        // it_vd->reserve( 32768 );
     }
     int n_time=0;
     int nline = 0;

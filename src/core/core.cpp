@@ -47,7 +47,7 @@ extern "C" {
 }
 #endif
 
-double stf::fgauss(double x, const std::valarray<double>& pars) {
+double stf::fgauss(double x, const Vector_double& pars) {
     double y=0.0, fac=0.0, ex=0.0, arg=0.0;
     int npars=static_cast<int>(pars.size());
     for (int i=0; i < npars-1; i += 3) {
@@ -59,7 +59,7 @@ double stf::fgauss(double x, const std::valarray<double>& pars) {
     return y;
 }
 
-double stf::fboltz(double x, const std::valarray<double>& pars) {
+double stf::fboltz(double x, const Vector_double& pars) {
     double arg=(pars[0]-x)/pars[1];
     double ex=exp(arg);
     return 1/(1+ex);
@@ -76,12 +76,12 @@ double stf::fbessel(double x, int n) {
     return sum;
 }
 
-double stf::fbessel4(double x, const std::valarray<double>& pars) {
+double stf::fbessel4(double x, const Vector_double& pars) {
     // normalize so that attenuation is -3dB at cutoff:
     return fbessel(0,4)/fbessel(x*0.355589/pars[0],4);
 }
 
-double stf::fgaussColqu(double x, const std::valarray<double>& pars) {
+double stf::fgaussColqu(double x, const Vector_double& pars) {
     return exp(-0.3466*(x/pars[0])*(x/pars[0]));
 }
 
@@ -94,16 +94,16 @@ int stf::fac(int arg) {
 }
 
 #ifndef TEST_MINIMAL
-std::valarray<double>
-stf::filter( const std::valarray<double>& data, std::size_t filter_start,
-        std::size_t filter_end, const std::valarray<double> &a, int SR,
+Vector_double
+stf::filter( const Vector_double& data, std::size_t filter_start,
+        std::size_t filter_end, const Vector_double &a, int SR,
         Func func, bool inverse ) {
     if (data.size()<=0 || filter_start>=data.size() || filter_end > data.size()) {
         std::out_of_range e("subscript out of range in stf::filter()");
         throw e;
     }
     std::size_t filter_size=filter_end-filter_start+1;
-    std::valarray<double> data_return(filter_size);
+    Vector_double data_return(filter_size);
     double SI=1.0/SR; //the sampling interval
 
     double *in;
@@ -155,9 +155,9 @@ stf::filter( const std::valarray<double>& data, std::size_t filter_start,
     return data_return;
 }
 
-std::valarray<double>
+Vector_double
 stf::spectrum(
-        const std::valarray<std::complex<double> >& data,
+        const std::vector<std::complex<double> >& data,
         int K,
         double& f_n
 ) {
@@ -185,7 +185,7 @@ stf::spectrum(
     fftw_complex* A=(fftw_complex*)fftw_malloc(sizeof(fftw_complex)*L);
     // plan the fft once:
     fftw_plan p1=fftw_plan_dft_1d(L,X,A,FFTW_FORWARD,FFTW_ESTIMATE);
-    std::valarray<double> P(0.0,spec_size);
+    Vector_double P(0.0,spec_size);
 
     // Window function summed, squared and normalized:
     double U=0.0;
@@ -229,9 +229,9 @@ stf::spectrum(
         }
     }
     // Do the multiplication and the normalization that we omitted above:
-    P/=U;
+    P = stf::vec_scal_div(P,U);
     // Average:
-    P/=K;
+    P = stf::vec_scal_div(P,K);
 
     // Use FFTW's deallocation routines:
     fftw_destroy_plan(p1);
@@ -242,15 +242,15 @@ stf::spectrum(
 }
 #endif
 
-std::valarray<double>
-stf::detectionCriterion(const std::valarray<double>& data, const std::valarray<double>& templ)
+Vector_double
+stf::detectionCriterion(const Vector_double& data, const Vector_double& templ)
 {
     wxProgressDialog progDlg( wxT("Template matching"), wxT("Starting template matching"),
             100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_SKIP );
     bool skipped=false;
     // variable names are taken from Clements & Bekkers (1997) as long
     // as they don't interfere with C++ keywords (such as "template")
-    std::valarray<double> detection_criterion(data.size()-templ.size());
+    Vector_double detection_criterion(data.size()-templ.size());
     // avoid redundant computations:
     double sum_templ_data=0.0, sum_templ=0.0, sum_templ_sqr=0.0, sum_data=0.0, sum_data_sqr=0.0;
     for (int n_templ=0; n_templ<(int)templ.size();++n_templ) {
@@ -304,7 +304,7 @@ stf::detectionCriterion(const std::valarray<double>& data, const std::valarray<d
 }
 
 std::vector<int>
-stf::peakIndices(const std::valarray<double>& data,
+stf::peakIndices(const Vector_double& data,
         double threshold,
         int minDistance)
 {
@@ -348,8 +348,8 @@ stf::peakIndices(const std::valarray<double>& data,
     return peakInd;
 }
 
-std::valarray<double>
-stf::linCorr(const std::valarray<double>& data, const std::valarray<double>& templ)
+Vector_double
+stf::linCorr(const Vector_double& data, const Vector_double& templ)
 {
     wxProgressDialog progDlg( wxT("Template matching"), wxT("Starting template matching"),
             100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_SKIP );
@@ -361,7 +361,7 @@ stf::linCorr(const std::valarray<double>& data, const std::valarray<double>& tem
     if (data.size()==0 || templ.size()==0) {
         throw std::runtime_error("Array of size 0 in stf::crossCorr");
     }
-    std::valarray<double> Corr(data.size()-templ.size());
+    Vector_double Corr(data.size()-templ.size());
 
     // Optimal scaling & offset:
     // avoid redundant computations:
@@ -530,7 +530,7 @@ wxString stf::CreatePreview(const wxString& fName) {
 }
 
 double stf::integrate_simpson(
-        const std::valarray<double>& input,
+        const Vector_double& input,
         std::size_t i1,
         std::size_t i2,
         double x_scale
@@ -571,7 +571,7 @@ double stf::integrate_simpson(
 }
 
 double stf::integrate_trapezium(
-        const std::valarray<double>& input,
+        const Vector_double& input,
         std::size_t i1,
         std::size_t i2,
         double x_scale
@@ -591,8 +591,8 @@ double stf::integrate_trapezium(
 }
 
 int
-stf::linsolv( int m, int n, int nrhs, std::valarray<double>& A,
-        std::valarray<double>& B)
+stf::linsolv( int m, int n, int nrhs, Vector_double& A,
+        Vector_double& B)
 {
 #ifndef TEST_MINIMAL
     if (A.size()<=0) {
@@ -639,7 +639,7 @@ stf::linsolv( int m, int n, int nrhs, std::valarray<double>& A,
 
     int lda_f = m;
     std::size_t ipiv_size = (m < n) ? m : n;
-    std::valarray<int> ipiv(ipiv_size);
+    std::vector<int> ipiv(ipiv_size);
     int info=0;
 
     dgetrf_(&m, &n, &A[0], &lda_f, &ipiv[0], &info);
@@ -703,7 +703,7 @@ stf::linsolv( int m, int n, int nrhs, std::valarray<double>& A,
 }
 
 stf::Table::Table(std::size_t nRows,std::size_t nCols) :
-    values(nRows,std::vector<double>(nCols,1.0)),
+values(nRows,std::vector<double>(nCols,1.0)),
     empty(nRows,std::deque<bool>(nCols,false)),
     rowLabels(nRows, wxT("\0")),
     colLabels(nCols, wxT("\0"))
@@ -715,7 +715,7 @@ rowLabels(map.size(),wxT("\0")), colLabels(1,wxT("Results"))
 {
     std::map< wxString, double >::const_iterator cit;
     wxs_it it1 = rowLabels.begin();
-    std::vector< std::vector< double > >::iterator it2 = values.begin();
+    std::vector< std::vector<double> >::iterator it2 = values.begin();
     for (cit = map.begin();
          cit != map.end() && it1 != rowLabels.end() && it2 != values.end();
          cit++)
@@ -809,3 +809,52 @@ void stf::Table::AppendRows(std::size_t nRows_) {
         empty[nRow].resize(nCols());
     }
 }
+
+    Vector_double stf::vec_scal_plus(const Vector_double& vec, double scalar) {
+        Vector_double ret_vec(vec.size(), scalar);
+        std::transform(vec.begin(), vec.end(), ret_vec.begin(), ret_vec.begin(), std::plus<double>());
+        return ret_vec;
+    }
+
+    Vector_double stf::vec_scal_minus(const Vector_double& vec, double scalar) {
+        Vector_double ret_vec(vec.size(), scalar);
+        std::transform(vec.begin(), vec.end(), ret_vec.begin(), ret_vec.begin(), std::minus<double>());
+        return ret_vec;
+    }
+
+    Vector_double stf::vec_scal_mul(const Vector_double& vec, double scalar) {
+        Vector_double ret_vec(vec.size(), scalar);
+        std::transform(vec.begin(), vec.end(), ret_vec.begin(), ret_vec.begin(), std::multiplies<double>());
+        return ret_vec;
+    }
+
+    Vector_double stf::vec_scal_div(const Vector_double& vec, double scalar) {
+        Vector_double ret_vec(vec.size(), scalar);
+        std::transform(vec.begin(), vec.end(), ret_vec.begin(), ret_vec.begin(), std::divides<double>());
+        return ret_vec;
+    }
+
+    Vector_double stf::vec_vec_plus(const Vector_double& vec1, const Vector_double& vec2) {
+        Vector_double ret_vec(vec1.size());
+        std::transform(vec1.begin(), vec1.end(), vec2.begin(), ret_vec.begin(), std::plus<double>());
+        return ret_vec;
+    }
+
+    Vector_double stf::vec_vec_minus(const Vector_double& vec1, const Vector_double& vec2) {
+        Vector_double ret_vec(vec1.size());
+        std::transform(vec1.begin(), vec1.end(), vec2.begin(), ret_vec.begin(), std::minus<double>());
+        return ret_vec;
+    }
+
+    Vector_double stf::vec_vec_mul(const Vector_double& vec1, const Vector_double& vec2) {
+        Vector_double ret_vec(vec1.size());
+        std::transform(vec1.begin(), vec1.end(), vec2.begin(), ret_vec.begin(), std::multiplies<double>());
+        return ret_vec;
+    }
+
+    Vector_double stf::vec_vec_div(const Vector_double& vec1, const Vector_double& vec2) {
+        Vector_double ret_vec(vec1.size());
+        std::transform(vec1.begin(), vec1.end(), vec2.begin(), ret_vec.begin(), std::divides<double>());
+        return ret_vec;
+    }
+

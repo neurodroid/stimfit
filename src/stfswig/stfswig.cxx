@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <math.h>
-#include <valarray>
+#include <boost/numeric/ublas/vector.hpp>
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
 #endif
@@ -32,7 +32,7 @@
 #include "./../core/recording.h"
 #include "./../core/fitlib.h"
 
-std::vector< std::vector< std::valarray<double> > > gMatrix;
+std::vector< std::vector< Vector_double > > gMatrix;
 std::vector< wxString > gNames;
 
 void ShowExcept(const std::exception& e) {
@@ -122,7 +122,7 @@ void _get_trace_fixedsize( double* outvec, int size, int trace, int channel ) {
 bool new_window( double* invec, int size ) {
     if ( !check_doc() ) return false;
 
-    std::valarray< double > va(size);
+    std::vector< double > va(size);
     std::copy( &invec[0], &invec[size], &va[0] );
     Section sec(va);
     Channel ch(sec);
@@ -181,7 +181,7 @@ bool new_window_matrix( double* invec, int traces, int size ) {
     Channel ch( traces );
     for (int n = 0; n < traces; ++n) {
         std::size_t offset = n * size;
-        std::valarray< double > va(size);
+        std::vector< double > va(size);
         std::copy( &invec[offset], &invec[offset+size], &va[0] );
         Section sec(va);
         ch.InsertSection(sec, n);
@@ -983,14 +983,14 @@ double get_peak( ) {
 
 void _gMatrix_resize( std::size_t channels, std::size_t sections ) {
     gMatrix.resize( channels );
-    std::vector< std::vector< std::valarray<double> > >::iterator it;
+    std::vector< std::vector< Vector_double > >::iterator it;
     for (it = gMatrix.begin(); it != gMatrix.end(); ++it) {
         it->resize( sections );
     }
 }
 
 void _gMatrix_at( double* invec, int size, int channel, int section ) {
-    std::valarray< double > va(size);
+    std::vector< double > va(size);
     std::copy( &invec[0], &invec[size], &va[0] );
 
     try{
@@ -1108,7 +1108,7 @@ void align_selected(  double (*alignment)( bool ), bool active ) {
               sel_it != pDoc->GetSelectedSections().end() && it3 != shift.end();
               ++sel_it )
         {
-            std::valarray<double> va( new_size );
+            Vector_double va( new_size );
             std::copy( &(chan_it->at( *sel_it ).get_w()[ 0 + (*it3) ]), 
                        &(chan_it->at( *sel_it ).get_w()[ (*it3) + new_size ]),
                        &va[0] );
@@ -1162,18 +1162,18 @@ PyObject* leastsq( int fselect, bool refresh ) {
         return NULL;
     }
 
-    std::valarray< double > x( pDoc->GetFitEnd() - pDoc->GetFitBeg() );
+    std::vector< double > x( pDoc->GetFitEnd() - pDoc->GetFitBeg() );
     //fill array:
     std::copy(&pDoc->cur()[pDoc->GetFitBeg()], &pDoc->cur()[pDoc->GetFitEnd()], &x[0]);
     
-    std::valarray< double > params( n_params );            
+    std::vector< double > params( n_params );            
 
     // initialize parameters from init function,
     wxGetApp().GetFuncLib().at(fselect).init( x, pDoc->GetBase(), pDoc->GetPeak(),
             pDoc->GetXScale(), params );
     wxString fitInfo;
     int fitWarning = 0;
-    std::valarray< double > opts( 6 );
+    std::vector< double > opts( 6 );
     // Respectively the scale factor for initial \mu,
     // stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2,
     // maxIter, maxPass
@@ -1265,7 +1265,7 @@ bool show_table_dictlist( PyObject* dict, const char* caption, bool reverse ) {
     }
     Py_ssize_t n_dict = 0;
     PyObject *pkey = NULL, *pvalue = NULL;
-    std::vector< std::valarray<double> > pyVector;
+    std::vector< Vector_double > pyVector;
     std::vector< wxString > pyStrings;
     while ( PyDict_Next( dict, &n_dict, &pkey, &pvalue ) ) {
         if ( !pkey || !pvalue ) {
@@ -1277,7 +1277,7 @@ bool show_table_dictlist( PyObject* dict, const char* caption, bool reverse ) {
             ShowError( wxT("Dictionary values are not (consistently) lists.") );
             return false;
         }
-        std::valarray<double> values( PyList_Size( pvalue ) );
+        Vector_double values( PyList_Size( pvalue ) );
         for (int n_list = 0; n_list < (int)values.size(); ++n_list ) {
             PyObject* plistvalue = PyList_GetItem( pvalue, n_list );
             if ( !plistvalue ) {
@@ -1293,7 +1293,7 @@ bool show_table_dictlist( PyObject* dict, const char* caption, bool reverse ) {
         return false;
     }
     stf::Table pyTable( pyVector[0].size(), pyVector.size() );
-    std::vector< std::valarray< double > >::const_iterator c_va_it;
+    std::vector< std::vector< double > >::const_iterator c_va_it;
     std::size_t n_col = 0;
     for (  c_va_it = pyVector.begin(); c_va_it != pyVector.end(); ++c_va_it ) {
         try {

@@ -134,7 +134,7 @@ bool wxStfFitSelDlg::OnOK() {
     read_opts();
 //    wxStfDoc* pDoc=pDoc;
 //    pDoc->cur().SetIsFitted(false);
-//    pDoc->cur().SetFit(std::valarray<double>(0));
+//    pDoc->cur().SetFit(Vector_double(0));
     return true;
 }
 
@@ -220,7 +220,7 @@ void wxStfFitSelDlg::OnButtonClick( wxCommandEvent& event ) {
     // calculate a graph from the current parameters:
     std::size_t fitSize=
         pDoc->GetFitEnd()-pDoc->GetFitBeg();
-    std::valarray<double> fit(fitSize);
+    Vector_double fit(fitSize);
     for (std::size_t n_f=0;n_f<fit.size();++n_f) {
         try {
             fit[n_f]=
@@ -255,12 +255,12 @@ void wxStfFitSelDlg::SetPars() {
             wxGetApp().ErrorMsg(wxT("Check fit cursor settings"));
             return;
         }
-        std::valarray<double> x(fitSize);
+        Vector_double x(fitSize);
         //fill array:
         std::copy(&pDoc->cur()[pDoc->GetFitBeg()],
                 &pDoc->cur()[pDoc->GetFitBeg()+fitSize],
                 &x[0]);
-        std::valarray<double> initPars(wxGetApp().GetFuncLib().at(m_fselect).pInfo.size());
+        Vector_double initPars(wxGetApp().GetFuncLib().at(m_fselect).pInfo.size());
         wxGetApp().GetFuncLib().at(m_fselect).init( x, pDoc->GetBase(),
                 pDoc->GetPeak(), pDoc->GetXScale(), initPars);
         std::vector< wxStaticText* >::iterator it1;

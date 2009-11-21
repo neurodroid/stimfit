@@ -186,7 +186,7 @@ bool stf::exportHDF5File(const wxString& fName, const Recording& WData) {
             // add data and description, store as 32 bit little endian independent of machine:
             hsize_t dims[1] = { WData[n_c][n_s].size() };
             wxString data_path; data_path << section_path << wxT("/data");
-            std::valarray<float> data_cp(WData[n_c][n_s].get().size()); /* 32 bit */
+            Vector_float data_cp(WData[n_c][n_s].get().size()); /* 32 bit */
             for (std::size_t n_cp = 0; n_cp < WData[n_c][n_s].get().size(); ++n_cp) {
                 data_cp[n_cp] = float(WData[n_c][n_s][n_cp]);
             }
@@ -382,7 +382,7 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
                 wxString errorMsg(wxT("Exception while reading data information in stf::importHDF5File"));
                 throw std::runtime_error(std::string(errorMsg.char_str()));
             }
-            std::vector<float> TempSection(sdims);
+            Vector_float TempSection(sdims);
             status = H5LTread_dataset(file_id, data_path.utf8_str(), H5T_IEEE_F32LE, &TempSection[0]);
             if (status < 0) {
                 wxString errorMsg(wxT("Exception while reading data in stf::importHDF5File"));

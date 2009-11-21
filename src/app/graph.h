@@ -333,10 +333,10 @@ private:
     boost::shared_ptr<wxMenu> m_zoomContext;
     boost::shared_ptr<wxMenu> m_eventContext;
     std::vector<wxStfCheckBox*> cbList;
-    void PlotTrace( wxDC* pDC, const std::valarray<double>& trace, bool is2=false );
-    void DoPlot( wxDC* pDC, const std::valarray<double>& trace, int start, int end, int step, bool is2 );
-    void PrintTrace( wxDC* pDC, const std::valarray<double>& trace, bool is2=false );
-    void DoPrint( wxDC* pDC, const std::valarray<double> trace, int start, int end, int downsampling, bool is2 );
+    void PlotTrace( wxDC* pDC, const Vector_double& trace, bool is2=false );
+    void DoPlot( wxDC* pDC, const Vector_double& trace, int start, int end, int step, bool is2 );
+    void PrintTrace( wxDC* pDC, const Vector_double& trace, bool is2=false );
+    void DoPrint( wxDC* pDC, const Vector_double trace, int start, int end, int downsampling, bool is2 );
     void DrawCircle(wxDC* pDC, double x, double y);
     void DrawVLine(wxDC* pDC, double x);
     void DrawHLine(wxDC* pDC, double y);

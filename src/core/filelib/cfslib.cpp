@@ -281,7 +281,7 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
             else
                 nBlockBytes=maxBytes*(int)WData.size();
 
-            std::valarray<float> faverage_small(nBlockBytes/4);
+            Vector_float faverage_small(nBlockBytes/4);
 
             for (int n_point=0; n_point < nBlockBytes/4/(int)WData.size(); n_point++) {
                 for (std::size_t n_c=0;n_c<WData.size();++n_c) {
@@ -471,7 +471,7 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
                         nBlockBytes=points[n_section]*4 - b*CFSMAXBYTES;
                     else
                         nBlockBytes=CFSMAXBYTES;
-                    std::valarray<float> fTempSection_small(nBlockBytes);
+                    Vector_float fTempSection_small(nBlockBytes);
                     GetChanData(CFSFile.myHandle, (short)n_channel, (WORD)n_section+1,
                         b*CFSMAXBYTES/4, (WORD)nBlockBytes/4, &fTempSection_small[0],
                         4*(points[n_section]+1));
@@ -489,7 +489,7 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
                         nBlockBytes=points[n_section]*2 - b*CFSMAXBYTES;
                     else
                         nBlockBytes=CFSMAXBYTES;
-                    std::valarray<short> TempSection_small(nBlockBytes);
+                    std::vector<short> TempSection_small(nBlockBytes);
                     GetChanData(CFSFile.myHandle, (short)n_channel, (WORD)n_section+1,
                         b*CFSMAXBYTES/2, (WORD)nBlockBytes/2, &TempSection_small[0],
                         2*(points[n_section]+1));

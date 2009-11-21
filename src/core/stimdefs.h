@@ -53,10 +53,12 @@
 #include <wx/wfstream.h>
 
 #include <boost/function.hpp>
-#include <valarray>
 #include <vector>
 #include <deque>
 #include <map>
+
+typedef std::vector<double > Vector_double;
+typedef std::vector<float > Vector_float;
 
 class Recording;
 class Channel;
@@ -71,6 +73,22 @@ namespace stf {
 /*! \addtogroup stfgen
  *  @{
  */
+    Vector_double vec_scal_plus(const Vector_double& vec, double scalar);
+
+    Vector_double vec_scal_minus(const Vector_double& vec, double scalar);
+
+    Vector_double vec_scal_mul(const Vector_double& vec, double scalar);
+
+    Vector_double vec_scal_div(const Vector_double& vec, double scalar);
+
+    Vector_double vec_vec_plus(const Vector_double& vec1, const Vector_double& vec2);
+
+    Vector_double vec_vec_minus(const Vector_double& vec1, const Vector_double& vec2);
+
+    Vector_double vec_vec_mul(const Vector_double& vec1, const Vector_double& vec2);
+
+    Vector_double vec_vec_div(const Vector_double& vec1, const Vector_double& vec2);
+
 
 //! A table used for printing information.
 /*! Members will throw std::out_of_range if out of range.
@@ -157,7 +175,7 @@ public:
 
 private:
     // row major order:
-    std::vector< std::vector< double > > values;
+    std::vector< std::vector<double> > values;
     std::vector< std::deque< bool > > empty;
     std::vector< wxString > rowLabels;
     std::vector< wxString > colLabels;
@@ -198,26 +216,26 @@ struct parInfo {
  *  that takes a double (the x-value) and a vector of parameters and returns 
  *  the function's result (the y-value).
  */
-typedef boost::function<double(double, const std::valarray<double>&)> Func;
+typedef boost::function<double(double, const Vector_double&)> Func;
 
 //! The jacobian of a stf::Func.
-typedef boost::function<std::valarray<double>(double, const std::valarray<double>&)> Jac;
+typedef boost::function<Vector_double(double, const Vector_double&)> Jac;
 
 //! Dummy function, serves as a placeholder to initialize functions without a Jacobian.
-std::valarray<double> nojac( double x, const std::valarray<double>& p);
+Vector_double nojac( double x, const Vector_double& p);
 
 //! Initialising function for the parameters in stf::Func to start a fit.
-typedef boost::function<void(const std::valarray<double>&,double,double,double,std::valarray<double>&)> Init;
+typedef boost::function<void(const Vector_double&,double,double,double,Vector_double&)> Init;
 
 //! Print the output of a fit into a stf::Table.
-typedef boost::function<Table(const std::valarray<double>&,const std::vector<stf::parInfo>,double)> Output;
+typedef boost::function<Table(const Vector_double&,const std::vector<stf::parInfo>,double)> Output;
 
 //! Get a Recording, do something with it, return the new Recording.
-typedef boost::function<Recording(const Recording&,const std::vector<double>&,std::map<wxString, double>&)> PluginFunc;
+typedef boost::function<Recording(const Recording&,const Vector_double&,std::map<wxString, double>&)> PluginFunc;
 
 //! Default fit output function, constructing a stf::Table from the parameters, their description and chisqr.
 Table defaultOutput(
-        const std::valarray<double>& pars, 
+        const Vector_double& pars, 
         const std::vector<parInfo>& parsInfo,
         double chisqr
 );
@@ -273,7 +291,7 @@ struct StfDll storedFunc {
 //! Represents user input from dialogs that can be used in plugins.
 struct UserInput {
     std::vector<wxString> labels; /*!< Dialog entry labels. */
-    std::vector<double> defaults; /*!< Default dialog entries. */
+    Vector_double defaults; /*!< Default dialog entries. */
     wxString title;               /*!< Dialog title. */
 
     //! Constructor.
@@ -283,13 +301,13 @@ struct UserInput {
      */
     UserInput(
             const std::vector<wxString>& labels_=std::vector<wxString>(0),
-            const std::vector<double>& defaults_=std::vector<double>(0),
+            const Vector_double& defaults_=Vector_double(0),
             wxString title_=wxT("\0")
     ) : labels(labels_),defaults(defaults_),title(title_)
     {
                 if (defaults.size()!=labels.size()) {
                     defaults.resize(labels.size());
-                    defaults.assign(labels.size(),0.0);
+                    std::fill(defaults.begin(), defaults.end(), 0.0);
                 }
     }
 };
@@ -616,7 +634,7 @@ inline int stf::round(double toRound) {
  *  \brief See http://www.sgi.com/tech/stl/Map.html (SGI's STL documentation)
  */
 
-/*! \class std::valarray
+/*! \class std::vector
  *  \brief See http://gcc.gnu.org/onlinedocs/libstdc++/latest-doxygen/classstd_1_1valarray.html (gcc's libstdc++ documentation)
  */
 

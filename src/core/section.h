@@ -45,7 +45,7 @@ public:
      *  \param label An optional section label string.
      */
     explicit Section(
-            const std::valarray<double>& valA,
+            const Vector_double& valA,
             const wxString& label=wxT("\0")
     );
 
@@ -95,17 +95,17 @@ public:
      *  to access the valarray.
      *  \return The valarray containing the data points.
      */
-    const std::valarray<double>& get() const { return data; }
+    const Vector_double& get() const { return data; }
 
     //! Low-level access to the valarray (read and write).
     /*! An explicit function is used instead of implicit type conversion
      *  to access the valarray.
      *  \return The valarray containing the data points.
      */
-    std::valarray<double>& get_w() { return data; }
+    Vector_double& get_w() { return data; }
 
     //! Resize the Section to a new number of data points; deletes all previously stored data when gcc is used.
-    /*! Note that in the gcc implementation of std::valarray, resizing will
+    /*! Note that in the gcc implementation of std::vector, resizing will
      *  delete all the original data. This is different from std::vector::resize().
      *  \param new_size The new number of data points.
      */
@@ -146,7 +146,7 @@ public:
         \param fitBeg Sampling point index where the fit starts
         \param fitEnd Sampling point index where the fit ends
      */
-    void SetIsFitted( const std::valarray<double>& bestFitP_, stf::storedFunc* fitFunc_,
+    void SetIsFitted( const Vector_double& bestFitP_, stf::storedFunc* fitFunc_,
             double chisqr, std::size_t fitBeg, std::size_t fitEnd );
 
     //! Retrieves the parameters of quadratic functions, each going through three consecutive data points
@@ -154,12 +154,12 @@ public:
      *          a0*x^2 + b0*x + c0, a1*x^2 + b1*x + c1, ..., an*x^2 + bn*x + cn 
      *          Each quadratic function goes through three consecutive data points.
      */
-    const std::valarray<double>& GetQuadP() const { return quad_p; }
+    const Vector_double& GetQuadP() const { return quad_p; }
 
     //! Retrieves the best-fit parameters for the most recently performed fit.
-    /*! \return A std::valarray of best-fit parameters.
+    /*! \return A std::vector of best-fit parameters.
      */
-    const std::valarray<double>& GetBestFitP() const { return bestFitP; }
+    const Vector_double& GetBestFitP() const { return bestFitP; }
 
     //! Indicates whether an integral has been calculated in this section.
     /*! \return true if an integral has been calculated, false otherwise.
@@ -297,15 +297,15 @@ private:
     double x_scale;
     bool isFitted,isIntegrated;
     stf::storedFunc *fitFunc;
-    std::valarray<double> bestFitP;
-    std::valarray<double> quad_p;
+    Vector_double bestFitP;
+    Vector_double quad_p;
     std::size_t storeFitBeg;
     std::size_t storeFitEnd;
     std::size_t storeIntBeg;
     std::size_t storeIntEnd;
     stf::Table bestFit;
     // The data:
-    std::valarray<double> data;
+    Vector_double data;
 };
 
 /*@}*/

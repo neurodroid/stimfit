@@ -31,7 +31,7 @@
 #endif
 
 #include <vector>
-#include <valarray>
+#include <boost/numeric/ublas/vector.hpp>
 #include <complex>
 #include <deque>
 #ifdef _OPENMP
@@ -61,8 +61,8 @@ namespace stf {
  *         indices in the spectrum, in units of 1/index_data.
  *  \return A valarray containing the spectrum.
  */
-std::valarray<double>
-spectrum(const std::valarray<std::complex<double> >& data,int K,double& f_n);
+Vector_double
+spectrum(const std::vector<std::complex<double> >& data,int K,double& f_n);
 
 //! Window function for psd estimation
 /*! \param n Argument of the window function.
@@ -88,12 +88,12 @@ T SQR (T a);
  *  \param inverse true if (1- \e func) should be used as the filter function, false otherwise
  *  \return The convoluted data set.
  */
-std::valarray<double>
+Vector_double
 filter(
-        const std::valarray<double>& toFilter,
+        const Vector_double& toFilter,
         std::size_t filter_start,
         std::size_t filter_end,  
-        const std::valarray<double> &a,
+        const Vector_double &a,
         int SR,
         Func func,
         bool inverse = false
@@ -106,9 +106,9 @@ filter(
  *  \return The interpolated data set.
  */
 template <class T>
-std::valarray<T>
+std::vector<T>
 cubicSpline(
-        const std::valarray<T>& y,
+        const std::vector<T>& y,
         T oldF,
         T newF
 );
@@ -155,7 +155,7 @@ importFile(
  * \return The result of the differentiation.
  */
 template <class T>
-std::valarray<T> diff(const std::valarray<T>& input, T x_scale);
+std::vector<T> diff(const std::vector<T>& input, T x_scale);
 
 //! Integration using Simpson's rule.
 /*! \param input The valarray to be integrated.
@@ -165,7 +165,7 @@ std::valarray<T> diff(const std::valarray<T>& input, T x_scale);
  *  \return The integral of \e input between \e a and \e b.
 */
 double integrate_simpson(
-        const std::valarray<double>& input,
+        const Vector_double& input,
         std::size_t a,
         std::size_t b,
         double x_scale
@@ -179,7 +179,7 @@ double integrate_simpson(
  *  \return The integral of \e input between \e a and \e b.
 */
 double integrate_trapezium(
-        const std::valarray<double>& input,
+        const Vector_double& input,
         std::size_t a,
         std::size_t b,
         double x_scale
@@ -203,8 +203,8 @@ linsolv(
         int m,
         int n,
         int nrhs,
-        std::valarray<double>& A,
-        std::valarray<double>& B
+        Vector_double& A,
+        Vector_double& B
 );
 
 //! Computes the event detection criterion according to Clements & Bekkers (1997).
@@ -212,10 +212,10 @@ linsolv(
  *  \param templ A template waveform that is used for event detection.
  *  \return The detection criterion for every value of \e data.
  */
-std::valarray<double>
+Vector_double
 detectionCriterion(
-        const std::valarray<double>& data,
-        const std::valarray<double>& templ
+        const Vector_double& data,
+        const Vector_double& templ
 );
 
 // TODO: Add negative-going peaks.
@@ -225,14 +225,14 @@ detectionCriterion(
  *  \param minDistance Minimal distance between subsequent peaks.
  *  \return A vector of indices where peaks have occurred in \e data.
  */
-std::vector<int> peakIndices(const std::valarray<double>& data, double threshold, int minDistance);
+std::vector<int> peakIndices(const Vector_double& data, double threshold, int minDistance);
 
 //! Computes the linear correlation between two arrays.
 /*! \param va1 First array.
  *  \param va2 Second array.
  *  \return The linear correlation between the two arrays for each data point of \e va1.
  */
-std::valarray<double> linCorr(const std::valarray<double>& va1, const std::valarray<double>& va2); 
+Vector_double linCorr(const Vector_double& va1, const Vector_double& va2); 
 
 //! Computes the sum of an arbitrary number of Gaussians.
 /*! \f[
@@ -247,7 +247,7 @@ std::valarray<double> linCorr(const std::valarray<double>& va1, const std::valar
  *         \e i is the 0-based index of the i-th Gaussian.
  *  \return The evaluated function.
  */
-double fgauss(double x, const std::valarray<double>& p);
+double fgauss(double x, const Vector_double& p);
 
 //! Computes a Gaussian that can be used as a filter kernel.
 /*! \f[
@@ -258,7 +258,7 @@ double fgauss(double x, const std::valarray<double>& p);
  *         \e p[0] is the corner frequency (-3 dB according to Colquhoun)
  *  \return The evaluated function.
  */
-double fgaussColqu(double x, const std::valarray<double>& p);
+double fgaussColqu(double x, const Vector_double& p);
 
 //! Computes a Boltzmann function.
 /*! \f[f(x)=\frac{1}{1+\mathrm{e}^{\frac{p_0-x}{p_1}}}\f] 
@@ -268,7 +268,7 @@ double fgaussColqu(double x, const std::valarray<double>& p);
  *         \e p[1] is the slope of the function. \n
  *  \return The evaluated function.
  */
-double fboltz(double x, const std::valarray<double>& p);
+double fboltz(double x, const Vector_double& p);
 
 //! Computes a Bessel polynomial.
 /*! \f[
@@ -290,7 +290,7 @@ double fbessel(double x, int n);
  *         \e p[0] is the corner frequency (-3 dB attenuation)
  *  \return The evaluated function.
  */
-double fbessel4(double x, const std::valarray<double>& p);
+double fbessel4(double x, const Vector_double& p);
 
 //! Creates a preview of a text file.
 /*! \param fName Full path name of the file.
@@ -332,8 +332,8 @@ void SWAP(T s1, T s2) {
 }
 
 template <class T>
-std::valarray<T>
-stf::cubicSpline(const std::valarray<T>& y,
+std::vector<T>
+stf::cubicSpline(const std::vector<T>& y,
         T oldF,
         T newF)
 {
@@ -341,16 +341,16 @@ stf::cubicSpline(const std::valarray<T>& y,
     int size=(int)y.size();
     // size of interpolated data:
     int size_i=(int)(size*factor_i);
-    std::valarray<double> x(size);
-    std::valarray<double> y_d(size);
+    Vector_double x(size);
+    Vector_double y_d(size);
     for (int n_p=0; n_p < size; ++n_p) {
         x[n_p]=n_p;
         y_d[n_p]=y[n_p];
     }
-    std::valarray<double> y_i(stf::spline_cubic_set(x,y_d,0,0,0,0));
+    Vector_double y_i(stf::spline_cubic_set(x,y_d,0,0,0,0));
 
-    std::valarray<T> y_if(size_i);
-    std::valarray<double> x_i(size_i);
+    std::vector<T> y_if(size_i);
+    Vector_double x_i(size_i);
 
     //Cubic spline interpolation:
     for (int n_i=0; n_i < size_i; ++n_i) {
@@ -362,8 +362,8 @@ stf::cubicSpline(const std::valarray<T>& y,
 }
 
 template <class T>
-std::valarray<T> stf::diff(const std::valarray<T>& input, T x_scale) {
-    std::valarray<T> diffVA(input.size()-1);
+std::vector<T> stf::diff(const std::vector<T>& input, T x_scale) {
+    std::vector<T> diffVA(input.size()-1);
     for (unsigned n=0;n<diffVA.size();++n) {
         diffVA[n]=(input[n+1]-input[n])/x_scale;
     }

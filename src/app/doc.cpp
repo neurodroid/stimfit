@@ -963,11 +963,11 @@ void wxStfDoc::FitDecay(wxCommandEvent& WXUNUSED(event)) {
         wxGetApp().ExceptMsg(msg);
         return;
     }
-    std::valarray<double> params ( FitSelDialog.GetInitP() );
+    Vector_double params ( FitSelDialog.GetInitP() );
     int warning = 0;
     try {
         std::size_t fitSize = GetFitEnd() - GetFitBeg();
-        std::valarray<double> x( fitSize );
+        Vector_double x( fitSize );
         //fill array:
         std::copy(&cur()[GetFitBeg()], &cur()[GetFitBeg()+fitSize], &x[0]);
         if (params.size() != n_params) {
@@ -1016,12 +1016,12 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
     }
     wxString fitInfo;
     n_params=2;
-    std::valarray<double> params( n_params );
+    Vector_double params( n_params );
 
     //fill array:
-    std::valarray<double> x(n_points);
+    Vector_double x(n_points);
     std::copy(&cur()[GetFitBeg()], &cur()[GetFitBeg()+n_points], &x[0]);
-    std::valarray<double> t(x.size());
+    Vector_double t(x.size());
     for (std::size_t n_t=0;n_t<x.size();++n_t) t[n_t]=n_t*GetXScale();
 
     // Perform the fit:
@@ -1046,7 +1046,10 @@ void wxStfDoc::LnTransform(wxCommandEvent& WXUNUSED(event)) {
     Channel TempChannel(GetSelectedSections().size(), get()[GetCurCh()][GetSelectedSections()[0]].size());
     std::size_t n = 0;
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
-        Section TempSection(log(get()[GetCurCh()][*cit].get()));
+        Section TempSection(size());
+        std::transform(get()[GetCurCh()][*cit].get().begin(), 
+            get()[GetCurCh()][*cit].get().end(), 
+            TempSection.get_w().begin(), std::logl);
         TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
                 wxT(", transformed (ln)") );
         try {
@@ -1085,13 +1088,13 @@ void wxStfDoc::Multiply(wxCommandEvent& WXUNUSED(event)) {
     }
     //insert standard values:
     std::vector<wxString> labels(1);
-    std::vector<double> defaults(labels.size());
+    Vector_double defaults(labels.size());
     labels[0]=wxT("Multiply with:");defaults[0]=1;
     stf::UserInput init(labels,defaults,wxT("Set factor"));
 
     wxStfUsrDlg MultDialog(GetDocumentWindow(),init);
     if (MultDialog.ShowModal()!=wxID_OK) return;
-    std::vector<double> input(MultDialog.readInput());
+    Vector_double input(MultDialog.readInput());
     if (input.size()!=1) return;
 
     double factor=input[0];
@@ -1099,7 +1102,7 @@ void wxStfDoc::Multiply(wxCommandEvent& WXUNUSED(event)) {
     std::size_t n = 0;
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
         // Multiply the valarray in Data:
-        Section TempSection(get()[GetCurCh()][*cit].get()*factor);
+        Section TempSection(stf::vec_scal_mul(get()[GetCurCh()][*cit].get(),factor));
         TempSection.SetSectionDescription(
                 get()[GetCurCh()][*cit].GetSectionDescription()+
                 wxT(", multiplied")
@@ -1130,7 +1133,7 @@ bool wxStfDoc::SubtractBase( ) {
     Channel TempChannel(GetSelectedSections().size(), get()[GetCurCh()][GetSelectedSections()[0]].size());
     std::size_t n = 0;
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
-        Section TempSection(get()[GetCurCh()][*cit].get()-GetSelectBase()[n]);
+        Section TempSection(stf::vec_scal_minus(get()[GetCurCh()][*cit].get(), GetSelectBase()[n]));
         TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
                 wxT(", baseline subtracted") );
         try {
@@ -1236,7 +1239,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
     if (SaveYtDialog.PrintThr()) {
         // Get threshold from user:
         stf::UserInput Input( std::vector<wxString>(1,wxT("Threshold")),
-                std::vector<double> (1,0.0), wxT("Set threshold") );
+                Vector_double (1,0.0), wxT("Set threshold") );
         wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
         if (myDlg.ShowModal()!=wxID_OK) {
             return;
@@ -1280,7 +1283,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         if (wxGetApp().GetCursorsDialog() != NULL && wxGetApp().GetCursorsDialog()->GetStartFitAtPeak())
             SetFitBeg(GetMaxT());
 
-        std::valarray<double> params;
+        Vector_double params;
         int fitWarning = 0;
         if (SaveYtDialog.PrintFitResults()) {
             try {
@@ -1294,7 +1297,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
             }
             // in this case, initialize parameters from init function,
             // not from user input:
-            std::valarray<double> x(GetFitEnd()-GetFitBeg());
+            Vector_double x(GetFitEnd()-GetFitBeg());
             //fill array:
             std::copy(&cur()[GetFitBeg()], &cur()[GetFitEnd()], &x[0]);
             params.resize(n_params);
@@ -1495,14 +1498,14 @@ void wxStfDoc::Selectsome(wxCommandEvent &WXUNUSED(event)) {
     }
     //insert standard values:
     std::vector<wxString> labels(2);
-    std::vector<double> defaults(labels.size());
+    Vector_double defaults(labels.size());
     labels[0]=wxT("Select every x-th trace:");defaults[0]=1;
     labels[1]=wxT("Starting with the y-th:");defaults[1]=1;
     stf::UserInput init(labels,defaults,wxT("Select every n-th (1-based)"));
 
     wxStfUsrDlg EveryDialog(GetDocumentWindow(),init);
     if (EveryDialog.ShowModal()!=wxID_OK) return;
-    std::vector<double> input(EveryDialog.readInput());
+    Vector_double input(EveryDialog.readInput());
     if (input.size()!=2) return;
     int everynth=(int)input[0];
     int everystart=(int)input[1];
@@ -1527,14 +1530,14 @@ void wxStfDoc::Unselectsome(wxCommandEvent &WXUNUSED(event)) {
     }
     //insert standard values:
     std::vector<wxString> labels(2);
-    std::vector<double> defaults(labels.size());
+    Vector_double defaults(labels.size());
     labels[0]=wxT("Unselect every x-th trace:");defaults[0]=1;
     labels[1]=wxT("Starting with the y-th:");defaults[1]=1;
     stf::UserInput init(labels,defaults,wxT("Unselect every n-th (1-based)"));
 
     wxStfUsrDlg EveryDialog(GetDocumentWindow(),init);
     if (EveryDialog.ShowModal()!=wxID_OK) return;
-    std::vector<double> input(EveryDialog.readInput());
+    Vector_double input(EveryDialog.readInput());
     if (input.size()!=2) return;
     int everynth=(int)input[0];
     int everystart=(int)input[1];
@@ -1616,14 +1619,14 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
 
     //--For details on the Fast Fourier Transform see NR in C++, chapters 12 and 13
     std::vector<wxString> windowLabels(2);
-    std::vector<double> windowDefaults(windowLabels.size());
+    Vector_double windowDefaults(windowLabels.size());
     windowLabels[0]=wxT("From point #:");windowDefaults[0]=0;
     windowLabels[1]=wxT("To point #:");windowDefaults[1]=(int)cur().size()-1;
     stf::UserInput initWindow(windowLabels,windowDefaults,wxT("Filter window"));
 
     wxStfUsrDlg FilterWindowDialog(GetDocumentWindow(),initWindow);
     if (FilterWindowDialog.ShowModal()!=wxID_OK) return;
-    std::vector<double> windowInput(FilterWindowDialog.readInput());
+    Vector_double windowInput(FilterWindowDialog.readInput());
     if (windowInput.size()!=2) return;
     int llf=(int)windowInput[0];
     int ulf=(int)windowInput[1];
@@ -1643,7 +1646,7 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
     }
     wxStfGaussianDlg FftDialog(GetDocumentWindow());
 
-    std::valarray<double> a(size);
+    Vector_double a(size);
     switch (fselect) {
     case 1:
         if (FftDialog.ShowModal()!=wxID_OK) return;
@@ -1655,14 +1658,14 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
     case 3: {
         //insert standard values:
         std::vector<wxString> labels(1);
-        std::vector<double> defaults(labels.size());
+        Vector_double defaults(labels.size());
         labels[0]=wxT("Cutoff frequency (kHz):");
         defaults[0]=10;
         stf::UserInput init(labels,defaults,wxT("Set frequency"));
 
         wxStfUsrDlg FilterHighLowDialog(GetDocumentWindow(),init);
         if (FilterHighLowDialog.ShowModal()!=wxID_OK) return;
-        std::vector<double> input(FilterHighLowDialog.readInput());
+        Vector_double input(FilterHighLowDialog.readInput());
         if (input.size()!=1) return;
         a[0]=(int)(input[0]*100000.0)/100000.0;    /*midpoint of sigmoid curve in kHz*/
         break;
@@ -1727,13 +1730,13 @@ void wxStfDoc::Spectrum(wxCommandEvent& WXUNUSED(event)) {
     }
     //insert standard values:
     std::vector<wxString> labels(1);
-    std::vector<double> defaults(labels.size());
+    Vector_double defaults(labels.size());
     labels[0]=wxT("Number of periodograms:");defaults[0]=10;
     stf::UserInput init(labels,defaults,wxT("Settings for Welch's method"));
 
     wxStfUsrDlg SegDialog(GetDocumentWindow(),init);
     if (SegDialog.ShowModal()!=wxID_OK) return;
-    std::vector<double> input(SegDialog.readInput());
+    Vector_double input(SegDialog.readInput());
     if (input.size()!=1) return;
 
     int n_seg=(int)SegDialog.readInput()[0];
@@ -1744,8 +1747,7 @@ void wxStfDoc::Spectrum(wxCommandEvent& WXUNUSED(event)) {
     double f_s=1.0; // frequency stepsize of the spectrum
     std::size_t n = 0;
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
-        std::valarray< std::complex<double> > temp(std::complex<double>(0.0,0.0),
-                get()[GetCurCh()][*cit].size());
+        std::vector< std::complex<double> > temp(get()[GetCurCh()][*cit].size(), std::complex<double>(0.0,0.0));
         for (int i=0;i<(int)get()[GetCurCh()][*cit].size();++i) {
             temp[i]=get()[GetCurCh()][*cit][i];
         }
@@ -1779,13 +1781,13 @@ void wxStfDoc::Spectrum(wxCommandEvent& WXUNUSED(event)) {
 void wxStfDoc::P_over_N(wxCommandEvent& WXUNUSED(event)){
     //insert standard values:
     std::vector<wxString> labels(1);
-    std::vector<double> defaults(labels.size());
+    Vector_double defaults(labels.size());
     labels[0]=wxT("N = (mind polarity!)");defaults[0]=-4;
     stf::UserInput init(labels,defaults,wxT("P over N"));
 
     wxStfUsrDlg PonDialog(GetDocumentWindow(),init);
     if (PonDialog.ShowModal()!=wxID_OK) return;
-    std::vector<double> input(PonDialog.readInput());
+    Vector_double input(PonDialog.readInput());
     if (input.size()!=1) return;
     int PoN=(int)fabs(input[0]);
     int ponDirection=input[0]<0? -1:1;
@@ -1846,7 +1848,7 @@ void wxStfDoc::Plotcriterion(wxCommandEvent& WXUNUSED(event)) {
     }
     int nTemplate=MiniDialog.GetTemplate();
     try {
-        std::valarray<double> templateWave(
+        Vector_double templateWave(
                 sectionList.at(nTemplate)->GetStoreFitEnd() -
                 sectionList.at(nTemplate)->GetStoreFitBeg());
         for ( std::size_t n_p=0; n_p < templateWave.size(); n_p++ ) {
@@ -1857,9 +1859,14 @@ void wxStfDoc::Plotcriterion(wxCommandEvent& WXUNUSED(event)) {
 #undef min
 #undef max
         // subtract offset and normalize:
-        templateWave-=templateWave.max();
-        double minim=fabs(templateWave.min());
-        templateWave /= minim;
+
+        Vector_double::const_iterator max_el = std::max_element(templateWave.begin(), templateWave.end());
+        Vector_double::const_iterator min_el = std::min_element(templateWave.begin(), templateWave.end());
+        double fmin=*min_el;
+        double fmax=*max_el;
+        templateWave = stf::vec_scal_minus(templateWave, fmax);
+        double minim=fabs(fmin);
+        templateWave = stf::vec_scal_div(templateWave, minim);
         Section TempSection(
                 stf::detectionCriterion( cur().get(), templateWave ) );
         if (TempSection.size()==0) return;
@@ -1893,7 +1900,7 @@ void wxStfDoc::Plotcorrelation(wxCommandEvent& WXUNUSED(event)) {
     }
     int nTemplate=MiniDialog.GetTemplate();
     try {
-        std::valarray<double> templateWave(
+        Vector_double templateWave(
                 sectionList.at(nTemplate)->GetStoreFitEnd() -
                 sectionList.at(nTemplate)->GetStoreFitBeg());
         for ( std::size_t n_p=0; n_p < templateWave.size(); n_p++ ) {
@@ -1904,9 +1911,14 @@ void wxStfDoc::Plotcorrelation(wxCommandEvent& WXUNUSED(event)) {
 #undef min
 #undef max
         // subtract offset and normalize:
-        templateWave-=templateWave.max();
-        double minim=fabs(templateWave.min());
-        templateWave /= minim;
+        Vector_double::const_iterator max_el = std::max_element(templateWave.begin(), templateWave.end());
+        Vector_double::const_iterator min_el = std::min_element(templateWave.begin(), templateWave.end());
+        double fmin=*min_el;
+        double fmax=*max_el;
+        templateWave = stf::vec_scal_minus(templateWave, fmax);
+        double minim=fabs(fmin);
+        templateWave = stf::vec_scal_div(templateWave, minim);
+
         Section TempSection( stf::linCorr( cur().get(), templateWave ) );
         if (TempSection.size()==0) return;
         TempSection.SetSectionDescription(
@@ -1937,7 +1949,7 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
     }
     int nTemplate=MiniDialog.GetTemplate();
     try {
-        std::valarray<double> templateWave(
+        Vector_double templateWave(
                 sectionList.at(nTemplate)->GetStoreFitEnd() -
                 sectionList.at(nTemplate)->GetStoreFitBeg());
         for ( std::size_t n_p=0; n_p < templateWave.size(); n_p++ ) {
@@ -1948,10 +1960,14 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
 #undef min
 #undef max
         // subtract offset and normalize:
-        templateWave-=templateWave.max();
-        double minim=fabs(templateWave.min());
-        templateWave /= minim;
-        std::valarray<double> detect( cur().get().size() - templateWave.size() );
+        Vector_double::const_iterator max_el = std::max_element(templateWave.begin(), templateWave.end());
+        Vector_double::const_iterator min_el = std::min_element(templateWave.begin(), templateWave.end());
+        double fmin=*min_el;
+        double fmax=*max_el;
+        templateWave = stf::vec_scal_minus(templateWave, fmax);
+        double minim=fabs(fmin);
+        templateWave = stf::vec_scal_div(templateWave, minim);
+        Vector_double detect( cur().get().size() - templateWave.size() );
         if (MiniDialog.GetScaling()) {
             detect=stf::detectionCriterion( cur().get(),templateWave );
         } else {
@@ -2124,9 +2140,9 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
 
 void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
     // get threshold from user input:
-    std::vector<double> threshold(0);
+    Vector_double threshold(0);
     stf::UserInput Input( std::vector<wxString>(1,wxT("Threshold")),
-            std::vector<double> (1,0.0), wxT("Set threshold") );
+            Vector_double (1,0.0), wxT("Set threshold") );
     wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
     if (myDlg.ShowModal()!=wxID_OK) {
         return;
@@ -2170,7 +2186,7 @@ void wxStfDoc::Userdef(std::size_t id) {
     wxBusyCursor wc;
     int fselect=(int)id;
     Recording newR;
-    std::vector<double> init(0);
+    Vector_double init(0);
     // get user input if necessary:
     if (!wxGetApp().GetPluginLib().at(fselect).input.labels.empty()) {
         wxStfUsrDlg myDlg( GetDocumentWindow(),

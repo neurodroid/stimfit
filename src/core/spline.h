@@ -26,12 +26,12 @@
 #define _SPLINE_H
 
 namespace stf {
-	std::valarray<double> d3_np_fs(std::valarray<double>& a, const std::valarray<double>& b);
-    void dvec_bracket3 (const std::valarray<double>& t, double tval, int& left );
-    std::valarray<double> spline_cubic_set ( const std::valarray<double>& t, const std::valarray<double>& y, 
+	Vector_double d3_np_fs(Vector_double& a, const Vector_double& b);
+    void dvec_bracket3 (const Vector_double& t, double tval, int& left );
+    Vector_double spline_cubic_set ( const Vector_double& t, const Vector_double& y, 
 		int ibcbeg, double ybcbeg, int ibcend, double ybcend );
-	double spline_cubic_val (const std::valarray<double>& t, double tval, const std::valarray<double>& y, 
-		const std::valarray<double>& ypp, double& ypval, double& yppval );
+	double spline_cubic_val (const Vector_double& t, double tval, const Vector_double& y, 
+		const Vector_double& ypp, double& ypval, double& yppval );
 }
 
 #endif

@@ -17,6 +17,7 @@
 #include "../../axon2/abf2headr.h"
 #endif
 #include <vector>
+#include "./../../../stimdefs.h"
 
 // #include "../AxAbfFio32/filedesc.hpp"    // File descriptors for ABF files.
 
@@ -128,9 +129,9 @@ BOOL WINAPI ABF_MultiplexWrite(int nFile, ABFFileHeader *pFH, UINT uFlags, const
 BOOL WINAPI ABF_WriteRawData(int nFile, const void *pvBuffer, DWORD dwSizeInBytes, int *pnError);
 */
 BOOL WINAPI ABF_ReadChannel(int nFile, const ABFFileHeader *pFH, int nChannel, DWORD dwEpisode, 
-                            std::vector<float>& pfBuffer, UINT *puNumSamples, int *pnError);
+                            Vector_float& pfBuffer, UINT *puNumSamples, int *pnError);
 BOOL WINAPI ABF2_ReadChannel(int nFile, const ABF2FileHeader *pFH, int nChannel, DWORD dwEpisode, 
-                             std::vector<float>& pfBuffer, UINT *puNumSamples, int *pnError);
+                             Vector_float& pfBuffer, UINT *puNumSamples, int *pnError);
 /*                                   
 BOOL WINAPI ABF_ReadRawChannel(int nFile, const ABFFileHeader *pFH, int nChannel, DWORD dwEpisode, 
                                void *pvBuffer, UINT *puNumSamples, int *pnError);

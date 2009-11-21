@@ -144,7 +144,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
         Channel TempChannel(sectionsPerChannel);
         for (std::size_t n_s=n_c; (int)n_s < numberOfColumns-1; n_s += numberOfChannels) {
             if (channel_units[n_c] == wxT("V")) {
-                section_list[n_s].get_w() *= 1.0e3;
+                section_list[n_s].get_w() = stf::vec_scal_mul(section_list[n_s].get(), 1.0e3);
             }
             try {
                 TempChannel.InsertSection( section_list[n_s], (n_s-n_c)/numberOfChannels );

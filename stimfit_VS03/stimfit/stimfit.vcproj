@@ -128,7 +128,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				AdditionalIncludeDirectories="D:\Users\cs\hdf5\include;D:\Users\cs\fftw\include;D:\Users\cs\wxPython\include"
-				PreprocessorDefinitions="_UNICODE;WXUSINGDLL;__STF__;__WIN32__;WIN32;__WXMSW__;WXP_USE_THREAD=1;NOPCH;STFDLL;_CRT_SECURE_NO_DEPRECATE;WITH_PYTHON;HAVE_LAPACK;_WINDOWS;STFDATE=\&quot;Thu Jun 5 2009, 22:54:25 CEST\&quot;"
+				PreprocessorDefinitions="_UNICODE;WXUSINGDLL;__STF__;__WIN32__;WIN32;__WXMSW__;WXP_USE_THREAD=1;NOPCH;STFDLL;_CRT_SECURE_NO_DEPRECATE;WITH_PYTHON;HAVE_LAPACK;_WINDOWS;STFDATE=\&quot;Thu Jun 5 2009, 22:54:25 CEST\&quot;;NDEBUG"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="false"
@@ -739,6 +739,18 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="axon"
+						>
+						<Filter
+							Name="AxAbfFio32"
+							>
+							<File
+								RelativePath="..\..\src\core\filelib\axon\AxAbfFio32\abffiles.h"
+								>
+							</File>
+						</Filter>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter
@@ -809,6 +821,22 @@
 					</File>
 					<File
 						RelativePath="..\..\src\app\dlgs\smalldlgs.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="funclib"
+					>
+					<File
+						RelativePath="..\..\src\app\funclib\funclib.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="plugins"
+					>
+					<File
+						RelativePath="..\..\src\app\plugins\plugins.h"
 						>
 					</File>
 				</Filter>

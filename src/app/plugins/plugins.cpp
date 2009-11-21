@@ -25,7 +25,7 @@ std::vector<stf::Plugin> stf::GetPluginLib() {
     extList.push_back(Plugin(wxT("Create bootstrapped datasets"),bootstrap));
 
     std::vector<wxString> labels;
-    std::vector<double> defaults;
+    Vector_double defaults;
     labels.push_back(wxT("Pulses for IV:"));defaults.push_back(6.0);
     labels.push_back(wxT("Voltage of first:"));defaults.push_back(-80.0);
     labels.push_back(wxT("Voltage step:"));defaults.push_back(-20.0);
@@ -39,7 +39,7 @@ std::vector<stf::Plugin> stf::GetPluginLib() {
 
 Recording stf::bootstrap(
         const Recording& data,
-        const std::vector<double>& input,            
+        const Vector_double& input,            
         std::map< wxString, double >& results
 ) {
     if (data.GetSelectedSections().empty()) {
@@ -75,7 +75,7 @@ Recording stf::bootstrap(
 
 Recording stf::analyze_iv(
         const Recording& data,
-        const std::vector<double>& input,
+        const Vector_double& input,
         std::map< wxString, double >& results
 ) {
     if (input.size()==0) {
@@ -98,7 +98,7 @@ Recording stf::analyze_iv(
     // Loop:
     for (int m = 0; m < ivPulses; ++m) {
         // A vector of valarrays to get the average:
-        std::vector<std::valarray<double> > set;
+        std::vector<Vector_double > set;
         for (std::size_t n=traceToBegin+m;
              n < (std::size_t)data.get()[data.GetCurCh()].size();
              n += ivPulses)
@@ -169,8 +169,8 @@ stf::randomPermutation(const std::vector<std::size_t>& input, std::size_t B) {
     return retVec;
 }
 
-std::valarray<double>
-stf::average(const std::vector< std::valarray< double > >& set) {
+Vector_double
+stf::average(const std::vector< std::vector< double > >& set) {
     if (set.empty()) {
         throw std::runtime_error("Array of size 0 in stf::average()");
     }
@@ -183,13 +183,13 @@ stf::average(const std::vector< std::valarray< double > >& set) {
         throw std::runtime_error("Array of size 0 in stf::average()");
     }
     // valarray for return:
-    std::valarray<double> retVa(max);
+    Vector_double retVa(max);
 
     for (std::size_t m=0;m<max;++m) {
         double sum=0.0;
         int count=0;
         // sum up at position m if it exists:
-        std::vector< std::valarray< double > >::const_iterator cit;
+        std::vector< std::vector< double > >::const_iterator cit;
         for (cit = set.begin(); cit != set.end(); cit++) {
             if (m < cit->size()) {
                 sum += (*cit)[m];

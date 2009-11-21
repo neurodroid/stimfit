@@ -91,7 +91,7 @@ void Recording::init() {
     t0Real = 0.0;
     pM = 1;
     selectedSections = std::vector<std::size_t>(0);
-    selectBase = std::vector<double>(0);
+    selectBase = Vector_double(0);
     t20Index = 0;
     t80Index = 0;
     t50LeftIndex = 0;
@@ -144,8 +144,12 @@ void Recording::InsertChannel(Channel& c_Channel, std::size_t pos) {
         std::size_t n_sec = 0;
         for ( sec_it sit = c_Channel.get().begin(); sit != c_Channel.get().end(); ++sit ) {
             if ( ChannelArray.at(pos).at(n_sec).size() <= sit->size() ) {
-                ChannelArray.at(pos).at(n_sec++).get_w().resize( sit->size() );
+                ChannelArray.at(pos).at(n_sec).get_w().resize( sit->size() );
+                if (ChannelArray.at(pos).at(n_sec).size() != sit->size()) {
+                    throw std::bad_alloc("Couldn't allocate memory in Recording::InsertChannel");
+                }
             }
+            n_sec++;
         }
     }
     catch (...) {

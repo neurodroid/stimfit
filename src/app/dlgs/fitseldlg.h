@@ -26,7 +26,7 @@
  */
 
 #include <vector>
-#include <valarray>
+#include <boost/numeric/ublas/vector.hpp>
 #include "wx/listctrl.h"
 #include "./../../core/stimdefs.h"
 
@@ -37,8 +37,8 @@ class wxStfFitSelDlg : public wxDialog
 
 private:
     int m_fselect;
-    std::valarray<double> init_p;
-    std::valarray<double> opts;
+    Vector_double init_p;
+    Vector_double opts;
     bool noInput;
 
     void SetPars();
@@ -100,12 +100,12 @@ public:
     //! Get the initial parameters.
     /*! \return A valarray containing the initial parameter set to start the fit.
      */
-    std::valarray<double> GetInitP() const {return init_p;}
+    Vector_double GetInitP() const {return init_p;}
 
     //! Get options for the algorithm.
     /*! \return A valarray containing the initial parameters for the algorithm.
      */
-    std::valarray<double> GetOpts() const {return opts;}
+    Vector_double GetOpts() const {return opts;}
 
     //! Determines whether user-defined initial parameters are allowed.
     /*! \param noInput_ Set to true if the user may set the initial parameters, false otherwise.

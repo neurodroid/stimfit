@@ -446,12 +446,12 @@ class StfDll Recording {
     //! Retrieves the stored baseline values of the selected sections (read-only).
     /*! \return A vector containing the stored baseline values of the selected sections.
      */
-    const std::vector<double>& GetSelectBase() const { return selectBase; } 
+    const Vector_double& GetSelectBase() const { return selectBase; } 
 
     //! Retrieves the stored baseline values of the selected sections (read and write).
     /*! \return A vector containing the stored baseline values of the selected sections.
      */
-    std::vector<double>& GetSelectBaseW() { return selectBase; }
+    Vector_double& GetSelectBaseW() { return selectBase; }
 
     //! Retrieves the currently accessed section in the active channel (read-only)
     /*! \return The currently accessed section in the active channel.
@@ -859,7 +859,7 @@ class StfDll Recording {
     // Indices of the selected sections
     std::vector<std::size_t> selectedSections;
     // Base line value for each selected trace
-    std::vector<double> selectBase;
+    Vector_double selectBase;
     
     std::size_t t20Index, t80Index, t50LeftIndex, t50RightIndex;
 

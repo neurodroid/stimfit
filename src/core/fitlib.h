@@ -44,8 +44,8 @@ namespace stf {
  */
 template <typename T>
 T linFit(
-        const std::valarray<T>& x,
-        const std::valarray<T>& y,
+        const std::vector<T>& x,
+        const std::vector<T>& y,
         T& m,
         T& c
 );
@@ -61,9 +61,9 @@ T linFit(
  *  \param warning A warning code on return.
  *  \return The sum of squred errors between \e data and the best-fit function.
  */
-double StfDll lmFit(const std::valarray<double>& data, double dt,
-        const stf::storedFunc& fitFunc, const std::valarray<double>& opts,
-        std::valarray<double>& p, wxString& info, int& warning );
+double StfDll lmFit(const Vector_double& data, double dt,
+        const stf::storedFunc& fitFunc, const Vector_double& opts,
+        Vector_double& p, wxString& info, int& warning );
 
 //! Linear function.
 /*! \f[f(x)=p_0 x + p_1\f]
@@ -73,11 +73,11 @@ double StfDll lmFit(const std::valarray<double>& data, double dt,
  *         \e p[1] is the y intersection.
  *  \return The evaluated function.
  */
-double flin(double x, const std::valarray<double>& p);
+double flin(double x, const Vector_double& p);
 
 //! Dummy function to be passed to stf::storedFunc for linear functions.
-void flin_init(const std::valarray<double>& data, double base, double peak,
-        double dt, std::valarray<double>& pInit );
+void flin_init(const Vector_double& data, double base, double peak,
+        double dt, Vector_double& pInit );
 
 //! initializes a linear function
 /*! \return An stf::storedFunc that can be used to store a linear function after a fit */
@@ -86,8 +86,8 @@ stf::storedFunc initLinFunc();
 }
 
 template <typename T>
-T stf::linFit(const std::valarray<T>& x,
-        const std::valarray<T>& y,
+T stf::linFit(const std::vector<T>& x,
+        const std::vector<T>& y,
         T& m,
         T& c)
 {

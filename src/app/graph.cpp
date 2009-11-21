@@ -625,7 +625,7 @@ void wxStfGraph::OnDraw( wxDC& DC )
     view->OnDraw(& DC);
 }
 
-void wxStfGraph::PlotTrace( wxDC* pDC, const std::valarray<double>& trace, bool is2 ) {
+void wxStfGraph::PlotTrace( wxDC* pDC, const Vector_double& trace, bool is2 ) {
     // speed up drawing by omitting points that are outside the window:
 
     // find point before left window border:
@@ -656,7 +656,7 @@ void wxStfGraph::PlotTrace( wxDC* pDC, const std::valarray<double>& trace, bool 
     DoPlot(pDC, trace, start, end, step, is2);
 }
 
-void wxStfGraph::DoPlot( wxDC* pDC, const std::valarray<double>& trace, int start, int end, int step, bool is2 ) {
+void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int end, int step, bool is2 ) {
     boost::function<int(double)> yFormatFunc;
     
     if (!is2) {
@@ -701,7 +701,7 @@ void wxStfGraph::DoPlot( wxDC* pDC, const std::valarray<double>& trace, int star
     }
 }
 
-void wxStfGraph::PrintTrace( wxDC* pDC, const std::valarray<double>& trace, bool is2 ) {
+void wxStfGraph::PrintTrace( wxDC* pDC, const Vector_double& trace, bool is2 ) {
     // speed up drawing by omitting points that are outside the window:
 
     // find point before left window border:
@@ -724,7 +724,7 @@ void wxStfGraph::PrintTrace( wxDC* pDC, const std::valarray<double>& trace, bool
     DoPrint(pDC, trace, start, end, downsampling, is2);
 }
 
-void wxStfGraph::DoPrint( wxDC* pDC, const std::valarray<double> trace, int start, int end, int downsampling, bool is2 ) {
+void wxStfGraph::DoPrint( wxDC* pDC, const Vector_double trace, int start, int end, int downsampling, bool is2 ) {
     boost::function<int(double)> yFormatFunc;
     
     if (!is2) {
@@ -980,7 +980,7 @@ void wxStfGraph::Exportimage() {
     if (bmpDialog.ShowModal()!=wxID_OK) return;
     std::vector<wxString> sizeStr(1);
     sizeStr[0] = wxT("Set width (in pixels):");
-    std::vector<double> defaultWidth(1);
+    Vector_double defaultWidth(1);
     defaultWidth[0]=GetRect().width;
     stf::UserInput(sizeStr,defaultWidth,wxT("Change image size"));
     wxStfUsrDlg sizeDlg(
@@ -1179,7 +1179,7 @@ void wxStfGraph::Exportsvg() {
 void wxStfGraph::Snapshot() {
     std::vector<wxString> sizeStr(1);
     sizeStr[0]=wxT("Set width (in pixels):");
-    std::vector<double> defaultWidth(1);
+    Vector_double defaultWidth(1);
     defaultWidth[0]=GetRect().width;
     stf::UserInput(sizeStr,defaultWidth,wxT("Change image size"));
     wxStfUsrDlg sizeDlg(
@@ -2023,10 +2023,12 @@ void wxStfGraph::Fittowindow(bool refresh)
         wxGetApp().ErrorMsg(wxT("Array of size zero in wxGraph::Fittowindow()"));
         return;
     }
-    double min=Doc()->cur().get().min();
+    Vector_double::const_iterator max_el = std::max_element(Doc()->cur().get().begin(), Doc()->cur().get().end());
+    Vector_double::const_iterator min_el = std::min_element(Doc()->cur().get().begin(), Doc()->cur().get().end());
+    double min=*min_el;
     if (min>1.0e12)  min= 1.0e12;
     if (min<-1.0e12) min=-1.0e12;
-    double max=Doc()->cur().get().max();
+    double max=*max_el;
     if (max>1.0e12)  max= 1.0e12;
     if (max<-1.0e12) max=-1.0e12;
     wxRect WindowRect(GetRect());
@@ -2082,8 +2084,10 @@ void wxStfGraph::FitToWindowSecCh(bool refresh)
     std::size_t secCh=Doc()->GetSecCh();
 #undef min
 #undef max
-    double min=Doc()->get()[secCh][Doc()->GetCurSec()].get().min();
-    double max=Doc()->get()[secCh][Doc()->GetCurSec()].get().max();
+    Vector_double::const_iterator max_el = std::max_element(Doc()->get()[secCh][Doc()->GetCurSec()].get().begin(), Doc()->get()[secCh][Doc()->GetCurSec()].get().end());
+    Vector_double::const_iterator min_el = std::min_element(Doc()->get()[secCh][Doc()->GetCurSec()].get().begin(), Doc()->get()[secCh][Doc()->GetCurSec()].get().end());
+    double min=*min_el;
+    double max=*max_el;
     YZ2W()=(WindowRect.height/fabs(max-min))*screen_part;
     SPY2W()=(int)(((screen_part+1)/2)*WindowRect.height
             + min * YZ2());

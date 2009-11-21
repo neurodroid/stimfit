@@ -44,7 +44,7 @@ namespace stf {
      */
     Recording bootstrap(
             const Recording& data,
-            const std::vector<double>& input,
+            const Vector_double& input,
             std::map< wxString, double >& results
     );
 
@@ -60,7 +60,7 @@ namespace stf {
      */
     Recording analyze_iv(
             const Recording& data,
-            const std::vector<double>& input,
+            const Vector_double& input,
             std::map< wxString, double >& results
     );
     
@@ -78,8 +78,8 @@ namespace stf {
     /*! \param set A vector of valarrays to be averaged.
      *  \return The average of all valarrays in \e set.
      */
-    std::valarray<double>
-    average(const std::vector<std::valarray<double> >& set);
+    Vector_double
+    average(const std::vector<Vector_double >& set);
 
     //! Get the plugins from the application.
     /*! \return A vector of plugins registered by the user.

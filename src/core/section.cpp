@@ -28,7 +28,7 @@ Section::Section(void)
       storeIntBeg(0),storeIntEnd(0),bestFit(0,0),
 	  data(0) {}
 
-Section::Section( const std::valarray<double>& valA, const wxString& label ) :	
+Section::Section( const Vector_double& valA, const wxString& label ) :	
     eventList(),pyMarkers(),section_description(label),
     x_scale(1.0),
     isFitted(false),isIntegrated(false),fitFunc(NULL),bestFitP(0),quad_p(0),storeFitBeg(0),storeFitEnd(0),
@@ -80,8 +80,8 @@ void Section::SetIsIntegrated(bool value, std::size_t begin, std::size_t end) {
     int n_q=0;
     if (begin-end>1) {
         for (int n=begin; n<(int)end-1; n+=2) {
-            std::valarray<double> A(9);
-            std::valarray<double> B(3);
+            Vector_double A(9);
+            Vector_double B(3);
     
             // solve linear equation system:
             // use column-major order (Fortran)
@@ -131,7 +131,7 @@ const stf::PyMarker& Section::GetPyMarker(std::size_t n_e) const {
     }
 }
 
-void Section::SetIsFitted( const std::valarray<double>& bestFitP_, stf::storedFunc* fitFunc_,
+void Section::SetIsFitted( const Vector_double& bestFitP_, stf::storedFunc* fitFunc_,
         double chisqr, std::size_t fitBeg, std::size_t fitEnd )
 {
     if ( !fitFunc_ ) {

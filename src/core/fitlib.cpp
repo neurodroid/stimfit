@@ -33,7 +33,7 @@ void saveJac(Jac jac);
 // (3) the sampling interval
 struct fitInfo {
     fitInfo(const std::deque<bool>& fit_p_arg,
-            const std::valarray<double>& const_p_arg,
+            const Vector_double& const_p_arg,
             double dt_arg)
     :   fit_p(fit_p_arg), const_p(const_p_arg), dt(dt_arg)
     {}
@@ -43,7 +43,7 @@ struct fitInfo {
 
             // A valarray containing the parameters that
             // will be kept constant:
-            std::valarray<double> const_p;
+            Vector_double const_p;
  
             // sampling interval
             double dt;
@@ -71,7 +71,7 @@ void stf::c_func_lour(double *p, double* hx, int m, int n, void *adata) {
     // total number of parameters, including constants:
     int tot_p=(int)fInfo->fit_p.size();
     // all parameters, including constants:
-    std::valarray<double> p_f(tot_p);
+    Vector_double p_f(tot_p);
     for (int n_tp=0, n_p=0, n_f=0;n_tp<tot_p;++n_tp) {
         // if the parameter needs to be fitted...
         if (fInfo->fit_p[n_tp]) {
@@ -95,7 +95,7 @@ void stf::c_jac_lour(double *p, double *jac, int m, int n, void *adata) {
     // total number of parameters, including constants:
     int tot_p=(int)fInfo->fit_p.size();
     // all parameters, including constants:
-    std::valarray<double> p_f(tot_p);
+    Vector_double p_f(tot_p);
     for (int n_tp=0,n_p=0,n_f=0;n_tp<tot_p;++n_tp) {
         // if the parameter needs to be fitted...
         if (fInfo->fit_p[n_tp]) {
@@ -109,7 +109,7 @@ void stf::c_jac_lour(double *p, double *jac, int m, int n, void *adata) {
     for (int n_x=0,n_j=0;n_x<n;++n_x) {
         // jac_f will calculate the derivatives of all parameters,
         // including the constants...
-        std::valarray<double> jac_f(jac_lour((double)n_x*fInfo->dt,p_f));
+        Vector_double jac_f(jac_lour((double)n_x*fInfo->dt,p_f));
         // ... but we only need the derivatives of the non-constants...
         for (int n_tp=0;n_tp<tot_p;++n_tp) {
             // ... hence, we will eliminate the derivatives of the constants:
@@ -120,9 +120,9 @@ void stf::c_jac_lour(double *p, double *jac, int m, int n, void *adata) {
     }
 }
 
-double stf::lmFit( const std::valarray<double>& data, double dt,
-        const stf::storedFunc& fitFunc, const std::valarray<double>& opts,
-        std::valarray<double>& p, wxString& info, int& warning )
+double stf::lmFit( const Vector_double& data, double dt,
+        const stf::storedFunc& fitFunc, const Vector_double& opts,
+        Vector_double& p, wxString& info, int& warning )
 {	
     // Basic range checking:
     if (fitFunc.pInfo.size()!=p.size()) {
@@ -137,8 +137,8 @@ double stf::lmFit( const std::valarray<double>& data, double dt,
     }
 
     bool constrained = false;
-    std::valarray< double > constrains_lm_lb( fitFunc.pInfo.size() );
-    std::valarray< double > constrains_lm_ub( fitFunc.pInfo.size() );
+    std::vector< double > constrains_lm_lb( fitFunc.pInfo.size() );
+    std::vector< double > constrains_lm_ub( fitFunc.pInfo.size() );
 
     for ( unsigned n_p=0; n_p < fitFunc.pInfo.size(); ++n_p ) {
         if ( fitFunc.pInfo[n_p].constrained ) {
@@ -156,7 +156,7 @@ double stf::lmFit( const std::valarray<double>& data, double dt,
     saveJac(fitFunc.jac);
 
     double info_id[LM_INFO_SZ];
-    std::valarray<double> data_ptr(data);
+    Vector_double data_ptr(data);
 
     // The parameters need to be separated into two parts:
     // Those that are to be fitted and those that the client wants
@@ -170,10 +170,10 @@ double stf::lmFit( const std::valarray<double>& data, double dt,
         n_fitted += fitFunc.pInfo[n_p].toFit;
     }
     // parameters that need to be fitted:
-    std::valarray<double> p_toFit(n_fitted);
+    Vector_double p_toFit(n_fitted);
     std::deque<bool> p_fit_bool( fitFunc.pInfo.size() );
     // parameters that are held constant:
-    std::valarray<double> p_const( fitFunc.pInfo.size()-n_fitted );
+    Vector_double p_const( fitFunc.pInfo.size()-n_fitted );
     for ( unsigned n_p=0, n_c=0, n_f=0; n_p < fitFunc.pInfo.size(); ++n_p ) {
         if (fitFunc.pInfo[n_p].toFit) {
             p_toFit[n_f++] = p[n_p];
@@ -184,13 +184,13 @@ double stf::lmFit( const std::valarray<double>& data, double dt,
     }
     fitInfo fInfo( p_fit_bool, p_const, dt );
     // make l-value of opts:
-    std::valarray<double> opts_l(5);
+    Vector_double opts_l(5);
     for (std::size_t n=0; n < 4; ++n) opts_l[n] = opts[n];
     opts_l[4] = -1e-6;
     int it = 0;
     if (p_toFit.size()!=0 && data_ptr.size()!=0) {
         double old_info_id[LM_INFO_SZ];
-        std::valarray<double> old_p_toFit( n_fitted );
+        Vector_double old_p_toFit( n_fitted );
         // initialize with initial parameter guess:
         old_p_toFit = p_toFit;
 #ifdef _DEBUG
@@ -318,11 +318,11 @@ double stf::lmFit( const std::valarray<double>& data, double dt,
     return info_id[1];
 }
 
-double stf::flin(double x, const std::valarray<double>& p) { return p[0]*x + p[1]; }
+double stf::flin(double x, const Vector_double& p) { return p[0]*x + p[1]; }
 
 //! Dummy function to be passed to stf::storedFunc for linear functions.
-void stf::flin_init(const std::valarray<double>& data, double base, double peak,
-        double dt, std::valarray<double>& pInit )
+void stf::flin_init(const Vector_double& data, double base, double peak,
+        double dt, Vector_double& pInit )
 { }
 
 stf::storedFunc stf::initLinFunc() {

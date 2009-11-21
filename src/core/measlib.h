@@ -50,7 +50,7 @@ namespace stf {
  *  \return The baseline value.
  */
 template <typename T>
-T base( T& var, const std::valarray<T>& data, std::size_t llb, std::size_t ulb,
+T base( T& var, const std::vector<T>& data, std::size_t llb, std::size_t ulb,
         std::size_t llp=0, std::size_t ulp=0 );
 
 //! Find the peak value of \e data between \e llp and \e ulp.
@@ -71,7 +71,7 @@ T base( T& var, const std::valarray<T>& data, std::size_t llb, std::size_t ulb,
  *  \return The peak value, measured from 0.
  */
 template <typename T>
-T peak( const std::valarray<T>& data, T base, std::size_t llp, std::size_t ulp,
+T peak( const std::vector<T>& data, T base, std::size_t llp, std::size_t ulp,
         int pM, stf::direction, T& maxT);
  
 //! Find the value within \e data between \e llp and \e ulp at which \e slope is exceeded.
@@ -84,7 +84,7 @@ T peak( const std::valarray<T>& data, T base, std::size_t llp, std::size_t ulp,
  *  \return The interpolated threshold value.
  */
 template <typename T>
-T threshold( const std::valarray<T>& data, std::size_t llp, std::size_t ulp, T slope, T& thrT );
+T threshold( const std::vector<T>& data, std::size_t llp, std::size_t ulp, T slope, T& thrT );
 
 //! Find 20 to 80% rise time of an event in \e data.
 /*! Although t80real is not explicitly returned, it can be calculated
@@ -101,7 +101,7 @@ T threshold( const std::valarray<T>& data, std::size_t llp, std::size_t ulp, T s
  *  \return The rise time.
  */
 template <typename T>
-T risetime( const std::valarray<T>& data, T base, T ampl, T left, T right,
+T risetime( const std::vector<T>& data, T base, T ampl, T left, T right,
             std::size_t& t20Id, std::size_t& t80Id, T& t20Real );
 
 //! Find the full width at half-maximal amplitude of an event within \e data.
@@ -122,7 +122,7 @@ T risetime( const std::valarray<T>& data, T base, T ampl, T left, T right,
  *  \return The full width at half-maximal amplitude.
  */
 template <typename T>
-T t_half( const std::valarray<T>& data, T base, T ampl, T left, T right,
+T t_half( const std::vector<T>& data, T base, T ampl, T left, T right,
           T center, std::size_t& t50LeftId, std::size_t& t50RightId,
           T& t50LeftReal );
 
@@ -136,7 +136,7 @@ T t_half( const std::valarray<T>& data, T base, T ampl, T left, T right,
  *  \return The maximal slope during the rising phase.
  */
 template <typename T>
-T  maxRise( const std::valarray<T>& data, T left, T right, T& maxRiseT,
+T  maxRise( const std::vector<T>& data, T left, T right, T& maxRiseT,
             T& maxRiseY);
 
 //! Find the maximal slope during the decaying phase of an event within \e data.
@@ -149,7 +149,7 @@ T  maxRise( const std::valarray<T>& data, T left, T right, T& maxRiseT,
  *  \return The maximal slope during the decaying phase.
  */
 template <typename T>
-T  maxDecay( const std::valarray<T>& data, T left, T right, T& maxDecayT,
+T  maxDecay( const std::vector<T>& data, T left, T right, T& maxDecayT,
              T& maxDecayY);
 
 /*@}*/
@@ -157,7 +157,7 @@ T  maxDecay( const std::valarray<T>& data, T left, T right, T& maxDecayT,
 }
 
 template <typename T>
-T stf::base( T& var, const std::valarray<T>& data, std::size_t llb, std::size_t ulb,
+T stf::base( T& var, const std::vector<T>& data, std::size_t llb, std::size_t ulb,
              std::size_t llp, std::size_t ulp)
 {
     if (data.size()==0) return 0;
@@ -196,7 +196,7 @@ T stf::base( T& var, const std::valarray<T>& data, std::size_t llb, std::size_t 
 }
 
 template <typename T>
-T stf::peak(const std::valarray<T>& data, T base, std::size_t llp, std::size_t ulp,
+T stf::peak(const std::vector<T>& data, T base, std::size_t llp, std::size_t ulp,
             int pM, stf::direction dir, T& maxT)
 {
     if (llp>ulp || ulp>data.size()) {
@@ -259,7 +259,7 @@ T stf::peak(const std::valarray<T>& data, T base, std::size_t llp, std::size_t u
 }
 
 template <typename T>
-T stf::threshold( const std::valarray<T>& data, std::size_t llp, std::size_t ulp, T slope, T& thrT )
+T stf::threshold( const std::vector<T>& data, std::size_t llp, std::size_t ulp, T slope, T& thrT )
 {
     thrT = -1;
     
@@ -286,7 +286,7 @@ T stf::threshold( const std::valarray<T>& data, std::size_t llp, std::size_t ulp
 }
 
 template <typename T>
-T stf::risetime(const std::valarray<T>& data,
+T stf::risetime(const std::vector<T>& data,
         T base,
         T ampl,
         T left,
@@ -342,7 +342,7 @@ T stf::risetime(const std::valarray<T>& data,
 }
 
 template <typename T>
-T   stf::t_half(const std::valarray<T>& data,
+T   stf::t_half(const std::vector<T>& data,
         T base,
         T ampl,
         T left,
@@ -392,7 +392,7 @@ T   stf::t_half(const std::valarray<T>& data,
 }
 
 template <typename T>
-T   stf::maxRise(const std::valarray<T>& data,
+T   stf::maxRise(const std::vector<T>& data,
         T left,
         T right,
         T& maxRiseT,
@@ -415,7 +415,7 @@ T   stf::maxRise(const std::valarray<T>& data,
 }
 
 template <typename T>
-T stf::maxDecay(const std::valarray<T>& data,
+T stf::maxDecay(const std::vector<T>& data,
         T left,
         T right,
         T& maxDecayT,

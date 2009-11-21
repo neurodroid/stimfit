@@ -189,8 +189,7 @@
 #endif
 
 #include "fileUtils.h"
-
-#include <vector>
+#include "./../../stimdefs.h"
 #include <wx/wx.h>
 
 // errors numbers
@@ -281,8 +280,8 @@ struct ColumnData {
     wxString title;
     std::vector<short> shortArray;
     std::vector<int> intArray;
-    std::vector<float> floatArray;
-    std::vector<double> doubleArray;
+    Vector_float floatArray;
+    Vector_double doubleArray;
     SeriesArray seriesArray;
     ScaledShortArray scaledShortArray;
 };

@@ -181,13 +181,22 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
     }
     int hFile = abf2.GetFileNumber();
     for (int nChannel=0; nChannel < numberChannels; ++nChannel) {
-        Channel TempChannel(finalSections);
-        int grandsize = 0;
+        progDlg.Update((int)(((double)nChannel/(double)numberChannels)*100.0), wxT("Memory allocation"));
+        long grandsize = pFH->lNumSamplesPerEpisode / numberChannels;
         wxString label;
         label << stf::noPath(fName) << wxT(", gapfree section");
         if (gapfree) {
             grandsize = pFH->lActualAcqLength / numberChannels;
+            Vector_double test_size(0);
+            long maxsize = test_size.max_size()/8;
+            if (grandsize <= 0 || grandsize >= maxsize) {
+                wxMessageBox(wxT("Gapfree file is too large for a single section. It will be segmented.\nFile opening may be very slow."),wxT("Information"), wxOK | wxICON_WARNING, NULL);
+                gapfree=false;
+                grandsize = pFH->lNumSamplesPerEpisode / numberChannels;
+                finalSections=numberSections;
+            }
         }
+        Channel TempChannel(finalSections, grandsize);
         Section TempSectionGrand(grandsize, label);
         for (int nEpisode=1; nEpisode<=numberSections;++nEpisode) {
             if (progress) {
@@ -225,7 +234,7 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
             // Use a vector here because memory allocation can
             // be controlled more easily:
             // request memory:
-            std::vector<float> TempSection(uNumSamples, 0.0);
+            Vector_float TempSection(uNumSamples, 0.0);
             unsigned int uNumSamplesW;
             if (!ABF2_ReadChannel(hFile, pFH, pFH->nADCSamplingSeq[nChannel],nEpisode,TempSection,
                                   &uNumSamplesW,&nError))
@@ -254,7 +263,8 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
                 }
             } else {
                 if ((nEpisode-1) * pFH->lNumSamplesPerEpisode / numberChannels + TempSection.size() <= TempSectionGrand.size()) {
-                    std::copy(TempSection.begin(),TempSection.end(),&TempSectionGrand[(nEpisode-1) * pFH->lNumSamplesPerEpisode / numberChannels]);
+                    std::copy(TempSection.begin(),TempSection.end(),
+                              &TempSectionGrand[(nEpisode-1) * pFH->lNumSamplesPerEpisode / numberChannels]);
                 }
 #ifdef _STFDEBUG
                 else {
@@ -272,6 +282,7 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
                 throw;
             }
         }
+        progDlg.Update((int)(((double)(nChannel+1)/(double)numberChannels)*100.0), wxT("Completing channel reading\n"));
         try {
             if ((int)ReturnData.size()<numberChannels) {
                 ReturnData.resize(numberChannels);
@@ -371,7 +382,7 @@ void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool prog
             // Use a vector here because memory allocation can
             // be controlled more easily:
             // request memory:
-            std::vector<float> TempSection(uNumSamples, 0.0);
+            Vector_float TempSection(uNumSamples, 0.0);
             unsigned int uNumSamplesW=0;
             if (!ABF_ReadChannel(hFile, &FH, FH.nADCSamplingSeq[nChannel], dwEpisode, TempSection,
                                  &uNumSamplesW, &nError))

@@ -12,8 +12,8 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include <float.h>
-
+#include <cfloat>
+#include <cmath>
 #include "./../../core/fitlib.h"
 #include "./../../core/measlib.h"
 #include "./funclib.h"
@@ -98,11 +98,11 @@ std::vector< stf::storedFunc > stf::GetFuncLib() {
     return funcList;
 }
 
-std::valarray<double> stf::nojac(double x, const std::valarray<double>& p) {
-    return std::valarray<double>(0);
+Vector_double stf::nojac(double x, const Vector_double& p) {
+    return Vector_double(0);
 }
 
-double stf::fexp(double x, const std::valarray<double>& p) {
+double stf::fexp(double x, const Vector_double& p) {
     double sum=0.0;
     for (std::size_t n_p=0;n_p<p.size()-1;n_p+=2) {
         double e=exp(-x/p[n_p+1]);
@@ -111,8 +111,8 @@ double stf::fexp(double x, const std::valarray<double>& p) {
     return sum+p[p.size()-1];
 }
 
-std::valarray<double> stf::fexp_jac(double x, const std::valarray<double>& p) {
-    std::valarray<double> jac(p.size());
+Vector_double stf::fexp_jac(double x, const Vector_double& p) {
+    Vector_double jac(p.size());
     for (std::size_t n_p=0;n_p<p.size()-1;n_p+=2) {
         double e=exp(-x/p[n_p+1]);
         jac[n_p]=e;
@@ -122,16 +122,18 @@ std::valarray<double> stf::fexp_jac(double x, const std::valarray<double>& p) {
     return jac;
 }
 
-void stf::fexp_init(const std::valarray<double>& data, double base, double peak, double dt, std::valarray<double>& pInit ) {
+void stf::fexp_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
     // Find out direction:
     bool increasing = data[0] < data[data.size()-1];
-    double floor = (increasing ? (data.max()+1.0e-9) : (data.min()-1.0e-9));
-    std::valarray<double> peeled(data-floor);
-    if (increasing) peeled *= -1.0;
-    peeled = log(peeled);
+    Vector_double::const_iterator max_el = std::max_element(data.begin(), data.end());
+    Vector_double::const_iterator min_el = std::min_element(data.begin(), data.end());
+    double floor = (increasing ? (*max_el+1.0e-9) : (*min_el-1.0e-9));
+    Vector_double peeled( stf::vec_scal_minus(data, floor));
+    if (increasing) peeled = vec_scal_mul(peeled, -1.0);
+    std::transform(peeled.begin(), peeled.end(), peeled.begin(), std::logl );
 
     // linear fit on log-transformed data:
-    std::valarray<double> x(data.size());
+    Vector_double x(data.size());
     for (std::size_t n_x = 0; n_x < x.size(); ++n_x) {
         x[n_x] = (double)n_x * dt;
     }
@@ -159,7 +161,7 @@ void stf::fexp_init(const std::valarray<double>& data, double base, double peak,
 
 }
 
-void stf::fexp_init2(const std::valarray<double>& data, double base, double peak, double dt, std::valarray<double>& pInit ) {
+void stf::fexp_init2(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
     int n_exp=(int)pInit.size()/2;
     for (std::size_t n_p=0;n_p<pInit.size()-1;n_p+=2) {
         // use inverse amplitude for last term:
@@ -173,7 +175,7 @@ void stf::fexp_init2(const std::valarray<double>& data, double base, double peak
     pInit[pInit.size()-1]=peak;
 }
 
-double stf::fexpde(double x, const std::valarray<double>& p) {
+double stf::fexpde(double x, const Vector_double& p) {
     if (x<p[1]) {
         return p[0];
     } else {
@@ -184,8 +186,8 @@ double stf::fexpde(double x, const std::valarray<double>& p) {
 }
 
 #if 0
-std::valarray<double> stf::fexpde_jac(double x, const std::valarray<double>& p) {
-    std::valarray<double> jac(4);
+Vector_double stf::fexpde_jac(double x, const Vector_double& p) {
+    Vector_double jac(4);
     if (x<p[3]) {
         jac[0]=1.0;
         jac[1]=0.0;
@@ -202,7 +204,7 @@ std::valarray<double> stf::fexpde_jac(double x, const std::valarray<double>& p) 
 }
 #endif 
 
-void stf::fexpde_init(const std::valarray<double>& data, double base, double peak, double dt, std::valarray<double>& pInit ) {
+void stf::fexpde_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT;
     stf::peak( data, base, 0, data.size(), 1, stf::both, maxT );
@@ -213,7 +215,7 @@ void stf::fexpde_init(const std::valarray<double>& data, double base, double pea
     pInit[3]=peak;
 }
 
-double stf::fexpbde(double x, const std::valarray<double>& p) {
+double stf::fexpbde(double x, const Vector_double& p) {
     if (x<p[1]) {
         return p[0];
     } else {
@@ -227,8 +229,8 @@ double stf::fexpbde(double x, const std::valarray<double>& p) {
 }
 
 #if 0
-std::valarray<double> stf::fexpbde_jac(double x, const std::valarray<double>& p) {
-    std::valarray<double> jac(5);
+Vector_double stf::fexpbde_jac(double x, const Vector_double& p) {
+    Vector_double jac(5);
     if (x<p[1]) {
         jac[0]=1.0;
         jac[1]=0.0;
@@ -250,7 +252,7 @@ std::valarray<double> stf::fexpbde_jac(double x, const std::valarray<double>& p)
 }
 #endif
 
-void stf::fexpbde_init(const std::valarray<double>& data, double base, double peak, double dt, std::valarray<double>& pInit ) {
+void stf::fexpbde_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT = stf::whereis( data, peak );
     // stf::peak( data, base, 0, data.size(), 1, stf::both, maxT );
@@ -266,13 +268,13 @@ void stf::fexpbde_init(const std::valarray<double>& data, double base, double pe
     pInit[3]=adjust*(peak-base);
 }
 
-double stf::falpha(double x, const std::valarray<double>& p) {
+double stf::falpha(double x, const Vector_double& p) {
     double e=exp(-p[1]*x);
     return p[0]*p[1]*p[1]*x*e+p[2]; 
 }
 
-std::valarray<double> stf::falpha_jac(double x, const std::valarray<double>& p) {
-    std::valarray<double> jac(3);
+Vector_double stf::falpha_jac(double x, const Vector_double& p) {
+    Vector_double jac(3);
     double e=exp(-p[1]*x);
     jac[0]=p[1]*p[1]*x*e;
     jac[1]=p[0]*x*p[1]*(2*e-x*p[1]*e);
@@ -280,13 +282,13 @@ std::valarray<double> stf::falpha_jac(double x, const std::valarray<double>& p) 
     return jac;
 }
 
-void stf::falpha_init(const std::valarray<double>& data, double base, double peak, double dt, std::valarray<double>& pInit ) {
+void stf::falpha_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
         pInit[0]=(peak-base)*data.size()*dt;
         pInit[1]=1.0/(data.size()*dt/20.0);
         pInit[2]=base;
 }
 
-double stf::fHH(double x, const std::valarray<double>& p) {
+double stf::fHH(double x, const Vector_double& p) {
     // p[0]: gprime_na
     // p[1]: tau_m
     // p[2]: tau_h
@@ -296,7 +298,7 @@ double stf::fHH(double x, const std::valarray<double>& p) {
     return p[0] * (1-e1)*(1-e1)*(1-e1) * e2 + p[3];
 }
 
-double stf::fgnabiexp(double x, const std::valarray<double>& p) {
+double stf::fgnabiexp(double x, const Vector_double& p) {
     // p[0]: gprime_na
     // p[1]: tau_m
     // p[2]: tau_h
@@ -306,7 +308,7 @@ double stf::fgnabiexp(double x, const std::valarray<double>& p) {
     return p[0] * (1-e1) * e2 + p[3];
 }
 
-void stf::fHH_init(const std::valarray<double>& data, double base, double peak, double dt, std::valarray<double>& pInit ) {
+void stf::fHH_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT = stf::whereis( data, peak );
     // stf::peak( data, base, 0, data.size(), 1, stf::both, maxT );
@@ -326,7 +328,7 @@ void stf::fHH_init(const std::valarray<double>& data, double base, double peak, 
     pInit[3]=base;
 }
 
-void stf::fgnabiexp_init(const std::valarray<double>& data, double base, double peak, double dt, std::valarray<double>& pInit ) {
+void stf::fgnabiexp_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT = stf::whereis( data, peak );
     // stf::peak( data, base, 0, data.size(), 1, stf::both, maxT );
@@ -358,7 +360,7 @@ std::vector<stf::parInfo> stf::getParInfoExp(int n_exp) {
 }
 
 stf::Table stf::outputWTau(
-    const std::valarray<double>& pars,
+    const Vector_double& pars,
     const std::vector<parInfo>& parsInfo,
     double chisqr
 ) {
@@ -393,7 +395,7 @@ stf::Table stf::outputWTau(
     return output;
 }
 
-std::size_t stf::whereis(const std::valarray<double>& data, double value) {
+std::size_t stf::whereis(const Vector_double& data, double value) {
     if (data.size()==0) return 0;
     bool fromtop=false;
     // coming from top or bottom?
@@ -415,7 +417,7 @@ std::size_t stf::whereis(const std::valarray<double>& data, double value) {
 }
 
 stf::Table stf::defaultOutput(
-	const std::valarray<double>& pars,
+	const Vector_double& pars,
 	const std::vector<stf::parInfo>& parsInfo,
     double chisqr
 ) {
@@ -437,4 +439,3 @@ stf::Table stf::defaultOutput(
 	}
 	return output;
 }
-

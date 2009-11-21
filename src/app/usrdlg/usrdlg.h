@@ -42,7 +42,7 @@ class wxStfUsrDlg : public wxDialog
 
 private:
     stf::UserInput input;
-    std::vector<double> retVec;
+    Vector_double retVec;
     wxStdDialogButtonSizer* m_sdbSizer;
     std::vector<wxTextCtrl*> m_textCtrlArray;
     std::vector<wxStaticText*> m_staticTextArray;
@@ -73,7 +73,7 @@ public:
     //! Get the user entries.
     /*! \return The user entries as a vector of doubles.
      */
-    std::vector<double> readInput() const {return retVec;}
+    Vector_double readInput() const {return retVec;}
     
     //! Called upon ending a modal dialog.
     /*! \param retCode The dialog button id that ended the dialog

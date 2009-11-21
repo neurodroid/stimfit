@@ -2297,7 +2297,7 @@ static BOOL ABF2_ConvertToResults(const ABF2FileHeader *pFH, float *pfDestinatio
 // pfBuffer     -> pFH->lNumSamplesPerEpisode / pFH->nADCNumChannels  (floats)
 //
 BOOL WINAPI ABF_ReadChannel(int nFile, const ABFFileHeader *pFH, int nChannel, DWORD dwEpisode, 
-                            std::vector<float>& pfBuffer, UINT *puNumSamples, int *pnError)
+                            Vector_float& pfBuffer, UINT *puNumSamples, int *pnError)
 {
 #ifdef _WINDOWS
     // ABFH_ASSERT(pFH);
@@ -2390,7 +2390,7 @@ BOOL WINAPI ABF_ReadChannel(int nFile, const ABFFileHeader *pFH, int nChannel, D
 // pfBuffer     -> pFH->lNumSamplesPerEpisode / pFH->nADCNumChannels  (floats)
 //
 BOOL WINAPI ABF2_ReadChannel(int nFile, const ABF2FileHeader *pFH, int nChannel, DWORD dwEpisode, 
-                             std::vector<float>& pfBuffer, UINT *puNumSamples, int *pnError)
+                             Vector_float& pfBuffer, UINT *puNumSamples, int *pnError)
 {
     //   ABFH_ASSERT(pFH);
     //   ARRAYASSERT(pfBuffer, (UINT)(pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels));

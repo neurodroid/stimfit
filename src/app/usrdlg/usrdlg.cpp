@@ -83,7 +83,7 @@ bool wxStfUsrDlg::OnOK() {
 			// Read entry to string:
 			wxString entry;
 			entry << m_textCtrlArray.at(n)->GetValue();
-			entry.ToDouble( &retVec.at(n) );
+			entry.ToDouble( &retVec[n] );
 		}
 	}
 	catch (const std::out_of_range&) {

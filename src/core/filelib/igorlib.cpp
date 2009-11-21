@@ -161,7 +161,7 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
         }
 
         // Write the data:
-        std::vector<double> cpData(wh.npnts);
+        Vector_double cpData(wh.npnts);
 
         // One unnecessary copy operation due to const-correctness (couldn't const_cast<>)
         Channel TempChannel(Data[n_c]);

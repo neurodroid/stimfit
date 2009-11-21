@@ -41,7 +41,7 @@ namespace stf {
      *         \e i denotes the <em>i</em> -th exponential term (running from 0 to <em>n</em>-1).
      *  \return The evaluated function.
      */
-    double fexp(double x, const std::valarray<double>& p);
+    double fexp(double x, const Vector_double& p);
     
     //! Computes the Jacobian of stf::fexp().
     /*! \f{eqnarray*}
@@ -61,7 +61,7 @@ namespace stf {
      *          \e j[2<em>i</em>+1] contains the derivative with respect to \e p[2<em>i</em>+1] and \n
      *          \e j[2<em>n</em>], the last element, contains the derivative with respect to \e p[2<em>n</em>].
      */
-    std::valarray<double> fexp_jac(double x, const std::valarray<double>& p);
+    Vector_double fexp_jac(double x, const Vector_double& p);
 
     //! Initialises parameters for fitting stf::fexp() to \e data.
     /*! This needs to be made more robust.
@@ -73,7 +73,7 @@ namespace stf {
      *         number of exponential functions. On exit, will contain initial parameter
      *         estimates.
      */
-    void fexp_init(const std::valarray<double>& data, double base, double peak, double dt, std::valarray<double>& pInit );
+    void fexp_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit );
 
     //! Yet another initialiser for fitting stf::fexp() to \e data.
     /*! In this case, one of the amplitude terms will have another sign than the others, making
@@ -86,7 +86,7 @@ namespace stf {
      *         number of exponential functions. On exit, will contain initial parameter
      *         estimates.
      */
-    void fexp_init2(const std::valarray<double>& data, double base, double peak, double dt, std::valarray<double>& pInit );
+    void fexp_init2(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit );
     
     //! Monoexponential function with delay. 
     /*! \f{eqnarray*}
@@ -104,7 +104,7 @@ namespace stf {
      *         \e p[3] is the delay.
      *  \return The evaluated function.
      */
-    double fexpde(double x, const std::valarray<double>& p);
+    double fexpde(double x, const Vector_double& p);
 
 #if 0
     //! Computes the Jacobian of stf::fexpde().
@@ -142,7 +142,7 @@ namespace stf {
      *          \e j[2] contains the derivative with respect to \e p[2] and \n
      *          \e j[3] contains the derivative with respect to \e p[3].
      */
-    std::valarray<double> fexpde_jac(double x, const std::valarray<double>& p);
+    Vector_double fexpde_jac(double x, const Vector_double& p);
 #endif
     
     //! Initialises parameters for fitting stf::fexpde() to \e data.
@@ -153,7 +153,7 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 4.
      *         On exit, will contain initial parameter estimates.
      */
-    void fexpde_init(const std::valarray<double>& data, double base, double peak,double dt,  std::valarray<double>& pInit );
+    void fexpde_init(const Vector_double& data, double base, double peak,double dt,  Vector_double& pInit );
     
     
     //! Biexponential function with delay. 
@@ -174,7 +174,7 @@ namespace stf {
      *         \e p[4] is the earlier (faster) time constant, \n
      *  \return The evaluated function.
      */
-    double fexpbde(double x, const std::valarray<double>& p);
+    double fexpbde(double x, const Vector_double& p);
 
 #if 0
     //! Computes the Jacobian of stf::fexpde().
@@ -212,7 +212,7 @@ namespace stf {
      *          \e j[2] contains the derivative with respect to \e p[2] and \n
      *          \e j[3] contains the derivative with respect to \e p[3].
      */
-    std::valarray<double> fexpbde_jac(double x, const std::valarray<double>& p);
+    Vector_double fexpbde_jac(double x, const Vector_double& p);
 #endif
     
     //! Initialises parameters for fitting stf::fexpde() to \e data.
@@ -223,7 +223,7 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 4.
      *         On exit, will contain initial parameter estimates.
      */
-    void fexpbde_init(const std::valarray<double>& data, double base, double peak,double dt,  std::valarray<double>& pInit );
+    void fexpbde_init(const Vector_double& data, double base, double peak,double dt,  Vector_double& pInit );
 
     //! Alpha function.
     /*! \f[f(x)=p_0 p_1^2 x \mathrm{e}^{-p_1 x} + p_2\f]
@@ -234,7 +234,7 @@ namespace stf {
      *         \e p[2] is the offset.
      *  \return The evaluated function.
      */
-    double falpha(double x, const std::valarray<double>& p);
+    double falpha(double x, const Vector_double& p);
     
     //! Computes the Jacobian of stf::falpha().
     /*! \f{eqnarray*}
@@ -252,7 +252,7 @@ namespace stf {
      *          \e j[1] contains the derivative with respect to \e p[1] and \n
      *          \e j[2] contains the derivative with respect to \e p[2].
      */
-    std::valarray<double> falpha_jac(double x, const std::valarray<double>& p);
+    Vector_double falpha_jac(double x, const Vector_double& p);
     
     //! Hodgkin-Huxley sodium conductance function.
     /*! \f[f(x)=p_0\left(1-\mathrm{e}^{\frac{-x}{p_1}}\right)^3\mathrm{e}^{\frac{-x}{p_2}} + p_3\f]
@@ -264,7 +264,7 @@ namespace stf {
      *         \e p[3] is the offset. \n
      *  \return The evaluated function.
      */
-    double fHH(double x, const std::valarray<double>& p);
+    double fHH(double x, const Vector_double& p);
 
     //! power of 1 sodium conductance function.
     /*! \f[f(x)=p_0\left(1-\mathrm{e}^{\frac{-x}{p_1}}\right)\mathrm{e}^{\frac{-x}{p_2}} + p_3\f]
@@ -276,7 +276,7 @@ namespace stf {
      *         \e p[3] is the offset. \n
      *  \return The evaluated function.
      */
-    double fgnabiexp(double x, const std::valarray<double>& p);
+    double fgnabiexp(double x, const Vector_double& p);
 
     //! Initialises parameters for fitting stf::falpha() to \e data.
     /*! \param data The waveform of the data for the fit.
@@ -286,7 +286,7 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 3. On exit, will contain initial parameter
      *         estimates.
      */
-    void falpha_init(const std::valarray<double>& data, double base, double peak, double dt, std::valarray<double>& pInit );
+    void falpha_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit );
 
     //! Initialises parameters for fitting stf::falpha() to \e data.
     /*! \param data The waveform of the data for the fit.
@@ -296,7 +296,7 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 4. On exit, will contain initial parameter
      *         estimates.
      */
-    void fHH_init(const std::valarray<double>& data, double base, double peak, double dt, std::valarray<double>& pInit );
+    void fHH_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit );
 
     //! Initialises parameters for fitting stf::falpha() to \e data.
     /*! \param data The waveform of the data for the fit.
@@ -306,7 +306,7 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 4. On exit, will contain initial parameter
      *         estimates.
      */
-    void fgnabiexp_init(const std::valarray<double>& data, double base, double peak, double dt, std::valarray<double>& pInit );
+    void fgnabiexp_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit );
 
     //! Creates stf::parInfo structs for n-exponential functions.
     /*! \param n_exp Number of exponential terms.
@@ -320,14 +320,14 @@ namespace stf {
      *  \param chisqr The sum of squared errors, as returned from a least-squares fit.
      *  \return A formatted table of results.
      */
-    stf::Table outputWTau(const std::valarray<double>& p, const std::vector<parInfo>& parsInfo, double chisqr);
+    stf::Table outputWTau(const Vector_double& p, const std::vector<parInfo>& parsInfo, double chisqr);
     
     //! Finds the index of \e data where \e value is encountered for the first time.
     /*! \param data The waveform to be searched.
      *  \param value The value to be found.
      *  \return The index of \e data right after \e value has been crossed.
      */
-    std::size_t whereis(const std::valarray<double>& data, double value);
+    std::size_t whereis(const Vector_double& data, double value);
 
     //! Returns the library of functions for non-linear regression.
     /*! \return A vector of non-linear regression functions.

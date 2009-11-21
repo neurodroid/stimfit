@@ -129,7 +129,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				AdditionalIncludeDirectories="D:\Users\cs\hdf5\include;D:\Users\cs\fftw\include;D:\Users\cs\wxPython\include"
-				PreprocessorDefinitions="_UNICODE;WXUSINGDLL;__STF__;__WIN32__;WIN32;__WXMSW__;WXP_USE_THREAD=1;NOPCH;_CRT_SECURE_NO_DEPRECATE;WITH_PYTHON;HAVE_LAPACK;_WINDOWS"
+				PreprocessorDefinitions="_UNICODE;WXUSINGDLL;__STF__;__WIN32__;WIN32;__WXMSW__;WXP_USE_THREAD=1;NOPCH;_CRT_SECURE_NO_DEPRECATE;WITH_PYTHON;HAVE_LAPACK;_WINDOWS;NDEBUG"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
 				RuntimeTypeInfo="false"
