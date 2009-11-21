@@ -668,18 +668,28 @@ double t50right_index( bool active = true );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-%feature("autodoc", 0) get_threshold;
+%feature("autodoc", 0) get_threshold_time;
 %feature("docstring", "Returns the crossing value of the threshold 
 slope. Note that this value is not updated after changing the AP 
-threshold. Call measure or hit enter to update the cursors.
+threshold. Call measure() or hit enter to update the cursors.
 
 Arguments:
-is_time -- If False (default), returns the value at which the 
-           threshold slope is crossed (e.g in mV). If True,
-           returns the time point at wich the threshold slope is 
+is_time -- If False (default), returns the zero-based index at which 
+           the threshold slope is crossed (e.g in mV). If True,
+           returns the time point at which the threshold slope is 
            crossed. A negative number is returned upon failure. 
-") get_threshold;
-double get_threshold( bool is_time = false );
+") get_threshold_time;
+double get_threshold_time( bool is_time = false );
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) get_threshold_value;
+%feature("docstring", "Returns the value found at the threshold 
+slope. Note that this value is not updated after changing the AP 
+threshold. Call measure or hit enter to update the threshold.
+") get_threshold_value;
+double get_threshold_value( );
 //--------------------------------------------------------------------
 
 
@@ -902,7 +912,8 @@ bool set_base_end( double pos, bool is_time = false );
 //--------------------------------------------------------------------
 %feature("autodoc", 0) set_slope;
 %feature("docstring", "Sets the AP threshold to the value given by the
-slope and takes it as reference for AP kinetic measurements. 
+slope and takes it as reference for AP kinetic measurements. Note that 
+you have to either call measure() or hit enter to update calculations.
 
 Arguments:
 slope --  slope value in mV/ms  

@@ -20,6 +20,7 @@ syntax: glob
 *.log
 *.exe
 *.swp
+*.orig
 
 .DS_Store
 config.status
@@ -59,6 +60,8 @@ libtool
 stimfit.plist
 stimfit
 stamp-h1
+stfswig_wrap.cxx
+stf.py
 
 .libs/
 src/stfswig/.libs/
