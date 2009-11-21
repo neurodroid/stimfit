@@ -130,7 +130,12 @@ void stf::fexp_init(const Vector_double& data, double base, double peak, double 
     double floor = (increasing ? (*max_el+1.0e-9) : (*min_el-1.0e-9));
     Vector_double peeled( stf::vec_scal_minus(data, floor));
     if (increasing) peeled = vec_scal_mul(peeled, -1.0);
-    std::transform(peeled.begin(), peeled.end(), peeled.begin(), std::logl );
+    std::transform(peeled.begin(), peeled.end(), peeled.begin(),
+#ifdef _WINDOWS                       
+                   std::logl);
+#else
+                   log);
+#endif
 
     // linear fit on log-transformed data:
     Vector_double x(data.size());

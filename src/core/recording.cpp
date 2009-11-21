@@ -145,9 +145,6 @@ void Recording::InsertChannel(Channel& c_Channel, std::size_t pos) {
         for ( sec_it sit = c_Channel.get().begin(); sit != c_Channel.get().end(); ++sit ) {
             if ( ChannelArray.at(pos).at(n_sec).size() <= sit->size() ) {
                 ChannelArray.at(pos).at(n_sec).get_w().resize( sit->size() );
-                if (ChannelArray.at(pos).at(n_sec).size() != sit->size()) {
-                    throw std::bad_alloc("Couldn't allocate memory in Recording::InsertChannel");
-                }
             }
             n_sec++;
         }

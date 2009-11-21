@@ -7,11 +7,10 @@ References
 ==========
 
 
-:Author: Christoph Schmidt-Hieber
-:Release: |version|
 :Date:  |today|
 
 A list of recent publications that have used stimfit for data analysis:
+    * Babu, H, Ramirez-Rodriguez, Fabel, K, Bischofberger, J, Kempermann, G (2009). Synaptic network activity induces neuronal differentiation of adult hippocampal precursor cells through BDNF signaling. *Front. Neurogenesis* doi:10.3389/neuro.22.001.2009
     * Doischer D, Hosp JA, Yanagawa Y, Obata K, Jonas P, Vida I, Bartos M (2008). Postnatal differentiation of basket cells from slow to fast signaling devices. *J Neurosci.* 28(48):12956-68.
     * Stocca G, Schmidt-Hieber C, Bischofberger J (2008). Differential dendritic Ca2+ signalling in young and mature hippocampal granule cells. *J Physiol.* 586(16):3795-811.
     * Schmidt-Hieber C, Jonas P, Bischofberger J (2008). Action potential initiation and propagation in hippocampal mossy fibre axons. *J Physiol.* 586(7):1849-57.

@@ -1048,8 +1048,13 @@ void wxStfDoc::LnTransform(wxCommandEvent& WXUNUSED(event)) {
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
         Section TempSection(size());
         std::transform(get()[GetCurCh()][*cit].get().begin(), 
-            get()[GetCurCh()][*cit].get().end(), 
-            TempSection.get_w().begin(), std::logl);
+                       get()[GetCurCh()][*cit].get().end(), 
+                       TempSection.get_w().begin(),
+#ifdef _WINDOWS                       
+                       std::logl);
+#else
+                       log);
+#endif
         TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
                 wxT(", transformed (ln)") );
         try {

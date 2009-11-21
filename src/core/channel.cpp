@@ -38,9 +38,6 @@ void Channel::InsertSection(const Section& c_Section, std::size_t pos) {
     try {
         if (SectionArray.at(pos).size() != c_Section.size()) {
             SectionArray.at(pos).resize(c_Section.size());
-            if (SectionArray.at(pos).size() != c_Section.size()) {
-                throw std::bad_alloc("Couldn't allocate memory in Channel::InsertSection");
-            }
         }
         SectionArray.at(pos) = c_Section;
     }

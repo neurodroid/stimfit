@@ -188,7 +188,14 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
         if (gapfree) {
             grandsize = pFH->lActualAcqLength / numberChannels;
             Vector_double test_size(0);
-            long maxsize = test_size.max_size()/8;
+            long maxsize = test_size.max_size()
+#ifdef _WINDOWS
+                // doesn't seem to return the correct size on Windows.
+                /8;
+#else
+                ;
+#endif
+            
             if (grandsize <= 0 || grandsize >= maxsize) {
                 wxMessageBox(wxT("Gapfree file is too large for a single section. It will be segmented.\nFile opening may be very slow."),wxT("Information"), wxOK | wxICON_WARNING, NULL);
                 gapfree=false;
