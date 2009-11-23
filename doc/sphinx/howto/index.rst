@@ -13,15 +13,15 @@ The Stimfit book of spells
 
 This document collects answers to some questions like "How do I make ... in `Stimfit <http://www.stimfit.org>`_ with python?". Though much of the material can be easily found in the :doc:`/manual/index`, the examples provided here are a good way for the casual user to start using Python in `Stimfit <http://www.stimfit.org>`_. 
 
-It assumes a basic knowledge of the embedded Python shell of `Stimfit <http://www.stimfit.org>`_. Some Python knowledge and a substantial proficiency in `Stimfit <http://www.stimfit.org>`_ are recommendable. Please note that this is not a Python manual, but a way to use Python for some basic analysis tasks provided with `Stimfit <http://www.stimfit.org>`_. For a detailed Python manual, we encourage the user to visit the official Python documentation on the [Python-website]_ and going through the :doc:`/manual/index`.
+It assumes a basic knowledge of the embedded Python shell of `Stimfit <http://www.stimfit.org>`_. Some Python knowledge and a substantial proficiency in `Stimfit <http://www.stimfit.org>`_ are recommendable. Please note that this is not a Python manual, but a way to use Python for some basic analysis tasks provided with `Stimfit <http://www.stimfit.org>`_. For a detailed Python manual, we encourage the user to visit the official Python documentation on the [Python-website]_ and to read carefully the :doc:`/manual/index`.
 
-Every function described along this document is available in your current `Stimfit <http://www.stimfit.org>`_ version. To make use of them you have simply to type the following line in the `Stimfit <http://www.stimfit.org>`_ embedded Python shell:
+The functions described along this document are available in your current `Stimfit <http://www.stimfit.org>`_ version. To make use of them you have simply to type the following line in the `Stimfit <http://www.stimfit.org>`_ embedded Python shell:
 
 ::
 
     >>> import spells 
     
-After that, every function can be called with the dot notation, just typing the word **spells** before the desired function . For example, the function called rmean() would simply called in this way:
+After that, functions can be called with the dot notation (i.e just typing **spells** before the function) For example, if we want to call the function rmean() we  would simply do it in this way:
 
 ::
 
@@ -39,3 +39,5 @@ Contents:
    amplitudes
    cuttingtraces
    apcounting
+   introclass
+   latencies

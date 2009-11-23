@@ -166,7 +166,7 @@ EVT_MENU( WXPRINT_PAGE_SETUP, wxStfParentFrame::OnPageSetup)
 EVT_MENU( wxID_SAVEPERSPECTIVE, wxStfParentFrame::OnSaveperspective )
 EVT_MENU( wxID_LOADPERSPECTIVE, wxStfParentFrame::OnLoadperspective )
 EVT_MENU( wxID_RESTOREPERSPECTIVE, wxStfParentFrame::OnRestoreperspective )
-#ifdef _WITH_PYTHON
+#ifdef WITH_PYTHON
 EVT_MENU( wxID_VIEW_SHELL, wxStfParentFrame::OnViewshell )
 #endif
 EVT_MENU( wxID_LATENCYSTART_MAXSLOPE, wxStfParentFrame::OnLStartMaxslope )

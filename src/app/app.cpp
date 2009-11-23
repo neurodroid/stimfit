@@ -228,7 +228,7 @@ bool wxStfApp::OnInit(void)
 #ifdef WITH_PYTHON
     m_file_menu->Append(
                         wxID_IMPORTPYTHON,
-                        wxT("&Import Python module...\tCtrl-I"),
+                        wxT("&Import Python module...\tCtrl+I"),
                         wxT("Import user-defined Python modules")
                         );
 #endif // WITH_PYTHON
@@ -246,8 +246,10 @@ bool wxStfApp::OnInit(void)
     help_menu->Append(wxID_ABOUT, wxT("&About"));
 
     wxMenu *m_view_menu = new wxMenu;
+#ifdef WITH_PYTHON
     m_view_menu->Append(wxID_VIEW_SHELL, wxT("&Toggle Python shell"),
                         wxT("Shows or hides the Python shell"));
+#endif // WITH_PYTHON
 
     wxMenuBar *menu_bar = new wxMenuBar;
 
@@ -526,10 +528,10 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     file_menu->AppendSeparator();
 #ifdef WITH_PYTHON
     file_menu->Append(
-                          wxID_IMPORTPYTHON,
-                          wxT("&Import Python module...\tCtrl-I"),
-                          wxT("Import user-defined Python modules")
-                          );
+                        wxID_IMPORTPYTHON,
+                        wxT("&Import Python module...\tCtrl+I"),
+                        wxT("Import user-defined Python modules")
+                        );
 #endif // WITH_PYTHON
 
     file_menu->AppendSeparator();
@@ -641,8 +643,10 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     m_view_menu->Append(wxID_LOADPERSPECTIVE,wxT("&Load window positions"));
     m_view_menu->Append(wxID_RESTOREPERSPECTIVE,wxT("&Restore default window positions"));
     m_view_menu->AppendSeparator();
+#ifdef WITH_PYTHON
     m_view_menu->Append(wxID_VIEW_SHELL, wxT("&Toggle Python shell"),
                         wxT("Shows or hides the Python shell"));
+#endif // WITH_PYTHON
 
 
 
@@ -1169,6 +1173,7 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
     return true;
 }
 
+#ifdef WITH_PYTHON
 bool wxStfApp::OpenFilePy(const wxString& filename) {
     wxDocTemplate* templ = GetDocManager()->FindTemplateForPath( filename );
     if ( templ == NULL ) {
@@ -1188,6 +1193,7 @@ bool wxStfApp::OpenFilePy(const wxString& filename) {
     }
     return true;
 }
+#endif //WITH_PYTHON
 
 void wxStfApp::OnCloseDocument() {
     // count open docs:
