@@ -174,7 +174,7 @@ Additionally, we created the methods get_tamplitude(), get_threshold() and get_t
 >>> t2 = APdend.get_tamplitude() # note this object has a different threshold
 >>> latency = t2-t1
 
-* 3.- **T50 latency:** this method is included in the Edit option of the `Stimfit <http://www.stimfit.org>`_ menu toolbar. However, this menu assumes that both thresholds are the same. We can calculate the t50 latency easily with the built-in python functions of `Stimfit <http://www.stimfit.org>`_ .For that, we type:
+* 3.- **T50 latency:** this method is included in the Edit option of the `Stimfit <http://www.stimfit.org>`_ menu toolbar. However, this menu assumes that both thresholds are the same. If we want to set different latencies for the calculation of the t50 latency, we can use the built-in python functions of `Stimfit <http://www.stimfit.org>`_ .For that, we type:
 
 We calculate the time for the dendritic recording.
 
@@ -192,7 +192,7 @@ and finally we calculate the latency.
 
 >>> latency = t2-t1
 
-In your current `Stimfit <http://www.stimfit.org>`_ version you can find a module called AP which contains the class Spike described bellow. Additionally, this module contains a function which creates a result table (see Figure bellow) with all the parameters described previously, and the latency calculate with the 3 methods described here. To use it simple type:
+In your current `Stimfit <http://www.stimfit.org>`_ version you can find a module called AP which contains the class Spike described above. Additionally, this module contains a function which creates a result table (see Figure bellow) with all the parameters described previously, and the latency calculate with the 3 methods described here. To use it simple type:
 
 >>> import AP
 >>> AP.calc(50,20) # 50 is the somatic threshold, 20 is dendritic

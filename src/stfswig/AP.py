@@ -39,7 +39,7 @@ class Spike(object):
         according to the threshold value set at construction.
         """
         # set slope
-        stf.set_slope(self._thr) # on stf v0.94 or above
+        stf.set_slope(self._thr) # on stf v0.93 or above
 
         # update sampling rate
         self._dt = stf.get_sampling_interval() 
@@ -130,7 +130,8 @@ class Spike(object):
 class APTrace(Spike):
     def __init__(self, threshold):
         """ creates a static instance of the Spike class. That is
-        a "screenshot" of the current AP kinetics for the current trace """
+        a "screenshot" of the current AP kinetics for the current trace.
+        There should be another way to do that """
 
         Spike.__init__(self, threshold)
         self.threshold = threshold
