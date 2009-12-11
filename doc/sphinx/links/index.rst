@@ -28,8 +28,6 @@ Free electrophysiology software
 ================================
 Electrophysiology software sites
 ================================
-`Neurohost <http://www.neurohost.org>`_ 
-    José Guzmán's neuroscience web site. Maintains up-to-date instructions how to build and install stimfit on GNU/Linux (see Troubleshooting).
 `Neuronal Networks Lab, University of Nottingham <http://www.nottingham.ac.uk/neuronal-networks/links3.html>`_ 
     Quite a number of useful links to electrophysiology software sites.
 
