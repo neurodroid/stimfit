@@ -7,6 +7,11 @@ Prerequisites
 
 This document describes the installation of `Stimfit <http://www.stimfit.org>`_ |version| on a GNU/Debian testing/unstable system, with a 2.6 kernel, with support for python 2.5. It should work on other Debian-based systems (e.g Ubuntu) as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) already installed in your system. Please, check that both versions match. For our installation we will use gcc-4.2.4 and the same version of g++. Any other installation should be carefully accomplished reading the manual of your corresponding GNU/Linux distribution.
 
+For the impatient, here are all dependencies in just one line:
+
+::
+    $ sudo apt-get install build-essential subversion libgtk2.0-dev libgl1-mesa-dev libglu1-mesa-dev libboost-dev liblapack-dev libfftw3-3 libfftw3-dev python-numpy libhdf5-serial-dev
+
 To install `Stimfit <http://www.stimfit.org>`_ we first need:
 
 * The current `Stimfit <http://www.stimfit.org>`_ version. You can simply go to the download section of the `Stimfit <http://www.stimfit.org>`_ `webpage <http://www.stimfit.org/>`_ and click on **GNU/Linux**  and download the Version |version| for Linux.

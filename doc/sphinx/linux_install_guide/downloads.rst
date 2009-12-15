@@ -37,7 +37,7 @@ This will create a directory called wxWidgets with the source code. Unfortunatel
 
 ::
 
-    $ svn checkout -r 61426 http://svn.wxwidgets.org/svn/wx/wxPython/trunk/ wxPython
+    $ svn checkout -r 62250 http://svn.wxwidgets.org/svn/wx/wxPython/trunk/ wxPython
 
 This will create a directory called wxPython with the corresponding source code.  http://svn.wxwidgets.org/svn/wx/wxPython/trunk/ is the main development branch for wxPython respectively. After that you will have the following directories: /usr/local/wxPython and /usr/local/wxWidgets.
 
@@ -54,7 +54,7 @@ Now you're going to need OpenGL. The development libraries to get would be: libg
 
 ::
 
-    $ apt-get install libgl1-mesa-dev libglu1-mesa-dev. 
+    $ apt-get install libgl1-mesa-dev libglu1-mesa-dev 
 
 If you are interested in programming graphics, you might want to go ahead and install libsdl-image1.2 and libsdl-image1.2-dev SDL_image will make loading textures for SDL and OpenGL a breeze (in all kinds of formats too), but this last is not necessary for `Stimfit <http://www.stimfit.org>`_.
 
