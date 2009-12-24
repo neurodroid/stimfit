@@ -97,11 +97,11 @@ fi
 
 # if this is darwin, unconditionally use atlas:
 if test "$STFKERNEL" = "darwin" ; then
-    AC_CHECK_LIB([atlas], [dgetrf_], HAVE_LAPACKX="yes")
+    AC_CHECK_LIB([lapack], [dgetrf_], HAVE_LAPACKX="yes")
     if test "${HAVE_LAPACKX}" != "yes" ; then
         AC_MSG_ERROR([Couldn't find lapack.])
     else
-        LIBLAPACK_LDFLAGS="-latlas -llapack"
+        LIBLAPACK_LDFLAGS="-latlas -llapack -lblas"
         CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
     fi
 else
