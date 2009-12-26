@@ -65,7 +65,8 @@ case `uname` in
         AC_MSG_RESULT(darwin)
         STF_PYTHON_LIBNAME="libstf.0.dylib"
         STFKERNEL="darwin"
-	ARCH_FLAGS="-isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5"
+	ARCH_FLAGS=""
+	# "/Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5"
         CFLAGS="${CFLAGS} ${ARCH_FLAGS}"
         CXXFLAGS="${CXXFLAGS} ${ARCH_FLAGS}"
         LDFLAGS="${LDFLAGS} ${ARCH_FLAGS}"
@@ -81,7 +82,7 @@ case `uname` in
     *) 
         AC_MSG_RESULT(other)
         AC_MSG_WARN([Platforms other than GNU/Linux and Mac OS X are not actively supported 
-                     by the configure script. Use Visual Studio 2003 to build on Windows.])
+                     by the configure script. Use Visual Studio 2008 to build on Windows.])
         STF_PYTHON_LIBNAME="libstf.so.0.0.0"
         STFKERNEL="other"
     ;;
@@ -97,7 +98,7 @@ fi
 
 # if this is darwin, unconditionally use atlas:
 if test "$STFKERNEL" = "darwin" ; then
-    AC_CHECK_LIB([lapack], [dgetrf_], HAVE_LAPACKX="yes")
+    AC_CHECK_LIB([atlas], [dgetrf_], HAVE_LAPACKX="yes")
     if test "${HAVE_LAPACKX}" != "yes" ; then
         AC_MSG_ERROR([Couldn't find lapack.])
     else
