@@ -8,18 +8,21 @@ Building wxWidgets
 :Author: Jose Guzman
 :Date:  |today|
 
-Assuming that we created a directory in /usr/local/wxWidgets to build the sources, we will create a build directory inside
+Assuming that we unpack the wxWidgets in /usr/local/wxWidgets, we will use a build directory inside to compile the sources
+
 ::
 
     $ cd /usr/local/wxWidgets
     $ mkdir build2.9 
 
-After that enter the build2.9 directory and run the configure script to create the Makefiles: 
+
+Once inside the build2.9 directory you can run the configure script with the following options to create the Makefiles: 
+
 ::
 
     $ ../configure --with-gtkprint --without-gnomeprint --with-opengl --enable-calendar --enable-graphics_ctx
 
-We type --with-gtkprint --without-gnomeprint because we need latest version of wxWidgets (which requires itself gtk) to print. Note that you call the script configure from /usr/local/wxWidgets but the make file will be created in /usr/local/wxWidgets/build2.9/
+We type *--with-gtkprint --without-gnomeprint* because we need latest version of wxWidgets (which requires itself gtk) to print, and not gnome. Note that you call the script configure from /usr/local/wxWidgets but the make file will be created in /usr/local/wxWidgets/build2.9/
 
 .. note::
     If you find the following error:
@@ -45,29 +48,29 @@ We type --with-gtkprint --without-gnomeprint because we need latest version of w
 
         which will give /usr/lib/pkgconfig/. 
         
-After this command you should see something like this: 
+If everything was OK, you can see the following mesage after configure. 
 
 ::
 
     Configured wxWidgets 2.9.0 for i686-pc-linux-gnu
         
-Now we just type make and after that as root make install. All this inside /usr/local/wxWidgets/build2.9/
+Now we just type make and after that type make install as root. All this inside /usr/local/wxWidgets/build2.9/
 
 ::
 
     $ make 
-    $ make install 
+    $ sudo make install 
 
 Building wxPython
 =================
 
-Now we will do the same to build xwPython. In the same directory where we downloaded the sources for wxPython (/usr/local/wxPython) just type:
+Now we will build xwPython. In the same directory where we downloaded the sources for wxPython (/usr/local/wxPython) just type:
 
 ::
 
     $ python setup.py build_ext --inplace
 
-Remember that you need first to have installed the python development libraries in your system (if not just type as root apt-get install python-dev) and that the versions of gcc and g++ should be the same (in our example both versions are 4.2.4). After that just as root type:
+You will need first, to have installed the python development libraries in your system (if not just type as root apt-get install python-dev) and second, same version of gcc and g++ (in our example both versions are 4.2.4). After that just as root type:
 
 ::
 
@@ -78,13 +81,19 @@ With that, you have built and installed wxWidgets and wxPython. We now only need
 Building Stimfit
 =================
 
-Go to the directory where you unpacked your version of Stimfit (in our example /usr/local/stimfit-0.8.19/ and type:
+Go to the directory where you unpacked your version of Stimfit (in our example /usr/local/stimfit- |version|/ and type:
 
 ::
 
     $ ./configure --enable-python
 
-After that, and if everything went Ok, just type
+The configure script has some additional options. For example, we may want to use ipython in stead of the default embedded python shell (note that the iPython shell is still very experimental). For that, we can write: 
+
+::
+
+    $ ./configure --enable-python --enable-ipython
+
+After that, and if everything went Ok, you can type
 
 ::
 
@@ -94,4 +103,4 @@ and finally type as root
 
 ::
 
-    $ make install
+    $ sudo make install

@@ -4,7 +4,7 @@
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
-#endif
+#endif // WX_PRECOMP
 
 #include <Python.h>
 #include <wx/wxPython/wxPython.h>
@@ -19,7 +19,7 @@ wxString GetExecutablePath()
 {
     return  wxStandardPaths::Get( ).GetExecutablePath();
 }
-#endif
+#endif // __WXMAC__
 
 #ifdef _WINDOWS
 #include <winreg.h>
@@ -61,7 +61,8 @@ wxString GetExecutablePath() {
 		return wxT("");
 	}
 }
-#endif
+#endif // _WINDOWS
+
 
 bool wxStfApp::Init_wxPython()
 {
@@ -86,8 +87,10 @@ bool wxStfApp::Init_wxPython()
     cwd << wxT("print sys.path\n");
     cwd << wxT("import numpy\n");
     cwd << wxT("print numpy.version.version\n");
-#endif
-#endif
+#endif // _STFDEBUG
+
+#endif // __WXMAC__
+
 #ifdef _WINDOWS
     // Add the cwd to the present path:
     wxString app_path = GetExecutablePath();
@@ -97,6 +100,7 @@ bool wxStfApp::Init_wxPython()
 	cwd << wxT("cwd = \"") << app_path.BeforeFirst( wxUniChar('\0') ) 
 		<< wxT("\"\nimport sys\nsys.path.insert(0,cwd)\n");
 #endif
+
 #if defined(_WINDOWS) || defined(__WXMAC__)
 	int cwd_result = PyRun_SimpleString(cwd.utf8_str());
     if (cwd_result!=0) {
@@ -127,6 +131,7 @@ bool wxStfApp::Init_wxPython()
         Py_Finalize();
         return false;
     }
+    
 #if wxCHECK_VERSION(2, 9, 0)
     PyObject* ver_string = Py_BuildValue("ss","2.9.0.0","");
 #else
@@ -162,6 +167,7 @@ bool wxStfApp::Init_wxPython()
         PyErr_Print();
         wxString errormsg;
         errormsg << wxT("Couldn't load wxPython core API.\n");
+
 #ifdef _WINDOWS
         errormsg << wxT("Try the following steps:\n");
         errormsg << wxT("1.\tUninstall a previous Stimfit installation\n");
@@ -180,7 +186,9 @@ bool wxStfApp::Init_wxPython()
         errormsg << wxT("\tIf you started stimfit from the command line, you\n");
         errormsg << wxT("\thave to set the current working directory using the\n");
         errormsg << wxT("\t\"/d\" option (e.g. /d=C:\\Program Files\\Stimfit)\n");
-#endif
+#endif // _WINDOWS
+
+
         ErrorMsg( errormsg );
         Py_Finalize();
         return false;

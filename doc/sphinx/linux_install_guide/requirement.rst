@@ -5,19 +5,24 @@ Prerequisites
 :Author: Jose Guzman
 :Date:    |today|
 
-This document describes the installation of `Stimfit <http://www.stimfit.org>`_ |version| on a GNU/Debian testing/unstable system, with a 2.6 kernel, with support for python 2.5. It should work on other Debian-based systems (e.g Ubuntu) as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) already installed in your system. Please, check that both versions match. For our installation we will use gcc-4.2.4 and the same version of g++. Any other installation should be carefully accomplished reading the manual of your corresponding GNU/Linux distribution.
+This document describes the installation of the `Stimfit <http://www.stimfit.org>`_ version |version| under GNU/Linux. The installation was tested on a GNU/Debian testing/unstable system, with a 2.6-based kernel and with support for Python 2.5. It should work on other Debian-based systems (e.g Ubuntu) as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) already installed in your system. Please, check that both versions match. For our installation we will use gcc-4.2.4 and the same version of g++. Any other installation should be carefully accomplished reading the manual of your corresponding GNU/Linux distribution.
 
-For the impatient, here are all dependencies in just one line:
+============================
+What we need before we start
+============================
+
+For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ dependencies in just one line:
 
 ::
+
     $ sudo apt-get install build-essential subversion libgtk2.0-dev libgl1-mesa-dev libglu1-mesa-dev libboost-dev liblapack-dev libfftw3-3 libfftw3-dev python-numpy libhdf5-serial-dev
 
-To install `Stimfit <http://www.stimfit.org>`_ we first need:
+To install and run `Stimfit <http://www.stimfit.org>`_ propertly under GNU/Linux, we first need the following packages:
 
-* The current `Stimfit <http://www.stimfit.org>`_ version. You can simply go to the download section of the `Stimfit <http://www.stimfit.org>`_ `webpage <http://www.stimfit.org/>`_ and click on **GNU/Linux**  and download the Version |version| for Linux.
-* Developmental libraries of [wxWidgets]_ and [wxPython]_: to avoid problems with printing, we need to build wxWidgets 2.9 from the subversion repository. This can be with the command svn. You can get the subversion using *apt-get install subversion command* as root.It is important that the wxWidgets version downloaded via svn correspond to the same version of wxPython to assure the compatibility of `Stimfit <http://www.stimfit.org>`_ with the Python interpreter.
+* The current `Stimfit <http://www.stimfit.org>`_ version. You can simply visit the download section of the `Stimfit webpage <http://www.stimfit.org/>`_ and download the Version |version| for **GNU/Linux**.
+* Developmental libraries of [wxWidgets]_ and [wxPython]_: we will need to download the sources of wxWidgets and build wxPython from the subversion repository. This last can be done with the svn programm. You can install svn in your computer typing *apt-get install subversion* as root. It is important that both wxWidgets and the wxPython version downloaded via svn correspond to the same version (i.e 2.9) to assure the compatibility of `Stimfit <http://www.stimfit.org>`_ with the Python interpreter.
 * Additional dependencies for wxWidgets, such as the development libraries for GTK+ and the Opengl. Both are necessary for the wxWidgets library to work properly.
-* Additional dependencies for `Stimfit <http://www.stimfit.org>`_: you will need a couple of additional packages to build and run `Stimfit <http://www.stimfit.org>`_. For example [boost]_, which is mainly needed for shared pointers (versions 1.33 or later). [Lapack]_ is needed for solving linear equation systems. [HDF5]_ is needed for binary file handling. Finally, you will need [fftw]_ to accomplish the Fourier transformations (version 3.1 or later) and in the case of Stimfit with Python interpreter the package [NumPy]_, which allows easy handling of matrices arithmetic and numerical operations. 
+* Additional dependencies for `Stimfit <http://www.stimfit.org>`_: you will need some additional packages to build and run `Stimfit <http://www.stimfit.org>`_. For example [boost]_, which is used internaly by `Stimfit <http://www.stimfig.org>`_ to share pointers (we need versions 1.33 or later). [Lapack]_ is needed for solving systems of linear equations. [HDF5]_ is needed for binary file handling. Additionaly, you will need [fftw]_ to perform the Fourier transformations (version 3.1 or later). Finally, if you want to use `Stimfit <http://www.stimfit.org>`_ with the embedded Python shell, we will need [NumPy]_, which allows to work with multidimensional arrays and perform complex numerical methods with Python.
 
 
 .. [wxWidgets] http://www.wxwidgets.org/
