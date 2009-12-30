@@ -30,7 +30,7 @@ To see a list of packages on hold, we use:
 Packages which should not be updated
 ====================================
 
-I collected a list of packages that you should hold in your system. This avoids troubles with `Stimfit <http://wwww.stimfit.org>`_. If you find any other packages with are non-compatible with `Stimfit <http://www.stimfit.org>`_, please report it to `Stimfit <http://www.stimfit.org>`_ developers and users in the *Stimfit users mail list*
+I collected a list of packages that you should hold in your system. This avoids troubles with `Stimfit <http://wwww.stimfit.org>`_. If you find any other packages with are non-compatible with `Stimfit <http://www.stimfit.org>`_, please report it to `Stimfit <http://www.stimfit.org>`_ developers and users in the `Stimfit mail list <http://groups.google.com/group/stimfit>`_
 
     * python-wxgtk2.8
     * python-wxgtk2.6
