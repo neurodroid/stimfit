@@ -8,7 +8,7 @@ Building wxWidgets
 :Author: Jose Guzman
 :Date:  |today|
 
-Assuming that we unpack the wxWidgets in /usr/local/wxWidgets, we will use a build directory inside to compile the sources
+Once we have unpacked the wxWidgets sources in /usr/local/wxWidgets, we can create build directory called build2.9 to compile the files: 
 
 ::
 
@@ -16,7 +16,7 @@ Assuming that we unpack the wxWidgets in /usr/local/wxWidgets, we will use a bui
     $ mkdir build2.9 
 
 
-Once inside the build2.9 directory you can run the configure script with the following options to create the Makefiles: 
+Inside the build2.9 directory you can run the configure script with the following options to create the Makefiles: 
 
 ::
 
@@ -48,13 +48,13 @@ We type *--with-gtkprint --without-gnomeprint* because we need latest version of
 
         which will give /usr/lib/pkgconfig/. 
         
-If everything was OK, you can see the following mesage after configure. 
+If everything was OK, you will see the following message after running configure. 
 
 ::
 
     Configured wxWidgets 2.9.0 for i686-pc-linux-gnu
         
-Now we just type make and after that type make install as root. All this inside /usr/local/wxWidgets/build2.9/
+Now we just type make and after that, run make install as root. All this inside /usr/local/wxWidgets/build2.9/
 
 ::
 
@@ -64,13 +64,13 @@ Now we just type make and after that type make install as root. All this inside 
 Building wxPython
 =================
 
-Now we will build xwPython. In the same directory where we downloaded the sources for wxPython (/usr/local/wxPython) just type:
+Now we will build xwPython. In the same directory where we downloaded the sources for wxPython (/usr/local/wxPython) you  just type:
 
 ::
 
     $ python setup.py build_ext --inplace
 
-You will need first, to have installed the python development libraries in your system (if not just type as root apt-get install python-dev) and second, same version of gcc and g++ (in our example both versions are 4.2.4). After that just as root type:
+You will need first to have installed the python development libraries in your system (if not just type as root *apt-get install python-dev*). You will need the same version of gcc and g++ (in our example both versions are 4.2.4). After that just as root type:
 
 ::
 
@@ -87,13 +87,13 @@ Go to the directory where you unpacked your version of Stimfit (in our example /
 
     $ ./configure --enable-python
 
-The configure script has some additional options. For example, we may want to use ipython in stead of the default embedded python shell (note that the iPython shell is still very experimental). For that, we can write: 
+The configure script has some additional options. For example, we may want to use ipython in stead of the default embedded python shell (note that the iPython shell is still very experimental). For that, we can write in stead: 
 
 ::
 
     $ ./configure --enable-python --enable-ipython
 
-After that, and if everything went Ok, you can type
+After running configure , you can type
 
 ::
 

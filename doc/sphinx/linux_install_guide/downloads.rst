@@ -8,7 +8,7 @@ Downloads
 Downloading and unpacking the sources of Stimfit
 ================================================
 
-You can download the last version of `Stimfit <http://www.stimfit.org>`_ from the `Stimfit homepage <http://www.stimfit.org>`_ . Simply click on the Download section, which contains different versions of `Stimfit <http://www.stimfit.org>`_ for different systems. In this guide we will download the `Stimfit <http://www.stimfit.org>`_ version |version| for Linux. Just click on the link containing the sources (i.e the stimfit- |version|.tar.gz file) or type the following command in your terminal:
+You can download the last version of `Stimfit <http://www.stimfit.org>`_ from the `Stimfit homepage <http://www.stimfit.org>`_ . Simply click on the Download section. After that you will find a site which contains different versions of `Stimfit <http://www.stimfit.org>`_ for different systems. In this guide we will download the `Stimfit <http://www.stimfit.org>`_ version |version| for Linux. You can download it just clicking on the file named stimfit- |version|.tar.gz , which contains the sources. Alternatively, you can type the following command in your terminal:
 
 ::
 
