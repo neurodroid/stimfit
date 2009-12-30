@@ -55,6 +55,5 @@ class MyPanel(wx.Panel):
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(pycrust, 1, wx.EXPAND | wx.BOTTOM | wx.LEFT | wx.RIGHT, 10)
-        Trace.__init__(self)
         self.SetSizer(sizer)
 
