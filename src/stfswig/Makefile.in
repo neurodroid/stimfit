@@ -538,6 +538,7 @@ uninstall-am: uninstall-libLTLIBRARIES
 @BUILD_PYTHON_TRUE@	cp -p $(srcdir)/stf.py ${PYTHON_SITE_PKG}/stimfit
 @BUILD_PYTHON_TRUE@	cp -p $(srcdir)/spells.py ${PYTHON_SITE_PKG}/stimfit
 @BUILD_PYTHON_TRUE@	cp -p $(srcdir)/AP.py ${PYTHON_SITE_PKG}/stimfit
+@BUILD_PYTHON_TRUE@	cp -p $(srcdir)/embedded_init.py ${PYTHON_SITE_PKG}/stimfit
 @BUILD_PYTHON_TRUE@	cp -p $(srcdir)/embedded_stf.py ${PYTHON_SITE_PKG}/stimfit
 @BUILD_PYTHON_TRUE@	cp -p $(srcdir)/embedded_ipython.py ${PYTHON_SITE_PKG}/stimfit
 @BUILD_PYTHON_TRUE@	echo stimfit > ${PYTHON_SITE_PKG}/stimfit.pth

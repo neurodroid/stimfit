@@ -13,9 +13,8 @@ starting code to embed wxPython into the stf application.
 import wx
 from wx.py import shell
 
-# access current versions of NumPy and Stimfit
-from numpy.version import version as numpy_version
-from stf import get_versionstring
+# to access the current versions of Stimfit, NumPy and wxPython
+from embedded_init import intro_msg
 
 # test if stf_init was loaded
 try:
@@ -35,23 +34,10 @@ class MyPanel(wx.Panel):
         super(MyPanel, self).__init__(parent, -1, \
             style = wx.BORDER_NONE | wx.MAXIMIZE)
 
-        version_s = "NumPy %s, wxPython %s" % (numpy_version, wx.version()) 
-        intro = '%s, using %s' % (get_versionstring(), version_s)
-
         # the Pycrust shell object
-        pycrust = shell.Shell(self, -1, introText = intro + LOADED)
-        pycrust.push("import numpy as N", silent = True)
-        pycrust.push("import stf", silent = True)
-        pycrust.push("from stf import *", silent = True)
-        pycrust.push("try:", silent = True)
-        pycrust.push("    from stf_init import *", silent = True)
-        pycrust.push("except ImportError:", silent = True)
-        pycrust.push("    pass", silent = True)
-        pycrust.push("except SyntaxError:", silent = True)
-        pycrust.push("    pass", silent = True)
-        pycrust.push("else:", silent = True)
-        pycrust.push("    pass", silent = True)
-        pycrust.push("", silent = True)
+        pycrust = shell.Shell(self,-1, \
+            introText = intro_msg() + LOADED)
+        pycrust.push('from embedded_init import *', silent = True)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(pycrust, 1, wx.EXPAND | wx.BOTTOM | wx.LEFT | wx.RIGHT, 10)

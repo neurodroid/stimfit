@@ -229,7 +229,7 @@ bool wxStfApp::OnInit(void)
     m_file_menu->Append(
                         wxID_IMPORTPYTHON,
                         wxT("&Import Python module...\tCtrl+I"),
-                        wxT("Import user-defined Python modules")
+                        wxT("Import/reload user-defined Python modules")
                         );
 #endif // WITH_PYTHON
     m_file_menu->AppendSeparator();
