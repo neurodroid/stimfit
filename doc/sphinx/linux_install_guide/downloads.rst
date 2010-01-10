@@ -38,7 +38,7 @@ This will create a directory called wxWidgets with the source code. Unfortunatel
 
 ::
 
-    $ svn checkout -r 62250 http://svn.wxwidgets.org/svn/wx/wxPython/trunk/ wxPython
+    $ svn checkout -r 63133 http://svn.wxwidgets.org/svn/wx/wxPython/trunk/ wxPython
 
 .. note::
 
