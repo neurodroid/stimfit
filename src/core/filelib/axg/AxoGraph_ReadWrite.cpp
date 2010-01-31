@@ -417,7 +417,7 @@ int AG_ReadFloatColumn( filehandle refNum, const int fileFormat, const int colum
      case ShortArrayType:
          {
              // Convert in the column data
-             columnData->floatArray.resize( columnData->points );
+             columnData->floatArray.resize( columnData->shortArray.size() );
              std::copy( columnData->shortArray.begin(), columnData->shortArray.end(), columnData->floatArray.begin() );
              columnData->shortArray.resize(0);
              columnData->type = FloatArrayType;
@@ -426,8 +426,8 @@ int AG_ReadFloatColumn( filehandle refNum, const int fileFormat, const int colum
      case IntArrayType:
          {
              // Convert in the column data
-             columnData->floatArray.resize( columnData->points );
-             std::copy( columnData->intArray.begin(), columnData->intArray.end(), columnData->intArray.begin() );
+             columnData->floatArray.resize( columnData->intArray.size() );
+             std::copy( columnData->intArray.begin(), columnData->intArray.end(), columnData->floatArray.begin() );
              columnData->intArray.resize(0);
              columnData->type = FloatArrayType;
              return result;
@@ -440,8 +440,8 @@ int AG_ReadFloatColumn( filehandle refNum, const int fileFormat, const int colum
      case DoubleArrayType:
          {
              // Convert in the column data
-             columnData->floatArray.resize( columnData->points );
-             std::copy( columnData->doubleArray.begin(), columnData->doubleArray.end(), columnData->doubleArray.begin() );
+             columnData->floatArray.resize( columnData->doubleArray.size() );
+             std::copy( columnData->doubleArray.begin(), columnData->doubleArray.end(), columnData->floatArray.begin() );
              columnData->doubleArray.resize(0);
              columnData->type = FloatArrayType;
              return result;
