@@ -11,7 +11,7 @@ SetCompressor lzma
 
 ;--------------------------------
 
-!define PRODUCT_VERSION "0.9.3"
+!define PRODUCT_VERSION "0.9.3rc2"
 !define EXE_NAME "stimfit"
 !define REG_NAME "Stimfit 0.9"
 !define PRODUCT_PUBLISHER "Christoph Schmidt-Hieber"
@@ -24,7 +24,7 @@ SetCompressor lzma
 !define PRODIR "C:\Programme"
 !define FULL_WELCOME "This wizard will guide you through the installation \
 of ${REG_NAME} and wxPython. You can optionally \
-install Python 2.6.2 and NumPy 1.3.0 \
+install Python 2.6.4 and NumPy 1.4.0 \
 if you don't have them on your machine."
 !define UPDATE_WELCOME "This wizard will update an existing installation \
 of ${REG_NAME} to version ${PRODUCT_VERSION}."
@@ -90,33 +90,33 @@ Var StrNoUsablePythonFound
 
 ; The stuff to install
 !ifndef UPDATE
-Section "Python 2.6.2" 0
+Section "Python 2.6.4" 0
 
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
 
   ; Put installer into installation dir temporarily
-  File "${MSIDIR}\python-2.6.2.msi"
+  File "${MSIDIR}\python-2.6.4.msi"
 
-  ExecWait '"Msiexec.exe" /i "$INSTDIR\python-2.6.2.msi"'
+  ExecWait '"Msiexec.exe" /i "$INSTDIR\python-2.6.4.msi"'
   
   ; Delete installer once we are done
-  Delete "$INSTDIR\python-2.6.2.msi"
+  Delete "$INSTDIR\python-2.6.4.msi"
 
 SectionEnd
 
-Section "NumPy 1.3.0" 1
+Section "NumPy 1.4.0" 1
 
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
 
   ; Put installer into installation dir temporarily
-  File "${MSIDIR}\numpy-1.3.0-win32-superpack-python2.6.exe"
+  File "${MSIDIR}\numpy-1.4.0-win32-superpack-python2.6.exe"
 
-  ExecWait '"$INSTDIR\numpy-1.3.0-win32-superpack-python2.6.exe"'
+  ExecWait '"$INSTDIR\numpy-1.4.0-win32-superpack-python2.6.exe"'
   
   ; Delete installer once we are done
-  Delete "$INSTDIR\numpy-1.3.0-win32-superpack-python2.6.exe"
+  Delete "$INSTDIR\numpy-1.4.0-win32-superpack-python2.6.exe"
 
 SectionEnd
 !endif
