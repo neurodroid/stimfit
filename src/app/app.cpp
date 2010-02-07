@@ -90,7 +90,7 @@ EVT_MENU( wxID_NEWFROMSELECTED, wxStfApp::OnNewfromselected )
 EVT_MENU( wxID_NEWFROMALL, wxStfApp::OnNewfromall )
 EVT_MENU( wxID_APPLYTOALL, wxStfApp::OnApplytoall )
 #ifdef WITH_PYTHON
-EVT_MENU( wxID_IMPORTPYTHON, wxStfApp::OnPythonImport)
+EVT_MENU( wxID_IMPORTPYTHON, wxStfApp::OnPythonImport )
 #endif // WITH_PYTHON
 END_EVENT_TABLE()
 
@@ -229,7 +229,7 @@ bool wxStfApp::OnInit(void)
     m_file_menu->Append(
                         wxID_IMPORTPYTHON,
                         wxT("&Import Python module...\tCtrl+I"),
-                        wxT("Import/reload user-defined Python modules")
+                        wxT("Import or reload user-defined Python modules")
                         );
 #endif // WITH_PYTHON
     m_file_menu->AppendSeparator();

@@ -55,6 +55,9 @@ enum {
 #ifdef _WINDOWS
     wxID_TOOL_SNAPSHOT_WMF,
 #endif
+#ifdef WITH_PYTHON
+    wxID_IMPORTPYTHON,
+#endif
     wxID_VIEW_RESULTS,
     wxID_VIEW_MEASURE,
     wxID_VIEW_BASELINE,
@@ -144,10 +147,7 @@ enum {
     wxID_EVENT_ERASE,
     wxCOMBOTRACES,
     wxCOMBOACTCHANNEL,
-    wxCOMBOINACTCHANNEL,
-#ifdef WITH_PYTHON
-    wxID_IMPORTPYTHON
-#endif
+    wxCOMBOINACTCHANNEL
 };
 
 #include "wx/mdi.h"

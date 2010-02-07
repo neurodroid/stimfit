@@ -130,7 +130,7 @@ If you used the same settings as suggested above, 97 events will be extracted. Y
 
     >>> minidemo.batch_cursors()
 
-To analyze all traces efficiently, you can now perform a "batch analysis" on all traces at once: First, select all traces, either using **select_all()** from the shell, or "Edit"->"Select all traces" from the menu or pressing **Ctrl + A**. Then choose "Analysis"->"Batch analysis" from the menu. 
+To analyze all traces efficiently, you can now perform a "batch analysis" on all traces at once: First, select all traces, either using :func:`stf.select_all()` from the shell, or "Edit"->"Select all traces" from the menu or pressing **Ctrl + A**. Then choose "Analysis"->"Batch analysis" from the menu. 
 
 
     .. figure:: images/batchanalysis.png
