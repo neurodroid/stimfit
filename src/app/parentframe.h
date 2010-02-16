@@ -142,7 +142,7 @@ private:
     wxAuiToolBar *m_cursorToolBar, *m_scaleToolBar;
     wxStfFileDrop* m_drop;
 #ifdef WITH_PYTHON
-    wxString python_code2;
+    wxString python_code2; // python import code
     void RedirectStdio();
     wxWindow* DoPythonStuff(wxWindow* parent);
 #endif

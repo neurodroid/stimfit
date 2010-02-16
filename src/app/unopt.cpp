@@ -66,7 +66,7 @@ wxString GetExecutablePath() {
 
 bool wxStfApp::Init_wxPython()
 {
-    // Initialize Python
+    // Initialize the Python interpreter
     Py_Initialize();
     
     PyEval_InitThreads();
@@ -174,7 +174,7 @@ bool wxStfApp::Init_wxPython()
         errormsg << wxT("\t(Control Panel->Software)\n");
         errormsg << wxT("2.\tUninstall a previous wxPython installation\n");
         errormsg << wxT("\t(Control Panel->Software)\n");
-        errormsg << wxT("3.\tUninstall a previous Python 2.5 installation\n");
+        errormsg << wxT("3.\tUninstall a previous Python 3.5 installation\n");
         errormsg << wxT("\t(Control Panel->Software)\n");
         errormsg << wxT("4.\tSet the current working directory\n");
         errormsg << wxT("\tto the program directory so that all shared\n");
@@ -210,16 +210,41 @@ void wxStfApp::ImportPython(const wxString &modulelocation) {
     // Grab the Global Interpreter Lock.
     wxPyBlock_t blocked = wxPyBeginBlockThreads();
 
-    // Python code to import the module starts here
+#ifdef IPYTHON
+    // the ip object is created to access the interactive IPython session
+    wxString IPython_import;
+    IPython_import << wxT("import IPython.ipapi\n");
+    IPython_import << wxT("ip = IPython.ipapi.get()\n");
+    IPython_import << wxT("import sys\n");
+    IPython_import << wxT("sys.path.append(\"") << python_path << wxT("\")\n");
+    IPython_import << wxT("ip.ex(\"import ") << python_file << ("\")\n");
+    IPython_import << wxT("ip.ex(\"reload(") << python_file << wxT(")") << wxT("\")\n");
+    IPython_import << wxT("sys.path.remove(\"") << python_path << wxT("\")\n");
+
+    PyRun_SimpleString(IPython_import);
+
+#else
+    // Python code to import a module with PyCrust 
     wxString python_import;
     python_import << wxT("import sys\n");
     python_import << wxT("sys.path.append(\"") << python_path << wxT("\")\n");
     python_import << wxT("import ") << python_file << wxT("\n");
     python_import << wxT("reload(") << python_file << wxT(")") << wxT("\n");
-    python_import << wxT("sys.path.remove(\"") << python_path << _T("\")\n");
+    python_import << wxT("sys.path.remove(\"") << python_path << wxT("\")\n");
     python_import << wxT("del sys\n");
 
     PyRun_SimpleString(python_import);
+
+#endif
+
+#ifdef _STFDEBUG
+#ifdef IPYTHON
+    std::cout << IPython_import << std::endl;
+#else
+    std::cout << ython_import << std::endl;
+#endif // IPYTHON
+#endif // _STFDEBUG
+
 
     // Release the Global Interpreter Lock
     wxPyEndBlockThreads(blocked);

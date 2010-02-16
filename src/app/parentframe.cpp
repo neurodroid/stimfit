@@ -312,7 +312,7 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 wxStfParentFrame::~wxStfParentFrame() {
     // deinitialize the frame manager
 #ifdef WITH_PYTHON
-    // write visiblity of the shell to config:
+    // write visibility of the shell to config:
     bool shell_state = m_mgr.GetPane(wxT("pythonShell")).IsShown();
     wxGetApp().wxWriteProfileInt( wxT("Settings"),wxT("ViewShell"), int(shell_state) );
 #endif

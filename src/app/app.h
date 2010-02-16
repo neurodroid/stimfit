@@ -430,7 +430,7 @@ public:
     //! Opens a dialog to import a Python module
     /*! \param event The associated menu event
      */
-    void OnPythonImport( wxCommandEvent& event);
+    void OnPythonImport( wxCommandEvent& event );
 #endif
     
 protected:

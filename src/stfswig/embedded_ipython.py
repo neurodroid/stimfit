@@ -39,11 +39,12 @@ class MyPanel(wx.Panel):
         # the ip object  will access the IPython functionality
         ip =  IPython.ipapi.get()
 
-        # Stimfit and NumPy are visible to the inteactive sesion.
+        # Stimfit and NumPy are visible to the interactive sesion.
         ip.ex('from embedded_init import *')
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(ipython_shell, 1, wx.EXPAND | wx.BOTTOM | wx.LEFT | wx.RIGHT, 10)
         self.SetSizer(sizer)
+
 
 

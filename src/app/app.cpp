@@ -530,7 +530,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     file_menu->Append(
                         wxID_IMPORTPYTHON,
                         wxT("&Import Python module...\tCtrl+I"),
-                        wxT("Import user-defined Python modules")
+                        wxT("Import or reload user-defined Python modules")
                         );
 #endif // WITH_PYTHON
 
@@ -647,8 +647,6 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     m_view_menu->Append(wxID_VIEW_SHELL, wxT("&Toggle Python shell"),
                         wxT("Shows or hides the Python shell"));
 #endif // WITH_PYTHON
-
-
 
     wxMenu *analysis_menu = new wxMenu;
     wxMenu *fitSub = new wxMenu;

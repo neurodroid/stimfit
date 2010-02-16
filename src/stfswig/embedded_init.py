@@ -2,8 +2,9 @@
 # embedded_init.py
 # 2009.12.31
 # 
-# This file simply loads Numpy and stf modules into the current namespace.
-# Addtionally, it loads the custom initialization script (stf_init)
+# This file simply loads both Numpy and stf modules into the current 
+# namespace.
+# Additionally, it loads the custom initialization script (stf_init.py)
 # It is used by embedded_stf.py and embedded_ipython.py 
 # Please, do not modify this file unless you know what you are doing
 #
