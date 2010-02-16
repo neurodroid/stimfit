@@ -174,7 +174,7 @@ bool wxStfApp::Init_wxPython()
         errormsg << wxT("\t(Control Panel->Software)\n");
         errormsg << wxT("2.\tUninstall a previous wxPython installation\n");
         errormsg << wxT("\t(Control Panel->Software)\n");
-        errormsg << wxT("3.\tUninstall a previous Python 3.5 installation\n");
+        errormsg << wxT("3.\tUninstall a previous Python 2.5 installation\n");
         errormsg << wxT("\t(Control Panel->Software)\n");
         errormsg << wxT("4.\tSet the current working directory\n");
         errormsg << wxT("\tto the program directory so that all shared\n");
