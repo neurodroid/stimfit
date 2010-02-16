@@ -237,15 +237,6 @@ void wxStfApp::ImportPython(const wxString &modulelocation) {
 
 #endif
 
-#ifdef _STFDEBUG
-#ifdef IPYTHON
-    std::cout << IPython_import << std::endl;
-#else
-    std::cout << ython_import << std::endl;
-#endif // IPYTHON
-#endif // _STFDEBUG
-
-
     // Release the Global Interpreter Lock
     wxPyEndBlockThreads(blocked);
 
