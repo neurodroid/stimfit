@@ -1,0 +1,19 @@
+make  all-recursive
+make[1]: Entering directory `/home/nin/dev/stimfit'
+Making all in src
+make[2]: Entering directory `/home/nin/dev/stimfit/src'
+Making all in stfswig
+make[3]: Entering directory `/home/nin/dev/stimfit/src/stfswig'
+make[3]: Nothing to be done for `all'.
+make[3]: Leaving directory `/home/nin/dev/stimfit/src/stfswig'
+Making all in app
+make[3]: Entering directory `/home/nin/dev/stimfit/src/app'
+make[3]: Nothing to be done for `all'.
+make[3]: Leaving directory `/home/nin/dev/stimfit/src/app'
+make[3]: Entering directory `/home/nin/dev/stimfit/src'
+make[3]: Nothing to be done for `all-am'.
+make[3]: Leaving directory `/home/nin/dev/stimfit/src'
+make[2]: Leaving directory `/home/nin/dev/stimfit/src'
+make[2]: Entering directory `/home/nin/dev/stimfit'
+make[2]: Leaving directory `/home/nin/dev/stimfit'
+make[1]: Leaving directory `/home/nin/dev/stimfit'

@@ -9,7 +9,13 @@ import wx
 import wx.grid
 
 
-import stf
+try:
+    import stf
+except ImportError:
+    print "This script only works with the embedded Python shell of Stimfit"
+    print "Visit www.stimfit.org for more information"
+    
+
 import numpy as np
 
 from math import ceil, floor
@@ -147,6 +153,7 @@ class APTrace(Spike):
         """ Returns a list with the current parameters of the 
         Spike
         """
+        # this should be a dictionary
         list = []
         list.append(self.threshold)
         list.append(self.threshold_time)
@@ -256,5 +263,6 @@ class APFrame(wx.Frame, APTrace):
         return (t50_dend - t50_soma)
 
 def calc(th_soma, th_dend):
+    """ Calculate the parameters of the AP in different channels """
     frame = APFrame(th_soma, th_dend)
     frame.Show()
