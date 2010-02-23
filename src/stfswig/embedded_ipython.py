@@ -12,8 +12,7 @@ starting code to embed wxPython into the stf application.
 
 import wx
 from IPython.frontend.wx.wx_frontend import WxController
-
-#from IPython.gui.wx.ipython_view import IPShellWidget
+# from IPython.gui.wx.ipython_view import IPShellWidget
 
 import IPython.ipapi
 
@@ -40,8 +39,8 @@ class MyPanel(wx.Panel):
         # see in /usr/lib/pymodules/python2.5/IPython/frontend/wx
         # see an example in /usr/lib/modules/python2.5/IPython/gui/wx
         ipython_shell = WxController(self)
-        #ipython_shell = IPShellWidget(self,background_color = "BLACK")
-        #ipython_shell = IPShellWidget(self)
+        # ipython_shell = IPShellWidget(self,background_color = "BLACK")
+        # ipython_shell = IPShellWidget(self)
         ipython_shell.clear_screen()
 
         # the ip object  will access the IPython functionality

@@ -252,19 +252,19 @@ FILEHANDLE WINAPI c_CreateFile( LPCSTR filename, DWORD access, DWORD sharing,
                                 DWORD attributes, HANDLE templ)
 {
 
-    char    fname[70];          /* To get near variable holding string */
+    char    fname[1024];          /* To get near variable holding string */
     char*   omode;
 
     switch (access)                /* use C library constants to set mode */
     {
-     case GENERIC_WRITE: omode = "w";
+     case GENERIC_WRITE: omode = (char*)"w";
          break;
-     case GENERIC_READ | GENERIC_WRITE: omode = "w+";
+     case GENERIC_READ | GENERIC_WRITE: omode = (char*)"w+";
          break;
-     default: omode = "r";
+     default: omode = (char*)"r";
          break;
     }
-    strcpy(fname, filename);              /* Get filename in near var */
+    strncpy(fname, filename, 1024);              /* Get filename in near var */
     return fopen(fname,omode);
 }
 #endif
