@@ -17,7 +17,8 @@
 #include "wx/filename.h"
 #include <wx/msgdlg.h>
 #include "hdf5.h"
-#include "H5TA.h"
+#include "hdf5_hl.h"
+//#include "H5TA.h"
 #include <boost/shared_ptr.hpp>
 #include <cmath>
 
