@@ -214,7 +214,7 @@ bool wxStfApp::OnInit(void)
 #if 0
     frame->SetIcon( wxICON(sample) );
 #endif
-    frame->SetIcon(wxIcon(wxT("doc.xbm")));
+    // frame->SetIcon(wxIcon(wxT("doc.xbm")));
 
     //// Make a menubar
     m_file_menu = new wxMenu;
@@ -497,7 +497,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     subframe->SetIcon(wxString(wxT("chart")));
 #endif
 #ifdef __X__
-    subframe->SetIcon(wxIcon(wxT("doc.xbm")));
+    // subframe->SetIcon(wxIcon(wxT("doc.xbm")));
 #endif
 
     //// Make a menubar

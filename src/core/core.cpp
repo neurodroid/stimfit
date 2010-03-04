@@ -158,7 +158,7 @@ stf::filter( const Vector_double& data, std::size_t filter_start,
 Vector_double
 stf::spectrum(
         const std::vector<std::complex<double> >& data,
-        int K,
+        long K,
         double& f_n
 ) {
     // Variable names according to:
@@ -176,31 +176,34 @@ stf::spectrum(
     if (K<=0) {
         throw std::runtime_error("Exception:\nNumber of segments <=0 in stf::spectrum");
     }
-    double step_size=data.size()/(K+1);
+    double step_size=(double)data.size()/(double)(K+1);
     // Segment size:
-    int L=stf::round(step_size*2.0);
-    int spec_size=int(L/2)+1;
+    long L=stf::round(step_size*2.0);
+    if (L<=0) {
+        throw std::runtime_error("Exception:\nSegment size <=0 in stf::spectrum");
+    }
+    long spec_size=long(L/2)+1;
     double offset=0.0;
     fftw_complex* X=(fftw_complex*)fftw_malloc(sizeof(fftw_complex)*L);
     fftw_complex* A=(fftw_complex*)fftw_malloc(sizeof(fftw_complex)*L);
     // plan the fft once:
     fftw_plan p1=fftw_plan_dft_1d(L,X,A,FFTW_FORWARD,FFTW_ESTIMATE);
-    Vector_double P(0.0,spec_size);
+    Vector_double P(spec_size, 0.0);
 
     // Window function summed, squared and normalized:
     double U=0.0;
-    for (int j=0;j<L;++j) {
+    for (long j=0;j<L;++j) {
         U+=SQR(stf::window(j,L));
     }
     // This should be normalized by L; however,
     // this can be omitted due to the later multi-
     // plication with 1/(L*U), which will then get 1/U.
 
-    for (int k=0;k<K;++k) {
+    for (long k=0;k<K;++k) {
         // Fill the segment, applying the window function:
-        for (int j=0;j<L;++j) {
-            X[j][0]=data[(int)offset+j].real()*window(j,L);
-            X[j][1]=data[(int)offset+j].imag()*window(j,L);
+        for (long j=0;j<L;++j) {
+            X[j][0]=data[(long)offset+j].real()*window(j,L);
+            X[j][1]=data[(long)offset+j].imag()*window(j,L);
         }
 
         // Transform the data:
@@ -213,7 +216,7 @@ stf::spectrum(
         // Treat the 0-component separately (because there is no corresponding
         // negative part):
         P[0]+=SQR(A[0][0])+SQR(A[0][1]);
-        for (int i_out=1;i_out<spec_size;++i_out) {
+        for (long i_out=1;i_out<spec_size;++i_out) {
             // Add corresponding negative and positive frequencies to
             // the same position in the spectrum:
             P[i_out]+=(SQR(A[i_out][0])+SQR(A[i_out][1])+

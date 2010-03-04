@@ -62,7 +62,7 @@ namespace stf {
  *  \return A valarray containing the spectrum.
  */
 Vector_double
-spectrum(const std::vector<std::complex<double> >& data,int K,double& f_n);
+spectrum(const std::vector<std::complex<double> >& data, long K, double& f_n);
 
 //! Window function for psd estimation
 /*! \param n Argument of the window function.
