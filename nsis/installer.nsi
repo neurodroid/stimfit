@@ -181,7 +181,6 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   File "${STFDIR}\src\stfswig\embedded_init.py"
   File "${STFDIR}\src\stfswig\embedded_stf.py"
   File "${STFDIR}\src\stfswig\embedded_ipython.py"
-  File "${STFDIR}\src\stfswig\AP.py"
   File /r /x .hg "${STFDIR}\src"
   
   ;Store installation folder

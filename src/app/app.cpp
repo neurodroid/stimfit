@@ -1265,7 +1265,7 @@ void wxStfApp::OnPythonImport(wxCommandEvent& WXUNUSED(event)) {
     wxString pyFilter; // file filter only show *.py
     pyFilter = wxT("Python file (*.py)|*.py|");
     wxFileDialog LoadModuleDialog (frame,
-                wxT("Import Python module"),
+                wxT("Import/reload Python module"),
                 wxT(""),
                 wxT(""),
                 pyFilter,

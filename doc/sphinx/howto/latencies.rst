@@ -12,9 +12,13 @@ Calculating latencies
 The Spike class
 ===============
 
-We will create a class to calculate basic action potential (AP) kinetics in the current/active channel. AP peak and half-width will be calculated from a threshold (in mV/ms) defined by the user, as described in Stuart et al. (1997) [#Stuart1997]_. In principle, this can be easily adjusted in the `Stimfit <http://www.stimfit.org>`_ menu toolbar (see Edit->Cursor settings and select Peak tab). However, as the number of AP to analyze increase, the manipulation of the menu becomes unnecessarily repetitive and prone to errors. We  will use an object to access different AP parameters (i.e baseline, peak, half-width and maximum rise-time) all them calculated from the threshold value Note these values are accessible in `Stimfit <http://www.stimfit.org>`_ result table (see Fig. 9 in the :doc:`/manual/index`), but we will access them within Python. Once the threshold is set, it can be accessed in terms of time with :func:`stf.get_threshold_time()`) or voltage with :func:`stf.get_threshold_value()`. 
+We will create an object to calculate basic action potential (AP) kinetics in the current/active channel. AP peak and half-width will be calculated from a threshold (in mV/ms) defined by the user, as described in Stuart et al. (1997) [#Stuart1997]_. In principle, this can be easily adjusted in the `Stimfit <http://www.stimfit.org>`_ menu toolbar (see Edit->Cursor settings and select Peak tab). However, as the number of traces to analyze increase, the manipulation of the menu becomes unnecessarily repetitive and prone to errors. We  will use the object to access different AP parameters (i.e baseline, peak, half-width and maximum rise-time) all them calculated from the threshold value. Note these values are accessible in `Stimfit <http://www.stimfit.org>`_ result table (see Fig. 9 in the :doc:`/manual/index`), but we will access them within Python. 
 
-Additionally, some other methods will be necessary to calculate the AP latencies. For example, we may want to calculate **onset latency** (i.e time difference between the beginning of the action potential in two different recordings) or **peak latency** (i.e difference in time between the peak of two APs in different recordings). More interestingly, we can calculate the **half-width latency** according to Schmidt-Hieber et al., (2008) [#Schmidt-Hieber2008]_ which calculates the AP latency by the time different between two APs by subtracting the time at the half-maximal amplitudes. 
+.. note::
+
+    Once the threshold is set, it can be accessed in terms of time with :func:`stf.get_threshold_time()`) or voltage with :func:`stf.get_threshold_value()`. 
+
+Additionally, some other methods will be necessary to calculate the AP latencies. For example, we may want to calculate **onset latency** (i.e time difference between the beginning of the action potential in two different recordings) or **peak latency** (i.e difference in time between the peak of two APs in different recordings). More interestingly, we can calculate the **half-width latency** according to Schmidt-Hieber et al., (2008) [#Schmidt-Hieber2008]_ . In this last case, the AP latency is calculated by the time different between the times of the AP at its half-maximal amplitudes. 
 
 ::
 
@@ -24,109 +28,153 @@ Additionally, some other methods will be necessary to calculate the AP latencies
 
     class Spike(object):
         """ 
-        A collection of methods to calculate AP properties 
-        from threshold (see Stuart et al, 1997). Note that all 
+        A collection of methods to calculate AP properties
+        from threshold (see Stuart et al., 1997). Note that all
         calculations are performed in the active/current channel!!!
         """
 
-        def __init__(self, threshold):
+        def __init__(self,threshold):
             """ 
-            create a Spike instance with sampling rate and threshold. 
+            Create a Spike instance with sampling rate and threshold 
             measurements are performed in the current/active channel!!!
 
             Arguments:
-            threshold    -- slope threshold to measure AP kinetics  
+            threshold   -- slope threshold to measure AP kinetics 
             """
 
             self._thr = threshold
-            self.update()
+            # set all the necessary AP parameters at construction
+            self.__updateattributes()
 
-        def update(self):
-            """ 
-            update current trace sampling rate,
-            cursors position and measurements (peak, baseline & AP kinetics)
-            according to the threshold value set at construction.
+        def __updateattributes(self):
+            """
+            update base, peak, t50, max_rise and tamplitude 
             """
 
-            # set threshold
-            stf.set_slope(self._thr)
-            
+            self.base = self.get_base() # in Stimfit is baseline
+            self.peak = self.get_peak() # in Stimfit peak (from threshold)
+            self.t50 = self.get_t50()   # in Stimfit t50
+            self.max_rise = self.get_max_rise() # in Stimfit Slope (rise)
+            self.thr = self.get_threshold_value() # in Stimit Threshold
+
+            # attributes necessary to calculate latencies
+            self.tonset = self.get_threshold_time()
+            self.tpeak = self.get_tamplitude()
+            self.t50_left = self.get_t50left()
+    
+        def update(self):
+            """ update current trace sampling rate, 
+            cursors position and  measurements (peak, baseline & AP kinetics)
+            according to the threshold value set at construction or when
+            the object is called with a threshold argument.
+            """
+            # set slope
+            stf.set_slope(self._thr) # on stf v0.93 or above
+
             # update sampling rate
-            self._dt = stf.get_sampling_interval()
+            self._dt = stf.get_sampling_interval() 
 
             # update cursors and AP kinetics (peak and half-width)
-            stf.measure()
+            stf.measure() 
+    
+        def __call__(self, threshold=None ):
+            """ update AP kinetic parameters to a new threshold in the 
+            current trace/channel
+            threshold (optional)   -- the new threshold value
+
+            Examples :
+            dend = Spike(40) # set the spike threshold at 40mV/ms
+            dend(20) # now we set the spike threshold at 20mV/ms 
+
+            The AP parameters will be thereby updated in the current 
+            trace/channel. This method allow us to use the same object 
+            to calculate AP latencies in different traces.
+            """
+       
+            if threshold is not None:
+                self._thr = threshold # set a new threshold
+
+            self.update() # update dt and sampling rate
+            self.__updateattributes()
+
 
         def get_base(self):
-            """ 
-            get baseline according to current cursor position in the 
-            current/active trace            
-            
+            """
+            Get baseline according to cursor position in the 
+            given current channel/trace
+
             """
 
-            return stf.get_trace(trace = -1,channel =-1)[stf.get_base_start():stf.get_base_end()+1].mean()
+            self.update()
+
+            return stf.get_trace(trace = -1 ,channel = -1)[stf.get_base_start():stf.get_base_end()+1].mean()
 
         def get_peak(self):
-            """
-            calculate peak measured from threshold in the current trace
-            (see Stuart et al, 1997)
+            """ 
+            calculate peak measured from threshold in the current trace, 
+            (see Stuart et al (1997)
             """
 
             stf.set_peak_mean(1) # a single point for the peak value
-            stf.set_peak_direction("up")
+            stf.set_peak_direction("up") # peak direction up
 
             self.update()
-
-            peak = stf.get_peak() - stf.get_threshold_value()
-
+        
+            peak = stf.get_peak()-stf.get_threshold_value()  
             return peak
 
         def get_t50(self):
             """ calculates the half-width in ms in the current trace"""
-            
+
             self.update()
 
-            # current t50's difference gives the half-width
-            return (stf.t50right_index-stf.t50left_index)*self._dt
+            # current t50's difference to calculate half-width (t50)
+
+            return (stf.t50right_index()-stf.t50left_index())*self._dt
 
         def get_max_rise(self):
             """ 
-            maximum rate of rise (dV/dt) of AP in the current trace
-            this depends on the available Na+ conductance, 
-            see Mainen et al, 1995 or Schmidt-Hieber et al, 2008
+            maximum rate of rise (dV/dt) of AP in the current trace, 
+            which depends on the available Na+ conductance, 
+            see Mainen et al, 1995, Schmidt-Hieber et al, 2008 
             """
 
             self.update()
             pmaxrise = stf.maxrise_index() # in active channel
 
-            trace = stf.get_trace()
-        
-            dV = trace[int(ceil(pmaxrise))]-trace[int(floor(pmaxrise))]
+            trace = stf.get_trace(trace = -1, channel =-1) # current trace
+
+            dV = trace[int(ceil(pmaxrise))]-trace[(int(floor(pmaxrise)))]
 
             return dV/self._dt
 
-        def get_amplitude(self):
-            """ returns the time at the peak in the current trace"""
-            
-            # stf.peak_index() does not update cursors!!!
+        def get_tamplitude(self):
+            """ return the time a the peak in the current trace"""
+
+            #stf.peak_index() does not update cursors!!!
             self.update()
 
             return stf.peak_index()*self._dt
 
-        def get_threshold(self):
-            """ returns the threshold (mV/ms) set at construction """
+        def get_t50left(self):
+            """ return the time at the half-width """
+            self.update()
+
+            return stf.t50left_index()*self._dt
+
+        def show_threshold(self):
+            """ return the threshold value (in mV/ms) set at construction
+            or when the object was called"""
             return self._thr
 
         def get_threshold_value(self):
-            """ returns the value (in y-units) at the threshold """
-
-            self.update() #stf.get_threshold_value() does not update !!!
+            """ return the value (in y-units) at the threshold """
+            self.update() # stf.get_threshold_value does not update
             return stf.get_threshold_value()
 
         def get_threshold_time(self):
-            """ returns the value (in x-units) at the threshold """
-
-            self.update() # stf.get_threshold_time() does not update!!!
+            """ return the value (in x-units) at the threshold """
+            self.update()
             return stf.get_threshold_time('True')
 
 
@@ -134,9 +182,39 @@ Additionally, some other methods will be necessary to calculate the AP latencies
 Code commented
 ==============
 
-Note that all methods but **get_base()** and **get_threshold()** are preceded by **self.update()**. This is to update the sampling rate of the current trace (necessary to transform index points into time). This method will also update the cursors position (necessary to calculate the peak, half-widths and maximal slope of rise). Besides that, **both threshold_time()** and **threshold_value()** would change depending on the current trace. The method **get_base()** strongly depends on :func:`stf.get_base_start()` and :func:`stf.get_base_end()`. Fortunately, these functions return updated values when we change the trace. The method get_threshold() simply returns the threshold value set at construction, so we do not need any update. 
+Note that all methods but **show_threshold()** are preceded by **self.update()**. This is to update the sampling rate of the current trace (necessary to transform index points into time) and the position of the cursors. In this way, we are sure that every function will return the values according to the current trace and the update position of the cursors.
 
+Because we want to group all the AP parameters (i.e baseline, peak, half-width and max rise) of a single trace together, we set the object attributes to the following values;
 
+::
+
+    def __updateattributes(self):
+        self.base = self.get_base() # in Stimfit is baseline
+        self.peak = self.get_peak() # in Stimfit peak (from threshold)
+        self.t50  = self.get_t50()  # in Stimfit t50
+        self.max_rise = self.get_max_rise() # in Stimfit slope (rise)
+
+        # attributes necessary to calculate latencies
+        self.tpeak = self.get_threshold_time()
+        self.tamplitude = self.get_tamplitude()
+
+These values refer to the trace present in the current Stimfit window when the object was created. This will allow us to store them for future calculations. 
+
+Note for example, that if we create an object with threshold 40 
+
+>>> myspike = Spike(40)
+
+and move after that to another trace, we could calculate the difference between the peaks of the previous and present trace as follows:
+
+>>> myspike.peak - myspike.get_peak()
+
+the former will give the peak value when in the trace where the object was created, and the later will return the peak in the current trace.
+
+Additionally, we can decide to change the threshold value of the AP in a trace. For that, we can simply type:
+
+>>> myspike(20)
+
+And now the Spike attributes will be updated with the new threshold in the current trace. The function __call__ simply allows to call the object with a given argument, and we used it to set a different threshold and update the object attributes.
 
 =====
 Usage
@@ -144,60 +222,47 @@ Usage
 
 To use this class we have to create an object in the current trace with a threshold value as argument. Do not forget to set both baseline and peak cursors before creating the object.
 
->>> mySpike = AP.Spike(50)
+>>> soma = spells.Spike(50)
 
-Now we can calculate the parameters with the methods available to this object. Note that these values change as we change the trace (i.e, we do not need to type update() or use :func:`stf.measure()`). This means that the method mySpike.get_base() will return different values if we call it in different traces. Compare the values obtained with the functions with the corresponding values in the result table.
+Now we can calculate the parameters with the methods available to this object. Note that these values change as we change the trace (i.e, we do not need to type update() or use :func:`stf.measure()`). This means that the method soma.get_base() will return different values if we call it in different traces or move the cursors. Compare the values obtained with the functions with the corresponding values in the result table of `Stimfit <http://www.stimfit.org>`_.
 
->>> mySpike.get_base() # correspond to baseline in the results table
->>> mySpike.get_peak() # correspond to Peak (from threshold) in the results table
->>> mySpike.get_t50() # correspond to t50 in the results table
->>> mySpike.get_max_rise() # correspond to slope (rise) in the results table
->>> mySpike.get_threshold_value() # correspond to Threshold in the results table
+>>> soma.get_base() # correspond to baseline in the results table
+>>> soma.get_peak() # correspond to Peak (from threshold) in the results table
+>>> soma.get_t50() # correspond to t50 in the results table
+>>> soma.get_max_rise() # correspond to slope (rise) in the results table
+>>> soma.get_threshold_value() # correspond to Threshold in the results table
 
-Additionally, we created the methods get_tamplitude(), get_threshold() and get_threshold_time() to help us to calculate the latencies with different methods. For example, if we have two different AP, one corresponding to the soma in channel 0, and the other corresponding to the dendrite in channel 1, we could calculate. We subtract the dendritic values from the somatic one (this means that positive values indicate that somatic AP would precede the dendritic AP).
+Additionally, we have methods like **get_tamplitude()**, **get_threshold()** and **get_threshold_time()** to calculate latencies with different methods. For example, if we have two different Spike objects, one corresponding to the soma and the other corresponding to the dendrite, we could calculate calculate the latencies with the 3 following methods.
 
 
 * 1.- **Onset latency:** this is the latency between the beginning of 2 APs. We can calculate it as follows:
 
->>> APsoma = AP.Spike(50) # threshold of somatic AP is 50mV/ms
->>> t1 = APsoma.get_threshold_time()
->>> stf.set_channel(1)
->>> APdend = AP.Spike(20) # threshold for dendritic AP is 20mV/ms
->>> t2 = APdend.get_threshold_time()
->>> latency = t2-t1
+>>> soma = spells.Spike(50) # threshold of somatic AP is 50mV/ms
+>>> stf.set_channel(1) # move to channel 2
+>>> dend = spells.Spike(20) # threshold for dendritic AP is 20mV/ms
+>>> latency = dend.tonset - soma.tonset
 
 * 2.- **Peak latency:** this is the latency between the peaks of 2 APs. Similarly to the previous calculate, we can use:
 
->>> stf.set_channel(0) # to the to channel 
->>> t1 = APsoma.get_tamplitude()
->>> stf.set_channel(1)
->>> t2 = APdend.get_tamplitude() # note this object has a different threshold
->>> latency = t2-t1
+>>> latency = dend.tpeak - soma.tpeak
 
-* 3.- **T50 latency:** this method is included in the Edit option of the `Stimfit <http://www.stimfit.org>`_ menu toolbar. However, this menu assumes that both thresholds are the same. If we want to set different latencies for the calculation of the t50 latency, we can use the built-in python functions of `Stimfit <http://www.stimfit.org>`_ .For that, we type:
+* 3.- **T50 latency:** this method is included in the Edit option of the `Stimfit <http://www.stimfit.org>`_ menu toolbar. However, this menu assumes that both thresholds are the same. If we want to set different latencies for the calculation of the t50 latency, we can the Spike property called t50left:
 
-We calculate the time for the dendritic recording.
 
->>> stf.set_channel(1)
->>> stf.set_slope(20)
->>> t2 = stf.t50left_index()*stf.get_sampling_interval()
+>>> latency = dend.t50_left - soma.t50_left
 
-Now we change the channel and do the same for the somatic recording
+You can find the class Spike described above in your current `Stimfit <http://www.stimfit.org>`_ version. To use it, you can simply import it from the spells module with the following command;  
 
->>> stf.set_channel(0)
->>> stf.set_slope(50)
->>> t1 = stf.t50left_index()*stf.get_sampling_interval()
+>>> from spells import Spike
+>>> soma = Spike(50)
+>>> dend = Spike(20) # in a different trace/window
 
-and finally we calculate the latency.
+Additionally, the spells module contains a function which creates a result table (see Figure bellow) with all the AP kinetic parameters described previously, and the latency calculated with the 3 methods described here. Once the soma and dend objects are created with the class Spike, we can use the latency function:
 
->>> latency = t2-t1
+>>> from spells import latency
+>>> latency(soma,dend) # both soma and dend are Spike objects 
 
-In your current `Stimfit <http://www.stimfit.org>`_ version you can find a module called AP which contains the class Spike described above. Additionally, this module contains a function which creates a result table (see Figure bellow) with all the parameters described previously, and the latency calculate with the 3 methods described here. To use it simple type:
-
->>> import AP
->>> AP.calc(50,20) # 50 is the somatic threshold, 20 is dendritic
-
-note that this function assumes that you set the cursors property in your trace, and that the dendritic and somatic AP are in different channels, being the somatic in the active channel.
+note that this function assumes that you set the cursors property in your trace, and that the dendritic and somatic AP are already initialized and contains the AP attributes of some trace.
 
 
     .. figure:: APmodule.png
