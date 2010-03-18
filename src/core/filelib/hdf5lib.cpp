@@ -17,7 +17,7 @@
 #include "wx/filename.h"
 #include <wx/msgdlg.h>
 #include "hdf5.h"
-#if H5_VERS_MINOR>6
+#if H5_VERS_MINOR > 6
   #include "hdf5_hl.h"
 #else
   #include "H5TA.h"

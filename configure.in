@@ -17,16 +17,40 @@ AC_PROG_CXX
 
 BUILDDATE=`date`
 
+AC_MSG_CHECKING(for kernel)
+case `uname` in 
+    Darwin)
+        AC_MSG_RESULT(darwin)
+        STF_PYTHON_LIBNAME="libstf.0.dylib"
+        STFKERNEL="darwin"
+	ARCH_FLAGS="-arch i386 -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5"
+        CFLAGS="${CFLAGS} ${ARCH_FLAGS}"
+        CXXFLAGS="${CXXFLAGS} ${ARCH_FLAGS}"
+        LDFLAGS="${LDFLAGS} ${ARCH_FLAGS}"
+        OBJCFLAGS="${OBJCFLAGS} ${ARCH_FLAGS}"
+        OBJCXXFLAGS="${OBJCXXFLAGS} ${ARCH_FLAGS}"
+    ;;
+    Linux)
+        AC_MSG_RESULT(linux)
+        STF_PYTHON_LIBNAME="libstf.so.0.0.0"
+        CPPFLAGS="${CPPFLAGS} -D__LINUX__"
+        STFKERNEL="linux"
+    ;;
+    *) 
+        AC_MSG_RESULT(other)
+        AC_MSG_WARN([Platforms other than GNU/Linux and Mac OS X are not actively supported 
+                     by the configure script. Use Visual Studio 2008 to build on Windows.])
+        STF_PYTHON_LIBNAME="libstf.so.0.0.0"
+        STFKERNEL="other"
+    ;;
+esac
+
+AC_SUBST(STF_PYTHON_LIBNAME)
+
 # Checks for libraries.
 AC_CHECK_LIB([fftw3], [fftw_malloc], HAVE_FFTW3="yes")
 if test "${HAVE_FFTW3}" != "yes" ; then
     AC_MSG_ERROR([Couldn't find fftw3.])
-fi
-
-# Checks for libraries.
-AC_CHECK_LIB([hdf5], [H5Fcreate], HAVE_HDF5="yes")
-if test "${HAVE_HDF5}" != "yes" ; then
-    AC_MSG_ERROR([Couldn't find hdf5 libraries.])
 fi
 
 # Checks for python libraries.
@@ -58,37 +82,6 @@ AC_ARG_ENABLE([ipython], AC_HELP_STRING([--enable-ipython],[enable ipython as th
 if test "$enable_ipython" = "yes" ; then
     CPPFLAGS="${CPPFLAGS} -DIPYTHON"
 fi
-
-AC_MSG_CHECKING(for kernel)
-case `uname` in 
-    Darwin)
-        AC_MSG_RESULT(darwin)
-        STF_PYTHON_LIBNAME="libstf.0.dylib"
-        STFKERNEL="darwin"
-	ARCH_FLAGS=""
-	# "/Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5"
-        CFLAGS="${CFLAGS} ${ARCH_FLAGS}"
-        CXXFLAGS="${CXXFLAGS} ${ARCH_FLAGS}"
-        LDFLAGS="${LDFLAGS} ${ARCH_FLAGS}"
-        OBJCFLAGS="${OBJCFLAGS} ${ARCH_FLAGS}"
-        OBJCXXFLAGS="${OBJCXXFLAGS} ${ARCH_FLAGS}"
-    ;;
-    Linux)
-        AC_MSG_RESULT(linux)
-        STF_PYTHON_LIBNAME="libstf.so.0.0.0"
-        CPPFLAGS="${CPPFLAGS} -D__LINUX__"
-        STFKERNEL="linux"
-    ;;
-    *) 
-        AC_MSG_RESULT(other)
-        AC_MSG_WARN([Platforms other than GNU/Linux and Mac OS X are not actively supported 
-                     by the configure script. Use Visual Studio 2008 to build on Windows.])
-        STF_PYTHON_LIBNAME="libstf.so.0.0.0"
-        STFKERNEL="other"
-    ;;
-esac
-
-AC_SUBST(STF_PYTHON_LIBNAME)
 
 # Optionally enables aui for doc/view architecture
 AC_ARG_ENABLE([aui], AC_HELP_STRING([--enable-aui],[enable AUI for the doc/view architecture (experimental)]),[])
@@ -133,6 +126,14 @@ else
     fi
 fi
 AC_SUBST(LIBLAPACK_LDFLAGS)
+
+# Checks for libraries.
+AC_CHECK_LIB([hdf5], [H5Fcreate], HAVE_HDF5="yes")
+if test "${HAVE_HDF5}" != "yes" ; then
+    AC_MSG_ERROR([Couldn't find hdf5 libraries.])
+else
+    CPPFLAGS="${CPPFLAGS} -DH5_USE_16_API"
+fi
 
 AC_ARG_ENABLE([debug],
 	AC_HELP_STRING([--enable-debug],[build stimfit in debug mode]),[
