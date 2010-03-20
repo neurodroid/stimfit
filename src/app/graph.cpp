@@ -1437,7 +1437,7 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
     event.Skip();
 
     int kc = event.GetKeyCode();
-#if 1//def _STFDEBUG
+#ifdef _STFDEBUG
     std::cout << "User pressed " << char(kc) << ", corresponding keycode is " << kc << std::endl;
 #endif
 
