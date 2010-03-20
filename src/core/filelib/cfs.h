@@ -59,9 +59,9 @@
     #endif
 #endif
 
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__)
     #define  qDebug 0               /* only used to debug Mac stuff         */
-    #ifdef __LINUX__
+    #ifdef __linux__
         #include <malloc.h>
     #endif
     #include <stdio.h>                         /* MSC I/O function definitions */

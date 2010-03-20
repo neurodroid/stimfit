@@ -336,7 +336,7 @@ typedef struct
 
 #pragma pack()
 
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__)
 typedef TFileHead  * TpFHead;        /* pointer to start of file header */
 typedef TDataHead  * TpDHead;        /* pointer to start of data header */
 typedef TDSChInfo  * TpDsInfo;
@@ -433,7 +433,7 @@ TFileInfo*  g_fileInfo = NULL;
 **
 *****************************************************************************/
 
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__)
 TError errorInfo = {0,0,0,0};
 #else
 TError  _near errorInfo = {0,0,0,0};
@@ -609,7 +609,7 @@ short CCreat(TpCStr name, short mode, fDef* pFile)
                 sErr = 0 - _doserrno;
         #endif
     #else
-        #if defined(__LINUX__) || defined(__APPLE__)
+        #if defined(__linux__) || defined(__APPLE__)
             char*     omode;
 
             if (mode)                         /* Sort out the file access value */
@@ -666,7 +666,7 @@ short CUnlink(TpCStr path)
 }
 #endif
 
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__)
 short CUnlink(TpCStr path)
 {
     return remove(path);                                /* C function in io.h */
@@ -719,7 +719,7 @@ short CClose(fDef handle)
             res = fclose(handle);                          /* shut the file */
         #endif
     #endif
-    #if defined(__LINUX__) || defined(__APPLE__)
+    #if defined(__linux__) || defined(__APPLE__)
             res = fclose(handle);
     #endif
 
@@ -746,7 +746,7 @@ short CCloseAndUnlink(fDef handle, TpCStr path)
 }
 #endif
 
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__)
 short CCloseAndUnlink(fDef handle, TpCStr path)
 {
     short err = 0;
@@ -887,7 +887,7 @@ long CLSeek(fDef handle,                              /* DOS handle of file */
         return res;
     #endif  /* if LLIO else */
 #endif  /* if _IS_MSDOS_ else */
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__)
     long     res;
     short    origin = 0;
 
@@ -974,7 +974,7 @@ WORD CReadHandle(fDef handle, TpStr buffer, WORD bytes)
     #endif /* if LLIO else */
 #endif /* if MSDOS */
 
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__)
         if (fread(buffer,1,bytes,handle) != bytes)
             return 0;
         else
@@ -1045,7 +1045,7 @@ WORD CWriteHandle(fDef handle, TpStr buffer, WORD bytes)
            return bytes;
     #endif /* if LLIO else */
 #endif /* else if MSDOS */
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__)
        if (fwrite(buffer, 1, bytes, handle) != bytes)
            return 0;
        else 
@@ -1118,7 +1118,7 @@ short CSetFileLen(fDef handle, long size)
                 return (short)-_doserrno;
         #endif
     #endif
-	#if defined(__LINUX__) || defined(__APPLE__)
+	#if defined(__linux__) || defined(__APPLE__)
 		return -1;
 	#endif			
 }                                                    /* end of CSetFileLen */
@@ -1170,7 +1170,7 @@ long CGetFileLen(fDef pFile)
                 return (long)(0 - _doserrno);
         #endif
     #endif
-    #if defined(__LINUX__) || defined(__APPLE__)
+    #if defined(__linux__) || defined(__APPLE__)
 	fpos_t cur;
 	if (fgetpos(pFile,&cur)!=0)
 		return -1;
@@ -1283,7 +1283,7 @@ short COpen(TpCStr name, short mode, fDef* pFile)
 }                                                           /* end of COpen */
 #endif
 
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__)
 short COpen(TpCStr name, short mode, fDef* pFile)
 {
     short   sRes = 0;
@@ -1352,7 +1352,7 @@ void CFreeAllcn(TpVoid p)
 *****************************************************************************/
 void CStrTime(char *timeStr)
 {
-#if defined(__APPLE__) || defined(__LINUX__)
+#if defined(__APPLE__) || defined(__linux__)
     time_t    now;
     struct tm *today;
     
@@ -1396,7 +1396,7 @@ void CStrDate(char *dateStr)
     F_strncpy(dateStr,sdata,8);                  /* store time without NULL */
 
 #endif
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__)
     time_t now;
     struct tm *today;
     
@@ -1560,7 +1560,7 @@ CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
               channels*sizeof(TFilChInfo) +        /* Info for each channel */
           ((fileVars+DSVars+2) * sizeof(TVarDesc)) +   /* desc for each var */
                   filVarSpace); /* space computed for actual file variables */
-#if defined(WIN32) || defined(__LINUX__) || defined(__APPLE__)
+#if defined(WIN32) || defined(__linux__) || defined(__APPLE__)
 #else
     if (bytSz > (WORD)MAXMEMALLOC)
     {
@@ -1588,7 +1588,7 @@ CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
                                   DSVarSpace);     /* DS varable data space */
                                                   /* round to nearest block */
     bytSz = (WORD)(((bytSz+(WORD)(blockSize-1)) / blockSize)*blockSize);
-#if defined(WIN32) || defined(__LINUX__) || defined(__APPLE__)
+#if defined(WIN32) || defined(__linux__) || defined(__APPLE__)
 #else
     if (bytSz>(WORD)MAXMEMALLOC)
     {
@@ -3198,7 +3198,7 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
         if (COpen(fname,(short)((enableWrite == 0) ? rMode : wMode), &pfileInfo->DOSHdl.d) != 0)
             loop = -1;
     #endif
-    #if defined(__LINUX__) || defined(__APPLE__)
+    #if defined(__linux__) || defined(__APPLE__)
         loop = 0;
         if (COpen(fname,(short)((enableWrite == 0) ? 0 : 2), &pfileInfo->DOSHdl.d) != 0)
             loop = -1;
@@ -3336,7 +3336,7 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
                 if (loop >= 0)
                     pfileInfo->DOSHdl.d = loop;
             #endif
-     	    #if defined(__LINUX__) || defined(__APPLE__)
+     	    #if defined(__linux__) || defined(__APPLE__)
         	loop = 0;
         	if (COpen(fname, 2, &pfileInfo->DOSHdl.d) != 0)
             	    loop = -1;
@@ -3382,7 +3382,7 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
                 if (loop >= 0)
                     pfileInfo->DOSHdl.d = loop;
             #endif
-            #if defined(__LINUX__) || defined(__APPLE__)
+            #if defined(__linux__) || defined(__APPLE__)
                 loop = 0;
                 if (COpen(fname, 0, &pfileInfo->DOSHdl.d) != 0)
                     loop = -1;
@@ -4819,7 +4819,7 @@ void TempName(short handle, TpCStr name, TpStr str2)
 }                                                        /* end of TempName */
 #endif
 
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__)
 void TempName(short handle, TpCStr name, TpStr str2) {
 	F_strcpy(str2,"CFSTMPXXXXXX");
 	mkstemp(str2);

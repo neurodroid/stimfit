@@ -33,7 +33,7 @@ case `uname` in
     Linux)
         AC_MSG_RESULT(linux)
         STF_PYTHON_LIBNAME="libstf.so.0.0.0"
-        CPPFLAGS="${CPPFLAGS} -D__LINUX__"
+        CPPFLAGS="${CPPFLAGS} -D__linux__"
         STFKERNEL="linux"
     ;;
     *) 

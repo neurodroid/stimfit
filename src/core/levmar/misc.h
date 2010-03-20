@@ -32,7 +32,7 @@
 #ifdef _WINDOWS
     #define LM_BLAS_SUFFIX _ // define empty if a f2c_ or cblas_ prefix was defined for LM_BLAS_PREFIX above
 #endif
-#ifdef __LINUX__
+#ifdef __linux__
     #define LM_BLAS_SUFFIX _ // use this in case of no BLAS prefix
 #endif
 

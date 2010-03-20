@@ -96,13 +96,13 @@
 ** Add other compiler dependant code HERE!
 */
 
-#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__STF__) || defined(__APPLE__)
 #define COMPILER "gcc"
 
 #include "unix.h"
 
 
-#endif /*__LINUX__*/
+#endif /*__linux__*/
 
 //===============================================================================================
 //
@@ -150,7 +150,7 @@
    #include "..\common\msdos.h"
 #elif defined(_WINDOWS)
    #error "ERROR: WIN16 is not supported any more."
-#elif defined(__LINUX__)
+#elif defined(__linux__)
    #define PLATFORM "Unix"
 #elif defined(__APPLE__) 
    #define PLATFORM "Mac"
