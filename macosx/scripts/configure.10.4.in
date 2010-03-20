@@ -1,0 +1,242 @@
+AC_INIT([stimfit],[0.9.3])
+AC_CONFIG_SRCDIR(src/app/app.cpp)
+AM_INIT_AUTOMAKE
+AC_CONFIG_MACRO_DIR([m4])
+
+AC_PROG_CC
+AC_PROG_INSTALL
+
+AC_LIBTOOL_DLOPEN
+AC_PROG_LIBTOOL
+AC_PROG_CPP
+AC_PROG_AWK
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+AC_PROG_MKDIR_P
+AC_PROG_CXX
+
+BUILDDATE=`date`
+
+AC_MSG_CHECKING(for kernel)
+case `uname` in 
+    Darwin)
+        AC_MSG_RESULT(darwin)
+        STF_PYTHON_LIBNAME="libstf.0.dylib"
+        STFKERNEL="darwin"
+	ARCH_FLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk/ -mmacosx-version-min=10.4"
+        CFLAGS="${CFLAGS} ${ARCH_FLAGS}"
+        CXXFLAGS="${CXXFLAGS} ${ARCH_FLAGS}"
+        LDFLAGS="${LDFLAGS} ${ARCH_FLAGS}"
+        OBJCFLAGS="${OBJCFLAGS} ${ARCH_FLAGS}"
+        OBJCXXFLAGS="${OBJCXXFLAGS} ${ARCH_FLAGS}"
+    ;;
+    Linux)
+        AC_MSG_RESULT(linux)
+        STF_PYTHON_LIBNAME="libstf.so.0.0.0"
+        CPPFLAGS="${CPPFLAGS} -D__LINUX__"
+        STFKERNEL="linux"
+    ;;
+    *) 
+        AC_MSG_RESULT(other)
+        AC_MSG_WARN([Platforms other than GNU/Linux and Mac OS X are not actively supported 
+                     by the configure script. Use Visual Studio 2008 to build on Windows.])
+        STF_PYTHON_LIBNAME="libstf.so.0.0.0"
+        STFKERNEL="other"
+    ;;
+esac
+
+AC_SUBST(STF_PYTHON_LIBNAME)
+
+# Checks for libraries.
+AC_CHECK_LIB([fftw3], [fftw_malloc], HAVE_FFTW3="yes")
+if test "${HAVE_FFTW3}" != "yes" ; then
+    AC_MSG_ERROR([Couldn't find fftw3.])
+fi
+
+# Checks for python libraries.
+AC_ARG_ENABLE([python], AC_HELP_STRING([--enable-python],[enable python console]),[])
+if test "$enable_python" = "yes" ; then
+    AC_PYTHON_DEVEL
+    AC_PROG_SWIG(1.3.17)
+    SWIG_ENABLE_CXX
+    SWIG_PYTHON
+    AC_SUBST(SWIG)
+    CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON"
+    CXXFLAGS="${CXXFLAGS}"
+    CFLAGS="${CFLAGS}"
+    LIBPYTHON_LDFLAGS=$PYTHON_LDFLAGS 
+    LIBPYTHON_INCLUDES=$PYTHON_CPPFLAGS
+    LIBNUMPY_INCLUDES=$PYTHON_NUMPY_INCLUDE
+else
+    LIBPYTHON_LDFLAGS= 
+    LIBPYTHON_INCLUDES= 
+    LIBNUMPY_INCLUDES= 
+fi
+AC_SUBST(LIBPYTHON_LDFLAGS)
+AC_SUBST(LIBPYTHON_INCLUDES)
+AC_SUBST(LIBNUMPY_INCLUDES)
+AM_CONDITIONAL(BUILD_PYTHON, test "$enable_python" = "yes")
+
+# Checks for python libraries.
+AC_ARG_ENABLE([ipython], AC_HELP_STRING([--enable-ipython],[enable ipython as the default shell (experimental)]),[])
+if test "$enable_ipython" = "yes" ; then
+    CPPFLAGS="${CPPFLAGS} -DIPYTHON"
+fi
+
+# Optionally enables aui for doc/view architecture
+AC_ARG_ENABLE([aui], AC_HELP_STRING([--enable-aui],[enable AUI for the doc/view architecture (experimental)]),[])
+if test "$enable_aui" = "yes" ; then
+    CPPFLAGS="${CPPFLAGS} -DWITH_AUIDOCVIEW"
+fi
+
+# if this is darwin, unconditionally use atlas:
+if test "$STFKERNEL" = "darwin" ; then
+    AC_CHECK_LIB([atlas], [dgetrf_], HAVE_LAPACKX="yes")
+    if test "${HAVE_LAPACKX}" != "yes" ; then
+        AC_CHECK_LIB([lapack], [dgetrf_], HAVE_LAPACKX="yes")
+	if test "${HAVE_LAPACKX}" != "yes" ; then
+            LIBLAPACK_LDFLAGS="-latlas -llapack -lblas"
+            CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+        else
+            AC_MSG_ERROR([Couldn't find lapack.])
+        fi
+    else
+        LIBLAPACK_LDFLAGS="-latlas -llapack -lblas"
+        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+    fi
+else
+    AC_CHECK_LIB([lapack], [dgetrf_], HAVE_LAPACKX="yes")
+    if test "${HAVE_LAPACKX}" != "yes" ; then
+        AC_CHECK_LIB([lapack3], [dgetrf_], HAVE_LAPACK3="yes")
+        if test "${HAVE_LAPACK3}" != "yes" ; then
+            AC_CHECK_LIB([lapack-3], [dgetrf_], HAVE_LAPACK_3="yes")
+                if test "${HAVE_LAPACK_3}" != "yes" ; then
+                    AC_CHECK_LIB([atlas], [dgetrf_], HAVE_ATLAS="yes")
+                    if test "${HAVE_ATLAS}" != "yes" ; then
+                        AC_MSG_ERROR([Couldn't find lapack.])
+                    else
+                        LIBLAPACK_LDFLAGS="-llapack -latlas"
+                        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+                    fi
+                else
+                    LIBLAPACK_LDFLAGS="-llapack-3"
+                    CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+                fi
+        else
+            LIBLAPACK_LDFLAGS=-llapack3
+            CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+        fi
+    else
+        LIBLAPACK_LDFLAGS=-llapack
+        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+    fi
+fi
+AC_SUBST(LIBLAPACK_LDFLAGS)
+
+# Checks for libraries.
+AC_CHECK_LIB([hdf5], [H5Fcreate], HAVE_HDF5="yes")
+if test "${HAVE_HDF5}" != "yes" ; then
+    AC_MSG_ERROR([Couldn't find hdf5 libraries.])
+else
+    CPPFLAGS="${CPPFLAGS} -DH5_USE_16_API"
+fi
+
+AC_ARG_ENABLE([debug],
+	AC_HELP_STRING([--enable-debug],[build stimfit in debug mode]),[
+])
+    if test "$enable_debug" = "yes" ; then
+    	CPPFLAGS="${CPPFLAGS} -D_STFDEBUG "
+    	OPT_CXXFLAGS="-O0 -g3"
+    	CFLAGS="${CFLAGS} -O0 -g3"
+    else
+    	stimfit_CXXFLAGS="${CXXFLAGS} -O2 -g"
+    	OPT_CXXFLAGS="-O2 -g"
+    	CFLAGS="${CFLAGS} -O2 -g"
+    fi
+AC_SUBST(OPT_CXXFLAGS)
+
+
+WXCONFIG=wx-config
+AC_ARG_WITH(wx-config,
+[[  --with-wx-config=FILE     Use the given path to wx-config when determining
+                            wxWidgets configuration; defaults to "wx-config"]],
+[
+    if test "$withval" != "yes" -a "$withval" != ""; then
+        WXCONFIG=$withval
+    fi
+])
+
+wxversion=0
+
+AC_DEFUN([WXTEST],
+[
+	AC_REQUIRE([AC_PROG_AWK])
+	AC_MSG_CHECKING([wxWidgets version])
+	if wxversion=`$WXCONFIG --version`; then
+		AC_MSG_RESULT([$wxversion])
+	else
+		AC_MSG_RESULT([not found])
+		AC_MSG_ERROR([wxWidgets is required. Try --with-wx-config.])
+	fi])
+
+# Call WXTEST func
+WXTEST
+
+# Verify minimus requires
+AC_MSG_CHECKING(for wxWidgets libraries)
+vers=`echo $wxversion | $AWK 'BEGIN { FS = "."; } { printf "% d", ($2 * 1000 + $2) * 1000 + $3;}'`
+if test -n "$vers" && test "$vers" -ge 2008000; then
+	WX_CPPFLAGS="`$WXCONFIG --cppflags`"
+	WX_CXXFLAGS="`$WXCONFIG --cxxflags`"
+	if test "$STFKERNEL" = "darwin" ; then
+	    WX_LIBS="`$WXCONFIG --libs base,core,adv,aui,net`"
+        else
+	    WX_LIBS="`$WXCONFIG --libs base,core,adv,aui,net`"
+        fi
+        AC_MSG_RESULT([$WX_LIBS])
+else
+	AC_MSG_ERROR([wxWidgets 2.8.0 or newer is required])
+fi
+
+CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
+CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS"
+
+AC_SUBST(WX_LIBS)
+
+dnl default value is to (silently) do nothing in the makefile
+POSTLINK_COMMAND="@true"
+MACSETFILE="@true"
+
+AC_MSG_CHECKING(for wxWidgets platform)
+WX_BASENAME="`$WXCONFIG --basename`"
+case $WX_BASENAME in 
+    *wx_osx*)
+        AC_MSG_RESULT($WX_BASENAME)
+        AC_CHECK_PROG(REZ, Rez, Rez, /Developer/Tools/Rez)
+        POSTLINK_COMMAND="\$(REZ) -d __DARWIN__ -t APPL Carbon.r -o"
+        AC_CHECK_PROG(SETFILE, SetFile, SetFile, /Developer/Tools/SetFile)
+        MACSETFILE="\$(SETFILE)"
+    ;;
+    *wx_mac*)
+        AC_MSG_RESULT($WX_BASENAME)
+        AC_CHECK_PROG(REZ, Rez, Rez, /Developer/Tools/Rez)
+        POSTLINK_COMMAND="\$(REZ) -d __DARWIN__ -t APPL Carbon.r -o"
+        AC_CHECK_PROG(SETFILE, SetFile, SetFile, /Developer/Tools/SetFile)
+        MACSETFILE="\$(SETFILE)"
+    ;;
+    *) 
+        AC_MSG_RESULT(other)
+    ;;
+esac
+
+AC_SUBST(POSTLINK_COMMAND)
+AC_SUBST(MACSETFILE)
+
+CPPFLAGS="${CPPFLAGS} -DSTFDATE='\"${BUILDDATE}\"'"
+CXXFLAGS="${CXXFLAGS} -Wall "
+
+AC_CONFIG_HEADERS([stfconf.h])
+
+AC_CONFIG_FILES([Makefile src/Makefile src/stfswig/Makefile src/app/Makefile stimfit.plist])
+
+AC_OUTPUT

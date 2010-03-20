@@ -1435,11 +1435,13 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
 
 void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
     event.Skip();
-    wxRect WindowRect(GetRect());
+
     int kc = event.GetKeyCode();
-#ifdef _STFDEBUG
+#if 1//def _STFDEBUG
     std::cout << "User pressed " << char(kc) << ", corresponding keycode is " << kc << std::endl;
 #endif
+
+    wxRect WindowRect(GetRect());
     switch (kc) {
     case WXK_LEFT:	//left cursor
         if (event.ControlDown()) {
@@ -1474,37 +1476,30 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
         return;
      case 49: //1
          ParentFrame()->SetZoomQual(stf::zoomch1);
-         //Child()->SetActiveWindow();
          return;
      case 50:  //2
          if (Doc()->size()>1)
              ParentFrame()->SetZoomQual(stf::zoomch2);
-         //Child()->SetActiveWindow();
          return;
      case 51: //3
          if (Doc()->size()>1)
              ParentFrame()->SetZoomQual(stf::zoomboth);
-         //Child()->SetActiveWindow();
          return;
      case 69: // e
      case 101:
          ParentFrame()->SetMouseQual(stf::event_cursor);
-         //Child()->SetActiveWindow();
          return;
      case 70:
      case 102: // f
          Fittowindow(true);
-         //Child()->SetActiveWindow();
          return;
      case 77:  // m
      case 109:
          ParentFrame()->SetMouseQual(stf::measure_cursor);
-         //Child()->SetActiveWindow();
          return;
      case 80: // p
      case 112:
          ParentFrame()->SetMouseQual(stf::peak_cursor);
-         //Child()->SetActiveWindow();
          return;
      case 65: // 'a'
      case 97:
@@ -1518,22 +1513,18 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
      case 66:  // b
      case 98:
          ParentFrame()->SetMouseQual(stf::base_cursor);
-         //Child()->SetActiveWindow();
          return;
      case 68:  // d
      case 100:
          ParentFrame()->SetMouseQual(stf::decay_cursor);
-         //Child()->SetActiveWindow();
          return;
      case 90:  // z
      case 122:
          ParentFrame()->SetMouseQual(stf::zoom_cursor);
-         //Child()->SetActiveWindow();
          return;
      case 76:  // l
      case 108:
          ParentFrame()->SetMouseQual(stf::latency_cursor);
-         //Child()->SetActiveWindow();
          return;
      case WXK_RETURN:    //Enter or Return
      {

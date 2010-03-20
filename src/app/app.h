@@ -440,7 +440,8 @@ private:
     void OnNewfromall( wxCommandEvent& event );
     void OnApplytoall( wxCommandEvent& event );
     void OnProcessCustom( wxCommandEvent& event );
-
+    void OnKeyDown( wxKeyEvent& event );
+    
 #ifdef WITH_PYTHON
     void ImportPython(const wxString& modulelocation);
     bool Init_wxPython();

@@ -85,6 +85,8 @@ IMPLEMENT_APP(wxStfApp)
 wxStfParentFrame *frame = (wxStfParentFrame *) NULL;
 
 BEGIN_EVENT_TABLE( wxStfApp, wxApp )
+EVT_KEY_DOWN( wxStfApp::OnKeyDown )
+
 EVT_MENU( wxID_CURSORS, wxStfApp::OnCursorSettings )
 EVT_MENU( wxID_NEWFROMSELECTED, wxStfApp::OnNewfromselected )
 EVT_MENU( wxID_NEWFROMALL, wxStfApp::OnNewfromall )
@@ -795,6 +797,21 @@ wxStfDoc* wxStfApp::GetActiveDoc() const {
         return NULL;
     }
     return (wxStfDoc*)GetDocManager()->GetCurrentDocument();
+}
+
+void wxStfApp::OnKeyDown( wxKeyEvent& event ) {
+    event.Skip();
+    wxStfDoc* actDoc = GetActiveDoc();
+    if (!actDoc)
+        return;
+    
+    wxStfView* actView = (wxStfView*)actDoc->GetFirstView();
+
+    if (actView) {
+        wxStfGraph* pGraph = actView->GetGraph();
+        if (pGraph)
+            pGraph->OnKeyDown(event);
+    }
 }
 
 void wxStfApp::OnCursorSettings( wxCommandEvent& WXUNUSED(event) ) {

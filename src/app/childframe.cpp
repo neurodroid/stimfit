@@ -261,6 +261,8 @@ void wxStfChildFrame::SetCurTrace(std::size_t n) {
 void wxStfChildFrame::OnComboTraces(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=(wxStfView*)GetView();
     wxStfDoc* pDoc=(wxStfDoc*)GetDocument();
+    if (!pView || !pDoc)
+        return;
     pDoc->SetSection(GetCurTrace());
     wxString indStr;
     indStr << wxT("Zero-based index: ") << GetCurTrace();
@@ -268,6 +270,7 @@ void wxStfChildFrame::OnComboTraces(wxCommandEvent& WXUNUSED(event)) {
     wxGetApp().OnPeakcalcexecMsg();
     if (pView->GetGraph() != NULL) {
         pView->GetGraph()->Refresh();
+        pView->GetGraph()->Enable();
         pView->GetGraph()->SetFocus();
     }
 }
@@ -326,6 +329,7 @@ void wxStfChildFrame::UpdateChannels( ) {
         }
         if (pView->GetGraph() != NULL) {
             pView->GetGraph()->Refresh();
+            pView->GetGraph()->Enable();
             pView->GetGraph()->SetFocus();
         }
     }
@@ -335,6 +339,7 @@ void wxStfChildFrame::OnPlotselected(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=(wxStfView*)GetView();
     if (pView != NULL && pView->GetGraph()!= NULL) { 
         pView->GetGraph()->Refresh();
+        pView->GetGraph()->Enable();
         pView->GetGraph()->SetFocus();
     }
 }
@@ -343,6 +348,7 @@ void wxStfChildFrame::OnShowsecond(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=(wxStfView*)GetView();
     if (pView != NULL && pView->GetGraph()!= NULL) { 
         pView->GetGraph()->Refresh();
+        pView->GetGraph()->Enable();
         pView->GetGraph()->SetFocus();
     }
 }
@@ -353,6 +359,7 @@ void wxStfChildFrame::ActivateGraph() {
     if (m_traceCounter != NULL) 
         m_traceCounter->SetFocus();
     if (pView != NULL && pView->GetGraph()!= NULL) { 
+        pView->GetGraph()->Enable();
         pView->GetGraph()->SetFocus();
     }
 }
@@ -384,6 +391,7 @@ void wxStfChildFrame::ShowTable(const stf::Table &table,const wxString& caption)
     m_mgr.Update();
     wxStfView* pView=(wxStfView*)GetView();
     if (pView != NULL && pView->GetGraph()!= NULL) { 
+        pView->GetGraph()->Enable();
         pView->GetGraph()->SetFocus();
     }
 }

@@ -116,14 +116,11 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
     wxFileName wxfFilename( filename );
     wxGetApp().wxWriteProfileString( wxT("Settings"), wxT("Last directory"), wxfFilename.GetPath() );
     if (wxDocument::OnOpenDocument(filename)) { //calls base class function
+
         // Detect type of file according to filter:
-#ifndef __APPLE__        
         wxString filter(GetDocumentTemplate()->GetFileFilter());
-#else
-        wxString filter = wxT("*.");
-        filter << wxfFilename.GetExt();
-#endif
         stf::filetype type = stf::findType(filter);
+
         if (type==stf::ascii) {
             if (!wxGetApp().get_directTxtImport()) {
                 wxStfTextImportDlg ImportDlg( GetDocumentWindow(),
@@ -442,13 +439,14 @@ void wxStfDoc::PostInit() {
         wxStfGraph* pGraph = pView->GetGraph();
         if (pGraph != NULL) {
             pGraph->Refresh();
+            pGraph->Enable();
             // Set the focus:
             pGraph->SetFocus();
         }
     }
-    wxGetApp().OnPeakcalcexecMsg();
     pFrame->SetCurTrace(0);
     UpdateSelectedButton();
+    wxGetApp().OnPeakcalcexecMsg();
 }
 
 //Dialog box to select channel to be displayed
@@ -1587,17 +1585,20 @@ void wxStfDoc::Deleteselected(wxCommandEvent &WXUNUSED(event)) {
 }
 
 void wxStfDoc::Focus() {
+
+    UpdateSelectedButton();
+
     // refresh the view once we are through:
     wxStfView* pView=(wxStfView*)GetFirstView();
     if (pView != NULL && pView->GetGraph() != NULL) {
+        pView->GetGraph()->Enable();
         pView->GetGraph()->SetFocus();
     }
     
-    UpdateSelectedButton();
 }
 
 void wxStfDoc::UpdateSelectedButton() {
-    //control whether trace has selected been selected:
+    // control whether trace has been selected:
     bool selected=false;
     for (c_st_it cit = GetSelectedSections().begin();
          cit != GetSelectedSections().end() && !selected;
