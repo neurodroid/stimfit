@@ -809,7 +809,8 @@ void wxStfApp::OnKeyDown( wxKeyEvent& event ) {
 
     if (actView) {
         wxStfGraph* pGraph = actView->GetGraph();
-        if (pGraph)
+        wxStfChildFrame* pChild=(wxStfChildFrame*)actView->GetFrame();
+        if (pGraph && pChild && pChild->IsActive())
             pGraph->OnKeyDown(event);
     }
 }
