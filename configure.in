@@ -17,42 +17,6 @@ AC_PROG_CXX
 
 BUILDDATE=`date`
 
-AC_MSG_CHECKING(for kernel)
-case `uname` in 
-    Darwin)
-        AC_MSG_RESULT(darwin)
-        STF_PYTHON_LIBNAME="libstf.0.dylib"
-        STFKERNEL="darwin"
-	ARCH_FLAGS="-arch i386 -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5"
-        CFLAGS="${CFLAGS} ${ARCH_FLAGS}"
-        CXXFLAGS="${CXXFLAGS} ${ARCH_FLAGS}"
-        LDFLAGS="${LDFLAGS} ${ARCH_FLAGS}"
-        OBJCFLAGS="${OBJCFLAGS} ${ARCH_FLAGS}"
-        OBJCXXFLAGS="${OBJCXXFLAGS} ${ARCH_FLAGS}"
-    ;;
-    Linux)
-        AC_MSG_RESULT(linux)
-        STF_PYTHON_LIBNAME="libstf.so.0.0.0"
-        CPPFLAGS="${CPPFLAGS} -D__LINUX__"
-        STFKERNEL="linux"
-    ;;
-    *) 
-        AC_MSG_RESULT(other)
-        AC_MSG_WARN([Platforms other than GNU/Linux and Mac OS X are not actively supported 
-                     by the configure script. Use Visual Studio 2008 to build on Windows.])
-        STF_PYTHON_LIBNAME="libstf.so.0.0.0"
-        STFKERNEL="other"
-    ;;
-esac
-
-AC_SUBST(STF_PYTHON_LIBNAME)
-
-# Checks for libraries.
-AC_CHECK_LIB([fftw3], [fftw_malloc], HAVE_FFTW3="yes")
-if test "${HAVE_FFTW3}" != "yes" ; then
-    AC_MSG_ERROR([Couldn't find fftw3.])
-fi
-
 # Checks for python libraries.
 AC_ARG_ENABLE([python], AC_HELP_STRING([--enable-python],[enable python console]),[])
 if test "$enable_python" = "yes" ; then
@@ -83,6 +47,54 @@ if test "$enable_ipython" = "yes" ; then
     CPPFLAGS="${CPPFLAGS} -DIPYTHON"
 fi
 
+AC_MSG_CHECKING(for kernel)
+case `uname` in 
+    Darwin)
+        AC_MSG_RESULT(darwin)
+        STF_PYTHON_LIBNAME="libstf.0.dylib"
+        STFKERNEL="darwin"
+	ARCH_FLAGS="-mmacosx-version-min=10.4"
+        CFLAGS="${CFLAGS} ${ARCH_FLAGS}"
+        CXXFLAGS="${CXXFLAGS} ${ARCH_FLAGS}"
+        LDFLAGS="${LDFLAGS} ${ARCH_FLAGS}"
+        OBJCFLAGS="${OBJCFLAGS} ${ARCH_FLAGS}"
+        OBJCXXFLAGS="${OBJCXXFLAGS} ${ARCH_FLAGS}"
+    ;;
+    Linux)
+        AC_MSG_RESULT(linux)
+        STF_PYTHON_LIBNAME="libstf.so.0.0.0"
+        CPPFLAGS="${CPPFLAGS} -D__LINUX__"
+        STFKERNEL="linux"
+    ;;
+    *) 
+        AC_MSG_RESULT(other)
+        AC_MSG_WARN([Platforms other than GNU/Linux and Mac OS X are not actively supported 
+                     by the configure script. Use Visual Studio 2008 to build on Windows.])
+        STF_PYTHON_LIBNAME="libstf.so.0.0.0"
+        STFKERNEL="other"
+    ;;
+esac
+AC_SUBST(STF_PYTHON_LIBNAME)
+
+AC_MSG_CHECKING(for cpu type)
+case `uname -p` in 
+    powerpc)
+        AC_MSG_RESULT(powerpc)
+        CPPFLAGS="${CPPFLAGS} -D__BIG_ENDIAN__"
+    ;;
+    *) 
+        AC_MSG_RESULT(other)
+        CPPFLAGS="${CPPFLAGS} -D__LITTLE_ENDIAN__"
+    ;;
+esac
+
+# Checks for libraries.
+AC_CHECK_LIB([fftw3], [fftw_malloc], HAVE_FFTW3="yes")
+if test "${HAVE_FFTW3}" != "yes" ; then
+    AC_MSG_ERROR([Couldn't find fftw3.])
+fi
+
+
 # Optionally enables aui for doc/view architecture
 AC_ARG_ENABLE([aui], AC_HELP_STRING([--enable-aui],[enable AUI for the doc/view architecture (experimental)]),[])
 if test "$enable_aui" = "yes" ; then
@@ -93,7 +105,13 @@ fi
 if test "$STFKERNEL" = "darwin" ; then
     AC_CHECK_LIB([atlas], [dgetrf_], HAVE_LAPACKX="yes")
     if test "${HAVE_LAPACKX}" != "yes" ; then
-        AC_MSG_ERROR([Couldn't find lapack.])
+        AC_CHECK_LIB([lapack], [dgetrf_], HAVE_LAPACKX="yes")
+	if test "${HAVE_LAPACKX}" != "yes" ; then
+            AC_MSG_ERROR([Couldn't find lapack.])
+        else
+            LIBLAPACK_LDFLAGS="-llapack -framework vecLib"
+            CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK -DHAVE_LAPACK_SUFFIX" 
+        fi
     else
         LIBLAPACK_LDFLAGS="-latlas -llapack -lblas"
         CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
