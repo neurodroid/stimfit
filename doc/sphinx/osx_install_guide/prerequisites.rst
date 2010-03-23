@@ -25,7 +25,7 @@ Once you've installed MacPorts, you can use it to build some required libraries:
 
     $ sudo port install subversion mercurial boost fftw-3 python26 py26-numpy hdf5-18 swig swig-python
 
-On OS X 10.4, you might have to to
+On OS X 10.4, you might have to do
 
 ::
 
