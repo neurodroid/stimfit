@@ -7,6 +7,8 @@
 #define kAGX_Creator 'AxGX'
 #define kAGX_DocType  'axgx'
 
+#include "longdef.h"
+
 #if 0
     typedef const int filehandle;
 #else
@@ -25,6 +27,6 @@ filehandle OpenFile( const char *fileName );
 void CloseFile( filehandle dataRefNum );
 
 int SetFilePosition( filehandle dataRefNum, int posn );
-int ReadFromFile( filehandle dataRefNum, long count, void *dataToRead );
+int ReadFromFile( filehandle dataRefNum, AXGLONG count, void *dataToRead );
 
 #endif

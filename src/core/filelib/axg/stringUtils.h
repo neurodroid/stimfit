@@ -2,6 +2,8 @@
 #ifndef STRINGUTILS_H
 #define STRINGUTILS_H
 
+#include "longdef.h"
+
 typedef unsigned char axgchar;
 
 void PascalToCString( axgchar *string );

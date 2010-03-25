@@ -10,7 +10,7 @@
    and directory ID for the demo application's directory. */
 
 #if 0
-OSStatus GetApplicationDirectory( short *vRefNum, long *dirID )
+OSStatus GetApplicationDirectory( short *vRefNum, AXGLONG *dirID )
 {
     ProcessSerialNumber PSN;
     ProcessInfoRec pinfo;
@@ -46,7 +46,7 @@ filehandle OpenFile( const char *fileName )
 #if 0
     short dataRefNum = 0;
     short vRefNum;
-    long dirID;
+    AXGLONG dirID;
     OSErr result;
     FSSpec spec;
 
@@ -122,7 +122,7 @@ int SetFilePosition( filehandle dataRefNum, int posn )
 #endif
 }
 
-int ReadFromFile( filehandle dataRefNum, long count, void *dataToRead )
+int ReadFromFile( filehandle dataRefNum, AXGLONG count, void *dataToRead )
 {
 #if 0
     return FSRead( dataRefNum, &count, dataToRead );

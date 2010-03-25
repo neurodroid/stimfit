@@ -28,7 +28,7 @@ int AG_GetFileFormat( filehandle refNum, int *fileFormat )
 
     // Read the 4-byte prefix present in all AxoGraph file formats
     unsigned char AxoGraphFileID[4];
-    long bytes = 4;	// 4 byte identifier
+    AXGLONG bytes = 4;	// 4 byte identifier
     result = ReadFromFile( refNum, bytes, AxoGraphFileID );
     if ( result )
         return result;
@@ -57,8 +57,8 @@ int AG_GetFileFormat( filehandle refNum, int *fileFormat )
     else if ( memcmp( AxoGraphFileID, kAxoGraphXDocType, 4 ) == 0 )
     {
         // Got an AxoGraph X format file. Check the file version.
-        long version;
-        bytes = sizeof( long );
+        AXGLONG version;
+        bytes = sizeof( AXGLONG );
         result = ReadFromFile( refNum, bytes, &version );
         if ( result )
             return result;
@@ -89,7 +89,7 @@ int AG_GetFileFormat( filehandle refNum, int *fileFormat )
 
 
 
-int AG_GetNumberOfColumns( filehandle refNum, const int fileFormat, long *numberOfColumns )
+int AG_GetNumberOfColumns( filehandle refNum, const int fileFormat, AXGLONG *numberOfColumns )
 {
     *numberOfColumns = 0;
 
@@ -97,7 +97,7 @@ int AG_GetNumberOfColumns( filehandle refNum, const int fileFormat, long *number
     {
         // Read the number of columns (short integer in AxoGraph 4 files)
         short nColumns;
-        long bytes = 2;
+        AXGLONG bytes = 2;
         int result = ReadFromFile( refNum, bytes, &nColumns);
         if ( result )
             return result;
@@ -112,8 +112,8 @@ int AG_GetNumberOfColumns( filehandle refNum, const int fileFormat, long *number
     else if ( fileFormat == kAxoGraph_X_Format )
     {
         // Read the number of columns (long integer in AxoGraph X files)
-        long nColumns;
-        long bytes = 4;
+        AXGLONG nColumns;
+        AXGLONG bytes = 4;
         int result = ReadFromFile( refNum, bytes, &nColumns);
         if ( result )
             return result;
@@ -144,7 +144,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
          {
              // Read the standard column header
              ColumnHeader columnHeader;
-             long bytes = sizeof( ColumnHeader );
+             AXGLONG bytes = sizeof( ColumnHeader );
              int result = ReadFromFile( refNum, bytes, &columnHeader );
              if ( result )
                  return result;
@@ -161,7 +161,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
              columnData->title = wxString( (wxChar*)columnHeader.title );
 
              // create a new pointer to receive the data
-             long columnBytes = columnHeader.points * sizeof( float );
+             AXGLONG columnBytes = columnHeader.points * sizeof( float );
              columnData->floatArray.resize( columnHeader.points );
              if ( columnData->floatArray.empty() )
                  return kAG_MemoryErr;
@@ -182,7 +182,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
              {
                  // Read the column header
                  DigitizedFirstColumnHeader columnHeader;
-                 long bytes = sizeof( DigitizedFirstColumnHeader );
+                 AXGLONG bytes = sizeof( DigitizedFirstColumnHeader );
                  int result = ReadFromFile( refNum, bytes, &columnHeader );
                  if ( result )
                      return result;
@@ -208,7 +208,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
              {
                  // Read the column header
                  DigitizedColumnHeader columnHeader;
-                 long bytes = sizeof( DigitizedColumnHeader );
+                 AXGLONG bytes = sizeof( DigitizedColumnHeader );
                  int result = ReadFromFile( refNum, bytes, &columnHeader );
                  if ( result )
                      return result;
@@ -229,7 +229,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  columnData->scaledShortArray.offset = 0;
 
                  // create a new pointer to receive the data
-                 long columnBytes = columnHeader.points * sizeof( short );
+                 AXGLONG columnBytes = columnHeader.points * sizeof( short );
                  columnData->scaledShortArray.shortArray.resize( columnHeader.points );
                  if ( columnData->scaledShortArray.shortArray.empty() )
                      return kAG_MemoryErr;
@@ -249,7 +249,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
          {
              // Read the column header
              AxoGraphXColumnHeader columnHeader;
-             long bytes = sizeof( AxoGraphXColumnHeader );
+             AXGLONG bytes = sizeof( AxoGraphXColumnHeader );
              int result = ReadFromFile( refNum, bytes, &columnHeader );
              if ( result )
                  return result;
@@ -286,7 +286,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
               case ShortArrayType:
                   {
                       // create a new pointer to receive the data
-                      long columnBytes = columnHeader.points * sizeof( short );
+                      AXGLONG columnBytes = columnHeader.points * sizeof( short );
                       columnData->shortArray.resize( columnHeader.points );
                       if ( columnData->shortArray.empty() )
                           return kAG_MemoryErr;
@@ -303,7 +303,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
               case IntArrayType:
                   {
                       // create a new pointer to receive the data
-                      long columnBytes = columnHeader.points * sizeof( int );
+                      AXGLONG columnBytes = columnHeader.points * sizeof( int );
                       columnData->intArray.resize( columnHeader.points );
                       if ( columnData->intArray.empty() )
                           return kAG_MemoryErr;
@@ -312,7 +312,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                       result = ReadFromFile( refNum, columnBytes, &(columnData->intArray[0]) );
 
 #ifdef __LITTLE_ENDIAN__
-                      ByteSwapLongArray( (long *)&(columnData->intArray[0]), columnHeader.points );
+                      ByteSwapLongArray( (AXGLONG *)&(columnData->intArray[0]), columnHeader.points );
 #endif
 
                       return result;
@@ -320,7 +320,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
               case FloatArrayType:
                   {
                       // create a new pointer to receive the data
-                      long columnBytes = columnHeader.points * sizeof( float );
+                      AXGLONG columnBytes = columnHeader.points * sizeof( float );
                       columnData->floatArray.resize( columnHeader.points );
                       if ( columnData->floatArray.empty() )
                           return kAG_MemoryErr;
@@ -337,7 +337,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
               case DoubleArrayType:
                   {
                       // create a new pointer to receive the data
-                      long columnBytes = columnHeader.points * sizeof( double );
+                      AXGLONG columnBytes = columnHeader.points * sizeof( double );
                       columnData->doubleArray.resize( columnHeader.points );
                       if ( columnData->doubleArray.empty() )
                           return kAG_MemoryErr;
@@ -354,7 +354,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
               case SeriesArrayType:
                   {
                       SeriesArray seriesParameters;
-                      long bytes = sizeof( SeriesArray );
+                      AXGLONG bytes = sizeof( SeriesArray );
                       result = ReadFromFile( refNum, bytes, &seriesParameters );
 
 #ifdef __LITTLE_ENDIAN__
@@ -369,7 +369,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
               case ScaledShortArrayType:
                   {
                       double scale, offset;
-                      long bytes = sizeof( double );
+                      AXGLONG bytes = sizeof( double );
                       result = ReadFromFile( refNum, bytes, &scale );
                       result = ReadFromFile( refNum, bytes, &offset );
 
@@ -382,7 +382,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                       columnData->scaledShortArray.offset = offset;
 
                       // create a new pointer to receive the data
-                      long columnBytes = columnHeader.points * sizeof( short );
+                      AXGLONG columnBytes = columnHeader.points * sizeof( short );
                       columnData->scaledShortArray.shortArray.resize( columnHeader.points );
                       if ( columnData->scaledShortArray.shortArray.empty() )
                           return kAG_MemoryErr;
@@ -454,7 +454,7 @@ int AG_ReadFloatColumn( filehandle refNum, const int fileFormat, const int colum
              columnData->floatArray.resize( columnData->points );
 
              // Convert in the column data
-             for ( long i = 0; i < columnData->points; i++ )
+             for ( AXGLONG i = 0; i < columnData->points; i++ )
              {
                  columnData->floatArray[i] = firstValue + i * increment;
              }
@@ -470,7 +470,7 @@ int AG_ReadFloatColumn( filehandle refNum, const int fileFormat, const int colum
              columnData->floatArray.resize( columnData->points );
 
              // Convert in the column data
-             for ( long i = 0; i < columnData->points; i++ )
+             for ( AXGLONG i = 0; i < columnData->points; i++ )
              {
                  columnData->floatArray[i] = columnData->scaledShortArray.shortArray[i] * scale + offset;
              }

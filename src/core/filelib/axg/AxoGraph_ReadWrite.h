@@ -188,6 +188,7 @@
 #define __LITTLE_ENDIAN__
 #endif
 
+#include "longdef.h"
 #include "fileUtils.h"
 #include "./../../stimdefs.h"
 #include <wx/wx.h>
@@ -209,14 +210,14 @@ const axgchar kAxoGraphXDocType[4] = { 'a', 'x', 'g', 'x' };
 // column header for AxoGraph graph files
 struct ColumnHeader
 {
-    long points;
+    AXGLONG points;
     axgchar title[80];
 };
 
 // x-axis column header for AxoGraph digitized files
 struct DigitizedFirstColumnHeader
 {
-    long points;
+    AXGLONG points;
     axgchar title[80];
     float firstPoint;
     float sampleInterval;
@@ -225,7 +226,7 @@ struct DigitizedFirstColumnHeader
 // y-axis column header for AxoGraph digitized files
 struct DigitizedColumnHeader
 {
-    long points;
+    AXGLONG points;
     axgchar title[80];
     float scalingFactor;
 };
@@ -233,9 +234,9 @@ struct DigitizedColumnHeader
 // column header for AxoGraph X files
 struct AxoGraphXColumnHeader
 {
-    long points;
-    long dataType;
-    long titleLength;
+    AXGLONG points;
+    AXGLONG dataType;
+    AXGLONG titleLength;
 };
 
 //============= ColumnData structure ======================
@@ -275,8 +276,8 @@ struct ScaledShortArray {
 
 struct ColumnData {
     ColumnType type;
-    long points;
-    long titleLength;
+    AXGLONG points;
+    AXGLONG titleLength;
     wxString title;
     std::vector<short> shortArray;
     std::vector<int> intArray;
@@ -300,7 +301,7 @@ int AG_GetFileFormat( filehandle refNum, int *fileFormat );
 //	or kAG_VersionErr if the file is of a more recent version than supported by this code.
 
 
-int AG_GetNumberOfColumns( filehandle refNum, const int fileFormat, long *numberOfColumns );
+int AG_GetNumberOfColumns( filehandle refNum, const int fileFormat, AXGLONG *numberOfColumns );
 
 //	Read in the number of columns to follow in this file.
 //	Called once per file. Returns 0 if all goes well.

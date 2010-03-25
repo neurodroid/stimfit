@@ -2,6 +2,7 @@
 #ifndef BYTESWAP_H
 #define BYTESWAP_H
 
+#include "longdef.h"
 
 //------------------------ Byte Swap Routines  -------------------------
 
@@ -9,7 +10,7 @@
 void ByteSwapShort( short *shortNumber );
 
 // swap bytes in an int (4 byte) variable
-void ByteSwapLong( long *longNumber );
+void ByteSwapLong( AXGLONG *longNumber );
 
 // swap bytes in a float (4 byte) variable
 void ByteSwapFloat( float *floatNumber );
@@ -21,7 +22,7 @@ void ByteSwapDouble( double *doubleNumber );
 void ByteSwapShortArray( short *shortArray, int arraySize );
 
 // swap bytes in an int (4 byte) array
-void ByteSwapLongArray( long *longArray, int arraySize );
+void ByteSwapLongArray( AXGLONG *longArray, int arraySize );
 
 // swap bytes in a float (4 byte) array
 void ByteSwapFloatArray( float *floatArray, int arraySize );

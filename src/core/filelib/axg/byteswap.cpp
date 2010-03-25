@@ -14,7 +14,7 @@ void ByteSwapShort( short *shortNumber )
 }
 
 
-void ByteSwapLong( long *longNumber )
+void ByteSwapLong( AXGLONG *longNumber )
 {
 	unsigned int *uLongNumber = ( unsigned int * )longNumber;
 	
@@ -57,7 +57,7 @@ void ByteSwapShortArray( short *shortArray, int arraySize )
 }
 
 
-void ByteSwapLongArray( long *longArray, int arraySize )
+void ByteSwapLongArray( AXGLONG *longArray, int arraySize )
 {
 	for ( int i = 0; i < arraySize; i++ )
 	{
