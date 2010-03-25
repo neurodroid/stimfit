@@ -22,6 +22,7 @@
 #include <wx/progdlg.h>
 #include "./axg/fileUtils.h"
 #include "./axg/AxoGraph_ReadWrite.h"
+#include "./axg/longdef.h"
 #include "./axglib.h"
 
 void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progress) {
@@ -63,7 +64,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
         throw std::runtime_error(std::string(errorMsg.char_str()));
     }
 
-    long numberOfColumns = 0;
+    AXGLONG numberOfColumns = 0;
     result = AG_GetNumberOfColumns( dataRefNum, fileFormat, &numberOfColumns );
     if ( result )
     {

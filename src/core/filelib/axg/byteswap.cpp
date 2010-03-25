@@ -38,8 +38,8 @@ void ByteSwapDouble( double *doubleNumber )
 	unsigned int *uLongArray = ( unsigned int * )doubleNumber;
 	
 	// swap the bytes in each long
-	ByteSwapLong( ( long * )&uLongArray[0] );
-	ByteSwapLong( ( long * )&uLongArray[1] );
+	ByteSwapLong( ( AXGLONG * )&uLongArray[0] );
+	ByteSwapLong( ( AXGLONG * )&uLongArray[1] );
 	
 	// swap the two longs
 	unsigned int saveLong0 = uLongArray[0];
