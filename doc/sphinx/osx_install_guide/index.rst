@@ -10,7 +10,7 @@ OS X Installation Guide
 :Release: |version|
 :Date:    |today|
 
-Building Stimfit from scratch requires you to install `Xcode <http://developer.apple.com/tools/xcode/>`_, `MacPorts <http://www.macports.org/>`_ and a couple of libraries. Note that this may take several hours.
+Building `Stimfit <http://www.stimfit.org>`_ from scratch requires you to install `Xcode <http://developer.apple.com/tools/xcode/>`_, `MacPorts <http://www.macports.org/>`_ and a couple of libraries. Note that this may take several hours.
 
 Contents:
 

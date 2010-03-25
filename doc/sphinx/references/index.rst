@@ -9,7 +9,7 @@ References
 
 :Date:  |today|
 
-A list of recent publications that have used stimfit for data analysis. Please let me know if something is missing here.
+A list of recent publications that have used `Stimfit <http:http://www.stimfit.org>`_ for data analysis. Please let me know if something is missing here.
 
     * Kowalski J, Geuting M, Paul S, Dieni S, Laurens J, Zhao S, Drakew A, Haas CA, Frotscher M, Vida I (2010). Proper Layering Is Important for Precisely Timed Activation of Hippocampal Mossy Cells. *Cereb Cortex.* doi:10.1093/cercor/bhp267
     * Sauer JF, Bartos M (2010). Recruitment of early postnatal parvalbumin-positive hippocampal interneurons by GABAergic excitation. *J Neurosci.* 30(1):110-5.
