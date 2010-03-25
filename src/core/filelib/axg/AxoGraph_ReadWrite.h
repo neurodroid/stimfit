@@ -185,7 +185,9 @@
 
 // uncomment the following line to run on little endian hardware ( byte swaps data before reading or writing )
 #ifndef __BIG_ENDIAN__
-#define __LITTLE_ENDIAN__
+  #ifndef __LITTLE_ENDIAN__
+    #define __LITTLE_ENDIAN__
+  #endif
 #endif
 
 #include "longdef.h"
