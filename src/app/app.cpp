@@ -290,7 +290,6 @@ bool wxStfApp::OnInit(void)
 
     SetTopWindow(frame);
 
-
     if (!m_fileToLoad.empty()) {
         wxDocTemplate* templ=GetDocManager()->FindTemplateForPath(m_fileToLoad);
         wxStfDoc* NewDoc=(wxStfDoc*)templ->CreateDocument(m_fileToLoad,wxDOC_NEW);

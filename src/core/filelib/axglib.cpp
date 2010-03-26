@@ -77,7 +77,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     // Sanity check
     if ( numberOfColumns <= 0 )  	// negative columns
     {
-        errorMsg += wxT ( "File format error: number of columns is set negative in AxoGraph data file" );
+        errorMsg += wxT ( "File format error: number of columns is negative in AxoGraph data file" );
         ReturnData.resize(0);
         CloseFile( dataRefNum );
         throw std::runtime_error(std::string(errorMsg.char_str()));
@@ -92,9 +92,9 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     double xscale = 1.0;
     for ( int columnNumber=0; columnNumber<numberOfColumns; columnNumber++ )
     {
-        if (progress) {
+        if (progress && columnNumber != 0) {
             wxString progStr;
-            progStr << wxT(", Section #") << columnNumber+1 << wxT(" of ") << numberOfColumns;
+            progStr << wxT("Section #") << columnNumber << wxT(" of ") << numberOfColumns-1;
             progDlg.Update( // Section contribution:
                            (double)columnNumber/(double)numberOfColumns * 100.0,
                            progStr );
@@ -112,7 +112,6 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
         }
         if ( columnNumber == 0 ) {
             xscale = column.seriesArray.increment * 1.0e3;
-
         } else {
             section_list.push_back( Section(column.points, column.title ) );
             std::size_t last = section_list.size()-1;
@@ -143,9 +142,18 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     std::size_t sectionsPerChannel = (numberOfColumns-1) / numberOfChannels;
     for (std::size_t n_c=0; (int)n_c < numberOfChannels; ++n_c) {
         Channel TempChannel(sectionsPerChannel);
+        double factor = 1.0;
+        if (channel_units[n_c] == wxT("V")) {
+            channel_units[n_c] = wxT("mV");
+            factor = 1.0e3;
+        }
+        if (channel_units[n_c] == wxT("A")) {
+            channel_units[n_c] = wxT("pA");
+            factor = 1.0e12;
+        }
         for (std::size_t n_s=n_c; (int)n_s < numberOfColumns-1; n_s += numberOfChannels) {
-            if (channel_units[n_c] == wxT("V")) {
-                section_list[n_s].get_w() = stf::vec_scal_mul(section_list[n_s].get(), 1.0e3);
+            if (factor != 1.0) {
+                section_list[n_s].get_w() = stf::vec_scal_mul(section_list[n_s].get(), factor);
             }
             try {
                 TempChannel.InsertSection( section_list[n_s], (n_s-n_c)/numberOfChannels );
@@ -157,9 +165,6 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
             }
         }
         TempChannel.SetChannelName( channel_names[n_c] );
-        if (channel_units[n_c] == wxT("V")) {
-            channel_units[n_c] = wxT("mV");
-        }
         TempChannel.SetYUnits( channel_units[n_c] );
         try {
             if ((int)ReturnData.size()<numberOfChannels) {
@@ -174,11 +179,18 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
         }
     }
 
-    // Apparently, the sample interval has to be multiplied by
-    // the number of channels for multiplexed data. Thanks to
-    // Dominique Engel for noticing and reporting.
     ReturnData.SetXScale( xscale );
 
+    wxString comment = AG_ReadComment(dataRefNum);
+    wxString notes = AG_ReadNotes(dataRefNum);
+    wxString date = AG_ParseDate(notes);
+    wxString time = AG_ParseTime(notes);
+
+    ReturnData.SetComment(comment);
+    ReturnData.SetFileDescription(notes);
+    ReturnData.SetTime(time);
+    ReturnData.SetDate(date);
+    
     // Close the import file
     CloseFile( dataRefNum );
 }

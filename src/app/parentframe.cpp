@@ -185,7 +185,7 @@ wxStfParentFrame::wxStfParentFrame(wxDocManager *manager, wxFrame *frame, const 
                  const wxPoint& pos, const wxSize& size, long type):
 wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 {
-    ::wxInitAllImageHandlers();
+    // ::wxInitAllImageHandlers();
 
     m_mgr.SetManagedWindow(this);
     m_mgr.SetFlags(

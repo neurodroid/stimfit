@@ -10,6 +10,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <wx/datetime.h>
 
 #include "stringUtils.h"
 #include "byteswap.h"
@@ -173,7 +174,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
              ByteSwapFloatArray( &(columnData->floatArray[0]), columnHeader.points );
 #endif
 
-             return result;
+             break;
          }
 
      case kAxoGraph_Digitized_Format:
@@ -202,7 +203,6 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
 
                  columnData->seriesArray.firstValue = columnHeader.firstPoint;
                  columnData->seriesArray.increment = columnHeader.sampleInterval;
-                 return result;
              }
              else
              {
@@ -241,8 +241,8 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  ByteSwapShortArray( &(columnData->scaledShortArray.shortArray[0]), columnHeader.points );
 #endif
 
-                 return result;
              }
+             break;
          }
 
      case kAxoGraph_X_Format:
@@ -298,7 +298,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                       ByteSwapShortArray( &(columnData->shortArray[0]), columnHeader.points );
 #endif
 
-                      return result;
+                      break;
                   }
               case IntArrayType:
                   {
@@ -315,7 +315,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                       ByteSwapLongArray( (AXGLONG *)&(columnData->intArray[0]), columnHeader.points );
 #endif
 
-                      return result;
+                      break;
                   }
               case FloatArrayType:
                   {
@@ -332,7 +332,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                       ByteSwapFloatArray( &(columnData->floatArray[0]), columnHeader.points );
 #endif
 
-                      return result;
+                      break;
                   }
               case DoubleArrayType:
                   {
@@ -349,7 +349,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                       ByteSwapDoubleArray( &(columnData->doubleArray[0]), columnHeader.points );
 #endif
 
-                      return result;
+                      break;
                   }
               case SeriesArrayType:
                   {
@@ -364,7 +364,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
 
                       columnData->seriesArray.firstValue = seriesParameters.firstValue;
                       columnData->seriesArray.increment = seriesParameters.increment;
-                      return result;
+                      break;
                   }
               case ScaledShortArrayType:
                   {
@@ -372,7 +372,6 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                       AXGLONG bytes = sizeof( double );
                       result = ReadFromFile( refNum, bytes, &scale );
                       result = ReadFromFile( refNum, bytes, &offset );
-
 #ifdef __LITTLE_ENDIAN__
                       ByteSwapDouble( &scale );
                       ByteSwapDouble( &offset );
@@ -394,18 +393,108 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                       ByteSwapShortArray( &(columnData->scaledShortArray.shortArray[0]), columnHeader.points );
 #endif
 
-                      return result;
+                      break;
                   }
              }
          }
-
+         break;
      default:
          {
              return -1;
          }
     }
+
+    return 0;
+
 }
 
+wxString AG_ReadComment( filehandle refNum )
+{
+    // File comment
+    wxString comment = wxT("\0");
+
+    AXGLONG comment_size = 0;
+    int result = ReadFromFile( refNum, sizeof(AXGLONG), &comment_size );
+    if ( result )
+        return comment;
+#ifdef __LITTLE_ENDIAN__
+    ByteSwapLong( &comment_size );
+#endif
+
+    if (comment_size > 0) {
+        std::vector< unsigned char > charBuffer( comment_size, '\0' );
+        result = ReadFromFile( refNum, comment_size, &charBuffer[0] );
+        if ( result )
+            return comment;
+        // Copy characters one by one into title (tedious but safe)
+        for (std::vector< unsigned char >::const_iterator c = charBuffer.begin()+1; c < charBuffer.end(); c += 2) {
+            comment << wxChar(*c);
+        }
+    }
+    
+
+    return comment;
+}
+
+wxString AG_ParseDate( const wxString& notes ) {
+    int datepos = notes.Find(wxT("Created on "));
+    wxString full = notes.Mid(datepos+11);
+    return full.BeforeFirst(wxT('\n'));
+}
+
+wxString AG_ParseTime( const wxString& notes ) {
+    int datepos = notes.Find(wxT("acquisition at "));
+    wxString full = notes.Mid(datepos+15);
+    return full.BeforeFirst(wxT('\n'));
+}
+
+wxString AG_ReadNotes( filehandle refNum )
+{
+    
+    // File notes
+    wxString notes = wxT("\0");
+    AXGLONG notes_size = 0;
+    int result = ReadFromFile( refNum, sizeof(AXGLONG), &notes_size );
+    if ( result )
+        return notes;
+#ifdef __LITTLE_ENDIAN__
+    ByteSwapLong( &notes_size );
+#endif
+
+    if (notes_size > 0) {
+        std::vector< unsigned char > charBuffer( notes_size, '\0' );
+        result = ReadFromFile( refNum, notes_size, &charBuffer[0] );
+        if ( result )
+            return notes;
+        // Copy characters one by one into title (tedious but safe)
+        for (std::vector< unsigned char >::const_iterator c = charBuffer.begin()+1; c < charBuffer.end(); c += 2) {
+            notes << wxChar(*c);
+        }
+    }
+    return notes;
+}
+
+wxString AG_ReadTraceHeaders( filehandle refNum ) {
+
+    wxString headers = wxT("\0");
+    AXGLONG num_headers = 0;
+    int result = ReadFromFile( refNum, sizeof(AXGLONG), &num_headers );
+    if ( result )
+        return headers;
+#ifdef __LITTLE_ENDIAN__
+    ByteSwapLong( &num_headers );
+#endif
+
+    for (AXGLONG nh=0; nh<num_headers; ++nh) {
+        AxoGraphXTraceHeader trace_header;
+        result = ReadFromFile( refNum, sizeof(AxoGraphXTraceHeader), &trace_header );
+        if ( result ) {
+            return headers;
+        }
+    }
+
+    return headers;
+}
 
 int AG_ReadFloatColumn( filehandle refNum, const int fileFormat, const int columnNumber, ColumnData *columnData )
 {
