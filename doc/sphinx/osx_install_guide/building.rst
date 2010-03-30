@@ -15,11 +15,17 @@ Check out the latest source code from the Google code repository:
 
     $ hg clone https://stimfit.googlecode.com/hg/ stimfit
 
-It's a good idea to configure and build outside of the source tree:
+Generate the build system:
 
 ::
 
     $ cd stimfit
+    $ ./autogen.sh
+
+It's a good idea to configure and build outside of the source tree:
+
+::
+
     $ mkdir bld
     $ cd bld
 
