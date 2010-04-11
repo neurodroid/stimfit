@@ -104,7 +104,7 @@ void wxStfView::OnUpdate(wxView *WXUNUSED(sender), wxObject *WXUNUSED(hint))
 // Clean up windows used for displaying the view.
 bool wxStfView::OnClose(bool deleteWindow)
 {
-	if ( !GetDocument()->Close() )
+    if ( !GetDocument()->Close() )
         return false;
 
     Activate(false);
@@ -137,6 +137,7 @@ void wxStfView::OnActivateView(bool activate, wxView *activeView, wxView *deacti
         frame->SetSingleChannel(Doc()->size()<2);
         if (graph)
             graph->SetFocus();
+        wxGetApp().SetActiveDoc(Doc());
     }
     wxView::OnActivateView(activate,activeView,deactiveView);
 }

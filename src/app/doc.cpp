@@ -529,7 +529,7 @@ bool wxStfDoc::OnCloseDocument() {
     wxGetApp().GetDocManager()->GetFileHistory()->RemoveMenu( doc_file_menu );
 
     // Tell the App:
-    wxGetApp().OnCloseDocument();
+    wxGetApp().CleanupDocument(this);
     return wxDocument::OnCloseDocument();
     //Note that the base class version will delete all the document's data
 }

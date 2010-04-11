@@ -97,7 +97,7 @@ EVT_MENU( wxID_IMPORTPYTHON, wxStfApp::OnPythonImport )
 END_EVENT_TABLE()
 
 wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isHires(false), txtImport(), funcLib(),
-    pluginLib(), CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ), m_file_menu(0), m_fileToLoad(wxEmptyString) {}
+    pluginLib(), CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ), m_file_menu(0), m_fileToLoad(wxEmptyString), activeDoc(0) {}
 
 void wxStfApp::OnInitCmdLine(wxCmdLineParser& parser)
 {
@@ -795,7 +795,18 @@ wxStfDoc* wxStfApp::GetActiveDoc() const {
         ErrorMsg( wxT("Couldn't access the document manager"));
         return NULL;
     }
-    return (wxStfDoc*)GetDocManager()->GetCurrentDocument();
+    wxStfDoc* pDoc = (wxStfDoc*)GetDocManager()->GetCurrentDocument();
+    if (pDoc == 0 && !GetDocManager()->GetDocuments().empty()) {
+        return activeDoc.back();
+    }
+    
+    return pDoc;
+}
+
+void wxStfApp::SetActiveDoc(wxStfDoc* pDoc) {
+    if (pDoc != activeDoc.back()) {
+        activeDoc.push_back( pDoc );
+    }
 }
 
 void wxStfApp::OnKeyDown( wxKeyEvent& event ) {
@@ -1210,7 +1221,7 @@ bool wxStfApp::OpenFilePy(const wxString& filename) {
 }
 #endif //WITH_PYTHON
 
-void wxStfApp::OnCloseDocument() {
+void wxStfApp::CleanupDocument(wxStfDoc* pDoc) {
     // count open docs:
     if (GetDocManager() && GetDocManager()->GetDocuments().GetCount()==1) {
         // Clean up if this was the last document:
@@ -1219,6 +1230,8 @@ void wxStfApp::OnCloseDocument() {
             CursorsDialog=NULL;
         }
     }
+    // Update active document:
+    activeDoc.remove(pDoc);
     // Remove menu from file history menu list:
     // GetDocManager()->FileHistoryUseMenu(m_file_menu);
     // GetDocManager()->FileHistoryAddFilesToMenu();

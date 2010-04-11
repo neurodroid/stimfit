@@ -150,6 +150,8 @@ enum {
     wxCOMBOINACTCHANNEL
 };
 
+#include <list>
+
 #include "wx/mdi.h"
 #include "wx/docview.h"
 #include "wx/docmdi.h"
@@ -218,6 +220,11 @@ public:
     /*! \return A pointer to the currently active document.
      */
     wxStfDoc* GetActiveDoc() const;
+
+    //! Sets the currently active document.
+    /*! \param pDoc A pointer to the currently active document.
+     */
+    void SetActiveDoc(wxStfDoc* pDoc);
 
     //! Retrieves the currently active view.
     /*! \return A pointer to the currently active view.
@@ -364,8 +371,9 @@ public:
 
     //! Destroys the last cursor settings dialog when the last document is closed
     /*! Do not use this function directly. It only needs to be called from wxStfDoc::OnCloseDocument().
+     *  \param pDoc Pointer to the document that is being closed.
      */
-    void OnCloseDocument();
+    void CleanupDocument(wxStfDoc* pDoc);
 
     //! Closes all documents
     bool CloseAll() { return GetDocManager()->CloseDocuments(); }
@@ -468,6 +476,7 @@ private:
     stf::storedFunc storedLinFunc;
     wxMenu* m_file_menu;
     wxString m_fileToLoad;
+    std::list<wxStfDoc *> activeDoc;
     
 #ifdef WITH_PYTHON
     PyThreadState* m_mainTState;
