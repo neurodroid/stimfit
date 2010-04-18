@@ -85,13 +85,19 @@ Go to the directory where you unpacked your version of Stimfit (in our example /
 
 ::
 
+    $ ./autogen.sh
+
+to generate the configure script. After that, you can call it with
+
+::
+
     $ ./configure --enable-python
 
 The configure script has some additional options. For example, we may want to use ipython in stead of the default embedded python shell (note that the iPython shell is still very experimental). For that, we can write in stead: 
 
 ::
 
-    $ ./configure --enable-python --enable-ipython
+
 
 After running configure , you can type
 

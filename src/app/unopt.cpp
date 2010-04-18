@@ -158,7 +158,7 @@ bool wxStfApp::Init_wxPython()
 #ifdef IPYTHON
     // Set a dummy sys.argv for IPython
     wxPyBlock_t blocked = wxPyBeginBlockThreads();
-    char* argv = "\0";
+    char* argv = (char *)"\0";
     PySys_SetArgv(1, &argv);
     wxPyEndBlockThreads(blocked);
 #endif
@@ -255,13 +255,14 @@ void wxStfParentFrame::RedirectStdio()
     // This is a helpful little tidbit to help debugging and such.  It
     // redirects Python's stdout and stderr to a window that will popup
     // only on demand when something is printed, like a traceback.
-    const char* python_redirect = "\
-import sys\n\
-import wx\n\
-output = wx.PyOnDemandOutputWindow()\n\
-sys.stdin = sys.stderr = output\n\
-del sys, wx\n\
-";
+    //const char* python_redirect = "\
+
+    wxString python_redirect;
+    python_redirect = wxT("import sys, wx\n");
+    python_redirect << wxT("output = wx.PyOnDemandOutputWindow()\n");
+    python_redirect << wxT("sys.stdin = sys.stderr = output\n");
+    python_redirect << wxT("del sys, wx\n");
+
     wxPyBlock_t blocked = wxPyBeginBlockThreads();
     PyRun_SimpleString(python_redirect);
     wxPyEndBlockThreads(blocked);
