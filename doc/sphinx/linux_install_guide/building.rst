@@ -93,13 +93,9 @@ to generate the configure script. After that, you can call it with
 
     $ ./configure --enable-python
 
-The configure script has some additional options. For example, we may want to use ipython in stead of the default embedded python shell (note that the iPython shell is still very experimental). For that, we can write in stead: 
+The configure script has some additional options. For example, we may want to use ipython in stead of the default embedded python shell with the option **---enable-ipython**  (note that the iPython shell is only available under GNU/Linux and it is still very experimental). 
 
-::
-
-
-
-After running configure , you can type
+Finally, after running configure , you can type
 
 ::
 
