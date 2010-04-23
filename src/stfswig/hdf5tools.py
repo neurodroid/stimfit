@@ -242,6 +242,33 @@ def open_hdf5( filename ):
 
     return True
 
+def show_rec( rec ):
+    """
+    Shows recording object in a new stimfit window
+    """
+    stf = __import__("stf")
+
+    stf._gNames_resize( len(rec.channels) )
+    for n_c in range(len(rec.channels)):
+        stf._gNames_at( rec.channels[n_c].name, n_c )
+    
+    stf.new_window_list( rec.get_list() )
+    n_channels = stf.get_size_recording()
+    dt = rec.channels[0].sections[0].dt
+    stf.set_sampling_interval( dt )
+    stf.set_recording_comment( rec.comment )
+    stf.set_recording_date( rec.date )
+    stf.set_recording_time( rec.time )
+    for n_c in range(stf.get_size_recording()):
+        for n_s in range(stf.get_size_channel(n_c)):
+            xunits = rec.channels[n_c].sections[n_s].xunits
+            yunits = rec.channels[n_c].sections[n_s].yunits
+
+            stf.set_xunits( xunits )
+            stf.set_yunits( yunits, n_s, n_c )
+
+    return True
+
 def test():
     export_hdf5()
     open_hdf5("/home/cs/data/EE07_04_11_2AC.dat.h5")
