@@ -237,7 +237,7 @@ def open_hdf5( filename ):
             xunits = rec.channels[n_c].sections[n_s].xunits
             yunits = rec.channels[n_c].sections[n_s].yunits
 
-            stf.set_xunits( xunits, n_s, n_c )
+            stf.set_xunits( xunits )
             stf.set_yunits( yunits, n_s, n_c )
 
     return True
