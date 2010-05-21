@@ -472,7 +472,8 @@ private:
     std::vector< stf::Plugin > pluginLib;
     // Pointer to the peak calculation dialog box
     wxStfCursorsDlg* CursorsDialog;
-    wxDocTemplate* m_cfsTemplate, *m_hdf5Template, *m_txtTemplate,*m_abfTemplate,*m_atfTemplate,*m_axgTemplate,*m_sonTemplate;
+    wxDocTemplate* m_cfsTemplate, *m_hdf5Template, *m_txtTemplate,*m_abfTemplate,
+        *m_atfTemplate,*m_axgTemplate,*m_sonTemplate, *m_hekaTemplate;
     stf::storedFunc storedLinFunc;
     wxMenu* m_file_menu;
     wxString m_fileToLoad;

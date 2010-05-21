@@ -185,6 +185,10 @@ bool wxStfApp::OnInit(void)
                                      wxT("Axograph binary file"), wxT("*.axgd;*.axgx"), wxT(""), wxT("axgd;axgx"),
                                      wxT("AXG Document"), wxT("AXG View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
+    m_hekaTemplate=new wxDocTemplate( docManager,
+                                     wxT("HEKA file bundle"), wxT("*.pgf"), wxT(""), wxT("pgf"),
+                                     wxT("HEKA Document"), wxT("HEKA View"), CLASSINFO(wxStfDoc),
+                                     CLASSINFO(wxStfView) );
 #if 0
     m_sonTemplate=new wxDocTemplate( docManager,
                                      wxT("CED Spike 2 (SON) file"), wxT("*.smr"), wxT(""), wxT(""),

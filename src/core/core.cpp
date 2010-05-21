@@ -32,6 +32,7 @@
 #include "./filelib/abflib.h"
 #include "./filelib/atflib.h"
 #include "./filelib/axglib.h"
+#include "./filelib/hekalib.h"
 #if 0
 #include "./filelib/sonlib.h"
 #endif
@@ -462,6 +463,7 @@ stf::findType(const wxString& ext) {
     else if (ext==wxT("*.axgd;*.axgx")) return stf::axg;
     else if (ext==wxT("*.h5")) return stf::hdf5;
     else if (ext==wxT("*.atf")) return stf::atf;
+    else if (ext==wxT("*.pgf")) return stf::heka;
     else if (ext==wxT("*.smr")) return stf::son;
     else return stf::ascii;
 }
@@ -493,6 +495,10 @@ bool stf::importFile(
         }
         case stf::axg: {
             stf::importAXGFile(fName, ReturnData, progress);
+            break;
+        }
+        case stf::heka: {
+            stf::importHEKAFile(fName, ReturnData, progress);
             break;
         }
 #if 0

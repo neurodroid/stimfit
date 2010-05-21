@@ -449,7 +449,8 @@ enum filetype {
     cfs,   /*!< CED filing system. */
     igor,  /*!< Igor binary wave. */
     son,   /*!< CED Son files. */
-    hdf5   /*!< hdf5 files. */
+    hdf5,  /*!< hdf5 files. */
+    heka   /*!< heka files. */
 };
 
 //! The direction of peak calculations

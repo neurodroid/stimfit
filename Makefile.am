@@ -5,6 +5,7 @@ stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/reco
 	    ./src/core/core.cpp ./src/core/fitlib.cpp ./src/core/filelib/asciilib.cpp \
 	    ./src/core/filelib/cfslib.cpp ./src/core/filelib/hdf5lib.cpp ./src/core/filelib/cfs.c \
             ./src/core/filelib/abflib.cpp ./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
+            ./src/core/filelib/hekalib.cpp \
 	    ./src/core/filelib/axon/AxAbfFio32/abffiles.cpp \
 	    ./src/core/filelib/axon/AxAbfFio32/csynch.cpp \
 	    ./src/core/filelib/axon/AxAbfFio32/filedesc.cpp \
@@ -39,6 +40,7 @@ noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.
             ./src/core/filelib/asciilib.h ./src/core/filelib/cfslib.h ./src/core/filelib/hdf5lib.h\
             ./src/core/filelib/abflib.h ./src/core/filelib/atflib.h ./src/core/filelib/axglib.h \
             ./src/core/filelib/cfs.h ./src/core/filelib/machine.h \
+            ./src/core/filelib/hekalib.h \
             ./src/core/filelib/axon/AxAbfFio32/abffiles.h \
             ./src/core/filelib/axon/AxAbfFio32/csynch.hpp \
             ./src/core/filelib/axon/AxAbfFio32/filedesc.hpp \
