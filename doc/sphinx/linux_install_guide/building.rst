@@ -93,7 +93,7 @@ to generate the configure script. After that, you can call it with
 
     $ ./configure --enable-python
 
-The configure script has some additional options. For example, we may want to use IPython <http://www.scipy.org>`_  in stead of the default embedded python shell with the option **---enable-ipython**  (note that the `IPython <http://www.scipy.org>`_ shell is only available under GNU/Linux and it is still very experimental). 
+The configure script has some additional options. For example, we may want to use `IPython <http://www.scipy.org>`_  in stead of the default embedded python shell with the option **---enable-ipython**  (note that the `IPython <http://www.scipy.org>`_ shell is only available under GNU/Linux and it is still very experimental). 
 
 Finally, after running configure , you can type
 

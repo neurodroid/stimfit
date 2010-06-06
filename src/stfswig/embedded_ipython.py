@@ -47,6 +47,7 @@ class MyPanel(wx.Panel):
         ip =  IPython.ipapi.get()
 
         # Stimfit and NumPy are visible to the interactive sesion.
+        # see embedded_init for details
         ip.ex('from embedded_init import *')
 
         sizer = wx.BoxSizer(wx.VERTICAL)

@@ -28,7 +28,7 @@ def intro_msg():
     Contains the current Stimfit version, together with the NumPy
     and wxPython version.
     """
-    # to access current versions of wxWidgets and NumPy
+    # access current versions of wxWidgets and NumPy
     from wx import version as wx_version
     from numpy.version import version as numpy_version
 
@@ -37,4 +37,31 @@ def intro_msg():
     intro = '%s, using %s' % (stf.get_versionstring(), version_s)
 
     return intro
-    
+
+class Recording(object):
+    """ General class for recording properties """
+    def __init__(self):
+        """ parameters set at constructions will not be updated """
+
+        self._rectime = stf.get_recording_time()
+        self._recdate = stf.get_recording_date()
+        self._update()
+
+    def _update(self):
+        """ update Recording attributes """
+        self._dt = stf.get_sampling_interval()
+        self._size = stf.get_size_recording()
+
+    def _get_dt(self):
+        """ get sampling interval """
+        self._update()
+        return self._dt
+
+    def _set_dt(self, value):
+        """ set the sampling interval """
+        return stf.set_sampling_interval(value)
+
+    # setter and getter for dt
+    dt = property(_get_dt, _set_dt )
+
+
