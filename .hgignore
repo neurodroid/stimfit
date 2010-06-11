@@ -69,7 +69,7 @@ src/stfswig/.libs/
 *Makefile.in
 aclocal.m4
 config.guess
-config.sub
+#config.sub
 #configure
 depcomp
 #install-sh
