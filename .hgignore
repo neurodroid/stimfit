@@ -72,7 +72,7 @@ config.guess
 config.sub
 #configure
 depcomp
-install-sh
+#install-sh
 ltmain.sh
 m4/libtool.m4
 m4/ltoptions.m4
