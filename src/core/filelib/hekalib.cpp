@@ -32,8 +32,8 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
 
     // Open file
     FILE* pgf_fh = fopen(fName.utf8_str(), "r");
-    std::cout << fh << std::endl;
+    std::cout << pgf_fh << std::endl;
     
     // Close file
-    fclose(fh);
+    fclose(pgf_fh);
 }
