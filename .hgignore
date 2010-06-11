@@ -66,13 +66,13 @@ stf.py
 .libs/
 src/stfswig/.libs/
 
-#Makefile.in
+*Makefile.in
 aclocal.m4
-#config.guess
-#config.sub
-#configure
+config.guess
+config.sub
+configure
 depcomp
-#install-sh
+install-sh
 ltmain.sh
 m4/libtool.m4
 m4/ltoptions.m4
