@@ -70,7 +70,7 @@ src/stfswig/.libs/
 aclocal.m4
 config.guess
 config.sub
-configure
+#configure
 depcomp
 install-sh
 ltmain.sh
