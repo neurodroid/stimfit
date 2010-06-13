@@ -182,17 +182,15 @@ class Section(Channel):
     def get_baseline(self):
         """ returns baseline according to the baseline cursors position """
         self.__update()
+        stf.measure()
         return stf.get_base()
         #return self._array[stf.get_base_start():stf.get_base_end()].mean()
 
     def get_peak(self):
         """ returns the peak amplitude from baseline according to
-        the current peak cursors positionh"""
-        # baseline calls self.__update()
+        the current peak cursors position"""
+        # baseline calls self.measure() allready
         baseline = self.get_baseline()
-
-        # to calculate the peak first update cursors 
-        stf.measure()
 
         return baseline-stf.get_peak()
 
