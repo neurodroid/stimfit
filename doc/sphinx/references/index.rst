@@ -11,6 +11,7 @@ References
 
 A list of recent publications that have used `Stimfit <http:http://www.stimfit.org>`_ for data analysis. Please let me know if something is missing here.
 
+    * Guzman SJ, Schmidt H, Franke H, Krügel U, Eilers J, Illes P, Gerevich Z (2010). P2Y1 receptors inhibit long-term depression in the prefrontal cortex. *Neuropharmacology* doi: 10.16/j.neuropharm.2010.05.013
     * Kowalski J, Geuting M, Paul S, Dieni S, Laurens J, Zhao S, Drakew A, Haas CA, Frotscher M, Vida I (2010). Proper Layering Is Important for Precisely Timed Activation of Hippocampal Mossy Cells. *Cereb Cortex.* doi:10.1093/cercor/bhp267
     * Sauer JF, Bartos M (2010). Recruitment of early postnatal parvalbumin-positive hippocampal interneurons by GABAergic excitation. *J Neurosci.* 30(1):110-5.
     * Babu H, Ramirez-Rodriguez, Fabel K, Bischofberger J, Kempermann G (2009). Synaptic network activity induces neuronal differentiation of adult hippocampal precursor cells through BDNF signaling. *Front. Neurogenesis* doi:10.3389/neuro.22.001.2009

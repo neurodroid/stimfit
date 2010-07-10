@@ -201,7 +201,7 @@ void wxStfChildFrame::CreateComboTraces(const std::size_t value) {
     m_mgr.Update();
     Refresh();
 }
-
+// Channel Selection childframe
 void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     m_channelCounter = CreateChannelCounter();
 
@@ -235,7 +235,7 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
 
     Refresh();
 }
-
+// Trace selection childframe
 void wxStfChildFrame::SetSelected(std::size_t value) {
     wxString selStr;
     selStr << wxT("Selected traces: ") << (int)value;

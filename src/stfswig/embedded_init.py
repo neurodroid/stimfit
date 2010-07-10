@@ -22,6 +22,7 @@ from os.path import basename
 try:
     from stf_init import *
 except ImportError:
+    # let the user know  stf_init does not work!
     pass
 except SyntaxError:
     pass

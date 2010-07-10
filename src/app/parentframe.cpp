@@ -305,8 +305,11 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 #endif // _STFDEBUG
 #endif // WITH_PYTHON
     m_mgr.Update();
-    wxStatusBar* pStatusBar = new wxStatusBar(this);
+    wxStatusBar* pStatusBar = new wxStatusBar(this, wxID_ANY, wxST_SIZEGRIP);
     SetStatusBar(pStatusBar);
+    //int widths[] = { 60, 60, -1 };
+    //pStatusBar->SetFieldWidths(WXSIZEOF(widths), widths);
+    //pStatusBar->SetStatusText(wxT("Test"), 0);
 }
 
 wxStfParentFrame::~wxStfParentFrame() {
