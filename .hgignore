@@ -34,7 +34,7 @@ doc/stfbook.ps
 doc/html/*
 doc/latex/*
 doc/doxygen/*
-doc/sphinx/.build/doctress/*
+doc/sphinx/.build/doctrees/*
 doc/sphinx/.build/latex/*
 doc/sphinx/.static/*
 
