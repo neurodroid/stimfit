@@ -71,11 +71,11 @@
 IMPLEMENT_CLASS(wxStfChildFrame, wxStfChildType)
 
 BEGIN_EVENT_TABLE(wxStfChildFrame, wxStfChildType)
-EVT_COMBOBOX( wxCOMBOTRACES, wxStfChildFrame::OnComboTraces )
-EVT_COMBOBOX( wxCOMBOACTCHANNEL, wxStfChildFrame::OnComboActChannel )
-EVT_COMBOBOX( wxCOMBOINACTCHANNEL, wxStfChildFrame::OnComboInactChannel )
-EVT_CHECKBOX( wxID_PLOTSELECTED, wxStfChildFrame::OnPlotselected )
-EVT_CHECKBOX( wxID_SHOWSECOND, wxStfChildFrame::OnShowsecond )
+EVT_COMBOBOX( ID_COMBOTRACES, wxStfChildFrame::OnComboTraces )
+EVT_COMBOBOX( ID_COMBOACTCHANNEL, wxStfChildFrame::OnComboActChannel )
+EVT_COMBOBOX( ID_COMBOINACTCHANNEL, wxStfChildFrame::OnComboInactChannel )
+EVT_CHECKBOX( ID_PLOTSELECTED, wxStfChildFrame::OnPlotselected )
+EVT_CHECKBOX( ID_SHOWSECOND, wxStfChildFrame::OnShowsecond )
 // workaround for status bar:
 EVT_MENU_HIGHLIGHT_ALL( wxStfChildFrame::OnMenuHighlight )
 END_EVENT_TABLE()
@@ -170,7 +170,7 @@ void wxStfChildFrame::CreateComboTraces(const std::size_t value) {
         number << (int)n+1;
         szTraces.Add(number);
     }
-    pTraces=new wxComboBox(	m_traceCounter, wxCOMBOTRACES, wxT("CB1"), wxDefaultPosition,
+    pTraces=new wxComboBox(	m_traceCounter, ID_COMBOTRACES, wxT("CB1"), wxDefaultPosition,
                                 wxSize(64,wxDefaultCoord), szTraces, wxCB_DROPDOWN | wxCB_READONLY);
     pTraceNumberSizer->Add( pTraces, wxALIGN_CENTRE );
 
@@ -181,7 +181,7 @@ void wxStfChildFrame::CreateComboTraces(const std::size_t value) {
 
     pTraceSizer->Add( pTraceNumberSizer, wxALIGN_BOTTOM );
 
-    pPlotSelected=new wxCheckBox( m_traceCounter, wxID_PLOTSELECTED, wxT("Plot selected traces") );
+    pPlotSelected=new wxCheckBox( m_traceCounter, ID_PLOTSELECTED, wxT("Plot selected traces") );
     pPlotSelected->SetValue(false);
     pTraceSizer->Add( pPlotSelected );
 
@@ -208,7 +208,7 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     wxStaticText* pActIndex  = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Active channel: ") );
     pChannelSizer->Add( pActIndex );
 
-    pActChannel = new wxComboBox( m_channelCounter, wxCOMBOACTCHANNEL, wxT("0"),
+    pActChannel = new wxComboBox( m_channelCounter, ID_COMBOACTCHANNEL, wxT("0"),
                                   wxDefaultPosition, wxSize(64,24), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
     pChannelSizer->Add( pActChannel );
     pChannelSizer->AddStretchSpacer( );
@@ -217,12 +217,12 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     pInactIndex->SetForegroundColour( *wxRED );
     pChannelSizer->Add( pInactIndex );
 
-    pInactChannel = new wxComboBox( m_channelCounter, wxCOMBOINACTCHANNEL, wxT("1"),
+    pInactChannel = new wxComboBox( m_channelCounter, ID_COMBOINACTCHANNEL, wxT("1"),
                                     wxDefaultPosition, wxSize(64,24), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
     pChannelSizer->Add( pInactChannel );
     
     // Checkbox to hide inactive channel:
-    pShowSecond = new wxCheckBox( m_channelCounter, wxID_PLOTSELECTED, wxT("Show") );
+    pShowSecond = new wxCheckBox( m_channelCounter, ID_PLOTSELECTED, wxT("Show") );
     pShowSecond->SetValue(true);
     pChannelSizer->Add( pShowSecond );
     

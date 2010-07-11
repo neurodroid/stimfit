@@ -20,20 +20,29 @@
 #include <boost/shared_array.hpp>
 #include <wx/wx.h>
 #include <wx/progdlg.h>
+#include <wx/filename.h>
 
 #include "./../core.h"
 #include "./hekalib.h"
 
 void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool progress) {
-    wxProgressDialog progDlg( wxT("HEKA binary file import"), wxT("Starting file import"),
-                              100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
+    wxProgressDialog progDlg(wxT("HEKA binary file import"), wxT("Starting file import"),
+                             100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL);
     wxString errorMsg(wxT("Exception while calling importHEKAFile():\n"));
     wxString yunits;
 
     // Open file
     FILE* pgf_fh = fopen(fName.utf8_str(), "r");
     std::cout << pgf_fh << std::endl;
-    
+
+    // Find corresponding data file:
+    wxFileName wx_fn = wxFileName(fName);
+    wx_fn.ClearExt();
+
+    wxString dat_fName(wx_fn.GetFullPath());
+    dat_fName << wxT(".dat");
+    std::cout << wxFileName::FileExists(dat_fName) << std::endl;
+
     // Close file
     fclose(pgf_fh);
 }

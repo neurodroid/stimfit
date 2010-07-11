@@ -78,7 +78,6 @@ public:
      */
     void OnAbout(wxCommandEvent& event);
 
-
     //! Creates a new graph.
     /*! Called from view.cpp when a new drawing view is created.
      *  \param view Pointer to the attached view.

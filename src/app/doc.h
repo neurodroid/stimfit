@@ -25,9 +25,6 @@
  *  @{
  */
 
-#include "wx/app.h"
-#include "wx/cmdproc.h"
-
 #include "./../core/core.h"
 #include "./../core/recording.h"
 
@@ -238,6 +235,7 @@ public:
     /*! \param menu The menu to be attached.
      */
     void SetFileMenu( wxMenu* menu ) { doc_file_menu = menu; }
+
     DECLARE_EVENT_TABLE()
 };
 

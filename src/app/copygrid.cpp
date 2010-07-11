@@ -38,21 +38,21 @@
 IMPLEMENT_CLASS(wxStfGrid, wxGrid)
 
 BEGIN_EVENT_TABLE(wxStfGrid, wxGrid)
-	EVT_MENU(wxID_COPYINTABLE,wxStfGrid::Copy)
-	EVT_MENU(wxID_VIEW_MEASURE,wxStfGrid::ViewCrosshair)
-	EVT_MENU(wxID_VIEW_BASELINE,wxStfGrid::ViewBaseline)
-        EVT_MENU(wxID_VIEW_BASESD,wxStfGrid::ViewBaseSD)
-        EVT_MENU(wxID_VIEW_THRESHOLD,wxStfGrid::ViewThreshold)
-	EVT_MENU(wxID_VIEW_PEAKZERO,wxStfGrid::ViewPeakzero)
-	EVT_MENU(wxID_VIEW_PEAKBASE,wxStfGrid::ViewPeakbase)
-	EVT_MENU(wxID_VIEW_PEAKTHRESHOLD,wxStfGrid::ViewPeakthreshold)
-	EVT_MENU(wxID_VIEW_RT2080,wxStfGrid::ViewRT2080)
-	EVT_MENU(wxID_VIEW_T50,wxStfGrid::ViewT50)
-	EVT_MENU(wxID_VIEW_RD,wxStfGrid::ViewRD)
-	EVT_MENU(wxID_VIEW_SLOPERISE,wxStfGrid::ViewSloperise)
-	EVT_MENU(wxID_VIEW_SLOPEDECAY,wxStfGrid::ViewSlopedecay)
-	EVT_MENU(wxID_VIEW_LATENCY,wxStfGrid::ViewLatency)
-	EVT_MENU(wxID_VIEW_CURSORS,wxStfGrid::ViewCursors)
+	EVT_MENU(ID_COPYINTABLE,wxStfGrid::Copy)
+	EVT_MENU(ID_VIEW_MEASURE,wxStfGrid::ViewCrosshair)
+	EVT_MENU(ID_VIEW_BASELINE,wxStfGrid::ViewBaseline)
+        EVT_MENU(ID_VIEW_BASESD,wxStfGrid::ViewBaseSD)
+        EVT_MENU(ID_VIEW_THRESHOLD,wxStfGrid::ViewThreshold)
+	EVT_MENU(ID_VIEW_PEAKZERO,wxStfGrid::ViewPeakzero)
+	EVT_MENU(ID_VIEW_PEAKBASE,wxStfGrid::ViewPeakbase)
+	EVT_MENU(ID_VIEW_PEAKTHRESHOLD,wxStfGrid::ViewPeakthreshold)
+	EVT_MENU(ID_VIEW_RT2080,wxStfGrid::ViewRT2080)
+	EVT_MENU(ID_VIEW_T50,wxStfGrid::ViewT50)
+	EVT_MENU(ID_VIEW_RD,wxStfGrid::ViewRD)
+	EVT_MENU(ID_VIEW_SLOPERISE,wxStfGrid::ViewSloperise)
+	EVT_MENU(ID_VIEW_SLOPEDECAY,wxStfGrid::ViewSlopedecay)
+	EVT_MENU(ID_VIEW_LATENCY,wxStfGrid::ViewLatency)
+	EVT_MENU(ID_VIEW_CURSORS,wxStfGrid::ViewCursors)
 	EVT_GRID_CELL_RIGHT_CLICK(wxStfGrid::OnRClick) 
 	EVT_GRID_LABEL_RIGHT_CLICK(wxStfGrid::OnLabelRClick) 
 	EVT_KEY_DOWN( wxStfGrid::OnKeyDown )
@@ -69,24 +69,24 @@ wxStfGrid::wxStfGrid(
 	selection(wxT(""))
 {
 	m_context.reset(new wxMenu());
-	m_context->Append(wxID_COPYINTABLE, wxT("Copy selection"));
+	m_context->Append(ID_COPYINTABLE, wxT("Copy selection"));
 	
 	m_labelContext.reset(new wxMenu());
-	m_labelContext->AppendCheckItem(wxID_VIEW_MEASURE,wxT("Crosshair"));
-	m_labelContext->AppendCheckItem(wxID_VIEW_BASELINE,wxT("Baseline"));
-	m_labelContext->AppendCheckItem(wxID_VIEW_BASESD,wxT("Base SD"));
-	m_labelContext->AppendCheckItem(wxID_VIEW_THRESHOLD,wxT("Threshold"));
-	m_labelContext->AppendCheckItem(wxID_VIEW_PEAKZERO,wxT("Peak (from 0)"));
-	m_labelContext->AppendCheckItem(wxID_VIEW_PEAKBASE,wxT("Peak (from base)"));
-	m_labelContext->AppendCheckItem(wxID_VIEW_PEAKTHRESHOLD,wxT("Peak (from threshold)"));
-	m_labelContext->AppendCheckItem(wxID_VIEW_RT2080,wxT("RT (20-80%)"));
-	m_labelContext->AppendCheckItem(wxID_VIEW_T50,wxT("t50"));
-	m_labelContext->AppendCheckItem(wxID_VIEW_RD,wxT("Rise/Decay"));
-	m_labelContext->AppendCheckItem(wxID_VIEW_SLOPERISE,wxT("Slope (rise)"));
-	m_labelContext->AppendCheckItem(wxID_VIEW_SLOPEDECAY,wxT("Slope (decay)"));
-	m_labelContext->AppendCheckItem(wxID_VIEW_LATENCY,wxT("Latency"));
+	m_labelContext->AppendCheckItem(ID_VIEW_MEASURE,wxT("Crosshair"));
+	m_labelContext->AppendCheckItem(ID_VIEW_BASELINE,wxT("Baseline"));
+	m_labelContext->AppendCheckItem(ID_VIEW_BASESD,wxT("Base SD"));
+	m_labelContext->AppendCheckItem(ID_VIEW_THRESHOLD,wxT("Threshold"));
+	m_labelContext->AppendCheckItem(ID_VIEW_PEAKZERO,wxT("Peak (from 0)"));
+	m_labelContext->AppendCheckItem(ID_VIEW_PEAKBASE,wxT("Peak (from base)"));
+	m_labelContext->AppendCheckItem(ID_VIEW_PEAKTHRESHOLD,wxT("Peak (from threshold)"));
+	m_labelContext->AppendCheckItem(ID_VIEW_RT2080,wxT("RT (20-80%)"));
+	m_labelContext->AppendCheckItem(ID_VIEW_T50,wxT("t50"));
+	m_labelContext->AppendCheckItem(ID_VIEW_RD,wxT("Rise/Decay"));
+	m_labelContext->AppendCheckItem(ID_VIEW_SLOPERISE,wxT("Slope (rise)"));
+	m_labelContext->AppendCheckItem(ID_VIEW_SLOPEDECAY,wxT("Slope (decay)"));
+	m_labelContext->AppendCheckItem(ID_VIEW_LATENCY,wxT("Latency"));
 	m_labelContext->AppendSeparator();
-	m_labelContext->AppendCheckItem(wxID_VIEW_CURSORS,wxT("Cursors"));
+	m_labelContext->AppendCheckItem(ID_VIEW_CURSORS,wxT("Cursors"));
 }
 
 void wxStfGrid::Copy(wxCommandEvent& WXUNUSED(event)) {
@@ -138,20 +138,20 @@ void wxStfGrid::OnRClick(wxGridEvent& event) {
 void wxStfGrid::OnLabelRClick(wxGridEvent& event) {
 	event.Skip();
 	// Update checkmarks:
-	m_labelContext->Check(wxID_VIEW_MEASURE,wxGetApp().GetActiveDoc()->GetViewCrosshair());
-	m_labelContext->Check(wxID_VIEW_BASELINE,wxGetApp().GetActiveDoc()->GetViewBaseline());
-	m_labelContext->Check(wxID_VIEW_BASESD,wxGetApp().GetActiveDoc()->GetViewBaseSD());
-	m_labelContext->Check(wxID_VIEW_THRESHOLD,wxGetApp().GetActiveDoc()->GetViewThreshold());
-	m_labelContext->Check(wxID_VIEW_PEAKZERO,wxGetApp().GetActiveDoc()->GetViewPeakZero());
-	m_labelContext->Check(wxID_VIEW_PEAKBASE,wxGetApp().GetActiveDoc()->GetViewPeakBase());
-	m_labelContext->Check(wxID_VIEW_PEAKTHRESHOLD,wxGetApp().GetActiveDoc()->GetViewPeakThreshold());
-	m_labelContext->Check(wxID_VIEW_RT2080,wxGetApp().GetActiveDoc()->GetViewRT2080());
-	m_labelContext->Check(wxID_VIEW_T50,wxGetApp().GetActiveDoc()->GetViewT50());
-	m_labelContext->Check(wxID_VIEW_RD,wxGetApp().GetActiveDoc()->GetViewRD());
-	m_labelContext->Check(wxID_VIEW_SLOPERISE,wxGetApp().GetActiveDoc()->GetViewSlopeRise());
-	m_labelContext->Check(wxID_VIEW_SLOPEDECAY,wxGetApp().GetActiveDoc()->GetViewSlopeDecay());
-	m_labelContext->Check(wxID_VIEW_LATENCY,wxGetApp().GetActiveDoc()->GetViewLatency());
-	m_labelContext->Check(wxID_VIEW_CURSORS,wxGetApp().GetActiveDoc()->GetViewCursors());
+	m_labelContext->Check(ID_VIEW_MEASURE,wxGetApp().GetActiveDoc()->GetViewCrosshair());
+	m_labelContext->Check(ID_VIEW_BASELINE,wxGetApp().GetActiveDoc()->GetViewBaseline());
+	m_labelContext->Check(ID_VIEW_BASESD,wxGetApp().GetActiveDoc()->GetViewBaseSD());
+	m_labelContext->Check(ID_VIEW_THRESHOLD,wxGetApp().GetActiveDoc()->GetViewThreshold());
+	m_labelContext->Check(ID_VIEW_PEAKZERO,wxGetApp().GetActiveDoc()->GetViewPeakZero());
+	m_labelContext->Check(ID_VIEW_PEAKBASE,wxGetApp().GetActiveDoc()->GetViewPeakBase());
+	m_labelContext->Check(ID_VIEW_PEAKTHRESHOLD,wxGetApp().GetActiveDoc()->GetViewPeakThreshold());
+	m_labelContext->Check(ID_VIEW_RT2080,wxGetApp().GetActiveDoc()->GetViewRT2080());
+	m_labelContext->Check(ID_VIEW_T50,wxGetApp().GetActiveDoc()->GetViewT50());
+	m_labelContext->Check(ID_VIEW_RD,wxGetApp().GetActiveDoc()->GetViewRD());
+	m_labelContext->Check(ID_VIEW_SLOPERISE,wxGetApp().GetActiveDoc()->GetViewSlopeRise());
+	m_labelContext->Check(ID_VIEW_SLOPEDECAY,wxGetApp().GetActiveDoc()->GetViewSlopeDecay());
+	m_labelContext->Check(ID_VIEW_LATENCY,wxGetApp().GetActiveDoc()->GetViewLatency());
+	m_labelContext->Check(ID_VIEW_CURSORS,wxGetApp().GetActiveDoc()->GetViewCursors());
 	PopupMenu(m_labelContext.get());
 }
 
@@ -175,106 +175,106 @@ void wxStfGrid::OnKeyDown(wxKeyEvent& event) {
 
 void wxStfGrid::ViewResults() {
 	// Update checkmarks:
-	m_labelContext->Check(wxID_VIEW_MEASURE,wxGetApp().GetActiveDoc()->GetViewCrosshair());
-	m_labelContext->Check(wxID_VIEW_BASELINE,wxGetApp().GetActiveDoc()->GetViewBaseline());
-	m_labelContext->Check(wxID_VIEW_BASESD,wxGetApp().GetActiveDoc()->GetViewBaseSD());
-	m_labelContext->Check(wxID_VIEW_THRESHOLD,wxGetApp().GetActiveDoc()->GetViewThreshold());
-	m_labelContext->Check(wxID_VIEW_PEAKZERO,wxGetApp().GetActiveDoc()->GetViewPeakZero());
-	m_labelContext->Check(wxID_VIEW_PEAKBASE,wxGetApp().GetActiveDoc()->GetViewPeakBase());
-	m_labelContext->Check(wxID_VIEW_PEAKTHRESHOLD,wxGetApp().GetActiveDoc()->GetViewPeakThreshold());
-	m_labelContext->Check(wxID_VIEW_RT2080,wxGetApp().GetActiveDoc()->GetViewRT2080());
-	m_labelContext->Check(wxID_VIEW_T50,wxGetApp().GetActiveDoc()->GetViewT50());
-	m_labelContext->Check(wxID_VIEW_RD,wxGetApp().GetActiveDoc()->GetViewRD());
-	m_labelContext->Check(wxID_VIEW_SLOPERISE,wxGetApp().GetActiveDoc()->GetViewSlopeRise());
-	m_labelContext->Check(wxID_VIEW_SLOPEDECAY,wxGetApp().GetActiveDoc()->GetViewSlopeDecay());
-	m_labelContext->Check(wxID_VIEW_LATENCY,wxGetApp().GetActiveDoc()->GetViewLatency());
-	m_labelContext->Check(wxID_VIEW_CURSORS,wxGetApp().GetActiveDoc()->GetViewCursors());
+	m_labelContext->Check(ID_VIEW_MEASURE,wxGetApp().GetActiveDoc()->GetViewCrosshair());
+	m_labelContext->Check(ID_VIEW_BASELINE,wxGetApp().GetActiveDoc()->GetViewBaseline());
+	m_labelContext->Check(ID_VIEW_BASESD,wxGetApp().GetActiveDoc()->GetViewBaseSD());
+	m_labelContext->Check(ID_VIEW_THRESHOLD,wxGetApp().GetActiveDoc()->GetViewThreshold());
+	m_labelContext->Check(ID_VIEW_PEAKZERO,wxGetApp().GetActiveDoc()->GetViewPeakZero());
+	m_labelContext->Check(ID_VIEW_PEAKBASE,wxGetApp().GetActiveDoc()->GetViewPeakBase());
+	m_labelContext->Check(ID_VIEW_PEAKTHRESHOLD,wxGetApp().GetActiveDoc()->GetViewPeakThreshold());
+	m_labelContext->Check(ID_VIEW_RT2080,wxGetApp().GetActiveDoc()->GetViewRT2080());
+	m_labelContext->Check(ID_VIEW_T50,wxGetApp().GetActiveDoc()->GetViewT50());
+	m_labelContext->Check(ID_VIEW_RD,wxGetApp().GetActiveDoc()->GetViewRD());
+	m_labelContext->Check(ID_VIEW_SLOPERISE,wxGetApp().GetActiveDoc()->GetViewSlopeRise());
+	m_labelContext->Check(ID_VIEW_SLOPEDECAY,wxGetApp().GetActiveDoc()->GetViewSlopeDecay());
+	m_labelContext->Check(ID_VIEW_LATENCY,wxGetApp().GetActiveDoc()->GetViewLatency());
+	m_labelContext->Check(ID_VIEW_CURSORS,wxGetApp().GetActiveDoc()->GetViewCursors());
 	PopupMenu(m_labelContext.get());
 }
 
 void wxStfGrid::ViewCrosshair(wxCommandEvent& event) {
 	event.Skip();
 	// Toggle on or off:
-	wxGetApp().GetActiveDoc()->SetViewCrosshair(m_labelContext->IsChecked(wxID_VIEW_MEASURE));
-	SetCheckmark(wxT("ViewCrosshair"),wxID_VIEW_MEASURE);
+	wxGetApp().GetActiveDoc()->SetViewCrosshair(m_labelContext->IsChecked(ID_VIEW_MEASURE));
+	SetCheckmark(wxT("ViewCrosshair"),ID_VIEW_MEASURE);
 }
 
 void wxStfGrid::ViewBaseline(wxCommandEvent& event) {
 	event.Skip();
-	wxGetApp().GetActiveDoc()->SetViewBaseline(m_labelContext->IsChecked(wxID_VIEW_BASELINE));
-	SetCheckmark(wxT("ViewBaseline"),wxID_VIEW_BASELINE);
+	wxGetApp().GetActiveDoc()->SetViewBaseline(m_labelContext->IsChecked(ID_VIEW_BASELINE));
+	SetCheckmark(wxT("ViewBaseline"),ID_VIEW_BASELINE);
 }
 
 void wxStfGrid::ViewBaseSD(wxCommandEvent& event) {
 	event.Skip();
-	wxGetApp().GetActiveDoc()->SetViewBaseSD(m_labelContext->IsChecked(wxID_VIEW_BASESD));
-	SetCheckmark(wxT("ViewBaseSD"),wxID_VIEW_BASESD);
+	wxGetApp().GetActiveDoc()->SetViewBaseSD(m_labelContext->IsChecked(ID_VIEW_BASESD));
+	SetCheckmark(wxT("ViewBaseSD"),ID_VIEW_BASESD);
 }
 
 void wxStfGrid::ViewThreshold(wxCommandEvent& event) {
 	event.Skip();
-	wxGetApp().GetActiveDoc()->SetViewThreshold(m_labelContext->IsChecked(wxID_VIEW_THRESHOLD));
-	SetCheckmark(wxT("ViewThreshold"),wxID_VIEW_THRESHOLD);
+	wxGetApp().GetActiveDoc()->SetViewThreshold(m_labelContext->IsChecked(ID_VIEW_THRESHOLD));
+	SetCheckmark(wxT("ViewThreshold"),ID_VIEW_THRESHOLD);
 }
 
 void wxStfGrid::ViewPeakzero(wxCommandEvent& event) {
 	event.Skip();
-	wxGetApp().GetActiveDoc()->SetViewPeakZero(m_labelContext->IsChecked(wxID_VIEW_PEAKZERO));
-	SetCheckmark(wxT("ViewPeakzero"),wxID_VIEW_PEAKZERO);
+	wxGetApp().GetActiveDoc()->SetViewPeakZero(m_labelContext->IsChecked(ID_VIEW_PEAKZERO));
+	SetCheckmark(wxT("ViewPeakzero"),ID_VIEW_PEAKZERO);
 }
 
 void wxStfGrid::ViewPeakbase(wxCommandEvent& event) {
 	event.Skip();
-	wxGetApp().GetActiveDoc()->SetViewPeakBase(m_labelContext->IsChecked(wxID_VIEW_PEAKBASE));
-	SetCheckmark(wxT("ViewPeakbase"),wxID_VIEW_PEAKBASE);
+	wxGetApp().GetActiveDoc()->SetViewPeakBase(m_labelContext->IsChecked(ID_VIEW_PEAKBASE));
+	SetCheckmark(wxT("ViewPeakbase"),ID_VIEW_PEAKBASE);
 }
 
 void wxStfGrid::ViewPeakthreshold(wxCommandEvent& event) {
 	event.Skip();
-	wxGetApp().GetActiveDoc()->SetViewPeakThreshold(m_labelContext->IsChecked(wxID_VIEW_PEAKTHRESHOLD));
-	SetCheckmark(wxT("ViewPeakthreshold"),wxID_VIEW_PEAKTHRESHOLD);
+	wxGetApp().GetActiveDoc()->SetViewPeakThreshold(m_labelContext->IsChecked(ID_VIEW_PEAKTHRESHOLD));
+	SetCheckmark(wxT("ViewPeakthreshold"),ID_VIEW_PEAKTHRESHOLD);
 }
 
 void wxStfGrid::ViewRT2080(wxCommandEvent& event) {
 	event.Skip();
-	wxGetApp().GetActiveDoc()->SetViewRT2080(m_labelContext->IsChecked(wxID_VIEW_RT2080));
-	SetCheckmark(wxT("ViewRT2080"),wxID_VIEW_RT2080);
+	wxGetApp().GetActiveDoc()->SetViewRT2080(m_labelContext->IsChecked(ID_VIEW_RT2080));
+	SetCheckmark(wxT("ViewRT2080"),ID_VIEW_RT2080);
 }
 
 void wxStfGrid::ViewT50(wxCommandEvent& event) {
 	event.Skip();
-	wxGetApp().GetActiveDoc()->SetViewT50(m_labelContext->IsChecked(wxID_VIEW_T50));
-	SetCheckmark(wxT("ViewT50"),wxID_VIEW_T50);
+	wxGetApp().GetActiveDoc()->SetViewT50(m_labelContext->IsChecked(ID_VIEW_T50));
+	SetCheckmark(wxT("ViewT50"),ID_VIEW_T50);
 }
 
 void wxStfGrid::ViewRD(wxCommandEvent& event) {
 	event.Skip();
-	wxGetApp().GetActiveDoc()->SetViewRD(m_labelContext->IsChecked(wxID_VIEW_RD));
-	SetCheckmark(wxT("ViewRD"),wxID_VIEW_RD);
+	wxGetApp().GetActiveDoc()->SetViewRD(m_labelContext->IsChecked(ID_VIEW_RD));
+	SetCheckmark(wxT("ViewRD"),ID_VIEW_RD);
 }
 
 void wxStfGrid::ViewSloperise(wxCommandEvent& event) {
 	event.Skip();
-	wxGetApp().GetActiveDoc()->SetViewSlopeRise(m_labelContext->IsChecked(wxID_VIEW_SLOPERISE));
-	SetCheckmark(wxT("ViewSloperise"),wxID_VIEW_SLOPERISE);
+	wxGetApp().GetActiveDoc()->SetViewSlopeRise(m_labelContext->IsChecked(ID_VIEW_SLOPERISE));
+	SetCheckmark(wxT("ViewSloperise"),ID_VIEW_SLOPERISE);
 }
 
 void wxStfGrid::ViewSlopedecay(wxCommandEvent& event) {
 	event.Skip();
-	wxGetApp().GetActiveDoc()->SetViewSlopeDecay(m_labelContext->IsChecked(wxID_VIEW_SLOPEDECAY));
-	SetCheckmark(wxT("ViewSlopedecay"),wxID_VIEW_SLOPEDECAY);
+	wxGetApp().GetActiveDoc()->SetViewSlopeDecay(m_labelContext->IsChecked(ID_VIEW_SLOPEDECAY));
+	SetCheckmark(wxT("ViewSlopedecay"),ID_VIEW_SLOPEDECAY);
 }
 
 void wxStfGrid::ViewLatency(wxCommandEvent& event) {
 	event.Skip();
-	wxGetApp().GetActiveDoc()->SetViewLatency(m_labelContext->IsChecked(wxID_VIEW_LATENCY));
-	SetCheckmark(wxT("ViewLatency"),wxID_VIEW_LATENCY);
+	wxGetApp().GetActiveDoc()->SetViewLatency(m_labelContext->IsChecked(ID_VIEW_LATENCY));
+	SetCheckmark(wxT("ViewLatency"),ID_VIEW_LATENCY);
 }
 
 void wxStfGrid::ViewCursors(wxCommandEvent& event) {
 	event.Skip();
-	wxGetApp().GetActiveDoc()->SetViewCursors(m_labelContext->IsChecked(wxID_VIEW_CURSORS));
-	SetCheckmark(wxT("ViewCursors"),wxID_VIEW_CURSORS);
+	wxGetApp().GetActiveDoc()->SetViewCursors(m_labelContext->IsChecked(ID_VIEW_CURSORS));
+	SetCheckmark(wxT("ViewCursors"),ID_VIEW_CURSORS);
 }
 
 void wxStfGrid::SetCheckmark(const wxString& RegEntry, int id) {

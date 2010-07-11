@@ -54,9 +54,9 @@
 #include "./graph.h"
 
 BEGIN_EVENT_TABLE(wxStfGraph, wxWindow)
-EVT_MENU(wxID_ZOOMHV,wxStfGraph::OnZoomHV)
-EVT_MENU(wxID_ZOOMH,wxStfGraph::OnZoomH)
-EVT_MENU(wxID_ZOOMV,wxStfGraph::OnZoomV)
+EVT_MENU(ID_ZOOMHV,wxStfGraph::OnZoomHV)
+EVT_MENU(ID_ZOOMH,wxStfGraph::OnZoomH)
+EVT_MENU(ID_ZOOMV,wxStfGraph::OnZoomV)
 EVT_MOUSE_EVENTS(wxStfGraph::OnMouseEvent)
 EVT_KEY_DOWN( wxStfGraph::OnKeyDown )
 #if defined __WXMAC__ && !(wxCHECK_VERSION(2, 9, 0))
@@ -126,13 +126,13 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     m_zoomContext( new wxMenu ),
     m_eventContext( new wxMenu )
 {
-    m_zoomContext->Append( wxID_ZOOMHV, wxT("Expand zoom window horizontally && vertically") );
-    m_zoomContext->Append( wxID_ZOOMH, wxT("Expand zoom window horizontally") );
-    m_zoomContext->Append( wxID_ZOOMV, wxT("Expand zoom window vertically") );
+    m_zoomContext->Append( ID_ZOOMHV, wxT("Expand zoom window horizontally && vertically") );
+    m_zoomContext->Append( ID_ZOOMH, wxT("Expand zoom window horizontally") );
+    m_zoomContext->Append( ID_ZOOMV, wxT("Expand zoom window vertically") );
 
-    m_eventContext->Append( wxID_EVENT_ADDEVENT, wxT("Add an event that starts here") );
-    m_eventContext->Append( wxID_EVENT_ERASE, wxT("Erase all events") );
-    m_eventContext->Append( wxID_EVENT_EXTRACT, wxT("Extract selected events") );
+    m_eventContext->Append( ID_EVENT_ADDEVENT, wxT("Add an event that starts here") );
+    m_eventContext->Append( ID_EVENT_ERASE, wxT("Erase all events") );
+    m_eventContext->Append( ID_EVENT_EXTRACT, wxT("Extract selected events") );
 
     SetBackgroundColour(*wxWHITE);
     view = (wxStfView*)v;
@@ -192,10 +192,10 @@ void wxStfGraph::OnDraw( wxDC& DC )
         pFrame->ActivateGraph();
 */
         if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewScaleBars"),1)) {
-            pFrame->GetMenuBar()->GetMenu(2)->Check(wxID_SCALE,true);
+            pFrame->GetMenuBar()->GetMenu(2)->Check(ID_SCALE,true);
             wxGetApp().set_isBars(true);
         } else {
-            pFrame->GetMenuBar()->GetMenu(2)->Check(wxID_SCALE,false);
+            pFrame->GetMenuBar()->GetMenu(2)->Check(ID_SCALE,false);
             wxGetApp().set_isBars(false);
         }
 
@@ -208,14 +208,14 @@ void wxStfGraph::OnDraw( wxDC& DC )
         }
 
         if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewHiRes"),1)) {
-            pFrame->GetMenuBar()->GetMenu(2)->Check(wxID_HIRES,true);
+            pFrame->GetMenuBar()->GetMenu(2)->Check(ID_HIRES,true);
 #ifndef __APPLE__
             wxGetApp().set_isHires(true);
 #else
             wxGetApp().set_isHires(false);
 #endif
         } else {
-            pFrame->GetMenuBar()->GetMenu(2)->Check(wxID_HIRES,false);
+            pFrame->GetMenuBar()->GetMenu(2)->Check(ID_HIRES,false);
             wxGetApp().set_isHires(false);
         }
         //Ensure proper dimensioning

@@ -56,34 +56,33 @@
 IMPLEMENT_DYNAMIC_CLASS(wxStfDoc, wxDocument)
 
 BEGIN_EVENT_TABLE( wxStfDoc, wxDocument )
-EVT_MENU( wxID_SWAPCHANNELS, wxStfDoc::OnSwapChannels )
-// EVT_MENU( wxID_TOOL_REMOVE, wxStfDoc::OnRemove)
-EVT_MENU( wxID_FILEINFO, wxStfDoc::Fileinfo)
-EVT_MENU( wxID_NEWFROMSELECTEDTHIS, wxStfDoc::OnNewfromselectedThisMenu  )
-EVT_MENU( wxID_MYSELECTALL, wxStfDoc::Selectall )
-EVT_MENU( wxID_UNSELECTALL, wxStfDoc::Deleteselected )
-EVT_MENU( wxID_SELECTSOME, wxStfDoc::Selectsome )
-EVT_MENU( wxID_UNSELECTSOME, wxStfDoc::Unselectsome )
-EVT_MENU( wxID_CONCATENATE, wxStfDoc::Concatenate )
-EVT_MENU( wxID_BATCH, wxStfDoc::OnAnalysisBatch )
-EVT_MENU( wxID_INTEGRATE, wxStfDoc::OnAnalysisIntegrate )
-EVT_MENU( wxID_DIFFERENTIATE, wxStfDoc::OnAnalysisDifferentiate )
-EVT_MENU( wxID_MULTIPLY, wxStfDoc::Multiply)
-EVT_MENU( wxID_SUBTRACTBASE, wxStfDoc::SubtractBaseMenu )
-EVT_MENU( wxID_FIT, wxStfDoc::FitDecay)
-EVT_MENU( wxID_LFIT, wxStfDoc::LFit)
-EVT_MENU( wxID_LOG, wxStfDoc::LnTransform)
-EVT_MENU( wxID_FILTER,wxStfDoc::Filter)
-EVT_MENU( wxID_SPECTRUM,wxStfDoc::Spectrum)
-EVT_MENU( wxID_POVERN,wxStfDoc::P_over_N)
-EVT_MENU( wxID_PLOTCRITERION,wxStfDoc::Plotcriterion)
-EVT_MENU( wxID_PLOTCORRELATION,wxStfDoc::Plotcorrelation)
-EVT_MENU( wxID_EXTRACT,wxStfDoc::MarkEvents )
-EVT_MENU( wxID_THRESHOLD,wxStfDoc::Threshold)
-EVT_MENU( wxID_VIEWTABLE, wxStfDoc::Viewtable)
-EVT_MENU( wxID_EVENT_EXTRACT, wxStfDoc::Extract )
-EVT_MENU( wxID_EVENT_ERASE, wxStfDoc::EraseEvents )
-EVT_MENU( wxID_EVENT_ADDEVENT, wxStfDoc::AddEvent )
+EVT_MENU( ID_SWAPCHANNELS, wxStfDoc::OnSwapChannels )
+EVT_MENU( ID_FILEINFO, wxStfDoc::Fileinfo)
+EVT_MENU( ID_NEWFROMSELECTEDTHIS, wxStfDoc::OnNewfromselectedThisMenu  )
+EVT_MENU( ID_MYSELECTALL, wxStfDoc::Selectall )
+EVT_MENU( ID_UNSELECTALL, wxStfDoc::Deleteselected )
+EVT_MENU( ID_SELECTSOME, wxStfDoc::Selectsome )
+EVT_MENU( ID_UNSELECTSOME, wxStfDoc::Unselectsome )
+EVT_MENU( ID_CONCATENATE, wxStfDoc::Concatenate )
+EVT_MENU( ID_BATCH, wxStfDoc::OnAnalysisBatch )
+EVT_MENU( ID_INTEGRATE, wxStfDoc::OnAnalysisIntegrate )
+EVT_MENU( ID_DIFFERENTIATE, wxStfDoc::OnAnalysisDifferentiate )
+EVT_MENU( ID_MULTIPLY, wxStfDoc::Multiply)
+EVT_MENU( ID_SUBTRACTBASE, wxStfDoc::SubtractBaseMenu )
+EVT_MENU( ID_FIT, wxStfDoc::FitDecay)
+EVT_MENU( ID_LFIT, wxStfDoc::LFit)
+EVT_MENU( ID_LOG, wxStfDoc::LnTransform)
+EVT_MENU( ID_FILTER,wxStfDoc::Filter)
+EVT_MENU( ID_SPECTRUM,wxStfDoc::Spectrum)
+EVT_MENU( ID_POVERN,wxStfDoc::P_over_N)
+EVT_MENU( ID_PLOTCRITERION,wxStfDoc::Plotcriterion)
+EVT_MENU( ID_PLOTCORRELATION,wxStfDoc::Plotcorrelation)
+EVT_MENU( ID_EXTRACT,wxStfDoc::MarkEvents )
+EVT_MENU( ID_THRESHOLD,wxStfDoc::Threshold)
+EVT_MENU( ID_VIEWTABLE, wxStfDoc::Viewtable)
+EVT_MENU( ID_EVENT_EXTRACT, wxStfDoc::Extract )
+EVT_MENU( ID_EVENT_ERASE, wxStfDoc::EraseEvents )
+EVT_MENU( ID_EVENT_ADDEVENT, wxStfDoc::AddEvent )
 END_EVENT_TABLE()
 
 static const int baseline=100;
@@ -349,16 +348,16 @@ void wxStfDoc::UpdateMenuCheckmarks() {
         wxMenuBar *pBar=pChildFrame->GetMenuBar();
 
         if (pBar) {
-            pBar->FindItem(wxID_LATENCYSTART_MAXSLOPE)->Check(GetLatencyStartMode()==stf::riseMode);
-            pBar->FindItem(wxID_LATENCYSTART_HALFRISE)->Check(GetLatencyStartMode()==stf::halfMode);
-            pBar->FindItem(wxID_LATENCYSTART_PEAK)->Check(GetLatencyStartMode()==stf::peakMode);
-            pBar->FindItem(wxID_LATENCYSTART_MANUAL)->Check(GetLatencyStartMode()==stf::manualMode);
-            pBar->FindItem(wxID_LATENCYEND_FOOT)->Check(GetLatencyEndMode()==stf::footMode);
-            pBar->FindItem(wxID_LATENCYEND_MAXSLOPE)->Check(GetLatencyEndMode()==stf::riseMode);
-            pBar->FindItem(wxID_LATENCYEND_HALFRISE)->Check(GetLatencyEndMode()==stf::halfMode);
-            pBar->FindItem(wxID_LATENCYEND_PEAK)->Check(GetLatencyEndMode()==stf::peakMode);
-            pBar->FindItem(wxID_LATENCYEND_MANUAL)->Check(GetLatencyEndMode()==stf::manualMode);
-            pBar->FindItem(wxID_LATENCYWINDOW)->Check(GetLatencyWindowMode()==stf::windowMode);
+            pBar->FindItem(ID_LATENCYSTART_MAXSLOPE)->Check(GetLatencyStartMode()==stf::riseMode);
+            pBar->FindItem(ID_LATENCYSTART_HALFRISE)->Check(GetLatencyStartMode()==stf::halfMode);
+            pBar->FindItem(ID_LATENCYSTART_PEAK)->Check(GetLatencyStartMode()==stf::peakMode);
+            pBar->FindItem(ID_LATENCYSTART_MANUAL)->Check(GetLatencyStartMode()==stf::manualMode);
+            pBar->FindItem(ID_LATENCYEND_FOOT)->Check(GetLatencyEndMode()==stf::footMode);
+            pBar->FindItem(ID_LATENCYEND_MAXSLOPE)->Check(GetLatencyEndMode()==stf::riseMode);
+            pBar->FindItem(ID_LATENCYEND_HALFRISE)->Check(GetLatencyEndMode()==stf::halfMode);
+            pBar->FindItem(ID_LATENCYEND_PEAK)->Check(GetLatencyEndMode()==stf::peakMode);
+            pBar->FindItem(ID_LATENCYEND_MANUAL)->Check(GetLatencyEndMode()==stf::manualMode);
+            pBar->FindItem(ID_LATENCYWINDOW)->Check(GetLatencyWindowMode()==stf::windowMode);
 	    }
     }
 }
@@ -403,17 +402,17 @@ void wxStfDoc::PostInit() {
     }
     if (size()>1) {
         wxMenu* ch2Sub=new wxMenu;
-        ch2Sub->Append(wxID_CH2BASE, wxT("Match &baseline"));
-        ch2Sub->Append(wxID_CH2POS, wxT("Match &abs. position"));
-        ch2Sub->Append(wxID_CH2ZOOM, wxT("Match &y-scale"));
-        ch2Sub->Append(wxID_CH2BASEZOOM, wxT("Match baseline a&nd y-scale"));
+        ch2Sub->Append(ID_CH2BASE, wxT("Match &baseline"));
+        ch2Sub->Append(ID_CH2POS, wxT("Match &abs. position"));
+        ch2Sub->Append(ID_CH2ZOOM, wxT("Match &y-scale"));
+        ch2Sub->Append(ID_CH2BASEZOOM, wxT("Match baseline a&nd y-scale"));
         wxStfChildFrame *pChildFrame = (wxStfChildFrame*)GetDocumentWindow();
         wxMenuBar* pBar=pChildFrame->GetMenuBar();
 
         if (pBar!=NULL) {
             pBar->GetMenu(2)->AppendSeparator();
             pBar->GetMenu(2)->AppendSubMenu(ch2Sub, wxT("&Channel 2 scaling"));
-            pBar->GetMenu(2)->Append(wxID_SWAPCHANNELS, wxT("&Swap channels"));
+            pBar->GetMenu(2)->Append(ID_SWAPCHANNELS, wxT("&Swap channels"));
         }
     }
     // Read results table settings from registry:

@@ -109,76 +109,76 @@
 IMPLEMENT_CLASS(wxStfParentFrame, wxStfParentType)
 BEGIN_EVENT_TABLE(wxStfParentFrame, wxStfParentType)
 EVT_MENU(wxID_HELP, wxStfParentFrame::OnHelp)
-EVT_MENU(wxID_UPDATE, wxStfParentFrame::OnCheckUpdate)
+EVT_MENU(ID_UPDATE, wxStfParentFrame::OnCheckUpdate)
 EVT_MENU(wxID_ABOUT, wxStfParentFrame::OnAbout)
 
-EVT_TOOL(wxID_TOOL_SELECT,wxStfParentFrame::OnToggleSelect)
-EVT_TOOL(wxID_TOOL_FIRST, wxStfParentFrame::OnToolFirst)
-EVT_TOOL(wxID_TOOL_NEXT, wxStfParentFrame::OnToolNext)
-EVT_TOOL(wxID_TOOL_PREVIOUS, wxStfParentFrame::OnToolPrevious)
-EVT_TOOL(wxID_TOOL_LAST, wxStfParentFrame::OnToolLast)
-EVT_TOOL(wxID_TOOL_XENL, wxStfParentFrame::OnToolXenl)
-EVT_TOOL(wxID_TOOL_XSHRINK, wxStfParentFrame::OnToolXshrink)
-EVT_TOOL(wxID_TOOL_YENL, wxStfParentFrame::OnToolYenl)
-EVT_TOOL(wxID_TOOL_YSHRINK, wxStfParentFrame::OnToolYshrink)
-EVT_TOOL(wxID_TOOL_UP, wxStfParentFrame::OnToolUp)
-EVT_TOOL(wxID_TOOL_DOWN, wxStfParentFrame::OnToolDown)
-EVT_TOOL(wxID_TOOL_FIT, wxStfParentFrame::OnToolFit)
-EVT_TOOL(wxID_TOOL_LEFT, wxStfParentFrame::OnToolLeft)
-EVT_TOOL(wxID_TOOL_RIGHT, wxStfParentFrame::OnToolRight)
-EVT_TOOL(wxID_TOOL_SNAPSHOT, wxStfParentFrame::OnToolSnapshot)
+EVT_TOOL(ID_TOOL_SELECT,wxStfParentFrame::OnToggleSelect)
+EVT_TOOL(ID_TOOL_FIRST, wxStfParentFrame::OnToolFirst)
+EVT_TOOL(ID_TOOL_NEXT, wxStfParentFrame::OnToolNext)
+EVT_TOOL(ID_TOOL_PREVIOUS, wxStfParentFrame::OnToolPrevious)
+EVT_TOOL(ID_TOOL_LAST, wxStfParentFrame::OnToolLast)
+EVT_TOOL(ID_TOOL_XENL, wxStfParentFrame::OnToolXenl)
+EVT_TOOL(ID_TOOL_XSHRINK, wxStfParentFrame::OnToolXshrink)
+EVT_TOOL(ID_TOOL_YENL, wxStfParentFrame::OnToolYenl)
+EVT_TOOL(ID_TOOL_YSHRINK, wxStfParentFrame::OnToolYshrink)
+EVT_TOOL(ID_TOOL_UP, wxStfParentFrame::OnToolUp)
+EVT_TOOL(ID_TOOL_DOWN, wxStfParentFrame::OnToolDown)
+EVT_TOOL(ID_TOOL_FIT, wxStfParentFrame::OnToolFit)
+EVT_TOOL(ID_TOOL_LEFT, wxStfParentFrame::OnToolLeft)
+EVT_TOOL(ID_TOOL_RIGHT, wxStfParentFrame::OnToolRight)
+EVT_TOOL(ID_TOOL_SNAPSHOT, wxStfParentFrame::OnToolSnapshot)
 #ifdef _WINDOWS
-EVT_TOOL(wxID_TOOL_SNAPSHOT_WMF, wxStfParentFrame::OnToolSnapshotwmf)
+EVT_TOOL(ID_TOOL_SNAPSHOT_WMF, wxStfParentFrame::OnToolSnapshotwmf)
 #endif
-EVT_TOOL(wxID_TOOL_CH1, wxStfParentFrame::OnToolCh1)
-EVT_TOOL(wxID_TOOL_CH2, wxStfParentFrame::OnToolCh2)
+EVT_TOOL(ID_TOOL_CH1, wxStfParentFrame::OnToolCh1)
+EVT_TOOL(ID_TOOL_CH2, wxStfParentFrame::OnToolCh2)
 
-EVT_TOOL(wxID_TOOL_MEASURE, wxStfParentFrame::OnToolMeasure)
-EVT_TOOL(wxID_TOOL_PEAK,wxStfParentFrame::OnToolPeak)
-EVT_TOOL(wxID_TOOL_BASE,wxStfParentFrame::OnToolBase)
-EVT_TOOL(wxID_TOOL_DECAY,wxStfParentFrame::OnToolDecay)
-EVT_TOOL(wxID_TOOL_LATENCY,wxStfParentFrame::OnToolLatency)
-EVT_TOOL(wxID_TOOL_ZOOM,wxStfParentFrame::OnToolZoom)
-EVT_TOOL(wxID_TOOL_EVENT,wxStfParentFrame::OnToolEvent)
+EVT_TOOL(ID_TOOL_MEASURE, wxStfParentFrame::OnToolMeasure)
+EVT_TOOL(ID_TOOL_PEAK,wxStfParentFrame::OnToolPeak)
+EVT_TOOL(ID_TOOL_BASE,wxStfParentFrame::OnToolBase)
+EVT_TOOL(ID_TOOL_DECAY,wxStfParentFrame::OnToolDecay)
+EVT_TOOL(ID_TOOL_LATENCY,wxStfParentFrame::OnToolLatency)
+EVT_TOOL(ID_TOOL_ZOOM,wxStfParentFrame::OnToolZoom)
+EVT_TOOL(ID_TOOL_EVENT,wxStfParentFrame::OnToolEvent)
 
-EVT_MENU(wxID_EXPORTIMAGE, wxStfParentFrame::OnExportimage)
-EVT_MENU(wxID_EXPORTPS, wxStfParentFrame::OnExportps)
+EVT_MENU(ID_EXPORTIMAGE, wxStfParentFrame::OnExportimage)
+EVT_MENU(ID_EXPORTPS, wxStfParentFrame::OnExportps)
 #if wxCHECK_VERSION(2, 9, 0)
-EVT_MENU(wxID_EXPORTSVG, wxStfParentFrame::OnExportsvg)
+EVT_MENU(ID_EXPORTSVG, wxStfParentFrame::OnExportsvg)
 #endif
-EVT_MENU(wxID_EXPORTLATEX, wxStfParentFrame::OnExportlatex)
+EVT_MENU(ID_EXPORTLATEX, wxStfParentFrame::OnExportlatex)
 EVT_MENU(ID_CONVERT, wxStfParentFrame::OnConvert)
-EVT_MENU(wxID_AVERAGE, wxStfParentFrame::OnAverage)
-EVT_MENU(wxID_ALIGNEDAVERAGE, wxStfParentFrame::OnAlignedAverage)
+EVT_MENU(ID_AVERAGE, wxStfParentFrame::OnAverage)
+EVT_MENU(ID_ALIGNEDAVERAGE, wxStfParentFrame::OnAlignedAverage)
 // EVT_MENU_RANGE(wxID_USERDEF1,wxID_USERDEF2,wxStfParentFrame::OnUserdef)
-EVT_MENU( wxID_VIEW_RESULTS, wxStfParentFrame::OnViewResults)
-EVT_MENU( wxID_CH2BASE, wxStfParentFrame::OnCh2base )
-EVT_MENU( wxID_CH2POS, wxStfParentFrame::OnCh2pos )
-EVT_MENU( wxID_CH2ZOOM, wxStfParentFrame::OnCh2zoom )
-EVT_MENU( wxID_CH2BASEZOOM, wxStfParentFrame::OnCh2basezoom )
-EVT_MENU( wxID_SCALE, wxStfParentFrame::OnScale )
-EVT_MENU( wxID_HIRES, wxStfParentFrame::OnHires )
-EVT_MENU( WXPRINT_PRINT, wxStfParentFrame::OnPrint)
+EVT_MENU( ID_VIEW_RESULTS, wxStfParentFrame::OnViewResults)
+EVT_MENU( ID_CH2BASE, wxStfParentFrame::OnCh2base )
+EVT_MENU( ID_CH2POS, wxStfParentFrame::OnCh2pos )
+EVT_MENU( ID_CH2ZOOM, wxStfParentFrame::OnCh2zoom )
+EVT_MENU( ID_CH2BASEZOOM, wxStfParentFrame::OnCh2basezoom )
+EVT_MENU( ID_SCALE, wxStfParentFrame::OnScale )
+EVT_MENU( ID_HIRES, wxStfParentFrame::OnHires )
+EVT_MENU( ID_PRINT_PRINT, wxStfParentFrame::OnPrint)
 #if 0
-EVT_MENU( WXPRINT_PREVIEW, wxStfParentFrame::OnPrintPreview)
+EVT_MENU( ID_PRINT_PREVIEW, wxStfParentFrame::OnPrintPreview)
 #endif
-EVT_MENU( WXPRINT_PAGE_SETUP, wxStfParentFrame::OnPageSetup)
-EVT_MENU( wxID_SAVEPERSPECTIVE, wxStfParentFrame::OnSaveperspective )
-EVT_MENU( wxID_LOADPERSPECTIVE, wxStfParentFrame::OnLoadperspective )
-EVT_MENU( wxID_RESTOREPERSPECTIVE, wxStfParentFrame::OnRestoreperspective )
+EVT_MENU( ID_PRINT_PAGE_SETUP, wxStfParentFrame::OnPageSetup)
+EVT_MENU( ID_SAVEPERSPECTIVE, wxStfParentFrame::OnSaveperspective )
+EVT_MENU( ID_LOADPERSPECTIVE, wxStfParentFrame::OnLoadperspective )
+EVT_MENU( ID_RESTOREPERSPECTIVE, wxStfParentFrame::OnRestoreperspective )
 #ifdef WITH_PYTHON
-EVT_MENU( wxID_VIEW_SHELL, wxStfParentFrame::OnViewshell )
+EVT_MENU( ID_VIEW_SHELL, wxStfParentFrame::OnViewshell )
 #endif
-EVT_MENU( wxID_LATENCYSTART_MAXSLOPE, wxStfParentFrame::OnLStartMaxslope )
-EVT_MENU( wxID_LATENCYSTART_HALFRISE, wxStfParentFrame::OnLStartHalfrise )
-EVT_MENU( wxID_LATENCYSTART_PEAK, wxStfParentFrame::OnLStartPeak )
-EVT_MENU( wxID_LATENCYSTART_MANUAL, wxStfParentFrame::OnLStartManual )
-EVT_MENU( wxID_LATENCYEND_FOOT, wxStfParentFrame::OnLEndFoot )
-EVT_MENU( wxID_LATENCYEND_MAXSLOPE, wxStfParentFrame::OnLEndMaxslope )
-EVT_MENU( wxID_LATENCYEND_PEAK, wxStfParentFrame::OnLEndPeak )
-EVT_MENU( wxID_LATENCYEND_HALFRISE, wxStfParentFrame::OnLEndHalfrise )
-EVT_MENU( wxID_LATENCYEND_MANUAL, wxStfParentFrame::OnLEndManual )
-EVT_MENU( wxID_LATENCYWINDOW, wxStfParentFrame::OnLWindow )
+EVT_MENU( ID_LATENCYSTART_MAXSLOPE, wxStfParentFrame::OnLStartMaxslope )
+EVT_MENU( ID_LATENCYSTART_HALFRISE, wxStfParentFrame::OnLStartHalfrise )
+EVT_MENU( ID_LATENCYSTART_PEAK, wxStfParentFrame::OnLStartPeak )
+EVT_MENU( ID_LATENCYSTART_MANUAL, wxStfParentFrame::OnLStartManual )
+EVT_MENU( ID_LATENCYEND_FOOT, wxStfParentFrame::OnLEndFoot )
+EVT_MENU( ID_LATENCYEND_MAXSLOPE, wxStfParentFrame::OnLEndMaxslope )
+EVT_MENU( ID_LATENCYEND_PEAK, wxStfParentFrame::OnLEndPeak )
+EVT_MENU( ID_LATENCYEND_HALFRISE, wxStfParentFrame::OnLEndHalfrise )
+EVT_MENU( ID_LATENCYEND_MANUAL, wxStfParentFrame::OnLEndManual )
+EVT_MENU( ID_LATENCYWINDOW, wxStfParentFrame::OnLWindow )
 END_EVENT_TABLE()
 
 wxStfParentFrame::wxStfParentFrame(wxDocManager *manager, wxFrame *frame, const wxString& title,
@@ -336,7 +336,7 @@ wxAuiToolBar* wxStfParentFrame::CreateStdTb() {
                   wxArtProvider::GetBitmap( wxART_FILE_SAVE_AS, wxART_TOOLBAR, wxSize(16,16) ),
                   wxT("Save traces"),
                   wxITEM_NORMAL );
-    tb1->AddTool( WXPRINT_PRINT,
+    tb1->AddTool( ID_PRINT_PRINT,
                   wxT("Print"),
                   wxArtProvider::GetBitmap( wxART_PRINT, wxART_TOOLBAR, wxSize(16,16) ),
                   wxT("Print traces"),
@@ -348,79 +348,79 @@ wxAuiToolBar* wxStfParentFrame::CreateScaleTb() {
     wxAuiToolBar* scaleToolBar =
         new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_DEFAULT_STYLE );
     scaleToolBar->SetToolBitmapSize(wxSize(20,20));
-    scaleToolBar->AddTool( wxID_TOOL_FIRST,
+    scaleToolBar->AddTool( ID_TOOL_FIRST,
                            wxT("First"),
                            wxBitmap(resultset_first),
                            wxT("Go to first trace"),
                            wxITEM_NORMAL );
-    scaleToolBar->AddTool( wxID_TOOL_PREVIOUS,
+    scaleToolBar->AddTool( ID_TOOL_PREVIOUS,
                            wxT("Prev."),
                            wxBitmap(resultset_previous),
                            wxT("Go to previous trace (left cursor)"),
                            wxITEM_NORMAL );
-    scaleToolBar->AddTool( wxID_TOOL_NEXT,
+    scaleToolBar->AddTool( ID_TOOL_NEXT,
                            wxT("Next"),
                            wxBitmap(resultset_next),
                            wxT("Go to next trace (right cursor)"),
                            wxITEM_NORMAL );
-    scaleToolBar->AddTool( wxID_TOOL_LAST,
+    scaleToolBar->AddTool( ID_TOOL_LAST,
                            wxT("Last"),
                            wxBitmap(resultset_last),
                            wxT("Go to last trace"),
                            wxITEM_NORMAL );
     scaleToolBar->AddSeparator();
-    scaleToolBar->AddTool( wxID_TOOL_LEFT,
+    scaleToolBar->AddTool( ID_TOOL_LEFT,
                            wxT("Left"),
                            wxBitmap(arrow_left),
                            wxT("Move traces left (CTRL+left cursor)"),
                            wxITEM_NORMAL );
-    scaleToolBar->AddTool( wxID_TOOL_RIGHT,
+    scaleToolBar->AddTool( ID_TOOL_RIGHT,
                            wxT("Right"),
                            wxBitmap(arrow_right),
                            wxT("Move traces right (CTRL+right cursor)"),
                            wxITEM_NORMAL );
-    scaleToolBar->AddTool( wxID_TOOL_FIT,
+    scaleToolBar->AddTool( ID_TOOL_FIT,
                            wxT("Fit"),
                            wxBitmap(arrow_out),
                            wxT("Fit traces to window (\"F\")"),
                            wxITEM_NORMAL );
-    scaleToolBar->AddTool( wxID_TOOL_UP,
+    scaleToolBar->AddTool( ID_TOOL_UP,
                            wxT("Up"),
                            wxBitmap(arrow_up),
                            wxT("Move traces up (up cursor)"),
                            wxITEM_NORMAL );
-    scaleToolBar->AddTool( wxID_TOOL_DOWN,
+    scaleToolBar->AddTool( ID_TOOL_DOWN,
                            wxT("Down"),
                            wxBitmap(arrow_down),
                            wxT("Move traces down (down cursor)"),
                            wxITEM_NORMAL );
-    scaleToolBar->AddTool( wxID_TOOL_XENL,
+    scaleToolBar->AddTool( ID_TOOL_XENL,
                            wxT("Zoom X"),
                            wxBitmap(zoom_in),
                            wxT("Enlarge x-scale (CTRL + \"+\")"),
                            wxITEM_NORMAL );
-    scaleToolBar->AddTool( wxID_TOOL_XSHRINK,
+    scaleToolBar->AddTool( ID_TOOL_XSHRINK,
                            wxT("Shrink X"),
                            wxBitmap(zoom_out),
                            wxT("Shrink x-scale (CTRL + \"-\")"),
                            wxITEM_NORMAL );
-    scaleToolBar->AddTool( wxID_TOOL_YENL,
+    scaleToolBar->AddTool( ID_TOOL_YENL,
                            wxT("Zoom Y"),
                            wxBitmap(zoom_in),
                            wxT("Enlarge y-scale (\"+\")"),
                            wxITEM_NORMAL );
-    scaleToolBar->AddTool( wxID_TOOL_YSHRINK,
+    scaleToolBar->AddTool( ID_TOOL_YSHRINK,
                            wxT("Shrink Y"),
                            wxBitmap(zoom_out),
                            wxT("Shrink y-scale (\"-\")"),
                            wxITEM_NORMAL );
     scaleToolBar->AddSeparator();
-    scaleToolBar->AddTool( wxID_TOOL_CH1,
+    scaleToolBar->AddTool( ID_TOOL_CH1,
                            wxT("Ch 1"),
                            wxBitmap(ch_),
                            wxT("Scaling applies to active (black) channel (\"1\")"),
                            wxITEM_CHECK );
-    scaleToolBar->AddTool( wxID_TOOL_CH2,
+    scaleToolBar->AddTool( ID_TOOL_CH2,
                            wxT("Ch 2"),
                            wxBitmap(ch2_),
                            wxT("Scaling applies to inactive (red) channel (\"2\")"),
@@ -432,22 +432,22 @@ wxAuiToolBar* wxStfParentFrame::CreateEditTb() {
     wxAuiToolBar* tb4= new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                          wxAUI_TB_DEFAULT_STYLE );
     tb4->SetToolBitmapSize(wxSize(20,20));
-    tb4->AddTool( wxID_AVERAGE,
+    tb4->AddTool( ID_AVERAGE,
                   wxT("Mean"),
                   wxBitmap(sum_new),
                   wxT("Average of selected traces"),
                   wxITEM_NORMAL );
-    tb4->AddTool( wxID_ALIGNEDAVERAGE,
+    tb4->AddTool( ID_ALIGNEDAVERAGE,
                   wxT("Aligned"),
                   wxBitmap(sum_new_aligned),
                   wxT("Aligned average of selected traces"),
                   wxITEM_NORMAL );
-    tb4->AddTool( wxID_FIT,
+    tb4->AddTool( ID_FIT,
                   wxT("Fit"),
                   wxBitmap(fit),//chart_line),
                   wxT("Fit function to data"),
                   wxITEM_NORMAL );
-    tb4->AddTool( wxID_VIEWTABLE,
+    tb4->AddTool( ID_VIEWTABLE,
                   wxT("Table"),
                   wxBitmap(table),
                   wxT("View current trace as a table"),
@@ -459,61 +459,61 @@ wxAuiToolBar* wxStfParentFrame::CreateCursorTb() {
     wxAuiToolBar* cursorToolBar = new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                                     wxAUI_TB_DEFAULT_STYLE );
     cursorToolBar->SetToolBitmapSize(wxSize(20,20));
-    cursorToolBar->AddTool( wxID_TOOL_SELECT,
+    cursorToolBar->AddTool( ID_TOOL_SELECT,
                             wxT("Select"),
                             wxBitmap( acceptbmp ),
                             wxT("Select or unselect this trace (\"S\" / \"R\")"),
                             wxITEM_CHECK );
-    // cursorToolBar->AddTool( wxID_TOOL_REMOVE,
+    // cursorToolBar->AddTool( ID_TOOL_REMOVE,
     //                         wxT("Unselect"),
     //                         wxBitmap( bin ),
     //                         wxT("Unselect this trace (\"R\")"),
     //                         wxITEM_NORMAL );
     cursorToolBar->AddSeparator();
-    cursorToolBar->AddTool( wxID_TOOL_SNAPSHOT,
+    cursorToolBar->AddTool( ID_TOOL_SNAPSHOT,
                             wxT("Snapshot"),
                             wxBitmap(camera),
                             wxT("Copy bitmap image to clipboard"),
                             wxITEM_NORMAL );
 #ifdef _WINDOWS
-    cursorToolBar->AddTool( wxID_TOOL_SNAPSHOT_WMF,
+    cursorToolBar->AddTool( ID_TOOL_SNAPSHOT_WMF,
                             wxT("WMF Snapshot"),
                             wxBitmap(camera_ps),
                             wxT("Copy vectorized image to clipboard"),
                             wxITEM_NORMAL );
 #endif
     cursorToolBar->AddSeparator();
-    cursorToolBar->AddTool( wxID_TOOL_MEASURE,
+    cursorToolBar->AddTool( ID_TOOL_MEASURE,
                             _T("Measure"),
                             wxBitmap(cursor),
                             wxT("Mouse selects measurement (crosshair) cursor (\"M\")"),
                             wxITEM_CHECK );
-    cursorToolBar->AddTool( wxID_TOOL_PEAK,
+    cursorToolBar->AddTool( ID_TOOL_PEAK,
                             _T("Peak"),
                             wxBitmap(___em_open),
                             wxT("Mouse selects peak cursors (\"P\")"),
                             wxITEM_CHECK );
-    cursorToolBar->AddTool( wxID_TOOL_BASE,
+    cursorToolBar->AddTool( ID_TOOL_BASE,
                             _T("Base"),
                             wxBitmap(___em_down),
                             wxT("Mouse selects base cursors (\"B\")"),
                             wxITEM_CHECK );
-    cursorToolBar->AddTool( wxID_TOOL_DECAY,
+    cursorToolBar->AddTool( ID_TOOL_DECAY,
                             _T("Fit"),
                             wxBitmap(fit_lim),//chart_curve),
                             wxT("Mouse selects fit cursors (\"D\")"),
                             wxITEM_CHECK );
-    cursorToolBar->AddTool( wxID_TOOL_LATENCY,
+    cursorToolBar->AddTool( ID_TOOL_LATENCY,
                             _T("Latency"),
                             wxBitmap(latency_lim),//chart_curve),
                             wxT("Mouse selects latency cursors (\"L\")"),
                             wxITEM_CHECK );
-    cursorToolBar->AddTool( wxID_TOOL_ZOOM,
+    cursorToolBar->AddTool( ID_TOOL_ZOOM,
                             _T("Zoom"),
                             wxBitmap(zoom),
                             wxT("Draw a zoom window with left mouse button (\"Z\")"),
                             wxITEM_CHECK );
-    cursorToolBar->AddTool( wxID_TOOL_EVENT,
+    cursorToolBar->AddTool( ID_TOOL_EVENT,
                             _T("Events"),
                             wxBitmap(event),
                             wxT( "Add, erase or extract events manually with right mouse button (\"E\")" ),
@@ -1029,32 +1029,32 @@ void wxStfParentFrame::OnToolRight(wxCommandEvent& WXUNUSED(event)) {
 
 void wxStfParentFrame::OnToolCh1(wxCommandEvent& WXUNUSED(event)) {
     // activate channel 1 if no channel is active:
-    if (!m_scaleToolBar->GetToolToggled(wxID_TOOL_CH1) &&
-        !m_scaleToolBar->GetToolToggled(wxID_TOOL_CH2)) {
-            m_scaleToolBar->ToggleTool(wxID_TOOL_CH1,true);
+    if (!m_scaleToolBar->GetToolToggled(ID_TOOL_CH1) &&
+        !m_scaleToolBar->GetToolToggled(ID_TOOL_CH2)) {
+            m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
     }
 }
 
 void wxStfParentFrame::OnToolCh2(wxCommandEvent& WXUNUSED(event)) {
     // activate channel 1 if no channel is active:
-    if (!m_scaleToolBar->GetToolToggled(wxID_TOOL_CH1) &&
-        !m_scaleToolBar->GetToolToggled(wxID_TOOL_CH2)) {
-            m_scaleToolBar->ToggleTool(wxID_TOOL_CH1,true);
+    if (!m_scaleToolBar->GetToolToggled(ID_TOOL_CH1) &&
+        !m_scaleToolBar->GetToolToggled(ID_TOOL_CH2)) {
+            m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
     }
 }
 
 void wxStfParentFrame::SetSingleChannel(bool value) {
     if (!m_scaleToolBar) return;
     if (value) {
-        m_scaleToolBar->ToggleTool(wxID_TOOL_CH1,true);
-        m_scaleToolBar->ToggleTool(wxID_TOOL_CH2,false);
-        m_scaleToolBar->EnableTool(wxID_TOOL_CH1,false);
-        m_scaleToolBar->EnableTool(wxID_TOOL_CH2,false);
+        m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
+        m_scaleToolBar->ToggleTool(ID_TOOL_CH2,false);
+        m_scaleToolBar->EnableTool(ID_TOOL_CH1,false);
+        m_scaleToolBar->EnableTool(ID_TOOL_CH2,false);
     } else {
-        m_scaleToolBar->ToggleTool(wxID_TOOL_CH1,true);
-        m_scaleToolBar->ToggleTool(wxID_TOOL_CH2,true);
-        m_scaleToolBar->EnableTool(wxID_TOOL_CH1,true);
-        m_scaleToolBar->EnableTool(wxID_TOOL_CH2,true);
+        m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
+        m_scaleToolBar->ToggleTool(ID_TOOL_CH2,true);
+        m_scaleToolBar->EnableTool(ID_TOOL_CH1,true);
+        m_scaleToolBar->EnableTool(ID_TOOL_CH2,true);
     }
 }
 
@@ -1139,7 +1139,7 @@ void wxStfParentFrame::OnViewResults(wxCommandEvent& WXUNUSED(event)) {
 void wxStfParentFrame::OnScale(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     if (pView!=NULL) {
-        if (GetActiveChild()->GetMenuBar()->GetMenu(2)->IsChecked(wxID_SCALE)) {
+        if (GetActiveChild()->GetMenuBar()->GetMenu(2)->IsChecked(ID_SCALE)) {
             wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("ViewScaleBars"),1);
             wxGetApp().set_isBars(true);
         } else {
@@ -1153,7 +1153,7 @@ void wxStfParentFrame::OnScale(wxCommandEvent& WXUNUSED(event)) {
 void wxStfParentFrame::OnHires(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     if (pView!=NULL) {
-        if (GetActiveChild()->GetMenuBar()->GetMenu(2)->IsChecked(wxID_HIRES)) {
+        if (GetActiveChild()->GetMenuBar()->GetMenu(2)->IsChecked(ID_HIRES)) {
             wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("ViewHiRes"),1);
 #ifndef __APPLE__
             wxGetApp().set_isHires(true);
@@ -1186,7 +1186,7 @@ void wxStfParentFrame::OnUserdef(wxCommandEvent& event) {
 #if 0
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pDoc!=NULL) {
-        pDoc->Userdef(event.GetId()-wxID_USERDEF1);
+        pDoc->Userdef(event.GetId()-ID_USERDEF1);
     }
 #endif
 }
@@ -1233,17 +1233,17 @@ void wxStfParentFrame::OnLStartMaxslope(wxCommandEvent& WXUNUSED(event)) {
         //		if (!prevMode) {
         pDoc->SetLatencyStartMode(stf::riseMode);
         // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_MAXSLOPE,true);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_HALFRISE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_PEAK,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_MANUAL,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MAXSLOPE,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_HALFRISE,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_PEAK,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,false);
         /*		} else {
         // else, toggle to manual mode (default)
         pDoc->SetLatencyStartMode(stf::manualMode);
         // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_MANUAL,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,true);
         // Uncheck (sometimes isn't done automatically):
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_MAXSLOPE,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MAXSLOPE,false);
         }
         */		wxGetApp().wxWriteProfileInt(
         wxT("Settings"),
@@ -1258,17 +1258,17 @@ void wxStfParentFrame::OnLStartHalfrise(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(wxID_LATENCYSTART_HALFRISE)) {
+        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYSTART_HALFRISE)) {
         pDoc->SetLatencyStartMode(stf::halfMode);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_HALFRISE,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_HALFRISE,true);
         // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_MAXSLOPE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_PEAK,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_MANUAL,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MAXSLOPE,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_PEAK,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,false);
         /*		} else {
         pDoc->SetLatencyStartMode(stf::manualMode);
         // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_MANUAL,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,true);
         }
         */		wxGetApp().wxWriteProfileInt(
         wxT("Settings"),
@@ -1284,17 +1284,17 @@ void wxStfParentFrame::OnLStartPeak(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(wxID_LATENCYSTART_PEAK)) {
+        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYSTART_PEAK)) {
         pDoc->SetLatencyStartMode(stf::peakMode);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_PEAK,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_PEAK,true);
         // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_MAXSLOPE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_HALFRISE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_MANUAL,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MAXSLOPE,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_HALFRISE,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,false);
         /*		} else {
         pDoc->SetLatencyStartMode(stf::manualMode);
         // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_MANUAL,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,true);
         }
         */
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyStartMode"), pDoc->GetLatencyStartMode() );
@@ -1309,10 +1309,10 @@ void wxStfParentFrame::OnLStartManual(wxCommandEvent& WXUNUSED(event)) {
         // Always keep manual mode as a default, even if attempted to uncheck:
         pDoc->SetLatencyStartMode(stf::manualMode);
         // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_MANUAL,true);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_MAXSLOPE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_HALFRISE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYSTART_PEAK,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MAXSLOPE,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_HALFRISE,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_PEAK,false);
         wxGetApp().wxWriteProfileInt(
             wxT("Settings"),
             wxT("LatencyStartMode"),
@@ -1326,18 +1326,18 @@ void wxStfParentFrame::OnLEndFoot(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(wxID_LATENCYEND_FOOT)) {
+        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYEND_FOOT)) {
         pDoc->SetLatencyEndMode(stf::footMode);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_FOOT,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_FOOT,true);
         // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_MAXSLOPE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_MANUAL,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_HALFRISE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_PEAK,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MAXSLOPE,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_HALFRISE,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_PEAK,false);
         /*		} else {
         pDoc->SetLatencyEndMode(stf::manualMode);
         // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_MANUAL,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,true);
         }
         */		wxGetApp().wxWriteProfileInt(
         wxT("Settings"),
@@ -1352,18 +1352,18 @@ void wxStfParentFrame::OnLEndMaxslope(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(wxID_LATENCYEND_HALFRISE)) {
+        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYEND_HALFRISE)) {
         pDoc->SetLatencyEndMode(stf::riseMode);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_MAXSLOPE,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MAXSLOPE,true);
         // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_HALFRISE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_MANUAL,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_FOOT,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_PEAK,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_HALFRISE,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_FOOT,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_PEAK,false);
         /*		} else {
         pDoc->SetLatencyEndMode(stf::manualMode);
         // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_MANUAL,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,true);
         }
         */		wxGetApp().wxWriteProfileInt(
         wxT("Settings"),
@@ -1378,18 +1378,18 @@ void wxStfParentFrame::OnLEndHalfrise(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(wxID_LATENCYEND_HALFRISE)) {
+        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYEND_HALFRISE)) {
         pDoc->SetLatencyEndMode(stf::halfMode);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_HALFRISE,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_HALFRISE,true);
         // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_MAXSLOPE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_MANUAL,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_FOOT,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_PEAK,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MAXSLOPE,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_FOOT,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_PEAK,false);
         /*		} else {
         pDoc->SetLatencyEndMode(stf::manualMode);
         // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_MANUAL,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,true);
         }
         */
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyEndMode"), pDoc->GetLatencyEndMode() );
@@ -1401,18 +1401,18 @@ void wxStfParentFrame::OnLEndPeak(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(wxID_LATENCYEND_PEAK)) {
+        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYEND_PEAK)) {
         pDoc->SetLatencyEndMode(stf::peakMode);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_PEAK,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_PEAK,true);
         // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_MAXSLOPE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_MANUAL,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_FOOT,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_HALFRISE,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MAXSLOPE,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_FOOT,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_HALFRISE,false);
         /*		} else {
         pDoc->SetLatencyEndMode(stf::manualMode);
         // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_MANUAL,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,true);
         }
         */
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyEndMode"), pDoc->GetLatencyEndMode() );
@@ -1425,18 +1425,18 @@ void wxStfParentFrame::OnLEndManual(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(wxID_LATENCYEND_MANUAL)) {
+        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYEND_MANUAL)) {
         pDoc->SetLatencyEndMode(stf::manualMode);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_MANUAL,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,true);
         // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_MAXSLOPE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_PEAK,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_FOOT,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_HALFRISE,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MAXSLOPE,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_PEAK,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_FOOT,false);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_HALFRISE,false);
         /*		} else {
         pDoc->SetLatencyEndMode(stf::manualMode);
         // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(wxID_LATENCYEND_MANUAL,true);
+        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,true);
         }
         */
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyEndMode"), pDoc->GetLatencyEndMode() );
@@ -1450,7 +1450,7 @@ void wxStfParentFrame::OnLWindow(wxCommandEvent& WXUNUSED(event)) {
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL) {
         // Select
-        if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(wxID_LATENCYWINDOW)) {
+        if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYWINDOW)) {
             wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyWindowMode"), stf::windowMode );
             pDoc->SetLatencyWindowMode(stf::windowMode);
         } else {
@@ -1462,19 +1462,19 @@ void wxStfParentFrame::OnLWindow(wxCommandEvent& WXUNUSED(event)) {
 }
 
 stf::cursor_type wxStfParentFrame::GetMouseQual() const {
-    if (m_cursorToolBar->GetToolToggled(wxID_TOOL_MEASURE))
+    if (m_cursorToolBar->GetToolToggled(ID_TOOL_MEASURE))
         return stf::measure_cursor;
-    if (m_cursorToolBar->GetToolToggled(wxID_TOOL_PEAK))
+    if (m_cursorToolBar->GetToolToggled(ID_TOOL_PEAK))
         return stf::peak_cursor;
-    if (m_cursorToolBar->GetToolToggled(wxID_TOOL_BASE))
+    if (m_cursorToolBar->GetToolToggled(ID_TOOL_BASE))
         return stf::base_cursor;
-    if (m_cursorToolBar->GetToolToggled(wxID_TOOL_DECAY))
+    if (m_cursorToolBar->GetToolToggled(ID_TOOL_DECAY))
         return stf::decay_cursor;
-    if (m_cursorToolBar->GetToolToggled(wxID_TOOL_LATENCY))
+    if (m_cursorToolBar->GetToolToggled(ID_TOOL_LATENCY))
         return stf::latency_cursor;
-    if (m_cursorToolBar->GetToolToggled(wxID_TOOL_ZOOM))
+    if (m_cursorToolBar->GetToolToggled(ID_TOOL_ZOOM))
         return stf::zoom_cursor;
-    if (m_cursorToolBar->GetToolToggled(wxID_TOOL_EVENT))
+    if (m_cursorToolBar->GetToolToggled(ID_TOOL_EVENT))
         return stf::event_cursor;
     return stf::undefined_cursor;
 }
@@ -1482,41 +1482,41 @@ stf::cursor_type wxStfParentFrame::GetMouseQual() const {
 void wxStfParentFrame::SetMouseQual(stf::cursor_type value) {
 
     // Need to set everything to false explicitly first:
-    m_cursorToolBar->ToggleTool(wxID_TOOL_MEASURE,false);
-    m_cursorToolBar->ToggleTool(wxID_TOOL_PEAK,false);
-    m_cursorToolBar->ToggleTool(wxID_TOOL_BASE,false);
-    m_cursorToolBar->ToggleTool(wxID_TOOL_DECAY,false);
-    m_cursorToolBar->ToggleTool(wxID_TOOL_LATENCY,false);
-    m_cursorToolBar->ToggleTool(wxID_TOOL_ZOOM,false);
-    m_cursorToolBar->ToggleTool(wxID_TOOL_EVENT,false);
+    m_cursorToolBar->ToggleTool(ID_TOOL_MEASURE,false);
+    m_cursorToolBar->ToggleTool(ID_TOOL_PEAK,false);
+    m_cursorToolBar->ToggleTool(ID_TOOL_BASE,false);
+    m_cursorToolBar->ToggleTool(ID_TOOL_DECAY,false);
+    m_cursorToolBar->ToggleTool(ID_TOOL_LATENCY,false);
+    m_cursorToolBar->ToggleTool(ID_TOOL_ZOOM,false);
+    m_cursorToolBar->ToggleTool(ID_TOOL_EVENT,false);
 
     // Then set the state of the selected button:
     if (value==stf::measure_cursor)
-        m_cursorToolBar->ToggleTool(wxID_TOOL_MEASURE,true);
+        m_cursorToolBar->ToggleTool(ID_TOOL_MEASURE,true);
     if (value==stf::peak_cursor)
-        m_cursorToolBar->ToggleTool(wxID_TOOL_PEAK,true);
+        m_cursorToolBar->ToggleTool(ID_TOOL_PEAK,true);
     if (value==stf::base_cursor)
-        m_cursorToolBar->ToggleTool(wxID_TOOL_BASE,true);
+        m_cursorToolBar->ToggleTool(ID_TOOL_BASE,true);
     if (value==stf::decay_cursor)
-        m_cursorToolBar->ToggleTool(wxID_TOOL_DECAY,true);
+        m_cursorToolBar->ToggleTool(ID_TOOL_DECAY,true);
     if (value==stf::latency_cursor)
-        m_cursorToolBar->ToggleTool(wxID_TOOL_LATENCY,true);
+        m_cursorToolBar->ToggleTool(ID_TOOL_LATENCY,true);
     if (value==stf::zoom_cursor)
-        m_cursorToolBar->ToggleTool(wxID_TOOL_ZOOM,true);
+        m_cursorToolBar->ToggleTool(ID_TOOL_ZOOM,true);
     if (value==stf::event_cursor)
-        m_cursorToolBar->ToggleTool(wxID_TOOL_EVENT,true);
+        m_cursorToolBar->ToggleTool(ID_TOOL_EVENT,true);
 
     m_cursorToolBar->Refresh();
 }
 
 void wxStfParentFrame::SetSelectedButton(bool selected) {
-    m_cursorToolBar->ToggleTool(wxID_TOOL_SELECT, selected);
+    m_cursorToolBar->ToggleTool(ID_TOOL_SELECT, selected);
     m_cursorToolBar->Refresh();
 }
 
 stf::zoom_channels wxStfParentFrame::GetZoomQual() const {
-    if (m_scaleToolBar->GetToolToggled(wxID_TOOL_CH1)) {
-        if (m_scaleToolBar->GetToolToggled(wxID_TOOL_CH2)) {
+    if (m_scaleToolBar->GetToolToggled(ID_TOOL_CH1)) {
+        if (m_scaleToolBar->GetToolToggled(ID_TOOL_CH2)) {
             return stf::zoomboth;
         } else {
             return stf::zoomch1;
@@ -1527,16 +1527,16 @@ stf::zoom_channels wxStfParentFrame::GetZoomQual() const {
 
 void wxStfParentFrame::SetZoomQual(stf::zoom_channels value) {
     if (value==stf::zoomch1) {
-        m_scaleToolBar->ToggleTool(wxID_TOOL_CH1,true);
-        m_scaleToolBar->ToggleTool(wxID_TOOL_CH2,false);
+        m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
+        m_scaleToolBar->ToggleTool(ID_TOOL_CH2,false);
     }
     if (value==stf::zoomch2) {
-        m_scaleToolBar->ToggleTool(wxID_TOOL_CH1,false);
-        m_scaleToolBar->ToggleTool(wxID_TOOL_CH2,true);
+        m_scaleToolBar->ToggleTool(ID_TOOL_CH1,false);
+        m_scaleToolBar->ToggleTool(ID_TOOL_CH2,true);
     }
     if (value==stf::zoomboth) {
-        m_scaleToolBar->ToggleTool(wxID_TOOL_CH1,true);
-        m_scaleToolBar->ToggleTool(wxID_TOOL_CH2,true);
+        m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
+        m_scaleToolBar->ToggleTool(ID_TOOL_CH2,true);
     }
     m_scaleToolBar->Refresh();
 }

@@ -27,13 +27,14 @@
 #include <wx/init.h>
 #include <wx/datetime.h>
 #include <wx/filename.h>
+#include <wx/stockitem.h>
 
 #ifdef __BORLANDC__
 #pragma hdrstop
 #endif
 
 #ifndef WX_PRECOMP
-#include "wx/wx.h"
+#include <wx/wx.h>
 #endif
 
 #if !wxUSE_DOC_VIEW_ARCHITECTURE
@@ -87,17 +88,18 @@ wxStfParentFrame *frame = (wxStfParentFrame *) NULL;
 BEGIN_EVENT_TABLE( wxStfApp, wxApp )
 EVT_KEY_DOWN( wxStfApp::OnKeyDown )
 
-EVT_MENU( wxID_CURSORS, wxStfApp::OnCursorSettings )
-EVT_MENU( wxID_NEWFROMSELECTED, wxStfApp::OnNewfromselected )
-EVT_MENU( wxID_NEWFROMALL, wxStfApp::OnNewfromall )
-EVT_MENU( wxID_APPLYTOALL, wxStfApp::OnApplytoall )
+EVT_MENU( ID_CURSORS, wxStfApp::OnCursorSettings )
+EVT_MENU( ID_NEWFROMSELECTED, wxStfApp::OnNewfromselected )
+EVT_MENU( ID_NEWFROMALL, wxStfApp::OnNewfromall )
+EVT_MENU( ID_APPLYTOALL, wxStfApp::OnApplytoall )
+
 #ifdef WITH_PYTHON
-EVT_MENU( wxID_IMPORTPYTHON, wxStfApp::OnPythonImport )
+EVT_MENU( ID_IMPORTPYTHON, wxStfApp::OnPythonImport )
 #endif // WITH_PYTHON
 END_EVENT_TABLE()
 
 wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isHires(false), txtImport(), funcLib(),
-    pluginLib(), CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ), m_file_menu(0), m_fileToLoad(wxEmptyString), activeDoc(0) {}
+    pluginLib(), CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ), /*m_file_menu(0),*/ m_fileToLoad(wxEmptyString), activeDoc(0) {}
 
 void wxStfApp::OnInitCmdLine(wxCmdLineParser& parser)
 {
@@ -200,12 +202,12 @@ bool wxStfApp::OnInit(void)
                                      wxT("Text Document"), wxT("Text View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 
-	// read last directory from config:
-	wxString lastDir = wxGetProfileString( wxT("Settings"), wxT("Last directory"), wxT("") );
-	if (lastDir == wxT("") || !wxFileName::DirExists( lastDir )) {
-		lastDir = wxFileName::GetCwd();
-	}
-	docManager->SetLastDirectory( lastDir );
+    // read last directory from config:
+    wxString lastDir = wxGetProfileString( wxT("Settings"), wxT("Last directory"), wxT("") );
+    if (lastDir == wxT("") || !wxFileName::DirExists( lastDir )) {
+        lastDir = wxFileName::GetCwd();
+    }
+    docManager->SetLastDirectory( lastDir );
 
     //// Create the main frame window
     frame = new wxStfParentFrame(docManager, (wxFrame *)NULL,
@@ -223,23 +225,23 @@ bool wxStfApp::OnInit(void)
     // frame->SetIcon(wxIcon(wxT("doc.xbm")));
 
     //// Make a menubar
-    m_file_menu = new wxMenu;
+    wxMenu* m_file_menu = new wxMenu;
     //	wxMenu *edit_menu = (wxMenu *) NULL;
 
-    m_file_menu->Append(wxID_OPEN, wxT("&Open...\tCtrl-X"));
-
+    m_file_menu->Append(wxID_OPEN);
+    
     m_file_menu->AppendSeparator();
     m_file_menu->Append(ID_CONVERT, wxT("&Convert file series..."));
     m_file_menu->AppendSeparator();
 #ifdef WITH_PYTHON
     m_file_menu->Append(
-                        wxID_IMPORTPYTHON,
+                        ID_IMPORTPYTHON,
                         wxT("&Import Python module...\tCtrl+I"),
                         wxT("Import or reload user-defined Python modules")
                         );
 #endif // WITH_PYTHON
     m_file_menu->AppendSeparator();
-    m_file_menu->Append(wxID_EXIT, wxT("E&xit\tAlt-X"));
+    m_file_menu->Append(wxID_EXIT);
 
     // A nice touch: a history of files visited. Use this menu.
     GetDocManager()->FileHistoryLoad( *config );
@@ -247,13 +249,13 @@ bool wxStfApp::OnInit(void)
     GetDocManager()->FileHistoryAddFilesToMenu();
 
     wxMenu *help_menu = new wxMenu;
-    help_menu->Append(wxID_HELP, wxT("Online &help\tF1"));
-    help_menu->Append(wxID_UPDATE, wxT("&Check for updates"));
-    help_menu->Append(wxID_ABOUT, wxT("&About"));
+    help_menu->Append(wxID_HELP);
+    help_menu->Append(ID_UPDATE, wxT("&Check for updates"));
+    help_menu->Append(wxID_ABOUT);
 
     wxMenu *m_view_menu = new wxMenu;
 #ifdef WITH_PYTHON
-    m_view_menu->Append(wxID_VIEW_SHELL, wxT("&Toggle Python shell"),
+    m_view_menu->Append(ID_VIEW_SHELL, wxT("&Toggle Python shell"),
                         wxT("Shows or hides the Python shell"));
 #endif // WITH_PYTHON
 
@@ -508,39 +510,39 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     //// Make a menubar
     wxMenu *file_menu = new wxMenu;
 
-    file_menu->Append(wxID_OPEN, wxT("&Open..."));
-    file_menu->Append(wxID_CLOSE, wxT("&Close"));
+    file_menu->Append(wxID_OPEN);
+    file_menu->Append(wxID_CLOSE);
     //	file_menu->Append(wxID_SAVE, wxT("&Save"));
-    file_menu->Append(wxID_SAVEAS, wxT("Save &As..."));
+    file_menu->Append(wxID_SAVEAS);
     file_menu->AppendSeparator();
 
-    file_menu->Append(wxID_EXPORTIMAGE, wxT("Export &image..."));
+    file_menu->Append(ID_EXPORTIMAGE, wxT("Export &image..."));
 
     wxMenu* vectorSub=new wxMenu;
-    vectorSub->Append(wxID_EXPORTPS, wxT("Export &postscript..."));
-    vectorSub->Append(wxID_EXPORTLATEX, wxT("Export &latex..."));
-    vectorSub->Append(wxID_EXPORTSVG, wxT("Export &svg..."));
+    vectorSub->Append(ID_EXPORTPS, wxT("Export &postscript..."));
+    vectorSub->Append(ID_EXPORTLATEX, wxT("Export &latex..."));
+    vectorSub->Append(ID_EXPORTSVG, wxT("Export &svg..."));
     file_menu->AppendSubMenu(vectorSub, wxT("Export &vector graphics"));
 
     file_menu->Append(ID_CONVERT, wxT("&Convert file series..."));
     file_menu->AppendSeparator();
-    file_menu->Append(wxID_FILEINFO, wxT("File information..."));
+    file_menu->Append(ID_FILEINFO, wxT("File information..."));
 
     file_menu->AppendSeparator();
-    file_menu->Append(WXPRINT_PRINT, wxT("&Print..."));
-    file_menu->Append(WXPRINT_PAGE_SETUP, wxT("Print &Setup..."));
+    file_menu->Append(ID_PRINT_PRINT, wxT("&Print..."));
+    file_menu->Append(ID_PRINT_PAGE_SETUP, wxT("Print &Setup..."));
 
     file_menu->AppendSeparator();
 #ifdef WITH_PYTHON
     file_menu->Append(
-                        wxID_IMPORTPYTHON,
+                        ID_IMPORTPYTHON,
                         wxT("&Import Python module...\tCtrl+I"),
                         wxT("Import or reload user-defined Python modules")
                         );
 #endif // WITH_PYTHON
 
     file_menu->AppendSeparator();
-    file_menu->Append(wxID_EXIT, wxT("E&xit"));
+    file_menu->Append(wxID_EXIT);
 
     ((wxStfDoc*)doc)->SetFileMenu( file_menu );
     GetDocManager()->FileHistoryUseMenu(file_menu);
@@ -548,64 +550,64 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
 
     wxMenu* m_edit_menu=new wxMenu;
     m_edit_menu->Append(
-                        wxID_CURSORS,
+                        ID_CURSORS,
                         wxT("&Cursor settings..."),
                         wxT("Set cursor position, direction, etc.")
                         );
     m_edit_menu->AppendSeparator();
     m_edit_menu->Append(
-                        wxID_MYSELECTALL,
+                        ID_MYSELECTALL,
                         wxT("&Select all traces"),
                         wxT("Select all traces in this file")
                         );
     m_edit_menu->Append(
-                        wxID_SELECTSOME,
+                        ID_SELECTSOME,
                         wxT("S&elect some traces..."),
                         wxT("Select every n-th trace in this file")
                         );
     m_edit_menu->Append(
-                        wxID_UNSELECTALL,
+                        ID_UNSELECTALL,
                         wxT("&Unselect all traces"),
                         wxT("Unselect all traces in this file")
                         );
     m_edit_menu->Append(
-                        wxID_UNSELECTSOME,
+                        ID_UNSELECTSOME,
                         wxT("U&nselect some traces"),
                         wxT("Unselect some traces in this file")
                         );
     wxMenu *editSub=new wxMenu;
     editSub->Append(
-                    wxID_NEWFROMSELECTEDTHIS,
+                    ID_NEWFROMSELECTEDTHIS,
                     wxT("&selected traces from this file"),
                     wxT("Create a new window showing all selected traces from this file")
                     );
     editSub->Append(
-                    wxID_NEWFROMSELECTED,
+                    ID_NEWFROMSELECTED,
                     wxT("&selected traces from all files"),
                     wxT("Create a new window showing all selected traces from all files")
                     );
-    editSub->Append(wxID_NEWFROMALL,
+    editSub->Append(ID_NEWFROMALL,
                     wxT("&all traces from all files"),
                     wxT("Create a new window showing all traces from all files")
                     );
     m_edit_menu->AppendSeparator();
     m_edit_menu->AppendSubMenu(editSub,wxT("New window with..."));
     m_edit_menu->Append(
-                        wxID_CONCATENATE,
+                        ID_CONCATENATE,
                         wxT("&Concatenate selected traces"),
                         wxT("Create one large trace by merging selected traces in this file")
                         );
     wxMenu *latencyStartSub=new wxMenu;
-    latencyStartSub->AppendCheckItem(wxID_LATENCYSTART_MAXSLOPE, wxT("max. slope of second channel"));
-    latencyStartSub->AppendCheckItem(wxID_LATENCYSTART_HALFRISE, wxT("half-maximal amplitude of second channel"));
-    latencyStartSub->AppendCheckItem(wxID_LATENCYSTART_PEAK, wxT("peak of second channel"));
-    latencyStartSub->AppendCheckItem(wxID_LATENCYSTART_MANUAL, wxT("Manual"));
+    latencyStartSub->AppendCheckItem(ID_LATENCYSTART_MAXSLOPE, wxT("max. slope of second channel"));
+    latencyStartSub->AppendCheckItem(ID_LATENCYSTART_HALFRISE, wxT("half-maximal amplitude of second channel"));
+    latencyStartSub->AppendCheckItem(ID_LATENCYSTART_PEAK, wxT("peak of second channel"));
+    latencyStartSub->AppendCheckItem(ID_LATENCYSTART_MANUAL, wxT("Manual"));
     wxMenu *latencyEndSub=new wxMenu;
-    latencyEndSub->AppendCheckItem(wxID_LATENCYEND_FOOT, wxT("beginning of event in active channel"));
-    latencyEndSub->AppendCheckItem(wxID_LATENCYEND_MAXSLOPE, wxT("max. slope of active channel"));
-    latencyEndSub->AppendCheckItem(wxID_LATENCYEND_HALFRISE, wxT("half-maximal amplitude of active channel"));
-    latencyEndSub->AppendCheckItem(wxID_LATENCYEND_PEAK, wxT("peak of active channel"));
-    latencyEndSub->AppendCheckItem(wxID_LATENCYEND_MANUAL, wxT("Manual"));
+    latencyEndSub->AppendCheckItem(ID_LATENCYEND_FOOT, wxT("beginning of event in active channel"));
+    latencyEndSub->AppendCheckItem(ID_LATENCYEND_MAXSLOPE, wxT("max. slope of active channel"));
+    latencyEndSub->AppendCheckItem(ID_LATENCYEND_HALFRISE, wxT("half-maximal amplitude of active channel"));
+    latencyEndSub->AppendCheckItem(ID_LATENCYEND_PEAK, wxT("peak of active channel"));
+    latencyEndSub->AppendCheckItem(ID_LATENCYEND_MANUAL, wxT("Manual"));
     m_edit_menu->AppendSeparator();
     m_edit_menu->AppendSubMenu(
                                latencyStartSub,
@@ -618,106 +620,106 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
                                wxT("Choose ending point of latency measurement")
                                );
     m_edit_menu->AppendCheckItem(
-                                 wxID_LATENCYWINDOW,
+                                 ID_LATENCYWINDOW,
                                  wxT("Use peak window for latency cursor"),
                                  wxT("Uses the current peak window to measure the peak in the inactive channel")
                                  );
     wxMenu* m_view_menu = new wxMenu;
     m_view_menu->Append(
-                        wxID_VIEW_RESULTS,
+                        ID_VIEW_RESULTS,
                         wxT("&Results..."),
                         wxT("Select analysis results to be shown in the results table")
                         );
     m_view_menu->Append(
-                        wxID_APPLYTOALL,
+                        ID_APPLYTOALL,
                         wxT("&Apply scaling to all windows"),
                         wxT("Apply this trace's scaling to all other windows")
                         );
     m_view_menu->AppendCheckItem(
-                                 wxID_SCALE,
+                                 ID_SCALE,
                                  wxT("&View scale bars"),
                                  wxT("If checked, use scale bars rather than coordinates")
                                  );
     m_view_menu->AppendCheckItem(
-                                 wxID_HIRES,
+                                 ID_HIRES,
                                  wxT("View &full resolution"),
                                  wxT("If checked, plot large traces at high resolution")
                                  );
     m_view_menu->AppendSeparator();
-    m_view_menu->Append(wxID_SAVEPERSPECTIVE,wxT("&Save window positions"));
-    m_view_menu->Append(wxID_LOADPERSPECTIVE,wxT("&Load window positions"));
-    m_view_menu->Append(wxID_RESTOREPERSPECTIVE,wxT("&Restore default window positions"));
+    m_view_menu->Append(ID_SAVEPERSPECTIVE,wxT("&Save window positions"));
+    m_view_menu->Append(ID_LOADPERSPECTIVE,wxT("&Load window positions"));
+    m_view_menu->Append(ID_RESTOREPERSPECTIVE,wxT("&Restore default window positions"));
     m_view_menu->AppendSeparator();
 #ifdef WITH_PYTHON
-    m_view_menu->Append(wxID_VIEW_SHELL, wxT("&Toggle Python shell"),
+    m_view_menu->Append(ID_VIEW_SHELL, wxT("&Toggle Python shell"),
                         wxT("Shows or hides the Python shell"));
 #endif // WITH_PYTHON
 
     wxMenu *analysis_menu = new wxMenu;
     wxMenu *fitSub = new wxMenu;
     fitSub->Append(
-                   wxID_FIT,
+                   ID_FIT,
                    wxT("&Nonlinear regression..."),
                    wxT("Fit a function to this trace between fit cursors")
                    );
     fitSub->Append(
-                   wxID_LFIT,
+                   ID_LFIT,
                    wxT("&Linear fit..."),
                    wxT("Fit a linear function to this trace between fit cursors")
                    );
     analysis_menu->AppendSubMenu(fitSub, wxT("&Fit"));
     wxMenu *transformSub = new wxMenu;
     transformSub->Append(
-                         wxID_LOG,
+                         ID_LOG,
                          wxT("&Logarithmic (base e)..."),
                          wxT("Transform selected traces logarithmically")
                          );
     analysis_menu->AppendSubMenu(transformSub, wxT("&Transform"));
     analysis_menu->Append(
-                          wxID_MULTIPLY,
+                          ID_MULTIPLY,
                           wxT("&Multiply..."),
                           wxT("Multiply selected traces")
                           );
     analysis_menu->Append(
-                          wxID_INTEGRATE,
+                          ID_INTEGRATE,
                           wxT("&Integrate"),
                           wxT("Integrate this trace between fit cursors")
                           );
     analysis_menu->Append(
-                          wxID_DIFFERENTIATE,
+                          ID_DIFFERENTIATE,
                           wxT("&Differentiate"),
                           wxT("Differentiate selected traces")
                           );
     analysis_menu->Append(
-                          wxID_SUBTRACTBASE,
+                          ID_SUBTRACTBASE,
                           wxT("&Subtract baseline"),
                           wxT("Subtract baseline from selected traces")
                           );
     analysis_menu->Append(
-                          wxID_FILTER,
+                          ID_FILTER,
                           wxT("F&ilter..."),
                           wxT("Filter selected traces")
                           );
     analysis_menu->Append(
-                          wxID_SPECTRUM,
+                          ID_SPECTRUM,
                           wxT("&Power spectrum..."),
                           wxT("Compute an estimate of the power spectrum of the selected traces")
                           );
     analysis_menu->Append(
-                          wxID_POVERN,
+                          ID_POVERN,
                           wxT("P over &N correction..."),
                           wxT("Apply P over N correction to all traces of this file")
                           );
     wxMenu* eventPlotSub = new wxMenu;
-    eventPlotSub->Append(wxID_PLOTCRITERION, wxT("&Detection criterion..."));
-    eventPlotSub->Append(wxID_PLOTCORRELATION, wxT("&Correlation coefficient..."));
+    eventPlotSub->Append(ID_PLOTCRITERION, wxT("&Detection criterion..."));
+    eventPlotSub->Append(ID_PLOTCORRELATION, wxT("&Correlation coefficient..."));
     wxMenu* eventSub = new wxMenu;
     eventSub->AppendSubMenu(eventPlotSub,wxT("Plot"));
-    eventSub->Append(wxID_EXTRACT,wxT("&Template matching..."));
-    eventSub->Append(wxID_THRESHOLD,wxT("Threshold &crossing..."));
+    eventSub->Append(ID_EXTRACT,wxT("&Template matching..."));
+    eventSub->Append(ID_THRESHOLD,wxT("Threshold &crossing..."));
     analysis_menu->AppendSubMenu(eventSub,wxT("Event detection"));
     analysis_menu->Append(
-                          wxID_BATCH,
+                          ID_BATCH,
                           wxT("&Batch analysis..."),
                           wxT("Analyze selected traces and show results in a table")
                           );
@@ -726,7 +728,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     wxMenu* userdefSub=new wxMenu;
     for (std::size_t n=0;n<GetPluginLib().size();++n) {
         userdefSub->Append(
-                           wxID_USERDEF1+(int)n,
+                           ID_USERDEF1+(int)n,
                            GetPluginLib()[n].menuEntry
                            );
     }
@@ -735,7 +737,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     wxMenu *help_menu = new wxMenu;
     help_menu->Append(wxID_HELP, wxT("Online &help\tF1"));
     help_menu->Append(wxID_ABOUT, wxT("&About"));
-    help_menu->Append(wxID_UPDATE, wxT("&Check for updates"));
+    help_menu->Append(ID_UPDATE, wxT("&Check for updates"));
 
     wxMenuBar *menu_bar = new wxMenuBar;
 
@@ -1297,13 +1299,13 @@ void wxStfApp::OnPythonImport(wxCommandEvent& WXUNUSED(event)) {
 
     // show a file selection dialog menu.
     wxString pyFilter; // file filter only show *.py
-    pyFilter = wxT("Python file (*.py)|*.py|");
+    pyFilter = wxT("Python file (*.py)|*.py");
     wxFileDialog LoadModuleDialog (frame,
                 wxT("Import/reload Python module"),
                 wxT(""),
                 wxT(""),
                 pyFilter,
-                wxFD_OPEN | wxFD_OVERWRITE_PROMPT | wxFD_PREVIEW );
+                wxFD_OPEN | wxFD_PREVIEW );
 
     if (LoadModuleDialog.ShowModal() == wxID_OK) {
         wxString modulelocation = LoadModuleDialog.GetPath();
