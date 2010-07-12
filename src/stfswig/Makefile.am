@@ -1,19 +1,4 @@
 if BUILD_MODULE
-noinst_LTLIBRARIES = libstfioswig.la
-
-libstfioswig_la_SOURCES = $(srcdir)/stfioswig_wrap.cxx $(srcdir)/stfioswig.cxx # $(SWIG_SOURCES)
-noinst_HEADERS = stfioswig.h
-
-$(srcdir)/stfioswig_wrap.cxx : $(srcdir)/stfioswig.i
-	$(SWIG) $(SWIG_PYTHON_OPT) -o $@ $<
-
-INCLUDES = $(LIBNUMPY_INCLUDES)
-
-libstfioswig_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
-libstfioswig_la_CXXFLAGS = $(OPT_CXXFLAGS)
-libstfioswig_la_LDFLAGS = $(LIBPYTHON_LDFLAGS)
-
-EXTRA_DIST = stfioswig.i stfio.py hdf5tools.py
 
 else
 if BUILD_PYTHON

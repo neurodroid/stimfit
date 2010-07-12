@@ -5,12 +5,12 @@ lib_LTLIBRARIES = libstfio.la
 
 PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
 PYTHON_ADDLDFLAGS = $(LIBPYTHON_LDFLAGS)
-PYTHON_ADDLIBS = ./src/stfswig/libstfioswig.la
-INCLUDES = $(PYTHON_ADDINCLUDES)
+PYTHON_ADDLIBS = 
 
-libstfio_la_SOURCES = ./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
-	    ./src/core/core.cpp \
-	    ./src/core/filelib/cfslib.cpp ./src/core/filelib/cfs.cpp ./src/core/filelib/hdf5lib.cpp
+libstfio_la_SOURCES = ./src/stfswig/stfioswig_wrap.cxx ./src/stfswig/stfioswig.cxx \
+	./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
+	./src/core/core.cpp \
+	./src/core/filelib/cfslib.cpp ./src/core/filelib/cfs.cpp ./src/core/filelib/hdf5lib.cpp
             # ./src/core/filelib/abflib.cpp ./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
             # ./src/core/filelib/hekalib.cpp \
 	    # ./src/core/filelib/axon/AxAbfFio32/abffiles.cpp \
@@ -35,7 +35,7 @@ libstfio_la_SOURCES = ./src/core/channel.cpp ./src/core/section.cpp ./src/core/r
             # ./src/core/filelib/axg/stringUtils.cpp \
             # ./src/core/filelib/axg/byteswap.cpp
 # 
-noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
+noinst_HEADERS = ./src/stfswig/stfioswig.h ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
             ./src/core/stimdefs.h \
             ./src/core/filelib/cfslib.h ./src/core/filelib/hdf5lib.h\
             ./src/core/filelib/abflib.h ./src/core/filelib/atflib.h ./src/core/filelib/axglib.h \
@@ -74,6 +74,14 @@ noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.
             ./src/core/filelib/axg/byteswap.h \
             ./src/core/filelib/axg/longdef.h
 
+$(srcdir)/src/stfswig/stfioswig_wrap.cxx : ./src/stfswig/stfioswig.i
+	$(SWIG) $(SWIG_PYTHON_OPT) -o $@ $<
+
+INCLUDES = $(LIBNUMPY_INCLUDES) $(PYTHON_ADDINCLUDES)
+
+EXTRA_DIST = ./src/stfswig/stfioswig.i ./src/stfswig/stfio.py ./src/stfswig/hdf5tools.py
+
+libstfio_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
 libstfio_la_CXXFLAGS = $(OPT_CXXFLAGS)
 libstfio_la_LDFLAGS = -lhdf5 -lhdf5_hl $(PYTHON_ADDLDFLAGS)
 libstfio_la_LIBADD = $(PYTHON_ADDLIBS)
