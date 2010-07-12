@@ -10,30 +10,30 @@ INCLUDES = $(PYTHON_ADDINCLUDES)
 
 libstfio_la_SOURCES = ./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
 	    ./src/core/core.cpp \
-	    ./src/core/filelib/cfslib.cpp ./src/core/filelib/cfs.cpp ./src/core/filelib/hdf5lib.cpp \
-            ./src/core/filelib/abflib.cpp ./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
-            ./src/core/filelib/hekalib.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/abffiles.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/csynch.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/filedesc.cpp \
-	    ./src/core/filelib/axon/Common/FileReadCache.cpp \
-	    ./src/core/filelib/axon/Common/FileIO.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/abfheadr.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/abfhwave.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/Oldheadr.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/abfutil.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/msbincvt.cpp \
-	    ./src/core/filelib/axon/Common/unix.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/abferror.cpp \
-            ./src/core/filelib/axon/AxAtfFio32/axatffio32.cpp \
-            ./src/core/filelib/axon/AxAtfFio32/fileio2.cpp \
-            ./src/core/filelib/axon2/ProtocolReaderABF2.cpp \
-            ./src/core/filelib/axon2/SimpleStringCache.cpp \
-	    ./src/core/filelib/axon2/abf2headr.cpp \
-            ./src/core/filelib/axg/AxoGraph_ReadWrite.cpp \
-            ./src/core/filelib/axg/fileUtils.cpp \
-            ./src/core/filelib/axg/stringUtils.cpp \
-            ./src/core/filelib/axg/byteswap.cpp
+	    ./src/core/filelib/cfslib.cpp ./src/core/filelib/cfs.cpp ./src/core/filelib/hdf5lib.cpp
+            # ./src/core/filelib/abflib.cpp ./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
+            # ./src/core/filelib/hekalib.cpp \
+	    # ./src/core/filelib/axon/AxAbfFio32/abffiles.cpp \
+	    # ./src/core/filelib/axon/AxAbfFio32/csynch.cpp \
+	    # ./src/core/filelib/axon/AxAbfFio32/filedesc.cpp \
+	    # ./src/core/filelib/axon/Common/FileReadCache.cpp \
+	    # ./src/core/filelib/axon/Common/FileIO.cpp \
+	    # ./src/core/filelib/axon/AxAbfFio32/abfheadr.cpp \
+	    # ./src/core/filelib/axon/AxAbfFio32/abfhwave.cpp \
+	    # ./src/core/filelib/axon/AxAbfFio32/Oldheadr.cpp \
+	    # ./src/core/filelib/axon/AxAbfFio32/abfutil.cpp \
+	    # ./src/core/filelib/axon/AxAbfFio32/msbincvt.cpp \
+	    # ./src/core/filelib/axon/Common/unix.cpp \
+	    # ./src/core/filelib/axon/AxAbfFio32/abferror.cpp \
+            # ./src/core/filelib/axon/AxAtfFio32/axatffio32.cpp \
+            # ./src/core/filelib/axon/AxAtfFio32/fileio2.cpp \
+            # ./src/core/filelib/axon2/ProtocolReaderABF2.cpp \
+            # ./src/core/filelib/axon2/SimpleStringCache.cpp \
+	    # ./src/core/filelib/axon2/abf2headr.cpp \
+            # ./src/core/filelib/axg/AxoGraph_ReadWrite.cpp \
+            # ./src/core/filelib/axg/fileUtils.cpp \
+            # ./src/core/filelib/axg/stringUtils.cpp \
+            # ./src/core/filelib/axg/byteswap.cpp
 # 
 noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
             ./src/core/stimdefs.h \
@@ -74,11 +74,15 @@ noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.
             ./src/core/filelib/axg/byteswap.h \
             ./src/core/filelib/axg/longdef.h
 
+libstfio_la_CXXFLAGS = $(OPT_CXXFLAGS)
+libstfio_la_LDFLAGS = -lhdf5 -lhdf5_hl $(PYTHON_ADDLDFLAGS)
+libstfio_la_LIBADD = $(PYTHON_ADDLIBS)
+
 install-exec-hook:
 	$(MKDIR_P) ${PYTHON_SITE_PKG}/stimfit
 	$(LN_S) -f ${prefix}/lib/${STFIO_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stimfit/_stfio.so
-	cp -p $(srcdir)/hdf5tools.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/stfio.py ${PYTHON_SITE_PKG}/stimfit
+	cp -p $(srcdir)/src/stfswig/hdf5tools.py ${PYTHON_SITE_PKG}/stimfit
+	cp -p $(srcdir)/src/stfswig/stfio.py ${PYTHON_SITE_PKG}/stimfit
 	echo stimfit > ${PYTHON_SITE_PKG}/stimfit.pth
 
 else

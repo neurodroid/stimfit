@@ -3771,7 +3771,7 @@ CFSAPI(void) GetVarVal(short  handle,                /* program file handle */
             pnext = pfileInfo->FVPoint.nameP + varNo + 1;
 
 /* point to variable in its data (char) array, using its offset, size */
-            sourceP = pfileInfo->FVPoint.dataP + size;
+            sourceP = (TpStr)pfileInfo->FVPoint.dataP + size;
             size = (short)(pnext->vSize - size); /* set size from offsets */
 
 /* 4. move the variable to the location specified */
@@ -3825,7 +3825,7 @@ CFSAPI(void) GetVarVal(short  handle,                /* program file handle */
             pInterDesc = pfileInfo->DSPoint.nameP + varNo;
             size    = pInterDesc->vSize;          /* This is offset for now */
             pnext   = pfileInfo->DSPoint.nameP + varNo + 1;
-            sourceP = pfileInfo->DSPoint.dataP + size;
+            sourceP = (TpStr)pfileInfo->DSPoint.dataP + size;
             size = (short)(pnext->vSize - size);   /* set size from offsets */
                                 /* if variable is lstr things are different */
             if (pInterDesc->vType == LSTR)
