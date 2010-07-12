@@ -13,9 +13,13 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-#include "wx/wxprec.h"
-#include "wx/progdlg.h"
+#ifndef MODULE_ONLY
+#include <wx/wxprec.h>
+#include <wx/progdlg.h>
 #include <wx/msgdlg.h>
+#endif
+
+#include <sstream>
 
 #include "./cfslib.h"
 #include "./cfs.h"
@@ -51,7 +55,7 @@ const int CFSMAXBYTES=64000; // adopted from FPCfs.ips by U Froebe
 }
 
 stf::CFS_IFile::CFS_IFile(const wxString& filename) {
-    myHandle=OpenCFSFile(filename.char_str(),0,1);
+    myHandle=OpenCFSFile(filename.c_str(),0,1);
 }
 
 stf::CFS_IFile::~CFS_IFile() {
@@ -66,7 +70,7 @@ stf::CFS_OFile::CFS_OFile(const wxString& filename,const wxString& comment,std::
     TVarDesc *c_DSArray, *c_fileArray;
     c_DSArray=NULL;
     c_fileArray=NULL;
-    myHandle=CreateCFSFile(filename.char_str(), comment.char_str(), 512, (short)nChannels,
+    myHandle=CreateCFSFile(filename.c_str(), comment.c_str(), 512, (short)nChannels,
         c_fileArray, c_DSArray, 0/*number of file vars*/,
         0/*number of section vars*/);
 }
@@ -142,7 +146,7 @@ bool stf::CFSError(wxString& errorMsg) {
 
 wxString stf::CFSReadVar(short fHandle,short varNo,short varKind) {
     wxString errorMsg;
-    wxString outputstream;
+    std::ostringstream outputstream;
     TUnits units;
     char description[22];
     short varSize=0;
@@ -150,11 +154,11 @@ wxString stf::CFSReadVar(short fHandle,short varNo,short varKind) {
     //Get description of a particular file variable
     //- see manual of CFS file system
     GetVarDesc(fHandle,varNo,varKind,&varSize,&varType,units,description);
-    if (CFSError(errorMsg)) throw std::runtime_error(std::string(errorMsg.char_str()));
+    if (CFSError(errorMsg)) throw std::runtime_error(std::string(errorMsg.c_str()));
     //I haven't found a way to directly pass a std::string to GetVarDesc;
     //passing &s_description[0] won't work correctly.
     // Added 11/27/06, CSH: Should be possible with vector<char>
-    wxString s_description(wxString( description, wxConvLocal ));
+    wxString s_description(description);
     if (s_description != wxT("Spare")) {
         switch (varType) {   //Begin switch 'varType'
             case INT1:
@@ -164,35 +168,35 @@ wxString stf::CFSReadVar(short fHandle,short varNo,short varKind) {
                 //Read the value of the file variable
                 //- see manual of CFS file system
                 GetVarVal(fHandle,varNo,varKind, 1,&shortBuffer);
-                if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
-                outputstream << s_description << wxT(" ") << shortBuffer << wxT(" ") << wxString( units, wxConvLocal );
+                if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
+                outputstream << s_description << wxT(" ") << shortBuffer << wxT(" ") << units;
                 break;
                        }
             case WRD1:
             case WRD2: {
                 unsigned short ushortBuffer=0;
                 GetVarVal(fHandle,varNo,varKind, 1,&ushortBuffer);
-                if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
-                outputstream << s_description << wxT(" ") << ushortBuffer << wxT(" ") << wxString( units, wxConvLocal );
+                if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
+                outputstream << s_description << wxT(" ") << ushortBuffer << wxT(" ") << units;
                 break;
                        }
             case RL4:
             case RL8: {
                 float floatBuffer=0;
                 GetVarVal(fHandle,varNo,varKind, 1,&floatBuffer);
-                if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
-                outputstream << s_description << wxT(" ") << floatBuffer << wxT(" ") << wxString( units, wxConvLocal );
+                if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
+                outputstream << s_description << wxT(" ") << floatBuffer << wxT(" ") << units;
                 break;
                       }
             case LSTR: {
                 std::vector<char> vc(varSize+2);
                 GetVarVal(fHandle,varNo,varKind, 1, &vc[0]);
-                if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
+                if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
                 std::string s(vc.begin(),vc.begin()+varSize+2);
                 if (s_description.substr(0,11) == wxT("ScriptBlock")) {
-                    outputstream << wxString( s.c_str(), wxConvLocal );
+                    outputstream << s;
                 } else {
-                    outputstream << s_description << wxT(" ") << wxString( s.c_str(), wxConvLocal );
+                    outputstream << s_description << wxT(" ") << s;
                 }
                 break;
                        }
@@ -200,19 +204,21 @@ wxString stf::CFSReadVar(short fHandle,short varNo,short varKind) {
         }	//End switch 'varType'
     }
     if (s_description.substr(0,11) != wxT("ScriptBlock") ) {
-        outputstream += wxT("\n");
+        outputstream << wxT("\n");
     }
-    return outputstream;
+    return outputstream.str();
 }
 
 bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
+#ifndef MODULE_ONLY
     wxProgressDialog progDlg(
         wxT("CED filing system export"),
         wxT("Starting file export"),
         100,
         NULL,
         wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL
-        );
+                             );
+#endif
     wxString errorMsg;
     if (fName.length()>1024) {
         throw std::runtime_error(
@@ -226,24 +232,25 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
     if (CFSFile.myHandle<0) {
         wxString errorMsg;
         CFSError(errorMsg);
-        throw std::runtime_error(std::string(errorMsg.char_str()));
+        throw std::runtime_error(std::string(errorMsg.c_str()));
     }
     for (std::size_t n_c=0;n_c<WData.size();++n_c) {
         SetFileChan(
             CFSFile.myHandle,
             (short)n_c,
-            WData[n_c].GetChannelName().char_str(),
-            WData[n_c].GetYUnits().char_str(),
+            WData[n_c].GetChannelName().c_str(),
+            WData[n_c].GetYUnits().c_str(),
             "ms\0" /* x units */,
             RL4 /* float */,
             EQUALSPACED /* MATRIX */,
             (short)(4*WData.size()) /* bytes between elements */,
             (short)n_c
             );
-        if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
+        if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
     }
 
     for (int n_section=0; n_section < (int)WData.GetChannelSize(0); n_section++) {
+#ifndef MODULE_ONLY
         wxString progStr;
         progStr << wxT("Writing section #") << n_section+1 << wxT(" of ") << (int)WData.GetChannelSize(0);
         progDlg.Update(
@@ -251,7 +258,7 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
             (int)((double)n_section/(double)WData.GetChannelSize(0)*100.0),
             progStr
             );
-
+#endif
         for (std::size_t n_c=0;n_c<WData.size();++n_c) {
             SetDSChan(
                 CFSFile.myHandle,
@@ -264,7 +271,7 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
                 (float)WData.GetXScale(),
                 0 /* x offset */
                 );
-            if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
+            if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
         }
 
         int maxBytes=CFSMAXBYTES/(int)WData.size();
@@ -300,36 +307,39 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
                 (WORD)nBlockBytes,
                 &faverage_small[0]
             );
-            if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
+            if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
         }	//End block loop
         InsertDS(CFSFile.myHandle, 0, noFlags);
-        if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
+        if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
     }	//End section loop
     return true;
 }
 
 void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progress ) {
+#ifndef MODULE_ONLY
     wxProgressDialog progDlg( wxT("CED filing system import"), wxT("Starting file import"),
-        100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
+                              100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
+#endif
+    
     wxString errorMsg;
     // Open old CFS File (read only) - see manual of CFS file system
     CFS_IFile CFSFile(fName);
     if (CFSFile.myHandle<0) {
         wxString errorMsg;
         CFSError(errorMsg);
-        throw std::runtime_error(std::string(errorMsg.char_str()));
+        throw std::runtime_error(std::string(errorMsg.c_str()));
     }
 
     //Get general Info of the file - see manual of CFS file system
     TDesc time, date;
     TComment comment;
     GetGenInfo(CFSFile.myHandle, time, date, comment);
-    if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
+    if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
     //Get characteristics of the file - see manual of CFS file system
     short channelsAvail=0, fileVars=0, DSVars=0;
     unsigned short dataSections=0;
     GetFileInfo(CFSFile.myHandle, &channelsAvail, &fileVars, &DSVars, &dataSections);
-    if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
+    if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
 
     //memory allocation
     ReturnData.resize(channelsAvail);
@@ -379,44 +389,45 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
         GetFileChan(CFSFile.myHandle, n_channel, &vchannel_name[0],
             &vyUnits[0], &vxUnits[0], &dataType, &dataKind,
             &spacing, &other);
-        if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
-        wxString channel_name(wxString( &vchannel_name[0], wxConvLocal )),
-            xUnits(wxString( &vxUnits[0], wxConvLocal )),
-            yUnits(wxString( &vyUnits[0], wxConvLocal ));
+        if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
+        wxString channel_name(&vchannel_name[0]),
+            xUnits(&vxUnits[0]),
+            yUnits(&vyUnits[0]);
         //Memory allocation for the current channel
         float yScale, yOffset, xOffset;
         //Begin loop: read scaling and offsets
         //Write the formatted string from 'n_channel' and 'channel_name' to 'buffer'
-        wxString outputstream;
+        std::ostringstream outputstream;
         outputstream << wxT("Channel ") << n_channel << wxT(" (") << channel_name.c_str() << wxT(")\n");
-        scaling += outputstream;
+        scaling += outputstream.str();
         //Get the channel information for a data section or a file
         //- see manual of CFS file system
         GetDSChan(CFSFile.myHandle, n_channel /*first channel*/, 1 /*first section*/, &startOffset,
             &points[0], &yScale, &yOffset,&xScale,&xOffset);
-        if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
+        if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
         //Write the formatted string from 'yScale' to 'buffer'
         outputstream.clear();
         outputstream << wxT("Yscale=") <<  yScale << wxT("\n");
-        scaling += outputstream;
+        scaling += outputstream.str();
         //Write the formatted string from 'xScale' to 'buffer'
         outputstream.clear();
         outputstream << wxT("Xscale=") <<  xScale << wxT("\n");
-        scaling += outputstream;
+        scaling += outputstream.str();
         //Write the formatted string from 'yOffset' to 'buffer'
         outputstream.clear();
         outputstream << wxT("YOffset=") <<  yOffset << wxT("\n");
-        scaling += outputstream;
+        scaling += outputstream.str();
         //Write the formatted string from 'xOffset' to 'buffer'
         outputstream.clear();
         outputstream << wxT("XOffset=") <<  xOffset << wxT("\n");
-        scaling += outputstream;
+        scaling += outputstream.str();
 
         Channel TempChannel(dataSections);
         TempChannel.SetChannelName(channel_name);
         TempChannel.SetYUnits(yUnits);
         std::size_t empty_sections=0;
         for (int n_section=0; n_section < dataSections; ++n_section) {
+#ifndef MODULE_ONLY
             wxString progStr;
             if (progress) {
                 progStr << wxT("Reading channel #") << n_channel + 1 << wxT(" of ") << channelsAvail
@@ -429,6 +440,8 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
                                progStr
                                );
             }
+#endif
+            
             //Begin loop: n_sections
             //Get the channel information for a data section or a file
             //- see manual of CFS file system
@@ -436,12 +449,12 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
             float yScale, yOffset, xOffset;
             GetDSChan(CFSFile.myHandle,(short)n_channel,(WORD)n_section+1,&startOffset,
                 &points[n_section],&yScale,&yOffset,&xScale,&xOffset);
-            if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
-            wxString label;
-            label << stf::noPath(fName) << wxT(", Section # ") << n_section+1;
+            if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
+            std::ostringstream label;
+            label << fName << wxT(", Section # ") << n_section+1;
             Section TempSection(
                 (int)(points[n_section]),
-                label
+                label.str()
             );
             //-----------------------------------------------------
             //The following part was modified to read data sections
@@ -475,7 +488,7 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
                     GetChanData(CFSFile.myHandle, (short)n_channel, (WORD)n_section+1,
                         b*CFSMAXBYTES/4, (WORD)nBlockBytes/4, &fTempSection_small[0],
                         4*(points[n_section]+1));
-                    if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
+                    if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
                     for (int n=0; n<nBlockBytes/4; ++n) {
                         TempSection[n + b*CFSMAXBYTES/4]=
                             fTempSection_small[n]* yScale +
@@ -493,7 +506,7 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
                     GetChanData(CFSFile.myHandle, (short)n_channel, (WORD)n_section+1,
                         b*CFSMAXBYTES/2, (WORD)nBlockBytes/2, &TempSection_small[0],
                         2*(points[n_section]+1));
-                    if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.char_str()));
+                    if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
                     for (int n=0; n<nBlockBytes/2; ++n) {
                         TempSection[n + b*CFSMAXBYTES/2]=
                             TempSection_small[n]* yScale +
@@ -534,7 +547,7 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
     ReturnData.SetFileDescription(file_description);
     ReturnData.SetGlobalSectionDescription(section_description);
     ReturnData.SetScaling(scaling);
-    ReturnData.SetTime( wxString( time, wxConvLocal) );
-    ReturnData.SetDate(wxString( date, wxConvLocal) );
-    ReturnData.SetComment(wxString( comment, wxConvLocal) );
+    ReturnData.SetTime(time);
+    ReturnData.SetDate(date);
+    ReturnData.SetComment(comment);
 }

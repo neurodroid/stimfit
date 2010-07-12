@@ -1,3 +1,6 @@
+if BUILD_MODULE
+
+else
 noinst_LIBRARIES = libstimfit.a
 
 libstimfit_a_SOURCES = unopt.cpp
@@ -12,5 +15,4 @@ else
 endif
 
 INCLUDES = $(PYTHON_ADDINCLUDES)
-
-
+endif

@@ -14,7 +14,10 @@
 
 #include "./core.h"
 #include "./section.h"
+
+#ifndef MODULE_ONLY
 #include "../app/funclib/funclib.h"
+#endif
 
 // Definitions------------------------------------------------------------
 // Default constructor definition
@@ -22,30 +25,31 @@
 // within the constructor, see [1]248 and [2]28
 
 Section::Section(void)
-    : eventList(),pyMarkers(),section_description(),
-	  x_scale(1.0),
-	  isFitted(false),isIntegrated(false),fitFunc(NULL),bestFitP(0),quad_p(0),storeFitBeg(0),storeFitEnd(0),
-      storeIntBeg(0),storeIntEnd(0),bestFit(0,0),
-	  data(0) {}
+    : section_description(), x_scale(1.0), data(0)
+#ifndef MODULE_ONLY
+    , eventList(),pyMarkers(),isFitted(false),
+      isIntegrated(false),fitFunc(NULL),bestFitP(0),quad_p(0),storeFitBeg(0),storeFitEnd(0),
+      storeIntBeg(0),storeIntEnd(0),bestFit(0,0)
+#endif
+{}
 
-Section::Section( const Vector_double& valA, const wxString& label ) :	
-    eventList(),pyMarkers(),section_description(label),
-    x_scale(1.0),
-    isFitted(false),isIntegrated(false),fitFunc(NULL),bestFitP(0),quad_p(0),storeFitBeg(0),storeFitEnd(0),
-    storeIntBeg(0),storeIntEnd(0),bestFit(0,0),
-    data(valA) {}
+Section::Section( const Vector_double& valA, const wxString& label )
+    : section_description(label), x_scale(1.0), data(valA)
+#ifndef MODULE_ONLY
+    , eventList(),pyMarkers(),isFitted(false),
+      isIntegrated(false),fitFunc(NULL),bestFitP(0),quad_p(0),storeFitBeg(0),storeFitEnd(0),
+      storeIntBeg(0),storeIntEnd(0),bestFit(0,0)
+#endif
+{}
 
-
-Section::Section(
-	std::size_t size, 
-	const wxString& label
-) :	
-    eventList(),pyMarkers(),section_description(label),
-	x_scale(1.0),
-	isFitted(false),isIntegrated(false),fitFunc(NULL),bestFitP(0),quad_p(0),storeFitBeg(0),storeFitEnd(0),
-    storeIntBeg(0),storeIntEnd(0),bestFit(0,0),
-	data(size) {}
-
+Section::Section(std::size_t size, const wxString& label)
+    : section_description(label), x_scale(1.0), data(size)
+#ifndef MODULE_ONLY
+    , eventList(),pyMarkers(),isFitted(false),
+      isIntegrated(false),fitFunc(NULL),bestFitP(0),quad_p(0),storeFitBeg(0),storeFitEnd(0),
+      storeIntBeg(0),storeIntEnd(0),bestFit(0,0)
+#endif
+{}
 
 Section::~Section(void) {
 }
@@ -67,6 +71,14 @@ double& Section::at(std::size_t at_) {
 	return data[at_];
 }
 
+void Section::SetXScale( double value ) {
+    if ( x_scale >= 0 )
+        x_scale=value;
+    else
+        throw std::runtime_error( "Attempt to set x-scale <= 0" );
+}
+
+#ifndef MODULE_ONLY
 void Section::SetIsIntegrated(bool value, std::size_t begin, std::size_t end) {
     if (value==false) {
         isIntegrated=value;
@@ -158,9 +170,4 @@ void Section::DeleteFit() {
     isFitted = false;
 }
 
-void Section::SetXScale( double value ) {
-    if ( x_scale >= 0 )
-        x_scale=value;
-    else
-        throw std::runtime_error( "Attempt to set x-scale <= 0" );
-}
+#endif

@@ -17,10 +17,6 @@
 // last revision: 07-23-2006
 // C. Schmidt-Hieber
 
-#include "wx/wxprec.h"
-#include "wx/progdlg.h"
-#include "wx/filename.h"
-
 #include <cmath>
 #include <limits>
 
@@ -37,6 +33,138 @@
 #include "./filelib/sonlib.h"
 #endif
 #endif
+
+stf::filetype
+stf::findType(const wxString& ext) {
+    if (ext==wxT("*.dat;*.cfs")) return stf::cfs;
+    else if (ext==wxT("*.abf")) return stf::abf;
+    else if (ext==wxT("*.axgd;*.axgx")) return stf::axg;
+    else if (ext==wxT("*.h5")) return stf::hdf5;
+    else if (ext==wxT("*.atf")) return stf::atf;
+    else if (ext==wxT("*.pgf")) return stf::heka;
+    else if (ext==wxT("*.smr")) return stf::son;
+    else return stf::ascii;
+}
+
+bool stf::importFile(
+        const wxString& fName,
+        stf::filetype type,
+        Recording& ReturnData,
+        const stf::txtImportSettings& txtImport,
+        bool progress
+) {
+    try {
+        switch (type) {
+        case stf::cfs: {
+            stf::importCFSFile(fName, ReturnData, progress);
+            break;
+        }
+        case stf::hdf5: {
+            stf::importHDF5File(fName, ReturnData, progress);
+            break;
+        }
+        case stf::abf: {
+            stf::importABFFile(fName, ReturnData, progress);
+            break;
+        }
+        case stf::atf: {
+            stf::importATFFile(fName, ReturnData, progress);
+            break;
+        }
+        case stf::axg: {
+            stf::importAXGFile(fName, ReturnData, progress);
+            break;
+        }
+        case stf::heka: {
+            stf::importHEKAFile(fName, ReturnData, progress);
+            break;
+        }
+#if 0
+        case stf::son: {
+            stf::SON::importSONFile(fName,ReturnData);
+            break;
+        }
+#endif
+        case stf::ascii: {
+            stf::importASCIIFile( fName, txtImport.hLines, txtImport.ncolumns,
+                    txtImport.firstIsTime, txtImport.toSection, ReturnData );
+            if (!txtImport.firstIsTime) {
+                ReturnData.SetXScale(1.0/txtImport.sr);
+            }
+            if (ReturnData.size()>0)
+                ReturnData[0].SetYUnits(txtImport.yUnits);
+            if (ReturnData.size()>1)
+                ReturnData[1].SetYUnits(txtImport.yUnitsCh2);
+            ReturnData.SetXUnits( txtImport.xUnits );
+            break;
+        }
+        default:
+            throw std::runtime_error("Unknown file type");
+        }
+    }
+    catch (...) {
+        throw;
+    }
+    return true;
+}
+
+    Vector_double stf::vec_scal_plus(const Vector_double& vec, double scalar) {
+        Vector_double ret_vec(vec.size(), scalar);
+        std::transform(vec.begin(), vec.end(), ret_vec.begin(), ret_vec.begin(), std::plus<double>());
+        return ret_vec;
+    }
+
+    Vector_double stf::vec_scal_minus(const Vector_double& vec, double scalar) {
+        Vector_double ret_vec(vec.size(), scalar);
+        std::transform(vec.begin(), vec.end(), ret_vec.begin(), ret_vec.begin(), std::minus<double>());
+        return ret_vec;
+    }
+
+    Vector_double stf::vec_scal_mul(const Vector_double& vec, double scalar) {
+        Vector_double ret_vec(vec.size(), scalar);
+        std::transform(vec.begin(), vec.end(), ret_vec.begin(), ret_vec.begin(), std::multiplies<double>());
+        return ret_vec;
+    }
+
+    Vector_double stf::vec_scal_div(const Vector_double& vec, double scalar) {
+        Vector_double ret_vec(vec.size(), scalar);
+        std::transform(vec.begin(), vec.end(), ret_vec.begin(), ret_vec.begin(), std::divides<double>());
+        return ret_vec;
+    }
+
+    Vector_double stf::vec_vec_plus(const Vector_double& vec1, const Vector_double& vec2) {
+        Vector_double ret_vec(vec1.size());
+        std::transform(vec1.begin(), vec1.end(), vec2.begin(), ret_vec.begin(), std::plus<double>());
+        return ret_vec;
+    }
+
+    Vector_double stf::vec_vec_minus(const Vector_double& vec1, const Vector_double& vec2) {
+        Vector_double ret_vec(vec1.size());
+        std::transform(vec1.begin(), vec1.end(), vec2.begin(), ret_vec.begin(), std::minus<double>());
+        return ret_vec;
+    }
+
+    Vector_double stf::vec_vec_mul(const Vector_double& vec1, const Vector_double& vec2) {
+        Vector_double ret_vec(vec1.size());
+        std::transform(vec1.begin(), vec1.end(), vec2.begin(), ret_vec.begin(), std::multiplies<double>());
+        return ret_vec;
+    }
+
+    Vector_double stf::vec_vec_div(const Vector_double& vec1, const Vector_double& vec2) {
+        Vector_double ret_vec(vec1.size());
+        std::transform(vec1.begin(), vec1.end(), vec2.begin(), ret_vec.begin(), std::divides<double>());
+        return ret_vec;
+    }
+
+
+#ifndef MODULE_ONLY
+#include <wx/wxprec.h>
+#include <wx/progdlg.h>
+#include <wx/filename.h>
+
+wxString stf::noPath(const wxString& fName) {
+    return wxFileName(fName).GetFullName();
+}
 
 // LU decomposition from lapack
 #ifdef __cplusplus
@@ -452,84 +580,6 @@ wxString stf::sectionToString(const Section& section) {
     return retString;
 }
 
-wxString stf::noPath(const wxString& fName) {
-    return wxFileName(fName).GetFullName();
-}
-
-stf::filetype
-stf::findType(const wxString& ext) {
-    if (ext==wxT("*.dat;*.cfs")) return stf::cfs;
-    else if (ext==wxT("*.abf")) return stf::abf;
-    else if (ext==wxT("*.axgd;*.axgx")) return stf::axg;
-    else if (ext==wxT("*.h5")) return stf::hdf5;
-    else if (ext==wxT("*.atf")) return stf::atf;
-    else if (ext==wxT("*.pgf")) return stf::heka;
-    else if (ext==wxT("*.smr")) return stf::son;
-    else return stf::ascii;
-}
-
-bool stf::importFile(
-        const wxString& fName,
-        stf::filetype type,
-        Recording& ReturnData,
-        const stf::txtImportSettings& txtImport,
-        bool progress
-) {
-    try {
-        switch (type) {
-        case stf::cfs: {
-            stf::importCFSFile(fName, ReturnData, progress);
-            break;
-        }
-        case stf::hdf5: {
-            stf::importHDF5File(fName, ReturnData, progress);
-            break;
-        }
-        case stf::abf: {
-            stf::importABFFile(fName, ReturnData, progress);
-            break;
-        }
-        case stf::atf: {
-            stf::importATFFile(fName, ReturnData, progress);
-            break;
-        }
-        case stf::axg: {
-            stf::importAXGFile(fName, ReturnData, progress);
-            break;
-        }
-        case stf::heka: {
-            stf::importHEKAFile(fName, ReturnData, progress);
-            break;
-        }
-#if 0
-        case stf::son: {
-            stf::SON::importSONFile(fName,ReturnData);
-            break;
-        }
-#endif
-        case stf::ascii: {
-            stf::importASCIIFile( fName, txtImport.hLines, txtImport.ncolumns,
-                    txtImport.firstIsTime, txtImport.toSection, ReturnData );
-            if (!txtImport.firstIsTime) {
-                ReturnData.SetXScale(1.0/txtImport.sr);
-            }
-            if (ReturnData.size()>0)
-                ReturnData[0].SetYUnits(txtImport.yUnits);
-            if (ReturnData.size()>1)
-                ReturnData[1].SetYUnits(txtImport.yUnitsCh2);
-            ReturnData.SetXUnits( txtImport.xUnits );
-            break;
-        }
-        default:
-            throw std::runtime_error("Unknown file type");
-        }
-    }
-    catch (...) {
-        throw;
-    }
-    return true;
-}
-
 wxString stf::CreatePreview(const wxString& fName) {
     ifstreamMan ASCIIfile( fName );
     // Stop reading if we are either at the end or at line 100:
@@ -819,51 +869,4 @@ void stf::Table::AppendRows(std::size_t nRows_) {
     }
 }
 
-    Vector_double stf::vec_scal_plus(const Vector_double& vec, double scalar) {
-        Vector_double ret_vec(vec.size(), scalar);
-        std::transform(vec.begin(), vec.end(), ret_vec.begin(), ret_vec.begin(), std::plus<double>());
-        return ret_vec;
-    }
-
-    Vector_double stf::vec_scal_minus(const Vector_double& vec, double scalar) {
-        Vector_double ret_vec(vec.size(), scalar);
-        std::transform(vec.begin(), vec.end(), ret_vec.begin(), ret_vec.begin(), std::minus<double>());
-        return ret_vec;
-    }
-
-    Vector_double stf::vec_scal_mul(const Vector_double& vec, double scalar) {
-        Vector_double ret_vec(vec.size(), scalar);
-        std::transform(vec.begin(), vec.end(), ret_vec.begin(), ret_vec.begin(), std::multiplies<double>());
-        return ret_vec;
-    }
-
-    Vector_double stf::vec_scal_div(const Vector_double& vec, double scalar) {
-        Vector_double ret_vec(vec.size(), scalar);
-        std::transform(vec.begin(), vec.end(), ret_vec.begin(), ret_vec.begin(), std::divides<double>());
-        return ret_vec;
-    }
-
-    Vector_double stf::vec_vec_plus(const Vector_double& vec1, const Vector_double& vec2) {
-        Vector_double ret_vec(vec1.size());
-        std::transform(vec1.begin(), vec1.end(), vec2.begin(), ret_vec.begin(), std::plus<double>());
-        return ret_vec;
-    }
-
-    Vector_double stf::vec_vec_minus(const Vector_double& vec1, const Vector_double& vec2) {
-        Vector_double ret_vec(vec1.size());
-        std::transform(vec1.begin(), vec1.end(), vec2.begin(), ret_vec.begin(), std::minus<double>());
-        return ret_vec;
-    }
-
-    Vector_double stf::vec_vec_mul(const Vector_double& vec1, const Vector_double& vec2) {
-        Vector_double ret_vec(vec1.size());
-        std::transform(vec1.begin(), vec1.end(), vec2.begin(), ret_vec.begin(), std::multiplies<double>());
-        return ret_vec;
-    }
-
-    Vector_double stf::vec_vec_div(const Vector_double& vec1, const Vector_double& vec2) {
-        Vector_double ret_vec(vec1.size());
-        std::transform(vec1.begin(), vec1.end(), vec2.begin(), ret_vec.begin(), std::divides<double>());
-        return ret_vec;
-    }
-
+#endif

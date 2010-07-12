@@ -125,6 +125,22 @@ class StfDll Recording {
      */
     double GetSR() const { return 1.0/x_scale; }
 
+    //! Range-checked access to a channel (read-only).
+    /*! Will throw std::out_of_range if out of range.
+     *  \param n_c The index of the channel.
+     *  \return The channel at index n_c.
+     */
+    const Channel& at(std::size_t n_c) const;
+
+    //! Range-checked access to a channel (read and write).
+    /*! Will throw std::out_of_range if out of range.
+     *  \param n_c The index of the channel.
+     *  \return The channel at index n_c.
+     */
+    Channel& at(std::size_t n_c);
+
+#ifndef MODULE_ONLY
+
     //! Retrieves the index of the current channel.
     /*! \return The index of the current channel.
      */
@@ -468,19 +484,7 @@ class StfDll Recording {
      */
     const Section& sec() const { return ChannelArray[sc][cs]; }
 
-    //! Range-checked access to a channel (read-only).
-    /*! Will throw std::out_of_range if out of range.
-     *  \param n_c The index of the channel.
-     *  \return The channel at index n_c.
-     */
-    const Channel& at(std::size_t n_c) const;
-
-    //! Range-checked access to a channel (read and write).
-    /*! Will throw std::out_of_range if out of range.
-     *  \param n_c The index of the channel.
-     *  \return The channel at index n_c.
-     */
-    Channel& at(std::size_t n_c);
+#endif
 
     //member access functions: write---------------------------------
 
@@ -533,6 +537,8 @@ class StfDll Recording {
      */
     void SetXScale(double value);
 
+#ifndef MODULE_ONLY
+    
     //! Sets the index of the current channel.
     /*! \param value The index of the current channel.
      */
@@ -738,6 +744,7 @@ class StfDll Recording {
     /*! \param value The slope value where the baseline shoudl be set.
      */
     void SetSlopeForThreshold(double value) { slopeForThreshold=value; }
+#endif
     
     //misc-----------------------------------------------------------
 
@@ -761,6 +768,7 @@ class StfDll Recording {
      */
     void CopyAttributes(const Recording& c_Recording);
 
+#ifndef MODULE_ONLY
     //! Copies the cursor positions from another Recording to this Recording.
     /*! This will copy the crosshair, base, peak and fit cursors positions as 
      *  well as the number of points for peak averaging from another Recording 
@@ -815,7 +823,8 @@ class StfDll Recording {
     /*! \return The current zoom settings.
      */
     XZoom& GetXZoomW() { return zoom; }
-
+#endif
+    
     //operators------------------------------------------------------
 
     //! Unchecked channel access (read and write)
@@ -831,9 +840,13 @@ class StfDll Recording {
     const Channel& operator[](std::size_t at) const { return ChannelArray[at]; }
 
  private:
+    std::vector<Channel> ChannelArray;
+
     wxString file_description, global_section_description,
         scaling,time,date,comment, xUnits;
     double x_scale;
+
+#ifndef MODULE_ONLY    
     stf::latency_mode latencyStartMode, latencyEndMode;
     stf::latency_window_mode latencyWindowMode;
     stf::direction	direction; //of peak detection: UP, DOWN or BOTH
@@ -863,8 +876,6 @@ class StfDll Recording {
     
     std::size_t t20Index, t80Index, t50LeftIndex, t50RightIndex;
 
-    std::vector<Channel> ChannelArray;
-
     bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold, viewRT2080,
         viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,viewCursors;
 
@@ -873,7 +884,10 @@ class StfDll Recording {
     void correctRangeR(int& value);
     void correctRangeR(std::size_t& value);
 
+#endif
+
     void init();
+
 };
 
 /*@}*/

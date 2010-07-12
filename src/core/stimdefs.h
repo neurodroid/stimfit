@@ -24,6 +24,12 @@
 #ifndef _STIMDEFS_H_
 #define _STIMDEFS_H_
 
+#include <boost/function.hpp>
+#include <vector>
+#include <deque>
+#include <map>
+#include <string>
+
 #ifdef _MSC_VER
 #pragma warning( disable : 4251 )  // Disable warning messages
 #pragma warning( disable : 4996 )  // Disable warning messages
@@ -40,22 +46,23 @@
     #define StfDll
 #endif
 
-#include "wx/wxprec.h"
+#ifndef MODULE_ONLY
+    #include <wx/wxprec.h>
 
-#ifdef __BORLANDC__
-#pragma hdrstop
+    #ifdef __BORLANDC__
+        #pragma hdrstop
+    #endif
+
+    #ifndef WX_PRECOMP
+        #include <wx/wx.h>
+    #endif
+
+    #include <wx/wfstream.h>
+#else
+    typedef std::string wxString;
+    #define wxT(x)  x
 #endif
 
-#ifndef WX_PRECOMP
-#include "wx/wx.h"
-#endif
-
-#include <wx/wfstream.h>
-
-#include <boost/function.hpp>
-#include <vector>
-#include <deque>
-#include <map>
 
 typedef std::vector<double > Vector_double;
 typedef std::vector<float > Vector_float;
@@ -90,6 +97,7 @@ namespace stf {
     Vector_double vec_vec_div(const Vector_double& vec1, const Vector_double& vec2);
 
 
+#ifndef MODULE_ONLY
 //! A table used for printing information.
 /*! Members will throw std::out_of_range if out of range.
  */
@@ -440,20 +448,7 @@ struct ofstreamMan {
     wxFFile myStream;
 };
 
-//! File types
-enum filetype {
-    atf,   /*!< Axon text file. */
-    abf,   /*!< Axon binary file. */
-    axg,   /*!< Axograph binary file. */
-    ascii, /*!< Generic text file. */
-    cfs,   /*!< CED filing system. */
-    igor,  /*!< Igor binary wave. */
-    son,   /*!< CED Son files. */
-    hdf5,  /*!< hdf5 files. */
-    heka   /*!< heka files. */
-};
-
-//! The direction of peak calculations
+ //! The direction of peak calculations
 enum direction {
     up,                 /*!< Find positive-going peaks. */
     down,               /*!< Find negative-going peaks. */
@@ -495,6 +490,17 @@ enum latency_window_mode {
     windowMode = 1  /*!< Use a window of 100 sampling points around the peak. */ 
 };
 
+typedef std::vector< stf::Event      >::iterator       event_it;    /*!< stf::Event iterator */
+typedef std::vector< stf::Event      >::const_iterator c_event_it;  /*!< constant stf::Event iterator */
+typedef std::vector< stf::PyMarker   >::iterator       marker_it;   /*!< stf::PyMarker iterator */
+typedef std::vector< stf::PyMarker   >::const_iterator c_marker_it; /*!< constant stf::PyMarker iterator */
+typedef std::vector< wxString        >::iterator       wxs_it;      /*!< wxString iterator */
+typedef std::vector< wxString        >::const_iterator c_wxs_it;    /*!< constant wxString iterator */
+typedef std::vector< stf::storedFunc >::const_iterator c_stfunc_it; /*!< constant stf::storedFunc iterator */
+
+#else
+#endif // Module only
+
 //! Text file import filter settings
 struct txtImportSettings {
   txtImportSettings() : hLines(1),toSection(true),firstIsTime(true),ncolumns(2),
@@ -509,6 +515,21 @@ struct txtImportSettings {
     wxString yUnitsCh2; /*!< y units string of second channel. */
     wxString xUnits;    /*!< x units string. */
 };
+
+
+//! File types
+enum filetype {
+    atf,   /*!< Axon text file. */
+    abf,   /*!< Axon binary file. */
+    axg,   /*!< Axograph binary file. */
+    ascii, /*!< Generic text file. */
+    cfs,   /*!< CED filing system. */
+    igor,  /*!< Igor binary wave. */
+    son,   /*!< CED Son files. */
+    hdf5,  /*!< hdf5 files. */
+    heka   /*!< heka files. */
+};
+
 
 //! Add decimals if you are not satisfied.
 const double PI=3.14159265358979323846;
@@ -526,17 +547,10 @@ int round(double toRound);
 typedef std::vector< std::size_t     >::const_iterator c_st_it;     /*!< constant size_t iterator */
 typedef std::vector< int             >::iterator       int_it;      /*!< int iterator */
 typedef std::vector< int             >::const_iterator c_int_it;    /*!< constant int iterator */
-typedef std::vector< stf::Event      >::iterator       event_it;    /*!< stf::Event iterator */
-typedef std::vector< stf::Event      >::const_iterator c_event_it;  /*!< constant stf::Event iterator */
-typedef std::vector< stf::PyMarker   >::iterator       marker_it;   /*!< stf::PyMarker iterator */
-typedef std::vector< stf::PyMarker   >::const_iterator c_marker_it; /*!< constant stf::PyMarker iterator */
 typedef std::vector< Channel         >::iterator       ch_it;       /*!< Channel iterator */
 typedef std::vector< Channel         >::const_iterator c_ch_it;     /*!< constant Channel iterator */
 typedef std::vector< Section         >::iterator       sec_it;      /*!< Section iterator */
 typedef std::vector< Section         >::const_iterator c_sec_it;    /*!< constant Section iterator */
-typedef std::vector< wxString        >::iterator       wxs_it;      /*!< wxString iterator */
-typedef std::vector< wxString        >::const_iterator c_wxs_it;    /*!< constant wxString iterator */
-typedef std::vector< stf::storedFunc >::const_iterator c_stfunc_it; /*!< constant stf::storedFunc iterator */
 
 inline int stf::round(double toRound) {
     return toRound <= 0.0 ? int(toRound-0.5) : int(toRound+0.5);

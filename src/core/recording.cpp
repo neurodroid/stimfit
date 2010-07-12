@@ -15,7 +15,10 @@
 
 #include "./core.h"
 #include "./recording.h"
-#include "./measlib.h"
+
+#ifndef MODULE_ONLY
+    #include "./measlib.h"
+#endif
 
 Recording::Recording(void)
     : ChannelArray(0)
@@ -44,6 +47,9 @@ void Recording::init() {
     comment = wxT("\0");
     xUnits =  wxT("ms") ;
     x_scale = 1.0;
+
+#ifndef MODULE_ONLY
+    
     latencyStartMode = stf::riseMode;
     latencyEndMode = stf::footMode;
     latencyWindowMode = stf::defaultMode;
@@ -112,6 +118,9 @@ void Recording::init() {
     viewLatency = true;
     viewCursors = true;
     zoom = XZoom(0, 0.1, false);
+
+#endif
+    
 }
 
 Recording::~Recording() {
@@ -155,25 +164,6 @@ void Recording::InsertChannel(Channel& c_Channel, std::size_t pos) {
     ChannelArray.at(pos) = c_Channel;
 }
 
-void Recording::CopyCursors(const Recording& c_Recording) {
-    measCursor=c_Recording.measCursor;
-    correctRangeR(measCursor);
-    baseBeg=c_Recording.baseBeg;
-    correctRangeR(baseBeg);
-    baseEnd=c_Recording.baseEnd;
-    correctRangeR(baseEnd);
-    peakBeg=c_Recording.peakBeg;
-    correctRangeR(peakBeg);
-    peakEnd=c_Recording.peakEnd;
-    correctRangeR(peakEnd);
-    fitBeg=c_Recording.fitBeg;
-    correctRangeR(fitBeg);
-    fitEnd=c_Recording.fitEnd;
-    correctRangeR(fitEnd);
-    pM=c_Recording.pM;  //peakMean, number of points used for averaging
-
-}
-
 void Recording::CopyAttributes(const Recording& c_Recording) {
     file_description=c_Recording.file_description;
     global_section_description=c_Recording.global_section_description;
@@ -209,6 +199,49 @@ void Recording::SetXScale(double value) {
             it2->SetXScale(value);
         }
     }
+}
+
+#ifndef MODULE_ONLY
+
+void Recording::correctRangeR(int& value) {
+    if (value<0) {
+        value=0;
+        return;
+    }
+    if (value>=(int)cur().size()) {
+        value=(int)cur().size()-1;
+        return;
+    }
+}
+
+void Recording::correctRangeR(std::size_t& value) {
+    if (value<0) {
+        value=0;
+        return;
+    }
+    if (value>=cur().size()) {
+        value=cur().size()-1;
+        return;
+    }
+}
+
+void Recording::CopyCursors(const Recording& c_Recording) {
+    measCursor=c_Recording.measCursor;
+    correctRangeR(measCursor);
+    baseBeg=c_Recording.baseBeg;
+    correctRangeR(baseBeg);
+    baseEnd=c_Recording.baseEnd;
+    correctRangeR(baseEnd);
+    peakBeg=c_Recording.peakBeg;
+    correctRangeR(peakBeg);
+    peakEnd=c_Recording.peakEnd;
+    correctRangeR(peakEnd);
+    fitBeg=c_Recording.fitBeg;
+    correctRangeR(fitBeg);
+    fitEnd=c_Recording.fitEnd;
+    correctRangeR(fitEnd);
+    pM=c_Recording.pM;  //peakMean, number of points used for averaging
+
 }
 
 void Recording::SetLatencyStartMode(int value) {
@@ -374,28 +407,6 @@ void Recording::SetLatencyEnd(double value) {
         value=cur().size()-1.0;
     }
     latencyEndCursor=value;
-}
-
-void Recording::correctRangeR(int& value) {
-    if (value<0) {
-        value=0;
-        return;
-    }
-    if (value>=(int)cur().size()) {
-        value=(int)cur().size()-1;
-        return;
-    }
-}
-
-void Recording::correctRangeR(std::size_t& value) {
-    if (value<0) {
-        value=0;
-        return;
-    }
-    if (value>=cur().size()) {
-        value=cur().size()-1;
-        return;
-    }
 }
 
 void Recording::SelectTrace(std::size_t sectionToSelect) {
@@ -851,3 +862,4 @@ stf::Table Recording::CurResultsTable() const {
 
     return table;
 }
+#endif

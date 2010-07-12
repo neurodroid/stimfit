@@ -126,6 +126,17 @@ public:
      */
     double GetXScale() const { return x_scale; }
     
+    //! Retrieves a section description.
+    /*! \return A string describing this section.
+     */
+    const wxString& GetSectionDescription() const { return section_description; }
+
+    //! Sets a section description.
+    /*! \param value A string describing this section.
+     */
+    void SetSectionDescription(const wxString& value) { section_description=value; }
+
+#ifndef MODULE_ONLY
     //! Retrieves a waveform of the evaluated best-fit function (read-only)
     /*! \return A valarray containing the evaluated best-fit function.
      */
@@ -224,16 +235,6 @@ public:
      */
     const stf::Table& GetBestFit() const { return bestFit; }
     
-    //! Retrieves a section description.
-    /*! \return A string describing this section.
-     */
-    const wxString& GetSectionDescription() const { return section_description; }
-
-    //! Sets a section description.
-    /*! \param value A string describing this section.
-     */
-    void SetSectionDescription(const wxString& value) { section_description=value; }
-
     //! Retrieves information about an event.
     /*! \param n_e The index of the event.
      *  \return An Event object containing information about an event.
@@ -286,15 +287,23 @@ public:
 
     //! Erases all events.
     void ErasePyMarkers() { pyMarkers.clear(); }
+#endif
 
-private:
+ private:
     //Private members-------------------------------------------------------
-    std::vector<stf::Event> eventList;
-    std::vector<stf::PyMarker> pyMarkers;
+
     // A description that is specific to this section:
     wxString section_description;
+
     // The sampling interval:
     double x_scale;
+
+    // The data:
+    Vector_double data;
+
+#ifndef MODULE_ONLY
+    std::vector<stf::Event> eventList;
+    std::vector<stf::PyMarker> pyMarkers;
     bool isFitted,isIntegrated;
     stf::storedFunc *fitFunc;
     Vector_double bestFitP;
@@ -304,8 +313,7 @@ private:
     std::size_t storeIntBeg;
     std::size_t storeIntEnd;
     stf::Table bestFit;
-    // The data:
-    Vector_double data;
+#endif
 };
 
 /*@}*/

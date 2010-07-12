@@ -31,22 +31,25 @@
 #endif
 
 #include <vector>
-#include <boost/numeric/ublas/vector.hpp>
+// #include <boost/numeric/ublas/vector.hpp>
 #include <complex>
 #include <deque>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+#include "./stimdefs.h"
+#include "./section.h"
+#include "./recording.h"
+
+#ifndef MODULE_ONLY
 // header for the fourier transform:
 #ifndef TEST_MINIMAL
 #include "fftw3.h"
 #endif
 
-#include "./stimdefs.h"
 #include "./spline.h"
-
-#include "./section.h"
-#include "./recording.h"
+#endif
 
 namespace stf {
 
@@ -54,6 +57,7 @@ namespace stf {
  *  @{
  */
 
+#ifndef MODULE_ONLY
 //! Computes a spectral estimate using Welch's method. 
 /*! \param data An input valarray of complex numbers.
  *  \param K \e data will be split into \e K windows.
@@ -119,37 +123,7 @@ cubicSpline(
  */
 wxString sectionToString(const Section& section);
 
-//! Strips the directory off a full path name, returns only the filename.
-/*! \param fName The full path of a file.
- *  \return The file name without the directory.
- */
-wxString noPath(const wxString& fName);
-
-//! Attempts to determine the filetype from the filter extension.
-/*! \param ext The filter extension to be tested (in the form wxT("*.ext")).
- *  \return The corresponding file type.
- */
-stf::filetype
-findType(const wxString& ext);
-
-//! Generic file import.
-/*! \param fName The full path name of the file. 
- *  \param type The file type. 
- *  \param ReturnData Will contain the file data on return.
- *  \param txtImport The text import filter settings.
- *  \param progress Set to true if a progress dialog should be shown.
- *  \return true if the file has successfully been read, false otherwise.
- */
-bool
-importFile(
-        const wxString& fName,
-        stf::filetype type,
-        Recording& ReturnData,
-        const stf::txtImportSettings& txtImport,
-        bool progress=true
-);
-
-//! Differentiate data.
+ //! Differentiate data.
 /* \param input The valarray to be differentiated.
  * \param x_scale The sampling interval.
  * \return The result of the differentiation.
@@ -310,10 +284,44 @@ int fac(int arg);
  */
 int pow2(int arg);
 
+//! Strips the directory off a full path name, returns only the filename.
+/*! \param fName The full path of a file.
+ *  \return The file name without the directory.
+ */
+wxString noPath(const wxString& fName);
+
+#endif
+ 
+//! Attempts to determine the filetype from the filter extension.
+/*! \param ext The filter extension to be tested (in the form wxT("*.ext")).
+ *  \return The corresponding file type.
+ */
+stf::filetype
+findType(const wxString& ext);
+
+//! Generic file import.
+/*! \param fName The full path name of the file. 
+ *  \param type The file type. 
+ *  \param ReturnData Will contain the file data on return.
+ *  \param txtImport The text import filter settings.
+ *  \param progress Set to true if a progress dialog should be shown.
+ *  \return true if the file has successfully been read, false otherwise.
+ */
+bool
+importFile(
+        const wxString& fName,
+        stf::filetype type,
+        Recording& ReturnData,
+        const stf::txtImportSettings& txtImport,
+        bool progress=true
+);
+
+
 /*@}*/
 
 }
 
+#ifndef MODULE_ONLY
 inline double stf::window(double n, double N) {
     return 1.0-(pow((2.0*n-N)/N,2.0));
 }
@@ -372,5 +380,6 @@ std::vector<T> stf::diff(const std::vector<T>& input, T x_scale) {
 
 template <typename T>
 inline T stf::SQR(T a) {return a*a;}
+#endif
 
 #endif
