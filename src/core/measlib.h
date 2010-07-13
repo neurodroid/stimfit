@@ -152,6 +152,15 @@ template <typename T>
 T  maxDecay( const std::vector<T>& data, T left, T right, T& maxDecayT,
              T& maxDecayY);
 
+//! Find the slope an event within \e data.
+/*! \param data The data waveform to be analysed.
+ *  \param left delimits the search to the left.
+ *  \param right delimits the search to the right.
+ *  \return The slope during the limits defined in left and right.
+ */
+template <typename T>
+T pslope( const std::vector<T>& data, std::size_t left, std::size_t right);
+
 /*@}*/
 
 }
@@ -429,6 +438,7 @@ T stf::maxDecay(const std::vector<T>& data,
         double diff=fabs(data[i]-data[i-1]);
         if (maxDecay<diff) {
             maxDecay=diff;
+            // maxDecayY = ( data[i]+data[i-1] )/(T)2.0;
             maxDecayY=data[i]/(T)2.0+data[i-1]/(T)2.0;
             maxDecayT=(T)(i-0.5);
         }
@@ -437,5 +447,26 @@ T stf::maxDecay(const std::vector<T>& data,
     return maxDecay;
 }
 
+template <typename T>
+T stf::pslope(const std::vector<T>& data, std::size_t left, std::size_t right) {
+
+    // data testing not zero 
+    //if (!data.size()) return 0;
+    if (data.size()==0) return 0;
+
+    // cursor testing out of bounds
+    if (left>right || right>data.size()) {
+        throw (std::out_of_range("Exception:\n Index out of range in stf::pslope()"));
+    }
+    // use interpolated data
+    T y2 = ( data[right]+data[right+1] )/(T)2.0;
+    T y1 = ( data[left]+data[left+1] )/(T)2.0;
+    T t2 = (T)(right-0.5);
+    T t1 = (T)(left-0.5);
+
+    T SlopeVal = (y2-y1)/(t2-t1);
+
+    return SlopeVal;
+}
 #endif
 
