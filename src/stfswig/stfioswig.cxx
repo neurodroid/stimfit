@@ -18,4 +18,18 @@
 
 #include "stfioswig.h"
 
+#include "./../core/stimdefs.h"
 #include "./../core/recording.h"
+
+bool _open( const char* filename ) {
+
+    bool res = stf::importFile(filename,
+        const wxString& fName,
+        stf::filetype type,
+        Recording& ReturnData,
+        const stf::txtImportSettings& txtImport,
+        bool progress
+) {
+    
+    return wxGetApp().OpenFilePy( wxFilename );
+}
