@@ -141,7 +141,7 @@ EVT_TOOL(ID_TOOL_DECAY,wxStfParentFrame::OnToolDecay)
 EVT_TOOL(ID_TOOL_LATENCY,wxStfParentFrame::OnToolLatency)
 EVT_TOOL(ID_TOOL_ZOOM,wxStfParentFrame::OnToolZoom)
 EVT_TOOL(ID_TOOL_EVENT,wxStfParentFrame::OnToolEvent)
-EVT_TOOL(wxID_TOOL_PSLOPE,wxStfParentFrame::OnToolPSlope)
+EVT_TOOL(ID_TOOL_PSLOPE,wxStfParentFrame::OnToolPSlope)
 
 EVT_MENU(ID_EXPORTIMAGE, wxStfParentFrame::OnExportimage)
 EVT_MENU(ID_EXPORTPS, wxStfParentFrame::OnExportps)
@@ -520,7 +520,7 @@ wxAuiToolBar* wxStfParentFrame::CreateCursorTb() {
                             wxBitmap(event),
                             wxT( "Add, erase or extract events manually with right mouse button (\"E\")" ),
                             wxITEM_CHECK );
-    cursorToolBar->AddTool( wxID_TOOL_PSLOPE,
+    cursorToolBar->AddTool( ID_TOOL_PSLOPE,
                             _T("Slope"),
                             wxBitmap(slope),
                             wxT( "Mouse selects slope cursors (\"O\")" ),
@@ -1487,7 +1487,7 @@ stf::cursor_type wxStfParentFrame::GetMouseQual() const {
         return stf::zoom_cursor;
     if (m_cursorToolBar->GetToolToggled(ID_TOOL_EVENT))
         return stf::event_cursor;
-    if (m_cursorToolBar->GetToolToggled(wxID_TOOL_PSLOPE))
+    if (m_cursorToolBar->GetToolToggled(ID_TOOL_PSLOPE))
         return stf::pslope_cursor;
     return stf::undefined_cursor;
 }
@@ -1502,7 +1502,7 @@ void wxStfParentFrame::SetMouseQual(stf::cursor_type value) {
     m_cursorToolBar->ToggleTool(ID_TOOL_LATENCY,false);
     m_cursorToolBar->ToggleTool(ID_TOOL_ZOOM,false);
     m_cursorToolBar->ToggleTool(ID_TOOL_EVENT,false);
-    m_cursorToolBar->ToggleTool(wxID_TOOL_PSLOPE,false);
+    m_cursorToolBar->ToggleTool(ID_TOOL_PSLOPE,false);
 
     // Then set the state of the selected button:
     if (value==stf::measure_cursor)
@@ -1520,7 +1520,7 @@ void wxStfParentFrame::SetMouseQual(stf::cursor_type value) {
     if (value==stf::event_cursor)
         m_cursorToolBar->ToggleTool(ID_TOOL_EVENT,true);
     if (value==stf::pslope_cursor)
-        m_cursorToolBar->ToggleTool(wxID_TOOL_PSLOPE,true);
+        m_cursorToolBar->ToggleTool(ID_TOOL_PSLOPE,true);
 
     m_cursorToolBar->Refresh();
 }
