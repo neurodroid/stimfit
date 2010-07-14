@@ -63,6 +63,7 @@ bool stf::importFile(
             stf::importHDF5File(fName, ReturnData, progress);
             break;
         }
+#ifndef MODULE_ONLY
         case stf::abf: {
             stf::importABFFile(fName, ReturnData, progress);
             break;
@@ -98,6 +99,7 @@ bool stf::importFile(
             ReturnData.SetXUnits( txtImport.xUnits );
             break;
         }
+#endif
         default:
             throw std::runtime_error("Unknown file type");
         }
