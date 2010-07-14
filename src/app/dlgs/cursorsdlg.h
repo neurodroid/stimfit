@@ -40,6 +40,7 @@ private:
     wxNotebookPage* CreatePeakPage();
     wxNotebookPage* CreateBasePage();
     wxNotebookPage* CreateDecayPage();
+    wxNotebookPage* CreatePSlopePage();
     wxFlexGridSizer*
         CreateCursorInput( wxPanel* nbPage, wxWindowID textC1, wxWindowID textC2,
                            wxWindowID comboU1, wxWindowID comboU2, std::size_t c1,
@@ -50,7 +51,8 @@ private:
     bool cursorMIsTime,
     cursor1PIsTime,cursor2PIsTime,
     cursor1BIsTime,cursor2BIsTime,
-    cursor1DIsTime,cursor2DIsTime;
+    cursor1DIsTime,cursor2DIsTime,
+    cursor1PSIsTime,cursor2PSIsTime;
     wxStfDoc* actDoc;
     wxNotebook* m_notebook;
 
@@ -62,6 +64,14 @@ private:
     void OnComboBoxU2B( wxCommandEvent& event );
     void OnComboBoxU1D( wxCommandEvent& event );
     void OnComboBoxU2D( wxCommandEvent& event );
+    void OnComboBoxU1PS( wxCommandEvent& event );
+    void OnComboBoxU2PS( wxCommandEvent& event );
+    void OnRadioPSManBeg( wxCommandEvent& event );
+    void OnRadioPSEventBeg( wxCommandEvent& event );
+    void OnRadioPSThrBeg( wxCommandEvent& event );
+    void OnRadioPSManEnd( wxCommandEvent& event );
+    void OnRadioPSt50End( wxCommandEvent& event );
+    void OnRadioPSPeakEnd( wxCommandEvent& event );
     void OnRadioAll( wxCommandEvent& event );
     void OnRadioMean( wxCommandEvent& event );
     void OnPeakcalcexec( wxCommandEvent& event );
@@ -135,9 +145,20 @@ public:
      */
     int GetCursor2D() const;
 
+    //! Get the left PSlope cursor x-position
+    /*! \return The left fit cursor x-position in units of sampling points.
+     */
+    int GetCursor1PS() const;
+
+    //! Get the right PSlope cursor x-position
+    /*! \return The right fit cursor x-position in units of sampling points.
+     */
+    int GetCursor2PS() const;
+
     //! Gets the number of points used for the binned average during peak detection.
     /*! \return The number of points used for the binned average during peak detection.
      */
+
     int GetPeakPoints() const;
 
     //! Sets the number of points used for the binned average during peak detection.
@@ -149,6 +170,16 @@ public:
     /*! \return The current direction of peak calculations.
      */
     stf::direction GetDirection() const;
+
+    //! Gets the mode of measure for the beginning of the slope cursor.
+    /*! \return The current mode for the beginning slope cursor.
+     */
+    stf::pslope_mode_beg CurrentPSlopeBegMode() const;
+
+    //! Gets the mode of measure for the end of the slope cursor.
+    /*! \return The current mode for the end slope cursor.
+     */
+    stf::pslope_mode_end CurrentPSlopeEndMode() const;
 
     //! Indicates whether to use the baseline as a reference for AP kinetics.
     /*! \return true if the baseline should be used, false if the threshold should be used.
@@ -175,7 +206,7 @@ public:
      */
     bool GetStartFitAtPeak() const;
 
-    //! Updates the cursor entries.
+    //! Updates the cursor entries in the Cursors Settings menu.
     void UpdateCursors();
 
     //! Retrieve the current cursor notebook page.

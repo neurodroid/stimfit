@@ -393,6 +393,11 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
              actDoc->SetFitEnd(CursorsDialog->GetCursor2D());
              break;
          }
+         case stf::pslope_cursor: {
+             actDoc->SetPSlopeBeg(CursorsDialog->GetCursor1PS());
+             actDoc->SetPSlopeEnd(CursorsDialog->GetCursor2PS());
+             break;
+         }
          case stf::undefined_cursor:
              {
                  ErrorMsg(wxT("Undefined cursor in wxStfApp::OnPeakcalcexecMsg()"));
