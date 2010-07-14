@@ -384,6 +384,16 @@ class StfDll Recording {
      */
     stf::direction GetDirection() const { return direction; }
     
+    //! Retrieves the mode of the left PSlope cursor.
+    /*! \return The current mode of the left PSlope cursor.
+     */
+    stf::pslope_mode_beg GetPSlopeBegMode() const { return pslopeBegMode; }
+
+    //! Retrieves the mode of the right PSlope cursor.
+    /*! \return The current mode of the right PSlope cursor.
+     */
+    stf::pslope_mode_end GetPSlopeEndMode() const { return pslopeEndMode; }
+
     //! Indicates whether to use the baseline as a reference for AP kinetics.
     /*! \return true if the baseline should be used, false if the threshold should be used.
      */
@@ -654,6 +664,16 @@ class StfDll Recording {
      */
     void SetPSlope(double value) { PSlope=value; }
 
+    //! Set the position mode of the left PSlope cursor.
+    /*! \param value The new mode of the left PSlope cursor.
+     */
+    void SetPSlopeBegMode(stf::pslope_mode_beg value) { pslopeBegMode=value; }
+
+    //! Set the position mode of the right PSlope cursor.
+    /*! \param value The new mode of the right PSlope cursor.
+     */
+    void SetPSlopeEndMode(stf::pslope_mode_end value) { pslopeEndMode=value; }
+
     //! Sets the number of points used for averaging during peak calculation.
     /*! \param value The number of points to be used.
      */
@@ -890,6 +910,8 @@ class StfDll Recording {
     stf::latency_mode latencyStartMode, latencyEndMode;
     stf::latency_window_mode latencyWindowMode;
     stf::direction	direction; //of peak detection: UP, DOWN or BOTH
+    stf::pslope_mode_beg pslopeBegMode; // for left mode PSlope cursor
+    stf::pslope_mode_end pslopeEndMode; // for right mode PSlope cursor
 
     // currently accessed channel:
     std::size_t cc;

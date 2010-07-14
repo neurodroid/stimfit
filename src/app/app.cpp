@@ -395,9 +395,12 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
              actDoc->SetFitEnd(CursorsDialog->GetCursor2D());
              break;
          }
+            // Get cursor location from the dialog box:
          case stf::pslope_cursor: {
-             actDoc->SetPSlopeBeg(CursorsDialog->GetCursor1PS());
-             actDoc->SetPSlopeEnd(CursorsDialog->GetCursor2PS());
+             actDoc->SetPSlopeBegMode(CursorsDialog->GetPSlopeBegMode());
+             //actDoc->SetPSlopeBeg(CursorsDialog->GetCursor1PS());
+             actDoc->SetPSlopeEndMode(CursorsDialog->GetPSlopeEndMode());
+             //actDoc->SetPSlopeEnd(CursorsDialog->GetCursor2PS());
              break;
          }
          case stf::undefined_cursor:
@@ -443,7 +446,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
     }
 
     // Calculate peak, base, 20/80 rise time, half duration,
-    // ratio of rise/slope and maximum slope.
+    // ratio of rise/slope, maximum slope and geometrical slope (PSlope).
     try {
         if (actDoc != NULL)
             actDoc->Measure( );

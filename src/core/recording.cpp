@@ -54,6 +54,8 @@ void Recording::init() {
     latencyEndMode = stf::footMode;
     latencyWindowMode = stf::defaultMode;
     direction = stf::both;    
+    pslopeBegMode = stf::psBeg_manualMode;
+    pslopeEndMode = stf::psEnd_manualMode;
     cc = 0;
     sc = 0;
     cs = 0;
@@ -663,6 +665,39 @@ void Recording::Measure( )
     //-------------------------------------
     // Begin PSlope calculation (PSP Slope)
     //-------------------------------------
+
+    //
+    int PSlopeBegVal; 
+    switch (pslopeBegMode) {
+
+        case stf::psBeg_footMode:   // Left PSlope to commencement
+            PSlopeBegVal = (int)(t20Real-(t80Real-t20Real)/3.0);
+            break;
+
+        case stf::psBeg_thrMode:   // Left PSlope to threshold
+            PSlopeBegVal = (int)thrT;
+            break;
+
+        case stf::psBeg_manualMode: // Left PSlope cursor manual
+        default:
+            PSlopeBegVal = PSlopeBeg;
+    }
+    SetPSlopeBeg(PSlopeBegVal);
+    
+    int PSlopeEndVal;
+    switch (pslopeEndMode) {
+
+        case stf::psEnd_t50Mode:    // Right PSlope to t50rigth
+            PSlopeEndVal = (int)t50LeftReal;
+            break;
+        case stf::psEnd_peakMode:   // Right PSlope to peak
+            PSlopeEndVal = (int)maxT;
+            break;
+        case stf::psEnd_manualMode:
+        default:
+            PSlopeEndVal = PSlopeEnd;
+    }
+    SetPSlopeEnd(PSlopeEndVal);
 
     try {
         PSlope = (stf::pslope(cur().get(), PSlopeBeg, PSlopeEnd))*GetSR();

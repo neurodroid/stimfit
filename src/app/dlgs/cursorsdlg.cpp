@@ -458,51 +458,11 @@ int wxStfCursorsDlg::GetCursor2D() const {
 }
 
 int wxStfCursorsDlg::GetCursor1PS() const {
-    // capture radio option from "measure from"
-    stf::pslope_mode_beg PSBeg= CurrentPSlopeBegMode();
-
-    switch(PSBeg) {
-
-    case stf::psBeg_thrMode:
-        return (int)actDoc->GetThrT();
-        break; // do we need a break after return? 
-
-    case stf::psBeg_footMode:
-        double t20, t80, foot;
-        t20 = actDoc->GetT20Real();
-        t80 = actDoc->GetT80Real();
-        foot = t20 -( (t80-t20)/3.0);
-        //double dfoot =  actDoc()->GetT20Real()-(actDoc()->GetT80Real()-actDoc()->GetT20Real())/3.0;
-        return (int)foot;
-        break;
-
-    case stf::psBeg_manualMode: // not handled
-    default:
-        return ReadCursor(wxTEXT1PS, cursor1PSIsTime);
-
-    }
-
+    return ReadCursor(wxTEXT1PS, cursor1PSIsTime);
 }
 
 int wxStfCursorsDlg::GetCursor2PS() const {
-    // capture radio option from "measure to"
-    stf::pslope_mode_end PSEnd= CurrentPSlopeEndMode();
-
-    switch(PSEnd) {
-    
-    case stf::psEnd_t50Mode:
-        return (int)actDoc->GetT50LeftReal();
-        break;
-
-    case stf::psEnd_peakMode:
-        return (int)actDoc->GetMaxT();
-        break;
-
-    case stf::psEnd_manualMode:
-    default:
-        return ReadCursor(wxTEXT2PS, cursor2PSIsTime);
-        break;
-    }
+    return ReadCursor(wxTEXT2PS, cursor2PSIsTime);
 }
 
 
@@ -813,7 +773,7 @@ void wxStfCursorsDlg::OnRadioMean( wxCommandEvent& event ) {
     pRadioAll->SetValue(false);
 }
 
-stf::pslope_mode_beg wxStfCursorsDlg::CurrentPSlopeBegMode() const {
+stf::pslope_mode_beg wxStfCursorsDlg::GetPSlopeBegMode() const {
 
     wxRadioButton* pPSManBeg   = (wxRadioButton*)FindWindow(wxRADIO_PSManBeg);
     wxRadioButton* pPSEventBeg = (wxRadioButton*)FindWindow(wxRADIO_PSEventBeg);
@@ -834,7 +794,7 @@ stf::pslope_mode_beg wxStfCursorsDlg::CurrentPSlopeBegMode() const {
         return stf::psBeg_undefined;
 }
 
-stf::pslope_mode_end wxStfCursorsDlg::CurrentPSlopeEndMode() const {
+stf::pslope_mode_end wxStfCursorsDlg::GetPSlopeEndMode() const {
 
     wxRadioButton* pPSManEnd  = (wxRadioButton*)FindWindow(wxRADIO_PSManEnd);
     wxRadioButton* pPSt50End  = (wxRadioButton*)FindWindow(wxRADIO_PSt50End);
@@ -853,6 +813,58 @@ stf::pslope_mode_end wxStfCursorsDlg::CurrentPSlopeEndMode() const {
         return stf::psEnd_peakMode;
     else
         return stf::psEnd_undefined;
+}
+
+void wxStfCursorsDlg::SetPSlopeEndMode(stf::pslope_mode_end pslopeEndMode) {
+
+    wxRadioButton* pPSManEnd  = (wxRadioButton*)FindWindow(wxRADIO_PSManEnd);
+    wxRadioButton* pPSt50End  = (wxRadioButton*)FindWindow(wxRADIO_PSt50End);
+    wxRadioButton* pPSPeakEnd = (wxRadioButton*)FindWindow(wxRADIO_PSPeakEnd);
+
+    if (pPSManEnd == NULL || pPSt50End == NULL || pPSPeakEnd == NULL){
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::SetPSlopeEndMode()"));
+        return;
+    }
+
+    switch (pslopeEndMode) {
+      case stf::psEnd_manualMode:
+        pPSManEnd->Enable(true);
+        break;
+      case stf::psEnd_t50Mode:
+        pPSt50End->Enable(true);
+        break;
+      case stf::psEnd_peakMode:
+        pPSPeakEnd->Enable(true);
+        break;
+    default:
+        break;
+    }
+}
+
+void wxStfCursorsDlg::SetPSlopeBegMode(stf::pslope_mode_beg pslopeBegMode) {
+
+    wxRadioButton* pPSManBeg  = (wxRadioButton*)FindWindow(wxRADIO_PSManBeg);
+    wxRadioButton* pPSEventBeg  = (wxRadioButton*)FindWindow(wxRADIO_PSEventBeg);
+    wxRadioButton* pPSThrBeg = (wxRadioButton*)FindWindow(wxRADIO_PSThrBeg);
+
+    if (pPSManBeg == NULL || pPSEventBeg == NULL || pPSThrBeg == NULL){
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::SetPSlopeBegMode()"));
+        return;
+    }
+
+    switch (pslopeBegMode) {
+    case stf::psBeg_manualMode:
+        pPSManBeg->Enable(true);
+        break;
+    case stf::psEnd_t50Mode:
+        pPSEventBeg->Enable(true);
+        break;
+    case stf::psEnd_peakMode:
+        pPSThrBeg->Enable(true);
+        break;
+    default:
+        break;
+    }
 }
 
 
@@ -949,6 +961,9 @@ void wxStfCursorsDlg::UpdateCursors() {
         cursor2isTime=cursor2PSIsTime;
         pText1=(wxTextCtrl*)FindWindow(wxTEXT1PS);
         pText2=(wxTextCtrl*)FindWindow(wxTEXT2PS);
+        // Update PSlope Beg and End options
+        SetPSlopeBegMode(actDoc->GetPSlopeBegMode() );
+        SetPSlopeEndMode(actDoc->GetPSlopeEndMode() );
         break;
 
     default:
