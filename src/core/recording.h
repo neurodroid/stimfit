@@ -191,6 +191,16 @@ class StfDll Recording {
      */
     std::size_t GetFitEnd() const { return fitEnd; }
 
+    //! Retrieves the position of the left PSlope cursor.
+    /*! \return The index of the left PSlope cursor within the current section.
+     */
+    std::size_t GetPSlopeBeg() const { return PSlopeBeg; }
+
+    //! Retrieves the position of the right PSlope cursor.
+    /*! \return The index of the right PSlope cursor within the current section.
+     */
+    std::size_t GetPSlopeEnd() const { return PSlopeEnd; }
+
     //! Retrieves the number of points used for averaging during peak calculation.
     /*! \return The number of points to be used.
      */
@@ -349,6 +359,11 @@ class StfDll Recording {
      */
     double GetSlopeRatio() const { return slopeRatio; }
 
+    //! Retrieves the value of the Slope
+    /*! \return slope value in y-units/x-units.
+    */
+    double GetPSlope() const { return PSlope; }
+
     //! Retrieves the mode of the latency start cursor.
     /*! \return The current mode of the latency start cursor..
      */
@@ -438,6 +453,11 @@ class StfDll Recording {
     /*! \return true if it should be shown, false otherwise.
      */
     bool GetViewLatency() const { return viewLatency; }
+
+    //! Indicates whether the Slopeshould be shown in the results table.
+    /*! \return true if it should be shown, false otherwise.
+     */
+    bool GetViewPSlope() const { return viewPSlope; }
 
     //! Indicates whether two additional rows showing the positions of start and end cursors should be shown in the results table.
     /*! \return true if it should be shown, false otherwise.
@@ -613,11 +633,26 @@ class StfDll Recording {
      *  position between two data points.
      */
     void SetLatencyEnd(double value);
-    
+
     //! Sets the latency.
     /*! \param value The latency, expressed in units of data points.
      */
     void SetLatency(double value) { latency=value; }
+
+    //! Sets the position of the left PSlope cursor.
+    /*! \param value The index of the left PSlope cursor within the current section.
+     */
+    void SetPSlopeBeg(int value);
+
+    //! Sets the position of the right PSlope cursor.
+    /*! \param value The index of the right PSlope cursor within the current section.
+     */
+    void SetPSlopeEnd(int value);
+
+    //! Sets the PSlope.
+    /*! \param value The slope, expressed in y-units/x-units.
+     */
+    void SetPSlope(double value) { PSlope=value; }
 
     //! Sets the number of points used for averaging during peak calculation.
     /*! \param value The number of points to be used.
@@ -734,6 +769,11 @@ class StfDll Recording {
     /*! \param value Set to true if it should be shown, false otherwise.
      */
     void SetViewLatency(bool value) { viewLatency=value; }
+
+    //! Determines whether the slope should be shown in the results table.
+    /*! \param value Set to true if it should be shown, false otherwise.
+     */
+    void SetViewPSlope(bool value) { viewPSlope=value; }
 
     //! Determines whether two additional rows showing the positions of start and end cursors should be shown in the results table.
     /*! \param value Set to true if they should be shown, false otherwise.
@@ -858,14 +898,14 @@ class StfDll Recording {
     // currently accessed section:
     std::size_t cs;
 
-    std::size_t baseBeg,baseEnd,peakBeg,peakEnd,fitBeg,fitEnd,measCursor;
+    std::size_t baseBeg, baseEnd, peakBeg, peakEnd, fitBeg, fitEnd, measCursor, PSlopeBeg, PSlopeEnd;
     double latencyStartCursor,
         latencyEndCursor,
         latency,	 //time from latency cursor to beginning of event
-        base, APBase, baseSD, threshold, slopeForThreshold, peak,APPeak,t20Real,t80Real,t50LeftReal,t50RightReal,
+        base, APBase, baseSD, threshold, slopeForThreshold, peak, APPeak, t20Real, t80Real, t50LeftReal, t50RightReal,
         maxT, thrT, maxRiseY, maxRiseT, maxDecayY, maxDecayT, maxRise, maxDecay,
         t50Y, APMaxT, APMaxRise, APMaxRiseT, APt50LeftReal, 
-        rt2080, halfDuration, slopeRatio,t0Real;
+        rt2080, halfDuration, slopeRatio, t0Real, PSlope;
     // cursor windows:
     int pM;  //peakMean, number of points used for averaging
 
@@ -877,7 +917,7 @@ class StfDll Recording {
     std::size_t t20Index, t80Index, t50LeftIndex, t50RightIndex;
 
     bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold, viewRT2080,
-        viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,viewCursors;
+        viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,viewPSlope, viewCursors;
 
     XZoom zoom;
 

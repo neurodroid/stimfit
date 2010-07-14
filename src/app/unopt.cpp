@@ -255,7 +255,6 @@ void wxStfParentFrame::RedirectStdio()
     // This is a helpful little tidbit to help debugging and such.  It
     // redirects Python's stdout and stderr to a window that will popup
     // only on demand when something is printed, like a traceback.
-    //const char* python_redirect = "\
 
     wxString python_redirect;
     python_redirect = wxT("import sys, wx\n");

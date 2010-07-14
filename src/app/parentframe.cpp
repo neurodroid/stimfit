@@ -83,7 +83,7 @@
 #include "./../icons/arrow_out.xpm"
 #include "./../icons/arrow_right.xpm"
 #include "./../icons/arrow_up.xpm"
-#include "./../icons/bin.xpm"
+//#include "./../icons/bin.xpm"
 #include "./../icons/camera.xpm"
 #ifdef _WINDOWS
 #include "./../icons/camera_ps.xpm"
@@ -105,6 +105,7 @@
 #include "./../icons/zoom.xpm"
 #include "./../icons/zoom_in.xpm"
 #include "./../icons/zoom_out.xpm"
+#include "./../icons/slope.xpm"
 
 IMPLEMENT_CLASS(wxStfParentFrame, wxStfParentType)
 BEGIN_EVENT_TABLE(wxStfParentFrame, wxStfParentType)
@@ -140,6 +141,7 @@ EVT_TOOL(ID_TOOL_DECAY,wxStfParentFrame::OnToolDecay)
 EVT_TOOL(ID_TOOL_LATENCY,wxStfParentFrame::OnToolLatency)
 EVT_TOOL(ID_TOOL_ZOOM,wxStfParentFrame::OnToolZoom)
 EVT_TOOL(ID_TOOL_EVENT,wxStfParentFrame::OnToolEvent)
+EVT_TOOL(wxID_TOOL_PSLOPE,wxStfParentFrame::OnToolPSlope)
 
 EVT_MENU(ID_EXPORTIMAGE, wxStfParentFrame::OnExportimage)
 EVT_MENU(ID_EXPORTPS, wxStfParentFrame::OnExportps)
@@ -517,6 +519,11 @@ wxAuiToolBar* wxStfParentFrame::CreateCursorTb() {
                             _T("Events"),
                             wxBitmap(event),
                             wxT( "Add, erase or extract events manually with right mouse button (\"E\")" ),
+                            wxITEM_CHECK );
+    cursorToolBar->AddTool( wxID_TOOL_PSLOPE,
+                            _T("Slope"),
+                            wxBitmap(slope),
+                            wxT( "Mouse selects slope cursors (\"O\")" ),
                             wxITEM_CHECK );
     return cursorToolBar;
 }
@@ -1101,6 +1108,10 @@ void wxStfParentFrame::OnToolEvent(wxCommandEvent& WXUNUSED(event)) {
     SetMouseQual( stf::event_cursor );
 }
 
+void wxStfParentFrame::OnToolPSlope(wxCommandEvent& WXUNUSED(event)) {
+    SetMouseQual ( stf::pslope_cursor );
+}
+
 void wxStfParentFrame::OnCh2zoom(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     if (pView!=NULL) {
@@ -1476,6 +1487,8 @@ stf::cursor_type wxStfParentFrame::GetMouseQual() const {
         return stf::zoom_cursor;
     if (m_cursorToolBar->GetToolToggled(ID_TOOL_EVENT))
         return stf::event_cursor;
+    if (m_cursorToolBar->GetToolToggled(wxID_TOOL_PSLOPE))
+        return stf::pslope_cursor;
     return stf::undefined_cursor;
 }
 
@@ -1489,6 +1502,7 @@ void wxStfParentFrame::SetMouseQual(stf::cursor_type value) {
     m_cursorToolBar->ToggleTool(ID_TOOL_LATENCY,false);
     m_cursorToolBar->ToggleTool(ID_TOOL_ZOOM,false);
     m_cursorToolBar->ToggleTool(ID_TOOL_EVENT,false);
+    m_cursorToolBar->ToggleTool(wxID_TOOL_PSLOPE,false);
 
     // Then set the state of the selected button:
     if (value==stf::measure_cursor)
@@ -1505,6 +1519,8 @@ void wxStfParentFrame::SetMouseQual(stf::cursor_type value) {
         m_cursorToolBar->ToggleTool(ID_TOOL_ZOOM,true);
     if (value==stf::event_cursor)
         m_cursorToolBar->ToggleTool(ID_TOOL_EVENT,true);
+    if (value==stf::pslope_cursor)
+        m_cursorToolBar->ToggleTool(wxID_TOOL_PSLOPE,true);
 
     m_cursorToolBar->Refresh();
 }

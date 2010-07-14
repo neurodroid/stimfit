@@ -16,6 +16,8 @@ enum {
     wxCOMBOU2B,
     wxCOMBOU1D,
     wxCOMBOU2D,
+    wxCOMBOU1PS,
+    wxCOMBOU2PS,
     wxTEXTM,
     wxTEXT1P,
     wxTEXT2P,
@@ -23,9 +25,18 @@ enum {
     wxTEXT2B,
     wxTEXT1D,
     wxTEXT2D,
+    wxTEXT1PS,
+    wxTEXT2PS,
     wxTEXTPM,
     wxRADIOALL,
     wxRADIOMEAN,
+    // Slope radio boxes 
+    wxRADIO_PSManBeg,
+    wxRADIO_PSEventBeg,
+    wxRADIO_PSThrBeg,
+    wxRADIO_PSManEnd,
+    wxRADIO_PSt50End,
+    wxRADIO_PSPeakEnd,
     wxMEASCURSOR,
     wxPEAKATEND,
     wxPEAKMEAN,
@@ -40,6 +51,7 @@ enum {
 
 BEGIN_EVENT_TABLE( wxStfCursorsDlg, wxDialog )
 EVT_NOTEBOOK_PAGE_CHANGED(wxIDNOTEBOOK, wxStfCursorsDlg::OnPageChanged)
+
 EVT_COMBOBOX( wxCOMBOUM, wxStfCursorsDlg::OnComboBoxUM )
 EVT_COMBOBOX( wxCOMBOU1P, wxStfCursorsDlg::OnComboBoxU1P )
 EVT_COMBOBOX( wxCOMBOU2P, wxStfCursorsDlg::OnComboBoxU2P )
@@ -47,16 +59,28 @@ EVT_COMBOBOX( wxCOMBOU1B, wxStfCursorsDlg::OnComboBoxU1B )
 EVT_COMBOBOX( wxCOMBOU2B, wxStfCursorsDlg::OnComboBoxU2B )
 EVT_COMBOBOX( wxCOMBOU1D, wxStfCursorsDlg::OnComboBoxU1D )
 EVT_COMBOBOX( wxCOMBOU2D, wxStfCursorsDlg::OnComboBoxU2D )
+EVT_COMBOBOX( wxCOMBOU1PS, wxStfCursorsDlg::OnComboBoxU1PS )
+EVT_COMBOBOX( wxCOMBOU2PS, wxStfCursorsDlg::OnComboBoxU2PS )
+
+// bindings radio buttons
 EVT_BUTTON( wxID_APPLY, wxStfCursorsDlg::OnPeakcalcexec )
 EVT_RADIOBUTTON( wxRADIOALL, wxStfCursorsDlg::OnRadioAll )
 EVT_RADIOBUTTON( wxRADIOMEAN, wxStfCursorsDlg::OnRadioMean )
+EVT_RADIOBUTTON( wxRADIO_PSManBeg, wxStfCursorsDlg::OnRadioPSManBeg )
+EVT_RADIOBUTTON( wxRADIO_PSEventBeg, wxStfCursorsDlg::OnRadioPSEventBeg )
+EVT_RADIOBUTTON( wxRADIO_PSThrBeg, wxStfCursorsDlg::OnRadioPSThrBeg )
+EVT_RADIOBUTTON( wxRADIO_PSManEnd, wxStfCursorsDlg::OnRadioPSManEnd )
+EVT_RADIOBUTTON( wxRADIO_PSt50End, wxStfCursorsDlg::OnRadioPSt50End )
+EVT_RADIOBUTTON( wxRADIO_PSPeakEnd, wxStfCursorsDlg::OnRadioPSPeakEnd )
+
+
 END_EVENT_TABLE()
 
 wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wxString title, wxPoint pos,
                                  wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ), cursorMIsTime(true),
-    cursor1PIsTime(true),cursor2PIsTime(true), cursor1BIsTime(true),cursor2BIsTime(true),
-    cursor1DIsTime(true),cursor2DIsTime(true), actDoc(initDoc)
+    cursor1PIsTime(true), cursor2PIsTime(true), cursor1BIsTime(true),cursor2BIsTime(true),
+    cursor1DIsTime(true), cursor2DIsTime(true), cursor1PSIsTime(true), cursor2PSIsTime(true), actDoc(initDoc)
 {
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
@@ -66,6 +90,7 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
     m_notebook->AddPage( CreatePeakPage(), wxT("Peak"));
     m_notebook->AddPage( CreateBasePage(), wxT("Base"));
     m_notebook->AddPage( CreateDecayPage(), wxT("Decay"));
+    m_notebook->AddPage( CreatePSlopePage(), wxT("Slope"));
     topSizer->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 
     wxStdDialogButtonSizer* pSdbSizer = new wxStdDialogButtonSizer();
@@ -91,6 +116,7 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
 bool wxStfCursorsDlg::TransferDataFromWindow() {
     // Apply settings before closing dialog:
     wxCommandEvent unusedEvent;
+    UpdateCursors();
     OnPeakcalcexec(unusedEvent);
     return wxWindow::TransferDataFromWindow();
 }
@@ -148,13 +174,13 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     pPeakAtEnd->SetValue(false);
     pageSizer->Add( pPeakAtEnd, 0, wxALIGN_CENTER | wxALL, 2);
 
-    // Number of points for peak calculation:
     wxFlexGridSizer* peakSettingsGrid;
-
     peakSettingsGrid=new wxFlexGridSizer(1,3,0,0);
+
+    // Number of points for peak calculation:
     wxStaticBoxSizer* peakPointsSizer = new wxStaticBoxSizer(
             wxVERTICAL, nbPage, wxT("Number of points for peak") );
-    // Number of points for peak calculation:
+
     wxRadioButton* pAllPoints = new wxRadioButton( nbPage, wxRADIOALL,
             wxT("All points within peak window"), wxDefaultPosition,
             wxDefaultSize, wxRB_GROUP );
@@ -251,6 +277,78 @@ wxNotebookPage* wxStfCursorsDlg::CreateDecayPage() {
     return nbPage;
 }
 
+wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
+    wxPanel* nbPage;
+    nbPage=new wxPanel(m_notebook);
+
+    // Sizer
+    wxBoxSizer* pageSizer;
+    pageSizer=new wxBoxSizer(wxVERTICAL);
+
+    pageSizer->Add( CreateCursorInput( nbPage, wxTEXT1PS, wxTEXT2PS, wxCOMBOU1PS,
+            wxCOMBOU2PS, 1, 10 ), 0, wxALIGN_CENTER | wxALL, 2 );
+
+    // Grid
+    wxFlexGridSizer* PSBegEndGrid;
+    PSBegEndGrid = new wxFlexGridSizer(1,2,0,0); // rows, cols
+
+    //**** Radio options "Measure from" ****
+    wxStaticBoxSizer* LeftBoxSizer = new wxStaticBoxSizer(
+        wxVERTICAL, nbPage, wxT("Measure from") );
+
+    // Measure from: Manual
+    wxRadioButton* pPSManBeg = new wxRadioButton( nbPage, wxRADIO_PSManBeg, wxT("Manual"),
+            wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
+    pPSManBeg->SetValue(true);
+
+    // Measure from: Commencement
+    wxRadioButton* pPSEventBeg = new wxRadioButton( nbPage, wxRADIO_PSEventBeg, wxT("Commencement"),
+            wxDefaultPosition, wxDefaultSize );
+     
+    // Measure from: Threshold
+    wxRadioButton* pPSThrBeg = new wxRadioButton( nbPage, wxRADIO_PSThrBeg, wxT("Threshold"),
+            wxDefaultPosition, wxDefaultSize);
+
+
+    // Sizer to group the radio options
+    LeftBoxSizer->Add( pPSManBeg, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    LeftBoxSizer->Add( pPSEventBeg, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    LeftBoxSizer->Add( pPSThrBeg, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    // Add to PSBegEndGrid
+    PSBegEndGrid->Add(LeftBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
+
+    //**** Radio options "Measure to" ****
+    wxStaticBoxSizer* RightBoxSizer = new wxStaticBoxSizer(
+        wxVERTICAL, nbPage, wxT("Measure to") );
+
+    // Measure to: Manual
+    wxRadioButton* pPSManEnd = new wxRadioButton( nbPage, wxRADIO_PSManEnd, wxT("Manual"),
+            wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+    pPSManEnd->SetValue(true);
+
+    // Measure to: Half-width
+    wxRadioButton* pPSt50End = new wxRadioButton( nbPage, wxRADIO_PSt50End, wxT("Half-width (t50)"),
+            wxDefaultPosition, wxDefaultSize);
+     
+    // Measure to: Peak
+    wxRadioButton* pPSPeakEnd = new wxRadioButton( nbPage, wxRADIO_PSPeakEnd, wxT("Peak"),
+            wxDefaultPosition, wxDefaultSize);
+
+
+    // Sizer to group the radio options
+    RightBoxSizer->Add( pPSManEnd, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    RightBoxSizer->Add( pPSt50End, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    RightBoxSizer->Add( pPSPeakEnd, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    // Add to PSBegEndGrid
+    PSBegEndGrid->Add(RightBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
+
+    pageSizer->Add(PSBegEndGrid, 0, wxALIGN_CENTER | wxALL, 2);
+
+    nbPage->SetSizer(pageSizer);
+    nbPage->Layout();
+    return nbPage;
+
+}
 wxFlexGridSizer* wxStfCursorsDlg::CreateCursorInput( wxPanel* nbPage, wxWindowID textC1id,
         wxWindowID textC2id, wxWindowID comboU1id, wxWindowID comboU2id, std::size_t c1,
         std::size_t c2 )
@@ -271,6 +369,7 @@ wxFlexGridSizer* wxStfCursorsDlg::CreateCursorInput( wxPanel* nbPage, wxWindowID
     wxTextCtrl* textC1 = new wxTextCtrl( nbPage, textC1id, strc1, wxDefaultPosition,
             wxSize(64,20), wxTE_RIGHT );
     cursorGrid->Add( textC1, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+
     // units
     wxString szUnits[] = { actDoc->GetXUnits(), wxT("pts") };
     int szUnitsSize = sizeof( szUnits ) / sizeof( wxString );
@@ -303,6 +402,7 @@ wxFlexGridSizer* wxStfCursorsDlg::CreateCursorInput( wxPanel* nbPage, wxWindowID
 void wxStfCursorsDlg::OnPeakcalcexec( wxCommandEvent& event )
 {
     event.Skip();
+    // Update the results table (see wxStfApp in app.cpp)
     wxGetApp().OnPeakcalcexecMsg(actDoc);
 }
 
@@ -356,6 +456,55 @@ int wxStfCursorsDlg::GetCursor1D() const {
 int wxStfCursorsDlg::GetCursor2D() const {
     return ReadCursor(wxTEXT2D,cursor2DIsTime);
 }
+
+int wxStfCursorsDlg::GetCursor1PS() const {
+    // capture radio option from "measure from"
+    stf::pslope_mode_beg PSBeg= CurrentPSlopeBegMode();
+
+    switch(PSBeg) {
+
+    case stf::psBeg_thrMode:
+        return (int)actDoc->GetThrT();
+        break; // do we need a break after return? 
+
+    case stf::psBeg_footMode:
+        double t20, t80, foot;
+        t20 = actDoc->GetT20Real();
+        t80 = actDoc->GetT80Real();
+        foot = t20 -( (t80-t20)/3.0);
+        //double dfoot =  actDoc()->GetT20Real()-(actDoc()->GetT80Real()-actDoc()->GetT20Real())/3.0;
+        return (int)foot;
+        break;
+
+    case stf::psBeg_manualMode: // not handled
+    default:
+        return ReadCursor(wxTEXT1PS, cursor1PSIsTime);
+
+    }
+
+}
+
+int wxStfCursorsDlg::GetCursor2PS() const {
+    // capture radio option from "measure to"
+    stf::pslope_mode_end PSEnd= CurrentPSlopeEndMode();
+
+    switch(PSEnd) {
+    
+    case stf::psEnd_t50Mode:
+        return (int)actDoc->GetT50LeftReal();
+        break;
+
+    case stf::psEnd_peakMode:
+        return (int)actDoc->GetMaxT();
+        break;
+
+    case stf::psEnd_manualMode:
+    default:
+        return ReadCursor(wxTEXT2PS, cursor2PSIsTime);
+        break;
+    }
+}
+
 
 int wxStfCursorsDlg::GetPeakPoints() const
 {
@@ -530,17 +679,135 @@ void wxStfCursorsDlg::OnComboBoxU2D( wxCommandEvent& event ) {
     UpdateUnits(wxCOMBOU2D,cursor2DIsTime,wxTEXT2D);
 }
 
+void wxStfCursorsDlg::OnComboBoxU1PS( wxCommandEvent& event ) {
+
+    event.Skip();
+    // select manual option in "measurement from" box
+    wxRadioButton* pPSManBeg   = (wxRadioButton*)FindWindow(wxRADIO_PSManBeg);
+
+    if (pPSManBeg == NULL) {
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::OnComboBoxU1PS()"));
+        return;
+    }
+    else 
+        pPSManBeg->SetValue(true);
+
+    UpdateUnits(wxCOMBOU1PS,cursor1PSIsTime,wxTEXT1PS);
+}
+
+void wxStfCursorsDlg::OnComboBoxU2PS( wxCommandEvent& event ) {
+
+    event.Skip();
+    // select manual option in "measurement to" box
+    wxRadioButton* pPSManEnd   = (wxRadioButton*)FindWindow(wxRADIO_PSManEnd);
+
+    if (pPSManEnd == NULL) {
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::OnComboBoxU2PS()"));
+        return;
+    }
+    else 
+        pPSManEnd->SetValue(true);
+
+    UpdateUnits(wxCOMBOU2PS,cursor2PSIsTime,wxTEXT2PS);
+}
+
+void wxStfCursorsDlg::OnRadioPSManBeg( wxCommandEvent& event ) {
+    event.Skip();
+    wxTextCtrl* pCursor1PS = (wxTextCtrl*)FindWindow(wxTEXT1PS);
+    if (pCursor1PS == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioManBeg()"));
+        return;
+    }
+    // cursor text box is not editable 
+    // unless the manual option is active
+    //pCursor1PS->Enable(true);
+    if (!pCursor1PS->IsEditable())
+        pCursor1PS->SetEditable(true);
+}
+
+void wxStfCursorsDlg::OnRadioPSEventBeg( wxCommandEvent& event ) {
+    event.Skip();
+    wxTextCtrl* pCursor1PS = (wxTextCtrl*)FindWindow(wxTEXT1PS);
+    if (pCursor1PS == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioPSEventBeg()"));
+        return;
+    }
+    // cursor text box is not editable 
+    // unless the manual option is active
+    if (pCursor1PS->IsEditable())
+        pCursor1PS->SetEditable(false);
+
+}
+
+void wxStfCursorsDlg::OnRadioPSThrBeg( wxCommandEvent& event ) {
+    event.Skip();
+    wxTextCtrl* pCursor1PS = (wxTextCtrl*)FindWindow(wxTEXT1PS);
+    if (pCursor1PS == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioThrBeg()"));
+        return;
+    }
+    // cursor text box is not editable 
+    // unless the manual option is active
+    if (pCursor1PS->IsEditable())
+        pCursor1PS->SetEditable(false);
+}
+
+void wxStfCursorsDlg::OnRadioPSManEnd( wxCommandEvent& event ) {
+    event.Skip();
+    wxTextCtrl* pCursor2PS = (wxTextCtrl*)FindWindow(wxTEXT2PS);
+    if (pCursor2PS == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioManEnd()"));
+        return;
+    }
+    // cursor text box is not editable 
+    // unless the manual option is active
+    //pCursor1PS->Enable(true);
+    if (!pCursor2PS->IsEditable())
+        pCursor2PS->SetEditable(true);
+}
+
+void wxStfCursorsDlg::OnRadioPSt50End( wxCommandEvent& event ) {
+    event.Skip();
+    wxTextCtrl* pCursor2PS = (wxTextCtrl*)FindWindow(wxTEXT2PS);
+    if (pCursor2PS == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioPSt50End()"));
+        return;
+    }
+    // cursor text box is not editable 
+    // unless the manual option is active
+    if (pCursor2PS->IsEditable())
+        pCursor2PS->SetEditable(false);
+
+}
+
+void wxStfCursorsDlg::OnRadioPSPeakEnd( wxCommandEvent& event ) {
+    event.Skip();
+    wxTextCtrl* pCursor2PS = (wxTextCtrl*)FindWindow(wxTEXT2PS);
+    if (pCursor2PS == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioPeakEnd()"));
+        return;
+    }
+    // cursor text box is not editable 
+    // unless the manual option is active
+    if (pCursor2PS->IsEditable())
+        pCursor2PS->SetEditable(false);
+}
+
+
 void wxStfCursorsDlg::OnRadioAll( wxCommandEvent& event ) {
     event.Skip();
     wxRadioButton* pRadioAll = (wxRadioButton*)FindWindow(wxRADIOALL);
     wxRadioButton* pRadioMean = (wxRadioButton*)FindWindow(wxRADIOMEAN);
+    wxRadioButton* ptest = (wxRadioButton*)FindWindow(wxRADIO_PSPeakEnd);
     wxTextCtrl* pTextPM = (wxTextCtrl*)FindWindow(wxTEXTPM);
     if (pTextPM==NULL || pRadioMean==NULL || pRadioAll==NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioAll()"));
         return;
     }
+
     pTextPM->Enable(false);
     pRadioMean->SetValue(false);
+    ptest->SetValue(false);
 }
 
 void wxStfCursorsDlg::OnRadioMean( wxCommandEvent& event ) {
@@ -555,6 +822,49 @@ void wxStfCursorsDlg::OnRadioMean( wxCommandEvent& event ) {
     pTextPM->Enable(true);
     pRadioAll->SetValue(false);
 }
+
+stf::pslope_mode_beg wxStfCursorsDlg::CurrentPSlopeBegMode() const {
+
+    wxRadioButton* pPSManBeg   = (wxRadioButton*)FindWindow(wxRADIO_PSManBeg);
+    wxRadioButton* pPSEventBeg = (wxRadioButton*)FindWindow(wxRADIO_PSEventBeg);
+    wxRadioButton* pPSThrBeg   = (wxRadioButton*)FindWindow(wxRADIO_PSThrBeg);
+
+    if (pPSManBeg == NULL || pPSEventBeg == NULL || pPSThrBeg == NULL) {
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::OnRadioPSBeg()"));
+        return stf::psBeg_undefined;
+    }
+
+    if ( pPSManBeg->GetValue() )
+        return stf::psBeg_manualMode;
+    else if ( pPSEventBeg->GetValue() )
+        return stf::psBeg_footMode;
+    else  if( pPSThrBeg->GetValue() )
+        return stf::psBeg_thrMode;
+    else
+        return stf::psBeg_undefined;
+}
+
+stf::pslope_mode_end wxStfCursorsDlg::CurrentPSlopeEndMode() const {
+
+    wxRadioButton* pPSManEnd  = (wxRadioButton*)FindWindow(wxRADIO_PSManEnd);
+    wxRadioButton* pPSt50End  = (wxRadioButton*)FindWindow(wxRADIO_PSt50End);
+    wxRadioButton* pPSPeakEnd = (wxRadioButton*)FindWindow(wxRADIO_PSPeakEnd);
+
+    if (pPSManEnd == NULL || pPSt50End == NULL || pPSPeakEnd == NULL){
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::OnRadioPSEnd()"));
+        return stf::psEnd_undefined;
+    }
+   
+    if ( pPSManEnd->GetValue() ) 
+        return stf::psEnd_manualMode;
+    else if ( pPSt50End->GetValue() )
+        return stf::psEnd_t50Mode;
+    else if ( pPSPeakEnd->GetValue() )
+        return stf::psEnd_peakMode;
+    else
+        return stf::psEnd_undefined;
+}
+
 
 void wxStfCursorsDlg::UpdateUnits(wxWindowID comboId, bool& setTime, wxWindowID textId) {
     // Read current entry:
@@ -591,19 +901,26 @@ void wxStfCursorsDlg::UpdateUnits(wxWindowID comboId, bool& setTime, wxWindowID 
 }
 
 void wxStfCursorsDlg::UpdateCursors() {
+
     stf::cursor_type select = CurrentCursor();
     int iNewValue1=0, iNewValue2=0;
+
     bool cursor2isTime=true, cursor1isTime=true;
+
     wxTextCtrl* pText1=NULL, *pText2=NULL;
+
     if (actDoc == NULL) {
         throw std::runtime_error("No active document found");
     }
+
     switch (select) {
+
     case stf::measure_cursor:	// Measure
         iNewValue1=(int)actDoc->GetMeasCursor();
         cursor1isTime=cursorMIsTime;
         pText1=(wxTextCtrl*)FindWindow(wxTEXTM);
         break;
+
     case stf::peak_cursor: // Peak
         iNewValue1=(int)actDoc->GetPeakBeg();
         iNewValue2=(int)actDoc->GetPeakEnd();
@@ -616,6 +933,7 @@ void wxStfCursorsDlg::UpdateCursors() {
         SetDirection( actDoc->GetDirection() );
         SetFromBase( actDoc->GetFromBase() );
         break;
+
     case stf::base_cursor: // Base
         iNewValue1=(int)actDoc->GetBaseBeg();
         iNewValue2=(int)actDoc->GetBaseEnd();
@@ -624,6 +942,7 @@ void wxStfCursorsDlg::UpdateCursors() {
         pText1=(wxTextCtrl*)FindWindow(wxTEXT1B);
         pText2=(wxTextCtrl*)FindWindow(wxTEXT2B);
         break;
+
     case stf::decay_cursor: // Decay
         iNewValue1=(int)actDoc->GetFitBeg();
         iNewValue2=(int)actDoc->GetFitEnd();
@@ -632,6 +951,16 @@ void wxStfCursorsDlg::UpdateCursors() {
         pText1=(wxTextCtrl*)FindWindow(wxTEXT1D);
         pText2=(wxTextCtrl*)FindWindow(wxTEXT2D);
         break;
+
+    case stf::pslope_cursor: // PSlope
+        iNewValue1=(int)actDoc->GetPSlopeBeg();
+        iNewValue2=(int)actDoc->GetPSlopeEnd();
+        cursor1isTime=cursor1PSIsTime;
+        cursor2isTime=cursor2PSIsTime;
+        pText1=(wxTextCtrl*)FindWindow(wxTEXT1PS);
+        pText2=(wxTextCtrl*)FindWindow(wxTEXT2PS);
+        break;
+
     default:
         break;
     }
@@ -676,6 +1005,7 @@ stf::cursor_type wxStfCursorsDlg::CurrentCursor() const {
     case 1: return stf::peak_cursor;
     case 2: return stf::base_cursor;
     case 3: return stf::decay_cursor;
+    case 4: return stf::pslope_cursor;
     default: return stf::undefined_cursor;
     }
 }

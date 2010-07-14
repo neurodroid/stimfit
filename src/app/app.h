@@ -52,6 +52,7 @@ enum {
     ID_TOOL_CH1,
     ID_TOOL_CH2,
     ID_TOOL_SNAPSHOT,
+    wxID_TOOL_PSLOPE,
 #ifdef _WINDOWS
     ID_TOOL_SNAPSHOT_WMF,
 #endif

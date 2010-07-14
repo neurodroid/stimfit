@@ -448,7 +448,7 @@ struct ofstreamMan {
     wxFFile myStream;
 };
 
- //! The direction of peak calculations
+//! The direction of peak calculations
 enum direction {
     up,                 /*!< Find positive-going peaks. */
     down,               /*!< Find negative-going peaks. */
@@ -465,6 +465,7 @@ enum cursor_type {
     latency_cursor,  /*!< Latency cursor. */
     zoom_cursor,     /*!< Zoom rectangle cursor. */
     event_cursor,    /*!< Event mode cursor. */
+    pslope_cursor,   /*!< PSlope mode cursor. */
     undefined_cursor /*!< Undefined cursor. */
 };
 
@@ -490,6 +491,23 @@ enum latency_window_mode {
     windowMode = 1  /*!< Use a window of 100 sampling points around the peak. */ 
 };
 
+//! PSlope start cursor settings
+enum pslope_mode_beg {
+    psBeg_manualMode, /*< Set the start Slope cursor manually. */
+    psBeg_footMode,   /*< Set the start Slope cursor to the beginning of an event. */
+    psBeg_thrMode,    /*< Set the start Slope cursor to a threshold. */
+    psBeg_undefined
+};
+
+//! PSlope end cursor settings
+enum pslope_mode_end {
+    psEnd_manualMode, /*< Set the end Slope cursor manually. */
+    psEnd_t50Mode,   /*< Set the Slope cursor to the beginning of an event. */
+    psEnd_peakMode,    /*< Set the Slope cursor to the peak. */
+    psEnd_undefined
+};
+
+
 typedef std::vector< stf::Event      >::iterator       event_it;    /*!< stf::Event iterator */
 typedef std::vector< stf::Event      >::const_iterator c_event_it;  /*!< constant stf::Event iterator */
 typedef std::vector< stf::PyMarker   >::iterator       marker_it;   /*!< stf::PyMarker iterator */
@@ -500,6 +518,7 @@ typedef std::vector< stf::storedFunc >::const_iterator c_stfunc_it; /*!< constan
 
 #else
 #endif // Module only
+
 
 //! Text file import filter settings
 struct txtImportSettings {
@@ -515,7 +534,6 @@ struct txtImportSettings {
     wxString yUnitsCh2; /*!< y units string of second channel. */
     wxString xUnits;    /*!< x units string. */
 };
-
 
 //! File types
 enum filetype {
@@ -547,10 +565,17 @@ int round(double toRound);
 typedef std::vector< std::size_t     >::const_iterator c_st_it;     /*!< constant size_t iterator */
 typedef std::vector< int             >::iterator       int_it;      /*!< int iterator */
 typedef std::vector< int             >::const_iterator c_int_it;    /*!< constant int iterator */
+typedef std::vector< stf::Event      >::iterator       event_it;    /*!< stf::Event iterator */
+typedef std::vector< stf::Event      >::const_iterator c_event_it;  /*!< constant stf::Event iterator */
+typedef std::vector< stf::PyMarker   >::iterator       marker_it;   /*!< stf::PyMarker iterator */
+typedef std::vector< stf::PyMarker   >::const_iterator c_marker_it; /*!< constant stf::PyMarker iterator */
 typedef std::vector< Channel         >::iterator       ch_it;       /*!< Channel iterator */
 typedef std::vector< Channel         >::const_iterator c_ch_it;     /*!< constant Channel iterator */
 typedef std::vector< Section         >::iterator       sec_it;      /*!< Section iterator */
 typedef std::vector< Section         >::const_iterator c_sec_it;    /*!< constant Section iterator */
+typedef std::vector< wxString        >::iterator       wxs_it;      /*!< wxString iterator */
+typedef std::vector< wxString        >::const_iterator c_wxs_it;    /*!< constant wxString iterator */
+typedef std::vector< stf::storedFunc >::const_iterator c_stfunc_it; /*!< constant stf::storedFunc iterator */
 
 inline int stf::round(double toRound) {
     return toRound <= 0.0 ? int(toRound-0.5) : int(toRound+0.5);
