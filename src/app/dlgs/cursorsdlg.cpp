@@ -718,11 +718,9 @@ void wxStfCursorsDlg::OnRadioPSManBeg( wxCommandEvent& event ) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioManBeg()"));
         return;
     }
-    // cursor text box is not editable 
-    // unless the manual option is active
-    //pCursor1PS->Enable(true);
-    if (!pCursor1PS->IsEditable())
-        pCursor1PS->SetEditable(true);
+    // if cursor wxTextCtrl is NOT enabled
+    if (!pCursor1PS->IsEnabled())
+        pCursor1PS->Enable(true);
 }
 
 void wxStfCursorsDlg::OnRadioPSEventBeg( wxCommandEvent& event ) {
@@ -732,11 +730,9 @@ void wxStfCursorsDlg::OnRadioPSEventBeg( wxCommandEvent& event ) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioPSEventBeg()"));
         return;
     }
-    // cursor text box is not editable 
-    // unless the manual option is active
-    if (pCursor1PS->IsEditable())
-        pCursor1PS->SetEditable(false);
-
+    // disable cursor wxTextCtrl if it is enabled 
+    if (pCursor1PS->IsEnabled())
+        pCursor1PS->Enable(false);
 }
 
 void wxStfCursorsDlg::OnRadioPSThrBeg( wxCommandEvent& event ) {
@@ -746,10 +742,9 @@ void wxStfCursorsDlg::OnRadioPSThrBeg( wxCommandEvent& event ) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioThrBeg()"));
         return;
     }
-    // cursor text box is not editable 
-    // unless the manual option is active
-    if (pCursor1PS->IsEditable())
-        pCursor1PS->SetEditable(false);
+    // disable cursor wxTextCtrl if it is enabled 
+    if (pCursor1PS->IsEnabled())
+        pCursor1PS->Enable(false);
 }
 
 void wxStfCursorsDlg::OnRadioPSManEnd( wxCommandEvent& event ) {
@@ -759,11 +754,9 @@ void wxStfCursorsDlg::OnRadioPSManEnd( wxCommandEvent& event ) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioManEnd()"));
         return;
     }
-    // cursor text box is not editable 
-    // unless the manual option is active
-    //pCursor1PS->Enable(true);
-    if (!pCursor2PS->IsEditable())
-        pCursor2PS->SetEditable(true);
+    // if cursor wxTextCtrl is NOT enabled 
+    if (!pCursor2PS->IsEnabled())
+        pCursor2PS->Enable(true);
 }
 
 void wxStfCursorsDlg::OnRadioPSt50End( wxCommandEvent& event ) {
@@ -773,11 +766,9 @@ void wxStfCursorsDlg::OnRadioPSt50End( wxCommandEvent& event ) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioPSt50End()"));
         return;
     }
-    // cursor text box is not editable 
-    // unless the manual option is active
-    if (pCursor2PS->IsEditable())
-        pCursor2PS->SetEditable(false);
-
+    // disable cursor wxTextCtrl if it is enabled 
+    if (pCursor2PS->IsEnabled())
+        pCursor2PS->Enable(false);
 }
 
 void wxStfCursorsDlg::OnRadioPSPeakEnd( wxCommandEvent& event ) {
@@ -787,10 +778,9 @@ void wxStfCursorsDlg::OnRadioPSPeakEnd( wxCommandEvent& event ) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioPeakEnd()"));
         return;
     }
-    // cursor text box is not editable 
-    // unless the manual option is active
-    if (pCursor2PS->IsEditable())
-        pCursor2PS->SetEditable(false);
+    // disable cursor wxTextCtrl if is enabled
+    if (pCursor2PS->IsEnabled())
+        pCursor2PS->Enable(false);
 }
 
 
