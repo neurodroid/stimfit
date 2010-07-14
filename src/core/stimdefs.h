@@ -565,17 +565,10 @@ int round(double toRound);
 typedef std::vector< std::size_t     >::const_iterator c_st_it;     /*!< constant size_t iterator */
 typedef std::vector< int             >::iterator       int_it;      /*!< int iterator */
 typedef std::vector< int             >::const_iterator c_int_it;    /*!< constant int iterator */
-typedef std::vector< stf::Event      >::iterator       event_it;    /*!< stf::Event iterator */
-typedef std::vector< stf::Event      >::const_iterator c_event_it;  /*!< constant stf::Event iterator */
-typedef std::vector< stf::PyMarker   >::iterator       marker_it;   /*!< stf::PyMarker iterator */
-typedef std::vector< stf::PyMarker   >::const_iterator c_marker_it; /*!< constant stf::PyMarker iterator */
 typedef std::vector< Channel         >::iterator       ch_it;       /*!< Channel iterator */
 typedef std::vector< Channel         >::const_iterator c_ch_it;     /*!< constant Channel iterator */
 typedef std::vector< Section         >::iterator       sec_it;      /*!< Section iterator */
 typedef std::vector< Section         >::const_iterator c_sec_it;    /*!< constant Section iterator */
-typedef std::vector< wxString        >::iterator       wxs_it;      /*!< wxString iterator */
-typedef std::vector< wxString        >::const_iterator c_wxs_it;    /*!< constant wxString iterator */
-typedef std::vector< stf::storedFunc >::const_iterator c_stfunc_it; /*!< constant stf::storedFunc iterator */
 
 inline int stf::round(double toRound) {
     return toRound <= 0.0 ? int(toRound-0.5) : int(toRound+0.5);
