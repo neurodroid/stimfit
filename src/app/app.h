@@ -52,6 +52,7 @@ enum {
     wxID_TOOL_CH1,
     wxID_TOOL_CH2,
     wxID_TOOL_SNAPSHOT,
+    wxID_TOOL_PSLOPE,
 #ifdef _WINDOWS
     wxID_TOOL_SNAPSHOT_WMF,
 #endif

@@ -470,6 +470,7 @@ enum cursor_type {
     latency_cursor,  /*!< Latency cursor. */
     zoom_cursor,     /*!< Zoom rectangle cursor. */
     event_cursor,    /*!< Event mode cursor. */
+    pslope_cursor,   /*!< PSlope mode cursor. */
     undefined_cursor /*!< Undefined cursor. */
 };
 
@@ -493,6 +494,22 @@ enum latency_mode {
 enum latency_window_mode {
     defaultMode = 0,  /*!< Use the current peak cursor window for the active channel. */ 
     windowMode = 1  /*!< Use a window of 100 sampling points around the peak. */ 
+};
+
+//! PSlope start cursor settings
+enum pslope_mode_beg {
+    psBeg_manualMode, /*< Set the start Slope cursor manually. */
+    psBeg_footMode,   /*< Set the start Slope cursor to the beginning of an event. */
+    psBeg_thrMode,    /*< Set the start Slope cursor to a threshold. */
+    psBeg_undefined
+};
+
+//! PSlope end cursor settings
+enum pslope_mode_end {
+    psEnd_manualMode, /*< Set the end Slope cursor manually. */
+    psEnd_t50Mode,   /*< Set the Slope cursor to the beginning of an event. */
+    psEnd_peakMode,    /*< Set the Slope cursor to the peak. */
+    psEnd_undefined
 };
 
 //! Text file import filter settings

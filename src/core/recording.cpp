@@ -57,6 +57,8 @@ void Recording::init() {
     peakEnd = 0;
     fitBeg = 0;
     fitEnd = 0;
+    PSlopeBeg = 0;
+    PSlopeEnd = 0;
     measCursor = 0;
     latencyStartCursor = 0.0;
     latencyEndCursor = 0.0;
@@ -90,6 +92,7 @@ void Recording::init() {
     slopeRatio = 0.0;
     t0Real = 0.0;
     pM = 1;
+    PSlope = 0.0;
     selectedSections = std::vector<std::size_t>(0);
     selectBase = Vector_double(0);
     t20Index = 0;
@@ -110,6 +113,7 @@ void Recording::init() {
     viewSloperise = true;
     viewSlopedecay = true;
     viewLatency = true;
+    viewPSlope = true;
     viewCursors = true;
     zoom = XZoom(0, 0.1, false);
 }
@@ -170,6 +174,10 @@ void Recording::CopyCursors(const Recording& c_Recording) {
     correctRangeR(fitBeg);
     fitEnd=c_Recording.fitEnd;
     correctRangeR(fitEnd);
+    PSlopeBeg = c_Recording.PSlopeBeg; // PSlope left cursor
+    correctRangeR(PSlopeBeg);
+    PSlopeEnd = c_Recording.PSlopeEnd; // PSlope right cursor
+    correctRangeR(PSlopeEnd);
     pM=c_Recording.pM;  //peakMean, number of points used for averaging
 
 }
@@ -374,6 +382,16 @@ void Recording::SetLatencyEnd(double value) {
         value=cur().size()-1.0;
     }
     latencyEndCursor=value;
+}
+
+void Recording::SetPSlopeBeg(int value) {
+    correctRangeR(value);
+    PSlopeBeg = value;
+}
+
+void Recording::SetPSlopeEnd(int value) {
+    correctRangeR(value);
+    PSlopeEnd = value;
 }
 
 void Recording::correctRangeR(int& value) {
@@ -630,6 +648,22 @@ void Recording::Measure( )
 
     SetLatency(GetLatencyEnd()-GetLatencyBeg());
 
+    //-------------------------------------
+    // Begin PSlope calculation (PSP Slope)
+    //-------------------------------------
+
+    try {
+        PSlope = (stf::pslope(cur().get(), PSlopeBeg, PSlopeEnd))*GetSR();
+    }
+    catch (const std::out_of_range& e) {
+        PSlope = 0.0;
+        throw e;
+    }
+
+    //-------------------------------------
+    // Begin PSlope calculation (PSP Slope)
+    //-------------------------------------
+
     //--------------------------
 }	//End of Measure(,,,,,)
 
@@ -697,6 +731,7 @@ stf::Table Recording::CurResultsTable() const {
     if (viewSloperise) n_cols++;
     if (viewSlopedecay) n_cols++;
     if (viewLatency) n_cols++;
+    if (viewPSlope) n_cols++;
 
     std::size_t n_rows=(viewCursors? 3:1);
     stf::Table table(n_rows,n_cols);
@@ -721,6 +756,7 @@ stf::Table Recording::CurResultsTable() const {
     if (viewSloperise) table.SetColLabel(nCol++,wxT("Slope (rise)"));
     if (viewSlopedecay) table.SetColLabel(nCol++,wxT("Slope (decay)"));
     if (viewLatency) table.SetColLabel(nCol++,wxT("Latency"));
+    if (viewPSlope) table.SetColLabel(nCol++,wxT("Slope"));
 
     // Values
     nCol=0;
@@ -845,6 +881,15 @@ stf::Table Recording::CurResultsTable() const {
         if (viewCursors) {
             table.at(1,nCol)=GetLatencyBeg()*GetXScale();
             table.at(2,nCol)=GetLatencyEnd()*GetXScale();
+        }
+        nCol++;
+    }
+
+    // PSlope
+    if (viewPSlope) {table.at(0,nCol)=GetPSlope();
+        if (viewCursors) {
+            table.at(1,nCol)=GetPSlopeBeg()*GetXScale();
+            table.at(2,nCol)=GetPSlopeEnd()*GetXScale();
         }
         nCol++;
     }
