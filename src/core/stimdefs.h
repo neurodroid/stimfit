@@ -496,13 +496,14 @@ enum pslope_mode_beg {
     psBeg_manualMode, /*< Set the start Slope cursor manually. */
     psBeg_footMode,   /*< Set the start Slope cursor to the beginning of an event. */
     psBeg_thrMode,    /*< Set the start Slope cursor to a threshold. */
+    psBeg_t50Mode,    /*< Set the start Slope cursor to the half-width of an event*/
     psBeg_undefined
 };
 
 //! PSlope end cursor settings
 enum pslope_mode_end {
     psEnd_manualMode, /*< Set the end Slope cursor manually. */
-    psEnd_t50Mode,   /*< Set the Slope cursor to the beginning of an event. */
+    psEnd_t50Mode,   /*< Set the Slope cursor to the half-width of an event. */
     psEnd_peakMode,    /*< Set the Slope cursor to the peak. */
     psEnd_undefined
 };

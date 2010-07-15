@@ -70,6 +70,7 @@ private:
     void OnRadioPSEventBeg( wxCommandEvent& event );
     void OnRadioPSThrBeg( wxCommandEvent& event );
     void OnRadioPSManEnd( wxCommandEvent& event );
+    void OnRadioPSt50Beg( wxCommandEvent& event );
     void OnRadioPSt50End( wxCommandEvent& event );
     void OnRadioPSPeakEnd( wxCommandEvent& event );
     void OnRadioAll( wxCommandEvent& event );

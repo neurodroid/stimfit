@@ -34,14 +34,18 @@ enum {
     wxRADIO_PSManBeg,
     wxRADIO_PSEventBeg,
     wxRADIO_PSThrBeg,
+    wxRADIO_PSt50Beg,
     wxRADIO_PSManEnd,
     wxRADIO_PSt50End,
+    wxRADIO_PSDeltaTEnd,
     wxRADIO_PSPeakEnd,
+    wxDELTATUNITS,
     wxMEASCURSOR,
     wxPEAKATEND,
     wxPEAKMEAN,
     wxDIRECTION,
     wxSLOPE,
+    wxSLOPE_FROM_PSLOPE,
     wxSLOPEUNITS,
     wxREFERENCE,
     wxSTARTFITATPEAK,
@@ -70,6 +74,7 @@ EVT_RADIOBUTTON( wxRADIO_PSManBeg, wxStfCursorsDlg::OnRadioPSManBeg )
 EVT_RADIOBUTTON( wxRADIO_PSEventBeg, wxStfCursorsDlg::OnRadioPSEventBeg )
 EVT_RADIOBUTTON( wxRADIO_PSThrBeg, wxStfCursorsDlg::OnRadioPSThrBeg )
 EVT_RADIOBUTTON( wxRADIO_PSManEnd, wxStfCursorsDlg::OnRadioPSManEnd )
+EVT_RADIOBUTTON( wxRADIO_PSt50Beg, wxStfCursorsDlg::OnRadioPSt50Beg )
 EVT_RADIOBUTTON( wxRADIO_PSt50End, wxStfCursorsDlg::OnRadioPSt50End )
 EVT_RADIOBUTTON( wxRADIO_PSPeakEnd, wxStfCursorsDlg::OnRadioPSPeakEnd )
 
@@ -317,15 +322,30 @@ wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
     wxRadioButton* pPSEventBeg = new wxRadioButton( nbPage, wxRADIO_PSEventBeg, wxT("Commencement"),
             wxDefaultPosition, wxDefaultSize );
      
-    // Measure from: Threshold
-    wxRadioButton* pPSThrBeg = new wxRadioButton( nbPage, wxRADIO_PSThrBeg, wxT("Threshold"),
+    // Measure from: Threshold slope
+    wxFlexGridSizer* thrGrid;
+    thrGrid = new wxFlexGridSizer(1,2,0,0);
+
+    wxRadioButton* pPSThrBeg = new wxRadioButton( nbPage, wxRADIO_PSThrBeg, wxT("Threshold slope"),
             wxDefaultPosition, wxDefaultSize);
+    thrGrid->Add(pPSThrBeg, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+
+    wxTextCtrl* pPStextThr = new wxTextCtrl(nbPage, wxSLOPE_FROM_PSLOPE, wxT(" "), wxDefaultPosition, 
+            wxSize(44,20), wxTE_RIGHT);
+    thrGrid->Add(pPStextThr, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+
+    // Measure from: t50
+    wxRadioButton* pPSt50Beg = new wxRadioButton( nbPage, wxRADIO_PSt50Beg, wxT("Half-width (t50)"),
+            wxDefaultPosition, wxDefaultSize);
+
 
 
     // Sizer to group the radio options
     LeftBoxSizer->Add( pPSManBeg, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
     LeftBoxSizer->Add( pPSEventBeg, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-    LeftBoxSizer->Add( pPSThrBeg, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    //LeftBoxSizer->Add( pPSThrBeg, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    LeftBoxSizer->Add( thrGrid, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    LeftBoxSizer->Add( pPSt50Beg, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
     // Add to PSBegEndGrid
     PSBegEndGrid->Add(LeftBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
 
@@ -341,7 +361,19 @@ wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
     // Measure to: Half-width
     wxRadioButton* pPSt50End = new wxRadioButton( nbPage, wxRADIO_PSt50End, wxT("Half-width (t50)"),
             wxDefaultPosition, wxDefaultSize);
-     
+
+    // Measue to: DeltaT
+    wxFlexGridSizer* DeltaTGrid;
+    DeltaTGrid = new wxFlexGridSizer(1,2,0,0);
+
+    wxRadioButton* pPSDeltaTEnd = new wxRadioButton( nbPage, wxRADIO_PSDeltaTEnd, wxT("Delta t"),
+            wxDefaultPosition, wxDefaultSize);
+    DeltaTGrid->Add(pPSDeltaTEnd, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+
+    wxTextCtrl* DeltaTunits = new wxTextCtrl(nbPage, wxDELTATUNITS, wxT(""), wxDefaultPosition, 
+            wxSize(44,20), wxTE_RIGHT);
+    DeltaTGrid->Add(DeltaTunits, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+
     // Measure to: Peak
     wxRadioButton* pPSPeakEnd = new wxRadioButton( nbPage, wxRADIO_PSPeakEnd, wxT("Peak"),
             wxDefaultPosition, wxDefaultSize);
@@ -350,6 +382,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
     // Sizer to group the radio options
     RightBoxSizer->Add( pPSManEnd, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
     RightBoxSizer->Add( pPSt50End, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    RightBoxSizer->Add( DeltaTGrid, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
     RightBoxSizer->Add( pPSPeakEnd, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
     // Add to PSBegEndGrid
     PSBegEndGrid->Add(RightBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
@@ -686,7 +719,8 @@ void wxStfCursorsDlg::OnComboBoxU2PS( wxCommandEvent& event ) {
 void wxStfCursorsDlg::OnRadioPSManBeg( wxCommandEvent& event ) {
     event.Skip();
     wxTextCtrl* pCursor1PS = (wxTextCtrl*)FindWindow(wxTEXT1PS);
-    if (pCursor1PS == NULL) {
+    wxTextCtrl* pPStextThr = (wxTextCtrl*)FindWindow(wxSLOPE_FROM_PSLOPE);
+    if (pCursor1PS == NULL || pPStextThr == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioManBeg()"));
         return;
     }
@@ -694,31 +728,45 @@ void wxStfCursorsDlg::OnRadioPSManBeg( wxCommandEvent& event ) {
     if (!pCursor1PS->IsEnabled())
         pCursor1PS->Enable(true);
 
+    // disable threshold text if is enabled
+    if (pPStextThr->IsEnabled())
+    pPStextThr->Enable(false);
+
     SetPSlopeBegMode(stf::psBeg_manualMode);
 }
 
 void wxStfCursorsDlg::OnRadioPSEventBeg( wxCommandEvent& event ) {
     event.Skip();
     wxTextCtrl* pCursor1PS = (wxTextCtrl*)FindWindow(wxTEXT1PS);
-    if (pCursor1PS == NULL) {
+    wxTextCtrl* pPStextThr = (wxTextCtrl*)FindWindow(wxSLOPE_FROM_PSLOPE);
+    if (pCursor1PS == NULL || pPStextThr == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioPSEventBeg()"));
         return;
     }
     // disable cursor wxTextCtrl if it is enabled 
-    if (pCursor1PS->IsEnabled())
+    if (pCursor1PS->IsEnabled()) 
         pCursor1PS->Enable(false);
+
+    // disable threshold text if is enabled
+    if (pPStextThr->IsEnabled())
+        pPStextThr->Enable(false);
 }
 
 void wxStfCursorsDlg::OnRadioPSThrBeg( wxCommandEvent& event ) {
     event.Skip();
     wxTextCtrl* pCursor1PS = (wxTextCtrl*)FindWindow(wxTEXT1PS);
+    wxTextCtrl* pPStextThr = (wxTextCtrl*)FindWindow(wxSLOPE_FROM_PSLOPE);
     if (pCursor1PS == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioThrBeg()"));
         return;
     }
     // disable cursor wxTextCtrl if it is enabled 
-    if (pCursor1PS->IsEnabled())
+    if (pCursor1PS->IsEnabled()) 
         pCursor1PS->Enable(false);
+
+    // enable threshold text if is not enabled
+    if (!pPStextThr->IsEnabled())
+        pPStextThr->Enable(true);
 }
 
 void wxStfCursorsDlg::OnRadioPSManEnd( wxCommandEvent& event ) {
@@ -744,6 +792,19 @@ void wxStfCursorsDlg::OnRadioPSt50End( wxCommandEvent& event ) {
     if (pCursor2PS->IsEnabled())
         pCursor2PS->Enable(false);
 }
+
+void wxStfCursorsDlg::OnRadioPSt50Beg( wxCommandEvent& event ) {
+    event.Skip();
+    wxTextCtrl* pCursor1PS = (wxTextCtrl*)FindWindow(wxTEXT1PS);
+    if (pCursor1PS == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioPSt50Beg()"));
+        return;
+    }
+    // disable cursor wxTextCtrl if it is enabled 
+    if (pCursor1PS->IsEnabled())
+        pCursor1PS->Enable(false);
+}
+
 
 void wxStfCursorsDlg::OnRadioPSPeakEnd( wxCommandEvent& event ) {
     event.Skip();
@@ -792,8 +853,10 @@ stf::pslope_mode_beg wxStfCursorsDlg::GetPSlopeBegMode() const {
     wxRadioButton* pPSManBeg   = (wxRadioButton*)FindWindow(wxRADIO_PSManBeg);
     wxRadioButton* pPSEventBeg = (wxRadioButton*)FindWindow(wxRADIO_PSEventBeg);
     wxRadioButton* pPSThrBeg   = (wxRadioButton*)FindWindow(wxRADIO_PSThrBeg);
+    wxRadioButton* pPSt50Beg   = (wxRadioButton*)FindWindow(wxRADIO_PSt50Beg);
 
-    if (pPSManBeg == NULL || pPSEventBeg == NULL || pPSThrBeg == NULL) {
+    if (pPSManBeg == NULL || pPSEventBeg == NULL 
+            || pPSThrBeg == NULL || pPSt50Beg == NULL) {
         wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::OnRadioPSBeg()"));
         return stf::psBeg_undefined;
     }
@@ -804,6 +867,8 @@ stf::pslope_mode_beg wxStfCursorsDlg::GetPSlopeBegMode() const {
         return stf::psBeg_footMode;
     else  if( pPSThrBeg->GetValue() )
         return stf::psBeg_thrMode;
+    else if ( pPSt50Beg->GetValue() )
+        return stf::psBeg_t50Mode;
     else
         return stf::psBeg_undefined;
 }
@@ -860,8 +925,10 @@ void wxStfCursorsDlg::SetPSlopeBegMode(stf::pslope_mode_beg pslopeBegMode) {
     wxRadioButton* pPSManBeg  = (wxRadioButton*)FindWindow(wxRADIO_PSManBeg);
     wxRadioButton* pPSEventBeg  = (wxRadioButton*)FindWindow(wxRADIO_PSEventBeg);
     wxRadioButton* pPSThrBeg = (wxRadioButton*)FindWindow(wxRADIO_PSThrBeg);
+    wxRadioButton* pPSt50Beg   = (wxRadioButton*)FindWindow(wxRADIO_PSThrBeg);
 
-    if (pPSManBeg == NULL || pPSEventBeg == NULL || pPSThrBeg == NULL){
+    if (pPSManBeg == NULL || pPSEventBeg == NULL 
+        || pPSThrBeg == NULL || pPSt50Beg == NULL){
         wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::SetPSlopeBegMode()"));
         return;
     }
@@ -870,12 +937,14 @@ void wxStfCursorsDlg::SetPSlopeBegMode(stf::pslope_mode_beg pslopeBegMode) {
     case stf::psBeg_manualMode:
         pPSManBeg->Enable(true);
         break;
-    case stf::psEnd_t50Mode:
+    case stf::psBeg_footMode:
         pPSEventBeg->Enable(true);
         break;
-    case stf::psEnd_peakMode:
+    case stf::psBeg_thrMode:
         pPSThrBeg->Enable(true);
         break;
+    case stf::psBeg_t50Mode:
+        pPSt50Beg->Enable(true);
     default:
         break;
     }
@@ -1044,10 +1113,14 @@ double wxStfCursorsDlg::GetSlope() const {
 
 void wxStfCursorsDlg::SetSlope( double fSlope ) {
     wxTextCtrl* pSlope = (wxTextCtrl*)FindWindow(wxSLOPE);
+    wxTextCtrl* pSlope2 = (wxTextCtrl*)FindWindow(wxSLOPE_FROM_PSLOPE);
+
     wxString wxsSlope;
     wxsSlope << fSlope;
-    if ( pSlope != NULL )
+    if ( pSlope != NULL ) {
         pSlope->SetValue( wxsSlope );
+        pSlope2->SetValue( wxsSlope );
+    }
 }
 
 void wxStfCursorsDlg::SetSlopeUnits(const wxString& units) {
