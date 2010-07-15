@@ -421,7 +421,7 @@ wxStfBatchDlg::wxStfBatchDlg(wxWindow* parent, int id, wxString title, wxPoint p
         }
     };
     m_checkList =
-        new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxSize(180,430), 
+        new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxSize(180,350), 
                             checkListChoices.size(), &checkListChoices[0], 0 );
     for (bo_it = batchOptions.begin(); bo_it != batchOptions.end(); ++bo_it) {
         m_checkList->Check(bo_it->index, wxGetApp().wxGetProfileInt( wxT("Batch Dialog"), bo_it->label, bo_it->selection) );
