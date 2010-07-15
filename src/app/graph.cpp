@@ -1326,6 +1326,7 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
         llz_y2=llz_y;
         break;
     case stf::pslope_cursor:
+        Doc()->SetPSlopeBegMode(stf::psBeg_manualMode); // set left cursor to manual
         // conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetPSlopeBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); // second 'double' added
         break;
@@ -1387,6 +1388,7 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
         }
         break;
     case stf::pslope_cursor:
+        Doc()->SetPSlopeEndMode(stf::psEnd_manualMode); // set right cursor to manual mode
         Doc()->SetPSlopeEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
     default: ;

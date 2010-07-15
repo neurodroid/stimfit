@@ -398,9 +398,12 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
             // Get cursor location from the dialog box:
          case stf::pslope_cursor: {
              actDoc->SetPSlopeBegMode(CursorsDialog->GetPSlopeBegMode());
-             //actDoc->SetPSlopeBeg(CursorsDialog->GetCursor1PS());
+             if (actDoc->GetPSlopeBegMode()==stf::psBeg_manualMode)
+                actDoc->SetPSlopeBeg(CursorsDialog->GetCursor1PS());
+
              actDoc->SetPSlopeEndMode(CursorsDialog->GetPSlopeEndMode());
-             //actDoc->SetPSlopeEnd(CursorsDialog->GetCursor2PS());
+             if (actDoc->GetPSlopeEndMode()==stf::psEnd_manualMode)
+                actDoc->SetPSlopeEnd(CursorsDialog->GetCursor2PS());
              break;
          }
          case stf::undefined_cursor:

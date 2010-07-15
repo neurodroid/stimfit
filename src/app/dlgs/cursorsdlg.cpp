@@ -681,6 +681,8 @@ void wxStfCursorsDlg::OnRadioPSManBeg( wxCommandEvent& event ) {
     // if cursor wxTextCtrl is NOT enabled
     if (!pCursor1PS->IsEnabled())
         pCursor1PS->Enable(true);
+
+    SetPSlopeBegMode(stf::psBeg_manualMode);
 }
 
 void wxStfCursorsDlg::OnRadioPSEventBeg( wxCommandEvent& event ) {
@@ -962,8 +964,8 @@ void wxStfCursorsDlg::UpdateCursors() {
         pText1=(wxTextCtrl*)FindWindow(wxTEXT1PS);
         pText2=(wxTextCtrl*)FindWindow(wxTEXT2PS);
         // Update PSlope Beg and End options
-        SetPSlopeBegMode(actDoc->GetPSlopeBegMode() );
-        SetPSlopeEndMode(actDoc->GetPSlopeEndMode() );
+        //SetPSlopeBegMode(actDoc->GetPSlopeBegMode() );
+        //SetPSlopeEndMode(actDoc->GetPSlopeEndMode() );
         break;
 
     default:
