@@ -332,6 +332,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
 
     wxTextCtrl* pPStextThr = new wxTextCtrl(nbPage, wxSLOPE_FROM_PSLOPE, wxT(" "), wxDefaultPosition, 
             wxSize(44,20), wxTE_RIGHT);
+    pPStextThr->Enable(false);
     thrGrid->Add(pPStextThr, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
 
     // Measure from: t50
@@ -769,6 +770,7 @@ void wxStfCursorsDlg::OnRadioPSThrBeg( wxCommandEvent& event ) {
         pPStextThr->Enable(true);
 }
 
+
 void wxStfCursorsDlg::OnRadioPSManEnd( wxCommandEvent& event ) {
     event.Skip();
     wxTextCtrl* pCursor2PS = (wxTextCtrl*)FindWindow(wxTEXT2PS);
@@ -796,13 +798,18 @@ void wxStfCursorsDlg::OnRadioPSt50End( wxCommandEvent& event ) {
 void wxStfCursorsDlg::OnRadioPSt50Beg( wxCommandEvent& event ) {
     event.Skip();
     wxTextCtrl* pCursor1PS = (wxTextCtrl*)FindWindow(wxTEXT1PS);
-    if (pCursor1PS == NULL) {
+    wxTextCtrl* pPStextThr = (wxTextCtrl*)FindWindow(wxSLOPE_FROM_PSLOPE);
+    if (pCursor1PS == NULL || pPStextThr == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioPSt50Beg()"));
         return;
     }
     // disable cursor wxTextCtrl if it is enabled 
     if (pCursor1PS->IsEnabled())
         pCursor1PS->Enable(false);
+
+    // disable threshold text if is enabled
+    if (pPStextThr->IsEnabled())
+        pPStextThr->Enable(false);
 }
 
 

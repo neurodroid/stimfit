@@ -680,7 +680,6 @@ void Recording::Measure( )
 
         case stf::psBeg_t50Mode:   // Left PSlope to the t50
             PSlopeBegVal = (int)t50LeftReal;
-            std::cout << "Modet50 for Pslope beg" << std::endl;
             break;
 
         case stf::psBeg_manualMode: // Left PSlope cursor manual
