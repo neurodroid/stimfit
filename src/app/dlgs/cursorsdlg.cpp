@@ -186,14 +186,26 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
             wxDefaultSize, wxRB_GROUP );
     peakPointsSizer->Add( pAllPoints, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
     pAllPoints->SetValue(false);
+
+    wxFlexGridSizer* usrdefGrid;
+    usrdefGrid = new wxFlexGridSizer(1,2,0,0);
+
     wxRadioButton* pMeanPoints = new wxRadioButton( nbPage, wxRADIOMEAN, wxT("User-defined:"),
             wxDefaultPosition, wxDefaultSize );
     pMeanPoints->SetValue(true);
-    peakPointsSizer->Add( pMeanPoints, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+
+    usrdefGrid->Add(pMeanPoints, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+
+    //peakPointsSizer->Add( pMeanPoints, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+
     wxTextCtrl* textMeanPoints=new wxTextCtrl( nbPage, wxTEXTPM, wxT("1"),
             wxDefaultPosition, wxSize(48,20), wxTE_RIGHT );
     peakPointsSizer->Add( textMeanPoints, 0, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
+    usrdefGrid->Add(textMeanPoints, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+
+    //peakSettingsGrid->Add( peakPointsSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2 );
+    peakPointsSizer->Add( usrdefGrid, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2 );
     peakSettingsGrid->Add( peakPointsSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2 );
 
     // Direction of peak calculation:
