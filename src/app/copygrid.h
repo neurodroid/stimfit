@@ -78,6 +78,7 @@ private:
     void ViewSloperise(wxCommandEvent& event);
     void ViewSlopedecay(wxCommandEvent& event);
     void ViewLatency(wxCommandEvent& event);
+    void ViewPSlope(wxCommandEvent& event);
     void ViewCursors(wxCommandEvent& event);
     void SetCheckmark(const wxString& RegEntry, int id);
 
