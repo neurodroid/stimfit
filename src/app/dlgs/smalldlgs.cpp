@@ -403,10 +403,11 @@ wxStfBatchDlg::wxStfBatchDlg(wxWindow* parent, int id, wxString title, wxPoint p
     batchOptions.push_back( BatchOption( wxT("Peak (from threshold)"), true, id_peakthreshold ) );
     batchOptions.push_back( BatchOption( wxT("20-80% risetime"), false, id_rt2080 ) );
     batchOptions.push_back( BatchOption( wxT("Half duration"), false, id_t50 ) );
-    batchOptions.push_back( BatchOption( wxT("Slopes"), false, id_slopes ) );
+    batchOptions.push_back( BatchOption( wxT("Max Slopes"), false, id_slopes ) );
     batchOptions.push_back( BatchOption( wxT("Latencies"), false, id_latencies ) );
     batchOptions.push_back( BatchOption( wxT("Fit results"), false, id_fit ) );
     batchOptions.push_back( BatchOption( wxT("Threshold crossings"), false, id_crossings ) );
+    batchOptions.push_back( BatchOption( wxT("Slopes"), false, id_pslopes ) );
     std::vector<BatchOption>::const_iterator bo_it;
     std::vector<wxString> checkListChoices(batchOptions.size());
     for (bo_it = batchOptions.begin(); bo_it != batchOptions.end(); ++bo_it) {
@@ -420,7 +421,7 @@ wxStfBatchDlg::wxStfBatchDlg(wxWindow* parent, int id, wxString title, wxPoint p
         }
     };
     m_checkList =
-        new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxSize(160,128), 
+        new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxSize(180,430), 
                             checkListChoices.size(), &checkListChoices[0], 0 );
     for (bo_it = batchOptions.begin(); bo_it != batchOptions.end(); ++bo_it) {
         m_checkList->Check(bo_it->index, wxGetApp().wxGetProfileInt( wxT("Batch Dialog"), bo_it->label, bo_it->selection) );
