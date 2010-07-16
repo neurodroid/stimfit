@@ -101,6 +101,7 @@ void Recording::init() {
     t0Real = 0.0;
     pM = 1;
     PSlope = 0.0;
+    DeltaT = 0;
     selectedSections = std::vector<std::size_t>(0);
     selectBase = Vector_double(0);
     t20Index = 0;
@@ -252,6 +253,7 @@ void Recording::CopyCursors(const Recording& c_Recording) {
     correctRangeR(PSlopeEnd);
  
     pM=c_Recording.pM;  //peakMean, number of points used for averaging
+    DeltaT=c_Recording.DeltaT;  //distance (number of points) from first cursor 
 
 }
 
@@ -696,6 +698,9 @@ void Recording::Measure( )
             break;
         case stf::psEnd_peakMode:   // Right PSlope to peak
             PSlopeEndVal = (int)maxT;
+            break;
+        case stf::psEnd_DeltaTMode: // Right PSlope to DeltaT time from first peak
+            PSlopeEndVal = (int)(PSlopeBeg + DeltaT);
             break;
         case stf::psEnd_manualMode:
         default:

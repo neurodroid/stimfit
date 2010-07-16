@@ -206,6 +206,11 @@ class StfDll Recording {
      */
     int GetPM() const { return pM; }
 
+    //! Retrieves the number of points used for distance from the first cursor.
+    /*! \return The number of points to be used.
+     */
+    int GetDeltaT() const { return DeltaT; }
+
     //! Retrieves the position of the left latency cursor.
     /*! \return The index of the left latency cursor within the current section. Note that by contrast
      *  to the other cursors, this is a double because the latency cursor may be set to an interpolated
@@ -674,6 +679,11 @@ class StfDll Recording {
      */
     void SetPSlopeEndMode(stf::pslope_mode_end value) { pslopeEndMode=value; }
 
+    //! Sets the number of points used for the distance from the first cursor.
+    /*! \param value The number of points to be used.
+     */
+    void SetDeltaT(int value) { DeltaT=value; }
+
     //! Sets the number of points used for averaging during peak calculation.
     /*! \param value The number of points to be used.
      */
@@ -930,6 +940,7 @@ class StfDll Recording {
         rt2080, halfDuration, slopeRatio, t0Real, PSlope;
     // cursor windows:
     int pM;  //peakMean, number of points used for averaging
+    int DeltaT;  // distance (number of points) from the first cursor
 
     // Indices of the selected sections
     std::vector<std::size_t> selectedSections;
