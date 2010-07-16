@@ -88,11 +88,11 @@ libstfio_la_LDFLAGS = -lhdf5 -lhdf5_hl $(PYTHON_ADDLDFLAGS)
 libstfio_la_LIBADD = $(PYTHON_ADDLIBS)
 
 install-exec-hook:
-	$(MKDIR_P) ${PYTHON_SITE_PKG}/stimfit
-	$(LN_S) -f ${prefix}/lib/${STFIO_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stimfit/_stfio.so
-	cp -p $(srcdir)/src/stfswig/hdf5tools.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/src/stfswig/stfio.py ${PYTHON_SITE_PKG}/stimfit
-	echo stimfit > ${PYTHON_SITE_PKG}/stimfit.pth
+	$(MKDIR_P) ${PYTHON_SITE_PKG}/stfio
+	$(LN_S) -f ${prefix}/lib/${STFIO_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stfio/_stfio.so
+	cp -p $(srcdir)/src/stfswig/hdf5tools.py ${PYTHON_SITE_PKG}/stfio
+	cp -p $(srcdir)/src/stfswig/stfio.py ${PYTHON_SITE_PKG}/stfio
+	echo stfio > ${PYTHON_SITE_PKG}/stfio.pth
 
 else
 bin_PROGRAMS = stimfit
