@@ -10,26 +10,27 @@ PYTHON_ADDLIBS =
 libstfio_la_SOURCES = ./src/stfswig/stfioswig_wrap.cxx ./src/stfswig/stfioswig.cxx \
 	./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
 	./src/core/core.cpp \
-	./src/core/filelib/cfslib.cpp ./src/core/filelib/cfs.c ./src/core/filelib/hdf5lib.cpp
-            # ./src/core/filelib/abflib.cpp ./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
+	./src/core/filelib/cfslib.cpp ./src/core/filelib/cfs.c ./src/core/filelib/hdf5lib.cpp \
+	./src/core/filelib/abflib.cpp \
+	./src/core/filelib/axon/AxAbfFio32/abffiles.cpp \
+	./src/core/filelib/axon/AxAbfFio32/csynch.cpp \
+	./src/core/filelib/axon/AxAbfFio32/filedesc.cpp \
+	./src/core/filelib/axon/Common/FileReadCache.cpp \
+	./src/core/filelib/axon/Common/FileIO.cpp \
+	./src/core/filelib/axon/AxAbfFio32/abfheadr.cpp \
+	./src/core/filelib/axon/AxAbfFio32/abfhwave.cpp \
+	./src/core/filelib/axon/AxAbfFio32/Oldheadr.cpp \
+	./src/core/filelib/axon/AxAbfFio32/abfutil.cpp \
+	./src/core/filelib/axon/AxAbfFio32/msbincvt.cpp \
+	./src/core/filelib/axon/Common/unix.cpp \
+	./src/core/filelib/axon/AxAbfFio32/abferror.cpp \
+        ./src/core/filelib/axon/AxAtfFio32/axatffio32.cpp \
+        ./src/core/filelib/axon/AxAtfFio32/fileio2.cpp \
+        ./src/core/filelib/axon2/ProtocolReaderABF2.cpp \
+        ./src/core/filelib/axon2/SimpleStringCache.cpp \
+	./src/core/filelib/axon2/abf2headr.cpp
+            # ./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
             # ./src/core/filelib/hekalib.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/abffiles.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/csynch.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/filedesc.cpp \
-	    # ./src/core/filelib/axon/Common/FileReadCache.cpp \
-	    # ./src/core/filelib/axon/Common/FileIO.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/abfheadr.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/abfhwave.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/Oldheadr.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/abfutil.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/msbincvt.cpp \
-	    # ./src/core/filelib/axon/Common/unix.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/abferror.cpp \
-            # ./src/core/filelib/axon/AxAtfFio32/axatffio32.cpp \
-            # ./src/core/filelib/axon/AxAtfFio32/fileio2.cpp \
-            # ./src/core/filelib/axon2/ProtocolReaderABF2.cpp \
-            # ./src/core/filelib/axon2/SimpleStringCache.cpp \
-	    # ./src/core/filelib/axon2/abf2headr.cpp \
             # ./src/core/filelib/axg/AxoGraph_ReadWrite.cpp \
             # ./src/core/filelib/axg/fileUtils.cpp \
             # ./src/core/filelib/axg/stringUtils.cpp \

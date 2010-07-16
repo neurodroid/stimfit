@@ -6,8 +6,8 @@
 # This file is compatible with both classic and new-style classes.
 
 """
-The stf module allows to access a running stimfit
-application from the embedded python shell.
+The stfio module provides functions to read/write data from/to
+common electrophysiology file formats
 """
 
 from sys import version_info
@@ -71,90 +71,121 @@ except AttributeError:
     _newclass = 0
 
 
+class Recording(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, Recording, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, Recording, name)
+    __repr__ = _swig_repr
+    __swig_setmethods__["dt"] = _stfio.Recording_dt_set
+    __swig_getmethods__["dt"] = _stfio.Recording_dt_get
+    if _newclass:dt = _swig_property(_stfio.Recording_dt_get, _stfio.Recording_dt_set)
+    __swig_setmethods__["time"] = _stfio.Recording_time_set
+    __swig_getmethods__["time"] = _stfio.Recording_time_get
+    if _newclass:time = _swig_property(_stfio.Recording_time_get, _stfio.Recording_time_set)
+    __swig_setmethods__["date"] = _stfio.Recording_date_set
+    __swig_getmethods__["date"] = _stfio.Recording_date_get
+    if _newclass:date = _swig_property(_stfio.Recording_date_get, _stfio.Recording_date_set)
+    __swig_setmethods__["comment"] = _stfio.Recording_comment_set
+    __swig_getmethods__["comment"] = _stfio.Recording_comment_get
+    if _newclass:comment = _swig_property(_stfio.Recording_comment_get, _stfio.Recording_comment_set)
+    __swig_setmethods__["xunits"] = _stfio.Recording_xunits_set
+    __swig_getmethods__["xunits"] = _stfio.Recording_xunits_get
+    if _newclass:xunits = _swig_property(_stfio.Recording_xunits_get, _stfio.Recording_xunits_set)
+    def __getitem__(self, *args): return _stfio.Recording___getitem__(self, *args)
+    def __len__(self): return _stfio.Recording___len__(self)
+    def __init__(self): 
+        this = _stfio.new_Recording()
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _stfio.delete_Recording
+    __del__ = lambda self : None;
+Recording_swigregister = _stfio.Recording_swigregister
+Recording_swigregister(Recording)
 
-def _open(*args):
+class Channel(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, Channel, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, Channel, name)
+    __repr__ = _swig_repr
+    __swig_setmethods__["name"] = _stfio.Channel_name_set
+    __swig_getmethods__["name"] = _stfio.Channel_name_get
+    if _newclass:name = _swig_property(_stfio.Channel_name_get, _stfio.Channel_name_set)
+    __swig_setmethods__["yunits"] = _stfio.Channel_yunits_set
+    __swig_getmethods__["yunits"] = _stfio.Channel_yunits_get
+    if _newclass:yunits = _swig_property(_stfio.Channel_yunits_get, _stfio.Channel_yunits_set)
+    def __getitem__(self, *args): return _stfio.Channel___getitem__(self, *args)
+    def __len__(self): return _stfio.Channel___len__(self)
+    def __init__(self): 
+        this = _stfio.new_Channel()
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _stfio.delete_Channel
+    __del__ = lambda self : None;
+Channel_swigregister = _stfio.Channel_swigregister
+Channel_swigregister(Channel)
+
+class Section(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, Section, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, Section, name)
+    __repr__ = _swig_repr
+    def __getitem__(self, *args): return _stfio.Section___getitem__(self, *args)
+    def __len__(self): return _stfio.Section___len__(self)
+    def asarray(self): return _stfio.Section_asarray(self)
+    def __init__(self): 
+        this = _stfio.new_Section()
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _stfio.delete_Section
+    __del__ = lambda self : None;
+Section_swigregister = _stfio.Section_swigregister
+Section_swigregister(Section)
+
+
+def _read(*args):
   """
-    _open(filename)
+    _read(filename, ftype, Data) -> bool
 
-    Opens a file and returns a recording object.
+    Reads a file and returns a recording object.
           
     Arguments:
     filename -- file name
+    ftype    -- File type
 
     Returns:
     A recording object.
     """
-  return _stfio._open(*args)
-import numpy as np
-
-class Recording():
-    def __init__(self, channels, comment, date, time):
-        self.channels = channels
-        self.comment = comment
-        self.date = date
-        self.time = time
-
-    def __getitem__( self, i ):
-        return self.channels[i]
-
-    def get_list( self ):
-        return [ [ s.data for s in c.sections ] for c in self.channels ]
-
-    def __len__( self ):
-        return len( self.channels )
-
-class Channel():
-    def __init__(self, sections, name):
-        self.sections = sections
-        self.name = name
-
-    def __len__( self ):
-        return len( self.sections )
-
-    def __getitem__( self, i ):
-        return self.sections[i]
-
-class Section():
-    def __init__(self, data, dt, xunits, yunits):
-        self.data = data
-        self.dt = dt
-        self.xunits = xunits
-        self.yunits = yunits
-
-    def __len__( self ):
-        return len( self.data )
-
-    def __getitem__( self, i ):
-        return self.data[i]
-
-def read(filename, stftype=None):
-    """
-    Reads a file into a Recording object.
-    """
-
-    
-    channel_list = list()
-    for n_c in range(n_channels):
-
+  return _stfio._read(*args)
+import os
         
-        if n_sections==1:
-            max_log10 = 0
-        else:
-            max_log10 = int(N.log10(n_sections-1))
+def read(fname, ftype=None):
+    """Reads a file and returns a Recording object.
 
+    Arguments:
+    fname  -- file name
+    ftype  -- file type
+              if type is None (default), it will be guessed from the
+              extension.
+
+    Returns:
+    A Recording object.
+    """
+    if ftype is None:
         
-        section_list = list()
-        for n_s in range(n_sections):
-            dt = secdesc_node.col("dt")[0]
-            xunits = secdesc_node.col("xunits")[0]
-            yunits = secdesc_node.col("yunits")[0]
-            data = h5file.getNode( section_node, "data").read()
-            section_list.append( Section(data, dt, xunits, yunits) )
-
-        channel_list.append( Channel(section_list, channel_names[n_c]) )
-
-    return Recording( channel_list, comment, date, time )
-
+        ext = os.path.splitext(fname)[1]
+        if ext==".dat": 
+            ftype = "cfs"
+        elif ext==".h5":
+            ftype = "hdf5"
+        elif ext==".abf":
+            ftype = "abf"
+    rec = Recording()
+    if not _read(fname, ftype, rec):
+        return None
+    return rec
 
 
 

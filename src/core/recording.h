@@ -108,8 +108,8 @@ class StfDll Recording {
     //! Retrieves the x units.
     /*! \return The x units. Currently hard-coded to be "ms".
      */
-    const wxString& GetXUnits() const { return xUnits; }
-    
+    const wxString& GetXUnits() const { return xunits; }
+
     //! Retrieves the size of the channel array.
     /*! \return The size of the channel array.
      */
@@ -118,12 +118,12 @@ class StfDll Recording {
     //! Retrieves the x scaling (sampling interval).
     /*! \return The x scaling.
      */
-    double GetXScale() const { return x_scale; }
+    double GetXScale() const { return dt; }
     
     //! Retrieves the sampling rate ( 1 / x-scale )
     /*! \return The sampling rate.
      */
-    double GetSR() const { return 1.0/x_scale; }
+    double GetSR() const { return 1.0/dt; }
 
     //! Range-checked access to a channel (read-only).
     /*! Will throw std::out_of_range if out of range.
@@ -559,14 +559,14 @@ class StfDll Recording {
     //! Sets the x units.
     /*! \param value A string containing the x units.
      */
-    void SetXUnits(const wxString& value) { xUnits=value; }
+    void SetXUnits(const wxString& value) { xunits=value; }
 
     //! Sets the x scaling.
     /*! Note that setting the global x-scale will set it for all sections
      *  \param value The x scaling.
      */
     void SetXScale(double value);
-
+    
 #ifndef MODULE_ONLY
     
     //! Sets the index of the current channel.
@@ -901,12 +901,18 @@ class StfDll Recording {
 
  private:
     std::vector<Channel> ChannelArray;
+    wxString file_description, global_section_description, scaling;
 
-    wxString file_description, global_section_description,
-        scaling,time,date,comment, xUnits;
-    double x_scale;
+#ifdef MODULE_ONLY    
+ public:
+#endif
+    
+    double dt;
+    wxString time, date, comment, xunits;
 
-#ifndef MODULE_ONLY    
+ private:
+
+#ifndef MODULE_ONLY
     stf::latency_mode latencyStartMode, latencyEndMode;
     stf::latency_window_mode latencyWindowMode;
     stf::direction	direction; //of peak detection: UP, DOWN or BOTH

@@ -21,12 +21,14 @@
 
 #include "hdf5.h"
 #if H5_VERS_MINOR > 6
+  #include "hdf5.h"
   #include "hdf5_hl.h"
 #else
   #include "H5TA.h"
 #endif
 #include <boost/shared_ptr.hpp>
 #include <cmath>
+#include <iostream>
 
 #include "./hdf5lib.h"
 
@@ -278,7 +280,7 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
     wxProgressDialog progDlg( wxT("HDF5 import"), wxT("Starting file import"),
                               100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
 #endif
-    
+
     /* Create a new file using default properties. */
     hid_t file_id = H5Fopen(fName.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
 
@@ -347,18 +349,20 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
         }
         hid_t string_typec= H5Tcopy( H5T_C_S1 );
         H5Tset_size( string_typec,  ctype_size );
-        boost::shared_ptr<char> szchannel_name;
-        szchannel_name.reset( new char[ctype_size] );
-        status = H5LTread_dataset(file_id, desc_path.str().c_str(), string_typec, szchannel_name.get() );
+        std::vector<char> szchannel_name(ctype_size);
+        // szchannel_name.reset( new char[ctype_size] );
+        status = H5LTread_dataset(file_id, desc_path.str().c_str(), string_typec, &szchannel_name[0] );
         if (status < 0) {
             wxString errorMsg(wxT("Exception while reading channel name in stf::importHDF5File"));
             throw std::runtime_error(std::string(errorMsg.c_str()));
         }
         std::ostringstream channel_name;
         for (std::size_t c=0; c<ctype_size; ++c) {
-            channel_name << szchannel_name.get()[c];
+            channel_name << szchannel_name[c];
         }
+
         std::stringstream channel_path; channel_path << wxT("/") << channel_name.str();
+
         hid_t channel_group = H5Gopen(file_id, channel_path.str().c_str() );
         status=H5TBread_table( channel_group, "description", sizeof(ct), ct_offset, ct_sizes, ct_buf );
         if (status < 0) {
@@ -404,7 +408,7 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
 
             // create a child group in the channel:
             std::ostringstream section_path;
-            section_path << channel_path << wxT("/") << wxT("section_") << strZero.str() << n_s;
+            section_path << channel_path.str() << wxT("/") << wxT("section_") << strZero.str() << n_s;
             hid_t section_group = H5Gopen(file_id, section_path.str().c_str() );
 
             std::ostringstream data_path; data_path << section_path.str() << wxT("/data");

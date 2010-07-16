@@ -1,13 +1,23 @@
 %define DOCSTRING
-"The stf module allows to access a running stimfit
-application from the embedded python shell."
+"The stfio module provides functions to read/write data from/to
+common electrophysiology file formats"
 %enddef
 
 %module(docstring=DOCSTRING) stfio
 
 %{
 #define SWIG_FILE_WITH_INIT
+#include <string>
+#include <numpy/arrayobject.h>
+    
+#include "./../core/recording.h"
+#include "./../core/channel.h"
+#include "./../core/section.h"
+    
 #include "stfioswig.h"
+
+#define array_data(a)          (((PyArrayObject *)a)->data)
+
 %}
 %include "numpy.i"
 %include "std_string.i"
@@ -15,101 +25,89 @@ application from the embedded python shell."
 import_array();
 %}
 
-%define %apply_numpy_typemaps(TYPE)
+class Recording {
+ public:
+    double dt;
+    std::string time, date, comment, xunits;
 
-%apply (TYPE* ARGOUT_ARRAY1, int DIM1) {(TYPE* outvec, int npts)};
-%apply (TYPE* IN_ARRAY1, int DIM1) {(TYPE* invec, int npts)};
-%apply (TYPE* IN_ARRAY2, int DIM1, int DIM2) {(TYPE* inarr, int nsections, int npts)};
-%apply (TYPE* IN_ARRAY3, int DIM1, int DIM2, int DIM3) {(TYPE* inarr, int channels, int sections, int npts)};
+};
 
-%enddef    /* %apply_numpy_typemaps() macro */
+class Channel {
+ public:
+    std::string name, yunits;
+    
+};
 
-%apply_numpy_typemaps(double)
+class Section {
+};
+
+%extend Recording {
+    Channel& __getitem__(std::size_t at) { return $self->operator[](at); }
+    int __len__() { return $self->size(); }
+}
+
+%extend Channel {
+    Section& __getitem__(std::size_t at) { return $self->operator[](at); }
+    int __len__() { return $self->size(); }
+}
+
+%extend Section {
+    double __getitem__(std::size_t at) { return $self->operator[](at); }
+    int __len__() { return $self->size(); }
+    PyObject* asarray() {
+        npy_intp dims[1] = {$self->size()};
+        PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+        double* gDataP = (double*)array_data(np_array);
+
+        std::copy( &($self->operator[](0)),
+                   &($self->operator[]($self->size())),
+                   gDataP);
+        return np_array;
+    };
+}
 
 //--------------------------------------------------------------------
-%feature("autodoc", 0) _open;
-%feature("docstring", "Opens a file and returns a recording object.
+%feature("autodoc", 0) _read;
+%feature("docstring", "Reads a file and returns a recording object.
       
 Arguments:
 filename -- file name
+ftype    -- File type
 
 Returns:
-A recording object.") _open;
-void _open(const char* filename);
+A recording object.") _read;
+bool _read(const std::string& filename, const std::string& ftype, Recording& Data);
 //--------------------------------------------------------------------
 
 
 //--------------------------------------------------------------------
 %pythoncode {
-import numpy as np
+import os
+        
+def read(fname, ftype=None):
+    """Reads a file and returns a Recording object.
 
-class Recording():
-    def __init__(self, channels, comment, date, time):
-        self.channels = channels
-        self.comment = comment
-        self.date = date
-        self.time = time
+    Arguments:
+    fname  -- file name
+    ftype  -- file type
+              if type is None (default), it will be guessed from the
+              extension.
 
-    def __getitem__( self, i ):
-        return self.channels[i]
-
-    def get_list( self ):
-        return [ [ s.data for s in c.sections ] for c in self.channels ]
-
-    def __len__( self ):
-        return len( self.channels )
-
-class Channel():
-    def __init__(self, sections, name):
-        self.sections = sections
-        self.name = name
-
-    def __len__( self ):
-        return len( self.sections )
-
-    def __getitem__( self, i ):
-        return self.sections[i]
-
-class Section():
-    def __init__(self, data, dt, xunits, yunits):
-        self.data = data
-        self.dt = dt
-        self.xunits = xunits
-        self.yunits = yunits
-
-    def __len__( self ):
-        return len( self.data )
-
-    def __getitem__( self, i ):
-        return self.data[i]
-
-def read(filename, stftype=None):
+    Returns:
+    A Recording object.
     """
-    Reads a file into a Recording object.
-    """
-
-    # read data from channels: 
-    channel_list = list()
-    for n_c in range(n_channels):
-
-        # required number of zeros:
-        if n_sections==1:
-            max_log10 = 0
-        else:
-            max_log10 = int(N.log10(n_sections-1))
-
-        # loop through sections:
-        section_list = list()
-        for n_s in range(n_sections):
-            dt = secdesc_node.col("dt")[0]
-            xunits = secdesc_node.col("xunits")[0]
-            yunits = secdesc_node.col("yunits")[0]
-            data = h5file.getNode( section_node, "data").read()
-            section_list.append( Section(data, dt, xunits, yunits) )
-
-        channel_list.append( Channel(section_list, channel_names[n_c]) )
-
-    return Recording( channel_list, comment, date, time )
-
+    if ftype is None:
+        # Guess file type:
+        ext = os.path.splitext(fname)[1]
+        if ext==".dat": 
+            ftype = "cfs"
+        elif ext==".h5":
+            ftype = "hdf5"
+        elif ext==".abf":
+            ftype = "abf"
+    rec = Recording()
+    if not _read(fname, ftype, rec):
+        return None
+    return rec
 }
 //--------------------------------------------------------------------

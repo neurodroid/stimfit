@@ -22,7 +22,6 @@
 #include <math.h>
 #include <float.h>
 #include <iostream> 
-#include <wx/convauto.h>
 
 #define ABF_OLDPARAMSIZE      260   // size of old acquisition parameter array
 //#define (sz)   OemToCharBuff(sz, sz, sizeof(sz))
@@ -257,8 +256,15 @@ static void CorrectDACScaling(ABFFileHeader *pFH)
       UINT uMaxSamples = 0;
       DWORD dwMaxEpi = 0;
       int hFile;
-      wxConvAuto wca;
-      if (!ABF_ReadOpen(wca.cMB2WX(szFilename), &hFile, ABF_DATAFILE, 
+      int fnsize = 0;
+      std::wstring wfName;
+      while (szFilename[fnsize++] != '\0') {
+          wfName += wchar_t(szFilename[fnsize-1]);
+      }
+      wfName += wchar_t('\0');
+
+      if (!ABF_ReadOpen(wfName.c_str(), &hFile, ABF_DATAFILE, 
+                        // if (!ABF_ReadOpen(wca.cMB2WX(szFilename), &hFile, ABF_DATAFILE, 
                         &DH, &uMaxSamples, &dwMaxEpi, NULL))
          return;
       ABF_Close(hFile, NULL);

@@ -63,11 +63,11 @@ bool stf::importFile(
             stf::importHDF5File(fName, ReturnData, progress);
             break;
         }
-#ifndef MODULE_ONLY
         case stf::abf: {
             stf::importABFFile(fName, ReturnData, progress);
             break;
         }
+#ifndef MODULE_ONLY
         case stf::atf: {
             stf::importATFFile(fName, ReturnData, progress);
             break;
