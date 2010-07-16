@@ -291,8 +291,8 @@ typedef TFilChInfo TFilChArr[MAXCHANS];
 
 typedef struct
 {
-    long  dataOffset;
-    long  dataPoints;
+    CFSLONG  dataOffset;
+    CFSLONG  dataPoints;
     float scaleY;
     float offsetY;
     float scaleX;
@@ -303,9 +303,9 @@ typedef TDSChInfo TDSChArr[MAXCHANS];
                                              /* 3. for data section headers */
 typedef struct
 {
-    long      lastDS;            /* offset in file of header of previous DS */
-    long      dataSt;                                /* data start position */
-    long      dataSz;                                 /* data size in bytes */
+    CFSLONG      lastDS;            /* offset in file of header of previous DS */
+    CFSLONG      dataSt;                                /* data start position */
+    CFSLONG      dataSz;                                 /* data size in bytes */
     TSFlags   flags;                              /* flags for this section */
     short     dSpace[8];                                     /* spare space */
     TDSChArr  DSChArr;                          /* array of DS channel info */
@@ -315,7 +315,7 @@ typedef struct
 {
     TMarker    marker;
     TFileName  name;
-    long       fileSz;
+    CFSLONG       fileSz;
     char       timeStr[8];
     char       dateStr[8];
     short      dataChans;                     /* number of channels of data */
@@ -323,11 +323,11 @@ typedef struct
     short      datVars;                 /* number of data section variables */
     short      fileHeadSz;
     short      dataHeadSz;
-    long       endPnt;               /* offset in file of header of last DS */
+    CFSLONG       endPnt;               /* offset in file of header of last DS */
     WORD       dataSecs;                         /* number of data sections */
     WORD       diskBlkSize;                             /* usually 1 or 512 */
     TComment   commentStr;
-    long       tablePos; 
+    CFSLONG       tablePos; 
                   /* offset in file for start of table of DS header offsets */
     short      fSpace[20];                                         /* spare */
     TFilChArr  FilChArr;                     /* array of fixed channel info */
@@ -448,13 +448,13 @@ static void  TransferIn(TpCStr olds,TpStr pNew,BYTE max);
 static void  TransferOut(TpCStr olds,TpStr pNew,BYTE max);
 static void  SetVarDescs(short numOfVars,TPointers varPoint,
                                TpCVDesc useArray,TpShort Offsets,short vSpace);
-static long  BlockRound(short handle,long raw);
+static CFSLONG  BlockRound(short handle,CFSLONG raw);
 static void  InternalError(short handle,short proc,short err);
 static short GetHeader(short handle,WORD getSection);
-static short FileData(short handle, TpVoid startP, long st, long sz);
-static short LoadData(short handle, TpVoid startP, long st, long sz);
-static long  GetTable(short handle, WORD position);
-static void  StoreTable(short handle,WORD position,long DSPointer);
+static short FileData(short handle, TpVoid startP, CFSLONG st, CFSLONG sz);
+static short LoadData(short handle, TpVoid startP, CFSLONG st, CFSLONG sz);
+static CFSLONG  GetTable(short handle, WORD position);
+static void  StoreTable(short handle,WORD position,CFSLONG DSPointer);
 static short RecoverTable(short handle,TpLong relSize,TpLong tPos,
                                                  TpUShort dSecs,TpLong fSize);
 static short TransferTable(WORD sects, fDef rdHdl, fDef wrHdl);
@@ -469,10 +469,10 @@ static short FileUpdate(short handle,TpFHead fileHP);
 #if 0 //def macintosh
     static void  TempName(short handle,ConstStr255Param name,
                                                 ConstStr255Param str2);
-    static short CCreat(ConstStr255Param name,short vRefNum,long dirID,
+    static short CCreat(ConstStr255Param name,short vRefNum,CFSLONG dirID,
                              SignedByte perm, OSType creator,OSType fileType);
-    static short CUnlink(ConstStr255Param name,short vRefNum,long dirID);
-    static short COpen(ConstStr255Param name, short vRefNum, long dirID,
+    static short CUnlink(ConstStr255Param name,short vRefNum,CFSLONG dirID);
+    static short COpen(ConstStr255Param name, short vRefNum, CFSLONG dirID,
                                                              SignedByte perm);
     static short CCloseAndUnlink(fDef handle);
 
@@ -484,13 +484,13 @@ static short CUnlink(TpCStr path);
 static short COpen(TpCStr name, short mode, fDef* pFile);
 static short CCloseAndUnlink(fDef handle, TpCStr path);
 
-static long   CGetFileLen(fDef handle);
+static CFSLONG   CGetFileLen(fDef handle);
 static short  CClose(fDef handle);
-static long   CLSeek(fDef handle, long offset, short mode);
+static CFSLONG   CLSeek(fDef handle, CFSLONG offset, short mode);
 static WORD   CReadHandle(fDef handle,TpStr buffer, WORD bytes);
 static WORD   CWriteHandle(fDef handle,TpStr buffer, WORD bytes);
 static void   CMovel(TpVoid dest,const TpVoid src, int count);
-static short  CSetFileLen(fDef handle, long size);
+static short  CSetFileLen(fDef handle, CFSLONG size);
 static TpVoid CMemAllcn(int size);
 static void   CFreeAllcn(TpVoid p);
 static void   CStrTime(char *timeStr);
@@ -524,7 +524,7 @@ static void   CStrDate(char *dateStr);
 ***************************************************************************/
 
 #if 0 //def macintosh
-short CCreat(ConstStr255Param name,short vRefNum,long dirID, SignedByte perm,
+short CCreat(ConstStr255Param name,short vRefNum,CFSLONG dirID, SignedByte perm,
                                                OSType creator,OSType fileType)
 {
     short fileRefNum ;              /* Mac file refnum, MUST be a short */
@@ -647,7 +647,7 @@ short CCreat(TpCStr name, short mode, fDef* pFile)
 **
 ****************************************************************************/
 #if 0 //def macintosh
-short CUnlink(ConstStr255Param name,short vRefNum,long dirID)
+short CUnlink(ConstStr255Param name,short vRefNum,CFSLONG dirID)
 {
     return HDelete(vRefNum, dirID, name);
 }
@@ -790,15 +790,15 @@ short CCloseAndUnlink(fDef handle)
 **  Returns new file position or -ve error code 
 **
 *****************************************************************************/
-long CLSeek(fDef handle,                              /* DOS handle of file */
-            long offset,                         /* amount to move in bytes */
+CFSLONG CLSeek(fDef handle,                              /* DOS handle of file */
+            CFSLONG offset,                         /* amount to move in bytes */
             short mode)                   /* 0 Move from file start
                                              1 Move from current file position
                                              2 Move from file end */
 {
 #if 0 //def macintosh
     OSErr err;
-    long eof;
+    CFSLONG eof;
 
     mode = 0;                                 /* to prevent warning message */
 
@@ -818,11 +818,11 @@ long CLSeek(fDef handle,                              /* DOS handle of file */
         fprintf (stderr,"ERROR: %d SetFPos, offset %d\n",err,offset);
     #endif
     
-    return (long)err;
+    return (CFSLONG)err;
 #endif
 
 #ifdef _IS_WINDOWS_                                         /* Windows seek */
-    long     res = 0;
+    CFSLONG     res = 0;
     #ifdef WIN32
         DWORD       dwMode;
 
@@ -862,7 +862,7 @@ long CLSeek(fDef handle,                              /* DOS handle of file */
 #endif  /* if _IS_WINDOWS_ else */
 
 #ifdef _IS_MSDOS_                                         /* DOS-style seek */
-    long     res;
+    CFSLONG     res;
     short    origin = 0;
 
     switch (mode)
@@ -888,7 +888,7 @@ long CLSeek(fDef handle,                              /* DOS handle of file */
     #endif  /* if LLIO else */
 #endif  /* if _IS_MSDOS_ else */
 #if defined(__linux__) || defined(__APPLE__)
-    long     res;
+    CFSLONG     res;
     short    origin = 0;
 
     switch (mode)
@@ -926,7 +926,7 @@ WORD CReadHandle(fDef handle, TpStr buffer, WORD bytes)
 {
 #ifdef  macintosh
     OSErr   err;
-    long    nBytes = bytes;             /* Mac read routine expects longint */
+    CFSLONG    nBytes = bytes;             /* Mac read routine expects longint */
 
     err = FSRead (handle, &nBytes, buffer) ;
     if (err)
@@ -998,7 +998,7 @@ WORD CWriteHandle(fDef handle, TpStr buffer, WORD bytes)
 {
 #ifdef  macintosh
     OSErr err ;
-    long nBytes = bytes;                /* Mac read routine expects longint */
+    CFSLONG nBytes = bytes;                /* Mac read routine expects longint */
 
     if (bytes == 0)                                    /* Protect our backs */
         return 0;
@@ -1069,7 +1069,7 @@ void CMovel(TpVoid dest, const TpVoid src, int count)
 
 /******  8. Change file size. NB operates on file handle NOT file name  *****/
 
-short CSetFileLen(fDef handle, long size)
+short CSetFileLen(fDef handle, CFSLONG size)
 /*
 ** For a file specified by its DOS handle, extend or truncate file to length,
 ** in bytes, specified by size. File must be open for writing.
@@ -1126,13 +1126,13 @@ short CSetFileLen(fDef handle, long size)
 
 /******  8a. Retrieve file size. NB operates on file handle NOT file name  *****/
 
-long CGetFileLen(fDef pFile)
+CFSLONG CGetFileLen(fDef pFile)
 /*
 ** For a file specified by its DOS handle, find the file size in bytes.
 ** Returns file size if successful, -DOS error code if not.
 */
 {
-    long    lSize;
+    CFSLONG    lSize;
     
     #if 0 //def macintosh
 //        ecode = SetEOF(handle, size);
@@ -1151,7 +1151,7 @@ long CGetFileLen(fDef pFile)
             if (lSize != -1)             
                 return lSize; 
             else 
-                return (long)(0 - _doserrno);
+                return (CFSLONG)(0 - _doserrno);
         #endif
     #endif
     
@@ -1161,13 +1161,13 @@ long CGetFileLen(fDef pFile)
             if (lSize != -1)             
                 return lSize; 
             else 
-                return (long)(0 - _doserrno);
+                return (CFSLONG)(0 - _doserrno);
         #else
             lSize = _filelength(_fileno(handle)); /* Streams mechanism */
             if (lSize != -1)             
                 return lSize; 
             else 
-                return (long)(0 - _doserrno);
+                return (CFSLONG)(0 - _doserrno);
         #endif
     #endif
     #if defined(__linux__) || defined(__APPLE__)
@@ -1198,7 +1198,7 @@ long CGetFileLen(fDef pFile)
 *****************************************************************************/
 
 #if 0 //def macintosh
-short COpen(ConstStr255Param name,short vRefNum,long dirID,SignedByte perm)
+short COpen(ConstStr255Param name,short vRefNum,CFSLONG dirID,SignedByte perm)
 {
     short i ;                                    /* used as the return code */
     short refNum;
@@ -1438,7 +1438,7 @@ CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
                             short    fileVars,      /* no. of file varables */
                             short    DSVars,         /* no. of DS variables */
                             short    vRefNum,        /* ..... */
-                            long     dirID,          /* ..... */
+                            CFSLONG     dirID,          /* ..... */
                             OSType   creator,        /* ..... */
                             OSType   fileType)       /* ..... */
 #endif
@@ -1677,7 +1677,7 @@ CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
                              /* Now fill in as much as poss of header block */
     pDataH->lastDS = 0;                        /* no data section there yet */
                 /* lastDS of zero means the fileheader is the 'previous' DS */
-    pDataH->dataSt = BlockRound(handle,(long)pFileH->fileHeadSz);/*round up */
+    pDataH->dataSt = BlockRound(handle,(CFSLONG)pFileH->fileHeadSz);/*round up */
     pFileH->fileSz = pDataH->dataSt;        /* reset so they are consistent */
     pDataH->dataSz = 0;                                    /* fill in later */
     pDataH->flags  = noFlags;                        /* start with no flags */
@@ -1892,8 +1892,8 @@ CFSAPI(void) SetFileChan(short     handle,           /* program file handle */
 CFSAPI(void) SetDSChan(short handle,                 /* program file handle */
                        short channel,                 /* CFS channel number */
                        WORD  dataSection,         /* reference when editing */
-                       long  startOffset,     /* byte offset to 1st element */
-                       long  points,          /* number of channel elements */
+                       CFSLONG  startOffset,     /* byte offset to 1st element */
+                       CFSLONG  points,          /* number of channel elements */
                        float yScale,                          /* data scale */
                        float yOffset,
                        float xScale,
@@ -1998,7 +1998,7 @@ CFSAPI(void) SetDSChan(short handle,                 /* program file handle */
         {
             if (dataSection > 0)      /* If we are at previous data section */
             {
-                long    tableValue;         /* Write the data back to disk */
+                CFSLONG    tableValue;         /* Write the data back to disk */
 
                 tableValue = GetTable(handle, dataSection);
                 if (FileData(handle, pfileInfo->dataHeadP, tableValue,
@@ -2032,13 +2032,13 @@ Restore:
 
 CFSAPI(short) WriteData(short  handle,               /* program file handle */
                         WORD   dataSection,        /* data section for data */
-                        long   startOffset,       /* offset in DS for write */
+                        CFSLONG   startOffset,       /* offset in DS for write */
                         WORD   bytes,           /* number of bytes to write */
                         TpVoid dataADS)    /* ptr to start of data to write */
 {
     short       proc = 19;                      /* number for this function */
     short       ecode = 0;
-    long        endOffset;
+    CFSLONG        endOffset;
 #ifdef _IS_WINDOWS_
     TFileInfo   _near *pfileInfo;
 #else
@@ -2155,9 +2155,9 @@ CFSAPI(short) WriteData(short  handle,               /* program file handle */
              
 
 CFSAPI(void) SetWriteData(short  handle,             /* program file handle */
-                          long   startOffset,
+                          CFSLONG   startOffset,
                                        /* byte offset within DS for writing */
-                          long   bytes)         /* number of bytes to write */
+                          CFSLONG   bytes)         /* number of bytes to write */
 {
     short       proc = 3;                                /* function number */
     char        oneByte;
@@ -2218,7 +2218,7 @@ CFSAPI(void) SetWriteData(short  handle,             /* program file handle */
 **
 *****************************************************************************/
 
-CFSAPI(long) CFSFileSize(short  handle)
+CFSAPI(CFSLONG) CFSFileSize(short  handle)
 {
     short       proc = 24;                               /* function number */
 #ifdef _IS_WINDOWS_
@@ -2263,8 +2263,8 @@ CFSAPI(short) InsertDS(short   handle,               /* program file handle */
 {
     short       proc = 17;                               /* function number */
     WORD        index,relevantSize;
-    long        gtPlace,gtPlace1;
-    long        tableValue;
+    CFSLONG        gtPlace,gtPlace1;
+    CFSLONG        tableValue;
 #ifdef _IS_WINDOWS_
     TFileInfo   _near *pfileInfo;
 #else
@@ -2378,7 +2378,7 @@ CFSAPI(short) InsertDS(short   handle,               /* program file handle */
 *****************************************************************************/
 
 CFSAPI(short) AppendDS(short    handle,              /* program file handle */
-                       long     lSize,           /* size of the new section */
+                       CFSLONG     lSize,           /* size of the new section */
                        TSFlags  flagSet)               /* flags for this DS */
 {
     short       proc = 25;                               /* function number */
@@ -2390,8 +2390,8 @@ CFSAPI(short) AppendDS(short    handle,              /* program file handle */
 #endif
    TpFHead     fileHP;
     TpDHead     dataHP;
-    long        lPrev, lThis;
-    long        tableValue;
+    CFSLONG        lPrev, lThis;
+    CFSLONG        tableValue;
 
     ASSERT(handle >= 0);
     ASSERT(handle < g_maxCfsFiles);
@@ -2495,7 +2495,7 @@ CFSAPI(short) AppendDS(short    handle,              /* program file handle */
 **
 *****************************************************************************/
 
-CFSAPI(long) GetDSSize(short  handle,                /* program file handle */
+CFSAPI(CFSLONG) GetDSSize(short  handle,                /* program file handle */
                        WORD   dataSection)
 {
     short proc = 22;
@@ -2598,9 +2598,9 @@ CFSAPI(void) RemoveDS(short handle,                  /* program file handle */
                       WORD  dataSection)                    /* DS to remove */
 {
     short       proc = 4;                       /* number for this function */
-    long        storeLastDS;
+    CFSLONG        storeLastDS;
     WORD        relSize,index,ecode;
-    long        tableValue;
+    CFSLONG        tableValue;
 #ifdef _IS_WINDOWS_
     TFileInfo   _near *pfileInfo;
 #else
@@ -2793,7 +2793,7 @@ CFSAPI(void) SetVarVal(short   handle,               /* program file handle */
 #else
     TFileInfo *pfileInfo;
 #endif
-    long*   pLong = (long*)varADS;
+    CFSLONG*   pLong = (CFSLONG*)varADS;
 
     ASSERT(handle >= 0);
     ASSERT(handle < g_maxCfsFiles);
@@ -2971,7 +2971,7 @@ CFSAPI(void) SetVarVal(short   handle,               /* program file handle */
         if ((pfileInfo->allowed == writing) &&
             (dataSection <= pfileInfo->fileHeadP->dataSecs))
         {
-            long    tableValue;          // First write the data back to disk
+            CFSLONG    tableValue;          // First write the data back to disk
 
             tableValue = GetTable(handle, dataSection);
             if (FileData(handle, pfileInfo->dataHeadP, tableValue,
@@ -3002,7 +3002,7 @@ CFSAPI(short) CloseCFSFile(short handle)
     short       flag = 0,
                 exchange = 0,
                 retval = 0;
-    long        tabSize, tableValue;
+    CFSLONG        tabSize, tableValue;
 #ifdef _IS_WINDOWS_
     TFileInfo   _near *pfileInfo;
 #else
@@ -3078,7 +3078,7 @@ CFSAPI(short) CloseCFSFile(short handle)
             tabSize = fileHP->dataSecs * 4;                /* size of table */
             if (pfileInfo->tableP == NULL)           /* table not in memory */
             {                               /* copy from start of temp file */
-                if (CLSeek(pfileInfo->DOSHdl.p,(long)0,0) < 0)
+                if (CLSeek(pfileInfo->DOSHdl.p,(CFSLONG)0,0) < 0)
                     retval = DISKPOS;
                 exchange = TransferTable(fileHP->dataSecs, pfileInfo->DOSHdl.p,
                                                            pfileInfo->DOSHdl.d);
@@ -3108,7 +3108,7 @@ CFSAPI(short) CloseCFSFile(short handle)
                                    /* table position at end of rest of file */
           fileHP->fileSz = fileHP->fileSz + tabSize;
                                                   /* add table to file size */
-          if (FileData(handle, fileHP, (long)0, fileHP->fileHeadSz) == 0)
+          if (FileData(handle, fileHP, (CFSLONG)0, fileHP->fileHeadSz) == 0)
               retval = WRITERR;
           CFreeAllcn(pfileInfo->extHeadP);
 /* release space for insert header applies to writing and editing files     */
@@ -3162,13 +3162,13 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
                                       short  memoryTable,
                                      /* 1 for table in memory 0 for on disk */
                                       short  vRefNum,   
-                                      long   dirID)
+                                      CFSLONG   dirID)
 #endif
 {
     short       proc;                                    /* function number */
     short       loop,retval;
     WORD        relevantSize;
-    long        tblSz;
+    CFSLONG        tblSz;
     short       exchange, handle;
 #ifdef _IS_WINDOWS_
     TFileInfo   _near *pfileInfo;
@@ -3218,7 +3218,7 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
 /* 2a. Check the file size against minimum */
 /* Calculate space needed for minimal file file header */
     relevantSize = sizeof(TFileHead) - sizeof(TFilChArr);
-    if (CGetFileLen(pfileInfo->DOSHdl.d) < (long)relevantSize)
+    if (CGetFileLen(pfileInfo->DOSHdl.d) < (CFSLONG)relevantSize)
     {
         retval = BADVER;
         goto Close0;                      /* need to close file before exit */
@@ -3238,7 +3238,7 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
     }
 
                            /* read the file header into the space allocated */
-    if (LoadData(handle,fileHP,(long)0,relevantSize) == 0)
+    if (LoadData(handle,fileHP,(CFSLONG)0,relevantSize) == 0)
     {
         retval = READERR;                                    /* load failed */
         goto Close1;                   /* free space allated and close file */
@@ -3271,7 +3271,7 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
 
 /* 4. read whole of file header including fixed channel info */
 
-    if (LoadData(handle,fileHP,(long)0,relevantSize) == 0)
+    if (LoadData(handle,fileHP,(CFSLONG)0,relevantSize) == 0)
     {
         retval = READERR;
         goto Close1;
@@ -3359,7 +3359,7 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
         }
         else   /* success in recovering table. write updated header to file */
         {
-            if (FileData(handle,fileHP,(long)0,fileHP->fileHeadSz) == 0)
+            if (FileData(handle,fileHP,(CFSLONG)0,fileHP->fileHeadSz) == 0)
             {
                 retval = WRITERR;
                 goto Close2;
@@ -3436,7 +3436,7 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
                 retval = BADCREAT;
                 goto Close2;
             }
-            if (CLSeek(pfileInfo->DOSHdl.p,(long)0,0) != 0)
+            if (CLSeek(pfileInfo->DOSHdl.p,(CFSLONG)0,0) != 0)
             {
                 retval = BADCREAT;
                 goto Close3; /* add close and delete of temp file to tiy up */
@@ -4058,11 +4058,11 @@ CFSAPI(void) GetDSChan(short   handle,               /* program file handle */
 CFSAPI(WORD) GetChanData(short  handle,              /* program file handle */
                          short  channel,                /* channel required */
                          WORD   dataSection,                 /* DS required */
-                         long   firstElement,
+                         CFSLONG   firstElement,
                                  /* data point in channel at which to start */
                          WORD   numberElements,            /* points wanted */
                          TpVoid dataADS,          /* address to transfer to */
-                         long   areaSize)   /* bytes allocated for transfer */
+                         CFSLONG   areaSize)   /* bytes allocated for transfer */
 {
     short   SizeOfData[NDATATYPE];          /* sizes in bytes of data types */
     short   ecode;
@@ -4071,7 +4071,7 @@ CFSAPI(WORD) GetChanData(short  handle,              /* program file handle */
     WORD    retval;
     WORD    bufferSize,spacing,pointsPerBuffer,buffersNeeded,
             bufferLoop,residueElements;
-    long    filePos,totalPoints,numElements,longSpace;
+    CFSLONG    filePos,totalPoints,numElements,longSpace;
     TpStr   dBufferP;
 //    THandle dummy;
 #ifndef _IS_WINDOWS_
@@ -4262,7 +4262,7 @@ CFSAPI(WORD) GetChanData(short  handle,              /* program file handle */
 
 CFSAPI(short) ReadData(short  handle,                /* program file handle */
                        WORD   dataSection,         /* data section required */
-                       long   startOffset,
+                       CFSLONG   startOffset,
                               /* offset into DS from which to start reading */
                        WORD   bytes,             /* number of bytes to read */
                        TpVoid dataADS)    /* start address to which to read */
@@ -4466,7 +4466,7 @@ CFSAPI(void) DSFlags(short   handle,                 /* program file handle */
         {
             if (setIt == 1)                       // Did we modify the data ?
             {                              // If so, we need to write it back
-                long    tableValue;
+                CFSLONG    tableValue;
 
                 tableValue = GetTable(handle, dataSection);
                 if (FileData(handle, pfileInfo->dataHeadP, tableValue,
@@ -4537,11 +4537,11 @@ CFSAPI(short) CommitCFSFile(short handle)
     short       retCode   = 0;
     short       restore   = 0;
     int         hand      = 0;
-    long        gtPlace   = 0;
-    long        endPtr    = 0;
-    long        oldDataSz = 0;
-    long        oldFileSz = 0;
-    long        oldLastDS = 0;
+    CFSLONG        gtPlace   = 0;
+    CFSLONG        endPtr    = 0;
+    CFSLONG        oldDataSz = 0;
+    CFSLONG        oldFileSz = 0;
+    CFSLONG        oldLastDS = 0;
 #ifdef _IS_WINDOWS_
     TFileInfo   _near *pfileInfo;
 #else
@@ -4596,7 +4596,7 @@ CFSAPI(short) CommitCFSFile(short handle)
         }
     }
     pfileInfo->fileHeadP->tablePos = 0;         /* flag no table on disk... */
-    if (!FileData(handle,pfileInfo->fileHeadP,(long)0,
+    if (!FileData(handle,pfileInfo->fileHeadP,(CFSLONG)0,
                                       (WORD)pfileInfo->fileHeadP->fileHeadSz))
         if (retCode == 0)
             retCode = WRITERR;                 /* error writing file header */
@@ -4993,9 +4993,9 @@ void SetVarDescs(short     numOfVars,    /* number of variable descriptions */
 **
 *****************************************************************************/
 
-long BlockRound(short handle,long raw)
+CFSLONG BlockRound(short handle,CFSLONG raw)
 {
-    long retval;
+    CFSLONG retval;
     short dbs;
 
     dbs = g_fileInfo[handle].fileHeadP->diskBlkSize;
@@ -5034,8 +5034,8 @@ void InternalError(short handle,short proc,short err)
 
 short FileData(short  handle,                                /* file handle */
                TpVoid startP,       /* start address from which to transfer */
-               long   st,        /* file position to which to start writing */
-               long   sz)                    /* number of bytes to transfer */
+               CFSLONG   st,        /* file position to which to start writing */
+               CFSLONG   sz)                    /* number of bytes to transfer */
 {
     WORD    res;
     TpStr   pDat = (TpStr)startP;
@@ -5080,8 +5080,8 @@ short FileData(short  handle,                                /* file handle */
 
 short LoadData(short    handle,                              /* file handle */
                TpVoid   startP,         /* address in memory to transfer to */
-               long     st,    /* file position from which to start reading */
-               long     sz)                  /* number of bytes to transfer */
+               CFSLONG     st,    /* file position from which to start reading */
+               CFSLONG     sz)                  /* number of bytes to transfer */
 {
     WORD    res;
     TpStr   pDat = (TpStr)startP;
@@ -5125,10 +5125,10 @@ short LoadData(short    handle,                              /* file handle */
 **
 *****************************************************************************/
 
-long GetTable(short handle, WORD position)
+CFSLONG GetTable(short handle, WORD position)
 {
-    long        DSPointer;                       /* return for offset value */
-    long        filePosn;    /* position in temporary file for offset value */
+    CFSLONG        DSPointer;                       /* return for offset value */
+    CFSLONG        filePosn;    /* position in temporary file for offset value */
 #ifdef _IS_WINDOWS_
     TFileInfo   _near *pfileInfo;
 #else
@@ -5143,7 +5143,7 @@ long GetTable(short handle, WORD position)
         DSPointer = pfileInfo->tableP[position-1];
     else
     {                                     /* get it from the temporary file */
-        filePosn = (position-1)*4; /* offset for each DS is long ie 4 bytes */
+        filePosn = (position-1)*4; /* offset for each DS is CFSLONG ie 4 bytes */
         if (pfileInfo->allowed == reading)
             filePosn=filePosn + pfileInfo->fileHeadP->fileSz -
                                              4*pfileInfo->fileHeadP->dataSecs;
@@ -5165,7 +5165,7 @@ long GetTable(short handle, WORD position)
 *****************************************************************************/
 short GetHeader(short handle, WORD getSection)
 {
-    long            tableValue;
+    CFSLONG            tableValue;
 #ifdef _IS_WINDOWS_
     TFileInfo   _near *pfileInfo;
 #else
@@ -5204,14 +5204,14 @@ short GetHeader(short handle, WORD getSection)
 
 /***************************  Store Table  ***********************************
 ** 
-**  Put a long offset value into the pointer table or file correspopnding to
+**  Put a CFSLONG offset value into the pointer table or file correspopnding to
 **  the entry for data section position.
 **
 *****************************************************************************/
 
-void StoreTable(short handle, WORD position, long DSPointer)
+void StoreTable(short handle, WORD position, CFSLONG DSPointer)
 {
-    long                filePosn;
+    CFSLONG                filePosn;
 #ifdef _IS_WINDOWS_
     TFileInfo   _near *pfileInfo;
 #else
@@ -5248,7 +5248,7 @@ void StoreTable(short handle, WORD position, long DSPointer)
     }
     else
     {                                         /* table is in temporary file */
-        filePosn = (long)(position-1)*4;     /* each entry occupies 4 bytes */
+        filePosn = (CFSLONG)(position-1)*4;     /* each entry occupies 4 bytes */
         CLSeek(pfileInfo->DOSHdl.p,filePosn,0);
         CWriteHandle(pfileInfo->DOSHdl.p,(TpStr)&DSPointer,4);
     }
@@ -5272,7 +5272,7 @@ short RecoverTable(short    handle,                  /* program file handle */
                    TpLong   fSize)        /* location of file size variable */
 {
     WORD        foundSecs,expSecs;
-    long        secPos,tablePos,maxSecPos,fileSz,tableSz,maxSecs;
+    CFSLONG        secPos,tablePos,maxSecPos,fileSz,tableSz,maxSecs;
 #ifdef _IS_WINDOWS_
     TFileInfo   _near *pfileInfo;
 #else
@@ -5368,7 +5368,7 @@ short TransferTable(WORD sects, fDef rdHdl, fDef wrHdl)
     TpShort   transArr;                             /* array 512 bytes long */
     WORD      index,ntran,transSize, lastSize;
 //    THandle   pHandle = NULL;
-    long      lTranBuf;                       /* last ditch transfer buffer */
+    CFSLONG      lTranBuf;                       /* last ditch transfer buffer */
 
     retval   = 0;                                 /* return value if all ok */
     if (sects == 0)
@@ -5423,7 +5423,7 @@ short TransferTable(WORD sects, fDef rdHdl, fDef wrHdl)
 
 short GetMemTable(short handle)
 {
-    long            tableSz;
+    CFSLONG            tableSz;
 #ifdef _IS_WINDOWS_
     TFileInfo   _near *pfileInfo;
 #else
@@ -5431,7 +5431,7 @@ short GetMemTable(short handle)
 #endif
 
     pfileInfo = &g_fileInfo[handle];     /* point to this files information */
-    tableSz   = 4*(long)pfileInfo->fileHeadP->dataSecs;
+    tableSz   = 4*(CFSLONG)pfileInfo->fileHeadP->dataSecs;
                                                 /* 4 bytes per data section */
 #if 0
     if (tableSz > MAXMEMALLOC)

@@ -265,8 +265,8 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
                 CFSFile.myHandle,
                 (short)n_c /* channel */,
                 0  /* current section */,
-                (long)(n_c*4)/*0*/ /* startOffset */,
-                (long)WData[n_c][n_section].size(),
+                (CFSLONG)(n_c*4)/*0*/ /* startOffset */,
+                (CFSLONG)WData[n_c][n_section].size(),
                 1.0 /* yScale */,
                 0  /* yOffset */,
                 (float)WData.GetXScale(),
@@ -328,19 +328,21 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
     if (CFSFile.myHandle<0) {
         wxString errorMsg;
         CFSError(errorMsg);
-        throw std::runtime_error(wxT("Error while opening file:\n") + std::string(errorMsg.c_str()));
+        throw std::runtime_error("Error while opening file:\n" + std::string(errorMsg.c_str()));
     }
 
     //Get general Info of the file - see manual of CFS file system
     TDesc time, date;
     TComment comment;
     GetGenInfo(CFSFile.myHandle, time, date, comment);
-    if (CFSError(errorMsg))	throw std::runtime_error(wxT("Error in GetGenInfo:\n") + std::string(errorMsg.c_str()));
+    if (CFSError(errorMsg))
+        throw std::runtime_error("Error in GetGenInfo:\n" + std::string(errorMsg.c_str()));
     //Get characteristics of the file - see manual of CFS file system
     short channelsAvail=0, fileVars=0, DSVars=0;
     unsigned short dataSections=0;
     GetFileInfo(CFSFile.myHandle, &channelsAvail, &fileVars, &DSVars, &dataSections);
-    if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
+    if (CFSError(errorMsg))
+        throw std::runtime_error(std::string(errorMsg.c_str()));
 
     //memory allocation
     ReturnData.resize(channelsAvail);
@@ -375,7 +377,7 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
     //can't be read with GetVarVal() since they might change from section
     //to section
     wxString scaling;
-    std::vector<long> points(dataSections);
+    std::vector<CFSLONG> points(dataSections);
     TDataType dataType;
     TCFSKind dataKind;
     short spacing, other;
@@ -386,7 +388,7 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
         //Get constant information for a particular data channel -
         //see manual of CFS file system.
         std::vector<char> vchannel_name(22),vyUnits(10),vxUnits(10);
-        long startOffset;
+        CFSLONG startOffset;
         GetFileChan(CFSFile.myHandle, n_channel, &vchannel_name[0],
             &vyUnits[0], &vxUnits[0], &dataType, &dataKind,
             &spacing, &other);
@@ -446,7 +448,7 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
             //Begin loop: n_sections
             //Get the channel information for a data section or a file
             //- see manual of CFS file system
-            long startOffset;
+            CFSLONG startOffset;
             float yScale, yOffset, xOffset;
             GetDSChan(CFSFile.myHandle,(short)n_channel,(WORD)n_section+1,&startOffset,
                 &points[n_section],&yScale,&yOffset,&xScale,&xOffset);

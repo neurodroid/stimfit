@@ -142,7 +142,7 @@ typedef char            * TpStr;
 typedef const char      * TpCStr;
 typedef short           * TpShort;
 typedef float           * TpFloat;
-typedef long            * TpLong;
+typedef CFSLONG            * TpLong;
 typedef void            * TpVoid;
 typedef TSFlags         * TpFlags;
 typedef TDataType       * TpDType;
@@ -158,7 +158,7 @@ typedef char           FAR * TpStr;
 typedef const char     FAR * TpCStr;
 typedef short          FAR * TpShort;
 typedef float          FAR * TpFloat;
-typedef long           FAR * TpLong;
+typedef CFSLONG           FAR * TpLong;
 typedef void           FAR * TpVoid;
 typedef TSFlags         FAR * TpFlags;
 typedef TDataType      FAR * TpDType;
@@ -215,8 +215,8 @@ CFSAPI(void)  SetFileChan(short     handle,
 CFSAPI(void)  SetDSChan(short handle,
                         short channel,
                         WORD  dataSection,
-                        long  startOffset,
-                        long  points,
+                        CFSLONG  startOffset,
+                        CFSLONG  points,
                         float yScale,
                         float yOffset,
                         float xScale,
@@ -224,24 +224,24 @@ CFSAPI(void)  SetDSChan(short handle,
 
 CFSAPI(short) WriteData(short  handle,
                         WORD   dataSection,
-                        long   startOffset,
+                        CFSLONG   startOffset,
                         WORD   bytes,
                         TpVoid dataADS);
 
 CFSAPI(short) ClearDS(short   handle);
 
 CFSAPI(void)  SetWriteData(short  handle,
-                           long   startOffset,
-                           long   bytes);
+                           CFSLONG   startOffset,
+                           CFSLONG   bytes);
 
-CFSAPI(long)  CFSFileSize(short  handle);
+CFSAPI(CFSLONG)  CFSFileSize(short  handle);
 
 CFSAPI(short) InsertDS(short   handle,
                        WORD    dataSection,
                        TSFlags flagSet);
 
 CFSAPI(short) AppendDS(short   handle,
-                       long    lSize,
+                       CFSLONG    lSize,
                        TSFlags flagSet);
 
 CFSAPI(void)  RemoveDS(short  handle,
@@ -311,17 +311,17 @@ CFSAPI(void) GetDSChan(short   handle,
 CFSAPI(WORD) GetChanData(short  handle,
                          short  channel,
                          WORD   dataSection,
-                         long   firstElement,
+                         CFSLONG   firstElement,
                          WORD   numberElements,
                          TpVoid dataADS,
-                         long   areaSize);
+                         CFSLONG   areaSize);
 
-CFSAPI(long) GetDSSize(short  handle,
+CFSAPI(CFSLONG) GetDSSize(short  handle,
                        WORD   dataSection);
 
 CFSAPI(short) ReadData(short  handle,
                        WORD   dataSection,
-                       long   startOffest,
+                       CFSLONG   startOffest,
                        WORD   bytes,
                        TpVoid dataADS);
 
