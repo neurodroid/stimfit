@@ -10,7 +10,7 @@ PYTHON_ADDLIBS =
 libstfio_la_SOURCES = ./src/stfswig/stfioswig_wrap.cxx ./src/stfswig/stfioswig.cxx \
 	./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
 	./src/core/core.cpp \
-	./src/core/filelib/cfslib.cpp ./src/core/filelib/cfs.cpp ./src/core/filelib/hdf5lib.cpp
+	./src/core/filelib/cfslib.cpp ./src/core/filelib/cfs.c ./src/core/filelib/hdf5lib.cpp
             # ./src/core/filelib/abflib.cpp ./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
             # ./src/core/filelib/hekalib.cpp \
 	    # ./src/core/filelib/axon/AxAbfFio32/abffiles.cpp \

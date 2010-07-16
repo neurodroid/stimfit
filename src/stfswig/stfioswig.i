@@ -27,6 +27,19 @@ import_array();
 %apply_numpy_typemaps(double)
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) _open;
+%feature("docstring", "Opens a file and returns a recording object.
+      
+Arguments:
+filename -- file name
+
+Returns:
+A recording object.") _open;
+void _open(const char* filename);
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
 %pythoncode {
 import numpy as np
 
@@ -70,7 +83,7 @@ class Section():
     def __getitem__( self, i ):
         return self.data[i]
 
-def import(filename, type=None)
+def read(filename, stftype=None):
     """
     Reads a file into a Recording object.
     """

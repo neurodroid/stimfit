@@ -19,6 +19,7 @@
 #include <wx/msgdlg.h>
 #endif
 
+#include <iostream>
 #include <sstream>
 
 #include "./cfslib.h"
@@ -55,7 +56,7 @@ const int CFSMAXBYTES=64000; // adopted from FPCfs.ips by U Froebe
 }
 
 stf::CFS_IFile::CFS_IFile(const wxString& filename) {
-    myHandle=OpenCFSFile(filename.c_str(),0,1);
+    myHandle = OpenCFSFile(filename.c_str(),0,1);
 }
 
 stf::CFS_IFile::~CFS_IFile() {
@@ -327,14 +328,14 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
     if (CFSFile.myHandle<0) {
         wxString errorMsg;
         CFSError(errorMsg);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(wxT("Error while opening file:\n") + std::string(errorMsg.c_str()));
     }
 
     //Get general Info of the file - see manual of CFS file system
     TDesc time, date;
     TComment comment;
     GetGenInfo(CFSFile.myHandle, time, date, comment);
-    if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
+    if (CFSError(errorMsg))	throw std::runtime_error(wxT("Error in GetGenInfo:\n") + std::string(errorMsg.c_str()));
     //Get characteristics of the file - see manual of CFS file system
     short channelsAvail=0, fileVars=0, DSVars=0;
     unsigned short dataSections=0;
