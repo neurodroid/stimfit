@@ -8,11 +8,11 @@ Building wxWidgets
 :Author: Jose Guzman
 :Date:  |today|
 
-Once we have unpacked the wxWidgets sources in /usr/local/wxWidgets, we can create build directory called build2.9 to compile the files: 
+Once we have unpacked the wxWidgets sources in $HOME/wxWidgets, we can create build directory called build2.9 to compile the files: 
 
 ::
 
-    $ cd /usr/local/wxWidgets
+    $ cd $HOME/wxWidgets
     $ mkdir build2.9 
 
 
@@ -22,7 +22,7 @@ Inside the build2.9 directory you can run the configure script with the followin
 
     $ ../configure --with-gtkprint --without-gnomeprint --with-opengl --enable-calendar --enable-graphics_ctx
 
-We type *--with-gtkprint --without-gnomeprint* because we need latest version of wxWidgets (which requires itself gtk) to print, and not gnome. Note that you call the script configure from /usr/local/wxWidgets but the make file will be created in /usr/local/wxWidgets/build2.9/
+We type *--with-gtkprint --without-gnomeprint* because we need latest version of wxWidgets (which requires itself gtk) to print, and not gnome. Note that you call the script configure from $HOME/wxWidgets but the make file will be created in $HOME/wxWidgets/build2.9/
 
 .. note::
     If you find the following error:
@@ -54,7 +54,7 @@ If everything was OK, you will see the following message after running configure
 
     Configured wxWidgets 2.9.0 for i686-pc-linux-gnu
         
-Now we just type make and after that, run make install as root. All this inside /usr/local/wxWidgets/build2.9/
+Now we just type make and after that, run make install as root. All this inside $HOME/wxWidgets/build2.9/
 
 ::
 
@@ -64,7 +64,7 @@ Now we just type make and after that, run make install as root. All this inside 
 Building wxPython
 =================
 
-Now we will build xwPython. In the same directory where we downloaded the sources for wxPython (/usr/local/wxPython) you  just type:
+Now we will build xwPython. In the same directory where we downloaded the sources for wxPython ($HOME/wxPython) you  just type:
 
 ::
 
@@ -81,7 +81,7 @@ With that, you have built and installed wxWidgets and wxPython. We now only need
 Building Stimfit
 =================
 
-Go to the directory where you unpacked your version of Stimfit (in our example /usr/local/stimfit- |version|/ and type:
+Go to the stimfit directory (in our example $HOME/stimfit) and type:
 
 ::
 

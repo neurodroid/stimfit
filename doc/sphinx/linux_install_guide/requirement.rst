@@ -15,7 +15,7 @@ For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ dependencies
 
 ::
 
-    $ sudo apt-get install build-essential subversion libgtk2.0-dev libgl1-mesa-dev libglu1-mesa-dev libboost-dev liblapack-dev libfftw3-3 libfftw3-dev python-numpy libhdf5-serial-dev
+    $ sudo apt-get install build-essential subversion libgtk2.0-dev libgl1-mesa-dev libglu1-mesa-dev libboost-dev liblapack-dev libfftw3-3 libfftw3-dev python-numpy libhdf5-serial-dev python-dev
 
 To install and run `Stimfit <http://www.stimfit.org>`_ propertly under GNU/Linux, we first need the following packages:
 
