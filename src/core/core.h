@@ -316,6 +316,17 @@ importFile(
         bool progress=true
 );
 
+//! Generic file export.
+/*! \param fName The full path name of the file. 
+ *  \param type The file type. 
+ *  \param Data Data to be written
+ *  \param progress Set to true if a progress dialog should be shown.
+ *  \return true if the file has successfully been written, false otherwise.
+ */
+bool
+exportFile(const wxString& fName, stf::filetype type, const Recording& Data,
+           bool progress=false);
+
 
 /*@}*/
 

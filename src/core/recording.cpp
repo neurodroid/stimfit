@@ -32,6 +32,12 @@ Recording::Recording(const Channel& c_Channel)
     init();
 }
 
+Recording::Recording(const std::vector<Channel>& ChannelList)
+    : ChannelArray(ChannelList)
+{
+    init();
+}
+
 Recording::Recording(std::size_t c_n_channels, std::size_t c_n_sections, std::size_t c_n_points)
   : ChannelArray(c_n_channels, Channel(c_n_sections, c_n_points))
 {

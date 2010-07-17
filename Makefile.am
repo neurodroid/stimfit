@@ -28,13 +28,13 @@ libstfio_la_SOURCES = ./src/stfswig/stfioswig_wrap.cxx ./src/stfswig/stfioswig.c
         ./src/core/filelib/axon/AxAtfFio32/fileio2.cpp \
         ./src/core/filelib/axon2/ProtocolReaderABF2.cpp \
         ./src/core/filelib/axon2/SimpleStringCache.cpp \
-	./src/core/filelib/axon2/abf2headr.cpp
-            # ./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
-            # ./src/core/filelib/hekalib.cpp \
-            # ./src/core/filelib/axg/AxoGraph_ReadWrite.cpp \
-            # ./src/core/filelib/axg/fileUtils.cpp \
-            # ./src/core/filelib/axg/stringUtils.cpp \
-            # ./src/core/filelib/axg/byteswap.cpp
+	./src/core/filelib/axon2/abf2headr.cpp \
+	./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
+	./src/core/filelib/axg/AxoGraph_ReadWrite.cpp \
+	./src/core/filelib/axg/fileUtils.cpp \
+	./src/core/filelib/axg/stringUtils.cpp \
+	./src/core/filelib/axg/byteswap.cpp
+# ./src/core/filelib/hekalib.cpp \
 # 
 noinst_HEADERS = ./src/stfswig/stfioswig.h ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
             ./src/core/stimdefs.h \
@@ -245,19 +245,12 @@ stimfit.app: stimfit
 	mkdir -p stimfit.app/Contents/MacOS
 	mkdir -p stimfit.app/Contents/Resources
 	mkdir -p stimfit.app/Contents/Resources/English.lproj
-	
-	
 	cp $(top_srcdir)/stimfit.plist.in stimfit.app/Contents/Info.plist
-	
-	
 	echo "APPL????\c" > stimfit.app/Contents/PkgInfo
-	
 	rm -f stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
 	cp -p -f .libs/stimfit$(EXEEXT) stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
 	$(POSTLINK_COMMAND) stimfit.app/Contents/MacOS/stimfit$(EXEEXT) \
 	                    $(srcdir)/macosx/app.r
 	$(MACSETFILE) -a C stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
-	
-	
 	cp -f $(top_srcdir)/macosx/wxmac.icns stimfit.app/Contents/Resources/wxmac.icns
 endif

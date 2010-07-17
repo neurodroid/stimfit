@@ -26,6 +26,9 @@ Channel::Channel(const Section& c_Section)
 : name(wxT("\0")), yunits( wxT("\0") ),
 SectionArray(1, c_Section), zoom(500,0.1,false) {}
 
+Channel::Channel(const std::vector<Section>& SectionList) 
+: name(wxT("\0")), yunits( wxT("\0") ),
+SectionArray(SectionList), zoom(500,0.1,false) {}
 
 Channel::Channel(std::size_t c_n_sections, std::size_t section_size) 	
 : name(wxT("\0")), yunits( wxT("\0") ),

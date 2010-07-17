@@ -17,17 +17,21 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
-#include "./../core.h"
+#ifndef MODULE_ONLY
 #include <wx/wx.h>
 #include <wx/progdlg.h>
+#endif
+#include "./../core.h"
 #include "./axg/fileUtils.h"
 #include "./axg/AxoGraph_ReadWrite.h"
 #include "./axg/longdef.h"
 #include "./axglib.h"
 
 void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progress) {
+#ifndef MODULE_ONLY
     wxProgressDialog progDlg( wxT("Axograph binary file import"), wxT("Starting file import"),
                               100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
+#endif
     wxString errorMsg(wxT("Exception while calling AXG_importAXGFile():\n"));
     wxString yunits;
 
@@ -38,12 +42,12 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     // =====================================================================================================================
 
     // Open the example file
-    filehandle dataRefNum = OpenFile( fName.utf8_str() );
+    filehandle dataRefNum = OpenFile( fName.c_str() );
     if ( dataRefNum == 0 )
     {
         errorMsg += wxT("\n\nError: Could not find file.");
         ReturnData.resize(0);
-        throw std::runtime_error(std::string(errorMsg.char_str()));
+        throw std::runtime_error(std::string(errorMsg.c_str()));
     }
 
     // check the AxoGraph header, and get the number of columns to be read
@@ -61,7 +65,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
 
         ReturnData.resize(0);
         CloseFile( dataRefNum );
-        throw std::runtime_error(std::string(errorMsg.char_str()));
+        throw std::runtime_error(std::string(errorMsg.c_str()));
     }
 
     AXGLONG numberOfColumns = 0;
@@ -71,7 +75,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
         errorMsg += wxT( "Error from AG_GetNumberOfColumns" );
         ReturnData.resize(0);
         CloseFile( dataRefNum );
-        throw std::runtime_error(std::string(errorMsg.char_str()));
+        throw std::runtime_error(std::string(errorMsg.c_str()));
     }
 
     // Sanity check
@@ -80,7 +84,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
         errorMsg += wxT ( "File format error: number of columns is negative in AxoGraph data file" );
         ReturnData.resize(0);
         CloseFile( dataRefNum );
-        throw std::runtime_error(std::string(errorMsg.char_str()));
+        throw std::runtime_error(std::string(errorMsg.c_str()));
     }
 
     //	AG_ReadFloatColumn reads column data into a float column structure.
@@ -93,11 +97,13 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     for ( int columnNumber=0; columnNumber<numberOfColumns; columnNumber++ )
     {
         if (progress && columnNumber != 0) {
+#ifndef MODULE_ONLY
             wxString progStr;
             progStr << wxT("Section #") << columnNumber << wxT(" of ") << numberOfColumns-1;
             progDlg.Update( // Section contribution:
                            (double)columnNumber/(double)numberOfColumns * 100.0,
                            progStr );
+#endif
         }
 
         ColumnData column;
@@ -108,7 +114,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
             errorMsg += wxT( "Error from AG_ReadFloatColumn" );
             ReturnData.resize(0);
             CloseFile( dataRefNum );
-            throw std::runtime_error(std::string(errorMsg.char_str()));
+            throw std::runtime_error(std::string(errorMsg.c_str()));
         }
         if ( columnNumber == 0 ) {
             xscale = column.seriesArray.increment * 1.0e3;
@@ -122,7 +128,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
 
             // test whether this name has been used before:
             for (std::size_t n_c=0; n_c < channel_names.size(); ++n_c) {
-                if ( column.title == channel_names[n_c] || column.title.StartsWith( wxT("Column") ) ) {
+                if ( column.title == channel_names[n_c] || column.title.find(wxT("Column"))==0 ) {
                     isnew = false;
                     break;
                 }

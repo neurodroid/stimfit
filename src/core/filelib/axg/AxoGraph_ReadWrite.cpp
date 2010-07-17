@@ -10,7 +10,10 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <wx/datetime.h>
+#include <sstream>
+#ifdef MODULE_ONLY
+typedef char wxChar;
+#endif
 
 #include "stringUtils.h"
 #include "byteswap.h"
@@ -277,7 +280,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  return result;
              // Copy characters one by one into title (tedious but safe)
              for (std::vector< unsigned char >::const_iterator c = charBuffer.begin()+1; c < charBuffer.end(); c += 2) {
-                 columnData->title << wxChar(*c);
+                 columnData->title += wxChar(*c);
              }
              // UnicodeToCString( columnData->title, columnData->titleLength );
 
@@ -411,12 +414,12 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
 wxString AG_ReadComment( filehandle refNum )
 {
     // File comment
-    wxString comment = wxT("\0");
+    std::ostringstream comment; comment << wxT("\0");
 
     AXGLONG comment_size = 0;
     int result = ReadFromFile( refNum, sizeof(AXGLONG), &comment_size );
     if ( result )
-        return comment;
+        return comment.str();
 #ifdef __LITTLE_ENDIAN__
     ByteSwapLong( &comment_size );
 #endif
@@ -425,7 +428,7 @@ wxString AG_ReadComment( filehandle refNum )
         std::vector< unsigned char > charBuffer( comment_size, '\0' );
         result = ReadFromFile( refNum, comment_size, &charBuffer[0] );
         if ( result )
-            return comment;
+            return comment.str();
         // Copy characters one by one into title (tedious but safe)
         for (std::vector< unsigned char >::const_iterator c = charBuffer.begin()+1; c < charBuffer.end(); c += 2) {
             comment << wxChar(*c);
@@ -433,30 +436,38 @@ wxString AG_ReadComment( filehandle refNum )
     }
     
 
-    return comment;
+    return comment.str();
 }
 
 wxString AG_ParseDate( const wxString& notes ) {
-    int datepos = notes.Find(wxT("Created on "));
-    wxString full = notes.Mid(datepos+11);
-    return full.BeforeFirst(wxT('\n'));
+    int datepos = notes.find(wxT("Created on "));
+    if (datepos+11 < notes.length()) {
+        wxString full = notes.substr(datepos+11);
+        return full.substr(0, full.find(wxT('\n')));
+    } else {
+        return wxString();
+    }
 }
 
 wxString AG_ParseTime( const wxString& notes ) {
-    int datepos = notes.Find(wxT("acquisition at "));
-    wxString full = notes.Mid(datepos+15);
-    return full.BeforeFirst(wxT('\n'));
+    int datepos = notes.find(wxT("acquisition at "));
+    if (datepos+15 < notes.length()) {
+        wxString full = notes.substr(datepos+15);
+        return full.substr(0, full.find(wxT('\n')));
+    } else {
+        return wxString();
+    }
 }
 
 wxString AG_ReadNotes( filehandle refNum )
 {
     
     // File notes
-    wxString notes = wxT("\0");
+    std::ostringstream notes; notes << wxT("\0");
     AXGLONG notes_size = 0;
     int result = ReadFromFile( refNum, sizeof(AXGLONG), &notes_size );
     if ( result )
-        return notes;
+        return notes.str();
 #ifdef __LITTLE_ENDIAN__
     ByteSwapLong( &notes_size );
 #endif
@@ -465,13 +476,13 @@ wxString AG_ReadNotes( filehandle refNum )
         std::vector< unsigned char > charBuffer( notes_size, '\0' );
         result = ReadFromFile( refNum, notes_size, &charBuffer[0] );
         if ( result )
-            return notes;
+            return notes.str();
         // Copy characters one by one into title (tedious but safe)
         for (std::vector< unsigned char >::const_iterator c = charBuffer.begin()+1; c < charBuffer.end(); c += 2) {
             notes << wxChar(*c);
         }
     }
-    return notes;
+    return notes.str();
 }
 
 wxString AG_ReadTraceHeaders( filehandle refNum ) {

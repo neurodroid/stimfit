@@ -71,6 +71,35 @@ except AttributeError:
     _newclass = 0
 
 
+class SwigPyIterator(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, SwigPyIterator, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, SwigPyIterator, name)
+    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
+    __repr__ = _swig_repr
+    __swig_destroy__ = _stfio.delete_SwigPyIterator
+    __del__ = lambda self : None;
+    def value(self): return _stfio.SwigPyIterator_value(self)
+    def incr(self, n = 1): return _stfio.SwigPyIterator_incr(self, n)
+    def decr(self, n = 1): return _stfio.SwigPyIterator_decr(self, n)
+    def distance(self, *args): return _stfio.SwigPyIterator_distance(self, *args)
+    def equal(self, *args): return _stfio.SwigPyIterator_equal(self, *args)
+    def copy(self): return _stfio.SwigPyIterator_copy(self)
+    def next(self): return _stfio.SwigPyIterator_next(self)
+    def __next__(self): return _stfio.SwigPyIterator___next__(self)
+    def previous(self): return _stfio.SwigPyIterator_previous(self)
+    def advance(self, *args): return _stfio.SwigPyIterator_advance(self, *args)
+    def __eq__(self, *args): return _stfio.SwigPyIterator___eq__(self, *args)
+    def __ne__(self, *args): return _stfio.SwigPyIterator___ne__(self, *args)
+    def __iadd__(self, *args): return _stfio.SwigPyIterator___iadd__(self, *args)
+    def __isub__(self, *args): return _stfio.SwigPyIterator___isub__(self, *args)
+    def __add__(self, *args): return _stfio.SwigPyIterator___add__(self, *args)
+    def __sub__(self, *args): return _stfio.SwigPyIterator___sub__(self, *args)
+    def __iter__(self): return self
+SwigPyIterator_swigregister = _stfio.SwigPyIterator_swigregister
+SwigPyIterator_swigregister(SwigPyIterator)
+
 class Recording(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, Recording, name, value)
@@ -80,6 +109,9 @@ class Recording(_object):
     __swig_setmethods__["dt"] = _stfio.Recording_dt_set
     __swig_getmethods__["dt"] = _stfio.Recording_dt_get
     if _newclass:dt = _swig_property(_stfio.Recording_dt_get, _stfio.Recording_dt_set)
+    __swig_setmethods__["file_description"] = _stfio.Recording_file_description_set
+    __swig_getmethods__["file_description"] = _stfio.Recording_file_description_get
+    if _newclass:file_description = _swig_property(_stfio.Recording_file_description_get, _stfio.Recording_file_description_set)
     __swig_setmethods__["time"] = _stfio.Recording_time_set
     __swig_getmethods__["time"] = _stfio.Recording_time_get
     if _newclass:time = _swig_property(_stfio.Recording_time_get, _stfio.Recording_time_set)
@@ -92,14 +124,35 @@ class Recording(_object):
     __swig_setmethods__["xunits"] = _stfio.Recording_xunits_set
     __swig_getmethods__["xunits"] = _stfio.Recording_xunits_get
     if _newclass:xunits = _swig_property(_stfio.Recording_xunits_get, _stfio.Recording_xunits_set)
-    def __getitem__(self, *args): return _stfio.Recording___getitem__(self, *args)
-    def __len__(self): return _stfio.Recording___len__(self)
-    def __init__(self): 
-        this = _stfio.new_Recording()
+    def __init__(self, *args): 
+        this = _stfio.new_Recording(*args)
         try: self.this.append(this)
         except: self.this = this
     __swig_destroy__ = _stfio.delete_Recording
     __del__ = lambda self : None;
+    def __getitem__(self, *args): return _stfio.Recording___getitem__(self, *args)
+    def __len__(self): return _stfio.Recording___len__(self)
+    def write(self, *args):
+        """
+        Reads a file and returns a Recording object.
+
+            Arguments:
+            fname  -- file name
+            ftype  -- file type (string). At present, only "hdf5" is supported.
+
+            Returns:
+            True upon successful completion.
+        Reads a file and returns a Recording object.
+
+            Arguments:
+            fname  -- file name
+            ftype  -- file type (string). At present, only "hdf5" is supported.
+
+            Returns:
+            True upon successful completion.
+        """
+        return _stfio.Recording_write(self, *args)
+
 Recording_swigregister = _stfio.Recording_swigregister
 Recording_swigregister(Recording)
 
@@ -115,14 +168,14 @@ class Channel(_object):
     __swig_setmethods__["yunits"] = _stfio.Channel_yunits_set
     __swig_getmethods__["yunits"] = _stfio.Channel_yunits_get
     if _newclass:yunits = _swig_property(_stfio.Channel_yunits_get, _stfio.Channel_yunits_set)
-    def __getitem__(self, *args): return _stfio.Channel___getitem__(self, *args)
-    def __len__(self): return _stfio.Channel___len__(self)
-    def __init__(self): 
-        this = _stfio.new_Channel()
+    def __init__(self, *args): 
+        this = _stfio.new_Channel(*args)
         try: self.this.append(this)
         except: self.this = this
     __swig_destroy__ = _stfio.delete_Channel
     __del__ = lambda self : None;
+    def __getitem__(self, *args): return _stfio.Channel___getitem__(self, *args)
+    def __len__(self): return _stfio.Channel___len__(self)
 Channel_swigregister = _stfio.Channel_swigregister
 Channel_swigregister(Channel)
 
@@ -132,15 +185,18 @@ class Section(_object):
     __swig_getmethods__ = {}
     __getattr__ = lambda self, name: _swig_getattr(self, Section, name)
     __repr__ = _swig_repr
-    def __getitem__(self, *args): return _stfio.Section___getitem__(self, *args)
-    def __len__(self): return _stfio.Section___len__(self)
-    def asarray(self): return _stfio.Section_asarray(self)
-    def __init__(self): 
-        this = _stfio.new_Section()
+    def __init__(self, *args): 
+        this = _stfio.new_Section(*args)
         try: self.this.append(this)
         except: self.this = this
     __swig_destroy__ = _stfio.delete_Section
     __del__ = lambda self : None;
+    def __getitem__(self, *args): return _stfio.Section___getitem__(self, *args)
+    def __len__(self): return _stfio.Section___len__(self)
+    def asarray(self):
+        """Returns the section as a numpy array."""
+        return _stfio.Section_asarray(self)
+
 Section_swigregister = _stfio.Section_swigregister
 Section_swigregister(Section)
 
@@ -166,8 +222,13 @@ def read(fname, ftype=None):
 
     Arguments:
     fname  -- file name
-    ftype  -- file type
-              if type is None (default), it will be guessed from the
+    ftype  -- file type (string); can be one of:
+              "cfs"  - CED filing system
+              "hdf5" - HDF5
+              "abf"  - Axon binary file
+              "atf"  - Axon text file
+              "axg"  - Axograph X binary file
+              if ftype is None (default), it will be guessed from the
               extension.
 
     Returns:
@@ -182,10 +243,15 @@ def read(fname, ftype=None):
             ftype = "hdf5"
         elif ext==".abf":
             ftype = "abf"
+        elif ext==".atf":
+            ftype = "atf"
+        elif ext==".axgd" or ext==".axgx":
+            ftype = "axg"
     rec = Recording()
     if not _read(fname, ftype, rec):
         return None
     return rec
+        
 
 
 

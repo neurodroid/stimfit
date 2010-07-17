@@ -42,6 +42,11 @@ public:
     explicit Channel(const Section& c_Section); 
 
     //! Constructor
+    /*! \param SectionList A vector of Sections from which to construct the channel
+     */
+    explicit Channel(const std::vector<Section>& SectionList); 
+
+    //! Constructor
     /*! Setting the number of sections at construction time will avoid unnecessary 
      *  memory re-allocations.
      *  \param c_n_sections The number of sections.

@@ -46,6 +46,11 @@ class StfDll Recording {
     explicit Recording(const Channel& c_Channel); 
 
     //! Constructor
+    /*! \param ChannelList A vector of channels from which to construct a new Recording.
+     */
+    explicit Recording(const std::vector<Channel>& ChannelList); 
+
+    //! Constructor
     /*! Setting the number of channels and sections at construction time will avoid unnecessary 
      *  memory re-allocations.
      *  \param c_n_channels The number of channels.
@@ -901,14 +906,14 @@ class StfDll Recording {
 
  private:
     std::vector<Channel> ChannelArray;
-    wxString file_description, global_section_description, scaling;
+    wxString global_section_description, scaling;
 
 #ifdef MODULE_ONLY    
  public:
 #endif
     
     double dt;
-    wxString time, date, comment, xunits;
+    wxString file_description, time, date, comment, xunits;
 
  private:
 

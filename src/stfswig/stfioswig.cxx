@@ -23,9 +23,7 @@
 #include "./../core/stimdefs.h"
 #include "./../core/core.h"
 
-bool _read(const std::string& filename, const std::string& ftype, Recording& Data) {
-    wxString fName(filename);
-    stf::txtImportSettings tis;
+stf::filetype gettype(const std::string& ftype) {
     stf::filetype stftype = stf::none;
     if (ftype == "cfs") {
         stftype = stf::cfs;
@@ -33,11 +31,22 @@ bool _read(const std::string& filename, const std::string& ftype, Recording& Dat
         stftype = stf::hdf5;
     } else if (ftype == "abf") {
         stftype = stf::abf;
+    } else if (ftype == "atf") {
+        stftype = stf::atf;
+    } else if (ftype == "axg") {
+        stftype = stf::axg;
     } else {
         stftype = stf::none;
     }
+    return stftype;
+}
+
+bool _read(const std::string& filename, const std::string& ftype, Recording& Data) {
+
+    stf::filetype stftype = gettype(ftype);
+    stf::txtImportSettings tis;
          
-    if (!stf::importFile(fName, stftype, Data, tis, false)) {
+    if (!stf::importFile(filename, stftype, Data, tis, false)) {
         std::cerr << "Error importing file\n";
         return false;
     }
