@@ -15,8 +15,6 @@
 #include "ProtocolReaderABF2.hpp"
 #include "../axon/AxAbfFio32/abfutil.h"
 #include "../axon/AxAbfFio32/abffiles.h"
-#include <wx/string.h>
-#include <wx/convauto.h>
 #include <math.h>
 
 #if defined(__linux__) || defined(__STF__) || defined(__APPLE__)
@@ -271,7 +269,6 @@ BOOL CABF2ProtocolReader::ReadFileInfo()
     MEMBERASSERT();
 
     BOOL bOK = TRUE;
-    wxConvAuto wxCA;
 
     short nMajor = MAJOR( m_FileInfo.uFileVersionNumber );
     short nMinor = MINOR( m_FileInfo.uFileVersionNumber );

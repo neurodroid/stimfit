@@ -8,19 +8,13 @@ Downloads
 Downloading and unpacking the sources of Stimfit
 ================================================
 
-You can download the last version of `Stimfit <http://www.stimfit.org>`_ from the `Stimfit homepage <http://www.stimfit.org>`_ . Simply click on the Download section. After that you will find a site which contains different versions of `Stimfit <http://www.stimfit.org>`_ for different systems. In this guide we will download the `Stimfit <http://www.stimfit.org>`_ version |version| for Linux. You can download it just clicking on the file named stimfit- |version|.tar.gz , which contains the sources. Alternatively, you can type the following command in your terminal:
+You can download the latest development code for `Stimfit <http://www.stimfit.org>`_ from the Google code repository. In your home directory ($HOME)
 
 ::
 
-    $ wget http://www.stimfit.org/stimfit-version.tar.gz
+    $ hg clone https://stimfit.googlecode.com/hg/ stimfit 
 
-Where **version** is the current `Stimfit <http://www.stimfit.org>`_ version (|version| in our case). Once the the tar.gz is located into a local directory (for example /usr/local) we can type the following command to uncompress/untar it:
-
-::
-
-    $ tar xvfz stimfit-version.tar.gz
-
-this will create the directory /stimfit-|version|/ in our current directory (for example /usr/local/stimfit-|version|/). 
+This will grab all the required files into $HOME/stimfit.
 
 Download wxWidgets and wxPython via svn
 =======================================
@@ -45,7 +39,7 @@ This will create a directory called wxWidgets with the source code. Unfortunatel
     Do not attempt to download wxPython sources other than the one described above. The GNU/Linux version of `Stimfit <http://www.stimfit.org>`_ is still experimental and strongly relies on this development version of wxPython.
 
 
-After obtaining the sources via svn we will have a directory called wxPython with the corresponding source code.  http://svn.wxwidgets.org/svn/wx/wxPython/trunk/ is the main development branch for wxPython. Now you will have the following directories: /usr/local/wxPython and /usr/local/wxWidgets.
+After obtaining the sources via svn we will have a directory called wxPython with the corresponding source code.  http://svn.wxwidgets.org/svn/wx/wxPython/trunk/ is the main development branch for wxPython. Now you will have the following directories: $HOME/wxPython and $HOME/wxWidgets.
 
 The GTK+ and OpenGL development environment
 ===========================================

@@ -16,7 +16,8 @@
 #include "../Common/wincpp.hpp"
 #include "atfintl.h"
 #include "axatffio32.h"
-#include <wx/convauto.h>
+
+#include <string>
 
 #if defined(__linux__) || defined(__STF__) || defined(__APPLE__)
 	#define max(a,b)   (((a) > (b)) ? (a) : (b))
@@ -136,11 +137,10 @@ HANDLE CreateFileBuf(ATF_FILEINFO *pATF, DWORD dwDesiredAccess, DWORD dwShareMod
                      DWORD dwFlagsAndAttributes, HANDLE hTemplateFile )
 {
 #ifdef _WINDOWS
-    wxConvAuto wca;
-    pATF->hFile = CreateFile(wca.cMB2WX(pATF->pszFileName), dwDesiredAccess, dwShareMode, lpSecurityAttributes,
+      pATF->hFile = CreateFile(pATF->pszFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes,
                             dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 #else
-    pATF->hFile = c_CreateFile(pATF->pszFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes,
+      pATF->hFile = c_CreateFile(pATF->pszFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes,
                             dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 #endif
    if (pATF->hFile != INVALID_HANDLE_VALUE)

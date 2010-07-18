@@ -63,7 +63,6 @@ bool stf::importFile(
             stf::importHDF5File(fName, ReturnData, progress);
             break;
         }
-#ifndef MODULE_ONLY
         case stf::abf: {
             stf::importABFFile(fName, ReturnData, progress);
             break;
@@ -76,6 +75,7 @@ bool stf::importFile(
             stf::importAXGFile(fName, ReturnData, progress);
             break;
         }
+#ifndef MODULE_ONLY
         case stf::heka: {
             stf::importHEKAFile(fName, ReturnData, progress);
             break;
@@ -102,6 +102,25 @@ bool stf::importFile(
 #endif
         default:
             throw std::runtime_error("Unknown file type");
+        }
+    }
+    catch (...) {
+        throw;
+    }
+    return true;
+}
+
+bool stf::exportFile(const wxString& fName, stf::filetype type, const Recording& Data,
+                     bool progress)
+{
+    try {
+        switch (type) {
+        case stf::hdf5: {
+            stf::exportHDF5File(fName, Data);
+            break;
+        }
+        default:
+            throw std::runtime_error("Only hdf5 is supported for writing at present.");
         }
     }
     catch (...) {

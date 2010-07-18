@@ -29,8 +29,10 @@
 #include "FileIO.hpp"
 
 #if defined (__linux__) || defined(__APPLE__)
+#ifndef MODULE_ONLY
 #include <wchar.h>
 #include <wx/convauto.h>
+#endif
 #endif
 
 //===============================================================================================
@@ -111,8 +113,15 @@ BOOL CFileIO::CreateEx(LPCTSTR szFileName, DWORD dwDesiredAccess, DWORD dwShareM
    m_hFileHandle = ::CreateFile(szFileName, dwDesiredAccess, dwShareMode, NULL, 
                                 dwCreationDisposition, dwFlagsAndAttributes, NULL);
 #else
-   wxConvAuto wca;
-   m_hFileHandle = ::c_CreateFile(wca.cWX2MB(szFileName), dwDesiredAccess, dwShareMode, NULL, 
+   int fnsize = 0;
+   std::string fName;
+   while (szFileName[fnsize++] != '\0') {
+       fName += char(szFileName[fnsize-1]);
+   }
+   fName += '\0';
+
+   m_hFileHandle = ::c_CreateFile(fName.c_str(), dwDesiredAccess, dwShareMode, NULL, 
+                                  //    m_hFileHandle = ::c_CreateFile(wca.cWX2MB(szFileName), dwDesiredAccess, dwShareMode, NULL, 
                                 dwCreationDisposition, dwFlagsAndAttributes, NULL);
 #endif
    if (m_hFileHandle == FILE_NULL)

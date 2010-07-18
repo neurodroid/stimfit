@@ -32,6 +32,12 @@ Recording::Recording(const Channel& c_Channel)
     init();
 }
 
+Recording::Recording(const std::vector<Channel>& ChannelList)
+    : ChannelArray(ChannelList)
+{
+    init();
+}
+
 Recording::Recording(std::size_t c_n_channels, std::size_t c_n_sections, std::size_t c_n_points)
   : ChannelArray(c_n_channels, Channel(c_n_sections, c_n_points))
 {
@@ -45,8 +51,8 @@ void Recording::init() {
     time = wxT("\0");
     date = wxT("\0");
     comment = wxT("\0");
-    xUnits =  wxT("ms") ;
-    x_scale = 1.0;
+    xunits =  wxT("ms") ;
+    dt = 1.0;
 
 #ifndef MODULE_ONLY
 
@@ -183,7 +189,7 @@ void Recording::CopyAttributes(const Recording& c_Recording) {
             ChannelArray[n_ch].SetYUnits( c_Recording[n_ch].GetYUnits() );
         }
     }
-    x_scale=c_Recording.x_scale;
+    dt=c_Recording.dt;
 }
 
 void Recording::resize(std::size_t c_n_channels) {
@@ -200,7 +206,7 @@ size_t Recording::GetChannelSize(std::size_t n_channel) const {
 }
 
 void Recording::SetXScale(double value) {
-    x_scale=value;
+    dt=value;
     for (ch_it it1 = ChannelArray.begin(); it1 != ChannelArray.end(); it1++) {
         for (sec_it it2 = it1->get().begin(); it2 != it1->get().end(); it2++) {
             it2->SetXScale(value);
@@ -728,8 +734,8 @@ void Recording::AddRec(const Recording &toAdd) {
     if (toAdd.size()!=size()) {
         throw std::runtime_error("Number of channels doesn't match");
     }
-    // check x_scale:
-    if (toAdd.GetXScale()!=x_scale) {
+    // check dt:
+    if (toAdd.GetXScale()!=dt) {
         throw std::runtime_error("Sampling interval doesn't match");
     }
     // add sections:
@@ -755,7 +761,7 @@ stf::Table Recording::CurAsTable() const {
     try {
         for (std::size_t nRow=0;nRow<table.nRows();++nRow) {
             wxString rLabel;
-            rLabel << nRow*x_scale;
+            rLabel << nRow*dt;
             table.SetRowLabel(nRow,rLabel);
             for (std::size_t nCol=0;nCol<table.nCols();++nCol) {
                 table.at(nRow,nCol)=ChannelArray.at(nCol).at(cs).at(nRow);

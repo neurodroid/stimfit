@@ -15,6 +15,7 @@ Contents:
    howto/index
    stf_reference/stf
    references/index
+   stfio/index
    links/index
 
 Indices and tables

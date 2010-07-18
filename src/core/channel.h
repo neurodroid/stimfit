@@ -42,6 +42,11 @@ public:
     explicit Channel(const Section& c_Section); 
 
     //! Constructor
+    /*! \param SectionList A vector of Sections from which to construct the channel
+     */
+    explicit Channel(const std::vector<Section>& SectionList); 
+
+    //! Constructor
     /*! Setting the number of sections at construction time will avoid unnecessary 
      *  memory re-allocations.
      *  \param c_n_sections The number of sections.
@@ -74,12 +79,12 @@ public:
     //! Retrieves the channel name
     /*! \return The channel name.
      */
-    const wxString& GetChannelName() const { return channel_name; }
+    const wxString& GetChannelName() const { return name; }
 
     //! Retrieves the y units string.
     /*! \return The y units string.
      */
-    const wxString& GetYUnits( ) const { return yUnits; }
+    const wxString& GetYUnits( ) const { return yunits; }
 
     //! Retrieves the size of the section array.
     /*! \return The size of the section array.
@@ -126,12 +131,12 @@ public:
     //! Sets the channel name
     /*! \param value The channel name.
      */
-    void SetChannelName(const wxString& value) { channel_name = value; }
+    void SetChannelName(const wxString& value) { name = value; }
     
     //! Sets the y units string
     /*! \param value The new y units string.
      */
-    void SetYUnits( const wxString& value ) { yUnits = value; }
+    void SetYUnits( const wxString& value ) { yunits = value; }
 
     //misc--------------------------------------------------------
     
@@ -157,7 +162,13 @@ public:
 
 private:
     //private members---------------------------------------------
-    wxString channel_name, yUnits;
+#ifdef MODULE_ONLY
+ public:
+#endif
+    
+    wxString name, yunits;
+
+ private:
     // An array of sections
     std::vector< Section > SectionArray;
     // The zoom settings

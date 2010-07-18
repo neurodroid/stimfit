@@ -539,7 +539,8 @@ enum filetype {
     igor,  /*!< Igor binary wave. */
     son,   /*!< CED Son files. */
     hdf5,  /*!< hdf5 files. */
-    heka   /*!< heka files. */
+    heka,  /*!< heka files. */
+    none   /*!< Undefined file type. */
 };
 
 

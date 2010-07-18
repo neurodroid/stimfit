@@ -63,6 +63,13 @@
 #ifndef __MACHINE__
     #define __MACHINE__
 
+    #include <limits.h>
+    #if ( __WORDSIZE == 64 ) || defined (__APPLE__)
+        #define CFSLONG int
+    #else
+        #define CFSLONG long
+    #endif
+
     #ifdef __APPLE__
         // #define macintosh
     #endif
@@ -149,7 +156,7 @@
        #define DllImport
        #endif
 
-       typedef long Coord;        /* this is LONG in the MacApp definitions */
+       typedef CFSLONG Coord;        /* this is LONG in the MacApp definitions */
        typedef double fdouble;
        #define FDBL_DIG DBL_DIG
        #define FDBL_MAX DBL_MAX
@@ -195,7 +202,7 @@
        #define FDBL_MAX DBL_MAX
        typedef char _far * LPSTR;
        typedef unsigned short WORD;
-       typedef unsigned long DWORD;
+       typedef unsigned CFSLONG DWORD;
        typedef unsigned char BYTE;
        typedef void _far * THandle; /* dummy to allow dos compiles          */
        typedef WORD _far * HWND;    /* dummy to allow dos compiles          */
@@ -234,10 +241,10 @@
         typedef char * LPSTR;
         typedef const char * LPCSTR;
         typedef unsigned short WORD;
-        typedef unsigned long  DWORD;
+        typedef unsigned CFSLONG  DWORD;
         typedef unsigned char  BYTE;
-        typedef long double fdouble;
-        typedef long Coord;     /*  Borrowed from MacApp */
+        typedef CFSLONG double fdouble;
+        typedef CFSLONG Coord;     /*  Borrowed from MacApp */
         typedef Handle THandle;
 
         #define M_AllocMem(x)     NewHandle(x)
@@ -273,10 +280,10 @@
         typedef char * LPSTR;
         typedef const char * LPCSTR;
         typedef unsigned short WORD;
-//        typedef unsigned long  DWORD;
+//        typedef unsigned CFSLONG  DWORD;
         typedef unsigned char  BYTE;
         typedef long double fdouble;
-        typedef long Coord;     /*  Borrowed from MacApp */
+        typedef CFSLONG Coord;     /*  Borrowed from MacApp */
         typedef WORD THandle;
         #define F_malloc         malloc
         #define F_free           free

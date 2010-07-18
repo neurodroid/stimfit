@@ -15,8 +15,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   moduleonly
    requirement
    downloads
    building
    updates
-

@@ -190,10 +190,13 @@
   #endif
 #endif
 
+#ifndef MODULE_ONLY
+#include <wx/wx.h>
+#endif
+
 #include "longdef.h"
 #include "fileUtils.h"
 #include "./../../stimdefs.h"
-#include <wx/wx.h>
 
 // errors numbers
 const short kAG_MemoryErr = -21;

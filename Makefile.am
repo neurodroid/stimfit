@@ -10,30 +10,31 @@ PYTHON_ADDLIBS =
 libstfio_la_SOURCES = ./src/stfswig/stfioswig_wrap.cxx ./src/stfswig/stfioswig.cxx \
 	./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
 	./src/core/core.cpp \
-	./src/core/filelib/cfslib.cpp ./src/core/filelib/cfs.cpp ./src/core/filelib/hdf5lib.cpp
-            # ./src/core/filelib/abflib.cpp ./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
-            # ./src/core/filelib/hekalib.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/abffiles.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/csynch.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/filedesc.cpp \
-	    # ./src/core/filelib/axon/Common/FileReadCache.cpp \
-	    # ./src/core/filelib/axon/Common/FileIO.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/abfheadr.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/abfhwave.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/Oldheadr.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/abfutil.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/msbincvt.cpp \
-	    # ./src/core/filelib/axon/Common/unix.cpp \
-	    # ./src/core/filelib/axon/AxAbfFio32/abferror.cpp \
-            # ./src/core/filelib/axon/AxAtfFio32/axatffio32.cpp \
-            # ./src/core/filelib/axon/AxAtfFio32/fileio2.cpp \
-            # ./src/core/filelib/axon2/ProtocolReaderABF2.cpp \
-            # ./src/core/filelib/axon2/SimpleStringCache.cpp \
-	    # ./src/core/filelib/axon2/abf2headr.cpp \
-            # ./src/core/filelib/axg/AxoGraph_ReadWrite.cpp \
-            # ./src/core/filelib/axg/fileUtils.cpp \
-            # ./src/core/filelib/axg/stringUtils.cpp \
-            # ./src/core/filelib/axg/byteswap.cpp
+	./src/core/filelib/cfslib.cpp ./src/core/filelib/cfs.c ./src/core/filelib/hdf5lib.cpp \
+	./src/core/filelib/abflib.cpp \
+	./src/core/filelib/axon/AxAbfFio32/abffiles.cpp \
+	./src/core/filelib/axon/AxAbfFio32/csynch.cpp \
+	./src/core/filelib/axon/AxAbfFio32/filedesc.cpp \
+	./src/core/filelib/axon/Common/FileReadCache.cpp \
+	./src/core/filelib/axon/Common/FileIO.cpp \
+	./src/core/filelib/axon/AxAbfFio32/abfheadr.cpp \
+	./src/core/filelib/axon/AxAbfFio32/abfhwave.cpp \
+	./src/core/filelib/axon/AxAbfFio32/Oldheadr.cpp \
+	./src/core/filelib/axon/AxAbfFio32/abfutil.cpp \
+	./src/core/filelib/axon/AxAbfFio32/msbincvt.cpp \
+	./src/core/filelib/axon/Common/unix.cpp \
+	./src/core/filelib/axon/AxAbfFio32/abferror.cpp \
+        ./src/core/filelib/axon/AxAtfFio32/axatffio32.cpp \
+        ./src/core/filelib/axon/AxAtfFio32/fileio2.cpp \
+        ./src/core/filelib/axon2/ProtocolReaderABF2.cpp \
+        ./src/core/filelib/axon2/SimpleStringCache.cpp \
+	./src/core/filelib/axon2/abf2headr.cpp \
+	./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
+	./src/core/filelib/axg/AxoGraph_ReadWrite.cpp \
+	./src/core/filelib/axg/fileUtils.cpp \
+	./src/core/filelib/axg/stringUtils.cpp \
+	./src/core/filelib/axg/byteswap.cpp
+# ./src/core/filelib/hekalib.cpp \
 # 
 noinst_HEADERS = ./src/stfswig/stfioswig.h ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
             ./src/core/stimdefs.h \
@@ -87,17 +88,18 @@ libstfio_la_LDFLAGS = -lhdf5 -lhdf5_hl $(PYTHON_ADDLDFLAGS)
 libstfio_la_LIBADD = $(PYTHON_ADDLIBS)
 
 install-exec-hook:
-	$(MKDIR_P) ${PYTHON_SITE_PKG}/stimfit
-	$(LN_S) -f ${prefix}/lib/${STFIO_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stimfit/_stfio.so
-	cp -p $(srcdir)/src/stfswig/hdf5tools.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/src/stfswig/stfio.py ${PYTHON_SITE_PKG}/stimfit
-	echo stimfit > ${PYTHON_SITE_PKG}/stimfit.pth
+	$(MKDIR_P) ${PYTHON_SITE_PKG}/stfio
+	$(LN_S) -f ${prefix}/lib/${STFIO_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stfio/_stfio.so
+	cp -p $(srcdir)/src/stfswig/hdf5tools.py ${PYTHON_SITE_PKG}/stfio
+	cp -p $(srcdir)/src/stfswig/stfio_plot.py ${PYTHON_SITE_PKG}/stfio
+	cp -p $(srcdir)/src/stfswig/stfio.py ${PYTHON_SITE_PKG}/stfio
+	echo stfio > ${PYTHON_SITE_PKG}/stfio.pth
 
 else
 bin_PROGRAMS = stimfit
 stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
 	    ./src/core/core.cpp ./src/core/fitlib.cpp ./src/core/filelib/asciilib.cpp \
-	    ./src/core/filelib/cfslib.cpp ./src/core/filelib/hdf5lib.cpp ./src/core/filelib/cfs.cpp \
+	    ./src/core/filelib/cfslib.cpp ./src/core/filelib/hdf5lib.cpp ./src/core/filelib/cfs.c \
             ./src/core/filelib/abflib.cpp ./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
             ./src/core/filelib/hekalib.cpp \
 	    ./src/core/filelib/axon/AxAbfFio32/abffiles.cpp \
@@ -244,19 +246,12 @@ stimfit.app: stimfit
 	mkdir -p stimfit.app/Contents/MacOS
 	mkdir -p stimfit.app/Contents/Resources
 	mkdir -p stimfit.app/Contents/Resources/English.lproj
-	
-	
 	cp $(top_srcdir)/stimfit.plist.in stimfit.app/Contents/Info.plist
-	
-	
 	echo "APPL????\c" > stimfit.app/Contents/PkgInfo
-	
 	rm -f stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
 	cp -p -f .libs/stimfit$(EXEEXT) stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
 	$(POSTLINK_COMMAND) stimfit.app/Contents/MacOS/stimfit$(EXEEXT) \
 	                    $(srcdir)/macosx/app.r
 	$(MACSETFILE) -a C stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
-	
-	
 	cp -f $(top_srcdir)/macosx/wxmac.icns stimfit.app/Contents/Resources/wxmac.icns
 endif

@@ -19,6 +19,7 @@
 #include <wx/msgdlg.h>
 #endif
 
+#include <iostream>
 #include <sstream>
 
 #include "./cfslib.h"
@@ -55,7 +56,7 @@ const int CFSMAXBYTES=64000; // adopted from FPCfs.ips by U Froebe
 }
 
 stf::CFS_IFile::CFS_IFile(const wxString& filename) {
-    myHandle=OpenCFSFile(filename.c_str(),0,1);
+    myHandle = OpenCFSFile(filename.c_str(),0,1);
 }
 
 stf::CFS_IFile::~CFS_IFile() {
@@ -250,22 +251,24 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
     }
 
     for (int n_section=0; n_section < (int)WData.GetChannelSize(0); n_section++) {
+        int progbar =
+            // Section contribution:
+            (int)((double)n_section/(double)WData.GetChannelSize(0)*100.0);
 #ifndef MODULE_ONLY
         wxString progStr;
         progStr << wxT("Writing section #") << n_section+1 << wxT(" of ") << (int)WData.GetChannelSize(0);
-        progDlg.Update(
-            // Section contribution:
-            (int)((double)n_section/(double)WData.GetChannelSize(0)*100.0),
-            progStr
-            );
+        progDlg.Update(progbar, progStr);
+#else
+        std::cout << "\r";
+        std::cout << progbar << "%" << std::flush;
 #endif
         for (std::size_t n_c=0;n_c<WData.size();++n_c) {
             SetDSChan(
                 CFSFile.myHandle,
                 (short)n_c /* channel */,
                 0  /* current section */,
-                (long)(n_c*4)/*0*/ /* startOffset */,
-                (long)WData[n_c][n_section].size(),
+                (CFSLONG)(n_c*4)/*0*/ /* startOffset */,
+                (CFSLONG)WData[n_c][n_section].size(),
                 1.0 /* yScale */,
                 0  /* yOffset */,
                 (float)WData.GetXScale(),
@@ -312,6 +315,11 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
         InsertDS(CFSFile.myHandle, 0, noFlags);
         if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
     }	//End section loop
+#ifdef MODULE_ONLY
+    std::cout << "\r";
+    std::cout << "100%" << std::endl;
+#endif
+    
     return true;
 }
 
@@ -327,19 +335,21 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
     if (CFSFile.myHandle<0) {
         wxString errorMsg;
         CFSError(errorMsg);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error("Error while opening file:\n" + std::string(errorMsg.c_str()));
     }
 
     //Get general Info of the file - see manual of CFS file system
     TDesc time, date;
     TComment comment;
     GetGenInfo(CFSFile.myHandle, time, date, comment);
-    if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
+    if (CFSError(errorMsg))
+        throw std::runtime_error("Error in GetGenInfo:\n" + std::string(errorMsg.c_str()));
     //Get characteristics of the file - see manual of CFS file system
     short channelsAvail=0, fileVars=0, DSVars=0;
     unsigned short dataSections=0;
     GetFileInfo(CFSFile.myHandle, &channelsAvail, &fileVars, &DSVars, &dataSections);
-    if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
+    if (CFSError(errorMsg))
+        throw std::runtime_error(std::string(errorMsg.c_str()));
 
     //memory allocation
     ReturnData.resize(channelsAvail);
@@ -374,7 +384,7 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
     //can't be read with GetVarVal() since they might change from section
     //to section
     wxString scaling;
-    std::vector<long> points(dataSections);
+    std::vector<CFSLONG> points(dataSections);
     TDataType dataType;
     TCFSKind dataKind;
     short spacing, other;
@@ -385,7 +395,7 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
         //Get constant information for a particular data channel -
         //see manual of CFS file system.
         std::vector<char> vchannel_name(22),vyUnits(10),vxUnits(10);
-        long startOffset;
+        CFSLONG startOffset;
         GetFileChan(CFSFile.myHandle, n_channel, &vchannel_name[0],
             &vyUnits[0], &vxUnits[0], &dataType, &dataKind,
             &spacing, &other);
@@ -427,25 +437,27 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
         TempChannel.SetYUnits(yUnits);
         std::size_t empty_sections=0;
         for (int n_section=0; n_section < dataSections; ++n_section) {
-#ifndef MODULE_ONLY
-            wxString progStr;
             if (progress) {
+                int progbar =
+                    // Channel contribution:
+                    (int)(((double)n_channel/(double)channelsAvail)*100.0+
+                          // Section contribution:
+                          (double)n_section/(double)dataSections*(100.0/channelsAvail));
+#ifndef MODULE_ONLY
+                wxString progStr;
                 progStr << wxT("Reading channel #") << n_channel + 1 << wxT(" of ") << channelsAvail
                         << wxT(", Section #") << n_section+1 << wxT(" of ") << dataSections;
-                progDlg.Update(
-                               // Channel contribution:
-                               (int)(((double)n_channel/(double)channelsAvail)*100.0+
-                                     // Section contribution:
-                                     (double)n_section/(double)dataSections*(100.0/channelsAvail)),
-                               progStr
-                               );
-            }
+                progDlg.Update(progbar, progStr);
+#else
+                std::cout << "\r";
+                std::cout << progbar << "%" << std::flush;
 #endif
+            }
             
             //Begin loop: n_sections
             //Get the channel information for a data section or a file
             //- see manual of CFS file system
-            long startOffset;
+            CFSLONG startOffset;
             float yScale, yOffset, xOffset;
             GetDSChan(CFSFile.myHandle,(short)n_channel,(WORD)n_section+1,&startOffset,
                 &points[n_section],&yScale,&yOffset,&xScale,&xOffset);
@@ -550,4 +562,10 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
     ReturnData.SetTime(time);
     ReturnData.SetDate(date);
     ReturnData.SetComment(comment);
+#ifdef MODULE_ONLY
+    if (progress) {
+        std::cout << "\r";
+        std::cout << "100%" << std::endl;
+    }
+#endif
 }
