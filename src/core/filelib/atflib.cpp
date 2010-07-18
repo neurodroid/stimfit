@@ -15,6 +15,8 @@
 #ifndef MODULE_ONLY
 #include <wx/wxprec.h>
 #include <wx/progdlg.h>
+#else
+#include <iostream>
 #endif
 
 #include "./atflib.h"
@@ -171,14 +173,14 @@ void stf::importATFFile(const wxString &fName, Recording &ReturnData, bool progr
     Channel TempChannel(nColumns-timeInFirstColumn);
     for (int n_c=timeInFirstColumn;n_c<nColumns;++n_c) {
         if (progress) {
+            int progbar = (double)100.0*(n_c+1-timeInFirstColumn)/(double)(nColumns-timeInFirstColumn);
 #ifndef MODULE_ONLY
             wxString progStr;
             progStr << wxT("Section #") << n_c+1-timeInFirstColumn << wxT(" of ") << nColumns-timeInFirstColumn;
-            progDlg.Update(
-                    // Section contribution:
-                    (double)100.0*(n_c+1-timeInFirstColumn)/(double)(nColumns-timeInFirstColumn),
-                    progStr
-                           );
+            progDlg.Update(progbar, progStr);
+#else
+            std::cout << "\r";
+            std::cout << progbar << "%" << std::flush;
 #endif
         }
         std::ostringstream label;
@@ -236,4 +238,10 @@ void stf::importATFFile(const wxString &fName, Recording &ReturnData, bool progr
         errorMsg+=wxT("Error while closing ATF file");
         throw std::runtime_error(std::string(errorMsg.c_str()));
     }
+#ifdef MODULE_ONLY
+    if (progress) {
+        std::cout << "\r";
+        std::cout << "100%" << std::endl;
+    }
+#endif
 }

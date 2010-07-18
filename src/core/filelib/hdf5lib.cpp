@@ -182,17 +182,19 @@ bool stf::exportHDF5File(const wxString& fName, const Recording& WData) {
         }
 
         for (std::size_t n_s=0; n_s < WData[n_c].size(); ++n_s) {
+            int progbar = 
+                // Channel contribution:
+                (int)(((double)n_c/(double)WData.size())*100.0+
+                      // Section contribution:
+                      (double)(n_s)/(double)WData[n_c].size()*(100.0/WData.size()));
 #ifndef MODULE_ONLY
             wxString progStr;
             progStr << wxT("Writing channel #") << n_c + 1 << wxT(" of ") << WData.size()
                     << wxT(", Section #") << n_s << wxT(" of ") << WData[n_c].size();
-            progDlg.Update(
-                           // Channel contribution:
-                           (int)(((double)n_c/(double)WData.size())*100.0+
-                                 // Section contribution:
-                                 (double)(n_s)/(double)WData[n_c].size()*(100.0/WData.size())),
-                           progStr
-                           );
+            progDlg.Update(progbar, progStr);
+#else
+            std::cout << "\r";
+            std::cout << progbar << "%" << std::flush;
 #endif
             
             // construct a number with leading zeros:
@@ -278,8 +280,12 @@ bool stf::exportHDF5File(const wxString& fName, const Recording& WData) {
         wxString errorMsg(wxT("Exception while closing file in stf::exportHDF5File"));
         throw std::runtime_error(std::string(errorMsg.c_str()));
     }
+#ifdef MODULE_ONLY
+    std::cout << "\r";
+    std::cout << "100%" << std::endl;
+#endif
+    
     return (status >= 0);
-
 }
 
 void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool progress) {
@@ -396,20 +402,22 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
         }
 
         for (int n_s=0; n_s < ct_buf[0].n_sections; ++n_s) {
-#ifndef MODULE_ONLY
             if (progress) {
+                int progbar =
+                    // Channel contribution:
+                    (int)(((double)n_c/(double)numberChannels)*100.0+
+                          // Section contribution:
+                          (double)(n_s)/(double)ct_buf[0].n_sections*(100.0/numberChannels));
+#ifndef MODULE_ONLY
                 wxString progStr;
                 progStr << wxT("Reading channel #") << n_c + 1 << wxT(" of ") << numberChannels
                         << wxT(", Section #") << n_s+1 << wxT(" of ") << ct_buf[0].n_sections;
-                progDlg.Update(
-                               // Channel contribution:
-                               (int)(((double)n_c/(double)numberChannels)*100.0+
-                                     // Section contribution:
-                                     (double)(n_s)/(double)ct_buf[0].n_sections*(100.0/numberChannels)),
-                               progStr
-                               );
-            }
+                progDlg.Update(progbar, progStr);
+#else
+                std::cout << "\r";
+                std::cout << progbar << "%" << std::flush;
 #endif
+            }
             
             // construct a number with leading zeros:
             int n10 = 0;
@@ -500,5 +508,11 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
         wxString errorMsg(wxT("Exception while closing file in stf::importHDF5File"));
         throw std::runtime_error(std::string(errorMsg.c_str()));
     }
-
+#ifdef MODULE_ONLY
+    if (progress) {
+        std::cout << "\r";
+        std::cout << "100%" << std::endl;
+    }
+#endif
+    
 }

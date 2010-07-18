@@ -147,11 +147,13 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
         100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
 #endif
     CABF2ProtocolReader abf2;
-    std::vector<wchar_t> wfName(fName.size());
+    std::wstring wfName;
+    wfName.resize(fName.size());
+    std::copy(fName.begin(), fName.end(), wfName.begin());
+    // for(std::string::size_type i=0; i<fName.size(); ++i) {
+    //     wfName[i] = (wchar_t)fName[i];
+    // }
 
-    for(std::string::size_type i=0; i<fName.size(); ++i) {
-        wfName[i] = fName[i];
-    }
     if (!abf2.Open( &wfName[0] )) {
         wxString errorMsg(wxT("Exception while calling importABF2File():\nCouldn't open file"));
         throw std::runtime_error(std::string(errorMsg.c_str()));
@@ -190,11 +192,13 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
     }
     int hFile = abf2.GetFileNumber();
     for (int nChannel=0; nChannel < numberChannels; ++nChannel) {
+        if (progress) {
 #ifndef MODULE_ONLY
-        progDlg.Update((int)(((double)nChannel/(double)numberChannels)*100.0), wxT("Memory allocation"));
+            int progbar = (int)(((double)nChannel/(double)numberChannels)*100.0);
+            progDlg.Update(progbar, wxT("Memory allocation"));
 #endif
-        
-        long grandsize = pFH->lNumSamplesPerEpisode / numberChannels;
+        }
+        ABFLONG grandsize = pFH->lNumSamplesPerEpisode / numberChannels;
         std::ostringstream label;
         label  
 #ifdef MODULE_ONLY
@@ -206,7 +210,7 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
         if (gapfree) {
             grandsize = pFH->lActualAcqLength / numberChannels;
             Vector_double test_size(0);
-            long maxsize = test_size.max_size()
+            ABFLONG maxsize = test_size.max_size()
 #ifdef _WINDOWS
                 // doesn't seem to return the correct size on Windows.
                 /8;
@@ -215,8 +219,13 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
 #endif
             
             if (grandsize <= 0 || grandsize >= maxsize) {
+                    
+                wxString segstring(wxT("Gapfree file is too large for a single section. " \
+                                       "It will be segmented.\nFile opening may be very slow."));
 #ifndef MODULE_ONLY        
-                wxMessageBox(wxT("Gapfree file is too large for a single section. It will be segmented.\nFile opening may be very slow."),wxT("Information"), wxOK | wxICON_WARNING, NULL);
+                wxMessageBox(segstring,wxT("Information"), wxOK | wxICON_WARNING, NULL);
+#else
+                std::cout << segstring << std::endl;
 #endif
                 
                 gapfree=false;
@@ -227,20 +236,22 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
         Channel TempChannel(finalSections, grandsize);
         Section TempSectionGrand(grandsize, label.str());
         for (int nEpisode=1; nEpisode<=numberSections;++nEpisode) {
-#ifndef MODULE_ONLY
             if (progress) {
+                int progbar =
+                    // Channel contribution:
+                    (int)(((double)nChannel/(double)numberChannels)*100.0+
+                          // Section contribution:
+                          (double)(nEpisode-1)/(double)numberSections*(100.0/numberChannels));
+#ifndef MODULE_ONLY
                 wxString progStr;
                 progStr << wxT("Reading channel #") << nChannel + 1 << wxT(" of ") << numberChannels
                     << wxT(", Section #") << nEpisode << wxT(" of ") << numberSections;
-                progDlg.Update(
-                        // Channel contribution:
-                        (int)(((double)nChannel/(double)numberChannels)*100.0+
-                                // Section contribution:
-                                (double)(nEpisode-1)/(double)numberSections*(100.0/numberChannels)),
-                                progStr
-                );
-            }
+                progDlg.Update(progbar, progStr);
+#else
+                std::cout << "\r";
+                std::cout << progbar << "%" << std::flush;
 #endif
+            }
             
             UINT uNumSamples = 0;
             if (gapfree) {
@@ -321,10 +332,6 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
                 throw;
             }
         }
-#ifndef MODULE_ONLY
-        
-        progDlg.Update((int)(((double)(nChannel+1)/(double)numberChannels)*100.0), wxT("Completing channel reading\n"));
-#endif
         try {
             if ((int)ReturnData.size()<numberChannels) {
                 ReturnData.resize(numberChannels);
@@ -335,6 +342,16 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
             ReturnData.resize(0);
             ABF_Close(hFile,&nError);
             throw;
+        }
+        
+        if (progress) {
+            int progbar = (int)(((double)(nChannel+1)/(double)numberChannels)*100.0);
+#ifndef MODULE_ONLY
+            progDlg.Update(progbar, wxT("Completing channel reading\n"));
+#else
+            std::cout << "\r";
+            std::cout << progbar << "%" << std::flush;
+#endif
         }
 
         wxString channel_name( pFH->sADCChannelName[pFH->nADCSamplingSeq[nChannel]] );
@@ -365,8 +382,13 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
     ReturnData.SetDate(dateToStr(pFH->uFileStartDate));
     ReturnData.SetTime(timeToStr(pFH->uFileStartTimeMS));
 
-    
     abf2.Close();
+#ifdef MODULE_ONLY
+    if (progress) {
+        std::cout << "\r";
+        std::cout << "100%" << std::endl;
+    }
+#endif
 }
 
 void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool progress) {
@@ -411,20 +433,21 @@ void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool prog
     for (int nChannel=0;nChannel<numberChannels;++nChannel) {
         Channel TempChannel(numberSections);
         for (DWORD dwEpisode=1;dwEpisode<=(DWORD)numberSections;++dwEpisode) {
-#ifndef MODULE_ONLY
             if (progress) {
+                int progbar = // Channel contribution:
+                    (int)(((double)nChannel/(double)numberChannels)*100.0+
+                          // Section contribution:
+                          (double)(dwEpisode-1)/(double)numberSections*(100.0/numberChannels));
+#ifndef MODULE_ONLY
                 wxString progStr;
                 progStr << wxT("Reading channel #") << nChannel + 1 << wxT(" of ") << numberChannels
                     << wxT(", Section #") << dwEpisode << wxT(" of ") << numberSections;
-                progDlg.Update(
-                        // Channel contribution:
-                        (int)(((double)nChannel/(double)numberChannels)*100.0+
-                                // Section contribution:
-                                (double)(dwEpisode-1)/(double)numberSections*(100.0/numberChannels)),
-                                progStr
-                );
-            }
+                progDlg.Update(progbar, progStr);
+#else
+                std::cout << "\r"; // Remove previous entry
+                std::cout << progbar << "%" << std::flush;
 #endif
+            }
             
             unsigned int uNumSamples=0;
             if (!ABF_GetNumSamples(hFile,&FH,dwEpisode,&uNumSamples,&nError)) {
@@ -510,6 +533,13 @@ void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool prog
     ReturnData.SetComment(comment);
     ReturnData.SetDate(dateToStr(FH.lFileStartDate));
     ReturnData.SetTime(timeToStr(FH.lFileStartTime));
+#ifdef MODULE_ONLY
+    if (progress) {
+        std::cout << "\r";
+        std::cout << "100%" << std::endl;
+    }
+#endif
+    
 }
 #ifdef _WINDOWS
 #pragma optimize ("", on)

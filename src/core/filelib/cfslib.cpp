@@ -251,14 +251,16 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
     }
 
     for (int n_section=0; n_section < (int)WData.GetChannelSize(0); n_section++) {
+        int progbar =
+            // Section contribution:
+            (int)((double)n_section/(double)WData.GetChannelSize(0)*100.0);
 #ifndef MODULE_ONLY
         wxString progStr;
         progStr << wxT("Writing section #") << n_section+1 << wxT(" of ") << (int)WData.GetChannelSize(0);
-        progDlg.Update(
-            // Section contribution:
-            (int)((double)n_section/(double)WData.GetChannelSize(0)*100.0),
-            progStr
-            );
+        progDlg.Update(progbar, progStr);
+#else
+        std::cout << "\r";
+        std::cout << progbar << "%" << std::flush;
 #endif
         for (std::size_t n_c=0;n_c<WData.size();++n_c) {
             SetDSChan(
@@ -313,6 +315,11 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
         InsertDS(CFSFile.myHandle, 0, noFlags);
         if (CFSError(errorMsg))	throw std::runtime_error(std::string(errorMsg.c_str()));
     }	//End section loop
+#ifdef MODULE_ONLY
+    std::cout << "\r";
+    std::cout << "100%" << std::endl;
+#endif
+    
     return true;
 }
 
@@ -430,20 +437,22 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
         TempChannel.SetYUnits(yUnits);
         std::size_t empty_sections=0;
         for (int n_section=0; n_section < dataSections; ++n_section) {
-#ifndef MODULE_ONLY
-            wxString progStr;
             if (progress) {
+                int progbar =
+                    // Channel contribution:
+                    (int)(((double)n_channel/(double)channelsAvail)*100.0+
+                          // Section contribution:
+                          (double)n_section/(double)dataSections*(100.0/channelsAvail));
+#ifndef MODULE_ONLY
+                wxString progStr;
                 progStr << wxT("Reading channel #") << n_channel + 1 << wxT(" of ") << channelsAvail
                         << wxT(", Section #") << n_section+1 << wxT(" of ") << dataSections;
-                progDlg.Update(
-                               // Channel contribution:
-                               (int)(((double)n_channel/(double)channelsAvail)*100.0+
-                                     // Section contribution:
-                                     (double)n_section/(double)dataSections*(100.0/channelsAvail)),
-                               progStr
-                               );
-            }
+                progDlg.Update(progbar, progStr);
+#else
+                std::cout << "\r";
+                std::cout << progbar << "%" << std::flush;
 #endif
+            }
             
             //Begin loop: n_sections
             //Get the channel information for a data section or a file
@@ -553,4 +562,10 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
     ReturnData.SetTime(time);
     ReturnData.SetDate(date);
     ReturnData.SetComment(comment);
+#ifdef MODULE_ONLY
+    if (progress) {
+        std::cout << "\r";
+        std::cout << "100%" << std::endl;
+    }
+#endif
 }

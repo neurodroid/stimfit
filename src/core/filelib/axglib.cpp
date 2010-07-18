@@ -20,6 +20,8 @@
 #ifndef MODULE_ONLY
 #include <wx/wx.h>
 #include <wx/progdlg.h>
+#else
+#include <iostream>
 #endif
 #include "./../core.h"
 #include "./axg/fileUtils.h"
@@ -97,12 +99,14 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     for ( int columnNumber=0; columnNumber<numberOfColumns; columnNumber++ )
     {
         if (progress && columnNumber != 0) {
+            int progbar = (double)columnNumber/(double)numberOfColumns * 100.0;
 #ifndef MODULE_ONLY
             wxString progStr;
             progStr << wxT("Section #") << columnNumber << wxT(" of ") << numberOfColumns-1;
-            progDlg.Update( // Section contribution:
-                           (double)columnNumber/(double)numberOfColumns * 100.0,
-                           progStr );
+            progDlg.Update(progbar, progStr);
+#else
+            std::cout << "\r";
+            std::cout << progbar << "%" << std::flush;
 #endif
         }
 
@@ -199,4 +203,10 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     
     // Close the import file
     CloseFile( dataRefNum );
+#ifdef MODULE_ONLY
+    if (progress) {
+        std::cout << "\r";
+        std::cout << "100%" << std::endl;
+    }
+#endif
 }

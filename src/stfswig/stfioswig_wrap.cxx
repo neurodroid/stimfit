@@ -3362,7 +3362,13 @@ SWIG_From_int  (int value)
 
 SWIGINTERN bool Recording_write__SWIG_0(Recording *self,std::string const &fname,std::string const &ftype="hdf5"){
         stf::filetype stftype = gettype(ftype);
-        return stf::exportFile(fname, stftype, *(self));
+        try {
+            return stf::exportFile(fname, stftype, *(self));
+        } catch (const std::exception& e) {
+            std::cerr << "Couldn't write to file:\n"
+                      << e.what() << std::endl;
+            return false;
+        }
     }
 SWIGINTERN Channel *new_Channel(PyObject *SectionList){
         if (!PyList_Check(SectionList)) {

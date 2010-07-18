@@ -45,10 +45,16 @@ bool _read(const std::string& filename, const std::string& ftype, Recording& Dat
 
     stf::filetype stftype = gettype(ftype);
     stf::txtImportSettings tis;
-         
-    if (!stf::importFile(filename, stftype, Data, tis, false)) {
-        std::cerr << "Error importing file\n";
+    try {
+        if (!stf::importFile(filename, stftype, Data, tis, true)) {
+            std::cerr << "Error importing file\n";
+            return false;
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error importing file:\n"
+                  << e.what() << std::endl;
         return false;
     }
+        
     return true;
 }

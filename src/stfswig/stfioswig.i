@@ -105,7 +105,13 @@ class Section {
     True upon successful completion.") write;
     bool write(const std::string& fname, const std::string& ftype="hdf5") {
         stf::filetype stftype = gettype(ftype);
-        return stf::exportFile(fname, stftype, *($self));
+        try {
+            return stf::exportFile(fname, stftype, *($self));
+        } catch (const std::exception& e) {
+            std::cerr << "Couldn't write to file:\n"
+                      << e.what() << std::endl;
+            return false;
+        }
     }
 }
 
