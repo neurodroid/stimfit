@@ -1,0 +1,3 @@
+* Enable change threshold slope in Slope page of Cursor settings menu
+* Add python commands for the Slope calculation (setting cursors, getting slope, setting Delta T mode, etc..)
+* Add a column with the Slope results in the Batch analysis 
