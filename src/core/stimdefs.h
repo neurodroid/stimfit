@@ -504,8 +504,8 @@ enum pslope_mode_beg {
 enum pslope_mode_end {
     psEnd_manualMode, /*< Set the end Slope cursor manually. */
     psEnd_t50Mode,   /*< Set the Slope cursor to the half-width of an event. */
-    psEnd_peakMode,    /*< Set the Slope cursor to the peak. */
     psEnd_DeltaTMode,  /*< Set the Slope cursor to a given distance from the first cursor. */
+    psEnd_peakMode,    /*< Set the Slope cursor to the peak. */
     psEnd_undefined
 };
 

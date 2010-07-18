@@ -472,7 +472,7 @@ private:
     boost::shared_ptr<wxConfig> config;
     std::vector<stf::storedFunc> funcLib;
     std::vector< stf::Plugin > pluginLib;
-    // Pointer to the peak calculation dialog box
+    // Pointer to the cursors settings dialog box
     wxStfCursorsDlg* CursorsDialog;
     wxDocTemplate* m_cfsTemplate, *m_hdf5Template, *m_txtTemplate,*m_abfTemplate,
         *m_atfTemplate,*m_axgTemplate,*m_sonTemplate, *m_hekaTemplate;

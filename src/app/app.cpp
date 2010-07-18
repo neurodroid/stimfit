@@ -397,13 +397,19 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
          }
             // Get cursor location from the dialog box:
          case stf::pslope_cursor: {
+
+             // first PSlope cursor
              actDoc->SetPSlopeBegMode(CursorsDialog->GetPSlopeBegMode());
-             if (actDoc->GetPSlopeBegMode()==stf::psBeg_manualMode)
+             if (actDoc->GetPSlopeBegMode() == stf::psBeg_manualMode)
                 actDoc->SetPSlopeBeg(CursorsDialog->GetCursor1PS());
 
+             // second PSlope cursor
              actDoc->SetPSlopeEndMode(CursorsDialog->GetPSlopeEndMode());
-             if (actDoc->GetPSlopeEndMode()==stf::psEnd_manualMode)
+             if (actDoc->GetPSlopeEndMode() == stf::psEnd_manualMode)
                 actDoc->SetPSlopeEnd(CursorsDialog->GetCursor2PS());
+             else if (actDoc->GetPSlopeEndMode() == stf::psEnd_DeltaTMode){
+                actDoc->SetDeltaT(CursorsDialog->GetDeltaT());
+             }
              break;
          }
          case stf::undefined_cursor:
@@ -414,6 +420,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
          default:
              break;
         }
+        std::cout << "PSlope End Mode in App" << actDoc->GetPSlopeEndMode() << std::endl;
         //Update edit peak limits in the peak calculation dialog box
         if (CursorsDialog->GetPeakAtEnd())
         {	//If 'Upper limit at end of trace' is selected in the dialog box

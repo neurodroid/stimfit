@@ -47,12 +47,15 @@ private:
                            std::size_t c2 );
 
     int ReadCursor(wxWindowID textId, bool isTime) const;
+    int ReadDeltaT(wxWindowID textId) const;
     void UpdateUnits(wxWindowID comboId, bool& setTime, wxWindowID textID);
     bool cursorMIsTime,
     cursor1PIsTime,cursor2PIsTime,
     cursor1BIsTime,cursor2BIsTime,
     cursor1DIsTime,cursor2DIsTime,
+
     cursor1PSIsTime,cursor2PSIsTime;
+    stf::pslope_mode_end dlgPSlopeModeEnd;
     wxStfDoc* actDoc;
     wxNotebook* m_notebook;
 
@@ -66,13 +69,17 @@ private:
     void OnComboBoxU2D( wxCommandEvent& event );
     void OnComboBoxU1PS( wxCommandEvent& event );
     void OnComboBoxU2PS( wxCommandEvent& event );
+
     void OnRadioPSManBeg( wxCommandEvent& event );
     void OnRadioPSEventBeg( wxCommandEvent& event );
     void OnRadioPSThrBeg( wxCommandEvent& event );
-    void OnRadioPSManEnd( wxCommandEvent& event );
     void OnRadioPSt50Beg( wxCommandEvent& event );
+
+    void OnRadioPSManEnd( wxCommandEvent& event );
     void OnRadioPSt50End( wxCommandEvent& event );
+    void OnRadioPSDeltaT( wxCommandEvent& event );
     void OnRadioPSPeakEnd( wxCommandEvent& event );
+
     void OnRadioAll( wxCommandEvent& event );
     void OnRadioMean( wxCommandEvent& event );
     void OnPeakcalcexec( wxCommandEvent& event );
@@ -166,6 +173,16 @@ public:
     /*! \param peakPoints The number of points used for the binned average during peak detection.
      */
     void SetPeakPoints(int peakPoints);
+
+    //! Gets the distance to the first PSlope cursor in number of points.
+    /*! \return The distance to the first PSlope cursor in number of points. 
+     */
+    int GetDeltaT() const;
+
+    //! Sets the number of points used for the distance from the first PSlope cursor.
+    /*! \param peakPoints The number of points used for the distance from the first PSlope cursor.
+     */
+    void SetDeltaT(int DeltaT);
 
     //! Gets the direction of peak calculations.
     /*! \return The current direction of peak calculations.
