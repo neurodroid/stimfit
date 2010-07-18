@@ -27,7 +27,7 @@ After that, functions can be called with the dot notation (i.e just typing **spe
 
     >>> spells.rmean(10)
 
-Finally, the contents of this document are organized with increased level of complexity, assuming some of the last chapters concepts and topics described in the first chapters. Thus, we encourage the newcomer to follow the order exposed bellow or to visit the section **code commented** in previous chapters. 
+Finally, the contents of this document are organized with increased level of complexity, assuming some of the last chapters concepts and topics described in the first chapters. Thus, we encourage the newcomer to follow the order exposed below or to visit the section **code commented** in previous chapters. 
 
 Contents:
 

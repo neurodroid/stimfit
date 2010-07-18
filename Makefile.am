@@ -91,6 +91,7 @@ install-exec-hook:
 	$(MKDIR_P) ${PYTHON_SITE_PKG}/stfio
 	$(LN_S) -f ${prefix}/lib/${STFIO_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stfio/_stfio.so
 	cp -p $(srcdir)/src/stfswig/hdf5tools.py ${PYTHON_SITE_PKG}/stfio
+	cp -p $(srcdir)/src/stfswig/stfio_plot.py ${PYTHON_SITE_PKG}/stfio
 	cp -p $(srcdir)/src/stfswig/stfio.py ${PYTHON_SITE_PKG}/stfio
 	echo stfio > ${PYTHON_SITE_PKG}/stfio.pth
 

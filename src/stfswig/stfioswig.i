@@ -27,7 +27,6 @@ void wrap_array() {
 %}
 %include "numpy.i"
 %include "std_string.i"
-%include "std_vector.i"
 %init %{
     import_array();
 %}
@@ -247,6 +246,6 @@ def read(fname, ftype=None):
     if not _read(fname, ftype, rec):
         return None
     return rec
-        
+
 }
 //--------------------------------------------------------------------
