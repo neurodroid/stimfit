@@ -232,8 +232,8 @@ bool wxStfApp::OnInit(void)
     
     m_file_menu->AppendSeparator();
     m_file_menu->Append(ID_CONVERT, wxT("&Convert file series..."));
-    m_file_menu->AppendSeparator();
 #ifdef WITH_PYTHON
+    m_file_menu->AppendSeparator();
     m_file_menu->Append(
                         ID_IMPORTPYTHON,
                         wxT("&Import Python module...\tCtrl+I"),
@@ -374,29 +374,29 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
     {
         CursorsDialog->SetActiveDoc(actDoc);
         switch (CursorsDialog->CurrentCursor()) {
-         case stf::measure_cursor: {
+         case stf::measure_cursor: 
              actDoc->SetMeasCursor(CursorsDialog->GetCursorM());// * GetDocument()->GetSR()));
              break;
-         }
+         
              //Get limits for peak calculation from the dialog box:
-         case stf::peak_cursor: {
+         case stf::peak_cursor: 
              actDoc->SetPeakBeg(CursorsDialog->GetCursor1P());// * GetDocument()->GetSR()));
              actDoc->SetPeakEnd(CursorsDialog->GetCursor2P());// * GetDocument()->GetSR()));
              actDoc->CheckBoundaries();
              break;
-         }
-         case stf::base_cursor: {
+         
+         case stf::base_cursor: 
              actDoc->SetBaseBeg(CursorsDialog->GetCursor1B());
              actDoc->SetBaseEnd(CursorsDialog->GetCursor2B());
              break;
-         }
-         case stf::decay_cursor: {
+         
+         case stf::decay_cursor: 
              actDoc->SetFitBeg(CursorsDialog->GetCursor1D());
              actDoc->SetFitEnd(CursorsDialog->GetCursor2D());
              break;
-         }
+         
             // Get cursor location from the dialog box:
-         case stf::pslope_cursor: {
+         case stf::pslope_cursor: 
 
              // first PSlope cursor
              actDoc->SetPSlopeBegMode(CursorsDialog->GetPSlopeBegMode());
@@ -407,20 +407,24 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
              actDoc->SetPSlopeEndMode(CursorsDialog->GetPSlopeEndMode());
              if (actDoc->GetPSlopeEndMode() == stf::psEnd_manualMode)
                 actDoc->SetPSlopeEnd(CursorsDialog->GetCursor2PS());
-             else if (actDoc->GetPSlopeEndMode() == stf::psEnd_DeltaTMode){
+             // we take data from CursorsDialog only if we need the DeltaT
+             //else if (actDoc->GetPSlopeEndMode() == stf::psEnd_DeltaTMode){
                 actDoc->SetDeltaT(CursorsDialog->GetDeltaT());
-             }
+             
              break;
-         }
+         
          case stf::undefined_cursor:
-             {
+             
                  ErrorMsg(wxT("Undefined cursor in wxStfApp::OnPeakcalcexecMsg()"));
                  return;
-             }
+             
          default:
              break;
         }
-        std::cout << "PSlope End Mode in App" << actDoc->GetPSlopeEndMode() << std::endl;
+#ifdef _STFDEBUG
+        std::cout << "wxStfApp: PSlopeBegMode is " << actDoc->GetPSlopeBegMode() << std::endl;
+        std::cout << "wxStfApp: PSlopeEndMode is " << actDoc->GetPSlopeEndMode() << std::endl;
+#endif
         //Update edit peak limits in the peak calculation dialog box
         if (CursorsDialog->GetPeakAtEnd())
         {	//If 'Upper limit at end of trace' is selected in the dialog box
@@ -550,8 +554,8 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     file_menu->Append(ID_PRINT_PRINT, wxT("&Print..."));
     file_menu->Append(ID_PRINT_PAGE_SETUP, wxT("Print &Setup..."));
 
-    file_menu->AppendSeparator();
 #ifdef WITH_PYTHON
+    file_menu->AppendSeparator();
     file_menu->Append(
                         ID_IMPORTPYTHON,
                         wxT("&Import Python module...\tCtrl+I"),

@@ -53,9 +53,8 @@ private:
     cursor1PIsTime,cursor2PIsTime,
     cursor1BIsTime,cursor2BIsTime,
     cursor1DIsTime,cursor2DIsTime,
-
     cursor1PSIsTime,cursor2PSIsTime;
-    stf::pslope_mode_end dlgPSlopeModeEnd;
+
     wxStfDoc* actDoc;
     wxNotebook* m_notebook;
 

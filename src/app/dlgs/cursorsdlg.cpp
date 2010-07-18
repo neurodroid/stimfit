@@ -132,6 +132,7 @@ bool wxStfCursorsDlg::TransferDataFromWindow() {
 }
 
 void wxStfCursorsDlg::EndModal(int retCode) {
+    wxCommandEvent unusedEvent;
     // similar to overriding OnOK in MFC (I hope...)
     switch (retCode) {
     case wxID_OK:
@@ -139,6 +140,7 @@ void wxStfCursorsDlg::EndModal(int retCode) {
             wxLogMessage(wxT("Please select a valid function"));
             return;
         }
+        OnPeakcalcexec(unusedEvent);
         break;
     case wxID_CANCEL:
         break;
@@ -577,7 +579,6 @@ void wxStfCursorsDlg::SetDeltaT (int DeltaT) {
     fDeltaT =DeltaT*actDoc->GetXScale();
     wxString strDeltaTval;
     strDeltaTval << fDeltaT;
-    // activate Radio option?
     //pRadPSDeltaT->Enable(true);
     //pTextPSDeltaT->Enable(true);
     pTextPSDeltaT->SetValue(strDeltaTval);
@@ -785,7 +786,6 @@ void wxStfCursorsDlg::OnRadioPSManBeg( wxCommandEvent& event ) {
     if (pPStextThr->IsEnabled())
         pPStextThr->Enable(false);
 
-    SetPSlopeBegMode(stf::psBeg_manualMode);
 }
 
 void wxStfCursorsDlg::OnRadioPSEventBeg( wxCommandEvent& event ) {
@@ -854,7 +854,7 @@ void wxStfCursorsDlg::OnRadioPSManEnd( wxCommandEvent& event ) {
     if (pTextPSDeltaT->IsEnabled())
         pTextPSDeltaT->Enable(false);
 
-    SetPSlopeEndMode(stf::psEnd_manualMode);
+//    SetPSlopeEndMode(stf::psEnd_manualMode);
 }
 
 void wxStfCursorsDlg::OnRadioPSt50End( wxCommandEvent& event ) {
@@ -969,14 +969,62 @@ stf::pslope_mode_beg wxStfCursorsDlg::GetPSlopeBegMode() const {
 }
 
 stf::pslope_mode_end wxStfCursorsDlg::GetPSlopeEndMode() const {
-    return dlgPSlopeModeEnd;
+  
+    wxRadioButton* pPSManEnd   = (wxRadioButton*)FindWindow(wxRADIO_PSManEnd);
+    wxRadioButton* pPSt50End = (wxRadioButton*)FindWindow(wxRADIO_PSt50End);
+    wxRadioButton* pPSDeltaT   = (wxRadioButton*)FindWindow(wxRADIO_PSDeltaT);
+    wxRadioButton* pPSPeakEnd   = (wxRadioButton*)FindWindow(wxRADIO_PSPeakEnd);
+
+    if (pPSManEnd == NULL || pPSt50End == NULL 
+            || pPSDeltaT == NULL || pPSPeakEnd == NULL) {
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::GetPSlopeEndMode()"));
+    }
+
+    if ( pPSManEnd->GetValue() )
+        return stf::psEnd_manualMode;
+    else if ( pPSt50End->GetValue() )
+        return stf::psEnd_t50Mode;
+    else  if( pPSDeltaT->GetValue() )
+        return stf::psEnd_DeltaTMode;
+    else if ( pPSPeakEnd->GetValue() )
+        return stf::psEnd_peakMode;
+    else
+        return stf::psEnd_undefined;
+//   return dlgPSlopeModeEnd;
 }
 
 void wxStfCursorsDlg::SetPSlopeEndMode(stf::pslope_mode_end pslopeEndMode) {
-    dlgPSlopeModeEnd = pslopeEndMode;
+ 
+    wxRadioButton* pPSManBeg  = (wxRadioButton*)FindWindow(wxRADIO_PSManBeg);
+    wxRadioButton* pPSEventBeg  = (wxRadioButton*)FindWindow(wxRADIO_PSEventBeg);
+    wxRadioButton* pPSThrBeg = (wxRadioButton*)FindWindow(wxRADIO_PSThrBeg);
+    wxRadioButton* pPSt50Beg   = (wxRadioButton*)FindWindow(wxRADIO_PSThrBeg);
+
+    if (pPSManBeg == NULL || pPSEventBeg == NULL 
+        || pPSThrBeg == NULL || pPSt50Beg == NULL){
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::SetPSlopeEndMode()"));
+        return;
+    }
+
+    switch (pslopeEndMode) {
+    case stf::psBeg_manualMode:
+        pPSManBeg->Enable(true);
+        break;
+    case stf::psBeg_footMode:
+        pPSEventBeg->Enable(true);
+        break;
+    case stf::psBeg_thrMode:
+        pPSThrBeg->Enable(true);
+        break;
+    case stf::psBeg_t50Mode:
+        pPSt50Beg->Enable(true);
+    default:
+        break;
+    
+}
 
 #ifdef _STFDEBUG
-    std::cout << "set to PSlopeEndMode in wxStfCursorsDlg " << dlgPSlopeModeEnd << std::endl;
+    std::cout << "wxStfCursorsDlg: PSlopeEndMode is " << pslopeEndMode << std::endl;
 #endif
 }
 
