@@ -217,6 +217,26 @@ def _read(*args):
   return _stfio._read(*args)
 import os
         
+# code added by Jose
+class StfIOException(Exception):
+    """ raises Exceptions for the Stfio module """
+    def __init__(self, error_msg):
+        self.msg = error_msg 
+
+    def __str__(self):
+        return repr(self.msg)
+
+filetype = {
+    '.dat':'cfs',
+    '.h5':'hdf5',
+    '.abf':'abf',
+    '.atf':'atf',
+    '.axgd':'axg',
+    '.axgx':'axg'}
+    
+# end code added by Jose
+            
+
 def read(fname, ftype=None):
     """Reads a file and returns a Recording object.
 
@@ -237,16 +257,21 @@ def read(fname, ftype=None):
     if ftype is None:
         
         ext = os.path.splitext(fname)[1]
-        if ext==".dat": 
-            ftype = "cfs"
-        elif ext==".h5":
-            ftype = "hdf5"
-        elif ext==".abf":
-            ftype = "abf"
-        elif ext==".atf":
-            ftype = "atf"
-        elif ext==".axgd" or ext==".axgx":
-            ftype = "axg"
+#        if ext==".dat": 
+#            ftype = "cfs"
+#        elif ext==".h5":
+#            ftype = "hdf5"
+#        elif ext==".abf":
+#            ftype = "abf"
+#        elif ext==".atf":
+#            ftype = "atf"
+#        elif ext==".axgd" or ext==".axgx":
+#            ftype = "axg"
+        try:
+            ftype = filetype[ext]
+        except KeyError:
+            raise StfIOException('File type not supported')
+
     rec = Recording()
     if not _read(fname, ftype, rec):
         return None
