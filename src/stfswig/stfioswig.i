@@ -8,6 +8,7 @@ common electrophysiology file formats"
 %{
 #define SWIG_FILE_WITH_INIT
 #include <string>
+#include <iostream>
 #include <numpy/arrayobject.h>
     
 #include "./../core/recording.h"
@@ -211,7 +212,24 @@ bool _read(const std::string& filename, const std::string& ftype, Recording& Dat
 //--------------------------------------------------------------------
 %pythoncode {
 import os
-        
+
+# code added by Jose
+class StfIOException(Exception):
+    """ raises Exceptions for the Stfio module """
+    def __init__(self, error_msg):
+        self.msg = error_msg 
+
+    def __str__(self):
+        return repr(self.msg)
+
+filetype = {
+    '.dat':'cfs',
+    '.h5':'hdf5',
+    '.abf':'abf',
+    '.atf':'atf',
+    '.axgd':'axg',
+    '.axgx':'axg'}
+
 def read(fname, ftype=None):
     """Reads a file and returns a Recording object.
 
@@ -229,22 +247,21 @@ def read(fname, ftype=None):
     Returns:
     A Recording object.
     """
+    if not os.path.exists(fname):
+        raise StfIOException('File %s does not exist' % fname)
+    
     if ftype is None:
         # Guess file type:
         ext = os.path.splitext(fname)[1]
-        if ext==".dat": 
-            ftype = "cfs"
-        elif ext==".h5":
-            ftype = "hdf5"
-        elif ext==".abf":
-            ftype = "abf"
-        elif ext==".atf":
-            ftype = "atf"
-        elif ext==".axgd" or ext==".axgx":
-            ftype = "axg"
+        try:
+            ftype = filetype[ext]
+        except KeyError:
+            raise StfIOException('Couldn\'t guess file type from extension (%s)' % ext)
+
     rec = Recording()
     if not _read(fname, ftype, rec):
-        return None
+        raise StfIOException('Error reading file')
+
     return rec
 
 }

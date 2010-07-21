@@ -71,35 +71,6 @@ except AttributeError:
     _newclass = 0
 
 
-class SwigPyIterator(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, SwigPyIterator, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, SwigPyIterator, name)
-    def __init__(self, *args, **kwargs): raise AttributeError("No constructor defined - class is abstract")
-    __repr__ = _swig_repr
-    __swig_destroy__ = _stfio.delete_SwigPyIterator
-    __del__ = lambda self : None;
-    def value(self): return _stfio.SwigPyIterator_value(self)
-    def incr(self, n = 1): return _stfio.SwigPyIterator_incr(self, n)
-    def decr(self, n = 1): return _stfio.SwigPyIterator_decr(self, n)
-    def distance(self, *args): return _stfio.SwigPyIterator_distance(self, *args)
-    def equal(self, *args): return _stfio.SwigPyIterator_equal(self, *args)
-    def copy(self): return _stfio.SwigPyIterator_copy(self)
-    def next(self): return _stfio.SwigPyIterator_next(self)
-    def __next__(self): return _stfio.SwigPyIterator___next__(self)
-    def previous(self): return _stfio.SwigPyIterator_previous(self)
-    def advance(self, *args): return _stfio.SwigPyIterator_advance(self, *args)
-    def __eq__(self, *args): return _stfio.SwigPyIterator___eq__(self, *args)
-    def __ne__(self, *args): return _stfio.SwigPyIterator___ne__(self, *args)
-    def __iadd__(self, *args): return _stfio.SwigPyIterator___iadd__(self, *args)
-    def __isub__(self, *args): return _stfio.SwigPyIterator___isub__(self, *args)
-    def __add__(self, *args): return _stfio.SwigPyIterator___add__(self, *args)
-    def __sub__(self, *args): return _stfio.SwigPyIterator___sub__(self, *args)
-    def __iter__(self): return self
-SwigPyIterator_swigregister = _stfio.SwigPyIterator_swigregister
-SwigPyIterator_swigregister(SwigPyIterator)
-
 class Recording(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, Recording, name, value)
@@ -216,8 +187,8 @@ def _read(*args):
     """
   return _stfio._read(*args)
 import os
-        
-# code added by Jose
+
+
 class StfIOException(Exception):
     """ raises Exceptions for the Stfio module """
     def __init__(self, error_msg):
@@ -233,9 +204,6 @@ filetype = {
     '.atf':'atf',
     '.axgd':'axg',
     '.axgx':'axg'}
-    
-# end code added by Jose
-            
 
 def read(fname, ftype=None):
     """Reads a file and returns a Recording object.
@@ -254,29 +222,23 @@ def read(fname, ftype=None):
     Returns:
     A Recording object.
     """
+    if not os.path.exists(fname):
+        raise StfIOException('File %s does not exist' % fname)
+    
     if ftype is None:
         
         ext = os.path.splitext(fname)[1]
-#        if ext==".dat": 
-#            ftype = "cfs"
-#        elif ext==".h5":
-#            ftype = "hdf5"
-#        elif ext==".abf":
-#            ftype = "abf"
-#        elif ext==".atf":
-#            ftype = "atf"
-#        elif ext==".axgd" or ext==".axgx":
-#            ftype = "axg"
         try:
             ftype = filetype[ext]
         except KeyError:
-            raise StfIOException('File type not supported')
+            raise StfIOException('Couldn\'t guess file file from extension (%s)' % ext)
 
     rec = Recording()
     if not _read(fname, ftype, rec):
-        return None
+        raise StfIOException('Error reading file')
+
     return rec
-        
+
 
 
 
