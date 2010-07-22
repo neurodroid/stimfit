@@ -16,22 +16,22 @@ Then, you need the `Stimfit <http://www.stimfit.org>`_ source code:
 ::
 
     $ cd $HOME
-    $ hg clone https://stimfit.googlecode.com/hg/ stimfit-module
+    $ hg clone https://stimfit.googlecode.com/hg/ stimfit
 
-This will create a directory called *stimfit-module* in your home directory ($HOME) and grab the source code into it.
+This will create a directory called *stimfite* in your home directory ($HOME) and grab the source code into it.
 
 Next, you need to generate the build system:
 
 ::
 
-    $ cd $HOME/stimfit-module
+    $ cd $HOME/stimfit
     $ ./autogen.sh
 
 Now you can configure. I strongly recommend building in a separate directory.
 
 ::
 
-    $ cd $HOME/stimfit-module
+    $ cd $HOME/stimfit
     $ mkdir build
     $ cd build
     $ mkdir module
