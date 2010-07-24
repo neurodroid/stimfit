@@ -99,6 +99,7 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     alignPen(*wxBLUE,1,wxSHORT_DASH),
     measPen(*wxBLACK,1,wxDOT),
     eventPen(*wxBLUE,2,wxSOLID),
+    PSlopePen(wxColor(30,144,255), 1, wxDOT), // Dotted bright blue line
 
     standardPrintPen(*wxBLACK,printSizePen1,wxSOLID), //Solid black line
     standardPrintPen2(*wxRED,printSizePen1,wxSOLID), //Solid red line
@@ -123,6 +124,7 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     baseBrush(*wxLIGHT_GREY,wxBDIAGONAL_HATCH),
     zeroBrush(*wxLIGHT_GREY,wxFDIAGONAL_HATCH),
     lastLDown(0,0),
+    PSlopePrintPen(wxColour(30,144,255), printSizePen1, wxDOT), // Dotted bright blue line
     m_zoomContext( new wxMenu ),
     m_eventContext( new wxMenu )
 {
@@ -398,6 +400,14 @@ void wxStfGraph::OnDraw( wxDC& DC )
         // right arrowhead:
         DC.DrawLine(latEnd-1,20,latEnd-6,15);
         DC.DrawLine(latEnd-1,20,latEnd-6,25);
+
+        // Create dotted bright blue line as slope cursor
+        if (!isPrinted)
+            DC.SetPen(PSlopePen);
+        else
+            DC.SetPen(PSlopePrintPen);
+        DrawVLine(&DC, Doc()->GetPSlopeBeg());
+        DrawVLine(&DC, Doc()->GetPSlopeEnd());
 
         // Created dashed line to indicate the alignment cursor
         /*		if (!isPrinted && (Doc()->get().size()>1)) {
@@ -1315,6 +1325,11 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
         llz_y=(double)lastLDown.y;
         llz_y2=llz_y;
         break;
+    case stf::pslope_cursor:
+        Doc()->SetPSlopeBegMode(stf::psBeg_manualMode); // set left cursor to manual
+        // conversion of pixel on screen to time (inversion of xFormat())
+        Doc()->SetPSlopeBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); // second 'double' added
+        break;
     default: break;
     }	//End switch TraceNav->GetMouseQual()
     if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
@@ -1372,6 +1387,10 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
             wxGetApp().ErrorMsg(wxT("No events have been detected yet"));
         }
         break;
+    case stf::pslope_cursor:
+        Doc()->SetPSlopeEndMode(stf::psEnd_manualMode); // set right cursor to manual mode
+        Doc()->SetPSlopeEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        break;
     default: ;
     }	//End switch TraceNav->GetMouseQual()
     if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
@@ -1407,6 +1426,9 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetFitEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
+    case stf::pslope_cursor:
+        // conversion of pixel on screen to time (inversion of xFormat())
+        Doc()->SetPSlopeEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
     case stf::latency_cursor:
         if (Doc()->GetLatencyEndMode() != stf::manualMode) {
             wxGetApp().ErrorMsg(
@@ -1438,6 +1460,7 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
     int kc = event.GetKeyCode();
 #ifdef _STFDEBUG
     std::cout << "User pressed " << char(kc) << ", corresponding keycode is " << kc << std::endl;
+    std::cout << "Mouse Cursor Mode " << ParentFrame()->GetMouseQual() << std::endl;
 #endif
 
     wxRect WindowRect(GetRect());
@@ -1512,6 +1535,10 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
      case 66:  // b
      case 98:
          ParentFrame()->SetMouseQual(stf::base_cursor);
+         return;
+     case 79:  // key 'o' to activate PSlope cursors
+     case 111:
+         ParentFrame()->SetMouseQual(stf::pslope_cursor);
          return;
      case 68:  // d
      case 100:

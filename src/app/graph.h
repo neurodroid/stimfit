@@ -317,14 +317,14 @@ private:
     wxPen standardPen, standardPen2, scalePen, scalePen2, peakPen, peakLimitPen,
         basePen, baseLimitPen, decayLimitPen, ZoomRectPen, fitPen, fitSelectedPen,
         selectPen, averagePen, rtPen, hdPen, rdPen, slopePen, latencyPen,
-        alignPen, measPen, eventPen;						/*CSH*/
+        alignPen, measPen, eventPen, PSlopePen;						/*CSH*/
 
     //Drawing (pen) styles for the different graphical standard output
     wxPen standardPrintPen, standardPrintPen2, scalePrintPen, scalePrintPen2,measPrintPen,
         peakPrintPen, peakLimitPrintPen, basePrintPen, baseLimitPrintPen,
         decayLimitPrintPen, fitPrintPen, fitSelectedPrintPen, selectPrintPen,
         averagePrintPen, rtPrintPen, hdPrintPen, rdPrintPen,
-        slopePrintPen, resultsPrintPen, latencyPrintPen, alignPrintPen;
+        slopePrintPen, resultsPrintPen, latencyPrintPen, alignPrintPen, PSlopePrintPen;
 
     wxBrush baseBrush, zeroBrush;
     
