@@ -188,7 +188,6 @@ EXTRA_DIST+= ./src/icons/arrow_left.xpm
 EXTRA_DIST+= ./src/icons/arrow_out.xpm
 EXTRA_DIST+= ./src/icons/arrow_right.xpm
 EXTRA_DIST+= ./src/icons/arrow_up.xpm
-EXTRA_DIST+= ./src/icons/bin.xpm
 EXTRA_DIST+= ./src/icons/camera.xpm
 EXTRA_DIST+= ./src/icons/ch1.xpm
 EXTRA_DIST+= ./src/icons/ch2.xpm
