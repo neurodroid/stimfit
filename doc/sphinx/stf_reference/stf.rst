@@ -197,6 +197,14 @@ The :mod:`stf` module defines the following functions:
         
         *is_time* -- If False (default), returns the zero-based index. If True, returns the time from the beginning of the trace to the cursor position.
     
+.. function:: get_slope(\*args)
+
+    Returns the slope value using the cursors described in the cursors setting dialog.
+
+        **Returns:**
+
+        The slope value
+    
 .. function:: get_peak(\*args)
 
     Returns the current peak value, measured from zero (!). Uses the currently measured values, i.e. does not update measurements if the peak or base window cursors have changed.

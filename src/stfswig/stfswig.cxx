@@ -981,6 +981,13 @@ double get_base( bool active ) {
     }
 }
 
+double get_slope() {
+
+    if (!check_doc() ) return 0.0; 
+
+    return actDoc()->GetPSlope();
+}
+
 double get_peak( ) {
     
     if ( !check_doc() ) return 0.0;

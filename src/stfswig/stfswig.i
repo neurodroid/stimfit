@@ -557,6 +557,17 @@ double get_peak( );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) get_slope;
+%feature("docstring", "Returns the slope, measured from
+zero the values defined in the current settings menu(!). 
+         
+Returns:
+The current slope value.") get_slope;
+double get_slope( );
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
 %feature("autodoc", 0) peak_index;
 %feature("docstring", "Returns the zero-based index of the current
 peak position in the specified channel. Uses the currently measured
