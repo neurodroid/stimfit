@@ -454,8 +454,8 @@ bool wxStfDoc::ChannelSelDlg() {
     if ( size() < 2 ) {
         return false;
     }
-    SetCurCh( 0 );
-    SetSecCh( 1 );
+    // SetCurCh(); done in Recording constructor
+    // SetSecCh( 1 );
     return true;
 }	//End ChannelSelDlg()
 

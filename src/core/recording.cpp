@@ -63,7 +63,7 @@ void Recording::init() {
     pslopeBegMode = stf::psBeg_manualMode;
     pslopeEndMode = stf::psEnd_manualMode;
     cc = 0;
-    sc = 0;
+    sc = 1;
     cs = 0;
     baseBeg = 0;
     baseEnd = 0;
@@ -342,7 +342,7 @@ void Recording::MakeAverage(Section& AverageReturn,
 
 void Recording::SetCurCh(size_t value) {
     if (value<0 || value>=ChannelArray.size()) {
-        throw std::out_of_range("channel out of range in Recording::set_cc()");
+        throw std::out_of_range("channel out of range in Recording::SetCurCh()");
     }
     cc=value;
 }
@@ -352,14 +352,14 @@ void Recording::SetSecCh(size_t value) {
             value>=ChannelArray.size() ||
             value==cc)
     {
-        throw std::out_of_range("channel out of range in Recording::set_sc()");
+        throw std::out_of_range("channel out of range in Recording::SetSecCh()");
     }
     sc=value;
 }
 
 void Recording::SetCurSec( size_t value ) {
     if (value<0 || value>=ChannelArray[cc].size()) {
-        throw std::out_of_range("channel out of range in Recording::set_cs()");
+        throw std::out_of_range("channel out of range in Recording::SetCurSec()");
     }
     cs=value;
 }
