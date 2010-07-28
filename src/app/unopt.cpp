@@ -217,8 +217,9 @@ void wxStfApp::ImportPython(const wxString &modulelocation) {
     IPython_import << wxT("ip = IPython.ipapi.get()\n");
     IPython_import << wxT("import sys\n");
     IPython_import << wxT("sys.path.append(\"") << python_path << wxT("\")\n");
+    IPython_import << wxT("if not sys.modules.has_key(\"") << python_file << wxT("\"):");
     IPython_import << wxT("ip.ex(\"import ") << python_file << ("\")\n");
-    IPython_import << wxT("ip.ex(\"reload(") << python_file << wxT(")") << wxT("\")\n");
+    IPython_import << wxT("else:") << wxT("ip.ex(\"reload(") << python_file << wxT(")") << wxT("\")\n");
     IPython_import << wxT("sys.path.remove(\"") << python_path << wxT("\")\n");
 
     PyRun_SimpleString(IPython_import);
@@ -228,8 +229,9 @@ void wxStfApp::ImportPython(const wxString &modulelocation) {
     wxString python_import;
     python_import << wxT("import sys\n");
     python_import << wxT("sys.path.append(\"") << python_path << wxT("\")\n");
+    python_import << wxT("if not sys.modules.has_key(\"") << python_file << wxT("\"):");
     python_import << wxT("import ") << python_file << wxT("\n");
-    python_import << wxT("reload(") << python_file << wxT(")") << wxT("\n");
+    python_import << wxT("else:") << wxT("reload(") << python_file << wxT(")" << wxT("\n");
     python_import << wxT("sys.path.remove(\"") << python_path << wxT("\")\n");
     python_import << wxT("del sys\n");
 
