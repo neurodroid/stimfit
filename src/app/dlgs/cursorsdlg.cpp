@@ -25,13 +25,15 @@ enum {
     wxTEXT2B,
     wxTEXT1D,
     wxTEXT2D,
+#ifdef WITH_PSLOPE
     wxTEXT1PS,
     wxTEXT2PS,
     wxTEXT_PSDELTAT,
+#endif
     wxTEXTPM,
     wxRADIOALL,
     wxRADIOMEAN,
-
+#ifdef WITH_PSLOPE
     // Slope radio boxes 
     wxRADIO_PSManBeg,
     wxRADIO_PSEventBeg,
@@ -42,13 +44,15 @@ enum {
     wxRADIO_PSt50End,
     wxRADIO_PSDeltaT,
     wxRADIO_PSPeakEnd,
-
+#endif //WITH_SLOPE
     wxMEASCURSOR,
     wxPEAKATEND,
     wxPEAKMEAN,
     wxDIRECTION,
     wxSLOPE,
+#ifdef WITH_PSLOPE
     wxSLOPE_FROM_PSLOPE,
+#endif
     wxSLOPEUNITS,
     wxREFERENCE,
     wxSTARTFITATPEAK,
@@ -66,14 +70,17 @@ EVT_COMBOBOX( wxCOMBOU1B, wxStfCursorsDlg::OnComboBoxU1B )
 EVT_COMBOBOX( wxCOMBOU2B, wxStfCursorsDlg::OnComboBoxU2B )
 EVT_COMBOBOX( wxCOMBOU1D, wxStfCursorsDlg::OnComboBoxU1D )
 EVT_COMBOBOX( wxCOMBOU2D, wxStfCursorsDlg::OnComboBoxU2D )
+#ifdef WITH_PSLOPE
 EVT_COMBOBOX( wxCOMBOU1PS, wxStfCursorsDlg::OnComboBoxU1PS )
 EVT_COMBOBOX( wxCOMBOU2PS, wxStfCursorsDlg::OnComboBoxU2PS )
+#endif
 
 // bindings radio buttons
 EVT_BUTTON( wxID_APPLY, wxStfCursorsDlg::OnPeakcalcexec )
 EVT_RADIOBUTTON( wxRADIOALL, wxStfCursorsDlg::OnRadioAll )
 EVT_RADIOBUTTON( wxRADIOMEAN, wxStfCursorsDlg::OnRadioMean )
 
+#ifdef WITH_PSLOPE
 EVT_RADIOBUTTON( wxRADIO_PSManBeg, wxStfCursorsDlg::OnRadioPSManBeg )
 EVT_RADIOBUTTON( wxRADIO_PSEventBeg, wxStfCursorsDlg::OnRadioPSEventBeg )
 EVT_RADIOBUTTON( wxRADIO_PSThrBeg, wxStfCursorsDlg::OnRadioPSThrBeg )
@@ -83,6 +90,7 @@ EVT_RADIOBUTTON( wxRADIO_PSManEnd, wxStfCursorsDlg::OnRadioPSManEnd )
 EVT_RADIOBUTTON( wxRADIO_PSt50End, wxStfCursorsDlg::OnRadioPSt50End )
 EVT_RADIOBUTTON( wxRADIO_PSDeltaT, wxStfCursorsDlg::OnRadioPSDeltaT )
 EVT_RADIOBUTTON( wxRADIO_PSPeakEnd, wxStfCursorsDlg::OnRadioPSPeakEnd )
+#endif
 
 END_EVENT_TABLE()
 
@@ -90,7 +98,10 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
                                  wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ), cursorMIsTime(true),
     cursor1PIsTime(true), cursor2PIsTime(true), cursor1BIsTime(true),cursor2BIsTime(true),
-    cursor1DIsTime(true), cursor2DIsTime(true), cursor1PSIsTime(true), cursor2PSIsTime(true), actDoc(initDoc)
+#ifdef WITH_PSLOPE
+    cursor1PSIsTime(true), cursor2PSIsTime(true), 
+#endif
+    actDoc(initDoc)
 {
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
@@ -100,7 +111,9 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
     m_notebook->AddPage( CreatePeakPage(), wxT("Peak"));
     m_notebook->AddPage( CreateBasePage(), wxT("Base"));
     m_notebook->AddPage( CreateDecayPage(), wxT("Decay"));
+#ifdef WITH_PSLOPE
     m_notebook->AddPage( CreatePSlopePage(), wxT("Slope"));
+#endif
     topSizer->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 
     wxStdDialogButtonSizer* pSdbSizer = new wxStdDialogButtonSizer();
@@ -303,6 +316,7 @@ wxNotebookPage* wxStfCursorsDlg::CreateDecayPage() {
     return nbPage;
 }
 
+#ifdef WITH_PSLOPE
 wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
     wxPanel* nbPage;
     nbPage=new wxPanel(m_notebook);
@@ -403,8 +417,9 @@ wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
     nbPage->SetSizer(pageSizer);
     nbPage->Layout();
     return nbPage;
-
 }
+#endif // WITH_PSLOPE
+
 wxFlexGridSizer* wxStfCursorsDlg::CreateCursorInput( wxPanel* nbPage, wxWindowID textC1id,
         wxWindowID textC2id, wxWindowID comboU1id, wxWindowID comboU2id, std::size_t c1,
         std::size_t c2 )
@@ -485,6 +500,7 @@ int wxStfCursorsDlg::ReadCursor(wxWindowID textId, bool isTime) const {
 
 }
 
+#ifdef WITH_PSLOPE
 int wxStfCursorsDlg::ReadDeltaT(wxWindowID textID) const {
     // returns DeltaT entered in the textBox in units of sampling points
 
@@ -504,6 +520,7 @@ int wxStfCursorsDlg::ReadDeltaT(wxWindowID textID) const {
     return (int)cursorpos;
 
 }
+#endif // WITH_PSLOPE
 
 int wxStfCursorsDlg::GetCursorM() const {
     return ReadCursor(wxTEXTM,cursorMIsTime);
@@ -533,6 +550,7 @@ int wxStfCursorsDlg::GetCursor2D() const {
     return ReadCursor(wxTEXT2D,cursor2DIsTime);
 }
 
+#ifdef WITH_PSLOPE
 int wxStfCursorsDlg::GetCursor1PS() const {
     return ReadCursor(wxTEXT1PS, cursor1PSIsTime);
 }
@@ -541,6 +559,7 @@ int wxStfCursorsDlg::GetCursor2PS() const {
     return ReadCursor(wxTEXT2PS, cursor2PSIsTime);
 }
 
+#endif
 
 int wxStfCursorsDlg::GetPeakPoints() const
 {
@@ -562,10 +581,13 @@ int wxStfCursorsDlg::GetPeakPoints() const
     }
 }
 
+#ifdef WITH_PSLOPE
 int wxStfCursorsDlg::GetDeltaT() const {
     return ReadDeltaT(wxTEXT_PSDELTAT);
 }
+#endif
 
+#ifdef WITH_PSLOPE
 void wxStfCursorsDlg::SetDeltaT (int DeltaT) {
     wxRadioButton* pRadPSDeltaT = (wxRadioButton*)FindWindow(wxRADIO_PSDeltaT);
     wxTextCtrl* pTextPSDeltaT = (wxTextCtrl*)FindWindow(wxTEXT_PSDELTAT);
@@ -583,6 +605,8 @@ void wxStfCursorsDlg::SetDeltaT (int DeltaT) {
     //pTextPSDeltaT->Enable(true);
     pTextPSDeltaT->SetValue(strDeltaTval);
 }
+
+#endif // WITH_PSLOPE
 
 void wxStfCursorsDlg::SetPeakPoints(int peakPoints)
 {
@@ -737,6 +761,8 @@ void wxStfCursorsDlg::OnComboBoxU2D( wxCommandEvent& event ) {
     event.Skip();
     UpdateUnits(wxCOMBOU2D,cursor2DIsTime,wxTEXT2D);
 }
+
+#ifdef WITH_PSLOPE
 
 void wxStfCursorsDlg::OnComboBoxU1PS( wxCommandEvent& event ) {
 
@@ -913,12 +939,12 @@ void wxStfCursorsDlg::OnRadioPSPeakEnd( wxCommandEvent& event ) {
     SetPSlopeEndMode(stf::psEnd_peakMode);
 }
 
+#endif // WITH_PSLOPE
 
 void wxStfCursorsDlg::OnRadioAll( wxCommandEvent& event ) {
     event.Skip();
     wxRadioButton* pRadioAll = (wxRadioButton*)FindWindow(wxRADIOALL);
     wxRadioButton* pRadioMean = (wxRadioButton*)FindWindow(wxRADIOMEAN);
-    wxRadioButton* ptest = (wxRadioButton*)FindWindow(wxRADIO_PSPeakEnd);
     wxTextCtrl* pTextPM = (wxTextCtrl*)FindWindow(wxTEXTPM);
     if (pTextPM==NULL || pRadioMean==NULL || pRadioAll==NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioAll()"));
@@ -927,7 +953,6 @@ void wxStfCursorsDlg::OnRadioAll( wxCommandEvent& event ) {
 
     pTextPM->Enable(false);
     pRadioMean->SetValue(false);
-    ptest->SetValue(false);
 }
 
 void wxStfCursorsDlg::OnRadioMean( wxCommandEvent& event ) {
@@ -943,6 +968,7 @@ void wxStfCursorsDlg::OnRadioMean( wxCommandEvent& event ) {
     pRadioAll->SetValue(false);
 }
 
+#ifdef WITH_PSLOPE
 stf::pslope_mode_beg wxStfCursorsDlg::GetPSlopeBegMode() const {
 
     wxRadioButton* pPSManBeg   = (wxRadioButton*)FindWindow(wxRADIO_PSManBeg);
@@ -1023,6 +1049,7 @@ void wxStfCursorsDlg::SetPSlopeEndMode(stf::pslope_mode_end pslopeEndMode) {
     
 }
 
+
 #ifdef _STFDEBUG
     std::cout << "wxStfCursorsDlg: PSlopeEndMode is " << pslopeEndMode << std::endl;
 #endif
@@ -1058,6 +1085,7 @@ void wxStfCursorsDlg::SetPSlopeBegMode(stf::pslope_mode_beg pslopeBegMode) {
     }
 }
 
+#endif // WITH_PSLOPE
 
 void wxStfCursorsDlg::UpdateUnits(wxWindowID comboId, bool& setTime, wxWindowID textId) {
     // Read current entry:
@@ -1145,6 +1173,7 @@ void wxStfCursorsDlg::UpdateCursors() {
         pText2=(wxTextCtrl*)FindWindow(wxTEXT2D);
         break;
 
+#ifdef WITH_PSLOPE
     case stf::pslope_cursor: // PSlope
         iNewValue1=(int)actDoc->GetPSlopeBeg();
         iNewValue2=(int)actDoc->GetPSlopeEnd();
@@ -1157,6 +1186,7 @@ void wxStfCursorsDlg::UpdateCursors() {
         SetPSlopeEndMode( actDoc->GetPSlopeEndMode() );
         SetDeltaT( actDoc->GetDeltaT() );
         break;
+#endif
 
     default:
         break;
@@ -1202,7 +1232,9 @@ stf::cursor_type wxStfCursorsDlg::CurrentCursor() const {
     case 1: return stf::peak_cursor;
     case 2: return stf::base_cursor;
     case 3: return stf::decay_cursor;
+#ifdef WITH_PSLOPE
     case 4: return stf::pslope_cursor;
+#endif 
     default: return stf::undefined_cursor;
     }
 }
@@ -1222,13 +1254,19 @@ double wxStfCursorsDlg::GetSlope() const {
 
 void wxStfCursorsDlg::SetSlope( double fSlope ) {
     wxTextCtrl* pSlope = (wxTextCtrl*)FindWindow(wxSLOPE);
+
+#ifdef WITH_PSLOPE
     wxTextCtrl* pSlope2 = (wxTextCtrl*)FindWindow(wxSLOPE_FROM_PSLOPE);
+#endif 
 
     wxString wxsSlope;
     wxsSlope << fSlope;
     if ( pSlope != NULL ) {
         pSlope->SetValue( wxsSlope );
+
+#ifdef WITH_PSLOPE
         pSlope2->SetValue( wxsSlope );
+#endif 
     }
 }
 

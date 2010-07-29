@@ -980,7 +980,6 @@ double get_base( bool active ) {
         return actDoc()->GetAPBase();
     }
 }
-
 double get_slope() {
 
     if (!check_doc() ) return 0.0; 

@@ -231,7 +231,7 @@ void wxStfApp::ImportPython(const wxString &modulelocation) {
     python_import << wxT("sys.path.append(\"") << python_path << wxT("\")\n");
     python_import << wxT("if not sys.modules.has_key(\"") << python_file << wxT("\"):");
     python_import << wxT("import ") << python_file << wxT("\n");
-    python_import << wxT("else:") << wxT("reload(") << python_file << wxT(")" << wxT("\n");
+    python_import << wxT("else:") << wxT("reload(") << python_file << wxT(")") << wxT("\n");
     python_import << wxT("sys.path.remove(\"") << python_path << wxT("\")\n");
     python_import << wxT("del sys\n");
 

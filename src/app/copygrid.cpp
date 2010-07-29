@@ -52,7 +52,9 @@ BEGIN_EVENT_TABLE(wxStfGrid, wxGrid)
 	EVT_MENU(ID_VIEW_SLOPERISE,wxStfGrid::ViewSloperise)
 	EVT_MENU(ID_VIEW_SLOPEDECAY,wxStfGrid::ViewSlopedecay)
 	EVT_MENU(ID_VIEW_LATENCY,wxStfGrid::ViewLatency)
+#ifdef WITH_PSLOPE
 	EVT_MENU(ID_VIEW_PSLOPE,wxStfGrid::ViewPSlope)
+#endif
 	EVT_MENU(ID_VIEW_CURSORS,wxStfGrid::ViewCursors)
 	EVT_GRID_CELL_RIGHT_CLICK(wxStfGrid::OnRClick) 
 	EVT_GRID_LABEL_RIGHT_CLICK(wxStfGrid::OnLabelRClick) 
@@ -86,7 +88,9 @@ wxStfGrid::wxStfGrid(
 	m_labelContext->AppendCheckItem(ID_VIEW_SLOPERISE,wxT("Slope (rise)"));
 	m_labelContext->AppendCheckItem(ID_VIEW_SLOPEDECAY,wxT("Slope (decay)"));
 	m_labelContext->AppendCheckItem(ID_VIEW_LATENCY,wxT("Latency"));
+#ifdef WITH_PSLOPE
 	m_labelContext->AppendCheckItem(ID_VIEW_PSLOPE,wxT("Slope"));
+#endif
 	m_labelContext->AppendSeparator();
 	m_labelContext->AppendCheckItem(ID_VIEW_CURSORS,wxT("Cursors"));
 }
@@ -153,7 +157,9 @@ void wxStfGrid::OnLabelRClick(wxGridEvent& event) {
 	m_labelContext->Check(ID_VIEW_SLOPERISE,wxGetApp().GetActiveDoc()->GetViewSlopeRise());
 	m_labelContext->Check(ID_VIEW_SLOPEDECAY,wxGetApp().GetActiveDoc()->GetViewSlopeDecay());
 	m_labelContext->Check(ID_VIEW_LATENCY,wxGetApp().GetActiveDoc()->GetViewLatency());
+#ifdef WITH_PSLOPE
 	m_labelContext->Check(ID_VIEW_PSLOPE,wxGetApp().GetActiveDoc()->GetViewPSlope());
+#endif
 	m_labelContext->Check(ID_VIEW_CURSORS,wxGetApp().GetActiveDoc()->GetViewCursors());
 	PopupMenu(m_labelContext.get());
 }
@@ -191,7 +197,9 @@ void wxStfGrid::ViewResults() {
 	m_labelContext->Check(ID_VIEW_SLOPERISE,wxGetApp().GetActiveDoc()->GetViewSlopeRise());
 	m_labelContext->Check(ID_VIEW_SLOPEDECAY,wxGetApp().GetActiveDoc()->GetViewSlopeDecay());
 	m_labelContext->Check(ID_VIEW_LATENCY,wxGetApp().GetActiveDoc()->GetViewLatency());
+#ifdef WIHT_PSLOPE
 	m_labelContext->Check(ID_VIEW_PSLOPE,wxGetApp().GetActiveDoc()->GetViewPSlope());
+#endif
 	m_labelContext->Check(ID_VIEW_CURSORS,wxGetApp().GetActiveDoc()->GetViewCursors());
 	PopupMenu(m_labelContext.get());
 }
@@ -275,12 +283,13 @@ void wxStfGrid::ViewLatency(wxCommandEvent& event) {
 	SetCheckmark(wxT("ViewLatency"),ID_VIEW_LATENCY);
 }
 
+#ifdef WITH_PSLOPE
 void wxStfGrid::ViewPSlope(wxCommandEvent& event) {
 	event.Skip();
 	wxGetApp().GetActiveDoc()->SetViewPSlope(m_labelContext->IsChecked(ID_VIEW_PSLOPE));
 	SetCheckmark(wxT("ViewSlope"),ID_VIEW_PSLOPE);
-
 }
+#endif 
 
 void wxStfGrid::ViewCursors(wxCommandEvent& event) {
 	event.Skip();

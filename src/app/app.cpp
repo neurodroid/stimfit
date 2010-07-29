@@ -395,6 +395,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
              actDoc->SetFitEnd(CursorsDialog->GetCursor2D());
              break;
          
+#ifdef WITH_PSLOPE
             // Get cursor location from the dialog box:
          case stf::pslope_cursor: 
 
@@ -412,7 +413,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
                 actDoc->SetDeltaT(CursorsDialog->GetDeltaT());
              
              break;
-         
+#endif 
          case stf::undefined_cursor:
              
                  ErrorMsg(wxT("Undefined cursor in wxStfApp::OnPeakcalcexecMsg()"));
@@ -421,10 +422,14 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
          default:
              break;
         }
+
+#ifdef WITH_PSLOPE
 #ifdef _STFDEBUG
         std::cout << "wxStfApp: PSlopeBegMode is " << actDoc->GetPSlopeBegMode() << std::endl;
         std::cout << "wxStfApp: PSlopeEndMode is " << actDoc->GetPSlopeEndMode() << std::endl;
 #endif
+#endif //with_PSLOPE
+
         //Update edit peak limits in the peak calculation dialog box
         if (CursorsDialog->GetPeakAtEnd())
         {	//If 'Upper limit at end of trace' is selected in the dialog box

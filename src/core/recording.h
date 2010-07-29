@@ -196,6 +196,7 @@ class StfDll Recording {
      */
     std::size_t GetFitEnd() const { return fitEnd; }
 
+#ifdef WITH_PSLOPE
     //! Retrieves the position of the left PSlope cursor.
     /*! \return The index of the left PSlope cursor within the current section.
      */
@@ -205,16 +206,19 @@ class StfDll Recording {
     /*! \return The index of the right PSlope cursor within the current section.
      */
     std::size_t GetPSlopeEnd() const { return PSlopeEnd; }
+#endif // WITH_PSLOPE
 
     //! Retrieves the number of points used for averaging during peak calculation.
     /*! \return The number of points to be used.
      */
     int GetPM() const { return pM; }
 
+#ifdef WITH_PSLOPE
     //! Retrieves the number of points used for distance from the first cursor.
     /*! \return The number of points to be used.
      */
     int GetDeltaT() const { return DeltaT; }
+#endif
 
     //! Retrieves the position of the left latency cursor.
     /*! \return The index of the left latency cursor within the current section. Note that by contrast
@@ -369,10 +373,12 @@ class StfDll Recording {
      */
     double GetSlopeRatio() const { return slopeRatio; }
 
+//#ifdef WITH_PSLOPE
     //! Retrieves the value of the Slope
     /*! \return slope value in y-units/x-units.
     */
     double GetPSlope() const { return PSlope; }
+//#endif
 
     //! Retrieves the mode of the latency start cursor.
     /*! \return The current mode of the latency start cursor..
@@ -394,6 +400,8 @@ class StfDll Recording {
      */
     stf::direction GetDirection() const { return direction; }
     
+
+#ifdef WITH_PSLOPE
     //! Retrieves the mode of the left PSlope cursor.
     /*! \return The current mode of the left PSlope cursor.
      */
@@ -403,6 +411,7 @@ class StfDll Recording {
     /*! \return The current mode of the right PSlope cursor.
      */
     stf::pslope_mode_end GetPSlopeEndMode() const { return pslopeEndMode; }
+#endif // WITH_PSLOPE
 
     //! Indicates whether to use the baseline as a reference for AP kinetics.
     /*! \return true if the baseline should be used, false if the threshold should be used.
@@ -474,11 +483,13 @@ class StfDll Recording {
      */
     bool GetViewLatency() const { return viewLatency; }
 
-    //! Indicates whether the Slopeshould be shown in the results table.
+#ifdef WITH_PSLOPE
+    //! Indicates whether the Slope should be shown in the results table.
     /*! \return true if it should be shown, false otherwise.
      */
     bool GetViewPSlope() const { return viewPSlope; }
 
+#endif
     //! Indicates whether two additional rows showing the positions of start and end cursors should be shown in the results table.
     /*! \return true if it should be shown, false otherwise.
      */
@@ -659,6 +670,7 @@ class StfDll Recording {
      */
     void SetLatency(double value) { latency=value; }
 
+#ifdef WITH_PSLOPE
     //! Sets the position of the left PSlope cursor.
     /*! \param value The index of the left PSlope cursor within the current section.
      */
@@ -688,6 +700,8 @@ class StfDll Recording {
     /*! \param value The number of points to be used.
      */
     void SetDeltaT(int value) { DeltaT=value; }
+
+#endif // WITH_PSLOPE
 
     //! Sets the number of points used for averaging during peak calculation.
     /*! \param value The number of points to be used.
@@ -805,10 +819,12 @@ class StfDll Recording {
      */
     void SetViewLatency(bool value) { viewLatency=value; }
 
+#ifdef WITH_PSLOPE
     //! Determines whether the slope should be shown in the results table.
     /*! \param value Set to true if it should be shown, false otherwise.
      */
     void SetViewPSlope(bool value) { viewPSlope=value; }
+#endif
 
     //! Determines whether two additional rows showing the positions of start and end cursors should be shown in the results table.
     /*! \param value Set to true if they should be shown, false otherwise.
@@ -931,9 +947,10 @@ class StfDll Recording {
     stf::latency_mode latencyStartMode, latencyEndMode;
     stf::latency_window_mode latencyWindowMode;
     stf::direction	direction; //of peak detection: UP, DOWN or BOTH
+#ifdef WITH_PSLOPE
     stf::pslope_mode_beg pslopeBegMode; // for left mode PSlope cursor
     stf::pslope_mode_end pslopeEndMode; // for right mode PSlope cursor
-
+#endif 
     // currently accessed channel:
     std::size_t cc;
     // second channel:
@@ -941,17 +958,26 @@ class StfDll Recording {
     // currently accessed section:
     std::size_t cs;
 
-    std::size_t baseBeg, baseEnd, peakBeg, peakEnd, fitBeg, fitEnd, measCursor, PSlopeBeg, PSlopeEnd;
+    std::size_t baseBeg, baseEnd, peakBeg, peakEnd, fitBeg, fitEnd, 
+#ifdef WITH_PSLOPE
+    PSlopeBeg, PSlopeEnd,
+#endif
+    measCursor;
     double latencyStartCursor,
         latencyEndCursor,
         latency,	 //time from latency cursor to beginning of event
         base, APBase, baseSD, threshold, slopeForThreshold, peak, APPeak, t20Real, t80Real, t50LeftReal, t50RightReal,
         maxT, thrT, maxRiseY, maxRiseT, maxDecayY, maxDecayT, maxRise, maxDecay,
         t50Y, APMaxT, APMaxRise, APMaxRiseT, APt50LeftReal, 
-        rt2080, halfDuration, slopeRatio, t0Real, PSlope;
+//#ifdef WITH_PSLOPE
+        PSlope,
+//#endif
+        rt2080, halfDuration, slopeRatio, t0Real;
     // cursor windows:
     int pM;  //peakMean, number of points used for averaging
+#ifdef WITH_PSLOPE
     int DeltaT;  // distance (number of points) from the first cursor
+#endif
 
     // Indices of the selected sections
     std::vector<std::size_t> selectedSections;
@@ -961,7 +987,11 @@ class StfDll Recording {
     std::size_t t20Index, t80Index, t50LeftIndex, t50RightIndex;
 
     bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold, viewRT2080,
-        viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,viewPSlope, viewCursors;
+        viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,
+#ifdef WITH_PSLOPE
+        viewPSlope,
+#endif
+        viewCursors;
 
     XZoom zoom;
 

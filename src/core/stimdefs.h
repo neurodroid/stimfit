@@ -465,7 +465,9 @@ enum cursor_type {
     latency_cursor,  /*!< Latency cursor. */
     zoom_cursor,     /*!< Zoom rectangle cursor. */
     event_cursor,    /*!< Event mode cursor. */
+#ifdef WITH_PSLOPE
     pslope_cursor,   /*!< PSlope mode cursor. */
+#endif
     undefined_cursor /*!< Undefined cursor. */
 };
 
@@ -491,6 +493,7 @@ enum latency_window_mode {
     windowMode = 1  /*!< Use a window of 100 sampling points around the peak. */ 
 };
 
+#ifdef WITH_PSLOPE
 //! PSlope start cursor settings
 enum pslope_mode_beg {
     psBeg_manualMode, /*< Set the start Slope cursor manually. */
@@ -509,6 +512,7 @@ enum pslope_mode_end {
     psEnd_undefined
 };
 
+#endif // WITH_PSLOPE
 
 #else
 #endif // Module only

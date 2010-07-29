@@ -188,6 +188,10 @@ private:
     void OnToolLatency(wxCommandEvent& event);
     void OnToolZoom(wxCommandEvent& event);
     void OnToolEvent(wxCommandEvent& event);
+
+#ifdef WITH_PSLOPE
+    void OnToolPSlope(wxCommandEvent& event);
+#endif
     
 //    void OnSwapChannels(wxCommandEvent& event);
     void OnCh2base(wxCommandEvent& event);

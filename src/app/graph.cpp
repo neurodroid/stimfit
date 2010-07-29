@@ -94,13 +94,16 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     rtPen(*wxGREEN,2,wxSOLID), //Solid green line
     hdPen(*wxCYAN,2,wxSOLID), //Solid violet line
     rdPen(*wxRED,2,wxSOLID), //Solid dark violet line
+#ifdef WITH_PSLOPE
     slopePen(*wxBLUE,2,wxSOLID), //Solid blue line
+#endif
     latencyPen(*wxBLUE,1,wxDOT),
     alignPen(*wxBLUE,1,wxSHORT_DASH),
     measPen(*wxBLACK,1,wxDOT),
     eventPen(*wxBLUE,2,wxSOLID),
+#ifdef WITH_PSLOPE
     PSlopePen(wxColor(30,144,255), 1, wxDOT), // Dotted bright blue line
-
+#endif
     standardPrintPen(*wxBLACK,printSizePen1,wxSOLID), //Solid black line
     standardPrintPen2(*wxRED,printSizePen1,wxSOLID), //Solid red line
     scalePrintPen(*wxBLACK,printSizePen2,wxSOLID), //Solid black line
@@ -118,7 +121,9 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     rtPrintPen(*wxGREEN,printSizePen2,wxSOLID), //Solid green line
     hdPrintPen(*wxCYAN,printSizePen2,wxSOLID), //Solid violet line
     rdPrintPen(*wxRED,printSizePen2,wxSOLID), //Solid dark violet line
+#ifdef WITH_PSLOPE
     slopePrintPen(*wxBLUE,printSizePen4,wxSOLID), //Solid blue line
+#endif
     resultsPrintPen(*wxLIGHT_GREY,printSizePen2,wxSOLID),//Solid light grey line
     latencyPrintPen(*wxBLUE,printSizePen1,wxDOT),//Dotted violett line
     baseBrush(*wxLIGHT_GREY,wxBDIAGONAL_HATCH),
@@ -401,6 +406,7 @@ void wxStfGraph::OnDraw( wxDC& DC )
         DC.DrawLine(latEnd-1,20,latEnd-6,15);
         DC.DrawLine(latEnd-1,20,latEnd-6,25);
 
+#ifdef WITH_PSLOPE
         // Create dotted bright blue line as slope cursor
         if (!isPrinted)
             DC.SetPen(PSlopePen);
@@ -408,6 +414,7 @@ void wxStfGraph::OnDraw( wxDC& DC )
             DC.SetPen(PSlopePrintPen);
         DrawVLine(&DC, Doc()->GetPSlopeBeg());
         DrawVLine(&DC, Doc()->GetPSlopeEnd());
+#endif 
 
         // Created dashed line to indicate the alignment cursor
         /*		if (!isPrinted && (Doc()->get().size()>1)) {
@@ -1325,11 +1332,13 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
         llz_y=(double)lastLDown.y;
         llz_y2=llz_y;
         break;
+#ifdef WITH_PSLOPE
     case stf::pslope_cursor:
         Doc()->SetPSlopeBegMode(stf::psBeg_manualMode); // set left cursor to manual
         // conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetPSlopeBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); // second 'double' added
         break;
+#endif
     default: break;
     }	//End switch TraceNav->GetMouseQual()
     if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
@@ -1387,10 +1396,12 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
             wxGetApp().ErrorMsg(wxT("No events have been detected yet"));
         }
         break;
+#ifdef WITH_PSLOPE
     case stf::pslope_cursor:
         Doc()->SetPSlopeEndMode(stf::psEnd_manualMode); // set right cursor to manual mode
         Doc()->SetPSlopeEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
+#endif
     default: ;
     }	//End switch TraceNav->GetMouseQual()
     if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
@@ -1426,9 +1437,11 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetFitEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
+#ifdef WITH_PSLOPE
     case stf::pslope_cursor:
         // conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetPSlopeEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+#endif
     case stf::latency_cursor:
         if (Doc()->GetLatencyEndMode() != stf::manualMode) {
             wxGetApp().ErrorMsg(
@@ -1536,10 +1549,12 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
      case 98:
          ParentFrame()->SetMouseQual(stf::base_cursor);
          return;
+#ifdef WITH_PSLOPE
      case 79:  // key 'o' to activate PSlope cursors
      case 111:
          ParentFrame()->SetMouseQual(stf::pslope_cursor);
          return;
+#endif
      case 68:  // d
      case 100:
          ParentFrame()->SetMouseQual(stf::decay_cursor);

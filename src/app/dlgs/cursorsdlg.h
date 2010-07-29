@@ -188,6 +188,7 @@ public:
      */
     stf::direction GetDirection() const;
 
+#ifdef WITH_PSLOPE
     //! Gets the mode of measure for the beginning of the slope cursor.
     /*! \return The current mode for the beginning slope cursor.
      */
@@ -197,6 +198,8 @@ public:
     /*! \return The current mode for the end slope cursor.
      */
     stf::pslope_mode_end GetPSlopeEndMode() const;
+
+#endif // WITH_PSLOPE
 
     //! Indicates whether to use the baseline as a reference for AP kinetics.
     /*! \return true if the baseline should be used, false if the threshold should be used.
@@ -208,6 +211,7 @@ public:
      */
     void SetDirection(stf::direction direction);
 
+#ifdef WITH_PSLOPE
     //! Sets the mode of the right slope cursor.
     /*! \param pslopeEndMode The new mode for the slope cursor.
      */
@@ -217,6 +221,7 @@ public:
     /*! \param pslopeBegMode The new mode for the slope cursor.
      */
     void SetPSlopeBegMode(stf::pslope_mode_beg pslopeBegMode);
+#endif // WITH_PSLOPE
 
     //! Sets the reference for AP kinetics measurements.
     /*! \param frombase true if the baseline should be used, false if the threshold should be used.

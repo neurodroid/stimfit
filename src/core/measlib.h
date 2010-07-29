@@ -152,6 +152,7 @@ template <typename T>
 T  maxDecay( const std::vector<T>& data, T left, T right, T& maxDecayT,
              T& maxDecayY);
 
+#ifdef WITH_PSLOPE
 //! Find the slope an event within \e data.
 /*! \param data The data waveform to be analysed.
  *  \param left delimits the search to the left.
@@ -161,6 +162,7 @@ T  maxDecay( const std::vector<T>& data, T left, T right, T& maxDecayT,
 template <typename T>
 T pslope( const std::vector<T>& data, std::size_t left, std::size_t right);
 
+#endif
 /*@}*/
 
 }
@@ -447,6 +449,7 @@ T stf::maxDecay(const std::vector<T>& data,
     return maxDecay;
 }
 
+#ifdef WITH_PSLOPE
 template <typename T>
 T stf::pslope(const std::vector<T>& data, std::size_t left, std::size_t right) {
 
@@ -468,5 +471,6 @@ T stf::pslope(const std::vector<T>& data, std::size_t left, std::size_t right) {
 
     return SlopeVal;
 }
+#endif // WITH_PSLOPE
 #endif
 
