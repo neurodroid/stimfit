@@ -328,7 +328,9 @@ class wxStfBatchDlg : public wxDialog
         id_slopes,
         id_latencies,
         id_fit,
+#ifdef PSLOPE
         id_pslopes,
+#endif
         id_crossings
     };
     
@@ -395,10 +397,12 @@ public:
      */
     bool PrintSlopes() const {return  LookUp(id_slopes).selection;}
 
+#ifdef WITH_PSLOPE
     //! Indicates whether the slopes should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
     bool PrintPSlopes() const {return  LookUp(id_pslopes).selection;}
+#endif
 
     //! Indicates whether a threshold crossing should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
