@@ -76,12 +76,12 @@ bool wxStfApp::Init_wxPython()
     wxString app_path = wxFileName( GetExecutablePath() ).GetPath();
     wxString cwd;
     cwd << wxT("import os\n");
-    cwd << wxT("cwd=\"") << app_path << wxT("/stimfit.app/Contents/Frameworks\"\n");
+    cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks\"\n");
     cwd << wxT("import sys\n");
     cwd << wxT("sys.path.append(cwd)\n");
-    cwd << wxT("cwd=\"") << app_path << wxT("/stimfit.app/Contents/Frameworks/stimfit\"\n");
+    cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks/stimfit\"\n");
     cwd << wxT("sys.path.append(cwd)\n");
-    cwd << wxT("cwd=\"") << app_path << wxT("/stimfit.app/Contents/Frameworks/numpy\"\n");
+    cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks/numpy\"\n");
     cwd << wxT("sys.path.insert(0,cwd)\n");
 #ifdef _STFDEBUG
     cwd << wxT("print sys.path\n");

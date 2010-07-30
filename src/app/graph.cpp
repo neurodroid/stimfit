@@ -239,7 +239,7 @@ void wxStfGraph::OnDraw( wxDC& DC )
 
         if (XZ() <= 0 || YZ() <= 0)
             Fittowindow(false);
-        if ((Doc()->get().size()>1))
+        if ((Doc()->size()>1))
         {	//Second channel is not part of the settings dialog =>read from registry
             SPY2W() =
                 wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("Zoom.startPosY2"), 1);
@@ -417,7 +417,7 @@ void wxStfGraph::OnDraw( wxDC& DC )
 #endif 
 
         // Created dashed line to indicate the alignment cursor
-        /*		if (!isPrinted && (Doc()->get().size()>1)) {
+        /*		if (!isPrinted && (Doc()->size()>1)) {
         DC.SetPen(alignPen);
         DrawVLine(&DC,Doc()->GetAPMaxSlopeT());
         }
@@ -598,7 +598,7 @@ void wxStfGraph::OnDraw( wxDC& DC )
 
     //Plot of the second channel
     //Trace one when displayed first time
-    if ((Doc()->get().size()>1) && pFrame->ShowSecond())
+    if ((Doc()->size()>1) && pFrame->ShowSecond())
     {
         if (!isPrinted)
         {	//Draw current trace on display
@@ -1623,13 +1623,16 @@ void wxStfGraph::OnZoomH(wxCommandEvent& WXUNUSED(event)) {
 void wxStfGraph::OnZoomV(wxCommandEvent& WXUNUSED(event)) {
     wxRect WindowRect=GetRect();
     llz_y=(SPY() - llz_y) / YZ();
-    llz_y2=(SPY2()-llz_y2)/YZ2();
     ulz_y=(SPY() - ulz_y) / YZ();
-    ulz_y2=(SPY2()-ulz_y2)/YZ2();
     YZW()=WindowRect.height/fabs(ulz_y-llz_y);
-    YZ2W()=WindowRect.height/fabs(ulz_y2-llz_y2);
     SPYW()=(int)(WindowRect.height + ulz_y * YZ());
-    SPY2W()=(int)(WindowRect.height + ulz_y2 * YZ2());
+
+    if (Doc()->size() > 1) {
+        llz_y2=(SPY2()-llz_y2)/YZ2();
+        ulz_y2=(SPY2()-ulz_y2)/YZ2();
+        YZ2W()=WindowRect.height/fabs(ulz_y2-llz_y2);
+        SPY2W()=(int)(WindowRect.height + ulz_y2 * YZ2());
+    }
     isZoomRect=false;
 }
 
@@ -1725,11 +1728,12 @@ void wxStfGraph::CreateScale(wxDC* pDC)
     //distance between two neigboured yValues in pixels:
     int barLengthY2=100;
     double yScaled2 =1.0;
-    double pixelDistanceY2=YZ2();
+    double pixelDistanceY2= 1.0;
     //real distance (difference) between two neighboured Values:
     double realDistanceY2 = 1.0;
-    if ((Doc()->get().size()>1))
+    if ((Doc()->size()>1))
     {
+        pixelDistanceY2= YZ2();
         //get an entire y-value which comes close to 150 pixels:
         yScaled2 = prettyNumber(realDistanceY2, pixelDistanceY2, limit);
         barLengthY2=(int)((yScaled2/realDistanceY2) * pixelDistanceY2);
@@ -1742,7 +1746,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         int bottomDist=(int)(50*printScale);
         int rightDist=(int)(60*printScale);
         // leave space for a second scale bar:
-        if ((Doc()->get().size()>1)) rightDist*=2;
+        if ((Doc()->size()>1)) rightDist*=2;
         // Set end points for the scale bar
         Scale[0]=wxPoint(WindowRect.width-rightDist-barLength,
                 WindowRect.height-bottomDist);
@@ -1750,7 +1754,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                 WindowRect.height-bottomDist);
         Scale[2]=wxPoint(WindowRect.width-rightDist,
                 WindowRect.height-bottomDist-barLengthY);
-        if ((Doc()->get().size()>1))
+        if ((Doc()->size()>1))
         {	//Set end points for the second channel y-bar
             Scale[3]=wxPoint(WindowRect.width-rightDist/2,
                     WindowRect.height-bottomDist);
@@ -1791,7 +1795,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
             pLatexDC->DrawLabelLatex(scaleYString,TextFrameY,wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL);
 #endif
         }
-        if ((Doc()->get().size()>1))	{
+        if ((Doc()->size()>1))	{
             wxString scaleYString2;
             scaleYString2 << (int)yScaled2 << wxT(" ")
             << Doc()->at(Doc()->GetSecCh()).GetYUnits();
@@ -1820,7 +1824,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         //Plot them
         pDC->DrawLine(Scale[0],Scale[1]);
         pDC->DrawLine(Scale[1],Scale[2]);
-        if ((Doc()->get().size()>1))	{
+        if ((Doc()->size()>1))	{
             if (!isPrinted)
                 pDC->SetPen(scalePen2);
             else
@@ -1842,7 +1846,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         pDC->DrawLine(leftDist,WindowRect.height-bottomDist,
                 WindowRect.width-rightDist,WindowRect.height-bottomDist);
         // second y-axis:
-        if ((Doc()->get().size()>1)) {
+        if ((Doc()->size()>1)) {
             pDC->SetPen(scalePen2);
             // upper left corner:
             pDC->DrawLine(leftDist*2,topDist,leftDist*2,WindowRect.height-bottomDist);
@@ -1901,7 +1905,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         );
 
         // y-Axis of second channel:
-        if ((Doc()->get().size()>1)) {
+        if ((Doc()->size()>1)) {
             pDC->SetPen(scalePen2);
             // Find first y-axis tick:
             // Get y-value of bottomDist:
@@ -2068,7 +2072,7 @@ void wxStfGraph::Fittowindow(bool refresh)
     {	//Depending on the zoom radio buttons (Mouse field)
     //in the (trace navigator) control box
     case stf::zoomboth:
-        if(!(Doc()->get().size()>1))
+        if(!(Doc()->size()>1))
         {
             wxGetApp().ErrorMsg(wxT("No second channel available! Choose Channel 1!"));
             return;
@@ -2084,7 +2088,7 @@ void wxStfGraph::Fittowindow(bool refresh)
         break;
     case stf::zoomch2:
         //ErrorMsg if no second channel available
-        if(!(Doc()->get().size()>1))
+        if(!(Doc()->size()>1))
         {
             wxGetApp().ErrorMsg(wxT("No second channel available! Choose Channel 1!"));
             return;
@@ -2109,21 +2113,23 @@ void wxStfGraph::Fittowindow(bool refresh)
 void wxStfGraph::FitToWindowSecCh(bool refresh)
 {
 
-    //Get coordinates of the main window
-    wxRect WindowRect(GetRect());
+    if (Doc()->size()>1) {
+        //Get coordinates of the main window
+        wxRect WindowRect(GetRect());
 
-    const double screen_part=0.5; //part of the window to be filled
-    std::size_t secCh=Doc()->GetSecCh();
-#undef min
-#undef max
-    Vector_double::const_iterator max_el = std::max_element(Doc()->get()[secCh][Doc()->GetCurSec()].get().begin(), Doc()->get()[secCh][Doc()->GetCurSec()].get().end());
-    Vector_double::const_iterator min_el = std::min_element(Doc()->get()[secCh][Doc()->GetCurSec()].get().begin(), Doc()->get()[secCh][Doc()->GetCurSec()].get().end());
-    double min=*min_el;
-    double max=*max_el;
-    YZ2W()=(WindowRect.height/fabs(max-min))*screen_part;
-    SPY2W()=(int)(((screen_part+1)/2)*WindowRect.height
-            + min * YZ2());
-    if (refresh) Refresh();
+        const double screen_part=0.5; //part of the window to be filled
+        std::size_t secCh=Doc()->GetSecCh();
+    #undef min
+    #undef max
+        Vector_double::const_iterator max_el = std::max_element(Doc()->get()[secCh][Doc()->GetCurSec()].get().begin(), Doc()->get()[secCh][Doc()->GetCurSec()].get().end());
+        Vector_double::const_iterator min_el = std::min_element(Doc()->get()[secCh][Doc()->GetCurSec()].get().begin(), Doc()->get()[secCh][Doc()->GetCurSec()].get().end());
+        double min=*min_el;
+        double max=*max_el;
+        YZ2W()=(WindowRect.height/fabs(max-min))*screen_part;
+        SPY2W()=(int)(((screen_part+1)/2)*WindowRect.height
+                + min * YZ2());
+        if (refresh) Refresh();
+    }
 }	//End FitToWindowSecCh()
 
 void wxStfGraph::OnPrevious() {
@@ -2173,12 +2179,12 @@ void wxStfGraph::OnUp() {
         //ErrorMsg if no second channel available
         //yZooms of Ch1 are performed keeping the base constant
         SPYW()=SPY() - 20;
-        if(!(Doc()->get().size()>1)) break;
+        if(!(Doc()->size()>1)) break;
         //Ymove of Ch2 is performed
         SPY2W()=SPY2() - 20;
         break;
     case stf::zoomch2:
-        if(!(Doc()->get().size()>1)) break;
+        if(!(Doc()->size()>1)) break;
         //Ymove of Ch2 is performed
         SPY2W()=SPY2() - 20;
         break;
@@ -2197,12 +2203,12 @@ void wxStfGraph::OnDown() {
     case stf::zoomboth:
         //yZooms of Ch1 are performed keeping the base constant
         SPYW()=SPY() + 20;
-        if(!(Doc()->get().size()>1)) break;
+        if(!(Doc()->size()>1)) break;
         //Ymove of Ch2 is performed
         SPY2W()=SPY2() + 20;
         break;
     case stf::zoomch2:
-        if(!(Doc()->get().size()>1)) break;
+        if(!(Doc()->size()>1)) break;
         //Ymove of Ch2 is performed
         SPY2W()=SPY2() + 20;
         break;
@@ -2279,7 +2285,7 @@ void wxStfGraph::ChangeYScale(double factor) {
                 - YZ()));
         YZW()=YZ() * factor;
         //ErrorMsg if no second channel available
-        if(!(Doc()->get().size()>1)) break;
+        if (Doc()->size()<=1) break;
         //yZooms of Ch2 are performed keeping the base constant
         SPY2W()=(int)(SPY2()
                 + Doc()->GetBase() * (YZ2() * factor
@@ -2287,7 +2293,7 @@ void wxStfGraph::ChangeYScale(double factor) {
         YZ2W()=YZ2() * factor;
         break;
     case stf::zoomch2:
-        if(!(Doc()->get().size()>1)) break;
+        if (Doc()->size()<=1) break;
         //yZooms of Ch2 are performed keeping the base constant
         SPY2W()=(int)(SPY2()
                 + Doc()->GetBase() * (YZ2() * factor
@@ -2305,7 +2311,7 @@ void wxStfGraph::ChangeYScale(double factor) {
 }
 
 void wxStfGraph::Ch2base() {
-    if ((Doc()->get().size()>1)) {
+    if ((Doc()->size()>1)) {
         double base2=0.0;
         try {
             double var2=0.0;
@@ -2329,21 +2335,21 @@ void wxStfGraph::Ch2base() {
 }
 
 void wxStfGraph::Ch2pos() {
-    if ((Doc()->get().size()>1)) {
+    if ((Doc()->size()>1)) {
         SPY2W()=SPY();
         Refresh();
     }
 }
 
 void wxStfGraph::Ch2zoom() {
-    if ((Doc()->get().size()>1)) {
+    if ((Doc()->size()>1)) {
         YZ2W()=YZ();
         Refresh();
     }
 }
 
 void wxStfGraph::Ch2basezoom() {
-    if ((Doc()->get().size()>1)) {
+    if ((Doc()->size()>1)) {
         // Adjust y-scale without refreshing:
         YZ2W()=YZ();
         // Adjust baseline:
