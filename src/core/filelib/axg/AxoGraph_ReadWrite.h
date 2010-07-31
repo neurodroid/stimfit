@@ -190,10 +190,6 @@
   #endif
 #endif
 
-#ifndef MODULE_ONLY
-#include <wx/wx.h>
-#endif
-
 #include "longdef.h"
 #include "fileUtils.h"
 #include "./../../stimdefs.h"
@@ -329,7 +325,7 @@ struct ColumnData {
     ColumnType type;
     AXGLONG points;
     AXGLONG titleLength;
-    wxString title;
+    std::string title;
     std::vector<short> shortArray;
     std::vector<int> intArray;
     Vector_float floatArray;
@@ -368,20 +364,20 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
 //    This function allocates new pointers of the appropriate size, reads the data into
 //    them and returns it in columnData.
 
-wxString AG_ReadComment( filehandle refNum );
+std::string AG_ReadComment( filehandle refNum );
 
 //    Read in comment from an AxoGraph X data file.
 
-wxString AG_ReadNotes( filehandle refNum );
+std::string AG_ReadNotes( filehandle refNum );
 
 //    Read in notes from an AxoGraph X data file.
 
-wxString AG_ReadTraceHeaders( filehandle refNum );
+std::string AG_ReadTraceHeaders( filehandle refNum );
 
 //    Read in trace headers from an AxoGraph X data file.
 
-wxString AG_ParseDate( const wxString& notes );
-wxString AG_ParseTime( const wxString& notes );
+std::string AG_ParseDate( const std::string& notes );
+std::string AG_ParseTime( const std::string& notes );
 
 int AG_ReadFloatColumn( filehandle refNum, const int fileFormat, const int columnNumber, ColumnData *columnData );
 

@@ -37,7 +37,7 @@ void importABFFile(const wxString& fName, Recording& ReturnData, bool progress =
  *         the data stored in \e fName.
  *  \param progress True if the progress dialog should be updated.
  */
-void importABF1File(const wxString& fName, Recording& ReturnData, bool progress = true);
+void importABF1File(const std::string& fName, Recording& ReturnData, bool progress = true);
  
  //! Open an ABF2 file and store its contents to a Recording object.
 /*! \param fName The full path to the file to be opened.
@@ -45,7 +45,7 @@ void importABF1File(const wxString& fName, Recording& ReturnData, bool progress 
  *         the data stored in \e fName.
  *  \param progress True if the progress dialog should be updated.
  */
-void importABF2File(const wxString& fName, Recording& ReturnData, bool progress = true);
+void importABF2File(const std::string& fName, Recording& ReturnData, bool progress = true);
 
 }
 

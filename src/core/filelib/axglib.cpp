@@ -34,8 +34,8 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     wxProgressDialog progDlg( wxT("Axograph binary file import"), wxT("Starting file import"),
                               100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
 #endif
-    wxString errorMsg(wxT("Exception while calling AXG_importAXGFile():\n"));
-    wxString yunits;
+    std::string errorMsg("Exception while calling AXG_importAXGFile():\n");
+    std::string yunits;
 
     // =====================================================================================================================
     //
@@ -47,7 +47,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     filehandle dataRefNum = OpenFile( fName.c_str() );
     if ( dataRefNum == 0 )
     {
-        errorMsg += wxT("\n\nError: Could not find file.");
+        errorMsg += "\n\nError: Could not find file.";
         ReturnData.resize(0);
         throw std::runtime_error(std::string(errorMsg.c_str()));
     }
@@ -57,13 +57,13 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     int result = AG_GetFileFormat( dataRefNum, &fileFormat );
     if ( result )
     {
-        errorMsg += wxT( "\nError from AG_GetFileFormat - ");
+        errorMsg += "\nError from AG_GetFileFormat - ";
         if ( result == kAG_FormatErr )
-            errorMsg += wxT( "file is not in AxoGraph format" );
+            errorMsg += "file is not in AxoGraph format";
         else if ( result == kAG_VersionErr )
-            errorMsg += wxT( "file is of a more recent version than supported by this code" );
+            errorMsg += "file is of a more recent version than supported by this code";
         else
-            errorMsg += wxT( "error" );
+            errorMsg += "error";
 
         ReturnData.resize(0);
         CloseFile( dataRefNum );
@@ -74,7 +74,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     result = AG_GetNumberOfColumns( dataRefNum, fileFormat, &numberOfColumns );
     if ( result )
     {
-        errorMsg += wxT( "Error from AG_GetNumberOfColumns" );
+        errorMsg += "Error from AG_GetNumberOfColumns";
         ReturnData.resize(0);
         CloseFile( dataRefNum );
         throw std::runtime_error(std::string(errorMsg.c_str()));
@@ -83,7 +83,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     // Sanity check
     if ( numberOfColumns <= 0 )  	// negative columns
     {
-        errorMsg += wxT ( "File format error: number of columns is negative in AxoGraph data file" );
+        errorMsg += "File format error: number of columns is negative in AxoGraph data file";
         ReturnData.resize(0);
         CloseFile( dataRefNum );
         throw std::runtime_error(std::string(errorMsg.c_str()));
@@ -93,8 +93,8 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     int numberOfChannels = 0;
 
     std::vector< Section > section_list;
-    std::vector< wxString > channel_names;
-    std::vector< wxString > channel_units;
+    std::vector< std::string > channel_names;
+    std::vector< std::string > channel_units;
     double xscale = 1.0;
     for ( int columnNumber=0; columnNumber<numberOfColumns; columnNumber++ )
     {
@@ -102,7 +102,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
             int progbar = (double)columnNumber/(double)numberOfColumns * 100.0;
 #ifndef MODULE_ONLY
             wxString progStr;
-            progStr << wxT("Section #") << columnNumber << wxT(" of ") << numberOfColumns-1;
+            progStr << "Section #" << columnNumber << " of " << numberOfColumns-1;
             progDlg.Update(progbar, progStr);
 #else
             std::cout << "\r";
@@ -115,7 +115,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
 
         if ( result )
         {
-            errorMsg += wxT( "Error from AG_ReadFloatColumn" );
+            errorMsg += "Error from AG_ReadFloatColumn";
             ReturnData.resize(0);
             CloseFile( dataRefNum );
             throw std::runtime_error(std::string(errorMsg.c_str()));
@@ -132,16 +132,16 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
 
             // test whether this name has been used before:
             for (std::size_t n_c=0; n_c < channel_names.size(); ++n_c) {
-                if ( column.title == channel_names[n_c] || column.title.find(wxT("Column"))==0 ) {
+                if ( column.title == channel_names[n_c] || column.title.find("Column")==0 ) {
                     isnew = false;
                     break;
                 }
             }
             if (isnew) {
                 numberOfChannels++;
-                wxString units( column.title );
-                std::size_t left = units.find_last_of( wxT("(") ) + 1;
-                std::size_t right = units.find_last_of( wxT(")") );
+                std::string units( column.title );
+                std::size_t left = units.find_last_of("(") + 1;
+                std::size_t right = units.find_last_of(")");
                 yunits = units.substr(left, right-left);
                 channel_units.push_back( yunits );
                 channel_names.push_back( column.title );
@@ -153,12 +153,12 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     for (std::size_t n_c=0; (int)n_c < numberOfChannels; ++n_c) {
         Channel TempChannel(sectionsPerChannel);
         double factor = 1.0;
-        if (channel_units[n_c] == wxT("V")) {
-            channel_units[n_c] = wxT("mV");
+        if (channel_units[n_c] == "V") {
+            channel_units[n_c] = "mV";
             factor = 1.0e3;
         }
-        if (channel_units[n_c] == wxT("A")) {
-            channel_units[n_c] = wxT("pA");
+        if (channel_units[n_c] == "A") {
+            channel_units[n_c] = "pA";
             factor = 1.0e12;
         }
         for (std::size_t n_s=n_c; (int)n_s < numberOfColumns-1; n_s += numberOfChannels) {
@@ -191,10 +191,10 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
 
     ReturnData.SetXScale( xscale );
 
-    wxString comment = AG_ReadComment(dataRefNum);
-    wxString notes = AG_ReadNotes(dataRefNum);
-    wxString date = AG_ParseDate(notes);
-    wxString time = AG_ParseTime(notes);
+    std::string comment = AG_ReadComment(dataRefNum);
+    std::string notes = AG_ReadNotes(dataRefNum);
+    std::string date = AG_ParseDate(notes);
+    std::string time = AG_ParseTime(notes);
 
     ReturnData.SetComment(comment);
     ReturnData.SetFileDescription(notes);

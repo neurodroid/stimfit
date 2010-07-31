@@ -37,45 +37,45 @@
 
 namespace stf {
 
-wxString ABF1Error(const wxString& fName, int nError);
+std::string ABF1Error(const std::string& fName, int nError);
 
-wxString dateToStr(ABFLONG date);
-wxString timeToStr(ABFLONG time);
+std::string dateToStr(ABFLONG date);
+std::string timeToStr(ABFLONG time);
 
 }
 
-wxString stf::ABF1Error(const wxString& fName, int nError) {
+std::string stf::ABF1Error(const std::string& fName, int nError) {
     UINT uMaxLen=320;
     std::vector<char> errorMsg(uMaxLen);
     // local copy:
-    wxString wxCp = fName;
+    std::string wxCp = fName;
     ABF_BuildErrorText(nError, wxCp.c_str(),&errorMsg[0], uMaxLen );
-    return wxString( &errorMsg[0] );
+    return std::string( &errorMsg[0] );
 }
 
-wxString stf::dateToStr(ABFLONG date) {
+std::string stf::dateToStr(ABFLONG date) {
     std::ostringstream dateStream;
     ldiv_t year=ldiv(date,(ABFLONG)10000);
     dateStream << year.quot;
     ldiv_t month=ldiv(year.rem,(ABFLONG)100);
-    dateStream << wxT("/") << month.quot;
-    dateStream << wxT("/") << month.rem;
+    dateStream << "/" << month.quot;
+    dateStream << "/" << month.rem;
     return dateStream.str();
 }
 
-wxString stf::timeToStr(ABFLONG time) {
+std::string stf::timeToStr(ABFLONG time) {
     std::ostringstream timeStream;
     ldiv_t hours=ldiv(time,(ABFLONG)3600);
     timeStream << hours.quot;
     ldiv_t minutes=ldiv(hours.rem,(ABFLONG)60);
     if (minutes.quot<10)
-        timeStream << wxT(":") << wxT('0') << minutes.quot;
+        timeStream << ":" << '0' << minutes.quot;
     else
-        timeStream << wxT(":") << minutes.quot;
+        timeStream << ":" << minutes.quot;
     if (minutes.rem<10)
-        timeStream << wxT(":") << wxT('0') << minutes.rem;
+        timeStream << ":" << '0' << minutes.rem;
     else
-        timeStream << wxT(":") << minutes.rem;
+        timeStream << ":" << minutes.rem;
     return timeStream.str();
 }
 
@@ -86,23 +86,23 @@ void stf::importABFFile(const wxString &fName, Recording &ReturnData, bool progr
 #ifndef _WINDOWS
     FILE* fh = fopen( fName.c_str(), "r" );
 	if (!fh) {
-        wxString errorMsg(wxT("Exception while calling importABFFile():\nCouldn't open file"));
+        std::string errorMsg("Exception while calling importABFFile():\nCouldn't open file");
         fclose(fh);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
 
     // attempt to read first chunk of data:
     int res = fseek( fh, 0, SEEK_SET);
     if (res != 0) {
-        wxString errorMsg(wxT("Exception while calling importABFFile():\nCouldn't open file"));
+        std::string errorMsg("Exception while calling importABFFile():\nCouldn't open file");
         fclose(fh);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
     res = fread( &fileInfo, sizeof( fileInfo ), 1, fh );
     if (res != 1) {
-        wxString errorMsg(wxT("Exception while calling importABFFile():\nCouldn't open file"));
+        std::string errorMsg("Exception while calling importABFFile():\nCouldn't open file");
         fclose(fh);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
     fclose(fh);
 #else
@@ -110,9 +110,9 @@ void stf::importABFFile(const wxString &fName, Recording &ReturnData, bool progr
                               OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
  
     if (hFile == INVALID_HANDLE_VALUE) { 
-        wxString errorMsg(wxT("Exception while calling importABFFile():\nCouldn't open file"));
+        std::string errorMsg("Exception while calling importABFFile():\nCouldn't open file");
         CloseHandle(hFile);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
 
 	// Read one character less than the buffer size to save room for
@@ -120,28 +120,28 @@ void stf::importABFFile(const wxString &fName, Recording &ReturnData, bool progr
     DWORD dwBytesRead = 0;
 
     if( FALSE == ReadFile(hFile, &fileInfo, sizeof( fileInfo ), &dwBytesRead, NULL) ) {
-        wxString errorMsg(wxT("Exception while calling importABFFile():\nCouldn't open file"));
+        std::string errorMsg("Exception while calling importABFFile():\nCouldn't open file");
         CloseHandle(hFile);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
 
 	if (dwBytesRead <= 0) {
-        wxString errorMsg(wxT("Exception while calling importABFFile():\nCouldn't open file"));
+        std::string errorMsg("Exception while calling importABFFile():\nCouldn't open file");
         CloseHandle(hFile);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
     CloseHandle(hFile);
 #endif
     
     if (CABF2ProtocolReader::CanOpen( (void*)&fileInfo, sizeof(fileInfo) )) {
-        importABF2File( fName, ReturnData, progress );
+        importABF2File( std::string(fName.c_str()), ReturnData, progress );
     } else {
-        importABF1File( fName, ReturnData, progress );
+        importABF1File( std::string(fName.c_str()), ReturnData, progress );
     }
 }
 
 
-void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool progress) {
+void stf::importABF2File(const std::string &fName, Recording &ReturnData, bool progress) {
 #ifndef MODULE_ONLY
     wxProgressDialog progDlg( wxT("Axon binary file 2.x import"), wxT("Starting file import"),
         100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
@@ -155,8 +155,8 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
     // }
 
     if (!abf2.Open( &wfName[0] )) {
-        wxString errorMsg(wxT("Exception while calling importABF2File():\nCouldn't open file"));
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        std::string errorMsg("Exception while calling importABF2File():\nCouldn't open file");
+        throw std::runtime_error(errorMsg);
         abf2.Close();
     }
 #ifdef _STFDEBUG
@@ -166,8 +166,8 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
 #endif
     int nError = 0;
     if (!abf2.Read( &nError )) {
-        wxString errorMsg(wxT("Exception while calling importABF2File():\nCouldn't read file"));
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        std::string errorMsg("Exception while calling importABF2File():\nCouldn't read file");
+        throw std::runtime_error(errorMsg);
         abf2.Close();
     }
             
@@ -195,7 +195,7 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
         if (progress) {
 #ifndef MODULE_ONLY
             int progbar = (int)(((double)nChannel/(double)numberChannels)*100.0);
-            progDlg.Update(progbar, wxT("Memory allocation"));
+            progDlg.Update(progbar, "Memory allocation");
 #endif
         }
         ABFLONG grandsize = pFH->lNumSamplesPerEpisode / numberChannels;
@@ -206,7 +206,7 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
 #else
                << stf::noPath(fName)
 #endif
-               << wxT(", gapfree section");
+               << ", gapfree section";
         if (gapfree) {
             grandsize = pFH->lActualAcqLength / numberChannels;
             Vector_double test_size(0);
@@ -220,7 +220,7 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
             
             if (grandsize <= 0 || grandsize >= maxsize) {
                     
-                wxString segstring("Gapfree file is too large for a single section." \
+                std::string segstring("Gapfree file is too large for a single section." \
                                    "It will be segmented.\nFile opening may be very slow.");
 #ifndef MODULE_ONLY        
                 wxMessageBox(segstring,wxT("Information"), wxOK | wxICON_WARNING, NULL);
@@ -266,13 +266,13 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
             } else {
                 if (!ABF2_GetNumSamples(hFile, pFH, nEpisode, &uNumSamples, &nError)) {
                     std::ostringstream errorMsg;
-                    errorMsg << wxT("Exception while calling ABF2_GetNumSamples() ")
-                             << wxT("for episode # ")
-                             << nEpisode << wxT("\n")
+                    errorMsg << "Exception while calling ABF2_GetNumSamples() "
+                             << "for episode # "
+                             << nEpisode << "\n"
                              << ABF1Error(fName, nError);
                     ReturnData.resize(0);
                     ABF_Close(hFile,&nError);
-                    throw std::runtime_error(std::string(errorMsg.str().c_str()));
+                    throw std::runtime_error(errorMsg.str());
                 }
             }
             // Use a vector here because memory allocation can
@@ -283,11 +283,11 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
             if (!ABF2_ReadChannel(hFile, pFH, pFH->nADCSamplingSeq[nChannel],nEpisode,TempSection,
                                   &uNumSamplesW,&nError))
             {
-                wxString errorMsg(wxT("Exception while calling ABF2_ReadChannel():\n"));
+                std::string errorMsg("Exception while calling ABF2_ReadChannel():\n");
                 errorMsg += ABF1Error(fName, nError);
                 ReturnData.resize(0);
                 ABF_Close(hFile,&nError);
-                throw std::runtime_error(std::string(errorMsg.c_str()));
+                throw std::runtime_error(errorMsg);
             }
             if (uNumSamples!=uNumSamplesW && !gapfree) {
                 ABF_Close(hFile,&nError);
@@ -301,7 +301,7 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
 #else
                     << stf::noPath(fName)
 #endif
-                    << wxT(", Section # ") << nEpisode;
+                    << ", Section # " << nEpisode;
                 Section TempSectionT(TempSection.size(),label.str());
                 std::copy(TempSection.begin(),TempSection.end(),&TempSectionT[0]);
                 try {
@@ -354,30 +354,30 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
 #endif
         }
 
-        wxString channel_name( pFH->sADCChannelName[pFH->nADCSamplingSeq[nChannel]] );
-        if (channel_name.find(wxT("  "))<channel_name.size()) {
-            channel_name.erase(channel_name.begin()+channel_name.find(wxT("  ")),channel_name.end());
+        std::string channel_name( pFH->sADCChannelName[pFH->nADCSamplingSeq[nChannel]] );
+        if (channel_name.find("  ")<channel_name.size()) {
+            channel_name.erase(channel_name.begin()+channel_name.find("  "),channel_name.end());
         }
         ReturnData[nChannel].SetChannelName(channel_name);
 
-        wxString channel_units( pFH->sADCUnits[pFH->nADCSamplingSeq[nChannel]] );
-        if (channel_units.find(wxT("  ")) < channel_units.size()) {
-            channel_units.erase(channel_units.begin() + channel_units.find(wxT("  ")),channel_units.end());
+        std::string channel_units( pFH->sADCUnits[pFH->nADCSamplingSeq[nChannel]] );
+        if (channel_units.find("  ") < channel_units.size()) {
+            channel_units.erase(channel_units.begin() + channel_units.find("  "),channel_units.end());
         }
         ReturnData[nChannel].SetYUnits(channel_units);
     }
 
     if (!ABF_Close(hFile,&nError)) {
-        wxString errorMsg(wxT("Exception in importABFFile():\n"));
+        std::string errorMsg("Exception in importABFFile():\n");
         errorMsg += ABF1Error(fName,nError);
         ReturnData.resize(0);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
     
     ReturnData.SetXScale((double)(pFH->fADCSequenceInterval/1000.0));
     
-    wxString comment(wxT("Created with "));
-    comment += wxString( pFH->sCreatorInfo );
+    std::string comment("Created with ");
+    comment += std::string( pFH->sCreatorInfo );
     ReturnData.SetComment(comment);
     ReturnData.SetDate(dateToStr(pFH->uFileStartDate));
     ReturnData.SetTime(timeToStr(pFH->uFileStartTimeMS));
@@ -391,7 +391,7 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
 #endif
 }
 
-void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool progress) {
+void stf::importABF1File(const std::string &fName, Recording &ReturnData, bool progress) {
 #ifndef MODULE_ONLY
     wxProgressDialog progDlg( wxT("Axon binary file 1.x import"), wxT("Starting file import"),
                               100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
@@ -412,10 +412,10 @@ void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool prog
     if (!ABF_ReadOpen(wfName.c_str(), &hFile, ABF_DATAFILE, &FH,
                       &uMaxSamples, &dwMaxEpi, &nError))
     {
-        wxString errorMsg(wxT("Exception while calling ABF_ReadOpen():\n"));
+        std::string errorMsg("Exception while calling ABF_ReadOpen():\n");
         errorMsg+=ABF1Error(fName,nError);
         ABF_Close(hFile,&nError);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
     /*	if (!ABF_HasData(hFile,pFH)) {
     std::string errorMsg("Exception while calling ABF_ReadOpen():\n"
@@ -440,8 +440,8 @@ void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool prog
                           (double)(dwEpisode-1)/(double)numberSections*(100.0/numberChannels));
 #ifndef MODULE_ONLY
                 wxString progStr;
-                progStr << wxT("Reading channel #") << nChannel + 1 << wxT(" of ") << numberChannels
-                    << wxT(", Section #") << dwEpisode << wxT(" of ") << numberSections;
+                progStr << "Reading channel #" << nChannel + 1 << " of " << numberChannels
+                    << ", Section #" << dwEpisode << " of " << numberSections;
                 progDlg.Update(progbar, progStr);
 #else
                 std::cout << "\r"; // Remove previous entry
@@ -451,11 +451,11 @@ void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool prog
             
             unsigned int uNumSamples=0;
             if (!ABF_GetNumSamples(hFile,&FH,dwEpisode,&uNumSamples,&nError)) {
-                wxString errorMsg( wxT("Exception while calling ABF_GetNumSamples():\n") );
+                std::string errorMsg( "Exception while calling ABF_GetNumSamples():\n" );
                 errorMsg += ABF1Error(fName, nError);
                 ReturnData.resize(0);
                 ABF_Close(hFile,&nError);
-                throw std::runtime_error(std::string(errorMsg.c_str()));
+                throw std::runtime_error(errorMsg);
             }
             // Use a vector here because memory allocation can
             // be controlled more easily:
@@ -465,11 +465,11 @@ void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool prog
             if (!ABF_ReadChannel(hFile, &FH, FH.nADCSamplingSeq[nChannel], dwEpisode, TempSection,
                                  &uNumSamplesW, &nError))
             {
-                wxString errorMsg(wxT("Exception while calling ABF_ReadChannel():\n"));
+                std::string errorMsg("Exception while calling ABF_ReadChannel():\n");
                 errorMsg += ABF1Error(fName, nError);
                 ReturnData.resize(0);
                 ABF_Close(hFile,&nError);
-                throw std::runtime_error(std::string(errorMsg.c_str()));
+                throw std::runtime_error(errorMsg);
             }
             if (uNumSamples!=uNumSamplesW) {
                 ABF_Close(hFile,&nError);
@@ -482,7 +482,7 @@ void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool prog
 #else
                 << stf::noPath(fName)
 #endif
-                << wxT(", Section # ") << dwEpisode;
+                << ", Section # " << dwEpisode;
             Section TempSectionT(TempSection.size(),label.str());
             std::copy(TempSection.begin(),TempSection.end(),&TempSectionT[0]);
             try {
@@ -505,31 +505,31 @@ void stf::importABF1File(const wxString &fName, Recording &ReturnData, bool prog
             throw;
         }
 
-        wxString channel_name( FH.sADCChannelName[FH.nADCSamplingSeq[nChannel]] );
-        if (channel_name.find(wxT("  "))<channel_name.size()) {
-            channel_name.erase(channel_name.begin()+channel_name.find(wxT("  ")),channel_name.end());
+        std::string channel_name( FH.sADCChannelName[FH.nADCSamplingSeq[nChannel]] );
+        if (channel_name.find("  ")<channel_name.size()) {
+            channel_name.erase(channel_name.begin()+channel_name.find("  "),channel_name.end());
         }
         ReturnData[nChannel].SetChannelName(channel_name);
 
-        wxString channel_units( FH.sADCUnits[FH.nADCSamplingSeq[nChannel]] );
-        if (channel_units.find(wxT("  ")) < channel_units.size()) {
-            channel_units.erase(channel_units.begin() + channel_units.find(wxT("  ")),channel_units.end());
+        std::string channel_units( FH.sADCUnits[FH.nADCSamplingSeq[nChannel]] );
+        if (channel_units.find("  ") < channel_units.size()) {
+            channel_units.erase(channel_units.begin() + channel_units.find("  "),channel_units.end());
         }
         ReturnData[nChannel].SetYUnits(channel_units);
     }
 
     if (!ABF_Close(hFile,&nError)) {
-        wxString errorMsg(wxT("Exception in importABFFile():\n"));
+        std::string errorMsg("Exception in importABFFile():\n");
         errorMsg += ABF1Error(fName,nError);
         ReturnData.resize(0);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
     // Apparently, the sample interval has to be multiplied by
     // the number of channels for multiplexed data. Thanks to
     // Dominique Engel for noticing.
     ReturnData.SetXScale((double)(FH.fADCSampleInterval/1000.0)*(double)numberChannels);
-    wxString comment(wxT("Created with "));
-    comment += wxString( FH.sCreatorInfo );
+    std::string comment("Created with ");
+    comment += std::string( FH.sCreatorInfo );
     ReturnData.SetComment(comment);
     ReturnData.SetDate(dateToStr(FH.lFileStartDate));
     ReturnData.SetTime(timeToStr(FH.lFileStartTime));

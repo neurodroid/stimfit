@@ -11,9 +11,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sstream>
-#ifdef MODULE_ONLY
-typedef char wxChar;
-#endif
 
 #include "stringUtils.h"
 #include "byteswap.h"
@@ -140,7 +137,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
 {
     // Initialize in case of error during read
     columnData->points = 0;
-    columnData->title = wxT("");
+    columnData->title = "";
 
     switch ( fileFormat )
     {
@@ -162,7 +159,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
              columnData->points = columnHeader.points;
              columnData->title.resize( 80 );
              PascalToCString( columnHeader.title );
-             columnData->title = wxString( (wxChar*)columnHeader.title );
+             columnData->title = std::string( (char*)columnHeader.title );
 
              // create a new pointer to receive the data
              AXGLONG columnBytes = columnHeader.points * sizeof( float );
@@ -202,7 +199,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  columnData->points = columnHeader.points;
                  columnData->title.resize( 80 );
                  PascalToCString( columnHeader.title );
-                 columnData->title = wxString( (wxChar*)columnHeader.title );
+                 columnData->title = std::string( (char*)columnHeader.title );
 
                  columnData->seriesArray.firstValue = columnHeader.firstPoint;
                  columnData->seriesArray.increment = columnHeader.sampleInterval;
@@ -226,7 +223,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  columnData->points = columnHeader.points;
                  columnData->title.resize( 80 );
                  PascalToCString( columnHeader.title );
-                 columnData->title = wxString( (wxChar*)columnHeader.title );
+                 columnData->title = std::string( (char*)columnHeader.title );
 
                  columnData->scaledShortArray.scale = columnHeader.scalingFactor;
                  columnData->scaledShortArray.offset = 0;
@@ -280,7 +277,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  return result;
              // Copy characters one by one into title (tedious but safe)
              for (std::vector< unsigned char >::const_iterator c = charBuffer.begin()+1; c < charBuffer.end(); c += 2) {
-                 columnData->title += wxChar(*c);
+                 columnData->title += char(*c);
              }
              // UnicodeToCString( columnData->title, columnData->titleLength );
 
@@ -411,10 +408,10 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
 
 }
 
-wxString AG_ReadComment( filehandle refNum )
+std::string AG_ReadComment( filehandle refNum )
 {
     // File comment
-    std::ostringstream comment; comment << wxT("\0");
+    std::ostringstream comment; comment << "\0";
 
     AXGLONG comment_size = 0;
     int result = ReadFromFile( refNum, sizeof(AXGLONG), &comment_size );
@@ -431,7 +428,7 @@ wxString AG_ReadComment( filehandle refNum )
             return comment.str();
         // Copy characters one by one into title (tedious but safe)
         for (std::vector< unsigned char >::const_iterator c = charBuffer.begin()+1; c < charBuffer.end(); c += 2) {
-            comment << wxChar(*c);
+            comment << char(*c);
         }
     }
     
@@ -439,31 +436,31 @@ wxString AG_ReadComment( filehandle refNum )
     return comment.str();
 }
 
-wxString AG_ParseDate( const wxString& notes ) {
-    int datepos = notes.find(wxT("Created on "));
+std::string AG_ParseDate( const std::string& notes ) {
+    int datepos = notes.find("Created on ");
     if (datepos+11 < notes.length()) {
-        wxString full = notes.substr(datepos+11);
-        return full.substr(0, full.find(wxT('\n')));
+        std::string full = notes.substr(datepos+11);
+        return full.substr(0, full.find('\n'));
     } else {
-        return wxString();
+        return std::string();
     }
 }
 
-wxString AG_ParseTime( const wxString& notes ) {
-    int datepos = notes.find(wxT("acquisition at "));
+std::string AG_ParseTime( const std::string& notes ) {
+    int datepos = notes.find("acquisition at ");
     if (datepos+15 < notes.length()) {
-        wxString full = notes.substr(datepos+15);
-        return full.substr(0, full.find(wxT('\n')));
+        std::string full = notes.substr(datepos+15);
+        return full.substr(0, full.find('\n'));
     } else {
-        return wxString();
+        return std::string();
     }
 }
 
-wxString AG_ReadNotes( filehandle refNum )
+std::string AG_ReadNotes( filehandle refNum )
 {
     
     // File notes
-    std::ostringstream notes; notes << wxT("\0");
+    std::ostringstream notes; notes << "\0";
     AXGLONG notes_size = 0;
     int result = ReadFromFile( refNum, sizeof(AXGLONG), &notes_size );
     if ( result )
@@ -479,15 +476,15 @@ wxString AG_ReadNotes( filehandle refNum )
             return notes.str();
         // Copy characters one by one into title (tedious but safe)
         for (std::vector< unsigned char >::const_iterator c = charBuffer.begin()+1; c < charBuffer.end(); c += 2) {
-            notes << wxChar(*c);
+            notes << char(*c);
         }
     }
     return notes.str();
 }
 
-wxString AG_ReadTraceHeaders( filehandle refNum ) {
+std::string AG_ReadTraceHeaders( filehandle refNum ) {
 
-    wxString headers = wxT("\0");
+    std::string headers = "\0";
     AXGLONG num_headers = 0;
     int result = ReadFromFile( refNum, sizeof(AXGLONG), &num_headers );
     if ( result )
