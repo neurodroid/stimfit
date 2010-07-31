@@ -309,8 +309,22 @@ void wxStfChildFrame::UpdateChannels( ) {
 
     if ( pDoc != NULL && pDoc->size() > 1) {
         try {
-            pDoc->SetCurCh( pActChannel->GetCurrentSelection() );
-            pDoc->SetSecCh( pInactChannel->GetCurrentSelection() );
+            if (pActChannel->GetCurrentSelection() >= 0 ||
+                pActChannel->GetCurrentSelection() <  pDoc->size())
+            {
+                pDoc->SetCurCh( pActChannel->GetCurrentSelection() );
+                if (pInactChannel->GetCurrentSelection() >= 0 ||
+                    pInactChannel->GetCurrentSelection() <  pDoc->size())
+                {
+                    pDoc->SetSecCh( pInactChannel->GetCurrentSelection() );
+                } else {
+                    pDoc->SetCurCh(0);
+                    pDoc->SetSecCh(1);
+                }
+            } else {
+                pDoc->SetCurCh(0);
+                pDoc->SetSecCh(1);
+            }
         }
         catch (const std::out_of_range& e) {
             wxString msg(wxT("Error while changing channels\nPlease close file\n"));
