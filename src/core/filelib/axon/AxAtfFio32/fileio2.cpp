@@ -137,7 +137,7 @@ HANDLE CreateFileBuf(ATF_FILEINFO *pATF, DWORD dwDesiredAccess, DWORD dwShareMod
                      DWORD dwFlagsAndAttributes, HANDLE hTemplateFile )
 {
 #ifdef _WINDOWS
-      pATF->hFile = CreateFile(pATF->pszFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes,
+      pATF->hFile = CreateFileA(pATF->pszFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes,
                             dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 #else
       pATF->hFile = c_CreateFile(pATF->pszFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes,

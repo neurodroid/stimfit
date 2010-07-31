@@ -13,22 +13,23 @@ SetCompressor lzma
 
 !define USRDRV "C:\"
 !define LOGIN "cs"
-!define PRODUCT_VERSION "0.9.3rc2"
+!define PRODUCT_VERSION "0.10alpha"
 !define WXW_VERSION "2.9.1"
 !define WXW_VERSION_SHORT "291"
 !define PY_VERSION "2.6.5"
 !define PY_MAJOR "2.6"
 !define NP_VERSION "1.4.1"
 !define EXE_NAME "stimfit"
-!define REG_NAME "Stimfit 0.9"
+!define REG_NAME "Stimfit 0.10"
 !define PRODUCT_PUBLISHER "Christoph Schmidt-Hieber"
 !define PRODUCT_WEB_SITE "http://www.stimfit.org"
 !define STFDIR "${USRDRV}Users\${LOGIN}\stimfit"
 !define MSIDIR "${USRDRV}Users\${LOGIN}\Downloads"
-!define WXWDIR "${USRDRV}Users\${LOGIN}\wxWidgets"
-!define FFTDIR "${USRDRV}Users\${LOGIN}\fftw"
+!define WXWDIR "${USRDRV}Users\${LOGIN}\wxWidgets-${WXW_VERSION}"
 !define WXPDIR "${USRDRV}Users\${LOGIN}\wxWidgets-${WXW_VERSION}/wxPython\final.build"
-!define PRODIR "C:\Program Files"
+!define FFTDIR "${USRDRV}Users\${LOGIN}\fftw"
+!define HDF5DIR "${USRDRV}Users\${LOGIN}\hdf5-1.8.5"
+!define PRODIR "C:\Program Files (x86)"
 !define FULL_WELCOME "This wizard will guide you through the installation \
 of ${REG_NAME} and wxPython. You can optionally \
 install Python ${PY_VERSION} and NumPy ${NP_VERSION} \
@@ -161,7 +162,11 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   SetOutPath $INSTDIR
   
 !ifndef UPDATE
-  File "${FFTDIR}\dll\libfftw3-3.dll"
+  File "${FFTDIR}\libfftw3-3.dll"
+  File "${HDF5DIR}\lib\hdf5_hldll.dll"
+  File "${HDF5DIR}\lib\hdf5dll.dll"
+  File "${HDF5DIR}\lib\szip.dll"
+  File "${HDF5DIR}\lib\zlib1.dll"
   File "${WXWDIR}\lib\vc_dll\wxmsw${WXW_VERSION_SHORT}u_core_vc_custom.dll"
   File "${WXWDIR}\lib\vc_dll\wxbase${WXW_VERSION_SHORT}u_vc_custom.dll"
   File "${WXWDIR}\lib\vc_dll\wxmsw${WXW_VERSION_SHORT}u_aui_vc_custom.dll"

@@ -220,8 +220,8 @@ void stf::importABF2File(const wxString &fName, Recording &ReturnData, bool prog
             
             if (grandsize <= 0 || grandsize >= maxsize) {
                     
-                wxString segstring(wxT("Gapfree file is too large for a single section. " \
-                                       "It will be segmented.\nFile opening may be very slow."));
+                wxString segstring("Gapfree file is too large for a single section." \
+                                   "It will be segmented.\nFile opening may be very slow.");
 #ifndef MODULE_ONLY        
                 wxMessageBox(segstring,wxT("Information"), wxOK | wxICON_WARNING, NULL);
 #else

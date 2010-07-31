@@ -129,7 +129,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="D:\Users\cs\fftw\include;D:\Users\cs\wxPython\include;&quot;C:\Python26\Lib\site-packages\numpy\core\include&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Python26\Lib\site-packages\numpy\core\include&quot;"
 				PreprocessorDefinitions="_UNICODE;WXUSINGDLL;__STF__;__WIN32__;WIN32;__WXMSW__;WXP_USE_THREAD=1;NOPCH;_CRT_SECURE_NO_DEPRECATE;WITH_PYTHON;HAVE_LAPACK;_WINDOWS;NDEBUG"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
@@ -308,7 +308,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="&quot;D:\Users\cs\swig\swig.exe&quot; -c++ -python &quot;$(InputPath)&quot;&#x0D;&#x0A;"
+						CommandLine="&quot;C:\cygwin\bin\swig.exe&quot; -c++ -python &quot;$(InputPath)&quot;&#x0D;&#x0A;"
 						Outputs="$(InputName)_wrap.cxx"
 					/>
 				</FileConfiguration>
