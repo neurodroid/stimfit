@@ -126,10 +126,10 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
 #endif
     resultsPrintPen(*wxLIGHT_GREY,printSizePen2,wxSOLID),//Solid light grey line
     latencyPrintPen(*wxBLUE,printSizePen1,wxDOT),//Dotted violett line
+    PSlopePrintPen(wxColour(30,144,255), printSizePen1, wxDOT), // Dotted bright blue line
     baseBrush(*wxLIGHT_GREY,wxBDIAGONAL_HATCH),
     zeroBrush(*wxLIGHT_GREY,wxFDIAGONAL_HATCH),
     lastLDown(0,0),
-    PSlopePrintPen(wxColour(30,144,255), printSizePen1, wxDOT), // Dotted bright blue line
     m_zoomContext( new wxMenu ),
     m_eventContext( new wxMenu )
 {
@@ -166,362 +166,23 @@ void wxStfGraph::OnDraw( wxDC& DC )
         return;
     wxRect WindowRect(GetRect());
 
-    if (isPrinted)
-    {	//enhance resolution for printing - see OnPrint()
-        //Ensures the scaling of all pixel dependent drawings
+    if (isPrinted) {
+        PrintScale(WindowRect);
+    }
 
-        //Calculate scaling
-
-        for ( ch_it cit = Doc()->get().begin(); cit != Doc()->get().end(); ++cit ) {
-            cit->GetYZoomW() = cit->GetYZoomW() * printScale;
-        }
-        Doc()->GetXZoomW() = Doc()->GetXZoomW() * printScale;
-        WindowRect=printRect;
-        //Calculate scaling variables
-        boebbelPrint=(int)(boebbelStd * printScale);
-        if ( boebbelPrint < 1 ) boebbelPrint=2;
-        printSizePen1=(int)(1 * printScale);
-        if ( printSizePen1 < 1 ) boebbelPrint=1;
-        printSizePen2=(int)(2 * printScale);
-        if ( printSizePen2 < 1 ) boebbelPrint=2;
-        printSizePen4=(int)(4 * printScale);
-        if ( printSizePen4 < 1 ) boebbelPrint=4;
-
-
-    }	//End if print out
     if (firstPass) {
         firstPass = false;
-
-/*        wxAuiPaneInfo graphInfo;
-        pFrame->GetMgr()->AddPane( this, graphInfo.Caption(wxT("Traces")).Name(wxT("Traces")).CaptionVisible(true).
-                CloseButton(false).Centre().PaneBorder(true) );
-        pFrame->GetMgr()->Update();
-        pFrame->ActivateGraph();
-*/
-        if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewScaleBars"),1)) {
-            pFrame->GetMenuBar()->GetMenu(2)->Check(ID_SCALE,true);
-            wxGetApp().set_isBars(true);
-        } else {
-            pFrame->GetMenuBar()->GetMenu(2)->Check(ID_SCALE,false);
-            wxGetApp().set_isBars(false);
-        }
-
-        if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewSyncx"),1)) {
-            // ParentFrame()->GetMenu()->CheckMenuItem(ID_VIEW_SYNCX,MF_CHECKED);
-            isSyncx=true;
-        } else {
-            // ParentFrame()->GetMenu()->CheckMenuItem(ID_VIEW_SYNCX,MF_UNCHECKED);
-            isSyncx=false;
-        }
-
-        if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewHiRes"),1)) {
-            pFrame->GetMenuBar()->GetMenu(2)->Check(ID_HIRES,true);
-#ifndef __APPLE__
-            wxGetApp().set_isHires(true);
-#else
-            wxGetApp().set_isHires(false);
-#endif
-        } else {
-            pFrame->GetMenuBar()->GetMenu(2)->Check(ID_HIRES,false);
-            wxGetApp().set_isHires(false);
-        }
-        //Ensure proper dimensioning
-        //Determine scaling factors and Units
-        //Zoom and offset variables are currently not part of the settings dialog =>
-        //Read from registry
-        YZW()=(double)(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("zoom.yZoom"), 1)
-                / 100000.0);
-        SPYW()=wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("zoom.startPosY"), 1);
-        XZW()=(double)(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("zoom.xZoom"), 1)
-                / 100000.0);
-        SPXW()=wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("zoom.startPosX"), 1);
-
-
-        if (XZ() <= 0 || YZ() <= 0)
-            Fittowindow(false);
-        if ((Doc()->size()>1))
-        {	//Second channel is not part of the settings dialog =>read from registry
-            SPY2W() =
-                wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("Zoom.startPosY2"), 1);
-            YZ2W() =
-                (double)(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("Zoom.yZoom2"), 1)
-                        / 100000.0);
-            //Ensure proper dimensioning
-            if (YZ2() <=0)
-                FitToWindowSecCh(false);
-        }
-        //Peak, Base, 20/80 rise time, half duration, ratio of rise/slope,
-        //maximum slope and latencycursor calculation and update of result box
-        // wxGetApp().OnPeakcalcexecMsg();
+        InitPlot();
     }
+    
     //Creates scale bars and labelings for display or print out
     //Calculate scale bars and labelings
     CreateScale(&DC);
 
     //Create additional rulers/lines and circles on display
     if (!no_gimmicks) 	{
-
-        // crosshair through measurement cursor:
-        int crosshairSize=20;
-        if (!isPrinted) {
-            DC.SetPen(measPen);
-        } else {
-            DC.SetPen(measPrintPen);
-            crosshairSize=(int)(crosshairSize*printScale);
-        }
-        try {
-            // circle:
-            wxPoint corner(xFormat(Doc()->GetMeasCursor())-crosshairSize,
-                    yFormat(Doc()->GetMeasValue())-crosshairSize);
-            wxRect frame(
-                    wxPoint( xFormat(Doc()->GetMeasCursor())-crosshairSize,
-                             yFormat(Doc()->GetMeasValue())-crosshairSize ),
-                    wxPoint( xFormat(Doc()->GetMeasCursor())+crosshairSize,
-                             yFormat(Doc()->GetMeasValue())+crosshairSize )
-            );
-            DC.DrawEllipse(frame);//, corner, corner);
-            // vertical part:
-            DC.DrawLine( xFormat(Doc()->GetMeasCursor()),
-                         yFormat(Doc()->GetMeasValue())-crosshairSize,
-                         xFormat(Doc()->GetMeasCursor()),
-                         yFormat(Doc()->GetMeasValue())+crosshairSize );
-            if (wxGetApp().GetCursorsDialog()!=NULL &&
-                    wxGetApp().GetCursorsDialog()->IsShown())
-            {
-                if (wxGetApp().GetCursorsDialog()->GetRuler())
-                {
-                    DrawVLine(&DC,Doc()->GetMeasCursor());
-                }
-            }
-
-            // horizontal part:
-            DC.DrawLine( xFormat(Doc()->GetMeasCursor())-crosshairSize,
-                         yFormat(Doc()->GetMeasValue()),
-                         xFormat(Doc()->GetMeasCursor())+crosshairSize,
-                         yFormat(Doc()->GetMeasValue()) );
-        }
-        catch (const std::out_of_range& e) {
-            wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
-            return;
-        }
-
-        // crosshair through threshold:
-        if (Doc()->GetThrT() >= 0) {
-            int thrCrosshairSize = crosshairSize / 2.0;        
-            if (!isPrinted) {
-                DC.SetPen(peakPen);
-            } else {
-                DC.SetPen(peakPrintPen);
-                thrCrosshairSize=(int)(thrCrosshairSize*printScale);
-            }
-            try {
-                // circle:
-                wxPoint corner(xFormat(Doc()->GetThrT())-thrCrosshairSize,
-                               yFormat(Doc()->GetThreshold())-thrCrosshairSize);
-                wxRect frame(
-                             wxPoint( xFormat(Doc()->GetThrT())-thrCrosshairSize,
-                                      yFormat(Doc()->GetThreshold())-thrCrosshairSize ),
-                             wxPoint( xFormat(Doc()->GetThrT())+thrCrosshairSize,
-                                      yFormat(Doc()->GetThreshold())+thrCrosshairSize )
-                             );
-                DC.DrawEllipse(frame);//, corner, corner);
-                // vertical part:
-                DC.DrawLine( xFormat(Doc()->GetThrT()),
-                             yFormat(Doc()->GetThreshold())-thrCrosshairSize,
-                             xFormat(Doc()->GetThrT()),
-                             yFormat(Doc()->GetThreshold())+thrCrosshairSize );
-                if (wxGetApp().GetCursorsDialog()!=NULL &&
-                    wxGetApp().GetCursorsDialog()->IsShown())
-                {
-                    if (wxGetApp().GetCursorsDialog()->GetRuler())
-                    {
-                        DrawVLine(&DC,Doc()->GetThrT());
-                    }
-                }
-                
-                // horizontal part:
-                DC.DrawLine( xFormat(Doc()->GetThrT())-thrCrosshairSize,
-                             yFormat(Doc()->GetThreshold()),
-                             xFormat(Doc()->GetThrT())+thrCrosshairSize,
-                             yFormat(Doc()->GetThreshold()) );
-            }
-            catch (const std::out_of_range& e) {
-                wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
-                return;
-            }
-        }
-
-        //creates red vertical and horizontal dashed lines through the peak
-        if (!isPrinted)
-            DC.SetPen(peakPen);
-        else
-            DC.SetPen(peakPrintPen);
-        DrawVLine(&DC,Doc()->GetMaxT());
-        DrawHLine(&DC,Doc()->GetPeak());
-        //and red dotted lines through peak calculation limits
-        if (!isPrinted)
-            DC.SetPen(peakLimitPen);
-        else
-            DC.SetPen(peakLimitPrintPen);
-        DrawVLine(&DC,Doc()->GetPeakBeg());
-        DrawVLine(&DC,Doc()->GetPeakEnd());
-
-        //creates a green horizontal dashed line through the base
-        if (!isPrinted)
-            DC.SetPen(basePen);
-        else
-            DC.SetPen(basePrintPen);
-        DrawHLine(&DC,Doc()->GetBase());
-        //and green dotted lines through Doc()->GetBase() calculation limits
-        if (!isPrinted)
-            DC.SetPen(baseLimitPen);
-        else
-            DC.SetPen(baseLimitPrintPen);
-        DrawVLine(&DC,Doc()->GetBaseBeg());
-        DrawVLine(&DC,Doc()->GetBaseEnd());
-
-        //Create darkblue dotted lines through decay calculation limits
-        if (!isPrinted)
-            DC.SetPen(decayLimitPen);
-        else
-            DC.SetPen(decayLimitPrintPen);
-        DrawVLine(&DC,Doc()->GetFitBeg());
-        DrawVLine(&DC,Doc()->GetFitEnd());
-
-        // Create dotted line as a latency cursor
-        if (!isPrinted)
-            DC.SetPen(latencyPen);
-        else
-            DC.SetPen(latencyPrintPen);
-        DrawVLine(&DC,Doc()->GetLatencyBeg());
-        DrawVLine(&DC,Doc()->GetLatencyEnd());
-        // Create double-arrow between latency cursors:
-        int latStart=xFormat(Doc()->GetLatencyBeg());
-        int latEnd=xFormat(Doc()->GetLatencyEnd());
-        DC.DrawLine(latStart,20,latEnd,20);
-        // left arrowhead:
-        DC.DrawLine(latStart+1,20,latStart+6,15);
-        DC.DrawLine(latStart+1,20,latStart+6,25);
-        // right arrowhead:
-        DC.DrawLine(latEnd-1,20,latEnd-6,15);
-        DC.DrawLine(latEnd-1,20,latEnd-6,25);
-
-#ifdef WITH_PSLOPE
-        // Create dotted bright blue line as slope cursor
-        if (!isPrinted)
-            DC.SetPen(PSlopePen);
-        else
-            DC.SetPen(PSlopePrintPen);
-        DrawVLine(&DC, Doc()->GetPSlopeBeg());
-        DrawVLine(&DC, Doc()->GetPSlopeEnd());
-#endif 
-
-        // Created dashed line to indicate the alignment cursor
-        /*		if (!isPrinted && (Doc()->size()>1)) {
-        DC.SetPen(alignPen);
-        DrawVLine(&DC,Doc()->GetAPMaxSlopeT());
-        }
-         */
-        //Set circle size depending on output
-        if (!isPrinted)
-            boebbel=boebbelStd;
-        else
-            boebbel=boebbelPrint;
-
-        if (Doc()->cur().HasEvents()) {
-            DC.SetPen(eventPen);
-            for (c_event_it it = Doc()->cur().GetEvents().begin(); it != Doc()->cur().GetEvents().end(); ++it) {
-                // Create small arrows indicating the start of an event:
-                eventArrow(&DC, (int)it->GetEventStartIndex());
-                // Create circles indicating the peak of an event:
-                try {
-                    DrawCircle( &DC, it->GetEventPeakIndex(), Doc()->cur().at(it->GetEventPeakIndex()) );
-                }
-                catch (const std::out_of_range& e) {
-                    wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
-                    return;
-                }
-            }
-
-            // resize list if necessary:
-            if (cbList.size() != Doc()->cur().GetEvents().size()) {
-                // destroy checkboxes that are not needed:
-                for (std::size_t n_cbl = Doc()->cur().GetEvents().size();
-                n_cbl < cbList.size();
-                ++n_cbl)
-                {
-                    cbList[n_cbl]->Destroy();
-                }
-                cbList.resize(Doc()->cur().GetEvents().size());
-            }
-            std::size_t n_cb = 0;
-            for (event_it it2 = Doc()->cur().GetEventsW().begin(); it2 != Doc()->cur().GetEventsW().end(); ++it2) {
-                try {
-                    if (cbList.at(n_cb) == NULL) {
-                        cbList.at(n_cb) =
-                            new wxStfCheckBox(
-                                    this, -1, wxEmptyString, &*it2,
-                                    wxPoint(xFormat(it2->GetEventStartIndex()), 0));
-                    }
-                    cbList.at(n_cb)->ResetEvent( &*it2 );
-                    cbList.at(n_cb++)->Move(
-                            wxPoint(xFormat(it2->GetEventStartIndex()), 0));
-                }
-                catch (const std::out_of_range& e) {
-                    wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
-                    return;
-                }
-            }
-            // return focus to frame:
-            SetFocus();
-        } else { // no events
-            // Destroy checkboxes (if any)
-            std::vector<wxStfCheckBox*>::iterator it2;
-            for (it2 = cbList.begin(); it2 != cbList.end(); ++it2) {
-                if (*it2 != NULL)
-                    (*it2)->Destroy();
-            }
-            if (!cbList.empty())
-                cbList.clear();
-        }
-
-        if (Doc()->cur().HasPyMarkers()) {
-            DC.SetPen(eventPen);
-            for (c_marker_it it = Doc()->cur().GetPyMarkers().begin(); it != Doc()->cur().GetPyMarkers().end(); ++it) {
-                // Create circles indicating the peak of an event:
-                DC.DrawRectangle( xFormat(it->x), yFormat(it->y), boebbel*2.0, boebbel*2.0 );
-            }
-        }
-
-        //draws green circles around the 20% and the 80% rise times
-        if (!isPrinted)
-            DC.SetPen(rtPen);
-        else
-            DC.SetPen(rtPrintPen);
-
-        double reference = Doc()->GetBase();
-        if ( !Doc()->GetFromBase() && Doc()->GetThrT() >= 0 ) {
-            reference = Doc()->GetThreshold();
-        }
-        DrawCircle(&DC,Doc()->GetT20Real(),0.8*reference+0.2*Doc()->GetPeak());
-        DrawCircle(&DC,Doc()->GetT80Real(),0.2*reference+0.8*Doc()->GetPeak());
-
-        //draws circles around the half duration limits
-        if (!isPrinted)
-            DC.SetPen(hdPen);
-        else
-            DC.SetPen(hdPrintPen);
-        DrawCircle(&DC,Doc()->GetT50LeftReal(),Doc()->GetT50Y());
-        DrawCircle(&DC,Doc()->GetT50RightReal(),Doc()->GetT50Y());
-
-        //draws dark violet circles around the points of steepest rise/decay
-        if (!isPrinted)
-            DC.SetPen(rdPen);
-        else
-            DC.SetPen(rdPrintPen);
-        DrawCircle(&DC,Doc()->GetMaxRiseT(),Doc()->GetMaxRiseY());
-        DrawCircle(&DC,Doc()->GetMaxDecayT(),Doc()->GetMaxDecayY());
-    }	//End create additional rulers/lines and circles
+        PlotGimmicks(DC);
+    }
 
     //Plot all selected traces and fitted functions if at least one trace ist selected
     //and 'is selected' is selected in the trace navigator/control box
@@ -532,45 +193,13 @@ void wxStfGraph::OnDraw( wxDC& DC )
     //Plot fit curves (including current trace)
     DrawFit(&DC);
 
-    if (!Doc()->GetSelectedSections().empty() && pFrame->PlotSelected())
-    {
-        if (!isPrinted)
-        {	//Draw traces on display
-            DC.SetPen(selectPen);
-            for (unsigned m=0; m < Doc()->GetSelectedSections().size(); ++m)
-            {
-                //For display use point to point drawing
-                PlotTrace(
-                        &DC,
-                        Doc()->get()[Doc()->GetCurCh()][Doc()->GetSelectedSections()[m]].get()
-                );
-            }
-        }  //End draw traces on display
-        else
-        {  //Draw traces for print out
-            DC.SetPen(selectPrintPen);
-            for (unsigned m=0; m < Doc()->GetSelectedSections().size() && Doc()->GetSelectedSections().size()>0; ++m)
-            {
-                PrintTrace(&DC,Doc()->get()[Doc()->GetCurCh()][Doc()->GetSelectedSections()[m]].get());
-            }	//End draw for print out
-        }	//End if display or print out
+    if (!Doc()->GetSelectedSections().empty() && pFrame->PlotSelected()) {
+        PlotSelected(DC);
     }	//End plot all selected traces
 
     //Plot average
-    if (Doc()->GetIsAverage())
-    {	//Average is calculated but not plotted
-        if (!isPrinted)
-        {	//Draw Average on display
-            //For display use point to point drawing
-            DC.SetPen(averagePen);
-            PlotTrace(&DC,Doc()->GetAverage()[0][0].get());
-        }	//End draw Average on display
-        else
-        {	//Draw average for print out
-            //For print out use polyline tool
-            DC.SetPen(averagePrintPen);
-            PrintTrace(&DC,Doc()->GetAverage()[0][0].get());
-        }	//End draw average for print out
+    if (Doc()->GetIsAverage()) {
+        PlotAverage(DC);
     }	//End plot average
 
 
@@ -579,29 +208,17 @@ void wxStfGraph::OnDraw( wxDC& DC )
         DrawIntegral(&DC);
     }
 
-    //Zoom window is displayed (see OnLeftButtonUp()) ...
-    if (isZoomRect)
-    {
-        DC.SetPen(ZoomRectPen);
-        wxPoint ZoomPoints[4];
-        wxPoint Ul_Corner((int)llz_x, (int)llz_y);
-        wxPoint Ur_Corner((int)ulz_x, (int)llz_y);
-        wxPoint Lr_Corner((int)ulz_x, (int)ulz_y);
-        wxPoint Ll_Corner((int)llz_x, (int)ulz_y);
-        ZoomPoints[0]=Ul_Corner;
-        ZoomPoints[1]=Ur_Corner;
-        ZoomPoints[2]=Lr_Corner;
-        ZoomPoints[3]=Ll_Corner;
-        DC.DrawPolygon(4,ZoomPoints);
+    //Zoom window is displayed (see OnLeftButtonUp())
+    if (isZoomRect) {
+        DrawZoomRect(DC);
     }
     //End zoom
 
     //Plot of the second channel
     //Trace one when displayed first time
-    if ((Doc()->size()>1) && pFrame->ShowSecond())
-    {
-        if (!isPrinted)
-        {	//Draw current trace on display
+    if ((Doc()->size()>1) && pFrame->ShowSecond()) {
+        if (!isPrinted) {
+            //Draw current trace on display
             //For display use point to point drawing
             DC.SetPen(standardPen2);
             PlotTrace(&DC,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(), true);
@@ -614,14 +231,13 @@ void wxStfGraph::OnDraw( wxDC& DC )
 
     //Standard plot of the current trace
     //Trace one when displayed first time
-    if (!isPrinted)
-    {	//Draw current trace on display
+    if (!isPrinted) {
+	//Draw current trace on display
         //For display use point to point drawing
         DC.SetPen(standardPen);
         PlotTrace(&DC,Doc()->get()[Doc()->GetCurCh()][Doc()->GetCurSec()].get());
-    }
-    else
-    {	//Draw average for print out
+    } else {
+	//Draw average for print out
         //For print out use polyline tool
         DC.SetPen(standardPrintPen);
         PrintTrace(&DC,Doc()->get()[Doc()->GetCurCh()][Doc()->GetCurSec()].get());
@@ -629,8 +245,7 @@ void wxStfGraph::OnDraw( wxDC& DC )
     //End plot of the current trace
 
     //Ensure old scaling after print out
-    if(isPrinted)
-    {
+    if(isPrinted) {
         for ( ch_it cit = Doc()->get().begin(); cit != Doc()->get().end(); ++cit ) {
             cit->GetYZoomW() = cit->GetYZoomW() * (1.0/printScale);
         }
@@ -639,6 +254,295 @@ void wxStfGraph::OnDraw( wxDC& DC )
     }	//End ensure old scaling after print out
 
     view->OnDraw(& DC);
+}
+
+void wxStfGraph::InitPlot() {
+
+    if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewScaleBars"),1)) {
+        pFrame->GetMenuBar()->GetMenu(2)->Check(ID_SCALE,true);
+        wxGetApp().set_isBars(true);
+    } else {
+        pFrame->GetMenuBar()->GetMenu(2)->Check(ID_SCALE,false);
+        wxGetApp().set_isBars(false);
+    }
+
+    if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewSyncx"),1)) {
+        isSyncx=true;
+    } else {
+        isSyncx=false;
+    }
+
+    if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewHiRes"),1)) {
+        pFrame->GetMenuBar()->GetMenu(2)->Check(ID_HIRES,true);
+#ifndef __APPLE__
+        wxGetApp().set_isHires(true);
+#else
+        wxGetApp().set_isHires(false);
+#endif
+    } else {
+        pFrame->GetMenuBar()->GetMenu(2)->Check(ID_HIRES,false);
+        wxGetApp().set_isHires(false);
+    }
+
+    // Ensure proper dimensioning
+    // Determine scaling factors and Units
+    // Zoom and offset variables are currently not part of the settings dialog =>
+    // Read from registry
+    // Return a negative value upon first program start so that the trace is
+    // fit to the window dimensions
+    YZW()=(double)(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("zoom.yZoom"), -1)
+                   / 100000.0);
+    SPYW()=wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("zoom.startPosY"), 0);
+    XZW()=(double)(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("zoom.xZoom"), -1)
+                   / 100000.0);
+    SPXW()=wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("zoom.startPosX"), 0);
+
+
+    if (XZ() <= 0 || YZ() <= 0)
+        Fittowindow(false);
+    if ((Doc()->size()>1))
+    {	//Second channel is not part of the settings dialog =>read from registry
+        SPY2W() =
+            wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("Zoom.startPosY2"), 1);
+        YZ2W() =
+            (double)(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("Zoom.yZoom2"), 1)
+                     / 100000.0);
+        //Ensure proper dimensioning
+        if (YZ2() <=0)
+            FitToWindowSecCh(false);
+    }
+}
+
+void wxStfGraph::PlotSelected(wxDC& DC) {
+    if (!isPrinted)
+    {	//Draw traces on display
+        DC.SetPen(selectPen);
+        for (unsigned m=0; m < Doc()->GetSelectedSections().size(); ++m)
+        {
+            //For display use point to point drawing
+            PlotTrace(
+                      &DC,
+                      Doc()->get()[Doc()->GetCurCh()][Doc()->GetSelectedSections()[m]].get()
+                      );
+        }
+    }  //End draw traces on display
+    else
+    {  //Draw traces for print out
+        DC.SetPen(selectPrintPen);
+        for (unsigned m=0; m < Doc()->GetSelectedSections().size() && Doc()->GetSelectedSections().size()>0; ++m)
+        {
+            PrintTrace(&DC,Doc()->get()[Doc()->GetCurCh()][Doc()->GetSelectedSections()[m]].get());
+        }	//End draw for print out
+    }	//End if display or print out
+}
+
+void wxStfGraph::PlotAverage(wxDC& DC) {
+    //Average is calculated but not plotted
+    if (!isPrinted)
+    {	//Draw Average on display
+        //For display use point to point drawing
+        DC.SetPen(averagePen);
+        PlotTrace(&DC,Doc()->GetAverage()[0][0].get());
+    }	//End draw Average on display
+    else
+    {	//Draw average for print out
+        //For print out use polyline tool
+        DC.SetPen(averagePrintPen);
+        PrintTrace(&DC,Doc()->GetAverage()[0][0].get());
+    }	//End draw average for print out
+}
+
+void wxStfGraph::DrawZoomRect(wxDC& DC) {
+    DC.SetPen(ZoomRectPen);
+    wxPoint ZoomPoints[4];
+    wxPoint Ul_Corner((int)llz_x, (int)llz_y);
+    wxPoint Ur_Corner((int)ulz_x, (int)llz_y);
+    wxPoint Lr_Corner((int)ulz_x, (int)ulz_y);
+    wxPoint Ll_Corner((int)llz_x, (int)ulz_y);
+    ZoomPoints[0]=Ul_Corner;
+    ZoomPoints[1]=Ur_Corner;
+    ZoomPoints[2]=Lr_Corner;
+    ZoomPoints[3]=Ll_Corner;
+    DC.DrawPolygon(4,ZoomPoints);
+}
+
+void wxStfGraph::PlotGimmicks(wxDC& DC) {
+
+    // crosshair through measurement cursor:
+    int crosshairSize=20;
+    DrawCrosshair(DC, measPen, measPrintPen, crosshairSize, Doc()->GetMeasCursor(), Doc()->GetMeasValue());
+
+    // crosshair through threshold:
+    DrawCrosshair(DC, peakPen, peakPrintPen, crosshairSize/2.0, Doc()->GetThrT(), Doc()->GetThreshold());
+
+    //creates red vertical and horizontal dashed lines through the peak
+    DrawVLine(&DC,Doc()->GetMaxT(), peakPen, peakPrintPen);
+    DrawHLine(&DC,Doc()->GetPeak(), peakPen, peakPrintPen);
+    //and red dotted lines through peak calculation limits
+    DrawVLine(&DC,Doc()->GetPeakBeg(), peakLimitPen, peakLimitPrintPen);
+    DrawVLine(&DC,Doc()->GetPeakEnd(), peakLimitPen, peakLimitPrintPen);
+
+    //creates a green horizontal dashed line through the base
+    DrawHLine(&DC,Doc()->GetBase(), basePen, basePrintPen);
+    //and green dotted lines through Doc()->GetBase() calculation limits
+    DrawVLine(&DC,Doc()->GetBaseBeg(), baseLimitPen, baseLimitPrintPen);
+    DrawVLine(&DC,Doc()->GetBaseEnd(), baseLimitPen, baseLimitPrintPen);
+
+    //Create darkblue dotted lines through decay calculation limits
+    DrawVLine(&DC,Doc()->GetFitBeg(), decayLimitPen, decayLimitPrintPen);
+    DrawVLine(&DC,Doc()->GetFitEnd(), decayLimitPen, decayLimitPrintPen);
+
+    // Create dotted line as a latency cursor
+    DrawVLine(&DC,Doc()->GetLatencyBeg(), latencyPen, latencyPrintPen);
+    DrawVLine(&DC,Doc()->GetLatencyEnd(), latencyPen, latencyPrintPen);
+
+    // Create double-arrow between latency cursors:
+    int latStart=xFormat(Doc()->GetLatencyBeg());
+    int latEnd=xFormat(Doc()->GetLatencyEnd());
+    DC.DrawLine(latStart,20,latEnd,20);
+    // left arrowhead:
+    DC.DrawLine(latStart+1,20,latStart+6,15);
+    DC.DrawLine(latStart+1,20,latStart+6,25);
+    // right arrowhead:
+    DC.DrawLine(latEnd-1,20,latEnd-6,15);
+    DC.DrawLine(latEnd-1,20,latEnd-6,25);
+
+#ifdef WITH_PSLOPE
+    // Create dotted bright blue line as slope cursor
+    DrawVLine(&DC, Doc()->GetPSlopeBeg(), PSlopePen, PSlopePrintPen);
+    DrawVLine(&DC, Doc()->GetPSlopeEnd(), PSlopePen, PSlopePrintPen);
+#endif 
+
+    //Set circle size depending on output
+    if (!isPrinted)
+        boebbel=boebbelStd;
+    else
+        boebbel=boebbelPrint;
+
+    //draws green circles around the 20% and the 80% rise times
+    double reference = Doc()->GetBase();
+    if ( !Doc()->GetFromBase() && Doc()->GetThrT() >= 0 ) {
+        reference = Doc()->GetThreshold();
+    }
+    DrawCircle(&DC,Doc()->GetT20Real(),0.8*reference+0.2*Doc()->GetPeak(), rtPen, rtPrintPen);
+    DrawCircle(&DC,Doc()->GetT80Real(),0.2*reference+0.8*Doc()->GetPeak(), rtPen, rtPrintPen);
+
+    //draws circles around the half duration limits
+    DrawCircle(&DC,Doc()->GetT50LeftReal(),Doc()->GetT50Y(), hdPen, hdPrintPen);
+    DrawCircle(&DC,Doc()->GetT50RightReal(),Doc()->GetT50Y(), hdPen, hdPrintPen);
+
+    //draws dark violet circles around the points of steepest rise/decay
+    DrawCircle(&DC,Doc()->GetMaxRiseT(),Doc()->GetMaxRiseY(), rdPen, rdPrintPen);
+    DrawCircle(&DC,Doc()->GetMaxDecayT(),Doc()->GetMaxDecayY(), rdPen, rdPrintPen);
+    
+    if (Doc()->cur().HasEvents()) {
+        PlotEvents(DC);
+    } else { // no events
+        // Destroy checkboxes (if any)
+        std::vector<wxStfCheckBox*>::iterator it2;
+        for (it2 = cbList.begin(); it2 != cbList.end(); ++it2) {
+            if (*it2 != NULL)
+                (*it2)->Destroy();
+        }
+        if (!cbList.empty())
+            cbList.clear();
+    }
+
+    if (Doc()->cur().HasPyMarkers()) {
+        DC.SetPen(eventPen);
+        for (c_marker_it it = Doc()->cur().GetPyMarkers().begin(); it != Doc()->cur().GetPyMarkers().end(); ++it) {
+            // Create circles indicating the peak of an event:
+            DC.DrawRectangle( xFormat(it->x), yFormat(it->y), boebbel*2.0, boebbel*2.0 );
+        }
+    }
+
+}
+
+void wxStfGraph::PlotEvents(wxDC& DC) {
+    DC.SetPen(eventPen);
+    for (c_event_it it = Doc()->cur().GetEvents().begin(); it != Doc()->cur().GetEvents().end(); ++it) {
+        // Create small arrows indicating the start of an event:
+        eventArrow(&DC, (int)it->GetEventStartIndex());
+        // Create circles indicating the peak of an event:
+        try {
+            DrawCircle( &DC, it->GetEventPeakIndex(), Doc()->cur().at(it->GetEventPeakIndex()), eventPen, eventPen );
+        }
+        catch (const std::out_of_range& e) {
+            wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
+            return;
+        }
+    }
+
+    // resize list if necessary:
+    if (cbList.size() != Doc()->cur().GetEvents().size()) {
+        // destroy checkboxes that are not needed:
+        for (std::size_t n_cbl = Doc()->cur().GetEvents().size();
+             n_cbl < cbList.size();
+             ++n_cbl)
+        {
+            cbList[n_cbl]->Destroy();
+        }
+        cbList.resize(Doc()->cur().GetEvents().size());
+    }
+    std::size_t n_cb = 0;
+    for (event_it it2 = Doc()->cur().GetEventsW().begin(); it2 != Doc()->cur().GetEventsW().end(); ++it2) {
+        try {
+            if (cbList.at(n_cb) == NULL) {
+                cbList.at(n_cb) =
+                    new wxStfCheckBox(
+                                      this, -1, wxEmptyString, &*it2,
+                                      wxPoint(xFormat(it2->GetEventStartIndex()), 0));
+            }
+            cbList.at(n_cb)->ResetEvent( &*it2 );
+            cbList.at(n_cb++)->Move(
+                                    wxPoint(xFormat(it2->GetEventStartIndex()), 0));
+        }
+        catch (const std::out_of_range& e) {
+            wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
+            return;
+        }
+    }
+    // return focus to frame:
+    SetFocus();
+}
+
+void wxStfGraph::DrawCrosshair( wxDC& DC, const wxPen& pen, const wxPen& printPen, int crosshairSize, double xch, double ych) {
+    wxPen chpen = pen;
+    if (isPrinted) {
+        chpen = printPen;
+        crosshairSize=(int)(crosshairSize*printScale);
+    }
+    DC.SetPen(chpen);
+    try {
+        // circle:
+        wxRect frame(wxPoint( xFormat(xch)-crosshairSize,
+                              yFormat(ych)-crosshairSize ),
+                     wxPoint( xFormat(xch)+crosshairSize,
+                              yFormat(ych)+crosshairSize ));
+        DC.DrawEllipse(frame);
+        // vertical part:
+        DC.DrawLine( xFormat(xch),
+                     yFormat(ych)-crosshairSize,
+                     xFormat(xch),
+                     yFormat(ych)+crosshairSize );
+        if (wxGetApp().GetCursorsDialog()!=NULL &&
+            wxGetApp().GetCursorsDialog()->IsShown())
+        {
+            if (wxGetApp().GetCursorsDialog()->GetRuler())
+            {
+                DrawVLine(&DC,xch, pen, printPen);
+            }
+        }
+
+        // horizontal part:
+        DC.DrawLine( xFormat(xch)-crosshairSize, yFormat(ych),
+                     xFormat(xch)+crosshairSize, yFormat(ych) );
+    }
+    catch (const std::out_of_range& e) {
+        wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
+        return;
+    }
+
 }
 
 void wxStfGraph::PlotTrace( wxDC* pDC, const Vector_double& trace, bool is2 ) {
@@ -717,6 +621,26 @@ void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int e
     }
 }
 
+void wxStfGraph::PrintScale(wxRect& WindowRect) {
+    //enhance resolution for printing - see OnPrint()
+    //Ensures the scaling of all pixel dependent drawings
+     
+    for ( ch_it cit = Doc()->get().begin(); cit != Doc()->get().end(); ++cit ) {
+        cit->GetYZoomW() = cit->GetYZoomW() * printScale;
+    }
+    Doc()->GetXZoomW() = Doc()->GetXZoomW() * printScale;
+    WindowRect=printRect;
+    //Calculate scaling variables
+    boebbelPrint=(int)(boebbelStd * printScale);
+    if ( boebbelPrint < 1 ) boebbelPrint=2;
+    printSizePen1=(int)(1 * printScale);
+    if ( printSizePen1 < 1 ) boebbelPrint=1;
+    printSizePen2=(int)(2 * printScale);
+    if ( printSizePen2 < 1 ) boebbelPrint=2;
+    printSizePen4=(int)(4 * printScale);
+    if ( printSizePen4 < 1 ) boebbelPrint=4;
+}
+
 void wxStfGraph::PrintTrace( wxDC* pDC, const Vector_double& trace, bool is2 ) {
     // speed up drawing by omitting points that are outside the window:
 
@@ -785,29 +709,39 @@ void wxStfGraph::DoPrint( wxDC* pDC, const Vector_double trace, int start, int e
     pDC->DrawLines((int)points.size(),&points[0]);
 }
 
-void wxStfGraph::DrawCircle(wxDC* pDC,double x,double y) {
-    wxPoint corner(xFormat(x)-boebbel,yFormat(y)-boebbel);
+void wxStfGraph::DrawCircle(wxDC* pDC, double x, double y, const wxPen& pen, const wxPen& printPen) {
+    if (isPrinted) {
+        pDC->SetPen(printPen);
+    } else {
+        pDC->SetPen(pen);
+    }
     wxRect Frame(
             wxPoint(xFormat(x)-boebbel,yFormat(y)-boebbel),
             wxPoint(xFormat(x)+boebbel,yFormat(y)+boebbel)
     );
-    pDC->DrawEllipse(Frame);//, corner, corner);
+    pDC->DrawEllipse(Frame);
 }
 
-void wxStfGraph::DrawVLine(wxDC* pDC, double x) {
+void wxStfGraph::DrawVLine(wxDC* pDC, double x, const wxPen& pen, const wxPen& printPen) {
     wxRect WindowRect(GetRect());
     if (isPrinted)
     {   //Set WindowRect to print coordinates (page size)
         WindowRect=printRect;
+        pDC->SetPen(printPen);
+    } else {
+        pDC->SetPen(pen);
     }
     pDC->DrawLine(xFormat(x),0,xFormat(x),WindowRect.height);
 }
 
-void wxStfGraph::DrawHLine(wxDC* pDC, double y) {
+void wxStfGraph::DrawHLine(wxDC* pDC, double y, const wxPen& pen, const wxPen& printPen) {
     wxRect WindowRect(GetRect());
     if (isPrinted)
     {   //Set WindowRect to print coordinates (page size)
         WindowRect=printRect;
+        pDC->SetPen(printPen);
+    } else {
+        pDC->SetPen(pen);
     }
     pDC->DrawLine(0, yFormat(y),WindowRect.width,yFormat(y));
 }

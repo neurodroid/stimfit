@@ -475,8 +475,9 @@ void wxStfChildFrame::Restoreperspective() {
 
 void wxStfChildFrame::OnMenuHighlight(wxMenuEvent& event) {
     wxMenuItem *item = this->GetMenuBar()->FindItem(event.GetId());
-    if(item)
+    if(item) {
         wxLogStatus(item->GetHelp());
+    }
     event.Skip();
 
 }

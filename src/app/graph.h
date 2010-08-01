@@ -324,7 +324,7 @@ private:
         peakPrintPen, peakLimitPrintPen, basePrintPen, baseLimitPrintPen,
         decayLimitPrintPen, fitPrintPen, fitSelectedPrintPen, selectPrintPen,
         averagePrintPen, rtPrintPen, hdPrintPen, rdPrintPen,
-        slopePrintPen, resultsPrintPen, latencyPrintPen, alignPrintPen, PSlopePrintPen;
+        slopePrintPen, resultsPrintPen, latencyPrintPen, PSlopePrintPen;
 
     wxBrush baseBrush, zeroBrush;
     
@@ -333,13 +333,21 @@ private:
     boost::shared_ptr<wxMenu> m_zoomContext;
     boost::shared_ptr<wxMenu> m_eventContext;
     std::vector<wxStfCheckBox*> cbList;
+    void InitPlot();
+    void PlotSelected(wxDC& DC);
+    void PlotAverage(wxDC& DC);
+    void DrawZoomRect(wxDC& DC);
+    void PlotGimmicks(wxDC& DC);
+    void PlotEvents(wxDC& DC);
+    void DrawCrosshair( wxDC& DC, const wxPen& pen, const wxPen& printPen, int crosshairSize, double xch, double ych);
     void PlotTrace( wxDC* pDC, const Vector_double& trace, bool is2=false );
     void DoPlot( wxDC* pDC, const Vector_double& trace, int start, int end, int step, bool is2 );
+    void PrintScale(wxRect& WindowRect);
     void PrintTrace( wxDC* pDC, const Vector_double& trace, bool is2=false );
     void DoPrint( wxDC* pDC, const Vector_double trace, int start, int end, int downsampling, bool is2 );
-    void DrawCircle(wxDC* pDC, double x, double y);
-    void DrawVLine(wxDC* pDC, double x);
-    void DrawHLine(wxDC* pDC, double y);
+    void DrawCircle(wxDC* pDC, double x, double y, const wxPen& pen, const wxPen& printPen);
+    void DrawVLine(wxDC* pDC, double x, const wxPen& pen, const wxPen& printPen);
+    void DrawHLine(wxDC* pDC, double y, const wxPen& pen, const wxPen& printPen);
     void eventArrow(wxDC* pDC, int eventIndex);
     void DrawFit(wxDC* pDC);
     void PlotFit( wxDC* pDC, const Section& Sec );
