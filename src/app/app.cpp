@@ -843,7 +843,7 @@ void wxStfApp::SetActiveDoc(wxStfDoc* pDoc) {
 }
 
 void wxStfApp::OnKeyDown( wxKeyEvent& event ) {
-    event.Skip();
+    // OAevent.Skip();
     wxStfDoc* actDoc = GetActiveDoc();
     if (!actDoc)
         return;

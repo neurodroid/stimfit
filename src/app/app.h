@@ -27,7 +27,7 @@
 
 //! Event ids
 enum {
-    ID_TOOL_FIRST = wxID_HIGHEST+1,
+    ID_TOOL_FIRST, // = wxID_HIGHEST+1, resulted in wrong events being fired
     ID_TOOL_NEXT,
     ID_TOOL_PREVIOUS,
     ID_TOOL_LAST,

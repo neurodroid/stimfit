@@ -51,6 +51,13 @@ typedef wxAuiDocMDIParentFrame wxStfParentType;
 typedef wxDocMDIParentFrame wxStfParentType;
 #endif
 
+
+#ifdef _WINDOWS
+typedef wxAuiToolBar wxStfToolBar;
+#else
+typedef wxAuiToolBar wxStfToolBar;
+#endif
+
 //! Provides the top-level frame.
 /*! It is part of the of the document/view framework implemented in wxWidgets.
  *  This class can only be used for MDI parent frames.
@@ -138,7 +145,7 @@ public:
     
 private:
     wxAuiManager m_mgr;
-    wxAuiToolBar *m_cursorToolBar, *m_scaleToolBar;
+    wxStfToolBar *m_cursorToolBar, *m_scaleToolBar;
     wxStfFileDrop* m_drop;
 #ifdef WITH_PYTHON
     wxString python_code2; // python import code
@@ -152,10 +159,10 @@ private:
     boost::shared_ptr<wxPageSetupDialogData> m_pageSetupData;
     bool firstResize;
 
-    wxAuiToolBar* CreateStdTb();
-    wxAuiToolBar* CreateScaleTb();
-    wxAuiToolBar* CreateEditTb();
-    wxAuiToolBar* CreateCursorTb();
+    wxStfToolBar* CreateStdTb();
+    wxStfToolBar* CreateScaleTb();
+    wxStfToolBar* CreateEditTb();
+    wxStfToolBar* CreateCursorTb();
 
     void OnHelp(wxCommandEvent& event);
     void OnCheckUpdate(wxCommandEvent& event);

@@ -223,13 +223,13 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 
     // create some toolbars
 
-    wxAuiToolBar* tb1 = CreateStdTb();
+    wxStfToolBar* tb1 = CreateStdTb();
     tb1->Realize();
 
     m_scaleToolBar=CreateScaleTb();
     m_scaleToolBar->Realize();
 
-    wxAuiToolBar* tb4=CreateEditTb();
+    wxStfToolBar* tb4=CreateEditTb();
     tb4->Realize();
 
     m_cursorToolBar=CreateCursorTb();
@@ -329,8 +329,8 @@ wxStfParentFrame::~wxStfParentFrame() {
     m_mgr.UnInit();
 }
 
-wxAuiToolBar* wxStfParentFrame::CreateStdTb() {
-    wxAuiToolBar* tb1=new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+wxStfToolBar* wxStfParentFrame::CreateStdTb() {
+    wxStfToolBar* tb1=new wxStfToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                         wxAUI_TB_DEFAULT_STYLE );
     tb1->SetToolBitmapSize(wxSize(20,20));
     tb1->AddTool( wxID_OPEN,
@@ -351,9 +351,9 @@ wxAuiToolBar* wxStfParentFrame::CreateStdTb() {
     return tb1;
 }
 
-wxAuiToolBar* wxStfParentFrame::CreateScaleTb() {
-    wxAuiToolBar* scaleToolBar =
-        new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_DEFAULT_STYLE );
+wxStfToolBar* wxStfParentFrame::CreateScaleTb() {
+    wxStfToolBar* scaleToolBar =
+        new wxStfToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_DEFAULT_STYLE );
     scaleToolBar->SetToolBitmapSize(wxSize(20,20));
     scaleToolBar->AddTool( ID_TOOL_FIRST,
                            wxT("First"),
@@ -435,8 +435,8 @@ wxAuiToolBar* wxStfParentFrame::CreateScaleTb() {
     return scaleToolBar;
 }
 
-wxAuiToolBar* wxStfParentFrame::CreateEditTb() {
-    wxAuiToolBar* tb4= new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+wxStfToolBar* wxStfParentFrame::CreateEditTb() {
+    wxStfToolBar* tb4= new wxStfToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                          wxAUI_TB_DEFAULT_STYLE );
     tb4->SetToolBitmapSize(wxSize(20,20));
     tb4->AddTool( ID_AVERAGE,
@@ -462,8 +462,8 @@ wxAuiToolBar* wxStfParentFrame::CreateEditTb() {
     return tb4;
 }
 
-wxAuiToolBar* wxStfParentFrame::CreateCursorTb() {
-    wxAuiToolBar* cursorToolBar = new wxAuiToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
+    wxStfToolBar* cursorToolBar = new wxStfToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                                     wxAUI_TB_DEFAULT_STYLE );
     cursorToolBar->SetToolBitmapSize(wxSize(20,20));
     cursorToolBar->AddTool( ID_TOOL_SELECT,
@@ -964,7 +964,7 @@ void wxStfParentFrame::OnToolNext(wxCommandEvent& WXUNUSED(event)) {
     }
 }
 
-void wxStfParentFrame::OnToolPrevious(wxCommandEvent& event) {
+void wxStfParentFrame::OnToolPrevious(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     if (pView!=NULL) {
         pView->GetGraph()->OnPrevious();

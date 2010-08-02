@@ -1208,7 +1208,7 @@ void wxStfGraph::Snapshotwmf() {
 #endif
 
 void wxStfGraph::OnMouseEvent(wxMouseEvent& event) {
-    event.Skip();
+    // event.Skip();
     if (!view) return;
     if (event.LeftDown()) LButtonDown(event);
     if (event.RightDown()) RButtonDown(event);
@@ -1220,7 +1220,7 @@ void wxStfGraph::OnMouseEvent(wxMouseEvent& event) {
 }
 
 void wxStfGraph::LButtonDown(wxMouseEvent& event) {
-    event.Skip();
+    // event.Skip();
     wxClientDC dc(this);
     PrepareDC(dc);
     lastLDown = event.GetLogicalPosition(dc);
@@ -1286,7 +1286,7 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
 }
 
 void wxStfGraph::RButtonDown(wxMouseEvent& event) {
-    event.Skip();
+    // event.Skip();
     wxClientDC dc(this);
     PrepareDC(dc);
     wxPoint point(event.GetLogicalPosition(dc));
@@ -1350,7 +1350,7 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
 }
 
 void wxStfGraph::LButtonUp(wxMouseEvent& event) {
-    event.Skip();
+    // event.Skip();
     wxClientDC dc(this);
     PrepareDC(dc);
     wxPoint point(event.GetLogicalPosition(dc));
@@ -1402,7 +1402,7 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
 }
 
 void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
-    event.Skip();
+    // event.Skip();
 
     int kc = event.GetKeyCode();
 #ifdef _STFDEBUG
