@@ -313,7 +313,8 @@ importFile(
         stf::filetype type,
         Recording& ReturnData,
         const stf::txtImportSettings& txtImport,
-        bool progress=true
+        bool progress=true,
+        wxWindow* parent=NULL
 );
 
 //! Generic file export.

@@ -29,10 +29,10 @@
 #include "./axg/longdef.h"
 #include "./axglib.h"
 
-void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progress) {
+void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progress, wxWindow* parent) {
 #ifndef MODULE_ONLY
     wxProgressDialog progDlg( wxT("Axograph binary file import"), wxT("Starting file import"),
-                              100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
+                              100, parent, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_SKIP );
 #endif
     std::string errorMsg("Exception while calling AXG_importAXGFile():\n");
     std::string yunits;
@@ -103,7 +103,12 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
 #ifndef MODULE_ONLY
             wxString progStr;
             progStr << "Section #" << columnNumber << " of " << numberOfColumns-1;
-            progDlg.Update(progbar, progStr);
+            bool skip = false;
+            progDlg.Update(progbar, progStr, &skip);
+            if (skip) {
+                ReturnData.resize(0);
+                return;
+            }
 #else
             std::cout << "\r";
             std::cout << progbar << "%" << std::flush;

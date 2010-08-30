@@ -60,6 +60,7 @@
     #include <wx/wfstream.h>
 #else
     typedef std::string wxString;
+    typedef int wxWindow;
     #define wxT(x)  x
 #endif
 

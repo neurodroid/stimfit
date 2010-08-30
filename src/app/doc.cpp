@@ -133,7 +133,7 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
             }
         }
         try {
-            stf::importFile(filename,type,*this,wxGetApp().GetTxtImport(),progress);
+            stf::importFile(filename,type,*this,wxGetApp().GetTxtImport(),progress, GetMainFrame());
         }
         catch (const std::runtime_error& e) {
             wxString errorMsg(wxT("Error opening file\n"));

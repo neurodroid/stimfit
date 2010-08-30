@@ -51,7 +51,8 @@ bool stf::importFile(
         stf::filetype type,
         Recording& ReturnData,
         const stf::txtImportSettings& txtImport,
-        bool progress
+        bool progress,
+        wxWindow* parent
 ) {
     try {
         switch (type) {
@@ -72,7 +73,7 @@ bool stf::importFile(
             break;
         }
         case stf::axg: {
-            stf::importAXGFile(fName, ReturnData, progress);
+            stf::importAXGFile(fName, ReturnData, progress, parent);
             break;
         }
 #ifndef MODULE_ONLY

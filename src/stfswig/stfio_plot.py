@@ -1,6 +1,9 @@
 """
 Some plotting utilities to use scale bars rather than coordinate axes.
 18 July 2010, C. Schmidt-Hieber, University College London
+
+From the stfio module:
+http://code.google.com/p/stimfit
 """
 
 has_mpl = True
@@ -20,12 +23,17 @@ graph_height = 4.0
 key_dist = 0.01
 
 class timeseries(object):
-    # if this is 2d, the second axis (shape[1]) is time
-    def __init__(self, section, dt, xunits="ms", yunits="mV"):
-        self.data = section.asarray()
+    def __init__(self, section, dt, xunits="ms", yunits="mV",  
+                 linestyle="-k", linewidth=1.0):
+        if type(section)==np.ndarray:
+            self.data = section
+        else:
+            self.data = section.asarray()
         self.dt = dt
         self.xunits = xunits
         self.yunits = yunits
+        self.linestyle = linestyle
+        self.linewidth = linewidth
 
     def x_trange(self, tstart, tend):
         return np.arange(int(tstart/self.dt), int(tend/self.dt), 1.0, 
@@ -39,7 +47,13 @@ class timeseries(object):
             return np.arange(0.0, len(self.data), 1.0) * self.dt
         else:
             return np.arange(0.0, self.data.shape[1], 1.0) * self.dt
-               
+
+    def duration(self):
+        if len(self.data.shape)==1:
+            return len(self.data) * self.dt
+        else:
+            return self.data.shape[1] * self.dt
+
     def interpolate(self, newtime, newdt):
         if len(self.data.shape) == 1:
             flin = \
@@ -124,7 +138,7 @@ def average(tsl):
             avef[nrow,:] = ma.mean(ave[:,nrow,:], axis=0)
         return timeseries(avef, dt_common)
 
-def prettyNumber( f ):
+def prettyNumber(f):
     fScaled = f
     if fScaled < 1:
         correct = 10.0
@@ -143,7 +157,7 @@ def prettyNumber( f ):
     else:
         return round(fScaled/prev10e) * prev10e
     
-def plot_scalebars( ax, div=3.0, labels=True, 
+def plot_scalebars(ax, div=3.0, labels=True, 
                     xunits="", yunits="", nox=False, 
                     sb_xoff=0, sb_yoff=0, rotate_yslabel=False, 
                     linestyle="-k", linewidth=4.0,
@@ -209,28 +223,28 @@ def plot_scalebars( ax, div=3.0, labels=True,
                     weight=textweight, color=textcolor)
 
 
-def xFormat( x, res, data_len, width ):
+def xFormat(x, res, data_len, width):
     points = int(width/2.5 * res)
     part = float(x) / data_len
-    return int( part*points )
+    return int(part*points)
 
-def yFormat( y ):
+def yFormat(y):
     return y
 
-def reduce( ydata, dy, maxres, xoffset=0, width=graph_width ):
-    x_last = xFormat( 0, maxres, len(ydata), width )
-    y_last = yFormat( ydata[0] )
+def reduce(ydata, dy, maxres, xoffset=0, width=graph_width):
+    x_last = xFormat(0, maxres, len(ydata), width)
+    y_last = yFormat(ydata[0])
     y_max = y_last
     y_min = y_last
     x_next = 0
     y_next = 0
     xrange = list()
     yrange = list()
-    xrange.append( x_last )
-    yrange.append( y_last )
-    for (n,pt) in enumerate( ydata[:-1] ):
+    xrange.append(x_last)
+    yrange.append(y_last)
+    for (n,pt) in enumerate(ydata[:-1]):
         x_next = xFormat(n+1, maxres, len(ydata), width)
-        y_next = yFormat( ydata[n+1] )
+        y_next = yFormat(ydata[n+1])
         # if we are still at the same pixel column, only draw if this is an extremum:
         if (x_next == x_last):
             if (y_next < y_min):
@@ -240,15 +254,15 @@ def reduce( ydata, dy, maxres, xoffset=0, width=graph_width ):
         else:
             # else, always draw and reset extrema:
             if (y_min != y_next):
-                xrange.append( x_last )
-                yrange.append( y_min )
+                xrange.append(x_last)
+                yrange.append(y_min)
                 y_last = y_min
             if (y_max != y_next):
-                xrange.append( x_last )
-                yrange.append( y_max )
+                xrange.append(x_last)
+                yrange.append(y_max)
                 y_last = y_max
-            xrange.append( x_next )
-            yrange.append( y_next )
+            xrange.append(x_next)
+            yrange.append(y_next)
             y_min = y_next
             y_max = y_next
             x_last = x_next
@@ -260,14 +274,14 @@ def reduce( ydata, dy, maxres, xoffset=0, width=graph_width ):
     
     return xrange, yrange
 
-def plot_traces( traces, pulses=None, linestyle="-k", linewidth=1.0,
+def plot_traces(traces, pulses=None,
                  xmin=None, xmax=None, ymin=None, ymax=None, xoffset=0,
                  maxres = None,
                  sb_yoff=0, sb_xoff=0, linestyle_sb = "-k",
                  dashedline=None, sagline=None, rotate_yslabel=False,
                  textcolor='k', textweight='normal'):
     
-    Fig = plt.figure(facecolor=None, dpi=maxres)
+    Fig = plt.figure(dpi=maxres)
     Fig.patch.set_alpha(0.0)
     border = 0.1
     pulseprop = 0.1
@@ -282,9 +296,9 @@ def plot_traces( traces, pulses=None, linestyle="-k", linewidth=1.0,
             xrange = trace.timearray()+xoffset
             yrange = trace.data
         else:
-            xrange, yrange = reduce( trace.data, trace.dt, maxres=maxres )
+            xrange, yrange = reduce(trace.data, trace.dt, maxres=maxres)
             xrange += xoffset
-        ax.plot(xrange, yrange, linestyle, lw=linewidth)
+        ax.plot(xrange, yrange, trace.linestyle, lw=trace.linewidth)
 
     if xmin is not None:
         phantomrect_x0 = xmin
@@ -311,16 +325,14 @@ def plot_traces( traces, pulses=None, linestyle="-k", linewidth=1.0,
     xscale = ax.dataLim.xmax-ax.dataLim.xmin
     yscale = ax.dataLim.ymax-ax.dataLim.ymin
     if dashedline is not None:
-        # dashedline = int(dashedline)
         ax.plot([ax.dataLim.xmin, ax.dataLim.xmax],[dashedline, dashedline], 
                 "--k", linewidth=linewidth*2.0)
         gridline_x, gridline_y = ax.dataLim.xmax, dashedline
         gridline_x += key_dist*xscale
         xoff = scale_dist_x * xscale
-        # ax.text(gridline_x+xoff, gridline_y, r"%d$\,$%s" % (dashedline, yunits), ha='left', va='center')#[pyx.text.halign.left,pyx.text.valign.middle])
+
 
     if sagline is not None:
-        # dashedline = int(dashedline)
         ax.plot([ax.dataLim.xmin, ax.dataLim.xmax],[sagline, sagline], 
                 "--k", linewidth=linewidth*2.0)
         gridline_x, gridline_y = ax.dataLim.xmax, sagline
@@ -335,7 +347,7 @@ def plot_traces( traces, pulses=None, linestyle="-k", linewidth=1.0,
         for pulse in pulses:
             xrange = pulse.timearray()
             yrange = pulse.data
-            axp.plot(xrange, yrange, linestyle, linewidth=linewidth)
+            axp.plot(xrange, yrange, pulse.linestyle, linewidth=pulse.linewidth)
         plot_scalebars(axp, linestyle=linestyle_sb, nox=True, yunits=pulses[0].yunits,
                        textweight=textweight, textcolor=textcolor)
         for o in axp.findobj():

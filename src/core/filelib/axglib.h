@@ -43,7 +43,8 @@ namespace stf {
  *         the data stored in \e fName.
  *  \param progress True if the progress dialog should be updated.
  */
-    void importAXGFile(const wxString& fName, Recording& ReturnData, bool progress = true);
+    void importAXGFile(const wxString& fName, Recording& ReturnData, bool progress = true,
+                       wxWindow* parent=NULL);
 
 }
 
