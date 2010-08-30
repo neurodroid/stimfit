@@ -13,10 +13,10 @@ SetCompressor lzma
 
 !define USRDRV "C:\"
 !define LOGIN "cs"
-!define PRODUCT_VERSION "0.10alpha"
+!define PRODUCT_VERSION "0.10alpha2"
 !define WXW_VERSION "2.9.1"
 !define WXW_VERSION_SHORT "291"
-!define PY_VERSION "2.6.5"
+!define PY_VERSION "2.6.6"
 !define PY_MAJOR "2.6"
 !define NP_VERSION "1.4.1"
 !define EXE_NAME "stimfit"
@@ -31,7 +31,8 @@ SetCompressor lzma
 !define HDF5DIR "${USRDRV}Users\${LOGIN}\hdf5-1.8.5"
 !define PRODIR "C:\Program Files (x86)"
 !define FULL_WELCOME "This wizard will guide you through the installation \
-of ${REG_NAME} and wxPython. You can optionally \
+of ${REG_NAME} and wxPython. Please uninstall any earlier version of Stimfit (<= 0.9) before \
+proceeding. You can optionally \
 install Python ${PY_VERSION} and NumPy ${NP_VERSION} \
 if you don't have them on your machine."
 !define UPDATE_WELCOME "This wizard will update an existing installation \
