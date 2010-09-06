@@ -29,15 +29,15 @@ wxString GetExecutablePath() {
 
     HKEY keyHandle;
 
-    if( RegOpenKeyEx( HKEY_CURRENT_USER, wxT("Software\\Stimfit 0.9"), 0, 
-		              KEY_QUERY_VALUE, &keyHandle) == ERROR_SUCCESS)
+    if( RegOpenKeyEx( HKEY_CURRENT_USER, wxT("Software\\Stimfit 0.10"), 0, 
+                      KEY_QUERY_VALUE, &keyHandle) == ERROR_SUCCESS)
     {
         DWORD BufferSize = 8192;
         DWORD cbData = BufferSize;
         		
-		wxCharTypeBuffer<wxChar> data( BufferSize );
+        wxCharTypeBuffer<wxChar> data( BufferSize );
         DWORD dwRet = RegQueryValueEx( keyHandle, TEXT("InstallLocation"),
-                             NULL, NULL, (LPBYTE) data.data(), &cbData );
+                                       NULL, NULL, (LPBYTE) data.data(), &cbData );
         while( dwRet == ERROR_MORE_DATA )
         {
             // Get a buffer that is big enough.
@@ -49,17 +49,17 @@ wxString GetExecutablePath() {
             dwRet = RegQueryValueEx( keyHandle, TEXT("InstallLocation"),
                                      NULL, NULL, (LPBYTE) data.data(), &cbData );
         }
-		if( dwRet == ERROR_SUCCESS ) {
+        if( dwRet == ERROR_SUCCESS ) {
             RegCloseKey(keyHandle);
-	        return wxString( data );
-	    } else {
-	        wxGetApp().ErrorMsg( wxT("Couldn't read registry key for Stimfit") );
-		    return wxT("");
-		}
-	} else {
-	    wxGetApp().ErrorMsg( wxT("Couldn't open registry key for Stimfit") );
-		return wxT("");
-	}
+            return wxString( data );
+        } else {
+            // wxGetApp().ErrorMsg( wxT("Couldn't read registry key for Stimfit") );
+            return wxT("");
+        }
+    } else {
+        // wxGetApp().ErrorMsg( wxT("Couldn't open registry key for Stimfit") );
+        return wxT("");
+    }
 }
 #endif // _WINDOWS
 
