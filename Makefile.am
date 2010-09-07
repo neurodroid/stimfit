@@ -33,8 +33,8 @@ libstfio_la_SOURCES = ./src/stfswig/stfioswig_wrap.cxx ./src/stfswig/stfioswig.c
 	./src/core/filelib/axg/AxoGraph_ReadWrite.cpp \
 	./src/core/filelib/axg/fileUtils.cpp \
 	./src/core/filelib/axg/stringUtils.cpp \
-	./src/core/filelib/axg/byteswap.cpp
-# ./src/core/filelib/hekalib.cpp \
+	./src/core/filelib/axg/byteswap.cpp \
+        ./src/core/filelib/hekalib.cpp
 # 
 noinst_HEADERS = ./src/stfswig/stfioswig.h ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
             ./src/core/stimdefs.h \

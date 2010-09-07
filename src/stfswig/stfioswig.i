@@ -241,6 +241,7 @@ def read(fname, ftype=None):
               "abf"  - Axon binary file
               "atf"  - Axon text file
               "axg"  - Axograph X binary file
+              "heka" - HEKA binary file
               if ftype is None (default), it will be guessed from the
               extension.
 

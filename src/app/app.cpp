@@ -188,7 +188,7 @@ bool wxStfApp::OnInit(void)
                                      wxT("AXG Document"), wxT("AXG View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
     m_hekaTemplate=new wxDocTemplate( docManager,
-                                     wxT("HEKA file bundle"), wxT("*.pgf"), wxT(""), wxT("pgf"),
+                                     wxT("HEKA file"), wxT("*.dat"), wxT(""), wxT("dat"),
                                      wxT("HEKA Document"), wxT("HEKA View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #if 0

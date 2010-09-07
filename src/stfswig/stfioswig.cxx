@@ -35,6 +35,8 @@ stf::filetype gettype(const std::string& ftype) {
         stftype = stf::atf;
     } else if (ftype == "axg") {
         stftype = stf::axg;
+    } else if (ftype == "heka") {
+        stftype = stf::heka;
     } else {
         stftype = stf::none;
     }

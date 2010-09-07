@@ -76,11 +76,11 @@ bool stf::importFile(
             stf::importAXGFile(fName, ReturnData, progress, parent);
             break;
         }
-#ifndef MODULE_ONLY
         case stf::heka: {
             stf::importHEKAFile(fName, ReturnData, progress);
             break;
         }
+#ifndef MODULE_ONLY
 #if 0
         case stf::son: {
             stf::SON::importSONFile(fName,ReturnData);

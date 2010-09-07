@@ -216,6 +216,7 @@ def read(fname, ftype=None):
               "abf"  - Axon binary file
               "atf"  - Axon text file
               "axg"  - Axograph X binary file
+              "heka" - HEKA binary file
               if ftype is None (default), it will be guessed from the
               extension.
 
@@ -231,7 +232,7 @@ def read(fname, ftype=None):
         try:
             ftype = filetype[ext]
         except KeyError:
-            raise StfIOException('Couldn\'t guess file file from extension (%s)' % ext)
+            raise StfIOException('Couldn\'t guess file type from extension (%s)' % ext)
 
     rec = Recording()
     if not _read(fname, ftype, rec):
