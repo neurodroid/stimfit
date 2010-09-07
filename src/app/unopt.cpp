@@ -110,7 +110,7 @@ bool wxStfApp::Init_wxPython()
         return false;
     }
 #endif
-    
+
     // Load the wxPython core API.  Imports the wx._core_ module and sets a
     // local pointer to a function table located there.  The pointer is used
     // internally by the rest of the API functions.
@@ -131,7 +131,6 @@ bool wxStfApp::Init_wxPython()
         Py_Finalize();
         return false;
     }
-    
 #if wxCHECK_VERSION(2, 9, 0)
     PyObject* ver_string = Py_BuildValue("ss","2.9","");
 #else
@@ -146,6 +145,7 @@ bool wxStfApp::Init_wxPython()
         return false;
     }
 
+#if 0 // wxversion.select doesn't return an error code, but raises an exception
     long iresult = PyInt_AsLong(result);
     Py_DECREF(result);
     if (iresult == 0) {
@@ -154,15 +154,7 @@ bool wxStfApp::Init_wxPython()
         Py_Finalize();
         return false;
     }
-    
-#ifdef IPYTHON
-    // Set a dummy sys.argv for IPython
-    wxPyBlock_t blocked = wxPyBeginBlockThreads();
-    char* argv = (char *)"\0";
-    PySys_SetArgv(1, &argv);
-    wxPyEndBlockThreads(blocked);
 #endif
-    
     if ( ! wxPyCoreAPI_IMPORT() ) {
         PyErr_Print();
         wxString errormsg;
@@ -197,6 +189,14 @@ bool wxStfApp::Init_wxPython()
     // Save the current Python thread state and release the
     // Global Interpreter Lock.
     m_mainTState = wxPyBeginAllowThreads();
+
+#ifdef IPYTHON
+    // Set a dummy sys.argv for IPython
+    wxPyBlock_t blocked = wxPyBeginBlockThreads();
+    char* argv = (char *)"\0";
+    PySys_SetArgv(1, &argv);
+    wxPyEndBlockThreads(blocked);
+#endif
 
     return true;
 }
