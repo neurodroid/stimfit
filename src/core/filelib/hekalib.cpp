@@ -36,137 +36,504 @@
 #include "./../core.h"
 #include "./hekalib.h"
 
+#ifndef _WINDOWS
+    #define C_ASSERT(e) extern void __C_ASSERT__(int [(e)?1:-1])
+#endif
 
-struct BundleItem {
-    BundleItem() :
-        start(0),
-        length(0),
-        extension(""),
-        bundleItemSize(0)
-    {}
-    int start;
-    int length;
-    std::string extension;
-    int bundleItemSize;
+enum Level {
+    root = 0,
+    group,
+    series,
+    sweep,
+    trace
 };
 
-struct HEKAheader {
-    HEKAheader() :
-        signature(""),
-        version(""),
-        time(0.0),
-        items(0),
-        bundleItems(12),
-        isLittleEndian(true),
-        bundleHeaderSize(0),
-        isBundled(false)
-    {}
-    std::string signature;
-    std::string version;
-    double time;
-    int items;
-    std::vector<BundleItem> bundleItems;
-    bool isLittleEndian;
-    int bundleHeaderSize;
-    bool isBundled;
-};
-
-std::string stringRead(FILE* fh, int n) {
-    std::vector<char> chr(n);
-    std::string str("");
-    int res = fread(&chr[0], sizeof(char), n, fh);
-    if (res != n) {
-        throw std::runtime_error("Couldn't read file");
+Level int2Level(int n) {
+    switch (n) {
+     case root:
+         return root;
+     case group:
+         return group;
+     case series:
+         return series;
+     case sweep:
+         return sweep;
+     case trace:
+         return trace;
+     default:
+         return root;
     }
-    for (int nc=0; nc < chr.size(); ++nc) {
-        if (chr[nc]!='\0') {
-            str.append(1, chr[nc]);
-        } else {
-            break;
-        }
-    }
-    return str;
 }
 
-HEKAheader getBundleHeader(FILE* fh) {
+struct TreeEntry {
+    TreeEntry(Level l, int c, int i) :
+        level(l), counter(c), idx(i)
+    {}
+        
+    Level level;
+    int counter;
+    int idx;
+};
 
-    HEKAheader header;
+//
+// pack structure on byte boundaries
+//
+#ifndef RC_INVOKED
+#pragma pack(push, 1)
+#endif
+
+struct BundleItem {
+   int oStart;            /* INT32 */
+   int oLength;           /* INT32 */
+   char oExtension[8];    /* ARRAY[0..7] OF CHAR */
+};
+C_ASSERT(sizeof(BundleItem) == 16);
+
+struct BundleHeader {
+    char oSignature[8];    /*   8 ARRAY[0..7] OF CHAR */
+    char oVersion[32];     /*  40 ARRAY[0..31] OF CHAR */
+    double oTime;        /*  48 LONGREAL */
+    int oItems;            /*  52 INT32 */
+    char oIsLittleEndian[12];   /*  64 BOOLEAN */
+    BundleItem oBundleItems[12];    /* 256 ARRAY[0..11] OF BundleItem */
+};
+C_ASSERT(sizeof(BundleHeader) == 256);
+
+struct TraceRecord {
+    int TrMark; /* INT32 */
+    char TrLabel[32]; /* String32Type */
+    int TrTraceCount; /* INT32 */
+    int TrData; /* INT32 */
+    int TrDataPoints; /* INT32 */
+    int TrInternalSolution; /* INT32 */
+    int TrAverageCount; /* INT32 */
+    int TrLeakCount; /* INT32 */
+    int TrLeakTraces; /* INT32 */
+    short TrDataKind; /* SET16 */
+    short TrFiller1; /* SET16 */
+    char TrRecordingMode; /* BYTE */
+    char TrAmplIndex; /* CHAR */
+    char TrDataFormat; /* BYTE */
+    char TrDataAbscissa; /* BYTE */
+    double TrDataScaler; /* LONGREAL */
+    double TrTimeOffset; /* LONGREAL */
+    double TrZeroData; /* LONGREAL */
+    char TrYUnit[8]; /* String8Type */
+    double TrXInterval; /* LONGREAL */
+    double TrXStart; /* LONGREAL */
+    char TrXUnit[8]; /* String8Type */
+    double TrYRange; /* LONGREAL */
+    double TrYOffset; /* LONGREAL */
+    double TrBandwidth; /* LONGREAL */
+    double TrPipetteResistance; /* LONGREAL */
+    double TrCellPotential; /* LONGREAL */
+    double TrSealResistance; /* LONGREAL */
+    double TrCSlow; /* LONGREAL */
+    double TrGSeries; /* LONGREAL */
+    double TrRsValue; /* LONGREAL */
+    double TrGLeak; /* LONGREAL */
+    double TrMConductance; /* LONGREAL */
+    int TrLinkDAChannel; /* INT32 */
+    char TrValidYrange; /* BOOLEAN */
+    char TrAdcMode; /* CHAR */
+    short TrAdcChannel; /* INT16 */
+    double TrYmin; /* LONGREAL */
+    double TrYmax; /* LONGREAL */
+    int TrSourceChannel; /* INT32 */
+    int TrExternalSolution; /* INT32 */
+    double TrCM; /* LONGREAL */
+    double TrGM; /* LONGREAL */
+    double TrPhase; /* LONGREAL */
+    int TrDataCRC; /* CARD32 */
+    int TrCRC; /* CARD32 */
+    double TrGS; /* LONGREAL */
+    int TrSelfChannel; /* INT32 */
+    int TrFiller2; /* SET16 */
+};
+C_ASSERT(sizeof(TraceRecord) == 296);
+
+struct SweepRecord {
+    int SwMark; /* INT32 */
+    char SwLabel[32]; /* String32Type */
+    int SwAuxDataFileOffset; /* INT32 */
+    int SwStimCount; /* INT32 */
+    int SwSweepCount; /* INT32 */
+    double SwTime; /* LONGREAL */
+    double SwTimer; /* LONGREAL */
+    double SwSwUserParams[4]; /* ARRAY[0..3] OF LONGREAL */
+    double SwTemperature; /* LONGREAL */
+    int SwOldIntSol; /* INT32 */
+    int SwOldExtSol; /* INT32 */
+    short SwDigitalIn; /* SET16 */
+    short SwSweepKind; /* SET16 */
+    int SwFiller1; /* INT32 */
+    double SwMarkers[4]; /* ARRAY[0..3] OF LONGREAL */
+    int SwFiller2; /* INT32 */
+    int SwCRC; /* CARD32 */
+};
+C_ASSERT(sizeof(SweepRecord) == 160);
+
+struct UserParamDescrType  {
+    char Name[32];
+    char Unit[8];
+};
+C_ASSERT(sizeof(UserParamDescrType) == 40);
+
+struct AmplifierState {
+    char E9StateVersion[8]; /* 8 = SizeStateVersion */
+    double E9RealCurrentGain; /* LONGREAL */
+    double E9RealF2Bandwidth; /* LONGREAL */
+    double E9F2Frequency; /* LONGREAL */
+    double E9RsValue; /* LONGREAL */
+    double E9RsFraction; /* LONGREAL */
+    double E9GLeak; /* LONGREAL */
+    double E9CFastAmp1; /* LONGREAL */
+    double E9CFastAmp2; /* LONGREAL */
+    double E9CFastTau; /* LONGREAL */
+    double E9CSlow              ; /* LONGREAL */
+    double E9GSeries            ; /* LONGREAL */
+    double E9StimDacScale       ; /* LONGREAL */
+    double E9CCStimScale        ; /* LONGREAL */
+    double E9VHold              ; /* LONGREAL */
+    double E9LastVHold          ; /* LONGREAL */
+    double E9VpOffset           ; /* LONGREAL */
+    double E9VLiquidJunction    ; /* LONGREAL */
+    double E9CCIHold            ; /* LONGREAL */
+    double E9CSlowStimVolts     ; /* LONGREAL */
+    double E9CCTrackVHold       ; /* LONGREAL */
+    double E9TimeoutLength      ; /* LONGREAL */
+    double E9SearchDelay        ; /* LONGREAL */
+    double E9MConductance       ; /* LONGREAL */
+    double E9MCapacitance       ; /* LONGREAL */
+    char E9SerialNumber[8]      ; /* 8 = SizeSerialNumber */
+    short E9E9Boards           ; /* INT16 */
+    short E9CSlowCycles        ; /* INT16 */
+    short E9IMonAdc            ; /* INT16 */
+    short E9VMonAdc            ; /* INT16 */
+    short E9MuxAdc             ; /* INT16 */
+    short E9TstDac             ; /* INT16 */
+    short E9StimDac            ; /* INT16 */
+    short E9StimDacOffset      ; /* INT16 */
+    short E9MaxDigitalBit      ; /* INT16 */
+    short E9SpareInt1       ; /* INT16 */
+    short E9SpareInt2       ; /* INT16 */
+    short E9SpareInt3       ; /* INT16 */
+
+    char E9AmplKind           ; /* BYTE */
+    char E9IsEpc9N            ; /* BYTE */
+    char E9ADBoard            ; /* BYTE */
+    char E9BoardVersion       ; /* BYTE */
+    char E9ActiveE9Board      ; /* BYTE */
+    char E9Mode               ; /* BYTE */
+    char E9Range              ; /* BYTE */
+    char E9F2Response         ; /* BYTE */
+
+    char E9RsOn               ; /* BYTE */
+    char E9CSlowRange         ; /* BYTE */
+    char E9CCRange            ; /* BYTE */
+    char E9CCGain             ; /* BYTE */
+    char E9CSlowToTstDac      ; /* BYTE */
+    char E9StimPath           ; /* BYTE */
+    char E9CCTrackTau         ; /* BYTE */
+    char E9WasClipping        ; /* BYTE */
+
+    char E9RepetitiveCSlow    ; /* BYTE */
+    char E9LastCSlowRange     ; /* BYTE */
+    char E9Locked             ; /* BYTE */
+    char E9CanCCFast          ; /* BYTE */
+    char E9CanLowCCRange      ; /* BYTE */
+    char E9CanHighCCRange     ; /* BYTE */
+    char E9CanCCTracking      ; /* BYTE */
+    char E9HasVmonPath        ; /* BYTE */
+
+    char E9HasNewCCMode       ; /* BYTE */
+    char E9Selector           ; /* CHAR */
+    char E9HoldInverted       ; /* BYTE */
+    char E9AutoCFast          ; /* BYTE */
+    char E9AutoCSlow          ; /* BYTE */
+    char E9HasVmonX100        ; /* BYTE */
+    char E9TestDacOn          ; /* BYTE */
+    char E9QMuxAdcOn          ; /* BYTE */
+
+    double E9RealImon1Bandwidth ; /* LONGREAL */
+    double E9StimScale          ; /* LONGREAL */
+
+    char E9Gain               ; /* BYTE */
+    char E9Filter1            ; /* BYTE */
+    char E9StimFilterOn       ; /* BYTE */
+    char E9RsSlow             ; /* BYTE */
+    char E9Old1            ; /* BYTE */
+    char E9CCCFastOn          ; /* BYTE */
+    char E9CCFastSpeed        ; /* BYTE */
+    char E9F2Source           ; /* BYTE */
+
+    char E9TestRange          ; /* BYTE */
+    char E9TestDacPath        ; /* BYTE */
+    char E9MuxChannel         ; /* BYTE */
+    char E9MuxGain64          ; /* BYTE */
+    char E9VmonX100           ; /* BYTE */
+    char E9IsQuadro           ; /* BYTE */
+    char E9SpareBool4      ; /* BYTE */
+    char E9SpareBool5      ; /* BYTE */
+
+    double E9StimFilterHz       ; /* LONGREAL */
+    double E9RsTau              ; /* LONGREAL */
+    short E9FilterOffsetDac    ; /* INT16 */
+    short E9ReferenceDac       ; /* INT16 */
+    short E9SpareInt6       ; /* INT16 */
+    short E9SpareInt7       ; /* INT16 */
+    char E9Spares1[24]         ;
+
+    char E9CalibDate[16]; /* 16 = SizeCalibDate */
+    double E9SelHold; /* LONGREAL */
+    char E9Spares2[32]; /* remaining */
+};
+C_ASSERT(sizeof(AmplifierState) == 400);
+
+struct LockInParams {
+    /* see definition in AmplTreeFile_v9.txt */
+    double loExtCalPhase        ; /* LONGREAL */
+    double loExtCalAtten        ; /* LONGREAL */
+    double loPLPhase            ; /* LONGREAL */
+    double loPLPhaseY1          ; /* LONGREAL */
+    double loPLPhaseY2          ; /* LONGREAL */
+    double loUsedPhaseShift     ; /* LONGREAL */
+    double loUsedAttenuation    ; /* LONGREAL */
+    char loSpares2[8]         ;
+    char loExtCalValid        ; /* BOOLEAN */
+    char loPLPhaseValid       ; /* BOOLEAN */
+    char loLockInMode         ; /* BYTE */
+    char loCalMode            ; /* BYTE */
+    char loSpares[28]         ; /* remaining */
+};
+C_ASSERT(sizeof(LockInParams) == 96);
+
+struct SeriesRecord {
+    int SeMark; /* INT32 */
+    char SeLabel[32]; /* String32Type */
+    char SeComment[80]; /* String80Type */
+    int SeSeriesCount; /* INT32 */
+    int SeNumberSweeps; /* INT32 */
+    int SeAmplStateOffset; /* INT32 */
+    int SeAmplStateSeries; /* INT32 */
+    char SeSeriesType; /* BYTE */
+    char SeFiller1; /* BYTE */
+    char SeFiller2; /* BYTE */
+    char SeFiller3; /* BYTE */
+    double SeTime; /* LONGREAL */
+    double SePageWidth; /* LONGREAL */
+    UserParamDescrType SeSwUserParamDescr[4]; /* ARRAY[0..3] OF UserParamDescrType = 4*40 */
+    char SeFiller4[32]; /* 32 BYTE */
+    double SeSeUserParams[4]; /* ARRAY[0..3] OF LONGREAL */
+    LockInParams SeLockInParams; /* SeLockInSize = 96, see "Pulsed.de" */
+    AmplifierState SeAmplifierState; /* AmplifierStateSize = 400 */
+    char SeUsername[80]; /* String80Type */
+    UserParamDescrType SeSeUserParamDescr[4]; /* ARRAY[0..3] OF UserParamDescrType = 4*40 */
+    int SeFiller5; /* INT32 */
+    int SeCRC; /* CARD32 */
+};
+C_ASSERT(sizeof(SeriesRecord) == 1120);
+
+struct GroupRecord {
+    int GrMark; /* INT32 */
+    char GrLabel[32]; /* String32Size */
+    char GrText[80]; /* String80Size */
+    int GrExperimentNumber; /* INT32 */
+    int GrGroupCount      ; /* INT32 */
+    int GrCRC             ; /* CARD32 */
+};
+C_ASSERT(sizeof(GroupRecord) == 128);
+
+struct RootRecord {
+      /*
+         NOTE: The "Version" field must be at offset zero in the file
+               while the "Mark" field must be at offset zero in RAM!
+       */
+    int RoVersion         ; /* INT32 */
+    int RoMark            ; /* INT32 */
+    char RoVersionName[32]; /* String32Type */
+    char RoAuxFileName[80]        ; /* String80Type */
+    char RoRootText[400]           ; /* String400Type */
+    double RoStartTime          ; /* LONGREAL */
+    int RoMaxSamples         ; /* INT32 */
+    int RoCRC                ; /* CARD32 */
+    short RoFeatures           ; /* SET16 */
+    short RoFiller1         ; /* INT16 */
+    int RoFiller2         ; /* INT32 */
+};
+C_ASSERT(sizeof(RootRecord) == 544);
+
+
+#ifndef RC_INVOKED
+#pragma pack(pop)                      // return to default packing
+#endif
+
+struct Tree {
+    std::vector<RootRecord> RootList;
+    std::vector<GroupRecord> GroupList;
+    std::vector<SeriesRecord> SeriesList;
+    std::vector<SweepRecord> SweepList;
+    std::vector<TraceRecord> TraceList;
+    std::vector<TreeEntry> entries;
+};
     
-    int res = fseek(fh, 0, SEEK_SET);
-    header.signature = stringRead(fh, 8);
-    std::cout << header.signature << std::endl;
+void printHeader(const BundleHeader& header) {
+   
+    std::cout << header.oSignature << std::endl;
 
-    if (header.signature=="DATA") {
-    } else if (header.signature=="DAT1" || header.signature=="DAT2") {
+    std::string strsig(header.oSignature);
+    if (strsig == "DATA") {
+        throw std::runtime_error("DATA file format not supported at present");
+    } else if (strsig=="DAT1" || strsig=="DAT2") {
         // Newer format
-        header.version=stringRead(fh, 32);
-        std::cout << header.version << std::endl;
-        res = fread(&header.time, sizeof(double), 1, fh);
-        std::cout << header.time << std::endl;
-        res = fread(&header.items, sizeof(int), 1, fh);
-        std::cout << header.items << std::endl;
-        unsigned char cEndian;
-        res = fread(&cEndian, sizeof(unsigned char), 1, fh);
-        std::cout << int(cEndian) << std::endl;
-        header.isLittleEndian = bool(int(cEndian));
-        header.bundleHeaderSize=256;
-        if (header.signature=="DAT1") {
-            header.isBundled=false;
+        std::cout << header.oVersion << std::endl;
+        std::cout << header.oTime << std::endl;
+        std::cout << header.oItems << std::endl;
+        std::cout << int(header.oIsLittleEndian[0]) << std::endl;
+        if (strsig=="DAT1") {
+            
         } else {
             // "DAT2"
-            fseek(fh, 64, SEEK_SET);
-            for (int k=0; k<header.bundleItems.size(); ++k) {
-                res = fread(&header.bundleItems[k].start, sizeof(int), 1, fh);
-                res = fread(&header.bundleItems[k].length, sizeof(int), 1, fh);
-                header.bundleItems[k].extension = stringRead(fh, 8);
-                header.bundleItems[k].bundleItemSize=16;
-                std::cout <<  header.bundleItems[k].start << std::endl
-                          <<  header.bundleItems[k].length << std::endl
-                          <<  header.bundleItems[k].extension << std::endl;
+            for (int k=0; k<12; ++k) {
+                std::cout <<  header.oBundleItems[k].oStart << std::endl
+                          <<  header.oBundleItems[k].oLength << std::endl
+                          <<  header.oBundleItems[k].oExtension << std::endl;
             }
-            header.isBundled=true;
         }
     }
+}
+
+BundleHeader getBundleHeader(FILE* fh) {
+    BundleHeader header;
+
+    int res = 0;
+    res = fseek(fh, 0, SEEK_SET);
+    res = fread(&header, sizeof(BundleHeader), 1, fh);
+    printHeader(header);
     return header;
 }
 
-int findExt(const HEKAheader& header, const std::string& ext) {
+RootRecord getRoot(FILE* fh) {
+    int res = 0;
+    RootRecord rec;
+    res = fread(&rec, sizeof(RootRecord), 1, fh);
+    std::cout << rec.RoVersionName << std::endl;
+    return rec;
+}
+
+GroupRecord getGroup(FILE* fh) {
+    int res = 0;
+    GroupRecord rec;
+    res = fread(&rec, sizeof(GroupRecord), 1, fh);
+    std::cout << rec.GrLabel << std::endl;
+    return rec;
+}
+
+SeriesRecord getSeries(FILE* fh) {
+    int res = 0;
+    SeriesRecord rec;
+    res = fread(&rec, sizeof(SeriesRecord), 1, fh);
+    std::cout << rec.SeLabel << std::endl;
+    return rec;
+}
+
+SweepRecord getSweep(FILE* fh) {
+    int res = 0;
+    SweepRecord rec;
+    res = fread(&rec, sizeof(SweepRecord), 1, fh);
+    std::cout << rec.SwLabel << std::endl;
+    return rec;
+}
+
+TraceRecord getTrace(FILE* fh) {
+    int res = 0;
+    TraceRecord rec;
+    res = fread(&rec, sizeof(TraceRecord), 1, fh);
+    std::cout << rec.TrLabel << std::endl;
+    return rec;
+}
+
+int findExt(const BundleHeader& header, const std::string& ext) {
     int extNo = -1;
-    for (int k=0; k<header.bundleItems.size(); ++k) {
-        if (header.bundleItems[k].extension == ext) {
+    for (int k=0; k<12; ++k) {
+        if (header.oBundleItems[k].oExtension == ext) {
             extNo = k;
         }
     }
     return extNo;
 }
-
-#if 0
-void getOneRecord(FILE* fh, int level, int& counter) {
+void getOneRecord(FILE* fh, Level level, Tree& TreeInOut, int& CounterInOut) {
     // Gets one record
-    counter++;
-    std::vector<double> rec;
+    int idx = -1;
     switch (level) {
-     case 0:
-         rec = getRoot(fh);
+     case root:
+         idx = TreeInOut.RootList.size();
+         TreeInOut.RootList.push_back(getRoot(fh));
          break;
-     case 1:
-         rec = getGroup(fh);
+     case group:
+         idx = TreeInOut.GroupList.size();
+         TreeInOut.GroupList.push_back(getGroup(fh));
          break;
-     case 2:
-         rec = getSeries(fh);
+     case series:
+         idx = TreeInOut.SeriesList.size();
+         TreeInOut.SeriesList.push_back(getSeries(fh));
          break;
-     case 3:
-         rec = getSweep(fh);
+     case sweep:
+         idx = TreeInOut.SweepList.size();
+         TreeInOut.SweepList.push_back(getSweep(fh));
          break;
-     case 4:
-         rec = getTrace(fh);
+     case trace:
+         idx = TreeInOut.TraceList.size();
+         TreeInOut.TraceList.push_back(getTrace(fh));
          break;
      default:
          throw std::runtime_error("Couldn't read record");
     }
-    // return rec;
+
+    TreeInOut.entries.push_back( TreeEntry(level, CounterInOut, idx) );
+    CounterInOut++;
+    std::cout << CounterInOut << "\t" << level << "\t";
 }
-#endif
+
+int getOneLevel(FILE* fh, const std::vector<int>& Sizes, Level level, Tree& TreeInOut, int& PositionInOut, int& CounterInOut) {
+    // Gets one record of the tree and the number of children
+    /*[s Counter]=getOneRecord(fh, Level, Counter);
+Tree{Counter, Level+1}=s;
+Position=Position+Sizes(Level+1);
+fseek(fh, Position, 'bof');
+nchild=fread(fh, 1, 'int32=>int32');
+Position=ftell(fh);
+    */
+    getOneRecord(fh, level, TreeInOut, CounterInOut);
+    PositionInOut += Sizes[level];
+    fseek(fh, PositionInOut, SEEK_SET);
+    int nchild = 0;
+    int res = fread(&nchild, sizeof(int), 1, fh);
+    PositionInOut = ftell(fh);
+    return nchild;
+}
+
+void getTreeReentrant(FILE* fh, const std::vector<int>& Sizes, Level level, Tree& TreeInOut, int& PositionInOut, int& CounterInOut) {
+    // Recursive routine called from LoadTree
+    /*
+    [Tree, Position, Counter, nchild]=getOneLevel(fh, Tree, Sizes, Level, Position, Counter);
+    for k=1:double(nchild)
+        [Tree, Position, Counter]=getTreeReentrant(fh, Tree, Sizes, Level+1, Position, Counter);
+    end*/
+    int nchild = getOneLevel(fh, Sizes, level, TreeInOut, PositionInOut, CounterInOut);
+    for (int k=0; k<nchild; ++k) {
+        getTreeReentrant(fh, Sizes, int2Level(level+1), TreeInOut, PositionInOut, CounterInOut);
+    }
+}
+
+Tree getTree(FILE* fh, const std::vector<int>& Sizes, int& PositionInOut) {
+    Tree tree;
+    // Main entry point for loading tree
+    // [Tree, Counter]=getTreeReentrant(fh, {}, Sizes, 0, Position, 0);
+    int Counter = 0;
+    getTreeReentrant(fh, Sizes, int2Level(0), tree, PositionInOut, Counter);
+    return tree;
+}
 
 void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool progress) {
 #ifndef MODULE_ONLY
@@ -179,23 +546,27 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
     
     // Open file
     FILE* dat_fh = fopen(fName.c_str(), "r");
-    std::cout << dat_fh << std::endl;
-    HEKAheader header = getBundleHeader(dat_fh);
+    BundleHeader header = getBundleHeader(dat_fh);
+
     int start = 0;
-    if (header.isBundled) {
+    bool isBundled = false;
+    if (std::string(header.oSignature)=="DAT2") {
         // find the pulse data
+        isBundled = true;
         int extNo = findExt(header, ".pul");
         if (extNo < 0) {
             throw std::runtime_error("Couldn't find .pul file in bundle");
         }
-        start = header.bundleItems[extNo].start;
+        start = header.oBundleItems[extNo].oStart;
     } else {
         throw std::runtime_error("Can only deal with bundled data at present");
     }
 
     // Base of tree
     fseek(dat_fh, start, SEEK_SET);
-    std::string magic = stringRead(dat_fh, 4);
+    char cMagic[4];
+    res = fread(&cMagic[0], sizeof(char), 4, dat_fh);
+    std::string magic(cMagic);
     int levels = 0;
     res = fread(&levels, sizeof(int), 1, dat_fh);
     std::vector<int> sizes(levels);
@@ -206,102 +577,41 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
               << levels << std::endl
               << sizes[0] << std::endl
               << pos << std::endl;
-    // tree=getTree(dat_fh, Sizes, Position);
+    Tree tree = getTree(dat_fh, sizes, pos);
 
+    if (isBundled) {
+        // find the data
+        int extNo = findExt(header, ".dat");
+        if (extNo < 0) {
+            throw std::runtime_error("Couldn't find .dat file in bundle");
+        }
+        start = header.oBundleItems[extNo].oStart;
+    } else {
+        throw std::runtime_error("Can only deal with bundled data at present");
+    }
+
+    // Now set pointer to the start of the data the data
+    fseek(dat_fh, start, SEEK_SET);
+
+    // NOW IMPORT
+    // Count groups:
+    int ngroups = tree.GroupList.size();
+    int nseries = tree.SeriesList.size();
+    int nsweeps = tree.SweepList.size();
+    int ntraces = tree.TraceList.size();
+    std::cout << "\nGroups: " << ngroups << std::endl;
+    std::cout << "Series: " << nseries << std::endl;
+    std::cout << "Sweeps: " << nsweeps << std::endl;
+    std::cout << "Traces: " << ntraces << std::endl;
+
+    int nchannels = ntraces/nsweeps;
+    
 
     // Close file
     fclose(dat_fh);
 }
 
 #if 0
-function [matfilename, tree]=ImportHEKA(thisfile, targetpath)
-% ImportHEKA imports HEKA PatchMaster and ChartMaster .DAT files
-%
-% Example:
-% OUTPUTFILE=ImportHEKA(FILENAME)
-% OUTPUTFILE=ImportHEKA(FILENAME, TARGETPATH)
-%
-% FILENAME is the path and name of the HEKA DAT file to import.
-%
-% The kcl file generated will be placed in TARGETPATH if supplied. If not,
-% the file will be created in the directory taken from FILENAME.
-%
-% ImportHEKA has been tested with Windows generated .DAT files on Windows,
-% Linux and Mac OS10.4.
-%
-% Both bundled and unbundled data files are supported. If your files are
-% unbundled, they must all be in the same folder.
-%
-%
-% Notes:
-% Timestamps from the data file are rounded to the nearest nanonsecond for
-% sigTOOL.
-% Waveform data are scaled to SI units of A or V in HEKA files. For
-% sigTOOL, they are scaled to pA, pV, nA, nV... etc as appropriate given
-% the data range.
-%
-% The HEKA DAT format is versatile and not all combinations of settings may
-% have been anticipated here. If you encounter problems importing files
-% please report the bug and send a sample DAT file using Help->Bug Report
-% in the sigTOOL GUI
-%
-
-[pathname filename ext]=fileparts(thisfile);
-datafile=fullfile(pathname, [filename ext]);
-
-% Progress bar
-progbar=scProgressBar(0,'Scanning file tree...','Name', filename);
-
-% Open file and get bundle header. Assume little-endian to begin with
-endian='ieee-le';
-fh=fopen(datafile, 'r', endian);
-[bundle littleendianflag isBundled]=getBundleHeader(fh);
-
-% Big endian so repeat process
-if ~isempty(littleendianflag) && littleendianflag==false
-    fclose(fh);
-    endian='ieee-be';
-    fh=fopen(datafile, 'r', endian);
-    bundle=getBundleHeader(fh);
-end
-
-if isBundled
-    ext={bundle.oBundleItems(1:12).oExtension};
-    % Find the pulse data
-    idx=strmatch('.pul', ext);
-    start=bundle.oBundleItems(idx).oStart;
-else
-    % Or open pulse file if not bundled
-    fclose(fh);
-    start=0;
-    fh=fopen(fullfile(pathname, [filename, '.pul']), 'r', endian);
-end
-
-% Base of tree
-fseek(fh, start, 'bof');
-Magic=fread(fh, 4, 'uint8=>char');
-Levels=fread(fh, 1, 'int32=>int32');
-Sizes=fread(fh, double(Levels), 'int32=>int32');
-
-% Get the tree form the pulse file
-Position=ftell(fh);
-tree=getTree(fh, Sizes, Position);
-
-if isBundled
-    % Set offset for data
-    idx=strmatch('.dat', ext);
-    start=bundle.oBundleItems(idx).oStart;
-else
-    % Or open data file if not bundled
-    fclose(fh);
-    fh=fopen(datafile, 'r', endian);
-    start=bundle.BundleHeaderSize;
-end
-
-% Now set pointer to the start of the data the data
-fseek(fh, start, 'bof');
-
-% NOW IMPORT
 
 % Set up MAT-file giving a 'kcl' extension
 if nargin<2
@@ -445,177 +755,23 @@ end
 % The functions below return data as defined by the HEKA PatchMaster
 % specification
 
-%--------------------------------------------------------------------------
-function p=getRoot(fh)
-%--------------------------------------------------------------------------
-p.RoVersion=fread(fh, 1, 'int32=>int32');
-p.RoMark=fread(fh, 1, 'int32=>int32');%               =   4; (* INT32 *)
-p.RoVersionName=deblank(fread(fh, 32, 'uint8=>char')');%        =   8; (* String32Type *)
-p.RoAuxFileName=deblank(fread(fh, 80, 'uint8=>char')');%        =  40; (* String80Type *)
-p.RoRootText=deblank(fread(fh, 400, 'uint8=>char')');% (* String400Type *)
-p.RoStartTime=fread(fh, 1, 'double=>double') ;%        = 520; (* LONGREAL *)
-p.RoStartTimeMATLAB=time2date(p.RoStartTime);
-p.RoMaxSamples=fread(fh, 1, 'int32=>int32'); %        = 528; (* INT32 *)
-p.RoCRC=fread(fh, 1, 'int32=>int32'); %                = 532; (* CARD32 *)
-p.RoFeatures=fread(fh, 1, 'int16=>int16'); %           = 536; (* SET16 *)
-p.RoFiller1=fread(fh, 1, 'int16=>int16');%         = 538; (* INT16 *)
-p.RoFiller2=fread(fh, 1, 'int32=>int32');%         = 540; (* INT32 *)
-p.RootRecSize= 544;
-p=orderfields(p);
-return
-end
-
-%--------------------------------------------------------------------------
-function g=getGroup(fh)
-%--------------------------------------------------------------------------
-% Group
-g.GrMark=fread(fh, 1, 'int32=>int32');%               =   0; (* INT32 *)
-g.GrLabel=deblank(fread(fh, 32, 'uint8=>char')');%               =   4; (* String32Size *)
-g.GrText=deblank(fread(fh, 80, 'uint8=>char')');%                =  36; (* String80Size *)
-g.GrExperimentNumber=fread(fh, 1, 'int32=>int32');%   = 116; (* INT32 *)
-g.GrGroupCount=fread(fh, 1, 'int32=>int32');%         = 120; (* INT32 *)
-g.GrCRC=fread(fh, 1, 'int32=>int32');%                = 124; (* CARD32 *)
-g.GroupRecSize=128;%     (* = 16 * 8 *)
-g=orderfields(g);
-return
-end
-
-%--------------------------------------------------------------------------
-function s=getSeries(fh)
-%--------------------------------------------------------------------------
-s.SeMark=fread(fh, 1, 'int32=>int32');%               =   0; (* INT32 *)
-s.SeLabel=deblank(fread(fh, 32, 'uint8=>char')');%              =   4; (* String32Type *)
-s.SeComment=deblank(fread(fh, 80, 'uint8=>char')');%            =  36; (* String80Type *)
-s.SeSeriesCount=fread(fh, 1, 'int32=>int32');%        = 116; (* INT32 *)
-s.SeNumbersw=fread(fh, 1, 'int32=>int32');%       = 120; (* INT32 *)
-s.SeAmplStateOffset=fread(fh, 1, 'int32=>int32');%    = 124; (* INT32 *)
-s.SeAmplStateSeries=fread(fh, 1, 'int32=>int32');%    = 128; (* INT32 *)
-s.SeSeriesType=fread(fh, 1, 'uint8=>uint8');%         = 132; (* BYTE *)
-s.SeFiller1=fread(fh, 1, 'uint8=>uint8');%         = 133; (* BYTE *)
-s.SeFiller2=fread(fh, 1, 'uint8=>uint8');%         = 134; (* BYTE *)
-s.SeFiller3=fread(fh, 1, 'uint8=>uint8');%         = 135; (* BYTE *)
-s.SeTime=fread(fh, 1, 'double=>double') ;%               = 136; (* LONGREAL *)
-s.SeTimeMATLAB=time2date(s.SeTime);
-s.SePageWidth=fread(fh, 1, 'double=>double') ;%          = 144; (* LONGREAL *)
-for k=1:4
-    s.SeSwUserParamDescr(k).Name=deblank(fread(fh, 32, 'uint8=>char')');%
-    s.SeSwUserParamDescr(k).Unit=deblank(fread(fh, 8, 'uint8=>char')');%
-end
-s.SeFiller4=fread(fh, 32, 'uint8=>uint8');%         = 312; (* 32 BYTE *)
-s.SeSeUserParams=fread(fh, 4, 'double=>double');%       = 344; (* ARRAY[0..3] OF LONGREAL *)
-s.SeLockInParams=getSeLockInParams(fh);%       = 376; (* SeLockInSize = 96, see "Pulsed.de" *)
-s.SeAmplifierState=getAmplifierState(fh);%     = 472; (* AmplifierStateSize = 400 *)
-s.SeUsername=deblank(fread(fh, 80, 'uint8=>char')');%           = 872; (* String80Type *)
-for k=1:4
-    s.SeSeUserParamDescr(k).Name=deblank(fread(fh, 32, 'uint8=>char')');%
-    s.SeSeUserParamDescr(k).Unit=deblank(fread(fh, 8, 'uint8=>char')');%
-end                                                  % (* ARRAY[0..3] OF UserParamDescrType = 4*40 *)
-s.SeFiller5=fread(fh, 1, 'int32=>int32');%         = 1112; (* INT32 *)
-s.SeCRC=fread(fh, 1, 'int32=>int32');%                = 1116; (* CARD32 *)
-s.SeriesRecSize=1120;%      (* = 140 * 8 *)
-s=orderfields(s);
-return
-end
-
-%--------------------------------------------------------------------------
-function sw=getSweep(fh)
-%--------------------------------------------------------------------------
-sw.SwMark=fread(fh, 1, 'int32=>int32');%               =   0; (* INT32 *)
-sw.SwLabel=deblank(fread(fh, 32, 'uint8=>char')');%              =   4; (* String32Type *)
-sw.SwAuxDataFileOffset=fread(fh, 1, 'int32=>int32');%  =  36; (* INT32 *)
-sw.SwStimCount=fread(fh, 1, 'int32=>int32');%          =  40; (* INT32 *)
-sw.SwSweepCount=fread(fh, 1, 'int32=>int32');%         =  44; (* INT32 *)
-sw.SwTime=fread(fh, 1, 'double=>double');%               =  48; (* LONGREAL *)
-sw.SwTimeMATLAB=time2date(sw.SwTime);% Also add in MATLAB datenum format
-sw.SwTimer=fread(fh, 1, 'double=>double');%              =  56; (* LONGREAL *)
-sw.SwSwUserParams=fread(fh, 4, 'double=>double');%       =  64; (* ARRAY[0..3] OF LONGREAL *)
-sw.SwTemperature=fread(fh, 1, 'double=>double');%        =  96; (* LONGREAL *)
-sw.SwOldIntSol=fread(fh, 1, 'int32=>int32');%          = 104; (* INT32 *)
-sw.SwOldExtSol=fread(fh, 1, 'int32=>int32');%          = 108; (* INT32 *)
-sw.SwDigitalIn=fread(fh, 1, 'int16=>int16');%          = 112; (* SET16 *)
-sw.SwSweepKind=fread(fh, 1, 'int16=>int16');%          = 114; (* SET16 *)
-sw.SwFiller1=fread(fh, 1, 'int32=>int32');%         = 116; (* INT32 *)
-sw.SwMarkers=fread(fh, 4, 'double=>double');%            = 120; (* ARRAY[0..3] OF LONGREAL *)
-sw.SwFiller2=fread(fh, 1, 'int32=>int32');%         = 152; (* INT32 *)
-sw.SwCRC=fread(fh, 1, 'int32=>int32');%                = 156; (* CARD32 *)
-sw.SweepRecSize         = 160;%      (* = 20 * 8 *)
-sw=orderfields(sw);
-return
-end
-
-%--------------------------------------------------------------------------
-function tr=getTrace(fh)
-%--------------------------------------------------------------------------
-tr.TrMark=fread(fh, 1, 'int32=>int32');%               =   0; (* INT32 *)
-tr.TrLabel=deblank(fread(fh, 32, 'uint8=>char')');%              =   4; (* String32Type *)
-tr.TrTraceCount=fread(fh, 1, 'int32=>int32');%         =  36; (* INT32 *)
-tr.TrData=fread(fh, 1, 'int32=>int32');%               =  40; (* INT32 *)
-tr.TrDataPoints=fread(fh, 1, 'int32=>int32');%         =  44; (* INT32 *)
-tr.TrInternalSolution=fread(fh, 1, 'int32=>int32');%   =  48; (* INT32 *)
-tr.TrAverageCount=fread(fh, 1, 'int32=>int32');%       =  52; (* INT32 *)
-tr.TrLeakCount=fread(fh, 1, 'int32=>int32');%          =  56; (* INT32 *)
-tr.TrLeakTraces=fread(fh, 1, 'int32=>int32');%         =  60; (* INT32 *)
-tr.TrDataKind=fread(fh, 1, 'uint16=>uint16');%           =  64; (* SET16 *) NB Stored unsigned
-tr.TrFiller1=fread(fh, 1, 'int16=>int16');%         =  66; (* SET16 *)
-tr.TrRecordingMode=fread(fh, 1, 'uint8=>uint8');%      =  68; (* BYTE *)
-tr.TrAmplIndex=fread(fh, 1, 'uint8=>uint8');%          =  69; (* CHAR *)
-tr.TrDataFormat=fread(fh, 1, 'uint8=>uint8');%         =  70; (* BYTE *)
-tr.TrDataAbscissa=fread(fh, 1, 'uint8=>uint8');%       =  71; (* BYTE *)
-tr.TrDataScaler=fread(fh, 1, 'double=>double');%         =  72; (* LONGREAL *)
-tr.TrTimeOffset=fread(fh, 1, 'double=>double');%         =  80; (* LONGREAL *)
-tr.TrZeroData=fread(fh, 1, 'double=>double');%           =  88; (* LONGREAL *)
-tr.TrYUnit=deblank(fread(fh, 8, 'uint8=>char')');%              =  96; (* String8Type *)
-tr.TrXInterval=fread(fh, 1, 'double=>double');%          = 104; (* LONGREAL *)
-tr.TrXStart=fread(fh, 1, 'double=>double');%             = 112; (* LONGREAL *)
-tr.TrXUnit=deblank(fread(fh, 8, 'uint8=>char')');%              = 120; (* String8Type *)
-tr.TrYRange=fread(fh, 1, 'double=>double');%             = 128; (* LONGREAL *)
-tr.TrYOffset=fread(fh, 1, 'double=>double');%            = 136; (* LONGREAL *)
-tr.TrBandwidth=fread(fh, 1, 'double=>double');%          = 144; (* LONGREAL *)
-tr.TrPipetteResistance=fread(fh, 1, 'double=>double');%  = 152; (* LONGREAL *)
-tr.TrCellPotential=fread(fh, 1, 'double=>double');%      = 160; (* LONGREAL *)
-tr.TrSealResistance=fread(fh, 1, 'double=>double');%     = 168; (* LONGREAL *)
-tr.TrCSlow=fread(fh, 1, 'double=>double');%              = 176; (* LONGREAL *)
-tr.TrGSeries=fread(fh, 1, 'double=>double');%            = 184; (* LONGREAL *)
-tr.TrRsValue=fread(fh, 1, 'double=>double');%            = 192; (* LONGREAL *)
-tr.TrGLeak=fread(fh, 1, 'double=>double');%              = 200; (* LONGREAL *)
-tr.TrMConductance=fread(fh, 1, 'double=>double');%       = 208; (* LONGREAL *)
-tr.TrLinkDAChannel=fread(fh, 1, 'int32=>int32');%      = 216; (* INT32 *)
-tr.TrValidYrange=fread(fh, 1, 'uint8=>logical');%        = 220; (* BOOLEAN *)
-tr.TrAdcMode=fread(fh, 1, 'uint8=>uint8');%            = 221; (* CHAR *)
-tr.TrAdcChannel=fread(fh, 1, 'int16=>int16');%         = 222; (* INT16 *)
-tr.TrYmin=fread(fh, 1, 'double=>double');%               = 224; (* LONGREAL *)
-tr.TrYmax=fread(fh, 1, 'double=>double');%               = 232; (* LONGREAL *)
-tr.TrSourceChannel=fread(fh, 1, 'int32=>int32');%      = 240; (* INT32 *)
-tr.TrExternalSolution=fread(fh, 1, 'int32=>int32');%   = 244; (* INT32 *)
-tr.TrCM=fread(fh, 1, 'double=>double');%                 = 248; (* LONGREAL *)
-tr.TrGM=fread(fh, 1, 'double=>double');%                 = 256; (* LONGREAL *)
-tr.TrPhase=fread(fh, 1, 'double=>double');%              = 264; (* LONGREAL *)
-tr.TrDataCRC=fread(fh, 1, 'int32=>int32');%            = 272; (* CARD32 *)
-tr.TrCRC=fread(fh, 1, 'int32=>int32');%                = 276; (* CARD32 *)
-tr.TrGS=fread(fh, 1, 'double=>double');%                 = 280; (* LONGREAL *)
-tr.TrSelfChannel=fread(fh, 1, 'int32=>int32');%        = 288; (* INT32 *)
-tr.TrFiller2=fread(fh, 1, 'int16=>int16');%         = 292; (* SET16 *)
-tr.TraceRecSize         = 296;%      (* = 37 * 8 *)
-tr=orderfields(tr);
-return
-end
 
 %--------------------------------------------------------------------------
 function L=getSeLockInParams(fh)
 %--------------------------------------------------------------------------
 offset=ftell(fh);
-L.loExtCalPhase=fread(fh, 1, 'double=>double') ;%        =   0; (* LONGREAL *)
-L.loExtCalAtten=fread(fh, 1, 'double=>double') ;%        =   8; (* LONGREAL *)
-L.loPLPhase=fread(fh, 1, 'double=>double') ;%            =  16; (* LONGREAL *)
-L.loPLPhaseY1=fread(fh, 1, 'double=>double') ;%          =  24; (* LONGREAL *)
-L.loPLPhaseY2=fread(fh, 1, 'double=>double') ;%          =  32; (* LONGREAL *)
-L.loUsedPhaseShift=fread(fh, 1, 'double=>double') ;%     =  40; (* LONGREAL *)
-L.loUsedAttenuation=fread(fh, 1, 'double=>double');%    =  48; (* LONGREAL *)
+L.loExtCalPhase=fread(fh, 1, 'double=>double') ;%        =   0; /* LONGREAL */
+L.loExtCalAtten=fread(fh, 1, 'double=>double') ;%        =   8; /* LONGREAL */
+L.loPLPhase=fread(fh, 1, 'double=>double') ;%            =  16; /* LONGREAL */
+L.loPLPhaseY1=fread(fh, 1, 'double=>double') ;%          =  24; /* LONGREAL */
+L.loPLPhaseY2=fread(fh, 1, 'double=>double') ;%          =  32; /* LONGREAL */
+L.loUsedPhaseShift=fread(fh, 1, 'double=>double') ;%     =  40; /* LONGREAL */
+L.loUsedAttenuation=fread(fh, 1, 'double=>double');%    =  48; /* LONGREAL */
 skip=fread(fh, 1, 'double=>double');
-L.loExtCalValid=fread(fh, 1, 'uint8=>logical') ;%        =  64; (* BOOLEAN *)
-L.loPLPhaseValid=fread(fh, 1, 'uint8=>logical') ;%       =  65; (* BOOLEAN *)
-L.loLockInMode=fread(fh, 1, 'uint8=>uint8') ;%         =  66; (* BYTE *)
-L.loCalMode=fread(fh, 1, 'uint8=>uint8') ;%            =  67; (* BYTE *)
+L.loExtCalValid=fread(fh, 1, 'uint8=>logical') ;%        =  64; /* BOOLEAN */
+L.loPLPhaseValid=fread(fh, 1, 'uint8=>logical') ;%       =  65; /* BOOLEAN */
+L.loLockInMode=fread(fh, 1, 'uint8=>uint8') ;%         =  66; /* BYTE */
+L.loCalMode=fread(fh, 1, 'uint8=>uint8') ;%            =  67; /* BYTE */
 L.LockInParamsSize=96;
 fseek(fh, offset+L.LockInParamsSize, 'bof');
 return
@@ -625,112 +781,112 @@ end
 function A=getAmplifierState(fh)
 %--------------------------------------------------------------------------
 offset=ftell(fh);
-A.E9StateVersion=fread(fh, 1, 'double=>double');%       =   0; (* 8 = SizeStateVersion *)
-A.E9RealCurrentGain=fread(fh, 1, 'double=>double');%    =   8; (* LONGREAL *)
-A.E9RealF2Bandwidth=fread(fh, 1, 'double=>double');%    =  16; (* LONGREAL *)
-A.E9F2Frequency=fread(fh, 1, 'double=>double');%        =  24; (* LONGREAL *)
-A.E9RsValue=fread(fh, 1, 'double=>double');%            =  32; (* LONGREAL *)
-A.E9RsFraction=fread(fh, 1, 'double=>double');%         =  40; (* LONGREAL *)
-A.E9GLeak=fread(fh, 1, 'double=>double');%              =  48; (* LONGREAL *)
-A.E9CFastAmp1=fread(fh, 1, 'double=>double');%          =  56; (* LONGREAL *)
-A.E9CFastAmp2=fread(fh, 1, 'double=>double');%          =  64; (* LONGREAL *)
-A.E9CFastTau=fread(fh, 1, 'double=>double');%           =  72; (* LONGREAL *)
-A.E9CSlow=fread(fh, 1, 'double=>double');%              =  80; (* LONGREAL *)
-A.E9GSeries=fread(fh, 1, 'double=>double');%            =  88; (* LONGREAL *)
-A.E9StimDacScale=fread(fh, 1, 'double=>double');%       =  96; (* LONGREAL *)
-A.E9CCStimScale=fread(fh, 1, 'double=>double');%        = 104; (* LONGREAL *)
-A.E9VHold=fread(fh, 1, 'double=>double');%              = 112; (* LONGREAL *)
-A.E9LastVHold=fread(fh, 1, 'double=>double');%          = 120; (* LONGREAL *)
-A.E9VpOffset=fread(fh, 1, 'double=>double');%           = 128; (* LONGREAL *)
-A.E9VLiquidJunction=fread(fh, 1, 'double=>double');%    = 136; (* LONGREAL *)
-A.E9CCIHold=fread(fh, 1, 'double=>double');%            = 144; (* LONGREAL *)
-A.E9CSlowStimVolts=fread(fh, 1, 'double=>double');%     = 152; (* LONGREAL *)
-A.E9CCtr.TrackVHold=fread(fh, 1, 'double=>double');%       = 160; (* LONGREAL *)
-A.E9TimeoutLength=fread(fh, 1, 'double=>double');%      = 168; (* LONGREAL *)
-A.E9SearchDelay=fread(fh, 1, 'double=>double');%        = 176; (* LONGREAL *)
-A.E9MConductance=fread(fh, 1, 'double=>double');%       = 184; (* LONGREAL *)
-A.E9MCapacitance=fread(fh, 1, 'double=>double');%       = 192; (* LONGREAL *)
-A.E9SerialNumber=fread(fh, 1, 'double=>double');%       = 200; (* 8 = SizeSerialNumber *)
-A.E9E9Boards=fread(fh, 1, 'int16=>int16');%           = 208; (* INT16 *)
-A.E9CSlowCycles=fread(fh, 1, 'int16=>int16');%        = 210; (* INT16 *)
-A.E9IMonAdc=fread(fh, 1, 'int16=>int16');%            = 212; (* INT16 *)
-A.E9VMonAdc=fread(fh, 1, 'int16=>int16');%            = 214; (* INT16 *)
-A.E9MuxAdc=fread(fh, 1, 'int16=>int16');%             = 216; (* INT16 *)
-A.E9TstDac=fread(fh, 1, 'int16=>int16');%             = 218; (* INT16 *)
-A.E9StimDac=fread(fh, 1, 'int16=>int16');%            = 220; (* INT16 *)
-A.E9StimDacOffset=fread(fh, 1, 'int16=>int16');%      = 222; (* INT16 *)
-A.E9MaxDigitalBit=fread(fh, 1, 'int16=>int16');%      = 224; (* INT16 *)
-A.E9SpareInt1=fread(fh, 1, 'int16=>int16');%       = 226; (* INT16 *)
-A.E9SpareInt2=fread(fh, 1, 'int16=>int16');%       = 228; (* INT16 *)
-A.E9SpareInt3=fread(fh, 1, 'int16=>int16');%       = 230; (* INT16 *)
+A.E9StateVersion=fread(fh, 1, 'double=>double');%       =   0; /* 8 = SizeStateVersion */
+A.E9RealCurrentGain=fread(fh, 1, 'double=>double');%    =   8; /* LONGREAL */
+A.E9RealF2Bandwidth=fread(fh, 1, 'double=>double');%    =  16; /* LONGREAL */
+A.E9F2Frequency=fread(fh, 1, 'double=>double');%        =  24; /* LONGREAL */
+A.E9RsValue=fread(fh, 1, 'double=>double');%            =  32; /* LONGREAL */
+A.E9RsFraction=fread(fh, 1, 'double=>double');%         =  40; /* LONGREAL */
+A.E9GLeak=fread(fh, 1, 'double=>double');%              =  48; /* LONGREAL */
+A.E9CFastAmp1=fread(fh, 1, 'double=>double');%          =  56; /* LONGREAL */
+A.E9CFastAmp2=fread(fh, 1, 'double=>double');%          =  64; /* LONGREAL */
+A.E9CFastTau=fread(fh, 1, 'double=>double');%           =  72; /* LONGREAL */
+A.E9CSlow=fread(fh, 1, 'double=>double');%              =  80; /* LONGREAL */
+A.E9GSeries=fread(fh, 1, 'double=>double');%            =  88; /* LONGREAL */
+A.E9StimDacScale=fread(fh, 1, 'double=>double');%       =  96; /* LONGREAL */
+A.E9CCStimScale=fread(fh, 1, 'double=>double');%        = 104; /* LONGREAL */
+A.E9VHold=fread(fh, 1, 'double=>double');%              = 112; /* LONGREAL */
+A.E9LastVHold=fread(fh, 1, 'double=>double');%          = 120; /* LONGREAL */
+A.E9VpOffset=fread(fh, 1, 'double=>double');%           = 128; /* LONGREAL */
+A.E9VLiquidJunction=fread(fh, 1, 'double=>double');%    = 136; /* LONGREAL */
+A.E9CCIHold=fread(fh, 1, 'double=>double');%            = 144; /* LONGREAL */
+A.E9CSlowStimVolts=fread(fh, 1, 'double=>double');%     = 152; /* LONGREAL */
+A.E9CCtr.TrackVHold=fread(fh, 1, 'double=>double');%       = 160; /* LONGREAL */
+A.E9TimeoutLength=fread(fh, 1, 'double=>double');%      = 168; /* LONGREAL */
+A.E9SearchDelay=fread(fh, 1, 'double=>double');%        = 176; /* LONGREAL */
+A.E9MConductance=fread(fh, 1, 'double=>double');%       = 184; /* LONGREAL */
+A.E9MCapacitance=fread(fh, 1, 'double=>double');%       = 192; /* LONGREAL */
+A.E9SerialNumber=fread(fh, 1, 'double=>double');%       = 200; /* 8 = SizeSerialNumber */
+A.E9E9Boards=fread(fh, 1, 'int16=>int16');%           = 208; /* INT16 */
+A.E9CSlowCycles=fread(fh, 1, 'int16=>int16');%        = 210; /* INT16 */
+A.E9IMonAdc=fread(fh, 1, 'int16=>int16');%            = 212; /* INT16 */
+A.E9VMonAdc=fread(fh, 1, 'int16=>int16');%            = 214; /* INT16 */
+A.E9MuxAdc=fread(fh, 1, 'int16=>int16');%             = 216; /* INT16 */
+A.E9TstDac=fread(fh, 1, 'int16=>int16');%             = 218; /* INT16 */
+A.E9StimDac=fread(fh, 1, 'int16=>int16');%            = 220; /* INT16 */
+A.E9StimDacOffset=fread(fh, 1, 'int16=>int16');%      = 222; /* INT16 */
+A.E9MaxDigitalBit=fread(fh, 1, 'int16=>int16');%      = 224; /* INT16 */
+A.E9SpareInt1=fread(fh, 1, 'int16=>int16');%       = 226; /* INT16 */
+A.E9SpareInt2=fread(fh, 1, 'int16=>int16');%       = 228; /* INT16 */
+A.E9SpareInt3=fread(fh, 1, 'int16=>int16');%       = 230; /* INT16 */
 
-A.E9AmplKind=fread(fh, 1, 'uint8=>uint8');%           = 232; (* BYTE *)
-A.E9IsEpc9N=fread(fh, 1, 'uint8=>uint8');%            = 233; (* BYTE *)
-A.E9ADBoard=fread(fh, 1, 'uint8=>uint8');%            = 234; (* BYTE *)
-A.E9BoardVersion=fread(fh, 1, 'uint8=>uint8');%       = 235; (* BYTE *)
-A.E9ActiveE9Board=fread(fh, 1, 'uint8=>uint8');%      = 236; (* BYTE *)
-A.E9Mode=fread(fh, 1, 'uint8=>uint8');%               = 237; (* BYTE *)
-A.E9Range=fread(fh, 1, 'uint8=>uint8');%              = 238; (* BYTE *)
-A.E9F2Response=fread(fh, 1, 'uint8=>uint8');%         = 239; (* BYTE *)
+A.E9AmplKind=fread(fh, 1, 'uint8=>uint8');%           = 232; /* BYTE */
+A.E9IsEpc9N=fread(fh, 1, 'uint8=>uint8');%            = 233; /* BYTE */
+A.E9ADBoard=fread(fh, 1, 'uint8=>uint8');%            = 234; /* BYTE */
+A.E9BoardVersion=fread(fh, 1, 'uint8=>uint8');%       = 235; /* BYTE */
+A.E9ActiveE9Board=fread(fh, 1, 'uint8=>uint8');%      = 236; /* BYTE */
+A.E9Mode=fread(fh, 1, 'uint8=>uint8');%               = 237; /* BYTE */
+A.E9Range=fread(fh, 1, 'uint8=>uint8');%              = 238; /* BYTE */
+A.E9F2Response=fread(fh, 1, 'uint8=>uint8');%         = 239; /* BYTE */
 
-A.E9RsOn=fread(fh, 1, 'uint8=>uint8');%               = 240; (* BYTE *)
-A.E9CSlowRange=fread(fh, 1, 'uint8=>uint8');%         = 241; (* BYTE *)
-A.E9CCRange=fread(fh, 1, 'uint8=>uint8');%            = 242; (* BYTE *)
-A.E9CCGain=fread(fh, 1, 'uint8=>uint8');%             = 243; (* BYTE *)
-A.E9CSlowToTstDac=fread(fh, 1, 'uint8=>uint8');%      = 244; (* BYTE *)
-A.E9StimPath=fread(fh, 1, 'uint8=>uint8');%           = 245; (* BYTE *)
-A.E9CCtr.TrackTau=fread(fh, 1, 'uint8=>uint8');%         = 246; (* BYTE *)
-A.E9WasClipping=fread(fh, 1, 'uint8=>uint8');%        = 247; (* BYTE *)
+A.E9RsOn=fread(fh, 1, 'uint8=>uint8');%               = 240; /* BYTE */
+A.E9CSlowRange=fread(fh, 1, 'uint8=>uint8');%         = 241; /* BYTE */
+A.E9CCRange=fread(fh, 1, 'uint8=>uint8');%            = 242; /* BYTE */
+A.E9CCGain=fread(fh, 1, 'uint8=>uint8');%             = 243; /* BYTE */
+A.E9CSlowToTstDac=fread(fh, 1, 'uint8=>uint8');%      = 244; /* BYTE */
+A.E9StimPath=fread(fh, 1, 'uint8=>uint8');%           = 245; /* BYTE */
+A.E9CCtr.TrackTau=fread(fh, 1, 'uint8=>uint8');%         = 246; /* BYTE */
+A.E9WasClipping=fread(fh, 1, 'uint8=>uint8');%        = 247; /* BYTE */
 
-A.E9RepetitiveCSlow=fread(fh, 1, 'uint8=>uint8');%    = 248; (* BYTE *)
-A.E9LastCSlowRange=fread(fh, 1, 'uint8=>uint8');%     = 249; (* BYTE *)
-A.E9Locked=fread(fh, 1, 'uint8=>uint8');%             = 250; (* BYTE *)
-A.E9CanCCFast=fread(fh, 1, 'uint8=>uint8');%          = 251; (* BYTE *)
-A.E9CanLowCCRange=fread(fh, 1, 'uint8=>uint8');%      = 252; (* BYTE *)
-A.E9CanHighCCRange=fread(fh, 1, 'uint8=>uint8');%     = 253; (* BYTE *)
-A.E9CanCCtr.Tracking=fread(fh, 1, 'uint8=>uint8');%      = 254; (* BYTE *)
-A.E9HasVmonPath=fread(fh, 1, 'uint8=>uint8');%        = 255; (* BYTE *)
+A.E9RepetitiveCSlow=fread(fh, 1, 'uint8=>uint8');%    = 248; /* BYTE */
+A.E9LastCSlowRange=fread(fh, 1, 'uint8=>uint8');%     = 249; /* BYTE */
+A.E9Locked=fread(fh, 1, 'uint8=>uint8');%             = 250; /* BYTE */
+A.E9CanCCFast=fread(fh, 1, 'uint8=>uint8');%          = 251; /* BYTE */
+A.E9CanLowCCRange=fread(fh, 1, 'uint8=>uint8');%      = 252; /* BYTE */
+A.E9CanHighCCRange=fread(fh, 1, 'uint8=>uint8');%     = 253; /* BYTE */
+A.E9CanCCtr.Tracking=fread(fh, 1, 'uint8=>uint8');%      = 254; /* BYTE */
+A.E9HasVmonPath=fread(fh, 1, 'uint8=>uint8');%        = 255; /* BYTE */
 
-A.E9HasNewCCMode=fread(fh, 1, 'uint8=>uint8');%       = 256; (* BYTE *)
-A.E9Selector=fread(fh, 1, 'uint8=>char');%           = 257; (* CHAR *)
-A.E9HoldInverted=fread(fh, 1, 'uint8=>uint8');%       = 258; (* BYTE *)
-A.E9AutoCFast=fread(fh, 1, 'uint8=>uint8');%          = 259; (* BYTE *)
-A.E9AutoCSlow=fread(fh, 1, 'uint8=>uint8');%          = 260; (* BYTE *)
-A.E9HasVmonX100=fread(fh, 1, 'uint8=>uint8');%        = 261; (* BYTE *)
-A.E9TestDacOn=fread(fh, 1, 'uint8=>uint8');%          = 262; (* BYTE *)
-A.E9QMuxAdcOn=fread(fh, 1, 'uint8=>uint8');%          = 263; (* BYTE *)
+A.E9HasNewCCMode=fread(fh, 1, 'uint8=>uint8');%       = 256; /* BYTE */
+A.E9Selector=fread(fh, 1, 'uint8=>char');%           = 257; /* CHAR */
+A.E9HoldInverted=fread(fh, 1, 'uint8=>uint8');%       = 258; /* BYTE */
+A.E9AutoCFast=fread(fh, 1, 'uint8=>uint8');%          = 259; /* BYTE */
+A.E9AutoCSlow=fread(fh, 1, 'uint8=>uint8');%          = 260; /* BYTE */
+A.E9HasVmonX100=fread(fh, 1, 'uint8=>uint8');%        = 261; /* BYTE */
+A.E9TestDacOn=fread(fh, 1, 'uint8=>uint8');%          = 262; /* BYTE */
+A.E9QMuxAdcOn=fread(fh, 1, 'uint8=>uint8');%          = 263; /* BYTE */
 
-A.E9RealImon1Bandwidth=fread(fh, 1, 'double=>double');% = 264; (* LONGREAL *)
-A.E9StimScale=fread(fh, 1, 'double=>double');%          = 272; (* LONGREAL *)
+A.E9RealImon1Bandwidth=fread(fh, 1, 'double=>double');% = 264; /* LONGREAL */
+A.E9StimScale=fread(fh, 1, 'double=>double');%          = 272; /* LONGREAL */
 
-A.E9Gain=fread(fh, 1, 'uint8=>uint8');%               = 280; (* BYTE *)
-A.E9Filter1=fread(fh, 1, 'uint8=>uint8');%            = 281; (* BYTE *)
-A.E9StimFilterOn=fread(fh, 1, 'uint8=>uint8');%       = 282; (* BYTE *)
-A.E9RsSlow=fread(fh, 1, 'uint8=>uint8');%             = 283; (* BYTE *)
-A.E9Old1=fread(fh, 1, 'uint8=>uint8');%            = 284; (* BYTE *)
-A.E9CCCFastOn=fread(fh, 1, 'uint8=>uint8');%          = 285; (* BYTE *)
-A.E9CCFastSpeed=fread(fh, 1, 'uint8=>uint8');%        = 286; (* BYTE *)
-A.E9F2Source=fread(fh, 1, 'uint8=>uint8');%           = 287; (* BYTE *)
+A.E9Gain=fread(fh, 1, 'uint8=>uint8');%               = 280; /* BYTE */
+A.E9Filter1=fread(fh, 1, 'uint8=>uint8');%            = 281; /* BYTE */
+A.E9StimFilterOn=fread(fh, 1, 'uint8=>uint8');%       = 282; /* BYTE */
+A.E9RsSlow=fread(fh, 1, 'uint8=>uint8');%             = 283; /* BYTE */
+A.E9Old1=fread(fh, 1, 'uint8=>uint8');%            = 284; /* BYTE */
+A.E9CCCFastOn=fread(fh, 1, 'uint8=>uint8');%          = 285; /* BYTE */
+A.E9CCFastSpeed=fread(fh, 1, 'uint8=>uint8');%        = 286; /* BYTE */
+A.E9F2Source=fread(fh, 1, 'uint8=>uint8');%           = 287; /* BYTE */
 
-A.E9TestRange=fread(fh, 1, 'uint8=>uint8');%          = 288; (* BYTE *)
-A.E9TestDacPath=fread(fh, 1, 'uint8=>uint8');%        = 289; (* BYTE *)
-A.E9MuxChannel=fread(fh, 1, 'uint8=>uint8');%         = 290; (* BYTE *)
-A.E9MuxGain64=fread(fh, 1, 'uint8=>uint8');%          = 291; (* BYTE *)
-A.E9VmonX100=fread(fh, 1, 'uint8=>uint8');%           = 292; (* BYTE *)
-A.E9IsQuadro=fread(fh, 1, 'uint8=>uint8');%           = 293; (* BYTE *)
-A.E9SpareBool4=fread(fh, 1, 'uint8=>uint8');%      = 294; (* BYTE *)
-A.E9SpareBool5=fread(fh, 1, 'uint8=>uint8');%      = 295; (* BYTE *)
+A.E9TestRange=fread(fh, 1, 'uint8=>uint8');%          = 288; /* BYTE */
+A.E9TestDacPath=fread(fh, 1, 'uint8=>uint8');%        = 289; /* BYTE */
+A.E9MuxChannel=fread(fh, 1, 'uint8=>uint8');%         = 290; /* BYTE */
+A.E9MuxGain64=fread(fh, 1, 'uint8=>uint8');%          = 291; /* BYTE */
+A.E9VmonX100=fread(fh, 1, 'uint8=>uint8');%           = 292; /* BYTE */
+A.E9IsQuadro=fread(fh, 1, 'uint8=>uint8');%           = 293; /* BYTE */
+A.E9SpareBool4=fread(fh, 1, 'uint8=>uint8');%      = 294; /* BYTE */
+A.E9SpareBool5=fread(fh, 1, 'uint8=>uint8');%      = 295; /* BYTE */
 
-A.E9StimFilterHz=fread(fh, 1, 'double=>double');%       = 296; (* LONGREAL *)
-A.E9RsTau=fread(fh, 1, 'double=>double');%              = 304; (* LONGREAL *)
-A.E9FilterOffsetDac=fread(fh, 1, 'int16=>int16');%    = 312; (* INT16 *)
-A.E9ReferenceDac=fread(fh, 1, 'int16=>int16');%       = 314; (* INT16 *)
-A.E9SpareInt6=fread(fh, 1, 'int16=>int16');%       = 316; (* INT16 *)
-A.E9SpareInt7=fread(fh, 1, 'int16=>int16');%       = 318; (* INT16 *)
+A.E9StimFilterHz=fread(fh, 1, 'double=>double');%       = 296; /* LONGREAL */
+A.E9RsTau=fread(fh, 1, 'double=>double');%              = 304; /* LONGREAL */
+A.E9FilterOffsetDac=fread(fh, 1, 'int16=>int16');%    = 312; /* INT16 */
+A.E9ReferenceDac=fread(fh, 1, 'int16=>int16');%       = 314; /* INT16 */
+A.E9SpareInt6=fread(fh, 1, 'int16=>int16');%       = 316; /* INT16 */
+A.E9SpareInt7=fread(fh, 1, 'int16=>int16');%       = 318; /* INT16 */
 A.E9Spares1=320;
 
-A.E9CalibDate=fread(fh, 2, 'double=>double');%          = 344; (* 16 = SizeCalibDate *)
-A.E9SelHold=fread(fh, 1, 'double=>double');%            = 360; (* LONGREAL *)
+A.E9CalibDate=fread(fh, 2, 'double=>double');%          = 344; /* 16 = SizeCalibDate */
+A.E9SelHold=fread(fh, 1, 'double=>double');%            = 360; /* LONGREAL */
 A.AmplifierStateSize   = 400;
 fseek(fh, offset+A.AmplifierStateSize, 'bof');
 return
