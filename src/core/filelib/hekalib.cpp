@@ -535,6 +535,206 @@ Tree getTree(FILE* fh, const std::vector<int>& Sizes, int& PositionInOut) {
     return tree;
 }
 
+void LocalImportGroup(FILE* fh, const Tree& tree, int grp, const std::vector<int>& grp_row, int channelnumber) {
+    #if 0
+//--------------------------------------------------------------------------
+
+
+// Create a structure for the series headers
+
+
+// Pad the indices for last series of last group
+grp_row(end+1)=size(tree,1);
+
+// Collect the series headers and row numbers for this group into a
+// structure array
+[ser_s, ser_row, nseries]=getSeriesHeaders(tree, grp_row, grp);
+
+// Pad for last series
+ser_row(nseries+1)=grp_row(grp+1);
+
+
+// Create the channels
+for ser=1:nseries
+    
+    [sw_s, sw_row, nsweeps]=getSweepHeaders(tree, ser_row, ser);    
+    
+    // Make sure the sweeps are in temporal sequence
+    if any(diff(cell2mat({sw_s.SwTime}))<=0)
+        // TODO: sort them if this can ever happen.
+        // For the moment just throw an error
+        error('Sweeps not in temporal sequence');
+    end
+    
+    sw_row(nsweeps+1)=ser_row(ser+1); 
+    // Get the trace headers for this sweep
+    [tr_row]=getTraceHeaders(tree, sw_row); 
+    
+    for k=1:size(tr_row, 1)
+
+        [tr_s, isConstantScaling, isConstantFormat, isFramed]=LocalCheckEntries(tree, tr_row, k);
+        
+        data=zeros(max(cell2mat({tr_s.TrDataPoints})), size(tr_row,2));
+        
+        for tr=1:size(tr_row,2)
+            // Disc format
+            fmt=LocalFormatToString(tr_s(tr).TrDataFormat);
+            // Always read into double
+            readfmt=[fmt '=>double'];
+            // Read the data - always casting to double
+            fseek(fh, tree{tr_row(k,tr),5}.TrData, 'bof');
+            [data(1:tree{tr_row(k,tr),5}.TrDataPoints, tr)]=...
+                fread(fh, double(tree{tr_row(k,tr),5}.TrDataPoints), readfmt);
+        end
+        
+        // Now format for sigTOOL
+        
+        // The channel header
+        hdr=scCreateChannelHeader();
+        hdr.channel=channelnumber;
+        hdr.title=tr_s(1).TrLabel;
+        hdr.source=dir(thisfile);
+        hdr.source.name=thisfile;
+        
+        hdr.Group.Number=grp;
+        hdr.Group.Label=tree{ser_row(ser),3}.SeLabel;
+        hdr.Group.SourceChannel=0;
+        s.hdr.Group.DateNum=datestr(now());
+        
+        // Patch details
+        hdr.Patch.Type=patchType(tr_s(1).TrRecordingMode);
+        hdr.Patch.Em=tr_s(1).TrCellPotential; 
+        hdr.Patch.isLeak=bitget(tr_s(1).TrDataKind, 2);
+        if hdr.Patch.isLeak==1
+            hdr.Patch.isLeakSubtracted=false;
+        else
+            hdr.Patch.isLeakSubtracted=true;
+            hdr.Patch.isZeroAdjusted=true;
+        end
+        
+        // Temp
+        temp=cell2mat({tree{sw_row(1:end-1), 4}});
+        templist=cell2mat({temp.SwTemperature});
+        if numel(unique(templist==1))
+            hdr.Environment.Temperature=tree{sw_row(1), 4}.SwTemperature;
+        else
+            hdr.Environment.Temperature
+        end
+        
+        if size(data,2)==1
+            hdr.Channeltype='Continuous Waveform';
+        elseif isFramed
+            hdr.Channeltype='Framed Waveform';
+        else
+            hdr.Channeltype='Episodic Waveform';
+        end
+        
+        // The waveform data
+        // Continuous/frame based/uneven epochs
+        if size(data, 2)==1
+            hdr.channeltype='Continuous Waveform';
+            hdr.adc.Labels={'Time'};
+        else
+            if isFramed
+                hdr.channeltype='Framed Waveform';
+                hdr.adc.Labels={'Time' 'Frame'};
+            else
+                hdr.channeltype='Episodic Waveform';
+                hdr.adc.Labels={'Time' 'Epoch'};
+            end
+        end
+        hdr.adc.TargetClass='adcarray';
+        hdr.adc.Npoints=double(cell2mat({tr_s.TrDataPoints}));
+        
+        // Set the sample interval - always in seconds for sigTOOL
+        if isConstantScaling && isConstantFormat
+            switch tr_s(1).TrXUnit// Must be constant or error thrown above
+                case 's'
+                    tsc=1e6;
+                case 'ms'
+                    tsc=1e3;
+                case 'µs'
+                    tsc=1;
+                otherwise
+                    error('Unsupported time units');
+            end
+            hdr.adc.SampleInterval=[tr_s(1).TrXInterval*tsc 1/tsc];
+        end
+        
+        // Now scale the data to real world units
+        // Note we also apply zero adjustment
+        for col=1:size(data,2)
+            data(:,col)=data(:,col)*tr_s(col).TrDataScaler+tr_s(col).TrZeroData;
+        end
+        
+        // Get the data range....
+        [sc prefix]=LocalDataScaling(data);        
+        //... and scale the data
+        data=data*sc;
+        
+        // Adjust the units string accordingly
+        switch tr_s(1).TrYUnit
+            case {'V' 'A'}
+                hdr.adc.Units=[prefix tr_s(1).TrYUnit];
+            otherwise
+                hdr.adc.Units=[tr_s(1).TrYUnit '*' sprintf('%g',sc)];
+        end
+        
+        if isConstantScaling
+            [res intflag]=LocalGetRes(fmt);
+            castfcn=str2func(fmt);
+        else
+            highest=LocalFormatToString(max(cell2mat({tr_s.TrDataFormat})));
+            [res intflag]=LocalGetRes(highest);
+            castfcn=str2func(highest);
+        end
+        
+        if intflag
+            // Set scaling/offset and cast to integer type
+            hdr.adc.Scale=(max(data(:))-min(data(:)))/res;
+            hdr.adc.DC=(min(data(:))+max(data(:)))/2;
+            imp.adc=castfcn((data-hdr.adc.DC)/hdr.adc.Scale);
+        else
+            // Preserve as floating point
+            hdr.adc.Scale=1;
+            hdr.adc.DC=0;
+            imp.adc=castfcn(data);
+        end
+        
+        hdr.adc.YLim=[double(min(imp.adc(:)))*hdr.adc.Scale+hdr.adc.DC...
+            double(max(imp.adc(:)))*hdr.adc.Scale+hdr.adc.DC];
+        
+        // Timestamps
+        StartTimes=cell2mat({sw_s.SwTime})+cell2mat({tr_s.TrTimeOffset});
+        imp.tim=(StartTimes-min(StartTimes))\';
+        if any(cell2mat({tr_s.TrXStart})+cell2mat({tr_s.TrXStart}));
+            imp.tim(:,2)=imp.tim(:,1)+cell2mat({tr_s.TrXStart}\');
+        end
+        imp.tim(:,end+1)=imp.tim(:,1)+(double(cell2mat({tr_s.TrDataPoints})-1).*cell2mat({tr_s.TrXInterval}))\';
+        
+        // Scale and round off to nanoseconds
+        imp.tim=round(imp.tim*10^9);
+        hdr.tim.Class='tstamp';
+        hdr.tim.Scale=1e-9;
+        hdr.tim.Shift=0;
+        hdr.tim.Func=[];
+        hdr.tim.Units=1;
+        
+        imp.mrk=[];
+        
+        scSaveImportedChannel(matfilename, channelnumber, imp, hdr);
+        clear('imp','hdr','data');
+        
+        channelnumber=channelnumber+1;
+    end
+    
+    
+end
+
+end
+#endif
+}
+
 void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool progress) {
 #ifndef MODULE_ONLY
     wxProgressDialog progDlg(wxT("HEKA binary file import"), wxT("Starting file import"),
