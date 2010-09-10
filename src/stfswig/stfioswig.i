@@ -87,10 +87,12 @@ class Section {
     ~Recording() {delete $self;}
 
     Channel& __getitem__(std::size_t at) {
-        try {
-            return $self->at(at);
-        } catch (const std::out_of_range& e) {
-            std::cerr << "Channel index out of range\n" << e.what() << std::endl;
+        if (at >= 0 && at < $self->size()) {
+            return (*($self))[at];
+        } else {
+            PyErr_SetString(PyExc_IndexError, "Channel index out of range");
+            std::cerr << "Channel index " << at << " out of range\n" << std::endl;
+            throw std::out_of_range("Channel index out of range");
         }
     }
     int __len__() { return $self->size(); }
@@ -146,10 +148,12 @@ class Section {
     ~Channel() {delete $self;}
     
     Section& __getitem__(std::size_t at) {
-        try {
-            return $self->at(at);
-        } catch (const std::out_of_range& e) {
-            std::cerr << "Section index out of range\n" << e.what() << std::endl;
+        if (at >= 0 && at < $self->size()) {
+            return (*($self))[at];
+        } else {
+            PyErr_SetString(PyExc_IndexError, "Section index out of range");
+            std::cerr << "Section index " << at << " out of range\n" << std::endl;
+            throw std::out_of_range("Section index out of range");
         }
     }
     int __len__() { return $self->size(); }
@@ -174,10 +178,12 @@ class Section {
         delete($self);
     }
     double __getitem__(std::size_t at) {
-        try {
-            return $self->at(at);
-        } catch (const std::out_of_range& e) {
-            std::cerr << "Point index out of range\n" << e.what() << std::endl;
+        if (at >= 0 && at < $self->size()) {
+            return (*($self))[at];
+        } else {
+            PyErr_SetString(PyExc_IndexError, "Point index out of range");
+            std::cerr << "Point index " << at << " out of range\n" << std::endl;
+            throw std::out_of_range("Point index out of range");
         }
     }
     int __len__() { return $self->size(); }

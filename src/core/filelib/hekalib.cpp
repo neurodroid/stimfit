@@ -409,7 +409,6 @@ BundleHeader getBundleHeader(FILE* fh) {
     int res = 0;
     res = fseek(fh, 0, SEEK_SET);
     res = fread(&header, sizeof(BundleHeader), 1, fh);
-    printHeader(header);
     return header;
 }
 
@@ -417,7 +416,6 @@ RootRecord getRoot(FILE* fh) {
     int res = 0;
     RootRecord rec;
     res = fread(&rec, sizeof(RootRecord), 1, fh);
-    std::cout << rec.RoVersionName << std::endl;
     return rec;
 }
 
@@ -425,7 +423,6 @@ GroupRecord getGroup(FILE* fh) {
     int res = 0;
     GroupRecord rec;
     res = fread(&rec, sizeof(GroupRecord), 1, fh);
-    std::cout << rec.GrLabel << std::endl;
     return rec;
 }
 
@@ -433,7 +430,6 @@ SeriesRecord getSeries(FILE* fh) {
     int res = 0;
     SeriesRecord rec;
     res = fread(&rec, sizeof(SeriesRecord), 1, fh);
-    std::cout << rec.SeLabel << std::endl;
     return rec;
 }
 
@@ -441,7 +437,6 @@ SweepRecord getSweep(FILE* fh) {
     int res = 0;
     SweepRecord rec;
     res = fread(&rec, sizeof(SweepRecord), 1, fh);
-    std::cout << rec.SwLabel << std::endl;
     return rec;
 }
 
@@ -449,7 +444,6 @@ TraceRecord getTrace(FILE* fh) {
     int res = 0;
     TraceRecord rec;
     res = fread(&rec, sizeof(TraceRecord), 1, fh);
-    std::cout << rec.TrLabel << std::endl;
     return rec;
 }
 
@@ -492,7 +486,6 @@ void getOneRecord(FILE* fh, Level level, Tree& TreeInOut, int& CounterInOut) {
 
     TreeInOut.entries.push_back( TreeEntry(level, CounterInOut, idx) );
     CounterInOut++;
-    std::cout << CounterInOut << "\t" << level << "\t";
 }
 
 int getOneLevel(FILE* fh, const std::vector<int>& Sizes, Level level, Tree& TreeInOut, int& PositionInOut, int& CounterInOut) {
@@ -535,8 +528,112 @@ Tree getTree(FILE* fh, const std::vector<int>& Sizes, int& PositionInOut) {
     return tree;
 }
 
-void LocalImportGroup(FILE* fh, const Tree& tree, int grp, const std::vector<int>& grp_row, int channelnumber) {
-    #if 0
+Recording ReadData(FILE* fh, const Tree& tree, bool progress
+#ifndef MODULE_ONLY
+                   , wxProgressDialog& progDlg
+#endif
+                   ) {
+    int ngroups = tree.GroupList.size();
+    int nseries = tree.SeriesList.size();
+    int nsweeps = tree.SweepList.size();
+    int ntraces = tree.TraceList.size();
+
+    int nchannels = ntraces/nsweeps;
+    Recording rec(nchannels, ntraces);
+    int res = 0;
+    for (int nc=0; nc<nchannels; ++nc) {
+        for (int ns=0; ns<ntraces; ns += nchannels) {
+            if (progress) {
+                int progbar =
+                    // Channel contribution:
+                    (int)(((double)nc/(double)nchannels)*100.0+
+                          // Section contribution:
+                          (double)ns/(double)ntraces*(100.0/nchannels));
+#ifndef MODULE_ONLY
+                wxString progStr;
+                progStr << "Reading channel #" << nc + 1 << " of " << nchannels
+                        << ", Section #" << ns + 1 << " of " << ntraces;
+                bool skip = false;
+                progDlg.Update(progbar, progStr, &skip);
+                if (skip) {
+                    rec.resize(0);
+                    return rec;
+                }
+#else
+                std::cout << "\r";
+                std::cout << progbar << "%" << std::flush;
+#endif
+            }
+            int npoints = tree.TraceList[ns].TrDataPoints;
+            rec[nc][ns].resize(npoints);
+
+            fseek(fh, tree.TraceList[ns].TrData, SEEK_SET);
+            std::cout << int(tree.TraceList[ns].TrDataFormat) << " ";
+            switch (int(tree.TraceList[ns].TrDataFormat)) {
+             case 0: {
+                 /*int16*/
+                 std::vector<short> tmpSection(npoints);
+                 res = fread(&tmpSection[0], sizeof(short), npoints, fh);
+                 std::copy(tmpSection.begin(), tmpSection.end(), rec[nc][ns].get_w().begin());
+                 break;
+             }
+             case 1: {
+                 /*int32*/
+                 std::vector<int> tmpSection(npoints);
+                 res = fread(&tmpSection[0], sizeof(int), npoints, fh);
+                 std::copy(tmpSection.begin(), tmpSection.end(), rec[nc][ns].get_w().begin());
+                 break;
+             }
+             case 2: {
+                 /*double16*/
+                 std::vector<float> tmpSection(npoints);
+                 res = fread(&tmpSection[0], sizeof(float), npoints, fh);
+                 std::copy(tmpSection.begin(), tmpSection.end(), rec[nc][ns].get_w().begin());
+                 break;
+             }
+             case 3: {
+                 /*double32*/
+                 std::vector<double> tmpSection(npoints);
+                 res = fread(&tmpSection[0], sizeof(double), npoints, fh);
+                 std::copy(tmpSection.begin(), tmpSection.end(), rec[nc][ns].get_w().begin());
+                 break;
+             }
+             default:
+                 throw std::runtime_error("Unknown data format while reading heka file");
+            }
+            double factor = 1.0;
+            if (tree.TraceList[nc].TrYUnit == "V") {
+                rec[nc].SetYUnits("mV");
+                factor = 1.0e3;
+            }
+            if (tree.TraceList[nc].TrYUnit == "A") {
+                rec[nc].SetYUnits("pA");
+                factor = 1.0e12;
+            }
+            std::cout << "\t" << int(tree.TraceList[ns].TrDataFormat) << " ";
+            std::cout << tree.TraceList[nc].TrDataScaler << " ";
+            std::cout << tree.TraceList[nc].TrZeroData << std::endl;
+            factor *=  tree.TraceList[nc].TrDataScaler;
+            rec[nc][ns].get_w() = stf::vec_scal_mul(rec[nc][ns].get(), factor);
+            rec[nc][ns].get_w() = stf::vec_scal_plus(rec[nc][ns].get(), tree.TraceList[nc].TrZeroData);
+        }
+        rec[nc].SetChannelName(tree.TraceList[nc].TrLabel);
+        
+    }
+    double tsc = 1.0;
+    std::string xunits(tree.TraceList[0].TrXUnit);
+    if (xunits == "s") {
+        tsc=1.0e3;
+    } else if (xunits == "ms") {
+        tsc=1.0;
+    } else if (xunits == "µs") {
+        tsc=1.0e-3;
+    } else {
+        throw std::runtime_error("Unsupported time units");
+    }
+    rec.SetXScale(tree.TraceList[0].TrXInterval*tsc);
+    return rec;
+#if 0
 //--------------------------------------------------------------------------
 
 
@@ -773,10 +870,6 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
     res = fread(&sizes[0], sizeof(int), levels, dat_fh);
     // Get the tree form the pulse file
     int pos = ftell(dat_fh);
-    std::cout << magic << std::endl
-              << levels << std::endl
-              << sizes[0] << std::endl
-              << pos << std::endl;
     Tree tree = getTree(dat_fh, sizes, pos);
 
     if (isBundled) {
@@ -794,304 +887,24 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
     fseek(dat_fh, start, SEEK_SET);
 
     // NOW IMPORT
-    // Count groups:
-    int ngroups = tree.GroupList.size();
-    int nseries = tree.SeriesList.size();
-    int nsweeps = tree.SweepList.size();
-    int ntraces = tree.TraceList.size();
-    std::cout << "\nGroups: " << ngroups << std::endl;
-    std::cout << "Series: " << nseries << std::endl;
-    std::cout << "Sweeps: " << nsweeps << std::endl;
-    std::cout << "Traces: " << ntraces << std::endl;
+    ReturnData = ReadData(dat_fh, tree, progress
+#ifndef MODULE_ONLY
+                          , progDlg
+#endif
+                          );
 
-    int nchannels = ntraces/nsweeps;
-    
+#ifdef MODULE_ONLY
+    if (progress) {
+        std::cout << "\r";
+        std::cout << "100%" << std::endl;
+    }
+#endif
 
     // Close file
     fclose(dat_fh);
 }
 
 #if 0
-
-% Set up MAT-file giving a 'kcl' extension
-if nargin<2
-    targetpath=fileparts(thisfile);
-end
-matfilename=scCreateKCLFile(thisfile, targetpath);
-if isempty(matfilename)
-    return
-end
-
-
-% Get the group headers into a structure array
-ngroup=1;
-for k=1:size(tree,1)
-    if ~isempty(tree{k, 2})
-        grp_row(ngroup)=k; %#ok<AGROW>
-        ngroup=ngroup+1;
-    end
-end
-
-
-% For each group
-channelnumber=1;
-for grp=1:numel(grp_row)
-            scProgressBar(grp/numel(grp_row), progbar, ...
-            sprintf('Importing data from Group %d',grp));
-    % Import the data...
-    channelnumber=LocalImportGroup(fh, thisfile, matfilename, tree, grp, grp_row, channelnumber);
-end
-
-
-FileSource.name='HEKA';
-FileSource.header=tree;
-save(matfilename, 'FileSource', '-v6', '-append');
-
-sigTOOLVersion=scVersion('nodisplay');
-save(matfilename,'sigTOOLVersion','-v6','-append');
-
-close(progbar);
-return
-end
-
-%--------------------------------------------------------------------------
-function [h littleendianflag isBundled]=getBundleHeader(fh)
-%--------------------------------------------------------------------------
-% Get the bundle header from a HEKA .dat file
-fseek(fh, 0, 'bof');
-h.oSignature=deblank(fread(fh, 8, 'uint8=>char')');
-switch h.oSignature
-    case 'DATA'
-        % Old format: nothing to do
-        h.oVersion=[];
-        h.oTime=[];
-        h.oItems=[];
-        h.oIsLittleEndian=[];
-        h.oBundleItems(1:12)=[];
-        h.BundleHeaderSize=0;
-        isBundled=false;
-    case {'DAT1' 'DAT2'}
-        % Newer format
-        h.oVersion=fread(fh, 32, 'uint8=>char')';
-        h.oTime=fread(fh, 1, 'double');
-        h.oItems=fread(fh, 1, 'int32=>int32');
-        h.oIsLittleEndian=fread(fh, 1, 'uint8=>logical');
-        h.BundleHeaderSize=256;
-        switch h.oSignature
-            case 'DAT1'
-                h.oBundleItems=[];
-                isBundled=false;
-            case 'DAT2'
-                fseek(fh, 64, 'bof');
-                for k=1:12
-                    h.oBundleItems(k).oStart=fread(fh, 1, 'int32=>int32');
-                    h.oBundleItems(k).oLength=fread(fh, 1, 'int32=>int32');
-                    h.oBundleItems(k).oExtension=deblank(fread(fh, 8, 'uint8=>char')');
-                    h.oBundleItems(k).BundleItemSize=16;
-                end
-                isBundled=true;
-        end
-    otherwise
-        error('This legacy file format is not supported');
-end
-littleendianflag=h.oIsLittleEndian;
-return
-end
-
-%--------------------------------------------------------------------------
-function [Tree, Counter]=getTree(fh, Sizes, Position)
-%--------------------------------------------------------------------------
-% Main entry point for loading tree
-[Tree, Counter]=getTreeReentrant(fh, {}, Sizes, 0, Position, 0);
-return
-end
-
-%--------------------------------------------------------------------------
-function [Tree, Position, Counter]=getTreeReentrant(fh, Tree, Sizes, Level, Position, Counter)
-%--------------------------------------------------------------------------
-% Recursive routine called from LoadTree
-[Tree, Position, Counter, nchild]=getOneLevel(fh, Tree, Sizes, Level, Position, Counter);
-for k=1:double(nchild)
-    [Tree, Position, Counter]=getTreeReentrant(fh, Tree, Sizes, Level+1, Position, Counter);
-end
-return
-end
-
-%--------------------------------------------------------------------------
-function [Tree, Position, Counter, nchild]=getOneLevel(fh, Tree, Sizes, Level, Position, Counter)
-%--------------------------------------------------------------------------
-% Gets one record of the tree and the number of children
-[s Counter]=getOneRecord(fh, Level, Counter);
-Tree{Counter, Level+1}=s;
-Position=Position+Sizes(Level+1);
-fseek(fh, Position, 'bof');
-nchild=fread(fh, 1, 'int32=>int32');
-Position=ftell(fh);
-return
-end
-
-%--------------------------------------------------------------------------
-function [rec Counter]=getOneRecord(fh, Level, Counter)
-%--------------------------------------------------------------------------
-% Gets one record
-Counter=Counter+1;
-switch Level
-    case 0
-        rec=getRoot(fh);
-    case 1
-        rec=getGroup(fh);
-    case 2
-        rec=getSeries(fh);
-    case 3
-        rec=getSweep(fh);
-    case 4
-        rec=getTrace(fh);
-    otherwise
-        error('Unexpected Level');
-end
-return
-end
-
-% The functions below return data as defined by the HEKA PatchMaster
-% specification
-
-
-%--------------------------------------------------------------------------
-function L=getSeLockInParams(fh)
-%--------------------------------------------------------------------------
-offset=ftell(fh);
-L.loExtCalPhase=fread(fh, 1, 'double=>double') ;%        =   0; /* LONGREAL */
-L.loExtCalAtten=fread(fh, 1, 'double=>double') ;%        =   8; /* LONGREAL */
-L.loPLPhase=fread(fh, 1, 'double=>double') ;%            =  16; /* LONGREAL */
-L.loPLPhaseY1=fread(fh, 1, 'double=>double') ;%          =  24; /* LONGREAL */
-L.loPLPhaseY2=fread(fh, 1, 'double=>double') ;%          =  32; /* LONGREAL */
-L.loUsedPhaseShift=fread(fh, 1, 'double=>double') ;%     =  40; /* LONGREAL */
-L.loUsedAttenuation=fread(fh, 1, 'double=>double');%    =  48; /* LONGREAL */
-skip=fread(fh, 1, 'double=>double');
-L.loExtCalValid=fread(fh, 1, 'uint8=>logical') ;%        =  64; /* BOOLEAN */
-L.loPLPhaseValid=fread(fh, 1, 'uint8=>logical') ;%       =  65; /* BOOLEAN */
-L.loLockInMode=fread(fh, 1, 'uint8=>uint8') ;%         =  66; /* BYTE */
-L.loCalMode=fread(fh, 1, 'uint8=>uint8') ;%            =  67; /* BYTE */
-L.LockInParamsSize=96;
-fseek(fh, offset+L.LockInParamsSize, 'bof');
-return
-end
-
-%--------------------------------------------------------------------------
-function A=getAmplifierState(fh)
-%--------------------------------------------------------------------------
-offset=ftell(fh);
-A.E9StateVersion=fread(fh, 1, 'double=>double');%       =   0; /* 8 = SizeStateVersion */
-A.E9RealCurrentGain=fread(fh, 1, 'double=>double');%    =   8; /* LONGREAL */
-A.E9RealF2Bandwidth=fread(fh, 1, 'double=>double');%    =  16; /* LONGREAL */
-A.E9F2Frequency=fread(fh, 1, 'double=>double');%        =  24; /* LONGREAL */
-A.E9RsValue=fread(fh, 1, 'double=>double');%            =  32; /* LONGREAL */
-A.E9RsFraction=fread(fh, 1, 'double=>double');%         =  40; /* LONGREAL */
-A.E9GLeak=fread(fh, 1, 'double=>double');%              =  48; /* LONGREAL */
-A.E9CFastAmp1=fread(fh, 1, 'double=>double');%          =  56; /* LONGREAL */
-A.E9CFastAmp2=fread(fh, 1, 'double=>double');%          =  64; /* LONGREAL */
-A.E9CFastTau=fread(fh, 1, 'double=>double');%           =  72; /* LONGREAL */
-A.E9CSlow=fread(fh, 1, 'double=>double');%              =  80; /* LONGREAL */
-A.E9GSeries=fread(fh, 1, 'double=>double');%            =  88; /* LONGREAL */
-A.E9StimDacScale=fread(fh, 1, 'double=>double');%       =  96; /* LONGREAL */
-A.E9CCStimScale=fread(fh, 1, 'double=>double');%        = 104; /* LONGREAL */
-A.E9VHold=fread(fh, 1, 'double=>double');%              = 112; /* LONGREAL */
-A.E9LastVHold=fread(fh, 1, 'double=>double');%          = 120; /* LONGREAL */
-A.E9VpOffset=fread(fh, 1, 'double=>double');%           = 128; /* LONGREAL */
-A.E9VLiquidJunction=fread(fh, 1, 'double=>double');%    = 136; /* LONGREAL */
-A.E9CCIHold=fread(fh, 1, 'double=>double');%            = 144; /* LONGREAL */
-A.E9CSlowStimVolts=fread(fh, 1, 'double=>double');%     = 152; /* LONGREAL */
-A.E9CCtr.TrackVHold=fread(fh, 1, 'double=>double');%       = 160; /* LONGREAL */
-A.E9TimeoutLength=fread(fh, 1, 'double=>double');%      = 168; /* LONGREAL */
-A.E9SearchDelay=fread(fh, 1, 'double=>double');%        = 176; /* LONGREAL */
-A.E9MConductance=fread(fh, 1, 'double=>double');%       = 184; /* LONGREAL */
-A.E9MCapacitance=fread(fh, 1, 'double=>double');%       = 192; /* LONGREAL */
-A.E9SerialNumber=fread(fh, 1, 'double=>double');%       = 200; /* 8 = SizeSerialNumber */
-A.E9E9Boards=fread(fh, 1, 'int16=>int16');%           = 208; /* INT16 */
-A.E9CSlowCycles=fread(fh, 1, 'int16=>int16');%        = 210; /* INT16 */
-A.E9IMonAdc=fread(fh, 1, 'int16=>int16');%            = 212; /* INT16 */
-A.E9VMonAdc=fread(fh, 1, 'int16=>int16');%            = 214; /* INT16 */
-A.E9MuxAdc=fread(fh, 1, 'int16=>int16');%             = 216; /* INT16 */
-A.E9TstDac=fread(fh, 1, 'int16=>int16');%             = 218; /* INT16 */
-A.E9StimDac=fread(fh, 1, 'int16=>int16');%            = 220; /* INT16 */
-A.E9StimDacOffset=fread(fh, 1, 'int16=>int16');%      = 222; /* INT16 */
-A.E9MaxDigitalBit=fread(fh, 1, 'int16=>int16');%      = 224; /* INT16 */
-A.E9SpareInt1=fread(fh, 1, 'int16=>int16');%       = 226; /* INT16 */
-A.E9SpareInt2=fread(fh, 1, 'int16=>int16');%       = 228; /* INT16 */
-A.E9SpareInt3=fread(fh, 1, 'int16=>int16');%       = 230; /* INT16 */
-
-A.E9AmplKind=fread(fh, 1, 'uint8=>uint8');%           = 232; /* BYTE */
-A.E9IsEpc9N=fread(fh, 1, 'uint8=>uint8');%            = 233; /* BYTE */
-A.E9ADBoard=fread(fh, 1, 'uint8=>uint8');%            = 234; /* BYTE */
-A.E9BoardVersion=fread(fh, 1, 'uint8=>uint8');%       = 235; /* BYTE */
-A.E9ActiveE9Board=fread(fh, 1, 'uint8=>uint8');%      = 236; /* BYTE */
-A.E9Mode=fread(fh, 1, 'uint8=>uint8');%               = 237; /* BYTE */
-A.E9Range=fread(fh, 1, 'uint8=>uint8');%              = 238; /* BYTE */
-A.E9F2Response=fread(fh, 1, 'uint8=>uint8');%         = 239; /* BYTE */
-
-A.E9RsOn=fread(fh, 1, 'uint8=>uint8');%               = 240; /* BYTE */
-A.E9CSlowRange=fread(fh, 1, 'uint8=>uint8');%         = 241; /* BYTE */
-A.E9CCRange=fread(fh, 1, 'uint8=>uint8');%            = 242; /* BYTE */
-A.E9CCGain=fread(fh, 1, 'uint8=>uint8');%             = 243; /* BYTE */
-A.E9CSlowToTstDac=fread(fh, 1, 'uint8=>uint8');%      = 244; /* BYTE */
-A.E9StimPath=fread(fh, 1, 'uint8=>uint8');%           = 245; /* BYTE */
-A.E9CCtr.TrackTau=fread(fh, 1, 'uint8=>uint8');%         = 246; /* BYTE */
-A.E9WasClipping=fread(fh, 1, 'uint8=>uint8');%        = 247; /* BYTE */
-
-A.E9RepetitiveCSlow=fread(fh, 1, 'uint8=>uint8');%    = 248; /* BYTE */
-A.E9LastCSlowRange=fread(fh, 1, 'uint8=>uint8');%     = 249; /* BYTE */
-A.E9Locked=fread(fh, 1, 'uint8=>uint8');%             = 250; /* BYTE */
-A.E9CanCCFast=fread(fh, 1, 'uint8=>uint8');%          = 251; /* BYTE */
-A.E9CanLowCCRange=fread(fh, 1, 'uint8=>uint8');%      = 252; /* BYTE */
-A.E9CanHighCCRange=fread(fh, 1, 'uint8=>uint8');%     = 253; /* BYTE */
-A.E9CanCCtr.Tracking=fread(fh, 1, 'uint8=>uint8');%      = 254; /* BYTE */
-A.E9HasVmonPath=fread(fh, 1, 'uint8=>uint8');%        = 255; /* BYTE */
-
-A.E9HasNewCCMode=fread(fh, 1, 'uint8=>uint8');%       = 256; /* BYTE */
-A.E9Selector=fread(fh, 1, 'uint8=>char');%           = 257; /* CHAR */
-A.E9HoldInverted=fread(fh, 1, 'uint8=>uint8');%       = 258; /* BYTE */
-A.E9AutoCFast=fread(fh, 1, 'uint8=>uint8');%          = 259; /* BYTE */
-A.E9AutoCSlow=fread(fh, 1, 'uint8=>uint8');%          = 260; /* BYTE */
-A.E9HasVmonX100=fread(fh, 1, 'uint8=>uint8');%        = 261; /* BYTE */
-A.E9TestDacOn=fread(fh, 1, 'uint8=>uint8');%          = 262; /* BYTE */
-A.E9QMuxAdcOn=fread(fh, 1, 'uint8=>uint8');%          = 263; /* BYTE */
-
-A.E9RealImon1Bandwidth=fread(fh, 1, 'double=>double');% = 264; /* LONGREAL */
-A.E9StimScale=fread(fh, 1, 'double=>double');%          = 272; /* LONGREAL */
-
-A.E9Gain=fread(fh, 1, 'uint8=>uint8');%               = 280; /* BYTE */
-A.E9Filter1=fread(fh, 1, 'uint8=>uint8');%            = 281; /* BYTE */
-A.E9StimFilterOn=fread(fh, 1, 'uint8=>uint8');%       = 282; /* BYTE */
-A.E9RsSlow=fread(fh, 1, 'uint8=>uint8');%             = 283; /* BYTE */
-A.E9Old1=fread(fh, 1, 'uint8=>uint8');%            = 284; /* BYTE */
-A.E9CCCFastOn=fread(fh, 1, 'uint8=>uint8');%          = 285; /* BYTE */
-A.E9CCFastSpeed=fread(fh, 1, 'uint8=>uint8');%        = 286; /* BYTE */
-A.E9F2Source=fread(fh, 1, 'uint8=>uint8');%           = 287; /* BYTE */
-
-A.E9TestRange=fread(fh, 1, 'uint8=>uint8');%          = 288; /* BYTE */
-A.E9TestDacPath=fread(fh, 1, 'uint8=>uint8');%        = 289; /* BYTE */
-A.E9MuxChannel=fread(fh, 1, 'uint8=>uint8');%         = 290; /* BYTE */
-A.E9MuxGain64=fread(fh, 1, 'uint8=>uint8');%          = 291; /* BYTE */
-A.E9VmonX100=fread(fh, 1, 'uint8=>uint8');%           = 292; /* BYTE */
-A.E9IsQuadro=fread(fh, 1, 'uint8=>uint8');%           = 293; /* BYTE */
-A.E9SpareBool4=fread(fh, 1, 'uint8=>uint8');%      = 294; /* BYTE */
-A.E9SpareBool5=fread(fh, 1, 'uint8=>uint8');%      = 295; /* BYTE */
-
-A.E9StimFilterHz=fread(fh, 1, 'double=>double');%       = 296; /* LONGREAL */
-A.E9RsTau=fread(fh, 1, 'double=>double');%              = 304; /* LONGREAL */
-A.E9FilterOffsetDac=fread(fh, 1, 'int16=>int16');%    = 312; /* INT16 */
-A.E9ReferenceDac=fread(fh, 1, 'int16=>int16');%       = 314; /* INT16 */
-A.E9SpareInt6=fread(fh, 1, 'int16=>int16');%       = 316; /* INT16 */
-A.E9SpareInt7=fread(fh, 1, 'int16=>int16');%       = 318; /* INT16 */
-A.E9Spares1=320;
-
-A.E9CalibDate=fread(fh, 2, 'double=>double');%          = 344; /* 16 = SizeCalibDate */
-A.E9SelHold=fread(fh, 1, 'double=>double');%            = 360; /* LONGREAL */
-A.AmplifierStateSize   = 400;
-fseek(fh, offset+A.AmplifierStateSize, 'bof');
-return
-end
-
 %--------------------------------------------------------------------------
 function channelnumber=LocalImportGroup(fh, thisfile, matfilename, tree, grp, grp_row, channelnumber)
 %--------------------------------------------------------------------------

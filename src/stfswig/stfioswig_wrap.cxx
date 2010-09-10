@@ -3128,10 +3128,12 @@ SWIG_AsVal_size_t (PyObject * obj, size_t *val)
 }
 
 SWIGINTERN Channel &Recording___getitem__(Recording *self,std::size_t at){
-        try {
-            return self->at(at);
-        } catch (const std::out_of_range& e) {
-            std::cerr << "Channel index out of range\n" << e.what() << std::endl;
+        if (at >= 0 && at < self->size()) {
+            return (*(self))[at];
+        } else {
+            PyErr_SetString(PyExc_IndexError, "Channel index out of range");
+            std::cerr << "Channel index " << at << " out of range\n" << std::endl;
+            throw std::out_of_range("Channel index out of range");
         }
     }
 SWIGINTERN int Recording___len__(Recording *self){ return self->size(); }
@@ -3190,10 +3192,12 @@ SWIGINTERN Channel *new_Channel(PyObject *SectionList){
     }
 SWIGINTERN void delete_Channel(Channel *self){delete self;}
 SWIGINTERN Section &Channel___getitem__(Channel *self,std::size_t at){
-        try {
-            return self->at(at);
-        } catch (const std::out_of_range& e) {
-            std::cerr << "Section index out of range\n" << e.what() << std::endl;
+        if (at >= 0 && at < self->size()) {
+            return (*(self))[at];
+        } else {
+            PyErr_SetString(PyExc_IndexError, "Section index out of range");
+            std::cerr << "Section index " << at << " out of range\n" << std::endl;
+            throw std::out_of_range("Section index out of range");
         }
     }
 SWIGINTERN int Channel___len__(Channel *self){ return self->size(); }
@@ -3214,10 +3218,12 @@ SWIGINTERN void delete_Section(Section *self){
         delete(self);
     }
 SWIGINTERN double Section___getitem__(Section *self,std::size_t at){
-        try {
-            return self->at(at);
-        } catch (const std::out_of_range& e) {
-            std::cerr << "Point index out of range\n" << e.what() << std::endl;
+        if (at >= 0 && at < self->size()) {
+            return (*(self))[at];
+        } else {
+            PyErr_SetString(PyExc_IndexError, "Point index out of range");
+            std::cerr << "Point index " << at << " out of range\n" << std::endl;
+            throw std::out_of_range("Point index out of range");
         }
     }
 SWIGINTERN int Section___len__(Section *self){ return self->size(); }
