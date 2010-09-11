@@ -43,6 +43,9 @@ autom4te.cache/*
 stimfit_VS03/stfswig/Debug
 stimfit_VS03/stfswig/stf\ debug
 stimfit_VS03/stfswig/Release
+stimfit_VS03/stfioswig/Debug
+stimfit_VS03/stfioswig/stf\ debug
+stimfit_VS03/stfioswig/Release
 stimfit_VS03/stimfit/Debug
 stimfit_VS03/stimfit/stf\ debug
 stimfit_VS03/stimfit/Release
