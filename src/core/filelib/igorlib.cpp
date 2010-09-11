@@ -19,8 +19,19 @@
 // Most of this was shamelessly copied from Wavemetrics' sample code.
 // Blame them for bugs.
 
+#ifndef MODULE_ONLY
 #include "wx/wxprec.h"
 #include "wx/progdlg.h"
+#endif
+
+#ifdef _WINDOWS
+#include <sstream>
+#ifdef MODULE_ONLY
+#define wxT(x) x
+#include <string>
+typedef std::string wxString;
+#endif
+#endif
 
 /*	The code in this file writes a sample Igor Pro packed experiment file.
 
@@ -65,10 +76,10 @@ bool CheckComp(const Recording& ReturnData);
 wxString
 stf::IGORError(const wxString& msg, int error)
 {
-    wxString ret;
+	std::stringstream ret;
     ret << wxT("Error # ") << error << wxT(" while writing Igor packed experiment:\n")
     << msg;
-    return ret;
+    return ret.str();
 }
 
 bool
@@ -99,9 +110,11 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
                 "Traces have different sizes"
         );
     }
+#ifndef MODULE_ONLY
     wxProgressDialog progDlg( wxT("Igor binary wave export"),
             wxT("Starting file export"), 100, NULL,
             wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
+#endif
     // Get unambiguous channel names:
     std::vector<wxString> channel_name(Data.size());
     bool ident=false;
@@ -115,7 +128,9 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
     }
     if (ident) {
         for (std::size_t n_c=0;n_c<Data.size()-1; ++n_c) {
-            channel_name[n_c] << wxT("Ch") << (int)n_c;
+			std::stringstream channelS;
+			channelS <<  wxT("Ch") << (int)n_c;
+            channel_name[n_c] = channelS.str();
         }
     } else {
         channel_name[Data.size()-1]=Data[Data.size()-1].GetChannelName();
@@ -133,9 +148,9 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
         WaveHeader5 wh;
         memset(&wh, 0, sizeof(wh));
         wh.type = NT_FP64;							// double precision floating point.
-		strcpy(wh.bname, channel_name[n_c].char_str());
-        strcpy(wh.dataUnits, Data[n_c].GetYUnits().char_str());
-        strcpy(wh.dimUnits[0], Data.GetXUnits().char_str());
+		strcpy(wh.bname, channel_name[n_c].c_str());
+        strcpy(wh.dataUnits, Data[n_c].GetYUnits().c_str());
+        strcpy(wh.dimUnits[0], Data.GetXUnits().c_str());
         wh.npnts = (long)(Data[n_c][0].size()*Data[n_c].size());
         wh.nDim[0] = (long)Data[n_c][0].size();
         wh.nDim[1] = (long)Data[n_c].size();
@@ -148,16 +163,16 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
 
         // Create a file:
         int err;
-        wxString filePath;
+		std::stringstream filePath;
         filePath << fileBase << wxT("_") << channel_name[n_c] << wxT(".ibw");
-        if (err = CPCreateFile(filePath.char_str(), 1, 'IGR0', 'IGBW')) {
-			throw std::runtime_error( std::string(IGORError(wxT("Error in CPCreateFile()\n"), err).char_str()) );
+        if (err = CPCreateFile(filePath.str().c_str(), 1, 'IGR0', 'IGBW')) {
+			throw std::runtime_error( std::string(IGORError(wxT("Error in CPCreateFile()\n"), err).c_str()) );
         }
 
         // Open the file:
         CP_FILE_REF fr;
-        if (err = CPOpenFile(filePath.char_str(), 1, &fr)) {
-			throw std::runtime_error( std::string(IGORError(wxT("Error in CPOpenFile()\n"), err).char_str()) );
+        if (err = CPOpenFile(filePath.str().c_str(), 1, &fr)) {
+			throw std::runtime_error( std::string(IGORError(wxT("Error in CPOpenFile()\n"), err).c_str()) );
         }
 
         // Write the data:
@@ -166,16 +181,18 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
         // One unnecessary copy operation due to const-correctness (couldn't const_cast<>)
         Channel TempChannel(Data[n_c]);
         for (std::size_t n_s=0;n_s<Data[n_c].size();++n_s) {
-            wxString progStr;
+			std::stringstream progStr;
             progStr << wxT("Writing channel #") << (int)n_c + 1 << wxT(" of ") << (int)Data.size()
             << wxT(", Section #") << (int)n_s+1 << wxT(" of ") << (int)Data[n_c].size();
+#ifndef MODULE_ONLY
             progDlg.Update(
                     // Channel contribution:
                     (int)(((double)n_c/(double)Data.size())*100.0+
                             // Section contribution:
                             (double)(n_s)/(double)Data[n_c].size()*(100.0/Data.size())),
-                            progStr
+                            progStr.str()
             );
+#endif
             // std::copy is faster than explicitly assigning to cpData[c][s][p]
             std::copy( &TempChannel[n_s][0], &TempChannel[n_s][Data[n_c][n_s].size()],
                     &cpData[n_s*wh.nDim[0]] );
@@ -184,7 +201,7 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
         if ( err=WriteVersion5NumericWave( fr, &wh, &cpData[0], waveNote.c_str(),
                 (long)strlen(waveNote.c_str()) ) )
         {
-            throw std::runtime_error( std::string(IGORError("Error in WriteVersion5NumericWave()\n", err).char_str()) );
+            throw std::runtime_error( std::string(IGORError("Error in WriteVersion5NumericWave()\n", err).c_str()) );
         }
         CPCloseFile(fr);
     }

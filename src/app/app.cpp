@@ -156,7 +156,7 @@ bool wxStfApp::OnInit(void)
 #endif
     
     // Config:
-    config.reset(new wxConfig(wxT("Stimfit")));
+    config.reset(new wxFileConfig(wxT("Stimfit")));
 
 
     //// Create a document manager

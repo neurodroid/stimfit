@@ -37,9 +37,7 @@
 #include "./../core.h"
 #include "./hekalib.h"
 
-#ifndef _WINDOWS
-    #define C_ASSERT(e) extern void __C_ASSERT__(int [(e)?1:-1])
-#endif
+#define C_ASSERT(e) extern void __C_ASSERT__(int [(e)?1:-1])
 
 enum Level {
     root = 0,
@@ -656,7 +654,11 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
     int res = 0;
     
     // Open file
-    FILE* dat_fh = fopen(fName.c_str(), "r");
+    FILE* dat_fh = fopen(fName.c_str(), "rb");
+    if (dat_fh==NULL) {
+        return;
+    }
+
     BundleHeader header = getBundleHeader(dat_fh);
     int start = 0;
     bool isBundled = false;

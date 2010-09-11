@@ -12,23 +12,38 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stimfit_exe", "stimfit_exe\
 		{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2} = {FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stfioswig", "stfioswig\stfioswig.vcproj", "{755F9071-405D-4AD9-8DB3-755F9C49A007}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
 		Release|Win32 = Release|Win32
 		stf debug|Win32 = stf debug|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}.Debug|Win32.Build.0 = Debug|Win32
 		{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}.Release|Win32.ActiveCfg = Release|Win32
 		{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}.Release|Win32.Build.0 = Release|Win32
 		{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}.stf debug|Win32.ActiveCfg = stf debug|Win32
 		{FFF63CE0-30F4-4BC4-B2D7-9E08318B14F2}.stf debug|Win32.Build.0 = stf debug|Win32
+		{A14ABDD1-AB61-4EA3-8A46-0170E7DB4EA0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A14ABDD1-AB61-4EA3-8A46-0170E7DB4EA0}.Debug|Win32.Build.0 = Debug|Win32
 		{A14ABDD1-AB61-4EA3-8A46-0170E7DB4EA0}.Release|Win32.ActiveCfg = Release|Win32
 		{A14ABDD1-AB61-4EA3-8A46-0170E7DB4EA0}.Release|Win32.Build.0 = Release|Win32
 		{A14ABDD1-AB61-4EA3-8A46-0170E7DB4EA0}.stf debug|Win32.ActiveCfg = stf debug|Win32
+		{4D16AB04-2431-4357-A898-1F0D6BDC9CB0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4D16AB04-2431-4357-A898-1F0D6BDC9CB0}.Debug|Win32.Build.0 = Debug|Win32
 		{4D16AB04-2431-4357-A898-1F0D6BDC9CB0}.Release|Win32.ActiveCfg = Release|Win32
 		{4D16AB04-2431-4357-A898-1F0D6BDC9CB0}.Release|Win32.Build.0 = Release|Win32
 		{4D16AB04-2431-4357-A898-1F0D6BDC9CB0}.stf debug|Win32.ActiveCfg = stf debug|Win32
 		{4D16AB04-2431-4357-A898-1F0D6BDC9CB0}.stf debug|Win32.Build.0 = stf debug|Win32
+		{755F9071-405D-4AD9-8DB3-755F9C49A007}.Debug|Win32.ActiveCfg = Debug|Win32
+		{755F9071-405D-4AD9-8DB3-755F9C49A007}.Debug|Win32.Build.0 = Debug|Win32
+		{755F9071-405D-4AD9-8DB3-755F9C49A007}.Release|Win32.ActiveCfg = Release|Win32
+		{755F9071-405D-4AD9-8DB3-755F9C49A007}.Release|Win32.Build.0 = Release|Win32
+		{755F9071-405D-4AD9-8DB3-755F9C49A007}.stf debug|Win32.ActiveCfg = Release|Win32
+		{755F9071-405D-4AD9-8DB3-755F9C49A007}.stf debug|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

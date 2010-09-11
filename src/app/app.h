@@ -161,7 +161,7 @@ enum {
 #include "wx/mdi.h"
 #include "wx/docview.h"
 #include "wx/docmdi.h"
-#include "wx/config.h"
+#include "wx/fileconf.h"
 #include "wx/settings.h"
 
 #ifdef __WXMAC__
@@ -473,7 +473,7 @@ private:
     bool directTxtImport,isBars,isHires;
     stf::txtImportSettings txtImport;
     // Registry:
-    boost::shared_ptr<wxConfig> config;
+    boost::shared_ptr<wxFileConfig> config;
     std::vector<stf::storedFunc> funcLib;
     std::vector< stf::Plugin > pluginLib;
     // Pointer to the cursors settings dialog box

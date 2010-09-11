@@ -24,6 +24,10 @@
 #ifndef MODULE_ONLY
 #include <wx/wx.h>
 #include <wx/progdlg.h>
+#else
+#ifdef _WINDOWS
+#include <sstream>
+#endif
 #endif
 
 #if defined(__linux__) || defined(__STF__) || defined(__APPLE__)
@@ -106,7 +110,9 @@ void stf::importABFFile(const wxString &fName, Recording &ReturnData, bool progr
     }
     fclose(fh);
 #else
-    HANDLE hFile = CreateFile(fName, GENERIC_READ, FILE_SHARE_READ, NULL,
+	std::wstringstream fNameS;
+	fNameS << fName.c_str();
+	HANDLE hFile = CreateFile(fNameS.str().c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
                               OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
  
     if (hFile == INVALID_HANDLE_VALUE) { 

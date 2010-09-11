@@ -448,7 +448,7 @@ void stf::importHDF5File(const wxString& fName, Recording& ReturnData, bool prog
                 wxString errorMsg(wxT("Exception while reading data information in stf::importHDF5File"));
                 throw std::runtime_error(std::string(errorMsg.c_str()));
             }
-            Vector_float TempSection(sdims);
+			Vector_float TempSection(sdims);
             status = H5LTread_dataset(file_id, data_path.str().c_str(), H5T_IEEE_F32LE, &TempSection[0]);
             if (status < 0) {
                 wxString errorMsg(wxT("Exception while reading data in stf::importHDF5File"));

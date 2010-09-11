@@ -1,6 +1,12 @@
 #include "fileUtils.h"
 #ifdef _WINDOWS
+#include <sstream>
+#ifdef MODULE_ONLY
+#include <string>
+typedef std::wstring wxString;
+#else
 #include <wx/wx.h>
+#endif
 #endif
 
 // Mac-specific file access functions
@@ -84,8 +90,9 @@ filehandle OpenFile( const char *fileName )
     return fopen( fileName, "r" );
 #endif
 #ifdef _WINDOWS
-    wxString fileNameU( fileName );
-    HANDLE file = CreateFile(fileNameU.c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	std::wstringstream fileNameS;
+	fileNameS << fileName;
+    HANDLE file = CreateFile(fileNameS.str().c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     return file;
 #endif
 }

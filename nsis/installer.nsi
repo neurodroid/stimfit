@@ -13,7 +13,7 @@ SetCompressor lzma
 
 !define USRDRV "C:\"
 !define LOGIN "cs"
-!define PRODUCT_VERSION "0.10.0alpha3"
+!define PRODUCT_VERSION "0.10.0alpha4"
 !define WXW_VERSION "2.9.1"
 !define WXW_VERSION_SHORT "291"
 !define PY_VERSION "2.6.6"
@@ -21,6 +21,7 @@ SetCompressor lzma
 !define NP_VERSION "1.5.0"
 !define EXE_NAME "stimfit"
 !define REG_NAME "Stimfit 0.10"
+!define REG_NAME_IO "stfio 0.10"
 !define PRODUCT_PUBLISHER "Christoph Schmidt-Hieber"
 !define PRODUCT_WEB_SITE "http://www.stimfit.org"
 !define STFDIR "${USRDRV}Users\${LOGIN}\stimfit"
@@ -233,6 +234,57 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
  
 SectionEnd ; end the section
 
+Section "!stfio standalone module" 4 ; Standalone python file i/o module
+
+  ;This section is required : readonly mode
+  SectionIn RO
+   
+  ; Create default error message
+  StrCpy $StrNoUsablePythonFound "${STRING_PYTHON_NOT_FOUND}"
+
+  ClearErrors
+  ReadRegStr $9 HKEY_LOCAL_MACHINE "SOFTWARE\Python\PythonCore\${PY_MAJOR}\InstallPath" ""
+    
+  IfErrors 0 +3
+    MessageBox MB_OK "$StrNoUsablePythonFound"
+    Quit    
+
+  ClearErrors
+  DetailPrint "Found a Python ${PY_MAJOR} installation at '$9'"
+  
+  !define STFIODIR "$9\Lib\site-packages\stfio"
+  ; Add a path to the installation directory in the python site-packages folder
+  FileOpen $0 $9\Lib\site-packages\stfio.pth w
+  FileWrite $0 ${STFIODIR}
+  FileClose $0
+  
+  IfErrors 0 +3
+    MessageBox MB_OK "Couldn't create path for python module"
+    Quit    
+
+  ClearErrors
+  
+  ; Set output path to the installation directory.
+  SetOutPath $9\Lib\site-packages\stfio
+  
+!ifndef UPDATE
+  File "${HDF5DIR}\lib\hdf5_hldll.dll"
+  File "${HDF5DIR}\lib\hdf5dll.dll"
+  File "${HDF5DIR}\lib\szip.dll"
+  File "${HDF5DIR}\lib\zlib1.dll"
+  File "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll"
+  File "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
+!endif
+  File "${STFDIR}\stimfit_VS03\stfioswig\Release\_stfio.pyd"
+  File "${STFDIR}\src\stfswig\stfio.py"
+  File "${STFDIR}\src\stfswig\stfio_plot.py"
+  File "${STFDIR}\src\stfswig\unittest_stfio.py"
+ 
+  ; Install for all users
+  SetShellVarContext all
+ 
+SectionEnd ; end the section
+
 Section "Uninstall"
 
   SetDetailsPrint textonly
@@ -262,6 +314,10 @@ Section "Uninstall"
   DeleteRegKey HKLM "Software\${REG_NAME}"
   DeleteRegKey HKCR "${REG_NAME}"
   DeleteRegKey HKCU "Software\${REG_NAME}"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${REG_NAME_IO}"
+  DeleteRegKey HKLM "Software\${REG_NAME_IO}"
+  DeleteRegKey HKCR "${REG_NAME_IO}"
+  DeleteRegKey HKCU "Software\${REG_NAME_IO}"
 
   ; uninstall files associations
   ; --> .dat
@@ -396,6 +452,7 @@ SubSectionEnd
     !insertmacro MUI_DESCRIPTION_TEXT 0 "Python ${PY_MAJOR} is required to run stimfit. Unselect this if it's already installed on your system."
     !insertmacro MUI_DESCRIPTION_TEXT 1 "NumPy is required for efficient numeric computations in python. Unselect this if you already have NumPy on your system."
     !insertmacro MUI_DESCRIPTION_TEXT 2 "The core program files and wxPython 2.9 (mandatory)."
-    !insertmacro MUI_DESCRIPTION_TEXT 3 "Selects Stimfit as the default application for files of these types."
+    !insertmacro MUI_DESCRIPTION_TEXT 3 "Standalone Python file i/o module."
+    !insertmacro MUI_DESCRIPTION_TEXT 4 "Selects Stimfit as the default application for files of these types."
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 !endif
