@@ -30,8 +30,9 @@ namespace stf {
  *  \param ReturnData On entry, an empty Recording object. On exit,
  *         the data stored in \e fName.
  *  \param progress Set to true if a progress dialog should be updated.
+ *  \return 0 upon success, a negative error code upon failure.
  */
-void importCFSFile(const wxString& fName, Recording& ReturnData, bool progress = true );
+int importCFSFile(const wxString& fName, Recording& ReturnData, bool progress = true );
 
 //! Export a Recording to a CFS file.
 /*! \param fName Full path to the file to be written.

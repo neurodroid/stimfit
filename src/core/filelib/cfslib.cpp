@@ -27,7 +27,7 @@
 
 namespace stf {
 
-bool CFSError(std::string& errorMsg);
+int CFSError(std::string& errorMsg);
 std::string CFSReadVar(short fHandle,short varNo,short varKind);
 
 // Resource management of CFS files
@@ -78,11 +78,11 @@ stf::CFS_OFile::CFS_OFile(const std::string& filename,const std::string& comment
 
 stf::CFS_OFile::~CFS_OFile() { CloseCFSFile(myHandle); }
 
-bool stf::CFSError(std::string& errorMsg) {
+int stf::CFSError(std::string& errorMsg) {
     short pHandle;
     short pFunc;
     short pErr;
-    if (!FileError(&pHandle,&pFunc,&pErr)) return false;
+    if (!FileError(&pHandle,&pFunc,&pErr)) return 0;
     errorMsg = "Error in stf::";
     switch (pFunc) {
         case  (1): errorMsg += "SetFileChan()"; break;
@@ -142,7 +142,7 @@ bool stf::CFSError(std::string& errorMsg) {
         case (-39): errorMsg += "Wrong CFS version number in file"; break;
         default   : errorMsg += "An unknown error occurred"; break;
     }
-    return true;
+    return pErr;
 }
 
 std::string stf::CFSReadVar(short fHandle,short varNo,short varKind) {
@@ -323,7 +323,7 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
     return true;
 }
 
-void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progress ) {
+int stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progress ) {
 #ifndef MODULE_ONLY
     wxProgressDialog progDlg( wxT("CED filing system import"), wxT("Starting file import"),
                               100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
@@ -333,8 +333,12 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
     // Open old CFS File (read only) - see manual of CFS file system
     CFS_IFile CFSFile(std::string(fName.c_str()));
     if (CFSFile.myHandle<0) {
-        CFSError(errorMsg);
-        throw std::runtime_error("Error while opening file:\n" + errorMsg);
+        int err = CFSError(errorMsg);
+        if (err==-7) {
+            return err;
+        }
+        errorMsg = std::string("Error while opening file:\n") + errorMsg;
+        throw std::runtime_error(errorMsg.c_str());
     }
 
     //Get general Info of the file - see manual of CFS file system
@@ -342,7 +346,7 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
     TComment comment;
     GetGenInfo(CFSFile.myHandle, time, date, comment);
     if (CFSError(errorMsg))
-        throw std::runtime_error("Error in GetGenInfo:\n" + errorMsg);
+        throw std::runtime_error(std::string("Error in GetGenInfo:\n") + errorMsg);
     //Get characteristics of the file - see manual of CFS file system
     short channelsAvail=0, fileVars=0, DSVars=0;
     unsigned short dataSections=0;
@@ -567,4 +571,5 @@ void stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progr
         std::cout << "100%" << std::endl;
     }
 #endif
+    return 0;
 }

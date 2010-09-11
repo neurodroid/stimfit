@@ -57,7 +57,10 @@ bool stf::importFile(
     try {
         switch (type) {
         case stf::cfs: {
-            stf::importCFSFile(fName, ReturnData, progress);
+            int res = stf::importCFSFile(fName, ReturnData, progress);
+            if (res==-7) {
+                stf::importHEKAFile(fName, ReturnData, progress);
+            }
             break;
         }
         case stf::hdf5: {
