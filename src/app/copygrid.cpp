@@ -137,12 +137,12 @@ void wxStfGrid::Copy(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void wxStfGrid::OnRClick(wxGridEvent& event) {
-    // event.Skip();
+    event.Skip();
     PopupMenu(m_context.get());
 }
 
 void wxStfGrid::OnLabelRClick(wxGridEvent& event) {
-    // event.Skip();
+    event.Skip();
     // Update checkmarks:
     m_labelContext->Check(ID_VIEW_MEASURE,wxGetApp().GetActiveDoc()->GetViewCrosshair());
     m_labelContext->Check(ID_VIEW_BASELINE,wxGetApp().GetActiveDoc()->GetViewBaseline());
@@ -166,7 +166,7 @@ void wxStfGrid::OnLabelRClick(wxGridEvent& event) {
 
 void wxStfGrid::OnKeyDown(wxKeyEvent& event) {
     // Handle CTRL + 'c'
-    // event.Skip();
+    //event.Skip();
     switch (event.GetKeyCode()) {
      case 67:
      case 99: {
@@ -205,94 +205,94 @@ void wxStfGrid::ViewResults() {
 }
 
 void wxStfGrid::ViewCrosshair(wxCommandEvent& event) {
-    // event.Skip();
+    event.Skip();
     // Toggle on or off:
     wxGetApp().GetActiveDoc()->SetViewCrosshair(m_labelContext->IsChecked(ID_VIEW_MEASURE));
     SetCheckmark(wxT("ViewCrosshair"),ID_VIEW_MEASURE);
 }
 
 void wxStfGrid::ViewBaseline(wxCommandEvent& event) {
-    // event.Skip();
+    event.Skip();
     wxGetApp().GetActiveDoc()->SetViewBaseline(m_labelContext->IsChecked(ID_VIEW_BASELINE));
     SetCheckmark(wxT("ViewBaseline"),ID_VIEW_BASELINE);
 }
 
 void wxStfGrid::ViewBaseSD(wxCommandEvent& event) {
-    // event.Skip();
+    event.Skip();
     wxGetApp().GetActiveDoc()->SetViewBaseSD(m_labelContext->IsChecked(ID_VIEW_BASESD));
     SetCheckmark(wxT("ViewBaseSD"),ID_VIEW_BASESD);
 }
 
 void wxStfGrid::ViewThreshold(wxCommandEvent& event) {
-    // event.Skip();
+    event.Skip();
     wxGetApp().GetActiveDoc()->SetViewThreshold(m_labelContext->IsChecked(ID_VIEW_THRESHOLD));
     SetCheckmark(wxT("ViewThreshold"),ID_VIEW_THRESHOLD);
 }
 
 void wxStfGrid::ViewPeakzero(wxCommandEvent& event) {
-    // event.Skip();
+    event.Skip();
     wxGetApp().GetActiveDoc()->SetViewPeakZero(m_labelContext->IsChecked(ID_VIEW_PEAKZERO));
     SetCheckmark(wxT("ViewPeakzero"),ID_VIEW_PEAKZERO);
 }
 
 void wxStfGrid::ViewPeakbase(wxCommandEvent& event) {
-    // event.Skip();
+    event.Skip();
     wxGetApp().GetActiveDoc()->SetViewPeakBase(m_labelContext->IsChecked(ID_VIEW_PEAKBASE));
     SetCheckmark(wxT("ViewPeakbase"),ID_VIEW_PEAKBASE);
 }
 
 void wxStfGrid::ViewPeakthreshold(wxCommandEvent& event) {
-    // event.Skip();
+    event.Skip();
     wxGetApp().GetActiveDoc()->SetViewPeakThreshold(m_labelContext->IsChecked(ID_VIEW_PEAKTHRESHOLD));
     SetCheckmark(wxT("ViewPeakthreshold"),ID_VIEW_PEAKTHRESHOLD);
 }
 
 void wxStfGrid::ViewRT2080(wxCommandEvent& event) {
-    // event.Skip();
+    event.Skip();
     wxGetApp().GetActiveDoc()->SetViewRT2080(m_labelContext->IsChecked(ID_VIEW_RT2080));
     SetCheckmark(wxT("ViewRT2080"),ID_VIEW_RT2080);
 }
 
 void wxStfGrid::ViewT50(wxCommandEvent& event) {
-    // event.Skip();
+    event.Skip();
     wxGetApp().GetActiveDoc()->SetViewT50(m_labelContext->IsChecked(ID_VIEW_T50));
     SetCheckmark(wxT("ViewT50"),ID_VIEW_T50);
 }
 
 void wxStfGrid::ViewRD(wxCommandEvent& event) {
-    // event.Skip();
+    event.Skip();
     wxGetApp().GetActiveDoc()->SetViewRD(m_labelContext->IsChecked(ID_VIEW_RD));
     SetCheckmark(wxT("ViewRD"),ID_VIEW_RD);
 }
 
 void wxStfGrid::ViewSloperise(wxCommandEvent& event) {
-    // event.Skip();
+    event.Skip();
     wxGetApp().GetActiveDoc()->SetViewSlopeRise(m_labelContext->IsChecked(ID_VIEW_SLOPERISE));
     SetCheckmark(wxT("ViewSloperise"),ID_VIEW_SLOPERISE);
 }
 
 void wxStfGrid::ViewSlopedecay(wxCommandEvent& event) {
-    // event.Skip();
+    event.Skip();
     wxGetApp().GetActiveDoc()->SetViewSlopeDecay(m_labelContext->IsChecked(ID_VIEW_SLOPEDECAY));
     SetCheckmark(wxT("ViewSlopedecay"),ID_VIEW_SLOPEDECAY);
 }
 
 void wxStfGrid::ViewLatency(wxCommandEvent& event) {
-    // event.Skip();
+    event.Skip();
     wxGetApp().GetActiveDoc()->SetViewLatency(m_labelContext->IsChecked(ID_VIEW_LATENCY));
     SetCheckmark(wxT("ViewLatency"),ID_VIEW_LATENCY);
 }
 
 #ifdef WITH_PSLOPE
 void wxStfGrid::ViewPSlope(wxCommandEvent& event) {
-    // event.Skip();
+    event.Skip();
     wxGetApp().GetActiveDoc()->SetViewPSlope(m_labelContext->IsChecked(ID_VIEW_PSLOPE));
     SetCheckmark(wxT("ViewSlope"),ID_VIEW_PSLOPE);
 }
 #endif 
 
 void wxStfGrid::ViewCursors(wxCommandEvent& event) {
-    // event.Skip();
+    event.Skip();
     wxGetApp().GetActiveDoc()->SetViewCursors(m_labelContext->IsChecked(ID_VIEW_CURSORS));
     SetCheckmark(wxT("ViewCursors"),ID_VIEW_CURSORS);
 }

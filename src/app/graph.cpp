@@ -1215,8 +1215,8 @@ void wxStfGraph::OnMouseEvent(wxMouseEvent& event) {
     if (event.LeftUp()) LButtonUp(event);
     wxClientDC dc(this);
     PrepareDC(dc);
-
     wxPoint pt(event.GetLogicalPosition(dc));
+    SetFocus();
 }
 
 void wxStfGraph::LButtonDown(wxMouseEvent& event) {
