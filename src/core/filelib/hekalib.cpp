@@ -876,11 +876,9 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
 
     std::vector<int> sizes(levels);
     res = fread(&sizes[0], sizeof(int), levels, dat_fh);
-    if (needsByteSwap) {
-        for (std::vector<int>::iterator it=sizes.begin(); it != sizes.end(); ++it) {
-            ByteSwap32((*it));
-        }
-    }
+    if (needsByteSwap)
+        std::for_each(sizes.begin(), sizes.end(), IntByteSwap);
+
     // Get the tree from the pulse file
     int pos = ftell(dat_fh);
     Tree tree = getTree(dat_fh, sizes, pos, needsByteSwap);
