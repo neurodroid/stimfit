@@ -26,6 +26,7 @@
 #include <iomanip>
 #include <iostream>
 #include <vector>
+#include <algorithm> //required for std::swap
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
 #ifndef MODULE_ONLY
@@ -38,6 +39,8 @@
 #include "./hekalib.h"
 
 #define C_ASSERT(e) extern void __C_ASSERT__(int [(e)?1:-1])
+#define ByteSwap16(x) ByteSwap((unsigned char *) &x,sizeof(x))
+#define ByteSwap32(x) ByteSwap((unsigned char *) &x,sizeof(x))
 
 enum Level {
     root = 0,
@@ -374,6 +377,7 @@ struct Tree {
     std::vector<SweepRecord> SweepList;
     std::vector<TraceRecord> TraceList;
     std::vector<TreeEntry> entries;
+    bool needsByteSwap;
 };
     
 void printHeader(const BundleHeader& header) {
@@ -402,6 +406,169 @@ void printHeader(const BundleHeader& header) {
     }
 }
 
+void ByteSwap(unsigned char * b, int n)
+{
+    register int i = 0;
+    register int j = n-1;
+    while (i<j)
+    {
+        std::swap(b[i], b[j]);
+        i++, j--;
+    }
+}
+
+#if 0
+void ByteSwap16(void *ptr16) {
+    unsigned short *uShort = (unsigned short *)ptr16;
+    *uShort = ((*uShort >> 8) | (*uShort << 8));
+}
+
+void ByteSwap32(void* ptr32) {
+    unsigned int *uInt = (unsigned int *)ptr32;
+    *uInt = (((*uInt & 0x000000FF)<<24) + ((*uInt & 0x0000FF00)<<8) +
+             ((*uInt & 0x00FF0000)>>8) +  ((*uInt & 0xFF000000)>>24));
+}
+#endif
+
+void ShortByteSwap(short& s) {
+    ByteSwap((unsigned char *) &s,sizeof(s));
+}
+
+void FloatByteSwap(float& s) {
+    ByteSwap((unsigned char *) &s,sizeof(s));
+}
+
+void IntByteSwap(int& s) {
+    ByteSwap((unsigned char *) &s,sizeof(s));
+}
+
+void DoubleByteSwap(double& s) {
+    ByteSwap((unsigned char *) &s,sizeof(s));
+}
+
+void SwapItem(BundleItem& item) {
+    ByteSwap32(item.oStart);
+    ByteSwap32(item.oLength);
+}
+
+void SwapHeader(BundleHeader& header) {
+    std::string strsig(header.oSignature);
+    if (strsig == "DATA") {
+        throw std::runtime_error("DATA file format not supported at present");
+    } else if (strsig=="DAT1" || strsig=="DAT2") {
+        // Newer format
+
+        ByteSwap32(header.oTime);
+        ByteSwap32(header.oItems);
+        if (strsig=="DAT1") {
+            
+        } else {
+            // "DAT2"
+            for (int k=0; k<12; ++k) {
+                SwapItem(header.oBundleItems[k]);
+            }
+        }
+    }
+
+}
+
+void SwapRoot(RootRecord& root) {
+    ByteSwap32(root.RoVersion);
+    ByteSwap32(root.RoMark);
+    ByteSwap32(root.RoStartTime);
+    ByteSwap32(root.RoMaxSamples);
+    ByteSwap32(root.RoCRC);
+    ByteSwap16(root.RoFeatures);
+    ByteSwap16(root.RoFiller1);
+    ByteSwap32(root.RoFiller2);
+}
+
+void SwapGroup(GroupRecord& group) {
+    ByteSwap32(group.GrMark); /* INT32 */
+    ByteSwap32(group.GrExperimentNumber); /* INT32 */
+    ByteSwap32(group.GrGroupCount      ); /* INT32 */
+    ByteSwap32(group.GrCRC             ); /* CARD32 */
+}
+
+void SwapSeries(SeriesRecord& series) {
+    ByteSwap32(series.SeMark); /* INT32 */
+    ByteSwap32(series.SeSeriesCount); /* INT32 */
+    ByteSwap32(series.SeNumberSweeps); /* INT32 */
+    ByteSwap32(series.SeAmplStateOffset); /* INT32 */
+    ByteSwap32(series.SeAmplStateSeries); /* INT32 */
+    ByteSwap32(series.SeTime); /* LONGREAL */
+    ByteSwap32(series.SePageWidth); /* LONGREAL */
+    // TODO UserParamDescrType SeSwUserParamDescr[4]); /* ARRAY[0..3] OF UserParamDescrType = 4*40 */
+    // TODO SeSeUserParams[4]); /* ARRAY[0..3] OF LONGREAL */
+    // TODO LockInParams SeLockInParams); /* SeLockInSize = 96, see "Pulsed.de" */
+    // TODO AmplifierState SeAmplifierState); /* AmplifierStateSize = 400 */
+    // TODO UserParamDescrType SeSeUserParamDescr[4]); /* ARRAY[0..3] OF UserParamDescrType = 4*40 */
+    ByteSwap32(series.SeFiller5); /* INT32 */
+    ByteSwap32(series.SeCRC); /* CARD32 */
+}
+
+void SwapSweep(SweepRecord& sweep) {
+    ByteSwap32(sweep.SwMark); /* INT32 */
+    ByteSwap32(sweep.SwAuxDataFileOffset); /* INT32 */
+    ByteSwap32(sweep.SwStimCount); /* INT32 */
+    ByteSwap32(sweep.SwSweepCount); /* INT32 */
+    ByteSwap32(sweep.SwTime); /* LONGREAL */
+    ByteSwap32(sweep.SwTimer); /* LONGREAL */
+    // TODO SwSwUserParams[4]); /* ARRAY[0..3] OF LONGREAL */
+    ByteSwap32(sweep.SwTemperature); /* LONGREAL */
+    ByteSwap32(sweep.SwOldIntSol); /* INT32 */
+    ByteSwap32(sweep.SwOldExtSol); /* INT32 */
+    ByteSwap16(sweep.SwDigitalIn); /* SET16 */
+    ByteSwap16(sweep.SwSweepKind); /* SET16 */
+    ByteSwap32(sweep.SwFiller1); /* INT32 */
+    // TODO ByteSwap32(sweep.SwMarkers[4]); /* ARRAY[0..3] OF LONGREAL */
+    ByteSwap32(sweep.SwFiller2); /* INT32 */
+    ByteSwap32(sweep.SwCRC); /* CARD32 */
+}
+
+void SwapTrace(TraceRecord& trace) {
+    ByteSwap32(trace.TrMark); /* INT32 */
+    ByteSwap32(trace.TrTraceCount); /* INT32 */
+    ByteSwap32(trace.TrData); /* INT32 */
+    ByteSwap32(trace.TrDataPoints); /* INT32 */
+    ByteSwap32(trace.TrInternalSolution); /* INT32 */
+    ByteSwap32(trace.TrAverageCount); /* INT32 */
+    ByteSwap32(trace.TrLeakCount); /* INT32 */
+    ByteSwap32(trace.TrLeakTraces); /* INT32 */
+    ByteSwap16(trace.TrDataKind); /* SET16 */
+    ByteSwap16(trace.TrFiller1); /* SET16 */
+    ByteSwap32(trace.TrDataScaler); /* LONGREAL */
+    ByteSwap32(trace.TrTimeOffset); /* LONGREAL */
+    ByteSwap32(trace.TrZeroData); /* LONGREAL */
+    ByteSwap32(trace.TrXInterval); /* LONGREAL */
+    ByteSwap32(trace.TrXStart); /* LONGREAL */
+    ByteSwap32(trace.TrYRange); /* LONGREAL */
+    ByteSwap32(trace.TrYOffset); /* LONGREAL */
+    ByteSwap32(trace.TrBandwidth); /* LONGREAL */
+    ByteSwap32(trace.TrPipetteResistance); /* LONGREAL */
+    ByteSwap32(trace.TrCellPotential); /* LONGREAL */
+    ByteSwap32(trace.TrSealResistance); /* LONGREAL */
+    ByteSwap32(trace.TrCSlow); /* LONGREAL */
+    ByteSwap32(trace.TrGSeries); /* LONGREAL */
+    ByteSwap32(trace.TrRsValue); /* LONGREAL */
+    ByteSwap32(trace.TrGLeak); /* LONGREAL */
+    ByteSwap32(trace.TrMConductance); /* LONGREAL */
+    ByteSwap32(trace.TrLinkDAChannel); /* INT32 */
+    ByteSwap16(trace.TrAdcChannel); /* INT16 */
+    ByteSwap32(trace.TrYmin); /* LONGREAL */
+    ByteSwap32(trace.TrYmax); /* LONGREAL */
+    ByteSwap32(trace.TrSourceChannel); /* INT32 */
+    ByteSwap32(trace.TrExternalSolution); /* INT32 */
+    ByteSwap32(trace.TrCM); /* LONGREAL */
+    ByteSwap32(trace.TrGM); /* LONGREAL */
+    ByteSwap32(trace.TrPhase); /* LONGREAL */
+    ByteSwap32(trace.TrDataCRC); /* CARD32 */
+    ByteSwap32(trace.TrCRC); /* CARD32 */
+    ByteSwap32(trace.TrGS); /* LONGREAL */
+    ByteSwap32(trace.TrSelfChannel); /* INT32 */
+    ByteSwap32(trace.TrFiller2); /* SET16 */
+}
+
 BundleHeader getBundleHeader(FILE* fh) {
     BundleHeader header;
 
@@ -411,38 +578,53 @@ BundleHeader getBundleHeader(FILE* fh) {
     return header;
 }
 
-RootRecord getRoot(FILE* fh) {
+RootRecord getRoot(FILE* fh, bool needsByteSwap) {
     int res = 0;
     RootRecord rec;
     res = fread(&rec, sizeof(RootRecord), 1, fh);
+    if (needsByteSwap) {
+        SwapRoot(rec);
+    }
     return rec;
 }
 
-GroupRecord getGroup(FILE* fh) {
+GroupRecord getGroup(FILE* fh, bool needsByteSwap) {
     int res = 0;
     GroupRecord rec;
     res = fread(&rec, sizeof(GroupRecord), 1, fh);
+    if (needsByteSwap) {
+        SwapGroup(rec);
+    }
     return rec;
 }
 
-SeriesRecord getSeries(FILE* fh) {
+SeriesRecord getSeries(FILE* fh, bool needsByteSwap) {
     int res = 0;
     SeriesRecord rec;
     res = fread(&rec, sizeof(SeriesRecord), 1, fh);
+    if (needsByteSwap) {
+        SwapSeries(rec);
+    }
     return rec;
 }
 
-SweepRecord getSweep(FILE* fh) {
+SweepRecord getSweep(FILE* fh, bool needsByteSwap) {
     int res = 0;
     SweepRecord rec;
     res = fread(&rec, sizeof(SweepRecord), 1, fh);
+    if (needsByteSwap) {
+        SwapSweep(rec);
+    }
     return rec;
 }
 
-TraceRecord getTrace(FILE* fh) {
+TraceRecord getTrace(FILE* fh, bool needsByteSwap) {
     int res = 0;
     TraceRecord rec;
     res = fread(&rec, sizeof(TraceRecord), 1, fh);
+    if (needsByteSwap) {
+        SwapTrace(rec);
+    }
     return rec;
 }
 
@@ -461,89 +643,80 @@ void getOneRecord(FILE* fh, Level level, Tree& TreeInOut, int& CounterInOut) {
     switch (level) {
      case root:
          idx = TreeInOut.RootList.size();
-         TreeInOut.RootList.push_back(getRoot(fh));
+         TreeInOut.RootList.push_back(getRoot(fh, TreeInOut.needsByteSwap));
          break;
      case group:
          idx = TreeInOut.GroupList.size();
-         TreeInOut.GroupList.push_back(getGroup(fh));
+         TreeInOut.GroupList.push_back(getGroup(fh, TreeInOut.needsByteSwap));
          break;
      case series:
          idx = TreeInOut.SeriesList.size();
-         TreeInOut.SeriesList.push_back(getSeries(fh));
+         TreeInOut.SeriesList.push_back(getSeries(fh, TreeInOut.needsByteSwap));
          break;
      case sweep:
          idx = TreeInOut.SweepList.size();
-         TreeInOut.SweepList.push_back(getSweep(fh));
+         TreeInOut.SweepList.push_back(getSweep(fh, TreeInOut.needsByteSwap));
          break;
      case trace:
          idx = TreeInOut.TraceList.size();
-         TreeInOut.TraceList.push_back(getTrace(fh));
+         TreeInOut.TraceList.push_back(getTrace(fh, TreeInOut.needsByteSwap));
          break;
      default:
          throw std::runtime_error("Couldn't read record");
     }
 
-    TreeInOut.entries.push_back( TreeEntry(level, CounterInOut, idx) );
+    TreeInOut.entries.push_back(TreeEntry(level, CounterInOut, idx));
     CounterInOut++;
 }
 
 int getOneLevel(FILE* fh, const std::vector<int>& Sizes, Level level, Tree& TreeInOut, int& PositionInOut, int& CounterInOut) {
     // Gets one record of the tree and the number of children
-    /*[s Counter]=getOneRecord(fh, Level, Counter);
-Tree{Counter, Level+1}=s;
-Position=Position+Sizes(Level+1);
-fseek(fh, Position, 'bof');
-nchild=fread(fh, 1, 'int32=>int32');
-Position=ftell(fh);
-    */
     getOneRecord(fh, level, TreeInOut, CounterInOut);
     PositionInOut += Sizes[level];
     fseek(fh, PositionInOut, SEEK_SET);
     int nchild = 0;
     int res = 0;
     res = fread(&nchild, sizeof(int), 1, fh);
+    if (TreeInOut.needsByteSwap) {
+        ByteSwap32(nchild);
+    }
     PositionInOut = ftell(fh);
     return nchild;
 }
 
 void getTreeReentrant(FILE* fh, const std::vector<int>& Sizes, Level level, Tree& TreeInOut, int& PositionInOut, int& CounterInOut) {
     // Recursive routine called from LoadTree
-    /*
-    [Tree, Position, Counter, nchild]=getOneLevel(fh, Tree, Sizes, Level, Position, Counter);
-    for k=1:double(nchild)
-        [Tree, Position, Counter]=getTreeReentrant(fh, Tree, Sizes, Level+1, Position, Counter);
-    end*/
     int nchild = getOneLevel(fh, Sizes, level, TreeInOut, PositionInOut, CounterInOut);
     for (int k=0; k<nchild; ++k) {
         getTreeReentrant(fh, Sizes, int2Level(level+1), TreeInOut, PositionInOut, CounterInOut);
     }
 }
 
-Tree getTree(FILE* fh, const std::vector<int>& Sizes, int& PositionInOut) {
+Tree getTree(FILE* fh, const std::vector<int>& Sizes, int& PositionInOut, bool needsByteSwap) {
     Tree tree;
+    tree.needsByteSwap = needsByteSwap;
     // Main entry point for loading tree
-    // [Tree, Counter]=getTreeReentrant(fh, {}, Sizes, 0, Position, 0);
     int Counter = 0;
     getTreeReentrant(fh, Sizes, int2Level(0), tree, PositionInOut, Counter);
     return tree;
 }
 
 std::string time2date(double t) {
- long time = (long)t - 1580970496;
- if (time<0) {
-     time += 4294967296;
- }
- time += 9561652096;
- time_t timer(time);
- std::string datestr(ctime(&timer)); 
- return datestr;
+    long time = (long)t - 1580970496;
+    if (time<0) {
+        time += 4294967296;
+    }
+    time += 9561652096;
+    time_t timer(time);
+    std::string datestr(ctime(&timer)); 
+    return datestr;
 }
 
 void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInOut
 #ifndef MODULE_ONLY
                    , wxProgressDialog& progDlg
 #endif
-                   ) {
+                  ) {
 
     int nsweeps = tree.SweepList.size();
     int ntraces = tree.TraceList.size();
@@ -553,8 +726,10 @@ void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInO
     int res = 0;
     for (int nc=0; nc<nchannels; ++nc) {
         RecordingInOut[nc].resize(nsweeps);
-        for (int nstree=nc; nstree<ntraces; nstree += nchannels) {
-            int ns = nstree/nchannels;
+        for (int ns=0; ns<nsweeps; ++ns) {
+            // nstree=nc; nstree<ntraces; nstree += nchannels) {
+            // int ns = nstree/nchannels;
+            int nstree = (ns*nchannels)+nc;
             if (progress) {
                 int progbar =
                     // Channel contribution:
@@ -585,6 +760,9 @@ void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInO
                  /*int16*/
                  std::vector<short> tmpSection(npoints);
                  res = fread(&tmpSection[0], sizeof(short), npoints, fh);
+                 if (tree.needsByteSwap) 
+                     std::for_each(tmpSection.begin(), tmpSection.end(), ShortByteSwap);
+
                  std::copy(tmpSection.begin(), tmpSection.end(), RecordingInOut[nc][ns].get_w().begin());
                  break;
              }
@@ -592,6 +770,8 @@ void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInO
                  /*int32*/
                  std::vector<int> tmpSection(npoints);
                  res = fread(&tmpSection[0], sizeof(int), npoints, fh);
+                 if (tree.needsByteSwap) 
+                     std::for_each(tmpSection.begin(), tmpSection.end(), IntByteSwap);
                  std::copy(tmpSection.begin(), tmpSection.end(), RecordingInOut[nc][ns].get_w().begin());
                  break;
              }
@@ -599,6 +779,8 @@ void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInO
                  /*double16*/
                  std::vector<float> tmpSection(npoints);
                  res = fread(&tmpSection[0], sizeof(float), npoints, fh);
+                 if (tree.needsByteSwap) 
+                     std::for_each(tmpSection.begin(), tmpSection.end(), FloatByteSwap);
                  std::copy(tmpSection.begin(), tmpSection.end(), RecordingInOut[nc][ns].get_w().begin());
                  break;
              }
@@ -606,6 +788,8 @@ void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInO
                  /*double32*/
                  std::vector<double> tmpSection(npoints);
                  res = fread(&tmpSection[0], sizeof(double), npoints, fh);
+                 if (tree.needsByteSwap) 
+                     std::for_each(tmpSection.begin(), tmpSection.end(), DoubleByteSwap);
                  std::copy(tmpSection.begin(), tmpSection.end(), RecordingInOut[nc][ns].get_w().begin());
                  break;
              }
@@ -647,7 +831,7 @@ void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInO
 void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool progress) {
 #ifndef MODULE_ONLY
     wxProgressDialog progDlg(wxT("HEKA binary file import"), wxT("Starting file import"),
-                             100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL);
+                             100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_SKIP );
 #endif
     wxString errorMsg(wxT("Exception while calling importHEKAFile():\n"));
     wxString yunits;
@@ -660,6 +844,11 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
     }
 
     BundleHeader header = getBundleHeader(dat_fh);
+    bool needsByteSwap = (int(header.oIsLittleEndian[0]) == 0);
+    if (needsByteSwap) {
+        SwapHeader(header);
+    }
+
     int start = 0;
     bool isBundled = false;
     if (std::string(header.oSignature)=="DAT2") {
@@ -681,11 +870,20 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
     std::string magic(cMagic);
     int levels = 0;
     res = fread(&levels, sizeof(int), 1, dat_fh);
+    if (needsByteSwap) {
+        ByteSwap32(levels);
+    }
+
     std::vector<int> sizes(levels);
     res = fread(&sizes[0], sizeof(int), levels, dat_fh);
-    // Get the tree form the pulse file
+    if (needsByteSwap) {
+        for (std::vector<int>::iterator it=sizes.begin(); it != sizes.end(); ++it) {
+            ByteSwap32((*it));
+        }
+    }
+    // Get the tree from the pulse file
     int pos = ftell(dat_fh);
-    Tree tree = getTree(dat_fh, sizes, pos);
+    Tree tree = getTree(dat_fh, sizes, pos, needsByteSwap);
     std::string date = time2date(tree.RootList[0].RoStartTime);
 
     if (isBundled) {
@@ -699,7 +897,7 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
         throw std::runtime_error("Can only deal with bundled data at present");
     }
 
-    // Now set pointer to the start of the data the data
+    // Now set pointer to the start of the data
     fseek(dat_fh, start, SEEK_SET);
 
     // NOW IMPORT
@@ -707,7 +905,7 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
 #ifndef MODULE_ONLY
                           , progDlg
 #endif
-                          );
+                         );
 
 #ifdef MODULE_ONLY
     if (progress) {
