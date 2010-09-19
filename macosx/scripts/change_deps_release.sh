@@ -4,8 +4,8 @@ sudo chown -R cs:staff stimfit.app
 
 WX_CONFIG=/Users/cs/wxbin/bin/wx-config
 WXPY_DIR=/Users/cs/wxPython-2.9
-WXPY_VER=wx-2.9.0-osx_cocoa-unicode
-WXPY_INSTALL_DIR=/Users/cs/wxPython-2.9/dummy-install/lib/python2.6/site-packages
+WXPY_VER=wx-2.9.1-osx_carbon-unicode
+WXPY_INSTALL_DIR=/Users/cs/wxPython-2.9/dummy-install/lib/python2.5/site-packages
 make stimfit.app
 mkdir -p ./stimfit.app/Contents/Frameworks/stimfit
 
@@ -28,7 +28,6 @@ rsync -rtuvl `${WX_CONFIG} --exec-prefix`/lib/libwx*.dylib ./stimfit.app/Content
 sudo cp -v ./src/stfswig/.libs/libstf.0.dylib /usr/local/lib/libstf.0.dylib
 rm -f ./stimfit.app/Contents/Frameworks/stimfit/_stf.so
 cp -v ./src/stfswig/.libs/libstf.0.dylib ./stimfit.app/Contents/Frameworks/stimfit/_stf.so
-# ln -sf ./stimfit.app/Contents/Frameworks/stimfit/_stf.so ./stimfit.app/Contents/libs/libstf.0.dylib
 rm -f ./stimfit.app/Contents/libs/libstf.0.dylib
 dylibbundler -of -b -x ./stimfit.app/Contents/MacOS/stimfit -d ./stimfit.app/Contents/libs/
 ##
@@ -37,12 +36,18 @@ dylibbundler -of -b -x ./stimfit.app/Contents/MacOS/stimfit -d ./stimfit.app/Con
 # ln -sf /usr/local/lib/_stf.so ./stimfit.app/Contents/libs/libstf.0.dylib
 
 ##
-find ./stimfit.app  -name "*.dylib" -exec dylibbundler -of -b -x '{}' -d ./stimfit.app/Contents/libs/ \;
-find ./stimfit.app  -name "*.so" -exec dylibbundler -of -b -x '{}' -d ./stimfit.app/Contents/libs/ \;
-sudo rm /usr/local/lib/*stf*
+if test -n "$1"; then
+  if [ $1 = '1' ]; then
+    find ./stimfit.app  -name "*.dylib" -exec dylibbundler -of -b -x '{}' -d ./stimfit.app/Contents/libs/ \;
+    find ./stimfit.app  -name "*.so" -exec dylibbundler -of -b -x '{}' -d ./stimfit.app/Contents/libs/ \;
+    sudo rm /usr/local/lib/*stf*
+  fi
+fi
 ##
 
-# cp -v ../../src/stfswig/*.py ./stimfit.app/Contents/Frameworks/stimfit/
+# ln -sf ./stimfit.app/Contents/libs/libstf.0.dylib ./stimfit.app/Contents/Frameworks/stimfit/_stf.so 
+
+cp -v ../../src/stfswig/*.py ./stimfit.app/Contents/Frameworks/stimfit/
 
 
 # # sudo rm /usr/local/lib/libwx*.dylib

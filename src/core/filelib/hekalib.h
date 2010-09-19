@@ -12,19 +12,19 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-// Inspired by sigTOOL
+/*! \file hekalib.h
+ *  \author Christoph Schmidt-Hieber
+ *  \date 2010-09-19
+ *  \brief Import HEKA files.
+ */
+
+// Parts of this code were inspired by sigTOOL:
 // http://sigtool.sourceforge.net/
 // Original comment for the Matlab file:
 //--------------------------------------------------------------------------
 // Author: Malcolm Lidierth 12/09
 // Copyright (c) The Author & King's College London 2009-
 //--------------------------------------------------------------------------
-
-/*! \file hekalib.h
- *  \author Christoph Schmidt-Hieber, Malcolm Lidierth
- *  \date 2008-01-23
- *  \brief Import axon binary files.
- */
 
 #ifndef _HEKALIB_H
 #define _HEKALIB_H
