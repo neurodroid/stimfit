@@ -875,7 +875,9 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
     }
 
     std::vector<int> sizes(levels);
-    res = fread(&sizes[0], sizeof(int), levels, dat_fh);
+    if (levels!=0)
+        res = fread(&sizes[0], sizeof(int), levels, dat_fh);
+
     if (needsByteSwap)
         std::for_each(sizes.begin(), sizes.end(), IntByteSwap);
 
