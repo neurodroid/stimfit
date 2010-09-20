@@ -16,16 +16,16 @@ except ImportError:
 
 import numpy as np
 
-scale_dist_x = 0.02
-scale_dist_y = 0.02
+scale_dist_x = 0.1
+scale_dist_y = 0.1
 graph_width = 6.0
 graph_height = 4.0
-key_dist = 0.01
+key_dist = 0.05
 
 class timeseries(object):
     def __init__(self, section, dt, xunits="ms", yunits="mV",  
                  linestyle="-k", linewidth=1.0):
-        if type(section)==np.ndarray:
+        if isinstance(section, np.ndarray):
             self.data = section
         else:
             self.data = section.asarray()
@@ -158,10 +158,10 @@ def prettyNumber(f):
         return round(fScaled/prev10e) * prev10e
     
 def plot_scalebars(ax, div=3.0, labels=True, 
-                    xunits="", yunits="", nox=False, 
-                    sb_xoff=0, sb_yoff=0, rotate_yslabel=False, 
-                    linestyle="-k", linewidth=4.0,
-                    textcolor='k', textweight='normal'):
+                   xunits="", yunits="", nox=False, 
+                   sb_xoff=0, sb_yoff=0, rotate_yslabel=False, 
+                   linestyle="-k", linewidth=4.0,
+                   textcolor='k', textweight='normal'):
     # print dir(ax.dataLim)
     xmin = ax.dataLim.xmin
     xmax = ax.dataLim.xmax
@@ -274,22 +274,24 @@ def reduce(ydata, dy, maxres, xoffset=0, width=graph_width):
     
     return xrange, yrange
 
-def plot_traces(traces, pulses=None,
-                 xmin=None, xmax=None, ymin=None, ymax=None, xoffset=0,
-                 maxres = None,
-                 sb_yoff=0, sb_xoff=0, linestyle_sb = "-k",
-                 dashedline=None, sagline=None, rotate_yslabel=False,
-                 textcolor='k', textweight='normal'):
-    
-    Fig = plt.figure(dpi=maxres)
-    Fig.patch.set_alpha(0.0)
-    border = 0.1
-    pulseprop = 0.1
-    if pulses is not None and len(pulses) > 0:
-        prop = 1.0-pulseprop-border
-    else:
-        prop = 1.0-border
-    ax = Fig.add_axes([0.0,(1.0-prop),1.0-border,prop], alpha=0.0)
+def plot_traces(traces, ax=None, pulses=None,
+                xmin=None, xmax=None, ymin=None, ymax=None, xoffset=0,
+                maxres = None,
+                plot_sb=True, sb_yoff=0, sb_xoff=0, linestyle_sb = "-k",
+                dashedline=None, sagline=None, rotate_yslabel=False,
+                textcolor='k', textweight='normal'):
+
+    if ax is None:
+        Fig = plt.figure(dpi=maxres)
+        Fig.patch.set_alpha(0.0)
+
+        border = 0.1
+        pulseprop = 0.1
+        if pulses is not None and len(pulses) > 0:
+            prop = 1.0-pulseprop-border
+        else:
+            prop = 1.0-border
+        ax = Fig.add_axes([0.0,(1.0-prop),1.0-border,prop], alpha=0.0)
 
     for trace in traces:
         if maxres is None:
@@ -326,7 +328,7 @@ def plot_traces(traces, pulses=None,
     yscale = ax.dataLim.ymax-ax.dataLim.ymin
     if dashedline is not None:
         ax.plot([ax.dataLim.xmin, ax.dataLim.xmax],[dashedline, dashedline], 
-                "--k", linewidth=linewidth*2.0)
+                "--k", linewidth=traces[0].linewidth*2.0)
         gridline_x, gridline_y = ax.dataLim.xmax, dashedline
         gridline_x += key_dist*xscale
         xoff = scale_dist_x * xscale
@@ -334,13 +336,14 @@ def plot_traces(traces, pulses=None,
 
     if sagline is not None:
         ax.plot([ax.dataLim.xmin, ax.dataLim.xmax],[sagline, sagline], 
-                "--k", linewidth=linewidth*2.0)
+                "--k", linewidth=traces[0].linewidth*2.0)
         gridline_x, gridline_y = ax.dataLim.xmax, sagline
         gridline_x += key_dist*xscale
         xoff = scale_dist_x * xscale
 
-    plot_scalebars(ax, linestyle=linestyle_sb, xunits=traces[0].xunits, yunits=traces[0].yunits,
-                   textweight=textweight, textcolor=textcolor)
+    if plot_sb:
+        plot_scalebars(ax, linestyle=linestyle_sb, xunits=traces[0].xunits, yunits=traces[0].yunits,
+                       textweight=textweight, textcolor=textcolor)
 
     if pulses is not None and len(pulses) > 0:
         axp = Fig.add_axes([0.0,0.0,1.0-border,pulseprop+border/2.0], sharex=ax)
@@ -369,5 +372,6 @@ def plot_traces(traces, pulses=None,
     for o in ax.findobj():
         o.set_clip_on(False)
     ax.axis('off')
-    
-    return Fig
+
+    if ax is None:
+        return Fig
