@@ -16,8 +16,8 @@ except ImportError:
 
 import numpy as np
 
-scale_dist_x = 0.1
-scale_dist_y = 0.1
+scale_dist_x = 0.05
+scale_dist_y = 0.05
 graph_width = 6.0
 graph_height = 4.0
 key_dist = 0.05
@@ -162,6 +162,7 @@ def plot_scalebars(ax, div=3.0, labels=True,
                    sb_xoff=0, sb_yoff=0, rotate_yslabel=False, 
                    linestyle="-k", linewidth=4.0,
                    textcolor='k', textweight='normal'):
+
     # print dir(ax.dataLim)
     xmin = ax.dataLim.xmin
     xmax = ax.dataLim.xmax
@@ -286,9 +287,9 @@ def plot_traces(traces, ax=None, pulses=None,
         Fig.patch.set_alpha(0.0)
 
         border = 0.1
-        pulseprop = 0.1
+        pulseprop = 0.05
         if pulses is not None and len(pulses) > 0:
-            prop = 1.0-pulseprop-border
+            prop = 1.0-pulseprop-border*1.5
         else:
             prop = 1.0-border
         ax = Fig.add_axes([0.0,(1.0-prop),1.0-border,prop], alpha=0.0)
@@ -341,22 +342,6 @@ def plot_traces(traces, ax=None, pulses=None,
         gridline_x += key_dist*xscale
         xoff = scale_dist_x * xscale
 
-    if plot_sb:
-        plot_scalebars(ax, linestyle=linestyle_sb, xunits=traces[0].xunits, yunits=traces[0].yunits,
-                       textweight=textweight, textcolor=textcolor)
-
-    if pulses is not None and len(pulses) > 0:
-        axp = Fig.add_axes([0.0,0.0,1.0-border,pulseprop+border/2.0], sharex=ax)
-        for pulse in pulses:
-            xrange = pulse.timearray()
-            yrange = pulse.data
-            axp.plot(xrange, yrange, pulse.linestyle, linewidth=pulse.linewidth)
-        plot_scalebars(axp, linestyle=linestyle_sb, nox=True, yunits=pulses[0].yunits,
-                       textweight=textweight, textcolor=textcolor)
-        for o in axp.findobj():
-            o.set_clip_on(False)
-        axp.axis('off')
-
     if xmin is None:
         xmin = ax.dataLim.xmin
     if xmax is None:
@@ -368,6 +353,22 @@ def plot_traces(traces, ax=None, pulses=None,
 
     ax.set_xlim(xmin, xmax)
     ax.set_ylim(ymin, ymax)
+
+    if plot_sb:
+        plot_scalebars(ax, linestyle=linestyle_sb, xunits=traces[0].xunits, yunits=traces[0].yunits,
+                       textweight=textweight, textcolor=textcolor)
+    if pulses is not None and len(pulses) > 0:
+        axp = Fig.add_axes([0.0,0.0,1.0-border,pulseprop+border/4.0], sharex=ax)
+        for pulse in pulses:
+            xrange = pulse.timearray()
+            yrange = pulse.data
+            axp.plot(xrange, yrange, pulse.linestyle, linewidth=pulse.linewidth)
+        plot_scalebars(axp, linestyle=linestyle_sb, nox=True, yunits=pulses[0].yunits,
+                       textweight=textweight, textcolor=textcolor)
+        for o in axp.findobj():
+            o.set_clip_on(False)
+        axp.axis('off')
+
 
     for o in ax.findobj():
         o.set_clip_on(False)

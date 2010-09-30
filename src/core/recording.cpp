@@ -449,7 +449,7 @@ void Recording::SelectTrace(std::size_t sectionToSelect) {
     // Check range so that sectionToSelect can be used
     // without checking again:
     if (sectionToSelect<0 ||
-            sectionToSelect>=ChannelArray[cc].size()) 
+        sectionToSelect>=ChannelArray[cc].size()) 
     {
         std::out_of_range e("subscript out of range in Recording::SelectTrace\n");
         throw e;
