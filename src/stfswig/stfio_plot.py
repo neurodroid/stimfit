@@ -16,11 +16,11 @@ except ImportError:
 
 import numpy as np
 
-scale_dist_x = 0.05
-scale_dist_y = 0.05
+scale_dist_x = 0.04
+scale_dist_y = 0.04
 graph_width = 6.0
 graph_height = 4.0
-key_dist = 0.05
+key_dist = 0.04
 
 class timeseries(object):
     def __init__(self, section, dt, xunits="ms", yunits="mV",  
@@ -161,13 +161,18 @@ def plot_scalebars(ax, div=3.0, labels=True,
                    xunits="", yunits="", nox=False, 
                    sb_xoff=0, sb_yoff=0, rotate_yslabel=False, 
                    linestyle="-k", linewidth=4.0,
-                   textcolor='k', textweight='normal'):
+                   textcolor='k', textweight='normal',
+                   xmin=None, xmax=None, ymin=None, ymax=None):
 
     # print dir(ax.dataLim)
-    xmin = ax.dataLim.xmin
-    xmax = ax.dataLim.xmax
-    ymin = ax.dataLim.ymin
-    ymax = ax.dataLim.ymax
+    if xmin is None:
+        xmin = ax.dataLim.xmin
+    if xmax is None:
+        xmax = ax.dataLim.xmax
+    if ymin is None:
+        ymin = ax.dataLim.ymin
+    if ymax is None:
+        ymax = ax.dataLim.ymax
     xscale = xmax-xmin
     yscale = ymax-ymin
 
@@ -220,7 +225,7 @@ def plot_scalebars(ax, div=3.0, labels=True,
         else:
             ylabel_x, ylabel_y = xmax, ymin + ylength/2.0
             ylabel_x += key_dist*xscale
-            ax.text(ylabel_x+xoff, ylabel_y-yoff, ylabel, ha='center', va='top', rotation=90,
+            ax.text(ylabel_x+xoff, ylabel_y-yoff, ylabel, ha='left', va='center', rotation=90,
                     weight=textweight, color=textcolor)
 
 
@@ -280,16 +285,20 @@ def plot_traces(traces, ax=None, pulses=None,
                 maxres = None,
                 plot_sb=True, sb_yoff=0, sb_xoff=0, linestyle_sb = "-k",
                 dashedline=None, sagline=None, rotate_yslabel=False,
-                textcolor='k', textweight='normal'):
+                textcolor='k', textweight='normal', figsize=None):
 
     if ax is None:
-        Fig = plt.figure(dpi=maxres)
+        if figsize is None:
+            Fig = plt.figure(dpi=maxres)
+        else:
+            Fig = plt.figure(dpi=maxres, figsize=figsize)
+            
         Fig.patch.set_alpha(0.0)
 
-        border = 0.1
+        border = 0.2
         pulseprop = 0.05
         if pulses is not None and len(pulses) > 0:
-            prop = 1.0-pulseprop-border*1.5
+            prop = 1.0-pulseprop-border
         else:
             prop = 1.0-border
         ax = Fig.add_axes([0.0,(1.0-prop),1.0-border,prop], alpha=0.0)
@@ -356,7 +365,8 @@ def plot_traces(traces, ax=None, pulses=None,
 
     if plot_sb:
         plot_scalebars(ax, linestyle=linestyle_sb, xunits=traces[0].xunits, yunits=traces[0].yunits,
-                       textweight=textweight, textcolor=textcolor)
+                       textweight=textweight, textcolor=textcolor, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, 
+                       rotate_yslabel = rotate_yslabel)
     if pulses is not None and len(pulses) > 0:
         axp = Fig.add_axes([0.0,0.0,1.0-border,pulseprop+border/4.0], sharex=ax)
         for pulse in pulses:
