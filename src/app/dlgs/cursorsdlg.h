@@ -76,6 +76,10 @@ private:
     void OnComboBoxU1PS( wxCommandEvent& event );
     void OnComboBoxU2PS( wxCommandEvent& event );
 #endif
+    void OnRadioLatManualBeg( wxCommandEvent& event );
+    void OnRadioLatManualEnd( wxCommandEvent& event );
+    void OnRadioLatNonManualBeg( wxCommandEvent& event );
+    void OnRadioLatNonManualEnd( wxCommandEvent& event );
 
 #ifdef WITH_PSLOPE
     void OnRadioPSManBeg( wxCommandEvent& event );

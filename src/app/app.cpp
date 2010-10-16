@@ -398,7 +398,6 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
          case stf::latency_cursor:
              actDoc->SetLatencyBeg(CursorsDialog->GetCursor1L());
              actDoc->SetLatencyEnd(CursorsDialog->GetCursor2L());
-             std::cout << "Latency selected!" << std::endl;
              break;
             
          

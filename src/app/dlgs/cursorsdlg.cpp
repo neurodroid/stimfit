@@ -97,6 +97,16 @@ EVT_BUTTON( wxID_APPLY, wxStfCursorsDlg::OnPeakcalcexec )
 EVT_RADIOBUTTON( wxRADIOALL, wxStfCursorsDlg::OnRadioAll )
 EVT_RADIOBUTTON( wxRADIOMEAN, wxStfCursorsDlg::OnRadioMean )
 
+EVT_RADIOBUTTON( wxRADIO_LAT_MANUAL1,    wxStfCursorsDlg::OnRadioLatManualBeg )
+EVT_RADIOBUTTON( wxRADIO_LAT_MAXSLOPE1,  wxStfCursorsDlg::OnRadioLatNonManualBeg )
+EVT_RADIOBUTTON( wxRADIO_LAT_HALFWIDTH1, wxStfCursorsDlg::OnRadioLatNonManualBeg )
+EVT_RADIOBUTTON( wxRADIO_LAT_PEAK1,      wxStfCursorsDlg::OnRadioLatNonManualBeg )
+
+EVT_RADIOBUTTON( wxRADIO_LAT_MANUAL2,    wxStfCursorsDlg::OnRadioLatManualEnd )
+EVT_RADIOBUTTON( wxRADIO_LAT_HALFWIDTH2, wxStfCursorsDlg::OnRadioLatNonManualEnd )
+EVT_RADIOBUTTON( wxRADIO_LAT_PEAK2,      wxStfCursorsDlg::OnRadioLatNonManualEnd )
+EVT_RADIOBUTTON( wxRADIO_LAT_MAXSLOPE2,  wxStfCursorsDlg::OnRadioLatNonManualEnd )
+EVT_RADIOBUTTON( wxRADIO_LAT_EVENT2,     wxStfCursorsDlg::OnRadioLatNonManualEnd )
 #ifdef WITH_PSLOPE
 EVT_RADIOBUTTON( wxRADIO_PSManBeg, wxStfCursorsDlg::OnRadioPSManBeg )
 EVT_RADIOBUTTON( wxRADIO_PSEventBeg, wxStfCursorsDlg::OnRadioPSEventBeg )
@@ -899,6 +909,59 @@ void wxStfCursorsDlg::OnComboBoxU2L( wxCommandEvent& event ) {
         wxRadio_Lat_Manual2->SetValue(true);
     UpdateUnits(wxCOMBOU2L,cursor2LIsTime,wxTEXT2L);
 }
+
+void wxStfCursorsDlg::OnRadioLatManualBeg( wxCommandEvent& event ) {
+    event.Skip();
+    wxTextCtrl* pCursor1L = (wxTextCtrl*)FindWindow(wxTEXT1L);
+    if (pCursor1L == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioLatManBeg()"));
+        return;
+    }
+    // if cursor wxTextCtrl is NOT enabled
+    if (!pCursor1L->IsEnabled())
+        pCursor1L->Enable(true);
+
+}
+
+void wxStfCursorsDlg::OnRadioLatManualEnd( wxCommandEvent& event ) {
+    event.Skip();
+    wxTextCtrl* pCursor2L = (wxTextCtrl*)FindWindow(wxTEXT2L);
+    if (pCursor2L == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioLatManEnd()"));
+        return;
+    }
+    // if cursor wxTextCtrl is NOT enabled
+    if (!pCursor2L->IsEnabled())
+        pCursor2L->Enable(true);
+
+}
+
+void wxStfCursorsDlg::OnRadioLatNonManualBeg( wxCommandEvent& event ) {
+    event.Skip();
+    wxTextCtrl* pCursor1L = (wxTextCtrl*)FindWindow(wxTEXT1L);
+    if (pCursor1L == NULL ) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioLatt50Beg()"));
+        return;
+    }
+    // disable cursor wxTextCtrl if it is enabled 
+    if (pCursor1L->IsEnabled())
+        pCursor1L->Enable(false);
+
+}
+
+void wxStfCursorsDlg::OnRadioLatNonManualEnd( wxCommandEvent& event ) {
+    event.Skip();
+    wxTextCtrl* pCursor2L = (wxTextCtrl*)FindWindow(wxTEXT2L);
+    if (pCursor2L == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioNonManualEnd()"));
+        return;
+    }
+    // disable cursor wxTextCtrl if it is enabled 
+    if (pCursor2L->IsEnabled()) 
+        pCursor2L->Enable(false);
+
+}
+
 
 #ifdef WITH_PSLOPE
 
