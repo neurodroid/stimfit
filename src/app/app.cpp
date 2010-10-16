@@ -398,6 +398,10 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
          case stf::latency_cursor:
              actDoc->SetLatencyBeg(CursorsDialog->GetCursor1L());
              actDoc->SetLatencyEnd(CursorsDialog->GetCursor2L());
+             // set the latency mode
+             actDoc->SetLatencyStartMode(CursorsDialog->GetLatencyStartMode());
+             actDoc->SetLatencyEndMode(CursorsDialog->GetLatencyEndMode());
+
              break;
             
          

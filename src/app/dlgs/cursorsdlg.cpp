@@ -1169,6 +1169,60 @@ void wxStfCursorsDlg::OnRadioMean( wxCommandEvent& event ) {
     pRadioAll->SetValue(false);
 }
 
+stf::latency_mode wxStfCursorsDlg::GetLatencyStartMode() const {
+
+    wxRadioButton* pManual   = (wxRadioButton*)FindWindow(wxRADIO_LAT_MANUAL1);
+    wxRadioButton* pPeak     = (wxRadioButton*)FindWindow(wxRADIO_LAT_PEAK1);
+    wxRadioButton* pMaxSlope = (wxRadioButton*)FindWindow(wxRADIO_LAT_MAXSLOPE1);
+    wxRadioButton* pt50      = (wxRadioButton*)FindWindow(wxRADIO_LAT_HALFWIDTH1);
+
+    if (pManual == NULL || pPeak == NULL
+            || pMaxSlope == NULL || pt50 == NULL ) {
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::GetLatencyStartMode()"));
+        return stf::undefinedMode;
+    }
+
+    if (pManual->GetValue() )
+        return stf::manualMode;
+    else if (pPeak->GetValue())
+        return stf::peakMode;
+    else if (pMaxSlope->GetValue())
+        return stf::riseMode;
+    else if (pt50->GetValue())
+        return stf::halfMode;
+    else
+        return stf::undefinedMode;
+
+}
+
+stf::latency_mode wxStfCursorsDlg::GetLatencyEndMode() const {
+
+    wxRadioButton* pEvent    = (wxRadioButton*)FindWindow(wxRADIO_LAT_EVENT2);
+    wxRadioButton* pManual   = (wxRadioButton*)FindWindow(wxRADIO_LAT_MANUAL2);
+    wxRadioButton* pPeak     = (wxRadioButton*)FindWindow(wxRADIO_LAT_PEAK2);
+    wxRadioButton* pMaxSlope = (wxRadioButton*)FindWindow(wxRADIO_LAT_MAXSLOPE2);
+    wxRadioButton* pt50      = (wxRadioButton*)FindWindow(wxRADIO_LAT_HALFWIDTH2);
+
+    if (pEvent == NULL || pManual == NULL || pPeak == NULL
+            || pMaxSlope == NULL || pt50 == NULL ) {
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::GetLatencyStartMode()"));
+        return stf::undefinedMode;
+    }
+
+    if (pManual->GetValue() )
+        return stf::manualMode;
+    else if (pEvent->GetValue())
+        return stf::footMode;
+    else if (pPeak->GetValue())
+        return stf::peakMode;
+    else if (pMaxSlope->GetValue())
+        return stf::riseMode;
+    else if (pt50->GetValue())
+        return stf::halfMode;
+    else
+        return stf::undefinedMode;
+
+}
 #ifdef WITH_PSLOPE
 stf::pslope_mode_beg wxStfCursorsDlg::GetPSlopeBegMode() const {
 

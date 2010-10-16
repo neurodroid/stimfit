@@ -214,6 +214,16 @@ public:
      */
     stf::direction GetDirection() const;
 
+    //! Gets the mode of Latency for the beginning of the latency cursor.
+    /*! \return The current mode for the beginning latency cursor.
+    */
+    stf::latency_mode GetLatencyStartMode() const;
+
+    //! Gets the mode of Latency of the last latency cursor.
+    /*! \return The current mode of the last latency cursor.
+    */
+    stf::latency_mode GetLatencyEndMode() const;
+
 #ifdef WITH_PSLOPE
     //! Gets the mode of measure for the beginning of the slope cursor.
     /*! \return The current mode for the beginning slope cursor.

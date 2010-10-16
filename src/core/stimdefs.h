@@ -485,7 +485,8 @@ enum latency_mode {
     peakMode = 1,   /*!< Set the corresponding latency cursor to the peak. */ 
     riseMode = 2,   /*!< Set the corresponding latency cursor to the maximal slope of rise. */ 
     halfMode = 3,   /*!< Set the corresponding latency cursor to the half-maximal amplitude. */ 
-    footMode = 4    /*!< Set the corresponding latency cursor to the beginning of an event. */ 
+    footMode = 4,    /*!< Set the corresponding latency cursor to the beginning of an event. */ 
+    undefinedMode   /*!< undefined mode. */
 };
 
 //! Latency window settings
