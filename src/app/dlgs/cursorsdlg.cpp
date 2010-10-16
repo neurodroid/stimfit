@@ -85,6 +85,8 @@ EVT_COMBOBOX( wxCOMBOU1B, wxStfCursorsDlg::OnComboBoxU1B )
 EVT_COMBOBOX( wxCOMBOU2B, wxStfCursorsDlg::OnComboBoxU2B )
 EVT_COMBOBOX( wxCOMBOU1D, wxStfCursorsDlg::OnComboBoxU1D )
 EVT_COMBOBOX( wxCOMBOU2D, wxStfCursorsDlg::OnComboBoxU2D )
+EVT_COMBOBOX( wxCOMBOU1L, wxStfCursorsDlg::OnComboBoxU1L )
+EVT_COMBOBOX( wxCOMBOU2L, wxStfCursorsDlg::OnComboBoxU2L )
 #ifdef WITH_PSLOPE
 EVT_COMBOBOX( wxCOMBOU1PS, wxStfCursorsDlg::OnComboBoxU1PS )
 EVT_COMBOBOX( wxCOMBOU2PS, wxStfCursorsDlg::OnComboBoxU2PS )
@@ -113,6 +115,7 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
                                  wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ), cursorMIsTime(true),
     cursor1PIsTime(true), cursor2PIsTime(true), cursor1BIsTime(true),cursor2BIsTime(true),
+    cursor1LIsTime(true), cursor2LIsTime(true),
 #ifdef WITH_PSLOPE
     cursor1PSIsTime(true), cursor2PSIsTime(true), 
 #endif
@@ -126,10 +129,10 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
     m_notebook->AddPage( CreatePeakPage(), wxT("Peak"));
     m_notebook->AddPage( CreateBasePage(), wxT("Base"));
     m_notebook->AddPage( CreateDecayPage(), wxT("Decay"));
+    m_notebook->AddPage( CreateLatencyPage(), wxT("Latency"));
 #ifdef WITH_PSLOPE
     m_notebook->AddPage( CreatePSlopePage(), wxT("Slope"));
 #endif
-    m_notebook->AddPage( CreateLatencyPage(), wxT("Latency"));
     topSizer->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 
     wxStdDialogButtonSizer* pSdbSizer = new wxStdDialogButtonSizer();
@@ -652,6 +655,14 @@ int wxStfCursorsDlg::GetCursor2D() const {
     return ReadCursor(wxTEXT2D,cursor2DIsTime);
 }
 
+int wxStfCursorsDlg::GetCursor1L() const {
+    return ReadCursor(wxTEXT1L, cursor1LIsTime);
+}
+
+int wxStfCursorsDlg::GetCursor2L() const {
+    return ReadCursor(wxTEXT2L, cursor2LIsTime);
+}
+
 #ifdef WITH_PSLOPE
 int wxStfCursorsDlg::GetCursor1PS() const {
     return ReadCursor(wxTEXT1PS, cursor1PSIsTime);
@@ -862,6 +873,31 @@ void wxStfCursorsDlg::OnComboBoxU1D( wxCommandEvent& event ) {
 void wxStfCursorsDlg::OnComboBoxU2D( wxCommandEvent& event ) {
     event.Skip();
     UpdateUnits(wxCOMBOU2D,cursor2DIsTime,wxTEXT2D);
+}
+
+void wxStfCursorsDlg::OnComboBoxU1L( wxCommandEvent& event ) {
+    event.Skip();
+    wxRadioButton* wxRadio_Lat_Manual1 = (wxRadioButton*)FindWindow(wxRADIO_LAT_MANUAL1);
+    if (wxRadio_Lat_Manual1 == NULL){
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::OnComboBoxU1LS()"));
+        return;
+    }
+    else
+        wxRadio_Lat_Manual1->SetValue(true);
+
+    UpdateUnits(wxCOMBOU1L,cursor1LIsTime,wxTEXT1L);
+}
+
+void wxStfCursorsDlg::OnComboBoxU2L( wxCommandEvent& event ) {
+    event.Skip();
+    wxRadioButton* wxRadio_Lat_Manual2 = (wxRadioButton*)FindWindow(wxRADIO_LAT_MANUAL2);
+    if (wxRadio_Lat_Manual2 == NULL){
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::OnComboBoxU2LS()"));
+        return;
+    }
+    else
+        wxRadio_Lat_Manual2->SetValue(true);
+    UpdateUnits(wxCOMBOU2L,cursor2LIsTime,wxTEXT2L);
 }
 
 #ifdef WITH_PSLOPE
@@ -1275,6 +1311,15 @@ void wxStfCursorsDlg::UpdateCursors() {
         pText2=(wxTextCtrl*)FindWindow(wxTEXT2D);
         break;
 
+    case stf::latency_cursor: // Latency
+        iNewValue1= (int)actDoc->GetLatencyBeg();
+        iNewValue2= (int)actDoc->GetLatencyEnd();
+        cursor1isTime=cursor1LIsTime;
+        cursor2isTime=cursor2LIsTime;
+        pText1=(wxTextCtrl*)FindWindow(wxTEXT1L);
+        pText2=(wxTextCtrl*)FindWindow(wxTEXT2L);
+        break;
+
 #ifdef WITH_PSLOPE
     case stf::pslope_cursor: // PSlope
         iNewValue1=(int)actDoc->GetPSlopeBeg();
@@ -1334,8 +1379,9 @@ stf::cursor_type wxStfCursorsDlg::CurrentCursor() const {
     case 1: return stf::peak_cursor;
     case 2: return stf::base_cursor;
     case 3: return stf::decay_cursor;
+    case 4: return stf::latency_cursor;
 #ifdef WITH_PSLOPE
-    case 4: return stf::pslope_cursor;
+    case 5: return stf::pslope_cursor;
 #endif 
     default: return stf::undefined_cursor;
     }

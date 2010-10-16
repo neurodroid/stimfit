@@ -54,7 +54,10 @@ private:
     cursor1PIsTime,cursor2PIsTime,
     cursor1BIsTime,cursor2BIsTime,
     cursor1DIsTime,cursor2DIsTime,
-    cursor1PSIsTime,cursor2PSIsTime;
+#ifdef WITH_PSLOPE
+    cursor1PSIsTime,cursor2PSIsTime,
+#endif
+    cursor1LIsTime,cursor2LIsTime;
 
     wxStfDoc* actDoc;
     wxNotebook* m_notebook;
@@ -67,6 +70,8 @@ private:
     void OnComboBoxU2B( wxCommandEvent& event );
     void OnComboBoxU1D( wxCommandEvent& event );
     void OnComboBoxU2D( wxCommandEvent& event );
+    void OnComboBoxU1L( wxCommandEvent& event );
+    void OnComboBoxU2L( wxCommandEvent& event );
 #ifdef WITH_PSLOPE
     void OnComboBoxU1PS( wxCommandEvent& event );
     void OnComboBoxU2PS( wxCommandEvent& event );
@@ -157,6 +162,17 @@ public:
      */
     int GetCursor2D() const;
 
+    //! Get the left latency cursor x-position
+    /*! \return The left fit cursor x-position in units of sampling points.
+     */
+    int GetCursor1L() const;
+
+    //! Get the right latency cursor x-position
+    /*! \return The right fit cursor x-position in units of sampling points.
+     */
+    int GetCursor2L() const;
+
+#ifdef WITH_PSLOPE
     //! Get the left PSlope cursor x-position
     /*! \return The left fit cursor x-position in units of sampling points.
      */
@@ -167,6 +183,7 @@ public:
      */
     int GetCursor2PS() const;
 
+#endif
     //! Gets the number of points used for the binned average during peak detection.
     /*! \return The number of points used for the binned average during peak detection.
      */

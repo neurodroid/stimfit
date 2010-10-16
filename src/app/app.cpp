@@ -394,6 +394,13 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
              actDoc->SetFitBeg(CursorsDialog->GetCursor1D());
              actDoc->SetFitEnd(CursorsDialog->GetCursor2D());
              break;
+
+         case stf::latency_cursor:
+             actDoc->SetLatencyBeg(CursorsDialog->GetCursor1L());
+             actDoc->SetLatencyEnd(CursorsDialog->GetCursor2L());
+             std::cout << "Latency selected!" << std::endl;
+             break;
+            
          
 #ifdef WITH_PSLOPE
             // Get cursor location from the dialog box:
