@@ -328,7 +328,7 @@ class wxStfBatchDlg : public wxDialog
         id_slopes,
         id_latencies,
         id_fit,
-#ifdef PSLOPE
+#ifdef WITH_PSLOPE
         id_pslopes,
 #endif
         id_crossings

@@ -16,8 +16,12 @@ enum {
     wxCOMBOU2B,
     wxCOMBOU1D,
     wxCOMBOU2D,
+    wxCOMBOU1L,
+    wxCOMBOU2L,
+#ifdef WITH_PSLOPE
     wxCOMBOU1PS,
     wxCOMBOU2PS,
+#endif 
     wxTEXTM,
     wxTEXT1P,
     wxTEXT2P,
@@ -25,6 +29,8 @@ enum {
     wxTEXT2B,
     wxTEXT1D,
     wxTEXT2D,
+    wxTEXT1L,
+    wxTEXT2L,
 #ifdef WITH_PSLOPE
     wxTEXT1PS,
     wxTEXT2PS,
@@ -33,6 +39,15 @@ enum {
     wxTEXTPM,
     wxRADIOALL,
     wxRADIOMEAN,
+    wxRADIO_LAT_MAXSLOPE1,
+    wxRADIO_LAT_HALFWIDTH1,
+    wxRADIO_LAT_PEAK1,
+    wxRADIO_LAT_MANUAL1,
+    wxRADIO_LAT_EVENT2,
+    wxRADIO_LAT_MAXSLOPE2,
+    wxRADIO_LAT_HALFWIDTH2,
+    wxRADIO_LAT_PEAK2,
+    wxRADIO_LAT_MANUAL2,
 #ifdef WITH_PSLOPE
     // Slope radio boxes 
     wxRADIO_PSManBeg,
@@ -114,6 +129,7 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
 #ifdef WITH_PSLOPE
     m_notebook->AddPage( CreatePSlopePage(), wxT("Slope"));
 #endif
+    m_notebook->AddPage( CreateLatencyPage(), wxT("Latency"));
     topSizer->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 
     wxStdDialogButtonSizer* pSdbSizer = new wxStdDialogButtonSizer();
@@ -316,6 +332,92 @@ wxNotebookPage* wxStfCursorsDlg::CreateDecayPage() {
     return nbPage;
 }
 
+wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
+    wxPanel* nbPage;
+    nbPage = new wxPanel(m_notebook);
+
+    wxBoxSizer* pageSizer;
+    pageSizer = new wxBoxSizer(wxVERTICAL);
+
+    pageSizer->Add(CreateCursorInput(nbPage, wxTEXT1L, wxTEXT2L, wxCOMBOU1L,
+        wxCOMBOU2L, 1, 10), 0, wxALIGN_CENTER | wxALL, 2);
+
+    // Grid
+    wxFlexGridSizer* PSBegEndGrid;
+    PSBegEndGrid = new wxFlexGridSizer(1,2,0,0); // rows, cols
+
+    //**** Radio options "Measure from" ****
+    wxStaticBoxSizer* LeftBoxSizer = new wxStaticBoxSizer(
+        wxVERTICAL, nbPage, wxT("Measure from") );
+
+    // Measure from: Maximal slope
+    wxRadioButton* wxRadio_Lat_MaxSlope1 = new wxRadioButton( nbPage, wxRADIO_LAT_MAXSLOPE1, wxT("Maximal slope"),
+            wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
+    wxRadio_Lat_MaxSlope1->SetValue(true);
+
+    // Measure from: Half-maximal amplitude
+    wxRadioButton* wxRadio_Lat_HalfWidth1 = new wxRadioButton( nbPage, wxRADIO_LAT_HALFWIDTH1, wxT("Half-width (t50)"),
+            wxDefaultPosition, wxDefaultSize );
+     
+    // Measure from: Peak
+    wxRadioButton* wxRadio_Lat_Peak1 = new wxRadioButton( nbPage, wxRADIO_LAT_PEAK1, wxT("Peak"),
+            wxDefaultPosition, wxDefaultSize);
+
+    // Measure from: Manual
+    wxRadioButton* wxRadio_Lat_Manual1 = new wxRadioButton( nbPage, wxRADIO_LAT_MANUAL1, wxT("Manual"),
+            wxDefaultPosition, wxDefaultSize);
+
+
+    // Sizer to group the radio options
+    LeftBoxSizer->Add( wxRadio_Lat_MaxSlope1,  0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    LeftBoxSizer->Add( wxRadio_Lat_HalfWidth1, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    LeftBoxSizer->Add( wxRadio_Lat_Peak1,      0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    LeftBoxSizer->Add( wxRadio_Lat_Manual1,    0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    // Add to PSBegEndGrid
+    PSBegEndGrid->Add(LeftBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
+
+    //**** Radio options "Measure to" ****
+    wxStaticBoxSizer* RightBoxSizer = new wxStaticBoxSizer(
+        wxVERTICAL, nbPage, wxT("Measure to") );
+
+    // Measure to: Beginning of event
+    wxRadioButton* wxRadio_Lat_Event2 = new wxRadioButton( nbPage, wxRADIO_LAT_EVENT2, wxT("Beginning of event"),
+            wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+    wxRadio_Lat_Event2->SetValue(true);
+
+    // Measure to: Maximal slope
+    wxRadioButton* wxRadio_Lat_MaxSlope2 = new wxRadioButton( nbPage, wxRADIO_LAT_MAXSLOPE2, wxT("Maximal slope"),
+            wxDefaultPosition, wxDefaultSize);
+
+    // Measue to: Half-maximal amplitude
+    wxRadioButton* wxRadio_Lat_HalfWidth2 = new wxRadioButton( nbPage, wxRADIO_LAT_HALFWIDTH2, wxT("Half-width (t50)"),
+            wxDefaultPosition, wxDefaultSize);
+
+    // Measure to: Peak
+    wxRadioButton* wxRadio_Lat_Peak2 = new wxRadioButton( nbPage, wxRADIO_LAT_PEAK2, wxT("Peak"),
+            wxDefaultPosition, wxDefaultSize);
+
+    // Measure to: Manual
+    wxRadioButton* wxRadio_Lat_Manual2 = new wxRadioButton( nbPage, wxRADIO_LAT_MANUAL2, wxT("Manual"),
+            wxDefaultPosition, wxDefaultSize);
+
+    // Sizer to group the radio options
+    RightBoxSizer->Add( wxRadio_Lat_Event2,     0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    RightBoxSizer->Add( wxRadio_Lat_MaxSlope2,  0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    RightBoxSizer->Add( wxRadio_Lat_HalfWidth2, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    RightBoxSizer->Add( wxRadio_Lat_Peak2,      0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    RightBoxSizer->Add( wxRadio_Lat_Manual2,    0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    // Add to PSBegEndGrid
+    PSBegEndGrid->Add(RightBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
+
+    pageSizer->Add(PSBegEndGrid, 0, wxALIGN_CENTER | wxALL, 2);
+
+    nbPage->SetSizer(pageSizer);
+    nbPage->Layout();
+    return nbPage;
+
+
+}
 #ifdef WITH_PSLOPE
 wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
     wxPanel* nbPage;

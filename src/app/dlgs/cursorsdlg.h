@@ -40,6 +40,7 @@ private:
     wxNotebookPage* CreatePeakPage();
     wxNotebookPage* CreateBasePage();
     wxNotebookPage* CreateDecayPage();
+    wxNotebookPage* CreateLatencyPage();
     wxNotebookPage* CreatePSlopePage();
     wxFlexGridSizer*
         CreateCursorInput( wxPanel* nbPage, wxWindowID textC1, wxWindowID textC2,
@@ -66,9 +67,12 @@ private:
     void OnComboBoxU2B( wxCommandEvent& event );
     void OnComboBoxU1D( wxCommandEvent& event );
     void OnComboBoxU2D( wxCommandEvent& event );
+#ifdef WITH_PSLOPE
     void OnComboBoxU1PS( wxCommandEvent& event );
     void OnComboBoxU2PS( wxCommandEvent& event );
+#endif
 
+#ifdef WITH_PSLOPE
     void OnRadioPSManBeg( wxCommandEvent& event );
     void OnRadioPSEventBeg( wxCommandEvent& event );
     void OnRadioPSThrBeg( wxCommandEvent& event );
@@ -78,6 +82,7 @@ private:
     void OnRadioPSt50End( wxCommandEvent& event );
     void OnRadioPSDeltaT( wxCommandEvent& event );
     void OnRadioPSPeakEnd( wxCommandEvent& event );
+#endif
 
     void OnRadioAll( wxCommandEvent& event );
     void OnRadioMean( wxCommandEvent& event );

@@ -1530,7 +1530,7 @@ void wxStfParentFrame::SetMouseQual(stf::cursor_type value) {
         m_cursorToolBar->ToggleTool(ID_TOOL_LATENCY,true);
 #ifdef WITH_PSLOPE
     if (value==stf::pslope_cursor)
-        m_cursorToolBar->ToggleTool(ID_TOOL_PSLOPE, true);
+        m_cursorToolBar->ToggleTool(ID_TOOL_PSLOPE,true);
 #endif
     if (value==stf::zoom_cursor)
         m_cursorToolBar->ToggleTool(ID_TOOL_ZOOM,true);
