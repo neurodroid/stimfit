@@ -11,6 +11,7 @@ has_mpl = True
 try:
     import matplotlib.pyplot as plt
     from matplotlib.patches import Rectangle
+    from mpl_toolkits.axes_grid.axislines import Subplot
 except ImportError:
     has_mpl = False
 
@@ -386,3 +387,16 @@ def plot_traces(traces, ax=None, pulses=None,
 
     if ax is None:
         return Fig
+
+def standard_axis(fig, subplot, sharex=None, sharey=None, hasx=False, hasy=True):
+    
+    ax1 = Subplot(fig, subplot, frameon=False, sharex=sharex, sharey=sharey)
+    fig.add_axes(ax1)
+    ax1.axis["right"].set_visible(False)
+    ax1.axis["top"].set_visible(False)
+    if not hasx:
+        ax1.axis["bottom"].set_visible(False)
+    if not hasy:
+        ax1.axis["left"].set_visible(False)
+
+    return ax1
