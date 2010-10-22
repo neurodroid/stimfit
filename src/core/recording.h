@@ -711,9 +711,7 @@ class StfDll Recording {
     //! Sets the mode of the latency start cursor.
     /*! \param value The new mode of the latency start cursor..
      */
-    void SetLatencyStartMode(stf::latency_mode value) {
-        latencyStartMode=value;
-    }
+    void SetLatencyStartMode(stf::latency_mode value) { latencyStartMode=value; }
 
     //! Sets the mode of the latency end cursor.
     /*! \param value The new mode of the latency end cursor..

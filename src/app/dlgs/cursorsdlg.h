@@ -41,7 +41,9 @@ private:
     wxNotebookPage* CreateBasePage();
     wxNotebookPage* CreateDecayPage();
     wxNotebookPage* CreateLatencyPage();
+#ifdef WITH_PSLOPE
     wxNotebookPage* CreatePSlopePage();
+#endif
     wxFlexGridSizer*
         CreateCursorInput( wxPanel* nbPage, wxWindowID textC1, wxWindowID textC2,
                            wxWindowID comboU1, wxWindowID comboU2, std::size_t c1,
@@ -186,8 +188,8 @@ public:
     /*! \return The right fit cursor x-position in units of sampling points.
      */
     int GetCursor2PS() const;
-
 #endif
+
     //! Gets the number of points used for the binned average during peak detection.
     /*! \return The number of points used for the binned average during peak detection.
      */
@@ -224,6 +226,16 @@ public:
     */
     stf::latency_mode GetLatencyEndMode() const;
 
+    //! Sets the latency mode of the left latency cursor.
+    /*! \param latencyBegMode: the new mode for the left latency cursor.
+     */
+    void SetLatencyStartMode(stf::latency_mode latencyBegMode);
+
+    //! Sets the latency mode of the right latency cursor.
+    /*! \param latencyEndMode: the new mode for the right latency cursor.
+     */
+    void SetLatencyEndMode(stf::latency_mode latencyEndMode);
+    
 #ifdef WITH_PSLOPE
     //! Gets the mode of measure for the beginning of the slope cursor.
     /*! \return The current mode for the beginning slope cursor.
@@ -248,8 +260,8 @@ public:
     void SetDirection(stf::direction direction);
 
 #ifdef WITH_PSLOPE
-    //! Sets the mode of the right slope cursor.
-    /*! \param pslopeEndMode The new mode for the slope cursor.
+    //! sets the mode of the right slope cursor.
+    /*! \param pslopeendmode the new mode for the slope cursor.
      */
     void SetPSlopeEndMode(stf::pslope_mode_end pslopeEndMode);
 

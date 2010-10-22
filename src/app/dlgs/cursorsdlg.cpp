@@ -367,7 +367,7 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
     // Measure from: Manual
     wxRadioButton* wxRadio_Lat_Manual1 = new wxRadioButton( nbPage, wxRADIO_LAT_MANUAL1, wxT("Manual"),
             wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-    wxRadio_Lat_Manual1->SetValue(true);
+    //wxRadio_Lat_Manual1->SetValue(true);
     
     // Measure from: Peak
     wxRadioButton* wxRadio_Lat_Peak1 = new wxRadioButton( nbPage, wxRADIO_LAT_PEAK1, wxT("Peak"),
@@ -397,7 +397,7 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
     // Measure to: Manual
     wxRadioButton* wxRadio_Lat_Manual2 = new wxRadioButton( nbPage, wxRADIO_LAT_MANUAL2, wxT("Manual"),
             wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-    wxRadio_Lat_Manual2->SetValue(true);
+    //wxRadio_Lat_Manual2->SetValue(true);
 
     // Measure to: Peak
     wxRadioButton* wxRadio_Lat_Peak2 = new wxRadioButton( nbPage, wxRADIO_LAT_PEAK2, wxT("Peak"),
@@ -1208,7 +1208,7 @@ stf::latency_mode wxStfCursorsDlg::GetLatencyEndMode() const {
 
     if (pEvent == NULL || pManual == NULL || pPeak == NULL
             || pMaxSlope == NULL || pt50 == NULL ) {
-        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::GetLatencyStartMode()"));
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::GetLatencyEndMode()"));
         return stf::undefinedMode;
     }
 
@@ -1224,8 +1224,74 @@ stf::latency_mode wxStfCursorsDlg::GetLatencyEndMode() const {
         return stf::halfMode;
     else
         return stf::undefinedMode;
-
 }
+
+void wxStfCursorsDlg::SetLatencyStartMode(stf::latency_mode latencyBegMode){
+
+    wxRadioButton* pManual   = (wxRadioButton*)FindWindow(wxRADIO_LAT_MANUAL1);
+    wxRadioButton* pPeak     = (wxRadioButton*)FindWindow(wxRADIO_LAT_PEAK1);
+    wxRadioButton* pMaxSlope = (wxRadioButton*)FindWindow(wxRADIO_LAT_MAXSLOPE1);
+    wxRadioButton* pt50      = (wxRadioButton*)FindWindow(wxRADIO_LAT_HALFWIDTH1);
+    
+    if (pManual == NULL || pPeak == NULL
+        || pMaxSlope == NULL || pt50 == NULL) {
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::SetLatencyStartMode()"));
+    }
+
+    switch (latencyBegMode) {
+        case stf::manualMode:
+            pManual->SetValue(true);
+            break;
+        case stf::peakMode:
+            pPeak->SetValue(true);
+            break;
+        case stf::riseMode:
+            pMaxSlope->SetValue(true);
+            break;
+        case stf::halfMode:
+            pt50->SetValue(true);
+            break;
+        default:
+            break;
+        }
+}
+
+
+void wxStfCursorsDlg::SetLatencyEndMode(stf::latency_mode latencyEndMode){
+
+    wxRadioButton* pManual   = (wxRadioButton*)FindWindow(wxRADIO_LAT_MANUAL2);
+    wxRadioButton* pPeak     = (wxRadioButton*)FindWindow(wxRADIO_LAT_PEAK2);
+    wxRadioButton* pMaxSlope = (wxRadioButton*)FindWindow(wxRADIO_LAT_MAXSLOPE2);
+    wxRadioButton* pt50      = (wxRadioButton*)FindWindow(wxRADIO_LAT_HALFWIDTH2);
+    wxRadioButton* pEvent    = (wxRadioButton*)FindWindow(wxRADIO_LAT_EVENT2);
+    
+    if (pManual == NULL || pPeak == NULL
+        || pMaxSlope == NULL || pt50 == NULL || pEvent == NULL) {
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::SetLatencyEndtMode()"));
+    }
+
+    switch (latencyEndMode) {
+        case stf::manualMode:
+            pManual->SetValue(true);
+            break;
+        case stf::peakMode:
+            pPeak->SetValue(true);
+            break;
+        case stf::riseMode:
+            pMaxSlope->SetValue(true);
+            break;
+        case stf::halfMode:
+            pt50->SetValue(true);
+            break;
+        case stf::footMode:
+            pEvent->SetValue(true);
+            break;
+        default:
+            break;
+        }
+}
+
+
 #ifdef WITH_PSLOPE
 stf::pslope_mode_beg wxStfCursorsDlg::GetPSlopeBegMode() const {
 
@@ -1438,6 +1504,12 @@ void wxStfCursorsDlg::UpdateCursors() {
         cursor2isTime=cursor2LIsTime;
         pText1=(wxTextCtrl*)FindWindow(wxTEXT1L);
         pText2=(wxTextCtrl*)FindWindow(wxTEXT2L);
+        // Update RadioButton options
+        std::cout << "UPDATE wxStfDlg" << std::endl;
+        std::cout << "wxStfDoc: latency start " << actDoc->GetLatencyStartMode() << std::endl;
+        std::cout << "wxStfDoc: latency end " << actDoc->GetLatencyEndMode() << std::endl;
+        SetLatencyStartMode( actDoc->GetLatencyStartMode() );
+        SetLatencyEndMode(   actDoc->GetLatencyEndMode() );
         break;
 
 #ifdef WITH_PSLOPE

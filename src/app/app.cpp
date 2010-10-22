@@ -399,10 +399,9 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
          case stf::latency_cursor:
              actDoc->SetLatencyBeg(CursorsDialog->GetCursor1L());
              actDoc->SetLatencyEnd(CursorsDialog->GetCursor2L());
-             // set the latency mode
-             actDoc->SetLatencyStartMode(CursorsDialog->GetLatencyStartMode());
-             actDoc->SetLatencyEndMode(CursorsDialog->GetLatencyEndMode());
-
+             // set latency mode in wxStfDoc
+             actDoc->SetLatencyStartMode(CursorsDialog->GetLatencyStartMode() );
+             actDoc->SetLatencyEndMode(CursorsDialog->GetLatencyEndMode() );
              break;
             
          
@@ -434,12 +433,6 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
              break;
         }
 
-#ifdef WITH_PSLOPE
-#ifdef _STFDEBUG
-        std::cout << "wxStfApp: PSlopeBegMode is " << actDoc->GetPSlopeBegMode() << std::endl;
-        std::cout << "wxStfApp: PSlopeEndMode is " << actDoc->GetPSlopeEndMode() << std::endl;
-#endif
-#endif //with_PSLOPE
 
         //Update edit peak limits in the peak calculation dialog box
         if (CursorsDialog->GetPeakAtEnd())
