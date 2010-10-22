@@ -255,6 +255,7 @@ bool wxStfApp::OnInit(void)
 
     wxMenu *m_view_menu = new wxMenu;
 #ifdef WITH_PYTHON
+    m_file_menu->AppendSeparator();
     m_view_menu->Append(ID_VIEW_SHELL, wxT("&Toggle Python shell"),
                         wxT("Shows or hides the Python shell"));
 #endif // WITH_PYTHON
@@ -686,8 +687,8 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     m_view_menu->Append(ID_SAVEPERSPECTIVE,wxT("&Save window positions"));
     m_view_menu->Append(ID_LOADPERSPECTIVE,wxT("&Load window positions"));
     m_view_menu->Append(ID_RESTOREPERSPECTIVE,wxT("&Restore default window positions"));
-    m_view_menu->AppendSeparator();
 #ifdef WITH_PYTHON
+    m_view_menu->AppendSeparator();
     m_view_menu->Append(ID_VIEW_SHELL, wxT("&Toggle Python shell"),
                         wxT("Shows or hides the Python shell"));
 #endif // WITH_PYTHON
