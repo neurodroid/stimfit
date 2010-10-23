@@ -260,8 +260,8 @@ public:
     void SetDirection(stf::direction direction);
 
 #ifdef WITH_PSLOPE
-    //! sets the mode of the right slope cursor.
-    /*! \param pslopeendmode the new mode for the slope cursor.
+    //! Sets the mode of the right slope cursor.
+    /*! \param pslopeEndMode The new mode for the slope cursor.
      */
     void SetPSlopeEndMode(stf::pslope_mode_end pslopeEndMode);
 

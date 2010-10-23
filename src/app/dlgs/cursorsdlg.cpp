@@ -1505,9 +1505,6 @@ void wxStfCursorsDlg::UpdateCursors() {
         pText1=(wxTextCtrl*)FindWindow(wxTEXT1L);
         pText2=(wxTextCtrl*)FindWindow(wxTEXT2L);
         // Update RadioButton options
-        std::cout << "UPDATE wxStfDlg" << std::endl;
-        std::cout << "wxStfDoc: latency start " << actDoc->GetLatencyStartMode() << std::endl;
-        std::cout << "wxStfDoc: latency end " << actDoc->GetLatencyEndMode() << std::endl;
         SetLatencyStartMode( actDoc->GetLatencyStartMode() );
         SetLatencyEndMode(   actDoc->GetLatencyEndMode() );
         break;
