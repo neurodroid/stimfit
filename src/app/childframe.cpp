@@ -53,6 +53,7 @@
 #include <wx/wxPython/wxPython.h>
 #endif
 
+#include "wx/spinctrl.h"
 #include "./app.h"
 #include "./doc.h"
 #include "./view.h"
@@ -284,6 +285,7 @@ void wxStfChildFrame::OnSpinCtrlTraces( wxCommandEvent& event ){
     wxStfDoc* pDoc=(wxStfDoc*)GetDocument();
 
     wxSpinCtrl* pSpinCtrlTrace = (wxSpinCtrl*)FindWindow(ID_SPINCTRLTRACES);
+
     if (pSpinCtrlTrace == NULL || pDoc == NULL || pView == NULL) {
         wxGetApp().ErrorMsg(wxT("Null pointer in wxStfChildFrame::OnSpinCtrlTraces()"));
         return;

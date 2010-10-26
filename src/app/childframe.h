@@ -189,7 +189,6 @@ private:
     wxStaticText *pSelected, *pSize, *pTraceIndex;
     //wxComboBox *pTraces, *pActChannel, *pInactChannel;
     wxComboBox *pActChannel, *pInactChannel;
-    wxStaticLine *pLine;
     wxSpinCtrl *pTraces;
     wxStfGrid* m_table;
     wxCheckBox *pPlotSelected, *pShowSecond;
