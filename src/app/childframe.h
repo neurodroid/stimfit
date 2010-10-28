@@ -189,7 +189,7 @@ private:
     wxStaticText *pSelected, *pSize, *pTraceIndex;
     //wxComboBox *pTraces, *pActChannel, *pInactChannel;
     wxComboBox *pActChannel, *pInactChannel;
-    wxSpinCtrl *pTraces;
+    wxSpinCtrl *trace_spinctrl;
     wxStfGrid* m_table;
     wxCheckBox *pPlotSelected, *pShowSecond;
     wxFlexGridSizer *pTraceSizer, *pChannelSizer;
@@ -204,7 +204,8 @@ private:
     void OnPlotselected(wxCommandEvent& event);
     void OnShowsecond(wxCommandEvent& event);
 //  void OnComboTraces(wxCommandEvent& event);
-    void OnSpinCtrlTraces(wxCommandEvent& event);
+    void OnSpinCtrlTraces(wxSpinEvent& event);
+//    void OnSpinCtrlTracesText(wxCommandEvent& event);
     void OnComboActChannel(wxCommandEvent& event);
     void OnComboInactChannel(wxCommandEvent& event);
 
