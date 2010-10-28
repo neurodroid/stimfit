@@ -193,7 +193,7 @@ void wxStfGraph::OnDraw( wxDC& DC )
     //Plot fit curves (including current trace)
     DrawFit(&DC);
 
-    if (!Doc()->GetSelectedSections().empty() && pFrame->PlotSelected()) {
+    if (!Doc()->GetSelectedSections().empty() && pFrame->ShowSelected()) {
         PlotSelected(DC);
     }	//End plot all selected traces
 
@@ -788,7 +788,7 @@ void wxStfGraph::DrawFit(wxDC* pDC) {
     for ( std::size_t n_sel = 0; n_sel < Doc()->GetSelectedSections().size(); ++n_sel ) {
         std::size_t sel_index = Doc()->GetSelectedSections()[ n_sel ];
         // Check whether this section contains a fit:
-        if ( (*Doc())[Doc()->GetCurCh()][sel_index].IsFitted() && pFrame->PlotSelected() ) {
+        if ( (*Doc())[Doc()->GetCurCh()][sel_index].IsFitted() && pFrame->ShowSelected() ) {
             PlotFit( pDC, (*Doc())[Doc()->GetCurCh()][sel_index] );
         }
     }

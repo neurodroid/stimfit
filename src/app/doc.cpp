@@ -369,7 +369,7 @@ void wxStfDoc::PostInit() {
         return;
     }
     try {
-        pFrame->CreateComboTraces(get().at(GetCurCh()).size());
+        pFrame->CreateMenuTraces(get().at(GetCurCh()).size());
         if ( size() > 1 ) {
             wxArrayString channelNames;
             channelNames.Alloc( size() );
@@ -1576,7 +1576,7 @@ void wxStfDoc::Deleteselected(wxCommandEvent &WXUNUSED(event)) {
         return;
     }
     // refresh the view once we are through:
-    if (pFrame->PlotSelected()) {
+    if (pFrame->ShowSelected()) {
         wxStfView* pView=(wxStfView*)GetFirstView();
         pView->GetGraph()->Refresh();
     }

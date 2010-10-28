@@ -117,10 +117,10 @@ public:
      */
     void SetCurTrace(std::size_t);
 
-    //! Creates the trace selection combo box.
-    /*! \param value The number of traces in the combo box drop-down list.
+    //! Creates the trace selection menu.
+    /*! \param value The number of traces.
      */
-    void CreateComboTraces(std::size_t value);
+    void CreateMenuTraces(std::size_t value);
 
 
     //! Creates the channel selection combo boxes.
@@ -170,7 +170,7 @@ public:
     //! Indicates whether all selected traces should be plotted.
     /*! \return true if they should be plotted, false otherwise.
      */
-    bool PlotSelected() const {return pPlotSelected->IsChecked();}
+    bool ShowSelected() const {return pShowSelected->IsChecked();}
 
     //! Indicates whether the second channel should be plotted.
     /*! \return true if it should be plotted, false otherwise.
@@ -186,14 +186,11 @@ private:
     long m_notebook_style;
     wxPanel *m_traceCounter;
     wxPanel *m_channelCounter;
-    //wxStaticText *pSelected, *pSize, *pTraceIndex;
-    //wxStaticText *pSize, *pTraceIndex;
     wxStaticText *pSize;
     wxComboBox *pActChannel, *pInactChannel;
     wxSpinCtrl *trace_spinctrl;
     wxStfGrid* m_table;
-    wxCheckBox *pZeroIndex, *pPlotSelected, *pShowSecond;
-    //wxFlexGridSizer *pTraceSizer, *pChannelSizer;
+    wxCheckBox *pZeroIndex, *pShowSelected, *pShowSecond;
     wxFlexGridSizer *pChannelSizer;
     wxFlexGridSizer *pTraceNumberSizer;
     bool firstResize;
