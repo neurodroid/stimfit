@@ -72,9 +72,7 @@
 IMPLEMENT_CLASS(wxStfChildFrame, wxStfChildType)
 
 BEGIN_EVENT_TABLE(wxStfChildFrame, wxStfChildType)
-//EVT_COMBOBOX( ID_COMBOTRACES, wxStfChildFrame::OnComboTraces )
 EVT_SPINCTRL( ID_SPINCTRLTRACES, wxStfChildFrame::OnSpinCtrlTraces )
-//EVT_TEXT( ID_SPINCTRLTRACES, wxStfChildFrame::OnSpinCtrlTracesText )
 EVT_COMBOBOX( ID_COMBOACTCHANNEL, wxStfChildFrame::OnComboActChannel )
 EVT_COMBOBOX( ID_COMBOINACTCHANNEL, wxStfChildFrame::OnComboInactChannel )
 EVT_CHECKBOX( ID_PLOTSELECTED, wxStfChildFrame::OnPlotselected )
@@ -167,12 +165,11 @@ void wxStfChildFrame::CreateComboTraces(const std::size_t value) {
     pSize=new wxStaticText( m_traceCounter, wxID_ANY, wxT("of 0") );
 
 
-    // creates a wxSpinCtrl with range of one to value (default value is 1)
+    // creates a wxSpinCtrl object 
     trace_spinctrl = new wxSpinCtrl( m_traceCounter, ID_SPINCTRLTRACES, wxEmptyString, wxDefaultPosition,
-                             wxSize(64, wxDefaultCoord), wxSP_WRAP);
+                     wxSize(64, wxDefaultCoord), wxSP_WRAP);
     trace_spinctrl->SetRange(1,(int)value);
 
-    //pTraceNumberSizer->Add( pTraces, wxALIGN_CENTRE );
     pTraceNumberSizer->Add( trace_spinctrl, wxALIGN_CENTRE );
 
     wxString sizeStr;
@@ -249,34 +246,15 @@ void wxStfChildFrame::SetChannels( std::size_t act, std::size_t inact ) {
 }
 
 std::size_t wxStfChildFrame::GetCurTrace() const {
-    //return pTraces->GetCurrentSelection();
     return trace_spinctrl->GetValue()-1;
 }
 
 void wxStfChildFrame::SetCurTrace(std::size_t n) {
-    //pTraces->SetSelection((int)n);
     trace_spinctrl->SetValue((int)n+1);
     wxString indStr;
     indStr << wxT("Zero-based index: ") << (int)n;
     pTraceIndex->SetLabel( indStr );
 }
-
-//void wxStfChildFrame::OnComboTraces(wxCommandEvent& WXUNUSED(event)) {
-//    wxStfView* pView=(wxStfView*)GetView();
-//    wxStfDoc* pDoc=(wxStfDoc*)GetDocument();
-//    if (!pView || !pDoc)
-//        return;
-//    pDoc->SetSection(GetCurTrace());
-//    wxString indStr;
-//    indStr << wxT("Zero-based index: ") << GetCurTrace();
-//    pTraceIndex->SetLabel( indStr );
-//    wxGetApp().OnPeakcalcexecMsg();
-//    if (pView->GetGraph() != NULL) {
-//        pView->GetGraph()->Refresh();
-//        pView->GetGraph()->Enable();
-//        pView->GetGraph()->SetFocus();
-//    }
-//}
 
 void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
     event.Skip();
@@ -293,7 +271,6 @@ void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
         return;
     }
 
-    // 
     pDoc->SetSection(GetCurTrace());
     indStr << wxT("Zero-based index: ") << pSpinCtrlTrace->GetValue()-1;
     pTraceIndex->SetLabel( indStr );
@@ -306,9 +283,6 @@ void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
     }
 }
 
-//void wxStfChildFrame::OnSpinCtrlTracesText( wxCommandEvent& event ) {
-//    std::cout << event.GetString().c_str() << std::endl;
-//}
 
 void wxStfChildFrame::OnComboActChannel(wxCommandEvent& WXUNUSED(event)) {
     if ( pActChannel->GetCurrentSelection() == pInactChannel->GetCurrentSelection()) {
