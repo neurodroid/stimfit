@@ -186,12 +186,14 @@ private:
     long m_notebook_style;
     wxPanel *m_traceCounter;
     wxPanel *m_channelCounter;
-    wxStaticText *pSelected, *pSize, *pTraceIndex;
+    //wxStaticText *pSelected, *pSize, *pTraceIndex;
+    wxStaticText *pSize, *pTraceIndex;
     wxComboBox *pActChannel, *pInactChannel;
     wxSpinCtrl *trace_spinctrl;
     wxStfGrid* m_table;
     wxCheckBox *pPlotSelected, *pShowSecond;
-    wxFlexGridSizer *pTraceSizer, *pChannelSizer;
+    //wxFlexGridSizer *pTraceSizer, *pChannelSizer;
+    wxFlexGridSizer *pChannelSizer;
     wxFlexGridSizer *pTraceNumberSizer;
     bool firstResize;
 

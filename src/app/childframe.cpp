@@ -135,9 +135,9 @@ wxAuiNotebook* wxStfChildFrame::CreateNotebook() {
 wxPanel* wxStfChildFrame::CreateTraceCounter() {
     wxSize client_size = GetClientSize();
     wxPanel* ctrl = new wxPanel( this, wxID_ANY, wxDefaultPosition,
-                                 wxSize(160,88) );
+                                 wxSize(165,88) );
 
-    pTraceSizer = new wxFlexGridSizer( 0, 1, 2, 2 );
+    //pTraceSizer = new wxFlexGridSizer( 0, 1, 2, 2 );
 
     return ctrl;
 }
@@ -153,40 +153,64 @@ wxPanel* wxStfChildFrame::CreateChannelCounter() {
 
 void wxStfChildFrame::CreateComboTraces(const std::size_t value) {
 
-    m_traceCounter = CreateTraceCounter();
-    pTraceNumberSizer = new wxFlexGridSizer( 0, 3, 2, 2 );
+    m_traceCounter = CreateTraceCounter(); // this is wxPanel
+    //pTraceNumberSizer = new wxFlexGridSizer( 0, 3, 2, 2 );
 
-    pSelected = new wxStaticText( m_traceCounter, wxID_ANY, wxT("Selected traces: 0") );
-    pTraceSizer->Add( pSelected );
+    //pSelected = new wxStaticText( m_traceCounter, wxID_ANY, wxT("Selected traces: 0") );
+    //pTraceSizer->Add( pSelected );
     
-    wxStaticText* pTraceStaticText = new wxStaticText( m_traceCounter, wxID_ANY, wxT("Trace") );
-    pTraceNumberSizer->Add( pTraceStaticText, wxALIGN_BOTTOM );
+    wxBoxSizer* TracesSizer; // top-level Sizer
+    TracesSizer = new wxBoxSizer(wxVERTICAL);
 
-    pSize=new wxStaticText( m_traceCounter, wxID_ANY, wxT("of 0") );
+    wxGridSizer* TracesGridSizer; // top-level GridSizer
+    TracesGridSizer = new wxGridSizer(1,1,0,0);
 
+    // **** Current Trace selection with 2 options ****
+    wxStaticBoxSizer* current_trace_box = new wxStaticBoxSizer( wxVERTICAL, m_traceCounter,  wxT("Current trace") );
 
-    // creates a wxSpinCtrl object 
+    // Grid
+    wxFlexGridSizer* TraceGridSizer;
+    TraceGridSizer = new wxFlexGridSizer(1,2,0,0); // 1 row, 2 columns for the SpinCtrl + text
+
+    // 1) the wxSpinCtrl object 
     trace_spinctrl = new wxSpinCtrl( m_traceCounter, ID_SPINCTRLTRACES, wxEmptyString, wxDefaultPosition,
                      wxSize(64, wxDefaultCoord), wxSP_WRAP);
     trace_spinctrl->SetRange(1,(int)value);
 
-    pTraceNumberSizer->Add( trace_spinctrl, wxALIGN_CENTRE );
-
+    // 2) the "of n"
+    pSize=new wxStaticText( m_traceCounter, wxID_ANY, wxT("of 0") );
     wxString sizeStr;
     sizeStr << wxT("of ") << (int)value;
     pSize->SetLabel(sizeStr);
-    pTraceNumberSizer->Add( pSize, wxALIGN_BOTTOM );
 
-    pTraceSizer->Add( pTraceNumberSizer, wxALIGN_BOTTOM );
+    TraceGridSizer->Add( trace_spinctrl, 0, wxALIGN_LEFT  | wxALL, 1) ;
+    TraceGridSizer->Add( pSize,          0, wxALIGN_LEFT  | wxALL, 1) ;
 
-    pPlotSelected=new wxCheckBox( m_traceCounter, ID_PLOTSELECTED, wxT("Plot selected traces") );
+    // 3) the zero-based index
+    pTraceIndex = new wxStaticText( m_traceCounter, wxID_ANY, wxT("Current trace index: 0  ") );
+
+    // Add to UpGridSizer
+    current_trace_box->Add(TraceGridSizer, 0, wxALIGN_CENTER | wxALIGN_TOP | wxALL, 1);
+    current_trace_box->Add(pTraceIndex, 1, wxEXPAND| wxALIGN_CENTER | wxALIGN_BOTTOM | wxALL, 1);
+
+    // **** Selected traces ****
+
+    // 1) Show selected
+    pPlotSelected=new wxCheckBox( m_traceCounter, ID_PLOTSELECTED, wxEmptyString );
+    pPlotSelected->SetLabel("Show   0 selected ");
     pPlotSelected->SetValue(false);
-    pTraceSizer->Add( pPlotSelected );
 
-    pTraceIndex = new wxStaticText( m_traceCounter, wxID_ANY, wxT("Current trace index: 0") );
-    pTraceSizer->Add( pTraceIndex );
+    //selected_box->Add(pSelected,     0, wxALIGN_LEFT | wxALL, 2);
 
-    m_traceCounter->SetSizer( pTraceSizer );
+    //pTraceSizer->Add( current_trace_box );
+    //pTraceSizer->Add( selected_box );
+    TracesGridSizer->Add( current_trace_box);
+    TracesGridSizer->Add(pPlotSelected);
+    TracesSizer->Add(TracesGridSizer, 0, wxALIGN_CENTER | wxALL, 1);
+    m_traceCounter->SetSizer( TracesSizer );
+
+
+    //m_traceCounter->SetSizer( pTraceSizer );
     m_traceCounter->Layout();
 
     wxStfDoc* pDoc=(wxStfDoc*)GetDocument();
@@ -236,8 +260,10 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
 // Trace selection childframe
 void wxStfChildFrame::SetSelected(std::size_t value) {
     wxString selStr;
-    selStr << wxT("Selected traces: ") << (int)value;
-    pSelected->SetLabel(selStr);
+    //selStr << wxT("Selected traces: ") << (int)value;
+    selStr << wxT("Show ") << wxString::Format(wxT("%3d"),(int)value) << wxT(" selected");
+    //pSelected->SetLabel(selStr);
+    pPlotSelected->SetLabel(selStr);
 }
 
 void wxStfChildFrame::SetChannels( std::size_t act, std::size_t inact ) {
@@ -252,7 +278,7 @@ std::size_t wxStfChildFrame::GetCurTrace() const {
 void wxStfChildFrame::SetCurTrace(std::size_t n) {
     trace_spinctrl->SetValue((int)n+1);
     wxString indStr;
-    indStr << wxT("Zero-based index: ") << (int)n;
+    indStr << wxT("Zero-based index: ") << wxString::Format(wxT("%3d"),(int)n);
     pTraceIndex->SetLabel( indStr );
 }
 
@@ -272,7 +298,7 @@ void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
     }
 
     pDoc->SetSection(GetCurTrace());
-    indStr << wxT("Zero-based index: ") << pSpinCtrlTrace->GetValue()-1;
+    indStr << wxT("Zero-based index: ") << wxString::Format(wxT("%3d"),pSpinCtrlTrace->GetValue()-1);
     pTraceIndex->SetLabel( indStr );
     wxGetApp().OnPeakcalcexecMsg();
 
