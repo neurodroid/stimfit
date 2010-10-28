@@ -75,7 +75,8 @@ BEGIN_EVENT_TABLE(wxStfChildFrame, wxStfChildType)
 EVT_SPINCTRL( ID_SPINCTRLTRACES, wxStfChildFrame::OnSpinCtrlTraces )
 EVT_COMBOBOX( ID_COMBOACTCHANNEL, wxStfChildFrame::OnComboActChannel )
 EVT_COMBOBOX( ID_COMBOINACTCHANNEL, wxStfChildFrame::OnComboInactChannel )
-EVT_CHECKBOX( ID_PLOTSELECTED, wxStfChildFrame::OnPlotselected )
+EVT_CHECKBOX( ID_ZERO_INDEX, wxStfChildFrame::OnZeroIndex)
+EVT_CHECKBOX( ID_PLOTSELECTED, wxStfChildFrame::OnShowselected )
 EVT_CHECKBOX( ID_SHOWSECOND, wxStfChildFrame::OnShowsecond )
 // workaround for status bar:
 EVT_MENU_HIGHLIGHT_ALL( wxStfChildFrame::OnMenuHighlight )
@@ -152,6 +153,7 @@ wxPanel* wxStfChildFrame::CreateChannelCounter() {
 }
 
 void wxStfChildFrame::CreateComboTraces(const std::size_t value) {
+    sizemax = value;
 
     m_traceCounter = CreateTraceCounter(); // this is wxPanel
     //pTraceNumberSizer = new wxFlexGridSizer( 0, 3, 2, 2 );
@@ -175,23 +177,27 @@ void wxStfChildFrame::CreateComboTraces(const std::size_t value) {
     // 1) the wxSpinCtrl object 
     trace_spinctrl = new wxSpinCtrl( m_traceCounter, ID_SPINCTRLTRACES, wxEmptyString, wxDefaultPosition,
                      wxSize(64, wxDefaultCoord), wxSP_WRAP);
-    trace_spinctrl->SetRange(1,(int)value);
+    // by default, we start with non-zero based indices
+    trace_spinctrl->SetValue(1);
+    trace_spinctrl->SetRange(1,(int)sizemax);
 
     // 2) the "of n"
-    pSize=new wxStaticText( m_traceCounter, wxID_ANY, wxT("of 0") );
+    pSize=new wxStaticText( m_traceCounter, wxID_ANY, wxEmptyString);
     wxString sizeStr;
-    sizeStr << wxT("of ") << (int)value;
+    sizeStr << wxT("of ") << wxString::Format(wxT("%3d"),(int)sizemax);
     pSize->SetLabel(sizeStr);
 
     TraceGridSizer->Add( trace_spinctrl, 0, wxALIGN_LEFT  | wxALL, 1) ;
     TraceGridSizer->Add( pSize,          0, wxALIGN_LEFT  | wxALL, 1) ;
 
     // 3) the zero-based index
-    pTraceIndex = new wxStaticText( m_traceCounter, wxID_ANY, wxT("Current trace index: 0  ") );
+    // pTraceIndex = new wxStaticText( m_traceCounter, wxID_ANY, wxEmptyString );
+    pZeroIndex = new wxCheckBox( m_traceCounter, ID_ZERO_INDEX, wxT("Zero-based index") );
+    pZeroIndex->SetValue(false);
 
     // Add to UpGridSizer
     current_trace_box->Add(TraceGridSizer, 0, wxALIGN_CENTER | wxALIGN_TOP | wxALL, 1);
-    current_trace_box->Add(pTraceIndex, 1, wxEXPAND| wxALIGN_CENTER | wxALIGN_BOTTOM | wxALL, 1);
+    current_trace_box->Add(pZeroIndex, 0, wxALIGN_CENTER | wxALIGN_BOTTOM | wxALL, 1);
 
     // **** Selected traces ****
 
@@ -272,14 +278,25 @@ void wxStfChildFrame::SetChannels( std::size_t act, std::size_t inact ) {
 }
 
 std::size_t wxStfChildFrame::GetCurTrace() const {
-    return trace_spinctrl->GetValue()-1;
+
+    // if zero-based is True
+    if ( pZeroIndex->GetValue() )
+        return trace_spinctrl->GetValue();
+    else 
+        return trace_spinctrl->GetValue()-1;
 }
 
 void wxStfChildFrame::SetCurTrace(std::size_t n) {
-    trace_spinctrl->SetValue((int)n+1);
-    wxString indStr;
-    indStr << wxT("Zero-based index: ") << wxString::Format(wxT("%3d"),(int)n);
-    pTraceIndex->SetLabel( indStr );
+
+    // if zero-based is True
+    if ( pZeroIndex->GetValue() )
+        trace_spinctrl->SetValue((int)n);
+    else
+        trace_spinctrl->SetValue((int)n+1);
+
+    // wxString indStr;
+    // indStr << wxT("Zero-based index: ") << wxString::Format(wxT("%3d"),(int)n);
+    // pTraceIndex->SetLabel( indStr );
 }
 
 void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
@@ -298,8 +315,8 @@ void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
     }
 
     pDoc->SetSection(GetCurTrace());
-    indStr << wxT("Zero-based index: ") << wxString::Format(wxT("%3d"),pSpinCtrlTrace->GetValue()-1);
-    pTraceIndex->SetLabel( indStr );
+    // indStr << wxT("Zero-based index: ") << wxString::Format(wxT("%3d"),pSpinCtrlTrace->GetValue()-1);
+    // pTraceIndex->SetLabel( indStr );
     wxGetApp().OnPeakcalcexecMsg();
 
     if (pView->GetGraph() != NULL) {
@@ -384,7 +401,36 @@ void wxStfChildFrame::UpdateChannels( ) {
     }
 }
 
-void wxStfChildFrame::OnPlotselected(wxCommandEvent& WXUNUSED(event)) {
+void wxStfChildFrame::OnZeroIndex( wxCommandEvent& event) {
+    event.Skip();
+    
+    wxSpinCtrl* pTraceCtrl = (wxSpinCtrl*)FindWindow(ID_SPINCTRLTRACES);
+    wxCheckBox* pZeroIndex = (wxCheckBox*)FindWindow(ID_ZERO_INDEX);
+
+    if (pZeroIndex == NULL || pTraceCtrl == NULL){
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxStfChildFrame::OnZeroIndex"));
+        return;
+    }
+    
+    // Check if  Zero-index is on
+    if (pZeroIndex->GetValue()){
+        sizemax--;
+        pTraceCtrl->SetRange(0, sizemax);
+        pTraceCtrl->SetValue(pTraceCtrl->GetValue()-1);
+        
+    }
+    else {
+        sizemax++;
+        pTraceCtrl->SetRange(0, sizemax);
+        pTraceCtrl->SetValue(pTraceCtrl->GetValue()+1);
+    }
+
+    wxString sizeStr;
+    sizeStr << wxT("of ") << wxString::Format(wxT("%3d"),(int)sizemax);
+    pSize->SetLabel(sizeStr);
+}
+
+void wxStfChildFrame::OnShowselected(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=(wxStfView*)GetView();
     if (pView != NULL && pView->GetGraph()!= NULL) { 
         pView->GetGraph()->Refresh();
