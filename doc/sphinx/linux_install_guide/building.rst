@@ -87,7 +87,7 @@ Go to the stimfit directory (in our example $HOME/stimfit) and type:
 
     $ ./autogen.sh
 
-to generate the configure script. After that, you can call it with
+to generate the configure script. Remember that we need Autoconf, Automake and LibTool to use autogen. After that, you can call it with
 
 ::
 
