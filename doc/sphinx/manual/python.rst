@@ -62,7 +62,7 @@ useful when you want to call a function several times in a row.
 Accessing data from the Python shell
 ====================================
 
-* **get_trace(trace=1, channel=1)**
+* **get_trace(trace=-1, channel=-1)**
 
 The :func:`stf.get_trace()` function returns the currently displayed trace as 
 one-dimension [NumPy]_ array when called without arguments:

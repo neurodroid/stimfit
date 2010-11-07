@@ -3,9 +3,9 @@
 sudo chown -R cs:staff stimfit.app
 
 WX_CONFIG=/Users/cs/wxbin/bin/wx-config
-WXPY_DIR=/Users/cs/wxPython-2.9
-WXPY_VER=wx-2.9.1-osx_carbon-unicode
-WXPY_INSTALL_DIR=/Users/cs/wxPython-2.9/dummy-install/lib/python2.5/site-packages
+# WXPY_DIR=/Users/cs/wxPython-src-2.9.1.1/wxPython
+# WXPY_VER=wx-2.9.1-osx_cocoa
+# WXPY_INSTALL_DIR=/Users/cs/wxPython-2.9/dummy-install/lib/python2.5/site-packages
 make stimfit.app
 mkdir -p ./stimfit.app/Contents/Frameworks/stimfit
 

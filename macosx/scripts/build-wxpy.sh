@@ -1,4 +1,1 @@
-#! /bin/bash
-
-/usr/bin/python setup.py build_ext --inplace WXPORT=osx_cocoa WX_CONFIG=~/wxbin/bin/wx-config
-# /usr/bin/python setup.py build_ext --inplace --force  ARCH=x86_64 WXPORT=osx_cocoa WX_CONFIG=~/wxbin/bin/wx-config
+python2.6 build-wxpython.py --build_dir=../bld --prefix=/Users/cs/wxbin --osx_cocoa --install --wxpy_installdir=/Users/cs/wxbin
