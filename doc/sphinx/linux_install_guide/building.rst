@@ -2,11 +2,11 @@
 Building wxWidgets, wxPython and Stimfit
 ****************************************
 
-Building wxWidgets and wxPython
-===============================
-
 :Author: Jose Guzman
 :Date:  |today|
+
+Building wxWidgets and wxPython
+===============================
 
 To build wxWidgets and wxPython, follow the build instructions found `here <http://www.wxpython.org/builddoc.php>`_
 
