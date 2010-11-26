@@ -159,10 +159,7 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
     TracesSizer = new wxBoxSizer(wxVERTICAL);
 
     wxGridSizer* TracesGridSizer; // top-level GridSizer
-    TracesGridSizer = new wxGridSizer(1,1,0,0);
-
-    // **** Current Trace selection with 2 options ****
-    wxStaticBoxSizer* current_trace_box = new wxStaticBoxSizer( wxVERTICAL, m_traceCounter,  wxT("Current trace") );
+    TracesGridSizer = new wxGridSizer(3,1,0,0);
 
     // Grid
     wxFlexGridSizer* TraceGridSizer;
@@ -182,23 +179,21 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
     pSize->SetLabel(sizeStr);
 
     TraceGridSizer->Add( trace_spinctrl, 0, wxALIGN_LEFT  | wxALL, 1) ;
-    TraceGridSizer->Add( pSize,          0, wxALIGN_LEFT  | wxALL, 1) ;
+    TraceGridSizer->Add( pSize,          0, wxALIGN_LEFT  | wxALIGN_CENTER | wxALL, 1) ;
 
     // 2) Show zero-based index?
     pZeroIndex = new wxCheckBox( m_traceCounter, ID_ZERO_INDEX, wxT("Zero-based index") );
     pZeroIndex->SetValue(false);
 
-    // Add to UpGridSizer
-    current_trace_box->Add(TraceGridSizer, 0, wxALIGN_CENTER | wxALIGN_TOP | wxALL, 1);
-    current_trace_box->Add(pZeroIndex, 0, wxALIGN_CENTER | wxALIGN_BOTTOM | wxALL, 1);
-
     // Show selected
-    pShowSelected=new wxCheckBox( m_traceCounter, ID_PLOTSELECTED, wxEmptyString );
-    pShowSelected->SetLabel("Show   0 selected ");
+    pShowSelected = new wxCheckBox( m_traceCounter, ID_PLOTSELECTED, wxT("Show selected "));
     pShowSelected->SetValue(false);
 
-    TracesGridSizer->Add( current_trace_box);
-    TracesGridSizer->Add(pShowSelected);
+    // Add to UpGridSizer
+    TracesGridSizer->Add(TraceGridSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 1);
+    TracesGridSizer->Add(pZeroIndex, 0, wxALIGN_LEFT | wxALIGN_BOTTOM | wxALL, 1);
+    TracesGridSizer->Add(pShowSelected, 0, wxALIGN_LEFT | wxALIGN_BOTTOM | wxALL, 1);
+
     TracesSizer->Add(TracesGridSizer, 0, wxALIGN_CENTER | wxALL, 1);
 
     m_traceCounter->SetSizer( TracesSizer );
