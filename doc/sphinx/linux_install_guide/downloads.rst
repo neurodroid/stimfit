@@ -8,7 +8,7 @@ Downloads
 Downloading and unpacking the sources of Stimfit
 ================================================
 
-You can download the latest development code for `Stimfit <http://www.stimfit.org>`_ from the Google code repository. In your home directory ($HOME)
+You can download the latest development code for Stimfit from the Google code repository. In your home directory ($HOME)
 
 ::
 
@@ -19,44 +19,30 @@ This will grab all the required files into $HOME/stimfit.
 Download wxWidgets and wxPython via svn
 =======================================
 
-`Stimfit <http://www.stimfit.org>`_ strongly depends on the wxWidgets library to manage the graphic user environment and on wxPython to manage the embeded Python shell. For that reason, we should download and build the corresponding packages via svn in our system. 
-Since wxWidgets 2.9 has officially been released, there's no need to check it out from svn. You can download the sources from sourceforge and unpack them:
+Stimfit depends on wxWidgets 2.9 (unstable) to manage the graphical user interface and on wxPython to manage the embedded Python shell.
+The easiest way to build both wxWidgets and wxPython in one go is to get the code for both in one single tarball from the wxPython site:
 
 ::
 
-    $ wget http://prdownloads.sourceforge.net/wxwindows/wxWidgets-2.9.0.tar.bz2
-    $ tar xvfj wxWidgets-2.9.0.tar.bz2
-    $ mv wxWidgets-2.9.0 wxWidgets
+    $ wget http://downloads.sourceforge.net/wxpython/wxPython-src-2.9.1.1.tar.bz2
+    $ tar xvfj wxPython-src-2.9.1.1.tar.bz2
 
-This will create a directory called wxWidgets with the source code. Unfortunately, wxPython 2.9 has not been released yet, so we need to get the sources from svn:
-
-::
-
-    $ svn checkout -r 63133 http://svn.wxwidgets.org/svn/wx/wxPython/trunk/ wxPython
-
-.. note::
-
-    Do not attempt to download wxPython sources other than the one described above. The GNU/Linux version of `Stimfit <http://www.stimfit.org>`_ is still experimental and strongly relies on this development version of wxPython.
-
-
-After obtaining the sources via svn we will have a directory called wxPython with the corresponding source code.  http://svn.wxwidgets.org/svn/wx/wxPython/trunk/ is the main development branch for wxPython. Now you will have the following directories: $HOME/wxPython and $HOME/wxWidgets.
+Check http://www.wxpython.org/download.php#unstable for updates.
 
 The GTK+ and OpenGL development environment
 ===========================================
 
-To install the development libraries of GTK+ just type as root
+To install the GTK+ development libraries, do as root:
 
 ::
 
     $ apt-get install libgtk2.0-dev
 
-Now you are going to need OpenGL. The development libraries to get would be: libgl1-mesa-dev & libglu1-mesa-dev. Just use the same command as root with:
+For the OpenGL development libraries, do:
 
 ::
 
     $ apt-get install libgl1-mesa-dev libglu1-mesa-dev 
-
-If you are interested in programming graphics, you might want to go ahead and install libsdl-image1.2 and libsdl-image1.2-dev SDL_image will make loading textures for SDL and OpenGL a breeze (in all kinds of formats too), but this last is not necessary for `Stimfit <http://www.stimfit.org>`_.
 
 Additional packages
 ===================
@@ -92,4 +78,3 @@ Some additional dependencies are required to build stimfit. They are briefly des
 ::
 
       $ apt-get install libhdf5-serial-dev
-

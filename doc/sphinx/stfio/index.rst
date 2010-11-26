@@ -35,6 +35,8 @@ Files can be opened using the *read* function that returns a *Recording* object:
 +--------+------------------------+
 | "axg"  | Axograph X binary file |
 +--------+------------------------+
+| "heka" | HEKA binary file       |
++--------+------------------------+
 
 If the file type is *None* (default), it will be guessed from the file name extension.
 

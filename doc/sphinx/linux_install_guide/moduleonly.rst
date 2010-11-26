@@ -11,14 +11,14 @@ Building only the standalone Python file i/o module is fairly straightforward. F
 
     $ sudo apt-get install build-essential mercurial libboost-dev python-dev python-numpy libhdf5-serial-dev swig
 
-Then, you need the `Stimfit <http://www.stimfit.org>`_ source code:
+Then, you need the Stimfit source code:
 
 ::
 
     $ cd $HOME
     $ hg clone https://stimfit.googlecode.com/hg/ stimfit
 
-This will create a directory called *stimfite* in your home directory ($HOME) and grab the source code into it.
+This will download the code to a directory called *stimfit*.
 
 Next, you need to generate the build system:
 
