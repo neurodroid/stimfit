@@ -628,6 +628,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
                         wxT("&Concatenate selected traces"),
                         wxT("Create one large trace by merging selected traces in this file")
                         );
+#if 0
     wxMenu *latencyStartSub=new wxMenu;
     latencyStartSub->AppendCheckItem(ID_LATENCYSTART_MAXSLOPE, wxT("max. slope of second channel"));
     latencyStartSub->AppendCheckItem(ID_LATENCYSTART_HALFRISE, wxT("half-maximal amplitude of second channel"));
@@ -650,6 +651,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
                                wxT("Measure latency to..."),
                                wxT("Choose ending point of latency measurement")
                                );
+#endif
     m_edit_menu->AppendCheckItem(
                                  ID_LATENCYWINDOW,
                                  wxT("Use peak window for latency cursor"),

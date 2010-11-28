@@ -347,6 +347,7 @@ void wxStfDoc::UpdateMenuCheckmarks() {
 	if (pChildFrame) {
         wxMenuBar *pBar=pChildFrame->GetMenuBar();
 
+#if 0
         if (pBar) {
             pBar->FindItem(ID_LATENCYSTART_MAXSLOPE)->Check(GetLatencyStartMode()==stf::riseMode);
             pBar->FindItem(ID_LATENCYSTART_HALFRISE)->Check(GetLatencyStartMode()==stf::halfMode);
@@ -359,6 +360,7 @@ void wxStfDoc::UpdateMenuCheckmarks() {
             pBar->FindItem(ID_LATENCYEND_MANUAL)->Check(GetLatencyEndMode()==stf::manualMode);
             pBar->FindItem(ID_LATENCYWINDOW)->Check(GetLatencyWindowMode()==stf::windowMode);
 	    }
+#endif
     }
 }
 

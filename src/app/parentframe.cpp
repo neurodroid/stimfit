@@ -176,6 +176,7 @@ EVT_MENU( ID_RESTOREPERSPECTIVE, wxStfParentFrame::OnRestoreperspective )
 #ifdef WITH_PYTHON
 EVT_MENU( ID_VIEW_SHELL, wxStfParentFrame::OnViewshell )
 #endif
+#if 0
 EVT_MENU( ID_LATENCYSTART_MAXSLOPE, wxStfParentFrame::OnLStartMaxslope )
 EVT_MENU( ID_LATENCYSTART_HALFRISE, wxStfParentFrame::OnLStartHalfrise )
 EVT_MENU( ID_LATENCYSTART_PEAK, wxStfParentFrame::OnLStartPeak )
@@ -185,6 +186,7 @@ EVT_MENU( ID_LATENCYEND_MAXSLOPE, wxStfParentFrame::OnLEndMaxslope )
 EVT_MENU( ID_LATENCYEND_PEAK, wxStfParentFrame::OnLEndPeak )
 EVT_MENU( ID_LATENCYEND_HALFRISE, wxStfParentFrame::OnLEndHalfrise )
 EVT_MENU( ID_LATENCYEND_MANUAL, wxStfParentFrame::OnLEndManual )
+#endif
 EVT_MENU( ID_LATENCYWINDOW, wxStfParentFrame::OnLWindow )
 END_EVENT_TABLE()
 
@@ -1252,11 +1254,13 @@ void wxStfParentFrame::OnLStartMaxslope(wxCommandEvent& WXUNUSED(event)) {
         // toggle on if it wasn't the previous mode:
         //		if (!prevMode) {
         pDoc->SetLatencyStartMode(stf::riseMode);
+#if 0
         // Uncheck the other choices:
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MAXSLOPE,true);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_HALFRISE,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_PEAK,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,false);
+#endif
         /*		} else {
         // else, toggle to manual mode (default)
         pDoc->SetLatencyStartMode(stf::manualMode);
@@ -1280,11 +1284,13 @@ void wxStfParentFrame::OnLStartHalfrise(wxCommandEvent& WXUNUSED(event)) {
     if (pView!=NULL && pDoc!=NULL) {
         //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYSTART_HALFRISE)) {
         pDoc->SetLatencyStartMode(stf::halfMode);
+#if 0
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_HALFRISE,true);
         // Uncheck the other choices:
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MAXSLOPE,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_PEAK,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,false);
+#endif 
         /*		} else {
         pDoc->SetLatencyStartMode(stf::manualMode);
         // Check manual mode:
@@ -1306,11 +1312,13 @@ void wxStfParentFrame::OnLStartPeak(wxCommandEvent& WXUNUSED(event)) {
     if (pView!=NULL && pDoc!=NULL) {
         //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYSTART_PEAK)) {
         pDoc->SetLatencyStartMode(stf::peakMode);
+#if 0
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_PEAK,true);
         // Uncheck the other choices:
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MAXSLOPE,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_HALFRISE,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,false);
+#endif
         /*		} else {
         pDoc->SetLatencyStartMode(stf::manualMode);
         // Check manual mode:
@@ -1328,11 +1336,13 @@ void wxStfParentFrame::OnLStartManual(wxCommandEvent& WXUNUSED(event)) {
     if (pView!=NULL && pDoc!=NULL) {
         // Always keep manual mode as a default, even if attempted to uncheck:
         pDoc->SetLatencyStartMode(stf::manualMode);
+#if 0
         // Uncheck the other choices:
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,true);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MAXSLOPE,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_HALFRISE,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_PEAK,false);
+#endif
         wxGetApp().wxWriteProfileInt(
             wxT("Settings"),
             wxT("LatencyStartMode"),
@@ -1348,12 +1358,14 @@ void wxStfParentFrame::OnLEndFoot(wxCommandEvent& WXUNUSED(event)) {
     if (pView!=NULL && pDoc!=NULL) {
         //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYEND_FOOT)) {
         pDoc->SetLatencyEndMode(stf::footMode);
+#if 0
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_FOOT,true);
         // Uncheck the other choices:
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MAXSLOPE,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_HALFRISE,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_PEAK,false);
+#endif 
         /*		} else {
         pDoc->SetLatencyEndMode(stf::manualMode);
         // Check manual mode:
@@ -1374,12 +1386,14 @@ void wxStfParentFrame::OnLEndMaxslope(wxCommandEvent& WXUNUSED(event)) {
     if (pView!=NULL && pDoc!=NULL) {
         //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYEND_HALFRISE)) {
         pDoc->SetLatencyEndMode(stf::riseMode);
+#if 0
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MAXSLOPE,true);
         // Uncheck the other choices:
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_HALFRISE,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_FOOT,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_PEAK,false);
+#endif
         /*		} else {
         pDoc->SetLatencyEndMode(stf::manualMode);
         // Check manual mode:
@@ -1400,12 +1414,14 @@ void wxStfParentFrame::OnLEndHalfrise(wxCommandEvent& WXUNUSED(event)) {
     if (pView!=NULL && pDoc!=NULL) {
         //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYEND_HALFRISE)) {
         pDoc->SetLatencyEndMode(stf::halfMode);
+#if 0
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_HALFRISE,true);
         // Uncheck the other choices:
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MAXSLOPE,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_FOOT,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_PEAK,false);
+#endif
         /*		} else {
         pDoc->SetLatencyEndMode(stf::manualMode);
         // Check manual mode:
@@ -1423,12 +1439,14 @@ void wxStfParentFrame::OnLEndPeak(wxCommandEvent& WXUNUSED(event)) {
     if (pView!=NULL && pDoc!=NULL) {
         //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYEND_PEAK)) {
         pDoc->SetLatencyEndMode(stf::peakMode);
+#if 0
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_PEAK,true);
         // Uncheck the other choices:
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MAXSLOPE,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_FOOT,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_HALFRISE,false);
+#endif
         /*		} else {
         pDoc->SetLatencyEndMode(stf::manualMode);
         // Check manual mode:
@@ -1447,12 +1465,14 @@ void wxStfParentFrame::OnLEndManual(wxCommandEvent& WXUNUSED(event)) {
     if (pView!=NULL && pDoc!=NULL) {
         //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYEND_MANUAL)) {
         pDoc->SetLatencyEndMode(stf::manualMode);
+#if 0
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,true);
         // Uncheck the other choices:
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MAXSLOPE,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_PEAK,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_FOOT,false);
         GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_HALFRISE,false);
+#endif
         /*		} else {
         pDoc->SetLatencyEndMode(stf::manualMode);
         // Check manual mode:
