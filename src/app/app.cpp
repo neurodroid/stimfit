@@ -230,8 +230,10 @@ bool wxStfApp::OnInit(void)
 
     m_file_menu->Append(wxID_OPEN);
     
+#ifdef _WINDOWS
     m_file_menu->AppendSeparator();
     m_file_menu->Append(ID_CONVERT, wxT("&Convert file series..."));
+#endif
 #ifdef WITH_PYTHON
     m_file_menu->AppendSeparator();
     m_file_menu->Append(
@@ -554,8 +556,9 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     vectorSub->Append(ID_EXPORTLATEX, wxT("Export &latex..."));
     vectorSub->Append(ID_EXPORTSVG, wxT("Export &svg..."));
     file_menu->AppendSubMenu(vectorSub, wxT("Export &vector graphics"));
-
+#ifdef _WINDOWS
     file_menu->Append(ID_CONVERT, wxT("&Convert file series..."));
+#endif
     file_menu->AppendSeparator();
     file_menu->Append(ID_FILEINFO, wxT("File information..."));
 
