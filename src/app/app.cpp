@@ -99,7 +99,7 @@ EVT_MENU( ID_IMPORTPYTHON, wxStfApp::OnPythonImport )
 END_EVENT_TABLE()
 
 wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isHires(false), txtImport(), funcLib(),
-    pluginLib(), CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ), /*m_file_menu(0),*/ m_fileToLoad(wxEmptyString), activeDoc(0) {}
+    pluginLib(), CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ), /*m_file_menu(0),*/ m_fileToLoad(wxEmptyString)/*, activeDoc(0)*/ {}
 
 void wxStfApp::OnInitCmdLine(wxCmdLineParser& parser)
 {
@@ -358,9 +358,12 @@ wxString wxStfApp::wxGetProfileString( const wxString& main, const wxString& sub
 void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
     if (actDoc==0) {
         actDoc = GetActiveDoc();
+        if (!actDoc)
+            return;
     }
-    wxStfView* actView = (wxStfView*)actDoc->GetFirstView();
-
+    
+    // wxStfView* actView = (wxStfView*)actDoc->GetFirstView();
+    wxStfView* actView = GetActiveView();
     if (actView!=NULL) {
         wxStfGraph* pGraph = actView->GetGraph();
         if (pGraph != NULL)
@@ -838,27 +841,27 @@ wxStfDoc* wxStfApp::GetActiveDoc() const {
         return NULL;
     }
     wxStfDoc* pDoc = (wxStfDoc*)GetDocManager()->GetCurrentDocument();
-    if (pDoc == 0 && !GetDocManager()->GetDocuments().empty()) {
+    /*if (pDoc == 0 && !GetDocManager()->GetDocuments().empty()) {
         return activeDoc.back();
-    }
+        }*/
     
     return pDoc;
 }
-
+/*
 void wxStfApp::SetActiveDoc(wxStfDoc* pDoc) {
     if (pDoc != activeDoc.back()) {
         activeDoc.push_back( pDoc );
     }
 }
-
+*/
 void wxStfApp::OnKeyDown( wxKeyEvent& event ) {
     event.Skip();
     wxStfDoc* actDoc = GetActiveDoc();
     if (!actDoc)
         return;
     
-    wxStfView* actView = (wxStfView*)actDoc->GetFirstView();
-
+    // wxStfView* actView = (wxStfView*)actDoc->GetFirstView();
+    wxStfView* actView = GetActiveView();
     if (actView) {
         wxStfGraph* pGraph = actView->GetGraph();
         wxStfChildFrame* pChild=(wxStfChildFrame*)actView->GetFrame();
@@ -1116,7 +1119,7 @@ void wxStfApp::OnApplytoall( wxCommandEvent& WXUNUSED(event) ) {
         wxStfDoc* OpenDoc=(wxStfDoc*)curNode->GetData();
         if (OpenDoc==NULL)
             return;
-        wxStfView* curView((wxStfView*)OpenDoc->GetFirstView());
+        wxStfView* curView = GetActiveView(); //((wxStfView*)OpenDoc->GetFirstView());
         if (curView!=pView && curView!=NULL) {
             OpenDoc->GetXZoomW() = pDoc->GetXZoom();
             for ( std::size_t n_c=0; n_c < OpenDoc->size(); ++n_c ) {
@@ -1273,7 +1276,7 @@ void wxStfApp::CleanupDocument(wxStfDoc* pDoc) {
         }
     }
     // Update active document:
-    activeDoc.remove(pDoc);
+    /* activeDoc.remove(pDoc); */
     // Remove menu from file history menu list:
     // GetDocManager()->FileHistoryUseMenu(m_file_menu);
     // GetDocManager()->FileHistoryAddFilesToMenu();

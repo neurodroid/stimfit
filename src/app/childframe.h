@@ -180,6 +180,8 @@ public:
     //! Activated the current graph
     void ActivateGraph();
 
+    void OnActivate(wxActivateEvent &event);
+    
 private:
     wxAuiManager m_mgr;
     wxAuiNotebook* m_notebook;

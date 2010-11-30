@@ -120,7 +120,9 @@ bool wxStfView::OnClose(bool deleteWindow)
 
 void wxStfView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView) {
     //this function will be called whenever the view is activated
-    if (activate) {
+    wxStfDoc *pDoc = ((wxStfView*)activeView)->Doc();
+    //    if (activate) {
+    if (pDoc) {
         if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
             wxGetApp().GetCursorsDialog()->SetActiveDoc(Doc());
             try {
@@ -130,14 +132,16 @@ void wxStfView::OnActivateView(bool activate, wxView *activeView, wxView *deacti
                 wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
             }
         }
-
         // Update menu checks:
-        Doc()->UpdateMenuCheckmarks();
-        Doc()->UpdateSelectedButton();
+        pDoc->UpdateMenuCheckmarks();
+        pDoc->UpdateSelectedButton();
         frame->SetSingleChannel(Doc()->size()<2);
-        if (graph)
-            graph->SetFocus();
-        wxGetApp().SetActiveDoc(Doc());
     }
+
+    wxStfGraph *pGraph = ((wxStfView*)activeView)->GetGraph();
+    if (pGraph)
+        pGraph->SetFocus();
+        
+    // wxGetApp().SetActiveDoc(Doc());
     wxView::OnActivateView(activate,activeView,deactiveView);
 }

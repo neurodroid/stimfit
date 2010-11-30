@@ -1209,14 +1209,16 @@ void wxStfGraph::Snapshotwmf() {
 
 void wxStfGraph::OnMouseEvent(wxMouseEvent& event) {
     // event.Skip();
+    
     if (!view) return;
+    view->Activate(true);
     if (event.LeftDown()) LButtonDown(event);
     if (event.RightDown()) RButtonDown(event);
     if (event.LeftUp()) LButtonUp(event);
     wxClientDC dc(this);
     PrepareDC(dc);
     wxPoint pt(event.GetLogicalPosition(dc));
-    SetFocus();
+    // SetFocus();
 }
 
 void wxStfGraph::LButtonDown(wxMouseEvent& event) {
@@ -1403,7 +1405,7 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
 
 void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
     // event.Skip();
-
+    view->Activate(true);
     int kc = event.GetKeyCode();
 #ifdef _STFDEBUG
     std::cout << "User pressed " << char(kc) << ", corresponding keycode is " << kc << std::endl;

@@ -234,7 +234,7 @@ public:
     //! Sets the currently active document.
     /*! \param pDoc A pointer to the currently active document.
      */
-    void SetActiveDoc(wxStfDoc* pDoc);
+    /*void SetActiveDoc(wxStfDoc* pDoc);*/
 
     //! Retrieves the currently active view.
     /*! \return A pointer to the currently active view.
@@ -487,7 +487,7 @@ private:
     stf::storedFunc storedLinFunc;
     // wxMenu* m_file_menu;
     wxString m_fileToLoad;
-    std::list<wxStfDoc *> activeDoc;
+    /*std::list<wxStfDoc *> activeDoc;*/
     
 #ifdef WITH_PYTHON
     PyThreadState* m_mainTState;

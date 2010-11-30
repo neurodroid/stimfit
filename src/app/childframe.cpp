@@ -296,6 +296,11 @@ void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
     }
 }
 
+void wxStfChildFrame::OnActivate(wxActivateEvent &event) {
+    wxStfView* pView=(wxStfView*)GetView();
+    if (pView)
+        pView->Activate(true);
+}
 
 void wxStfChildFrame::OnComboActChannel(wxCommandEvent& WXUNUSED(event)) {
     if ( pActChannel->GetCurrentSelection() == pInactChannel->GetCurrentSelection()) {
