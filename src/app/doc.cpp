@@ -1184,7 +1184,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         colTitles.push_back(wxT("Base SD"));
     }
     if (SaveYtDialog.PrintThreshold()) {
-        colTitles.push_back(wxT("Threshold"));
+        colTitles.push_back(wxT("Slope threshold"));
     }
     if (SaveYtDialog.PrintPeakZero()) {
         colTitles.push_back(wxT("Peak (from 0)"));
@@ -1242,7 +1242,9 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
     double threshold=0.0;
     if (SaveYtDialog.PrintThr()) {
         // Get threshold from user:
-        stf::UserInput Input( std::vector<wxString>(1,wxT("Threshold")),
+        wxString thrS;
+        thrS << wxT("Threshold (") << at(GetCurCh()).GetYUnits() << wxT(")");
+        stf::UserInput Input( std::vector<wxString>(1, thrS),
                 Vector_double (1,0.0), wxT("Set threshold") );
         wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
         if (myDlg.ShowModal()!=wxID_OK) {
@@ -2148,8 +2150,10 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
 void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
     // get threshold from user input:
     Vector_double threshold(0);
-    stf::UserInput Input( std::vector<wxString>(1,wxT("Threshold")),
-            Vector_double (1,0.0), wxT("Set threshold") );
+    wxString thrS;
+    thrS << wxT("Threshold (") << at(GetCurCh()).GetYUnits() << wxT(")");
+    stf::UserInput Input( std::vector<wxString>(1, thrS),
+                          Vector_double (1,0.0), wxT("Set threshold") );
     wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
     if (myDlg.ShowModal()!=wxID_OK) {
         return;
