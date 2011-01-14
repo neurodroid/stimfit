@@ -1211,18 +1211,17 @@ void wxStfGraph::OnMouseEvent(wxMouseEvent& event) {
     // event.Skip();
     
     if (!view) return;
-    view->Activate(true);
+
     if (event.LeftDown()) LButtonDown(event);
     if (event.RightDown()) RButtonDown(event);
     if (event.LeftUp()) LButtonUp(event);
-    wxClientDC dc(this);
-    PrepareDC(dc);
-    wxPoint pt(event.GetLogicalPosition(dc));
-    // SetFocus();
+
 }
 
 void wxStfGraph::LButtonDown(wxMouseEvent& event) {
     // event.Skip();
+    if (!view) return;
+    view->Activate(true);
     wxClientDC dc(this);
     PrepareDC(dc);
     lastLDown = event.GetLogicalPosition(dc);
@@ -1289,6 +1288,10 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
 
 void wxStfGraph::RButtonDown(wxMouseEvent& event) {
     // event.Skip();
+
+    if (!view) return;
+    view->Activate(true);
+
     wxClientDC dc(this);
     PrepareDC(dc);
     wxPoint point(event.GetLogicalPosition(dc));

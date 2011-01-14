@@ -295,12 +295,12 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     } else {
         bool show = wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewShell"), 1);
         m_mgr.AddPane( pPython, wxAuiPaneInfo().Name(wxT("pythonShell")).
-#ifndef __APPLE__
+#ifndef __WXMAC__
                        CloseButton(true).
                        Show(show).Caption(wxT("Python Shell")).Dockable(true).Bottom().
                        BestSize(GetClientSize().GetWidth(),GetClientSize().GetHeight()/5) );
 #else
-                       CenterPane().Floatable(false).CaptionVisible(false).
+                       Floatable(false).CaptionVisible(false).
                        BestSize(GetClientSize().GetWidth(),GetClientSize().GetHeight()).Fixed() );
 #endif
     }

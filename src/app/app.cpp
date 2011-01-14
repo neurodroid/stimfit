@@ -318,7 +318,9 @@ int wxStfApp::OnExit()
 #ifdef WITH_PYTHON
     Exit_wxPython();
 #endif
+
     GetDocManager()->FileHistorySave( *config );
+
     delete wxDocManager::GetDocumentManager();
     return wxApp::OnExit();
 }
@@ -582,6 +584,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     file_menu->Append(wxID_EXIT);
 
     ((wxStfDoc*)doc)->SetFileMenu( file_menu );
+
     GetDocManager()->FileHistoryUseMenu(file_menu);
     GetDocManager()->FileHistoryAddFilesToMenu( file_menu );
 

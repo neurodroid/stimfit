@@ -138,10 +138,12 @@ void wxStfView::OnActivateView(bool activate, wxView *activeView, wxView *deacti
         frame->SetSingleChannel(Doc()->size()<2);
     }
 
+#ifndef __WXMAC__
     wxStfGraph *pGraph = ((wxStfView*)activeView)->GetGraph();
     if (pGraph)
         pGraph->SetFocus();
-        
+#endif
+    
     // wxGetApp().SetActiveDoc(Doc());
     wxView::OnActivateView(activate,activeView,deactiveView);
 }

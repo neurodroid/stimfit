@@ -247,7 +247,11 @@ stimfit.app: stimfit
 	cp $(top_srcdir)/stimfit.plist.in stimfit.app/Contents/Info.plist
 	echo "APPL????\c" > stimfit.app/Contents/PkgInfo
 	rm -f stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
+if BUILD_PYTHON
 	cp -p -f .libs/stimfit$(EXEEXT) stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
+else
+	cp -p -f ./stimfit$(EXEEXT) stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
+endif
 	$(POSTLINK_COMMAND) stimfit.app/Contents/MacOS/stimfit$(EXEEXT) \
 	                    $(srcdir)/macosx/app.r
 	$(MACSETFILE) -a C stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
