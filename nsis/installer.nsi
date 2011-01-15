@@ -13,7 +13,7 @@ SetCompressor lzma
 
 !define USRDRV "C:\"
 !define LOGIN "cs"
-!define PRODUCT_VERSION "0.10.0alpha6"
+!define PRODUCT_VERSION "0.10.1"
 !define WXW_VERSION "2.9.1"
 !define WXW_VERSION_SHORT "291"
 !define PY_VERSION "2.7.1"
@@ -166,6 +166,9 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
 !ifndef UPDATE
   Delete "$INSTDIR\*.exe"
   Delete "$INSTDIR\*.dll"
+  Delete "$INSTDIR\wx*"
+  RMDir /r "$INSTDIR\wx-2.9.1-msw-unicode"
+  RMDir /r "$INSTDIR\wx-2.9.1-msw"
   File "${FFTDIR}\libfftw3-3.dll"
   File "${HDF5DIR}\lib\hdf5_hldll.dll"
   File "${HDF5DIR}\lib\hdf5dll.dll"

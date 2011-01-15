@@ -843,10 +843,9 @@ wxStfDoc* wxStfApp::GetActiveDoc() const {
         ErrorMsg( wxT("Couldn't access the document manager"));
         return NULL;
     }
+    if (GetDocManager()->GetDocuments().empty())
+        return NULL;
     wxStfDoc* pDoc = (wxStfDoc*)GetDocManager()->GetCurrentDocument();
-    /*if (pDoc == 0 && !GetDocManager()->GetDocuments().empty()) {
-        return activeDoc.back();
-        }*/
     
     return pDoc;
 }
@@ -1140,7 +1139,8 @@ void wxStfApp::OnApplytoall( wxCommandEvent& WXUNUSED(event) ) {
             OpenDoc->SetLatencyEnd(latencyEndCursorToApply);
             wxStfChildFrame* pChild=(wxStfChildFrame*)curView->GetFrame();
             pChild->UpdateResults();
-            curView->GetGraph()->Refresh();
+            if (curView->GetGraph() != NULL)
+                curView->GetGraph()->Refresh();
         }
         curNode=curNode->GetNext();
     }

@@ -1408,6 +1408,8 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
 
 void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
     // event.Skip();
+    if (!view)
+        return;
     view->Activate(true);
     int kc = event.GetKeyCode();
 #ifdef _STFDEBUG

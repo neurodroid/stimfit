@@ -276,8 +276,8 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
              if ( result )
                  return result;
              // Copy characters one by one into title (tedious but safe)
-             for (std::vector< unsigned char >::const_iterator c = charBuffer.begin()+1; c < charBuffer.end(); c += 2) {
-                 columnData->title += char(*c);
+             for (std::size_t nc=1; nc<charBuffer.size(); nc+=2) {
+                 columnData->title += char(charBuffer[nc]);
              }
              // UnicodeToCString( columnData->title, columnData->titleLength );
 
@@ -331,7 +331,6 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
 #ifdef __LITTLE_ENDIAN__
                       ByteSwapFloatArray( &(columnData->floatArray[0]), columnHeader.points );
 #endif
-
                       break;
                   }
               case DoubleArrayType:
@@ -403,9 +402,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
              return -1;
          }
     }
-
     return 0;
-
 }
 
 std::string AG_ReadComment( filehandle refNum )
@@ -427,8 +424,8 @@ std::string AG_ReadComment( filehandle refNum )
         if ( result )
             return comment.str();
         // Copy characters one by one into title (tedious but safe)
-        for (std::vector< unsigned char >::const_iterator c = charBuffer.begin()+1; c < charBuffer.end(); c += 2) {
-            comment << char(*c);
+        for (std::size_t nc=1; nc<charBuffer.size(); nc+=2) {
+            comment << char(charBuffer[nc]);
         }
     }
     
@@ -475,8 +472,8 @@ std::string AG_ReadNotes( filehandle refNum )
         if ( result )
             return notes.str();
         // Copy characters one by one into title (tedious but safe)
-        for (std::vector< unsigned char >::const_iterator c = charBuffer.begin()+1; c < charBuffer.end(); c += 2) {
-            notes << char(*c);
+        for (std::size_t nc=1; nc<charBuffer.size(); nc+=2) {
+            notes << char(charBuffer[nc]);
         }
     }
     return notes.str();

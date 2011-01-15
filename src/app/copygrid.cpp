@@ -178,7 +178,8 @@ void wxStfGrid::OnKeyDown(wxKeyEvent& event) {
      }
      default:
          // pipe everything else to the graph
-         wxGetApp().GetActiveView()->GetGraph()->OnKeyDown(event);
+         if (wxGetApp().GetActiveView()!=NULL && wxGetApp().GetActiveView()->GetGraph()!=NULL)
+             wxGetApp().GetActiveView()->GetGraph()->OnKeyDown(event);
     }
 }
 

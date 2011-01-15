@@ -149,6 +149,12 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
             get().clear();
             return false;
         }
+        catch (...) {
+            wxString errorMsg(wxT("Error opening file\n"));
+            wxGetApp().ExceptMsg(errorMsg);
+            get().clear();
+            return false;
+        }
         if (get().empty()) {
             wxGetApp().ErrorMsg(wxT("File is probably empty\n"));
             get().clear();
@@ -989,7 +995,8 @@ void wxStfDoc::FitDecay(wxCommandEvent& WXUNUSED(event)) {
     // Refresh the graph to show the fit before
     // the dialog pops up:
     wxStfView* pView=(wxStfView*)GetFirstView();
-    pView->GetGraph()->Refresh();
+    if (pView!=NULL && pView->GetGraph()!=NULL)
+        pView->GetGraph()->Refresh();
     wxStfFitInfoDlg InfoDialog(GetDocumentWindow(),fitInfo);
     wxEndBusyCursor();
     InfoDialog.ShowModal();
@@ -1031,7 +1038,8 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
     // Refresh the graph to show the fit before
     // the dialog pops up:
     wxStfView* pView=(wxStfView*)GetFirstView();
-    pView->GetGraph()->Refresh();
+    if (pView!=NULL && pView->GetGraph()!=NULL)
+        pView->GetGraph()->Refresh();
     fitInfo << wxT("slope = ") << params[0] << wxT("\n1/slope = ") << 1.0/params[0]
             << wxT("\ny-intercept = ") << params[1];
     wxStfFitInfoDlg InfoDialog(GetDocumentWindow(),fitInfo);
@@ -1582,7 +1590,8 @@ void wxStfDoc::Deleteselected(wxCommandEvent &WXUNUSED(event)) {
     // refresh the view once we are through:
     if (pFrame->ShowSelected()) {
         wxStfView* pView=(wxStfView*)GetFirstView();
-        pView->GetGraph()->Refresh();
+        if (pView!=NULL && pView->GetGraph()!=NULL)
+            pView->GetGraph()->Refresh();
     }
     Focus();
 }

@@ -1168,7 +1168,8 @@ void wxStfParentFrame::OnScale(wxCommandEvent& WXUNUSED(event)) {
             wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("ViewScaleBars"),0);
             wxGetApp().set_isBars(false);
         }
-        pView->GetGraph()->Refresh();
+        if (pView->GetGraph() != NULL)
+            pView->GetGraph()->Refresh();
     }
 }
 
@@ -1186,7 +1187,8 @@ void wxStfParentFrame::OnHires(wxCommandEvent& WXUNUSED(event)) {
             wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("ViewHiRes"),0);
             wxGetApp().set_isHires(false);
         }
-        pView->GetGraph()->Refresh();
+        if (pView->GetGraph()!=NULL)
+            pView->GetGraph()->Refresh();
     }
 }
 
@@ -1274,7 +1276,8 @@ void wxStfParentFrame::OnLStartMaxslope(wxCommandEvent& WXUNUSED(event)) {
         wxT("LatencyStartMode"),
         pDoc->GetLatencyStartMode()
         );
-        pView->GetGraph()->Refresh();
+        if (pView->GetGraph()!=NULL)
+            pView->GetGraph()->Refresh();
     }
 }
 
@@ -1301,7 +1304,8 @@ void wxStfParentFrame::OnLStartHalfrise(wxCommandEvent& WXUNUSED(event)) {
         wxT("LatencyStartMode"),
         pDoc->GetLatencyStartMode()
         );
-        pView->GetGraph()->Refresh();
+        if (pView->GetGraph()!=NULL)
+            pView->GetGraph()->Refresh();
     }
 
 }
@@ -1326,7 +1330,8 @@ void wxStfParentFrame::OnLStartPeak(wxCommandEvent& WXUNUSED(event)) {
         }
         */
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyStartMode"), pDoc->GetLatencyStartMode() );
-        pView->GetGraph()->Refresh();
+        if (pView->GetGraph()!=NULL)
+            pView->GetGraph()->Refresh();
     }
 }
 
@@ -1348,7 +1353,8 @@ void wxStfParentFrame::OnLStartManual(wxCommandEvent& WXUNUSED(event)) {
             wxT("LatencyStartMode"),
             pDoc->GetLatencyStartMode()
             );
-        pView->GetGraph()->Refresh();
+        if (pView->GetGraph()!=NULL)
+            pView->GetGraph()->Refresh();
     }
 }
 
@@ -1376,7 +1382,8 @@ void wxStfParentFrame::OnLEndFoot(wxCommandEvent& WXUNUSED(event)) {
         wxT("LatencyEndMode"),
         pDoc->GetLatencyEndMode()
         );
-        pView->GetGraph()->Refresh();
+        if (pView->GetGraph()!=NULL)
+            pView->GetGraph()->Refresh();
     }
 }
 
@@ -1404,7 +1411,8 @@ void wxStfParentFrame::OnLEndMaxslope(wxCommandEvent& WXUNUSED(event)) {
         wxT("LatencyEndMode"),
         pDoc->GetLatencyEndMode()
         );
-        pView->GetGraph()->Refresh();
+        if (pView->GetGraph()!=NULL)
+            pView->GetGraph()->Refresh();
     }
 }
 
@@ -1429,7 +1437,8 @@ void wxStfParentFrame::OnLEndHalfrise(wxCommandEvent& WXUNUSED(event)) {
         }
         */
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyEndMode"), pDoc->GetLatencyEndMode() );
-        pView->GetGraph()->Refresh();
+        if (pView->GetGraph()!=NULL)
+            pView->GetGraph()->Refresh();
     }
 }
 
@@ -1454,7 +1463,8 @@ void wxStfParentFrame::OnLEndPeak(wxCommandEvent& WXUNUSED(event)) {
         }
         */
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyEndMode"), pDoc->GetLatencyEndMode() );
-        pView->GetGraph()->Refresh();
+        if (pView->GetGraph()!=NULL)
+            pView->GetGraph()->Refresh();
     }
 
 }
@@ -1480,7 +1490,8 @@ void wxStfParentFrame::OnLEndManual(wxCommandEvent& WXUNUSED(event)) {
         }
         */
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyEndMode"), pDoc->GetLatencyEndMode() );
-        pView->GetGraph()->Refresh();
+        if (pView->GetGraph()!=NULL)
+            pView->GetGraph()->Refresh();
     }
 
 }
@@ -1497,7 +1508,8 @@ void wxStfParentFrame::OnLWindow(wxCommandEvent& WXUNUSED(event)) {
             wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyWindowMode"), stf::defaultMode );
             pDoc->SetLatencyWindowMode(stf::defaultMode);
         }
-        pView->GetGraph()->Refresh();
+        if (pView->GetGraph()!=NULL)
+            pView->GetGraph()->Refresh();
     }
 }
 
@@ -1524,6 +1536,9 @@ stf::cursor_type wxStfParentFrame::GetMouseQual() const {
 }
 
 void wxStfParentFrame::SetMouseQual(stf::cursor_type value) {
+
+    if (m_cursorToolBar == NULL)
+        return;
 
     // Need to set everything to false explicitly first:
     m_cursorToolBar->ToggleTool(ID_TOOL_MEASURE,false);
@@ -1561,6 +1576,9 @@ void wxStfParentFrame::SetMouseQual(stf::cursor_type value) {
 }
 
 void wxStfParentFrame::SetSelectedButton(bool selected) {
+    if (m_cursorToolBar==NULL)
+        return;
+
     m_cursorToolBar->ToggleTool(ID_TOOL_SELECT, selected);
     m_cursorToolBar->Refresh();
 }
@@ -1577,6 +1595,9 @@ stf::zoom_channels wxStfParentFrame::GetZoomQual() const {
 }
 
 void wxStfParentFrame::SetZoomQual(stf::zoom_channels value) {
+    if (m_scaleToolBar==NULL)
+        return;
+
     if (value==stf::zoomch1) {
         m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
         m_scaleToolBar->ToggleTool(ID_TOOL_CH2,false);
@@ -1589,5 +1610,4 @@ void wxStfParentFrame::SetZoomQual(stf::zoom_channels value) {
         m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
         m_scaleToolBar->ToggleTool(ID_TOOL_CH2,true);
     }
-    m_scaleToolBar->Refresh();
 }

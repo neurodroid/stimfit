@@ -36,7 +36,6 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
 #endif
     std::string errorMsg("Exception while calling AXG_importAXGFile():\n");
     std::string yunits;
-
     // =====================================================================================================================
     //
     // Open an AxoGraph file and read in the data
@@ -131,7 +130,17 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
             section_list.push_back( Section(column.points, column.title ) );
             std::size_t last = section_list.size()-1;
 
-            std::copy(&(column.floatArray[0]),&(column.floatArray[column.points]),&(section_list[last].get_w()[0]));
+            if (column.points<1) {
+                throw std::out_of_range("number of points too small");
+            }
+            if (column.floatArray.size()<column.points) {
+                throw std::out_of_range("floatArray too small in importAXGFile()");
+            }
+            if (section_list[last].get().size()!=column.floatArray.size()) {
+                throw std::out_of_range("section too small in importAXGFile()");
+            }
+
+            std::copy(column.floatArray.begin(),column.floatArray.end(),section_list[last].get_w().begin());
             // check whether this is a new channel:
             bool isnew = true;
 

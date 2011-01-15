@@ -239,8 +239,10 @@ void wxStfFitSelDlg::OnButtonClick( wxCommandEvent& event ) {
     pDoc->cur().SetIsFitted( init_p, wxGetApp().GetFuncLibPtr(m_fselect), 0,
             pDoc->GetFitBeg(), pDoc->GetFitEnd() );
     // tell the view to draw the fit:
-    ((wxStfView*)pDoc->GetFirstView())->GetGraph()->Refresh();
-     // wxGetApp().GetActiveView()->GetGraph()->Refresh();
+    wxStfView* pView = (wxStfView*)pDoc->GetFirstView();
+    if (pView != NULL)
+        if (pView->GetGraph() != NULL)
+            pView->GetGraph()->Refresh();
 }
 
 void wxStfFitSelDlg::SetPars() {

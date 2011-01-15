@@ -373,13 +373,11 @@ void Recording::SetMeasCursor(int value) {
     measCursor=value;
 }
 
-double Recording::GetMeasValue() const {
-    try {
-        return cur().at(measCursor);
+double Recording::GetMeasValue() {
+    if (measCursor<0 || measCursor>=ChannelArray[cc].size()) {
+        correctRangeR(measCursor);
     }
-    catch (...) {
-        throw;
-    }
+    return cur().at(measCursor);
 }
 
 void Recording::SetBaseBeg(int value) {
@@ -786,7 +784,7 @@ stf::Table Recording::CurAsTable() const {
     return table;
 }
 
-stf::Table Recording::CurResultsTable() const {
+stf::Table Recording::CurResultsTable() {
     // resize table:
     std::size_t n_cols=0;
     if (viewCrosshair) n_cols++;

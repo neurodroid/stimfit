@@ -317,10 +317,10 @@ class StfDll Recording {
      */
     double GetMaxDecayY() const { return maxDecayY; }
     
-    //! Retrieves the y-value at the measurement cursor (crosshair).
+    //! Retrieves the y-value at the measurement cursor (crosshair). Will update measCursor if out of range.
     /*! \return The y-value at the measurement cursor.
      */
-    double GetMeasValue() const;
+    double GetMeasValue();
     
     //! Retrieves the peak value.
     /*! \return The peak value.
@@ -901,7 +901,7 @@ class StfDll Recording {
     stf::Table CurAsTable() const;
     
     //! Put the current measurement results into a text table.
-    stf::Table CurResultsTable() const;
+    stf::Table CurResultsTable();
     
     //! Returns the current zoom settings for this channel (read-only).
     /*! \return The current zoom settings.

@@ -156,7 +156,7 @@
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="D:\Users\cs\fftw\lib;&quot;$(SolutionDir)..\libs&quot;;C:\Python27\libs;D:\Users\cs\wxWidgets\lib\vc_dll"
 				IgnoreDefaultLibraryNames="libcmt.lib"
-				GenerateDebugInformation="false"
+				GenerateDebugInformation="true"
 				GenerateMapFile="false"
 				MapExports="false"
 				SubSystem="0"
