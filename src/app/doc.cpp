@@ -811,11 +811,14 @@ void wxStfDoc::Concatenate(wxCommandEvent &WXUNUSED(event)) {
                 (int)((double)n_s/(double)GetSelectedSections().size()*100.0),
                 progStr
         );
-        // copy using iterators (somewhat unusual for a valarray):
         std::size_t secSize=get()[GetCurCh()][*cit].size();
-        std::copy(&get()[GetCurCh()][*cit][0],
-                &get()[GetCurCh()][*cit][secSize],
-                &TempSection[n_new]);
+        if (n_new+secSize>TempSection.size()) {
+            wxGetApp().ErrorMsg(wxT("Memory allocation error"));
+            return;
+        }
+        std::copy(get()[GetCurCh()][*cit].get().begin(),
+                  get()[GetCurCh()][*cit].get().end(),
+                  &TempSection[n_new]);
         n_new+=secSize;
         n_s++;
     }
