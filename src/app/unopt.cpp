@@ -352,5 +352,93 @@ wxWindow* wxStfParentFrame::DoPythonStuff(wxWindow* parent)
     return window;
 }
 
+std::vector<stf::Plugin> wxStfApp::LoadExtensions() {
+    std::vector< stf::Plugin > extList;
+
+    // As always, first grab the GIL
+    wxPyBlock_t blocked = wxPyBeginBlockThreads();
+
+    // import extensions.py:
+    PyObject* pModule = PyImport_ImportModule("extensions");
+    if (!pModule) {
+        PyErr_Print();
+        wxGetApp().ErrorMsg(wxT("Couldn't load extensions.py"));
+        wxPyEndBlockThreads(blocked);
+        return extList;
+    }
+
+    PyObject* pExtList = PyObject_GetAttrString(pModule, "extensionList");
+    if (!pExtList) {
+        PyErr_Print();
+        wxGetApp().ErrorMsg(wxT("Couldn't find extensionList in extensions.py"));
+        wxPyEndBlockThreads(blocked);
+        Py_DECREF(pModule);
+        return extList;
+    }
+
+    if (!PyList_Check(pExtList)) {
+        PyErr_Print();
+        wxGetApp().ErrorMsg(wxT("extensionList is not a list in extensions.py"));
+        wxPyEndBlockThreads(blocked);
+        Py_DECREF(pExtList);
+        Py_DECREF(pModule);
+        return extList;
+    }
+
+    // retrieve values from list:
+    for (int i=0; i<PyList_Size(pExtList); ++i) {
+        PyObject* pExt = PyList_GetItem(pExtList, i);
+        if (!pExt) {
+            PyErr_Print();
+            wxString missingStr;
+            missingStr << wxT("Could not retrieve item #") << i
+                       << wxT(" in extensionList");
+            wxGetApp().ErrorMsg(missingStr);
+        } else {
+            if (!PyObject_HasAttrString(pExt, "menuEntryString") ||
+                !PyObject_HasAttrString(pExt, "pyFunc") ||
+                !PyObject_HasAttrString(pExt, "description") ||
+                !PyObject_HasAttrString(pExt, "requiresFile"))
+            {
+                wxString attrStr;
+                attrStr << wxT("Item #") << i
+                        << wxT(" in extensionList misses an attribute");
+                wxGetApp().ErrorMsg(attrStr);
+            } else {
+                PyObject* pMenuEntry = PyObject_GetAttrString(pExt, "menuEntryString");
+                PyObject* pPyFunc = PyObject_GetAttrString(pExt, "pyFunc");
+                PyObject* pDescription = PyObject_GetAttrString(pExt, "description");
+                PyObject* pRequiresFile = PyObject_GetAttrString(pExt, "requiresFile");
+                if (!pMenuEntry || !pPyFunc || !pDescription || !pRequiresFile ||
+                    !PyString_Check(pMenuEntry) || !PyFunction_Check(pPyFunc) ||
+                    !PyString_Check(pDescription) || !PyBool_Check(pRequiresFile))
+                {
+                    wxString typeStr;
+                    typeStr << wxT("One of the attributes in item #") << i
+                            << wxT(" of extensionList misses an attribute");
+                    wxGetApp().ErrorMsg(typeStr);
+
+                } else {
+                    std::string menuEntry(PyString_AsString(pMenuEntry));
+                    std::string description(PyString_AsString(pDescription));
+                    bool requiresFile = (pRequiresFile==Py_True);
+                }
+                Py_XDECREF(pMenuEntry);
+                Py_XDECREF(pPyFunc);
+                Py_XDECREF(pDescription);
+                Py_XDECREF(pRequiresFile);
+            }
+        }
+    }
+    
+    Py_DECREF(pExtList);
+    Py_DECREF(pModule);
+
+    // Finally, after all Python stuff is done, release the GIL
+    wxPyEndBlockThreads(blocked);
+
+    return extList;
+}
+
 #endif // WITH_PYTHON
 

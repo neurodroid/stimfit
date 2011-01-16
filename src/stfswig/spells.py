@@ -485,3 +485,24 @@ class APFrame(wx.Frame):
 def latency(soma, dend):
     frame = APFrame(soma, dend)
     frame.Show()
+
+def count_aps():
+    if not stf.check_doc():
+        print("Open file first")
+        return
+    
+    try:
+        l = stf.get_selected_indices()
+    except:
+        print("Select traces first")
+        return
+
+    mytable = dict()
+    for i in l:
+        tstart = 0
+        tend = stf.get_size_trace(i)*stf.get_sampling_interval()
+        threshold = 0
+        spikes = spells.count_events(tstart, tend, threshold, True, i, True)
+        mytable["Trace %.3d" %i] = spikes
+
+    stf.show_table(mytable)

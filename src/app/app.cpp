@@ -293,7 +293,9 @@ bool wxStfApp::OnInit(void)
     frame->CheckUpdate();
 #endif
     // load user-defined plugins:
-    pluginLib = stf::GetPluginLib();
+    // pluginLib = stf::GetPluginLib();
+    pluginLib = LoadExtensions();
+    
     // load fit function library:
     funcLib = stf::GetFuncLib();
 
@@ -776,6 +778,8 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     }
     analysis_menu->AppendSubMenu(userdefSub,wxT("User-defined functions"));
 #endif
+    wxMenu *extensions_menu = new wxMenu;
+    
     wxMenu *help_menu = new wxMenu;
     help_menu->Append(wxID_HELP, wxT("Online &help\tF1"));
     help_menu->Append(wxID_ABOUT, wxT("&About"));
@@ -787,6 +791,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     menu_bar->Append(m_edit_menu, wxT("&Edit"));
     menu_bar->Append(m_view_menu, wxT("&View"));
     menu_bar->Append(analysis_menu, wxT("&Analysis"));
+    menu_bar->Append(extensions_menu, wxT("E&xtensions"));
     menu_bar->Append(help_menu, wxT("&Help"));
 
     //// Associate the menu bar with the frame
@@ -795,11 +800,9 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     return subframe;
 }
 
-wxStfDoc* wxStfApp::NewChild(
-                             const Recording& NewData,
-                             const wxStfDoc* Sender,
-                             const wxString& title
-                             ) {
+wxStfDoc* wxStfApp::NewChild(const Recording& NewData, const wxStfDoc* Sender,
+                             const wxString& title)
+{
     wxStfDoc* NewDoc=(wxStfDoc*)m_cfsTemplate->CreateDocument(title,wxDOC_NEW);
     NewDoc->SetDocumentName(title);
     NewDoc->SetTitle(title);

@@ -464,6 +464,7 @@ private:
     void ImportPython(const wxString& modulelocation);
     bool Init_wxPython();
     bool Exit_wxPython();
+    std::vector<stf::Plugin> LoadExtensions();
 #endif // WITH_PYTHON
 
 #ifdef _WINDOWS

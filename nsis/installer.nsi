@@ -201,6 +201,7 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   File "${STFDIR}\src\stfswig\embedded_ipython.py"
   File "${STFDIR}\src\stfswig\unittest_stfio.py"
   File "${STFDIR}\src\stfswig\heka.py"
+  File "${STFDIR}\src\stfswig\extensions.py"
   File /r /x .hg "${STFDIR}\src"
   
   ;Store installation folder
