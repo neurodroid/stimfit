@@ -480,8 +480,9 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
     // Calculate peak, base, 20/80 rise time, half duration,
     // ratio of rise/slope, maximum slope and geometrical slope (PSlope).
     try {
-        if (actDoc != NULL)
+        if (actDoc != NULL) {
             actDoc->Measure( );
+        }
     }
     catch (const std::out_of_range& e) {
         ExceptMsg(wxString( e.what(), wxConvLocal ));

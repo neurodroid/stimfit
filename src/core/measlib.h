@@ -409,15 +409,17 @@ T   stf::maxRise(const std::vector<T>& data,
         T& maxRiseT,
         T& maxRiseY)
 {
-    if (left<0 || right<0 || left>=data.size()-1 || right>=data.size()) {
+    if (left<0 || right<0 || left>=data.size() || right>=data.size() || data.size()<2) {
         throw std::out_of_range("Index out of range in stf::maxRise");
     }
-    if (right==0)
-        right=1;
+    int rightc = (right<2? 2 : right);
+    int leftc = (left>=data.size()-1? data.size()-2 : left);        
+    leftc = (leftc<1? 1 : leftc);
+
     //Maximal rise
-    T maxRise=fabs(data[(int)right]-data[(int)right-1]);
-    maxRiseT=right-(double)0.5;
-    int i=(int)right-1;
+    T maxRise=fabs(data[(int)rightc]-data[(int)rightc-1]);
+    maxRiseT=rightc-(double)0.5;
+    int i=(int)rightc-1;
     do {
         T diff=fabs(data[i]-data[i-1]);
         if (maxRise<diff) {
@@ -426,7 +428,7 @@ T   stf::maxRise(const std::vector<T>& data,
             maxRiseT=(T)(i-0.5);
         }
         --i;
-    } while (i>=left);
+    } while (i>=leftc);
     return maxRise;
 }
 
@@ -437,16 +439,15 @@ T stf::maxDecay(const std::vector<T>& data,
         T& maxDecayT,
         T& maxDecayY)
 {
-    if (left<0 || right<0 || left>=data.size()-2 || right>=data.size()) {
+    if (left<0 || right<0 || left>=data.size() || right>=data.size() || data.size()<3) {
         throw std::out_of_range("Index out of range in stf::maxDecay");
     }
-    if (right==0)
-        right=1;
-            
+    int rightc = (right==0? 1 : right);
+    int leftc = (left>=data.size()-2? data.size()-3 : left);        
     //Maximal decay
-    T maxDecay=fabs(data[(int)left+1]-data[(int)left]);
-    maxDecayT=left+(double)0.5;
-    int i=(int)left+2;
+    T maxDecay=fabs(data[(int)leftc+1]-data[(int)leftc]);
+    maxDecayT=leftc+(double)0.5;
+    int i=(int)leftc+2;
     do {
         double diff=fabs(data[i]-data[i-1]);
         if (maxDecay<diff) {
@@ -456,7 +457,7 @@ T stf::maxDecay(const std::vector<T>& data,
             maxDecayT=(T)(i-0.5);
         }
         ++i;
-    } while (i<right);
+    } while (i<rightc);
     return maxDecay;
 }
 

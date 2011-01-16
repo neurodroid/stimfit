@@ -757,25 +757,11 @@ void wxStfGraph::eventArrow(wxDC* pDC, int eventIndex) {
         WindowRect=printRect;
     }
 
-    pDC->DrawLine(
-            xFormat(eventIndex),
-            20,
-            xFormat(eventIndex),
-            0
-    );
+    pDC->DrawLine(xFormat(eventIndex), 20, xFormat(eventIndex), 0);
+
     // arrow head:
-    pDC->DrawLine(
-            xFormat(eventIndex)-5,
-            15,
-            xFormat(eventIndex),
-            20
-    );
-    pDC->DrawLine(
-            xFormat(eventIndex)+5,
-            15,
-            xFormat(eventIndex),
-            20
-    );
+    pDC->DrawLine(xFormat(eventIndex)-5, 15, xFormat(eventIndex), 20);
+    pDC->DrawLine(xFormat(eventIndex)+5, 15, xFormat(eventIndex), 20);
 }
 
 void wxStfGraph::DrawFit(wxDC* pDC) {
@@ -1222,6 +1208,9 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
     // event.Skip();
     if (!view) return;
     view->Activate(true);
+    if (!HasFocus())
+        SetFocus();
+
     wxClientDC dc(this);
     PrepareDC(dc);
     lastLDown = event.GetLogicalPosition(dc);
@@ -1291,6 +1280,8 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
 
     if (!view) return;
     view->Activate(true);
+    if (!HasFocus())
+        SetFocus();
 
     wxClientDC dc(this);
     PrepareDC(dc);

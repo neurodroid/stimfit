@@ -603,7 +603,15 @@ void Recording::Measure( )
         if (GetLatencyWindowMode() == stf::defaultMode ) {
             left_APRise= APMaxT-searchRange>2.0 ? APMaxT-searchRange : 2.0;
         }
-        stf::maxRise(sec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY);
+        try {
+            stf::maxRise(sec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY);
+        }
+        catch (const std::out_of_range& e) {
+            APMaxRiseT=0.0;
+            APMaxRiseY=0.0;
+            left_APRise = peakBeg; 
+        }
+
         //End determination of the region of maximal slope in the second channel
         //----------------------------
 
@@ -734,6 +742,7 @@ void Recording::Measure( )
 
 #endif // WITH_PSLOPE
     //--------------------------
+
 }	//End of Measure(,,,,,)
 
 void Recording::AddRec(const Recording &toAdd) {
