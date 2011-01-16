@@ -341,6 +341,40 @@ To import and use this file, you would do:
     >>> myFile.sqr_amp()
     497.70163353882447
 
+Add a Python function to the Stimfit menu
+-----------------------------------------
+
+You can add your own functions to the ``Extensions`` menu by editing ``extensions.py`` that should be located in the Stimfit program folder. ``extensions.py`` contains a list that will be processed when the program starts:
+
+::
+
+    extensionList = [
+        Extension("Count APs", spells.count_aps, 
+                  "Counts APs in selected files", True),
+    ]
+
+First, define an ``Extension``:
+
+::
+
+    myExt = Extension("My function",   # This will be shown as a menu entry.
+                      mymodule.myfunc, # The Python function that is to be called.
+                                       # Takes no arguments and returns a boolean.
+                      "Does magic",    # A more verbose description of the function.
+                      False)           # Whether your function requires a file to be opened.
+
+Then, add it to ``extensionList``:
+
+::
+
+    extensionList = [
+        Extension("Count APs", spells.count_aps, 
+                  "Counts APs in selected files", True),
+        myExt,
+    ]
+
+Your function should now appear within the Extensions menu.
+
 Some recipes for commonly requested features
 =============================================
 
