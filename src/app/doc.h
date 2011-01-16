@@ -192,10 +192,12 @@ public:
      */
     void CreateAverage( bool calcSD, bool align );
 
+#if 0
     //! Applies a user-defined function to the current data set
     /*! \param id The id of the user-defined function
      */
     void Userdef(std::size_t id);
+#endif
 
     //! Toggles the selection status of the current section
     void ToggleSelect( );

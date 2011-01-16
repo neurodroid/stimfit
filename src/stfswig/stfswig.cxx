@@ -114,8 +114,8 @@ void _get_trace_fixedsize( double* outvec, int size, int trace, int channel ) {
     }
     
     // We can now safely perform a fast copy without range checking:
-    std::copy( &(*actDoc())[channel][trace][0],
-         &(*actDoc())[channel][trace][size],
+    std::copy( (*actDoc())[channel][trace].get().begin(),
+         (*actDoc())[channel][trace].get().end(),
          outvec);
 }
 
@@ -123,7 +123,7 @@ bool new_window( double* invec, int size ) {
     if ( !check_doc() ) return false;
 
     std::vector< double > va(size);
-    std::copy( &invec[0], &invec[size], &va[0] );
+    std::copy( &invec[0], &invec[size], va.begin() );
     Section sec(va);
     Channel ch(sec);
     ch.SetYUnits( actDoc()->at( actDoc()->GetCurCh() ).GetYUnits() );
@@ -1005,7 +1005,7 @@ void _gMatrix_resize( std::size_t channels, std::size_t sections ) {
 
 void _gMatrix_at( double* invec, int size, int channel, int section ) {
     std::vector< double > va(size);
-    std::copy( &invec[0], &invec[size], &va[0] );
+    std::copy( &invec[0], &invec[size], va.begin() );
 
     try{
         gMatrix.at(channel).at(section).resize( va.size() );

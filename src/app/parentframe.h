@@ -218,7 +218,9 @@ private:
     void OnExportsvg(wxCommandEvent& event);
 #endif
     void OnConvert(wxCommandEvent& event);
+#if 0
     void OnUserdef(wxCommandEvent& event);
+#endif
     void OnScale(wxCommandEvent& event);
     void OnHires(wxCommandEvent& event);
     void OnPrint(wxCommandEvent& event);

@@ -2205,13 +2205,13 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
     }
 }
 
+#if 0
 void wxStfDoc::Userdef(std::size_t id) {
     wxBusyCursor wc;
     int fselect=(int)id;
     Recording newR;
     Vector_double init(0);
     // get user input if necessary:
-#if 0
     if (!wxGetApp().GetPluginLib().at(fselect).input.labels.empty()) {
         wxStfUsrDlg myDlg( GetDocumentWindow(),
                 wxGetApp().GetPluginLib().at(fselect).input );
@@ -2247,5 +2247,5 @@ void wxStfDoc::Userdef(std::size_t id) {
     ((wxStfChildFrame*)pDoc->GetDocumentWindow())->ShowTable(
             stf::Table(resultsMap), wxGetApp().GetPluginLib().at(fselect).menuEntry
                                                              );
-#endif
 }
+#endif

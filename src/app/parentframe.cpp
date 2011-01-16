@@ -1205,14 +1205,14 @@ void wxStfParentFrame::OnAlignedAverage(wxCommandEvent& WXUNUSED(event)) {
     }
 }
 
-void wxStfParentFrame::OnUserdef(wxCommandEvent& event) {
 #if 0
+void wxStfParentFrame::OnUserdef(wxCommandEvent& event) {
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pDoc!=NULL) {
         pDoc->Userdef(event.GetId()-ID_USERDEF1);
     }
-#endif
 }
+#endif
 
 void wxStfParentFrame::OnSaveperspective(wxCommandEvent& WXUNUSED(event)) {
     wxStfChildFrame* pChild=(wxStfChildFrame*)GetActiveChild();
