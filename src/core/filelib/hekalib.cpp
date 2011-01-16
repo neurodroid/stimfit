@@ -835,9 +835,15 @@ void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInO
 }
 
 void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool progress) {
+    std::string warnStr("Warning: HEKA support is experimental.\n" \
+        "Please check sampling rate and report errors to\nchristsc_at_gmx.de." );
 #ifndef MODULE_ONLY
+    wxMessageDialog warnDlg(NULL, wxString(warnStr.c_str()), wxT("Warning"));
+    warnDlg.ShowModal();
     wxProgressDialog progDlg(wxT("HEKA binary file import"), wxT("Starting file import"),
                              100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_SKIP );
+#else
+    std::cerr << warnStr << std::endl;
 #endif
     wxString errorMsg(wxT("Exception while calling importHEKAFile():\n"));
     wxString yunits;
