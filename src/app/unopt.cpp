@@ -12,6 +12,8 @@
 #include "./app.h"
 #include "./parentframe.h"
 
+int stf::Extension::n_extensions = 0;
+
 #ifdef __WXMAC__
 #include <wx/stdpaths.h>
 
@@ -352,8 +354,8 @@ wxWindow* wxStfParentFrame::DoPythonStuff(wxWindow* parent)
     return window;
 }
 
-std::vector<stf::Plugin> wxStfApp::LoadExtensions() {
-    std::vector< stf::Plugin > extList;
+std::vector<stf::Extension> wxStfApp::LoadExtensions() {
+    std::vector< stf::Extension > extList;
 
     // As always, first grab the GIL
     wxPyBlock_t blocked = wxPyBeginBlockThreads();
@@ -411,6 +413,7 @@ std::vector<stf::Plugin> wxStfApp::LoadExtensions() {
                 PyObject* pRequiresFile = PyObject_GetAttrString(pExt, "requiresFile");
                 if (!pMenuEntry || !pPyFunc || !pDescription || !pRequiresFile ||
                     !PyString_Check(pMenuEntry) || !PyFunction_Check(pPyFunc) ||
+                    !PyCallable_Check(pPyFunc) ||
                     !PyString_Check(pDescription) || !PyBool_Check(pRequiresFile))
                 {
                     wxString typeStr;
@@ -422,6 +425,7 @@ std::vector<stf::Plugin> wxStfApp::LoadExtensions() {
                     std::string menuEntry(PyString_AsString(pMenuEntry));
                     std::string description(PyString_AsString(pDescription));
                     bool requiresFile = (pRequiresFile==Py_True);
+                    extList.push_back(stf::Extension(menuEntry, (void*)pPyFunc, description, requiresFile));
                 }
                 Py_XDECREF(pMenuEntry);
                 Py_XDECREF(pPyFunc);
@@ -439,6 +443,50 @@ std::vector<stf::Plugin> wxStfApp::LoadExtensions() {
 
     return extList;
 }
+
+void wxStfApp::OnUserdef(wxCommandEvent& event) {
+    int id = event.GetId()-ID_USERDEF;
+
+    if (id>=GetExtensionLib().size() || id<0) {
+        wxString msg("Couldn't find extension function");
+        ErrorMsg( msg );
+        return;
+    }
+
+    // As always, first grab the GIL
+    wxPyBlock_t blocked = wxPyBeginBlockThreads();
+
+    // retrieve function
+    PyObject* pPyFunc = (PyObject*)(GetExtensionLib()[id].pyFunc);
+    if (!pPyFunc || !PyCallable_Check(pPyFunc)) {
+        wxString msg("Couldn't call extension function");
+        ErrorMsg( msg );
+        wxPyEndBlockThreads(blocked);
+        return;
+    }
+
+    // call function
+    PyObject* res = PyObject_CallObject(pPyFunc, NULL);
+    if (!res) {
+        PyErr_Print();
+        wxString msg("Function call failed");
+        ErrorMsg( msg );
+        wxPyEndBlockThreads(blocked);
+        return;
+    }
+
+    if (res==Py_False) {
+        wxString msg("Function returned False");
+        ErrorMsg( msg );
+    }
+    
+    Py_XDECREF(res);
+
+    // Finally, after all Python stuff is done, release the GIL
+    wxPyEndBlockThreads(blocked);
+    
+}
+
 
 #endif // WITH_PYTHON
 

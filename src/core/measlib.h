@@ -409,9 +409,11 @@ T   stf::maxRise(const std::vector<T>& data,
         T& maxRiseT,
         T& maxRiseY)
 {
-    if (left<0 || right<1 || left>=data.size()-1 || right>=data.size()) {
+    if (left<0 || right<0 || left>=data.size()-1 || right>=data.size()) {
         throw std::out_of_range("Index out of range in stf::maxRise");
     }
+    if (right==0)
+        right=1;
     //Maximal rise
     T maxRise=fabs(data[(int)right]-data[(int)right-1]);
     maxRiseT=right-(double)0.5;
@@ -435,9 +437,12 @@ T stf::maxDecay(const std::vector<T>& data,
         T& maxDecayT,
         T& maxDecayY)
 {
-    if (left<0 || right<1 || left>=data.size()-2 || right>=data.size()) {
+    if (left<0 || right<0 || left>=data.size()-2 || right>=data.size()) {
         throw std::out_of_range("Index out of range in stf::maxDecay");
     }
+    if (right==0)
+        right=1;
+            
     //Maximal decay
     T maxDecay=fabs(data[(int)left+1]-data[(int)left]);
     maxDecayT=left+(double)0.5;

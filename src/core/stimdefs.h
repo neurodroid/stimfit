@@ -417,6 +417,41 @@ struct Plugin {
     UserInput input;       /*!< Dialog entries */
 };
 
+#ifdef WITH_PYTHON
+
+//! User-defined Python extension
+/*! Class used for extending Stimfit's functionality: 
+ *  The client supplies a new menu entry and a Python function 
+ *  that will be called upon selection of that entry.
+ */
+struct Extension {
+    //! Constructor
+    /*! \param menuEntry_ Menu entry string for this extension.
+     *  \param pyFunc_ Python function to be called.
+     *  \param description_  Description for this function.
+     *  \param requiresFile_ Whether a file needs to be open for this function to work
+     */
+    Extension(const wxString& menuEntry_, void* pyFunc_,
+              const wxString& description_, bool requiresFile_) :
+        menuEntry(menuEntry_), pyFunc(pyFunc_),
+        description(description_), requiresFile(requiresFile_)
+    {
+        id = n_extensions;
+        n_extensions++;
+    }
+    
+    //! Destructor
+    ~Extension() { }
+
+    int id;                /*!< The extension id; set automatically upon construction, so don't touch. */
+    static int n_extensions;  /*!< Static extension counter. Initialised in extensions/extensions.cpp. */
+    wxString menuEntry;    /*!< Menu entry string for this extension. */
+    void* pyFunc;     /*!< Python function to be called. */
+    wxString description;  /*!< Description for this function. */
+    bool requiresFile;     /*!< Whether a file needs to be open for this function to work */
+};
+#endif
+
 //! Resource manager for ifstream objects.
 struct ifstreamMan {
     

@@ -2211,6 +2211,7 @@ void wxStfDoc::Userdef(std::size_t id) {
     Recording newR;
     Vector_double init(0);
     // get user input if necessary:
+#if 0
     if (!wxGetApp().GetPluginLib().at(fselect).input.labels.empty()) {
         wxStfUsrDlg myDlg( GetDocumentWindow(),
                 wxGetApp().GetPluginLib().at(fselect).input );
@@ -2245,5 +2246,6 @@ void wxStfDoc::Userdef(std::size_t id) {
     wxStfDoc* pDoc = wxGetApp().NewChild(newR,this,newTitle);
     ((wxStfChildFrame*)pDoc->GetDocumentWindow())->ShowTable(
             stf::Table(resultsMap), wxGetApp().GetPluginLib().at(fselect).menuEntry
-    );
+                                                             );
+#endif
 }

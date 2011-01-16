@@ -64,7 +64,6 @@
 #include "./dlgs/cursorsdlg.h"
 #include "./dlgs/smalldlgs.h"
 #include "./funclib/funclib.h"
-#include "./plugins/plugins.h"
 #if defined(__linux__) || defined(__WXMAC__)
 #include "./../core/filelib/axon/Common/axodefn.h"
 #include "./../core/filelib/axon/AxAbfFio32/abffiles.h"
@@ -95,11 +94,12 @@ EVT_MENU( ID_APPLYTOALL, wxStfApp::OnApplytoall )
 
 #ifdef WITH_PYTHON
 EVT_MENU( ID_IMPORTPYTHON, wxStfApp::OnPythonImport )
+EVT_MENU_RANGE(ID_USERDEF, ID_USERDEF+32, wxStfApp::OnUserdef)
 #endif // WITH_PYTHON
 END_EVENT_TABLE()
 
 wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isHires(false), txtImport(), funcLib(),
-    pluginLib(), CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ), /*m_file_menu(0),*/ m_fileToLoad(wxEmptyString)/*, activeDoc(0)*/ {}
+    extensionLib(), CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ), /*m_file_menu(0),*/ m_fileToLoad(wxEmptyString)/*, activeDoc(0)*/ {}
 
 void wxStfApp::OnInitCmdLine(wxCmdLineParser& parser)
 {
@@ -294,7 +294,7 @@ bool wxStfApp::OnInit(void)
 #endif
     // load user-defined plugins:
     // pluginLib = stf::GetPluginLib();
-    pluginLib = LoadExtensions();
+    extensionLib = LoadExtensions();
     
     // load fit function library:
     funcLib = stf::GetFuncLib();
@@ -779,6 +779,9 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     analysis_menu->AppendSubMenu(userdefSub,wxT("User-defined functions"));
 #endif
     wxMenu *extensions_menu = new wxMenu;
+    for (std::size_t n=0;n<GetExtensionLib().size();++n) {
+        extensions_menu->Append(ID_USERDEF+(int)n, GetExtensionLib()[n].menuEntry);
+    }
     
     wxMenu *help_menu = new wxMenu;
     help_menu->Append(wxID_HELP, wxT("Online &help\tF1"));

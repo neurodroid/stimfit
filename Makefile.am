@@ -128,7 +128,7 @@ stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/reco
             ./src/app/printout.cpp ./src/app/parentframe.cpp ./src/app/childframe.cpp ./src/app/view.cpp ./src/app/table.cpp ./src/app/zoom.cpp \
             ./src/app/dlgs/cursorsdlg.cpp ./src/app/dlgs/eventdlg.cpp \
 	    ./src/app/dlgs/fitseldlg.cpp ./src/app/dlgs/smalldlgs.cpp \
-            ./src/app/plugins/plugins.cpp ./src/app/funclib/funclib.cpp \
+            ./src/app/funclib/funclib.cpp \
             ./src/app/usrdlg/usrdlg.cpp
 
 noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
@@ -177,7 +177,7 @@ noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.
             ./src/app/table.h ./src/app/zoom.h \
             ./src/app/dlgs/cursorsdlg.h ./src/app/dlgs/eventdlg.h \
 	    ./src/app/dlgs/fitseldlg.h ./src/app/dlgs/smalldlgs.h \
-            ./src/app/plugins/plugins.h ./src/app/funclib/funclib.h \
+            ./src/app/funclib/funclib.h \
             ./src/app/usrdlg/usrdlg.h
 
 EXTRA_DIST = ./src/icons/16-em-down.xpm

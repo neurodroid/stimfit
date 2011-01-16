@@ -2014,10 +2014,8 @@ void wxStfGraph::Fittowindow(bool refresh)
     //in the (trace navigator) control box
     case stf::zoomboth:
         if(!(Doc()->size()>1))
-        {
-            wxGetApp().ErrorMsg(wxT("No second channel available! Choose Channel 1!"));
             return;
-        }
+
         //Fit to window Ch2
         FitToWindowSecCh(false);
         //Fit to window Ch1
@@ -2030,10 +2028,8 @@ void wxStfGraph::Fittowindow(bool refresh)
     case stf::zoomch2:
         //ErrorMsg if no second channel available
         if(!(Doc()->size()>1))
-        {
-            wxGetApp().ErrorMsg(wxT("No second channel available! Choose Channel 1!"));
             return;
-        }
+
         //Fit to window Ch2
         FitToWindowSecCh(false);
         break;

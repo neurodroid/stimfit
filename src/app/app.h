@@ -157,7 +157,8 @@ enum {
     ID_SPINCTRLTRACES,
     ID_ZERO_INDEX,
     ID_COMBOACTCHANNEL,
-    ID_COMBOINACTCHANNEL
+    ID_COMBOINACTCHANNEL,
+    ID_USERDEF
 };
 
 #include <list>
@@ -202,7 +203,7 @@ public:
 
     //! Initialise the application
     /*! Initialises the document manager and the file-independent menu items,
-     *  loads the user-defined plugin library and the least-squares function library,
+     *  loads the user-defined extension library and the least-squares function library,
      *  parses the command line and attempts to open a file if one was given
      *  at program startup by either double-clicking it or as a command-line
      *  argument.
@@ -311,10 +312,10 @@ public:
      */
     stf::storedFunc* GetLinFuncPtr( ) { return &storedLinFunc; }
 
-	//! Retrieves the user-defined plugin functions.
+    //! Retrieves the user-defined extension functions.
     /*! \return A vector containing the user-defined functions.
      */
-    const std::vector< stf::Plugin >& GetPluginLib() const { return pluginLib; }
+    const std::vector< stf::Extension >& GetExtensionLib() const { return extensionLib; }
 
     //! Retrieves the cursor settings dialog.
     /*! \return A pointer to the cursor settings dialog.
@@ -458,13 +459,14 @@ private:
     void OnNewfromall( wxCommandEvent& event );
     void OnApplytoall( wxCommandEvent& event );
     void OnProcessCustom( wxCommandEvent& event );
+    void OnUserdef(wxCommandEvent& event);
     void OnKeyDown( wxKeyEvent& event );
     
 #ifdef WITH_PYTHON
     void ImportPython(const wxString& modulelocation);
     bool Init_wxPython();
     bool Exit_wxPython();
-    std::vector<stf::Plugin> LoadExtensions();
+    std::vector<stf::Extension> LoadExtensions();
 #endif // WITH_PYTHON
 
 #ifdef _WINDOWS
@@ -480,7 +482,7 @@ private:
     // Registry:
     boost::shared_ptr<wxFileConfig> config;
     std::vector<stf::storedFunc> funcLib;
-    std::vector< stf::Plugin > pluginLib;
+    std::vector< stf::Extension > extensionLib;
     // Pointer to the cursors settings dialog box
     wxStfCursorsDlg* CursorsDialog;
     wxDocTemplate* m_cfsTemplate, *m_hdf5Template, *m_txtTemplate,*m_abfTemplate,
