@@ -165,7 +165,7 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
             throw std::runtime_error("pFrame is 0 in wxStfDoc::OnOpenDocument");
         }
 
-        // pFrame->SetSingleChannel( size() <= 1 );
+        pFrame->SetSingleChannel( size() <= 1 );
 
         if (InitCursors()!=wxID_OK) {
             get().clear();
@@ -234,7 +234,7 @@ void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const w
     if (pFrame == NULL) {
         throw std::runtime_error("pFrame is 0 in wxStfDoc::SetData");
     }
-    // pFrame->SetSingleChannel( size() <= 1 );
+    pFrame->SetSingleChannel( size() <= 1 );
 
     // If the title is not a zero string...
     if (title != wxT("\0")) {

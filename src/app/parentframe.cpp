@@ -1048,6 +1048,8 @@ void wxStfParentFrame::OnToolCh1(wxCommandEvent& WXUNUSED(event)) {
         !m_scaleToolBar->GetToolToggled(ID_TOOL_CH2)) {
             m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
     }
+    m_scaleToolBar->Refresh();
+    
 }
 
 void wxStfParentFrame::OnToolCh2(wxCommandEvent& WXUNUSED(event)) {
@@ -1056,21 +1058,23 @@ void wxStfParentFrame::OnToolCh2(wxCommandEvent& WXUNUSED(event)) {
         !m_scaleToolBar->GetToolToggled(ID_TOOL_CH2)) {
             m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
     }
+    m_scaleToolBar->Refresh();
 }
 
 void wxStfParentFrame::SetSingleChannel(bool value) {
     if (!m_scaleToolBar) return;
     if (value) {
-        m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
-        m_scaleToolBar->ToggleTool(ID_TOOL_CH2,false);
-        m_scaleToolBar->EnableTool(ID_TOOL_CH1,false);
-        m_scaleToolBar->EnableTool(ID_TOOL_CH2,false);
+        if (!m_scaleToolBar->GetToolEnabled(ID_TOOL_CH1))
+            m_scaleToolBar->EnableTool(ID_TOOL_CH1,true);
+        if (m_scaleToolBar->GetToolEnabled(ID_TOOL_CH2))
+            m_scaleToolBar->EnableTool(ID_TOOL_CH2,false);
     } else {
-        m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
-        m_scaleToolBar->ToggleTool(ID_TOOL_CH2,true);
-        m_scaleToolBar->EnableTool(ID_TOOL_CH1,true);
-        m_scaleToolBar->EnableTool(ID_TOOL_CH2,true);
+        if (!m_scaleToolBar->GetToolEnabled(ID_TOOL_CH1))
+            m_scaleToolBar->EnableTool(ID_TOOL_CH1,true);
+        if (!m_scaleToolBar->GetToolEnabled(ID_TOOL_CH2))
+            m_scaleToolBar->EnableTool(ID_TOOL_CH2,true);
     }
+    m_scaleToolBar->Refresh();
 }
 
 void wxStfParentFrame::OnToolSnapshot(wxCommandEvent& WXUNUSED(event)) {
@@ -1609,4 +1613,5 @@ void wxStfParentFrame::SetZoomQual(stf::zoom_channels value) {
         m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
         m_scaleToolBar->ToggleTool(ID_TOOL_CH2,true);
     }
+    m_scaleToolBar->Refresh();
 }
