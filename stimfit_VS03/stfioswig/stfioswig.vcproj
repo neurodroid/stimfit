@@ -111,7 +111,7 @@
 				EnableIntrinsicFunctions="false"
 				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="&quot;C:\Python27\Lib\site-packages\numpy\core\include&quot;;D:\Users\cs\hdf5\include"
-				PreprocessorDefinitions="_UNICODE;__STF__;__WIN32__;WIN32;NOPCH;_CRT_SECURE_NO_DEPRECATE;WITH_PYTHON;HAVE_LAPACK;_WINDOWS;MODULE_ONLY;H5_USE_16_API;_HDF5USEDLL_;STFDLL;__NO_VC_CRTDBG__"
+				PreprocessorDefinitions="_UNICODE;__STF__;__WIN32__;WIN32;NOPCH;_CRT_SECURE_NO_DEPRECATE;WITH_PYTHON;HAVE_LAPACK;_WINDOWS;MODULE_ONLY;H5_USE_16_API;_HDF5USEDLL_;STFDLL;NDEBUG"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="false"
