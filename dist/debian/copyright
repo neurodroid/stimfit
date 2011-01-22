@@ -1,0 +1,29 @@
+This work was packaged for Debian by:
+
+    Christoph Schmidt-Hieber <christsc@gmx.de> on Sat, 22 Jan 2011 20:06:14 +0000
+
+It was downloaded from:
+
+    http://code.google.com/p/stimfit/downloads/list
+
+Upstream Author(s):
+
+    Christoph Schmidt-Hieber <christsc@gmx.de>
+
+Copyright:
+
+    Copyright (C) 2011 Christoph Schmidt-Hieber
+
+License:
+
+    GPLv2
+
+The Debian packaging is:
+
+    Copyright (C) 2011 Christoph Schmidt-Hieber <christsc@gmx.de>
+
+and is licensed under the GPL version 2,
+see "/usr/share/common-licenses/GPL-2".
+
+# Please also look if there are files or directories which have a
+# different copyright/license attached and list them here.

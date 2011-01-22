@@ -27,6 +27,10 @@ config.status
 .deps/*
 .externalToolBuilders/*
 build/*
+dist/debian/build
+dist/debian/build/*
+osc
+osc/*
 
 # doc build
 
