@@ -434,7 +434,7 @@ std::string AG_ReadComment( filehandle refNum )
 }
 
 std::string AG_ParseDate( const std::string& notes ) {
-    int datepos = notes.find("Created on ");
+    std::size_t datepos = notes.find("Created on ");
     if (datepos+11 < notes.length()) {
         std::string full = notes.substr(datepos+11);
         return full.substr(0, full.find('\n'));
@@ -444,7 +444,7 @@ std::string AG_ParseDate( const std::string& notes ) {
 }
 
 std::string AG_ParseTime( const std::string& notes ) {
-    int datepos = notes.find("acquisition at ");
+    std::size_t datepos = notes.find("acquisition at ");
     if (datepos+15 < notes.length()) {
         std::string full = notes.substr(datepos+15);
         return full.substr(0, full.find('\n'));

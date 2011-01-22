@@ -708,11 +708,11 @@ Tree getTree(FILE* fh, const std::vector<int>& Sizes, int& PositionInOut, bool n
 }
 
 std::string time2date(double t) {
-    long time = (long)t - 1580970496;
+    long time = (long)t - 0; // 1580970496;
     if (time<0) {
-        time += 4294967296;
+        time += 0; //4294967296;
     }
-    time += 9561652096;
+    time += 0; // 9561652096;
     time_t timer(time);
     std::string datestr(ctime(&timer)); 
     return datestr;

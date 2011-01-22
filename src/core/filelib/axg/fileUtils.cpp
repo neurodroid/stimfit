@@ -135,7 +135,7 @@ int ReadFromFile( filehandle dataRefNum, AXGLONG count, void *dataToRead )
     return FSRead( dataRefNum, &count, dataToRead );
 #endif
 #if defined(__APPLE__) || defined(__linux__)
-    if ( fread( dataToRead, 1, count, dataRefNum ) == count )
+    if ( (AXGLONG)fread( dataToRead, 1, count, dataRefNum ) == count )
         return 0;
     else
         return 1;

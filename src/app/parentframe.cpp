@@ -1074,6 +1074,12 @@ void wxStfParentFrame::SetSingleChannel(bool value) {
         if (!m_scaleToolBar->GetToolEnabled(ID_TOOL_CH2))
             m_scaleToolBar->EnableTool(ID_TOOL_CH2,true);
     }
+
+    // Make sure at least one value is selected:
+    if (!m_scaleToolBar->GetToolToggled(ID_TOOL_CH1) &&
+        (value || !m_scaleToolBar->GetToolToggled(ID_TOOL_CH2))) {
+        m_scaleToolBar->ToggleTool(ID_TOOL_CH1, true);
+    }
     m_scaleToolBar->Refresh();
 }
 

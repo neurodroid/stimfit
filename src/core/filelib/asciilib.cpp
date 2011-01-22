@@ -155,7 +155,7 @@ void stf::importASCIIFile( const wxString& fName, int hLinesToSkip, int nColumns
         ReturnRec.SetXScale(time[1]-time[0]);
     }
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-    ReturnRec.SetFileDescription( header );
+    ReturnRec.SetFileDescription( header.ToStdString() );
 #else
     ReturnRec.SetFileDescription(std::string(header.mb_str()));
 #endif    

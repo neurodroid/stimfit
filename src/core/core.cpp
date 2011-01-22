@@ -98,10 +98,10 @@ bool stf::importFile(
             }
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
             if (ReturnData.size()>0)
-                ReturnData[0].SetYUnits(txtImport.yUnits);
+                ReturnData[0].SetYUnits(txtImport.yUnits.ToStdString());
             if (ReturnData.size()>1)
-                ReturnData[1].SetYUnits(txtImport.yUnitsCh2);
-            ReturnData.SetXUnits( txtImport.xUnits );
+                ReturnData[1].SetYUnits(txtImport.yUnitsCh2.ToStdString());
+            ReturnData.SetXUnits( txtImport.xUnits.ToStdString() );
 #else
             if (ReturnData.size()>0)
                 ReturnData[0].SetYUnits(std::string(txtImport.yUnits.mb_str()));

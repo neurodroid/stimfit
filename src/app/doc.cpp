@@ -838,7 +838,7 @@ void wxStfDoc::Concatenate(wxCommandEvent &WXUNUSED(event)) {
     }
     TempSection.SetSectionDescription(
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-                                      wxString(GetTitle()+wxT(", concatenated"))
+                                      GetTitle().ToStdString()+", concatenated"
 #else
                                       std::string(GetTitle().mb_str())+
                                       std::string(", concatenated")
@@ -941,7 +941,7 @@ void wxStfDoc::CreateAverage(
         Section TempSection(average_size), TempSig(average_size);
         MakeAverage(TempSection, TempSig, n_c, GetSelectedSections(), calcSD, shift);
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-        TempSection.SetSectionDescription(GetTitle()+std::string(", average"));
+        TempSection.SetSectionDescription(GetTitle().ToStdString()+std::string(", average"));
 #else
         TempSection.SetSectionDescription(std::string(GetTitle().mb_str())
                                           +std::string(", average"));
