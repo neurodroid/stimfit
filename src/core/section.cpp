@@ -33,7 +33,7 @@ Section::Section(void)
 #endif
 {}
 
-Section::Section( const Vector_double& valA, const wxString& label )
+Section::Section( const Vector_double& valA, const std::string& label )
     : section_description(label), x_scale(1.0), data(valA)
 #ifndef MODULE_ONLY
     , eventList(),pyMarkers(),isFitted(false),
@@ -42,7 +42,7 @@ Section::Section( const Vector_double& valA, const wxString& label )
 #endif
 {}
 
-Section::Section(std::size_t size, const wxString& label)
+Section::Section(std::size_t size, const std::string& label)
     : section_description(label), x_scale(1.0), data(size)
 #ifndef MODULE_ONLY
     , eventList(),pyMarkers(),isFitted(false),

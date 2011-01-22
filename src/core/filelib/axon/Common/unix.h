@@ -164,7 +164,8 @@ typedef unsigned int   UINT_PTR;
 #define ERROR_TOO_MANY_OPEN_FILES       4
 
 
-#define __stdcall __attribute__((__stdcall__))
+    // #define __stdcall __attribute__((__stdcall__))
+#define __stdcall
 // gcc uses cdecl as a standard:
 #define cdecl
 #define WINAPI __stdcall

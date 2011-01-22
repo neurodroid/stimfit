@@ -1750,7 +1750,7 @@ BOOL WINAPI ABF_MultiplexRead(int nFile, const ABFFileHeader *pFH, DWORD dwEpiso
 
     // Set the sample size in the data.
     UINT uSampleSize = SampleSize(pFH);
-    UINT uBytesPerEpisode = UINT(pFH->lNumSamplesPerEpisode) * uSampleSize;
+    // UINT uBytesPerEpisode = UINT(pFH->lNumSamplesPerEpisode) * uSampleSize;
 
     // If a synch array is not present, create a synch entry for this chunk,
     // otherwise, read it from the synch array.
@@ -1809,7 +1809,7 @@ BOOL WINAPI ABF2_MultiplexRead(int nFile, const ABF2FileHeader *pFH, DWORD dwEpi
 
     // Set the sample size in the data.
     UINT uSampleSize = ABF2_SampleSize(pFH);
-    UINT uBytesPerEpisode = UINT(pFH->lNumSamplesPerEpisode) * uSampleSize;
+    // UINT uBytesPerEpisode = UINT(pFH->lNumSamplesPerEpisode) * uSampleSize;
 
     // If a synch array is not present, create a synch entry for this chunk,
     // otherwise, read it from the synch array.

@@ -299,9 +299,9 @@ struct StfDll storedFunc {
 
 //! Represents user input from dialogs that can be used in plugins.
 struct UserInput {
-    std::vector<wxString> labels; /*!< Dialog entry labels. */
+    std::vector<std::string> labels; /*!< Dialog entry labels. */
     Vector_double defaults; /*!< Default dialog entries. */
-    wxString title;               /*!< Dialog title. */
+    std::string title;               /*!< Dialog title. */
 
     //! Constructor.
     /*! \param labels_ A vector of dialog entry label strings.
@@ -309,9 +309,9 @@ struct UserInput {
      *  \param title_ Dialog title.
      */
     UserInput(
-            const std::vector<wxString>& labels_=std::vector<wxString>(0),
+            const std::vector<std::string>& labels_=std::vector<std::string>(0),
             const Vector_double& defaults_=Vector_double(0),
-            wxString title_=wxT("\0")
+            std::string title_="\0"
     ) : labels(labels_),defaults(defaults_),title(title_)
     {
                 if (defaults.size()!=labels.size()) {
@@ -431,8 +431,8 @@ struct Extension {
      *  \param description_  Description for this function.
      *  \param requiresFile_ Whether a file needs to be open for this function to work
      */
-    Extension(const wxString& menuEntry_, void* pyFunc_,
-              const wxString& description_, bool requiresFile_) :
+    Extension(const std::string& menuEntry_, void* pyFunc_,
+              const std::string& description_, bool requiresFile_) :
         menuEntry(menuEntry_), pyFunc(pyFunc_),
         description(description_), requiresFile(requiresFile_)
     {
@@ -445,9 +445,9 @@ struct Extension {
 
     int id;                /*!< The extension id; set automatically upon construction, so don't touch. */
     static int n_extensions;  /*!< Static extension counter. Initialised in extensions/extensions.cpp. */
-    wxString menuEntry;    /*!< Menu entry string for this extension. */
+    std::string menuEntry;    /*!< Menu entry string for this extension. */
     void* pyFunc;     /*!< Python function to be called. */
-    wxString description;  /*!< Description for this function. */
+    std::string description;  /*!< Description for this function. */
     bool requiresFile;     /*!< Whether a file needs to be open for this function to work */
 };
 #endif

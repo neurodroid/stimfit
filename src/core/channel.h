@@ -79,12 +79,12 @@ public:
     //! Retrieves the channel name
     /*! \return The channel name.
      */
-    const wxString& GetChannelName() const { return name; }
+    const std::string& GetChannelName() const { return name; }
 
     //! Retrieves the y units string.
     /*! \return The y units string.
      */
-    const wxString& GetYUnits( ) const { return yunits; }
+    const std::string& GetYUnits( ) const { return yunits; }
 
     //! Retrieves the size of the section array.
     /*! \return The size of the section array.
@@ -131,12 +131,12 @@ public:
     //! Sets the channel name
     /*! \param value The channel name.
      */
-    void SetChannelName(const wxString& value) { name = value; }
+    void SetChannelName(const std::string& value) { name = value; }
     
     //! Sets the y units string
     /*! \param value The new y units string.
      */
-    void SetYUnits( const wxString& value ) { yunits = value; }
+    void SetYUnits( const std::string& value ) { yunits = value; }
 
     //misc--------------------------------------------------------
     
@@ -166,7 +166,7 @@ private:
  public:
 #endif
     
-    wxString name, yunits;
+    std::string name, yunits;
 
  private:
     // An array of sections

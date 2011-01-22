@@ -744,8 +744,8 @@ void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInO
                           (double)ns/(double)nsweeps*(100.0/nchannels));
 #ifndef MODULE_ONLY
                 wxString progStr;
-                progStr << "Reading channel #" << nc + 1 << " of " << nchannels
-                        << ", Section #" << ns + 1 << " of " << nsweeps;
+                progStr << wxT("Reading channel #") << nc + 1 << wxT(" of ") << nchannels
+                        << wxT(", Section #") << ns + 1 << wxT(" of ") << nsweeps;
                 bool skip = false;
                 progDlg.Update(progbar, progStr, &skip);
                 if (skip) {
@@ -838,7 +838,11 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
     std::string warnStr("Warning: HEKA support is experimental.\n" \
         "Please check sampling rate and report errors to\nchristsc_at_gmx.de." );
 #ifndef MODULE_ONLY
+#if wxCHECK_VERSION(2, 9, 0)
     wxMessageDialog warnDlg(NULL, wxString(warnStr.c_str()), wxT("Warning"));
+#else
+    wxMessageDialog warnDlg(NULL, wxString(warnStr.c_str(), wxConvUTF8), wxT("Warning"));
+#endif
     warnDlg.ShowModal();
     wxProgressDialog progDlg(wxT("HEKA binary file import"), wxT("Starting file import"),
                              100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_SKIP );
@@ -850,7 +854,12 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
     int res = 0;
     
     // Open file
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     FILE* dat_fh = fopen(fName.c_str(), "rb");
+#else
+    FILE* dat_fh = fopen(fName.mb_str(), "rb");
+#endif
+    
     if (dat_fh==NULL) {
         return;
     }

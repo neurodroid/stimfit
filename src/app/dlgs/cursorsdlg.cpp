@@ -560,10 +560,17 @@ wxFlexGridSizer* wxStfCursorsDlg::CreateCursorInput( wxPanel* nbPage, wxWindowID
     cursorGrid->Add( textC1, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
     // units
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     wxString szUnits[] = { actDoc->GetXUnits(), wxT("pts") };
     int szUnitsSize = sizeof( szUnits ) / sizeof( wxString );
     wxComboBox* comboU1 = new wxComboBox( nbPage, comboU1id,  actDoc->GetXUnits(), wxDefaultPosition,
-                wxSize(64,20), szUnitsSize, szUnits, wxCB_DROPDOWN | wxCB_READONLY );
+#else
+    wxString szUnits[] = { wxString(actDoc->GetXUnits().c_str(), wxConvUTF8), wxT("pts") };
+    int szUnitsSize = sizeof( szUnits ) / sizeof( wxString );
+    wxComboBox* comboU1 = new wxComboBox( nbPage, comboU1id,
+                                                                                wxString(actDoc->GetXUnits().c_str(), wxConvUTF8), wxDefaultPosition,
+#endif
+                                          wxSize(64,20), szUnitsSize, szUnits, wxCB_DROPDOWN | wxCB_READONLY );
     cursorGrid->Add( comboU1, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
     // Cursor 2:
@@ -580,7 +587,12 @@ wxFlexGridSizer* wxStfCursorsDlg::CreateCursorInput( wxPanel* nbPage, wxWindowID
                 wxSize(64,20), wxTE_RIGHT );
         cursorGrid->Add( textC2, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
         // units
+        
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
         wxComboBox* comboU2 = new wxComboBox( nbPage, comboU2id, actDoc->GetXUnits(), wxDefaultPosition,
+#else
+                                              wxComboBox* comboU2 = new wxComboBox( nbPage, comboU2id, wxString(actDoc->GetXUnits().c_str(), wxConvUTF8), wxDefaultPosition,
+#endif
                     wxSize(64,20), szUnitsSize, szUnits, wxCB_DROPDOWN | wxCB_READONLY );
         cursorGrid->Add( comboU2, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
     }
@@ -1554,9 +1566,15 @@ void wxStfCursorsDlg::UpdateCursors() {
     SetSlope( actDoc->GetSlopeForThreshold() );
     
     wxString slopeUnits;
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     slopeUnits += actDoc->at(actDoc->GetCurCh()).GetYUnits();
     slopeUnits += wxT("/");
     slopeUnits += actDoc->GetXUnits();
+#else
+    slopeUnits += wxString(actDoc->at(actDoc->GetCurCh()).GetYUnits().c_str(), wxConvUTF8);
+    slopeUnits += wxT("/");
+    slopeUnits += wxString(actDoc->GetXUnits().c_str(), wxConvUTF8);
+#endif    
     SetSlopeUnits(slopeUnits);
 }
 

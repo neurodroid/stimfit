@@ -31,7 +31,11 @@ isExtract(isExtract_), m_minDistance(150), m_template(-1)
     int max_w = 0;
     for (std::size_t n_templ=0;n_templ<templateSections.size();++n_templ) {
         if (templateSections[n_templ]!=NULL) {
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
             wxString sec_desc = templateSections[n_templ]->GetSectionDescription();
+#else
+            wxString sec_desc = wxString(templateSections[n_templ]->GetSectionDescription().c_str(), wxConvUTF8);
+#endif            
             int w, h;
             GetTextExtent( sec_desc, &w, &h );
             if ( w > max_w )

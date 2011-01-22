@@ -914,14 +914,13 @@ void wxStfGraph::Exportimage() {
             wxFD_SAVE
     );
     if (bmpDialog.ShowModal()!=wxID_OK) return;
-    std::vector<wxString> sizeStr(1);
-    sizeStr[0] = wxT("Set width (in pixels):");
+    std::vector<std::string> sizeStr(1);
+    sizeStr[0] = "Set width (in pixels):";
     Vector_double defaultWidth(1);
     defaultWidth[0]=GetRect().width;
-    stf::UserInput(sizeStr,defaultWidth,wxT("Change image size"));
     wxStfUsrDlg sizeDlg(
             ParentFrame(),
-            stf::UserInput(sizeStr,defaultWidth,wxT("Change image size"))
+            stf::UserInput(sizeStr,defaultWidth,"Change image size")
     );
     if (sizeDlg.ShowModal()!=wxID_OK) return;
 
@@ -1113,14 +1112,13 @@ void wxStfGraph::Exportsvg() {
 #endif
 
 void wxStfGraph::Snapshot() {
-    std::vector<wxString> sizeStr(1);
-    sizeStr[0]=wxT("Set width (in pixels):");
+    std::vector<std::string> sizeStr(1);
+    sizeStr[0]="Set width (in pixels):";
     Vector_double defaultWidth(1);
     defaultWidth[0]=GetRect().width;
-    stf::UserInput(sizeStr,defaultWidth,wxT("Change image size"));
     wxStfUsrDlg sizeDlg(
             ParentFrame(),
-            stf::UserInput(sizeStr,defaultWidth,wxT("Change image size"))
+            stf::UserInput(sizeStr,defaultWidth,"Change image size")
     );
     if (sizeDlg.ShowModal()!=wxID_OK) return;
 
@@ -1208,7 +1206,11 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
     // event.Skip();
     if (!view) return;
     view->Activate(true);
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     if (!HasFocus())
+#else
+        if (wxWindow::FindFocus()==(wxWindow*)this)
+#endif
         SetFocus();
 
     wxClientDC dc(this);
@@ -1280,7 +1282,11 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
 
     if (!view) return;
     view->Activate(true);
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     if (!HasFocus())
+#else
+        if (wxWindow::FindFocus()==(wxWindow*)this)
+#endif
         SetFocus();
 
     wxClientDC dc(this);
@@ -1712,7 +1718,11 @@ void wxStfGraph::CreateScale(wxDC* pDC)
 #endif
         }
         wxString scaleYString;
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
         scaleYString <<  (int)yScaled << wxT(" ") << Doc()->at(Doc()->GetCurCh()).GetYUnits() << wxT("\0");
+#else
+        scaleYString <<  (int)yScaled << wxT(" ") << wxString(Doc()->at(Doc()->GetCurCh()).GetYUnits().c_str(), wxConvUTF8) << wxT("\0");
+#endif        
         // Center of y-scalebar:
         int yCenter=WindowRect.height-bottomDist-(Scale[1].y-Scale[2].y)/2;
         wxRect TextFrameY(
@@ -1730,7 +1740,11 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         if ((Doc()->size()>1))	{
             wxString scaleYString2;
             scaleYString2 << (int)yScaled2 << wxT(" ")
-            << Doc()->at(Doc()->GetSecCh()).GetYUnits();
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
+                          << Doc()->at(Doc()->GetSecCh()).GetYUnits();
+#else
+            << wxString(Doc()->at(Doc()->GetSecCh()).GetYUnits().c_str(), wxConvUTF8);
+#endif
             // Center of y2-scalebar:
             int y2Center=WindowRect.height-bottomDist-(Scale[3].y-Scale[4].y)/2;
             wxRect TextFrameY2(
@@ -1831,7 +1845,11 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                 wxPoint(leftDist-tickLength-1,vCenter+(int)(10*printScale))
         );
         pDC->DrawLabel(
-                Doc()->at(Doc()->GetCurCh()).GetYUnits(),
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
+                       Doc()->at(Doc()->GetCurCh()).GetYUnits(),
+#else
+                       wxString(Doc()->at(Doc()->GetCurCh()).GetYUnits().c_str(), wxConvUTF8),
+#endif
                 TextFrame,
                 wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL
         );
@@ -1884,7 +1902,11 @@ void wxStfGraph::CreateScale(wxDC* pDC)
             );
             pDC->SetTextForeground(*wxRED);
             pDC->DrawLabel(
-                    Doc()->at(Doc()->GetSecCh()).GetYUnits(),
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
+                           Doc()->at(Doc()->GetSecCh()).GetYUnits(),
+#else
+                           wxString(Doc()->at(Doc()->GetSecCh()).GetYUnits().c_str(), wxConvUTF8),
+#endif                           
                     TextFrame2,
                     wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL
             );
@@ -1950,7 +1972,11 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                         WindowRect.height-bottomDist+tickLength+(int)(40*printScale)
                 )
         );
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
         pDC->DrawLabel(Doc()->GetXUnits(),xTextFrame,wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL);
+#else
+        pDC->DrawLabel(wxString(Doc()->GetXUnits().c_str(), wxConvUTF8),xTextFrame,wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL);
+#endif        
     }
 }
 

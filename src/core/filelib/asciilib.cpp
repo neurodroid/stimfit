@@ -126,14 +126,14 @@ void stf::importASCIIFile( const wxString& fName, int hLinesToSkip, int nColumns
         std::copy(tempVec[n_insert].begin(),tempVec[n_insert].end(),&TempSection[0]);
         try {
             if (toSection) {
-                wxString label;
-                label << stf::noPath(fName) << wxT(", Section # ") << n_insert+1;
-                TempSection.SetSectionDescription( label );
+                std::ostringstream label;
+                label << stf::noPath(fName) << ", Section # " << n_insert+1;
+                TempSection.SetSectionDescription(label.str());
                 TempChannel[0].InsertSection(TempSection,n_insert);
             } else {
-                wxString label;
-                label << fName << wxT(", Section # 1");
-                TempSection.SetSectionDescription( label );
+                std::ostringstream label;
+                label << fName << ", Section # 1";
+                TempSection.SetSectionDescription(label.str());
                 TempChannel[n_insert].InsertSection(TempSection,0);
             }
         }
@@ -154,7 +154,11 @@ void stf::importASCIIFile( const wxString& fName, int hLinesToSkip, int nColumns
         }
         ReturnRec.SetXScale(time[1]-time[0]);
     }
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     ReturnRec.SetFileDescription( header );
+#else
+    ReturnRec.SetFileDescription(std::string(header.mb_str()));
+#endif    
 }
 
 bool stf::exportASCIIFile(const wxString& fName, const Section& Export) {

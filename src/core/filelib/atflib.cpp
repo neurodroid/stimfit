@@ -22,30 +22,38 @@
 #include "./atflib.h"
 
 namespace stf {
-wxString ATFError(const wxString& fName, int nError);
+    std::string ATFError(const wxString& fName, int nError);
 }
 
-wxString stf::ATFError(const wxString& fName, int nError) {
+std::string stf::ATFError(const wxString& fName, int nError) {
     int nMaxLen=320;
     std::vector<char> errorMsg(nMaxLen);
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     ATF_BuildErrorText(nError, fName.c_str(),&errorMsg[0], nMaxLen );
-    return wxString( &errorMsg[0] );
+#else
+    ATF_BuildErrorText(nError, fName.mb_str(),&errorMsg[0], nMaxLen );
+#endif    
+    return std::string( &errorMsg[0] );
 }
 
 bool stf::exportATFFile(const wxString& fName, const Recording& WData) {
     int nColumns=1+(int)WData[0].size() /*time + number of sections*/, nFileNum;
     int nError;
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     if (!ATF_OpenFile(fName.c_str(),ATF_WRITEONLY,&nColumns,&nFileNum,&nError)) {
-        wxString errorMsg(wxT("Exception while calling ATF_OpenFile():\n"));
+#else
+    if (!ATF_OpenFile(fName.mb_str(),ATF_WRITEONLY,&nColumns,&nFileNum,&nError)) {
+#endif
+        std::string errorMsg("Exception while calling ATF_OpenFile():\n");
         errorMsg += ATFError(fName,nError);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
     // Write sections to columns:
     // First column is time:
     for (int n_c=0;n_c<nColumns;++n_c) {
-        wxString columnTitle,columnUnits;
+        std::string columnTitle,columnUnits;
         if (n_c==0) {
-            columnTitle = wxT("Time");
+            columnTitle = "Time";
             columnUnits = WData.GetXUnits();
         } else {
             std::ostringstream titleStr;
@@ -54,14 +62,14 @@ bool stf::exportATFFile(const wxString& fName, const Recording& WData) {
             columnUnits = WData[0].GetYUnits();
         }
         if (!ATF_SetColumnTitle(nFileNum, columnTitle.c_str(), &nError)) {
-            wxString errorMsg(wxT("Exception while calling ATF_SetColumnTitle():\n"));
+            std::string errorMsg("Exception while calling ATF_SetColumnTitle():\n");
             errorMsg+=ATFError(fName,nError);
-            throw std::runtime_error(std::string(errorMsg.c_str()));
+            throw std::runtime_error(errorMsg);
         }
         if (!ATF_SetColumnUnits(nFileNum, columnUnits.c_str(),&nError)) {
-            wxString errorMsg(wxT("Exception while calling ATF_SetColumnUnits():\n"));
+            std::string errorMsg("Exception while calling ATF_SetColumnUnits():\n");
             errorMsg+=ATFError(fName,nError);
-            throw std::runtime_error(std::string(errorMsg.c_str()));
+            throw std::runtime_error(errorMsg);
         }
     }
     // Write data line by line:
@@ -78,31 +86,31 @@ bool stf::exportATFFile(const wxString& fName, const Recording& WData) {
                 // Write time:
                 double time=n_l*WData.GetXScale();
                 if (!ATF_WriteDataRecord1(nFileNum,time,&nError)) {
-                    wxString errorMsg(wxT("Exception while calling ATF_WriteDataRecord1():\n"));
+                    std::string errorMsg("Exception while calling ATF_WriteDataRecord1():\n");
                     errorMsg+=ATFError(fName,nError);
-                    throw std::runtime_error(std::string(errorMsg.c_str()));
+                    throw std::runtime_error(errorMsg);
                 }
             } else {
                 double toWrite = (n_l < (int)WData[0][n_c-1].size()) ?
                         (double)WData[0][n_c-1][n_l] :
                 0.0;
                         if (!ATF_WriteDataRecord1(nFileNum,toWrite,&nError)) {
-                            wxString errorMsg(wxT("Exception while calling ATF_WriteDataRecord1():\n"));
+                            std::string errorMsg("Exception while calling ATF_WriteDataRecord1():\n");
                             errorMsg+=ATFError(fName,nError);
-                            throw std::runtime_error(std::string(errorMsg.c_str()));
+                            throw std::runtime_error(errorMsg);
                         }
             }
         }
         if (!ATF_WriteEndOfLine(nFileNum,&nError)) {
-            wxString errorMsg(wxT("Exception while calling ATF_WriteEndOfLine():\n"));
+            std::string errorMsg("Exception while calling ATF_WriteEndOfLine():\n");
             errorMsg+=ATFError(fName,nError);
-            throw std::runtime_error(std::string(errorMsg.c_str()));
+            throw std::runtime_error(errorMsg);
         }
     }
     if (!ATF_CloseFile(nFileNum)) {
-        wxString errorMsg(wxT("Exception while calling ATF_CloseFile():\n"));
-        errorMsg += wxT("Error while closing ATF file");
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        std::string errorMsg("Exception while calling ATF_CloseFile():\n");
+        errorMsg += "Error while closing ATF file";
+        throw std::runtime_error(errorMsg);
     }
     return true;
 }
@@ -121,29 +129,33 @@ void stf::importATFFile(const wxString &fName, Recording &ReturnData, bool progr
     int nError;
     const int nMaxText=64;
 
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     if (!ATF_OpenFile(fName.c_str(),ATF_READONLY,&nColumns,&nFileNum,&nError)) {
-        wxString errorMsg(wxT("Exception while calling ATF_OpenFile():\n"));
+#else
+    if (!ATF_OpenFile(fName.mb_str(),ATF_READONLY,&nColumns,&nFileNum,&nError)) {
+#endif        
+        std::string errorMsg("Exception while calling ATF_OpenFile():\n");
         errorMsg+=ATFError(fName,nError);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
     // Assume that the first column is time:
     if (nColumns==0) {
-        wxString errorMsg(wxT("Error while opening ATF file:\nFile appears to be empty"));
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        std::string errorMsg("Error while opening ATF file:\nFile appears to be empty");
+        throw std::runtime_error(errorMsg);
     }
     long sectionSize;
     if (!ATF_CountDataLines(nFileNum,&sectionSize,&nError)) {
-        wxString errorMsg(wxT("Exception while calling ATF_CountDataLines():\n"));
+        std::string errorMsg("Exception while calling ATF_CountDataLines():\n");
         errorMsg+=ATFError(fName,nError);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
 
     // If first column contains time values, determine sampling interval:
     std::vector<char> titleVec(nMaxText);
     if (!ATF_GetColumnTitle(nFileNum,0,&titleVec[0],nMaxText,&nError)) {
-        wxString errorMsg(wxT("Exception while calling ATF_GetColumnTitle():\n"));
+        std::string errorMsg("Exception while calling ATF_GetColumnTitle():\n");
         errorMsg+=ATFError(fName,nError);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
     std::string titleString(titleVec.begin(),titleVec.end());
     int timeInFirstColumn=0;
@@ -155,15 +167,15 @@ void stf::importATFFile(const wxString &fName, Recording &ReturnData, bool progr
         double time[2];
         for (int n_l=0;n_l<2;++n_l) {
             if (!ATF_ReadDataColumn(nFileNum,0,&time[n_l],&nError)) {
-                wxString errorMsg(wxT("Exception while calling ATF_ReadDataColumn():\n"));
+                std::string errorMsg("Exception while calling ATF_ReadDataColumn():\n");
                 errorMsg+=ATFError(fName,nError);
-                throw std::runtime_error(std::string(errorMsg.c_str()));
+                throw std::runtime_error(errorMsg);
             }
         }
         if (!ATF_RewindFile(nFileNum,&nError)) {
-            wxString errorMsg(wxT("Exception while calling ATF_RewindFile():\n"));
+            std::string errorMsg("Exception while calling ATF_RewindFile():\n");
             errorMsg+=ATFError(fName,nError);
-            throw std::runtime_error(std::string(errorMsg.c_str()));
+            throw std::runtime_error(errorMsg);
         }
 
         ReturnData.SetXScale(time[1]-time[0]);
@@ -195,21 +207,21 @@ void stf::importATFFile(const wxString &fName, Recording &ReturnData, bool progr
         Section TempSection(sectionSize,label.str());
         for (int n_l=0;n_l<sectionSize;++n_l) {
             if (!ATF_ReadDataColumn(nFileNum,n_c,&TempSection[n_l],&nError)) {
-                wxString errorMsg(wxT("Exception while calling ATF_ReadDataColumn():\n"));
+                std::string errorMsg("Exception while calling ATF_ReadDataColumn():\n");
                 errorMsg+=ATFError(fName,nError);
                 ReturnData.resize(0);
-                throw std::runtime_error(std::string(errorMsg.c_str()));
+                throw std::runtime_error(errorMsg);
             }
         }
         if (n_c-timeInFirstColumn==0) {
             std::vector<char> unitsVec(nMaxText);
             if (!ATF_GetColumnUnits(nFileNum,n_c,&unitsVec[0],nMaxText,&nError)) {
-                wxString errorMsg(wxT("Exception while calling ATF_GetColumnUnits():\n"));
+                std::string errorMsg("Exception while calling ATF_GetColumnUnits():\n");
                 errorMsg+=ATFError(fName,nError);
                 ReturnData.resize(0);
-                throw std::runtime_error(std::string(errorMsg.c_str()));
+                throw std::runtime_error(errorMsg);
             }
-            ReturnData[0].SetYUnits(wxString( &unitsVec[0] ));
+            ReturnData[0].SetYUnits(std::string(&unitsVec[0]));
         }
         try {
             TempChannel.InsertSection(TempSection,n_c-timeInFirstColumn);
@@ -219,10 +231,10 @@ void stf::importATFFile(const wxString &fName, Recording &ReturnData, bool progr
         }
         // Rewind file before reading next column:
         if (!ATF_RewindFile(nFileNum,&nError)) {
-            wxString errorMsg(wxT("Exception while calling ATF_RewindFile():\n"));
+            std::string errorMsg("Exception while calling ATF_RewindFile():\n");
             errorMsg+=ATFError(fName,nError);
             ReturnData.resize(0);
-            throw std::runtime_error(std::string(errorMsg.c_str()));
+            throw std::runtime_error(errorMsg);
         }
     }
     try {
@@ -234,9 +246,9 @@ void stf::importATFFile(const wxString &fName, Recording &ReturnData, bool progr
     }
 
     if (!ATF_CloseFile(nFileNum)) {
-        wxString errorMsg(wxT("Exception while calling ATF_CloseFile():\n"));
-        errorMsg+=wxT("Error while closing ATF file");
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        std::string errorMsg("Exception while calling ATF_CloseFile():\n");
+        errorMsg += "Error while closing ATF file";
+        throw std::runtime_error(errorMsg);
     }
 #ifdef MODULE_ONLY
     if (progress) {

@@ -83,37 +83,37 @@ class StfDll Recording {
     //! Retrieves the file description.
     /*! \return The file description.
      */
-    const wxString& GetFileDescription() const { return file_description; }
+    const std::string& GetFileDescription() const { return file_description; }
 
     //! Retrieves the common section description.
     /*! \return The common section description.
      */
-    const wxString& GetGlobalSectionDescription() const { return global_section_description; }
+    const std::string& GetGlobalSectionDescription() const { return global_section_description; }
 
     //! Retrieves the scaling as a string.
     /*! \return A string containing the description.
      */
-    const wxString& GetScaling() const { return scaling; }
+    const std::string& GetScaling() const { return scaling; }
 
     //! Retrieves the time of recording as a string.
     /*! \return A string containing the time of recording.
      */
-    const wxString& GetTime() const { return time; }
+    const std::string& GetTime() const { return time; }
 
     //! Retrieves the date of recording as a string.
     /*! \return A string containing the date of recording.
      */
-    const wxString& GetDate() const { return date; }
+    const std::string& GetDate() const { return date; }
 
     //! Retrieves a comment string.
     /*! \return A string containing a comment.
      */
-    const wxString& GetComment() const { return comment; }
+    const std::string& GetComment() const { return comment; }
     
     //! Retrieves the x units.
     /*! \return The x units. Currently hard-coded to be "ms".
      */
-    const wxString& GetXUnits() const { return xunits; }
+    const std::string& GetXUnits() const { return xunits; }
 
     //! Retrieves the size of the channel array.
     /*! \return The size of the channel array.
@@ -542,45 +542,45 @@ class StfDll Recording {
     //! Sets the file description.
     /*! \param value The file description.
      */
-    void SetFileDescription(const wxString& value) { file_description=value; }
+    void SetFileDescription(const std::string& value) { file_description=value; }
 
     //! Sets the common section description.
     /*! \param value The common section description.
      */
-    void SetGlobalSectionDescription(const wxString& value) {
+    void SetGlobalSectionDescription(const std::string& value) {
         global_section_description=value;
     }
 
     //! Sets the scaling as a string.
     /*! \param value A string containing the description.
      */
-    void SetScaling(const wxString& value) { scaling=value; }
+    void SetScaling(const std::string& value) { scaling=value; }
  
     //! Sets the time of recording as a string.
     /*! \param value A string containing the time of recording.
      */
-    void SetTime(const wxString& value) { time=value; }
+    void SetTime(const std::string& value) { time=value; }
 
     //! Sets the date of recording as a string.
     /*! \param value A string containing the date of recording.
      */
-    void SetDate(const wxString& value) { date=value; }
+    void SetDate(const std::string& value) { date=value; }
 
     //! Sets a comment string.
     /*! \param value A string containing a comment.
      */
-    void SetComment(const wxString& value) { comment=value; }
+    void SetComment(const std::string& value) { comment=value; }
     
     //! Sets the y units for a channel.
     /*! \param n_channel The channel index for which to set the units.
      *  \param value A string containing the y units.
      */
-    void SetGlobalYUnits(std::size_t n_channel, const wxString& value);
+    void SetGlobalYUnits(std::size_t n_channel, const std::string& value);
 
     //! Sets the x units.
     /*! \param value A string containing the x units.
      */
-    void SetXUnits(const wxString& value) { xunits=value; }
+    void SetXUnits(const std::string& value) { xunits=value; }
 
     //! Sets the x scaling.
     /*! Note that setting the global x-scale will set it for all sections
@@ -930,14 +930,14 @@ class StfDll Recording {
 
  private:
     std::vector<Channel> ChannelArray;
-    wxString global_section_description, scaling;
+    std::string global_section_description, scaling;
 
 #ifdef MODULE_ONLY    
  public:
 #endif
     
     double dt;
-    wxString file_description, time, date, comment, xunits;
+    std::string file_description, time, date, comment, xunits;
 
  private:
 

@@ -46,7 +46,7 @@ public:
      */
     explicit Section(
             const Vector_double& valA,
-            const wxString& label=wxT("\0")
+            const std::string& label="\0"
     );
 
     //! Yet another constructor
@@ -55,7 +55,7 @@ public:
      */
     explicit Section(
             std::size_t size,
-            const wxString& label=wxT("\0")
+            const std::string& label="\0"
     );
 
     //! Destructor
@@ -129,12 +129,12 @@ public:
     //! Retrieves a section description.
     /*! \return A string describing this section.
      */
-    const wxString& GetSectionDescription() const { return section_description; }
+    const std::string& GetSectionDescription() const { return section_description; }
 
     //! Sets a section description.
     /*! \param value A string describing this section.
      */
-    void SetSectionDescription(const wxString& value) { section_description=value; }
+    void SetSectionDescription(const std::string& value) { section_description=value; }
 
 #ifndef MODULE_ONLY
     //! Retrieves a waveform of the evaluated best-fit function (read-only)
@@ -293,7 +293,7 @@ public:
     //Private members-------------------------------------------------------
 
     // A description that is specific to this section:
-    wxString section_description;
+    std::string section_description;
 
     // The sampling interval:
     double x_scale;

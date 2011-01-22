@@ -45,13 +45,13 @@ Recording::Recording(std::size_t c_n_channels, std::size_t c_n_sections, std::si
 }
 
 void Recording::init() {
-    file_description = wxT("\0");
-    global_section_description = wxT("\0");
-    scaling = wxT("\0");
-    time = wxT("\0");
-    date = wxT("\0");
-    comment = wxT("\0");
-    xunits =  wxT("ms") ;
+    file_description = "\0";
+    global_section_description = "\0";
+    scaling = "\0";
+    time = "\0";
+    date = "\0";
+    comment = "\0";
+    xunits =  "ms" ;
     dt = 1.0;
 
 #ifndef MODULE_ONLY
@@ -784,7 +784,12 @@ stf::Table Recording::CurAsTable() const {
             }
         }
         for (std::size_t nCol=0;nCol<table.nCols();++nCol) {
-            table.SetColLabel(nCol,ChannelArray.at(nCol).GetChannelName());
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
+            table.SetColLabel(nCol, ChannelArray.at(nCol).GetChannelName());
+#else
+            table.SetColLabel(nCol,
+                              wxString(ChannelArray.at(nCol).GetChannelName().c_str(), wxConvUTF8));
+#endif
         }
     }
     catch (const std::out_of_range& e) {

@@ -88,8 +88,12 @@ void stf::importABFFile(const wxString &fName, Recording &ReturnData, bool progr
 
     // Open file:
 #ifndef _WINDOWS
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     FILE* fh = fopen( fName.c_str(), "r" );
-	if (!fh) {
+#else
+    FILE* fh = fopen( fName.mb_str(), "r" );
+#endif
+    if (!fh) {
         std::string errorMsg("Exception while calling importABFFile():\nCouldn't open file");
         fclose(fh);
         throw std::runtime_error(errorMsg);
@@ -139,11 +143,20 @@ void stf::importABFFile(const wxString &fName, Recording &ReturnData, bool progr
     CloseHandle(hFile);
 #endif
     
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     if (CABF2ProtocolReader::CanOpen( (void*)&fileInfo, sizeof(fileInfo) )) {
         importABF2File( std::string(fName.c_str()), ReturnData, progress );
     } else {
         importABF1File( std::string(fName.c_str()), ReturnData, progress );
     }
+#else
+    if (CABF2ProtocolReader::CanOpen( (void*)&fileInfo, sizeof(fileInfo) )) {
+        importABF2File( std::string(fName.mb_str()), ReturnData, progress );
+    } else {
+        importABF1File( std::string(fName.mb_str()), ReturnData, progress );
+    }
+#endif
+
 }
 
 
@@ -201,7 +214,7 @@ void stf::importABF2File(const std::string &fName, Recording &ReturnData, bool p
         if (progress) {
 #ifndef MODULE_ONLY
             int progbar = (int)(((double)nChannel/(double)numberChannels)*100.0);
-            progDlg.Update(progbar, "Memory allocation");
+            progDlg.Update(progbar, wxT("Memory allocation"));
 #endif
         }
         ABFLONG grandsize = pFH->lNumSamplesPerEpisode / numberChannels;
@@ -210,7 +223,13 @@ void stf::importABF2File(const std::string &fName, Recording &ReturnData, bool p
 #ifdef MODULE_ONLY
                << fName
 #else
+            
+    #if wxCHECK_VERSION(2, 9, 0)
                << stf::noPath(fName)
+    #else
+               << stf::noPath(wxString(fName.c_str(), wxConvUTF8))
+    #endif
+            
 #endif
                << ", gapfree section";
         if (gapfree) {
@@ -228,8 +247,12 @@ void stf::importABF2File(const std::string &fName, Recording &ReturnData, bool p
                     
                 std::string segstring("Gapfree file is too large for a single section." \
                                    "It will be segmented.\nFile opening may be very slow.");
-#ifndef MODULE_ONLY        
+#ifndef MODULE_ONLY
+    #if wxCHECK_VERSION(2, 9, 0)
                 wxMessageBox(segstring,wxT("Information"), wxOK | wxICON_WARNING, NULL);
+    #else
+                wxMessageBox(wxString(segstring.c_str(), wxConvUTF8),wxT("Information"), wxOK | wxICON_WARNING, NULL);
+    #endif            
 #else
                 std::cout << segstring << std::endl;
 #endif
@@ -305,7 +328,13 @@ void stf::importABF2File(const std::string &fName, Recording &ReturnData, bool p
 #ifdef MODULE_ONLY
                     << fName
 #else
-                    << stf::noPath(fName)
+
+    #if wxCHECK_VERSION(2, 9, 0)
+               << stf::noPath(fName)
+    #else
+                    << stf::noPath(wxString(fName.c_str(), wxConvUTF8))
+    #endif
+
 #endif
                     << ", Section # " << nEpisode;
                 Section TempSectionT(TempSection.size(),label.str());
@@ -446,8 +475,8 @@ void stf::importABF1File(const std::string &fName, Recording &ReturnData, bool p
                           (double)(dwEpisode-1)/(double)numberSections*(100.0/numberChannels));
 #ifndef MODULE_ONLY
                 wxString progStr;
-                progStr << "Reading channel #" << nChannel + 1 << " of " << numberChannels
-                    << ", Section #" << dwEpisode << " of " << numberSections;
+                progStr << wxT("Reading channel #") << nChannel + 1 << wxT(" of ") << numberChannels
+                        << wxT(", Section #") << dwEpisode << wxT(" of ") << numberSections;
                 progDlg.Update(progbar, progStr);
 #else
                 std::cout << "\r"; // Remove previous entry
@@ -486,7 +515,13 @@ void stf::importABF1File(const std::string &fName, Recording &ReturnData, bool p
 #ifdef MODULE_ONLY
                 << fName
 #else
-                << stf::noPath(fName)
+
+    #if wxCHECK_VERSION(2, 9, 0)
+               << stf::noPath(fName)
+    #else
+                << stf::noPath(wxString(fName.c_str(), wxConvUTF8))
+    #endif
+            
 #endif
                 << ", Section # " << dwEpisode;
             Section TempSectionT(TempSection.size(),label.str());

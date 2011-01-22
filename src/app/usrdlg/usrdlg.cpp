@@ -16,11 +16,16 @@ wxStfUsrDlg::wxStfUsrDlg(
 		wxPoint pos,
 		wxSize size,
 		int style
+                
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
 ) : wxDialog( parent, id, input_.title, pos, size, style ),
-	input(input_),
-	retVec(input_.labels.size()),
-	m_textCtrlArray(input_.labels.size()),
-	m_staticTextArray(input_.labels.size())
+#else
+    ) : wxDialog( parent, id, wxString(input_.title.c_str(), wxConvUTF8), pos, size, style ),
+#endif
+    input(input_),
+    retVec(input_.labels.size()),
+    m_textCtrlArray(input_.labels.size()),
+    m_staticTextArray(input_.labels.size())
 {
 	wxFlexGridSizer* gSizer;
 	gSizer = new wxFlexGridSizer( (int)input.labels.size(), 2, 0, 0 );
@@ -30,7 +35,11 @@ wxStfUsrDlg::wxStfUsrDlg(
 			new wxStaticText(
 				this,
 				wxID_ANY,
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
 				input.labels[nRow],
+#else
+				wxString(input.labels[nRow].c_str(), wxConvUTF8),
+#endif
 				wxDefaultPosition,
 				wxDefaultSize,
 				wxTE_LEFT

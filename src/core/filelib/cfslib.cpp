@@ -229,7 +229,11 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
             "1024 characters.\n"
             );
     }
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     CFS_OFile CFSFile(std::string(fName.c_str()),std::string(WData.GetComment().c_str()),WData.size());
+#else
+    CFS_OFile CFSFile(std::string(fName.mb_str()), WData.GetComment(),WData.size());
+#endif
     if (CFSFile.myHandle<0) {
         std::string errorMsg;
         CFSError(errorMsg);
@@ -331,7 +335,11 @@ int stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progre
     
     std::string errorMsg;
     // Open old CFS File (read only) - see manual of CFS file system
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     CFS_IFile CFSFile(std::string(fName.c_str()));
+#else
+    CFS_IFile CFSFile(std::string(fName.mb_str()));
+#endif
     if (CFSFile.myHandle<0) {
         int err = CFSError(errorMsg);
         if (err==-7) {
@@ -448,8 +456,8 @@ int stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progre
                           (double)n_section/(double)dataSections*(100.0/channelsAvail));
 #ifndef MODULE_ONLY
                 wxString progStr;
-                progStr << "Reading channel #" << n_channel + 1 << " of " << channelsAvail
-                        << ", Section #" << n_section+1 << " of " << dataSections;
+                progStr << wxT("Reading channel #") << n_channel + 1 << wxT(" of ") << channelsAvail
+                        << wxT(", Section #") << n_section+1 << wxT(" of ") << dataSections;
                 progDlg.Update(progbar, progStr);
 #else
                 std::cout << "\r";

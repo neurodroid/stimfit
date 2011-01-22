@@ -237,8 +237,12 @@ void wxStfApp::ImportPython(const wxString &modulelocation) {
     python_import << wxT("sys.path.remove(\"") << python_path << wxT("\")\n");
     python_import << wxT("del sys\n");
 
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     PyRun_SimpleString(python_import);
-
+#else
+    PyRun_SimpleString(python_import.char_str());
+#endif
+    
 #endif
 
     // Release the Global Interpreter Lock
@@ -267,7 +271,12 @@ void wxStfParentFrame::RedirectStdio()
     python_redirect << wxT("del sys, wx\n");
 
     wxPyBlock_t blocked = wxPyBeginBlockThreads();
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     PyRun_SimpleString(python_redirect);
+#else
+    PyRun_SimpleString(python_redirect.char_str());
+#endif
+    
     wxPyEndBlockThreads(blocked);
 }
 
@@ -448,7 +457,7 @@ void wxStfApp::OnUserdef(wxCommandEvent& event) {
     int id = event.GetId()-ID_USERDEF;
 
     if (id>=GetExtensionLib().size() || id<0) {
-        wxString msg("Couldn't find extension function");
+        wxString msg(wxT("Couldn't find extension function"));
         ErrorMsg( msg );
         return;
     }
@@ -459,7 +468,7 @@ void wxStfApp::OnUserdef(wxCommandEvent& event) {
     // retrieve function
     PyObject* pPyFunc = (PyObject*)(GetExtensionLib()[id].pyFunc);
     if (!pPyFunc || !PyCallable_Check(pPyFunc)) {
-        wxString msg("Couldn't call extension function");
+        wxString msg(wxT("Couldn't call extension function"));
         ErrorMsg( msg );
         wxPyEndBlockThreads(blocked);
         return;
@@ -469,14 +478,14 @@ void wxStfApp::OnUserdef(wxCommandEvent& event) {
     PyObject* res = PyObject_CallObject(pPyFunc, NULL);
     if (!res) {
         PyErr_Print();
-        wxString msg("Function call failed");
+        wxString msg(wxT("Function call failed"));
         ErrorMsg( msg );
         wxPyEndBlockThreads(blocked);
         return;
     }
 
     if (res==Py_False) {
-        wxString msg("Function returned False");
+        wxString msg(wxT("Function returned False"));
         ErrorMsg( msg );
     }
     

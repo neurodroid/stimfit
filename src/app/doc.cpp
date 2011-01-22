@@ -351,9 +351,9 @@ void wxStfDoc::UpdateMenuCheckmarks() {
     // get menu bar:
     wxStfChildFrame *pChildFrame = (wxStfChildFrame*)GetDocumentWindow();
 	if (pChildFrame) {
-        wxMenuBar *pBar=pChildFrame->GetMenuBar();
 
 #if 0
+        wxMenuBar *pBar=pChildFrame->GetMenuBar();
         if (pBar) {
             pBar->FindItem(ID_LATENCYSTART_MAXSLOPE)->Check(GetLatencyStartMode()==stf::riseMode);
             pBar->FindItem(ID_LATENCYSTART_HALFRISE)->Check(GetLatencyStartMode()==stf::halfMode);
@@ -383,7 +383,11 @@ void wxStfDoc::PostInit() {
             channelNames.Alloc( size() );
             for (std::size_t n_c=0; n_c < size(); ++n_c) {
                 wxString channelStream;
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
                 channelStream << n_c << wxT(" (") << at(n_c).GetChannelName() << wxT(")");
+#else
+                channelStream << n_c << wxT(" (") << wxString(at(n_c).GetChannelName().c_str(), wxConvUTF8) << wxT(")");
+#endif                
                 channelNames.Add( channelStream );
             }
             pFrame->CreateComboChannels( channelNames );
@@ -514,17 +518,23 @@ bool wxStfDoc::OnNewDocument() {
 
 void wxStfDoc::Fileinfo(wxCommandEvent& WXUNUSED(event)) {
     //Create CFileOpenDlg object 'dlg'
-    wxString oss1, oss2;
+    std::ostringstream oss1, oss2;
     oss1 << wxT("Number of Channels: ") << static_cast<unsigned int>(get().size());
     oss2 << wxT("Number of Sweeps: ") << static_cast<unsigned int>(get()[GetCurCh()].size());
-    wxString general;
-    general+=wxT("Date:\n") + GetDate() + wxT("\n")+
-    wxT("Time:\n") + GetTime() + wxT("\n")+
-    oss1+wxT("\n") + oss2 + wxT("\n")+
-    wxT("Comment:\n") + GetComment();
+    std::ostringstream general;
+    general << wxT("Date:\n") << GetDate() << wxT("\n")
+            << wxT("Time:\n") << GetTime() << wxT("\n")
+            << oss1 << wxT("\n") << oss2 << wxT("\n")
+            << wxT("Comment:\n") << GetComment();
 
-    wxStfFileInfoDlg dlg( GetDocumentWindow(), general, GetFileDescription(),
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
+    wxStfFileInfoDlg dlg( GetDocumentWindow(), general.str(), GetFileDescription(),
             GetGlobalSectionDescription() );
+#else
+                          wxStfFileInfoDlg dlg( GetDocumentWindow(), wxString(general.str().c_str(), wxConvUTF8),
+                                                wxString(GetFileDescription().c_str(), wxConvUTF8),
+                                                wxString(GetGlobalSectionDescription().c_str(), wxConvUTF8) );
+#endif                          
     dlg.ShowModal();
 }
 
@@ -593,7 +603,11 @@ Recording wxStfDoc::ReorderChannels() {
          cit != get().end() && it != channelNames.end();
          cit++)
     {
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
         *it = cit->GetChannelName();
+#else
+        *it = wxString(cit->GetChannelName().c_str(), wxConvUTF8);
+#endif
         it++;
     }
     std::vector<int> channelOrder(size());
@@ -823,7 +837,12 @@ void wxStfDoc::Concatenate(wxCommandEvent &WXUNUSED(event)) {
         n_s++;
     }
     TempSection.SetSectionDescription(
-            wxString(GetTitle()+wxT(", concatenated"))
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
+                                      wxString(GetTitle()+wxT(", concatenated"))
+#else
+                                      std::string(GetTitle().mb_str())+
+                                      std::string(", concatenated")
+#endif
     );
     Channel TempChannel(TempSection);
     Recording Concatenated(TempChannel);
@@ -921,7 +940,12 @@ void wxStfDoc::CreateAverage(
     for (c_ch_it cit = get().begin(); cit != get().end(); cit++) {
         Section TempSection(average_size), TempSig(average_size);
         MakeAverage(TempSection, TempSig, n_c, GetSelectedSections(), calcSD, shift);
-        TempSection.SetSectionDescription( wxString(GetTitle()+wxT(", average")) );
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
+        TempSection.SetSectionDescription(GetTitle()+std::string(", average"));
+#else
+        TempSection.SetSectionDescription(std::string(GetTitle().mb_str())
+                                          +std::string(", average"));
+#endif
         Channel TempChannel(TempSection);
         TempChannel.SetChannelName(cit->GetChannelName());
         try {
@@ -1066,7 +1090,7 @@ void wxStfDoc::LnTransform(wxCommandEvent& WXUNUSED(event)) {
                        log);
 #endif
         TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
-                wxT(", transformed (ln)") );
+                                           ", transformed (ln)");
         try {
             TempChannel.InsertSection(TempSection,n);
         }
@@ -1088,7 +1112,12 @@ void wxStfDoc::Viewtable(wxCommandEvent& WXUNUSED(event)) {
     wxBusyCursor wc;
     try {
         wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
         pFrame->ShowTable(CurAsTable(),cur().GetSectionDescription());
+#else
+        pFrame->ShowTable(CurAsTable(),
+                          wxString(cur().GetSectionDescription().c_str(), wxConvUTF8));
+#endif        
     }
     catch (const std::out_of_range& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -1102,10 +1131,10 @@ void wxStfDoc::Multiply(wxCommandEvent& WXUNUSED(event)) {
         return;
     }
     //insert standard values:
-    std::vector<wxString> labels(1);
+    std::vector<std::string> labels(1);
     Vector_double defaults(labels.size());
-    labels[0]=wxT("Multiply with:");defaults[0]=1;
-    stf::UserInput init(labels,defaults,wxT("Set factor"));
+    labels[0]="Multiply with:";defaults[0]=1;
+    stf::UserInput init(labels,defaults,"Set factor");
 
     wxStfUsrDlg MultDialog(GetDocumentWindow(),init);
     if (MultDialog.ShowModal()!=wxID_OK) return;
@@ -1120,7 +1149,7 @@ void wxStfDoc::Multiply(wxCommandEvent& WXUNUSED(event)) {
         Section TempSection(stf::vec_scal_mul(get()[GetCurCh()][*cit].get(),factor));
         TempSection.SetSectionDescription(
                 get()[GetCurCh()][*cit].GetSectionDescription()+
-                wxT(", multiplied")
+                ", multiplied"
         );
         try {
             TempChannel.InsertSection(TempSection,n);
@@ -1150,7 +1179,7 @@ bool wxStfDoc::SubtractBase( ) {
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
         Section TempSection(stf::vec_scal_minus(get()[GetCurCh()][*cit].get(), GetSelectBase()[n]));
         TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
-                wxT(", baseline subtracted") );
+                                           ", baseline subtracted");
         try {
             TempChannel.InsertSection(TempSection,n);
         }
@@ -1253,10 +1282,10 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
     double threshold=0.0;
     if (SaveYtDialog.PrintThr()) {
         // Get threshold from user:
-        wxString thrS;
-        thrS << wxT("Threshold (") << at(GetCurCh()).GetYUnits() << wxT(")");
-        stf::UserInput Input( std::vector<wxString>(1, thrS),
-                Vector_double (1,0.0), wxT("Set threshold") );
+        std::ostringstream thrS;
+        thrS << "Threshold (" << at(GetCurCh()).GetYUnits() << ")";
+        stf::UserInput Input( std::vector<std::string>(1, thrS.str()),
+                Vector_double (1,0.0), "Set threshold");
         wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
         if (myDlg.ShowModal()!=wxID_OK) {
             return;
@@ -1354,7 +1383,12 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         std::size_t nCol=0;
         //Write the variables of the current channel in a string
         try {
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
             table.SetRowLabel(n_s,cur().GetSectionDescription());
+#else
+            table.SetRowLabel(n_s,
+                              wxString(cur().GetSectionDescription().c_str(), wxConvUTF8));
+#endif
             if (SaveYtDialog.PrintBase())
                 table.at(n_s,nCol++)=GetBase();
             if (SaveYtDialog.PrintBaseSD())
@@ -1453,7 +1487,7 @@ void wxStfDoc::OnAnalysisDifferentiate(wxCommandEvent &WXUNUSED(event)) {
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
         Section TempSection( stf::diff( get()[GetCurCh()][*cit].get(), GetXScale() ) );
         TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
-                wxT(", differentiated") );
+                ", differentiated");
         try {
             TempChannel.InsertSection(TempSection,n);
         }
@@ -1484,7 +1518,7 @@ bool wxStfDoc::OnNewfromselectedThis( ) {
         // Multiply the valarray in Data:
         Section TempSection(get()[GetCurCh()][*cit].get());
         TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
-                wxT(", new from selected") );
+                ", new from selected");
         try {
             TempChannel.InsertSection(TempSection,n);
         }
@@ -1514,11 +1548,11 @@ void wxStfDoc::Selectsome(wxCommandEvent &WXUNUSED(event)) {
         return;
     }
     //insert standard values:
-    std::vector<wxString> labels(2);
+    std::vector<std::string> labels(2);
     Vector_double defaults(labels.size());
-    labels[0]=wxT("Select every x-th trace:");defaults[0]=1;
-    labels[1]=wxT("Starting with the y-th:");defaults[1]=1;
-    stf::UserInput init(labels,defaults,wxT("Select every n-th (1-based)"));
+    labels[0]="Select every x-th trace:";defaults[0]=1;
+    labels[1]="Starting with the y-th:";defaults[1]=1;
+    stf::UserInput init(labels,defaults,"Select every n-th (1-based)");
 
     wxStfUsrDlg EveryDialog(GetDocumentWindow(),init);
     if (EveryDialog.ShowModal()!=wxID_OK) return;
@@ -1546,11 +1580,11 @@ void wxStfDoc::Unselectsome(wxCommandEvent &WXUNUSED(event)) {
         return;
     }
     //insert standard values:
-    std::vector<wxString> labels(2);
+    std::vector<std::string> labels(2);
     Vector_double defaults(labels.size());
-    labels[0]=wxT("Unselect every x-th trace:");defaults[0]=1;
-    labels[1]=wxT("Starting with the y-th:");defaults[1]=1;
-    stf::UserInput init(labels,defaults,wxT("Unselect every n-th (1-based)"));
+    labels[0]="Unselect every x-th trace:";defaults[0]=1;
+    labels[1]="Starting with the y-th:";defaults[1]=1;
+    stf::UserInput init(labels,defaults,"Unselect every n-th (1-based)");
 
     wxStfUsrDlg EveryDialog(GetDocumentWindow(),init);
     if (EveryDialog.ShowModal()!=wxID_OK) return;
@@ -1639,11 +1673,11 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
     }
 
     //--For details on the Fast Fourier Transform see NR in C++, chapters 12 and 13
-    std::vector<wxString> windowLabels(2);
+    std::vector<std::string> windowLabels(2);
     Vector_double windowDefaults(windowLabels.size());
-    windowLabels[0]=wxT("From point #:");windowDefaults[0]=0;
-    windowLabels[1]=wxT("To point #:");windowDefaults[1]=(int)cur().size()-1;
-    stf::UserInput initWindow(windowLabels,windowDefaults,wxT("Filter window"));
+    windowLabels[0]="From point #:";windowDefaults[0]=0;
+    windowLabels[1]="To point #:";windowDefaults[1]=(int)cur().size()-1;
+    stf::UserInput initWindow(windowLabels,windowDefaults,"Filter window");
 
     wxStfUsrDlg FilterWindowDialog(GetDocumentWindow(),initWindow);
     if (FilterWindowDialog.ShowModal()!=wxID_OK) return;
@@ -1678,11 +1712,11 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
     case 2:
     case 3: {
         //insert standard values:
-        std::vector<wxString> labels(1);
+        std::vector<std::string> labels(1);
         Vector_double defaults(labels.size());
-        labels[0]=wxT("Cutoff frequency (kHz):");
+        labels[0]="Cutoff frequency (kHz):";
         defaults[0]=10;
-        stf::UserInput init(labels,defaults,wxT("Set frequency"));
+        stf::UserInput init(labels,defaults,"Set frequency");
 
         wxStfUsrDlg FilterHighLowDialog(GetDocumentWindow(),init);
         if (FilterHighLowDialog.ShowModal()!=wxID_OK) return;
@@ -1708,7 +1742,7 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
                     Section FftTemp(stf::filter(get()[GetCurCh()][*cit].get(),
                             llf,ulf,a,(int)GetSR(),stf::fgaussColqu,false));
                     FftTemp.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
-                                                   wxT(", filtered") );
+                                                   ", filtered");
                     TempChannel.InsertSection(FftTemp, n);
                     break;
                 }
@@ -1716,7 +1750,7 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
                     Section FftTemp(stf::filter(get()[GetCurCh()][*cit].get(),
                             llf,ulf,a,(int)GetSR(),stf::fbessel4,false));
                     FftTemp.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
-                                                   wxT(", filtered") );
+                                                   ", filtered" );
                     TempChannel.InsertSection(FftTemp, n);
                     break;
                 }
@@ -1724,7 +1758,7 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
                     Section FftTemp(stf::filter(get()[GetCurCh()][*cit].get(),
                             llf,ulf,a,(int)GetSR(),stf::fgauss,inverse));
                     FftTemp.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
-                                                   wxT(", filtered") );
+                                                   std::string(", filtered") );
                     TempChannel.InsertSection(FftTemp, n);
                     break;
                 }
@@ -1750,10 +1784,10 @@ void wxStfDoc::Spectrum(wxCommandEvent& WXUNUSED(event)) {
         return;
     }
     //insert standard values:
-    std::vector<wxString> labels(1);
+    std::vector<std::string> labels(1);
     Vector_double defaults(labels.size());
-    labels[0]=wxT("Number of periodograms:");defaults[0]=10;
-    stf::UserInput init(labels,defaults,wxT("Settings for Welch's method"));
+    labels[0]="Number of periodograms:";defaults[0]=10;
+    stf::UserInput init(labels,defaults, std::string("Settings for Welch's method"));
 
     wxStfUsrDlg SegDialog(GetDocumentWindow(),init);
     if (SegDialog.ShowModal()!=wxID_OK) return;
@@ -1776,7 +1810,7 @@ void wxStfDoc::Spectrum(wxCommandEvent& WXUNUSED(event)) {
             Section TempSection(stf::spectrum(temp,n_seg,f_s));
             TempSection.SetSectionDescription(
                     get()[GetCurCh()][*cit].GetSectionDescription()+
-                    wxT(", spectrum") );
+                    std::string(", spectrum"));
             TempChannel.InsertSection(TempSection,n);
         }
         catch (const std::runtime_error& e) {
@@ -1792,7 +1826,7 @@ void wxStfDoc::Spectrum(wxCommandEvent& WXUNUSED(event)) {
         Recording Fft(TempChannel);
         Fft.CopyAttributes(*this);
         double unit_f=f_s/GetXScale();
-        Fft[0].SetYUnits( at( GetCurCh() ).GetYUnits()+wxChar(-78));
+        Fft[0].SetYUnits( at( GetCurCh() ).GetYUnits()+char(-78));
         Fft.SetXScale(unit_f);
         wxGetApp().NewChild(Fft,this,GetTitle()+wxT(", spectrum"));
     }
@@ -1801,10 +1835,10 @@ void wxStfDoc::Spectrum(wxCommandEvent& WXUNUSED(event)) {
 
 void wxStfDoc::P_over_N(wxCommandEvent& WXUNUSED(event)){
     //insert standard values:
-    std::vector<wxString> labels(1);
+    std::vector<std::string> labels(1);
     Vector_double defaults(labels.size());
-    labels[0]=wxT("N = (mind polarity!)");defaults[0]=-4;
-    stf::UserInput init(labels,defaults,wxT("P over N"));
+    labels[0]="N = (mind polarity!)";defaults[0]=-4;
+    stf::UserInput init(labels,defaults,"P over N");
 
     wxStfUsrDlg PonDialog(GetDocumentWindow(),init);
     if (PonDialog.ShowModal()!=wxID_OK) return;
@@ -1838,9 +1872,9 @@ void wxStfDoc::P_over_N(wxCommandEvent& WXUNUSED(event)){
         for (int n_point=0; n_point < (int)get()[GetCurCh()][n_section].size(); n_point++)
             TempSection[n_point] = get()[GetCurCh()][n_section*(PoN+1)][n_point]-
                     TempSection[n_point]*ponDirection;
-        wxString povernLabel;
-        povernLabel << GetTitle() << wxT(", #") << n_section << wxT(", P over N");
-        TempSection.SetSectionDescription( povernLabel );
+        std::ostringstream povernLabel;
+        povernLabel << GetTitle() << ", #" << n_section << ", P over N";
+        TempSection.SetSectionDescription(povernLabel.str());
         try {
             TempChannel.InsertSection(TempSection,n_section);
         }
@@ -1892,7 +1926,7 @@ void wxStfDoc::Plotcriterion(wxCommandEvent& WXUNUSED(event)) {
                 stf::detectionCriterion( cur().get(), templateWave ) );
         if (TempSection.size()==0) return;
         TempSection.SetSectionDescription(
-                wxT("Detection criterion of ")+cur().GetSectionDescription()
+                                          std::string("Detection criterion of ")+cur().GetSectionDescription()
         );
         Channel TempChannel(TempSection);
         Recording detCrit(TempChannel);
@@ -1943,7 +1977,7 @@ void wxStfDoc::Plotcorrelation(wxCommandEvent& WXUNUSED(event)) {
         Section TempSection( stf::linCorr( cur().get(), templateWave ) );
         if (TempSection.size()==0) return;
         TempSection.SetSectionDescription(
-                wxT("Template correlation of ")+cur().GetSectionDescription() );
+                                          std::string("Template correlation of ") + cur().GetSectionDescription() );
         Channel TempChannel(TempSection);
         Recording detCrit(TempChannel);
         detCrit.CopyAttributes(*this);
@@ -2073,9 +2107,9 @@ void wxStfDoc::Extract( wxCommandEvent& WXUNUSED(event) ) {
                         index = cur().size()-1;
                     TempSection2[n_new] = cur()[index];
                 }
-                wxString eventDesc;
-                eventDesc << wxT( "Extracted event #" ) << (int)n_real;
-                TempSection2.SetSectionDescription(eventDesc);
+                std::ostringstream eventDesc;
+                eventDesc << "Extracted event #" << (int)n_real;
+                TempSection2.SetSectionDescription(eventDesc.str());
                 TempChannel2.InsertSection( TempSection2, n_real );
                 n_real++;
                 lastEventIt = it;
@@ -2162,10 +2196,10 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
 void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
     // get threshold from user input:
     Vector_double threshold(0);
-    wxString thrS;
-    thrS << wxT("Threshold (") << at(GetCurCh()).GetYUnits() << wxT(")");
-    stf::UserInput Input( std::vector<wxString>(1, thrS),
-                          Vector_double (1,0.0), wxT("Set threshold") );
+    std::ostringstream thrS;
+    thrS << "Threshold (" << at(GetCurCh()).GetYUnits() << wxT(")");
+    stf::UserInput Input( std::vector<std::string>(1, thrS.str()),
+                          Vector_double (1,0.0), "Set threshold" );
     wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
     if (myDlg.ShowModal()!=wxID_OK) {
         return;

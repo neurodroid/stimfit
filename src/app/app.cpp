@@ -105,9 +105,9 @@ void wxStfApp::OnInitCmdLine(wxCmdLineParser& parser)
 {
     wxApp::OnInitCmdLine(parser);
 
-    parser.AddOption("d", "dir",
-                     "Working directory to change to", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
-    parser.AddParam("File to open",
+    parser.AddOption(wxT("d"), wxT("dir"),
+                     wxT("Working directory to change to"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+    parser.AddParam(wxT("File to open"),
                     wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
 }
 
@@ -120,14 +120,14 @@ bool wxStfApp::OnCmdLineParsed(wxCmdLineParser& parser)
         // Check whether the directory exists:
         if ( !wxDirExists( new_cwd ) ) {
             wxString msg;
-            msg << "New working directory " << new_cwd << " doesn't exist.";
+            msg << wxT("New working directory ") << new_cwd << wxT(" doesn't exist.");
             ErrorMsg( msg );
             return false;
         }
         // Change to the new wd:
         if ( !wxSetWorkingDirectory( new_cwd ) ) {
             wxString msg;
-            msg << "Couldn't change working directory to " << new_cwd;
+            msg << wxT("Couldn't change working directory to ") << new_cwd;
             ErrorMsg( msg );
             return false;
         }
@@ -781,7 +781,12 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
 #endif
     wxMenu *extensions_menu = new wxMenu;
     for (std::size_t n=0;n<GetExtensionLib().size();++n) {
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
         extensions_menu->Append(ID_USERDEF+(int)n, GetExtensionLib()[n].menuEntry);
+#else
+        extensions_menu->Append(ID_USERDEF+(int)n,
+                                wxString(GetExtensionLib()[n].menuEntry.c_str(), wxConvUTF8));
+#endif        
     }
     
     wxMenu *help_menu = new wxMenu;
@@ -962,7 +967,7 @@ void wxStfApp::OnNewfromselected( wxCommandEvent& WXUNUSED(event) ) {
     wxStfDoc* pDoc=NULL;
 
     nwxT=0;
-    std::vector<std::vector<wxString> > channel_names(n_channels);
+    std::vector<std::vector<std::string> > channel_names(n_channels);
     while (curNode!=NULL) {
         pDoc=(wxStfDoc*)curNode->GetData();
         if (pDoc->GetSelectedSections().size() > 0) {
@@ -988,7 +993,7 @@ void wxStfApp::OnNewfromselected( wxCommandEvent& WXUNUSED(event) ) {
 
     // Set channel names:
     for (std::size_t n_c=0;n_c<n_channels;++n_c) {
-        wxString channel_name;
+        std::ostringstream channel_name;
         channel_name << channel_names[n_c][0];
         for (std::size_t n_n=1;n_n<channel_names[n_c].size();++n_n) {
             // add channel name if it hasn't been used yet:
@@ -996,13 +1001,13 @@ void wxStfApp::OnNewfromselected( wxCommandEvent& WXUNUSED(event) ) {
             for (int n_used=(int)n_n-1;n_used>=0 && !used;--n_used) {
                 // can't use size_t here because
                 // n_used might be negative when checking loop condition
-                used = ( channel_names[n_c][n_n].Cmp( channel_names[n_c][n_used] ) == 0 );
+                used = ( channel_names[n_c][n_n].compare( channel_names[n_c][n_used] ) == 0 );
             }
             if (!used) {
                 channel_name << wxT(", ") << channel_names[n_c][n_n];
             }
         }
-        Selected.get()[n_c].SetChannelName(channel_name);
+        Selected.get()[n_c].SetChannelName(channel_name.str());
     }
     // Copy some variables from the last document's recording
     // to the new recording:
@@ -1047,7 +1052,7 @@ void wxStfApp::OnNewfromall( wxCommandEvent& WXUNUSED(event) ) {
     curNode=docList.GetFirst();
     nwxT=0;
     wxStfDoc* pDoc=NULL;
-    std::vector<std::vector<wxString> > channel_names(n_channels);
+    std::vector<std::vector<std::string> > channel_names(n_channels);
     while (curNode!=NULL) {
         pDoc=(wxStfDoc*)curNode->GetData();
         if (pDoc->get()[pDoc->GetCurCh()].size() > 0) {
@@ -1070,7 +1075,7 @@ void wxStfApp::OnNewfromall( wxCommandEvent& WXUNUSED(event) ) {
 
     // Set channel names:
     for (std::size_t n_c=0;n_c<n_channels;++n_c) {
-        wxString channel_name;
+        std::ostringstream channel_name;
         channel_name << channel_names[n_c][0];
         for (std::size_t n_n=1;n_n<channel_names[n_c].size();++n_n) {
             // add channel name if it hasn't been used yet:
@@ -1078,13 +1083,13 @@ void wxStfApp::OnNewfromall( wxCommandEvent& WXUNUSED(event) ) {
             for (int n_used=(int)n_n-1;n_used>=0 && !used;--n_used) {
                 // can't use size_t here because
                 // n_used might be negative when checking loop condition
-                used = ( channel_names[n_c][n_n].Cmp( channel_names[n_c][n_used] ) == 0 );
+                used = ( channel_names[n_c][n_n].compare( channel_names[n_c][n_used] ) == 0 );
             }
             if (!used) {
                 channel_name << wxT(", ") << channel_names[n_c][n_n];
             }
         }
-        Selected.get()[n_c].SetChannelName(channel_name);
+        Selected.get()[n_c].SetChannelName(channel_name.str());
     }
 
     // Copy some variables from the last document's recording

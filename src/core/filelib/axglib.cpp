@@ -43,7 +43,12 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     // =====================================================================================================================
 
     // Open the example file
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     filehandle dataRefNum = OpenFile( fName.c_str() );
+#else
+    filehandle dataRefNum = OpenFile( fName.mb_str() );
+#endif
+    
     if ( dataRefNum == 0 )
     {
         errorMsg += "\n\nError: Could not find file.";
@@ -101,7 +106,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
             int progbar = (double)columnNumber/(double)numberOfColumns * 100.0;
 #ifndef MODULE_ONLY
             wxString progStr;
-            progStr << "Section #" << columnNumber << " of " << numberOfColumns-1;
+            progStr << wxT("Section #") << columnNumber << wxT(" of ") << numberOfColumns-1;
             bool skip = false;
             progDlg.Update(progbar, progStr, &skip);
             if (skip) {
