@@ -95,6 +95,10 @@ install-exec-hook:
 	cp -p $(srcdir)/src/stfswig/stfio.py ${PYTHON_SITE_PKG}/stfio
 	echo stfio > ${PYTHON_SITE_PKG}/stfio.pth
 
+uninstall-hook:
+	rm -f ${PYTHON_SITE_PKG}/stfio/_stfio.so
+	rm -f ${PYTHON_SITE_PKG}/stfio.pth
+
 else
 bin_PROGRAMS = stimfit
 stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
@@ -237,6 +241,9 @@ INCLUDES = $(PYTHON_ADDINCLUDES)
 stimfit_CXXFLAGS = $(OPT_CXXFLAGS)
 stimfit_LDFLAGS = $(WX_LIBS) $(LIBLAPACK_LDFLAGS) -lfftw3 -lhdf5 -lhdf5_hl $(PYTHON_ADDLDFLAGS)
 stimfit_LDADD = $(PYTHON_ADDLIBS) ./src/app/libstimfit.a
+
+install-exec-hook:
+	$(LIBTOOL) --finish $(prefix)/lib
 
 # wxMac resource fork/unbundled app
 stimfit.app: stimfit
