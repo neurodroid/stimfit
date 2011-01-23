@@ -183,7 +183,8 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
 
     // 2) Show zero-based index?
     pZeroIndex = new wxCheckBox( m_traceCounter, ID_ZERO_INDEX, wxT("Zero-based index") );
-    pZeroIndex->SetValue(false);
+    //pZeroIndex->SetValue(false);
+    pZeroIndex->SetValue(wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("Zeroindex"), 0));
 
     // Show selected
     pShowSelected = new wxCheckBox( m_traceCounter, ID_PLOTSELECTED, wxT("Show selected "));
@@ -389,12 +390,14 @@ void wxStfChildFrame::OnZeroIndex( wxCommandEvent& event) {
     
     // Check if  Zero-index is on
     if (pZeroIndex->GetValue()){
+        wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("Zeroindex"), 1); // write config
         sizemax--;
         pTraceCtrl->SetRange(0, sizemax);
         pTraceCtrl->SetValue(pTraceCtrl->GetValue()-1);
         
     }
     else {
+        wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("Zeroindex"), 0); 
         sizemax++;
         pTraceCtrl->SetRange(0, sizemax);
         pTraceCtrl->SetValue(pTraceCtrl->GetValue()+1);

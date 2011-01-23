@@ -328,7 +328,7 @@ int wxStfApp::OnExit()
 }
 
 // "Fake" registry
-void wxStfApp::wxWriteProfileInt(const wxString& main,const wxString& sub, int value) const {
+void wxStfApp::wxWriteProfileInt(const wxString& main, const wxString& sub, int value) const {
     // create a wxConfig-compatible path:
     wxString path=wxT("/")+main+wxT("/")+sub;
     if (!config->Write(path,(long)value)) {
@@ -406,11 +406,17 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
              break;
 
          case stf::latency_cursor:
+             // Latency start mode
              actDoc->SetLatencyBeg(CursorsDialog->GetCursor1L());
-             actDoc->SetLatencyEnd(CursorsDialog->GetCursor2L());
              // set latency mode in wxStfDoc
              actDoc->SetLatencyStartMode(CursorsDialog->GetLatencyStartMode() );
+             // write latency start mode in Stimfit Profile
+             wxWriteProfileInt(wxT("Settings"), wxT("LatencyStartMode"), CursorsDialog->GetLatencyStartMode() );
+            
+             // Latency end mode
+             actDoc->SetLatencyEnd(CursorsDialog->GetCursor2L());
              actDoc->SetLatencyEndMode(CursorsDialog->GetLatencyEndMode() );
+             wxWriteProfileInt(wxT("Settings"), wxT("LatencyEndMode"), CursorsDialog->GetLatencyEndMode() );
              break;
             
          
@@ -474,6 +480,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
         wxString wxsSlope;
         wxsSlope << CursorsDialog->GetSlope();
         wxWriteProfileString(wxT("Settings"), wxT("Slope"), wxsSlope);
+
 
     }
 

@@ -96,7 +96,7 @@ bool stf::importFile(
             if (!txtImport.firstIsTime) {
                 ReturnData.SetXScale(1.0/txtImport.sr);
             }
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
+#if ( wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY) )
             if (ReturnData.size()>0)
                 ReturnData[0].SetYUnits(txtImport.yUnits.ToStdString());
             if (ReturnData.size()>1)
@@ -111,7 +111,7 @@ bool stf::importFile(
             break;
 #endif
         }
-#endif
+#endif // MODULE_ONLY
         default:
             throw std::runtime_error("Unknown file type");
         }

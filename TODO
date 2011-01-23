@@ -1,7 +1,17 @@
-This is my TODO list for Stimfit:
+This Jose's TODO list for Stimfit:
 
 Thu Jan 20 09:59:57 CET 2011
 * Enable change threshold slope in Slope page of Cursor settings menu
 
 * Add python commands for the Slope calculation (setting cursors, getting slope, setting Delta T mode, etc..)
+
 * Add a column with the Slope results in the Batch analysis 
+
+
+Sat Jan 22 11:22:13 CET 2011
+* Enable writing of Latency cursors in Stimfit profile (check wxGetProfileInt and wxWriteProfileInt in wxStfApp). Additionaly, consider to write zero-based index too the configuration. (done)
+
+* Channel selection: when uncheking show, the scale bar/units are still on. Check in graph.cpp how to solve it.
+
+* Averages: There is some discrepancies in the average when using more than
+2 channels
