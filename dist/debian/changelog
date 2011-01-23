@@ -1,3 +1,9 @@
+stimfit (0.10.5-0ubuntu4) lucid; urgency=low
+
+  * Initial release for lucid (10.04).
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sun, 23 Jan 2011 16:24:41 +0000
+
 stimfit (0.10.5-0ubuntu4) maverick; urgency=low
 
   * Added build-arch to debian rules.
