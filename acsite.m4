@@ -125,6 +125,8 @@ $ac_distutils_result])
         if test -z "$PYTHON_SITE_PKG"; then
                 PYTHON_SITE_PKG=`$PYTHON -c "import distutils.sysconfig; \
                         print distutils.sysconfig.get_python_lib(0,0);"`
+                PYTHON_SITE_PKG=${ac_py_prefix}/${PYTHON_SITE_PKG}
+
         fi
         AC_MSG_RESULT([$PYTHON_SITE_PKG])
         AC_SUBST([PYTHON_SITE_PKG])

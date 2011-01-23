@@ -21,6 +21,10 @@ BUILDDATE=`date`
 AC_ARG_ENABLE([module], AC_HELP_STRING([--enable-module],[build a standalone python module; implies --enable-python]),[])
 AM_CONDITIONAL(BUILD_MODULE, test "$enable_module" = "yes")
 
+# Checks for debian package build.
+AC_ARG_WITH([py-prefix], 
+            AC_HELP_STRING([--with-py-prefix],[additional prefix for python packages]),
+            [ac_py_prefix=$withval],[ac_py_prefix=''])
 
 # Checks for python libraries.
 AC_ARG_ENABLE([python], AC_HELP_STRING([--enable-python],[enable python console]),[])
