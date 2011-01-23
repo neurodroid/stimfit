@@ -9,9 +9,9 @@ Thu Jan 20 09:59:57 CET 2011
 
 
 Sat Jan 22 11:22:13 CET 2011
-* Enable writing of Latency cursors in Stimfit profile (check wxGetProfileInt and wxWriteProfileInt in wxStfApp). Additionaly, consider to write zero-based index too the configuration. (done)
+* DONE (Jan 23 22:12:33 CET 2011) : Enable writing of Latency cursors in Stimfit profile (check wxGetProfileInt and wxWriteProfileInt in wxStfApp). Additionaly, consider to write zero-based index too the configuration. (done)
 
-* Channel selection: when uncheking show, the scale bar/units are still on. Check in graph.cpp how to solve it.
+Sun Jan 23 22:13:20 CET 2011
+* Remove red scalebar if channel is not selected: when uncheking show inactive channel , the red scale bar/units are still on. Check in graph.cpp how to solve it. wxStfGraph::CreateScale(&DC) is used to  create scale bars and labelings. If we use wxStfChildframe->ShowSecond() we can see the status of Show in Channel.
 
-* Averages: There is some discrepancies in the average when using more than
-2 channels
+* Averages: There is some discrepancies in the average when using more than 2 channels
