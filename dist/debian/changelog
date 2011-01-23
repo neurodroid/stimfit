@@ -1,3 +1,21 @@
+stimfit (0.10.5-0ubuntu4) maverick; urgency=low
+
+  * Added build-arch to debian rules.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sun, 23 Jan 2011 15:53:17 +0000
+
+stimfit (0.10.5-0ubuntu3) maverick; urgency=low
+
+  * Added source to upload.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sun, 23 Jan 2011 15:04:35 +0000
+
+stimfit (0.10.5-0ubuntu2) maverick; urgency=low
+
+  * Uploaded to wrong ppa.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sun, 23 Jan 2011 15:04:35 +0000
+
 stimfit (0.10.5-0ubuntu1) maverick; urgency=low
 
   * Initial release.

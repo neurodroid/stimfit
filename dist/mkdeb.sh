@@ -6,5 +6,5 @@ cp stimfit-0.10.5.tar.gz ../deb/stimfit_0.10.5.orig.tar.gz
 cd ../deb/
 tar -xzf stimfit_0.10.5.orig.tar.gz
 cd stimfit-0.10.5
-debuild -S
+debuild -S -sa
 sudo pbuilder build ../*.dsc

@@ -42,7 +42,10 @@ install: build
 	$(MAKE) prefix=`pwd`/debian/`dh_listpackages`/usr install
 
 # Build architecture-independent files here.
-binary: build install
+binary-indep: build install
+# We have nothing to do by default.
+
+binary-arch: build install
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs
@@ -75,5 +78,5 @@ binary: build install
 	dh_md5sums
 	dh_builddeb
 
-
-.PHONY: build clean binary install
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install
