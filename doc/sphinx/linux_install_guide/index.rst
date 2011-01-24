@@ -17,6 +17,3 @@ Contents:
 
    moduleonly
    requirement
-   downloads
-   building
-   updates

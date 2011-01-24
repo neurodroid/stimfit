@@ -1,8 +1,8 @@
-*************
-Prerequisites
-*************
+****************
+Building Stimfit
+****************
 
-:Author: Jose Guzman
+:Author: Jose Guzman, Christoph Schmidt-Hieber
 :Date:    |today|
 
 This document describes how to install `Stimfit <http://www.stimfit.org>`_ |version| under GNU/Linux. The installation was tested on a GNU/Debian testing/unstable system, with a 2.6-based kernel and with support for Python 2.5. It should work on other Debian-based systems (e.g Ubuntu) as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) already installed in your system. Please, check that both versions match. For our installation we will use gcc-4.2.4 and the same version of g++.
@@ -11,23 +11,105 @@ This document describes how to install `Stimfit <http://www.stimfit.org>`_ |vers
 What we need before we start
 ============================
 
-For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ dependencies in just one line:
+For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build dependencies:
 
 ::
 
-    $ sudo apt-get install build-essential subversion libgtk2.0-dev libgl1-mesa-dev libglu1-mesa-dev libboost-dev liblapack-dev libfftw3-3 libfftw3-dev python-numpy libhdf5-serial-dev python-dev
+    $ sudo apt-get install libboost-dev \
+                           python-dev \
+                           python-numpy \
+                           libhdf5-serial-dev \
+                           swig \
+                           python-wxgtk2.8 \
+                           libwxgtk2.8-dev \
+                           fftw3-dev \
+                           liblapack-dev \
+                           mercurial \
+                           automake \
+			   autoconf \
+ 			   libtool
 
-To install and run `Stimfit <http://www.stimfit.org>`_ propertly under GNU/Linux, we first need the following packages:
+This will get you, amongst others:
 
-* The current `Stimfit <http://www.stimfit.org>`_ version. You can simply visit the download section of the `Stimfit webpage <http://www.stimfit.org/>`_ and download the Version |version| for **GNU/Linux**.
-* [wxWidgets]_ and [wxPython]_ 2.9 (unstable): Need to be built from source at present. wxWidgets/wxPython 2.8 won't work.
-* Additional dependencies for wxWidgets, such as the development libraries for GTK+ and the Opengl. Both are necessary for the wxWidgets library to work properly.
-* Additional dependencies for `Stimfit <http://www.stimfit.org>`_: you will need some additional packages to build and run `Stimfit <http://www.stimfit.org>`_. For example [boost]_, which is used internally by `Stimfit <http://www.stimfig.org>`_ for shared pointers (we need versions 1.33 or later). [Lapack]_ is needed for solving systems of linear equations. [HDF5]_ is needed for binary file handling. Additionaly, you will need [fftw]_ to perform the Fourier transformations (version 3.1 or later). Finally, if you want to use `Stimfit <http://www.stimfit.org>`_ with the embedded Python shell, we will need [NumPy]_, which allows to work with multidimensional arrays and perform complex numerical methods with Python.
+* [boost]_: C++ library that is mainly used for its shared pointers.
+* [Lapack]_: A linear algebra library.
+* [fftw]_:  Library for computing Fourier transformations.
+* [NumPy]_: To handle multidimensional arrays and perform more complex numerical computations with Python.
+* [HDF5]_: This is the hierarchical Data Format 5 (HDF5) to manage large amount of data.
 
+=======================
+Optional: wxWidgets 2.9
+=======================
 
-.. [wxWidgets] http://www.wxwidgets.org/
-.. [wxPython] http://www.wxpython.org/
-.. [boost] http://www.boost.org/
+* [wxWidgets]_ and [wxPython]_ 2.9 (unstable): If you'd like to live on the bleeding edge and get decent printing support through gtk-print, you can build against wxWidgets 2.9, which in turn needs to be built from source. To get the build dependencies (which are the same as for 2.8), do:
+
+::
+
+    $  sudo apt-get build-dep wxwidgets2.8
+
+Get the source for both wxWidgets and wxPython in a single tarball:
+
+::
+
+    $ wget http://downloads.sourceforge.net/wxpython/wxPython-src-2.9.1.1.tar.bz2
+    $ tar xvfj wxPython-src-2.9.1.1.tar.bz2
+
+Check http://www.wxpython.org/download.php#unstable for updates.
+
+From there, follow the build instructions found `here <http://www.wxpython.org/builddoc.php>`_
+
+================================
+Download the Stimfit source code
+================================
+
+You can download the latest development code for Stimfit from the Google code repository. In your home directory ($HOME)
+
+::
+
+    $ hg clone https://stimfit.googlecode.com/hg/ stimfit 
+
+This will grab all the required files into $HOME/stimfit. If you'd like to update at a later point, do:
+
+::
+
+    $ cd $HOME/stimfit
+    $ hg -v pull -u
+
+=============
+Build Stimfit
+=============
+
+Go to the stimfit directory (in our example $HOME/stimfit) and type:
+
+::
+
+    $ ./autogen.sh
+
+to generate the configure script. Remember that we need Autoconf, Automake and LibTool to use autogen. After that, you can call it with
+
+::
+
+    $ ./configure --enable-python
+
+The configure script has some additional options. For example, we may want to use `IPython <http://www.scipy.org>`_  instead of the default embedded python shell with the option **---enable-ipython**  (note that the `IPython <http://www.scipy.org>`_ shell is only available under GNU/Linux and it is still very experimental). 
+
+Finally, after running configure, you can type
+
+::
+
+    $ make -j[N]
+
+where [N] is the number of parallel builds you want to start. And finally:
+
+::
+
+    $ sudo make install
+    $ sudo ldconfig
+
+.. [wxWidgets] http://www.wxwidgets.org
+.. [wxPython] http://www.wxpython.org
+.. [boost] http://www.boost.org
 .. [Lapack] http://www.netlib.org/lapack/
 .. [HDF5] http://www.hdfgroup.org/HDF5/
-.. [fftw] http://www.fftw.org/
+.. [NumPy] http://www.numpy.org
+.. [fftw] http://www.fftw.org
