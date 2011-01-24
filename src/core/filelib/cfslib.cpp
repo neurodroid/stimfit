@@ -229,7 +229,7 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
             "1024 characters.\n"
             );
     }
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
+#if (defined(MODULE_ONLY) || wxCHECK_VERSION(2, 9, 0))
     CFS_OFile CFSFile(std::string(fName.c_str()),std::string(WData.GetComment().c_str()),WData.size());
 #else
     CFS_OFile CFSFile(std::string(fName.mb_str()), WData.GetComment(),WData.size());

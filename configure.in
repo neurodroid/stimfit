@@ -85,8 +85,8 @@ case `uname` in
     ;;
     Linux)
         AC_MSG_RESULT(linux)
-        STF_PYTHON_LIBNAME="libstf.so.0.0.0"
-        STFIO_PYTHON_LIBNAME="libstfio.so.0.0.0"
+        STF_PYTHON_LIBNAME="libstf.so"
+        STFIO_PYTHON_LIBNAME="libstfio.so"
         CPPFLAGS="${CPPFLAGS} -D__LINUX__"
         STFKERNEL="linux"
     ;;
@@ -94,8 +94,8 @@ case `uname` in
         AC_MSG_RESULT(other)
         AC_MSG_WARN([Platforms other than GNU/Linux and Mac OS X are not actively supported 
                      by the configure script. Use Visual Studio 2008 to build on Windows.])
-        STF_PYTHON_LIBNAME="libstf.so.0.0.0"
-        STFIO_PYTHON_LIBNAME="libstfio.so.0.0.0"
+        STF_PYTHON_LIBNAME="libstf.so"
+        STFIO_PYTHON_LIBNAME="libstfio.so"
         STFKERNEL="other"
     ;;
 esac

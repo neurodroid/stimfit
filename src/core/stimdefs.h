@@ -62,6 +62,7 @@
     typedef std::string wxString;
     typedef int wxWindow;
     #define wxT(x)  x
+    #define wxCHECK_VERSION(major,minor,release) 0
 #endif
 
 
