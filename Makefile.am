@@ -1,7 +1,8 @@
 SUBDIRS = src
 
 if BUILD_MODULE
-lib_LTLIBRARIES = libstfio.la
+
+pkglib_LTLIBRARIES = libstfio.la
 
 PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
 PYTHON_ADDLDFLAGS = $(LIBPYTHON_LDFLAGS)
@@ -84,12 +85,12 @@ EXTRA_DIST = ./src/stfswig/stfioswig.i ./src/stfswig/stfio.py ./src/stfswig/unit
 
 libstfio_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
 libstfio_la_CXXFLAGS = $(OPT_CXXFLAGS)
-libstfio_la_LDFLAGS = -lhdf5 -lhdf5_hl $(PYTHON_ADDLDFLAGS)
+libstfio_la_LDFLAGS = -lhdf5 -lhdf5_hl $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
 libstfio_la_LIBADD = $(PYTHON_ADDLIBS)
 
 install-exec-hook:
 	$(MKDIR_P) ${PYTHON_SITE_PKG}/stfio
-	$(LN_S) -f ${prefix}/lib/${STFIO_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stfio/_stfio.so
+	ln -f ${prefix}/lib/stimfit/${STFIO_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stfio/_stfio.so
 	cp -p $(srcdir)/src/stfswig/hdf5tools.py ${PYTHON_SITE_PKG}/stfio
 	cp -p $(srcdir)/src/stfswig/stfio_plot.py ${PYTHON_SITE_PKG}/stfio
 	cp -p $(srcdir)/src/stfswig/stfio.py ${PYTHON_SITE_PKG}/stfio
@@ -102,7 +103,7 @@ uninstall-hook:
 else
 bin_PROGRAMS = stimfit
 stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
-	    ./src/core/core.cpp ./src/core/fitlib.cpp ./src/core/filelib/asciilib.cpp \
+	    ./src/core/core.cpp ./src/core/fitlib.cpp ./src/core/measlib.cpp ./src/core/filelib/asciilib.cpp \
 	    ./src/core/filelib/cfslib.cpp ./src/core/filelib/hdf5lib.cpp ./src/core/filelib/cfs.c \
             ./src/core/filelib/abflib.cpp ./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
             ./src/core/filelib/hekalib.cpp \

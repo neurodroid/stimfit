@@ -102,6 +102,10 @@ esac
 AC_SUBST(STF_PYTHON_LIBNAME)
 AC_SUBST(STFIO_PYTHON_LIBNAME)
 
+# Flags for getting libstf/libstfio into private directory
+LIBSTF_LDFLAGS="-Wl,-rpath,${prefix}/lib/stimfit -avoid-version"
+AC_SUBST(LIBSTF_LDFLAGS)
+
 AC_MSG_CHECKING(for cpu type)
 case `uname -p` in 
     powerpc)
