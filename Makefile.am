@@ -241,7 +241,7 @@ INCLUDES = $(PYTHON_ADDINCLUDES)
 
 stimfit_CXXFLAGS = $(OPT_CXXFLAGS)
 stimfit_LDFLAGS = $(WX_LIBS) $(LIBLAPACK_LDFLAGS) -lfftw3 -lhdf5 -lhdf5_hl $(PYTHON_ADDLDFLAGS)
-stimfit_LDADD = $(PYTHON_ADDLIBS) ./src/app/libstimfit.a
+stimfit_LDADD = $(PYTHON_ADDLIBS) $(LIBSTF_LDFLAGS) ./src/app/libstimfit.a
 
 install-exec-hook:
 	$(LIBTOOL) --finish $(prefix)/lib
