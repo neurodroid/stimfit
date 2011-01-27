@@ -164,6 +164,17 @@ void wxStfGraph::OnDraw( wxDC& DC )
 
     if ( !view || Doc()->get().empty() || !Doc()->IsInitialized() )
         return;
+
+    // ugly hack to force active document update:
+#if defined(__WXGTK__) || defined(__WXMAC__)
+    view->Activate(true);
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
+    if (!HasFocus())
+#else
+    if (wxWindow::FindFocus()==(wxWindow*)this)
+#endif
+        SetFocus();
+#endif
     wxRect WindowRect(GetRect());
 
     if (isPrinted) {
