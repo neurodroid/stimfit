@@ -252,7 +252,7 @@ stimfit_LDFLAGS = $(WX_LIBS) $(LIBLAPACK_LDFLAGS) -lfftw3 -lhdf5 -lhdf5_hl $(PYT
 stimfit_LDADD = $(PYTHON_ADDLIBS) $(LIBSTF_LDFLAGS) ./src/app/libstimfit.a
 
 install-exec-hook:
-	$(LIBTOOL) --finish $(deb_prefix)/$(prefix)/lib
+	$(LIBTOOL) --finish $(deb_prefix)/$(prefix)/lib/stimfit
 
 # wxMac resource fork/unbundled app
 stimfit.app: stimfit

@@ -17,8 +17,7 @@ clean:
 	rm -f build-stamp
 
 	# Add here commands to clean up after the build process.
-	rm -rf ./stimfit/.libs ./stimfit/_libs ./stimfit/.deps ./stimfit/.stimfit
-	rm -rf ./python-stfio/.libs ./python-stfio/_libs ./python-stfio/.deps
+	rm -rf ./.libs ./_libs ./.deps ./.stimfit
 	find -name '*.o' | xargs -r rm -f
 	find -name '*.lo' | xargs -r rm -f
 	find -name '*.a' | xargs -r rm -f
@@ -37,7 +36,7 @@ install: build
 	touch build-stamp
 
 	dh_testroot
-	dh_prep
+	# dh_prep
 	dh_installdirs
 
 # Build architecture-independent files here.
@@ -66,6 +65,7 @@ binary-arch: build install
 #	dh_bugfiles
 #	dh_undocumented
 	dh_installman
+	ls -la $(CURDIR)/debian/tmp/usr/lib/python-stfio
 	ls -la $(CURDIR)/debian/tmp/usr/lib/stimfit
 	dh_install --sourcedir=$(CURDIR)/debian/tmp
 	dh_link
