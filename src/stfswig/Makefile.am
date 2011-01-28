@@ -3,6 +3,7 @@ if BUILD_MODULE
 else
 if BUILD_PYTHON
 
+# pkglibdir = ${prefix}/lib/stimfit
 pkglib_LTLIBRARIES = libstf.la
 
 libstf_la_SOURCES = $(srcdir)/stfswig_wrap.cxx $(srcdir)/stfswig.cxx # $(SWIG_SOURCES)
@@ -21,7 +22,7 @@ EXTRA_DIST = stfswig.i ivtools.py mintools.py natools.py minidemo.py charlie.py 
 
 install-exec-hook:
 	$(MKDIR_P) ${PYTHON_SITE_PKG}/stimfit
-	ln -f ${prefix}/lib/stimfit/${STF_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stimfit/_stf.so
+	ln -f ${deb_prefix}/${prefix}/lib/stimfit/${STF_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stimfit/_stf.so
 	cp -p $(srcdir)/ivtools.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/mintools.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/natools.py ${PYTHON_SITE_PKG}/stimfit

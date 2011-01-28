@@ -2,6 +2,7 @@ SUBDIRS = src
 
 if BUILD_MODULE
 
+pkglibdir = ${prefix}/lib/python-stfio
 pkglib_LTLIBRARIES = libstfio.la
 
 PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
@@ -90,7 +91,7 @@ libstfio_la_LIBADD = $(PYTHON_ADDLIBS)
 
 install-exec-hook:
 	$(MKDIR_P) ${PYTHON_SITE_PKG}/stfio
-	ln -f ${prefix}/lib/stimfit/${STFIO_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stfio/_stfio.so
+	ln -f ${deb_prefix}/${prefix}/lib/python-stfio/${STFIO_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stfio/_stfio.so
 	cp -p $(srcdir)/src/stfswig/hdf5tools.py ${PYTHON_SITE_PKG}/stfio
 	cp -p $(srcdir)/src/stfswig/stfio_plot.py ${PYTHON_SITE_PKG}/stfio
 	cp -p $(srcdir)/src/stfswig/stfio.py ${PYTHON_SITE_PKG}/stfio
@@ -226,6 +227,13 @@ EXTRA_DIST+= ./macosx/scripts/conf_mac_release.sh
 EXTRA_DIST+= ./macosx/scripts/change_deps_release.sh
 EXTRA_DIST+= ./macosx/app.r
 EXTRA_DIST+= ./macosx/wxmac.icns
+EXTRA_DIST+= ./src/stfswig/stfioswig_wrap.cxx 
+EXTRA_DIST+= ./src/stfswig/stfioswig.cxx 
+EXTRA_DIST+= ./src/stfswig/stfioswig.i 
+EXTRA_DIST+= ./src/stfswig/stfio.py 
+EXTRA_DIST+= ./src/stfswig/stfio_plot.py 
+EXTRA_DIST+= ./src/stfswig/unittest_stfio.py
+EXTRA_DIST+= ./src/stfswig/stfioswig.h 
 
 if BUILD_PYTHON
     PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
@@ -244,7 +252,7 @@ stimfit_LDFLAGS = $(WX_LIBS) $(LIBLAPACK_LDFLAGS) -lfftw3 -lhdf5 -lhdf5_hl $(PYT
 stimfit_LDADD = $(PYTHON_ADDLIBS) $(LIBSTF_LDFLAGS) ./src/app/libstimfit.a
 
 install-exec-hook:
-	$(LIBTOOL) --finish $(prefix)/lib
+	$(LIBTOOL) --finish $(deb_prefix)/$(prefix)/lib
 
 # wxMac resource fork/unbundled app
 stimfit.app: stimfit

@@ -1,0 +1,6 @@
+usr/lib/python-stfio/lib*.so
+usr/lib/python-stfio/lib*.la
+usr/lib/python-stfio/lib*.a
+usr/lib/python2.*/dist-packages/stfio.pth
+usr/lib/python2.*/dist-packages/stfio/_*.so
+usr/lib/python2.*/dist-packages/stfio/*.py

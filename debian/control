@@ -15,3 +15,12 @@ Description: A program for viewing and analyzing electrophysiological data
  electrophysiological data. It features an embedded Python shell that
  allows you to extend the program functionality by using numerical
  libraries such as NumPy and SciPy.
+
+Package: python-stfio
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, python-numpy
+Recommends: python-matplotlib, python-scipy
+Description: A Python module to read common electrophysiology file formats.
+ The stfio module allows you to read common electrophysiology file formats
+ from Python. Axon binaries (abf), Axon text (atf), HEKA (dat),
+ CFS (dat/cfs), Axograph (axgd/axgx) are currently supported.

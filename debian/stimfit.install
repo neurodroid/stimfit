@@ -1,0 +1,7 @@
+usr/lib/stimfit/lib*.so
+usr/lib/stimfit/lib*.la
+usr/lib/stimfit/lib*.a
+usr/lib/python2.*/dist-packages/stimfit.pth
+usr/lib/python2.*/dist-packages/stimfit/_*.so
+usr/lib/python2.*/dist-packages/stimfit/*.py
+usr/bin/stimfit

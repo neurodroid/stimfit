@@ -11,21 +11,14 @@ build: build-stamp
 build-stamp:
 	dh_testdir
 
-	# Add here commands to compile the package.
-	./configure --enable-python --with-py-prefix=`pwd`/debian/`dh_listpackages`
-	$(MAKE)
-
-	touch build-stamp
-
 clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp
 
 	# Add here commands to clean up after the build process.
-	rm -rf ./.libs ./_libs
-	rm -rf ./.deps
-	rm -rf .stimfit
+	rm -rf ./stimfit/.libs ./stimfit/_libs ./stimfit/.deps ./stimfit/.stimfit
+	rm -rf ./python-stfio/.libs ./python-stfio/_libs ./python-stfio/.deps
 	find -name '*.o' | xargs -r rm -f
 	find -name '*.lo' | xargs -r rm -f
 	find -name '*.a' | xargs -r rm -f
@@ -33,13 +26,19 @@ clean:
 	dh_clean
 
 install: build
-	dh_testdir
+	./configure --prefix=/usr --enable-python --with-deb-prefix=$(CURDIR)/debian/tmp
+	$(MAKE)
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+
+	./configure --prefix=/usr --enable-module --with-deb-prefix=$(CURDIR)/debian/tmp
+	$(MAKE)
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+
+	touch build-stamp
+
 	dh_testroot
 	dh_prep
 	dh_installdirs
-
-	# Add here commands to install the package into debian/<packagename>.
-	$(MAKE) prefix=`pwd`/debian/`dh_listpackages`/usr install
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -67,6 +66,8 @@ binary-arch: build install
 #	dh_bugfiles
 #	dh_undocumented
 	dh_installman
+	ls -la $(CURDIR)/debian/tmp/usr/lib/stimfit
+	dh_install --sourcedir=$(CURDIR)/debian/tmp
 	dh_link
 	dh_compress
 	dh_fixperms
