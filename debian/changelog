@@ -1,3 +1,9 @@
+stimfit (0.10.7-0ubuntu1) maverick; urgency=low
+
+  * Fixed "Apply scaling to all windows"
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Thu, 27 Jan 2011 17:12:21 +0000
+
 stimfit (0.10.6-0ubuntu2) lucid; urgency=low
 
   * Fixed a bug when accessing files from the Python shell.

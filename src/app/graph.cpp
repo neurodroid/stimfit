@@ -2030,10 +2030,10 @@ void wxStfGraph::Fittowindow(bool refresh)
     }
     Vector_double::const_iterator max_el = std::max_element(Doc()->cur().get().begin(), Doc()->cur().get().end());
     Vector_double::const_iterator min_el = std::min_element(Doc()->cur().get().begin(), Doc()->cur().get().end());
-    double min=*min_el;
+    double min = *min_el;
     if (min>1.0e12)  min= 1.0e12;
     if (min<-1.0e12) min=-1.0e12;
-    double max=*max_el;
+    double max = *max_el;
     if (max>1.0e12)  max= 1.0e12;
     if (max<-1.0e12) max=-1.0e12;
     wxRect WindowRect(GetRect());
