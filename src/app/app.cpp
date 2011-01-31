@@ -1140,7 +1140,7 @@ void wxStfApp::OnApplytoall( wxCommandEvent& WXUNUSED(event) ) {
         wxStfDoc* OpenDoc=(wxStfDoc*)curNode->GetData();
         if (OpenDoc==NULL)
             return;
-        wxStfView* curView = GetActiveView(); //((wxStfView*)OpenDoc->GetFirstView());
+        wxStfView* curView = (wxStfView*)OpenDoc->GetFirstView(); //(GetActiveView());
         if (curView!=pView && curView!=NULL) {
             OpenDoc->GetXZoomW() = pDoc->GetXZoom();
             for ( std::size_t n_c=0; n_c < OpenDoc->size(); ++n_c ) {
