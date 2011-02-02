@@ -2,7 +2,7 @@ SUBDIRS = src
 
 if BUILD_MODULE
 
-pkglibdir = ${prefix}/lib/python-stfio
+pkglibdir = ${PYTHON_SITE_PKG}/stfio
 pkglib_LTLIBRARIES = libstfio.la
 
 PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
@@ -90,8 +90,9 @@ libstfio_la_LDFLAGS = -lhdf5 -lhdf5_hl $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
 libstfio_la_LIBADD = $(PYTHON_ADDLIBS)
 
 install-exec-hook:
-	$(MKDIR_P) ${PYTHON_SITE_PKG}/stfio
-	ln -f ${deb_prefix}/${prefix}/lib/python-stfio/${STFIO_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stfio/_stfio.so
+	mv ${PYTHON_SITE_PKG}/stfio/libstfio.so ${PYTHON_SITE_PKG}/stfio/_stfio.so
+	rm -f ${PYTHON_SITE_PKG}/stfio/*.la
+	rm -f ${PYTHON_SITE_PKG}/stfio/*.a
 	cp -p $(srcdir)/src/stfswig/hdf5tools.py ${PYTHON_SITE_PKG}/stfio
 	cp -p $(srcdir)/src/stfswig/stfio_plot.py ${PYTHON_SITE_PKG}/stfio
 	cp -p $(srcdir)/src/stfswig/stfio.py ${PYTHON_SITE_PKG}/stfio
