@@ -123,9 +123,12 @@ $ac_distutils_result])
         #
         AC_MSG_CHECKING([for Python site-packages path])
         if test -z "$PYTHON_SITE_PKG"; then
-                PYTHON_SITE_PKG=`$PYTHON -c "import distutils.sysconfig; \
-                        print distutils.sysconfig.get_python_lib(0,0);"`
-                PYTHON_SITE_PKG=${deb_prefix}/${PYTHON_SITE_PKG}
+                PYTHON_SITE_PKG=`$PYTHON -c \
+"import distutils.sysconfig; \
+acprefix = \"${prefix}\"
+if acprefix is \"NONE\": acprefix=\"/usr/local/\"
+print distutils.sysconfig.get_python_lib(0,0,prefix=acprefix);"`
+                PYTHON_SITE_PKG=${PYTHON_SITE_PKG}
 
         fi
         AC_MSG_RESULT([$PYTHON_SITE_PKG])
