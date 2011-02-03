@@ -16,6 +16,16 @@ Description: A program for viewing and analyzing electrophysiological data
  allows you to extend the program functionality by using numerical
  libraries such as NumPy and SciPy.
 
+Package: stimfit-dbg
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, python-wxgtk2.8 (>= 2.8.9), python-numpy
+Recommends: python-matplotlib, python-scipy, python-stfio
+Description: Debug symbols for stimfit
+ Stimfit is a free, fast and simple program for viewing and analyzing
+ electrophysiological data. It features an embedded Python shell that
+ allows you to extend the program functionality by using numerical
+ libraries such as NumPy and SciPy.
+
 Package: python-stfio
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, python-numpy

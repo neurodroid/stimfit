@@ -68,7 +68,7 @@ binary-arch: build install
 	dh_install --sourcedir=$(CURDIR)/debian/tmp
 	dh_link
 	dh_compress
-	dh_strip --dbg-packages=stimfit-dbg
+	dh_strip --dbg-package=stimfit-dbg
 	dh_fixperms
 #	dh_perl
 	dh_makeshlibs

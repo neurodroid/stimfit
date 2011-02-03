@@ -1,4 +1,4 @@
-usr/lib/python2.*/site-packages/stimfit.pth
-usr/lib/python2.*/site-packages/stimfit/*.so
-usr/lib/python2.*/site-packages/stimfit/*.py
+usr/lib/python2.*/dist-packages/stimfit.pth
+usr/lib/python2.*/dist-packages/stimfit/*.so
+usr/lib/python2.*/dist-packages/stimfit/*.py
 usr/bin/stimfit

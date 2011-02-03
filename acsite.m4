@@ -119,20 +119,34 @@ $ac_distutils_result])
         AC_SUBST([PYTHON_LDFLAGS])
 
         #
-        # Check for site packages
+        # Check for prefixed site packages
         #
-        AC_MSG_CHECKING([for Python site-packages path])
+        AC_MSG_CHECKING([for prefixed Python site-packages path])
         if test -z "$PYTHON_SITE_PKG"; then
                 PYTHON_SITE_PKG=`$PYTHON -c \
 "import distutils.sysconfig; \
 acprefix = \"${prefix}\"
 if acprefix is \"NONE\": acprefix=\"/usr/local/\"
-print distutils.sysconfig.get_python_lib(0,0,prefix=acprefix);"`
-                PYTHON_SITE_PKG=${PYTHON_SITE_PKG}
+print distutils.sysconfig.get_python_lib(0,1,prefix=acprefix);"`
+                PYTHON_SITE_PKG="${PYTHON_SITE_PKG}/dist-packages"
 
         fi
         AC_MSG_RESULT([$PYTHON_SITE_PKG])
         AC_SUBST([PYTHON_SITE_PKG])
+
+        #
+        # Check for unprefixed site packages path
+        #
+        AC_MSG_CHECKING([for unprefixed Python site-packages path])
+        if test -z "$PYTHON_DIST_PKG"; then
+                PYTHON_DIST_PKG=`$PYTHON -c \
+"import distutils.sysconfig; \
+print distutils.sysconfig.get_python_lib(0,0);"`
+                PYTHON_DIST_PKG=${PYTHON_DIST_PKG}
+
+        fi
+        AC_MSG_RESULT([$PYTHON_DIST_PKG])
+        AC_SUBST([PYTHON_DIST_PKG])
 
         #
         # Check if you have numpy, else fail
