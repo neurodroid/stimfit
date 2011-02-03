@@ -96,6 +96,7 @@ install-exec-hook:
 	cp -p $(srcdir)/src/stfswig/hdf5tools.py ${PYTHON_SITE_PKG}/stfio
 	cp -p $(srcdir)/src/stfswig/stfio_plot.py ${PYTHON_SITE_PKG}/stfio
 	cp -p $(srcdir)/src/stfswig/stfio.py ${PYTHON_SITE_PKG}/stfio
+	chmod -x ${PYTHON_SITE_PKG}/stfio/*
 	echo stfio > ${PYTHON_SITE_PKG}/stfio.pth
 
 uninstall-hook:

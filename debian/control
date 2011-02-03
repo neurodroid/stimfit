@@ -7,6 +7,8 @@ Standards-Version: 3.9.1
 Homepage: http://www.stimfit.org
 
 Package: stimfit
+Section: science
+Priority: optional
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, python-wxgtk2.8 (>= 2.8.9), python-numpy
 Recommends: python-matplotlib, python-scipy, python-stfio
@@ -17,8 +19,10 @@ Description: A program for viewing and analyzing electrophysiological data
  libraries such as NumPy and SciPy.
 
 Package: stimfit-dbg
+Section: debug
+Priority: extra
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, python-wxgtk2.8 (>= 2.8.9), python-numpy
+Depends: ${shlibs:Depends}, ${misc:Depends}, python-wxgtk2.8 (>= 2.8.9), python-numpy, stimfit
 Recommends: python-matplotlib, python-scipy, python-stfio
 Description: Debug symbols for stimfit
  Stimfit is a free, fast and simple program for viewing and analyzing
@@ -27,6 +31,8 @@ Description: Debug symbols for stimfit
  libraries such as NumPy and SciPy.
 
 Package: python-stfio
+Section: python
+Priority: optional
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, python-numpy
 Recommends: python-matplotlib, python-scipy

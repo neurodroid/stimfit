@@ -39,6 +39,7 @@ install-exec-hook:
 	cp -p $(srcdir)/embedded_ipython.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/heka.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/extensions.py ${PYTHON_SITE_PKG}/stimfit
+	chmod -x ${PYTHON_SITE_PKG}/stimfit/*
 	echo stimfit > ${PYTHON_SITE_PKG}/stimfit.pth
 
 uninstall-hook:
