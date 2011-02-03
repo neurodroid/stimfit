@@ -22,7 +22,9 @@ EXTRA_DIST = stfswig.i ivtools.py mintools.py natools.py minidemo.py charlie.py 
 
 install-exec-hook:
 	$(MKDIR_P) ${PYTHON_SITE_PKG}/stimfit
-	ln -f ${deb_prefix}/${prefix}/lib/stimfit/${STF_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stimfit/_stf.so
+	ln -sf ${prefix}/lib/stimfit/${STF_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stimfit/_stf.so
+	rm -f ${deb_prefix}/${prefix}/lib/stimfit/*.la
+	rm -f ${deb_prefix}/${prefix}/lib/stimfit/*.a
 	cp -p $(srcdir)/ivtools.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/mintools.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/natools.py ${PYTHON_SITE_PKG}/stimfit
@@ -39,6 +41,7 @@ install-exec-hook:
 	echo stimfit > ${PYTHON_SITE_PKG}/stimfit.pth
 
 uninstall-hook:
+	rm -rf ${deb_prefix}/${prefix}/lib/stimfit
 	rm -f ${PYTHON_SITE_PKG}/stimfit/_stf.so
 	rm -f ${PYTHON_SITE_PKG}/stimfit.pth
 
