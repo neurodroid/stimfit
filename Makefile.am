@@ -250,11 +250,11 @@ endif
 INCLUDES = $(PYTHON_ADDINCLUDES)
 
 stimfit_CXXFLAGS = $(OPT_CXXFLAGS)
-stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(LIBSTF_LDFLAGS) $(PYTHON_ADDLDFLAGS)
+stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
 stimfit_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lfftw3 -lhdf5 -lhdf5_hl ./src/app/libstimfit.a
 
 install-exec-hook:
-	$(LIBTOOL) --finish $(PYTHON_DIST_PKG)/stimfit
+	$(LIBTOOL) --finish $(PYTHON_SITE_PKG)/stimfit
 	rm -rf ${prefix}/lib/stimfit
 
 # wxMac resource fork/unbundled app
