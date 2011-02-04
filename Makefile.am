@@ -86,8 +86,8 @@ EXTRA_DIST = ./src/stfswig/stfioswig.i ./src/stfswig/stfio.py ./src/stfswig/unit
 
 libstfio_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
 libstfio_la_CXXFLAGS = $(OPT_CXXFLAGS)
-libstfio_la_LDFLAGS = -lhdf5 -lhdf5_hl $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
-libstfio_la_LIBADD = $(PYTHON_ADDLIBS)
+libstfio_la_LDFLAGS = $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
+libstfio_la_LIBADD = -lhdf5 -lhdf5_hl $(PYTHON_ADDLIBS)
 
 install-exec-hook:
 	mv ${PYTHON_SITE_PKG}/stfio/libstfio.so ${PYTHON_SITE_PKG}/stfio/_stfio.so
@@ -250,8 +250,8 @@ endif
 INCLUDES = $(PYTHON_ADDINCLUDES)
 
 stimfit_CXXFLAGS = $(OPT_CXXFLAGS)
-stimfit_LDFLAGS = $(WX_LIBS) $(LIBLAPACK_LDFLAGS) -lfftw3 -lhdf5 -lhdf5_hl $(PYTHON_ADDLDFLAGS)
-stimfit_LDADD = $(PYTHON_ADDLIBS) $(LIBSTF_LDFLAGS) ./src/app/libstimfit.a
+stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(LIBSTF_LDFLAGS) $(PYTHON_ADDLDFLAGS)
+stimfit_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lfftw3 -lhdf5 -lhdf5_hl ./src/app/libstimfit.a
 
 install-exec-hook:
 	$(LIBTOOL) --finish $(PYTHON_DIST_PKG)/stimfit

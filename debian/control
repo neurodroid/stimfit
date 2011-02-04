@@ -22,7 +22,7 @@ Package: stimfit-dbg
 Section: debug
 Priority: extra
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, python-wxgtk2.8 (>= 2.8.9), python-numpy, stimfit
+Depends: stimfit
 Recommends: python-matplotlib, python-scipy, python-stfio
 Description: Debug symbols for stimfit
  Stimfit is a free, fast and simple program for viewing and analyzing

@@ -36,10 +36,10 @@ if (test "$enable_python" = "yes") || (test "$enable_module" = "yes"); then
     SWIG_PYTHON
     AC_SUBST(SWIG)
     if test "$enable_module" = "yes" ; then
-        LIBSTF_LDFLAGS="-Wl,-rpath,${PYTHON_DIST_PKG}/stfio -avoid-version"
+        LIBSTF_LDFLAGS= "-Wl,-rpath,${PYTHON_DIST_PKG}/stfio -avoid-version"
         CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON -DMODULE_ONLY"
     else
-        LIBSTF_LDFLAGS="-Wl,-rpath,${PYTHON_DIST_PKG}/stimfit -avoid-version"
+        LIBSTF_LDFLAGS= "-Wl,-rpath,${PYTHON_DIST_PKG}/stimfit -avoid-version"
         CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON"
     fi
     CXXFLAGS="${CXXFLAGS}"

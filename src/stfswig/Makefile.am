@@ -16,7 +16,8 @@ INCLUDES = $(LIBNUMPY_INCLUDES)
 
 libstf_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
 libstf_la_CXXFLAGS = $(OPT_CXXFLAGS)
-libstf_la_LDFLAGS = $(WX_LIBS) $(LIBPYTHON_LDFLAGS) $(LIBSTF_LDFLAGS)
+libstf_la_LDFLAGS = $(LIBPYTHON_LDFLAGS) $(LIBSTF_LDFLAGS)
+libstf_la_LIBADD = $(WX_LIBS)
 
 EXTRA_DIST = stfswig.i ivtools.py mintools.py natools.py minidemo.py charlie.py stf.py mintools.py hdf5tools.py spells.py embedded_init.py embedded_stf.py embedded_ipython.py unittest_stfio.py heka.py extensions.py Doxyfile
 
