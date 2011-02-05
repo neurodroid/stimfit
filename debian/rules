@@ -7,6 +7,8 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+DEBPREFIX=$(CURDIR)/debian/tmp/usr
+
 build: build-stamp
 build-stamp:
 	dh_testdir
@@ -18,6 +20,7 @@ clean:
 
 	# Add here commands to clean up after the build process.
 	rm -rf ./.libs ./_libs ./.deps ./.stimfit
+	rm -rf $(CURDIR)/man
 	find -name '*.o' | xargs -r rm -f
 	find -name '*.lo' | xargs -r rm -f
 	find -name '*.a' | xargs -r rm -f
@@ -25,13 +28,18 @@ clean:
 	dh_clean
 
 install: build
-	./configure --enable-python --prefix=$(CURDIR)/debian/tmp/usr
+	./configure --enable-python --enable-debian --prefix=$(DEBPREFIX)
 	$(MAKE)
 	$(MAKE) install
 
-	./configure --enable-module --prefix=$(CURDIR)/debian/tmp/usr
+	./configure --enable-module --enable-debian --prefix=$(DEBPREFIX)
 	$(MAKE)
+	: Build manpages
 	$(MAKE) install
+
+	mkdir $(CURDIR)/man && \
+	  help2man --name="stimfit" --version-string 0.10.7 \
+	           --no-info --no-discard-stderr $(DEBPREFIX)/bin/stimfit >| ./man/stimfit.1
 
 	touch build-stamp
 
@@ -64,7 +72,7 @@ binary-arch: build install
 #	dh_lintian
 #	dh_bugfiles
 #	dh_undocumented
-	dh_installman
+	dh_installman $(CURDIR)/man/stimfit.1
 	dh_install --sourcedir=$(CURDIR)/debian/tmp
 	dh_link
 	dh_compress

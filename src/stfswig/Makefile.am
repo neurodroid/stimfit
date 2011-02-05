@@ -3,7 +3,6 @@ if BUILD_MODULE
 else
 if BUILD_PYTHON
 
-pkglibdir = ${PYTHON_SITE_PKG}/stimfit
 pkglib_LTLIBRARIES = libstf.la
 
 libstf_la_SOURCES = $(srcdir)/stfswig_wrap.cxx $(srcdir)/stfswig.cxx # $(SWIG_SOURCES)
@@ -21,12 +20,17 @@ libstf_la_LIBADD = $(WX_LIBS)
 
 EXTRA_DIST = stfswig.i ivtools.py mintools.py natools.py minidemo.py charlie.py stf.py mintools.py hdf5tools.py spells.py embedded_init.py embedded_stf.py embedded_ipython.py unittest_stfio.py heka.py extensions.py Doxyfile
 
+if BUILD_DEBIAN
+  LNTARGET="/usr/lib/stimfit/${STF_PYTHON_LIBNAME}"
+else
+  LNTARGET="${prefix}/lib/stimfit/${STF_PYTHON_LIBNAME}"
+endif
+
 install-exec-hook:
 	$(MKDIR_P) ${PYTHON_SITE_PKG}/stimfit
-	cd ${PYTHON_SITE_PKG}/stimfit/ && ln -sf ${STF_PYTHON_LIBNAME} ./_stf.so
-	cd ${abs_builddir}
-	rm -f ${PYTHON_SITE_PKG}/stimfit/*.la
-	rm -f ${PYTHON_SITE_PKG}/stimfit/*.a
+	cd ${PYTHON_SITE_PKG}/stimfit && ln -sf ${LNTARGET} _stf.so
+	rm -f ${prefix}/lib/stimfit/*.la
+	rm -f ${prefix}/lib/stimfit/*.a
 	cp -p $(srcdir)/ivtools.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/mintools.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/natools.py ${PYTHON_SITE_PKG}/stimfit
@@ -40,12 +44,13 @@ install-exec-hook:
 	cp -p $(srcdir)/embedded_ipython.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/heka.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/extensions.py ${PYTHON_SITE_PKG}/stimfit
-	chmod -x ${PYTHON_SITE_PKG}/stimfit/*
+	chmod -x ${PYTHON_SITE_PKG}/stimfit/*.py
 	echo stimfit > ${PYTHON_SITE_PKG}/stimfit.pth
 
 uninstall-hook:
 	rm -rf ${PYTHON_SITE_PKG}/stimfit
 	rm -f ${PYTHON_SITE_PKG}/stimfit.pth
+	rm -rf ${prefix}/lib/stimfit
 
 endif
 endif

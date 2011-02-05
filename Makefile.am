@@ -253,9 +253,15 @@ stimfit_CXXFLAGS = $(OPT_CXXFLAGS)
 stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
 stimfit_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lfftw3 -lhdf5 -lhdf5_hl ./src/app/libstimfit.a
 
+if BUILD_DEBIAN
+  LTTARGET=/usr/lib/stimfit
+else
+  LTTARGET=$(prefix)/lib/stimfit
+endif
+
 install-exec-hook:
-	$(LIBTOOL) --finish $(PYTHON_SITE_PKG)/stimfit
-	rm -rf ${prefix}/lib/stimfit
+	$(LIBTOOL) --finish $(LTTARGET)
+	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
 
 # wxMac resource fork/unbundled app
 stimfit.app: stimfit

@@ -1,29 +1,46 @@
-This work was packaged for Debian by:
+Format: http://dep.debian.net/deps/dep5/
+Upstream-Name: stimfit
+Upstream-Contact: Christoph Schmidt-Hieber <christsc@gmx.de>
+Source: http://code.google.com/p/stimfit/downloads/list
 
-    Christoph Schmidt-Hieber <christsc@gmx.de> on Sat, 22 Jan 2011 20:06:14 +0000
+Files: *
+Copyright: 2011, Christoph Schmidt-Hieber <christsc@gmx.de>
+License: GPL-2+
 
-It was downloaded from:
-
-    http://code.google.com/p/stimfit/downloads/list
-
-Upstream Author(s):
-
-    Christoph Schmidt-Hieber <christsc@gmx.de>
-
-Copyright:
-
-    Copyright (C) 2011 Christoph Schmidt-Hieber
-
+Files: src/core/filelib/axon/*
+Copyright: 1997, Axon Instruments <info@moldev.com>
 License:
+ Permission is granted to freely to use, modify and copy 
+ the code in this file.
 
-    GPLv2
+Files: src/core/filelib/axon2/*
+Copyright: 2005, Molecular Devices <info@moldev.com>
+License:
+ Permission is granted to freely to use, modify and copy 
+ the code in this file.
 
-The Debian packaging is:
+Files: src/core/levmar/*
+Copyright: 2004, Manolis Lourakis <lourakis@ics.forth.gr>
+License: GPL-2+
 
-    Copyright (C) 2011 Christoph Schmidt-Hieber <christsc@gmx.de>
-
-and is licensed under the GPL version 2,
-see "/usr/share/common-licenses/GPL-2".
-
-# Please also look if there are files or directories which have a
-# different copyright/license attached and list them here.
+License: GPL-2+
+ This program is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later
+ version.
+ .
+ This program is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ PURPOSE.  See the GNU General Public License for more
+ details.
+ .
+ You should have received a copy of the GNU General Public
+ License along with this package; if not, write to the Free
+ Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+ Boston, MA  02110-1301 USA
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 2 can be found in the file
+ `/usr/share/common-licenses/GPL-2'.
