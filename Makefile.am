@@ -236,6 +236,18 @@ EXTRA_DIST+= ./src/stfswig/stfio.py
 EXTRA_DIST+= ./src/stfswig/stfio_plot.py 
 EXTRA_DIST+= ./src/stfswig/unittest_stfio.py
 EXTRA_DIST+= ./src/stfswig/stfioswig.h 
+EXTRA_DIST+= ./debian/changelog
+EXTRA_DIST+= ./debian/compat
+EXTRA_DIST+= ./debian/control
+EXTRA_DIST+= ./debian/copyright
+EXTRA_DIST+= ./debian/docs
+EXTRA_DIST+= ./debian/mkdeb.sh
+EXTRA_DIST+= ./debian/python-stfio.files
+EXTRA_DIST+= ./debian/python-stfio.install
+EXTRA_DIST+= ./debian/rules
+EXTRA_DIST+= ./debian/stimfit.1
+EXTRA_DIST+= ./debian/stimfit.files
+EXTRA_DIST+= ./debian/stimfit.install
 
 if BUILD_PYTHON
     PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)

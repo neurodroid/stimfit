@@ -38,8 +38,7 @@ install: build
 	$(MAKE) install
 
 	mkdir $(CURDIR)/man && \
-	  help2man --name="stimfit" --version-string 0.10.7 \
-	           --no-info --no-discard-stderr $(DEBPREFIX)/bin/stimfit >| ./man/stimfit.1
+	  cp ./debian/stimfit.1 ./man/stimfit.1
 
 	touch build-stamp
 
