@@ -22,17 +22,12 @@
 #include <wx/wx.h>
 #endif
 
+#ifdef _WINDOWS
 #include <wx/image.h>
 #include <wx/clipbrd.h>
-#include <wx/dcps.h>
-#if 0
-#include "wx/dclatex.h"
-#endif
 #include <wx/metafile.h>
 #include <wx/printdlg.h>
 #include <wx/paper.h>
-#if wxCHECK_VERSION(2, 9, 0)
-#include <wx/dcsvg.h>
 #endif
 
 #ifdef _STFDEBUG
@@ -556,6 +551,26 @@ void wxStfGraph::DrawCrosshair( wxDC& DC, const wxPen& pen, const wxPen& printPe
 
 }
 
+double wxStfGraph::get_plot_xmin() const {
+    return -SPX()/XZ() * DocC()->GetXScale();
+}
+
+double wxStfGraph::get_plot_xmax() const {
+    wxRect WindowRect=GetRect();
+    int right=WindowRect.width;
+    return (right-SPX())/XZ() * DocC()->GetXScale();
+}
+
+double wxStfGraph::get_plot_ymin() const {
+    wxRect WindowRect=GetRect();
+    int top=WindowRect.height;
+    return (SPY()-top)/YZ();
+}
+
+double wxStfGraph::get_plot_ymax() const {
+    return SPY()/YZ();
+}
+
 void wxStfGraph::PlotTrace( wxDC* pDC, const Vector_double& trace, bool is2 ) {
     // speed up drawing by omitting points that are outside the window:
 
@@ -911,259 +926,6 @@ void wxStfGraph::DrawIntegral(wxDC* pDC) {
     pDC->SetBrush(zeroBrush);
     pDC->DrawPolygon((int)quadTrace.size(),&quadTrace[0]);
     pDC->SetBrush(*wxTRANSPARENT_BRUSH);
-}
-
-void wxStfGraph::Exportimage() {
-    wxFileDialog bmpDialog(
-            ParentFrame(),
-            wxT("Save image"),
-            wxT(""),
-            wxT(""),
-            wxT("TIFF image (*.tif)|*.tif|")
-            wxT("JPG image (*.jpg)|*.jpg|")
-            wxT("PNG image (*.png)|*.png"),
-            wxFD_SAVE
-    );
-    if (bmpDialog.ShowModal()!=wxID_OK) return;
-    std::vector<std::string> sizeStr(1);
-    sizeStr[0] = "Set width (in pixels):";
-    Vector_double defaultWidth(1);
-    defaultWidth[0]=GetRect().width;
-    wxStfUsrDlg sizeDlg(
-            ParentFrame(),
-            stf::UserInput(sizeStr,defaultWidth,"Change image size")
-    );
-    if (sizeDlg.ShowModal()!=wxID_OK) return;
-
-    double prop=(double)GetRect().height/(double)GetRect().width;
-    int newWidth=(int)sizeDlg.readInput()[0];
-    int newHeight=(int)(prop*newWidth);
-    if (newWidth<=0 || newHeight <=0) {
-        wxGetApp().ErrorMsg(wxT("Check size settings"));
-        return;
-    }
-    // Create a bitmap:
-    wxBitmap tempBmp;
-    tempBmp.Create(newWidth,newHeight,-1);
-    wxMemoryDC bmpDC;
-    bmpDC.SelectObject(tempBmp);
-    bmpDC.SetBrush(*wxWHITE_BRUSH);
-    bmpDC.SetPen(*wxWHITE_PEN);
-    bmpDC.DrawRectangle(0,0,bmpDC.GetSize().x,bmpDC.GetSize().y);
-    bmpDC.SetPen(*wxBLACK_PEN);
-    wxRect bmpRect(0,0,newWidth,newHeight);
-    double scale=(double)bmpRect.width/(double)GetRect().width;
-    set_isPrinted(true);
-    printScale=scale;
-    printRect=bmpRect;
-    no_gimmicks=true;
-    OnDraw(bmpDC);
-    set_isPrinted(false);
-    no_gimmicks=false;
-    switch (bmpDialog.GetFilterIndex()) {
-    case 0:
-        tempBmp.SaveFile(bmpDialog.GetPath(),wxBITMAP_TYPE_TIF );
-        break;
-    case 1:
-        tempBmp.SaveFile(bmpDialog.GetPath(),wxBITMAP_TYPE_JPEG );
-        break;
-    case 2:
-        tempBmp.SaveFile(bmpDialog.GetPath(),wxBITMAP_TYPE_PNG );
-        break;
-    default:
-        tempBmp.SaveFile(bmpDialog.GetPath(),wxBITMAP_TYPE_TIF );
-        break;
-    }
-}
-
-void wxStfGraph::Exportps() {
-    wxStfPreprintDlg myDlg(this,true);
-    if (myDlg.ShowModal()!=wxID_OK) return;
-
-    set_downsampling(myDlg.GetDownSampling());
-    set_noGimmicks(true);
-
-    wxFileDialog psFileDialog( this, wxT("Save postscript file"), wxT(""), wxT(""),
-            wxT("Postscript file (*.ps)|*.ps"), wxFD_SAVE );
-    if (psFileDialog.ShowModal()!=wxID_OK) return;
-
-    // Get size of Graph, in pixels:
-    wxRect screenRect(GetRect());
-
-    // Get size of page, in pixels:
-    // assuming the screen is ~ 96 dpi, but we want ~ 720:
-    printRect=wxRect( 0,0, (int)(GetRect().GetSize().GetWidth()*7.5),
-            (int)(GetRect().GetSize().GetHeight()*7.5) );
-
-    // Fit to width or fit to height?
-    // If the screenRect's proportion is wider than the printRect's,
-    // fit to width:
-
-    double scale=(double)screenRect.width/(double)printRect.width;
-
-    set_isPrinted(true);
-    printScale=scale;
-
-    wxPrintData print_d;
-    print_d.SetPaperSize(GetRect().GetSize());
-    print_d.SetOrientation(wxLANDSCAPE);
-
-    print_d.SetFilename(psFileDialog.GetPath());
-    print_d.SetPrintMode(wxPRINT_MODE_FILE);
-
-    wxPostScriptDC psdc(print_d);
-
-    psdc.StartDoc(wxT("printing..."));
-
-    // Tell it where to find the AFM files
-    // psdc.GetPrintData().SetFontMetricPath(wxT("afm/"));
-
-    OnDraw(psdc);
-    psdc.EndDoc();
-
-    set_isPrinted(false);
-    no_gimmicks=false;
-}
-
-void wxStfGraph::Exportlatex() {
-#if 0
-    wxStfPreprintDlg myDlg(this,true);
-    if (myDlg.ShowModal()!=wxID_OK) return;
-
-    set_downsampling(myDlg.GetDownSampling());
-    set_noGimmicks(true);
-
-    wxFileDialog latexFileDialog(
-            this,
-            wxT("Save LaTeX file"),
-            wxT(""),
-            wxT(""),
-            wxT("LaTeX file (*.tex)|*.tex"),
-            wxFD_SAVE
-    );
-    if (latexFileDialog.ShowModal()!=wxID_OK) return;
-
-    // Get size of Graph, in pixels:
-    wxRect screenRect(GetRect());
-
-    // Get size of page, in pixels:
-    // assuming the screen is ~ 96 dpi, but we want ~ 720:
-    double upscale = 4.0;
-    printRect=wxRect(
-            0,0,
-            (int)(GetRect().GetSize().GetWidth()*upscale),
-            (int)(GetRect().GetSize().GetHeight()*upscale)
-    );
-
-    // Fit to width or fit to height?
-    // If the screenRect's proportion is wider than the printRect's,
-    // fit to width:
-
-    double scale=(double)printRect.width/(double)screenRect.width;
-
-    set_isPrinted(true);
-    printScale=scale;
-
-    wxLatexDC latexDC(latexFileDialog.GetPath(),printRect.width,printRect.height,96.0*upscale);
-    isLatex = true;
-    OnDraw (latexDC);
-    isLatex = false;
-    set_isPrinted(false);
-
-    no_gimmicks=false;
-#endif
-}
-
-#if wxCHECK_VERSION(2, 9, 0)
-void wxStfGraph::Exportsvg() {
-    wxStfPreprintDlg myDlg(this,true);
-    if (myDlg.ShowModal()!=wxID_OK) return;
-
-    set_downsampling(myDlg.GetDownSampling());
-    set_noGimmicks(true);
-
-    wxFileDialog svgFileDialog(
-            this,
-            wxT("Save svg file"),
-            wxT(""),
-            wxT(""),
-            wxT("SVG file (*.svg)|*.svg"),
-            wxFD_SAVE
-    );
-    if (svgFileDialog.ShowModal()!=wxID_OK) return;
-
-    // Get size of Graph, in pixels:
-    wxRect screenRect(GetRect());
-
-    // Get size of page, in pixels:
-    // assuming the screen is ~ 96 dpi, but we want ~ 720:
-    double upscale = 7.5;
-    printRect=wxRect(
-            0,0,
-            (int)(GetRect().GetSize().GetWidth()*upscale),
-            (int)(GetRect().GetSize().GetHeight()*upscale)
-    );
-
-    // Fit to width or fit to height?
-    // If the screenRect's proportion is wider than the printRect's,
-    // fit to width:
-
-    double scale=(double)printRect.width/(double)screenRect.width;
-
-    set_isPrinted(true);
-    printScale=scale;
-
-    wxSVGFileDC svgDC(svgFileDialog.GetPath(),printRect.width,printRect.height,96.0*upscale);
-    OnDraw (svgDC);
-
-    set_isPrinted(false);
-
-    no_gimmicks=false;
-}
-#endif
-
-void wxStfGraph::Snapshot() {
-    std::vector<std::string> sizeStr(1);
-    sizeStr[0]="Set width (in pixels):";
-    Vector_double defaultWidth(1);
-    defaultWidth[0]=GetRect().width;
-    wxStfUsrDlg sizeDlg(
-            ParentFrame(),
-            stf::UserInput(sizeStr,defaultWidth,"Change image size")
-    );
-    if (sizeDlg.ShowModal()!=wxID_OK) return;
-
-    double prop=(double)GetRect().height/(double)GetRect().width;
-    int newWidth=(int)sizeDlg.readInput()[0];
-    int newHeight=(int)(prop*newWidth);
-    if (newWidth<=0 || newHeight <=0) {
-        wxGetApp().ErrorMsg(wxT("Check size settings"));
-        return;
-    }
-    // Create a bitmap:
-    wxBitmap tempBmp;
-    tempBmp.Create(newWidth,newHeight,-1);
-    wxMemoryDC bmpDC;
-    bmpDC.SelectObject(tempBmp);
-    bmpDC.SetPen(*wxWHITE_PEN);
-    bmpDC.SetBrush(*wxWHITE_BRUSH);
-    bmpDC.DrawRectangle(0,0,bmpDC.GetSize().x,bmpDC.GetSize().y);
-    bmpDC.SetPen(*wxBLACK_PEN);
-    wxRect bmpRect(0,0,newWidth,newHeight);
-    double scale=(double)bmpRect.width/(double)GetRect().width;
-    set_isPrinted(true);
-    printScale=scale;
-    printRect=bmpRect;
-    no_gimmicks=true;
-    OnDraw(bmpDC);
-    set_isPrinted(false);
-    no_gimmicks=false;
-    if (wxTheClipboard->Open()) {
-        wxTheClipboard->SetData(
-                new wxBitmapDataObject(tempBmp)
-        );
-        wxTheClipboard->Close();
-    }
 }
 
 #ifdef _WINDOWS

@@ -88,6 +88,10 @@ wxStfDoc* wxStfView::Doc() {
     return (wxStfDoc*)GetDocument();
 }
 
+wxStfDoc* wxStfView::DocC() const {
+    return (wxStfDoc*)GetDocument();
+}
+
 // Sneakily gets used for default print/preview
 // as well as drawing on the screen.
 void wxStfView::OnDraw(wxDC *WXUNUSED(pDC)) {

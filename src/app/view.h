@@ -80,6 +80,11 @@ public:
      */
     wxStfDoc* Doc();
 
+    //! Retrieve the attached document
+    /*! \return A pointer to the attached document.
+     */
+    wxStfDoc* DocC() const;
+
 protected:
     //! Called when the view is activated; dialogs and menus are then updated. 
     /*! \param activate true if this view is being activated.

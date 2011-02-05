@@ -280,7 +280,7 @@ void wxStfParentFrame::RedirectStdio()
     wxPyEndBlockThreads(blocked);
 }
 
-wxWindow* wxStfParentFrame::DoPythonStuff(wxWindow* parent)
+wxWindow* wxStfParentFrame::DoPythonStuff(wxWindow* parent, bool mpl)
 {
     // More complex embedded situations will require passing C++ objects to
     // Python and/or returning objects from Python to be used in C++.  This
@@ -316,7 +316,13 @@ wxWindow* wxStfParentFrame::DoPythonStuff(wxWindow* parent)
 
     // Now there should be an object named 'makeWindow' in the dictionary that
     // we can grab a pointer to:
-    PyObject* func = PyDict_GetItemString(globals, "makeWindow");
+    PyObject* func = NULL;
+    if (mpl) {
+        func = PyDict_GetItemString(globals, "makeWindowMpl");
+
+    } else {
+        func = PyDict_GetItemString(globals, "makeWindow");
+    }
     if (!PyCallable_Check(func)) {
         PyErr_Print();
         wxGetApp().ErrorMsg(wxT("Couldn't initialize window for the python shell"));

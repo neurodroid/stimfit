@@ -18,7 +18,7 @@ libstf_la_CXXFLAGS = $(OPT_CXXFLAGS)
 libstf_la_LDFLAGS = $(LIBPYTHON_LDFLAGS) $(LIBSTF_LDFLAGS)
 libstf_la_LIBADD = $(WX_LIBS)
 
-EXTRA_DIST = stfswig.i ivtools.py mintools.py natools.py minidemo.py charlie.py stf.py mintools.py hdf5tools.py spells.py embedded_init.py embedded_stf.py embedded_ipython.py unittest_stfio.py heka.py extensions.py Doxyfile
+EXTRA_DIST = stfswig.i ivtools.py mintools.py natools.py minidemo.py charlie.py stf.py mintools.py hdf5tools.py spells.py embedded_init.py embedded_stf.py embedded_mpl.py embedded_ipython.py unittest_stfio.py heka.py extensions.py Doxyfile
 
 if BUILD_DEBIAN
   LNTARGET="/usr/lib/stimfit/${STF_PYTHON_LIBNAME}"
@@ -38,9 +38,11 @@ install-exec-hook:
 	cp -p $(srcdir)/charlie.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/hdf5tools.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/stf.py ${PYTHON_SITE_PKG}/stimfit
+	cp -p $(srcdir)/stfio_plot.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/spells.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/embedded_init.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/embedded_stf.py ${PYTHON_SITE_PKG}/stimfit
+	cp -p $(srcdir)/embedded_mpl.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/embedded_ipython.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/heka.py ${PYTHON_SITE_PKG}/stimfit
 	cp -p $(srcdir)/extensions.py ${PYTHON_SITE_PKG}/stimfit

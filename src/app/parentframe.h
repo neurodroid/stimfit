@@ -150,7 +150,7 @@ private:
 #ifdef WITH_PYTHON
     wxString python_code2; // python import code
     void RedirectStdio();
-    wxWindow* DoPythonStuff(wxWindow* parent);
+    wxWindow* DoPythonStuff(wxWindow* parent, bool mpl=false);
 #endif
     // print data, to remember settings during the session
     boost::shared_ptr<wxPrintData> m_printData;
@@ -183,8 +183,6 @@ private:
     void OnToolRight(wxCommandEvent& event);
     void OnToolCh1(wxCommandEvent& event);
     void OnToolCh2(wxCommandEvent& event);
-    void OnToolSnapshot(wxCommandEvent& event);
-
 #ifdef _WINDOWS
     void OnToolSnapshotwmf(wxCommandEvent& event);
 #endif
@@ -211,20 +209,13 @@ private:
     void OnExportatf(wxCommandEvent& event);
     void OnExportigor(wxCommandEvent& event);
     void OnExporthdf5(wxCommandEvent& event);
-    void OnExportimage(wxCommandEvent& event);
-    void OnExportps(wxCommandEvent& event);
-    void OnExportlatex(wxCommandEvent& event);
-#if wxCHECK_VERSION(2, 9, 0)
-    void OnExportsvg(wxCommandEvent& event);
-#endif
+#ifdef _WINDOWS
     void OnConvert(wxCommandEvent& event);
-#if 0
-    void OnUserdef(wxCommandEvent& event);
+    void OnPrint(wxCommandEvent& event);
 #endif
     void OnScale(wxCommandEvent& event);
     void OnHires(wxCommandEvent& event);
-    void OnPrint(wxCommandEvent& event);
-    void OnPrintPreview(wxCommandEvent& event);
+    void OnMpl(wxCommandEvent& event);
     void OnPageSetup(wxCommandEvent& event);
     void OnViewResults(wxCommandEvent& event);
     void OnSaveperspective(wxCommandEvent& event);

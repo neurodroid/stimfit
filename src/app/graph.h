@@ -54,34 +54,7 @@ public:
     /*! \param dc is the device context used for drawing (can be a printer, a screen or a file).
      */ 
     virtual void OnDraw(wxDC& dc);
-
-    //! Exports the drawing to a bitmap file (jpg, tiff or png at this time).
-    void Exportimage();
-
-    //! Exports the drawing to a postscript file
-    /*! This function is only implemented in Windows. In Linux/Unix,
-     *  the cairo library is used for postscript output from the printing
-     *  dialog. It produces much better output than the generic postscript
-     *  library.
-     */ 
-    void Exportps();
-
-    //! Exports the drawing to a LaTeX file using PSTricks macros.
-    /*! Uses wxLatexDC to create LaTeX-compatible postscipt macros
-     *  with PSTricks.
-     */
-    void Exportlatex();
-
-#if wxCHECK_VERSION(2, 9, 0)
-    //! Exports the drawing to a SVG file
-    /*! Uses wxSVGFileDC to create scalable vector graphics.
-     */
-    void Exportsvg();
-#endif
     
-    //! Copies the drawing to the clipboard as a bitmap.
-    void Snapshot();
-
 #ifdef _WINDOWS
     //! Copies the drawing to the clipboard as a windows metafile.
     /*! Metafiles are only implemented in Windows. Some applications
@@ -271,7 +244,27 @@ public:
     //! The view attached to this wxStfGraph.
     wxStfView *view;
 
-private:
+    //! Returns x value of the left screen border
+    /*! \return x value of the left screen border
+     */
+    double get_plot_xmin() const;
+
+    //! Returns x value of the right screen border
+    /*! \return x value of the right screen border
+     */
+    double get_plot_xmax() const;
+
+    //! Returns y value of the bottom screen border
+    /*! \return y value of the bottom screen border
+     */
+    double get_plot_ymin() const;
+
+    //! Returns y value of the top screen border
+    /*! \return y value of the top screen border
+     */
+    double get_plot_ymax() const;
+
+ private:
     wxStfChildFrame* pFrame;
     bool isZoomRect; //True if zoom window is set
     bool no_gimmicks; //True if no extra rulers/lines and circles shall be displayed
@@ -381,6 +374,12 @@ private:
         else
             return NULL;
     }
+    wxStfDoc* DocC() const {
+        if (view != NULL) 
+            return view->DocC();
+        else
+            return NULL;
+    }
     void ChangeXScale(double factor);
     void ChangeYScale(double factor);
     wxStfParentFrame* ParentFrame();
@@ -390,19 +389,19 @@ private:
 #if defined __WXMAC__ && !(wxCHECK_VERSION(2, 9, 0))
     void OnPaint(wxPaintEvent &event);
 #endif
-    int SPX() { return Doc()->GetXZoom().startPosX; }
-    int& SPXW() { return Doc()->GetXZoomW().startPosX; } 
-    int SPY() { return Doc()->at(Doc()->GetCurCh()).GetYZoom().startPosY; }
-    int& SPYW() { return Doc()->at(Doc()->GetCurCh()).GetYZoomW().startPosY; } 
-    int SPY2() { return Doc()->at(Doc()->GetSecCh()).GetYZoom().startPosY; }
-    int& SPY2W() { return Doc()->at(Doc()->GetSecCh()).GetYZoomW().startPosY; }
+    int SPX() const { return DocC()->GetXZoom().startPosX; }
+    int& SPXW() { return DocC()->GetXZoomW().startPosX; } 
+    int SPY() const { return DocC()->at(DocC()->GetCurCh()).GetYZoom().startPosY; }
+    int& SPYW() { return DocC()->at(DocC()->GetCurCh()).GetYZoomW().startPosY; } 
+    int SPY2() { return DocC()->at(DocC()->GetSecCh()).GetYZoom().startPosY; }
+    int& SPY2W() { return DocC()->at(DocC()->GetSecCh()).GetYZoomW().startPosY; }
     
-    double XZ() { return Doc()->GetXZoom().xZoom; }
-    double& XZW() { return Doc()->GetXZoomW().xZoom; }
-    double YZ() { return Doc()->at(Doc()->GetCurCh()).GetYZoom().yZoom; }
-    double& YZW() { return Doc()->at(Doc()->GetCurCh()).GetYZoomW().yZoom; }
-    double YZ2() { return Doc()->at(Doc()->GetSecCh()).GetYZoom().yZoom; }
-    double& YZ2W() { return Doc()->at(Doc()->GetSecCh()).GetYZoomW().yZoom; }
+    double XZ() const { return DocC()->GetXZoom().xZoom; }
+    double& XZW() { return DocC()->GetXZoomW().xZoom; }
+    double YZ() const { return DocC()->at(DocC()->GetCurCh()).GetYZoom().yZoom; }
+    double& YZW() { return DocC()->at(DocC()->GetCurCh()).GetYZoomW().yZoom; }
+    double YZ2() { return DocC()->at(DocC()->GetSecCh()).GetYZoom().yZoom; }
+    double& YZ2W() { return DocC()->at(DocC()->GetSecCh()).GetYZoomW().yZoom; }
     
     DECLARE_EVENT_TABLE()
 };

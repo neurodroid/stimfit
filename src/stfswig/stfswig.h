@@ -98,6 +98,11 @@ bool set_base_end( double pos, bool is_time = false );
 
 bool set_slope(double slope);
 
+double plot_xmin();
+double plot_xmax();
+double plot_ymin();
+double plot_ymax();
+
 void _get_trace_fixedsize( double* outvec, int size, int trace = -1, int channel = -1 );
 void _gMatrix_resize( std::size_t channels, std::size_t sections );
 void _gNames_resize( std::size_t channels );

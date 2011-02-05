@@ -55,6 +55,16 @@ wxStfDoc* actDoc() {
     return wxGetApp().GetActiveDoc();
 }
 
+wxStfGraph* actGraph() {
+    if ( !check_doc() ) return NULL;
+    
+    wxStfView* pView=(wxStfView*)actDoc()->GetFirstView();
+    if ( !pView )
+        return NULL;
+
+    return pView->GetGraph();
+}
+
 bool check_doc( ) {
     if (actDoc() == NULL)  {
         ShowError( wxT("Couldn't find open file") );
@@ -74,15 +84,7 @@ std::string get_filename( ) {
 }
 
 bool refresh_graph() {
-    if ( !check_doc() ) return false;
-    
-    wxStfView* pView=(wxStfView*)actDoc()->GetFirstView();
-    if ( !pView ) {
-        ShowError( wxT("Pointer to view is zero") );
-        return false;
-    }
-
-    wxStfGraph* pGraph = pView->GetGraph();
+    wxStfGraph* pGraph = actGraph();
     if ( !pGraph ) {
         ShowError( wxT("Pointer to graph is zero") );
         return false;
@@ -368,10 +370,6 @@ void unselect_all( ) {
 PyObject* get_selected_indices() {
     if ( !check_doc() ) return NULL;
     
-    if ( actDoc()->GetSelectedSections().empty() ) {
-        ShowError( wxT("No selected traces") );
-        return NULL;
-    }
     PyObject* retObj = PyTuple_New( (int)actDoc()->GetSelectedSections().size() );
     c_st_it cit;
     int n=0;
@@ -383,6 +381,7 @@ PyObject* get_selected_indices() {
     // no reference count decrement should be performed here.
     return retObj;
 }
+
 bool set_trace( int trace ) {
     if ( !check_doc() ) return false; // use only with open document
 
@@ -1361,4 +1360,44 @@ bool erase_markers() {
 
     actDoc()->cur().ErasePyMarkers();
     return refresh_graph();
+}
+
+double plot_xmin() {
+    wxStfGraph* pGraph = actGraph();
+    if ( !pGraph ) {
+        ShowError( wxT("Pointer to graph is zero") );
+        return 0;
+    }
+
+    return pGraph->get_plot_xmin();
+}
+
+double plot_xmax() {
+    wxStfGraph* pGraph = actGraph();
+    if ( !pGraph ) {
+        ShowError( wxT("Pointer to graph is zero") );
+        return 0;
+    }
+
+    return pGraph->get_plot_xmax();
+}
+
+double plot_ymin() {
+    wxStfGraph* pGraph = actGraph();
+    if ( !pGraph ) {
+        ShowError( wxT("Pointer to graph is zero") );
+        return 0;
+    }
+
+    return pGraph->get_plot_ymin();
+}
+
+double plot_ymax() {
+    wxStfGraph* pGraph = actGraph();
+    if ( !pGraph ) {
+        ShowError( wxT("Pointer to graph is zero") );
+        return 0;
+    }
+
+    return pGraph->get_plot_ymax();
 }

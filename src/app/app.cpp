@@ -562,25 +562,21 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     file_menu->Append(wxID_CLOSE);
     //	file_menu->Append(wxID_SAVE, wxT("&Save"));
     file_menu->Append(wxID_SAVEAS);
-    file_menu->AppendSeparator();
 
-    file_menu->Append(ID_EXPORTIMAGE, wxT("Export &image..."));
-
-    wxMenu* vectorSub=new wxMenu;
-    vectorSub->Append(ID_EXPORTPS, wxT("Export &postscript..."));
-    vectorSub->Append(ID_EXPORTLATEX, wxT("Export &latex..."));
-    vectorSub->Append(ID_EXPORTSVG, wxT("Export &svg..."));
-    file_menu->AppendSubMenu(vectorSub, wxT("Export &vector graphics"));
 #ifdef _WINDOWS
+    file_menu->AppendSeparator();
     file_menu->Append(ID_CONVERT, wxT("&Convert file series..."));
 #endif
     file_menu->AppendSeparator();
     file_menu->Append(ID_FILEINFO, wxT("File information..."));
 
     file_menu->AppendSeparator();
+    file_menu->Append(ID_MPL, wxT("Create &figure..."));
+#ifdef _WINDOWS
     file_menu->Append(ID_PRINT_PRINT, wxT("&Print..."));
     file_menu->Append(ID_PRINT_PAGE_SETUP, wxT("Print &Setup..."));
-
+#endif
+    
 #ifdef WITH_PYTHON
     file_menu->AppendSeparator();
     file_menu->Append(

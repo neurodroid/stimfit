@@ -1098,6 +1098,34 @@ bool erase_markers();
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) plot_xmin;
+%feature("docstring", "Returns x value of the left screen border")
+plot_xmin;
+double plot_xmin();
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) plot_xmax;
+%feature("docstring", "Returns x value of the right screen border")
+plot_xmax;
+double plot_xmax();
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) plot_ymin;
+%feature("docstring", "Returns x value of the bottom screen border")
+plot_ymin;
+double plot_ymin();
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) plot_ymax;
+%feature("docstring", "Returns x value of the top screen border")
+plot_ymax;
+double plot_ymax();
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %pythoncode {
 import numpy as N
 

@@ -130,7 +130,6 @@ EVT_TOOL(ID_TOOL_DOWN, wxStfParentFrame::OnToolDown)
 EVT_TOOL(ID_TOOL_FIT, wxStfParentFrame::OnToolFit)
 EVT_TOOL(ID_TOOL_LEFT, wxStfParentFrame::OnToolLeft)
 EVT_TOOL(ID_TOOL_RIGHT, wxStfParentFrame::OnToolRight)
-EVT_TOOL(ID_TOOL_SNAPSHOT, wxStfParentFrame::OnToolSnapshot)
 #ifdef _WINDOWS
 EVT_TOOL(ID_TOOL_SNAPSHOT_WMF, wxStfParentFrame::OnToolSnapshotwmf)
 #endif
@@ -148,13 +147,9 @@ EVT_TOOL(ID_TOOL_LATENCY,wxStfParentFrame::OnToolLatency)
 EVT_TOOL(ID_TOOL_ZOOM,wxStfParentFrame::OnToolZoom)
 EVT_TOOL(ID_TOOL_EVENT,wxStfParentFrame::OnToolEvent)
 
-EVT_MENU(ID_EXPORTIMAGE, wxStfParentFrame::OnExportimage)
-EVT_MENU(ID_EXPORTPS, wxStfParentFrame::OnExportps)
-#if wxCHECK_VERSION(2, 9, 0)
-EVT_MENU(ID_EXPORTSVG, wxStfParentFrame::OnExportsvg)
-#endif
-EVT_MENU(ID_EXPORTLATEX, wxStfParentFrame::OnExportlatex)
+#ifdef _WINDOWS
 EVT_MENU(ID_CONVERT, wxStfParentFrame::OnConvert)
+#endif
 EVT_MENU(ID_AVERAGE, wxStfParentFrame::OnAverage)
 EVT_MENU(ID_ALIGNEDAVERAGE, wxStfParentFrame::OnAlignedAverage)
 EVT_MENU( ID_VIEW_RESULTS, wxStfParentFrame::OnViewResults)
@@ -164,10 +159,10 @@ EVT_MENU( ID_CH2ZOOM, wxStfParentFrame::OnCh2zoom )
 EVT_MENU( ID_CH2BASEZOOM, wxStfParentFrame::OnCh2basezoom )
 EVT_MENU( ID_SCALE, wxStfParentFrame::OnScale )
 EVT_MENU( ID_HIRES, wxStfParentFrame::OnHires )
+#ifdef _WINDOWS
 EVT_MENU( ID_PRINT_PRINT, wxStfParentFrame::OnPrint)
-#if 0
-EVT_MENU( ID_PRINT_PREVIEW, wxStfParentFrame::OnPrintPreview)
 #endif
+EVT_MENU( ID_MPL, wxStfParentFrame::OnMpl)
 EVT_MENU( ID_PRINT_PAGE_SETUP, wxStfParentFrame::OnPageSetup)
 EVT_MENU( ID_SAVEPERSPECTIVE, wxStfParentFrame::OnSaveperspective )
 EVT_MENU( ID_LOADPERSPECTIVE, wxStfParentFrame::OnLoadperspective )
@@ -277,6 +272,7 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 #else
                  << wxT("import embedded_stf\n")
 #endif
+                 << wxT("import embedded_mpl\n")
                  << wxT("\n")
                  << wxT("def makeWindow(parent):\n")
 #ifdef IPYTHON
@@ -284,11 +280,15 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 #else
                  << wxT("    win = embedded_stf.MyPanel(parent)\n")
 #endif
+                 << wxT("    return win\n")
+                 << wxT("\n")
+                 << wxT("def makeWindowMpl(parent):\n")
+                 << wxT("    win = embedded_mpl.MplPanel(parent)\n")
+                 << wxT("    win.plot_screen()\n")
                  << wxT("    return win\n");
 
-
     RedirectStdio();
-    wxWindow* pPython = DoPythonStuff(this);
+    wxWindow* pPython = DoPythonStuff(this, false);
     if ( pPython == 0 ) {
         wxGetApp().ErrorMsg(wxT("Can't create a window for the python shell\nPointer is zero"));
     } else {
@@ -478,10 +478,10 @@ wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
     //                         wxT("Unselect this trace (\"R\")"),
     //                         wxITEM_NORMAL );
     cursorToolBar->AddSeparator();
-    cursorToolBar->AddTool( ID_TOOL_SNAPSHOT,
+    cursorToolBar->AddTool( ID_MPL,
                             wxT("Snapshot"),
                             wxBitmap(camera),
-                            wxT("Copy bitmap image to clipboard"),
+                            wxT("Create snapshot with matplotlib"),
                             wxITEM_NORMAL );
 #ifdef _WINDOWS
     cursorToolBar->AddTool( ID_TOOL_SNAPSHOT_WMF,
@@ -704,49 +704,8 @@ void wxStfParentFrame::OnCheckUpdate(wxCommandEvent& WXUNUSED(event) )
     CheckUpdate( &progDlg );
 }
 
-void wxStfParentFrame::OnExportimage(wxCommandEvent& WXUNUSED(event) ) {
-    wxStfView* pView=wxGetApp().GetActiveView();
-    if (pView!=NULL) {
-        wxStfGraph* graph=pView->GetGraph();
-        if (graph!=NULL) {
-            graph->Exportimage();
-        }
-    }
-}
-
-void wxStfParentFrame::OnExportps(wxCommandEvent& WXUNUSED(event) ) {
-    wxStfView* pView=wxGetApp().GetActiveView();
-    if (pView!=NULL) {
-        wxStfGraph* graph=pView->GetGraph();
-        if (graph!=NULL) {
-            graph->Exportps();
-        }
-    }
-}
-
-void wxStfParentFrame::OnExportlatex(wxCommandEvent& WXUNUSED(event) ) {
-    wxStfView* pView=wxGetApp().GetActiveView();
-    if (pView!=NULL) {
-        wxStfGraph* graph=pView->GetGraph();
-        if (graph!=NULL) {
-            graph->Exportlatex();
-        }
-    }
-}
-#if wxCHECK_VERSION(2, 9, 0)
-void wxStfParentFrame::OnExportsvg(wxCommandEvent& WXUNUSED(event) ) {
-    wxStfView* pView=wxGetApp().GetActiveView();
-    if (pView!=NULL) {
-        wxStfGraph* graph=pView->GetGraph();
-        if (graph!=NULL) {
-            graph->Exportsvg();
-        }
-    }
-}
-#endif
-
-void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
 #ifdef _WINDOWS
+void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
     // Choose file type:
     std::vector< wxString > choices(2);
     choices[0] = wxT("Axon text file (*.atf)");
@@ -842,8 +801,8 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
             }
         }
     }
-#endif
 }
+#endif
 
 // Creates a graph. Called from view.cpp when a new drawing
 // view is created.
@@ -868,6 +827,7 @@ wxStfGraph *wxStfParentFrame::CreateGraph(wxView *view, wxStfChildFrame *parent)
     return graph;
 }
 
+#ifdef _WINDOWS
 void wxStfParentFrame::OnPrint(wxCommandEvent& WXUNUSED(event))
 {
     if (wxGetApp().GetActiveDoc()==NULL) return;
@@ -898,40 +858,22 @@ void wxStfParentFrame::OnPrint(wxCommandEvent& WXUNUSED(event))
         (*m_printData) = printer.GetPrintDialogData().GetPrintData();
     }
 }
-
-#if 0
-void wxStfParentFrame::OnPrintPreview(wxCommandEvent& WXUNUSED(event))
-{
-    // Pass two printout objects: for preview, and possible printing.
-    wxPrintDialogData printDialogData(* m_printData);
-    wxStfPreprintDlg myDlg(this);
-    if (myDlg.ShowModal()!=wxID_OK) return;
-    wxStfView* pView=wxGetApp().GetActiveView();
-    pView->GetGraph()->set_downsampling(myDlg.GetDownSampling());
-    pView->GetGraph()->set_noGimmicks(!myDlg.GetGimmicks());
-    wxPrintPreview *preview = new wxPrintPreview(new wxStfPrintout, new wxStfPrintout, & printDialogData);
-    if (!preview->Ok())
-    {
-        delete preview;
-        wxMessageBox(
-            _T("There was a problem previewing.\nPerhaps your current printer is not set correctly?"),
-            _T("Previewing"), wxOK
-            );
-        return;
-    }
-
-    wxPreviewFrame *pFrame = new wxPreviewFrame(
-        preview,
-        this,
-        _T("Demo Print Preview"),
-        wxPoint(100, 100),
-        wxSize(600, 650)
-        );
-    pFrame->Centre(wxBOTH);
-    pFrame->Initialize();
-    pFrame->Show();
-}
 #endif
+
+void wxStfParentFrame::OnMpl(wxCommandEvent& WXUNUSED(event))
+{
+    if (wxGetApp().GetActiveDoc()==NULL) return;
+
+    wxWindow* pPython = DoPythonStuff(this, true);
+    if ( pPython == 0 ) {
+        wxGetApp().ErrorMsg(wxT("Can't create a window for matplotlib\nPointer is zero"));
+    } else {
+        m_mgr.AddPane( pPython, wxAuiPaneInfo().Name(wxT("mpl")).
+                       CloseButton(true).
+                       Show(true).Caption(wxT("Matplotlib")).Float().BestSize(800,600));
+    }
+    m_mgr.Update();
+}
 
 void wxStfParentFrame::OnPageSetup(wxCommandEvent& WXUNUSED(event))
 {
@@ -1083,12 +1025,6 @@ void wxStfParentFrame::SetSingleChannel(bool value) {
     m_scaleToolBar->Refresh();
 }
 
-void wxStfParentFrame::OnToolSnapshot(wxCommandEvent& WXUNUSED(event)) {
-    wxStfView* pView=wxGetApp().GetActiveView();
-    if (pView!=NULL) {
-        pView->GetGraph()->Snapshot();
-    }
-}
 #ifdef _WINDOWS
 void wxStfParentFrame::OnToolSnapshotwmf(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();

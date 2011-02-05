@@ -9,7 +9,7 @@ class Extension(object):
     An extension that can be added to the program menu.
     """
     def __init__(self, menuEntryString, pyFunc, description="", 
-                 requiresFile=True):
+                 requiresFile=True, parentEntry=None):
         """
         Arguments:
         menuEntryString -- This will be shown as a menu entry.
@@ -22,6 +22,7 @@ class Extension(object):
         self.pyFunc = pyFunc
         self.description = description
         self.requiresFile = requiresFile
+        self.parentEntry = parentEntry
 
 extensionList = [
     Extension("Count APs", spells.count_aps, 

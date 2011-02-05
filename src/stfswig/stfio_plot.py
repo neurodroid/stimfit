@@ -1,21 +1,25 @@
 """
 Some plotting utilities to use scale bars rather than coordinate axes.
-18 July 2010, C. Schmidt-Hieber, University College London
+04 Feb 2011, C. Schmidt-Hieber, University College London
 
 From the stfio module:
 http://code.google.com/p/stimfit
 """
 
+# TODO: Pin scale bars to their position
+# TODO: Implement 2-channel plots
+
 has_mpl = True
 
+import numpy as np
+
 try:
+    import matplotlib
     import matplotlib.pyplot as plt
     from matplotlib.patches import Rectangle
     from mpl_toolkits.axes_grid.axislines import Subplot
 except ImportError:
     has_mpl = False
-
-import numpy as np
 
 scale_dist_x = 0.04
 scale_dist_y = 0.04
@@ -25,7 +29,7 @@ key_dist = 0.04
 
 class timeseries(object):
     def __init__(self, section, dt, xunits="ms", yunits="mV",  
-                 linestyle="-k", linewidth=1.0):
+                 linestyle="-", linewidth=1.0, color='k'):
         if isinstance(section, np.ndarray):
             self.data = section
         else:
@@ -35,6 +39,7 @@ class timeseries(object):
         self.yunits = yunits
         self.linestyle = linestyle
         self.linewidth = linewidth
+        self.color = color
 
     def x_trange(self, tstart, tend):
         return np.arange(int(tstart/self.dt), int(tend/self.dt), 1.0, 
@@ -311,7 +316,7 @@ def plot_traces(traces, ax=None, pulses=None,
         else:
             xrange, yrange = reduce(trace.data, trace.dt, maxres=maxres)
             xrange += xoffset
-        ax.plot(xrange, yrange, trace.linestyle, lw=trace.linewidth)
+        ax.plot(xrange, yrange, trace.linestyle, lw=trace.linewidth, color=trace.color)
 
     if xmin is not None:
         phantomrect_x0 = xmin
