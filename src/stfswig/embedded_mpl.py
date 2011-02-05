@@ -71,5 +71,3 @@ class MplPanel(wx.Panel):
 
         stfio_plot.plot_traces(tsl, self.axes, xmin=stf.plot_xmin(), xmax=stf.plot_xmax(),
                                ymin=stf.plot_ymin(), ymax=stf.plot_ymax())
-
-    def get_axes(self):
