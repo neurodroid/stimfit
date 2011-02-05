@@ -37,14 +37,14 @@ def resistance( base_start, base_end, peak_start, peak_end, amplitude):
         return 0
 
     #A temporary array to calculate the average:
-    array = N.empty( (stf.get_size_channel(), stf.get_size_trace()) )
+    array = np.empty( (stf.get_size_channel(), stf.get_size_trace()) )
     for n in range( 0,  stf.get_size_channel() ):
         # Add this trace to set:
         array[n] = stf.get_trace( n )
 
 
     # calculate average and create a new section from it:
-    stf.new_window( N.average(set, 0) )
+    stf.new_window( np.average(set, 0) )
 
     # set peak cursors:
     # -1 means all points within peak window.
@@ -93,19 +93,19 @@ def rmean(binwidth, trace=-1, channel=-1):
     sweep = stf.get_trace(trace, channel)
 
     # creates a destination python list to append the data
-    dsweep = N.empty((len(sweep)))
+    dsweep = np.empty((len(sweep)))
 
     # running mean algorithm
     for i in range(len(sweep)):
 
         if (len(sweep)-i) > binwidth:
             # append to list the running mean of `binwidth` values
-            # N.mean(sweep) calculates the mean of list
-            dsweep[i] = N.mean( sweep[i:(binwidth+i)] )
+            # np.mean(sweep) calculates the mean of list
+            dsweep[i] = np.mean( sweep[i:(binwidth+i)] )
 
         else:
             # use all remaining points for the average:
-            dsweep[i] = N.mean( sweep[i:] )
+            dsweep[i] = np.mean( sweep[i:] )
 
 
     stf.new_window(dsweep)

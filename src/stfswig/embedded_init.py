@@ -13,7 +13,7 @@
 #
 #=========================================================================
 
-import numpy as N 
+import numpy as np
 import stf
 from stf import *
 

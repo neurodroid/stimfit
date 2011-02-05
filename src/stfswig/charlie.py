@@ -4,7 +4,7 @@ Calculates resistances
 Indices are zero-based!
 """
 
-import numpy as N
+import numpy as np
 
 # stimfit python module:
 import stf
@@ -33,13 +33,13 @@ def resistance( base_start, base_end, peak_start, peak_end, amplitude ):
         return 0
 
     # A temporary array to calculate the average:
-    set = N.empty( (stf.get_size_channel(), stf.get_size_trace()) )
+    set = np.empty( (stf.get_size_channel(), stf.get_size_trace()) )
     for n in range( 0,  stf.get_size_channel() ):
         # Add this trace to set:
         set[n] = stf.get_trace( n )
 
     # calculate average and create a new section from it:
-    stf.new_window( N.average(set,0) )
+    stf.new_window( np.average(set,0) )
 
     # set peak cursors:
     if ( not(stf.set_peak_mean(-1)) ): return False # -1 means all points within peak window.
@@ -131,7 +131,7 @@ def glu_iv( pulses = 13, subtract_base=True ):
 
     # A list for dictionary keys and values:
     dict_keys = []
-    dict_values = N.empty( (gDictSize, stf.get_size_channel()) )
+    dict_values = np.empty( (gDictSize, stf.get_size_channel()) )
     firstpass = True
     for n in range( 0, stf.get_size_channel() ):
         if ( stf.set_trace( n ) == False ):

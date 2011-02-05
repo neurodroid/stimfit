@@ -3,7 +3,7 @@
 Batch analysis of Na IVs
 """
 
-import numpy as N
+import numpy as np
 from scipy.io import write_array
 
 def dens_batch( nFunc = 0 ):
@@ -50,7 +50,7 @@ def dens_batch( nFunc = 0 ):
 
     # A list for dictionary keys and values:
     dict_keys = []
-    dict_values = N.empty( (gDictSize, 1) )
+    dict_values = np.empty( (gDictSize, 1) )
 
     if ( not(stf.set_peak_end( (gPeakStartCtrl + gPeakWindowSize)/dt )) ):
         return False
@@ -92,10 +92,10 @@ def dens_batch( nFunc = 0 ):
 
     # divide by inactivation part:
     trace = stf.get_trace()[gFitStart/dt:gFitEnd/dt]
-    l = N.empty( (3, len(trace)) )
+    l = np.empty( (3, len(trace)) )
     l[1] = trace - stf.get_base()
-    t = N.arange(0,len(l[1]))*dt
-    l[2] = N.exp(-t/p_dict['Tau_0'])
+    t = np.arange(0,len(l[1]))*dt
+    l[2] = np.exp(-t/p_dict['Tau_0'])
     l[0] = l[1] / l[2]
     stf.new_window_matrix( l )
     stf.set_base_start(0)
@@ -155,9 +155,9 @@ def act_batch( nFunc = 5, filename="", lat=60 ):
     firstpass = True
     # A list for dictionary keys and values:
     dict_keys = []
-    dict_values = N.empty( (gDictSize, stf.get_size_channel()) )
+    dict_values = np.empty( (gDictSize, stf.get_size_channel()) )
     if not filename=="":
-        ls_file=N.empty((gPulses,stf.leastsq_param_size(nFunc)))
+        ls_file=np.empty((gPulses,stf.leastsq_param_size(nFunc)))
     for n in range( 0, gPulses ):
         if ( stf.set_trace( n ) == False ):
             print "Couldn't set a new trace; aborting now."
@@ -249,7 +249,7 @@ def inact_batch():
 
     # A list for dictionary keys and values:
     dict_keys = [ "Peak amplitude", ]
-    dict_values = N.empty( (gDictSize, gPulses) )
+    dict_values = np.empty( (gDictSize, gPulses) )
 
     for n in range( 0, gPulses ):
         if ( stf.set_trace( n ) == False ):
@@ -319,9 +319,9 @@ def deact_batch( filename="" ):
     # A list for dictionary keys...
     mono_keys = []
     # ... and values:
-    mono_values = N.empty( (gMonoDictSize, gNMono) )
+    mono_values = np.empty( (gMonoDictSize, gNMono) )
     if not filename=="":
-        ls_file=N.empty((gNMono,stf.leastsq_param_size(gFMono)))
+        ls_file=np.empty((gNMono,stf.leastsq_param_size(gFMono)))
     
     # Monoexponential fits:
     for n in range( 0, gNMono ):
@@ -380,7 +380,7 @@ def deact_batch( filename="" ):
     # A list for dictionary keys...
     bi_keys = []
     # ... and values:
-    bi_values = N.empty( (gBiDictSize, gNBi) )
+    bi_values = np.empty( (gBiDictSize, gNBi) )
     
     # Monoexponential fits:
     for n in range( gNMono, gNBi+gNMono ):
@@ -457,7 +457,7 @@ def inact_recov_batch( show_table = True ):
     # A list for dictionary keys...
     dict_keys = [ "Control amplitude", "Test amplitude" ]
     # ... and values:
-    dict_values = N.empty( (gDictSize, gPulses) )
+    dict_values = np.empty( (gDictSize, gPulses) )
 
     
     if ( not(stf.set_peak_mean( 3 )) ):
@@ -535,7 +535,7 @@ def inact_onset_batch( show_table = True ):
     # A list for dictionary keys...
     dict_keys = [ "Test amplitude", ]
     # ... and values:
-    dict_values = N.empty( (gDictSize, gPulses) )
+    dict_values = np.empty( (gDictSize, gPulses) )
 
     if ( not(stf.set_peak_mean( 4 )) ):
         return -1

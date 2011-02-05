@@ -1,7 +1,7 @@
 import sys
 sys.argv = ""
 import tables
-import numpy as N
+import numpy as np
 
 class Recording():
     def __init__(self, channels, comment, date, time):
@@ -96,14 +96,14 @@ def save_hdf5( rec, filename ):
         if len(rec[n_c])==1:
             max_log10 = 0
         else:
-            max_log10 = int(N.log10(len(rec[n_c])-1))
+            max_log10 = int(np.log10(len(rec[n_c])-1))
         
         for n_s in range(len(rec[n_c])):
             # construct a number with leading zeros:
             if n_s==0:
                 n10 = 0
             else:
-                n10 = int(N.log10(n_s))
+                n10 = int(np.log10(n_s))
             strZero = ""
             for n_z in range(n10,max_log10):
                 strZero += "0"
@@ -115,7 +115,7 @@ def save_hdf5( rec, filename ):
             section_group = h5file.createGroup(channel_group, "section_%s%d" % (strZero, n_s), section_name)
             
             # add data and description:
-            array = h5file.createArray(section_group, "data", N.array(rec[n_c][n_s].data, dtype=N.float32), "data in %s" % section_name)
+            array = h5file.createArray(section_group, "data", np.array(rec[n_c][n_s].data, dtype=np.float32), "data in %s" % section_name)
             desc_table = h5file.createTable(section_group, "description", SectionDescription, "description of %s" % section_name)
             desc_row = desc_table.row
             desc_row['dt'] = rec[n_c][n_s].dt
@@ -185,7 +185,7 @@ def import_hdf5( filename ):
         if n_sections==1:
             max_log10 = 0
         else:
-            max_log10 = int(N.log10(n_sections-1))
+            max_log10 = int(np.log10(n_sections-1))
 
         # loop through sections:
         section_list = list()
@@ -194,7 +194,7 @@ def import_hdf5( filename ):
             if n_s==0:
                 n10 = 0
             else:
-                n10 = int(N.log10(n_s))
+                n10 = int(np.log10(n_s))
             strZero = ""
             for n_z in range(n10,max_log10):
                 strZero += "0"
