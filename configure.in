@@ -39,17 +39,6 @@ if (test "$enable_python" = "yes") || (test "$enable_module" = "yes"); then
     SWIG_ENABLE_CXX
     SWIG_PYTHON
     AC_SUBST(SWIG)
-    if test "$enable_module" = "yes" ; then
-        LIBSTF_LDFLAGS="-avoid-version"
-        CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON -DMODULE_ONLY"
-    else
-        if test "$enable_debian" = "yes" ; then
-          LIBSTF_LDFLAGS="-Wl,-rpath,/usr/lib/stimfit -avoid-version"
-        else
-          LIBSTF_LDFLAGS="-Wl,-rpath,${prefix}/lib/stimfit -avoid-version"
-        fi
-        CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON"
-    fi
     CXXFLAGS="${CXXFLAGS}"
     CFLAGS="${CFLAGS}"
     LIBPYTHON_LDFLAGS=$PYTHON_LDFLAGS 
@@ -60,7 +49,6 @@ else
     LIBPYTHON_INCLUDES= 
     LIBNUMPY_INCLUDES= 
 fi
-AC_SUBST(LIBSTF_LDFLAGS)
 AC_SUBST(LIBPYTHON_LDFLAGS)
 AC_SUBST(LIBPYTHON_INCLUDES)
 AC_SUBST(LIBNUMPY_INCLUDES)
@@ -82,8 +70,14 @@ AC_MSG_CHECKING(for kernel)
 case `uname` in 
     Darwin)
         AC_MSG_RESULT(darwin)
-        STF_PYTHON_LIBNAME="libstf.0.dylib"
-        STFIO_PYTHON_LIBNAME="libstfio.0.dylib"
+        LIBSTF_LDFLAGS="-avoid-version"
+	if test "$enable_module" = "yes" ; then
+	    CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON -DMODULE_ONLY"
+	else
+	    CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON"
+	fi
+        STF_PYTHON_LIBNAME="libstf.dylib"
+        STFIO_PYTHON_LIBNAME="libstfio.dylib"
         STFKERNEL="darwin"
 	ARCH_FLAGS="-mmacosx-version-min=10.4"
         CFLAGS="${CFLAGS} ${ARCH_FLAGS}"
@@ -94,6 +88,17 @@ case `uname` in
     ;;
     Linux)
         AC_MSG_RESULT(linux)
+	if test "$enable_module" = "yes" ; then
+	    LIBSTF_LDFLAGS="-avoid-version"
+	    CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON -DMODULE_ONLY"
+	else
+	    if test "$enable_debian" = "yes" ; then
+	      LIBSTF_LDFLAGS="-Wl,-rpath,/usr/lib/stimfit -avoid-version"
+	    else
+	      LIBSTF_LDFLAGS="-Wl,-rpath,${prefix}/lib/stimfit -avoid-version"
+	    fi
+	    CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON"
+	fi
         STF_PYTHON_LIBNAME="libstf.so"
         STFIO_PYTHON_LIBNAME="libstfio.so"
         CPPFLAGS="${CPPFLAGS} -D__LINUX__"
@@ -103,11 +108,13 @@ case `uname` in
         AC_MSG_RESULT(other)
         AC_MSG_WARN([Platforms other than GNU/Linux and Mac OS X are not actively supported 
                      by the configure script. Use Visual Studio 2008 to build on Windows.])
+        LIBSTF_LDFLAGS="-avoid-version"
         STF_PYTHON_LIBNAME="libstf.so"
         STFIO_PYTHON_LIBNAME="libstfio.so"
         STFKERNEL="other"
     ;;
 esac
+AC_SUBST(LIBSTF_LDFLAGS)
 AC_SUBST(STF_PYTHON_LIBNAME)
 AC_SUBST(STFIO_PYTHON_LIBNAME)
 

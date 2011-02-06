@@ -10,8 +10,13 @@ starting code to embed a matplotlib wx figure into the stf application.
 
 """
 
-import wxversion
-wxversion.select('2.8')
+import sys
+if 'linux' in sys.platform:
+    import wxversion
+    try:
+        wxversion.select('2.8')
+    except:
+        pass
 import wx
 import matplotlib
 matplotlib.use('WXAgg')
