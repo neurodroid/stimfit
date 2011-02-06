@@ -16,7 +16,7 @@ These files correspond to the same recording with different file
 extensions; the recording contains the following properties:
  
 Number of channels = 4
-Number of traces = 30
+Number of traces = 3
 Sampling interval  = 0.05
  
 """
@@ -38,25 +38,25 @@ class DataListTest(unittest.TestCase):
         # test if Recording object was created
         self.assertTrue(True, isinstance(rec, stfio.Recording))
 
-    def testReadCFS(self):
-        """ testReadCFS() Read CED filling system files"""
-        try:
-            rec = stfio.read('test.dat')
-        except SyntaxError:
-            rec = None
+    # def testReadCFS(self):
+    #     """ testReadCFS() Read CED filling system files"""
+    #     try:
+    #         rec = stfio.read('test.dat')
+    #     except SyntaxError:
+    #         rec = None
 
-        # test if Recording object was created
-        self.assertTrue(True, isinstance(rec, stfio.Recording))
+    #     # test if Recording object was created
+    #     self.assertTrue(True, isinstance(rec, stfio.Recording))
 
-    def testReadATF(self):
-        """ testReadATF() Read ABF files"""
-        try:
-            rec = stfio.read('test.atf')
-        except SyntaxError:
-            rec = None
+    # def testReadATF(self):
+    #     """ testReadATF() Read ABF files"""
+    #     try:
+    #         rec = stfio.read('test.atf')
+    #     except SyntaxError:
+    #         rec = None
 
-        # test if Recording object was created
-        self.assertTrue(True, isinstance(rec, stfio.Recording))
+    #     # test if Recording object was created
+    #     self.assertTrue(True, isinstance(rec, stfio.Recording))
 
     def testReadStfException(self):
         """ Raises a StfException if file format to read is not supported"""
@@ -65,13 +65,14 @@ class DataListTest(unittest.TestCase):
         self.assertRaises(stfio.StfIOException, stfio.read, 'test.txt')
 
 
-    def testWriteStfException(self):
-        """ testWriteStfException() Raises a StfException if file format
+    def testWrite(self):
+        """ testWrite() Returns False if file format
             to write is not supported"""
 
         # should raise an StfException if filetype is not supported
-        rec = stfio.read('test.dat')
-        self.assertRaises(stfio.StfIOException, rec.write, 'new.dat')
+        rec = stfio.read('test.h5')
+        res = rec.write('new.abf', 'abf')
+        self.assertEquals(False, res)
 
     def testNumberofChannels(self):
         """ testNumberofChannels() returns the number of channels """
@@ -79,7 +80,7 @@ class DataListTest(unittest.TestCase):
 
     def testNumberofSections(self):
         """ testNumberofSections() returns the number of channels """
-        self.assertEquals(30,len(rec[0]))
+        self.assertEquals(3,len(rec[0]))
 
     def testNumberofDataPoints(self):
         """ testNumberofDataPoints() returns the number of sampling points """

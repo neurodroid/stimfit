@@ -86,7 +86,7 @@ class Section {
     }
     ~Recording() {delete $self;}
 
-    Channel& __getitem__(std::size_t at) {
+    Channel& __getitem__(int at) {
         if (at >= 0 && at < $self->size()) {
             return (*($self))[at];
         } else {
@@ -147,7 +147,7 @@ class Section {
 
     ~Channel() {delete $self;}
     
-    Section& __getitem__(std::size_t at) {
+    Section& __getitem__(int at) {
         if (at >= 0 && at < $self->size()) {
             return (*($self))[at];
         } else {
@@ -177,7 +177,7 @@ class Section {
     ~Section() {
         delete($self);
     }
-    double __getitem__(std::size_t at) {
+    double __getitem__(int at) {
         if (at >= 0 && at < $self->size()) {
             return (*($self))[at];
         } else {
