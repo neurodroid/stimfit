@@ -8,13 +8,14 @@ Copyright: 2011, Christoph Schmidt-Hieber <christsc@gmx.de>
 License: GPL-2+
 
 Files: src/core/filelib/axon/*
-Copyright: 1997, Axon Instruments <info@moldev.com>
+Copyright: 1993-2000, Axon Instruments <info@moldev.com>
 License:
  Permission is granted to freely to use, modify and copy 
  the code in this file.
 
 Files: src/core/filelib/axon2/*
-Copyright: 2005, Molecular Devices <info@moldev.com>
+Copyright: 1993-2005, Molecular Devices <info@moldev.com>
+           1993-2002, Axon Instruments <info@moldev.com>
 License:
  Permission is granted to freely to use, modify and copy 
  the code in this file.
