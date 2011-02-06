@@ -403,6 +403,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\core\measlib.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\core\recording.cpp"
 					>
 				</File>

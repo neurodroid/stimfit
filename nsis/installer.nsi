@@ -19,6 +19,7 @@ SetCompressor lzma
 !define PY_VERSION "2.7.1"
 !define PY_MAJOR "2.7"
 !define NP_VERSION "1.5.1"
+!define MPL_VERSION "1.0.1"
 !define EXE_NAME "stimfit"
 !define REG_NAME "Stimfit 0.10"
 !define REG_NAME_IO "stfio 0.10"
@@ -34,19 +35,21 @@ SetCompressor lzma
 !define FULL_WELCOME "This wizard will guide you through the installation \
 of ${REG_NAME} and wxPython. Please uninstall any earlier version of Stimfit (<= 0.9) before \
 proceeding. You can optionally \
-install Python ${PY_VERSION} and NumPy ${NP_VERSION} \
+install Python ${PY_VERSION}, NumPy ${NP_VERSION} \
+and Matplotlib ${MPL_VERSION} \
 if you don't have them on your machine."
-!define UPDATE_WELCOME "This wizard will update an existing installation \
-of ${REG_NAME} to version ${PRODUCT_VERSION}."
+!define UPDATE_WELCOME "This wizard will install \
+${REG_NAME} on your computer. Please make sure Python ${PY_MAJOR},\
+NumPy and Matplotlib are installed before proceeding."
 ; The name of the installer
 Name "${REG_NAME}"
 
 
 ; The file to write
 !ifdef UPDATE
-OutFile "${EXE_NAME}-${PRODUCT_VERSION}-update.exe"
+OutFile "${EXE_NAME}-${PRODUCT_VERSION}-core.exe"
 !else
-OutFile "${EXE_NAME}-${PRODUCT_VERSION}-full.exe"
+OutFile "${EXE_NAME}-${PRODUCT_VERSION}-bundle.exe"
 !endif
 
 ; The default installation directory
@@ -129,9 +132,24 @@ Section "NumPy ${NP_VERSION}" 1
   Delete "$INSTDIR\numpy-${NP_VERSION}-win32-superpack-python${PY_MAJOR}.exe"
 
 SectionEnd
+
+Section "Matplotlib ${MPL_VERSION}" 2
+
+  ; Set output path to the installation directory.
+  SetOutPath $INSTDIR
+
+  ; Put installer into installation dir temporarily
+  File "${MSIDIR}\matplotlib-${MPL_VERSION}.win32-py${PY_MAJOR}.exe"
+
+  ExecWait '"$INSTDIR\matplotlib-${MPL_VERSION}.win32-py${PY_MAJOR}.exe"'
+  
+  ; Delete installer once we are done
+  Delete "$INSTDIR\matplotlib-${MPL_VERSION}.win32-py${PY_MAJOR}.exe"
+
+SectionEnd
 !endif
 
-Section "!Program files and wxPython" 2 ; Core program files and wxPython
+Section "!Program files and wxPython" 3 ; Core program files and wxPython
 
   ;This section is required : readonly mode
   SectionIn RO
@@ -163,7 +181,6 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   
-!ifndef UPDATE
   Delete "$INSTDIR\*.exe"
   Delete "$INSTDIR\*.dll"
   Delete "$INSTDIR\wx*"
@@ -184,7 +201,6 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   File "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll"
   File "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
   File /r "${WXPDIR}\wx*"
-!endif
   File "${STFDIR}\stimfit_VS03\stimfit_exe\Release\${EXE_NAME}.exe"
   File "${STFDIR}\stimfit_VS03\stimfit_exe\Release\stimfit.dll"
   File "${STFDIR}\stimfit_VS03\stfswig\Release\_stf.pyd"
@@ -198,6 +214,7 @@ Section "!Program files and wxPython" 2 ; Core program files and wxPython
   File "${STFDIR}\src\stfswig\spells.py"
   File "${STFDIR}\src\stfswig\embedded_init.py"
   File "${STFDIR}\src\stfswig\embedded_stf.py"
+  File "${STFDIR}\src\stfswig\embedded_mpl.py"
   File "${STFDIR}\src\stfswig\embedded_ipython.py"
   File "${STFDIR}\src\stfswig\unittest_stfio.py"
   File "${STFDIR}\src\stfswig\heka.py"
@@ -274,14 +291,12 @@ Section "!stfio standalone module" 4 ; Standalone python file i/o module
   ; Set output path to the installation directory.
   SetOutPath $9\Lib\site-packages\stfio
   
-!ifndef UPDATE
   File "${HDF5DIR}\lib\hdf5_hldll.dll"
   File "${HDF5DIR}\lib\hdf5dll.dll"
   File "${HDF5DIR}\lib\szip.dll"
   File "${HDF5DIR}\lib\zlib1.dll"
   File "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll"
   File "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
-!endif
   File "${STFDIR}\stimfit_VS03\stfioswig\Release\_stfio.pyd"
   File "${STFDIR}\src\stfswig\stfio.py"
   File "${STFDIR}\src\stfswig\stfio_plot.py"
@@ -458,8 +473,15 @@ SubSectionEnd
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT 0 "Python ${PY_MAJOR} is required to run stimfit. Unselect this if it's already installed on your system."
     !insertmacro MUI_DESCRIPTION_TEXT 1 "NumPy is required for efficient numeric computations in python. Unselect this if you already have NumPy on your system."
-    !insertmacro MUI_DESCRIPTION_TEXT 2 "The core program files and wxPython 2.9 (mandatory)."
-    !insertmacro MUI_DESCRIPTION_TEXT 3 "Standalone Python file i/o module."
-    !insertmacro MUI_DESCRIPTION_TEXT 4 "Selects Stimfit as the default application for files of these types."
+    !insertmacro MUI_DESCRIPTION_TEXT 2 "Matplotlib is required for exporting graphics and printing. Unselect this if you already have Matplotlib on your system."
+    !insertmacro MUI_DESCRIPTION_TEXT 3 "The core program files and wxPython 2.9 (mandatory)."
+    !insertmacro MUI_DESCRIPTION_TEXT 4 "Standalone Python file i/o module."
+    !insertmacro MUI_DESCRIPTION_TEXT 5 "Selects Stimfit as the default application for files of these types."
+  !insertmacro MUI_FUNCTION_DESCRIPTION_END
+!else
+  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+    !insertmacro MUI_DESCRIPTION_TEXT 3 "The core program files and wxPython 2.9 (mandatory)."
+    !insertmacro MUI_DESCRIPTION_TEXT 4 "Standalone Python file i/o module."
+    !insertmacro MUI_DESCRIPTION_TEXT 5 "Selects Stimfit as the default application for files of these types."
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 !endif

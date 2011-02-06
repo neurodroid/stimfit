@@ -39,7 +39,7 @@ class wxEnhMetaFile;
  *  at this time. All the trace scaling and drawing happens here. Mouse
  *  and keyboard input is handled here as well.
  */
-class wxStfGraph : public wxScrolledWindow
+class StfDll wxStfGraph : public wxScrolledWindow
 {
 public:
     //! Constructor.
