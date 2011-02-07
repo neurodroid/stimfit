@@ -18,6 +18,8 @@ SetCompressor lzma
 !define WXW_VERSION_SHORT "291"
 !define PY_VERSION "2.7.1"
 !define PY_MAJOR "2.7"
+!define PY_MIN "2.7"
+Var PY_ACT
 !define NP_VERSION "1.5.1"
 !define MPL_VERSION "1.0.1"
 !define EXE_NAME "stimfit"
@@ -39,7 +41,7 @@ install Python ${PY_VERSION}, NumPy ${NP_VERSION} \
 and Matplotlib ${MPL_VERSION} \
 if you don't have them on your machine."
 !define UPDATE_WELCOME "This wizard will install \
-${REG_NAME} on your computer. Please make sure Python ${PY_MAJOR},\
+${REG_NAME} on your computer. Please make sure Python ${PY_MIN} or ${PY_MAJOR}, \
 NumPy and Matplotlib are installed before proceeding."
 ; The name of the installer
 Name "${REG_NAME}"
@@ -58,7 +60,7 @@ InstallDir "$PROGRAMFILES\${REG_NAME}"
 ; Request application privileges for Windows Vista
 RequestExecutionLevel admin
 
-!define STRING_PYTHON_NOT_FOUND "Python ${PY_MAJOR} is not installed on this system. \
+!define STRING_PYTHON_NOT_FOUND "Python ${PY_MIN} (or newer) is not installed on this system. \
 $\nPlease install Python first. \
 $\nClick OK to cancel installation and remove installation files."
 
@@ -111,7 +113,7 @@ Section "Python ${PY_VERSION}" 0
   ; Put installer into installation dir temporarily
   File "${MSIDIR}\python-${PY_VERSION}.msi"
 
-  ExecWait '"Msiexec.exe" /i "$INSTDIR\python-${PY_VERSION}.msi"'
+  ExecWait '"Msiexec.exe" /quiet /passive /i "$INSTDIR\python-${PY_VERSION}.msi"'
   
   ; Delete installer once we are done
   Delete "$INSTDIR\python-${PY_VERSION}.msi"
@@ -159,13 +161,21 @@ Section "!Program files and wxPython" 3 ; Core program files and wxPython
 
   ClearErrors
   ReadRegStr $9 HKEY_LOCAL_MACHINE "SOFTWARE\Python\PythonCore\${PY_MAJOR}\InstallPath" ""
-    
-  IfErrors 0 +3
-    MessageBox MB_OK "$StrNoUsablePythonFound"
-    Quit    
-
+  IfErrors 0 +9
+    ClearErrors
+    ReadRegStr $9 HKEY_LOCAL_MACHINE "SOFTWARE\Python\PythonCore\${PY_MIN}\InstallPath" ""
+    IfErrors 0 +8
+	  ClearErrors
+	  ReadRegStr $9 HKEY_CURRENT_USER "Software\Python\PythonCore\${PY_MIN}\InstallPath" ""
+	  IfErrors 0 +5
+        MessageBox MB_OK "$StrNoUsablePythonFound"
+        Quit
+  StrCpy $PY_ACT "${PY_MAJOR}"
+  Goto +2
+  StrCpy $PY_ACT "${PY_MIN}"
+  
   ClearErrors
-  DetailPrint "Found a Python ${PY_MAJOR} installation at '$9'"
+  DetailPrint "Found a Python $PY_ACT installation at '$9'"
   
   ; Add a path to the installation directory in the python site-packages folder
   FileOpen $0 $9\Lib\site-packages\stimfit.pth w
@@ -259,7 +269,7 @@ Section "!Program files and wxPython" 3 ; Core program files and wxPython
 SectionEnd ; end the section
 
 Section "!stfio standalone module" 4 ; Standalone python file i/o module
-
+  
   ;This section is required : readonly mode
   SectionIn RO
    
@@ -268,13 +278,21 @@ Section "!stfio standalone module" 4 ; Standalone python file i/o module
 
   ClearErrors
   ReadRegStr $9 HKEY_LOCAL_MACHINE "SOFTWARE\Python\PythonCore\${PY_MAJOR}\InstallPath" ""
-    
-  IfErrors 0 +3
-    MessageBox MB_OK "$StrNoUsablePythonFound"
-    Quit    
+  IfErrors 0 +9
+    ClearErrors
+    ReadRegStr $9 HKEY_LOCAL_MACHINE "SOFTWARE\Python\PythonCore\${PY_MIN}\InstallPath" ""
+    IfErrors 0 +8
+	  ClearErrors
+	  ReadRegStr $9 HKEY_CURRENT_USER "Software\Python\PythonCore\${PY_MIN}\InstallPath" ""
+	  IfErrors 0 +5
+        MessageBox MB_OK "$StrNoUsablePythonFound"
+        Quit
+  StrCpy $PY_ACT "${PY_MAJOR}"
+  Goto +2
+  StrCpy $PY_ACT "${PY_MIN}"
 
   ClearErrors
-  DetailPrint "Found a Python ${PY_MAJOR} installation at '$9'"
+  DetailPrint "Found a Python $PY_ACT installation at '$9'"
   
   !define STFIODIR "$9\Lib\site-packages\stfio"
   ; Add a path to the installation directory in the python site-packages folder
@@ -471,7 +489,7 @@ SubSectionEnd
   ;Assign descriptions to sections
 !ifndef UPDATE
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT 0 "Python ${PY_MAJOR} is required to run stimfit. Unselect this if it's already installed on your system."
+    !insertmacro MUI_DESCRIPTION_TEXT 0 "Python ${PY_MIN} or ${PY_MAJOR} is required to run stimfit. Unselect this if it's already installed on your system."
     !insertmacro MUI_DESCRIPTION_TEXT 1 "NumPy is required for efficient numeric computations in python. Unselect this if you already have NumPy on your system."
     !insertmacro MUI_DESCRIPTION_TEXT 2 "Matplotlib is required for exporting graphics and printing. Unselect this if you already have Matplotlib on your system."
     !insertmacro MUI_DESCRIPTION_TEXT 3 "The core program files and wxPython 2.9 (mandatory)."
