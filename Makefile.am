@@ -141,7 +141,7 @@ stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/reco
             ./src/app/funclib/funclib.cpp \
             ./src/app/usrdlg/usrdlg.cpp
 
-stimfittest_SOURCES = ./src/app/app.cpp ./src/core/section_test.cpp
+stimfittest_SOURCES = ./src/app/app.cpp ./src/test/test.cpp
 
 noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
             ./src/core/stimdefs.h ./src/core/fitlib.h ./src/core/spline.h ./src/core/measlib.h \
@@ -270,7 +270,9 @@ stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
 stimfit_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lfftw3 -lhdf5 -lhdf5_hl ./src/app/libstimfit.a
 stimfittest_CPPFLAGS = ${CPPFLAGS} -DSTF_TEST
 stimfittest_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS)
+
 # stimfit_OBJECTS won't work here because stimfit-app.o has a main() function
+# this is why *.o files are explicitly listed here
 stimfittest_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lfftw3 -lhdf5 -lhdf5_hl -lboost_unit_test_framework \
  Axb.o stimfit-abfheadr.o stimfit-cfslib.o stimfit-FileIO.o stimfit-Oldheadr.o stimfit-table.o \
  cfs.o stimfit-abfhwave.o stimfit-channel.o stimfit-FileReadCache.o stimfit-parentframe.o \
