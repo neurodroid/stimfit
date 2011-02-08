@@ -74,11 +74,11 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
-#ifdef _WINDOWS
+#if defined(_WINDOWS) || defined (STF_TEST)
 extern wxStfApp& wxGetApp();
 wxStfApp& wxGetApp() { return *static_cast<wxStfApp*>(wxApp::GetInstance()); }
 #endif
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) && !defined(STF_TEST)
 IMPLEMENT_APP(wxStfApp)
 #endif
 

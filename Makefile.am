@@ -104,7 +104,9 @@ uninstall-hook:
 	rm -f ${PYTHON_SITE_PKG}/stfio.pth
 
 else
-bin_PROGRAMS = stimfit stimfittest
+bin_PROGRAMS = stimfit
+check_PROGRAMS = stimfittest
+TESTS = ${check_PROGRAMS}
 stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
 	    ./src/core/core.cpp ./src/core/fitlib.cpp ./src/core/measlib.cpp ./src/core/filelib/asciilib.cpp \
 	    ./src/core/filelib/cfslib.cpp ./src/core/filelib/hdf5lib.cpp ./src/core/filelib/cfs.c \
@@ -139,7 +141,7 @@ stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/reco
             ./src/app/funclib/funclib.cpp \
             ./src/app/usrdlg/usrdlg.cpp
 
-stimfittest_SOURCES = ./src/core/section_test.cpp
+stimfittest_SOURCES = ./src/app/app.cpp ./src/core/section_test.cpp
 
 noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
             ./src/core/stimdefs.h ./src/core/fitlib.h ./src/core/spline.h ./src/core/measlib.h \
@@ -266,7 +268,22 @@ INCLUDES = $(PYTHON_ADDINCLUDES)
 stimfit_CXXFLAGS = $(OPT_CXXFLAGS)
 stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
 stimfit_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lfftw3 -lhdf5 -lhdf5_hl ./src/app/libstimfit.a
-stimfittest_LDADD = -lboost_unit_test_framework
+stimfittest_CPPFLAGS = ${CPPFLAGS} -DSTF_TEST
+stimfittest_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS)
+# stimfit_OBJECTS won't work here because stimfit-app.o has a main() function
+stimfittest_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lfftw3 -lhdf5 -lhdf5_hl -lboost_unit_test_framework \
+ Axb.o stimfit-abfheadr.o stimfit-cfslib.o stimfit-FileIO.o stimfit-Oldheadr.o stimfit-table.o \
+ cfs.o stimfit-abfhwave.o stimfit-channel.o stimfit-FileReadCache.o stimfit-parentframe.o \
+ stimfit-abflib.o stimfit-childframe.o stimfit-fileUtils.o \
+ stimfit-abfutil.o stimfit-copygrid.o stimfit-fitlib.o stimfit-printout.o stimfit-unix.o \
+ stimfit-core.o stimfit-fitseldlg.o stimfit-ProtocolReaderABF2.o stimfit-usrdlg.o \
+ lmbc.o stimfit-asciilib.o stimfit-csynch.o stimfit-funclib.o stimfit-recording.o stimfit-view.o \
+ lmlec.o stimfit-atflib.o stimfit-cursorsdlg.o stimfit-graph.o stimfit-section.o stimfit-zoom.o \
+ lm.o stimfit-axatffio32.o stimfit-doc.o stimfit-hdf5lib.o stimfit-SimpleStringCache.o \
+ stimfit-abf2headr.o stimfit-axglib.o stimfit-eventdlg.o stimfit-hekalib.o stimfit-smalldlgs.o \
+ misc.o stimfit-abferror.o stimfit-AxoGraph_ReadWrite.o stimfit-filedesc.o stimfit-measlib.o stimfit-stfcheckbox.o \
+ stimfit-abffiles.o stimfit-byteswap.o stimfit-fileio2.o stimfit-msbincvt.o stimfit-stringUtils.o \
+ src/app/libstimfit.a
 
 if BUILD_DEBIAN
   LTTARGET=/usr/lib/stimfit
