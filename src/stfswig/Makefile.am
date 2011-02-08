@@ -20,38 +20,28 @@ libstf_la_LIBADD = $(WX_LIBS)
 
 EXTRA_DIST = stfswig.i ivtools.py mintools.py natools.py minidemo.py charlie.py stf.py mintools.py hdf5tools.py spells.py embedded_init.py embedded_stf.py embedded_mpl.py embedded_ipython.py unittest_stfio.py heka.py extensions.py Doxyfile
 
-if BUILD_DEBIAN
-  LNTARGET="/usr/lib/stimfit/${STF_PYTHON_LIBNAME}"
-else
-  LNTARGET="${prefix}/lib/stimfit/${STF_PYTHON_LIBNAME}"
-endif
-
 install-exec-hook:
-	$(MKDIR_P) ${PYTHON_SITE_PKG}/stimfit
-	cd ${PYTHON_SITE_PKG}/stimfit && ln -sf ${LNTARGET} _stf.so
+	cd ${prefix}/lib/stimfit && ln -sf ${STF_PYTHON_LIBNAME} _stf.so
 	rm -f ${prefix}/lib/stimfit/*.la
 	rm -f ${prefix}/lib/stimfit/*.a
-	cp -p $(srcdir)/ivtools.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/mintools.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/natools.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/minidemo.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/charlie.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/hdf5tools.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/stf.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/stfio_plot.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/spells.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/embedded_init.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/embedded_stf.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/embedded_mpl.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/embedded_ipython.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/heka.py ${PYTHON_SITE_PKG}/stimfit
-	cp -p $(srcdir)/extensions.py ${PYTHON_SITE_PKG}/stimfit
-	chmod -x ${PYTHON_SITE_PKG}/stimfit/*.py
-	echo stimfit > ${PYTHON_SITE_PKG}/stimfit.pth
+	cp -p $(srcdir)/ivtools.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/mintools.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/natools.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/minidemo.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/charlie.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/hdf5tools.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/stf.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/stfio_plot.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/spells.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/embedded_init.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/embedded_stf.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/embedded_mpl.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/embedded_ipython.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/heka.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/extensions.py ${prefix}/lib/stimfit
+	chmod -x ${prefix}/lib/stimfit/*.py
 
 uninstall-hook:
-	rm -rf ${PYTHON_SITE_PKG}/stimfit
-	rm -f ${PYTHON_SITE_PKG}/stimfit.pth
 	rm -rf ${prefix}/lib/stimfit
 
 endif

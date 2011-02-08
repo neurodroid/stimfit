@@ -1,5 +1,3 @@
-usr/lib/python2.*/dist-packages/stimfit.pth
-usr/lib/python2.*/dist-packages/stimfit/*.so
-usr/lib/python2.*/dist-packages/stimfit/*.py
+usr/lib/stimfit/*.py
 usr/lib/stimfit/*.so
 usr/bin/stimfit

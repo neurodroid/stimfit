@@ -14,14 +14,14 @@
 
 int stf::Extension::n_extensions = 0;
 
-#ifdef __WXMAC__
+#if defined(__WXMAC__) || defined (__WXGTK__)
 #include <wx/stdpaths.h>
 
 wxString GetExecutablePath()
 {
     return  wxStandardPaths::Get( ).GetExecutablePath();
 }
-#endif // __WXMAC__
+#endif // __WXMAC__ || __WXGTK__
 
 #ifdef _WINDOWS
 #include <winreg.h>
@@ -90,8 +90,22 @@ bool wxStfApp::Init_wxPython()
     cwd << wxT("import numpy\n");
     cwd << wxT("print numpy.version.version\n");
 #endif // _STFDEBUG
-
 #endif // __WXMAC__
+    
+#ifdef __WXGTK__
+    // Add the cwd to the present path:
+    wxString app_path = wxFileName( GetExecutablePath() ).GetPath();
+    wxString cwd;
+    cwd << wxT("import os\n");
+    cwd << wxT("cwd=\"") << app_path << wxT("/../lib/stimfit\"\n");
+    cwd << wxT("import sys\n");
+    cwd << wxT("sys.path.append(cwd)\n");
+#ifdef _STFDEBUG
+    cwd << wxT("print sys.path\n");
+    cwd << wxT("import numpy\n");
+    cwd << wxT("print numpy.version.version\n");
+#endif // _STFDEBUG
+#endif // __WXGTK__
 
 #ifdef _WINDOWS
     // Add the cwd to the present path:
@@ -103,15 +117,13 @@ bool wxStfApp::Init_wxPython()
 		<< wxT("\"\nimport sys\nsys.path.insert(0,cwd)\n");
 #endif
 
-#if defined(_WINDOWS) || defined(__WXMAC__)
-	int cwd_result = PyRun_SimpleString(cwd.utf8_str());
+    int cwd_result = PyRun_SimpleString(cwd.utf8_str());
     if (cwd_result!=0) {
         PyErr_Print();
         ErrorMsg( wxT("Couldn't modify Python path") );
         Py_Finalize();
         return false;
     }
-#endif
 
     // Load the wxPython core API.  Imports the wx._core_ module and sets a
     // local pointer to a function table located there.  The pointer is used
