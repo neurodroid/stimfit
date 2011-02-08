@@ -104,7 +104,7 @@ uninstall-hook:
 	rm -f ${PYTHON_SITE_PKG}/stfio.pth
 
 else
-bin_PROGRAMS = stimfit
+bin_PROGRAMS = stimfit stimfittest
 stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
 	    ./src/core/core.cpp ./src/core/fitlib.cpp ./src/core/measlib.cpp ./src/core/filelib/asciilib.cpp \
 	    ./src/core/filelib/cfslib.cpp ./src/core/filelib/hdf5lib.cpp ./src/core/filelib/cfs.c \
@@ -138,6 +138,8 @@ stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/reco
 	    ./src/app/dlgs/fitseldlg.cpp ./src/app/dlgs/smalldlgs.cpp \
             ./src/app/funclib/funclib.cpp \
             ./src/app/usrdlg/usrdlg.cpp
+
+stimfittest_SOURCES = ./src/core/section_test.cpp
 
 noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
             ./src/core/stimdefs.h ./src/core/fitlib.h ./src/core/spline.h ./src/core/measlib.h \
@@ -264,6 +266,7 @@ INCLUDES = $(PYTHON_ADDINCLUDES)
 stimfit_CXXFLAGS = $(OPT_CXXFLAGS)
 stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
 stimfit_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lfftw3 -lhdf5 -lhdf5_hl ./src/app/libstimfit.a
+stimfittest_LDADD = -lboost_unit_test_framework
 
 if BUILD_DEBIAN
   LTTARGET=/usr/lib/stimfit
