@@ -13,7 +13,7 @@ SetCompressor lzma
 
 !define USRDRV "C:\"
 !define LOGIN "cs"
-!define PRODUCT_VERSION "0.10.9"
+!define PRODUCT_VERSION "0.10.10"
 !define WXW_VERSION "2.9.1"
 !define WXW_VERSION_SHORT "291"
 !define PY_VERSION "2.7.1"

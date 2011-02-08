@@ -26,7 +26,7 @@ clean:
 	find -name '*.a' | xargs -r rm -f
 	find -name '*.la' | xargs -r rm -f
 	find -name '*.so' | xargs -r rm -f
-	find -name '*.h5' | xargs -r rm -f
+	rm -f $(CURDIR)/test.h5
 	dh_clean
 
 install: build

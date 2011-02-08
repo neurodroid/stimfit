@@ -1,3 +1,15 @@
+stimfit (0.10.10-1ubuntu1) lucid; urgency=low
+
+  * Failed upload required yet another reversioning...
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Thu, 08 Feb 2011 18:11:03 +0000
+
+stimfit (0.10.9-1ubuntu3) lucid; urgency=low
+
+  * Failed upload required reversioning
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Thu, 08 Feb 2011 17:54:56 +0000
+
 stimfit (0.10.9-1ubuntu2) lucid; urgency=low
 
   * Moved Python files from dist-packages to private directory
@@ -19,6 +31,8 @@ stimfit (0.10.9-1) unstable; urgency=low
   * Moved Python files from dist-packages to private directory
     (/usr/lib/stimfit) to comply with debian packaging rules.
   * Minimal unit testing during build.
+  * Initial Debian release (Closes: #612375)
+  * Upload sponsored by Yaroslav Halchenko <debian@onerussian.com>
 
  -- Christoph Schmidt-Hieber <christsc@gmx.de>  Thu, 08 Feb 2011 16:23:29 +0000
 
