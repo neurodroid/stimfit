@@ -1,3 +1,27 @@
+stimfit (0.10.9-1ubuntu2) lucid; urgency=low
+
+  * Moved Python files from dist-packages to private directory
+    (/usr/lib/stimfit) to comply with debian packaging rules.
+  * Minimal unit testing during build.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Thu, 08 Feb 2011 17:34:09 +0000
+
+stimfit (0.10.9-1ubuntu1) maverick; urgency=low
+
+  * Moved Python files from dist-packages to private directory
+    (/usr/lib/stimfit) to comply with debian packaging rules.
+  * Minimal unit testing during build.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Thu, 08 Feb 2011 17:31:57 +0000
+
+stimfit (0.10.9-1) unstable; urgency=low
+
+  * Moved Python files from dist-packages to private directory
+    (/usr/lib/stimfit) to comply with debian packaging rules.
+  * Minimal unit testing during build.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Thu, 08 Feb 2011 16:23:29 +0000
+
 stimfit (0.10.8-0ubuntu2) lucid; urgency=low
 
   * Increased matplotlib compatibility

@@ -25,16 +25,18 @@ clean:
 	find -name '*.lo' | xargs -r rm -f
 	find -name '*.a' | xargs -r rm -f
 	find -name '*.la' | xargs -r rm -f
+	find -name '*.so' | xargs -r rm -f
+	find -name '*.h5' | xargs -r rm -f
 	dh_clean
 
 install: build
 	./configure --enable-python --enable-debian --prefix=$(DEBPREFIX)
 	$(MAKE)
+	$(MAKE) check
 	$(MAKE) install
 
 	./configure --enable-module --enable-debian --prefix=$(DEBPREFIX)
 	$(MAKE)
-	: Build manpages
 	$(MAKE) install
 
 	mkdir $(CURDIR)/man && \

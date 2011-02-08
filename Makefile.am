@@ -4,6 +4,10 @@ if BUILD_MODULE
 
 pkglibdir = ${PYTHON_SITE_PKG}/stfio
 pkglib_LTLIBRARIES = libstfio.la
+TESTS_ENVIRONMENT = cp $(srcdir)/src/stfswig/test.h5 ./ && \
+  cp .libs/libstfio.so ./_stfio.so && \
+  $(PYTHON)
+TESTS = ./src/stfswig/unittest_stfio.py
 
 PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
 PYTHON_ADDLDFLAGS = $(LIBPYTHON_LDFLAGS)
@@ -82,7 +86,7 @@ $(srcdir)/src/stfswig/stfioswig_wrap.cxx : ./src/stfswig/stfioswig.i
 
 INCLUDES = $(LIBNUMPY_INCLUDES) $(PYTHON_ADDINCLUDES)
 
-EXTRA_DIST = ./src/stfswig/stfioswig.i ./src/stfswig/stfio.py ./src/stfswig/unittest_stfio.py ./src/stfswig/hdf5tools.py
+EXTRA_DIST = ./src/stfswig/stfioswig.i ./src/stfswig/stfio.py ./src/stfswig/unittest_stfio.py ./src/stfswig/hdf5tools.py ./src/stfswig/test.h5
 
 libstfio_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
 libstfio_la_CXXFLAGS = $(OPT_CXXFLAGS)
@@ -102,6 +106,10 @@ install-exec-hook:
 uninstall-hook:
 	rm -f ${PYTHON_SITE_PKG}/stfio/_stfio.so
 	rm -f ${PYTHON_SITE_PKG}/stfio.pth
+
+clean-local:
+	rm -f test.h5
+	rm -f _stfio.so
 
 else
 bin_PROGRAMS = stimfit
@@ -239,6 +247,7 @@ EXTRA_DIST+= ./src/stfswig/stfioswig.i
 EXTRA_DIST+= ./src/stfswig/stfio.py 
 EXTRA_DIST+= ./src/stfswig/stfio_plot.py 
 EXTRA_DIST+= ./src/stfswig/unittest_stfio.py
+EXTRA_DIST+= ./src/stfswig/test.h5
 EXTRA_DIST+= ./src/stfswig/stfioswig.h 
 EXTRA_DIST+= ./debian/changelog
 EXTRA_DIST+= ./debian/compat
