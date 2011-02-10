@@ -457,10 +457,18 @@ void Recording::SelectTrace(std::size_t sectionToSelect) {
 #ifdef _OPENMP
 #pragma omp parallel for reduction(+:sumY)
 #endif
-    for (int i=(int)baseBeg;i<=(int)baseEnd;i++) {
-        sumY+=ChannelArray[cc][sectionToSelect][i];
+    int start = baseBeg;
+    int end = baseEnd;
+    if (start < 0) start = 0;
+    if (start > (int)ChannelArray[cc][sectionToSelect].size()-1)
+        start = ChannelArray[cc][sectionToSelect].size()-1;
+    if (end < 0) end = 0;
+    if (end > (int)ChannelArray[cc][sectionToSelect].size()-1)
+        end = ChannelArray[cc][sectionToSelect].size()-1;
+    for (int i=start; i<=end; i++) {
+        sumY += ChannelArray[cc][sectionToSelect][i];
     }
-    int n=(int)(baseEnd-baseBeg+1);
+    int n=(int)(end-start+1);
     selectBase.push_back(sumY/n);
 }
 

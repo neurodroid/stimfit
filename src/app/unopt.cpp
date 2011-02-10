@@ -474,7 +474,7 @@ std::vector<stf::Extension> wxStfApp::LoadExtensions() {
 void wxStfApp::OnUserdef(wxCommandEvent& event) {
     int id = event.GetId()-ID_USERDEF;
 
-    if (id>=GetExtensionLib().size() || id<0) {
+    if (id >= (int)GetExtensionLib().size() || id<0) {
         wxString msg(wxT("Couldn't find extension function"));
         ErrorMsg( msg );
         return;
