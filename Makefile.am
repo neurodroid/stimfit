@@ -149,7 +149,7 @@ stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/reco
             ./src/app/funclib/funclib.cpp \
             ./src/app/usrdlg/usrdlg.cpp
 
-stimfittest_SOURCES = ./src/app/app.cpp ./src/test/section.cpp
+stimfittest_SOURCES = ./src/app/app.cpp ./src/test/section.cpp ./src/test/channel.cpp ./src/test/recording.cpp
 
 noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
             ./src/core/stimdefs.h ./src/core/fitlib.h ./src/core/spline.h ./src/core/measlib.h \

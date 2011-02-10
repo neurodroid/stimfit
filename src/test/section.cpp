@@ -1,8 +1,10 @@
 #include "../core/section.h"
 
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE Section test
+#define BOOST_TEST_MODULE Stimfit test
 #include <boost/test/unit_test.hpp>
+
+BOOST_AUTO_TEST_SUITE( section_suite )
 
 BOOST_AUTO_TEST_CASE( constructors_test )
 {
@@ -26,3 +28,5 @@ BOOST_AUTO_TEST_CASE( data_access_test )
     BOOST_CHECK_EQUAL( sec2[sec2.size()-1], 0 );
     BOOST_CHECK_THROW( sec1.at( sec1.size() ), std::out_of_range );
 }
+
+BOOST_AUTO_TEST_SUITE_END()
