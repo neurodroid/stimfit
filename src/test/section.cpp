@@ -11,13 +11,18 @@ BOOST_AUTO_TEST_CASE( constructors_test )
 
     Section sec1(Vector_double(32768, 0), "Test section");
     BOOST_CHECK_EQUAL( sec1.size(), 32768 );
-    BOOST_CHECK_EQUAL( sec1[32767], 0 );
-    BOOST_CHECK_EQUAL( sec1.GetSectionDescription(), "Test section" );
-    BOOST_CHECK_THROW( sec1.at( sec1.size() ), std::out_of_range );
 
     Section sec2(32768, "Test section");
     BOOST_CHECK_EQUAL( sec2.size(), 32768 );
-    BOOST_CHECK_EQUAL( sec2[32767], 0 );
-    BOOST_CHECK_EQUAL( sec2.GetSectionDescription(), "Test section" );
-    BOOST_CHECK_THROW( sec2.at( sec2.size() ), std::out_of_range );
+}
+
+BOOST_AUTO_TEST_CASE( data_access_test )
+{
+    Section sec1(Vector_double(32768, 0), "Test section");
+    BOOST_CHECK_EQUAL( sec1[sec1.size()-1], 0 );
+    BOOST_CHECK_THROW( sec1.at( sec1.size() ), std::out_of_range );
+
+    Section sec2(32768, "Test section");
+    BOOST_CHECK_EQUAL( sec2[sec2.size()-1], 0 );
+    BOOST_CHECK_THROW( sec1.at( sec1.size() ), std::out_of_range );
 }
