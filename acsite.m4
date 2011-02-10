@@ -379,4 +379,3 @@ AC_DEFUN([SWIG_PYTHON],[
         AC_SUBST([SWIG_PYTHON_OPT],[-python$swig_shadow])
         AC_SUBST([SWIG_PYTHON_CPPFLAGS],[$PYTHON_CPPFLAGS])
 ])
-

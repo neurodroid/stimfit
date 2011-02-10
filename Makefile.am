@@ -277,12 +277,13 @@ INCLUDES = $(PYTHON_ADDINCLUDES)
 stimfit_CXXFLAGS = $(OPT_CXXFLAGS)
 stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
 stimfit_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lfftw3 -lhdf5 -lhdf5_hl ./src/app/libstimfit.a
-stimfittest_CPPFLAGS = ${CPPFLAGS} -DSTF_TEST
-stimfittest_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS)
+stimfittest_CXXFLAGS = $(GT_CXXFLAGS)
+stimfittest_CPPFLAGS = ${CPPFLAGS} $(GT_CPPFLAGS) -DSTF_TEST
+stimfittest_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(GT_LDFLAGS)
 
 # stimfit_OBJECTS won't work here because stimfit-app.o has a main() function
 # this is why *.o files are explicitly listed here
-stimfittest_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lfftw3 -lhdf5 -lhdf5_hl -lboost_unit_test_framework \
+stimfittest_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lgtest_main -lfftw3 -lhdf5 -lhdf5_hl \
  Axb.o stimfit-abfheadr.o stimfit-cfslib.o stimfit-FileIO.o stimfit-Oldheadr.o stimfit-table.o \
  cfs.o stimfit-abfhwave.o stimfit-channel.o stimfit-FileReadCache.o stimfit-parentframe.o \
  stimfit-abflib.o stimfit-childframe.o stimfit-fileUtils.o \
