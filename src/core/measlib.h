@@ -46,8 +46,8 @@ namespace stf {
  *  \param ulp Upper limit of the peak window (see stf::peak()). 
  *  \return The baseline value.
  */
-double base( double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb,
-        std::size_t llp=0, std::size_t ulp=0 );
+double base( double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb);
+
 
 //! Find the peak value of \e data between \e llp and \e ulp.
 /*! Note that peaks will be detected by measuring from \e base, but the return value

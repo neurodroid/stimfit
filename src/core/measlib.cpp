@@ -33,8 +33,7 @@
 #include "./stimdefs.h"
 #include "./measlib.h"
 
-double stf::base( double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb,
-             std::size_t llp, std::size_t ulp)
+double stf::base( double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb)
 {
     if (data.size()==0) return 0;
     if (llb>ulb || ulb>=data.size()) {
@@ -74,7 +73,7 @@ double stf::base( double& var, const std::vector<double>& data, std::size_t llb,
 double stf::peak(const std::vector<double>& data, double base, std::size_t llp, std::size_t ulp,
             int pM, stf::direction dir, double& maxT)
 {
-    if (llp>ulp || ulp>data.size()) {
+    if (llp>ulp || ulp>=data.size()) {
         throw (std::out_of_range("Exception:\n Index out of range in stf::peak()"));
     }
     
@@ -87,9 +86,14 @@ double stf::peak(const std::vector<double>& data, double base, std::size_t llp, 
             //Calculate peak as the average over pM points around the point i
             peak=0.0;
             div_t Div1=div((int)pM-1, 2);
-            for (std::size_t j=i-Div1.quot; j <=i-Div1.quot+pM-1; j++) 
-                peak+=data[j];
-            peak /= pM;
+            int counter = 0;
+            int start = i-Div1.quot;
+            if (start < 0)
+                start = 0;
+            for (counter=start; counter <= start+pM-1 && counter < (int)data.size(); counter++)
+                peak+=data[counter];
+            peak /= (counter-start);
+            
             //Set peak for BOTH
             if (dir == stf::both && fabs(peak-base) > fabs (max-base))
             {

@@ -507,7 +507,7 @@ void Recording::Measure( )
     //Begin peak and base calculation
     //-------------------------------
     try {
-        base=stf::base(var,cur().get(),baseBeg,baseEnd,peakBeg,peakEnd);
+        base=stf::base(var,cur().get(),baseBeg,baseEnd);
         baseSD=sqrt(var);
         peak=stf::peak(cur().get(),base,
                        peakBeg,peakEnd,pM,direction,maxT);
