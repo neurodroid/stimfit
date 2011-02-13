@@ -7,7 +7,6 @@ Thu Jan 20 09:59:57 CET 2011
 
 * Add a column with the Slope results in the Batch analysis 
 
-
 Sat Jan 22 11:22:13 CET 2011
 * DONE (Jan 23 22:12:33 CET 2011) : Enable writing of Latency cursors in Stimfit profile (check wxGetProfileInt and wxWriteProfileInt in wxStfApp). Additionaly, consider to write zero-based index too the configuration. (done)
 
