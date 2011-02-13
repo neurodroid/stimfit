@@ -26,15 +26,16 @@ mkdir -p ./stimfit.app/Contents/Frameworks/stimfit
 
 ##
 rsync -rtuvl `${WX_CONFIG} --exec-prefix`/lib/libwx*.dylib ./stimfit.app/Contents/libs/
-sudo cp -v ./src/stfswig/.libs/libstf.0.dylib /usr/local/lib/libstf.0.dylib
+sudo mkdir -p /usr/local/lib/stimfit
+sudo cp -v ./src/stfswig/.libs/libstf.dylib /usr/local/lib/stimfit/libstf.dylib
 rm -f ./stimfit.app/Contents/Frameworks/stimfit/_stf.so
-cp -v ./src/stfswig/.libs/libstf.0.dylib ./stimfit.app/Contents/Frameworks/stimfit/_stf.so
-rm -f ./stimfit.app/Contents/libs/libstf.0.dylib
+cp -v ./src/stfswig/.libs/libstf.dylib ./stimfit.app/Contents/Frameworks/stimfit/_stf.so
+rm -f ./stimfit.app/Contents/libs/libstf.dylib
 dylibbundler -of -b -x ./stimfit.app/Contents/MacOS/stimfit -d ./stimfit.app/Contents/libs/
 ##
 
-# sudo mv ./stimfit.app/Contents/libs/libstf.0.dylib /usr/local/lib/_stf.so
-# ln -sf /usr/local/lib/_stf.so ./stimfit.app/Contents/libs/libstf.0.dylib
+# sudo mv ./stimfit.app/Contents/libs/libstf.dylib /usr/local/lib/stimfit/_stf.so
+# ln -sf /usr/local/lib/stimfit/_stf.so ./stimfit.app/Contents/libs/libstf.dylib
 
 ##
 if test -n "$1"; then
@@ -43,11 +44,11 @@ if test -n "$1"; then
     find ./stimfit.app  -name "*.so" -exec dylibbundler -of -b -x '{}' -d ./stimfit.app/Contents/libs/ \;
   fi
 fi
-sudo rm /usr/local/lib/*stf*
+sudo rm /usr/local/lib/stimfit
 
 ##
 
-# ln -sf ./stimfit.app/Contents/libs/libstf.0.dylib ./stimfit.app/Contents/Frameworks/stimfit/_stf.so 
+# ln -sf ./stimfit.app/Contents/libs/libstf.dylib ./stimfit.app/Contents/Frameworks/stimfit/_stf.so 
 
 cp -v ../../src/stfswig/*.py ./stimfit.app/Contents/Frameworks/stimfit/
 
