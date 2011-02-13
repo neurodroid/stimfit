@@ -92,5 +92,8 @@ stfconf.h.in
 
 #stf_init.py
 
+# stimfittest
+stimfittest
+
 syntax: regexp
 .*\#.*\#$
