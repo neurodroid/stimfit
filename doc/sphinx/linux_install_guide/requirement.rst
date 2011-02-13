@@ -26,8 +26,9 @@ For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build depend
                            liblapack-dev \
                            mercurial \
                            automake \
-			   autoconf \
- 			   libtool
+              			   autoconf \
+                           libtool \
+                           libgtest-dev
 
 This will get you, amongst others:
 
