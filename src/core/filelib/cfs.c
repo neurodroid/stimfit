@@ -5280,7 +5280,7 @@ short RecoverTable(short    handle,                  /* program file handle */
 #endif
     TpFHead     fileHP;
     short       retval;
-    THandle     pHandle = (THandle)NULL;
+    THandle     pHandle = 0;
     
     pfileInfo = &g_fileInfo[handle];     /* point to this files information */
     fileHP    = pfileInfo->fileHeadP;

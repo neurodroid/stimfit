@@ -2,7 +2,10 @@
 #include <string.h>
 #include <wchar.h>
 
-int WINAPI AXODBG_printf( char *lpsz, ... ) {printf(lpsz);return 0;}
+int WINAPI AXODBG_printf( char *lpsz, ... ) {
+    printf("%s", lpsz);
+    return 0;
+}
 /*********************************************************************
  *           CloseW32Handle (KERNEL.474)
  *           CloseHandle    (KERNEL32.@)

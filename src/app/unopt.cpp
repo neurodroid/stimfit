@@ -83,8 +83,8 @@ bool wxStfApp::Init_wxPython()
     cwd << wxT("sys.path.append(cwd)\n");
     cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks/stimfit\"\n");
     cwd << wxT("sys.path.append(cwd)\n");
-    cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks/numpy\"\n");
-    cwd << wxT("sys.path.insert(0,cwd)\n");
+    // cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks/numpy\"\n");
+    // cwd << wxT("sys.path.insert(0,cwd)\n");
 #ifdef _STFDEBUG
     cwd << wxT("print sys.path\n");
     cwd << wxT("import numpy\n");
