@@ -224,23 +224,20 @@ void wxStfApp::ImportPython(const wxString &modulelocation) {
     // Grab the Global Interpreter Lock.
     wxPyBlock_t blocked = wxPyBeginBlockThreads();
 
+    wxString python_import;
 #ifdef IPYTHON
     // the ip object is created to access the interactive IPython session
-    wxString IPython_import;
-    IPython_import << wxT("import IPython.ipapi\n");
-    IPython_import << wxT("ip = IPython.ipapi.get()\n");
-    IPython_import << wxT("import sys\n");
-    IPython_import << wxT("sys.path.append(\"") << python_path << wxT("\")\n");
-    IPython_import << wxT("if not sys.modules.has_key(\"") << python_file << wxT("\"):");
-    IPython_import << wxT("ip.ex(\"import ") << python_file << ("\")\n");
-    IPython_import << wxT("else:") << wxT("ip.ex(\"reload(") << python_file << wxT(")") << wxT("\")\n");
-    IPython_import << wxT("sys.path.remove(\"") << python_path << wxT("\")\n");
-
-    PyRun_SimpleString(IPython_import);
+    python_import << wxT("import IPython.ipapi\n");
+    python_import << wxT("ip = IPython.ipapi.get()\n");
+    python_import << wxT("import sys\n");
+    python_import << wxT("sys.path.append(\"") << python_path << wxT("\")\n");
+    python_import << wxT("if not sys.modules.has_key(\"") << python_file << wxT("\"):");
+    python_import << wxT("ip.ex(\"import ") << python_file << wxT("\")\n");
+    python_import << wxT("else:") << wxT("ip.ex(\"reload(") << python_file << wxT(")") << wxT("\")\n");
+    python_import << wxT("sys.path.remove(\"") << python_path << wxT("\")\n");
 
 #else
     // Python code to import a module with PyCrust 
-    wxString python_import;
     python_import << wxT("import sys\n");
     python_import << wxT("sys.path.append(\"") << python_path << wxT("\")\n");
     python_import << wxT("if not sys.modules.has_key(\"") << python_file << wxT("\"):");
@@ -249,12 +246,12 @@ void wxStfApp::ImportPython(const wxString &modulelocation) {
     python_import << wxT("sys.path.remove(\"") << python_path << wxT("\")\n");
     python_import << wxT("del sys\n");
 
+#endif
+
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     PyRun_SimpleString(python_import);
 #else
     PyRun_SimpleString(python_import.char_str());
-#endif
-    
 #endif
 
     // Release the Global Interpreter Lock
