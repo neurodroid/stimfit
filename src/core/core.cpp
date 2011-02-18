@@ -29,6 +29,9 @@
 #include "./filelib/atflib.h"
 #include "./filelib/axglib.h"
 #include "./filelib/hekalib.h"
+#ifdef WITH_BIOSIG
+#include "./filelib/biosiglib.h"
+#endif
 #if 0
 #include "./filelib/sonlib.h"
 #endif
@@ -43,6 +46,9 @@ stf::findType(const wxString& ext) {
     else if (ext==wxT("*.atf")) return stf::atf;
     else if (ext==wxT("*.dat")) return stf::heka;
     else if (ext==wxT("*.smr")) return stf::son;
+#ifdef WITH_BIOSIG
+    else if (ext==wxT("*.bs")) return stf::biosig;
+#endif
     else return stf::ascii;
 }
 
@@ -83,6 +89,12 @@ bool stf::importFile(
             stf::importHEKAFile(fName, ReturnData, progress);
             break;
         }
+#ifdef WITH_BIOSIG
+        case stf::biosig: {
+            stf::importBSFile(fName, ReturnData, progress);
+            break;
+        }
+#endif
 #ifndef MODULE_ONLY
 #if 0
         case stf::son: {

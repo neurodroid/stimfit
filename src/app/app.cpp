@@ -191,6 +191,12 @@ bool wxStfApp::OnInit(void)
                                      wxT("HEKA file"), wxT("*.dat"), wxT(""), wxT("dat"),
                                      wxT("HEKA Document"), wxT("HEKA View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
+#ifdef WITH_BIOSIG
+    m_biosigTemplate=new wxDocTemplate( docManager,
+                                     wxT("Biosig file"), wxT("*.bs"), wxT(""), wxT("bs"),
+                                     wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
+                                     CLASSINFO(wxStfView) );
+#endif
 #if 0
     m_sonTemplate=new wxDocTemplate( docManager,
                                      wxT("CED Spike 2 (SON) file"), wxT("*.smr"), wxT(""), wxT(""),

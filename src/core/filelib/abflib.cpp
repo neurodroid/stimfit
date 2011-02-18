@@ -114,9 +114,9 @@ void stf::importABFFile(const wxString &fName, Recording &ReturnData, bool progr
     }
     fclose(fh);
 #else
-	std::wstringstream fNameS;
-	fNameS << fName.c_str();
-	HANDLE hFile = CreateFile(fNameS.str().c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
+    std::wstringstream fNameS;
+    fNameS << fName.c_str();
+    HANDLE hFile = CreateFile(fNameS.str().c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
                               OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
  
     if (hFile == INVALID_HANDLE_VALUE) { 

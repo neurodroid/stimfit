@@ -573,16 +573,19 @@ struct txtImportSettings {
 
 //! File types
 enum filetype {
-    atf,   /*!< Axon text file. */
-    abf,   /*!< Axon binary file. */
-    axg,   /*!< Axograph binary file. */
-    ascii, /*!< Generic text file. */
-    cfs,   /*!< CED filing system. */
-    igor,  /*!< Igor binary wave. */
-    son,   /*!< CED Son files. */
-    hdf5,  /*!< hdf5 files. */
-    heka,  /*!< heka files. */
-    none   /*!< Undefined file type. */
+    atf,    /*!< Axon text file. */
+    abf,    /*!< Axon binary file. */
+    axg,    /*!< Axograph binary file. */
+    ascii,  /*!< Generic text file. */
+    cfs,    /*!< CED filing system. */
+    igor,   /*!< Igor binary wave. */
+    son,    /*!< CED Son files. */
+    hdf5,   /*!< hdf5 files. */
+    heka,   /*!< heka files. */
+#ifdef WITH_BIOSIG
+    biosig, /*!< biosig files. */
+#endif
+    none    /*!< Undefined file type. */
 };
 
 

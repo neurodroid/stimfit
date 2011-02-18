@@ -41,6 +41,10 @@ libstfio_la_SOURCES = ./src/stfswig/stfioswig_wrap.cxx ./src/stfswig/stfioswig.c
 	./src/core/filelib/axg/stringUtils.cpp \
 	./src/core/filelib/axg/byteswap.cpp \
         ./src/core/filelib/hekalib.cpp
+
+if WITH_BIOSIG
+libstfio_la_SOURCES += ./src/core/filelib/biosiglib.cpp
+endif
 # 
 noinst_HEADERS = ./src/stfswig/stfioswig.h ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
             ./src/core/stimdefs.h \
@@ -80,6 +84,10 @@ noinst_HEADERS = ./src/stfswig/stfioswig.h ./src/core/channel.h ./src/core/secti
             ./src/core/filelib/axg/stringUtils.h \
             ./src/core/filelib/axg/byteswap.h \
             ./src/core/filelib/axg/longdef.h
+
+if WITH_BIOSIG
+    noinst_HEADERS += ./src/core/filelib/biosiglib.h
+endif
 
 $(srcdir)/src/stfswig/stfioswig_wrap.cxx : ./src/stfswig/stfioswig.i
 	$(SWIG) $(SWIG_PYTHON_OPT) -o $@ $<
@@ -149,6 +157,10 @@ stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/reco
             ./src/app/funclib/funclib.cpp \
             ./src/app/usrdlg/usrdlg.cpp
 
+if WITH_BIOSIG
+stimfit_SOURCES += ./src/core/filelib/biosiglib.cpp
+endif
+
 stimfittest_SOURCES = ./src/app/app.cpp ./src/test/section.cpp ./src/test/channel.cpp ./src/test/recording.cpp ./src/test/measlib.cpp
 
 noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
@@ -199,6 +211,10 @@ noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.
 	    ./src/app/dlgs/fitseldlg.h ./src/app/dlgs/smalldlgs.h \
             ./src/app/funclib/funclib.h \
             ./src/app/usrdlg/usrdlg.h
+
+if WITH_BIOSIG
+    noinst_HEADERS += ./src/core/filelib/biosiglib.h
+endif
 
 EXTRA_DIST = ./src/icons/16-em-down.xpm
 EXTRA_DIST+= ./src/icons/16-em-open.xpm
@@ -275,7 +291,7 @@ endif
 INCLUDES = $(PYTHON_ADDINCLUDES)
 
 stimfit_CXXFLAGS = $(OPT_CXXFLAGS)
-stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
+stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS) $(LIBBIOSIG_LDFLAGS)
 stimfit_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lfftw3 -lhdf5 -lhdf5_hl ./src/app/libstimfit.a
 stimfittest_CXXFLAGS = $(GT_CXXFLAGS)
 stimfittest_CPPFLAGS = ${CPPFLAGS} $(GT_CPPFLAGS) -DSTF_TEST

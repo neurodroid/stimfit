@@ -66,6 +66,14 @@ if test "$with_pslope" = "yes" ; then
     CPPFLAGS="${CPPFLAGS} -DWITH_PSLOPE"
 fi
 
+AC_ARG_WITH([biosig], AS_HELP_STRING([--with-biosig],[build with support for libbiosig]),[])
+AM_CONDITIONAL(WITH_BIOSIG, test "$with_biosig" = "yes")
+if test "$with_biosig" = "yes" ; then
+    CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG"
+    LIBBIOSIG_LDFLAGS="-lbiosig"
+fi
+AC_SUBST(LIBBIOSIG_LDFLAGS)
+
 AC_MSG_CHECKING(for kernel)
 case `uname` in 
     Darwin)
