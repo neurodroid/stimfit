@@ -160,6 +160,16 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
             get().clear();
             return false;
         }
+        if (get()[0].get().empty()) {
+            wxGetApp().ErrorMsg(wxT("File is probably empty\n"));
+            get().clear();
+            return false;
+        }
+        if (get()[0][0].get().empty()) {
+            wxGetApp().ErrorMsg(wxT("File is probably empty\n"));
+            get().clear();
+            return false;
+        }
         wxStfParentFrame* pFrame = GetMainFrame();
         if (pFrame == NULL) {
             throw std::runtime_error("pFrame is 0 in wxStfDoc::OnOpenDocument");

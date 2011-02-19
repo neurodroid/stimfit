@@ -65,11 +65,81 @@ void stf::importBSFile(const wxString &fName, Recording &ReturnData, bool progre
 	sclose(hdr);
         throw std::runtime_error(std::string(errorMsg.c_str()));
     }
+
+#ifdef _STFDEBUG
     std::cout << "Number of channels: " << hdr->NS << std::endl;
+    std::cout << "Number of records per channel: " << hdr->NRec << std::endl;
+    std::cout << "Number of samples per record: " << hdr->SPR << std::endl;
     std::cout << "Data size: " << hdr->data.size[0] << "x" << hdr->data.size[1] << std::endl;
     std::cout << "Sampling rate: " << hdr->SampleRate << std::endl;
+    std::cout << "Number of events: " << hdr->EVENT.N << std::endl;
+    int	res = hdr2ascii(hdr, stdout, 3);
+#endif
 
-    // TODO: Read file data into ReturnData
+    int nchannels = hdr->NS;
+    for (int nc=0; nc<nchannels; ++nc) {
+        int nsections = 0; // TODO: hdr->nsections[nc];
+
+        Channel TempChannel(nsections);
+        TempChannel.SetChannelName(""); // TODO: hdr->channelname[nc];
+        TempChannel.SetYUnits(""); // TODO: hdr->yunits[nc];
+        
+        for (int ns=0; ns<nsections; ++ns) {
+            if (progress) {
+                int progbar =
+                    // Channel contribution:
+                    (int)(((double)nc/(double)nchannels)*100.0+
+                          // Section contribution:
+                          (double)ns/(double)nsections*(100.0/nchannels));
+#ifndef MODULE_ONLY
+                wxString progStr;
+                progStr << wxT("Reading channel #") << nc + 1 << wxT(" of ") << nchannels
+                        << wxT(", Section #") << ns + 1 << wxT(" of ") << nsections;
+                progDlg.Update(progbar, progStr);
+#else
+                std::cout << "\r";
+                std::cout << progbar << "%" << std::flush;
+#endif
+            }
+            Section TempSection(
+                                0, // TODO: hdr->nsamplingpoints[nc][ns]
+                                "" // TODO: hdr->sectionname[nc][ns]
+            );
+            // TODO: std::copy(&buffer[0], &buffer[TempSection.size()], TempSection.get_w().begin());
+            try {
+                TempChannel.InsertSection(TempSection, ns);
+            }
+            catch (...) {
+                ReturnData.resize(0);
+                sclose(hdr);
+                destructHDR(hdr);
+                throw;
+            }
+        }
+        try {
+            if ((int)ReturnData.size() < nchannels) {
+                ReturnData.resize(nchannels);
+            }
+            ReturnData.InsertChannel(TempChannel, nc);
+        }
+        catch (...) {
+            ReturnData.resize(0);
+            sclose(hdr);
+            destructHDR(hdr);
+            throw;
+        }
+    }
+    ReturnData.SetXScale(hdr->SampleRate);
+    ReturnData.SetComment(""); // TODO: hdr->comment
+    ReturnData.SetDate(""); // TODO: hdr->datestring
+    ReturnData.SetTime(""); // TODO: hdr->timestring
+
+#ifdef MODULE_ONLY
+    if (progress) {
+        std::cout << "\r";
+        std::cout << "100%" << std::endl;
+    }
+#endif
 
     sclose(hdr);
     destructHDR(hdr);
