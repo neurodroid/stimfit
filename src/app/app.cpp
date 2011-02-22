@@ -74,13 +74,13 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
-#if defined(_WINDOWS) || defined (STF_TEST)
+// #if defined(_WINDOWS) || defined (STF_TEST)
 extern wxStfApp& wxGetApp();
 wxStfApp& wxGetApp() { return *static_cast<wxStfApp*>(wxApp::GetInstance()); }
-#endif
-#if !defined(_WINDOWS) && !defined(STF_TEST)
-IMPLEMENT_APP(wxStfApp)
-#endif
+// #endif
+// #if !defined(_WINDOWS) && !defined(STF_TEST)
+// IMPLEMENT_APP(wxStfApp)
+// #endif
 
 wxStfParentFrame *frame = (wxStfParentFrame *) NULL;
 

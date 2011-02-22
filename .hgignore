@@ -44,6 +44,8 @@ doc/sphinx/.build/latex/*
 doc/sphinx/.static/*
 
 autom4te.cache/*
+m4/lt~obsolete.m4
+
 stimfit_VS03/stfswig/Debug
 stimfit_VS03/stfswig/stf\ debug
 stimfit_VS03/stfswig/Release

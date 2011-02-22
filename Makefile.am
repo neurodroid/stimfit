@@ -123,43 +123,7 @@ else
 bin_PROGRAMS = stimfit
 check_PROGRAMS = stimfittest
 TESTS = ${check_PROGRAMS}
-stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
-	    ./src/core/core.cpp ./src/core/fitlib.cpp ./src/core/measlib.cpp ./src/core/filelib/asciilib.cpp \
-	    ./src/core/filelib/cfslib.cpp ./src/core/filelib/hdf5lib.cpp ./src/core/filelib/cfs.c \
-            ./src/core/filelib/abflib.cpp ./src/core/filelib/atflib.cpp ./src/core/filelib/axglib.cpp \
-            ./src/core/filelib/hekalib.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/abffiles.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/csynch.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/filedesc.cpp \
-	    ./src/core/filelib/axon/Common/FileReadCache.cpp \
-	    ./src/core/filelib/axon/Common/FileIO.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/abfheadr.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/abfhwave.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/Oldheadr.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/abfutil.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/msbincvt.cpp \
-	    ./src/core/filelib/axon/Common/unix.cpp \
-	    ./src/core/filelib/axon/AxAbfFio32/abferror.cpp \
-            ./src/core/filelib/axon/AxAtfFio32/axatffio32.cpp \
-            ./src/core/filelib/axon/AxAtfFio32/fileio2.cpp \
-            ./src/core/filelib/axon2/ProtocolReaderABF2.cpp \
-            ./src/core/filelib/axon2/SimpleStringCache.cpp \
-	    ./src/core/filelib/axon2/abf2headr.cpp \
-            ./src/core/filelib/axg/AxoGraph_ReadWrite.cpp \
-            ./src/core/filelib/axg/fileUtils.cpp \
-            ./src/core/filelib/axg/stringUtils.cpp \
-            ./src/core/filelib/axg/byteswap.cpp \
-            ./src/core/levmar/lm.c ./src/core/levmar/Axb.c ./src/core/levmar/misc.c ./src/core/levmar/lmlec.c ./src/core/levmar/lmbc.c \
-            ./src/app/app.cpp ./src/app/unopt.cpp ./src/app/doc.cpp ./src/app/stfcheckbox.cpp ./src/app/copygrid.cpp ./src/app/graph.cpp \
-            ./src/app/printout.cpp ./src/app/parentframe.cpp ./src/app/childframe.cpp ./src/app/view.cpp ./src/app/table.cpp ./src/app/zoom.cpp \
-            ./src/app/dlgs/cursorsdlg.cpp ./src/app/dlgs/eventdlg.cpp \
-	    ./src/app/dlgs/fitseldlg.cpp ./src/app/dlgs/smalldlgs.cpp \
-            ./src/app/funclib/funclib.cpp \
-            ./src/app/usrdlg/usrdlg.cpp
-
-if WITH_BIOSIG
-stimfit_SOURCES += ./src/core/filelib/biosiglib.cpp
-endif
+stimfit_SOURCES = src/app/dummy.cpp
 
 stimfittest_SOURCES = ./src/app/app.cpp ./src/test/section.cpp ./src/test/channel.cpp ./src/test/recording.cpp ./src/test/measlib.cpp
 
@@ -292,7 +256,7 @@ INCLUDES = $(PYTHON_ADDINCLUDES)
 
 stimfit_CXXFLAGS = $(OPT_CXXFLAGS)
 stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS) $(LIBBIOSIG_LDFLAGS)
-stimfit_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lfftw3 -lhdf5 -lhdf5_hl
+stimfit_LDADD = $(WX_LIBS) -lfftw3 -lhdf5 -lhdf5_hl ./src/app/libstimfit.la # $(PYTHON_ADDLIBS) 
 stimfittest_CXXFLAGS = $(GT_CXXFLAGS)
 stimfittest_CPPFLAGS = ${CPPFLAGS} $(GT_CPPFLAGS) -DSTF_TEST
 stimfittest_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(GT_LDFLAGS)
