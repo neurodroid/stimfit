@@ -138,7 +138,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
             if (column.points<1) {
                 throw std::out_of_range("number of points too small");
             }
-            if (column.floatArray.size()<column.points) {
+            if ((int)column.floatArray.size()<column.points) {
                 throw std::out_of_range("floatArray too small in importAXGFile()");
             }
             if (section_list[last].get().size()!=column.floatArray.size()) {

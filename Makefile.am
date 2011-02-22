@@ -150,7 +150,7 @@ stimfit_SOURCES =  ./src/core/channel.cpp ./src/core/section.cpp ./src/core/reco
             ./src/core/filelib/axg/stringUtils.cpp \
             ./src/core/filelib/axg/byteswap.cpp \
             ./src/core/levmar/lm.c ./src/core/levmar/Axb.c ./src/core/levmar/misc.c ./src/core/levmar/lmlec.c ./src/core/levmar/lmbc.c \
-            ./src/app/app.cpp ./src/app/doc.cpp ./src/app/stfcheckbox.cpp ./src/app/copygrid.cpp ./src/app/graph.cpp \
+            ./src/app/app.cpp ./src/app/unopt.cpp ./src/app/doc.cpp ./src/app/stfcheckbox.cpp ./src/app/copygrid.cpp ./src/app/graph.cpp \
             ./src/app/printout.cpp ./src/app/parentframe.cpp ./src/app/childframe.cpp ./src/app/view.cpp ./src/app/table.cpp ./src/app/zoom.cpp \
             ./src/app/dlgs/cursorsdlg.cpp ./src/app/dlgs/eventdlg.cpp \
 	    ./src/app/dlgs/fitseldlg.cpp ./src/app/dlgs/smalldlgs.cpp \
@@ -292,7 +292,7 @@ INCLUDES = $(PYTHON_ADDINCLUDES)
 
 stimfit_CXXFLAGS = $(OPT_CXXFLAGS)
 stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS) $(LIBBIOSIG_LDFLAGS)
-stimfit_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lfftw3 -lhdf5 -lhdf5_hl ./src/app/libstimfit.a
+stimfit_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lfftw3 -lhdf5 -lhdf5_hl
 stimfittest_CXXFLAGS = $(GT_CXXFLAGS)
 stimfittest_CPPFLAGS = ${CPPFLAGS} $(GT_CPPFLAGS) -DSTF_TEST
 stimfittest_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(GT_LDFLAGS)
@@ -307,11 +307,10 @@ stimfittest_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lgtest_main -lfftw3 -lhdf5 -lh
  stimfit-core.o stimfit-fitseldlg.o stimfit-ProtocolReaderABF2.o stimfit-usrdlg.o \
  lmbc.o stimfit-asciilib.o stimfit-csynch.o stimfit-funclib.o stimfit-recording.o stimfit-view.o \
  lmlec.o stimfit-atflib.o stimfit-cursorsdlg.o stimfit-graph.o stimfit-section.o stimfit-zoom.o \
- lm.o stimfit-axatffio32.o stimfit-doc.o stimfit-hdf5lib.o stimfit-SimpleStringCache.o \
+ lm.o stimfit-axatffio32.o stimfit-unopt.o stimfit-doc.o stimfit-hdf5lib.o stimfit-SimpleStringCache.o \
  stimfit-abf2headr.o stimfit-axglib.o stimfit-eventdlg.o stimfit-hekalib.o stimfit-smalldlgs.o \
  misc.o stimfit-abferror.o stimfit-AxoGraph_ReadWrite.o stimfit-filedesc.o stimfit-measlib.o stimfit-stfcheckbox.o \
- stimfit-abffiles.o stimfit-byteswap.o stimfit-fileio2.o stimfit-msbincvt.o stimfit-stringUtils.o \
- src/app/libstimfit.a
+ stimfit-abffiles.o stimfit-byteswap.o stimfit-fileio2.o stimfit-msbincvt.o stimfit-stringUtils.o
 
 if BUILD_DEBIAN
   LTTARGET=/usr/lib/stimfit

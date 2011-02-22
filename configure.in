@@ -156,9 +156,9 @@ if test "$enable_module" != "yes"; then
 
     # if this is darwin, unconditionally use atlas:
     if test "$STFKERNEL" = "darwin" ; then
-	AC_CHECK_LIB([atlas], [dgetrf_], HAVE_LAPACKX="yes")
+	AC_CHECK_LIB([atlas], [dgemm_], HAVE_LAPACKX="yes")
 	if test "${HAVE_LAPACKX}" != "yes" ; then
-	    AC_CHECK_LIB([lapack], [dgetrf_], HAVE_LAPACKX="yes")
+	    AC_CHECK_LIB([lapack], [dgemm_], HAVE_LAPACKX="yes")
 	    if test "${HAVE_LAPACKX}" != "yes" ; then
 		AC_MSG_ERROR([Couldn't find lapack.])
 	    else
@@ -170,17 +170,17 @@ if test "$enable_module" != "yes"; then
 	    CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
 	fi
     else
-	AC_CHECK_LIB([lapack], [dgetrf_], HAVE_LAPACKX="yes")
+	AC_CHECK_LIB([lapack], [dgemm_], HAVE_LAPACKX="yes")
 	if test "${HAVE_LAPACKX}" != "yes" ; then
-	    AC_CHECK_LIB([lapack3], [dgetrf_], HAVE_LAPACK3="yes")
+	    AC_CHECK_LIB([lapack3], [dgemm_], HAVE_LAPACK3="yes")
 	    if test "${HAVE_LAPACK3}" != "yes" ; then
-		AC_CHECK_LIB([lapack-3], [dgetrf_], HAVE_LAPACK_3="yes")
+		AC_CHECK_LIB([lapack-3], [dgemm_], HAVE_LAPACK_3="yes")
 		    if test "${HAVE_LAPACK_3}" != "yes" ; then
-			AC_CHECK_LIB([atlas], [dgetrf_], HAVE_ATLAS="yes")
+			AC_CHECK_LIB([blas], [dgemm_], HAVE_ATLAS="yes")
 			if test "${HAVE_ATLAS}" != "yes" ; then
 			    AC_MSG_ERROR([Couldn't find lapack.])
 			else
-			    LIBLAPACK_LDFLAGS="-llapack -latlas"
+			    LIBLAPACK_LDFLAGS="-llapack -lblas"
 			    CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
 			fi
 		    else

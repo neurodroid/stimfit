@@ -467,7 +467,7 @@ static short FileUpdate(short handle,TpFHead fileHP);
                                  /* Function definitions for IO functions . */
 
 #if 0 //def macintosh
-    static void  TempName(short handle,ConstStr255Param name,
+    static short TempName(short handle,ConstStr255Param name,
                                                 ConstStr255Param str2);
     static short CCreat(ConstStr255Param name,short vRefNum,CFSLONG dirID,
                              SignedByte perm, OSType creator,OSType fileType);
@@ -478,7 +478,7 @@ static short FileUpdate(short handle,TpFHead fileHP);
 
 #endif
 
-static void  TempName(short handle,TpCStr name,TpStr str2);
+static short TempName(short handle,TpCStr name,TpStr str2);
 static short CCreat(TpCStr name, short mode, fDef* pFile);
 static short CUnlink(TpCStr path);
 static short COpen(TpCStr name, short mode, fDef* pFile);
@@ -4778,7 +4778,7 @@ void CleanUpCfs(void)
 ****************************************************************************/
 
 #if 0 //def macintosh
-void TempName(short handle,ConstStr255Param /*name*/,ConstStr255Param str2)
+short TempName(short handle,ConstStr255Param /*name*/,ConstStr255Param str2)
 {
     sprintf(str2,"CFS Temporary %d",handle);    /* encode handle into string */
     c2pstr(str2);
@@ -4786,7 +4786,7 @@ void TempName(short handle,ConstStr255Param /*name*/,ConstStr255Param str2)
 #endif
 
 #if defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)
-void TempName(short handle, TpCStr name, TpStr str2)
+short TempName(short handle, TpCStr name, TpStr str2)
 {
     short   pathstart;
     short   pathend = 0;
@@ -4816,13 +4816,16 @@ void TempName(short handle, TpCStr name, TpStr str2)
     F_strcat(str2,"CFS(TMP).");       /* ad standard part of temp file name */
     _itoa(handle,gWorkStr,10);                 /* encode handle into string */
     F_strcat(str2,gWorkStr);            /* add handle to make complete name */
+    return 0;
 }                                                        /* end of TempName */
+
+
 #endif
 
 #if defined(__linux__) || defined(__APPLE__)
-void TempName(short handle, TpCStr name, TpStr str2) {
+short TempName(short handle, TpCStr name, TpStr str2) {
 	F_strcpy(str2,"CFSTMPXXXXXX");
-	mkstemp(str2);
+	return (short)mkstemp(str2);
 }
 #endif
 
