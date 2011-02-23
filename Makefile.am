@@ -264,16 +264,18 @@ stimfittest_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(GT_LDFLAGS)
 stimfittest_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lgtest_main $(GT_LIBS) -lfftw3 -lhdf5 -lhdf5_hl ./src/app/libstimfit.la
 
 if BUILD_DEBIAN
-  LTTARGET=/usr/lib/stimfit
-else
-  LTTARGET=$(prefix)/lib/stimfit
-endif
-
+LTTARGET=/usr/lib/stimfit
 install-exec-hook:
 	$(LIBTOOL) --finish $(LTTARGET)
 	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstf.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstimfit.so
+else
+LTTARGET=$(prefix)/lib/stimfit
+install-exec-hook:
+	$(LIBTOOL) --finish $(LTTARGET)
+	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
+endif
 
 # wxMac resource fork/unbundled app
 stimfit.app: stimfit

@@ -65,6 +65,7 @@ void stf::importBSFile(const wxString &fName, Recording &ReturnData, bool progre
 	sclose(hdr);
         throw std::runtime_error(std::string(errorMsg.c_str()));
     }
+    size_t blks = sread(NULL, 0, hdr->NRec*hdr->SPR, hdr);
 
 #ifdef _STFDEBUG
     std::cout << "Number of channels: " << hdr->NS << std::endl;
