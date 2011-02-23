@@ -1,3 +1,9 @@
+stimfit (0.10.12-1ubuntu1) natty; urgency=low
+
+  * Fixed gtest build on natty.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Wed, 23 Feb 2011 15:36:31 +0000
+
 stimfit (0.10.11-1ubuntu5) natty; urgency=low
 
   * Resolved some dependency problems in Python module.
