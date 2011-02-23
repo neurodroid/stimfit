@@ -1,3 +1,15 @@
+stimfit (0.10.11-1ubuntu5) natty; urgency=low
+
+  * Resolved some dependency problems in Python module.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Wed, 23 Feb 2011 14:55:59 +0000
+
+stimfit (0.10.11-1ubuntu4) maverick; urgency=low
+
+  * Resolved some dependency problems in Python module.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Wed, 23 Feb 2011 14:39:29 +0000
+
 stimfit (0.10.11-1ubuntu3) natty; urgency=low
 
   * Resolved some dependency problems in Python module.
