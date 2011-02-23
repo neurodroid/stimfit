@@ -65,7 +65,8 @@ void stf::importBSFile(const wxString &fName, Recording &ReturnData, bool progre
 	sclose(hdr);
         throw std::runtime_error(std::string(errorMsg.c_str()));
     }
-    size_t blks = sread(NULL, 0, hdr->NRec*hdr->SPR, hdr);
+    hdr->FLAG.ROW_BASED_CHANNELS = 1;
+    size_t blks = sread(NULL, 0, hdr->NS*hdr->NRec*hdr->SPR, hdr);
 
 #ifdef _STFDEBUG
     std::cout << "Number of channels: " << hdr->NS << std::endl;
@@ -79,7 +80,7 @@ void stf::importBSFile(const wxString &fName, Recording &ReturnData, bool progre
 
     int nchannels = hdr->NS;
     for (int nc=0; nc<nchannels; ++nc) {
-        int nsections = 0; // TODO: hdr->nsections[nc];
+        int nsections = hdr->NRec;
 
         Channel TempChannel(nsections);
         TempChannel.SetChannelName(""); // TODO: hdr->channelname[nc];
@@ -103,10 +104,10 @@ void stf::importBSFile(const wxString &fName, Recording &ReturnData, bool progre
 #endif
             }
             Section TempSection(
-                                0, // TODO: hdr->nsamplingpoints[nc][ns]
+                                hdr->SPR, // TODO: hdr->nsamplingpoints[nc][ns]
                                 "" // TODO: hdr->sectionname[nc][ns]
             );
-            // TODO: std::copy(&buffer[0], &buffer[TempSection.size()], TempSection.get_w().begin());
+            std::copy(&(hdr->data.block[nc*hdr->SPR]), &(hdr->data.block[(nc+1)*hdr->SPR]), TempSection.get_w().begin());
             try {
                 TempChannel.InsertSection(TempSection, ns);
             }

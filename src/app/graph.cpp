@@ -1370,7 +1370,7 @@ double prettyNumber( double fDistance, double pixelDistance, int limit ) {
         }
         
         //check whether f scale is ok
-        if ((fScaled/fDistance) * pixelDistance > limit)
+        if ((fScaled/fDistance) * pixelDistance > limit || fScaled>1e9)
             break;
         else {
             //suggest a new f scale:
