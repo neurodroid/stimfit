@@ -257,24 +257,11 @@ INCLUDES = $(PYTHON_ADDINCLUDES)
 stimfit_CXXFLAGS = $(OPT_CXXFLAGS)
 stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS) $(LIBBIOSIG_LDFLAGS)
 stimfit_LDADD = $(WX_LIBS) -lfftw3 -lhdf5 -lhdf5_hl ./src/app/libstimfit.la # $(PYTHON_ADDLIBS) 
+
 stimfittest_CXXFLAGS = $(GT_CXXFLAGS)
 stimfittest_CPPFLAGS = ${CPPFLAGS} $(GT_CPPFLAGS) -DSTF_TEST
 stimfittest_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(GT_LDFLAGS)
-
-# stimfit_OBJECTS won't work here because stimfit-app.o has a main() function
-# this is why *.o files are explicitly listed here
-stimfittest_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lgtest_main -lfftw3 -lhdf5 -lhdf5_hl \
- Axb.o stimfit-abfheadr.o stimfit-cfslib.o stimfit-FileIO.o stimfit-Oldheadr.o stimfit-table.o \
- cfs.o stimfit-abfhwave.o stimfit-channel.o stimfit-FileReadCache.o stimfit-parentframe.o \
- stimfit-abflib.o stimfit-childframe.o stimfit-fileUtils.o \
- stimfit-abfutil.o stimfit-copygrid.o stimfit-fitlib.o stimfit-printout.o stimfit-unix.o \
- stimfit-core.o stimfit-fitseldlg.o stimfit-ProtocolReaderABF2.o stimfit-usrdlg.o \
- lmbc.o stimfit-asciilib.o stimfit-csynch.o stimfit-funclib.o stimfit-recording.o stimfit-view.o \
- lmlec.o stimfit-atflib.o stimfit-cursorsdlg.o stimfit-graph.o stimfit-section.o stimfit-zoom.o \
- lm.o stimfit-axatffio32.o stimfit-unopt.o stimfit-doc.o stimfit-hdf5lib.o stimfit-SimpleStringCache.o \
- stimfit-abf2headr.o stimfit-axglib.o stimfit-eventdlg.o stimfit-hekalib.o stimfit-smalldlgs.o \
- misc.o stimfit-abferror.o stimfit-AxoGraph_ReadWrite.o stimfit-filedesc.o stimfit-measlib.o stimfit-stfcheckbox.o \
- stimfit-abffiles.o stimfit-byteswap.o stimfit-fileio2.o stimfit-msbincvt.o stimfit-stringUtils.o
+stimfittest_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) -lgtest_main -lfftw3 -lhdf5 -lhdf5_hl ./src/app/libstimfit.la
 
 if BUILD_DEBIAN
   LTTARGET=/usr/lib/stimfit
@@ -285,6 +272,8 @@ endif
 install-exec-hook:
 	$(LIBTOOL) --finish $(LTTARGET)
 	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
+	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstf.so
+	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstimfit.so
 
 # wxMac resource fork/unbundled app
 stimfit.app: stimfit

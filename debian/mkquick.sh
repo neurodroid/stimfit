@@ -12,5 +12,4 @@ tar -xzf stimfit_${VERSION}.orig.tar.gz
 cd stimfit-${VERSION}
 mkdir -p debian
 cp -rv ../../../debian/* ./debian
-debuild -S -sa
-sudo pbuilder build ../*.dsc
+fakeroot debian/rules binary

@@ -1,4 +1,4 @@
-AC_INIT([stimfit],[0.10.10])
+AC_INIT([stimfit],[0.10.11])
 AC_CONFIG_SRCDIR(src/app/app.cpp)
 AM_INIT_AUTOMAKE
 AC_CONFIG_MACRO_DIR([m4])
@@ -192,7 +192,7 @@ if test "$enable_module" != "yes"; then
 		CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
 	    fi
 	else
-	    LIBLAPACK_LDFLAGS=-llapack
+	    LIBLAPACK_LDFLAGS="-llapack -lblas"
 	    CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
 	fi
     fi
@@ -240,8 +240,8 @@ if test "$enable_module" != "yes"; then
 	    AC_MSG_ERROR([wxWidgets 2.8.0 or newer is required])
     fi
 
-    # CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS" dnl included in cxxflags
-    CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS"
+    CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
+    # CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS" dnl included in cppflags
 
     AC_SUBST(WX_LIBS)
 dnl default value is to (silently) do nothing in the makefile

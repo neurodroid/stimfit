@@ -1,3 +1,27 @@
+stimfit (0.10.11-1ubuntu3) natty; urgency=low
+
+  * Resolved some dependency problems in Python module.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Wed, 23 Feb 2011 14:08:14 +0000
+
+stimfit (0.10.11-1ubuntu2) maverick; urgency=low
+
+  * Resolved some dependency problems in Python module.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Wed, 23 Feb 2011 14:06:39 +0000
+
+stimfit (0.10.11-1ubuntu1) lucid; urgency=low
+
+  * Resolved some dependency problems in Python module.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Wed, 23 Feb 2011 13:53:47 +0000
+
+stimfit (0.10.11-1) unstable; urgency=low
+
+  * Resolved some dependency problems in Python module.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Tue, 22 Feb 2011 20:12:18 +0000
+
 stimfit (0.10.10-1ubuntu1) lucid; urgency=low
 
   * Failed upload required yet another reversioning...
