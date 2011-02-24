@@ -113,7 +113,7 @@ Section "Python ${PY_VERSION}" 0
   ; Put installer into installation dir temporarily
   File "${MSIDIR}\python-${PY_VERSION}.msi"
 
-  ExecWait '"Msiexec.exe" /quiet /passive /i "$INSTDIR\python-${PY_VERSION}.msi"'
+  ExecWait '"Msiexec.exe" /i "$INSTDIR\python-${PY_VERSION}.msi"'
   
   ; Delete installer once we are done
   Delete "$INSTDIR\python-${PY_VERSION}.msi"
