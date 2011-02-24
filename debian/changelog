@@ -1,3 +1,9 @@
+stimfit (0.10.12-2) unstable; urgency=low
+
+  * Fixed version number for Debian.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Wed, 23 Feb 2011 21:10:56 +0000
+
 stimfit (0.10.12-1) unstable; urgency=low
 
   * Fixed gtest build on sid.
