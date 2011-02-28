@@ -19,12 +19,12 @@ EVT_BUTTON( wxID_PREVIEW, wxStfFitSelDlg::OnButtonClick )
 END_EVENT_TABLE()
 
 wxStfFitSelDlg::wxStfFitSelDlg(wxWindow* parent, wxStfDoc* doc, int id, wxString title, wxPoint pos,
-        wxSize size, int style) :
-            wxDialog( parent, id, title, pos, size, style ),
-            m_fselect(18),init_p(0),opts(6),noInput(false),
-            paramDescArray(MAXPAR),
-            paramEntryArray(MAXPAR), pDoc(doc)
- {
+                               wxSize size, int style)
+: wxDialog( parent, id, title, pos, size, style ),
+    m_fselect(18),init_p(0),opts(6),noInput(false),
+    paramDescArray(MAXPAR),
+    paramEntryArray(MAXPAR), pDoc(doc)
+{
     // Respectively the scale factor for initial \mu,
     // stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2,
     // maxIter, maxPass
@@ -80,7 +80,7 @@ wxStfFitSelDlg::wxStfFitSelDlg(wxWindow* parent, wxStfDoc* doc, int id, wxString
     // Fit options:
     // grid for parameters:
     wxFlexGridSizer* optionsGrid;
-    optionsGrid=new wxFlexGridSizer(opts.size(),2,0,0);
+    optionsGrid=new wxFlexGridSizer(opts.size()+1, 2, 0, 0);
 
     InitOptions(optionsGrid);
     // add the options grid to the settings sizer:
@@ -204,6 +204,13 @@ void wxStfFitSelDlg::InitOptions(wxFlexGridSizer* optionsGrid) {
     m_textCtrlE2=new wxTextCtrl( this, wxID_ANY, strE2, wxDefaultPosition,
             wxSize(64,20), wxTE_RIGHT );
     optionsGrid->Add( m_textCtrlE2, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+
+    // Use scaling-------------------------------------------------------
+    m_checkBox = new wxCheckBox(this, wxID_ANY, wxT("Scale parameters to 1"), 
+                                         wxDefaultPosition, wxDefaultSize, 0); 
+    m_checkBox->SetValue(true);
+    optionsGrid->Add( m_checkBox, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    
 }
 
 void wxStfFitSelDlg::OnButtonClick( wxCommandEvent& event ) {

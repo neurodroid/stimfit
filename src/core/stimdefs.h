@@ -211,8 +211,9 @@ struct parInfo {
      *  \param constr_ub_ upper bound for constrained fit
      */
     parInfo( const wxString& desc_, bool toFit_, bool constrained_ = false, 
-            double constr_lb_ = 0, double constr_ub_ = 0)
-    : desc(desc_),toFit(toFit_), constrained(false), constr_lb(constr_lb_), constr_ub(constr_ub_) {}
+             double constr_lb_ = 0, double constr_ub_ = 0)
+    : desc(desc_),toFit(toFit_), constrained(false), constr_lb(constr_lb_), constr_ub(constr_ub_)
+    {}
 
     wxString desc; /*!< Parameter description string */
     bool toFit;    /*!< true if this parameter should be fitted, false if it should be kept fixed. */

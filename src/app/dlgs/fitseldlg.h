@@ -55,7 +55,8 @@ private:
     wxStdDialogButtonSizer* m_sdbSizer;
     wxListCtrl* m_listCtrl;
     wxTextCtrl *m_textCtrlMu,*m_textCtrlJTE,*m_textCtrlDP,*m_textCtrlE2,
-    *m_textCtrlMaxiter, *m_textCtrlMaxpasses;
+        *m_textCtrlMaxiter, *m_textCtrlMaxpasses;
+    wxCheckBox *m_checkBox;
     std::vector< wxStaticText* > paramDescArray;
     std::vector< wxTextCtrl* > paramEntryArray;
 
