@@ -45,38 +45,6 @@
 #error You must set wxUSE_MDI_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#ifdef WITH_PYTHON
-#ifdef _POSIX_C_SOURCE
-#define _POSIX_C_SOURCE_WAS_DEF
-#undef _POSIX_C_SOURCE
-#endif
-#ifdef _XOPEN_SOURCE
-#define _XOPEN_SOURCE_WAS_DEF
-#undef _XOPEN_SOURCE
-#endif
-#include <Python.h>
-#ifdef _POSIX_C_SOURCE_WAS_DEF
-  #ifndef _POSIX_C_SOURCE
-    #define _POSIX_C_SOURCE
-  #endif
-#endif
-#ifdef _XOPEN_SOURCE_WAS_DEF
-  #ifndef _XOPEN_SOURCE
-    #define _XOPEN_SOURCE
-  #endif
-#endif
-
-#if defined(__WXMAC__) || defined(__WXGTK__)
-  #pragma GCC diagnostic ignored "-Wwrite-strings"
-#endif
-#include <wx/wxPython/wxPython.h>
-// revert to previous behaviour
-#if defined(__WXMAC__) || defined(__WXGTK__)
-  #pragma GCC diagnostic warning "-Wwrite-strings"
-#endif
-
-#endif // WITH_PYTHON
-
 #ifdef _WINDOWS
 #include "../../stfconf.h"
 #else

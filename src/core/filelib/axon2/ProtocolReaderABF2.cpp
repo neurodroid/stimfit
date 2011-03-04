@@ -622,16 +622,16 @@ BOOL CABF2ProtocolReader::ReadStats()
     BOOL bOK = TRUE;
     if( m_FileInfo.StatsRegionSection.uBlockIndex )
     {
-        ABF_StatsRegionInfo Stats;
-        ASSERT( m_FileInfo.StatsRegionSection.uBytes == sizeof( Stats ) );
-        ASSERT( m_FileInfo.StatsRegionSection.llNumEntries );
         bOK &= m_pFI->Seek( LONGLONG(m_FileInfo.StatsRegionSection.uBlockIndex) * ABF_BLOCKSIZE, FILE_BEGIN );
         if( !bOK )
             return FALSE;
 
         for( long i=0; i<m_FileInfo.StatsRegionSection.llNumEntries; i++ )
         {
-            Stats = ABF_StatsRegionInfo();
+            ABF_StatsRegionInfo Stats = ABF_StatsRegionInfo();
+            ASSERT( m_FileInfo.StatsRegionSection.uBytes == sizeof( Stats ) );
+            ASSERT( m_FileInfo.StatsRegionSection.llNumEntries );
+
             bOK &= m_pFI->Read( &Stats, sizeof( Stats ) );
 
             short r = Stats.nRegionNum;         

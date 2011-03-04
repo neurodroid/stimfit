@@ -48,11 +48,6 @@
 #error You must set wxUSE_MDI_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#ifdef WITH_PYTHON
-#include <Python.h>
-#include <wx/wxPython/wxPython.h>
-#endif
-
 #include "wx/spinctrl.h"
 #include "./app.h"
 #include "./doc.h"
@@ -338,11 +333,11 @@ void wxStfChildFrame::UpdateChannels( ) {
     if ( pDoc != NULL && pDoc->size() > 1) {
         try {
             if (pActChannel->GetCurrentSelection() >= 0 ||
-                pActChannel->GetCurrentSelection() <  pDoc->size())
+                pActChannel->GetCurrentSelection() <  (int)pDoc->size())
             {
                 pDoc->SetCurCh( pActChannel->GetCurrentSelection() );
                 if (pInactChannel->GetCurrentSelection() >= 0 ||
-                    pInactChannel->GetCurrentSelection() <  pDoc->size())
+                    pInactChannel->GetCurrentSelection() <  (int)pDoc->size())
                 {
                     pDoc->SetSecCh( pInactChannel->GetCurrentSelection() );
                 } else {

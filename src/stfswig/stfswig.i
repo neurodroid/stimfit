@@ -1,3 +1,7 @@
+#if defined(__WXMAC__) || defined(__WXGTK__)
+  #pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
+
 %define DOCSTRING
 "The stf module allows to access a running stimfit
 application from the embedded python shell."
@@ -12,7 +16,8 @@ application from the embedded python shell."
 %include "numpy.i"
 %include "std_string.i"
 %init %{
-import_array();
+    import_array();
+    
 %}
 
 %define %apply_numpy_typemaps(TYPE)

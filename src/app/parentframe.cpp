@@ -50,10 +50,6 @@
 #error You must set wxUSE_MDI_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#ifdef WITH_PYTHON
-    #include <Python.h>
-    #include <wx/wxPython/wxPython.h>
-#endif
 #ifdef _WINDOWS
 #include "../../stfconf.h"
 #else

@@ -10,6 +10,8 @@ noinst_HEADERS = stfswig.h
 
 $(srcdir)/stfswig_wrap.cxx : $(srcdir)/stfswig.i
 	$(SWIG) $(SWIG_PYTHON_OPT) -o $@ $<
+	cat $(srcdir)/gccwarn $(srcdir)/stfswig_wrap.cxx > $(srcdir)/stfswig_wrap_tmp.cxx
+	mv $(srcdir)/stfswig_wrap_tmp.cxx $(srcdir)/stfswig_wrap.cxx
 
 INCLUDES = $(LIBNUMPY_INCLUDES)
 
@@ -43,6 +45,9 @@ install-exec-hook:
 
 uninstall-hook:
 	rm -rf ${prefix}/lib/stimfit
+
+clean_local:
+	rm -f $(srcdir)/stfswig_wrap.cxx
 
 endif
 endif
