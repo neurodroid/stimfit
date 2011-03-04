@@ -198,7 +198,7 @@ BOOL CABF2ProtocolReader::Read( int* pnError )
     {
         nError = ABF_EBADPARAMETERS;
         Close();
-        nFile = ABF_INVALID_HANDLE;
+        nFile = (int)ABF_INVALID_HANDLE;
         ERRORRETURN(pnError, nError);
     }
 

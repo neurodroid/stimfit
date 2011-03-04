@@ -6,8 +6,34 @@
 #include "wx/wx.h"
 #endif // WX_PRECOMP
 
+#ifdef _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE_WAS_DEF
+#undef _POSIX_C_SOURCE
+#endif
+#ifdef _XOPEN_SOURCE
+#define _XOPEN_SOURCE_WAS_DEF
+#undef _XOPEN_SOURCE
+#endif
 #include <Python.h>
+#ifdef _POSIX_C_SOURCE_WAS_DEF
+  #ifndef _POSIX_C_SOURCE
+    #define _POSIX_C_SOURCE
+  #endif
+#endif
+#ifdef _XOPEN_SOURCE_WAS_DEF
+  #ifndef _XOPEN_SOURCE
+    #define _XOPEN_SOURCE
+  #endif
+#endif
+
+#if defined(__WXMAC__) || defined(__WXGTK__)
+  #pragma GCC diagnostic ignored "-Wwrite-strings"
+#endif
 #include <wx/wxPython/wxPython.h>
+// revert to previous behaviour
+#if defined(__WXMAC__) || defined(__WXGTK__)
+  #pragma GCC diagnostic warning "-Wwrite-strings"
+#endif
 
 #include "./app.h"
 #include "./parentframe.h"

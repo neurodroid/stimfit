@@ -39,7 +39,9 @@ UINT WINAPI ABFU_GetTempFileName(LPCSTR szPrefix, UINT uUnique, LPSTR lpTempName
    return GetTempFileNameA(szTempPath, szPrefix, uUnique, lpTempName);
 #else   
    strcpy(lpTempName,"ABFTMPXXXXXX");
-   mkstemp(lpTempName);
+   int res = mkstemp(lpTempName);
+   if (res == -1)
+       return 0;
    return 1;
 #endif
 }

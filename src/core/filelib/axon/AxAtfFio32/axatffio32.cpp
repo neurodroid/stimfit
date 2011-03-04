@@ -764,7 +764,8 @@ static BOOL _FormatNumber(double dNum, int nDigits, char *pszString, UINT uSize)
    ARRAYASSERT(pszString, uSize);
 
 #ifndef _WINDOWS
-   gcvt(dNum, nDigits, pszString);
+   sprintf(pszString, "%.*g", nDigits, dNum);
+   // char* res = gcvt(dNum, nDigits, pszString);
 #else
    _gcvt(dNum, nDigits, pszString);
 #endif

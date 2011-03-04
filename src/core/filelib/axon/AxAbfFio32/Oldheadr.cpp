@@ -1079,7 +1079,7 @@ static void FetchexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
          pFH->fADCDisplayOffset[n] /= pFH->_fAutosampleAdditGain;
    }
 
-   strncpy(pFH->sDACChannelUnits[0], DACLabel, ABF_DACCOUNT * ABF_DACUNITLEN);
+   strncpy(pFH->sDACChannelUnits[0], DACLabel, ABF_DACUNITLEN);
    for (i=0; i < ABF_DACCOUNT; i++)
    {
       pFH->fDACScaleFactor[i] = Param[F53_GAINDACTOCELL];
@@ -1651,7 +1651,7 @@ static void ClampexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
          pFH->fADCDisplayOffset[i] /= pFH->_fAutosampleAdditGain;
    }
 
-   strncpy(pFH->sDACChannelUnits[0], DACLabel, ABF_DACCOUNT * ABF_DACUNITLEN);
+   strncpy(pFH->sDACChannelUnits[0], DACLabel, ABF_DACUNITLEN);
    for (i=0; i<ABF_DACCOUNT; i++)
    {
       pFH->fDACScaleFactor[i] = Param[C52_GAINDACTOCELL];
