@@ -288,7 +288,9 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     if ( pPython == 0 ) {
         wxGetApp().ErrorMsg(wxT("Can't create a window for the python shell\nPointer is zero"));
     } else {
+#ifndef __WXMAC__
         bool show = wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewShell"), 1);
+#endif
         m_mgr.AddPane( pPython, wxAuiPaneInfo().Name(wxT("pythonShell")).
 #ifndef __WXMAC__
                        CloseButton(true).
