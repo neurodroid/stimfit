@@ -30,11 +30,14 @@
 #include <iostream>
 
 #include "./hdf5lib.h"
+const static unsigned int DATELEN = 128;
+const static unsigned int TIMELEN = 128;
+const static unsigned int UNITLEN = 16;
 
 typedef struct rt {
     int channels;
-    char date[128];
-    char time[128];
+    char date[DATELEN];
+    char time[TIMELEN];
 } rt;
 
 typedef struct ct {
@@ -43,8 +46,8 @@ typedef struct ct {
 
 typedef struct st {
     double dt;
-    char xunits[16];
-    char yunits[16];
+    char xunits[UNITLEN];
+    char yunits[UNITLEN];
 } st;
 
 bool stf::exportHDF5File(const wxString& fName, const Recording& WData) {
@@ -71,8 +74,10 @@ bool stf::exportHDF5File(const wxString& fName, const Recording& WData) {
     /* Define an array of root tables */
     rt p_data;
     p_data.channels = WData.size();
-    strcpy( p_data.date, (WData.GetDate()).c_str());
-    strcpy( p_data.time, (WData.GetTime()).c_str());
+    if (WData.GetDate().length() < DATELEN)
+        strcpy( p_data.date, (WData.GetDate()).c_str());
+    if (WData.GetTime().length() < TIMELEN)
+        strcpy( p_data.time, (WData.GetTime()).c_str());
 
     /* Define field information */
     const char *field_names[NFIELDS]  =  { "channels", "date", "time" };
@@ -249,8 +254,10 @@ bool stf::exportHDF5File(const wxString& fName, const Recording& WData) {
             /* Define an array of root tables */
             st s_data;
             s_data.dt = WData.GetXScale();
-            strcpy( s_data.xunits, WData.GetXUnits().c_str() );
-            strcpy( s_data.yunits, WData[n_c].GetYUnits().c_str() );
+            if (WData.GetXUnits().length() < UNITLEN)
+                strcpy( s_data.xunits, WData.GetXUnits().c_str() );
+            if (WData[n_c].GetYUnits().length() < UNITLEN)
+                strcpy( s_data.yunits, WData[n_c].GetYUnits().c_str() );
 
             /* Define field information */
             const char *sfield_names[NSFIELDS]  =  { "dt", "xunits", "yunits" };

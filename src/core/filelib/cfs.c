@@ -229,9 +229,10 @@
 #define MAXFORWRD      65535            /* maximum value for unsigned short */
 #define MAXNODS      64000     /* alloc restrictions are looser for WIN32 */
 #define MAXMEMALLOC    65519        /* get problems if try to allocate more */
-#define WHOLEFILECHARS 300/* to hold whole of temp file name including path */
+#define WHOLEFILECHARS 1024/* to hold whole of temp file name including path */
 #define MARKERCHARS    8                       /* characters in file marker */
 #define PARTMARKCHARS  7         /* characters to test for old version file */
+#define MAXFNCHARS     1024             /* characters to test for file name */
 
 /* define error codes */
 
@@ -438,7 +439,7 @@ TError errorInfo = {0,0,0,0};
 #else
 TError  _near errorInfo = {0,0,0,0};
 #endif
-char    gWorkStr[40];    /* Global var on DS to avoid DLL SS != DS problems */
+char    gWorkStr[MAXFNCHARS];    /* Global var on DS to avoid DLL SS != DS problems */
 
                                               /* Local function definitions */
 static void  CleanUpCfs(void);
@@ -478,7 +479,7 @@ static short FileUpdate(short handle,TpFHead fileHP);
 
 #endif
 
-static short TempName(short handle,TpCStr name,TpStr str2);
+static short TempName(short handle,TpCStr name,TpStr str2, unsigned str2len);
 static short CCreat(TpCStr name, short mode, fDef* pFile);
 static short CUnlink(TpCStr path);
 static short COpen(TpCStr name, short mode, fDef* pFile);
@@ -570,7 +571,7 @@ short CCreat(TpCStr name, short mode, fDef* pFile)
     DWORD    dwMode;
     #else
     short    pmode;
-    char     fname[70];              /* To get near variable holding string */
+    char     fname[MAXFNCHARS];              /* To get near variable holding string */
     #endif
     fDef     file;                      /* The various types of file handle */
 
@@ -602,8 +603,9 @@ short CCreat(TpCStr name, short mode, fDef* pFile)
             file = CreateFileA(name, dwMode, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
             if (file == INVALID_HANDLE_VALUE)
                 sErr = BADCREAT;
-        #else
-            F_strcpy(fname, name);              /* Get filename in near var */
+    #else
+            if (strlen(name) < MAXFNCHARS)
+                F_strcpy(fname, name);              /* Get filename in near var */
             file = _open(fname, (int)(O_CREAT|O_RDWR|O_TRUNC|O_BINARY), pmode);
             if (file < 0)
                 sErr = 0 - _doserrno;
@@ -617,18 +619,21 @@ short CCreat(TpCStr name, short mode, fDef* pFile)
             else
                 omode = "w+";
 
-            F_strcpy(fname, name);              /* Get filename in near var */
+            if (strlen(name) < MAXFNCHARS)
+                F_strcpy(fname, name);              /* Get filename in near var */
             file = fopen(fname,omode);
             if (file == 0)
                 sErr = -1;
         #else
             #ifdef LLIO
-                F_strcpy(fname, name);              /* Get filename in near var */
+                if (strlen(name) < MAXFNCHARS)
+                    F_strcpy(fname, name);              /* Get filename in near var */
                 file = open(fname,(int)(O_CREAT|O_RDWR|O_TRUNC|O_BINARY),pmode);
                 if (file < 0)
                     sErr = 0 - _doserrno;
             #else
-                F_strcpy(fname, name);              /* Get filename in near var */
+                if (strlen(name) < MAXFNCHARS)
+                    F_strcpy(fname, name);              /* Get filename in near var */
                 file = fopen(fname,"wb");
                 if (file==0)
                     sErr = -1;
@@ -1217,7 +1222,7 @@ short COpen(TpCStr name, short mode, fDef* pFile)
     #ifdef  WIN32
         DWORD   dwMode;
     #else
-        char    fname[70];          /* To get near variable holding string */
+        char    fname[MAXFNCHARS];          /* To get near variable holding string */
         int     oflag;
     #endif
 
@@ -1256,20 +1261,23 @@ short COpen(TpCStr name, short mode, fDef* pFile)
             file = CreateFileA(name, dwMode, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
             if (file == INVALID_HANDLE_VALUE)
                 sRes = BADOPEN;
-        #else
-            F_strcpy(fname, name);              /* Get filename in near var */
+    #else
+            if (strlen(name) < MAXFNCHARS)        
+                F_strcpy(fname, name);              /* Get filename in near var */
             file = _open(fname, oflag);
             if (file < 0)
                 sRes = 0 - _doserrno;
         #endif
     #else
         #ifdef LLIO
-            F_strcpy(fname, name);              /* Get filename in near var */
+            if (strlen(name) < MAXFNCHARS)    
+                F_strcpy(fname, name);              /* Get filename in near var */
             file = open(fname, oflag);
             if (file < 0)
                 sRes = 0 - _doserrno;
         #else
-            F_strcpy(fname, name);              /* Get filename in near var */
+            if (strlen(name) < MAXFNCHARS)    
+                F_strcpy(fname, name);              /* Get filename in near var */
             file = fopen(fname,"r+b");
             if (file < 0)
                 sRes = (short)file;
@@ -1287,7 +1295,7 @@ short COpen(TpCStr name, short mode, fDef* pFile)
 short COpen(TpCStr name, short mode, fDef* pFile)
 {
     short   sRes = 0;
-    char    fname[70];          /* To get near variable holding string */
+    char    fname[MAXFNCHARS];          /* To get near variable holding string */
     char*     omode;
 
     switch (mode)                /* use C library constants to set mode */
@@ -1298,9 +1306,9 @@ short COpen(TpCStr name, short mode, fDef* pFile)
                  break;
         default: omode = "r";
                  break;
-     }
-
-     F_strcpy(fname, name);              /* Get filename in near var */
+    }
+    if (strlen(name) < MAXFNCHARS)    
+        F_strcpy(fname, name);              /* Get filename in near var */
      *pFile = fopen(fname,omode);
      if (*pFile == 0)
           sRes = -1;
@@ -1502,7 +1510,7 @@ CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
             return retval;
         }
     #endif
-        TempName(handle, fname, pfileInfo->tempFName);  /* get temp file name */
+        TempName(handle, fname, pfileInfo->tempFName, WHOLEFILECHARS+2);  /* get temp file name */
         sErr = CCreat(pfileInfo->tempFName, rwMode, &pfileInfo->DOSHdl.p);
         if (sErr != 0)
         {
@@ -1768,7 +1776,8 @@ CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
             CFreeAllcn(DSOffsets);
 
     Close_1:
-            F_strcpy(gWorkStr,fname);      /* Get file name into global var */
+            if (strlen(fname) < MAXFNCHARS)
+                F_strcpy(gWorkStr,fname);      /* Get file name into global var */
             CCloseAndUnlink(pfileInfo->DOSHdl.d, gWorkStr); 
                                                    /* delete empty CFS file */
 #if 0 //def macintosh
@@ -3419,7 +3428,7 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
         {                   /* editing required so make temp file for table */
             #if defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)
                                         /* make and save name for temp file */
-                TempName(handle,fname,pfileInfo->tempFName);
+                TempName(handle,fname,pfileInfo->tempFName, WHOLEFILECHARS+2);
                 if (CCreat(pfileInfo->tempFName, rwMode, &pfileInfo->DOSHdl.p) != 0)
                     pfileInfo->DOSHdl.p = (fDef)-1;
             #endif
@@ -4786,14 +4795,14 @@ short TempName(short handle,ConstStr255Param /*name*/,ConstStr255Param str2)
 #endif
 
 #if defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)
-short TempName(short handle, TpCStr name, TpStr str2)
+short TempName(short handle, TpCStr name, TpStr str2, unsigned str2len)
 {
     short   pathstart;
     short   pathend = 0;
     short   search  = 0;
     char    fname[WHOLEFILECHARS];   /* To get near variable holding string */
-
-    F_strcpy(fname, name);                      /* Get filename in near var */
+    if (strlen(name) < WHOLEFILECHARS)
+        F_strcpy(fname, name);                      /* Get filename in near var */
     pathstart = 0;
     while (isspace(fname[pathstart]))
         pathstart++;                                  /* first proper TpStr */
@@ -4811,8 +4820,10 @@ short TempName(short handle, TpCStr name, TpStr str2)
         F_strncpy(str2,fname+pathstart,pathend+1-pathstart);   /* copy path */
         str2[pathend+1-pathstart] = '\0';                       /* add null */
     }
-    else
-        F_strcpy(str2,"");                  /* or initialise to null string */
+    else {
+        if (str2len > 0)
+            F_strcpy(str2,"");                  /* or initialise to null string */
+    }
     F_strcat(str2,"CFS(TMP).");       /* ad standard part of temp file name */
     _itoa(handle,gWorkStr,10);                 /* encode handle into string */
     F_strcat(str2,gWorkStr);            /* add handle to make complete name */
@@ -4823,9 +4834,10 @@ short TempName(short handle, TpCStr name, TpStr str2)
 #endif
 
 #if defined(__linux__) || defined(__APPLE__)
-short TempName(short handle, TpCStr name, TpStr str2) {
+short TempName(short handle, TpCStr name, TpStr str2, unsigned str2len) {
+    if (str2len > 12)
 	F_strcpy(str2,"CFSTMPXXXXXX");
-	return (short)mkstemp(str2);
+    return (short)mkstemp(str2);
 }
 #endif
 

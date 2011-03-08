@@ -148,9 +148,13 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
         WaveHeader5 wh;
         memset(&wh, 0, sizeof(wh));
         wh.type = NT_FP64;							// double precision floating point.
-		strcpy(wh.bname, channel_name[n_c].c_str());
-        strcpy(wh.dataUnits, Data[n_c].GetYUnits().c_str());
-        strcpy(wh.dimUnits[0], Data.GetXUnits().c_str());
+
+        if (channel_name[n_c].length() < MAX_WAVE_NAME2+2)
+            strcpy(wh.bname, channel_name[n_c].c_str());
+        if (Data[n_c].GetYUnits().length() < MAX_UNIT_CHARS+1)
+            strcpy(wh.dataUnits, Data[n_c].GetYUnits().c_str());
+        if (Data.GetXUnits().length() < MAX_UNIT_CHARS+1)
+            strcpy(wh.dimUnits[0], Data.GetXUnits().c_str());
         wh.npnts = (long)(Data[n_c][0].size()*Data[n_c].size());
         wh.nDim[0] = (long)Data[n_c][0].size();
         wh.nDim[1] = (long)Data[n_c].size();
