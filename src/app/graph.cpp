@@ -166,7 +166,7 @@ void wxStfGraph::OnDraw( wxDC& DC )
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     if (!HasFocus())
 #else
-    if (wxWindow::FindFocus()==(wxWindow*)this)
+    if (wxWindow::FindFocus()!=(wxWindow*)this)
 #endif
         SetFocus();
 #endif
@@ -982,7 +982,7 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     if (!HasFocus())
 #else
-        if (wxWindow::FindFocus()==(wxWindow*)this)
+    if (wxWindow::FindFocus()!=(wxWindow*)this)
 #endif
         SetFocus();
 
@@ -1058,7 +1058,7 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     if (!HasFocus())
 #else
-        if (wxWindow::FindFocus()==(wxWindow*)this)
+    if (wxWindow::FindFocus()!=(wxWindow*)this)
 #endif
         SetFocus();
 
