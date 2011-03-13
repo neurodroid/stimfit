@@ -8,7 +8,25 @@
     #endif
 #endif
 
+#ifdef _POSIX_C_SOURCE
+#define _POSIX_C_SOURCE_WAS_DEF
+#undef _POSIX_C_SOURCE
+#endif
+#ifdef _XOPEN_SOURCE
+#define _XOPEN_SOURCE_WAS_DEF
+#undef _XOPEN_SOURCE
+#endif
 #include <Python.h>
+#ifdef _POSIX_C_SOURCE_WAS_DEF
+  #ifndef _POSIX_C_SOURCE
+    #define _POSIX_C_SOURCE
+  #endif
+#endif
+#ifdef _XOPEN_SOURCE_WAS_DEF
+  #ifndef _XOPEN_SOURCE
+    #define _XOPEN_SOURCE
+  #endif
+#endif
 
 #include <iostream>
 

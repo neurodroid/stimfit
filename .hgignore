@@ -23,6 +23,7 @@ syntax: glob
 *.orig
 
 .DS_Store
+.AppleDouble
 config.status
 .deps/*
 .externalToolBuilders/*

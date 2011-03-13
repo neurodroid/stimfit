@@ -91,6 +91,8 @@ endif
 
 $(srcdir)/src/stfswig/stfioswig_wrap.cxx : ./src/stfswig/stfioswig.i
 	$(SWIG) $(SWIG_PYTHON_OPT) -o $@ $<
+	cat $(srcdir)/src/stfswig/gccwarn $(srcdir)/src/stfswig/stfioswig_wrap.cxx > $(srcdir)/src/stfswig/stfioswig_wrap_tmp.cxx
+	mv $(srcdir)/src/stfswig/stfioswig_wrap_tmp.cxx $(srcdir)/src/stfswig/stfioswig_wrap.cxx
 
 INCLUDES = $(LIBNUMPY_INCLUDES) $(PYTHON_ADDINCLUDES)
 
@@ -116,6 +118,7 @@ uninstall-hook:
 	rm -f ${PYTHON_SITE_PKG}/stfio.pth
 
 clean-local:
+	rm -f $(srcdir)/src/stfswig/stfswig_wrap.cxx
 	rm -f test.h5
 	rm -f _stfio.so
 
