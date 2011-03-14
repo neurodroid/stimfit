@@ -395,7 +395,12 @@ def plot_traces(traces, ax=None, pulses=None,
 
 def standard_axis(fig, subplot, sharex=None, sharey=None, hasx=False, hasy=True):
     
-    ax1 = Subplot(fig, subplot, frameon=False, sharex=sharex, sharey=sharey)
+    try:
+        it = iter(subplot)
+        ax1 = Subplot(fig, subplot[0], subplot[1], subplot[2], frameon=False, sharex=sharex, sharey=sharey)
+    except:
+        ax1 = Subplot(fig, subplot, frameon=False, sharex=sharex, sharey=sharey)
+
     fig.add_axes(ax1)
     ax1.axis["right"].set_visible(False)
     ax1.axis["top"].set_visible(False)
