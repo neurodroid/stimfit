@@ -1016,7 +1016,8 @@ void wxStfDoc::FitDecay(wxCommandEvent& WXUNUSED(event)) {
             throw std::runtime_error("Wrong size of params in Recording::lmFit()");
         }
         double chisqr = stf::lmFit( x, GetXScale(), wxGetApp().GetFuncLib()[fselect],
-                FitSelDialog.GetOpts(), params, fitInfo, warning );
+                                    FitSelDialog.GetOpts(), FitSelDialog.UseScaling(),
+                                    params, fitInfo, warning );
         cur().SetIsFitted( params, wxGetApp().GetFuncLibPtr(fselect),
                 chisqr, GetFitBeg(), GetFitEnd() );
     }
@@ -1363,7 +1364,8 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
 
             try {
                 double chisqr = stf::lmFit( x, GetXScale(), wxGetApp().GetFuncLib()[fselect],
-                        FitSelDialog.GetOpts(), params, fitInfo, fitWarning );
+                                            FitSelDialog.GetOpts(), FitSelDialog.UseScaling(),
+                                            params, fitInfo, fitWarning );
                 cur().SetIsFitted( params, wxGetApp().GetFuncLibPtr(fselect),
                         chisqr, GetFitBeg(), GetFitEnd() );
             }

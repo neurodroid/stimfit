@@ -21,7 +21,7 @@ END_EVENT_TABLE()
 wxStfFitSelDlg::wxStfFitSelDlg(wxWindow* parent, wxStfDoc* doc, int id, wxString title, wxPoint pos,
                                wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ),
-    m_fselect(18),init_p(0),opts(6),noInput(false),
+    m_fselect(18),init_p(0),opts(6),noInput(false), use_scaling(false),
     paramDescArray(MAXPAR),
     paramEntryArray(MAXPAR), pDoc(doc)
 {
@@ -208,7 +208,7 @@ void wxStfFitSelDlg::InitOptions(wxFlexGridSizer* optionsGrid) {
     // Use scaling-------------------------------------------------------
     m_checkBox = new wxCheckBox(this, wxID_ANY, wxT("Scale parameters to 1"), 
                                          wxDefaultPosition, wxDefaultSize, 0); 
-    m_checkBox->SetValue(true);
+    m_checkBox->SetValue(false);
     optionsGrid->Add( m_checkBox, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
     
 }
@@ -345,4 +345,6 @@ void wxStfFitSelDlg::read_opts() {
     entryMaxiter.ToDouble( &opts[4] );
     wxString entryMaxpasses = m_textCtrlMaxpasses->GetValue();
     entryMaxpasses.ToDouble( &opts[5] );
+
+    use_scaling = m_checkBox->GetValue();
 }

@@ -191,38 +191,7 @@ private:
     std::vector< wxString > colLabels;
 };
 
-//! Information about parameters used in storedFunc
-/*! Contains information about a function's parameters used 
- *  in storedFunc (see below). The client supplies a description 
- *  (desc) and determines whether the parameter is to be 
- *  fitted (toFit==true) or to be kept constant (toFit==false).
- */
-struct parInfo {
-    //! Default constructor
-    parInfo()
-    : desc(wxT("")),toFit(true), constrained(false), constr_lb(0), constr_ub(0) {}
-
-    //! Constructor
-    /*! \param desc_ Parameter description string
-     *  \param toFit_ true if this parameter should be fitted, false if
-     *         it should be kept fixed. 
-     *  \param constrained_ true if this is a constrained fit
-     *  \param constr_lb_ lower bound for constrained fit
-     *  \param constr_ub_ upper bound for constrained fit
-     */
-    parInfo( const wxString& desc_, bool toFit_, bool constrained_ = false, 
-             double constr_lb_ = 0, double constr_ub_ = 0)
-    : desc(desc_),toFit(toFit_), constrained(false), constr_lb(constr_lb_), constr_ub(constr_ub_)
-    {}
-
-    wxString desc; /*!< Parameter description string */
-    bool toFit;    /*!< true if this parameter should be fitted, false if it should be kept fixed. */
-    bool constrained; /*!< true if this parameter should be fitted, false if it should be kept fixed. */
-    double constr_lb; /*!< Lower boundary for box-constrained fits */
-    double constr_ub; /*!< Upper boundary for box-constrained fits */
-};
-
-//! A function taking a double and a vector and returning a double.
+ //! A function taking a double and a vector and returning a double.
 /*! Type definition for a function (or, to be precise, any 'callable entity') 
  *  that takes a double (the x-value) and a vector of parameters and returns 
  *  the function's result (the y-value).
@@ -232,8 +201,51 @@ typedef boost::function<double(double, const Vector_double&)> Func;
 //! The jacobian of a stf::Func.
 typedef boost::function<Vector_double(double, const Vector_double&)> Jac;
 
+//! Scaling function for fit parameters
+typedef boost::function<double(double, double, double, double, double)> Scale;
+
 //! Dummy function, serves as a placeholder to initialize functions without a Jacobian.
 Vector_double nojac( double x, const Vector_double& p);
+
+//! Dummy function, serves as a placeholder to initialize parameters without a scaling function.
+double noscale(double param, double xscale, double xoff, double yscale, double yoff);
+
+//! Information about parameters used in storedFunc
+/*! Contains information about a function's parameters used 
+ *  in storedFunc (see below). The client supplies a description 
+ *  (desc) and determines whether the parameter is to be 
+ *  fitted (toFit==true) or to be kept constant (toFit==false).
+ */
+struct parInfo {
+    //! Default constructor
+    parInfo()
+    : desc(wxT("")),toFit(true), constrained(false), constr_lb(0), constr_ub(0), scale(noscale), unscale(noscale) {}
+
+    //! Constructor
+    /*! \param desc_ Parameter description string
+     *  \param toFit_ true if this parameter should be fitted, false if
+     *         it should be kept fixed. 
+     *  \param constrained_ true if this is a constrained fit
+     *  \param constr_lb_ lower bound for constrained fit
+     *  \param constr_ub_ upper bound for constrained fit
+     *  \param scale_ scaling function
+     *  \param unscale_ unscaling function
+     */
+    parInfo( const wxString& desc_, bool toFit_, bool constrained_ = false, 
+             double constr_lb_ = 0, double constr_ub_ = 0, Scale scale_ = noscale, Scale unscale_ = noscale)
+    : desc(desc_),toFit(toFit_),
+        constrained(false), constr_lb(constr_lb_), constr_ub(constr_ub_),
+        scale(scale_), unscale(unscale_)
+    {}
+
+    wxString desc; /*!< Parameter description string */
+    bool toFit;    /*!< true if this parameter should be fitted, false if it should be kept fixed. */
+    bool constrained; /*!< true if this parameter should be constrained */
+    double constr_lb; /*!< Lower boundary for box-constrained fits */
+    double constr_ub; /*!< Upper boundary for box-constrained fits */
+    Scale scale; /*!< Scaling function for this parameter */
+    Scale unscale; /*!< Unscaling function for this parameter */
+};
 
 //! Initialising function for the parameters in stf::Func to start a fit.
 typedef boost::function<void(const Vector_double&,double,double,double,Vector_double&)> Init;

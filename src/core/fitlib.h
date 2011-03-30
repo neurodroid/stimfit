@@ -55,6 +55,7 @@ T linFit(
  *  \param dt The sampling interval of \e data.
  *  \param fitFunc An stf::storedFunc to be fitted to \e data.
  *  \param opts Options controlling Lourakis' implementation of the algorithm.
+ *  \param use_scaling Whether to scale x and y-amplitudes to 1.0
  *  \param p \e func's parameters. Should be set to an initial guess 
  *         on entry. Will contain the best-fit values on exit.
  *  \param info Information about why the fit stopped iterating
@@ -62,8 +63,8 @@ T linFit(
  *  \return The sum of squred errors between \e data and the best-fit function.
  */
 double StfDll lmFit(const Vector_double& data, double dt,
-        const stf::storedFunc& fitFunc, const Vector_double& opts,
-        Vector_double& p, wxString& info, int& warning );
+                    const stf::storedFunc& fitFunc, const Vector_double& opts,
+                    bool use_scaling, Vector_double& p, wxString& info, int& warning );
 
 //! Linear function.
 /*! \f[f(x)=p_0 x + p_1\f]
@@ -83,6 +84,15 @@ void flin_init(const Vector_double& data, double base, double peak,
 /*! \return An stf::storedFunc that can be used to store a linear function after a fit */
 stf::storedFunc initLinFunc();
 
+//! Compute and perform normalisation
+/*! \param data Data vector; will be scaled upon return
+ *  \return A vector with \n
+ *          [0] x scale
+ *          [1] x offset
+ *          [2] y scale
+ *          [3] y offset
+ */
+ Vector_double get_scale(Vector_double& data);
 }
 
 template <typename T>

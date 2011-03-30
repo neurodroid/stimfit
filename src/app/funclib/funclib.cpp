@@ -33,12 +33,13 @@ std::vector< stf::storedFunc > stf::GetFuncLib() {
 
     // Monoexponential function, starting with a delay, start fixed to baseline:
     std::vector<parInfo> parInfoMExpDe(4);
-    parInfoMExpDe[0].toFit=false; parInfoMExpDe[0].desc=wxT("Baseline");
-    parInfoMExpDe[1].toFit=true; parInfoMExpDe[1].desc=wxT("Delay");
-    parInfoMExpDe[2].toFit=true; parInfoMExpDe[2].desc=wxT("tau");
-    parInfoMExpDe[3].toFit=true; parInfoMExpDe[3].desc=wxT("Peak");
+    parInfoMExpDe[0].toFit=false; parInfoMExpDe[0].desc=wxT("Baseline"); parInfoMExpDe[0].scale=stf::yscale; parInfoMExpDe[0].unscale=stf::yunscale; 
+    parInfoMExpDe[1].toFit=true; parInfoMExpDe[1].desc=wxT("Delay"); parInfoMExpDe[0].scale=stf::xscale; parInfoMExpDe[0].unscale=stf::xunscale;
+    parInfoMExpDe[2].toFit=true; parInfoMExpDe[2].desc=wxT("tau"); parInfoMExpDe[0].scale=stf::xscale; parInfoMExpDe[0].unscale=stf::xunscale;
+    parInfoMExpDe[3].toFit=true; parInfoMExpDe[3].desc=wxT("Peak"); parInfoMExpDe[0].scale=stf::yscale; parInfoMExpDe[0].unscale=stf::yunscale;
     funcList.push_back(stf::storedFunc(
-                                       wxT("Monoexponential with delay, start fixed to baseline"),parInfoMExpDe,fexpde,fexpde_init,nojac,false));
+                                       wxT("Monoexponential with delay, start fixed to baseline"),
+                                       parInfoMExpDe,fexpde,fexpde_init,nojac,false));
 
     // Biexponential function, free fit:
     std::vector<parInfo> parInfoBExp=getParInfoExp(2);
@@ -59,7 +60,8 @@ std::vector< stf::storedFunc > stf::GetFuncLib() {
     parInfoBExpDe[3].toFit=true;  parInfoBExpDe[3].desc=wxT("Factor");
     parInfoBExpDe[4].toFit=true;  parInfoBExpDe[4].desc=wxT("tau2");
     funcList.push_back(stf::storedFunc(
-                                       wxT("Biexponential with delay, start fixed to baseline, delay constrained to > 0"),parInfoBExpDe,fexpbde,fexpbde_init,nojac,false));
+                                       wxT("Biexponential with delay, start fixed to baseline, delay constrained to > 0"),
+                                       parInfoBExpDe,fexpbde,fexpbde_init,nojac,false));
 
     // Triexponential function, free fit:
     std::vector<parInfo> parInfoTExp=getParInfoExp(3);
@@ -100,6 +102,10 @@ std::vector< stf::storedFunc > stf::GetFuncLib() {
 
 Vector_double stf::nojac(double x, const Vector_double& p) {
     return Vector_double(0);
+}
+
+double stf::noscale(double param, double xscale, double xoff, double yscale, double yoff) {
+    return param;
 }
 
 double stf::fexp(double x, const Vector_double& p) {
@@ -178,6 +184,22 @@ void stf::fexp_init2(const Vector_double& data, double base, double peak, double
         pInit[n_p+1]=1.0/((double)n_p+2.0)/((double)n_p+2.0)*(double)data.size()*dt;
     }
     pInit[pInit.size()-1]=peak;
+}
+
+double stf::xscale(double param, double xscale, double xoff, double yscale, double yoff) {
+    return param; //*xscale + xoff;
+}
+
+double stf::xunscale(double param, double xscale, double xoff, double yscale, double yoff) {
+    return param; //(param-xoff)/xscale;
+}
+
+double stf::yscale(double param, double xscale, double xoff, double yscale, double yoff) {
+    return param*yscale - yoff;
+}
+
+double stf::yunscale(double param, double xscale, double xoff, double yscale, double yoff) {
+    return (param+yoff)/yscale;
 }
 
 double stf::fexpde(double x, const Vector_double& p) {
@@ -353,14 +375,20 @@ void stf::fgnabiexp_init(const Vector_double& data, double base, double peak, do
 
 std::vector<stf::parInfo> stf::getParInfoExp(int n_exp) {
     std::vector<parInfo> retParInfo(n_exp*2+1);
-    for (int n_e=0;n_e<n_exp*2;n_e+=2) {
+    for (int n_e=0; n_e<n_exp*2; n_e+=2) {
         retParInfo[n_e].toFit=true;
-        retParInfo[n_e+1].toFit=true;
         retParInfo[n_e].desc << wxT("Amp_") << (int)n_e/2;
+        retParInfo[n_e].scale = stf::yscale;
+        retParInfo[n_e].unscale = stf::yunscale;
+        retParInfo[n_e+1].toFit=true;
         retParInfo[n_e+1].desc <<  wxT("Tau_") << (int)n_e/2;
+        retParInfo[n_e+1].scale = stf::xscale;
+        retParInfo[n_e+1].unscale = stf::xunscale;
     }
     retParInfo[n_exp*2].toFit=true;
     retParInfo[n_exp*2].desc=wxT("Offset");
+    retParInfo[n_exp*2].scale=stf::yscale;
+    retParInfo[n_exp*2].unscale=stf::yunscale;
     return retParInfo;
 }
 

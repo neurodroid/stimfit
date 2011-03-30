@@ -1234,7 +1234,7 @@ PyObject* leastsq( int fselect, bool refresh ) {
     double chisqr = 0.0;
     try {
         chisqr = stf::lmFit( x, pDoc->GetXScale(), wxGetApp().GetFuncLib().at(fselect),
-                opts, params, fitInfo, fitWarning );
+                             opts, true, params, fitInfo, fitWarning );
         pDoc->cur().SetIsFitted( params, wxGetApp().GetFuncLibPtr(fselect),
                 chisqr, pDoc->GetFitBeg(), pDoc->GetFitEnd() );
     }

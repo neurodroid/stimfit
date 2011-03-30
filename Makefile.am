@@ -126,7 +126,7 @@ else
 bin_PROGRAMS = stimfit
 check_PROGRAMS = stimfittest
 TESTS = ${check_PROGRAMS}
-stimfit_SOURCES = src/app/dummy.cpp
+stimfit_SOURCES = src/app/wxStfMain.cpp
 
 stimfittest_SOURCES = ./src/test/section.cpp ./src/test/channel.cpp ./src/test/recording.cpp ./src/test/measlib.cpp
 

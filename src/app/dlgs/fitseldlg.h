@@ -39,7 +39,7 @@ private:
     int m_fselect;
     Vector_double init_p;
     Vector_double opts;
-    bool noInput;
+    bool noInput, use_scaling;
 
     void SetPars();
     void SetOpts();
@@ -107,6 +107,11 @@ public:
     /*! \return A valarray containing the initial parameters for the algorithm.
      */
     Vector_double GetOpts() const {return opts;}
+
+    //! Scale x- and y-amplitudes to 1.0 before fit
+    /*! \return True if scaling should be used
+     */
+    bool UseScaling() const {return use_scaling;}
 
     //! Determines whether user-defined initial parameters are allowed.
     /*! \param noInput_ Set to true if the user may set the initial parameters, false otherwise.

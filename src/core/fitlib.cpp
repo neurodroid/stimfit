@@ -12,10 +12,11 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include <float.h>
-
 #include "./fitlib.h"
 #include "./levmar/lm.h"
+
+#include <float.h>
+#include <boost/algorithm/minmax_element.hpp>
 
 namespace stf {
 // C-style functions for Lourakis' routines:
@@ -120,10 +121,32 @@ void stf::c_jac_lour(double *p, double *jac, int m, int n, void *adata) {
     }
 }
 
+Vector_double stf::get_scale(Vector_double& data) {
+    Vector_double xyscale(4);
+    std::pair<Vector_double::const_iterator, Vector_double::const_iterator> minmax;
+    minmax = boost::minmax_element(data.begin(), data.end());
+    double ymin = *minmax.first;
+    double ymax = *minmax.second;
+    std::cout << "minmax " << ymin << " " << ymax << std::endl;
+    double amp = ymax-ymin;
+    data = stf::vec_scal_mul(data, 1.0e3/amp);
+    data = stf::vec_scal_minus(data, ymin*1.0e3/amp);
+    minmax = boost::minmax_element(data.begin(), data.end());
+    std::cout << "minmax " << *minmax.first << " " << *minmax.second << std::endl;
+
+    xyscale[0] = 1.0/data.size();
+    xyscale[1] = 0.0;
+    xyscale[2] = 1.0e3/amp;
+    xyscale[3] = ymin/amp;
+    
+    return xyscale;
+}
+
 double stf::lmFit( const Vector_double& data, double dt,
-        const stf::storedFunc& fitFunc, const Vector_double& opts,
-        Vector_double& p, wxString& info, int& warning )
-{	
+                   const stf::storedFunc& fitFunc, const Vector_double& opts,
+                   bool use_scaling,
+                   Vector_double& p, wxString& info, int& warning )
+{
     // Basic range checking:
     if (fitFunc.pInfo.size()!=p.size()) {
         std::string msg("Error in stf::lmFit()\n"
@@ -140,6 +163,8 @@ double stf::lmFit( const Vector_double& data, double dt,
     std::vector< double > constrains_lm_lb( fitFunc.pInfo.size() );
     std::vector< double > constrains_lm_ub( fitFunc.pInfo.size() );
 
+    bool can_scale = use_scaling;
+    
     for ( unsigned n_p=0; n_p < fitFunc.pInfo.size(); ++n_p ) {
         if ( fitFunc.pInfo[n_p].constrained ) {
             constrained = true;
@@ -149,6 +174,11 @@ double stf::lmFit( const Vector_double& data, double dt,
             constrains_lm_lb[n_p] = -DBL_MAX;
             constrains_lm_ub[n_p] = DBL_MAX;
         }
+        if ( can_scale ) {
+            if (fitFunc.pInfo[n_p].scale == noscale) {
+                can_scale = false;
+            }
+        }
     }
 
     // Store the functions at global scope:
@@ -157,7 +187,12 @@ double stf::lmFit( const Vector_double& data, double dt,
 
     double info_id[LM_INFO_SZ];
     Vector_double data_ptr(data);
-
+    Vector_double xyscale(4);
+    if (can_scale) {
+        xyscale = get_scale(data_ptr);
+    }
+    std::cout << xyscale[2] << std::endl;
+    
     // The parameters need to be separated into two parts:
     // Those that are to be fitted and those that the client wants
     // to keep constant. Since there is no native support to
@@ -177,8 +212,19 @@ double stf::lmFit( const Vector_double& data, double dt,
     for ( unsigned n_p=0, n_c=0, n_f=0; n_p < fitFunc.pInfo.size(); ++n_p ) {
         if (fitFunc.pInfo[n_p].toFit) {
             p_toFit[n_f++] = p[n_p];
+            if (can_scale) {
+                std::cout << "before scaling " << p_toFit[n_f-1] << " after ";
+                
+                p_toFit[n_f-1] = fitFunc.pInfo[n_p].scale(p_toFit[n_f-1], xyscale[0],
+                                                          xyscale[1], xyscale[2], xyscale[3]);
+                std::cout << p_toFit[n_f-1] << std::endl;
+            }
         } else {
             p_const[n_c++] = p[n_p];
+            if (can_scale) {
+                p_const[n_c-1] = fitFunc.pInfo[n_p].scale(p_const[n_c-1], xyscale[0],
+                                                          xyscale[1], xyscale[2], xyscale[3]);
+            }
         }
         p_fit_bool[n_p] = fitFunc.pInfo[n_p].toFit;
     }
@@ -209,7 +255,7 @@ double stf::lmFit( const Vector_double& data, double dt,
         std::cout << optsMsg;
 #endif
         while ( 1 ) {
-#ifdef _DEBUG
+            // #ifdef _DEBUG
             wxString paramMsg;
             paramMsg << wxT("Pass: ") << it << wxT("\t");
             paramMsg << wxT("p_toFit: ");
@@ -217,7 +263,7 @@ double stf::lmFit( const Vector_double& data, double dt,
                 paramMsg << p_toFit[n_p] << wxT("\t");
             paramMsg << wxT("\n");
             std::cout << paramMsg.c_str();
-#endif
+            // #endif
             if ( !fitFunc.hasJac ) {
                 if ( !constrained ) {
                     dlevmar_dif( c_func_lour, &p_toFit[0], &data_ptr[0], n_fitted, 
@@ -272,10 +318,17 @@ double stf::lmFit( const Vector_double& data, double dt,
         std::runtime_error e("Array of size zero in lmFit");
         throw e;
     }
+
     // copy back the fitted parameters to p:
-    for ( unsigned n_p=0,n_f=0; n_p<fitFunc.pInfo.size(); ++n_p ) {
+    for ( unsigned n_p=0, n_f=0; n_p<fitFunc.pInfo.size(); ++n_p ) {
         if (fitFunc.pInfo[n_p].toFit) {
             p[n_p] = p_toFit[n_f++];
+        }
+        if (can_scale) {
+            std::cout << "before unscaling " << p[n_p] << " after ";
+            p[n_p] = fitFunc.pInfo[n_p].unscale(p[n_p], xyscale[0],
+                                                xyscale[1], xyscale[2], xyscale[3]);
+            std::cout << p[n_p] << std::endl;
         }
     }
 
@@ -313,6 +366,10 @@ double stf::lmFit( const Vector_double& data, double dt,
         str_info << wxT("\nStopped by small squared error.");
         warning = 0;
         break;
+    }
+    if (use_scaling && !can_scale) {
+        str_info << wxT("\nCouldn't use scaling because one or more ")
+                 << wxT("of the parameters don't allow it.");
     }
     info=str_info;
     return info_id[1];
