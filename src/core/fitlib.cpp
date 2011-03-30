@@ -121,22 +121,19 @@ void stf::c_jac_lour(double *p, double *jac, int m, int n, void *adata) {
     }
 }
 
-Vector_double stf::get_scale(Vector_double& data) {
+Vector_double stf::get_scale(Vector_double& data, double oldx) {
     Vector_double xyscale(4);
     std::pair<Vector_double::const_iterator, Vector_double::const_iterator> minmax;
     minmax = boost::minmax_element(data.begin(), data.end());
     double ymin = *minmax.first;
     double ymax = *minmax.second;
-    std::cout << "minmax " << ymin << " " << ymax << std::endl;
     double amp = ymax-ymin;
-    data = stf::vec_scal_mul(data, 1.0e3/amp);
-    data = stf::vec_scal_minus(data, ymin*1.0e3/amp);
-    minmax = boost::minmax_element(data.begin(), data.end());
-    std::cout << "minmax " << *minmax.first << " " << *minmax.second << std::endl;
+    data = stf::vec_scal_mul(data, 1.0/amp);
+    data = stf::vec_scal_minus(data, ymin/amp);
 
-    xyscale[0] = 1.0/data.size();
-    xyscale[1] = 0.0;
-    xyscale[2] = 1.0e3/amp;
+    xyscale[0] = 1.0/(data.size()*oldx);
+    xyscale[1] = 0;
+    xyscale[2] = 1.0/amp;
     xyscale[3] = ymin/amp;
     
     return xyscale;
@@ -189,9 +186,8 @@ double stf::lmFit( const Vector_double& data, double dt,
     Vector_double data_ptr(data);
     Vector_double xyscale(4);
     if (can_scale) {
-        xyscale = get_scale(data_ptr);
+        xyscale = get_scale(data_ptr, dt);
     }
-    std::cout << xyscale[2] << std::endl;
     
     // The parameters need to be separated into two parts:
     // Those that are to be fitted and those that the client wants
@@ -213,11 +209,8 @@ double stf::lmFit( const Vector_double& data, double dt,
         if (fitFunc.pInfo[n_p].toFit) {
             p_toFit[n_f++] = p[n_p];
             if (can_scale) {
-                std::cout << "before scaling " << p_toFit[n_f-1] << " after ";
-                
                 p_toFit[n_f-1] = fitFunc.pInfo[n_p].scale(p_toFit[n_f-1], xyscale[0],
                                                           xyscale[1], xyscale[2], xyscale[3]);
-                std::cout << p_toFit[n_f-1] << std::endl;
             }
         } else {
             p_const[n_c++] = p[n_p];
@@ -228,7 +221,12 @@ double stf::lmFit( const Vector_double& data, double dt,
         }
         p_fit_bool[n_p] = fitFunc.pInfo[n_p].toFit;
     }
-    fitInfo fInfo( p_fit_bool, p_const, dt );
+    // size * dt_new = 1 -> dt_new = 1.0/size
+    double dt_finfo = dt;
+    if (can_scale)
+        dt_finfo = 1.0/data_ptr.size();
+    fitInfo fInfo( p_fit_bool, p_const, dt_finfo );
+
     // make l-value of opts:
     Vector_double opts_l(5);
     for (std::size_t n=0; n < 4; ++n) opts_l[n] = opts[n];
@@ -255,7 +253,7 @@ double stf::lmFit( const Vector_double& data, double dt,
         std::cout << optsMsg;
 #endif
         while ( 1 ) {
-            // #ifdef _DEBUG
+#ifdef _DEBUG
             wxString paramMsg;
             paramMsg << wxT("Pass: ") << it << wxT("\t");
             paramMsg << wxT("p_toFit: ");
@@ -263,7 +261,7 @@ double stf::lmFit( const Vector_double& data, double dt,
                 paramMsg << p_toFit[n_p] << wxT("\t");
             paramMsg << wxT("\n");
             std::cout << paramMsg.c_str();
-            // #endif
+#endif
             if ( !fitFunc.hasJac ) {
                 if ( !constrained ) {
                     dlevmar_dif( c_func_lour, &p_toFit[0], &data_ptr[0], n_fitted, 
@@ -325,10 +323,8 @@ double stf::lmFit( const Vector_double& data, double dt,
             p[n_p] = p_toFit[n_f++];
         }
         if (can_scale) {
-            std::cout << "before unscaling " << p[n_p] << " after ";
             p[n_p] = fitFunc.pInfo[n_p].unscale(p[n_p], xyscale[0],
                                                 xyscale[1], xyscale[2], xyscale[3]);
-            std::cout << p[n_p] << std::endl;
         }
     }
 

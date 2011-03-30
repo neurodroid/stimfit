@@ -309,7 +309,8 @@ namespace stf {
     void fgnabiexp_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit );
 
     //! Scales a parameter that linearly depends on x
-    /*! \param xscale x scaling factor
+    /*! \param The parameter to scale
+     *  \param xscale x scaling factor
      *  \param xoff x offset
      *  \param yscale y scaling factor
      *  \param yoff y offset
@@ -318,7 +319,8 @@ namespace stf {
     double xscale(double param, double xscale, double xoff, double yscale, double yoff);
 
     //! Unscales a parameter that linearly depends on x
-    /*! \param xscale x scaling factor
+    /*! \param The parameter to scale
+     *  \param xscale x scaling factor
      *  \param xoff x offset
      *  \param yscale y scaling factor
      *  \param yoff y offset
@@ -327,21 +329,42 @@ namespace stf {
     double xunscale(double param, double xscale, double xoff, double yscale, double yoff);
 
     //! Scales a parameter that linearly depends on y
-    /*! \param xscale x scaling factor
+    /*! \param The parameter to scale
+     *  \param xscale x scaling factor
      *  \param xoff x offset
      *  \param yscale y scaling factor
      *  \param yoff y offset
      */
     double yscale(double param, double xscale, double xoff, double yscale, double yoff);
 
+    //! Scales a parameter that linearly depends on y and adds an offset
+    /*! \param The parameter to scale
+     *  \param xscale x scaling factor
+     *  \param xoff x offset
+     *  \param yscale y scaling factor
+     *  \param yoff y offset
+     */
+    double yscaleoffset(double param, double xscale, double xoff, double yscale, double yoff);
+
     //! Unscales a parameter that linearly depends on y
-    /*! \param xscale x scaling factor
+    /*! \param The parameter to scale
+     *  \param xscale x scaling factor
      *  \param xoff x offset
      *  \param yscale y scaling factor
      *  \param yoff y offset
      *  \return Unscaled parameter
      */
     double yunscale(double param, double xscale, double xoff, double yscale, double yoff);
+
+    //! Unscales a parameter that linearly depends on y and removes the offset
+    /*! \param The parameter to scale
+     *  \param xscale x scaling factor
+     *  \param xoff x offset
+     *  \param yscale y scaling factor
+     *  \param yoff y offset
+     *  \return Unscaled parameter
+     */
+    double yunscaleoffset(double param, double xscale, double xoff, double yscale, double yoff);
 
     //! Creates stf::parInfo structs for n-exponential functions.
     /*! \param n_exp Number of exponential terms.

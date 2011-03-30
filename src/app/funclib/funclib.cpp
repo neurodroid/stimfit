@@ -33,7 +33,7 @@ std::vector< stf::storedFunc > stf::GetFuncLib() {
 
     // Monoexponential function, starting with a delay, start fixed to baseline:
     std::vector<parInfo> parInfoMExpDe(4);
-    parInfoMExpDe[0].toFit=false; parInfoMExpDe[0].desc=wxT("Baseline"); parInfoMExpDe[0].scale=stf::yscale; parInfoMExpDe[0].unscale=stf::yunscale; 
+    parInfoMExpDe[0].toFit=false; parInfoMExpDe[0].desc=wxT("Baseline"); parInfoMExpDe[0].scale=stf::yscaleoffset; parInfoMExpDe[0].unscale=stf::yunscaleoffset; 
     parInfoMExpDe[1].toFit=true; parInfoMExpDe[1].desc=wxT("Delay"); parInfoMExpDe[0].scale=stf::xscale; parInfoMExpDe[0].unscale=stf::xunscale;
     parInfoMExpDe[2].toFit=true; parInfoMExpDe[2].desc=wxT("tau"); parInfoMExpDe[0].scale=stf::xscale; parInfoMExpDe[0].unscale=stf::xunscale;
     parInfoMExpDe[3].toFit=true; parInfoMExpDe[3].desc=wxT("Peak"); parInfoMExpDe[0].scale=stf::yscale; parInfoMExpDe[0].unscale=stf::yunscale;
@@ -104,7 +104,7 @@ Vector_double stf::nojac(double x, const Vector_double& p) {
     return Vector_double(0);
 }
 
-double stf::noscale(double param, double xscale, double xoff, double yscale, double yoff) {
+double stf::noscale(double param, double xscale, double oldx, double yscale, double yoff) {
     return param;
 }
 
@@ -187,18 +187,26 @@ void stf::fexp_init2(const Vector_double& data, double base, double peak, double
 }
 
 double stf::xscale(double param, double xscale, double xoff, double yscale, double yoff) {
-    return param; //*xscale + xoff;
+    return param*xscale; // + xoff;
 }
 
 double stf::xunscale(double param, double xscale, double xoff, double yscale, double yoff) {
-    return param; //(param-xoff)/xscale;
+    return param/xscale; //(param-xoff)/xscale;
 }
 
 double stf::yscale(double param, double xscale, double xoff, double yscale, double yoff) {
+    return param*yscale;
+}
+
+double stf::yscaleoffset(double param, double xscale, double xoff, double yscale, double yoff) {
     return param*yscale - yoff;
 }
 
 double stf::yunscale(double param, double xscale, double xoff, double yscale, double yoff) {
+    return param/yscale;
+}
+
+double stf::yunscaleoffset(double param, double xscale, double xoff, double yscale, double yoff) {
     return (param+yoff)/yscale;
 }
 
@@ -387,8 +395,8 @@ std::vector<stf::parInfo> stf::getParInfoExp(int n_exp) {
     }
     retParInfo[n_exp*2].toFit=true;
     retParInfo[n_exp*2].desc=wxT("Offset");
-    retParInfo[n_exp*2].scale=stf::yscale;
-    retParInfo[n_exp*2].unscale=stf::yunscale;
+    retParInfo[n_exp*2].scale=stf::yscaleoffset;
+    retParInfo[n_exp*2].unscale=stf::yunscaleoffset;
     return retParInfo;
 }
 

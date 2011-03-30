@@ -206,9 +206,9 @@ void wxStfFitSelDlg::InitOptions(wxFlexGridSizer* optionsGrid) {
     optionsGrid->Add( m_textCtrlE2, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
     // Use scaling-------------------------------------------------------
-    m_checkBox = new wxCheckBox(this, wxID_ANY, wxT("Scale parameters to 1"), 
+    m_checkBox = new wxCheckBox(this, wxID_ANY, wxT("Scale data amplitude to 1.0"),
                                          wxDefaultPosition, wxDefaultSize, 0); 
-    m_checkBox->SetValue(false);
+    m_checkBox->SetValue(true);
     optionsGrid->Add( m_checkBox, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
     
 }

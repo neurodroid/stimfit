@@ -86,13 +86,14 @@ stf::storedFunc initLinFunc();
 
 //! Compute and perform normalisation
 /*! \param data Data vector; will be scaled upon return
+ *  \param oldx original x interval
  *  \return A vector with \n
  *          [0] x scale
  *          [1] x offset
  *          [2] y scale
  *          [3] y offset
  */
- Vector_double get_scale(Vector_double& data);
+ Vector_double get_scale(Vector_double& data, double oldx);
 }
 
 template <typename T>
