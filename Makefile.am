@@ -168,7 +168,7 @@ noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.
             ./src/core/filelib/axg/stringUtils.h \
             ./src/core/filelib/axg/byteswap.h \
             ./src/core/filelib/axg/longdef.h \
-            ./src/core/levmar/lm.h ./src/core/levmar/misc.h \
+            ./src/core/levmar/lm.h ./src/core/levmar/misc.h ./src/core/levmar/compiler.h \
             ./src/app/app.h ./src/app/stfcheckbox.h \
             ./src/app/copygrid.h ./src/app/graph.h \
             ./src/app/printout.h \
