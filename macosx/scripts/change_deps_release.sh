@@ -5,9 +5,17 @@ WX_CONFIG=/Users/cs/wxbin/bin/wx-config
 # WXPY_VER=wx-2.9.1-osx_cocoa
 # WXPY_INSTALL_DIR=/Users/cs/wxPython-2.9/dummy-install/lib/python2.5/site-packages
 
+mkdir -p stimfit.app
+mkdir -p stimfit.app/Contents
+mkdir -p stimfit.app/Contents/Frameworks
+mkdir -p stimfit.app/Contents/MacOS
+mkdir -p stimfit.app/Contents/libs
+
 chown -R cs:staff stimfit.app
 
 make stimfit.app
+cp -v .libs/stimfit  ./stimfit.app/Contents/MacOS/stimfit
+chmod +x ./stimfit.app/Contents/MacOS/stimfit
 mkdir -p ./stimfit.app/Contents/Frameworks/stimfit
 
 # if test -n "$1"; then
@@ -29,15 +37,15 @@ mkdir -p ./stimfit.app/Contents/Frameworks/stimfit
 mkdir -p ./stimfit.app/Contents/lib/stimfit
 cp -v ./src/stfswig/.libs/libstf.dylib ./stimfit.app/Contents/lib/stimfit/libstf.dylib
 cp -v ./src/app/.libs/libstimfit.dylib ./stimfit.app/Contents/lib/stimfit/libstimfit.dylib
-rm -f ./stimfit.app/Contents/Frameworks/stimfit/_stf.so
+rm -fv ./stimfit.app/Contents/Frameworks/stimfit/_stf.so
+rm -fv ./stimfit.app/Contents/libs/libstf.dylib
+rm -fv ./stimfit.app/Contents/libs/libstimfit.dylib
+# cp -v ./src/app/.libs/libstimfit.dylib ./stimfit.app/Contents/libs/libstimfit.dylib
+dylibbundler -of -b -x ./stimfit.app/Contents/MacOS/stimfit -d ./stimfit.app/Contents/libs/
 CURDIR=`pwd`
 cd stimfit.app/Contents/Frameworks/stimfit
 ln -sf ../../libs/libstf.dylib _stf.so
 cd ${CURDIR}
-rm -f ./stimfit.app/Contents/libs/libstf.dylib
-rm -f ./stimfit.app/Contents/libs/libstimfit.dylib
-cp -v ./src/app/.libs/libstimfit.dylib ./stimfit.app/Contents/libs/libstimfit.dylib
-dylibbundler -of -b -x ./stimfit.app/Contents/MacOS/stimfit -d ./stimfit.app/Contents/libs/
 
 if test -n "$1"; then
   if [ $1 = '1' ]; then
@@ -45,7 +53,8 @@ if test -n "$1"; then
     find ./stimfit.app  -name "*.so" -exec dylibbundler -of -b -x '{}' -d ./stimfit.app/Contents/libs/ \;
   fi
 fi
-rm -rf ./stimfit.app/Contents/lib/stimfit
+rm -rfv ./stimfit.app/Contents/lib
+
 
 cp -v ../../src/stfswig/*.py ./stimfit.app/Contents/Frameworks/stimfit/
 
