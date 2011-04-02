@@ -13,7 +13,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "./fitlib.h"
-#include "./levmar/lm.h"
+#include "./levmar/levmar.h"
 
 #include <float.h>
 #include <boost/algorithm/minmax_element.hpp>

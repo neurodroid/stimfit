@@ -290,7 +290,7 @@
 				Name="app"
 				>
 				<File
-					RelativePath="..\..\src\app\dummy.cpp"
+					RelativePath="..\..\src\app\main.cpp"
 					>
 				</File>
 			</Filter>

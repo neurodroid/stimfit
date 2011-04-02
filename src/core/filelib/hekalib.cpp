@@ -905,7 +905,7 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
     // Get the tree from the pulse file
     int pos = ftell(dat_fh);
     Tree tree = getTree(dat_fh, sizes, pos, needsByteSwap);
-    std::string date = time2date(tree.RootList[0].RoStartTime);
+    std::string date = ""; //time2date(tree.RootList[0].RoStartTime);
 
     if (isBundled) {
         // find the data
