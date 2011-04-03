@@ -168,7 +168,7 @@ noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.
             ./src/core/filelib/axg/stringUtils.h \
             ./src/core/filelib/axg/byteswap.h \
             ./src/core/filelib/axg/longdef.h \
-            ./src/core/levmar/lm.h ./src/core/levmar/misc.h ./src/core/levmar/compiler.h \
+            ./src/core/levmar/lm.h ./src/core/levmar/levmar.h ./src/core/levmar/misc.h ./src/core/levmar/compiler.h \
             ./src/app/app.h ./src/app/stfcheckbox.h \
             ./src/app/copygrid.h ./src/app/graph.h \
             ./src/app/printout.h \
@@ -212,7 +212,6 @@ EXTRA_DIST+= ./src/icons/zoom_out.xpm
 EXTRA_DIST+= ./src/core/levmar/Axb_core.c
 EXTRA_DIST+= ./src/core/levmar/lmbc_core.c
 EXTRA_DIST+= ./src/core/levmar/lm_core.c
-EXTRA_DIST+= ./src/core/levmar/lmdemo.c
 EXTRA_DIST+= ./src/core/levmar/lmlec_core.c
 EXTRA_DIST+= ./src/core/levmar/misc_core.c
 EXTRA_DIST+= ./src/core/levmar/LICENSE

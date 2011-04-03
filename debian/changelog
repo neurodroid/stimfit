@@ -1,3 +1,47 @@
+stimfit (0.10.13-1ubuntu5) natty; urgency=low
+
+  * Added scaling support to levmar
+  * Fixed a bug in HEKA file reading library
+  * Reversioned because of source change
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 02 Apr 2011 14:03:45 +0000
+
+stimfit (0.10.13-1ubuntu4) maverick; urgency=low
+
+  * Added scaling support to levmar
+  * Fixed a bug in HEKA file reading library
+  * Reversioned because of source change
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 02 Apr 2011 13:57:48 +0000
+
+stimfit (0.10.13-1ubuntu3) natty; urgency=low
+
+  * Added scaling support to levmar
+  * Fixed a bug in HEKA file reading library
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 02 Apr 2011 13:27:16 +0000
+
+stimfit (0.10.13-1ubuntu2) maverick; urgency=low
+
+  * Added scaling support to levmar
+  * Fixed a bug in HEKA file reading library
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 02 Apr 2011 13:21:56 +0000
+
+stimfit (0.10.13-1ubuntu1) lucid; urgency=low
+
+  * Added scaling support to levmar
+  * Fixed a bug in HEKA file reading library
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 02 Apr 2011 12:45:43 +0000
+
+stimfit (0.10.13-1) unstable; urgency=low
+
+  * Added scaling support to levmar
+  * Fixed a bug in HEKA file reading library
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 02 Apr 2011 12:33:21 +0000
+
 stimfit (0.10.12-3) unstable; urgency=low
 
   * Fixed time stamp for Debian.
