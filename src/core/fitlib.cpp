@@ -35,19 +35,25 @@ void saveJac(Jac jac);
 struct fitInfo {
     fitInfo(const std::deque<bool>& fit_p_arg,
             const Vector_double& const_p_arg,
+            const Vector_double& scale_p_arg,
             double dt_arg)
-    :   fit_p(fit_p_arg), const_p(const_p_arg), dt(dt_arg)
+        :   fit_p(fit_p_arg), const_p(const_p_arg),
+            scale_p(scale_p_arg), dt(dt_arg)
     {}
-            // Specifies for each parameter whether the client
-            // wants to fit it (true) or to keep it constant (false)
-            std::deque<bool> fit_p;
 
-            // A valarray containing the parameters that
-            // will be kept constant:
-            Vector_double const_p;
- 
-            // sampling interval
-            double dt;
+    // Specifies for each parameter whether the client
+    // wants to fit it (true) or to keep it constant (false)
+    std::deque<bool> fit_p;
+
+    // A valarray containing the parameters that
+    // will be kept constant:
+    Vector_double const_p;
+
+    // Scaling factors for the parameters.
+    Vector_double scale_p;
+    
+    // sampling interval
+    double dt;
 };
 }
 
@@ -77,10 +83,10 @@ void stf::c_func_lour(double *p, double* hx, int m, int n, void *adata) {
         // if the parameter needs to be fitted...
         if (fInfo->fit_p[n_tp]) {
             // ... take it from *p, ...
-            p_f[n_tp] = p[n_p++];
+            p_f[n_tp] = p[n_p++]*fInfo->scale_p[n_tp];
         } else {
             // ... otherwise, take it from the fInfo struct:
-            p_f[n_tp] = fInfo->const_p[n_f++];
+            p_f[n_tp] = fInfo->const_p[n_f++]*fInfo->scale_p[n_tp];
         }
     }
     for (int n_x=0;n_x<n;++n_x) {
@@ -101,10 +107,10 @@ void stf::c_jac_lour(double *p, double *jac, int m, int n, void *adata) {
         // if the parameter needs to be fitted...
         if (fInfo->fit_p[n_tp]) {
             // ... take it from *p, ...
-            p_f[n_tp]=p[n_p++];
+            p_f[n_tp] = p[n_p++]*fInfo->scale_p[n_tp];
         } else {
             // ... otherwise, take it from the fInfo struct:
-            p_f[n_tp] = fInfo->const_p[n_f++];
+            p_f[n_tp] = fInfo->const_p[n_f++]*fInfo->scale_p[n_tp];
         }
     }
     for (int n_x=0,n_j=0;n_x<n;++n_x) {
@@ -205,6 +211,7 @@ double stf::lmFit( const Vector_double& data, double dt,
     std::deque<bool> p_fit_bool( fitFunc.pInfo.size() );
     // parameters that are held constant:
     Vector_double p_const( fitFunc.pInfo.size()-n_fitted );
+    Vector_double p_scale(fitFunc.pInfo.size());
     for ( unsigned n_p=0, n_c=0, n_f=0; n_p < fitFunc.pInfo.size(); ++n_p ) {
         if (fitFunc.pInfo[n_p].toFit) {
             p_toFit[n_f++] = p[n_p];
@@ -212,12 +219,16 @@ double stf::lmFit( const Vector_double& data, double dt,
                 p_toFit[n_f-1] = fitFunc.pInfo[n_p].scale(p_toFit[n_f-1], xyscale[0],
                                                           xyscale[1], xyscale[2], xyscale[3]);
             }
+            p_scale[n_p] = p_toFit[n_f-1];
+            p_toFit[n_f-1] = 1.0;
         } else {
             p_const[n_c++] = p[n_p];
             if (can_scale) {
                 p_const[n_c-1] = fitFunc.pInfo[n_p].scale(p_const[n_c-1], xyscale[0],
                                                           xyscale[1], xyscale[2], xyscale[3]);
             }
+            p_scale[n_p] = p_const[n_c-1];
+            p_const[n_c-1] = 1.0;
         }
         p_fit_bool[n_p] = fitFunc.pInfo[n_p].toFit;
     }
@@ -225,7 +236,8 @@ double stf::lmFit( const Vector_double& data, double dt,
     double dt_finfo = dt;
     if (can_scale)
         dt_finfo = 1.0/data_ptr.size();
-    fitInfo fInfo( p_fit_bool, p_const, dt_finfo );
+
+    fitInfo fInfo( p_fit_bool, p_const, p_scale, dt_finfo );
 
     // make l-value of opts:
     Vector_double opts_l(5);
@@ -328,6 +340,8 @@ double stf::lmFit( const Vector_double& data, double dt,
         }
     }
 
+    p = stf::vec_vec_mul(p, p_scale);
+    
     wxString str_info;
     str_info << wxT("Passes: ") << it;
     str_info << wxT("\nIterations during last pass: ") << info_id[5];
