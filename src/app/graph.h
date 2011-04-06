@@ -307,13 +307,13 @@ public:
 
     //Pens are declared here instead of locally to accelerate OnDraw()
     //Drawing (pen) styles for the different graphical standard output
-    wxPen standardPen, standardPen2, scalePen, scalePen2, peakPen, peakLimitPen,
+    wxPen standardPen, standardPen2, standardPen3, scalePen, scalePen2, peakPen, peakLimitPen,
         basePen, baseLimitPen, decayLimitPen, ZoomRectPen, fitPen, fitSelectedPen,
         selectPen, averagePen, rtPen, hdPen, rdPen, slopePen, latencyPen,
         alignPen, measPen, eventPen, PSlopePen;						/*CSH*/
 
     //Drawing (pen) styles for the different graphical standard output
-    wxPen standardPrintPen, standardPrintPen2, scalePrintPen, scalePrintPen2,measPrintPen,
+    wxPen standardPrintPen, standardPrintPen2, standardPrintPen3, scalePrintPen, scalePrintPen2,measPrintPen,
         peakPrintPen, peakLimitPrintPen, basePrintPen, baseLimitPrintPen,
         decayLimitPrintPen, fitPrintPen, fitSelectedPrintPen, selectPrintPen,
         averagePrintPen, rtPrintPen, hdPrintPen, rdPrintPen,

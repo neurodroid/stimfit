@@ -74,6 +74,7 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     results1(wxT("\0")),results2(wxT("\0")),results3(wxT("\0")),results4(wxT("\0")),results5(wxT("\0")),results6(wxT("\0")),
     standardPen(*wxBLACK,1,wxSOLID), //Solid black line
     standardPen2(*wxRED,1,wxSOLID), //Solid red line
+    standardPen3(wxColour(255,192,192),1,wxSOLID), //Solid red line
     scalePen(*wxBLACK,2,wxSOLID), //Solid black line
     scalePen2(*wxRED,2,wxSOLID), //Solid red line
     peakPen(*wxRED,1,wxSHORT_DASH), //Dashed red line
@@ -101,6 +102,7 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
 #endif
     standardPrintPen(*wxBLACK,printSizePen1,wxSOLID), //Solid black line
     standardPrintPen2(*wxRED,printSizePen1,wxSOLID), //Solid red line
+    standardPrintPen3(wxColour(255,192,192),printSizePen1,wxSOLID), //Solid red line
     scalePrintPen(*wxBLACK,printSizePen2,wxSOLID), //Solid black line
     scalePrintPen2(*wxRED,printSizePen2,wxSOLID), //Solid red line
     measPrintPen(*wxBLACK,printSizePen1,wxDOT),
@@ -235,6 +237,23 @@ void wxStfGraph::OnDraw( wxDC& DC )
         }	// End display or print out
     }		//End plot of the second channel
 
+    if ((Doc()->size()>1) && pFrame->ShowAll()) {
+        for (std::size_t n=0; n < Doc()->size(); ++n) {
+            if (n!=Doc()->GetCurCh() && (n!=Doc()->GetSecCh() || !pFrame->ShowSecond())) {
+                if (!isPrinted) {
+                    //Draw current trace on display
+                    //For display use point to point drawing
+                    DC.SetPen(standardPen3);
+                    PlotTrace(&DC,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(), true);
+                } else {	//Draw second channel for print out
+                    //For print out use polyline tool
+                    DC.SetPen(standardPrintPen3);
+                    PrintTrace(&DC,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(), true);
+                }	// End display or print out
+            }
+        }
+    }		//End plot of the second channel
+    
     //Standard plot of the current trace
     //Trace one when displayed first time
     if (!isPrinted) {
@@ -1465,7 +1484,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                 WindowRect.height-bottomDist);
         Scale[2]=wxPoint(WindowRect.width-rightDist,
                 WindowRect.height-bottomDist-barLengthY);
-        if ((Doc()->size()>1))
+        if (Doc()->size()>1 && pFrame->ShowSecond())
         {	//Set end points for the second channel y-bar
             Scale[3]=wxPoint(WindowRect.width-rightDist/2,
                     WindowRect.height-bottomDist);
@@ -1510,7 +1529,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
             pLatexDC->DrawLabelLatex(scaleYString,TextFrameY,wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL);
 #endif
         }
-        if ((Doc()->size()>1))	{
+        if (Doc()->size()>1  && pFrame->ShowSecond())	{
             wxString scaleYString2;
             scaleYString2 << (int)yScaled2 << wxT(" ")
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
@@ -1543,7 +1562,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         //Plot them
         pDC->DrawLine(Scale[0],Scale[1]);
         pDC->DrawLine(Scale[1],Scale[2]);
-        if ((Doc()->size()>1))	{
+        if (Doc()->size()>1  && pFrame->ShowSecond()) {
             if (!isPrinted)
                 pDC->SetPen(scalePen2);
             else
@@ -1565,7 +1584,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         pDC->DrawLine(leftDist,WindowRect.height-bottomDist,
                 WindowRect.width-rightDist,WindowRect.height-bottomDist);
         // second y-axis:
-        if ((Doc()->size()>1)) {
+        if (Doc()->size()>1  && pFrame->ShowSecond()) {
             pDC->SetPen(scalePen2);
             // upper left corner:
             pDC->DrawLine(leftDist*2,topDist,leftDist*2,WindowRect.height-bottomDist);
@@ -1628,7 +1647,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         );
 
         // y-Axis of second channel:
-        if ((Doc()->size()>1)) {
+        if (Doc()->size()>1  && pFrame->ShowSecond()) {
             pDC->SetPen(scalePen2);
             // Find first y-axis tick:
             // Get y-value of bottomDist:

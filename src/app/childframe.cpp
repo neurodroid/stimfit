@@ -72,7 +72,6 @@ EVT_COMBOBOX( ID_COMBOACTCHANNEL, wxStfChildFrame::OnComboActChannel )
 EVT_COMBOBOX( ID_COMBOINACTCHANNEL, wxStfChildFrame::OnComboInactChannel )
 EVT_CHECKBOX( ID_ZERO_INDEX, wxStfChildFrame::OnZeroIndex)
 EVT_CHECKBOX( ID_PLOTSELECTED, wxStfChildFrame::OnShowselected )
-EVT_CHECKBOX( ID_SHOWSECOND, wxStfChildFrame::OnShowsecond )
 // workaround for status bar:
 EVT_MENU_HIGHLIGHT_ALL( wxStfChildFrame::OnMenuHighlight )
 END_EVENT_TABLE()
@@ -411,15 +410,6 @@ void wxStfChildFrame::OnZeroIndex( wxCommandEvent& event) {
 }
 
 void wxStfChildFrame::OnShowselected(wxCommandEvent& WXUNUSED(event)) {
-    wxStfView* pView=(wxStfView*)GetView();
-    if (pView != NULL && pView->GetGraph()!= NULL) { 
-        pView->GetGraph()->Refresh();
-        pView->GetGraph()->Enable();
-        pView->GetGraph()->SetFocus();
-    }
-}
-
-void wxStfChildFrame::OnShowsecond(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=(wxStfView*)GetView();
     if (pView != NULL && pView->GetGraph()!= NULL) { 
         pView->GetGraph()->Refresh();

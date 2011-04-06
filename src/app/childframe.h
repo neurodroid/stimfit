@@ -209,7 +209,6 @@ private:
     wxStfGrid* CreateTable();
     void OnMenuHighlight(wxMenuEvent& event);
     void OnShowselected(wxCommandEvent& event);
-    void OnShowsecond(wxCommandEvent& event);
     void OnZeroIndex(wxCommandEvent& event);
     void OnSpinCtrlTraces(wxSpinEvent& event);
     void OnComboActChannel(wxCommandEvent& event);
