@@ -543,7 +543,7 @@ peak or base window cursors have changed.
 
 Arguments:
 active -- If True, returns the baseline in the active channel. If False
-          returns the baseline within the inactive channel.
+          returns the baseline within the reference channel.
 
 Returns:
 The current baseline.") get_base;
@@ -581,7 +581,7 @@ have changed.
    
 Arguments:
 active -- If True, returns the current peak index of the active channel.
-          Otherwise, returns the current peak index of the inactive channel.
+          Otherwise, returns the current peak index of the reference channel.
           
 Returns:
 The zero-based index in units of sampling points. May be interpolated
@@ -603,7 +603,7 @@ Arguments:
 active -- If True, returns the current index of the maximal slope of 
           rise within the active channel. Otherwise, returns the 
           current index of the maximal slope of rise within the 
-          inactive channel.
+          reference channel.
           
 Returns:
 The zero-based index of the maximal slope of  rise in units of 
@@ -649,7 +649,7 @@ Arguments:
 active -- If True, returns the current index of the left half-
           maximal amplitude within the active channel. If False, 
           returns the current index of the left half-maximal amplitude
-          within the inactive channel.
+          within the reference channel.
           
 Returns:
 The zero-based index of the left half-maximal amplitude in units of 
@@ -986,7 +986,7 @@ channel.
 Arguments:
 
 active -- If True, returns the index of the active (black) channel.
-If False, returns the index of the inactive (red) channel.
+If False, returns the index of the reference (red) channel.
 ") get_channel_index;
 int get_channel_index( bool active = true );
 //--------------------------------------------------------------------
@@ -1068,7 +1068,7 @@ alignment -- The alignment function to be used. Accepts any function
              t50right_index (Left/right half-maximal amplitude)
 active --    If True, the alignment function will be applied to
              the active channel. If False (default), it will be applied
-             to the inactive channel.
+             to the reference channel.
 zeropad --   Not yet implemented:
              If True, missing parts at the beginning or end of a trace 
              will be padded with zeros after the alignment. If False

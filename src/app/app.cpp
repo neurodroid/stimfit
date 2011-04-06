@@ -671,7 +671,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     m_edit_menu->AppendCheckItem(
                                  ID_LATENCYWINDOW,
                                  wxT("Use peak window for latency cursor"),
-                                 wxT("Uses the current peak window to measure the peak in the inactive channel")
+                                 wxT("Uses the current peak window to measure the peak in the reference channel")
                                  );
     wxMenu* m_view_menu = new wxMenu;
     m_view_menu->Append(

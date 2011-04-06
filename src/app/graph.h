@@ -185,7 +185,7 @@ public:
     void Ch2basezoom();
 
 #if 0
-    //! Swaps the active and the inactive channel.
+    //! Swaps the active and the reference channel.
     void SwapChannels();
 #endif
     

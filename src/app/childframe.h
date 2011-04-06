@@ -135,7 +135,7 @@ public:
 
     //! Sets the channels in the combo boxes. Checks and corrects equal channels in both boxes.
     /*! \param act Index of the active channel.
-     *  \param inact Index of the inactive channel.
+     *  \param inact Index of the reference channel.
      */
     void SetChannels( std::size_t act, std::size_t inact );
 

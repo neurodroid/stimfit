@@ -113,7 +113,7 @@ public:
     int GetSelCh1() const {return m_selChannel1;}
 
     //! Get selection for channel 2
-    /*! \return The index of the second (inactive) channel
+    /*! \return The index of the second (reference) channel
      */
     int GetSelCh2() const {return m_selChannel2;}
 };

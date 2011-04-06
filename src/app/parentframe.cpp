@@ -429,7 +429,7 @@ wxStfToolBar* wxStfParentFrame::CreateScaleTb() {
     scaleToolBar->AddTool( ID_TOOL_CH2,
                            wxT("Ch 2"),
                            wxBitmap(ch2_),
-                           wxT("Scaling applies to inactive (red) channel (\"2\")"),
+                           wxT("Scaling applies to reference (red) channel (\"2\")"),
                            wxITEM_CHECK );
     return scaleToolBar;
 }

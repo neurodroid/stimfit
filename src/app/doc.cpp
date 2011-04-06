@@ -875,7 +875,7 @@ void wxStfDoc::CreateAverage(
     //number of points in average:
     int average_size;
 
-    //find alignment points in the inactive (==second) channel:
+    //find alignment points in the reference (==second) channel:
     if (align) {
         wxStfAlignDlg AlignDlg(GetDocumentWindow());
         if (AlignDlg.ShowModal()!=wxID_OK) return;
@@ -908,7 +908,7 @@ void wxStfDoc::CreateAverage(
                 SetPeakEnd((int)get()[GetSecCh()][*cit].size()-1);
             }
             // Calculate all variables for the current settings
-            // APMaxSlopeT will be calculated for the second (==inactive)
+            // APMaxSlopeT will be calculated for the second (==reference)
             // channel, so channels may not be changed!
             try {
                 Measure();

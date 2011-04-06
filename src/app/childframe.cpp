@@ -217,7 +217,7 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     pChannelSizer->Add( pActChannel );
     pChannelSizer->AddStretchSpacer( );
 
-    wxStaticText* pInactIndex = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Inactive channel: ") );
+    wxStaticText* pInactIndex = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Reference channel: ") );
     pInactIndex->SetForegroundColour( *wxRED );
     pChannelSizer->Add( pInactIndex );
 
@@ -225,7 +225,7 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
                                     wxDefaultPosition, wxSize(64,24), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
     pChannelSizer->Add( pInactChannel );
     
-    // Checkbox to hide inactive channel:
+    // Checkbox to hide reference channel:
     pShowSecond = new wxCheckBox( m_channelCounter, ID_PLOTSELECTED, wxT("Show") );
     pShowSecond->SetValue(true);
     pChannelSizer->Add( pShowSecond );

@@ -458,7 +458,7 @@ bool set_channel(int channel) {
         return true;
     }
 
-    int inactive_ch = actDoc()->GetCurCh();  
+    int reference_ch = actDoc()->GetCurCh();  
         
     // catch exceptions (i.e out of range)
     try {
@@ -477,7 +477,7 @@ bool set_channel(int channel) {
     }
     // set the channel selection combo 
     //pFrame->SetChannels( actDoc()->GetCurCh(), actDoc()->GetSecCh()); 
-    pFrame->SetChannels( actDoc()->GetCurCh(), inactive_ch); 
+    pFrame->SetChannels( actDoc()->GetCurCh(), reference_ch); 
     pFrame->UpdateChannels(); // update according to the combo
     return refresh_graph();
 }
@@ -1107,7 +1107,7 @@ void align_selected(  double (*alignment)( bool ), bool active ) {
             pDoc->SetPeakEnd((int)pDoc->get()[pDoc->GetSecCh()][*cit].size()-1);
         }
         // Calculate all variables for the current settings
-        // APMaxSlopeT will be calculated for the second (==inactive)
+        // APMaxSlopeT will be calculated for the second (==reference)
         // channel, so channels may not be changed!
         try {
             pDoc->Measure();

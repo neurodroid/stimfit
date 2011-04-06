@@ -291,9 +291,9 @@ class StfDll Recording {
      */
     double GetAPMaxT() const { return APMaxT; }
 
-    //! Retrieves the time point at which 50% of the max. amplitude have been reached from the left of the peak in the inactive channel.
+    //! Retrieves the time point at which 50% of the max. amplitude have been reached from the left of the peak in the reference channel.
     /*! \return The time point at which 50% of the maximal amplitude have been reached from the left of the peak 
-     *  in the inactive channel, expressed in units of data points.
+     *  in the reference channel, expressed in units of data points.
      */
     double GetAPT50LeftReal() const { return APt50LeftReal; }
 
@@ -530,8 +530,8 @@ class StfDll Recording {
      */
     Section& cur() { return ChannelArray[cc][cs]; }
 
-    //! Retrieves the currently accessed section in the second (inactive) channel (read-only)
-    /*! \return The currently accessed section in the second (inactive) channel.
+    //! Retrieves the currently accessed section in the second (reference) channel (read-only)
+    /*! \return The currently accessed section in the second (reference) channel.
      */
     const Section& sec() const { return ChannelArray[sc][cs]; }
 
