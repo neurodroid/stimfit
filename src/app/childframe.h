@@ -177,6 +177,11 @@ public:
      */
     bool ShowSecond() const {return pShowSecond->IsChecked();}
 
+    //! Indicates whether all channels should be plotted.
+    /*! \return true if they should be plotted, false otherwise.
+     */
+    bool ShowAll() const {return pShowAll->IsChecked();}
+    
     //! Activated the current graph
     void ActivateGraph();
 
@@ -192,7 +197,7 @@ private:
     wxComboBox *pActChannel, *pInactChannel;
     wxSpinCtrl *trace_spinctrl;
     wxStfGrid* m_table;
-    wxCheckBox *pZeroIndex, *pShowSelected, *pShowSecond;
+    wxCheckBox *pZeroIndex, *pShowSelected, *pShowSecond, *pShowAll;
     wxFlexGridSizer *pChannelSizer;
     wxFlexGridSizer *pTraceNumberSizer;
     bool firstResize;

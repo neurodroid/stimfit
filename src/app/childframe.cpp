@@ -140,7 +140,7 @@ wxPanel* wxStfChildFrame::CreateChannelCounter() {
     wxPanel* ctrl = new wxPanel( this, wxID_ANY, wxDefaultPosition,
                                  wxSize(256,88) );
 
-    pChannelSizer = new wxFlexGridSizer( 2, 3, 2, 2 );
+    pChannelSizer = new wxFlexGridSizer( 3, 3, 2, 2 );
 
     return ctrl;
 }
@@ -230,6 +230,12 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     pShowSecond->SetValue(true);
     pChannelSizer->Add( pShowSecond );
     
+    pShowAll = new wxCheckBox( m_channelCounter, ID_PLOTSELECTED, wxT("Show all channels") );
+    pShowAll->SetValue(false);
+    pChannelSizer->Add( pShowAll );
+    pChannelSizer->AddStretchSpacer( );
+    pChannelSizer->AddStretchSpacer( );
+
     m_channelCounter->SetSizer( pChannelSizer );
     m_channelCounter->Layout();
 
