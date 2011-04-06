@@ -130,15 +130,15 @@ wxAuiNotebook* wxStfChildFrame::CreateNotebook() {
 
 wxPanel* wxStfChildFrame::CreateTraceCounter() {
     wxSize client_size = GetClientSize();
-    wxPanel* ctrl = new wxPanel( this, wxID_ANY, wxDefaultPosition,
-                                 wxSize(165,88) );
+    wxPanel* ctrl = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize
+                                 );// , wxSize(165,88) );
 
     return ctrl;
 }
 
 wxPanel* wxStfChildFrame::CreateChannelCounter() {
-    wxPanel* ctrl = new wxPanel( this, wxID_ANY, wxDefaultPosition,
-                                 wxSize(256,88) );
+    wxPanel* ctrl = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize
+                                 ); //, wxSize(256,88) );
 
     pChannelSizer = new wxFlexGridSizer( 3, 3, 2, 2 );
 
@@ -192,11 +192,12 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
 
     TracesSizer->Add(TracesGridSizer, 0, wxALIGN_CENTER | wxALL, 1);
 
+    TracesSizer->SetSizeHints(m_traceCounter);
     m_traceCounter->SetSizer( TracesSizer );
     m_traceCounter->Layout();
-
+    wxSize size = m_traceCounter->GetSize();
     wxStfDoc* pDoc=(wxStfDoc*)GetDocument();
-    m_mgr.AddPane( m_traceCounter, wxAuiPaneInfo().Caption(wxT("Trace selection")).Fixed().
+    m_mgr.AddPane( m_traceCounter, wxAuiPaneInfo().Caption(wxT("Trace selection")).Fixed().BestSize(size.x, size.y).
                    Position(pDoc->size()-1).CloseButton(false).Floatable().Dock().Top().Name(wxT("SelectionT")) );
     m_table=CreateTable();
 
@@ -235,11 +236,11 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     pChannelSizer->Add( pShowAll );
     pChannelSizer->AddStretchSpacer( );
     pChannelSizer->AddStretchSpacer( );
-
+    pChannelSizer->SetSizeHints(m_channelCounter);
     m_channelCounter->SetSizer( pChannelSizer );
     m_channelCounter->Layout();
-
-    m_mgr.AddPane( m_channelCounter, wxAuiPaneInfo().Caption(wxT("Channel selection")).Fixed().
+    wxSize size = m_channelCounter->GetSize();
+    m_mgr.AddPane( m_channelCounter, wxAuiPaneInfo().Caption(wxT("Channel selection")).Fixed().BestSize(size.x, size.y).
                    Position(0).CloseButton(false).Floatable().Dock().Top().Name(wxT("SelectionC")) );
     m_mgr.Update();
 
