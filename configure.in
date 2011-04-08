@@ -145,18 +145,6 @@ if test "$with_biosig" = "yes" ; then
 fi
 AC_SUBST(LIBBIOSIG_LDFLAGS)
 
-AC_MSG_CHECKING(for cpu type)
-case `uname -p` in 
-    powerpc)
-        AC_MSG_RESULT(powerpc)
-        CPPFLAGS="${CPPFLAGS} -D__BIG_ENDIAN__"
-    ;;
-    *) 
-        AC_MSG_RESULT(other)
-        CPPFLAGS="${CPPFLAGS} -D__LITTLE_ENDIAN__"
-    ;;
-esac
-
 # GUI stuff not required for standalone module
 if test "$enable_module" != "yes"; then
     # Checks for libraries.

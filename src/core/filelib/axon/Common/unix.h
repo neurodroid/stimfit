@@ -15,13 +15,19 @@ extern "C" {
 #endif
 
 #ifdef _WINDOWS
-#include <windows.h>
-#include <stdio.h>
-typedef HANDLE FILEHANDLE;
-#include "resource.h"
+    #include <windows.h>
+    #include <stdio.h>
+    typedef HANDLE FILEHANDLE;
+    #include "resource.h"
+    #define __LITTLE_ENDIAN__
 #else
-#ifndef INVALID_HANDLE_VALUE
-#define INVALID_HANDLE_VALUE ((HANDLE)0xFFFFFFFF)
+    #ifdef __APPLE__
+         #include <machine/endian.h>
+    #elif defined(__linux__)
+         #include <endian.h>
+    #endif
+    #ifndef INVALID_HANDLE_VALUE
+    #define INVALID_HANDLE_VALUE ((HANDLE)0xFFFFFFFF)
 #endif
 
 #include "../AxAbfFio32/AxAbffio32.h"
@@ -194,7 +200,7 @@ void _makepath( char * path, const char * drive,
 /* 64 bit number of 100 nanoseconds intervals since January 1, 1601 */
 typedef struct _FILETIME
 {
-#ifdef WORDS_BIGENDIAN
+#ifdef __BIG_ENDIAN__
     DWORD  dwHighDateTime;
     DWORD  dwLowDateTime;
 #else
