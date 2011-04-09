@@ -36,17 +36,12 @@ case `uname` in
 	CFLAGS="${CFLAGS} -fPIC"
         STFKERNEL="darwin"
     ;;
-    Linux)
+    *)  
+        # treat everything else (kfreebsd, hurd) as linux
         AC_MSG_RESULT(linux)
 	CXXFLAGS="-fPIC"
 	CFLAGS="-fPIC"
         STFKERNEL="linux"
-    ;;
-    *) 
-        AC_MSG_RESULT(other)
-        AC_MSG_WARN([Platforms other than GNU/Linux and Mac OS X are not actively supported 
-                     by the configure script. Use Visual Studio 2008 to build on Windows.])
-        STFKERNEL="other"
     ;;
 esac
 AC_SUBST(LIBSTF_LDFLAGS)
