@@ -86,7 +86,7 @@ filehandle OpenFile( const char *fileName )
 
     return dataRefNum;
 #endif
-#if defined(__APPLE__) || defined(__linux__)
+#if defined(__APPLE__) || defined(__LINUX__)
     return fopen( fileName, "r" );
 #endif
 #ifdef _WINDOWS
@@ -103,7 +103,7 @@ void CloseFile( filehandle dataRefNum )
     FSClose( dataRefNum );
     return;
 #endif
-#if defined(__APPLE__) || defined(__linux__)
+#if defined(__APPLE__) || defined(__LINUX__)
     fclose( dataRefNum );
     return;
 #endif
@@ -118,7 +118,7 @@ int SetFilePosition( filehandle dataRefNum, int posn )
 #if 0
     return SetFPos( dataRefNum, fsFromStart, posn );		// Position the mark
 #endif
-#if defined(__APPLE__) || defined(__linux__)
+#if defined(__APPLE__) || defined(__LINUX__)
     return fseek( dataRefNum, posn, SEEK_SET );
 #endif
 #ifdef _WINDOWS
@@ -134,7 +134,7 @@ int ReadFromFile( filehandle dataRefNum, AXGLONG count, void *dataToRead )
 #if 0
     return FSRead( dataRefNum, &count, dataToRead );
 #endif
-#if defined(__APPLE__) || defined(__linux__)
+#if defined(__APPLE__) || defined(__LINUX__)
     if ( (AXGLONG)fread( dataToRead, 1, count, dataRefNum ) == count )
         return 0;
     else

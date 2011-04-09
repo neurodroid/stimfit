@@ -38,7 +38,7 @@ case `uname` in
     ;;
     *)  
         # treat everything else (kfreebsd, hurd) as linux
-        AC_MSG_RESULT(linux)
+        AC_MSG_RESULT(linux or similar)
 	CXXFLAGS="-fPIC"
 	CFLAGS="-fPIC"
         STFKERNEL="linux"

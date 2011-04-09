@@ -59,9 +59,9 @@
     #endif
 #endif
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__LINUX__) || defined(__APPLE__)
     #define  qDebug 0               /* only used to debug Mac stuff         */
-    #ifdef __linux__
+    #ifdef __LINUX__
         #include <malloc.h>
     #endif
     #include <stdio.h>                         /* MSC I/O function definitions */
@@ -137,7 +137,7 @@ typedef struct
    short     vSize;  /* for type lstr gives no. of chars +1 for length byte */
 } TVarDesc;
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__LINUX__) || defined(__APPLE__)
 typedef char            * TpStr;
 typedef const char      * TpCStr;
 typedef short           * TpShort;

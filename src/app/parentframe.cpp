@@ -637,7 +637,7 @@ bool CompVersion( const std::vector<int>& version ) {
 
 void wxStfParentFrame::CheckUpdate( wxProgressDialog* progDlg ) const {
     
-#ifdef __linux__
+#ifdef __LINUX__
     wxString address(wxT("/latest_linux"));
 #elif defined (_WINDOWS)
     wxString address(wxT("/latest_windows"));
@@ -738,7 +738,7 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
             wxFileName srcWxFilename(srcFilenames[nFile]);
             wxString destFilename(
                                   myDlg.GetDestDir()+
-#ifdef __linux__
+#ifdef __LINUX__
                                   wxT("/")+
 #else
                                   wxT("\\")+

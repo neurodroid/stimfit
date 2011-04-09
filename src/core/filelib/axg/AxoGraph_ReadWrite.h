@@ -186,7 +186,7 @@
 // uncomment the following line to run on little endian hardware ( byte swaps data before reading or writing )
 #ifdef __APPLE__
   #include <machine/endian.h>
-#elif defined(__linux__)
+#elif defined(__LINUX__)
   #include <endian.h>
 #else
   #define __LITTLE_ENDIAN__

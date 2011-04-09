@@ -28,7 +28,7 @@
 #include "wincpp.hpp"
 #include "FileIO.hpp"
 
-#if defined (__linux__) || defined(__APPLE__)
+#if defined (__LINUX__) || defined(__APPLE__)
 #ifndef MODULE_ONLY
 #include <wchar.h>
 #include <wx/convauto.h>
