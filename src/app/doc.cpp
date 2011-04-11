@@ -1417,8 +1417,15 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
 }
 
 void wxStfDoc::OnAnalysisIntegrate(wxCommandEvent &WXUNUSED(event)) {
-    double integral_s = stf::integrate_simpson(cur().get(),GetFitBeg(),GetFitEnd(),GetXScale());
-    double integral_t = stf::integrate_trapezium(cur().get(),GetFitBeg(),GetFitEnd(),GetXScale());
+    double integral_s = 0.0, integral_t = 0.0;
+    try {
+        integral_s = stf::integrate_simpson(cur().get(),GetFitBeg(),GetFitEnd(),GetXScale());
+        integral_t = stf::integrate_trapezium(cur().get(),GetFitBeg(),GetFitEnd(),GetXScale());
+    }
+    catch (const std::exception& e) {
+        wxGetApp().ErrorMsg(wxString( e.what(), wxConvLocal ));
+        return;
+    }
     stf::Table integralTable(6,1);
     try {
         integralTable.SetRowLabel(0, wxT("Trapezium (linear)"));
