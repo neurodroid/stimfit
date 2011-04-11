@@ -662,6 +662,13 @@ double get_threshold_value( ) {
 
 }
 
+double get_latency( ) {
+    if ( !check_doc() ) return -1.0;
+
+        return (actDoc()->GetLatency())* (actDoc()->GetXScale());
+
+}
+
 double get_fit_start( bool is_time ) {
     if ( !check_doc() ) return -1;
 
