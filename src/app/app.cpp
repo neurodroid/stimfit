@@ -828,7 +828,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
 #endif
 
 #ifndef __WXGTK__
-    wxMenuBar* menu_bar = CreateUnifiedMenuBar(doc);
+    wxMenuBar* menu_bar = CreateUnifiedMenuBar((wxStfDoc*)doc);
     //// Associate the menu bar with the frame
     subframe->SetMenuBar(menu_bar);
 
