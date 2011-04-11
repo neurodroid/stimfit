@@ -186,8 +186,20 @@ public:
     void ActivateGraph();
 
     void OnActivate(wxActivateEvent &event);
+
+    //! Override default GetMenuBar
+    /*! \return the menu bar if non-NULL; otherwise, the parent's menu bar
+     */
+    virtual wxMenuBar *GetMenuBar() const {
+        if (wxStfChildType::GetMenuBar()) {
+            return wxStfChildType::GetMenuBar();
+        } else {
+            return m_parent->GetMenuBar();
+        }
+    }
     
-private:
+ private:
+    wxStfParentType* m_parent;
     wxAuiManager m_mgr;
     wxAuiNotebook* m_notebook;
     long m_notebook_style;

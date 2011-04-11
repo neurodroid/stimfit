@@ -263,7 +263,7 @@ void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const w
         SetLatencyEndMode( Sender->GetLatencyEndMode() );
         SetLatencyWindowMode( Sender->GetLatencyWindowMode() );
         // Update menu checks:
-        UpdateMenuCheckmarks();
+        // UpdateMenuCheckmarks();
         //Get value of the peak direction dialog box
         SetDirection( Sender->GetDirection() );
         SetFromBase( Sender->GetFromBase() );
@@ -296,7 +296,7 @@ void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const w
     {
         SetLatencyStartMode(stf::manualMode);
         SetLatencyEndMode(stf::manualMode);
-        UpdateMenuCheckmarks();
+        // UpdateMenuCheckmarks();
     }
 
     // Make sure once again curChannel and curSection are not out of range:
@@ -337,7 +337,7 @@ int wxStfDoc::InitCursors() {
     SetLatencyEndMode(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyEndMode"),0));
     SetLatencyWindowMode(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyWindowMode"),1));
     // Set corresponding menu checkmarks:
-    UpdateMenuCheckmarks();
+    // UpdateMenuCheckmarks();
     SetPM(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakMean"),1));
     wxString wxsSlope = wxGetApp().wxGetProfileString(wxT("Settings"),wxT("Slope"),wxT("20.0"));
     double fSlope = 0.0;
@@ -356,29 +356,6 @@ int wxStfDoc::InitCursors() {
     CheckBoundaries();
     return wxID_OK;
 }	//End SettingsDlg()
-
-void wxStfDoc::UpdateMenuCheckmarks() {
-    // get menu bar:
-    wxStfChildFrame *pChildFrame = (wxStfChildFrame*)GetDocumentWindow();
-	if (pChildFrame) {
-
-#if 0
-        wxMenuBar *pBar=pChildFrame->GetMenuBar();
-        if (pBar) {
-            pBar->FindItem(ID_LATENCYSTART_MAXSLOPE)->Check(GetLatencyStartMode()==stf::riseMode);
-            pBar->FindItem(ID_LATENCYSTART_HALFRISE)->Check(GetLatencyStartMode()==stf::halfMode);
-            pBar->FindItem(ID_LATENCYSTART_PEAK)->Check(GetLatencyStartMode()==stf::peakMode);
-            pBar->FindItem(ID_LATENCYSTART_MANUAL)->Check(GetLatencyStartMode()==stf::manualMode);
-            pBar->FindItem(ID_LATENCYEND_FOOT)->Check(GetLatencyEndMode()==stf::footMode);
-            pBar->FindItem(ID_LATENCYEND_MAXSLOPE)->Check(GetLatencyEndMode()==stf::riseMode);
-            pBar->FindItem(ID_LATENCYEND_HALFRISE)->Check(GetLatencyEndMode()==stf::halfMode);
-            pBar->FindItem(ID_LATENCYEND_PEAK)->Check(GetLatencyEndMode()==stf::peakMode);
-            pBar->FindItem(ID_LATENCYEND_MANUAL)->Check(GetLatencyEndMode()==stf::manualMode);
-            pBar->FindItem(ID_LATENCYWINDOW)->Check(GetLatencyWindowMode()==stf::windowMode);
-	    }
-#endif
-    }
-}
 
 void wxStfDoc::PostInit() {
     wxStfChildFrame *pFrame = (wxStfChildFrame*)GetDocumentWindow();
@@ -422,21 +399,7 @@ void wxStfDoc::PostInit() {
             SetXScale(GetXScale()*1000.0);
         }
     }
-    if (size()>1) {
-        wxMenu* ch2Sub=new wxMenu;
-        ch2Sub->Append(ID_CH2BASE, wxT("Match &baseline"));
-        ch2Sub->Append(ID_CH2POS, wxT("Match &abs. position"));
-        ch2Sub->Append(ID_CH2ZOOM, wxT("Match &y-scale"));
-        ch2Sub->Append(ID_CH2BASEZOOM, wxT("Match baseline a&nd y-scale"));
-        wxStfChildFrame *pChildFrame = (wxStfChildFrame*)GetDocumentWindow();
-        wxMenuBar* pBar=pChildFrame->GetMenuBar();
 
-        if (pBar!=NULL) {
-            pBar->GetMenu(2)->AppendSeparator();
-            pBar->GetMenu(2)->AppendSubMenu(ch2Sub, wxT("&Channel 2 scaling"));
-            pBar->GetMenu(2)->Append(ID_SWAPCHANNELS, wxT("&Swap channels"));
-        }
-    }
     // Read results table settings from registry:
     SetViewCrosshair(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewCrosshair"),1)==1);
     SetViewBaseline(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewBaseline"),1)==1);
@@ -553,8 +516,10 @@ bool wxStfDoc::OnCloseDocument() {
         WriteToReg();
     }
     // Remove file menu from file menu list:
+#ifndef __WXGTK__
     wxGetApp().GetDocManager()->GetFileHistory()->RemoveMenu( doc_file_menu );
-
+#endif
+    
     // Tell the App:
     wxGetApp().CleanupDocument(this);
     return wxDocument::OnCloseDocument();

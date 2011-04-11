@@ -500,6 +500,8 @@ private:
     std::vector<stf::Extension> LoadExtensions();
 #endif // WITH_PYTHON
 
+    wxMenuBar* CreateUnifiedMenuBar(wxStfDoc* doc=NULL);
+    
 #ifdef _WINDOWS
 #pragma optimize( "", off )
 #endif

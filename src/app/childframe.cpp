@@ -79,7 +79,7 @@ END_EVENT_TABLE()
 wxStfChildFrame::wxStfChildFrame(wxDocument* doc, wxView* view, wxStfParentType* parent,
                                  wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size,
                                  long style, const wxString& name) :
-wxStfChildType(doc,view,parent,id,title,pos,size,style,name),
+wxStfChildType(doc,view,parent,id,title,pos,size,style,name), m_parent(parent),
     m_notebook(NULL)
 {
     m_mgr.SetManagedWindow(this);
@@ -525,9 +525,11 @@ void wxStfChildFrame::Restoreperspective() {
 }
 
 void wxStfChildFrame::OnMenuHighlight(wxMenuEvent& event) {
-    wxMenuItem *item = this->GetMenuBar()->FindItem(event.GetId());
-    if(item) {
-        wxLogStatus(item->GetHelp());
+    if (this->GetMenuBar()) {
+        wxMenuItem *item = this->GetMenuBar()->FindItem(event.GetId());
+        if(item) {
+            wxLogStatus(item->GetHelp());
+        }
     }
     event.Skip();
 

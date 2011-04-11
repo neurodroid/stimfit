@@ -158,9 +158,6 @@ public:
     //! Checks whether any cursor is reversed or out of range and corrects it if required.
     void CheckBoundaries();
 
-    //! Updates the check marks in the latency mode menu
-    void UpdateMenuCheckmarks();
-
     //! Sets the current section to the specified value
     /*! Checks for out-of-range errors
      *  \param section The 0-based index of the new section

@@ -284,10 +284,14 @@ void wxStfGraph::OnDraw( wxDC& DC )
 void wxStfGraph::InitPlot() {
 
     if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewScaleBars"),1)) {
-        pFrame->GetMenuBar()->GetMenu(2)->Check(ID_SCALE,true);
+        if (pFrame->GetMenuBar() && pFrame->GetMenuBar()->GetMenu(2)) {
+            pFrame->GetMenuBar()->GetMenu(2)->Check(ID_SCALE,true);
+        }
         wxGetApp().set_isBars(true);
     } else {
-        pFrame->GetMenuBar()->GetMenu(2)->Check(ID_SCALE,false);
+        if (pFrame->GetMenuBar() && pFrame->GetMenuBar()->GetMenu(2)) {
+            pFrame->GetMenuBar()->GetMenu(2)->Check(ID_SCALE,false);
+        }
         wxGetApp().set_isBars(false);
     }
 
@@ -298,14 +302,18 @@ void wxStfGraph::InitPlot() {
     }
 
     if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewHiRes"),1)) {
-        pFrame->GetMenuBar()->GetMenu(2)->Check(ID_HIRES,true);
+        if (pFrame->GetMenuBar() && pFrame->GetMenuBar()->GetMenu(2)) {
+            pFrame->GetMenuBar()->GetMenu(2)->Check(ID_HIRES,true);
+        }
 #ifndef __APPLE__
         wxGetApp().set_isHires(true);
 #else
         wxGetApp().set_isHires(false);
 #endif
     } else {
-        pFrame->GetMenuBar()->GetMenu(2)->Check(ID_HIRES,false);
+        if (pFrame->GetMenuBar() && pFrame->GetMenuBar()->GetMenu(2)) {
+            pFrame->GetMenuBar()->GetMenu(2)->Check(ID_HIRES,false);
+        }
         wxGetApp().set_isHires(false);
     }
 

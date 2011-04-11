@@ -225,6 +225,7 @@ bool wxStfApp::OnInit(void)
 #endif
     // frame->SetIcon(wxIcon(wxT("doc.xbm")));
 
+#ifndef __WXGTK__
     //// Make a menubar
     wxMenu* m_file_menu = new wxMenu;
     //	wxMenu *edit_menu = (wxMenu *) NULL;
@@ -278,8 +279,11 @@ bool wxStfApp::OnInit(void)
     wxMenuBar::MacSetCommonMenuBar(menu_bar);
 #endif //def __WXMAC__
     //// Associate the menu bar with the frame
+#else // __WXGTK__
+    wxMenuBar* menu_bar = CreateUnifiedMenuBar();
+#endif //__WXGTK__
     frame->SetMenuBar(menu_bar);
-
+    
     frame->Centre(wxBOTH);
 
     /*    pStatusBar = new wxStatusBar(frame);
@@ -520,42 +524,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
     }
 }
 
-/*
- * Centralised code for creating a document frame.
- * Called from view.cpp, when a view is created.
- */
-
-wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
-{
-    //// Make a child frame
-#ifdef __WXMAC__
-    int xpos = (GetDocCount()-1) * 16 + 64;
-    int ypos = (GetDocCount()-1) * 16 + 80;
-#endif
-    wxStfChildFrame *subframe = new wxStfChildFrame(
-                                                    doc, view, 
-#ifdef __WXMAC__
-                                                    GetMainFrame(), wxID_ANY, doc->GetTitle(),
-                                                    wxPoint(xpos,ypos), wxSize(800,600),
-                                                    wxDEFAULT_FRAME_STYLE |
-                                                    // wxNO_FULL_REPAINT_ON_RESIZE |
-                                                    wxWANTS_CHARS | wxMAXIMIZE
-#else
-                                                    GetMainFrame(), wxID_ANY, doc->GetTitle(),
-                                                    wxDefaultPosition, wxDefaultSize,
-                                                    wxDEFAULT_FRAME_STYLE |
-                                                    // wxNO_FULL_REPAINT_ON_RESIZE |
-                                                    wxWANTS_CHARS | wxMAXIMIZE
-#endif
-                                                    );
-
-#ifdef __WXMSW__
-    subframe->SetIcon(wxString(wxT("chart")));
-#endif
-#ifdef __X__
-    // subframe->SetIcon(wxIcon(wxT("doc.xbm")));
-#endif
-
+wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     //// Make a menubar
     wxMenu *file_menu = new wxMenu;
 
@@ -590,10 +559,14 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     file_menu->AppendSeparator();
     file_menu->Append(wxID_EXIT);
 
+#ifndef __WXGTK__
     ((wxStfDoc*)doc)->SetFileMenu( file_menu );
-
+#else
+    GetDocManager()->FileHistoryLoad( *config );
+#endif
+    
     GetDocManager()->FileHistoryUseMenu(file_menu);
-    GetDocManager()->FileHistoryAddFilesToMenu( file_menu );
+    GetDocManager()->FileHistoryAddFilesToMenu();
 
     wxMenu* m_edit_menu=new wxMenu;
     m_edit_menu->Append(
@@ -703,7 +676,16 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     m_view_menu->Append(ID_VIEW_SHELL, wxT("&Toggle Python shell"),
                         wxT("Shows or hides the Python shell"));
 #endif // WITH_PYTHON
+    wxMenu* ch2Sub=new wxMenu;
+    ch2Sub->Append(ID_CH2BASE, wxT("Match &baseline"));
+    ch2Sub->Append(ID_CH2POS, wxT("Match &abs. position"));
+    ch2Sub->Append(ID_CH2ZOOM, wxT("Match &y-scale"));
+    ch2Sub->Append(ID_CH2BASEZOOM, wxT("Match baseline a&nd y-scale"));
 
+    m_view_menu->AppendSeparator();
+    m_view_menu->AppendSubMenu(ch2Sub, wxT("&Channel 2 scaling"));
+    m_view_menu->Append(ID_SWAPCHANNELS, wxT("&Swap channels"));
+    
     wxMenu *analysis_menu = new wxMenu;
     wxMenu *fitSub = new wxMenu;
     fitSub->Append(
@@ -807,9 +789,51 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     menu_bar->Append(extensions_menu, wxT("E&xtensions"));
     menu_bar->Append(help_menu, wxT("&Help"));
 
+    return menu_bar;
+}
+
+/*
+ * Centralised code for creating a document frame.
+ * Called from view.cpp when a view is created.
+ */
+wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
+{
+    //// Make a child frame
+#ifdef __WXMAC__
+    int xpos = (GetDocCount()-1) * 16 + 64;
+    int ypos = (GetDocCount()-1) * 16 + 80;
+#endif
+    wxStfChildFrame *subframe = new wxStfChildFrame(
+                                                    doc, view, 
+#ifdef __WXMAC__
+                                                    GetMainFrame(), wxID_ANY, doc->GetTitle(),
+                                                    wxPoint(xpos,ypos), wxSize(800,600),
+                                                    wxDEFAULT_FRAME_STYLE |
+                                                    // wxNO_FULL_REPAINT_ON_RESIZE |
+                                                    wxWANTS_CHARS | wxMAXIMIZE
+#else
+                                                    GetMainFrame(), wxID_ANY, doc->GetTitle(),
+                                                    wxDefaultPosition, wxDefaultSize,
+                                                    wxDEFAULT_FRAME_STYLE |
+                                                    // wxNO_FULL_REPAINT_ON_RESIZE |
+                                                    wxWANTS_CHARS | wxMAXIMIZE
+#endif
+                                                    );
+
+#ifdef __WXMSW__
+    subframe->SetIcon(wxString(wxT("chart")));
+#endif
+#ifdef __X__
+    // subframe->SetIcon(wxIcon(wxT("doc.xbm")));
+#endif
+
+#ifndef __WXGTK__
+    wxMenuBar* menu_bar = CreateUnifiedMenuBar(doc);
     //// Associate the menu bar with the frame
     subframe->SetMenuBar(menu_bar);
 
+#endif // __WXGTK__
+    
     return subframe;
 }
 

@@ -1104,7 +1104,7 @@ void wxStfParentFrame::OnViewResults(wxCommandEvent& WXUNUSED(event)) {
 void wxStfParentFrame::OnScale(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     if (pView!=NULL) {
-        if (GetActiveChild()->GetMenuBar()->GetMenu(2)->IsChecked(ID_SCALE)) {
+        if (GetActiveChild()->GetMenuBar() && GetActiveChild()->GetMenuBar()->GetMenu(2)->IsChecked(ID_SCALE)) {
             wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("ViewScaleBars"),1);
             wxGetApp().set_isBars(true);
         } else {
@@ -1119,7 +1119,7 @@ void wxStfParentFrame::OnScale(wxCommandEvent& WXUNUSED(event)) {
 void wxStfParentFrame::OnHires(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     if (pView!=NULL) {
-        if (GetActiveChild()->GetMenuBar()->GetMenu(2)->IsChecked(ID_HIRES)) {
+        if (GetActiveChild()->GetMenuBar() && GetActiveChild()->GetMenuBar()->GetMenu(2)->IsChecked(ID_HIRES)) {
             wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("ViewHiRes"),1);
 #ifndef __APPLE__
             wxGetApp().set_isHires(true);
@@ -1199,26 +1199,9 @@ void wxStfParentFrame::OnLStartMaxslope(wxCommandEvent& WXUNUSED(event)) {
         // toggle on if it wasn't the previous mode:
         //		if (!prevMode) {
         pDoc->SetLatencyStartMode(stf::riseMode);
-#if 0
-        // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MAXSLOPE,true);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_HALFRISE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_PEAK,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,false);
-#endif
-        /*		} else {
-        // else, toggle to manual mode (default)
-        pDoc->SetLatencyStartMode(stf::manualMode);
-        // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,true);
-        // Uncheck (sometimes isn't done automatically):
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MAXSLOPE,false);
-        }
-        */		wxGetApp().wxWriteProfileInt(
-        wxT("Settings"),
-        wxT("LatencyStartMode"),
-        pDoc->GetLatencyStartMode()
-        );
+        wxGetApp().wxWriteProfileInt(wxT("Settings"),
+                                     wxT("LatencyStartMode"),
+                                     pDoc->GetLatencyStartMode());
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
     }
@@ -1228,25 +1211,12 @@ void wxStfParentFrame::OnLStartHalfrise(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYSTART_HALFRISE)) {
         pDoc->SetLatencyStartMode(stf::halfMode);
-#if 0
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_HALFRISE,true);
-        // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MAXSLOPE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_PEAK,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,false);
-#endif 
-        /*		} else {
-        pDoc->SetLatencyStartMode(stf::manualMode);
-        // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,true);
-        }
-        */		wxGetApp().wxWriteProfileInt(
-        wxT("Settings"),
-        wxT("LatencyStartMode"),
-        pDoc->GetLatencyStartMode()
-        );
+        wxGetApp().wxWriteProfileInt(
+                                     wxT("Settings"),
+                                     wxT("LatencyStartMode"),
+                                     pDoc->GetLatencyStartMode()
+                                     );
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
     }
@@ -1257,21 +1227,7 @@ void wxStfParentFrame::OnLStartPeak(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYSTART_PEAK)) {
         pDoc->SetLatencyStartMode(stf::peakMode);
-#if 0
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_PEAK,true);
-        // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MAXSLOPE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_HALFRISE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,false);
-#endif
-        /*		} else {
-        pDoc->SetLatencyStartMode(stf::manualMode);
-        // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,true);
-        }
-        */
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyStartMode"), pDoc->GetLatencyStartMode() );
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
@@ -1284,13 +1240,6 @@ void wxStfParentFrame::OnLStartManual(wxCommandEvent& WXUNUSED(event)) {
     if (pView!=NULL && pDoc!=NULL) {
         // Always keep manual mode as a default, even if attempted to uncheck:
         pDoc->SetLatencyStartMode(stf::manualMode);
-#if 0
-        // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MANUAL,true);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_MAXSLOPE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_HALFRISE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYSTART_PEAK,false);
-#endif
         wxGetApp().wxWriteProfileInt(
             wxT("Settings"),
             wxT("LatencyStartMode"),
@@ -1305,26 +1254,12 @@ void wxStfParentFrame::OnLEndFoot(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYEND_FOOT)) {
         pDoc->SetLatencyEndMode(stf::footMode);
-#if 0
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_FOOT,true);
-        // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MAXSLOPE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_HALFRISE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_PEAK,false);
-#endif 
-        /*		} else {
-        pDoc->SetLatencyEndMode(stf::manualMode);
-        // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,true);
-        }
-        */		wxGetApp().wxWriteProfileInt(
-        wxT("Settings"),
-        wxT("LatencyEndMode"),
-        pDoc->GetLatencyEndMode()
-        );
+	wxGetApp().wxWriteProfileInt(
+                                     wxT("Settings"),
+                                     wxT("LatencyEndMode"),
+                                     pDoc->GetLatencyEndMode()
+                                     );
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
     }
@@ -1334,26 +1269,12 @@ void wxStfParentFrame::OnLEndMaxslope(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYEND_HALFRISE)) {
         pDoc->SetLatencyEndMode(stf::riseMode);
-#if 0
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MAXSLOPE,true);
-        // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_HALFRISE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_FOOT,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_PEAK,false);
-#endif
-        /*		} else {
-        pDoc->SetLatencyEndMode(stf::manualMode);
-        // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,true);
-        }
-        */		wxGetApp().wxWriteProfileInt(
-        wxT("Settings"),
-        wxT("LatencyEndMode"),
-        pDoc->GetLatencyEndMode()
-        );
+        wxGetApp().wxWriteProfileInt(
+                                     wxT("Settings"),
+                                     wxT("LatencyEndMode"),
+                                     pDoc->GetLatencyEndMode()
+                                     );
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
     }
@@ -1363,22 +1284,7 @@ void wxStfParentFrame::OnLEndHalfrise(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYEND_HALFRISE)) {
         pDoc->SetLatencyEndMode(stf::halfMode);
-#if 0
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_HALFRISE,true);
-        // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MAXSLOPE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_FOOT,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_PEAK,false);
-#endif
-        /*		} else {
-        pDoc->SetLatencyEndMode(stf::manualMode);
-        // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,true);
-        }
-        */
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyEndMode"), pDoc->GetLatencyEndMode() );
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
@@ -1389,22 +1295,7 @@ void wxStfParentFrame::OnLEndPeak(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYEND_PEAK)) {
         pDoc->SetLatencyEndMode(stf::peakMode);
-#if 0
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_PEAK,true);
-        // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MAXSLOPE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_FOOT,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_HALFRISE,false);
-#endif
-        /*		} else {
-        pDoc->SetLatencyEndMode(stf::manualMode);
-        // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,true);
-        }
-        */
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyEndMode"), pDoc->GetLatencyEndMode() );
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
@@ -1416,22 +1307,7 @@ void wxStfParentFrame::OnLEndManual(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        //		if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYEND_MANUAL)) {
         pDoc->SetLatencyEndMode(stf::manualMode);
-#if 0
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,true);
-        // Uncheck the other choices:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MAXSLOPE,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_PEAK,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_FOOT,false);
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_HALFRISE,false);
-#endif
-        /*		} else {
-        pDoc->SetLatencyEndMode(stf::manualMode);
-        // Check manual mode:
-        GetActiveChild()->GetMenuBar()->GetMenu(1)->Check(ID_LATENCYEND_MANUAL,true);
-        }
-        */
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyEndMode"), pDoc->GetLatencyEndMode() );
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
@@ -1444,7 +1320,7 @@ void wxStfParentFrame::OnLWindow(wxCommandEvent& WXUNUSED(event)) {
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL) {
         // Select
-        if (GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYWINDOW)) {
+        if (GetActiveChild()->GetMenuBar() && GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYWINDOW)) {
             wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyWindowMode"), stf::windowMode );
             pDoc->SetLatencyWindowMode(stf::windowMode);
         } else {

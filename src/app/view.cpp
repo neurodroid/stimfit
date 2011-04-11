@@ -138,7 +138,7 @@ void wxStfView::OnActivateView(bool activate, wxView *activeView, wxView *deacti
                 }
             }
             // Update menu checks:
-            pDoc->UpdateMenuCheckmarks();
+            // pDoc->UpdateMenuCheckmarks();
             pDoc->UpdateSelectedButton();
             if (frame!=NULL)
                 frame->SetSingleChannel(pDoc->size()<2);

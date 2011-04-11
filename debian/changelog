@@ -1,3 +1,11 @@
+stimfit (0.10.14-0ubuntu1) lucid; urgency=low
+
+  * Use unified menu on GTK to resolve problems with Unity
+    and gnome-global-menu applet
+  * Started support for viewing all channels
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Mon, 11 Apr 2011 14:56:55 +0000
+
 stimfit (0.10.13-1ubuntu5) natty; urgency=low
 
   * Added scaling support to levmar
