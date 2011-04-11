@@ -34,6 +34,12 @@ class wxEnhMetaFile;
 
 #include "./zoom.h"
 
+enum plottype {
+    active,
+    reference,
+    background
+};
+    
 //! Handles drawing of traces and keyboard or mouse input.
 /*! Derived from wxScrolledWindow, although no scrolling is implemented
  *  at this time. All the trace scaling and drawing happens here. Mouse
@@ -322,6 +328,8 @@ public:
     wxBrush baseBrush, zeroBrush;
     
     wxPoint lastLDown;
+
+    YZoom yzoombg;
     
     boost::shared_ptr<wxMenu> m_zoomContext;
     boost::shared_ptr<wxMenu> m_eventContext;
@@ -333,11 +341,11 @@ public:
     void PlotGimmicks(wxDC& DC);
     void PlotEvents(wxDC& DC);
     void DrawCrosshair( wxDC& DC, const wxPen& pen, const wxPen& printPen, int crosshairSize, double xch, double ych);
-    void PlotTrace( wxDC* pDC, const Vector_double& trace, bool is2=false );
-    void DoPlot( wxDC* pDC, const Vector_double& trace, int start, int end, int step, bool is2 );
+    void PlotTrace( wxDC* pDC, const Vector_double& trace, plottype pt=active, int bgno=0 );
+    void DoPlot( wxDC* pDC, const Vector_double& trace, int start, int end, int step, plottype pt=active, int bgno=0 );
     void PrintScale(wxRect& WindowRect);
-    void PrintTrace( wxDC* pDC, const Vector_double& trace, bool is2=false );
-    void DoPrint( wxDC* pDC, const Vector_double trace, int start, int end, int downsampling, bool is2 );
+    void PrintTrace( wxDC* pDC, const Vector_double& trace, plottype pt=active);
+    void DoPrint( wxDC* pDC, const Vector_double trace, int start, int end, int downsampling, plottype pt=active);
     void DrawCircle(wxDC* pDC, double x, double y, const wxPen& pen, const wxPen& printPen);
     void DrawVLine(wxDC* pDC, double x, const wxPen& pen, const wxPen& printPen);
     void DrawHLine(wxDC* pDC, double y, const wxPen& pen, const wxPen& printPen);
@@ -360,7 +368,12 @@ public:
     int yFormat2(double);
     int yFormat2(int);
     int yFormatD2(double f) { return yFormat2(f); }
+    // The same for the y coordinates of the background channel
+    int yFormatB(double);
+    int yFormatB(int);
+    int yFormatDB(double f) { return yFormatB(f); }
 
+    void FittorectY(YZoom& yzoom, const wxRect& rect, double min, double max, double screen_part);
     void FitToWindowSecCh(bool refresh);
 
     void LButtonDown(wxMouseEvent& event);

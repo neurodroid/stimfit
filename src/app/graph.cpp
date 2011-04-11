@@ -127,6 +127,7 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     baseBrush(*wxLIGHT_GREY,wxBDIAGONAL_HATCH),
     zeroBrush(*wxLIGHT_GREY,wxFDIAGONAL_HATCH),
     lastLDown(0,0),
+    yzoombg(),
     m_zoomContext( new wxMenu ),
     m_eventContext( new wxMenu )
 {
@@ -229,27 +230,21 @@ void wxStfGraph::OnDraw( wxDC& DC )
             //Draw current trace on display
             //For display use point to point drawing
             DC.SetPen(standardPen2);
-            PlotTrace(&DC,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(), true);
+            PlotTrace(&DC,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(), reference);
         } else {	//Draw second channel for print out
             //For print out use polyline tool
             DC.SetPen(standardPrintPen2);
-            PrintTrace(&DC,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(), true);
+            PrintTrace(&DC,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(), reference);
         }	// End display or print out
     }		//End plot of the second channel
 
     if ((Doc()->size()>1) && pFrame->ShowAll()) {
         for (std::size_t n=0; n < Doc()->size(); ++n) {
-            if (n!=Doc()->GetCurCh() && (n!=Doc()->GetSecCh() || !pFrame->ShowSecond())) {
-                if (!isPrinted) {
-                    //Draw current trace on display
-                    //For display use point to point drawing
-                    DC.SetPen(standardPen3);
-                    PlotTrace(&DC,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(), true);
-                } else {	//Draw second channel for print out
-                    //For print out use polyline tool
-                    DC.SetPen(standardPrintPen3);
-                    PrintTrace(&DC,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(), true);
-                }	// End display or print out
+            if (!isPrinted) {
+                //Draw current trace on display
+                //For display use point to point drawing
+                DC.SetPen(standardPen3);
+                PlotTrace(&DC,Doc()->get()[n][Doc()->GetCurSec()].get(), background, n);
             }
         }
     }		//End plot of the second channel
@@ -598,7 +593,7 @@ double wxStfGraph::get_plot_ymax() const {
     return SPY()/YZ();
 }
 
-void wxStfGraph::PlotTrace( wxDC* pDC, const Vector_double& trace, bool is2 ) {
+void wxStfGraph::PlotTrace( wxDC* pDC, const Vector_double& trace, plottype pt, int bgno ) {
     // speed up drawing by omitting points that are outside the window:
 
     // find point before left window border:
@@ -626,16 +621,34 @@ void wxStfGraph::PlotTrace( wxDC* pDC, const Vector_double& trace, bool is2 ) {
     }
 
     // apply filter at half the new sampling frequency:
-    DoPlot(pDC, trace, start, end, step, is2);
+    DoPlot(pDC, trace, start, end, step, pt, bgno);
 }
 
-void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int end, int step, bool is2 ) {
+void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int end, int step, plottype pt, int bgno) {
     boost::function<int(double)> yFormatFunc;
-    
-    if (!is2) {
-        yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD), this);
-    } else {
-        yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD2), this);
+
+    switch (pt) {
+     case active:
+         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD), this);
+         break;
+     case reference:
+         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD2), this);
+         break;
+     case background:
+         Vector_double::const_iterator max_el = std::max_element(trace.begin(), trace.end());
+         Vector_double::const_iterator min_el = std::min_element(trace.begin(), trace.end());
+         double min = *min_el;
+         if (min>1.0e12)  min= 1.0e12;
+         if (min<-1.0e12) min=-1.0e12;
+         double max = *max_el;
+         if (max>1.0e12)  max= 1.0e12;
+         if (max<-1.0e12) max=-1.0e12;
+         wxRect WindowRect=GetRect();
+         WindowRect.height /= Doc()->size();
+         FittorectY(yzoombg, WindowRect, min, max, 1.0);
+         yzoombg.startPosY += bgno*WindowRect.height;
+         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatDB), this);
+         break;
     }
 
     int x_last = xFormat(start);
@@ -694,7 +707,7 @@ void wxStfGraph::PrintScale(wxRect& WindowRect) {
     if ( printSizePen4 < 1 ) boebbelPrint=4;
 }
 
-void wxStfGraph::PrintTrace( wxDC* pDC, const Vector_double& trace, bool is2 ) {
+void wxStfGraph::PrintTrace( wxDC* pDC, const Vector_double& trace, plottype pt ) {
     // speed up drawing by omitting points that are outside the window:
 
     // find point before left window border:
@@ -714,13 +727,13 @@ void wxStfGraph::PrintTrace( wxDC* pDC, const Vector_double& trace, bool is2 ) {
     int right=WindowRect.width;
     int xri=int((right-SPX())/XZ())+1;
     if (xri>=0 && xri<(int)trace.size()-1) end=xri;
-    DoPrint(pDC, trace, start, end, downsampling, is2);
+    DoPrint(pDC, trace, start, end, downsampling, pt);
 }
 
-void wxStfGraph::DoPrint( wxDC* pDC, const Vector_double trace, int start, int end, int downsampling, bool is2 ) {
+void wxStfGraph::DoPrint( wxDC* pDC, const Vector_double trace, int start, int end, int downsampling, plottype pt) {
     boost::function<int(double)> yFormatFunc;
     
-    if (!is2) {
+    if (pt==active) {
         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD), this);
     } else {
         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD2), this);
@@ -1417,12 +1430,8 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         YZW()=1.0;
 
     if (!isPrinted) {
-        wxFont font(
-                (int)(8*printScale),
-                wxFONTFAMILY_SWISS,
-                wxFONTSTYLE_NORMAL,
-                wxFONTWEIGHT_NORMAL
-        );
+        wxFont font((int)(8*printScale), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL,
+                    wxFONTWEIGHT_NORMAL);
         pDC->SetFont(font);
     }
 
@@ -1808,6 +1817,20 @@ inline int wxStfGraph::yFormat2(int toFormat){
     return (int)(SPY2() - toFormat * YZ2());
 }
 
+inline int wxStfGraph::yFormatB(double toFormat) {
+    return (int)(yzoombg.startPosY - toFormat * yzoombg.yZoom);
+}
+
+inline int wxStfGraph::yFormatB(int toFormat){
+    return (int)(yzoombg.startPosY - toFormat * yzoombg.yZoom);
+}
+
+void wxStfGraph::FittorectY(YZoom& yzoom, const wxRect& rect, double min, double max, double screen_part) {
+    
+    yzoom.yZoom = (rect.height/fabs(max-min))*screen_part;
+    yzoom.startPosY = (int)(((screen_part+1.0)/2.0)*rect.height
+                            + min * yzoom.yZoom);
+}
 
 void wxStfGraph::Fittowindow(bool refresh)
 {
@@ -1837,10 +1860,8 @@ void wxStfGraph::Fittowindow(bool refresh)
         FitToWindowSecCh(false);
         //Fit to window Ch1
         XZW()=(double)WindowRect.width /points;
-        YZW()=(WindowRect.height/fabs(max-min))*screen_part;
-        SPYW()=(int)(((screen_part+1)/2)*WindowRect.height
-                + min * YZ());
         SPXW()=0;
+        FittorectY(Doc()->at(Doc()->GetCurCh()).GetYZoomW(), WindowRect, min, max, screen_part);
         break;
     case stf::zoomch2:
         //ErrorMsg if no second channel available
@@ -1855,10 +1876,8 @@ void wxStfGraph::Fittowindow(bool refresh)
         //			Invalidate();
         //Fit to window Ch1
         XZW()=(double)WindowRect.width /points;
-        YZW()=(WindowRect.height/fabs(max-min))*screen_part;
-        SPYW()=(int)(((screen_part+1)/2)*WindowRect.height
-                + min * YZ());
         SPXW()=0;
+        FittorectY(Doc()->at(Doc()->GetCurCh()).GetYZoomW(), WindowRect, min, max, screen_part);
         break;
     }
     if (refresh) Refresh();
@@ -1879,9 +1898,7 @@ void wxStfGraph::FitToWindowSecCh(bool refresh)
         Vector_double::const_iterator min_el = std::min_element(Doc()->get()[secCh][Doc()->GetCurSec()].get().begin(), Doc()->get()[secCh][Doc()->GetCurSec()].get().end());
         double min=*min_el;
         double max=*max_el;
-        YZ2W()=(WindowRect.height/fabs(max-min))*screen_part;
-        SPY2W()=(int)(((screen_part+1)/2)*WindowRect.height
-                + min * YZ2());
+        FittorectY(Doc()->at(Doc()->GetSecCh()).GetYZoomW(), WindowRect, min, max, screen_part);
         if (refresh) Refresh();
     }
 }	//End FitToWindowSecCh()
