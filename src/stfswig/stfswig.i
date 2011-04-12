@@ -710,6 +710,16 @@ double get_latency( );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) get_risetime;
+%feature("docstring", "Returns the rise time (in x-units)
+determined by the linear interpolation between sampling points
+at 20% and 80% of the peak amplitude. 
+Call measure() or hit enter to update the cursors.
+
+") get_risetime;
+double get_risetime( );
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
 %feature("autodoc", 0) get_threshold_value;
 %feature("docstring", "Returns the value found at the threshold 
 slope. Note that this value is not updated after changing the AP 

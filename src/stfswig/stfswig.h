@@ -69,6 +69,7 @@ double get_slope();
 double get_threshold_time( bool is_time = false );
 double get_threshold_value( );
 double get_latency();
+double get_risetime();
 
 double peak_index( bool active = true );
 double maxrise_index( bool active = true );

@@ -664,9 +664,18 @@ double get_threshold_value( ) {
 
 double get_latency( ) {
     if ( !check_doc() ) return -1.0;
+        
+        double dt = actDoc()->GetXScale();
+        return ( actDoc()->GetLatency() )*dt;
 
-        return (actDoc()->GetLatency())* (actDoc()->GetXScale());
+}
 
+double get_risetime( ) {
+    if ( !check_doc() ) return -1.0;
+
+    double dt = actDoc()->GetXScale();
+    return ( actDoc()->GetT80Real()-actDoc()->GetT20Real() )*dt;
+    
 }
 
 double get_fit_start( bool is_time ) {
