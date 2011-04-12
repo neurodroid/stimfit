@@ -197,6 +197,11 @@ The :mod:`stf` module defines the following functions:
         
         *is_time* -- If False (default), returns the zero-based index. If True, returns the time from the beginning of the trace to the cursor position.
     
+.. function:: get_latency(\*args)
+
+    Returns the latency value (in x-units) determined by the latency cursors set in the cursors settings menu. Call :func:`measure()` or hit enter to update the cursors.
+
+
 .. function:: get_slope(\*args)
 
     Returns the slope value using the cursors described in the cursors setting dialog.
