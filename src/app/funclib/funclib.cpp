@@ -53,12 +53,14 @@ std::vector< stf::storedFunc > stf::GetFuncLib() {
 
     // Biexponential function, starting with a delay, start fixed to baseline:
     std::vector<parInfo> parInfoBExpDe(5);
-    parInfoBExpDe[0].toFit=false; parInfoBExpDe[0].desc=wxT("Baseline");
-    parInfoBExpDe[1].toFit=true;  parInfoBExpDe[1].desc=wxT("Delay");
-    parInfoBExpDe[1].constrained = true; parInfoBExpDe[1].constr_lb = 0.0; parInfoBExpDe[1].constr_ub = DBL_MAX;
-    parInfoBExpDe[2].toFit=true;  parInfoBExpDe[2].desc=wxT("tau1");
-    parInfoBExpDe[3].toFit=true;  parInfoBExpDe[3].desc=wxT("Factor");
-    parInfoBExpDe[4].toFit=true;  parInfoBExpDe[4].desc=wxT("tau2");
+    parInfoBExpDe[0].toFit=false; parInfoBExpDe[0].desc=wxT("Baseline"); parInfoBExpDe[0].scale=stf::yscaleoffset; parInfoBExpDe[0].unscale=stf::yunscaleoffset;
+    parInfoBExpDe[1].toFit=true;  parInfoBExpDe[1].desc=wxT("Delay"); parInfoBExpDe[1].scale=stf::xscale; parInfoBExpDe[1].unscale=stf::xunscale; 
+    // parInfoBExpDe[1].constrained = true; parInfoBExpDe[1].constr_lb = 0.0; parInfoBExpDe[1].constr_ub = DBL_MAX;
+    parInfoBExpDe[2].toFit=true;  parInfoBExpDe[2].desc=wxT("tau1"); parInfoBExpDe[2].scale=stf::xscale; parInfoBExpDe[2].unscale=stf::xunscale;
+    // parInfoBExpDe[2].constrained = true; parInfoBExpDe[2].constr_lb = 1.0e-16; parInfoBExpDe[2].constr_ub = DBL_MAX;
+    parInfoBExpDe[3].toFit=true;  parInfoBExpDe[3].desc=wxT("Factor"); parInfoBExpDe[3].scale=stf::yscale; parInfoBExpDe[3].unscale=stf::yunscale;
+    parInfoBExpDe[4].toFit=true;  parInfoBExpDe[4].desc=wxT("tau2"); parInfoBExpDe[4].scale=stf::xscale; parInfoBExpDe[4].unscale=stf::xunscale;
+    // parInfoBExpDe[4].constrained = true; parInfoBExpDe[4].constr_lb = 1.0e-16; parInfoBExpDe[4].constr_ub = DBL_MAX;
     funcList.push_back(stf::storedFunc(
                                        wxT("Biexponential with delay, start fixed to baseline, delay constrained to > 0"),
                                        parInfoBExpDe,fexpbde,fexpbde_init,nojac,false));

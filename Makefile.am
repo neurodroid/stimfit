@@ -104,7 +104,7 @@ libstfio_la_LDFLAGS = $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
 libstfio_la_LIBADD = -lhdf5 -lhdf5_hl $(PYTHON_ADDLIBS)
 
 install-exec-hook:
-	mv ${PYTHON_SITE_PKG}/stfio/libstfio.so ${PYTHON_SITE_PKG}/stfio/_stfio.so
+	mv ${PYTHON_SITE_PKG}/stfio/${STFIO_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stfio/_stfio.so
 	rm -f ${PYTHON_SITE_PKG}/stfio/*.la
 	rm -f ${PYTHON_SITE_PKG}/stfio/*.a
 	cp -p $(srcdir)/src/stfswig/hdf5tools.py ${PYTHON_SITE_PKG}/stfio

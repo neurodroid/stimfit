@@ -324,9 +324,11 @@ double stf::lmFit( const Vector_double& data, double dt,
     }
 
     // copy back the fitted parameters to p:
-    for ( unsigned n_p=0, n_f=0; n_p<fitFunc.pInfo.size(); ++n_p ) {
+    for ( unsigned n_p=0, n_f=0, n_c=0; n_p<fitFunc.pInfo.size(); ++n_p ) {
         if (fitFunc.pInfo[n_p].toFit) {
             p[n_p] = p_toFit[n_f++];
+        } else {
+            p[n_p] = p_const[n_c++];
         }
         if (can_scale) {
             p[n_p] = fitFunc.pInfo[n_p].unscale(p[n_p], xyscale[0],
@@ -339,35 +341,43 @@ double stf::lmFit( const Vector_double& data, double dt,
     str_info << wxT("\nIterations during last pass: ") << info_id[5];
     str_info << wxT("\nStopping reason during last pass:");
     switch ((int)info_id[6]) {
-    case 1:
-        str_info << wxT("\nStopped by small gradient of squared error.");
-        warning = 0;
-        break;
-    case 2:
-        str_info << wxT("\nStopped by small rel. parameter change.");
-        warning = 0;
-        break;
-    case 3:
-        str_info << wxT("\nReached max. number of iterations. Restart\n")
-                 << wxT("with smarter initial parameters and / or with\n")
-                 << wxT("increased initial scaling factor and / or with\n")
-                 << wxT("increased max. number of iterations.");
-        warning = 3;
-        break;
-    case 4:
-        str_info << wxT("\nSingular matrix. Restart from current parameters\n")
-                 << wxT("with increased initial scaling factor.");
-        warning = 4;
-        break;
-    case 5:
-        str_info << wxT("\nNo further error reduction is possible.\n")
-                 << wxT("Restart with increased initial scaling factor.");
-        warning = 5;
-        break;
-    case 6:
-        str_info << wxT("\nStopped by small squared error.");
-        warning = 0;
-        break;
+     case 1:
+         str_info << wxT("\nStopped by small gradient of squared error.");
+         warning = 0;
+         break;
+     case 2:
+         str_info << wxT("\nStopped by small rel. parameter change.");
+         warning = 0;
+         break;
+     case 3:
+         str_info << wxT("\nReached max. number of iterations. Restart\n")
+                  << wxT("with smarter initial parameters and / or with\n")
+                  << wxT("increased initial scaling factor and / or with\n")
+                  << wxT("increased max. number of iterations.");
+         warning = 3;
+         break;
+     case 4:
+         str_info << wxT("\nSingular matrix. Restart from current parameters\n")
+                  << wxT("with increased initial scaling factor.");
+         warning = 4;
+         break;
+     case 5:
+         str_info << wxT("\nNo further error reduction is possible.\n")
+                  << wxT("Restart with increased initial scaling factor.");
+         warning = 5;
+         break;
+     case 6:
+         str_info << wxT("\nStopped by small squared error.");
+         warning = 0;
+         break;
+     case 7:
+         str_info << wxT("\nStopped by invalid (i.e. NaN or Inf) \"func\" values.\n");
+         str_info << wxT("This is a user error.");
+         warning = 7;
+         break;
+     default:
+         str_info << wxT("\nUnknown reason for stopping the fit.");
+         warning = -1;
     }
     if (use_scaling && !can_scale) {
         str_info << wxT("\nCouldn't use scaling because one or more ")
