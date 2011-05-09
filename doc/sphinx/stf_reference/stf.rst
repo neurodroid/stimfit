@@ -625,6 +625,14 @@ The :mod:`stf` module defines the following functions:
 
         False upon failure (such as out-of-range).
     
+.. function:: get_peak_direction()
+
+    Gets the direction of the peak detection.
+
+        **Returns:**
+        
+        A string specifying the peak direction. Can be one of: "up", "donw",or "both".
+
 .. function:: get_peak_mean()
 
     Returns the number of sampling points used for peak calculation.

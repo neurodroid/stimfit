@@ -874,6 +874,19 @@ int get_peak_mean( );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) get_peak_direction;
+%feature("docstring", "Gets the current direction of the detection
+for the peak cursors.
+
+Arguments:
+direction -- A string specifying the peak direction. Can be one of:
+             \"up\", \"down\" or \"both\"
+
+Returns:
+False upon failure.") get_peak_direction;
+const char* get_peak_direction( );
+//--------------------------------------------------------------------
+//--------------------------------------------------------------------
 %feature("autodoc", 0) set_peak_direction;
 %feature("docstring", "Sets the direction of the peak detection.
 

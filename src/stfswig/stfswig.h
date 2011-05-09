@@ -91,6 +91,7 @@ double get_peak_end( bool is_time = false );
 bool set_peak_end( double pos, bool is_time = false );
 int get_peak_mean( );
 bool set_peak_mean( int pts );
+const char* get_peak_direction( );
 bool set_peak_direction( const char* direction );
 
 double get_base_start( bool is_time = false );

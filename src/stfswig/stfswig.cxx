@@ -821,6 +821,20 @@ int get_peak_mean() {
     return (int)actDoc()->GetPM();
 }
 
+const char* get_peak_direction( ) {
+    if ( !check_doc() ) return "";
+    
+    const char *direction;
+    if ( actDoc()->GetDirection() == stf::up )
+        direction = "up";
+    else if ( actDoc()->GetDirection() == stf::down )
+        direction = "down";
+    else if ( actDoc()->GetDirection() == stf::both )
+        direction = "both";
+    
+    return direction;
+}
+
 bool set_peak_direction( const char* direction ) {
     if ( !check_doc() ) return false;
 
