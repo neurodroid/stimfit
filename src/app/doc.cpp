@@ -533,8 +533,8 @@ bool wxStfDoc::SaveAs() {
     filters += wxT("hdf5 file (*.h5)|*.h5|");
     filters += wxT("CED filing system (*.dat;*.cfs)|*.dat;*.cfs|");
     filters += wxT("Axon text file (*.atf)|*.atf|");
-    filters += wxT("Igor binary wave (*.*)|*.*|");
-    filters += wxT("Text file series (*.*)|*.*");
+    filters += wxT("Igor binary wave (*.ibw)|*.ibw|");
+    filters += wxT("Text file series (*.txt)|*.txt");
     wxFileDialog SelectFileDialog( GetDocumentWindow(), wxT("Save file"), wxT(""), wxT(""), filters,
             wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_PREVIEW );
     if(SelectFileDialog.ShowModal()==wxID_OK) {
