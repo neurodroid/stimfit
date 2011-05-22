@@ -143,6 +143,7 @@ typedef unsigned int   UINT_PTR;
 #define GENERIC_READ               0x80000000
 #define GENERIC_WRITE              0x40000000
 
+#define CREATE_NEW                          1
 #define CREATE_ALWAYS                       2
 #define OPEN_EXISTING                       3
 

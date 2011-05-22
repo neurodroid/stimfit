@@ -43,8 +43,10 @@ CPCreateFile(const char* fullFilePath, int overwrite)
 {
 	int err;
 		
+#ifdef _WINDOWS
 	if (overwrite)							// Delete file if it exists and if overwrite is specified.
-		CPDeleteFile(fullFilePath);			// Ignore error.
+            CPDeleteFile(fullFilePath);			// Ignore error.
+#endif
 
 	#ifdef MACINTOSH
 		if (err = create(fullFilePath, 0, macCreator, macFileType))
@@ -52,7 +54,7 @@ CPCreateFile(const char* fullFilePath, int overwrite)
 		return 0;
 	#endif
 	
-	#ifdef WIN32
+#if 1//def WIN32
 	{
 		HANDLE fileH;
 		long accessMode, shareMode;
@@ -60,11 +62,23 @@ CPCreateFile(const char* fullFilePath, int overwrite)
 		err = 0;
 		accessMode = GENERIC_READ | GENERIC_WRITE;
 		shareMode = 0;
+#ifdef _WINDOWS
 		fileH = CreateFileA(fullFilePath, accessMode, shareMode, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+#else
+		fileH = c_CreateFile(fullFilePath, accessMode, shareMode, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+#endif
 		if (fileH == INVALID_HANDLE_VALUE)
-			err = GetLastError();
+#ifdef _WINDOWS
+                    err = GetLastError();
+#else
+                    err = 1;
+#endif
 		else
-			CloseHandle(fileH);
+#ifdef _WINDOWS
+                    CloseHandle(fileH);
+#else
+                    c_CloseHandle(fileH);
+#endif
 		return err;
 	}
 	#endif
@@ -81,7 +95,7 @@ CPCreateFile(const char* fullFilePath, int overwrite)
 	Added for Igor Pro 3.13 but works with any version. However, some error
 	codes returned require Igor Pro 3.13 or later, so you will get bogus error
 	messages if you return these error codes to earlier versions of Igor.
-*/
+
 int
 CPDeleteFile(const char* fullFilePath)
 {
@@ -93,17 +107,18 @@ CPDeleteFile(const char* fullFilePath)
 		return 0;
 	#endif
 	
-	#ifdef WIN32
+#if 1//def WIN32
 	{
 		int err;
 
 		err = 0;
 		if (DeleteFileA(fullFilePath) == 0)
-			err = GetLastError();
+                    err = GetLastError();
 		return err;
 	}
-	#endif
+#endif
 }
+*/
 
 /*	CPOpenFile(fullFilePath, readOrWrite, fileRefPtr)
 

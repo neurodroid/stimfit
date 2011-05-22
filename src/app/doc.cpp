@@ -46,7 +46,7 @@
 #include "./../core/filelib/atflib.h"
 #include "./../core/filelib/hdf5lib.h"
 #include "./../core/filelib/asciilib.h"
-#ifdef _WINDOWS
+#if 1//def _WINDOWS
 #include "./../core/filelib/igorlib.h"
 #endif
 #include "./usrdlg/usrdlg.h"
@@ -548,9 +548,9 @@ bool wxStfDoc::SaveAs() {
             case 2:
                 return stf::exportATFFile(filename, writeRec);
             case 3:
-#ifdef _WINDOWS
-                return stf::exportIGORFile(std::string(filename.c_str()), writeRec);
-#else
+                //#ifdef _WINDOWS
+                return stf::exportIGORFile(filename, writeRec);
+#if 0 //else
                 wxGetApp().ErrorMsg( wxT("Igor file export only implemented on Windows platforms") );
                 return false;
 #endif

@@ -31,7 +31,7 @@ namespace stf {
  *  \return At present, always returns 0.
  */
 bool
-exportIGORFile(const std::string& fName, const Recording& WData);
+exportIGORFile(const wxString& fName, const Recording& WData);
 
 }
 

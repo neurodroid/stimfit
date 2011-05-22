@@ -101,7 +101,7 @@ stf::CheckComp(const Recording& Data) {
 }
 
 bool
-stf::exportIGORFile(const std::string& fileBase,const Recording& Data)
+stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
 {
     // Check compatibility:
     if (!CheckComp(Data)) {
@@ -163,7 +163,7 @@ stf::exportIGORFile(const std::string& fileBase,const Recording& Data)
 
         // Create a file:
         std::stringstream filePath;
-        filePath << fileBase << "_" << channel_name[n_c] << ".ibw";
+        filePath << fileBase.utf8_str() << "_" << channel_name[n_c] << ".ibw";
         int err = CPCreateFile(filePath.str().c_str(), 1);
         if (err) {
             throw std::runtime_error(IGORError("Error in CPCreateFile()\n", err));
