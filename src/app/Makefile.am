@@ -29,6 +29,9 @@ libstimfit_la_SOURCES = ./../core/channel.cpp ./../core/section.cpp ./../core/re
             ./../core/filelib/axg/fileUtils.cpp \
             ./../core/filelib/axg/stringUtils.cpp \
             ./../core/filelib/axg/byteswap.cpp \
+            ./../core/filelib/igorlib.cpp \
+            ./../core/filelib/igor/CrossPlatformFileIO.c \
+            ./../core/filelib/igor/WriteWave.c \
             ./../core/levmar/lm.c ./../core/levmar/Axb.c ./../core/levmar/misc.c ./../core/levmar/lmlec.c ./../core/levmar/lmbc.c \
             ./../app/app.cpp ./../app/unopt.cpp ./../app/doc.cpp ./../app/stfcheckbox.cpp ./../app/copygrid.cpp ./../app/graph.cpp \
             ./../app/printout.cpp ./../app/parentframe.cpp ./../app/childframe.cpp ./../app/view.cpp ./../app/table.cpp ./../app/zoom.cpp \

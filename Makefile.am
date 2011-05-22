@@ -40,7 +40,10 @@ libstfio_la_SOURCES = ./src/stfswig/stfioswig_wrap.cxx ./src/stfswig/stfioswig.c
 	./src/core/filelib/axg/fileUtils.cpp \
 	./src/core/filelib/axg/stringUtils.cpp \
 	./src/core/filelib/axg/byteswap.cpp \
-        ./src/core/filelib/hekalib.cpp
+        ./src/core/filelib/hekalib.cpp \
+	./src/core/filelib/igorlib.cpp \
+	./src/core/filelib/igor/CrossPlatformFileIO.c \
+	./src/core/filelib/igor/WriteWave.c
 
 if WITH_BIOSIG
 libstfio_la_SOURCES += ./src/core/filelib/biosiglib.cpp
@@ -84,6 +87,9 @@ noinst_HEADERS = ./src/stfswig/stfioswig.h ./src/core/channel.h ./src/core/secti
             ./src/core/filelib/axg/stringUtils.h \
             ./src/core/filelib/axg/byteswap.h \
             ./src/core/filelib/axg/longdef.h
+            ./src/core/filelib/igorlib.h \
+            ./src/core/filelib/igor/CrossPlatformFileIO.h \
+            ./src/core/filelib/igor/IgorBin.h
 
 if WITH_BIOSIG
     noinst_HEADERS += ./src/core/filelib/biosiglib.h
@@ -168,6 +174,9 @@ noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.
             ./src/core/filelib/axg/stringUtils.h \
             ./src/core/filelib/axg/byteswap.h \
             ./src/core/filelib/axg/longdef.h \
+            ./src/core/filelib/igorlib.h \
+            ./src/core/filelib/igor/CrossPlatformFileIO.h \
+            ./src/core/filelib/igor/IgorBin.h \
             ./src/core/levmar/lm.h ./src/core/levmar/levmar.h ./src/core/levmar/misc.h ./src/core/levmar/compiler.h \
             ./src/app/app.h ./src/app/stfcheckbox.h \
             ./src/app/copygrid.h ./src/app/graph.h \

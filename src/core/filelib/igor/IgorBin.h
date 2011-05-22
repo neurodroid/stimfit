@@ -13,10 +13,7 @@ extern "C" {
 	#pragma pack(2)
 #endif
 
-#ifdef WIN32
-	typedef void** Handle;
-#endif
-
+typedef void** Handle;
 
 // From IgorMath.h
 #define NT_CMPLX 1			// Complex numbers.

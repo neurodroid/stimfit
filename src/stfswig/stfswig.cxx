@@ -824,7 +824,7 @@ int get_peak_mean() {
 const char* get_peak_direction( ) {
     if ( !check_doc() ) return "";
     
-    const char *direction;
+    const char *direction = "both";
     if ( actDoc()->GetDirection() == stf::up )
         direction = "up";
     else if ( actDoc()->GetDirection() == stf::down )

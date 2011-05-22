@@ -25,12 +25,14 @@
 #endif
 
 #ifdef _WINDOWS
-#include <sstream>
-#ifdef MODULE_ONLY
-#define wxT(x) x
-#include <string>
-typedef std::string wxString;
-#endif
+  #include <sstream>
+  #ifdef MODULE_ONLY
+    #define wxT(x) x
+    #include <string>
+    typedef std::string wxString;
+  #endif
+#else
+  #include "./axon/Common/unix.h"
 #endif
 
 /*	The code in this file writes a sample Igor Pro packed experiment file.
@@ -45,7 +47,7 @@ typedef std::string wxString;
 
 #include "./../core.h"
 
-#include "./IGORlib.h"
+#include "./igorlib.h"
 
 // Headers taken from Wavemetrics' demo files:
 #ifdef __cplusplus
@@ -63,20 +65,18 @@ extern "C" {
 
 namespace stf {
 
-wxString IGORError(
-        const wxString& msg,
-        int nError
-);
-
+    std::string IGORError(const std::string& msg,
+                          int nError);
+    
 // Check compatibility before exporting:
 bool CheckComp(const Recording& ReturnData);
 
 }
 
-wxString
-stf::IGORError(const wxString& msg, int error)
+std::string
+stf::IGORError(const std::string& msg, int error)
 {
-	std::stringstream ret;
+    std::stringstream ret;
     ret << wxT("Error # ") << error << wxT(" while writing Igor packed experiment:\n")
     << msg;
     return ret.str();
@@ -139,11 +139,7 @@ stf::exportIGORFile(const std::string& fileBase,const Recording& Data)
     // Export channels individually:
     for (std::size_t n_c=0;n_c<Data.size();++n_c) {
         unsigned long now;
-#ifdef WIN32
         now = 0;			// It would be possible to write a Windows equivalent for the Macintosh GetDateTime function but it is not easy.
-#else
-        GetDateTime(&now);
-#endif
 
         WaveHeader5 wh;
         memset(&wh, 0, sizeof(wh));
@@ -166,17 +162,18 @@ stf::exportIGORFile(const std::string& fileBase,const Recording& Data)
         std::string waveNote("Wave exported from Stimfit");
 
         // Create a file:
-        int err;
-		std::stringstream filePath;
+        std::stringstream filePath;
         filePath << fileBase << "_" << channel_name[n_c] << ".ibw";
-        if (err = CPCreateFile(filePath.str().c_str(), 1, 'IGR0', 'IGBW')) {
-			throw std::runtime_error( std::string(IGORError(wxT("Error in CPCreateFile()\n"), err).c_str()) );
+        int err = CPCreateFile(filePath.str().c_str(), 1);
+        if (err) {
+            throw std::runtime_error(IGORError("Error in CPCreateFile()\n", err));
         }
 
         // Open the file:
         CP_FILE_REF fr;
-        if (err = CPOpenFile(filePath.str().c_str(), 1, &fr)) {
-			throw std::runtime_error( std::string(IGORError(wxT("Error in CPOpenFile()\n"), err).c_str()) );
+        err = CPOpenFile(filePath.str().c_str(), 1, &fr);
+        if (err) {
+            throw std::runtime_error(IGORError("Error in CPOpenFile()\n", err));
         }
 
         // Write the data:
@@ -185,7 +182,11 @@ stf::exportIGORFile(const std::string& fileBase,const Recording& Data)
         // One unnecessary copy operation due to const-correctness (couldn't const_cast<>)
         Channel TempChannel(Data[n_c]);
         for (std::size_t n_s=0;n_s<Data[n_c].size();++n_s) {
-			std::stringstream progStr;
+#ifndef MODULE_ONLY
+            wxString progStr;
+#else
+            std::stringstream progStr;
+#endif
             progStr << wxT("Writing channel #") << (int)n_c + 1 << wxT(" of ") << (int)Data.size()
             << wxT(", Section #") << (int)n_s+1 << wxT(" of ") << (int)Data[n_c].size();
 #ifndef MODULE_ONLY
@@ -194,16 +195,16 @@ stf::exportIGORFile(const std::string& fileBase,const Recording& Data)
                     (int)(((double)n_c/(double)Data.size())*100.0+
                             // Section contribution:
                             (double)(n_s)/(double)Data[n_c].size()*(100.0/Data.size())),
-                            progStr.str()
+                    progStr
             );
 #endif
             // std::copy is faster than explicitly assigning to cpData[c][s][p]
             std::copy( &TempChannel[n_s][0], &TempChannel[n_s][Data[n_c][n_s].size()],
                     &cpData[n_s*wh.nDim[0]] );
         }
-
-        if ( err=WriteVersion5NumericWave( fr, &wh, &cpData[0], waveNote.c_str(),
-                (long)strlen(waveNote.c_str()) ) )
+        err=WriteVersion5NumericWave( fr, &wh, &cpData[0], waveNote.c_str(),
+                                      (long)strlen(waveNote.c_str()) );
+        if (err)
         {
             throw std::runtime_error( std::string(IGORError("Error in WriteVersion5NumericWave()\n", err).c_str()) );
         }

@@ -7,9 +7,10 @@
 #include <stddef.h>
 
 #ifdef WIN32
-	#include <Windows.h>
+  #include <Windows.h>
+#else
+  #include "../axon/Common/unix.h"
 #endif
-
 // The Windows headers create the WIN32 symbol if we are compiling for Windows.
 // Here, we create an analogous MACINTOSH symbol if we are compiling for Macintosh.
 #if (defined(GENERATINGPOWERPC) || defined(GENERATING68K))
@@ -38,7 +39,7 @@
 	Returns 0 if OK or an error code.
 */
 int
-CPCreateFile(const char* fullFilePath, int overwrite, long macCreator, long macFileType)
+CPCreateFile(const char* fullFilePath, int overwrite)
 {
 	int err;
 		

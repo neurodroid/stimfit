@@ -7,7 +7,7 @@
 
 #define CP_FILE_REF FILE*
 
-int CPCreateFile(const char* fullFilePath, int overwrite, long macCreator, long macFileType);
+int CPCreateFile(const char* fullFilePath, int overwrite);
 int CPDeleteFile(const char* fullFilePath);
 int CPOpenFile(const char* fullFilePath, int readOrWrite, CP_FILE_REF* fileRefPtr);
 int CPCloseFile(CP_FILE_REF fileRef);
