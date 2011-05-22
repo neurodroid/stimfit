@@ -549,7 +549,7 @@ bool wxStfDoc::SaveAs() {
                 return stf::exportATFFile(filename, writeRec);
             case 3:
 #ifdef _WINDOWS
-                return stf::exportIGORFile(filename, writeRec);
+                return stf::exportIGORFile(std::string(filename.c_str()), writeRec);
 #else
                 wxGetApp().ErrorMsg( wxT("Igor file export only implemented on Windows platforms") );
                 return false;

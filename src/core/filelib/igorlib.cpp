@@ -101,7 +101,7 @@ stf::CheckComp(const Recording& Data) {
 }
 
 bool
-stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
+stf::exportIGORFile(const std::string& fileBase,const Recording& Data)
 {
     // Check compatibility:
     if (!CheckComp(Data)) {
@@ -116,7 +116,7 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
             wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
 #endif
     // Get unambiguous channel names:
-    std::vector<wxString> channel_name(Data.size());
+    std::vector<std::string> channel_name(Data.size());
     bool ident=false;
     for (std::size_t n_c=0;n_c<Data.size()-1 && !ident; ++n_c) {
         for (std::size_t n_c2=n_c+1;n_c2<Data.size()&& !ident; ++n_c2) {
@@ -129,7 +129,7 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
     if (ident) {
         for (std::size_t n_c=0;n_c<Data.size()-1; ++n_c) {
 			std::stringstream channelS;
-			channelS <<  wxT("Ch") << (int)n_c;
+			channelS <<  "Ch" << (int)n_c;
             channel_name[n_c] = channelS.str();
         }
     } else {
@@ -168,7 +168,7 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
         // Create a file:
         int err;
 		std::stringstream filePath;
-        filePath << fileBase << wxT("_") << channel_name[n_c] << wxT(".ibw");
+        filePath << fileBase << "_" << channel_name[n_c] << ".ibw";
         if (err = CPCreateFile(filePath.str().c_str(), 1, 'IGR0', 'IGBW')) {
 			throw std::runtime_error( std::string(IGORError(wxT("Error in CPCreateFile()\n"), err).c_str()) );
         }

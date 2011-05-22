@@ -128,7 +128,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				AdditionalIncludeDirectories="D:\Users\cs\hdf5\include;D:\Users\cs\fftw\include;D:\Users\cs\wxPython\include"
-				PreprocessorDefinitions="_UNICODE;WXUSINGDLL;__STF__;__WIN32__;WIN32;__WXMSW__;WXP_USE_THREAD=1;NOPCH;STFDLL;_CRT_SECURE_NO_DEPRECATE;WITH_PYTHON;HAVE_LAPACK;_WINDOWS;STFDATE=\&quot;Sat Jan 20 2011, 16:57:17 CEST\&quot;;NDEBUG"
+				PreprocessorDefinitions="_UNICODE;WXUSINGDLL;__STF__;__WIN32__;WIN32;__WXMSW__;WXP_USE_THREAD=1;NOPCH;STFDLL;_CRT_SECURE_NO_DEPRECATE;WITH_PYTHON;HAVE_LAPACK;_WINDOWS;STFDATE=\&quot;Sat May 20 2011, 11:31:58 CEST\&quot;;NDEBUG"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="false"
@@ -152,7 +152,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wxmsw29uh_aui.lib wxmsw29uh_html.lib wxmsw29uh_adv.lib wxmsw29uh_core.lib wxbase29uh_xml.lib wxbase29uh.lib wxtiffh.lib wxjpegh.lib wxpngh.lib wxzlibh.lib wxexpath.lib wxregexuh.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib clapack.lib libf2c.lib BLAS.lib libfftw3-3.lib hdf5dll.lib hdf5_hldll.lib szip.lib"
+				AdditionalDependencies="wxmsw29u_aui.lib wxmsw29u_html.lib wxmsw29u_adv.lib wxmsw29u_core.lib wxbase29u_net.lib wxbase29u_xml.lib wxbase29u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxexpat.lib wxregexu.lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib clapack.lib libf2c.lib BLAS.lib libfftw3-3.lib hdf5dll.lib hdf5_hldll.lib szip.lib"
 				OutputFile="../stimfit_exe/$(OutDir)/stimfit.dll"
 				AdditionalLibraryDirectories="D:\Users\cs\fftw\lib;D:\Users\cs\szip\lib;D:\Users\cs\hdf5\lib;&quot;$(SolutionDir)..\libs&quot;;C:\Python27\libs;D:\Users\cs\wxWidgets\lib\vc_dll"
 				IgnoreAllDefaultLibraries="false"
