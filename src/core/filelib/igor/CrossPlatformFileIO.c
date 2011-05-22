@@ -95,7 +95,8 @@ CPCreateFile(const char* fullFilePath, int overwrite)
 	Added for Igor Pro 3.13 but works with any version. However, some error
 	codes returned require Igor Pro 3.13 or later, so you will get bogus error
 	messages if you return these error codes to earlier versions of Igor.
-
+*/
+#ifdef _WINDOWS
 int
 CPDeleteFile(const char* fullFilePath)
 {
@@ -107,7 +108,6 @@ CPDeleteFile(const char* fullFilePath)
 		return 0;
 	#endif
 	
-#if 1//def WIN32
 	{
 		int err;
 
@@ -116,9 +116,8 @@ CPDeleteFile(const char* fullFilePath)
                     err = GetLastError();
 		return err;
 	}
-#endif
 }
-*/
+#endif
 
 /*	CPOpenFile(fullFilePath, readOrWrite, fileRefPtr)
 

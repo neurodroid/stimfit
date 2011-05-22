@@ -163,7 +163,13 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
 
         // Create a file:
         std::stringstream filePath;
-        filePath << fileBase.utf8_str() << "_" << channel_name[n_c] << ".ibw";
+        filePath 
+#ifndef MODULE_ONLY
+            << fileBase.utf8_str()
+#else
+            << fileBase
+#endif
+            << "_" << channel_name[n_c] << ".ibw";
         int err = CPCreateFile(filePath.str().c_str(), 1);
         if (err) {
             throw std::runtime_error(IGORError("Error in CPCreateFile()\n", err));
@@ -199,8 +205,13 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
             );
 #endif
             // std::copy is faster than explicitly assigning to cpData[c][s][p]
-            std::copy( &TempChannel[n_s][0], &TempChannel[n_s][Data[n_c][n_s].size()],
-                    &cpData[n_s*wh.nDim[0]] );
+            if (n_s*wh.nDim[0]+Data[n_c][n_s].size() > cpData.size() ||
+                Data[n_c][n_s].size() > TempChannel[n_s].size()) {
+                    throw std::out_of_range("Out of range exception in WriteVersion5NumericWave");
+            }
+            std::copy( TempChannel[n_s].get_w().begin(), 
+                       TempChannel[n_s].get_w().begin()+Data[n_c][n_s].size(),
+                       &cpData[n_s*wh.nDim[0]] );
         }
         err=WriteVersion5NumericWave( fr, &wh, &cpData[0], waveNote.c_str(),
                                       (long)strlen(waveNote.c_str()) );
