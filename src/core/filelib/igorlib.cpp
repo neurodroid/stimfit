@@ -147,10 +147,13 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
 
         if (channel_name[n_c].length() < MAX_WAVE_NAME2+2)
             strcpy(wh.bname, channel_name[n_c].c_str());
+        printf("%s\n", wh.bname);
         if (Data[n_c].GetYUnits().length() < MAX_UNIT_CHARS+1)
             strcpy(wh.dataUnits, Data[n_c].GetYUnits().c_str());
+        printf("%s\n", wh.dataUnits);
         if (Data.GetXUnits().length() < MAX_UNIT_CHARS+1)
             strcpy(wh.dimUnits[0], Data.GetXUnits().c_str());
+        printf("%s\n", wh.dimUnits[0]);
         wh.npnts = (IGORLONG)(Data[n_c][0].size()*Data[n_c].size());
         wh.nDim[0] = (IGORLONG)Data[n_c][0].size();
         wh.nDim[1] = (IGORLONG)Data[n_c].size();
