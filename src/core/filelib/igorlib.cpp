@@ -138,7 +138,7 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
 
     // Export channels individually:
     for (std::size_t n_c=0;n_c<Data.size();++n_c) {
-        unsigned ABFLONG now;
+        unsigned IGORLONG now;
         now = 0;			// It would be possible to write a Windows equivalent for the Macintosh GetDateTime function but it is not easy.
 
         WaveHeader5 wh;
@@ -151,9 +151,9 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
             strcpy(wh.dataUnits, Data[n_c].GetYUnits().c_str());
         if (Data.GetXUnits().length() < MAX_UNIT_CHARS+1)
             strcpy(wh.dimUnits[0], Data.GetXUnits().c_str());
-        wh.npnts = (ABFLONG)(Data[n_c][0].size()*Data[n_c].size());
-        wh.nDim[0] = (ABFLONG)Data[n_c][0].size();
-        wh.nDim[1] = (ABFLONG)Data[n_c].size();
+        wh.npnts = (IGORLONG)(Data[n_c][0].size()*Data[n_c].size());
+        wh.nDim[0] = (IGORLONG)Data[n_c][0].size();
+        wh.nDim[1] = (IGORLONG)Data[n_c].size();
         wh.sfA[0] = Data.GetXScale();
         wh.sfB[0] = 0.0e0;								// Starting from zero.
         wh.modDate = now;

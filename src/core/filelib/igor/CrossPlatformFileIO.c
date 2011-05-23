@@ -42,7 +42,7 @@ int
 CPCreateFile(const char* fullFilePath, int overwrite)
 {
 	int err;
-		
+	err = 0;	
 #ifdef _WINDOWS
 	if (overwrite)							// Delete file if it exists and if overwrite is specified.
             CPDeleteFile(fullFilePath);			// Ignore error.
@@ -57,10 +57,9 @@ CPCreateFile(const char* fullFilePath, int overwrite)
 #if 1//def WIN32
 	{
 		HANDLE fileH;
-		
-		err = 0;
-#ifdef _WINDOWS
 		long accessMode, shareMode;
+		
+#ifdef _WINDOWS
 		accessMode = GENERIC_READ | GENERIC_WRITE;
 		shareMode = 0;
 		fileH = CreateFileA(fullFilePath, accessMode, shareMode, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
