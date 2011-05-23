@@ -40,7 +40,7 @@ NumBytesPerPoint(int type)
 			numBytesPerPoint = 2;		// short
 			break;
 		case NT_I32:
-			numBytesPerPoint = 4;		// long
+			numBytesPerPoint = 4;		// IGORLONG
 			break;
 		case NT_FP32:
 			numBytesPerPoint = 4;		// float
@@ -148,21 +148,26 @@ WriteVersion2NumericWave(CP_FILE_REF fr, WaveHeader2* whp, const void* data, con
 int
 WriteVersion5NumericWave(CP_FILE_REF fr, WaveHeader5* whp, const void* data, const char* waveNote, long noteSize)
 {
-	unsigned long numBytesToWrite;
+        unsigned long numBytesToWrite;
 	unsigned long numBytesWritten;
-	unsigned long waveDataSize;
+	unsigned IGORLONG waveDataSize;
 	int numBytesPerPoint;
 	short cksum;
 	BinHeader5 bh;
 	int err;
-	
+
+        printf("sizeof(short): %lu\n", sizeof(short));
+        printf("sizeof(int): %lu\n", sizeof(int));
+        printf("sizeof(IGORLONG): %lu\n", sizeof(IGORLONG));
+        printf("sizeof(unsigned IGORLONG): %lu\n", sizeof(unsigned IGORLONG));
+        printf("sizeof(float): %lu\n", sizeof(float));
+        printf("sizeof(double): %lu\n", sizeof(double));
 	numBytesPerPoint = NumBytesPerPoint(whp->type);
 	if (numBytesPerPoint <= 0) {
 		printf("Invalid wave type (0x%x).\n", whp->type);
 		return -1;
 	}
 	waveDataSize = whp->npnts * numBytesPerPoint;
-	
 	// Prepare the BinHeader structure.
 	memset(&bh,0,sizeof(struct BinHeader5));
 	bh.version = 5;
@@ -175,7 +180,6 @@ WriteVersion5NumericWave(CP_FILE_REF fr, WaveHeader5* whp, const void* data, con
 	cksum = Checksum((short *)&bh, 0, sizeof(BinHeader5));
 	cksum = Checksum((short *)whp, cksum, offsetof(WaveHeader5, wData));
 	bh.checksum = -cksum;
-	
 	do {
 		// Write the BinHeader.
 		numBytesToWrite = sizeof(struct BinHeader5);

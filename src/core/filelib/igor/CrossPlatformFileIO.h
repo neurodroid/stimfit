@@ -7,6 +7,12 @@
 
 #define CP_FILE_REF FILE*
 
+#if ( __WORDSIZE == 64 ) || defined (__APPLE__)
+    #define IGORLONG int
+#else
+    #define IGORLONG long
+#endif
+
 int CPCreateFile(const char* fullFilePath, int overwrite);
 int CPDeleteFile(const char* fullFilePath);
 int CPOpenFile(const char* fullFilePath, int readOrWrite, CP_FILE_REF* fileRefPtr);

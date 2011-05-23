@@ -29,6 +29,7 @@
 #include "./filelib/atflib.h"
 #include "./filelib/axglib.h"
 #include "./filelib/hekalib.h"
+#include "./filelib/igorlib.h"
 #ifdef WITH_BIOSIG
 #include "./filelib/biosiglib.h"
 #endif
@@ -143,8 +144,12 @@ bool stf::exportFile(const wxString& fName, stf::filetype type, const Recording&
             stf::exportHDF5File(fName, Data);
             break;
         }
+        case stf::igor: {
+            stf::exportIGORFile(fName, Data);
+            break;
+        }
         default:
-            throw std::runtime_error("Only hdf5 is supported for writing at present.");
+            throw std::runtime_error("Only hdf5 and IGOR are supported for writing at present.");
         }
     }
     catch (...) {

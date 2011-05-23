@@ -57,15 +57,15 @@ CPCreateFile(const char* fullFilePath, int overwrite)
 #if 1//def WIN32
 	{
 		HANDLE fileH;
-		long accessMode, shareMode;
 		
 		err = 0;
+#ifdef _WINDOWS
+		long accessMode, shareMode;
 		accessMode = GENERIC_READ | GENERIC_WRITE;
 		shareMode = 0;
-#ifdef _WINDOWS
 		fileH = CreateFileA(fullFilePath, accessMode, shareMode, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
 #else
-		fileH = c_CreateFile(fullFilePath, accessMode, shareMode, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		fileH = fopen(fullFilePath, "w+b");
 #endif
 		if (fileH == INVALID_HANDLE_VALUE)
 #ifdef _WINDOWS
@@ -77,7 +77,7 @@ CPCreateFile(const char* fullFilePath, int overwrite)
 #ifdef _WINDOWS
                     CloseHandle(fileH);
 #else
-                    c_CloseHandle(fileH);
+                    fclose(fileH);
 #endif
 		return err;
 	}
@@ -371,7 +371,7 @@ CPAtEndOfFile(CP_FILE_REF fileRef)
 int
 CPNumberOfBytesInFile(CP_FILE_REF fileRef, unsigned long* numBytesPtr)
 {
-	long originalPos;
+        long originalPos;
 
 	originalPos = ftell(fileRef);
 	if (fseek(fileRef, 0, SEEK_END) != 0)
