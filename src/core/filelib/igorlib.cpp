@@ -217,7 +217,7 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
                        &cpData[n_s*wh.nDim[0]] );
         }
         err=WriteVersion5NumericWave( fr, &wh, &cpData[0], waveNote.c_str(),
-                                      (long)strlen(waveNote.c_str()) );
+                                      (long)waveNote.length() );
         if (err)
         {
             throw std::runtime_error( std::string(IGORError("Error in WriteVersion5NumericWave()\n", err).c_str()) );

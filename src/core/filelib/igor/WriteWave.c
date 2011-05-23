@@ -170,12 +170,15 @@ WriteVersion5NumericWave(CP_FILE_REF fr, WaveHeader5* whp, const void* data, con
 		return -1;
 	}
 	waveDataSize = whp->npnts * numBytesPerPoint;
+        printf("wfmSize: %d\n", waveDataSize);
 	// Prepare the BinHeader structure.
 	memset(&bh,0,sizeof(struct BinHeader5));
 	bh.version = 5;
 	bh.wfmSize = offsetof(WaveHeader5, wData) + waveDataSize;
+        printf("wfmSize: %d\n", bh.wfmSize);
 	bh.noteSize = noteSize;
-
+        printf("noteSize: %d\n", bh.noteSize);
+        
 	/*	The checksum is over the BinHeader5 structure and the WaveHeader5 structure,
 		excluding the wData field.
 	*/
