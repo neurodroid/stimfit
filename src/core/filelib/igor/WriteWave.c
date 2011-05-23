@@ -100,7 +100,7 @@ WriteVersion2NumericWave(CP_FILE_REF fr, WaveHeader2* whp, const void* data, con
 	cksum = Checksum((short *)&bh, 0, sizeof(struct BinHeader2));
 	cksum = Checksum((short *)whp, cksum, sizeof(struct WaveHeader2));
 	bh.checksum = -cksum;
-	
+
 	do {
 		// Write the BinHeader.
 		numBytesToWrite = sizeof(struct BinHeader2);
@@ -180,8 +180,11 @@ WriteVersion5NumericWave(CP_FILE_REF fr, WaveHeader5* whp, const void* data, con
 		excluding the wData field.
 	*/
 	cksum = Checksum((short *)&bh, 0, sizeof(BinHeader5));
+        printf("%d\n", cksum);
 	cksum = Checksum((short *)whp, cksum, offsetof(WaveHeader5, wData));
+        printf("%d\n", cksum);
 	bh.checksum = -cksum;
+        printf("%d\n", bh.checksum);
 	do {
 		// Write the BinHeader.
 		numBytesToWrite = sizeof(struct BinHeader5);
