@@ -158,7 +158,9 @@ WriteVersion5NumericWave(CP_FILE_REF fr, WaveHeader5* whp, const void* data, con
 
         printf("sizeof(short): %lu\n", sizeof(short));
         printf("sizeof(int): %lu\n", sizeof(int));
+        printf("sizeof(long): %lu\n", sizeof(long));
         printf("sizeof(IGORLONG): %lu\n", sizeof(IGORLONG));
+        printf("sizeof(unsigned long): %lu\n", sizeof(unsigned long));
         printf("sizeof(unsigned IGORLONG): %lu\n", sizeof(unsigned IGORLONG));
         printf("sizeof(float): %lu\n", sizeof(float));
         printf("sizeof(double): %lu\n", sizeof(double));
