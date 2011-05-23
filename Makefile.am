@@ -86,7 +86,7 @@ noinst_HEADERS = ./src/stfswig/stfioswig.h ./src/core/channel.h ./src/core/secti
             ./src/core/filelib/axg/fileUtils.h \
             ./src/core/filelib/axg/stringUtils.h \
             ./src/core/filelib/axg/byteswap.h \
-            ./src/core/filelib/axg/longdef.h
+            ./src/core/filelib/axg/longdef.h \
             ./src/core/filelib/igorlib.h \
             ./src/core/filelib/igor/CrossPlatformFileIO.h \
             ./src/core/filelib/igor/IgorBin.h
