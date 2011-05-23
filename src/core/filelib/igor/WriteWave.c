@@ -155,7 +155,7 @@ WriteVersion5NumericWave(CP_FILE_REF fr, WaveHeader5* whp, const void* data, con
 	short cksum;
 	BinHeader5 bh;
 	int err;
-
+#ifdef _STFDEBUG
         printf("sizeof(short): %lu\n", sizeof(short));
         printf("sizeof(int): %lu\n", sizeof(int));
         printf("sizeof(long): %lu\n", sizeof(long));
@@ -164,30 +164,41 @@ WriteVersion5NumericWave(CP_FILE_REF fr, WaveHeader5* whp, const void* data, con
         printf("sizeof(unsigned IGORLONG): %lu\n", sizeof(unsigned IGORLONG));
         printf("sizeof(float): %lu\n", sizeof(float));
         printf("sizeof(double): %lu\n", sizeof(double));
+        printf("sizeof(void): %lu\n", sizeof(void));
+        printf("sizeof(void*): %lu\n", sizeof(void*));
+        printf("sizeof(void**): %lu\n", sizeof(void**));
+#endif        
 	numBytesPerPoint = NumBytesPerPoint(whp->type);
 	if (numBytesPerPoint <= 0) {
 		printf("Invalid wave type (0x%x).\n", whp->type);
 		return -1;
 	}
 	waveDataSize = whp->npnts * numBytesPerPoint;
-        printf("wfmSize: %d\n", waveDataSize);
+
 	// Prepare the BinHeader structure.
 	memset(&bh,0,sizeof(struct BinHeader5));
 	bh.version = 5;
 	bh.wfmSize = offsetof(WaveHeader5, wData) + waveDataSize;
-        printf("wfmSize: %d\n", bh.wfmSize);
 	bh.noteSize = noteSize;
+#ifdef _STFDEBUG
+        printf("waveDataSize: %d\n", waveDataSize);
+        printf("wfmSize: %d\n", bh.wfmSize);
         printf("noteSize: %d\n", bh.noteSize);
+#endif        
         
 	/*	The checksum is over the BinHeader5 structure and the WaveHeader5 structure,
 		excluding the wData field.
 	*/
 	cksum = Checksum((short *)&bh, 0, sizeof(BinHeader5));
+#ifdef _STFDEBUG
         printf("%d\n", cksum);
+#endif        
 	cksum = Checksum((short *)whp, cksum, offsetof(WaveHeader5, wData));
-        printf("%d\n", cksum);
 	bh.checksum = -cksum;
+#ifdef _STFDEBUG
+        printf("%d\n", cksum);
         printf("%d\n", bh.checksum);
+#endif        
 	do {
 		// Write the BinHeader.
 		numBytesToWrite = sizeof(struct BinHeader5);

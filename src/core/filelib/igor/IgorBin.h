@@ -9,6 +9,9 @@ extern "C" {
 #if GENERATINGPOWERPC
 	#pragma options align=mac68k
 #endif
+
+#define C_ASSERT(e) extern void __C_ASSERT__(int [(e)?1:-1])
+
 #if 1 // def WIN32
 	#pragma pack(2)
 #endif
@@ -123,8 +126,11 @@ typedef WavePtr2 *waveHandle2;
 
 
 struct WaveHeader5 {
+#ifdef _WINDOWS
 	struct WaveHeader5 **next;			// link to next wave in linked list.
-
+#else
+        int next;
+#endif
 	unsigned IGORLONG creationDate;			// DateTime of creation.
 	unsigned IGORLONG modDate;				// DateTime of last modification.
 
@@ -135,9 +141,13 @@ struct WaveHeader5 {
 	char whpad1[6];						// Reserved. Write zero. Ignore on read.
 	short whVersion;					// Write 1. Ignore on read.
 	char bname[MAX_WAVE_NAME5+1];		// Name of wave plus trailing null.
-	IGORLONG whpad2;						// Reserved. Write zero. Ignore on read.
+        IGORLONG whpad2;						// Reserved. Write zero. Ignore on read.
+#ifdef _WINDOWS    
 	struct DataFolder **dFolder;		// Used in memory only. Write zero. Ignore on read.
-
+#else
+        int dFolder;		// Used in memory only. Write zero. Ignore on read.
+#endif
+    
 	// Dimensioning info. [0] == rows, [1] == cols etc
 	IGORLONG nDim[MAXDIMS];					// Number of of items in a dimension -- 0 means no data.
 	double sfA[MAXDIMS];				// Index value for element e of dimension d = sfA[d]*e + sfB[d].
@@ -151,11 +161,17 @@ struct WaveHeader5 {
 	short whpad3;						// Reserved. Write zero. Ignore on read.
 	double topFullScale,botFullScale;	// The max and max full scale value for wave.
 
+#ifdef _WINDOWS
 	Handle dataEUnits;					// Used in memory only. Write zero. Ignore on read.
 	Handle dimEUnits[MAXDIMS];			// Used in memory only. Write zero. Ignore on read.
 	Handle dimLabels[MAXDIMS];			// Used in memory only. Write zero. Ignore on read.
-	
 	Handle waveNoteH;					// Used in memory only. Write zero. Ignore on read.
+#else	
+	int dataEUnits;					// Used in memory only. Write zero. Ignore on read.
+	int dimEUnits[MAXDIMS];			// Used in memory only. Write zero. Ignore on read.
+	int dimLabels[MAXDIMS];			// Used in memory only. Write zero. Ignore on read.
+	int waveNoteH;					// Used in memory only. Write zero. Ignore on read.
+#endif
 	IGORLONG whUnused[16];					// Reserved. Write zero. Ignore on read.
 
 	// The following stuff is considered private to Igor.
@@ -166,18 +182,26 @@ struct WaveHeader5 {
 	
 	char useBits;						// Used in memory only. Write zero. Ignore on read.
 	char kindBits;						// Reserved. Write zero. Ignore on read.
+#ifdef _WINDOWS        
 	void **formula;						// Used in memory only. Write zero. Ignore on read.
+#else
+        int formula;
+#endif
 	IGORLONG depID;							// Used in memory only. Write zero. Ignore on read.
 	
 	short whpad4;						// Reserved. Write zero. Ignore on read.
 	short srcFldr;						// Used in memory only. Write zero. Ignore on read.
+#ifdef _WINDOWS        
 	Handle fileName;					// Used in memory only. Write zero. Ignore on read.
-	
 	IGORLONG **sIndices;					// Used in memory only. Write zero. Ignore on read.
-
+#else	
+	int fileName;					// Used in memory only. Write zero. Ignore on read.
+	int sIndices;					// Used in memory only. Write zero. Ignore on read.
+#endif
 	float wData[1];						// The start of the array of data. Must be 64 bit aligned.
 };
 typedef struct WaveHeader5 WaveHeader5;
+
 typedef WaveHeader5 *WavePtr5;
 typedef WavePtr5 *WaveHandle5;
 
