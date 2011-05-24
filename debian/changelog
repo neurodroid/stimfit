@@ -1,3 +1,21 @@
+stimfit (0.10.15-0ubuntu3) lucid; urgency=low
+
+  * Igor file export
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Tue, 24 May 2011 23:42:50 +0000
+
+stimfit (0.10.15-0ubuntu2) maverick; urgency=low
+
+  * Igor file export
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Tue, 24 May 2011 22:36:01 +0000
+
+stimfit (0.10.15-0ubuntu1) natty; urgency=low
+
+  * Igor file export
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Tue, 24 May 2011 22:45:06 +0000
+
 stimfit (0.10.14-0ubuntu1) lucid; urgency=low
 
   * Use unified menu on GTK to resolve problems with Unity

@@ -31,12 +31,12 @@ clean:
 
 install: build
 	./configure --enable-python --enable-debian --prefix=$(DEBPREFIX)
-	$(MAKE)
+	$(MAKE) -j4
 	$(MAKE) check
 	$(MAKE) install
 
 	./configure --enable-module --enable-debian --prefix=$(DEBPREFIX)
-	$(MAKE)
+	$(MAKE) -j4
 	$(MAKE) install
 
 	mkdir $(CURDIR)/man && \
