@@ -772,7 +772,7 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
                      stf::exportATFFile( destFilename, sourceFile );
                      break;
                  case stf::igor:
-                     stf::exportIGORFile( std::string(destFilename), sourceFile );
+                     stf::exportIGORFile( destFilename, sourceFile );
                      break;
                  default:
                      wxString errorMsg(wxT("Unknown export file type\n"));
