@@ -182,6 +182,7 @@ bool wxStfApp::OnInit(void)
                                      wxT("Axograph binary file"), wxT("*.axgd;*.axgx"), wxT(""), wxT("axgd;axgx"),
                                      wxT("AXG Document"), wxT("AXG View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
+
     m_hekaTemplate=new wxDocTemplate( docManager,
                                      wxT("HEKA file"), wxT("*.dat"), wxT(""), wxT("dat"),
                                      wxT("HEKA Document"), wxT("HEKA View"), CLASSINFO(wxStfDoc),
@@ -232,10 +233,10 @@ bool wxStfApp::OnInit(void)
 
     m_file_menu->Append(wxID_OPEN);
     
-#ifdef _WINDOWS
+//#ifdef _WINDOWS
     m_file_menu->AppendSeparator();
     m_file_menu->Append(ID_CONVERT, wxT("&Convert file series..."));
-#endif
+//#endif
 #ifdef WITH_PYTHON
     m_file_menu->AppendSeparator();
     m_file_menu->Append(

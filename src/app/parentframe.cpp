@@ -63,8 +63,10 @@
 #include "./printout.h"
 #include "./dlgs/smalldlgs.h"
 #include "./copygrid.h"
+//#ifdef _WINDOWS
 #include "./../core/filelib/atflib.h"
 #include "./../core/filelib/igorlib.h"
+//#endif
 
 #include "./childframe.h"
 #include "./parentframe.h"
@@ -141,7 +143,9 @@ EVT_TOOL(ID_TOOL_LATENCY,wxStfParentFrame::OnToolLatency)
 EVT_TOOL(ID_TOOL_ZOOM,wxStfParentFrame::OnToolZoom)
 EVT_TOOL(ID_TOOL_EVENT,wxStfParentFrame::OnToolEvent)
 
+//#ifdef _WINDOWS
 EVT_MENU(ID_CONVERT, wxStfParentFrame::OnConvert)
+//#endif
 EVT_MENU(ID_AVERAGE, wxStfParentFrame::OnAverage)
 EVT_MENU(ID_ALIGNEDAVERAGE, wxStfParentFrame::OnAlignedAverage)
 EVT_MENU( ID_VIEW_RESULTS, wxStfParentFrame::OnViewResults)
@@ -698,6 +702,7 @@ void wxStfParentFrame::OnCheckUpdate(wxCommandEvent& WXUNUSED(event) )
     CheckUpdate( &progDlg );
 }
 
+//#ifdef _WINDOWS
 void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
     // Choose file type:
     std::vector< wxString > choices(2);
@@ -769,10 +774,10 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
                 stf::importFile(srcFilenames[nFile], ift, sourceFile, wxGetApp().GetTxtImport());
                 switch ( eft ) {
                  case stf::atf:
-                     stf::exportATFFile( destFilename, sourceFile );
+                     stf::exportATFFile( std::string(destFilename), sourceFile );
                      break;
                  case stf::igor:
-                     stf::exportIGORFile( destFilename, sourceFile );
+ //                    stf::exportIGORFile( std::string(destFilename), sourceFile );
                      break;
                  default:
                      wxString errorMsg(wxT("Unknown export file type\n"));
@@ -795,6 +800,7 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
         }
     }
 }
+//#endif
 
 // Creates a graph. Called from view.cpp when a new drawing
 // view is created.
