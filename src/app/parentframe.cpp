@@ -774,7 +774,7 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
                 stf::importFile(srcFilenames[nFile], ift, sourceFile, wxGetApp().GetTxtImport());
                 switch ( eft ) {
                  case stf::atf:
-                     stf::exportATFFile( std::string(destFilename), sourceFile );
+                     stf::exportATFFile(destFilename, sourceFile );
                      break;
                  case stf::igor:
  //                    stf::exportIGORFile( std::string(destFilename), sourceFile );
