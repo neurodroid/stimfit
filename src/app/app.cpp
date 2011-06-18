@@ -534,10 +534,10 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     //	file_menu->Append(wxID_SAVE, wxT("&Save"));
     file_menu->Append(wxID_SAVEAS);
 
-#ifdef _WINDOWS
+//#ifdef _WINDOWS
     file_menu->AppendSeparator();
     file_menu->Append(ID_CONVERT, wxT("&Convert file series..."));
-#endif
+//#endif
     file_menu->AppendSeparator();
     file_menu->Append(ID_FILEINFO, wxT("File information..."));
 
