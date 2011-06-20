@@ -46,7 +46,7 @@ stf::findType(const wxString& ext) {
     else if (ext==wxT("*.axgd;*.axgx")) return stf::axg;
     else if (ext==wxT("*.h5")) return stf::hdf5;
     else if (ext==wxT("*.atf")) return stf::atf;
-   // else if (ext==wxT("*.dat")) return stf::heka;
+    else if (ext==wxT("*.dat")) return stf::heka;
     else if (ext==wxT("*.smr")) return stf::son;
 
 #ifdef WITH_BIOSIG

@@ -1161,11 +1161,6 @@ void wxStfConvertDlg::OnComboBoxExt(wxCommandEvent& event){
             srcFilterExt =  stf::none;
             srcFilter = wxT("*.*");
     }
-       
-     
-    //std::cout<<pComboBox->GetSelection()<<std::endl;
-    std::cout<<srcFilterExt<<std::endl;
-    std::cout<<srcFilter<<std::endl;
 
 }
 
