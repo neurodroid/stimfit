@@ -20,3 +20,10 @@ Wed May 11 09:23:14 CEST 2011
 * Add Analysis toolbar to the Extensions menu
 * There is a problem with the zero-based index
 * When pressing L, change latency measurements to manual
+
+
+Sun Jun 19 08:58:13 CEST 2011
+Bugs reported by Stephanie
+* in stf.show_table_dictlist() the ordering of the dictionary list in the grid is random; the elements of the dictionary will not appear in the grid as they are written in the dictionary, nor appear alphabetically as in stf.shot_table. Besides that,
+the key of the dictionary doest not show in the column (it says A, B and so on).
+

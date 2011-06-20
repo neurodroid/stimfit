@@ -787,14 +787,17 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
                      return;
                 }
             }
-            catch (const std::runtime_error& e) {
+           catch (const std::runtime_error& e) {
                 wxString errorMsg(wxT("Error opening file\n"));
-                errorMsg += wxString( e.what(),wxConvLocal );
+                errorMsg += wxT("Runtime Error\n");
+                errorMsg += wxString( e.what(), wxConvLocal );
                 wxGetApp().ExceptMsg(errorMsg);
                 return;
             }
+
             catch (const std::exception& e) {
                 wxString errorMsg(wxT("Error opening file\n"));
+                errorMsg += wxT("Exception\n");
                 errorMsg += wxString( e.what(), wxConvLocal );
                 wxGetApp().ExceptMsg(errorMsg);
                 return;

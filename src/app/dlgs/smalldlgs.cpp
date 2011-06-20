@@ -1057,7 +1057,7 @@ srcFileNames(0)
             this,
             wxID_ANY,
             wxEmptyString,
-            _T("Choose source directory:"),
+            wxT("Choose source directory:"),
             wxDefaultPosition,
             wxDefaultSize,
             wxDIRP_USE_TEXTCTRL
@@ -1115,6 +1115,7 @@ bool wxStfConvertDlg::OnOK() {
     srcFilter << wxT("*.") << m_textCtrlSrcFilter->GetValue();
     srcDir = m_srcDirPicker->GetPath();
     destDir = m_destDirPicker->GetPath();
+
     if (!wxDir::Exists(srcDir)) {
         wxString msg;
         msg << srcDir << wxT(" doesn't exist");
@@ -1127,6 +1128,7 @@ bool wxStfConvertDlg::OnOK() {
         wxLogMessage(msg);
         return false;
     }
+
     if (!ReadPath(srcDir)) {
         wxString msg;
         msg << srcDir <<  wxT(" doesn't contain\n")
