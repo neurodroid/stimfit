@@ -704,7 +704,7 @@ void wxStfParentFrame::OnCheckUpdate(wxCommandEvent& WXUNUSED(event) )
 
 //#ifdef _WINDOWS
 void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
-    // Choose file type:
+    // Choose export file type:
     std::vector< wxString > choices(2);
     choices[0] = wxT("Axon text file (*.atf)");
     choices[1] = wxT("Igor binary wave (*.ibw)");

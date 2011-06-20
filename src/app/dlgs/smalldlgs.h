@@ -682,7 +682,7 @@ public:
      *  \param size Initial size.
      *  \param style Dialog style.
      */
-    wxStfConvertDlg( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("Convert CFS files"),
+    wxStfConvertDlg( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("Convert file series"),
             wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxCAPTION );
 
     //! Get the source directory.
