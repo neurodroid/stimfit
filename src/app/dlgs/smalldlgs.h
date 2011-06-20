@@ -663,10 +663,15 @@ class wxStfConvertDlg : public wxDialog
 private:
     wxDirPickerCtrl *m_srcDirPicker,*m_destDirPicker;
     wxTextCtrl *m_textCtrlSrcFilter;
-    wxString srcDir,destDir,srcFilter;
+    wxComboBox *m_ComboBoxExt;
+    wxString srcDir,destDir;
+    wxString srcFilter;
+    stf::filetype srcFilterExt;
     std::vector<wxString> srcFileNames;
 
     bool ReadPath(const wxString& path);
+
+    void OnComboBoxExt(wxCommandEvent& event);
 
     //! Only called when a modal dialog is closed with the OK button.
     /*! \return true if all dialog entries could be read successfully
@@ -700,6 +705,8 @@ public:
      */
     wxString GetSrcFilter() const {return srcFilter;}
 
+    stf::filetype GetSrcFileExt() const {return srcFilterExt;}
+
     //! Get the list of file names.
     /*! \return A vector with source file names.
      */
@@ -710,6 +717,7 @@ public:
      *         (e.g. wxID_OK)
      */
     virtual void EndModal(int retCode);
+
 };
 
 class wxListCtrl;

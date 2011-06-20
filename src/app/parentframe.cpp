@@ -705,6 +705,7 @@ void wxStfParentFrame::OnCheckUpdate(wxCommandEvent& WXUNUSED(event) )
 //#ifdef _WINDOWS
 void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
     // Choose export file type:
+    //TODO: Add this dialog in wxStfConvertDlg
     std::vector< wxString > choices(2);
     choices[0] = wxT("Axon text file (*.atf)");
     choices[1] = wxT("Igor binary wave (*.ibw)");
@@ -723,9 +724,14 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
      default:
          eft = stf::atf;
     }
+    // "Convert files" Dialog (see wxStfConvertDlg in smalldlgs.cpp)
     wxStfConvertDlg myDlg(this);
     if(myDlg.ShowModal()==wxID_OK) {
-		stf::filetype ift = stf::findType( myDlg.GetSrcFilter() );
+
+        //std::cout << stf::findType(myDlg.GetSrcFilter()) << std::endl;
+        std::cout << myDlg.GetSrcFileExt() << std::endl;
+		//stf::filetype ift = stf::findType( myDlg.GetSrcFilter() );
+		stf::filetype ift = myDlg.GetSrcFileExt();
 		wxMessageDialog Simple(this, myDlg.GetSrcFilter());
 		Simple.ShowModal();
         wxProgressDialog progDlg( wxT("CFS conversion utility"), wxT("Starting file conversion"),

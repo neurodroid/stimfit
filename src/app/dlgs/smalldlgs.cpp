@@ -1030,11 +1030,17 @@ void wxStfTextImportDlg::OnComboSecorch( wxCommandEvent& event ) {
     m_toSection=(m_comboBoxSecorch->GetCurrentSelection()==0);
     disableSenseless();
 }
+// HERE STARTS wxStConvertDlg class
+enum {
+    wxCOMBOBOX_EXT
+};
 
 BEGIN_EVENT_TABLE( wxStfConvertDlg, wxDialog )
+EVT_COMBOBOX( wxCOMBOBOX_EXT, wxStfConvertDlg::OnComboBoxExt)
 END_EVENT_TABLE()
 
 wxStfConvertDlg::wxStfConvertDlg(wxWindow* parent, int id, wxString title, wxPoint pos,
+    // "Convert files" Dialog
         wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ), m_srcDirPicker(NULL), m_destDirPicker(NULL),
 m_textCtrlSrcFilter(NULL), srcDir(wxT("")), destDir(wxT("")),srcFilter(wxT("")),
@@ -1065,21 +1071,32 @@ srcFileNames(0)
     gridSizer->Add(m_srcDirPicker, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
     // Extension of source files-----------------------------------------
-    wxStaticText* staticTextSrcFilter;
-    staticTextSrcFilter=new wxStaticText( this, wxID_ANY,
-            wxT("Source files extension filter (e.g. \"abf\"):\n(case-sensitive)"), wxDefaultPosition,
-            wxDefaultSize, 0 );
-    gridSizer->Add( staticTextSrcFilter, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
-    m_textCtrlSrcFilter=new wxTextCtrl( this, wxID_ANY, wxT("abf"), wxDefaultPosition, wxSize(64,20),
-            wxTE_LEFT );
-    gridSizer->Add( m_textCtrlSrcFilter, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    // ---- START: My wxComboBox to select the source file extension
+    wxStaticText* staticTextExt;
+    staticTextExt = new wxStaticText( this, wxID_ANY, wxT("Select extension:"),
+            wxDefaultPosition, wxDefaultSize, 0 );
+    wxArrayString myextensions; //ordered alphabetically
+    myextensions.Add(wxT("Axon binary   [*.abf ]"));
+    myextensions.Add(wxT("Axograph      [*.axgd]"));
+    myextensions.Add(wxT("Axon textfile [*.atf ]"));
+    myextensions.Add(wxT("ASCII         [*.*   ]"));
+    myextensions.Add(wxT("CFS binary    [*.dat ]"));
+    myextensions.Add(wxT("HDF5          [*.h5  ]"));
+    myextensions.Add(wxT("HEKA files    [*.dat ]"));
+    wxComboBox* m_ComboBoxExt = new wxComboBox(this, wxCOMBOBOX_EXT, wxT("CFS binary   [*.dat]"), 
+        wxDefaultPosition, wxDefaultSize, myextensions, wxCB_READONLY);
+    // add to sizer
+    gridSizer->Add( staticTextExt, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    gridSizer->Add( m_ComboBoxExt, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    // ---- END: My wxComboBox to select the source file extension
 
     // Dest dir----------------------------------------------------------
     wxStaticText* staticTextDestDir;
     staticTextDestDir=new wxStaticText( this, wxID_ANY, wxT("Choose destination directory:"),
             wxDefaultPosition, wxDefaultSize, 0 );
     gridSizer->Add( staticTextDestDir, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+
 
     m_destDirPicker=new wxDirPickerCtrl( this, wxID_ANY, wxEmptyString,
             wxT("Choose destination directory:"), wxDefaultPosition, wxDefaultSize,
@@ -1101,6 +1118,57 @@ srcFileNames(0)
     this->Layout();
 }
 
+void wxStfConvertDlg::OnComboBoxExt(wxCommandEvent& event){
+
+    event.Skip();
+    wxComboBox* pComboBox = (wxComboBox*)FindWindow(wxCOMBOBOX_EXT);
+    if (pComboBox == NULL) {
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxStfConvertDlg::GetSrcFileExt()"));
+        return;
+    }
+
+    // update srcFilterExt and srcFilter
+    switch(pComboBox->GetSelection()){
+        case 0:
+            srcFilterExt =  stf::abf;
+            srcFilter = wxT("*.abf");
+            break;
+        case 1:
+            srcFilterExt = stf::axg;
+            srcFilter = wxT("*.axg");
+            break;
+        case 2:
+            srcFilterExt =  stf::atf;
+            srcFilter = wxT("*.atf");
+            break;
+        case 3: 
+            srcFilterExt =  stf::ascii;
+            srcFilter = wxT("*.*");
+            break;
+        case 4: 
+            srcFilterExt =  stf::cfs;
+            srcFilter = wxT("*.dat");
+            break;
+        case 5: 
+            srcFilterExt =  stf::hdf5;
+            srcFilter = wxT("*.h5");
+            break;
+        case 6: 
+            srcFilterExt =  stf::heka;
+            srcFilter = wxT("*.dat");
+            break;
+        default:   
+            srcFilterExt =  stf::none;
+            srcFilter = wxT("*.*");
+    }
+       
+     
+    //std::cout<<pComboBox->GetSelection()<<std::endl;
+    std::cout<<srcFilterExt<<std::endl;
+    std::cout<<srcFilter<<std::endl;
+
+}
+
 void wxStfConvertDlg::EndModal(int retCode) {
     // similar to overriding OnOK in MFC (I hope...)
     if (retCode==wxID_OK) {
@@ -1112,7 +1180,7 @@ void wxStfConvertDlg::EndModal(int retCode) {
 }
 
 bool wxStfConvertDlg::OnOK() {
-    srcFilter << wxT("*.") << m_textCtrlSrcFilter->GetValue();
+    //srcFilter << wxT("*.") << m_textCtrlSrcFilter->GetValue();
     srcDir = m_srcDirPicker->GetPath();
     destDir = m_destDirPicker->GetPath();
 
@@ -1131,8 +1199,9 @@ bool wxStfConvertDlg::OnOK() {
 
     if (!ReadPath(srcDir)) {
         wxString msg;
-        msg << srcDir <<  wxT(" doesn't contain\n")
-			<<  srcFilter <<  wxT(" files");
+        msg << wxT("File type not found in ") << srcDir;
+        // <<  wxT(" doesn't contain\n")
+		//	<<  srcFilter <<  wxT(" files");
         wxLogMessage(msg);
         return false;
     }
