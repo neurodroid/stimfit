@@ -1032,33 +1032,96 @@ void wxStfTextImportDlg::OnComboSecorch( wxCommandEvent& event ) {
 }
 // HERE STARTS wxStConvertDlg class
 enum {
-    wxCOMBOBOX_EXT
+    wxCOMBOBOX_SRC,
+    wxCOMBOBOX_DEST,
+    wxGENERICDIRCTRL_SRC,
+    wxGENERICDIRCTRL_DEST
 };
 
 BEGIN_EVENT_TABLE( wxStfConvertDlg, wxDialog )
-EVT_COMBOBOX( wxCOMBOBOX_EXT, wxStfConvertDlg::OnComboBoxExt)
+EVT_COMBOBOX( wxCOMBOBOX_SRC,  wxStfConvertDlg::OnComboBoxSrcExt)
+EVT_COMBOBOX( wxCOMBOBOX_DEST, wxStfConvertDlg::OnComboBoxDestExt)
 END_EVENT_TABLE()
 
+// wxStfConvertDlg constructor 
 wxStfConvertDlg::wxStfConvertDlg(wxWindow* parent, int id, wxString title, wxPoint pos,
-    // "Convert files" Dialog
         wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ), m_srcDirPicker(NULL), m_destDirPicker(NULL),
-m_textCtrlSrcFilter(NULL), srcDir(wxT("")), destDir(wxT("")),srcFilter(wxT("")), srcFilterExt(stf::cfs),
+m_textCtrlSrcFilter(NULL), 
+#ifdef __LINUX__
+srcDir(wxT("/home")), destDir(wxT("/home")),
+#else
+srcDir(wxT("C:\\")), destDir(wxT("C:\\")),
+#endif
+
+srcFilter(wxT("")), srcFilterExt(stf::cfs), destFilterExt(stf::igor),
 srcFileNames(0)
 
 {
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
 
-    wxFlexGridSizer *gridSizer;
-    gridSizer = new wxFlexGridSizer(2,2,0,10);
+    //wxFlexGridSizer *gridSizer; 
+    //gridSizer = new wxFlexGridSizer(2,2,0,10);
 
-    // Source dir------------------------------------------------------
-    wxStaticText* staticTextSrcDir;
-    staticTextSrcDir=new wxStaticText( this, wxID_ANY, wxT("Choose source directory:"),
+    wxFlexGridSizer *gridSizer; 
+    gridSizer = new wxFlexGridSizer(1,2,0,0);
+
+    // SOURCE dir ------------------------------------------------------
+    // wxFlexGridSizer to place a 1) combo + 2) directory listing
+    wxFlexGridSizer *myLeftSizer; // this is a sizer for the left side 
+    myLeftSizer = new wxFlexGridSizer(2, 1, 0, 0);
+
+    // 1.- wxComboBox to select the source file extension
+    wxFlexGridSizer *mySrcComboSizer; // a sizer for my Combo
+    mySrcComboSizer = new wxFlexGridSizer(1, 2, 0, 0); 
+
+    wxStaticText* staticTextExt;
+    staticTextExt = new wxStaticText( this, wxID_ANY, wxT("Origin filetype:"),
             wxDefaultPosition, wxDefaultSize, 0 );
-    gridSizer->Add( staticTextSrcDir, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
+    wxArrayString myextensions; //ordered alphabetically
+    myextensions.Add(wxT("Axon binary   [*.abf ]"));
+    myextensions.Add(wxT("Axograph      [*.axgd]"));
+    myextensions.Add(wxT("Axon textfile [*.atf ]"));
+    myextensions.Add(wxT("ASCII         [*.*   ]"));
+    myextensions.Add(wxT("CFS binary    [*.dat ]"));
+    myextensions.Add(wxT("HDF5          [*.h5  ]"));
+    myextensions.Add(wxT("HEKA files    [*.dat ]"));
+
+    wxComboBox* myComboBoxExt;
+    myComboBoxExt = new wxComboBox(this, wxCOMBOBOX_SRC, wxT("CFS binary   [*.dat]"), 
+        wxDefaultPosition, wxDefaultSize, myextensions, wxCB_READONLY);
+    // add to mySrcComboSizer
+    mySrcComboSizer->Add( staticTextExt, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    mySrcComboSizer->Add( myComboBoxExt, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    // add to myLeftSizer
+    myLeftSizer->Add( mySrcComboSizer, 0, wxEXPAND | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    // ---- wxComboBox to select the source file extension
+
+    
+    // 2.- A wxGenericDirCtrl to select the source directory:
+
+    //wxGenericDirCtrl *mySrcDirCtrl; 
+    mySrcDirCtrl = new wxGenericDirCtrl(this, wxGENERICDIRCTRL_SRC, srcDir,
+        wxDefaultPosition, wxSize(300,300), wxDIRCTRL_DIR_ONLY);
+    // add to myLeftSizer
+    myLeftSizer->Add( mySrcDirCtrl, 0, wxEXPAND | wxALL , 2 );
+    // ---- A wxGenericDirCtrl to select the source directory:
+
+    // Finally add myLeftSizer to the gridSizer
+    gridSizer->Add( myLeftSizer, 0, wxALIGN_LEFT, 5 );
+    //topSizer->Add( gridSizer, 0, wxALIGN_CENTER, 5 );
+    
+    
+
+    // old code
+    //wxStaticText* staticTextSrcDir;
+    //staticTextSrcDir=new wxStaticText( this, wxID_ANY, wxT("Choose source directory:"),
+     //       wxDefaultPosition, wxDefaultSize, 0 );
+    //gridSizer->Add( staticTextSrcDir, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+
+    /*
     m_srcDirPicker=new wxDirPickerCtrl(
             this,
             wxID_ANY,
@@ -1068,46 +1131,73 @@ srcFileNames(0)
             wxDefaultSize,
             wxDIRP_USE_TEXTCTRL
     );
-    gridSizer->Add(m_srcDirPicker, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    */
+    //gridSizer->Add(m_srcDirPicker, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
     // Extension of source files-----------------------------------------
 
-    // ---- START: My wxComboBox to select the source file extension
-    wxStaticText* staticTextExt;
-    staticTextExt = new wxStaticText( this, wxID_ANY, wxT("Select extension:"),
+    // DESTINATION dir ----------------------------------------------------------
+    // wxFlexGridSizer to place a 1) combo + 2) directory listing
+    wxFlexGridSizer *myRightSizer; // this is a sizer for the right side
+    myRightSizer = new wxFlexGridSizer(2, 1, 0, 0);
+
+    
+    // 1.- wxComboBox to select the destiny file extension
+    wxFlexGridSizer *myDestComboSizer; // a sizer for my Combo
+    myDestComboSizer = new wxFlexGridSizer(1, 2, 0, 0); 
+
+    wxStaticText* staticTextDestExt;
+    staticTextDestExt = new wxStaticText( this, wxID_ANY, wxT("Destination filetype:"),
             wxDefaultPosition, wxDefaultSize, 0 );
-    wxArrayString myextensions; //ordered alphabetically
-    myextensions.Add(wxT("Axon binary   [*.abf ]"));
-    myextensions.Add(wxT("Axograph      [*.axgd]"));
-    myextensions.Add(wxT("Axon textfile [*.atf ]"));
-    myextensions.Add(wxT("ASCII         [*.*   ]"));
-    myextensions.Add(wxT("CFS binary    [*.dat ]"));
-    myextensions.Add(wxT("HDF5          [*.h5  ]"));
-    myextensions.Add(wxT("HEKA files    [*.dat ]"));
-    wxComboBox* m_ComboBoxExt = new wxComboBox(this, wxCOMBOBOX_EXT, wxT("CFS binary   [*.dat]"), 
-        wxDefaultPosition, wxDefaultSize, myextensions, wxCB_READONLY);
-    // add to sizer
-    gridSizer->Add( staticTextExt, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
-    gridSizer->Add( m_ComboBoxExt, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
-    // ---- END: My wxComboBox to select the source file extension
 
-    // Dest dir----------------------------------------------------------
-    wxStaticText* staticTextDestDir;
-    staticTextDestDir=new wxStaticText( this, wxID_ANY, wxT("Choose destination directory:"),
-            wxDefaultPosition, wxDefaultSize, 0 );
-    gridSizer->Add( staticTextDestDir, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    wxArrayString mydestextensions; //ordered alphabetically
+    mydestextensions.Add(wxT("Axon textfile [*.atf ]"));
+    mydestextensions.Add(wxT("Igor binary   [*.ibw ]"));
 
+    wxComboBox* myComboBoxDestExt;
+    myComboBoxDestExt = new wxComboBox(this, wxCOMBOBOX_DEST, wxT("Igor binary  [*.ibw]"), 
+        wxDefaultPosition, wxDefaultSize, mydestextensions, wxCB_READONLY);
+    // add to mySrcComboSizer
+    myDestComboSizer->Add( staticTextDestExt, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    myDestComboSizer->Add( myComboBoxDestExt, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    // add to myRightSizer
+    myRightSizer->Add( myDestComboSizer, 0, wxEXPAND | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    // ---- wxComboBox to select the source file extension
 
-    m_destDirPicker=new wxDirPickerCtrl( this, wxID_ANY, wxEmptyString,
-            wxT("Choose destination directory:"), wxDefaultPosition, wxDefaultSize,
-            wxDIRP_USE_TEXTCTRL );
-    gridSizer->Add(m_destDirPicker, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    // 2.- A wxGenericDirCtrl to select the destiny directory:
 
+    //wxGenericDirCtrl *myDestDirCtrl; 
+    myDestDirCtrl = new wxGenericDirCtrl(this, wxGENERICDIRCTRL_DEST, destDir,
+        wxDefaultPosition, wxSize(300,300), wxDIRCTRL_DIR_ONLY);
+    // add to myLeftSizer
+    myRightSizer->Add( myDestDirCtrl, 0, wxEXPAND | wxALL, 2 );
+    // ---- A wxGenericDirCtrl to select the source directory:
+
+    // Finally add myRightSizer to gridSizer and this to topSizer
+    gridSizer->Add( myRightSizer, 0, wxALIGN_RIGHT, 5);
     topSizer->Add( gridSizer, 0, wxALIGN_CENTER, 5 );
+
+    //wxStaticText* staticTextDestDir;
+    //staticTextDestDir=new wxStaticText( this, wxID_ANY, wxT("Choose destination directory:"),
+    //        wxDefaultPosition, wxDefaultSize, 0 );
+    //gridSizer->Add( staticTextDestDir, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+
+
+    //m_destDirPicker=new wxDirPickerCtrl( this, wxID_ANY, wxEmptyString,
+     //       wxT("Choose destination directory:"), wxDefaultPosition, wxDefaultSize,
+      //      wxDIRP_USE_TEXTCTRL );
+    //gridSizer->Add(m_destDirPicker, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+
+    //topSizer->Add( gridSizer, 0, wxALIGN_CENTER, 5 );
 
     // OK / Cancel buttons-----------------------------------------------
     wxStdDialogButtonSizer* sdbSizer = new wxStdDialogButtonSizer();
-    sdbSizer->AddButton( new wxButton( this, wxID_OK ) );
+    wxButton *myConvertButton;
+    myConvertButton = new wxButton( this, wxID_OK, wxT("C&onvert"));
+    // this for wxWidgets 2.9.1
+    //myConvertButton->SetBitmap(wxBitmap(wxT("icon_cross.png"), wxBITMAP_TYPE_PNG));
+
+    sdbSizer->AddButton(myConvertButton);
     sdbSizer->AddButton( new wxButton( this, wxID_CANCEL ) );
     sdbSizer->Realize();
     topSizer->Add( sdbSizer, 0, wxALIGN_CENTER | wxALL, 5 );
@@ -1117,13 +1207,34 @@ srcFileNames(0)
 
     this->Layout();
 }
+void wxStfConvertDlg::OnComboBoxDestExt(wxCommandEvent& event){
+    event.Skip();
 
-void wxStfConvertDlg::OnComboBoxExt(wxCommandEvent& event){
+    wxComboBox* pComboBox = (wxComboBox*)FindWindow(wxCOMBOBOX_DEST);
+    if (pComboBox == NULL) {
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxStfConvertDlg::OnComboBoxDestExt()"));
+        return;
+    }
+    // update destFilterExt and destFilter
+    switch(pComboBox->GetSelection()){
+        case 0:
+            destFilterExt =  stf::igor;
+            break;
+        case 1:
+            destFilterExt = stf::atf;
+            break;
+        default:
+            destFilterExt = stf::igor;
+}
+    std::cout<<destFilterExt << std::endl;
+}
+
+void wxStfConvertDlg::OnComboBoxSrcExt(wxCommandEvent& event){
 
     event.Skip();
-    wxComboBox* pComboBox = (wxComboBox*)FindWindow(wxCOMBOBOX_EXT);
+    wxComboBox* pComboBox = (wxComboBox*)FindWindow(wxCOMBOBOX_SRC);
     if (pComboBox == NULL) {
-        wxGetApp().ErrorMsg(wxT("Null pointer in wxStfConvertDlg::GetSrcFileExt()"));
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxStfConvertDlg::OnComboBoxSrcExt()"));
         return;
     }
 
@@ -1161,6 +1272,7 @@ void wxStfConvertDlg::OnComboBoxExt(wxCommandEvent& event){
             srcFilterExt =  stf::none;
             srcFilter = wxT("*.*");
     }
+    std::cout << srcFilterExt << std::endl;
 
 }
 
@@ -1176,8 +1288,10 @@ void wxStfConvertDlg::EndModal(int retCode) {
 
 bool wxStfConvertDlg::OnOK() {
     //srcFilter << wxT("*.") << m_textCtrlSrcFilter->GetValue();
-    srcDir = m_srcDirPicker->GetPath();
-    destDir = m_destDirPicker->GetPath();
+    //srcDir = m_srcDirPicker->GetPath();
+    //destDir = m_destDirPicker->GetPath();
+    srcDir = mySrcDirCtrl->GetPath();
+    destDir = myDestDirCtrl->GetPath();
 
     if (!wxDir::Exists(srcDir)) {
         wxString msg;

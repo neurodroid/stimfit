@@ -705,7 +705,7 @@ void wxStfParentFrame::OnCheckUpdate(wxCommandEvent& WXUNUSED(event) )
 //#ifdef _WINDOWS
 void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
     // Choose export file type:
-    //TODO: Add this dialog in wxStfConvertDlg
+    /*
     std::vector< wxString > choices(2);
     choices[0] = wxT("Axon text file (*.atf)");
     choices[1] = wxT("Igor binary wave (*.ibw)");
@@ -724,19 +724,28 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
      default:
          eft = stf::atf;
     }
+    */
+    int nfiles; // files to convert
+    wxString src_ext; // extension of the source file
+    wxString dest_ext; // extesion of the destiny file
+
     // "Convert files" Dialog (see wxStfConvertDlg in smalldlgs.cpp)
     wxStfConvertDlg myDlg(this);
     if(myDlg.ShowModal()==wxID_OK) {
-
-        //std::cout << stf::findType(myDlg.GetSrcFilter()) << std::endl;
-        std::cout << myDlg.GetSrcFileExt() << std::endl;
-		//stf::filetype ift = stf::findType( myDlg.GetSrcFilter() );
+        //std::cout << myDlg.GetSrcFileExt() << std::endl;
 		stf::filetype ift = myDlg.GetSrcFileExt();
-		wxMessageDialog Simple(this, myDlg.GetSrcFilter());
-		Simple.ShowModal();
+		stf::filetype eft = myDlg.GetDestFileExt();
+        src_ext = myDlg.GetSrcFilter();
+
+        // wxProgressDialog
         wxProgressDialog progDlg( wxT("CFS conversion utility"), wxT("Starting file conversion"),
             100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
+
         std::vector<wxString> srcFilenames(myDlg.GetSrcFileNames());
+        nfiles = srcFilenames.size(); // number of files to convert
+        wxString myDestDir = myDlg.GetDestDir();
+        std::cout << myDestDir.c_str() << std::endl;
+
         for (std::size_t nFile=0; nFile<srcFilenames.size(); ++nFile) {
             wxString progStr;
 
@@ -777,14 +786,18 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
                         wxGetApp().set_txtImportSettings(ImportDlg.GetTxtImport());
                     }
                 }
+
                 stf::importFile(srcFilenames[nFile], ift, sourceFile, wxGetApp().GetTxtImport());
+
                 switch ( eft ) {
                  case stf::atf:
                      stf::exportATFFile( destFilename, sourceFile );
+                     dest_ext = wxT("Axon textfile [*.atf]");
                      break;
 
                  case stf::igor:
                      stf::exportIGORFile( destFilename, sourceFile );
+                     dest_ext = wxT("Igor binary file [*.ibw]");
                      break;
 
                  default:
@@ -809,7 +822,17 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
                 return;
             }
         }
-    }
+    // Show now a smal information dialog
+    //std::count << srcFilter.c_str() << std::endl;
+    wxString msg;
+    msg = wxString::Format(wxT("%i"), nfiles);
+    msg << src_ext;
+    msg << wxT(" files \nwere converted to ");
+    msg << dest_ext;
+	wxMessageDialog Simple(this, msg);
+	Simple.ShowModal();
+    } // end of wxStfConvertDlg
+
 }
 //#endif
 

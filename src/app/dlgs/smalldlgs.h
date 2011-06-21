@@ -663,15 +663,17 @@ class wxStfConvertDlg : public wxDialog
 private:
     wxDirPickerCtrl *m_srcDirPicker,*m_destDirPicker;
     wxTextCtrl *m_textCtrlSrcFilter;
-    wxComboBox *m_ComboBoxExt;
+    //wxComboBox *m_ComboBoxExt;
+    wxGenericDirCtrl *mySrcDirCtrl, *myDestDirCtrl; 
     wxString srcDir,destDir;
-    wxString srcFilter;
-    stf::filetype srcFilterExt;
+
+    stf::filetype srcFilterExt, destFilterExt;
     std::vector<wxString> srcFileNames;
 
     bool ReadPath(const wxString& path);
 
-    void OnComboBoxExt(wxCommandEvent& event);
+    void OnComboBoxSrcExt(wxCommandEvent& event);
+    void OnComboBoxDestExt(wxCommandEvent& event);
 
     //! Only called when a modal dialog is closed with the OK button.
     /*! \return true if all dialog entries could be read successfully
@@ -687,6 +689,8 @@ public:
      *  \param size Initial size.
      *  \param style Dialog style.
      */
+
+    wxString srcFilter;
     wxStfConvertDlg( wxWindow* parent, int id = wxID_ANY, wxString title = wxT("Convert file series"),
             wxPoint pos = wxDefaultPosition, wxSize size = wxDefaultSize, int style = wxCAPTION );
 
@@ -705,7 +709,15 @@ public:
      */
     wxString GetSrcFilter() const {return srcFilter;}
 
+    //! Get the source extension as std::filetype.
+    /*! \return The source extension as std::filetype.
+     */
     stf::filetype GetSrcFileExt() const {return srcFilterExt;}
+
+    //! Get the destination extension as std::filetype.
+    /*! \return The destination extension as std::filetype.
+     */
+    stf::filetype GetDestFileExt() const {return destFilterExt;}
 
     //! Get the list of file names.
     /*! \return A vector with source file names.
