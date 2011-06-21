@@ -1043,7 +1043,7 @@ wxStfConvertDlg::wxStfConvertDlg(wxWindow* parent, int id, wxString title, wxPoi
     // "Convert files" Dialog
         wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ), m_srcDirPicker(NULL), m_destDirPicker(NULL),
-m_textCtrlSrcFilter(NULL), srcDir(wxT("")), destDir(wxT("")),srcFilter(wxT("")),
+m_textCtrlSrcFilter(NULL), srcDir(wxT("")), destDir(wxT("")),srcFilter(wxT("")), srcFilterExt(stf::cfs),
 srcFileNames(0)
 
 {
