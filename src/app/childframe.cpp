@@ -149,15 +149,15 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
 
     m_traceCounter = CreateTraceCounter(); // this is wxPanel
 
-    wxBoxSizer* TracesSizer; // top-level Sizer
-    TracesSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* TracesBoxSizer; // top-level Sizer
+    TracesBoxSizer = new wxBoxSizer(wxVERTICAL);
 
     wxGridSizer* TracesGridSizer; // top-level GridSizer
     TracesGridSizer = new wxGridSizer(3,1,0,0);
 
-    // Grid
-    wxFlexGridSizer* TraceGridSizer;
-    TraceGridSizer = new wxFlexGridSizer(1,2,0,0); // 1 row, 2 columns for the SpinCtrl + text
+    // Grid for spin control
+    wxFlexGridSizer* pSpinCtrlTraceSizer;
+    pSpinCtrlTraceSizer = new wxFlexGridSizer(1,2,0,0); // 1 row, 2 columns for the SpinCtrl + text
 
     // 1) the wxSpinCtrl object 
     trace_spinctrl = new wxSpinCtrl( m_traceCounter, ID_SPINCTRLTRACES, wxEmptyString, wxDefaultPosition,
@@ -172,8 +172,8 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
     sizeStr << wxT("of ") << wxString::Format(wxT("%3d"),(int)sizemax);
     pSize->SetLabel(sizeStr);
 
-    TraceGridSizer->Add( trace_spinctrl, 0, wxALIGN_LEFT  | wxALL, 1) ;
-    TraceGridSizer->Add( pSize,          0, wxALIGN_LEFT  | wxALIGN_CENTER | wxALL, 1) ;
+    pSpinCtrlTraceSizer->Add( trace_spinctrl, 0, wxALIGN_LEFT  | wxALL, 1) ;
+    pSpinCtrlTraceSizer->Add( pSize,          0, wxALIGN_LEFT  | wxALIGN_CENTER | wxALL, 1) ;
 
     // 2) Show zero-based index?
     pZeroIndex = new wxCheckBox( m_traceCounter, ID_ZERO_INDEX, wxT("Zero-based index") );
@@ -184,15 +184,15 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
     pShowSelected = new wxCheckBox( m_traceCounter, ID_PLOTSELECTED, wxT("Show selected "));
     pShowSelected->SetValue(false);
 
-    // Add to UpGridSizer
-    TracesGridSizer->Add(TraceGridSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 1);
-    TracesGridSizer->Add(pZeroIndex, 0, wxALIGN_LEFT | wxALIGN_BOTTOM | wxALL, 1);
-    TracesGridSizer->Add(pShowSelected, 0, wxALIGN_LEFT | wxALIGN_BOTTOM | wxALL, 1);
+    // Add everything to top-level GridSizer
+    TracesGridSizer->Add(pSpinCtrlTraceSizer, 0, wxALIGN_LEFT | wxALIGN_TOP    | wxALL, 3);
+    TracesGridSizer->Add(pZeroIndex,          0, wxALIGN_LEFT | wxALIGN_BOTTOM | wxALL, 3);
+    TracesGridSizer->Add(pShowSelected,       0, wxALIGN_LEFT | wxALIGN_BOTTOM | wxALL, 3);
 
-    TracesSizer->Add(TracesGridSizer, 0, wxALIGN_CENTER | wxALL, 1);
+    TracesBoxSizer->Add(TracesGridSizer, 0, wxALIGN_CENTER | wxALL, 1);
 
-    TracesSizer->SetSizeHints(m_traceCounter);
-    m_traceCounter->SetSizer( TracesSizer );
+    TracesBoxSizer->SetSizeHints(m_traceCounter);
+    m_traceCounter->SetSizer( TracesGridSizer );
     m_traceCounter->Layout();
     wxSize size = m_traceCounter->GetSize();
     wxStfDoc* pDoc=(wxStfDoc*)GetDocument();
@@ -207,36 +207,68 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
 }
 // Channel Selection childframe
 void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
-    m_channelCounter = CreateChannelCounter();
 
-    wxStaticText* pActIndex  = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Active channel: ") );
+    m_channelCounter = CreateChannelCounter();
+    
+    wxBoxSizer* pChannelsBoxSizer; // top-level Sizer
+    pChannelsBoxSizer = new wxBoxSizer(wxVERTICAL);
+
+    wxGridSizer* ChannelsGridSizer; // top-level GridSizer
+    ChannelsGridSizer = new wxGridSizer(3,1,0,0);
+
+    // Grid for Active comboBox
+    wxBoxSizer* pComboActSizer;
+    pComboActSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    wxStaticText* pActIndex  = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Active channel:        ") );
     pChannelSizer->Add( pActIndex );
 
     pActChannel = new wxComboBox( m_channelCounter, ID_COMBOACTCHANNEL, wxT("0"),
-                                  wxDefaultPosition, wxSize(64,24), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
-    pChannelSizer->Add( pActChannel );
-    pChannelSizer->AddStretchSpacer( );
+                                  wxDefaultPosition, wxSize(92, wxDefaultCoord), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
+
+    pComboActSizer->Add( pActIndex,   0,  wxALIGN_CENTER_VERTICAL| wxALIGN_LEFT,  1);
+    pComboActSizer->Add( pActChannel, 0,  wxALIGN_CENTER_VERTICAL| wxALIGN_RIGHT,  1);
+
+    
+    // Grid for reference comboBox
+    wxBoxSizer* pComboRefSizer;
+    pComboRefSizer = new wxBoxSizer(wxHORIZONTAL);
 
     wxStaticText* pInactIndex = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Reference channel: ") );
     pInactIndex->SetForegroundColour( *wxRED );
-    pChannelSizer->Add( pInactIndex );
 
     pInactChannel = new wxComboBox( m_channelCounter, ID_COMBOINACTCHANNEL, wxT("1"),
-                                    wxDefaultPosition, wxSize(64,24), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
-    pChannelSizer->Add( pInactChannel );
+                                    wxDefaultPosition, wxSize(92,wxDefaultCoord), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
+
+    pComboRefSizer->Add( pInactIndex,   0,  wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT , 1);
+    pComboRefSizer->Add( pInactChannel, 0,  wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT, 1 );
     
+
+    wxBoxSizer *pShowChannelSizer;
+    pShowChannelSizer = new wxBoxSizer(wxHORIZONTAL);
+
     // Checkbox to hide reference channel:
-    pShowSecond = new wxCheckBox( m_channelCounter, ID_PLOTSELECTED, wxT("Show") );
+    pShowSecond = new wxCheckBox( m_channelCounter, ID_PLOTSELECTED, wxT("Show reference") );
+    pShowSecond->SetForegroundColour( *wxRED );
     pShowSecond->SetValue(true);
-    pChannelSizer->Add( pShowSecond );
+    //pChannelSizer->Add( pShowSecond );
     
-    pShowAll = new wxCheckBox( m_channelCounter, ID_PLOTSELECTED, wxT("Show all channels") );
+    pShowAll = new wxCheckBox( m_channelCounter, ID_PLOTSELECTED, wxT("Show all") );
     pShowAll->SetValue(false);
-    pChannelSizer->Add( pShowAll );
-    pChannelSizer->AddStretchSpacer( );
-    pChannelSizer->AddStretchSpacer( );
-    pChannelSizer->SetSizeHints(m_channelCounter);
-    m_channelCounter->SetSizer( pChannelSizer );
+    pShowChannelSizer->Add( pShowAll );
+    pShowChannelSizer->Add( pShowSecond );
+    
+    // Add everything to top-level GridSizer
+    ChannelsGridSizer->Add(pComboActSizer,    0, wxALIGN_LEFT | wxALIGN_TOP    | wxALL, 3);
+    ChannelsGridSizer->Add(pComboRefSizer,    0, wxALIGN_LEFT | wxALIGN_BOTTOM | wxALL, 3);
+    ChannelsGridSizer->Add(pShowChannelSizer, 0, wxALIGN_LEFT | wxALIGN_BOTTOM | wxALL, 3);
+    
+
+    pChannelsBoxSizer->Add(ChannelsGridSizer, 0, wxALIGN_CENTER | wxALL, 1);
+
+    pChannelsBoxSizer->SetSizeHints(m_channelCounter);
+
+    m_channelCounter->SetSizer( ChannelsGridSizer );
     m_channelCounter->Layout();
     wxSize size = m_channelCounter->GetSize();
     m_mgr.AddPane( m_channelCounter, wxAuiPaneInfo().Caption(wxT("Channel selection")).Fixed().BestSize(size.x, size.y).
