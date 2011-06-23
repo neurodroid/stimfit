@@ -148,8 +148,8 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
 
     m_traceCounter = CreateTraceCounter(); // this is wxPanel
 
-    wxBoxSizer* TracesBoxSizer; // top-level Sizer
-    TracesBoxSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* pTracesBoxSizer; // top-level Sizer
+    pTracesBoxSizer = new wxBoxSizer(wxVERTICAL);
 
     wxGridSizer* TracesGridSizer; // top-level GridSizer
     TracesGridSizer = new wxGridSizer(3,1,0,0);
@@ -188,9 +188,9 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
     TracesGridSizer->Add(pZeroIndex,          0, wxALIGN_LEFT | wxALIGN_BOTTOM | wxALL, 3);
     TracesGridSizer->Add(pShowSelected,       0, wxALIGN_LEFT | wxALIGN_BOTTOM | wxALL, 3);
 
-    TracesBoxSizer->Add(TracesGridSizer, 0, wxALIGN_CENTER | wxALL, 1);
+    pTracesBoxSizer->Add(TracesGridSizer, 0, wxALIGN_CENTER | wxALL, 1);
 
-    TracesBoxSizer->SetSizeHints(m_traceCounter);
+    pTracesBoxSizer->SetSizeHints(m_traceCounter);
     m_traceCounter->SetSizer( TracesGridSizer );
     m_traceCounter->Layout();
     wxSize size = m_traceCounter->GetSize();
