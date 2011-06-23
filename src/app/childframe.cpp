@@ -139,7 +139,6 @@ wxPanel* wxStfChildFrame::CreateChannelCounter() {
     wxPanel* ctrl = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize
                                  ); //, wxSize(256,88) );
 
-    pChannelSizer = new wxFlexGridSizer( 3, 3, 2, 2 );
 
     return ctrl;
 }
@@ -221,13 +220,12 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     pComboActSizer = new wxBoxSizer(wxHORIZONTAL);
 
     wxStaticText* pActIndex  = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Active channel:        ") );
-    pChannelSizer->Add( pActIndex );
 
     pActChannel = new wxComboBox( m_channelCounter, ID_COMBOACTCHANNEL, wxT("0"),
                                   wxDefaultPosition, wxSize(92, wxDefaultCoord), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
 
     pComboActSizer->Add( pActIndex,   0,  wxALIGN_CENTER_VERTICAL| wxALIGN_LEFT,  1);
-    pComboActSizer->Add( pActChannel, 0,  wxALIGN_CENTER_VERTICAL| wxALIGN_RIGHT,  1);
+    pComboActSizer->Add( pActChannel, 0,  wxALIGN_CENTER_VERTICAL| wxALIGN_RIGHT, 1);
 
     
     // Grid for reference comboBox
@@ -251,9 +249,8 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     pShowSecond = new wxCheckBox( m_channelCounter, ID_PLOTSELECTED, wxT("Show reference") );
     pShowSecond->SetForegroundColour( *wxRED );
     pShowSecond->SetValue(true);
-    //pChannelSizer->Add( pShowSecond );
     
-    pShowAll = new wxCheckBox( m_channelCounter, ID_PLOTSELECTED, wxT("Show all") );
+    pShowAll = new wxCheckBox( m_channelCounter, ID_PLOTSELECTED, wxT("Show all  ") );
     pShowAll->SetValue(false);
     pShowChannelSizer->Add( pShowAll );
     pShowChannelSizer->Add( pShowSecond );

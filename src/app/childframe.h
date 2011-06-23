@@ -210,6 +210,7 @@ public:
     wxSpinCtrl *trace_spinctrl;
     wxStfGrid* m_table;
     wxCheckBox *pZeroIndex, *pShowSelected, *pShowSecond, *pShowAll;
+    wxBoxSizer *pTracesBoxSizer, *pChannelsBoxSizer;
     wxFlexGridSizer *pChannelSizer;
     wxFlexGridSizer *pTraceNumberSizer;
     bool firstResize;
