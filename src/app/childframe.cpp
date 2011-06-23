@@ -180,7 +180,7 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
     pZeroIndex->SetValue(wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("Zeroindex"), 0));
 
     // Show selected
-    pShowSelected = new wxCheckBox( m_traceCounter, ID_PLOTSELECTED, wxT("Show selected "));
+    pShowSelected = new wxCheckBox( m_traceCounter, ID_PLOTSELECTED, wxT("Show selected       "));
     pShowSelected->SetValue(false);
 
     // Add everything to top-level GridSizer
