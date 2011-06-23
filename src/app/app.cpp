@@ -235,7 +235,7 @@ bool wxStfApp::OnInit(void)
     
 //#ifdef _WINDOWS
     m_file_menu->AppendSeparator();
-    m_file_menu->Append(ID_CONVERT, wxT("&Convert file series..."));
+    m_file_menu->Append(ID_CONVERT, wxT("Convert file series..."));
 //#endif
 #ifdef WITH_PYTHON
     m_file_menu->AppendSeparator();
