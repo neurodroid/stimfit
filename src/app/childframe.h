@@ -211,8 +211,8 @@ public:
     wxStfGrid* m_table;
     wxCheckBox *pZeroIndex, *pShowSelected, *pShowSecond, *pShowAll;
     wxBoxSizer *pTracesBoxSizer, *pChannelsBoxSizer;
-    wxFlexGridSizer *pChannelSizer;
-    wxFlexGridSizer *pTraceNumberSizer;
+    //wxFlexGridSizer *pChannelSizer;
+    //wxFlexGridSizer *pTraceNumberSizer;
     bool firstResize;
     std::size_t sizemax;
 
