@@ -161,11 +161,9 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
     // 1) the wxSpinCtrl object 
     trace_spinctrl = new wxSpinCtrl( m_traceCounter, ID_SPINCTRLTRACES, wxEmptyString, wxDefaultPosition,
                      wxSize(64, wxDefaultCoord), wxSP_WRAP);
-    // by default, we start with non-zero based indices
-    //trace_spinctrl->SetValue(1);
-    //trace_spinctrl->SetRange(1,(int)sizemax);
 
     // the "of n", where n is the number of traces
+    // n is zero-based in zero-based check box is selected
     pSize=new wxStaticText( m_traceCounter, wxID_ANY, wxEmptyString);
     wxString sizeStr;
 
@@ -327,7 +325,7 @@ void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
         return;
     }
 
-    pDoc->SetSection(GetCurTrace()); //BUG
+    pDoc->SetSection(GetCurTrace()); 
     wxGetApp().OnPeakcalcexecMsg();
 
     if (pView->GetGraph() != NULL) {
