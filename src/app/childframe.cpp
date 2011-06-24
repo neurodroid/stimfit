@@ -155,8 +155,8 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
     TracesGridSizer = new wxGridSizer(3,1,0,0);
 
     // Grid for spin control
-    wxFlexGridSizer* pSpinCtrlTraceSizer;
-    pSpinCtrlTraceSizer = new wxFlexGridSizer(1,2,0,0); // 1 row, 2 columns for the SpinCtrl + text
+    wxGridSizer* pSpinCtrlTraceSizer;
+    pSpinCtrlTraceSizer = new wxGridSizer(1,3,0,0); // 1 row, 3 columns for the SpinCtrl + text
 
     // 1) the wxSpinCtrl object 
     trace_spinctrl = new wxSpinCtrl( m_traceCounter, ID_SPINCTRLTRACES, wxEmptyString, wxDefaultPosition,
@@ -164,16 +164,20 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
 
     // the "of n", where n is the number of traces
     // n is zero-based in zero-based check box is selected
+    wxStaticText* pIndexText;
+    pIndexText = new wxStaticText(m_traceCounter, wxID_ANY, wxT("Index: "));
     pSize=new wxStaticText( m_traceCounter, wxID_ANY, wxEmptyString);
     wxString sizeStr;
 
+    pSpinCtrlTraceSizer->Add( pIndexText,     0, wxALIGN_CENTER_VERTICAL  | wxALL, 1) ;
     pSpinCtrlTraceSizer->Add( trace_spinctrl, 0, wxALIGN_LEFT  | wxALL, 1) ;
     pSpinCtrlTraceSizer->Add( pSize,          0, wxALIGN_LEFT  | wxALIGN_CENTER | wxALL, 1) ;
 
     // 2) Show zero-based index? Read from Stimfit registry
-    pZeroIndex = new wxCheckBox( m_traceCounter, ID_ZERO_INDEX, wxT("Zero-based index") );
+    pZeroIndex = new wxCheckBox( m_traceCounter, ID_ZERO_INDEX, wxT("Zero-based index ") );
     pZeroIndex->SetValue(wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("Zeroindex"), 0));
-        // If true set the starting value to zero
+
+    // If true set the starting value to zero
     if (pZeroIndex->GetValue()){
         sizemax--;
         trace_spinctrl->SetValue(0);
@@ -467,9 +471,9 @@ void wxStfChildFrame::OnZeroIndex( wxCommandEvent& event) {
         
     }
 
-    wxString sizeStr;
-    sizeStr << wxT("of ") << wxString::Format(wxT("%3d"),(int)sizemax);
-    pSize->SetLabel(sizeStr);
+    //wxString sizeStr;
+    //sizeStr << wxT("of ") << wxString::Format(wxT("%3d"),(int)sizemax);
+    //pSize->SetLabel(sizeStr);
 }
 
 void wxStfChildFrame::OnShowselected(wxCommandEvent& WXUNUSED(event)) {
