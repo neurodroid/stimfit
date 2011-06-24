@@ -426,19 +426,45 @@ void wxStfChildFrame::OnZeroIndex( wxCommandEvent& event) {
         return;
     }
     
-    // Check if  Zero-index is on
+    // If  Zero-index is ON (selected) 
     if (pZeroIndex->GetValue()){
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("Zeroindex"), 1); // write config
-        sizemax--;
-        pTraceCtrl->SetValue(pTraceCtrl->GetValue()-1);
-        pTraceCtrl->SetRange(0, sizemax);
+        if (pTraceCtrl->GetValue()==1){
+            sizemax--;
+            pTraceCtrl->SetRange(0, sizemax); // first set new range
+            pTraceCtrl->SetValue(pTraceCtrl->GetValue()-1); // now you can move one less 
+        }
+        else if (pTraceCtrl->GetValue()==(int)sizemax){
+            sizemax--;
+            pTraceCtrl->SetValue(pTraceCtrl->GetValue()-1); // move one less
+            pTraceCtrl->SetRange(0, sizemax); // next set new range
+        }
+        else {
+            sizemax--;
+            pTraceCtrl->SetRange(0, sizemax); // first set new range
+            pTraceCtrl->SetValue(pTraceCtrl->GetValue()-1); // now you can move one less 
+        }
         
     }
+    // If Zero-index is OFF (unselected) 
     else {
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("Zeroindex"), 0); 
-        sizemax++;
-        pTraceCtrl->SetValue(pTraceCtrl->GetValue()+1);
-        pTraceCtrl->SetRange(1, sizemax);
+        if (pTraceCtrl->GetValue()==0){
+            sizemax++;
+            pTraceCtrl->SetValue(pTraceCtrl->GetValue()+1); 
+            pTraceCtrl->SetRange(1, (int)sizemax); 
+        }
+        else if (pTraceCtrl->GetValue()==(int)sizemax){
+            sizemax++;
+            pTraceCtrl->SetRange(1, (int)sizemax); // first set new range
+            pTraceCtrl->SetValue(pTraceCtrl->GetValue()+1); // now you can move one more 
+        }
+        else { // now the order does not matter
+            sizemax++;
+            pTraceCtrl->SetRange(1, (int)sizemax); // first set new range
+            pTraceCtrl->SetValue(pTraceCtrl->GetValue()+1); // now you can move one more 
+        }
+        
     }
 
     wxString sizeStr;
