@@ -162,23 +162,33 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
     trace_spinctrl = new wxSpinCtrl( m_traceCounter, ID_SPINCTRLTRACES, wxEmptyString, wxDefaultPosition,
                      wxSize(64, wxDefaultCoord), wxSP_WRAP);
     // by default, we start with non-zero based indices
-    trace_spinctrl->SetValue(1);
-    trace_spinctrl->SetRange(1,(int)sizemax);
+    //trace_spinctrl->SetValue(1);
+    //trace_spinctrl->SetRange(1,(int)sizemax);
 
     // the "of n", where n is the number of traces
     pSize=new wxStaticText( m_traceCounter, wxID_ANY, wxEmptyString);
     wxString sizeStr;
-    sizeStr << wxT("of ") << wxString::Format(wxT("%3d"),(int)sizemax);
-    pSize->SetLabel(sizeStr);
 
     pSpinCtrlTraceSizer->Add( trace_spinctrl, 0, wxALIGN_LEFT  | wxALL, 1) ;
     pSpinCtrlTraceSizer->Add( pSize,          0, wxALIGN_LEFT  | wxALIGN_CENTER | wxALL, 1) ;
 
-    // 2) Show zero-based index?
+    // 2) Show zero-based index? Read from Stimfit registry
     pZeroIndex = new wxCheckBox( m_traceCounter, ID_ZERO_INDEX, wxT("Zero-based index") );
-    //pZeroIndex->SetValue(false);
     pZeroIndex->SetValue(wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("Zeroindex"), 0));
+        // If true set the starting value to zero
+    if (pZeroIndex->GetValue()){
+        sizemax--;
+        trace_spinctrl->SetValue(0);
+        trace_spinctrl->SetRange(0, (int)sizemax);
+    }
+    else {
+        trace_spinctrl->SetValue(1);
+        trace_spinctrl->SetRange(1, (int)sizemax);
+    
+    }
 
+    sizeStr << wxT("of ") << wxString::Format(wxT("%3d"),(int)sizemax);
+    pSize->SetLabel(sizeStr);
     // Show selected
     pShowSelected = new wxCheckBox( m_traceCounter, ID_PLOTSELECTED, wxT("Show selected       "));
     pShowSelected->SetValue(false);
@@ -317,7 +327,7 @@ void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
         return;
     }
 
-    pDoc->SetSection(GetCurTrace());
+    pDoc->SetSection(GetCurTrace()); //BUG
     wxGetApp().OnPeakcalcexecMsg();
 
     if (pView->GetGraph() != NULL) {
@@ -422,15 +432,15 @@ void wxStfChildFrame::OnZeroIndex( wxCommandEvent& event) {
     if (pZeroIndex->GetValue()){
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("Zeroindex"), 1); // write config
         sizemax--;
-        pTraceCtrl->SetRange(0, sizemax);
         pTraceCtrl->SetValue(pTraceCtrl->GetValue()-1);
+        pTraceCtrl->SetRange(0, sizemax);
         
     }
     else {
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("Zeroindex"), 0); 
         sizemax++;
-        pTraceCtrl->SetRange(0, sizemax);
         pTraceCtrl->SetValue(pTraceCtrl->GetValue()+1);
+        pTraceCtrl->SetRange(1, sizemax);
     }
 
     wxString sizeStr;

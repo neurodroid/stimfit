@@ -13,7 +13,6 @@ Sun Jan 23 22:13:20 CET 2011
 
 Wed May 11 09:23:14 CEST 2011
 * Add Analysis toolbar to the Extensions menu
-* There is a problem with the zero-based index
 * When pressing L, change latency measurements to manual
 
 Sun Jun 19 08:58:13 CEST 2011
@@ -28,3 +27,5 @@ Solve warning:
 ./../app/dlgs/./cursorsdlg.h:62: warning: 'wxStfCursorsDlg::cursor2LIsTime' will be initialized after
 ./../app/dlgs/./cursorsdlg.h:60: warning:   'bool wxStfCursorsDlg::cursor1PSIsTime'
 ./../app/dlgs/cursorsdlg.cpp:125: warning:   when initialized here
+
+
