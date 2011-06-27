@@ -291,7 +291,8 @@ def plot_traces(traces, ax=None, pulses=None,
                 maxres = None,
                 plot_sb=True, sb_yoff=0, sb_xoff=0, linestyle_sb = "-k",
                 dashedline=None, sagline=None, rotate_yslabel=False,
-                textcolor='k', textweight='normal', figsize=None):
+                textcolor='k', textweight='normal', figsize=None,
+                pulseprop=0.05):
 
     if ax is None:
         if figsize is None:
@@ -302,7 +303,6 @@ def plot_traces(traces, ax=None, pulses=None,
         Fig.patch.set_alpha(0.0)
 
         border = 0.2
-        pulseprop = 0.05
         if pulses is not None and len(pulses) > 0:
             prop = 1.0-pulseprop-border
         else:
