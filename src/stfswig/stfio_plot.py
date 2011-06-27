@@ -378,7 +378,7 @@ def plot_traces(traces, ax=None, pulses=None,
         for pulse in pulses:
             xrange = pulse.timearray()
             yrange = pulse.data
-            axp.plot(xrange, yrange, pulse.linestyle, linewidth=pulse.linewidth)
+            axp.plot(xrange, yrange, pulse.linestyle, linewidth=pulse.linewidth, color=pulse.color)
         plot_scalebars(axp, linestyle=linestyle_sb, nox=True, yunits=pulses[0].yunits,
                        textweight=textweight, textcolor=textcolor)
         for o in axp.findobj():
