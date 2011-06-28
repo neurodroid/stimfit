@@ -155,8 +155,8 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
     TracesGridSizer = new wxGridSizer(3,1,0,0);
 
     // Grid for spin control
-    wxGridSizer* pSpinCtrlTraceSizer;
-    pSpinCtrlTraceSizer = new wxGridSizer(1,3,0,0); // 1 row, 3 columns for the SpinCtrl + text
+    wxFlexGridSizer* pSpinCtrlTraceSizer;
+    pSpinCtrlTraceSizer = new wxFlexGridSizer(1,3,0,0); // 1 row, 3 columns for the SpinCtrl + text
 
     // 1) the wxSpinCtrl object 
     trace_spinctrl = new wxSpinCtrl( m_traceCounter, ID_SPINCTRLTRACES, wxEmptyString, wxDefaultPosition,
