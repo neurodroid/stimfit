@@ -170,8 +170,8 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
     wxString sizeStr;
 
     pSpinCtrlTraceSizer->Add( pIndexText,     0, wxALIGN_CENTER_VERTICAL  | wxALL, 1) ;
-    pSpinCtrlTraceSizer->Add( trace_spinctrl, 0, wxALIGN_LEFT  | wxALL, 1) ;
-    pSpinCtrlTraceSizer->Add( pSize,          0, wxALIGN_LEFT  | wxALIGN_CENTER | wxALL, 1) ;
+    pSpinCtrlTraceSizer->Add( trace_spinctrl, 0, wxALIGN_LEFT, 1) ;
+    pSpinCtrlTraceSizer->Add( pSize,          0, wxALIGN_LEFT  | wxALIGN_CENTER, 1) ;
 
     // 2) Show zero-based index? Read from Stimfit registry
     pZeroIndex = new wxCheckBox( m_traceCounter, ID_ZERO_INDEX, wxT("Zero-based index ") );
@@ -189,7 +189,7 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
     
     }
 
-    sizeStr << wxT("of ") << wxString::Format(wxT("%3d"),(int)sizemax);
+    sizeStr << wxT(" of ") << wxString::Format(wxT("%3d"),(int)sizemax);
     pSize->SetLabel(sizeStr);
     // Show selected
     pShowSelected = new wxCheckBox( m_traceCounter, ID_PLOTSELECTED, wxT("Show selected       "));
