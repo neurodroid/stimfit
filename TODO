@@ -28,4 +28,5 @@ Solve warning:
 ./../app/dlgs/./cursorsdlg.h:60: warning:   'bool wxStfCursorsDlg::cursor1PSIsTime'
 ./../app/dlgs/cursorsdlg.cpp:125: warning:   when initialized here
 
-
+Wed Jul 13 16:55:13 CEST 2011
+Add "Show reference" to Stimfit registry
