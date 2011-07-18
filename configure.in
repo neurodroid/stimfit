@@ -121,7 +121,7 @@ AC_SUBST(STF_PYTHON_LIBNAME)
 AC_SUBST(STFIO_PYTHON_LIBNAME)
 
 # Checks for python libraries.
-AC_ARG_ENABLE([ipython], AS_HELP_STRING([--enable-ipython],[enable ipython as the default shell (experimental)]),[])
+AC_ARG_ENABLE([ipython], AS_HELP_STRING([--enable-ipython],[enable ipython as the default shell (experimental); implies --enable-python]),[])
 if test "$enable_ipython" = "yes" ; then
     CPPFLAGS="${CPPFLAGS} -DIPYTHON"
 fi
