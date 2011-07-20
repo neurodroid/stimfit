@@ -189,7 +189,8 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
     
     }
 
-    sizeStr << wxT(" of ") << wxString::Format(wxT("%3d"),(int)sizemax);
+    // value argument is the number of traces
+    sizeStr << wxT(" of ") << wxString::Format(wxT("%3d"), value);
     pSize->SetLabel(sizeStr);
     // Show selected
     pShowSelected = new wxCheckBox( m_traceCounter, ID_PLOTSELECTED, wxT("Show selected       "));
