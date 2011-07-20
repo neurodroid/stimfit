@@ -1544,7 +1544,7 @@ void wxStfDoc::Selectsome(wxCommandEvent &WXUNUSED(event)) {
     if (input.size()!=2) return;
     int everynth=(int)input[0];
     int everystart=(int)input[1];
-    div_t n_selected=div((int)get()[GetCurCh()].size(),everynth);
+    //div_t n_selected=div((int)get()[GetCurCh()].size(),everynth);
     for (int n=0; n*everynth+everystart-1 < (int)get()[GetCurCh()].size(); ++n) {
         try {
             SelectTrace(n*everynth+everystart-1);
@@ -1576,7 +1576,7 @@ void wxStfDoc::Unselectsome(wxCommandEvent &WXUNUSED(event)) {
     if (input.size()!=2) return;
     int everynth=(int)input[0];
     int everystart=(int)input[1];
-    div_t n_unselected=div((int)get()[GetCurCh()].size(),everynth);
+    //div_t n_unselected=div((int)get()[GetCurCh()].size(),everynth);
     for (int n=0; n*everynth+everystart-1 < (int)get()[GetCurCh()].size(); ++n) {
         UnselectTrace(n*everynth+everystart-1);
     }

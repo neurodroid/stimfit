@@ -94,7 +94,7 @@ wxStfChildFrame::~wxStfChildFrame() {
 
 wxStfGrid* wxStfChildFrame::CreateTable() {
     // create the notebook off-window to avoid flicker
-    wxSize client_size = GetClientSize();
+    //wxSize client_size = GetClientSize();
 
     wxStfGrid* ctrl = new wxStfGrid( this, wxID_ANY,
                                      wxDefaultPosition, wxDefaultSize,
@@ -128,7 +128,7 @@ wxAuiNotebook* wxStfChildFrame::CreateNotebook() {
 }
 
 wxPanel* wxStfChildFrame::CreateTraceCounter() {
-    wxSize client_size = GetClientSize();
+    //wxSize client_size = GetClientSize();
     wxPanel* ctrl = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize
                                  );// , wxSize(165,88) );
 

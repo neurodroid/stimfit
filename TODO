@@ -30,9 +30,3 @@ Solve warning:
 
 Wed Jul 13 16:55:13 CEST 2011
 Add "Show reference" to Stimfit registry
-
-Tue Jul 19 14:05:17 CEST 2011
-Check size in trace selection when trace is only one!
-
-Wed Jul 20 08:40:29 CEST 2011
-When opening with zero-based index, the number of channels is n-1.

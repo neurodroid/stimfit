@@ -125,11 +125,11 @@ END_EVENT_TABLE()
 wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wxString title, wxPoint pos,
                                  wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ), cursorMIsTime(true),
-    cursor1PIsTime(true), cursor2PIsTime(true), cursor1BIsTime(true),cursor2BIsTime(true),
-    cursor1LIsTime(true), cursor2LIsTime(true),
+    cursor1PIsTime(true), cursor2PIsTime(true), cursor1BIsTime(true), cursor2BIsTime(true),
 #ifdef WITH_PSLOPE
     cursor1PSIsTime(true), cursor2PSIsTime(true), 
 #endif
+    cursor1LIsTime(true), cursor2LIsTime(true),
     actDoc(initDoc)
 {
     wxBoxSizer* topSizer;
