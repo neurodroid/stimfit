@@ -211,7 +211,8 @@ noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.
             ./src/test/gtest/include/gtest/internal/gtest-internal.h \
             ./src/test/gtest/include/gtest/internal/gtest-param-util-generated.h.pump \
             ./src/test/gtest/include/gtest/internal/gtest-string.h \
-            ./src/test/gtest/include/gtest/internal/gtest-type-util.h
+            ./src/test/gtest/include/gtest/internal/gtest-type-util.h \
+            ./src/test/gtest/src/gtest-internal-inl.h
 
 if WITH_BIOSIG
     noinst_HEADERS += ./src/core/filelib/biosiglib.h

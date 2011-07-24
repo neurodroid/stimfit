@@ -1,3 +1,10 @@
+stimfit (0.10.16-1) unstable; urgency=low
+
+  * Provide gtest source files (Closes: #631825)
+  * File series conversion implemented by Jose Guzman
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sun, 24 Jul 2011 16:59:56 +0000
+
 stimfit (0.10.15-0ubuntu3) lucid; urgency=low
 
   * Igor file export
