@@ -20,7 +20,12 @@ common electrophysiology file formats"
 
 #define array_data(a)          (((PyArrayObject *)a)->data)
 
-void wrap_array() {
+#if PY_MAJOR_VERSION >= 3
+int
+#else
+void
+#endif
+wrap_array() {
     import_array();
 }
     

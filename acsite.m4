@@ -209,7 +209,7 @@ $ac_numpy_result])
         AC_MSG_CHECKING([consistency of all components of python development environment])
         AC_LANG_PUSH([C])
         # save current global flags
-        LIBS="$ac_save_LIBS $PYTHON_LDFLAGS"
+        LIBS="$ac_save_LIBS $PYTHON_LDFLAGS $PYTHON_EXTRA_LIBS -lm"
         CPPFLAGS="$ac_save_CPPFLAGS $PYTHON_CPPFLAGS"
         AC_TRY_LINK([
                 #include <Python.h>
