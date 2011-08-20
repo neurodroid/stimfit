@@ -14,8 +14,7 @@ PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
 PYTHON_ADDLDFLAGS = $(LIBPYTHON_LDFLAGS)
 PYTHON_ADDLIBS = 
 
-nodist__libstfio_la_SOURCES = ./src/stfswig/stfioswig_wrap.cxx
-pyexec_SRIPTS = ./src/stfswig/stfio.py
+nodist_libstfio_la_SOURCES = ./src/stfswig/stfioswig_wrap.cxx
 
 libstfio_la_SOURCES =  ./src/stfswig/stfioswig.cxx \
 	./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \

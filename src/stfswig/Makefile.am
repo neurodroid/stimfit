@@ -9,8 +9,7 @@ $(srcdir)/stfswig_wrap.cxx $(srcdir)/stf.py: $(srcdir)/stfswig.i
 	cat $(srcdir)/gccwarn $(srcdir)/stfswig_wrap.cxx > $(srcdir)/stfswig_wrap_tmp.cxx
 	mv $(srcdir)/stfswig_wrap_tmp.cxx $(srcdir)/stfswig_wrap.cxx
 
-nodist__libstf_la_SOURCES = $(srcdir)/stfswig_wrap.cxx
-pyexec_SCRIPTS = $(srcdir)/stf.py
+nodist_libstf_la_SOURCES = $(srcdir)/stfswig_wrap.cxx
 
 libstf_la_SOURCES = $(srcdir)/stfswig.cxx # $(SWIG_SOURCES)
 noinst_HEADERS = stfswig.h
