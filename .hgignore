@@ -76,6 +76,7 @@ stamp-h1
 stfswig_wrap.cxx
 stfioswig_wrap.cxx
 stf.py
+stfio.py
 
 .libs/
 src/stfswig/.libs/

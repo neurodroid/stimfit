@@ -47,7 +47,7 @@ to something else than an empty string.
                 AC_MSG_CHECKING([for a version of Python $1])
                 ac_supports_python_ver=`$PYTHON -c "import sys, string; \
                         ver = string.split(sys.version)[[0]]; \
-                        print(ver $1)"`
+                        sys.stdout.write(ver + '$1' + '\n')"`
                 if test "$ac_supports_python_ver" = "True"; then
                    AC_MSG_RESULT([yes])
                 else
@@ -81,8 +81,8 @@ $ac_distutils_result])
         #
         AC_MSG_CHECKING([for Python include path])
         if test -z "$PYTHON_CPPFLAGS"; then
-                python_path=`$PYTHON -c "import distutils.sysconfig; \
-                        print(distutils.sysconfig.get_python_inc());"`
+                python_path=`$PYTHON -c "import distutils.sysconfig, sys; \
+                        sys.stdout.write(distutils.sysconfig.get_python_inc() + '\n');"`
                 if test -n "${python_path}"; then
                         python_path="-I$python_path"
                 fi
@@ -102,23 +102,23 @@ $ac_distutils_result])
                 # (makes two attempts to ensure we've got a version number
                 # from the interpreter)
 		py_version=`$PYTHON -c \
-"from distutils.sysconfig import *
+"import sys; from distutils.sysconfig import *
 if get_config_vars('LDVERSION')[[0]] is None:
-    print(' '.join(get_config_vars('VERSION')))
+    sys.stdout.write(' '.join(get_config_vars('VERSION'))+'\n')
 else:
-    print(' '.join(get_config_vars('LDVERSION')))"`
+    sys.stdout.write(' '.join(get_config_vars('LDVERSION'))+'\n')"`
                 if test "$py_version" == "[None]"; then
                         if test -n "$PYTHON_VERSION"; then
                                 py_version=$PYTHON_VERSION
                         else
                                 py_version=`$PYTHON -c "import sys; \
-                                        print(sys.version[[:3]])"`
+                                        sys.stdout.write(sys.version[[:3]] + '\n')"`
                         fi
                 fi
 
-                PYTHON_LDFLAGS=`$PYTHON -c "from distutils.sysconfig import *; \
-                        print('-L' + get_python_lib(0,1) + \
-                        ' -lpython');"`$py_version
+                PYTHON_LDFLAGS=`$PYTHON -c "import sys; from distutils.sysconfig import *; \
+                        sys.stdout.write('-L' + get_python_lib(0,1) + \
+                        ' -lpython' + '\n');"`$py_version
         fi
         AC_MSG_RESULT([$PYTHON_LDFLAGS])
         AC_SUBST([PYTHON_LDFLAGS])
@@ -129,10 +129,10 @@ else:
         AC_MSG_CHECKING([for prefixed Python site-packages path])
         if test -z "$PYTHON_SITE_PKG"; then
                 PYTHON_SITE_PKG=`$PYTHON -c \
-"import distutils.sysconfig; \
+"import sys, distutils.sysconfig; \
 acprefix = \"${prefix}\"
 if acprefix is \"NONE\": acprefix=\"/usr/local/\"
-print(distutils.sysconfig.get_python_lib(0,1,prefix=acprefix));"`
+sys.stdout.write(distutils.sysconfig.get_python_lib(0,1,prefix=acprefix)+'\n');"`
                 PYTHON_SITE_PKG="${PYTHON_SITE_PKG}/dist-packages"
 
         fi
@@ -145,8 +145,8 @@ print(distutils.sysconfig.get_python_lib(0,1,prefix=acprefix));"`
         AC_MSG_CHECKING([for unprefixed Python site-packages path])
         if test -z "$PYTHON_DIST_PKG"; then
                 PYTHON_DIST_PKG=`$PYTHON -c \
-"import distutils.sysconfig; \
-print(distutils.sysconfig.get_python_lib(0,0));"`
+"import sys, distutils.sysconfig; \
+sys.stdout.write(distutils.sysconfig.get_python_lib(0,0)+'\n');"`
                 PYTHON_DIST_PKG=${PYTHON_DIST_PKG}
 
         fi
@@ -173,8 +173,8 @@ $ac_numpy_result])
         #
         AC_MSG_CHECKING([for numpy include path])
         if test -z "$PYTHON_NUMPY_INCLUDE"; then
-                PYTHON_NUMPY_INCLUDE=-I`$PYTHON -c "import numpy; \
-                        print(numpy.lib.get_include());"`
+                PYTHON_NUMPY_INCLUDE=-I`$PYTHON -c "import sys, numpy; \
+                        sys.stdout.write(numpy.lib.get_include() + '\n');"`
         fi
         AC_MSG_RESULT([$PYTHON_NUMPY_INCLUDE])
         AC_SUBST([PYTHON_NUMPY_INCLUDE])
@@ -184,9 +184,9 @@ $ac_numpy_result])
         #
         AC_MSG_CHECKING(python extra libraries)
         if test -z "$PYTHON_EXTRA_LIBS"; then
-           PYTHON_EXTRA_LIBS=`$PYTHON -c "import distutils.sysconfig; \
+           PYTHON_EXTRA_LIBS=`$PYTHON -c "import sys, distutils.sysconfig; \
                 conf = distutils.sysconfig.get_config_var; \
-                print(conf('LOCALMODLIBS'), conf('LIBS'))"`
+                sys.stdout.write(conf('LOCALMODLIBS') + ' ' + conf('LIBS') + ' ' + '\n')"`
         fi
         AC_MSG_RESULT([$PYTHON_EXTRA_LIBS])
         AC_SUBST(PYTHON_EXTRA_LIBS)
@@ -196,9 +196,9 @@ $ac_numpy_result])
         #
         AC_MSG_CHECKING(python extra linking flags)
         if test -z "$PYTHON_EXTRA_LDFLAGS"; then
-                PYTHON_EXTRA_LDFLAGS=`$PYTHON -c "import distutils.sysconfig; \
+                PYTHON_EXTRA_LDFLAGS=`$PYTHON -c "import sys, distutils.sysconfig; \
                         conf = distutils.sysconfig.get_config_var; \
-                        print(conf('LINKFORSHARED'))"`
+                        sys.stdout.write(conf('LINKFORSHARED')+'\n')"`
         fi
         AC_MSG_RESULT([$PYTHON_EXTRA_LDFLAGS])
         AC_SUBST(PYTHON_EXTRA_LDFLAGS)

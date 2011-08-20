@@ -1,17 +1,19 @@
 if BUILD_MODULE
-
 else
 if BUILD_PYTHON
 
 pkglib_LTLIBRARIES = libstf.la
 
-libstf_la_SOURCES = $(srcdir)/stfswig_wrap.cxx $(srcdir)/stfswig.cxx # $(SWIG_SOURCES)
-noinst_HEADERS = stfswig.h
-
-$(srcdir)/stfswig_wrap.cxx : $(srcdir)/stfswig.i
+$(srcdir)/stfswig_wrap.cxx $(srcdir)/stf.py: $(srcdir)/stfswig.i
 	$(SWIG) $(SWIG_PYTHON_OPT) -o $@ $<
 	cat $(srcdir)/gccwarn $(srcdir)/stfswig_wrap.cxx > $(srcdir)/stfswig_wrap_tmp.cxx
 	mv $(srcdir)/stfswig_wrap_tmp.cxx $(srcdir)/stfswig_wrap.cxx
+
+nodist__libstf_la_SOURCES = $(srcdir)/stfswig_wrap.cxx
+pyexec_SCRIPTS = $(srcdir)/stf.py
+
+libstf_la_SOURCES = $(srcdir)/stfswig.cxx # $(SWIG_SOURCES)
+noinst_HEADERS = stfswig.h
 
 INCLUDES = $(LIBNUMPY_INCLUDES)
 
@@ -47,7 +49,7 @@ uninstall-hook:
 	rm -rf ${prefix}/lib/stimfit
 
 clean_local:
-	rm -f $(srcdir)/stfswig_wrap.cxx
+	rm -f $(srcdir)/stfswig_wrap.cxx $(srcdir)/stf.py
 
 endif
 endif

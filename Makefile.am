@@ -4,6 +4,7 @@ if BUILD_MODULE
 
 pkglibdir = ${PYTHON_SITE_PKG}/stfio
 pkglib_LTLIBRARIES = libstfio.la
+
 TESTS_ENVIRONMENT = cp $(srcdir)/src/stfswig/test.h5 ./ && \
   cp .libs/libstfio.so ./_stfio.so && \
   $(PYTHON)
@@ -13,7 +14,10 @@ PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
 PYTHON_ADDLDFLAGS = $(LIBPYTHON_LDFLAGS)
 PYTHON_ADDLIBS = 
 
-libstfio_la_SOURCES = ./src/stfswig/stfioswig_wrap.cxx ./src/stfswig/stfioswig.cxx \
+nodist__libstfio_la_SOURCES = ./src/stfswig/stfioswig_wrap.cxx
+pyexec_SRIPTS = ./src/stfswig/stfio.py
+
+libstfio_la_SOURCES =  ./src/stfswig/stfioswig.cxx \
 	./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
 	./src/core/core.cpp \
 	./src/core/filelib/cfslib.cpp ./src/core/filelib/cfs.c ./src/core/filelib/hdf5lib.cpp \
@@ -95,11 +99,6 @@ if WITH_BIOSIG
     noinst_HEADERS += ./src/core/filelib/biosiglib.h
 endif
 
-$(srcdir)/src/stfswig/stfioswig_wrap.cxx : ./src/stfswig/stfioswig.i
-	$(SWIG) $(SWIG_PYTHON_OPT) -o $@ $<
-	cat $(srcdir)/src/stfswig/gccwarn $(srcdir)/src/stfswig/stfioswig_wrap.cxx > $(srcdir)/src/stfswig/stfioswig_wrap_tmp.cxx
-	mv $(srcdir)/src/stfswig/stfioswig_wrap_tmp.cxx $(srcdir)/src/stfswig/stfioswig_wrap.cxx
-
 INCLUDES = $(LIBNUMPY_INCLUDES) $(PYTHON_ADDINCLUDES)
 
 EXTRA_DIST = ./src/stfswig/stfioswig.i ./src/stfswig/stfio.py ./src/stfswig/unittest_stfio.py ./src/stfswig/hdf5tools.py ./src/stfswig/test.h5
@@ -124,9 +123,14 @@ uninstall-hook:
 	rm -f ${PYTHON_SITE_PKG}/stfio.pth
 
 clean-local:
-	rm -f $(srcdir)/src/stfswig/stfswig_wrap.cxx
+	rm -f $(srcdir)/src/stfswig/stfioswig_wrap.cxx $(srcdir)/src/stfswig/stfio.py
 	rm -f test.h5
 	rm -f _stfio.so
+
+$(srcdir)/src/stfswig/stfioswig_wrap.cxx $(srcdir)/src/stfswig/stfio.py: $(srcdir)/src/stfswig/stfioswig.i
+	$(SWIG) $(SWIG_PYTHON_OPT) -o $@ $<
+	cat $(srcdir)/src/stfswig/gccwarn $(srcdir)/src/stfswig/stfioswig_wrap.cxx > $(srcdir)/src/stfswig/stfioswig_wrap_tmp.cxx
+	mv $(srcdir)/src/stfswig/stfioswig_wrap_tmp.cxx $(srcdir)/src/stfswig/stfioswig_wrap.cxx
 
 else
 bin_PROGRAMS = stimfit
