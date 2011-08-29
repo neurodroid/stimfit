@@ -112,9 +112,9 @@ bool wxStfApp::Init_wxPython()
     // cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks/numpy\"\n");
     // cwd << wxT("sys.path.insert(0,cwd)\n");
 #ifdef _STFDEBUG
-    cwd << wxT("print sys.path\n");
+    cwd << wxT("print(sys.path)\n");
     cwd << wxT("import numpy\n");
-    cwd << wxT("print numpy.version.version\n");
+    cwd << wxT("print(numpy.version.version)\n");
 #endif // _STFDEBUG
 #endif // __WXMAC__
     
@@ -127,9 +127,9 @@ bool wxStfApp::Init_wxPython()
     cwd << wxT("import sys\n");
     cwd << wxT("sys.path.append(cwd)\n");
 #ifdef _STFDEBUG
-    cwd << wxT("print sys.path\n");
+    cwd << wxT("print(sys.path)\n");
     cwd << wxT("import numpy\n");
-    cwd << wxT("print numpy.version.version\n");
+    cwd << wxT("print(numpy.version.version)\n");
 #endif // _STFDEBUG
 #endif // __WXGTK__
 

@@ -283,7 +283,9 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
                  << wxT("    win.plot_screen()\n")
                  << wxT("    return win\n");
 
-    RedirectStdio();
+    /*  The window remains open after the main application has been closed; deactivated for the time being.
+     *  RedirectStdio();
+     */
     wxWindow* pPython = DoPythonStuff(this, false);
     if ( pPython == 0 ) {
         wxGetApp().ErrorMsg(wxT("Can't create a window for the python shell\nPointer is zero"));
