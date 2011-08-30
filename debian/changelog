@@ -19,7 +19,7 @@ stimfit (0.10.16-1ubuntu1) lucid; urgency=low
 
  -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sun, 24 Jul 2011 19:04:50 +0000
 
-stimfit (0.10.16-1) unstable; urgency=low
+stimfit (0.10.16-1) UNRELEASED; urgency=low
 
   * Provide gtest source files (Closes: #631825)
   * File series conversion implemented by Jose Guzman
