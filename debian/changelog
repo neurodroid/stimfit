@@ -1,3 +1,10 @@
+stimfit (0.10.17-1oneiric1) oneiric; urgency=low
+
+  * Do not redirect Python stdio to separate Window (Closes: #639672)
+  * From previous unreleased version: provide gtest source files (Closes: #631825)
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Tue, 30 Aug 2011 23:02:16 +0000
+
 stimfit (0.10.17-1natty1) natty; urgency=low
 
   * Do not redirect Python stdio to separate Window (Closes: #639672)
