@@ -1,9 +1,0 @@
-<map id="G" name="G">
-<area shape="rect" id="node3" href="$doc_8h.html" title="Declares wxStfDoc." alt="" coords="5,86,107,117"/>
-<area shape="rect" id="node5" href="$childframe_8h.html" title="Declares wxStfChildFrame." alt="" coords="131,86,269,117"/>
-<area shape="rect" id="node7" href="$parentframe_8h.html" title="Declares wxStfParentFrame." alt="" coords="293,86,443,117"/>
-<area shape="rect" id="node9" href="$asciilib_8h.html" title="Import and export plain text files." alt="" coords="467,86,624,117"/>
-<area shape="rect" id="node11" href="$atflib_8h.html" title="Import and export Axon text files." alt="" coords="648,86,795,117"/>
-<area shape="rect" id="node13" href="$cfslib_8h.html" title="Import from and export to the CED filing system." alt="" coords="819,86,968,117"/>
-<area shape="rect" id="node15" href="$hdf5lib_8h.html" title="Import from and export to hdf5." alt="" coords="992,86,1147,117"/>
-</map>
