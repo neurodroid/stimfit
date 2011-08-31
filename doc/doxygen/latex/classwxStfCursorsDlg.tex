@@ -1,0 +1,689 @@
+\hypertarget{classwxStfCursorsDlg}{
+\section{wxStfCursorsDlg Class Reference}
+\label{classwxStfCursorsDlg}\index{wxStfCursorsDlg@{wxStfCursorsDlg}}
+}
+
+
+Cursor settings non-\/modal dialog.  
+
+
+
+
+{\ttfamily \#include $<$cursorsdlg.h$>$}
+
+
+
+Inheritance diagram for wxStfCursorsDlg:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=168pt]{classwxStfCursorsDlg__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for wxStfCursorsDlg:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=400pt]{classwxStfCursorsDlg__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classwxStfCursorsDlg_a94b84498bba9d335ecab89e0f5030e41}{wxStfCursorsDlg} (\hyperlink{classwxWindow}{wxWindow} $\ast$parent, \hyperlink{classwxStfDoc}{wxStfDoc} $\ast$initDoc, int id=wxID\_\-ANY, \hyperlink{classwxString}{wxString} title=wxT(\char`\"{}Cursor settings\char`\"{}), wxPoint pos=wxDefaultPosition, \hyperlink{classwxSize}{wxSize} size=wxDefaultSize, int style=wxCAPTION)
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classwxStfCursorsDlg_afa2eeb514962a88b822018daa4cf84b4}{EndModal} (int retCode)
+\begin{DoxyCompactList}\small\item\em Called upon ending a modal dialog. \item\end{DoxyCompactList}\item 
+virtual bool \hyperlink{classwxStfCursorsDlg_a681f5abeb01d02fe312a2a164769d98c}{TransferDataFromWindow} ()
+\begin{DoxyCompactList}\small\item\em Called when data should be transferred from the non-\/modal dialog (e.g. when OK is pressed) \item\end{DoxyCompactList}\item 
+int \hyperlink{classwxStfCursorsDlg_a3c33644d6e71ff2f94c3e2a95889d5a0}{GetCursorM} () const 
+\begin{DoxyCompactList}\small\item\em Get the measurement cursor x-\/position. \item\end{DoxyCompactList}\item 
+int \hyperlink{classwxStfCursorsDlg_a588a9bc27f41358b26daa1ea7bb9ae53}{GetCursor1P} () const 
+\begin{DoxyCompactList}\small\item\em Get the left peak cursor x-\/position. \item\end{DoxyCompactList}\item 
+int \hyperlink{classwxStfCursorsDlg_a554f804d5baa56a0a37adb036633db8e}{GetCursor2P} () const 
+\begin{DoxyCompactList}\small\item\em Get the right peak cursor x-\/position. \item\end{DoxyCompactList}\item 
+int \hyperlink{classwxStfCursorsDlg_a4580524b0a8eab02f773f9d1143f0f31}{GetCursor1B} () const 
+\begin{DoxyCompactList}\small\item\em Get the left base cursor x-\/position. \item\end{DoxyCompactList}\item 
+int \hyperlink{classwxStfCursorsDlg_af6ecc16a7642f2600d1ff26c0725fed5}{GetCursor2B} () const 
+\begin{DoxyCompactList}\small\item\em Get the right base cursor x-\/position. \item\end{DoxyCompactList}\item 
+int \hyperlink{classwxStfCursorsDlg_a5ded86530ce6603ccc150c2d7eff2f72}{GetCursor1D} () const 
+\begin{DoxyCompactList}\small\item\em Get the left fit cursor x-\/position. \item\end{DoxyCompactList}\item 
+int \hyperlink{classwxStfCursorsDlg_abd4e5afc85fbaa1bcb9f1a157781ee99}{GetCursor2D} () const 
+\begin{DoxyCompactList}\small\item\em Get the right fit cursor x-\/position. \item\end{DoxyCompactList}\item 
+int \hyperlink{classwxStfCursorsDlg_aa66c4a6d63fa6846e281d4810554a31e}{GetCursor1L} () const 
+\begin{DoxyCompactList}\small\item\em Get the left latency cursor x-\/position. \item\end{DoxyCompactList}\item 
+int \hyperlink{classwxStfCursorsDlg_a2cdeaf3197df8ccf5fe22d7ad57a1719}{GetCursor2L} () const 
+\begin{DoxyCompactList}\small\item\em Get the right latency cursor x-\/position. \item\end{DoxyCompactList}\item 
+int \hyperlink{classwxStfCursorsDlg_aed1c8d75410af56a4dfba76dae6e2ecc}{GetPeakPoints} () const 
+\begin{DoxyCompactList}\small\item\em Gets the number of points used for the binned average during peak detection. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfCursorsDlg_a10fdc48de32be164e70eaf49d43c724f}{SetPeakPoints} (int peakPoints)
+\begin{DoxyCompactList}\small\item\em Sets the number of points used for the binned average during peak detection. \item\end{DoxyCompactList}\item 
+int \hyperlink{classwxStfCursorsDlg_a45576f19bb75432ede2a5743efc38c55}{GetDeltaT} () const 
+\begin{DoxyCompactList}\small\item\em Gets the distance to the first PSlope cursor in number of points. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfCursorsDlg_a1691b68e582e2bf940f04fd59c2da654}{SetDeltaT} (int DeltaT)
+\begin{DoxyCompactList}\small\item\em Sets the number of points used for the distance from the first PSlope cursor. \item\end{DoxyCompactList}\item 
+\hyperlink{group__stfgen_gae8845ae2aeaf4b742a905a2a5571fd5a}{stf::direction} \hyperlink{classwxStfCursorsDlg_aebe08375891c206922c3fb9482593964}{GetDirection} () const 
+\begin{DoxyCompactList}\small\item\em Gets the direction of peak calculations. \item\end{DoxyCompactList}\item 
+\hyperlink{group__stfgen_ga738f9934a45a9d2d81cb0a3de0375c99}{stf::latency\_\-mode} \hyperlink{classwxStfCursorsDlg_ae5c3f8ba6105aaee9f3d4961ba66b962}{GetLatencyStartMode} () const 
+\begin{DoxyCompactList}\small\item\em Gets the mode of Latency for the beginning of the latency cursor. \item\end{DoxyCompactList}\item 
+\hyperlink{group__stfgen_ga738f9934a45a9d2d81cb0a3de0375c99}{stf::latency\_\-mode} \hyperlink{classwxStfCursorsDlg_a7cfc9e0616e262dfa115345b6afc16de}{GetLatencyEndMode} () const 
+\begin{DoxyCompactList}\small\item\em Gets the mode of Latency of the last latency cursor. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfCursorsDlg_a79ec551af76845fbf2b07058f3480845}{SetLatencyStartMode} (\hyperlink{group__stfgen_ga738f9934a45a9d2d81cb0a3de0375c99}{stf::latency\_\-mode} latencyBegMode)
+\begin{DoxyCompactList}\small\item\em Sets the latency mode of the left latency cursor. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfCursorsDlg_a6677d9880b2a68bcb7ffed7ad7a8871a}{SetLatencyEndMode} (\hyperlink{group__stfgen_ga738f9934a45a9d2d81cb0a3de0375c99}{stf::latency\_\-mode} latencyEndMode)
+\begin{DoxyCompactList}\small\item\em Sets the latency mode of the right latency cursor. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classwxStfCursorsDlg_a8096e588bbd449ede67a15821d3cb34f}{GetFromBase} () const 
+\begin{DoxyCompactList}\small\item\em Indicates whether to use the baseline as a reference for AP kinetics. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfCursorsDlg_afec8b402c6f0d51d563c63e26aaf00ac}{SetDirection} (\hyperlink{group__stfgen_gae8845ae2aeaf4b742a905a2a5571fd5a}{stf::direction} direction)
+\begin{DoxyCompactList}\small\item\em Sets the direction of peak calculations. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfCursorsDlg_a9a6b329f076ae3c1e50309c5a6c79a5c}{SetFromBase} (bool frombase)
+\begin{DoxyCompactList}\small\item\em Sets the reference for AP kinetics measurements. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classwxStfCursorsDlg_ae1579db95062fd20394a498bfd3dc924}{GetPeakAtEnd} () const 
+\begin{DoxyCompactList}\small\item\em Indicates whether the right peak cursor should always be at the end of the trace. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classwxStfCursorsDlg_aa6d011bfe921c1d038b720fb7c94a3ec}{GetStartFitAtPeak} () const 
+\begin{DoxyCompactList}\small\item\em Indicates whether to always start a fit at the current peak position. \item\end{DoxyCompactList}\item 
+\hypertarget{classwxStfCursorsDlg_a299bb15e4c37376c620e71dac269d6a5}{
+void \hyperlink{classwxStfCursorsDlg_a299bb15e4c37376c620e71dac269d6a5}{UpdateCursors} ()}
+\label{classwxStfCursorsDlg_a299bb15e4c37376c620e71dac269d6a5}
+
+\begin{DoxyCompactList}\small\item\em Updates the cursor entries in the Cursors Settings menu. \item\end{DoxyCompactList}\item 
+\hyperlink{group__stfgen_gad2d1acb3ac0c16ee32b5f4d3a1ab4abf}{stf::cursor\_\-type} \hyperlink{classwxStfCursorsDlg_a2fe14dd421b1df3d14c7fba062bb56a8}{CurrentCursor} () const 
+\begin{DoxyCompactList}\small\item\em Retrieve the current cursor notebook page. \item\end{DoxyCompactList}\item 
+double \hyperlink{classwxStfCursorsDlg_a24a5953757bb1883724c18088a65b380}{GetSlope} () const 
+\begin{DoxyCompactList}\small\item\em Get the slope at which the baseline should be fixed. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfCursorsDlg_ad761357b9b82e1e9ffa3bd70a7dca671}{SetSlope} (double slope)
+\begin{DoxyCompactList}\small\item\em Set the threshold slope. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfCursorsDlg_ad6d4fd19849612abd62db33ede3d3ca6}{SetSlopeUnits} (const \hyperlink{classwxString}{wxString} \&units)
+\begin{DoxyCompactList}\small\item\em Set the units of the slope. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classwxStfCursorsDlg_a52bed6f2df9a325990130f1958de9d37}{GetBaseToSlope} () const 
+\begin{DoxyCompactList}\small\item\em Indicates whether the baseline should be fixed to a certain slope. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classwxStfCursorsDlg_a000170c56fe7f09dc830f89031fc6e4c}{GetRuler} () const 
+\begin{DoxyCompactList}\small\item\em Indicates whether an additional vertical ruler should be drawn through the baseline. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfCursorsDlg_a32207ff701a636525f6cb1e4ac8852f6}{SetActiveDoc} (\hyperlink{classwxStfDoc}{wxStfDoc} $\ast$actDoc\_\-)
+\begin{DoxyCompactList}\small\item\em Sets the currently active document. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Cursor settings non-\/modal dialog. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classwxStfCursorsDlg_a94b84498bba9d335ecab89e0f5030e41}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{wxStfCursorsDlg}]{\setlength{\rightskip}{0pt plus 5cm}wxStfCursorsDlg::wxStfCursorsDlg (
+\begin{DoxyParamCaption}
+\item[{{\bf wxWindow} $\ast$}]{parent, }
+\item[{{\bf wxStfDoc} $\ast$}]{initDoc, }
+\item[{int}]{id = {\ttfamily wxID\_\-ANY}, }
+\item[{{\bf wxString}}]{title = {\ttfamily wxT(\char`\"{}Cursor~settings\char`\"{})}, }
+\item[{{\bf wxPoint}}]{pos = {\ttfamily wxDefaultPosition}, }
+\item[{{\bf wxSize}}]{size = {\ttfamily wxDefaultSize}, }
+\item[{int}]{style = {\ttfamily wxCAPTION}}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfCursorsDlg_a94b84498bba9d335ecab89e0f5030e41}
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & Pointer to parent window. \\
+\hline
+{\em initDoc} & Pointer to the document the call originated from. \\
+\hline
+{\em id} & Window id. \\
+\hline
+{\em title} & Dialog title. \\
+\hline
+{\em pos} & Initial position. \\
+\hline
+{\em size} & Initial size. \\
+\hline
+{\em style} & Dialog style. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classwxStfCursorsDlg_a2fe14dd421b1df3d14c7fba062bb56a8}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!CurrentCursor@{CurrentCursor}}
+\index{CurrentCursor@{CurrentCursor}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{CurrentCursor}]{\setlength{\rightskip}{0pt plus 5cm}{\bf stf::cursor\_\-type} wxStfCursorsDlg::CurrentCursor (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_a2fe14dd421b1df3d14c7fba062bb56a8}
+
+
+Retrieve the current cursor notebook page. 
+
+\begin{DoxyReturn}{Returns}
+The cursor corresponding to the currently selected notebook page. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_afa2eeb514962a88b822018daa4cf84b4}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!EndModal@{EndModal}}
+\index{EndModal@{EndModal}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{EndModal}]{\setlength{\rightskip}{0pt plus 5cm}virtual void wxStfCursorsDlg::EndModal (
+\begin{DoxyParamCaption}
+\item[{int}]{retCode}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classwxStfCursorsDlg_afa2eeb514962a88b822018daa4cf84b4}
+
+
+Called upon ending a modal dialog. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em retCode} & The dialog button id that ended the dialog (e.g. wxID\_\-OK) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfCursorsDlg_a52bed6f2df9a325990130f1958de9d37}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetBaseToSlope@{GetBaseToSlope}}
+\index{GetBaseToSlope@{GetBaseToSlope}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetBaseToSlope}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfCursorsDlg::GetBaseToSlope (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_a52bed6f2df9a325990130f1958de9d37}
+
+
+Indicates whether the baseline should be fixed to a certain slope. 
+
+\begin{DoxyReturn}{Returns}
+true if the baseline should be fixed, false otherwise. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_a4580524b0a8eab02f773f9d1143f0f31}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetCursor1B@{GetCursor1B}}
+\index{GetCursor1B@{GetCursor1B}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetCursor1B}]{\setlength{\rightskip}{0pt plus 5cm}int wxStfCursorsDlg::GetCursor1B (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_a4580524b0a8eab02f773f9d1143f0f31}
+
+
+Get the left base cursor x-\/position. 
+
+\begin{DoxyReturn}{Returns}
+The left base cursor x-\/position in units of sampling points. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_a5ded86530ce6603ccc150c2d7eff2f72}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetCursor1D@{GetCursor1D}}
+\index{GetCursor1D@{GetCursor1D}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetCursor1D}]{\setlength{\rightskip}{0pt plus 5cm}int wxStfCursorsDlg::GetCursor1D (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_a5ded86530ce6603ccc150c2d7eff2f72}
+
+
+Get the left fit cursor x-\/position. 
+
+\begin{DoxyReturn}{Returns}
+The left fit cursor x-\/position in units of sampling points. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_aa66c4a6d63fa6846e281d4810554a31e}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetCursor1L@{GetCursor1L}}
+\index{GetCursor1L@{GetCursor1L}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetCursor1L}]{\setlength{\rightskip}{0pt plus 5cm}int wxStfCursorsDlg::GetCursor1L (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_aa66c4a6d63fa6846e281d4810554a31e}
+
+
+Get the left latency cursor x-\/position. 
+
+\begin{DoxyReturn}{Returns}
+The left fit cursor x-\/position in units of sampling points. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_a588a9bc27f41358b26daa1ea7bb9ae53}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetCursor1P@{GetCursor1P}}
+\index{GetCursor1P@{GetCursor1P}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetCursor1P}]{\setlength{\rightskip}{0pt plus 5cm}int wxStfCursorsDlg::GetCursor1P (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_a588a9bc27f41358b26daa1ea7bb9ae53}
+
+
+Get the left peak cursor x-\/position. 
+
+\begin{DoxyReturn}{Returns}
+The left peak cursor x-\/position in units of sampling points. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_af6ecc16a7642f2600d1ff26c0725fed5}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetCursor2B@{GetCursor2B}}
+\index{GetCursor2B@{GetCursor2B}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetCursor2B}]{\setlength{\rightskip}{0pt plus 5cm}int wxStfCursorsDlg::GetCursor2B (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_af6ecc16a7642f2600d1ff26c0725fed5}
+
+
+Get the right base cursor x-\/position. 
+
+\begin{DoxyReturn}{Returns}
+The right base cursor x-\/position in units of sampling points. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_abd4e5afc85fbaa1bcb9f1a157781ee99}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetCursor2D@{GetCursor2D}}
+\index{GetCursor2D@{GetCursor2D}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetCursor2D}]{\setlength{\rightskip}{0pt plus 5cm}int wxStfCursorsDlg::GetCursor2D (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_abd4e5afc85fbaa1bcb9f1a157781ee99}
+
+
+Get the right fit cursor x-\/position. 
+
+\begin{DoxyReturn}{Returns}
+The right fit cursor x-\/position in units of sampling points. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_a2cdeaf3197df8ccf5fe22d7ad57a1719}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetCursor2L@{GetCursor2L}}
+\index{GetCursor2L@{GetCursor2L}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetCursor2L}]{\setlength{\rightskip}{0pt plus 5cm}int wxStfCursorsDlg::GetCursor2L (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_a2cdeaf3197df8ccf5fe22d7ad57a1719}
+
+
+Get the right latency cursor x-\/position. 
+
+\begin{DoxyReturn}{Returns}
+The right fit cursor x-\/position in units of sampling points. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_a554f804d5baa56a0a37adb036633db8e}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetCursor2P@{GetCursor2P}}
+\index{GetCursor2P@{GetCursor2P}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetCursor2P}]{\setlength{\rightskip}{0pt plus 5cm}int wxStfCursorsDlg::GetCursor2P (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_a554f804d5baa56a0a37adb036633db8e}
+
+
+Get the right peak cursor x-\/position. 
+
+\begin{DoxyReturn}{Returns}
+The right peak cursor x-\/position in units of sampling points. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_a3c33644d6e71ff2f94c3e2a95889d5a0}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetCursorM@{GetCursorM}}
+\index{GetCursorM@{GetCursorM}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetCursorM}]{\setlength{\rightskip}{0pt plus 5cm}int wxStfCursorsDlg::GetCursorM (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_a3c33644d6e71ff2f94c3e2a95889d5a0}
+
+
+Get the measurement cursor x-\/position. 
+
+\begin{DoxyReturn}{Returns}
+The measurement cursor x-\/position in units of sampling points. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_a45576f19bb75432ede2a5743efc38c55}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetDeltaT@{GetDeltaT}}
+\index{GetDeltaT@{GetDeltaT}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetDeltaT}]{\setlength{\rightskip}{0pt plus 5cm}int wxStfCursorsDlg::GetDeltaT (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_a45576f19bb75432ede2a5743efc38c55}
+
+
+Gets the distance to the first PSlope cursor in number of points. 
+
+\begin{DoxyReturn}{Returns}
+The distance to the first PSlope cursor in number of points. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_aebe08375891c206922c3fb9482593964}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetDirection@{GetDirection}}
+\index{GetDirection@{GetDirection}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetDirection}]{\setlength{\rightskip}{0pt plus 5cm}{\bf stf::direction} wxStfCursorsDlg::GetDirection (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_aebe08375891c206922c3fb9482593964}
+
+
+Gets the direction of peak calculations. 
+
+\begin{DoxyReturn}{Returns}
+The current direction of peak calculations. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_a8096e588bbd449ede67a15821d3cb34f}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetFromBase@{GetFromBase}}
+\index{GetFromBase@{GetFromBase}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetFromBase}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfCursorsDlg::GetFromBase (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_a8096e588bbd449ede67a15821d3cb34f}
+
+
+Indicates whether to use the baseline as a reference for AP kinetics. 
+
+\begin{DoxyReturn}{Returns}
+true if the baseline should be used, false if the threshold should be used. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_a7cfc9e0616e262dfa115345b6afc16de}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetLatencyEndMode@{GetLatencyEndMode}}
+\index{GetLatencyEndMode@{GetLatencyEndMode}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetLatencyEndMode}]{\setlength{\rightskip}{0pt plus 5cm}{\bf stf::latency\_\-mode} wxStfCursorsDlg::GetLatencyEndMode (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_a7cfc9e0616e262dfa115345b6afc16de}
+
+
+Gets the mode of Latency of the last latency cursor. 
+
+\begin{DoxyReturn}{Returns}
+The current mode of the last latency cursor. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_ae5c3f8ba6105aaee9f3d4961ba66b962}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetLatencyStartMode@{GetLatencyStartMode}}
+\index{GetLatencyStartMode@{GetLatencyStartMode}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetLatencyStartMode}]{\setlength{\rightskip}{0pt plus 5cm}{\bf stf::latency\_\-mode} wxStfCursorsDlg::GetLatencyStartMode (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_ae5c3f8ba6105aaee9f3d4961ba66b962}
+
+
+Gets the mode of Latency for the beginning of the latency cursor. 
+
+\begin{DoxyReturn}{Returns}
+The current mode for the beginning latency cursor. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_ae1579db95062fd20394a498bfd3dc924}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetPeakAtEnd@{GetPeakAtEnd}}
+\index{GetPeakAtEnd@{GetPeakAtEnd}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetPeakAtEnd}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfCursorsDlg::GetPeakAtEnd (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_ae1579db95062fd20394a498bfd3dc924}
+
+
+Indicates whether the right peak cursor should always be at the end of the trace. 
+
+\begin{DoxyReturn}{Returns}
+true if the peak cursor should always be at the end of the trace. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_aed1c8d75410af56a4dfba76dae6e2ecc}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetPeakPoints@{GetPeakPoints}}
+\index{GetPeakPoints@{GetPeakPoints}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetPeakPoints}]{\setlength{\rightskip}{0pt plus 5cm}int wxStfCursorsDlg::GetPeakPoints (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_aed1c8d75410af56a4dfba76dae6e2ecc}
+
+
+Gets the number of points used for the binned average during peak detection. 
+
+\begin{DoxyReturn}{Returns}
+The number of points used for the binned average during peak detection. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_a000170c56fe7f09dc830f89031fc6e4c}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetRuler@{GetRuler}}
+\index{GetRuler@{GetRuler}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetRuler}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfCursorsDlg::GetRuler (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_a000170c56fe7f09dc830f89031fc6e4c}
+
+
+Indicates whether an additional vertical ruler should be drawn through the baseline. 
+
+\begin{DoxyReturn}{Returns}
+true if an additional ruler should be drawn. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_a24a5953757bb1883724c18088a65b380}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetSlope@{GetSlope}}
+\index{GetSlope@{GetSlope}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetSlope}]{\setlength{\rightskip}{0pt plus 5cm}double wxStfCursorsDlg::GetSlope (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_a24a5953757bb1883724c18088a65b380}
+
+
+Get the slope at which the baseline should be fixed. 
+
+\begin{DoxyReturn}{Returns}
+The slope at which the baseline should be fixed. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_aa6d011bfe921c1d038b720fb7c94a3ec}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!GetStartFitAtPeak@{GetStartFitAtPeak}}
+\index{GetStartFitAtPeak@{GetStartFitAtPeak}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{GetStartFitAtPeak}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfCursorsDlg::GetStartFitAtPeak (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfCursorsDlg_aa6d011bfe921c1d038b720fb7c94a3ec}
+
+
+Indicates whether to always start a fit at the current peak position. 
+
+\begin{DoxyReturn}{Returns}
+true if the fit should always be started at the current peak position. 
+\end{DoxyReturn}
+\hypertarget{classwxStfCursorsDlg_a32207ff701a636525f6cb1e4ac8852f6}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!SetActiveDoc@{SetActiveDoc}}
+\index{SetActiveDoc@{SetActiveDoc}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{SetActiveDoc}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfCursorsDlg::SetActiveDoc (
+\begin{DoxyParamCaption}
+\item[{{\bf wxStfDoc} $\ast$}]{actDoc\_\-}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfCursorsDlg_a32207ff701a636525f6cb1e4ac8852f6}
+
+
+Sets the currently active document. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em actDoc\_\-} & A pointer to the currently active document. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfCursorsDlg_a1691b68e582e2bf940f04fd59c2da654}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!SetDeltaT@{SetDeltaT}}
+\index{SetDeltaT@{SetDeltaT}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{SetDeltaT}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfCursorsDlg::SetDeltaT (
+\begin{DoxyParamCaption}
+\item[{int}]{DeltaT}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfCursorsDlg_a1691b68e582e2bf940f04fd59c2da654}
+
+
+Sets the number of points used for the distance from the first PSlope cursor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em peakPoints} & The number of points used for the distance from the first PSlope cursor. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfCursorsDlg_afec8b402c6f0d51d563c63e26aaf00ac}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!SetDirection@{SetDirection}}
+\index{SetDirection@{SetDirection}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{SetDirection}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfCursorsDlg::SetDirection (
+\begin{DoxyParamCaption}
+\item[{{\bf stf::direction}}]{direction}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfCursorsDlg_afec8b402c6f0d51d563c63e26aaf00ac}
+
+
+Sets the direction of peak calculations. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em direction} & The new direction of peak calculations. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfCursorsDlg_a9a6b329f076ae3c1e50309c5a6c79a5c}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!SetFromBase@{SetFromBase}}
+\index{SetFromBase@{SetFromBase}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{SetFromBase}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfCursorsDlg::SetFromBase (
+\begin{DoxyParamCaption}
+\item[{bool}]{frombase}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfCursorsDlg_a9a6b329f076ae3c1e50309c5a6c79a5c}
+
+
+Sets the reference for AP kinetics measurements. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em frombase} & true if the baseline should be used, false if the threshold should be used. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfCursorsDlg_a6677d9880b2a68bcb7ffed7ad7a8871a}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!SetLatencyEndMode@{SetLatencyEndMode}}
+\index{SetLatencyEndMode@{SetLatencyEndMode}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{SetLatencyEndMode}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfCursorsDlg::SetLatencyEndMode (
+\begin{DoxyParamCaption}
+\item[{{\bf stf::latency\_\-mode}}]{latencyEndMode}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfCursorsDlg_a6677d9880b2a68bcb7ffed7ad7a8871a}
+
+
+Sets the latency mode of the right latency cursor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em latencyEndMode,:} & the new mode for the right latency cursor. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfCursorsDlg_a79ec551af76845fbf2b07058f3480845}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!SetLatencyStartMode@{SetLatencyStartMode}}
+\index{SetLatencyStartMode@{SetLatencyStartMode}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{SetLatencyStartMode}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfCursorsDlg::SetLatencyStartMode (
+\begin{DoxyParamCaption}
+\item[{{\bf stf::latency\_\-mode}}]{latencyBegMode}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfCursorsDlg_a79ec551af76845fbf2b07058f3480845}
+
+
+Sets the latency mode of the left latency cursor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em latencyBegMode,:} & the new mode for the left latency cursor. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfCursorsDlg_a10fdc48de32be164e70eaf49d43c724f}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!SetPeakPoints@{SetPeakPoints}}
+\index{SetPeakPoints@{SetPeakPoints}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{SetPeakPoints}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfCursorsDlg::SetPeakPoints (
+\begin{DoxyParamCaption}
+\item[{int}]{peakPoints}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfCursorsDlg_a10fdc48de32be164e70eaf49d43c724f}
+
+
+Sets the number of points used for the binned average during peak detection. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em peakPoints} & The number of points used for the binned average during peak detection. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfCursorsDlg_ad761357b9b82e1e9ffa3bd70a7dca671}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!SetSlope@{SetSlope}}
+\index{SetSlope@{SetSlope}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{SetSlope}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfCursorsDlg::SetSlope (
+\begin{DoxyParamCaption}
+\item[{double}]{slope}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfCursorsDlg_ad761357b9b82e1e9ffa3bd70a7dca671}
+
+
+Set the threshold slope. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em slope} & The new threshold slope. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfCursorsDlg_ad6d4fd19849612abd62db33ede3d3ca6}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!SetSlopeUnits@{SetSlopeUnits}}
+\index{SetSlopeUnits@{SetSlopeUnits}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{SetSlopeUnits}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfCursorsDlg::SetSlopeUnits (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{units}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfCursorsDlg_ad6d4fd19849612abd62db33ede3d3ca6}
+
+
+Set the units of the slope. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em units} & The units of the slope. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfCursorsDlg_a681f5abeb01d02fe312a2a164769d98c}{
+\index{wxStfCursorsDlg@{wxStfCursorsDlg}!TransferDataFromWindow@{TransferDataFromWindow}}
+\index{TransferDataFromWindow@{TransferDataFromWindow}!wxStfCursorsDlg@{wxStfCursorsDlg}}
+\subsubsection[{TransferDataFromWindow}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool wxStfCursorsDlg::TransferDataFromWindow (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classwxStfCursorsDlg_a681f5abeb01d02fe312a2a164769d98c}
+
+
+Called when data should be transferred from the non-\/modal dialog (e.g. when OK is pressed) 
+
+Note that a non-\/modal dialog won't be destroyed when OK is clicked, it will only disappear from sight. This function will then apply the current cursor settings and update the results table. \begin{DoxyReturn}{Returns}
+The return value of the base class version wxWindow::TransferDataFromWindow() 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+src/app/dlgs/\hyperlink{cursorsdlg_8h}{cursorsdlg.h}\end{DoxyCompactItemize}

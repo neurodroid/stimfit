@@ -1,0 +1,11 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$recording_8h.html" title="Declares the Recording class." alt="" coords="287,86,423,117"/>
+<area shape="rect" id="node5" href="$core_8h.html" title="Core components." alt="" coords="401,166,511,197"/>
+<area shape="rect" id="node7" href="$doc_8h.html" title="Declares wxStfDoc." alt="" coords="5,246,107,277"/>
+<area shape="rect" id="node9" href="$childframe_8h.html" title="Declares wxStfChildFrame." alt="" coords="131,246,269,277"/>
+<area shape="rect" id="node11" href="$parentframe_8h.html" title="Declares wxStfParentFrame." alt="" coords="293,246,443,277"/>
+<area shape="rect" id="node13" href="$asciilib_8h.html" title="Import and export plain text files." alt="" coords="467,246,624,277"/>
+<area shape="rect" id="node15" href="$atflib_8h.html" title="Import and export Axon text files." alt="" coords="648,246,795,277"/>
+<area shape="rect" id="node17" href="$cfslib_8h.html" title="Import from and export to the CED filing system." alt="" coords="819,246,968,277"/>
+<area shape="rect" id="node19" href="$hdf5lib_8h.html" title="Import from and export to hdf5." alt="" coords="992,246,1147,277"/>
+</map>

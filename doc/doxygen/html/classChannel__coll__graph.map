@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" id="node4" href="$classSection.html" title="Represents a continuously sampled sweep of data points." alt="" coords="1216,197,1283,227"/>
+<area shape="rect" id="node8" href="$structstf_1_1PyMarker.html" title="A marker that can be set from Python." alt="" coords="599,5,700,35"/>
+<area shape="rect" id="node10" title="STL class." alt="" coords="920,109,1000,139"/>
+<area shape="rect" id="node12" title="STL class." alt="" coords="567,58,732,89"/>
+<area shape="rect" id="node14" href="$structstf_1_1storedFunc.html" title="Function used for least&#45;squares fitting." alt="" coords="905,410,1015,441"/>
+<area shape="rect" id="node18" href="$structstf_1_1parInfo.html" title="Information about parameters used in storedFunc." alt="" coords="209,410,295,441"/>
+<area shape="rect" id="node20" href="$classwxString.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxstring.html (wxWidgets documentation)" alt="" coords="5,410,77,441"/>
+<area shape="rect" id="node23" href="$classstf_1_1Table.html" title="A table used for printing information." alt="" coords="923,187,997,218"/>
+<area shape="rect" id="node38" href="$classstf_1_1Event.html" title="Describes the attributes of an event." alt="" coords="611,303,688,334"/>
+<area shape="rect" id="node41" href="$classYZoom.html" title="Handles y&#45;scaling of traces." alt="" coords="1429,231,1491,262"/>
+</map>

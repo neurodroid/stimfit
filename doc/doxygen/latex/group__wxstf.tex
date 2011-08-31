@@ -1,0 +1,301 @@
+\hypertarget{group__wxstf}{
+\section{Stimfit classes and functions derived from wxWidgets}
+\label{group__wxstf}\index{Stimfit classes and functions derived from wxWidgets@{Stimfit classes and functions derived from wxWidgets}}
+}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classwxStfApp}{wxStfApp}
+\begin{DoxyCompactList}\small\item\em The application, derived from \hyperlink{classwxApp}{wxApp}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfGrid}{wxStfGrid}
+\begin{DoxyCompactList}\small\item\em Derived from \hyperlink{classwxGrid}{wxGrid}. Allows to copy cells to the clipboard. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfDoc}{wxStfDoc}
+\begin{DoxyCompactList}\small\item\em The document class, derived from both \hyperlink{classwxDocument}{wxDocument} and \hyperlink{classRecording}{Recording}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfChildFrame}{wxStfChildFrame}
+\begin{DoxyCompactList}\small\item\em Provides the child frame for displaying documents on separate windows. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfParentFrame}{wxStfParentFrame}
+\begin{DoxyCompactList}\small\item\em Provides the top-\/level frame. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfGraph}{wxStfGraph}
+\begin{DoxyCompactList}\small\item\em Handles drawing of traces and keyboard or mouse input. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfPrintout}{wxStfPrintout}
+\begin{DoxyCompactList}\small\item\em Handles printing of traces. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfCheckBox}{wxStfCheckBox}
+\begin{DoxyCompactList}\small\item\em A checkbox used to select or unselect detected events. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfTable}{wxStfTable}
+\begin{DoxyCompactList}\small\item\em Adapts \hyperlink{classstf_1_1Table}{stf::Table} to be used by \hyperlink{classwxStfGrid}{wxStfGrid}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfView}{wxStfView}
+\begin{DoxyCompactList}\small\item\em The view class, derived from \hyperlink{classwxView}{wxView}. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfCursorsDlg}{wxStfCursorsDlg}
+\begin{DoxyCompactList}\small\item\em Cursor settings non-\/modal dialog. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfEventDlg}{wxStfEventDlg}
+\begin{DoxyCompactList}\small\item\em Dialog for event-\/detection settings. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfFitSelDlg}{wxStfFitSelDlg}
+\begin{DoxyCompactList}\small\item\em Non-\/linear regression settings dialog. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfFileInfoDlg}{wxStfFileInfoDlg}
+\begin{DoxyCompactList}\small\item\em Dialog showing file information. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfChannelSelDlg}{wxStfChannelSelDlg}
+\begin{DoxyCompactList}\small\item\em Dialog for selecting channels. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfAlignDlg}{wxStfAlignDlg}
+\begin{DoxyCompactList}\small\item\em Dialog for selecting alignment mode. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfFilterSelDlg}{wxStfFilterSelDlg}
+\begin{DoxyCompactList}\small\item\em Dialog for selecting a filter function. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfTransformDlg}{wxStfTransformDlg}
+\begin{DoxyCompactList}\small\item\em Dialog for selecting a transform function. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfFitInfoDlg}{wxStfFitInfoDlg}
+\begin{DoxyCompactList}\small\item\em Dialog showing information about a fit. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structBatchOption}{BatchOption}
+\begin{DoxyCompactList}\small\item\em small struct representing a batch dialog option \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfBatchDlg}{wxStfBatchDlg}
+\begin{DoxyCompactList}\small\item\em Dialog for batch analysis settings. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfPreprintDlg}{wxStfPreprintDlg}
+\begin{DoxyCompactList}\small\item\em Dialog for setting printout options. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfGaussianDlg}{wxStfGaussianDlg}
+\begin{DoxyCompactList}\small\item\em Dialog for setting the parameters of a Gaussian function. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfTextImportDlg}{wxStfTextImportDlg}
+\begin{DoxyCompactList}\small\item\em Dialog for text import filter settings. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfConvertDlg}{wxStfConvertDlg}
+\begin{DoxyCompactList}\small\item\em Dialog for batch conversion of files.from cfs to atf. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfOrderChannelsDlg}{wxStfOrderChannelsDlg}
+\begin{DoxyCompactList}\small\item\em Dialog for re-\/ordering channels before saving to file. \item\end{DoxyCompactList}\item 
+class \hyperlink{classwxStfUsrDlg}{wxStfUsrDlg}
+\begin{DoxyCompactList}\small\item\em A user-\/defined dialog for entering floating-\/point numbers. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{group__wxstf_gaca090027a7eceae4189b1a4e2747a921}{
+typedef \hyperlink{classwxDocMDIChildFrame}{wxDocMDIChildFrame} \hyperlink{group__wxstf_gaca090027a7eceae4189b1a4e2747a921}{wxStfChildType}}
+\label{group__wxstf_gaca090027a7eceae4189b1a4e2747a921}
+
+\begin{DoxyCompactList}\small\item\em child frame type; depends on whether aui is used for the doc/view interface \item\end{DoxyCompactList}\item 
+\hypertarget{group__wxstf_gac69111a30c99cf6bf4a9b2ae1cf6348b}{
+typedef \hyperlink{classwxDocMDIParentFrame}{wxDocMDIParentFrame} \hyperlink{group__wxstf_gac69111a30c99cf6bf4a9b2ae1cf6348b}{wxStfParentType}}
+\label{group__wxstf_gac69111a30c99cf6bf4a9b2ae1cf6348b}
+
+\begin{DoxyCompactList}\small\item\em parent frame type; depends on whether aui is used for the doc/view interface \item\end{DoxyCompactList}\item 
+\hypertarget{group__wxstf_gaca090027a7eceae4189b1a4e2747a921}{
+typedef \hyperlink{classwxDocMDIChildFrame}{wxDocMDIChildFrame} \hyperlink{group__wxstf_gaca090027a7eceae4189b1a4e2747a921}{wxStfChildType}}
+\label{group__wxstf_gaca090027a7eceae4189b1a4e2747a921}
+
+\begin{DoxyCompactList}\small\item\em child frame type; depends on whether aui is used for the doc/view interface \item\end{DoxyCompactList}\item 
+\hypertarget{group__wxstf_gac69111a30c99cf6bf4a9b2ae1cf6348b}{
+typedef \hyperlink{classwxDocMDIParentFrame}{wxDocMDIParentFrame} \hyperlink{group__wxstf_gac69111a30c99cf6bf4a9b2ae1cf6348b}{wxStfParentType}}
+\label{group__wxstf_gac69111a30c99cf6bf4a9b2ae1cf6348b}
+
+\begin{DoxyCompactList}\small\item\em parent frame type; depends on whether aui is used for the doc/view interface \item\end{DoxyCompactList}\item 
+\hypertarget{group__wxstf_ga5091357e98d0ee6aa790dd6c902c6c10}{
+typedef wxAuiToolBar {\bfseries wxStfToolBar}}
+\label{group__wxstf_ga5091357e98d0ee6aa790dd6c902c6c10}
+
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \{ \par
+{\bfseries ID\_\-TOOL\_\-FIRST}, 
+{\bfseries ID\_\-TOOL\_\-NEXT}, 
+{\bfseries ID\_\-TOOL\_\-PREVIOUS}, 
+{\bfseries ID\_\-TOOL\_\-LAST}, 
+\par
+{\bfseries ID\_\-TOOL\_\-XENL}, 
+{\bfseries ID\_\-TOOL\_\-XSHRINK}, 
+{\bfseries ID\_\-TOOL\_\-YENL}, 
+{\bfseries ID\_\-TOOL\_\-YSHRINK}, 
+\par
+{\bfseries ID\_\-TOOL\_\-UP}, 
+{\bfseries ID\_\-TOOL\_\-DOWN}, 
+{\bfseries ID\_\-TOOL\_\-FIT}, 
+{\bfseries ID\_\-TOOL\_\-LEFT}, 
+\par
+{\bfseries ID\_\-TOOL\_\-RIGHT}, 
+{\bfseries ID\_\-TOOL\_\-SELECT}, 
+{\bfseries ID\_\-TOOL\_\-REMOVE}, 
+{\bfseries ID\_\-TOOL\_\-MEASURE}, 
+\par
+{\bfseries ID\_\-TOOL\_\-PEAK}, 
+{\bfseries ID\_\-TOOL\_\-BASE}, 
+{\bfseries ID\_\-TOOL\_\-DECAY}, 
+{\bfseries ID\_\-TOOL\_\-LATENCY}, 
+\par
+{\bfseries ID\_\-TOOL\_\-ZOOM}, 
+{\bfseries ID\_\-TOOL\_\-EVENT}, 
+{\bfseries ID\_\-TOOL\_\-CH1}, 
+{\bfseries ID\_\-TOOL\_\-CH2}, 
+\par
+{\bfseries ID\_\-TOOL\_\-SNAPSHOT}, 
+{\bfseries ID\_\-TOOL\_\-SNAPSHOT\_\-WMF}, 
+{\bfseries ID\_\-IMPORTPYTHON}, 
+{\bfseries ID\_\-VIEW\_\-RESULTS}, 
+\par
+{\bfseries ID\_\-VIEW\_\-MEASURE}, 
+{\bfseries ID\_\-VIEW\_\-BASELINE}, 
+{\bfseries ID\_\-VIEW\_\-BASESD}, 
+{\bfseries ID\_\-VIEW\_\-THRESHOLD}, 
+\par
+{\bfseries ID\_\-VIEW\_\-PEAKZERO}, 
+{\bfseries ID\_\-VIEW\_\-PEAKBASE}, 
+{\bfseries ID\_\-VIEW\_\-PEAKTHRESHOLD}, 
+{\bfseries ID\_\-VIEW\_\-RT2080}, 
+\par
+{\bfseries ID\_\-VIEW\_\-T50}, 
+{\bfseries ID\_\-VIEW\_\-RD}, 
+{\bfseries ID\_\-VIEW\_\-SLOPERISE}, 
+{\bfseries ID\_\-VIEW\_\-SLOPEDECAY}, 
+\par
+{\bfseries ID\_\-VIEW\_\-LATENCY}, 
+{\bfseries ID\_\-VIEW\_\-CURSORS}, 
+{\bfseries ID\_\-VIEW\_\-SHELL}, 
+{\bfseries ID\_\-FILEINFO}, 
+\par
+{\bfseries ID\_\-EXPORTIMAGE}, 
+{\bfseries ID\_\-EXPORTPS}, 
+{\bfseries ID\_\-EXPORTLATEX}, 
+{\bfseries ID\_\-EXPORTSVG}, 
+\par
+{\bfseries ID\_\-TRACES}, 
+{\bfseries ID\_\-PLOTSELECTED}, 
+{\bfseries ID\_\-SHOWSECOND}, 
+{\bfseries ID\_\-CURSORS}, 
+\par
+{\bfseries ID\_\-AVERAGE}, 
+{\bfseries ID\_\-ALIGNEDAVERAGE}, 
+{\bfseries ID\_\-FIT}, 
+{\bfseries ID\_\-LFIT}, 
+\par
+{\bfseries ID\_\-LOG}, 
+{\bfseries ID\_\-VIEWTABLE}, 
+{\bfseries ID\_\-BATCH}, 
+{\bfseries ID\_\-INTEGRATE}, 
+\par
+{\bfseries ID\_\-DIFFERENTIATE}, 
+{\bfseries ID\_\-CH2BASE}, 
+{\bfseries ID\_\-CH2POS}, 
+{\bfseries ID\_\-CH2ZOOM}, 
+\par
+{\bfseries ID\_\-CH2BASEZOOM}, 
+{\bfseries ID\_\-SWAPCHANNELS}, 
+{\bfseries ID\_\-SCALE}, 
+{\bfseries ID\_\-HIRES}, 
+\par
+{\bfseries ID\_\-ZOOMHV}, 
+{\bfseries ID\_\-ZOOMH}, 
+{\bfseries ID\_\-ZOOMV}, 
+{\bfseries ID\_\-EVENTADD}, 
+\par
+{\bfseries ID\_\-EVENTEXTRACT}, 
+{\bfseries ID\_\-APPLYTOALL}, 
+{\bfseries ID\_\-UPDATE}, 
+{\bfseries ID\_\-CONVERT}, 
+\par
+{\bfseries ID\_\-LATENCYWINDOW}, 
+{\bfseries ID\_\-PRINT\_\-PRINT}, 
+{\bfseries ID\_\-MPL}, 
+{\bfseries ID\_\-PRINT\_\-PAGE\_\-SETUP}, 
+\par
+{\bfseries ID\_\-PRINT\_\-PREVIEW}, 
+{\bfseries ID\_\-COPYINTABLE}, 
+{\bfseries ID\_\-MULTIPLY}, 
+{\bfseries ID\_\-SELECTSOME}, 
+\par
+{\bfseries ID\_\-UNSELECTSOME}, 
+{\bfseries ID\_\-MYSELECTALL}, 
+{\bfseries ID\_\-UNSELECTALL}, 
+{\bfseries ID\_\-NEWFROMSELECTED}, 
+\par
+{\bfseries ID\_\-NEWFROMSELECTEDTHIS}, 
+{\bfseries ID\_\-NEWFROMALL}, 
+{\bfseries ID\_\-CONCATENATE}, 
+{\bfseries ID\_\-SUBTRACTBASE}, 
+\par
+{\bfseries ID\_\-FILTER}, 
+{\bfseries ID\_\-SPECTRUM}, 
+{\bfseries ID\_\-POVERN}, 
+{\bfseries ID\_\-PLOTCRITERION}, 
+\par
+{\bfseries ID\_\-PLOTCORRELATION}, 
+{\bfseries ID\_\-EXTRACT}, 
+{\bfseries ID\_\-THRESHOLD}, 
+{\bfseries ID\_\-LOADPERSPECTIVE}, 
+\par
+{\bfseries ID\_\-SAVEPERSPECTIVE}, 
+{\bfseries ID\_\-RESTOREPERSPECTIVE}, 
+{\bfseries ID\_\-STFCHECKBOX}, 
+{\bfseries ID\_\-EVENT\_\-ADDEVENT}, 
+\par
+{\bfseries ID\_\-EVENT\_\-EXTRACT}, 
+{\bfseries ID\_\-EVENT\_\-ERASE}, 
+{\bfseries ID\_\-COMBOTRACES}, 
+{\bfseries ID\_\-SPINCTRLTRACES}, 
+\par
+{\bfseries ID\_\-ZERO\_\-INDEX}, 
+{\bfseries ID\_\-COMBOACTCHANNEL}, 
+{\bfseries ID\_\-COMBOINACTCHANNEL}, 
+{\bfseries ID\_\-USERDEF}
+ \}
+\begin{DoxyCompactList}\small\item\em Event ids. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{group__wxstf_ga10919857dea79326b815ec8555077e07}{
+StfDll \hyperlink{classwxStfApp}{wxStfApp} \& \hyperlink{group__wxstf_ga10919857dea79326b815ec8555077e07}{wxGetApp} ()}
+\label{group__wxstf_ga10919857dea79326b815ec8555077e07}
+
+\begin{DoxyCompactList}\small\item\em Returns a reference to the application. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxStfParentFrame}{wxStfParentFrame} $\ast$ \hyperlink{group__wxstf_gac1dfaac894e39fdac1507247318a00ac}{GetMainFrame} ()
+\begin{DoxyCompactList}\small\item\em Retrieve the application's top-\/level frame. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{group__wxstf_ga3b3cd43da4976041b4a034eeefdea07e}{
+bool \hyperlink{group__wxstf_ga3b3cd43da4976041b4a034eeefdea07e}{singleWindowMode}}
+\label{group__wxstf_ga3b3cd43da4976041b4a034eeefdea07e}
+
+\begin{DoxyCompactList}\small\item\em true if in single-\/window mode \item\end{DoxyCompactList}\item 
+const \hyperlink{classwxString}{wxString} \hyperlink{group__wxstf_ga4683d89bd1f06c731e1eecda0e88f371}{defaultPersp}
+\begin{DoxyCompactList}\small\item\em Default perspective string. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{group__wxstf_gac1dfaac894e39fdac1507247318a00ac}{
+\index{wxstf@{wxstf}!GetMainFrame@{GetMainFrame}}
+\index{GetMainFrame@{GetMainFrame}!wxstf@{wxstf}}
+\subsubsection[{GetMainFrame}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wxStfParentFrame}$\ast$ GetMainFrame (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{group__wxstf_gac1dfaac894e39fdac1507247318a00ac}
+
+
+Retrieve the application's top-\/level frame. 
+
+\begin{DoxyReturn}{Returns}
+A pointer to the top-\/level frame. 
+\end{DoxyReturn}
+
+
+\subsection{Variable Documentation}
+\hypertarget{group__wxstf_ga4683d89bd1f06c731e1eecda0e88f371}{
+\index{wxstf@{wxstf}!defaultPersp@{defaultPersp}}
+\index{defaultPersp@{defaultPersp}!wxstf@{wxstf}}
+\subsubsection[{defaultPersp}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf wxString} {\bf defaultPersp}}}
+\label{group__wxstf_ga4683d89bd1f06c731e1eecda0e88f371}
+{\bfseries Initial value:}
+\begin{DoxyCode}
+
+wxT("layout2| \
+name=Results;caption=Results;state=2044;dir=1;layer=0;row=0;pos=1;prop=167270; \
+bestw=200;besth=184;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1
+      ;floath=-1| \
+name=Selection;caption=Trace selection;state=2044;dir=1;layer=0;row=0;pos=0;prop=
+      32730; \
+bestw=128;besth=64;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;
+      floath=-1| \
+name=Traces;caption=Traces;state=18428;dir=5;layer=0;row=0;pos=0;prop=100000; \
+bestw=20;besth=20;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;f
+      loath=-1|")
+\end{DoxyCode}
+
+
+Default perspective string. 
+
+Can be loaded to restore the default AUI perspective. 

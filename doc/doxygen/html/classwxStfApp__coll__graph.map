@@ -1,0 +1,22 @@
+<map id="G" name="G">
+<area shape="rect" id="node2" href="$classwxApp.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxapp.html (wxWidgets documentation)" alt="" coords="2848,5,2909,35"/>
+<area shape="rect" id="node4" href="$structstf_1_1txtImportSettings.html" title="Text file import filter settings." alt="" coords="365,59,509,90"/>
+<area shape="rect" id="node6" href="$classwxString.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxstring.html (wxWidgets documentation)" alt="" coords="5,177,77,207"/>
+<area shape="rect" id="node10" href="$structstf_1_1storedFunc.html" title="Function used for least&#45;squares fitting." alt="" coords="913,229,1023,259"/>
+<area shape="rect" id="node14" href="$structstf_1_1parInfo.html" title="Information about parameters used in storedFunc." alt="" coords="217,229,303,259"/>
+<area shape="rect" id="node38" href="$classSection.html" title="Represents a continuously sampled sweep of data points." alt="" coords="1243,570,1309,601"/>
+<area shape="rect" id="node20" href="$classwxStfCursorsDlg.html" title="Cursor settings non&#45;modal dialog." alt="" coords="2820,459,2937,490"/>
+<area shape="rect" id="node22" href="$classwxDialog.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxdialog.html (wxWidgets documentation)" alt="" coords="2651,459,2725,490"/>
+<area shape="rect" id="node24" href="$classwxStfDoc.html" title="The document class, derived from both wxDocument and Recording." alt="" coords="2649,647,2727,678"/>
+<area shape="rect" id="node26" href="$classwxDocument.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxdocument.html (wxWidgets documentation)" alt="" coords="2452,630,2548,661"/>
+<area shape="rect" id="node28" href="$classRecording.html" title="Represents the data within a file." alt="" coords="2460,702,2540,733"/>
+<area shape="rect" id="node34" href="$classChannel.html" title="A Channel contains several data Sections &#160;representing observations of the same physical quantity..." alt="" coords="1960,537,2029,567"/>
+<area shape="rect" id="node42" href="$structstf_1_1PyMarker.html" title="A marker that can be set from Python." alt="" coords="607,673,708,703"/>
+<area shape="rect" id="node44" title="STL class." alt="" coords="928,406,1008,437"/>
+<area shape="rect" id="node77" href="$structstf_1_1Extension.html" title="User&#45;defined Python extension." alt="" coords="1225,319,1327,350"/>
+<area shape="rect" id="node46" title="STL class." alt="" coords="575,313,740,343"/>
+<area shape="rect" id="node49" href="$classstf_1_1Table.html" title="A table used for printing information." alt="" coords="931,475,1005,506"/>
+<area shape="rect" id="node64" href="$classstf_1_1Event.html" title="Describes the attributes of an event." alt="" coords="619,619,696,650"/>
+<area shape="rect" id="node67" href="$classYZoom.html" title="Handles y&#45;scaling of traces." alt="" coords="1616,517,1677,547"/>
+<area shape="rect" id="node70" href="$classXZoom.html" title="Handles x&#45;scaling of traces." alt="" coords="2185,777,2247,807"/>
+</map>

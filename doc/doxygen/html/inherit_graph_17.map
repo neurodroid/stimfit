@@ -1,0 +1,19 @@
+<map id="G" name="G">
+<area shape="rect" id="node1" href="$classwxDialog.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxdialog.html (wxWidgets documentation)" alt="" coords="5,405,80,435"/>
+<area shape="rect" id="node3" href="$classwxStfAlignDlg.html" title="Dialog for selecting alignment mode." alt="" coords="157,5,259,35"/>
+<area shape="rect" id="node5" href="$classwxStfBatchDlg.html" title="Dialog for batch analysis settings." alt="" coords="155,58,261,89"/>
+<area shape="rect" id="node7" href="$classwxStfChannelSelDlg.html" title="Dialog for selecting channels." alt="" coords="139,111,277,142"/>
+<area shape="rect" id="node9" href="$classwxStfConvertDlg.html" title="Dialog for batch conversion of files.from cfs to atf." alt="" coords="149,165,267,195"/>
+<area shape="rect" id="node11" href="$classwxStfCursorsDlg.html" title="Cursor settings non&#45;modal dialog." alt="" coords="149,218,267,249"/>
+<area shape="rect" id="node13" href="$classwxStfEventDlg.html" title="Dialog for event&#45;detection settings." alt="" coords="155,271,261,302"/>
+<area shape="rect" id="node15" href="$classwxStfFileInfoDlg.html" title="Dialog showing file information." alt="" coords="149,325,267,355"/>
+<area shape="rect" id="node17" href="$classwxStfFilterSelDlg.html" title="Dialog for selecting a filter function." alt="" coords="147,378,269,409"/>
+<area shape="rect" id="node19" href="$classwxStfFitInfoDlg.html" title="Dialog showing information about a fit." alt="" coords="153,431,263,462"/>
+<area shape="rect" id="node21" href="$classwxStfFitSelDlg.html" title="Non&#45;linear regression settings dialog." alt="" coords="155,485,261,515"/>
+<area shape="rect" id="node23" href="$classwxStfGaussianDlg.html" title="Dialog for setting the parameters of a Gaussian function." alt="" coords="144,538,272,569"/>
+<area shape="rect" id="node25" href="$classwxStfOrderChannelsDlg.html" title="Dialog for re&#45;ordering channels before saving to file." alt="" coords="128,591,288,622"/>
+<area shape="rect" id="node27" href="$classwxStfPreprintDlg.html" title="Dialog for setting printout options." alt="" coords="149,645,267,675"/>
+<area shape="rect" id="node29" href="$classwxStfTextImportDlg.html" title="Dialog for text import filter settings." alt="" coords="140,698,276,729"/>
+<area shape="rect" id="node31" href="$classwxStfTransformDlg.html" title="Dialog for selecting a transform function." alt="" coords="143,751,273,782"/>
+<area shape="rect" id="node33" href="$classwxStfUsrDlg.html" title="A user&#45;defined dialog for entering floating&#45;point numbers." alt="" coords="161,805,255,835"/>
+</map>

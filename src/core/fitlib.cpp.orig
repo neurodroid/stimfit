@@ -1,0 +1,337 @@
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+#include <float.h>
+
+#include "./fitlib.h"
+#include "./levmar/lm.h"
+
+namespace stf {
+// C-style functions for Lourakis' routines:
+void c_func_lour(double *p, double* hx, int m, int n, void *adata);
+void c_jac_lour(double *p, double *j, int m, int n, void *adata);
+
+// Helper functions for lmFit to store the function at global scope:
+void saveFunc(Func func);
+void saveJac(Jac jac);
+
+// A struct that will be passed as a pointer to
+// Lourakis' C-functions. It is used to:
+// (1) specify which parameters are to be fitted, and
+// (2) pass the constant parameters
+// (3) the sampling interval
+struct fitInfo {
+    fitInfo(const std::deque<bool>& fit_p_arg,
+            const Vector_double& const_p_arg,
+            double dt_arg)
+    :   fit_p(fit_p_arg), const_p(const_p_arg), dt(dt_arg)
+    {}
+            // Specifies for each parameter whether the client
+            // wants to fit it (true) or to keep it constant (false)
+            std::deque<bool> fit_p;
+
+            // A valarray containing the parameters that
+            // will be kept constant:
+            Vector_double const_p;
+ 
+            // sampling interval
+            double dt;
+};
+}
+
+// Functions stored at global scope to be called by c_func_lour
+// and c_jac_lour
+stf::Func func_lour;
+stf::Jac jac_lour; 
+
+void stf::saveFunc(Func func) {
+    func_lour=func;
+}
+
+void stf::saveJac(Jac jac) {
+    jac_lour=jac;
+}
+
+void stf::c_func_lour(double *p, double* hx, int m, int n, void *adata) {
+    // m: the number of parameters that are to be fitted
+    // adata: pointer to a struct that (1) specifies which parameters are to be fitted
+    //		  and (2) contains the constant parameters
+    fitInfo *fInfo=static_cast<fitInfo*>(adata);
+    // total number of parameters, including constants:
+    int tot_p=(int)fInfo->fit_p.size();
+    // all parameters, including constants:
+    Vector_double p_f(tot_p);
+    for (int n_tp=0, n_p=0, n_f=0;n_tp<tot_p;++n_tp) {
+        // if the parameter needs to be fitted...
+        if (fInfo->fit_p[n_tp]) {
+            // ... take it from *p, ...
+            p_f[n_tp] = p[n_p++];
+        } else {
+            // ... otherwise, take it from the fInfo struct:
+            p_f[n_tp] = fInfo->const_p[n_f++];
+        }
+    }
+    for (int n_x=0;n_x<n;++n_x) {
+        hx[n_x]=func_lour( (double)n_x*fInfo->dt, p_f);
+    }	
+}
+
+void stf::c_jac_lour(double *p, double *jac, int m, int n, void *adata) {
+    // m: the number of parameters that are to be fitted
+    // adata: pointer to a struct that (1) specifies which parameters are to be fitted
+    //		  and (2) contains the constant parameters
+    fitInfo *fInfo=static_cast<fitInfo*>(adata);
+    // total number of parameters, including constants:
+    int tot_p=(int)fInfo->fit_p.size();
+    // all parameters, including constants:
+    Vector_double p_f(tot_p);
+    for (int n_tp=0,n_p=0,n_f=0;n_tp<tot_p;++n_tp) {
+        // if the parameter needs to be fitted...
+        if (fInfo->fit_p[n_tp]) {
+            // ... take it from *p, ...
+            p_f[n_tp]=p[n_p++];
+        } else {
+            // ... otherwise, take it from the fInfo struct:
+            p_f[n_tp] = fInfo->const_p[n_f++];
+        }
+    }
+    for (int n_x=0,n_j=0;n_x<n;++n_x) {
+        // jac_f will calculate the derivatives of all parameters,
+        // including the constants...
+        Vector_double jac_f(jac_lour((double)n_x*fInfo->dt,p_f));
+        // ... but we only need the derivatives of the non-constants...
+        for (int n_tp=0;n_tp<tot_p;++n_tp) {
+            // ... hence, we will eliminate the derivatives of the constants:
+            if (fInfo->fit_p[n_tp]) {
+                jac[n_j++]=jac_f[n_tp];
+            }
+        }
+    }
+}
+
+double stf::lmFit( const Vector_double& data, double dt,
+                   const stf::storedFunc& fitFunc, const Vector_double& opts,
+                   Vector_double& p, wxString& info, int& warning,
+                   bool scaled)
+{	
+    // Basic range checking:
+    if (fitFunc.pInfo.size()!=p.size()) {
+        std::string msg("Error in stf::lmFit()\n"
+                "p_fit and p have different sizes");
+        throw std::runtime_error(msg);
+    }
+    if ( opts.size() != 6 ) {
+        std::string msg("Error in stf::lmFit()\n"
+                "wrong number of options");
+        throw std::runtime_error(msg);
+    }
+
+    bool constrained = false;
+    std::vector< double > constrains_lm_lb( fitFunc.pInfo.size() );
+    std::vector< double > constrains_lm_ub( fitFunc.pInfo.size() );
+    std::vector< double > fscale( fitFunc.pInfo.size() );
+
+    for ( unsigned n_p=0; n_p < fitFunc.pInfo.size(); ++n_p ) {
+        if ( fitFunc.pInfo[n_p].constrained ) {
+            constrained = true;
+            constrains_lm_lb[n_p] = fitFunc.pInfo[n_p].constr_lb;
+            constrains_lm_ub[n_p] = fitFunc.pInfo[n_p].constr_ub;
+        } else {
+            constrains_lm_lb[n_p] = -DBL_MAX;
+            constrains_lm_ub[n_p] = DBL_MAX;
+        }
+    }
+
+    // Store the functions at global scope:
+    saveFunc(fitFunc.func);
+    saveJac(fitFunc.jac);
+
+    double info_id[LM_INFO_SZ];
+    Vector_double data_ptr(data);
+
+    // The parameters need to be separated into two parts:
+    // Those that are to be fitted and those that the client wants
+    // to keep constant. Since there is no native support to
+    // do so in Lourakis' routines, the workaround is a little
+    // tricky, making (ab)use of the *void pointer:
+
+    // number of parameters that need to be fitted:
+    int n_fitted=0;
+    for ( unsigned n_p=0; n_p < fitFunc.pInfo.size(); ++n_p ) {
+        n_fitted += fitFunc.pInfo[n_p].toFit;
+    }
+    // parameters that need to be fitted:
+    Vector_double p_toFit(n_fitted);
+    std::deque<bool> p_fit_bool( fitFunc.pInfo.size() );
+    // parameters that are held constant:
+    Vector_double p_const( fitFunc.pInfo.size()-n_fitted );
+    for ( unsigned n_p=0, n_c=0, n_f=0; n_p < fitFunc.pInfo.size(); ++n_p ) {
+        if (fitFunc.pInfo[n_p].toFit) {
+            p_toFit[n_f++] = p[n_p];
+        } else {
+            p_const[n_c++] = p[n_p];
+        }
+        p_fit_bool[n_p] = fitFunc.pInfo[n_p].toFit;
+    }
+    fitInfo fInfo( p_fit_bool, p_const, dt );
+    // make l-value of opts:
+    Vector_double opts_l(5);
+    for (std::size_t n=0; n < 4; ++n) opts_l[n] = opts[n];
+    opts_l[4] = -1e-6;
+    int it = 0;
+    if (p_toFit.size()!=0 && data_ptr.size()!=0) {
+        double old_info_id[LM_INFO_SZ];
+        Vector_double old_p_toFit( n_fitted );
+        // initialize with initial parameter guess:
+        old_p_toFit = p_toFit;
+#ifdef _DEBUG
+        wxString optsMsg;
+        optsMsg << wxT("\nopts: ");
+        for (std::size_t n_p=0; n_p < opts.size(); ++n_p)
+            optsMsg << opts[n_p] << wxT("\t");
+        optsMsg << wxT("\n") << wxT("data_ptr[") << data_ptr.size()-1 << wxT("]=") << data_ptr[data_ptr.size()-1] << wxT("\n");
+        optsMsg << wxT("constrains_lm_lb: "); 
+        for (std::size_t n_p=0; n_p < constrains_lm_lb.size(); ++n_p) 
+            optsMsg << constrains_lm_lb[n_p] << wxT("\t");
+        optsMsg << wxT("\n") << wxT("constrains_lm_ub: "); 
+        for (std::size_t n_p=0; n_p < constrains_lm_ub.size(); ++n_p) 
+            optsMsg << constrains_lm_ub[n_p] << wxT("\t");
+        optsMsg << wxT("\n\n");
+        std::cout << optsMsg;
+#endif
+        while ( 1 ) {
+#ifdef _DEBUG
+            wxString paramMsg;
+            paramMsg << wxT("Pass: ") << it << wxT("\t");
+            paramMsg << wxT("p_toFit: ");
+            for (std::size_t n_p=0; n_p < p_toFit.size(); ++n_p)
+                paramMsg << p_toFit[n_p] << wxT("\t");
+            paramMsg << wxT("\n");
+            std::cout << paramMsg.c_str();
+#endif
+            if ( !fitFunc.hasJac ) {
+                if ( !constrained ) {
+                    dlevmar_dif( c_func_lour, &p_toFit[0], &data_ptr[0], n_fitted, 
+                            (int)data.size(), (int)opts[4], &opts_l[0], info_id,
+                            NULL, NULL, &fInfo );
+                } else {
+                    dlevmar_bc_dif( c_func_lour, &p_toFit[0], &data_ptr[0], n_fitted, 
+                            (int)data.size(), &constrains_lm_lb[0], &constrains_lm_ub[0], 
+                            (int)opts[4], &opts_l[0], info_id, NULL, NULL, &fInfo );
+                }
+            } else {
+                if ( !constrained ) {
+                    dlevmar_der( c_func_lour, c_jac_lour, &p_toFit[0], &data_ptr[0], 
+                            n_fitted, (int)data.size(), (int)opts[4], &opts_l[0], info_id,
+                            NULL, NULL, &fInfo );                
+                } else {
+                    dlevmar_bc_der( c_func_lour,  c_jac_lour, &p_toFit[0], 
+                            &data_ptr[0], n_fitted, (int)data.size(), &constrains_lm_lb[0], 
+                            &constrains_lm_ub[0], (int)opts[4], &opts_l[0], info_id,
+                            NULL, NULL, &fInfo );
+                }
+            }
+            it++;
+            if ( info_id[1] != info_id[1] ) {
+                // restore previous parameters if new chisqr is NaN:
+                p_toFit = old_p_toFit;
+            } else {
+                double dchisqr = (info_id[0] - info_id[1]) / info_id[1]; // (old chisqr - new chisqr) / new_chisqr
+            
+                if ( dchisqr < 0 ) {
+                    // restore previous results and exit if new chisqr is larger:
+                    for ( int n_i = 0; n_i < LM_INFO_SZ; ++n_i )  info_id[n_i] = old_info_id[n_i];
+                    p_toFit = old_p_toFit;
+                    break;
+                }
+                if ( dchisqr < 1e-5 ) {
+                    // Keep current results and exit if change in chisqr is below threshold
+                    break;
+                }
+                // otherwise, store results and continue iterating:
+                for ( int n_i = 0; n_i < LM_INFO_SZ; ++n_i ) old_info_id[n_i] = info_id[n_i];
+                old_p_toFit = p_toFit;
+            }
+            if ( it >= opts[5] )
+                // Exit if maximal number of iterations is reached
+                break;
+            // decrease initial step size for next iteration:
+            opts_l[0] *= 1e-4;
+        }
+        
+    } else {
+        std::runtime_error e("Array of size zero in lmFit");
+        throw e;
+    }
+    // copy back the fitted parameters to p:
+    for ( unsigned n_p=0,n_f=0; n_p<fitFunc.pInfo.size(); ++n_p ) {
+        if (fitFunc.pInfo[n_p].toFit) {
+            p[n_p] = p_toFit[n_f++];
+        }
+    }
+
+    wxString str_info;
+    str_info << wxT("Passes: ") << it;
+    str_info << wxT("\nIterations during last pass: ") << info_id[5];
+    str_info << wxT("\nStopping reason during last pass:");
+    switch ((int)info_id[6]) {
+    case 1:
+        str_info << wxT("\nStopped by small gradient of squared error.");
+        warning = 0;
+        break;
+    case 2:
+        str_info << wxT("\nStopped by small rel. parameter change.");
+        warning = 0;
+        break;
+    case 3:
+        str_info << wxT("\nReached max. number of iterations. Restart\n")
+                 << wxT("with smarter initial parameters and / or with\n")
+                 << wxT("increased initial scaling factor and / or with\n")
+                 << wxT("increased max. number of iterations.");
+        warning = 3;
+        break;
+    case 4:
+        str_info << wxT("\nSingular matrix. Restart from current parameters\n")
+                 << wxT("with increased initial scaling factor.");
+        warning = 4;
+        break;
+    case 5:
+        str_info << wxT("\nNo further error reduction is possible.\n")
+                 << wxT("Restart with increased initial scaling factor.");
+        warning = 5;
+        break;
+    case 6:
+        str_info << wxT("\nStopped by small squared error.");
+        warning = 0;
+        break;
+    }
+    info=str_info;
+    return info_id[1];
+}
+
+double stf::flin(double x, const Vector_double& p) { return p[0]*x + p[1]; }
+
+//! Dummy function to be passed to stf::storedFunc for linear functions.
+void stf::flin_init(const Vector_double& data, double base, double peak,
+        double dt, Vector_double& pInit )
+{ }
+
+stf::storedFunc stf::initLinFunc() {
+    std::vector< stf::parInfo > linParInfo(2);
+    linParInfo[0] = stf::parInfo(wxT("Slope"), true);
+    linParInfo[1] = stf::parInfo(wxT("Y intersect"), true);
+    return stf::storedFunc( wxT("Linear function"), linParInfo,
+            stf::flin, stf::flin_init, stf::nojac, false, stf::defaultOutput );    
+}
+

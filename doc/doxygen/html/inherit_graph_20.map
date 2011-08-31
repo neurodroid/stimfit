@@ -1,0 +1,5 @@
+<map id="G" name="G">
+<area shape="rect" id="node1" href="$classRecording.html" title="Represents the data within a file." alt="" coords="15,5,95,35"/>
+<area shape="rect" id="node3" href="$classwxStfDoc.html" title="The document class, derived from both wxDocument and Recording." alt="" coords="153,31,231,62"/>
+<area shape="rect" id="node4" href="$classwxDocument.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxdocument.html (wxWidgets documentation)" alt="" coords="7,58,103,89"/>
+</map>

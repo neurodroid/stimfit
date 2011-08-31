@@ -1,0 +1,118 @@
+\hypertarget{classwxStfCheckBox}{
+\section{wxStfCheckBox Class Reference}
+\label{classwxStfCheckBox}\index{wxStfCheckBox@{wxStfCheckBox}}
+}
+
+
+A checkbox used to select or unselect detected events.  
+
+
+
+
+{\ttfamily \#include $<$stfcheckbox.h$>$}
+
+
+
+Inheritance diagram for wxStfCheckBox:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=166pt]{classwxStfCheckBox__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for wxStfCheckBox:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{classwxStfCheckBox__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classwxStfCheckBox_a9c976112e0951a799ff63f6c491a159b}{wxStfCheckBox} (\hyperlink{classwxWindow}{wxWindow} $\ast$parent, wxWindowID id, const \hyperlink{classwxString}{wxString} \&label, \hyperlink{classstf_1_1Event}{stf::Event} $\ast$pEvent, const \hyperlink{classwxPoint}{wxPoint} \&pos=wxDefaultPosition, const \hyperlink{classwxSize}{wxSize} \&size=wxDefaultSize, long style=0, const wxValidator \&validator=wxDefaultValidator, const \hyperlink{classwxString}{wxString} \&name=wxCheckBoxNameStr)
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfCheckBox_a29d01f441967d73be7fa05e9d722fd5d}{ResetEvent} (\hyperlink{classstf_1_1Event}{stf::Event} $\ast$pEvent)
+\begin{DoxyCompactList}\small\item\em Resets the pointer to the attached event. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A checkbox used to select or unselect detected events. Toggles the \hyperlink{classstf_1_1Event}{stf::Event} status, and forwards keyboard input to the graph. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classwxStfCheckBox_a9c976112e0951a799ff63f6c491a159b}{
+\index{wxStfCheckBox@{wxStfCheckBox}!wxStfCheckBox@{wxStfCheckBox}}
+\index{wxStfCheckBox@{wxStfCheckBox}!wxStfCheckBox@{wxStfCheckBox}}
+\subsubsection[{wxStfCheckBox}]{\setlength{\rightskip}{0pt plus 5cm}wxStfCheckBox::wxStfCheckBox (
+\begin{DoxyParamCaption}
+\item[{{\bf wxWindow} $\ast$}]{parent, }
+\item[{wxWindowID}]{id, }
+\item[{const {\bf wxString} \&}]{label, }
+\item[{{\bf stf::Event} $\ast$}]{pEvent, }
+\item[{const {\bf wxPoint} \&}]{pos = {\ttfamily wxDefaultPosition}, }
+\item[{const {\bf wxSize} \&}]{size = {\ttfamily wxDefaultSize}, }
+\item[{long}]{style = {\ttfamily 0}, }
+\item[{const wxValidator \&}]{validator = {\ttfamily wxDefaultValidator}, }
+\item[{const {\bf wxString} \&}]{name = {\ttfamily wxCheckBoxNameStr}}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfCheckBox_a9c976112e0951a799ff63f6c491a159b}
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & Pointer to the parent window. \\
+\hline
+{\em id} & Window id. \\
+\hline
+{\em label} & The checkbox label. \\
+\hline
+{\em pEvent} & The event attached to this checkbox. \\
+\hline
+{\em pos} & Initial checkbox position. \\
+\hline
+{\em size} & Initial checkbox size. \\
+\hline
+{\em style} & Checkbox style. \\
+\hline
+{\em validator} & Checkbox validator. \\
+\hline
+{\em name} & Name of this grid. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classwxStfCheckBox_a29d01f441967d73be7fa05e9d722fd5d}{
+\index{wxStfCheckBox@{wxStfCheckBox}!ResetEvent@{ResetEvent}}
+\index{ResetEvent@{ResetEvent}!wxStfCheckBox@{wxStfCheckBox}}
+\subsubsection[{ResetEvent}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfCheckBox::ResetEvent (
+\begin{DoxyParamCaption}
+\item[{{\bf stf::Event} $\ast$}]{pEvent}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfCheckBox_a29d01f441967d73be7fa05e9d722fd5d}
+
+
+Resets the pointer to the attached event. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pEvent} & The pointer to the new event \\
+\hline
+\end{DoxyParams}
+
+
+References stf::Event::GetDiscard().
+
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+src/app/\hyperlink{stfcheckbox_8h}{stfcheckbox.h}\end{DoxyCompactItemize}

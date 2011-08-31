@@ -1,0 +1,183 @@
+\hypertarget{classwxStfEventDlg}{
+\section{wxStfEventDlg Class Reference}
+\label{classwxStfEventDlg}\index{wxStfEventDlg@{wxStfEventDlg}}
+}
+
+
+Dialog for event-\/detection settings.  
+
+
+
+
+{\ttfamily \#include $<$eventdlg.h$>$}
+
+
+
+Inheritance diagram for wxStfEventDlg:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=160pt]{classwxStfEventDlg__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for wxStfEventDlg:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=160pt]{classwxStfEventDlg__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classwxStfEventDlg_a9a2b621347c3b7023925bf34fbc6aec8}{wxStfEventDlg} (\hyperlink{classwxWindow}{wxWindow} $\ast$parent, const std::vector$<$ \hyperlink{classSection}{Section} $\ast$ $>$ \&templateSections, bool isExtract, int id=wxID\_\-ANY, \hyperlink{classwxString}{wxString} title=wxT(\char`\"{}Event detection settings\char`\"{}), wxPoint pos=wxDefaultPosition, \hyperlink{classwxSize}{wxSize} size=wxDefaultSize, int style=wxCAPTION)
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+double \hyperlink{classwxStfEventDlg_a9d8b27333f9876691d79d0e30a1458ee}{GetThreshold} () const 
+\begin{DoxyCompactList}\small\item\em Get the event detection threshold. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classwxStfEventDlg_a42308a83a05ad311035411807618cdcf}{GetScaling} () const 
+\begin{DoxyCompactList}\small\item\em Indicates whether template scaling or the correlation coefficient should be used. \item\end{DoxyCompactList}\item 
+int \hyperlink{classwxStfEventDlg_a8c1e61f0d00bebd250cc84995994f3e4}{GetMinDistance} () const 
+\begin{DoxyCompactList}\small\item\em Get the minimal distance between events. \item\end{DoxyCompactList}\item 
+int \hyperlink{classwxStfEventDlg_a93043c17a21791ecc9d59d28d06f76f6}{GetTemplate} () const 
+\begin{DoxyCompactList}\small\item\em Get the selected template. \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classwxStfEventDlg_a986b0e424be3432d17c20e7507e03519}{EndModal} (int retCode)
+\begin{DoxyCompactList}\small\item\em Called upon ending a modal dialog. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Dialog for event-\/detection settings. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classwxStfEventDlg_a9a2b621347c3b7023925bf34fbc6aec8}{
+\index{wxStfEventDlg@{wxStfEventDlg}!wxStfEventDlg@{wxStfEventDlg}}
+\index{wxStfEventDlg@{wxStfEventDlg}!wxStfEventDlg@{wxStfEventDlg}}
+\subsubsection[{wxStfEventDlg}]{\setlength{\rightskip}{0pt plus 5cm}wxStfEventDlg::wxStfEventDlg (
+\begin{DoxyParamCaption}
+\item[{{\bf wxWindow} $\ast$}]{parent, }
+\item[{const std::vector$<$ {\bf Section} $\ast$ $>$ \&}]{templateSections, }
+\item[{bool}]{isExtract, }
+\item[{int}]{id = {\ttfamily wxID\_\-ANY}, }
+\item[{{\bf wxString}}]{title = {\ttfamily wxT(\char`\"{}Event~detection~settings\char`\"{})}, }
+\item[{{\bf wxPoint}}]{pos = {\ttfamily wxDefaultPosition}, }
+\item[{{\bf wxSize}}]{size = {\ttfamily wxDefaultSize}, }
+\item[{int}]{style = {\ttfamily wxCAPTION}}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfEventDlg_a9a2b621347c3b7023925bf34fbc6aec8}
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & Pointer to parent window. \\
+\hline
+{\em templateSections} & A vector of pointers to sections that contain fits which might be used as a template. \\
+\hline
+{\em isExtract} & true if events are to be detected for later extraction (rather than just plotting the detection criterion or \\
+\hline
+{\em id} & Window id. \\
+\hline
+{\em title} & Dialog title. \\
+\hline
+{\em pos} & Initial position. \\
+\hline
+{\em size} & Initial size. \\
+\hline
+{\em style} & Dialog style. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classwxStfEventDlg_a986b0e424be3432d17c20e7507e03519}{
+\index{wxStfEventDlg@{wxStfEventDlg}!EndModal@{EndModal}}
+\index{EndModal@{EndModal}!wxStfEventDlg@{wxStfEventDlg}}
+\subsubsection[{EndModal}]{\setlength{\rightskip}{0pt plus 5cm}virtual void wxStfEventDlg::EndModal (
+\begin{DoxyParamCaption}
+\item[{int}]{retCode}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classwxStfEventDlg_a986b0e424be3432d17c20e7507e03519}
+
+
+Called upon ending a modal dialog. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em retCode} & The dialog button id that ended the dialog (e.g. wxID\_\-OK) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfEventDlg_a8c1e61f0d00bebd250cc84995994f3e4}{
+\index{wxStfEventDlg@{wxStfEventDlg}!GetMinDistance@{GetMinDistance}}
+\index{GetMinDistance@{GetMinDistance}!wxStfEventDlg@{wxStfEventDlg}}
+\subsubsection[{GetMinDistance}]{\setlength{\rightskip}{0pt plus 5cm}int wxStfEventDlg::GetMinDistance (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfEventDlg_a8c1e61f0d00bebd250cc84995994f3e4}
+
+
+Get the minimal distance between events. 
+
+\begin{DoxyReturn}{Returns}
+The minimal distance between events in units of sampling points. 
+\end{DoxyReturn}
+\hypertarget{classwxStfEventDlg_a42308a83a05ad311035411807618cdcf}{
+\index{wxStfEventDlg@{wxStfEventDlg}!GetScaling@{GetScaling}}
+\index{GetScaling@{GetScaling}!wxStfEventDlg@{wxStfEventDlg}}
+\subsubsection[{GetScaling}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfEventDlg::GetScaling (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfEventDlg_a42308a83a05ad311035411807618cdcf}
+
+
+Indicates whether template scaling or the correlation coefficient should be used. 
+
+\begin{DoxyReturn}{Returns}
+true if template scaling, false if the correlation coefficient should be used. 
+\end{DoxyReturn}
+\hypertarget{classwxStfEventDlg_a93043c17a21791ecc9d59d28d06f76f6}{
+\index{wxStfEventDlg@{wxStfEventDlg}!GetTemplate@{GetTemplate}}
+\index{GetTemplate@{GetTemplate}!wxStfEventDlg@{wxStfEventDlg}}
+\subsubsection[{GetTemplate}]{\setlength{\rightskip}{0pt plus 5cm}int wxStfEventDlg::GetTemplate (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfEventDlg_a93043c17a21791ecc9d59d28d06f76f6}
+
+
+Get the selected template. 
+
+\begin{DoxyReturn}{Returns}
+The index of the template fit to be used for event detection. 
+\end{DoxyReturn}
+\hypertarget{classwxStfEventDlg_a9d8b27333f9876691d79d0e30a1458ee}{
+\index{wxStfEventDlg@{wxStfEventDlg}!GetThreshold@{GetThreshold}}
+\index{GetThreshold@{GetThreshold}!wxStfEventDlg@{wxStfEventDlg}}
+\subsubsection[{GetThreshold}]{\setlength{\rightskip}{0pt plus 5cm}double wxStfEventDlg::GetThreshold (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfEventDlg_a9d8b27333f9876691d79d0e30a1458ee}
+
+
+Get the event detection threshold. 
+
+\begin{DoxyReturn}{Returns}
+The event detection threshold. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+src/app/dlgs/\hyperlink{eventdlg_8h}{eventdlg.h}\end{DoxyCompactItemize}

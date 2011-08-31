@@ -1,0 +1,133 @@
+\hypertarget{core_8h}{
+\section{src/core/core.h File Reference}
+\label{core_8h}\index{src/core/core.h@{src/core/core.h}}
+}
+
+
+Core components.  
+
+
+{\ttfamily \#include $<$vector$>$}\par
+{\ttfamily \#include $<$complex$>$}\par
+{\ttfamily \#include $<$deque$>$}\par
+{\ttfamily \#include \char`\"{}./stimdefs.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}./section.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}./recording.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}fftw3.h\char`\"{}}\par
+{\ttfamily \#include \char`\"{}./spline.h\char`\"{}}\par
+Include dependency graph for core.h:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=400pt]{core_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=400pt]{core_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacestf}{stf}
+
+
+\begin{DoxyCompactList}\small\item\em The stimfit namespace. \item\end{DoxyCompactList}
+
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+Vector\_\-double \hyperlink{group__stfgen_ga2fcd50c88877838de7ed4b52e1fedb59}{stf::spectrum} (const std::vector$<$ std::complex$<$ double $>$ $>$ \&data, long K, double \&f\_\-n)
+\begin{DoxyCompactList}\small\item\em Computes a spectral estimate using Welch's method. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gacdf87f88e8ac06ad60a3f3b206b0cd91}{stf::window} (double n, double N)
+\begin{DoxyCompactList}\small\item\em Window function for psd estimation. \item\end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \hyperlink{group__stfgen_ga62f78deb330cc40d8ae6da48cdbec951}{stf::SQR} (T a)
+\begin{DoxyCompactList}\small\item\em Calculates the square of a number. \item\end{DoxyCompactList}\item 
+Vector\_\-double \hyperlink{group__stfgen_ga8d4bf7a86a487551837817a7d6d09cf1}{stf::filter} (const Vector\_\-double \&toFilter, std::size\_\-t filter\_\-start, std::size\_\-t filter\_\-end, const Vector\_\-double \&a, int SR, Func func, bool inverse=false)
+\begin{DoxyCompactList}\small\item\em Convolutes a data set with a filter function. \item\end{DoxyCompactList}\item 
+{\footnotesize template$<$class T $>$ }\\std::vector$<$ T $>$ \hyperlink{group__stfgen_gad6d6bf4577ec605215a4a374a3505a03}{stf::cubicSpline} (const std::vector$<$ T $>$ \&y, T oldF, T newF)
+\begin{DoxyCompactList}\small\item\em Interpolates a dataset using cubic splines. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxString}{wxString} \hyperlink{group__stfgen_ga9536c899dc7a569c55ba8957aec43613}{stf::sectionToString} (const \hyperlink{classSection}{Section} \&section)
+\begin{DoxyCompactList}\small\item\em Converts a \hyperlink{classSection}{Section} to a \hyperlink{classwxString}{wxString}. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_ga3892c35dfb30e27bdc9f6e178ebf064e}{
+{\footnotesize template$<$class T $>$ }\\std::vector$<$ T $>$ \hyperlink{group__stfgen_ga3892c35dfb30e27bdc9f6e178ebf064e}{stf::diff} (const std::vector$<$ T $>$ \&input, T x\_\-scale)}
+\label{group__stfgen_ga3892c35dfb30e27bdc9f6e178ebf064e}
+
+\begin{DoxyCompactList}\small\item\em Differentiate data. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga278bc04e06ac5796e0867b158ae4797b}{stf::integrate\_\-simpson} (const Vector\_\-double \&input, std::size\_\-t a, std::size\_\-t b, double x\_\-scale)
+\begin{DoxyCompactList}\small\item\em Integration using Simpson's rule. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga0be2d046407da1c77424a79fa01924ab}{stf::integrate\_\-trapezium} (const Vector\_\-double \&input, std::size\_\-t a, std::size\_\-t b, double x\_\-scale)
+\begin{DoxyCompactList}\small\item\em Integration using the trapezium rule. \item\end{DoxyCompactList}\item 
+int \hyperlink{group__stfgen_ga2e6063c1fcb15672fb84c44065e32455}{stf::linsolv} (int m, int n, int nrhs, Vector\_\-double \&A, Vector\_\-double \&B)
+\begin{DoxyCompactList}\small\item\em Solves a linear equation system using LAPACK. \item\end{DoxyCompactList}\item 
+Vector\_\-double \hyperlink{group__stfgen_gaaaca81c58d327e730c0e785e578ec24e}{stf::detectionCriterion} (const Vector\_\-double \&data, const Vector\_\-double \&templ)
+\begin{DoxyCompactList}\small\item\em Computes the event detection criterion according to Clements \& Bekkers (1997). \item\end{DoxyCompactList}\item 
+std::vector$<$ int $>$ \hyperlink{group__stfgen_ga211ecf55c013f280fd1a87d9b762f79e}{stf::peakIndices} (const Vector\_\-double \&data, double threshold, int minDistance)
+\begin{DoxyCompactList}\small\item\em Searches for positive-\/going peaks. \item\end{DoxyCompactList}\item 
+Vector\_\-double \hyperlink{group__stfgen_gaa0386bf9c9ceb5499900af490e06e2ab}{stf::linCorr} (const Vector\_\-double \&va1, const Vector\_\-double \&va2)
+\begin{DoxyCompactList}\small\item\em Computes the linear correlation between two arrays. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gaa947b273fe10b4e93fdcba6865815a07}{stf::fgauss} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Computes the sum of an arbitrary number of Gaussians. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gaf3e890196c425798f9d97ef3b4846837}{stf::fgaussColqu} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Computes a Gaussian that can be used as a filter kernel. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga1f97545508d6e155d20c896e5ce21f4d}{stf::fboltz} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Computes a Boltzmann function. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gacb01a426bb2ab315da605e22cf1b176d}{stf::fbessel} (double x, int n)
+\begin{DoxyCompactList}\small\item\em Computes a Bessel polynomial. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gae0c21c43d67f957c3224d454319a7c00}{stf::fbessel4} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Computes a 4th-\/order Bessel polynomial that can be used as a filter kernel. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxString}{wxString} \hyperlink{group__stfgen_ga32ad0c8e262d2985d84451d3f2c52028}{stf::CreatePreview} (const \hyperlink{classwxString}{wxString} \&fName)
+\begin{DoxyCompactList}\small\item\em Creates a preview of a text file. \item\end{DoxyCompactList}\item 
+int \hyperlink{group__stfgen_gaf31edaa97d0a41cd830c9478e04fd375}{stf::fac} (int arg)
+\begin{DoxyCompactList}\small\item\em Computes the faculty of an integer. \item\end{DoxyCompactList}\item 
+int \hyperlink{group__stfgen_gac8474c28c6c1e5cce375823a1d38591d}{stf::pow2} (int arg)
+\begin{DoxyCompactList}\small\item\em Computes $ 2^{arg} $. Uses the bitwise-\/shift operator ($<$$<$). \item\end{DoxyCompactList}\item 
+\hyperlink{classwxString}{wxString} \hyperlink{group__stfgen_gad14c86e14d611fd5c11eca4edfbb4fb8}{stf::noPath} (const \hyperlink{classwxString}{wxString} \&fName)
+\begin{DoxyCompactList}\small\item\em Strips the directory off a full path name, returns only the filename. \item\end{DoxyCompactList}\item 
+\hyperlink{group__stfgen_gae703f7802498ae301ac058b94426900f}{stf::filetype} \hyperlink{group__stfgen_ga60f83eec1f06c30440d1f576bd5a5f7e}{stf::findType} (const \hyperlink{classwxString}{wxString} \&ext)
+\begin{DoxyCompactList}\small\item\em Attempts to determine the filetype from the filter extension. \item\end{DoxyCompactList}\item 
+bool \hyperlink{group__stfgen_ga3c37983f5e22f103c26a77b09d8206ad}{stf::importFile} (const \hyperlink{classwxString}{wxString} \&fName, \hyperlink{group__stfgen_gae703f7802498ae301ac058b94426900f}{stf::filetype} type, \hyperlink{classRecording}{Recording} \&ReturnData, const \hyperlink{structstf_1_1txtImportSettings}{stf::txtImportSettings} \&txtImport, bool progress=true, \hyperlink{classwxWindow}{wxWindow} $\ast$parent=NULL)
+\begin{DoxyCompactList}\small\item\em Generic file import. \item\end{DoxyCompactList}\item 
+bool \hyperlink{group__stfgen_ga502a391afc11e955c34aa4a6efc208af}{stf::exportFile} (const \hyperlink{classwxString}{wxString} \&fName, \hyperlink{group__stfgen_gae703f7802498ae301ac058b94426900f}{stf::filetype} type, const \hyperlink{classRecording}{Recording} \&Data, bool progress=false)
+\begin{DoxyCompactList}\small\item\em Generic file export. \item\end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\void \hyperlink{core_8h_a259cb4bc921795c47013f15ad9a4ef47}{SWAP} (T s1, T s2)
+\begin{DoxyCompactList}\small\item\em Swaps {\itshape s1\/} and {\itshape s2\/}. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Core components. \begin{DoxyAuthor}{Author}
+Christoph Schmidt-\/Hieber 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2008-\/01-\/16 
+\end{DoxyDate}
+
+
+\subsection{Function Documentation}
+\hypertarget{core_8h_a259cb4bc921795c47013f15ad9a4ef47}{
+\index{core.h@{core.h}!SWAP@{SWAP}}
+\index{SWAP@{SWAP}!core.h@{core.h}}
+\subsubsection[{SWAP}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ void SWAP (
+\begin{DoxyParamCaption}
+\item[{T}]{s1, }
+\item[{T}]{s2}
+\end{DoxyParamCaption}
+)}}
+\label{core_8h_a259cb4bc921795c47013f15ad9a4ef47}
+
+
+Swaps {\itshape s1\/} and {\itshape s2\/}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s1} & will be swapped with \\
+\hline
+{\em s2} & \\
+\hline
+\end{DoxyParams}

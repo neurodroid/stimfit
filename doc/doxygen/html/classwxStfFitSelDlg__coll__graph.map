@@ -1,0 +1,19 @@
+<map id="G" name="G">
+<area shape="rect" id="node2" href="$classwxDialog.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxdialog.html (wxWidgets documentation)" alt="" coords="2499,5,2573,35"/>
+<area shape="rect" id="node8" href="$classwxStfDoc.html" title="The document class, derived from both wxDocument and Recording." alt="" coords="2497,215,2575,246"/>
+<area shape="rect" id="node10" href="$classwxDocument.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxdocument.html (wxWidgets documentation)" alt="" coords="2244,215,2340,246"/>
+<area shape="rect" id="node12" href="$classRecording.html" title="Represents the data within a file." alt="" coords="2252,287,2332,318"/>
+<area shape="rect" id="node18" href="$classChannel.html" title="A Channel contains several data Sections &#160;representing observations of the same physical quantity..." alt="" coords="1752,463,1821,494"/>
+<area shape="rect" id="node22" href="$classSection.html" title="Represents a continuously sampled sweep of data points." alt="" coords="1216,491,1283,522"/>
+<area shape="rect" id="node26" href="$structstf_1_1PyMarker.html" title="A marker that can be set from Python." alt="" coords="599,509,700,539"/>
+<area shape="rect" id="node28" title="STL class." alt="" coords="920,693,1000,723"/>
+<area shape="rect" id="node30" title="STL class." alt="" coords="567,719,732,750"/>
+<area shape="rect" id="node32" href="$structstf_1_1storedFunc.html" title="Function used for least&#45;squares fitting." alt="" coords="905,614,1015,645"/>
+<area shape="rect" id="node36" href="$structstf_1_1parInfo.html" title="Information about parameters used in storedFunc." alt="" coords="209,666,295,697"/>
+<area shape="rect" id="node38" href="$classwxString.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxstring.html (wxWidgets documentation)" alt="" coords="5,614,77,645"/>
+<area shape="rect" id="node41" href="$classstf_1_1Table.html" title="A table used for printing information." alt="" coords="923,409,997,439"/>
+<area shape="rect" id="node56" href="$classstf_1_1Event.html" title="Describes the attributes of an event." alt="" coords="611,562,688,593"/>
+<area shape="rect" id="node59" href="$classYZoom.html" title="Handles y&#45;scaling of traces." alt="" coords="1443,438,1504,469"/>
+<area shape="rect" id="node62" href="$classXZoom.html" title="Handles x&#45;scaling of traces." alt="" coords="1977,383,2039,414"/>
+<area shape="rect" id="node67" href="$classwxCheckBox.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxcheckbox.html (wxWidgets documentation)" alt="" coords="2487,269,2585,299"/>
+</map>

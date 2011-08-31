@@ -1,0 +1,16 @@
+<map id="G" name="G">
+<area shape="rect" id="node2" href="$classwxDocument.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxdocument.html (wxWidgets documentation)" alt="" coords="2244,181,2340,211"/>
+<area shape="rect" id="node4" href="$classRecording.html" title="Represents the data within a file." alt="" coords="2252,243,2332,274"/>
+<area shape="rect" id="node10" href="$classChannel.html" title="A Channel contains several data Sections &#160;representing observations of the same physical quantity..." alt="" coords="1752,243,1821,274"/>
+<area shape="rect" id="node14" href="$classSection.html" title="Represents a continuously sampled sweep of data points." alt="" coords="1216,307,1283,338"/>
+<area shape="rect" id="node18" href="$structstf_1_1PyMarker.html" title="A marker that can be set from Python." alt="" coords="599,534,700,565"/>
+<area shape="rect" id="node20" title="STL class." alt="" coords="920,123,1000,154"/>
+<area shape="rect" id="node22" title="STL class." alt="" coords="567,74,732,105"/>
+<area shape="rect" id="node24" href="$structstf_1_1storedFunc.html" title="Function used for least&#45;squares fitting." alt="" coords="905,231,1015,262"/>
+<area shape="rect" id="node28" href="$structstf_1_1parInfo.html" title="Information about parameters used in storedFunc." alt="" coords="209,231,295,262"/>
+<area shape="rect" id="node30" href="$classwxString.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxstring.html (wxWidgets documentation)" alt="" coords="5,231,77,262"/>
+<area shape="rect" id="node33" href="$classstf_1_1Table.html" title="A table used for printing information." alt="" coords="923,347,997,378"/>
+<area shape="rect" id="node48" href="$classstf_1_1Event.html" title="Describes the attributes of an event." alt="" coords="611,127,688,158"/>
+<area shape="rect" id="node51" href="$classYZoom.html" title="Handles y&#45;scaling of traces." alt="" coords="1443,297,1504,327"/>
+<area shape="rect" id="node54" href="$classXZoom.html" title="Handles x&#45;scaling of traces." alt="" coords="1977,638,2039,669"/>
+</map>

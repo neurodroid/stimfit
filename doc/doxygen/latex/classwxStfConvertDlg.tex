@@ -1,0 +1,177 @@
+\hypertarget{classwxStfConvertDlg}{
+\section{wxStfConvertDlg Class Reference}
+\label{classwxStfConvertDlg}\index{wxStfConvertDlg@{wxStfConvertDlg}}
+}
+
+
+Dialog for batch conversion of files.from cfs to atf.  
+
+
+
+
+{\ttfamily \#include $<$smalldlgs.h$>$}
+
+
+
+Inheritance diagram for wxStfConvertDlg:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=168pt]{classwxStfConvertDlg__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for wxStfConvertDlg:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=344pt]{classwxStfConvertDlg__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classwxStfConvertDlg_a1f96707f1cdf3b0e5459ca49bcbc648b}{wxStfConvertDlg} (\hyperlink{classwxWindow}{wxWindow} $\ast$parent, int id=wxID\_\-ANY, \hyperlink{classwxString}{wxString} title=wxT(\char`\"{}Convert CFS files\char`\"{}), wxPoint pos=wxDefaultPosition, \hyperlink{classwxSize}{wxSize} size=wxDefaultSize, int style=wxCAPTION)
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxString}{wxString} \hyperlink{classwxStfConvertDlg_addf3c318a648dc3aeb855a2f32416c98}{GetSrcDir} () const 
+\begin{DoxyCompactList}\small\item\em Get the source directory. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxString}{wxString} \hyperlink{classwxStfConvertDlg_af209dab7add715973cb4efc583e20fa4}{GetDestDir} () const 
+\begin{DoxyCompactList}\small\item\em Get the destination directory. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxString}{wxString} \hyperlink{classwxStfConvertDlg_a4496190e3ab8965a3fa9d9675881357d}{GetSrcFilter} () const 
+\begin{DoxyCompactList}\small\item\em Get the source extension filter. \item\end{DoxyCompactList}\item 
+std::vector$<$ \hyperlink{classwxString}{wxString} $>$ \hyperlink{classwxStfConvertDlg_a1fed3038cfba83d7103d2c44ab3d06bd}{GetSrcFileNames} () const 
+\begin{DoxyCompactList}\small\item\em Get the list of file names. \item\end{DoxyCompactList}\item 
+virtual void \hyperlink{classwxStfConvertDlg_a7271e4bb7b6614f4f3083170564eba8e}{EndModal} (int retCode)
+\begin{DoxyCompactList}\small\item\em Called upon ending a modal dialog. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Dialog for batch conversion of files.from cfs to atf. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classwxStfConvertDlg_a1f96707f1cdf3b0e5459ca49bcbc648b}{
+\index{wxStfConvertDlg@{wxStfConvertDlg}!wxStfConvertDlg@{wxStfConvertDlg}}
+\index{wxStfConvertDlg@{wxStfConvertDlg}!wxStfConvertDlg@{wxStfConvertDlg}}
+\subsubsection[{wxStfConvertDlg}]{\setlength{\rightskip}{0pt plus 5cm}wxStfConvertDlg::wxStfConvertDlg (
+\begin{DoxyParamCaption}
+\item[{{\bf wxWindow} $\ast$}]{parent, }
+\item[{int}]{id = {\ttfamily wxID\_\-ANY}, }
+\item[{{\bf wxString}}]{title = {\ttfamily wxT(\char`\"{}Convert~CFS~files\char`\"{})}, }
+\item[{{\bf wxPoint}}]{pos = {\ttfamily wxDefaultPosition}, }
+\item[{{\bf wxSize}}]{size = {\ttfamily wxDefaultSize}, }
+\item[{int}]{style = {\ttfamily wxCAPTION}}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfConvertDlg_a1f96707f1cdf3b0e5459ca49bcbc648b}
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em parent} & Pointer to parent window. \\
+\hline
+{\em id} & Window id. \\
+\hline
+{\em title} & Dialog title. \\
+\hline
+{\em pos} & Initial position. \\
+\hline
+{\em size} & Initial size. \\
+\hline
+{\em style} & Dialog style. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classwxStfConvertDlg_a7271e4bb7b6614f4f3083170564eba8e}{
+\index{wxStfConvertDlg@{wxStfConvertDlg}!EndModal@{EndModal}}
+\index{EndModal@{EndModal}!wxStfConvertDlg@{wxStfConvertDlg}}
+\subsubsection[{EndModal}]{\setlength{\rightskip}{0pt plus 5cm}virtual void wxStfConvertDlg::EndModal (
+\begin{DoxyParamCaption}
+\item[{int}]{retCode}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classwxStfConvertDlg_a7271e4bb7b6614f4f3083170564eba8e}
+
+
+Called upon ending a modal dialog. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em retCode} & The dialog button id that ended the dialog (e.g. wxID\_\-OK) \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfConvertDlg_af209dab7add715973cb4efc583e20fa4}{
+\index{wxStfConvertDlg@{wxStfConvertDlg}!GetDestDir@{GetDestDir}}
+\index{GetDestDir@{GetDestDir}!wxStfConvertDlg@{wxStfConvertDlg}}
+\subsubsection[{GetDestDir}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wxString} wxStfConvertDlg::GetDestDir (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfConvertDlg_af209dab7add715973cb4efc583e20fa4}
+
+
+Get the destination directory. 
+
+\begin{DoxyReturn}{Returns}
+The destination directory. 
+\end{DoxyReturn}
+\hypertarget{classwxStfConvertDlg_addf3c318a648dc3aeb855a2f32416c98}{
+\index{wxStfConvertDlg@{wxStfConvertDlg}!GetSrcDir@{GetSrcDir}}
+\index{GetSrcDir@{GetSrcDir}!wxStfConvertDlg@{wxStfConvertDlg}}
+\subsubsection[{GetSrcDir}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wxString} wxStfConvertDlg::GetSrcDir (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfConvertDlg_addf3c318a648dc3aeb855a2f32416c98}
+
+
+Get the source directory. 
+
+\begin{DoxyReturn}{Returns}
+The source directory. 
+\end{DoxyReturn}
+\hypertarget{classwxStfConvertDlg_a1fed3038cfba83d7103d2c44ab3d06bd}{
+\index{wxStfConvertDlg@{wxStfConvertDlg}!GetSrcFileNames@{GetSrcFileNames}}
+\index{GetSrcFileNames@{GetSrcFileNames}!wxStfConvertDlg@{wxStfConvertDlg}}
+\subsubsection[{GetSrcFileNames}]{\setlength{\rightskip}{0pt plus 5cm}std::vector$<${\bf wxString}$>$ wxStfConvertDlg::GetSrcFileNames (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfConvertDlg_a1fed3038cfba83d7103d2c44ab3d06bd}
+
+
+Get the list of file names. 
+
+\begin{DoxyReturn}{Returns}
+A vector with source file names. 
+\end{DoxyReturn}
+\hypertarget{classwxStfConvertDlg_a4496190e3ab8965a3fa9d9675881357d}{
+\index{wxStfConvertDlg@{wxStfConvertDlg}!GetSrcFilter@{GetSrcFilter}}
+\index{GetSrcFilter@{GetSrcFilter}!wxStfConvertDlg@{wxStfConvertDlg}}
+\subsubsection[{GetSrcFilter}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wxString} wxStfConvertDlg::GetSrcFilter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfConvertDlg_a4496190e3ab8965a3fa9d9675881357d}
+
+
+Get the source extension filter. 
+
+\begin{DoxyReturn}{Returns}
+The source extension filter. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+src/app/dlgs/\hyperlink{smalldlgs_8h}{smalldlgs.h}\end{DoxyCompactItemize}

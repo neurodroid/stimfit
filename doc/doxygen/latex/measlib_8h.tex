@@ -1,0 +1,53 @@
+\hypertarget{measlib_8h}{
+\section{src/core/measlib.h File Reference}
+\label{measlib_8h}\index{src/core/measlib.h@{src/core/measlib.h}}
+}
+
+
+Functions for measuring kinetics of events within waveforms.  
+
+
+{\ttfamily \#include $<$vector$>$}\par
+Include dependency graph for measlib.h:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=176pt]{measlib_8h__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacestf}{stf}
+
+
+\begin{DoxyCompactList}\small\item\em The stimfit namespace. \item\end{DoxyCompactList}
+
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{group__stfgen_ga365e8fdc4f5836f495e6f1dd95baf3fa}{stf::base} (double \&var, const std::vector$<$ double $>$ \&data, std::size\_\-t llb, std::size\_\-t ulb)
+\begin{DoxyCompactList}\small\item\em Calculate the average of all sampling points between and including {\itshape llb\/} and {\itshape ulb\/}. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga0f30710d3729c00c31a1aa82d08badff}{stf::peak} (const std::vector$<$ double $>$ \&data, double base, std::size\_\-t llp, std::size\_\-t ulp, int pM, \hyperlink{group__stfgen_gae8845ae2aeaf4b742a905a2a5571fd5a}{stf::direction}, double \&maxT)
+\begin{DoxyCompactList}\small\item\em Find the peak value of {\itshape data\/} between {\itshape llp\/} and {\itshape ulp\/}. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gaafcb097f10d8179f38881321d7cd86f3}{stf::threshold} (const std::vector$<$ double $>$ \&data, std::size\_\-t llp, std::size\_\-t ulp, double slope, double \&thrT)
+\begin{DoxyCompactList}\small\item\em Find the value within {\itshape data\/} between {\itshape llp\/} and {\itshape ulp\/} at which {\itshape slope\/} is exceeded. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gada6c5911cfc604b337b76d1198d8cd37}{stf::risetime} (const std::vector$<$ double $>$ \&data, double base, double ampl, double left, double right, std::size\_\-t \&t20Id, std::size\_\-t \&t80Id, double \&t20Real)
+\begin{DoxyCompactList}\small\item\em Find 20 to 80\% rise time of an event in {\itshape data\/}. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga7c43d9ceb4e7ce199c0278b52e28386d}{stf::t\_\-half} (const std::vector$<$ double $>$ \&data, double base, double ampl, double left, double right, double center, std::size\_\-t \&t50LeftId, std::size\_\-t \&t50RightId, double \&t50LeftReal)
+\begin{DoxyCompactList}\small\item\em Find the full width at half-\/maximal amplitude of an event within {\itshape data\/}. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga3fe029fabcdd9669244b896cd57fede3}{stf::maxRise} (const std::vector$<$ double $>$ \&data, double left, double right, double \&maxRiseT, double \&maxRiseY)
+\begin{DoxyCompactList}\small\item\em Find the maximal slope during the rising phase of an event within {\itshape data\/}. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga7aea0ee12af70b3eb64016585df82eeb}{stf::maxDecay} (const std::vector$<$ double $>$ \&data, double left, double right, double \&maxDecayT, double \&maxDecayY)
+\begin{DoxyCompactList}\small\item\em Find the maximal slope during the decaying phase of an event within {\itshape data\/}. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Functions for measuring kinetics of events within waveforms. \begin{DoxyAuthor}{Author}
+Christoph Schmidt-\/Hieber, Peter Jonas 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2011-\/01-\/24 For an example how to use these functions, see \hyperlink{classRecording_a6013d836fff642a89db9ec0d1cd2d4f5}{Recording::Measure()}. 
+\end{DoxyDate}

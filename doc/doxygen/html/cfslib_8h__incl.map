@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node3" href="$core_8h.html" title="Core components." alt="" coords="511,86,580,117"/>
+<area shape="rect" id="node11" href="$stimdefs_8h.html" title="Common definitions and classes." alt="" coords="288,406,379,437"/>
+<area shape="rect" id="node27" href="$section_8h.html" title="Declares the Section class." alt="" coords="292,326,375,357"/>
+<area shape="rect" id="node30" href="$recording_8h.html" title="Declares the Recording class." alt="" coords="457,166,551,197"/>
+<area shape="rect" id="node32" href="$channel_8h.html" title="Declares the Channel class." alt="" coords="407,246,492,277"/>
+<area shape="rect" id="node35" href="$zoom_8h.html" title="Declares the Zoom struct." alt="" coords="399,326,500,357"/>
+</map>

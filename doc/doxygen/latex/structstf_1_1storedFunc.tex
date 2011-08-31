@@ -1,0 +1,135 @@
+\hypertarget{structstf_1_1storedFunc}{
+\section{stf::storedFunc Struct Reference}
+\label{structstf_1_1storedFunc}\index{stf::storedFunc@{stf::storedFunc}}
+}
+
+
+Function used for least-\/squares fitting.  
+
+
+
+
+{\ttfamily \#include $<$stimdefs.h$>$}
+
+
+
+Collaboration diagram for stf::storedFunc:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=230pt]{structstf_1_1storedFunc__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structstf_1_1storedFunc_a6cfde3ff81a2297aaf4b33ee46a9a7e9}{storedFunc} (const \hyperlink{classwxString}{wxString} \&name\_\-, const std::vector$<$ \hyperlink{structstf_1_1parInfo}{parInfo} $>$ \&pInfo\_\-, const \hyperlink{group__stfgen_ga11d6ec55abceacf5fdd47f9fc889d9a3}{Func} \&func\_\-, const \hyperlink{group__stfgen_ga15ccefdb3c4b758564e73f080639ff98}{Init} \&init\_\-, const \hyperlink{group__stfgen_ga77f3e621f1771784f2befaeb3d1ac4fb}{Jac} \&jac\_\-, bool hasJac\_\-=true, const \hyperlink{group__stfgen_ga66542f63882a99158a17cdc977eac5e8}{Output} \&output\_\-=defaultOutput)
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+\hypertarget{structstf_1_1storedFunc_a058a7ae12ebbaf5dd5f42eb69052b6e8}{
+\hyperlink{structstf_1_1storedFunc_a058a7ae12ebbaf5dd5f42eb69052b6e8}{$\sim$storedFunc} ()}
+\label{structstf_1_1storedFunc_a058a7ae12ebbaf5dd5f42eb69052b6e8}
+
+\begin{DoxyCompactList}\small\item\em Destructor. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classwxString}{wxString} \hyperlink{structstf_1_1storedFunc_ac1fe235432b5de9f93817a573b6d9946}{name}
+\item 
+std::vector$<$ \hyperlink{structstf_1_1parInfo}{parInfo} $>$ \hyperlink{structstf_1_1storedFunc_a2f09fc5276140a85ad4fa61bccc3fd61}{pInfo}
+\item 
+\hyperlink{group__stfgen_ga11d6ec55abceacf5fdd47f9fc889d9a3}{Func} \hyperlink{structstf_1_1storedFunc_a3ec6459b20161c0331f69902d219e5f4}{func}
+\item 
+\hyperlink{group__stfgen_ga15ccefdb3c4b758564e73f080639ff98}{Init} \hyperlink{structstf_1_1storedFunc_a825fd7a72e67915cde6439afe8010840}{init}
+\item 
+\hyperlink{group__stfgen_ga77f3e621f1771784f2befaeb3d1ac4fb}{Jac} \hyperlink{structstf_1_1storedFunc_a5f97002993f83f9c162e2a9fde8125ea}{jac}
+\item 
+bool \hyperlink{structstf_1_1storedFunc_a26a0e3f68ef57d72e5fd8e967dc15911}{hasJac}
+\item 
+\hyperlink{group__stfgen_ga66542f63882a99158a17cdc977eac5e8}{Output} \hyperlink{structstf_1_1storedFunc_aad9e1ffc2999387f61578bf9f7461224}{output}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Function used for least-\/squares fitting. Objects of this class are used for fitting functions to data. The client supplies a function (func), its jacobian (jac), information about the function's parameters (pInfo) and a function to initialize the parameters (init). 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{structstf_1_1storedFunc_a6cfde3ff81a2297aaf4b33ee46a9a7e9}{
+\index{stf::storedFunc@{stf::storedFunc}!storedFunc@{storedFunc}}
+\index{storedFunc@{storedFunc}!stf::storedFunc@{stf::storedFunc}}
+\subsubsection[{storedFunc}]{\setlength{\rightskip}{0pt plus 5cm}stf::storedFunc::storedFunc (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{name\_\-, }
+\item[{const std::vector$<$ {\bf parInfo} $>$ \&}]{pInfo\_\-, }
+\item[{const {\bf Func} \&}]{func\_\-, }
+\item[{const {\bf Init} \&}]{init\_\-, }
+\item[{const {\bf Jac} \&}]{jac\_\-, }
+\item[{bool}]{hasJac\_\- = {\ttfamily true}, }
+\item[{const {\bf Output} \&}]{output\_\- = {\ttfamily defaultOutput}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{structstf_1_1storedFunc_a6cfde3ff81a2297aaf4b33ee46a9a7e9}
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em name\_\-} & Plain function name. \\
+\hline
+{\em pInfo\_\-} & A vector containing information about the function parameters. \\
+\hline
+{\em func\_\-} & The function that will be fitted to the data. \\
+\hline
+{\em jac\_\-} & Jacobian of func\_\-. \\
+\hline
+{\em hasJac\_\-} & true if a Jacobian is available. \\
+\hline
+{\em init\_\-} & A function for initialising the parameters. \\
+\hline
+{\em output\_\-} & Output of the fit. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{structstf_1_1storedFunc_a3ec6459b20161c0331f69902d219e5f4}{
+\index{stf::storedFunc@{stf::storedFunc}!func@{func}}
+\index{func@{func}!stf::storedFunc@{stf::storedFunc}}
+\subsubsection[{func}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Func} {\bf stf::storedFunc::func}}}
+\label{structstf_1_1storedFunc_a3ec6459b20161c0331f69902d219e5f4}
+The function that will be fitted to the data. \hypertarget{structstf_1_1storedFunc_a26a0e3f68ef57d72e5fd8e967dc15911}{
+\index{stf::storedFunc@{stf::storedFunc}!hasJac@{hasJac}}
+\index{hasJac@{hasJac}!stf::storedFunc@{stf::storedFunc}}
+\subsubsection[{hasJac}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf stf::storedFunc::hasJac}}}
+\label{structstf_1_1storedFunc_a26a0e3f68ef57d72e5fd8e967dc15911}
+True if the function has an analytic Jacobian. \hypertarget{structstf_1_1storedFunc_a825fd7a72e67915cde6439afe8010840}{
+\index{stf::storedFunc@{stf::storedFunc}!init@{init}}
+\index{init@{init}!stf::storedFunc@{stf::storedFunc}}
+\subsubsection[{init}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Init} {\bf stf::storedFunc::init}}}
+\label{structstf_1_1storedFunc_a825fd7a72e67915cde6439afe8010840}
+A function for initialising the parameters. \hypertarget{structstf_1_1storedFunc_a5f97002993f83f9c162e2a9fde8125ea}{
+\index{stf::storedFunc@{stf::storedFunc}!jac@{jac}}
+\index{jac@{jac}!stf::storedFunc@{stf::storedFunc}}
+\subsubsection[{jac}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Jac} {\bf stf::storedFunc::jac}}}
+\label{structstf_1_1storedFunc_a5f97002993f83f9c162e2a9fde8125ea}
+Jacobian of func. \hypertarget{structstf_1_1storedFunc_ac1fe235432b5de9f93817a573b6d9946}{
+\index{stf::storedFunc@{stf::storedFunc}!name@{name}}
+\index{name@{name}!stf::storedFunc@{stf::storedFunc}}
+\subsubsection[{name}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wxString} {\bf stf::storedFunc::name}}}
+\label{structstf_1_1storedFunc_ac1fe235432b5de9f93817a573b6d9946}
+Function name. \hypertarget{structstf_1_1storedFunc_aad9e1ffc2999387f61578bf9f7461224}{
+\index{stf::storedFunc@{stf::storedFunc}!output@{output}}
+\index{output@{output}!stf::storedFunc@{stf::storedFunc}}
+\subsubsection[{output}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Output} {\bf stf::storedFunc::output}}}
+\label{structstf_1_1storedFunc_aad9e1ffc2999387f61578bf9f7461224}
+Output of the fit. \hypertarget{structstf_1_1storedFunc_a2f09fc5276140a85ad4fa61bccc3fd61}{
+\index{stf::storedFunc@{stf::storedFunc}!pInfo@{pInfo}}
+\index{pInfo@{pInfo}!stf::storedFunc@{stf::storedFunc}}
+\subsubsection[{pInfo}]{\setlength{\rightskip}{0pt plus 5cm}std::vector$<${\bf parInfo}$>$ {\bf stf::storedFunc::pInfo}}}
+\label{structstf_1_1storedFunc_a2f09fc5276140a85ad4fa61bccc3fd61}
+A vector containing information about the function parameters. 
+
+The documentation for this struct was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+src/core/\hyperlink{stimdefs_8h}{stimdefs.h}\end{DoxyCompactItemize}

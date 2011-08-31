@@ -1,0 +1,130 @@
+\hypertarget{structstf_1_1Extension}{
+\section{stf::Extension Struct Reference}
+\label{structstf_1_1Extension}\index{stf::Extension@{stf::Extension}}
+}
+
+
+User-\/defined Python extension.  
+
+
+
+
+{\ttfamily \#include $<$stimdefs.h$>$}
+
+
+
+Collaboration diagram for stf::Extension:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=204pt]{structstf_1_1Extension__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structstf_1_1Extension_a279ba4a2a78e265c034450806715f789}{Extension} (const std::string \&menuEntry\_\-, void $\ast$pyFunc\_\-, const std::string \&description\_\-, bool requiresFile\_\-)
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+\hypertarget{structstf_1_1Extension_aa0e893a92ad0eca35620645ccadf12c1}{
+\hyperlink{structstf_1_1Extension_aa0e893a92ad0eca35620645ccadf12c1}{$\sim$Extension} ()}
+\label{structstf_1_1Extension_aa0e893a92ad0eca35620645ccadf12c1}
+
+\begin{DoxyCompactList}\small\item\em Destructor. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{structstf_1_1Extension_a069888104cfb479873e3da55e7c049d2}{id}
+\item 
+std::string \hyperlink{structstf_1_1Extension_a6e83222a3ed4de95ed36b143a6ee1913}{menuEntry}
+\item 
+void $\ast$ \hyperlink{structstf_1_1Extension_a2c2aeac701f3925233924aff9d1466b8}{pyFunc}
+\item 
+std::string \hyperlink{structstf_1_1Extension_a432e0a68c4052944bc5e9b679f688ad7}{description}
+\item 
+bool \hyperlink{structstf_1_1Extension_abaef4f6bdc9af533d706344c40ae4cf4}{requiresFile}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static int \hyperlink{structstf_1_1Extension_a143b2d64266f86fe54937c98fdb59c32}{n\_\-extensions}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+User-\/defined Python extension. Class used for extending Stimfit's functionality: The client supplies a new menu entry and a Python function that will be called upon selection of that entry. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{structstf_1_1Extension_a279ba4a2a78e265c034450806715f789}{
+\index{stf::Extension@{stf::Extension}!Extension@{Extension}}
+\index{Extension@{Extension}!stf::Extension@{stf::Extension}}
+\subsubsection[{Extension}]{\setlength{\rightskip}{0pt plus 5cm}stf::Extension::Extension (
+\begin{DoxyParamCaption}
+\item[{const std::string \&}]{menuEntry\_\-, }
+\item[{void $\ast$}]{pyFunc\_\-, }
+\item[{const std::string \&}]{description\_\-, }
+\item[{bool}]{requiresFile\_\-}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{structstf_1_1Extension_a279ba4a2a78e265c034450806715f789}
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em menuEntry\_\-} & Menu entry string for this extension. \\
+\hline
+{\em pyFunc\_\-} & Python function to be called. \\
+\hline
+{\em description\_\-} & Description for this function. \\
+\hline
+{\em requiresFile\_\-} & Whether a file needs to be open for this function to work \\
+\hline
+\end{DoxyParams}
+
+
+References n\_\-extensions.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{structstf_1_1Extension_a432e0a68c4052944bc5e9b679f688ad7}{
+\index{stf::Extension@{stf::Extension}!description@{description}}
+\index{description@{description}!stf::Extension@{stf::Extension}}
+\subsubsection[{description}]{\setlength{\rightskip}{0pt plus 5cm}std::string {\bf stf::Extension::description}}}
+\label{structstf_1_1Extension_a432e0a68c4052944bc5e9b679f688ad7}
+Description for this function. \hypertarget{structstf_1_1Extension_a069888104cfb479873e3da55e7c049d2}{
+\index{stf::Extension@{stf::Extension}!id@{id}}
+\index{id@{id}!stf::Extension@{stf::Extension}}
+\subsubsection[{id}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf stf::Extension::id}}}
+\label{structstf_1_1Extension_a069888104cfb479873e3da55e7c049d2}
+The extension id; set automatically upon construction, so don't touch. \hypertarget{structstf_1_1Extension_a6e83222a3ed4de95ed36b143a6ee1913}{
+\index{stf::Extension@{stf::Extension}!menuEntry@{menuEntry}}
+\index{menuEntry@{menuEntry}!stf::Extension@{stf::Extension}}
+\subsubsection[{menuEntry}]{\setlength{\rightskip}{0pt plus 5cm}std::string {\bf stf::Extension::menuEntry}}}
+\label{structstf_1_1Extension_a6e83222a3ed4de95ed36b143a6ee1913}
+Menu entry string for this extension. \hypertarget{structstf_1_1Extension_a143b2d64266f86fe54937c98fdb59c32}{
+\index{stf::Extension@{stf::Extension}!n\_\-extensions@{n\_\-extensions}}
+\index{n\_\-extensions@{n\_\-extensions}!stf::Extension@{stf::Extension}}
+\subsubsection[{n\_\-extensions}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf stf::Extension::n\_\-extensions}\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{structstf_1_1Extension_a143b2d64266f86fe54937c98fdb59c32}
+Static extension counter. Initialised in extensions/extensions.cpp. 
+
+Referenced by Extension().
+
+\hypertarget{structstf_1_1Extension_a2c2aeac701f3925233924aff9d1466b8}{
+\index{stf::Extension@{stf::Extension}!pyFunc@{pyFunc}}
+\index{pyFunc@{pyFunc}!stf::Extension@{stf::Extension}}
+\subsubsection[{pyFunc}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ {\bf stf::Extension::pyFunc}}}
+\label{structstf_1_1Extension_a2c2aeac701f3925233924aff9d1466b8}
+Python function to be called. \hypertarget{structstf_1_1Extension_abaef4f6bdc9af533d706344c40ae4cf4}{
+\index{stf::Extension@{stf::Extension}!requiresFile@{requiresFile}}
+\index{requiresFile@{requiresFile}!stf::Extension@{stf::Extension}}
+\subsubsection[{requiresFile}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf stf::Extension::requiresFile}}}
+\label{structstf_1_1Extension_abaef4f6bdc9af533d706344c40ae4cf4}
+Whether a file needs to be open for this function to work 
+
+The documentation for this struct was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+src/core/\hyperlink{stimdefs_8h}{stimdefs.h}\end{DoxyCompactItemize}

@@ -1,0 +1,120 @@
+\hypertarget{structstf_1_1Plugin}{
+\section{stf::Plugin Struct Reference}
+\label{structstf_1_1Plugin}\index{stf::Plugin@{stf::Plugin}}
+}
+
+
+User-\/defined plugin.  
+
+
+
+
+{\ttfamily \#include $<$stimdefs.h$>$}
+
+
+
+Collaboration diagram for stf::Plugin:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=396pt]{structstf_1_1Plugin__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{structstf_1_1Plugin_a0609473477d0237371571bfe143536bf}{Plugin} (const \hyperlink{classwxString}{wxString} \&menuEntry\_\-, const \hyperlink{group__stfgen_gaa37601710b061d50b53ceeab1e7a9dd2}{PluginFunc} \&pluginFunc\_\-, const \hyperlink{structstf_1_1UserInput}{UserInput} \&input\_\-=\hyperlink{structstf_1_1UserInput}{UserInput}())
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+\hypertarget{structstf_1_1Plugin_a2347a780c8b165fd604f8bd5656630a5}{
+\hyperlink{structstf_1_1Plugin_a2347a780c8b165fd604f8bd5656630a5}{$\sim$Plugin} ()}
+\label{structstf_1_1Plugin_a2347a780c8b165fd604f8bd5656630a5}
+
+\begin{DoxyCompactList}\small\item\em Destructor. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{structstf_1_1Plugin_a417ea89eae1a8fbd21e7c7488d14fd7d}{id}
+\item 
+\hyperlink{classwxString}{wxString} \hyperlink{structstf_1_1Plugin_a9e7060c1a895ba6ea04250c2c1313272}{menuEntry}
+\item 
+\hyperlink{group__stfgen_gaa37601710b061d50b53ceeab1e7a9dd2}{PluginFunc} \hyperlink{structstf_1_1Plugin_aebef99c1f1bd1d6c69ff8fb31988d22d}{pluginFunc}
+\item 
+\hyperlink{structstf_1_1UserInput}{UserInput} \hyperlink{structstf_1_1Plugin_a53713a074aabf4d0e873d9d13b1e60f3}{input}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static int \hyperlink{structstf_1_1Plugin_a41eba3414a715e63c4dfff9fc2d53851}{n\_\-plugins}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+User-\/defined plugin. Class used for extending Stimfit's functionality: The client supplies a new menu entry and an ExtFunc that will be called upon selection of that entry. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{structstf_1_1Plugin_a0609473477d0237371571bfe143536bf}{
+\index{stf::Plugin@{stf::Plugin}!Plugin@{Plugin}}
+\index{Plugin@{Plugin}!stf::Plugin@{stf::Plugin}}
+\subsubsection[{Plugin}]{\setlength{\rightskip}{0pt plus 5cm}stf::Plugin::Plugin (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{menuEntry\_\-, }
+\item[{const {\bf PluginFunc} \&}]{pluginFunc\_\-, }
+\item[{const {\bf UserInput} \&}]{input\_\- = {\ttfamily {\bf UserInput}()}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{structstf_1_1Plugin_a0609473477d0237371571bfe143536bf}
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em menuEntry\_\-} & Menu entry string for this plugin. \\
+\hline
+{\em pluginFunc\_\-} & Function to be executed by this plugin. \\
+\hline
+{\em input\_\-} & Dialog entries required by this plugin. \\
+\hline
+\end{DoxyParams}
+
+
+References n\_\-plugins.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{structstf_1_1Plugin_a417ea89eae1a8fbd21e7c7488d14fd7d}{
+\index{stf::Plugin@{stf::Plugin}!id@{id}}
+\index{id@{id}!stf::Plugin@{stf::Plugin}}
+\subsubsection[{id}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf stf::Plugin::id}}}
+\label{structstf_1_1Plugin_a417ea89eae1a8fbd21e7c7488d14fd7d}
+The plugin id; set automatically upon construction, so don't touch. \hypertarget{structstf_1_1Plugin_a53713a074aabf4d0e873d9d13b1e60f3}{
+\index{stf::Plugin@{stf::Plugin}!input@{input}}
+\index{input@{input}!stf::Plugin@{stf::Plugin}}
+\subsubsection[{input}]{\setlength{\rightskip}{0pt plus 5cm}{\bf UserInput} {\bf stf::Plugin::input}}}
+\label{structstf_1_1Plugin_a53713a074aabf4d0e873d9d13b1e60f3}
+Dialog entries \hypertarget{structstf_1_1Plugin_a9e7060c1a895ba6ea04250c2c1313272}{
+\index{stf::Plugin@{stf::Plugin}!menuEntry@{menuEntry}}
+\index{menuEntry@{menuEntry}!stf::Plugin@{stf::Plugin}}
+\subsubsection[{menuEntry}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wxString} {\bf stf::Plugin::menuEntry}}}
+\label{structstf_1_1Plugin_a9e7060c1a895ba6ea04250c2c1313272}
+Menu entry string for this plugin. \hypertarget{structstf_1_1Plugin_a41eba3414a715e63c4dfff9fc2d53851}{
+\index{stf::Plugin@{stf::Plugin}!n\_\-plugins@{n\_\-plugins}}
+\index{n\_\-plugins@{n\_\-plugins}!stf::Plugin@{stf::Plugin}}
+\subsubsection[{n\_\-plugins}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf stf::Plugin::n\_\-plugins}\hspace{0.3cm}{\ttfamily  \mbox{[}static\mbox{]}}}}
+\label{structstf_1_1Plugin_a41eba3414a715e63c4dfff9fc2d53851}
+Static plugin counter. Initialised in plugins/plugins.cpp. 
+
+Referenced by Plugin().
+
+\hypertarget{structstf_1_1Plugin_aebef99c1f1bd1d6c69ff8fb31988d22d}{
+\index{stf::Plugin@{stf::Plugin}!pluginFunc@{pluginFunc}}
+\index{pluginFunc@{pluginFunc}!stf::Plugin@{stf::Plugin}}
+\subsubsection[{pluginFunc}]{\setlength{\rightskip}{0pt plus 5cm}{\bf PluginFunc} {\bf stf::Plugin::pluginFunc}}}
+\label{structstf_1_1Plugin_aebef99c1f1bd1d6c69ff8fb31988d22d}
+The function to be executed by this plugin. 
+
+The documentation for this struct was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+src/core/\hyperlink{stimdefs_8h}{stimdefs.h}\end{DoxyCompactItemize}

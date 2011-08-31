@@ -1,0 +1,358 @@
+\hypertarget{classwxStfChildFrame}{
+\section{wxStfChildFrame Class Reference}
+\label{classwxStfChildFrame}\index{wxStfChildFrame@{wxStfChildFrame}}
+}
+
+
+Provides the child frame for displaying documents on separate windows.  
+
+
+
+
+{\ttfamily \#include $<$childframe.h$>$}
+
+
+
+Inheritance diagram for wxStfChildFrame:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=170pt]{classwxStfChildFrame__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for wxStfChildFrame:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=346pt]{classwxStfChildFrame__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classwxStfChildFrame_ad0da3136456c372aac1a26264a05cf88}{wxStfChildFrame} (\hyperlink{classwxDocument}{wxDocument} $\ast$doc, \hyperlink{classwxView}{wxView} $\ast$view, \hyperlink{classwxDocMDIParentFrame}{wxStfParentType} $\ast$parent, wxWindowID id, const \hyperlink{classwxString}{wxString} \&title, const \hyperlink{classwxPoint}{wxPoint} \&pos=\hyperlink{classwxPoint}{wxPoint}(48, 48), const \hyperlink{classwxSize}{wxSize} \&size=wxDefaultSize, long style=wxDEFAULT\_\-FRAME\_\-STYLE, const \hyperlink{classwxString}{wxString} \&name=wxT(\char`\"{}frame\char`\"{}))
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+\hypertarget{classwxStfChildFrame_ab4d598cb9650ba0734aa9c9a82b1e6a6}{
+\hyperlink{classwxStfChildFrame_ab4d598cb9650ba0734aa9c9a82b1e6a6}{$\sim$wxStfChildFrame} ()}
+\label{classwxStfChildFrame_ab4d598cb9650ba0734aa9c9a82b1e6a6}
+
+\begin{DoxyCompactList}\small\item\em Destructor. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfChildFrame_a5eed0f028a05cfd1d967baddd926808e}{ShowTable} (const \hyperlink{classstf_1_1Table}{stf::Table} \&table, const \hyperlink{classwxString}{wxString} \&caption)
+\begin{DoxyCompactList}\small\item\em Adds a table to the results notebook. \item\end{DoxyCompactList}\item 
+std::size\_\-t \hyperlink{classwxStfChildFrame_a5d3d4ccb9139d9b89a1d8c3b5274bf44}{GetCurTrace} () const 
+\begin{DoxyCompactList}\small\item\em Retrieves the current trace from the trace selection combo box. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfChildFrame_ac4951640416b40c7ef770972b2861a96}{SetCurTrace} (std::size\_\-t)
+\begin{DoxyCompactList}\small\item\em Sets the current trace from the trace selection combo box. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfChildFrame_a8bf15457066b27f81c4ce7f6efee0968}{CreateMenuTraces} (std::size\_\-t value)
+\begin{DoxyCompactList}\small\item\em Creates the trace selection menu. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfChildFrame_ad2ae8f658f6cf4e5ab293fce15c2ef72}{CreateComboChannels} (const wxArrayString \&channelNames)
+\begin{DoxyCompactList}\small\item\em Creates the channel selection combo boxes. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfChildFrame_a1378a98bc5cbb3983398cbaa4df07b14}{SetSelected} (std::size\_\-t value)
+\begin{DoxyCompactList}\small\item\em Refreshes the trace selection string. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfChildFrame_a4dcae3a72bd8cbf4ec88fa8c175a5263}{SetChannels} (std::size\_\-t act, std::size\_\-t inact)
+\begin{DoxyCompactList}\small\item\em Sets the channels in the combo boxes. Checks and corrects equal channels in both boxes. \item\end{DoxyCompactList}\item 
+\hypertarget{classwxStfChildFrame_ad51c5aaa777d50ce3577bacc5c282ca4}{
+void \hyperlink{classwxStfChildFrame_ad51c5aaa777d50ce3577bacc5c282ca4}{UpdateChannels} ()}
+\label{classwxStfChildFrame_ad51c5aaa777d50ce3577bacc5c282ca4}
+
+\begin{DoxyCompactList}\small\item\em Updates the channels according to the current combo boy selection. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfChildFrame_aa74cf4d2706de49d7e62c6ce7bffa2e6}{UpdateResults} ()
+\begin{DoxyCompactList}\small\item\em Updates the results table. \item\end{DoxyCompactList}\item 
+wxAuiManager $\ast$ \hyperlink{classwxStfChildFrame_a68df0de27a7818fc273e23e3773fd0da}{GetMgr} ()
+\begin{DoxyCompactList}\small\item\em Retrieve the wxAuiManager. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxStfGrid}{wxStfGrid} $\ast$ \hyperlink{classwxStfChildFrame_a4e2fab6fd5eea1a8da903bac45823fef}{GetCopyGrid} ()
+\begin{DoxyCompactList}\small\item\em Retrieve the \hyperlink{classwxStfGrid}{wxStfGrid} that contains the results table. \item\end{DoxyCompactList}\item 
+\hypertarget{classwxStfChildFrame_ab3d88fc327c7f4dcfde46f4764a02152}{
+void \hyperlink{classwxStfChildFrame_ab3d88fc327c7f4dcfde46f4764a02152}{Saveperspective} ()}
+\label{classwxStfChildFrame_ab3d88fc327c7f4dcfde46f4764a02152}
+
+\begin{DoxyCompactList}\small\item\em Write the current AUI perspective to the configuration. \item\end{DoxyCompactList}\item 
+\hypertarget{classwxStfChildFrame_a5e3b3b5ed6f0e91542051a7320ee3fb5}{
+void \hyperlink{classwxStfChildFrame_a5e3b3b5ed6f0e91542051a7320ee3fb5}{Loadperspective} ()}
+\label{classwxStfChildFrame_a5e3b3b5ed6f0e91542051a7320ee3fb5}
+
+\begin{DoxyCompactList}\small\item\em Load the saved AUI perspective from the configuration. \item\end{DoxyCompactList}\item 
+\hypertarget{classwxStfChildFrame_a9ca8d5334433e39f014a399b26589d32}{
+void \hyperlink{classwxStfChildFrame_a9ca8d5334433e39f014a399b26589d32}{Restoreperspective} ()}
+\label{classwxStfChildFrame_a9ca8d5334433e39f014a399b26589d32}
+
+\begin{DoxyCompactList}\small\item\em Restore the default AUI perspective. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classwxStfChildFrame_a6d956a35f7e01c0bf18ca1409b5f50e0}{ShowSelected} () const 
+\begin{DoxyCompactList}\small\item\em Indicates whether all selected traces should be plotted. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classwxStfChildFrame_aeab6592a78f2b567c46b716dbbdcac70}{ShowSecond} () const 
+\begin{DoxyCompactList}\small\item\em Indicates whether the second channel should be plotted. \item\end{DoxyCompactList}\item 
+\hypertarget{classwxStfChildFrame_a0186c699805f1f99befae295f864bcbe}{
+void \hyperlink{classwxStfChildFrame_a0186c699805f1f99befae295f864bcbe}{ActivateGraph} ()}
+\label{classwxStfChildFrame_a0186c699805f1f99befae295f864bcbe}
+
+\begin{DoxyCompactList}\small\item\em Activated the current graph. \item\end{DoxyCompactList}\item 
+\hypertarget{classwxStfChildFrame_ac12d539c58c7826a616b259d345859e6}{
+void {\bfseries OnActivate} (wxActivateEvent \&event)}
+\label{classwxStfChildFrame_ac12d539c58c7826a616b259d345859e6}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Provides the child frame for displaying documents on separate windows. This class can only be used for MDI child frames. It is part of the document/view framework supported by wxWidgets. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classwxStfChildFrame_ad0da3136456c372aac1a26264a05cf88}{
+\index{wxStfChildFrame@{wxStfChildFrame}!wxStfChildFrame@{wxStfChildFrame}}
+\index{wxStfChildFrame@{wxStfChildFrame}!wxStfChildFrame@{wxStfChildFrame}}
+\subsubsection[{wxStfChildFrame}]{\setlength{\rightskip}{0pt plus 5cm}wxStfChildFrame::wxStfChildFrame (
+\begin{DoxyParamCaption}
+\item[{{\bf wxDocument} $\ast$}]{doc, }
+\item[{{\bf wxView} $\ast$}]{view, }
+\item[{{\bf wxStfParentType} $\ast$}]{parent, }
+\item[{wxWindowID}]{id, }
+\item[{const {\bf wxString} \&}]{title, }
+\item[{const {\bf wxPoint} \&}]{pos = {\ttfamily {\bf wxPoint}(48,~48)}, }
+\item[{const {\bf wxSize} \&}]{size = {\ttfamily wxDefaultSize}, }
+\item[{long}]{style = {\ttfamily wxDEFAULT\_\-FRAME\_\-STYLE}, }
+\item[{const {\bf wxString} \&}]{name = {\ttfamily wxT(\char`\"{}frame\char`\"{})}}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfChildFrame_ad0da3136456c372aac1a26264a05cf88}
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em doc} & Pointer to the attached document. \\
+\hline
+{\em view} & Pointer to the attached view. \\
+\hline
+{\em parent} & Pointer to the parent frame. \\
+\hline
+{\em id} & Window id. \\
+\hline
+{\em title} & Window title string. \\
+\hline
+{\em pos} & Initial window position. \\
+\hline
+{\em size} & Initial window size. \\
+\hline
+{\em style} & Window style. \\
+\hline
+{\em name} & Name of this frame. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classwxStfChildFrame_ad2ae8f658f6cf4e5ab293fce15c2ef72}{
+\index{wxStfChildFrame@{wxStfChildFrame}!CreateComboChannels@{CreateComboChannels}}
+\index{CreateComboChannels@{CreateComboChannels}!wxStfChildFrame@{wxStfChildFrame}}
+\subsubsection[{CreateComboChannels}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfChildFrame::CreateComboChannels (
+\begin{DoxyParamCaption}
+\item[{const wxArrayString \&}]{channelNames}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfChildFrame_ad2ae8f658f6cf4e5ab293fce15c2ef72}
+
+
+Creates the channel selection combo boxes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em channelNames} & The channel names for the combo box drop-\/down list. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfChildFrame_a8bf15457066b27f81c4ce7f6efee0968}{
+\index{wxStfChildFrame@{wxStfChildFrame}!CreateMenuTraces@{CreateMenuTraces}}
+\index{CreateMenuTraces@{CreateMenuTraces}!wxStfChildFrame@{wxStfChildFrame}}
+\subsubsection[{CreateMenuTraces}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfChildFrame::CreateMenuTraces (
+\begin{DoxyParamCaption}
+\item[{std::size\_\-t}]{value}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfChildFrame_a8bf15457066b27f81c4ce7f6efee0968}
+
+
+Creates the trace selection menu. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & The number of traces. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfChildFrame_a4e2fab6fd5eea1a8da903bac45823fef}{
+\index{wxStfChildFrame@{wxStfChildFrame}!GetCopyGrid@{GetCopyGrid}}
+\index{GetCopyGrid@{GetCopyGrid}!wxStfChildFrame@{wxStfChildFrame}}
+\subsubsection[{GetCopyGrid}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wxStfGrid}$\ast$ wxStfChildFrame::GetCopyGrid (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfChildFrame_a4e2fab6fd5eea1a8da903bac45823fef}
+
+
+Retrieve the \hyperlink{classwxStfGrid}{wxStfGrid} that contains the results table. 
+
+\begin{DoxyReturn}{Returns}
+A pointer to the grid. 
+\end{DoxyReturn}
+\hypertarget{classwxStfChildFrame_a5d3d4ccb9139d9b89a1d8c3b5274bf44}{
+\index{wxStfChildFrame@{wxStfChildFrame}!GetCurTrace@{GetCurTrace}}
+\index{GetCurTrace@{GetCurTrace}!wxStfChildFrame@{wxStfChildFrame}}
+\subsubsection[{GetCurTrace}]{\setlength{\rightskip}{0pt plus 5cm}std::size\_\-t wxStfChildFrame::GetCurTrace (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfChildFrame_a5d3d4ccb9139d9b89a1d8c3b5274bf44}
+
+
+Retrieves the current trace from the trace selection combo box. 
+
+\begin{DoxyReturn}{Returns}
+The 0-\/based index of the currently selected trace. 
+\end{DoxyReturn}
+\hypertarget{classwxStfChildFrame_a68df0de27a7818fc273e23e3773fd0da}{
+\index{wxStfChildFrame@{wxStfChildFrame}!GetMgr@{GetMgr}}
+\index{GetMgr@{GetMgr}!wxStfChildFrame@{wxStfChildFrame}}
+\subsubsection[{GetMgr}]{\setlength{\rightskip}{0pt plus 5cm}wxAuiManager$\ast$ wxStfChildFrame::GetMgr (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfChildFrame_a68df0de27a7818fc273e23e3773fd0da}
+
+
+Retrieve the wxAuiManager. 
+
+\begin{DoxyReturn}{Returns}
+A pointer to the wxAuiManager. 
+\end{DoxyReturn}
+\hypertarget{classwxStfChildFrame_a4dcae3a72bd8cbf4ec88fa8c175a5263}{
+\index{wxStfChildFrame@{wxStfChildFrame}!SetChannels@{SetChannels}}
+\index{SetChannels@{SetChannels}!wxStfChildFrame@{wxStfChildFrame}}
+\subsubsection[{SetChannels}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfChildFrame::SetChannels (
+\begin{DoxyParamCaption}
+\item[{std::size\_\-t}]{act, }
+\item[{std::size\_\-t}]{inact}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfChildFrame_a4dcae3a72bd8cbf4ec88fa8c175a5263}
+
+
+Sets the channels in the combo boxes. Checks and corrects equal channels in both boxes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em act} & Index of the active channel. \\
+\hline
+{\em inact} & Index of the inactive channel. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfChildFrame_ac4951640416b40c7ef770972b2861a96}{
+\index{wxStfChildFrame@{wxStfChildFrame}!SetCurTrace@{SetCurTrace}}
+\index{SetCurTrace@{SetCurTrace}!wxStfChildFrame@{wxStfChildFrame}}
+\subsubsection[{SetCurTrace}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfChildFrame::SetCurTrace (
+\begin{DoxyParamCaption}
+\item[{std::size\_\-t}]{}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfChildFrame_ac4951640416b40c7ef770972b2861a96}
+
+
+Sets the current trace from the trace selection combo box. 
+
+\begin{DoxyReturn}{Returns}
+The 0-\/based index of the trace to be selected. 
+\end{DoxyReturn}
+\hypertarget{classwxStfChildFrame_a1378a98bc5cbb3983398cbaa4df07b14}{
+\index{wxStfChildFrame@{wxStfChildFrame}!SetSelected@{SetSelected}}
+\index{SetSelected@{SetSelected}!wxStfChildFrame@{wxStfChildFrame}}
+\subsubsection[{SetSelected}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfChildFrame::SetSelected (
+\begin{DoxyParamCaption}
+\item[{std::size\_\-t}]{value}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfChildFrame_a1378a98bc5cbb3983398cbaa4df07b14}
+
+
+Refreshes the trace selection string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & The number of selected traces. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfChildFrame_aeab6592a78f2b567c46b716dbbdcac70}{
+\index{wxStfChildFrame@{wxStfChildFrame}!ShowSecond@{ShowSecond}}
+\index{ShowSecond@{ShowSecond}!wxStfChildFrame@{wxStfChildFrame}}
+\subsubsection[{ShowSecond}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfChildFrame::ShowSecond (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfChildFrame_aeab6592a78f2b567c46b716dbbdcac70}
+
+
+Indicates whether the second channel should be plotted. 
+
+\begin{DoxyReturn}{Returns}
+true if it should be plotted, false otherwise. 
+\end{DoxyReturn}
+\hypertarget{classwxStfChildFrame_a6d956a35f7e01c0bf18ca1409b5f50e0}{
+\index{wxStfChildFrame@{wxStfChildFrame}!ShowSelected@{ShowSelected}}
+\index{ShowSelected@{ShowSelected}!wxStfChildFrame@{wxStfChildFrame}}
+\subsubsection[{ShowSelected}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfChildFrame::ShowSelected (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfChildFrame_a6d956a35f7e01c0bf18ca1409b5f50e0}
+
+
+Indicates whether all selected traces should be plotted. 
+
+\begin{DoxyReturn}{Returns}
+true if they should be plotted, false otherwise. 
+\end{DoxyReturn}
+\hypertarget{classwxStfChildFrame_a5eed0f028a05cfd1d967baddd926808e}{
+\index{wxStfChildFrame@{wxStfChildFrame}!ShowTable@{ShowTable}}
+\index{ShowTable@{ShowTable}!wxStfChildFrame@{wxStfChildFrame}}
+\subsubsection[{ShowTable}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfChildFrame::ShowTable (
+\begin{DoxyParamCaption}
+\item[{const {\bf stf::Table} \&}]{table, }
+\item[{const {\bf wxString} \&}]{caption}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfChildFrame_a5eed0f028a05cfd1d967baddd926808e}
+
+
+Adds a table to the results notebook. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em table} & The table to be added. \\
+\hline
+{\em caption} & The title of the new table in the notebook. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfChildFrame_aa74cf4d2706de49d7e62c6ce7bffa2e6}{
+\index{wxStfChildFrame@{wxStfChildFrame}!UpdateResults@{UpdateResults}}
+\index{UpdateResults@{UpdateResults}!wxStfChildFrame@{wxStfChildFrame}}
+\subsubsection[{UpdateResults}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfChildFrame::UpdateResults (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfChildFrame_aa74cf4d2706de49d7e62c6ce7bffa2e6}
+
+
+Updates the results table. 
+
+Called from \hyperlink{classwxStfApp_a584396d82492d98d08c74689a1adfbc3}{wxStfApp::OnPeakcalcexecMsg()} to update the results table. Don't call this directly; use \hyperlink{classwxStfApp_a584396d82492d98d08c74689a1adfbc3}{wxStfApp::OnPeakcalcexecMsg()} instead. 
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+src/app/\hyperlink{childframe_8h}{childframe.h}\end{DoxyCompactItemize}

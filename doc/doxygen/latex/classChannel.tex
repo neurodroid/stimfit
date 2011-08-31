@@ -1,0 +1,434 @@
+\hypertarget{classChannel}{
+\section{Channel Class Reference}
+\label{classChannel}\index{Channel@{Channel}}
+}
+
+
+A \hyperlink{classChannel}{Channel} contains several data \hyperlink{classSection}{Sections } representing observations of the same physical quantity.  
+
+
+
+
+{\ttfamily \#include $<$channel.h$>$}
+
+
+
+Collaboration diagram for Channel:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=400pt]{classChannel__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classChannel_a130abb5b562e98a8c700026f6e328118}{
+\hyperlink{classChannel_a130abb5b562e98a8c700026f6e328118}{Channel} (void)}
+\label{classChannel_a130abb5b562e98a8c700026f6e328118}
+
+\begin{DoxyCompactList}\small\item\em Default constructor. \item\end{DoxyCompactList}\item 
+\hyperlink{classChannel_ad23e275f306c9044089dc1785f75ae52}{Channel} (const \hyperlink{classSection}{Section} \&c\_\-Section)
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+\hyperlink{classChannel_ab8404b525bf98a610dca014613ed85f2}{Channel} (const std::vector$<$ \hyperlink{classSection}{Section} $>$ \&SectionList)
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+\hyperlink{classChannel_acdf766293ad403862cbe57693b088b0d}{Channel} (std::size\_\-t c\_\-n\_\-sections, std::size\_\-t section\_\-size=0)
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+\hypertarget{classChannel_a5f15ebd302464069f1a9e3f0ded14482}{
+\hyperlink{classChannel_a5f15ebd302464069f1a9e3f0ded14482}{$\sim$Channel} ()}
+\label{classChannel_a5f15ebd302464069f1a9e3f0ded14482}
+
+\begin{DoxyCompactList}\small\item\em Destructor. \item\end{DoxyCompactList}\item 
+\hyperlink{classSection}{Section} \& \hyperlink{classChannel_a00bfc4162f9a4febff18bd32db7ba238}{operator\mbox{[}$\,$\mbox{]}} (std::size\_\-t at\_\-)
+\begin{DoxyCompactList}\small\item\em Unchecked access to a section (read and write) \item\end{DoxyCompactList}\item 
+const \hyperlink{classSection}{Section} \& \hyperlink{classChannel_a507d1567e157f080c259b71c8ff214d6}{operator\mbox{[}$\,$\mbox{]}} (std::size\_\-t at\_\-) const 
+\begin{DoxyCompactList}\small\item\em Unchecked access to a section (read-\/only) \item\end{DoxyCompactList}\item 
+const std::string \& \hyperlink{classChannel_a009b30c9871d77b306d0c42986a1869a}{GetChannelName} () const 
+\begin{DoxyCompactList}\small\item\em Retrieves the channel name. \item\end{DoxyCompactList}\item 
+const std::string \& \hyperlink{classChannel_a808344243b3730730e0c541d529b803d}{GetYUnits} () const 
+\begin{DoxyCompactList}\small\item\em Retrieves the y units string. \item\end{DoxyCompactList}\item 
+size\_\-t \hyperlink{classChannel_a85706062035b7c436b41695e3a1fe0f8}{size} () const 
+\begin{DoxyCompactList}\small\item\em Retrieves the size of the section array. \item\end{DoxyCompactList}\item 
+const \hyperlink{classSection}{Section} \& \hyperlink{classChannel_a5c3ee4edf1450054f99d67413d5ff7c6}{at} (std::size\_\-t at\_\-) const 
+\begin{DoxyCompactList}\small\item\em Range-\/checked access to a section (read-\/only). \item\end{DoxyCompactList}\item 
+\hyperlink{classSection}{Section} \& \hyperlink{classChannel_a4e0a0e63c39b5a593ce970e141a0a3d3}{at} (std::size\_\-t at\_\-)
+\begin{DoxyCompactList}\small\item\em Range-\/checked access to a section (read and write). \item\end{DoxyCompactList}\item 
+const std::vector$<$ \hyperlink{classSection}{Section} $>$ \& \hyperlink{classChannel_ae22f828ce5bea9ca4ccb7787072e0585}{get} () const 
+\begin{DoxyCompactList}\small\item\em Low-\/level access to the section array (read-\/only). \item\end{DoxyCompactList}\item 
+std::vector$<$ \hyperlink{classSection}{Section} $>$ \& \hyperlink{classChannel_a246087dd85eaa37347437b6d2d0e51a8}{get} ()
+\begin{DoxyCompactList}\small\item\em Low-\/level access to the section array (read and write). \item\end{DoxyCompactList}\item 
+const \hyperlink{classYZoom}{YZoom} \& \hyperlink{classChannel_a99998581e71361e5a06f79e7fbb0303e}{GetYZoom} ()
+\begin{DoxyCompactList}\small\item\em Returns the current zoom settings for this channel (read-\/only). \item\end{DoxyCompactList}\item 
+\hyperlink{classYZoom}{YZoom} \& \hyperlink{classChannel_a3995ccf99ce0031c7d2510d5444b8999}{GetYZoomW} ()
+\begin{DoxyCompactList}\small\item\em Returns the current zoom settings for this channel (read \& write). \item\end{DoxyCompactList}\item 
+void \hyperlink{classChannel_ac1816100ed2bf3b68f36872138c8d721}{SetChannelName} (const std::string \&value)
+\begin{DoxyCompactList}\small\item\em Sets the channel name. \item\end{DoxyCompactList}\item 
+void \hyperlink{classChannel_a70e87deb5f9e16c019ee4f80615d0a2e}{SetYUnits} (const std::string \&value)
+\begin{DoxyCompactList}\small\item\em Sets the y units string. \item\end{DoxyCompactList}\item 
+void \hyperlink{classChannel_ae60ae41702c7ee29ecfc6f4e602266e7}{InsertSection} (const \hyperlink{classSection}{Section} \&c\_\-Section, std::size\_\-t pos)
+\begin{DoxyCompactList}\small\item\em Inserts a section at the given position, overwriting anything that's currently stored at that position. \item\end{DoxyCompactList}\item 
+void \hyperlink{classChannel_a6ed41e506c3a975b7a1e9776a38e3504}{resize} (std::size\_\-t newSize)
+\begin{DoxyCompactList}\small\item\em Resize the section array. \item\end{DoxyCompactList}\item 
+void \hyperlink{classChannel_a904d1019726e0fb75d7422874c941e13}{reserve} (std::size\_\-t resSize)
+\begin{DoxyCompactList}\small\item\em Reserve memory for a number of sections. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A \hyperlink{classChannel}{Channel} contains several data \hyperlink{classSection}{Sections } representing observations of the same physical quantity. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classChannel_ad23e275f306c9044089dc1785f75ae52}{
+\index{Channel@{Channel}!Channel@{Channel}}
+\index{Channel@{Channel}!Channel@{Channel}}
+\subsubsection[{Channel}]{\setlength{\rightskip}{0pt plus 5cm}Channel::Channel (
+\begin{DoxyParamCaption}
+\item[{const {\bf Section} \&}]{c\_\-Section}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}explicit\mbox{]}}}}
+\label{classChannel_ad23e275f306c9044089dc1785f75ae52}
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em c\_\-Section} & A single section from which to construct the channel \\
+\hline
+\end{DoxyParams}
+\hypertarget{classChannel_ab8404b525bf98a610dca014613ed85f2}{
+\index{Channel@{Channel}!Channel@{Channel}}
+\index{Channel@{Channel}!Channel@{Channel}}
+\subsubsection[{Channel}]{\setlength{\rightskip}{0pt plus 5cm}Channel::Channel (
+\begin{DoxyParamCaption}
+\item[{const std::vector$<$ {\bf Section} $>$ \&}]{SectionList}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}explicit\mbox{]}}}}
+\label{classChannel_ab8404b525bf98a610dca014613ed85f2}
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em SectionList} & A vector of Sections from which to construct the channel \\
+\hline
+\end{DoxyParams}
+\hypertarget{classChannel_acdf766293ad403862cbe57693b088b0d}{
+\index{Channel@{Channel}!Channel@{Channel}}
+\index{Channel@{Channel}!Channel@{Channel}}
+\subsubsection[{Channel}]{\setlength{\rightskip}{0pt plus 5cm}Channel::Channel (
+\begin{DoxyParamCaption}
+\item[{std::size\_\-t}]{c\_\-n\_\-sections, }
+\item[{std::size\_\-t}]{section\_\-size = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}explicit\mbox{]}}}}
+\label{classChannel_acdf766293ad403862cbe57693b088b0d}
+
+
+Constructor. 
+
+Setting the number of sections at construction time will avoid unnecessary memory re-\/allocations. 
+\begin{DoxyParams}{Parameters}
+{\em c\_\-n\_\-sections} & The number of sections. \\
+\hline
+{\em section\_\-size} & Initial section size. Will serve additional re-\/alocations if known at construction time. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classChannel_a5c3ee4edf1450054f99d67413d5ff7c6}{
+\index{Channel@{Channel}!at@{at}}
+\index{at@{at}!Channel@{Channel}}
+\subsubsection[{at}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf Section}\& Channel::at (
+\begin{DoxyParamCaption}
+\item[{std::size\_\-t}]{at\_\-}
+\end{DoxyParamCaption}
+) const}}
+\label{classChannel_a5c3ee4edf1450054f99d67413d5ff7c6}
+
+
+Range-\/checked access to a section (read-\/only). 
+
+Will throw std::out\_\-of\_\-range if out of range. 
+\begin{DoxyParams}{Parameters}
+{\em at\_\-} & The index of the section. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The section at index at\_\-. 
+\end{DoxyReturn}
+\hypertarget{classChannel_a4e0a0e63c39b5a593ce970e141a0a3d3}{
+\index{Channel@{Channel}!at@{at}}
+\index{at@{at}!Channel@{Channel}}
+\subsubsection[{at}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Section}\& Channel::at (
+\begin{DoxyParamCaption}
+\item[{std::size\_\-t}]{at\_\-}
+\end{DoxyParamCaption}
+)}}
+\label{classChannel_a4e0a0e63c39b5a593ce970e141a0a3d3}
+
+
+Range-\/checked access to a section (read and write). 
+
+Will throw std::out\_\-of\_\-range if out of range. 
+\begin{DoxyParams}{Parameters}
+{\em at\_\-} & The index of the section. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The section at index at\_\-. 
+\end{DoxyReturn}
+\hypertarget{classChannel_ae22f828ce5bea9ca4ccb7787072e0585}{
+\index{Channel@{Channel}!get@{get}}
+\index{get@{get}!Channel@{Channel}}
+\subsubsection[{get}]{\setlength{\rightskip}{0pt plus 5cm}const std::vector$<$ {\bf Section} $>$\& Channel::get (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classChannel_ae22f828ce5bea9ca4ccb7787072e0585}
+
+
+Low-\/level access to the section array (read-\/only). 
+
+\begin{DoxyReturn}{Returns}
+The vector containing the sections. 
+\end{DoxyReturn}
+\hypertarget{classChannel_a246087dd85eaa37347437b6d2d0e51a8}{
+\index{Channel@{Channel}!get@{get}}
+\index{get@{get}!Channel@{Channel}}
+\subsubsection[{get}]{\setlength{\rightskip}{0pt plus 5cm}std::vector$<$ {\bf Section} $>$\& Channel::get (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classChannel_a246087dd85eaa37347437b6d2d0e51a8}
+
+
+Low-\/level access to the section array (read and write). 
+
+\begin{DoxyReturn}{Returns}
+The vector containing the sections. 
+\end{DoxyReturn}
+\hypertarget{classChannel_a009b30c9871d77b306d0c42986a1869a}{
+\index{Channel@{Channel}!GetChannelName@{GetChannelName}}
+\index{GetChannelName@{GetChannelName}!Channel@{Channel}}
+\subsubsection[{GetChannelName}]{\setlength{\rightskip}{0pt plus 5cm}const std::string\& Channel::GetChannelName (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classChannel_a009b30c9871d77b306d0c42986a1869a}
+
+
+Retrieves the channel name. 
+
+\begin{DoxyReturn}{Returns}
+The channel name. 
+\end{DoxyReturn}
+\hypertarget{classChannel_a808344243b3730730e0c541d529b803d}{
+\index{Channel@{Channel}!GetYUnits@{GetYUnits}}
+\index{GetYUnits@{GetYUnits}!Channel@{Channel}}
+\subsubsection[{GetYUnits}]{\setlength{\rightskip}{0pt plus 5cm}const std::string\& Channel::GetYUnits (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classChannel_a808344243b3730730e0c541d529b803d}
+
+
+Retrieves the y units string. 
+
+\begin{DoxyReturn}{Returns}
+The y units string. 
+\end{DoxyReturn}
+\hypertarget{classChannel_a99998581e71361e5a06f79e7fbb0303e}{
+\index{Channel@{Channel}!GetYZoom@{GetYZoom}}
+\index{GetYZoom@{GetYZoom}!Channel@{Channel}}
+\subsubsection[{GetYZoom}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf YZoom}\& Channel::GetYZoom (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classChannel_a99998581e71361e5a06f79e7fbb0303e}
+
+
+Returns the current zoom settings for this channel (read-\/only). 
+
+\begin{DoxyReturn}{Returns}
+The current zoom settings. 
+\end{DoxyReturn}
+\hypertarget{classChannel_a3995ccf99ce0031c7d2510d5444b8999}{
+\index{Channel@{Channel}!GetYZoomW@{GetYZoomW}}
+\index{GetYZoomW@{GetYZoomW}!Channel@{Channel}}
+\subsubsection[{GetYZoomW}]{\setlength{\rightskip}{0pt plus 5cm}{\bf YZoom}\& Channel::GetYZoomW (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classChannel_a3995ccf99ce0031c7d2510d5444b8999}
+
+
+Returns the current zoom settings for this channel (read \& write). 
+
+\begin{DoxyReturn}{Returns}
+The current zoom settings. 
+\end{DoxyReturn}
+\hypertarget{classChannel_ae60ae41702c7ee29ecfc6f4e602266e7}{
+\index{Channel@{Channel}!InsertSection@{InsertSection}}
+\index{InsertSection@{InsertSection}!Channel@{Channel}}
+\subsubsection[{InsertSection}]{\setlength{\rightskip}{0pt plus 5cm}void Channel::InsertSection (
+\begin{DoxyParamCaption}
+\item[{const {\bf Section} \&}]{c\_\-Section, }
+\item[{std::size\_\-t}]{pos}
+\end{DoxyParamCaption}
+)}}
+\label{classChannel_ae60ae41702c7ee29ecfc6f4e602266e7}
+
+
+Inserts a section at the given position, overwriting anything that's currently stored at that position. 
+
+Meant to be used after constructing with \hyperlink{classChannel}{Channel}(const unsigned int\& c\_\-n\_\-sections\}. The section array size has to be larger than pos because it won't be resized. Will throw std::out\_\-of\_\-range if out of range. 
+\begin{DoxyParams}{Parameters}
+{\em c\_\-Section} & The section to be inserted. \\
+\hline
+{\em pos} & The position at which to insert the section. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classChannel_a507d1567e157f080c259b71c8ff214d6}{
+\index{Channel@{Channel}!operator\mbox{[}\mbox{]}@{operator[]}}
+\index{operator\mbox{[}\mbox{]}@{operator[]}!Channel@{Channel}}
+\subsubsection[{operator[]}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf Section}\& Channel::operator\mbox{[}$\,$\mbox{]} (
+\begin{DoxyParamCaption}
+\item[{std::size\_\-t}]{at\_\-}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classChannel_a507d1567e157f080c259b71c8ff214d6}
+
+
+Unchecked access to a section (read-\/only) 
+
+Use \hyperlink{classChannel_a5c3ee4edf1450054f99d67413d5ff7c6}{at()} for range-\/checked access. 
+\begin{DoxyParams}{Parameters}
+{\em at\_\-} & The section index. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The section at index at\_\-. 
+\end{DoxyReturn}
+\hypertarget{classChannel_a00bfc4162f9a4febff18bd32db7ba238}{
+\index{Channel@{Channel}!operator\mbox{[}\mbox{]}@{operator[]}}
+\index{operator\mbox{[}\mbox{]}@{operator[]}!Channel@{Channel}}
+\subsubsection[{operator[]}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Section}\& Channel::operator\mbox{[}$\,$\mbox{]} (
+\begin{DoxyParamCaption}
+\item[{std::size\_\-t}]{at\_\-}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classChannel_a00bfc4162f9a4febff18bd32db7ba238}
+
+
+Unchecked access to a section (read and write) 
+
+Use \hyperlink{classChannel_a5c3ee4edf1450054f99d67413d5ff7c6}{at()} for range-\/checked access. 
+\begin{DoxyParams}{Parameters}
+{\em at\_\-} & The section index. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The section at index at\_\-. 
+\end{DoxyReturn}
+\hypertarget{classChannel_a904d1019726e0fb75d7422874c941e13}{
+\index{Channel@{Channel}!reserve@{reserve}}
+\index{reserve@{reserve}!Channel@{Channel}}
+\subsubsection[{reserve}]{\setlength{\rightskip}{0pt plus 5cm}void Channel::reserve (
+\begin{DoxyParamCaption}
+\item[{std::size\_\-t}]{resSize}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classChannel_a904d1019726e0fb75d7422874c941e13}
+
+
+Reserve memory for a number of sections. 
+
+This will avoid unnecessary memory re-\/allocations. 
+\begin{DoxyParams}{Parameters}
+{\em resSize} & The number of sections to reserve memory for. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classChannel_a6ed41e506c3a975b7a1e9776a38e3504}{
+\index{Channel@{Channel}!resize@{resize}}
+\index{resize@{resize}!Channel@{Channel}}
+\subsubsection[{resize}]{\setlength{\rightskip}{0pt plus 5cm}void Channel::resize (
+\begin{DoxyParamCaption}
+\item[{std::size\_\-t}]{newSize}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classChannel_a6ed41e506c3a975b7a1e9776a38e3504}
+
+
+Resize the section array. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em newSize} & The new number of sections. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classChannel_ac1816100ed2bf3b68f36872138c8d721}{
+\index{Channel@{Channel}!SetChannelName@{SetChannelName}}
+\index{SetChannelName@{SetChannelName}!Channel@{Channel}}
+\subsubsection[{SetChannelName}]{\setlength{\rightskip}{0pt plus 5cm}void Channel::SetChannelName (
+\begin{DoxyParamCaption}
+\item[{const std::string \&}]{value}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classChannel_ac1816100ed2bf3b68f36872138c8d721}
+
+
+Sets the channel name. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & The channel name. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classChannel_a70e87deb5f9e16c019ee4f80615d0a2e}{
+\index{Channel@{Channel}!SetYUnits@{SetYUnits}}
+\index{SetYUnits@{SetYUnits}!Channel@{Channel}}
+\subsubsection[{SetYUnits}]{\setlength{\rightskip}{0pt plus 5cm}void Channel::SetYUnits (
+\begin{DoxyParamCaption}
+\item[{const std::string \&}]{value}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classChannel_a70e87deb5f9e16c019ee4f80615d0a2e}
+
+
+Sets the y units string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & The new y units string. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classChannel_a85706062035b7c436b41695e3a1fe0f8}{
+\index{Channel@{Channel}!size@{size}}
+\index{size@{size}!Channel@{Channel}}
+\subsubsection[{size}]{\setlength{\rightskip}{0pt plus 5cm}size\_\-t Channel::size (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classChannel_a85706062035b7c436b41695e3a1fe0f8}
+
+
+Retrieves the size of the section array. 
+
+\begin{DoxyReturn}{Returns}
+The size of the section array. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+src/core/\hyperlink{channel_8h}{channel.h}\end{DoxyCompactItemize}

@@ -1,0 +1,804 @@
+\hypertarget{classwxStfApp}{
+\section{wxStfApp Class Reference}
+\label{classwxStfApp}\index{wxStfApp@{wxStfApp}}
+}
+
+
+The application, derived from \hyperlink{classwxApp}{wxApp}.  
+
+
+
+
+{\ttfamily \#include $<$app.h$>$}
+
+
+
+Inheritance diagram for wxStfApp:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=138pt]{classwxStfApp__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for wxStfApp:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=400pt]{classwxStfApp__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classwxStfApp_a589012f57e32c0c45fda2db4f88d93bb}{
+\hyperlink{classwxStfApp_a589012f57e32c0c45fda2db4f88d93bb}{wxStfApp} ()}
+\label{classwxStfApp_a589012f57e32c0c45fda2db4f88d93bb}
+
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+virtual bool \hyperlink{classwxStfApp_a2933498655e65fab015ccc643f97e096}{OnInit} ()
+\begin{DoxyCompactList}\small\item\em Initialise the application. \item\end{DoxyCompactList}\item 
+virtual int \hyperlink{classwxStfApp_ad0777eb76fe6a4b73ac95e41eefe7768}{OnExit} ()
+\begin{DoxyCompactList}\small\item\em Exit the application. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxStfChildFrame}{wxStfChildFrame} $\ast$ \hyperlink{classwxStfApp_a3e1a978b7ade905d5ee2465305273b88}{CreateChildFrame} (\hyperlink{classwxDocument}{wxDocument} $\ast$doc, \hyperlink{classwxView}{wxView} $\ast$view)
+\begin{DoxyCompactList}\small\item\em Creates a new child frame. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxStfDoc}{wxStfDoc} $\ast$ \hyperlink{classwxStfApp_a1300dc5dad0790f58726e11088441b18}{GetActiveDoc} () const 
+\begin{DoxyCompactList}\small\item\em Retrieves the currently active document. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxStfView}{wxStfView} $\ast$ \hyperlink{classwxStfApp_a62a9c9d666190a4389224686b6dd7faa}{GetActiveView} () const 
+\begin{DoxyCompactList}\small\item\em Sets the currently active document. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfApp_a4d1d4887f607e088a871b42b6a878bdd}{ErrorMsg} (const \hyperlink{classwxString}{wxString} \&msg) const 
+\begin{DoxyCompactList}\small\item\em Displays a message box when an error has occured. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfApp_a37646b2722c97ff92abeaecb9b9e7198}{ExceptMsg} (const \hyperlink{classwxString}{wxString} \&msg) const 
+\begin{DoxyCompactList}\small\item\em Displays a message box when an exception has occured. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfApp_ab18bb61cbd01df81e8577494ed1221a5}{InfoMsg} (const \hyperlink{classwxString}{wxString} \&msg) const 
+\begin{DoxyCompactList}\small\item\em Displays a message box with information. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classwxStfApp_a2ba47fb8c9f58b21211fbfb915c46a80}{get\_\-directTxtImport} () const 
+\begin{DoxyCompactList}\small\item\em Indicates whether text files should be imported directly without showing an import settings dialog. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfApp_aa00f88aecbfd73fa18a0141fe42bc879}{set\_\-directTxtImport} (bool directTxtImport\_\-)
+\begin{DoxyCompactList}\small\item\em Determines whether text files should be imported directly without showing an import filter settings dialog. \item\end{DoxyCompactList}\item 
+const \hyperlink{structstf_1_1txtImportSettings}{stf::txtImportSettings} \& \hyperlink{classwxStfApp_af7fcc335ab5df92c0df0eeb846d22476}{GetTxtImport} () const 
+\begin{DoxyCompactList}\small\item\em Retrieves the text import filter settings. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfApp_a6f94ead9d8e03baf99d3deec56582920}{set\_\-txtImportSettings} (const \hyperlink{structstf_1_1txtImportSettings}{stf::txtImportSettings} \&txtImport\_\-)
+\begin{DoxyCompactList}\small\item\em Sets the text import filter settings. \item\end{DoxyCompactList}\item 
+const std::vector$<$ \hyperlink{structstf_1_1storedFunc}{stf::storedFunc} $>$ \& \hyperlink{classwxStfApp_aa46d93e619d2698aa807390c51980f3e}{GetFuncLib} () const 
+\begin{DoxyCompactList}\small\item\em Retrieves the functions that are available for least-\/squares minimisation. \item\end{DoxyCompactList}\item 
+\hyperlink{structstf_1_1storedFunc}{stf::storedFunc} $\ast$ \hyperlink{classwxStfApp_a68cc63c9e6d555e364f6ac175e27016e}{GetFuncLibPtr} (std::size\_\-t at)
+\begin{DoxyCompactList}\small\item\em Retrieves a pointer to a function for least-\/squares minimisation. \item\end{DoxyCompactList}\item 
+\hyperlink{structstf_1_1storedFunc}{stf::storedFunc} $\ast$ \hyperlink{classwxStfApp_a9d5cbe83f3a3329c3649c3374004b87f}{GetLinFuncPtr} ()
+\begin{DoxyCompactList}\small\item\em Retrieves a pointer to a function for least-\/squares minimisation. \item\end{DoxyCompactList}\item 
+const std::vector$<$ \hyperlink{structstf_1_1Extension}{stf::Extension} $>$ \& \hyperlink{classwxStfApp_a29f0f699a0545eb4ae8219ec83c4aa0a}{GetExtensionLib} () const 
+\begin{DoxyCompactList}\small\item\em Retrieves the user-\/defined extension functions. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxStfCursorsDlg}{wxStfCursorsDlg} $\ast$ \hyperlink{classwxStfApp_ac953818454f409adebdc2a195225c292}{GetCursorsDialog} () const 
+\begin{DoxyCompactList}\small\item\em Retrieves the cursor settings dialog. \item\end{DoxyCompactList}\item 
+std::vector$<$ \hyperlink{classSection}{Section} $\ast$ $>$ \hyperlink{classwxStfApp_a2b27b151af8a1062542f35c466281b55}{GetSectionsWithFits} () const 
+\begin{DoxyCompactList}\small\item\em Retrieves all sections with fits. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfApp_a487f19baf697d6e51db9c3a4f27cacf6}{wxWriteProfileInt} (const \hyperlink{classwxString}{wxString} \&main, const \hyperlink{classwxString}{wxString} \&sub, int value) const 
+\begin{DoxyCompactList}\small\item\em Writes an integer value to the configuration. \item\end{DoxyCompactList}\item 
+int \hyperlink{classwxStfApp_a2fa40721aba5a795665a99711701b3b0}{wxGetProfileInt} (const \hyperlink{classwxString}{wxString} \&main, const \hyperlink{classwxString}{wxString} \&sub, int default\_\-) const 
+\begin{DoxyCompactList}\small\item\em Retrieves an integer value from the configuration. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfApp_a731ce695f19f790f9e5b49252c3cddeb}{wxWriteProfileString} (const \hyperlink{classwxString}{wxString} \&main, const \hyperlink{classwxString}{wxString} \&sub, const \hyperlink{classwxString}{wxString} \&value) const 
+\begin{DoxyCompactList}\small\item\em Writes a string to the configuration. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxString}{wxString} \hyperlink{classwxStfApp_a509da5804564d52e34d87a77f43c4aa7}{wxGetProfileString} (const \hyperlink{classwxString}{wxString} \&main, const \hyperlink{classwxString}{wxString} \&sub, const \hyperlink{classwxString}{wxString} \&default\_\-) const 
+\begin{DoxyCompactList}\small\item\em Retrieves a string from the configuration. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxStfDoc}{wxStfDoc} $\ast$ \hyperlink{classwxStfApp_ac38d9f10644fef847d50cfac42353c38}{NewChild} (const \hyperlink{classRecording}{Recording} \&NewData, const \hyperlink{classwxStfDoc}{wxStfDoc} $\ast$Sender, const \hyperlink{classwxString}{wxString} \&title=wxT(\char`\"{}$\backslash$0\char`\"{}))
+\begin{DoxyCompactList}\small\item\em Creates a new child window showing a new document. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfApp_a584396d82492d98d08c74689a1adfbc3}{OnPeakcalcexecMsg} (\hyperlink{classwxStfDoc}{wxStfDoc} $\ast$actDoc=0)
+\begin{DoxyCompactList}\small\item\em Execute all pending calculations. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfApp_aad9c9b808e1568f9f4e4266be1e7c7b9}{CleanupDocument} (\hyperlink{classwxStfDoc}{wxStfDoc} $\ast$pDoc)
+\begin{DoxyCompactList}\small\item\em Destroys the last cursor settings dialog when the last document is closed. \item\end{DoxyCompactList}\item 
+\hypertarget{classwxStfApp_a7a112fcc6db87597de9adcc8987c6355}{
+bool \hyperlink{classwxStfApp_a7a112fcc6db87597de9adcc8987c6355}{CloseAll} ()}
+\label{classwxStfApp_a7a112fcc6db87597de9adcc8987c6355}
+
+\begin{DoxyCompactList}\small\item\em Closes all documents. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classwxStfApp_ae091bc0de048b5386379f934a71f3d20}{OpenFileSeries} (const wxArrayString \&fNameArray)
+\begin{DoxyCompactList}\small\item\em Opens a series of files. Optionally, files can be put into a single window. \item\end{DoxyCompactList}\item 
+int \hyperlink{classwxStfApp_a09fd899d6efaca715f7e22dd1ddb3ccf}{GetDocCount} ()
+\begin{DoxyCompactList}\small\item\em Returns the number of currently opened documents. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfApp_a876a3f37ff3cd08ac00fa4ef6b1b2c5d}{set\_\-isBars} (bool value)
+\begin{DoxyCompactList}\small\item\em Determine whether scale bars or coordinates should be shown. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classwxStfApp_a2d731c3c77d94fe13ad8184fa1f5cb5f}{get\_\-isBars} () const 
+\begin{DoxyCompactList}\small\item\em Indicates whether scale bars or coordinates are shown. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfApp_a19263b9dec3c8506d801c3becada2a18}{set\_\-isHires} (bool value)
+\begin{DoxyCompactList}\small\item\em Determine whether a high or a low resolution should be used for drawing traces. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classwxStfApp_a73345a1fd9b9f33f5aaf8d7f5a2c1df3}{get\_\-isHires} () const 
+\begin{DoxyCompactList}\small\item\em Indicates whether a high or a low resolution is used for drawing traces. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxString}{wxString} \hyperlink{classwxStfApp_a3e2dfcb798c3451a31b84ec712ae52fd}{GetVersionString} () const 
+\begin{DoxyCompactList}\small\item\em Get a formatted version string. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfApp_ad84ab3a7bc030ba2b1a03924f8e90386}{OnNewfromselected} (\hyperlink{classwxCommandEvent}{wxCommandEvent} \&event)
+\begin{DoxyCompactList}\small\item\em Open a new window showing all selected traces from all open files. \item\end{DoxyCompactList}\item 
+wxDocManager $\ast$ \hyperlink{classwxStfApp_a5fad31f2760593bec972912461e2e2e4}{GetDocManager} () const 
+\begin{DoxyCompactList}\small\item\em Access the document manager. \item\end{DoxyCompactList}\item 
+\hypertarget{classwxStfApp_a6a012628e86f748873c91ab039373fc8}{
+virtual void {\bfseries OnInitCmdLine} (wxCmdLineParser \&parser)}
+\label{classwxStfApp_a6a012628e86f748873c91ab039373fc8}
+
+\item 
+\hypertarget{classwxStfApp_a6bbcf577566590abb524e842692688c3}{
+virtual bool {\bfseries OnCmdLineParsed} (wxCmdLineParser \&parser)}
+\label{classwxStfApp_a6bbcf577566590abb524e842692688c3}
+
+\item 
+bool \hyperlink{classwxStfApp_ad8c1479a2b4e101482005d2cbae660bf}{OpenFilePy} (const \hyperlink{classwxString}{wxString} \&fNameArray)
+\begin{DoxyCompactList}\small\item\em Opens a file in a new window, to be called from Python. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfApp_aa5887b87ba6889cffc3c77b4f4b97b8c}{OnPythonImport} (\hyperlink{classwxCommandEvent}{wxCommandEvent} \&event)
+\begin{DoxyCompactList}\small\item\em Opens a dialog to import a Python module. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The application, derived from \hyperlink{classwxApp}{wxApp}. This class is used to set and get application-\/wide properties, implement the windowing system message or event loop, initiate application processing via OnInit, and allow default processing of events not handled by other objects in the application. 
+
+\subsection{Member Function Documentation}
+\hypertarget{classwxStfApp_aad9c9b808e1568f9f4e4266be1e7c7b9}{
+\index{wxStfApp@{wxStfApp}!CleanupDocument@{CleanupDocument}}
+\index{CleanupDocument@{CleanupDocument}!wxStfApp@{wxStfApp}}
+\subsubsection[{CleanupDocument}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfApp::CleanupDocument (
+\begin{DoxyParamCaption}
+\item[{{\bf wxStfDoc} $\ast$}]{pDoc}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfApp_aad9c9b808e1568f9f4e4266be1e7c7b9}
+
+
+Destroys the last cursor settings dialog when the last document is closed. 
+
+Do not use this function directly. It only needs to be called from \hyperlink{classwxStfDoc_aeb6ac6149de1d6f580bde0d220810d2d}{wxStfDoc::OnCloseDocument()}. 
+\begin{DoxyParams}{Parameters}
+{\em pDoc} & Pointer to the document that is being closed. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfApp_a3e1a978b7ade905d5ee2465305273b88}{
+\index{wxStfApp@{wxStfApp}!CreateChildFrame@{CreateChildFrame}}
+\index{CreateChildFrame@{CreateChildFrame}!wxStfApp@{wxStfApp}}
+\subsubsection[{CreateChildFrame}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wxStfChildFrame}$\ast$ wxStfApp::CreateChildFrame (
+\begin{DoxyParamCaption}
+\item[{{\bf wxDocument} $\ast$}]{doc, }
+\item[{{\bf wxView} $\ast$}]{view}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfApp_a3e1a978b7ade905d5ee2465305273b88}
+
+
+Creates a new child frame. 
+
+This is called from view.cpp whenever a child frame is created. If you want to pop up a new frame showing a new document, use \hyperlink{classwxStfApp_ac38d9f10644fef847d50cfac42353c38}{NewChild()} instead; this function will then be called by the newly created view. 
+\begin{DoxyParams}{Parameters}
+{\em doc} & A pointer to the document that the new child frame should contain. \\
+\hline
+{\em view} & A pointer to the view corresponding to the document. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the newly created child frame. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_a4d1d4887f607e088a871b42b6a878bdd}{
+\index{wxStfApp@{wxStfApp}!ErrorMsg@{ErrorMsg}}
+\index{ErrorMsg@{ErrorMsg}!wxStfApp@{wxStfApp}}
+\subsubsection[{ErrorMsg}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfApp::ErrorMsg (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{msg}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_a4d1d4887f607e088a871b42b6a878bdd}
+
+
+Displays a message box when an error has occured. 
+
+You can use this function from almost anywhere using \hyperlink{group__wxstf_ga10919857dea79326b815ec8555077e07}{wxGetApp()}.ErrorMsg( wxT( \char`\"{}Error abc: xyz\char`\"{} ) ); 
+\begin{DoxyParams}{Parameters}
+{\em msg} & The message string to be shown. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfApp_a37646b2722c97ff92abeaecb9b9e7198}{
+\index{wxStfApp@{wxStfApp}!ExceptMsg@{ExceptMsg}}
+\index{ExceptMsg@{ExceptMsg}!wxStfApp@{wxStfApp}}
+\subsubsection[{ExceptMsg}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfApp::ExceptMsg (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{msg}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_a37646b2722c97ff92abeaecb9b9e7198}
+
+
+Displays a message box when an exception has occured. 
+
+You can use this function from almost anywhere using \hyperlink{group__wxstf_ga10919857dea79326b815ec8555077e07}{wxGetApp()}.ExceptMsg( wxT( \char`\"{}Exception description xyz\char`\"{} ) ); 
+\begin{DoxyParams}{Parameters}
+{\em msg} & The message string to be shown. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfApp_a2ba47fb8c9f58b21211fbfb915c46a80}{
+\index{wxStfApp@{wxStfApp}!get\_\-directTxtImport@{get\_\-directTxtImport}}
+\index{get\_\-directTxtImport@{get\_\-directTxtImport}!wxStfApp@{wxStfApp}}
+\subsubsection[{get\_\-directTxtImport}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfApp::get\_\-directTxtImport (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_a2ba47fb8c9f58b21211fbfb915c46a80}
+
+
+Indicates whether text files should be imported directly without showing an import settings dialog. 
+
+\begin{DoxyReturn}{Returns}
+true if text files should be imported directly, false otherwise. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_a2d731c3c77d94fe13ad8184fa1f5cb5f}{
+\index{wxStfApp@{wxStfApp}!get\_\-isBars@{get\_\-isBars}}
+\index{get\_\-isBars@{get\_\-isBars}!wxStfApp@{wxStfApp}}
+\subsubsection[{get\_\-isBars}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfApp::get\_\-isBars (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_a2d731c3c77d94fe13ad8184fa1f5cb5f}
+
+
+Indicates whether scale bars or coordinates are shown. 
+
+\begin{DoxyReturn}{Returns}
+true for scale bars, false for coordinates. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_a73345a1fd9b9f33f5aaf8d7f5a2c1df3}{
+\index{wxStfApp@{wxStfApp}!get\_\-isHires@{get\_\-isHires}}
+\index{get\_\-isHires@{get\_\-isHires}!wxStfApp@{wxStfApp}}
+\subsubsection[{get\_\-isHires}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfApp::get\_\-isHires (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_a73345a1fd9b9f33f5aaf8d7f5a2c1df3}
+
+
+Indicates whether a high or a low resolution is used for drawing traces. 
+
+\begin{DoxyReturn}{Returns}
+true for high resolution, false for low resolution. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_a1300dc5dad0790f58726e11088441b18}{
+\index{wxStfApp@{wxStfApp}!GetActiveDoc@{GetActiveDoc}}
+\index{GetActiveDoc@{GetActiveDoc}!wxStfApp@{wxStfApp}}
+\subsubsection[{GetActiveDoc}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wxStfDoc}$\ast$ wxStfApp::GetActiveDoc (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfApp_a1300dc5dad0790f58726e11088441b18}
+
+
+Retrieves the currently active document. 
+
+\begin{DoxyReturn}{Returns}
+A pointer to the currently active document. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_a62a9c9d666190a4389224686b6dd7faa}{
+\index{wxStfApp@{wxStfApp}!GetActiveView@{GetActiveView}}
+\index{GetActiveView@{GetActiveView}!wxStfApp@{wxStfApp}}
+\subsubsection[{GetActiveView}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wxStfView}$\ast$ wxStfApp::GetActiveView (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfApp_a62a9c9d666190a4389224686b6dd7faa}
+
+
+Sets the currently active document. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pDoc} & A pointer to the currently active document. Retrieves the currently active view.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the currently active view. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_ac953818454f409adebdc2a195225c292}{
+\index{wxStfApp@{wxStfApp}!GetCursorsDialog@{GetCursorsDialog}}
+\index{GetCursorsDialog@{GetCursorsDialog}!wxStfApp@{wxStfApp}}
+\subsubsection[{GetCursorsDialog}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wxStfCursorsDlg}$\ast$ wxStfApp::GetCursorsDialog (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_ac953818454f409adebdc2a195225c292}
+
+
+Retrieves the cursor settings dialog. 
+
+\begin{DoxyReturn}{Returns}
+A pointer to the cursor settings dialog. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_a09fd899d6efaca715f7e22dd1ddb3ccf}{
+\index{wxStfApp@{wxStfApp}!GetDocCount@{GetDocCount}}
+\index{GetDocCount@{GetDocCount}!wxStfApp@{wxStfApp}}
+\subsubsection[{GetDocCount}]{\setlength{\rightskip}{0pt plus 5cm}int wxStfApp::GetDocCount (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_a09fd899d6efaca715f7e22dd1ddb3ccf}
+
+
+Returns the number of currently opened documents. 
+
+\begin{DoxyReturn}{Returns}
+The number of currently opened documents. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_a5fad31f2760593bec972912461e2e2e4}{
+\index{wxStfApp@{wxStfApp}!GetDocManager@{GetDocManager}}
+\index{GetDocManager@{GetDocManager}!wxStfApp@{wxStfApp}}
+\subsubsection[{GetDocManager}]{\setlength{\rightskip}{0pt plus 5cm}wxDocManager$\ast$ wxStfApp::GetDocManager (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_a5fad31f2760593bec972912461e2e2e4}
+
+
+Access the document manager. 
+
+\begin{DoxyReturn}{Returns}
+A pointer to the document manager. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_a29f0f699a0545eb4ae8219ec83c4aa0a}{
+\index{wxStfApp@{wxStfApp}!GetExtensionLib@{GetExtensionLib}}
+\index{GetExtensionLib@{GetExtensionLib}!wxStfApp@{wxStfApp}}
+\subsubsection[{GetExtensionLib}]{\setlength{\rightskip}{0pt plus 5cm}const std::vector$<$ {\bf stf::Extension} $>$\& wxStfApp::GetExtensionLib (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_a29f0f699a0545eb4ae8219ec83c4aa0a}
+
+
+Retrieves the user-\/defined extension functions. 
+
+\begin{DoxyReturn}{Returns}
+A vector containing the user-\/defined functions. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_aa46d93e619d2698aa807390c51980f3e}{
+\index{wxStfApp@{wxStfApp}!GetFuncLib@{GetFuncLib}}
+\index{GetFuncLib@{GetFuncLib}!wxStfApp@{wxStfApp}}
+\subsubsection[{GetFuncLib}]{\setlength{\rightskip}{0pt plus 5cm}const std::vector$<${\bf stf::storedFunc}$>$\& wxStfApp::GetFuncLib (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_aa46d93e619d2698aa807390c51980f3e}
+
+
+Retrieves the functions that are available for least-\/squares minimisation. 
+
+\begin{DoxyReturn}{Returns}
+A vector containing the available functions. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_a68cc63c9e6d555e364f6ac175e27016e}{
+\index{wxStfApp@{wxStfApp}!GetFuncLibPtr@{GetFuncLibPtr}}
+\index{GetFuncLibPtr@{GetFuncLibPtr}!wxStfApp@{wxStfApp}}
+\subsubsection[{GetFuncLibPtr}]{\setlength{\rightskip}{0pt plus 5cm}{\bf stf::storedFunc}$\ast$ wxStfApp::GetFuncLibPtr (
+\begin{DoxyParamCaption}
+\item[{std::size\_\-t}]{at}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_a68cc63c9e6d555e364f6ac175e27016e}
+
+
+Retrieves a pointer to a function for least-\/squares minimisation. 
+
+\begin{DoxyReturn}{Returns}
+A vector containing the available functions. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_a9d5cbe83f3a3329c3649c3374004b87f}{
+\index{wxStfApp@{wxStfApp}!GetLinFuncPtr@{GetLinFuncPtr}}
+\index{GetLinFuncPtr@{GetLinFuncPtr}!wxStfApp@{wxStfApp}}
+\subsubsection[{GetLinFuncPtr}]{\setlength{\rightskip}{0pt plus 5cm}{\bf stf::storedFunc}$\ast$ wxStfApp::GetLinFuncPtr (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_a9d5cbe83f3a3329c3649c3374004b87f}
+
+
+Retrieves a pointer to a function for least-\/squares minimisation. 
+
+\begin{DoxyReturn}{Returns}
+A vector containing the available functions. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_a2b27b151af8a1062542f35c466281b55}{
+\index{wxStfApp@{wxStfApp}!GetSectionsWithFits@{GetSectionsWithFits}}
+\index{GetSectionsWithFits@{GetSectionsWithFits}!wxStfApp@{wxStfApp}}
+\subsubsection[{GetSectionsWithFits}]{\setlength{\rightskip}{0pt plus 5cm}std::vector$<${\bf Section}$\ast$$>$ wxStfApp::GetSectionsWithFits (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfApp_a2b27b151af8a1062542f35c466281b55}
+
+
+Retrieves all sections with fits. 
+
+\begin{DoxyReturn}{Returns}
+A vector containing pointers to all sections in which fits have been performed 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_af7fcc335ab5df92c0df0eeb846d22476}{
+\index{wxStfApp@{wxStfApp}!GetTxtImport@{GetTxtImport}}
+\index{GetTxtImport@{GetTxtImport}!wxStfApp@{wxStfApp}}
+\subsubsection[{GetTxtImport}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf stf::txtImportSettings}\& wxStfApp::GetTxtImport (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_af7fcc335ab5df92c0df0eeb846d22476}
+
+
+Retrieves the text import filter settings. 
+
+\begin{DoxyReturn}{Returns}
+A struct with the current text import filter settings. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_a3e2dfcb798c3451a31b84ec712ae52fd}{
+\index{wxStfApp@{wxStfApp}!GetVersionString@{GetVersionString}}
+\index{GetVersionString@{GetVersionString}!wxStfApp@{wxStfApp}}
+\subsubsection[{GetVersionString}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wxString} wxStfApp::GetVersionString (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfApp_a3e2dfcb798c3451a31b84ec712ae52fd}
+
+
+Get a formatted version string. 
+
+\begin{DoxyReturn}{Returns}
+A version string (stimfit x.y.z, release/debug build, date). 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_ab18bb61cbd01df81e8577494ed1221a5}{
+\index{wxStfApp@{wxStfApp}!InfoMsg@{InfoMsg}}
+\index{InfoMsg@{InfoMsg}!wxStfApp@{wxStfApp}}
+\subsubsection[{InfoMsg}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfApp::InfoMsg (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{msg}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_ab18bb61cbd01df81e8577494ed1221a5}
+
+
+Displays a message box with information. 
+
+You can use this function from almost anywhere using \hyperlink{group__wxstf_ga10919857dea79326b815ec8555077e07}{wxGetApp()}.InfoMsg( wxT( \char`\"{}Info xyz\char`\"{} ) ); 
+\begin{DoxyParams}{Parameters}
+{\em msg} & The message string to be shown. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfApp_ac38d9f10644fef847d50cfac42353c38}{
+\index{wxStfApp@{wxStfApp}!NewChild@{NewChild}}
+\index{NewChild@{NewChild}!wxStfApp@{wxStfApp}}
+\subsubsection[{NewChild}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wxStfDoc}$\ast$ wxStfApp::NewChild (
+\begin{DoxyParamCaption}
+\item[{const {\bf Recording} \&}]{NewData, }
+\item[{const {\bf wxStfDoc} $\ast$}]{Sender, }
+\item[{const {\bf wxString} \&}]{title = {\ttfamily wxT(\char`\"{}$\backslash$0\char`\"{})}}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfApp_ac38d9f10644fef847d50cfac42353c38}
+
+
+Creates a new child window showing a new document. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em NewData} & The new data to be shown in the new window. \\
+\hline
+{\em Sender} & The document that was at the origin of this new window. \\
+\hline
+{\em title} & A title for the new document. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to the newly created document. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_ad0777eb76fe6a4b73ac95e41eefe7768}{
+\index{wxStfApp@{wxStfApp}!OnExit@{OnExit}}
+\index{OnExit@{OnExit}!wxStfApp@{wxStfApp}}
+\subsubsection[{OnExit}]{\setlength{\rightskip}{0pt plus 5cm}virtual int wxStfApp::OnExit (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classwxStfApp_ad0777eb76fe6a4b73ac95e41eefe7768}
+
+
+Exit the application. 
+
+Does nothing but calling the base class's wxApp::OnExit(). \begin{DoxyReturn}{Returns}
+The return value of wxApp::OnExit(). 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_a2933498655e65fab015ccc643f97e096}{
+\index{wxStfApp@{wxStfApp}!OnInit@{OnInit}}
+\index{OnInit@{OnInit}!wxStfApp@{wxStfApp}}
+\subsubsection[{OnInit}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool wxStfApp::OnInit (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}
+\label{classwxStfApp_a2933498655e65fab015ccc643f97e096}
+
+
+Initialise the application. 
+
+Initialises the document manager and the file-\/independent menu items, loads the user-\/defined extension library and the least-\/squares function library, parses the command line and attempts to open a file if one was given at program startup by either double-\/clicking it or as a command-\/line argument. \begin{DoxyReturn}{Returns}
+true upon successful initialisation, false otherwise. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_ad84ab3a7bc030ba2b1a03924f8e90386}{
+\index{wxStfApp@{wxStfApp}!OnNewfromselected@{OnNewfromselected}}
+\index{OnNewfromselected@{OnNewfromselected}!wxStfApp@{wxStfApp}}
+\subsubsection[{OnNewfromselected}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfApp::OnNewfromselected (
+\begin{DoxyParamCaption}
+\item[{{\bf wxCommandEvent} \&}]{event}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfApp_ad84ab3a7bc030ba2b1a03924f8e90386}
+
+
+Open a new window showing all selected traces from all open files. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em event} & The associated menu event \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfApp_a584396d82492d98d08c74689a1adfbc3}{
+\index{wxStfApp@{wxStfApp}!OnPeakcalcexecMsg@{OnPeakcalcexecMsg}}
+\index{OnPeakcalcexecMsg@{OnPeakcalcexecMsg}!wxStfApp@{wxStfApp}}
+\subsubsection[{OnPeakcalcexecMsg}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfApp::OnPeakcalcexecMsg (
+\begin{DoxyParamCaption}
+\item[{{\bf wxStfDoc} $\ast$}]{actDoc = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfApp_a584396d82492d98d08c74689a1adfbc3}
+
+
+Execute all pending calculations. 
+
+Whenever settings that have an effect on measurements, such as cursor positions or trace selections, are modified, this function needs to be called to update the results table. \hypertarget{classwxStfApp_aa5887b87ba6889cffc3c77b4f4b97b8c}{
+\index{wxStfApp@{wxStfApp}!OnPythonImport@{OnPythonImport}}
+\index{OnPythonImport@{OnPythonImport}!wxStfApp@{wxStfApp}}
+\subsubsection[{OnPythonImport}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfApp::OnPythonImport (
+\begin{DoxyParamCaption}
+\item[{{\bf wxCommandEvent} \&}]{event}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfApp_aa5887b87ba6889cffc3c77b4f4b97b8c}
+
+
+Opens a dialog to import a Python module. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em event} & The associated menu event \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfApp_ad8c1479a2b4e101482005d2cbae660bf}{
+\index{wxStfApp@{wxStfApp}!OpenFilePy@{OpenFilePy}}
+\index{OpenFilePy@{OpenFilePy}!wxStfApp@{wxStfApp}}
+\subsubsection[{OpenFilePy}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfApp::OpenFilePy (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{fNameArray}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfApp_ad8c1479a2b4e101482005d2cbae660bf}
+
+
+Opens a file in a new window, to be called from Python. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fNameArray} & An array of file names to be opened. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true upon successful opening, false otherwise. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_ae091bc0de048b5386379f934a71f3d20}{
+\index{wxStfApp@{wxStfApp}!OpenFileSeries@{OpenFileSeries}}
+\index{OpenFileSeries@{OpenFileSeries}!wxStfApp@{wxStfApp}}
+\subsubsection[{OpenFileSeries}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfApp::OpenFileSeries (
+\begin{DoxyParamCaption}
+\item[{const wxArrayString \&}]{fNameArray}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfApp_ae091bc0de048b5386379f934a71f3d20}
+
+
+Opens a series of files. Optionally, files can be put into a single window. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fNameArray} & An array of file names to be opened. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true upon successful opening of all files, false otherwise. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_aa00f88aecbfd73fa18a0141fe42bc879}{
+\index{wxStfApp@{wxStfApp}!set\_\-directTxtImport@{set\_\-directTxtImport}}
+\index{set\_\-directTxtImport@{set\_\-directTxtImport}!wxStfApp@{wxStfApp}}
+\subsubsection[{set\_\-directTxtImport}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfApp::set\_\-directTxtImport (
+\begin{DoxyParamCaption}
+\item[{bool}]{directTxtImport\_\-}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_aa00f88aecbfd73fa18a0141fe42bc879}
+
+
+Determines whether text files should be imported directly without showing an import filter settings dialog. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em directTxtImport\_\-} & Set to true if text files should be imported directly, false otherwise. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfApp_a876a3f37ff3cd08ac00fa4ef6b1b2c5d}{
+\index{wxStfApp@{wxStfApp}!set\_\-isBars@{set\_\-isBars}}
+\index{set\_\-isBars@{set\_\-isBars}!wxStfApp@{wxStfApp}}
+\subsubsection[{set\_\-isBars}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfApp::set\_\-isBars (
+\begin{DoxyParamCaption}
+\item[{bool}]{value}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_a876a3f37ff3cd08ac00fa4ef6b1b2c5d}
+
+
+Determine whether scale bars or coordinates should be shown. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Set to true for scale bars, false for coordinates. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfApp_a19263b9dec3c8506d801c3becada2a18}{
+\index{wxStfApp@{wxStfApp}!set\_\-isHires@{set\_\-isHires}}
+\index{set\_\-isHires@{set\_\-isHires}!wxStfApp@{wxStfApp}}
+\subsubsection[{set\_\-isHires}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfApp::set\_\-isHires (
+\begin{DoxyParamCaption}
+\item[{bool}]{value}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_a19263b9dec3c8506d801c3becada2a18}
+
+
+Determine whether a high or a low resolution should be used for drawing traces. 
+
+Will attempt to draw at most 50,000 points per trace. 
+\begin{DoxyParams}{Parameters}
+{\em value} & Set to true for high resolution, false for low resolution. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfApp_a6f94ead9d8e03baf99d3deec56582920}{
+\index{wxStfApp@{wxStfApp}!set\_\-txtImportSettings@{set\_\-txtImportSettings}}
+\index{set\_\-txtImportSettings@{set\_\-txtImportSettings}!wxStfApp@{wxStfApp}}
+\subsubsection[{set\_\-txtImportSettings}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfApp::set\_\-txtImportSettings (
+\begin{DoxyParamCaption}
+\item[{const {\bf stf::txtImportSettings} \&}]{txtImport\_\-}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
+\label{classwxStfApp_a6f94ead9d8e03baf99d3deec56582920}
+
+
+Sets the text import filter settings. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em txtImport\_\-} & A struct with the new text import filter settings. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfApp_a2fa40721aba5a795665a99711701b3b0}{
+\index{wxStfApp@{wxStfApp}!wxGetProfileInt@{wxGetProfileInt}}
+\index{wxGetProfileInt@{wxGetProfileInt}!wxStfApp@{wxStfApp}}
+\subsubsection[{wxGetProfileInt}]{\setlength{\rightskip}{0pt plus 5cm}int wxStfApp::wxGetProfileInt (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{main, }
+\item[{const {\bf wxString} \&}]{sub, }
+\item[{int}]{default\_\-}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfApp_a2fa40721aba5a795665a99711701b3b0}
+
+
+Retrieves an integer value from the configuration. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em main} & The main path within the configuration. \\
+\hline
+{\em sub} & The sub-\/path within the configuration. \\
+\hline
+{\em default\_\-} & The default integer to return if the configuration entry can't be read. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The integer that is stored in /main/sub, or default\_\- if the entry couldn't be read. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_a509da5804564d52e34d87a77f43c4aa7}{
+\index{wxStfApp@{wxStfApp}!wxGetProfileString@{wxGetProfileString}}
+\index{wxGetProfileString@{wxGetProfileString}!wxStfApp@{wxStfApp}}
+\subsubsection[{wxGetProfileString}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wxString} wxStfApp::wxGetProfileString (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{main, }
+\item[{const {\bf wxString} \&}]{sub, }
+\item[{const {\bf wxString} \&}]{default\_\-}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfApp_a509da5804564d52e34d87a77f43c4aa7}
+
+
+Retrieves a string from the configuration. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em main} & The main path within the configuration. \\
+\hline
+{\em sub} & The sub-\/path within the configuration. \\
+\hline
+{\em default\_\-} & The default string to return if the configuration entry can't be read. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The string that is stored in /main/sub, or default\_\- if the entry couldn't be read. 
+\end{DoxyReturn}
+\hypertarget{classwxStfApp_a487f19baf697d6e51db9c3a4f27cacf6}{
+\index{wxStfApp@{wxStfApp}!wxWriteProfileInt@{wxWriteProfileInt}}
+\index{wxWriteProfileInt@{wxWriteProfileInt}!wxStfApp@{wxStfApp}}
+\subsubsection[{wxWriteProfileInt}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfApp::wxWriteProfileInt (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{main, }
+\item[{const {\bf wxString} \&}]{sub, }
+\item[{int}]{value}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfApp_a487f19baf697d6e51db9c3a4f27cacf6}
+
+
+Writes an integer value to the configuration. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em main} & The main path within the configuration. \\
+\hline
+{\em sub} & The sub-\/path within the configuration. \\
+\hline
+{\em value} & The integer to write to the configuration. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfApp_a731ce695f19f790f9e5b49252c3cddeb}{
+\index{wxStfApp@{wxStfApp}!wxWriteProfileString@{wxWriteProfileString}}
+\index{wxWriteProfileString@{wxWriteProfileString}!wxStfApp@{wxStfApp}}
+\subsubsection[{wxWriteProfileString}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfApp::wxWriteProfileString (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{main, }
+\item[{const {\bf wxString} \&}]{sub, }
+\item[{const {\bf wxString} \&}]{value}
+\end{DoxyParamCaption}
+) const}}
+\label{classwxStfApp_a731ce695f19f790f9e5b49252c3cddeb}
+
+
+Writes a string to the configuration. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em main} & The main path within the configuration. \\
+\hline
+{\em sub} & The sub-\/path within the configuration. \\
+\hline
+{\em value} & The string to write to the configuration. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+src/app/\hyperlink{app_8h}{app.h}\end{DoxyCompactItemize}

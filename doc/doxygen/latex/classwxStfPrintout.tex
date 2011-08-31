@@ -1,0 +1,176 @@
+\hypertarget{classwxStfPrintout}{
+\section{wxStfPrintout Class Reference}
+\label{classwxStfPrintout}\index{wxStfPrintout@{wxStfPrintout}}
+}
+
+
+Handles printing of traces.  
+
+
+
+
+{\ttfamily \#include $<$printout.h$>$}
+
+
+
+Inheritance diagram for wxStfPrintout:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=154pt]{classwxStfPrintout__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for wxStfPrintout:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=154pt]{classwxStfPrintout__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classwxStfPrintout_a00bdf488a1c7168a300f4000a7466e86}{wxStfPrintout} (const wxChar $\ast$title=\_\-T(\char`\"{}Printout\char`\"{}))
+\begin{DoxyCompactList}\small\item\em Constructor. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classwxStfPrintout_af5a68115593cf12cac5fb084e8780791}{OnPrintPage} (int page)
+\begin{DoxyCompactList}\small\item\em Called by the framework when a page should be printed. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classwxStfPrintout_a48bea6b4373bad58aced765267565e93}{HasPage} (int page)
+\begin{DoxyCompactList}\small\item\em Checks whether a page exists. \item\end{DoxyCompactList}\item 
+bool \hyperlink{classwxStfPrintout_a9847ca3f90dc272cef0e5fe1de8d93dd}{OnBeginDocument} (int startPage, int endPage)
+\begin{DoxyCompactList}\small\item\em Called by the framework at the start of document printing. \item\end{DoxyCompactList}\item 
+void \hyperlink{classwxStfPrintout_a355447fe2a62d31bfff9e7c12437e234}{GetPageInfo} (int $\ast$minPage, int $\ast$maxPage, int $\ast$selPageFrom, int $\ast$selPageTo)
+\begin{DoxyCompactList}\small\item\em Retrieve information about the pages that will be printed. \item\end{DoxyCompactList}\item 
+\hypertarget{classwxStfPrintout_a514df3391064b05df4f9489b76185952}{
+void \hyperlink{classwxStfPrintout_a514df3391064b05df4f9489b76185952}{DrawPageOne} ()}
+\label{classwxStfPrintout_a514df3391064b05df4f9489b76185952}
+
+\begin{DoxyCompactList}\small\item\em Prints the first (and only) page. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Handles printing of traces. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classwxStfPrintout_a00bdf488a1c7168a300f4000a7466e86}{
+\index{wxStfPrintout@{wxStfPrintout}!wxStfPrintout@{wxStfPrintout}}
+\index{wxStfPrintout@{wxStfPrintout}!wxStfPrintout@{wxStfPrintout}}
+\subsubsection[{wxStfPrintout}]{\setlength{\rightskip}{0pt plus 5cm}wxStfPrintout::wxStfPrintout (
+\begin{DoxyParamCaption}
+\item[{const wxChar $\ast$}]{title = {\ttfamily \_\-T(\char`\"{}Printout\char`\"{})}}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfPrintout_a00bdf488a1c7168a300f4000a7466e86}
+
+
+Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em title} & Printout title \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classwxStfPrintout_a355447fe2a62d31bfff9e7c12437e234}{
+\index{wxStfPrintout@{wxStfPrintout}!GetPageInfo@{GetPageInfo}}
+\index{GetPageInfo@{GetPageInfo}!wxStfPrintout@{wxStfPrintout}}
+\subsubsection[{GetPageInfo}]{\setlength{\rightskip}{0pt plus 5cm}void wxStfPrintout::GetPageInfo (
+\begin{DoxyParamCaption}
+\item[{int $\ast$}]{minPage, }
+\item[{int $\ast$}]{maxPage, }
+\item[{int $\ast$}]{selPageFrom, }
+\item[{int $\ast$}]{selPageTo}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfPrintout_a355447fe2a62d31bfff9e7c12437e234}
+
+
+Retrieve information about the pages that will be printed. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em minPage} & On return, a pointer to the minimal page number allowed. \\
+\hline
+{\em maxPage} & On return, a pointer to the maximal page number allowed. \\
+\hline
+{\em selPageFrom} & On return, a pointer to the minimal selected page number allowed. \\
+\hline
+{\em selPageTo} & On return, a pointer to the maximal selected page number allowed. \\
+\hline
+\end{DoxyParams}
+\hypertarget{classwxStfPrintout_a48bea6b4373bad58aced765267565e93}{
+\index{wxStfPrintout@{wxStfPrintout}!HasPage@{HasPage}}
+\index{HasPage@{HasPage}!wxStfPrintout@{wxStfPrintout}}
+\subsubsection[{HasPage}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfPrintout::HasPage (
+\begin{DoxyParamCaption}
+\item[{int}]{page}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfPrintout_a48bea6b4373bad58aced765267565e93}
+
+
+Checks whether a page exists. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em page} & The page number to be checked. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if {\itshape page\/} exists. 
+\end{DoxyReturn}
+\hypertarget{classwxStfPrintout_a9847ca3f90dc272cef0e5fe1de8d93dd}{
+\index{wxStfPrintout@{wxStfPrintout}!OnBeginDocument@{OnBeginDocument}}
+\index{OnBeginDocument@{OnBeginDocument}!wxStfPrintout@{wxStfPrintout}}
+\subsubsection[{OnBeginDocument}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfPrintout::OnBeginDocument (
+\begin{DoxyParamCaption}
+\item[{int}]{startPage, }
+\item[{int}]{endPage}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfPrintout_a9847ca3f90dc272cef0e5fe1de8d93dd}
+
+
+Called by the framework at the start of document printing. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em startPage} & Page from which to start printing. \\
+\hline
+{\em endPage} & Page at which to end printing. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+false cancels the print job. 
+\end{DoxyReturn}
+\hypertarget{classwxStfPrintout_af5a68115593cf12cac5fb084e8780791}{
+\index{wxStfPrintout@{wxStfPrintout}!OnPrintPage@{OnPrintPage}}
+\index{OnPrintPage@{OnPrintPage}!wxStfPrintout@{wxStfPrintout}}
+\subsubsection[{OnPrintPage}]{\setlength{\rightskip}{0pt plus 5cm}bool wxStfPrintout::OnPrintPage (
+\begin{DoxyParamCaption}
+\item[{int}]{page}
+\end{DoxyParamCaption}
+)}}
+\label{classwxStfPrintout_af5a68115593cf12cac5fb084e8780791}
+
+
+Called by the framework when a page should be printed. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em page} & The page number to be printed \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+false will cancel the print job. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+src/app/\hyperlink{printout_8h}{printout.h}\end{DoxyCompactItemize}

@@ -1,0 +1,702 @@
+\hypertarget{namespacestf}{
+\section{stf Namespace Reference}
+\label{namespacestf}\index{stf@{stf}}
+}
+
+
+The stimfit namespace.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classstf_1_1Table}{Table}
+\begin{DoxyCompactList}\small\item\em A table used for printing information. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1parInfo}{parInfo}
+\begin{DoxyCompactList}\small\item\em Information about parameters used in \hyperlink{structstf_1_1storedFunc}{storedFunc}. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1storedFunc}{storedFunc}
+\begin{DoxyCompactList}\small\item\em Function used for least-\/squares fitting. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1UserInput}{UserInput}
+\begin{DoxyCompactList}\small\item\em Represents user input from dialogs that can be used in plugins. \item\end{DoxyCompactList}\item 
+class \hyperlink{classstf_1_1Event}{Event}
+\begin{DoxyCompactList}\small\item\em Describes the attributes of an event. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1PyMarker}{PyMarker}
+\begin{DoxyCompactList}\small\item\em A marker that can be set from Python. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1Plugin}{Plugin}
+\begin{DoxyCompactList}\small\item\em User-\/defined plugin. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1Extension}{Extension}
+\begin{DoxyCompactList}\small\item\em User-\/defined Python extension. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1ifstreamMan}{ifstreamMan}
+\begin{DoxyCompactList}\small\item\em Resource manager for ifstream objects. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1ofstreamMan}{ofstreamMan}
+\begin{DoxyCompactList}\small\item\em Resource manager for ofstream objects. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1txtImportSettings}{txtImportSettings}
+\begin{DoxyCompactList}\small\item\em Text file import filter settings. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef boost::function$<$ double(double, const Vector\_\-double \&)$>$ \hyperlink{group__stfgen_ga11d6ec55abceacf5fdd47f9fc889d9a3}{Func}
+\begin{DoxyCompactList}\small\item\em A function taking a double and a vector and returning a double. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_ga77f3e621f1771784f2befaeb3d1ac4fb}{
+typedef boost::function$<$ Vector\_\-double(double, const Vector\_\-double \&)$>$ \hyperlink{group__stfgen_ga77f3e621f1771784f2befaeb3d1ac4fb}{Jac}}
+\label{group__stfgen_ga77f3e621f1771784f2befaeb3d1ac4fb}
+
+\begin{DoxyCompactList}\small\item\em The jacobian of a stf::Func. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_ga775530afebda38e8138e8eb1401a0e01}{
+typedef boost::function$<$ double(double, double, double, double, double)$>$ \hyperlink{group__stfgen_ga775530afebda38e8138e8eb1401a0e01}{Scale}}
+\label{group__stfgen_ga775530afebda38e8138e8eb1401a0e01}
+
+\begin{DoxyCompactList}\small\item\em Scaling function for fit parameters. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_ga15ccefdb3c4b758564e73f080639ff98}{
+typedef boost::function$<$ void(const Vector\_\-double \&, double, double, double, Vector\_\-double \&)$>$ \hyperlink{group__stfgen_ga15ccefdb3c4b758564e73f080639ff98}{Init}}
+\label{group__stfgen_ga15ccefdb3c4b758564e73f080639ff98}
+
+\begin{DoxyCompactList}\small\item\em Initialising function for the parameters in stf::Func to start a fit. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_ga66542f63882a99158a17cdc977eac5e8}{
+typedef boost::function$<$ \hyperlink{classstf_1_1Table}{Table}(const Vector\_\-double \&, const std::vector$<$ \hyperlink{structstf_1_1parInfo}{stf::parInfo} $>$, double)$>$ \hyperlink{group__stfgen_ga66542f63882a99158a17cdc977eac5e8}{Output}}
+\label{group__stfgen_ga66542f63882a99158a17cdc977eac5e8}
+
+\begin{DoxyCompactList}\small\item\em Print the output of a fit into a \hyperlink{classstf_1_1Table}{stf::Table}. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_gaa37601710b061d50b53ceeab1e7a9dd2}{
+typedef boost::function$<$ \hyperlink{classRecording}{Recording}(const \hyperlink{classRecording}{Recording} \&, const Vector\_\-double \&, std::map$<$ \hyperlink{classwxString}{wxString}, double $>$ \&)$>$ \hyperlink{group__stfgen_gaa37601710b061d50b53ceeab1e7a9dd2}{PluginFunc}}
+\label{group__stfgen_gaa37601710b061d50b53ceeab1e7a9dd2}
+
+\begin{DoxyCompactList}\small\item\em Get a \hyperlink{classRecording}{Recording}, do something with it, return the new \hyperlink{classRecording}{Recording}. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{group__stfgen_gae8845ae2aeaf4b742a905a2a5571fd5a}{direction} \{ \hyperlink{group__stfgen_ggae8845ae2aeaf4b742a905a2a5571fd5aaf12a3d86708046ee92fa400c99fcbecb}{up}, 
+\hyperlink{group__stfgen_ggae8845ae2aeaf4b742a905a2a5571fd5aaccaa84903131c15d67e4f95298e68e2b}{down}, 
+\hyperlink{group__stfgen_ggae8845ae2aeaf4b742a905a2a5571fd5aa22cccef6520f7679886dc6d584805ce3}{both}, 
+\hyperlink{group__stfgen_ggae8845ae2aeaf4b742a905a2a5571fd5aab5df1157da4f45612d5815bc164e0931}{undefined\_\-direction}
+ \}
+\begin{DoxyCompactList}\small\item\em The direction of peak calculations. \item\end{DoxyCompactList}\item 
+enum \hyperlink{group__stfgen_gad2d1acb3ac0c16ee32b5f4d3a1ab4abf}{cursor\_\-type} \{ \par
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfa1b879af00b1b8b8c4a195c0b27de3f0b}{measure\_\-cursor}, 
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfad99eafbc283ce642e9ff607357c95e9b}{peak\_\-cursor}, 
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfa8c54633348bfe4fdeaf6c8ddf06fccba}{base\_\-cursor}, 
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfab09f70483c5bed40addf3c21eb528afe}{decay\_\-cursor}, 
+\par
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfabb059a629fb7fbf5d9a3f83c44954b9b}{latency\_\-cursor}, 
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfadb6eff6e3108c48f2dd357dc3b539238}{zoom\_\-cursor}, 
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfa28885ead48beb5a6da1810d391d41760}{event\_\-cursor}, 
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfa2794c8863a730fbd8e4dea7f93b8dfa7}{undefined\_\-cursor}
+ \}
+\begin{DoxyCompactList}\small\item\em Mouse cursor types. \item\end{DoxyCompactList}\item 
+enum \hyperlink{group__stfgen_ga9a792b11c01e9429bfe2acd3e4ef108b}{zoom\_\-channels} \{ \hyperlink{group__stfgen_gga9a792b11c01e9429bfe2acd3e4ef108bafdaacd56a89cce6998f8fcc331b0f665}{zoomch1}, 
+\hyperlink{group__stfgen_gga9a792b11c01e9429bfe2acd3e4ef108baef0062d1da678e4771bf559b3dc1e537}{zoomch2}, 
+\hyperlink{group__stfgen_gga9a792b11c01e9429bfe2acd3e4ef108ba0c34eab028555c38760abc86b551b6c6}{zoomboth}
+ \}
+\begin{DoxyCompactList}\small\item\em Determines which channels to scale. \item\end{DoxyCompactList}\item 
+enum \hyperlink{group__stfgen_ga738f9934a45a9d2d81cb0a3de0375c99}{latency\_\-mode} \{ \par
+\hyperlink{group__stfgen_gga738f9934a45a9d2d81cb0a3de0375c99a38b8edc5f8a706c23b6efd737aada25a}{manualMode} =  0, 
+\hyperlink{group__stfgen_gga738f9934a45a9d2d81cb0a3de0375c99a42837a2123b13815fb4ee3c005f2cac0}{peakMode} =  1, 
+\hyperlink{group__stfgen_gga738f9934a45a9d2d81cb0a3de0375c99abbb23ece92fe176e5358289e2b14f97e}{riseMode} =  2, 
+\hyperlink{group__stfgen_gga738f9934a45a9d2d81cb0a3de0375c99ae23bd76db1d3f2fd5ee275c5dc004283}{halfMode} =  3, 
+\par
+\hyperlink{group__stfgen_gga738f9934a45a9d2d81cb0a3de0375c99a216dce55e173d3838de785cf0a42d87e}{footMode} =  4, 
+\hyperlink{group__stfgen_gga738f9934a45a9d2d81cb0a3de0375c99a871047aafad5c561dbf5a77e80a7b174}{undefinedMode}
+ \}
+\begin{DoxyCompactList}\small\item\em Latency cursor settings. \item\end{DoxyCompactList}\item 
+enum \hyperlink{group__stfgen_gae034ed0eec6bdaba3b23d3b2184f799d}{latency\_\-window\_\-mode} \{ \hyperlink{group__stfgen_ggae034ed0eec6bdaba3b23d3b2184f799da65ce55297aad4c581e70b239864c2a16}{defaultMode} =  0, 
+\hyperlink{group__stfgen_ggae034ed0eec6bdaba3b23d3b2184f799daf28fa2b9cdf5e498f1ed689e1d8d1934}{windowMode} =  1
+ \}
+\begin{DoxyCompactList}\small\item\em Latency window settings. \item\end{DoxyCompactList}\item 
+enum \hyperlink{group__stfgen_gae703f7802498ae301ac058b94426900f}{filetype} \{ \par
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa0136c00f38aa0ad185d30d7c845f38b5}{atf}, 
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa5496504b8584246c4ee5820087f94be2}{abf}, 
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa8140bedc5caf41a80dbbdb1bed69b799}{axg}, 
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa653f7b20462a96d94629bf0a997f70f9}{ascii}, 
+\par
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa0eb892b5486c4452d4030cd8a6788457}{cfs}, 
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa8b7b106321d7c7cad7791629bb4e11f9}{igor}, 
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa64735633245afb7ddbbecf5a49ea00ba}{son}, 
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900faf4bec932069c6c6f363fbf4a9a2b4312}{hdf5}, 
+\par
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa4172e0376fc3d0059ea45e291d57b37c}{heka}, 
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa8434e1cbb32b170c5df740e0f0305edd}{none}
+ \}
+\begin{DoxyCompactList}\small\item\em File types. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+Vector\_\-double \hyperlink{group__stfgen_ga2fcd50c88877838de7ed4b52e1fedb59}{spectrum} (const std::vector$<$ std::complex$<$ double $>$ $>$ \&data, long K, double \&f\_\-n)
+\begin{DoxyCompactList}\small\item\em Computes a spectral estimate using Welch's method. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gacdf87f88e8ac06ad60a3f3b206b0cd91}{window} (double n, double N)
+\begin{DoxyCompactList}\small\item\em Window function for psd estimation. \item\end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \hyperlink{group__stfgen_ga62f78deb330cc40d8ae6da48cdbec951}{SQR} (T a)
+\begin{DoxyCompactList}\small\item\em Calculates the square of a number. \item\end{DoxyCompactList}\item 
+Vector\_\-double \hyperlink{group__stfgen_ga8d4bf7a86a487551837817a7d6d09cf1}{filter} (const Vector\_\-double \&toFilter, std::size\_\-t filter\_\-start, std::size\_\-t filter\_\-end, const Vector\_\-double \&a, int SR, \hyperlink{group__stfgen_ga11d6ec55abceacf5fdd47f9fc889d9a3}{Func} func, bool inverse=false)
+\begin{DoxyCompactList}\small\item\em Convolutes a data set with a filter function. \item\end{DoxyCompactList}\item 
+{\footnotesize template$<$class T $>$ }\\std::vector$<$ T $>$ \hyperlink{group__stfgen_gad6d6bf4577ec605215a4a374a3505a03}{cubicSpline} (const std::vector$<$ T $>$ \&y, T oldF, T newF)
+\begin{DoxyCompactList}\small\item\em Interpolates a dataset using cubic splines. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxString}{wxString} \hyperlink{group__stfgen_ga9536c899dc7a569c55ba8957aec43613}{sectionToString} (const \hyperlink{classSection}{Section} \&section)
+\begin{DoxyCompactList}\small\item\em Converts a \hyperlink{classSection}{Section} to a \hyperlink{classwxString}{wxString}. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_ga3892c35dfb30e27bdc9f6e178ebf064e}{
+{\footnotesize template$<$class T $>$ }\\std::vector$<$ T $>$ \hyperlink{group__stfgen_ga3892c35dfb30e27bdc9f6e178ebf064e}{diff} (const std::vector$<$ T $>$ \&input, T x\_\-scale)}
+\label{group__stfgen_ga3892c35dfb30e27bdc9f6e178ebf064e}
+
+\begin{DoxyCompactList}\small\item\em Differentiate data. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga278bc04e06ac5796e0867b158ae4797b}{integrate\_\-simpson} (const Vector\_\-double \&input, std::size\_\-t a, std::size\_\-t b, double x\_\-scale)
+\begin{DoxyCompactList}\small\item\em Integration using Simpson's rule. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga0be2d046407da1c77424a79fa01924ab}{integrate\_\-trapezium} (const Vector\_\-double \&input, std::size\_\-t a, std::size\_\-t b, double x\_\-scale)
+\begin{DoxyCompactList}\small\item\em Integration using the trapezium rule. \item\end{DoxyCompactList}\item 
+int \hyperlink{group__stfgen_ga2e6063c1fcb15672fb84c44065e32455}{linsolv} (int m, int n, int nrhs, Vector\_\-double \&A, Vector\_\-double \&B)
+\begin{DoxyCompactList}\small\item\em Solves a linear equation system using LAPACK. \item\end{DoxyCompactList}\item 
+Vector\_\-double \hyperlink{group__stfgen_gaaaca81c58d327e730c0e785e578ec24e}{detectionCriterion} (const Vector\_\-double \&data, const Vector\_\-double \&templ)
+\begin{DoxyCompactList}\small\item\em Computes the event detection criterion according to Clements \& Bekkers (1997). \item\end{DoxyCompactList}\item 
+std::vector$<$ int $>$ \hyperlink{group__stfgen_ga211ecf55c013f280fd1a87d9b762f79e}{peakIndices} (const Vector\_\-double \&data, double threshold, int minDistance)
+\begin{DoxyCompactList}\small\item\em Searches for positive-\/going peaks. \item\end{DoxyCompactList}\item 
+Vector\_\-double \hyperlink{group__stfgen_gaa0386bf9c9ceb5499900af490e06e2ab}{linCorr} (const Vector\_\-double \&va1, const Vector\_\-double \&va2)
+\begin{DoxyCompactList}\small\item\em Computes the linear correlation between two arrays. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gaa947b273fe10b4e93fdcba6865815a07}{fgauss} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Computes the sum of an arbitrary number of Gaussians. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gaf3e890196c425798f9d97ef3b4846837}{fgaussColqu} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Computes a Gaussian that can be used as a filter kernel. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga1f97545508d6e155d20c896e5ce21f4d}{fboltz} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Computes a Boltzmann function. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gacb01a426bb2ab315da605e22cf1b176d}{fbessel} (double x, int n)
+\begin{DoxyCompactList}\small\item\em Computes a Bessel polynomial. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gae0c21c43d67f957c3224d454319a7c00}{fbessel4} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Computes a 4th-\/order Bessel polynomial that can be used as a filter kernel. \item\end{DoxyCompactList}\item 
+\hyperlink{classwxString}{wxString} \hyperlink{group__stfgen_ga32ad0c8e262d2985d84451d3f2c52028}{CreatePreview} (const \hyperlink{classwxString}{wxString} \&fName)
+\begin{DoxyCompactList}\small\item\em Creates a preview of a text file. \item\end{DoxyCompactList}\item 
+int \hyperlink{group__stfgen_gaf31edaa97d0a41cd830c9478e04fd375}{fac} (int arg)
+\begin{DoxyCompactList}\small\item\em Computes the faculty of an integer. \item\end{DoxyCompactList}\item 
+int \hyperlink{group__stfgen_gac8474c28c6c1e5cce375823a1d38591d}{pow2} (int arg)
+\begin{DoxyCompactList}\small\item\em Computes $ 2^{arg} $. Uses the bitwise-\/shift operator ($<$$<$). \item\end{DoxyCompactList}\item 
+\hyperlink{classwxString}{wxString} \hyperlink{group__stfgen_gad14c86e14d611fd5c11eca4edfbb4fb8}{noPath} (const \hyperlink{classwxString}{wxString} \&fName)
+\begin{DoxyCompactList}\small\item\em Strips the directory off a full path name, returns only the filename. \item\end{DoxyCompactList}\item 
+\hyperlink{group__stfgen_gae703f7802498ae301ac058b94426900f}{stf::filetype} \hyperlink{group__stfgen_ga60f83eec1f06c30440d1f576bd5a5f7e}{findType} (const \hyperlink{classwxString}{wxString} \&ext)
+\begin{DoxyCompactList}\small\item\em Attempts to determine the filetype from the filter extension. \item\end{DoxyCompactList}\item 
+bool \hyperlink{group__stfgen_ga3c37983f5e22f103c26a77b09d8206ad}{importFile} (const \hyperlink{classwxString}{wxString} \&fName, \hyperlink{group__stfgen_gae703f7802498ae301ac058b94426900f}{stf::filetype} type, \hyperlink{classRecording}{Recording} \&ReturnData, const \hyperlink{structstf_1_1txtImportSettings}{stf::txtImportSettings} \&txtImport, bool progress=true, \hyperlink{classwxWindow}{wxWindow} $\ast$parent=NULL)
+\begin{DoxyCompactList}\small\item\em Generic file import. \item\end{DoxyCompactList}\item 
+bool \hyperlink{group__stfgen_ga502a391afc11e955c34aa4a6efc208af}{exportFile} (const \hyperlink{classwxString}{wxString} \&fName, \hyperlink{group__stfgen_gae703f7802498ae301ac058b94426900f}{stf::filetype} type, const \hyperlink{classRecording}{Recording} \&Data, bool progress=false)
+\begin{DoxyCompactList}\small\item\em Generic file export. \item\end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\T \hyperlink{group__stfgen_ga29e77fd36f4c103444287e9c5b807ab9}{linFit} (const std::vector$<$ T $>$ \&x, const std::vector$<$ T $>$ \&y, T \&m, T \&c)
+\begin{DoxyCompactList}\small\item\em Performs a linear fit. \item\end{DoxyCompactList}\item 
+double StfDll \hyperlink{group__stfgen_gacf43d0ea16185a30745919255f231c80}{lmFit} (const Vector\_\-double \&data, double dt, const \hyperlink{structstf_1_1storedFunc}{stf::storedFunc} \&fitFunc, const Vector\_\-double \&opts, bool use\_\-scaling, Vector\_\-double \&p, \hyperlink{classwxString}{wxString} \&info, int \&warning)
+\begin{DoxyCompactList}\small\item\em Uses the Levenberg-\/Marquardt algorithm to perform a non-\/linear least-\/squares fit. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga96ce124f20c81dcdac988e31770b65c5}{flin} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Linear function. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_gacf47eaaf817ab9f675c36f1b77811fd9}{
+void \hyperlink{group__stfgen_gacf47eaaf817ab9f675c36f1b77811fd9}{flin\_\-init} (const Vector\_\-double \&data, double base, double peak, double dt, Vector\_\-double \&pInit)}
+\label{group__stfgen_gacf47eaaf817ab9f675c36f1b77811fd9}
+
+\begin{DoxyCompactList}\small\item\em Dummy function to be passed to \hyperlink{structstf_1_1storedFunc}{stf::storedFunc} for linear functions. \item\end{DoxyCompactList}\item 
+\hyperlink{structstf_1_1storedFunc}{stf::storedFunc} \hyperlink{group__stfgen_gacce99eda0b9fa51555b8b8adbfef7700}{initLinFunc} ()
+\begin{DoxyCompactList}\small\item\em initializes a linear function \item\end{DoxyCompactList}\item 
+Vector\_\-double \hyperlink{group__stfgen_ga89d5f83830be9b0132ddb34c5d46d281}{get\_\-scale} (Vector\_\-double \&data, double oldx)
+\begin{DoxyCompactList}\small\item\em Compute and perform normalisation. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga365e8fdc4f5836f495e6f1dd95baf3fa}{base} (double \&var, const std::vector$<$ double $>$ \&data, std::size\_\-t llb, std::size\_\-t ulb)
+\begin{DoxyCompactList}\small\item\em Calculate the average of all sampling points between and including {\itshape llb\/} and {\itshape ulb\/}. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga0f30710d3729c00c31a1aa82d08badff}{peak} (const std::vector$<$ double $>$ \&data, double base, std::size\_\-t llp, std::size\_\-t ulp, int pM, \hyperlink{group__stfgen_gae8845ae2aeaf4b742a905a2a5571fd5a}{stf::direction}, double \&maxT)
+\begin{DoxyCompactList}\small\item\em Find the peak value of {\itshape data\/} between {\itshape llp\/} and {\itshape ulp\/}. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gaafcb097f10d8179f38881321d7cd86f3}{threshold} (const std::vector$<$ double $>$ \&data, std::size\_\-t llp, std::size\_\-t ulp, double slope, double \&thrT)
+\begin{DoxyCompactList}\small\item\em Find the value within {\itshape data\/} between {\itshape llp\/} and {\itshape ulp\/} at which {\itshape slope\/} is exceeded. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gada6c5911cfc604b337b76d1198d8cd37}{risetime} (const std::vector$<$ double $>$ \&data, double base, double ampl, double left, double right, std::size\_\-t \&t20Id, std::size\_\-t \&t80Id, double \&t20Real)
+\begin{DoxyCompactList}\small\item\em Find 20 to 80\% rise time of an event in {\itshape data\/}. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga7c43d9ceb4e7ce199c0278b52e28386d}{t\_\-half} (const std::vector$<$ double $>$ \&data, double base, double ampl, double left, double right, double center, std::size\_\-t \&t50LeftId, std::size\_\-t \&t50RightId, double \&t50LeftReal)
+\begin{DoxyCompactList}\small\item\em Find the full width at half-\/maximal amplitude of an event within {\itshape data\/}. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga3fe029fabcdd9669244b896cd57fede3}{maxRise} (const std::vector$<$ double $>$ \&data, double left, double right, double \&maxRiseT, double \&maxRiseY)
+\begin{DoxyCompactList}\small\item\em Find the maximal slope during the rising phase of an event within {\itshape data\/}. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga7aea0ee12af70b3eb64016585df82eeb}{maxDecay} (const std::vector$<$ double $>$ \&data, double left, double right, double \&maxDecayT, double \&maxDecayY)
+\begin{DoxyCompactList}\small\item\em Find the maximal slope during the decaying phase of an event within {\itshape data\/}. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_ga8fefeddc3e296792aeb1c4169bcf6992}{
+Vector\_\-double {\bfseries vec\_\-scal\_\-plus} (const Vector\_\-double \&vec, double scalar)}
+\label{group__stfgen_ga8fefeddc3e296792aeb1c4169bcf6992}
+
+\item 
+\hypertarget{group__stfgen_ga635ebb6f8676ca855fe93b83028efafc}{
+Vector\_\-double {\bfseries vec\_\-scal\_\-minus} (const Vector\_\-double \&vec, double scalar)}
+\label{group__stfgen_ga635ebb6f8676ca855fe93b83028efafc}
+
+\item 
+\hypertarget{group__stfgen_ga1d3019104e48837b3e73441bf3c114f8}{
+Vector\_\-double {\bfseries vec\_\-scal\_\-mul} (const Vector\_\-double \&vec, double scalar)}
+\label{group__stfgen_ga1d3019104e48837b3e73441bf3c114f8}
+
+\item 
+\hypertarget{group__stfgen_ga2b8a0bf817a5cae1752bd5f5adb1b6bc}{
+Vector\_\-double {\bfseries vec\_\-scal\_\-div} (const Vector\_\-double \&vec, double scalar)}
+\label{group__stfgen_ga2b8a0bf817a5cae1752bd5f5adb1b6bc}
+
+\item 
+\hypertarget{group__stfgen_ga51d7332f01697cfc06f2bd5b52c52f15}{
+Vector\_\-double {\bfseries vec\_\-vec\_\-plus} (const Vector\_\-double \&vec1, const Vector\_\-double \&vec2)}
+\label{group__stfgen_ga51d7332f01697cfc06f2bd5b52c52f15}
+
+\item 
+\hypertarget{group__stfgen_ga9c715d4f5927507dc34eaeeea0840968}{
+Vector\_\-double {\bfseries vec\_\-vec\_\-minus} (const Vector\_\-double \&vec1, const Vector\_\-double \&vec2)}
+\label{group__stfgen_ga9c715d4f5927507dc34eaeeea0840968}
+
+\item 
+\hypertarget{group__stfgen_ga1ee73a2a48f6d19a94e77fe33d8fd664}{
+Vector\_\-double {\bfseries vec\_\-vec\_\-mul} (const Vector\_\-double \&vec1, const Vector\_\-double \&vec2)}
+\label{group__stfgen_ga1ee73a2a48f6d19a94e77fe33d8fd664}
+
+\item 
+\hypertarget{group__stfgen_gaa34bbc6c34b76d8f2d7ec80f6afc9164}{
+Vector\_\-double {\bfseries vec\_\-vec\_\-div} (const Vector\_\-double \&vec1, const Vector\_\-double \&vec2)}
+\label{group__stfgen_gaa34bbc6c34b76d8f2d7ec80f6afc9164}
+
+\item 
+\hypertarget{group__stfgen_ga0dd74b65e47d94acfc41705c9c4dd872}{
+Vector\_\-double \hyperlink{group__stfgen_ga0dd74b65e47d94acfc41705c9c4dd872}{nojac} (double x, const Vector\_\-double \&p)}
+\label{group__stfgen_ga0dd74b65e47d94acfc41705c9c4dd872}
+
+\begin{DoxyCompactList}\small\item\em Dummy function, serves as a placeholder to initialize functions without a Jacobian. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_gafdb0668b03431e76286bbf94363d70bc}{
+double \hyperlink{group__stfgen_gafdb0668b03431e76286bbf94363d70bc}{noscale} (double param, double xscale, double xoff, double yscale, double yoff)}
+\label{group__stfgen_gafdb0668b03431e76286bbf94363d70bc}
+
+\begin{DoxyCompactList}\small\item\em Dummy function, serves as a placeholder to initialize parameters without a scaling function. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_gacb88ca09147b65f75b9347d0d2462cef}{
+\hyperlink{classstf_1_1Table}{Table} \hyperlink{group__stfgen_gacb88ca09147b65f75b9347d0d2462cef}{defaultOutput} (const Vector\_\-double \&pars, const std::vector$<$ \hyperlink{structstf_1_1parInfo}{parInfo} $>$ \&parsInfo, double chisqr)}
+\label{group__stfgen_gacb88ca09147b65f75b9347d0d2462cef}
+
+\begin{DoxyCompactList}\small\item\em Default fit output function, constructing a \hyperlink{classstf_1_1Table}{stf::Table} from the parameters, their description and chisqr. \item\end{DoxyCompactList}\item 
+int \hyperlink{group__stfgen_ga555e6d942a4dc2437482dbe9c5fed9ab}{round} (double toRound)
+\begin{DoxyCompactList}\small\item\em Does what it says. \item\end{DoxyCompactList}\item 
+void \hyperlink{namespacestf_a7643667703aae7da632f9b4406837713}{importABFFile} (const \hyperlink{classwxString}{wxString} \&fName, \hyperlink{classRecording}{Recording} \&ReturnData, bool progress=true)
+\begin{DoxyCompactList}\small\item\em Open an ABF file and store its contents to a \hyperlink{classRecording}{Recording} object. Attempts to identify the ABF version. \item\end{DoxyCompactList}\item 
+void \hyperlink{namespacestf_a86f8b109ca14c06e0b90b9862e34fca8}{importABF1File} (const std::string \&fName, \hyperlink{classRecording}{Recording} \&ReturnData, bool progress=true)
+\begin{DoxyCompactList}\small\item\em Open an ABF1 file and store its contents to a \hyperlink{classRecording}{Recording} object. \item\end{DoxyCompactList}\item 
+void \hyperlink{namespacestf_af334ab7905de94c51ca488a735cdc83c}{importABF2File} (const std::string \&fName, \hyperlink{classRecording}{Recording} \&ReturnData, bool progress=true)
+\begin{DoxyCompactList}\small\item\em Open an ABF2 file and store its contents to a \hyperlink{classRecording}{Recording} object. \item\end{DoxyCompactList}\item 
+void \hyperlink{namespacestf_a3ea62b5c59c5cf64a74058afee5aeebf}{importASCIIFile} (const \hyperlink{classwxString}{wxString} \&fName, int hLinesToSkip, int nColumns, bool firstIsTime, bool toSection, \hyperlink{classRecording}{Recording} \&ReturnRec, bool progress=true)
+\begin{DoxyCompactList}\small\item\em Open an ASCII file and store its contents to a \hyperlink{classRecording}{Recording} object. \item\end{DoxyCompactList}\item 
+bool \hyperlink{namespacestf_a470b01a32ca1c8153db077d84a6aaedb}{exportASCIIFile} (const \hyperlink{classwxString}{wxString} \&fName, const \hyperlink{classSection}{Section} \&Export)
+\begin{DoxyCompactList}\small\item\em Export a \hyperlink{classSection}{Section} to a text file. \item\end{DoxyCompactList}\item 
+bool \hyperlink{namespacestf_a35952c89753b92b9939ba6a5607c78b3}{exportASCIIFile} (const \hyperlink{classwxString}{wxString} \&fName, const \hyperlink{classChannel}{Channel} \&Export)
+\begin{DoxyCompactList}\small\item\em Export a \hyperlink{classChannel}{Channel} to a text file. \item\end{DoxyCompactList}\item 
+home cs stimfit src core filelib atflib h void \hyperlink{namespacestf_aa7404900ed7ff18ca085190bbbd9a5fa}{importATFFile} (const \hyperlink{classwxString}{wxString} \&fName, \hyperlink{classRecording}{Recording} \&ReturnData, bool progress=true)
+\begin{DoxyCompactList}\small\item\em Open an ATF file and store its contents to a \hyperlink{classRecording}{Recording} object. \item\end{DoxyCompactList}\item 
+bool \hyperlink{namespacestf_a062be9bdf46097610b2de4608b98180b}{exportATFFile} (const \hyperlink{classwxString}{wxString} \&fName, const \hyperlink{classRecording}{Recording} \&WData)
+\begin{DoxyCompactList}\small\item\em Export a \hyperlink{classRecording}{Recording} to an ATF file. \item\end{DoxyCompactList}\item 
+void \hyperlink{namespacestf_ad6a3f57c7c71b26acca0ebee596eafb3}{importAXGFile} (const \hyperlink{classwxString}{wxString} \&fName, \hyperlink{classRecording}{Recording} \&ReturnData, bool progress=true, \hyperlink{classwxWindow}{wxWindow} $\ast$parent=NULL)
+\begin{DoxyCompactList}\small\item\em Open an AXG file and store its contents to a \hyperlink{classRecording}{Recording} object. \item\end{DoxyCompactList}\item 
+int \hyperlink{namespacestf_ad5e49cfb0c9aae60ca3b749865ef0b6f}{importCFSFile} (const \hyperlink{classwxString}{wxString} \&fName, \hyperlink{classRecording}{Recording} \&ReturnData, bool progress=true)
+\begin{DoxyCompactList}\small\item\em Open a CFS file and store its contents to a \hyperlink{classRecording}{Recording} object. \item\end{DoxyCompactList}\item 
+bool \hyperlink{namespacestf_a56c281faaa3c6c52c6a409b6747ec95b}{exportCFSFile} (const \hyperlink{classwxString}{wxString} \&fName, const \hyperlink{classRecording}{Recording} \&WData)
+\begin{DoxyCompactList}\small\item\em Export a \hyperlink{classRecording}{Recording} to a CFS file. \item\end{DoxyCompactList}\item 
+void \hyperlink{namespacestf_a8d1d1874e112c489e02cb62458e8dc64}{importHDF5File} (const \hyperlink{classwxString}{wxString} \&fName, \hyperlink{classRecording}{Recording} \&ReturnData, bool progress=true)
+\begin{DoxyCompactList}\small\item\em Open a HDF5 file and store its contents to a \hyperlink{classRecording}{Recording} object. \item\end{DoxyCompactList}\item 
+bool \hyperlink{namespacestf_ab76abc79d68fcb38d37fb4ca2e16fbf1}{exportHDF5File} (const \hyperlink{classwxString}{wxString} \&fName, const \hyperlink{classRecording}{Recording} \&WData)
+\begin{DoxyCompactList}\small\item\em Export a \hyperlink{classRecording}{Recording} to a HDF5 file. \item\end{DoxyCompactList}\item 
+bool \hyperlink{namespacestf_a99fa117e783221a4683b8dbf2942026b}{exportIGORFile} (const \hyperlink{classwxString}{wxString} \&fName, const \hyperlink{classRecording}{Recording} \&WData)
+\begin{DoxyCompactList}\small\item\em Export a \hyperlink{classRecording}{Recording} to an Igor binary wave. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gaa7e2a13c3f81aa07434ab6ba4da4a617}{fexp} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Sum of {\itshape n\/} exponential functions. \item\end{DoxyCompactList}\item 
+Vector\_\-double \hyperlink{group__stfgen_ga17dd9dd4ebcdfd99370cc21505dbca94}{fexp\_\-jac} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Computes the Jacobian of stf::fexp(). \item\end{DoxyCompactList}\item 
+void \hyperlink{group__stfgen_ga205a9760c992ccc914c114dcdf72eacb}{fexp\_\-init} (const Vector\_\-double \&data, double base, double peak, double dt, Vector\_\-double \&pInit)
+\begin{DoxyCompactList}\small\item\em Initialises parameters for fitting stf::fexp() to {\itshape data\/}. \item\end{DoxyCompactList}\item 
+void \hyperlink{group__stfgen_ga52d567f013f039416a245b985af83bbf}{fexp\_\-init2} (const Vector\_\-double \&data, double base, double peak, double dt, Vector\_\-double \&pInit)
+\begin{DoxyCompactList}\small\item\em Yet another initialiser for fitting stf::fexp() to {\itshape data\/}. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga214dc6bb2e3a2ad37ab9e4650b55c632}{fexpde} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Monoexponential function with delay. \item\end{DoxyCompactList}\item 
+void \hyperlink{group__stfgen_ga4c3336556c6aa992cf19e1b2e4ec7a76}{fexpde\_\-init} (const Vector\_\-double \&data, double base, double peak, double dt, Vector\_\-double \&pInit)
+\begin{DoxyCompactList}\small\item\em Initialises parameters for fitting stf::fexpde() to {\itshape data\/}. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga4dd9d335d263c75d61961db8bb1fe1e2}{fexpbde} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Biexponential function with delay. \item\end{DoxyCompactList}\item 
+void \hyperlink{group__stfgen_gaf0561e7b630cce2263693f8e86167eea}{fexpbde\_\-init} (const Vector\_\-double \&data, double base, double peak, double dt, Vector\_\-double \&pInit)
+\begin{DoxyCompactList}\small\item\em Initialises parameters for fitting stf::fexpde() to {\itshape data\/}. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gafa6594e79d6dd700e3dfc91528f5be56}{falpha} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Alpha function. \item\end{DoxyCompactList}\item 
+Vector\_\-double \hyperlink{group__stfgen_ga8b22dedbea54a0994d9b41d5c03d0459}{falpha\_\-jac} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Computes the Jacobian of stf::falpha(). \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga63447f9728c486a97b390102ff325018}{fHH} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Hodgkin-\/Huxley sodium conductance function. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga6c64c923dcb8f39d644163ab0c09abbe}{fgnabiexp} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em power of 1 sodium conductance function. \item\end{DoxyCompactList}\item 
+void \hyperlink{group__stfgen_ga47d38cf93cda965b8dc517cf5fa20ac1}{falpha\_\-init} (const Vector\_\-double \&data, double base, double peak, double dt, Vector\_\-double \&pInit)
+\begin{DoxyCompactList}\small\item\em Initialises parameters for fitting stf::falpha() to {\itshape data\/}. \item\end{DoxyCompactList}\item 
+void \hyperlink{group__stfgen_gacaee0bf94446342456475acd827bb1f1}{fHH\_\-init} (const Vector\_\-double \&data, double base, double peak, double dt, Vector\_\-double \&pInit)
+\begin{DoxyCompactList}\small\item\em Initialises parameters for fitting stf::falpha() to {\itshape data\/}. \item\end{DoxyCompactList}\item 
+void \hyperlink{group__stfgen_ga5454dcb2feefac399c4f5e9d7a277dd7}{fgnabiexp\_\-init} (const Vector\_\-double \&data, double base, double peak, double dt, Vector\_\-double \&pInit)
+\begin{DoxyCompactList}\small\item\em Initialises parameters for fitting stf::falpha() to {\itshape data\/}. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gabe31dea1c4b9c10627815f17c56f4549}{xscale} (double param, double xscale, double xoff, double yscale, double yoff)
+\begin{DoxyCompactList}\small\item\em Scales a parameter that linearly depends on x. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga3f08b8e36843ae1e5ef9b285cc5f86b7}{xunscale} (double param, double xscale, double xoff, double yscale, double yoff)
+\begin{DoxyCompactList}\small\item\em Unscales a parameter that linearly depends on x. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga00c92887edc6d459207573419ede56ef}{yscale} (double param, double xscale, double xoff, double yscale, double yoff)
+\begin{DoxyCompactList}\small\item\em Scales a parameter that linearly depends on y. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gae9d5e4c6d163781154d54888906e3928}{yscaleoffset} (double param, double xscale, double xoff, double yscale, double yoff)
+\begin{DoxyCompactList}\small\item\em Scales a parameter that linearly depends on y and adds an offset. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga7d081bd58e0107dc245a8441e45e3929}{yunscale} (double param, double xscale, double xoff, double yscale, double yoff)
+\begin{DoxyCompactList}\small\item\em Unscales a parameter that linearly depends on y. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_gab000f4b8bc54c11315091c912ba0c1e0}{yunscaleoffset} (double param, double xscale, double xoff, double yscale, double yoff)
+\begin{DoxyCompactList}\small\item\em Unscales a parameter that linearly depends on y and removes the offset. \item\end{DoxyCompactList}\item 
+std::vector$<$ \hyperlink{structstf_1_1parInfo}{parInfo} $>$ \hyperlink{group__stfgen_gaa535878b74675e92a48e0e20a7e6b1a6}{getParInfoExp} (int n\_\-exp)
+\begin{DoxyCompactList}\small\item\em Creates \hyperlink{structstf_1_1parInfo}{stf::parInfo} structs for n-\/exponential functions. \item\end{DoxyCompactList}\item 
+\hyperlink{classstf_1_1Table}{stf::Table} \hyperlink{group__stfgen_ga62fd233e1b8aaa7e71bcc639793b3c93}{outputWTau} (const Vector\_\-double \&p, const std::vector$<$ \hyperlink{structstf_1_1parInfo}{parInfo} $>$ \&parsInfo, double chisqr)
+\begin{DoxyCompactList}\small\item\em Calculates a weighted time constant. \item\end{DoxyCompactList}\item 
+std::size\_\-t \hyperlink{group__stfgen_ga7fa85af19cf73937c166e0fa1aad7955}{whereis} (const Vector\_\-double \&data, double value)
+\begin{DoxyCompactList}\small\item\em Finds the index of {\itshape data\/} where {\itshape value\/} is encountered for the first time. \item\end{DoxyCompactList}\item 
+std::vector$<$ \hyperlink{structstf_1_1storedFunc}{stf::storedFunc} $>$ \hyperlink{group__stfgen_ga14b43f4510558137aac70408cd1c036b}{GetFuncLib} ()
+\begin{DoxyCompactList}\small\item\em Returns the library of functions for non-\/linear regression. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{group__stfgen_ga5b9c4776a431231a9db345759e7de8ae}{
+const double \hyperlink{group__stfgen_ga5b9c4776a431231a9db345759e7de8ae}{PI} = 3.14159265358979323846}
+\label{group__stfgen_ga5b9c4776a431231a9db345759e7de8ae}
+
+\begin{DoxyCompactList}\small\item\em Add decimals if you are not satisfied. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The stimfit namespace. All essential core functions and classes are in this namespace. Its purpose is to reduce name mangling problems. 
+
+\subsection{Function Documentation}
+\hypertarget{namespacestf_a470b01a32ca1c8153db077d84a6aaedb}{
+\index{stf@{stf}!exportASCIIFile@{exportASCIIFile}}
+\index{exportASCIIFile@{exportASCIIFile}!stf@{stf}}
+\subsubsection[{exportASCIIFile}]{\setlength{\rightskip}{0pt plus 5cm}bool stf::exportASCIIFile (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{fName, }
+\item[{const {\bf Section} \&}]{Export}
+\end{DoxyParamCaption}
+)}}
+\label{namespacestf_a470b01a32ca1c8153db077d84a6aaedb}
+
+
+Export a \hyperlink{classSection}{Section} to a text file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fName} & Full path to the file to be written. \\
+\hline
+{\em Export} & The section to be exported. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true upon success, false otherwise. 
+\end{DoxyReturn}
+\hypertarget{namespacestf_a35952c89753b92b9939ba6a5607c78b3}{
+\index{stf@{stf}!exportASCIIFile@{exportASCIIFile}}
+\index{exportASCIIFile@{exportASCIIFile}!stf@{stf}}
+\subsubsection[{exportASCIIFile}]{\setlength{\rightskip}{0pt plus 5cm}bool stf::exportASCIIFile (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{fName, }
+\item[{const {\bf Channel} \&}]{Export}
+\end{DoxyParamCaption}
+)}}
+\label{namespacestf_a35952c89753b92b9939ba6a5607c78b3}
+
+
+Export a \hyperlink{classChannel}{Channel} to a text file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fName} & Full path to the file to be written. \\
+\hline
+{\em Export} & The channel to be exported. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true upon success, false otherwise. 
+\end{DoxyReturn}
+\hypertarget{namespacestf_a062be9bdf46097610b2de4608b98180b}{
+\index{stf@{stf}!exportATFFile@{exportATFFile}}
+\index{exportATFFile@{exportATFFile}!stf@{stf}}
+\subsubsection[{exportATFFile}]{\setlength{\rightskip}{0pt plus 5cm}bool stf::exportATFFile (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{fName, }
+\item[{const {\bf Recording} \&}]{WData}
+\end{DoxyParamCaption}
+)}}
+\label{namespacestf_a062be9bdf46097610b2de4608b98180b}
+
+
+Export a \hyperlink{classRecording}{Recording} to an ATF file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fName} & Full path to the file to be written. \\
+\hline
+{\em WData} & The data to be exported. \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespacestf_a56c281faaa3c6c52c6a409b6747ec95b}{
+\index{stf@{stf}!exportCFSFile@{exportCFSFile}}
+\index{exportCFSFile@{exportCFSFile}!stf@{stf}}
+\subsubsection[{exportCFSFile}]{\setlength{\rightskip}{0pt plus 5cm}bool stf::exportCFSFile (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{fName, }
+\item[{const {\bf Recording} \&}]{WData}
+\end{DoxyParamCaption}
+)}}
+\label{namespacestf_a56c281faaa3c6c52c6a409b6747ec95b}
+
+
+Export a \hyperlink{classRecording}{Recording} to a CFS file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fName} & Full path to the file to be written. \\
+\hline
+{\em WData} & The data to be exported. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The CFS file handle. 
+\end{DoxyReturn}
+\hypertarget{namespacestf_ab76abc79d68fcb38d37fb4ca2e16fbf1}{
+\index{stf@{stf}!exportHDF5File@{exportHDF5File}}
+\index{exportHDF5File@{exportHDF5File}!stf@{stf}}
+\subsubsection[{exportHDF5File}]{\setlength{\rightskip}{0pt plus 5cm}bool stf::exportHDF5File (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{fName, }
+\item[{const {\bf Recording} \&}]{WData}
+\end{DoxyParamCaption}
+)}}
+\label{namespacestf_ab76abc79d68fcb38d37fb4ca2e16fbf1}
+
+
+Export a \hyperlink{classRecording}{Recording} to a HDF5 file. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fName} & Full path to the file to be written. \\
+\hline
+{\em WData} & The data to be exported. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The HDF5 file handle. 
+\end{DoxyReturn}
+\hypertarget{namespacestf_a99fa117e783221a4683b8dbf2942026b}{
+\index{stf@{stf}!exportIGORFile@{exportIGORFile}}
+\index{exportIGORFile@{exportIGORFile}!stf@{stf}}
+\subsubsection[{exportIGORFile}]{\setlength{\rightskip}{0pt plus 5cm}bool stf::exportIGORFile (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{fName, }
+\item[{const {\bf Recording} \&}]{WData}
+\end{DoxyParamCaption}
+)}}
+\label{namespacestf_a99fa117e783221a4683b8dbf2942026b}
+
+
+Export a \hyperlink{classRecording}{Recording} to an Igor binary wave. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fName} & Full path to the file to be written. \\
+\hline
+{\em WData} & The data to be exported. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+At present, always returns 0. 
+\end{DoxyReturn}
+\hypertarget{namespacestf_a86f8b109ca14c06e0b90b9862e34fca8}{
+\index{stf@{stf}!importABF1File@{importABF1File}}
+\index{importABF1File@{importABF1File}!stf@{stf}}
+\subsubsection[{importABF1File}]{\setlength{\rightskip}{0pt plus 5cm}void stf::importABF1File (
+\begin{DoxyParamCaption}
+\item[{const std::string \&}]{fName, }
+\item[{{\bf Recording} \&}]{ReturnData, }
+\item[{bool}]{progress = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}}
+\label{namespacestf_a86f8b109ca14c06e0b90b9862e34fca8}
+
+
+Open an ABF1 file and store its contents to a \hyperlink{classRecording}{Recording} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fName} & The full path to the file to be opened. \\
+\hline
+{\em ReturnData} & On entry, an empty \hyperlink{classRecording}{Recording} object. On exit, the data stored in {\itshape fName\/}. \\
+\hline
+{\em progress} & True if the progress dialog should be updated. \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespacestf_af334ab7905de94c51ca488a735cdc83c}{
+\index{stf@{stf}!importABF2File@{importABF2File}}
+\index{importABF2File@{importABF2File}!stf@{stf}}
+\subsubsection[{importABF2File}]{\setlength{\rightskip}{0pt plus 5cm}void stf::importABF2File (
+\begin{DoxyParamCaption}
+\item[{const std::string \&}]{fName, }
+\item[{{\bf Recording} \&}]{ReturnData, }
+\item[{bool}]{progress = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}}
+\label{namespacestf_af334ab7905de94c51ca488a735cdc83c}
+
+
+Open an ABF2 file and store its contents to a \hyperlink{classRecording}{Recording} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fName} & The full path to the file to be opened. \\
+\hline
+{\em ReturnData} & On entry, an empty \hyperlink{classRecording}{Recording} object. On exit, the data stored in {\itshape fName\/}. \\
+\hline
+{\em progress} & True if the progress dialog should be updated. \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespacestf_a7643667703aae7da632f9b4406837713}{
+\index{stf@{stf}!importABFFile@{importABFFile}}
+\index{importABFFile@{importABFFile}!stf@{stf}}
+\subsubsection[{importABFFile}]{\setlength{\rightskip}{0pt plus 5cm}void stf::importABFFile (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{fName, }
+\item[{{\bf Recording} \&}]{ReturnData, }
+\item[{bool}]{progress = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}}
+\label{namespacestf_a7643667703aae7da632f9b4406837713}
+
+
+Open an ABF file and store its contents to a \hyperlink{classRecording}{Recording} object. Attempts to identify the ABF version. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fName} & The full path to the file to be opened. \\
+\hline
+{\em ReturnData} & On entry, an empty \hyperlink{classRecording}{Recording} object. On exit, the data stored in {\itshape fName\/}. \\
+\hline
+{\em progress} & True if the progress dialog should be updated. \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespacestf_a3ea62b5c59c5cf64a74058afee5aeebf}{
+\index{stf@{stf}!importASCIIFile@{importASCIIFile}}
+\index{importASCIIFile@{importASCIIFile}!stf@{stf}}
+\subsubsection[{importASCIIFile}]{\setlength{\rightskip}{0pt plus 5cm}void stf::importASCIIFile (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{fName, }
+\item[{int}]{hLinesToSkip, }
+\item[{int}]{nColumns, }
+\item[{bool}]{firstIsTime, }
+\item[{bool}]{toSection, }
+\item[{{\bf Recording} \&}]{ReturnRec, }
+\item[{bool}]{progress = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}}
+\label{namespacestf_a3ea62b5c59c5cf64a74058afee5aeebf}
+
+
+Open an ASCII file and store its contents to a \hyperlink{classRecording}{Recording} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fName} & Full path to the file to be read. \\
+\hline
+{\em hLinesToSkip} & Header lines to skip. \\
+\hline
+{\em nColumns} & Number of columns. \\
+\hline
+{\em firstIsTime} & true if the first column contains time values, false otherwise. \\
+\hline
+{\em toSection} & true if the columns should be put into different sections, false if they should be put into different channels. \\
+\hline
+{\em ReturnRec} & On entry, an empty \hyperlink{classRecording}{Recording} object. On exit, the data stored in {\itshape fName\/}. \\
+\hline
+{\em progress} & True if the progress dialog should be updated. \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespacestf_aa7404900ed7ff18ca085190bbbd9a5fa}{
+\index{stf@{stf}!importATFFile@{importATFFile}}
+\index{importATFFile@{importATFFile}!stf@{stf}}
+\subsubsection[{importATFFile}]{\setlength{\rightskip}{0pt plus 5cm}home cs stimfit src core filelib atflib h void stf::importATFFile (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{fName, }
+\item[{{\bf Recording} \&}]{ReturnData, }
+\item[{bool}]{progress = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}}
+\label{namespacestf_aa7404900ed7ff18ca085190bbbd9a5fa}
+
+
+Open an ATF file and store its contents to a \hyperlink{classRecording}{Recording} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fName} & Full path to the file to be read. \\
+\hline
+{\em ReturnData} & On entry, an empty \hyperlink{classRecording}{Recording} object. On exit, the data stored in {\itshape fName\/}. \\
+\hline
+{\em progress} & True if the progress dialog should be updated. \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespacestf_ad6a3f57c7c71b26acca0ebee596eafb3}{
+\index{stf@{stf}!importAXGFile@{importAXGFile}}
+\index{importAXGFile@{importAXGFile}!stf@{stf}}
+\subsubsection[{importAXGFile}]{\setlength{\rightskip}{0pt plus 5cm}void stf::importAXGFile (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{fName, }
+\item[{{\bf Recording} \&}]{ReturnData, }
+\item[{bool}]{progress = {\ttfamily true}, }
+\item[{{\bf wxWindow} $\ast$}]{parent = {\ttfamily NULL}}
+\end{DoxyParamCaption}
+)}}
+\label{namespacestf_ad6a3f57c7c71b26acca0ebee596eafb3}
+
+
+Open an AXG file and store its contents to a \hyperlink{classRecording}{Recording} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fName} & The full path to the file to be opened. \\
+\hline
+{\em ReturnData} & On entry, an empty \hyperlink{classRecording}{Recording} object. On exit, the data stored in {\itshape fName\/}. \\
+\hline
+{\em progress} & True if the progress dialog should be updated. \\
+\hline
+\end{DoxyParams}
+\hypertarget{namespacestf_ad5e49cfb0c9aae60ca3b749865ef0b6f}{
+\index{stf@{stf}!importCFSFile@{importCFSFile}}
+\index{importCFSFile@{importCFSFile}!stf@{stf}}
+\subsubsection[{importCFSFile}]{\setlength{\rightskip}{0pt plus 5cm}int stf::importCFSFile (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{fName, }
+\item[{{\bf Recording} \&}]{ReturnData, }
+\item[{bool}]{progress = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}}
+\label{namespacestf_ad5e49cfb0c9aae60ca3b749865ef0b6f}
+
+
+Open a CFS file and store its contents to a \hyperlink{classRecording}{Recording} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fName} & Full path to the file to be read. \\
+\hline
+{\em ReturnData} & On entry, an empty \hyperlink{classRecording}{Recording} object. On exit, the data stored in {\itshape fName\/}. \\
+\hline
+{\em progress} & Set to true if a progress dialog should be updated. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 upon success, a negative error code upon failure. 
+\end{DoxyReturn}
+\hypertarget{namespacestf_a8d1d1874e112c489e02cb62458e8dc64}{
+\index{stf@{stf}!importHDF5File@{importHDF5File}}
+\index{importHDF5File@{importHDF5File}!stf@{stf}}
+\subsubsection[{importHDF5File}]{\setlength{\rightskip}{0pt plus 5cm}void stf::importHDF5File (
+\begin{DoxyParamCaption}
+\item[{const {\bf wxString} \&}]{fName, }
+\item[{{\bf Recording} \&}]{ReturnData, }
+\item[{bool}]{progress = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}}
+\label{namespacestf_a8d1d1874e112c489e02cb62458e8dc64}
+
+
+Open a HDF5 file and store its contents to a \hyperlink{classRecording}{Recording} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fName} & Full path to the file to be read. \\
+\hline
+{\em ReturnData} & On entry, an empty \hyperlink{classRecording}{Recording} object. On exit, the data stored in {\itshape fName\/}. \\
+\hline
+{\em progress} & True if the progress dialog should be updated. \\
+\hline
+\end{DoxyParams}

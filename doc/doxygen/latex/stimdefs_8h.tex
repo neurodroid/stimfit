@@ -1,0 +1,355 @@
+\hypertarget{stimdefs_8h}{
+\section{src/core/stimdefs.h File Reference}
+\label{stimdefs_8h}\index{src/core/stimdefs.h@{src/core/stimdefs.h}}
+}
+
+
+Common definitions and classes.  
+
+
+{\ttfamily \#include $<$boost/function.hpp$>$}\par
+{\ttfamily \#include $<$vector$>$}\par
+{\ttfamily \#include $<$deque$>$}\par
+{\ttfamily \#include $<$map$>$}\par
+{\ttfamily \#include $<$string$>$}\par
+{\ttfamily \#include $<$wx/wxprec.h$>$}\par
+{\ttfamily \#include $<$wx/wx.h$>$}\par
+{\ttfamily \#include $<$wx/wfstream.h$>$}\par
+Include dependency graph for stimdefs.h:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=400pt]{stimdefs_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=400pt]{stimdefs_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classstf_1_1Table}{stf::Table}
+\begin{DoxyCompactList}\small\item\em A table used for printing information. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1parInfo}{stf::parInfo}
+\begin{DoxyCompactList}\small\item\em Information about parameters used in \hyperlink{structstf_1_1storedFunc}{storedFunc}. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1storedFunc}{stf::storedFunc}
+\begin{DoxyCompactList}\small\item\em Function used for least-\/squares fitting. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1UserInput}{stf::UserInput}
+\begin{DoxyCompactList}\small\item\em Represents user input from dialogs that can be used in plugins. \item\end{DoxyCompactList}\item 
+class \hyperlink{classstf_1_1Event}{stf::Event}
+\begin{DoxyCompactList}\small\item\em Describes the attributes of an event. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1PyMarker}{stf::PyMarker}
+\begin{DoxyCompactList}\small\item\em A marker that can be set from Python. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1Plugin}{stf::Plugin}
+\begin{DoxyCompactList}\small\item\em User-\/defined plugin. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1Extension}{stf::Extension}
+\begin{DoxyCompactList}\small\item\em User-\/defined Python extension. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1ifstreamMan}{stf::ifstreamMan}
+\begin{DoxyCompactList}\small\item\em Resource manager for ifstream objects. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1ofstreamMan}{stf::ofstreamMan}
+\begin{DoxyCompactList}\small\item\em Resource manager for ofstream objects. \item\end{DoxyCompactList}\item 
+struct \hyperlink{structstf_1_1txtImportSettings}{stf::txtImportSettings}
+\begin{DoxyCompactList}\small\item\em Text file import filter settings. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacestf}{stf}
+
+
+\begin{DoxyCompactList}\small\item\em The stimfit namespace. \item\end{DoxyCompactList}
+
+\item 
+namespace \hyperlink{namespacestd}{std}
+
+
+\begin{DoxyCompactList}\small\item\em The namespace of the C++ standard library (libstdc++). \item\end{DoxyCompactList}
+
+\end{DoxyCompactItemize}
+\subsection*{Defines}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{stimdefs_8h_af0aadb2095d86bfd55625223bcdefddc}{
+\#define \hyperlink{stimdefs_8h_af0aadb2095d86bfd55625223bcdefddc}{StfDll}~\_\-\_\-declspec( dllimport )}
+\label{stimdefs_8h_af0aadb2095d86bfd55625223bcdefddc}
+
+\begin{DoxyCompactList}\small\item\em Defines dll export or import functions for Windows. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{stimdefs_8h_a68f50e79999c8d3e4993a7ee74798ddc}{
+typedef std::vector$<$ double $>$ {\bfseries Vector\_\-double}}
+\label{stimdefs_8h_a68f50e79999c8d3e4993a7ee74798ddc}
+
+\item 
+\hypertarget{stimdefs_8h_a401cf4881a4c396085038ee7dbb76a1f}{
+typedef std::vector$<$ float $>$ {\bfseries Vector\_\-float}}
+\label{stimdefs_8h_a401cf4881a4c396085038ee7dbb76a1f}
+
+\item 
+typedef boost::function$<$ double(double, const Vector\_\-double \&)$>$ \hyperlink{group__stfgen_ga11d6ec55abceacf5fdd47f9fc889d9a3}{stf::Func}
+\begin{DoxyCompactList}\small\item\em A function taking a double and a vector and returning a double. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_ga77f3e621f1771784f2befaeb3d1ac4fb}{
+typedef boost::function$<$ Vector\_\-double(double, const Vector\_\-double \&)$>$ \hyperlink{group__stfgen_ga77f3e621f1771784f2befaeb3d1ac4fb}{stf::Jac}}
+\label{group__stfgen_ga77f3e621f1771784f2befaeb3d1ac4fb}
+
+\begin{DoxyCompactList}\small\item\em The jacobian of a stf::Func. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_ga775530afebda38e8138e8eb1401a0e01}{
+typedef boost::function$<$ double(double, double, double, double, double)$>$ \hyperlink{group__stfgen_ga775530afebda38e8138e8eb1401a0e01}{stf::Scale}}
+\label{group__stfgen_ga775530afebda38e8138e8eb1401a0e01}
+
+\begin{DoxyCompactList}\small\item\em Scaling function for fit parameters. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_ga15ccefdb3c4b758564e73f080639ff98}{
+typedef boost::function$<$ void(const Vector\_\-double \&, double, double, double, Vector\_\-double \&)$>$ \hyperlink{group__stfgen_ga15ccefdb3c4b758564e73f080639ff98}{stf::Init}}
+\label{group__stfgen_ga15ccefdb3c4b758564e73f080639ff98}
+
+\begin{DoxyCompactList}\small\item\em Initialising function for the parameters in stf::Func to start a fit. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_ga66542f63882a99158a17cdc977eac5e8}{
+typedef boost::function$<$ Table(const Vector\_\-double \&, const std::vector$<$ \hyperlink{structstf_1_1parInfo}{stf::parInfo} $>$, double)$>$ \hyperlink{group__stfgen_ga66542f63882a99158a17cdc977eac5e8}{stf::Output}}
+\label{group__stfgen_ga66542f63882a99158a17cdc977eac5e8}
+
+\begin{DoxyCompactList}\small\item\em Print the output of a fit into a \hyperlink{classstf_1_1Table}{stf::Table}. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_gaa37601710b061d50b53ceeab1e7a9dd2}{
+typedef boost::function$<$ \hyperlink{classRecording}{Recording}(const \hyperlink{classRecording}{Recording} \&, const Vector\_\-double \&, std::map$<$ \hyperlink{classwxString}{wxString}, double $>$ \&)$>$ \hyperlink{group__stfgen_gaa37601710b061d50b53ceeab1e7a9dd2}{stf::PluginFunc}}
+\label{group__stfgen_gaa37601710b061d50b53ceeab1e7a9dd2}
+
+\begin{DoxyCompactList}\small\item\em Get a \hyperlink{classRecording}{Recording}, do something with it, return the new \hyperlink{classRecording}{Recording}. \item\end{DoxyCompactList}\item 
+typedef std::vector$<$ \hyperlink{classstf_1_1Event}{stf::Event} $>$::iterator \hyperlink{stimdefs_8h_a8d74cbcc599609c245bb529fb4fd2d49}{event\_\-it}
+\item 
+typedef std::vector$<$ \hyperlink{classstf_1_1Event}{stf::Event} $>$::const\_\-iterator \hyperlink{stimdefs_8h_ad3f6ebf58a98b850cba4daa045799782}{c\_\-event\_\-it}
+\item 
+typedef std::vector$<$ \hyperlink{structstf_1_1PyMarker}{stf::PyMarker} $>$::iterator \hyperlink{stimdefs_8h_a80876e2e846e6700b6c43a2df9916a56}{marker\_\-it}
+\item 
+typedef std::vector$<$ \hyperlink{structstf_1_1PyMarker}{stf::PyMarker} $>$::const\_\-iterator \hyperlink{stimdefs_8h_a92503ae55e4a2c3726853f5f35826de1}{c\_\-marker\_\-it}
+\item 
+typedef std::vector$<$ \hyperlink{classwxString}{wxString} $>$::iterator \hyperlink{stimdefs_8h_a825adb91dc13428d01f348280af19fea}{wxs\_\-it}
+\item 
+typedef std::vector$<$ \hyperlink{classwxString}{wxString} $>$::const\_\-iterator \hyperlink{stimdefs_8h_aa853c276bd08135b87cd201f4d402610}{c\_\-wxs\_\-it}
+\item 
+typedef std::vector$<$ \hyperlink{structstf_1_1storedFunc}{stf::storedFunc} $>$::const\_\-iterator \hyperlink{stimdefs_8h_a59255f5e909f1e75f3070a33640e1316}{c\_\-stfunc\_\-it}
+\item 
+typedef std::vector$<$ std::size\_\-t $>$::const\_\-iterator \hyperlink{stimdefs_8h_a2a3f4387e44db97aa934dd568c68f176}{c\_\-st\_\-it}
+\item 
+typedef std::vector$<$ int $>$::iterator \hyperlink{stimdefs_8h_a7b16d74d6e0ea93af41d3918f512ed78}{int\_\-it}
+\item 
+typedef std::vector$<$ int $>$::const\_\-iterator \hyperlink{stimdefs_8h_a09a86e189e8820c63e804106a6d64601}{c\_\-int\_\-it}
+\item 
+typedef std::vector$<$ \hyperlink{classChannel}{Channel} $>$::iterator \hyperlink{stimdefs_8h_a4a33a21499e0f70c982ebbfb848333d7}{ch\_\-it}
+\item 
+typedef std::vector$<$ \hyperlink{classChannel}{Channel} $>$::const\_\-iterator \hyperlink{stimdefs_8h_ac124147ce6bc456d341ca3249d0353a0}{c\_\-ch\_\-it}
+\item 
+typedef std::vector$<$ \hyperlink{classSection}{Section} $>$::iterator \hyperlink{stimdefs_8h_ad7c8cea87202e04b61c6d2cf72cda99b}{sec\_\-it}
+\item 
+typedef std::vector$<$ \hyperlink{classSection}{Section} $>$::const\_\-iterator \hyperlink{stimdefs_8h_a3bdd131c299e2569d0ec52bb2221bf91}{c\_\-sec\_\-it}
+\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{group__stfgen_gae8845ae2aeaf4b742a905a2a5571fd5a}{stf::direction} \{ \hyperlink{group__stfgen_ggae8845ae2aeaf4b742a905a2a5571fd5aaf12a3d86708046ee92fa400c99fcbecb}{stf::up}, 
+\hyperlink{group__stfgen_ggae8845ae2aeaf4b742a905a2a5571fd5aaccaa84903131c15d67e4f95298e68e2b}{stf::down}, 
+\hyperlink{group__stfgen_ggae8845ae2aeaf4b742a905a2a5571fd5aa22cccef6520f7679886dc6d584805ce3}{stf::both}, 
+\hyperlink{group__stfgen_ggae8845ae2aeaf4b742a905a2a5571fd5aab5df1157da4f45612d5815bc164e0931}{stf::undefined\_\-direction}
+ \}
+\begin{DoxyCompactList}\small\item\em The direction of peak calculations. \item\end{DoxyCompactList}\item 
+enum \hyperlink{group__stfgen_gad2d1acb3ac0c16ee32b5f4d3a1ab4abf}{stf::cursor\_\-type} \{ \par
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfa1b879af00b1b8b8c4a195c0b27de3f0b}{stf::measure\_\-cursor}, 
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfad99eafbc283ce642e9ff607357c95e9b}{stf::peak\_\-cursor}, 
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfa8c54633348bfe4fdeaf6c8ddf06fccba}{stf::base\_\-cursor}, 
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfab09f70483c5bed40addf3c21eb528afe}{stf::decay\_\-cursor}, 
+\par
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfabb059a629fb7fbf5d9a3f83c44954b9b}{stf::latency\_\-cursor}, 
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfadb6eff6e3108c48f2dd357dc3b539238}{stf::zoom\_\-cursor}, 
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfa28885ead48beb5a6da1810d391d41760}{stf::event\_\-cursor}, 
+\hyperlink{group__stfgen_ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfa2794c8863a730fbd8e4dea7f93b8dfa7}{stf::undefined\_\-cursor}
+ \}
+\begin{DoxyCompactList}\small\item\em Mouse cursor types. \item\end{DoxyCompactList}\item 
+enum \hyperlink{group__stfgen_ga9a792b11c01e9429bfe2acd3e4ef108b}{stf::zoom\_\-channels} \{ \hyperlink{group__stfgen_gga9a792b11c01e9429bfe2acd3e4ef108bafdaacd56a89cce6998f8fcc331b0f665}{stf::zoomch1}, 
+\hyperlink{group__stfgen_gga9a792b11c01e9429bfe2acd3e4ef108baef0062d1da678e4771bf559b3dc1e537}{stf::zoomch2}, 
+\hyperlink{group__stfgen_gga9a792b11c01e9429bfe2acd3e4ef108ba0c34eab028555c38760abc86b551b6c6}{stf::zoomboth}
+ \}
+\begin{DoxyCompactList}\small\item\em Determines which channels to scale. \item\end{DoxyCompactList}\item 
+enum \hyperlink{group__stfgen_ga738f9934a45a9d2d81cb0a3de0375c99}{stf::latency\_\-mode} \{ \par
+\hyperlink{group__stfgen_gga738f9934a45a9d2d81cb0a3de0375c99a38b8edc5f8a706c23b6efd737aada25a}{stf::manualMode} =  0, 
+\hyperlink{group__stfgen_gga738f9934a45a9d2d81cb0a3de0375c99a42837a2123b13815fb4ee3c005f2cac0}{stf::peakMode} =  1, 
+\hyperlink{group__stfgen_gga738f9934a45a9d2d81cb0a3de0375c99abbb23ece92fe176e5358289e2b14f97e}{stf::riseMode} =  2, 
+\hyperlink{group__stfgen_gga738f9934a45a9d2d81cb0a3de0375c99ae23bd76db1d3f2fd5ee275c5dc004283}{stf::halfMode} =  3, 
+\par
+\hyperlink{group__stfgen_gga738f9934a45a9d2d81cb0a3de0375c99a216dce55e173d3838de785cf0a42d87e}{stf::footMode} =  4, 
+\hyperlink{group__stfgen_gga738f9934a45a9d2d81cb0a3de0375c99a871047aafad5c561dbf5a77e80a7b174}{stf::undefinedMode}
+ \}
+\begin{DoxyCompactList}\small\item\em Latency cursor settings. \item\end{DoxyCompactList}\item 
+enum \hyperlink{group__stfgen_gae034ed0eec6bdaba3b23d3b2184f799d}{stf::latency\_\-window\_\-mode} \{ \hyperlink{group__stfgen_ggae034ed0eec6bdaba3b23d3b2184f799da65ce55297aad4c581e70b239864c2a16}{stf::defaultMode} =  0, 
+\hyperlink{group__stfgen_ggae034ed0eec6bdaba3b23d3b2184f799daf28fa2b9cdf5e498f1ed689e1d8d1934}{stf::windowMode} =  1
+ \}
+\begin{DoxyCompactList}\small\item\em Latency window settings. \item\end{DoxyCompactList}\item 
+enum \hyperlink{group__stfgen_gae703f7802498ae301ac058b94426900f}{stf::filetype} \{ \par
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa0136c00f38aa0ad185d30d7c845f38b5}{stf::atf}, 
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa5496504b8584246c4ee5820087f94be2}{stf::abf}, 
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa8140bedc5caf41a80dbbdb1bed69b799}{stf::axg}, 
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa653f7b20462a96d94629bf0a997f70f9}{stf::ascii}, 
+\par
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa0eb892b5486c4452d4030cd8a6788457}{stf::cfs}, 
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa8b7b106321d7c7cad7791629bb4e11f9}{stf::igor}, 
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa64735633245afb7ddbbecf5a49ea00ba}{stf::son}, 
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900faf4bec932069c6c6f363fbf4a9a2b4312}{stf::hdf5}, 
+\par
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa4172e0376fc3d0059ea45e291d57b37c}{stf::heka}, 
+\hyperlink{group__stfgen_ggae703f7802498ae301ac058b94426900fa8434e1cbb32b170c5df740e0f0305edd}{stf::none}
+ \}
+\begin{DoxyCompactList}\small\item\em File types. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{group__stfgen_ga8fefeddc3e296792aeb1c4169bcf6992}{
+Vector\_\-double {\bfseries stf::vec\_\-scal\_\-plus} (const Vector\_\-double \&vec, double scalar)}
+\label{group__stfgen_ga8fefeddc3e296792aeb1c4169bcf6992}
+
+\item 
+\hypertarget{group__stfgen_ga635ebb6f8676ca855fe93b83028efafc}{
+Vector\_\-double {\bfseries stf::vec\_\-scal\_\-minus} (const Vector\_\-double \&vec, double scalar)}
+\label{group__stfgen_ga635ebb6f8676ca855fe93b83028efafc}
+
+\item 
+\hypertarget{group__stfgen_ga1d3019104e48837b3e73441bf3c114f8}{
+Vector\_\-double {\bfseries stf::vec\_\-scal\_\-mul} (const Vector\_\-double \&vec, double scalar)}
+\label{group__stfgen_ga1d3019104e48837b3e73441bf3c114f8}
+
+\item 
+\hypertarget{group__stfgen_ga2b8a0bf817a5cae1752bd5f5adb1b6bc}{
+Vector\_\-double {\bfseries stf::vec\_\-scal\_\-div} (const Vector\_\-double \&vec, double scalar)}
+\label{group__stfgen_ga2b8a0bf817a5cae1752bd5f5adb1b6bc}
+
+\item 
+\hypertarget{group__stfgen_ga51d7332f01697cfc06f2bd5b52c52f15}{
+Vector\_\-double {\bfseries stf::vec\_\-vec\_\-plus} (const Vector\_\-double \&vec1, const Vector\_\-double \&vec2)}
+\label{group__stfgen_ga51d7332f01697cfc06f2bd5b52c52f15}
+
+\item 
+\hypertarget{group__stfgen_ga9c715d4f5927507dc34eaeeea0840968}{
+Vector\_\-double {\bfseries stf::vec\_\-vec\_\-minus} (const Vector\_\-double \&vec1, const Vector\_\-double \&vec2)}
+\label{group__stfgen_ga9c715d4f5927507dc34eaeeea0840968}
+
+\item 
+\hypertarget{group__stfgen_ga1ee73a2a48f6d19a94e77fe33d8fd664}{
+Vector\_\-double {\bfseries stf::vec\_\-vec\_\-mul} (const Vector\_\-double \&vec1, const Vector\_\-double \&vec2)}
+\label{group__stfgen_ga1ee73a2a48f6d19a94e77fe33d8fd664}
+
+\item 
+\hypertarget{group__stfgen_gaa34bbc6c34b76d8f2d7ec80f6afc9164}{
+Vector\_\-double {\bfseries stf::vec\_\-vec\_\-div} (const Vector\_\-double \&vec1, const Vector\_\-double \&vec2)}
+\label{group__stfgen_gaa34bbc6c34b76d8f2d7ec80f6afc9164}
+
+\item 
+\hypertarget{group__stfgen_ga0dd74b65e47d94acfc41705c9c4dd872}{
+Vector\_\-double \hyperlink{group__stfgen_ga0dd74b65e47d94acfc41705c9c4dd872}{stf::nojac} (double x, const Vector\_\-double \&p)}
+\label{group__stfgen_ga0dd74b65e47d94acfc41705c9c4dd872}
+
+\begin{DoxyCompactList}\small\item\em Dummy function, serves as a placeholder to initialize functions without a Jacobian. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_gafdb0668b03431e76286bbf94363d70bc}{
+double \hyperlink{group__stfgen_gafdb0668b03431e76286bbf94363d70bc}{stf::noscale} (double param, double xscale, double xoff, double yscale, double yoff)}
+\label{group__stfgen_gafdb0668b03431e76286bbf94363d70bc}
+
+\begin{DoxyCompactList}\small\item\em Dummy function, serves as a placeholder to initialize parameters without a scaling function. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_gacb88ca09147b65f75b9347d0d2462cef}{
+Table \hyperlink{group__stfgen_gacb88ca09147b65f75b9347d0d2462cef}{stf::defaultOutput} (const Vector\_\-double \&pars, const std::vector$<$ parInfo $>$ \&parsInfo, double chisqr)}
+\label{group__stfgen_gacb88ca09147b65f75b9347d0d2462cef}
+
+\begin{DoxyCompactList}\small\item\em Default fit output function, constructing a \hyperlink{classstf_1_1Table}{stf::Table} from the parameters, their description and chisqr. \item\end{DoxyCompactList}\item 
+int \hyperlink{group__stfgen_ga555e6d942a4dc2437482dbe9c5fed9ab}{stf::round} (double toRound)
+\begin{DoxyCompactList}\small\item\em Does what it says. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{group__stfgen_ga5b9c4776a431231a9db345759e7de8ae}{
+const double \hyperlink{group__stfgen_ga5b9c4776a431231a9db345759e7de8ae}{stf::PI} = 3.14159265358979323846}
+\label{group__stfgen_ga5b9c4776a431231a9db345759e7de8ae}
+
+\begin{DoxyCompactList}\small\item\em Add decimals if you are not satisfied. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Common definitions and classes. \begin{DoxyAuthor}{Author}
+Christoph Schmidt-\/Hieber 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2008-\/01-\/16 Header file for common definitions and classes. 
+\end{DoxyDate}
+
+
+\subsection{Typedef Documentation}
+\hypertarget{stimdefs_8h_ac124147ce6bc456d341ca3249d0353a0}{
+\index{stimdefs.h@{stimdefs.h}!c\_\-ch\_\-it@{c\_\-ch\_\-it}}
+\index{c\_\-ch\_\-it@{c\_\-ch\_\-it}!stimdefs.h@{stimdefs.h}}
+\subsubsection[{c\_\-ch\_\-it}]{\setlength{\rightskip}{0pt plus 5cm}typedef std::vector$<$ {\bf Channel} $>$::const\_\-iterator {\bf c\_\-ch\_\-it}}}
+\label{stimdefs_8h_ac124147ce6bc456d341ca3249d0353a0}
+constant \hyperlink{classChannel}{Channel} iterator \hypertarget{stimdefs_8h_ad3f6ebf58a98b850cba4daa045799782}{
+\index{stimdefs.h@{stimdefs.h}!c\_\-event\_\-it@{c\_\-event\_\-it}}
+\index{c\_\-event\_\-it@{c\_\-event\_\-it}!stimdefs.h@{stimdefs.h}}
+\subsubsection[{c\_\-event\_\-it}]{\setlength{\rightskip}{0pt plus 5cm}typedef std::vector$<$ {\bf stf::Event} $>$::const\_\-iterator {\bf c\_\-event\_\-it}}}
+\label{stimdefs_8h_ad3f6ebf58a98b850cba4daa045799782}
+constant \hyperlink{classstf_1_1Event}{stf::Event} iterator \hypertarget{stimdefs_8h_a09a86e189e8820c63e804106a6d64601}{
+\index{stimdefs.h@{stimdefs.h}!c\_\-int\_\-it@{c\_\-int\_\-it}}
+\index{c\_\-int\_\-it@{c\_\-int\_\-it}!stimdefs.h@{stimdefs.h}}
+\subsubsection[{c\_\-int\_\-it}]{\setlength{\rightskip}{0pt plus 5cm}typedef std::vector$<$ int $>$::const\_\-iterator {\bf c\_\-int\_\-it}}}
+\label{stimdefs_8h_a09a86e189e8820c63e804106a6d64601}
+constant int iterator \hypertarget{stimdefs_8h_a92503ae55e4a2c3726853f5f35826de1}{
+\index{stimdefs.h@{stimdefs.h}!c\_\-marker\_\-it@{c\_\-marker\_\-it}}
+\index{c\_\-marker\_\-it@{c\_\-marker\_\-it}!stimdefs.h@{stimdefs.h}}
+\subsubsection[{c\_\-marker\_\-it}]{\setlength{\rightskip}{0pt plus 5cm}typedef std::vector$<$ {\bf stf::PyMarker} $>$::const\_\-iterator {\bf c\_\-marker\_\-it}}}
+\label{stimdefs_8h_a92503ae55e4a2c3726853f5f35826de1}
+constant \hyperlink{structstf_1_1PyMarker}{stf::PyMarker} iterator \hypertarget{stimdefs_8h_a3bdd131c299e2569d0ec52bb2221bf91}{
+\index{stimdefs.h@{stimdefs.h}!c\_\-sec\_\-it@{c\_\-sec\_\-it}}
+\index{c\_\-sec\_\-it@{c\_\-sec\_\-it}!stimdefs.h@{stimdefs.h}}
+\subsubsection[{c\_\-sec\_\-it}]{\setlength{\rightskip}{0pt plus 5cm}typedef std::vector$<$ {\bf Section} $>$::const\_\-iterator {\bf c\_\-sec\_\-it}}}
+\label{stimdefs_8h_a3bdd131c299e2569d0ec52bb2221bf91}
+constant \hyperlink{classSection}{Section} iterator \hypertarget{stimdefs_8h_a2a3f4387e44db97aa934dd568c68f176}{
+\index{stimdefs.h@{stimdefs.h}!c\_\-st\_\-it@{c\_\-st\_\-it}}
+\index{c\_\-st\_\-it@{c\_\-st\_\-it}!stimdefs.h@{stimdefs.h}}
+\subsubsection[{c\_\-st\_\-it}]{\setlength{\rightskip}{0pt plus 5cm}typedef std::vector$<$ std::size\_\-t $>$::const\_\-iterator {\bf c\_\-st\_\-it}}}
+\label{stimdefs_8h_a2a3f4387e44db97aa934dd568c68f176}
+constant size\_\-t iterator \hypertarget{stimdefs_8h_a59255f5e909f1e75f3070a33640e1316}{
+\index{stimdefs.h@{stimdefs.h}!c\_\-stfunc\_\-it@{c\_\-stfunc\_\-it}}
+\index{c\_\-stfunc\_\-it@{c\_\-stfunc\_\-it}!stimdefs.h@{stimdefs.h}}
+\subsubsection[{c\_\-stfunc\_\-it}]{\setlength{\rightskip}{0pt plus 5cm}typedef std::vector$<$ {\bf stf::storedFunc} $>$::const\_\-iterator {\bf c\_\-stfunc\_\-it}}}
+\label{stimdefs_8h_a59255f5e909f1e75f3070a33640e1316}
+constant \hyperlink{structstf_1_1storedFunc}{stf::storedFunc} iterator \hypertarget{stimdefs_8h_aa853c276bd08135b87cd201f4d402610}{
+\index{stimdefs.h@{stimdefs.h}!c\_\-wxs\_\-it@{c\_\-wxs\_\-it}}
+\index{c\_\-wxs\_\-it@{c\_\-wxs\_\-it}!stimdefs.h@{stimdefs.h}}
+\subsubsection[{c\_\-wxs\_\-it}]{\setlength{\rightskip}{0pt plus 5cm}typedef std::vector$<$ {\bf wxString} $>$::const\_\-iterator {\bf c\_\-wxs\_\-it}}}
+\label{stimdefs_8h_aa853c276bd08135b87cd201f4d402610}
+constant \hyperlink{classwxString}{wxString} iterator \hypertarget{stimdefs_8h_a4a33a21499e0f70c982ebbfb848333d7}{
+\index{stimdefs.h@{stimdefs.h}!ch\_\-it@{ch\_\-it}}
+\index{ch\_\-it@{ch\_\-it}!stimdefs.h@{stimdefs.h}}
+\subsubsection[{ch\_\-it}]{\setlength{\rightskip}{0pt plus 5cm}typedef std::vector$<$ {\bf Channel} $>$::iterator {\bf ch\_\-it}}}
+\label{stimdefs_8h_a4a33a21499e0f70c982ebbfb848333d7}
+\hyperlink{classChannel}{Channel} iterator \hypertarget{stimdefs_8h_a8d74cbcc599609c245bb529fb4fd2d49}{
+\index{stimdefs.h@{stimdefs.h}!event\_\-it@{event\_\-it}}
+\index{event\_\-it@{event\_\-it}!stimdefs.h@{stimdefs.h}}
+\subsubsection[{event\_\-it}]{\setlength{\rightskip}{0pt plus 5cm}typedef std::vector$<$ {\bf stf::Event} $>$::iterator {\bf event\_\-it}}}
+\label{stimdefs_8h_a8d74cbcc599609c245bb529fb4fd2d49}
+\hyperlink{classstf_1_1Event}{stf::Event} iterator \hypertarget{stimdefs_8h_a7b16d74d6e0ea93af41d3918f512ed78}{
+\index{stimdefs.h@{stimdefs.h}!int\_\-it@{int\_\-it}}
+\index{int\_\-it@{int\_\-it}!stimdefs.h@{stimdefs.h}}
+\subsubsection[{int\_\-it}]{\setlength{\rightskip}{0pt plus 5cm}typedef std::vector$<$ int $>$::iterator {\bf int\_\-it}}}
+\label{stimdefs_8h_a7b16d74d6e0ea93af41d3918f512ed78}
+int iterator \hypertarget{stimdefs_8h_a80876e2e846e6700b6c43a2df9916a56}{
+\index{stimdefs.h@{stimdefs.h}!marker\_\-it@{marker\_\-it}}
+\index{marker\_\-it@{marker\_\-it}!stimdefs.h@{stimdefs.h}}
+\subsubsection[{marker\_\-it}]{\setlength{\rightskip}{0pt plus 5cm}typedef std::vector$<$ {\bf stf::PyMarker} $>$::iterator {\bf marker\_\-it}}}
+\label{stimdefs_8h_a80876e2e846e6700b6c43a2df9916a56}
+\hyperlink{structstf_1_1PyMarker}{stf::PyMarker} iterator \hypertarget{stimdefs_8h_ad7c8cea87202e04b61c6d2cf72cda99b}{
+\index{stimdefs.h@{stimdefs.h}!sec\_\-it@{sec\_\-it}}
+\index{sec\_\-it@{sec\_\-it}!stimdefs.h@{stimdefs.h}}
+\subsubsection[{sec\_\-it}]{\setlength{\rightskip}{0pt plus 5cm}typedef std::vector$<$ {\bf Section} $>$::iterator {\bf sec\_\-it}}}
+\label{stimdefs_8h_ad7c8cea87202e04b61c6d2cf72cda99b}
+\hyperlink{classSection}{Section} iterator \hypertarget{stimdefs_8h_a825adb91dc13428d01f348280af19fea}{
+\index{stimdefs.h@{stimdefs.h}!wxs\_\-it@{wxs\_\-it}}
+\index{wxs\_\-it@{wxs\_\-it}!stimdefs.h@{stimdefs.h}}
+\subsubsection[{wxs\_\-it}]{\setlength{\rightskip}{0pt plus 5cm}typedef std::vector$<$ {\bf wxString} $>$::iterator {\bf wxs\_\-it}}}
+\label{stimdefs_8h_a825adb91dc13428d01f348280af19fea}
+\hyperlink{classwxString}{wxString} iterator 

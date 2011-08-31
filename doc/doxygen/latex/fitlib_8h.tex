@@ -1,0 +1,55 @@
+\hypertarget{fitlib_8h}{
+\section{src/core/fitlib.h File Reference}
+\label{fitlib_8h}\index{src/core/fitlib.h@{src/core/fitlib.h}}
+}
+
+
+Functions for linear and non-\/linear regression.  
+
+
+{\ttfamily \#include \char`\"{}./stimdefs.h\char`\"{}}\par
+{\ttfamily \#include $<$deque$>$}\par
+Include dependency graph for fitlib.h:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=400pt]{fitlib_8h__incl}
+\end{center}
+\end{figure}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \hyperlink{namespacestf}{stf}
+
+
+\begin{DoxyCompactList}\small\item\em The stimfit namespace. \item\end{DoxyCompactList}
+
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename T $>$ }\\T \hyperlink{group__stfgen_ga29e77fd36f4c103444287e9c5b807ab9}{stf::linFit} (const std::vector$<$ T $>$ \&x, const std::vector$<$ T $>$ \&y, T \&m, T \&c)
+\begin{DoxyCompactList}\small\item\em Performs a linear fit. \item\end{DoxyCompactList}\item 
+double StfDll \hyperlink{group__stfgen_gacf43d0ea16185a30745919255f231c80}{stf::lmFit} (const Vector\_\-double \&data, double dt, const \hyperlink{structstf_1_1storedFunc}{stf::storedFunc} \&fitFunc, const Vector\_\-double \&opts, bool use\_\-scaling, Vector\_\-double \&p, \hyperlink{classwxString}{wxString} \&info, int \&warning)
+\begin{DoxyCompactList}\small\item\em Uses the Levenberg-\/Marquardt algorithm to perform a non-\/linear least-\/squares fit. \item\end{DoxyCompactList}\item 
+double \hyperlink{group__stfgen_ga96ce124f20c81dcdac988e31770b65c5}{stf::flin} (double x, const Vector\_\-double \&p)
+\begin{DoxyCompactList}\small\item\em Linear function. \item\end{DoxyCompactList}\item 
+\hypertarget{group__stfgen_gacf47eaaf817ab9f675c36f1b77811fd9}{
+void \hyperlink{group__stfgen_gacf47eaaf817ab9f675c36f1b77811fd9}{stf::flin\_\-init} (const Vector\_\-double \&data, double base, double peak, double dt, Vector\_\-double \&pInit)}
+\label{group__stfgen_gacf47eaaf817ab9f675c36f1b77811fd9}
+
+\begin{DoxyCompactList}\small\item\em Dummy function to be passed to \hyperlink{structstf_1_1storedFunc}{stf::storedFunc} for linear functions. \item\end{DoxyCompactList}\item 
+\hyperlink{structstf_1_1storedFunc}{stf::storedFunc} \hyperlink{group__stfgen_gacce99eda0b9fa51555b8b8adbfef7700}{stf::initLinFunc} ()
+\begin{DoxyCompactList}\small\item\em initializes a linear function \item\end{DoxyCompactList}\item 
+Vector\_\-double \hyperlink{group__stfgen_ga89d5f83830be9b0132ddb34c5d46d281}{stf::get\_\-scale} (Vector\_\-double \&data, double oldx)
+\begin{DoxyCompactList}\small\item\em Compute and perform normalisation. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Functions for linear and non-\/linear regression. \begin{DoxyAuthor}{Author}
+Christoph Schmidt-\/Hieber 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2008-\/01-\/16 
+\end{DoxyDate}
