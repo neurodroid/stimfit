@@ -2,7 +2,7 @@ stimfit (0.10.18-1) unstable; urgency=low
 
   * Updated copyright notice for numpy.i
 
- -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 10 Sep 15:46:33 +0000
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 10 Sep 2011 15:46:33 +0000
 
 stimfit (0.10.17-1oneiric1) oneiric; urgency=low
 
