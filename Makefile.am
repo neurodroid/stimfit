@@ -100,7 +100,7 @@ endif
 
 INCLUDES = $(LIBNUMPY_INCLUDES) $(PYTHON_ADDINCLUDES)
 
-EXTRA_DIST = ./src/stfswig/stfioswig.i ./src/stfswig/stfio.py ./src/stfswig/unittest_stfio.py ./src/stfswig/hdf5tools.py ./src/stfswig/test.h5
+EXTRA_DIST = ./src/stfswig/stfioswig.i ./src/stfswig/unittest_stfio.py ./src/stfswig/hdf5tools.py ./src/stfswig/test.h5
 
 libstfio_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
 libstfio_la_CXXFLAGS = $(OPT_CXXFLAGS)
