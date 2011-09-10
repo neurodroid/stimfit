@@ -1,3 +1,9 @@
+stimfit (0.10.18-1) unstable; urgency=low
+
+  * Updated copyright notice for numpy.i
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 10 Sep 15:46:33 +0000
+
 stimfit (0.10.17-1oneiric1) oneiric; urgency=low
 
   * Do not redirect Python stdio to separate Window (Closes: #639672)
@@ -32,7 +38,7 @@ stimfit (0.10.17-1lucid1) lucid; urgency=low
 
  -- Christoph Schmidt-Hieber <christsc@gmx.de>  Tue, 30 Aug 2011 22:38:59 +0000
 
-stimfit (0.10.17-1) unstable; urgency=low
+stimfit (0.10.17-1) UNRELEASED; urgency=low
 
   * Do not redirect Python stdio to separate Window (Closes: #639672)
   * From previous unreleased version: provide gtest source files (Closes: #631825)
