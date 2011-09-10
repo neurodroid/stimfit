@@ -74,6 +74,8 @@ stimfit
 stamp-h1
 stfswig_wrap.cxx
 stf.py
+stfioswig_wrap.cxx
+stfio.py
 
 .libs/
 src/stfswig/.libs/
