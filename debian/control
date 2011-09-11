@@ -13,7 +13,7 @@ Priority: optional
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, python-wxgtk2.8 (>= 2.8.9), python-numpy, python-matplotlib
 Recommends: python-scipy
-Description: A program for viewing and analyzing electrophysiological data
+Description: Program for viewing and analyzing electrophysiological data
  Stimfit is a free, fast and simple program for viewing and analyzing
  electrophysiological data. It features an embedded Python shell that
  allows you to extend the program functionality by using numerical
@@ -37,7 +37,7 @@ Priority: optional
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, python-numpy
 Recommends: python-matplotlib, python-scipy
-Description: A Python module to read common electrophysiology file formats.
+Description: Python module to read common electrophysiology file formats.
  The stfio module allows you to read common electrophysiology file formats
  from Python. Axon binaries (abf), Axon text (atf), HEKA (dat),
  CFS (dat/cfs), Axograph (axgd/axgx) are currently supported.
