@@ -73,6 +73,7 @@ binary-arch: build install
 #	dh_lintian
 #	dh_bugfiles
 #	dh_undocumented
+	dh_pysupport
 	dh_installman $(CURDIR)/man/stimfit.1
 	dh_install --sourcedir=$(CURDIR)/debian/tmp
 	dh_link

@@ -35,7 +35,7 @@ Package: python-stfio
 Section: python
 Priority: optional
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, python-numpy
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, python-numpy
 Recommends: python-matplotlib, python-scipy
 Description: Python module to read common electrophysiology file formats.
  The stfio module allows you to read common electrophysiology file formats
