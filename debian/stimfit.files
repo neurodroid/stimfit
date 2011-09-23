@@ -1,3 +1,5 @@
+usr/share/applications/stimfit.desktop
+usr/share/pixmaps/stimfit.png
 usr/lib/stimfit/*.py
 usr/lib/stimfit/*.so
 usr/bin/stimfit

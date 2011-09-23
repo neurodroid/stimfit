@@ -39,6 +39,11 @@ install: build
 	$(MAKE) -j4
 	$(MAKE) install
 
+	mkdir -p $(DEBPREFIX)/share/pixmaps
+	mkdir -p $(DEBPREFIX)/share/applications
+	cp src/icons/stimfit.png $(DEBPREFIX)/share/pixmaps/
+	cp debian/stimfit.desktop $(DEBPREFIX)/share/applications/
+
 	mkdir $(CURDIR)/man && \
 	  cp ./debian/stimfit.1 ./man/stimfit.1
 
@@ -58,13 +63,13 @@ binary-arch: build install
 	dh_installchangelogs
 	dh_installdocs
 	dh_installexamples
-#	dh_installmenu
+	dh_installmenu -pstimfit
 #	dh_installdebconf
 #	dh_installlogrotate
 #	dh_installemacsen
 #	dh_installcatalogs
 #	dh_installpam
-#	dh_installmime
+	dh_installmime -pstimfit
 #	dh_installinit
 #	dh_installcron
 #	dh_installinfo
@@ -80,6 +85,7 @@ binary-arch: build install
 	dh_compress
 	dh_strip --dbg-package=stimfit-dbg
 	dh_fixperms
+	dh_icons
 #	dh_perl
 	dh_makeshlibs
 	dh_shlibdeps

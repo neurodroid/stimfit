@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Stimfit
+GenericName=Stimfit
+Comment=View and analyze electrophysiology files
+TryExec=stimfit
+Exec=stimfit %F
+MimeType=application/x-foo;
+Categories=Science;
