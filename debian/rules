@@ -39,11 +39,6 @@ install: build
 	$(MAKE) -j4
 	$(MAKE) install
 
-	mkdir -p $(DEBPREFIX)/share/pixmaps
-	mkdir -p $(DEBPREFIX)/share/applications
-	cp src/icons/stimfit.png $(DEBPREFIX)/share/pixmaps/
-	cp debian/stimfit.desktop $(DEBPREFIX)/share/applications/
-
 	mkdir $(CURDIR)/man && \
 	  cp ./debian/stimfit.1 ./man/stimfit.1
 

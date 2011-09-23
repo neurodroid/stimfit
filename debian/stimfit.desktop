@@ -6,5 +6,6 @@ GenericName=Stimfit
 Comment=View and analyze electrophysiology files
 TryExec=stimfit
 Exec=stimfit %F
+Icon=stimfit
 MimeType=application/x-foo;
 Categories=Science;

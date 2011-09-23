@@ -283,6 +283,7 @@ EXTRA_DIST+= ./debian/stimfit.1
 EXTRA_DIST+= ./debian/stimfit.desktop
 EXTRA_DIST+= ./debian/stimfit.files
 EXTRA_DIST+= ./debian/stimfit.install
+EXTRA_DIST+= ./debian/stimfit.menu
 EXTRA_DIST+= ./src/test/gtest/CHANGES
 EXTRA_DIST+= ./src/test/gtest/CONTRIBUTORS
 EXTRA_DIST+= ./src/test/gtest/COPYING
@@ -323,12 +324,24 @@ install-exec-hook:
 	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstf.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstimfit.so
+	mkdir -p $(prefix)/share/pixmaps
+	mkdir -p $(prefix)/share/applications
+	cp $(top_srcdir)/src/icons/stimfit.png $(prefix)/share/pixmaps/stimfit.png
+	cp $(top_srcdir)/debian/stimfit.desktop $(prefix)/share/applications/
 else
 LTTARGET=$(prefix)/lib/stimfit
 install-exec-hook:
 	$(LIBTOOL) --finish $(LTTARGET)
 	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
+	mkdir -p $(prefix)/share/pixmaps
+	mkdir -p $(prefix)/share/applications
+	cp $(top_srcdir)/src/icons/stimfit.png $(prefix)/share/pixmaps/stimfit.png
+	cp $(top_srcdir)/debian/stimfit.desktop $(prefix)/share/applications/
 endif
+
+uninstall-hook:
+	rm -f $(prefix)/share/pixmaps/stimfit.png
+	rm -f $(prefix)/share/applications/stimfit.desktop
 
 # wxMac resource fork/unbundled app
 stimfit.app: stimfit

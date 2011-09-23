@@ -1,0 +1,5 @@
+?package(stimfit): needs="X11" section="Applications/Programming"\
+  hints="Documents"\
+  title="Stimfit" command="/usr/bin/stimfit"\
+  icon="/usr/share/pixmaps/stimfit.png"\
+  longtitle="View and analyze electrophysiology files"
