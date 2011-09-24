@@ -257,7 +257,6 @@ void wxStfGraph::OnDraw( wxDC& DC )
         DC.SetPen(standardPen);
         PlotTrace(&DC,Doc()->get()[Doc()->GetCurCh()][Doc()->GetCurSec()].get());
     } else {
-	//Draw average for print out
         //For print out use polyline tool
         DC.SetPen(standardPrintPen);
         PrintTrace(&DC,Doc()->get()[Doc()->GetCurCh()][Doc()->GetCurSec()].get());
@@ -707,7 +706,7 @@ void wxStfGraph::PrintScale(wxRect& WindowRect) {
     if ( printSizePen4 < 1 ) boebbelPrint=4;
 }
 
-void wxStfGraph::PrintTrace( wxDC* pDC, const Vector_double& trace, plottype pt ) {
+void wxStfGraph::PrintTrace( wxDC* pDC, const Vector_double& trace, plottype ptype ) {
     // speed up drawing by omitting points that are outside the window:
 
     // find point before left window border:
@@ -727,18 +726,21 @@ void wxStfGraph::PrintTrace( wxDC* pDC, const Vector_double& trace, plottype pt 
     int right=WindowRect.width;
     int xri=int((right-SPX())/XZ())+1;
     if (xri>=0 && xri<(int)trace.size()-1) end=xri;
-    DoPrint(pDC, trace, start, end, downsampling, pt);
+    DoPrint(pDC, trace, start, end, ptype);
 }
 
-void wxStfGraph::DoPrint( wxDC* pDC, const Vector_double trace, int start, int end, int downsampling, plottype pt) {
+void wxStfGraph::DoPrint( wxDC* pDC, const Vector_double& trace, int start, int end, plottype ptype) {
     boost::function<int(double)> yFormatFunc;
     
-    if (pt==active) {
-        yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD), this);
-    } else {
-        yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD2), this);
+    switch (ptype) {
+     case active:
+         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD), this);
+         break;
+     default:
+         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD2), this);
+         break;
     }
-    
+
     std::vector<wxPoint> points;
     int x_last = xFormat(start);
     int y_last = yFormatFunc( trace[start] );
@@ -1424,7 +1426,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
 {
     // catch bizarre y-Zooms:
     double fstartPosY=(double)SPY();
-    if (fabs(fstartPosY)>(double)stf::pow2(16))
+    if (fabs(fstartPosY)>(double)1.0e20)
         SPYW()=0;
     if (fabs(YZ())>1e15)
         YZW()=1.0;

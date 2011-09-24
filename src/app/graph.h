@@ -344,8 +344,8 @@ public:
     void PlotTrace( wxDC* pDC, const Vector_double& trace, plottype pt=active, int bgno=0 );
     void DoPlot( wxDC* pDC, const Vector_double& trace, int start, int end, int step, plottype pt=active, int bgno=0 );
     void PrintScale(wxRect& WindowRect);
-    void PrintTrace( wxDC* pDC, const Vector_double& trace, plottype pt=active);
-    void DoPrint( wxDC* pDC, const Vector_double trace, int start, int end, int downsampling, plottype pt=active);
+    void PrintTrace( wxDC* pDC, const Vector_double& trace, plottype ptype=active);
+    void DoPrint( wxDC* pDC, const Vector_double& trace, int start, int end, plottype ptype=active);
     void DrawCircle(wxDC* pDC, double x, double y, const wxPen& pen, const wxPen& printPen);
     void DrawVLine(wxDC* pDC, double x, const wxPen& pen, const wxPen& printPen);
     void DrawHLine(wxDC* pDC, double y, const wxPen& pen, const wxPen& printPen);
