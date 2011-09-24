@@ -18,7 +18,7 @@
 	<key>CFBundleExecutable</key>
 	<string>stimfit</string>
 	<key>CFBundleIconFile</key>
-	<string>wxmac.icns</string>
+	<string>stimfit.icns</string>
 	<key>CFBundleName</key>
 	<string>stimfit</string>
 	<key>CFBundlePackageType</key>

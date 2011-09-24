@@ -261,7 +261,7 @@ EXTRA_DIST+= ./autogen.sh
 EXTRA_DIST+= ./macosx/scripts/conf_mac_release.sh
 EXTRA_DIST+= ./macosx/scripts/change_deps_release.sh
 EXTRA_DIST+= ./macosx/app.r
-EXTRA_DIST+= ./macosx/wxmac.icns
+EXTRA_DIST+= ./macosx/stimfit.icns
 # EXTRA_DIST+= ./src/stfswig/stfioswig_wrap.cxx 
 # EXTRA_DIST+= ./src/stfswig/stfio.py 
 EXTRA_DIST+= ./src/stfswig/stfioswig.cxx 
@@ -360,5 +360,5 @@ endif
 	$(POSTLINK_COMMAND) stimfit.app/Contents/MacOS/stimfit$(EXEEXT) \
 	                    $(srcdir)/macosx/app.r
 	$(MACSETFILE) -a C stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
-	cp -f $(top_srcdir)/macosx/wxmac.icns stimfit.app/Contents/Resources/wxmac.icns
+	cp -f $(top_srcdir)/macosx/stimfit.icns stimfit.app/Contents/Resources/stimfit.icns
 endif
