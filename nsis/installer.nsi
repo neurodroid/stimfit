@@ -16,11 +16,11 @@ SetCompressor lzma
 !define PRODUCT_VERSION "0.10.18"
 !define WXW_VERSION "2.9.1.1"
 !define WXW_VERSION_SHORT "291"
-!define PY_VERSION "2.7.1"
+!define PY_VERSION "2.7.2"
 !define PY_MAJOR "2.7"
 !define PY_MIN "2.7"
 Var PY_ACT
-!define NP_VERSION "1.6.0"
+!define NP_VERSION "1.6.1"
 !define MPL_VERSION "1.0.1"
 !define EXE_NAME "stimfit"
 !define REG_NAME "Stimfit 0.10"

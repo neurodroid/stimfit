@@ -1,2 +1,2 @@
-sample ICON "sample.ico"
+sample ICON "stimfit.ico"
 #include "wx/msw/wx.rc"

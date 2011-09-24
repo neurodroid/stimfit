@@ -362,6 +362,15 @@
 				<File
 					RelativePath="..\..\src\stfswig\stfioswig.i"
 					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="&quot;C:\cygwin\bin\swig.exe&quot; -c++ -python &quot;$(InputPath)&quot;"
+							Outputs="$(InputName)_wrap.cxx"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\src\stfswig\stfioswig_wrap.cxx"
