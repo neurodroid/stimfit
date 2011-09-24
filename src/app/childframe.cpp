@@ -190,7 +190,7 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
     }
 
     // value argument is the number of traces
-    sizeStr << "(" << value << ")"; // gives asserts on OS X: wxString::Format(wxT("%3d"), value);
+    sizeStr << wxT("(") << value << wxT(")"); // gives asserts on OS X: wxString::Format(wxT("%3d"), value);
     pSize->SetLabel(sizeStr);
     // Show selected
     pShowSelected = new wxCheckBox( m_traceCounter, ID_PLOTSELECTED, wxT("Show selected       "));

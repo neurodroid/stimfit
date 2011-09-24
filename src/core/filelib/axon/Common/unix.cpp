@@ -85,7 +85,7 @@ BOOL WINAPI c_ReadFile( FILEHANDLE hFile, LPVOID buffer, DWORD bytesToRead,
 DWORD WINAPI c_SetFilePointer( FILEHANDLE hFile, LONG distance, LONG *highword, DWORD method )
 {
 #ifndef _WINDOWS
-    long     res;
+    /*long     res;*/
     short    origin = 0;
 
     switch (method)
@@ -97,7 +97,7 @@ DWORD WINAPI c_SetFilePointer( FILEHANDLE hFile, LONG distance, LONG *highword, 
      case FILE_END : origin = SEEK_END;                      /* end of file */
          break;
     }
-    res = fseek (hFile, distance, origin);                 /* stdio read */
+    /* res = */ fseek (hFile, distance, origin);                 /* stdio read */
     return (DWORD) ftell(hFile);
 #else
     return SetFilePointer( hFile, distance, highword, method );

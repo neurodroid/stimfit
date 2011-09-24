@@ -579,8 +579,11 @@ BundleHeader getBundleHeader(FILE* fh) {
     BundleHeader header;
 
     int res = 0;
-    res = fseek(fh, 0, SEEK_SET);
+    /* res = */ fseek(fh, 0, SEEK_SET);
     res = fread(&header, sizeof(BundleHeader), 1, fh);
+    if (res != 1)
+        throw std::runtime_error("getBundleHeader: Error in fread()");
+
     return header;
 }
 
@@ -588,6 +591,8 @@ RootRecord getRoot(FILE* fh, bool needsByteSwap) {
     int res = 0;
     RootRecord rec;
     res = fread(&rec, sizeof(RootRecord), 1, fh);
+    if (res != 1)
+        throw std::runtime_error("getBundleHeader: Error in fread()");
     if (needsByteSwap) {
         SwapRoot(rec);
     }
@@ -598,6 +603,8 @@ GroupRecord getGroup(FILE* fh, bool needsByteSwap) {
     int res = 0;
     GroupRecord rec;
     res = fread(&rec, sizeof(GroupRecord), 1, fh);
+    if (res != 1)
+        throw std::runtime_error("getBundleHeader: Error in fread()");
     if (needsByteSwap) {
         SwapGroup(rec);
     }
@@ -608,6 +615,8 @@ SeriesRecord getSeries(FILE* fh, bool needsByteSwap) {
     int res = 0;
     SeriesRecord rec;
     res = fread(&rec, sizeof(SeriesRecord), 1, fh);
+    if (res != 1)
+        throw std::runtime_error("getBundleHeader: Error in fread()");
     if (needsByteSwap) {
         SwapSeries(rec);
     }
@@ -618,6 +627,8 @@ SweepRecord getSweep(FILE* fh, bool needsByteSwap) {
     int res = 0;
     SweepRecord rec;
     res = fread(&rec, sizeof(SweepRecord), 1, fh);
+    if (res != 1)
+        throw std::runtime_error("getBundleHeader: Error in fread()");
     if (needsByteSwap) {
         SwapSweep(rec);
     }
@@ -628,6 +639,8 @@ TraceRecord getTrace(FILE* fh, bool needsByteSwap) {
     int res = 0;
     TraceRecord rec;
     res = fread(&rec, sizeof(TraceRecord), 1, fh);
+    if (res != 1)
+        throw std::runtime_error("getBundleHeader: Error in fread()");
     if (needsByteSwap) {
         SwapTrace(rec);
     }
@@ -683,6 +696,8 @@ int getOneLevel(FILE* fh, const std::vector<int>& Sizes, Level level, Tree& Tree
     int nchild = 0;
     int res = 0;
     res = fread(&nchild, sizeof(int), 1, fh);
+    if (res != 1)
+        throw std::runtime_error("getBundleHeader: Error in fread()");
     if (TreeInOut.needsByteSwap) {
         ByteSwap32(nchild);
     }
@@ -766,6 +781,8 @@ void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInO
                  /*int16*/
                  std::vector<short> tmpSection(npoints);
                  res = fread(&tmpSection[0], sizeof(short), npoints, fh);
+                 if (res != npoints)
+                     throw std::runtime_error("getBundleHeader: Error in fread()");
                  if (tree.needsByteSwap) 
                      std::for_each(tmpSection.begin(), tmpSection.end(), ShortByteSwap);
 
@@ -776,6 +793,8 @@ void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInO
                  /*int32*/
                  std::vector<int> tmpSection(npoints);
                  res = fread(&tmpSection[0], sizeof(int), npoints, fh);
+                 if (res != npoints)
+                     throw std::runtime_error("getBundleHeader: Error in fread()");
                  if (tree.needsByteSwap) 
                      std::for_each(tmpSection.begin(), tmpSection.end(), IntByteSwap);
                  std::copy(tmpSection.begin(), tmpSection.end(), RecordingInOut[nc][ns].get_w().begin());
@@ -785,6 +804,8 @@ void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInO
                  /*double16*/
                  std::vector<float> tmpSection(npoints);
                  res = fread(&tmpSection[0], sizeof(float), npoints, fh);
+                 if (res != npoints)
+                     throw std::runtime_error("getBundleHeader: Error in fread()");
                  if (tree.needsByteSwap) 
                      std::for_each(tmpSection.begin(), tmpSection.end(), FloatByteSwap);
                  std::copy(tmpSection.begin(), tmpSection.end(), RecordingInOut[nc][ns].get_w().begin());
@@ -794,6 +815,8 @@ void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInO
                  /*double32*/
                  std::vector<double> tmpSection(npoints);
                  res = fread(&tmpSection[0], sizeof(double), npoints, fh);
+                 if (res != npoints)
+                     throw std::runtime_error("getBundleHeader: Error in fread()");
                  if (tree.needsByteSwap) 
                      std::for_each(tmpSection.begin(), tmpSection.end(), DoubleByteSwap);
                  std::copy(tmpSection.begin(), tmpSection.end(), RecordingInOut[nc][ns].get_w().begin());
@@ -888,9 +911,13 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
     fseek(dat_fh, start, SEEK_SET);
     char cMagic[4];
     res = fread(&cMagic[0], sizeof(char), 4, dat_fh);
+    if (res != 4)
+        throw std::runtime_error("getBundleHeader: Error in fread()");
     std::string magic(cMagic);
     int levels = 0;
     res = fread(&levels, sizeof(int), 1, dat_fh);
+    if (res != 1)
+        throw std::runtime_error("getBundleHeader: Error in fread()");
     if (needsByteSwap) {
         ByteSwap32(levels);
     }

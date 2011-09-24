@@ -106,7 +106,7 @@ void wxStfGrid::Copy(wxCommandEvent& WXUNUSED(event)) {
     selection.Clear();
     bool newline=true;
     for (int nRow=0;nRow<GetNumberRows();++nRow) {
-        bool selected=false;
+        /* bool selected=false;*/
         newline=true;
         for (int nCol=0;nCol<GetNumberCols();++nCol) {
             if (IsInSelection(nRow,nCol)) {
@@ -120,7 +120,7 @@ void wxStfGrid::Copy(wxCommandEvent& WXUNUSED(event)) {
                 newline=false;
                 try {
                     selection << GetCellValue(nRow,nCol);
-                    selected=true;
+                    /* selected=true;*/
                 }
                 catch (const std::out_of_range& e) {
                     throw e;

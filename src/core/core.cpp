@@ -229,12 +229,12 @@ extern "C" {
 #endif
 
 double stf::fgauss(double x, const Vector_double& pars) {
-    double y=0.0, fac=0.0, ex=0.0, arg=0.0;
+    double y=0.0, /* fac=0.0, */ ex=0.0, arg=0.0;
     int npars=static_cast<int>(pars.size());
     for (int i=0; i < npars-1; i += 3) {
         arg=(x-pars[i+1])/pars[i+2];
         ex=exp(-arg*arg);
-        fac=pars[i]*ex*2.0*arg;
+        /* fac=pars[i]*ex*2.0*arg; */
         y += pars[i] * ex;
     }
     return y;
