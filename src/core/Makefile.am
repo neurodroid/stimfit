@@ -69,7 +69,7 @@ else
 noinst_LTLIBRARIES = libstfcore.la
 
 libstfcore_la_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp \
-	    ./core.cpp ./fitlib.cpp ./filelib/asciilib.cpp \
+	    ./core.cpp ./stfio.cpp ./fitlib.cpp ./filelib/asciilib.cpp \
 	    ./filelib/cfslib.cpp ./filelib/cfs.c \
             ./filelib/abflib.cpp ./filelib/atflib.cpp \
 	    ./filelib/axon/AxAbfFio32/abffiles.cpp \
@@ -90,7 +90,7 @@ libstfcore_la_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp \
             ./levmar/lm.c ./levmar/Axb.c ./levmar/misc.c ./levmar/lmlec.c ./levmar/lmbc.c 
 
 noinst_HEADERS =  ./channel.h ./section.h ./recording.h ./core.h \
-            ./stimdefs.h ./fitlib.h ./spline.h ./measlib.h \
+            ./stimdefs.h ./stfio.h ./fitlib.h ./spline.h ./measlib.h \
             ./filelib/asciilib.h ./filelib/cfslib.h \
             ./filelib/abflib.h ./filelib/atflib.h \
             ./filelib/cfs.h ./filelib/machine.h \

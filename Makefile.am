@@ -19,6 +19,7 @@ nodist_libstfio_la_SOURCES = ./src/stfswig/stfioswig_wrap.cxx
 libstfio_la_SOURCES =  ./src/stfswig/stfioswig.cxx \
 	./src/core/channel.cpp ./src/core/section.cpp ./src/core/recording.cpp \
 	./src/core/core.cpp \
+	./src/core/stfio.cpp \
 	./src/core/filelib/cfslib.cpp ./src/core/filelib/cfs.c ./src/core/filelib/hdf5lib.cpp \
 	./src/core/filelib/abflib.cpp \
 	./src/core/filelib/axon/AxAbfFio32/abffiles.cpp \
@@ -54,6 +55,7 @@ endif
 # 
 noinst_HEADERS = ./src/stfswig/stfioswig.h ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
             ./src/core/stimdefs.h \
+            ./src/core/stfio.h \
             ./src/core/filelib/cfslib.h ./src/core/filelib/hdf5lib.h\
             ./src/core/filelib/abflib.h ./src/core/filelib/atflib.h ./src/core/filelib/axglib.h \
             ./src/core/filelib/cfs.h ./src/core/filelib/machine.h \
@@ -141,7 +143,7 @@ stimfittest_SOURCES = ./src/test/section.cpp ./src/test/channel.cpp ./src/test/r
             ./src/test/gtest/src/gtest-all.cc ./src/test/gtest/src/gtest_main.cc
 
 noinst_HEADERS = ./src/core/channel.h ./src/core/section.h ./src/core/recording.h ./src/core/core.h \
-            ./src/core/stimdefs.h ./src/core/fitlib.h ./src/core/spline.h ./src/core/measlib.h \
+            ./src/core/stimdefs.h ./src/core/stfio.h ./src/core/fitlib.h ./src/core/spline.h ./src/core/measlib.h \
             ./src/core/filelib/asciilib.h ./src/core/filelib/cfslib.h ./src/core/filelib/hdf5lib.h\
             ./src/core/filelib/abflib.h ./src/core/filelib/atflib.h ./src/core/filelib/axglib.h \
             ./src/core/filelib/cfs.h ./src/core/filelib/machine.h \
