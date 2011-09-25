@@ -31,17 +31,13 @@
 #include <ctime>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <algorithm> //required for std::swap
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
-#ifndef MODULE_ONLY
-#include <wx/wxprec.h>
-#include <wx/progdlg.h>
-#include <wx/msgdlg.h>
-#endif
 
-#include "./../core.h"
+#include "./../stfio.h"
 #include "./hekalib.h"
 
 #define C_ASSERT(e) extern void __C_ASSERT__(int [(e)?1:-1])
@@ -733,11 +729,9 @@ std::string time2date(double t) {
     return datestr;
 }
 
-void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInOut
-#ifndef MODULE_ONLY
-                   , wxProgressDialog& progDlg
-#endif
-                  ) {
+void ReadData(FILE* fh, const Tree& tree, Recording& RecordingInOut,
+              stfio::ProgressInfo& progDlg)
+{
 
     int nsweeps = tree.SweepList.size();
     int ntraces = tree.TraceList.size();
@@ -751,27 +745,21 @@ void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInO
             // nstree=nc; nstree<ntraces; nstree += nchannels) {
             // int ns = nstree/nchannels;
             int nstree = (ns*nchannels)+nc;
-            if (progress) {
-                int progbar =
-                    // Channel contribution:
-                    (int)(((double)nc/(double)nchannels)*100.0+
-                          // Section contribution:
-                          (double)ns/(double)nsweeps*(100.0/nchannels));
-#ifndef MODULE_ONLY
-                wxString progStr;
-                progStr << wxT("Reading channel #") << nc + 1 << wxT(" of ") << nchannels
-                        << wxT(", Section #") << ns + 1 << wxT(" of ") << nsweeps;
-                bool skip = false;
-                progDlg.Update(progbar, progStr, &skip);
-                if (skip) {
-                    RecordingInOut.resize(0);
-                    return;
-                }
-#else
-                std::cout << "\r";
-                std::cout << progbar << "%" << std::flush;
-#endif
+            int progbar =
+                // Channel contribution:
+                (int)(((double)nc/(double)nchannels)*100.0+
+                      // Section contribution:
+                      (double)ns/(double)nsweeps*(100.0/nchannels));
+            std::ostringstream progStr;
+            progStr << "Reading channel #" << nc + 1 << " of " << nchannels
+                    << ", Section #" << ns + 1 << " of " << nsweeps;
+            bool skip = false;
+            progDlg.Update(progbar, progStr.str(), &skip);
+            if (skip) {
+                RecordingInOut.resize(0);
+                return;
             }
+
             int npoints = tree.TraceList[nstree].TrDataPoints;
             RecordingInOut[nc][ns].resize(npoints);
 
@@ -836,8 +824,8 @@ void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInO
                 RecordingInOut[nc].SetYUnits(tree.TraceList[nc].TrYUnit);
             }
             factor *=  tree.TraceList[nc].TrDataScaler;
-            RecordingInOut[nc][ns].get_w() = stf::vec_scal_mul(RecordingInOut[nc][ns].get(), factor);
-            RecordingInOut[nc][ns].get_w() = stf::vec_scal_plus(RecordingInOut[nc][ns].get(), tree.TraceList[nc].TrZeroData);
+            RecordingInOut[nc][ns].get_w() = stfio::vec_scal_mul(RecordingInOut[nc][ns].get(), factor);
+            RecordingInOut[nc][ns].get_w() = stfio::vec_scal_plus(RecordingInOut[nc][ns].get(), tree.TraceList[nc].TrZeroData);
         }
         RecordingInOut[nc].SetChannelName(tree.TraceList[nc].TrLabel);
         
@@ -857,31 +845,17 @@ void ReadData(FILE* fh, const Tree& tree, bool progress, Recording& RecordingInO
 
 }
 
-void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool progress) {
+void stfio::importHEKAFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
     std::string warnStr("Warning: HEKA support is experimental.\n" \
         "Please check sampling rate and report errors to\nchristsc_at_gmx.de." );
-#ifndef MODULE_ONLY
-#if wxCHECK_VERSION(2, 9, 0)
-    wxMessageDialog warnDlg(NULL, wxString(warnStr.c_str()), wxT("Warning"));
-#else
-    wxMessageDialog warnDlg(NULL, wxString(warnStr.c_str(), wxConvUTF8), wxT("Warning"));
-#endif
-    warnDlg.ShowModal();
-    wxProgressDialog progDlg(wxT("HEKA binary file import"), wxT("Starting file import"),
-                             100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_SKIP );
-#else
-    std::cerr << warnStr << std::endl;
-#endif
-    wxString errorMsg(wxT("Exception while calling importHEKAFile():\n"));
-    wxString yunits;
+    progDlg.Update(0, warnStr);
+
+    std::string errorMsg("Exception while calling importHEKAFile():\n");
+    std::string yunits;
     int res = 0;
     
     // Open file
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     FILE* dat_fh = fopen(fName.c_str(), "rb");
-#else
-    FILE* dat_fh = fopen(fName.mb_str(), "rb");
-#endif
     
     if (dat_fh==NULL) {
         return;
@@ -949,18 +923,7 @@ void stf::importHEKAFile(const wxString &fName, Recording &ReturnData, bool prog
     fseek(dat_fh, start, SEEK_SET);
 
     // NOW IMPORT
-    ReadData(dat_fh, tree, progress, ReturnData
-#ifndef MODULE_ONLY
-                          , progDlg
-#endif
-                         );
-
-#ifdef MODULE_ONLY
-    if (progress) {
-        std::cout << "\r";
-        std::cout << "100%" << std::endl;
-    }
-#endif
+    ReadData(dat_fh, tree, ReturnData, progDlg);
 
     // Close file
     fclose(dat_fh);

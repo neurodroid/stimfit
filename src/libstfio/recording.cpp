@@ -13,12 +13,11 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-#include "./core.h"
 #include "./recording.h"
 
-#ifndef MODULE_ONLY
-    #include "./measlib.h"
-#endif
+#include "./measure.h"
+
+#include <sstream>
 
 Recording::Recording(void)
     : ChannelArray(0)
@@ -54,15 +53,13 @@ void Recording::init() {
     xunits =  "ms" ;
     dt = 1.0;
 
-#ifndef MODULE_ONLY
-
-    latencyStartMode = stf::riseMode;
-    latencyEndMode = stf::footMode;
-    latencyWindowMode = stf::defaultMode;
-    direction = stf::both;    
+    latencyStartMode = stfio::riseMode;
+    latencyEndMode = stfio::footMode;
+    latencyWindowMode = stfio::defaultMode;
+    direction = stfio::both;    
 #ifdef WITH_PSLOPE
-    pslopeBegMode = stf::psBeg_manualMode;
-    pslopeEndMode = stf::psEnd_manualMode;
+    pslopeBegMode = stfio::psBeg_manualMode;
+    pslopeEndMode = stfio::psEnd_manualMode;
     PSlopeBeg = 0;
     PSlopeEnd = 0;
     DeltaT = 0;
@@ -133,9 +130,6 @@ void Recording::init() {
     viewLatency = true;
     viewCursors = true;
     zoom = XZoom(0, 0.1, false);
-
-#endif
-
 }
 
 Recording::~Recording() {
@@ -216,8 +210,6 @@ void Recording::SetXScale(double value) {
     }
 }
 
-#ifndef MODULE_ONLY
-
 void Recording::correctRangeR(int& value) {
     if (value<0) {
         value=0;
@@ -270,46 +262,46 @@ void Recording::CopyCursors(const Recording& c_Recording) {
 void Recording::SetLatencyStartMode(int value) {
     switch (value) {
     case 1:
-        latencyStartMode=stf::peakMode;
+        latencyStartMode=stfio::peakMode;
         break;
     case 2:
-        latencyStartMode=stf::riseMode;
+        latencyStartMode=stfio::riseMode;
         break;
     case 3:
-        latencyStartMode=stf::halfMode;
+        latencyStartMode=stfio::halfMode;
         break;
     case 4:
-        latencyStartMode=stf::footMode;
+        latencyStartMode=stfio::footMode;
     case 0:
     default:
-        latencyStartMode=stf::manualMode;
+        latencyStartMode=stfio::manualMode;
     }
 }
 
 void Recording::SetLatencyEndMode(int value) {
     switch (value) {
     case 1:
-        latencyEndMode=stf::peakMode;
+        latencyEndMode=stfio::peakMode;
         break;
     case 2:
-        latencyEndMode=stf::riseMode;
+        latencyEndMode=stfio::riseMode;
         break;
     case 3:
-        latencyEndMode=stf::halfMode;
+        latencyEndMode=stfio::halfMode;
         break;
     case 4:
-        latencyEndMode=stf::footMode;
+        latencyEndMode=stfio::footMode;
     case 0:
     default:
-        latencyEndMode=stf::manualMode;
+        latencyEndMode=stfio::manualMode;
     }
 }
 
 void Recording::SetLatencyWindowMode(int value) {
     if ( value == 1 ) {
-        latencyWindowMode = stf::windowMode;
+        latencyWindowMode = stfio::windowMode;
     } else {
-        latencyWindowMode = stf::defaultMode;
+        latencyWindowMode = stfio::defaultMode;
     }
 }
 
@@ -515,11 +507,11 @@ void Recording::Measure( )
     //Begin peak and base calculation
     //-------------------------------
     try {
-        base=stf::base(var,cur().get(),baseBeg,baseEnd);
+        base=stfio::base(var,cur().get(),baseBeg,baseEnd);
         baseSD=sqrt(var);
-        peak=stf::peak(cur().get(),base,
+        peak=stfio::peak(cur().get(),base,
                        peakBeg,peakEnd,pM,direction,maxT);
-        threshold = stf::threshold( cur().get(), peakBeg, peakEnd, slopeForThreshold/GetSR(), thrT );
+        threshold = stfio::threshold( cur().get(), peakBeg, peakEnd, slopeForThreshold/GetSR(), thrT );
     }
     catch (const std::out_of_range& e) {
         base=0.0;
@@ -540,7 +532,7 @@ void Recording::Measure( )
     t20Real=0.0;
     try {
         // 2008-04-27: changed limits to start from the beginning of the trace
-        rt2080=stf::risetime(cur().get(),reference,ampl, (double)0/*(double)baseEnd*/,
+        rt2080=stfio::risetime(cur().get(),reference,ampl, (double)0/*(double)baseEnd*/,
                 maxT,t20Index,t80Index,t20Real);
     }
     catch (const std::out_of_range& e) {
@@ -556,7 +548,7 @@ void Recording::Measure( )
     t50LeftReal=0.0;
     // 2008-04-27: changed limits to start from the beginning of the trace
     //             and to stop at the end of the trace
-    halfDuration = stf::t_half(cur().get(), reference, ampl, (double)0 /*(double)baseBeg*/,
+    halfDuration = stfio::t_half(cur().get(), reference, ampl, (double)0 /*(double)baseBeg*/,
             (double)cur().size()-1 /*(double)peakEnd*/,maxT, t50LeftIndex,t50RightIndex,t50LeftReal);
 
     t50RightReal=t50LeftReal+halfDuration;
@@ -564,7 +556,7 @@ void Recording::Measure( )
     t50Y=0.5*ampl + reference;
 
     //Calculate the beginning of the event by linear extrapolation:
-    if (latencyEndMode==stf::footMode) {
+    if (latencyEndMode==stfio::footMode) {
         t0Real=t20Real-(t80Real-t20Real)/3.0;
     } else {
         t0Real=t50LeftReal;
@@ -573,10 +565,10 @@ void Recording::Measure( )
     //Begin Ratio of slopes rise/decay calculation
     //--------------------------------------------
     double left_rise = (peakBeg > t0Real-1 || !fromBase) ? peakBeg : t0Real-1;
-    maxRise=stf::maxRise(cur().get(),left_rise,maxT,maxRiseT,maxRiseY);
+    maxRise=stfio::maxRise(cur().get(),left_rise,maxT,maxRiseT,maxRiseY);
     double t_half_3=t50RightIndex+2.0*(t50RightIndex-t50LeftIndex);
     double right_decay=peakEnd<=t_half_3 ? peakEnd : t_half_3+1;
-    maxDecay=stf::maxDecay(cur().get(),maxT,right_decay,maxDecayT,maxDecayY);
+    maxDecay=stfio::maxDecay(cur().get(),maxT,right_decay,maxDecayT,maxDecayY);
     //Slope ratio
     if (maxDecay !=0) slopeRatio=maxRise/maxDecay;
     else slopeRatio=0.0;
@@ -594,8 +586,8 @@ void Recording::Measure( )
         const int searchRange=100;
         double APBase=0.0, APPeak=0.0, APVar=0.0;
         try {
-            APBase=stf::base(APVar,sec().get(),0,endResting);
-            APPeak=stf::peak(sec().get(),APBase,peakBeg,peakEnd,pM,stf::up,APMaxT);
+            APBase=stfio::base(APVar,sec().get(),0,endResting);
+            APPeak=stfio::peak(sec().get(),APBase,peakBeg,peakEnd,pM,stfio::up,APMaxT);
         }
         catch (const std::out_of_range& e) {
             APBase=0.0;
@@ -608,11 +600,11 @@ void Recording::Measure( )
         APMaxRiseT=0.0;
         double APMaxRiseY=0.0;
         double left_APRise = peakBeg; 
-        if (GetLatencyWindowMode() == stf::defaultMode ) {
+        if (GetLatencyWindowMode() == stfio::defaultMode ) {
             left_APRise= APMaxT-searchRange>2.0 ? APMaxT-searchRange : 2.0;
         }
         try {
-            stf::maxRise(sec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY);
+            stfio::maxRise(sec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY);
         }
         catch (const std::out_of_range& e) {
             APMaxRiseT=0.0;
@@ -627,7 +619,7 @@ void Recording::Measure( )
         //Half-maximal amplitude
         //----------------------------
         std::size_t APt50LeftIndex,APt50RightIndex;
-        stf::t_half(
+        stfio::t_half(
                 sec().get(),
                 APBase,
                 APPeak-APBase,
@@ -648,16 +640,16 @@ void Recording::Measure( )
     // Interestingly, latencyCursor is an int in pascal, although
     // the maxTs aren't. That's why there are double type casts
     // here.
-    case stf::peakMode: //Latency cursor is set to the peak						
+    case stfio::peakMode: //Latency cursor is set to the peak						
         latStart=APMaxT;
         break;
-    case stf::riseMode:
+    case stfio::riseMode:
         latStart=APMaxRiseT;
         break;
-    case stf::halfMode:
+    case stfio::halfMode:
         latStart=APt50LeftReal;
         break;
-    case stf::manualMode:
+    case stfio::manualMode:
     default:
         latStart=GetLatencyBeg();
         break;
@@ -670,19 +662,19 @@ void Recording::Measure( )
     // Interestingly, latencyCursor is an int in pascal, although
     // the maxTs aren't. That's why there are double type casts
     // here.
-    case stf::footMode: //Latency cursor is set to the peak						
+    case stfio::footMode: //Latency cursor is set to the peak						
         latEnd=t20Real-(t80Real-t20Real)/3.0;
         break;
-    case stf::riseMode:
+    case stfio::riseMode:
         latEnd=maxRiseT;
         break;
-    case stf::halfMode:
+    case stfio::halfMode:
         latEnd=t50LeftReal;
         break;
-    case stf::peakMode:
+    case stfio::peakMode:
         latEnd=maxT;
         break;
-    case stf::manualMode:
+    case stfio::manualMode:
     default:
         latEnd=GetLatencyEnd();
         break;
@@ -700,19 +692,19 @@ void Recording::Measure( )
     int PSlopeBegVal; 
     switch (pslopeBegMode) {
 
-        case stf::psBeg_footMode:   // Left PSlope to commencement
+        case stfio::psBeg_footMode:   // Left PSlope to commencement
             PSlopeBegVal = (int)(t20Real-(t80Real-t20Real)/3.0);
             break;
 
-        case stf::psBeg_thrMode:   // Left PSlope to threshold
+        case stfio::psBeg_thrMode:   // Left PSlope to threshold
             PSlopeBegVal = (int)thrT;
             break;
 
-        case stf::psBeg_t50Mode:   // Left PSlope to the t50
+        case stfio::psBeg_t50Mode:   // Left PSlope to the t50
             PSlopeBegVal = (int)t50LeftReal;
             break;
 
-        case stf::psBeg_manualMode: // Left PSlope cursor manual
+        case stfio::psBeg_manualMode: // Left PSlope cursor manual
         default:
             PSlopeBegVal = PSlopeBeg;
     }
@@ -721,23 +713,23 @@ void Recording::Measure( )
     int PSlopeEndVal;
     switch (pslopeEndMode) {
 
-        case stf::psEnd_t50Mode:    // Right PSlope to t50rigth
+        case stfio::psEnd_t50Mode:    // Right PSlope to t50rigth
             PSlopeEndVal = (int)t50LeftReal;
             break;
-        case stf::psEnd_peakMode:   // Right PSlope to peak
+        case stfio::psEnd_peakMode:   // Right PSlope to peak
             PSlopeEndVal = (int)maxT;
             break;
-        case stf::psEnd_DeltaTMode: // Right PSlope to DeltaT time from first peak
+        case stfio::psEnd_DeltaTMode: // Right PSlope to DeltaT time from first peak
             PSlopeEndVal = (int)(PSlopeBeg + DeltaT);
             break;
-        case stf::psEnd_manualMode:
+        case stfio::psEnd_manualMode:
         default:
             PSlopeEndVal = PSlopeEnd;
     }
     SetPSlopeEnd(PSlopeEndVal);
 
     try {
-        PSlope = (stf::pslope(cur().get(), PSlopeBeg, PSlopeEnd))*GetSR();
+        PSlope = (stfio::pslope(cur().get(), PSlopeBeg, PSlopeEnd))*GetSR();
     }
     catch (const std::out_of_range& e) {
         PSlope = 0.0;
@@ -780,24 +772,19 @@ void Recording::AddRec(const Recording &toAdd) {
     }
 }
 
-stf::Table Recording::CurAsTable() const {
-    stf::Table table(cur().size(),size());
+stfio::Table Recording::CurAsTable() const {
+    stfio::Table table(cur().size(),size());
     try {
         for (std::size_t nRow=0;nRow<table.nRows();++nRow) {
-            wxString rLabel;
+            std::ostringstream rLabel;
             rLabel << nRow*dt;
-            table.SetRowLabel(nRow,rLabel);
+            table.SetRowLabel(nRow,rLabel.str());
             for (std::size_t nCol=0;nCol<table.nCols();++nCol) {
                 table.at(nRow,nCol)=ChannelArray.at(nCol).at(cs).at(nRow);
             }
         }
         for (std::size_t nCol=0;nCol<table.nCols();++nCol) {
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
             table.SetColLabel(nCol, ChannelArray.at(nCol).GetChannelName());
-#else
-            table.SetColLabel(nCol,
-                              wxString(ChannelArray.at(nCol).GetChannelName().c_str(), wxConvUTF8));
-#endif
         }
     }
     catch (const std::out_of_range& e) {
@@ -806,7 +793,7 @@ stf::Table Recording::CurAsTable() const {
     return table;
 }
 
-stf::Table Recording::CurResultsTable() {
+stfio::Table Recording::CurResultsTable() {
     // resize table:
     std::size_t n_cols=0;
     if (viewCrosshair) n_cols++;
@@ -827,30 +814,30 @@ stf::Table Recording::CurResultsTable() {
 #endif
 
     std::size_t n_rows=(viewCursors? 3:1);
-    stf::Table table(n_rows,n_cols);
+    stfio::Table table(n_rows,n_cols);
 
     // Labels
-    table.SetRowLabel(0,wxT("Value"));
+    table.SetRowLabel(0, "Value");
     if (viewCursors) {
-        table.SetRowLabel(1,wxT("Cursor 1"));
-        table.SetRowLabel(2,wxT("Cursor 2"));
+        table.SetRowLabel(1, "Cursor 1");
+        table.SetRowLabel(2, "Cursor 2");
     }
     int nCol=0;
-    if (viewCrosshair) table.SetColLabel(nCol++, wxT("Crosshair"));
-    if (viewBaseline) table.SetColLabel(nCol++,wxT("Baseline"));
-    if (viewBaseSD) table.SetColLabel(nCol++,wxT("Base SD"));
-    if (viewThreshold) table.SetColLabel(nCol++,wxT("Threshold"));
-    if (viewPeakzero) table.SetColLabel(nCol++,wxT("Peak (from 0)"));
-    if (viewPeakbase) table.SetColLabel(nCol++,wxT("Peak (from base)"));
-    if (viewPeakthreshold) table.SetColLabel(nCol++,wxT("Peak (from threshold)"));
-    if (viewRT2080) table.SetColLabel(nCol++,wxT("RT (20-80%)"));
-    if (viewT50) table.SetColLabel(nCol++,wxT("t50"));
-    if (viewRD) table.SetColLabel(nCol++,wxT("Rise/Decay"));
-    if (viewSloperise) table.SetColLabel(nCol++,wxT("Slope (rise)"));
-    if (viewSlopedecay) table.SetColLabel(nCol++,wxT("Slope (decay)"));
-    if (viewLatency) table.SetColLabel(nCol++,wxT("Latency"));
+    if (viewCrosshair) table.SetColLabel(nCol++, "Crosshair");
+    if (viewBaseline) table.SetColLabel(nCol++,"Baseline");
+    if (viewBaseSD) table.SetColLabel(nCol++,"Base SD");
+    if (viewThreshold) table.SetColLabel(nCol++,"Threshold");
+    if (viewPeakzero) table.SetColLabel(nCol++,"Peak (from 0)");
+    if (viewPeakbase) table.SetColLabel(nCol++,"Peak (from base)");
+    if (viewPeakthreshold) table.SetColLabel(nCol++,"Peak (from threshold)");
+    if (viewRT2080) table.SetColLabel(nCol++,"RT (20-80%)");
+    if (viewT50) table.SetColLabel(nCol++,"t50");
+    if (viewRD) table.SetColLabel(nCol++,"Rise/Decay");
+    if (viewSloperise) table.SetColLabel(nCol++,"Slope (rise)");
+    if (viewSlopedecay) table.SetColLabel(nCol++,"Slope (decay)");
+    if (viewLatency) table.SetColLabel(nCol++,"Latency");
 #ifdef WITH_PSLOPE
-    if (viewPSlope) table.SetColLabel(nCol++,wxT("Slope"));
+    if (viewPSlope) table.SetColLabel(nCol++,"Slope");
 #endif
 
     // Values
@@ -992,4 +979,3 @@ stf::Table Recording::CurResultsTable() {
 #endif // WITH_PSLOPE
     return table;
 }
-#endif

@@ -17,7 +17,7 @@
 #include "../../axon2/abf2headr.h"
 #endif
 #include <vector>
-#include "./../../../stimdefs.h"
+#include "./../../../stfio.h"
 
 // #include "../AxAbfFio32/filedesc.hpp"    // File descriptors for ABF files.
 

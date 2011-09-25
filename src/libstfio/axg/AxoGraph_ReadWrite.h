@@ -194,7 +194,7 @@
 
 #include "longdef.h"
 #include "fileUtils.h"
-#include "./../../stimdefs.h"
+#include "./../stfio.h"
 
 // errors numbers
 const short kAG_MemoryErr = -21;

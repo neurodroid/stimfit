@@ -21,9 +21,10 @@
 #ifndef _HDF5LIB_H
 #define _HDF5LIB_H
 
-#include "../core.h"
+#include "../stfio.h"
+#include "../recording.h"
 
-namespace stf {
+namespace stfio {
 
 //! Open a HDF5 file and store its contents to a Recording object.
 /*! \param fName Full path to the file to be read.
@@ -31,14 +32,14 @@ namespace stf {
  *         the data stored in \e fName.
  *  \param progress True if the progress dialog should be updated.
  */
-void importHDF5File(const wxString& fName, Recording& ReturnData, bool progress = true);
+void importHDF5File(const std::string& fName, Recording& ReturnData, ProgressInfo& progDlg);
 
 //! Export a Recording to a HDF5 file.
 /*! \param fName Full path to the file to be written.
  *  \param WData The data to be exported.
  *  \return The HDF5 file handle.
  */
-bool exportHDF5File(const wxString& fName, const Recording& WData);
+ bool exportHDF5File(const std::string& fName, const Recording& WData, ProgressInfo& progDlg);
 
 }
 

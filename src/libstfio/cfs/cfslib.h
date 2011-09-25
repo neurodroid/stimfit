@@ -21,9 +21,10 @@
 #ifndef _CFSLIB_H
 #define _CFSLIB_H
 
-#include "../core.h"
+#include "../stfio.h"
+#include "../recording.h"
 
-namespace stf {
+namespace stfio {
 
 //! Open a CFS file and store its contents to a Recording object.
 /*! \param fName Full path to the file to be read.
@@ -32,14 +33,14 @@ namespace stf {
  *  \param progress Set to true if a progress dialog should be updated.
  *  \return 0 upon success, a negative error code upon failure.
  */
-int importCFSFile(const wxString& fName, Recording& ReturnData, bool progress = true );
+int importCFSFile(const std::string& fName, Recording& ReturnData, ProgressInfo& progDlg);
 
 //! Export a Recording to a CFS file.
 /*! \param fName Full path to the file to be written.
  *  \param WData The data to be exported.
  *  \return The CFS file handle.
  */
-bool exportCFSFile(const wxString& fName, const Recording& WData);
+ bool exportCFSFile(const std::string& fName, const Recording& WData, ProgressInfo& progDlg);
 
 }
 

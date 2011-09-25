@@ -31,7 +31,7 @@
 
 #include <vector>
 
-namespace stf {
+namespace stfio {
 
 /*! \addtogroup stfgen
  *  @{
@@ -42,8 +42,8 @@ namespace stf {
  *  \param data The data waveform to be analysed.
  *  \param llb Averaging will be started at this index.
  *  \param ulb Index of the last data point included in the average (legacy of the PASCAL version).
- *  \param llp Lower limit of the peak window (see stf::peak()).
- *  \param ulp Upper limit of the peak window (see stf::peak()). 
+ *  \param llp Lower limit of the peak window (see stfio::peak()).
+ *  \param ulp Upper limit of the peak window (see stfio::peak()). 
  *  \return The baseline value.
  */
 double base( double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb);
@@ -60,14 +60,14 @@ double base( double& var, const std::vector<double>& data, std::size_t llb, std:
  *  \param pM If \e pM > 1, a sliding (boxcar) average of width \e pM will be used
  *         to measure the peak.
  *  \param dir Can be \n
- *         stf::up for positive-going peaks, \n
- *         stf::down for negative-going peaks or \n
- *         stf::both for negative- or positive-going peaks, whichever is larger.
+ *         stfio::up for positive-going peaks, \n
+ *         stfio::down for negative-going peaks or \n
+ *         stfio::both for negative- or positive-going peaks, whichever is larger.
  *  \param maxT On exit, the index of the peak value. May be interpolated if \e pM > 1.
  *  \return The peak value, measured from 0.
  */
 double peak( const std::vector<double>& data, double base, std::size_t llp, std::size_t ulp,
-        int pM, stf::direction, double& maxT);
+        int pM, stfio::direction, double& maxT);
  
 //! Find the value within \e data between \e llp and \e ulp at which \e slope is exceeded.
 /*! \param data The data waveform to be analysed.

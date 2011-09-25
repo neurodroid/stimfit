@@ -2,10 +2,10 @@ SUBDIRS = py
 
 pkglib_LTLIBRARIES = libstimfit.la
 
-libstimfit_la_SOURCES = ./math/fit.cpp ./core/measure.cpp \
+libstimfit_la_SOURCES = ./math/fit.cpp \
             ./levmar/lm.c ./levmar/Axb.c ./levmar/misc.c ./levmar/lmlec.c ./levmar/lmbc.c \
             ./gui/app.cpp ./gui/unopt.cpp ./gui/doc.cpp ./gui/stfcheckbox.cpp ./gui/copygrid.cpp ./gui/graph.cpp \
-            ./gui/printout.cpp ./gui/parentframe.cpp ./gui/childframe.cpp ./gui/view.cpp ./gui/table.cpp ./gui/zoom.cpp \
+            ./gui/printout.cpp ./gui/parentframe.cpp ./gui/childframe.cpp ./gui/view.cpp ./gui/table.cpp \
             ./gui/dlgs/cursorsdlg.cpp ./gui/dlgs/eventdlg.cpp \
 	    ./gui/dlgs/fitseldlg.cpp ./gui/dlgs/smalldlgs.cpp \
             ./gui/funclib/funclib.cpp \

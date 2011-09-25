@@ -31,7 +31,7 @@
  *  @{
  */
 
-#include "./stimdefs.h"
+#include "./stfio.h"
 
 //! Represents a continuously sampled sweep of data points
 class StfDll Section {
@@ -136,11 +136,10 @@ public:
      */
     void SetSectionDescription(const std::string& value) { section_description=value; }
 
-#ifndef MODULE_ONLY
     //! Retrieves a waveform of the evaluated best-fit function (read-only)
     /*! \return A valarray containing the evaluated best-fit function.
      */
-    const stf::storedFunc* GetFitFunc() const { return fitFunc; }
+    const stfio::storedFunc* GetFitFunc() const { return fitFunc; }
     
     //! Indicates whether a fit has been performed on this section.
     /*! \return true if a fit has been performed, false otherwise.
@@ -157,7 +156,7 @@ public:
         \param fitBeg Sampling point index where the fit starts
         \param fitEnd Sampling point index where the fit ends
      */
-    void SetIsFitted( const Vector_double& bestFitP_, stf::storedFunc* fitFunc_,
+    void SetIsFitted( const Vector_double& bestFitP_, stfio::storedFunc* fitFunc_,
             double chisqr, std::size_t fitBeg, std::size_t fitEnd );
 
     //! Retrieves the parameters of quadratic functions, each going through three consecutive data points
@@ -233,18 +232,18 @@ public:
     //! Retrieves imformation about the last fit that has been performed (read-only).
     /*! \return A table with information about the last fit.
      */
-    const stf::Table& GetBestFit() const { return bestFit; }
+    const stfio::Table& GetBestFit() const { return bestFit; }
     
     //! Retrieves information about an event.
     /*! \param n_e The index of the event.
      *  \return An Event object containing information about an event.
      */
-    const stf::Event& GetEvent(std::size_t n_e) const;
+    const stfio::Event& GetEvent(std::size_t n_e) const;
 
     //! Creates a new event.
     /*! \param event Information about the event.
      */
-    void CreateEvent(const stf::Event& event) { eventList.push_back( event ); }
+    void CreateEvent(const stfio::Event& event) { eventList.push_back( event ); }
 
     //! Checks whether any events have been created yet.
     /*! \return true if there are any events, false otherwise.
@@ -254,12 +253,12 @@ public:
     //! Retrieves a list with information about events (read-only).
     /*! \return A vector with event information.
      */
-    const std::vector<stf::Event>& GetEvents() const { return eventList; }
+    const std::vector<stfio::Event>& GetEvents() const { return eventList; }
 
     //! Retrieves a list with information about events (read and write).
     /*! \return A vector with event information.
      */
-    std::vector<stf::Event>& GetEventsW() { return eventList; }
+    std::vector<stfio::Event>& GetEventsW() { return eventList; }
 
     //! Erases all events.
     void EraseEvents() { eventList.clear(); }
@@ -268,12 +267,12 @@ public:
     /*! \param n_e The index of the marker.
      *  \return The marker (a pair of x,y coordinates) 
      */
-    const stf::PyMarker& GetPyMarker(std::size_t n_e) const;
+    const stfio::PyMarker& GetPyMarker(std::size_t n_e) const;
 
     //! Sets a new marker.
     /*! \param marker The new marker.
      */
-    void SetPyMarker(const stf::PyMarker& marker) { pyMarkers.push_back( marker ); }
+    void SetPyMarker(const stfio::PyMarker& marker) { pyMarkers.push_back( marker ); }
 
     //! Checks whether any marker has been set yet.
     /*! \return true if there are any markers, false otherwise.
@@ -283,11 +282,10 @@ public:
     //! Retrieves a list with information about markers (read-only).
     /*! \return A vector with markers.
      */
-    const std::vector<stf::PyMarker>& GetPyMarkers() const { return pyMarkers; }
+    const std::vector<stfio::PyMarker>& GetPyMarkers() const { return pyMarkers; }
 
     //! Erases all events.
     void ErasePyMarkers() { pyMarkers.clear(); }
-#endif
 
  private:
     //Private members-------------------------------------------------------
@@ -301,19 +299,17 @@ public:
     // The data:
     Vector_double data;
 
-#ifndef MODULE_ONLY
-    std::vector<stf::Event> eventList;
-    std::vector<stf::PyMarker> pyMarkers;
+    std::vector<stfio::Event> eventList;
+    std::vector<stfio::PyMarker> pyMarkers;
     bool isFitted,isIntegrated;
-    stf::storedFunc *fitFunc;
+    stfio::storedFunc *fitFunc;
     Vector_double bestFitP;
     Vector_double quad_p;
     std::size_t storeFitBeg;
     std::size_t storeFitEnd;
     std::size_t storeIntBeg;
     std::size_t storeIntEnd;
-    stf::Table bestFit;
-#endif
+    stfio::Table bestFit;
 };
 
 /*@}*/

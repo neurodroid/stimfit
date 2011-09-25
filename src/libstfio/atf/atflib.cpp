@@ -12,38 +12,26 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#ifndef MODULE_ONLY
-#include <wx/wxprec.h>
-#include <wx/progdlg.h>
-#else
-#include <iostream>
-#endif
-
 #include "./atflib.h"
+#include <iostream>
+#include <sstream>
 
-namespace stf {
-    std::string ATFError(const wxString& fName, int nError);
+namespace stfio {
+    std::string ATFError(const std::string& fName, int nError);
 }
 
-std::string stf::ATFError(const wxString& fName, int nError) {
+std::string stfio::ATFError(const std::string& fName, int nError) {
     int nMaxLen=320;
     std::vector<char> errorMsg(nMaxLen);
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     ATF_BuildErrorText(nError, fName.c_str(),&errorMsg[0], nMaxLen );
-#else
-    ATF_BuildErrorText(nError, fName.mb_str(),&errorMsg[0], nMaxLen );
-#endif    
     return std::string( &errorMsg[0] );
 }
 
-bool stf::exportATFFile(const wxString& fName, const Recording& WData) {
+bool stfio::exportATFFile(const std::string& fName, const Recording& WData) {
     int nColumns=1+(int)WData[0].size() /*time + number of sections*/, nFileNum;
     int nError;
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
+
     if (!ATF_OpenFile(fName.c_str(),ATF_WRITEONLY,&nColumns,&nFileNum,&nError)) {
-#else
-    if (!ATF_OpenFile(fName.mb_str(),ATF_WRITEONLY,&nColumns,&nFileNum,&nError)) {
-#endif
         std::string errorMsg("Exception while calling ATF_OpenFile():\n");
         errorMsg += ATFError(fName,nError);
         throw std::runtime_error(errorMsg);
@@ -57,7 +45,7 @@ bool stf::exportATFFile(const wxString& fName, const Recording& WData) {
             columnUnits = WData.GetXUnits();
         } else {
             std::ostringstream titleStr;
-            titleStr << wxT("Section[") << n_c-1 << wxT("]");
+            titleStr << "Section[" << n_c-1 << "]";
             columnTitle = titleStr.str();
             columnUnits = WData[0].GetYUnits();
         }
@@ -115,25 +103,12 @@ bool stf::exportATFFile(const wxString& fName, const Recording& WData) {
     return true;
 }
 
-void stf::importATFFile(const wxString &fName, Recording &ReturnData, bool progress) {
-#ifndef MODULE_ONLY
-    wxProgressDialog progDlg(
-            wxT("Axon text file import"),
-            wxT("Starting file import"),
-            100,
-            NULL,
-            wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL
-                             );
-#endif
+void stfio::importATFFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
     int nColumns, nFileNum;
     int nError;
     const int nMaxText=64;
 
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     if (!ATF_OpenFile(fName.c_str(),ATF_READONLY,&nColumns,&nFileNum,&nError)) {
-#else
-    if (!ATF_OpenFile(fName.mb_str(),ATF_READONLY,&nColumns,&nFileNum,&nError)) {
-#endif        
         std::string errorMsg("Exception while calling ATF_OpenFile():\n");
         errorMsg+=ATFError(fName,nError);
         throw std::runtime_error(errorMsg);
@@ -184,26 +159,15 @@ void stf::importATFFile(const wxString &fName, Recording &ReturnData, bool progr
     ReturnData.resize(1);
     Channel TempChannel(nColumns-timeInFirstColumn);
     for (int n_c=timeInFirstColumn;n_c<nColumns;++n_c) {
-        if (progress) {
-            int progbar = (double)100.0*(n_c+1-timeInFirstColumn)/(double)(nColumns-timeInFirstColumn);
-#ifndef MODULE_ONLY
-            wxString progStr;
-            progStr << wxT("Section #") << n_c+1-timeInFirstColumn << wxT(" of ") << nColumns-timeInFirstColumn;
-            progDlg.Update(progbar, progStr);
-#else
-            std::cout << "\r";
-            std::cout << progbar << "%" << std::flush;
-#endif
-        }
+        int progbar = (double)100.0*(n_c+1-timeInFirstColumn)/(double)(nColumns-timeInFirstColumn);
+
+        std::ostringstream progStr;
+        progStr << "Section #" << n_c+1-timeInFirstColumn << " of " << nColumns-timeInFirstColumn;
+        progDlg.Update(progbar, progStr.str());
         std::ostringstream label;
         label
-#ifdef MODULE_ONLY
             << fName 
-#else
-            << stf::noPath(fName) 
-#endif
-            
-            << wxT(", Section # ") << n_c-timeInFirstColumn+1;
+            << ", Section # " << n_c-timeInFirstColumn+1;
         Section TempSection(sectionSize,label.str());
         for (int n_l=0;n_l<sectionSize;++n_l) {
             if (!ATF_ReadDataColumn(nFileNum,n_c,&TempSection[n_l],&nError)) {

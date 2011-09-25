@@ -21,14 +21,11 @@
 #ifndef _ATFLIB_H
 #define _ATFLIB_H
 
-#include <string>
-#include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/shared_array.hpp>
-#include "../../core/core.h"
-#include "./axon/AxAtfFio32/axatffio32.h"
+#include "./../stfio.h"
+#include "../recording.h"
+#include "./../abf/axon/AxAtfFio32/axatffio32.h"
 
-namespace stf {
+namespace stfio {
 
 //! Open an ATF file and store its contents to a Recording object.
 /*! \param fName Full path to the file to be read.
@@ -36,13 +33,13 @@ namespace stf {
  *         the data stored in \e fName.
  *  \param progress True if the progress dialog should be updated.
  */
-void importATFFile(const wxString& fName, Recording& ReturnData, bool progress = true);
+void importATFFile(const std::string& fName, Recording& ReturnData, ProgressInfo& progDlg);
 
 //! Export a Recording to an ATF file.
 /*! \param fName Full path to the file to be written.
  *  \param WData The data to be exported.
  */
-bool exportATFFile(const wxString& fName, const Recording& WData);
+ bool exportATFFile(const std::string& fName, const Recording& WData);
 
 }
 

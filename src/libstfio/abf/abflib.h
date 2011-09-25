@@ -21,7 +21,10 @@
 #ifndef _ABFLIB_H
 #define _ABFLIB_H
 
-namespace stf {
+#include "../stfio.h"
+#include "../recording.h"
+
+namespace stfio {
 
 //! Open an ABF file and store its contents to a Recording object. Attempts to identify the ABF version.
 /*! \param fName The full path to the file to be opened.
@@ -29,7 +32,7 @@ namespace stf {
  *         the data stored in \e fName.
  *  \param progress True if the progress dialog should be updated.
  */
-void importABFFile(const wxString& fName, Recording& ReturnData, bool progress = true);
+void importABFFile(const std::string& fName, Recording& ReturnData, ProgressInfo& progDlg);
  
  //! Open an ABF1 file and store its contents to a Recording object.
 /*! \param fName The full path to the file to be opened.
@@ -37,7 +40,7 @@ void importABFFile(const wxString& fName, Recording& ReturnData, bool progress =
  *         the data stored in \e fName.
  *  \param progress True if the progress dialog should be updated.
  */
-void importABF1File(const std::string& fName, Recording& ReturnData, bool progress = true);
+void importABF1File(const std::string& fName, Recording& ReturnData, ProgressInfo& progDlg);
  
  //! Open an ABF2 file and store its contents to a Recording object.
 /*! \param fName The full path to the file to be opened.
@@ -45,7 +48,7 @@ void importABF1File(const std::string& fName, Recording& ReturnData, bool progre
  *         the data stored in \e fName.
  *  \param progress True if the progress dialog should be updated.
  */
-void importABF2File(const std::string& fName, Recording& ReturnData, bool progress = true);
+void importABF2File(const std::string& fName, Recording& ReturnData, ProgressInfo& progDlg);
 
 }
 

@@ -12,12 +12,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "./core.h"
 #include "./section.h"
-
-#ifndef MODULE_ONLY
-#include "../app/funclib/funclib.h"
-#endif
 
 // Definitions------------------------------------------------------------
 // Default constructor definition
@@ -78,7 +73,6 @@ void Section::SetXScale( double value ) {
         throw std::runtime_error( "Attempt to set x-scale <= 0" );
 }
 
-#ifndef MODULE_ONLY
 void Section::SetIsIntegrated(bool value, std::size_t begin, std::size_t end) {
     if (value==false) {
         isIntegrated=value;
@@ -110,7 +104,7 @@ void Section::SetIsIntegrated(bool value, std::size_t begin, std::size_t end) {
             B[1]=data[n+1];
             B[2]=data[n+2];
             try {
-                stf::linsolv(3,3,1,A,B);
+                stfio::linsolv(3,3,1,A,B);
             }
             catch (...) {
                 throw;
@@ -125,7 +119,7 @@ void Section::SetIsIntegrated(bool value, std::size_t begin, std::size_t end) {
     storeIntEnd=end;
 }
 
-const stf::Event& Section::GetEvent(std::size_t n_e) const {
+const stfio::Event& Section::GetEvent(std::size_t n_e) const {
     try {
         return eventList.at(n_e);
     }
@@ -134,7 +128,7 @@ const stf::Event& Section::GetEvent(std::size_t n_e) const {
     }
 }
 
-const stf::PyMarker& Section::GetPyMarker(std::size_t n_e) const {
+const stfio::PyMarker& Section::GetPyMarker(std::size_t n_e) const {
     try {
         return pyMarkers.at(n_e);
     }
@@ -143,7 +137,7 @@ const stf::PyMarker& Section::GetPyMarker(std::size_t n_e) const {
     }
 }
 
-void Section::SetIsFitted( const Vector_double& bestFitP_, stf::storedFunc* fitFunc_,
+void Section::SetIsFitted( const Vector_double& bestFitP_, stfio::storedFunc* fitFunc_,
         double chisqr, std::size_t fitBeg, std::size_t fitEnd )
 {
     if ( !fitFunc_ ) {
@@ -166,8 +160,6 @@ void Section::SetIsFitted( const Vector_double& bestFitP_, stf::storedFunc* fitF
 void Section::DeleteFit() {
     fitFunc = NULL;
     bestFitP.resize( 0 );
-    bestFit = stf::Table( 0, 0 );
+    bestFit = stfio::Table( 0, 0 );
     isFitted = false;
 }
-
-#endif

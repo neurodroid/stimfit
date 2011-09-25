@@ -26,7 +26,6 @@
  */
 
 #include "./channel.h"
-#include "./stimdefs.h"
 
 //! Represents the data within a file.
 /*! Contains an array of channels that can be accessed either via at() (range-checked,
@@ -143,8 +142,6 @@ class StfDll Recording {
      *  \return The channel at index n_c.
      */
     Channel& at(std::size_t n_c);
-
-#ifndef MODULE_ONLY
 
     //! Retrieves the index of the current channel.
     /*! \return The index of the current channel.
@@ -383,34 +380,34 @@ class StfDll Recording {
     //! Retrieves the mode of the latency start cursor.
     /*! \return The current mode of the latency start cursor..
      */
-    stf::latency_mode GetLatencyStartMode() const { return latencyStartMode; }
+    stfio::latency_mode GetLatencyStartMode() const { return latencyStartMode; }
 
     //! Retrieves the mode of the latency end cursor.
     /*! \return The current mode of the latency end cursor.
      */
-    stf::latency_mode GetLatencyEndMode() const { return latencyEndMode; }
+    stfio::latency_mode GetLatencyEndMode() const { return latencyEndMode; }
     
     //! Retrieves the mode of the latency window.
     /*! \return The current mode of the latency window.
      */
-    stf::latency_window_mode GetLatencyWindowMode() const { return latencyWindowMode; }
+    stfio::latency_window_mode GetLatencyWindowMode() const { return latencyWindowMode; }
 
     //! Retrieves the direction of peak calculations.
     /*! \return The current direction of peak calculations.
      */
-    stf::direction GetDirection() const { return direction; }
+    stfio::direction GetDirection() const { return direction; }
     
 
 #ifdef WITH_PSLOPE
     //! Retrieves the mode of the left PSlope cursor.
     /*! \return The current mode of the left PSlope cursor.
      */
-    stf::pslope_mode_beg GetPSlopeBegMode() const { return pslopeBegMode; }
+    stfio::pslope_mode_beg GetPSlopeBegMode() const { return pslopeBegMode; }
 
     //! Retrieves the mode of the right PSlope cursor.
     /*! \return The current mode of the right PSlope cursor.
      */
-    stf::pslope_mode_end GetPSlopeEndMode() const { return pslopeEndMode; }
+    stfio::pslope_mode_end GetPSlopeEndMode() const { return pslopeEndMode; }
 #endif // WITH_PSLOPE
 
     //! Indicates whether to use the baseline as a reference for AP kinetics.
@@ -535,8 +532,6 @@ class StfDll Recording {
      */
     const Section& sec() const { return ChannelArray[sc][cs]; }
 
-#endif
-
     //member access functions: write---------------------------------
 
     //! Sets the file description.
@@ -587,8 +582,6 @@ class StfDll Recording {
      *  \param value The x scaling.
      */
     void SetXScale(double value);
-    
-#ifndef MODULE_ONLY
     
     //! Sets the index of the current channel.
     /*! \param value The index of the current channel.
@@ -689,12 +682,12 @@ class StfDll Recording {
     //! Set the position mode of the left PSlope cursor.
     /*! \param value The new mode of the left PSlope cursor.
      */
-    void SetPSlopeBegMode(stf::pslope_mode_beg value) { pslopeBegMode=value; }
+    void SetPSlopeBegMode(stfio::pslope_mode_beg value) { pslopeBegMode=value; }
 
     //! Set the position mode of the right PSlope cursor.
     /*! \param value The new mode of the right PSlope cursor.
      */
-    void SetPSlopeEndMode(stf::pslope_mode_end value) { pslopeEndMode=value; }
+    void SetPSlopeEndMode(stfio::pslope_mode_end value) { pslopeEndMode=value; }
 
     //! Sets the number of points used for the distance from the first cursor.
     /*! \param value The number of points to be used.
@@ -711,19 +704,19 @@ class StfDll Recording {
     //! Sets the mode of the latency start cursor.
     /*! \param value The new mode of the latency start cursor..
      */
-    void SetLatencyStartMode(stf::latency_mode value) { latencyStartMode=value; }
+    void SetLatencyStartMode(stfio::latency_mode value) { latencyStartMode=value; }
 
     //! Sets the mode of the latency end cursor.
     /*! \param value The new mode of the latency end cursor..
      */
-    void SetLatencyEndMode(stf::latency_mode value) {
+    void SetLatencyEndMode(stfio::latency_mode value) {
         latencyEndMode=value;
     }
 
     //! Sets the mode of the latency end cursor.
     /*! \param value The new mode of the latency end cursor..
      */
-    void SetLatencyWindowMode(stf::latency_window_mode value) {
+    void SetLatencyWindowMode(stfio::latency_window_mode value) {
         latencyWindowMode=value;
     }
     
@@ -745,7 +738,7 @@ class StfDll Recording {
     //! Sets the direction of peak calculations.
     /*! \param value The new direction of peak calculations.
      */
-    void SetDirection(stf::direction value) { direction=value; }
+    void SetDirection(stfio::direction value) { direction=value; }
 
     //! Sets the reference for AP kinetics measurements.
     /*! \param frombase true if the baseline should be used, false if the threshold should be used.
@@ -833,7 +826,6 @@ class StfDll Recording {
     /*! \param value The slope value where the baseline shoudl be set.
      */
     void SetSlopeForThreshold(double value) { slopeForThreshold=value; }
-#endif
     
     //misc-----------------------------------------------------------
 
@@ -857,7 +849,6 @@ class StfDll Recording {
      */
     void CopyAttributes(const Recording& c_Recording);
 
-#ifndef MODULE_ONLY
     //! Copies the cursor positions from another Recording to this Recording.
     /*! This will copy the crosshair, base, peak and fit cursors positions as 
      *  well as the number of points for peak averaging from another Recording 
@@ -898,10 +889,10 @@ class StfDll Recording {
     void AddRec(const Recording& toAdd);
     
     //! Put the current trace into a text table.
-    stf::Table CurAsTable() const;
+    stfio::Table CurAsTable() const;
     
     //! Put the current measurement results into a text table.
-    stf::Table CurResultsTable();
+    stfio::Table CurResultsTable();
     
     //! Returns the current zoom settings for this channel (read-only).
     /*! \return The current zoom settings.
@@ -912,7 +903,6 @@ class StfDll Recording {
     /*! \return The current zoom settings.
      */
     XZoom& GetXZoomW() { return zoom; }
-#endif
     
     //operators------------------------------------------------------
 
@@ -932,22 +922,19 @@ class StfDll Recording {
     std::vector<Channel> ChannelArray;
     std::string global_section_description, scaling;
 
-#ifdef MODULE_ONLY    
- public:
-#endif
+    /* public: */
     
     double dt;
     std::string file_description, time, date, comment, xunits;
 
  private:
 
-#ifndef MODULE_ONLY
-    stf::latency_mode latencyStartMode, latencyEndMode;
-    stf::latency_window_mode latencyWindowMode;
-    stf::direction	direction; //of peak detection: UP, DOWN or BOTH
+    stfio::latency_mode latencyStartMode, latencyEndMode;
+    stfio::latency_window_mode latencyWindowMode;
+    stfio::direction	direction; //of peak detection: UP, DOWN or BOTH
 #ifdef WITH_PSLOPE
-    stf::pslope_mode_beg pslopeBegMode; // for left mode PSlope cursor
-    stf::pslope_mode_end pslopeEndMode; // for right mode PSlope cursor
+    stfio::pslope_mode_beg pslopeBegMode; // for left mode PSlope cursor
+    stfio::pslope_mode_end pslopeEndMode; // for right mode PSlope cursor
 #endif 
     // currently accessed channel:
     std::size_t cc;
@@ -995,8 +982,6 @@ class StfDll Recording {
 
     void correctRangeR(int& value);
     void correctRangeR(std::size_t& value);
-
-#endif
 
     void init();
 

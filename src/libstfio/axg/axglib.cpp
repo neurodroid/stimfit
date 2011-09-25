@@ -17,23 +17,16 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
-#ifndef MODULE_ONLY
-#include <wx/wx.h>
-#include <wx/progdlg.h>
-#else
 #include <iostream>
-#endif
-#include "./../core.h"
+#include <sstream>
+
 #include "./axg/fileUtils.h"
 #include "./axg/AxoGraph_ReadWrite.h"
 #include "./axg/longdef.h"
 #include "./axglib.h"
 
-void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progress, wxWindow* parent) {
-#ifndef MODULE_ONLY
-    wxProgressDialog progDlg( wxT("Axograph binary file import"), wxT("Starting file import"),
-                              100, parent, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_SKIP );
-#endif
+void stfio::importAXGFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
+
     std::string errorMsg("Exception while calling AXG_importAXGFile():\n");
     std::string yunits;
     // =====================================================================================================================
@@ -42,12 +35,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     //
     // =====================================================================================================================
 
-    // Open the example file
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     filehandle dataRefNum = OpenFile( fName.c_str() );
-#else
-    filehandle dataRefNum = OpenFile( fName.mb_str() );
-#endif
     
     if ( dataRefNum == 0 )
     {
@@ -102,21 +90,16 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
     double xscale = 1.0;
     for ( int columnNumber=0; columnNumber<numberOfColumns; columnNumber++ )
     {
-        if (progress && columnNumber != 0) {
+        if (columnNumber != 0) {
             int progbar = (double)columnNumber/(double)numberOfColumns * 100.0;
-#ifndef MODULE_ONLY
-            wxString progStr;
-            progStr << wxT("Section #") << columnNumber << wxT(" of ") << numberOfColumns-1;
+            std::ostringstream progStr;
+            progStr << "Section #" << columnNumber << " of " << numberOfColumns-1;
             bool skip = false;
-            progDlg.Update(progbar, progStr, &skip);
+            progDlg.Update(progbar, progStr.str(), &skip);
             if (skip) {
                 ReturnData.resize(0);
                 return;
             }
-#else
-            std::cout << "\r";
-            std::cout << progbar << "%" << std::flush;
-#endif
         }
 
         ColumnData column;
@@ -182,7 +165,7 @@ void stf::importAXGFile(const wxString &fName, Recording &ReturnData, bool progr
         }
         for (std::size_t n_s=n_c; (int)n_s < numberOfColumns-1; n_s += numberOfChannels) {
             if (factor != 1.0) {
-                section_list[n_s].get_w() = stf::vec_scal_mul(section_list[n_s].get(), factor);
+                section_list[n_s].get_w() = stfio::vec_scal_mul(section_list[n_s].get(), factor);
             }
             try {
                 TempChannel.InsertSection( section_list[n_s], (n_s-n_c)/numberOfChannels );

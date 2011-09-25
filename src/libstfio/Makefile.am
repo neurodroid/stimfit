@@ -1,5 +1,5 @@
 noinst_LIBRARIES = libstfio.a
-libstfio_a_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp ./stfio.cpp \
+libstfio_a_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp ./stfio.cpp ./zoom.cpp ./measure.cpp \
 	./cfs/cfslib.cpp ./cfs/cfs.c \
 	./hdf5/hdf5lib.cpp \
 	./abf/abflib.cpp \
@@ -36,4 +36,4 @@ libstfio_a_SOURCES += ./biosig/biosiglib.cpp
 endif
 
 
-libstfio_a_LIBADD = -lhdf5 -lhdf5_hl
+libstfio_a_LIBADD = $(HDF_LIBS)

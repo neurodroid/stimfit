@@ -29,13 +29,16 @@
 /*! \file axglib.h
  *  \author Christoph Schmidt-Hieber
  *  \date 2008-01-23
- *  \brief Import axon binary files.
+ *  \brief Import Axograph X binary files.
  */
 
 #ifndef _AXGLIB_H
 #define _AXGLIB_H
 
-namespace stf {
+#include "../recording.h"
+#include "../stfio.h"
+
+namespace stfio {
 
 //! Open an AXG file and store its contents to a Recording object.
 /*! \param fName The full path to the file to be opened.
@@ -43,8 +46,7 @@ namespace stf {
  *         the data stored in \e fName.
  *  \param progress True if the progress dialog should be updated.
  */
-    void importAXGFile(const wxString& fName, Recording& ReturnData, bool progress = true,
-                       wxWindow* parent=NULL);
+    void importAXGFile(const std::string& fName, Recording& ReturnData, ProgressInfo& progDlg);
 
 }
 

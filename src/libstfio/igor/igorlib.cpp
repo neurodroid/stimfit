@@ -19,22 +19,6 @@
 // Most of this was shamelessly copied from Wavemetrics' sample code.
 // Blame them for bugs.
 
-#ifndef MODULE_ONLY
-#include "wx/wxprec.h"
-#include "wx/progdlg.h"
-#endif
-
-#ifdef _WINDOWS
-  #include <sstream>
-  #ifdef MODULE_ONLY
-    #define wxT(x) x
-    #include <string>
-    typedef std::string wxString;
-  #endif
-#else
-  #include "./axon/Common/unix.h"
-#endif
-
 /*	The code in this file writes a sample Igor Pro packed experiment file.
 
 	See Igor Pro Tech Note PTN#003 for details.
@@ -44,8 +28,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <stddef.h>					// For offsetof macro.
+#include <sstream>
 
-#include "./../core.h"
+#ifndef _WINDOWS
+  #include "./abf/axon/Common/unix.h"
+#endif
+
+#include "./../stfio.h"
 
 #include "./igorlib.h"
 
@@ -63,7 +52,7 @@ extern "C" {
 }
 #endif
 
-namespace stf {
+namespace stfio {
 
     std::string IGORError(const std::string& msg,
                           int nError);
@@ -74,16 +63,16 @@ bool CheckComp(const Recording& ReturnData);
 }
 
 std::string
-stf::IGORError(const std::string& msg, int error)
+stfio::IGORError(const std::string& msg, int error)
 {
-    std::stringstream ret;
-    ret << wxT("Error # ") << error << wxT(" while writing Igor packed experiment:\n")
+    std::ostringstream ret;
+    ret << "Error # " << error << " while writing Igor packed experiment:\n"
     << msg;
     return ret.str();
 }
 
 bool
-stf::CheckComp(const Recording& Data) {
+stfio::CheckComp(const Recording& Data) {
     std::size_t oldSize=0;
     if (!Data.get().empty() && !Data[0].get().empty()) {
         oldSize=Data[0][0].size();
@@ -101,7 +90,7 @@ stf::CheckComp(const Recording& Data) {
 }
 
 bool
-stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
+stfio::exportIGORFile(const std::string& fileBase,const Recording& Data, ProgressInfo& progDlg)
 {
     // Check compatibility:
     if (!CheckComp(Data)) {
@@ -110,11 +99,7 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
                 "Traces have different sizes"
         );
     }
-#ifndef MODULE_ONLY
-    wxProgressDialog progDlg( wxT("Igor binary wave export"),
-            wxT("Starting file export"), 100, NULL,
-            wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
-#endif
+
     // Get unambiguous channel names:
     std::vector<std::string> channel_name(Data.size());
     bool ident=false;
@@ -164,11 +149,7 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
         // Create a file:
         std::stringstream filePath;
         filePath 
-#ifndef MODULE_ONLY
-            << fileBase.utf8_str()
-#else
             << fileBase
-#endif
             << "_" << channel_name[n_c] << ".ibw";
         int err = CPCreateFile(filePath.str().c_str(), 1);
         if (err) {
@@ -188,22 +169,17 @@ stf::exportIGORFile(const wxString& fileBase,const Recording& Data)
         // One unnecessary copy operation due to const-correctness (couldn't const_cast<>)
         Channel TempChannel(Data[n_c]);
         for (std::size_t n_s=0;n_s<Data[n_c].size();++n_s) {
-#ifndef MODULE_ONLY
-            wxString progStr;
-#else
-            std::stringstream progStr;
-#endif
-            progStr << wxT("Writing channel #") << (int)n_c + 1 << wxT(" of ") << (int)Data.size()
-            << wxT(", Section #") << (int)n_s+1 << wxT(" of ") << (int)Data[n_c].size();
-#ifndef MODULE_ONLY
+            std::ostringstream progStr;
+            progStr << "Writing channel #" << (int)n_c + 1 << " of " << (int)Data.size()
+                    << ", Section #" << (int)n_s+1 << " of " << (int)Data[n_c].size();
             progDlg.Update(
                     // Channel contribution:
                     (int)(((double)n_c/(double)Data.size())*100.0+
                             // Section contribution:
                             (double)(n_s)/(double)Data[n_c].size()*(100.0/Data.size())),
-                    progStr
+                    progStr.str()
             );
-#endif
+
             // std::copy is faster than explicitly assigning to cpData[c][s][p]
             if (n_s*wh.nDim[0]+Data[n_c][n_s].size() > cpData.size() ||
                 Data[n_c][n_s].size() > TempChannel[n_s].size()) {

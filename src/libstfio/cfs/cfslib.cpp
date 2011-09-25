@@ -13,19 +13,13 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-#ifndef MODULE_ONLY
-#include <wx/wxprec.h>
-#include <wx/progdlg.h>
-#include <wx/msgdlg.h>
-#endif
-
 #include <iostream>
 #include <sstream>
 
 #include "./cfslib.h"
 #include "./cfs.h"
 
-namespace stf {
+namespace stfio {
 
 int CFSError(std::string& errorMsg);
 std::string CFSReadVar(short fHandle,short varNo,short varKind);
@@ -55,18 +49,18 @@ const int CFSMAXBYTES=64000; // adopted from FPCfs.ips by U Froebe
 
 }
 
-stf::CFS_IFile::CFS_IFile(const std::string& filename) {
+stfio::CFS_IFile::CFS_IFile(const std::string& filename) {
     myHandle = OpenCFSFile(filename.c_str(),0,1);
 }
 
-stf::CFS_IFile::~CFS_IFile() {
+stfio::CFS_IFile::~CFS_IFile() {
     if (myHandle>0) {
         CloseCFSFile(myHandle);
     }
 }
 
 // Management of write-only files:
-stf::CFS_OFile::CFS_OFile(const std::string& filename,const std::string& comment,std::size_t nChannels)
+stfio::CFS_OFile::CFS_OFile(const std::string& filename,const std::string& comment,std::size_t nChannels)
 {
     TVarDesc *c_DSArray, *c_fileArray;
     c_DSArray=NULL;
@@ -76,14 +70,14 @@ stf::CFS_OFile::CFS_OFile(const std::string& filename,const std::string& comment
         0/*number of section vars*/);
 }
 
-stf::CFS_OFile::~CFS_OFile() { CloseCFSFile(myHandle); }
+stfio::CFS_OFile::~CFS_OFile() { CloseCFSFile(myHandle); }
 
-int stf::CFSError(std::string& errorMsg) {
+int stfio::CFSError(std::string& errorMsg) {
     short pHandle;
     short pFunc;
     short pErr;
     if (!FileError(&pHandle,&pFunc,&pErr)) return 0;
-    errorMsg = "Error in stf::";
+    errorMsg = "Error in stfio::";
     switch (pFunc) {
         case  (1): errorMsg += "SetFileChan()"; break;
         case  (2): errorMsg += "SetDSChan()"; break;
@@ -145,7 +139,7 @@ int stf::CFSError(std::string& errorMsg) {
     return pErr;
 }
 
-std::string stf::CFSReadVar(short fHandle,short varNo,short varKind) {
+std::string stfio::CFSReadVar(short fHandle,short varNo,short varKind) {
     std::string errorMsg;
     std::ostringstream outputstream;
     TUnits units;
@@ -210,16 +204,7 @@ std::string stf::CFSReadVar(short fHandle,short varNo,short varKind) {
     return outputstream.str();
 }
 
-bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
-#ifndef MODULE_ONLY
-    wxProgressDialog progDlg(
-        wxT("CED filing system export"),
-        wxT("Starting file export"),
-        100,
-        NULL,
-        wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL
-                             );
-#endif
+bool stfio::exportCFSFile(const std::string& fName, const Recording& WData, stfio::ProgressInfo& progDlg) {
     std::string errorMsg;
     if (fName.length()>1024) {
         throw std::runtime_error(
@@ -229,11 +214,9 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
             "1024 characters.\n"
             );
     }
-#if (defined(MODULE_ONLY) || wxCHECK_VERSION(2, 9, 0))
-    CFS_OFile CFSFile(std::string(fName.c_str()),std::string(WData.GetComment().c_str()),WData.size());
-#else
-    CFS_OFile CFSFile(std::string(fName.mb_str()), WData.GetComment(),WData.size());
-#endif
+
+    CFS_OFile CFSFile(fName, WData.GetComment(), WData.size());
+
     if (CFSFile.myHandle<0) {
         std::string errorMsg;
         CFSError(errorMsg);
@@ -258,14 +241,10 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
         int progbar =
             // Section contribution:
             (int)((double)n_section/(double)WData.GetChannelSize(0)*100.0);
-#ifndef MODULE_ONLY
-        wxString progStr;
-        progStr << wxT("Writing section #") << n_section+1 << wxT(" of ") << (int)WData.GetChannelSize(0);
-        progDlg.Update(progbar, progStr);
-#else
-        std::cout << "\r";
-        std::cout << progbar << "%" << std::flush;
-#endif
+        std::ostringstream progStr;
+        progStr << "Writing section #" << n_section+1 << " of " << (int)WData.GetChannelSize(0);
+        progDlg.Update(progbar, progStr.str());
+
         for (std::size_t n_c=0;n_c<WData.size();++n_c) {
             SetDSChan(
                 CFSFile.myHandle,
@@ -327,19 +306,12 @@ bool stf::exportCFSFile(const wxString& fName, const Recording& WData) {
     return true;
 }
 
-int stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progress ) {
-#ifndef MODULE_ONLY
-    wxProgressDialog progDlg( wxT("CED filing system import"), wxT("Starting file import"),
-                              100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
-#endif
-    
+int stfio::importCFSFile(const std::string& fName, Recording& ReturnData, ProgressInfo& progDlg) {
+
     std::string errorMsg;
     // Open old CFS File (read only) - see manual of CFS file system
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-    CFS_IFile CFSFile(std::string(fName.c_str()));
-#else
-    CFS_IFile CFSFile(std::string(fName.mb_str()));
-#endif
+    CFS_IFile CFSFile(fName);
+
     if (CFSFile.myHandle<0) {
         int err = CFSError(errorMsg);
         if (err==-7) {
@@ -448,22 +420,15 @@ int stf::importCFSFile(const wxString& fName, Recording& ReturnData, bool progre
         TempChannel.SetYUnits(yUnits);
         std::size_t empty_sections=0;
         for (int n_section=0; n_section < dataSections; ++n_section) {
-            if (progress) {
-                int progbar =
-                    // Channel contribution:
-                    (int)(((double)n_channel/(double)channelsAvail)*100.0+
-                          // Section contribution:
-                          (double)n_section/(double)dataSections*(100.0/channelsAvail));
-#ifndef MODULE_ONLY
-                wxString progStr;
-                progStr << wxT("Reading channel #") << n_channel + 1 << wxT(" of ") << channelsAvail
-                        << wxT(", Section #") << n_section+1 << wxT(" of ") << dataSections;
-                progDlg.Update(progbar, progStr);
-#else
-                std::cout << "\r";
-                std::cout << progbar << "%" << std::flush;
-#endif
-            }
+            int progbar =
+                // Channel contribution:
+                (int)(((double)n_channel/(double)channelsAvail)*100.0+
+                      // Section contribution:
+                      (double)n_section/(double)dataSections*(100.0/channelsAvail));
+            std::ostringstream progStr;
+            progStr << "Reading channel #" << n_channel + 1 << " of " << channelsAvail
+                        << ", Section #" << n_section+1 << " of " << dataSections;
+            progDlg.Update(progbar, progStr.str());
             
             //Begin loop: n_sections
             //Get the channel information for a data section or a file

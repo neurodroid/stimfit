@@ -22,8 +22,10 @@
 #ifndef _IGORLIB_H
 #define _IGORLIB_H
 
+#include "./../stfio.h"
+#include "./../recording.h"
 
-namespace stf {
+namespace stfio {
 
 //! Export a Recording to an Igor binary wave.
 /*! \param fName Full path to the file to be written.
@@ -31,7 +33,7 @@ namespace stf {
  *  \return At present, always returns 0.
  */
 bool
-exportIGORFile(const wxString& fName, const Recording& WData);
+    exportIGORFile(const std::string& fName, const Recording& WData, ProgressInfo& progDlg);
 
 }
 
