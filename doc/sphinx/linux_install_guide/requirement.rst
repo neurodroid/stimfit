@@ -67,14 +67,14 @@ You can download the latest development code for Stimfit from the Google code re
 
 ::
 
-    $ hg clone https://stimfit.googlecode.com/hg/ stimfit 
+    $ git clone https://stimfit.googlecode.com/p/stimfit $HOME/stimfit
 
 This will grab all the required files into $HOME/stimfit. If you'd like to update at a later point, do:
 
 ::
 
     $ cd $HOME/stimfit
-    $ hg -v pull -u
+    $ git pull
 
 =============
 Build Stimfit
