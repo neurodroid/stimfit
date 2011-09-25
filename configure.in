@@ -1,5 +1,5 @@
 AC_INIT([stimfit],[0.10.19])
-AC_CONFIG_SRCDIR(src/app/app.cpp)
+AC_CONFIG_SRCDIR(src/stimfit/gui/main.cpp)
 AM_INIT_AUTOMAKE
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -316,6 +316,6 @@ CXXFLAGS="${CXXFLAGS} -Wall"
 AC_CONFIG_HEADERS([stfconf.h])
 
 SHAVE_INIT(["."], [enable])
-AC_CONFIG_FILES([Makefile src/Makefile src/stfswig/Makefile src/app/Makefile stimfit.plist shave shave-libtool])
+AC_CONFIG_FILES([Makefile src/Makefile src/libstfio/Makefile src/pystfio/Makefile src/stimfit/Makefile src/stimfit/py/Makefile stimfit.plist shave shave-libtool])
 
 AC_OUTPUT
