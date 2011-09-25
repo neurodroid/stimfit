@@ -21,8 +21,6 @@
 #include <boost/shared_array.hpp>
 #include <sstream>
 
-#include "./../stfio.h"
-
 #if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__)
 #include "./axon/Common/axodefn.h"
 #include "./axon/AxAbfFio32/abffiles.h"
@@ -30,7 +28,7 @@
 #endif
 
 #include "./abflib.h"
-
+#include "../recording.h"
 
 namespace stfio {
 

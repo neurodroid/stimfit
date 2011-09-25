@@ -24,6 +24,8 @@
 #include <iostream>
 
 #include "./hdf5lib.h"
+#include "../recording.h"
+
 const static unsigned int DATELEN = 128;
 const static unsigned int TIMELEN = 128;
 const static unsigned int UNITLEN = 16;

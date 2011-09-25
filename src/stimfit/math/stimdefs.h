@@ -186,40 +186,6 @@ struct ofstreamMan {
 #else
 #endif // Module only
 
-
-//! Text file import filter settings
-struct txtImportSettings {
-  txtImportSettings() : hLines(1),toSection(true),firstIsTime(true),ncolumns(2),
-        sr(20),yUnits(wxT("mV")),yUnitsCh2(wxT("pA")),xUnits(wxT("ms")) {}
-
-    int hLines;            /*!< Number of header lines. */
-    bool toSection;        /*!< Import columns into separate sections rather than separate channels. */
-    bool firstIsTime;      /*!< First column contains time. */
-    int ncolumns;          /*!< Number of columns. */
-    double sr;             /*!< Sampling rate. */
-    wxString yUnits;    /*!< y units string. */
-    wxString yUnitsCh2; /*!< y units string of second channel. */
-    wxString xUnits;    /*!< x units string. */
-};
-
-//! File types
-enum filetype {
-    atf,    /*!< Axon text file. */
-    abf,    /*!< Axon binary file. */
-    axg,    /*!< Axograph binary file. */
-    ascii,  /*!< Generic text file. */
-    cfs,    /*!< CED filing system. */
-    igor,   /*!< Igor binary wave. */
-    son,    /*!< CED Son files. */
-    hdf5,   /*!< hdf5 files. */
-    heka,   /*!< heka files. */
-#ifdef WITH_BIOSIG
-    biosig, /*!< biosig files. */
-#endif
-    none    /*!< Undefined file type. */
-};
-
-
 //! Add decimals if you are not satisfied.
 const double PI=3.14159265358979323846;
 

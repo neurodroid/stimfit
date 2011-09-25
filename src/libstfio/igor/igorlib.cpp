@@ -34,9 +34,8 @@
   #include "./abf/axon/Common/unix.h"
 #endif
 
-#include "./../stfio.h"
-
 #include "./igorlib.h"
+#include "../recording.h"
 
 // Headers taken from Wavemetrics' demo files:
 #ifdef __cplusplus

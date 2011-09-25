@@ -30,6 +30,7 @@
 #include <map>
 #include <string>
 #include <cmath>
+#include "./zoom.h"
 
 #ifdef _MSC_VER
 #pragma warning( disable : 4251 )  // Disable warning messages
@@ -50,6 +51,9 @@
 typedef std::vector<double > Vector_double;
 typedef std::vector<float > Vector_float;
 
+class Recording;
+class Channel;
+class Section;
 
 //! The stfio namespace.
 /*! All essential core functions and classes are in this namespace. 
@@ -488,13 +492,78 @@ enum pslope_mode_end {
 
 #endif // WITH_PSLOPE
 
+ 
+//! Text file import filter settings
+struct txtImportSettings {
+  txtImportSettings() : hLines(1),toSection(true),firstIsTime(true),ncolumns(2),
+        sr(20),yUnits("mV"),yUnitsCh2("pA"),xUnits("ms") {}
+
+    int hLines;            /*!< Number of header lines. */
+    bool toSection;        /*!< Import columns into separate sections rather than separate channels. */
+    bool firstIsTime;      /*!< First column contains time. */
+    int ncolumns;          /*!< Number of columns. */
+    double sr;             /*!< Sampling rate. */
+    std::string yUnits;    /*!< y units string. */
+    std::string yUnitsCh2; /*!< y units string of second channel. */
+    std::string xUnits;    /*!< x units string. */
+};
+
+//! File types
+enum filetype {
+    atf,    /*!< Axon text file. */
+    abf,    /*!< Axon binary file. */
+    axg,    /*!< Axograph binary file. */
+    ascii,  /*!< Generic text file. */
+    cfs,    /*!< CED filing system. */
+    igor,   /*!< Igor binary wave. */
+    son,    /*!< CED Son files. */
+    hdf5,   /*!< hdf5 files. */
+    heka,   /*!< heka files. */
+#ifdef WITH_BIOSIG
+    biosig, /*!< biosig files. */
+#endif
+    none    /*!< Undefined file type. */
+};
+
+  
+//! Attempts to determine the filetype from the filter extension.
+/*! \param ext The filter extension to be tested (in the form wxT("*.ext")).
+ *  \return The corresponding file type.
+ */
+stfio::filetype
+findType(const std::string& ext);
+
+//! Generic file import.
+/*! \param fName The full path name of the file. 
+ *  \param type The file type. 
+ *  \param ReturnData Will contain the file data on return.
+ *  \param txtImport The text import filter settings.
+ *  \param progress Set to true if a progress dialog should be shown.
+ *  \return true if the file has successfully been read, false otherwise.
+ */
+bool
+importFile(
+        const std::string& fName,
+        stfio::filetype type,
+        Recording& ReturnData,
+        const stfio::txtImportSettings& txtImport,
+        stfio::ProgressInfo& progDlg
+);
+
+//! Generic file export.
+/*! \param fName The full path name of the file. 
+ *  \param type The file type. 
+ *  \param Data Data to be written
+ *  \param progress Set to true if a progress dialog should be shown.
+ *  \return true if the file has successfully been written, false otherwise.
+ */
+bool
+exportFile(const std::string& fName, stfio::filetype type, const Recording& Data,
+           ProgressInfo& progDlg);
+
 /*@}*/
 
 } // end of namespace
-
-class Recording;
-class Channel;
-class Section;
 
 typedef std::vector< stfio::Event      >::iterator       event_it;    /*!< stfio::Event iterator */
 typedef std::vector< stfio::Event      >::const_iterator c_event_it;  /*!< constant stfio::Event iterator */

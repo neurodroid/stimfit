@@ -28,13 +28,6 @@
 #include "wincpp.hpp"
 #include "FileIO.hpp"
 
-#if defined (__LINUX__) || defined(__APPLE__)
-#ifndef MODULE_ONLY
-#include <wchar.h>
-#include <wx/convauto.h>
-#endif
-#endif
-
 //===============================================================================================
 // FUNCTION: Constructor
 // PURPOSE:  Initialize the object
@@ -121,7 +114,6 @@ BOOL CFileIO::CreateEx(LPCTSTR szFileName, DWORD dwDesiredAccess, DWORD dwShareM
    fName += '\0';
 
    m_hFileHandle = ::c_CreateFile(fName.c_str(), dwDesiredAccess, dwShareMode, NULL, 
-                                  //    m_hFileHandle = ::c_CreateFile(wca.cWX2MB(szFileName), dwDesiredAccess, dwShareMode, NULL, 
                                 dwCreationDisposition, dwFlagsAndAttributes, NULL);
 #endif
    if (m_hFileHandle == FILE_NULL)

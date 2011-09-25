@@ -21,14 +21,10 @@
 #ifndef _ASCIILIB_H
 #define _ASCIILIB_H
 
-#include <string>
-#include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/shared_array.hpp>
-#include "../stimdefs.h"
-#include "../core.h"
+#include "../stfio.h"
+#include "../recording.h"
 
-namespace stf {
+namespace stfio {
 
 //! Open an ASCII file and store its contents to a Recording object.
 /*! \param fName Full path to the file to be read.
@@ -41,30 +37,30 @@ namespace stf {
  *         the data stored in \e fName.
  *  \param progress True if the progress dialog should be updated.
  */
-void importASCIIFile(const wxString& fName,
+void importASCIIFile(const std::string& fName,
         int hLinesToSkip,
         int nColumns,
         bool firstIsTime,
         bool toSection,
         Recording& ReturnRec,
-        bool progress = true);
+        ProgressInfo& progDlg);
 
 //! Export a Section to a text file.
 /*! \param fName Full path to the file to be written.
  *  \param Export The section to be exported.
  *  \return true upon success, false otherwise.
  */
-bool exportASCIIFile(const wxString& fName, const Section& Export);
+bool exportASCIIFile(const std::string& fName, const Section& Export);
 
 //! Export a Channel to a text file.
 /*! \param fName Full path to the file to be written.
  *  \param Export The channel to be exported.
  *  \return true upon success, false otherwise.
  */
-bool exportASCIIFile(const wxString& fName, const Channel& Export);
+bool exportASCIIFile(const std::string& fName, const Channel& Export);
  
 #if 0
-wxString NextWord( wxString& str );
+std::string NextWord( std::string& str );
 #endif
 
 }

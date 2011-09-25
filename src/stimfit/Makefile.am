@@ -11,7 +11,8 @@ libstimfit_la_SOURCES = ./math/fit.cpp \
             ./gui/funclib/funclib.cpp \
             ./gui/usrdlg/usrdlg.cpp
 
-libstimfit_la_CXXFLAGS = $(OPT_CXXFLAGS)
+libstimfit_la_CPPFLAGS = $(WX_CPPFLAGS)
+libstimfit_la_CXXFLAGS = $(OPT_CXXFLAGS) $(WX_CXXFLAGS)
 libstimfit_la_LDFLAGS = $(LIBPYTHON_LDFLAGS) $(LIBLAPACK_LDFLAGS) $(LIBSTF_LDFLAGS)
 libstimfit_la_LIBADD = $(WX_LIBS) -lfftw3
 

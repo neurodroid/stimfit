@@ -25,8 +25,7 @@
  *  @{
  */
 
-#include "section.h"
-#include "zoom.h"
+#include "./section.h"
 
 //! A Channel contains several data \link #Section Sections \endlink representing observations of the same physical quantity.
 class StfDll Channel {

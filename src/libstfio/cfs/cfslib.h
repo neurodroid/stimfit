@@ -22,7 +22,7 @@
 #define _CFSLIB_H
 
 #include "../stfio.h"
-#include "../recording.h"
+class Recording;
 
 namespace stfio {
 

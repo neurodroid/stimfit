@@ -23,7 +23,7 @@ EXTRA_DIST = ./stfioswig.i ./unittest_stfio.py ./hdf5tools.py ./test.h5
 libpystfio_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
 libpystfio_la_CXXFLAGS = $(OPT_CXXFLAGS)
 libpystfio_la_LDFLAGS = $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
-libpystfio_la_LIBADD = -lhdf5 -lhdf5_hl $(PYTHON_ADDLIBS) ./../libstfio/libstfio.a
+libpystfio_la_LIBADD = -lhdf5 -lhdf5_hl $(PYTHON_ADDLIBS) ./../libstfio/libstfio.la
 
 install-exec-hook:
 	mv ${PYTHON_SITE_PKG}/stfio/${STFIO_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stfio/_stfio.so

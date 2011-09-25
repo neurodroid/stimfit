@@ -24,6 +24,7 @@
 #include "./axg/AxoGraph_ReadWrite.h"
 #include "./axg/longdef.h"
 #include "./axglib.h"
+#include "../recording.h"
 
 void stfio::importAXGFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
 

@@ -11,10 +11,10 @@ common electrophysiology file formats"
 #include <iostream>
 #include <numpy/arrayobject.h>
     
-#include "./../core/recording.h"
-#include "./../core/channel.h"
-#include "./../core/section.h"
-#include "./../core/core.h"
+#include "./../libstfio/stfio.h"
+#include "./../libstfio/recording.h"
+#include "./../libstfio/channel.h"
+#include "./../libstfio/section.h"
 
 #include "stfioswig.h"
 
@@ -40,22 +40,22 @@ wrap_array() {
 class Recording {
  public:
     Recording();
-    %feature("autodoc", "The sampling interval") dt;
-    double dt;
+    /* %feature("autodoc", "The sampling interval") dt;
+       double dt;
     %feature("autodoc", "File description") file_description;
     %feature("autodoc", "The time of recording") time;
     %feature("autodoc", "The date of recording") date;
     %feature("autodoc", "Comment on the recording") comment;
     %feature("autodoc", "x unit string") xunits;
     std::string file_description, time, date, comment, xunits;
-
+    */
 };
 
 class Channel {
  public:
-    %feature("autodoc", "Channel name") name;
+    /*    %feature("autodoc", "Channel name") name;
     %feature("autodoc", "y unit string") yunits;
-    std::string name, yunits;
+    std::string name, yunits;*/
     
 };
 
@@ -91,6 +91,8 @@ class Section {
     }
     ~Recording() {delete $self;}
 
+    double dt;
+    
     Channel& __getitem__(int at) {
         if (at >= 0 && at < $self->size()) {
             return (*($self))[at];
@@ -111,9 +113,10 @@ class Section {
     Returns:
     True upon successful completion.") write;
     bool write(const std::string& fname, const std::string& ftype="hdf5") {
-        stf::filetype stftype = gettype(ftype);
+        stfio::filetype stftype = gettype(ftype);
+        StdoutProgressInfo progDlg("File import", "Reading file", 100);
         try {
-            return stf::exportFile(fname, stftype, *($self));
+            return stfio::exportFile(fname, stftype, *($self), progDlg);
         } catch (const std::exception& e) {
             std::cerr << "Couldn't write to file:\n"
                       << e.what() << std::endl;
@@ -121,6 +124,15 @@ class Section {
         }
     }
 }
+
+%{
+    double Recording_dt_get(Recording *r) {
+        return r->GetXScale();
+    }
+    void Recording_dt_set(Recording *r, double val) {
+        r->SetXScale(val);
+    }
+%}
 
 %extend Channel {
     Channel(PyObject* SectionList) {

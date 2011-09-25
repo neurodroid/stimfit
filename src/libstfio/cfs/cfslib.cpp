@@ -19,6 +19,8 @@
 #include "./cfslib.h"
 #include "./cfs.h"
 
+#include "../recording.h"
+
 namespace stfio {
 
 int CFSError(std::string& errorMsg);

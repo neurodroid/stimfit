@@ -38,37 +38,43 @@
 
 #include "stfioswig.h"
 
-#include "./../core/stimdefs.h"
-#include "./../core/core.h"
+StdoutProgressInfo::StdoutProgressInfo(const std::string& title, const std::string& message, int maximum)
+    : ProgressInfo(title, message, maximum) {};
 
-stf::filetype gettype(const std::string& ftype) {
-    stf::filetype stftype = stf::none;
+bool StdoutProgressInfo::Update(int value, const std::string& newmsg, bool* skip) {
+    return true;
+}
+
+stfio::filetype gettype(const std::string& ftype) {
+    stfio::filetype stftype = stfio::none;
     if (ftype == "cfs") {
-        stftype = stf::cfs;
+        stftype = stfio::cfs;
     } else if (ftype == "hdf5") {
-        stftype = stf::hdf5;
+        stftype = stfio::hdf5;
     } else if (ftype == "abf") {
-        stftype = stf::abf;
+        stftype = stfio::abf;
     } else if (ftype == "atf") {
-        stftype = stf::atf;
+        stftype = stfio::atf;
     } else if (ftype == "axg") {
-        stftype = stf::axg;
+        stftype = stfio::axg;
     } else if (ftype == "heka") {
-        stftype = stf::heka;
+        stftype = stfio::heka;
     } else if (ftype == "igor") {
-        stftype = stf::igor;
+        stftype = stfio::igor;
     } else {
-        stftype = stf::none;
+        stftype = stfio::none;
     }
     return stftype;
 }
 
 bool _read(const std::string& filename, const std::string& ftype, Recording& Data) {
 
-    stf::filetype stftype = gettype(ftype);
-    stf::txtImportSettings tis;
+    stfio::filetype stftype = gettype(ftype);
+    stfio::txtImportSettings tis;
+    StdoutProgressInfo progDlg("File import", "Starting file import", 100);
+    
     try {
-        if (!stf::importFile(filename, stftype, Data, tis, true)) {
+        if (!stfio::importFile(filename, stftype, Data, tis, progDlg)) {
             std::cerr << "Error importing file\n";
             return false;
         }

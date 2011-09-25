@@ -37,8 +37,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
 
-#include "./../stfio.h"
 #include "./hekalib.h"
+#include "../recording.h"
 
 #define C_ASSERT(e) extern void __C_ASSERT__(int [(e)?1:-1])
 #define ByteSwap16(x) ByteSwap((unsigned char *) &x,sizeof(x))

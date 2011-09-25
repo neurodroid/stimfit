@@ -35,8 +35,9 @@
 #ifndef _AXGLIB_H
 #define _AXGLIB_H
 
-#include "../recording.h"
 #include "../stfio.h"
+
+class Recording;
 
 namespace stfio {
 

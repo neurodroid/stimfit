@@ -269,42 +269,6 @@ int pow2(int arg);
 wxString noPath(const wxString& fName);
 
 #endif
- 
-//! Attempts to determine the filetype from the filter extension.
-/*! \param ext The filter extension to be tested (in the form wxT("*.ext")).
- *  \return The corresponding file type.
- */
-stf::filetype
-findType(const wxString& ext);
-
-//! Generic file import.
-/*! \param fName The full path name of the file. 
- *  \param type The file type. 
- *  \param ReturnData Will contain the file data on return.
- *  \param txtImport The text import filter settings.
- *  \param progress Set to true if a progress dialog should be shown.
- *  \return true if the file has successfully been read, false otherwise.
- */
-bool
-importFile(
-        const wxString& fName,
-        stf::filetype type,
-        Recording& ReturnData,
-        const stf::txtImportSettings& txtImport,
-        bool progress=true,
-        wxWindow* parent=NULL
-);
-
-//! Generic file export.
-/*! \param fName The full path name of the file. 
- *  \param type The file type. 
- *  \param Data Data to be written
- *  \param progress Set to true if a progress dialog should be shown.
- *  \return true if the file has successfully been written, false otherwise.
- */
-bool
-exportFile(const wxString& fName, stf::filetype type, const Recording& Data,
-           bool progress=false);
 
 
 /*@}*/

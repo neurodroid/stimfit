@@ -26,6 +26,8 @@
  */
 
 #include "./channel.h"
+#include "./section.h"
+#include "./stfio.h"
 
 //! Represents the data within a file.
 /*! Contains an array of channels that can be accessed either via at() (range-checked,

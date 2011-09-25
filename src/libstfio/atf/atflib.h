@@ -22,8 +22,9 @@
 #define _ATFLIB_H
 
 #include "./../stfio.h"
-#include "../recording.h"
 #include "./../abf/axon/AxAtfFio32/axatffio32.h"
+
+class Recording;
 
 namespace stfio {
 
