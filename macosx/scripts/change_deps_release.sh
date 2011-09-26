@@ -35,8 +35,9 @@ mkdir -p ./stimfit.app/Contents/Frameworks/stimfit
 ##
 # rsync -rtuvl `${WX_CONFIG} --exec-prefix`/lib/libwx*.dylib ./stimfit.app/Contents/libs/
 mkdir -p ./stimfit.app/Contents/lib/stimfit
-cp -v ./src/stfswig/.libs/libstf.dylib ./stimfit.app/Contents/lib/stimfit/libstf.dylib
-cp -v ./src/app/.libs/libstimfit.dylib ./stimfit.app/Contents/lib/stimfit/libstimfit.dylib
+cp -v ./src/stimfit/py/.libs/libstf.dylib ./stimfit.app/Contents/lib/stimfit/libstf.dylib
+cp -v ./src/stimfit/.libs/libstimfit.dylib ./stimfit.app/Contents/lib/stimfit/libstimfit.dylib
+cp -v ./src/libstfio/.libs/libstfio.dylib ./stimfit.app/Contents/lib/stimfit/libstfio.dylib
 rm -fv ./stimfit.app/Contents/Frameworks/stimfit/_stf.so
 rm -fv ./stimfit.app/Contents/libs/libstf.dylib
 rm -fv ./stimfit.app/Contents/libs/libstimfit.dylib
@@ -56,7 +57,7 @@ fi
 rm -rfv ./stimfit.app/Contents/lib
 
 
-cp -v ../../src/stfswig/*.py ./stimfit.app/Contents/Frameworks/stimfit/
+cp -v ../../src/stimfit/py/*.py ./stimfit.app/Contents/Frameworks/stimfit/
 
 # # rm ./stimfit.app/Contents/libs/libwx*
 # # rsync -rtuvl `${WX_CONFIG} --exec-prefix`/lib/libwx_baseu_net-* ./stimfit.app/Contents/libs/
