@@ -10,11 +10,17 @@ PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
 PYTHON_ADDLDFLAGS = $(LIBPYTHON_LDFLAGS)
 PYTHON_ADDLIBS = 
 
-nodist_libpystfio_la_SOURCES = ./pystfio_wrap.cxx
 
-libpystfio_la_SOURCES =  ./pystfio.cxx
+$(top_srcdir)/src/pystfio/pystfio_wrap.cxx $(top_srcdir)/src/pystfio/stfio.py: $(top_srcdir)/src/pystfio/pystfio.i
+	$(SWIG) $(SWIG_PYTHON_OPT) -o $@ $<
+	cat $(top_srcdir)/src/stimfit/py/gccwarn $(top_srcdir)/src/pystfio/pystfio_wrap.cxx > $(top_srcdir)/src/pystfio/pystfio_wrap_tmp.cxx
+	mv $(top_srcdir)/src/pystfio/pystfio_wrap_tmp.cxx $(top_srcdir)/src/pystfio/pystfio_wrap.cxx
 
-noinst_HEADERS = ./pystfio.h
+nodist_libpystfio_la_SOURCES = $(top_srcdir)/src/pystfio/pystfio_wrap.cxx
+
+libpystfio_la_SOURCES =  $(top_srcdir)/src/pystfio/pystfio.cxx
+
+noinst_HEADERS = $(top_srcdir)/src/pystfio/pystfio.h
 
 INCLUDES = $(LIBNUMPY_INCLUDES) $(PYTHON_ADDINCLUDES)
 
@@ -42,8 +48,3 @@ clean-local:
 	rm -f $(top_srcdir)/src/pystfio/pystfio_wrap.cxx $(top_srcdir)/src/pystfio/stfio.py
 	rm -f test.h5
 	rm -f _stfio.so
-
-$(top_srcdir)/src/pystfio/pystfio_wrap.cxx $(top_srcdir)/src/pystfio/stfio.py: $(top_srcdir)/src/pystfio/pystfio.i
-	$(SWIG) $(SWIG_PYTHON_OPT) -o $@ $<
-	cat $(top_srcdir)/src/pystfio/gccwarn $(top_srcdir)/src/pystfio/pystfio_wrap.cxx > $(top_srcdir)/src/pystfio/pystfio_wrap_tmp.cxx
-	mv $(top_srcdir)/src/pystfio/pystfio_wrap_tmp.cxx $(top_srcdir)/src/pystfio/pystfio_wrap.cxx

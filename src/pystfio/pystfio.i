@@ -31,7 +31,7 @@ wrap_array() {
     
 
 %}
-%include "numpy.i"
+%include "../stimfit/py/numpy.i"
 %include "std_string.i"
 %init %{
     import_array();

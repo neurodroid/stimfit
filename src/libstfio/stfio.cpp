@@ -25,7 +25,7 @@
 
 #include "stfio.h"
 
-#include "./ascii/asciilib.h"
+// TODO #include "./ascii/asciilib.h"
 #include "./cfs/cfslib.h"
 #include "./hdf5/hdf5lib.h"
 #include "./abf/abflib.h"
