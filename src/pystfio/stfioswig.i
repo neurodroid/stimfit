@@ -71,7 +71,7 @@ class Section {
         Py_ssize_t listsize = PyList_Size(ChannelList);
         std::vector<Channel> ChannelCpp(listsize);
         
-        for (std::size_t i=0; i<listsize; ++i) {
+        for (Py_ssize_t i=0; i<listsize; ++i) {
             PyObject* sec0 = PyList_GetItem(ChannelList, i);
             void* argp1;
             int res1 = SWIG_ConvertPtr(sec0, &argp1, SWIGTYPE_p_Channel, 0 | 0 );
@@ -99,7 +99,7 @@ class Section {
     char* xunits;
     
     Channel& __getitem__(int at) {
-        if (at >= 0 && at < $self->size()) {
+        if (at >= 0 && at < (int)$self->size()) {
             return (*($self))[at];
         } else {
             PyErr_SetString(PyExc_IndexError, "Channel index out of range");
@@ -179,7 +179,7 @@ class Section {
         Py_ssize_t listsize = PyList_Size(SectionList);
         std::vector<Section> SectionCpp(listsize);
         
-        for (std::size_t i=0; i<listsize; ++i) {
+        for (Py_ssize_t i=0; i<listsize; ++i) {
             PyObject* sec0 = PyList_GetItem(SectionList, i);
             void* argp1;
             int res1 = SWIG_ConvertPtr(sec0, &argp1, SWIGTYPE_p_Section, 0 | 0 );
@@ -199,9 +199,12 @@ class Section {
     }
 
     ~Channel() {delete $self;}
+
+    char* name;
+    char* yunits;
     
     Section& __getitem__(int at) {
-        if (at >= 0 && at < $self->size()) {
+        if (at >= 0 && at < (int)$self->size()) {
             return (*($self))[at];
         } else {
             PyErr_SetString(PyExc_IndexError, "Section index out of range");
@@ -211,6 +214,22 @@ class Section {
     }
     int __len__() { return $self->size(); }
 }
+
+%{
+    const char* Channel_name_get(Channel *c) {
+        return c->GetChannelName().c_str();
+    }
+    void Channel_name_set(Channel *c, char *val) {
+        c->SetChannelName(std::string(val));
+    }
+    const char* Channel_yunits_get(Channel *c) {
+        return c->GetYUnits().c_str();
+    }
+    void Channel_yunits_set(Channel *c, char* val) {
+        c->SetYUnits(std::string(val));
+    }
+
+%}
 
 %extend Section {
 
@@ -231,7 +250,7 @@ class Section {
         delete($self);
     }
     double __getitem__(int at) {
-        if (at >= 0 && at < $self->size()) {
+        if (at >= 0 && at < (int)$self->size()) {
             return (*($self))[at];
         } else {
             PyErr_SetString(PyExc_IndexError, "Point index out of range");
