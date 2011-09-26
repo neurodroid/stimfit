@@ -79,14 +79,14 @@ namespace stf {
 //! Progress Info interface adapter; maps to wxProgressDialog
 class wxProgressInfo : public stfio::ProgressInfo {
 public:
-    wxProgressInfo(const std::string& title, const std::string& message, int maximum);
+    wxProgressInfo(const std::string& title, const std::string& message, int maximum, bool verbose=true);
     bool Update(int value, const std::string& newmsg="", bool* skip=NULL);
 private:
     wxProgressDialog pd;
 };
 
-    std::string wx2std(const wxString& wxs);
-    wxString std2wx(const std::string& sst);
+std::string wx2std(const wxString& wxs);
+wxString std2wx(const std::string& sst);
 
 //! Get a Recording, do something with it, return the new Recording.
 typedef boost::function<Recording(const Recording&,const Vector_double&,std::map<std::string, double>&)> PluginFunc;

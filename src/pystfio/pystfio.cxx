@@ -29,6 +29,7 @@
 #endif
 
 #include <iostream>
+#include <iomanip>
 
 #ifdef _WINDOWS
     #ifdef _UNDEBUG
@@ -38,11 +39,23 @@
 
 #include "pystfio.h"
 
-StdoutProgressInfo::StdoutProgressInfo(const std::string& title, const std::string& message, int maximum)
-    : ProgressInfo(title, message, maximum)
-{}
+StdoutProgressInfo::StdoutProgressInfo(const std::string& title, const std::string& message, int maximum, bool verbose)
+    : ProgressInfo(title, message, maximum, verbose),
+      verbosity(verbose)
+{
+    if (verbosity) {
+        std::cout << title << std::endl;
+        std::cout << message << std::endl;
+    }
+}
 
 bool StdoutProgressInfo::Update(int value, const std::string& newmsg, bool* skip) {
+    if (verbosity) {
+        std::cout << "\r";
+        std::cout.width(3);
+        std::cout << value << "% " << newmsg
+                  << std::flush;
+    }
     return true;
 }
 
@@ -68,11 +81,11 @@ stfio::filetype gettype(const std::string& ftype) {
     return stftype;
 }
 
-bool _read(const std::string& filename, const std::string& ftype, Recording& Data) {
+bool _read(const std::string& filename, const std::string& ftype, bool verbose, Recording& Data) {
 
     stfio::filetype stftype = gettype(ftype);
     stfio::txtImportSettings tis;
-    StdoutProgressInfo progDlg("File import", "Starting file import", 100);
+    StdoutProgressInfo progDlg("File import", "Starting file import", 100, verbose);
     
     try {
         if (!stfio::importFile(filename, stftype, Data, tis, progDlg)) {

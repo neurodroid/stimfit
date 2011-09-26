@@ -386,8 +386,9 @@ struct PyMarker {
      /*! \param title Dialog title
       *  \param message Message displayed
       *  \param maximum Maximum value for the progress meter
+      *  \param verbose Whether or not to emit a lot of noise
       */
-     ProgressInfo(const std::string& title, const std::string& message, int maximum) {};
+     ProgressInfo(const std::string& title, const std::string& message, int maximum, bool verbose) {};
 
      //! Updates the progress info
      /*! \param value New value of the progress meter

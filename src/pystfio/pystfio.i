@@ -116,12 +116,13 @@ class Section {
     Arguments:
     fname  -- file name
     ftype  -- file type (string). At present, only \"hdf5\" is supported.
+    verbose-- Show info while writing
 
     Returns:
     True upon successful completion.") write;
-    bool write(const std::string& fname, const std::string& ftype="hdf5") {
+    bool write(const std::string& fname, const std::string& ftype="hdf5", bool verbose=false) {
         stfio::filetype stftype = gettype(ftype);
-        StdoutProgressInfo progDlg("File import", "Reading file", 100);
+        StdoutProgressInfo progDlg("File import", "Reading file", 100, verbose);
         try {
             return stfio::exportFile(fname, stftype, *($self), progDlg);
         } catch (const std::exception& e) {
@@ -288,10 +289,11 @@ class Section {
 Arguments:
 filename -- file name
 ftype    -- File type
+verbose  -- Show info while reading
 
 Returns:
 A recording object.") _read;
-bool _read(const std::string& filename, const std::string& ftype, Recording& Data);
+bool _read(const std::string& filename, const std::string& ftype, bool verbose, Recording& Data);
 //--------------------------------------------------------------------
 
 
@@ -316,7 +318,7 @@ filetype = {
     '.axgd':'axg',
     '.axgx':'axg'}
 
-def read(fname, ftype=None):
+def read(fname, ftype=None, verbose=False):
     """Reads a file and returns a Recording object.
 
     Arguments:
@@ -330,6 +332,7 @@ def read(fname, ftype=None):
               "heka" - HEKA binary file
               if ftype is None (default), it will be guessed from the
               extension.
+    verbose-- Show info while reading file
 
     Returns:
     A Recording object.
@@ -346,9 +349,12 @@ def read(fname, ftype=None):
             raise StfIOException('Couldn\'t guess file type from extension (%s)' % ext)
 
     rec = Recording()
-    if not _read(fname, ftype, rec):
+    if not _read(fname, ftype, verbose, rec):
         raise StfIOException('Error reading file')
 
+    if verbose:
+        print("")
+        
     return rec
 
 }

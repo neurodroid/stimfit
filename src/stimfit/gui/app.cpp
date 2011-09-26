@@ -1372,8 +1372,8 @@ wxStfParentFrame *GetMainFrame(void)
     return frame;
 }
 
-stf::wxProgressInfo::wxProgressInfo(const std::string& title, const std::string& message, int maximum)
-    : ProgressInfo(title, message, maximum),
+stf::wxProgressInfo::wxProgressInfo(const std::string& title, const std::string& message, int maximum, bool verbose)
+    : ProgressInfo(title, message, maximum, verbose),
       pd(stf::std2wx(title), stf::std2wx(message), maximum, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL )
 {
     
