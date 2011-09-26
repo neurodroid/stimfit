@@ -23,16 +23,14 @@
 #endif
 #include "wx/grid.h"
 
-#include "./../core/core.h"
-
 #include "./table.h"
 
 bool wxStfTable::IsEmptyCell( int row, int col ) {
 	try {
 		if (row==0 && col>=1) {
-			return table.GetColLabel(col-1) == wxT("\0");
+			return table.GetColLabel(col-1) == "\0";
 		} else if (col==0 && row>=1) {
-			return table.GetRowLabel(row-1) == wxT("\0");
+			return table.GetRowLabel(row-1) == "\0";
 		} else if (col!=0 && row!=0) {
             return table.IsEmpty(row-1,col-1); 
 		} else {
@@ -47,9 +45,9 @@ bool wxStfTable::IsEmptyCell( int row, int col ) {
 wxString wxStfTable::GetValue( int row, int col ) {
 	try {
 		if (row==0 && col>=1) {
-			return table.GetColLabel(col-1);
+                    return stf::std2wx(table.GetColLabel(col-1));
 		} else if (col==0 && row>=1) {
-			return table.GetRowLabel(row-1);
+                    return stf::std2wx(table.GetRowLabel(row-1));
 		} else if (col!=0 && row!=0) {
             if (table.IsEmpty(row-1,col-1))
                 return wxT("\0");
@@ -68,21 +66,21 @@ wxString wxStfTable::GetValue( int row, int col ) {
 void wxStfTable::SetValue( int row, int col, const wxString& value ) {
 	try {
 		if (row==0 && col>=1) {
-			return table.SetColLabel(col-1, value);
+                    return table.SetColLabel(col-1, stf::wx2std(value));
 		} else if (col==0 && row>=1) {
-			return table.SetRowLabel(row-1, value);
+                    return table.SetRowLabel(row-1, stf::wx2std(value));
 		} else if (col!=0 && row!=0) {
-			wxString strVal; 
-			strVal << value;
-			double in=0.0;
-            strVal.ToDouble(&in);
-			table.at(row-1,col-1)=in;
+                    wxString strVal; 
+                    strVal << value;
+                    double in=0.0;
+                    strVal.ToDouble(&in);
+                    table.at(row-1,col-1)=in;
 		} else {
-			return;
+                    return;
 		}
 	}
 	catch (const std::out_of_range&) {
-		return;
+            return;
 	}
 }
 

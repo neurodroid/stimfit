@@ -25,8 +25,8 @@
  *  @{
  */
 
-#include "./../../core/stimdefs.h"
-#include "wx/bookctrl.h"
+#include "./../../stf.h"
+#include <wx/bookctrl.h>
 
 class wxStfDoc;
 
@@ -214,38 +214,38 @@ public:
     //! Gets the direction of peak calculations.
     /*! \return The current direction of peak calculations.
      */
-    stf::direction GetDirection() const;
+    stfio::direction GetDirection() const;
 
     //! Gets the mode of Latency for the beginning of the latency cursor.
     /*! \return The current mode for the beginning latency cursor.
     */
-    stf::latency_mode GetLatencyStartMode() const;
+    stfio::latency_mode GetLatencyStartMode() const;
 
     //! Gets the mode of Latency of the last latency cursor.
     /*! \return The current mode of the last latency cursor.
     */
-    stf::latency_mode GetLatencyEndMode() const;
+    stfio::latency_mode GetLatencyEndMode() const;
 
     //! Sets the latency mode of the left latency cursor.
     /*! \param latencyBegMode: the new mode for the left latency cursor.
      */
-    void SetLatencyStartMode(stf::latency_mode latencyBegMode);
+    void SetLatencyStartMode(stfio::latency_mode latencyBegMode);
 
     //! Sets the latency mode of the right latency cursor.
     /*! \param latencyEndMode: the new mode for the right latency cursor.
      */
-    void SetLatencyEndMode(stf::latency_mode latencyEndMode);
+    void SetLatencyEndMode(stfio::latency_mode latencyEndMode);
     
 #ifdef WITH_PSLOPE
     //! Gets the mode of measure for the beginning of the slope cursor.
     /*! \return The current mode for the beginning slope cursor.
      */
-    stf::pslope_mode_beg GetPSlopeBegMode() const;
+    stfio::pslope_mode_beg GetPSlopeBegMode() const;
 
     //! Gets the mode of measure for the end of the slope cursor.
     /*! \return The current mode for the end slope cursor.
      */
-    stf::pslope_mode_end GetPSlopeEndMode() const;
+    stfio::pslope_mode_end GetPSlopeEndMode() const;
 
 #endif // WITH_PSLOPE
 
@@ -257,18 +257,18 @@ public:
     //! Sets the direction of peak calculations.
     /*! \param direction The new direction of peak calculations.
      */
-    void SetDirection(stf::direction direction);
+    void SetDirection(stfio::direction direction);
 
 #ifdef WITH_PSLOPE
     //! Sets the mode of the right slope cursor.
     /*! \param pslopeEndMode The new mode for the slope cursor.
      */
-    void SetPSlopeEndMode(stf::pslope_mode_end pslopeEndMode);
+    void SetPSlopeEndMode(stfio::pslope_mode_end pslopeEndMode);
 
     //! Sets the mode of the left slope cursor.
     /*! \param pslopeBegMode The new mode for the slope cursor.
      */
-    void SetPSlopeBegMode(stf::pslope_mode_beg pslopeBegMode);
+    void SetPSlopeBegMode(stfio::pslope_mode_beg pslopeBegMode);
 #endif // WITH_PSLOPE
 
     //! Sets the reference for AP kinetics measurements.
@@ -292,7 +292,7 @@ public:
     //! Retrieve the current cursor notebook page.
     /*! \return The cursor corresponding to the currently selected notebook page.
      */
-    stf::cursor_type CurrentCursor() const;
+    stfio::cursor_type CurrentCursor() const;
 
     //! Get the slope at which the baseline should be fixed.
     /*! \return The slope at which the baseline should be fixed.

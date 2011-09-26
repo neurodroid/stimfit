@@ -16,6 +16,8 @@
 // The application, derived from wxApp
 // 2007-12-27, Christoph Schmidt-Hieber, University of Freiburg
 
+#include <sstream>
+
 // For compilers that support precompilation, includes "wx/wx.h".
 #include <wx/wxprec.h>
 
@@ -58,12 +60,13 @@
 #include "./graph.h"
 #include "./dlgs/cursorsdlg.h"
 #include "./dlgs/smalldlgs.h"
-#include "./funclib/funclib.h"
+#include "./../math/funclib.h"
+
 #if defined(__LINUX__) || defined(__WXMAC__)
-#include "./../core/filelib/axon/Common/axodefn.h"
-#include "./../core/filelib/axon/AxAbfFio32/abffiles.h"
+#include "./../../libstfio/abf/axon/Common/axodefn.h"
+#include "./../../libstfio/abf/axon/AxAbfFio32/abffiles.h"
 #endif
-#include "./../core/fitlib.h"
+#include "./../math/fit.h"
 
 #ifdef __WXMAC__
 #include <ApplicationServices/ApplicationServices.h>
@@ -390,28 +393,28 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
     {
         CursorsDialog->SetActiveDoc(actDoc);
         switch (CursorsDialog->CurrentCursor()) {
-         case stf::measure_cursor: 
+         case stfio::measure_cursor: 
              actDoc->SetMeasCursor(CursorsDialog->GetCursorM());// * GetDocument()->GetSR()));
              break;
          
              //Get limits for peak calculation from the dialog box:
-         case stf::peak_cursor: 
+         case stfio::peak_cursor: 
              actDoc->SetPeakBeg(CursorsDialog->GetCursor1P());// * GetDocument()->GetSR()));
              actDoc->SetPeakEnd(CursorsDialog->GetCursor2P());// * GetDocument()->GetSR()));
              actDoc->CheckBoundaries();
              break;
          
-         case stf::base_cursor: 
+         case stfio::base_cursor: 
              actDoc->SetBaseBeg(CursorsDialog->GetCursor1B());
              actDoc->SetBaseEnd(CursorsDialog->GetCursor2B());
              break;
          
-         case stf::decay_cursor: 
+         case stfio::decay_cursor: 
              actDoc->SetFitBeg(CursorsDialog->GetCursor1D());
              actDoc->SetFitEnd(CursorsDialog->GetCursor2D());
              break;
 
-         case stf::latency_cursor:
+         case stfio::latency_cursor:
              // Latency start mode
              actDoc->SetLatencyBeg(CursorsDialog->GetCursor1L());
              // set latency mode in wxStfDoc
@@ -428,24 +431,24 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
          
 #ifdef WITH_PSLOPE
             // Get cursor location from the dialog box:
-         case stf::pslope_cursor: 
+         case stfio::pslope_cursor: 
 
              // first PSlope cursor
              actDoc->SetPSlopeBegMode(CursorsDialog->GetPSlopeBegMode());
-             if (actDoc->GetPSlopeBegMode() == stf::psBeg_manualMode)
+             if (actDoc->GetPSlopeBegMode() == stfio::psBeg_manualMode)
                 actDoc->SetPSlopeBeg(CursorsDialog->GetCursor1PS());
 
              // second PSlope cursor
              actDoc->SetPSlopeEndMode(CursorsDialog->GetPSlopeEndMode());
-             if (actDoc->GetPSlopeEndMode() == stf::psEnd_manualMode)
+             if (actDoc->GetPSlopeEndMode() == stfio::psEnd_manualMode)
                 actDoc->SetPSlopeEnd(CursorsDialog->GetCursor2PS());
              // we take data from CursorsDialog only if we need the DeltaT
-             //else if (actDoc->GetPSlopeEndMode() == stf::psEnd_DeltaTMode){
+             //else if (actDoc->GetPSlopeEndMode() == stfio::psEnd_DeltaTMode){
                 actDoc->SetDeltaT(CursorsDialog->GetDeltaT());
              
              break;
 #endif 
-         case stf::undefined_cursor:
+         case stfio::undefined_cursor:
              
                  ErrorMsg(wxT("Undefined cursor in wxStfApp::OnPeakcalcexecMsg()"));
                  return;
@@ -768,12 +771,8 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
 #endif
     wxMenu *extensions_menu = new wxMenu;
     for (std::size_t n=0;n<GetExtensionLib().size();++n) {
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-        extensions_menu->Append(ID_USERDEF+(int)n, GetExtensionLib()[n].menuEntry);
-#else
         extensions_menu->Append(ID_USERDEF+(int)n,
-                                wxString(GetExtensionLib()[n].menuEntry.c_str(), wxConvUTF8));
-#endif        
+                                stf::std2wx(GetExtensionLib()[n].menuEntry));
     }
     
     wxMenu *help_menu = new wxMenu;
@@ -1231,16 +1230,13 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
             wxDocTemplate* templ=GetDocManager()->FindTemplateForPath(fNameArray[n_opened]);
             // Use this template only for type recognition:
             wxString filter(templ->GetFileFilter());
-            stf::filetype type=
-                stf::findType(templ->GetFileFilter());
-            if (type==stf::ascii) {
+            stfio::filetype type=
+                stfio::findType(stf::wx2std(templ->GetFileFilter()));
+#if 0 // TODO: re-implement ascii
+            if (type==stfio::ascii) {
                 if (!get_directTxtImport()) {
-                    wxStfTextImportDlg ImportDlg(
-                                                 NULL,
-                                                 stf::CreatePreview(fNameArray[n_opened]),
-                                                 1,
-                                                 true
-                                                 );
+                    wxStfTextImportDlg ImportDlg(NULL, stf::CreatePreview(fNameArray[n_opened]), 1,
+                                                 true);
                     if (ImportDlg.ShowModal()!=wxID_OK) {
                         return false;
                     }
@@ -1249,10 +1245,12 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
                     set_directTxtImport(ImportDlg.ApplyToAll());
                 }
             }
+#endif
             // add this file to the series recording:
             Recording singleRec;
             try {
-                stf::importFile(fNameArray[n_opened++],type,singleRec,txtImport);
+                stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
+                stfio::importFile(stf::wx2std(fNameArray[n_opened++]),type,singleRec,txtImport, progDlg);
                 if (n_opened==1) {
                     seriesRec.resize(singleRec.size());
                     // reserve memory to avoid allocations:
@@ -1266,7 +1264,7 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
             catch (const std::runtime_error& e) {
                 wxString errorMsg;
                 errorMsg << wxT("Couldn't open file, aborting file import:\n")
-                         << wxString( e.what(), wxConvLocal );
+                         << stf::std2wx(e.what());
                 ErrorMsg(errorMsg);
                 return false;
             }
@@ -1374,6 +1372,23 @@ wxStfParentFrame *GetMainFrame(void)
     return frame;
 }
 
+stf::wxProgressInfo::wxProgressInfo(const std::string& title, const std::string& message, int maximum)
+    : ProgressInfo(title, message, maximum),
+      pd(stf::std2wx(title), stf::std2wx(message), maximum, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL )
+{
+    
+}
+
+bool stf::wxProgressInfo::Update(int value, const std::string& newmsg, bool* skip) {
+    return pd.Update(value, stf::std2wx(newmsg), skip);
+}
+
+std::string stf::wx2std(const wxString& wxs) {
+    return std::string(wxs.mb_str());
+}
+wxString stf::std2wx(const std::string& sst) {
+    return wxString(sst.c_str(), wxConvUTF8);
+}
 
 //  LocalWords:  wxStfView
 

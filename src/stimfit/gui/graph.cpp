@@ -44,9 +44,9 @@
 #include "./stfcheckbox.h"
 #include "./dlgs/cursorsdlg.h"
 #include "./dlgs/smalldlgs.h"
-#include "./../core/measlib.h"
 #include "./usrdlg/usrdlg.h"
 #include "./graph.h"
+#include "./../../libstfio/measure.h"
 
 BEGIN_EVENT_TABLE(wxStfGraph, wxWindow)
 EVT_MENU(ID_ZOOMHV,wxStfGraph::OnZoomHV)
@@ -1034,22 +1034,22 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
     switch (ParentFrame()->GetMouseQual())
     {	//Depending on the radio buttons (Mouse field)
     //in the (trace navigator) control box
-    case stf::measure_cursor:
+    case stfio::measure_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetMeasCursor( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
         // in this case, update results string without waiting for "Return":
         pFrame->UpdateResults();
         break;
-    case stf::peak_cursor:
+    case stfio::peak_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetPeakBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
         //Set x-value as lower limit of the peak calculation dialog box
         break;
-    case stf::base_cursor:
+    case stfio::base_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetBaseBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
         break;
-    case stf::decay_cursor:
+    case stfio::decay_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         if (wxGetApp().GetCursorsDialog() != NULL && wxGetApp().GetCursorsDialog()->GetStartFitAtPeak()) {
             wxGetApp().ErrorMsg(
@@ -1059,8 +1059,8 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
         }
         Doc()->SetFitBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
         break;
-    case stf::latency_cursor:
-        if (Doc()->GetLatencyStartMode() != stf::manualMode) {
+    case stfio::latency_cursor:
+        if (Doc()->GetLatencyStartMode() != stfio::manualMode) {
             wxGetApp().ErrorMsg(
                     wxT("The latency cursor can not be set in the current mode\nChoose manual mode to set the latency cursor manually")
             );
@@ -1068,7 +1068,7 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
         }
         Doc()->SetLatencyBeg(((double)lastLDown.x-(double)SPX())/XZ());
         break;
-    case stf::zoom_cursor:
+    case stfio::zoom_cursor:
         llz_x=(double)lastLDown.x;
         llz_y=(double)lastLDown.y;
         llz_y2=llz_y;
@@ -1108,20 +1108,20 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
     PrepareDC(dc);
     wxPoint point(event.GetLogicalPosition(dc));
     switch (ParentFrame()->GetMouseQual()) {
-    case stf::peak_cursor:
+    case stfio::peak_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetPeakEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
-    case stf::base_cursor:
+    case stfio::base_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetBaseEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
-    case stf::decay_cursor:
+    case stfio::decay_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetFitEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
-    case stf::latency_cursor:
-        if (Doc()->GetLatencyEndMode() != stf::manualMode) {
+    case stfio::latency_cursor:
+        if (Doc()->GetLatencyEndMode() != stfio::manualMode) {
             wxGetApp().ErrorMsg(
                     wxT("The latency cursor can not be set in the current mode\n \
                     Choose manual mode to set the latency cursor manually")
@@ -1131,14 +1131,14 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
         Doc()->SetLatencyEnd(((double)point.x-(double)SPX())/XZ());
         Refresh();
         break;
-    case stf::zoom_cursor:
+    case stfio::zoom_cursor:
         if (isZoomRect) {
             PopupMenu(m_zoomContext.get());
         } else {
             wxGetApp().ErrorMsg(wxT("Draw a zoom window with the left mouse button first"));
         }
         break;
-    case stf::event_cursor:
+    case stfio::event_cursor:
         if (Doc()->cur().HasEvents()) {
             // store the position that has been clicked:
             eventPos = stf::round( ((double)point.x - (double)SPX())/XZ() );
@@ -1176,15 +1176,15 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
         return;
     }
     switch (ParentFrame()->GetMouseQual()) {
-    case stf::peak_cursor:
+    case stfio::peak_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetPeakEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
-    case stf::base_cursor:
+    case stfio::base_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetBaseEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
-    case stf::decay_cursor:
+    case stfio::decay_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetFitEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
@@ -1193,8 +1193,8 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
         // conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetPSlopeEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
 #endif
-    case stf::latency_cursor:
-        if (Doc()->GetLatencyEndMode() != stf::manualMode) {
+    case stfio::latency_cursor:
+        if (Doc()->GetLatencyEndMode() != stfio::manualMode) {
             wxGetApp().ErrorMsg(
                     wxT("The latency cursor can not be set in the current mode\n \
                     Choose manual mode to set the latency cursor manually")
@@ -1203,7 +1203,7 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
         }
         Doc()->SetLatencyEnd(((double)point.x-(double)SPX())/XZ());
         break;
-    case stf::zoom_cursor:
+    case stfio::zoom_cursor:
         ulz_x=(double)point.x;
         ulz_y=(double)point.y;
         ulz_y2=ulz_y;
@@ -1263,19 +1263,19 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
         OnUp();
         return;
      case 49: //1
-         ParentFrame()->SetZoomQual(stf::zoomch1);
+         ParentFrame()->SetZoomQual(stfio::zoomch1);
          return;
      case 50:  //2
          if (Doc()->size()>1)
-             ParentFrame()->SetZoomQual(stf::zoomch2);
+             ParentFrame()->SetZoomQual(stfio::zoomch2);
          return;
      case 51: //3
          if (Doc()->size()>1)
-             ParentFrame()->SetZoomQual(stf::zoomboth);
+             ParentFrame()->SetZoomQual(stfio::zoomboth);
          return;
      case 69: // e
      case 101:
-         ParentFrame()->SetMouseQual(stf::event_cursor);
+         ParentFrame()->SetMouseQual(stfio::event_cursor);
          return;
      case 70:
      case 102: // f
@@ -1283,11 +1283,11 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
          return;
      case 77:  // m
      case 109:
-         ParentFrame()->SetMouseQual(stf::measure_cursor);
+         ParentFrame()->SetMouseQual(stfio::measure_cursor);
          return;
      case 80: // p
      case 112:
-         ParentFrame()->SetMouseQual(stf::peak_cursor);
+         ParentFrame()->SetMouseQual(stfio::peak_cursor);
          return;
      case 65: // 'a'
      case 97:
@@ -1300,7 +1300,7 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
          return;
      case 66:  // b
      case 98:
-         ParentFrame()->SetMouseQual(stf::base_cursor);
+         ParentFrame()->SetMouseQual(stfio::base_cursor);
          return;
 #ifdef WITH_PSLOPE
      case 79:  // key 'o' to activate PSlope cursors
@@ -1310,15 +1310,15 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
 #endif
      case 68:  // d
      case 100:
-         ParentFrame()->SetMouseQual(stf::decay_cursor);
+         ParentFrame()->SetMouseQual(stfio::decay_cursor);
          return;
      case 90:  // z
      case 122:
-         ParentFrame()->SetMouseQual(stf::zoom_cursor);
+         ParentFrame()->SetMouseQual(stfio::zoom_cursor);
          return;
      case 76:  // l
      case 108:
-         ParentFrame()->SetMouseQual(stf::latency_cursor);
+         ParentFrame()->SetMouseQual(stfio::latency_cursor);
          return;
      case WXK_RETURN:    //Enter or Return
      {
@@ -1854,7 +1854,7 @@ void wxStfGraph::Fittowindow(bool refresh)
     switch (ParentFrame()->GetZoomQual())
     {	//Depending on the zoom radio buttons (Mouse field)
     //in the (trace navigator) control box
-    case stf::zoomboth:
+    case stfio::zoomboth:
         if(!(Doc()->size()>1))
             return;
 
@@ -1865,7 +1865,7 @@ void wxStfGraph::Fittowindow(bool refresh)
         SPXW()=0;
         FittorectY(Doc()->at(Doc()->GetCurCh()).GetYZoomW(), WindowRect, min, max, screen_part);
         break;
-    case stf::zoomch2:
+    case stfio::zoomch2:
         //ErrorMsg if no second channel available
         if(!(Doc()->size()>1))
             return;
@@ -1948,7 +1948,7 @@ void wxStfGraph::OnUp() {
     switch (ParentFrame()->GetZoomQual())
     {	//Depending on the zoom radio buttons (Mouse field)
     //in the (trace navigator) control box
-    case stf::zoomboth:
+    case stfio::zoomboth:
         //ErrorMsg if no second channel available
         //yZooms of Ch1 are performed keeping the base constant
         SPYW()=SPY() - 20;
@@ -1956,7 +1956,7 @@ void wxStfGraph::OnUp() {
         //Ymove of Ch2 is performed
         SPY2W()=SPY2() - 20;
         break;
-    case stf::zoomch2:
+    case stfio::zoomch2:
         if(!(Doc()->size()>1)) break;
         //Ymove of Ch2 is performed
         SPY2W()=SPY2() - 20;
@@ -1973,14 +1973,14 @@ void wxStfGraph::OnDown() {
     switch (ParentFrame()->GetZoomQual())
     {	//Depending on the zoom radio buttons (Mouse field)
     //in the (trace navigator) control box
-    case stf::zoomboth:
+    case stfio::zoomboth:
         //yZooms of Ch1 are performed keeping the base constant
         SPYW()=SPY() + 20;
         if(!(Doc()->size()>1)) break;
         //Ymove of Ch2 is performed
         SPY2W()=SPY2() + 20;
         break;
-    case stf::zoomch2:
+    case stfio::zoomch2:
         if(!(Doc()->size()>1)) break;
         //Ymove of Ch2 is performed
         SPY2W()=SPY2() + 20;
@@ -2052,7 +2052,7 @@ void wxStfGraph::ChangeYScale(double factor) {
     switch (ParentFrame()->GetZoomQual()) {
     // Depending on the zoom radio buttons (Mouse field)
     // in the (trace navigator) control box
-    case stf::zoomboth:
+    case stfio::zoomboth:
         //yZooms of Ch1 are performed keeping the base constant
         SPYW()=(int)(SPY() + Doc()->GetBase() * (YZ() * factor
                 - YZ()));
@@ -2065,7 +2065,7 @@ void wxStfGraph::ChangeYScale(double factor) {
                         - YZ2()));
         YZ2W()=YZ2() * factor;
         break;
-    case stf::zoomch2:
+    case stfio::zoomch2:
         if (Doc()->size()<=1) break;
         //yZooms of Ch2 are performed keeping the base constant
         SPY2W()=(int)(SPY2()
@@ -2088,7 +2088,7 @@ void wxStfGraph::Ch2base() {
         double base2=0.0;
         try {
             double var2=0.0;
-            base2=stf::base(var2,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(),
+            base2=stfio::base(var2,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(),
                     Doc()->GetBaseBeg(),Doc()->GetBaseEnd());
         }
         catch (const std::out_of_range& e) {
@@ -2129,7 +2129,7 @@ void wxStfGraph::Ch2basezoom() {
         double base2=0.0;
         try {
             double var2=0.0;
-            base2=stf::base(var2,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(),
+            base2=stfio::base(var2,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(),
                     Doc()->GetBaseBeg(),Doc()->GetBaseEnd());
         }
         catch (const std::out_of_range& e) {

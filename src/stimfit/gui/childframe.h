@@ -25,11 +25,11 @@
  *  @{
  */
 
-#include "wx/aui/aui.h"
-#include "wx/grid.h"
-#include "wx/dnd.h"
+#include <wx/aui/aui.h>
+#include <wx/grid.h>
+#include <wx/dnd.h>
 
-#include "./../core/core.h"
+#include "./../stf.h"
 
 // Define a new frame
 class wxStfGraph;
@@ -105,7 +105,7 @@ public:
     /*! \param table The table to be added.
      *  \param caption The title of the new table in the notebook.
      */
-    void ShowTable(const stf::Table& table,const wxString& caption);
+    void ShowTable(const stfio::Table& table,const wxString& caption);
 
     //! Retrieves the current trace from the trace selection combo box.
     /*! \return The 0-based index of the currently selected trace.

@@ -8,8 +8,8 @@
 #include <wx/dir.h>
 #include <wx/listctrl.h>
 
-#include "./../../icons/arrow_down.xpm"
-#include "./../../icons/arrow_up.xpm"
+#include "./../../res/arrow_down.xpm"
+#include "./../../res/arrow_up.xpm"
 
 #include "./../app.h"
 
@@ -961,16 +961,16 @@ bool wxStfTextImportDlg::OnOK() {
     return true;
 }
 
-stf::txtImportSettings wxStfTextImportDlg::GetTxtImport() const {
-    stf::txtImportSettings retTxtImport; 
+stfio::txtImportSettings wxStfTextImportDlg::GetTxtImport() const {
+    stfio::txtImportSettings retTxtImport; 
     retTxtImport.firstIsTime=m_firstIsTime;
     retTxtImport.hLines=m_hLines;
     retTxtImport.ncolumns=m_ncolumns;
     retTxtImport.sr=m_sr;
     retTxtImport.toSection=m_toSection;
-    retTxtImport.xUnits=m_xUnits;
-    retTxtImport.yUnits=m_yUnits;
-    retTxtImport.yUnitsCh2=m_yUnitsCh2;
+    retTxtImport.xUnits = stf::wx2std(m_xUnits);
+    retTxtImport.yUnits = stf::wx2std(m_yUnits);
+    retTxtImport.yUnitsCh2 = stf::wx2std(m_yUnitsCh2);
     return retTxtImport;
 }
 
@@ -1054,7 +1054,7 @@ srcDir(wxT("/home")), destDir(wxT("/home")),
 srcDir(wxT("C:\\")), destDir(wxT("C:\\")),
 #endif
 
-srcFilter(wxT("")), srcFilterExt(stf::cfs), destFilterExt(stf::igor),
+srcFilter(wxT("")), srcFilterExt(stfio::cfs), destFilterExt(stfio::igor),
 srcFileNames(0)
 
 {
@@ -1218,13 +1218,13 @@ void wxStfConvertDlg::OnComboBoxDestExt(wxCommandEvent& event){
     // update destFilterExt and destFilter
     switch(pComboBox->GetSelection()){
         case 0:
-            destFilterExt =  stf::igor;
+            destFilterExt =  stfio::igor;
             break;
         case 1:
-            destFilterExt = stf::atf;
+            destFilterExt = stfio::atf;
             break;
         default:
-            destFilterExt = stf::igor;
+            destFilterExt = stfio::igor;
 }
     std::cout<<destFilterExt << std::endl;
 }
@@ -1241,35 +1241,35 @@ void wxStfConvertDlg::OnComboBoxSrcExt(wxCommandEvent& event){
     // update srcFilterExt and srcFilter
     switch(pComboBox->GetSelection()){
         case 0:
-            srcFilterExt =  stf::abf;
+            srcFilterExt =  stfio::abf;
             srcFilter = wxT("*.abf");
             break;
         case 1:
-            srcFilterExt = stf::axg;
+            srcFilterExt = stfio::axg;
             srcFilter = wxT("*.axg");
             break;
         case 2:
-            srcFilterExt =  stf::atf;
+            srcFilterExt =  stfio::atf;
             srcFilter = wxT("*.atf");
             break;
         case 3: 
-            srcFilterExt =  stf::ascii;
+            srcFilterExt =  stfio::ascii;
             srcFilter = wxT("*.*");
             break;
         case 4: 
-            srcFilterExt =  stf::cfs;
+            srcFilterExt =  stfio::cfs;
             srcFilter = wxT("*.dat");
             break;
         case 5: 
-            srcFilterExt =  stf::hdf5;
+            srcFilterExt =  stfio::hdf5;
             srcFilter = wxT("*.h5");
             break;
         case 6: 
-            srcFilterExt =  stf::heka;
+            srcFilterExt =  stfio::heka;
             srcFilter = wxT("*.dat");
             break;
         default:   
-            srcFilterExt =  stf::none;
+            srcFilterExt =  stfio::none;
             srcFilter = wxT("*.*");
     }
     std::cout << srcFilterExt << std::endl;

@@ -12,7 +12,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "./fitlib.h"
+#include "./fit.h"
 #include "./levmar/levmar.h"
 
 #include <float.h>
@@ -25,8 +25,8 @@ void c_func_lour(double *p, double* hx, int m, int n, void *adata);
 void c_jac_lour(double *p, double *j, int m, int n, void *adata);
 
 // Helper functions for lmFit to store the function at global scope:
-void saveFunc(Func func);
-void saveJac(Jac jac);
+    void saveFunc(stfio::Func func);
+    void saveJac(stfio::Jac jac);
 
 // A struct that will be passed as a pointer to
 // Lourakis' C-functions. It is used to:
@@ -56,14 +56,14 @@ struct fitInfo {
 
 // Functions stored at global scope to be called by c_func_lour
 // and c_jac_lour
-stf::Func func_lour;
-stf::Jac jac_lour; 
+stfio::Func func_lour;
+stfio::Jac jac_lour; 
 
-void stf::saveFunc(Func func) {
+void stf::saveFunc(stfio::Func func) {
     func_lour=func;
 }
 
-void stf::saveJac(Jac jac) {
+void stf::saveJac(stfio::Jac jac) {
     jac_lour=jac;
 }
 
@@ -131,8 +131,8 @@ Vector_double stf::get_scale(Vector_double& data, double oldx) {
     double ymin = *minmax.first;
     double ymax = *minmax.second;
     double amp = ymax-ymin;
-    data = stf::vec_scal_mul(data, 1.0/amp);
-    data = stf::vec_scal_minus(data, ymin/amp);
+    data = stfio::vec_scal_mul(data, 1.0/amp);
+    data = stfio::vec_scal_minus(data, ymin/amp);
 
     xyscale[0] = 1.0/(data.size()*oldx);
     xyscale[1] = 0;
@@ -143,7 +143,7 @@ Vector_double stf::get_scale(Vector_double& data, double oldx) {
 }
 
 double stf::lmFit( const Vector_double& data, double dt,
-                   const stf::storedFunc& fitFunc, const Vector_double& opts,
+                   const stfio::storedFunc& fitFunc, const Vector_double& opts,
                    bool use_scaling,
                    Vector_double& p, wxString& info, int& warning )
 {
@@ -175,7 +175,7 @@ double stf::lmFit( const Vector_double& data, double dt,
             constrains_lm_ub[n_p] = DBL_MAX;
         }
         if ( can_scale ) {
-            if (fitFunc.pInfo[n_p].scale == noscale) {
+            if (fitFunc.pInfo[n_p].scale == stfio::noscale) {
                 can_scale = false;
             }
         }
@@ -394,11 +394,11 @@ void stf::flin_init(const Vector_double& data, double base, double peak,
         double dt, Vector_double& pInit )
 { }
 
-stf::storedFunc stf::initLinFunc() {
-    std::vector< stf::parInfo > linParInfo(2);
-    linParInfo[0] = stf::parInfo(wxT("Slope"), true);
-    linParInfo[1] = stf::parInfo(wxT("Y intersect"), true);
-    return stf::storedFunc( wxT("Linear function"), linParInfo,
-            stf::flin, stf::flin_init, stf::nojac, false, stf::defaultOutput );    
+stfio::storedFunc stf::initLinFunc() {
+    std::vector< stfio::parInfo > linParInfo(2);
+    linParInfo[0] = stfio::parInfo("Slope", true);
+    linParInfo[1] = stfio::parInfo("Y intersect", true);
+    return stfio::storedFunc("Linear function", linParInfo,
+            stf::flin, stf::flin_init, stfio::nojac, false, stfio::defaultOutput);
 }
 

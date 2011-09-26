@@ -192,7 +192,7 @@ void wxStfPrintout::PrintHeader(wxDC* pDC, double scale) {
     pDC->DrawText(description,xstart,ystart);
 
     // Results:
-    stf::Table table(Doc()->CurResultsTable());
+    stfio::Table table(Doc()->CurResultsTable());
 
     font.SetWeight(wxFONTWEIGHT_NORMAL);
     pDC->SetFont(font);
@@ -202,7 +202,7 @@ void wxStfPrintout::PrintHeader(wxDC* pDC, double scale) {
         // row label:
         for (std::size_t nCol=0;nCol<table.nCols();++nCol) {
             int colSize=(int)(40.0*resScale+table.GetColLabel(nCol).length()*4.0*resScale);
-            if (nRow==0) pDC->DrawText(table.GetColLabel(nCol),xpos,(int)(14.0*resScale)+ystart);
+            if (nRow==0) pDC->DrawText(stf::std2wx(table.GetColLabel(nCol)),xpos,(int)(14.0*resScale)+ystart);
             if (!table.IsEmpty(nRow,nCol)) {
                 wxString entry; entry << table.at(nRow,nCol);
                 pDC->DrawText(entry,xpos,(int)(24.0*resScale)+ystart);
@@ -217,7 +217,7 @@ void wxStfPrintout::PrintHeader(wxDC* pDC, double scale) {
         int xPos=(int)(WindowRect.width*0.75);
         // print fit info line by line:
         for (std::size_t n=0;n<Doc()->cur().GetBestFit().nRows();++n) {
-            pDC->DrawText(Doc()->cur().GetBestFit().GetRowLabel(n),xPos,yPos);
+            pDC->DrawText(stf::std2wx(Doc()->cur().GetBestFit().GetRowLabel(n)),xPos,yPos);
             wxString value;
             value << Doc()->cur().GetBestFit().at(n,0);
             pDC->DrawText(value,(int)(xPos+40.0*resScale),yPos);

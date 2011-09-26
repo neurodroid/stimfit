@@ -26,7 +26,7 @@
 #ifndef _FITLIB_H
 #define _FITLIB_H
 
-#include "./stimdefs.h"
+#include "../stf.h"
 #include <deque>
 
 namespace stf {
@@ -63,7 +63,7 @@ T linFit(
  *  \return The sum of squred errors between \e data and the best-fit function.
  */
 double StfDll lmFit(const Vector_double& data, double dt,
-                    const stf::storedFunc& fitFunc, const Vector_double& opts,
+                    const stfio::storedFunc& fitFunc, const Vector_double& opts,
                     bool use_scaling, Vector_double& p, wxString& info, int& warning );
 
 //! Linear function.
@@ -82,7 +82,7 @@ void flin_init(const Vector_double& data, double base, double peak,
 
 //! initializes a linear function
 /*! \return An stf::storedFunc that can be used to store a linear function after a fit */
-stf::storedFunc initLinFunc();
+stfio::storedFunc initLinFunc();
 
 //! Compute and perform normalisation
 /*! \param data Data vector; will be scaled upon return

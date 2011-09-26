@@ -1,3 +1,8 @@
+if BUILD_MODULE
+pkglibdir = ${PYTHON_SITE_PKG}/stfio
+else
+
+endif
 pkglib_LTLIBRARIES = libstfio.la
 
 libstfio_la_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp ./stfio.cpp ./zoom.cpp ./measure.cpp \
@@ -36,6 +41,7 @@ if WITH_BIOSIG
 libstfio_la_SOURCES += ./biosig/biosiglib.cpp
 endif
 
-libstfio_la_LIBADD = -lhdf5 -lhdf5_hl
+libstfio_la_LDFLAGS = 
+libstfio_la_LIBADD = $(LIBLAPACK_LDFLAGS) $(LIBSTF_LDFLAGS) -lhdf5 -lhdf5_hl
 
 #. /ascii/asciilib.cpp

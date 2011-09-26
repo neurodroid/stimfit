@@ -21,29 +21,23 @@
 
 Section::Section(void)
     : section_description(), x_scale(1.0), data(0)
-#ifndef MODULE_ONLY
     , eventList(),pyMarkers(),isFitted(false),
       isIntegrated(false),fitFunc(NULL),bestFitP(0),quad_p(0),storeFitBeg(0),storeFitEnd(0),
       storeIntBeg(0),storeIntEnd(0),bestFit(0,0)
-#endif
 {}
 
 Section::Section( const Vector_double& valA, const std::string& label )
     : section_description(label), x_scale(1.0), data(valA)
-#ifndef MODULE_ONLY
     , eventList(),pyMarkers(),isFitted(false),
       isIntegrated(false),fitFunc(NULL),bestFitP(0),quad_p(0),storeFitBeg(0),storeFitEnd(0),
       storeIntBeg(0),storeIntEnd(0),bestFit(0,0)
-#endif
 {}
 
 Section::Section(std::size_t size, const std::string& label)
     : section_description(label), x_scale(1.0), data(size)
-#ifndef MODULE_ONLY
     , eventList(),pyMarkers(),isFitted(false),
       isIntegrated(false),fitFunc(NULL),bestFitP(0),quad_p(0),storeFitBeg(0),storeFitEnd(0),
       storeIntBeg(0),storeIntEnd(0),bestFit(0,0)
-#endif
 {}
 
 Section::~Section(void) {

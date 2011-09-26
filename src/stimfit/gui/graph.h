@@ -32,7 +32,7 @@ class wxStfParentFrame;
 class wxStfCheckBox;
 class wxEnhMetaFile;
 
-#include "./zoom.h"
+#include "./../../libstfio/zoom.h"
 
 enum plottype {
     active,

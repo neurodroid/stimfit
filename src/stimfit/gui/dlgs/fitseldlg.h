@@ -26,9 +26,9 @@
  */
 
 #include <vector>
-#include <boost/numeric/ublas/vector.hpp>
-#include "wx/listctrl.h"
-#include "./../../core/stimdefs.h"
+#include <wx/listctrl.h>
+
+#include "./../../stf.h"
 
 //! Non-linear regression settings dialog
 class wxStfFitSelDlg : public wxDialog

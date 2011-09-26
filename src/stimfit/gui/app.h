@@ -164,18 +164,18 @@ enum {
 
 #include <list>
 
-#include "wx/mdi.h"
-#include "wx/docview.h"
-#include "wx/docmdi.h"
-#include "wx/fileconf.h"
-#include "wx/settings.h"
+#include <wx/mdi.h>
+#include <wx/docview.h>
+#include <wx/docmdi.h>
+#include <wx/fileconf.h>
+#include <wx/settings.h>
 
 #ifdef __WXMAC__
 #undef wxFontDialog
-#include "wx/osx/fontdlg.h"
+#include <wx/osx/fontdlg.h>
 #endif
 
-#include "./../core/stimdefs.h"
+#include "./../stf.h"
 
 #ifdef WITH_PYTHON
 
@@ -315,33 +315,33 @@ public:
     //! Retrieves the text import filter settings.
     /*! \return A struct with the current text import filter settings.
      */
-    const stf::txtImportSettings& GetTxtImport() const {
+    const stfio::txtImportSettings& GetTxtImport() const {
         return txtImport;
     }
 
     //! Sets the text import filter settings.
     /*! \param txtImport_ A struct with the new text import filter settings.
      */
-    void set_txtImportSettings(const stf::txtImportSettings& txtImport_) {
+    void set_txtImportSettings(const stfio::txtImportSettings& txtImport_) {
         txtImport=txtImport_;
     }
 
     //! Retrieves the functions that are available for least-squares minimisation.
     /*! \return A vector containing the available functions.
      */
-    const std::vector<stf::storedFunc>& GetFuncLib() const { return funcLib; }
+    const std::vector<stfio::storedFunc>& GetFuncLib() const { return funcLib; }
 
 
     //! Retrieves a pointer to a function for least-squares minimisation.
     /*! \return A vector containing the available functions.
      */
-    stf::storedFunc* GetFuncLibPtr(std::size_t at) { return &funcLib.at(at); }
+    stfio::storedFunc* GetFuncLibPtr(std::size_t at) { return &funcLib.at(at); }
 
 
     //! Retrieves a pointer to a function for least-squares minimisation.
     /*! \return A vector containing the available functions.
      */
-    stf::storedFunc* GetLinFuncPtr( ) { return &storedLinFunc; }
+    stfio::storedFunc* GetLinFuncPtr( ) { return &storedLinFunc; }
 
     //! Retrieves the user-defined extension functions.
     /*! \return A vector containing the user-defined functions.
@@ -511,16 +511,16 @@ private:
 #endif
 
     bool directTxtImport,isBars,isHires;
-    stf::txtImportSettings txtImport;
+    stfio::txtImportSettings txtImport;
     // Registry:
     boost::shared_ptr<wxFileConfig> config;
-    std::vector<stf::storedFunc> funcLib;
+    std::vector<stfio::storedFunc> funcLib;
     std::vector< stf::Extension > extensionLib;
     // Pointer to the cursors settings dialog box
     wxStfCursorsDlg* CursorsDialog;
     wxDocTemplate* m_cfsTemplate, *m_hdf5Template, *m_txtTemplate,*m_abfTemplate,
       *m_atfTemplate,*m_axgTemplate,*m_sonTemplate, *m_hekaTemplate, *m_biosigTemplate;
-    stf::storedFunc storedLinFunc;
+    stfio::storedFunc storedLinFunc;
     // wxMenu* m_file_menu;
     wxString m_fileToLoad;
     /*std::list<wxStfDoc *> activeDoc;*/

@@ -216,10 +216,4 @@ void stfio::importATFFile(const std::string &fName, Recording &ReturnData, Progr
         errorMsg += "Error while closing ATF file";
         throw std::runtime_error(errorMsg);
     }
-#ifdef MODULE_ONLY
-    if (progress) {
-        std::cout << "\r";
-        std::cout << "100%" << std::endl;
-    }
-#endif
 }

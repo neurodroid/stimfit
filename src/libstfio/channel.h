@@ -161,13 +161,9 @@ public:
 
 private:
     //private members---------------------------------------------
-#ifdef MODULE_ONLY
- public:
-#endif
     
     std::string name, yunits;
 
- private:
     // An array of sections
     std::vector< Section > SectionArray;
     // The zoom settings

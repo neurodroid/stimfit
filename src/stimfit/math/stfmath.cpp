@@ -19,35 +19,16 @@
 
 #include <cmath>
 #include <limits>
-
-#ifndef _STIMFIT_H_
-#include "core.h"
-#include "./filelib/asciilib.h"
-#include "./filelib/cfslib.h"
-#include "./filelib/hdf5lib.h"
-#include "./filelib/abflib.h"
-#include "./filelib/atflib.h"
-#include "./filelib/axglib.h"
-#include "./filelib/hekalib.h"
-#include "./filelib/igorlib.h"
-#ifdef WITH_BIOSIG
-#include "./filelib/biosiglib.h"
-#endif
-#if 0
-#include "./filelib/sonlib.h"
-#endif
-#endif
-
-
-
-#ifndef MODULE_ONLY
 #include <wx/wxprec.h>
 #include <wx/progdlg.h>
 #include <wx/filename.h>
 
-wxString stf::noPath(const wxString& fName) {
+#include "stfmath.h"
+#include "../../libstfio/section.h"
+
+/*wxString stf::noPath(const wxString& fName) {
     return wxFileName(fName).GetFullName();
-}
+    }*/
 
 double stf::fgauss(double x, const Vector_double& pars) {
     double y=0.0, /* fac=0.0, */ ex=0.0, arg=0.0;
@@ -95,11 +76,10 @@ int stf::fac(int arg) {
     }
 }
 
-#ifndef TEST_MINIMAL
 Vector_double
 stf::filter( const Vector_double& data, std::size_t filter_start,
         std::size_t filter_end, const Vector_double &a, int SR,
-        Func func, bool inverse ) {
+        stfio::Func func, bool inverse ) {
     if (data.size()<=0 || filter_start>=data.size() || filter_end > data.size()) {
         std::out_of_range e("subscript out of range in stf::filter()");
         throw e;
@@ -234,9 +214,9 @@ stf::spectrum(
         }
     }
     // Do the multiplication and the normalization that we omitted above:
-    P = stf::vec_scal_div(P,U);
+    P = stfio::vec_scal_div(P,U);
     // Average:
-    P = stf::vec_scal_div(P,K);
+    P = stfio::vec_scal_div(P,K);
 
     // Use FFTW's deallocation routines:
     fftw_destroy_plan(p1);
@@ -245,7 +225,7 @@ stf::spectrum(
     f_n=1.0/L;
     return P;
 }
-#endif
+
 
 Vector_double
 stf::detectionCriterion(const Vector_double& data, const Vector_double& templ)
@@ -521,6 +501,3 @@ double stf::integrate_trapezium(
     sum *= (b-a)/2/(i2-i1);
     return sum;
 }
-
-
-#endif

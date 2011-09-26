@@ -21,8 +21,8 @@
  *  Header file for common definitions and classes. 
  */
 
-#ifndef _STIMDEFS_H_
-#define _STIMDEFS_H_
+#ifndef _STF_H_
+#define _STF_H_
 
 #include <boost/function.hpp>
 #include <vector>
@@ -47,7 +47,6 @@
 
 #ifndef MODULE_ONLY
     #include <wx/wxprec.h>
-
     #ifdef __BORLANDC__
         #pragma hdrstop
     #endif
@@ -57,6 +56,7 @@
     #endif
 
     #include <wx/wfstream.h>
+    #include <wx/progdlg.h>
 #else
     typedef std::string wxString;
     typedef int wxWindow;
@@ -64,10 +64,7 @@
     #define wxCHECK_VERSION(major,minor,release) 0
 #endif
 
-
-class Recording;
-class Channel;
-class Section;
+#include "../libstfio/stfio.h"
 
 //! The stimfit namespace.
 /*! All essential core functions and classes are in this namespace. 
@@ -79,11 +76,45 @@ namespace stf {
  *  @{
  */
 
-#ifndef MODULE_ONLY
+//! Progress Info interface adapter; maps to wxProgressDialog
+class wxProgressInfo : public stfio::ProgressInfo {
+public:
+    wxProgressInfo(const std::string& title, const std::string& message, int maximum);
+    bool Update(int value, const std::string& newmsg="", bool* skip=NULL);
+private:
+    wxProgressDialog pd;
+};
 
-    
+    std::string wx2std(const wxString& wxs);
+    wxString std2wx(const std::string& sst);
+
 //! Get a Recording, do something with it, return the new Recording.
 typedef boost::function<Recording(const Recording&,const Vector_double&,std::map<std::string, double>&)> PluginFunc;
+
+ 
+//! Represents user input from dialogs that can be used in plugins.
+struct UserInput {
+    std::vector<std::string> labels; /*!< Dialog entry labels. */
+    Vector_double defaults; /*!< Default dialog entries. */
+    std::string title;               /*!< Dialog title. */
+
+    //! Constructor.
+    /*! \param labels_ A vector of dialog entry label strings.
+     *  \param defaults_ A vector of default dialog entries.
+     *  \param title_ Dialog title.
+     */
+    UserInput(
+            const std::vector<std::string>& labels_=std::vector<std::string>(0),
+            const Vector_double& defaults_=Vector_double(0),
+            std::string title_="\0"
+    ) : labels(labels_),defaults(defaults_),title(title_)
+    {
+                if (defaults.size()!=labels.size()) {
+                    defaults.resize(labels.size());
+                    std::fill(defaults.begin(), defaults.end(), 0.0);
+                }
+    }
+};
 
 //! User-defined plugin
 /*! Class used for extending Stimfit's functionality: 
@@ -183,9 +214,6 @@ struct ofstreamMan {
     wxFFile myStream;
 };
 
-#else
-#endif // Module only
-
 //! Add decimals if you are not satisfied.
 const double PI=3.14159265358979323846;
 
@@ -202,6 +230,9 @@ int round(double toRound);
 inline int stf::round(double toRound) {
     return toRound <= 0.0 ? int(toRound-0.5) : int(toRound+0.5);
 }
+
+typedef std::vector< wxString >::iterator       wxs_it;      /*!< std::string iterator */
+typedef std::vector< wxString >::const_iterator c_wxs_it;    /*!< constant std::string iterator */
 
 // Doxygen-links to documentation of frequently used wxWidgets-classes
 

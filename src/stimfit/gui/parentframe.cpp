@@ -63,47 +63,45 @@
 #include "./printout.h"
 #include "./dlgs/smalldlgs.h"
 #include "./copygrid.h"
-//#ifdef _WINDOWS
-#include "./../core/filelib/atflib.h"
-#include "./../core/filelib/igorlib.h"
-//#endif
+#include "./../../libstfio/atf/atflib.h"
+#include "./../../libstfio/igor/igorlib.h"
 
 #include "./childframe.h"
 #include "./parentframe.h"
 
-#include "./../icons/16-em-down.xpm"
-#include "./../icons/16-em-open.xpm"
-#include "./../icons/accept.xpm"
-#include "./../icons/arrow_down.xpm"
-#include "./../icons/arrow_left.xpm"
-#include "./../icons/arrow_out.xpm"
-#include "./../icons/arrow_right.xpm"
-#include "./../icons/arrow_up.xpm"
-//#include "./../icons/bin.xpm"
-#include "./../icons/camera.xpm"
+#include "./../res/16-em-down.xpm"
+#include "./../res/16-em-open.xpm"
+#include "./../res/accept.xpm"
+#include "./../res/arrow_down.xpm"
+#include "./../res/arrow_left.xpm"
+#include "./../res/arrow_out.xpm"
+#include "./../res/arrow_right.xpm"
+#include "./../res/arrow_up.xpm"
+//#include "./../res/bin.xpm"
+#include "./../res/camera.xpm"
 #ifdef _WINDOWS
-#include "./../icons/camera_ps.xpm"
+#include "./../res/camera_ps.xpm"
 #endif
-#include "./../icons/ch1.xpm"
-#include "./../icons/ch2.xpm"
-#include "./../icons/cursor.xpm"
-#include "./../icons/event.xpm"
-#include "./../icons/fit.xpm"
-#include "./../icons/fit_lim.xpm"
-#include "./../icons/latency_lim.xpm"
-#include "./../icons/resultset_first.xpm"
-#include "./../icons/resultset_last.xpm"
-#include "./../icons/resultset_next.xpm"
-#include "./../icons/resultset_previous.xpm"
-#include "./../icons/sum_new.xpm"
-#include "./../icons/sum_new_aligned.xpm"
-#include "./../icons/table.xpm"
-#include "./../icons/zoom.xpm"
-#include "./../icons/zoom_in.xpm"
-#include "./../icons/zoom_out.xpm"
+#include "./../res/ch1.xpm"
+#include "./../res/ch2.xpm"
+#include "./../res/cursor.xpm"
+#include "./../res/event.xpm"
+#include "./../res/fit.xpm"
+#include "./../res/fit_lim.xpm"
+#include "./../res/latency_lim.xpm"
+#include "./../res/resultset_first.xpm"
+#include "./../res/resultset_last.xpm"
+#include "./../res/resultset_next.xpm"
+#include "./../res/resultset_previous.xpm"
+#include "./../res/sum_new.xpm"
+#include "./../res/sum_new_aligned.xpm"
+#include "./../res/table.xpm"
+#include "./../res/zoom.xpm"
+#include "./../res/zoom_in.xpm"
+#include "./../res/zoom_out.xpm"
 
 #ifdef WITH_PSLOPE 
-#include "./../icons/slope.xpm"
+#include "./../res/slope.xpm"
 #endif
 
 IMPLEMENT_CLASS(wxStfParentFrame, wxStfParentType)
@@ -258,7 +256,7 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
                    Dockable(false).Float().FloatingPosition(xpos,ypos) );
 #endif
 
-    SetMouseQual( stf::measure_cursor );
+    SetMouseQual( stfio::measure_cursor );
 
 #ifdef WITH_PYTHON
     python_code2 << wxT("import sys\n")
@@ -715,16 +713,16 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
                                  wxT("Choose file type"), 2, &choices[0]);
     if (typeDlg.ShowModal() != wxID_OK)
         return;
-    stf::filetype eft = stf::atf;
+    stfio::filetype eft = stfio::atf;
     switch ( typeDlg.GetSelection() ) {
      case 0:
-         eft = stf::atf;
+         eft = stfio::atf;
          break;
      case 1:
-         eft = stf::igor;
+         eft = stfio::igor;
          break;
      default:
-         eft = stf::atf;
+         eft = stfio::atf;
     }
     */
     int nfiles; // files to convert
@@ -735,8 +733,8 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
     wxStfConvertDlg myDlg(this);
     if(myDlg.ShowModal()==wxID_OK) {
         //std::cout << myDlg.GetSrcFileExt() << std::endl;
-		stf::filetype ift = myDlg.GetSrcFileExt();
-		stf::filetype eft = myDlg.GetDestFileExt();
+		stfio::filetype ift = myDlg.GetSrcFileExt();
+		stfio::filetype eft = myDlg.GetDestFileExt();
         src_ext = myDlg.GetSrcFilter();
 
         // wxProgressDialog
@@ -762,7 +760,7 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
 #endif
                                   srcWxFilename.GetName()  // returns file name without path and extension
                                   );
-            if ( eft == stf::atf ) {
+            if ( eft == stfio::atf ) {
                 destFilename += wxT(".atf");
             }
             // Update progress bar:
@@ -777,10 +775,11 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
             // Open source file and convert:
             Recording sourceFile;
             try {
-                if (ift==stf::ascii) {
+#if 0 //TODO
+                if (ift==stfio::ascii) {
                     if (!wxGetApp().get_directTxtImport()) {
                         wxStfTextImportDlg ImportDlg( this,
-                                                      stf::CreatePreview(srcFilenames[nFile]), 1, false );
+                                                      stfio::CreatePreview(srcFilenames[nFile]), 1, false );
                         if (ImportDlg.ShowModal()!=wxID_OK) {
                             return;
                         }
@@ -788,17 +787,19 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
                         wxGetApp().set_txtImportSettings(ImportDlg.GetTxtImport());
                     }
                 }
+#endif
+                stf::wxProgressInfo progDlgIn("Reading file", "Opening file", 100);
+                stfio::importFile(stf::wx2std(srcFilenames[nFile]), ift, sourceFile, wxGetApp().GetTxtImport(), progDlgIn);
 
-                stf::importFile(srcFilenames[nFile], ift, sourceFile, wxGetApp().GetTxtImport());
-
+                stf::wxProgressInfo progDlgOut("Writing file", "Opening file", 100);
                 switch ( eft ) {
-                 case stf::atf:
-                     stf::exportATFFile( destFilename, sourceFile );
+                 case stfio::atf:
+                     stfio::exportATFFile(stf::wx2std(destFilename), sourceFile);
                      dest_ext = wxT("Axon textfile [*.atf]");
                      break;
 
-                 case stf::igor:
-                     stf::exportIGORFile( destFilename, sourceFile );
+                 case stfio::igor:
+                     stfio::exportIGORFile(stf::wx2std(destFilename), sourceFile, progDlgOut);
                      dest_ext = wxT("Igor binary file [*.ibw]");
                      break;
 
@@ -1069,37 +1070,37 @@ void wxStfParentFrame::OnToolSnapshotwmf(wxCommandEvent& WXUNUSED(event)) {
 #endif
 
 void wxStfParentFrame::OnToolMeasure(wxCommandEvent& WXUNUSED(event)) {
-    SetMouseQual( stf::measure_cursor );
+    SetMouseQual( stfio::measure_cursor );
 }
 
 void wxStfParentFrame::OnToolPeak(wxCommandEvent& WXUNUSED(event)) {
-    SetMouseQual( stf::peak_cursor );
+    SetMouseQual( stfio::peak_cursor );
 }
 
 void wxStfParentFrame::OnToolBase(wxCommandEvent& WXUNUSED(event)) {
-    SetMouseQual( stf::base_cursor );
+    SetMouseQual( stfio::base_cursor );
 }
 
 void wxStfParentFrame::OnToolDecay(wxCommandEvent& WXUNUSED(event)) {
-    SetMouseQual( stf::decay_cursor );
+    SetMouseQual( stfio::decay_cursor );
 }
 
 #ifdef WITH_PSLOPE
 void wxStfParentFrame::OnToolPSlope(wxCommandEvent& WXUNUSED(event)) {
-    SetMouseQual( stf::pslope_cursor );
+    SetMouseQual( stfio::pslope_cursor );
 }
 #endif
 
 void wxStfParentFrame::OnToolLatency(wxCommandEvent& WXUNUSED(event)) {
-    SetMouseQual( stf::latency_cursor );
+    SetMouseQual( stfio::latency_cursor );
 }
 
 void wxStfParentFrame::OnToolZoom(wxCommandEvent& WXUNUSED(event)) {
-    SetMouseQual( stf::zoom_cursor );
+    SetMouseQual( stfio::zoom_cursor );
 }
 
 void wxStfParentFrame::OnToolEvent(wxCommandEvent& WXUNUSED(event)) {
-    SetMouseQual( stf::event_cursor );
+    SetMouseQual( stfio::event_cursor );
 }
 
 void wxStfParentFrame::OnCh2zoom(wxCommandEvent& WXUNUSED(event)) {
@@ -1231,10 +1232,10 @@ void wxStfParentFrame::OnLStartMaxslope(wxCommandEvent& WXUNUSED(event)) {
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
         // get previous mode:
-        //		bool prevMode=pDoc->GetLatencyStartMode()==stf::riseMode;
+        //		bool prevMode=pDoc->GetLatencyStartMode()==stfio::riseMode;
         // toggle on if it wasn't the previous mode:
         //		if (!prevMode) {
-        pDoc->SetLatencyStartMode(stf::riseMode);
+        pDoc->SetLatencyStartMode(stfio::riseMode);
         wxGetApp().wxWriteProfileInt(wxT("Settings"),
                                      wxT("LatencyStartMode"),
                                      pDoc->GetLatencyStartMode());
@@ -1247,7 +1248,7 @@ void wxStfParentFrame::OnLStartHalfrise(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        pDoc->SetLatencyStartMode(stf::halfMode);
+        pDoc->SetLatencyStartMode(stfio::halfMode);
         wxGetApp().wxWriteProfileInt(
                                      wxT("Settings"),
                                      wxT("LatencyStartMode"),
@@ -1263,7 +1264,7 @@ void wxStfParentFrame::OnLStartPeak(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        pDoc->SetLatencyStartMode(stf::peakMode);
+        pDoc->SetLatencyStartMode(stfio::peakMode);
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyStartMode"), pDoc->GetLatencyStartMode() );
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
@@ -1275,7 +1276,7 @@ void wxStfParentFrame::OnLStartManual(wxCommandEvent& WXUNUSED(event)) {
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
         // Always keep manual mode as a default, even if attempted to uncheck:
-        pDoc->SetLatencyStartMode(stf::manualMode);
+        pDoc->SetLatencyStartMode(stfio::manualMode);
         wxGetApp().wxWriteProfileInt(
             wxT("Settings"),
             wxT("LatencyStartMode"),
@@ -1290,7 +1291,7 @@ void wxStfParentFrame::OnLEndFoot(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        pDoc->SetLatencyEndMode(stf::footMode);
+        pDoc->SetLatencyEndMode(stfio::footMode);
 	wxGetApp().wxWriteProfileInt(
                                      wxT("Settings"),
                                      wxT("LatencyEndMode"),
@@ -1305,7 +1306,7 @@ void wxStfParentFrame::OnLEndMaxslope(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        pDoc->SetLatencyEndMode(stf::riseMode);
+        pDoc->SetLatencyEndMode(stfio::riseMode);
         wxGetApp().wxWriteProfileInt(
                                      wxT("Settings"),
                                      wxT("LatencyEndMode"),
@@ -1320,7 +1321,7 @@ void wxStfParentFrame::OnLEndHalfrise(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        pDoc->SetLatencyEndMode(stf::halfMode);
+        pDoc->SetLatencyEndMode(stfio::halfMode);
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyEndMode"), pDoc->GetLatencyEndMode() );
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
@@ -1331,7 +1332,7 @@ void wxStfParentFrame::OnLEndPeak(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        pDoc->SetLatencyEndMode(stf::peakMode);
+        pDoc->SetLatencyEndMode(stfio::peakMode);
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyEndMode"), pDoc->GetLatencyEndMode() );
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
@@ -1343,7 +1344,7 @@ void wxStfParentFrame::OnLEndManual(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        pDoc->SetLatencyEndMode(stf::manualMode);
+        pDoc->SetLatencyEndMode(stfio::manualMode);
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyEndMode"), pDoc->GetLatencyEndMode() );
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
@@ -1357,40 +1358,40 @@ void wxStfParentFrame::OnLWindow(wxCommandEvent& WXUNUSED(event)) {
     if (pView!=NULL) {
         // Select
         if (GetActiveChild()->GetMenuBar() && GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYWINDOW)) {
-            wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyWindowMode"), stf::windowMode );
-            pDoc->SetLatencyWindowMode(stf::windowMode);
+            wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyWindowMode"), stfio::windowMode );
+            pDoc->SetLatencyWindowMode(stfio::windowMode);
         } else {
-            wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyWindowMode"), stf::defaultMode );
-            pDoc->SetLatencyWindowMode(stf::defaultMode);
+            wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyWindowMode"), stfio::defaultMode );
+            pDoc->SetLatencyWindowMode(stfio::defaultMode);
         }
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
     }
 }
 
-stf::cursor_type wxStfParentFrame::GetMouseQual() const {
+stfio::cursor_type wxStfParentFrame::GetMouseQual() const {
     if (m_cursorToolBar->GetToolToggled(ID_TOOL_MEASURE))
-        return stf::measure_cursor;
+        return stfio::measure_cursor;
     if (m_cursorToolBar->GetToolToggled(ID_TOOL_PEAK))
-        return stf::peak_cursor;
+        return stfio::peak_cursor;
     if (m_cursorToolBar->GetToolToggled(ID_TOOL_BASE))
-        return stf::base_cursor;
+        return stfio::base_cursor;
     if (m_cursorToolBar->GetToolToggled(ID_TOOL_DECAY))
-        return stf::decay_cursor;
+        return stfio::decay_cursor;
     if (m_cursorToolBar->GetToolToggled(ID_TOOL_LATENCY))
-        return stf::latency_cursor;
+        return stfio::latency_cursor;
     if (m_cursorToolBar->GetToolToggled(ID_TOOL_ZOOM))
-        return stf::zoom_cursor;
+        return stfio::zoom_cursor;
     if (m_cursorToolBar->GetToolToggled(ID_TOOL_EVENT))
-        return stf::event_cursor;
+        return stfio::event_cursor;
 #ifdef WITH_PSLOPE
     if (m_cursorToolBar->GetToolToggled(ID_TOOL_PSLOPE))
-        return stf::pslope_cursor;
+        return stfio::pslope_cursor;
 #endif
-    return stf::undefined_cursor;
+    return stfio::undefined_cursor;
 }
 
-void wxStfParentFrame::SetMouseQual(stf::cursor_type value) {
+void wxStfParentFrame::SetMouseQual(stfio::cursor_type value) {
 
     if (m_cursorToolBar == NULL)
         return;
@@ -1408,23 +1409,23 @@ void wxStfParentFrame::SetMouseQual(stf::cursor_type value) {
 #endif
 
     // Then set the state of the selected button:
-    if (value==stf::measure_cursor)
+    if (value==stfio::measure_cursor)
         m_cursorToolBar->ToggleTool(ID_TOOL_MEASURE,true);
-    if (value==stf::peak_cursor)
+    if (value==stfio::peak_cursor)
         m_cursorToolBar->ToggleTool(ID_TOOL_PEAK,true);
-    if (value==stf::base_cursor)
+    if (value==stfio::base_cursor)
         m_cursorToolBar->ToggleTool(ID_TOOL_BASE,true);
-    if (value==stf::decay_cursor)
+    if (value==stfio::decay_cursor)
         m_cursorToolBar->ToggleTool(ID_TOOL_DECAY,true);
-    if (value==stf::latency_cursor)
+    if (value==stfio::latency_cursor)
         m_cursorToolBar->ToggleTool(ID_TOOL_LATENCY,true);
 #ifdef WITH_PSLOPE
-    if (value==stf::pslope_cursor)
+    if (value==stfio::pslope_cursor)
         m_cursorToolBar->ToggleTool(ID_TOOL_PSLOPE,true);
 #endif
-    if (value==stf::zoom_cursor)
+    if (value==stfio::zoom_cursor)
         m_cursorToolBar->ToggleTool(ID_TOOL_ZOOM,true);
-    if (value==stf::event_cursor)
+    if (value==stfio::event_cursor)
         m_cursorToolBar->ToggleTool(ID_TOOL_EVENT,true);
 
     m_cursorToolBar->Refresh();
@@ -1438,30 +1439,30 @@ void wxStfParentFrame::SetSelectedButton(bool selected) {
     m_cursorToolBar->Refresh();
 }
 
-stf::zoom_channels wxStfParentFrame::GetZoomQual() const {
+stfio::zoom_channels wxStfParentFrame::GetZoomQual() const {
     if (m_scaleToolBar->GetToolToggled(ID_TOOL_CH1)) {
         if (m_scaleToolBar->GetToolToggled(ID_TOOL_CH2)) {
-            return stf::zoomboth;
+            return stfio::zoomboth;
         } else {
-            return stf::zoomch1;
+            return stfio::zoomch1;
         }
     }
-    return stf::zoomch2;
+    return stfio::zoomch2;
 }
 
-void wxStfParentFrame::SetZoomQual(stf::zoom_channels value) {
+void wxStfParentFrame::SetZoomQual(stfio::zoom_channels value) {
     if (m_scaleToolBar==NULL)
         return;
 
-    if (value==stf::zoomch1) {
+    if (value==stfio::zoomch1) {
         m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
         m_scaleToolBar->ToggleTool(ID_TOOL_CH2,false);
     }
-    if (value==stf::zoomch2) {
+    if (value==stfio::zoomch2) {
         m_scaleToolBar->ToggleTool(ID_TOOL_CH1,false);
         m_scaleToolBar->ToggleTool(ID_TOOL_CH2,true);
     }
-    if (value==stf::zoomboth) {
+    if (value==stfio::zoomboth) {
         m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
         m_scaleToolBar->ToggleTool(ID_TOOL_CH2,true);
     }

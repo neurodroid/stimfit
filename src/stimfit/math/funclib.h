@@ -22,7 +22,7 @@
 #define _FUNCLIB_H
 
 // common definitions needed here:
-#include "./../../core/stimdefs.h"
+#include "./../stf.h"
 
 namespace stf {
 
@@ -370,7 +370,7 @@ namespace stf {
     /*! \param n_exp Number of exponential terms.
      *  \return A vector of parameter information structs.
      */
-    std::vector<parInfo> getParInfoExp(int n_exp);
+    std::vector<stfio::parInfo> getParInfoExp(int n_exp);
     
     //! Calculates a weighted time constant.
     /*! \param p Parameters of an exponential function (see stf::fexp()).
@@ -378,7 +378,7 @@ namespace stf {
      *  \param chisqr The sum of squared errors, as returned from a least-squares fit.
      *  \return A formatted table of results.
      */
-    stf::Table outputWTau(const Vector_double& p, const std::vector<parInfo>& parsInfo, double chisqr);
+    stfio::Table outputWTau(const Vector_double& p, const std::vector<stfio::parInfo>& parsInfo, double chisqr);
     
     //! Finds the index of \e data where \e value is encountered for the first time.
     /*! \param data The waveform to be searched.
@@ -390,7 +390,7 @@ namespace stf {
     //! Returns the library of functions for non-linear regression.
     /*! \return A vector of non-linear regression functions.
      */
-    std::vector<stf::storedFunc> GetFuncLib();
+    std::vector<stfio::storedFunc> GetFuncLib();
 
     /*@}*/
 

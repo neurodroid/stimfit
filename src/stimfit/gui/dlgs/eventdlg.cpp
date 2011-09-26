@@ -5,7 +5,7 @@
 #endif
 
 
-#include "./../../core/section.h"
+#include "./../../../libstfio/section.h"
 #include "./eventdlg.h"
 
 enum {wxID_COMBOTEMPLATES};

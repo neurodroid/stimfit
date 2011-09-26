@@ -49,15 +49,15 @@
 
 #include "stfswig.h"
 
-#include "./../app/app.h"
-#include "./../app/doc.h"
-#include "./../app/view.h"
-#include "./../app/graph.h"
-#include "./../app/parentframe.h"
-#include "./../app/childframe.h"
-#include "./../app/dlgs/cursorsdlg.h"
-#include "./../core/recording.h"
-#include "./../core/fitlib.h"
+#include "./../gui/app.h"
+#include "./../gui/doc.h"
+#include "./../gui/view.h"
+#include "./../gui/graph.h"
+#include "./../gui/parentframe.h"
+#include "./../gui/childframe.h"
+#include "./../gui/dlgs/cursorsdlg.h"
+#include "./../../libstfio/recording.h"
+#include "./../math/fit.h"
 
 std::vector< std::vector< Vector_double > > gMatrix;
 std::vector< std::string > gNames;
@@ -825,11 +825,11 @@ const char* get_peak_direction( ) {
     if ( !check_doc() ) return "";
     
     const char *direction = "both";
-    if ( actDoc()->GetDirection() == stf::up )
+    if ( actDoc()->GetDirection() == stfio::up )
         direction = "up";
-    else if ( actDoc()->GetDirection() == stf::down )
+    else if ( actDoc()->GetDirection() == stfio::down )
         direction = "down";
-    else if ( actDoc()->GetDirection() == stf::both )
+    else if ( actDoc()->GetDirection() == stfio::both )
         direction = "both";
     
     return direction;
@@ -839,17 +839,17 @@ bool set_peak_direction( const char* direction ) {
     if ( !check_doc() ) return false;
 
     if ( strcmp( direction, "up" ) == 0 ) {
-        actDoc()->SetDirection( stf::up );
+        actDoc()->SetDirection( stfio::up );
         return update_cursor_dialog();
     }
 
     if ( strcmp( direction, "down" ) == 0 ) {
-        actDoc()->SetDirection( stf::down );
+        actDoc()->SetDirection( stfio::down );
         return update_cursor_dialog();
     }
 
     if ( strcmp( direction, "both" ) == 0 ) {
-        actDoc()->SetDirection( stf::both );
+        actDoc()->SetDirection( stfio::both );
         return update_cursor_dialog();
     }
 
@@ -1289,7 +1289,7 @@ PyObject* leastsq( int fselect, bool refresh ) {
     // Dictionaries apparently grow as needed; no initial size is required.
     PyObject* retDict = PyDict_New( );
     for ( std::size_t n_dict = 0; n_dict < params.size(); ++n_dict ) {
-         PyDict_SetItemString( retDict, wxGetApp().GetFuncLib()[fselect].pInfo.at(n_dict).desc.char_str(), 
+         PyDict_SetItemString( retDict, wxGetApp().GetFuncLib()[fselect].pInfo.at(n_dict).desc.c_str(), 
                 PyFloat_FromDouble( params[n_dict] ) );
     }
     PyDict_SetItemString( retDict, "SSE", PyFloat_FromDouble( chisqr ) );
@@ -1305,7 +1305,7 @@ bool show_table( PyObject* dict, const char* caption ) {
         ShowError( wxT("First argument to ShowTable() is not a dictionary.") );
         return false;
     }
-    std::map< wxString, double > pyMap;
+    std::map< std::string, double > pyMap;
     Py_ssize_t n_dict = 0;
     PyObject *pkey = NULL, *pvalue = NULL;
     while ( PyDict_Next( dict, &n_dict, &pkey, &pvalue ) ) {
@@ -1313,11 +1313,11 @@ bool show_table( PyObject* dict, const char* caption ) {
             ShowError( wxT("Couldn't read from dictionary in ShowTable().") );
             return false;
         }
-        wxString key = wxString( PyString_AsString( pkey ), wxConvLocal );
+        std::string key = PyString_AsString( pkey );
         double value = PyFloat_AsDouble( pvalue );
         pyMap[key] = value;
     }
-    stf::Table pyTable( pyMap );
+    stfio::Table pyTable( pyMap );
 
     wxStfChildFrame* pFrame = (wxStfChildFrame*)actDoc()->GetDocumentWindow();
     if ( !pFrame ) {
@@ -1344,13 +1344,13 @@ bool show_table_dictlist( PyObject* dict, const char* caption, bool reverse ) {
     Py_ssize_t n_dict = 0;
     PyObject *pkey = NULL, *pvalue = NULL;
     std::vector< Vector_double > pyVector;
-    std::vector< wxString > pyStrings;
+    std::vector< std::string > pyStrings;
     while ( PyDict_Next( dict, &n_dict, &pkey, &pvalue ) ) {
         if ( !pkey || !pvalue ) {
             ShowError( wxT("Couldn't read from dictionary in ShowTable().") );
             return false;
         }
-        pyStrings.push_back( wxString( PyString_AsString( pkey ), wxConvLocal ) );
+        pyStrings.push_back(PyString_AsString( pkey ));
         if ( !PyList_Check( pvalue ) ) {
             ShowError( wxT("Dictionary values are not (consistently) lists.") );
             return false;
@@ -1370,7 +1370,7 @@ bool show_table_dictlist( PyObject* dict, const char* caption, bool reverse ) {
         ShowError( wxT("Dictionary was empty in show_table().") );
         return false;
     }
-    stf::Table pyTable( pyVector[0].size(), pyVector.size() );
+    stfio::Table pyTable( pyVector[0].size(), pyVector.size() );
     std::vector< std::vector< double > >::const_iterator c_va_it;
     std::size_t n_col = 0;
     for (  c_va_it = pyVector.begin(); c_va_it != pyVector.end(); ++c_va_it ) {
@@ -1399,7 +1399,7 @@ bool set_marker(double x, double y) {
     if ( !check_doc() )
         return false;
     try {
-        actDoc()->cur().SetPyMarker(stf::PyMarker(x,y));
+        actDoc()->cur().SetPyMarker(stfio::PyMarker(x,y));
     }
     catch (const std::out_of_range& e) {
         wxString msg( wxT("Could not set the marker:\n") );

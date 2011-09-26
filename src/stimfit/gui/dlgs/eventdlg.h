@@ -25,6 +25,8 @@
  *  @{
  */
 
+#include <vector>
+
 class Section;
 
 //! Dialog for event-detection settings.

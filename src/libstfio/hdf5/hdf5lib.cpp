@@ -266,11 +266,6 @@ bool stfio::exportHDF5File(const std::string& fName, const Recording& WData, Pro
         std::string errorMsg("Exception while closing file in stfio::exportHDF5File");
         throw std::runtime_error(errorMsg);
     }
-#ifdef MODULE_ONLY
-    std::cout << "\r";
-    std::cout << "100%" << std::endl;
-#endif
-    
     return (status >= 0);
 }
 
@@ -483,11 +478,4 @@ void stfio::importHDF5File(const std::string& fName, Recording& ReturnData, Prog
         std::string errorMsg("Exception while closing file in stfio::importHDF5File");
         throw std::runtime_error(errorMsg);
     }
-#ifdef MODULE_ONLY
-    if (progress) {
-        std::cout << "\r";
-        std::cout << "100%" << std::endl;
-    }
-#endif
-    
 }

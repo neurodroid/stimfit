@@ -174,7 +174,7 @@ stfio::Table::Table(const std::map< std::string, double >& map)
 rowLabels(map.size(), "\0"), colLabels(1, "Results")
 {
     std::map< std::string, double >::const_iterator cit;
-    wxs_it it1 = rowLabels.begin();
+    sst_it it1 = rowLabels.begin();
     std::vector< std::vector<double> >::iterator it2 = values.begin();
     for (cit = map.begin();
          cit != map.end() && it1 != rowLabels.end() && it2 != values.end();
@@ -429,4 +429,36 @@ Vector_double stfio::vec_vec_div(const Vector_double& vec1, const Vector_double&
     Vector_double ret_vec(vec1.size());
     std::transform(vec1.begin(), vec1.end(), vec2.begin(), ret_vec.begin(), std::divides<double>());
     return ret_vec;
+}
+
+Vector_double stfio::nojac(double x, const Vector_double& p) {
+    return Vector_double(0);
+}
+
+double stfio::noscale(double param, double xscale, double oldx, double yscale, double yoff) {
+    return param;
+}
+
+stfio::Table stfio::defaultOutput(
+	const Vector_double& pars,
+	const std::vector<stfio::parInfo>& parsInfo,
+    double chisqr
+) {
+	if (pars.size()!=parsInfo.size()) {
+		throw std::out_of_range("index out of range in stf::defaultOutput");
+	}
+        stfio::Table output(pars.size()+1,1);
+	try {
+		output.SetColLabel(0,"Best-fit value");
+		for (std::size_t n_p=0;n_p<pars.size(); ++n_p) {
+			output.SetRowLabel(n_p,parsInfo[n_p].desc);
+			output.at(n_p,0)=pars[n_p];
+		}
+        output.SetRowLabel(pars.size(),"SSE");
+        output.at(pars.size(),0)=chisqr;
+	}
+	catch (...) {
+		throw;
+	}
+	return output;
 }

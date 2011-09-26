@@ -100,7 +100,7 @@ Vector_double nojac( double x, const Vector_double& p);
 
 //! Dummy function, serves as a placeholder to initialize parameters without a scaling function.
 double noscale(double param, double xscale, double xoff, double yscale, double yoff);
-
+    
 //! Information about parameters used in storedFunc
 /*! Contains information about a function's parameters used 
  *  in storedFunc (see below). The client supplies a description 
@@ -229,13 +229,6 @@ private:
     std::vector< std::string > colLabels;
 };
 
-//! Default fit output function, constructing a stf::Table from the parameters, their description and chisqr.
-Table defaultOutput(
-        const Vector_double& pars, 
-        const std::vector<parInfo>& parsInfo,
-        double chisqr
-);
-
 //! Initialising function for the parameters in stf::Func to start a fit.
 typedef boost::function<void(const Vector_double&,double,double,double,Vector_double&)> Init;
 
@@ -264,6 +257,11 @@ linsolv(
         Vector_double& A,
         Vector_double& B
 );
+
+//! Default fit output function, constructing a stf::Table from the parameters, their description and chisqr.
+Table defaultOutput(const Vector_double& pars, 
+                    const std::vector<parInfo>& parsInfo,
+                    double chisqr);
 
 //! Function used for least-squares fitting.
 /*! Objects of this class are used for fitting functions 
@@ -311,30 +309,6 @@ struct StfDll storedFunc {
     Output output;               /*!< Output of the fit. */
 //    bool hasId;                  /*!< Determines whether a function should have an id. */
 
-};
-
-//! Represents user input from dialogs that can be used in plugins.
-struct UserInput {
-    std::vector<std::string> labels; /*!< Dialog entry labels. */
-    Vector_double defaults; /*!< Default dialog entries. */
-    std::string title;               /*!< Dialog title. */
-
-    //! Constructor.
-    /*! \param labels_ A vector of dialog entry label strings.
-     *  \param defaults_ A vector of default dialog entries.
-     *  \param title_ Dialog title.
-     */
-    UserInput(
-            const std::vector<std::string>& labels_=std::vector<std::string>(0),
-            const Vector_double& defaults_=Vector_double(0),
-            std::string title_="\0"
-    ) : labels(labels_),defaults(defaults_),title(title_)
-    {
-                if (defaults.size()!=labels.size()) {
-                    defaults.resize(labels.size());
-                    std::fill(defaults.begin(), defaults.end(), 0.0);
-                }
-    }
 };
 
 //! Describes the attributes of an event.
@@ -413,7 +387,7 @@ struct PyMarker {
       *  \param message Message displayed
       *  \param maximum Maximum value for the progress meter
       */
-     ProgressInfo(const std::string& title, const std::string& message, int maximum);
+     ProgressInfo(const std::string& title, const std::string& message, int maximum) {};
 
      //! Updates the progress info
      /*! \param value New value of the progress meter
@@ -569,8 +543,8 @@ typedef std::vector< stfio::Event      >::iterator       event_it;    /*!< stfio
 typedef std::vector< stfio::Event      >::const_iterator c_event_it;  /*!< constant stfio::Event iterator */
 typedef std::vector< stfio::PyMarker   >::iterator       marker_it;   /*!< stfio::PyMarker iterator */
 typedef std::vector< stfio::PyMarker   >::const_iterator c_marker_it; /*!< constant stfio::PyMarker iterator */
-typedef std::vector< std::string        >::iterator       wxs_it;      /*!< std::string iterator */
-typedef std::vector< std::string        >::const_iterator c_wxs_it;    /*!< constant std::string iterator */
+typedef std::vector< std::string        >::iterator       sst_it;      /*!< std::string iterator */
+typedef std::vector< std::string        >::const_iterator c_sst_it;    /*!< constant std::string iterator */
 typedef std::vector< stfio::storedFunc >::const_iterator c_stfunc_it; /*!< constant stfio::storedFunc iterator */
 typedef std::vector< std::size_t     >::const_iterator c_st_it;     /*!< constant size_t iterator */
 typedef std::vector< int             >::iterator       int_it;      /*!< int iterator */

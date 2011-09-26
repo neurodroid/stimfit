@@ -206,10 +206,4 @@ void stfio::importAXGFile(const std::string &fName, Recording &ReturnData, Progr
     
     // Close the import file
     CloseFile( dataRefNum );
-#ifdef MODULE_ONLY
-    if (progress) {
-        std::cout << "\r";
-        std::cout << "100%" << std::endl;
-    }
-#endif
 }

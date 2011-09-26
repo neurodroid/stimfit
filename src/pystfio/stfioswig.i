@@ -92,6 +92,11 @@ class Section {
     ~Recording() {delete $self;}
 
     double dt;
+    char* file_description;
+    char* time;
+    char* date;
+    char* comment;
+    char* xunits;
     
     Channel& __getitem__(int at) {
         if (at >= 0 && at < $self->size()) {
@@ -132,6 +137,37 @@ class Section {
     void Recording_dt_set(Recording *r, double val) {
         r->SetXScale(val);
     }
+    const char* Recording_file_description_get(Recording *r) {
+        return r->GetFileDescription().c_str();
+    }
+    void Recording_file_description_set(Recording *r, char* val) {
+        r->SetFileDescription(std::string(val));
+    }
+    const char* Recording_time_get(Recording *r) {
+        return r->GetTime().c_str();
+    }
+    void Recording_time_set(Recording *r, char* val) {
+        r->SetTime(std::string(val));
+    }
+    const char* Recording_date_get(Recording *r) {
+        return r->GetDate().c_str();
+    }
+    void Recording_date_set(Recording *r, char* val) {
+        r->SetDate(std::string(val));
+    }
+    const char* Recording_xunits_get(Recording *r) {
+        return r->GetXUnits().c_str();
+    }
+    void Recording_xunits_set(Recording *r, char* val) {
+        r->SetXUnits(std::string(val));
+    }
+    const char* Recording_comment_get(Recording *r) {
+        return r->GetComment().c_str();
+    }
+    void Recording_comment_set(Recording *r, char* val) {
+        r->SetComment(std::string(val));
+    }
+
 %}
 
 %extend Channel {

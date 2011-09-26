@@ -15,11 +15,11 @@ noinst_HEADERS = stfswig.h
 INCLUDES = $(LIBNUMPY_INCLUDES)
 
 libstf_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
-libstf_la_CXXFLAGS = $(OPT_CXXFLAGS)
+libstf_la_CXXFLAGS = $(OPT_CXXFLAGS) $(WX_CXXFLAGS)
 libstf_la_LDFLAGS = $(LIBPYTHON_LDFLAGS) $(LIBSTF_LDFLAGS) $(LIBBIOSIG_LDFLAGS)
-libstf_la_LIBADD = ../gui/libstimfit.la $(WX_LIBS)
+libstf_la_LIBADD = ../libstimfit.la $(WX_LIBS)
 
-EXTRA_DIST = stfswig.i numpy.i ivtools.py mintools.py natools.py minidemo.py charlie.py mintools.py hdf5tools.py spells.py embedded_init.py embedded_stf.py embedded_mpl.py embedded_ipython.py unittest_stfio.py heka.py extensions.py Doxyfile gccwarn
+EXTRA_DIST = stfswig.i numpy.i ivtools.py mintools.py natools.py minidemo.py charlie.py mintools.py hdf5tools.py spells.py embedded_init.py embedded_stf.py embedded_mpl.py embedded_ipython.py heka.py extensions.py Doxyfile gccwarn
 
 install-exec-hook:
 	cd ${prefix}/lib/stimfit && ln -sf ${STF_PYTHON_LIBNAME} _stf.so
@@ -32,7 +32,6 @@ install-exec-hook:
 	cp -p $(srcdir)/charlie.py ${prefix}/lib/stimfit
 	cp -p $(srcdir)/hdf5tools.py ${prefix}/lib/stimfit
 	cp -p $(srcdir)/stf.py ${prefix}/lib/stimfit
-	cp -p $(srcdir)/stfio_plot.py ${prefix}/lib/stimfit
 	cp -p $(srcdir)/spells.py ${prefix}/lib/stimfit
 	cp -p $(srcdir)/embedded_init.py ${prefix}/lib/stimfit
 	cp -p $(srcdir)/embedded_stf.py ${prefix}/lib/stimfit

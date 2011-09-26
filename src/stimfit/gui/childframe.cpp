@@ -497,7 +497,7 @@ void wxStfChildFrame::ActivateGraph() {
     }
 }
 
-void wxStfChildFrame::ShowTable(const stf::Table &table,const wxString& caption) {
+void wxStfChildFrame::ShowTable(const stfio::Table &table,const wxString& caption) {
 
     // Create and show notebook if necessary:
     if (m_notebook==NULL && !m_mgr.GetPane(m_notebook).IsOk()) {
@@ -531,7 +531,7 @@ void wxStfChildFrame::ShowTable(const stf::Table &table,const wxString& caption)
 
 void wxStfChildFrame::UpdateResults() {
     wxStfDoc* pDoc=(wxStfDoc*)GetDocument();
-    stf::Table table(pDoc->CurResultsTable());
+    stfio::Table table(pDoc->CurResultsTable());
     
     // Delete or append columns:
     if (m_table->GetNumberCols()<(int)table.nCols()) {
@@ -553,9 +553,9 @@ void wxStfChildFrame::UpdateResults() {
 
     for (std::size_t nRow=0;nRow<table.nRows();++nRow) {
         // set row label:
-        m_table->SetRowLabelValue((int)nRow,table.GetRowLabel(nRow));
+        m_table->SetRowLabelValue((int)nRow, stf::std2wx(table.GetRowLabel(nRow)));
         for (std::size_t nCol=0;nCol<table.nCols();++nCol) {
-            if (nRow==0) m_table->SetColLabelValue((int)nCol,table.GetColLabel(nCol));
+            if (nRow==0) m_table->SetColLabelValue((int)nCol, stf::std2wx(table.GetColLabel(nCol)));
             if (!table.IsEmpty(nRow,nCol)) {
                 wxString entry; entry << table.at(nRow,nCol);
                 m_table->SetCellValue((int)nRow,(int)nCol,entry);

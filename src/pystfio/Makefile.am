@@ -18,25 +18,24 @@ noinst_HEADERS = ./stfioswig.h
 
 INCLUDES = $(LIBNUMPY_INCLUDES) $(PYTHON_ADDINCLUDES)
 
-EXTRA_DIST = ./stfioswig.i ./unittest_stfio.py ./hdf5tools.py ./test.h5
+EXTRA_DIST = ./stfioswig.i ./unittest_stfio.py ./test.h5
 
 libpystfio_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
 libpystfio_la_CXXFLAGS = $(OPT_CXXFLAGS)
 libpystfio_la_LDFLAGS = $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
-libpystfio_la_LIBADD = -lhdf5 -lhdf5_hl $(PYTHON_ADDLIBS) ./../libstfio/libstfio.la
+libpystfio_la_LIBADD = $(PYTHON_ADDLIBS) ./../libstfio/libstfio.la
 
 install-exec-hook:
 	mv ${PYTHON_SITE_PKG}/stfio/${STFIO_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stfio/_stfio.so
 	rm -f ${PYTHON_SITE_PKG}/stfio/*.la
 	rm -f ${PYTHON_SITE_PKG}/stfio/*.a
-	cp -p $(top_srcdir)/src/pystfio/hdf5tools.py ${PYTHON_SITE_PKG}/stfio
 	cp -p $(top_srcdir)/src/pystfio/stfio_plot.py ${PYTHON_SITE_PKG}/stfio
 	cp -p $(top_srcdir)/src/pystfio/stfio.py ${PYTHON_SITE_PKG}/stfio
 	chmod -x ${PYTHON_SITE_PKG}/stfio/*
 	echo stfio > ${PYTHON_SITE_PKG}/stfio.pth
 
 uninstall-hook:
-	rm -f ${PYTHON_SITE_PKG}/stfio/_stfio.so
+	rm -f ${PYTHON_SITE_PKG}/stfio/*.so
 	rm -f ${PYTHON_SITE_PKG}/stfio.pth
 
 clean-local:

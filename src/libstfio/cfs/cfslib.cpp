@@ -300,10 +300,6 @@ bool stfio::exportCFSFile(const std::string& fName, const Recording& WData, stfi
         InsertDS(CFSFile.myHandle, 0, noFlags);
         if (CFSError(errorMsg))	throw std::runtime_error(errorMsg);
     }	//End section loop
-#ifdef MODULE_ONLY
-    std::cout << "\r";
-    std::cout << "100%" << std::endl;
-#endif
     
     return true;
 }
@@ -540,11 +536,5 @@ int stfio::importCFSFile(const std::string& fName, Recording& ReturnData, Progre
     ReturnData.SetTime(time);
     ReturnData.SetDate(date);
     ReturnData.SetComment(comment);
-#ifdef MODULE_ONLY
-    if (progress) {
-        std::cout << "\r";
-        std::cout << "100%" << std::endl;
-    }
-#endif
     return 0;
 }

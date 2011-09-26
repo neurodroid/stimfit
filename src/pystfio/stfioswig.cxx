@@ -39,7 +39,8 @@
 #include "stfioswig.h"
 
 StdoutProgressInfo::StdoutProgressInfo(const std::string& title, const std::string& message, int maximum)
-    : ProgressInfo(title, message, maximum) {};
+    : ProgressInfo(title, message, maximum)
+{}
 
 bool StdoutProgressInfo::Update(int value, const std::string& newmsg, bool* skip) {
     return true;

@@ -25,11 +25,11 @@
  *  @{
  */
 
-#include "wx/aui/aui.h"
-#include "wx/grid.h"
-#include "wx/dnd.h"
+#include <wx/aui/aui.h>
+#include <wx/grid.h>
+#include <wx/dnd.h>
 
-#include "./../core/core.h"
+#include "./../stf.h"
 
 class wxStfGraph;
 class wxStfTable;
@@ -96,12 +96,12 @@ public:
     //! Retrieve the current mouse mode.
     /*! \return The current mouse cursor mode.
      */
-    stf::cursor_type GetMouseQual() const;
+    stfio::cursor_type GetMouseQual() const;
 
     //! Sets the current mouse cursor mode.
     /*! \param value The new mouse cursor mode.
      */
-    void SetMouseQual(stf::cursor_type value);
+    void SetMouseQual(stfio::cursor_type value);
 
     //! Sets status of the toolbar's selection button.
     /*! \param selected The desired toggle status of the selection button.
@@ -111,12 +111,12 @@ public:
     //! Retrieve which channels will be affected by scaling operations
     /*! \return The channels affected by scaling operations.
      */
-    stf::zoom_channels GetZoomQual() const;
+    stfio::zoom_channels GetZoomQual() const;
 
     //! Set the channels that will be affected by scaling operations
     /*! \param value The channels affected by scaling operations.
      */
-    void SetZoomQual(stf::zoom_channels value);
+    void SetZoomQual(stfio::zoom_channels value);
 
     //! Set the zoom buttons to single- or multi-channel mode.
     /*! \param value Set to true for single- or false for multi-channel mode.

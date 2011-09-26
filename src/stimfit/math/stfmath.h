@@ -38,9 +38,9 @@
 #include <omp.h>
 #endif
 
-#include "./stimdefs.h"
-#include "./section.h"
-#include "./recording.h"
+#include "./../stf.h"
+// #include "./../../libstfio/section.h"
+// #include "./../../libstfio/recording.h"
 
 #ifndef MODULE_ONLY
 // header for the fourier transform:
@@ -99,7 +99,7 @@ filter(
         std::size_t filter_end,  
         const Vector_double &a,
         int SR,
-        Func func,
+        stfio::Func func,
         bool inverse = false
 );
 

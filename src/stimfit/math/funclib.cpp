@@ -14,100 +14,92 @@
 
 #include <cfloat>
 #include <cmath>
-#include "./../../core/fitlib.h"
-#include "./../../core/measlib.h"
+#include <sstream>
+
+#include "./fit.h"
+#include "./../../libstfio/measure.h"
 #include "./funclib.h"
 
-std::vector< stf::storedFunc > stf::GetFuncLib() {
-    std::vector< stf::storedFunc > funcList;
+std::vector< stfio::storedFunc > stf::GetFuncLib() {
+    std::vector< stfio::storedFunc > funcList;
     
     // Monoexponential function, free fit:
-    std::vector<parInfo> parInfoMExp=getParInfoExp(1);
-    funcList.push_back(stf::storedFunc(
-                                       wxT("Monoexponential"),parInfoMExp,fexp,fexp_init,fexp_jac,true));
+    std::vector<stfio::parInfo> parInfoMExp=getParInfoExp(1);
+    funcList.push_back(stfio::storedFunc("Monoexponential",parInfoMExp,fexp,fexp_init,fexp_jac,true));
 
     // Monoexponential function, offset fixed to baseline:
     parInfoMExp[2].toFit=false;
-    funcList.push_back(stf::storedFunc(
-                                       wxT("Monoexponential, offset fixed to baseline"),parInfoMExp,fexp,fexp_init,fexp_jac,true));
+    funcList.push_back(stfio::storedFunc("Monoexponential, offset fixed to baseline",
+                                         parInfoMExp,fexp,fexp_init,fexp_jac,true));
 
     // Monoexponential function, starting with a delay, start fixed to baseline:
-    std::vector<parInfo> parInfoMExpDe(4);
-    parInfoMExpDe[0].toFit=false; parInfoMExpDe[0].desc=wxT("Baseline"); parInfoMExpDe[0].scale=stf::yscaleoffset; parInfoMExpDe[0].unscale=stf::yunscaleoffset; 
-    parInfoMExpDe[1].toFit=true; parInfoMExpDe[1].desc=wxT("Delay"); parInfoMExpDe[0].scale=stf::xscale; parInfoMExpDe[0].unscale=stf::xunscale;
-    parInfoMExpDe[2].toFit=true; parInfoMExpDe[2].desc=wxT("tau"); parInfoMExpDe[0].scale=stf::xscale; parInfoMExpDe[0].unscale=stf::xunscale;
-    parInfoMExpDe[3].toFit=true; parInfoMExpDe[3].desc=wxT("Peak"); parInfoMExpDe[0].scale=stf::yscale; parInfoMExpDe[0].unscale=stf::yunscale;
-    funcList.push_back(stf::storedFunc(
-                                       wxT("Monoexponential with delay, start fixed to baseline"),
-                                       parInfoMExpDe,fexpde,fexpde_init,nojac,false));
+    std::vector<stfio::parInfo> parInfoMExpDe(4);
+    parInfoMExpDe[0].toFit=false; parInfoMExpDe[0].desc="Baseline"; parInfoMExpDe[0].scale=stf::yscaleoffset; parInfoMExpDe[0].unscale=stf::yunscaleoffset; 
+    parInfoMExpDe[1].toFit=true; parInfoMExpDe[1].desc="Delay"; parInfoMExpDe[0].scale=stf::xscale; parInfoMExpDe[0].unscale=stf::xunscale;
+    parInfoMExpDe[2].toFit=true; parInfoMExpDe[2].desc="tau"; parInfoMExpDe[0].scale=stf::xscale; parInfoMExpDe[0].unscale=stf::xunscale;
+    parInfoMExpDe[3].toFit=true; parInfoMExpDe[3].desc="Peak"; parInfoMExpDe[0].scale=stf::yscale; parInfoMExpDe[0].unscale=stf::yunscale;
+    funcList.push_back(stfio::storedFunc("Monoexponential with delay, start fixed to baseline",
+                                         parInfoMExpDe,fexpde,fexpde_init,stfio::nojac,false));
 
     // Biexponential function, free fit:
-    std::vector<parInfo> parInfoBExp=getParInfoExp(2);
-    funcList.push_back(stf::storedFunc(
-                                       wxT("Biexponential"),parInfoBExp,fexp,fexp_init,fexp_jac,true,outputWTau));
+    std::vector<stfio::parInfo> parInfoBExp=getParInfoExp(2);
+    funcList.push_back(stfio::storedFunc(
+                                       "Biexponential",parInfoBExp,fexp,fexp_init,fexp_jac,true,outputWTau));
 
     // Biexponential function, offset fixed to baseline:
     parInfoBExp[4].toFit=false;
-    funcList.push_back(stf::storedFunc(
-                                       wxT("Biexponential, offset fixed to baseline"),parInfoBExp,fexp,fexp_init,fexp_jac,true,outputWTau));
+    funcList.push_back(stfio::storedFunc("Biexponential, offset fixed to baseline",
+                                         parInfoBExp,fexp,fexp_init,fexp_jac,true,outputWTau));
 
     // Biexponential function, starting with a delay, start fixed to baseline:
-    std::vector<parInfo> parInfoBExpDe(5);
-    parInfoBExpDe[0].toFit=false; parInfoBExpDe[0].desc=wxT("Baseline"); parInfoBExpDe[0].scale=stf::yscaleoffset; parInfoBExpDe[0].unscale=stf::yunscaleoffset;
-    parInfoBExpDe[1].toFit=true;  parInfoBExpDe[1].desc=wxT("Delay"); parInfoBExpDe[1].scale=stf::xscale; parInfoBExpDe[1].unscale=stf::xunscale; 
+    std::vector<stfio::parInfo> parInfoBExpDe(5);
+    parInfoBExpDe[0].toFit=false; parInfoBExpDe[0].desc="Baseline"; parInfoBExpDe[0].scale=stf::yscaleoffset; parInfoBExpDe[0].unscale=stf::yunscaleoffset;
+    parInfoBExpDe[1].toFit=true;  parInfoBExpDe[1].desc="Delay"; parInfoBExpDe[1].scale=stf::xscale; parInfoBExpDe[1].unscale=stf::xunscale; 
     // parInfoBExpDe[1].constrained = true; parInfoBExpDe[1].constr_lb = 0.0; parInfoBExpDe[1].constr_ub = DBL_MAX;
-    parInfoBExpDe[2].toFit=true;  parInfoBExpDe[2].desc=wxT("tau1"); parInfoBExpDe[2].scale=stf::xscale; parInfoBExpDe[2].unscale=stf::xunscale;
+    parInfoBExpDe[2].toFit=true;  parInfoBExpDe[2].desc="tau1"; parInfoBExpDe[2].scale=stf::xscale; parInfoBExpDe[2].unscale=stf::xunscale;
     // parInfoBExpDe[2].constrained = true; parInfoBExpDe[2].constr_lb = 1.0e-16; parInfoBExpDe[2].constr_ub = DBL_MAX;
-    parInfoBExpDe[3].toFit=true;  parInfoBExpDe[3].desc=wxT("Factor"); parInfoBExpDe[3].scale=stf::yscale; parInfoBExpDe[3].unscale=stf::yunscale;
-    parInfoBExpDe[4].toFit=true;  parInfoBExpDe[4].desc=wxT("tau2"); parInfoBExpDe[4].scale=stf::xscale; parInfoBExpDe[4].unscale=stf::xunscale;
+    parInfoBExpDe[3].toFit=true;  parInfoBExpDe[3].desc="Factor"; parInfoBExpDe[3].scale=stf::yscale; parInfoBExpDe[3].unscale=stf::yunscale;
+    parInfoBExpDe[4].toFit=true;  parInfoBExpDe[4].desc="tau2"; parInfoBExpDe[4].scale=stf::xscale; parInfoBExpDe[4].unscale=stf::xunscale;
     // parInfoBExpDe[4].constrained = true; parInfoBExpDe[4].constr_lb = 1.0e-16; parInfoBExpDe[4].constr_ub = DBL_MAX;
-    funcList.push_back(stf::storedFunc(
-                                       wxT("Biexponential with delay, start fixed to baseline, delay constrained to > 0"),
-                                       parInfoBExpDe,fexpbde,fexpbde_init,nojac,false));
+    funcList.push_back(stfio::storedFunc(
+                                       "Biexponential with delay, start fixed to baseline, delay constrained to > 0",
+                                       parInfoBExpDe,fexpbde,fexpbde_init,stfio::nojac,false));
 
     // Triexponential function, free fit:
-    std::vector<parInfo> parInfoTExp=getParInfoExp(3);
-    funcList.push_back(stf::storedFunc(
-                                       wxT("Triexponential"),parInfoTExp,fexp,fexp_init,fexp_jac,true,outputWTau));
+    std::vector<stfio::parInfo> parInfoTExp=getParInfoExp(3);
+    funcList.push_back(stfio::storedFunc(
+                                       "Triexponential",parInfoTExp,fexp,fexp_init,fexp_jac,true,outputWTau));
 
     // Triexponential function, free fit, different initialization:
-    funcList.push_back(stf::storedFunc(
-                                       wxT("Triexponential, initialize for PSCs/PSPs"),parInfoTExp,fexp,fexp_init2,fexp_jac,true,outputWTau));
+    funcList.push_back(stfio::storedFunc(
+                                       "Triexponential, initialize for PSCs/PSPs",parInfoTExp,fexp,fexp_init2,fexp_jac,true,outputWTau));
 
     // Triexponential function, offset fixed to baseline:
     parInfoTExp[6].toFit=false;
-    funcList.push_back(stf::storedFunc(
-                                       wxT("Triexponential, offset fixed to baseline"),parInfoTExp,fexp,fexp_init,fexp_jac,true,outputWTau));
+    funcList.push_back(stfio::storedFunc(
+                                       "Triexponential, offset fixed to baseline",parInfoTExp,fexp,fexp_init,fexp_jac,true,outputWTau));
 
     // Alpha function:
-    std::vector<parInfo> parInfoAlpha(3);
-    parInfoAlpha[0].toFit=true; parInfoAlpha[0].desc=wxT("Q");
-    parInfoAlpha[1].toFit=true; parInfoAlpha[1].desc=wxT("rate");
-    parInfoAlpha[2].toFit=true; parInfoAlpha[2].desc=wxT("Offset");
-    funcList.push_back(stf::storedFunc(
-                                       wxT("Alpha function"), parInfoAlpha,falpha,falpha_init,falpha_jac,true));
+    std::vector<stfio::parInfo> parInfoAlpha(3);
+    parInfoAlpha[0].toFit=true; parInfoAlpha[0].desc="Q";
+    parInfoAlpha[1].toFit=true; parInfoAlpha[1].desc="rate";
+    parInfoAlpha[2].toFit=true; parInfoAlpha[2].desc="Offset";
+    funcList.push_back(stfio::storedFunc(
+                                       "Alpha function", parInfoAlpha,falpha,falpha_init,falpha_jac,true));
 
     // HH gNa function:
-    std::vector<parInfo> parInfoHH(4);
-    parInfoHH[0].toFit=true; parInfoHH[0].desc=wxT("gprime_na");
-    parInfoHH[1].toFit=true; parInfoHH[1].desc=wxT("tau_m");
-    parInfoHH[2].toFit=true; parInfoHH[2].desc=wxT("tau_h");
-    parInfoHH[3].toFit=false; parInfoHH[3].desc=wxT("offset");
-    funcList.push_back(stf::storedFunc(
-                                       wxT("Hodgkin-Huxley g_Na function, offset fixed to baseline"), parInfoHH, fHH, fHH_init, nojac, false));
+    std::vector<stfio::parInfo> parInfoHH(4);
+    parInfoHH[0].toFit=true; parInfoHH[0].desc="gprime_na";
+    parInfoHH[1].toFit=true; parInfoHH[1].desc="tau_m";
+    parInfoHH[2].toFit=true; parInfoHH[2].desc="tau_h";
+    parInfoHH[3].toFit=false; parInfoHH[3].desc="offset";
+    funcList.push_back(stfio::storedFunc(
+                                         "Hodgkin-Huxley g_Na function, offset fixed to baseline", parInfoHH, fHH, fHH_init, stfio::nojac, false));
 
     // power of 1 gNa function:
-    funcList.push_back(stf::storedFunc(
-                                       wxT("power of 1 g_Na function, offset fixed to baseline"), parInfoHH, fgnabiexp, fgnabiexp_init, nojac, false));
+    funcList.push_back(stfio::storedFunc(
+                                         "power of 1 g_Na function, offset fixed to baseline", parInfoHH, fgnabiexp, fgnabiexp_init, stfio::nojac, false));
     return funcList;
-}
-
-Vector_double stf::nojac(double x, const Vector_double& p) {
-    return Vector_double(0);
-}
-
-double stf::noscale(double param, double xscale, double oldx, double yscale, double yoff) {
-    return param;
 }
 
 double stf::fexp(double x, const Vector_double& p) {
@@ -136,8 +128,8 @@ void stf::fexp_init(const Vector_double& data, double base, double peak, double 
     Vector_double::const_iterator max_el = std::max_element(data.begin(), data.end());
     Vector_double::const_iterator min_el = std::min_element(data.begin(), data.end());
     double floor = (increasing ? (*max_el+1.0e-9) : (*min_el-1.0e-9));
-    Vector_double peeled( stf::vec_scal_minus(data, floor));
-    if (increasing) peeled = vec_scal_mul(peeled, -1.0);
+    Vector_double peeled( stfio::vec_scal_minus(data, floor));
+    if (increasing) peeled = stfio::vec_scal_mul(peeled, -1.0);
     std::transform(peeled.begin(), peeled.end(), peeled.begin(),
 #ifdef _WINDOWS                       
                    std::logl);
@@ -244,7 +236,7 @@ Vector_double stf::fexpde_jac(double x, const Vector_double& p) {
 void stf::fexpde_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT;
-    stf::peak( data, base, 0, data.size(), 1, stf::both, maxT );
+    stfio::peak( data, base, 0, data.size(), 1, stfio::both, maxT );
 
     pInit[0]=base;
     pInit[1]=0.0;
@@ -383,31 +375,35 @@ void stf::fgnabiexp_init(const Vector_double& data, double base, double peak, do
     pInit[3]=base;
 }
 
-std::vector<stf::parInfo> stf::getParInfoExp(int n_exp) {
-    std::vector<parInfo> retParInfo(n_exp*2+1);
+std::vector<stfio::parInfo> stf::getParInfoExp(int n_exp) {
+    std::vector<stfio::parInfo> retParInfo(n_exp*2+1);
     for (int n_e=0; n_e<n_exp*2; n_e+=2) {
         retParInfo[n_e].toFit=true;
-        retParInfo[n_e].desc << wxT("Amp_") << (int)n_e/2;
+        std::ostringstream adesc;
+        adesc << "Amp_" << (int)n_e/2;
+        retParInfo[n_e].desc = adesc.str();
         retParInfo[n_e].scale = stf::yscale;
         retParInfo[n_e].unscale = stf::yunscale;
         retParInfo[n_e+1].toFit=true;
-        retParInfo[n_e+1].desc <<  wxT("Tau_") << (int)n_e/2;
+        std::ostringstream tdesc;
+        tdesc  <<  "Tau_" << (int)n_e/2;
+        retParInfo[n_e+1].desc = tdesc.str();
         retParInfo[n_e+1].scale = stf::xscale;
         retParInfo[n_e+1].unscale = stf::xunscale;
     }
     retParInfo[n_exp*2].toFit=true;
-    retParInfo[n_exp*2].desc=wxT("Offset");
+    retParInfo[n_exp*2].desc="Offset";
     retParInfo[n_exp*2].scale=stf::yscaleoffset;
     retParInfo[n_exp*2].unscale=stf::yunscaleoffset;
     return retParInfo;
 }
 
-stf::Table stf::outputWTau(
+stfio::Table stf::outputWTau(
     const Vector_double& pars,
-    const std::vector<parInfo>& parsInfo,
+    const std::vector<stfio::parInfo>& parsInfo,
     double chisqr
 ) {
-    Table output(pars.size()+1,1);
+    stfio::Table output(pars.size()+1,1);
     // call default version:
     try  {
         output=defaultOutput(pars,parsInfo,chisqr);
@@ -429,7 +425,7 @@ stf::Table stf::outputWTau(
     // print:
     output.AppendRows(1);
     try {
-        output.SetRowLabel(pars.size()+1, wxT("Weighted tau"));
+        output.SetRowLabel(pars.size()+1, "Weighted tau");
         output.at(pars.size()+1,0)=sumTau;
     }
     catch (...) {
@@ -459,26 +455,3 @@ std::size_t stf::whereis(const Vector_double& data, double value) {
     return 0;
 }
 
-stf::Table stf::defaultOutput(
-	const Vector_double& pars,
-	const std::vector<stf::parInfo>& parsInfo,
-    double chisqr
-) {
-	if (pars.size()!=parsInfo.size()) {
-		throw std::out_of_range("index out of range in stf::defaultOutput");
-	}
-	Table output(pars.size()+1,1);
-	try {
-		output.SetColLabel(0,wxT("Best-fit value"));
-		for (std::size_t n_p=0;n_p<pars.size(); ++n_p) {
-			output.SetRowLabel(n_p,parsInfo[n_p].desc);
-			output.at(n_p,0)=pars[n_p];
-		}
-        output.SetRowLabel(pars.size(),wxT("SSE"));
-        output.at(pars.size(),0)=chisqr;
-	}
-	catch (...) {
-		throw;
-	}
-	return output;
-}

@@ -346,12 +346,6 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
     ReturnData.SetTime(timeToStr(pFH->uFileStartTimeMS));
 
     abf2.Close();
-#ifdef MODULE_ONLY
-    if (progress) {
-        std::cout << "\r";
-        std::cout << "100%" << std::endl;
-    }
-#endif
 }
 
 void stfio::importABF1File(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
@@ -481,12 +475,6 @@ void stfio::importABF1File(const std::string &fName, Recording &ReturnData, Prog
     ReturnData.SetComment(comment);
     ReturnData.SetDate(dateToStr(FH.lFileStartDate));
     ReturnData.SetTime(timeToStr(FH.lFileStartTime));
-#ifdef MODULE_ONLY
-    if (progress) {
-        std::cout << "\r";
-        std::cout << "100%" << std::endl;
-    }
-#endif
     
 }
 #ifdef _WINDOWS

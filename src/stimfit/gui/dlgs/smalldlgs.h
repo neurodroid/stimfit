@@ -26,7 +26,7 @@
  */
 
 #include <vector>
-#include "./../../core/stimdefs.h"
+#include "./../../stf.h"
 
 //! Dialog showing file information.
 class wxStfFileInfoDlg : public wxDialog 
@@ -644,7 +644,7 @@ public:
     //! Get the text import filter settings struct.
     /*! \return The stf::txtImportSettings struct.
      */
-    stf::txtImportSettings GetTxtImport() const;
+    stfio::txtImportSettings GetTxtImport() const;
 
     //! Called upon ending a modal dialog.
     /*! \param retCode The dialog button id that ended the dialog
@@ -668,7 +668,7 @@ private:
     wxString srcDir,destDir;
     wxString srcFilter;
 
-    stf::filetype srcFilterExt, destFilterExt;
+    stfio::filetype srcFilterExt, destFilterExt;
     std::vector<wxString> srcFileNames;
 
     bool ReadPath(const wxString& path);
@@ -711,12 +711,12 @@ public:
     //! Get the source extension as std::filetype.
     /*! \return The source extension as std::filetype.
      */
-    stf::filetype GetSrcFileExt() const {return srcFilterExt;}
+    stfio::filetype GetSrcFileExt() const {return srcFilterExt;}
 
     //! Get the destination extension as std::filetype.
     /*! \return The destination extension as std::filetype.
      */
-    stf::filetype GetDestFileExt() const {return destFilterExt;}
+    stfio::filetype GetDestFileExt() const {return destFilterExt;}
 
     //! Get the list of file names.
     /*! \return A vector with source file names.

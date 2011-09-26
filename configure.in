@@ -86,7 +86,7 @@ case ${STFKERNEL} in
 	    CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON"
 	fi
         STF_PYTHON_LIBNAME="libstf.dylib"
-        STFIO_PYTHON_LIBNAME="libstfio.dylib"
+        STFIO_PYTHON_LIBNAME="libpystfio.dylib"
 	ARCH_FLAGS="-mmacosx-version-min=10.4"
         CFLAGS="${CFLAGS} ${ARCH_FLAGS}"
         CXXFLAGS="${CXXFLAGS} ${ARCH_FLAGS}"
@@ -107,13 +107,13 @@ case ${STFKERNEL} in
 	    CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON"
 	fi
         STF_PYTHON_LIBNAME="libstf.so"
-        STFIO_PYTHON_LIBNAME="libstfio.so"
+        STFIO_PYTHON_LIBNAME="libpystfio.so"
         CPPFLAGS="${CPPFLAGS} -D__LINUX__"
     ;;
     *) 
         LIBSTF_LDFLAGS="-avoid-version"
         STF_PYTHON_LIBNAME="libstf.so"
-        STFIO_PYTHON_LIBNAME="libstfio.so"
+        STFIO_PYTHON_LIBNAME="libpystfio.so"
     ;;
 esac
 AC_SUBST(LIBSTF_LDFLAGS)
@@ -140,6 +140,50 @@ if test "$with_biosig" = "yes" ; then
 fi
 AC_SUBST(LIBBIOSIG_LDFLAGS)
 
+# if this is darwin, unconditionally use atlas:
+if test "$STFKERNEL" = "darwin" ; then
+    AC_CHECK_LIB([atlas], [dgemm_], HAVE_LAPACKX="yes")
+    if test "${HAVE_LAPACKX}" != "yes" ; then
+	AC_CHECK_LIB([lapack], [dgemm_], HAVE_LAPACKX="yes")
+	if test "${HAVE_LAPACKX}" != "yes" ; then
+	    AC_MSG_ERROR([Couldn't find lapack.])
+	else
+	    LIBLAPACK_LDFLAGS="-llapack -framework vecLib"
+	    CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK -DHAVE_LAPACK_SUFFIX" 
+	fi
+    else
+	LIBLAPACK_LDFLAGS="-latlas -llapack -lblas"
+	CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+    fi
+else
+    AC_CHECK_LIB([lapack], [dgemm_], HAVE_LAPACKX="yes")
+    if test "${HAVE_LAPACKX}" != "yes" ; then
+	AC_CHECK_LIB([lapack3], [dgemm_], HAVE_LAPACK3="yes")
+	if test "${HAVE_LAPACK3}" != "yes" ; then
+	    AC_CHECK_LIB([lapack-3], [dgemm_], HAVE_LAPACK_3="yes")
+		if test "${HAVE_LAPACK_3}" != "yes" ; then
+		    AC_CHECK_LIB([blas], [dgemm_], HAVE_ATLAS="yes")
+		    if test "${HAVE_ATLAS}" != "yes" ; then
+			AC_MSG_ERROR([Couldn't find lapack.])
+		    else
+			LIBLAPACK_LDFLAGS="-llapack -lblas"
+			CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+		    fi
+		else
+		    LIBLAPACK_LDFLAGS="-llapack-3"
+		    CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+		fi
+	else
+	    LIBLAPACK_LDFLAGS=-llapack3
+	    CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+	fi
+    else
+	LIBLAPACK_LDFLAGS="-llapack -lblas"
+	CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+    fi
+fi
+AC_SUBST(LIBLAPACK_LDFLAGS)
+
 # GUI stuff not required for standalone module
 if test "$enable_module" != "yes"; then
     # Checks for libraries.
@@ -154,51 +198,6 @@ if test "$enable_module" != "yes"; then
     if test "$enable_aui" = "yes" ; then
 	CPPFLAGS="${CPPFLAGS} -DWITH_AUIDOCVIEW"
     fi
-
-
-    # if this is darwin, unconditionally use atlas:
-    if test "$STFKERNEL" = "darwin" ; then
-	AC_CHECK_LIB([atlas], [dgemm_], HAVE_LAPACKX="yes")
-	if test "${HAVE_LAPACKX}" != "yes" ; then
-	    AC_CHECK_LIB([lapack], [dgemm_], HAVE_LAPACKX="yes")
-	    if test "${HAVE_LAPACKX}" != "yes" ; then
-		AC_MSG_ERROR([Couldn't find lapack.])
-	    else
-		LIBLAPACK_LDFLAGS="-llapack -framework vecLib"
-		CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK -DHAVE_LAPACK_SUFFIX" 
-	    fi
-	else
-	    LIBLAPACK_LDFLAGS="-latlas -llapack -lblas"
-	    CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
-	fi
-    else
-	AC_CHECK_LIB([lapack], [dgemm_], HAVE_LAPACKX="yes")
-	if test "${HAVE_LAPACKX}" != "yes" ; then
-	    AC_CHECK_LIB([lapack3], [dgemm_], HAVE_LAPACK3="yes")
-	    if test "${HAVE_LAPACK3}" != "yes" ; then
-		AC_CHECK_LIB([lapack-3], [dgemm_], HAVE_LAPACK_3="yes")
-		    if test "${HAVE_LAPACK_3}" != "yes" ; then
-			AC_CHECK_LIB([blas], [dgemm_], HAVE_ATLAS="yes")
-			if test "${HAVE_ATLAS}" != "yes" ; then
-			    AC_MSG_ERROR([Couldn't find lapack.])
-			else
-			    LIBLAPACK_LDFLAGS="-llapack -lblas"
-			    CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
-			fi
-		    else
-			LIBLAPACK_LDFLAGS="-llapack-3"
-			CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
-		    fi
-	    else
-		LIBLAPACK_LDFLAGS=-llapack3
-		CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
-	    fi
-	else
-	    LIBLAPACK_LDFLAGS="-llapack -lblas"
-	    CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
-	fi
-    fi
-    AC_SUBST(LIBLAPACK_LDFLAGS)
 
     WXCONFIG=wx-config
     AC_ARG_WITH(wx-config,

@@ -33,7 +33,7 @@
 #include <string>
 #include <sstream>
 
-#include "./../../core/stimdefs.h"
+#include "./../../stf.h"
 
 //! A user-defined dialog for entering floating-point numbers.
 class wxStfUsrDlg : public wxDialog 

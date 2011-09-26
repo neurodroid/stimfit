@@ -45,7 +45,7 @@ wxStfFitSelDlg::wxStfFitSelDlg(wxWindow* parent, wxStfDoc* doc, int id, wxString
     int n_f = 0;
     for (c_stfunc_it cit = wxGetApp().GetFuncLib().begin(); cit != wxGetApp().GetFuncLib().end(); cit++) {
         wxString funcName;
-        funcName << n_f << wxT(": ") << cit->name;
+        funcName << n_f << wxT(": ") << stf::std2wx(cit->name);
         m_listCtrl->InsertItem( n_f++, funcName );
     }
 
@@ -282,9 +282,7 @@ void wxStfFitSelDlg::SetPars() {
                 (*it1)->Show();
                 (*it2)->Show();
                 // Parameter label:
-                (*it1)->SetLabel(
-                        wxGetApp().GetFuncLib().at(m_fselect).pInfo[n_p].desc.c_str()
-                );
+                (*it1)->SetLabel(stf::std2wx(wxGetApp().GetFuncLib().at(m_fselect).pInfo[n_p].desc));
                 // Initial parameter values:
                 wxString strInit; strInit << initPars[n_p];
                 (*it2)->SetValue(strInit);
