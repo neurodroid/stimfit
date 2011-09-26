@@ -35,17 +35,17 @@ mkdir -p ./stimfit.app/Contents/Frameworks/stimfit
 ##
 # rsync -rtuvl `${WX_CONFIG} --exec-prefix`/lib/libwx*.dylib ./stimfit.app/Contents/libs/
 mkdir -p ./stimfit.app/Contents/lib/stimfit
-cp -v ./src/stimfit/py/.libs/libstf.dylib ./stimfit.app/Contents/lib/stimfit/libstf.dylib
+cp -v ./src/stimfit/py/.libs/libpystf.dylib ./stimfit.app/Contents/lib/stimfit/libpystf.dylib
 cp -v ./src/stimfit/.libs/libstimfit.dylib ./stimfit.app/Contents/lib/stimfit/libstimfit.dylib
 cp -v ./src/libstfio/.libs/libstfio.dylib ./stimfit.app/Contents/lib/stimfit/libstfio.dylib
 rm -fv ./stimfit.app/Contents/Frameworks/stimfit/_stf.so
-rm -fv ./stimfit.app/Contents/libs/libstf.dylib
+rm -fv ./stimfit.app/Contents/libs/libpystf.dylib
 rm -fv ./stimfit.app/Contents/libs/libstimfit.dylib
 # cp -v ./src/app/.libs/libstimfit.dylib ./stimfit.app/Contents/libs/libstimfit.dylib
 dylibbundler -of -b -x ./stimfit.app/Contents/MacOS/stimfit -d ./stimfit.app/Contents/libs/
 CURDIR=`pwd`
 cd stimfit.app/Contents/Frameworks/stimfit
-ln -sf ../../libs/libstf.dylib _stf.so
+ln -sf ../../libs/libpystf.dylib _stf.so
 cd ${CURDIR}
 
 if test -n "$1"; then

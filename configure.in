@@ -85,7 +85,7 @@ case ${STFKERNEL} in
 	else
 	    CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON"
 	fi
-        STF_PYTHON_LIBNAME="libstf.dylib"
+        STF_PYTHON_LIBNAME="libpystf.dylib"
         STFIO_PYTHON_LIBNAME="libpystfio.dylib"
 	ARCH_FLAGS="-mmacosx-version-min=10.4"
         CFLAGS="${CFLAGS} ${ARCH_FLAGS}"
@@ -106,13 +106,13 @@ case ${STFKERNEL} in
 	    fi
 	    CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON"
 	fi
-        STF_PYTHON_LIBNAME="libstf.so"
+        STF_PYTHON_LIBNAME="libpystf.so"
         STFIO_PYTHON_LIBNAME="libpystfio.so"
         CPPFLAGS="${CPPFLAGS} -D__LINUX__"
     ;;
     *) 
         LIBSTF_LDFLAGS="-avoid-version"
-        STF_PYTHON_LIBNAME="libstf.so"
+        STF_PYTHON_LIBNAME="libpystf.so"
         STFIO_PYTHON_LIBNAME="libpystfio.so"
     ;;
 esac

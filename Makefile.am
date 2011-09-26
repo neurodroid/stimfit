@@ -172,7 +172,7 @@ EXTRA_DIST+= ./src/stimfit/test/gtest/src/gtest-typed-test.cc
 if BUILD_PYTHON
     PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
     PYTHON_ADDLDFLAGS = $(LIBPYTHON_LDFLAGS)
-    PYTHON_ADDLIBS = ./src/stimfit/py/libstf.la
+    PYTHON_ADDLIBS = ./src/stimfit/py/libpystf.la
 else
     PYTHON_ADDLDFLAGS = 
     PYTHON_ADDLIBS = 
@@ -195,7 +195,7 @@ LTTARGET=/usr/lib/stimfit
 install-exec-hook:
 	$(LIBTOOL) --finish $(LTTARGET)
 	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
-	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstf.so
+	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libpystf.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstimfit.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstfio.so
 	mkdir -p $(prefix)/share/pixmaps

@@ -1,23 +1,23 @@
 if BUILD_PYTHON
 
-pkglib_LTLIBRARIES = libstf.la
+pkglib_LTLIBRARIES = libpystf.la
 
 $(srcdir)/stfswig_wrap.cxx $(srcdir)/stf.py: $(srcdir)/stfswig.i
 	$(SWIG) $(SWIG_PYTHON_OPT) -o $@ $<
 	cat $(srcdir)/gccwarn $(srcdir)/stfswig_wrap.cxx > $(srcdir)/stfswig_wrap_tmp.cxx
 	mv $(srcdir)/stfswig_wrap_tmp.cxx $(srcdir)/stfswig_wrap.cxx
 
-nodist_libstf_la_SOURCES = $(srcdir)/stfswig_wrap.cxx
+nodist_libpystf_la_SOURCES = $(srcdir)/stfswig_wrap.cxx
 
-libstf_la_SOURCES = $(srcdir)/stfswig.cxx # $(SWIG_SOURCES)
+libpystf_la_SOURCES = $(srcdir)/stfswig.cxx # $(SWIG_SOURCES)
 noinst_HEADERS = stfswig.h
 
 INCLUDES = $(LIBNUMPY_INCLUDES)
 
-libstf_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
-libstf_la_CXXFLAGS = $(OPT_CXXFLAGS) $(WX_CXXFLAGS)
-libstf_la_LDFLAGS = $(LIBPYTHON_LDFLAGS) $(LIBSTF_LDFLAGS) $(LIBBIOSIG_LDFLAGS)
-libstf_la_LIBADD = ../libstimfit.la $(WX_LIBS)
+libpystf_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
+libpystf_la_CXXFLAGS = $(OPT_CXXFLAGS) $(WX_CXXFLAGS)
+libpystf_la_LDFLAGS = $(LIBPYTHON_LDFLAGS) $(LIBSTF_LDFLAGS) $(LIBBIOSIG_LDFLAGS)
+libpystf_la_LIBADD = ../libstimfit.la $(WX_LIBS)
 
 EXTRA_DIST = stfswig.i numpy.i ivtools.py mintools.py natools.py minidemo.py charlie.py mintools.py hdf5tools.py spells.py embedded_init.py embedded_stf.py embedded_mpl.py embedded_ipython.py heka.py extensions.py Doxyfile gccwarn
 
