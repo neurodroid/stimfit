@@ -2,7 +2,6 @@
 Cursor Settins:
 ===============
 
-* Clicking "Go to next trace cursor" does not update the text cursors.
 * Clicking OK alone (without Apply) does not work update values entered on CtrlText  (for example Threshold slope) to be processed by wxStfApp (is this a bug or a feature? (ask Christoph)).
 
 ======
@@ -11,13 +10,8 @@ Graph:
 The PSlope cursors does not appear at document loading (this is good, since we want to hide the cursors from the user, or at least, to allow the user to choose if he/she wants to see the blue PSlope cursors), 
 * the PSlope cursor positions are not remembered from one sesion ot another..
 
-========
-Cursors:
-========
-* o + click and move mouse activates end/left latency cursor...
-
-
 ==============
 Batch Analysis
 ==============
-Slope does not appear in the grid!!!
+* Slope does not appear in the grid!!!
+* Batch analysis results gives names liek "0xb27468, Section #1" in the first column of the results table. This should be more human-readable.
