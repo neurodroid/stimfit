@@ -73,12 +73,14 @@ stimfit.plist
 stimfit
 stamp-h1
 stfswig_wrap.cxx
+pystf_wrap.cxx
 stf.py
 stfioswig_wrap.cxx
+pystfio_wrap.cxx
 stfio.py
 
 .libs/
-src/stfswig/.libs/
+src/stimfit/py/.libs/
 
 *Makefile.in
 aclocal.m4
