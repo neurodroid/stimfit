@@ -91,12 +91,14 @@ class Section {
     }
     ~Recording() {delete $self;}
 
+#if SWIG_VERSION >= 0x020000
     double dt;
     char* file_description;
     char* time;
     char* date;
     char* comment;
     char* xunits;
+#endif
     
     Channel& __getitem__(int at) {
         if (at >= 0 && at < (int)$self->size()) {
@@ -130,6 +132,7 @@ class Section {
     }
 }
 
+#if SWIG_VERSION >= 0x020000
 %{
     double Recording_dt_get(Recording *r) {
         return r->GetXScale();
@@ -169,6 +172,7 @@ class Section {
     }
 
 %}
+#endif
 
 %extend Channel {
     Channel(PyObject* SectionList) {
@@ -200,8 +204,10 @@ class Section {
 
     ~Channel() {delete $self;}
 
+#if SWIG_VERSION >= 0x020000
     char* name;
     char* yunits;
+#endif
     
     Section& __getitem__(int at) {
         if (at >= 0 && at < (int)$self->size()) {
@@ -215,6 +221,7 @@ class Section {
     int __len__() { return $self->size(); }
 }
 
+#if SWIG_VERSION >= 0x020000
 %{
     const char* Channel_name_get(Channel *c) {
         return c->GetChannelName().c_str();
@@ -230,6 +237,7 @@ class Section {
     }
 
 %}
+#endif
 
 %extend Section {
 
