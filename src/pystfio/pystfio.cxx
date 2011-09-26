@@ -36,7 +36,7 @@
     #endif
 #endif
 
-#include "stfioswig.h"
+#include "pystfio.h"
 
 StdoutProgressInfo::StdoutProgressInfo(const std::string& title, const std::string& message, int maximum)
     : ProgressInfo(title, message, maximum)

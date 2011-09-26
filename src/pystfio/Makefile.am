@@ -10,15 +10,15 @@ PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
 PYTHON_ADDLDFLAGS = $(LIBPYTHON_LDFLAGS)
 PYTHON_ADDLIBS = 
 
-nodist_libpystfio_la_SOURCES = ./stfioswig_wrap.cxx
+nodist_libpystfio_la_SOURCES = ./pystfio_wrap.cxx
 
-libpystfio_la_SOURCES =  ./stfioswig.cxx
+libpystfio_la_SOURCES =  ./pystfio.cxx
 
-noinst_HEADERS = ./stfioswig.h
+noinst_HEADERS = ./pystfio.h
 
 INCLUDES = $(LIBNUMPY_INCLUDES) $(PYTHON_ADDINCLUDES)
 
-EXTRA_DIST = ./stfioswig.i ./unittest_stfio.py ./test.h5
+EXTRA_DIST = ./pystfio.i ./unittest_stfio.py ./test.h5
 
 libpystfio_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
 libpystfio_la_CXXFLAGS = $(OPT_CXXFLAGS)
@@ -39,11 +39,11 @@ uninstall-hook:
 	rm -f ${PYTHON_SITE_PKG}/stfio.pth
 
 clean-local:
-	rm -f $(top_srcdir)/src/pystfio/stfioswig_wrap.cxx $(top_srcdir)/src/pystfio/stfio.py
+	rm -f $(top_srcdir)/src/pystfio/pystfio_wrap.cxx $(top_srcdir)/src/pystfio/stfio.py
 	rm -f test.h5
 	rm -f _stfio.so
 
-$(top_srcdir)/src/pystfio/stfioswig_wrap.cxx $(top_srcdir)/src/pystfio/stfio.py: $(top_srcdir)/src/pystfio/stfioswig.i
+$(top_srcdir)/src/pystfio/pystfio_wrap.cxx $(top_srcdir)/src/pystfio/stfio.py: $(top_srcdir)/src/pystfio/pystfio.i
 	$(SWIG) $(SWIG_PYTHON_OPT) -o $@ $<
-	cat $(top_srcdir)/src/pystfio/gccwarn $(top_srcdir)/src/pystfio/stfioswig_wrap.cxx > $(top_srcdir)/src/pystfio/stfioswig_wrap_tmp.cxx
-	mv $(top_srcdir)/src/pystfio/stfioswig_wrap_tmp.cxx $(top_srcdir)/src/pystfio/stfioswig_wrap.cxx
+	cat $(top_srcdir)/src/pystfio/gccwarn $(top_srcdir)/src/pystfio/pystfio_wrap.cxx > $(top_srcdir)/src/pystfio/pystfio_wrap_tmp.cxx
+	mv $(top_srcdir)/src/pystfio/pystfio_wrap_tmp.cxx $(top_srcdir)/src/pystfio/pystfio_wrap.cxx

@@ -2,15 +2,15 @@ if BUILD_PYTHON
 
 pkglib_LTLIBRARIES = libpystf.la
 
-$(srcdir)/stfswig_wrap.cxx $(srcdir)/stf.py: $(srcdir)/stfswig.i
+$(srcdir)/pystf_wrap.cxx $(srcdir)/stf.py: $(srcdir)/pystf.i
 	$(SWIG) $(SWIG_PYTHON_OPT) -o $@ $<
-	cat $(srcdir)/gccwarn $(srcdir)/stfswig_wrap.cxx > $(srcdir)/stfswig_wrap_tmp.cxx
-	mv $(srcdir)/stfswig_wrap_tmp.cxx $(srcdir)/stfswig_wrap.cxx
+	cat $(srcdir)/gccwarn $(srcdir)/pystf_wrap.cxx > $(srcdir)/pystf_wrap_tmp.cxx
+	mv $(srcdir)/pystf_wrap_tmp.cxx $(srcdir)/pystf_wrap.cxx
 
-nodist_libpystf_la_SOURCES = $(srcdir)/stfswig_wrap.cxx
+nodist_libpystf_la_SOURCES = $(srcdir)/pystf_wrap.cxx
 
-libpystf_la_SOURCES = $(srcdir)/stfswig.cxx # $(SWIG_SOURCES)
-noinst_HEADERS = stfswig.h
+libpystf_la_SOURCES = $(srcdir)/pystf.cxx # $(SWIG_SOURCES)
+noinst_HEADERS = pystf.h
 
 INCLUDES = $(LIBNUMPY_INCLUDES)
 
@@ -19,7 +19,7 @@ libpystf_la_CXXFLAGS = $(OPT_CXXFLAGS) $(WX_CXXFLAGS)
 libpystf_la_LDFLAGS = $(LIBPYTHON_LDFLAGS) $(LIBSTF_LDFLAGS) $(LIBBIOSIG_LDFLAGS)
 libpystf_la_LIBADD = ../libstimfit.la $(WX_LIBS)
 
-EXTRA_DIST = stfswig.i numpy.i ivtools.py mintools.py natools.py minidemo.py charlie.py mintools.py hdf5tools.py spells.py embedded_init.py embedded_stf.py embedded_mpl.py embedded_ipython.py heka.py extensions.py Doxyfile gccwarn
+EXTRA_DIST = pystf.i numpy.i ivtools.py mintools.py natools.py minidemo.py charlie.py mintools.py hdf5tools.py spells.py embedded_init.py embedded_stf.py embedded_mpl.py embedded_ipython.py heka.py extensions.py Doxyfile gccwarn
 
 install-exec-hook:
 	cd ${prefix}/lib/stimfit && ln -sf ${STF_PYTHON_LIBNAME} _stf.so
@@ -45,6 +45,6 @@ uninstall-hook:
 	rm -rf ${prefix}/lib/stimfit
 
 clean_local:
-	rm -f $(srcdir)/stfswig_wrap.cxx $(srcdir)/stf.py
+	rm -f $(srcdir)/pystf_wrap.cxx $(srcdir)/stf.py
 
 endif

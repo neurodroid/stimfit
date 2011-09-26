@@ -1,5 +1,5 @@
-#ifndef _STFIOSWIG_H
-#define _STFIOSWIG_H
+#ifndef _PYSTFIO_H
+#define _PYSTFIO_H
 
 #include "../libstfio/stfio.h"
 

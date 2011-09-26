@@ -16,7 +16,7 @@ common electrophysiology file formats"
 #include "./../libstfio/channel.h"
 #include "./../libstfio/section.h"
 
-#include "stfioswig.h"
+#include "pystfio.h"
 
 #define array_data(a)          (((PyArrayObject *)a)->data)
 

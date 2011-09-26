@@ -47,7 +47,7 @@
     #endif
 #endif
 
-#include "stfswig.h"
+#include "pystf.h"
 
 #include "./../gui/app.h"
 #include "./../gui/doc.h"

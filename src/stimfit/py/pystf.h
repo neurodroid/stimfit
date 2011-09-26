@@ -1,5 +1,5 @@
-#ifndef _STFSWIG_H
-#define _STFSWIG_H
+#ifndef _PYSTF_H
+#define _PYSTF_H
 #undef _DEBUG
 
 #include <wx/wx.h>

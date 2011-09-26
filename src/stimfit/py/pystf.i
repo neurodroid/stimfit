@@ -11,7 +11,7 @@ application from the embedded python shell."
 
 %{
 #define SWIG_FILE_WITH_INIT
-#include "stfswig.h"
+#include "pystf.h"
 %}
 %include "numpy.i"
 %include "std_string.i"
