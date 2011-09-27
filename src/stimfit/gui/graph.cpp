@@ -1034,22 +1034,22 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
     switch (ParentFrame()->GetMouseQual())
     {	//Depending on the radio buttons (Mouse field)
     //in the (trace navigator) control box
-    case stfio::measure_cursor:
+    case stf::measure_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetMeasCursor( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
         // in this case, update results string without waiting for "Return":
         pFrame->UpdateResults();
         break;
-    case stfio::peak_cursor:
+    case stf::peak_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetPeakBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
         //Set x-value as lower limit of the peak calculation dialog box
         break;
-    case stfio::base_cursor:
+    case stf::base_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetBaseBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
         break;
-    case stfio::decay_cursor:
+    case stf::decay_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         if (wxGetApp().GetCursorsDialog() != NULL && wxGetApp().GetCursorsDialog()->GetStartFitAtPeak()) {
             wxGetApp().ErrorMsg(
@@ -1059,7 +1059,7 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
         }
         Doc()->SetFitBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
         break;
-    case stfio::latency_cursor:
+    case stf::latency_cursor:
         if (Doc()->GetLatencyStartMode() != stfio::manualMode) {
             wxGetApp().ErrorMsg(
                     wxT("The latency cursor can not be set in the current mode\nChoose manual mode to set the latency cursor manually")
@@ -1068,7 +1068,7 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
         }
         Doc()->SetLatencyBeg(((double)lastLDown.x-(double)SPX())/XZ());
         break;
-    case stfio::zoom_cursor:
+    case stf::zoom_cursor:
         llz_x=(double)lastLDown.x;
         llz_y=(double)lastLDown.y;
         llz_y2=llz_y;
@@ -1108,19 +1108,19 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
     PrepareDC(dc);
     wxPoint point(event.GetLogicalPosition(dc));
     switch (ParentFrame()->GetMouseQual()) {
-    case stfio::peak_cursor:
+    case stf::peak_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetPeakEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
-    case stfio::base_cursor:
+    case stf::base_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetBaseEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
-    case stfio::decay_cursor:
+    case stf::decay_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetFitEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
-    case stfio::latency_cursor:
+    case stf::latency_cursor:
         if (Doc()->GetLatencyEndMode() != stfio::manualMode) {
             wxGetApp().ErrorMsg(
                     wxT("The latency cursor can not be set in the current mode\n \
@@ -1131,14 +1131,14 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
         Doc()->SetLatencyEnd(((double)point.x-(double)SPX())/XZ());
         Refresh();
         break;
-    case stfio::zoom_cursor:
+    case stf::zoom_cursor:
         if (isZoomRect) {
             PopupMenu(m_zoomContext.get());
         } else {
             wxGetApp().ErrorMsg(wxT("Draw a zoom window with the left mouse button first"));
         }
         break;
-    case stfio::event_cursor:
+    case stf::event_cursor:
         if (Doc()->cur().HasEvents()) {
             // store the position that has been clicked:
             eventPos = stf::round( ((double)point.x - (double)SPX())/XZ() );
@@ -1176,15 +1176,15 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
         return;
     }
     switch (ParentFrame()->GetMouseQual()) {
-    case stfio::peak_cursor:
+    case stf::peak_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetPeakEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
-    case stfio::base_cursor:
+    case stf::base_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetBaseEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
-    case stfio::decay_cursor:
+    case stf::decay_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetFitEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
@@ -1193,7 +1193,7 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
         // conversion of pixel on screen to time (inversion of xFormat())
         Doc()->SetPSlopeEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
 #endif
-    case stfio::latency_cursor:
+    case stf::latency_cursor:
         if (Doc()->GetLatencyEndMode() != stfio::manualMode) {
             wxGetApp().ErrorMsg(
                     wxT("The latency cursor can not be set in the current mode\n \
@@ -1203,7 +1203,7 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
         }
         Doc()->SetLatencyEnd(((double)point.x-(double)SPX())/XZ());
         break;
-    case stfio::zoom_cursor:
+    case stf::zoom_cursor:
         ulz_x=(double)point.x;
         ulz_y=(double)point.y;
         ulz_y2=ulz_y;
@@ -1275,7 +1275,7 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
          return;
      case 69: // e
      case 101:
-         ParentFrame()->SetMouseQual(stfio::event_cursor);
+         ParentFrame()->SetMouseQual(stf::event_cursor);
          return;
      case 70:
      case 102: // f
@@ -1283,11 +1283,11 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
          return;
      case 77:  // m
      case 109:
-         ParentFrame()->SetMouseQual(stfio::measure_cursor);
+         ParentFrame()->SetMouseQual(stf::measure_cursor);
          return;
      case 80: // p
      case 112:
-         ParentFrame()->SetMouseQual(stfio::peak_cursor);
+         ParentFrame()->SetMouseQual(stf::peak_cursor);
          return;
      case 65: // 'a'
      case 97:
@@ -1300,7 +1300,7 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
          return;
      case 66:  // b
      case 98:
-         ParentFrame()->SetMouseQual(stfio::base_cursor);
+         ParentFrame()->SetMouseQual(stf::base_cursor);
          return;
 #ifdef WITH_PSLOPE
      case 79:  // key 'o' to activate PSlope cursors
@@ -1310,15 +1310,15 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
 #endif
      case 68:  // d
      case 100:
-         ParentFrame()->SetMouseQual(stfio::decay_cursor);
+         ParentFrame()->SetMouseQual(stf::decay_cursor);
          return;
      case 90:  // z
      case 122:
-         ParentFrame()->SetMouseQual(stfio::zoom_cursor);
+         ParentFrame()->SetMouseQual(stf::zoom_cursor);
          return;
      case 76:  // l
      case 108:
-         ParentFrame()->SetMouseQual(stfio::latency_cursor);
+         ParentFrame()->SetMouseQual(stf::latency_cursor);
          return;
      case WXK_RETURN:    //Enter or Return
      {

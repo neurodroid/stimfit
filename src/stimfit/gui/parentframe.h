@@ -96,12 +96,12 @@ public:
     //! Retrieve the current mouse mode.
     /*! \return The current mouse cursor mode.
      */
-    stfio::cursor_type GetMouseQual() const;
+    stf::cursor_type GetMouseQual() const;
 
     //! Sets the current mouse cursor mode.
     /*! \param value The new mouse cursor mode.
      */
-    void SetMouseQual(stfio::cursor_type value);
+    void SetMouseQual(stf::cursor_type value);
 
     //! Sets status of the toolbar's selection button.
     /*! \param selected The desired toggle status of the selection button.

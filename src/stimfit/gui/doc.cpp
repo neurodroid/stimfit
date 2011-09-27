@@ -1442,7 +1442,8 @@ void wxStfDoc::OnAnalysisIntegrate(wxCommandEvent &WXUNUSED(event)) {
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
     pFrame->ShowTable(integralTable,wxT("Integral"));
     try {
-        cur().SetIsIntegrated(true,GetFitBeg(),GetFitEnd());
+        Vector_double quad_p = stf::quad(cur().get(), GetFitBeg(), GetFitEnd());
+        cur().SetIsIntegrated(true,GetFitBeg(),GetFitEnd(), quad_p);
     }
     catch (const std::runtime_error& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));

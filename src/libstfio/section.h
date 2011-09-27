@@ -179,7 +179,7 @@ public:
     //! Determines whether an integral has been calculated in this section.
     /*! \return true if an integral has been calculated, false otherwise.
      */
-    void SetIsIntegrated(bool value=true, std::size_t begin=0, std::size_t end=0);
+    void SetIsIntegrated(bool value, std::size_t begin, std::size_t end, const Vector_double& quad_p_);
 
     //! Retrieves the position of a stored fit start cursor.
     /*! Note that cursors are usually managed in Recording. However, the fit

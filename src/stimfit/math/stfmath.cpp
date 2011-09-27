@@ -26,10 +26,6 @@
 #include "stfmath.h"
 #include "../../libstfio/section.h"
 
-/*wxString stf::noPath(const wxString& fName) {
-    return wxFileName(fName).GetFullName();
-    }*/
-
 double stf::fgauss(double x, const Vector_double& pars) {
     double y=0.0, /* fac=0.0, */ ex=0.0, arg=0.0;
     int npars=static_cast<int>(pars.size());
@@ -500,4 +496,168 @@ double stf::integrate_trapezium(
     }
     sum *= (b-a)/2/(i2-i1);
     return sum;
+}
+
+// LU decomposition from lapack
+#ifdef __cplusplus
+extern "C" {
+#endif
+    extern int dgetrs_(char *trans, int *n, int *nrhs, double *a, int *lda, int *ipiv, double *b, int *ldb, int *info);
+    extern int dgetrf_(int *m, int *n, double *a, int *lda, int *ipiv, int *info);
+#ifdef __cplusplus
+}
+#endif
+
+int
+stf::linsolv( int m, int n, int nrhs, Vector_double& A,
+              Vector_double& B)
+{
+#ifndef TEST_MINIMAL
+    if (A.size()<=0) {
+        throw std::runtime_error("Matrix A has size 0 in stfio::linsolv");
+    }
+
+    if (B.size()<=0) {
+        throw std::runtime_error("Matrix B has size 0 in stfio::linsolv");
+    }
+
+    if (A.size()!= std::size_t(m*n)) {
+        throw std::runtime_error("Size of matrix A is not m*n");
+    }
+
+    /* Arguments to dgetrf_
+     *  ====================
+     *
+     *  M       (input) INTEGER
+     *          The number of rows of the matrix A.  M >= 0.
+     *
+     *  N       (input) INTEGER
+     *          The number of columns of the matrix A.  N >= 0.
+     *
+     *  A       (input/output) DOUBLE PRECISION array, dimension (LDA,N)
+     *          On entry, the M-by-N matrix to be factored.
+     *          On exit, the factors L and U from the factorization
+     *          A = P*L*U; the unit diagonal elements of L are not stored.
+     *
+     *  LDA     (input) INTEGER
+     *          The leading dimension of the array A.  LDA >= max(1,M).
+     *
+     *  IPIV    (output) INTEGER array, dimension (min(M,N))
+     *          The pivot indices; for 1 <= i <= min(M,N), row i of the
+     *          matrix was interchanged with row IPIV(i).
+     *
+     *  INFO    (output) INTEGER
+     *          = 0:  successful exit
+     *          < 0:  if INFO = -i, the i-th argument had an illegal value
+     *          > 0:  if INFO = i, U(i,i) is exactly zero. The factorization
+     *                has been completed, but the factor U is exactly
+     *                singular, and division by zero will occur if it is used
+     *                to solve a system of equations.
+     */
+
+    int lda_f = m;
+    std::size_t ipiv_size = (m < n) ? m : n;
+    std::vector<int> ipiv(ipiv_size);
+    int info=0;
+
+    dgetrf_(&m, &n, &A[0], &lda_f, &ipiv[0], &info);
+    if (info<0) {
+        std::ostringstream error_msg;
+        error_msg << "Argument " << -info << " had an illegal value in LAPACK's dgetrf_";
+		throw std::runtime_error( std::string(error_msg.str()));
+    }
+    if (info>0) {
+        throw std::runtime_error("Singular matrix in LAPACK's dgetrf_; would result in division by zero");
+    }
+
+
+    /* Arguments to dgetrs_
+     *  ====================
+     *
+     *  TRANS   (input) CHARACTER*1
+     *          Specifies the form of the system of equations:
+     *          = 'N':  A * X = B  (No transpose)
+     *          = 'T':  A'* X = B  (Transpose)
+     *          = 'C':  A'* X = B  (Conjugate transpose = Transpose)
+     *
+     *  N       (input) INTEGER
+     *          The order of the matrix A.  N >= 0.
+     *
+     *  NRHS    (input) INTEGER
+     *          The number of right hand sides, i.e., the number of columns
+     *          of the matrix B.  NRHS >= 0.
+     *
+     *  A       (input) DOUBLE PRECISION array, dimension (LDA,N)
+     *          The factors L and U from the factorization A = P*L*U
+     *          as computed by DGETRF.
+     *
+     *  LDA     (input) INTEGER
+     *          The leading dimension of the array A.  LDA >= max(1,N).
+     *
+     *  IPIV    (input) INTEGER array, dimension (N)
+     *          The pivot indices from DGETRF; for 1<=i<=N, row i of the
+     *          matrix was interchanged with row IPIV(i).
+     *
+     *  B       (input/output) DOUBLE PRECISION array, dimension (LDB,NRHS)
+     *          On entry, the right hand side matrix B.
+     *          On exit, the solution matrix X.
+     *
+     *  LDB     (input) INTEGER
+     *          The leading dimension of the array B.  LDB >= max(1,N).
+     *
+     *  INFO    (output) INTEGER
+     *          = 0:  successful exit
+     *          < 0:  if INFO = -i, the i-th argument had an illegal value
+     */
+    char trans='N';
+    dgetrs_(&trans, &m, &nrhs, &A[0], &m, &ipiv[0], &B[0], &m, &info);
+    if (info<0) {
+        std::ostringstream error_msg;
+        error_msg << "Argument " << -info << " had an illegal value in LAPACK's dgetrs_";
+        throw std::runtime_error(std::string(error_msg.str()));
+    }
+#endif
+    return 0;
+}
+
+Vector_double stf::quad(const Vector_double& data, std::size_t begin, std::size_t end) {
+
+    // Solve quadratic equations relating 3 sample points a time
+    
+    int n_intervals=std::div((int)end-(int)begin,2).quot;
+    
+    Vector_double quad_p(n_intervals*3);
+    
+    int n_q=0;
+    if (begin-end>1) {
+        for (int n=begin; n<(int)end-1; n+=2) {
+            Vector_double A(9);
+            Vector_double B(3);
+    
+            // solve linear equation system:
+            // use column-major order (Fortran)
+            A[0]=(double)n*(double)n;
+            A[1]=((double)n+1.0)*((double)n+1.0);
+            A[2]=((double)n+2.0)*((double)n+2.0);
+            A[3]=(double)n;
+            A[4]=(double)n+1.0;
+            A[5]=(double)n+2.0;
+            A[6]=1.0;
+            A[7]=1.0;
+            A[8]=1.0;
+            B[0]=data[n];
+            B[1]=data[n+1];
+            B[2]=data[n+2];
+            try {
+                stf::linsolv(3,3,1,A,B);
+            }
+            catch (...) {
+                throw;
+            }
+            quad_p[n_q++]=B[0];
+            quad_p[n_q++]=B[1];
+            quad_p[n_q++]=B[2];
+        }
+    }
+    return quad_p;
 }

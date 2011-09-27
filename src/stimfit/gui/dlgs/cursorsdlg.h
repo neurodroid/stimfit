@@ -292,7 +292,7 @@ public:
     //! Retrieve the current cursor notebook page.
     /*! \return The cursor corresponding to the currently selected notebook page.
      */
-    stfio::cursor_type CurrentCursor() const;
+    stf::cursor_type CurrentCursor() const;
 
     //! Get the slope at which the baseline should be fixed.
     /*! \return The slope at which the baseline should be fixed.

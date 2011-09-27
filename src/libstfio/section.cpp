@@ -67,47 +67,19 @@ void Section::SetXScale( double value ) {
         throw std::runtime_error( "Attempt to set x-scale <= 0" );
 }
 
-void Section::SetIsIntegrated(bool value, std::size_t begin, std::size_t end) {
+void Section::SetIsIntegrated(bool value, std::size_t begin, std::size_t end, const Vector_double& quad_p_) {
     if (value==false) {
         isIntegrated=value;
         return;
     }
     if (end<=begin) {
-        throw std::out_of_range("integration limits out of range in Section::set_isIntegrated");
+        throw std::out_of_range("integration limits out of range in Section::SetIsIntegrated");
     }
     int n_intervals=std::div((int)end-(int)begin,2).quot;
-    quad_p.resize(n_intervals*3);
-    int n_q=0;
-    if (begin-end>1) {
-        for (int n=begin; n<(int)end-1; n+=2) {
-            Vector_double A(9);
-            Vector_double B(3);
-    
-            // solve linear equation system:
-            // use column-major order (Fortran)
-            A[0]=(double)n*(double)n;
-            A[1]=((double)n+1.0)*((double)n+1.0);
-            A[2]=((double)n+2.0)*((double)n+2.0);
-            A[3]=(double)n;
-            A[4]=(double)n+1.0;
-            A[5]=(double)n+2.0;
-            A[6]=1.0;
-            A[7]=1.0;
-            A[8]=1.0;
-            B[0]=data[n];
-            B[1]=data[n+1];
-            B[2]=data[n+2];
-            try {
-                stfio::linsolv(3,3,1,A,B);
-            }
-            catch (...) {
-                throw;
-            }
-            quad_p[n_q++]=B[0];
-            quad_p[n_q++]=B[1];
-            quad_p[n_q++]=B[2];
-        }
+    if ((int)quad_p_.size() != n_intervals*3) {
+        throw std::out_of_range("Wrong number of parameters for quadratic equations in Section::SetIsIntegrated");
     }
+    quad_p = quad_p_;
     isIntegrated=value;
     storeIntBeg=begin;
     storeIntEnd=end;

@@ -1459,7 +1459,7 @@ void wxStfCursorsDlg::UpdateUnits(wxWindowID comboId, bool& setTime, wxWindowID 
 
 void wxStfCursorsDlg::UpdateCursors() {
 
-    stfio::cursor_type select = CurrentCursor();
+    stf::cursor_type select = CurrentCursor();
     int iNewValue1=0, iNewValue2=0;
 
     bool cursor2isTime=true, cursor1isTime=true;
@@ -1472,13 +1472,13 @@ void wxStfCursorsDlg::UpdateCursors() {
 
     switch (select) {
 
-    case stfio::measure_cursor:	// Measure
+    case stf::measure_cursor:	// Measure
         iNewValue1=(int)actDoc->GetMeasCursor();
         cursor1isTime=cursorMIsTime;
         pText1=(wxTextCtrl*)FindWindow(wxTEXTM);
         break;
 
-    case stfio::peak_cursor: // Peak
+    case stf::peak_cursor: // Peak
         iNewValue1=(int)actDoc->GetPeakBeg();
         iNewValue2=(int)actDoc->GetPeakEnd();
         cursor1isTime=cursor1PIsTime;
@@ -1491,7 +1491,7 @@ void wxStfCursorsDlg::UpdateCursors() {
         SetFromBase( actDoc->GetFromBase() );
         break;
 
-    case stfio::base_cursor: // Base
+    case stf::base_cursor: // Base
         iNewValue1=(int)actDoc->GetBaseBeg();
         iNewValue2=(int)actDoc->GetBaseEnd();
         cursor1isTime=cursor1BIsTime;
@@ -1500,7 +1500,7 @@ void wxStfCursorsDlg::UpdateCursors() {
         pText2=(wxTextCtrl*)FindWindow(wxTEXT2B);
         break;
 
-    case stfio::decay_cursor: // Decay
+    case stf::decay_cursor: // Decay
         iNewValue1=(int)actDoc->GetFitBeg();
         iNewValue2=(int)actDoc->GetFitEnd();
         cursor1isTime=cursor1DIsTime;
@@ -1509,7 +1509,7 @@ void wxStfCursorsDlg::UpdateCursors() {
         pText2=(wxTextCtrl*)FindWindow(wxTEXT2D);
         break;
 
-    case stfio::latency_cursor: // Latency
+    case stf::latency_cursor: // Latency
         iNewValue1= (int)actDoc->GetLatencyBeg();
         iNewValue2= (int)actDoc->GetLatencyEnd();
         cursor1isTime=cursor1LIsTime;
@@ -1522,7 +1522,7 @@ void wxStfCursorsDlg::UpdateCursors() {
         break;
 
 #ifdef WITH_PSLOPE
-    case stfio::pslope_cursor: // PSlope
+    case stf::pslope_cursor: // PSlope
         iNewValue1=(int)actDoc->GetPSlopeBeg();
         iNewValue2=(int)actDoc->GetPSlopeEnd();
         cursor1isTime=cursor1PSIsTime;
@@ -1553,7 +1553,7 @@ void wxStfCursorsDlg::UpdateCursors() {
         pText1->SetValue( strNewValue );
     }
 
-    if (select!=stfio::measure_cursor && pText2 != NULL) {
+    if (select!=stf::measure_cursor && pText2 != NULL) {
         wxString strNewValue2;
         if (cursor2isTime) {
             strNewValue2 << fNewValue2;
@@ -1578,19 +1578,19 @@ void wxStfCursorsDlg::UpdateCursors() {
     SetSlopeUnits(slopeUnits);
 }
 
-stfio::cursor_type wxStfCursorsDlg::CurrentCursor() const {
+stf::cursor_type wxStfCursorsDlg::CurrentCursor() const {
     if (m_notebook == NULL)
-        return stfio::undefined_cursor;
+        return stf::undefined_cursor;
     switch (m_notebook->GetSelection()) {
-    case 0:	return stfio::measure_cursor;
-    case 1: return stfio::peak_cursor;
-    case 2: return stfio::base_cursor;
-    case 3: return stfio::decay_cursor;
-    case 4: return stfio::latency_cursor;
+    case 0:	return stf::measure_cursor;
+    case 1: return stf::peak_cursor;
+    case 2: return stf::base_cursor;
+    case 3: return stf::decay_cursor;
+    case 4: return stf::latency_cursor;
 #ifdef WITH_PSLOPE
-    case 5: return stfio::pslope_cursor;
+    case 5: return stf::pslope_cursor;
 #endif 
-    default: return stfio::undefined_cursor;
+    default: return stf::undefined_cursor;
     }
 }
 

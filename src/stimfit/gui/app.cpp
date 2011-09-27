@@ -393,28 +393,28 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
     {
         CursorsDialog->SetActiveDoc(actDoc);
         switch (CursorsDialog->CurrentCursor()) {
-         case stfio::measure_cursor: 
+         case stf::measure_cursor: 
              actDoc->SetMeasCursor(CursorsDialog->GetCursorM());// * GetDocument()->GetSR()));
              break;
          
              //Get limits for peak calculation from the dialog box:
-         case stfio::peak_cursor: 
+         case stf::peak_cursor: 
              actDoc->SetPeakBeg(CursorsDialog->GetCursor1P());// * GetDocument()->GetSR()));
              actDoc->SetPeakEnd(CursorsDialog->GetCursor2P());// * GetDocument()->GetSR()));
              actDoc->CheckBoundaries();
              break;
          
-         case stfio::base_cursor: 
+         case stf::base_cursor: 
              actDoc->SetBaseBeg(CursorsDialog->GetCursor1B());
              actDoc->SetBaseEnd(CursorsDialog->GetCursor2B());
              break;
          
-         case stfio::decay_cursor: 
+         case stf::decay_cursor: 
              actDoc->SetFitBeg(CursorsDialog->GetCursor1D());
              actDoc->SetFitEnd(CursorsDialog->GetCursor2D());
              break;
 
-         case stfio::latency_cursor:
+         case stf::latency_cursor:
              // Latency start mode
              actDoc->SetLatencyBeg(CursorsDialog->GetCursor1L());
              // set latency mode in wxStfDoc
@@ -431,7 +431,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
          
 #ifdef WITH_PSLOPE
             // Get cursor location from the dialog box:
-         case stfio::pslope_cursor: 
+         case stf::pslope_cursor: 
 
              // first PSlope cursor
              actDoc->SetPSlopeBegMode(CursorsDialog->GetPSlopeBegMode());
@@ -448,7 +448,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
              
              break;
 #endif 
-         case stfio::undefined_cursor:
+         case stf::undefined_cursor:
              
                  ErrorMsg(wxT("Undefined cursor in wxStfApp::OnPeakcalcexecMsg()"));
                  return;

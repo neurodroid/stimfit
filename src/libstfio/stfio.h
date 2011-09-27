@@ -235,29 +235,6 @@ typedef boost::function<void(const Vector_double&,double,double,double,Vector_do
 //! Print the output of a fit into a stf::Table.
 typedef boost::function<Table(const Vector_double&,const std::vector<stfio::parInfo>,double)> Output;
 
- 
-//! Solves a linear equation system using LAPACK.
-/*! Uses column-major order for matrices. For an example, see
- *  Section::SetIsIntegrated()
- *  \param m Number of rows of the matrix \e A.
- *  \param n Number of columns of the matrix \e A.
- *  \param nrhs Number of columns of the matrix \e B.
- *  \param A On entry, the left-hand-side matrix. On exit, 
- *         the factors L and U from the factorization
- *         A = P*L*U; the unit diagonal elements of L are not stored. 
- *  \param B On entry, the right-hand-side matrix. On exit, the
- *           solution to the linear equation system.
- *  \return At present, always returns 0.
- */
-int
-linsolv(
-        int m,
-        int n,
-        int nrhs,
-        Vector_double& A,
-        Vector_double& B
-);
-
 //! Default fit output function, constructing a stf::Table from the parameters, their description and chisqr.
 Table defaultOutput(const Vector_double& pars, 
                     const std::vector<parInfo>& parsInfo,
@@ -407,22 +384,7 @@ enum direction {
     both,               /*!< Find negative- or positive-going peaks, whichever is larger. */
     undefined_direction /*!< Undefined direction. */
 };
-
-//! Mouse cursor types
-enum cursor_type {
-    measure_cursor,  /*!< Measurement cursor (crosshair). */
-    peak_cursor,     /*!< Peak calculation limits cursor. */
-    base_cursor,     /*!< Baseline calculation limits cursor. */
-    decay_cursor,    /*!< Fit limits cursor. */
-    latency_cursor,  /*!< Latency cursor. */
-    zoom_cursor,     /*!< Zoom rectangle cursor. */
-    event_cursor,    /*!< Event mode cursor. */
-#ifdef WITH_PSLOPE
-    pslope_cursor,   /*!< PSlope mode cursor. */
-#endif
-    undefined_cursor /*!< Undefined cursor. */
-};
-
+ 
 //! Determines which channels to scale
 enum zoom_channels {
     zoomch1, /*!< Scaling applies to channel 1 only. */

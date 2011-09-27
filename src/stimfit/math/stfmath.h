@@ -159,6 +159,38 @@ double integrate_trapezium(
         double x_scale
 );
 
+//! Solves a linear equation system using LAPACK.
+/*! Uses column-major order for matrices. For an example, see
+ *  Section::SetIsIntegrated()
+ *  \param m Number of rows of the matrix \e A.
+ *  \param n Number of columns of the matrix \e A.
+ *  \param nrhs Number of columns of the matrix \e B.
+ *  \param A On entry, the left-hand-side matrix. On exit, 
+ *         the factors L and U from the factorization
+ *         A = P*L*U; the unit diagonal elements of L are not stored. 
+ *  \param B On entry, the right-hand-side matrix. On exit, the
+ *           solution to the linear equation system.
+ *  \return At present, always returns 0.
+ */
+int
+linsolv(
+        int m,
+        int n,
+        int nrhs,
+        Vector_double& A,
+        Vector_double& B
+);
+
+//! Solve quadratic equations for 3 adjacent sampling points
+/*! \param data The data vector
+ *  \param begin Start of interval to be used
+ *  \param end End of interval to be used
+ *  \return Parameters of quadratic equation
+ */
+Vector_double
+quad(const Vector_double& data, std::size_t begin, std::size_t end);
+ 
+
 //! Computes the event detection criterion according to Clements & Bekkers (1997).
 /*! \param data The valarray from which to extract events.
  *  \param templ A template waveform that is used for event detection.

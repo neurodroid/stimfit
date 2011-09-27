@@ -223,6 +223,21 @@ const double PI=3.14159265358979323846;
  */
 int round(double toRound);
 
+//! Mouse cursor types
+enum cursor_type {
+    measure_cursor,  /*!< Measurement cursor (crosshair). */
+    peak_cursor,     /*!< Peak calculation limits cursor. */
+    base_cursor,     /*!< Baseline calculation limits cursor. */
+    decay_cursor,    /*!< Fit limits cursor. */
+    latency_cursor,  /*!< Latency cursor. */
+    zoom_cursor,     /*!< Zoom rectangle cursor. */
+    event_cursor,    /*!< Event mode cursor. */
+#ifdef WITH_PSLOPE
+    pslope_cursor,   /*!< PSlope mode cursor. */
+#endif
+    undefined_cursor /*!< Undefined cursor. */
+};
+
 /*@}*/
 
 } // end of namespace
