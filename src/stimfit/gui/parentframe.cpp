@@ -1235,7 +1235,7 @@ void wxStfParentFrame::OnLStartMaxslope(wxCommandEvent& WXUNUSED(event)) {
         //		bool prevMode=pDoc->GetLatencyStartMode()==stfio::riseMode;
         // toggle on if it wasn't the previous mode:
         //		if (!prevMode) {
-        pDoc->SetLatencyStartMode(stfio::riseMode);
+        pDoc->SetLatencyStartMode(stf::riseMode);
         wxGetApp().wxWriteProfileInt(wxT("Settings"),
                                      wxT("LatencyStartMode"),
                                      pDoc->GetLatencyStartMode());
@@ -1248,7 +1248,7 @@ void wxStfParentFrame::OnLStartHalfrise(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        pDoc->SetLatencyStartMode(stfio::halfMode);
+        pDoc->SetLatencyStartMode(stf::halfMode);
         wxGetApp().wxWriteProfileInt(
                                      wxT("Settings"),
                                      wxT("LatencyStartMode"),
@@ -1264,7 +1264,7 @@ void wxStfParentFrame::OnLStartPeak(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        pDoc->SetLatencyStartMode(stfio::peakMode);
+        pDoc->SetLatencyStartMode(stf::peakMode);
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyStartMode"), pDoc->GetLatencyStartMode() );
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
@@ -1276,7 +1276,7 @@ void wxStfParentFrame::OnLStartManual(wxCommandEvent& WXUNUSED(event)) {
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
         // Always keep manual mode as a default, even if attempted to uncheck:
-        pDoc->SetLatencyStartMode(stfio::manualMode);
+        pDoc->SetLatencyStartMode(stf::manualMode);
         wxGetApp().wxWriteProfileInt(
             wxT("Settings"),
             wxT("LatencyStartMode"),
@@ -1291,7 +1291,7 @@ void wxStfParentFrame::OnLEndFoot(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        pDoc->SetLatencyEndMode(stfio::footMode);
+        pDoc->SetLatencyEndMode(stf::footMode);
 	wxGetApp().wxWriteProfileInt(
                                      wxT("Settings"),
                                      wxT("LatencyEndMode"),
@@ -1306,7 +1306,7 @@ void wxStfParentFrame::OnLEndMaxslope(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        pDoc->SetLatencyEndMode(stfio::riseMode);
+        pDoc->SetLatencyEndMode(stf::riseMode);
         wxGetApp().wxWriteProfileInt(
                                      wxT("Settings"),
                                      wxT("LatencyEndMode"),
@@ -1321,7 +1321,7 @@ void wxStfParentFrame::OnLEndHalfrise(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        pDoc->SetLatencyEndMode(stfio::halfMode);
+        pDoc->SetLatencyEndMode(stf::halfMode);
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyEndMode"), pDoc->GetLatencyEndMode() );
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
@@ -1332,7 +1332,7 @@ void wxStfParentFrame::OnLEndPeak(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        pDoc->SetLatencyEndMode(stfio::peakMode);
+        pDoc->SetLatencyEndMode(stf::peakMode);
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyEndMode"), pDoc->GetLatencyEndMode() );
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
@@ -1344,7 +1344,7 @@ void wxStfParentFrame::OnLEndManual(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pView!=NULL && pDoc!=NULL) {
-        pDoc->SetLatencyEndMode(stfio::manualMode);
+        pDoc->SetLatencyEndMode(stf::manualMode);
         wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyEndMode"), pDoc->GetLatencyEndMode() );
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
@@ -1358,11 +1358,11 @@ void wxStfParentFrame::OnLWindow(wxCommandEvent& WXUNUSED(event)) {
     if (pView!=NULL) {
         // Select
         if (GetActiveChild()->GetMenuBar() && GetActiveChild()->GetMenuBar()->GetMenu(1)->IsChecked(ID_LATENCYWINDOW)) {
-            wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyWindowMode"), stfio::windowMode );
-            pDoc->SetLatencyWindowMode(stfio::windowMode);
+            wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyWindowMode"), stf::windowMode );
+            pDoc->SetLatencyWindowMode(stf::windowMode);
         } else {
-            wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyWindowMode"), stfio::defaultMode );
-            pDoc->SetLatencyWindowMode(stfio::defaultMode);
+            wxGetApp().wxWriteProfileInt( wxT("Settings"), wxT("LatencyWindowMode"), stf::defaultMode );
+            pDoc->SetLatencyWindowMode(stf::defaultMode);
         }
         if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
@@ -1439,30 +1439,30 @@ void wxStfParentFrame::SetSelectedButton(bool selected) {
     m_cursorToolBar->Refresh();
 }
 
-stfio::zoom_channels wxStfParentFrame::GetZoomQual() const {
+stf::zoom_channels wxStfParentFrame::GetZoomQual() const {
     if (m_scaleToolBar->GetToolToggled(ID_TOOL_CH1)) {
         if (m_scaleToolBar->GetToolToggled(ID_TOOL_CH2)) {
-            return stfio::zoomboth;
+            return stf::zoomboth;
         } else {
-            return stfio::zoomch1;
+            return stf::zoomch1;
         }
     }
-    return stfio::zoomch2;
+    return stf::zoomch2;
 }
 
-void wxStfParentFrame::SetZoomQual(stfio::zoom_channels value) {
+void wxStfParentFrame::SetZoomQual(stf::zoom_channels value) {
     if (m_scaleToolBar==NULL)
         return;
 
-    if (value==stfio::zoomch1) {
+    if (value==stf::zoomch1) {
         m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
         m_scaleToolBar->ToggleTool(ID_TOOL_CH2,false);
     }
-    if (value==stfio::zoomch2) {
+    if (value==stf::zoomch2) {
         m_scaleToolBar->ToggleTool(ID_TOOL_CH1,false);
         m_scaleToolBar->ToggleTool(ID_TOOL_CH2,true);
     }
-    if (value==stfio::zoomboth) {
+    if (value==stf::zoomboth) {
         m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
         m_scaleToolBar->ToggleTool(ID_TOOL_CH2,true);
     }

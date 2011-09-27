@@ -30,7 +30,6 @@
 #include <map>
 #include <string>
 #include <cmath>
-#include "./zoom.h"
 
 #ifdef _MSC_VER
 #pragma warning( disable : 4251 )  // Disable warning messages
@@ -375,60 +374,6 @@ struct PyMarker {
       */
      virtual bool Update(int value, const std::string& newmsg="", bool* skip=NULL) = 0;
  };
-
- 
-//! The direction of peak calculations
-enum direction {
-    up,                 /*!< Find positive-going peaks. */
-    down,               /*!< Find negative-going peaks. */
-    both,               /*!< Find negative- or positive-going peaks, whichever is larger. */
-    undefined_direction /*!< Undefined direction. */
-};
- 
-//! Determines which channels to scale
-enum zoom_channels {
-    zoomch1, /*!< Scaling applies to channel 1 only. */
-    zoomch2, /*!< Scaling applies to channel 2 only. */
-    zoomboth /*!< Scaling applies to both channels. */
-};
-
-//! Latency cursor settings
-enum latency_mode {
-    manualMode = 0, /*!< Set the corresponding latency cursor manually (by clicking on the graph). */ 
-    peakMode = 1,   /*!< Set the corresponding latency cursor to the peak. */ 
-    riseMode = 2,   /*!< Set the corresponding latency cursor to the maximal slope of rise. */ 
-    halfMode = 3,   /*!< Set the corresponding latency cursor to the half-maximal amplitude. */ 
-    footMode = 4,    /*!< Set the corresponding latency cursor to the beginning of an event. */ 
-    undefinedMode   /*!< undefined mode. */
-};
-
-//! Latency window settings
-enum latency_window_mode {
-    defaultMode = 0,  /*!< Use the current peak cursor window for the active channel. */ 
-    windowMode = 1  /*!< Use a window of 100 sampling points around the peak. */ 
-};
-
-#ifdef WITH_PSLOPE
-//! PSlope start cursor settings
-enum pslope_mode_beg {
-    psBeg_manualMode, /*< Set the start Slope cursor manually. */
-    psBeg_footMode,   /*< Set the start Slope cursor to the beginning of an event. */
-    psBeg_thrMode,    /*< Set the start Slope cursor to a threshold. */
-    psBeg_t50Mode,    /*< Set the start Slope cursor to the half-width of an event*/
-    psBeg_undefined
-};
-
-//! PSlope end cursor settings
-enum pslope_mode_end {
-    psEnd_manualMode, /*< Set the end Slope cursor manually. */
-    psEnd_t50Mode,   /*< Set the Slope cursor to the half-width of an event. */
-    psEnd_DeltaTMode,  /*< Set the Slope cursor to a given distance from the first cursor. */
-    psEnd_peakMode,    /*< Set the Slope cursor to the peak. */
-    psEnd_undefined
-};
-
-#endif // WITH_PSLOPE
-
  
 //! Text file import filter settings
 struct txtImportSettings {

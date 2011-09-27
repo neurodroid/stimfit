@@ -825,11 +825,11 @@ const char* get_peak_direction( ) {
     if ( !check_doc() ) return "";
     
     const char *direction = "both";
-    if ( actDoc()->GetDirection() == stfio::up )
+    if ( actDoc()->GetDirection() == stf::up )
         direction = "up";
-    else if ( actDoc()->GetDirection() == stfio::down )
+    else if ( actDoc()->GetDirection() == stf::down )
         direction = "down";
-    else if ( actDoc()->GetDirection() == stfio::both )
+    else if ( actDoc()->GetDirection() == stf::both )
         direction = "both";
     
     return direction;
@@ -839,17 +839,17 @@ bool set_peak_direction( const char* direction ) {
     if ( !check_doc() ) return false;
 
     if ( strcmp( direction, "up" ) == 0 ) {
-        actDoc()->SetDirection( stfio::up );
+        actDoc()->SetDirection( stf::up );
         return update_cursor_dialog();
     }
 
     if ( strcmp( direction, "down" ) == 0 ) {
-        actDoc()->SetDirection( stfio::down );
+        actDoc()->SetDirection( stf::down );
         return update_cursor_dialog();
     }
 
     if ( strcmp( direction, "both" ) == 0 ) {
-        actDoc()->SetDirection( stfio::both );
+        actDoc()->SetDirection( stf::both );
         return update_cursor_dialog();
     }
 

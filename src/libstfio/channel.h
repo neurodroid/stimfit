@@ -114,16 +114,6 @@ public:
     /*! \return The vector containing the sections.
      */
     std::vector< Section >& get() { return SectionArray; }
-    
-    //! Returns the current zoom settings for this channel (read-only).
-    /*! \return The current zoom settings.
-     */
-    const YZoom& GetYZoom() { return zoom; }
-
-    //! Returns the current zoom settings for this channel (read & write).
-    /*! \return The current zoom settings.
-     */
-    YZoom& GetYZoomW() { return zoom; }
 
     //member access: write----------------------------------------
 
@@ -166,8 +156,6 @@ private:
 
     // An array of sections
     std::vector< Section > SectionArray;
-    // The zoom settings
-    YZoom zoom;
 
 };
 

@@ -10,7 +10,6 @@ stimfittest_SOURCES = ./src/stimfit/test/section.cpp ./src/stimfit/test/channel.
             ./src/stimfit/test/gtest/src/gtest-all.cc ./src/stimfit/test/gtest/src/gtest_main.cc
 
 noinst_HEADERS = ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfio/recording.h ./src/libstfio/stfio.h \
-	./src/libstfio/measure.h ./src/libstfio/zoom.h \
 	./src/libstfio/cfs/cfslib.h ./src/libstfio/cfs/cfs.h ./src/libstfio/cfs/machine.h \
 	./src/libstfio/hdf5/hdf5lib.h \
 	./src/libstfio/heka/hekalib.h \
@@ -54,12 +53,14 @@ noinst_HEADERS = ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfi
 	./src/libstfio/igor/IgorBin.h \
 	./src/stimfit/stf.h \
 	./src/stimfit/math/stfmath.h ./src/stimfit/math/fit.h ./src/stimfit/math/spline.h \
-	./src/stimfit/math/levmar/lm.h ./src/stimfit/math/levmar/levmar.h ./src/stimfit/math/levmar/misc.h ./src/stimfit/math/levmar/compiler.h \
+	./src/stimfit/math/measure.h \
+	./src/stimfit/math/levmar/lm.h ./src/stimfit/math/levmar/levmar.h \
+	./src/stimfit/math/levmar/misc.h ./src/stimfit/math/levmar/compiler.h \
 	./src/stimfit/gui/app.h ./src/stimfit/gui/stfcheckbox.h \
 	./src/stimfit/gui/copygrid.h ./src/stimfit/gui/graph.h \
 	./src/stimfit/gui/printout.h \
 	./src/stimfit/gui/doc.h ./src/stimfit/gui/parentframe.h ./src/stimfit/gui/childframe.h ./src/stimfit/gui/view.h \
-	./src/stimfit/gui/table.h  \
+	./src/stimfit/gui/table.h ./src/stimfit/gui/zoom.h \
 	./src/stimfit/gui/dlgs/cursorsdlg.h ./src/stimfit/gui/dlgs/eventdlg.h \
 	./src/stimfit/gui/dlgs/fitseldlg.h ./src/stimfit/gui/dlgs/smalldlgs.h \
 	./src/stimfit/math/funclib.h \

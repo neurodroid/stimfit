@@ -214,38 +214,38 @@ public:
     //! Gets the direction of peak calculations.
     /*! \return The current direction of peak calculations.
      */
-    stfio::direction GetDirection() const;
+    stf::direction GetDirection() const;
 
     //! Gets the mode of Latency for the beginning of the latency cursor.
     /*! \return The current mode for the beginning latency cursor.
     */
-    stfio::latency_mode GetLatencyStartMode() const;
+    stf::latency_mode GetLatencyStartMode() const;
 
     //! Gets the mode of Latency of the last latency cursor.
     /*! \return The current mode of the last latency cursor.
     */
-    stfio::latency_mode GetLatencyEndMode() const;
+    stf::latency_mode GetLatencyEndMode() const;
 
     //! Sets the latency mode of the left latency cursor.
     /*! \param latencyBegMode: the new mode for the left latency cursor.
      */
-    void SetLatencyStartMode(stfio::latency_mode latencyBegMode);
+    void SetLatencyStartMode(stf::latency_mode latencyBegMode);
 
     //! Sets the latency mode of the right latency cursor.
     /*! \param latencyEndMode: the new mode for the right latency cursor.
      */
-    void SetLatencyEndMode(stfio::latency_mode latencyEndMode);
+    void SetLatencyEndMode(stf::latency_mode latencyEndMode);
     
 #ifdef WITH_PSLOPE
     //! Gets the mode of measure for the beginning of the slope cursor.
     /*! \return The current mode for the beginning slope cursor.
      */
-    stfio::pslope_mode_beg GetPSlopeBegMode() const;
+    stf::pslope_mode_beg GetPSlopeBegMode() const;
 
     //! Gets the mode of measure for the end of the slope cursor.
     /*! \return The current mode for the end slope cursor.
      */
-    stfio::pslope_mode_end GetPSlopeEndMode() const;
+    stf::pslope_mode_end GetPSlopeEndMode() const;
 
 #endif // WITH_PSLOPE
 
@@ -257,18 +257,18 @@ public:
     //! Sets the direction of peak calculations.
     /*! \param direction The new direction of peak calculations.
      */
-    void SetDirection(stfio::direction direction);
+    void SetDirection(stf::direction direction);
 
 #ifdef WITH_PSLOPE
     //! Sets the mode of the right slope cursor.
     /*! \param pslopeEndMode The new mode for the slope cursor.
      */
-    void SetPSlopeEndMode(stfio::pslope_mode_end pslopeEndMode);
+    void SetPSlopeEndMode(stf::pslope_mode_end pslopeEndMode);
 
     //! Sets the mode of the left slope cursor.
     /*! \param pslopeBegMode The new mode for the slope cursor.
      */
-    void SetPSlopeBegMode(stfio::pslope_mode_beg pslopeBegMode);
+    void SetPSlopeBegMode(stf::pslope_mode_beg pslopeBegMode);
 #endif // WITH_PSLOPE
 
     //! Sets the reference for AP kinetics measurements.

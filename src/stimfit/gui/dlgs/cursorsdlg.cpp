@@ -773,35 +773,35 @@ void wxStfCursorsDlg::SetPeakPoints(int peakPoints)
 }
 
 
-stfio::direction wxStfCursorsDlg::GetDirection() const {
+stf::direction wxStfCursorsDlg::GetDirection() const {
     wxRadioBox* pDirection = (wxRadioBox*)FindWindow(wxDIRECTION);
     if (pDirection == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::GetDirection()"));
-        return stfio::undefined_direction;
+        return stf::undefined_direction;
     }
     switch (pDirection->GetSelection()) {
-    case 0: return stfio::up;
-    case 1: return stfio::down;
-    case 2: return stfio::both;
-    default: return stfio::undefined_direction;
+    case 0: return stf::up;
+    case 1: return stf::down;
+    case 2: return stf::both;
+    default: return stf::undefined_direction;
     }
 }
 
-void wxStfCursorsDlg::SetDirection(stfio::direction direction) {
+void wxStfCursorsDlg::SetDirection(stf::direction direction) {
     wxRadioBox* pDirection = (wxRadioBox*)FindWindow(wxDIRECTION);
     if (pDirection == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::GetDirection()"));
         return;
     }
     switch (direction) {
-    case stfio::up:
+    case stf::up:
         pDirection->SetSelection(0);
         break;
-    case stfio::down:
+    case stf::down:
         pDirection->SetSelection(1);
         break;
-    case stfio::both:
-    case stfio::undefined_direction:
+    case stf::both:
+    case stf::undefined_direction:
         pDirection->SetSelection(2);
         break;
     }
@@ -1096,7 +1096,7 @@ void wxStfCursorsDlg::OnRadioPSManEnd( wxCommandEvent& event ) {
     if (pTextPSDeltaT->IsEnabled())
         pTextPSDeltaT->Enable(false);
 
-//    SetPSlopeEndMode(stfio::psEnd_manualMode);
+//    SetPSlopeEndMode(stf::psEnd_manualMode);
 }
 
 void wxStfCursorsDlg::OnRadioPSt50End( wxCommandEvent& event ) {
@@ -1114,7 +1114,7 @@ void wxStfCursorsDlg::OnRadioPSt50End( wxCommandEvent& event ) {
     if (pTextPSDeltaT->IsEnabled())
         pTextPSDeltaT->Enable(false);
 
-    SetPSlopeEndMode(stfio::psEnd_t50Mode);
+    SetPSlopeEndMode(stf::psEnd_t50Mode);
 }
 
 void wxStfCursorsDlg::OnRadioPSDeltaT( wxCommandEvent& event) {
@@ -1134,7 +1134,7 @@ void wxStfCursorsDlg::OnRadioPSDeltaT( wxCommandEvent& event) {
     if (!pTextPSDeltaT->IsEnabled())
         pTextPSDeltaT->Enable(true);
 
-    SetPSlopeEndMode(stfio::psEnd_DeltaTMode);
+    SetPSlopeEndMode(stf::psEnd_DeltaTMode);
 }
 
 void wxStfCursorsDlg::OnRadioPSPeakEnd( wxCommandEvent& event ) {
@@ -1152,7 +1152,7 @@ void wxStfCursorsDlg::OnRadioPSPeakEnd( wxCommandEvent& event ) {
     if (pTextPSDeltaT->IsEnabled())
         pTextPSDeltaT->Enable(false);
 
-    SetPSlopeEndMode(stfio::psEnd_peakMode);
+    SetPSlopeEndMode(stf::psEnd_peakMode);
 }
 
 #endif // WITH_PSLOPE
@@ -1184,7 +1184,7 @@ void wxStfCursorsDlg::OnRadioMean( wxCommandEvent& event ) {
     pRadioAll->SetValue(false);
 }
 
-stfio::latency_mode wxStfCursorsDlg::GetLatencyStartMode() const {
+stf::latency_mode wxStfCursorsDlg::GetLatencyStartMode() const {
 
     wxRadioButton* pManual   = (wxRadioButton*)FindWindow(wxRADIO_LAT_MANUAL1);
     wxRadioButton* pPeak     = (wxRadioButton*)FindWindow(wxRADIO_LAT_PEAK1);
@@ -1194,23 +1194,23 @@ stfio::latency_mode wxStfCursorsDlg::GetLatencyStartMode() const {
     if (pManual == NULL || pPeak == NULL
             || pMaxSlope == NULL || pt50 == NULL ) {
         wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::GetLatencyStartMode()"));
-        return stfio::undefinedMode;
+        return stf::undefinedMode;
     }
 
     if (pManual->GetValue() )
-        return stfio::manualMode;
+        return stf::manualMode;
     else if (pPeak->GetValue())
-        return stfio::peakMode;
+        return stf::peakMode;
     else if (pMaxSlope->GetValue())
-        return stfio::riseMode;
+        return stf::riseMode;
     else if (pt50->GetValue())
-        return stfio::halfMode;
+        return stf::halfMode;
     else
-        return stfio::undefinedMode;
+        return stf::undefinedMode;
 
 }
 
-stfio::latency_mode wxStfCursorsDlg::GetLatencyEndMode() const {
+stf::latency_mode wxStfCursorsDlg::GetLatencyEndMode() const {
 
     wxRadioButton* pEvent    = (wxRadioButton*)FindWindow(wxRADIO_LAT_EVENT2);
     wxRadioButton* pManual   = (wxRadioButton*)FindWindow(wxRADIO_LAT_MANUAL2);
@@ -1221,24 +1221,24 @@ stfio::latency_mode wxStfCursorsDlg::GetLatencyEndMode() const {
     if (pEvent == NULL || pManual == NULL || pPeak == NULL
             || pMaxSlope == NULL || pt50 == NULL ) {
         wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::GetLatencyEndMode()"));
-        return stfio::undefinedMode;
+        return stf::undefinedMode;
     }
 
     if (pManual->GetValue() )
-        return stfio::manualMode;
+        return stf::manualMode;
     else if (pEvent->GetValue())
-        return stfio::footMode;
+        return stf::footMode;
     else if (pPeak->GetValue())
-        return stfio::peakMode;
+        return stf::peakMode;
     else if (pMaxSlope->GetValue())
-        return stfio::riseMode;
+        return stf::riseMode;
     else if (pt50->GetValue())
-        return stfio::halfMode;
+        return stf::halfMode;
     else
-        return stfio::undefinedMode;
+        return stf::undefinedMode;
 }
 
-void wxStfCursorsDlg::SetLatencyStartMode(stfio::latency_mode latencyBegMode){
+void wxStfCursorsDlg::SetLatencyStartMode(stf::latency_mode latencyBegMode){
 
     wxRadioButton* pManual   = (wxRadioButton*)FindWindow(wxRADIO_LAT_MANUAL1);
     wxRadioButton* pPeak     = (wxRadioButton*)FindWindow(wxRADIO_LAT_PEAK1);
@@ -1251,16 +1251,16 @@ void wxStfCursorsDlg::SetLatencyStartMode(stfio::latency_mode latencyBegMode){
     }
 
     switch (latencyBegMode) {
-        case stfio::manualMode:
+        case stf::manualMode:
             pManual->SetValue(true);
             break;
-        case stfio::peakMode:
+        case stf::peakMode:
             pPeak->SetValue(true);
             break;
-        case stfio::riseMode:
+        case stf::riseMode:
             pMaxSlope->SetValue(true);
             break;
-        case stfio::halfMode:
+        case stf::halfMode:
             pt50->SetValue(true);
             break;
         default:
@@ -1269,7 +1269,7 @@ void wxStfCursorsDlg::SetLatencyStartMode(stfio::latency_mode latencyBegMode){
 }
 
 
-void wxStfCursorsDlg::SetLatencyEndMode(stfio::latency_mode latencyEndMode){
+void wxStfCursorsDlg::SetLatencyEndMode(stf::latency_mode latencyEndMode){
 
     wxRadioButton* pManual   = (wxRadioButton*)FindWindow(wxRADIO_LAT_MANUAL2);
     wxRadioButton* pPeak     = (wxRadioButton*)FindWindow(wxRADIO_LAT_PEAK2);
@@ -1283,19 +1283,19 @@ void wxStfCursorsDlg::SetLatencyEndMode(stfio::latency_mode latencyEndMode){
     }
 
     switch (latencyEndMode) {
-        case stfio::manualMode:
+        case stf::manualMode:
             pManual->SetValue(true);
             break;
-        case stfio::peakMode:
+        case stf::peakMode:
             pPeak->SetValue(true);
             break;
-        case stfio::riseMode:
+        case stf::riseMode:
             pMaxSlope->SetValue(true);
             break;
-        case stfio::halfMode:
+        case stf::halfMode:
             pt50->SetValue(true);
             break;
-        case stfio::footMode:
+        case stf::footMode:
             pEvent->SetValue(true);
             break;
         default:
@@ -1305,7 +1305,7 @@ void wxStfCursorsDlg::SetLatencyEndMode(stfio::latency_mode latencyEndMode){
 
 
 #ifdef WITH_PSLOPE
-stfio::pslope_mode_beg wxStfCursorsDlg::GetPSlopeBegMode() const {
+stf::pslope_mode_beg wxStfCursorsDlg::GetPSlopeBegMode() const {
 
     wxRadioButton* pPSManBeg   = (wxRadioButton*)FindWindow(wxRADIO_PSManBeg);
     wxRadioButton* pPSEventBeg = (wxRadioButton*)FindWindow(wxRADIO_PSEventBeg);
@@ -1315,22 +1315,22 @@ stfio::pslope_mode_beg wxStfCursorsDlg::GetPSlopeBegMode() const {
     if (pPSManBeg == NULL || pPSEventBeg == NULL 
             || pPSThrBeg == NULL || pPSt50Beg == NULL) {
         wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::OnRadioPSBeg()"));
-        return stfio::psBeg_undefined;
+        return stf::psBeg_undefined;
     }
 
     if ( pPSManBeg->GetValue() )
-        return stfio::psBeg_manualMode;
+        return stf::psBeg_manualMode;
     else if ( pPSEventBeg->GetValue() )
-        return stfio::psBeg_footMode;
+        return stf::psBeg_footMode;
     else  if( pPSThrBeg->GetValue() )
-        return stfio::psBeg_thrMode;
+        return stf::psBeg_thrMode;
     else if ( pPSt50Beg->GetValue() )
-        return stfio::psBeg_t50Mode;
+        return stf::psBeg_t50Mode;
     else
-        return stfio::psBeg_undefined;
+        return stf::psBeg_undefined;
 }
 
-stfio::pslope_mode_end wxStfCursorsDlg::GetPSlopeEndMode() const {
+stf::pslope_mode_end wxStfCursorsDlg::GetPSlopeEndMode() const {
   
     wxRadioButton* pPSManEnd   = (wxRadioButton*)FindWindow(wxRADIO_PSManEnd);
     wxRadioButton* pPSt50End = (wxRadioButton*)FindWindow(wxRADIO_PSt50End);
@@ -1343,19 +1343,19 @@ stfio::pslope_mode_end wxStfCursorsDlg::GetPSlopeEndMode() const {
     }
 
     if ( pPSManEnd->GetValue() )
-        return stfio::psEnd_manualMode;
+        return stf::psEnd_manualMode;
     else if ( pPSt50End->GetValue() )
-        return stfio::psEnd_t50Mode;
+        return stf::psEnd_t50Mode;
     else  if( pPSDeltaT->GetValue() )
-        return stfio::psEnd_DeltaTMode;
+        return stf::psEnd_DeltaTMode;
     else if ( pPSPeakEnd->GetValue() )
-        return stfio::psEnd_peakMode;
+        return stf::psEnd_peakMode;
     else
-        return stfio::psEnd_undefined;
+        return stf::psEnd_undefined;
 //   return dlgPSlopeModeEnd;
 }
 
-void wxStfCursorsDlg::SetPSlopeEndMode(stfio::pslope_mode_end pslopeEndMode) {
+void wxStfCursorsDlg::SetPSlopeEndMode(stf::pslope_mode_end pslopeEndMode) {
  
     wxRadioButton* pPSManBeg  = (wxRadioButton*)FindWindow(wxRADIO_PSManBeg);
     wxRadioButton* pPSEventBeg  = (wxRadioButton*)FindWindow(wxRADIO_PSEventBeg);
@@ -1369,16 +1369,16 @@ void wxStfCursorsDlg::SetPSlopeEndMode(stfio::pslope_mode_end pslopeEndMode) {
     }
 
     switch (pslopeEndMode) {
-    case stfio::psBeg_manualMode:
+    case stf::psBeg_manualMode:
         pPSManBeg->Enable(true);
         break;
-    case stfio::psBeg_footMode:
+    case stf::psBeg_footMode:
         pPSEventBeg->Enable(true);
         break;
-    case stfio::psBeg_thrMode:
+    case stf::psBeg_thrMode:
         pPSThrBeg->Enable(true);
         break;
-    case stfio::psBeg_t50Mode:
+    case stf::psBeg_t50Mode:
         pPSt50Beg->Enable(true);
     default:
         break;
@@ -1391,7 +1391,7 @@ void wxStfCursorsDlg::SetPSlopeEndMode(stfio::pslope_mode_end pslopeEndMode) {
 #endif
 }
 
-void wxStfCursorsDlg::SetPSlopeBegMode(stfio::pslope_mode_beg pslopeBegMode) {
+void wxStfCursorsDlg::SetPSlopeBegMode(stf::pslope_mode_beg pslopeBegMode) {
 
     wxRadioButton* pPSManBeg  = (wxRadioButton*)FindWindow(wxRADIO_PSManBeg);
     wxRadioButton* pPSEventBeg  = (wxRadioButton*)FindWindow(wxRADIO_PSEventBeg);
@@ -1405,16 +1405,16 @@ void wxStfCursorsDlg::SetPSlopeBegMode(stfio::pslope_mode_beg pslopeBegMode) {
     }
 
     switch (pslopeBegMode) {
-    case stfio::psBeg_manualMode:
+    case stf::psBeg_manualMode:
         pPSManBeg->Enable(true);
         break;
-    case stfio::psBeg_footMode:
+    case stf::psBeg_footMode:
         pPSEventBeg->Enable(true);
         break;
-    case stfio::psBeg_thrMode:
+    case stf::psBeg_thrMode:
         pPSThrBeg->Enable(true);
         break;
-    case stfio::psBeg_t50Mode:
+    case stf::psBeg_t50Mode:
         pPSt50Beg->Enable(true);
     default:
         break;

@@ -42,7 +42,7 @@
 #include "./dlgs/cursorsdlg.h"
 #include "./../math/stfmath.h"
 #include "./../math/fit.h"
-#include "./../../libstfio/measure.h"
+#include "./../math/measure.h"
 #include "./../../libstfio/cfs/cfslib.h"
 #include "./../../libstfio/atf/atflib.h"
 #include "./../../libstfio/hdf5/hdf5lib.h"
@@ -89,10 +89,88 @@ END_EVENT_TABLE()
 static const int baseline=100;
 
 wxStfDoc::wxStfDoc() :
-    Recording(),peakAtEnd(false),initialized(false),progress(true),Average(0)
-{
-
-}
+    Recording(),peakAtEnd(false),initialized(false),progress(true), Average(0),
+    latencyStartMode(stf::riseMode),
+    latencyEndMode(stf::footMode),
+    latencyWindowMode(stf::defaultMode),
+    direction(stf::both),    
+#ifdef WITH_PSLOPE
+    pslopeBegMode(stf::psBeg_manualMode),
+    pslopeEndMode(stf::psEnd_manualMode),
+#endif
+    baseBeg(0),
+    baseEnd(0),
+    peakBeg(0),
+    peakEnd(0),
+    fitBeg(0),
+    fitEnd(0),
+#ifdef WITH_PSLOPE
+    PSlopeBeg(0),
+    PSlopeEnd(0),
+    DeltaT(0),
+    viewPSlope(true),
+#endif
+    measCursor(0),
+    latencyStartCursor(0.0),
+    latencyEndCursor(0.0),
+    latency(0.0),
+    base(0.0),
+    APBase(0.0),
+    baseSD(0.0),
+    threshold(0.0),
+    slopeForThreshold(20.0),
+    peak(0.0),
+    APPeak(0.0),
+    t20Real(0),
+    t80Real(0),
+    t50LeftReal(0),
+    t50RightReal(0),
+    maxT(0.0),
+    thrT(-1.0),
+    maxRiseY(0.0),
+    maxRiseT(0.0),
+    maxDecayY(0.0),
+    maxDecayT(0.0),
+    maxRise(0.0),
+    maxDecay(0.0),
+    t50Y(0.0),
+    APMaxT(0.0),
+    APMaxRise(0.0),
+    APMaxRiseT(0.0),
+    APt50LeftReal(0.0),
+    PSlope(0.0),
+    rt2080(0.0),
+    halfDuration(0.0),
+    slopeRatio(0.0),
+    t0Real(0.0),
+    pM(1),
+    cc(0),
+    sc(1),
+    cs(0),
+    selectedSections(std::vector<std::size_t>(0)),
+    selectBase(Vector_double(0)),
+    t20Index(0),
+    t80Index(0),
+    t50LeftIndex(0),
+    t50RightIndex(0),
+    fromBase(true),
+    viewCrosshair(true),
+    viewBaseline(true),
+    viewBaseSD(true),
+    viewThreshold(false),
+    viewPeakzero(true),
+    viewPeakbase(true),
+    viewPeakthreshold(false),
+    viewRT2080(true),
+    viewT50(true),
+    viewRD(true),
+    viewSloperise(true),
+    viewSlopedecay(true),
+    viewLatency(true),
+    viewCursors(true),
+    xzoom(XZoom(0, 0.1, false)),
+    yzoom(std::vector<YZoom>(size(), YZoom(500,0.1,false)))
+{}
 
 wxStfDoc::~wxStfDoc()
 {}
@@ -177,7 +255,8 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
         if (pFrame == NULL) {
             throw std::runtime_error("pFrame is 0 in wxStfDoc::OnOpenDocument");
         }
-
+        yzoom.resize(size());
+        
         pFrame->SetSingleChannel( size() <= 1 );
 
         if (InitCursors()!=wxID_OK) {
@@ -234,6 +313,7 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
 void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const wxString& title )
 {
     this->resize(c_Data.size());
+    yzoom.resize(size());
     std::copy(c_Data.get().begin(),c_Data.get().end(),get().begin());
     CopyAttributes(c_Data);
 
@@ -294,11 +374,11 @@ void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const w
 
     //Latency Cursor: OFF-Mode only if one channel is selected!
     if (!(get().size()>1) &&
-            GetLatencyStartMode()!=stfio::manualMode &&
-            GetLatencyEndMode()!=stfio::manualMode)
+            GetLatencyStartMode()!=stf::manualMode &&
+            GetLatencyEndMode()!=stf::manualMode)
     {
-        SetLatencyStartMode(stfio::manualMode);
-        SetLatencyEndMode(stfio::manualMode);
+        SetLatencyStartMode(stf::manualMode);
+        SetLatencyEndMode(stf::manualMode);
         // UpdateMenuCheckmarks();
     }
 
@@ -326,10 +406,10 @@ int wxStfDoc::InitCursors() {
     SetPeakEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakEnd"), (int)cur().size()-50));
     int iDirection=wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("Direction"),2);
     switch (iDirection) {
-    case 0: SetDirection(stfio::up); break;
-    case 1: SetDirection(stfio::down); break;
-    case 2: SetDirection(stfio::both); break;
-    default: SetDirection(stfio::undefined_direction);
+    case 0: SetDirection(stf::up); break;
+    case 1: SetDirection(stf::down); break;
+    case 2: SetDirection(stf::both); break;
+    default: SetDirection(stf::undefined_direction);
     }
     SetFromBase( true ); // reset at every program start   wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FromBase"),1) );
     SetFitBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FitBegin"), 10));
@@ -348,13 +428,13 @@ int wxStfDoc::InitCursors() {
     SetSlopeForThreshold( fSlope );
     
     if (!(get().size()>1) &&
-            GetLatencyStartMode()!=stfio::manualMode &&
-            GetLatencyEndMode()!=stfio::manualMode)
+            GetLatencyStartMode()!=stf::manualMode &&
+            GetLatencyEndMode()!=stf::manualMode)
     {
-        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("LatencyStartMode"),stfio::manualMode);
-        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("LatencyEndMode"),stfio::manualMode);
-        SetLatencyStartMode(stfio::manualMode);
-        SetLatencyEndMode(stfio::manualMode);
+        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("LatencyStartMode"),stf::manualMode);
+        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("LatencyEndMode"),stf::manualMode);
+        SetLatencyStartMode(stf::manualMode);
+        SetLatencyEndMode(stf::manualMode);
     }
     CheckBoundaries();
     return wxID_OK;
@@ -661,14 +741,14 @@ void wxStfDoc::WriteToReg() {
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("LatencyCursor"), (int)GetLatencyEnd());
 
     // Write Zoom
-    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.xZoom"),(int)GetXZoom().xZoom*100000);
-    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.yZoom"),at(GetCurCh()).GetYZoom().yZoom*100000);
-    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.startPosX"),(int)GetXZoom().startPosX);
-    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.startPosY"),at(GetCurCh()).GetYZoom().startPosY);
+    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.xZoom"), (int)GetXZoom().xZoom*100000);
+    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.yZoom"), GetYZoom(GetCurCh()).yZoom*100000);
+    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.startPosX"), (int)GetXZoom().startPosX);
+    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.startPosY"), GetYZoom(GetCurCh()).startPosY);
     if ((get().size()>1))
     {
-        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.yZoom2"),(int)at(GetSecCh()).GetYZoom().yZoom*100000);
-        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.startPosY2"),at(GetSecCh()).GetYZoom().startPosY);
+        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.yZoom2"), (int)GetYZoom(GetSecCh()).yZoom*100000);
+        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.startPosY2"), GetYZoom(GetSecCh()).startPosY);
     }
 }
 
@@ -973,7 +1053,7 @@ void wxStfDoc::FitDecay(wxCommandEvent& WXUNUSED(event)) {
         //fill array:
         std::copy(&cur()[GetFitBeg()], &cur()[GetFitBeg()+fitSize], &x[0]);
         if (params.size() != n_params) {
-            throw std::runtime_error("Wrong size of params in Recording::lmFit()");
+            throw std::runtime_error("Wrong size of params in wxStfDoc::lmFit()");
         }
         double chisqr = stf::lmFit( x, GetXScale(), wxGetApp().GetFuncLib()[fselect],
                                     FitSelDialog.GetOpts(), FitSelDialog.UseScaling(),
@@ -2032,8 +2112,8 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             }
             baselineMean /= baseline;
             double peakIndex=0;
-            stfio::peak( cur().get(), baselineMean, *cit, *cit + templateWave.size(),
-                    1, stfio::both, peakIndex );
+            stf::peak( cur().get(), baselineMean, *cit, *cit + templateWave.size(),
+                    1, stf::both, peakIndex );
             // set peak index of last event:
             cur().GetEventsW()[cur().GetEvents().size()-1].SetEventPeakIndex((int)peakIndex);
         }
@@ -2141,9 +2221,9 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
         }
         baselineMean /= baseline;
         double peakIndex=0;
-        stfio::peak( cur().get(), baselineMean, newStartPos,
+        stf::peak( cur().get(), baselineMean, newStartPos,
                 newStartPos + cur().GetEvent(0).GetEventSize(), 1,
-                stfio::both, peakIndex );
+                stf::both, peakIndex );
         // set peak index of last event:
         newEvent.SetEventPeakIndex( (int)peakIndex );
         // find the position in the current event list where the new
@@ -2213,6 +2293,713 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
     if (pChild!=NULL) {
         pChild->ShowTable(events,wxT("Extracted events"));
     }
+}
+
+//Function calculates the peak and respective measures: base, 20/80 rise time
+//half duration, ratio of rise/slope and maximum slope
+void wxStfDoc::Measure( )
+{
+    double var=0.0;
+    if (cur().get().size() == 0) return;
+    try {
+        cur().at(0);
+    }
+    catch (const std::out_of_range&) {
+        return;
+    }
+    //Begin peak and base calculation
+    //-------------------------------
+    try {
+        base=stf::base(var,cur().get(),baseBeg,baseEnd);
+        baseSD=sqrt(var);
+        peak=stf::peak(cur().get(),base,
+                       peakBeg,peakEnd,pM,direction,maxT);
+        threshold = stf::threshold( cur().get(), peakBeg, peakEnd, slopeForThreshold/GetSR(), thrT );
+    }
+    catch (const std::out_of_range& e) {
+        base=0.0;
+        baseSD=0.0;
+        peak=0.0;
+        throw e;
+    }
+
+    //Begin 20 to 80% Rise Time calculation
+    //-------------------------------------
+    // 2009-06-05: reference is either from baseline or from threshold
+    double reference = base;
+    if (!fromBase && thrT >= 0) {
+        reference = threshold;
+    }
+    double ampl=peak-reference;
+    
+    t20Real=0.0;
+    try {
+        // 2008-04-27: changed limits to start from the beginning of the trace
+        rt2080=stf::risetime(cur().get(),reference,ampl, (double)0/*(double)baseEnd*/,
+                maxT,t20Index,t80Index,t20Real);
+    }
+    catch (const std::out_of_range& e) {
+        rt2080=0.0;
+        throw e;
+    }
+
+    t80Real=t20Real+rt2080;
+    rt2080/=GetSR();
+
+    //Begin Half Duration calculation
+    //-------------------------------
+    t50LeftReal=0.0;
+    // 2008-04-27: changed limits to start from the beginning of the trace
+    //             and to stop at the end of the trace
+    halfDuration = stf::t_half(cur().get(), reference, ampl, (double)0 /*(double)baseBeg*/,
+            (double)cur().size()-1 /*(double)peakEnd*/,maxT, t50LeftIndex,t50RightIndex,t50LeftReal);
+
+    t50RightReal=t50LeftReal+halfDuration;
+    halfDuration/=GetSR();
+    t50Y=0.5*ampl + reference;
+
+    //Calculate the beginning of the event by linear extrapolation:
+    if (latencyEndMode==stf::footMode) {
+        t0Real=t20Real-(t80Real-t20Real)/3.0;
+    } else {
+        t0Real=t50LeftReal;
+    }
+
+    //Begin Ratio of slopes rise/decay calculation
+    //--------------------------------------------
+    double left_rise = (peakBeg > t0Real-1 || !fromBase) ? peakBeg : t0Real-1;
+    maxRise=stf::maxRise(cur().get(),left_rise,maxT,maxRiseT,maxRiseY);
+    double t_half_3=t50RightIndex+2.0*(t50RightIndex-t50LeftIndex);
+    double right_decay=peakEnd<=t_half_3 ? peakEnd : t_half_3+1;
+    maxDecay=stf::maxDecay(cur().get(),maxT,right_decay,maxDecayT,maxDecayY);
+    //Slope ratio
+    if (maxDecay !=0) slopeRatio=maxRise/maxDecay;
+    else slopeRatio=0.0;
+    maxRise *= GetSR();
+    maxDecay *= GetSR();
+
+    if (size()>1) {
+        //Calculate the absolute peak of the (AP) Ch2 inbetween the peak boundaries
+        //A direction dependent evaluation of the peak as in Ch1 does NOT exist!!
+
+        // endResting is set to 100 points arbitrarily in the pascal version
+        // (see measlib.pas) assuming that the resting potential is stable
+        // during the first 100 sampling points.
+        const int endResting=100;
+        const int searchRange=100;
+        double APBase=0.0, APPeak=0.0, APVar=0.0;
+        try {
+            APBase=stf::base(APVar,sec().get(),0,endResting);
+            APPeak=stf::peak(sec().get(),APBase,peakBeg,peakEnd,pM,stf::up,APMaxT);
+        }
+        catch (const std::out_of_range& e) {
+            APBase=0.0;
+            APPeak=0.0;
+            throw e;
+        }
+        //-------------------------------
+        //Maximal slope in the rise before the peak
+        //----------------------------
+        APMaxRiseT=0.0;
+        double APMaxRiseY=0.0;
+        double left_APRise = peakBeg; 
+        if (GetLatencyWindowMode() == stf::defaultMode ) {
+            left_APRise= APMaxT-searchRange>2.0 ? APMaxT-searchRange : 2.0;
+        }
+        try {
+            stf::maxRise(sec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY);
+        }
+        catch (const std::out_of_range& e) {
+            APMaxRiseT=0.0;
+            APMaxRiseY=0.0;
+            left_APRise = peakBeg; 
+        }
+
+        //End determination of the region of maximal slope in the second channel
+        //----------------------------
+
+        //-------------------------------
+        //Half-maximal amplitude
+        //----------------------------
+        std::size_t APt50LeftIndex,APt50RightIndex;
+        stf::t_half(sec().get(), APBase, APPeak-APBase, left_APRise,
+                      (double)sec().get().size(), APMaxT, APt50LeftIndex,
+                      APt50RightIndex, APt50LeftReal);
+        //End determination of the region of maximal slope in the second channel
+        //----------------------------
+    }
+
+    // get and set start of latency measurement:
+    double latStart=0.0;
+    switch (latencyStartMode) {
+    // Interestingly, latencyCursor is an int in pascal, although
+    // the maxTs aren't. That's why there are double type casts
+    // here.
+    case stf::peakMode: //Latency cursor is set to the peak						
+        latStart=APMaxT;
+        break;
+    case stf::riseMode:
+        latStart=APMaxRiseT;
+        break;
+    case stf::halfMode:
+        latStart=APt50LeftReal;
+        break;
+    case stf::manualMode:
+    default:
+        latStart=GetLatencyBeg();
+        break;
+    }
+    SetLatencyBeg(latStart);
+
+    // get and set end of latency measurement:
+    double latEnd=0.0;
+    switch (latencyEndMode) {
+    // Interestingly, latencyCursor is an int in pascal, although
+    // the maxTs aren't. That's why there are double type casts
+    // here.
+    case stf::footMode: //Latency cursor is set to the peak						
+        latEnd=t20Real-(t80Real-t20Real)/3.0;
+        break;
+    case stf::riseMode:
+        latEnd=maxRiseT;
+        break;
+    case stf::halfMode:
+        latEnd=t50LeftReal;
+        break;
+    case stf::peakMode:
+        latEnd=maxT;
+        break;
+    case stf::manualMode:
+    default:
+        latEnd=GetLatencyEnd();
+        break;
+    }
+    SetLatencyEnd(latEnd);
+
+    SetLatency(GetLatencyEnd()-GetLatencyBeg());
+
+#ifdef WITH_PSLOPE
+    //-------------------------------------
+    // Begin PSlope calculation (PSP Slope)
+    //-------------------------------------
+
+    //
+    int PSlopeBegVal; 
+    switch (pslopeBegMode) {
+
+        case stf::psBeg_footMode:   // Left PSlope to commencement
+            PSlopeBegVal = (int)(t20Real-(t80Real-t20Real)/3.0);
+            break;
+
+        case stf::psBeg_thrMode:   // Left PSlope to threshold
+            PSlopeBegVal = (int)thrT;
+            break;
+
+        case stf::psBeg_t50Mode:   // Left PSlope to the t50
+            PSlopeBegVal = (int)t50LeftReal;
+            break;
+
+        case stf::psBeg_manualMode: // Left PSlope cursor manual
+        default:
+            PSlopeBegVal = PSlopeBeg;
+    }
+    SetPSlopeBeg(PSlopeBegVal);
+    
+    int PSlopeEndVal;
+    switch (pslopeEndMode) {
+
+        case stf::psEnd_t50Mode:    // Right PSlope to t50rigth
+            PSlopeEndVal = (int)t50LeftReal;
+            break;
+        case stf::psEnd_peakMode:   // Right PSlope to peak
+            PSlopeEndVal = (int)maxT;
+            break;
+        case stf::psEnd_DeltaTMode: // Right PSlope to DeltaT time from first peak
+            PSlopeEndVal = (int)(PSlopeBeg + DeltaT);
+            break;
+        case stf::psEnd_manualMode:
+        default:
+            PSlopeEndVal = PSlopeEnd;
+    }
+    SetPSlopeEnd(PSlopeEndVal);
+
+    try {
+        PSlope = (stf::pslope(cur().get(), PSlopeBeg, PSlopeEnd))*GetSR();
+    }
+    catch (const std::out_of_range& e) {
+        PSlope = 0.0;
+        throw e;
+    }
+
+    //-----------------------------------
+    // End PSlope calculation (PSP Slope)
+    //-----------------------------------
+
+#endif // WITH_PSLOPE
+    //--------------------------
+
+}	//End of Measure(,,,,,)
+
+
+void wxStfDoc::CopyCursors(const wxStfDoc& c_Recording) {
+    measCursor=c_Recording.measCursor;
+    correctRangeR(measCursor);
+    baseBeg=c_Recording.baseBeg;
+    correctRangeR(baseBeg);
+    baseEnd=c_Recording.baseEnd;
+    correctRangeR(baseEnd);
+    peakBeg=c_Recording.peakBeg;
+    correctRangeR(peakBeg);
+    peakEnd=c_Recording.peakEnd;
+    correctRangeR(peakEnd);
+    fitBeg=c_Recording.fitBeg;
+    correctRangeR(fitBeg);
+    fitEnd=c_Recording.fitEnd;
+    correctRangeR(fitEnd);
+#ifdef WITH_PSLOPE
+    PSlopeBeg = c_Recording.PSlopeBeg; // PSlope left cursor
+    correctRangeR(PSlopeBeg);
+    PSlopeEnd = c_Recording.PSlopeEnd; // PSlope right cursor
+    correctRangeR(PSlopeEnd);
+    DeltaT=c_Recording.DeltaT;  //distance (number of points) from first cursor 
+#endif
+ 
+    pM=c_Recording.pM;  //peakMean, number of points used for averaging
+
+}
+
+void wxStfDoc::SetLatencyStartMode(int value) {
+    switch (value) {
+    case 1:
+        latencyStartMode=stf::peakMode;
+        break;
+    case 2:
+        latencyStartMode=stf::riseMode;
+        break;
+    case 3:
+        latencyStartMode=stf::halfMode;
+        break;
+    case 4:
+        latencyStartMode=stf::footMode;
+    case 0:
+    default:
+        latencyStartMode=stf::manualMode;
+    }
+}
+
+void wxStfDoc::SetLatencyEndMode(int value) {
+    switch (value) {
+    case 1:
+        latencyEndMode=stf::peakMode;
+        break;
+    case 2:
+        latencyEndMode=stf::riseMode;
+        break;
+    case 3:
+        latencyEndMode=stf::halfMode;
+        break;
+    case 4:
+        latencyEndMode=stf::footMode;
+    case 0:
+    default:
+        latencyEndMode=stf::manualMode;
+    }
+}
+
+void wxStfDoc::SetLatencyWindowMode(int value) {
+    if ( value == 1 ) {
+        latencyWindowMode = stf::windowMode;
+    } else {
+        latencyWindowMode = stf::defaultMode;
+    }
+}
+
+void wxStfDoc::correctRangeR(int& value) {
+    if (value<0) {
+        value=0;
+        return;
+    }
+    if (value>=(int)cur().size()) {
+        value=(int)cur().size()-1;
+        return;
+    }
+}
+
+void wxStfDoc::correctRangeR(std::size_t& value) {
+    if (value<0) {
+        value=0;
+        return;
+    }
+    if (value>=cur().size()) {
+        value=cur().size()-1;
+        return;
+    }
+}
+
+
+void wxStfDoc::SetCurCh(size_t value) {
+    if (value<0 || value>=get().size()) {
+        throw std::out_of_range("channel out of range in wxStfDoc::SetCurCh()");
+    }
+    cc=value;
+}
+
+void wxStfDoc::SetSecCh(size_t value) {
+    if (value<0 ||
+            value>=get().size() ||
+            value==cc)
+    {
+        throw std::out_of_range("channel out of range in wxStfDoc::SetSecCh()");
+    }
+    sc=value;
+}
+
+void wxStfDoc::SetCurSec( size_t value ) {
+    if (value<0 || value>=get()[cc].size()) {
+        throw std::out_of_range("channel out of range in wxStfDoc::SetCurSec()");
+    }
+    cs=value;
+}
+
+void wxStfDoc::SetMeasCursor(int value) {
+    correctRangeR(value);
+    measCursor=value;
+}
+
+double wxStfDoc::GetMeasValue() {
+    if (measCursor<0 || measCursor>=get()[cc].size()) {
+        correctRangeR(measCursor);
+    }
+    return cur().at(measCursor);
+}
+
+void wxStfDoc::SetBaseBeg(int value) {
+    correctRangeR(value);
+    baseBeg=value;
+}
+
+void wxStfDoc::SetBaseEnd(int value) {
+    correctRangeR(value);
+    baseEnd=value;
+}
+
+void wxStfDoc::SetPeakBeg(int value) {
+    correctRangeR(value);
+    peakBeg=value;
+}
+
+void wxStfDoc::SetPeakEnd(int value) {
+    correctRangeR(value);
+    peakEnd=value;
+}
+
+void wxStfDoc::SetFitBeg(int value) {
+    correctRangeR(value);
+    fitBeg=value;
+}
+
+void wxStfDoc::SetFitEnd(int value) {
+    correctRangeR(value);
+    fitEnd=value;
+}
+
+void wxStfDoc::SetLatencyBeg(double value) {
+    if (value<0.0) {
+        value=0.0;
+    }
+    if (value>=(double)cur().size()) {
+        value=cur().size()-1.0;
+    }
+    latencyStartCursor=value;
+}
+
+void wxStfDoc::SetLatencyEnd(double value) {
+    if (value<0.0) {
+        value=0.0;
+    }
+    if (value>=(double)cur().size()) {
+        value=cur().size()-1.0;
+    }
+    latencyEndCursor=value;
+}
+
+#ifdef WITH_PSLOPE
+void wxStfDoc::SetPSlopeBeg(int value) {
+    correctRangeR(value);
+    PSlopeBeg = value;
+}
+
+
+void wxStfDoc::SetPSlopeEnd(int value) {
+    correctRangeR(value);
+    PSlopeEnd = value;
+}
+#endif 
+
+void wxStfDoc::SelectTrace(std::size_t sectionToSelect) {
+    // Check range so that sectionToSelect can be used
+    // without checking again:
+    if (sectionToSelect<0 ||
+        sectionToSelect>=get()[cc].size()) 
+    {
+        std::out_of_range e("subscript out of range in wxStfDoc::SelectTrace\n");
+        throw e;
+    }
+    selectedSections.push_back(sectionToSelect);
+    double sumY=0;
+#ifdef _OPENMP
+#pragma omp parallel for reduction(+:sumY)
+#endif
+    int start = baseBeg;
+    int end = baseEnd;
+    if (start < 0) start = 0;
+    if (start > (int)get()[cc][sectionToSelect].size()-1)
+        start = get()[cc][sectionToSelect].size()-1;
+    if (end < 0) end = 0;
+    if (end > (int)get()[cc][sectionToSelect].size()-1)
+        end = get()[cc][sectionToSelect].size()-1;
+    for (int i=start; i<=end; i++) {
+        sumY += get()[cc][sectionToSelect][i];
+    }
+    int n=(int)(end-start+1);
+    selectBase.push_back(sumY/n);
+}
+
+bool wxStfDoc::UnselectTrace(std::size_t sectionToUnselect) {
+
+    //verify whether the trace has really been selected and find the 
+    //number of the trace within the selectedTraces array:
+    bool traceSelected=false;
+    std::size_t traceToRemove=0;
+    for (std::size_t n=0; n < selectedSections.size() && !traceSelected; ++n) { 
+        if (selectedSections[n] == sectionToUnselect) traceSelected=true;
+        if (traceSelected) traceToRemove=n;
+    }
+    //Shift the selectedTraces array by one position, beginning
+    //with the trace to remove: 
+    if (traceSelected) {
+        //shift traces by one position:
+        for (std::size_t k=traceToRemove; k < GetSelectedSections().size()-1; ++k) { 
+            selectedSections[k]=selectedSections[k+1];
+            selectBase[k]=selectBase[k+1];
+        }
+        // resize vectors:
+        selectedSections.resize(selectedSections.size()-1);
+        selectBase.resize(selectBase.size()-1);
+        return true;
+    } else {
+        //msgbox
+        return false;
+    }
+}
+
+
+stfio::Table wxStfDoc::CurAsTable() const {
+    stfio::Table table(cur().size(),size());
+    try {
+        for (std::size_t nRow=0;nRow<table.nRows();++nRow) {
+            std::ostringstream rLabel;
+            rLabel << nRow*GetXScale();
+            table.SetRowLabel(nRow,rLabel.str());
+            for (std::size_t nCol=0;nCol<table.nCols();++nCol) {
+                table.at(nRow,nCol)=get().at(nCol).at(cs).at(nRow);
+            }
+        }
+        for (std::size_t nCol=0;nCol<table.nCols();++nCol) {
+            table.SetColLabel(nCol, get().at(nCol).GetChannelName());
+        }
+    }
+    catch (const std::out_of_range& e) {
+        throw e;
+    }
+    return table;
+}
+
+stfio::Table wxStfDoc::CurResultsTable() {
+    // resize table:
+    std::size_t n_cols=0;
+    if (viewCrosshair) n_cols++;
+    if (viewBaseline) n_cols++;
+    if (viewBaseSD) n_cols++;
+    if (viewThreshold) n_cols++;
+    if (viewPeakzero) n_cols++;
+    if (viewPeakbase) n_cols++;
+    if (viewPeakthreshold) n_cols++;
+    if (viewRT2080) n_cols++;
+    if (viewT50) n_cols++;
+    if (viewRD) n_cols++;
+    if (viewSloperise) n_cols++;
+    if (viewSlopedecay) n_cols++;
+    if (viewLatency) n_cols++;
+#ifdef WITH_PSLOPE
+    if (viewPSlope) n_cols++;
+#endif
+
+    std::size_t n_rows=(viewCursors? 3:1);
+    stfio::Table table(n_rows,n_cols);
+
+    // Labels
+    table.SetRowLabel(0, "Value");
+    if (viewCursors) {
+        table.SetRowLabel(1, "Cursor 1");
+        table.SetRowLabel(2, "Cursor 2");
+    }
+    int nCol=0;
+    if (viewCrosshair) table.SetColLabel(nCol++, "Crosshair");
+    if (viewBaseline) table.SetColLabel(nCol++,"Baseline");
+    if (viewBaseSD) table.SetColLabel(nCol++,"Base SD");
+    if (viewThreshold) table.SetColLabel(nCol++,"Threshold");
+    if (viewPeakzero) table.SetColLabel(nCol++,"Peak (from 0)");
+    if (viewPeakbase) table.SetColLabel(nCol++,"Peak (from base)");
+    if (viewPeakthreshold) table.SetColLabel(nCol++,"Peak (from threshold)");
+    if (viewRT2080) table.SetColLabel(nCol++,"RT (20-80%)");
+    if (viewT50) table.SetColLabel(nCol++,"t50");
+    if (viewRD) table.SetColLabel(nCol++,"Rise/Decay");
+    if (viewSloperise) table.SetColLabel(nCol++,"Slope (rise)");
+    if (viewSlopedecay) table.SetColLabel(nCol++,"Slope (decay)");
+    if (viewLatency) table.SetColLabel(nCol++,"Latency");
+#ifdef WITH_PSLOPE
+    if (viewPSlope) table.SetColLabel(nCol++,"Slope");
+#endif
+
+    // Values
+    nCol=0;
+    // measurement cursor
+    if (viewCrosshair) {
+        table.at(0,nCol)=GetMeasValue();
+        if (viewCursors) {
+            table.at(1,nCol)=GetMeasCursor()*GetXScale();
+            table.SetEmpty(2,nCol,true);
+        }
+        nCol++;
+    }
+
+    // baseline
+    if (viewBaseline) {
+        table.at(0,nCol)=GetBase();
+        if (viewCursors) {
+            table.at(1,nCol)=GetBaseBeg()*GetXScale();
+            table.at(2,nCol)=GetBaseEnd()*GetXScale();
+        }
+        nCol++;
+    }
+
+    // base SD
+    if (viewBaseSD) {
+        table.at(0,nCol)=GetBaseSD();
+        if (viewCursors) {
+            table.at(1,nCol)=GetBaseBeg()*GetXScale();
+            table.at(2,nCol)=GetBaseEnd()*GetXScale();
+        }
+        nCol++;
+    }
+
+    // threshold
+    if (viewThreshold) {
+        table.at(0,nCol)=GetThreshold();
+        if (viewCursors) {
+            table.at(1,nCol)=GetPeakBeg()*GetXScale();
+            table.at(2,nCol)=GetPeakEnd()*GetXScale();
+        }
+        nCol++;
+    }
+    
+    // peak
+    if (viewPeakzero) {
+        table.at(0,nCol)=GetPeak();
+        if (viewCursors) {
+            table.at(1,nCol)=GetPeakBeg()*GetXScale();
+            table.at(2,nCol)=GetPeakEnd()*GetXScale();
+        }
+        nCol++;
+    }
+
+    if (viewPeakbase) {
+        table.at(0,nCol)=GetPeak()-GetBase();
+        if (viewCursors) {
+            table.at(1,nCol)=GetPeakBeg()*GetXScale();
+            table.at(2,nCol)=GetPeakEnd()*GetXScale();
+        }
+        nCol++;
+    }
+    if (viewPeakthreshold) {
+        if (thrT >= 0) {
+            table.at(0,nCol) = GetPeak()-GetThreshold();
+        } else {
+            table.at(0,nCol) = 0;
+        }
+        if (viewCursors) {
+            table.at(1,nCol)=GetPeakBeg()*GetXScale();
+            table.at(2,nCol)=GetPeakEnd()*GetXScale();
+        }
+        nCol++;
+    }
+
+    // RT (20-80%)
+    if (viewRT2080) {table.at(0,nCol)=GetRT2080();
+        if (viewCursors) {
+            table.at(1,nCol)=GetT20Real()*GetXScale();
+            table.at(2,nCol)=GetT80Real()*GetXScale();
+        }
+        nCol++;
+    }
+
+    // Half duration
+    if (viewT50) {table.at(0,nCol)=GetHalfDuration();
+        if (viewCursors) {
+            table.at(1,nCol)=GetT50LeftReal()*GetXScale();
+            table.at(2,nCol)=GetT50RightReal()*GetXScale();
+        }
+        nCol++;
+    }
+
+    // Rise/decay
+    if (viewRD) {table.at(0,nCol)=GetSlopeRatio();
+        if (viewCursors) {
+            table.at(1,nCol)=GetMaxRiseT()*GetXScale();
+            table.at(2,nCol)=GetMaxDecayT()*GetXScale();
+        }
+        nCol++;
+    }
+
+    // Max rise
+    if (viewSloperise) {table.at(0,nCol)=GetMaxRise();
+        if (viewCursors) {
+            table.at(1,nCol)=GetMaxRiseT()*GetXScale();
+            table.SetEmpty(2,nCol,true);
+        }
+        nCol++;
+    }
+
+    // Max decay
+    if (viewSlopedecay) {table.at(0,nCol)=GetMaxDecay();
+        if (viewCursors) {
+            table.at(1,nCol)=GetMaxDecayT()*GetXScale();
+            table.SetEmpty(2,nCol,true);
+        }
+        nCol++;
+    }
+
+    // Latency
+    if (viewLatency) {table.at(0,nCol)=GetLatency()*GetXScale();
+        if (viewCursors) {
+            table.at(1,nCol)=GetLatencyBeg()*GetXScale();
+            table.at(2,nCol)=GetLatencyEnd()*GetXScale();
+        }
+        nCol++;
+    }
+
+#ifdef WITH_PSLOPE
+    // PSlope
+    if (viewPSlope) {table.at(0,nCol)=GetPSlope();
+        if (viewCursors) {
+            table.at(1,nCol)=GetPSlopeBeg()*GetXScale();
+            table.at(2,nCol)=GetPSlopeEnd()*GetXScale();
+        }
+        nCol++;
+    }
+#endif // WITH_PSLOPE
+    return table;
 }
 
 #if 0

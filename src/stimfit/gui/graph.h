@@ -32,7 +32,7 @@ class wxStfParentFrame;
 class wxStfCheckBox;
 class wxEnhMetaFile;
 
-#include "./../../libstfio/zoom.h"
+#include "./zoom.h"
 
 enum plottype {
     active,
@@ -404,17 +404,17 @@ public:
 #endif
     int SPX() const { return DocC()->GetXZoom().startPosX; }
     int& SPXW() { return DocC()->GetXZoomW().startPosX; } 
-    int SPY() const { return DocC()->at(DocC()->GetCurCh()).GetYZoom().startPosY; }
-    int& SPYW() { return DocC()->at(DocC()->GetCurCh()).GetYZoomW().startPosY; } 
-    int SPY2() { return DocC()->at(DocC()->GetSecCh()).GetYZoom().startPosY; }
-    int& SPY2W() { return DocC()->at(DocC()->GetSecCh()).GetYZoomW().startPosY; }
+    int SPY() const { return DocC()->GetYZoom(DocC()->GetCurCh()).startPosY; }
+    int& SPYW() { return DocC()->GetYZoomW(DocC()->GetCurCh()).startPosY; } 
+    int SPY2() { return DocC()->GetYZoom(DocC()->GetSecCh()).startPosY; }
+    int& SPY2W() { return DocC()->GetYZoomW(DocC()->GetSecCh()).startPosY; }
     
     double XZ() const { return DocC()->GetXZoom().xZoom; }
     double& XZW() { return DocC()->GetXZoomW().xZoom; }
-    double YZ() const { return DocC()->at(DocC()->GetCurCh()).GetYZoom().yZoom; }
-    double& YZW() { return DocC()->at(DocC()->GetCurCh()).GetYZoomW().yZoom; }
-    double YZ2() { return DocC()->at(DocC()->GetSecCh()).GetYZoom().yZoom; }
-    double& YZ2W() { return DocC()->at(DocC()->GetSecCh()).GetYZoomW().yZoom; }
+    double YZ() const { return DocC()->GetYZoom(DocC()->GetCurCh()).yZoom; }
+    double& YZW() { return DocC()->GetYZoomW(DocC()->GetCurCh()).yZoom; }
+    double YZ2() { return DocC()->GetYZoom(DocC()->GetSecCh()).yZoom; }
+    double& YZ2W() { return DocC()->GetYZoomW(DocC()->GetSecCh()).yZoom; }
     
     DECLARE_EVENT_TABLE()
 };

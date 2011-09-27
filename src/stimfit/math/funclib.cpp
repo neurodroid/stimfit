@@ -17,7 +17,7 @@
 #include <sstream>
 
 #include "./fit.h"
-#include "./../../libstfio/measure.h"
+#include "./measure.h"
 #include "./funclib.h"
 
 std::vector< stfio::storedFunc > stf::GetFuncLib() {
@@ -236,7 +236,7 @@ Vector_double stf::fexpde_jac(double x, const Vector_double& p) {
 void stf::fexpde_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT;
-    stfio::peak( data, base, 0, data.size(), 1, stfio::both, maxT );
+    stf::peak( data, base, 0, data.size(), 1, stf::both, maxT );
 
     pInit[0]=base;
     pInit[1]=0.0;

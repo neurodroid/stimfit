@@ -30,14 +30,14 @@
 #include <omp.h>
 #endif
 
-#include "./stfio.h"
+#include "../stf.h"
 #include "./measure.h"
 
-double stfio::base( double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb)
+double stf::base( double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb)
 {
     if (data.size()==0) return 0;
     if (llb>ulb || ulb>=data.size()) {
-        throw (std::out_of_range("Exception:\n Index out of range in stfio::base()"));
+        throw (std::out_of_range("Exception:\n Index out of range in stf::base()"));
     }
     double base=0.0;
 
@@ -70,11 +70,11 @@ double stfio::base( double& var, const std::vector<double>& data, std::size_t ll
     return base;
 }
 
-double stfio::peak(const std::vector<double>& data, double base, std::size_t llp, std::size_t ulp,
-            int pM, stfio::direction dir, double& maxT)
+double stf::peak(const std::vector<double>& data, double base, std::size_t llp, std::size_t ulp,
+            int pM, stf::direction dir, double& maxT)
 {
     if (llp>ulp || ulp>=data.size()) {
-        throw (std::out_of_range("Exception:\n Index out of range in stfio::peak()"));
+        throw (std::out_of_range("Exception:\n Index out of range in stf::peak()"));
     }
     
     double max=data[llp];
@@ -95,19 +95,19 @@ double stfio::peak(const std::vector<double>& data, double base, std::size_t llp
             peak /= (counter-start);
             
             //Set peak for BOTH
-            if (dir == stfio::both && fabs(peak-base) > fabs (max-base))
+            if (dir == stf::both && fabs(peak-base) > fabs (max-base))
             {
                 max = peak;
                 maxT = (double)i;
             }
             //Set peak for UP
-            if (dir == stfio::up && peak-base > max-base)
+            if (dir == stf::up && peak-base > max-base)
             {
                 max = peak;
                 maxT = (double)i;
             }
             //Set peak for DOWN
-            if (dir == stfio::down && peak-base < max-base)
+            if (dir == stf::down && peak-base < max-base)
             {
                 max = peak;
                 maxT = (double)i;
@@ -130,14 +130,14 @@ double stfio::peak(const std::vector<double>& data, double base, std::size_t llp
             maxT=(double)((llp+ulp)/2.0);
         } else {
             throw (std::out_of_range(
-                    "mean peak points out of range in stfio::peak()")
+                    "mean peak points out of range in stf::peak()")
             );
         }
     }
     return peak;
 }
 
-double stfio::threshold( const std::vector<double>& data, std::size_t llp, std::size_t ulp, double slope, double& thrT )
+double stf::threshold( const std::vector<double>& data, std::size_t llp, std::size_t ulp, double slope, double& thrT )
 {
     thrT = -1;
     
@@ -145,7 +145,7 @@ double stfio::threshold( const std::vector<double>& data, std::size_t llp, std::
 
     // ulb has to be < data.size()-1 (data[i+1] will be used)
     if (llp > ulp || ulp >= data.size()) {
-        throw (std::out_of_range("Exception:\n Index out of range in stfio::threshold()"));
+        throw (std::out_of_range("Exception:\n Index out of range in stf::threshold()"));
     }
     
     double threshold = 0.0;
@@ -163,7 +163,7 @@ double stfio::threshold( const std::vector<double>& data, std::size_t llp, std::
     return threshold;
 }
 
-double stfio::risetime(const std::vector<double>& data,
+double stf::risetime(const std::vector<double>& data,
         double base,
         double ampl,
         double left,
@@ -174,7 +174,7 @@ double stfio::risetime(const std::vector<double>& data,
 {
     //20%of peak
     if (right<0 || left<0 || right>=data.size()) {
-        throw std::out_of_range("Index out of range in stfio::risetime");
+        throw std::out_of_range("Index out of range in stf::risetime");
     }
     t20Id=(int)right>=1? (int)right:1;
     do {
@@ -218,7 +218,7 @@ double stfio::risetime(const std::vector<double>& data,
     return rt2080;  
 }
 
-double   stfio::t_half(const std::vector<double>& data,
+double   stf::t_half(const std::vector<double>& data,
         double base,
         double ampl,
         double left,
@@ -229,7 +229,7 @@ double   stfio::t_half(const std::vector<double>& data,
         double& t50LeftReal)
 {
     if (center<0 || center>=data.size()) {
-        throw std::out_of_range("Index out of range in stfio::thalf()");
+        throw std::out_of_range("Index out of range in stf::thalf()");
     }
     t50LeftId=(int)center>=1? (int)center:1;
     do {
@@ -267,14 +267,14 @@ double   stfio::t_half(const std::vector<double>& data,
     return t50RightReal-t50LeftReal;
 }
 
-double   stfio::maxRise(const std::vector<double>& data,
+double   stf::maxRise(const std::vector<double>& data,
         double left,
         double right,
         double& maxRiseT,
         double& maxRiseY)
 {
     if (left<0 || right<0 || left>=data.size() || right>=data.size() || data.size()<2) {
-        throw std::out_of_range("Index out of range in stfio::maxRise");
+        throw std::out_of_range("Index out of range in stf::maxRise");
     }
     int rightc = (right<2? 2 : right);
     int leftc = (left>=data.size()-1? data.size()-2 : left);        
@@ -296,14 +296,14 @@ double   stfio::maxRise(const std::vector<double>& data,
     return maxRise;
 }
 
-double stfio::maxDecay(const std::vector<double>& data,
+double stf::maxDecay(const std::vector<double>& data,
         double left,
         double right,
         double& maxDecayT,
         double& maxDecayY)
 {
     if (left<0 || right<0 || left>=data.size() || right>=data.size() || data.size()<3) {
-        throw std::out_of_range("Index out of range in stfio::maxDecay");
+        throw std::out_of_range("Index out of range in stf::maxDecay");
     }
     int rightc = (right==0? 1 : right);
     int leftc = (left>=data.size()-2? data.size()-3 : left);        
@@ -325,7 +325,7 @@ double stfio::maxDecay(const std::vector<double>& data,
 }
 
 #ifdef WITH_PSLOPE
-double stfio::pslope(const std::vector<double>& data, std::size_t left, std::size_t right) {
+double stf::pslope(const std::vector<double>& data, std::size_t left, std::size_t right) {
 
     // data testing not zero 
     //if (!data.size()) return 0;
@@ -333,7 +333,7 @@ double stfio::pslope(const std::vector<double>& data, std::size_t left, std::siz
 
     // cursor testing out of bounds
     if (left>right || right>data.size()) {
-        throw (std::out_of_range("Exception:\n Index out of range in stfio::pslope()"));
+        throw (std::out_of_range("Exception:\n Index out of range in stf::pslope()"));
     }
     // use interpolated data
     double y2 = ( data[right]+data[right+1] )/(double)2.0;

@@ -46,7 +46,7 @@
 #include "./dlgs/smalldlgs.h"
 #include "./usrdlg/usrdlg.h"
 #include "./graph.h"
-#include "./../../libstfio/measure.h"
+#include "./../math/measure.h"
 
 BEGIN_EVENT_TABLE(wxStfGraph, wxWindow)
 EVT_MENU(ID_ZOOMHV,wxStfGraph::OnZoomHV)
@@ -265,8 +265,8 @@ void wxStfGraph::OnDraw( wxDC& DC )
 
     //Ensure old scaling after print out
     if(isPrinted) {
-        for ( ch_it cit = Doc()->get().begin(); cit != Doc()->get().end(); ++cit ) {
-            cit->GetYZoomW() = cit->GetYZoomW() * (1.0/printScale);
+        for (std::size_t n=0; n < Doc()->size(); ++n) {
+            Doc()->GetYZoomW(n) = Doc()->GetYZoomW(n) * (1.0/printScale);
         }
         Doc()->GetXZoomW() = Doc()->GetXZoomW() * (1.0/printScale);
         WindowRect=printRect;
@@ -690,8 +690,8 @@ void wxStfGraph::PrintScale(wxRect& WindowRect) {
     //enhance resolution for printing - see OnPrint()
     //Ensures the scaling of all pixel dependent drawings
      
-    for ( ch_it cit = Doc()->get().begin(); cit != Doc()->get().end(); ++cit ) {
-        cit->GetYZoomW() = cit->GetYZoomW() * printScale;
+    for (std::size_t n=0; n < Doc()->size(); ++n) {
+        Doc()->GetYZoomW(n) = Doc()->GetYZoomW(n) * printScale;
     }
     Doc()->GetXZoomW() = Doc()->GetXZoomW() * printScale;
     WindowRect=printRect;
@@ -1060,7 +1060,7 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
         Doc()->SetFitBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
         break;
     case stf::latency_cursor:
-        if (Doc()->GetLatencyStartMode() != stfio::manualMode) {
+        if (Doc()->GetLatencyStartMode() != stf::manualMode) {
             wxGetApp().ErrorMsg(
                     wxT("The latency cursor can not be set in the current mode\nChoose manual mode to set the latency cursor manually")
             );
@@ -1121,7 +1121,7 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
         Doc()->SetFitEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
         break;
     case stf::latency_cursor:
-        if (Doc()->GetLatencyEndMode() != stfio::manualMode) {
+        if (Doc()->GetLatencyEndMode() != stf::manualMode) {
             wxGetApp().ErrorMsg(
                     wxT("The latency cursor can not be set in the current mode\n \
                     Choose manual mode to set the latency cursor manually")
@@ -1194,7 +1194,7 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
         Doc()->SetPSlopeEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
 #endif
     case stf::latency_cursor:
-        if (Doc()->GetLatencyEndMode() != stfio::manualMode) {
+        if (Doc()->GetLatencyEndMode() != stf::manualMode) {
             wxGetApp().ErrorMsg(
                     wxT("The latency cursor can not be set in the current mode\n \
                     Choose manual mode to set the latency cursor manually")
@@ -1263,15 +1263,15 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
         OnUp();
         return;
      case 49: //1
-         ParentFrame()->SetZoomQual(stfio::zoomch1);
+         ParentFrame()->SetZoomQual(stf::zoomch1);
          return;
      case 50:  //2
          if (Doc()->size()>1)
-             ParentFrame()->SetZoomQual(stfio::zoomch2);
+             ParentFrame()->SetZoomQual(stf::zoomch2);
          return;
      case 51: //3
          if (Doc()->size()>1)
-             ParentFrame()->SetZoomQual(stfio::zoomboth);
+             ParentFrame()->SetZoomQual(stf::zoomboth);
          return;
      case 69: // e
      case 101:
@@ -1854,7 +1854,7 @@ void wxStfGraph::Fittowindow(bool refresh)
     switch (ParentFrame()->GetZoomQual())
     {	//Depending on the zoom radio buttons (Mouse field)
     //in the (trace navigator) control box
-    case stfio::zoomboth:
+    case stf::zoomboth:
         if(!(Doc()->size()>1))
             return;
 
@@ -1863,9 +1863,9 @@ void wxStfGraph::Fittowindow(bool refresh)
         //Fit to window Ch1
         XZW()=(double)WindowRect.width /points;
         SPXW()=0;
-        FittorectY(Doc()->at(Doc()->GetCurCh()).GetYZoomW(), WindowRect, min, max, screen_part);
+        FittorectY(Doc()->GetYZoomW(Doc()->GetCurCh()), WindowRect, min, max, screen_part);
         break;
-    case stfio::zoomch2:
+    case stf::zoomch2:
         //ErrorMsg if no second channel available
         if(!(Doc()->size()>1))
             return;
@@ -1879,7 +1879,7 @@ void wxStfGraph::Fittowindow(bool refresh)
         //Fit to window Ch1
         XZW()=(double)WindowRect.width /points;
         SPXW()=0;
-        FittorectY(Doc()->at(Doc()->GetCurCh()).GetYZoomW(), WindowRect, min, max, screen_part);
+        FittorectY(Doc()->GetYZoomW(Doc()->GetCurCh()), WindowRect, min, max, screen_part);
         break;
     }
     if (refresh) Refresh();
@@ -1896,11 +1896,13 @@ void wxStfGraph::FitToWindowSecCh(bool refresh)
         std::size_t secCh=Doc()->GetSecCh();
     #undef min
     #undef max
-        Vector_double::const_iterator max_el = std::max_element(Doc()->get()[secCh][Doc()->GetCurSec()].get().begin(), Doc()->get()[secCh][Doc()->GetCurSec()].get().end());
-        Vector_double::const_iterator min_el = std::min_element(Doc()->get()[secCh][Doc()->GetCurSec()].get().begin(), Doc()->get()[secCh][Doc()->GetCurSec()].get().end());
+        Vector_double::const_iterator max_el = std::max_element(Doc()->get()[secCh][Doc()->GetCurSec()].get().begin(),
+                                                                Doc()->get()[secCh][Doc()->GetCurSec()].get().end());
+        Vector_double::const_iterator min_el = std::min_element(Doc()->get()[secCh][Doc()->GetCurSec()].get().begin(),
+                                                                Doc()->get()[secCh][Doc()->GetCurSec()].get().end());
         double min=*min_el;
         double max=*max_el;
-        FittorectY(Doc()->at(Doc()->GetSecCh()).GetYZoomW(), WindowRect, min, max, screen_part);
+        FittorectY(Doc()->GetYZoomW(Doc()->GetSecCh()), WindowRect, min, max, screen_part);
         if (refresh) Refresh();
     }
 }	//End FitToWindowSecCh()
@@ -1948,7 +1950,7 @@ void wxStfGraph::OnUp() {
     switch (ParentFrame()->GetZoomQual())
     {	//Depending on the zoom radio buttons (Mouse field)
     //in the (trace navigator) control box
-    case stfio::zoomboth:
+    case stf::zoomboth:
         //ErrorMsg if no second channel available
         //yZooms of Ch1 are performed keeping the base constant
         SPYW()=SPY() - 20;
@@ -1956,7 +1958,7 @@ void wxStfGraph::OnUp() {
         //Ymove of Ch2 is performed
         SPY2W()=SPY2() - 20;
         break;
-    case stfio::zoomch2:
+    case stf::zoomch2:
         if(!(Doc()->size()>1)) break;
         //Ymove of Ch2 is performed
         SPY2W()=SPY2() - 20;
@@ -1973,14 +1975,14 @@ void wxStfGraph::OnDown() {
     switch (ParentFrame()->GetZoomQual())
     {	//Depending on the zoom radio buttons (Mouse field)
     //in the (trace navigator) control box
-    case stfio::zoomboth:
+    case stf::zoomboth:
         //yZooms of Ch1 are performed keeping the base constant
         SPYW()=SPY() + 20;
         if(!(Doc()->size()>1)) break;
         //Ymove of Ch2 is performed
         SPY2W()=SPY2() + 20;
         break;
-    case stfio::zoomch2:
+    case stf::zoomch2:
         if(!(Doc()->size()>1)) break;
         //Ymove of Ch2 is performed
         SPY2W()=SPY2() + 20;
@@ -2052,7 +2054,7 @@ void wxStfGraph::ChangeYScale(double factor) {
     switch (ParentFrame()->GetZoomQual()) {
     // Depending on the zoom radio buttons (Mouse field)
     // in the (trace navigator) control box
-    case stfio::zoomboth:
+    case stf::zoomboth:
         //yZooms of Ch1 are performed keeping the base constant
         SPYW()=(int)(SPY() + Doc()->GetBase() * (YZ() * factor
                 - YZ()));
@@ -2065,7 +2067,7 @@ void wxStfGraph::ChangeYScale(double factor) {
                         - YZ2()));
         YZ2W()=YZ2() * factor;
         break;
-    case stfio::zoomch2:
+    case stf::zoomch2:
         if (Doc()->size()<=1) break;
         //yZooms of Ch2 are performed keeping the base constant
         SPY2W()=(int)(SPY2()
@@ -2088,7 +2090,7 @@ void wxStfGraph::Ch2base() {
         double base2=0.0;
         try {
             double var2=0.0;
-            base2=stfio::base(var2,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(),
+            base2=stf::base(var2,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(),
                     Doc()->GetBaseBeg(),Doc()->GetBaseEnd());
         }
         catch (const std::out_of_range& e) {
@@ -2129,7 +2131,7 @@ void wxStfGraph::Ch2basezoom() {
         double base2=0.0;
         try {
             double var2=0.0;
-            base2=stfio::base(var2,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(),
+            base2=stf::base(var2,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(),
                     Doc()->GetBaseBeg(),Doc()->GetBaseEnd());
         }
         catch (const std::out_of_range& e) {

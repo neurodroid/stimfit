@@ -1166,7 +1166,7 @@ void wxStfApp::OnApplytoall( wxCommandEvent& WXUNUSED(event) ) {
             OpenDoc->GetXZoomW() = pDoc->GetXZoom();
             for ( std::size_t n_c=0; n_c < OpenDoc->size(); ++n_c ) {
                 if ( n_c < pDoc->size() ) {
-                    OpenDoc->at(n_c).GetYZoomW() = pDoc->at(n_c).GetYZoom();
+                    OpenDoc->GetYZoomW(n_c) = pDoc->GetYZoom(n_c);
                 }
             }
             OpenDoc->SetBaseBeg((int)llbToApply);

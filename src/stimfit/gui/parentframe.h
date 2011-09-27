@@ -111,12 +111,12 @@ public:
     //! Retrieve which channels will be affected by scaling operations
     /*! \return The channels affected by scaling operations.
      */
-    stfio::zoom_channels GetZoomQual() const;
+    stf::zoom_channels GetZoomQual() const;
 
     //! Set the channels that will be affected by scaling operations
     /*! \param value The channels affected by scaling operations.
      */
-    void SetZoomQual(stfio::zoom_channels value);
+    void SetZoomQual(stf::zoom_channels value);
 
     //! Set the zoom buttons to single- or multi-channel mode.
     /*! \param value Set to true for single- or false for multi-channel mode.
