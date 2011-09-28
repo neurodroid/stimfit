@@ -953,7 +953,6 @@ public:
     
     //! Put the current trace into a text table.
     stfio::Table CurAsTable() const;
-
     
     //! Copies the cursor positions from another Recording to this Recording.
     /*! This will copy the crosshair, base, peak and fit cursors positions as 
@@ -964,6 +963,19 @@ public:
      */
     void CopyCursors(const wxStfDoc& c_Recording);
 
+    //! Resize the Recording to a new number of channels.
+    /*! Resizes both the channel and the global y units arrays.
+     *  \param c_n_channels The new number of channels.
+     */
+    virtual void resize(std::size_t c_n_channels);
+
+    //! Insert a Channel at a given position.
+    /*! Will throw std::out_of_range if range check fails.
+     *  \param c_Channel The Channel to be inserted.
+     *  \param pos The position at which to insert the channel (0-based).
+     */
+    virtual void InsertChannel(Channel& c_Channel, std::size_t pos);
+    
     void correctRangeR(int& value);
     void correctRangeR(std::size_t& value);
     

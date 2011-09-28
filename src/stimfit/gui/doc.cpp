@@ -255,7 +255,6 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
         if (pFrame == NULL) {
             throw std::runtime_error("pFrame is 0 in wxStfDoc::OnOpenDocument");
         }
-        yzoom.resize(size());
         
         pFrame->SetSingleChannel( size() <= 1 );
 
@@ -312,8 +311,7 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
 
 void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const wxString& title )
 {
-    this->resize(c_Data.size());
-    yzoom.resize(size());
+    resize(c_Data.size());
     std::copy(c_Data.get().begin(),c_Data.get().end(),get().begin());
     CopyAttributes(c_Data);
 
@@ -3000,6 +2998,17 @@ stfio::Table wxStfDoc::CurResultsTable() {
     }
 #endif // WITH_PSLOPE
     return table;
+}
+
+
+void wxStfDoc::resize(std::size_t c_n_channels) {
+    Recording::resize(c_n_channels);
+    yzoom.resize(size());
+}
+
+void wxStfDoc::InsertChannel(Channel& c_Channel, std::size_t pos) {
+    Recording::InsertChannel(c_Channel, pos);
+    yzoom.resize(size());
 }
 
 #if 0

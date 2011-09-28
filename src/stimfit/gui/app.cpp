@@ -846,13 +846,13 @@ wxStfDoc* wxStfApp::NewChild(const Recording& NewData, const wxStfDoc* Sender,
     NewDoc->SetDocumentTemplate(m_cfsTemplate);
     if (!NewDoc->OnNewDocument()) return NULL;
     try {
-        NewDoc->SetData(NewData,Sender,title);
+        NewDoc->SetData(NewData, Sender, title);
     }
     catch (const std::out_of_range& e) {
         wxString msg;
         msg << wxT("Error while creating new document:\n")
-            << wxString( e.what(), wxConvLocal );
-        ExceptMsg( msg );
+            << stf::std2wx(e.what());
+        ExceptMsg(msg);
         // Close file:
         NewDoc->OnCloseDocument();
         return NULL;

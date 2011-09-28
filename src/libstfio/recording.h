@@ -202,14 +202,14 @@ class StfDll Recording {
     /*! Resizes both the channel and the global y units arrays.
      *  \param c_n_channels The new number of channels.
      */
-    void resize(std::size_t c_n_channels);
+    virtual void resize(std::size_t c_n_channels);
 
     //! Insert a Channel at a given position.
     /*! Will throw std::out_of_range if range check fails.
      *  \param c_Channel The Channel to be inserted.
      *  \param pos The position at which to insert the channel (0-based).
      */
-    void InsertChannel(Channel& c_Channel, std::size_t pos);
+    virtual void InsertChannel(Channel& c_Channel, std::size_t pos);
 
     //! Copy descriptive attributes from another Recording to this Recording.
     /*! This will copy the file and global section decription, the scaling, time, date, 
