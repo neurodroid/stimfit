@@ -1,0 +1,14 @@
+Source code structure
+=====================
+
+./src/libstfio    -- File i/o library for common electrophysiology formats
+./src/pystfio     -- Python wrapper around libstfio
+./src/stimfit     -- Stimfit program
+./src/stimfit/py  -- stf module that gets imported into the embedded Python
+                     shell
+
+As of yet, libstfio is a private library that won't be installed system-wide.
+You may therefore end up with two copies of libstfio.so: One in the private
+stimfit library directory (/usr/lib/stimfit/ or similar), the other one in
+the Python site packages path for pystfio.
+libstfio may turn into a system-wide library in the future.
