@@ -1265,8 +1265,9 @@ PyObject* leastsq( int fselect, bool refresh ) {
     try {
         chisqr = stf::lmFit( x, pDoc->GetXScale(), wxGetApp().GetFuncLib().at(fselect),
                              opts, true, params, fitInfo, fitWarning );
-        pDoc->cur().SetIsFitted( params, wxGetApp().GetFuncLibPtr(fselect),
-                chisqr, pDoc->GetFitBeg(), pDoc->GetFitEnd() );
+        pDoc->SetIsFitted( pDoc->GetCurCh(), pDoc->GetCurSec(), params,
+                           wxGetApp().GetFuncLibPtr(fselect),
+                           chisqr, pDoc->GetFitBeg(), pDoc->GetFitEnd() );
     }
     
     catch (const std::out_of_range& e) {
@@ -1317,7 +1318,7 @@ bool show_table( PyObject* dict, const char* caption ) {
         double value = PyFloat_AsDouble( pvalue );
         pyMap[key] = value;
     }
-    stfio::Table pyTable( pyMap );
+    stf::Table pyTable( pyMap );
 
     wxStfChildFrame* pFrame = (wxStfChildFrame*)actDoc()->GetDocumentWindow();
     if ( !pFrame ) {
@@ -1370,7 +1371,7 @@ bool show_table_dictlist( PyObject* dict, const char* caption, bool reverse ) {
         ShowError( wxT("Dictionary was empty in show_table().") );
         return false;
     }
-    stfio::Table pyTable( pyVector[0].size(), pyVector.size() );
+    stf::Table pyTable( pyVector[0].size(), pyVector.size() );
     std::vector< std::vector< double > >::const_iterator c_va_it;
     std::size_t n_col = 0;
     for (  c_va_it = pyVector.begin(); c_va_it != pyVector.end(); ++c_va_it ) {
@@ -1399,7 +1400,8 @@ bool set_marker(double x, double y) {
     if ( !check_doc() )
         return false;
     try {
-        actDoc()->cur().SetPyMarker(stfio::PyMarker(x,y));
+        actDoc()->GetCurrentSectionAttributes().pyMarkers.
+            push_back(stf::PyMarker(x,y));
     }
     catch (const std::out_of_range& e) {
         wxString msg( wxT("Could not set the marker:\n") );
@@ -1415,7 +1417,16 @@ bool erase_markers() {
     if ( !check_doc() )
         return false;
 
-    actDoc()->cur().ErasePyMarkers();
+    try {
+        actDoc()->GetCurrentSectionAttributes().pyMarkers.clear();
+    }
+    catch (const std::out_of_range& e) {
+        wxString msg( wxT("Could not erase markers:\n") );
+        msg << wxString( e.what(), wxConvLocal );
+        ShowError(msg);
+        return false;
+    }
+
     return refresh_graph();
 }
 

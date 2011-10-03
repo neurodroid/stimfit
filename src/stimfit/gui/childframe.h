@@ -105,7 +105,7 @@ public:
     /*! \param table The table to be added.
      *  \param caption The title of the new table in the notebook.
      */
-    void ShowTable(const stfio::Table& table,const wxString& caption);
+    void ShowTable(const stf::Table& table,const wxString& caption);
 
     //! Retrieves the current trace from the trace selection combo box.
     /*! \return The 0-based index of the currently selected trace.

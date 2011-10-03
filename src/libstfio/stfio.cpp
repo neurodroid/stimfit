@@ -12,7 +12,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-/*! \file stfio.c
+/*! \file stfio.cpp
  *  \author Christoph Schmidt-Hieber
  *  \date 2011-09-25
  *  \brief General functions for libstfio
@@ -40,114 +40,6 @@
 #include "./son/sonlib.h"
 #endif
 
-
-stfio::Table::Table(std::size_t nRows,std::size_t nCols) :
-values(nRows,std::vector<double>(nCols,1.0)),
-    empty(nRows,std::deque<bool>(nCols,false)),
-    rowLabels(nRows, "\0"),
-    colLabels(nCols, "\0")
-    {}
-
-stfio::Table::Table(const std::map< std::string, double >& map)
-: values(map.size(),std::vector<double>(1,1.0)), empty(map.size(),std::deque<bool>(1,false)),
-rowLabels(map.size(), "\0"), colLabels(1, "Results")
-{
-    std::map< std::string, double >::const_iterator cit;
-    sst_it it1 = rowLabels.begin();
-    std::vector< std::vector<double> >::iterator it2 = values.begin();
-    for (cit = map.begin();
-         cit != map.end() && it1 != rowLabels.end() && it2 != values.end();
-         cit++)
-    {
-        (*it1) = cit->first;
-        it2->at(0) = cit->second;
-        it1++;
-        it2++;
-    }
-}
-
-double stfio::Table::at(std::size_t row,std::size_t col) const {
-    try {
-        return values.at(row).at(col);
-    }
-    catch (...) {
-        throw;
-    }
-}
-
-double& stfio::Table::at(std::size_t row,std::size_t col) {
-    try {
-        return values.at(row).at(col);
-    }
-    catch (...) {
-        throw;
-    }
-}
-
-bool stfio::Table::IsEmpty(std::size_t row,std::size_t col) const {
-    try {
-        return empty.at(row).at(col);
-    }
-    catch (...) {
-        throw;
-    }
-}
-
-void stfio::Table::SetEmpty(std::size_t row,std::size_t col,bool value) {
-    try {
-        empty.at(row).at(col)=value;
-    }
-    catch (...) {
-        throw;
-    }
-}
-
-void stfio::Table::SetRowLabel(std::size_t row,const std::string& label) {
-    try {
-        rowLabels.at(row)=label;
-    }
-    catch (...) {
-        throw;
-    }
-}
-
-void stfio::Table::SetColLabel(std::size_t col,const std::string& label) {
-    try {
-        colLabels.at(col)=label;
-    }
-    catch (...) {
-        throw;
-    }
-}
-
-const std::string& stfio::Table::GetRowLabel(std::size_t row) const {
-    try {
-        return rowLabels.at(row);
-    }
-    catch (...) {
-        throw;
-    }
-}
-
-const std::string& stfio::Table::GetColLabel(std::size_t col) const {
-    try {
-        return colLabels.at(col);
-    }
-    catch (...) {
-        throw;
-    }
-}
-
-void stfio::Table::AppendRows(std::size_t nRows_) {
-    std::size_t oldRows=nRows();
-    rowLabels.resize(oldRows+nRows_);
-    values.resize(oldRows+nRows_);
-    empty.resize(oldRows+nRows_);
-    for (std::size_t nRow = 0; nRow < oldRows + nRows_; ++nRow) {
-        values[nRow].resize(nCols());
-        empty[nRow].resize(nCols());
-    }
-}
 
 stfio::filetype
 stfio::findType(const std::string& ext) {
@@ -308,36 +200,4 @@ Vector_double stfio::vec_vec_div(const Vector_double& vec1, const Vector_double&
     Vector_double ret_vec(vec1.size());
     std::transform(vec1.begin(), vec1.end(), vec2.begin(), ret_vec.begin(), std::divides<double>());
     return ret_vec;
-}
-
-Vector_double stfio::nojac(double x, const Vector_double& p) {
-    return Vector_double(0);
-}
-
-double stfio::noscale(double param, double xscale, double oldx, double yscale, double yoff) {
-    return param;
-}
-
-stfio::Table stfio::defaultOutput(
-	const Vector_double& pars,
-	const std::vector<stfio::parInfo>& parsInfo,
-    double chisqr
-) {
-	if (pars.size()!=parsInfo.size()) {
-		throw std::out_of_range("index out of range in stf::defaultOutput");
-	}
-        stfio::Table output(pars.size()+1,1);
-	try {
-		output.SetColLabel(0,"Best-fit value");
-		for (std::size_t n_p=0;n_p<pars.size(); ++n_p) {
-			output.SetRowLabel(n_p,parsInfo[n_p].desc);
-			output.at(n_p,0)=pars[n_p];
-		}
-        output.SetRowLabel(pars.size(),"SSE");
-        output.at(pars.size(),0)=chisqr;
-	}
-	catch (...) {
-		throw;
-	}
-	return output;
 }

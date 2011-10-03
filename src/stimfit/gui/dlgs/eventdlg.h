@@ -27,7 +27,7 @@
 
 #include <vector>
 
-class Section;
+class SectionPointer;
 
 //! Dialog for event-detection settings.
 class wxStfEventDlg : public wxDialog 
@@ -64,7 +64,7 @@ public:
      */
     wxStfEventDlg(
             wxWindow* parent,
-            const std::vector<Section*>& templateSections,
+            const std::vector<stf::SectionPointer>& templateSections,
             bool isExtract,
             int id = wxID_ANY,
             wxString title = wxT("Event detection settings"),

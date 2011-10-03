@@ -82,7 +82,7 @@ EVT_MENU( ID_EXTRACT,wxStfDoc::MarkEvents )
 EVT_MENU( ID_THRESHOLD,wxStfDoc::Threshold)
 EVT_MENU( ID_VIEWTABLE, wxStfDoc::Viewtable)
 EVT_MENU( ID_EVENT_EXTRACT, wxStfDoc::Extract )
-EVT_MENU( ID_EVENT_ERASE, wxStfDoc::EraseEvents )
+EVT_MENU( ID_EVENT_ERASE, wxStfDoc::InteractiveEraseEvents )
 EVT_MENU( ID_EVENT_ADDEVENT, wxStfDoc::AddEvent )
 END_EVENT_TABLE()
 
@@ -169,7 +169,8 @@ wxStfDoc::wxStfDoc() :
     viewLatency(true),
     viewCursors(true),
     xzoom(XZoom(0, 0.1, false)),
-    yzoom(std::vector<YZoom>(size(), YZoom(500,0.1,false)))
+    yzoom(std::vector<YZoom>(size(), YZoom(500,0.1,false))),
+    sec_attr(size())
 {}
 
 wxStfDoc::~wxStfDoc()
@@ -1056,8 +1057,8 @@ void wxStfDoc::FitDecay(wxCommandEvent& WXUNUSED(event)) {
         double chisqr = stf::lmFit( x, GetXScale(), wxGetApp().GetFuncLib()[fselect],
                                     FitSelDialog.GetOpts(), FitSelDialog.UseScaling(),
                                     params, fitInfo, warning );
-        cur().SetIsFitted( params, wxGetApp().GetFuncLibPtr(fselect),
-                chisqr, GetFitBeg(), GetFitEnd() );
+        SetIsFitted( GetCurCh(), GetCurSec(), params, wxGetApp().GetFuncLibPtr(fselect),
+                     chisqr, GetFitBeg(), GetFitEnd() );
     }
     catch (const std::out_of_range& e) {
         wxGetApp().ExceptMsg( wxString(e.what(), wxConvLocal) );
@@ -1078,13 +1079,18 @@ void wxStfDoc::FitDecay(wxCommandEvent& WXUNUSED(event)) {
     InfoDialog.ShowModal();
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
     wxString label; label << wxT("Fit, Section #") << (int)GetCurSec()+1;
-    pFrame->ShowTable(cur().GetBestFit(),label);
+    try {
+        pFrame->ShowTable(sec_attr.at(GetCurCh()).at(GetCurCh()).bestFit, label);
+    }
+    catch (const std::out_of_range e) {
+        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+    }
 }
 
 void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
     wxBusyCursor wc;
     if (outOfRange(GetFitBeg()) || outOfRange(GetFitEnd())) {
-        wxGetApp().ErrorMsg(wxT("Subscript out of range in CStimfitDoc::FitDecay()"));
+        wxGetApp().ErrorMsg(wxT("Subscript out of range in wxStfDoc::FitDecay()"));
         return;
     }
     //number of parameters to be fitted:
@@ -1108,8 +1114,12 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
 
     // Perform the fit:
     double chisqr = stf::linFit(t,x,params[0],params[1]);
-
-	cur().SetIsFitted( params, wxGetApp().GetLinFuncPtr(), chisqr, GetFitBeg(), GetFitEnd() );
+    try {
+        SetIsFitted( GetCurCh(), GetCurSec(), params, wxGetApp().GetLinFuncPtr(), chisqr, GetFitBeg(), GetFitEnd() );
+    }
+    catch (const std::out_of_range e) {
+        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+    }
 
     // Refresh the graph to show the fit before
     // the dialog pops up:
@@ -1122,7 +1132,12 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
     InfoDialog.ShowModal();
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
     wxString label; label << wxT("Fit, Section #") << (int)GetCurSec();
-    pFrame->ShowTable(cur().GetBestFit(),label);
+    try {
+        pFrame->ShowTable(sec_attr.at(GetCurCh()).at(GetCurCh()).bestFit, label);
+    }
+    catch (const std::out_of_range e) {
+        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+    }
 }
 
 void wxStfDoc::LnTransform(wxCommandEvent& WXUNUSED(event)) {
@@ -1344,7 +1359,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
     wxProgressDialog progDlg( wxT("Batch analysis in progress"), wxT("Starting batch analysis"),
             100, GetDocumentWindow(), wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
 
-    stfio::Table table(GetSelectedSections().size(),colTitles.size());
+    stf::Table table(GetSelectedSections().size(),colTitles.size());
     for (std::size_t nCol=0;nCol<colTitles.size();++nCol) {
         try {
             table.SetColLabel(nCol,colTitles[nCol]);
@@ -1404,8 +1419,8 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
                 double chisqr = stf::lmFit( x, GetXScale(), wxGetApp().GetFuncLib()[fselect],
                                             FitSelDialog.GetOpts(), FitSelDialog.UseScaling(),
                                             params, fitInfo, fitWarning );
-                cur().SetIsFitted( params, wxGetApp().GetFuncLibPtr(fselect),
-                        chisqr, GetFitBeg(), GetFitEnd() );
+                SetIsFitted( GetCurCh(), GetCurSec(), params, wxGetApp().GetFuncLibPtr(fselect),
+                             chisqr, GetFitBeg(), GetFitEnd() );
             }
 
             catch (const std::out_of_range& e) {
@@ -1495,7 +1510,7 @@ void wxStfDoc::OnAnalysisIntegrate(wxCommandEvent &WXUNUSED(event)) {
         wxGetApp().ErrorMsg(wxString( e.what(), wxConvLocal ));
         return;
     }
-    stfio::Table integralTable(6,1);
+    stf::Table integralTable(6,1);
     try {
         integralTable.SetRowLabel(0, "Trapezium (linear)");
         integralTable.SetRowLabel(1, "Integral (from 0)");
@@ -1521,7 +1536,7 @@ void wxStfDoc::OnAnalysisIntegrate(wxCommandEvent &WXUNUSED(event)) {
     pFrame->ShowTable(integralTable,wxT("Integral"));
     try {
         Vector_double quad_p = stf::quad(cur().get(), GetFitBeg(), GetFitEnd());
-        cur().SetIsIntegrated(true,GetFitBeg(),GetFitEnd(), quad_p);
+        SetIsIntegrated(GetCurCh(), GetCurSec(), true,GetFitBeg(),GetFitEnd(), quad_p);
     }
     catch (const std::runtime_error& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -1945,24 +1960,24 @@ void wxStfDoc::P_over_N(wxCommandEvent& WXUNUSED(event)){
 }
 
 void wxStfDoc::Plotcriterion(wxCommandEvent& WXUNUSED(event)) {
-    std::vector<Section*> sectionList(wxGetApp().GetSectionsWithFits());
+    std::vector<stf::SectionPointer> sectionList(wxGetApp().GetSectionsWithFits());
     if (sectionList.empty()) {
         wxGetApp().ErrorMsg(
                 wxT("You have to create a template first\nby fitting a function to an event") );
         return;
     }
-    wxStfEventDlg MiniDialog(GetDocumentWindow(),wxGetApp().GetSectionsWithFits(),false);
+    wxStfEventDlg MiniDialog(GetDocumentWindow(), sectionList, false);
     if (MiniDialog.ShowModal()!=wxID_OK)  {
         return;
     }
     int nTemplate=MiniDialog.GetTemplate();
     try {
         Vector_double templateWave(
-                sectionList.at(nTemplate)->GetStoreFitEnd() -
-                sectionList.at(nTemplate)->GetStoreFitBeg());
+                sectionList.at(nTemplate).sec_attr.storeFitEnd -
+                sectionList.at(nTemplate).sec_attr.storeFitBeg);
         for ( std::size_t n_p=0; n_p < templateWave.size(); n_p++ ) {
-            templateWave[n_p] = sectionList.at(nTemplate)->GetFitFunc()->func(
-                    n_p*GetXScale(), sectionList.at(nTemplate)->GetBestFitP());
+            templateWave[n_p] = sectionList.at(nTemplate).sec_attr.fitFunc->func(
+                n_p*GetXScale(), sectionList.at(nTemplate).sec_attr.bestFitP);
         }
         wxBusyCursor wc;
 #undef min
@@ -1996,25 +2011,25 @@ void wxStfDoc::Plotcriterion(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void wxStfDoc::Plotcorrelation(wxCommandEvent& WXUNUSED(event)) {
-    std::vector<Section*> sectionList(wxGetApp().GetSectionsWithFits());
+    std::vector<stf::SectionPointer> sectionList(wxGetApp().GetSectionsWithFits());
     if (sectionList.empty()) {
         wxGetApp().ErrorMsg(
                 wxT("You have to create a template first\nby fitting a function to an event")
         );
         return;
     }
-    wxStfEventDlg MiniDialog(GetDocumentWindow(),wxGetApp().GetSectionsWithFits(),false);
+    wxStfEventDlg MiniDialog(GetDocumentWindow(), sectionList, false);
     if (MiniDialog.ShowModal()!=wxID_OK)  {
         return;
     }
     int nTemplate=MiniDialog.GetTemplate();
     try {
         Vector_double templateWave(
-                sectionList.at(nTemplate)->GetStoreFitEnd() -
-                sectionList.at(nTemplate)->GetStoreFitBeg());
+                sectionList.at(nTemplate).sec_attr.storeFitEnd -
+                sectionList.at(nTemplate).sec_attr.storeFitBeg);
         for ( std::size_t n_p=0; n_p < templateWave.size(); n_p++ ) {
-            templateWave[n_p] = sectionList.at(nTemplate)->GetFitFunc()->func(
-                    n_p*GetXScale(), sectionList.at(nTemplate)->GetBestFitP());
+            templateWave[n_p] = sectionList.at(nTemplate).sec_attr.fitFunc->func(
+                n_p*GetXScale(), sectionList.at(nTemplate).sec_attr.bestFitP);
         }
         wxBusyCursor wc;
 #undef min
@@ -2046,24 +2061,24 @@ void wxStfDoc::Plotcorrelation(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
-    std::vector<Section*> sectionList(wxGetApp().GetSectionsWithFits());
+    std::vector<stf::SectionPointer> sectionList(wxGetApp().GetSectionsWithFits());
     if (sectionList.empty()) {
         wxGetApp().ErrorMsg(
                 wxT( "You have to create a template first\nby fitting a function to an event" ) );
         return;
     }
-    wxStfEventDlg MiniDialog( GetDocumentWindow(), wxGetApp().GetSectionsWithFits(), true );
+    wxStfEventDlg MiniDialog( GetDocumentWindow(), sectionList, true );
     if ( MiniDialog.ShowModal()!=wxID_OK ) {
         return;
     }
     int nTemplate=MiniDialog.GetTemplate();
     try {
         Vector_double templateWave(
-                sectionList.at(nTemplate)->GetStoreFitEnd() -
-                sectionList.at(nTemplate)->GetStoreFitBeg());
+                sectionList.at(nTemplate).sec_attr.storeFitEnd -
+                sectionList.at(nTemplate).sec_attr.storeFitBeg);
         for ( std::size_t n_p=0; n_p < templateWave.size(); n_p++ ) {
-            templateWave[n_p] = sectionList.at(nTemplate)->GetFitFunc()->func(
-                    n_p*GetXScale(), sectionList.at(nTemplate)->GetBestFitP());
+            templateWave[n_p] = sectionList.at(nTemplate).sec_attr.fitFunc->func(
+                    n_p*GetXScale(), sectionList.at(nTemplate).sec_attr.bestFitP);
         }
         wxBusyCursor wc;
 #undef min
@@ -2093,9 +2108,10 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             return;
         }
         // erase old events:
-        cur().EraseEvents();
+        ClearEvents(GetCurCh(), GetCurSec());
         for (c_int_it cit = startIndices.begin(); cit != startIndices.end(); ++cit ) {
-            cur().CreateEvent( stfio::Event( *cit, 0, templateWave.size() ) );
+            std::vector< stf::Event > eventList = GetSectionAttributes(GetCurCh(), GetCurSec()).eventList;
+            eventList.push_back( stf::Event( *cit, 0, templateWave.size() ) );
             // Find peak in this event:
             double baselineMean=0;
             for ( std::size_t n_mean = (std::size_t)*cit-baseline;
@@ -2113,8 +2129,11 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             stf::peak( cur().get(), baselineMean, *cit, *cit + templateWave.size(),
                     1, stf::both, peakIndex );
             // set peak index of last event:
-            cur().GetEventsW()[cur().GetEvents().size()-1].SetEventPeakIndex((int)peakIndex);
+            eventList[eventList.size()-1].SetEventPeakIndex((int)peakIndex);
         }
+    }
+    catch (const std::out_of_range& e) {
+        wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ));
     }
     catch (const std::runtime_error& e) {
         wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ));
@@ -2126,7 +2145,8 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
 
 void wxStfDoc::Extract( wxCommandEvent& WXUNUSED(event) ) {
     try {
-        stfio::Table events(cur().GetEvents().size(),2);
+        std::vector< stf::Event > eventList = GetSectionAttributes(GetCurCh(), GetCurSec()).eventList;
+        stf::Table events(eventList.size(), 2);
         events.SetColLabel(0, "Time of event onset");
         events.SetColLabel(1, "Inter-event interval");
         // using the peak indices (these are the locations of the beginning of an optimal
@@ -2134,14 +2154,14 @@ void wxStfDoc::Extract( wxCommandEvent& WXUNUSED(event) ) {
 
         // count non-discarded events:
         std::size_t n_real = 0;
-        for (c_event_it cit = cur().GetEvents().begin(); cit != cur().GetEvents().end(); ++cit) {
+        for (c_event_it cit = eventList.begin(); cit != eventList.end(); ++cit) {
             n_real += (int)(!cit->GetDiscard());
         }
         Channel TempChannel2(n_real);
         std::vector<int> peakIndices(n_real);
         n_real = 0;
-        c_event_it lastEventIt = cur().GetEvents().begin();
-        for (event_it it = cur().GetEventsW().begin(); it != cur().GetEventsW().end(); ++it) {
+        c_event_it lastEventIt = eventList.begin();
+        for (event_it it = eventList.begin(); it != eventList.end(); ++it) {
             if (!it->GetDiscard()) {
                 wxString miniName; miniName << wxT( "Event #" ) << (int)n_real+1;
                 events.SetRowLabel(n_real, stf::wx2std(miniName));
@@ -2182,6 +2202,9 @@ void wxStfDoc::Extract( wxCommandEvent& WXUNUSED(event) ) {
             }
         }
     }
+    catch (const std::out_of_range& e) {
+        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+    }
     catch (const std::runtime_error& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
     }
@@ -2190,11 +2213,16 @@ void wxStfDoc::Extract( wxCommandEvent& WXUNUSED(event) ) {
     }
 }
 
-void wxStfDoc::EraseEvents( wxCommandEvent& WXUNUSED(event) ) {
+void wxStfDoc::InteractiveEraseEvents( wxCommandEvent& WXUNUSED(event) ) {
     if (wxMessageDialog( GetDocumentWindow(), wxT("Do you really want to erase all events?"),
                          wxT("Erase all events"), wxYES_NO ).ShowModal()==wxID_YES)
     {
-        cur().EraseEvents();
+        try {
+            ClearEvents(GetCurCh(), GetCurSec());
+        }
+        catch (const std::out_of_range& e) {
+            wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+        }
     }
 }
 
@@ -2204,7 +2232,8 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
         wxStfView* pView = (wxStfView*)GetFirstView();
         wxStfGraph* pGraph = pView->GetGraph();
         int newStartPos = pGraph->get_eventPos();
-        stfio::Event newEvent(newStartPos, 0, cur().GetEvent(0).GetEventSize());
+        std::vector< stf::Event > eventList = GetSectionAttributes(GetCurCh(), GetCurSec()).eventList;
+        stf::Event newEvent(newStartPos, 0, eventList.at(0).GetEventSize());
         // Find peak in this event:
         double baselineMean=0;
         for ( std::size_t n_mean = (std::size_t)newStartPos - baseline;
@@ -2220,24 +2249,27 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
         baselineMean /= baseline;
         double peakIndex=0;
         stf::peak( cur().get(), baselineMean, newStartPos,
-                newStartPos + cur().GetEvent(0).GetEventSize(), 1,
+                newStartPos + eventList.at(0).GetEventSize(), 1,
                 stf::both, peakIndex );
         // set peak index of last event:
         newEvent.SetEventPeakIndex( (int)peakIndex );
         // find the position in the current event list where the new
         // event should be inserted:
         bool found = false;
-        for (event_it it = cur().GetEventsW().begin(); it != cur().GetEventsW().end(); ++it) {
+        for (event_it it = eventList.begin(); it != eventList.end(); ++it) {
             if ( (int)(it->GetEventStartIndex()) > newStartPos ) {
                 // insert new event before this event, then break:
-                cur().GetEventsW().insert( it, newEvent );
+                eventList.insert( it, newEvent );
                 found = true;
                 break;
             }
         }
         // if we are at the end of the list, append the event:
         if (!found)
-            cur().GetEventsW().push_back( newEvent );
+            eventList.push_back( newEvent );
+    }
+    catch (const std::out_of_range& e) {
+        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
     }
     catch (const std::runtime_error& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -2268,16 +2300,17 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
                 wxT("Couldn't find any events;\ntry again with lower threshold")
         );
     }
+    std::vector< stf::Event > eventList = GetSectionAttributes(GetCurCh(), GetCurSec()).eventList;
     for (c_int_it cit = startIndices.begin(); cit != startIndices.end(); ++cit) {
-        cur().CreateEvent( stfio::Event( *cit, 0, baseline ) );
+        eventList.push_back( stf::Event( *cit, 0, baseline ) );
     }
     // show results in a table:
-    stfio::Table events(cur().GetEvents().size(),2);
+    stf::Table events(eventList.size(),2);
     events.SetColLabel( 0, "Time of event peak");
     events.SetColLabel( 1, "Inter-event interval");
     std::size_t n_event = 0;
-    c_event_it lastEventCit = cur().GetEvents().begin();
-    for (c_event_it cit2 = cur().GetEvents().begin(); cit2 != cur().GetEvents().end(); ++cit2) {
+    c_event_it lastEventCit = eventList.begin();
+    for (c_event_it cit2 = eventList.begin(); cit2 != eventList.end(); ++cit2) {
         wxString eventName; eventName << wxT("Event #") << (int)n_event+1;
         events.SetRowLabel(n_event, stf::wx2std(eventName));
         events.at(n_event,0)= (double)cit2->GetEventStartIndex() / GetSR();
@@ -2792,8 +2825,8 @@ bool wxStfDoc::UnselectTrace(std::size_t sectionToUnselect) {
 }
 
 
-stfio::Table wxStfDoc::CurAsTable() const {
-    stfio::Table table(cur().size(),size());
+stf::Table wxStfDoc::CurAsTable() const {
+    stf::Table table(cur().size(),size());
     try {
         for (std::size_t nRow=0;nRow<table.nRows();++nRow) {
             std::ostringstream rLabel;
@@ -2813,7 +2846,7 @@ stfio::Table wxStfDoc::CurAsTable() const {
     return table;
 }
 
-stfio::Table wxStfDoc::CurResultsTable() {
+stf::Table wxStfDoc::CurResultsTable() {
     // resize table:
     std::size_t n_cols=0;
     if (viewCrosshair) n_cols++;
@@ -2834,7 +2867,7 @@ stfio::Table wxStfDoc::CurResultsTable() {
 #endif
 
     std::size_t n_rows=(viewCursors? 3:1);
-    stfio::Table table(n_rows,n_cols);
+    stf::Table table(n_rows,n_cols);
 
     // Labels
     table.SetRowLabel(0, "Value");
@@ -3004,11 +3037,106 @@ stfio::Table wxStfDoc::CurResultsTable() {
 void wxStfDoc::resize(std::size_t c_n_channels) {
     Recording::resize(c_n_channels);
     yzoom.resize(size());
+    sec_attr.resize(size());
+    for (std::size_t nchannel = 0; nchannel < size(); ++nchannel) {
+        sec_attr[nchannel].resize(at(nchannel).size());
+    }
 }
 
 void wxStfDoc::InsertChannel(Channel& c_Channel, std::size_t pos) {
     Recording::InsertChannel(c_Channel, pos);
     yzoom.resize(size());
+    sec_attr.resize(size());
+    for (std::size_t nchannel = 0; nchannel < size(); ++nchannel) {
+        sec_attr[nchannel].resize(at(nchannel).size());
+    }
+}
+
+void wxStfDoc::SetIsFitted( std::size_t nchannel, std::size_t nsection,
+                            const Vector_double& bestFitP_, stf::storedFunc* fitFunc_,
+                            double chisqr, std::size_t fitBeg, std::size_t fitEnd )
+{
+    if (nchannel >= sec_attr.size() || nsection >= sec_attr[nchannel].size()) {
+        throw std::out_of_range("Index out of range in wxStfDoc::SetIsFitted");
+    }
+    if ( !fitFunc_ ) {
+        throw std::runtime_error("Function pointer is zero in wxStfDoc::SetIsFitted");
+    }
+    if ( fitFunc_->pInfo.size() != bestFitP_.size() ) {
+        throw std::runtime_error("Number of best-fit parameters doesn't match number\n \
+                                 of function parameters in wxStfDoc::SetIsFitted");
+    }
+    sec_attr[nchannel][nsection].fitFunc = fitFunc_;
+    if ( sec_attr[nchannel][nsection].bestFitP.size() != bestFitP_.size() )
+        sec_attr[nchannel][nsection].bestFitP.resize(bestFitP_.size()); 
+    sec_attr[nchannel][nsection].bestFitP = bestFitP_;
+    sec_attr[nchannel][nsection].bestFit =
+        sec_attr[nchannel][nsection].fitFunc->output(sec_attr[nchannel][nsection].bestFitP,
+                                                     sec_attr[nchannel][nsection].fitFunc->pInfo, chisqr );
+    sec_attr[nchannel][nsection].storeFitBeg = fitBeg;
+    sec_attr[nchannel][nsection].storeFitEnd = fitEnd;
+    sec_attr[nchannel][nsection].isFitted = true;
+}
+
+void wxStfDoc::DeleteFit(std::size_t nchannel, std::size_t nsection) {
+    if (nchannel >= sec_attr.size() || nsection >= sec_attr[nchannel].size()) {
+        throw std::out_of_range("Index out of range in wxStfDoc::SetIsFitted");
+    }
+    sec_attr[nchannel][nsection].fitFunc = NULL;
+    sec_attr[nchannel][nsection].bestFitP.resize( 0 );
+    sec_attr[nchannel][nsection].bestFit = stf::Table( 0, 0 );
+    sec_attr[nchannel][nsection].isFitted = false;
+}
+
+
+void wxStfDoc::SetIsIntegrated(std::size_t nchannel, std::size_t nsection, bool value,
+                               std::size_t begin, std::size_t end, const Vector_double& quad_p_)
+{
+    if (nchannel >= sec_attr.size() || nsection >= sec_attr[nchannel].size()) {
+        throw std::out_of_range("Index out of range in wxStfDoc::SetIsFitted");
+    }
+    if (value==false) {
+        sec_attr[nchannel][nsection].isIntegrated=value;
+        return;
+    }
+    if (end<=begin) {
+        throw std::out_of_range("integration limits out of range in Section::SetIsIntegrated");
+    }
+    int n_intervals=std::div((int)end-(int)begin,2).quot;
+    if ((int)quad_p_.size() != n_intervals*3) {
+        throw std::out_of_range("Wrong number of parameters for quadratic equations in Section::SetIsIntegrated");
+    }
+    sec_attr[nchannel][nsection].quad_p = quad_p_;
+    sec_attr[nchannel][nsection].isIntegrated=value;
+    sec_attr[nchannel][nsection].storeIntBeg=begin;
+    sec_attr[nchannel][nsection].storeIntEnd=end;
+}
+
+void wxStfDoc::ClearEvents(std::size_t nchannel, std::size_t nsection) {
+    try {
+        sec_attr.at(nchannel).at(nsection).eventList.clear();
+    }
+    catch(const std::out_of_range& e) {
+        throw e;
+    }
+}
+
+stf::SectionAttributes wxStfDoc::GetSectionAttributes(std::size_t nchannel, std::size_t nsection) {
+    try {
+        return sec_attr.at(nchannel).at(nsection);
+    }
+    catch(const std::out_of_range& e) {
+        throw e;
+    }
+}
+
+stf::SectionAttributes wxStfDoc::GetCurrentSectionAttributes() {
+    try {
+        return sec_attr.at(GetCurCh()).at(GetCurSec());
+    }
+    catch(const std::out_of_range& e) {
+        throw e;
+    }
 }
 
 #if 0
@@ -3051,7 +3179,7 @@ void wxStfDoc::Userdef(std::size_t id) {
     newTitle += wxGetApp().GetPluginLib().at(fselect).menuEntry;
     wxStfDoc* pDoc = wxGetApp().NewChild(newR,this,newTitle);
     ((wxStfChildFrame*)pDoc->GetDocumentWindow())->ShowTable(
-            stfio::Table(resultsMap), wxGetApp().GetPluginLib().at(fselect).menuEntry
+            stf::Table(resultsMap), wxGetApp().GetPluginLib().at(fselect).menuEntry
                                                              );
 }
 #endif

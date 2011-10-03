@@ -75,7 +75,7 @@ int stf::fac(int arg) {
 Vector_double
 stf::filter( const Vector_double& data, std::size_t filter_start,
         std::size_t filter_end, const Vector_double &a, int SR,
-        stfio::Func func, bool inverse ) {
+        stf::Func func, bool inverse ) {
     if (data.size()<=0 || filter_start>=data.size() || filter_end > data.size()) {
         std::out_of_range e("subscript out of range in stf::filter()");
         throw e;
@@ -420,23 +420,6 @@ stf::linCorr(const Vector_double& data, const Vector_double& templ)
     return Corr;
 }
 
-wxString stf::sectionToString(const Section& section) {
-    wxString retString;
-    retString << (int)section.size() << wxT("\n");
-    for (int n=0;n<(int)section.size();++n) {
-        retString << section.GetXScale()*n << wxT("\t") << section[n] << wxT("\n");
-    }
-    return retString;
-}
-
-wxString stf::CreatePreview(const wxString& fName) {
-    ifstreamMan ASCIIfile( fName );
-    // Stop reading if we are either at the end or at line 100:
-    wxString preview;
-	ASCIIfile.myStream.ReadAll( &preview );
-    return preview;
-}
-
 double stf::integrate_simpson(
         const Vector_double& input,
         std::size_t i1,
@@ -514,11 +497,11 @@ stf::linsolv( int m, int n, int nrhs, Vector_double& A,
 {
 #ifndef TEST_MINIMAL
     if (A.size()<=0) {
-        throw std::runtime_error("Matrix A has size 0 in stfio::linsolv");
+        throw std::runtime_error("Matrix A has size 0 in stf::linsolv");
     }
 
     if (B.size()<=0) {
-        throw std::runtime_error("Matrix B has size 0 in stfio::linsolv");
+        throw std::runtime_error("Matrix B has size 0 in stf::linsolv");
     }
 
     if (A.size()!= std::size_t(m*n)) {
@@ -660,4 +643,36 @@ Vector_double stf::quad(const Vector_double& data, std::size_t begin, std::size_
         }
     }
     return quad_p;
+}
+
+Vector_double stf::nojac(double x, const Vector_double& p) {
+    return Vector_double(0);
+}
+
+double stf::noscale(double param, double xscale, double oldx, double yscale, double yoff) {
+    return param;
+}
+
+stf::Table stf::defaultOutput(
+	const Vector_double& pars,
+	const std::vector<stf::parInfo>& parsInfo,
+    double chisqr
+) {
+	if (pars.size()!=parsInfo.size()) {
+		throw std::out_of_range("index out of range in stf::defaultOutput");
+	}
+        stf::Table output(pars.size()+1,1);
+	try {
+		output.SetColLabel(0,"Best-fit value");
+		for (std::size_t n_p=0;n_p<pars.size(); ++n_p) {
+			output.SetRowLabel(n_p,parsInfo[n_p].desc);
+			output.at(n_p,0)=pars[n_p];
+		}
+        output.SetRowLabel(pars.size(),"SSE");
+        output.at(pars.size(),0)=chisqr;
+	}
+	catch (...) {
+		throw;
+	}
+	return output;
 }

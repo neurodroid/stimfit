@@ -119,8 +119,12 @@ void wxStfFitSelDlg::EndModal(int retCode) {
             return;
         }
         break;
-    case wxID_CANCEL:
-        pDoc->cur().DeleteFit();
+     case wxID_CANCEL:
+         try {
+             pDoc->DeleteFit(pDoc->GetCurCh(), pDoc->GetCurSec());
+         } catch (const std::out_of_range& e) {
+
+         }
         break;
     default:
         ;
@@ -243,8 +247,13 @@ void wxStfFitSelDlg::OnButtonClick( wxCommandEvent& event ) {
             return;
         }
     }
-    pDoc->cur().SetIsFitted( init_p, wxGetApp().GetFuncLibPtr(m_fselect), 0,
-            pDoc->GetFitBeg(), pDoc->GetFitEnd() );
+    try {
+        pDoc->SetIsFitted(pDoc->GetCurCh(), pDoc->GetCurSec(), init_p,
+                          wxGetApp().GetFuncLibPtr(m_fselect), 0,
+                          pDoc->GetFitBeg(), pDoc->GetFitEnd() );
+    } catch (const std::out_of_range& e) {
+        
+    }
     // tell the view to draw the fit:
     wxStfView* pView = (wxStfView*)pDoc->GetFirstView();
     if (pView != NULL)

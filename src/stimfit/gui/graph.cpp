@@ -213,8 +213,13 @@ void wxStfGraph::OnDraw( wxDC& DC )
 
 
     // Plot integral boundaries
-    if (Doc()->cur().IsIntegrated()) {
-        DrawIntegral(&DC);
+    try {
+        if (Doc()->GetCurrentSectionAttributes().isIntegrated) {
+            DrawIntegral(&DC);
+        }
+    }
+    catch (const std::out_of_range& e) {
+        /* Do nothing for now */
     }
 
     //Zoom window is displayed (see OnLeftButtonUp())
@@ -462,32 +467,45 @@ void wxStfGraph::PlotGimmicks(wxDC& DC) {
     DrawCircle(&DC,Doc()->GetMaxRiseT(),Doc()->GetMaxRiseY(), rdPen, rdPrintPen);
     DrawCircle(&DC,Doc()->GetMaxDecayT(),Doc()->GetMaxDecayY(), rdPen, rdPrintPen);
     
-    if (Doc()->cur().HasEvents()) {
-        PlotEvents(DC);
-    } else { // no events
-        // Destroy checkboxes (if any)
-        std::vector<wxStfCheckBox*>::iterator it2;
-        for (it2 = cbList.begin(); it2 != cbList.end(); ++it2) {
-            if (*it2 != NULL)
-                (*it2)->Destroy();
+    try {
+        stf::SectionAttributes sec_attr = Doc()->GetCurrentSectionAttributes();
+        if (!sec_attr.eventList.empty()) {
+            PlotEvents(DC);
+        } else { // no events
+            // Destroy checkboxes (if any)
+            std::vector<wxStfCheckBox*>::iterator it2;
+            for (it2 = cbList.begin(); it2 != cbList.end(); ++it2) {
+                if (*it2 != NULL)
+                    (*it2)->Destroy();
+            }
+            if (!cbList.empty())
+                cbList.clear();
         }
-        if (!cbList.empty())
-            cbList.clear();
+        if (!sec_attr.pyMarkers.empty()) {
+            DC.SetPen(eventPen);
+            for (c_marker_it it = sec_attr.pyMarkers.begin(); it != sec_attr.pyMarkers.end(); ++it) {
+                // Create circles indicating the peak of an event:
+                DC.DrawRectangle( xFormat(it->x), yFormat(it->y), boebbel*2.0, boebbel*2.0 );
+            }
+        }
+    }
+    catch (const std::out_of_range& e) {
+        /* Do nothing for now */
     }
 
-    if (Doc()->cur().HasPyMarkers()) {
-        DC.SetPen(eventPen);
-        for (c_marker_it it = Doc()->cur().GetPyMarkers().begin(); it != Doc()->cur().GetPyMarkers().end(); ++it) {
-            // Create circles indicating the peak of an event:
-            DC.DrawRectangle( xFormat(it->x), yFormat(it->y), boebbel*2.0, boebbel*2.0 );
-        }
-    }
 
 }
 
 void wxStfGraph::PlotEvents(wxDC& DC) {
+    stf::SectionAttributes sec_attr;
+    try {
+        sec_attr = Doc()->GetCurrentSectionAttributes();
+    }
+    catch (const std::out_of_range& e) {
+        return;
+    }
     DC.SetPen(eventPen);
-    for (c_event_it it = Doc()->cur().GetEvents().begin(); it != Doc()->cur().GetEvents().end(); ++it) {
+    for (c_event_it it = sec_attr.eventList.begin(); it != sec_attr.eventList.end(); ++it) {
         // Create small arrows indicating the start of an event:
         eventArrow(&DC, (int)it->GetEventStartIndex());
         // Create circles indicating the peak of an event:
@@ -501,18 +519,18 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
     }
 
     // resize list if necessary:
-    if (cbList.size() != Doc()->cur().GetEvents().size()) {
+    if (cbList.size() != sec_attr.eventList.size()) {
         // destroy checkboxes that are not needed:
-        for (std::size_t n_cbl = Doc()->cur().GetEvents().size();
+        for (std::size_t n_cbl = sec_attr.eventList.size();
              n_cbl < cbList.size();
              ++n_cbl)
         {
             cbList[n_cbl]->Destroy();
         }
-        cbList.resize(Doc()->cur().GetEvents().size());
+        cbList.resize(sec_attr.eventList.size());
     }
     std::size_t n_cb = 0;
-    for (event_it it2 = Doc()->cur().GetEventsW().begin(); it2 != Doc()->cur().GetEventsW().end(); ++it2) {
+    for (event_it it2 = sec_attr.eventList.begin(); it2 != sec_attr.eventList.end(); ++it2) {
         try {
             if (cbList.at(n_cb) == NULL) {
                 cbList.at(n_cb) =
@@ -834,30 +852,38 @@ void wxStfGraph::eventArrow(wxDC* pDC, int eventIndex) {
 
 void wxStfGraph::DrawFit(wxDC* pDC) {
 
-    // go through selected traces:
-    if ( isPrinted )
-        pDC->SetPen(fitSelectedPrintPen);
-    else
-        pDC->SetPen(fitSelectedPen);
-    for ( std::size_t n_sel = 0; n_sel < Doc()->GetSelectedSections().size(); ++n_sel ) {
-        std::size_t sel_index = Doc()->GetSelectedSections()[ n_sel ];
-        // Check whether this section contains a fit:
-        if ( (*Doc())[Doc()->GetCurCh()][sel_index].IsFitted() && pFrame->ShowSelected() ) {
-            PlotFit( pDC, (*Doc())[Doc()->GetCurCh()][sel_index] );
+    try {
+        // go through selected traces:
+        if ( isPrinted )
+            pDC->SetPen(fitSelectedPrintPen);
+        else
+            pDC->SetPen(fitSelectedPen);
+        for ( std::size_t n_sel = 0; n_sel < Doc()->GetSelectedSections().size(); ++n_sel ) {
+            std::size_t sel_index = Doc()->GetSelectedSections()[ n_sel ];
+            // Check whether this section contains a fit:
+            stf::SectionAttributes sec_attr = Doc()->GetSectionAttributes(Doc()->GetCurCh(), sel_index);
+            if ( sec_attr.isFitted && pFrame->ShowSelected() ) {
+                PlotFit( pDC, stf::SectionPointer( &((*Doc())[Doc()->GetCurCh()][sel_index]), sec_attr ) );
+            }
+        }
+
+        // Active trace
+        if ( isPrinted )
+            pDC->SetPen(fitPrintPen);
+        else
+            pDC->SetPen(fitPen);
+        stf::SectionAttributes sec_attr = Doc()->GetCurrentSectionAttributes();
+        if (sec_attr.isFitted) {
+            PlotFit( pDC, stf::SectionPointer( &((*Doc())[Doc()->GetCurCh()][Doc()->GetCurSec()]),
+                                               sec_attr) );
         }
     }
-
-    // go through selected traces:
-    if ( isPrinted )
-        pDC->SetPen(fitPrintPen);
-    else
-        pDC->SetPen(fitPen);
-    if ( (*Doc())[Doc()->GetCurCh()][Doc()->GetCurSec()].IsFitted() ) {
-        PlotFit( pDC, (*Doc())[Doc()->GetCurCh()][Doc()->GetCurSec()] );
+    catch (const std::out_of_range& e) {
+        
     }
 }
 
-void wxStfGraph::PlotFit( wxDC* pDC, const Section& Sec ) {
+void wxStfGraph::PlotFit( wxDC* pDC, const stf::SectionPointer& Sec ) {
 
     wxRect WindowRect = GetRect();
     if (isPrinted)
@@ -865,9 +891,9 @@ void wxStfGraph::PlotFit( wxDC* pDC, const Section& Sec ) {
         WindowRect=printRect;
     }
 
-    int firstPixel = xFormat( Sec.GetStoreFitBeg() );
+    int firstPixel = xFormat( Sec.sec_attr.storeFitBeg );
     if ( firstPixel < 0 ) firstPixel = 0;
-    int lastPixel = xFormat( Sec.GetStoreFitEnd() );
+    int lastPixel = xFormat( Sec.sec_attr.storeFitEnd );
     if ( lastPixel > WindowRect.width + 1 ) lastPixel = WindowRect.width + 1;
 
     if (!isPrinted) {
@@ -875,16 +901,16 @@ void wxStfGraph::PlotFit( wxDC* pDC, const Section& Sec ) {
         //For display use point to point drawing
         double fit_time_1 =
             ( ((double)firstPixel - (double)SPX()) / XZ() -
-                    (double)Sec.GetStoreFitBeg() )* Doc()->GetXScale();
+                    (double)Sec.sec_attr.storeFitBeg )* Doc()->GetXScale();
         for ( int n_px = firstPixel; n_px < lastPixel-1; n_px++ ) {
             // Calculate pixel back to time (GetStoreFitBeg() is t=0)
             double fit_time_2 =
                 ( ((double)n_px+1.0 - (double)SPX()) / XZ() -
-                        (double)Sec.GetStoreFitBeg() )
+                        (double)Sec.sec_attr.storeFitBeg )
                         * Doc()->GetXScale(); // undo xFormat = (int)(toFormat * XZ() + SPX());
             pDC->DrawLine( n_px,
-                    yFormat(Sec.GetFitFunc()->func( fit_time_1, Sec.GetBestFitP())),
-                            n_px + 1, yFormat(Sec.GetFitFunc()->func(fit_time_2, Sec.GetBestFitP()))
+                    yFormat(Sec.sec_attr.fitFunc->func( fit_time_1, Sec.sec_attr.bestFitP)),
+                            n_px + 1, yFormat(Sec.sec_attr.fitFunc->func(fit_time_2, Sec.sec_attr.bestFitP))
             );
             fit_time_1 = fit_time_2;
         }
@@ -894,11 +920,11 @@ void wxStfGraph::PlotFit( wxDC* pDC, const Section& Sec ) {
         for ( int n_px = firstPixel; n_px < lastPixel; n_px++ ) {
             // Calculate pixel back to time (GetStoreFitBeg() is t=0)
             double fit_time =
-                ( ((double)n_px - (double)SPX()) / XZ() -(double)Sec.GetStoreFitBeg() )
+                ( ((double)n_px - (double)SPX()) / XZ() -(double)Sec.sec_attr.storeFitBeg )
                         * Doc()->GetXScale(); // undo xFormat = (int)(toFormat * XZ() + SPX());
             f_print[n_px-firstPixel].x = n_px;
-            f_print[n_px-firstPixel].y = yFormat( Sec.GetFitFunc()->func(
-                            fit_time, Sec.GetBestFitP()) );
+            f_print[n_px-firstPixel].y = yFormat( Sec.sec_attr.fitFunc->func(
+                            fit_time, Sec.sec_attr.bestFitP) );
         }
         pDC->DrawLines( f_print.size(), &f_print[0] );
     }   //End if display or print out
@@ -907,16 +933,23 @@ void wxStfGraph::PlotFit( wxDC* pDC, const Section& Sec ) {
 void wxStfGraph::DrawIntegral(wxDC* pDC) {
     // Draws a polygon around the integral. Note that the polygon will be drawn
     // out of screen as well.
-
+    stf::SectionAttributes sec_attr;
+    try {
+        sec_attr = Doc()->GetCurrentSectionAttributes();
+    }
+    catch (const std::out_of_range& e) {
+        return;
+    }
+    
     if (!isPrinted) {
         pDC->SetPen(scalePen);
     } else {
         pDC->SetPen(scalePrintPen);
     }
-    bool even = std::div((int)Doc()->cur().GetStoreIntEnd()-(int)Doc()->cur().GetStoreIntBeg(), 2).rem==0;
-    int firstPixel=xFormat(Doc()->cur().GetStoreIntBeg());
+    bool even = std::div((int)sec_attr.storeIntEnd-(int)sec_attr.storeIntBeg, 2).rem==0;
+    int firstPixel=xFormat(sec_attr.storeIntBeg);
     // last pixel:
-    int lastPixel= even ? xFormat(Doc()->cur().GetStoreIntEnd()) : xFormat(Doc()->cur().GetStoreIntEnd()-1);
+    int lastPixel= even ? xFormat(sec_attr.storeIntEnd) : xFormat(sec_attr.storeIntEnd-1);
     std::size_t qt_size=
         lastPixel-firstPixel + // part that covers the trace
         2; // straight line through base or 0
@@ -929,12 +962,12 @@ void wxStfGraph::DrawIntegral(wxDC* pDC) {
     for (int n_pixel=firstPixel; n_pixel < lastPixel; ++n_pixel) {
         // (lower) index corresponding to pixel:
         int n_relIndex =
-            (int)(((double)n_pixel-(double)SPX())/(double)XZ()-Doc()->cur().GetStoreIntBeg());
+            (int)(((double)n_pixel-(double)SPX())/(double)XZ()-sec_attr.storeIntBeg);
         double n_absIndex = ((double)n_pixel-(double)SPX())/(double)XZ();
         // quadratic parameters at this point:
-        double a = Doc()->cur().GetQuadP()[(int)(n_relIndex/2)*3];
-        double b = Doc()->cur().GetQuadP()[(int)(n_relIndex/2)*3+1];
-        double c = Doc()->cur().GetQuadP()[(int)(n_relIndex/2)*3+2];
+        double a = sec_attr.quad_p[(int)(n_relIndex/2)*3];
+        double b = sec_attr.quad_p[(int)(n_relIndex/2)*3+1];
+        double c = sec_attr.quad_p[(int)(n_relIndex/2)*3+2];
         double y = a*n_absIndex*n_absIndex + b*n_absIndex + c;
 
         quadTrace[n_qt++]=wxPoint(n_pixel,yFormat(y));
@@ -945,13 +978,13 @@ void wxStfGraph::DrawIntegral(wxDC* pDC) {
         // draw a straight line:
         quadTrace[n_qt++]=
             wxPoint(
-                    xFormat(Doc()->cur().GetStoreIntEnd()),
-                    yFormat(Doc()->cur()[Doc()->cur().GetStoreIntEnd()])
+                    xFormat(sec_attr.storeIntEnd),
+                    yFormat(Doc()->cur()[sec_attr.storeIntEnd])
             );
     }
     quadTrace[n_qt]=
         wxPoint(
-                xFormat(Doc()->cur().GetStoreIntEnd()),
+                xFormat(sec_attr.storeIntEnd),
                 yFormat(Doc()->GetBase())
         );
 
@@ -962,7 +995,7 @@ void wxStfGraph::DrawIntegral(wxDC* pDC) {
     quadTrace[0]=wxPoint(firstPixel,yFormat(0));
     quadTrace[n_qt]=
         wxPoint(
-                xFormat(Doc()->cur().GetStoreIntEnd()),
+                xFormat(sec_attr.storeIntEnd),
                 yFormat(0)
         );
     pDC->SetBrush(zeroBrush);
@@ -1139,12 +1172,16 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
         }
         break;
     case stf::event_cursor:
-        if (Doc()->cur().HasEvents()) {
-            // store the position that has been clicked:
-            eventPos = stf::round( ((double)point.x - (double)SPX())/XZ() );
-            PopupMenu(m_eventContext.get());
-        } else {
-            wxGetApp().ErrorMsg(wxT("No events have been detected yet"));
+        try {
+            if (!Doc()->GetCurrentSectionAttributes().eventList.empty()) {
+                // store the position that has been clicked:
+                eventPos = stf::round( ((double)point.x - (double)SPX())/XZ() );
+                PopupMenu(m_eventContext.get());
+            } else {
+                wxGetApp().ErrorMsg(wxT("No events have been detected yet"));
+            }
+        } catch (const std::out_of_range& e) {
+
         }
         break;
 #ifdef WITH_PSLOPE

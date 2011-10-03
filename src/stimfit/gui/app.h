@@ -175,7 +175,7 @@ enum {
 #include <wx/osx/fontdlg.h>
 #endif
 
-#include "./../stf.h"
+#include "./../math/stfmath.h"
 
 #ifdef WITH_PYTHON
 
@@ -329,19 +329,19 @@ public:
     //! Retrieves the functions that are available for least-squares minimisation.
     /*! \return A vector containing the available functions.
      */
-    const std::vector<stfio::storedFunc>& GetFuncLib() const { return funcLib; }
+    const std::vector<stf::storedFunc>& GetFuncLib() const { return funcLib; }
 
 
     //! Retrieves a pointer to a function for least-squares minimisation.
     /*! \return A vector containing the available functions.
      */
-    stfio::storedFunc* GetFuncLibPtr(std::size_t at) { return &funcLib.at(at); }
+    stf::storedFunc* GetFuncLibPtr(std::size_t at) { return &funcLib.at(at); }
 
 
     //! Retrieves a pointer to a function for least-squares minimisation.
     /*! \return A vector containing the available functions.
      */
-    stfio::storedFunc* GetLinFuncPtr( ) { return &storedLinFunc; }
+    stf::storedFunc* GetLinFuncPtr( ) { return &storedLinFunc; }
 
     //! Retrieves the user-defined extension functions.
     /*! \return A vector containing the user-defined functions.
@@ -356,8 +356,8 @@ public:
     //! Retrieves all sections with fits
     /*! \return A vector containing pointers to all sections in which fits have been performed
      */
-    std::vector<Section*> GetSectionsWithFits() const;
-
+    std::vector<stf::SectionPointer> GetSectionsWithFits() const;
+    
     //! Writes an integer value to the configuration.
     /*! \param main The main path within the configuration.
      *  \param sub The sub-path within the configuration.
@@ -514,13 +514,13 @@ private:
     stfio::txtImportSettings txtImport;
     // Registry:
     boost::shared_ptr<wxFileConfig> config;
-    std::vector<stfio::storedFunc> funcLib;
+    std::vector<stf::storedFunc> funcLib;
     std::vector< stf::Extension > extensionLib;
     // Pointer to the cursors settings dialog box
     wxStfCursorsDlg* CursorsDialog;
     wxDocTemplate* m_cfsTemplate, *m_hdf5Template, *m_txtTemplate,*m_abfTemplate,
       *m_atfTemplate,*m_axgTemplate,*m_sonTemplate, *m_hekaTemplate, *m_biosigTemplate;
-    stfio::storedFunc storedLinFunc;
+    stf::storedFunc storedLinFunc;
     // wxMenu* m_file_menu;
     wxString m_fileToLoad;
     /*std::list<wxStfDoc *> activeDoc;*/

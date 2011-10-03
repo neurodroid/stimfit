@@ -192,7 +192,7 @@ void wxStfPrintout::PrintHeader(wxDC* pDC, double scale) {
     pDC->DrawText(description,xstart,ystart);
 
     // Results:
-    stfio::Table table(Doc()->CurResultsTable());
+    stf::Table table(Doc()->CurResultsTable());
 
     font.SetWeight(wxFONTWEIGHT_NORMAL);
     pDC->SetFont(font);
@@ -210,18 +210,23 @@ void wxStfPrintout::PrintHeader(wxDC* pDC, double scale) {
             xpos+=colSize;
         }
     }
-    if (Doc()->cur().IsFitted()) {
-        wxRect WindowRect(GetLogicalPageMarginsRect(*(frame->GetPageSetup())));
-        int increment=WindowRect.height/50;
-        int yPos=(int)(WindowRect.height*0.5);
-        int xPos=(int)(WindowRect.width*0.75);
-        // print fit info line by line:
-        for (std::size_t n=0;n<Doc()->cur().GetBestFit().nRows();++n) {
-            pDC->DrawText(stf::std2wx(Doc()->cur().GetBestFit().GetRowLabel(n)),xPos,yPos);
-            wxString value;
-            value << Doc()->cur().GetBestFit().at(n,0);
-            pDC->DrawText(value,(int)(xPos+40.0*resScale),yPos);
-            yPos+=increment;
+    try {
+        stf::SectionAttributes sec_attr = Doc()->GetCurrentSectionAttributes();
+        if (sec_attr.isFitted) {
+            wxRect WindowRect(GetLogicalPageMarginsRect(*(frame->GetPageSetup())));
+            int increment=WindowRect.height/50;
+            int yPos=(int)(WindowRect.height*0.5);
+            int xPos=(int)(WindowRect.width*0.75);
+            // print fit info line by line:
+            for (std::size_t n=0;n < sec_attr.bestFit.nRows();++n) {
+                pDC->DrawText(stf::std2wx(sec_attr.bestFit.GetRowLabel(n)),xPos,yPos);
+                wxString value;
+                value << sec_attr.bestFit.at(n,0);
+                pDC->DrawText(value,(int)(xPos+40.0*resScale),yPos);
+                yPos+=increment;
+            }
         }
+    } catch (const std::out_of_range& e) {
+        
     }
 }

@@ -41,7 +41,7 @@ wxStfCheckBox::wxStfCheckBox(
     wxWindow* parent,
     wxWindowID id,
     const wxString& label,
-    stfio::Event* pEvent,
+    stf::Event* pEvent,
     const wxPoint& pos,
     const wxSize& size,
     long style,

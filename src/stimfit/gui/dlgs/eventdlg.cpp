@@ -5,6 +5,7 @@
 #endif
 
 
+#include "./../../stf.h"
 #include "./../../../libstfio/section.h"
 #include "./eventdlg.h"
 
@@ -13,10 +14,10 @@ enum {wxID_COMBOTEMPLATES};
 BEGIN_EVENT_TABLE( wxStfEventDlg, wxDialog )
 END_EVENT_TABLE()
 
-wxStfEventDlg::wxStfEventDlg(wxWindow* parent, const std::vector<Section*>& templateSections,
-        bool isExtract_, int id, wxString title, wxPoint pos, wxSize size, int style)
-: wxDialog( parent, id, title, pos, size, style ), m_threshold(4.0), m_scaling(true),
-isExtract(isExtract_), m_minDistance(150), m_template(-1)
+wxStfEventDlg::wxStfEventDlg(wxWindow* parent, const std::vector<stf::SectionPointer>& templateSections,
+                             bool isExtract_, int id, wxString title, wxPoint pos, wxSize size, int style) :
+wxDialog( parent, id, title, pos, size, style ), m_threshold(4.0), m_scaling(true),
+    isExtract(isExtract_), m_minDistance(150), m_template(-1)
 {
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
@@ -30,12 +31,8 @@ isExtract(isExtract_), m_minDistance(150), m_template(-1)
     templateNames.Alloc(templateSections.size());
     int max_w = 0;
     for (std::size_t n_templ=0;n_templ<templateSections.size();++n_templ) {
-        if (templateSections[n_templ]!=NULL) {
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-            wxString sec_desc = templateSections[n_templ]->GetSectionDescription();
-#else
-            wxString sec_desc = wxString(templateSections[n_templ]->GetSectionDescription().c_str(), wxConvUTF8);
-#endif            
+        if (templateSections[n_templ].pSection != NULL) {
+            wxString sec_desc = stf::std2wx(templateSections[n_templ].pSection->GetSectionDescription());
             int w, h;
             GetTextExtent( sec_desc, &w, &h );
             if ( w > max_w )

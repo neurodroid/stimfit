@@ -125,7 +125,9 @@ private:
 
     XZoom xzoom;
     std::vector<YZoom> yzoom;
-        
+
+    std::vector< std::vector<stf::SectionAttributes> > sec_attr;
+    
 public:
 
     //! Constructor.
@@ -264,8 +266,8 @@ public:
     //! Erases all events, independent of whether they are checked or not
     /*! \param event The menu event that made the call.
      */
-    void EraseEvents(wxCommandEvent& event);
-
+    void InteractiveEraseEvents(wxCommandEvent& event);
+    
     //! Adds an event at the current eventPos
     /*! \param event The menu event that made the call.
      */
@@ -295,7 +297,7 @@ public:
 
     
     //! Put the current measurement results into a text table.
-    stfio::Table CurResultsTable();
+    stf::Table CurResultsTable();
 
 
     //! Retrieves the index of the current channel.
@@ -952,7 +954,7 @@ public:
     void SetSlopeForThreshold(double value) { slopeForThreshold=value; }
     
     //! Put the current trace into a text table.
-    stfio::Table CurAsTable() const;
+    stf::Table CurAsTable() const;
     
     //! Copies the cursor positions from another Recording to this Recording.
     /*! This will copy the crosshair, base, peak and fit cursors positions as 
@@ -975,7 +977,34 @@ public:
      *  \param pos The position at which to insert the channel (0-based).
      */
     virtual void InsertChannel(Channel& c_Channel, std::size_t pos);
+
+    stf::SectionAttributes GetSectionAttributes(std::size_t nchannel, std::size_t nsection);
+    stf::SectionAttributes GetCurrentSectionAttributes();
+
+    //! Deletes the current fit, sets isFitted to false;
+    void DeleteFit(std::size_t nchannel, std::size_t nsection);
     
+    //! Sets the best-fit parameters when a fit has been performed on this section.
+    /*! \param bestFitP_ The best-fit parameters
+        \param fitFunc_ The function used for fitting
+        \param chisqr The sum of squared errors
+        \param fitBeg Sampling point index where the fit starts
+        \param fitEnd Sampling point index where the fit ends
+     */
+    void SetIsFitted( std::size_t nchannel, std::size_t nsection,
+                      const Vector_double& bestFitP_, stf::storedFunc* fitFunc_,
+                      double chisqr, std::size_t fitBeg, std::size_t fitEnd );
+
+
+    //! Determines whether an integral has been calculated in this section.
+    /*! \return true if an integral has been calculated, false otherwise.
+     */
+    void SetIsIntegrated(std::size_t nchannel, std::size_t nsection, bool value,
+                         std::size_t begin, std::size_t end, const Vector_double& quad_p_);
+    
+    //! Erases all events.
+    void ClearEvents(std::size_t nchannel, std::size_t nsection);
+
     void correctRangeR(int& value);
     void correctRangeR(std::size_t& value);
     

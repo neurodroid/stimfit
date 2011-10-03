@@ -17,10 +17,10 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-/*! \file core.h
+/*! \file stfmath.h
  *  \author Christoph Schmidt-Hieber
  *  \date 2008-01-16
- *  \brief Core components.
+ *  \brief Math functions.
  */
 
 #ifndef _CORE_H
@@ -31,7 +31,6 @@
 #endif
 
 #include <vector>
-// #include <boost/numeric/ublas/vector.hpp>
 #include <complex>
 #include <deque>
 #ifdef _OPENMP
@@ -39,17 +38,12 @@
 #endif
 
 #include "./../stf.h"
-// #include "./../../libstfio/section.h"
-// #include "./../../libstfio/recording.h"
 
-#ifndef MODULE_ONLY
 // header for the fourier transform:
 #ifndef TEST_MINIMAL
 #include "fftw3.h"
 #endif
-
 #include "./spline.h"
-#endif
 
 namespace stf {
 
@@ -57,7 +51,121 @@ namespace stf {
  *  @{
  */
 
-#ifndef MODULE_ONLY
+//! A function taking a double and a vector and returning a double.
+/*! Type definition for a function (or, to be precise, any 'callable entity') 
+ *  that takes a double (the x-value) and a vector of parameters and returns 
+ *  the function's result (the y-value).
+ */
+typedef boost::function<double(double, const Vector_double&)> Func;
+
+//! The jacobian of a stf::Func.
+typedef boost::function<Vector_double(double, const Vector_double&)> Jac;
+
+//! Scaling function for fit parameters
+typedef boost::function<double(double, double, double, double, double)> Scale;
+
+//! Dummy function, serves as a placeholder to initialize functions without a Jacobian.
+Vector_double nojac( double x, const Vector_double& p);
+
+//! Dummy function, serves as a placeholder to initialize parameters without a scaling function.
+double noscale(double param, double xscale, double xoff, double yscale, double yoff);
+ 
+//! Information about parameters used in storedFunc
+/*! Contains information about a function's parameters used 
+ *  in storedFunc (see below). The client supplies a description 
+ *  (desc) and determines whether the parameter is to be 
+ *  fitted (toFit==true) or to be kept constant (toFit==false).
+ */
+struct parInfo {
+    //! Default constructor
+    parInfo()
+    : desc(""),toFit(true), constrained(false), constr_lb(0), constr_ub(0), scale(noscale), unscale(noscale) {}
+
+    //! Constructor
+    /*! \param desc_ Parameter description string
+     *  \param toFit_ true if this parameter should be fitted, false if
+     *         it should be kept fixed. 
+     *  \param constrained_ true if this is a constrained fit
+     *  \param constr_lb_ lower bound for constrained fit
+     *  \param constr_ub_ upper bound for constrained fit
+     *  \param scale_ scaling function
+     *  \param unscale_ unscaling function
+     */
+  parInfo( const std::string& desc_, bool toFit_, bool constrained_ = false, 
+             double constr_lb_ = 0, double constr_ub_ = 0, Scale scale_ = noscale, Scale unscale_ = noscale)
+    : desc(desc_),toFit(toFit_),
+        constrained(false), constr_lb(constr_lb_), constr_ub(constr_ub_),
+        scale(scale_), unscale(unscale_)
+    {}
+
+    std::string desc; /*!< Parameter description string */
+    bool toFit;    /*!< true if this parameter should be fitted, false if it should be kept fixed. */
+    bool constrained; /*!< true if this parameter should be constrained */
+    double constr_lb; /*!< Lower boundary for box-constrained fits */
+    double constr_ub; /*!< Upper boundary for box-constrained fits */
+    Scale scale; /*!< Scaling function for this parameter */
+    Scale unscale; /*!< Unscaling function for this parameter */
+};
+
+//! Print the output of a fit into a stf::Table.
+typedef boost::function<Table(const Vector_double&,const std::vector<stf::parInfo>,double)> Output;
+ 
+//! Default fit output function, constructing a stf::Table from the parameters, their description and chisqr.
+Table defaultOutput(const Vector_double& pars, 
+                    const std::vector<parInfo>& parsInfo,
+                    double chisqr);
+
+//! Initialising function for the parameters in stf::Func to start a fit.
+typedef boost::function<void(const Vector_double&,double,double,double,Vector_double&)> Init;
+
+//! Function used for least-squares fitting.
+/*! Objects of this class are used for fitting functions 
+ *  to data. The client supplies a function (func), its 
+ *  jacobian (jac), information about the function's parameters 
+ *  (pInfo) and a function to initialize the parameters (init).
+ */
+struct StfDll storedFunc {
+
+    //! Constructor
+    /*! \param name_ Plain function name.
+     *  \param pInfo_ A vector containing information about the function parameters.
+     *  \param func_ The function that will be fitted to the data.
+     *  \param jac_ Jacobian of func_.
+     *  \param hasJac_ true if a Jacobian is available.
+     *  \param init_ A function for initialising the parameters.
+     *  \param output_ Output of the fit.
+     */
+    storedFunc( const std::string& name_, const std::vector<parInfo>& pInfo_,
+            const Func& func_, const Init& init_, const Jac& jac_, bool hasJac_ = true,
+            const Output& output_ = defaultOutput /*,
+            bool hasId_ = true*/
+    ) : name(name_),pInfo(pInfo_),func(func_),init(init_),jac(jac_),hasJac(hasJac_),output(output_) /*, hasId(hasId_)*/
+    {
+/*        if (hasId) {
+            id = NextId();
+            std::string new_name;
+            new_name << id << ": " << name;
+            name = new_name;
+        } else
+            id = 0;
+*/    }
+     
+    //! Destructor
+    ~storedFunc() { }
+
+//    static int n_funcs;          /*!< Static function counter */
+//    int id;                      /*!< Function id; set automatically upon construction, so don't touch. */
+    std::string name;            /*!< Function name. */
+    std::vector<parInfo> pInfo;  /*!< A vector containing information about the function parameters. */
+    Func func;                   /*!< The function that will be fitted to the data. */
+    Init init;                   /*!< A function for initialising the parameters. */
+    Jac jac;                     /*!< Jacobian of func. */
+    bool hasJac;                 /*!< True if the function has an analytic Jacobian. */
+    Output output;               /*!< Output of the fit. */
+//    bool hasId;                  /*!< Determines whether a function should have an id. */
+
+};
+
 //! Computes a spectral estimate using Welch's method. 
 /*! \param data An input valarray of complex numbers.
  *  \param K \e data will be split into \e K windows.
@@ -99,7 +207,7 @@ filter(
         std::size_t filter_end,  
         const Vector_double &a,
         int SR,
-        stfio::Func func,
+        stf::Func func,
         bool inverse = false
 );
 
@@ -300,14 +408,12 @@ int pow2(int arg);
  */
 wxString noPath(const wxString& fName);
 
-#endif
-
-
 /*@}*/
 
 }
 
-#ifndef MODULE_ONLY
+typedef std::vector< stf::storedFunc >::const_iterator c_stfunc_it; /*!< constant stf::storedFunc iterator */
+
 inline double stf::window(double n, double N) {
     return 1.0-(pow((2.0*n-N)/N,2.0));
 }
@@ -366,6 +472,5 @@ std::vector<T> stf::diff(const std::vector<T>& input, T x_scale) {
 
 template <typename T>
 inline T stf::SQR(T a) {return a*a;}
-#endif
 
 #endif

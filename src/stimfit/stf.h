@@ -93,6 +93,96 @@ wxString std2wx(const std::string& sst);
 //! Get a Recording, do something with it, return the new Recording.
 typedef boost::function<Recording(const Recording&,const Vector_double&,std::map<std::string, double>&)> PluginFunc;
 
+//! A table used for printing information.
+/*! Members will throw std::out_of_range if out of range.
+ */
+class StfDll Table {
+public:
+    //! Constructor
+    /*! \param nRows Initial number of rows.
+     *  \param nCols Initial number of columns.
+     */
+    Table(std::size_t nRows,std::size_t nCols);
+
+    //! Constructor
+    /*! \param map A map used to initialise the table.
+     */
+    Table(const std::map< std::string, double >& map);
+
+    //! Range-checked access. Returns a copy. Throws std::out_of_range if out of range.
+    /*! \param row 0-based row index.
+     *  \param col 0-based column index.
+     *  \return A copy of the double at row, col.
+     */
+    double at(std::size_t row,std::size_t col) const;
+
+    //! Range-checked access. Returns a reference. Throws std::out_of_range if out of range.
+    /*! \param row 0-based row index.
+     *  \param col 0-based column index.
+     *  \return A reference to the double at row, col.
+     */
+    double& at(std::size_t row,std::size_t col);
+    
+    //! Check whether a cell is empty.
+    /*! \param row 0-based row index.
+     *  \param col 0-based column index.
+     *  \return true if empty, false otherwise.
+     */
+    bool IsEmpty(std::size_t row,std::size_t col) const;
+
+    //! Empties or un-empties a cell.
+    /*! \param row 0-based row index.
+     *  \param col 0-based column index.
+     *  \param value true if the cell should be empty, false otherwise.
+     */
+    void SetEmpty(std::size_t row,std::size_t col,bool value=true);
+
+    //! Sets the label of a row.
+    /*! \param row 0-based row index.
+     *  \param label Row label string.
+     */
+    void SetRowLabel(std::size_t row,const std::string& label);
+
+    //! Sets the label of a column.
+    /*! \param col 0-based column index.
+     *  \param label Column label string.
+     */
+    void SetColLabel(std::size_t col,const std::string& label);
+
+    //! Retrieves the label of a row.
+    /*! \param row 0-based row index.
+     *  \return Row label string.
+     */
+    const std::string& GetRowLabel(std::size_t row) const;
+
+    //! Retrieves the label of a column.
+    /*! \param col 0-based column index.
+     *  \return Column label string.
+     */
+    const std::string& GetColLabel(std::size_t col) const;
+
+    //! Retrieves the number of rows.
+    /*! \return The number of rows.
+     */
+    std::size_t nRows() const { return rowLabels.size(); }
+
+    //! Retrieves the number of columns.
+    /*! \return The number of columns.
+     */
+    std::size_t nCols() const { return colLabels.size(); }
+    
+    //! Appends rows to the table.
+    /*! \param nRows The number of rows to be appended.
+     */
+    void AppendRows(std::size_t nRows);
+
+private:
+    // row major order:
+    std::vector< std::vector<double> > values;
+    std::vector< std::deque< bool > > empty;
+    std::vector< std::string > rowLabels;
+    std::vector< std::string > colLabels;
+};
  
 //! Represents user input from dialogs that can be used in plugins.
 struct UserInput {
@@ -215,6 +305,94 @@ struct ofstreamMan {
     //! The managed stream.
     wxFFile myStream;
 };
+ 
+//! Describes the attributes of an event.
+class Event {
+public:
+    //! Constructor
+    explicit Event(std::size_t start, std::size_t peak, std::size_t size, bool discard_ = false) : 
+        eventStartIndex(start), eventPeakIndex(peak), eventSize(size), discard(discard_) { }
+    
+    //! Destructor
+    ~Event() {}
+
+    //! Retrieves the start index of an event.
+    /*! \return The start index of an event within a section. */
+    std::size_t GetEventStartIndex() const { return eventStartIndex; }
+
+    //! Retrieves the index of an event's peak.
+    /*! \return The index of an event's peak within a section. */
+    std::size_t GetEventPeakIndex() const { return eventPeakIndex; }
+
+    //! Retrieves the size of an event.
+    /*! \return The size of an event in units of data points. */
+    std::size_t GetEventSize() const { return eventSize; }
+
+    //! Indicates whether an event should be discarded.
+    /*! \return true if it should be discarded, false otherwise. */
+    bool GetDiscard() const { return discard; }
+
+    //! Sets the start index of an event.
+    /*! \param value The start index of an event within a section. */
+    void SetEventStartIndex( std::size_t value ) { eventStartIndex = value; }
+
+    //! Sets the index of an event's peak.
+    /*! \param value The index of an event's peak within a section. */
+    void SetEventPeakIndex( std::size_t value ) { eventPeakIndex = value; }
+
+    //! Sets the size of an event.
+    /*! \param value The size of an event in units of data points. */
+    void SetEventSize( std::size_t value ) { eventSize = value; }
+
+    //! Determines whether an event should be discarded.
+    /*! \return true if it should be discarded, false otherwise. */
+    void SetDiscard( bool value ) { discard = value; }
+
+    //! Sets discard to true if it was false and vice versa.
+    void ToggleStatus() { discard = !discard; }
+
+private:
+    std::size_t eventStartIndex;
+    std::size_t eventPeakIndex;
+    std::size_t eventSize;
+    bool discard;
+};
+
+//! A marker that can be set from Python
+/*! A pair of x,y coordinates
+ */
+struct PyMarker {
+    //! Constructor
+    /*! \param xv x-coordinate.
+     *  \param yv y-coordinate.
+     */
+    PyMarker( double xv, double yv ) : x(xv), y(yv) {} 
+    double x; /*!< x-coordinate in units of sampling points */
+    double y; /*!< y-coordinate in trace units (e.g. mV) */
+};
+
+struct storedFunc;
+ 
+struct SectionAttributes {
+    SectionAttributes();
+    std::vector<stf::Event> eventList;
+    std::vector<stf::PyMarker> pyMarkers;
+    bool isFitted,isIntegrated;
+    stf::storedFunc *fitFunc;
+    Vector_double bestFitP;
+    Vector_double quad_p;
+    std::size_t storeFitBeg;
+    std::size_t storeFitEnd;
+    std::size_t storeIntBeg;
+    std::size_t storeIntEnd;
+    stf::Table bestFit;
+};
+
+struct SectionPointer {
+    SectionPointer(Section* pSec=NULL, const SectionAttributes& sa=SectionAttributes());
+    Section* pSection;
+    SectionAttributes sec_attr;
+};
 
 //! Add decimals if you are not satisfied.
 const double PI=3.14159265358979323846;
@@ -305,6 +483,10 @@ inline int stf::round(double toRound) {
 
 typedef std::vector< wxString >::iterator       wxs_it;      /*!< std::string iterator */
 typedef std::vector< wxString >::const_iterator c_wxs_it;    /*!< constant std::string iterator */
+typedef std::vector< stf::Event      >::iterator       event_it;    /*!< stf::Event iterator */
+typedef std::vector< stf::Event      >::const_iterator c_event_it;  /*!< constant stf::Event iterator */
+typedef std::vector< stf::PyMarker   >::iterator       marker_it;   /*!< stf::PyMarker iterator */
+typedef std::vector< stf::PyMarker   >::const_iterator c_marker_it; /*!< constant stf::PyMarker iterator */
 
 // Doxygen-links to documentation of frequently used wxWidgets-classes
 

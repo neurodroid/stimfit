@@ -351,7 +351,7 @@ public:
     void DrawHLine(wxDC* pDC, double y, const wxPen& pen, const wxPen& printPen);
     void eventArrow(wxDC* pDC, int eventIndex);
     void DrawFit(wxDC* pDC);
-    void PlotFit( wxDC* pDC, const Section& Sec );
+    void PlotFit( wxDC* pDC, const stf::SectionPointer& Sec );
     void DrawIntegral(wxDC* pDC);
     void CreateScale(wxDC* pDC);
 

@@ -26,7 +26,7 @@
  */
 
 //! A checkbox used to select or unselect detected events.
-/*! Toggles the stfio::Event status, and forwards keyboard input to the graph.*/
+/*! Toggles the stf::Event status, and forwards keyboard input to the graph.*/
 class wxStfCheckBox : public wxCheckBox {
 DECLARE_CLASS(wxStfCheckBox)
 public:
@@ -45,7 +45,7 @@ public:
         wxWindow *parent,
         wxWindowID id,
         const wxString& label,
-        stfio::Event* pEvent,
+        stf::Event* pEvent,
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
         long style = 0,
@@ -56,13 +56,13 @@ public:
     //! Resets the pointer to the attached event
     /*! \param pEvent The pointer to the new event
      */
-    void ResetEvent( stfio::Event* pEvent ) { m_pEvent = pEvent; SetValue( !pEvent->GetDiscard() );}
+    void ResetEvent( stf::Event* pEvent ) { m_pEvent = pEvent; SetValue( !pEvent->GetDiscard() );}
 
 private:
     void OnKeyDown(wxKeyEvent& event);
     void OnStfClicked(wxMouseEvent& event);
 
-    stfio::Event* m_pEvent;
+    stf::Event* m_pEvent;
 
 DECLARE_EVENT_TABLE()
 };

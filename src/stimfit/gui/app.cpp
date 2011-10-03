@@ -72,13 +72,8 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
-// #if defined(_WINDOWS) || defined (STF_TEST)
 extern wxStfApp& wxGetApp();
 wxStfApp& wxGetApp() { return *static_cast<wxStfApp*>(wxApp::GetInstance()); }
-// #endif
-// #if !defined(_WINDOWS) && !defined(STF_TEST)
-// IMPLEMENT_APP(wxStfApp)
-// #endif
 
 wxStfParentFrame *frame = (wxStfParentFrame *) NULL;
 
@@ -435,15 +430,15 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
 
              // first PSlope cursor
              actDoc->SetPSlopeBegMode(CursorsDialog->GetPSlopeBegMode());
-             if (actDoc->GetPSlopeBegMode() == stfio::psBeg_manualMode)
+             if (actDoc->GetPSlopeBegMode() == stf::psBeg_manualMode)
                 actDoc->SetPSlopeBeg(CursorsDialog->GetCursor1PS());
 
              // second PSlope cursor
              actDoc->SetPSlopeEndMode(CursorsDialog->GetPSlopeEndMode());
-             if (actDoc->GetPSlopeEndMode() == stfio::psEnd_manualMode)
+             if (actDoc->GetPSlopeEndMode() == stf::psEnd_manualMode)
                 actDoc->SetPSlopeEnd(CursorsDialog->GetCursor2PS());
              // we take data from CursorsDialog only if we need the DeltaT
-             //else if (actDoc->GetPSlopeEndMode() == stfio::psEnd_DeltaTMode){
+             //else if (actDoc->GetPSlopeEndMode() == stf::psEnd_DeltaTMode){
                 actDoc->SetDeltaT(CursorsDialog->GetDeltaT());
              
              break;
@@ -1324,13 +1319,13 @@ void wxStfApp::CleanupDocument(wxStfDoc* pDoc) {
     // GetDocManager()->FileHistoryAddFilesToMenu();
 }
 
-std::vector<Section*> wxStfApp::GetSectionsWithFits() const {
+std::vector<stf::SectionPointer> wxStfApp::GetSectionsWithFits() const {
     // Search the document's template list for open documents:
     wxList docList=GetDocManager()->GetDocuments();
     if (docList.IsEmpty()) {
-        return std::vector<Section*>(0);
+        return std::vector<stf::SectionPointer>(0);
     }
-    std::vector<Section*> sectionList;
+    std::vector<stf::SectionPointer> sectionList;
     // Since random access is expensive, go through the list node by node:
     // Get first node:
     wxObjectList::compatibility_iterator curNode=docList.GetFirst();
@@ -1338,14 +1333,17 @@ std::vector<Section*> wxStfApp::GetSectionsWithFits() const {
         wxStfDoc* pDoc=(wxStfDoc*)curNode->GetData();
         try {
             for (std::size_t n_sec=0;n_sec<pDoc->get().at(pDoc->GetCurCh()).size();++n_sec) {
-                if (pDoc->get().at(pDoc->GetCurCh()).at(n_sec).IsFitted()) {
-                    sectionList.push_back(&pDoc->get()[pDoc->GetCurCh()][n_sec]);
+                stf::SectionAttributes sec_attr = pDoc->GetSectionAttributes(pDoc->GetCurCh(), n_sec);
+                if (sec_attr.isFitted) {
+                    sectionList.push_back(stf::SectionPointer(&pDoc->get()[pDoc->GetCurCh()][n_sec],
+                                                              sec_attr)
+                                          );
                 }
             }
         }
         catch (const std::out_of_range& e) {
             ExceptMsg( wxString( e.what(), wxConvLocal ) );
-            return std::vector<Section*>(0);
+            return std::vector<stf::SectionPointer>(0);
         }
         curNode=curNode->GetNext();
     }
@@ -1370,24 +1368,6 @@ wxString wxStfApp::GetVersionString() const {
 wxStfParentFrame *GetMainFrame(void)
 {
     return frame;
-}
-
-stf::wxProgressInfo::wxProgressInfo(const std::string& title, const std::string& message, int maximum, bool verbose)
-    : ProgressInfo(title, message, maximum, verbose),
-      pd(stf::std2wx(title), stf::std2wx(message), maximum, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL )
-{
-    
-}
-
-bool stf::wxProgressInfo::Update(int value, const std::string& newmsg, bool* skip) {
-    return pd.Update(value, stf::std2wx(newmsg), skip);
-}
-
-std::string stf::wx2std(const wxString& wxs) {
-    return std::string(wxs.mb_str());
-}
-wxString stf::std2wx(const std::string& sst) {
-    return wxString(sst.c_str(), wxConvUTF8);
 }
 
 //  LocalWords:  wxStfView

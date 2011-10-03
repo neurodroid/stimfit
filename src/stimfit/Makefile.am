@@ -1,6 +1,6 @@
 pkglib_LTLIBRARIES = libstimfit.la
 
-libstimfit_la_SOURCES = ./math/fit.cpp \
+libstimfit_la_SOURCES = ./stf.cpp ./math/fit.cpp \
             ./math/levmar/lm.c ./math/levmar/Axb.c ./math/levmar/misc.c ./math/levmar/lmlec.c ./math/levmar/lmbc.c \
             ./math/funclib.cpp ./math/stfmath.cpp ./math/measure.cpp \
             ./gui/app.cpp ./gui/unopt.cpp ./gui/doc.cpp ./gui/stfcheckbox.cpp ./gui/copygrid.cpp ./gui/graph.cpp \

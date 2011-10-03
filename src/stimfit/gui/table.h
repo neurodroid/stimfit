@@ -33,7 +33,7 @@ public:
     //! Constructor
     /*! \param table_ The associated stf::Table
      */
-    wxStfTable(const stfio::Table& table_) : table(table_) {}
+    wxStfTable(const stf::Table& table_) : table(table_) {}
 
     //! Get the number of rows.
     /*! \return The number of rows.
@@ -73,7 +73,7 @@ public:
     wxString GetSelection(const wxGridCellCoordsArray& selection);
 
 private:
-    stfio::Table table;
+    stf::Table table;
 };
 
 /*@}*/
