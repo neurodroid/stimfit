@@ -12,6 +12,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#include "./stfio.h"
 #include "./channel.h"
 
 Channel::Channel(void) 
@@ -63,3 +64,7 @@ Section& Channel::at(std::size_t at_) {
         throw;
     }
 }
+
+void Channel::resize(std::size_t newSize) { SectionArray.resize(newSize); }
+
+void Channel::reserve(std::size_t resSize) { SectionArray.reserve(resSize); }

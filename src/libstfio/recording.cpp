@@ -13,6 +13,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
+#include "./stfio.h"
 #include "./recording.h"
 
 #include <sstream>

@@ -56,7 +56,6 @@
 #include "./../gui/parentframe.h"
 #include "./../gui/childframe.h"
 #include "./../gui/dlgs/cursorsdlg.h"
-#include "./../../libstfio/recording.h"
 #include "./../math/fit.h"
 
 std::vector< std::vector< Vector_double > > gMatrix;

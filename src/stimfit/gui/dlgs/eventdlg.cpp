@@ -6,7 +6,6 @@
 
 
 #include "./../../stf.h"
-#include "./../../../libstfio/section.h"
 #include "./eventdlg.h"
 
 enum {wxID_COMBOTEMPLATES};

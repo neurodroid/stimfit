@@ -25,7 +25,7 @@
  *  @{
  */
 
-#include "./section.h"
+class Section;
 
 //! A Channel contains several data \link #Section Sections \endlink representing observations of the same physical quantity.
 class StfDll Channel {
@@ -141,13 +141,13 @@ public:
     //! Resize the section array.
     /*! \param newSize The new number of sections.
      */
-    void resize(std::size_t newSize) { SectionArray.resize(newSize); }
+    void resize(std::size_t newSize);
 
     //! Reserve memory for a number of sections.
     /*! This will avoid unnecessary memory re-allocations.
      *  \param resSize The number of sections to reserve memory for.
      */
-    void reserve(std::size_t resSize) { SectionArray.reserve(resSize); }
+    void reserve(std::size_t resSize);
 
 private:
     //private members---------------------------------------------

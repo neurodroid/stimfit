@@ -26,7 +26,6 @@
  */
 
 #include "./../stf.h"
-#include "./../../libstfio/recording.h"
 
 //! The document class, derived from both wxDocument and Recording.
 /*! The document class can be used to model an application’s file-based data.

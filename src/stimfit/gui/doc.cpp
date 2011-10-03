@@ -169,9 +169,13 @@ wxStfDoc::wxStfDoc() :
     viewLatency(true),
     viewCursors(true),
     xzoom(XZoom(0, 0.1, false)),
-    yzoom(std::vector<YZoom>(size(), YZoom(500,0.1,false))),
+    yzoom(size(), YZoom(500,0.1,false)),
     sec_attr(size())
-{}
+{
+    for (std::size_t nchannel=0; nchannel < sec_attr.size(); ++nchannel) {
+        sec_attr[nchannel].resize(at(nchannel).size());
+    }
+}
 
 wxStfDoc::~wxStfDoc()
 {}
@@ -445,6 +449,14 @@ void wxStfDoc::PostInit() {
         wxGetApp().ErrorMsg( wxT("Zero pointer in wxStfDoc::PostInit") );
         return;
     }
+
+    // Update some vector sizes
+    sec_attr.resize(size());
+    for (std::size_t nchannel=0; nchannel < sec_attr.size(); ++nchannel) {
+        sec_attr[nchannel].resize(at(nchannel).size());
+    }
+    yzoom.resize(size());
+    
     try {
         pFrame->CreateMenuTraces(get().at(GetCurCh()).size());
         if ( size() > 1 ) {
@@ -1119,6 +1131,7 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
     }
     catch (const std::out_of_range e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+        return;
     }
 
     // Refresh the graph to show the fit before
@@ -3080,7 +3093,7 @@ void wxStfDoc::SetIsFitted( std::size_t nchannel, std::size_t nsection,
 
 void wxStfDoc::DeleteFit(std::size_t nchannel, std::size_t nsection) {
     if (nchannel >= sec_attr.size() || nsection >= sec_attr[nchannel].size()) {
-        throw std::out_of_range("Index out of range in wxStfDoc::SetIsFitted");
+        throw std::out_of_range("Index out of range in wxStfDoc::DeleteFit");
     }
     sec_attr[nchannel][nsection].fitFunc = NULL;
     sec_attr[nchannel][nsection].bestFitP.resize( 0 );
@@ -3093,7 +3106,7 @@ void wxStfDoc::SetIsIntegrated(std::size_t nchannel, std::size_t nsection, bool 
                                std::size_t begin, std::size_t end, const Vector_double& quad_p_)
 {
     if (nchannel >= sec_attr.size() || nsection >= sec_attr[nchannel].size()) {
-        throw std::out_of_range("Index out of range in wxStfDoc::SetIsFitted");
+        throw std::out_of_range("Index out of range in wxStfDoc::SetIsIntegrated");
     }
     if (value==false) {
         sec_attr[nchannel][nsection].isIntegrated=value;

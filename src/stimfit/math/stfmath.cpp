@@ -24,7 +24,6 @@
 #include <wx/filename.h>
 
 #include "stfmath.h"
-#include "../../libstfio/section.h"
 
 double stf::fgauss(double x, const Vector_double& pars) {
     double y=0.0, /* fac=0.0, */ ex=0.0, arg=0.0;

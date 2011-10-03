@@ -31,8 +31,6 @@
  *  @{
  */
 
-#include "./stfio.h"
-
 //! Represents a continuously sampled sweep of data points
 class StfDll Section {
 public:

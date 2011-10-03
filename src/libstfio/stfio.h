@@ -50,9 +50,13 @@
 typedef std::vector<double > Vector_double;
 typedef std::vector<float > Vector_float;
 
-class Recording;
-class Channel;
-class Section;
+#include "./recording.h"
+#include "./channel.h"
+#include "./section.h"
+
+/* class Recording; */
+/* class Channel; */
+/* class Section; */
 
 //! The stfio namespace.
 /*! All essential core functions and classes are in this namespace. 
