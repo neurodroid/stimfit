@@ -1146,7 +1146,7 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
     wxString label; label << wxT("Fit, Section #") << (int)GetCurSec();
     try {
-        pFrame->ShowTable(sec_attr.at(GetCurCh()).at(GetCurCh()).bestFit, label);
+        pFrame->ShowTable(sec_attr.at(GetCurCh()).at(GetCurSec()).bestFit, label);
     }
     catch (const std::out_of_range e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
