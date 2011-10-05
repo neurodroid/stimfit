@@ -1332,7 +1332,7 @@ std::vector<stf::SectionPointer> wxStfApp::GetSectionsWithFits() const {
     while (curNode!=NULL) {
         wxStfDoc* pDoc=(wxStfDoc*)curNode->GetData();
         try {
-            for (std::size_t n_sec=0;n_sec<pDoc->get().at(pDoc->GetCurCh()).size();++n_sec) {
+            for (std::size_t n_sec=0; n_sec < pDoc->get().at(pDoc->GetCurCh()).size(); ++n_sec) {
                 stf::SectionAttributes sec_attr = pDoc->GetSectionAttributes(pDoc->GetCurCh(), n_sec);
                 if (sec_attr.isFitted) {
                     sectionList.push_back(stf::SectionPointer(&pDoc->get()[pDoc->GetCurCh()][n_sec],
