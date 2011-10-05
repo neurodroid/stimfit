@@ -1,5 +1,5 @@
-#include "../stf.h"
-#include "../math/measure.h"
+#include "../stimfit/stf.h"
+#include "../stimfit/math/measure.h"
 #include <gtest/gtest.h>
 
 TEST(measlib_test, checks) {

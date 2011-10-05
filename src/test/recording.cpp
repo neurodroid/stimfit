@@ -1,4 +1,4 @@
-#include "../../libstfio/stfio.h"
+#include "../libstfio/stfio.h"
 #include <gtest/gtest.h>
 
 TEST(Recording_test, constructors)

@@ -6,8 +6,8 @@ check_PROGRAMS = stimfittest
 TESTS = ${check_PROGRAMS}
 stimfit_SOURCES = ./src/stimfit/gui/main.cpp
 
-stimfittest_SOURCES = ./src/stimfit/test/section.cpp ./src/stimfit/test/channel.cpp ./src/stimfit/test/recording.cpp ./src/stimfit/test/measure.cpp \
-            ./src/stimfit/test/gtest/src/gtest-all.cc ./src/stimfit/test/gtest/src/gtest_main.cc
+stimfittest_SOURCES = ./src/test/section.cpp ./src/test/channel.cpp ./src/test/recording.cpp ./src/test/measure.cpp \
+            ./src/test/gtest/src/gtest-all.cc ./src/test/gtest/src/gtest_main.cc
 
 noinst_HEADERS = ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfio/recording.h ./src/libstfio/stfio.h \
 	./src/libstfio/cfs/cfslib.h ./src/libstfio/cfs/cfs.h ./src/libstfio/cfs/machine.h \
@@ -65,31 +65,31 @@ noinst_HEADERS = ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfi
 	./src/stimfit/gui/dlgs/fitseldlg.h ./src/stimfit/gui/dlgs/smalldlgs.h \
 	./src/stimfit/math/funclib.h \
 	./src/stimfit/gui/usrdlg/usrdlg.h \
-	./src/stimfit/test/gtest/include/gtest/gtest-death-test.h \
-	./src/stimfit/test/gtest/include/gtest/gtest-message.h \
-	./src/stimfit/test/gtest/include/gtest/gtest-param-test.h.pump \
-	./src/stimfit/test/gtest/include/gtest/gtest-printers.h \
-	./src/stimfit/test/gtest/include/gtest/gtest-spi.h \
-	./src/stimfit/test/gtest/include/gtest/gtest-typed-test.h \
-	./src/stimfit/test/gtest/include/gtest/gtest.h \
-	./src/stimfit/test/gtest/include/gtest/gtest-param-test.h	\
-	./src/stimfit/test/gtest/include/gtest/gtest_pred_impl.h \
-	./src/stimfit/test/gtest/include/gtest/gtest_prod.h \
-	./src/stimfit/test/gtest/include/gtest/gtest-test-part.h  \
-	./src/stimfit/test/gtest/include/gtest/internal/gtest-death-test-internal.h \
-	./src/stimfit/test/gtest/include/gtest/internal/gtest-linked_ptr.h \
-	./src/stimfit/test/gtest/include/gtest/internal/gtest-param-util.h \
-	./src/stimfit/test/gtest/include/gtest/internal/gtest-tuple.h \
-	./src/stimfit/test/gtest/include/gtest/internal/gtest-type-util.h.pump \
-	./src/stimfit/test/gtest/include/gtest/internal/gtest-filepath.h \
-	./src/stimfit/test/gtest/include/gtest/internal/gtest-param-util-generated.h \
-	./src/stimfit/test/gtest/include/gtest/internal/gtest-port.h \
-	./src/stimfit/test/gtest/include/gtest/internal/gtest-tuple.h.pump \
-	./src/stimfit/test/gtest/include/gtest/internal/gtest-internal.h \
-	./src/stimfit/test/gtest/include/gtest/internal/gtest-param-util-generated.h.pump \
-	./src/stimfit/test/gtest/include/gtest/internal/gtest-string.h \
-	./src/stimfit/test/gtest/include/gtest/internal/gtest-type-util.h \
-	./src/stimfit/test/gtest/src/gtest-internal-inl.h
+	./src/test/gtest/include/gtest/gtest-death-test.h \
+	./src/test/gtest/include/gtest/gtest-message.h \
+	./src/test/gtest/include/gtest/gtest-param-test.h.pump \
+	./src/test/gtest/include/gtest/gtest-printers.h \
+	./src/test/gtest/include/gtest/gtest-spi.h \
+	./src/test/gtest/include/gtest/gtest-typed-test.h \
+	./src/test/gtest/include/gtest/gtest.h \
+	./src/test/gtest/include/gtest/gtest-param-test.h	\
+	./src/test/gtest/include/gtest/gtest_pred_impl.h \
+	./src/test/gtest/include/gtest/gtest_prod.h \
+	./src/test/gtest/include/gtest/gtest-test-part.h  \
+	./src/test/gtest/include/gtest/internal/gtest-death-test-internal.h \
+	./src/test/gtest/include/gtest/internal/gtest-linked_ptr.h \
+	./src/test/gtest/include/gtest/internal/gtest-param-util.h \
+	./src/test/gtest/include/gtest/internal/gtest-tuple.h \
+	./src/test/gtest/include/gtest/internal/gtest-type-util.h.pump \
+	./src/test/gtest/include/gtest/internal/gtest-filepath.h \
+	./src/test/gtest/include/gtest/internal/gtest-param-util-generated.h \
+	./src/test/gtest/include/gtest/internal/gtest-port.h \
+	./src/test/gtest/include/gtest/internal/gtest-tuple.h.pump \
+	./src/test/gtest/include/gtest/internal/gtest-internal.h \
+	./src/test/gtest/include/gtest/internal/gtest-param-util-generated.h.pump \
+	./src/test/gtest/include/gtest/internal/gtest-string.h \
+	./src/test/gtest/include/gtest/internal/gtest-type-util.h \
+	./src/test/gtest/src/gtest-internal-inl.h
 
 if WITH_BIOSIG
     noinst_HEADERS += ./src/libstfio/biosig/biosiglib.h
@@ -158,17 +158,17 @@ EXTRA_DIST+= ./debian/stimfit.desktop
 EXTRA_DIST+= ./debian/stimfit.files
 EXTRA_DIST+= ./debian/stimfit.install
 EXTRA_DIST+= ./debian/stimfit.menu
-EXTRA_DIST+= ./src/stimfit/test/gtest/CHANGES
-EXTRA_DIST+= ./src/stimfit/test/gtest/CONTRIBUTORS
-EXTRA_DIST+= ./src/stimfit/test/gtest/COPYING
-EXTRA_DIST+= ./src/stimfit/test/gtest/README
-EXTRA_DIST+= ./src/stimfit/test/gtest/src/gtest.cc
-EXTRA_DIST+= ./src/stimfit/test/gtest/src/gtest-death-test.cc
-EXTRA_DIST+= ./src/stimfit/test/gtest/src/gtest-filepath.cc
-EXTRA_DIST+= ./src/stimfit/test/gtest/src/gtest-port.cc
-EXTRA_DIST+= ./src/stimfit/test/gtest/src/gtest-printers.cc
-EXTRA_DIST+= ./src/stimfit/test/gtest/src/gtest-test-part.cc
-EXTRA_DIST+= ./src/stimfit/test/gtest/src/gtest-typed-test.cc
+EXTRA_DIST+= ./src/test/gtest/CHANGES
+EXTRA_DIST+= ./src/test/gtest/CONTRIBUTORS
+EXTRA_DIST+= ./src/test/gtest/COPYING
+EXTRA_DIST+= ./src/test/gtest/README
+EXTRA_DIST+= ./src/test/gtest/src/gtest.cc
+EXTRA_DIST+= ./src/test/gtest/src/gtest-death-test.cc
+EXTRA_DIST+= ./src/test/gtest/src/gtest-filepath.cc
+EXTRA_DIST+= ./src/test/gtest/src/gtest-port.cc
+EXTRA_DIST+= ./src/test/gtest/src/gtest-printers.cc
+EXTRA_DIST+= ./src/test/gtest/src/gtest-test-part.cc
+EXTRA_DIST+= ./src/test/gtest/src/gtest-typed-test.cc
 
 if BUILD_PYTHON
     PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
@@ -187,7 +187,7 @@ stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS) $(
 stimfit_LDADD = $(WX_LIBS) -lfftw3 ./src/stimfit/libstimfit.la ./src/libstfio/libstfio.la # $(PYTHON_ADDLIBS) 
 
 stimfittest_CXXFLAGS = $(GT_CXXFLAGS) $(WX_CXXFLAGS)
-stimfittest_CPPFLAGS = ${CPPFLAGS} $(GT_CPPFLAGS) -DSTF_TEST -I$(top_srcdir)/src/stimfit/test/gtest -I$(top_srcdir)/src/stimfit/test/gtest/include
+stimfittest_CPPFLAGS = ${CPPFLAGS} $(GT_CPPFLAGS) -DSTF_TEST -I$(top_srcdir)/src/test/gtest -I$(top_srcdir)/src/test/gtest/include
 stimfittest_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(GT_LDFLAGS)
 stimfittest_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) $(GT_LIBS) -lfftw3 ./src/stimfit/libstimfit.la ./src/libstfio/libstfio.la
 
