@@ -6,7 +6,7 @@ check_PROGRAMS = stimfittest
 TESTS = ${check_PROGRAMS}
 stimfit_SOURCES = ./src/stimfit/gui/main.cpp
 
-stimfittest_SOURCES = ./src/stimfit/test/section.cpp ./src/stimfit/test/channel.cpp ./src/stimfit/test/recording.cpp ./src/stimfit/test/measlib.cpp \
+stimfittest_SOURCES = ./src/stimfit/test/section.cpp ./src/stimfit/test/channel.cpp ./src/stimfit/test/recording.cpp ./src/stimfit/test/measure.cpp \
             ./src/stimfit/test/gtest/src/gtest-all.cc ./src/stimfit/test/gtest/src/gtest_main.cc
 
 noinst_HEADERS = ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfio/recording.h ./src/libstfio/stfio.h \
@@ -189,7 +189,7 @@ stimfit_LDADD = $(WX_LIBS) -lfftw3 ./src/stimfit/libstimfit.la ./src/libstfio/li
 stimfittest_CXXFLAGS = $(GT_CXXFLAGS) $(WX_CXXFLAGS)
 stimfittest_CPPFLAGS = ${CPPFLAGS} $(GT_CPPFLAGS) -DSTF_TEST -I$(top_srcdir)/src/stimfit/test/gtest -I$(top_srcdir)/src/stimfit/test/gtest/include
 stimfittest_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(GT_LDFLAGS)
-stimfittest_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) $(GT_LIBS) -lfftw3 ./src/stimfit/gui/libstimfit.la
+stimfittest_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) $(GT_LIBS) -lfftw3 ./src/stimfit/libstimfit.la ./src/libstfio/libstfio.la
 
 if BUILD_DEBIAN
 LTTARGET=/usr/lib/stimfit

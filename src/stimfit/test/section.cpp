@@ -1,4 +1,4 @@
-#include "../core/section.h"
+#include "../../libstfio/stfio.h"
 #include <gtest/gtest.h>
 
 TEST(Section_test, constructors) {
