@@ -92,11 +92,11 @@ class Section {
     ~Recording() {delete $self;}
 
     double dt;
-    std::string file_description;
-    std::string time;
-    std::string date;
-    std::string comment;
-    std::string xunits;
+    char* file_description;
+    char* time;
+    char* date;
+    char* comment;
+    char* xunits;
     
     Channel& __getitem__(int at) {
         if (at >= 0 && at < (int)$self->size()) {
@@ -138,32 +138,32 @@ class Section {
     void Recording_dt_set(Recording *r, double val) {
         r->SetXScale(val);
     }
-    std::string Recording_file_description_get(Recording *r) {
-        return r->GetFileDescription();
+    const char* Recording_file_description_get(Recording *r) {
+        return r->GetFileDescription().c_str();
     }
     void Recording_file_description_set(Recording *r, const std::string& val) {
         r->SetFileDescription(val);
     }
-    std::string Recording_time_get(Recording *r) {
-        return r->GetTime();
+    const char* Recording_time_get(Recording *r) {
+        return r->GetTime().c_str();
     }
     void Recording_time_set(Recording *r, const std::string& val) {
         r->SetTime(val);
     }
-    std::string Recording_date_get(Recording *r) {
-        return r->GetDate();
+    const char* Recording_date_get(Recording *r) {
+        return r->GetDate().c_str();
     }
     void Recording_date_set(Recording *r, const std::string& val) {
         r->SetDate(val);
     }
-    std::string Recording_xunits_get(Recording *r) {
-        return r->GetXUnits();
+    const char* Recording_xunits_get(Recording *r) {
+        return r->GetXUnits().c_str();
     }
     void Recording_xunits_set(Recording *r, const std::string& val) {
         r->SetXUnits(val);
     }
-    std::string Recording_comment_get(Recording *r) {
-        return r->GetComment();
+    const char* Recording_comment_get(Recording *r) {
+        return r->GetComment().c_str();
     }
     void Recording_comment_set(Recording *r, const std::string& val) {
         r->SetComment(val);
@@ -201,8 +201,8 @@ class Section {
 
     ~Channel() {delete $self;}
 
-    std::string name;
-    std::string yunits;
+    char* name;
+    char* yunits;
     
     Section& __getitem__(int at) {
         if (at >= 0 && at < (int)$self->size()) {
@@ -217,14 +217,14 @@ class Section {
 }
 
 %{
-    std::string Channel_name_get(Channel *c) {
-        return c->GetChannelName();
+    const char* Channel_name_get(Channel *c) {
+        return c->GetChannelName().c_str();
     }
     void Channel_name_set(Channel *c, const std::string& val) {
         c->SetChannelName(val);
     }
-    std::string Channel_yunits_get(Channel *c) {
-        return c->GetYUnits();
+    const char* Channel_yunits_get(Channel *c) {
+        return c->GetYUnits().c_str();
     }
     void Channel_yunits_set(Channel *c, const std::string& val) {
         c->SetYUnits(val);
