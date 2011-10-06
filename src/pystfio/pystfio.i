@@ -91,14 +91,12 @@ class Section {
     }
     ~Recording() {delete $self;}
 
-#if SWIG_VERSION >= 0x020000
     double dt;
-    char* file_description;
-    char* time;
-    char* date;
-    char* comment;
-    char* xunits;
-#endif
+    std::string file_description;
+    std::string time;
+    std::string date;
+    std::string comment;
+    std::string xunits;
     
     Channel& __getitem__(int at) {
         if (at >= 0 && at < (int)$self->size()) {
@@ -133,7 +131,6 @@ class Section {
     }
 }
 
-#if SWIG_VERSION >= 0x020000
 %{
     double Recording_dt_get(Recording *r) {
         return r->GetXScale();
@@ -141,39 +138,38 @@ class Section {
     void Recording_dt_set(Recording *r, double val) {
         r->SetXScale(val);
     }
-    const char* Recording_file_description_get(Recording *r) {
-        return r->GetFileDescription().c_str();
+    std::string Recording_file_description_get(Recording *r) {
+        return r->GetFileDescription();
     }
-    void Recording_file_description_set(Recording *r, char* val) {
-        r->SetFileDescription(std::string(val));
+    void Recording_file_description_set(Recording *r, const std::string& val) {
+        r->SetFileDescription(val);
     }
-    const char* Recording_time_get(Recording *r) {
-        return r->GetTime().c_str();
+    std::string Recording_time_get(Recording *r) {
+        return r->GetTime();
     }
-    void Recording_time_set(Recording *r, char* val) {
-        r->SetTime(std::string(val));
+    void Recording_time_set(Recording *r, const std::string& val) {
+        r->SetTime(val);
     }
-    const char* Recording_date_get(Recording *r) {
-        return r->GetDate().c_str();
+    std::string Recording_date_get(Recording *r) {
+        return r->GetDate();
     }
-    void Recording_date_set(Recording *r, char* val) {
-        r->SetDate(std::string(val));
+    void Recording_date_set(Recording *r, const std::string& val) {
+        r->SetDate(val);
     }
-    const char* Recording_xunits_get(Recording *r) {
-        return r->GetXUnits().c_str();
+    std::string Recording_xunits_get(Recording *r) {
+        return r->GetXUnits();
     }
-    void Recording_xunits_set(Recording *r, char* val) {
-        r->SetXUnits(std::string(val));
+    void Recording_xunits_set(Recording *r, const std::string& val) {
+        r->SetXUnits(val);
     }
-    const char* Recording_comment_get(Recording *r) {
-        return r->GetComment().c_str();
+    std::string Recording_comment_get(Recording *r) {
+        return r->GetComment();
     }
-    void Recording_comment_set(Recording *r, char* val) {
-        r->SetComment(std::string(val));
+    void Recording_comment_set(Recording *r, const std::string& val) {
+        r->SetComment(val);
     }
 
 %}
-#endif
 
 %extend Channel {
     Channel(PyObject* SectionList) {
@@ -205,10 +201,8 @@ class Section {
 
     ~Channel() {delete $self;}
 
-#if SWIG_VERSION >= 0x020000
-    char* name;
-    char* yunits;
-#endif
+    std::string name;
+    std::string yunits;
     
     Section& __getitem__(int at) {
         if (at >= 0 && at < (int)$self->size()) {
@@ -222,23 +216,21 @@ class Section {
     int __len__() { return $self->size(); }
 }
 
-#if SWIG_VERSION >= 0x020000
 %{
-    const char* Channel_name_get(Channel *c) {
-        return c->GetChannelName().c_str();
+    std::string Channel_name_get(Channel *c) {
+        return c->GetChannelName();
     }
-    void Channel_name_set(Channel *c, char *val) {
-        c->SetChannelName(std::string(val));
+    void Channel_name_set(Channel *c, const std::string& val) {
+        c->SetChannelName(val);
     }
-    const char* Channel_yunits_get(Channel *c) {
-        return c->GetYUnits().c_str();
+    std::string Channel_yunits_get(Channel *c) {
+        return c->GetYUnits();
     }
-    void Channel_yunits_set(Channel *c, char* val) {
-        c->SetYUnits(std::string(val));
+    void Channel_yunits_set(Channel *c, const std::string& val) {
+        c->SetYUnits(val);
     }
 
 %}
-#endif
 
 %extend Section {
 
