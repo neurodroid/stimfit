@@ -512,6 +512,13 @@ void wxStfDoc::PostInit() {
 
     // refresh the view once we are through:
     initialized=true;
+    pFrame->SetCurTrace(0);
+    UpdateSelectedButton();
+    wxGetApp().OnPeakcalcexecMsg();
+    wxStfParentFrame* parentFrame = GetMainFrame();
+    if (parentFrame) {
+        parentFrame->SetFocus();
+    }
     wxStfView* pView=(wxStfView*)GetFirstView();
     if (pView != NULL) {
         wxStfGraph* pGraph = pView->GetGraph();
@@ -522,9 +529,6 @@ void wxStfDoc::PostInit() {
             pGraph->SetFocus();
         }
     }
-    pFrame->SetCurTrace(0);
-    UpdateSelectedButton();
-    wxGetApp().OnPeakcalcexecMsg();
 }
 
 //Dialog box to select channel to be displayed
