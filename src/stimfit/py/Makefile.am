@@ -17,9 +17,9 @@ INCLUDES = $(LIBNUMPY_INCLUDES)
 libpystf_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
 libpystf_la_CXXFLAGS = $(OPT_CXXFLAGS) $(WX_CXXFLAGS)
 libpystf_la_LDFLAGS = $(LIBPYTHON_LDFLAGS) $(LIBSTF_LDFLAGS) $(LIBBIOSIG_LDFLAGS)
-libpystf_la_LIBADD = ../libstimfit.la $(WX_LIBS)
+libpystf_la_LIBADD = ../libstimfit.la ../../libstfio/libstfio.la $(WX_LIBS)
 
-EXTRA_DIST = pystf.i numpy.i ivtools.py mintools.py natools.py minidemo.py charlie.py mintools.py hdf5tools.py spells.py embedded_init.py embedded_stf.py embedded_mpl.py embedded_ipython.py heka.py extensions.py Doxyfile gccwarn
+EXTRA_DIST = pystf.i numpy.i ivtools.py mintools.py natools.py minidemo.py charlie.py mintools.py hdf5tools.py spells.py embedded_init.py embedded_stf.py embedded_mpl.py embedded_ipython.py heka.py extensions.py gccwarn
 
 install-exec-hook:
 	cd ${prefix}/lib/stimfit && ln -sf ${STF_PYTHON_LIBNAME} _stf.so

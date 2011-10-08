@@ -1,3 +1,27 @@
+stimfit (0.11.0-1oneiric1) oneiric; urgency=low
+
+  * libstfio factored out as separate, GUI-independent library
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 15:50:54 +0000
+
+stimfit (0.11.0-1natty1) natty; urgency=low
+
+  * libstfio factored out as separate, GUI-independent library
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 15:48:41 +0000
+
+stimfit (0.11.0-1maverick1) maverick; urgency=low
+
+  * libstfio factored out as separate, GUI-independent library
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 15:42:22 +0000
+
+stimfit (0.11.0-1lucid1) lucid; urgency=low
+
+  * libstfio factored out as separate, GUI-independent library
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 14:49:00 +0000
+
 stimfit (0.10.18-1) unstable; urgency=low
 
   * Updated copyright notice for numpy.i

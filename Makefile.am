@@ -184,7 +184,7 @@ INCLUDES = $(PYTHON_ADDINCLUDES)
 
 stimfit_CXXFLAGS = $(OPT_CXXFLAGS) $(WX_CXXFLAGS)
 stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS) $(LIBBIOSIG_LDFLAGS)
-stimfit_LDADD = $(WX_LIBS) -lfftw3 ./src/stimfit/libstimfit.la ./src/libstfio/libstfio.la # $(PYTHON_ADDLIBS) 
+stimfit_LDADD = $(WX_LIBS) -lfftw3 ./src/stimfit/libstimfit.la # $(PYTHON_ADDLIBS) 
 
 stimfittest_CXXFLAGS = $(GT_CXXFLAGS) $(WX_CXXFLAGS)
 stimfittest_CPPFLAGS = ${CPPFLAGS} $(GT_CPPFLAGS) -DSTF_TEST -I$(top_srcdir)/src/test/gtest -I$(top_srcdir)/src/test/gtest/include

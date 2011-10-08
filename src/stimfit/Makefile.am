@@ -12,7 +12,7 @@ libstimfit_la_SOURCES = ./stf.cpp ./math/fit.cpp \
 libstimfit_la_CPPFLAGS = 
 libstimfit_la_CXXFLAGS = $(OPT_CXXFLAGS) $(WX_CXXFLAGS)
 libstimfit_la_LDFLAGS = $(LIBPYTHON_LDFLAGS) $(LIBLAPACK_LDFLAGS) $(LIBSTF_LDFLAGS)
-libstimfit_la_LIBADD = $(WX_LIBS) -lfftw3
+libstimfit_la_LIBADD = $(WX_LIBS) -lfftw3 ../libstfio/libstfio.la
 
 # the application source, library search path, and link libraries
 if BUILD_PYTHON
