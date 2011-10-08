@@ -1,3 +1,27 @@
+stimfit (0.11.1-1oneiric1) oneiric; urgency=low
+
+  * Added stfio_plot.py to stimfit
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 16:41:23 +0000
+
+stimfit (0.11.1-1natty1) natty; urgency=low
+
+  * Added stfio_plot.py to stimfit
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 16:40:08 +0000
+
+stimfit (0.11.1-1maverick1) maverick; urgency=low
+
+  * Added stfio_plot.py to stimfit
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 16:39:02 +0000
+
+stimfit (0.11.1-1lucid1) lucid; urgency=low
+
+  * Added stfio_plot.py to stimfit
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 16:33:22 +0000
+
 stimfit (0.11.0-1oneiric1) oneiric; urgency=low
 
   * libstfio factored out as separate, GUI-independent library

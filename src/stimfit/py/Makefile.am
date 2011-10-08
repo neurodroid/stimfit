@@ -39,6 +39,7 @@ install-exec-hook:
 	cp -p $(srcdir)/embedded_ipython.py ${prefix}/lib/stimfit
 	cp -p $(srcdir)/heka.py ${prefix}/lib/stimfit
 	cp -p $(srcdir)/extensions.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/../../pystfio/stfio_plot.py ${prefix}/lib/stimfit
 	chmod -x ${prefix}/lib/stimfit/*.py
 
 uninstall-hook:
