@@ -114,6 +114,7 @@ bool new_window_selected_all( );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) show_table;
+%feature("kwargs") show_table;
 %feature("docstring", "Shows a python dictionary in a results table.
 The dictionary has to have the form \"string\" : float
 
@@ -129,6 +130,7 @@ bool show_table( PyObject* dict, const char* caption = "Python table" );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) show_table_dictlist;
+%feature("kwargs") show_table_dictlist;
 %feature("docstring", "Shows a python dictionary in a results table.
 The dictionary has to have the form \"string\" : list. 
 
@@ -147,6 +149,7 @@ bool show_table_dictlist( PyObject* dict, const char* caption = "Python table", 
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_size_trace;
+%feature("kwargs") get_size_trace;
 %feature("docstring", "Retrieves the number of sample points of a trace.
    
 Arguments:
@@ -163,6 +166,7 @@ int get_size_trace( int trace = -1, int channel = -1 );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_size_channel;
+%feature("kwargs") get_size_channel;
 %feature("docstring", "Retrieves the number of traces in a channel.
 Note that at present, stimfit only supports equal-sized channels, i.e. 
 all channels within a file need to have the same number of traces. The
@@ -207,6 +211,7 @@ const char* get_xunits( );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_yunits;
+%feature("kwargs") get_yunits;
 %feature("docstring", "Returns the y units of the specified trace.
 Y units are not allowed to change between traces at present.
 
@@ -223,6 +228,7 @@ const char* get_yunits( int trace = -1, int channel = -1 );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) set_yunits;
+%feature("kwargs") set_yunits;
 %feature("docstring", "Sets the y unit string of the specified trace.
 Y units are not allowed to change between traces at present.
 
@@ -240,6 +246,7 @@ bool set_yunits( const char* units, int trace = -1, int channel = -1 );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) set_xunits;
+%feature("kwargs") set_xunits;
 %feature("docstring", "Sets the x unit string for the entire file.
 
 Arguments:
@@ -264,6 +271,7 @@ bool set_sampling_interval( double si );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) select_trace;
+%feature("kwargs") select_trace;
 %feature("docstring", "Selects a trace. Checks for out-of-range
 indices and stores the baseline along with the trace index.
    
@@ -315,6 +323,7 @@ bool subtract_base( );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) leastsq;
+%feature("kwargs") leastsq;
 %feature("docstring", "Fits a function to the data between the current
 fit cursors.
 
@@ -537,6 +546,7 @@ bool close_this( );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_base;
+%feature("kwargs") get_base;
 %feature("docstring", "Returns the current baseline value. Uses the 
 currently measured values, i.e. does not update measurements if the 
 peak or base window cursors have changed.
@@ -574,6 +584,7 @@ double get_slope( );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) peak_index;
+%feature("kwargs") peak_index;
 %feature("docstring", "Returns the zero-based index of the current
 peak position in the specified channel. Uses the currently measured
 values, i.e. does not update measurements if the peak window cursors
@@ -594,6 +605,7 @@ double peak_index( bool active = true );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) maxrise_index;
+%feature("kwargs") maxrise_index;
 %feature("docstring", "Returns the zero-based index of the maximal
 slope of rise in the specified channel. Uses the currently measured
 values, i.e. does not update measurements if the peak window cursors
@@ -617,6 +629,7 @@ double maxrise_index( bool active = true );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) foot_index;
+%feature("kwargs") foot_index;
 %feature("docstring", "Returns the zero-based index of the foot of 
 an event in the active channel. The foot is the intersection of an
 interpolated line through the points of 20 and 80% rise with the
@@ -640,6 +653,7 @@ double foot_index( bool active = true );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) t50left_index;
+%feature("kwargs") t50left_index;
 %feature("docstring", "Returns the zero-based index of the left half-
 maximal amplitude of an event in the specified channel. Uses the 
 currently measured values, i.e. does not update measurements if the 
@@ -662,6 +676,7 @@ double t50left_index( bool active = true );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) t50right_index;
+%feature("kwargs") t50right_index;
 %feature("docstring", "Returns the zero-based index of the right half-
 maximal amplitude of an event in the active channel. Uses the 
 currently measured values, i.e. does not update measurements if the 
@@ -685,6 +700,7 @@ double t50right_index( bool active = true );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_threshold_time;
+%feature("kwargs") get_threshold_time;
 %feature("docstring", "Returns the crossing value of the threshold 
 slope. Note that this value is not updated after changing the AP 
 threshold. Call measure() or hit enter to update the cursors.
@@ -731,6 +747,7 @@ double get_threshold_value( );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_fit_start;
+%feature("kwargs") get_fit_start;
 %feature("docstring", "Returns the zero-based index or the time point
 of the fit start cursor.
 
@@ -744,6 +761,7 @@ double get_fit_start( bool is_time = false );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_fit_end;
+%feature("kwargs") get_fit_end;
 %feature("docstring", "Returns the zero-based index or the time point
 of the fit end cursor.
 
@@ -757,6 +775,7 @@ double get_fit_end( bool is_time = false );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) set_fit_start;
+%feature("kwargs") set_fit_start;
 %feature("docstring", "Sets the fit start cursor to a new position.
 
 Arguments:
@@ -772,6 +791,7 @@ bool set_fit_start( double pos, bool is_time = false );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) set_fit_end;
+%feature("kwargs") set_fit_end;
 %feature("docstring", "Sets the fit end cursor to a new position.
 
 Arguments:
@@ -787,6 +807,7 @@ bool set_fit_end( double pos, bool is_time = false );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_peak_start;
+%feature("kwargs") get_peak_start;
 %feature("docstring", "Returns the zero-based index or the time point
 of the peak start cursor.
 
@@ -800,6 +821,7 @@ double get_peak_start( bool is_time = false );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_peak_end;
+%feature("kwargs") get_peak_end;
 %feature("docstring", "Returns the zero-based index or the time point
 of the peak end cursor.
 
@@ -813,6 +835,7 @@ double get_peak_end( bool is_time = false );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) set_peak_start;
+%feature("kwargs") set_peak_start;
 %feature("docstring", "Sets the peak start cursor to a new position.
 This will NOT update the peak calculation. You have to either call 
 measure() or hit enter in the main window to achieve that.
@@ -830,6 +853,7 @@ bool set_peak_start( double pos, bool is_time = false );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) set_peak_end;
+%feature("kwargs") set_peak_end;
 %feature("docstring", "Sets the peak end cursor to a new position.
 This will NOT update the peak calculation. You have to either call 
 measure() or hit enter in the main window to achieve that.
@@ -901,6 +925,7 @@ bool set_peak_direction( const char* direction );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_base_start;
+%feature("kwargs") get_base_start;
 %feature("docstring", "Returns the zero-based index or the time point
 of the base start cursor.
 
@@ -913,6 +938,7 @@ double get_base_start( bool is_time = false );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_base_end;
+%feature("kwargs") get_base_end;
 %feature("docstring", "Returns the zero-based index or the time point
 of the base end cursor.
 
@@ -925,6 +951,7 @@ double get_base_end( bool is_time = false );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) set_base_start;
+%feature("kwargs") set_base_start;
 %feature("docstring", "Sets the base start cursor to a new position.
 This will NOT update the baseline calculation. You have to either call 
 measure() or hit enter in the main window to achieve that.
@@ -942,6 +969,7 @@ bool set_base_start( double pos, bool is_time = false );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) set_base_end;
+%feature("kwargs") set_base_end;
 %feature("docstring", "Sets the base end cursor to a new position.
 This will NOT update the baseline calculation. You have to either call 
 measure() or hit enter in the main window to achieve that.
@@ -1013,6 +1041,7 @@ int get_trace_index();
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_channel_index;
+%feature("kwargs") get_channel_index;
 %feature("docstring", "Returns the ZERO-BASED index of the specified
 channel.
 
@@ -1026,6 +1055,7 @@ int get_channel_index( bool active = true );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_channel_name;
+%feature("kwargs") get_channel_name;
 %feature("docstring", "Returns the name of the channel with the 
 specified index.
 
@@ -1056,6 +1086,7 @@ bool set_channel( int channel);
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) set_channel_name;
+%feature("kwargs") set_channel_name;
 %feature("docstring", "Sets the name of the channel with the 
 specified index.
 
@@ -1071,6 +1102,7 @@ bool set_channel_name( const char* name, int index = -1 );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_trace_name;
+%feature("kwargs") get_trace_name;
 %feature("docstring", "Returns the name of the trace with the 
 specified index.
 
@@ -1087,6 +1119,7 @@ const char* get_trace_name( int trace = -1, int channel = -1 );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) align_selected;
+%feature("kwargs") align_selected;
 %feature("docstring", "Aligns the selected traces to the index that is 
 returned by the alignment function, and then creates a new window 
 showing the aligned traces.
