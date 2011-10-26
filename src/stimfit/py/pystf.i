@@ -1165,7 +1165,6 @@ double plot_ymax();
 
 //--------------------------------------------------------------------
 %pythoncode {
-import numpy as N
 
 def get_trace(trace = -1, channel = -1):
     """Returns a trace as a 1-dimensional NumPy array.
