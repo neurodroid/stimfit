@@ -162,7 +162,7 @@ In this example, N is the NumPy namespace. Typing N. at the command prompt will 
 
 * **new_window_list()**
 
-Although using a 2D_NumPy array is very efficient, there are a few drawbacks: the size of the array has to be know at construction time, and all traces have to be of equal lengths. Both problems can be avoided using :func:`stf.new_window_list()`, albeit at the price of a significant performance loss. :func:`stf.new_window_list()` takes a Python list of 1D-NumPy arrays as an argument:
+Although using a 2D_NumPy array is very efficient, there are a few drawbacks: the size of the array has to be known at construction time, and all traces have to be of equal lengths. Both problems can be avoided using :func:`stf.new_window_list()`, albeit at the price of a significant performance loss. :func:`stf.new_window_list()` takes a Python list of 1D-NumPy arrays as an argument:
 
 ::
 
@@ -172,7 +172,7 @@ Although using a 2D_NumPy array is very efficient, there are a few drawbacks: th
 
 Note that items in Python list are written between *squared* brakes, and that a comma is required at the end of single-item lists.
 
-The [Scipy]_ library, which is build on top of [NumPy]_, provides a huge amount of numerical tools, such as special functions, integration, ordinary differential equation solvers, gradient optimization, genetic algorithms or parallel programming tools. Due to its size, it is no packaged with `Stimfit <http://www.stimfit.org>`_ by default, but I highly recommend installing it for more advanced numerical analysis.
+The [Scipy]_ library, which is build on top of [NumPy]_, provides a huge amount of numerical tools, such as special functions, integration, ordinary differential equation solvers, gradient optimization, genetic algorithms or parallel programming tools. Due to its size, it is not packaged with `Stimfit <http://www.stimfit.org>`_ by default, but I highly recommend installing it for more advanced numerical analysis.
 
 Control Stimfit from the Python shell
 =====================================
@@ -225,7 +225,7 @@ The list of selected traces can be cleared using :func:`stf.unselect_all()`, and
 
 * **get_size_trace(trace=-1, channel=-1)** and **get_size_channel(channel=-1)** 
 
-Return the number of sampling points in a trace a the number of traces in a channel, respectively. ``trace`` and ``channel`` have the same meaning as in :func:`stf.get_trace()`. These functions can be used to iterate over an entire file or to check ranges;
+Return the number of sampling points in a trace the number of traces in a channel, respectively. ``trace`` and ``channel`` have the same meaning as in :func:`stf.get_trace()`. These functions can be used to iterate over an entire file or to check ranges;
 
 
 ::
