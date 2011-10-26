@@ -576,7 +576,7 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     m_edit_menu->AppendSeparator();
     m_edit_menu->Append(
                         ID_MYSELECTALL,
-                        wxT("&Select all traces"),
+                        wxT("&Select all traces\tCtrl+A"),
                         wxT("Select all traces in this file")
                         );
     m_edit_menu->Append(
