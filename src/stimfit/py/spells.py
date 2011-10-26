@@ -8,7 +8,7 @@ Check "The Stimfit Book of Spells" for details.
 """
 
 
-import numpy as N
+import numpy as np
 
 # stimfit python module:
 import stf
@@ -33,7 +33,7 @@ def resistance( base_start, base_end, peak_start, peak_end, amplitude):
     """
 
     if not stf.check_doc():
-        print "Couldn't find an open file; aborting now."
+        print('Couldn\'t find an open file; aborting now.')
         return 0
 
     #A temporary array to calculate the average:
@@ -135,7 +135,7 @@ def get_amplitude(base, peak, delta, trace=None):
         sweep = stf.get_trace_index()
     else:
         if type(trace) != int:
-            print "trace argument admits only intergers"
+            print('trace argument admits only intergers')
             return False
         sweep = trace
 
@@ -229,7 +229,7 @@ def count_events(start, delta, threshold=0, up=True, trace=None, mark=True):
         sweep = stf.get_trace_index()
     else:
         if type(trace) !=int:
-            print "trace argument admits only integers"
+            print('trace argument admits only integers')
             return False
         sweep = trace
 
@@ -435,7 +435,7 @@ class APFrame(wx.Frame):
         """
         # first check that both soma and dend are Spike() instances
         if not isinstance(soma,Spike) or not isinstance(dend,Spike):
-            print "wrong argument, did you create the Spike objects???"
+            print('wrong argument, did you create a Spike object???')
             return 0
 
         # initialize the wxframe

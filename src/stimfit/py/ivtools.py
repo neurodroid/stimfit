@@ -3,7 +3,7 @@ Some functions to create I-V curves
 2008-03-26, C. Schmidt-Hieber
 Indices are zero-based!
 """
-import numpy as N
+import numpy as np
 
 # stimfit python module:
 import stf
@@ -23,11 +23,11 @@ def analyze_iv( pulses, trace_start = 0, factor = 1.0 ):
     """
     
     if (stf.check_doc() == False):
-        print "Couldn't find an open file; aborting now."
+        print(Couldn\'t find an open file; aborting now.')
         return False
 
     if (pulses < 1):
-        print "Number of pulses has to be greater or equal 1."
+        print('Number of pulses has to be greater or equal 1.')
         return False
     
     # create an empty array (will contain random numbers)

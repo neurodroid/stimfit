@@ -28,11 +28,11 @@ def dens_batch( nFunc = 0 ):
     gFitEnd   =  gFitStart+4.5
     dt = stf.get_sampling_interval()
     if ( gDictSize < 0 ):
-        print "Couldn't retrieve function #", gFSelect, "; aborting now."
+        print('Couldn\'t retrieve function id=%d; aborting now.'%gFSelect)
         return False        
     
     if ( not(stf.check_doc()) ):
-        print "Couldn't find an open file; aborting now."
+        print('Couldn\'t find an open file; aborting now.')
         return False
     
     # set cursors:
@@ -66,7 +66,7 @@ def dens_batch( nFunc = 0 ):
     p_dict = stf.leastsq( gFSelect )
         
     if ( p_dict == 0 ):
-        print "Couldn't perform a fit; aborting now."
+        print('Couldn\'t perform a fit; aborting now.')
         return False
             
     # Create an empty list:
@@ -130,11 +130,11 @@ def act_batch( nFunc = 5, filename="", lat=60 ):
     gPulses = len( gFitDurations )    # Number of traces 
     
     if ( gDictSize < 0 ):
-        print "Couldn't retrieve function #", gFSelect, "; aborting now."
+        print(Couldn\'t retrieve function id=%d; aborting now.'%gFSelect)
         return False        
     
     if ( not(stf.check_doc()) ):
-        print "Couldn't find an open file; aborting now."
+        print(Couldn\'t find an open file; aborting now.')
         return False
     
     # set cursors:
@@ -160,10 +160,10 @@ def act_batch( nFunc = 5, filename="", lat=60 ):
         ls_file=np.empty((gPulses,stf.leastsq_param_size(nFunc)))
     for n in range( 0, gPulses ):
         if ( stf.set_trace( n ) == False ):
-            print "Couldn't set a new trace; aborting now."
+            print('Couldn\'t set a new trace; aborting now.')
             return False
         
-        print "Analyzing trace ", n+1, " of ", stf.get_size_channel()
+        print('Analyzing trace %d of %d'%( n+1, stf.get_size_channel()))
         # set the fit window cursors:
         if ( not(stf.set_peak_end( gPeakStartCtrl + gPeakWindowSizes[n], True )) ):
             return False
@@ -183,7 +183,7 @@ def act_batch( nFunc = 5, filename="", lat=60 ):
             ls_file[n][3]=p_dict["offset"]
 
         if ( p_dict == 0 ):
-            print "Couldn't perform a fit; aborting now."
+            print('Couldn\'t perform a fit; aborting now.')
             return False
             
         # Create an empty list:
@@ -229,7 +229,7 @@ def inact_batch():
     gPulses = 11    # Number of traces 
     
     if ( not(stf.check_doc()) ):
-        print "Couldn't find an open file; aborting now."
+        print('Couldn\'t find an open file; aborting now.')
         return False
     
     # set cursors:
@@ -253,10 +253,10 @@ def inact_batch():
 
     for n in range( 0, gPulses ):
         if ( stf.set_trace( n ) == False ):
-            print "Couldn't set a new trace; aborting now."
+            print('Couldn\'t set a new trace; aborting now.')
             return False
         
-        print "Analyzing pulse ", n+1, " of ", stf.get_size_channel()
+        print('Analyzing pulse %d of %d'%( n+1, stf.get_size_channel()))
 
         # Update calculations:
         stf.measure()
@@ -290,11 +290,11 @@ def deact_batch( filename="" ):
     gBiDictSize =    stf.leastsq_param_size( gFBi ) + 1   # Parameters, chisqr
 
     if ( gMonoDictSize < 0 or gBiDictSize < 0 ):
-        print "Couldn't retrieve function; aborting now."
+        print('Couldn\'t retrieve function; aborting now.')
         return False        
     
     if ( not(stf.check_doc()) ):
-        print "Couldn't find an open file; aborting now."
+        print('Couldn\'t find an open file; aborting now.')
         return False
 
     # set the test pulse window cursors:
@@ -329,7 +329,7 @@ def deact_batch( filename="" ):
             print "Couldn't set a new trace; aborting now."
             return False
         
-        print "Analyzing trace ", n+1, " of ", stf.get_size_channel()
+        print('Analyzing trace %d of %d'%( n+1, stf.get_size_channel()))
         
         # set the fit window cursors:
         
@@ -350,7 +350,7 @@ def deact_batch( filename="" ):
             ls_file[n][2]=p_dict["Offset"]
         
         if ( p_dict == 0 ):
-            print "Couldn't perform a fit; aborting now."
+            print('Couldn\'t perform a fit; aborting now.')
             return False
             
         # Create an empty list:
@@ -385,10 +385,10 @@ def deact_batch( filename="" ):
     # Monoexponential fits:
     for n in range( gNMono, gNBi+gNMono ):
         if ( stf.set_trace( n ) == False ):
-            print "Couldn't set a new trace; aborting now."
+            print('Couldn\'t set a new trace; aborting now.')
             return False
         
-        print "Analyzing trace ", n+1, " of ", stf.get_size_channel()
+        print('Analyzing trace %d of %d'%( n+1, stf.get_size_channel()))
         
         # set the fit window cursors:
         
@@ -405,7 +405,7 @@ def deact_batch( filename="" ):
         p_dict = stf.leastsq( gFBi )
         
         if ( p_dict == 0 ):
-            print "Couldn't perform a fit; aborting now."
+            print('Couldn\'t perform a fit; aborting now.')
             return False
             
         # Create an empty list:
@@ -441,7 +441,7 @@ def inact_recov_batch( show_table = True ):
     stf = __import__("stf")
 
     if ( not(stf.check_doc()) ):
-        print "Couldn't find an open file; aborting now."
+        print('Couldn\'t find an open file; aborting now.')
         return False
 
     # Some ugly definitions for the time being
@@ -468,7 +468,7 @@ def inact_recov_batch( show_table = True ):
     for n in range( 0, gPulses ):
 
         if ( stf.set_trace( n ) == False ):
-            print "Couldn't set a new trace; aborting now."
+            print('Couldn\'t set a new trace; aborting now.')
             return False
         
         # set the control pulse window cursors:
@@ -523,7 +523,7 @@ def inact_onset_batch( show_table = True ):
     stf = __import__("stf")
 
     if ( not(stf.check_doc()) ):
-        print "Couldn't find an open file; aborting now."
+        print('Couldn\'t find an open file; aborting now.')
         return -1
 
     # Some ugly definitions for the time being
@@ -545,10 +545,10 @@ def inact_onset_batch( show_table = True ):
     for n in range( 0, gPulses ):
 
         if ( stf.set_trace( n ) == False ):
-            print "Couldn't set a new trace; aborting now."
+            print('Couldn\'t set a new trace; aborting now.')
             return -1
-        
-        print "Analyzing pulse ", n+1, " of ", stf.get_size_channel()
+
+        print('Analyzing pulse %d of %d'%( n+1, stf.get_size_channel()))
         
         # set the test pulse window cursors:
         if ( not(stf.set_peak_start( gDurations[n]+70.12, True )) ):

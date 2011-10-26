@@ -29,7 +29,7 @@ def resistance( base_start, base_end, peak_start, peak_end, amplitude ):
     """
     
     if (stf.check_doc() == False):
-        print "Couldn't find an open file; aborting now."
+        print('Couldn't find an open file; aborting now.')
         return 0
 
     # A temporary array to calculate the average:
@@ -103,11 +103,11 @@ def glu_iv( pulses = 13, subtract_base=True ):
     gPeakEnd = 253.55 
     
     if ( gDictSize < 0 ):
-        print "Couldn't retrieve function #", gFSelect, "; aborting now."
+        print('Couldn\'t retrieve function id=%d, aborting now.'%gFSelect)
         return False        
     
     if ( not(stf.check_doc()) ):
-        print "Couldn't find an open file; aborting now."
+        print('Couldn\'t find an open file; aborting now.')
         return False
     
     # analyse iv, subtract baseline if requested:
@@ -135,10 +135,10 @@ def glu_iv( pulses = 13, subtract_base=True ):
     firstpass = True
     for n in range( 0, stf.get_size_channel() ):
         if ( stf.set_trace( n ) == False ):
-            print "Couldn't set a new trace; aborting now."
+            print('Couldn\'t set a new trace; aborting now.')
             return False
         
-        print "Analyzing trace ", n+1, " of ", stf.get_size_channel()
+        print('Analyzing trace %d of %d'%(n+1, stf.get_size_channel()) )
         # set the fit window cursors:
         if ( not(stf.set_fit_start( stf.peak_index() )) ): return False
         
@@ -146,7 +146,7 @@ def glu_iv( pulses = 13, subtract_base=True ):
         p_dict = stf.leastsq( gFSelect )
         
         if ( p_dict == 0 ):
-            print "Couldn't perform a fit; aborting now."
+            print('Couldn\'t perform a fit; aborting now.')
             return False
             
         # Create an empty list:
