@@ -29,7 +29,7 @@ def resistance( base_start, base_end, peak_start, peak_end, amplitude ):
     """
     
     if (stf.check_doc() == False):
-        print('Couldn't find an open file; aborting now.')
+        print('Couldn\'t find an open file; aborting now.')
         return 0
 
     # A temporary array to calculate the average:
@@ -138,7 +138,7 @@ def glu_iv( pulses = 13, subtract_base=True ):
             print('Couldn\'t set a new trace; aborting now.')
             return False
         
-        print('Analyzing trace %d of %d'%(n+1, stf.get_size_channel()) )
+        print('Analyzing trace %d of %d'%( n+1, stf.get_size_channel() ) )
         # set the fit window cursors:
         if ( not(stf.set_fit_start( stf.peak_index() )) ): return False
         
