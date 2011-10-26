@@ -157,20 +157,38 @@ Some other values describing the event can be found in the results table (Fig. 1
         
         **Fig. 13:** Analysis of individual events. 
         
-Average calculation
-===================
+Analysis on selected traces
+===========================
+You can perform the analysis of a repeated event in a recording that contains several traces. This is important if you want to study the time evolution of an event. The Trace selection window informs you about the number of traces in your recording and the index of the current trace. Zero-based index (i.e first trace is zero, and not one) can be selected if checked in the corresponding checkbox.
 
-First, you have to select the traces to average: navigate through the file with the left and right keys (as described above), and press **S** if you want to select a trace, or click the selection button. The number of traces that you have already selected will be shown just above the trace selection drop-down box (Fig. 14)
-   
-   
+    .. figure:: images/trace_selection0.png
+        :align: center
+
+To perform the analysis on only some traces, you need first to select them. For that, we can move the current trace with the left/right arrow keys and buttons (as described above), or click up/down buttons in the Trace selection window. Press **S** if you want to select the current trace, or click the selection button (Fig. 14). The number of traces that you have already selected will be indicated in the Trace selection window. You can click on the checkbox if you want to visualize them together with your current trace.
+
     .. figure:: images/selection.png
         :align: center
         
         **Fig. 14:** Trace selection.
-  
+
 If you selected a trace accidentally, you can remove it from the selected traces list by pressing **R** or clicking the trash bin button to the right of the selection button (Fig. 14).
 
-Once you are done, click the "Average" button to compute the average of all selected traces (Fig. 15). A new child window will pop up showing the average. In the original child window, the average is shown as blue trace.
+After selecting some traces, we can select Analysis->Batch Analysis to select the type on the selected traces. 
+
+    .. figure:: images/choose_values.png
+        :align: center
+
+Once the measurements are selected, a result table will appear, that contains a first column with the ordered of traces and several columns with the measured parameteres.
+
+
+.. note::
+
+    This is a general concept for most analysis functions: you first select traces, and the analysis will then be performed on the selected traces.
+
+Average calculation
+===================
+
+First, you have to select the traces to average (Fig. 14). Once you are done, click the "Average" button to compute the average of all selected traces (Fig. 15). A new child window will pop up showing the average. In the original child window, the average is shown as blue trace.
 
     .. figure:: images/average.png
         :align: center
@@ -180,7 +198,7 @@ Once you are done, click the "Average" button to compute the average of all sele
 
 .. note::
 
-    This is a general concept for most analysis functions: you first select traces, and the analysis will then be performed on the selected traces.
+    If you want to perform an average (or any other measurement) of all traces in a recording, simply select Edit-> Select all, or type Ctrl+A
 
 Fitting functions to data
 =========================
