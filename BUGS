@@ -13,7 +13,7 @@ The PSlope cursors does not appear at document loading (this is good, since we w
 ==============
 Batch Analysis
 ==============
-* Slope does not appear in the grid!!!
+* PSlope does not appear in the grid!!!
 * Batch analysis results gives names liek "0xb27468, Section #1" in the first column of the results table. This should be more human-readable.
 
 =======

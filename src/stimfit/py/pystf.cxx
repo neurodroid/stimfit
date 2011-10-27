@@ -300,6 +300,18 @@ int get_size_recording( ) {
     return actDoc()->size();
 }
 
+double get_maxdecay() {
+    if ( !check_doc() ) return -1.0;
+
+    return actDoc()->GetMaxDecay();
+}
+
+double get_maxrise() {
+    if ( !check_doc() ) return -1.0;
+
+    return actDoc()->GetMaxRise();
+}
+
 const char* get_recording_time( ) {
     if ( !check_doc() ) return 0;
     return actDoc()->GetTime().c_str();

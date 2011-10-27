@@ -181,6 +181,32 @@ int get_size_channel( int channel = -1 );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) get_maxdecay;
+%feature("docstring", "Retrieves the maximal slope of the decay 
+between the peak cursors in the current trace. Uses the currently 
+measured values, i.e. does not update measurements if the peak window 
+cursors have changed.
+  
+   
+Returns:
+The maximal slope of the decay, -1.0 upon failure.") get_maxdecay;
+double get_maxdecay( );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) get_maxrise;
+%feature("docstring", "Retrieves the maximal slope of the rise 
+between the peak cursors in the current trace. Uses the currently 
+measured values, i.e. does not update measurements if the peak window 
+cursors have changed.
+
+   
+Returns:
+The maximal slope of the rise, -1.0 upon failure.") get_maxrise;
+double get_maxrise( );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %feature("autodoc", 0) get_size_recording;
 %feature("docstring", "Retrieves the number of channels in a 
 recording.
