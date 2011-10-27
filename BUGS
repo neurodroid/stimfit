@@ -22,3 +22,5 @@ Others:
 
 * After average the trace is not centered
 * After loading a file keybindings does not work!
+* Add get_max_rise and get_max_decay to stf
+* Move or copy bug reports to the issue tracker on Google Code
