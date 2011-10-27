@@ -67,6 +67,7 @@ stimfit_VS03/stimfit_exe/Release
 *.la
 *.lai
 *.so*
+*.Plo
 Makefile
 libtool
 stimfit.plist
@@ -80,6 +81,7 @@ pystfio_wrap.cxx
 stfio.py
 
 .libs/
+.deps/
 src/stimfit/py/.libs/
 
 *Makefile.in
