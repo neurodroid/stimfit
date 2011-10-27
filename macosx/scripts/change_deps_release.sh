@@ -11,6 +11,9 @@ mkdir -p stimfit.app/Contents/Frameworks
 mkdir -p stimfit.app/Contents/MacOS
 mkdir -p stimfit.app/Contents/libs
 
+cp -v -r /Users/cs/matplotlib-1.0.1/build/lib.macosx-10.7-intel-2.6/* ./stimfit.app/Contents/Frameworks
+cp -v -r /Users/cs/wxbin/lib/python2.6/site-packages/wx* ./stimfit.app/Contents/Frameworks
+
 chown -R cs:staff stimfit.app
 
 make stimfit.app
