@@ -73,6 +73,7 @@ double get_risetime();
 
 double peak_index( bool active = true );
 double maxrise_index( bool active = true );
+double maxdecay_index( );
 double foot_index( bool active = true );
 double t50left_index( bool active = true );
 double t50right_index( bool active = true );

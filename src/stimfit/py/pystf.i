@@ -626,6 +626,20 @@ double maxrise_index( bool active = true );
 %nocallback;
 //--------------------------------------------------------------------
 
+//--------------------------------------------------------------------
+%feature("autodoc", 0) maxdecay_index;
+%feature("docstring", "Returns the zero-based index of the maximal
+slope of decay in the current channel. Uses the currently measured
+values, i.e. does not update measurements if the peak window cursors
+have changed. Note that in contrast to maxrise_index, this function 
+only works on the active channel.
+   
+Returns:
+The zero-based index of the maximal slope of decay in units of 
+sampling points. Interpolated between adjacent sampling points.
+Returns a negative value upon failure.") maxdecay_index;
+double maxdecay_index( );
+//--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) foot_index;

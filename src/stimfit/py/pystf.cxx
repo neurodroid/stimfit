@@ -594,6 +594,12 @@ double maxrise_index( bool active ) {
     }
 }
 
+double maxdecay_index( ) {
+    if ( !check_doc() ) return -1.0;
+    
+    return actDoc()->GetMaxDecayT();
+}
+
 double foot_index( bool active ) {
     if ( !check_doc() ) return -1.0;
 
