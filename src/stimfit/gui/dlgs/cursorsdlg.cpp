@@ -142,7 +142,7 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
     m_notebook->AddPage( CreateDecayPage(), wxT("Decay"));
     m_notebook->AddPage( CreateLatencyPage(), wxT("Latency"));
 #ifdef WITH_PSLOPE
-    m_notebook->AddPage( CreatePSlopePage(), wxT("Slope"));
+    m_notebook->AddPage( CreatePSlopePage(), wxT("PSlope"));
 #endif
     topSizer->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 

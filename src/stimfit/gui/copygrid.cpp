@@ -89,7 +89,7 @@ wxStfGrid::wxStfGrid(
     m_labelContext->AppendCheckItem(ID_VIEW_SLOPEDECAY,wxT("Slope (decay)"));
     m_labelContext->AppendCheckItem(ID_VIEW_LATENCY,wxT("Latency"));
 #ifdef WITH_PSLOPE
-    m_labelContext->AppendCheckItem(ID_VIEW_PSLOPE,wxT("Slope"));
+    m_labelContext->AppendCheckItem(ID_VIEW_PSLOPE,wxT("PSlope"));
 #endif
     m_labelContext->AppendSeparator();
     m_labelContext->AppendCheckItem(ID_VIEW_CURSORS,wxT("Cursors"));
@@ -288,7 +288,7 @@ void wxStfGrid::ViewLatency(wxCommandEvent& event) {
 void wxStfGrid::ViewPSlope(wxCommandEvent& event) {
     event.Skip();
     wxGetApp().GetActiveDoc()->SetViewPSlope(m_labelContext->IsChecked(ID_VIEW_PSLOPE));
-    SetCheckmark(wxT("ViewSlope"),ID_VIEW_PSLOPE);
+    SetCheckmark(wxT("ViewPSlope"),ID_VIEW_PSLOPE);
 }
 #endif 
 

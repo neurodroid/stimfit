@@ -2907,7 +2907,7 @@ stf::Table wxStfDoc::CurResultsTable() {
     if (viewSlopedecay) table.SetColLabel(nCol++,"Slope (decay)");
     if (viewLatency) table.SetColLabel(nCol++,"Latency");
 #ifdef WITH_PSLOPE
-    if (viewPSlope) table.SetColLabel(nCol++,"Slope");
+    if (viewPSlope) table.SetColLabel(nCol++,"PSlope");
 #endif
 
     // Values

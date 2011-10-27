@@ -65,7 +65,7 @@ bool measure( );
 
 double get_base( bool active = true );
 double get_peak( );
-double get_slope();
+double get_pslope();
 double get_threshold_time( bool is_time = false );
 double get_threshold_value( );
 double get_latency();

@@ -21,4 +21,6 @@ Others:
 =======
 
 * After average the trace is not centered
-* After loading a file keybindings does not work!
+* After loading a file keybindings does not work unless we click "Show reference", or "show selected" or  out. This is with multiple channel recordings
+
+Substrac baseline does not fit new trace

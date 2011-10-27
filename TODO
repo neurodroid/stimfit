@@ -9,7 +9,6 @@ Thu Jan 20 09:59:57 CET 2011
 
 Sun Jan 23 22:13:20 CET 2011
 
-* Averages: There is some discrepancies in the average when using more than 2 channels
 
 Wed May 11 09:23:14 CEST 2011
 * Add Analysis toolbar to the Extensions menu
@@ -30,3 +29,7 @@ Solve warning:
 
 Wed Jul 13 16:55:13 CEST 2011
 Add "Show reference" to Stimfit registry
+
+
+Thu Oct 27 09:37:41 CEST 2011
+Set window Icon in Stimfit (see http://zetcode.com/tutorials/wxwidgetstutorial/firstprograms/) 

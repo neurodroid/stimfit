@@ -1043,7 +1043,7 @@ double get_base( bool active ) {
         return actDoc()->GetAPBase();
     }
 }
-double get_slope() {
+double get_pslope() {
 
     if (!check_doc() ) return 0.0; 
 
