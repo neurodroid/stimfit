@@ -410,8 +410,16 @@ The :mod:`stf` module defines the following functions:
                   
         **Returns:**
         
-        The zero-based index of the maximal slope of  rise in units of sampling points. Interpolated between adjacent sampling points.Returns a negative value upon failure.
+        The zero-based index of the maximal slope of  rise in units of sampling points interpolated between adjacent sampling points. Returns a negative value upon failure.
         
+.. function:: maxdecay_index() 
+
+    Returns the zero-based index of the maximal slope of decay in the current channel. Uses the currently measured values, i.e. does not update measurements if the peak window cursors have changed. Note that in contrast to :func:`maxrise_index()`, this function only works on the active channel.
+
+        **Returns:**
+
+        The zero-based index of the maximal slope of decay in units of sampling points interpolated between adjacent sampling points. Returns a negative value upon failure.
+
 .. function:: measure()
     
     Updates all measurements (e.g. peak, baseline, latency) according to the current cursor settings. As if you had pressed **Enter** in the main window.

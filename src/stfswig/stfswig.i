@@ -607,7 +607,7 @@ active -- If True, returns the current index of the maximal slope of
           
 Returns:
 The zero-based index of the maximal slope of  rise in units of 
-sampling points. Interpolated between adjacent sampling points.
+sampling points interpolated between adjacent sampling points.
 Returns a negative value upon failure.") maxrise_index;
 %callback("%s_cb");
 double maxrise_index( bool active = true );
@@ -624,7 +624,7 @@ only works on the active channel.
    
 Returns:
 The zero-based index of the maximal slope of decay in units of 
-sampling points. Interpolated between adjacent sampling points.
+sampling points interpolated between adjacent sampling points.
 Returns a negative value upon failure.") maxdecay_index;
 double maxdecay_index( );
 //--------------------------------------------------------------------

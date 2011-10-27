@@ -15,3 +15,15 @@ Batch Analysis
 ==============
 * Slope does not appear in the grid!!!
 * Batch analysis results gives names liek "0xb27468, Section #1" in the first column of the results table. This should be more human-readable.
+
+=======
+Others:
+=======
+
+* After average the trace is not centered
+
+* After loading a file keybindings does not work unless we click "Show reference", or "show selected" or  out. This is with multiple channel recordings
+
+Substrac baseline does not fit new trace
+=======
+* After loading a file keybindings does not work!
