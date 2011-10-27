@@ -201,6 +201,14 @@ The :mod:`stf` module defines the following functions:
 
     Returns the latency value (in x-units) determined by the latency cursors set in the cursors settings menu. Call :func:`measure()` or hit enter to update the cursors.
 
+.. function:: get_maxdecay(\*args)
+
+    Returns the the maximal slope of the decay between the peak cursors. Returns -1.0 upon error. Call :func:`measure()` or hit enter to update the value.
+
+.. function:: get_maxrise(\*args)
+
+    Returns the the maximal slope of the rise between the peak cursors. Returns -1.0 upon error. Call :func:`measure()` or hit enter to update the value.
+
 .. function:: get_risetime(\*args)
 
     Returns the 20-80% rise time (in x-units) by calculation of the interpolated adjacent sampling points at 20% and 80% of the peak amplitude. Returns -1.0 upon failure. Call :func:`measure()` or hit enter to update the value.

@@ -26,6 +26,9 @@ const char* get_yunits( int trace = -1, int channel = -1 );
 bool set_xunits( const char* units );
 bool set_yunits( const char* units, int trace = -1, int channel = -1 );
 
+double get_maxdecay();
+double get_maxrise();
+
 const char* get_recording_time( );
 const char* get_recording_date( );
 std::string get_recording_comment( );
