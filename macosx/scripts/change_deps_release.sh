@@ -58,7 +58,7 @@ rm -rfv ./stimfit.app/Contents/lib
 
 
 cp -v ../../src/stimfit/py/*.py ./stimfit.app/Contents/Frameworks/stimfit/
-
+cp -v ../../src/pystfio/*.py ./stimfit.app/Contents/Frameworks/stimfit/
 # # rm ./stimfit.app/Contents/libs/libwx*
 # # rsync -rtuvl `${WX_CONFIG} --exec-prefix`/lib/libwx_baseu_net-* ./stimfit.app/Contents/libs/
 # # rsync -rtuvl `${WX_CONFIG} --exec-prefix`/lib/libwx_baseu-* ./stimfit.app/Contents/libs/
