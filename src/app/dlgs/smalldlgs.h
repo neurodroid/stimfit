@@ -663,7 +663,6 @@ class wxStfConvertDlg : public wxDialog
 private:
     wxDirPickerCtrl *m_srcDirPicker,*m_destDirPicker;
     wxTextCtrl *m_textCtrlSrcFilter;
-    //wxComboBox *m_ComboBoxExt;
     wxGenericDirCtrl *mySrcDirCtrl, *myDestDirCtrl; 
     wxString srcDir,destDir;
     wxString srcFilter;
@@ -708,13 +707,13 @@ public:
      */
     wxString GetSrcFilter() const {return srcFilter;}
 
-    //! Get the source extension as std::filetype.
-    /*! \return The source extension as std::filetype.
+    //! Get the source extension as stfio::filetype.
+    /*! \return The source extension as stfio::filetype.
      */
     stf::filetype GetSrcFileExt() const {return srcFilterExt;}
 
-    //! Get the destination extension as std::filetype.
-    /*! \return The destination extension as std::filetype.
+    //! Get the destination extension as stfio::filetype.
+    /*! \return The destination extension as stfio::filetype.
      */
     stf::filetype GetDestFileExt() const {return destFilterExt;}
 

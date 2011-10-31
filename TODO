@@ -3,13 +3,11 @@ This Jose's TODO list for Stimfit:
 Thu Jan 20 09:59:57 CET 2011
 * Enable change threshold slope in Slope page of Cursor settings menu
 
-* Add python commands for the Slope calculation (setting cursors, getting slope, setting Delta T mode, etc..)
+* Add python commands for the PSlope calculation (setting cursors, getting slope, setting Delta T mode, etc..)
 
 * Add a column with the Slope results in the Batch analysis 
 
 Sun Jan 23 22:13:20 CET 2011
-
-* Averages: There is some discrepancies in the average when using more than 2 channels
 
 Wed May 11 09:23:14 CEST 2011
 * Add Analysis toolbar to the Extensions menu
@@ -30,3 +28,10 @@ Solve warning:
 
 Wed Jul 13 16:55:13 CEST 2011
 Add "Show reference" to Stimfit registry
+
+Thu Oct 27 09:37:41 CEST 2011
+Set window Icon in Stimfit (see http://zetcode.com/tutorials/wxwidgetstutorial/firstprograms/) 
+
+Sun Oct 30 07:52:17 CET 2011
+GUI event loop support for IPython 0.11; 
+The thread-based version to work interactively with wxPython is deprecated in IPython 0.11. See https://github.com/ipython/ipython/issues/645. There will be a new way to embed IPython (see http://ipython.org/ipython-doc/dev/interactive/reference.html#gui-event-loop-support
