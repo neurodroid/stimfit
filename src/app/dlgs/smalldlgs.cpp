@@ -1189,16 +1189,8 @@ void wxStfConvertDlg::OnComboBoxDestExt(wxCommandEvent& event){
             destFilterExt = stf::atf;
             break;
         default:
-<<<<<<< HEAD
             destFilterExt = stf::igor;
-}
-    std::cout<<destFilterExt << std::endl;
-=======
-            destFilterExt = stfio::igor;
     }
-
-
->>>>>>> e742792... Solved BUG in Convert "file series"
 }
 
 void wxStfConvertDlg::OnComboBoxSrcExt(wxCommandEvent& event){
@@ -1214,7 +1206,6 @@ void wxStfConvertDlg::OnComboBoxSrcExt(wxCommandEvent& event){
     // see index of wxArrayString myextensions to evaluate case
     switch(pComboBox->GetSelection()){
         case 0:
-<<<<<<< HEAD
             srcFilterExt =  stf::abf;
             srcFilter = wxT("*.abf");
             break;
@@ -1233,24 +1224,6 @@ void wxStfConvertDlg::OnComboBoxSrcExt(wxCommandEvent& event){
         case 4: 
             srcFilterExt =  stf::cfs;
             srcFilter = wxT("*.dat");
-=======
-            srcFilterExt =  stfio::cfs;
-            srcFilter = wxT("*.dat");
-            break;
-        case 1:
-            srcFilterExt =  stfio::abf;
-            srcFilter = wxT("*.abf");
-            break;
-        case 2:
-            srcFilterExt = stfio::axg;
-            srcFilter = wxT("*.axg");
-            break;
-        case 3: 
-            srcFilterExt =  stfio::atf;
-            srcFilter = wxT("*.atf");
-            break;
-        case 4: 
->>>>>>> e742792... Solved BUG in Convert "file series"
             break;
         case 5: 
             srcFilterExt =  stf::hdf5;

@@ -705,7 +705,6 @@ void wxStfParentFrame::OnCheckUpdate(wxCommandEvent& WXUNUSED(event) )
 }
 
 void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
-<<<<<<< HEAD
     // Choose export file type:
     /*
     std::vector< wxString > choices(2);
@@ -727,26 +726,16 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
          eft = stf::atf;
     }
     */
-=======
-
->>>>>>> e742792... Solved BUG in Convert "file series"
     int nfiles; // files to convert
     wxString src_ext; // extension of the source file
     wxString dest_ext; // extesion of the destiny file
 
     // "Convert files" Dialog (see wxStfConvertDlg in smalldlgs.cpp)
     wxStfConvertDlg myDlg(this);
-<<<<<<< HEAD
     if(myDlg.ShowModal()==wxID_OK) {
         //std::cout << myDlg.GetSrcFileExt() << std::endl;
 		stf::filetype ift = myDlg.GetSrcFileExt();
 		stf::filetype eft = myDlg.GetDestFileExt();
-=======
-    if(myDlg.ShowModal() == wxID_OK) {
-
-		stfio::filetype ift = myDlg.GetSrcFileExt();
-		stfio::filetype eft = myDlg.GetDestFileExt();
->>>>>>> e742792... Solved BUG in Convert "file series"
         src_ext = myDlg.GetSrcFilter();
 
         // wxProgressDialog
@@ -787,23 +776,6 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
             // Open source file and convert:
             Recording sourceFile;
             try {
-<<<<<<< HEAD
-                if (ift==stf::ascii) {
-                    if (!wxGetApp().get_directTxtImport()) {
-                        wxStfTextImportDlg ImportDlg( this,
-                                                      stf::CreatePreview(srcFilenames[nFile]), 1, false );
-                        if (ImportDlg.ShowModal()!=wxID_OK) {
-                            return;
-                        }
-                        // store settings in application:
-                        wxGetApp().set_txtImportSettings(ImportDlg.GetTxtImport());
-                    }
-                }
-=======
-
-                stf::wxProgressInfo progDlgIn("Reading file", "Opening file", 100);
-                stfio::importFile(stf::wx2std(srcFilenames[nFile]), ift, sourceFile, wxGetApp().GetTxtImport(), progDlgIn);
->>>>>>> e742792... Solved BUG in Convert "file series"
 
                 stf::importFile(srcFilenames[nFile], ift, sourceFile, wxGetApp().GetTxtImport());
 
