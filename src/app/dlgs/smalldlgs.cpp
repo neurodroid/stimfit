@@ -1305,7 +1305,7 @@ bool wxStfConvertDlg::OnOK() {
 }
 
 bool wxStfConvertDlg::ReadPath(const wxString& path) {
-    // Walk thrSOURCE path:
+    // Walk through path:
     wxDir dir(path);
 
     if ( !dir.IsOpened() )

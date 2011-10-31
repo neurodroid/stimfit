@@ -749,9 +749,6 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
 >>>>>>> e742792... Solved BUG in Convert "file series"
         src_ext = myDlg.GetSrcFilter();
 
-        std::cout << "Destiny File extension " << myDlg.GetDestFileExt() << std::endl;
-        std::cout << "Source  File extension " << myDlg.GetDestFileExt() << std::endl;
-
         // wxProgressDialog
         wxProgressDialog progDlg( wxT("CFS conversion utility"), wxT("Starting file conversion"),
             100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
