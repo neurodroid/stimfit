@@ -702,40 +702,22 @@ void wxStfParentFrame::OnCheckUpdate(wxCommandEvent& WXUNUSED(event) )
     CheckUpdate( &progDlg );
 }
 
-//#ifdef _WINDOWS
 void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
-    // Choose export file type:
-    /*
-    std::vector< wxString > choices(2);
-    choices[0] = wxT("Axon text file (*.atf)");
-    choices[1] = wxT("Igor binary wave (*.ibw)");
-    wxSingleChoiceDialog typeDlg(this, wxT("Please specify the export file type:"),
-                                 wxT("Choose file type"), 2, &choices[0]);
-    if (typeDlg.ShowModal() != wxID_OK)
-        return;
-    stfio::filetype eft = stfio::atf;
-    switch ( typeDlg.GetSelection() ) {
-     case 0:
-         eft = stfio::atf;
-         break;
-     case 1:
-         eft = stfio::igor;
-         break;
-     default:
-         eft = stfio::atf;
-    }
-    */
+
     int nfiles; // files to convert
     wxString src_ext; // extension of the source file
     wxString dest_ext; // extesion of the destiny file
 
     // "Convert files" Dialog (see wxStfConvertDlg in smalldlgs.cpp)
     wxStfConvertDlg myDlg(this);
-    if(myDlg.ShowModal()==wxID_OK) {
-        //std::cout << myDlg.GetSrcFileExt() << std::endl;
+    if(myDlg.ShowModal() == wxID_OK) {
+
 		stfio::filetype ift = myDlg.GetSrcFileExt();
 		stfio::filetype eft = myDlg.GetDestFileExt();
         src_ext = myDlg.GetSrcFilter();
+
+        std::cout << "Destiny File extension " << myDlg.GetDestFileExt() << std::endl;
+        std::cout << "Source  File extension " << myDlg.GetDestFileExt() << std::endl;
 
         // wxProgressDialog
         wxProgressDialog progDlg( wxT("CFS conversion utility"), wxT("Starting file conversion"),
@@ -775,19 +757,7 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
             // Open source file and convert:
             Recording sourceFile;
             try {
-#if 0 //TODO
-                if (ift==stfio::ascii) {
-                    if (!wxGetApp().get_directTxtImport()) {
-                        wxStfTextImportDlg ImportDlg( this,
-                                                      stfio::CreatePreview(srcFilenames[nFile]), 1, false );
-                        if (ImportDlg.ShowModal()!=wxID_OK) {
-                            return;
-                        }
-                        // store settings in application:
-                        wxGetApp().set_txtImportSettings(ImportDlg.GetTxtImport());
-                    }
-                }
-#endif
+
                 stf::wxProgressInfo progDlgIn("Reading file", "Opening file", 100);
                 stfio::importFile(stf::wx2std(srcFilenames[nFile]), ift, sourceFile, wxGetApp().GetTxtImport(), progDlgIn);
 
@@ -837,7 +807,6 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
     } // end of wxStfConvertDlg
 
 }
-//#endif
 
 // Creates a graph. Called from view.cpp when a new drawing
 // view is created.
