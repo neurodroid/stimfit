@@ -145,7 +145,7 @@ std::string stfio::CFSReadVar(short fHandle,short varNo,short varKind) {
     std::string errorMsg;
     std::ostringstream outputstream;
     TUnits units;
-    char description[22];
+    char description[1024];
     short varSize=0;
     TDataType varType;
     //Get description of a particular file variable
@@ -189,12 +189,13 @@ std::string stfio::CFSReadVar(short fHandle,short varNo,short varKind) {
                 std::vector<char> vc(varSize+2);
                 GetVarVal(fHandle,varNo,varKind, 1, &vc[0]);
                 if (CFSError(errorMsg))	throw std::runtime_error(errorMsg);
-                std::string s(vc.begin(),vc.begin()+varSize+2);
-                if (s_description.substr(0,11) == "ScriptBlock") {
-                    outputstream << s;
-                } else {
+                std::string s(vc.begin(),vc.end());
+                /* std::cout << &vc[0] << std::endl;
+                   if (s_description.substr(0,11) == "ScriptBlock") {*/
+                outputstream << s_description << " " << s;
+                /*} else {
                     outputstream << s_description << " " << s;
-                }
+                    }*/
                 break;
                        }
             default: break;
@@ -529,12 +530,22 @@ int stfio::importCFSFile(const std::string& fName, Recording& ReturnData, Progre
             throw;
         }
     }	//Begin loop: n_channel
-    ReturnData.SetXScale(xScale);
-    ReturnData.SetFileDescription(file_description);
-    ReturnData.SetGlobalSectionDescription(section_description);
+    ReturnData.SetXScale(xScale + '\0');
+    ReturnData.SetFileDescription(file_description + '\0');
+    ReturnData.SetGlobalSectionDescription(section_description + '\0');
     ReturnData.SetScaling(scaling);
-    ReturnData.SetTime(time);
-    ReturnData.SetDate(date);
-    ReturnData.SetComment(comment);
+    ReturnData.SetTime(time + '\0');
+    ReturnData.SetDate(date + '\0');
+    ReturnData.SetComment(comment + '\0');
+#if 0
+    std::cout << time << std::endl
+              << ReturnData.GetTime() << std::endl
+              << date << std::endl
+              << ReturnData.GetDate() << std::endl
+              << file_description << std::endl
+              << section_description << std::endl
+              << comment << std::endl
+              << ReturnData.GetComment() << std::endl;
+#endif
     return 0;
 }

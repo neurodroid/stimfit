@@ -33,7 +33,6 @@ wxStfFileInfoDlg::wxStfFileInfoDlg( wxWindow* parent,
     //	this->SetSize(464,464);
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
-
     wxTextCtrl* textCtrlGeneral = new wxTextCtrl(
             this, 
             wxID_ANY,
