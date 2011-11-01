@@ -162,47 +162,46 @@ std::string stf::CFSReadVar(short fHandle,short varNo,short varKind) {
     std::string s_description(description);
     if (s_description != "Spare") {
         switch (varType) {   //Begin switch 'varType'
-            case INT1:
-            case INT2:
-            case INT4: {
-                short shortBuffer=0;
-                //Read the value of the file variable
-                //- see manual of CFS file system
-                GetVarVal(fHandle,varNo,varKind, 1,&shortBuffer);
-                if (CFSError(errorMsg))	throw std::runtime_error(errorMsg);
-                outputstream << s_description << " " << shortBuffer << " " << units;
-                break;
-                       }
-            case WRD1:
-            case WRD2: {
-                unsigned short ushortBuffer=0;
-                GetVarVal(fHandle,varNo,varKind, 1,&ushortBuffer);
-                if (CFSError(errorMsg))	throw std::runtime_error(errorMsg);
-                outputstream << s_description << " " << ushortBuffer << " " << units;
-                break;
-                       }
-            case RL4:
-            case RL8: {
-                float floatBuffer=0;
-                GetVarVal(fHandle,varNo,varKind, 1,&floatBuffer);
-                if (CFSError(errorMsg))	throw std::runtime_error(errorMsg);
-                outputstream << s_description << " " << floatBuffer << " " << units;
-                break;
-                      }
-            case LSTR: {
-                std::vector<char> vc(varSize+2);
-                GetVarVal(fHandle,varNo,varKind, 1, &vc[0]);
-                if (CFSError(errorMsg))	throw std::runtime_error(errorMsg);
-                std::string s(vc.begin(),vc.end());
-                /* std::cout << &vc[0] << std::endl;
-                   if (s_description.substr(0,11) == "ScriptBlock") {*/
-                outputstream << s_description << " " << s;
-                /*} else {
-                    outputstream << s_description << " " << s;
-                    }*/
-                break;
-                       }
-            default: break;
+         case INT1:
+         case INT2:
+         case INT4: {
+             short shortBuffer=0;
+             //Read the value of the file variable
+             //- see manual of CFS file system
+             GetVarVal(fHandle,varNo,varKind, 1,&shortBuffer);
+             if (CFSError(errorMsg))	throw std::runtime_error(errorMsg);
+             outputstream << s_description << " " << shortBuffer << " " << units;
+             break;
+         }
+         case WRD1:
+         case WRD2: {
+             unsigned short ushortBuffer=0;
+             GetVarVal(fHandle,varNo,varKind, 1,&ushortBuffer);
+             if (CFSError(errorMsg))	throw std::runtime_error(errorMsg);
+             outputstream << s_description << " " << ushortBuffer << " " << units;
+             break;
+         }
+         case RL4:
+         case RL8: {
+             float floatBuffer=0;
+             GetVarVal(fHandle,varNo,varKind, 1,&floatBuffer);
+             if (CFSError(errorMsg))	throw std::runtime_error(errorMsg);
+             outputstream << s_description << " " << floatBuffer << " " << units;
+             break;
+         }
+         case LSTR: {
+             std::vector<char> vc(varSize+2);
+             GetVarVal(fHandle,varNo,varKind, 1, &vc[0]);
+             if (CFSError(errorMsg))	throw std::runtime_error(errorMsg);
+             std::string s(&vc[0]);
+             if (s_description.substr(0,11) == "ScriptBlock") {
+                 outputstream << s_description << " " << s;
+             } else {
+                 outputstream << s_description << " " << s;
+             }
+             break;
+         }
+         default: break;
         }	//End switch 'varType'
     }
     if (s_description.substr(0,11) != "ScriptBlock" ) {
