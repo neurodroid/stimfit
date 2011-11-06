@@ -1,4 +1,3 @@
-arch_flags=""
-# "-arch x86_64 -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5"
+#! /bin/bash
 
-../configure CC=gcc-4.2 CXX=g++-4.2 LD=g++-4.2 CPPFLAGS="" CFLAGS="$arch_flags" CXXFLAGS="$arch_flags" LDFLAGS="$arch_flags" OBJCFLAGS="$arch_flags" OBJCXXFLAGS="$arch_flags" --prefix=/Users/cs/wxbin --with-osx_cocoa --with-opengl --enable-geometry --enable-graphics_ctx --enable-sound --with-sdl --enable-mediactrl --enable-std_string
+/Users/cs/wxPython-src-2.9.2.4/configure --enable-unicode --with-osx_cocoa --prefix=/Users/cs/wxbin --with-opengl --enable-sound --enable-graphics_ctx --enable-mediactrl --enable-display --enable-geometry --enable-debug_flag --enable-optimise --disable-debugreport --enable-uiactionsim --enable-monolithic --with-macosx-sdk=/Developer/SDKs/MacOSX10.6.sdk --enable-universal_binary --with-macosx-version-min=10.6
