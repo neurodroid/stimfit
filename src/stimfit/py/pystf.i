@@ -1281,6 +1281,13 @@ double plot_ymax();
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) mpl_panel;
+%feature("docstring", "Returns a pointer to the parent window")
+mpl_panel;
+PyObject* mpl_panel();
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %pythoncode {
 
 def get_trace(trace = -1, channel = -1):
@@ -1394,5 +1401,6 @@ def cut_traces_multi( pt_list ):
         if len(new_list) > 0: new_list.append( get_trace()[old_pt:] )
     new_window_list( new_list )
     return True
+                  
 }
 //--------------------------------------------------------------------

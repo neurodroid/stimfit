@@ -119,4 +119,6 @@ void _gMatrix_at( double* invec, int size, int channel, int section );
 void _gNames_at( const char* name, int channel );
 bool _new_window_gMatrix( );
 
+PyObject* mpl_panel();
+
 #endif

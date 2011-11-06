@@ -58,6 +58,14 @@ typedef wxAuiToolBar wxStfToolBar;
 typedef wxAuiToolBar wxStfToolBar;
 #endif
 
+struct new_wxwindow {
+    new_wxwindow(wxWindow* cppW=NULL, PyObject* pyW=NULL) :
+        cppWindow(cppW), pyWindow(pyW)
+    {}
+    wxWindow* cppWindow;
+    PyObject* pyWindow;
+};
+
 //! Provides the top-level frame.
 /*! It is part of the of the document/view framework implemented in wxWidgets.
  *  This class can only be used for MDI parent frames.
@@ -142,7 +150,13 @@ public:
     /*! \param progDlg An optional progress dialog
      */
     void CheckUpdate( wxProgressDialog* progDlg=NULL ) const;
-    
+
+    new_wxwindow MakePythonWindow(const std::string& windowFunc, const std::string& mgr_name="pythonShell",
+                                  const std::string& caption="Python Shell",
+                                  bool show=true, bool full=false, bool isfloat=true,
+                                  int width=-1, int height=-1);
+
+    int GetMplFigNo() {return mpl_figno++;}
 private:
     wxAuiManager m_mgr;
     wxStfToolBar *m_cursorToolBar, *m_scaleToolBar;
@@ -150,7 +164,6 @@ private:
 #ifdef WITH_PYTHON
     wxString python_code2; // python import code
     void RedirectStdio();
-    wxWindow* DoPythonStuff(wxWindow* parent, bool mpl=false);
 #endif
     // print data, to remember settings during the session
     boost::shared_ptr<wxPrintData> m_printData;
@@ -159,6 +172,7 @@ private:
     boost::shared_ptr<wxPageSetupDialogData> m_pageSetupData;
     bool firstResize;
 
+    int mpl_figno;
     wxStfToolBar* CreateStdTb();
     wxStfToolBar* CreateScaleTb();
     wxStfToolBar* CreateEditTb();

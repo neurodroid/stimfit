@@ -180,7 +180,7 @@ END_EVENT_TABLE()
 
 wxStfParentFrame::wxStfParentFrame(wxDocManager *manager, wxFrame *frame, const wxString& title,
                  const wxPoint& pos, const wxSize& size, long type):
-wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
+wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame")), mpl_figno(0)
 {
     // ::wxInitAllImageHandlers();
 
@@ -276,30 +276,28 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 #endif
                  << wxT("    return win\n")
                  << wxT("\n")
-                 << wxT("def makeWindowMpl(parent):\n")
+                 << wxT("def plotWindowMpl(parent):\n")
                  << wxT("    win = embedded_mpl.MplPanel(parent)\n")
                  << wxT("    win.plot_screen()\n")
+                 << wxT("    return win\n")
+                 << wxT("\n")
+                 << wxT("def makeWindowMpl(parent):\n")
+                 << wxT("    win = embedded_mpl.MplPanel(parent)\n")
                  << wxT("    return win\n");
 
     /*  The window remains open after the main application has been closed; deactivated for the time being.
      *  RedirectStdio();
      */
-    wxWindow* pPython = DoPythonStuff(this, false);
+    bool show = wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewShell"), 1);
+    wxWindow* pPython = MakePythonWindow("makeWindow", "pythonShell", "Python Shell", show,
+#ifdef __WXMAC__
+                                         true
+#else
+                                         false, false, GetClientSize().GetWidth(), GetClientSize().GetHeight()/5
+#endif                                         
+                                     ).cppWindow;
     if ( pPython == 0 ) {
         wxGetApp().ErrorMsg(wxT("Can't create a window for the python shell\nPointer is zero"));
-    } else {
-#ifndef __WXMAC__
-        bool show = wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewShell"), 1);
-#endif
-        m_mgr.AddPane( pPython, wxAuiPaneInfo().Name(wxT("pythonShell")).
-#ifndef __WXMAC__
-                       CloseButton(true).
-                       Show(show).Caption(wxT("Python Shell")).Dockable(true).Bottom().
-                       BestSize(GetClientSize().GetWidth(),GetClientSize().GetHeight()/5) );
-#else
-                       Floatable(false).CaptionVisible(false).
-                       BestSize(GetClientSize().GetWidth(),GetClientSize().GetHeight()).Fixed() );
-#endif
     }
 
 #ifdef _STFDEBUG
@@ -310,7 +308,7 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 #endif // _WINDOWS
 #endif // _STFDEBUG
 #endif // WITH_PYTHON
-    m_mgr.Update();
+
     wxStatusBar* pStatusBar = new wxStatusBar(this, wxID_ANY, wxST_SIZEGRIP);
     SetStatusBar(pStatusBar);
     //int widths[] = { 60, 60, -1 };
@@ -865,15 +863,13 @@ void wxStfParentFrame::OnMpl(wxCommandEvent& WXUNUSED(event))
 {
     if (wxGetApp().GetActiveDoc()==NULL) return;
 
-    wxWindow* pPython = DoPythonStuff(this, true);
+    std::ostringstream mgr_name;
+    mgr_name << "mpl" << GetMplFigNo();
+    wxWindow* pPython = MakePythonWindow("plotWindowMpl", mgr_name.str(), "Matplotlib", true, false, true, 800, 600).cppWindow;
+    
     if ( pPython == 0 ) {
         wxGetApp().ErrorMsg(wxT("Can't create a window for matplotlib\nPointer is zero"));
-    } else {
-        m_mgr.AddPane( pPython, wxAuiPaneInfo().Name(wxT("mpl")).
-                       CloseButton(true).
-                       Show(true).Caption(wxT("Matplotlib")).Float().BestSize(800,600));
     }
-    m_mgr.Update();
 }
 
 void wxStfParentFrame::OnPageSetup(wxCommandEvent& WXUNUSED(event))

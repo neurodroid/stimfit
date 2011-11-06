@@ -315,9 +315,9 @@ void wxStfParentFrame::RedirectStdio()
     wxPyEndBlockThreads(blocked);
 }
 
-wxWindow* wxStfParentFrame::DoPythonStuff(wxWindow* parent, bool mpl)
-{
-    // More complex embedded situations will require passing C++ objects to
+new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, const std::string& mgr_name, const std::string& caption, bool show,
+                                                bool full, bool isfloat, int width, int height) {
+   // More complex embedded situations will require passing C++ objects to
     // Python and/or returning objects from Python to be used in C++.  This
     // sample shows one way to do it.  NOTE: The above code could just have
     // easily come from a file, or the whole thing could be in the Python
@@ -352,12 +352,7 @@ wxWindow* wxStfParentFrame::DoPythonStuff(wxWindow* parent, bool mpl)
     // Now there should be an object named 'makeWindow' in the dictionary that
     // we can grab a pointer to:
     PyObject* func = NULL;
-    if (mpl) {
-        func = PyDict_GetItemString(globals, "makeWindowMpl");
-
-    } else {
-        func = PyDict_GetItemString(globals, "makeWindow");
-    }
+    func = PyDict_GetItemString(globals, windowFunc.c_str());
     if (!PyCallable_Check(func)) {
         PyErr_Print();
         wxGetApp().ErrorMsg(wxT("Couldn't initialize window for the python shell"));
@@ -368,7 +363,7 @@ wxWindow* wxStfParentFrame::DoPythonStuff(wxWindow* parent, bool mpl)
     // Now build an argument tuple and call the Python function.  Notice the
     // use of another wxPython API to take a wxWindows object and build a
     // wxPython object that wraps it.
-    PyObject* arg = wxPyMake_wxObject(parent, false);
+    PyObject* arg = wxPyMake_wxObject(this, false);
     wxASSERT(arg != NULL);
     PyObject* tuple = PyTuple_New(1);
     PyTuple_SET_ITEM(tuple, 0, arg);
@@ -400,8 +395,27 @@ wxWindow* wxStfParentFrame::DoPythonStuff(wxWindow* parent, bool mpl)
 
     // Finally, after all Python stuff is done, release the GIL
     wxPyEndBlockThreads(blocked);
-
-    return window;
+    
+    if (!full) {
+        if (isfloat) {
+            m_mgr.AddPane( window, wxAuiPaneInfo().Name(stf::std2wx(mgr_name)).
+                           CloseButton(true).
+                           Show(show).Caption(stf::std2wx(caption)).Float().
+                           BestSize(width, height) );
+        } else {
+            m_mgr.AddPane( window, wxAuiPaneInfo().Name(stf::std2wx(mgr_name)).
+                           CloseButton(true).
+                           Show(show).Caption(stf::std2wx(caption)).Dockable(true).Bottom().
+                           BestSize(width, height) );
+        }
+    } else {
+        m_mgr.AddPane( window, wxAuiPaneInfo().Name(stf::std2wx(mgr_name)).
+                       Floatable(false).CaptionVisible(false).
+                       BestSize(GetClientSize().GetWidth(),GetClientSize().GetHeight()).Fixed() );
+    }
+    m_mgr.Update();
+    
+    return new_wxwindow(window, result);
 }
 
 std::vector<stf::Extension> wxStfApp::LoadExtensions() {

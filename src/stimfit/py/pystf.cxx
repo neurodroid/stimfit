@@ -1508,3 +1508,20 @@ double plot_ymax() {
 
     return pGraph->get_plot_ymax();
 }
+
+PyObject* mpl_panel() {
+    if ( !check_doc() ) return NULL;
+
+    wxStfParentFrame* parent = GetMainFrame();
+    if ( !parent ) {
+        ShowError( wxT("Parent window is NULL") );
+        return 0;
+    }
+
+    std::ostringstream mpl_name;
+    mpl_name << "mpl" << parent->GetMplFigNo();
+
+    PyObject* result = parent->MakePythonWindow("makeWindowMpl", mpl_name.str(), "Matplotlib", true, false, true, 800, 600).pyWindow;
+
+    return result;
+}
