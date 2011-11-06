@@ -739,6 +739,50 @@ double t50right_index( bool active = true );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) rtlow_index;
+%feature("kwargs") rtlow_index;
+%feature("docstring", "Returns the zero-based index of the lower rise-
+time of an event in the specified channel. Uses the currently measured
+values, i.e. does not update measurements if the peak or base window
+cursors have changed.
+   
+Arguments:
+active -- If True, returns the current index within the active
+          channel. If False, returns the current index within the
+          reference channel.
+          
+Returns:
+The zero-based index of the lower rise time in units of sampling
+points. Interpolates between sampling points. Returns a negative value
+upon failure.") rtlow_index;
+%callback("%s_cb");
+double rtlow_index( bool active = true );
+%nocallback;
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) rthigh_index;
+%feature("kwargs") rthigh_index;
+%feature("docstring", "Returns the zero-based index of the higher
+rise time of an event in the specified channel. Uses the currently
+measured values, i.e. does not update measurements if the peak or base
+window cursors have changed.
+   
+Arguments:
+active -- If True, returns the current index within the active
+          channel. If False, returns the current index within the
+          reference channel.
+          
+Returns:
+The zero-based index of the higher rise time in units of sampling
+points. Interpolates between sampling points. Returns a negative value
+upon failure.") rthigh_index;
+%callback("%s_cb");
+double rthigh_index( bool active = true );
+%nocallback;
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %feature("autodoc", 0) get_threshold_time;
 %feature("kwargs") get_threshold_time;
 %feature("docstring", "Returns the crossing value of the threshold 

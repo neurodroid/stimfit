@@ -649,6 +649,28 @@ double t50right_index( bool active ) {
     }
 }
 
+double rtlow_index( bool active ) {
+    if ( !check_doc() ) return -1.0;
+
+    if ( active ) {
+        return actDoc()->GetT20Real();
+    } else {
+        ShowError( wxT("At this time, rtlow_index() is only implemented for the active channel") );
+        return -1.0;
+    }
+}
+
+double rthigh_index( bool active ) {
+    if ( !check_doc() ) return -1.0;
+
+    if ( active ) {
+        return actDoc()->GetT80Real();
+    } else {
+        ShowError( wxT("At this time, rthigh_index() is only implemented for the active channel") );
+        return -1.0;
+    }
+}
+
 bool update_cursor_dialog( ) {
     if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
         try {

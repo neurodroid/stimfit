@@ -170,11 +170,6 @@ enum {
 #include <wx/fileconf.h>
 #include <wx/settings.h>
 
-#ifdef __WXMAC__
-#undef wxFontDialog
-#include <wx/osx/fontdlg.h>
-#endif
-
 #include "./../math/stfmath.h"
 
 #ifdef WITH_PYTHON
