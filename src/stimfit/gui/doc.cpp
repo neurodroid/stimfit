@@ -3161,6 +3161,15 @@ const stf::SectionAttributes& wxStfDoc::GetCurrentSectionAttributes() const {
     }
 }
 
+stf::SectionAttributes& wxStfDoc::GetCurrentSectionAttributesW() {
+    try {
+        return sec_attr.at(GetCurCh()).at(GetCurSec());
+    }
+    catch(const std::out_of_range& e) {
+        throw e;
+    }
+}
+
 #if 0
 void wxStfDoc::Userdef(std::size_t id) {
     wxBusyCursor wc;

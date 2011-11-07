@@ -977,6 +977,7 @@ public:
 
     const stf::SectionAttributes& GetSectionAttributes(std::size_t nchannel, std::size_t nsection) const;
     const stf::SectionAttributes& GetCurrentSectionAttributes() const;
+    stf::SectionAttributes& GetCurrentSectionAttributesW();
 
     //! Deletes the current fit, sets isFitted to false;
     void DeleteFit(std::size_t nchannel, std::size_t nsection);

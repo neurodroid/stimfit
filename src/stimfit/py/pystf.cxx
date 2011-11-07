@@ -1558,7 +1558,7 @@ bool set_marker(double x, double y) {
     if ( !check_doc() )
         return false;
     try {
-        actDoc()->GetCurrentSectionAttributes().pyMarkers.
+        actDoc()->GetCurrentSectionAttributesW().pyMarkers.
             push_back(stf::PyMarker(x,y));
     }
     catch (const std::out_of_range& e) {
@@ -1576,7 +1576,7 @@ bool erase_markers() {
         return false;
 
     try {
-        actDoc()->GetCurrentSectionAttributes().pyMarkers.clear();
+        actDoc()->GetCurrentSectionAttributesW().pyMarkers.clear();
     }
     catch (const std::out_of_range& e) {
         wxString msg( wxT("Could not erase markers:\n") );
