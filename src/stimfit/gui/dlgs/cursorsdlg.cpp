@@ -169,8 +169,10 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
 bool wxStfCursorsDlg::TransferDataFromWindow() {
     // Apply settings before closing dialog:
     wxCommandEvent unusedEvent;
-    UpdateCursors();
-    OnPeakcalcexec(unusedEvent);
+    /* how did this sneak in?!
+       UpdateCursors();
+       OnPeakcalcexec(unusedEvent);
+    */
     return wxWindow::TransferDataFromWindow();
 }
 
@@ -1224,18 +1226,27 @@ stf::latency_mode wxStfCursorsDlg::GetLatencyEndMode() const {
         return stf::undefinedMode;
     }
 
-    if (pManual->GetValue() )
+    if (pManual->GetValue() ) {
         return stf::manualMode;
-    else if (pEvent->GetValue())
-        return stf::footMode;
-    else if (pPeak->GetValue())
-        return stf::peakMode;
-    else if (pMaxSlope->GetValue())
-        return stf::riseMode;
-    else if (pt50->GetValue())
-        return stf::halfMode;
-    else
-        return stf::undefinedMode;
+    } else {
+        if (pEvent->GetValue()) {
+            return stf::footMode;
+        } else {
+            if (pPeak->GetValue()) {
+                return stf::peakMode;
+            } else {
+                if (pMaxSlope->GetValue()) {
+                    return stf::riseMode;
+                } else {
+                    if (pt50->GetValue()) {
+                        return stf::halfMode;
+                    } else {
+                        return stf::undefinedMode;
+                    }
+                }
+            }
+        }
+    }
 }
 
 void wxStfCursorsDlg::SetLatencyStartMode(stf::latency_mode latencyBegMode){

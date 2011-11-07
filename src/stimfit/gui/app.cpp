@@ -369,16 +369,22 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
         if (!actDoc)
             return;
     }
-    
-    // wxStfView* actView = (wxStfView*)actDoc->GetFirstView();
+    if (!actDoc->IsInitialized()) {
+        ErrorMsg(wxT("Uninitialized file in wxStfApp::OnPeakcalcexecMsg()"));
+        return;
+    }
+#ifdef __WXMAC__        
+    wxStfView* actView = (wxStfView*)actDoc->GetFirstView();
+#else
     wxStfView* actView = GetActiveView();
+#endif
     if (actView!=NULL) {
         wxStfGraph* pGraph = actView->GetGraph();
         if (pGraph != NULL)
             pGraph->Refresh();
         else
             return;
-    }
+    }   
 
     if (CursorsDialog != NULL &&
         CursorsDialog->IsShown() &&

@@ -2628,6 +2628,7 @@ void wxStfDoc::SetLatencyStartMode(int value) {
         break;
     case 4:
         latencyStartMode=stf::footMode;
+        break;
     case 0:
     default:
         latencyStartMode=stf::manualMode;
@@ -2647,6 +2648,7 @@ void wxStfDoc::SetLatencyEndMode(int value) {
         break;
     case 4:
         latencyEndMode=stf::footMode;
+        break;
     case 0:
     default:
         latencyEndMode=stf::manualMode;
