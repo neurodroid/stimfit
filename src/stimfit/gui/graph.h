@@ -269,6 +269,16 @@ public:
     /*! \return y value of the top screen border
      */
     double get_plot_ymax() const;
+    
+    //! Returns y value of the bottom screen border for the reference channel
+    /*! \return y value of the bottom screen border for the reference channel
+     */
+    double get_plot_y2min() const;
+
+    //! Returns y value of the top screen border for the reference channel
+    /*! \return y value of the top screen border for the reference channel
+     */
+    double get_plot_y2max() const;
 
  private:
     wxStfChildFrame* pFrame;
@@ -406,14 +416,14 @@ public:
     int& SPXW() { return DocC()->GetXZoomW().startPosX; } 
     int SPY() const { return DocC()->GetYZoom(DocC()->GetCurCh()).startPosY; }
     int& SPYW() { return DocC()->GetYZoomW(DocC()->GetCurCh()).startPosY; } 
-    int SPY2() { return DocC()->GetYZoom(DocC()->GetSecCh()).startPosY; }
+    int SPY2() const { return DocC()->GetYZoom(DocC()->GetSecCh()).startPosY; }
     int& SPY2W() { return DocC()->GetYZoomW(DocC()->GetSecCh()).startPosY; }
     
     double XZ() const { return DocC()->GetXZoom().xZoom; }
     double& XZW() { return DocC()->GetXZoomW().xZoom; }
     double YZ() const { return DocC()->GetYZoom(DocC()->GetCurCh()).yZoom; }
     double& YZW() { return DocC()->GetYZoomW(DocC()->GetCurCh()).yZoom; }
-    double YZ2() { return DocC()->GetYZoom(DocC()->GetSecCh()).yZoom; }
+    double YZ2() const { return DocC()->GetYZoom(DocC()->GetSecCh()).yZoom; }
     double& YZ2W() { return DocC()->GetYZoomW(DocC()->GetSecCh()).yZoom; }
     
     DECLARE_EVENT_TABLE()

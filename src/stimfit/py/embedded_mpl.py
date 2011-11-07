@@ -73,6 +73,15 @@ class MplPanel(wx.Panel):
         tsl.append(stfio_plot.timeseries(stf.get_trace(), 
                                          yunits = stf.get_yunits(),
                                          dt = stf.get_sampling_interval()))
+        if stf.get_size_recording()>1:
+            tsl2 = [stfio_plot.timeseries(stf.get_trace(trace=-1, channel=stf.get_channel_index(False)), 
+                                          yunits = stf.get_yunits(trace=-1, channel=stf.get_channel_index(False)),
+                                          dt = stf.get_sampling_interval(),
+                                          color='r', linestyle='-r')]
+        else:
+            tsl2 = None
 
-        stfio_plot.plot_traces(tsl, self.axes, xmin=stf.plot_xmin(), xmax=stf.plot_xmax(),
-                               ymin=stf.plot_ymin(), ymax=stf.plot_ymax())
+        stfio_plot.plot_traces(tsl, tsl2, ax=self.axes, textcolor2 = 'r',
+                               xmin=stf.plot_xmin(), xmax=stf.plot_xmax(),
+                               ymin=stf.plot_ymin(), ymax=stf.plot_ymax(), 
+                               y2min=stf.plot_y2min(), y2max=stf.plot_y2max())

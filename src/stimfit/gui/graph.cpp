@@ -610,6 +610,16 @@ double wxStfGraph::get_plot_ymax() const {
     return SPY()/YZ();
 }
 
+double wxStfGraph::get_plot_y2min() const {
+    wxRect WindowRect=GetRect();
+    int top=WindowRect.height;
+    return (SPY2()-top)/YZ2();
+}
+
+double wxStfGraph::get_plot_y2max() const {
+    return SPY2()/YZ2();
+}
+
 void wxStfGraph::PlotTrace( wxDC* pDC, const Vector_double& trace, plottype pt, int bgno ) {
     // speed up drawing by omitting points that are outside the window:
 

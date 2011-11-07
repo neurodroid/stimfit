@@ -165,7 +165,8 @@ def prettyNumber(f):
     
 def plot_scalebars(ax, div=3.0, labels=True, 
                    xunits="", yunits="", nox=False, 
-                   sb_xoff=0, sb_yoff=0, rotate_yslabel=False, 
+                   sb_xoff=0, sb_yoff=0, 
+                   sb_ylabel_xoff_comp=False, sb_ylabel_yoff=0, rotate_yslabel=False, 
                    linestyle="-k", linewidth=4.0,
                    textcolor='k', textweight='normal',
                    xmin=None, xmax=None, ymin=None, ymax=None):
@@ -183,6 +184,11 @@ def plot_scalebars(ax, div=3.0, labels=True,
     yscale = ymax-ymin
 
     xoff = (scale_dist_x + sb_xoff) * xscale
+    if sb_ylabel_xoff_comp:
+        xoff_ylabel = scale_dist_x * xscale
+    else:
+        xoff_ylabel = xoff
+
     yoff = (scale_dist_y - sb_yoff) * yscale
 
     # plot scale bars:
@@ -224,14 +230,14 @@ def plot_scalebars(ax, div=3.0, labels=True,
         else:
             ylabel = r"%g$\,$%s" % (ylength,yunits)
         if not rotate_yslabel:
-            ylabel_x, ylabel_y = xmax, ymin + ylength/2.0
+            ylabel_x, ylabel_y = xmax, ymin + ylength/2.0 + sb_ylabel_yoff*yscale
             ylabel_x += key_dist*xscale
-            ax.text(ylabel_x+xoff, ylabel_y-yoff, ylabel, ha='left', va='center',
+            ax.text(ylabel_x+xoff_ylabel, ylabel_y-yoff, ylabel, ha='left', va='center',
                     weight=textweight, color=textcolor)
         else:
-            ylabel_x, ylabel_y = xmax, ymin + ylength/2.0
+            ylabel_x, ylabel_y = xmax, ymin + ylength/2.0 + sb_ylabel_yoff
             ylabel_x += key_dist*xscale
-            ax.text(ylabel_x+xoff, ylabel_y-yoff, ylabel, ha='left', va='center', rotation=90,
+            ax.text(ylabel_x+xoff_ylabel, ylabel_y-yoff, ylabel, ha='left', va='center', rotation=90,
                     weight=textweight, color=textcolor)
 
 
@@ -286,12 +292,15 @@ def reduce(ydata, dy, maxres, xoffset=0, width=graph_width):
     
     return xrange, yrange
 
-def plot_traces(traces, ax=None, pulses=None,
-                xmin=None, xmax=None, ymin=None, ymax=None, xoffset=0,
+def plot_traces(traces, traces2=None, ax=None, pulses=None,
+                xmin=None, xmax=None, ymin=None, ymax=None, 
+                y2min=None, y2max=None, xoffset=0,
                 maxres = None,
                 plot_sb=True, sb_yoff=0, sb_xoff=0, linestyle_sb = "-k",
                 dashedline=None, sagline=None, rotate_yslabel=False,
-                textcolor='k', textweight='normal', figsize=None,
+                textcolor='k', textweight='normal', 
+                textcolor2='r',
+                figsize=None,
                 pulseprop=0.05, border=0.2):
 
     if ax is None:
@@ -317,6 +326,17 @@ def plot_traces(traces, ax=None, pulses=None,
             xrange += xoffset
         ax.plot(xrange, yrange, trace.linestyle, lw=trace.linewidth, color=trace.color)
 
+    if traces2 is not None:
+        copy_ax = ax.twinx()
+        for trace in traces2:
+            if maxres is None:
+                xrange = trace.timearray()+xoffset
+                yrange = trace.data
+            else:
+                xrange, yrange = reduce(trace.data, trace.dt, maxres=maxres)
+                xrange += xoffset
+            copy_ax.plot(xrange, yrange, trace.linestyle, lw=trace.linewidth, color=trace.color)
+
     if xmin is not None:
         phantomrect_x0 = xmin
     else:
@@ -338,6 +358,19 @@ def plot_traces(traces, ax=None, pulses=None,
         phantomrect_y1 = ax.dataLim.ymax
 
     pr = ax.plot([phantomrect_x0, phantomrect_x1], [phantomrect_y0, phantomrect_y1], alpha=0.0)
+
+    # if traces2 is not None:
+    #     if y2min is not None:
+    #         phantomrect_y20 = y2min
+    #     else:
+    #         phantomrect_y20 = copy_ax.dataLim.ymin
+
+    #     if y2max is not None:
+    #         phantomrect_y21 = y2max
+    #     else:
+    #         phantomrect_y21 = copy_ax.dataLim.ymax
+
+    #     pr = copy_ax.plot([phantomrect_x0, phantomrect_x1], [phantomrect_y20, phantomrect_y21], alpha=0.0)
 
     xscale = ax.dataLim.xmax-ax.dataLim.xmin
     yscale = ax.dataLim.ymax-ax.dataLim.ymin
@@ -367,11 +400,30 @@ def plot_traces(traces, ax=None, pulses=None,
 
     ax.set_xlim(xmin, xmax)
     ax.set_ylim(ymin, ymax)
-
+    
+    if traces2 is not None:
+        if y2min is None:
+            y2min = copy_ax.dataLim.ymin
+        if y2max is None:
+            y2max = copy_ax.dataLim.ymax
+        copy_ax.set_ylim(y2min, y2max)
+        sb_xoff_total = -0.03+sb_xoff
+        sb_yl_yoff = 0.025
+    else:
+        sb_xoff_total = sb_xoff
+        sb_yl_yoff = 0
+        
     if plot_sb:
         plot_scalebars(ax, linestyle=linestyle_sb, xunits=traces[0].xunits, yunits=traces[0].yunits,
                        textweight=textweight, textcolor=textcolor, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, 
-                       rotate_yslabel = rotate_yslabel)
+                       rotate_yslabel = rotate_yslabel, sb_xoff=sb_xoff_total, 
+                       sb_ylabel_xoff_comp=(traces2 is not None), sb_ylabel_yoff=sb_yl_yoff)
+        if traces2 is not None:
+            plot_scalebars(copy_ax, linestyle=traces2[0].linestyle, xunits=traces2[0].xunits, yunits=traces2[0].yunits,
+                           textweight=textweight, textcolor=textcolor2, xmin=xmin, xmax=xmax, ymin=y2min, ymax=y2max, 
+                           rotate_yslabel = rotate_yslabel, nox=True, 
+                           sb_xoff=-0.01+sb_xoff, sb_ylabel_xoff_comp=True, sb_ylabel_yoff=-sb_yl_yoff)
+
     if pulses is not None and len(pulses) > 0:
         axp = Fig.add_axes([0.0,0.0,1.0-border,pulseprop+border/4.0], sharex=ax)
         for pulse in pulses:
@@ -388,6 +440,8 @@ def plot_traces(traces, ax=None, pulses=None,
     for o in ax.findobj():
         o.set_clip_on(False)
     ax.axis('off')
+    if traces2 is not None:
+        copy_ax.axis('off')
 
     if ax is None:
         return Fig

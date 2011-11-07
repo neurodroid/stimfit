@@ -1509,6 +1509,26 @@ double plot_ymax() {
     return pGraph->get_plot_ymax();
 }
 
+double plot_y2min() {
+    wxStfGraph* pGraph = actGraph();
+    if ( !pGraph ) {
+        ShowError( wxT("Pointer to graph is zero") );
+        return 0;
+    }
+
+    return pGraph->get_plot_y2min();
+}
+
+double plot_y2max() {
+    wxStfGraph* pGraph = actGraph();
+    if ( !pGraph ) {
+        ShowError( wxT("Pointer to graph is zero") );
+        return 0;
+    }
+
+    return pGraph->get_plot_y2max();
+}
+
 PyObject* mpl_panel() {
     if ( !check_doc() ) return NULL;
 

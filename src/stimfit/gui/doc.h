@@ -293,11 +293,9 @@ public:
      *  and the latency.
      */
     void Measure();
-
     
     //! Put the current measurement results into a text table.
     stf::Table CurResultsTable();
-
 
     //! Retrieves the index of the current channel.
     /*! \return The index of the current channel.

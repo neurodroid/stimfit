@@ -1268,16 +1268,32 @@ double plot_xmax();
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) plot_ymin;
-%feature("docstring", "Returns x value of the bottom screen border")
+%feature("docstring", "Returns y value of the bottom screen border")
 plot_ymin;
 double plot_ymin();
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) plot_ymax;
-%feature("docstring", "Returns x value of the top screen border")
+%feature("docstring", "Returns y value of the top screen border")
 plot_ymax;
 double plot_ymax();
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) plot_y2min;
+%feature("docstring", "Returns y value of the bottom screen border for
+the reference channel")
+plot_y2min;
+double plot_y2min();
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) plot_y2max;
+%feature("docstring", "Returns y value of the top screen border for
+the reference channel")
+plot_y2max;
+double plot_y2max();
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
