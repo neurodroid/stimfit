@@ -982,19 +982,6 @@ int get_peak_mean( );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-%feature("autodoc", 0) get_peak_direction;
-%feature("docstring", "Gets the current direction of the detection
-for the peak cursors.
-
-Arguments:
-direction -- A string specifying the peak direction. Can be one of:
-             \"up\", \"down\" or \"both\"
-
-Returns:
-False upon failure.") get_peak_direction;
-const char* get_peak_direction( );
-//--------------------------------------------------------------------
-//--------------------------------------------------------------------
 %feature("autodoc", 0) set_peak_direction;
 %feature("docstring", "Sets the direction of the peak detection.
 
@@ -1005,6 +992,90 @@ direction -- A string specifying the peak direction. Can be one of:
 Returns:
 False upon failure.") set_peak_direction;
 bool set_peak_direction( const char* direction );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) get_peak_direction;
+%feature("docstring", "Gets the current direction of the detection
+for the peak cursors.
+
+Returns:
+A string specifying the peak direction. Can be one of:
+\"up\", \"down\" or \"both\"") get_peak_direction;
+const char* get_peak_direction( );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) set_latency_start_mode;
+%feature("docstring", "Sets the latency start mode.
+
+Arguments:
+direction -- A string specifying the latency start mode. Can be one of
+             \"manual\", \"peak\", \"rise\" or \"half\"
+
+Returns:
+False upon failure.") set_latency_start_mode;
+bool set_latency_start_mode( const char* mode );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) get_latency_start_mode;
+%feature("docstring", "Gets the latency start mode
+
+Returns:
+A string specifying the latency start mode. Can be one of
+\"manual\", \"peak\", \"rise\" or \"half\"") get_latency_start_mode;
+const char* get_latency_start_mode( );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) set_latency_end_mode;
+%feature("docstring", "Sets the latency end mode.
+
+Arguments:
+direction -- A string specifying the latency end mode. Can be one of
+             \"manual\", \"peak\", \"rise\", \"foot\" or \"half\"
+
+Returns:
+False upon failure.") set_latency_end_mode;
+bool set_latency_end_mode( const char* mode );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) get_latency_end_mode;
+%feature("docstring", "Gets the latency end mode
+
+Returns:
+A string specifying the latency end mode. Can be one of \"manual\",
+\"peak\", \"rise\", \"foot\" or \"half\"") get_latency_end_mode;
+const char* get_latency_end_mode( );
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) get_latency_start;
+%feature("kwargs") get_latency_start;
+%feature("docstring", "Returns the zero-based index or the time point
+of the latency start cursor.
+
+Arguments:
+is_time -- If False (default), returns the zero-based index. If True,
+           returns the time from the beginning of the trace to the
+           cursor position.") get_latency_start;
+double get_latency_start( bool is_time = false );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) get_latency_end;
+%feature("kwargs") get_latency_end;
+%feature("docstring", "Returns the zero-based index or the time point
+of the latency end cursor.
+
+Arguments:
+is_time -- If False (default), returns the zero-based index. If True,
+           returns the time from the beginning of the trace to the
+           cursor position.") get_latency_end;
+double get_latency_end( bool is_time = false );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------

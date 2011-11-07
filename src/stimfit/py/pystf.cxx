@@ -900,6 +900,125 @@ bool set_peak_direction( const char* direction ) {
 
 }
 
+const char* get_latency_start_mode( ) {
+    if ( !check_doc() ) return "";
+    
+    const char *mode = "undefined";
+    if ( actDoc()->GetLatencyStartMode() == stf::manualMode )
+        mode = "manual";
+    else if ( actDoc()->GetLatencyStartMode() == stf::peakMode )
+        mode = "peak";
+    else if ( actDoc()->GetLatencyStartMode() == stf::riseMode )
+        mode = "rise";
+    else if ( actDoc()->GetLatencyStartMode() == stf::halfMode )
+        mode = "half";
+    
+    return mode;
+}
+
+bool set_latency_start_mode( const char* mode ) {
+    if ( !check_doc() ) return false;
+
+    if ( strcmp( mode, "manual" ) == 0 ) {
+        actDoc()->SetLatencyStartMode( stf::manualMode );
+        return update_cursor_dialog();
+    }
+
+    if ( strcmp( mode, "peak" ) == 0 ) {
+        actDoc()->SetLatencyStartMode( stf::peakMode );
+        return update_cursor_dialog();
+    }
+
+    if ( strcmp( mode, "rise" ) == 0 ) {
+        actDoc()->SetLatencyStartMode( stf::riseMode );
+        return update_cursor_dialog();
+    }
+
+    if ( strcmp( mode, "half" ) == 0 ) {
+        actDoc()->SetLatencyStartMode( stf::halfMode );
+        return update_cursor_dialog();
+    }
+
+    wxString msg;
+    msg << wxT("\"") << wxString::FromAscii(mode) << wxT("\" is not a valid mode\n");
+    msg << wxT("Use \"up\", \"down\" or \"both\"");
+    ShowError( msg );
+    return false;
+
+}
+
+const char* get_latency_end_mode( ) {
+    if ( !check_doc() ) return "";
+    
+    const char *mode = "undefined";
+    if ( actDoc()->GetLatencyEndMode() == stf::manualMode )
+        mode = "manual";
+    else if ( actDoc()->GetLatencyEndMode() == stf::peakMode )
+        mode = "peak";
+    else if ( actDoc()->GetLatencyEndMode() == stf::riseMode )
+        mode = "rise";
+    else if ( actDoc()->GetLatencyEndMode() == stf::halfMode )
+        mode = "half";
+    else if ( actDoc()->GetLatencyEndMode() == stf::footMode )
+        mode = "foot";
+    
+    return mode;
+}
+
+bool set_latency_end_mode( const char* mode ) {
+    if ( !check_doc() ) return false;
+
+    if ( strcmp( mode, "manual" ) == 0 ) {
+        actDoc()->SetLatencyEndMode( stf::manualMode );
+        return update_cursor_dialog();
+    }
+
+    if ( strcmp( mode, "peak" ) == 0 ) {
+        actDoc()->SetLatencyEndMode( stf::peakMode );
+        return update_cursor_dialog();
+    }
+
+    if ( strcmp( mode, "rise" ) == 0 ) {
+        actDoc()->SetLatencyEndMode( stf::riseMode );
+        return update_cursor_dialog();
+    }
+
+    if ( strcmp( mode, "half" ) == 0 ) {
+        actDoc()->SetLatencyEndMode( stf::halfMode );
+        return update_cursor_dialog();
+    }
+
+    if ( strcmp( mode, "foot" ) == 0 ) {
+        actDoc()->SetLatencyEndMode( stf::footMode );
+        return update_cursor_dialog();
+    }
+
+    wxString msg;
+    msg << wxT("\"") << wxString::FromAscii(mode) << wxT("\" is not a valid mode\n");
+    msg << wxT("Use \"up\", \"down\" or \"both\"");
+    ShowError( msg );
+    return false;
+
+}
+
+double get_latency_start( bool is_time ) {
+    if ( !check_doc() ) return -1;
+
+    if ( !is_time )
+        return actDoc()->GetLatencyBeg();
+    else
+        return (double)actDoc()->GetLatencyBeg() * actDoc()->GetXScale();
+}
+
+double get_latency_end( bool is_time ) {
+    if ( !check_doc() ) return -1;
+
+    if ( !is_time )
+        return actDoc()->GetLatencyEnd();
+    else
+        return (double)actDoc()->GetLatencyEnd() * actDoc()->GetXScale();
+}
+
 double get_base_start( bool is_time ) {
     if ( !check_doc() ) return -1;
 
