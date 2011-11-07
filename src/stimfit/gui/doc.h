@@ -975,8 +975,8 @@ public:
      */
     virtual void InsertChannel(Channel& c_Channel, std::size_t pos);
 
-    stf::SectionAttributes GetSectionAttributes(std::size_t nchannel, std::size_t nsection);
-    stf::SectionAttributes GetCurrentSectionAttributes();
+    const stf::SectionAttributes& GetSectionAttributes(std::size_t nchannel, std::size_t nsection) const;
+    const stf::SectionAttributes& GetCurrentSectionAttributes() const;
 
     //! Deletes the current fit, sets isFitted to false;
     void DeleteFit(std::size_t nchannel, std::size_t nsection);

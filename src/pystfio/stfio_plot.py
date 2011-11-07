@@ -336,6 +336,8 @@ def plot_traces(traces, traces2=None, ax=None, pulses=None,
                 xrange, yrange = reduce(trace.data, trace.dt, maxres=maxres)
                 xrange += xoffset
             copy_ax.plot(xrange, yrange, trace.linestyle, lw=trace.linewidth, color=trace.color)
+    else:
+        copy_ax = None
 
     if xmin is not None:
         phantomrect_x0 = xmin
@@ -445,6 +447,8 @@ def plot_traces(traces, traces2=None, ax=None, pulses=None,
 
     if ax is None:
         return Fig
+
+    return copy_ax
 
 def standard_axis(fig, subplot, sharex=None, sharey=None, hasx=False, hasy=True):
     

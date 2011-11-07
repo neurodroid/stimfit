@@ -2115,7 +2115,10 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
                     cur().get(),templateWave
             );
         }
-        if (detect.size()==0) return;
+        if (detect.empty()) {
+            wxGetApp().ErrorMsg(wxT("Error: Detection criterion is empty."));
+            return;
+        }
         std::vector<int> startIndices(
                 stf::peakIndices( detect, MiniDialog.GetThreshold(),
                         MiniDialog.GetMinDistance() ) );
@@ -2126,8 +2129,7 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
         // erase old events:
         ClearEvents(GetCurCh(), GetCurSec());
         for (c_int_it cit = startIndices.begin(); cit != startIndices.end(); ++cit ) {
-            std::vector< stf::Event > eventList = GetSectionAttributes(GetCurCh(), GetCurSec()).eventList;
-            eventList.push_back( stf::Event( *cit, 0, templateWave.size() ) );
+            sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.push_back( stf::Event( *cit, 0, templateWave.size() ) );
             // Find peak in this event:
             double baselineMean=0;
             for ( std::size_t n_mean = (std::size_t)*cit-baseline;
@@ -2143,9 +2145,10 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             baselineMean /= baseline;
             double peakIndex=0;
             stf::peak( cur().get(), baselineMean, *cit, *cit + templateWave.size(),
-                    1, stf::both, peakIndex );
+                       1, stf::both, peakIndex );
             // set peak index of last event:
-            eventList[eventList.size()-1].SetEventPeakIndex((int)peakIndex);
+            std::size_t last_idx = GetCurrentSectionAttributes().eventList.size()-1;
+            sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.at(last_idx).SetEventPeakIndex((int)peakIndex);
         }
     }
     catch (const std::out_of_range& e) {
@@ -2161,8 +2164,7 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
 
 void wxStfDoc::Extract( wxCommandEvent& WXUNUSED(event) ) {
     try {
-        std::vector< stf::Event > eventList = GetSectionAttributes(GetCurCh(), GetCurSec()).eventList;
-        stf::Table events(eventList.size(), 2);
+        stf::Table events(GetCurrentSectionAttributes().eventList.size(), 2);
         events.SetColLabel(0, "Time of event onset");
         events.SetColLabel(1, "Inter-event interval");
         // using the peak indices (these are the locations of the beginning of an optimal
@@ -2170,14 +2172,16 @@ void wxStfDoc::Extract( wxCommandEvent& WXUNUSED(event) ) {
 
         // count non-discarded events:
         std::size_t n_real = 0;
-        for (c_event_it cit = eventList.begin(); cit != eventList.end(); ++cit) {
+        for (c_event_it cit = GetCurrentSectionAttributes().eventList.begin();
+             cit != GetCurrentSectionAttributes().eventList.end(); ++cit) {
             n_real += (int)(!cit->GetDiscard());
         }
         Channel TempChannel2(n_real);
         std::vector<int> peakIndices(n_real);
         n_real = 0;
-        c_event_it lastEventIt = eventList.begin();
-        for (event_it it = eventList.begin(); it != eventList.end(); ++it) {
+        c_event_it lastEventIt = GetCurrentSectionAttributes().eventList.begin();
+        for (c_event_it it = GetCurrentSectionAttributes().eventList.begin();
+             it != GetCurrentSectionAttributes().eventList.end(); ++it) {
             if (!it->GetDiscard()) {
                 wxString miniName; miniName << wxT( "Event #" ) << (int)n_real+1;
                 events.SetRowLabel(n_real, stf::wx2std(miniName));
@@ -2248,8 +2252,7 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
         wxStfView* pView = (wxStfView*)GetFirstView();
         wxStfGraph* pGraph = pView->GetGraph();
         int newStartPos = pGraph->get_eventPos();
-        std::vector< stf::Event > eventList = GetSectionAttributes(GetCurCh(), GetCurSec()).eventList;
-        stf::Event newEvent(newStartPos, 0, eventList.at(0).GetEventSize());
+        stf::Event newEvent(newStartPos, 0, GetCurrentSectionAttributes().eventList.at(0).GetEventSize());
         // Find peak in this event:
         double baselineMean=0;
         for ( std::size_t n_mean = (std::size_t)newStartPos - baseline;
@@ -2265,24 +2268,25 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
         baselineMean /= baseline;
         double peakIndex=0;
         stf::peak( cur().get(), baselineMean, newStartPos,
-                newStartPos + eventList.at(0).GetEventSize(), 1,
+                newStartPos + GetCurrentSectionAttributes().eventList.at(0).GetEventSize(), 1,
                 stf::both, peakIndex );
         // set peak index of last event:
         newEvent.SetEventPeakIndex( (int)peakIndex );
         // find the position in the current event list where the new
         // event should be inserted:
         bool found = false;
-        for (event_it it = eventList.begin(); it != eventList.end(); ++it) {
+        for (event_it it = sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.begin();
+             it != sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.end(); ++it) {
             if ( (int)(it->GetEventStartIndex()) > newStartPos ) {
                 // insert new event before this event, then break:
-                eventList.insert( it, newEvent );
+                sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.insert( it, newEvent );
                 found = true;
                 break;
             }
         }
         // if we are at the end of the list, append the event:
         if (!found)
-            eventList.push_back( newEvent );
+            sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.push_back( newEvent );
     }
     catch (const std::out_of_range& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -2316,17 +2320,17 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
                 wxT("Couldn't find any events;\ntry again with lower threshold")
         );
     }
-    std::vector< stf::Event > eventList = GetSectionAttributes(GetCurCh(), GetCurSec()).eventList;
     for (c_int_it cit = startIndices.begin(); cit != startIndices.end(); ++cit) {
-        eventList.push_back( stf::Event( *cit, 0, baseline ) );
+        sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.push_back( stf::Event( *cit, 0, baseline ) );
     }
     // show results in a table:
-    stf::Table events(eventList.size(),2);
+    stf::Table events(GetCurrentSectionAttributes().eventList.size(),2);
     events.SetColLabel( 0, "Time of event peak");
     events.SetColLabel( 1, "Inter-event interval");
     std::size_t n_event = 0;
-    c_event_it lastEventCit = eventList.begin();
-    for (c_event_it cit2 = eventList.begin(); cit2 != eventList.end(); ++cit2) {
+    c_event_it lastEventCit = GetCurrentSectionAttributes().eventList.begin();
+    for (c_event_it cit2 = GetCurrentSectionAttributes().eventList.begin();
+         cit2 != GetCurrentSectionAttributes().eventList.end(); ++cit2) {
         wxString eventName; eventName << wxT("Event #") << (int)n_event+1;
         events.SetRowLabel(n_event, stf::wx2std(eventName));
         events.at(n_event,0)= (double)cit2->GetEventStartIndex() / GetSR();
@@ -3139,7 +3143,7 @@ void wxStfDoc::ClearEvents(std::size_t nchannel, std::size_t nsection) {
     }
 }
 
-stf::SectionAttributes wxStfDoc::GetSectionAttributes(std::size_t nchannel, std::size_t nsection) {
+const stf::SectionAttributes& wxStfDoc::GetSectionAttributes(std::size_t nchannel, std::size_t nsection) const {
     try {
         return sec_attr.at(nchannel).at(nsection);
     }
@@ -3148,7 +3152,7 @@ stf::SectionAttributes wxStfDoc::GetSectionAttributes(std::size_t nchannel, std:
     }
 }
 
-stf::SectionAttributes wxStfDoc::GetCurrentSectionAttributes() {
+const stf::SectionAttributes& wxStfDoc::GetCurrentSectionAttributes() const {
     try {
         return sec_attr.at(GetCurCh()).at(GetCurSec());
     }

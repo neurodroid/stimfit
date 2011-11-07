@@ -871,9 +871,13 @@ void wxStfGraph::DrawFit(wxDC* pDC) {
         for ( std::size_t n_sel = 0; n_sel < Doc()->GetSelectedSections().size(); ++n_sel ) {
             std::size_t sel_index = Doc()->GetSelectedSections()[ n_sel ];
             // Check whether this section contains a fit:
-            stf::SectionAttributes sec_attr = Doc()->GetSectionAttributes(Doc()->GetCurCh(), sel_index);
-            if ( sec_attr.isFitted && pFrame->ShowSelected() ) {
-                PlotFit( pDC, stf::SectionPointer( &((*Doc())[Doc()->GetCurCh()][sel_index]), sec_attr ) );
+            try {
+                stf::SectionAttributes sec_attr = Doc()->GetSectionAttributes(Doc()->GetCurCh(), sel_index);
+                if ( sec_attr.isFitted && pFrame->ShowSelected() ) {
+                    PlotFit( pDC, stf::SectionPointer( &((*Doc())[Doc()->GetCurCh()][sel_index]), sec_attr ) );
+                }
+            } catch (const std::out_of_range& e) {
+                /* Do nothing */
             }
         }
 
