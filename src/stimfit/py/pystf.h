@@ -7,6 +7,8 @@
 
 std::string get_versionstring( );
 
+PyObject* get_trace(int trace=-1, int channel=-1);
+
 bool new_window( double* invec, int size );
 bool new_window_matrix( double* inarr, int traces, int size );
 bool new_window_selected_this( );
@@ -121,7 +123,6 @@ double plot_ymax();
 double plot_y2min();
 double plot_y2max();
 
-void _get_trace_fixedsize( double* outvec, int size, int trace = -1, int channel = -1 );
 void _gMatrix_resize( std::size_t channels, std::size_t sections );
 void _gNames_resize( std::size_t channels );
 void _gMatrix_at( double* invec, int size, int channel, int section );
@@ -129,5 +130,7 @@ void _gNames_at( const char* name, int channel );
 bool _new_window_gMatrix( );
 
 PyObject* mpl_panel();
+
+PyObject* template_matching(double* invec, int size, bool correlate=false);
 
 #endif

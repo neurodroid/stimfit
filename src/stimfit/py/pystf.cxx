@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <math.h>
-#include <boost/numeric/ublas/vector.hpp>
+// #include <boost/numeric/ublas/vector.hpp>
+
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
 #endif
@@ -47,6 +48,8 @@
     #endif
 #endif
 
+#include <numpy/arrayobject.h>
+
 #include "pystf.h"
 
 #include "./../gui/app.h"
@@ -58,8 +61,14 @@
 #include "./../gui/dlgs/cursorsdlg.h"
 #include "./../math/fit.h"
 
+#define array_data(a)          (((PyArrayObject *)a)->data)
+
 std::vector< std::vector< Vector_double > > gMatrix;
 std::vector< std::string > gNames;
+
+void wrap_array() {
+    import_array();
+}
 
 void ShowExcept(const std::exception& e) {
     wxString msg;
@@ -127,8 +136,10 @@ std::string get_versionstring() {
 #endif
 }
 
-void _get_trace_fixedsize( double* outvec, int size, int trace, int channel ) {
-    if ( !check_doc() ) return;
+PyObject* get_trace(int trace, int channel) {
+    wrap_array();
+
+    if ( !check_doc() ) return NULL;
 
     if ( trace == -1 ) {
         trace = actDoc()->GetCurSec();
@@ -136,23 +147,17 @@ void _get_trace_fixedsize( double* outvec, int size, int trace, int channel ) {
     if ( channel == -1 ) {
         channel = actDoc()->GetCurCh();
     }
-    
-    // Do the range checking here so the copying will be faster:
-    try {
-        if ( size > (int)actDoc()->at(channel).at(trace).size() ) {
-            ShowError( wxT("Index out of range in get_trace_fixedsize()") );
-            return;
-        }
-    }
-    catch ( const std::out_of_range& e) {
-        ShowExcept( e );
-        return;
-    }
-    
-    // We can now safely perform a fast copy without range checking:
+
+    npy_intp dims[1] = {(int)actDoc()->at(channel).at(trace).size()};
+    PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+    double* gDataP = (double*)array_data(np_array);
+
+    /* fill */
     std::copy( (*actDoc())[channel][trace].get().begin(),
-         (*actDoc())[channel][trace].get().end(),
-         outvec);
+               (*actDoc())[channel][trace].get().end(),
+               gDataP);
+    
+    return np_array;
 }
 
 bool new_window( double* invec, int size ) {
@@ -1663,4 +1668,30 @@ PyObject* mpl_panel() {
     PyObject* result = parent->MakePythonWindow("makeWindowMpl", mpl_name.str(), "Matplotlib", true, false, true, 800, 600).pyWindow;
 
     return result;
+}
+
+PyObject* template_matching(double* invec, int size, bool correlate) {
+    wrap_array();
+
+    if ( !check_doc() ) return NULL;
+
+    int trace = actDoc()->GetCurSec();
+    int channel = actDoc()->GetCurCh();
+
+    Vector_double templ(invec, &invec[size]);
+    
+    Vector_double detect((*actDoc())[channel][trace].get().size());
+    if (correlate) {
+        detect = stf::linCorr((*actDoc())[channel][trace].get(), templ, false);
+    } else {
+        detect = stf::detectionCriterion((*actDoc())[channel][trace].get(), templ, false);
+    }
+    npy_intp dims[1] = {detect.size()};
+    PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+    double* gDataP = (double*)array_data(np_array);
+
+    /* fill */
+    std::copy(detect.begin(), detect.end(), gDataP);
+    
+    return np_array;
 }

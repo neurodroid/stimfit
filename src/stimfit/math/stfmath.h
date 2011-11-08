@@ -307,7 +307,8 @@ quad(const Vector_double& data, std::size_t begin, std::size_t end);
 Vector_double
 detectionCriterion(
         const Vector_double& data,
-        const Vector_double& templ
+        const Vector_double& templ,
+        bool progress=true
 );
 
 // TODO: Add negative-going peaks.
@@ -324,7 +325,7 @@ std::vector<int> peakIndices(const Vector_double& data, double threshold, int mi
  *  \param va2 Second array.
  *  \return The linear correlation between the two arrays for each data point of \e va1.
  */
-Vector_double linCorr(const Vector_double& va1, const Vector_double& va2); 
+ Vector_double linCorr(const Vector_double& va1, const Vector_double& va2, bool progress=true); 
 
 //! Computes the sum of an arbitrary number of Gaussians.
 /*! \f[

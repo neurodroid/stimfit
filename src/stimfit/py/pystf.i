@@ -22,7 +22,6 @@ application from the embedded python shell."
 
 %define %apply_numpy_typemaps(TYPE)
 
-%apply (TYPE* ARGOUT_ARRAY1, int DIM1) {(TYPE* outvec, int size)};
 %apply (TYPE* IN_ARRAY1, int DIM1) {(TYPE* invec, int size)};
 %apply (TYPE* IN_ARRAY2, int DIM1, int DIM2) {(TYPE* inarr, int traces, int size)};
 
@@ -38,13 +37,11 @@ std::string get_versionstring( );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-%feature("autodoc", 0) _get_trace_fixedsize;
-%feature("docstring", "Returns a trace as a 1-dimensional NumPy array.
-This returns an array of a given size.
-Don't use this, use get_trace instead.
-      
-Arguments:
-size --    Size of the array to be filled.       
+%feature("autodoc", 0) get_trace;
+%feature("kwargs") get_trace;
+%feature("docstring", """Returns a trace as a 1-dimensional NumPy array.
+
+Arguments:       
 trace --   ZERO-BASED index of the trace within the channel.
            Note that this is one less than what is shown
            in the drop-down box.
@@ -55,8 +52,18 @@ channel -- ZERO-BASED index of the channel. This is independent
            The default value of -1 returns the currently
            active channel.
 Returns:
-The trace as a 1D NumPy array.") _get_trace_fixedsize;
-void _get_trace_fixedsize( double* outvec, int size, int trace, int channel );
+The trace as a 1D NumPy array.""") get_trace;
+PyObject* get_trace(int trace=-1, int channel=-1);
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) template_matching;
+%feature("kwargs") template_matching;
+%feature("docstring", "
+      
+Arguments:
+") template_matching;
+PyObject* template_matching(double* invec, int size, bool correlate=false);
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -1377,24 +1384,6 @@ PyObject* mpl_panel();
 //--------------------------------------------------------------------
 %pythoncode {
 
-def get_trace(trace = -1, channel = -1):
-    """Returns a trace as a 1-dimensional NumPy array.
-      
-    Arguments:       
-    trace --   ZERO-BASED index of the trace within the channel.
-               Note that this is one less than what is shown
-               in the drop-down box.
-               The default value of -1 returns the currently
-               displayed trace.
-    channel -- ZERO-BASED index of the channel. This is independent
-               of whether a channel is active or not.
-               The default value of -1 returns the currently
-               active channel.
-    Returns:
-    The trace as a 1D NumPy array.
-    """
-    return _get_trace_fixedsize(get_size_trace(trace, channel), trace, channel)
-    
 def new_window_list( array_list ):
     """Creates a new window showing a sequence of
     1D NumPy arrays, or a sequence of a sequence of 1D

@@ -223,7 +223,7 @@ stf::spectrum(
 
 
 Vector_double
-stf::detectionCriterion(const Vector_double& data, const Vector_double& templ)
+stf::detectionCriterion(const Vector_double& data, const Vector_double& templ, bool progress)
 {
     wxProgressDialog progDlg( wxT("Template matching"), wxT("Starting template matching"),
             100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_SKIP );
@@ -245,7 +245,7 @@ stf::detectionCriterion(const Vector_double& data, const Vector_double& templ)
     int progCounter=0;
     double progFraction=(data.size()-templ.size())/100;
     for (unsigned n_data=0; n_data<data.size()-templ.size(); ++n_data) {
-        if (n_data/progFraction>progCounter) {
+        if (progress && n_data/progFraction>progCounter) {
             progDlg.Update( (int)((double)n_data/(double)(data.size()-templ.size())*100.0),
                     wxT("Calculating detection criterion"), &skipped );
             if (skipped) {
@@ -329,7 +329,7 @@ stf::peakIndices(const Vector_double& data,
 }
 
 Vector_double
-stf::linCorr(const Vector_double& data, const Vector_double& templ)
+stf::linCorr(const Vector_double& data, const Vector_double& templ, bool progress)
 {
     wxProgressDialog progDlg( wxT("Template matching"), wxT("Starting template matching"),
             100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_SKIP );
@@ -358,7 +358,7 @@ stf::linCorr(const Vector_double& data, const Vector_double& templ)
     int progCounter=0;
     double progFraction=(data.size()-templ.size())/100;
     for (unsigned n_data=0; n_data<data.size()-templ.size(); ++n_data) {
-        if (n_data/progFraction>progCounter) {
+        if (progress && n_data/progFraction>progCounter) {
             progDlg.Update( (int)((double)n_data/(double)(data.size()-templ.size())*100.0),
                     wxT("Calculating correlation coefficient"), &skipped );
             if (skipped) {
