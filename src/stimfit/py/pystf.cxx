@@ -1670,7 +1670,7 @@ PyObject* mpl_panel() {
     return result;
 }
 
-PyObject* template_matching(double* invec, int size, bool correlate) {
+PyObject* template_matching(double* invec, int size, bool correlate, bool norm) {
     wrap_array();
 
     if ( !check_doc() ) return NULL;
@@ -1679,6 +1679,15 @@ PyObject* template_matching(double* invec, int size, bool correlate) {
     int channel = actDoc()->GetCurCh();
 
     Vector_double templ(invec, &invec[size]);
+    if (norm) {
+        Vector_double::const_iterator max_el = std::max_element(templ.begin(), templ.end());
+        Vector_double::const_iterator min_el = std::min_element(templ.begin(), templ.end());
+        double fmin=*min_el;
+        double fmax=*max_el;
+        templ = stfio::vec_scal_minus(templ, fmax);
+        double minim=fabs(fmin);
+        templ = stfio::vec_scal_div(templ, minim);
+    }
     
     Vector_double detect((*actDoc())[channel][trace].get().size());
     if (correlate) {
@@ -1694,4 +1703,35 @@ PyObject* template_matching(double* invec, int size, bool correlate) {
     std::copy(detect.begin(), detect.end(), gDataP);
     
     return np_array;
+}
+
+PyObject* peak_detection(double* invec, int size, double threshold, int min_distance) {
+    wrap_array();
+
+    if ( !check_doc() ) return NULL;
+
+    Vector_double data(invec, &invec[size]);
+
+    std::vector<int> peak_idcs = stf::peakIndices(data, threshold, min_distance);
+
+    npy_intp dims[1] = {peak_idcs.size()};
+    PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_INT);
+    if (sizeof(int) == 4) {
+        int* gDataP = (int*)array_data(np_array);
+        /* fill */
+        std::copy(peak_idcs.begin(), peak_idcs.end(), gDataP);
+    
+        return np_array;
+    } else if (sizeof(short) == 4) {
+        short* gDataP = (short*)array_data(np_array);
+        
+        /* fill */
+        std::copy(peak_idcs.begin(), peak_idcs.end(), gDataP);
+    
+        return np_array;
+    } else {
+        ShowError(wxT("Couldn't find 4-byte integer type"));
+        return NULL;
+    }
+        
 }

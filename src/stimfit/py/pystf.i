@@ -63,7 +63,17 @@ PyObject* get_trace(int trace=-1, int channel=-1);
       
 Arguments:
 ") template_matching;
-PyObject* template_matching(double* invec, int size, bool correlate=false);
+PyObject* template_matching(double* invec, int size, bool correlate=false, bool norm=true);
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) peak_detection;
+%feature("kwargs") peak_detection;
+%feature("docstring", "
+      
+Arguments:
+") peak_detection;
+PyObject* peak_detection(double* invec, int size, double threshold, int min_distance);
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------

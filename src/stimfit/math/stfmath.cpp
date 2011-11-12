@@ -285,8 +285,8 @@ stf::detectionCriterion(const Vector_double& data, const Vector_double& templ, b
 
 std::vector<int>
 stf::peakIndices(const Vector_double& data,
-        double threshold,
-        int minDistance)
+                 double threshold,
+                 int minDistance)
 {
     // to avoid unnecessary copying, we first reserve quite
     // a bit of space for the vector:

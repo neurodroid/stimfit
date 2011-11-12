@@ -131,6 +131,7 @@ bool _new_window_gMatrix( );
 
 PyObject* mpl_panel();
 
-PyObject* template_matching(double* invec, int size, bool correlate=false);
+PyObject* template_matching(double* invec, int size, bool correlate=false, bool norm=true);
+PyObject* peak_detection(double* invec, int size, double threshold, int min_distance);
 
 #endif
