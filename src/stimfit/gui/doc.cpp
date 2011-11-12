@@ -218,8 +218,13 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
         }
 #endif
         try {
-            stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
-            stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+            if (progress) {
+                stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
+                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+            } else {
+                stfio::StdoutProgressInfo progDlg("Reading file", "Opening file", 100, true);
+                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+            }
         }
         catch (const std::runtime_error& e) {
             wxString errorMsg(wxT("Error opening file\n"));
@@ -2007,8 +2012,8 @@ void wxStfDoc::Plotcriterion(wxCommandEvent& WXUNUSED(event)) {
         templateWave = stfio::vec_scal_minus(templateWave, fmax);
         double minim=fabs(fmin);
         templateWave = stfio::vec_scal_div(templateWave, minim);
-        Section TempSection(
-                stf::detectionCriterion( cur().get(), templateWave ) );
+        stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
+        Section TempSection(stf::detectionCriterion( cur().get(), templateWave, progDlg ) );
         if (TempSection.size()==0) return;
         TempSection.SetSectionDescription(
                                           std::string("Detection criterion of ")+cur().GetSectionDescription()
@@ -2059,7 +2064,8 @@ void wxStfDoc::Plotcorrelation(wxCommandEvent& WXUNUSED(event)) {
         double minim=fabs(fmin);
         templateWave = stfio::vec_scal_div(templateWave, minim);
 
-        Section TempSection( stf::linCorr( cur().get(), templateWave ) );
+        stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
+        Section TempSection( stf::linCorr(cur().get(), templateWave, progDlg) );
         if (TempSection.size()==0) return;
         TempSection.SetSectionDescription(
                                           std::string("Template correlation of ") + cur().GetSectionDescription() );
@@ -2109,11 +2115,11 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
         templateWave = stfio::vec_scal_div(templateWave, minim);
         Vector_double detect( cur().get().size() - templateWave.size() );
         if (MiniDialog.GetScaling()) {
-            detect=stf::detectionCriterion( cur().get(),templateWave );
+            stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
+            detect=stf::detectionCriterion(cur().get(), templateWave, progDlg);
         } else {
-            detect=stf::linCorr(
-                    cur().get(),templateWave
-            );
+            stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
+            detect=stf::linCorr(cur().get(), templateWave, progDlg);
         }
         if (detect.empty()) {
             wxGetApp().ErrorMsg(wxT("Error: Detection criterion is empty."));

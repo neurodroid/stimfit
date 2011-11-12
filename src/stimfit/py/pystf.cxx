@@ -1691,9 +1691,11 @@ PyObject* template_matching(double* invec, int size, bool correlate, bool norm) 
     
     Vector_double detect((*actDoc())[channel][trace].get().size());
     if (correlate) {
-        detect = stf::linCorr((*actDoc())[channel][trace].get(), templ, false);
+        stfio::StdoutProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100, true);
+        detect = stf::linCorr((*actDoc())[channel][trace].get(), templ, progDlg);
     } else {
-        detect = stf::detectionCriterion((*actDoc())[channel][trace].get(), templ, false);
+        stfio::StdoutProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100, true);
+        detect = stf::detectionCriterion((*actDoc())[channel][trace].get(), templ, progDlg);
     }
     npy_intp dims[1] = {detect.size()};
     PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);

@@ -106,7 +106,19 @@ namespace stfio {
       */
      virtual bool Update(int value, const std::string& newmsg="", bool* skip=NULL) = 0;
  };
+
  
+//! StdoutProgressInfo class
+/*! Example of a ProgressInfo that prints to stdout
+ */
+class StdoutProgressInfo : public stfio::ProgressInfo {
+ public:
+    StdoutProgressInfo(const std::string& title, const std::string& message, int maximum, bool verbose);
+    bool Update(int value, const std::string& newmsg="", bool* skip=NULL);
+ private:
+    bool verbosity;
+};
+
 //! Text file import filter settings
 struct txtImportSettings {
   txtImportSettings() : hLines(1),toSection(true),firstIsTime(true),ncolumns(2),
