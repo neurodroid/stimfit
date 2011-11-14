@@ -1669,9 +1669,11 @@ PyObject* mpl_panel(const std::vector<double>& figsize) {
 
     std::ostringstream mpl_name;
     mpl_name << "mpl" << parent->GetMplFigNo();
-    
+
+    int width = 800 * figsize[0]/8.0;
+    int height = 600 * figsize[1]/6.0;
     PyObject* result = parent->MakePythonWindow("makeWindowMpl", mpl_name.str(), "Matplotlib",
-                                                true, false, true, 800, 600, figsize[0], figsize[1]).pyWindow;
+                                                true, false, true, width, height, figsize[0], figsize[1]).pyWindow;
 
     return result;
 }
