@@ -316,8 +316,8 @@ void wxStfParentFrame::RedirectStdio()
 }
 
 new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, const std::string& mgr_name, const std::string& caption, bool show,
-                                                bool full, bool isfloat, int width, int height) {
-   // More complex embedded situations will require passing C++ objects to
+                                                bool full, bool isfloat, int width, int height, double mpl_width, double mpl_height) {
+    // More complex embedded situations will require passing C++ objects to
     // Python and/or returning objects from Python to be used in C++.  This
     // sample shows one way to do it.  NOTE: The above code could just have
     // easily come from a file, or the whole thing could be in the Python
@@ -365,11 +365,22 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     // wxPython object that wraps it.
     PyObject* arg = wxPyMake_wxObject(this, false);
     wxASSERT(arg != NULL);
-    PyObject* tuple = PyTuple_New(1);
-    PyTuple_SET_ITEM(tuple, 0, arg);
-    result = PyEval_CallObject(func, tuple);
-    Py_DECREF(tuple);
-
+    PyObject* py_mpl_width = PyFloat_FromDouble(mpl_width);
+    wxASSERT(py_mpl_width != NULL);
+    PyObject* py_mpl_height = PyFloat_FromDouble(mpl_height);
+    wxASSERT(py_mpl_height != NULL);
+    PyObject* figsize = PyTuple_New(2);
+    PyTuple_SET_ITEM(figsize, 0, py_mpl_width);
+    PyTuple_SET_ITEM(figsize, 1, py_mpl_height);
+    PyObject* argtuple = PyTuple_New(2);
+    PyTuple_SET_ITEM(argtuple, 0, arg);
+    PyTuple_SET_ITEM(argtuple, 1, figsize);
+    result = PyEval_CallObject(func, argtuple);
+    Py_DECREF(argtuple);
+    Py_DECREF(py_mpl_width);
+    Py_DECREF(py_mpl_height);
+    Py_DECREF(figsize);
+    
     // Was there an exception?
     if (! result) {
         PyErr_Print();
@@ -383,7 +394,6 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
         if (!wxPyConvertSwigPtr(result, (void**)&window, _T("wxWindow"))) {
             PyErr_Print();
             wxGetApp().ErrorMsg(wxT("Returned object was not a wxWindow!"));
-            Py_DECREF(tuple);
             wxPyEndBlockThreads(blocked);
             return NULL;
         }

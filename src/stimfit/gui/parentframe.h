@@ -154,7 +154,8 @@ public:
     new_wxwindow MakePythonWindow(const std::string& windowFunc, const std::string& mgr_name="pythonShell",
                                   const std::string& caption="Python Shell",
                                   bool show=true, bool full=false, bool isfloat=true,
-                                  int width=-1, int height=-1);
+                                  int width=-1, int height=-1,
+                                  double mpl_width=8.0, double mpl_height=6.0);
 
     int GetMplFigNo() {return mpl_figno++;}
 private:

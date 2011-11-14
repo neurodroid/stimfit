@@ -65,6 +65,7 @@
 
 std::vector< std::vector< Vector_double > > gMatrix;
 std::vector< std::string > gNames;
+double _figsize[] = {8.0,6.0};
 
 void wrap_array() {
     import_array();
@@ -1653,9 +1654,13 @@ double plot_y2max() {
     return pGraph->get_plot_y2max();
 }
 
-PyObject* mpl_panel() {
+PyObject* mpl_panel(const std::vector<double>& figsize) {
     if ( !check_doc() ) return NULL;
 
+    if (figsize.size() < 2) {
+        ShowError( wxT("figsize has to have length 2") );
+    }
+    
     wxStfParentFrame* parent = GetMainFrame();
     if ( !parent ) {
         ShowError( wxT("Parent window is NULL") );
@@ -1664,8 +1669,9 @@ PyObject* mpl_panel() {
 
     std::ostringstream mpl_name;
     mpl_name << "mpl" << parent->GetMplFigNo();
-
-    PyObject* result = parent->MakePythonWindow("makeWindowMpl", mpl_name.str(), "Matplotlib", true, false, true, 800, 600).pyWindow;
+    
+    PyObject* result = parent->MakePythonWindow("makeWindowMpl", mpl_name.str(), "Matplotlib",
+                                                true, false, true, 800, 600, figsize[0], figsize[1]).pyWindow;
 
     return result;
 }
