@@ -29,9 +29,9 @@ import stfio_plot
 
 class MplPanel(wx.Panel):
     """The matplotlib figure"""
-    def __init__(self, parent):
+    def __init__(self, parent, figsize=(8.0, 6.0)):
         super(MplPanel, self).__init__(parent, -1)
-        self.fig = Figure((8.0, 6.0), dpi=96)
+        self.fig = Figure(figsize, dpi=96)
         self.canvas = FigCanvas(self, -1, self.fig)
 
         # Since we have only one plot, we can use add_axes 
