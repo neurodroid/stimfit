@@ -622,7 +622,7 @@ double foot_index( bool active ) {
     if ( !check_doc() ) return -1.0;
 
     if ( active ) {
-        return  actDoc()->GetT20Real() - (actDoc()->GetT80Real() - actDoc()->GetT20Real()) / 3.0;
+        return  actDoc()->GetTLoReal() - (actDoc()->GetTHiReal() - actDoc()->GetTLoReal()) / 3.0;
     } else {
         ShowError( wxT("At this time, foot_index() is only implemented for the active channel") );
         return -1.0;
@@ -659,7 +659,7 @@ double rtlow_index( bool active ) {
     if ( !check_doc() ) return -1.0;
 
     if ( active ) {
-        return actDoc()->GetT20Real();
+        return actDoc()->GetTLoReal();
     } else {
         ShowError( wxT("At this time, rtlow_index() is only implemented for the active channel") );
         return -1.0;
@@ -670,7 +670,7 @@ double rthigh_index( bool active ) {
     if ( !check_doc() ) return -1.0;
 
     if ( active ) {
-        return actDoc()->GetT80Real();
+        return actDoc()->GetTHiReal();
     } else {
         ShowError( wxT("At this time, rthigh_index() is only implemented for the active channel") );
         return -1.0;
@@ -719,7 +719,7 @@ double get_risetime( ) {
     if ( !check_doc() ) return -1.0;
 
     double dt = actDoc()->GetXScale();
-    return ( actDoc()->GetT80Real()-actDoc()->GetT20Real() )*dt;
+    return ( actDoc()->GetTHiReal()-actDoc()->GetTLoReal() )*dt;
     
 }
 

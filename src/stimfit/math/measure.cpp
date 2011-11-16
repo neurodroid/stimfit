@@ -163,59 +163,61 @@ double stf::threshold( const std::vector<double>& data, std::size_t llp, std::si
     return threshold;
 }
 
-double stf::risetime(const std::vector<double>& data,
-        double base,
-        double ampl,
-        double left,
-        double right,
-        std::size_t& t20Id,
-        std::size_t& t80Id,
-        double& t20Real)
+double stf::risetime(const std::vector<double>& data, double base, double ampl,
+                     double left, double right, double frac, std::size_t& tLoId, std::size_t& tHiId,
+                     double& tLoReal)
 {
-    //20%of peak
+    if (frac <= 0 || frac >=0.5) {
+        throw std::out_of_range("frac has to be in ]0,0.5[ in stf::risetime");
+    }
+    
+    double lo = frac;
+    double hi = 1.0-frac;
+    
+    //Lo%of peak
     if (right<0 || left<0 || right>=data.size()) {
         throw std::out_of_range("Index out of range in stf::risetime");
     }
-    t20Id=(int)right>=1? (int)right:1;
+    tLoId=(int)right>=1? (int)right:1;
     do {
-        --t20Id;
+        --tLoId;
     } 
-    while (fabs(data[t20Id]-base)>fabs(0.2*ampl) && t20Id>left);
+    while (fabs(data[tLoId]-base)>fabs(lo*ampl) && tLoId>left);
 
-    //80%of peak
-    t80Id=t20Id;
+    //Hi%of peak
+    tHiId=tLoId;
     do {
-        ++t80Id;
+        ++tHiId;
     }
-    while (fabs(data[t80Id]-base)<fabs(0.8*ampl) && t80Id<right);
+    while (fabs(data[tHiId]-base)<fabs(hi*ampl) && tHiId<right);
 
     //Calculation of real values by linear interpolation: 
-    //20%of peak
+    //Lo%of peak
     //there was a bug in Stimfit for DOS before 2002 that I used
     //as a template
     //corrected 03/01/2006
-    double yLong2=data[ t20Id+1];
-    double yLong1=data[ t20Id];
-    t20Real=0.0;
-    double t80Real=0.0;
+    double yLong2=data[ tLoId+1];
+    double yLong1=data[ tLoId];
+    tLoReal=0.0;
+    double tHiReal=0.0;
     if (yLong2-yLong1 !=0)
     {
-        t20Real=(double)((double)t20Id+
-                fabs((0.2*ampl+base-yLong1)/(yLong2-yLong1)));
+        tLoReal=(double)((double)tLoId+
+                fabs((lo*ampl+base-yLong1)/(yLong2-yLong1)));
     } 
-    else t20Real=(double)t20Id;
-    //80%of peak
-    yLong2=data[ t80Id];
-    yLong1=data[ t80Id-1];	
+    else tLoReal=(double)tLoId;
+    //Hi%of peak
+    yLong2=data[ tHiId];
+    yLong1=data[ tHiId-1];	
     if (yLong2-yLong1 !=0) 
     {
-        t80Real=(double)((double)t80Id-
-                fabs(((yLong2-base)-0.8*ampl)/(yLong2-yLong1)));
+        tHiReal=(double)((double)tHiId-
+                fabs(((yLong2-base)-hi*ampl)/(yLong2-yLong1)));
     } 
-    else t80Real=(double)t80Id;
+    else tHiReal=(double)tHiId;
 
-    double rt2080=(t80Real-t20Real);
-    return rt2080;  
+    double rtLoHi=(tHiReal-tLoReal);
+    return rtLoHi;  
 }
 
 double   stf::t_half(const std::vector<double>& data,

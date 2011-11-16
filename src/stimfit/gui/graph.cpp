@@ -451,13 +451,13 @@ void wxStfGraph::PlotGimmicks(wxDC& DC) {
     else
         boebbel=boebbelPrint;
 
-    //draws green circles around the 20% and the 80% rise times
+    //draws green circles around the Lo% and the Hi% rise times
     double reference = Doc()->GetBase();
     if ( !Doc()->GetFromBase() && Doc()->GetThrT() >= 0 ) {
         reference = Doc()->GetThreshold();
     }
-    DrawCircle(&DC,Doc()->GetT20Real(),0.8*reference+0.2*Doc()->GetPeak(), rtPen, rtPrintPen);
-    DrawCircle(&DC,Doc()->GetT80Real(),0.2*reference+0.8*Doc()->GetPeak(), rtPen, rtPrintPen);
+    DrawCircle(&DC,Doc()->GetTLoReal(),0.8*reference+0.2*Doc()->GetPeak(), rtPen, rtPrintPen);
+    DrawCircle(&DC,Doc()->GetTHiReal(),0.2*reference+0.8*Doc()->GetPeak(), rtPen, rtPrintPen);
 
     //draws circles around the half duration limits
     DrawCircle(&DC,Doc()->GetT50LeftReal(),Doc()->GetT50Y(), hdPen, hdPrintPen);

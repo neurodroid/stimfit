@@ -94,8 +94,9 @@ double threshold( const std::vector<double>& data, std::size_t llp, std::size_t 
  *         units of sampling points.
  *  \return The rise time.
  */
-double risetime( const std::vector<double>& data, double base, double ampl, double left, double right,
-            std::size_t& t20Id, std::size_t& t80Id, double& t20Real );
+double risetime(const std::vector<double>& data, double base, double ampl,
+                double left, double right, double frac, std::size_t& tLoId, std::size_t& tHiId,
+                double& tLoReal);
 
 //! Find the full width at half-maximal amplitude of an event within \e data.
 /*! Although t50RightReal is not explicitly returned, it can be calculated

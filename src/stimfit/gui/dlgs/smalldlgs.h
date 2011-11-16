@@ -323,7 +323,7 @@ class wxStfBatchDlg : public wxDialog
         id_peakzero,
         id_peakbase,
         id_peakthreshold,
-        id_rt2080,
+        id_rtLoHi,
         id_t50,
         id_slopes,
         id_latencies,
@@ -382,10 +382,10 @@ public:
      */
     bool PrintPeakThreshold() const {return LookUp(id_peakthreshold).selection;}
     
-    //! Indicates whether the 20-80% rise time should be printed in the batch analysis table.
+    //! Indicates whether the Lo-Hi% rise time should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
-    bool PrintRT2080() const {return LookUp(id_rt2080).selection;}
+    bool PrintRTLoHi() const {return LookUp(id_rtLoHi).selection;}
 
     //! Indicates whether the half duration should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
