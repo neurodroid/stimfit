@@ -10,6 +10,7 @@ References
 :Date:  |today|
 
 A list of recent publications that have used `Stimfit <http:http://www.stimfit.org>`_ for data analysis. Please let me know if something is missing here.
+    * `Poh YC, Beyder A, Strege PR, Farrugia G, Buist ML (2011). <http://www.sciencedirect.com/science/article/pii/S002251931100470X>`_ Quantification of gastrointestinal sodium channelopathy. *J Theor Biol* 293:41-48.
     * `Sambandan S, Sauer JF, Vida I, Bartos M (2010). <http://www.jneurosci.org/cgi/content/full/30/35/11826>`_ Associative plasticity at excitatory synapses facilitates recruitment of fast-spiking interneurons in the dentate gyrus. *J Neurosci* 30:11826-11837.
     * `Pelkonen A, Hiltunen M, Kiianmaa K, Yavich L (2010). <http://www3.interscience.wiley.com/journal/123488780/abstract>`_ Stimulated dopamine overflow and alpha-synuclein expression in the nucleus accumbens core distinguish rats bred for differential ethanol preference. *J Neurochem* 114:1168-1176.
     * `Schmidt-Hieber C, Bischofberger J (2010). <http://www.jneurosci.org/cgi/content/abstract/30/30/10233>`_ Fast sodium channel gating supports localized and efficient axonal action potential initiation. *J Neurosci* 30(30):10233-10242.
