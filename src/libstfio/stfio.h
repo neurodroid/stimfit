@@ -24,6 +24,7 @@
 #ifndef _STFIO_H_
 #define _STFIO_H_
 
+#include <iostream>
 #include <boost/function.hpp>
 #include <vector>
 #include <deque>
