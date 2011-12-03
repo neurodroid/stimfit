@@ -285,9 +285,9 @@ class Spike(object):
 
         self._thr = threshold
         # set all the necessary AP parameters at construction
-        self.__updateattributes()
+        self._updateattributes()
 
-    def __updateattributes(self):
+    def _updateattributes(self):
         """
         update base, peak, t50, max_rise and tamplitude 
         """
@@ -336,7 +336,7 @@ class Spike(object):
            self._thr = threshold # set a new threshold
 
         self.update() # update dt and sampling rate
-        self.__updateattributes()
+        self._updateattributes()
 
 
     def get_base(self):

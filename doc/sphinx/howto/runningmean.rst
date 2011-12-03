@@ -25,7 +25,7 @@ The following Python function calculates the running mean of the current channel
     import stf
 
     # load NumPy for numerical analysis
-    import numpy as N
+    import numpy as np 
 
     def rmean(binwidth, trace=-1,channel=-1):
         """
@@ -53,20 +53,20 @@ The following Python function calculates the running mean of the current channel
         sweep = stf.get_trace(trace,channel)
 
         # creates a destination python list to append the data 
-        dsweep = N.empty((len(sweep))) 
+        dsweep = np.empty((len(sweep))) 
 
         # running mean algorithm
         for i in range(len(sweep)):
         
             if (len(sweep)-i) > binwidth:
                 # append to list the running mean of `binwidth` values
-                # N.mean(sweep) calculates the mean of list
+                # np.mean(sweep) calculates the mean of list
                 # sweep[p0:p10] takes the values in the vector between p0 and p10 (zero-based) 
-                dsweep[i] = N.mean( sweep[i:(binwidth+i)] )
+                dsweep[i] = np.mean( sweep[i:(binwidth+i)] )
 
             else:
 	        # use all remaining points for the average:
-                dsweep[i] = N.mean( sweep[i:] )
+                dsweep[i] = np.mean( sweep[i:] )
 		
 
         stf.new_window(dsweep)

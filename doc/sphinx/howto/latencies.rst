@@ -23,7 +23,6 @@ Additionally, some other methods will be necessary to calculate the AP latencies
 ::
 
     import stf
-    import numpy as N
     from math import ceil, floor
 
     class Spike(object):
@@ -44,9 +43,9 @@ Additionally, some other methods will be necessary to calculate the AP latencies
 
             self._thr = threshold
             # set all the necessary AP parameters at construction
-            self.__updateattributes()
+            self._updateattributes()
 
-        def __updateattributes(self):
+        def _updateattributes(self):
             """
             update base, peak, t50, max_rise and tamplitude 
             """
@@ -95,7 +94,7 @@ Additionally, some other methods will be necessary to calculate the AP latencies
                 self._thr = threshold # set a new threshold
 
             self.update() # update dt and sampling rate
-            self.__updateattributes()
+            self._updateattributes()
 
 
         def get_base(self):
@@ -188,7 +187,7 @@ Because we want to group all the AP parameters (i.e baseline, peak, half-width a
 
 ::
 
-    def __updateattributes(self):
+    def _updateattributes(self):
         self.base = self.get_base() # in Stimfit is baseline
         self.peak = self.get_peak() # in Stimfit peak (from threshold)
         self.t50  = self.get_t50()  # in Stimfit t50
