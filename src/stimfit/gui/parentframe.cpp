@@ -535,7 +535,7 @@ wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
 void wxStfParentFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
 {
 	wxAboutDialogInfo info;
-	info.SetName(wxT("stimfit"));
+	info.SetName(wxT("Stimfit"));
 	info.SetVersion(wxString(VERSION, wxConvLocal));
 	info.SetWebSite(wxT("http://www.stimfit.org"));
 	wxString about(wxT("Credits:\n\nOriginal idea (Stimfit for DOS):\n\
