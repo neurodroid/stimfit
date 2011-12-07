@@ -103,7 +103,6 @@ void WINAPI ATF_Cleanup(void)
    {
       if (g_FileDescriptor[i] != NULL)
       {
-
          DLLTRACE("An ATF file was not closed!\n");
          ATF_CloseFile(i);
       }

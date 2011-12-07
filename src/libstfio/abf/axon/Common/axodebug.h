@@ -43,7 +43,7 @@ void AXODBG_Initialize(void);
 BOOL AXODBG_DebugBreak(void);
 
 // Prints a printf formatted string to the debug context.
-int cdecl AXODBG_printf(const char *lpsz, ... );
+int cdecl AXODBG_printf(char *lpsz, ... );
 
 
 // Set a prefix string used for all subsequent calls to AXODBG_printf()

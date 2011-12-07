@@ -230,7 +230,7 @@ extern HINSTANCE g_hInstance;
 // Function wrappers
 //
     
-int WINAPI AXODBG_printf(const char *lpsz, ... );
+int WINAPI AXODBG_printf(char *lpsz, ... );
 BOOL  WINAPI c_WriteFile( FILEHANDLE hFile, LPCVOID buffer, DWORD bytesToWrite,
                           LPDWORD bytesWritten, LPOVERLAPPED overlapped );
 FILEHANDLE WINAPI c_CreateFile( LPCSTR filename, DWORD access, DWORD sharing,
