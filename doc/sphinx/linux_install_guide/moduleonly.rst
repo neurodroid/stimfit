@@ -16,7 +16,7 @@ Then, you need the Stimfit source code:
 ::
 
     $ cd $HOME
-    $ hg clone https://stimfit.googlecode.com/hg/ stimfit
+    $ git clone https://code.google/com/p/stimfit stimfiy
 
 This will download the code to a directory called *stimfit*.
 
