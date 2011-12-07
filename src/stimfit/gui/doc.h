@@ -80,11 +80,13 @@ private:
     stf::pslope_mode_beg pslopeBegMode; // for left mode PSlope cursor
     stf::pslope_mode_end pslopeEndMode; // for right mode PSlope cursor
 #endif 
-    std::size_t baseBeg, baseEnd, peakBeg, peakEnd, fitBeg, fitEnd, 
+    std::size_t baseBeg, baseEnd, peakBeg, peakEnd, fitBeg, fitEnd; 
 #ifdef WITH_PSLOPE
-    PSlopeBeg, PSlopeEnd,
+    std::size_t PSlopeBeg, PSlopeEnd;
+    int DeltaT;  // distance (number of points) from the first cursor
+    bool viewPSlope;
 #endif
-    measCursor;
+    std::size_t measCursor;
     double latencyStartCursor,
         latencyEndCursor,
         latency,	 //time from latency cursor to beginning of event
@@ -98,7 +100,6 @@ private:
     // cursor windows:
     int pM;  //peakMean, number of points used for averaging
 #ifdef WITH_PSLOPE
-    int DeltaT;  // distance (number of points) from the first cursor
 #endif
 
     // currently accessed channel:
@@ -118,7 +119,7 @@ private:
     bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold, viewRTLoHi,
         viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,
 #ifdef WITH_PSLOPE
-        viewPSlope,
+        //viewPSlope,
 #endif
         viewCursors;
 
