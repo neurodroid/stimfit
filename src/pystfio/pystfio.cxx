@@ -65,7 +65,7 @@ bool _read(const std::string& filename, const std::string& ftype, bool verbose, 
 
     stfio::filetype stftype = gettype(ftype);
     stfio::txtImportSettings tis;
-    StdoutProgressInfo progDlg("File import", "Starting file import", 100, verbose);
+    stfio::StdoutProgressInfo progDlg("File import", "Starting file import", 100, verbose);
     
     try {
         if (!stfio::importFile(filename, stftype, Data, tis, progDlg)) {

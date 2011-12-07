@@ -120,7 +120,7 @@ class Section {
     True upon successful completion.") write;
     bool write(const std::string& fname, const std::string& ftype="hdf5", bool verbose=false) {
         stfio::filetype stftype = gettype(ftype);
-        StdoutProgressInfo progDlg("File import", "Reading file", 100, verbose);
+        stfio::StdoutProgressInfo progDlg("File import", "Reading file", 100, verbose);
         try {
             return stfio::exportFile(fname, stftype, *($self), progDlg);
         } catch (const std::exception& e) {
