@@ -292,7 +292,7 @@ def reduce(ydata, dy, maxres, xoffset=0, width=graph_width):
     
     return xrange, yrange
 
-def plot_traces(traces, traces2=None, ax=None, pulses=None,
+def plot_traces(traces, traces2=None, ax=None, Fig=None, pulses=None,
                 xmin=None, xmax=None, ymin=None, ymax=None, 
                 y2min=None, y2max=None, xoffset=0,
                 maxres = None,
@@ -454,7 +454,10 @@ def standard_axis(fig, subplot, sharex=None, sharey=None, hasx=False, hasy=True)
     
     try:
         it = iter(subplot)
-        ax1 = Subplot(fig, subplot[0], subplot[1], subplot[2], frameon=False, sharex=sharex, sharey=sharey)
+        if isinstance(gs1, matplotlib.gridspec.GridSpec):
+            ax1 = Subplot(fig, subplot, frameon=False, sharex=sharex, sharey=sharey)
+        else:
+            ax1 = Subplot(fig, subplot[0], subplot[1], subplot[2], frameon=False, sharex=sharex, sharey=sharey)
     except:
         ax1 = Subplot(fig, subplot, frameon=False, sharex=sharex, sharey=sharey)
 
