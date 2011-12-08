@@ -15,6 +15,11 @@ application from the embedded python shell."
 %}
 %include "numpy.i"
 %include "std_string.i"
+%include "std_vector.i"
+namespace std {
+    %template(vectord) vector<double>;
+};
+
 %init %{
     import_array();
     
@@ -63,7 +68,17 @@ PyObject* get_trace(int trace=-1, int channel=-1);
       
 Arguments:
 ") template_matching;
-PyObject* template_matching(double* invec, int size, bool correlate=false);
+PyObject* template_matching(double* invec, int size, bool correlate=false, bool norm=true);
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) peak_detection;
+%feature("kwargs") peak_detection;
+%feature("docstring", "
+      
+Arguments:
+") peak_detection;
+PyObject* peak_detection(double* invec, int size, double threshold, int min_distance);
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -1376,9 +1391,10 @@ double plot_y2max();
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) mpl_panel;
+%feature("kwargs") mpl_panel;
 %feature("docstring", "Returns a pointer to the parent window")
 mpl_panel;
-PyObject* mpl_panel();
+PyObject* mpl_panel(const std::vector<double>& figsize = std::vector<double>(_figsize, _figsize+2));
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------

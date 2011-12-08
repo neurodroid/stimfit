@@ -29,9 +29,9 @@ import stfio_plot
 
 class MplPanel(wx.Panel):
     """The matplotlib figure"""
-    def __init__(self, parent):
+    def __init__(self, parent, figsize=(8.0, 6.0)):
         super(MplPanel, self).__init__(parent, -1)
-        self.fig = Figure((8.0, 6.0), dpi=96)
+        self.fig = Figure(figsize, dpi=72)
         self.canvas = FigCanvas(self, -1, self.fig)
 
         # Since we have only one plot, we can use add_axes 
@@ -78,10 +78,12 @@ class MplPanel(wx.Panel):
                                           yunits = stf.get_yunits(trace=-1, channel=stf.get_channel_index(False)),
                                           dt = stf.get_sampling_interval(),
                                           color='r', linestyle='-r')]
+            stfio_plot.plot_traces(tsl, traces2=tsl2, ax=self.axes, textcolor2 = 'r',
+                                   xmin=stf.plot_xmin(), xmax=stf.plot_xmax(),
+                                   ymin=stf.plot_ymin(), ymax=stf.plot_ymax(), 
+                                   y2min=stf.plot_y2min(), y2max=stf.plot_y2max())
         else:
-            tsl2 = None
+            stfio_plot.plot_traces(tsl, ax=self.axes,
+                                   xmin=stf.plot_xmin(), xmax=stf.plot_xmax(),
+                                   ymin=stf.plot_ymin(), ymax=stf.plot_ymax())
 
-        stfio_plot.plot_traces(tsl, tsl2, ax=self.axes, textcolor2 = 'r',
-                               xmin=stf.plot_xmin(), xmax=stf.plot_xmax(),
-                               ymin=stf.plot_ymin(), ymax=stf.plot_ymax(), 
-                               y2min=stf.plot_y2min(), y2max=stf.plot_y2max())

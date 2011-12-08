@@ -114,6 +114,23 @@ class timeseries(object):
                         maskedarray[timest-leftindex+offset]=self.data[timest]
         maskedarray.mask = ma.make_mask(mask)
         return timeseries(maskedarray, self.dt)
+
+class StandardAxis(Subplot):
+    def __init__(self, *args, **kwargs):
+        hasx = kwargs.pop( 'hasx', False)
+        hasy = kwargs.pop( 'hasy', True)
+        kwargs['frameon'] = False
+
+        super(StandardAxis, self).__init__(*args, **kwargs)
+
+        args[0].add_axes(self)
+        self.axis["right"].set_visible(False)
+        self.axis["top"].set_visible(False)
+        
+        if not hasx:
+            self.axis["bottom"].set_visible(False)
+        if not hasy:
+            self.axis["left"].set_visible(False)
         
 def average(tsl):
     # find fastest dt:
@@ -452,6 +469,7 @@ def plot_traces(traces, traces2=None, ax=None, Fig=None, pulses=None,
 
 def standard_axis(fig, subplot, sharex=None, sharey=None, hasx=False, hasy=True):
     
+    sys.stderr.write("This method is deprecated. Use stfio_plot.StandardAxis instead.\n")
     try:
         it = iter(subplot)
         if isinstance(gs1, matplotlib.gridspec.GridSpec):

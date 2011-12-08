@@ -80,25 +80,26 @@ private:
     stf::pslope_mode_beg pslopeBegMode; // for left mode PSlope cursor
     stf::pslope_mode_end pslopeEndMode; // for right mode PSlope cursor
 #endif 
-    std::size_t baseBeg, baseEnd, peakBeg, peakEnd, fitBeg, fitEnd, 
+    std::size_t baseBeg, baseEnd, peakBeg, peakEnd, fitBeg, fitEnd; 
 #ifdef WITH_PSLOPE
-    PSlopeBeg, PSlopeEnd,
+    std::size_t PSlopeBeg, PSlopeEnd;
+    int DeltaT;  // distance (number of points) from the first cursor
+    bool viewPSlope;
 #endif
-    measCursor;
+    std::size_t measCursor;
     double latencyStartCursor,
         latencyEndCursor,
         latency,	 //time from latency cursor to beginning of event
-        base, APBase, baseSD, threshold, slopeForThreshold, peak, APPeak, t20Real, t80Real, t50LeftReal, t50RightReal,
+        base, APBase, baseSD, threshold, slopeForThreshold, peak, APPeak, tLoReal, tHiReal, t50LeftReal, t50RightReal,
         maxT, thrT, maxRiseY, maxRiseT, maxDecayY, maxDecayT, maxRise, maxDecay,
         t50Y, APMaxT, APMaxRise, APMaxRiseT, APt50LeftReal, 
 //#ifdef WITH_PSLOPE
         PSlope,
 //#endif
-        rt2080, halfDuration, slopeRatio, t0Real;
+        rtLoHi, halfDuration, slopeRatio, t0Real;
     // cursor windows:
     int pM;  //peakMean, number of points used for averaging
 #ifdef WITH_PSLOPE
-    int DeltaT;  // distance (number of points) from the first cursor
 #endif
 
     // currently accessed channel:
@@ -113,12 +114,12 @@ private:
     // Base line value for each selected trace
     Vector_double selectBase;
     
-    std::size_t t20Index, t80Index, t50LeftIndex, t50RightIndex;
+    std::size_t tLoIndex, tHiIndex, t50LeftIndex, t50RightIndex;
 
-    bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold, viewRT2080,
+    bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold, viewRTLoHi,
         viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,
 #ifdef WITH_PSLOPE
-        viewPSlope,
+        //viewPSlope,
 #endif
         viewCursors;
 
@@ -288,7 +289,7 @@ public:
     void SetFileMenu( wxMenu* menu ) { doc_file_menu = menu; }
     
     //! Measure everything using functions defined in measlib.h
-    /*! This will measure the baseline, peak values, 20 to 80% rise time, 
+    /*! This will measure the baseline, peak values, Lo to Hi% rise time, 
      *  half duration, maximal slopes during rise and decay, the ratio of these slopes 
      *  and the latency.
      */
@@ -390,17 +391,17 @@ public:
      */
     double GetLatency() const { return latency; }
 
-    //! Retrieves the time point at which 20% of the maximal amplitude have been reached.
-    /*! \return The time point at which 20% of the maximal amplitude have been reached, expressed in
+    //! Retrieves the time point at which Lo% of the maximal amplitude have been reached.
+    /*! \return The time point at which Lo% of the maximal amplitude have been reached, expressed in
      *  units of data points.
      */
-    double GetT20Real() const { return t20Real; }
+    double GetTLoReal() const { return tLoReal; }
 
-    //! Retrieves the time point at which 80% of the maximal amplitude have been reached.
-    /*! \return The time point at which 80% of the maximal amplitude have been reached, expressed in
+    //! Retrieves the time point at which Hi% of the maximal amplitude have been reached.
+    /*! \return The time point at which Hi% of the maximal amplitude have been reached, expressed in
      *  units of data points.
      */
-    double GetT80Real() const { return t80Real; }
+    double GetTHiReal() const { return tHiReal; }
 
     //! Retrieves the time point at which 50% of the maximal amplitude have been reached from the left of the peak.
     /*! \return The time point at which 50% of the maximal amplitude have been reached from the left of the peak, 
@@ -509,10 +510,10 @@ public:
      */
     double GetThrT() const { return thrT; }
     
-    //! Retrieves the 20 to 80% rise time.
-    /*! \return The difference between GetT80Real() and GetT20Real(), expressed in units o data points.
+    //! Retrieves the Lo to Hi% rise time.
+    /*! \return The difference between GetTHiReal() and GetTLoReal(), expressed in units o data points.
      */
-    double GetRT2080() const { return rt2080; }
+    double GetRTLoHi() const { return rtLoHi; }
     
     //! Retrieves the full width at half-maximal amplitude ("half duration").
     /*! \return The difference between GetT50RightReal() and GetT50LeftReal(), expressed in units of data points.
@@ -604,10 +605,10 @@ public:
      */
     bool GetViewPeakThreshold() const { return viewPeakthreshold; }
 
-    //! Indicates whether the 20 to 80% rise time should be shown in the results table.
+    //! Indicates whether the Lo to Hi% rise time should be shown in the results table.
     /*! \return true if it should be shown, false otherwise.
      */
-    bool GetViewRT2080() const { return viewRT2080; }
+    bool GetViewRTLoHi() const { return viewRTLoHi; }
 
     //! Indicates whether the half duration should be shown in the results table.
     /*! \return true if it should be shown, false otherwise.
@@ -903,10 +904,10 @@ public:
      */
     void SetViewPeakThreshold(bool value) { viewPeakthreshold=value; }
 
-    //! Determines whether the 20 to 80% rise time should be shown in the results table.
+    //! Determines whether the Lo to Hi% rise time should be shown in the results table.
     /*! \param value Set to true if it should be shown, false otherwise.
      */
-    void SetViewRT2080(bool value) { viewRT2080=value; }
+    void SetViewRTLoHi(bool value) { viewRTLoHi=value; }
 
     //! Determines whether the half duration should be shown in the results table.
     /*! \param value Set to true if it should be shown, false otherwise.

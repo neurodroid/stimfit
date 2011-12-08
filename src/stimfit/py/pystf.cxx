@@ -65,6 +65,7 @@
 
 std::vector< std::vector< Vector_double > > gMatrix;
 std::vector< std::string > gNames;
+double _figsize[] = {8.0,6.0};
 
 void wrap_array() {
     import_array();
@@ -621,7 +622,7 @@ double foot_index( bool active ) {
     if ( !check_doc() ) return -1.0;
 
     if ( active ) {
-        return  actDoc()->GetT20Real() - (actDoc()->GetT80Real() - actDoc()->GetT20Real()) / 3.0;
+        return  actDoc()->GetTLoReal() - (actDoc()->GetTHiReal() - actDoc()->GetTLoReal()) / 3.0;
     } else {
         ShowError( wxT("At this time, foot_index() is only implemented for the active channel") );
         return -1.0;
@@ -658,7 +659,7 @@ double rtlow_index( bool active ) {
     if ( !check_doc() ) return -1.0;
 
     if ( active ) {
-        return actDoc()->GetT20Real();
+        return actDoc()->GetTLoReal();
     } else {
         ShowError( wxT("At this time, rtlow_index() is only implemented for the active channel") );
         return -1.0;
@@ -669,7 +670,7 @@ double rthigh_index( bool active ) {
     if ( !check_doc() ) return -1.0;
 
     if ( active ) {
-        return actDoc()->GetT80Real();
+        return actDoc()->GetTHiReal();
     } else {
         ShowError( wxT("At this time, rthigh_index() is only implemented for the active channel") );
         return -1.0;
@@ -718,7 +719,7 @@ double get_risetime( ) {
     if ( !check_doc() ) return -1.0;
 
     double dt = actDoc()->GetXScale();
-    return ( actDoc()->GetT80Real()-actDoc()->GetT20Real() )*dt;
+    return ( actDoc()->GetTHiReal()-actDoc()->GetTLoReal() )*dt;
     
 }
 
@@ -1653,9 +1654,13 @@ double plot_y2max() {
     return pGraph->get_plot_y2max();
 }
 
-PyObject* mpl_panel() {
+PyObject* mpl_panel(const std::vector<double>& figsize) {
     if ( !check_doc() ) return NULL;
 
+    if (figsize.size() < 2) {
+        ShowError( wxT("figsize has to have length 2") );
+    }
+    
     wxStfParentFrame* parent = GetMainFrame();
     if ( !parent ) {
         ShowError( wxT("Parent window is NULL") );
@@ -1665,12 +1670,15 @@ PyObject* mpl_panel() {
     std::ostringstream mpl_name;
     mpl_name << "mpl" << parent->GetMplFigNo();
 
-    PyObject* result = parent->MakePythonWindow("makeWindowMpl", mpl_name.str(), "Matplotlib", true, false, true, 800, 600).pyWindow;
+    int width = 800 * figsize[0]/8.0;
+    int height = 600 * figsize[1]/6.0;
+    PyObject* result = parent->MakePythonWindow("makeWindowMpl", mpl_name.str(), "Matplotlib",
+                                                true, false, true, width, height, figsize[0], figsize[1]).pyWindow;
 
     return result;
 }
 
-PyObject* template_matching(double* invec, int size, bool correlate) {
+PyObject* template_matching(double* invec, int size, bool correlate, bool norm) {
     wrap_array();
 
     if ( !check_doc() ) return NULL;
@@ -1679,12 +1687,23 @@ PyObject* template_matching(double* invec, int size, bool correlate) {
     int channel = actDoc()->GetCurCh();
 
     Vector_double templ(invec, &invec[size]);
+    if (norm) {
+        Vector_double::const_iterator max_el = std::max_element(templ.begin(), templ.end());
+        Vector_double::const_iterator min_el = std::min_element(templ.begin(), templ.end());
+        double fmin=*min_el;
+        double fmax=*max_el;
+        templ = stfio::vec_scal_minus(templ, fmax);
+        double minim=fabs(fmin);
+        templ = stfio::vec_scal_div(templ, minim);
+    }
     
     Vector_double detect((*actDoc())[channel][trace].get().size());
     if (correlate) {
-        detect = stf::linCorr((*actDoc())[channel][trace].get(), templ, false);
+        stfio::StdoutProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100, true);
+        detect = stf::linCorr((*actDoc())[channel][trace].get(), templ, progDlg);
     } else {
-        detect = stf::detectionCriterion((*actDoc())[channel][trace].get(), templ, false);
+        stfio::StdoutProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100, true);
+        detect = stf::detectionCriterion((*actDoc())[channel][trace].get(), templ, progDlg);
     }
     npy_intp dims[1] = {detect.size()};
     PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);
@@ -1694,4 +1713,35 @@ PyObject* template_matching(double* invec, int size, bool correlate) {
     std::copy(detect.begin(), detect.end(), gDataP);
     
     return np_array;
+}
+
+PyObject* peak_detection(double* invec, int size, double threshold, int min_distance) {
+    wrap_array();
+
+    if ( !check_doc() ) return NULL;
+
+    Vector_double data(invec, &invec[size]);
+
+    std::vector<int> peak_idcs = stf::peakIndices(data, threshold, min_distance);
+
+    npy_intp dims[1] = {peak_idcs.size()};
+    PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_INT);
+    if (sizeof(int) == 4) {
+        int* gDataP = (int*)array_data(np_array);
+        /* fill */
+        std::copy(peak_idcs.begin(), peak_idcs.end(), gDataP);
+    
+        return np_array;
+    } else if (sizeof(short) == 4) {
+        short* gDataP = (short*)array_data(np_array);
+        
+        /* fill */
+        std::copy(peak_idcs.begin(), peak_idcs.end(), gDataP);
+    
+        return np_array;
+    } else {
+        ShowError(wxT("Couldn't find 4-byte integer type"));
+        return NULL;
+    }
+        
 }

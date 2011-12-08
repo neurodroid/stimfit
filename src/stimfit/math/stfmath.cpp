@@ -223,10 +223,8 @@ stf::spectrum(
 
 
 Vector_double
-stf::detectionCriterion(const Vector_double& data, const Vector_double& templ, bool progress)
+stf::detectionCriterion(const Vector_double& data, const Vector_double& templ, stfio::ProgressInfo& progDlg)
 {
-    wxProgressDialog progDlg( wxT("Template matching"), wxT("Starting template matching"),
-            100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_SKIP );
     bool skipped=false;
     // variable names are taken from Clements & Bekkers (1997) as long
     // as they don't interfere with C++ keywords (such as "template")
@@ -245,9 +243,9 @@ stf::detectionCriterion(const Vector_double& data, const Vector_double& templ, b
     int progCounter=0;
     double progFraction=(data.size()-templ.size())/100;
     for (unsigned n_data=0; n_data<data.size()-templ.size(); ++n_data) {
-        if (progress && n_data/progFraction>progCounter) {
+        if (n_data/progFraction>progCounter) {
             progDlg.Update( (int)((double)n_data/(double)(data.size()-templ.size())*100.0),
-                    wxT("Calculating detection criterion"), &skipped );
+                            "Calculating detection criterion", &skipped );
             if (skipped) {
                 detection_criterion.resize(0);
                 return detection_criterion;
@@ -285,8 +283,8 @@ stf::detectionCriterion(const Vector_double& data, const Vector_double& templ, b
 
 std::vector<int>
 stf::peakIndices(const Vector_double& data,
-        double threshold,
-        int minDistance)
+                 double threshold,
+                 int minDistance)
 {
     // to avoid unnecessary copying, we first reserve quite
     // a bit of space for the vector:
@@ -329,10 +327,8 @@ stf::peakIndices(const Vector_double& data,
 }
 
 Vector_double
-stf::linCorr(const Vector_double& data, const Vector_double& templ, bool progress)
+stf::linCorr(const Vector_double& data, const Vector_double& templ, stfio::ProgressInfo& progDlg)
 {
-    wxProgressDialog progDlg( wxT("Template matching"), wxT("Starting template matching"),
-            100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_SKIP );
     bool skipped = false;
     // the template has to be smaller than the data waveform:
     if (data.size()<templ.size()) {
@@ -358,9 +354,9 @@ stf::linCorr(const Vector_double& data, const Vector_double& templ, bool progres
     int progCounter=0;
     double progFraction=(data.size()-templ.size())/100;
     for (unsigned n_data=0; n_data<data.size()-templ.size(); ++n_data) {
-        if (progress && n_data/progFraction>progCounter) {
+        if (n_data/progFraction>progCounter) {
             progDlg.Update( (int)((double)n_data/(double)(data.size()-templ.size())*100.0),
-                    wxT("Calculating correlation coefficient"), &skipped );
+                            "Calculating correlation coefficient", &skipped );
             if (skipped) {
                 Corr.resize(0);
                 return Corr;

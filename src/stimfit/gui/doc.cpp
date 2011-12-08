@@ -87,6 +87,7 @@ EVT_MENU( ID_EVENT_ADDEVENT, wxStfDoc::AddEvent )
 END_EVENT_TABLE()
 
 static const int baseline=100;
+static const double rtfrac = 0.2; // At present, hard coded to Lo-Hi% rise time
 
 wxStfDoc::wxStfDoc() :
     Recording(),peakAtEnd(false),initialized(false),progress(true), Average(0),
@@ -121,8 +122,8 @@ wxStfDoc::wxStfDoc() :
     slopeForThreshold(20.0),
     peak(0.0),
     APPeak(0.0),
-    t20Real(0),
-    t80Real(0),
+    tLoReal(0),
+    tHiReal(0),
     t50LeftReal(0),
     t50RightReal(0),
     maxT(0.0),
@@ -139,7 +140,7 @@ wxStfDoc::wxStfDoc() :
     APMaxRiseT(0.0),
     APt50LeftReal(0.0),
     PSlope(0.0),
-    rt2080(0.0),
+    rtLoHi(0.0),
     halfDuration(0.0),
     slopeRatio(0.0),
     t0Real(0.0),
@@ -149,8 +150,8 @@ wxStfDoc::wxStfDoc() :
     cs(0),
     selectedSections(std::vector<std::size_t>(0)),
     selectBase(Vector_double(0)),
-    t20Index(0),
-    t80Index(0),
+    tLoIndex(0),
+    tHiIndex(0),
     t50LeftIndex(0),
     t50RightIndex(0),
     fromBase(true),
@@ -161,7 +162,7 @@ wxStfDoc::wxStfDoc() :
     viewPeakzero(true),
     viewPeakbase(true),
     viewPeakthreshold(false),
-    viewRT2080(true),
+    viewRTLoHi(true),
     viewT50(true),
     viewRD(true),
     viewSloperise(true),
@@ -218,8 +219,13 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
         }
 #endif
         try {
-            stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
-            stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+            if (progress) {
+                stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
+                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+            } else {
+                stfio::StdoutProgressInfo progDlg("Reading file", "Opening file", 100, true);
+                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+            }
         }
         catch (const std::runtime_error& e) {
             wxString errorMsg(wxT("Error opening file\n"));
@@ -502,7 +508,7 @@ void wxStfDoc::PostInit() {
     SetViewPeakZero(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPeakzero"),1)==1);
     SetViewPeakBase(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPeakbase"),1)==1);
     SetViewPeakThreshold(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPeakthreshold"),1)==1);
-    SetViewRT2080(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewRT2080"),1)==1);
+    SetViewRTLoHi(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewRTLoHi"),1)==1);
     SetViewT50(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewT50"),1)==1);
     SetViewRD(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewRD"),1)==1);
     SetViewSlopeRise(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewSloperise"),1)==1);
@@ -1315,8 +1321,8 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
     if (SaveYtDialog.PrintPeakThreshold()) {
         colTitles.push_back("Peak (from threshold)");
     }
-    if (SaveYtDialog.PrintRT2080()) {
-        colTitles.push_back("RT 20-80%");
+    if (SaveYtDialog.PrintRTLoHi()) {
+        colTitles.push_back("RT Lo-Hi%");
     }
     if (SaveYtDialog.PrintT50()) {
         colTitles.push_back("t 1/2");
@@ -1478,8 +1484,8 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
                 table.at(n_s,nCol++)=GetPeak()-GetBase();
             if (SaveYtDialog.PrintPeakThreshold())
                 table.at(n_s,nCol++)=GetPeak()-GetThreshold();
-            if (SaveYtDialog.PrintRT2080())
-                table.at(n_s,nCol++)=GetRT2080();
+            if (SaveYtDialog.PrintRTLoHi())
+                table.at(n_s,nCol++)=GetRTLoHi();
             if (SaveYtDialog.PrintT50())
                 table.at(n_s,nCol++)=GetHalfDuration();
             if (SaveYtDialog.PrintSlopes()) {
@@ -2007,8 +2013,8 @@ void wxStfDoc::Plotcriterion(wxCommandEvent& WXUNUSED(event)) {
         templateWave = stfio::vec_scal_minus(templateWave, fmax);
         double minim=fabs(fmin);
         templateWave = stfio::vec_scal_div(templateWave, minim);
-        Section TempSection(
-                stf::detectionCriterion( cur().get(), templateWave ) );
+        stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
+        Section TempSection(stf::detectionCriterion( cur().get(), templateWave, progDlg ) );
         if (TempSection.size()==0) return;
         TempSection.SetSectionDescription(
                                           std::string("Detection criterion of ")+cur().GetSectionDescription()
@@ -2059,7 +2065,8 @@ void wxStfDoc::Plotcorrelation(wxCommandEvent& WXUNUSED(event)) {
         double minim=fabs(fmin);
         templateWave = stfio::vec_scal_div(templateWave, minim);
 
-        Section TempSection( stf::linCorr( cur().get(), templateWave ) );
+        stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
+        Section TempSection( stf::linCorr(cur().get(), templateWave, progDlg) );
         if (TempSection.size()==0) return;
         TempSection.SetSectionDescription(
                                           std::string("Template correlation of ") + cur().GetSectionDescription() );
@@ -2109,11 +2116,11 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
         templateWave = stfio::vec_scal_div(templateWave, minim);
         Vector_double detect( cur().get().size() - templateWave.size() );
         if (MiniDialog.GetScaling()) {
-            detect=stf::detectionCriterion( cur().get(),templateWave );
+            stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
+            detect=stf::detectionCriterion(cur().get(), templateWave, progDlg);
         } else {
-            detect=stf::linCorr(
-                    cur().get(),templateWave
-            );
+            stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
+            detect=stf::linCorr(cur().get(), templateWave, progDlg);
         }
         if (detect.empty()) {
             wxGetApp().ErrorMsg(wxT("Error: Detection criterion is empty."));
@@ -2346,7 +2353,7 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
     }
 }
 
-//Function calculates the peak and respective measures: base, 20/80 rise time
+//Function calculates the peak and respective measures: base, Lo/Hi rise time
 //half duration, ratio of rise/slope and maximum slope
 void wxStfDoc::Measure( )
 {
@@ -2374,7 +2381,7 @@ void wxStfDoc::Measure( )
         throw e;
     }
 
-    //Begin 20 to 80% Rise Time calculation
+    //Begin Lo to Hi% Rise Time calculation
     //-------------------------------------
     // 2009-06-05: reference is either from baseline or from threshold
     double reference = base;
@@ -2383,19 +2390,19 @@ void wxStfDoc::Measure( )
     }
     double ampl=peak-reference;
     
-    t20Real=0.0;
+    tLoReal=0.0;
     try {
         // 2008-04-27: changed limits to start from the beginning of the trace
-        rt2080=stf::risetime(cur().get(),reference,ampl, (double)0/*(double)baseEnd*/,
-                maxT,t20Index,t80Index,t20Real);
+        rtLoHi=stf::risetime(cur().get(),reference,ampl, (double)0/*(double)baseEnd*/,
+                             maxT, 0.2, tLoIndex, tHiIndex, tLoReal);
     }
     catch (const std::out_of_range& e) {
-        rt2080=0.0;
+        rtLoHi=0.0;
         throw e;
     }
 
-    t80Real=t20Real+rt2080;
-    rt2080/=GetSR();
+    tHiReal=tLoReal+rtLoHi;
+    rtLoHi/=GetSR();
 
     //Begin Half Duration calculation
     //-------------------------------
@@ -2411,7 +2418,7 @@ void wxStfDoc::Measure( )
 
     //Calculate the beginning of the event by linear extrapolation:
     if (latencyEndMode==stf::footMode) {
-        t0Real=t20Real-(t80Real-t20Real)/3.0;
+        t0Real=tLoReal-(tHiReal-tLoReal)/3.0;
     } else {
         t0Real=t50LeftReal;
     }
@@ -2509,7 +2516,7 @@ void wxStfDoc::Measure( )
     // the maxTs aren't. That's why there are double type casts
     // here.
     case stf::footMode: //Latency cursor is set to the peak						
-        latEnd=t20Real-(t80Real-t20Real)/3.0;
+        latEnd=tLoReal-(tHiReal-tLoReal)/3.0;
         break;
     case stf::riseMode:
         latEnd=maxRiseT;
@@ -2539,7 +2546,7 @@ void wxStfDoc::Measure( )
     switch (pslopeBegMode) {
 
         case stf::psBeg_footMode:   // Left PSlope to commencement
-            PSlopeBegVal = (int)(t20Real-(t80Real-t20Real)/3.0);
+            PSlopeBegVal = (int)(tLoReal-(tHiReal-tLoReal)/3.0);
             break;
 
         case stf::psBeg_thrMode:   // Left PSlope to threshold
@@ -2878,7 +2885,7 @@ stf::Table wxStfDoc::CurResultsTable() {
     if (viewPeakzero) n_cols++;
     if (viewPeakbase) n_cols++;
     if (viewPeakthreshold) n_cols++;
-    if (viewRT2080) n_cols++;
+    if (viewRTLoHi) n_cols++;
     if (viewT50) n_cols++;
     if (viewRD) n_cols++;
     if (viewSloperise) n_cols++;
@@ -2905,7 +2912,7 @@ stf::Table wxStfDoc::CurResultsTable() {
     if (viewPeakzero) table.SetColLabel(nCol++,"Peak (from 0)");
     if (viewPeakbase) table.SetColLabel(nCol++,"Peak (from base)");
     if (viewPeakthreshold) table.SetColLabel(nCol++,"Peak (from threshold)");
-    if (viewRT2080) table.SetColLabel(nCol++,"RT (20-80%)");
+    if (viewRTLoHi) table.SetColLabel(nCol++,"RT (Lo-Hi%)");
     if (viewT50) table.SetColLabel(nCol++,"t50");
     if (viewRD) table.SetColLabel(nCol++,"Rise/Decay");
     if (viewSloperise) table.SetColLabel(nCol++,"Slope (rise)");
@@ -2988,11 +2995,11 @@ stf::Table wxStfDoc::CurResultsTable() {
         nCol++;
     }
 
-    // RT (20-80%)
-    if (viewRT2080) {table.at(0,nCol)=GetRT2080();
+    // RT (Lo-Hi%)
+    if (viewRTLoHi) {table.at(0,nCol)=GetRTLoHi();
         if (viewCursors) {
-            table.at(1,nCol)=GetT20Real()*GetXScale();
-            table.at(2,nCol)=GetT80Real()*GetXScale();
+            table.at(1,nCol)=GetTLoReal()*GetXScale();
+            table.at(2,nCol)=GetTHiReal()*GetXScale();
         }
         nCol++;
     }

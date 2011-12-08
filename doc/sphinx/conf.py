@@ -42,7 +42,7 @@ master_doc = 'contents'
 
 # General information about the project.
 project = u'Stimfit'
-copyright = u'2009, Christoph Schmidt-Hieber'
+copyright = u'2011, Christoph Schmidt-Hieber'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -113,7 +113,7 @@ html_short_title = 'Stimfit documentation'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-# html_logo = 'stf_logo.png'
+html_logo = '../../src/stimfit/res/stimfit_128.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32

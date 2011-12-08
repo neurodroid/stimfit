@@ -268,7 +268,7 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 #endif
                  << wxT("import embedded_mpl\n")
                  << wxT("\n")
-                 << wxT("def makeWindow(parent):\n")
+                 << wxT("def makeWindow(parent, figsize=(8,6)):\n")
 #ifdef IPYTHON
                  << wxT("    win = embedded_ipython.MyPanel(parent)\n")
 #else
@@ -276,13 +276,13 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 #endif
                  << wxT("    return win\n")
                  << wxT("\n")
-                 << wxT("def plotWindowMpl(parent):\n")
-                 << wxT("    win = embedded_mpl.MplPanel(parent)\n")
+                 << wxT("def plotWindowMpl(parent, figsize=(8,6)):\n")
+                 << wxT("    win = embedded_mpl.MplPanel(parent, figsize)\n")
                  << wxT("    win.plot_screen()\n")
                  << wxT("    return win\n")
                  << wxT("\n")
-                 << wxT("def makeWindowMpl(parent):\n")
-                 << wxT("    win = embedded_mpl.MplPanel(parent)\n")
+                 << wxT("def makeWindowMpl(parent, figsize=(8,6)):\n")
+                 << wxT("    win = embedded_mpl.MplPanel(parent, figsize)\n")
                  << wxT("    return win\n");
 
     /*  The window remains open after the main application has been closed; deactivated for the time being.
@@ -535,7 +535,7 @@ wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
 void wxStfParentFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
 {
 	wxAboutDialogInfo info;
-	info.SetName(wxT("stimfit"));
+	info.SetName(wxT("Stimfit"));
 	info.SetVersion(wxString(VERSION, wxConvLocal));
 	info.SetWebSite(wxT("http://www.stimfit.org"));
 	wxString about(wxT("Credits:\n\nOriginal idea (Stimfit for DOS):\n\

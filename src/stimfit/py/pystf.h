@@ -5,6 +5,8 @@
 #include <wx/wx.h>
 #undef _DEBUG
 
+#include <vector>
+
 std::string get_versionstring( );
 
 PyObject* get_trace(int trace=-1, int channel=-1);
@@ -129,8 +131,10 @@ void _gMatrix_at( double* invec, int size, int channel, int section );
 void _gNames_at( const char* name, int channel );
 bool _new_window_gMatrix( );
 
-PyObject* mpl_panel();
+extern double _figsize[];
+PyObject* mpl_panel(const std::vector<double>& figsize = std::vector<double>(_figsize, _figsize+2));
 
-PyObject* template_matching(double* invec, int size, bool correlate=false);
+PyObject* template_matching(double* invec, int size, bool correlate=false, bool norm=true);
+PyObject* peak_detection(double* invec, int size, double threshold, int min_distance);
 
 #endif
