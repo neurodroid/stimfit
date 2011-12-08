@@ -971,14 +971,13 @@ void wxStfGraph::DrawIntegral(wxDC* pDC) {
         qt_size++; //straight line for trapezoidal part
     std::vector<wxPoint> quadTrace;
     quadTrace.reserve(qt_size);
-    std::size_t n_qt=0;
     quadTrace.push_back(wxPoint(firstPixel,yFormat(Doc()->GetBase())));
     // "Simpson part" (piecewise quadratic functions through three adjacent points):
     for (int n_pixel=firstPixel; n_pixel < lastPixel; ++n_pixel) {
         // (lower) index corresponding to pixel:
         int n_relIndex =
-            (int)(((double)n_pixel-(double)SPX())/(double)XZ()-sec_att.storeIntBeg);
-        if (n_relIndex >= 0 && (int)(n_relIndex/2)*3+2 < sec_attr.quad_p.size()) {
+            (int)(((double)n_pixel-(double)SPX())/(double)XZ()-sec_attr.storeIntBeg);
+        if (n_relIndex >= 0 && (unsigned int)(n_relIndex/2)*3+2 < sec_attr.quad_p.size()) {
             double n_absIndex = ((double)n_pixel-(double)SPX())/(double)XZ();
             // quadratic parameters at this point:
             double a = sec_attr.quad_p[(int)(n_relIndex/2)*3];
