@@ -930,7 +930,7 @@ void wxStfGraph::DrawIntegral(wxDC* pDC) {
         // (lower) index corresponding to pixel:
         int n_relIndex =
             (int)(((double)n_pixel-(double)SPX())/(double)XZ()-Doc()->cur().GetStoreIntBeg());
-        if (n_relIndex > 0 && (int)(n_relIndex/2)*3+2 < Doc()->cur().GetQuadP().size()) {
+        if (n_relIndex >= 0 && (int)(n_relIndex/2)*3+2 < Doc()->cur().GetQuadP().size()) {
             double n_absIndex = ((double)n_pixel-(double)SPX())/(double)XZ();
             // quadratic parameters at this point:
             double a = Doc()->cur().GetQuadP()[(int)(n_relIndex/2)*3];
@@ -961,7 +961,7 @@ void wxStfGraph::DrawIntegral(wxDC* pDC) {
     pDC->DrawPolygon((int)quadTrace.size(),&quadTrace[0]);
     // Polygon from 0:
     quadTrace[0]=wxPoint(firstPixel,yFormat(0));
-    quadTrace[n_qt]=
+    quadTrace[quadTrace.size()-1]=
         wxPoint(
                 xFormat(Doc()->cur().GetStoreIntEnd()),
                 yFormat(0)
