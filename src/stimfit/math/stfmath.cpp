@@ -463,7 +463,7 @@ double stf::integrate_trapezium(
         double x_scale
 ) {
     if (i2>=input.size() || i1>=i2) {
-        throw std::out_of_range( "integration interval out of range in stf::integrate_simpson" );
+        throw std::out_of_range( "integration interval out of range in stf::integrate_trapezium" );
     }
     double a = i1 * x_scale;
     double b = i2 * x_scale;
@@ -592,7 +592,7 @@ stf::linsolv( int m, int n, int nrhs, Vector_double& A,
     if (info<0) {
         std::ostringstream error_msg;
         error_msg << "Argument " << -info << " had an illegal value in LAPACK's dgetrs_";
-        throw std::runtime_error(std::string(error_msg.str()));
+        throw std::runtime_error(error_msg.str());
     }
 #endif
     return 0;
