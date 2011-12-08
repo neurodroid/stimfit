@@ -969,38 +969,40 @@ void wxStfGraph::DrawIntegral(wxDC* pDC) {
         2; // straight line through base or 0
     if (!even)
         qt_size++; //straight line for trapezoidal part
-    std::vector<wxPoint> quadTrace(qt_size);
+    std::vector<wxPoint> quadTrace;
+    quadTrace.reserve(qt_size);
     std::size_t n_qt=0;
-    quadTrace[n_qt++]=wxPoint(firstPixel,yFormat(Doc()->GetBase()));
+    quadTrace.push_back(wxPoint(firstPixel,yFormat(Doc()->GetBase())));
     // "Simpson part" (piecewise quadratic functions through three adjacent points):
     for (int n_pixel=firstPixel; n_pixel < lastPixel; ++n_pixel) {
         // (lower) index corresponding to pixel:
         int n_relIndex =
-            (int)(((double)n_pixel-(double)SPX())/(double)XZ()-sec_attr.storeIntBeg);
-        double n_absIndex = ((double)n_pixel-(double)SPX())/(double)XZ();
-        // quadratic parameters at this point:
-        double a = sec_attr.quad_p[(int)(n_relIndex/2)*3];
-        double b = sec_attr.quad_p[(int)(n_relIndex/2)*3+1];
-        double c = sec_attr.quad_p[(int)(n_relIndex/2)*3+2];
-        double y = a*n_absIndex*n_absIndex + b*n_absIndex + c;
-
-        quadTrace[n_qt++]=wxPoint(n_pixel,yFormat(y));
+            (int)(((double)n_pixel-(double)SPX())/(double)XZ()-sec_att.storeIntBeg);
+        if (n_relIndex > 0 && (int)(n_relIndex/2)*3+2 < sec_attr.quad_p.size()) {
+            double n_absIndex = ((double)n_pixel-(double)SPX())/(double)XZ();
+            // quadratic parameters at this point:
+            double a = sec_attr.quad_p[(int)(n_relIndex/2)*3];
+            double b = sec_attr.quad_p[(int)(n_relIndex/2)*3+1];
+            double c = sec_attr.quad_p[(int)(n_relIndex/2)*3+2];
+            double y = a*n_absIndex*n_absIndex + b*n_absIndex + c;
+            quadTrace.push_back(wxPoint(n_pixel,yFormat(y)));
+        }
     }
 
     // add trapezoidal integration part if uneven:
     if (!even) {
-        // draw a straight line:
-        quadTrace[n_qt++]=
+    // draw a straight line:
+        quadTrace.push_back(
             wxPoint(
                     xFormat(sec_attr.storeIntEnd),
                     yFormat(Doc()->cur()[sec_attr.storeIntEnd])
-            );
+                    ));
     }
-    quadTrace[n_qt]=
+    quadTrace.push_back(
         wxPoint(
                 xFormat(sec_attr.storeIntEnd),
                 yFormat(Doc()->GetBase())
-        );
+        ));
 
     // Polygon from base:
     pDC->SetBrush(baseBrush);
