@@ -455,7 +455,7 @@ std::vector<stf::Extension> wxStfApp::LoadExtensions() {
 
     if (!PyList_Check(pExtList)) {
         PyErr_Print();
-        wxGetApp().ErrorMsg(wxT("extensionList is not a list in extensions.py"));
+        wxGetApp().ErrorMsg(wxT("extensionList is not a Python list in extensions.py"));
         wxPyEndBlockThreads(blocked);
         Py_DECREF(pExtList);
         Py_DECREF(pModule);
@@ -533,8 +533,10 @@ void wxStfApp::OnUserdef(wxCommandEvent& event) {
 
     // retrieve function
     PyObject* pPyFunc = (PyObject*)(GetExtensionLib()[id].pyFunc);
+    // retrieve function name
+    wxString FuncName = stf::std2wx(GetExtensionLib()[id].menuEntry);
     if (!pPyFunc || !PyCallable_Check(pPyFunc)) {
-        wxString msg(wxT("Couldn't call extension function"));
+        wxString msg(FuncName << wxT(" Couldn't call extension function "));
         ErrorMsg( msg );
         wxPyEndBlockThreads(blocked);
         return;
@@ -544,14 +546,14 @@ void wxStfApp::OnUserdef(wxCommandEvent& event) {
     PyObject* res = PyObject_CallObject(pPyFunc, NULL);
     if (!res) {
         PyErr_Print();
-        wxString msg(wxT("Function call failed"));
+        wxString msg(FuncName << wxT(" call failed"));
         ErrorMsg( msg );
         wxPyEndBlockThreads(blocked);
         return;
     }
 
     if (res==Py_False) {
-        wxString msg(wxT("Function returned False"));
+        wxString msg(FuncName << wxT(" returned False"));
         ErrorMsg( msg );
     }
     
