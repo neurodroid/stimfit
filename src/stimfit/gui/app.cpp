@@ -87,12 +87,16 @@ EVT_MENU( ID_APPLYTOALL, wxStfApp::OnApplytoall )
 
 #ifdef WITH_PYTHON
 EVT_MENU( ID_IMPORTPYTHON, wxStfApp::OnPythonImport )
+//EVT_MENU_RANGE(10000, 10000+32, wxStfApp::OnUserdef)
 EVT_MENU_RANGE(ID_USERDEF, ID_USERDEF+32, wxStfApp::OnUserdef)
 #endif // WITH_PYTHON
 END_EVENT_TABLE()
 
 wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isHires(false), txtImport(), funcLib(),
-    extensionLib(), CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ), /*m_file_menu(0),*/ m_fileToLoad(wxEmptyString)/*, activeDoc(0)*/ {}
+#ifdef WITH_PYTHON
+extensionLib(),
+#endif 
+    CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ), /*m_file_menu(0),*/ m_fileToLoad(wxEmptyString)/*, activeDoc(0)*/ {}
 
 void wxStfApp::OnInitCmdLine(wxCmdLineParser& parser)
 {
@@ -148,6 +152,11 @@ bool wxStfApp::OnInit(void)
     }
 #endif
     
+// Load Python extensions before creation of wxMenuBar ( CreateUnifiedMenuBar() )
+//#ifdef WITH_PYTHON
+    extensionLib = LoadExtensions();
+    std::cout << "DEBUG: wxStfApp extensionLib size is " << GetExtensionLib().size() << std::endl;
+//#endif
     // Config:
     config.reset(new wxFileConfig(wxT("Stimfit")));
 
@@ -273,6 +282,7 @@ bool wxStfApp::OnInit(void)
 
     menu_bar->Append(help_menu, wxT("&Help"));
 
+
 #ifdef __WXMAC__
     // wxApp::SetExitOnFrameDelete(false);
     wxMenuBar::MacSetCommonMenuBar(menu_bar);
@@ -298,7 +308,10 @@ bool wxStfApp::OnInit(void)
 #endif
     // load user-defined plugins:
     // pluginLib = stf::GetPluginLib();
-    extensionLib = LoadExtensions();
+//#ifdef WITH_PYTHON
+//    extensionLib = LoadExtensions();
+//    std::cout << "DEBUG: wxStfApp extensionLib size is " << GetExtensionLib().size() << std::endl;
+//#endif
     
     // load fit function library:
     funcLib = stf::GetFuncLib();
@@ -592,7 +605,7 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
                         );
     m_edit_menu->Append(
                         ID_UNSELECTALL,
-                        wxT("&Unselect all traces"),
+                        wxT("&Unselect all traces\tCtrl+U"),
                         wxT("Unselect all traces in this file")
                         );
     m_edit_menu->Append(
@@ -771,6 +784,9 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     analysis_menu->AppendSubMenu(userdefSub,wxT("User-defined functions"));
 #endif
     wxMenu *extensions_menu = new wxMenu;
+#ifdef _STFDEBUG
+    std::cout << (int) GetExtensionLib().size() << " Python extension/s loaded"<< std::endl;
+#endif
     for (std::size_t n=0;n<GetExtensionLib().size();++n) {
         extensions_menu->Append(ID_USERDEF+(int)n,
                                 stf::std2wx(GetExtensionLib()[n].menuEntry));

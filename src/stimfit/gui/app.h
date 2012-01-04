@@ -60,6 +60,7 @@ enum {
 #endif
 #ifdef WITH_PYTHON
     ID_IMPORTPYTHON,
+    ID_USERDEF,
 #endif
     ID_VIEW_RESULTS,
     ID_VIEW_MEASURE,
@@ -159,7 +160,6 @@ enum {
     ID_ZERO_INDEX,
     ID_COMBOACTCHANNEL,
     ID_COMBOINACTCHANNEL,
-    ID_USERDEF
 };
 
 #include <list>
@@ -338,10 +338,12 @@ public:
      */
     stf::storedFunc* GetLinFuncPtr( ) { return &storedLinFunc; }
 
+#ifdef WITH_PYTHON
     //! Retrieves the user-defined extension functions.
     /*! \return A vector containing the user-defined functions.
      */
     const std::vector< stf::Extension >& GetExtensionLib() const { return extensionLib; }
+#endif
 
     //! Retrieves the cursor settings dialog.
     /*! \return A pointer to the cursor settings dialog.
@@ -485,11 +487,11 @@ private:
     void OnNewfromall( wxCommandEvent& event );
     void OnApplytoall( wxCommandEvent& event );
     void OnProcessCustom( wxCommandEvent& event );
-    void OnUserdef(wxCommandEvent& event);
     void OnKeyDown( wxKeyEvent& event );
     
 #ifdef WITH_PYTHON
     void ImportPython(const wxString& modulelocation);
+    void OnUserdef(wxCommandEvent& event);
     bool Init_wxPython();
     bool Exit_wxPython();
     std::vector<stf::Extension> LoadExtensions();
@@ -510,7 +512,9 @@ private:
     // Registry:
     boost::shared_ptr<wxFileConfig> config;
     std::vector<stf::storedFunc> funcLib;
+#ifdef WITH_PYTHON
     std::vector< stf::Extension > extensionLib;
+#endif
     // Pointer to the cursors settings dialog box
     wxStfCursorsDlg* CursorsDialog;
     wxDocTemplate* m_cfsTemplate, *m_hdf5Template, *m_txtTemplate,*m_abfTemplate,

@@ -224,12 +224,10 @@ private:
     void OnExportatf(wxCommandEvent& event);
     void OnExportigor(wxCommandEvent& event);
     void OnExporthdf5(wxCommandEvent& event);
-//#ifdef _WINDOWS
     void OnConvert(wxCommandEvent& event);
 #ifdef _WINDOWS
     void OnPrint(wxCommandEvent& event);
 #endif
-//#endif
     void OnScale(wxCommandEvent& event);
     void OnHires(wxCommandEvent& event);
     void OnMpl(wxCommandEvent& event);
@@ -240,6 +238,7 @@ private:
     void OnRestoreperspective(wxCommandEvent& event);
 #ifdef WITH_PYTHON
     void OnViewshell(wxCommandEvent& event);
+    void OnUserdef(wxCommandEvent& event);
 #endif
     void OnLStartMaxslope(wxCommandEvent& event);
     void OnLStartHalfrise(wxCommandEvent& event);

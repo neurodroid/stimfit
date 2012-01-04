@@ -483,27 +483,42 @@ class APFrame(wx.Frame):
         grid.SetCellValue(2,6, "%.4f"%(dend.t50_left -soma.t50_left))
 
 def latency(soma, dend):
+    """ 
+    Shows a results table with the latencies between the 
+    somatic and dendritic  object 
+    
+    Arguments:
+    soma    -- Spike Object of a trace containing the somatic AP 
+    dend    -- Spike Object of a trace containing the dendritic AP
+    see Spike() class for more details
+    """
     frame = APFrame(soma, dend)
     frame.Show()
 
 def count_aps():
+    """
+    Shows a result table with the number of action potentials (i.e
+    events whose potential is above 0 mV) in selected traces.  
+
+    Returns:
+    False if document is not open or no trace is selected
+    """
     if not stf.check_doc():
         print("Open file first")
         return False
-    
-    try:
-        l = stf.get_selected_indices()
-    except:
+   
+    sel_trace = stf.get_selected_indices()
+    if not sel_trace: 
         print("Select traces first")
         return False
 
     mytable = dict()
-    for i in l:
+    for trace in sel_trace:
         tstart = 0
-        tend = stf.get_size_trace(i)*stf.get_sampling_interval()
+        tend = stf.get_size_trace(trace)*stf.get_sampling_interval()
         threshold = 0
-        spikes = count_events(tstart, tend, threshold, True, i, True)
-        mytable["Trace %.3d" %i] = spikes
+        spikes = count_events(tstart, tend, threshold, True, trace, True)
+        mytable["Trace %.3d" %trace] = spikes
 
     stf.show_table(mytable)
 
