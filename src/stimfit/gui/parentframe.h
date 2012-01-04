@@ -238,7 +238,7 @@ private:
     void OnRestoreperspective(wxCommandEvent& event);
 #ifdef WITH_PYTHON
     void OnViewshell(wxCommandEvent& event);
-    //void OnUserdef(wxCommandEvent& event);
+    void OnUserdef(wxCommandEvent& event);
 #endif
     void OnLStartMaxslope(wxCommandEvent& event);
     void OnLStartHalfrise(wxCommandEvent& event);

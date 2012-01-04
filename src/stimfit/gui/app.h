@@ -24,7 +24,6 @@
 /*! \defgroup wxstf Stimfit classes and functions derived from wxWidgets
  *  @{
  */
-
 //! Event ids
 enum {
     ID_TOOL_FIRST, // = wxID_HIGHEST+1, resulted in wrong events being fired
@@ -60,7 +59,6 @@ enum {
 #endif
 #ifdef WITH_PYTHON
     ID_IMPORTPYTHON,
-    ID_USERDEF,
 #endif
     ID_VIEW_RESULTS,
     ID_VIEW_MEASURE,
@@ -160,6 +158,9 @@ enum {
     ID_ZERO_INDEX,
     ID_COMBOACTCHANNEL,
     ID_COMBOINACTCHANNEL,
+#ifdef WITH_PYTHON
+    ID_USERDEF, // this should be the last ID event
+#endif
 };
 
 #include <list>

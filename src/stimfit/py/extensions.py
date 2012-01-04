@@ -27,6 +27,6 @@ class Extension(object):
         self.parentEntry = parentEntry
 
 # define an Extension: it will appear as a submenu in the Extensions Menu
-myExt = Extension("Count APs", spells.count_aps, "Count events > 0 mV", True)
+myExt = Extension("Count APs", spells.count_aps, "Count events >0 mV in selected files", True)
 
 extensionList = [myExt]
