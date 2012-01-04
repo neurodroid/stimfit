@@ -10,14 +10,22 @@ File opening
 This tutorial will cover the basic program functionality from opening a
 file to fitting functions to data.
 
-* Download the `Stimfit setup program <http://www.stimfit.org>`_ and install `Stimfit <http://www.stimfit.org>`_ on your computer.
+* Download `Stimfit from here <http://code.google.com/p/stimfit/downloads/list>`_ and install it on your computer.
 
-* Download the `Stimfit sample <http://stimfit.org/tutorial/minis.dat>`_ data file.
+* Download a sample file from `here <http://www.stimfit.org/tutorial/minis.dat>`_ .
 
-* Open the data file: you can either double-click it from an Explorer Window, or you can start Stimfit and choose "File"->"Open..." from the menu.
+* Open the data file: you can either double-click it from an Explorer Window, or you can start `Stimfit <http://www.stimfit.org>`__ and choose "File"->"Open..." from the menu.
 
 * The file will be opened in a new child window, and the first trace will be displayed.
 
+======================
+Opening multiple files
+======================
+
+`Stimfit <http://www.stimfit.org>`__ support drag and drop of files by simply selecting a file in your file browser and move it to an open session of `Stimfit <http://www.stimfit.org/>`__. To open varios files simultaneously you have to select them first on your file browser and move it to a `Stimfit <http:www.stimfit.org/>`__ session. A menu will appear (see bellow), that asks you if you want to put your selected files all together in a single file.
+
+    .. figure:: images/put_files.png
+        :align: center
 
 Trace scaling
 =============

@@ -26,7 +26,7 @@ For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build depend
                            liblapack-dev \
                            mercurial \
                            automake \
-              			   autoconf \
+                           autoconf \
                            libtool \
                            libgtest-dev
 
@@ -63,7 +63,7 @@ From there, follow the build instructions found `here <http://www.wxpython.org/b
 Download the Stimfit source code
 ================================
 
-You can download the latest development code for Stimfit from the Google code repository. In your home directory ($HOME)
+You can download the latest development code for `Stimfit <http://www.stimfit.org>`_ from the `Google code repository <http://code.google.com/p/stimfit/>`_. In your home directory ($HOME)
 
 ::
 
@@ -105,7 +105,7 @@ where [N] is the number of parallel builds you want to start. And finally:
 ::
 
     $ sudo make install
-    $ sudo ldconfig
+    $ sudo /sbin/ldconfig
 
 .. [wxWidgets] http://www.wxwidgets.org
 .. [wxPython] http://www.wxpython.org
