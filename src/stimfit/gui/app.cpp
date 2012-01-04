@@ -87,9 +87,8 @@ EVT_MENU( ID_APPLYTOALL, wxStfApp::OnApplytoall )
 
 #ifdef WITH_PYTHON
 EVT_MENU( ID_IMPORTPYTHON, wxStfApp::OnPythonImport )
-//EVT_MENU_RANGE(10000, 10000+32, wxStfApp::OnUserdef)
 EVT_MENU_RANGE(ID_USERDEF, ID_USERDEF+32, wxStfApp::OnUserdef)
-#endif // WITH_PYTHON
+#endif 
 END_EVENT_TABLE()
 
 wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isHires(false), txtImport(), funcLib(),
@@ -152,11 +151,13 @@ bool wxStfApp::OnInit(void)
     }
 #endif
     
-// Load Python extensions before creation of wxMenuBar ( CreateUnifiedMenuBar() )
-//#ifdef WITH_PYTHON
+// Load Python extensions before creation of wxMenuBar ( see later CreateUnifiedMenuBar() )
+#ifdef WITH_PYTHON
     extensionLib = LoadExtensions();
-    std::cout << "DEBUG: wxStfApp extensionLib size is " << GetExtensionLib().size() << std::endl;
-//#endif
+    #ifdef _STFDEBUG
+    std::cout << (int) GetExtensionLib().size() << " Python extension/s loaded"<< std::endl;
+    #endif
+#endif //WITH_PTYHON
     // Config:
     config.reset(new wxFileConfig(wxT("Stimfit")));
 
@@ -240,10 +241,9 @@ bool wxStfApp::OnInit(void)
 
     m_file_menu->Append(wxID_OPEN);
     
-//#ifdef _WINDOWS
     m_file_menu->AppendSeparator();
     m_file_menu->Append(ID_CONVERT, wxT("Convert file series..."));
-//#endif
+
 #ifdef WITH_PYTHON
     m_file_menu->AppendSeparator();
     m_file_menu->Append(
@@ -784,9 +784,6 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     analysis_menu->AppendSubMenu(userdefSub,wxT("User-defined functions"));
 #endif
     wxMenu *extensions_menu = new wxMenu;
-#ifdef _STFDEBUG
-    std::cout << (int) GetExtensionLib().size() << " Python extension/s loaded"<< std::endl;
-#endif
     for (std::size_t n=0;n<GetExtensionLib().size();++n) {
         extensions_menu->Append(ID_USERDEF+(int)n,
                                 stf::std2wx(GetExtensionLib()[n].menuEntry));

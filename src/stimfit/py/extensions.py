@@ -7,7 +7,8 @@ import spells
 # submenu
 class Extension(object):
     """
-    An extension that can be added to the program menu.
+    A Python extension that can be added as a submenu in 
+    the Extensions menu of Stimfit.
     """
     def __init__(self, menuEntryString, pyFunc, description="", 
                  requiresFile=True, parentEntry=None):
@@ -25,10 +26,7 @@ class Extension(object):
         self.requiresFile = requiresFile
         self.parentEntry = parentEntry
 
-# define an Extension object:
-myExt = Extension("Count APs", spells.count_aps, "Count APs", True)
+# define an Extension: it will appear as a submenu in the Extensions Menu
+myExt = Extension("Count APs", spells.count_aps, "Count events > 0 mV", True)
 
-extensionList = [
-    Extension("Count APs", spells.count_aps, 
-              "Counts APs in selected files", True),
-]
+extensionList = [myExt]

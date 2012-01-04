@@ -223,7 +223,6 @@ bool wxStfApp::Init_wxPython()
 
         ErrorMsg( errormsg );
         Py_Finalize();
-        //??? Py_DECREF(result);
         return false;
     }        
     
@@ -430,7 +429,6 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
 }
 
 std::vector<stf::Extension> wxStfApp::LoadExtensions() {
-    std::cout << "loading extensions " << std::endl;
     std::vector< stf::Extension > extList;
 
     // As always, first grab the GIL
@@ -502,7 +500,6 @@ std::vector<stf::Extension> wxStfApp::LoadExtensions() {
                     std::string description(PyString_AsString(pDescription));
                     bool requiresFile = (pRequiresFile==Py_True);
                     extList.push_back(stf::Extension(menuEntry, (void*)pPyFunc, description, requiresFile));
-                    std::cout << menuEntry << std::endl;
                 }
                 Py_XDECREF(pMenuEntry);
                 Py_XDECREF(pPyFunc);
@@ -517,16 +514,12 @@ std::vector<stf::Extension> wxStfApp::LoadExtensions() {
 
     // Finally, after all Python stuff is done, release the GIL
     wxPyEndBlockThreads(blocked);
-    //std::cout << menuEntry << std::endl;
 
-    //std::cout << extList[0].menuEntry << std::endl;
     return extList;
 }
 
 void wxStfApp::OnUserdef(wxCommandEvent& event) {
-    //std::cout << "evento" << event.GetId() << std::endl;
     int id = event.GetId()-ID_USERDEF;
-    std::cout << id << std::endl;
 
     if (id >= (int)GetExtensionLib().size() || id<0) {
         wxString msg(wxT("Couldn't find extension function"));
