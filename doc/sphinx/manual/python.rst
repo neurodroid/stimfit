@@ -341,6 +341,11 @@ To import and use this file, you would do:
     >>> myFile.sqr_amp()
     497.70163353882447
 
+.. note::
+
+    You can import a file from any directory by selecting **File->Import Python module** or simpy by pressing ``Ctrl+I``. The file will be automatically loaded in the embedded Python shell and ready to be used (it is not necessary to type import(myFile). To reload the file, you have simply to select **File->Import Python module** or ``Ctrl+I`` again. 
+
+
 Add a Python function to the Stimfit menu
 -----------------------------------------
 
