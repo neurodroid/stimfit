@@ -22,7 +22,7 @@ file to fitting functions to data.
 Opening multiple files
 ======================
 
-`Stimfit <http://www.stimfit.org>`__ support drag and drop of files by simply selecting a file in your file browser and move it to an open session of `Stimfit <http://www.stimfit.org/>`__. To open varios files simultaneously you have to select them first on your file browser and move it to a `Stimfit <http:www.stimfit.org/>`__ session. A menu will appear (see bellow), that asks you if you want to put your selected files all together in a single file.
+`Stimfit <http://www.stimfit.org>`__ supports drag-and-drop file opening. Select a file or a list of files in your file browser and move it to the main `Stimfit <http://www.stimfit.org/>`__ program window. A dialog window will appear (see below) asking you whether you want to merge all your selected files in a single file.
 
     .. figure:: images/put_files.png
         :align: center
