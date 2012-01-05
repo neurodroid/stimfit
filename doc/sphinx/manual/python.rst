@@ -7,7 +7,7 @@ The Python shell
 
 Why use Python?
 ===============
-Why would you want to use Python (or more specifically SciPy) to analyse neuroscientific data? Here are a couple of reasons:
+Why would you want to use Python (or more specifically [SciPy]_ ) to analyse neuroscientific data? Here are a couple of reasons:
 
 * `Widely used <http://www.python.org/about/success/>`_, `general-purpose <http://www.python.org/about/>`_ programming language
 * `Predicted to become the major programming language in neurosciences <http://www.frontiersin.org/neuroinformatics/specialtopics/8/>`_
@@ -153,12 +153,12 @@ You can pass a 2D-NumPy array to :func:`stf.new_window_matrix()`. The first dime
 
 ::
 
-    >>> numpy_matrix = N.empty( (2, get_size_trace()) )
+    >>> numpy_matrix = np.empty( (2, get_size_trace()) )
     >>> numpy_matrix[0] = get_trace()
-    >>> numpy_matrix[1] = N.sqrt( N.abs(get_trace()) )
+    >>> numpy_matrix[1] = np.sqrt( np.abs(get_trace()) )
     >>> new_window_matrix(numpy_matrix)
 
-In this example, N is the NumPy namespace. Typing N. at the command prompt will show you all available NumPy functions. :func:`stf.get_size_trace()` will be explained later on.
+In this example, np is the NumPy namespace. Typing np. at the command prompt will show you all available NumPy functions. :func:`stf.get_size_trace()` will be explained later on.
 
 * **new_window_list()**
 
@@ -167,12 +167,12 @@ Although using a 2D_NumPy array is very efficient, there are a few drawbacks: th
 ::
 
     >>> python_list = [get_trace,]
-    >>> python_list.append( N.concatenate( (get_trace(), get_trace()) ) )
+    >>> python_list.append( np.concatenate( (get_trace(), get_trace()) ) )
     >>> new_window_list(python_list)
 
 Note that items in Python list are written between *squared* brakes, and that a comma is required at the end of single-item lists.
 
-The [Scipy]_ library, which is build on top of [NumPy]_, provides a huge amount of numerical tools, such as special functions, integration, ordinary differential equation solvers, gradient optimization, genetic algorithms or parallel programming tools. Due to its size, it is not packaged with `Stimfit <http://www.stimfit.org>`_ by default, but I highly recommend installing it for more advanced numerical analysis.
+The [SciPy]_ library, which is build on top of [NumPy]_, provides a huge amount of numerical tools, such as special functions, integration, ordinary differential equation solvers, gradient optimization, genetic algorithms or parallel programming tools. Due to its size, it is not packaged with `Stimfit <http://www.stimfit.org>`_ by default, but I highly recommend installing it for more advanced numerical analysis.
 
 Control Stimfit from the Python shell
 =====================================
@@ -344,36 +344,34 @@ To import and use this file, you would do:
 Add a Python function to the Stimfit menu
 -----------------------------------------
 
-You can add your own functions to the ``Extensions`` menu by editing ``extensions.py`` that should be located in the Stimfit program folder. ``extensions.py`` contains a list that will be processed when the program starts:
+It is possible to create a submenu with your own Python functions in the ``Extensions`` menu of `Stimfit <http://www.stimfit.org>`__. To include your own function as a submenu you have to edit the file ``extensions.py``. This file is located in the Stimfit program folder. ``extensions.py`` contains a list called **extensionsList** that contains a list of submenus. For example, in the following example, only one submenu can be found, called *myAPCounter*:
+
+
+:: 
+    
+    extensionList = [myAPCounter,]
+
+To create a submenu we have first to define it as Extension. In ``extensions.py`` we should add:
 
 ::
 
-    extensionList = [
-        Extension("Count APs", spells.count_aps, 
-                  "Counts APs in selected files", True),
-    ]
+    myAPCounter = Extension("Count APs", spells.count_aps, "Counts APs in selected traces", True) 
 
-First, define an ``Extension``:
+this command creates the extension called myAPCounter, which has the name "Counts APs" and executes the function spells.count_aps. If we add the extension *myAPCounter* to the extensionList, we will see now that a submenu appear within the Extension menu.
+    
+In general, an extension requires four arguments:
 
-::
+1. **Function name**: this is the name that will appear in the submenu (in our example this is "Counts APs").
 
-    myExt = Extension("My function",   # This will be shown as a menu entry.
-                      mymodule.myfunc, # The Python function that is to be called.
-                                       # Takes no arguments and returns a boolean.
-                      "Does magic",    # A more verbose description of the function.
-                      False)           # Whether your function requires a file to be opened.
+2. **Python function**: the custom Python function to be executed when clicking on the submenu. We used here spells.counts_aps
 
-Then, add it to ``extensionList``:
+3. **Description**: a more elaborate description of what the function is doing. We wrote "Counts APs in selected traces".
 
-::
+4. **Does your function require a file?**: If your function needs a file to be open type 'True', otherwise 'False'. Because our Python function operate on files, we typed 'True'.
 
-    extensionList = [
-        Extension("Count APs", spells.count_aps, 
-                  "Counts APs in selected files", True),
-        myExt,
-    ]
+.. note::
 
-Your function should now appear within the Extensions menu.
+    Use a boolean return type when using your own Python functions in the extensions Menu. If you write a function that returns False upon failure, Stimfit will show a warning indicating that your custom function did not work propertly.  
 
 Some recipes for commonly requested features
 =============================================
@@ -400,7 +398,7 @@ These functions cut all selected traces at a single sampling point (pt) or at mu
 ::
 
     import stf
-    import numpy as N
+    import numpy as np 
 
     def cut_traces( pt ):
         """Cuts the selected traces at the sampling point pt, 
@@ -447,4 +445,4 @@ will cut the selected traces at every 100th sampling point, starting with the 10
 .. [Python-tutorial] http://docs.python.org/tut/
 .. [Python-website]  http://www.python.org/doc/
 .. [NumPy] http://numpy.scipy.org/
-.. [Scipy] http://www.scipy.org/
+.. [SciPy] http://www.scipy.org/
