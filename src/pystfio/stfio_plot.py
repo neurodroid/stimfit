@@ -334,6 +334,11 @@ def plot_traces(traces, traces2=None, ax=None, Fig=None, pulses=None,
             prop = 1.0-border
         ax = Fig.add_axes([0.0,(1.0-prop),1.0-border,prop], alpha=0.0)
 
+    ymin, ymax = np.inf, -np.inf # This is a hack to find the y-limits of the
+    # traces. It should be supplied by stf.plot_ymin() & stf.plot_ymax(). But
+    # this doesn't work for a 2nd channel, and if the active channel is 2 (IN
+    # 2). It seems like stf.plot_ymin/max always gets data from channel 0 (IN
+    # 0), irrespective of which is choosen as the active channel.
     for trace in traces:
         if maxres is None:
             xrange = trace.timearray()+xoffset
@@ -341,8 +346,12 @@ def plot_traces(traces, traces2=None, ax=None, Fig=None, pulses=None,
         else:
             xrange, yrange = reduce(trace.data, trace.dt, maxres=maxres)
             xrange += xoffset
+        ymin, ymax = min(ymin,yrange.min()), max(ymax,yrange.max()) # Hack to
+        # get y-limits of data. See comment above.
+        comment above
         ax.plot(xrange, yrange, trace.linestyle, lw=trace.linewidth, color=trace.color)
 
+    y2min, y2max = np.inf, -np.inf # Hack to get y-limit of data, see comment above.
     if traces2 is not None:
         copy_ax = ax.twinx()
         for trace in traces2:
@@ -352,6 +361,8 @@ def plot_traces(traces, traces2=None, ax=None, Fig=None, pulses=None,
             else:
                 xrange, yrange = reduce(trace.data, trace.dt, maxres=maxres)
                 xrange += xoffset
+            y2min, y2max = min(y2min,yrange.min()), max(y2max,yrange.max()) #
+            # Hack to get y-limit of data, see comment above.
             copy_ax.plot(xrange, yrange, trace.linestyle, lw=trace.linewidth, color=trace.color)
     else:
         copy_ax = None
@@ -378,18 +389,18 @@ def plot_traces(traces, traces2=None, ax=None, Fig=None, pulses=None,
 
     pr = ax.plot([phantomrect_x0, phantomrect_x1], [phantomrect_y0, phantomrect_y1], alpha=0.0)
 
-    # if traces2 is not None:
-    #     if y2min is not None:
-    #         phantomrect_y20 = y2min
-    #     else:
-    #         phantomrect_y20 = copy_ax.dataLim.ymin
+    if traces2 is not None:
+        if y2min is not None:
+            phantomrect_y20 = y2min
+        else:
+            phantomrect_y20 = copy_ax.dataLim.ymin
 
-    #     if y2max is not None:
-    #         phantomrect_y21 = y2max
-    #     else:
-    #         phantomrect_y21 = copy_ax.dataLim.ymax
+        if y2max is not None:
+            phantomrect_y21 = y2max
+        else:
+            phantomrect_y21 = copy_ax.dataLim.ymax
 
-    #     pr = copy_ax.plot([phantomrect_x0, phantomrect_x1], [phantomrect_y20, phantomrect_y21], alpha=0.0)
+        pr = copy_ax.plot([phantomrect_x0, phantomrect_x1], [phantomrect_y20, phantomrect_y21], alpha=0.0)
 
     xscale = ax.dataLim.xmax-ax.dataLim.xmin
     yscale = ax.dataLim.ymax-ax.dataLim.ymin
@@ -464,8 +475,8 @@ def plot_traces(traces, traces2=None, ax=None, Fig=None, pulses=None,
 
     if ax is None:
         return Fig
-
-    return copy_ax
+    print ax
+    return ax # NOTE copy_ax HKT mod
 
 def standard_axis(fig, subplot, sharex=None, sharey=None, hasx=False, hasy=True):
     
