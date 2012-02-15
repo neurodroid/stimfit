@@ -348,7 +348,6 @@ def plot_traces(traces, traces2=None, ax=None, Fig=None, pulses=None,
             xrange += xoffset
         ymin, ymax = min(ymin,yrange.min()), max(ymax,yrange.max()) # Hack to
         # get y-limits of data. See comment above.
-        comment above
         ax.plot(xrange, yrange, trace.linestyle, lw=trace.linewidth, color=trace.color)
 
     y2min, y2max = np.inf, -np.inf # Hack to get y-limit of data, see comment above.
