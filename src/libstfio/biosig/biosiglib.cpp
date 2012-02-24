@@ -51,7 +51,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         errorMsg += "\nBiosig header is empty";
         ReturnData.resize(0);
 	sclose(hdr);
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg.c_str());
     }
     hdr->FLAG.ROW_BASED_CHANNELS = 1;
     /* size_t blks = */ sread(NULL, 0, hdr->NS*hdr->NRec*hdr->SPR, hdr);
@@ -63,13 +63,19 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     std::cout << "Data size: " << hdr->data.size[0] << "x" << hdr->data.size[1] << std::endl;
     std::cout << "Sampling rate: " << hdr->SampleRate << std::endl;
     std::cout << "Number of events: " << hdr->EVENT.N << std::endl;
-    int	res = hdr2ascii(hdr, stdout, 3);
+    /*int res = */ hdr2ascii(hdr, stdout, 3);
 #endif
 
     int nchannels = hdr->NS;
+    // This seems to be wrong?
+    if (hdr->NRec > hdr->SPR) {
+        int tmp = hdr->NRec;
+        hdr->NRec = hdr->SPR;
+        hdr->SPR = tmp;
+    }
     for (int nc=0; nc<nchannels; ++nc) {
-        int nsections = hdr->NRec;
 
+        int nsections = hdr->NRec;
         Channel TempChannel(nsections);
         TempChannel.SetChannelName(""); // TODO: hdr->channelname[nc];
         TempChannel.SetYUnits(""); // TODO: hdr->yunits[nc];
