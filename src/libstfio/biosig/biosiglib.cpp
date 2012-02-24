@@ -17,15 +17,10 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
-#ifndef MODULE_ONLY
-#include <wx/wx.h>
-#include <wx/progdlg.h>
-#else
-#include <iostream>
-#endif
+#include <sstream>
 #include <biosig.h>
 
-#include "./../core.h"
+#include "../stfio.h"
 #include "./biosiglib.h"
 
 class BiosigHDR {
@@ -41,11 +36,8 @@ class BiosigHDR {
     HDRTYPE* pHDR;
 };
 
-void stf::importBSFile(const wxString &fName, Recording &ReturnData, bool progress, wxWindow* parent) {
-#ifndef MODULE_ONLY
-    wxProgressDialog progDlg( wxT("Biosig binary file import"), wxT("Starting file import"),
-                              100, parent, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_SKIP );
-#endif
+void stfio::importBSFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
+
     std::string errorMsg("Exception while calling std::importBSFile():\n");
     std::string yunits;
     // =====================================================================================================================
@@ -54,11 +46,7 @@ void stf::importBSFile(const wxString &fName, Recording &ReturnData, bool progre
     //
     // =====================================================================================================================
     
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     HDRTYPE* hdr =  sopen( fName.c_str(), "r", NULL );
-#else
-    HDRTYPE* hdr =  sopen( fName.mb_str(), "r", NULL );
-#endif
     if (hdr==NULL) {
         errorMsg += "\nBiosig header is empty";
         ReturnData.resize(0);
@@ -66,7 +54,7 @@ void stf::importBSFile(const wxString &fName, Recording &ReturnData, bool progre
         throw std::runtime_error(std::string(errorMsg.c_str()));
     }
     hdr->FLAG.ROW_BASED_CHANNELS = 1;
-    size_t blks = sread(NULL, 0, hdr->NS*hdr->NRec*hdr->SPR, hdr);
+    /* size_t blks = */ sread(NULL, 0, hdr->NS*hdr->NRec*hdr->SPR, hdr);
 
 #ifdef _STFDEBUG
     std::cout << "Number of channels: " << hdr->NS << std::endl;
@@ -87,22 +75,15 @@ void stf::importBSFile(const wxString &fName, Recording &ReturnData, bool progre
         TempChannel.SetYUnits(""); // TODO: hdr->yunits[nc];
         
         for (int ns=0; ns<nsections; ++ns) {
-            if (progress) {
-                int progbar =
-                    // Channel contribution:
-                    (int)(((double)nc/(double)nchannels)*100.0+
-                          // Section contribution:
-                          (double)ns/(double)nsections*(100.0/nchannels));
-#ifndef MODULE_ONLY
-                wxString progStr;
-                progStr << wxT("Reading channel #") << nc + 1 << wxT(" of ") << nchannels
-                        << wxT(", Section #") << ns + 1 << wxT(" of ") << nsections;
-                progDlg.Update(progbar, progStr);
-#else
-                std::cout << "\r";
-                std::cout << progbar << "%" << std::flush;
-#endif
-            }
+            int progbar =
+                // Channel contribution:
+                (int)(((double)nc/(double)nchannels)*100.0+
+                      // Section contribution:
+                      (double)ns/(double)nsections*(100.0/nchannels));
+            std::ostringstream progStr;
+            progStr << "Reading channel #" << nc + 1 << " of " << nchannels
+                    << ", Section #" << ns + 1 << " of " << nsections;
+            progDlg.Update(progbar, progStr.str());
             Section TempSection(
                                 hdr->SPR, // TODO: hdr->nsamplingpoints[nc][ns]
                                 "" // TODO: hdr->sectionname[nc][ns]
