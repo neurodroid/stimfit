@@ -63,7 +63,14 @@ class Section {
 };
 
 %extend Recording {
-    Recording(PyObject* ChannelList) {
+ Recording(PyObject* ChannelList) :
+    dt(1.0),
+    file_description(""),
+    time(""),
+    date(""),
+    comment(""),
+    xunits("")
+ {
         if (!PyList_Check(ChannelList)) {
             std::cerr << "Argument is not a list\n";
             return NULL;
@@ -120,7 +127,7 @@ class Section {
     True upon successful completion.") write;
     bool write(const std::string& fname, const std::string& ftype="hdf5", bool verbose=false) {
         stfio::filetype stftype = gettype(ftype);
-        stfio::StdoutProgressInfo progDlg("File import", "Reading file", 100, verbose);
+        stfio::StdoutProgressInfo progDlg("File export", "Writing file", 100, verbose);
         try {
             return stfio::exportFile(fname, stftype, *($self), progDlg);
         } catch (const std::exception& e) {
@@ -172,7 +179,10 @@ class Section {
 %}
 
 %extend Channel {
-    Channel(PyObject* SectionList) {
+ Channel(PyObject* SectionList) :
+    name(""),
+    yunits("")
+    {
         if (!PyList_Check(SectionList)) {
             std::cerr << "Argument is not a list\n";
             return NULL;
