@@ -8,6 +8,7 @@
 #export DH_VERBOSE=1
 
 DEBPREFIX=$(CURDIR)/debian/tmp/usr
+PYVER   := $(shell pyversions -vd)
 
 build: build-stamp
 build-stamp:
@@ -82,7 +83,7 @@ binary-arch: build install
 	dh_fixperms
 	dh_icons
 #	dh_perl
-	dh_python2
+	[ -x /usr/bin/dh_python2 ] && dh_python2 -V$(PYVER) || :
 	dh_makeshlibs
 	dh_shlibdeps
 	dh_installdeb
