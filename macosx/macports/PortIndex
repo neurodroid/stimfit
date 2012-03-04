@@ -1,0 +1,2 @@
+stimfit 447
+portdir science/stimfit description {Electrophysiology analysis suite} homepage http://www.stimfit.org epoch 0 platforms darwin name stimfit depends_lib {port:python27 port:boost port:fftw-3 port:hdf5-18 port:wxWidgets-devel port:py27-wxpython-devel port:py27-numpy port:py27-matplotlib} license GPL maintainers christsc long_description {A program for viewing and analyzing electrophysiological data} categories science version 0.11.2 revision 0
