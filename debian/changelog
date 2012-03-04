@@ -1,12 +1,15 @@
-stimfit (0.10.18-1.1) unstable; urgency=low
+stimfit (0.10.18-2) unstable; urgency=low
 
-  * Non-maintainer upload.
+  [ Jonathan Wiltshire ]
   * Use dh_python2 to set proper dependencies for
-    python-stfio. Note: this only happens for Python 2.7,
-    building for all versions needs maintainer work and
-    isn't suitable for NMU. Closes: #631983
+    python-stfio (Closes: #631983)
 
- -- Jonathan Wiltshire <jmw@debian.org>  Sun, 04 Mar 2012 13:33:02 +0000
+  [ Yaroslav Halchenko ]
+  * Ajudsted dh_python2 patch to
+    - invoke it only whenever it is present
+    - do not carry hardcoded python version in X-Python-Version
+
+ -- Yaroslav Halchenko <debian@onerussian.com>  Sun, 04 Mar 2012 17:03:34 -0500
 
 stimfit (0.10.18-1) unstable; urgency=low
 
