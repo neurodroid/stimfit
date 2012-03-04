@@ -82,6 +82,7 @@ binary-arch: build install
 	dh_fixperms
 	dh_icons
 #	dh_perl
+	dh_python2
 	dh_makeshlibs
 	dh_shlibdeps
 	dh_installdeb

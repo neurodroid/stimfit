@@ -46,6 +46,16 @@ stimfit (0.11.0-1lucid1) lucid; urgency=low
 
  -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 14:49:00 +0000
 
+stimfit (0.10.18-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Use dh_python2 to set proper dependencies for
+    python-stfio. Note: this only happens for Python 2.7,
+    building for all versions needs maintainer work and
+    isn't suitable for NMU. Closes: #631983
+
+ -- Jonathan Wiltshire <jmw@debian.org>  Sun, 04 Mar 2012 13:33:02 +0000
+
 stimfit (0.10.18-1) unstable; urgency=low
 
   * Updated copyright notice for numpy.i
