@@ -53,9 +53,16 @@ stimfit (0.10.18-2) unstable; urgency=low
     python-stfio (Closes: #631983)
 
   [ Yaroslav Halchenko ]
-  * Ajudsted dh_python2 patch to
+  * Ajudsted dh_python2 call to
     - invoke it only whenever it is present
     - do not carry hardcoded python version in X-Python-Version
+      but rather specify current default using -V cmdline option
+  * Use of DEB_BUILD_OPTIONS
+    - Condition running tests on not having 'nocheck'
+    - Rely on parallel= option to specify number of parallel builds,
+      instead of hardcoded -j4
+  * Use of dh_numpy (if present) to specify numpy ABI dependency
+  * Added ${python:Depends} to stimfit itself
 
  -- Yaroslav Halchenko <debian@onerussian.com>  Sun, 04 Mar 2012 17:03:34 -0500
 
