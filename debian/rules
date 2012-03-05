@@ -5,10 +5,15 @@
 # This version is for packages that are architecture independent.
 
 # Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
+export DH_VERBOSE=1
 
 DEBPREFIX=$(CURDIR)/debian/tmp/usr
 PYVER   := $(shell pyversions -vd)
+
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+	NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+	MAKEFLAGS += -j$(NUMJOBS)
+endif
 
 build: build-stamp
 build-stamp:
@@ -32,12 +37,14 @@ clean:
 
 install: build
 	./configure --enable-python --enable-debian --prefix=$(DEBPREFIX)
-	$(MAKE) -j4
+	$(MAKE)
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) check
+endif
 	$(MAKE) install
 
 	./configure --enable-module --enable-debian --prefix=$(DEBPREFIX)
-	$(MAKE) -j4
+	$(MAKE)
 	$(MAKE) install
 
 	mkdir $(CURDIR)/man && \
@@ -82,6 +89,7 @@ binary-arch: build install
 	dh_fixperms
 #	dh_perl
 	[ -x /usr/bin/dh_python2 ] && dh_python2 -V$(PYVER) || :
+	[ -x /usr/bin/dh_numpy ] && dh_numpy || :
 	dh_makeshlibs
 	dh_shlibdeps
 	dh_installdeb

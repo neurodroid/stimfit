@@ -11,7 +11,7 @@ Package: stimfit
 Section: science
 Priority: optional
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, python-wxgtk2.8 (>= 2.8.9), python-numpy, python-matplotlib
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, python-wxgtk2.8 (>= 2.8.9), python-numpy, python-matplotlib
 Recommends: python-scipy
 Description: A program for viewing and analyzing electrophysiological data
  Stimfit is a free, fast and simple program for viewing and analyzing
