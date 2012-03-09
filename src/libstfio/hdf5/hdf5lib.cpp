@@ -266,6 +266,14 @@ bool stfio::exportHDF5File(const std::string& fName, const Recording& WData, Pro
         std::string errorMsg("Exception while closing file in stfio::exportHDF5File");
         throw std::runtime_error(errorMsg);
     }
+
+    /* Release all hdf5 resources */
+    status = H5close();
+    if (status < 0) {
+        std::string errorMsg("Exception while closing file in stfio::exportHDF5File");
+        throw std::runtime_error(errorMsg);
+    }
+    
     return (status >= 0);
 }
 
@@ -478,4 +486,12 @@ void stfio::importHDF5File(const std::string& fName, Recording& ReturnData, Prog
         std::string errorMsg("Exception while closing file in stfio::importHDF5File");
         throw std::runtime_error(errorMsg);
     }
+
+    /* Release all hdf5 resources */
+    status = H5close();
+    if (status < 0) {
+        std::string errorMsg("Exception while closing file in stfio::exportHDF5File");
+        throw std::runtime_error(errorMsg);
+    }
+    
 }
