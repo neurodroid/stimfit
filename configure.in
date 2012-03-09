@@ -87,7 +87,7 @@ case ${STFKERNEL} in
 	fi
         STF_PYTHON_LIBNAME="libpystf.dylib"
         STFIO_PYTHON_LIBNAME="libpystfio.dylib"
-	ARCH_FLAGS="-mmacosx-version-min=10.4"
+	ARCH_FLAGS=""
         CFLAGS="${CFLAGS} ${ARCH_FLAGS}"
         CXXFLAGS="${CXXFLAGS} ${ARCH_FLAGS}"
         LDFLAGS="${LDFLAGS} ${ARCH_FLAGS}"

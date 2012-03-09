@@ -220,10 +220,14 @@ uninstall-hook:
 
 # wxMac resource fork/unbundled app
 stimfit.app: stimfit
-	mkdir -p stimfit.app/Contents
 	mkdir -p stimfit.app/Contents/MacOS
 	mkdir -p stimfit.app/Contents/Resources
 	mkdir -p stimfit.app/Contents/Resources/English.lproj
+	mkdir -p stimfit.app/Contents/Frameworks/stimfit
+	mkdir -p stimfit.app/Contents/lib/stimfit
+	cp -v ./src/stimfit/py/.libs/libpystf.dylib ./stimfit.app/Contents/lib/stimfit/libpystf.dylib
+	cp -v ./src/stimfit/.libs/libstimfit.dylib ./stimfit.app/Contents/lib/stimfit/libstimfit.dylib
+	cp -v ./src/libstfio/.libs/libstfio.dylib ./stimfit.app/Contents/lib/stimfit/libstfio.dylib
 	cp $(top_srcdir)/stimfit.plist.in stimfit.app/Contents/Info.plist
 	echo "APPL????\c" > stimfit.app/Contents/PkgInfo
 	rm -f stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
@@ -236,4 +240,7 @@ endif
 	                    $(srcdir)/macosx/app.r
 	$(MACSETFILE) -a C stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
 	cp -f $(top_srcdir)/macosx/stimfit.icns stimfit.app/Contents/Resources/stimfit.icns
+	ln -s ../../lib/stimfit/libpystf.dylib stimfit.app/Contents/Frameworks/stimfit/_stf.so
+	cp -v ../../src/stimfit/py/*.py ./stimfit.app/Contents/Frameworks/stimfit/
+	cp -v ../../src/pystfio/*.py ./stimfit.app/Contents/Frameworks/stimfit/
 endif

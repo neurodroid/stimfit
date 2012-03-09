@@ -63,6 +63,7 @@ stimfit_VS03/stimfit_exe/Release
 # macports
 
 PortIndex*
+macosx/macports/science/stimfit/work
 
 # build files
 

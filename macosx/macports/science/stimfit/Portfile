@@ -18,6 +18,8 @@ checksums           rmd160  75a237566ff12f5dd72b3c1e8721139c988c0818 \
                     sha256  ba5ce632e8aec7829728dfb4ed70edd754b41d29025347fc586673e21f147689
 
 universal_variant   no
+
+supported_archs     x86_64
  
 depends_lib         port:python27 \
                     port:boost \
@@ -40,4 +42,8 @@ configure.args      --with-wx-config=/opt/local/bin/wx-config \
                     CXX="`/opt/local/bin/wx-config --cxx`" \
                     LD="`/opt/local/bin/wx-config --ld`"
 
-destroot {}
+destroot {
+        set appPath ${destroot}/Applications/MacPorts
+        xinstall -d ${appPath}
+        file copy stimfit.app ${appPath}
+}

@@ -439,7 +439,9 @@ std::vector<stf::Extension> wxStfApp::LoadExtensions() {
     PyObject* pModule = PyImport_ImportModule("extensions");
     if (!pModule) {
         PyErr_Print();
+#ifdef _STFDEBUG
         wxGetApp().ErrorMsg(wxT("Couldn't load extensions.py"));
+#endif
         wxPyEndBlockThreads(blocked);
         return extList;
     }
