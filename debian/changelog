@@ -1,10 +1,54 @@
-stimfit (0.10.18-2) unstable; urgency=low
+stimfit (0.11.1-1oneiric1) oneiric; urgency=low
 
-  [ Jonathan Wiltshire ]
-  * Use dh_python2 to set proper dependencies for
-    python-stfio (Closes: #631983)
+  * Added stfio_plot.py to stimfit
 
-  [ Yaroslav Halchenko ]
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 16:41:23 +0000
+
+stimfit (0.11.1-1natty1) natty; urgency=low
+
+  * Added stfio_plot.py to stimfit
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 16:40:08 +0000
+
+stimfit (0.11.1-1maverick1) maverick; urgency=low
+
+  * Added stfio_plot.py to stimfit
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 16:39:02 +0000
+
+stimfit (0.11.1-1lucid1) lucid; urgency=low
+
+  * Added stfio_plot.py to stimfit
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 16:33:22 +0000
+
+stimfit (0.11.0-1oneiric1) oneiric; urgency=low
+
+  * libstfio factored out as separate, GUI-independent library
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 15:50:54 +0000
+
+stimfit (0.11.0-1natty1) natty; urgency=low
+
+  * libstfio factored out as separate, GUI-independent library
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 15:48:41 +0000
+
+stimfit (0.11.0-1maverick1) maverick; urgency=low
+
+  * libstfio factored out as separate, GUI-independent library
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 15:42:22 +0000
+
+stimfit (0.11.0-1lucid1) lucid; urgency=low
+
+  * libstfio factored out as separate, GUI-independent library
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 08 Oct 2011 14:49:00 +0000
+
+stimfit (0.10.18-2) UNRELEASED; urgency=low
+
+  * Acknoledging previous NMU
   * Ajudsted dh_python2 call to
     - invoke it only whenever it is present
     - do not carry hardcoded python version in X-Python-Version
@@ -17,6 +61,16 @@ stimfit (0.10.18-2) unstable; urgency=low
   * Added ${python:Depends} to stimfit itself
 
  -- Yaroslav Halchenko <debian@onerussian.com>  Sun, 04 Mar 2012 17:03:34 -0500
+
+stimfit (0.10.18-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Use dh_python2 to set proper dependencies for
+    python-stfio. Note: this only happens for Python 2.7,
+    building for all versions needs maintainer work and
+    isn't suitable for NMU. Closes: #631983
+
+ -- Jonathan Wiltshire <jmw@debian.org>  Sun, 04 Mar 2012 13:33:02 +0000
 
 stimfit (0.10.18-1) unstable; urgency=low
 
