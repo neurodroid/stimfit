@@ -60,6 +60,10 @@ stimfit_VS03/stimfit_exe/Debug
 stimfit_VS03/stimfit_exe/stf\ debug
 stimfit_VS03/stimfit_exe/Release
 
+# macports
+
+PortIndex*
+
 # build files
 
 *.o
@@ -100,3 +104,5 @@ stfconf.h.in
 
 # stimfittest
 stimfittest
+
+src/pystfio
