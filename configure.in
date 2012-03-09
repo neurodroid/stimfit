@@ -1,4 +1,4 @@
-AC_INIT([stimfit],[0.11.1])
+AC_INIT([stimfit],[0.11.2])
 AC_CONFIG_SRCDIR(src/stimfit/gui/main.cpp)
 AM_INIT_AUTOMAKE
 AC_CONFIG_MACRO_DIR([m4])
@@ -24,7 +24,7 @@ AC_PROG_CXX
 AC_ARG_ENABLE([module], AS_HELP_STRING([--enable-module],[build a standalone python module; implies --enable-python]),[])
 AM_CONDITIONAL(BUILD_MODULE, test "$enable_module" = "yes")
 
-# Build a standalone python module
+# pbuilder debian package build
 AC_ARG_ENABLE([debian], AS_HELP_STRING([--enable-debian],[special build for pbuilder]),[])
 AM_CONDITIONAL(BUILD_DEBIAN, test "$enable_debian" = "yes")
 
@@ -233,7 +233,7 @@ if test "$enable_module" != "yes"; then
 	    WX_CPPFLAGS="`$WXCONFIG --cppflags`"
 	    WX_CXXFLAGS="`$WXCONFIG --cxxflags`"
 	    if test "$STFKERNEL" = "darwin" ; then
-		WX_LIBS="`$WXCONFIG --libs base,core`"
+		WX_LIBS="`$WXCONFIG --libs propgrid,aui,adv,core,net,base`"
 	    else
 		WX_LIBS="`$WXCONFIG --libs base,core,adv,aui,net`"
 	    fi

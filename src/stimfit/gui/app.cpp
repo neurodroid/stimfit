@@ -983,7 +983,7 @@ void wxStfApp::OnNewfromselected( wxCommandEvent& WXUNUSED(event) ) {
     wxObjectList::compatibility_iterator curNode=docList.GetFirst();
     std::size_t n_channels=((wxStfDoc*)curNode->GetData())->size();
 
-    while (curNode!=NULL) {
+    while (curNode) {
 
         wxStfDoc* pDoc=(wxStfDoc*)curNode->GetData();
         if (pDoc->size()!=n_channels) {
@@ -1010,7 +1010,7 @@ void wxStfApp::OnNewfromselected( wxCommandEvent& WXUNUSED(event) ) {
 
     nwxT=0;
     std::vector<std::vector<std::string> > channel_names(n_channels);
-    while (curNode!=NULL) {
+    while (curNode) {
         pDoc=(wxStfDoc*)curNode->GetData();
         if (pDoc->GetSelectedSections().size() > 0) {
             for (std::size_t n_c=0;n_c<pDoc->size();++n_c) {
@@ -1074,7 +1074,7 @@ void wxStfApp::OnNewfromall( wxCommandEvent& WXUNUSED(event) ) {
     // Get first node:
     wxObjectList::compatibility_iterator curNode=docList.GetFirst();
     std::size_t n_channels=((wxStfDoc*)curNode->GetData())->size();
-    while (curNode!=NULL) {
+    while (curNode) {
         wxStfDoc* pDoc=(wxStfDoc*)curNode->GetData();
         if (pDoc->size()!=n_channels) {
             ErrorMsg(wxT("Can't combine files: different numbers of channels"));
@@ -1095,7 +1095,7 @@ void wxStfApp::OnNewfromall( wxCommandEvent& WXUNUSED(event) ) {
     nwxT=0;
     wxStfDoc* pDoc=NULL;
     std::vector<std::vector<std::string> > channel_names(n_channels);
-    while (curNode!=NULL) {
+    while (curNode) {
         pDoc=(wxStfDoc*)curNode->GetData();
         if (pDoc->get()[pDoc->GetCurCh()].size() > 0) {
             for (std::size_t n_c=0;n_c<n_channels;++n_c) {
@@ -1171,7 +1171,7 @@ void wxStfApp::OnApplytoall( wxCommandEvent& WXUNUSED(event) ) {
     // Since random access is expensive, go through the list node by node:
     // Get first node:
     wxObjectList::compatibility_iterator curNode=docList.GetFirst();
-    while (curNode!=NULL) {
+    while (curNode) {
         wxStfDoc* OpenDoc=(wxStfDoc*)curNode->GetData();
         if (OpenDoc==NULL)
             return;
@@ -1348,7 +1348,7 @@ std::vector<stf::SectionPointer> wxStfApp::GetSectionsWithFits() const {
     // Since random access is expensive, go through the list node by node:
     // Get first node:
     wxObjectList::compatibility_iterator curNode=docList.GetFirst();
-    while (curNode!=NULL) {
+    while (curNode) {
         wxStfDoc* pDoc=(wxStfDoc*)curNode->GetData();
         try {
             for (std::size_t n_sec=0; n_sec < pDoc->get().at(pDoc->GetCurCh()).size(); ++n_sec) {

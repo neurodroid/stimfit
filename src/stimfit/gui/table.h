@@ -71,7 +71,7 @@ public:
      *  \return The selection as a single string.
      */
     wxString GetSelection(const wxGridCellCoordsArray& selection);
-
+    
 private:
     stf::Table table;
 };

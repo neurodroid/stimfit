@@ -60,6 +60,10 @@ stimfit_VS03/stimfit_exe/Debug
 stimfit_VS03/stimfit_exe/stf\ debug
 stimfit_VS03/stimfit_exe/Release
 
+# macports
+
+PortIndex*
+
 # build files
 
 *.o
@@ -71,7 +75,7 @@ stimfit_VS03/stimfit_exe/Release
 Makefile
 libtool
 stimfit.plist
-stimfit
+# stimfit
 stamp-h1
 stfswig_wrap.cxx
 pystf_wrap.cxx
