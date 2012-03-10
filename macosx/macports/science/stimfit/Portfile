@@ -7,15 +7,14 @@ version             0.11.2
 categories          science
 platforms           darwin
 license             GPL
-maintainers         christsc
+maintainers         gmx.de:christsc
 description         Electrophysiology analysis suite
 long_description    A program for viewing and analyzing electrophysiological data
 homepage            http://www.stimfit.org
-master_sites        file:///Users/cs/stimfit/build/release \
-                    https://stimfit.googlecode.com/files/
+master_sites        https://stimfit.googlecode.com/files/
 
-checksums           rmd160  75a237566ff12f5dd72b3c1e8721139c988c0818 \
-                    sha256  ba5ce632e8aec7829728dfb4ed70edd754b41d29025347fc586673e21f147689
+checksums           rmd160  d334ed564717a5d9892cbb0efca21b178e43caab \
+                    sha256  6dc7364d2472322caadd443db54242d699edaef72ccbe81257d084eb08d7c82b
 
 universal_variant   no
 
@@ -30,20 +29,20 @@ depends_lib         port:python27 \
                     port:py27-numpy \
                     port:py27-matplotlib
 
-configure.args      --with-wx-config=/opt/local/bin/wx-config \
+configure.args      --with-wx-config=${prefix}/bin/wx-config \
                     --disable-dependency-tracking \
                     --disable-shave \
                     CPPFLAGS="-DH5_USE_16_API" \
                     CFLAGS="" \
-                    CXXFLAGS="-I/opt/local/include" \
-                    LDFLAGS="-headerpad_max_install_names -L/opt/local/lib -L/usr/lib" \
-                    PYTHON=/opt/local/bin/python2.7 \
-                    CC="`/opt/local/bin/wx-config --cc`" \
-                    CXX="`/opt/local/bin/wx-config --cxx`" \
-                    LD="`/opt/local/bin/wx-config --ld`"
+                    CXXFLAGS="-I${prefix}/include" \
+                    LDFLAGS="-headerpad_max_install_names -L${prefix}/lib -L/usr/lib" \
+                    PYTHON=${prefix}/bin/python2.7 \
+                    CC="`${prefix}/bin/wx-config --cc`" \
+                    CXX="`${prefix}/bin/wx-config --cxx`" \
+                    LD="`${prefix}/bin/wx-config --ld`"
 
-destroot {
+post-destroot {
         set appPath ${destroot}/Applications/MacPorts
         xinstall -d ${appPath}
-        file copy stimfit.app ${appPath}
+        file copy ${worksrcpath}/stimfit.app ${appPath}
 }

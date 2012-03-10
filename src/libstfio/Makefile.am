@@ -44,4 +44,10 @@ endif
 libstfio_la_LDFLAGS = 
 libstfio_la_LIBADD = $(LIBSTF_LDFLAGS) -lhdf5 -lhdf5_hl
 
+if ISDARWIN
+# don't install anything because it has to go into the app bundle
+if !BUILD_MODULE
+install:
+endif
+endif
 #. /ascii/asciilib.cpp
