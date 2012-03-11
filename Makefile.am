@@ -221,62 +221,61 @@ else ISDARWIN
 LTTARGET=$(prefix)/lib/stimfit
 # wxMac resource fork/unbundled app
 install: stimfit
-	mkdir -p stimfit.app/Contents/MacOS
-	mkdir -p stimfit.app/Contents/Resources
-	mkdir -p stimfit.app/Contents/Resources/English.lproj
-	mkdir -p stimfit.app/Contents/Frameworks/stimfit
-	mkdir -p stimfit.app/Contents/lib/stimfit
-	cp -v ./src/stimfit/py/.libs/libpystf.dylib ./stimfit.app/Contents/lib/stimfit/libpystf.dylib
-	cp -v ./src/stimfit/.libs/libstimfit.dylib ./stimfit.app/Contents/lib/stimfit/libstimfit.dylib
-	cp -v ./src/libstfio/.libs/libstfio.dylib ./stimfit.app/Contents/lib/stimfit/libstfio.dylib
-	cp $(top_srcdir)/stimfit.plist.in stimfit.app/Contents/Info.plist
-	echo "APPL????\c" > stimfit.app/Contents/PkgInfo
-	rm -f stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
+	mkdir -p ${DESTDIR}/stimfit.app/Contents/MacOS
+	mkdir -p ${DESTDIR}/stimfit.app/Contents/Resources
+	mkdir -p ${DESTDIR}/stimfit.app/Contents/Resources/English.lproj
+	mkdir -p ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit
+	mkdir -p ${DESTDIR}/stimfit.app/Contents/lib/stimfit
+	cp -v ./src/stimfit/py/.libs/libpystf.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
+	cp -v ./src/stimfit/.libs/libstimfit.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
+	cp -v ./src/libstfio/.libs/libstfio.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfio.dylib
+	cp $(top_srcdir)/stimfit.plist.in ${DESTDIR}/stimfit.app/Contents/Info.plist
+	echo "APPL????\c" > ${DESTDIR}/stimfit.app/Contents/PkgInfo
+	rm -f ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
 if BUILD_PYTHON
-	cp -p -f .libs/stimfit$(EXEEXT) stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
+	cp -p -f .libs/stimfit$(EXEEXT) ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
 else !BUILD_PYTHON
-	cp -p -f ./stimfit$(EXEEXT) stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
+	cp -p -f ./stimfit$(EXEEXT) ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
 endif !BUILD_PYTHON
-	$(POSTLINK_COMMAND) stimfit.app/Contents/MacOS/stimfit$(EXEEXT) \
+	$(POSTLINK_COMMAND) ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT) \
 	                    $(srcdir)/macosx/app.r
-	$(MACSETFILE) -a C stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
-	cp -f $(top_srcdir)/macosx/stimfit.icns stimfit.app/Contents/Resources/stimfit.icns
-	ln -s ../../lib/stimfit/libpystf.dylib stimfit.app/Contents/Frameworks/stimfit/_stf.so
-	cp -v $(top_srcdir)/src/stimfit/py/*.py ./stimfit.app/Contents/Frameworks/stimfit/
-	cp -v $(top_srcdir)/src/pystfio/*.py ./stimfit.app/Contents/Frameworks/stimfit/
+	$(MACSETFILE) -a C ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
+	cp -f $(top_srcdir)/macosx/stimfit.icns ${DESTDIR}/stimfit.app/Contents/Resources/stimfit.icns
+	ln -sf ../../lib/stimfit/libpystf.dylib ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/_stf.so
+	cp -v $(top_srcdir)/src/stimfit/py/*.py ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/
+	cp -v $(top_srcdir)/src/pystfio/*.py ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/
 	install_name_tool -change \
 	                  $(LTTARGET)/libstimfit.dylib \
 	                  @executable_path/../lib/stimfit/libstimfit.dylib \
-	                  stimfit.app/Contents/MacOS/stimfit
+	                  ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit
 	install_name_tool -change \
 	                  $(LTTARGET)/libstfio.dylib \
 	                  @executable_path/../lib/stimfit/libstfio.dylib \
-	                  stimfit.app/Contents/MacOS/stimfit
+	                  ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit
 	install_name_tool -change \
 	                  $(LTTARGET)/libstimfit.dylib \
 	                  @executable_path/../lib/stimfit/libstimfit.dylib \
-	                  stimfit.app/Contents/lib/stimfit/libstimfit.dylib
+	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
 	install_name_tool -change \
 	                  $(LTTARGET)/libstfio.dylib \
 	                  @executable_path/../lib/stimfit/libstfio.dylib \
-	                  stimfit.app/Contents/lib/stimfit/libstimfit.dylib
+	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
 	install_name_tool -change \
 	                  $(LTTARGET)/libstfio.dylib \
 	                  @executable_path/../lib/stimfit/libstfio.dylib \
-	                  stimfit.app/Contents/lib/stimfit/libstfio.dylib
+	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfio.dylib
 	install_name_tool -change \
 	                  $(LTTARGET)/libstimfit.dylib \
 	                  @executable_path/../lib/stimfit/libstimfit.dylib \
-	                  stimfit.app/Contents/lib/stimfit/libpystf.dylib
+	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
 	install_name_tool -change \
 	                  $(LTTARGET)/libstfio.dylib \
 	                  @executable_path/../lib/stimfit/libstfio.dylib \
-	                  stimfit.app/Contents/lib/stimfit/libpystf.dylib
+	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
 	install_name_tool -change \
 	                  $(LTTARGET)/libpystf.dylib \
 	                  @executable_path/../lib/stimfit/libpystf.dylib \
-	                  stimfit.app/Contents/lib/stimfit/libpystf.dylib
-
+	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
 
 endif ISDARWIN
 
