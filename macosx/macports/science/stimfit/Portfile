@@ -49,7 +49,6 @@ variant python27 description {Use Python version 2.7} {
 
 configure.args      --with-wx-config=${prefix}/bin/wx-config \
                     --disable-dependency-tracking \
-                    --disable-shave \
                     CC="`${prefix}/bin/wx-config --cc`" \
                     CXX="`${prefix}/bin/wx-config --cxx`" \
                     LD="`${prefix}/bin/wx-config --ld`"
