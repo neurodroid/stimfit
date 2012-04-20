@@ -74,7 +74,7 @@ double stf::peak(const std::vector<double>& data, double base, std::size_t llp, 
             int pM, stf::direction dir, double& maxT)
 {
     if (llp>ulp || ulp>=data.size()) {
-        throw (std::out_of_range("Exception:\n Index out of range in stf::peak()"));
+        throw (std::out_of_range("Exception: Index out of range in stf::peak()"));
     }
     
     double max=data[llp];

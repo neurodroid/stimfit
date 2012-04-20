@@ -103,7 +103,7 @@ void WINAPI ATF_Cleanup(void)
    {
       if (g_FileDescriptor[i] != NULL)
       {
-         DLLTRACE("An ATF file was not closed!\n");
+          DLLTRACE((char*)"An ATF file was not closed!\n");
          ATF_CloseFile(i);
       }
    }
@@ -1725,7 +1725,7 @@ BOOL WINAPI ATF_BuildErrorText(int nErrorNum, LPCSTR szFileName, char *sTxtBuf, 
    
    if (nMaxLen < 2)
    {
-      TRACE("Error string destination buffer too short!\n");
+       TRACE((char*)"Error string destination buffer too short!\n");
       ASSERT(0);
       return FALSE;
    }

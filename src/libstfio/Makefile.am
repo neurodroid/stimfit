@@ -42,7 +42,7 @@ libstfio_la_SOURCES += ./biosig/biosiglib.cpp
 endif
 
 libstfio_la_LDFLAGS = 
-libstfio_la_LIBADD = $(LIBSTF_LDFLAGS) -lhdf5 -lhdf5_hl
+libstfio_la_LIBADD = $(LIBSTF_LDFLAGS) -lhdf5 -lhdf5_hl $(LIBBIOSIG_LDFLAGS)
 
 if ISDARWIN
 # don't install anything because it has to go into the app bundle
