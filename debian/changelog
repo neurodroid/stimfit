@@ -1,3 +1,10 @@
+stimfit (0.11.4-0precise1) precise; urgency=low
+
+  * Fixed monoexponential fit with delay
+  * Release hdf5 resources after reading / writing a file
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Fri, 20 Apr 2012 17:18:43 +0000
+
 stimfit (0.11.1-1oneiric1) oneiric; urgency=low
 
   * Added stfio_plot.py to stimfit

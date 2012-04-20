@@ -28,11 +28,11 @@ def dens_batch( nFunc = 0 ):
     gFitEnd   =  gFitStart+4.5
     dt = stf.get_sampling_interval()
     if ( gDictSize < 0 ):
-        print('Couldn\'t retrieve function id=%d; aborting now.'%gFSelect)
+        print("Couldn\'t retrieve function id=%d; aborting now." % gFSelect)
         return False        
     
     if ( not(stf.check_doc()) ):
-        print('Couldn\'t find an open file; aborting now.')
+        print("Couldn\'t find an open file; aborting now.")
         return False
     
     # set cursors:
@@ -130,11 +130,11 @@ def act_batch( nFunc = 5, filename="", lat=60 ):
     gPulses = len( gFitDurations )    # Number of traces 
     
     if ( gDictSize < 0 ):
-        print(Couldn\'t retrieve function id=%d; aborting now.'%gFSelect)
+        print("Couldn\'t retrieve function id=%d; aborting now." % gFSelect)
         return False        
     
     if ( not(stf.check_doc()) ):
-        print(Couldn\'t find an open file; aborting now.')
+        print("Couldn\'t find an open file; aborting now.")
         return False
     
     # set cursors:

@@ -23,11 +23,11 @@ def analyze_iv( pulses, trace_start = 0, factor = 1.0 ):
     """
     
     if (stf.check_doc() == False):
-        print(Couldn\'t find an open file; aborting now.')
+        print("Couldn\'t find an open file; aborting now.")
         return False
 
     if (pulses < 1):
-        print('Number of pulses has to be greater or equal 1.')
+        print("Number of pulses has to be greater or equal 1.")
         return False
     
     # create an empty array (will contain random numbers)

@@ -195,7 +195,7 @@ if !ISDARWIN
 if BUILD_DEBIAN
 LTTARGET=/usr/lib/stimfit
 install-exec-hook:
-	$(LIBTOOL) --finish $(LTTARGET)
+	$(LIBTOOL) --finish $(prefix)/lib/stimfit
 	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libpystf.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstimfit.so
