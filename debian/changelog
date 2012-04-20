@@ -48,8 +48,8 @@ stimfit (0.11.0-1lucid1) lucid; urgency=low
 
 stimfit (0.10.18-2) UNRELEASED; urgency=low
 
-  * Acknoledging previous NMU
-  * Ajudsted dh_python2 call to
+  * Acknowledging previous NMU
+  * Adjusted dh_python2 call to
     - invoke it only whenever it is present
     - do not carry hardcoded python version in X-Python-Version
       but rather specify current default using -V cmdline option
