@@ -932,6 +932,12 @@ void wxStfDoc::CreateAverage(
         wxGetApp().ErrorMsg(wxT("Select traces first"));
         return;
     }
+
+    // align needs 2 channels
+    if (size() == 1){
+        wxGetApp().ErrorMsg(wxT("There is only one channel to align"));
+        return;
+    }
     wxBusyCursor wc;
     //array indicating how many indices to shift when aligning,
     //has to be filled with zeros:
