@@ -12,6 +12,8 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+// Copyright 2012 Alois Schloegl, IST Austria <alois.schloegl@ist.ac.at>
+
 #include <string>
 #include <iomanip>
 #include <vector>
@@ -53,7 +55,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 	sclose(hdr);
         throw std::runtime_error(errorMsg.c_str());
     }
-    hdr->FLAG.ROW_BASED_CHANNELS = 1;
+    hdr->FLAG.ROW_BASED_CHANNELS = 0;
     /* size_t blks = */ sread(NULL, 0, hdr->NRec, hdr);
 
 #ifdef _STFDEBUG
@@ -64,29 +66,31 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     std::cout << "Sampling rate: " << hdr->SampleRate << std::endl;
     std::cout << "Number of events: " << hdr->EVENT.N << std::endl;
     /*int res = */ hdr2ascii(hdr, stdout, 4);
-   #define VERBOSE_LEVEL 8
 #endif
 
-
-if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 110\n");  
-
-    // make sure that the event table is in chronological order	
+    // ensure the event table is in chronological order	
     sort_eventtable(hdr);
 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 120\n");  
-
-    /* 
-       memory for only Events of TYP==0x7ffe is needed, superfluous memory is allocated 
-       in order to avoid loop + malloc + a 2nd loop
-    */ 	
-    size_t *SegIndexList = (size_t*)malloc((hdr->EVENT.N+1)*sizeof(size_t)); 
+    /*
+	count sections and generate list of indeces indicating start and end of sweeps
+     */	
+    size_t LenIndexList = 256; 
+    if (LenIndexList > hdr->EVENT.N) LenIndexList = hdr->EVENT.N + 2;
+    size_t *SegIndexList = (size_t*)malloc(LenIndexList*sizeof(size_t)); 
     uint32_t nsections = 0; 
     SegIndexList[nsections] = 0; 
     size_t MaxSectionLength = 0; 
-    for (size_t k=0; k<=hdr->EVENT.N; k++) {
-
-if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 130 %i %i\n",(int)k, (int)nsections);  
-
+    for (size_t k=0; k <= hdr->EVENT.N; k++) {
+	if (LenIndexList <= nsections+2) {
+		LenIndexList *=2; 
+		SegIndexList = (size_t*)realloc(SegIndexList, LenIndexList*sizeof(size_t)); 
+	}
+	/* 
+           count number of sections and stores it in nsections; 
+  	   EVENT.TYP==0x7ffe indicate number of breaks between sweeps
+	   SegIndexList includes index to first sample and index to last sample,
+	   thus, the effective length of SegIndexList is the number of 0x7ffe plus two.
+	*/
 	if (0) ; 
         else if (k>=hdr->EVENT.N)		SegIndexList[++nsections] = hdr->NRec*hdr->SPR; 
 	else if (hdr->EVENT.TYP[k]==0x7ffe)	SegIndexList[++nsections] = hdr->EVENT.POS[k]; 
@@ -96,70 +100,26 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 130 %i %i\n
 	if (MaxSectionLength < SPS) MaxSectionLength = SPS;
     }
 
-/***********
-
-TODO: 
-Data of Segment ns and channel nc is available from this memory range:
-
-	hdr->data.block[nc*hdr->SPR*hdr->NRec + SegIndexList[ns-1]]
-	hdr->data.block[nc*hdr->SPR*hdr->NRec + SegIndexList[ns]-1], 
-
-
-The length of the data (i.e. number of samples) can be obtain in the following way:
-        size_t SPS = SegIndexList[ns]-SegIndexList[ns-1];
-
-Thus, the data can be accessed in this way 
-	
-	for (nc=0; nc<hdr->NS; nc++) {
-		for (ns=0; ns<nsections; nc++) {
-			for (k=0; k<SPS; k++) {
-				// value of k-th sample, of channel nc in segment ns 
-				value = hdr->data.block[nc*hdr->SPR*hdr->NRec + SegIndexList[ns-1] + k];
-			}
-		}
-	}
-
-Don't forget 
-    free(SegIndexList); 	
-
-************/
-
-    
-// #ifdef NON_WORKING_ATTEMPT
-
     for (size_t nc=0; nc<hdr->NS; ++nc) {
-
-if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 150 %i [%i %i]\n",(int)nc, (int)nc, (int)nsections);  
-
-	        Channel TempChannel(nsections);
-	        TempChannel.SetChannelName(""); // TODO: hdr->channelname[nc];
-        	TempChannel.SetYUnits(""); // TODO: hdr->yunits[nc];
-
-	        //Channel TempChannel(nsections, MaxSectionLength);
-	        //TempChannel.SetChannelName(hdr->CHANNEL[nc].Label); // TODO: hdr->channelname[nc];
-	        //TempChannel.SetYUnits(hdr->CHANNEL[nc].PhysDim); // TODO: hdr->yunits[nc];
-
+	Channel TempChannel(nsections);
+	TempChannel.SetChannelName(hdr->CHANNEL[nc].Label);
+	TempChannel.SetYUnits(hdr->CHANNEL[nc].PhysDim);
 
         for (size_t ns=1; ns<=nsections; ns++) {
-
 	        size_t SPS = SegIndexList[ns]-SegIndexList[ns-1];	// length of segment, samples per segment
-
-if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 140 %i %i %i %i\n",(int)nc, (int)SPS, (int)SegIndexList[ns], (int)SegIndexList[ns-1]);  
-
 
 		int progbar = 100.0*(1.0*ns/(nsections+1) + nc)/(hdr->NS); 
 		std::ostringstream progStr;
-		progStr << "Reading event #" << nc + 1 << " of " << hdr->NS ;
+		progStr << "Reading channel #" << nc + 1 << " of " << hdr->NS
+			<< ", Section #" << ns + 1 << " of " << nsections;
 		progDlg.Update(progbar, progStr.str());
 
-//		memcpy(&(TempChannel.at(ns-1).get_w()),hdr->data.block+nc*hdr->SPR*hdr->NRec + SegIndexList[ns-1],SPS*sizeof(double)); 
-
-
+		char sweepname[20];
+		sprintf(sweepname,"sweep %i",(int)ns);		
 		Section TempSection(
                                 SPS, // TODO: hdr->nsamplingpoints[nc][ns]
                                 "" // TODO: hdr->sectionname[nc][ns]
             	);
-
 
 		std::copy(&(hdr->data.block[nc*hdr->SPR*hdr->NRec + SegIndexList[ns-1]]), 
 			  &(hdr->data.block[nc*hdr->SPR*hdr->NRec + SegIndexList[ns]]), 
@@ -169,100 +129,36 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 140 %i %i %
 			TempChannel.InsertSection(TempSection, ns-1);
 		}
 		catch (...) {
-
-if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 160 Insert section %i in channel %i failed\n",int(ns-1),(int)nc);  
-
 			ReturnData.resize(0);
-			sclose(hdr);
 			destructHDR(hdr);
 			throw;
 		}
-
 	}        
-
         try {
-            if (ReturnData.size() < hdr->NS) {
-                ReturnData.resize(hdr->NS);
-            }
-            ReturnData.InsertChannel(TempChannel, nc);
+		if (ReturnData.size() < hdr->NS) {
+			ReturnData.resize(hdr->NS);
+		}
+		ReturnData.InsertChannel(TempChannel, nc);
         }
         catch (...) {
-
-if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 170 Insert channel %i failed\n",(int)nc);  
-
-            ReturnData.resize(0);
-            sclose(hdr);
-            destructHDR(hdr);
-            throw;
+		ReturnData.resize(0);
+		destructHDR(hdr);
+		throw;
         }
     }
-
-    // #endif 
-
 
     free(SegIndexList); 	
 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 180 %i\n",(int)nsections);  
+    ReturnData.SetXScale(1000.0/hdr->SampleRate);
+    ReturnData.SetComment(hdr->FileName);
 
-
-
-/*
-    // This seems to be wrong?
-    if (hdr->NRec > hdr->SPR) {
-        int tmp = hdr->NRec;
-        hdr->NRec = hdr->SPR;
-        hdr->SPR = tmp;
-    }
-
-    for (typeof(hdr->NS) nc=0; nc<nchannels; ++nc) {
-
-        Channel TempChannel(nsections);
-        TempChannel.SetChannelName(""); // TODO: hdr->channelname[nc];
-        TempChannel.SetYUnits(""); // TODO: hdr->yunits[nc];
-        
-        for (uint32_t ns=0; ns<nsections; ++ns) {
-            int progbar =
-                // Channel contribution:
-                (int)(((double)nc/(double)nchannels)*100.0+
-                      // Section contribution:
-                      (double)ns/(double)nsections*(100.0/nchannels));
-            std::ostringstream progStr;
-            progStr << "Reading channel #" << nc + 1 << " of " << nchannels
-                    << ", Section #" << ns + 1 << " of " << nsections;
-            progDlg.Update(progbar, progStr.str());
-            Section TempSection(
-                                hdr->SPR, // TODO: hdr->nsamplingpoints[nc][ns]
-                                "" // TODO: hdr->sectionname[nc][ns]
-            );
-            std::copy(&(hdr->data.block[nc*hdr->SPR]), &(hdr->data.block[(nc+1)*hdr->SPR]), TempSection.get_w().begin());
-            try {
-                TempChannel.InsertSection(TempSection, ns);
-            }
-            catch (...) {
-                ReturnData.resize(0);
-                sclose(hdr);
-                destructHDR(hdr);
-                throw;
-            }
-        }
-        try {
-            if ((int)ReturnData.size() < nchannels) {
-                ReturnData.resize(nchannels);
-            }
-            ReturnData.InsertChannel(TempChannel, nc);
-        }
-        catch (...) {
-            ReturnData.resize(0);
-            sclose(hdr);
-            destructHDR(hdr);
-            throw;
-        }
-    }
-*/
-    ReturnData.SetXScale(hdr->SampleRate);
-    ReturnData.SetComment(""); // TODO: hdr->comment
-    ReturnData.SetDate(""); // TODO: hdr->datestring
-    ReturnData.SetTime(""); // TODO: hdr->timestring
+    char str[100]; 
+    struct tm T; 
+    gdf_time2tm_time_r(hdr->T0, &T); 
+    strftime(str,100,"%Y-%m-%d",&T);
+    ReturnData.SetDate(str);
+    strftime(str,100,"%H:%M:%S",&T);
+    ReturnData.SetTime(str);
 
 #ifdef MODULE_ONLY
     if (progress) {
@@ -271,6 +167,5 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 180 %i\n",(
     }
 #endif
 
-    sclose(hdr);
     destructHDR(hdr);
 }
