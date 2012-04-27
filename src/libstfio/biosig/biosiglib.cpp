@@ -125,7 +125,7 @@ Don't forget
 ************/
 
     
-#ifdef NON_WORKING_ATTEMPT
+// #ifdef NON_WORKING_ATTEMPT
 
     for (size_t nc=0; nc<hdr->NS; ++nc) {
 
@@ -181,6 +181,9 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 160 Insert 
 	}        
 
         try {
+            if (ReturnData.size() < hdr->NS) {
+                ReturnData.resize(hdr->NS);
+            }
             ReturnData.InsertChannel(TempChannel, nc);
         }
         catch (...) {
@@ -194,7 +197,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 170 Insert 
         }
     }
 
-#endif 
+    // #endif 
 
 
     free(SegIndexList); 	
