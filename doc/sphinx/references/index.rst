@@ -10,6 +10,11 @@ References
 :Date:  |today|
 
 A list of recent publications that have used `Stimfit <http:http://www.stimfit.org>`_ for data analysis. Please let me know if something is missing here.
+
+
+    * `Kim S, Guzman SJ, Hua H, Jonas P (2012). <http://dx.doi.org/10.1038/nn.3060>`_ Active dendrites support efficient initiation of dendritic spikes in hippocampal CA3 pyramidal neurons. *Nat Neurosci* 15(4):600-606.
+    * `Eggermann E and Jonas P (2012). <http://dx.doi.org/10.1038/nn.3002>`_ How the 'slow' Ca\ :sup: `2+` buffer parvalbumin affects transmitter release in nanodomains-coupling regimes. *Nat Neurosci* 15(1):2022.
+    * `Sauer JF, Strüber M, Bartos M (2012) <http://www.jneurosci.org/cgi/pmidlookup?view=long&pmid=22442084>`_ Interneurons provide circuit-specific depolarization and hyperpolarization. *J Neurosci* 32(12):4224-4229.
     * `Poh YC, Beyder A, Strege PR, Farrugia G, Buist ML (2011). <http://www.sciencedirect.com/science/article/pii/S002251931100470X>`_ Quantification of gastrointestinal sodium channelopathy. *J Theor Biol* 293:41-48.
     * `Sambandan S, Sauer JF, Vida I, Bartos M (2010). <http://www.jneurosci.org/cgi/content/full/30/35/11826>`_ Associative plasticity at excitatory synapses facilitates recruitment of fast-spiking interneurons in the dentate gyrus. *J Neurosci* 30:11826-11837.
     * `Pelkonen A, Hiltunen M, Kiianmaa K, Yavich L (2010). <http://www3.interscience.wiley.com/journal/123488780/abstract>`_ Stimulated dopamine overflow and alpha-synuclein expression in the nucleus accumbens core distinguish rats bred for differential ethanol preference. *J Neurochem* 114:1168-1176.
