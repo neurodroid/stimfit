@@ -21,20 +21,24 @@
  *  Implements some general functions for libstfio
  */
 
+// Copyright 2012 Alois Schloegl, IST Austria <alois.schloegl@ist.ac.at>
+
+
 #include <sstream>
 
 #include "stfio.h"
 
 // TODO #include "./ascii/asciilib.h"
-#include "./cfs/cfslib.h"
 #include "./hdf5/hdf5lib.h"
 #include "./abf/abflib.h"
 #include "./atf/atflib.h"
 #include "./axg/axglib.h"
-#include "./heka/hekalib.h"
 #include "./igor/igorlib.h"
 #ifdef WITH_BIOSIG
 #include "./biosig/biosiglib.h"
+#else
+#include "./cfs/cfslib.h"
+#include "./heka/hekalib.h"
 #endif
 #if 0
 #include "./son/sonlib.h"
@@ -86,13 +90,6 @@ bool stfio::importFile(
 ) {
     try {
         switch (type) {
-        case stfio::cfs: {
-            int res = stfio::importCFSFile(fName, ReturnData, progDlg);
-            if (res==-7) {
-                stfio::importHEKAFile(fName, ReturnData, progDlg);
-            }
-            break;
-        }
         case stfio::hdf5: {
             stfio::importHDF5File(fName, ReturnData, progDlg);
             break;
@@ -109,15 +106,24 @@ bool stfio::importFile(
             stfio::importAXGFile(fName, ReturnData, progDlg);
             break;
         }
+#ifndef WITH_BIOSIG
+        case stfio::cfs: {
+            int res = stfio::importCFSFile(fName, ReturnData, progDlg);
+            if (res==-7) {
+                stfio::importHEKAFile(fName, ReturnData, progDlg);
+            }
+            break;
+        }
         case stfio::heka: {
             stfio::importHEKAFile(fName, ReturnData, progDlg);
             break;
         }
-#ifdef WITH_BIOSIG
-        case stfio::biosig: {
+#else
+        case stfio::cfs:
+        case stfio::heka: 
+        case stfio::biosig: 
             stfio::importBSFile(fName, ReturnData, progDlg);
             break;
-        }
 #endif
 
 #if 0
