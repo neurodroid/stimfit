@@ -54,7 +54,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         throw std::runtime_error(errorMsg.c_str());
     }
     hdr->FLAG.ROW_BASED_CHANNELS = 1;
-    /* size_t blks = */ sread(NULL, 0, hdr->NS*hdr->NRec*hdr->SPR, hdr);
+    /* size_t blks = */ sread(NULL, 0, hdr->NRec, hdr);
 
 #ifdef _STFDEBUG
     std::cout << "Number of channels: " << hdr->NS << std::endl;
@@ -63,24 +63,161 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     std::cout << "Data size: " << hdr->data.size[0] << "x" << hdr->data.size[1] << std::endl;
     std::cout << "Sampling rate: " << hdr->SampleRate << std::endl;
     std::cout << "Number of events: " << hdr->EVENT.N << std::endl;
-    /*int res = */ hdr2ascii(hdr, stdout, 3);
+    /*int res = */ hdr2ascii(hdr, stdout, 4);
+   #define VERBOSE_LEVEL 8
 #endif
 
-    int nchannels = hdr->NS;
+
+if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 110\n");  
+
+    // make sure that the event table is in chronological order	
+    sort_eventtable(hdr);
+
+if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 120\n");  
+
+    /* 
+       memory for only Events of TYP==0x7ffe is needed, superfluous memory is allocated 
+       in order to avoid loop + malloc + a 2nd loop
+    */ 	
+    size_t *SegIndexList = (size_t*)malloc((hdr->EVENT.N+1)*sizeof(size_t)); 
+    uint32_t nsections = 0; 
+    SegIndexList[nsections] = 0; 
+    size_t MaxSectionLength = 0; 
+    for (size_t k=0; k<=hdr->EVENT.N; k++) {
+
+if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 130 %i %i\n",(int)k, (int)nsections);  
+
+	if (0) ; 
+        else if (k>=hdr->EVENT.N)		SegIndexList[++nsections] = hdr->NRec*hdr->SPR; 
+	else if (hdr->EVENT.TYP[k]==0x7ffe)	SegIndexList[++nsections] = hdr->EVENT.POS[k]; 
+	else					continue; 
+
+        size_t SPS = SegIndexList[nsections]-SegIndexList[nsections-1];	// length of segment, samples per segment
+	if (MaxSectionLength < SPS) MaxSectionLength = SPS;
+    }
+
+/***********
+
+TODO: 
+Data of Segment ns and channel nc is available from this memory range:
+
+	hdr->data.block[nc*hdr->SPR*hdr->NRec + SegIndexList[ns-1]]
+	hdr->data.block[nc*hdr->SPR*hdr->NRec + SegIndexList[ns]-1], 
+
+
+The length of the data (i.e. number of samples) can be obtain in the following way:
+        size_t SPS = SegIndexList[ns]-SegIndexList[ns-1];
+
+Thus, the data can be accessed in this way 
+	
+	for (nc=0; nc<hdr->NS; nc++) {
+		for (ns=0; ns<nsections; nc++) {
+			for (k=0; k<SPS; k++) {
+				// value of k-th sample, of channel nc in segment ns 
+				value = hdr->data.block[nc*hdr->SPR*hdr->NRec + SegIndexList[ns-1] + k];
+			}
+		}
+	}
+
+Don't forget 
+    free(SegIndexList); 	
+
+************/
+
+    
+#ifdef NON_WORKING_ATTEMPT
+
+    for (size_t nc=0; nc<hdr->NS; ++nc) {
+
+if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 150 %i [%i %i]\n",(int)nc, (int)nc, (int)nsections);  
+
+	        Channel TempChannel(nsections);
+	        TempChannel.SetChannelName(""); // TODO: hdr->channelname[nc];
+        	TempChannel.SetYUnits(""); // TODO: hdr->yunits[nc];
+
+	        //Channel TempChannel(nsections, MaxSectionLength);
+	        //TempChannel.SetChannelName(hdr->CHANNEL[nc].Label); // TODO: hdr->channelname[nc];
+	        //TempChannel.SetYUnits(hdr->CHANNEL[nc].PhysDim); // TODO: hdr->yunits[nc];
+
+
+        for (size_t ns=1; ns<=nsections; ns++) {
+
+	        size_t SPS = SegIndexList[ns]-SegIndexList[ns-1];	// length of segment, samples per segment
+
+if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 140 %i %i %i %i\n",(int)nc, (int)SPS, (int)SegIndexList[ns], (int)SegIndexList[ns-1]);  
+
+
+		int progbar = 100.0*(1.0*ns/(nsections+1) + nc)/(hdr->NS); 
+		std::ostringstream progStr;
+		progStr << "Reading event #" << nc + 1 << " of " << hdr->NS ;
+		progDlg.Update(progbar, progStr.str());
+
+//		memcpy(&(TempChannel.at(ns-1).get_w()),hdr->data.block+nc*hdr->SPR*hdr->NRec + SegIndexList[ns-1],SPS*sizeof(double)); 
+
+
+		Section TempSection(
+                                SPS, // TODO: hdr->nsamplingpoints[nc][ns]
+                                "" // TODO: hdr->sectionname[nc][ns]
+            	);
+
+
+		std::copy(&(hdr->data.block[nc*hdr->SPR*hdr->NRec + SegIndexList[ns-1]]), 
+			  &(hdr->data.block[nc*hdr->SPR*hdr->NRec + SegIndexList[ns]]), 
+			  TempSection.get_w().begin() );
+
+		try {
+			TempChannel.InsertSection(TempSection, ns-1);
+		}
+		catch (...) {
+
+if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 160 Insert section %i in channel %i failed\n",int(ns-1),(int)nc);  
+
+			ReturnData.resize(0);
+			sclose(hdr);
+			destructHDR(hdr);
+			throw;
+		}
+
+	}        
+
+        try {
+            ReturnData.InsertChannel(TempChannel, nc);
+        }
+        catch (...) {
+
+if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 170 Insert channel %i failed\n",(int)nc);  
+
+            ReturnData.resize(0);
+            sclose(hdr);
+            destructHDR(hdr);
+            throw;
+        }
+    }
+
+#endif 
+
+
+    free(SegIndexList); 	
+
+if (VERBOSE_LEVEL>7) fprintf(stdout,"stimfit:biosiglib:ImportBSfile; 180 %i\n",(int)nsections);  
+
+
+
+/*
     // This seems to be wrong?
     if (hdr->NRec > hdr->SPR) {
         int tmp = hdr->NRec;
         hdr->NRec = hdr->SPR;
         hdr->SPR = tmp;
     }
-    for (int nc=0; nc<nchannels; ++nc) {
 
-        int nsections = hdr->NRec;
+    for (typeof(hdr->NS) nc=0; nc<nchannels; ++nc) {
+
         Channel TempChannel(nsections);
         TempChannel.SetChannelName(""); // TODO: hdr->channelname[nc];
         TempChannel.SetYUnits(""); // TODO: hdr->yunits[nc];
         
-        for (int ns=0; ns<nsections; ++ns) {
+        for (uint32_t ns=0; ns<nsections; ++ns) {
             int progbar =
                 // Channel contribution:
                 (int)(((double)nc/(double)nchannels)*100.0+
@@ -118,6 +255,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
             throw;
         }
     }
+*/
     ReturnData.SetXScale(hdr->SampleRate);
     ReturnData.SetComment(""); // TODO: hdr->comment
     ReturnData.SetDate(""); // TODO: hdr->datestring
