@@ -5,7 +5,7 @@ Building Stimfit
 :Author: Jose Guzman, Christoph Schmidt-Hieber
 :Date:    |today|
 
-This document describes how to install `Stimfit <http://www.stimfit.org>`_ |version| under GNU/Linux. The installation was tested on a GNU/Debian testing/unstable system, with a 2.6-based kernel and with support for Python 2.5. It should work on other Debian-based systems (e.g Ubuntu) as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) already installed in your system. Please, check that both versions match. For our installation we will use gcc-4.2.4 and the same version of g++.
+This document describes how to install `Stimfit <http://www.stimfit.org>`_ |version| under GNU/Linux. The installation was tested on a GNU/Debian testing/unstable system, with a 2.6-based kernel and with support for Python 2.5. and Python 2.6. It should work on other Debian-based systems (e.g Ubuntu) as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) already installed in your system. Please, check that both versions match. For our installation we will use gcc-4.2.4 and the same version of g++.
 
 ============================
 What we need before we start
@@ -18,12 +18,14 @@ For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build depend
     $ sudo apt-get install libboost-dev \
                            python-dev \
                            python-numpy \
+                           python-matplotlib \
                            libhdf5-serial-dev \
                            swig \
                            python-wxgtk2.8 \
                            libwxgtk2.8-dev \
                            fftw3-dev \
                            liblapack-dev \
+                           chrpath \
                            mercurial \
                            automake \
                            autoconf \
@@ -92,7 +94,9 @@ to generate the configure script. Remember that we need Autoconf, Automake and L
 
     $ ./configure --enable-python
 
-The configure script has some additional options. For example, we may want to use `IPython <http://www.scipy.org>`_  instead of the default embedded python shell with the option **---enable-ipython**  (note that the `IPython <http://www.scipy.org>`_ shell is only available under GNU/Linux and it is still very experimental). 
+The **--enable-python** option is absolutely necessary to install `Stimfit <http://www.stimfit.org>`_ since some of the functionality depends on Python. The configure script has some additional options. For example, we may want to use `IPython <http://www.scipy.org>`_  instead of the default embedded python shell with the option **---enable-ipython**  (note that the `IPython <http://www.scipy.org>`_ shell is only available under GNU/Linux and it is still very experimental). 
+
+
 
 Finally, after running configure, you can type
 
@@ -106,6 +110,16 @@ where [N] is the number of parallel builds you want to start. And finally:
 
     $ sudo make install
     $ sudo /sbin/ldconfig
+
+.. note::
+
+    If you want to install Stimfit as local user (e.g in ~/.local) with a local version of Python (e.g ~/.local/lib/python2.6) you have to add the following argument to configure
+    script:
+
+    $ ./configure --prefix= $HOME/.local PYTHON = $HOME/.local/lib/python2.6 --enable-python
+
+    and after that simply call **make** and **make install** as normal user. The Stimfit executable will be now in $HOME/.local
+
 
 .. [wxWidgets] http://www.wxwidgets.org
 .. [wxPython] http://www.wxpython.org
