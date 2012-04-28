@@ -932,6 +932,7 @@ void wxStfDoc::CreateAverage(
         wxGetApp().ErrorMsg(wxT("Select traces first"));
         return;
     }
+
     wxBusyCursor wc;
     //array indicating how many indices to shift when aligning,
     //has to be filled with zeros:
@@ -939,8 +940,14 @@ void wxStfDoc::CreateAverage(
     //number of points in average:
     int average_size;
 
+    /* Aligned average */
     //find alignment points in the reference (==second) channel:
     if (align) {
+        // check that we have more than one channel
+        if (size()==1){
+            wxGetApp().ErrorMsg(wxT("Aligned average requires more than one channel"));
+            return;
+        }
         wxStfAlignDlg AlignDlg(GetDocumentWindow());
         if (AlignDlg.ShowModal()!=wxID_OK) return;
         //store current section and channel index:
