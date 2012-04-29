@@ -223,7 +223,7 @@ bool wxStfApp::Init_wxPython()
 
         ErrorMsg( errormsg );
         Py_Finalize();
-        //??? Py_DECREF(result);
+        Py_DECREF(result);
         return false;
     }        
     
