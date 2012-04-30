@@ -1331,7 +1331,7 @@ void wxStfCursorsDlg::SetPeak4Latency(int val){
     pUsePeak->SetValue(val);
 }
 
-bool wxStfCursorsDlg::GetPeak4Latency() const
+bool wxStfCursorsDlg::UsePeak4Latency() const
 {   
     wxCheckBox* pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
     if (pUsePeak == NULL) {

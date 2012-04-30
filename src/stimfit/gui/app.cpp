@@ -442,8 +442,8 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
              wxWriteProfileInt(wxT("Settings"), wxT("LatencyEndMode"), CursorsDialog->GetLatencyEndMode() );
 
              // Use peak cursors for latency?
-             actDoc->SetLatencyWindowMode(CursorsDialog->GetUsePeak4Latency() );
-             wxWriteProfileInt(wxT("Settings"), wxT("LatencyWindowMode"), CursorsDialog->GetUsePeak4Latency() );
+             actDoc->SetLatencyWindowMode(CursorsDialog->UsePeak4Latency() );
+             wxWriteProfileInt(wxT("Settings"), wxT("LatencyWindowMode"), CursorsDialog->UsePeak4Latency() );
              break;
             
          

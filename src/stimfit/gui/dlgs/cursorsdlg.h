@@ -239,7 +239,7 @@ public:
     //! Indicates whether latency measurements should be taken within the current peak cursors.
     /*! \return true if latency measurement is taken within the peak cursors.
      */
-    bool GetUsePeak4Latency() const;
+    bool UsePeak4Latency() const;
 
     //! Sets the latency measurements to current peak cursors.
     /*! \param val.
