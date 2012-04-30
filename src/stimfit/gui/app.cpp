@@ -662,12 +662,12 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
                                wxT("Measure latency to..."),
                                wxT("Choose ending point of latency measurement")
                                );
-#endif
     m_edit_menu->AppendCheckItem(
                                  ID_LATENCYWINDOW,
                                  wxT("Use peak window for latency cursor"),
                                  wxT("Uses the current peak window to measure the peak in the reference channel")
                                  );
+#endif
     wxMenu* m_view_menu = new wxMenu;
     m_view_menu->Append(
                         ID_VIEW_RESULTS,
