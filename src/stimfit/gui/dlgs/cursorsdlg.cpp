@@ -49,6 +49,7 @@ enum {
     wxRADIO_LAT_HALFWIDTH2,
     wxRADIO_LAT_PEAK2,
     wxRADIO_LAT_MANUAL2,
+    wxLATENCYWINDOW,
 #ifdef WITH_PSLOPE
     // Slope radio boxes 
     wxRADIO_PSManBeg,
@@ -60,7 +61,7 @@ enum {
     wxRADIO_PSt50End,
     wxRADIO_PSDeltaT,
     wxRADIO_PSPeakEnd,
-#endif //WITH_SLOPE
+#endif //WITH_PSLOPE
     wxMEASCURSOR,
     wxPEAKATEND,
     wxPEAKMEAN,
@@ -429,6 +430,12 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
     LatBegEndGrid->Add(RightBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
 
     pageSizer->Add(LatBegEndGrid, 0, wxALIGN_CENTER | wxALL, 2);
+
+    // Checkbox for using peak window for latency cursors
+    wxCheckBox *pUsePeak = new wxCheckBox(nbPage, wxLATENCYWINDOW,
+        wxT("Use peak window for latency cursor"), wxDefaultPosition,
+        wxDefaultSize, 0);
+    pageSizer->Add(pUsePeak, 0 , wxALIGN_CENTER | wxALL, 2);
 
     nbPage->SetSizer(pageSizer);
     nbPage->Layout();
@@ -1313,6 +1320,27 @@ void wxStfCursorsDlg::SetLatencyEndMode(stf::latency_mode latencyEndMode){
             break;
         }
 }
+void wxStfCursorsDlg::SetPeak4Latency(int val){
+
+    wxCheckBox* pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
+    if (pUsePeak == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::SetUsePeak4Latency()"));
+        return;
+    }
+
+    pUsePeak->SetValue(val);
+}
+
+bool wxStfCursorsDlg::GetUsePeak4Latency() const
+{   
+    wxCheckBox* pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
+    if (pUsePeak == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::GetUsePeak4Latency()"));
+        return false;
+    }
+    return pUsePeak->IsChecked(); 
+    
+}
 
 
 #ifdef WITH_PSLOPE
@@ -1530,6 +1558,8 @@ void wxStfCursorsDlg::UpdateCursors() {
         // Update RadioButton options
         SetLatencyStartMode( actDoc->GetLatencyStartMode() );
         SetLatencyEndMode(   actDoc->GetLatencyEndMode() );
+        // use peak for latency measurements?
+        SetPeak4Latency ( actDoc->GetLatencyWindowMode() );
         break;
 
 #ifdef WITH_PSLOPE
