@@ -100,10 +100,15 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 	if (MaxSectionLength < SPS) MaxSectionLength = SPS;
     }
 
+    // allocate local memory for intermediate results;    
+    const int strSize=100;     
+    char str[strSize];
+
     for (size_t nc=0; nc<hdr->NS; ++nc) {
 	Channel TempChannel(nsections);
 	TempChannel.SetChannelName(hdr->CHANNEL[nc].Label);
-	TempChannel.SetYUnits(hdr->CHANNEL[nc].PhysDim);
+        PhysDim(hdr->CHANNEL[nc].PhysDimCode,str);
+        TempChannel.SetYUnits(str);
 
         for (size_t ns=1; ns<=nsections; ns++) {
 	        size_t SPS = SegIndexList[ns]-SegIndexList[ns-1];	// length of segment, samples per segment
@@ -152,12 +157,11 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     ReturnData.SetXScale(1000.0/hdr->SampleRate);
     ReturnData.SetComment(hdr->FileName);
 
-    char str[100]; 
     struct tm T; 
     gdf_time2tm_time_r(hdr->T0, &T); 
-    strftime(str,100,"%Y-%m-%d",&T);
+    strftime(str,strSize,"%Y-%m-%d",&T);
     ReturnData.SetDate(str);
-    strftime(str,100,"%H:%M:%S",&T);
+    strftime(str,strSize,"%H:%M:%S",&T);
     ReturnData.SetTime(str);
 
 #ifdef MODULE_ONLY
