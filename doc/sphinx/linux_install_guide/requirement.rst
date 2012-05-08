@@ -120,6 +120,38 @@ where [N] is the number of parallel builds you want to start. And finally:
 
     and after that simply call **make** and **make install** as normal user. The Stimfit executable will be now in $HOME/.local
 
+==========================================
+Building Stimfit with BioSig import filter
+==========================================
+
+It is recommended to build `Stimfit <http://www.stimfit.org>`_  with the BioSig import filter to read HEKA files or to have the possibility import some other file formats used biomedical signal processing. To do it, follow this instructions:
+
+1. It is first recommended to install libsuitesparse and libz libraries:
+
+::
+
+    sudo apt-get install libsuitesparse-dev libz-dev
+
+2. Download BioSig sources: you can obtain the latest BioSig version in `Biosig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig. Alternatively, you can obtain the latest developmental version from the repository:
+
+::
+
+    svc co https://biosig.svn.sourceforge.net/svnroot/biosig/truck/biosig4c++
+
+3. Compile the sources:
+
+::
+
+    make
+
+4. Install the library:
+
+::
+
+    sudo make install
+
+
+After that you can enter the option **--with-biosig** in the configure script of `Stimfit <http://www.stimfit.org>`_ and compile as usual.
 
 .. [wxWidgets] http://www.wxwidgets.org
 .. [wxPython] http://www.wxpython.org
