@@ -1459,6 +1459,7 @@ def cut_traces( pt ):
     Returns True upon success, False upon failure."""
     
     if not get_selected_indices():
+        print("Trace is not selected!")
         return False
     new_list = list()
     for n in get_selected_indices():
