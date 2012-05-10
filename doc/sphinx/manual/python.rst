@@ -412,6 +412,7 @@ These functions cut all selected traces at a single sampling point (pt) or at mu
         
         # Check whether anything has been selected:
         if not stf.get_selected_indices():
+            print("Trace is not selected!")
             return False
         
         new_list = list()
@@ -436,14 +437,15 @@ These functions cut all selected traces at a single sampling point (pt) or at mu
 For example:
 
 ::
+    >>> dt = stf.get_sampling_interval()
+    >>> cutPoitns = [int(100/dt), int(900/dt)]
+    >>> cut_traces_multi(cutPoints) 
 
-    >>> cut_traces_multi([100,900]) 
-
-will cut all selected traces at sampling points 100 and 900 and show the cut traces in a new window. Note that you can pass a list or a tuple as argument.
+will cut all selected traces at time 100 and 900 (in units of the x axis) and show the cut traces in a new window. Note that you can pass a list or a tuple as argument.
 
 ::
 
-    >>> cut_traces_multi(range(100,2000,100))
+    >>> cut_traces_multi(range(100,2000,100)) # cut at 100 sampling points not ms!
 
 will cut the selected traces at every 100th sampling point, starting with the 100th and ending with the 1900th.
 
