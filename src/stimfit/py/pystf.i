@@ -1417,16 +1417,16 @@ def new_window_list( array_list ):
     try: 
         it = iter(array_list)
     except TypeError: 
-        print "Argument is not a sequence"
+        print( "Argument is not a sequence" )
         return False
 
     # Check whether second dimension is a sequence (required):
     try: 
         it = iter(array_list[0])
     except TypeError: 
-        print "Argument is not a sequence of sequences."
-        print "You can either pass a sequence of 1D NumPy arrays,"
-        print "Or a sequence of sequences of 1D NumPy arrays."
+        print( "Argument is not a sequence of sequences." )
+        print( "You can either pass a sequence of 1D NumPy arrays," )
+        print( "Or a sequence of sequences of 1D NumPy arrays." )
         return False
         
     # Check whether third dimension is a sequence (optional):
@@ -1459,7 +1459,7 @@ def cut_traces( pt ):
     Returns True upon success, False upon failure."""
     
     if not get_selected_indices():
-        print("Trace is not selected!")
+        print( "Trace is not selected!" )
         return False
     new_list = list()
     for n in get_selected_indices():
@@ -1469,7 +1469,7 @@ def cut_traces( pt ):
             new_list.append( get_trace()[:pt] )
             new_list.append( get_trace()[pt:] )
         else:
-            print "Cutting point", pt, "is out of range"
+            print( "Cutting point %d is out of range" %pt )
 
     if len(new_list) > 0: new_window_list( new_list )
     
@@ -1490,7 +1490,7 @@ def cut_traces_multi( pt_list ):
                 new_list.append( get_trace()[old_pt:pt] )
                 old_pt = pt
             else:
-                print "Cutting point", pt, "is out of range"
+                print( "Cutting point %d is out of range" %pt )
         if len(new_list) > 0: new_list.append( get_trace()[old_pt:] )
     new_window_list( new_list )
     return True
