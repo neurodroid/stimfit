@@ -437,8 +437,9 @@ These functions cut all selected traces at a single sampling point (pt) or at mu
 For example:
 
 ::
+
     >>> dt = stf.get_sampling_interval()
-    >>> cutPoitns = [int(100/dt), int(900/dt)]
+    >>> cutPoints = [int(100/dt), int(900/dt)]
     >>> cut_traces_multi(cutPoints) 
 
 will cut all selected traces at time 100 and 900 (in units of the x axis) and show the cut traces in a new window. Note that you can pass a list or a tuple as argument.
