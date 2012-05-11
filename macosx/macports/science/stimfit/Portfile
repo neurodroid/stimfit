@@ -3,7 +3,7 @@
 PortSystem          1.0
 
 name                stimfit
-version             0.11.3
+version             0.11.4
 categories          science
 platforms           darwin
 license             GPL
@@ -25,19 +25,18 @@ depends_lib         port:boost \
                     port:hdf5-18 \
                     port:wxWidgets-devel
 
-# Pending py26-wxpython-devel to be released
-# variant python26 description {Use Python version 2.6 (always enabled at this time)} {
-#     depends_lib-append \
-#         port:python26 \
-#         port:py26-wxpython-devel \
-#         port:py26-numpy \
-#         port:py26-matplotlib
+variant python26 description {Use Python version 2.6} {
+    depends_lib-append \
+        port:python26 \
+        port:py26-wxpython-devel \
+        port:py26-numpy \
+        port:py26-matplotlib
 
-#     configure.python \
-#         ${prefix}/bin/python2.6
-# }
+    configure.python \
+        ${prefix}/bin/python2.6
+}
 
-variant python27 description {Use Python version 2.7 (always enabled at this time)} {
+variant python27 description {Use Python version 2.7} {
     depends_lib-append \
         port:python27 \
         port:py27-wxpython-devel \
