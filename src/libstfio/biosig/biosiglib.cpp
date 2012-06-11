@@ -107,8 +107,12 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     for (size_t nc=0; nc<hdr->NS; ++nc) {
 	Channel TempChannel(nsections);
 	TempChannel.SetChannelName(hdr->CHANNEL[nc].Label);
+#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION > 10301)
+        TempChannel.SetYUnits(PhysDim(hdr->CHANNEL[nc].PhysDimCode));
+#else
         PhysDim(hdr->CHANNEL[nc].PhysDimCode,str);
         TempChannel.SetYUnits(str);
+#endif
 
         for (size_t ns=1; ns<=nsections; ns++) {
 	        size_t SPS = SegIndexList[ns]-SegIndexList[ns-1];	// length of segment, samples per segment
