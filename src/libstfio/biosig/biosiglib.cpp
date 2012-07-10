@@ -108,7 +108,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 	Channel TempChannel(nsections);
 	TempChannel.SetChannelName(hdr->CHANNEL[nc].Label);
 #if defined(BIOSIG_VERSION) && (BIOSIG_VERSION > 10301)
-        TempChannel.SetYUnits(PhysDim(hdr->CHANNEL[nc].PhysDimCode));
+        TempChannel.SetYUnits(PhysDim3(hdr->CHANNEL[nc].PhysDimCode));
 #else
         PhysDim(hdr->CHANNEL[nc].PhysDimCode,str);
         TempChannel.SetYUnits(str);
