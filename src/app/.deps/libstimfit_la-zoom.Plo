@@ -1,3 +1,0 @@
-libstimfit_la-zoom.lo: ../app/zoom.cpp ../app/./zoom.h
-
-../app/./zoom.h:
