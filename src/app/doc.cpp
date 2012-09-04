@@ -499,13 +499,17 @@ void wxStfDoc::Fileinfo(wxCommandEvent& WXUNUSED(event)) {
             << "Time:\n" << GetTime() << "\n"
             << oss1.str() << "\n" << oss2.str() << "\n"
             << "Comment:\n" << GetComment();
+
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
     wxStfFileInfoDlg dlg( GetDocumentWindow(), general.str(), GetFileDescription(),
             GetGlobalSectionDescription() );
 #else
-    wxStfFileInfoDlg dlg(GetDocumentWindow(), stf::std2wx(general.str()),
-                         stf::std2wx(GetFileDescription()),
-                         stf::std2wx(GetGlobalSectionDescription()));
+//    wxStfFileInfoDlg dlg(GetDocumentWindow(), stf::std2wx(general.str()),
+//                         stf::std2wx(GetFileDescription()),
+//                         stf::std2wx(GetGlobalSectionDescription()));
+    wxStfFileInfoDlg dlg(GetDocumentWindow(), wxString(general.str().c_str(), wxConvUTF8),
+                         wxString(GetFileDescription().c_str(), wxConvUTF8),
+                         wxString(GetGlobalSectionDescription().c_str(), wxConvUTF8));
 #endif                          
     dlg.ShowModal();
 }
