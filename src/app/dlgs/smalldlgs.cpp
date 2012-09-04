@@ -1205,24 +1205,22 @@ void wxStfConvertDlg::OnComboBoxSrcExt(wxCommandEvent& event){
     // see index of wxArrayString myextensions to evaluate case
     switch(pComboBox->GetSelection()){
         case 0:
-            srcFilterExt =  stf::abf;
-            srcFilter = wxT("*.abf");
+            srcFilterExt =  stf::cfs;
+            srcFilter = wxT("*.dat");
             break;
         case 1:
-            srcFilterExt = stf::axg;
-            srcFilter = wxT("*.axg");
+            srcFilterExt = stf::abf;
+            srcFilter = wxT("*.abf");
             break;
         case 2:
+            srcFilterExt =  stf::axg;
+            srcFilter = wxT("*.axg");
+            break;
+        case 3: 
             srcFilterExt =  stf::atf;
             srcFilter = wxT("*.atf");
             break;
-        case 3: 
-            srcFilterExt =  stf::ascii;
-            srcFilter = wxT("*.*");
-            break;
         case 4: 
-            srcFilterExt =  stf::cfs;
-            srcFilter = wxT("*.dat");
             break;
         case 5: 
             srcFilterExt =  stf::hdf5;
