@@ -145,18 +145,18 @@ std::string stfio::CFSReadVar(short fHandle,short varNo,short varKind) {
     std::string errorMsg;
     std::ostringstream outputstream;
     TUnits units;
-    char description[1024];
+    std::vector<char> description(DESCCHARS);
     short varSize=0;
     TDataType varType;
     //Get description of a particular file variable
     //- see manual of CFS file system
-    GetVarDesc(fHandle,varNo,varKind,&varSize,&varType,units,description);
+    GetVarDesc(fHandle,varNo,varKind,&varSize,&varType,units,&description[0]);
     if (CFSError(errorMsg)) throw std::runtime_error(errorMsg);
     //I haven't found a way to directly pass a std::string to GetVarDesc;
     //passing &s_description[0] won't work correctly.
     // Added 11/27/06, CSH: Should be possible with vector<char>
-    std::string s_description(description);
-    if (s_description != "Spare") {
+    std::string s_description(description.begin(), description.end());
+    if (s_description.substr(0,5) != "Spare") {
         switch (varType) {   //Begin switch 'varType'
          case INT1:
          case INT2:
@@ -188,10 +188,22 @@ std::string stfio::CFSReadVar(short fHandle,short varNo,short varKind) {
          case LSTR: {
              std::vector<char> vc(varSize+2);
              GetVarVal(fHandle,varNo,varKind, 1, &vc[0]);
-             if (CFSError(errorMsg))	throw std::runtime_error(errorMsg);
-             std::string s(&vc[0]);
+             if (CFSError(errorMsg))
+                 throw std::runtime_error(errorMsg);
+             std::string s;
+             s.resize(vc.size());
+             int ns = 0;
+             for (std::vector<char>::iterator it=vc.begin(); it != vc.end(); ++it) {
+                 if ((int)*it == 13)
+                     s[ns] = '\n';
+                 else if ((int)*it < 0)
+                     s[ns] = '?';
+                 else
+                     s[ns] = *it;
+                 ns++;
+             }
              if (s_description.substr(0,11) == "ScriptBlock") {
-                 outputstream << s_description << " " << s;
+                 outputstream << s;
              } else {
                  outputstream << s_description << " " << s;
              }
@@ -199,9 +211,9 @@ std::string stfio::CFSReadVar(short fHandle,short varNo,short varKind) {
          }
          default: break;
         }	//End switch 'varType'
-    }
-    if (s_description.substr(0,11) != "ScriptBlock" ) {
-        outputstream << "\n";
+        if (s_description.substr(0,11) != "ScriptBlock" ) {
+            outputstream << "\n";
+        }
     }
     return outputstream.str();
 }
