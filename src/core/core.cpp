@@ -65,13 +65,6 @@ bool stf::importFile(
 ) {
     try {
         switch (type) {
-        case stf::cfs: {
-            int res = stf::importCFSFile(fName, ReturnData, progress);
-            if (res==-7) {
-                stf::importHEKAFile(fName, ReturnData, progress);
-            }
-            break;
-        }
         case stf::hdf5: {
             stf::importHDF5File(fName, ReturnData, progress);
             break;
@@ -88,11 +81,19 @@ bool stf::importFile(
             stf::importAXGFile(fName, ReturnData, progress, parent);
             break;
         }
+#ifndef WITH_BIOSIG
+        case stf::cfs: {
+            int res = stf::importCFSFile(fName, ReturnData, progress);
+            if (res!=-7) break
+	    // else try importHEKAFile
+        }
         case stf::heka: {
             stf::importHEKAFile(fName, ReturnData, progress);
             break;
         }
-#ifdef WITH_BIOSIG
+#else
+        case stf::cfs: 
+        case stf::heka:
         case stf::biosig: {
             stf::importBSFile(fName, ReturnData, progress);
             break;

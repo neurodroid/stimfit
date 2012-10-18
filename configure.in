@@ -136,7 +136,7 @@ AC_ARG_WITH([biosig], AS_HELP_STRING([--with-biosig],[build with support for lib
 AM_CONDITIONAL(WITH_BIOSIG, test "$with_biosig" = "yes")
 if test "$with_biosig" = "yes" ; then
     CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG"
-    LIBBIOSIG_LDFLAGS="-lbiosig"
+    LIBBIOSIG_LDFLAGS="-lbiosig -lcholmod -lz"
 fi
 AC_SUBST(LIBBIOSIG_LDFLAGS)
 

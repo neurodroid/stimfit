@@ -35,6 +35,8 @@
 #ifndef _BIOSIGLIB_H
 #define _BIOSIGLIB_H
 
+#include "../core.h"
+
 namespace stf {
 
 //! Open an BIOSIG file and store its contents to a Recording object.
@@ -43,8 +45,7 @@ namespace stf {
  *         the data stored in \e fName.
  *  \param progress True if the progress dialog should be updated.
  */
-    void importBSFile(const wxString& fName, Recording& ReturnData, bool progress = true,
-                       wxWindow* parent=NULL);
+    void importBSFile(const wxString& fName, Recording& ReturnData, bool progress = true);
 
 }
 
