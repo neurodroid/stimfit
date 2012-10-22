@@ -58,6 +58,7 @@ typedef wxAuiToolBar wxStfToolBar;
 typedef wxAuiToolBar wxStfToolBar;
 #endif
 
+#ifdef WITH_PYTHON
 struct new_wxwindow {
     new_wxwindow(wxWindow* cppW=NULL, PyObject* pyW=NULL) :
         cppWindow(cppW), pyWindow(pyW)
@@ -65,6 +66,15 @@ struct new_wxwindow {
     wxWindow* cppWindow;
     PyObject* pyWindow;
 };
+#else
+struct new_wxwindow {
+    new_wxwindow(wxWindow* cppW=NULL, void* pyW=NULL) :
+        cppWindow(cppW), pyWindow(pyW)
+    {}
+    wxWindow* cppWindow;
+    void* pyWindow;
+};
+#endif
 
 //! Provides the top-level frame.
 /*! It is part of the of the document/view framework implemented in wxWidgets.

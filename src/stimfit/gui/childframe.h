@@ -223,7 +223,9 @@ public:
     void OnMenuHighlight(wxMenuEvent& event);
     void OnShowselected(wxCommandEvent& event);
     void OnZeroIndex(wxCommandEvent& event);
+#ifdef WITH_PYTHON
     void OnSpinCtrlTraces(wxSpinEvent& event);
+#endif
     void OnComboActChannel(wxCommandEvent& event);
     void OnComboInactChannel(wxCommandEvent& event);
 

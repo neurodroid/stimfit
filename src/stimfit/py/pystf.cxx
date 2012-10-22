@@ -21,7 +21,11 @@
 #define _XOPEN_SOURCE_WAS_DEF
 #undef _XOPEN_SOURCE
 #endif
+
+#ifdef WITH_PYTHON
 #include <Python.h>
+#endif
+
 #ifdef _POSIX_C_SOURCE_WAS_DEF
   #ifndef _POSIX_C_SOURCE
     #define _POSIX_C_SOURCE
@@ -36,7 +40,11 @@
 #if defined(__WXMAC__) || defined(__WXGTK__)
   #pragma GCC diagnostic ignored "-Wwrite-strings"
 #endif
+
+#ifdef WITH_PYTHON
 #include <wx/wxPython/wxPython.h>
+#endif
+
 // revert to previous behaviour
 #if defined(__WXMAC__) || defined(__WXGTK__)
   #pragma GCC diagnostic warning "-Wwrite-strings"
@@ -48,7 +56,9 @@
     #endif
 #endif
 
+#ifdef WITH_PYTHON
 #include <numpy/arrayobject.h>
+#endif
 
 #include "pystf.h"
 
@@ -61,14 +71,18 @@
 #include "./../gui/dlgs/cursorsdlg.h"
 #include "./../math/fit.h"
 
+#ifdef WITH_PYTHON
 #define array_data(a)          (((PyArrayObject *)a)->data)
+#endif
 
 std::vector< std::vector< Vector_double > > gMatrix;
 std::vector< std::string > gNames;
 double _figsize[] = {8.0,6.0};
 
 void wrap_array() {
+#ifdef WITH_PYTHON
     import_array();
+#endif
 }
 
 void ShowExcept(const std::exception& e) {
@@ -137,6 +151,7 @@ std::string get_versionstring() {
 #endif
 }
 
+#ifdef WITH_PYTHON
 PyObject* get_trace(int trace, int channel) {
     wrap_array();
 
@@ -160,6 +175,7 @@ PyObject* get_trace(int trace, int channel) {
     
     return np_array;
 }
+#endif
 
 bool new_window( double* invec, int size ) {
     if ( !check_doc() ) return false;
@@ -411,6 +427,7 @@ void unselect_all( ) {
     actDoc()->Deleteselected( wce );
 }
 
+#ifdef WITH_PYTHON
 PyObject* get_selected_indices() {
     if ( !check_doc() ) return NULL;
     
@@ -425,6 +442,7 @@ PyObject* get_selected_indices() {
     // no reference count decrement should be performed here.
     return retObj;
 }
+#endif 
 
 bool set_trace( int trace ) {
     if ( !check_doc() ) return false; // use only with open document

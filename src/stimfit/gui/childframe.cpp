@@ -67,7 +67,9 @@
 IMPLEMENT_CLASS(wxStfChildFrame, wxStfChildType)
 
 BEGIN_EVENT_TABLE(wxStfChildFrame, wxStfChildType)
+#ifdef WITH_PYTHON
 EVT_SPINCTRL( ID_SPINCTRLTRACES, wxStfChildFrame::OnSpinCtrlTraces )
+#endif
 EVT_COMBOBOX( ID_COMBOACTCHANNEL, wxStfChildFrame::OnComboActChannel )
 EVT_COMBOBOX( ID_COMBOINACTCHANNEL, wxStfChildFrame::OnComboInactChannel )
 EVT_CHECKBOX( ID_ZERO_INDEX, wxStfChildFrame::OnZeroIndex)
@@ -214,6 +216,7 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
 
     m_mgr.AddPane( m_table, wxAuiPaneInfo().Caption(wxT("Results")).Position(pDoc->size()).
                    CloseButton(false).Floatable().Dock().Top().Name(wxT("Results")) );
+
     m_mgr.Update();
     Refresh();
 }
@@ -318,6 +321,7 @@ void wxStfChildFrame::SetCurTrace(std::size_t n) {
         trace_spinctrl->SetValue((int)n+1);
 }
 
+#ifdef WITH_PYTHON
 void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
     event.Skip();
 
@@ -339,6 +343,7 @@ void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
         pView->GetGraph()->SetFocus();
     }
 }
+#endif
 
 void wxStfChildFrame::OnActivate(wxActivateEvent &event) {
     wxStfView* pView=(wxStfView*)GetView();

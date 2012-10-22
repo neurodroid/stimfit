@@ -788,10 +788,12 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     analysis_menu->AppendSubMenu(userdefSub,wxT("User-defined functions"));
 #endif
     wxMenu *extensions_menu = new wxMenu;
+#ifdef WITH_PYTHON
     for (std::size_t n=0;n<GetExtensionLib().size();++n) {
         extensions_menu->Append(ID_USERDEF+(int)n,
                                 stf::std2wx(GetExtensionLib()[n].menuEntry));
     }
+#endif 
     
     wxMenu *help_menu = new wxMenu;
     help_menu->Append(wxID_HELP, wxT("Online &help\tF1"));

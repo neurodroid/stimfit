@@ -1102,11 +1102,13 @@ srcFileNames(0)
     // SOURCE 2.- A wxGenericDirCtrl to select the source directory:
 
     //wxGenericDirCtrl *mySrcDirCtrl; 
+#ifdef WITH_PYTHON
     mySrcDirCtrl = new wxGenericDirCtrl(this, wxGENERICDIRCTRL_SRC, srcDir,
         wxDefaultPosition, wxSize(300,300), wxDIRCTRL_DIR_ONLY);
     // add to myLeftSizer
     myLeftSizer->Add( mySrcDirCtrl, 0, wxEXPAND | wxALL , 2 );
     // ---- A wxGenericDirCtrl to select the source directory:
+#endif
 
     // Finally add myLeftSizer to the gridSizer
     gridSizer->Add( myLeftSizer, 0, wxALIGN_LEFT, 5 );
@@ -1142,12 +1144,14 @@ srcFileNames(0)
 
     // DESTINATION 2.- A wxGenericDirCtrl to select the destiny directory:
 
+#ifdef WITH_PYTHON
     //wxGenericDirCtrl *myDestDirCtrl; 
     myDestDirCtrl = new wxGenericDirCtrl(this, wxGENERICDIRCTRL_DEST, destDir,
         wxDefaultPosition, wxSize(300,300), wxDIRCTRL_DIR_ONLY);
     // add to myLeftSizer
     myRightSizer->Add( myDestDirCtrl, 0, wxEXPAND | wxALL, 2 );
     // ---- A wxGenericDirCtrl to select the source directory:
+#endif
 
     // Finally add myRightSizer to gridSizer and this to topSizer
     gridSizer->Add( myRightSizer, 0, wxALIGN_RIGHT, 5);
@@ -1251,6 +1255,7 @@ void wxStfConvertDlg::EndModal(int retCode) {
 
 bool wxStfConvertDlg::OnOK() {
 
+#ifdef WITH_PYTHON
     srcDir  = mySrcDirCtrl->GetPath();
     destDir = myDestDirCtrl->GetPath();
 
@@ -1273,6 +1278,7 @@ bool wxStfConvertDlg::OnOK() {
         wxLogMessage(msg);
         return false;
     }
+#endif
     return true;
 }
 
