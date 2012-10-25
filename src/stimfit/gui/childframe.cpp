@@ -48,7 +48,6 @@
 #error You must set wxUSE_MDI_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#include "wx/spinctrl.h"
 #include "./app.h"
 #include "./doc.h"
 #include "./view.h"
@@ -67,9 +66,7 @@
 IMPLEMENT_CLASS(wxStfChildFrame, wxStfChildType)
 
 BEGIN_EVENT_TABLE(wxStfChildFrame, wxStfChildType)
-#ifdef WITH_PYTHON
 EVT_SPINCTRL( ID_SPINCTRLTRACES, wxStfChildFrame::OnSpinCtrlTraces )
-#endif
 EVT_COMBOBOX( ID_COMBOACTCHANNEL, wxStfChildFrame::OnComboActChannel )
 EVT_COMBOBOX( ID_COMBOINACTCHANNEL, wxStfChildFrame::OnComboInactChannel )
 EVT_CHECKBOX( ID_ZERO_INDEX, wxStfChildFrame::OnZeroIndex)
@@ -321,10 +318,8 @@ void wxStfChildFrame::SetCurTrace(std::size_t n) {
         trace_spinctrl->SetValue((int)n+1);
 }
 
-#ifdef WITH_PYTHON
 void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
     event.Skip();
-
 
     wxStfView* pView=(wxStfView*)GetView();
     wxStfDoc* pDoc=(wxStfDoc*)GetDocument();
@@ -343,7 +338,6 @@ void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
         pView->GetGraph()->SetFocus();
     }
 }
-#endif
 
 void wxStfChildFrame::OnActivate(wxActivateEvent &event) {
     wxStfView* pView=(wxStfView*)GetView();

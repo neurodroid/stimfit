@@ -307,6 +307,8 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     std::cout << "python startup script:\n" << std::string( python_code2.char_str() );
 #endif // _WINDOWS
 #endif // _STFDEBUG
+#else // WITH_PYTHON
+    m_mgr.Update();
 #endif // WITH_PYTHON
 
     wxStatusBar* pStatusBar = new wxStatusBar(this, wxID_ANY, wxST_SIZEGRIP);

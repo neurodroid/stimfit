@@ -825,19 +825,15 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
 #endif
     wxStfChildFrame *subframe = new wxStfChildFrame(
                                                     doc, view, 
+                                                    GetMainFrame(), wxID_ANY, doc->GetTitle(),
 #ifdef __WXMAC__
-                                                    GetMainFrame(), wxID_ANY, doc->GetTitle(),
                                                     wxPoint(xpos,ypos), wxSize(800,600),
-                                                    wxDEFAULT_FRAME_STYLE |
-                                                    // wxNO_FULL_REPAINT_ON_RESIZE |
-                                                    wxWANTS_CHARS | wxMAXIMIZE
 #else
-                                                    GetMainFrame(), wxID_ANY, doc->GetTitle(),
                                                     wxDefaultPosition, wxDefaultSize,
+#endif
                                                     wxDEFAULT_FRAME_STYLE |
                                                     // wxNO_FULL_REPAINT_ON_RESIZE |
                                                     wxWANTS_CHARS | wxMAXIMIZE
-#endif
                                                     );
 
 #ifdef __WXMSW__

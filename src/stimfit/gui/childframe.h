@@ -28,6 +28,7 @@
 #include <wx/aui/aui.h>
 #include <wx/grid.h>
 #include <wx/dnd.h>
+#include <wx/spinctrl.h>
 
 #include "./../stf.h"
 
@@ -223,9 +224,7 @@ public:
     void OnMenuHighlight(wxMenuEvent& event);
     void OnShowselected(wxCommandEvent& event);
     void OnZeroIndex(wxCommandEvent& event);
-#ifdef WITH_PYTHON
     void OnSpinCtrlTraces(wxSpinEvent& event);
-#endif
     void OnComboActChannel(wxCommandEvent& event);
     void OnComboInactChannel(wxCommandEvent& event);
 
