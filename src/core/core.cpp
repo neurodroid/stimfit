@@ -84,7 +84,8 @@ bool stf::importFile(
 #ifndef WITH_BIOSIG
         case stf::cfs: {
             int res = stf::importCFSFile(fName, ReturnData, progress);
-            if (res!=-7) break
+            if (res!=-7) 
+                break;
 	    // else try importHEKAFile
         }
         case stf::heka: {
