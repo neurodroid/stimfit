@@ -176,8 +176,8 @@ EVT_MENU( ID_LATENCYEND_MAXSLOPE, wxStfParentFrame::OnLEndMaxslope )
 EVT_MENU( ID_LATENCYEND_PEAK, wxStfParentFrame::OnLEndPeak )
 EVT_MENU( ID_LATENCYEND_HALFRISE, wxStfParentFrame::OnLEndHalfrise )
 EVT_MENU( ID_LATENCYEND_MANUAL, wxStfParentFrame::OnLEndManual )
-#endif
 EVT_MENU( ID_LATENCYWINDOW, wxStfParentFrame::OnLWindow )
+#endif
 END_EVENT_TABLE()
 
 wxStfParentFrame::wxStfParentFrame(wxDocManager *manager, wxFrame *frame, const wxString& title,
@@ -1338,6 +1338,7 @@ void wxStfParentFrame::OnLEndManual(wxCommandEvent& WXUNUSED(event)) {
 
 }
 
+# if 0
 void wxStfParentFrame::OnLWindow(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
@@ -1354,6 +1355,8 @@ void wxStfParentFrame::OnLWindow(wxCommandEvent& WXUNUSED(event)) {
             pView->GetGraph()->Refresh();
     }
 }
+
+#endif
 
 stf::cursor_type wxStfParentFrame::GetMouseQual() const {
     if (m_cursorToolBar->GetToolToggled(ID_TOOL_MEASURE))

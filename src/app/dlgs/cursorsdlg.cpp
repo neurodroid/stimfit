@@ -49,6 +49,7 @@ enum {
     wxRADIO_LAT_HALFWIDTH2,
     wxRADIO_LAT_PEAK2,
     wxRADIO_LAT_MANUAL2,
+    wxLATENCYWINDOW,
 #ifdef WITH_PSLOPE
     // Slope radio boxes 
     wxRADIO_PSManBeg,
@@ -60,7 +61,7 @@ enum {
     wxRADIO_PSt50End,
     wxRADIO_PSDeltaT,
     wxRADIO_PSPeakEnd,
-#endif //WITH_SLOPE
+#endif //WITH_PSLOPE
     wxMEASCURSOR,
     wxPEAKATEND,
     wxPEAKMEAN,
@@ -142,7 +143,7 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
     m_notebook->AddPage( CreateDecayPage(), wxT("Decay"));
     m_notebook->AddPage( CreateLatencyPage(), wxT("Latency"));
 #ifdef WITH_PSLOPE
-    m_notebook->AddPage( CreatePSlopePage(), wxT("Slope"));
+    m_notebook->AddPage( CreatePSlopePage(), wxT("PSlope"));
 #endif
     topSizer->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 
@@ -169,8 +170,6 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
 bool wxStfCursorsDlg::TransferDataFromWindow() {
     // Apply settings before closing dialog:
     wxCommandEvent unusedEvent;
-    UpdateCursors();
-    OnPeakcalcexec(unusedEvent);
     return wxWindow::TransferDataFromWindow();
 }
 
@@ -427,6 +426,12 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
     LatBegEndGrid->Add(RightBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
 
     pageSizer->Add(LatBegEndGrid, 0, wxALIGN_CENTER | wxALL, 2);
+
+    // CheckBox for using peak window for latency cursors
+    wxCheckBox *pUsePeak = new wxCheckBox(nbPage, wxLATENCYWINDOW,
+        wxT("Use peak window for latency cursors"), wxDefaultPosition,
+        wxDefaultSize, 0);
+    pageSizer->Add(pUsePeak, 0, wxALIGN_CENTER | wxALL, 2);
 
     nbPage->SetSizer(pageSizer);
     nbPage->Layout();
@@ -1303,6 +1308,27 @@ void wxStfCursorsDlg::SetLatencyEndMode(stf::latency_mode latencyEndMode){
         }
 }
 
+void wxStfCursorsDlg::SetPeak4Latency(int val){
+    wxCheckBox* pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
+    if (pUsePeak == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::SetUsePeak4Latency()"));
+        return;
+    }
+    
+    pUsePeak->SetValue(val);
+}
+
+bool wxStfCursorsDlg::UsePeak4Latency() const 
+{
+    wxCheckBox* pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
+    if (pUsePeak == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::GetUsePeak4Latency()"));
+        return false;
+    }
+    return pUsePeak->IsChecked(); 
+
+}
+    
 
 #ifdef WITH_PSLOPE
 stf::pslope_mode_beg wxStfCursorsDlg::GetPSlopeBegMode() const {
@@ -1519,6 +1545,8 @@ void wxStfCursorsDlg::UpdateCursors() {
         // Update RadioButton options
         SetLatencyStartMode( actDoc->GetLatencyStartMode() );
         SetLatencyEndMode(   actDoc->GetLatencyEndMode() );
+        // use peak for latency measurements?
+        SetPeak4Latency ( actDoc->GetLatencyWindowMode() );
         break;
 
 #ifdef WITH_PSLOPE
