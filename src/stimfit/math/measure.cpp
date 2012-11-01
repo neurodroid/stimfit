@@ -231,7 +231,7 @@ double   stf::t_half(const std::vector<double>& data,
         double& t50LeftReal)
 {
     if (center<0 || center>=data.size()) {
-        throw std::out_of_range("Index out of range in stf::thalf()");
+        throw std::out_of_range("Index out of range in stf::t_half()");
     }
     t50LeftId=(int)center>=1? (int)center:1;
     do {

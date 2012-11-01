@@ -154,6 +154,8 @@ wxStfDoc::wxStfDoc() :
     tHiIndex(0),
     t50LeftIndex(0),
     t50RightIndex(0),
+    APt50LeftIndex(0),
+    APt50RightIndex(0),
     fromBase(true),
     viewCrosshair(true),
     viewBaseline(true),
@@ -2413,7 +2415,7 @@ void wxStfDoc::Measure( )
 
     //Begin Half Duration calculation
     //-------------------------------
-    t50LeftReal=0.0;
+    //t50LeftReal=0.0;
     // 2008-04-27: changed limits to start from the beginning of the trace
     //             and to stop at the end of the trace
     halfDuration = stf::t_half(cur().get(), reference, ampl, (double)0 /*(double)baseBeg*/,
@@ -2450,11 +2452,12 @@ void wxStfDoc::Measure( )
         // endResting is set to 100 points arbitrarily in the pascal version
         // (see measlib.pas) assuming that the resting potential is stable
         // during the first 100 sampling points.
-        const int endResting=100;
+        // const int endResting=100;
         const int searchRange=100;
         double APBase=0.0, APPeak=0.0, APVar=0.0;
         try {
-            APBase=stf::base(APVar,sec().get(),0,endResting);
+            //APBase=stf::base(APVar,sec().get(),0,endResting);
+            APBase=stf::base(APVar,sec().get(),baseBeg,baseEnd); // use baseline cursors 
             APPeak=stf::peak(sec().get(),APBase,peakBeg,peakEnd,pM,stf::up,APMaxT);
         }
         catch (const std::out_of_range& e) {
@@ -2486,7 +2489,8 @@ void wxStfDoc::Measure( )
         //-------------------------------
         //Half-maximal amplitude
         //----------------------------
-        std::size_t APt50LeftIndex,APt50RightIndex;
+        //APt50LeftReal=0.0;
+        //std::size_t APt50LeftIndex,APt50RightIndex;
         stf::t_half(sec().get(), APBase, APPeak-APBase, left_APRise,
                       (double)sec().get().size(), APMaxT, APt50LeftIndex,
                       APt50RightIndex, APt50LeftReal);

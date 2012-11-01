@@ -1555,11 +1555,13 @@ void wxStfCursorsDlg::UpdateCursors() {
         cursor2isTime=cursor2LIsTime;
         pText1=(wxTextCtrl*)FindWindow(wxTEXT1L);
         pText2=(wxTextCtrl*)FindWindow(wxTEXT2L);
+
+        // use peak for latency measurements?
+        SetPeak4Latency ( actDoc->GetLatencyWindowMode() );
+
         // Update RadioButton options
         SetLatencyStartMode( actDoc->GetLatencyStartMode() );
         SetLatencyEndMode(   actDoc->GetLatencyEndMode() );
-        // use peak for latency measurements?
-        SetPeak4Latency ( actDoc->GetLatencyWindowMode() );
         break;
 
 #ifdef WITH_PSLOPE
