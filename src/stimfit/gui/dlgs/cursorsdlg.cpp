@@ -282,7 +282,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     
     // Threshold slope
     wxStaticBoxSizer* slopeSizer =
-        new wxStaticBoxSizer( wxVERTICAL, nbPage, wxT("Threshold slope") );
+        new wxStaticBoxSizer( wxVERTICAL, nbPage, wxT("Threshold slope   ") );
 
     wxFlexGridSizer* slopeGrid = new wxFlexGridSizer(1,2,0,0);
     // user entry
@@ -300,7 +300,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     // Ap kinetics reference
     wxString referenceChoices[] = { wxT("From baseline"), wxT("From threshold") };
     int referenceNChoices = sizeof( referenceChoices ) / sizeof( wxString );
-    wxRadioBox* pReference = new wxRadioBox( nbPage, wxREFERENCE, wxT("Measure AP kinetics:"),
+    wxRadioBox* pReference = new wxRadioBox( nbPage, wxREFERENCE, wxT("Measure AP kinetics "),
             wxDefaultPosition, wxDefaultSize, referenceNChoices, referenceChoices,
             0, wxRA_SPECIFY_ROWS );
     pReference->SetSelection(0);
@@ -359,13 +359,20 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
     pageSizer->Add(CreateCursorInput(nbPage, wxTEXT1L, wxTEXT2L, wxCOMBOU1L,
         wxCOMBOU2L, 1, 10), 0, wxALIGN_CENTER | wxALL, 2);
 
+    // Checkbox for using peak window for latency cursors
+    wxCheckBox *pUsePeak = new wxCheckBox(nbPage, wxLATENCYWINDOW,
+        //wxT("Use peak window for latency cursor"), wxDefaultPosition,
+        wxT("Measure latencies within the peak cursors"), wxDefaultPosition,
+        wxDefaultSize, 0);
+    pageSizer->Add(pUsePeak, 0 , wxALIGN_CENTER | wxALL, 2);
+
     // Grid
     wxFlexGridSizer* LatBegEndGrid;
     LatBegEndGrid = new wxFlexGridSizer(1,2,0,0); // rows, cols
 
     //**** Radio options "Measure from" ****
     wxStaticBoxSizer* LeftBoxSizer = new wxStaticBoxSizer(
-        wxVERTICAL, nbPage, wxT("Measure from") );
+        wxVERTICAL, nbPage, wxT("Latency from") );
 
     // Measure from: Manual
     wxRadioButton* wxRadio_Lat_Manual1 = new wxRadioButton( nbPage, wxRADIO_LAT_MANUAL1, wxT("Manual"),
@@ -395,7 +402,7 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
 
     //**** Radio options "Measure to" ****
     wxStaticBoxSizer* RightBoxSizer = new wxStaticBoxSizer(
-        wxVERTICAL, nbPage, wxT("Measure to") );
+        wxVERTICAL, nbPage, wxT("Latency to") );
 
     // Measure to: Manual
     wxRadioButton* wxRadio_Lat_Manual2 = new wxRadioButton( nbPage, wxRADIO_LAT_MANUAL2, wxT("Manual"),
@@ -430,12 +437,6 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
     LatBegEndGrid->Add(RightBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
 
     pageSizer->Add(LatBegEndGrid, 0, wxALIGN_CENTER | wxALL, 2);
-
-    // Checkbox for using peak window for latency cursors
-    wxCheckBox *pUsePeak = new wxCheckBox(nbPage, wxLATENCYWINDOW,
-        wxT("Use peak window for latency cursor"), wxDefaultPosition,
-        wxDefaultSize, 0);
-    pageSizer->Add(pUsePeak, 0 , wxALIGN_CENTER | wxALL, 2);
 
     nbPage->SetSizer(pageSizer);
     nbPage->Layout();
@@ -1553,8 +1554,14 @@ void wxStfCursorsDlg::UpdateCursors() {
         iNewValue2= (int)actDoc->GetLatencyEnd();
         cursor1isTime=cursor1LIsTime;
         cursor2isTime=cursor2LIsTime;
+
+        // if GetLatencyStartmode() is zero, textbox is enabled
         pText1=(wxTextCtrl*)FindWindow(wxTEXT1L);
+        pText1->Enable(!actDoc->GetLatencyStartMode()); 
+
+        // if GetLatencyEndmode() is zero, textbox is enabled
         pText2=(wxTextCtrl*)FindWindow(wxTEXT2L);
+        pText2->Enable(!actDoc->GetLatencyEndMode());
 
         // use peak for latency measurements?
         SetPeak4Latency ( actDoc->GetLatencyWindowMode() );
