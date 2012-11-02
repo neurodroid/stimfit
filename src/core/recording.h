@@ -982,7 +982,7 @@ class StfDll Recording {
     // Base line value for each selected trace
     Vector_double selectBase;
     
-    std::size_t t20Index, t80Index, t50LeftIndex, t50RightIndex;
+    std::size_t t20Index, t80Index, t50LeftIndex, t50RightIndex, APt50LeftIndex, APt50RightIndex;
 
     bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold, viewRT2080,
         viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,
