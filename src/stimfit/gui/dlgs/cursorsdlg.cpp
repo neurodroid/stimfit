@@ -374,20 +374,20 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
     wxStaticBoxSizer* LeftBoxSizer = new wxStaticBoxSizer(
         wxVERTICAL, nbPage, wxT("Latency from") );
 
-    // Measure from: Manual
+    // Latency from: Manual
     wxRadioButton* wxRadio_Lat_Manual1 = new wxRadioButton( nbPage, wxRADIO_LAT_MANUAL1, wxT("Manual"),
             wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
     //wxRadio_Lat_Manual1->SetValue(true);
     
-    // Measure from: Peak
+    // Latency from: Peak
     wxRadioButton* wxRadio_Lat_Peak1 = new wxRadioButton( nbPage, wxRADIO_LAT_PEAK1, wxT("Peak"),
             wxDefaultPosition, wxDefaultSize);
 
-    // Measure from: Maximal slope
+    // Latency from: Maximal slope
     wxRadioButton* wxRadio_Lat_MaxSlope1 = new wxRadioButton( nbPage, wxRADIO_LAT_MAXSLOPE1, wxT("Maximal slope"),
             wxDefaultPosition, wxDefaultSize );
 
-    // Measure from: Half-maximal amplitude
+    // Latency from: Half-maximal amplitude
     wxRadioButton* wxRadio_Lat_HalfWidth1 = new wxRadioButton( nbPage, wxRADIO_LAT_HALFWIDTH1, wxT("Half-width (t50)"),
             wxDefaultPosition, wxDefaultSize );
      
@@ -400,28 +400,28 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
     // Add to LatBegEndGrid
     LatBegEndGrid->Add(LeftBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
 
-    //**** Radio options "Measure to" ****
+    //**** Radio options "Latency to" ****
     wxStaticBoxSizer* RightBoxSizer = new wxStaticBoxSizer(
         wxVERTICAL, nbPage, wxT("Latency to") );
 
-    // Measure to: Manual
+    // Latency to: Manual
     wxRadioButton* wxRadio_Lat_Manual2 = new wxRadioButton( nbPage, wxRADIO_LAT_MANUAL2, wxT("Manual"),
             wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
     //wxRadio_Lat_Manual2->SetValue(true);
 
-    // Measure to: Peak
+    // Latency to: Peak
     wxRadioButton* wxRadio_Lat_Peak2 = new wxRadioButton( nbPage, wxRADIO_LAT_PEAK2, wxT("Peak"),
             wxDefaultPosition, wxDefaultSize);
 
-    // Measue to: Half-maximal amplitude
+    // Latency to: Half-maximal amplitude
     wxRadioButton* wxRadio_Lat_HalfWidth2 = new wxRadioButton( nbPage, wxRADIO_LAT_HALFWIDTH2, wxT("Half-width (t50)"),
             wxDefaultPosition, wxDefaultSize);
 
-    // Measure to: Maximal slope
+    // Latency to: Maximal slope
     wxRadioButton* wxRadio_Lat_MaxSlope2 = new wxRadioButton( nbPage, wxRADIO_LAT_MAXSLOPE2, wxT("Maximal slope"),
             wxDefaultPosition, wxDefaultSize);
 
-    // Measure to: Beginning of event
+    // Latency to: Beginning of event
     wxRadioButton* wxRadio_Lat_Event2 = new wxRadioButton( nbPage, wxRADIO_LAT_EVENT2, wxT("Beginning of event"),
             wxDefaultPosition, wxDefaultSize );
 
@@ -460,20 +460,20 @@ wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
     wxFlexGridSizer* PSBegEndGrid;
     PSBegEndGrid = new wxFlexGridSizer(1,2,0,0); // rows, cols
 
-    //**** Radio options "Measure from" ****
+    //**** Radio options "Slope from" ****
     wxStaticBoxSizer* LeftBoxSizer = new wxStaticBoxSizer(
-        wxVERTICAL, nbPage, wxT("Measure from") );
+        wxVERTICAL, nbPage, wxT("Slope from") );
 
-    // Measure from: Manual
+    // Slope from: Manual
     wxRadioButton* pPSManBeg = new wxRadioButton( nbPage, wxRADIO_PSManBeg, wxT("Manual"),
             wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
     pPSManBeg->SetValue(true);
 
-    // Measure from: Commencement
+    // Slope from: Commencement
     wxRadioButton* pPSEventBeg = new wxRadioButton( nbPage, wxRADIO_PSEventBeg, wxT("Commencement"),
             wxDefaultPosition, wxDefaultSize );
      
-    // Measure from: Threshold slope
+    // Slope from: Threshold slope
     wxFlexGridSizer* thrGrid;
     thrGrid = new wxFlexGridSizer(1,2,0,0);
 
@@ -486,7 +486,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
     pPStextThr->Enable(false);
     thrGrid->Add(pPStextThr, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
 
-    // Measure from: t50
+    // Slope from: t50
     wxRadioButton* pPSt50Beg = new wxRadioButton( nbPage, wxRADIO_PSt50Beg, wxT("Half-width (t50)"),
             wxDefaultPosition, wxDefaultSize);
 
@@ -500,20 +500,20 @@ wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
     // Add to PSBegEndGrid
     PSBegEndGrid->Add(LeftBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
 
-    //**** Radio options "Measure to" ****
+    //**** Radio options "Slope to" ****
     wxStaticBoxSizer* RightBoxSizer = new wxStaticBoxSizer(
-        wxVERTICAL, nbPage, wxT("Measure to") );
+        wxVERTICAL, nbPage, wxT("Slope to") );
 
-    // Measure to: Manual
+    // Slope to: Manual
     wxRadioButton* pPSManEnd = new wxRadioButton( nbPage, wxRADIO_PSManEnd, wxT("Manual"),
             wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
     pPSManEnd->SetValue(true);
 
-    // Measure to: Half-width
+    // Slope to: Half-width
     wxRadioButton* pPSt50End = new wxRadioButton( nbPage, wxRADIO_PSt50End, wxT("Half-width (t50)"),
             wxDefaultPosition, wxDefaultSize);
 
-    // Measue to: DeltaT
+    // Slope to: DeltaT
     wxFlexGridSizer* DeltaTGrid;
     DeltaTGrid = new wxFlexGridSizer(1,2,0,0);
 
@@ -527,7 +527,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
 
     DeltaTGrid->Add(pTextPSDeltaT, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
 
-    // Measure to: Peak
+    // Slope to: Peak
     wxRadioButton* pPSPeakEnd = new wxRadioButton( nbPage, wxRADIO_PSPeakEnd, wxT("Peak"),
             wxDefaultPosition, wxDefaultSize);
 
