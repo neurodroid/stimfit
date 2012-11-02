@@ -2458,7 +2458,8 @@ void wxStfDoc::Measure( )
         try {
             //APBase=stf::base(APVar,sec().get(),0,endResting);
             APBase=stf::base(APVar,sec().get(),baseBeg,baseEnd); // use baseline cursors 
-            APPeak=stf::peak(sec().get(),APBase,peakBeg,peakEnd,pM,stf::up,APMaxT);
+            //APPeak=stf::peak(sec().get(),APBase,peakBeg,peakEnd,pM,stf::up,APMaxT);
+            APPeak=stf::peak(sec().get(),APBase,peakBeg,peakEnd,pM,direction,APMaxT);
         }
         catch (const std::out_of_range& e) {
             APBase=0.0;
