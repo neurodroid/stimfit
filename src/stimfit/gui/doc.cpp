@@ -515,6 +515,9 @@ void wxStfDoc::PostInit() {
     SetViewRD(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewRD"),1)==1);
     SetViewSlopeRise(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewSloperise"),1)==1);
     SetViewSlopeDecay(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewSlopedecay"),1)==1);
+#ifdef WITH_PSLOPE
+    SetViewPSlope(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPSlope"),1)==1);
+#endif
     SetViewLatency(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewLatency"),1)==1);
     SetViewCursors(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewCursors"),1)==1);
 
