@@ -67,6 +67,7 @@ bool subtract_base( );
 int leastsq_param_size( int fselect );
 #ifdef WITH_PYTHON
 PyObject* leastsq( int fselect, bool refresh = true );
+PyObject* get_fit( int trace = -1, int channel = -1 );
 #endif 
 
 bool check_doc( );

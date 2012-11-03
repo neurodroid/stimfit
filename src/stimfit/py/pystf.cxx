@@ -1480,6 +1480,48 @@ PyObject* leastsq( int fselect, bool refresh ) {
     return retDict;
 }
 
+#ifdef WITH_PYTHON
+PyObject* get_fit( int trace, int channel ) {
+    wrap_array();
+
+    if ( !check_doc() ) return NULL;
+
+    if ( trace == -1 ) {
+        trace = actDoc()->GetCurSec();
+    }
+    if ( channel == -1 ) {
+        channel = actDoc()->GetCurCh();
+    }
+
+    /* Does the specified section contain a fit at all? */
+    stf::SectionAttributes sec_attr;
+    try {
+        sec_attr = actDoc()->GetSectionAttributes(channel, trace);
+    } catch (const std::out_of_range& e) {
+        return NULL;
+    }
+    if (!sec_attr.isFitted) {
+        return Py_None;
+    }
+
+    unsigned int size = sec_attr.storeFitEnd - sec_attr.storeFitBeg;
+    Vector_double xy_fit(2*size);
+    for (unsigned int x = 0; x < size; ++x) {
+        xy_fit[x] = (x+sec_attr.storeFitBeg) * actDoc()->GetXScale();
+        xy_fit[x+size] = sec_attr.fitFunc->func(x*actDoc()->GetXScale(), sec_attr.bestFitP);
+    }
+    
+    npy_intp dims[2] = {2, size};
+    PyObject* np_array = PyArray_SimpleNew(2, dims, NPY_DOUBLE);
+    double* gDataP = (double*)array_data(np_array);
+
+    /* fill */
+    std::copy(xy_fit.begin(), xy_fit.end(), gDataP);
+
+    return np_array;
+}
+#endif
+
 bool show_table( PyObject* dict, const char* caption ) {
     if ( !check_doc() ) return false;
 
@@ -1723,7 +1765,7 @@ PyObject* template_matching(double* invec, int size, bool correlate, bool norm) 
         stfio::StdoutProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100, true);
         detect = stf::detectionCriterion((*actDoc())[channel][trace].get(), templ, progDlg);
     }
-    npy_intp dims[1] = {detect.size()};
+    npy_intp dims[1] = {(int)detect.size()};
     PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);
     double* gDataP = (double*)array_data(np_array);
 
@@ -1742,7 +1784,7 @@ PyObject* peak_detection(double* invec, int size, double threshold, int min_dist
 
     std::vector<int> peak_idcs = stf::peakIndices(data, threshold, min_distance);
 
-    npy_intp dims[1] = {peak_idcs.size()};
+    npy_intp dims[1] = {(int)peak_idcs.size()};
     PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_INT);
     if (sizeof(int) == 4) {
         int* gDataP = (int*)array_data(np_array);

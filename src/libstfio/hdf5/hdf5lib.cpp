@@ -170,7 +170,7 @@ bool stfio::exportHDF5File(const std::string& fName, const Recording& WData, Pro
         size_t ct_size =  sizeof( ct );
         size_t ct_offset[1] = { HOFFSET( rt, channels ) };
         /* Define an array of channel tables */
-        ct c_data = { WData[n_c].size() };
+        ct c_data = { (int)WData[n_c].size() };
 
         /* Define field information */
         const char *cfield_names[1]  =  { "n_sections" };

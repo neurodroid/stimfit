@@ -389,6 +389,24 @@ PyObject* leastsq( int fselect, bool refresh = true );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) get_fit;
+%feature("kwargs") get_fit;
+%feature("docstring", "Get the fitted waveform, if available.
+
+Arguments:
+Arguments:
+trace -- The zero-based index of the trace of interest. If < 0, the
+      	   name of the active trace will be returned.
+channel -- The zero-based index of the channel of interest. If < 0, the
+      	   active channel will be used.
+
+Returns:
+A 2D Numpy array with the x-values of the fit in the first and the y-
+values in the second dimension, or None if no fit is available.") get_fit;
+PyObject* get_fit( int trace = -1, int channel = -1 );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %feature("autodoc", 0) leastsq_param_size;
 %feature("docstring", "Retrieves the number of parameters for a
 function.

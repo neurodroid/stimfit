@@ -67,6 +67,9 @@ class MplPanel(wx.Panel):
                                                  yunits = stf.get_yunits(),
                                                  dt = stf.get_sampling_interval(),
                                                  color='0.2'))
+                fit = stf.get_fit(idx)
+                if fit is not None:
+                    self.axes.plot(fit[0], fit[1], color='0.4', alpha='0.5', lw=5.0)
         except:
             pass
         
@@ -86,4 +89,6 @@ class MplPanel(wx.Panel):
             stfio_plot.plot_traces(tsl, ax=self.axes,
                                    xmin=stf.plot_xmin(), xmax=stf.plot_xmax(),
                                    ymin=stf.plot_ymin(), ymax=stf.plot_ymax())
-
+        fit = stf.get_fit()
+        if fit is not None:
+            self.axes.plot(fit[0], fit[1], color='0.2', alpha='0.5', lw=5.0)
