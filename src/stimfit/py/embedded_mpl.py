@@ -69,7 +69,7 @@ class MplPanel(wx.Panel):
                                                  color='0.2'))
                 fit = stf.get_fit(idx)
                 if fit is not None:
-                    self.axes.plot(fit[0], fit[1], color='0.4', alpha='0.5', lw=5.0)
+                    self.axes.plot(fit[0], fit[1], color='0.4', alpha=0.5, lw=5.0)
         except:
             pass
         
@@ -91,4 +91,4 @@ class MplPanel(wx.Panel):
                                    ymin=stf.plot_ymin(), ymax=stf.plot_ymax())
         fit = stf.get_fit()
         if fit is not None:
-            self.axes.plot(fit[0], fit[1], color='0.2', alpha='0.5', lw=5.0)
+            self.axes.plot(fit[0], fit[1], color='0.2', alpha=0.5, lw=5.0)
