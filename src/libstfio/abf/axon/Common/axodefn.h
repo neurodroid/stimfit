@@ -143,7 +143,9 @@
    #ifndef _WINDOWS
       #define _WINDOWS
    #endif
-   #include "..\common\win32.h"
+   #ifndef __MINGW32__
+      #include "..\common\win32.h"
+   #endif    
 #endif
 #elif defined(_DOS)
    #define PLATFORM "DOS"

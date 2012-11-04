@@ -192,6 +192,11 @@
 **
 */
 
+#if !defined(WITH_BIOSIG)
+
+#if defined(__MINGW32__)
+#error Compilation with Mingw requires configuration --with-biosig
+#endif
 
 #if defined(qDebug) || defined(_STFDEBUG)
     #undef NDEBUG
@@ -598,7 +603,7 @@ short CCreat(TpCStr name, short mode, fDef* pFile)
             pmode = S_IREAD|S_IWRITE;
     #endif
 
-    #ifdef _IS_WINDOWS_
+    #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
         #ifdef WIN32
             file = CreateFileA(name, dwMode, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
             if (file == INVALID_HANDLE_VALUE)
@@ -611,7 +616,7 @@ short CCreat(TpCStr name, short mode, fDef* pFile)
                 sErr = 0 - _doserrno;
         #endif
     #else
-        #if defined(__LINUX__) || defined(__APPLE__)
+        #if defined(__LINUX__) || defined(__APPLE__) || defined(__MINGW32__)
             char*     omode;
 
             if (mode)                         /* Sort out the file access value */
@@ -658,7 +663,7 @@ short CUnlink(ConstStr255Param name,short vRefNum,CFSLONG dirID)
 }
 #endif
 
-#if defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)
+#if (defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)) && !defined(__MINGW32__)
 short CUnlink(TpCStr path)
 {
     int     a;
@@ -671,7 +676,7 @@ short CUnlink(TpCStr path)
 }
 #endif
 
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__LINUX__) || defined(__APPLE__) || defined(__MINGW32__)
 short CUnlink(TpCStr path)
 {
     return remove(path);                                /* C function in io.h */
@@ -704,7 +709,7 @@ short CClose(fDef handle)
             res = FlushVol (NULL, vRefNum);             /* flush the volume */
     #endif
 
-    #ifdef _IS_WINDOWS_
+    #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
         #ifdef WIN32
             if (!CloseHandle(handle))
                 res = BADHANDLE;
@@ -724,7 +729,7 @@ short CClose(fDef handle)
             res = fclose(handle);                          /* shut the file */
         #endif
     #endif
-    #if defined(__LINUX__) || defined(__APPLE__)
+    #if defined(__LINUX__) || defined(__APPLE__) || defined(__MINGW32__)
             res = fclose(handle);
     #endif
 
@@ -739,7 +744,7 @@ short CClose(fDef handle)
 **
 ****************************************************************************/
 
-#if defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)
+#if (defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)) && !defined(__MINGW32__)
 short CCloseAndUnlink(fDef handle, TpCStr path)
 {
     short err = 0;
@@ -751,7 +756,7 @@ short CCloseAndUnlink(fDef handle, TpCStr path)
 }
 #endif
 
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__LINUX__) || defined(__APPLE__) || defined(__MINGW32__)
 short CCloseAndUnlink(fDef handle, TpCStr path)
 {
     short err = 0;
@@ -826,7 +831,7 @@ CFSLONG CLSeek(fDef handle,                              /* DOS handle of file *
     return (CFSLONG)err;
 #endif
 
-#ifdef _IS_WINDOWS_                                         /* Windows seek */
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)         /* Windows seek */
     CFSLONG     res = 0;
     #ifdef WIN32
         DWORD       dwMode;
@@ -5562,4 +5567,6 @@ short FileUpdate(short    handle,                    /* program file handle */
         return 0;
 }                                                      /* end of FileUpdate */
 
+
+#endif // !defined(WITH_BIOSIG)
 /********************************   E N D  **********************************/

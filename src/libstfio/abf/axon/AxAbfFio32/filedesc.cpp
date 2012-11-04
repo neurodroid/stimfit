@@ -13,7 +13,7 @@
 #include "../Common/wincpp.hpp"
 #include "filedesc.hpp"
 
-#if defined (__LINUX__) || defined (__APPLE__) 
+#if defined (__LINUX__) || defined (__APPLE__) || defined(__MINGW32__)
 #include <wchar.h>
 #endif
 
@@ -72,7 +72,7 @@ BOOL CFileDescriptor::TestFlag(UINT uFlag)
 //
 BOOL CFileDescriptor::Open(LPCTSTR szFileName, BOOL bReadOnly)
 {
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    MEMBERASSERT();
    // LPSZASSERT(szFileName);
 #endif

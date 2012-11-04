@@ -12,14 +12,14 @@
 #include "abffiles.h"
 #include "abfheadr.h"
 
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__) 
 #define USE_AXOVDATE
 #endif
 
 
 #define  ABFU_VALID_SIG_CHARS     " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_#"
 
-#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__)
+#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__) || defined(__MINGW32__)
 	#define max(a,b)   (((a) > (b)) ? (a) : (b))
 	#define min(a,b)   (((a) < (b)) ? (a) : (b))
 #endif
@@ -29,9 +29,10 @@
 // PURPOSE:  Gets a temporary file name in the directory pointed to by the %TEMP% environment
 //           variable.
 //
+#if !defined(__MINGW32__) // TODO: check what this is used for and whether this is a critical component
 UINT WINAPI ABFU_GetTempFileName(LPCSTR szPrefix, UINT uUnique, LPSTR lpTempName)
 {
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    ARRAYASSERT(lpTempName, _MAX_PATH);
    char szTempPath[_MAX_PATH];
    if (!GetTempPathA(_MAX_PATH, szTempPath))
@@ -39,12 +40,13 @@ UINT WINAPI ABFU_GetTempFileName(LPCSTR szPrefix, UINT uUnique, LPSTR lpTempName
    return GetTempFileNameA(szTempPath, szPrefix, uUnique, lpTempName);
 #else   
    strcpy(lpTempName,"ABFTMPXXXXXX");
-   int res = mkstemp(lpTempName);
+   int res = mkstemp((char*)lpTempName);
    if (res == -1)
        return 0;
    return 1;
 #endif
 }
+#endif
 
 //   tmpnam (lpTempName);
 //	return 1;
@@ -57,7 +59,7 @@ UINT WINAPI ABFU_GetTempFileName(LPCSTR szPrefix, UINT uUnique, LPSTR lpTempName
 BOOL WINAPI ABFU_ReadFile(FILEHANDLE hFile, LPVOID lpBuf, DWORD dwBytesToRead)
 {
    DWORD dwBytesRead;
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__) 
    BOOL bOK = ReadFile(hFile, lpBuf, dwBytesToRead, &dwBytesRead, NULL);
 #else
    BOOL bOK = c_ReadFile(hFile, lpBuf, dwBytesToRead, &dwBytesRead, NULL);

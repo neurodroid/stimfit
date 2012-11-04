@@ -38,7 +38,7 @@
 #endif
 
 //! Defines dll export or import functions for Windows
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
     #ifdef STFDLL
         #define StfDll __declspec( dllexport )
     #else

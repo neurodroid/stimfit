@@ -17,7 +17,7 @@
 #include "../Common/FileIO.hpp"
 #include "./abfutil.h"
 
-#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__)
+#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__) || defined(__MINGW32__)
 	#define max(a,b)   (((a) > (b)) ? (a) : (b))
 	#define min(a,b)   (((a) < (b)) ? (a) : (b))
 #endif
@@ -28,7 +28,7 @@
 //
 void CSynch::_Initialize()
 {
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    m_szFileName[0] = '\0';                // Filename for array virtualization
 #endif
    m_hfSynchFile = NULL;  // Handle to temporary file.
@@ -96,7 +96,7 @@ BOOL CSynch::OpenFile()
 {
 	/*MEMBERASSERT();*/
    _Initialize();
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
    // Create the temporary file.
    m_hfSynchFile = tmpfile();
    ASSERT(m_hfSynchFile != FILE_NULL);
@@ -123,8 +123,8 @@ void CSynch::CloseFile()
      /*MEMBERASSERT();*/    
    if (m_hfSynchFile != NULL)
    {
-#ifndef _WINDOWS
-	   c_CloseHandle(m_hfSynchFile);
+#if !defined(_WINDOWS) || defined(__MINGW32__)
+ 	   c_CloseHandle(m_hfSynchFile);
 #else
 	   CloseHandle(m_hfSynchFile);
 #endif
@@ -168,7 +168,7 @@ void CSynch::SetMode(eMODE eMode)
       Read( m_SynchBuffer, m_uCacheStart, uCount );
 
       // Set the current position to the start of the bit we last read, and truncate the file here.
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
       SetFilePointer(m_hfSynchFile, m_uCacheStart * sizeof(Synch), NULL, FILE_BEGIN);
 #else
       c_SetFilePointer(m_hfSynchFile, m_uCacheStart * sizeof(Synch), NULL, FILE_BEGIN);
@@ -323,7 +323,7 @@ BOOL CSynch::_Flush()
 
       // Write out the current contents of the cache.
       UINT  uBytesToWrite = m_uCacheCount * sizeof(Synch);
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
       bRval = WriteFile(m_hfSynchFile, m_SynchBuffer, uBytesToWrite, &dwBytesWritten, NULL);
 #else
       bRval = c_WriteFile(m_hfSynchFile, m_SynchBuffer, uBytesToWrite, &dwBytesWritten, NULL);

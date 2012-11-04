@@ -985,8 +985,8 @@ public:
 };   // Size = 6144
     
 // This structure is persisted, so the size MUST NOT CHANGE
-#ifndef _WINDOWS
-    #define C_ASSERT(e) extern void __C_ASSERT__(int [(e)?1:-1])
+#if !defined(_WINDOWS) || defined(__MINGW32__)
+     #define C_ASSERT(e) extern void __C_ASSERT__(int [(e)?1:-1])
 #endif
 C_ASSERT(sizeof(ABFFileHeader) == 6144);
 

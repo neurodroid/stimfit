@@ -52,7 +52,7 @@ CFileIO::CFileIO(FILEHANDLE hFile)
    m_dwLastError   = 0;
 }
 
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
 CFileIO::CFileIO(HANDLE hFile)
 {
    //MEMBERASSERT();
@@ -102,7 +102,7 @@ BOOL CFileIO::CreateEx(LPCTSTR szFileName, DWORD dwDesiredAccess, DWORD dwShareM
    //MEMBERASSERT();
    //LPSZASSERT(szFileName);
    ASSERT(m_hFileHandle == FILE_NULL);
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    m_hFileHandle = ::CreateFile(szFileName, dwDesiredAccess, dwShareMode, NULL, 
                                 dwCreationDisposition, dwFlagsAndAttributes, NULL);
 #else
@@ -180,7 +180,7 @@ BOOL CFileIO::Read(LPVOID lpBuf, DWORD dwBytesToRead, DWORD *pdwBytesRead)
    ASSERT(m_hFileHandle != FILE_NULL);
 
    DWORD dwBytesRead = 0;
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    BOOL bRval = ::ReadFile(m_hFileHandle, lpBuf, dwBytesToRead, &dwBytesRead, NULL);
 #else
    BOOL bRval = ::c_ReadFile(m_hFileHandle, lpBuf, dwBytesToRead, &dwBytesRead, NULL);
@@ -204,7 +204,7 @@ BOOL CFileIO::Close()
    //MEMBERASSERT();
    if (m_hFileHandle != NULL)
    {
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
       if (!::CloseHandle(m_hFileHandle))
 #else
       if (!c_CloseHandle(m_hFileHandle))
@@ -259,7 +259,7 @@ BOOL CFileIO::SeekFailure(DWORD dwOffset)
 //
 BOOL CFileIO::Seek(LONGLONG lOffset, UINT uFlag, LONGLONG *plNewOffset)
 {
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
 	/*MEMBERASSERT();*/
     short    origin = 0;
 
@@ -304,8 +304,8 @@ LONGLONG CFileIO::GetFileSize()
 {
    /*MEMBERASSERT();*/
    ASSERT(m_hFileHandle != FILE_NULL);
-#ifndef _WINDOWS
-   return c_GetFileSize(m_hFileHandle,NULL);
+#if !defined(_WINDOWS) || defined(__MINGW32__)
+    return c_GetFileSize(m_hFileHandle,NULL);
 #else
    return ::GetFileSize(m_hFileHandle,NULL);
 #endif

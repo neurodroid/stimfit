@@ -13,13 +13,13 @@
 #ifndef __ATFUTIL_H__
 #define __ATFUTIL_H__
 
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
 int LoadString( HINSTANCE hInstance, int nErrorNum, char *sTxtBuf, UINT uMaxLen);
 #endif
 
 extern HINSTANCE g_hInstance;
 
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
 #include "./../Common/resource.h"
 #endif
 

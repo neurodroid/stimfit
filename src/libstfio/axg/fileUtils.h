@@ -12,7 +12,7 @@
 #if 0
     typedef const int filehandle;
 #else
-    #ifndef _WINDOWS
+    #if !defined(_WINDOWS) || defined(__MINGW32__)
         #include <cstdio>
         typedef FILE* filehandle;
     #else

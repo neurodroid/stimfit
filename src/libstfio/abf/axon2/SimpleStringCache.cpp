@@ -14,7 +14,7 @@
 #include "../axon/Common/ArrayPtr.hpp"
 #include "../axon/Common/FileIO.hpp"
 
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
 #pragma warning(disable : 4201)
 #include <mmsystem.h>
 #endif
@@ -30,7 +30,7 @@
 const DWORD c_dwSIGNATURE         = MAKEFOURCC('S','S','C','H');   // Simple String Cache Header
 const DWORD c_dwCURRENT_VERSION   = MAKEFOURCC(1,0,0,0);           // 1.0.0.0
 
-#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__)
+#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__) || defined(__MINGW32__) 
     #define max(a,b)   (((a) > (b)) ? (a) : (b))
     #define min(a,b)   (((a) < (b)) ? (a) : (b))
 #endif

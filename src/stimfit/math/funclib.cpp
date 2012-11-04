@@ -131,7 +131,7 @@ void stf::fexp_init(const Vector_double& data, double base, double peak, double 
     Vector_double peeled( stfio::vec_scal_minus(data, floor));
     if (increasing) peeled = stfio::vec_scal_mul(peeled, -1.0);
     std::transform(peeled.begin(), peeled.end(), peeled.begin(),
-#ifdef _WINDOWS                       
+#if defined(_WINDOWS) && !defined(__MINGW32__)                      
                    std::logl);
 #else
                    log);

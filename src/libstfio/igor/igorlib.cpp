@@ -30,7 +30,7 @@
 #include <stddef.h>					// For offsetof macro.
 #include <sstream>
 
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__) 
   #include "./abf/axon/Common/unix.h"
 #endif
 

@@ -28,7 +28,7 @@
 
 #include <assert.h>
 
-#ifdef __WIN32__
+#if defined(__WIN32__) && !defined(__MINGW32__)
 	#include <crtdbg.h>
 #endif
 
@@ -43,8 +43,11 @@ void AXODBG_Initialize(void);
 BOOL AXODBG_DebugBreak(void);
 
 // Prints a printf formatted string to the debug context.
+#ifdef __MINGW32__
+int AXODBG_printf(char *lpsz, ... );
+#else
 int cdecl AXODBG_printf(char *lpsz, ... );
-
+#endif
 
 // Set a prefix string used for all subsequent calls to AXODBG_printf()
 void  AXODBG_SetTracePrefix(char const * szNewTracePrefix);
@@ -118,7 +121,7 @@ void AXODBG_SystemErrorMsg(DWORD dwSystemError, LPCSTR psFile, int nLine);
 #endif
 #endif   // ASSERT
 
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    #define HWNDASSERT(hWnd)      ASSERT(IsWindow(hWnd))
    #define IsBadPtr(p)           IsBadWritePtr((void *)(p), sizeof(*(p)))
    #define IsBadArray(p,n)       IsBadWritePtr((void *)(p), sizeof(*(p))*(n))
@@ -149,7 +152,7 @@ void AXODBG_SystemErrorMsg(DWORD dwSystemError, LPCSTR psFile, int nLine);
 // USAGE:
 //    int   array[10];
 //    RARRAYASSERT(array, 10);
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    #define RARRAYASSERT(p,n)     ASSERT( ((p) != NULL) && !IsBadReadPtr( (const void *)(p), sizeof(*(p))*(n) ) )
    #define WARRAYASSERT(p,n)     ASSERT( ((p) != NULL) && !IsBadWritePtr( (void *)(p), sizeof(*(p))*(n) ) )
 #else

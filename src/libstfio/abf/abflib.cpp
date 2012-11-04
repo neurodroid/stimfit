@@ -21,7 +21,7 @@
 #include <boost/shared_array.hpp>
 #include <sstream>
 
-#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__)
+#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__) || defined(__MINGW32__)
 #include "./axon/Common/axodefn.h"
 #include "./axon/AxAbfFio32/abffiles.h"
 #include "./axon2/ProtocolReaderABF2.hpp"
@@ -78,7 +78,7 @@ void stfio::importABFFile(const std::string &fName, Recording &ReturnData, Progr
     ABF2_FileInfo fileInfo;
 
     // Open file:
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
     FILE* fh = fopen( fName.c_str(), "r" );
     if (!fh) {
         std::string errorMsg("Exception while calling importABFFile():\nCouldn't open file");
@@ -197,7 +197,7 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
             grandsize = pFH->lActualAcqLength / numberChannels;
             Vector_double test_size(0);
             ABFLONG maxsize = test_size.max_size()
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
                 // doesn't seem to return the correct size on Windows.
                 /8;
 #else
@@ -477,6 +477,6 @@ void stfio::importABF1File(const std::string &fName, Recording &ReturnData, Prog
     ReturnData.SetTime(timeToStr(FH.lFileStartTime));
     
 }
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
 #pragma optimize ("", on)
 #endif

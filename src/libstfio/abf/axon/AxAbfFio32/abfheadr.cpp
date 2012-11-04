@@ -969,7 +969,7 @@ BOOL WINAPI ABFH_ParamReader(FILEHANDLE hFile, ABFFileHeader *pFH, int *pnError)
       ERRORRETURN(pnError, ABFH_EUNKNOWNFILETYPE);
 
    // Get the file length for parameter validation, then seek back to the start of the file.
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    ABFLONG lFileLength = SetFilePointer(hFile, 0, NULL, FILE_END);
    SetFilePointer(hFile, 0L, NULL, FILE_BEGIN);
 #else
@@ -1142,14 +1142,14 @@ BOOL WINAPI ABFH_GetErrorText( int nError, char *sTxtBuf, UINT uMaxLen)
    }
 
    BOOL rval = TRUE;        // OK return value
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    if (!LoadStringA(g_hInstance, nError, sTxtBuf, uMaxLen))
 #else
    if (!c_LoadString(g_hInstance, nError, sTxtBuf, uMaxLen))
 #endif
    {
       char szTemplate[80];
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
       LoadStringA(g_hInstance, IDS_ENOMESSAGESTR, szTemplate, sizeof(szTemplate));
 #else
       c_LoadString(g_hInstance, IDS_ENOMESSAGESTR, szTemplate, sizeof(szTemplate));

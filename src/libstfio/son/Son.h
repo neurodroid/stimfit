@@ -51,6 +51,11 @@
     #define SONAPI(type) type WINAPI
 #endif
 
+#ifdef __GNUC__
+#define  SONAPI(type) type
+#undef LLIO                         /* LLIO is not used for Mac             */
+#endif                              /* End of the Mac stuff, now for DOS    */
+
 #define SONMAXCHANS 32              /* The old limit on channels, now the minimum number */
 #define SONABSMAXCHANS 451          /* Maximum possible channels from SON file structures */
 

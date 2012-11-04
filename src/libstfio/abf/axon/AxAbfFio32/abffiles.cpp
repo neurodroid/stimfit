@@ -44,7 +44,7 @@
 
 #define ABF_DEFAULTCHUNKSIZE  8192     // Default chunk size for reading gap-free amd var-len files.
 
-#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__)
+#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__) || defined(__MINGW32__)
 #define max(a,b)   (((a) > (b)) ? (a) : (b))
 #define min(a,b)   (((a) < (b)) ? (a) : (b))
 #endif
@@ -2299,7 +2299,7 @@ static BOOL ABF2_ConvertToResults(const ABF2FileHeader *pFH, float *pfDestinatio
 BOOL WINAPI ABF_ReadChannel(int nFile, const ABFFileHeader *pFH, int nChannel, DWORD dwEpisode, 
                             Vector_float& pfBuffer, UINT *puNumSamples, int *pnError)
 {
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
     // ABFH_ASSERT(pFH);
     // ARRAYASSERT(&pfBuffer[0], (UINT)(pFH->lNumSamplesPerEpisode/pFH->nADCNumChannels));
 #endif
@@ -3847,14 +3847,14 @@ BOOL WINAPI ABF_BuildErrorText(int nErrorNum, const char *szFileName, char *sTxt
 
     BOOL rval = TRUE;        // OK return value
     char szTemplate[128];
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
     if (!LoadStringA(g_hInstance, nErrorNum, szTemplate, sizeof(szTemplate)))
 #else
     if (!c_LoadString(g_hInstance, nErrorNum, szTemplate, sizeof(szTemplate)))
 #endif
     {
         char szErrorMsg[128];
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
         LoadStringA(g_hInstance, IDS_ENOMESSAGESTR, szTemplate, sizeof(szTemplate));
 #else
         c_LoadString(g_hInstance, IDS_ENOMESSAGESTR, szTemplate, sizeof(szTemplate));
@@ -3867,7 +3867,7 @@ BOOL WINAPI ABF_BuildErrorText(int nErrorNum, const char *szFileName, char *sTxt
         rval = FALSE;
     }
     else
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
         _snprintf(sTxtBuf, uMaxLen, szTemplate, szFileName);
 #else
     snprintf(sTxtBuf, uMaxLen, szTemplate, szFileName);
