@@ -653,7 +653,12 @@ bool wxStfDoc::SaveAs() {
             stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
             switch (SelectFileDialog.GetFilterIndex()) {
              case 1:
+#ifdef __MINGW32__
+                // FIXME: CFS export does not work with MINGW
+                 return false;
+#else                 
                  return stfio::exportCFSFile(stf::wx2std(filename), writeRec, progDlg);
+#endif
              case 2:
                  return stfio::exportATFFile(stf::wx2std(filename), writeRec);
              case 3:

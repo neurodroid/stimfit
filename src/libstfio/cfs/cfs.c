@@ -192,11 +192,7 @@
 **
 */
 
-#if !defined(WITH_BIOSIG)
-
-#if defined(__MINGW32__)
-#error Compilation with Mingw requires configuration --with-biosig
-#endif
+#if !defined(__MINGW32__)
 
 #if defined(qDebug) || defined(_STFDEBUG)
     #undef NDEBUG
@@ -5568,5 +5564,5 @@ short FileUpdate(short    handle,                    /* program file handle */
 }                                                      /* end of FileUpdate */
 
 
-#endif // !defined(WITH_BIOSIG)
+#endif // !defined(__MINGW32__)
 /********************************   E N D  **********************************/
