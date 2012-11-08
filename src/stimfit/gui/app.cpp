@@ -62,9 +62,11 @@
 #include "./dlgs/smalldlgs.h"
 #include "./../math/funclib.h"
 
-#if defined(__LINUX__) || defined(__WXMAC__)
+#if defined(__LINUX__) || defined(__WXMAC__) 
+#if !defined(__MINGW32__)
 #include "./../../libstfio/abf/axon/Common/axodefn.h"
 #include "./../../libstfio/abf/axon/AxAbfFio32/abffiles.h"
+#endif
 #endif
 #include "./../math/fit.h"
 
@@ -180,7 +182,9 @@ bool wxStfApp::OnInit(void)
                                      wxT("ABF Document"), wxT("ABF View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #if defined(__LINUX__) || defined(__WXMAC__)
+#if !defined(__MINGW32__)
     ABF_Initialize();
+#endif
 #endif
     m_atfTemplate=new wxDocTemplate( docManager,
                                      wxT("Axon text file"), wxT("*.atf"), wxT(""), wxT("atf"),
@@ -564,8 +568,10 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     file_menu->Append(ID_FILEINFO, wxT("File information..."));
 
     file_menu->AppendSeparator();
+#ifdef WITH_PYTHON
     file_menu->Append(ID_MPL, wxT("Create &figure..."));
-#ifdef _WINDOWS
+#endif
+#ifdef _WINDOWS 
     file_menu->Append(ID_PRINT_PRINT, wxT("&Print..."));
     file_menu->Append(ID_PRINT_PAGE_SETUP, wxT("Print &Setup..."));
 #endif
@@ -807,7 +813,9 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     menu_bar->Append(m_edit_menu, wxT("&Edit"));
     menu_bar->Append(m_view_menu, wxT("&View"));
     menu_bar->Append(analysis_menu, wxT("&Analysis"));
+#ifdef WITH_PYTHON
     menu_bar->Append(extensions_menu, wxT("E&xtensions"));
+#endif
     menu_bar->Append(help_menu, wxT("&Help"));
 
     return menu_bar;

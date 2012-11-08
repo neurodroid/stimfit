@@ -44,8 +44,15 @@
 #include "./../math/fit.h"
 #include "./../math/measure.h"
 #include "./../../libstfio/cfs/cfslib.h"
-#include "./../../libstfio/atf/atflib.h"
-#include "./../../libstfio/hdf5/hdf5lib.h"
+#ifndef _STFIO_H_
+  #error stfio.h must be included before checking WITH_AXON, WITH_HDF5
+#endif 
+#ifdef WITH_AXON
+  #include "./../../libstfio/atf/atflib.h"
+#endif
+#ifdef WITH_HDF5
+  #include "./../../libstfio/hdf5/hdf5lib.h"
+#endif
 #if 0 // TODO: backport ascii
 #include "./../../libstfio/ascii/asciilib.h"
 #endif
@@ -660,7 +667,11 @@ bool wxStfDoc::SaveAs() {
                  return stfio::exportCFSFile(stf::wx2std(filename), writeRec, progDlg);
 #endif
              case 2:
+#ifdef WITH_AXON
                  return stfio::exportATFFile(stf::wx2std(filename), writeRec);
+#else
+                 return false;
+#endif
              case 3:
                  return stfio::exportIGORFile(stf::wx2std(filename), writeRec, progDlg);
              case 4:
@@ -670,7 +681,11 @@ bool wxStfDoc::SaveAs() {
 #endif
              case 0:
              default:
+#ifdef WITH_HDF5
                  return stfio::exportHDF5File(stf::wx2std(filename), writeRec, progDlg);
+#else
+                 return false; 
+#endif
             }
         }
         catch (const std::runtime_error& e) {
@@ -727,9 +742,11 @@ bool wxStfDoc::DoSaveDocument(const wxString& filename) {
     if (writeRec.size() == 0) return false;
     try {
         stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
+#ifdef WITH_HDF5
         if (stfio::exportHDF5File(stf::wx2std(filename), writeRec, progDlg))
             return true;
         else
+#endif
             return false;
     }
     catch (const std::runtime_error& e) {

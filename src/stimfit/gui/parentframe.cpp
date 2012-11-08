@@ -63,7 +63,13 @@
 #include "./printout.h"
 #include "./dlgs/smalldlgs.h"
 #include "./copygrid.h"
-#include "./../../libstfio/atf/atflib.h"
+#ifndef _STFIO_H_
+  // because WITH_AXON, WITH_HDF5 are defined in stfio.h
+  #error stfio.h must be included before checking WITH_AXON, WITH_HDF5
+#endif 
+#ifdef WITH_AXON
+  #include "./../../libstfio/atf/atflib.h"
+#endif 
 #include "./../../libstfio/igor/igorlib.h"
 
 #include "./childframe.h"
@@ -760,11 +766,12 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
 
                 stf::wxProgressInfo progDlgOut("Writing file", "Opening file", 100);
                 switch ( eft ) {
+#ifdef WITH_AXON
                  case stfio::atf:
                      stfio::exportATFFile(stf::wx2std(destFilename), sourceFile);
                      dest_ext = wxT("Axon textfile [*.atf]");
                      break;
-
+#endif
                  case stfio::igor:
                      stfio::exportIGORFile(stf::wx2std(destFilename), sourceFile, progDlgOut);
                      dest_ext = wxT("Igor binary file [*.ibw]");

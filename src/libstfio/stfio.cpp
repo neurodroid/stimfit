@@ -29,13 +29,17 @@
 #include "stfio.h"
 
 // TODO #include "./ascii/asciilib.h"
-#include "./hdf5/hdf5lib.h"
-#include "./abf/abflib.h"
-#include "./atf/atflib.h"
+#ifdef WITH_HDF5
+  #include "./hdf5/hdf5lib.h"
+#endif
+#ifdef WITH_AXON
+  #include "./abf/abflib.h"
+  #include "./atf/atflib.h"
+#endif  
 #include "./axg/axglib.h"
 #include "./igor/igorlib.h"
 #ifdef WITH_BIOSIG
-#include "./biosig/biosiglib.h"
+  #include "./biosig/biosiglib.h"
 #else
 #include "./cfs/cfslib.h"
 #include "./heka/hekalib.h"
@@ -90,10 +94,13 @@ bool stfio::importFile(
 ) {
     try {
         switch (type) {
+#ifdef WITH_HDF5
         case stfio::hdf5: {
             stfio::importHDF5File(fName, ReturnData, progDlg);
             break;
         }
+#endif
+#ifdef WITH_AXON
         case stfio::abf: {
             stfio::importABFFile(fName, ReturnData, progDlg);
             break;
@@ -102,6 +109,7 @@ bool stfio::importFile(
             stfio::importATFFile(fName, ReturnData, progDlg);
             break;
         }
+#endif
         case stfio::axg: {
             stfio::importAXGFile(fName, ReturnData, progDlg);
             break;
@@ -147,7 +155,7 @@ bool stfio::importFile(
 #endif
 
         default:
-            throw std::runtime_error("Unknown file type");
+            throw std::runtime_error("Unknown or unsupported file type");
         }
     }
     catch (...) {
@@ -162,7 +170,11 @@ bool stfio::exportFile(const std::string& fName, stfio::filetype type, const Rec
     try {
         switch (type) {
         case stfio::hdf5: {
+#ifdef WITH_HDF5
             stfio::exportHDF5File(fName, Data, progDlg);
+#else
+            throw std::runtime_error("hdf5 is not supported in this version.");
+#endif
             break;
         }
         case stfio::igor: {
