@@ -292,6 +292,7 @@ else
     CPPFLAGS="${CPPFLAGS} -DH5_USE_16_API"
     LIBHDF5_LDFLAGS="-lhdf5 -lhdf5_hl"
 fi
+AC_SUBST(LIBHDF5_LDFLAGS)
 
 AC_ARG_ENABLE([debug],
 	AS_HELP_STRING([--enable-debug],[build stimfit in debug mode]),[
