@@ -55,24 +55,12 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         destructHDR(hdr);	// free allocated memory
         throw std::runtime_error(errorMsg.c_str());
     }
-    hdr->FLAG.ROW_BASED_CHANNELS = 0;
-    /* size_t blks = */ sread(NULL, 0, hdr->NRec, hdr);
-
-#ifdef _STFDEBUG
-    std::cout << "Number of channels: " << hdr->NS << std::endl;
-    std::cout << "Number of records per channel: " << hdr->NRec << std::endl;
-    std::cout << "Number of samples per record: " << hdr->SPR << std::endl;
-    std::cout << "Data size: " << hdr->data.size[0] << "x" << hdr->data.size[1] << std::endl;
-    std::cout << "Sampling rate: " << hdr->SampleRate << std::endl;
-    std::cout << "Number of events: " << hdr->EVENT.N << std::endl;
-    /*int res = */ hdr2ascii(hdr, stdout, 4);
-#endif
 
     // ensure the event table is in chronological order	
     sort_eventtable(hdr);
 
     /*
-	count sections and generate list of indeces indicating start and end of sweeps
+	count sections and generate list of indices indicating start and end of sweeps
      */	
     size_t LenIndexList = 256; 
     if (LenIndexList > hdr->EVENT.N) LenIndexList = hdr->EVENT.N + 2;
@@ -99,6 +87,51 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         size_t SPS = SegIndexList[nsections]-SegIndexList[nsections-1];	// length of segment, samples per segment
 	if (MaxSectionLength < SPS) MaxSectionLength = SPS;
     }
+
+    /*************************************************************************
+        rescale data to mV and pA
+     *************************************************************************/    
+
+    for (typeof(hdr->NS) ch=0; ch < hdr->NS; ++ch) {
+        CHANNEL_TYPE *hc = hdr->CHANNEL+ch;
+        double scale = PhysDimScale(hc->PhysDimCode); 
+        switch (hc->PhysDimCode & 0xffe0) {
+        case 4256:  // Volt
+                hc->PhysDimCode = 4272 // = PhysDimCode("mV");
+                scale *=1e3;   // V->mV
+                hc->PhysMax *= scale;         
+                hc->PhysMin *= scale;         
+                hc->Cal *= scale;         
+                hc->Off *= scale;         
+                break; 
+        case 4160:  // Ampere
+                hc->PhysDimCode = 4181; // = PhysDimCode("pA");
+                scale *=1e12;   // A->pA
+                hc->PhysMax *= scale;         
+                hc->PhysMin *= scale;         
+                hc->Cal *= scale;         
+                hc->Off *= scale;         
+                break; 
+        }     
+    }
+
+    /*************************************************************************
+        read bulk data 
+     *************************************************************************/    
+    hdr->FLAG.ROW_BASED_CHANNELS = 0;
+    /* size_t blks = */ sread(NULL, 0, hdr->NRec, hdr);
+
+#ifdef _STFDEBUG
+    std::cout << "Number of channels: " << hdr->NS << std::endl;
+    std::cout << "Number of records per channel: " << hdr->NRec << std::endl;
+    std::cout << "Number of samples per record: " << hdr->SPR << std::endl;
+    std::cout << "Data size: " << hdr->data.size[0] << "x" << hdr->data.size[1] << std::endl;
+    std::cout << "Sampling rate: " << hdr->SampleRate << std::endl;
+    std::cout << "Number of events: " << hdr->EVENT.N << std::endl;
+    /*int res = */ hdr2ascii(hdr, stdout, 4);
+#endif
+
+
 
     // allocate local memory for intermediate results;    
     const int strSize=100;     
@@ -177,3 +210,4 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 
     destructHDR(hdr);
 }
+
