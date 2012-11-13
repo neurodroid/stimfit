@@ -877,10 +877,9 @@ void wxStfParentFrame::OnMpl(wxCommandEvent& WXUNUSED(event))
 #ifdef WITH_PYTHON
     wxWindow* pPython = MakePythonWindow("plotWindowMpl", mgr_name.str(), "Matplotlib", true, false, true, 800, 600).cppWindow;
     
-    if ( pPython == 0 ) {
-        wxGetApp().ErrorMsg(wxT("Can't create a window for matplotlib\nPointer is zero"));
-    }
+    if ( pPython == 0 ) 
 #endif
+        wxGetApp().ErrorMsg(wxT("Can not Create figure (python/matplotlib is not available)"));
 }
 
 void wxStfParentFrame::OnPageSetup(wxCommandEvent& WXUNUSED(event))

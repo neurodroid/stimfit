@@ -568,9 +568,7 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     file_menu->Append(ID_FILEINFO, wxT("File information..."));
 
     file_menu->AppendSeparator();
-#ifdef WITH_PYTHON
     file_menu->Append(ID_MPL, wxT("Create &figure..."));
-#endif
 #ifdef _WINDOWS 
     file_menu->Append(ID_PRINT_PRINT, wxT("&Print..."));
     file_menu->Append(ID_PRINT_PAGE_SETUP, wxT("Print &Setup..."));
