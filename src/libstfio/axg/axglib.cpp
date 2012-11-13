@@ -20,9 +20,9 @@
 #include <iostream>
 #include <sstream>
 
-#include "./axg/fileUtils.h"
-#include "./axg/AxoGraph_ReadWrite.h"
-#include "./axg/longdef.h"
+#include "../axg/fileUtils.h"
+#include "../axg/AxoGraph_ReadWrite.h"
+#include "../axg/longdef.h"
 #include "./axglib.h"
 #include "../recording.h"
 

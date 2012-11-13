@@ -31,7 +31,7 @@
 #include <sstream>
 
 #if !defined(_WINDOWS) || defined(__MINGW32__) 
-  #include "./abf/axon/Common/unix.h"
+  #include "../abf/axon/Common/unix.h"
 #endif
 
 #include "./igorlib.h"
@@ -42,8 +42,8 @@
 extern "C" {
 #endif
 
-#include "./igor/IgorBin.h"
-#include "./igor/CrossPlatformFileIO.h"
+#include "../igor/IgorBin.h"
+#include "../igor/CrossPlatformFileIO.h"
 
     int WriteVersion5NumericWave(CP_FILE_REF fr, WaveHeader5* whp, const void* data, const char* waveNote, long noteSize);
 
