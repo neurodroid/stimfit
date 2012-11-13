@@ -97,7 +97,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         double scale = PhysDimScale(hc->PhysDimCode); 
         switch (hc->PhysDimCode & 0xffe0) {
         case 4256:  // Volt
-                hc->PhysDimCode = 4272 // = PhysDimCode("mV");
+                hc->PhysDimCode = 4274; // = PhysDimCode("mV");
                 scale *=1e3;   // V->mV
                 hc->PhysMax *= scale;         
                 hc->PhysMin *= scale;         
