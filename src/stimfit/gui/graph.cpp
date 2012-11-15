@@ -22,13 +22,11 @@
 #include <wx/wx.h>
 #endif
 
-#ifdef _WINDOWS
 #include <wx/image.h>
 #include <wx/clipbrd.h>
 #include <wx/metafile.h>
 #include <wx/printdlg.h>
 #include <wx/paper.h>
-#endif
 
 #ifdef _STFDEBUG
 #include <iostream>
@@ -1018,7 +1016,6 @@ void wxStfGraph::DrawIntegral(wxDC* pDC) {
     pDC->SetBrush(*wxTRANSPARENT_BRUSH);
 }
 
-#ifdef _WINDOWS
 void wxStfGraph::Snapshotwmf() {
     wxStfPreprintDlg myDlg(this,true);
     if (myDlg.ShowModal()!=wxID_OK) return;
@@ -1033,26 +1030,36 @@ void wxStfGraph::Snapshotwmf() {
 
     double scale=(double)printRect.width/(double)screenRect.width;
 
+#if _WINDOWS
+    // FIXME: for non-Windows platforms	
     wxMetafileDC wmfDC;
-    if (!wmfDC.IsOk()) {
+    if (!wmfDC.IsOk()) 
+#endif 
+    {
         wxGetApp().ErrorMsg(wxT("Error while creating clipboard data"));
         return;
     }
     set_noGimmicks(true);
     set_isPrinted(true);
     printScale=scale;
+#if _WINDOWS
+    // FIXME: for non-Windows platforms	
     OnDraw(wmfDC);
+#endif
     set_isPrinted(false);
     no_gimmicks=false;
+#if _WINDOWS
+    // FIXME: for non-Windows platforms	
     wxMetafile* mf = wmfDC.Close();
     if (mf && mf->IsOk()) {
         mf->SetClipboard();
         delete mf;
-    } else {
+    } else 
+#endif 
+    {
         wxGetApp().ErrorMsg(wxT("Error while copying to clipboard"));
     }
 }
-#endif
 
 void wxStfGraph::OnMouseEvent(wxMouseEvent& event) {
     // event.Skip();

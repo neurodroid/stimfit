@@ -47,11 +47,7 @@
 #error You must set wxUSE_MDI_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#ifdef _WINDOWS
-#include "../../stfconf.h"
-#else
-#include "stfconf.h"
-#endif
+#include "../../../stfconf.h"
 #include "./app.h"
 #include "./doc.h"
 #include "./view.h"
@@ -569,10 +565,9 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
 
     file_menu->AppendSeparator();
     file_menu->Append(ID_MPL, wxT("Create &figure..."));
-#ifdef _WINDOWS 
+
     file_menu->Append(ID_PRINT_PRINT, wxT("&Print..."));
     file_menu->Append(ID_PRINT_PAGE_SETUP, wxT("Print &Setup..."));
-#endif
     
 #ifdef WITH_PYTHON
     file_menu->AppendSeparator();

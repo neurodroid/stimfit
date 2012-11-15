@@ -54,9 +54,9 @@ enum {
     ID_TOOL_CH1,
     ID_TOOL_CH2,
     ID_TOOL_SNAPSHOT,
-#ifdef _WINDOWS
+
     ID_TOOL_SNAPSHOT_WMF,
-#endif
+
 #ifdef WITH_PYTHON
     ID_IMPORTPYTHON,
 #endif

@@ -50,11 +50,7 @@
 #error You must set wxUSE_MDI_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#ifdef _WINDOWS
-#include "../../stfconf.h"
-#else
-#include "stfconf.h"
-#endif
+#include "../../../stfconf.h"
 #include "./app.h"
 #include "./doc.h"
 #include "./view.h"
@@ -85,9 +81,9 @@
 #include "./../res/arrow_up.xpm"
 //#include "./../res/bin.xpm"
 #include "./../res/camera.xpm"
-#ifdef _WINDOWS
+
 #include "./../res/camera_ps.xpm"
-#endif
+
 #include "./../res/ch1.xpm"
 #include "./../res/ch2.xpm"
 #include "./../res/cursor.xpm"
@@ -130,9 +126,9 @@ EVT_TOOL(ID_TOOL_DOWN, wxStfParentFrame::OnToolDown)
 EVT_TOOL(ID_TOOL_FIT, wxStfParentFrame::OnToolFit)
 EVT_TOOL(ID_TOOL_LEFT, wxStfParentFrame::OnToolLeft)
 EVT_TOOL(ID_TOOL_RIGHT, wxStfParentFrame::OnToolRight)
-#ifdef _WINDOWS
+
 EVT_TOOL(ID_TOOL_SNAPSHOT_WMF, wxStfParentFrame::OnToolSnapshotwmf)
-#endif
+
 EVT_TOOL(ID_TOOL_CH1, wxStfParentFrame::OnToolCh1)
 EVT_TOOL(ID_TOOL_CH2, wxStfParentFrame::OnToolCh2)
 
@@ -147,9 +143,8 @@ EVT_TOOL(ID_TOOL_LATENCY,wxStfParentFrame::OnToolLatency)
 EVT_TOOL(ID_TOOL_ZOOM,wxStfParentFrame::OnToolZoom)
 EVT_TOOL(ID_TOOL_EVENT,wxStfParentFrame::OnToolEvent)
 
-//#ifdef _WINDOWS
 EVT_MENU(ID_CONVERT, wxStfParentFrame::OnConvert)
-//#endif
+
 EVT_MENU(ID_AVERAGE, wxStfParentFrame::OnAverage)
 EVT_MENU(ID_ALIGNEDAVERAGE, wxStfParentFrame::OnAlignedAverage)
 EVT_MENU( ID_VIEW_RESULTS, wxStfParentFrame::OnViewResults)
@@ -159,9 +154,9 @@ EVT_MENU( ID_CH2ZOOM, wxStfParentFrame::OnCh2zoom )
 EVT_MENU( ID_CH2BASEZOOM, wxStfParentFrame::OnCh2basezoom )
 EVT_MENU( ID_SCALE, wxStfParentFrame::OnScale )
 EVT_MENU( ID_HIRES, wxStfParentFrame::OnHires )
-#ifdef _WINDOWS
+
 EVT_MENU( ID_PRINT_PRINT, wxStfParentFrame::OnPrint)
-#endif
+
 EVT_MENU( ID_MPL, wxStfParentFrame::OnMpl)
 EVT_MENU( ID_PRINT_PAGE_SETUP, wxStfParentFrame::OnPageSetup)
 EVT_MENU( ID_SAVEPERSPECTIVE, wxStfParentFrame::OnSaveperspective )
@@ -487,13 +482,13 @@ wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
                             wxBitmap(camera),
                             wxT("Create snapshot with matplotlib"),
                             wxITEM_NORMAL );
-#ifdef _WINDOWS
+
     cursorToolBar->AddTool( ID_TOOL_SNAPSHOT_WMF,
                             wxT("WMF Snapshot"),
                             wxBitmap(camera_ps),
                             wxT("Copy vectorized image to clipboard"),
                             wxITEM_NORMAL );
-#endif
+
     cursorToolBar->AddSeparator();
     cursorToolBar->AddTool( ID_TOOL_MEASURE,
                             _T("Measure"),
@@ -643,13 +638,16 @@ bool CompVersion( const std::vector<int>& version ) {
 
 void wxStfParentFrame::CheckUpdate( wxProgressDialog* progDlg ) const {
     
-#ifdef __linux__
+#if defined (__linux__)
     wxString address(wxT("/latest_linux"));
+#elif defined (__MINGW32__)
+    wxString address(wxT("/latest_mingw"));
 #elif defined (_WINDOWS)
     wxString address(wxT("/latest_windows"));
 #elif defined (__APPLE__)
     wxString address(wxT("/latest_mac"));
 #else
+    wxString address(wxT("/unspecified"));
     return;
 #endif
     
@@ -835,7 +833,7 @@ wxStfGraph *wxStfParentFrame::CreateGraph(wxView *view, wxStfChildFrame *parent)
     return graph;
 }
 
-#ifdef _WINDOWS
+
 void wxStfParentFrame::OnPrint(wxCommandEvent& WXUNUSED(event))
 {
     if (wxGetApp().GetActiveDoc()==NULL) return;
@@ -866,7 +864,6 @@ void wxStfParentFrame::OnPrint(wxCommandEvent& WXUNUSED(event))
         (*m_printData) = printer.GetPrintDialogData().GetPrintData();
     }
 }
-#endif
 
 void wxStfParentFrame::OnMpl(wxCommandEvent& WXUNUSED(event))
 {
@@ -1032,14 +1029,12 @@ void wxStfParentFrame::SetSingleChannel(bool value) {
     m_scaleToolBar->Refresh();
 }
 
-#ifdef _WINDOWS
 void wxStfParentFrame::OnToolSnapshotwmf(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     if (pView!=NULL) {
         pView->GetGraph()->Snapshotwmf();
     }
 }
-#endif
 
 void wxStfParentFrame::OnToolMeasure(wxCommandEvent& WXUNUSED(event)) {
     SetMouseQual( stf::measure_cursor );

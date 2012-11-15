@@ -25,8 +25,9 @@
 
 DEFINES	+= -DWITH_BIOSIG
 DEFINES	+= -DHAVE_LAPACK
-DEFINES	+= -DWITH_HDF5
-DEFINES	+= -DWITH_AXON
+#DEFINES	+= -DWITH_HDF5
+#DEFINES	+= -DWITH_AXON
+DEFINES	+= -DWITH_PSLOPE
 #DEFINES	+= -DPYTHON -DWITH_PYTHON
 
 PY_VERSION := 2.6
@@ -35,7 +36,6 @@ WX_VERSION := 2.8
 all: stimfit 
 
 ### INCLUDE DIRECTORIES ###
-INCPATH += -I. 
 #-I./src/test/gtest/ -I./src/test/gtest/include/
 INCPATH += -I/usr/include/wx-$(WX_VERSION)/
 INCPATH += -I/usr/lib/wx/include/gtk2-unicode-release-$(WX_VERSION) -I/usr/include/wx-$(WX_VERSION) -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXGTK__ -pthread
@@ -46,7 +46,7 @@ LDFLAGS += -Xlinker -export-dynamic -Wl,-O1 -Wl,-Bsymbolic-functions
 
 ### LIBRARIES ###
 WX_LIBS = -lwx_gtk2u_core-$(WX_VERSION) -lwx_gtk2u_adv-$(WX_VERSION) -lwx_gtk2u_aui-$(WX_VERSION) -lwx_baseu_net-$(WX_VERSION) -lwx_baseu-$(WX_VERSION)
-LIBS +=   -llapack -lblas -lfftw3
+LIBS +=   -lfftw3
 LIBS +=   -lssl -lcrypto -lz -lpthread -ldl -lutil 
 LIBS +=    $(WX_LIBS) 
 
@@ -58,7 +58,11 @@ ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
 endif
 
 ifneq (,$(findstring WITH_HDF5, $(DEFINES)))
-  LIBS +=   -lhdf5 -lhdf5_hl 
+  LIBS += -lhdf5 -lhdf5_hl 
+endif
+
+ifneq (,$(findstring HAVE_LAPACK, $(DEFINES)))
+  LIBS += -llapack -lblas
 endif
 
 ifneq (,$(findstring WITH_PYTHON, $(DEFINES)))
