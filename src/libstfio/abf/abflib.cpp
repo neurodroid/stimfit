@@ -21,7 +21,7 @@
 #include <boost/shared_array.hpp>
 #include <sstream>
 
-#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__) || defined(__MINGW32__)
+#if defined(__linux__) || defined(__STF__) || defined(__APPLE__) || defined(__MINGW32__)
 #include "./axon/Common/axodefn.h"
 #include "./axon/AxAbfFio32/abffiles.h"
 #include "./axon2/ProtocolReaderABF2.hpp"

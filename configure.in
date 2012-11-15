@@ -107,7 +107,6 @@ case ${STFKERNEL} in
 	fi
         STF_PYTHON_LIBNAME="libpystf.so"
         STFIO_PYTHON_LIBNAME="libpystfio.so"
-        CPPFLAGS="${CPPFLAGS} -D__LINUX__"
     ;;
     *) 
         LIBSTF_LDFLAGS="-avoid-version"

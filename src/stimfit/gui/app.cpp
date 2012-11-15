@@ -62,7 +62,7 @@
 #include "./dlgs/smalldlgs.h"
 #include "./../math/funclib.h"
 
-#if defined(__LINUX__) || defined(__WXMAC__) 
+#if defined(__linux__) || defined(__WXMAC__) 
 #if !defined(__MINGW32__)
 #include "./../../libstfio/abf/axon/Common/axodefn.h"
 #include "./../../libstfio/abf/axon/AxAbfFio32/abffiles.h"
@@ -181,7 +181,7 @@ bool wxStfApp::OnInit(void)
                                      wxT("Axon binary file"), wxT("*.abf"), wxT(""), wxT("abf"),
                                      wxT("ABF Document"), wxT("ABF View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
-#if defined(__LINUX__) || defined(__WXMAC__)
+#if defined(__linux__) || defined(__WXMAC__)
 #if !defined(__MINGW32__)
     ABF_Initialize();
 #endif

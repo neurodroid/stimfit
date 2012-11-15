@@ -188,7 +188,7 @@
   #include <machine/endian.h>
 #elif defined(__MINGW32__)
   #define __LITTLE_ENDIAN__
-#elif defined(__LINUX__)
+#elif defined(__linux__)
   #include <endian.h>
 #else
   #define __LITTLE_ENDIAN__

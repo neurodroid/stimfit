@@ -257,7 +257,7 @@
         #define M_GetMemSize(x)   GetHandleSize(x)
     #endif  /* macintosh */
 
-#if defined(__LINUX__) || defined(__APPLE__) || defined(__MINGW32__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
         #define F_memcpy memcpy
         #define F_memmove memmove
         #define F_strlen strlen

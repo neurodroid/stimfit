@@ -1047,7 +1047,7 @@ wxStfConvertDlg::wxStfConvertDlg(wxWindow* parent, int id, wxString title, wxPoi
         wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ), m_srcDirPicker(NULL), m_destDirPicker(NULL),
 m_textCtrlSrcFilter(NULL), 
-#ifdef __LINUX__
+#ifdef __linux__
 srcDir(wxT("/home")), destDir(wxT("/home")),
 #else
 srcDir(wxT("C:\\")), destDir(wxT("C:\\")),

@@ -23,7 +23,6 @@
 #
 ########################################################################
 
-DEFINES	+= -D__LINUX__
 DEFINES	+= -DWITH_BIOSIG
 DEFINES	+= -DHAVE_LAPACK
 DEFINES	+= -DWITH_HDF5
@@ -46,7 +45,7 @@ INCPATH += $(DEFINES)
 LDFLAGS += -Xlinker -export-dynamic -Wl,-O1 -Wl,-Bsymbolic-functions
 
 ### LIBRARIES ###
-WX_LIBS = -lwx_baseu-$(WX_VERSION) -lwx_gtk2u_core-$(WX_VERSION) -lwx_gtk2u_adv-$(WX_VERSION) -lwx_gtk2u_aui-$(WX_VERSION) -lwx_baseu_net-$(WX_VERSION)
+WX_LIBS = -lwx_gtk2u_core-$(WX_VERSION) -lwx_gtk2u_adv-$(WX_VERSION) -lwx_gtk2u_aui-$(WX_VERSION) -lwx_baseu_net-$(WX_VERSION) -lwx_baseu-$(WX_VERSION)
 LIBS +=   -llapack -lblas -lfftw3
 LIBS +=   -lssl -lcrypto -lz -lpthread -ldl -lutil 
 LIBS +=    $(WX_LIBS) 

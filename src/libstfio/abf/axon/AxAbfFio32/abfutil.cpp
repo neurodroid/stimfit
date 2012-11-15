@@ -19,7 +19,7 @@
 
 #define  ABFU_VALID_SIG_CHARS     " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_#"
 
-#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__) || defined(__MINGW32__)
+#if defined(__linux__) || defined(__STF__) || defined(__APPLE__) || defined(__MINGW32__)
 	#define max(a,b)   (((a) > (b)) ? (a) : (b))
 	#define min(a,b)   (((a) < (b)) ? (a) : (b))
 #endif

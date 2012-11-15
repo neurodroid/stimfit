@@ -25,7 +25,7 @@ extern "C" {
          #include <machine/endian.h>
     #elif defined(__MINGW32__)     
          #define __LITTLE_ENDIAN__
-    #elif defined(__LINUX__)
+    #elif defined(__linux__)
          #include <endian.h>
     #endif
     #ifndef INVALID_HANDLE_VALUE
@@ -94,7 +94,7 @@ typedef const CHAR *LPCSTR, *PCSTR;
 //
 // Neutral ANSI/UNICODE types and macros
 //
-#if defined(UNICODE) || defined (__LINUX__) || defined (__APPLE__)                     // r_winnt
+#if defined(UNICODE) || defined (__linux__) || defined (__APPLE__)                     // r_winnt
 
 #ifndef _TCHAR_DEFINED
 typedef WCHAR TCHAR, *PTCHAR;
