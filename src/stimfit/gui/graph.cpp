@@ -1026,7 +1026,7 @@ void wxStfGraph::Snapshotwmf() {
 
     // Get size of page, in pixels:
     // assuming the screen is ~ 96 dpi, but we want ~ 720:
-    printRect=(0,0,wxSize(GetRect().GetSize()*4));
+    printRect = wxRect(wxPoint(0,0), wxSize(GetRect().GetSize()*4));
 
     double scale=(double)printRect.width/(double)screenRect.width;
 
