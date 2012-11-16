@@ -477,7 +477,7 @@ def plot_traces(traces, traces2=None, ax=None, Fig=None, pulses=None,
 
     if ax is None:
         return Fig
-    print ax
+
     return ax # NOTE copy_ax HKT mod
 
 def standard_axis(fig, subplot, sharex=None, sharey=None, hasx=False, hasy=True):
