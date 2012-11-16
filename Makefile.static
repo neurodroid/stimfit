@@ -35,12 +35,10 @@ endif
 
 DEFINES	+= -DWITH_BIOSIG
 DEFINES	+= -DHAVE_LAPACK
-#DEFINES	+= -DWITH_HDF5
+DEFINES	+= -DWITH_HDF5
 #DEFINES	+= -DWITH_AXON
 DEFINES	+= -DWITH_PSLOPE
 #DEFINES	+= -DPYTHON -DWITH_PYTHON
-
-DEFINES	+= -fPIC
 
 
 WXVERSION = $(basename $(shell $(WXCONF) --version))
@@ -189,7 +187,7 @@ OBJECTS  = $(addsuffix .o, $(basename $(SOURCES)))
 ##############################################################
 
 stimfit: $(OBJECTS)
-	 $(shell $(WXCONF) --ld) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o "$@"
+	 $(CXX) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o "$@"
 
 %.c: %.h
 
