@@ -11,17 +11,27 @@
 # usage:
 #   cd ~/src/stimfit/         # change into stimfit's root directory
 #   make -f Makefile.static   # build stimfit 
+#   make -B -f Makefile.static   # rebuild everything
+#
+#   WXCONF=/usr/bin/wx-config make -f Makefile.static   
+#                             # build built with non-default WX
+#
 #   ./stimfit                 # start stimfit 
 #
 # Limitations: 
 #    - no support for ASCII, SON format
 #    - PYTHON shell, matplotlib (print) are not supported
 #    - configure not supported
-#    - dependencies on include files not resolved
+#    - does not compile on Ubuntu 12.04 LTS
 #
 # Copyright (C) 2012 Alois Schloegl 
 #
 ########################################################################
+
+ifeq (,$(WXCONF))
+  # default wx-config      
+  WXCONF    = $(shell which wx-config)
+endif
 
 DEFINES	+= -DWITH_BIOSIG
 DEFINES	+= -DHAVE_LAPACK
@@ -30,48 +40,49 @@ DEFINES	+= -DHAVE_LAPACK
 DEFINES	+= -DWITH_PSLOPE
 #DEFINES	+= -DPYTHON -DWITH_PYTHON
 
+DEFINES	+= -fPIC
+
+
+WXVERSION = $(basename $(shell $(WXCONF) --version))
+WXDIR     = $(dir $(WXCONF))../include/wx-$(WXVERSION)/
+DEFINES	 += -I. -I$(WXDIR)
+
+
 PY_VERSION := 2.6
-WX_VERSION := 2.8 
 
 all: stimfit 
-
-### INCLUDE DIRECTORIES ###
-#-I./src/test/gtest/ -I./src/test/gtest/include/
-INCPATH += -I/usr/include/wx-$(WX_VERSION)/
-INCPATH += -I/usr/lib/wx/include/gtk2-unicode-release-$(WX_VERSION) -I/usr/include/wx-$(WX_VERSION) -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXGTK__ -pthread
-INCPATH += $(DEFINES)
 
 ### LIBRARY DIRECTORIES ###
 LDFLAGS += -Xlinker -export-dynamic -Wl,-O1 -Wl,-Bsymbolic-functions
 
 ### LIBRARIES ###
-WX_LIBS = -lwx_gtk2u_core-$(WX_VERSION) -lwx_gtk2u_adv-$(WX_VERSION) -lwx_gtk2u_aui-$(WX_VERSION) -lwx_baseu_net-$(WX_VERSION) -lwx_baseu-$(WX_VERSION)
-LIBS +=   -lfftw3
+LIBS +=   -llapack -lblas -lfftw3
 LIBS +=   -lssl -lcrypto -lz -lpthread -ldl -lutil 
-LIBS +=    $(WX_LIBS) 
 
 ### DEPENDENCIES ###
 ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
-  INCPATH += -I$(HOME)/src/biosig4c++/
+  DEFINES += -I$(HOME)/src/biosig4c++/
   LDFLAGS += -L$(HOME)/src/biosig4c++/
   LIBS +=   -lbiosig -lcholmod 
 endif
 
 ifneq (,$(findstring WITH_HDF5, $(DEFINES)))
-  LIBS += -lhdf5 -lhdf5_hl 
-endif
-
-ifneq (,$(findstring HAVE_LAPACK, $(DEFINES)))
-  LIBS += -llapack -lblas
+  LIBS +=   -lhdf5 -lhdf5_hl 
 endif
 
 ifneq (,$(findstring WITH_PYTHON, $(DEFINES)))
-  INCPATH += -I/usr/include/python$(PY_VERSION)
-  INCPATH += -I/usr/lib/pymodules/python$(PY_VERSION)/numpy/core/include
+  DEFINES += -I/usr/include/python$(PY_VERSION)
+  DEFINES += -I/usr/lib/pymodules/python$(PY_VERSION)/numpy/core/include
   LDFLAGS += -L/usr/lib/python$(PY_VERSION)/
   LIBS +=  -lpython2.6 
 endif
 
+
+CC        = $(shell $(WXCONF) --cc)
+CXX       = $(shell $(WXCONF) --cxx)
+CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags)
+CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags)
+LIBS     += $(shell $(WXCONF) --libs)
 
 ##############################################################
 ###  SOURCES
@@ -177,23 +188,20 @@ OBJECTS  = $(addsuffix .o, $(basename $(SOURCES)))
 ###  BUILT
 ##############################################################
 
-CFLAGS   += $(INCPATH) $(LDFLAGS)
-CXXFLAGS += $(INCPATH) $(LDFLAGS)
-
 stimfit: $(OBJECTS)
-	$(CXX) $(LDFLAGS) $(OBJECTS) $(LIBS) -o "$@"
+	 $(shell $(WXCONF) --ld) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o "$@"
 
 %.c: %.h
 
 %.cpp: %.h
 
-%.o: %.c
-	$(CC) -c $(CFLAGS) $(INCPATH) $(DEFINES) -c -o "$@" "$<"
+%.o: %.c 
+	$(CC) -c $(CFLAGS) -c -o "$@" "$<"
 
 %.o: %.cpp
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) $(DEFINES) -c -o "$@" "$<"
+	$(CXX) -c $(CXXFLAGS) -c -o "$@" "$<"
 
 %.o: %.cc
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) $(DEFINES) -c -o "$@" "$<"
+	$(CXX) -c $(CXXFLAGS) -c -o "$@" "$<"
 
 
