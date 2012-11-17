@@ -46,8 +46,6 @@ DEFINES  += -I$(WXDIR)
 
 PY_VERSION := 2.6
 
-all: stimfit 
-
 
 ##############################################################
 ###  SOURCES
@@ -156,8 +154,10 @@ ifneq (,$(findstring HAVE_LAPACK, $(DEFINES)))
 endif
 
 ifeq (,$(findstring mingw32, $(WXCONF)))
-  DEFINES += -DWITH_HDF5
-  DEFINES += -DWITH_AXON
+  # WITH_HDF5 and WITH_AXON are already defined in src/libstfio/stfio.h
+  # these are commented here to avoid  recurring definition 
+  #DEFINES += -DWITH_HDF5
+  #DEFINES += -DWITH_AXON
   LIBS    += -lhdf5 -lhdf5_hl 
   SOURCES += $(SOURCES_ABF)
   TARGET   = stimfit 
@@ -173,11 +173,14 @@ else
   ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
     LDFLAGS += -L$(HOME)/src/biosig4c++/win32/
   endif
+  ifeq (2.9,$(WXVERSION))
+    ## hack - its not clear why this is needed
+    LIBS +=-lwx_mswu_aui-2.9-i686-static-mingw32
+  endif
 endif
 
 ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
   DEFINES += -I$(HOME)/src/biosig4c++/
-  LDFLAGS += -L$(HOME)/src/biosig4c++/
   LIBS    += -lbiosig -lcholmod 
 endif
 
@@ -200,7 +203,7 @@ LIBS     += -lfftw3 -lssl -lcrypto -lz -lpthread
 ###  BUILT
 ##############################################################
 
-stimfit: $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	 $(CXX) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o "$@"
 
 %.c: %.h
