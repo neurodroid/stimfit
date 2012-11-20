@@ -146,8 +146,6 @@ TESTSRC = ./src/test/section.cpp \
 	./src/test/gtest/src/gtest-filepath.cc 
 
 
-OBJECTS  = $(addsuffix .$(OBJEXT), $(basename $(SOURCES)))
-
 ### DEPENDENCIES ###
 ifneq (,$(findstring HAVE_LAPACK, $(DEFINES)))
   LIBS   += -llapack -lblas
@@ -173,10 +171,6 @@ else
   ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
     LDFLAGS += -L$(HOME)/src/biosig4c++/win32/
   endif
-  ifeq (2.9,$(WXVERSION))
-    ## hack - its not clear why this is needed
-    LIBS +=-lwx_mswu_aui-2.9-i686-static-mingw32
-  endif
 endif
 
 ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
@@ -196,12 +190,14 @@ CC        = $(shell $(WXCONF) --cc)
 CXX       = $(shell $(WXCONF) --cxx)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags)
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags)
-LIBS     += $(shell $(WXCONF) --libs)
+LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
 LIBS     += -lfftw3 -lssl -lcrypto -lz -lpthread 
 
 ##############################################################
 ###  BUILT
 ##############################################################
+
+OBJECTS  = $(addsuffix .$(OBJEXT), $(basename $(SOURCES)))
 
 $(TARGET): $(OBJECTS)
 	 $(CXX) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o "$@"
@@ -219,4 +215,5 @@ $(TARGET): $(OBJECTS)
 %.$(OBJEXT): %.cc
 	$(CXX) -c $(CXXFLAGS) -c -o "$@" "$<"
 
-
+clean:
+	find src -name "*.$(OBJEXT)" -print0 |xargs -0 rm
