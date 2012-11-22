@@ -1304,10 +1304,10 @@ bool wxStfConvertDlg::ReadPath(const wxString& path) {
         srcFileNames.push_back(
                 wxString(
                         wxString(dir.GetName())+
-#ifdef __UNIX__
-                        wxString( wxT("/") )+
-#else				
+#ifdef _WINDOWS
                         wxString( wxT("\\") )+
+#else
+                        wxString( wxT("/") )+
 #endif
                         wxString(filename.c_str())
                 )
