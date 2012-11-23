@@ -23,7 +23,8 @@ supported_archs     x86_64
 depends_lib         port:boost \
                     port:fftw-3 \
                     port:hdf5-18 \
-                    port:wxWidgets-devel
+                    port:wxWidgets-devel \
+                    port:swig-python
 
 variant python26 description {Use Python version 2.6} {
     depends_lib-append \
