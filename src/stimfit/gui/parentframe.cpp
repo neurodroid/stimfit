@@ -738,6 +738,8 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
                                   myDlg.GetDestDir()+
 #ifdef __linux__
                                   wxT("/")+
+#elif __APPLE__
+                                  wxT("/")+
 #else
                                   wxT("\\")+
 #endif
