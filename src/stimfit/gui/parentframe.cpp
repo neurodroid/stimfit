@@ -736,13 +736,7 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
             wxFileName srcWxFilename(srcFilenames[nFile]);
             wxString destFilename(
                                   myDlg.GetDestDir()+
-#ifdef __linux__
-                                  wxT("/")+
-#elif __APPLE__
-                                  wxT("/")+
-#else
-                                  wxT("\\")+
-#endif
+                                  wxFileName::GetPathSeparators(wxPATH_NATIVE)+
                                   srcWxFilename.GetName()  // returns file name without path and extension
                                   );
             if ( eft == stfio::atf ) {

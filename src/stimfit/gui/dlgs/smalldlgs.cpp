@@ -7,8 +7,6 @@
 #include <wx/filepicker.h>
 #include <wx/dir.h>
 #include <wx/listctrl.h>
-#include <wx/filename.h>
-#include <wx/dirctrl.h>
 
 #include "./../../res/arrow_down.xpm"
 #include "./../../res/arrow_up.xpm"
