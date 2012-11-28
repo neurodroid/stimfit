@@ -663,9 +663,7 @@ class wxStfConvertDlg : public wxDialog
 private:
     wxDirPickerCtrl *m_srcDirPicker,*m_destDirPicker;
     wxTextCtrl *m_textCtrlSrcFilter;
-#ifdef WITH_PYTHON
     wxGenericDirCtrl *mySrcDirCtrl, *myDestDirCtrl; 
-#endif
     wxString srcDir,destDir;
     wxString srcFilter;
 
