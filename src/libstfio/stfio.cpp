@@ -80,7 +80,7 @@ stfio::findType(const std::string& ext) {
     else if (ext=="*.smr") return stfio::son;
 
 #ifdef WITH_BIOSIG
-    else if (ext=="*.bs") return stfio::biosig;
+    else if (ext=="*.*") return stfio::biosig;
 #endif
     else return stfio::none;
 }
@@ -126,13 +126,18 @@ bool stfio::importFile(
             stfio::importHEKAFile(fName, ReturnData, progDlg);
             break;
         }
+        default:
+            throw std::runtime_error("Unknown or unsupported file type");
 #else
         case stfio::cfs:
+        case stfio::son:
         case stfio::heka: 
-        case stfio::biosig: 
+        case stfio::biosig:
+        default: 
             stfio::importBSFile(fName, ReturnData, progDlg);
             break;
 #endif
+	}
 
 #if 0
         case stfio::son: {
@@ -153,10 +158,6 @@ bool stfio::importFile(
             break;
         }
 #endif
-
-        default:
-            throw std::runtime_error("Unknown or unsupported file type");
-        }
     }
     catch (...) {
         throw;

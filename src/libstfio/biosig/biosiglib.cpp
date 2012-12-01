@@ -49,12 +49,19 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     // =====================================================================================================================
     
     HDRTYPE* hdr =  sopen( fName.c_str(), "r", NULL );
-#if (BIOSIG_VERSION > 10400)
-    if (hdr==NULL || serror2(hdr)) {
-#else
-    if (hdr==NULL || serror()) {
-#endif
+    if (hdr==NULL) {
         errorMsg += "\nBiosig header is empty";
+        ReturnData.resize(0);
+        throw std::runtime_error(errorMsg.c_str());
+    }
+    errorMsg += "\n";
+#if (BIOSIG_VERSION > 10400)
+    if (serror2(hdr)) {
+        errorMsg += hdr->AS.B4C_ERRMSG;
+#else
+    if (serror()) {
+	errorMsg += B4C_ERRMSG;
+#endif
         ReturnData.resize(0);
         destructHDR(hdr);	// free allocated memory
         throw std::runtime_error(errorMsg.c_str());
