@@ -33,7 +33,10 @@
 #include <wx/protocol/http.h>
 #include <wx/sstream.h>
 #include <wx/progdlg.h>
+#if defined(WITH_BIOSIG)
 #include <biosig.h>
+#endif 
+
 
 #ifdef __BORLANDC__
 #pragma hdrstop
@@ -549,8 +552,8 @@ void wxStfParentFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
 Peter Jonas, Physiology Department, University of Freiburg\n\n\
 Fourier transform:\nFFTW, http://www.fftw.org\n\n\
 Levenberg-Marquardt non-linear regression:\n\
-Manolis Lourakis, http://www.ics.forth.gr/~lourakis/levmar/ \n\n"\
-CREDIT_BIOSIG\
+Manolis Lourakis, http://www.ics.forth.gr/~lourakis/levmar/ \n\n"
+"CREDIT_BIOSIG\n"
 "Documentation:\n\
 Jose Guzman\n\n\
 Event detection by template matching:\n\
