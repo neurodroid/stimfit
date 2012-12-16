@@ -304,7 +304,7 @@ quad(const Vector_double& data, std::size_t begin, std::size_t end);
  *  \param templ A template waveform that is used for event detection.
  *  \return The detection criterion for every value of \e data.
  */
-Vector_double
+StfDll Vector_double
 detectionCriterion(
         const Vector_double& data,
         const Vector_double& templ,
@@ -318,14 +318,14 @@ detectionCriterion(
  *  \param minDistance Minimal distance between subsequent peaks.
  *  \return A vector of indices where peaks have occurred in \e data.
  */
-std::vector<int> peakIndices(const Vector_double& data, double threshold, int minDistance);
+StfDll std::vector<int> peakIndices(const Vector_double& data, double threshold, int minDistance);
 
 //! Computes the linear correlation between two arrays.
 /*! \param va1 First array.
  *  \param va2 Second array.
  *  \return The linear correlation between the two arrays for each data point of \e va1.
  */
- Vector_double linCorr(const Vector_double& va1, const Vector_double& va2, stfio::ProgressInfo& progDlg); 
+StfDll Vector_double linCorr(const Vector_double& va1, const Vector_double& va2, stfio::ProgressInfo& progDlg); 
 
 //! Computes the sum of an arbitrary number of Gaussians.
 /*! \f[

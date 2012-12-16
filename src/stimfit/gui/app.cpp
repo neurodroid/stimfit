@@ -1388,7 +1388,7 @@ wxString wxStfApp::GetVersionString() const {
     return verString;
 }
 
-wxStfParentFrame *GetMainFrame(void)
+StfDll wxStfParentFrame *GetMainFrame(void)
 {
     return frame;
 }

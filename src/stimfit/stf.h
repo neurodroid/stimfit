@@ -370,7 +370,7 @@ struct PyMarker {
 
 struct storedFunc;
  
-struct SectionAttributes {
+struct StfDll SectionAttributes {
     SectionAttributes();
     std::vector<stf::Event> eventList;
     std::vector<stf::PyMarker> pyMarkers;

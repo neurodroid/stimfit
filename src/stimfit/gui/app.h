@@ -541,7 +541,7 @@ DECLARE_APP(wxStfApp)
 
 //! Retrieve the application's top-level frame
 /*! \return A pointer to the top-level frame. */
-extern wxStfParentFrame *GetMainFrame();
+extern StfDll wxStfParentFrame *GetMainFrame();
 
 //! true if in single-window mode
 extern bool singleWindowMode;
