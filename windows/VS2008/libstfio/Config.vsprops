@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="Config"
+	>
+	<UserMacro
+		Name="HDF5DIR"
+		Value="C:\Users\cs\hdf5"
+		PerformEnvironmentSet="true"
+	/>
+	<UserMacro
+		Name="BOOSTDIR"
+		Value="C:\Users\cs\boost"
+	/>
+	<UserMacro
+		Name="PYTHONDIR"
+		Value="C:\Python27"
+	/>
+</VisualStudioPropertySheet>

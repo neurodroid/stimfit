@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="Config"
+	>
+	<UserMacro
+		Name="SWIGBIN"
+		Value="C:\cygwin\bin\swig.exe"
+		PerformEnvironmentSet="true"
+	/>
+	<UserMacro
+		Name="NUMPYDIR"
+		Value="$(PYTHONDIR)\Lib\site-packages\numpy\core\include"
+	/>
+	<UserMacro
+		Name="PYTHONDIR"
+		Value="C:\Python27"
+	/>
+	<UserMacro
+		Name="BOOSTDIR"
+		Value="C:\Users\cs\boost"
+	/>
+</VisualStudioPropertySheet>
