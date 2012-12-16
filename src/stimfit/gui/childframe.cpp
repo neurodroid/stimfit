@@ -57,8 +57,8 @@
 #include "./dlgs/smalldlgs.h"
 #include "./copygrid.h"
 #ifdef _WINDOWS
-#include "./../core/filelib/atflib.h"
-#include "./../core/filelib/igorlib.h"
+#include "./../../libstfio/atf/atflib.h"
+#include "./../../libstfio/igor/igorlib.h"
 #endif
 
 #include "./childframe.h"

@@ -28,7 +28,7 @@
 class Section;
 
 //! A Channel contains several data \link #Section Sections \endlink representing observations of the same physical quantity.
-class StfDll Channel {
+class StfioDll Channel {
 public:
 
     //ctor/dtor---------------------------------------------------

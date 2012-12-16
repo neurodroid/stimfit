@@ -32,7 +32,7 @@
  */
 
 //! Represents a continuously sampled sweep of data points
-class StfDll Section {
+class StfioDll Section {
 public:
     // Construction/Destruction-----------------------------------------------
     //! Default constructor.

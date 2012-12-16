@@ -547,13 +547,13 @@ void wxStfParentFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
 	info.SetName(wxT("Stimfit"));
 	info.SetVersion(wxString(VERSION, wxConvLocal));
 	info.SetWebSite(wxT("http://www.stimfit.org"));
-	wxString about(wxT("Credits:\n\nOriginal idea (Stimfit for DOS):\n\
+	wxString about = wxString(wxT("Credits:\n\nOriginal idea (Stimfit for DOS):\n\
 Peter Jonas, Physiology Department, University of Freiburg\n\n\
 Fourier transform:\nFFTW, http://www.fftw.org\n\n\
 Levenberg-Marquardt non-linear regression:\n\
-Manolis Lourakis, http://www.ics.forth.gr/~lourakis/levmar/ \n\n"\
-CREDIT_BIOSIG\
-"Documentation:\n\
+Manolis Lourakis, http://www.ics.forth.gr/~lourakis/levmar/ \n\n")) +
+wxString(wxT(CREDIT_BIOSIG)) +
+wxString(wxT("Documentation:\n\
 Jose Guzman\n\n\
 Event detection by template matching:\n\
 Jonas, P., Major, G. & Sakmann B. (1993) J Physiol 472:615-63\n\

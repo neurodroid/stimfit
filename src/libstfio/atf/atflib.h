@@ -40,7 +40,7 @@ void importATFFile(const std::string& fName, Recording& ReturnData, ProgressInfo
 /*! \param fName Full path to the file to be written.
  *  \param WData The data to be exported.
  */
- bool exportATFFile(const std::string& fName, const Recording& WData);
+StfioDll bool exportATFFile(const std::string& fName, const Recording& WData);
 
 }
 
