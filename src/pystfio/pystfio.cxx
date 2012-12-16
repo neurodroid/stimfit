@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#ifdef _WINDOWS
+#if 0 //def _WINDOWS
     #ifdef _DEBUG
         #undef _DEBUG
         #define _UNDEBUG
@@ -31,7 +31,7 @@
 #include <iostream>
 #include <iomanip>
 
-#ifdef _WINDOWS
+#if 0//def _WINDOWS
     #ifdef _UNDEBUG
         #define _DEBUG
     #endif

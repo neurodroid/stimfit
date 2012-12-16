@@ -1,14 +1,8 @@
 #include "fileUtils.h"
 #if defined(_WINDOWS) && !defined(__MINGW32__)
-#include <sstream>
-
-#ifdef MODULE_ONLY
-#include <string>
-typedef std::wstring wxString;
-#else
-#include <wx/wx.h>
-#endif
-
+    #include <sstream>
+    #include <string>
+    typedef std::wstring wxString;
 #endif
 
 // Mac-specific file access functions

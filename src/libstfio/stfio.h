@@ -54,7 +54,7 @@
 
 //! Defines dll export or import functions for Windows
 #if defined(_WINDOWS) && !defined(__MINGW32__)
-    #ifdef STFDLL
+    #ifdef STFIODLL
         #define StfDll __declspec( dllexport )
     #else
         #define StfDll __declspec( dllimport )
@@ -104,7 +104,7 @@ namespace stfio {
 /*! Abstract class to be used as an interface for the file io read/write functions
  *  Can be a GUI Dialog or stdout messages
  */
- class ProgressInfo {
+ class StfDll ProgressInfo {
  public:
      //! Constructor
      /*! \param title Dialog title
@@ -127,7 +127,7 @@ namespace stfio {
 //! StdoutProgressInfo class
 /*! Example of a ProgressInfo that prints to stdout
  */
-class StdoutProgressInfo : public stfio::ProgressInfo {
+class StfDll StdoutProgressInfo : public stfio::ProgressInfo {
  public:
     StdoutProgressInfo(const std::string& title, const std::string& message, int maximum, bool verbose);
     bool Update(int value, const std::string& newmsg="", bool* skip=NULL);
@@ -183,7 +183,7 @@ findType(const std::string& ext);
  *  \param progress Set to true if a progress dialog should be shown.
  *  \return true if the file has successfully been read, false otherwise.
  */
-bool
+StfDll bool 
 importFile(
         const std::string& fName,
         stfio::filetype type,
@@ -199,7 +199,7 @@ importFile(
  *  \param progress Set to true if a progress dialog should be shown.
  *  \return true if the file has successfully been written, false otherwise.
  */
-bool
+StfDll bool
 exportFile(const std::string& fName, stfio::filetype type, const Recording& Data,
            ProgressInfo& progDlg);
 
