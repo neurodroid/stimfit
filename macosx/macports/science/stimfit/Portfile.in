@@ -14,8 +14,8 @@ long_description    A program for viewing and analyzing electrophysiological dat
 homepage            http://www.stimfit.org
 master_sites        https://stimfit.googlecode.com/files/
 
-checksums           rmd160  07b0ba4f6d23b88b7910c16119dc42ddf4f6a9d7 \
-                    sha256  65d073e4a608488d24aae9f79cc7fff4c214d53d0825ed55c506b859baff505f
+checksums           rmd160  RMD160 \
+                    sha256  SHA256
 
 universal_variant   no
 

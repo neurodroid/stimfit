@@ -117,7 +117,7 @@ else:
                 fi
 
                 PYTHON_LDFLAGS=`$PYTHON -c "import sys; from distutils.sysconfig import *; \
-                        sys.stdout.write('-L' + get_python_lib(0,1) + \
+                        sys.stdout.write('-L' + get_config_vars()[['LIBDIR']] + \
                         ' -lpython' + '\n');"`$py_version
         fi
         AC_MSG_RESULT([$PYTHON_LDFLAGS])
