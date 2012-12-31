@@ -32,6 +32,8 @@ dist/debian/build/*
 osc
 osc/*
 
+test.h5
+
 # doc build
 
 doc/stfbook.ps
