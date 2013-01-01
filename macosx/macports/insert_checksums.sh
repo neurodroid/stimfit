@@ -21,3 +21,13 @@ sed 's/RMD160/'${RMD160}'/g' ${MPDIR}/science/stimfit/Portfile.in > ${MPDIR}/sci
 sed -i 's/SHA256/'${SHA256}'/g' ${MPDIR}/science/stimfit/Portfile
 sed 's/RMD160/'${RMD160}'/g' ${MPDIR}/python/py-stfio/Portfile.in > ${MPDIR}/python/py-stfio/Portfile
 sed -i 's/SHA256/'${SHA256}'/g' ${MPDIR}/python/py-stfio/Portfile
+
+sudo portindex
+sudo port uninstall stimfit
+sudo port clean --all stimfit
+sudo port uninstall py-stfio
+sudo port clean --all py-stfio
+sudo port uninstall py27-stfio
+sudo port clean --all py27-stfio
+sudo port uninstall py33-stfio
+sudo port clean --all py33-stfio

@@ -12,7 +12,8 @@ maintainers         gmx.de:christsc
 description         Electrophysiology analysis suite
 long_description    A program for viewing and analyzing electrophysiological data
 homepage            http://www.stimfit.org
-master_sites        https://stimfit.googlecode.com/files/
+master_sites        https://stimfit.googlecode.com/files/ \
+                    file:///Users/cs/stimfit/build/release/
 
 checksums           rmd160  RMD160 \
                     sha256  SHA256
