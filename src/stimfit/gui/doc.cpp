@@ -802,8 +802,7 @@ void wxStfDoc::WriteToReg() {
 bool wxStfDoc::SetSection(std::size_t section){
     // Check range:
     if (!(get().size()>1)) {
-        if (section<0 ||
-                section>=get()[GetCurCh()].size())
+        if (section>=get()[GetCurCh()].size())
         {
             wxGetApp().ErrorMsg(wxT("subscript out of range\nwhile calling CStimfitDoc::SetSection()"));
             return false;
@@ -813,9 +812,8 @@ bool wxStfDoc::SetSection(std::size_t section){
             return false;
         }
     } else {
-        if (section<0 ||
-                section>=get()[GetCurCh()].size() ||
-                section>=get()[GetSecCh()].size())
+        if (section>=get()[GetCurCh()].size() ||
+            section>=get()[GetSecCh()].size())
         {
             wxGetApp().ErrorMsg(wxT("subscript out of range\nwhile calling CStimfitDoc::SetSection()"));
             return false;
@@ -2173,9 +2171,9 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.push_back( stf::Event( *cit, 0, templateWave.size() ) );
             // Find peak in this event:
             double baselineMean=0;
-            for ( std::size_t n_mean = (std::size_t)*cit-baseline;
-            n_mean < (std::size_t)(*cit);
-            ++n_mean )
+            for ( int n_mean = *cit-baseline;
+                  n_mean < *cit;
+                  ++n_mean )
             {
                 if (n_mean < 0) {
                     baselineMean += cur().at(0);
@@ -2296,9 +2294,9 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
         stf::Event newEvent(newStartPos, 0, GetCurrentSectionAttributes().eventList.at(0).GetEventSize());
         // Find peak in this event:
         double baselineMean=0;
-        for ( std::size_t n_mean = (std::size_t)newStartPos - baseline;
-        n_mean < (std::size_t)newStartPos;
-        ++n_mean )
+        for ( int n_mean = newStartPos - baseline;
+              n_mean < newStartPos;
+              ++n_mean )
         {
             if (n_mean < 0) {
                 baselineMean += cur().at(0);
@@ -2723,10 +2721,6 @@ void wxStfDoc::correctRangeR(int& value) {
 }
 
 void wxStfDoc::correctRangeR(std::size_t& value) {
-    if (value<0) {
-        value=0;
-        return;
-    }
     if (value>=cur().size()) {
         value=cur().size()-1;
         return;
@@ -2735,24 +2729,21 @@ void wxStfDoc::correctRangeR(std::size_t& value) {
 
 
 void wxStfDoc::SetCurCh(size_t value) {
-    if (value<0 || value>=get().size()) {
+    if (value>=get().size()) {
         throw std::out_of_range("channel out of range in wxStfDoc::SetCurCh()");
     }
     cc=value;
 }
 
 void wxStfDoc::SetSecCh(size_t value) {
-    if (value<0 ||
-            value>=get().size() ||
-            value==cc)
-    {
+    if (value>=get().size() || value==cc) {
         throw std::out_of_range("channel out of range in wxStfDoc::SetSecCh()");
     }
     sc=value;
 }
 
 void wxStfDoc::SetCurSec( size_t value ) {
-    if (value<0 || value>=get()[cc].size()) {
+    if (value >= get()[cc].size()) {
         throw std::out_of_range("channel out of range in wxStfDoc::SetCurSec()");
     }
     cs=value;
@@ -2764,7 +2755,7 @@ void wxStfDoc::SetMeasCursor(int value) {
 }
 
 double wxStfDoc::GetMeasValue() {
-    if (measCursor<0 || measCursor>=get()[cc].size()) {
+    if (measCursor>=get()[cc].size()) {
         correctRangeR(measCursor);
     }
     return cur().at(measCursor);
@@ -2836,9 +2827,7 @@ void wxStfDoc::SetPSlopeEnd(int value) {
 void wxStfDoc::SelectTrace(std::size_t sectionToSelect) {
     // Check range so that sectionToSelect can be used
     // without checking again:
-    if (sectionToSelect<0 ||
-        sectionToSelect>=get()[cc].size()) 
-    {
+    if (sectionToSelect>=get()[cc].size()) {
         std::out_of_range e("subscript out of range in wxStfDoc::SelectTrace\n");
         throw e;
     }
