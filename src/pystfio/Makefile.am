@@ -1,11 +1,12 @@
 if ISDARWIN
 PYTHON_TARGET_DIR=${PYTHON_DIST_PKG}
 PYTHON_DEST_DIR=${DESTDIR}/${PYTHON_TARGET_DIR}
+pkglibdir=${PYTHON_TARGET_DIR}/stfio
 else
 PYTHON_TARGET_DIR=${PYTHON_SITE_PKG}
+pkglibdir = ${PYTHON_TARGET_DIR}/stfio
 endif
 
-pkglibdir = ${PYTHON_TARGET_DIR}/stfio
 pkglib_LTLIBRARIES = libpystfio.la
 
 TESTS_ENVIRONMENT = cp ./test.h5 ./ && \
