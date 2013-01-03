@@ -52,12 +52,9 @@ typedef wxDocMDIParentFrame wxStfParentType;
 #endif
 
 
-#ifdef _WINDOWS
 typedef wxAuiToolBar wxStfToolBar;
-#else
-typedef wxAuiToolBar wxStfToolBar;
-#endif
 
+#ifdef WITH_PYTHON
 struct new_wxwindow {
     new_wxwindow(wxWindow* cppW=NULL, PyObject* pyW=NULL) :
         cppWindow(cppW), pyWindow(pyW)
@@ -65,12 +62,21 @@ struct new_wxwindow {
     wxWindow* cppWindow;
     PyObject* pyWindow;
 };
+#else
+struct new_wxwindow {
+    new_wxwindow(wxWindow* cppW=NULL, void* pyW=NULL) :
+        cppWindow(cppW), pyWindow(pyW)
+    {}
+    wxWindow* cppWindow;
+    void* pyWindow;
+};
+#endif
 
 //! Provides the top-level frame.
 /*! It is part of the of the document/view framework implemented in wxWidgets.
  *  This class can only be used for MDI parent frames.
  */
-class wxStfParentFrame : public wxStfParentType {
+class StfDll wxStfParentFrame : public wxStfParentType {
     DECLARE_CLASS(wxStfParentFrame)
 public:
     //! Constructor
@@ -198,9 +204,9 @@ private:
     void OnToolRight(wxCommandEvent& event);
     void OnToolCh1(wxCommandEvent& event);
     void OnToolCh2(wxCommandEvent& event);
-#ifdef _WINDOWS
+
     void OnToolSnapshotwmf(wxCommandEvent& event);
-#endif
+
     void OnToolMeasure(wxCommandEvent& event);
     void OnToolPeak(wxCommandEvent& event);
     void OnToolBase(wxCommandEvent& event);
@@ -225,9 +231,9 @@ private:
     void OnExportigor(wxCommandEvent& event);
     void OnExporthdf5(wxCommandEvent& event);
     void OnConvert(wxCommandEvent& event);
-#ifdef _WINDOWS
+
     void OnPrint(wxCommandEvent& event);
-#endif
+
     void OnScale(wxCommandEvent& event);
     void OnHires(wxCommandEvent& event);
     void OnMpl(wxCommandEvent& event);

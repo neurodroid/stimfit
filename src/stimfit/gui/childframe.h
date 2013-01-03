@@ -28,6 +28,7 @@
 #include <wx/aui/aui.h>
 #include <wx/grid.h>
 #include <wx/dnd.h>
+#include <wx/spinctrl.h>
 
 #include "./../stf.h"
 

@@ -550,7 +550,7 @@ int AG_ReadFloatColumn( filehandle refNum, const int fileFormat, const int colum
              // Convert in the column data
              for ( AXGLONG i = 0; i < columnData->points; i++ )
              {
-                 columnData->floatArray[i] = firstValue + i * increment;
+                 columnData->floatArray[i] = (float)(firstValue + i * increment);
              }
 
              columnData->type = FloatArrayType;
@@ -566,7 +566,7 @@ int AG_ReadFloatColumn( filehandle refNum, const int fileFormat, const int colum
              // Convert in the column data
              for ( AXGLONG i = 0; i < columnData->points; i++ )
              {
-                 columnData->floatArray[i] = columnData->scaledShortArray.shortArray[i] * scale + offset;
+                 columnData->floatArray[i] = (float)(columnData->scaledShortArray.shortArray[i] * scale + offset);
              }
 
              // free old short array

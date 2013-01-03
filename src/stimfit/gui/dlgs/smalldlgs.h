@@ -25,6 +25,8 @@
  *  @{
  */
 
+#include <wx/dirctrl.h>
+#include <wx/filename.h>
 #include <vector>
 #include "./../../stf.h"
 

@@ -17,7 +17,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "./SONlib.h"
+#include "./sonlib.h"
 
 std::string stimfit::SON::SONError(short errorCode) {
 	std::string errorMsg("");

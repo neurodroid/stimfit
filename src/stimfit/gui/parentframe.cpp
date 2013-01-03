@@ -34,6 +34,7 @@
 #include <wx/sstream.h>
 #include <wx/progdlg.h>
 
+
 #ifdef __BORLANDC__
 #pragma hdrstop
 #endif
@@ -50,11 +51,7 @@
 #error You must set wxUSE_MDI_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#ifdef _WINDOWS
-#include "../../stfconf.h"
-#else
-#include "stfconf.h"
-#endif
+#include "../../../stfconf.h"
 #include "./app.h"
 #include "./doc.h"
 #include "./view.h"
@@ -63,7 +60,13 @@
 #include "./printout.h"
 #include "./dlgs/smalldlgs.h"
 #include "./copygrid.h"
-#include "./../../libstfio/atf/atflib.h"
+#ifndef _STFIO_H_
+  // because WITH_AXON, WITH_HDF5 are defined in stfio.h
+  #error stfio.h must be included before checking WITH_AXON, WITH_HDF5
+#endif 
+#ifdef WITH_AXON
+  #include "./../../libstfio/atf/atflib.h"
+#endif 
 #include "./../../libstfio/igor/igorlib.h"
 
 #include "./childframe.h"
@@ -79,9 +82,9 @@
 #include "./../res/arrow_up.xpm"
 //#include "./../res/bin.xpm"
 #include "./../res/camera.xpm"
-#ifdef _WINDOWS
+
 #include "./../res/camera_ps.xpm"
-#endif
+
 #include "./../res/ch1.xpm"
 #include "./../res/ch2.xpm"
 #include "./../res/cursor.xpm"
@@ -124,9 +127,9 @@ EVT_TOOL(ID_TOOL_DOWN, wxStfParentFrame::OnToolDown)
 EVT_TOOL(ID_TOOL_FIT, wxStfParentFrame::OnToolFit)
 EVT_TOOL(ID_TOOL_LEFT, wxStfParentFrame::OnToolLeft)
 EVT_TOOL(ID_TOOL_RIGHT, wxStfParentFrame::OnToolRight)
-#ifdef _WINDOWS
+
 EVT_TOOL(ID_TOOL_SNAPSHOT_WMF, wxStfParentFrame::OnToolSnapshotwmf)
-#endif
+
 EVT_TOOL(ID_TOOL_CH1, wxStfParentFrame::OnToolCh1)
 EVT_TOOL(ID_TOOL_CH2, wxStfParentFrame::OnToolCh2)
 
@@ -141,9 +144,8 @@ EVT_TOOL(ID_TOOL_LATENCY,wxStfParentFrame::OnToolLatency)
 EVT_TOOL(ID_TOOL_ZOOM,wxStfParentFrame::OnToolZoom)
 EVT_TOOL(ID_TOOL_EVENT,wxStfParentFrame::OnToolEvent)
 
-//#ifdef _WINDOWS
 EVT_MENU(ID_CONVERT, wxStfParentFrame::OnConvert)
-//#endif
+
 EVT_MENU(ID_AVERAGE, wxStfParentFrame::OnAverage)
 EVT_MENU(ID_ALIGNEDAVERAGE, wxStfParentFrame::OnAlignedAverage)
 EVT_MENU( ID_VIEW_RESULTS, wxStfParentFrame::OnViewResults)
@@ -153,9 +155,9 @@ EVT_MENU( ID_CH2ZOOM, wxStfParentFrame::OnCh2zoom )
 EVT_MENU( ID_CH2BASEZOOM, wxStfParentFrame::OnCh2basezoom )
 EVT_MENU( ID_SCALE, wxStfParentFrame::OnScale )
 EVT_MENU( ID_HIRES, wxStfParentFrame::OnHires )
-#ifdef _WINDOWS
+
 EVT_MENU( ID_PRINT_PRINT, wxStfParentFrame::OnPrint)
-#endif
+
 EVT_MENU( ID_MPL, wxStfParentFrame::OnMpl)
 EVT_MENU( ID_PRINT_PAGE_SETUP, wxStfParentFrame::OnPageSetup)
 EVT_MENU( ID_SAVEPERSPECTIVE, wxStfParentFrame::OnSaveperspective )
@@ -307,6 +309,8 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     std::cout << "python startup script:\n" << std::string( python_code2.char_str() );
 #endif // _WINDOWS
 #endif // _STFDEBUG
+#else // WITH_PYTHON
+    m_mgr.Update();
 #endif // WITH_PYTHON
 
     wxStatusBar* pStatusBar = new wxStatusBar(this, wxID_ANY, wxST_SIZEGRIP);
@@ -479,13 +483,13 @@ wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
                             wxBitmap(camera),
                             wxT("Create snapshot with matplotlib"),
                             wxITEM_NORMAL );
-#ifdef _WINDOWS
+
     cursorToolBar->AddTool( ID_TOOL_SNAPSHOT_WMF,
                             wxT("WMF Snapshot"),
                             wxBitmap(camera_ps),
                             wxT("Copy vectorized image to clipboard"),
                             wxITEM_NORMAL );
-#endif
+
     cursorToolBar->AddSeparator();
     cursorToolBar->AddTool( ID_TOOL_MEASURE,
                             _T("Measure"),
@@ -532,18 +536,24 @@ wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
     return cursorToolBar;
 }
 
+#if defined(WITH_BIOSIG)
+#define CREDIT_BIOSIG "Biosig import using libbiosig http://biosig.sf.net\n\n"
+#else 
+#define CREDIT_BIOSIG ""
+#endif
 void wxStfParentFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
 {
 	wxAboutDialogInfo info;
 	info.SetName(wxT("Stimfit"));
 	info.SetVersion(wxString(VERSION, wxConvLocal));
 	info.SetWebSite(wxT("http://www.stimfit.org"));
-	wxString about(wxT("Credits:\n\nOriginal idea (Stimfit for DOS):\n\
+	wxString about = wxString(wxT("Credits:\n\nOriginal idea (Stimfit for DOS):\n\
 Peter Jonas, Physiology Department, University of Freiburg\n\n\
 Fourier transform:\nFFTW, http://www.fftw.org\n\n\
 Levenberg-Marquardt non-linear regression:\n\
-Manolis Lourakis, http://www.ics.forth.gr/~lourakis/levmar/ \n\n\
-Documentation:\n\
+Manolis Lourakis, http://www.ics.forth.gr/~lourakis/levmar/ \n\n")) +
+wxString(wxT(CREDIT_BIOSIG)) +
+wxString(wxT("Documentation:\n\
 Jose Guzman\n\n\
 Event detection by template matching:\n\
 Jonas, P., Major, G. & Sakmann B. (1993) J Physiol 472:615-63\n\
@@ -635,13 +645,16 @@ bool CompVersion( const std::vector<int>& version ) {
 
 void wxStfParentFrame::CheckUpdate( wxProgressDialog* progDlg ) const {
     
-#ifdef __LINUX__
+#if defined (__linux__)
     wxString address(wxT("/latest_linux"));
+#elif defined (__MINGW32__)
+    wxString address(wxT("/latest_mingw"));
 #elif defined (_WINDOWS)
     wxString address(wxT("/latest_windows"));
 #elif defined (__APPLE__)
     wxString address(wxT("/latest_mac"));
 #else
+    wxString address(wxT("/unspecified"));
     return;
 #endif
     
@@ -730,11 +743,7 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
             wxFileName srcWxFilename(srcFilenames[nFile]);
             wxString destFilename(
                                   myDlg.GetDestDir()+
-#ifdef __LINUX__
-                                  wxT("/")+
-#else
-                                  wxT("\\")+
-#endif
+                                  wxFileName::GetPathSeparators(wxPATH_NATIVE)+
                                   srcWxFilename.GetName()  // returns file name without path and extension
                                   );
             if ( eft == stfio::atf ) {
@@ -758,11 +767,12 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
 
                 stf::wxProgressInfo progDlgOut("Writing file", "Opening file", 100);
                 switch ( eft ) {
+#ifdef WITH_AXON
                  case stfio::atf:
                      stfio::exportATFFile(stf::wx2std(destFilename), sourceFile);
                      dest_ext = wxT("Axon textfile [*.atf]");
                      break;
-
+#endif
                  case stfio::igor:
                      stfio::exportIGORFile(stf::wx2std(destFilename), sourceFile, progDlgOut);
                      dest_ext = wxT("Igor binary file [*.ibw]");
@@ -826,7 +836,7 @@ wxStfGraph *wxStfParentFrame::CreateGraph(wxView *view, wxStfChildFrame *parent)
     return graph;
 }
 
-#ifdef _WINDOWS
+
 void wxStfParentFrame::OnPrint(wxCommandEvent& WXUNUSED(event))
 {
     if (wxGetApp().GetActiveDoc()==NULL) return;
@@ -857,7 +867,6 @@ void wxStfParentFrame::OnPrint(wxCommandEvent& WXUNUSED(event))
         (*m_printData) = printer.GetPrintDialogData().GetPrintData();
     }
 }
-#endif
 
 void wxStfParentFrame::OnMpl(wxCommandEvent& WXUNUSED(event))
 {
@@ -865,11 +874,12 @@ void wxStfParentFrame::OnMpl(wxCommandEvent& WXUNUSED(event))
 
     std::ostringstream mgr_name;
     mgr_name << "mpl" << GetMplFigNo();
+#ifdef WITH_PYTHON
     wxWindow* pPython = MakePythonWindow("plotWindowMpl", mgr_name.str(), "Matplotlib", true, false, true, 800, 600).cppWindow;
     
-    if ( pPython == 0 ) {
-        wxGetApp().ErrorMsg(wxT("Can't create a window for matplotlib\nPointer is zero"));
-    }
+    if ( pPython == 0 ) 
+#endif
+        wxGetApp().ErrorMsg(wxT("Can not Create figure (python/matplotlib is not available)"));
 }
 
 void wxStfParentFrame::OnPageSetup(wxCommandEvent& WXUNUSED(event))
@@ -1022,14 +1032,12 @@ void wxStfParentFrame::SetSingleChannel(bool value) {
     m_scaleToolBar->Refresh();
 }
 
-#ifdef _WINDOWS
 void wxStfParentFrame::OnToolSnapshotwmf(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     if (pView!=NULL) {
         pView->GetGraph()->Snapshotwmf();
     }
 }
-#endif
 
 void wxStfParentFrame::OnToolMeasure(wxCommandEvent& WXUNUSED(event)) {
     SetMouseQual( stf::measure_cursor );

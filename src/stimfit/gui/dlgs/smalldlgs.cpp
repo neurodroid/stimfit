@@ -1047,7 +1047,7 @@ wxStfConvertDlg::wxStfConvertDlg(wxWindow* parent, int id, wxString title, wxPoi
         wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ), m_srcDirPicker(NULL), m_destDirPicker(NULL),
 m_textCtrlSrcFilter(NULL), 
-#ifdef __LINUX__
+#ifdef __linux__
 srcDir(wxT("/home")), destDir(wxT("/home")),
 #else
 srcDir(wxT("C:\\")), destDir(wxT("C:\\")),
@@ -1142,7 +1142,6 @@ srcFileNames(0)
 
     // DESTINATION 2.- A wxGenericDirCtrl to select the destiny directory:
 
-    //wxGenericDirCtrl *myDestDirCtrl; 
     myDestDirCtrl = new wxGenericDirCtrl(this, wxGENERICDIRCTRL_DEST, destDir,
         wxDefaultPosition, wxSize(300,300), wxDIRCTRL_DIR_ONLY);
     // add to myLeftSizer
@@ -1298,11 +1297,7 @@ bool wxStfConvertDlg::ReadPath(const wxString& path) {
         srcFileNames.push_back(
                 wxString(
                         wxString(dir.GetName())+
-#ifdef __UNIX__
-                        wxString( wxT("/") )+
-#else				
-                        wxString( wxT("\\") )+
-#endif
+                        wxFileName::GetPathSeparators(wxPATH_NATIVE)+  	
                         wxString(filename.c_str())
                 )
         );

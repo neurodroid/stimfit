@@ -22,7 +22,7 @@ int WINAPI AXODBG_printf( char *lpsz, ... ) {
 BOOL WINAPI c_CloseHandle( FILEHANDLE handle )
 {
     // returns the opposite of the Windows-function
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
     return (!fclose(handle));
 #else
     return CloseHandle( handle );
@@ -45,7 +45,7 @@ BOOL WINAPI c_CloseHandle( FILEHANDLE handle )
  */
 DWORD WINAPI c_GetFileSize( FILEHANDLE hFile, LPDWORD filesizehigh )
 {
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
     long lSize;
     fpos_t cur;
     if (fgetpos(hFile,&cur)!=0)
@@ -67,7 +67,7 @@ DWORD WINAPI c_GetFileSize( FILEHANDLE hFile, LPDWORD filesizehigh )
 BOOL WINAPI c_ReadFile( FILEHANDLE hFile, LPVOID buffer, DWORD bytesToRead,
                         LPDWORD bytesRead, LPOVERLAPPED overlapped )
 {
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
     *bytesRead=(DWORD)fread(buffer,1,bytesToRead,hFile);
     if ( *bytesRead != bytesToRead)
         return FALSE;
@@ -84,7 +84,7 @@ BOOL WINAPI c_ReadFile( FILEHANDLE hFile, LPVOID buffer, DWORD bytesToRead,
 
 DWORD WINAPI c_SetFilePointer( FILEHANDLE hFile, LONG distance, LONG *highword, DWORD method )
 {
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
     /*long     res;*/
     short    origin = 0;
 
@@ -103,7 +103,7 @@ DWORD WINAPI c_SetFilePointer( FILEHANDLE hFile, LONG distance, LONG *highword, 
     return SetFilePointer( hFile, distance, highword, method );
 #endif
 }
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
 /*********************************************************************
  *		_splitpath (NTDLL.@)
  *
@@ -236,7 +236,7 @@ void cdecl _makepath(char * path, const char * drive,
 BOOL WINAPI c_WriteFile( FILEHANDLE hFile, LPCVOID buffer, DWORD bytesToWrite,
                          LPDWORD bytesWritten, LPOVERLAPPED overlapped )
 {
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
     *bytesWritten=(DWORD)fwrite(buffer, 1, bytesToWrite, hFile);
     return (*bytesWritten==bytesToWrite);
 #else
@@ -249,7 +249,7 @@ BOOL WINAPI c_WriteFile( FILEHANDLE hFile, LPCVOID buffer, DWORD bytesToWrite,
  *
  * See CreateFileW.
  */
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
 FILEHANDLE WINAPI c_CreateFile( LPCSTR filename, DWORD access, DWORD sharing,
                                 LPSECURITY_ATTRIBUTES sa, DWORD creation,
                                 DWORD attributes, HANDLE templ)

@@ -41,7 +41,7 @@
     #define  CFSAPI(type) type _pascal
 #endif
 
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     #include <io.h>                         /* MSC I/O function definitions */
     #include <fcntl.h>
     #define  qDebug 0               /* only used to debug Mac stuff         */
@@ -59,9 +59,9 @@
     #endif
 #endif
 
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
     #define  qDebug 0               /* only used to debug Mac stuff         */
-    #ifdef __LINUX__
+    #ifdef __linux__
         #include <malloc.h>
     #endif
     #include <stdio.h>                         /* MSC I/O function definitions */
@@ -137,7 +137,7 @@ typedef struct
    short     vSize;  /* for type lstr gives no. of chars +1 for length byte */
 } TVarDesc;
 
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
 typedef char            * TpStr;
 typedef const char      * TpCStr;
 typedef short           * TpShort;
@@ -173,7 +173,7 @@ typedef WORD           FAR * TpUShort;
 #if 0 //def macintosh
     typedef int     fDef;        /* file handle means something else on Mac */
 #else
-  #ifdef WIN32
+  #if defined(WIN32) && !defined(__MINGW32__)
     typedef HANDLE  fDef;                              /* WIN32 file handle */
   #else
     #ifdef LLIO

@@ -17,12 +17,12 @@
 #include "atfintl.h"
 #include "axatffio32.h"
 
-#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__STF__) || defined(__APPLE__)
 	#define max(a,b)   (((a) > (b)) ? (a) : (b))
 	#define min(a,b)   (((a) < (b)) ? (a) : (b))
 #endif
 
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
 //===============================================================================================
 // FUNCTION: _GetRootDir
 // PURPOSE:  Extracts the root directory of a full or partial path.
@@ -63,7 +63,7 @@ static BOOL AllocReadWriteBuffer(ATF_FILEINFO *pATF, DWORD dwDesiredAccess)
    if (dwDesiredAccess == 0)
       return TRUE;
 
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    char szRootDir[_MAX_DRIVE+2];
    if (_GetRootDir(pATF->pszFileName, szRootDir, sizeof(szRootDir)))
    {
@@ -105,7 +105,7 @@ static BOOL FreeReadWriteBuffer(ATF_FILEINFO *pATF)
 
    DWORD dwBytesWritten = 0;
    if (!pATF->bRead && pATF->lPos != 0L)
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
        WriteFile(pATF->hFile, pATF->pszBuf, pATF->lPos, &dwBytesWritten, NULL);
 #else
        c_WriteFile((FILE*)pATF->hFile, pATF->pszBuf, pATF->lPos, &dwBytesWritten, NULL);
@@ -134,7 +134,7 @@ HANDLE CreateFileBuf(ATF_FILEINFO *pATF, DWORD dwDesiredAccess, DWORD dwShareMod
                      LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, 
                      DWORD dwFlagsAndAttributes, HANDLE hTemplateFile )
 {
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
     pATF->hFile = CreateFileA(pATF->pszFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes,
                             dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
 #else
@@ -146,7 +146,7 @@ HANDLE CreateFileBuf(ATF_FILEINFO *pATF, DWORD dwDesiredAccess, DWORD dwShareMod
       // allocate buffer, initialize flags:
       if (!AllocReadWriteBuffer(pATF, dwDesiredAccess))
       {
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
          CloseHandle(pATF->hFile);         
 #else
          c_CloseHandle((FILE*)pATF->hFile);         
@@ -168,7 +168,7 @@ HANDLE CreateFileBuf(ATF_FILEINFO *pATF, DWORD dwDesiredAccess, DWORD dwShareMod
 BOOL CloseHandleBuf(ATF_FILEINFO *pATF)
 {
    BOOL bReturn = FreeReadWriteBuffer(pATF);
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    return CloseHandle(pATF->hFile) && bReturn;
 #else
    return c_CloseHandle((FILE*)pATF->hFile) && bReturn;
@@ -198,7 +198,7 @@ BOOL WriteFileBuf(ATF_FILEINFO *pATF, LPCVOID pvBuffer, DWORD dwBytes, DWORD *pd
 
    // perform write if buffer size is 0:
    if (lBufSize == 0L)
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
        return WriteFile(pATF->hFile, pvBuffer, dwBytes, pdwWritten, lpOverlapped);
 #else
        return c_WriteFile((FILE*)pATF->hFile, pvBuffer, dwBytes, pdwWritten, lpOverlapped);
@@ -229,7 +229,7 @@ BOOL WriteFileBuf(ATF_FILEINFO *pATF, LPCVOID pvBuffer, DWORD dwBytes, DWORD *pd
 
    // write initial buffer - results handled in case 2 and 3:
    DWORD dwBytesWritten = 0;
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    BOOL  bReturn = WriteFile(pATF->hFile, pszWriteBuf, lBufSize, &dwBytesWritten, lpOverlapped);
 #else
    BOOL  bReturn = c_WriteFile((FILE*)pATF->hFile, pszWriteBuf, lBufSize, &dwBytesWritten, lpOverlapped);
@@ -249,7 +249,7 @@ BOOL WriteFileBuf(ATF_FILEINFO *pATF, LPCVOID pvBuffer, DWORD dwBytes, DWORD *pd
    // case 3:  multiple buffer's worth (write mem buffer, write the remainder, reset internals)
    if (bReturn)
    {
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
        bReturn = WriteFile(pATF->hFile, ((BYTE *)pvBuffer + lMoveSize), 
                           dwBytes - lMoveSize, &dwBytesWritten, lpOverlapped);
 #else
@@ -286,7 +286,7 @@ BOOL ReadFileBuf(ATF_FILEINFO *pATF, LPVOID pvBuffer, DWORD dwBytes, DWORD *pdwR
 
    // perform read if buffer size is 0:
    if (pATF->lBufSize == 0L)
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
       return ReadFile(pATF->hFile, pvBuffer, dwBytes, pdwRead, lpOverlapped);
 #else
       return c_ReadFile((FILE*)pATF->hFile, pvBuffer, dwBytes, pdwRead, lpOverlapped);
@@ -299,7 +299,7 @@ BOOL ReadFileBuf(ATF_FILEINFO *pATF, LPVOID pvBuffer, DWORD dwBytes, DWORD *pdwR
 
       // commit current cache:
       if (pATF->lPos > 0L)
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
          if (!WriteFile(pATF->hFile, pATF->pszBuf, pATF->lPos, &dwBytesWritten, NULL))
 #else
          if (!c_WriteFile((FILE*)pATF->hFile, pATF->pszBuf, pATF->lPos, &dwBytesWritten, NULL))
@@ -340,7 +340,7 @@ BOOL ReadFileBuf(ATF_FILEINFO *pATF, LPVOID pvBuffer, DWORD dwBytes, DWORD *pdwR
    //         (perform a full read; leaves buffer empty)
    if (dwBytes - (DWORD)lMoveSize >= (DWORD)pATF->lBufReadLimit)
    {
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
        bReturn = ReadFile(pATF->hFile, ((BYTE *)pvBuffer + lMoveSize), 
                          dwBytes - lMoveSize, &dwBytesRead, lpOverlapped);
 #else
@@ -357,7 +357,7 @@ BOOL ReadFileBuf(ATF_FILEINFO *pATF, LPVOID pvBuffer, DWORD dwBytes, DWORD *pdwR
 
    // case 3: request runs past end of buffer, and wants less than another buffer's worth:
    //        (read in another buffer, copy wanted portion, advance lPos)
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    bReturn = ReadFile(pATF->hFile, pszReadBuf, lBufSize, &dwBytesRead, lpOverlapped);
 #else
    bReturn = c_ReadFile((FILE*)pATF->hFile, pszReadBuf, lBufSize, &dwBytesRead, lpOverlapped);
@@ -403,7 +403,7 @@ DWORD SetFilePointerBuf(ATF_FILEINFO *pATF, long lToMove, PLONG plDistHigh, DWOR
    // move real file position to lPos:
    if (pATF->bRead) 
    {
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
       if (SetFilePointer(pATF->hFile, pATF->lPos - pATF->lBufReadLimit, NULL, FILE_CURRENT) == 0xFFFFFFFF)
 #else
       if (c_SetFilePointer((FILE*)pATF->hFile, pATF->lPos - pATF->lBufReadLimit, NULL, FILE_CURRENT) == 0xFFFFFFFF)
@@ -415,7 +415,7 @@ DWORD SetFilePointerBuf(ATF_FILEINFO *pATF, long lToMove, PLONG plDistHigh, DWOR
    {
       if (pATF->lPos != 0L)
       {
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
           if (!WriteFile(pATF->hFile, pATF->pszBuf, pATF->lPos, &dwBytesWritten, NULL))
 #else
           if (!c_WriteFile((FILE*)pATF->hFile, pATF->pszBuf, pATF->lPos, &dwBytesWritten, NULL))
@@ -427,7 +427,7 @@ DWORD SetFilePointerBuf(ATF_FILEINFO *pATF, long lToMove, PLONG plDistHigh, DWOR
    pATF->bRead          = TRUE;
    pATF->lPos           = pATF->lBufSize;
    pATF->lBufReadLimit  = pATF->lBufSize;
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    return SetFilePointer(pATF->hFile, lToMove, plDistHigh, dwMoveMethod);
 #else
    return c_SetFilePointer((FILE*)pATF->hFile, lToMove, plDistHigh, dwMoveMethod);
@@ -545,7 +545,7 @@ int getsBuf(ATF_FILEINFO *pATF, LPSTR pszString, DWORD dwBufSize)
 
       // commit current cache:
       if (pATF->lPos > 0)
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
           if (!WriteFile(pATF->hFile, pATF->pszBuf, pATF->lPos, &dwBytesWritten, NULL))
 #else
           if (!c_WriteFile((FILE*)pATF->hFile, pATF->pszBuf, pATF->lPos, &dwBytesWritten, NULL))
@@ -606,7 +606,7 @@ int getsBuf(ATF_FILEINFO *pATF, LPSTR pszString, DWORD dwBufSize)
          if (dwToRead > 0)    // ie - we arrived here because lBytesInBuf == 0
          {
             DWORD dwBytesRead;
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
             if (!ReadFile(pATF->hFile, pszReadBuf, pATF->lBufSize, &dwBytesRead, NULL))
 #else
             if (!c_ReadFile((FILE*)pATF->hFile, pszReadBuf, pATF->lBufSize, &dwBytesRead, NULL))
@@ -663,7 +663,7 @@ int putsBuf(ATF_FILEINFO *pATF, LPCSTR pszString)
 
    // perform write if buffer size is 0:
    if (pATF->lBufSize == 0L)
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
        return WriteFile(pATF->hFile, pszString, dwBytes, &dwBytesWritten, NULL);
 #else
        return c_WriteFile((FILE*)pATF->hFile, pszString, dwBytes, &dwBytesWritten, NULL);
@@ -692,7 +692,7 @@ int putsBuf(ATF_FILEINFO *pATF, LPCSTR pszString)
       return TRUE;
 
    // write initial buffer - results handled in case 2 and 3:
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    BOOL bReturn = WriteFile(pATF->hFile, pszWriteBuf, lBufSize, &dwBytesWritten, NULL);
 #else
    BOOL bReturn = c_WriteFile((FILE*)pATF->hFile, pszWriteBuf, lBufSize, &dwBytesWritten, NULL);
@@ -709,7 +709,7 @@ int putsBuf(ATF_FILEINFO *pATF, LPCSTR pszString)
 
    // case 3:  multiple buffer's worth (write mem buffer, write the remainder, reset internals)
    if (bReturn)
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
        bReturn = WriteFile(pATF->hFile, pszString + lMoveSize, 
                           dwBytes - lMoveSize, &dwBytesWritten, NULL);
 #else

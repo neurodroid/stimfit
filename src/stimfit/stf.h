@@ -37,7 +37,7 @@
 #endif
 
 //! Defines dll export or import functions for Windows
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
     #ifdef STFDLL
         #define StfDll __declspec( dllexport )
     #else
@@ -239,8 +239,6 @@ struct Plugin {
     UserInput input;       /*!< Dialog entries */
 };
 
-#ifdef WITH_PYTHON
-
 //! User-defined Python extension
 /*! Class used for extending Stimfit's functionality: 
  *  The client supplies a new menu entry and a Python function 
@@ -272,7 +270,6 @@ struct Extension {
     std::string description;  /*!< Description for this function. */
     bool requiresFile;     /*!< Whether a file needs to be open for this function to work */
 };
-#endif
 
 //! Resource manager for ifstream objects.
 struct ifstreamMan {
@@ -373,7 +370,7 @@ struct PyMarker {
 
 struct storedFunc;
  
-struct SectionAttributes {
+struct StfDll SectionAttributes {
     SectionAttributes();
     std::vector<stf::Event> eventList;
     std::vector<stf::PyMarker> pyMarkers;

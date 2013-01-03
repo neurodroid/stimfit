@@ -44,7 +44,7 @@ private:
     bool ChannelSelDlg();
     void WriteToReg();
     bool outOfRange(std::size_t check) {
-        return (check>=cur().size() || check<0);
+        return (check>=cur().size());
     }
     void Focus();
     void OnNewfromselectedThisMenu( wxCommandEvent& event ) { OnNewfromselectedThis( ); }
@@ -114,7 +114,7 @@ private:
     // Base line value for each selected trace
     Vector_double selectBase;
     
-    std::size_t tLoIndex, tHiIndex, t50LeftIndex, t50RightIndex;
+    std::size_t tLoIndex, tHiIndex, t50LeftIndex, t50RightIndex, APt50LeftIndex, APt50RightIndex;
 
     bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold, viewRTLoHi,
         viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,

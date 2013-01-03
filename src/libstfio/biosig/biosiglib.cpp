@@ -52,27 +52,26 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     if (hdr==NULL) {
         errorMsg += "\nBiosig header is empty";
         ReturnData.resize(0);
-	sclose(hdr);
         throw std::runtime_error(errorMsg.c_str());
     }
-    hdr->FLAG.ROW_BASED_CHANNELS = 0;
-    /* size_t blks = */ sread(NULL, 0, hdr->NRec, hdr);
-
-#ifdef _STFDEBUG
-    std::cout << "Number of channels: " << hdr->NS << std::endl;
-    std::cout << "Number of records per channel: " << hdr->NRec << std::endl;
-    std::cout << "Number of samples per record: " << hdr->SPR << std::endl;
-    std::cout << "Data size: " << hdr->data.size[0] << "x" << hdr->data.size[1] << std::endl;
-    std::cout << "Sampling rate: " << hdr->SampleRate << std::endl;
-    std::cout << "Number of events: " << hdr->EVENT.N << std::endl;
-    /*int res = */ hdr2ascii(hdr, stdout, 4);
+    errorMsg += "\n";
+#if (BIOSIG_VERSION > 10400)
+    if (serror2(hdr)) {
+        errorMsg += hdr->AS.B4C_ERRMSG;
+#else
+    if (serror()) {
+	errorMsg += B4C_ERRMSG;
 #endif
+        ReturnData.resize(0);
+        destructHDR(hdr);	// free allocated memory
+        throw std::runtime_error(errorMsg.c_str());
+    }
 
     // ensure the event table is in chronological order	
     sort_eventtable(hdr);
 
     /*
-	count sections and generate list of indeces indicating start and end of sweeps
+	count sections and generate list of indices indicating start and end of sweeps
      */	
     size_t LenIndexList = 256; 
     if (LenIndexList > hdr->EVENT.N) LenIndexList = hdr->EVENT.N + 2;
@@ -100,6 +99,51 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 	if (MaxSectionLength < SPS) MaxSectionLength = SPS;
     }
 
+    /*************************************************************************
+        rescale data to mV and pA
+     *************************************************************************/    
+
+    for (typeof(hdr->NS) ch=0; ch < hdr->NS; ++ch) {
+        CHANNEL_TYPE *hc = hdr->CHANNEL+ch;
+        double scale = PhysDimScale(hc->PhysDimCode); 
+        switch (hc->PhysDimCode & 0xffe0) {
+        case 4256:  // Volt
+                hc->PhysDimCode = 4274; // = PhysDimCode("mV");
+                scale *=1e3;   // V->mV
+                hc->PhysMax *= scale;         
+                hc->PhysMin *= scale;         
+                hc->Cal *= scale;         
+                hc->Off *= scale;         
+                break; 
+        case 4160:  // Ampere
+                hc->PhysDimCode = 4181; // = PhysDimCode("pA");
+                scale *=1e12;   // A->pA
+                hc->PhysMax *= scale;         
+                hc->PhysMin *= scale;         
+                hc->Cal *= scale;         
+                hc->Off *= scale;         
+                break; 
+        }     
+    }
+
+    /*************************************************************************
+        read bulk data 
+     *************************************************************************/    
+    hdr->FLAG.ROW_BASED_CHANNELS = 0;
+    /* size_t blks = */ sread(NULL, 0, hdr->NRec, hdr);
+
+#ifdef _STFDEBUG
+    std::cout << "Number of channels: " << hdr->NS << std::endl;
+    std::cout << "Number of records per channel: " << hdr->NRec << std::endl;
+    std::cout << "Number of samples per record: " << hdr->SPR << std::endl;
+    std::cout << "Data size: " << hdr->data.size[0] << "x" << hdr->data.size[1] << std::endl;
+    std::cout << "Sampling rate: " << hdr->SampleRate << std::endl;
+    std::cout << "Number of events: " << hdr->EVENT.N << std::endl;
+    /*int res = */ hdr2ascii(hdr, stdout, 4);
+#endif
+
+
+
     // allocate local memory for intermediate results;    
     const int strSize=100;     
     char str[strSize];
@@ -107,8 +151,12 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     for (size_t nc=0; nc<hdr->NS; ++nc) {
 	Channel TempChannel(nsections);
 	TempChannel.SetChannelName(hdr->CHANNEL[nc].Label);
+#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION > 10301)
+        TempChannel.SetYUnits(PhysDim3(hdr->CHANNEL[nc].PhysDimCode));
+#else
         PhysDim(hdr->CHANNEL[nc].PhysDimCode,str);
         TempChannel.SetYUnits(str);
+#endif
 
         for (size_t ns=1; ns<=nsections; ns++) {
 	        size_t SPS = SegIndexList[ns]-SegIndexList[ns-1];	// length of segment, samples per segment
@@ -173,3 +221,4 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 
     destructHDR(hdr);
 }
+

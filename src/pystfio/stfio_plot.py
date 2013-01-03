@@ -334,11 +334,13 @@ def plot_traces(traces, traces2=None, ax=None, Fig=None, pulses=None,
             prop = 1.0-border
         ax = Fig.add_axes([0.0,(1.0-prop),1.0-border,prop], alpha=0.0)
 
-    ymin, ymax = np.inf, -np.inf # This is a hack to find the y-limits of the
-    # traces. It should be supplied by stf.plot_ymin() & stf.plot_ymax(). But
-    # this doesn't work for a 2nd channel, and if the active channel is 2 (IN
-    # 2). It seems like stf.plot_ymin/max always gets data from channel 0 (IN
-    # 0), irrespective of which is choosen as the active channel.
+    if y2min is not None and y2max is not None:
+        ymin, ymax = np.inf, -np.inf # This is a hack to find the y-limits of the
+        # traces. It should be supplied by stf.plot_ymin() & stf.plot_ymax(). But
+        # this doesn't work for a 2nd channel, and if the active channel is 2 (IN
+        # 2). It seems like stf.plot_ymin/max always gets data from channel 0 (IN
+        # 0), irrespective of which is choosen as the active channel.
+
     for trace in traces:
         if maxres is None:
             xrange = trace.timearray()+xoffset
@@ -346,8 +348,9 @@ def plot_traces(traces, traces2=None, ax=None, Fig=None, pulses=None,
         else:
             xrange, yrange = reduce(trace.data, trace.dt, maxres=maxres)
             xrange += xoffset
-        ymin, ymax = min(ymin,yrange.min()), max(ymax,yrange.max()) # Hack to
-        # get y-limits of data. See comment above.
+        if y2min is not None and y2max is not None:
+            ymin, ymax = min(ymin,yrange.min()), max(ymax,yrange.max()) # Hack to
+            # get y-limits of data. See comment above.
         ax.plot(xrange, yrange, trace.linestyle, lw=trace.linewidth, color=trace.color)
 
     y2min, y2max = np.inf, -np.inf # Hack to get y-limit of data, see comment above.
@@ -441,7 +444,7 @@ def plot_traces(traces, traces2=None, ax=None, Fig=None, pulses=None,
     else:
         sb_xoff_total = sb_xoff
         sb_yl_yoff = 0
-        
+
     if plot_sb:
         plot_scalebars(ax, linestyle=linestyle_sb, xunits=traces[0].xunits, yunits=traces[0].yunits,
                        textweight=textweight, textcolor=textcolor, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, 

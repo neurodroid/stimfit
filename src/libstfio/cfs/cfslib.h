@@ -40,7 +40,7 @@ int importCFSFile(const std::string& fName, Recording& ReturnData, ProgressInfo&
  *  \param WData The data to be exported.
  *  \return The CFS file handle.
  */
- bool exportCFSFile(const std::string& fName, const Recording& WData, ProgressInfo& progDlg);
+StfioDll bool exportCFSFile(const std::string& fName, const Recording& WData, ProgressInfo& progDlg);
 
 }
 

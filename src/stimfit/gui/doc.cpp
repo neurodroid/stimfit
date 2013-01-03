@@ -44,8 +44,15 @@
 #include "./../math/fit.h"
 #include "./../math/measure.h"
 #include "./../../libstfio/cfs/cfslib.h"
-#include "./../../libstfio/atf/atflib.h"
-#include "./../../libstfio/hdf5/hdf5lib.h"
+#ifndef _STFIO_H_
+  #error stfio.h must be included before checking WITH_AXON, WITH_HDF5
+#endif 
+#ifdef WITH_AXON
+  #include "./../../libstfio/atf/atflib.h"
+#endif
+#ifdef WITH_HDF5
+  #include "./../../libstfio/hdf5/hdf5lib.h"
+#endif
 #if 0 // TODO: backport ascii
 #include "./../../libstfio/ascii/asciilib.h"
 #endif
@@ -154,6 +161,8 @@ wxStfDoc::wxStfDoc() :
     tHiIndex(0),
     t50LeftIndex(0),
     t50RightIndex(0),
+    APt50LeftIndex(0),
+    APt50RightIndex(0),
     fromBase(true),
     viewCrosshair(true),
     viewBaseline(true),
@@ -513,6 +522,9 @@ void wxStfDoc::PostInit() {
     SetViewRD(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewRD"),1)==1);
     SetViewSlopeRise(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewSloperise"),1)==1);
     SetViewSlopeDecay(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewSlopedecay"),1)==1);
+#ifdef WITH_PSLOPE
+    SetViewPSlope(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPSlope"),1)==1);
+#endif
     SetViewLatency(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewLatency"),1)==1);
     SetViewCursors(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewCursors"),1)==1);
 
@@ -648,9 +660,18 @@ bool wxStfDoc::SaveAs() {
             stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
             switch (SelectFileDialog.GetFilterIndex()) {
              case 1:
+#ifdef __MINGW32__
+                // FIXME: CFS export does not work with MINGW
+                 return false;
+#else                 
                  return stfio::exportCFSFile(stf::wx2std(filename), writeRec, progDlg);
+#endif
              case 2:
+#ifdef WITH_AXON
                  return stfio::exportATFFile(stf::wx2std(filename), writeRec);
+#else
+                 return false;
+#endif
              case 3:
                  return stfio::exportIGORFile(stf::wx2std(filename), writeRec, progDlg);
              case 4:
@@ -660,7 +681,11 @@ bool wxStfDoc::SaveAs() {
 #endif
              case 0:
              default:
+#ifdef WITH_HDF5
                  return stfio::exportHDF5File(stf::wx2std(filename), writeRec, progDlg);
+#else
+                 return false; 
+#endif
             }
         }
         catch (const std::runtime_error& e) {
@@ -717,9 +742,11 @@ bool wxStfDoc::DoSaveDocument(const wxString& filename) {
     if (writeRec.size() == 0) return false;
     try {
         stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
+#ifdef WITH_HDF5
         if (stfio::exportHDF5File(stf::wx2std(filename), writeRec, progDlg))
             return true;
         else
+#endif
             return false;
     }
     catch (const std::runtime_error& e) {
@@ -775,8 +802,7 @@ void wxStfDoc::WriteToReg() {
 bool wxStfDoc::SetSection(std::size_t section){
     // Check range:
     if (!(get().size()>1)) {
-        if (section<0 ||
-                section>=get()[GetCurCh()].size())
+        if (section>=get()[GetCurCh()].size())
         {
             wxGetApp().ErrorMsg(wxT("subscript out of range\nwhile calling CStimfitDoc::SetSection()"));
             return false;
@@ -786,9 +812,8 @@ bool wxStfDoc::SetSection(std::size_t section){
             return false;
         }
     } else {
-        if (section<0 ||
-                section>=get()[GetCurCh()].size() ||
-                section>=get()[GetSecCh()].size())
+        if (section>=get()[GetCurCh()].size() ||
+            section>=get()[GetSecCh()].size())
         {
             wxGetApp().ErrorMsg(wxT("subscript out of range\nwhile calling CStimfitDoc::SetSection()"));
             return false;
@@ -2146,9 +2171,9 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.push_back( stf::Event( *cit, 0, templateWave.size() ) );
             // Find peak in this event:
             double baselineMean=0;
-            for ( std::size_t n_mean = (std::size_t)*cit-baseline;
-            n_mean < (std::size_t)(*cit);
-            ++n_mean )
+            for ( int n_mean = *cit-baseline;
+                  n_mean < *cit;
+                  ++n_mean )
             {
                 if (n_mean < 0) {
                     baselineMean += cur().at(0);
@@ -2269,9 +2294,9 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
         stf::Event newEvent(newStartPos, 0, GetCurrentSectionAttributes().eventList.at(0).GetEventSize());
         // Find peak in this event:
         double baselineMean=0;
-        for ( std::size_t n_mean = (std::size_t)newStartPos - baseline;
-        n_mean < (std::size_t)newStartPos;
-        ++n_mean )
+        for ( int n_mean = newStartPos - baseline;
+              n_mean < newStartPos;
+              ++n_mean )
         {
             if (n_mean < 0) {
                 baselineMean += cur().at(0);
@@ -2413,7 +2438,7 @@ void wxStfDoc::Measure( )
 
     //Begin Half Duration calculation
     //-------------------------------
-    t50LeftReal=0.0;
+    //t50LeftReal=0.0;
     // 2008-04-27: changed limits to start from the beginning of the trace
     //             and to stop at the end of the trace
     halfDuration = stf::t_half(cur().get(), reference, ampl, (double)0 /*(double)baseBeg*/,
@@ -2450,12 +2475,14 @@ void wxStfDoc::Measure( )
         // endResting is set to 100 points arbitrarily in the pascal version
         // (see measlib.pas) assuming that the resting potential is stable
         // during the first 100 sampling points.
-        const int endResting=100;
+        // const int endResting=100;
         const int searchRange=100;
         double APBase=0.0, APPeak=0.0, APVar=0.0;
         try {
-            APBase=stf::base(APVar,sec().get(),0,endResting);
-            APPeak=stf::peak(sec().get(),APBase,peakBeg,peakEnd,pM,stf::up,APMaxT);
+            //APBase=stf::base(APVar,sec().get(),0,endResting);
+            APBase=stf::base(APVar,sec().get(),baseBeg,baseEnd); // use baseline cursors 
+            //APPeak=stf::peak(sec().get(),APBase,peakBeg,peakEnd,pM,stf::up,APMaxT);
+            APPeak=stf::peak(sec().get(),APBase,peakBeg,peakEnd,pM,direction,APMaxT);
         }
         catch (const std::out_of_range& e) {
             APBase=0.0;
@@ -2486,7 +2513,8 @@ void wxStfDoc::Measure( )
         //-------------------------------
         //Half-maximal amplitude
         //----------------------------
-        std::size_t APt50LeftIndex,APt50RightIndex;
+        //APt50LeftReal=0.0;
+        //std::size_t APt50LeftIndex,APt50RightIndex;
         stf::t_half(sec().get(), APBase, APPeak-APBase, left_APRise,
                       (double)sec().get().size(), APMaxT, APt50LeftIndex,
                       APt50RightIndex, APt50LeftReal);
@@ -2693,10 +2721,6 @@ void wxStfDoc::correctRangeR(int& value) {
 }
 
 void wxStfDoc::correctRangeR(std::size_t& value) {
-    if (value<0) {
-        value=0;
-        return;
-    }
     if (value>=cur().size()) {
         value=cur().size()-1;
         return;
@@ -2705,24 +2729,21 @@ void wxStfDoc::correctRangeR(std::size_t& value) {
 
 
 void wxStfDoc::SetCurCh(size_t value) {
-    if (value<0 || value>=get().size()) {
+    if (value>=get().size()) {
         throw std::out_of_range("channel out of range in wxStfDoc::SetCurCh()");
     }
     cc=value;
 }
 
 void wxStfDoc::SetSecCh(size_t value) {
-    if (value<0 ||
-            value>=get().size() ||
-            value==cc)
-    {
+    if (value>=get().size() || value==cc) {
         throw std::out_of_range("channel out of range in wxStfDoc::SetSecCh()");
     }
     sc=value;
 }
 
 void wxStfDoc::SetCurSec( size_t value ) {
-    if (value<0 || value>=get()[cc].size()) {
+    if (value >= get()[cc].size()) {
         throw std::out_of_range("channel out of range in wxStfDoc::SetCurSec()");
     }
     cs=value;
@@ -2734,7 +2755,7 @@ void wxStfDoc::SetMeasCursor(int value) {
 }
 
 double wxStfDoc::GetMeasValue() {
-    if (measCursor<0 || measCursor>=get()[cc].size()) {
+    if (measCursor>=get()[cc].size()) {
         correctRangeR(measCursor);
     }
     return cur().at(measCursor);
@@ -2806,9 +2827,7 @@ void wxStfDoc::SetPSlopeEnd(int value) {
 void wxStfDoc::SelectTrace(std::size_t sectionToSelect) {
     // Check range so that sectionToSelect can be used
     // without checking again:
-    if (sectionToSelect<0 ||
-        sectionToSelect>=get()[cc].size()) 
-    {
+    if (sectionToSelect>=get()[cc].size()) {
         std::out_of_range e("subscript out of range in wxStfDoc::SelectTrace\n");
         throw e;
     }

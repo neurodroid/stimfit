@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stddef.h>
 
-#ifdef WIN32
+#if defined(WIN32) && !defined(__MINGW32__)
   #include <Windows.h>
 #else
   #include "../abf/axon/Common/unix.h"
@@ -43,7 +43,7 @@ CPCreateFile(const char* fullFilePath, int overwrite)
 {
 	int err;
 	err = 0;	
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
 	if (overwrite)							// Delete file if it exists and if overwrite is specified.
             CPDeleteFile(fullFilePath);			// Ignore error.
 #endif
@@ -59,7 +59,7 @@ CPCreateFile(const char* fullFilePath, int overwrite)
 		HANDLE fileH;
 		long accessMode, shareMode;
 		
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
 		accessMode = GENERIC_READ | GENERIC_WRITE;
 		shareMode = 0;
 		fileH = CreateFileA(fullFilePath, accessMode, shareMode, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -67,13 +67,13 @@ CPCreateFile(const char* fullFilePath, int overwrite)
 		fileH = fopen(fullFilePath, "w+b");
 #endif
 		if (fileH == INVALID_HANDLE_VALUE)
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
                     err = GetLastError();
 #else
                     err = 1;
 #endif
 		else
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
                     CloseHandle(fileH);
 #else
                     fclose(fileH);
@@ -95,7 +95,7 @@ CPCreateFile(const char* fullFilePath, int overwrite)
 	codes returned require Igor Pro 3.13 or later, so you will get bogus error
 	messages if you return these error codes to earlier versions of Igor.
 */
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
 int
 CPDeleteFile(const char* fullFilePath)
 {

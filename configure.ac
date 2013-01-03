@@ -1,6 +1,7 @@
-AC_INIT([stimfit],[0.11.4])
+AC_INIT([stimfit],[0.11.5])
 AC_CONFIG_SRCDIR(src/stimfit/gui/main.cpp)
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([1.11])
+AM_SILENT_RULES([yes])
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_PROG_CC
@@ -50,7 +51,7 @@ AM_CONDITIONAL([ISDARWIN], [test $STFKERNEL = "darwin"])
 AC_ARG_ENABLE([python], 
   AS_HELP_STRING(
     [--enable-python],
-    [enable python console [[default="yes"]]]),,
+    [enable python console (default="yes")]),,
     [enable_python="yes"])
 
 AM_CONDITIONAL(BUILD_PYTHON, test "$enable_python" = "yes")
@@ -79,9 +80,9 @@ case ${STFKERNEL} in
     darwin)
         LIBSTF_LDFLAGS="-avoid-version"
 	if test "$enable_module" = "yes" ; then
-	    CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON -DMODULE_ONLY"
+	    CPPFLAGS="${CPPFLAGS} -DMODULE_ONLY"
 	else
-	    CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON"
+	    CPPFLAGS="${CPPFLAGS}"
 	fi
         STF_PYTHON_LIBNAME="libpystf.dylib"
         STFIO_PYTHON_LIBNAME="libpystfio.dylib"
@@ -95,18 +96,17 @@ case ${STFKERNEL} in
     linux)
 	if test "$enable_module" = "yes" ; then
 	    LIBSTF_LDFLAGS="-avoid-version"
-	    CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON -DMODULE_ONLY"
+	    CPPFLAGS="${CPPFLAGS} -DMODULE_ONLY"
 	else
 	    if test "$enable_debian" = "yes" ; then
 	      LIBSTF_LDFLAGS="-Wl,-rpath,/usr/lib/stimfit -avoid-version"
 	    else
 	      LIBSTF_LDFLAGS="-Wl,-rpath,${prefix}/lib/stimfit -avoid-version"
 	    fi
-	    CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON"
+	    CPPFLAGS="${CPPFLAGS}"
 	fi
         STF_PYTHON_LIBNAME="libpystf.so"
         STFIO_PYTHON_LIBNAME="libpystfio.so"
-        CPPFLAGS="${CPPFLAGS} -D__LINUX__"
     ;;
     *) 
         LIBSTF_LDFLAGS="-avoid-version"
@@ -119,6 +119,10 @@ AC_SUBST(STF_PYTHON_LIBNAME)
 AC_SUBST(STFIO_PYTHON_LIBNAME)
 
 # Checks for python libraries.
+if test "$enable_python" = "yes" ; then
+    CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON"
+fi
+
 AC_ARG_ENABLE([ipython], AS_HELP_STRING([--enable-ipython],[enable ipython as the default shell (experimental); implies --enable-python]),[])
 if test "$enable_ipython" = "yes" ; then
     CPPFLAGS="${CPPFLAGS} -DIPYTHON"
@@ -284,7 +288,9 @@ if test "${HAVE_HDF5}" != "yes" ; then
     AC_MSG_ERROR([Couldn't find hdf5 libraries.])
 else
     CPPFLAGS="${CPPFLAGS} -DH5_USE_16_API"
+    LIBHDF5_LDFLAGS="-lhdf5 -lhdf5_hl"
 fi
+AC_SUBST(LIBHDF5_LDFLAGS)
 
 AC_ARG_ENABLE([debug],
 	AS_HELP_STRING([--enable-debug],[build stimfit in debug mode]),[
@@ -316,7 +322,6 @@ CXXFLAGS="${CXXFLAGS} -Wall"
 
 AC_CONFIG_HEADERS([stfconf.h])
 
-SHAVE_INIT(["."], [enable])
-AC_CONFIG_FILES([Makefile src/Makefile src/libstfio/Makefile src/pystfio/Makefile src/stimfit/Makefile src/stimfit/py/Makefile stimfit.plist shave shave-libtool])
+AC_CONFIG_FILES([Makefile src/Makefile src/libstfio/Makefile src/pystfio/Makefile src/stimfit/Makefile src/stimfit/py/Makefile stimfit.plist])
 
 AC_OUTPUT

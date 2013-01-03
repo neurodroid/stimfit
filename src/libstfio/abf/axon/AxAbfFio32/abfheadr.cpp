@@ -25,7 +25,7 @@
 #define DEFAULT_TIME_HYSTERESIS  1     // Two sequences of time hysteresis.
 
 
-#if defined(__LINUX__) || defined(__STF__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__STF__) || defined(__APPLE__)
 	#define max(a,b)   (((a) > (b)) ? (a) : (b))
 	#define min(a,b)   (((a) < (b)) ? (a) : (b))
 #endif
@@ -793,7 +793,7 @@ void WINAPI ABFH_GetDACtoUUFactors( const ABFFileHeader *pFH, int nChannel,
    ABFH_PromoteHeader( &NewFH, pFH );
    {
       // Prevent accidental use of pFH.
-      int pFH = 0;   pFH = pFH;
+      int pFH = 0; pFH = pFH;
 
       float fScaleFactor       = NewFH.fDACScaleFactor[nChannel];
       float fCalibrationFactor = NewFH.fDACCalibrationFactor[nChannel];
@@ -969,7 +969,7 @@ BOOL WINAPI ABFH_ParamReader(FILEHANDLE hFile, ABFFileHeader *pFH, int *pnError)
       ERRORRETURN(pnError, ABFH_EUNKNOWNFILETYPE);
 
    // Get the file length for parameter validation, then seek back to the start of the file.
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    ABFLONG lFileLength = SetFilePointer(hFile, 0, NULL, FILE_END);
    SetFilePointer(hFile, 0L, NULL, FILE_BEGIN);
 #else
@@ -1142,14 +1142,14 @@ BOOL WINAPI ABFH_GetErrorText( int nError, char *sTxtBuf, UINT uMaxLen)
    }
 
    BOOL rval = TRUE;        // OK return value
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    if (!LoadStringA(g_hInstance, nError, sTxtBuf, uMaxLen))
 #else
    if (!c_LoadString(g_hInstance, nError, sTxtBuf, uMaxLen))
 #endif
    {
       char szTemplate[80];
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
       LoadStringA(g_hInstance, IDS_ENOMESSAGESTR, szTemplate, sizeof(szTemplate));
 #else
       c_LoadString(g_hInstance, IDS_ENOMESSAGESTR, szTemplate, sizeof(szTemplate));

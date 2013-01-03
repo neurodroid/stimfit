@@ -33,7 +33,7 @@ namespace stfio {
  *  \param WData The data to be exported.
  *  \return At present, always returns 0.
  */
-bool
+StfioDll bool
     exportIGORFile(const std::string& fName, const Recording& WData, ProgressInfo& progDlg);
 
 }

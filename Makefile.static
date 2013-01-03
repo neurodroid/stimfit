@@ -1,0 +1,219 @@
+########################################################################
+# Makefile for static compilation Stimfit 
+# no auto-tools (autoconf, automake, libtool, shave etc.) are needed. 
+#
+# No global installation (sudo make install) is needed, but 
+# stimfit can be started immediately after compilation. 
+#
+# This is most useful for debugging, when several instances of stimfit
+# should be available. 
+#
+# usage:
+#   cd ~/src/stimfit/         # change into stimfit's root directory
+#   make -f Makefile.static   # build stimfit 
+#   make -B -f Makefile.static   # rebuild everything
+#
+#   WXCONF=/usr/bin/wx-config make -f Makefile.static   
+#                             # build built with non-default WX
+#
+#   ./stimfit                 # start stimfit 
+#
+# Limitations: 
+#    - no support for ASCII, SON format
+#    - PYTHON shell, matplotlib (print) are not supported
+#    - configure not supported
+#    - does not compile on Ubuntu 12.04 LTS
+#
+# Copyright (C) 2012 Alois Schloegl 
+#
+########################################################################
+
+ifeq (,$(WXCONF))
+  # default wx-config      
+  WXCONF    = $(shell which wx-config)
+endif
+
+DEFINES += -DWITH_BIOSIG
+DEFINES += -DHAVE_LAPACK
+DEFINES += -DWITH_PSLOPE
+#DEFINES += -DPYTHON -DWITH_PYTHON
+
+
+WXVERSION = $(basename $(shell $(WXCONF) --version))
+WXDIR     = $(dir $(WXCONF))../include/wx-$(WXVERSION)/
+DEFINES  += -I$(WXDIR)
+
+
+PY_VERSION := 2.6
+
+
+##############################################################
+###  SOURCES
+##############################################################
+
+vpath %.cpp ./src/stimfit:./src/stimfit/gui:./src/stimfit/gui/dlgs:./src/stimfit/gui/usrdlg:./src/stimfit/math:./src/libstfio/:./src/libstfio/cfs/:./src/libstfio/atf/:./src/libstfio/abf/:./src/libstfio/abf/axon2:./src/libstfio/abf/axon/Common:./src/libstfio/abf/axon/AxAbfFio32:./src/libstfio/abf/axon/AxAtfFio32/:./src/libstfio/biosig/:./src/libstfio/hdf5/:./src/libstfio/heka/:./src/libstfio/igor:./src/libstfio/ascii/:./src/libstfio/axg/
+
+vpath %.c ./src/stimfit/math/levmar/:./src/libstfio/igor/:./src/libstfio/cfs/
+
+SOURCES = ./src/stimfit/stf.cpp \
+	./src/stimfit/math/stfmath.cpp \
+	./src/stimfit/math/funclib.cpp \
+	./src/stimfit/math/measure.cpp \
+	./src/stimfit/math/fit.cpp \
+	./src/stimfit/gui/doc.cpp \
+	./src/stimfit/gui/zoom.cpp \
+	./src/stimfit/gui/childframe.cpp \
+	./src/stimfit/gui/app.cpp \
+	./src/stimfit/gui/parentframe.cpp \
+	./src/stimfit/gui/dlgs/cursorsdlg.cpp \
+	./src/stimfit/gui/dlgs/eventdlg.cpp \
+	./src/stimfit/gui/dlgs/smalldlgs.cpp \
+	./src/stimfit/gui/dlgs/fitseldlg.cpp \
+	./src/stimfit/gui/copygrid.cpp \
+	./src/stimfit/gui/usrdlg/usrdlg.cpp \
+	./src/stimfit/gui/graph.cpp \
+	./src/stimfit/gui/unopt.cpp \
+	./src/stimfit/gui/view.cpp \
+	./src/stimfit/gui/table.cpp \
+	./src/stimfit/gui/printout.cpp \
+	./src/stimfit/gui/main.cpp \
+	./src/stimfit/gui/stfcheckbox.cpp \
+	./src/libstfio/igor/igorlib.cpp \
+	./src/libstfio/cfs/cfslib.cpp \
+	./src/libstfio/section.cpp \
+	./src/libstfio/recording.cpp \
+	./src/libstfio/biosig/biosiglib.cpp \
+	./src/libstfio/hdf5/hdf5lib.cpp \
+	./src/libstfio/heka/hekalib.cpp \
+	./src/libstfio/channel.cpp \
+	./src/libstfio/stfio.cpp \
+	./src/libstfio/axg/axglib.cpp \
+	./src/libstfio/axg/AxoGraph_ReadWrite.cpp \
+	./src/libstfio/axg/fileUtils.cpp \
+	./src/libstfio/axg/stringUtils.cpp \
+	./src/libstfio/axg/byteswap.cpp \
+	./src/stimfit/math/levmar/lm.c \
+	./src/stimfit/math/levmar/Axb.c \
+	./src/stimfit/math/levmar/misc.c \
+	./src/stimfit/math/levmar/lmbc.c \
+	./src/stimfit/math/levmar/lmlec.c \
+	./src/libstfio/igor/WriteWave.c \
+	./src/libstfio/igor/CrossPlatformFileIO.c \
+	./src/libstfio/cfs/cfs.c 
+
+SOURCES_ABF = ./src/libstfio/atf/atflib.cpp \
+	./src/libstfio/abf/abflib.cpp \
+	./src/libstfio/abf/axon2/ProtocolReaderABF2.cpp \
+	./src/libstfio/abf/axon2/abf2headr.cpp \
+	./src/libstfio/abf/axon2/SimpleStringCache.cpp \
+	./src/libstfio/abf/axon/Common/FileReadCache.cpp \
+	./src/libstfio/abf/axon/Common/unix.cpp \
+	./src/libstfio/abf/axon/Common/FileIO.cpp \
+	./src/libstfio/abf/axon/AxAtfFio32/axatffio32.cpp \
+	./src/libstfio/abf/axon/AxAtfFio32/fileio.cpp \
+	./src/libstfio/abf/axon/AxAbfFio32/abferror.cpp \
+	./src/libstfio/abf/axon/AxAbfFio32/abfheadr.cpp \
+	./src/libstfio/abf/axon/AxAbfFio32/filedesc.cpp \
+	./src/libstfio/abf/axon/AxAbfFio32/msbincvt.cpp \
+	./src/libstfio/abf/axon/AxAbfFio32/abfutil.cpp \
+	./src/libstfio/abf/axon/AxAbfFio32/abffiles.cpp \
+	./src/libstfio/abf/axon/AxAbfFio32/Oldheadr.cpp \
+	./src/libstfio/abf/axon/AxAbfFio32/abfhwave.cpp \
+	./src/libstfio/abf/axon/AxAbfFio32/csynch.cpp 
+
+EXCLUDED = ./src/libstfio/ascii/asciilib.cpp \
+	./src/libstfio/abf/axon/AxAtfFio32/fileio2.cpp \
+	./src/stimfit/math/levmar/lmbc_core.c \
+	./src/stimfit/math/levmar/lmlec_core.c \
+	./src/stimfit/math/levmar/misc_core.c \
+	./src/stimfit/math/levmar/lm_core.c \
+	./src/stimfit/math/levmar/Axb_core.c \
+	./src/stimfit/gui/dclatex.cpp \
+
+TESTSRC = ./src/test/section.cpp \
+	./src/test/recording.cpp \
+	./src/test/measure.cpp \
+	./src/test/channel.cpp \
+	./src/test/gtest/src/gtest.cc \
+	./src/test/gtest/src/gtest-port.cc \
+	./src/test/gtest/src/gtest-test-part.cc \
+	./src/test/gtest/src/gtest-typed-test.cc \
+	./src/test/gtest/src/gtest.cc \
+	./src/test/gtest/src/gtest-printers.cc \
+	./src/test/gtest/src/gtest-death-test.cc \
+	./src/test/gtest/src/gtest-all.cc \
+	./src/test/gtest/src/gtest_main.cc \
+	./src/test/gtest/src/gtest-filepath.cc 
+
+
+### DEPENDENCIES ###
+ifneq (,$(findstring HAVE_LAPACK, $(DEFINES)))
+  LIBS   += -llapack -lblas
+endif
+
+ifeq (,$(findstring mingw32, $(WXCONF)))
+  # WITH_HDF5 and WITH_AXON are already defined in src/libstfio/stfio.h
+  # these are commented here to avoid  recurring definition 
+  #DEFINES += -DWITH_HDF5
+  #DEFINES += -DWITH_AXON
+  LIBS    += -lhdf5 -lhdf5_hl 
+  SOURCES += $(SOURCES_ABF)
+  TARGET   = stimfit 
+  OBJEXT   = o
+  ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
+    LDFLAGS += -L$(HOME)/src/biosig4c++/
+  endif
+else
+  ### MINGW ### 
+  TARGET   = stimfit.exe 
+  LIBS    += -lgfortran
+  OBJEXT   = obj
+  ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
+    LDFLAGS += -L$(HOME)/src/biosig4c++/win32/
+  endif
+endif
+
+ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
+  DEFINES += -I$(HOME)/src/biosig4c++/
+  LIBS    += -lbiosig -lcholmod 
+endif
+
+ifneq (,$(findstring WITH_PYTHON, $(DEFINES)))
+  DEFINES += -I/usr/include/python$(PY_VERSION)
+  DEFINES += -I/usr/lib/pymodules/python$(PY_VERSION)/numpy/core/include
+  LDFLAGS += -L/usr/lib/python$(PY_VERSION)/
+  LIBS    += -lpython$(PY_VERSION) 
+endif
+
+
+CC        = $(shell $(WXCONF) --cc)
+CXX       = $(shell $(WXCONF) --cxx)
+CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags)
+CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags)
+LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
+LIBS     += -lfftw3 -lssl -lcrypto -lz -lpthread 
+
+##############################################################
+###  BUILT
+##############################################################
+
+OBJECTS  = $(addsuffix .$(OBJEXT), $(basename $(SOURCES)))
+
+$(TARGET): $(OBJECTS)
+	 $(CXX) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o "$@"
+
+%.c: %.h
+
+%.cpp: %.h
+
+%.$(OBJEXT): %.c 
+	$(CC) -c $(CFLAGS) -c -o "$@" "$<"
+
+%.$(OBJEXT): %.cpp
+	$(CXX) -c $(CXXFLAGS) -c -o "$@" "$<"
+
+%.$(OBJEXT): %.cc
+	$(CXX) -c $(CXXFLAGS) -c -o "$@" "$<"
+
+clean:
+	find src -name "*.$(OBJEXT)" -print0 |xargs -0 rm

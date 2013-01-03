@@ -9,14 +9,18 @@
 
 std::string get_versionstring( );
 
+#ifdef WITH_PYTHON
 PyObject* get_trace(int trace=-1, int channel=-1);
+#endif
 
 bool new_window( double* invec, int size );
 bool new_window_matrix( double* inarr, int traces, int size );
 bool new_window_selected_this( );
 bool new_window_selected_all( );
+#ifdef WITH_PYTHON
 bool show_table( PyObject* dict, const char* caption = "Python table" );
 bool show_table_dictlist( PyObject* dict, const char* caption  = "Python table", bool reverse = true );
+#endif
 
 int get_size_trace( int trace = -1, int channel = -1 );
 int get_size_channel( int channel = -1 );
@@ -43,7 +47,9 @@ bool set_recording_date( const char* date );
 bool select_trace( int trace = -1 );
 void select_all( );
 void unselect_all( );
+#ifdef WITH_PYTHON
 PyObject* get_selected_indices( );
+#endif
 
 bool set_trace( int trace );
 int get_trace_index();
@@ -59,7 +65,10 @@ void align_selected(  double (*alignment)( bool ), bool active = false );
 bool subtract_base( );
 
 int leastsq_param_size( int fselect );
+#ifdef WITH_PYTHON
 PyObject* leastsq( int fselect, bool refresh = true );
+PyObject* get_fit( int trace = -1, int channel = -1 );
+#endif 
 
 bool check_doc( );
 std::string get_filename( );
@@ -132,9 +141,11 @@ void _gNames_at( const char* name, int channel );
 bool _new_window_gMatrix( );
 
 extern double _figsize[];
+#ifdef WITH_PYTHON
 PyObject* mpl_panel(const std::vector<double>& figsize = std::vector<double>(_figsize, _figsize+2));
 
 PyObject* template_matching(double* invec, int size, bool correlate=false, bool norm=true);
 PyObject* peak_detection(double* invec, int size, double threshold, int min_distance);
-
+#endif
+ 
 #endif

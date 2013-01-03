@@ -37,7 +37,7 @@ public:
    enum eMODE { eWRITEMODE, eREADMODE };
 
 private:    // Member variables.
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    char   m_szFileName[_MAX_PATH];            // Filename for array virtualization
 #endif
 

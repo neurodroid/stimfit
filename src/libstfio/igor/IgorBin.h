@@ -12,7 +12,10 @@ extern "C" {
 
 #define C_ASSERT(e) extern void __C_ASSERT__(int [(e)?1:-1])
 
-#if 1 // def WIN32
+#ifdef __GNUC__
+        #define ALIGNED2 __attribute__ ((aligned (2)))
+#else // def WIN32
+        #define ALIGNED2 
 	#pragma pack(2)
 #endif
 
@@ -44,7 +47,7 @@ typedef struct BinHeader1 {
 	short version;						// Version number for backwards compatibility.
 	IGORLONG wfmSize;						// The size of the WaveHeader2 data structure plus the wave data plus 16 bytes of padding.
 	short checksum;						// Checksum over this header and the wave header.
-} BinHeader1;
+} BinHeader1 ALIGNED2;
 
 typedef struct BinHeader2 {
 	short version;						// Version number for backwards compatibility.
@@ -52,7 +55,7 @@ typedef struct BinHeader2 {
 	IGORLONG noteSize;						// The size of the note text.
 	IGORLONG pictSize;						// Reserved. Write zero. Ignore on read.
 	short checksum;						// Checksum over this header and the wave header.
-} BinHeader2;
+} BinHeader2 ALIGNED2;
 
 typedef struct BinHeader3 {
 	short version;						// Version number for backwards compatibility.
@@ -61,7 +64,7 @@ typedef struct BinHeader3 {
 	IGORLONG formulaSize;					// The size of the dependency formula, if any.
 	IGORLONG pictSize;						// Reserved. Write zero. Ignore on read.
 	short checksum;						// Checksum over this header and the wave header.
-} BinHeader3;
+} BinHeader3 ALIGNED2;
 
 typedef struct BinHeader5 {
 	short version;						// Version number for backwards compatibility.
@@ -75,7 +78,7 @@ typedef struct BinHeader5 {
 	IGORLONG sIndicesSize;					// The size of string indicies if this is a text wave.
 	IGORLONG optionsSize1;					// Reserved. Write zero. Ignore on read.
 	IGORLONG optionsSize2;					// Reserved. Write zero. Ignore on read.
-} BinHeader5;
+} BinHeader5 ALIGNED2;
 
 
 //	From wave.h
@@ -119,14 +122,14 @@ struct WaveHeader2 {
 	Handle waveNoteH;					// Used in memory only. Write zero. Ignore on read.
 
 	float wData[4];						// The start of the array of waveform data.
-};
+} ALIGNED2;
 typedef struct WaveHeader2 WaveHeader2;
 typedef WaveHeader2 *WavePtr2;
 typedef WavePtr2 *waveHandle2;
 
 
 struct WaveHeader5 {
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
 	struct WaveHeader5 **next;			// link to next wave in linked list.
 #else
         int next;
@@ -142,7 +145,7 @@ struct WaveHeader5 {
 	short whVersion;					// Write 1. Ignore on read.
 	char bname[MAX_WAVE_NAME5+1];		// Name of wave plus trailing null.
         IGORLONG whpad2;						// Reserved. Write zero. Ignore on read.
-#ifdef _WINDOWS    
+#if defined(_WINDOWS) && !defined(__MINGW32__)
 	struct DataFolder **dFolder;		// Used in memory only. Write zero. Ignore on read.
 #else
         int dFolder;		// Used in memory only. Write zero. Ignore on read.
@@ -161,7 +164,7 @@ struct WaveHeader5 {
 	short whpad3;						// Reserved. Write zero. Ignore on read.
 	double topFullScale,botFullScale;	// The max and max full scale value for wave.
 
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
 	Handle dataEUnits;					// Used in memory only. Write zero. Ignore on read.
 	Handle dimEUnits[MAXDIMS];			// Used in memory only. Write zero. Ignore on read.
 	Handle dimLabels[MAXDIMS];			// Used in memory only. Write zero. Ignore on read.
@@ -182,7 +185,7 @@ struct WaveHeader5 {
 	
 	char useBits;						// Used in memory only. Write zero. Ignore on read.
 	char kindBits;						// Reserved. Write zero. Ignore on read.
-#ifdef _WINDOWS        
+#if defined(_WINDOWS) && !defined(__MINGW32__)
 	void **formula;						// Used in memory only. Write zero. Ignore on read.
 #else
         int formula;
@@ -191,7 +194,7 @@ struct WaveHeader5 {
 	
 	short whpad4;						// Reserved. Write zero. Ignore on read.
 	short srcFldr;						// Used in memory only. Write zero. Ignore on read.
-#ifdef _WINDOWS        
+#if defined(_WINDOWS) && !defined(__MINGW32__)
 	Handle fileName;					// Used in memory only. Write zero. Ignore on read.
 	IGORLONG **sIndices;					// Used in memory only. Write zero. Ignore on read.
 #else	
@@ -199,7 +202,7 @@ struct WaveHeader5 {
 	int sIndices;					// Used in memory only. Write zero. Ignore on read.
 #endif
 	float wData[1];						// The start of the array of data. Must be 64 bit aligned.
-};
+} ALIGNED2;
 typedef struct WaveHeader5 WaveHeader5;
 
 typedef WaveHeader5 *WavePtr5;
@@ -211,6 +214,7 @@ typedef WavePtr5 *WaveHandle5;
 #endif
 #if 1 //def WIN32
 	#pragma pack()
+	#undef ALIGNED2
 #endif
 // All structures written to disk are 2-byte-aligned.
 

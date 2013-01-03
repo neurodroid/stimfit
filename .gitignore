@@ -32,6 +32,8 @@ dist/debian/build/*
 osc
 osc/*
 
+test.h5
+
 # doc build
 
 doc/stfbook.ps
@@ -64,7 +66,9 @@ stimfit_VS03/stimfit_exe/Release
 
 PortIndex*
 macosx/macports/science/stimfit/work
-macosx/macports/python
+macosx/macports/science/stimfit/work/*
+macosx/macports/python/py-stfio/work
+macosx/macports/python/py-stfio/work/*
 
 # build files
 

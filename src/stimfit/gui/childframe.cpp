@@ -48,7 +48,6 @@
 #error You must set wxUSE_MDI_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#include "wx/spinctrl.h"
 #include "./app.h"
 #include "./doc.h"
 #include "./view.h"
@@ -58,8 +57,8 @@
 #include "./dlgs/smalldlgs.h"
 #include "./copygrid.h"
 #ifdef _WINDOWS
-#include "./../core/filelib/atflib.h"
-#include "./../core/filelib/igorlib.h"
+#include "./../../libstfio/atf/atflib.h"
+#include "./../../libstfio/igor/igorlib.h"
 #endif
 
 #include "./childframe.h"
@@ -214,6 +213,7 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
 
     m_mgr.AddPane( m_table, wxAuiPaneInfo().Caption(wxT("Results")).Position(pDoc->size()).
                    CloseButton(false).Floatable().Dock().Top().Name(wxT("Results")) );
+
     m_mgr.Update();
     Refresh();
 }
@@ -320,7 +320,6 @@ void wxStfChildFrame::SetCurTrace(std::size_t n) {
 
 void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
     event.Skip();
-
 
     wxStfView* pView=(wxStfView*)GetView();
     wxStfDoc* pDoc=(wxStfDoc*)GetDocument();

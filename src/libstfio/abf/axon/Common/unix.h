@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 
-#ifdef _WINDOWS
+#if defined(WIN32) && !defined(__MINGW32__)
     #include <windows.h>
     #include <stdio.h>
     typedef HANDLE FILEHANDLE;
@@ -23,12 +23,14 @@ extern "C" {
 #else
     #ifdef __APPLE__
          #include <machine/endian.h>
-    #elif defined(__LINUX__)
+    #elif defined(__MINGW32__)     
+         #define __LITTLE_ENDIAN__
+    #elif defined(__linux__)
          #include <endian.h>
     #endif
     #ifndef INVALID_HANDLE_VALUE
     #define INVALID_HANDLE_VALUE ((HANDLE)0xFFFFFFFF)
-#endif
+    #endif
 
 #include "../AxAbfFio32/AxAbffio32.h"
     
@@ -92,7 +94,7 @@ typedef const CHAR *LPCSTR, *PCSTR;
 //
 // Neutral ANSI/UNICODE types and macros
 //
-#if defined(UNICODE) || defined (__LINUX__) || defined (__APPLE__)                     // r_winnt
+#if defined(UNICODE) || defined (__linux__) || defined (__APPLE__)                     // r_winnt
 
 #ifndef _TCHAR_DEFINED
 typedef WCHAR TCHAR, *PTCHAR;
@@ -172,7 +174,9 @@ typedef unsigned int   UINT_PTR;
 
 
     // #define __stdcall __attribute__((__stdcall__))
+#if !defined(__MINGW32__)
 #define __stdcall
+#endif
 // gcc uses cdecl as a standard:
 #define cdecl
 #define WINAPI __stdcall

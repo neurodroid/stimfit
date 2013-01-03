@@ -32,20 +32,35 @@
 #include <string>
 #include <cmath>
 
+#ifndef __MINGW32__
+  // defining these compiler flags should eventually move to ./configure.in
+  #define WITH_AXON
+  #define WITH_HDF5
+#else
+  #ifdef WITH_HDF5
+    #error HDF5 not supported when compiling with MINGW
+    #undef WITH_HDF5
+  #endif 
+  #ifdef WITH_AXON
+    #error AXON not supported when compiling with MINGW
+    #undef WITH_AXON
+  #endif 
+#endif
+
 #ifdef _MSC_VER
 #pragma warning( disable : 4251 )  // Disable warning messages
 #pragma warning( disable : 4996 )  // Disable warning messages
 #endif
 
 //! Defines dll export or import functions for Windows
-#ifdef _WINDOWS
-    #ifdef STFDLL
-        #define StfDll __declspec( dllexport )
+#if defined(_WINDOWS) && !defined(__MINGW32__)
+    #ifdef STFIODLL
+        #define StfioDll __declspec( dllexport )
     #else
-        #define StfDll __declspec( dllimport )
+        #define StfioDll __declspec( dllimport )
     #endif
 #else
-    #define StfDll
+    #define StfioDll
 #endif
 
 typedef std::vector<double > Vector_double;
@@ -69,27 +84,27 @@ namespace stfio {
  *  @{
  */
 
-    Vector_double vec_scal_plus(const Vector_double& vec, double scalar);
+    StfioDll Vector_double vec_scal_plus(const Vector_double& vec, double scalar);
 
-    Vector_double vec_scal_minus(const Vector_double& vec, double scalar);
+    StfioDll Vector_double vec_scal_minus(const Vector_double& vec, double scalar);
 
-    Vector_double vec_scal_mul(const Vector_double& vec, double scalar);
+    StfioDll Vector_double vec_scal_mul(const Vector_double& vec, double scalar);
 
-    Vector_double vec_scal_div(const Vector_double& vec, double scalar);
+    StfioDll Vector_double vec_scal_div(const Vector_double& vec, double scalar);
 
-    Vector_double vec_vec_plus(const Vector_double& vec1, const Vector_double& vec2);
+    StfioDll Vector_double vec_vec_plus(const Vector_double& vec1, const Vector_double& vec2);
 
-    Vector_double vec_vec_minus(const Vector_double& vec1, const Vector_double& vec2);
+    StfioDll Vector_double vec_vec_minus(const Vector_double& vec1, const Vector_double& vec2);
 
-    Vector_double vec_vec_mul(const Vector_double& vec1, const Vector_double& vec2);
+    StfioDll Vector_double vec_vec_mul(const Vector_double& vec1, const Vector_double& vec2);
 
-    Vector_double vec_vec_div(const Vector_double& vec1, const Vector_double& vec2);
+    StfioDll Vector_double vec_vec_div(const Vector_double& vec1, const Vector_double& vec2);
 
 //! ProgressInfo class
 /*! Abstract class to be used as an interface for the file io read/write functions
  *  Can be a GUI Dialog or stdout messages
  */
- class ProgressInfo {
+ class StfioDll ProgressInfo {
  public:
      //! Constructor
      /*! \param title Dialog title
@@ -112,7 +127,7 @@ namespace stfio {
 //! StdoutProgressInfo class
 /*! Example of a ProgressInfo that prints to stdout
  */
-class StdoutProgressInfo : public stfio::ProgressInfo {
+class StfioDll StdoutProgressInfo : public stfio::ProgressInfo {
  public:
     StdoutProgressInfo(const std::string& title, const std::string& message, int maximum, bool verbose);
     bool Update(int value, const std::string& newmsg="", bool* skip=NULL);
@@ -157,7 +172,7 @@ enum filetype {
 /*! \param ext The filter extension to be tested (in the form wxT("*.ext")).
  *  \return The corresponding file type.
  */
-stfio::filetype
+StfioDll stfio::filetype
 findType(const std::string& ext);
 
 //! Generic file import.
@@ -168,7 +183,7 @@ findType(const std::string& ext);
  *  \param progress Set to true if a progress dialog should be shown.
  *  \return true if the file has successfully been read, false otherwise.
  */
-bool
+StfioDll bool 
 importFile(
         const std::string& fName,
         stfio::filetype type,
@@ -184,7 +199,7 @@ importFile(
  *  \param progress Set to true if a progress dialog should be shown.
  *  \return true if the file has successfully been written, false otherwise.
  */
-bool
+StfioDll bool
 exportFile(const std::string& fName, stfio::filetype type, const Recording& Data,
            ProgressInfo& progDlg);
 

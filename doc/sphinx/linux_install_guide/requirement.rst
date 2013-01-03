@@ -69,7 +69,7 @@ You can download the latest development code for `Stimfit <http://www.stimfit.or
 
 ::
 
-    $ git clone https://stimfit.googlecode.com/p/stimfit $HOME/stimfit
+    $ git clone https://code.google.com/p/stimfit $HOME/stimfit
 
 This will grab all the required files into $HOME/stimfit. If you'd like to update at a later point, do:
 

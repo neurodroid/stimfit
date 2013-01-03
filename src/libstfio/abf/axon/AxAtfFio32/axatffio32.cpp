@@ -391,7 +391,7 @@ static BOOL FixColumnTitles(int nColumns, ATF_FILEINFO *pATF)
             return FALSE;
       }
       *ps++ = '\0';
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
       pATF->apszFileColTitles[i] = strdup(StripSpaces(psStart));
 #else
       pATF->apszFileColTitles[i] = _strdup(StripSpaces(psStart));
@@ -435,7 +435,7 @@ static BOOL FixColumnUnits(int nColumns, ATF_FILEINFO *pATF)
       }
       *ps++ = '\0';
 
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
       pATF->apszFileColUnits[i] = strdup(StripSpaces(psStart));
 #else
 	  pATF->apszFileColUnits[i] = _strdup(StripSpaces(psStart));
@@ -495,7 +495,7 @@ static BOOL FixColumnHeadings(int nColumns, ATF_FILEINFO *pATF)
          }
       }
       *ps++ = '\0';
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
       pATF->apszFileColTitles[i] = strdup(StripSpaces(psStart));
 #else
 	  pATF->apszFileColTitles[i] = _strdup(StripSpaces(psStart));
@@ -520,7 +520,7 @@ static BOOL FixColumnHeadings(int nColumns, ATF_FILEINFO *pATF)
          }
          *ps++ = '\0';
          
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
 		 pATF->apszFileColUnits[i] = strdup(StripSpaces(psStart));
 #else
 		 pATF->apszFileColUnits[i] = _strdup(StripSpaces(psStart));
@@ -763,7 +763,7 @@ static BOOL _FormatNumber(double dNum, int nDigits, char *pszString, UINT uSize)
 {
    ARRAYASSERT(pszString, uSize);
 
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
    sprintf(pszString, "%.*g", nDigits, dNum);
    // char* res = gcvt(dNum, nDigits, pszString);
 #else
@@ -804,7 +804,7 @@ BOOL WINAPI ATF_OpenFile(LPCSTR szFileName, UINT uFlags, int *pnColumns, int *pn
       return FALSE;
       
    // copy name:
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
    pATF->pszFileName = strdup(szFileName);
 #else
    pATF->pszFileName = _strdup(szFileName);
@@ -840,7 +840,7 @@ BOOL WINAPI ATF_OpenFile(LPCSTR szFileName, UINT uFlags, int *pnColumns, int *pn
 
       // Try to open any existing file with same name
 
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
       hFile = CreateFileBuf(pATF, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
       if (hFile != INVALID_HANDLE_VALUE)
       {
@@ -1180,7 +1180,7 @@ BOOL WINAPI ATF_SetColumnTitle(int nFile, LPCSTR pszText, int *pnError)
       ERRORRETURN(pnError, ATF_ERROR_TOOMANYCOLS);
 
    // Copy the new column title into the string buffer and save a pointer to it.
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
    LPSTR psz = strdup(pszText);
 #else
    LPSTR psz = _strdup(pszText);
@@ -1219,7 +1219,7 @@ BOOL WINAPI ATF_SetColumnUnits(int nFile, LPCSTR pszText, int *pnError)
       ERRORRETURN(pnError, ATF_ERROR_TOOMANYCOLS);
 
    // Copy the new column Unit into the string buffer and save a pointer to it.
-#ifndef _WINDOWS
+#if !defined(_WINDOWS) || defined(__MINGW32__)
    LPSTR psz = strdup(pszText);
 #else
    LPSTR psz = _strdup(pszText);
@@ -1299,7 +1299,7 @@ BOOL WINAPI ATF_WriteDataComment(int nFile, LPCSTR pszText, int *pnError)
    LPSZASSERT(pszText);
 #endif
    char buf[128];
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    _snprintf(buf, sizeof(buf), "\"%s\"", pszText);
 #else
    snprintf(buf, sizeof(buf), "\"%s\"", pszText);
@@ -1731,7 +1731,7 @@ BOOL WINAPI ATF_BuildErrorText(int nErrorNum, LPCSTR szFileName, char *sTxtBuf, 
    }
 
    char szTemplate[276];
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    if (!LoadStringA(g_hInstance, nErrorNum, szTemplate, sizeof(szTemplate)))
    {
       LoadStringA(g_hInstance, ATF_ERROR_NOMESSAGESTR, szTemplate, sizeof(szTemplate));
@@ -1745,7 +1745,7 @@ BOOL WINAPI ATF_BuildErrorText(int nErrorNum, LPCSTR szFileName, char *sTxtBuf, 
       //      ERRORMSG(sTxtBuf);
       return FALSE;
    }
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    _snprintf(sTxtBuf, nMaxLen, szTemplate, szFileName);
 #else
    snprintf(sTxtBuf, nMaxLen, szTemplate, szFileName);
@@ -1759,7 +1759,7 @@ BOOL WINAPI ATF_BuildErrorText(int nErrorNum, LPCSTR szFileName, char *sTxtBuf, 
 //
 BOOL WINAPI ATF_GetFileDateTime(int nFile, long *plDate, long *plTime, int *pnError)
 {
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
    ATF_FILEINFO *pATF = NULL;
    if (!GetFileDescriptor(&pATF, nFile, pnError))
       return FALSE;

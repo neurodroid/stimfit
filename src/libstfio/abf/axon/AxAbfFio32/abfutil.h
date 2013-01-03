@@ -19,7 +19,7 @@ extern "C" {
 #include "AxAbffio32.h"
 #include "abfheadr.h"
 
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
 UINT WINAPI ABFU_GetTempFileName(LPCSTR szPrefix, UINT uUnique, LPSTR lpTempName);
 #endif
 

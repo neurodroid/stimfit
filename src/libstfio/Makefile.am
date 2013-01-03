@@ -1,5 +1,10 @@
 if BUILD_MODULE
+if ISDARWIN
+PYTHON_TARGET_DIR=${PYTHON_DIST_PKG}
+pkglibdir=${PYTHON_TARGET_DIR}/stfio
+else
 pkglibdir = ${PYTHON_SITE_PKG}/stfio
+endif
 else
 
 endif
@@ -42,7 +47,7 @@ libstfio_la_SOURCES += ./biosig/biosiglib.cpp
 endif
 
 libstfio_la_LDFLAGS = 
-libstfio_la_LIBADD = $(LIBSTF_LDFLAGS) -lhdf5 -lhdf5_hl $(LIBBIOSIG_LDFLAGS)
+libstfio_la_LIBADD = $(LIBSTF_LDFLAGS) $(LIBHDF5_LDFLAGS) $(LIBBIOSIG_LDFLAGS)
 
 if ISDARWIN
 # don't install anything because it has to go into the app bundle

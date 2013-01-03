@@ -124,7 +124,7 @@
     #endif
 
 
-    #ifdef _IS_WINDOWS_           /* Now set up for windows use             */
+    #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)  /* Now set up for windows use */
        #ifdef WIN32             /* if we are in NT all is SMALL           */
 	   #include <Windows.h>
        #define F_memcpy memcpy    /* Define model-independent routines      */
@@ -257,7 +257,7 @@
         #define M_GetMemSize(x)   GetHandleSize(x)
     #endif  /* macintosh */
 
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
         #define F_memcpy memcpy
         #define F_memmove memmove
         #define F_strlen strlen

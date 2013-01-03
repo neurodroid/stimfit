@@ -12,6 +12,14 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+#include "./hdf5lib.h"
+
+#ifndef _STFIO_H_
+  // because WITH_AXON, WITH_HDF5 are defined in stfio.h
+  #error stfio.h must be included before checking WITH_AXON, WITH_HDF5
+#endif 
+#ifdef WITH_HDF5
+
 #include "hdf5.h"
 #if H5_VERS_MINOR > 6
   #include "hdf5_hl.h"
@@ -23,7 +31,6 @@
 #include <sstream>
 #include <iostream>
 
-#include "./hdf5lib.h"
 #include "../recording.h"
 
 const static unsigned int DATELEN = 128;
@@ -91,10 +98,12 @@ bool stfio::exportHDF5File(const std::string& fName, const Recording& WData, Pro
 
     if (status < 0) {
         std::string errorMsg("Exception while writing description in stfio::exportHDF5File");
+        H5Fclose(file_id);
+        H5close();
         throw std::runtime_error(errorMsg);
     }
 
-    H5Gcreate(file_id, "/comment", 0 );
+    hid_t comment_group = H5Gcreate2( file_id,"/comment", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
     /* File comment. */
     std::string description(WData.GetFileDescription());
@@ -105,6 +114,8 @@ bool stfio::exportHDF5File(const std::string& fName, const Recording& WData, Pro
     status = H5LTmake_dataset_string(file_id, "/comment/description", description.c_str());
     if (status < 0) {
         std::string errorMsg("Exception while writing description in stfio::exportHDF5File");
+        H5Fclose(file_id);
+        H5close();
         throw std::runtime_error(errorMsg);
     }
 
@@ -116,11 +127,16 @@ bool stfio::exportHDF5File(const std::string& fName, const Recording& WData, Pro
     status = H5LTmake_dataset_string(file_id, "/comment/comment", comment.c_str());
     if (status < 0) {
         std::string errorMsg("Exception while writing comment in stfio::exportHDF5File");
+        H5Fclose(file_id);
+        H5close();
         throw std::runtime_error(errorMsg);
     }
+    H5Gclose(comment_group);
 
     std::vector<std::string> channel_name(WData.size());
-    H5Gcreate(file_id, "/channels", 0 );
+
+    hid_t channels_group = H5Gcreate2( file_id,"/channels", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+
     for ( std::size_t n_c=0; n_c < WData.size(); ++n_c) {
         /* Channel descriptions. */
         std::ostringstream ossname;
@@ -141,17 +157,27 @@ bool stfio::exportHDF5File(const std::string& fName, const Recording& WData, Pro
         status = H5LTmake_dataset(file_id, desc_path.str().c_str(), 1, dimsc, string_typec, &datac[0]);
         if (status < 0) {
             std::string errorMsg("Exception while writing channel name in stfio::exportHDF5File");
+            H5Fclose(file_id);
+            H5close();
             throw std::runtime_error(errorMsg);
         }
 
         std::ostringstream channel_path; channel_path << "/" << channel_name[n_c];
-        hid_t channel_group = H5Gcreate( file_id, channel_path.str().c_str(), 0 );
+        hid_t channel_group = H5Gcreate2( file_id, channel_path.str().c_str(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+        if (channel_group < 0) {
+            std::ostringstream errorMsg;
+            errorMsg << "Exception while creating channel group for "
+                     << channel_path.str().c_str();
+            H5Fclose(file_id);
+            H5close();
+            throw std::runtime_error(errorMsg.str());
+        }
 
         /* Calculate the size and the offsets of our struct members in memory */
         size_t ct_size =  sizeof( ct );
         size_t ct_offset[1] = { HOFFSET( rt, channels ) };
         /* Define an array of channel tables */
-        ct c_data = { WData[n_c].size() };
+        ct c_data = { (int)WData[n_c].size() };
 
         /* Define field information */
         const char *cfield_names[1]  =  { "n_sections" };
@@ -162,6 +188,8 @@ bool stfio::exportHDF5File(const std::string& fName, const Recording& WData, Pro
                                  cfield_names, ct_offset, cfield_type, 10, NULL, 0, &c_data  );
         if (status < 0) {
             std::string errorMsg("Exception while writing channel description in stfio::exportHDF5File");
+            H5Fclose(file_id);
+            H5close();
             throw std::runtime_error(errorMsg);
         }
 
@@ -200,7 +228,7 @@ bool stfio::exportHDF5File(const std::string& fName, const Recording& WData, Pro
             // create a child group in the channel:
             std::ostringstream section_path;
             section_path << channel_path.str() << "/" << "section_" << strZero.str() << n_s;
-            hid_t section_group = H5Gcreate( file_id, section_path.str().c_str(), 0 );
+            hid_t section_group = H5Gcreate2( file_id, section_path.str().c_str(), H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
             // add data and description, store as 32 bit little endian independent of machine:
             hsize_t dims[1] = { WData[n_c][n_s].size() };
@@ -213,6 +241,8 @@ bool stfio::exportHDF5File(const std::string& fName, const Recording& WData, Pro
             status = H5LTmake_dataset(file_id, data_path.str().c_str(), 1, dims, H5T_IEEE_F32LE, &data_cp[0]);
             if (status < 0) {
                 std::string errorMsg("Exception while writing data in stfio::exportHDF5File");
+                H5Fclose(file_id);
+                H5close();
                 throw std::runtime_error(errorMsg);
             }
 
@@ -255,10 +285,15 @@ bool stfio::exportHDF5File(const std::string& fName, const Recording& WData, Pro
                                      sfield_names, st_offset, sfield_type, 10, NULL, 0, &s_data  );
             if (status < 0) {
                 std::string errorMsg("Exception while writing section description in stfio::exportHDF5File");
+                H5Fclose(file_id);
+                H5close();
                 throw std::runtime_error(errorMsg);
             }
+            H5Gclose(section_group);
         }
+        H5Gclose(channel_group);
     }
+    H5Gclose(channels_group);
 
     /* Terminate access to the file. */
     status = H5Fclose(file_id);
@@ -308,7 +343,7 @@ void stfio::importHDF5File(const std::string& fName, Recording& ReturnData, Prog
     size_t type_size;
 
     std::string description, comment;
-    hid_t group_id = H5Gopen(file_id, "/comment");
+    hid_t group_id = H5Gopen2(file_id, "/comment", H5P_DEFAULT);
     status = H5Lexists(group_id, "/comment/description", 0);
     if (status==1) {
         status = H5LTget_dataset_info( file_id, "/comment/description", &dims, &class_id, &type_size );
@@ -373,7 +408,7 @@ void stfio::importHDF5File(const std::string& fName, Recording& ReturnData, Prog
         std::ostringstream channel_path;
         channel_path << "/" << channel_name.str();
 
-        hid_t channel_group = H5Gopen(file_id, channel_path.str().c_str() );
+        hid_t channel_group = H5Gopen2(file_id, channel_path.str().c_str(), H5P_DEFAULT );
         status=H5TBread_table( channel_group, "description", sizeof(ct), ct_offset, ct_sizes, ct_buf );
         if (status < 0) {
             std::string errorMsg("Exception while reading channel description in stfio::importHDF5File");
@@ -414,7 +449,7 @@ void stfio::importHDF5File(const std::string& fName, Recording& ReturnData, Prog
             // create a child group in the channel:
             std::ostringstream section_path;
             section_path << channel_path.str() << "/" << "section_" << strZero.str() << n_s;
-            hid_t section_group = H5Gopen(file_id, section_path.str().c_str() );
+            hid_t section_group = H5Gopen2(file_id, section_path.str().c_str(), H5P_DEFAULT );
 
             std::ostringstream data_path; data_path << section_path.str() << "/data";
             hsize_t sdims;
@@ -495,3 +530,6 @@ void stfio::importHDF5File(const std::string& fName, Recording& ReturnData, Prog
     }
     
 }
+
+#endif // WITH_HDF5
+

@@ -61,14 +61,12 @@ public:
      */ 
     virtual void OnDraw(wxDC& dc);
     
-#ifdef _WINDOWS
     //! Copies the drawing to the clipboard as a windows metafile.
     /*! Metafiles are only implemented in Windows. Some applications
      *  allow you to paste as an enhanced metafile (usually through
      *  "Edit -> Paste special..."); choose this option for best results.
      */
     void Snapshotwmf();
-#endif
 
     //! Handles mouse events.
     /*! The different possibilities (e.g. left or right click) split up

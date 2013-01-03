@@ -1,12 +1,8 @@
 #include "fileUtils.h"
-#ifdef _WINDOWS
-#include <sstream>
-#ifdef MODULE_ONLY
-#include <string>
-typedef std::wstring wxString;
-#else
-#include <wx/wx.h>
-#endif
+#if defined(_WINDOWS) && !defined(__MINGW32__)
+    #include <sstream>
+    #include <string>
+    typedef std::wstring wxString;
 #endif
 
 // Mac-specific file access functions
@@ -86,10 +82,10 @@ filehandle OpenFile( const char *fileName )
 
     return dataRefNum;
 #endif
-#if defined(__APPLE__) || defined(__LINUX__)
+#if defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)
     return fopen( fileName, "r" );
 #endif
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
 	std::wstringstream fileNameS;
 	fileNameS << fileName;
     HANDLE file = CreateFile(fileNameS.str().c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
@@ -103,11 +99,11 @@ void CloseFile( filehandle dataRefNum )
     FSClose( dataRefNum );
     return;
 #endif
-#if defined(__APPLE__) || defined(__LINUX__)
+#if defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)
     fclose( dataRefNum );
     return;
 #endif
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
     CloseHandle(dataRefNum);
     return;
 #endif
@@ -118,10 +114,10 @@ int SetFilePosition( filehandle dataRefNum, int posn )
 #if 0
     return SetFPos( dataRefNum, fsFromStart, posn );		// Position the mark
 #endif
-#if defined(__APPLE__) || defined(__LINUX__)
+#if defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)
     return fseek( dataRefNum, posn, SEEK_SET );
 #endif
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
     if (SetFilePointer(dataRefNum, posn, NULL, FILE_BEGIN) == INVALID_SET_FILE_POINTER)
         return 1;
     else
@@ -134,13 +130,13 @@ int ReadFromFile( filehandle dataRefNum, AXGLONG count, void *dataToRead )
 #if 0
     return FSRead( dataRefNum, &count, dataToRead );
 #endif
-#if defined(__APPLE__) || defined(__LINUX__)
+#if defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)
     if ( (AXGLONG)fread( dataToRead, 1, count, dataRefNum ) == count )
         return 0;
     else
         return 1;
 #endif
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && !defined(__MINGW32__)
     DWORD   dwRead;
 	short res = ReadFile(dataRefNum, dataToRead, count, &dwRead, NULL);
     if (res)

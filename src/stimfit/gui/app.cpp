@@ -47,11 +47,7 @@
 #error You must set wxUSE_MDI_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#ifdef _WINDOWS
-#include "../../stfconf.h"
-#else
-#include "stfconf.h"
-#endif
+#include "../../../stfconf.h"
 #include "./app.h"
 #include "./doc.h"
 #include "./view.h"
@@ -62,9 +58,11 @@
 #include "./dlgs/smalldlgs.h"
 #include "./../math/funclib.h"
 
-#if defined(__LINUX__) || defined(__WXMAC__)
+#if defined(__linux__) || defined(__WXMAC__) 
+#if !defined(__MINGW32__)
 #include "./../../libstfio/abf/axon/Common/axodefn.h"
 #include "./../../libstfio/abf/axon/AxAbfFio32/abffiles.h"
+#endif
 #endif
 #include "./../math/fit.h"
 
@@ -179,8 +177,10 @@ bool wxStfApp::OnInit(void)
                                      wxT("Axon binary file"), wxT("*.abf"), wxT(""), wxT("abf"),
                                      wxT("ABF Document"), wxT("ABF View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
-#if defined(__LINUX__) || defined(__WXMAC__)
+#if defined(__linux__) || defined(__WXMAC__)
+#if !defined(__MINGW32__)
     ABF_Initialize();
+#endif
 #endif
     m_atfTemplate=new wxDocTemplate( docManager,
                                      wxT("Axon text file"), wxT("*.atf"), wxT(""), wxT("atf"),
@@ -197,7 +197,7 @@ bool wxStfApp::OnInit(void)
                                      CLASSINFO(wxStfView) );
 #ifdef WITH_BIOSIG
     m_biosigTemplate=new wxDocTemplate( docManager,
-                                     wxT("Biosig file"), wxT("*.bs"), wxT(""), wxT("bs"),
+                                     wxT("CFS, HEKA, etc. with BioSig"), wxT("*.*"), wxT(""), wxT(""),
                                      wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #endif
@@ -429,6 +429,10 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
              break;
 
          case stf::latency_cursor:
+             // Use peak cursors for latency?
+             actDoc->SetLatencyWindowMode(CursorsDialog->UsePeak4Latency() );
+             wxWriteProfileInt(wxT("Settings"), wxT("LatencyWindowMode"), CursorsDialog->UsePeak4Latency() );
+
              // Latency start mode
              actDoc->SetLatencyBeg(CursorsDialog->GetCursor1L());
              // set latency mode in wxStfDoc
@@ -441,9 +445,6 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
              actDoc->SetLatencyEndMode(CursorsDialog->GetLatencyEndMode() );
              wxWriteProfileInt(wxT("Settings"), wxT("LatencyEndMode"), CursorsDialog->GetLatencyEndMode() );
 
-             // Use peak cursors for latency?
-             actDoc->SetLatencyWindowMode(CursorsDialog->UsePeak4Latency() );
-             wxWriteProfileInt(wxT("Settings"), wxT("LatencyWindowMode"), CursorsDialog->UsePeak4Latency() );
              break;
             
          
@@ -564,10 +565,9 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
 
     file_menu->AppendSeparator();
     file_menu->Append(ID_MPL, wxT("Create &figure..."));
-#ifdef _WINDOWS
+
     file_menu->Append(ID_PRINT_PRINT, wxT("&Print..."));
     file_menu->Append(ID_PRINT_PAGE_SETUP, wxT("Print &Setup..."));
-#endif
     
 #ifdef WITH_PYTHON
     file_menu->AppendSeparator();
@@ -787,11 +787,13 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     }
     analysis_menu->AppendSubMenu(userdefSub,wxT("User-defined functions"));
 #endif
+#ifdef WITH_PYTHON
     wxMenu *extensions_menu = new wxMenu;
     for (std::size_t n=0;n<GetExtensionLib().size();++n) {
         extensions_menu->Append(ID_USERDEF+(int)n,
                                 stf::std2wx(GetExtensionLib()[n].menuEntry));
     }
+#endif 
     
     wxMenu *help_menu = new wxMenu;
     help_menu->Append(wxID_HELP, wxT("Online &help\tF1"));
@@ -804,7 +806,9 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     menu_bar->Append(m_edit_menu, wxT("&Edit"));
     menu_bar->Append(m_view_menu, wxT("&View"));
     menu_bar->Append(analysis_menu, wxT("&Analysis"));
+#ifdef WITH_PYTHON
     menu_bar->Append(extensions_menu, wxT("E&xtensions"));
+#endif
     menu_bar->Append(help_menu, wxT("&Help"));
 
     return menu_bar;
@@ -823,19 +827,15 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
 #endif
     wxStfChildFrame *subframe = new wxStfChildFrame(
                                                     doc, view, 
+                                                    GetMainFrame(), wxID_ANY, doc->GetTitle(),
 #ifdef __WXMAC__
-                                                    GetMainFrame(), wxID_ANY, doc->GetTitle(),
                                                     wxPoint(xpos,ypos), wxSize(800,600),
-                                                    wxDEFAULT_FRAME_STYLE |
-                                                    // wxNO_FULL_REPAINT_ON_RESIZE |
-                                                    wxWANTS_CHARS | wxMAXIMIZE
 #else
-                                                    GetMainFrame(), wxID_ANY, doc->GetTitle(),
                                                     wxDefaultPosition, wxDefaultSize,
+#endif
                                                     wxDEFAULT_FRAME_STYLE |
                                                     // wxNO_FULL_REPAINT_ON_RESIZE |
                                                     wxWANTS_CHARS | wxMAXIMIZE
-#endif
                                                     );
 
 #ifdef __WXMSW__
@@ -1388,7 +1388,7 @@ wxString wxStfApp::GetVersionString() const {
     return verString;
 }
 
-wxStfParentFrame *GetMainFrame(void)
+StfDll wxStfParentFrame *GetMainFrame(void)
 {
     return frame;
 }
