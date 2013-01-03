@@ -8,7 +8,7 @@
 # This is most useful for debugging, when several instances of stimfit
 # should be available. 
 #
-# usage:
+# Usage:
 #   cd ~/src/stimfit/         # change into stimfit's root directory
 #   make -f Makefile.static   # build stimfit 
 #   make -B -f Makefile.static   # rebuild everything
@@ -18,11 +18,15 @@
 #
 #   ./stimfit                 # start stimfit 
 #
+#   win32 built
+#	WXCONF=i686-pc-mingw32-wx-config   make -f Makefile.static 
+#   win64 built
+#	WXCONF=x86_64-static-mingw32-wx-config make -f Makefile.static
+#
 # Limitations: 
 #    - no support for ASCII, SON format
 #    - PYTHON shell, matplotlib (print) are not supported
 #    - configure not supported
-#    - does not compile on Ubuntu 12.04 LTS
 #
 # Copyright (C) 2012 Alois Schloegl 
 #
@@ -151,31 +155,34 @@ ifneq (,$(findstring HAVE_LAPACK, $(DEFINES)))
   LIBS   += -llapack -lblas
 endif
 
+ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
+  DEFINES += -I$(HOME)/src/biosig-code/biosig4c++/
+endif
+
 ifeq (,$(findstring mingw32, $(WXCONF)))
-  # WITH_HDF5 and WITH_AXON are already defined in src/libstfio/stfio.h
-  # these are commented here to avoid  recurring definition 
-  #DEFINES += -DWITH_HDF5
+  # WITH_AXON is already defined in src/libstfio/stfio.h
+  # It's commented here to avoid  recurring definition 
   #DEFINES += -DWITH_AXON
-  LIBS    += -lhdf5 -lhdf5_hl 
   SOURCES += $(SOURCES_ABF)
   TARGET   = stimfit 
   OBJEXT   = o
   ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
-    LDFLAGS += -L$(HOME)/src/biosig4c++/
+    LIBS    += -lbiosig -lcholmod 
+    LDFLAGS += -L$(HOME)/src/biosig-code/biosig4c++/
   endif
 else
   ### MINGW ### 
   TARGET   = stimfit.exe 
-  LIBS    += -lgfortran
+  LIBS    += -lgfortran -lhdf5 -lhdf5_hl
   OBJEXT   = obj
-  ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
-    LDFLAGS += -L$(HOME)/src/biosig4c++/win32/
+  ifeq (i686, $(findstring i686, $(WXCONF)))
+    LIBS += $(HOME)/src/biosig-code/biosig4c++/win32/libbiosig.a  -lcholmod 
+    LDFLAGS += -L$(HOME)/src/biosig-code/biosig4c++/win32/
   endif
-endif
-
-ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
-  DEFINES += -I$(HOME)/src/biosig4c++/
-  LIBS    += -lbiosig -lcholmod 
+  ifeq (x86_64, $(findstring x86_64, $(WXCONF)))
+    LIBS += $(HOME)/src/biosig-code/biosig4c++/win32/libbiosig.a  -lcholmod 
+    LDFLAGS += -L$(HOME)/src/biosig-code/biosig4c++/win64/
+  endif
 endif
 
 ifneq (,$(findstring WITH_PYTHON, $(DEFINES)))
@@ -191,7 +198,7 @@ CXX       = $(shell $(WXCONF) --cxx)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags)
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags)
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
-LIBS     += -lfftw3 -lssl -lcrypto -lz -lpthread 
+LIBS     += -lfftw3 -lhdf5 -lhdf5_hl -lssl -lcrypto -lz -lpthread 
 
 ##############################################################
 ###  BUILT

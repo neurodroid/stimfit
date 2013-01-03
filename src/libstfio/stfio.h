@@ -35,12 +35,7 @@
 #ifndef __MINGW32__
   // defining these compiler flags should eventually move to ./configure.in
   #define WITH_AXON
-  #define WITH_HDF5
 #else
-  #ifdef WITH_HDF5
-    #error HDF5 not supported when compiling with MINGW
-    #undef WITH_HDF5
-  #endif 
   #ifdef WITH_AXON
     #error AXON not supported when compiling with MINGW
     #undef WITH_AXON

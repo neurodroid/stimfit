@@ -61,8 +61,8 @@
 #include "./dlgs/smalldlgs.h"
 #include "./copygrid.h"
 #ifndef _STFIO_H_
-  // because WITH_AXON, WITH_HDF5 are defined in stfio.h
-  #error stfio.h must be included before checking WITH_AXON, WITH_HDF5
+  // because WITH_AXON is defined in stfio.h
+  #error stfio.h must be included before checking WITH_AXON
 #endif 
 #ifdef WITH_AXON
   #include "./../../libstfio/atf/atflib.h"
