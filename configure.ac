@@ -1,4 +1,4 @@
-AC_INIT([stimfit],[0.11.4])
+AC_INIT([stimfit],[0.11.5])
 AC_CONFIG_SRCDIR(src/stimfit/gui/main.cpp)
 AM_INIT_AUTOMAKE([1.11])
 AM_SILENT_RULES([yes])
@@ -51,7 +51,7 @@ AM_CONDITIONAL([ISDARWIN], [test $STFKERNEL = "darwin"])
 AC_ARG_ENABLE([python], 
   AS_HELP_STRING(
     [--enable-python],
-    [enable python console [[default="yes"]]]),,
+    [enable python console (default="yes")]),,
     [enable_python="yes"])
 
 AM_CONDITIONAL(BUILD_PYTHON, test "$enable_python" = "yes")
@@ -119,7 +119,6 @@ AC_SUBST(STF_PYTHON_LIBNAME)
 AC_SUBST(STFIO_PYTHON_LIBNAME)
 
 # Checks for python libraries.
-AC_ARG_ENABLE([python], AS_HELP_STRING([--enable-python],[enable python as the default shell]),[])
 if test "$enable_python" = "yes" ; then
     CPPFLAGS="${CPPFLAGS} -DWITH_PYTHON"
 fi

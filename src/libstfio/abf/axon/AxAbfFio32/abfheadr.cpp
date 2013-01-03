@@ -793,7 +793,7 @@ void WINAPI ABFH_GetDACtoUUFactors( const ABFFileHeader *pFH, int nChannel,
    ABFH_PromoteHeader( &NewFH, pFH );
    {
       // Prevent accidental use of pFH.
-      int pFH = 0;   pFH = pFH;
+      int pFH = 0; pFH = pFH;
 
       float fScaleFactor       = NewFH.fDACScaleFactor[nChannel];
       float fCalibrationFactor = NewFH.fDACCalibrationFactor[nChannel];

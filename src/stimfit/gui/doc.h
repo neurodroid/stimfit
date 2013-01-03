@@ -44,7 +44,7 @@ private:
     bool ChannelSelDlg();
     void WriteToReg();
     bool outOfRange(std::size_t check) {
-        return (check>=cur().size() || check<0);
+        return (check>=cur().size());
     }
     void Focus();
     void OnNewfromselectedThisMenu( wxCommandEvent& event ) { OnNewfromselectedThis( ); }

@@ -1490,7 +1490,7 @@ void wxStfCursorsDlg::UpdateUnits(wxWindowID comboId, bool& setTime, wxWindowID 
     }
     if (setTime&&!isTimeNow) {
         // switched from time to pts:
-        int iNewValue = round(fEntry/actDoc->GetXScale());
+        int iNewValue = stf::round(fEntry/actDoc->GetXScale());
         wxString strNewValue; strNewValue << iNewValue;
         pText->SetValue( strNewValue );
         setTime=false;

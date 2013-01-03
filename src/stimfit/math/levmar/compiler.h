@@ -39,7 +39,9 @@
 #endif 
 
 #ifdef _MSC_VER // avoid deprecation warnings in VS2005
+#ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
+#endif
 #endif
 
 #endif /* _COMPILER_H_ */

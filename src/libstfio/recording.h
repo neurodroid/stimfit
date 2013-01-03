@@ -37,7 +37,7 @@ class Section;
  *  will throw an exception if out of range) or the []-operator (range unchecked). Moreover
  *  all the metadata such as time, date, samling rate and comments are stored here.
  */
-class StfDll Recording {
+class StfioDll Recording {
  public:
 
     //ctor/dtor-------------------------------------------------------

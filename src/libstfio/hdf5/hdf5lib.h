@@ -39,7 +39,7 @@ void importHDF5File(const std::string& fName, Recording& ReturnData, ProgressInf
  *  \param WData The data to be exported.
  *  \return The HDF5 file handle.
  */
- bool exportHDF5File(const std::string& fName, const Recording& WData, ProgressInfo& progDlg);
+StfioDll  bool exportHDF5File(const std::string& fName, const Recording& WData, ProgressInfo& progDlg);
 
 }
 

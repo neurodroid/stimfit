@@ -444,7 +444,7 @@ def plot_traces(traces, traces2=None, ax=None, Fig=None, pulses=None,
     else:
         sb_xoff_total = sb_xoff
         sb_yl_yoff = 0
-        
+
     if plot_sb:
         plot_scalebars(ax, linestyle=linestyle_sb, xunits=traces[0].xunits, yunits=traces[0].yunits,
                        textweight=textweight, textcolor=textcolor, xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, 

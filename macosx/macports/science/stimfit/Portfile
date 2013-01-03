@@ -1,9 +1,10 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 # $Id$
 
 PortSystem          1.0
 
 name                stimfit
-version             0.11.4
+version             0.11.5
 categories          science
 platforms           darwin
 license             GPL
@@ -11,10 +12,11 @@ maintainers         gmx.de:christsc
 description         Electrophysiology analysis suite
 long_description    A program for viewing and analyzing electrophysiological data
 homepage            http://www.stimfit.org
-master_sites        https://stimfit.googlecode.com/files/
+master_sites        https://stimfit.googlecode.com/files/ \
+                    file:///Users/cs/stimfit/build/release/
 
-checksums           rmd160  f872a4f14a2fa47ac6595425db26ffdde58c4b9d \
-                    sha256  9cf6dc74f4202d6054a2ef6ccff28e8d8b7f1d12b53b6521594b4b8806f40ac5
+checksums           rmd160  790416b14862de08774c12f6efa84c2d2830f57d \
+                    sha256  c15fe5f8fe801cef8da997b6817784d0c2d75dd0b10dc517346632c74123cc19
 
 universal_variant   no
 
@@ -23,36 +25,32 @@ supported_archs     x86_64
 depends_lib         port:boost \
                     port:fftw-3 \
                     port:hdf5-18 \
-                    port:wxWidgets-devel \
+                    port:wxWidgets30 \
                     port:swig-python
 
-variant python26 description {Use Python version 2.6} {
-    depends_lib-append \
-        port:python26 \
-        port:py26-wxpython-devel \
-        port:py26-numpy \
-        port:py26-matplotlib
+configure.args      --with-wx-config=${prefix}/bin/wx-config \
+                    --disable-dependency-tracking \
+                    --disable-python \
+                    CC="`${prefix}/bin/wx-config --cc`" \
+                    CXX="`${prefix}/bin/wx-config --cxx`" \
+                    LD="`${prefix}/bin/wx-config --ld`"
 
-    configure.python \
-        ${prefix}/bin/python2.6
-}
-
-variant python27 description {Use Python version 2.7} {
+variant python27 description {Build with Python shell. Only 2.7 is supported.} {
     depends_lib-append \
         port:python27 \
-        port:py27-wxpython-devel \
+        port:py27-wxpython30 \
         port:py27-numpy \
         port:py27-matplotlib
 
     configure.python \
         ${prefix}/bin/python2.7
-}
 
-configure.args      --with-wx-config=${prefix}/bin/wx-config \
-                    --disable-dependency-tracking \
-                    CC="`${prefix}/bin/wx-config --cc`" \
-                    CXX="`${prefix}/bin/wx-config --cxx`" \
-                    LD="`${prefix}/bin/wx-config --ld`"
+    configure.args-delete \
+        --disable-python
+
+    configure.args-append \
+        --enable-python
+}
 
 configure.ldflags-append \
                     -headerpad_max_install_names

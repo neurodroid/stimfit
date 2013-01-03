@@ -76,7 +76,7 @@ struct new_wxwindow {
 /*! It is part of the of the document/view framework implemented in wxWidgets.
  *  This class can only be used for MDI parent frames.
  */
-class wxStfParentFrame : public wxStfParentType {
+class StfDll wxStfParentFrame : public wxStfParentType {
     DECLARE_CLASS(wxStfParentFrame)
 public:
     //! Constructor

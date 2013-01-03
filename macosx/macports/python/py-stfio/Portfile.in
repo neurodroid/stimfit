@@ -1,0 +1,45 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem          1.0
+PortGroup           python 1.0
+
+name                py-stfio
+version             0.11.5
+categories          python science
+platforms           darwin
+license             GPL-2
+maintainers         gmx.de:christsc
+description         Electrophysiology file support for Python
+long_description    A Python module to read common electrophysiology file formats.
+homepage            http://www.stimfit.org
+master_sites        googlecode:stimfit
+distname            stimfit-${version}
+
+checksums           rmd160  RMD160 \
+                    sha256  SHA256
+
+supported_archs     x86_64 i386
+
+python.versions     25 26 27 31 32 33
+
+if { ${subport} != ${name} } {
+    depends_build   port:swig-python
+
+    depends_lib     port:boost \
+                    port:hdf5-18 \
+                    port:py${python.version}-numpy
+
+    configure.args  --disable-dependency-tracking \
+                    --enable-module
+
+    configure.python \
+                    ${python.bin}
+
+    use_configure   yes
+    build.cmd       make
+    build.target    
+    destroot.cmd    make
+    destroot.destdir \
+                    DESTDIR=${destroot}
+}
