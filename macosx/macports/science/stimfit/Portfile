@@ -12,8 +12,7 @@ maintainers         gmx.de:christsc
 description         Electrophysiology analysis suite
 long_description    A program for viewing and analyzing electrophysiological data
 homepage            http://www.stimfit.org
-master_sites        https://stimfit.googlecode.com/files/ \
-                    file:///Users/cs/stimfit/build/release/
+master_sites        googlecode:stimfit
 
 checksums           rmd160  790416b14862de08774c12f6efa84c2d2830f57d \
                     sha256  c15fe5f8fe801cef8da997b6817784d0c2d75dd0b10dc517346632c74123cc19
@@ -21,12 +20,11 @@ checksums           rmd160  790416b14862de08774c12f6efa84c2d2830f57d \
 universal_variant   no
 
 supported_archs     x86_64
- 
+
 depends_lib         port:boost \
                     port:fftw-3 \
                     port:hdf5-18 \
-                    port:wxWidgets30 \
-                    port:swig-python
+                    port:wxWidgets30
 
 configure.args      --with-wx-config=${prefix}/bin/wx-config \
                     --disable-dependency-tracking \
@@ -36,6 +34,9 @@ configure.args      --with-wx-config=${prefix}/bin/wx-config \
                     LD="`${prefix}/bin/wx-config --ld`"
 
 variant python27 description {Build with Python shell. Only 2.7 is supported.} {
+    depends_build-append \
+        port:swig-python
+
     depends_lib-append \
         port:python27 \
         port:py27-wxpython30 \
