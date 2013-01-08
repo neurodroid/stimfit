@@ -166,23 +166,11 @@ ifeq (,$(findstring mingw32, $(WXCONF)))
   SOURCES += $(SOURCES_ABF)
   TARGET   = stimfit 
   OBJEXT   = o
-  ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
-    LIBS    += -lbiosig -lcholmod 
-    LDFLAGS += -L$(HOME)/src/biosig-code/biosig4c++/
-  endif
 else
   ### MINGW ### 
   TARGET   = stimfit.exe 
-  LIBS    += -lgfortran -lhdf5 -lhdf5_hl
+  LIBS    += -lgfortran
   OBJEXT   = obj
-  ifeq (i686, $(findstring i686, $(WXCONF)))
-    LIBS += $(HOME)/src/biosig-code/biosig4c++/win32/libbiosig.a  -lcholmod 
-    LDFLAGS += -L$(HOME)/src/biosig-code/biosig4c++/win32/
-  endif
-  ifeq (x86_64, $(findstring x86_64, $(WXCONF)))
-    LIBS += $(HOME)/src/biosig-code/biosig4c++/win64/libbiosig.a  -lcholmod 
-    LDFLAGS += -L$(HOME)/src/biosig-code/biosig4c++/win64/
-  endif
 endif
 
 ifneq (,$(findstring WITH_PYTHON, $(DEFINES)))
@@ -198,6 +186,7 @@ CXX       = $(shell $(WXCONF) --cxx)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags)
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags)
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
+LIBS     += -lhdf5 -lhdf5_hl -lbiosig -lcholmod -liberty
 LIBS     += -lfftw3 -lhdf5 -lhdf5_hl -lssl -lcrypto -lz -lpthread 
 
 ##############################################################
@@ -207,7 +196,7 @@ LIBS     += -lfftw3 -lhdf5 -lhdf5_hl -lssl -lcrypto -lz -lpthread
 OBJECTS  = $(addsuffix .$(OBJEXT), $(basename $(SOURCES)))
 
 $(TARGET): $(OBJECTS)
-	 $(CXX) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o "$@"
+	 $(CXX) $(OBJECTS) $(CXXFLAGS) -fstack-protector-all $(LDFLAGS) $(LIBS) -o "$@"
 
 %.c: %.h
 
