@@ -159,7 +159,7 @@ ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
   DEFINES += -I$(HOME)/src/biosig-code/biosig4c++/
 endif
 
-ifeq (,$(findstring mingw32, $(WXCONF)))
+ifeq (,$(findstring mingw, $(WXCONF)))
   # WITH_AXON is already defined in src/libstfio/stfio.h
   # It's commented here to avoid  recurring definition 
   #DEFINES += -DWITH_AXON
@@ -169,7 +169,7 @@ ifeq (,$(findstring mingw32, $(WXCONF)))
 else
   ### MINGW ### 
   TARGET   = stimfit.exe 
-  LIBS    += -lgfortran
+  LIBS    += -lgfortran -liberty
   OBJEXT   = obj
 endif
 
@@ -186,7 +186,7 @@ CXX       = $(shell $(WXCONF) --cxx)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags)
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags)
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
-LIBS     += -lhdf5 -lhdf5_hl -lbiosig -lcholmod -liberty
+LIBS     += -lhdf5 -lhdf5_hl -lbiosig -lcholmod
 LIBS     += -lfftw3 -lhdf5 -lhdf5_hl -lssl -lcrypto -lz -lpthread 
 
 ##############################################################
