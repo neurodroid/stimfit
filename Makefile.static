@@ -169,7 +169,6 @@ ifeq (,$(findstring mingw, $(WXCONF)))
 else
   ### MINGW ### 
   TARGET   = stimfit.exe 
-  LIBS    += -lgfortran -liberty
   OBJEXT   = obj
 endif
 
@@ -186,8 +185,13 @@ CXX       = $(shell $(WXCONF) --cxx)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags)
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags)
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
-LIBS     += -lhdf5 -lhdf5_hl -lbiosig -lcholmod
-LIBS     += -lfftw3 -lhdf5 -lhdf5_hl -lssl -lcrypto -lz -lpthread 
+LIBS     += -lhdf5_hl -lhdf5 -lbiosig -lcholmod 
+LIBS     += -lfftw3 -lssl -lcrypto -lz -lpthread
+
+ifeq (mingw,$(findstring mingw, $(WXCONF)))
+  LIBS   += -lgfortran -liberty
+endif
+
 
 ##############################################################
 ###  BUILT
