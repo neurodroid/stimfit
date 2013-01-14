@@ -186,7 +186,7 @@ CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags)
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags)
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
 LIBS     += -lhdf5_hl -lhdf5 -lbiosig -lcholmod 
-LIBS     += -lfftw3 -lssl -lcrypto -lz -lpthread
+LIBS     += -lfftw3 -lz -lpthread
 
 ifeq (mingw,$(findstring mingw, $(WXCONF)))
   LIBS   += -lgfortran -liberty
