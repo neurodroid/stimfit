@@ -45,8 +45,14 @@ namespace stfio {
  *         the data stored in \e fName.
  *  \param progress True if the progress dialog should be updated.
  */
-    void importBSFile(const std::string& fName, Recording& ReturnData,
-                      ProgressInfo& progDlg);
+    void importBSFile(const std::string& fName, Recording& ReturnData, ProgressInfo& progDlg);
+
+//! Export a Recording to a GDF file using biosig.
+/*! \param fName Full path to the file to be written.
+ *  \param WData The data to be exported.
+ */
+StfioDll bool exportBiosigFile(const std::string& fName, const Recording& WData, ProgressInfo& progDlg);
+
 
 }
 

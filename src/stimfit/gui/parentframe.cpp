@@ -67,6 +67,9 @@
 #ifdef WITH_AXON
   #include "./../../libstfio/atf/atflib.h"
 #endif 
+#ifdef WITH_BIOSIG
+  #include "./../../libstfio/biosig/biosiglib.h"
+#endif
 #include "./../../libstfio/igor/igorlib.h"
 
 #include "./childframe.h"
@@ -778,6 +781,12 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
                      dest_ext = wxT("Igor binary file [*.ibw]");
                      break;
 
+#ifdef WITH_BIOSIG
+                 case stfio::biosig:
+                     stfio::exportBiosigFile(stf::wx2std(destFilename), sourceFile, progDlgOut);
+                     dest_ext = wxT("Biosig/GDF [*.gdf]");
+                     break;
+#endif
                  default:
                      wxString errorMsg(wxT("Unknown export file type\n"));
                      wxGetApp().ErrorMsg(errorMsg);

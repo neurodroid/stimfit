@@ -50,6 +50,9 @@
 #ifdef WITH_AXON
   #include "./../../libstfio/atf/atflib.h"
 #endif
+#ifdef WITH_BIOSIG
+  #include "./../../libstfio/biosig/biosiglib.h"
+#endif
 #include "./../../libstfio/hdf5/hdf5lib.h"
 #if 0 // TODO: backport ascii
 #include "./../../libstfio/ascii/asciilib.h"
@@ -609,8 +612,8 @@ void wxStfDoc::Fileinfo(wxCommandEvent& WXUNUSED(event)) {
     oss1 << "Number of Channels: " << static_cast<unsigned int>(get().size());
     oss2 << "Number of Sweeps: " << static_cast<unsigned int>(get()[GetCurCh()].size());
     std::ostringstream general;
-    general << "Date:\n" << GetDate() << "\n"
-            << "Time:\n" << GetTime() << "\n"
+    general << "Date:\t" << GetDate() << "\n"
+            << "Time:\t" << GetTime() << "\n"
             << oss1.str() << "\n" << oss2.str() << "\n"
             << "Comment:\n" << GetComment();
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
@@ -647,7 +650,11 @@ bool wxStfDoc::SaveAs() {
     filters += wxT("CED filing system (*.dat;*.cfs)|*.dat;*.cfs|");
     filters += wxT("Axon text file (*.atf)|*.atf|");
     filters += wxT("Igor binary wave (*.ibw)|*.ibw|");
-    filters += wxT("Text file series (*.txt)|*.txt");
+    filters += wxT("Text file series (*.txt)|*.txt|");
+#ifdef WITH_BIOSIG
+    filters += wxT("Biosig/GDF file (*.*)|*.gdf");
+#endif
+
     wxFileDialog SelectFileDialog( GetDocumentWindow(), wxT("Save file"), wxT(""), wxT(""), filters,
             wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_PREVIEW );
     if(SelectFileDialog.ShowModal()==wxID_OK) {
@@ -676,6 +683,10 @@ bool wxStfDoc::SaveAs() {
                  return false;
 #if 0 // TODO
                  return stfio::exportASCIIFile(stf::wx2std(filename), get()[GetCurCh()]);
+#endif
+#ifdef WITH_BIOSIG
+             case 5:
+                 return stfio::exportBiosigFile(stf::wx2std(filename), writeRec, progDlg);
 #endif
              case 0:
              default:

@@ -20,9 +20,11 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
 #include <sstream>
-#include <biosig.h>
+#include <string.h>
 
 #include "../stfio.h"
+
+#include <biosig-dev.h>
 #include "./biosiglib.h"
 
 class BiosigHDR {
@@ -100,6 +102,21 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     }
 
     /*************************************************************************
+        Date and time conversion
+     *************************************************************************/
+    struct tm t;
+    gdf_time2tm_time_r(hdr->T0, &t);
+
+    // allocate local memory for intermediate results;
+    const int strSize=100;
+    char str[strSize];
+
+    strftime(str,100,"%F",&t);
+    ReturnData.SetDate(str);
+    strftime(str,100,"%D",&t);
+    ReturnData.SetTime(str);
+
+    /*************************************************************************
         rescale data to mV and pA
      *************************************************************************/    
 
@@ -141,12 +158,6 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     std::cout << "Number of events: " << hdr->EVENT.N << std::endl;
     /*int res = */ hdr2ascii(hdr, stdout, 4);
 #endif
-
-
-
-    // allocate local memory for intermediate results;    
-    const int strSize=100;     
-    char str[strSize];
 
     for (size_t nc=0; nc<hdr->NS; ++nc) {
 	Channel TempChannel(nsections);
@@ -204,6 +215,10 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 
     ReturnData.SetXScale(1000.0/hdr->SampleRate);
     ReturnData.SetComment(hdr->FileName);
+    ReturnData.SetGlobalSectionDescription("global section desc");
+    ReturnData.SetFileDescription("biosig file descr");
+    ReturnData.SetXUnits("ms");
+    ReturnData.SetScaling("biosig scaling factor");
 
     struct tm T; 
     gdf_time2tm_time_r(hdr->T0, &T); 
@@ -220,5 +235,183 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 #endif
 
     destructHDR(hdr);
+}
+
+
+bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, stfio::ProgressInfo& progDlg) {
+/*
+    converts the internal data structure to libbiosig's internal structure
+    and saves the file as gdf file.
+
+    The data in converted into the raw data format, and not into the common
+    data matrix.
+*/
+
+    HDRTYPE* hdr = constructHDR(Data.size(), 0);
+    assert(hdr->NS == Data.size());
+
+	/* Initialize all header parameters */
+    hdr->TYPE = GDF;
+    hdr->VERSION = 3;   // latest version
+
+    struct tm t;
+    char *str;
+    str = strdup(Data.GetDate().c_str());
+    t.tm_year = strtol(str,&str,10)-1900;
+    t.tm_mon = strtol(str+1,&str,10)-1;
+    t.tm_mday = strtol(str+1,&str,10);
+
+    str = strdup(Data.GetTime().c_str());
+    t.tm_hour = strtol(str,&str,10);
+    t.tm_min = strtol(str+1,&str,10);
+    t.tm_sec = strtol(str+1,&str,10);
+
+    hdr->T0   = tm_time2gdf_time(&t);
+
+    const char *xunits = Data.GetXUnits().c_str();
+    uint16_t pdc = PhysDimCode(xunits);
+    if ((pdc & 0xffe0) == PhysDimCode("s")) {
+        fprintf(stderr,"Stimfit exportBiosigFile: xunits [%s] has not proper units, assume [ms]\n",Data.GetXUnits().c_str());
+        pdc = PhysDimCode("ms");
+    }
+    hdr->SampleRate = 1.0/(PhysDimScale(pdc) * Data.GetXScale());
+    hdr->SPR  = 1;
+
+    hdr->FLAG.UCAL = 0;
+    hdr->FLAG.OVERFLOWDETECTION = 0;
+
+    hdr->FILE.COMPRESSION = 0;
+
+	/* Initialize all channel parameters */
+    typeof(hdr->NS) k;
+    for (k = 0; k < hdr->NS; ++k) {
+        CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+
+        hc->PhysMin = -1e9;
+        hc->PhysMax = 1e9;
+        hc->DigMin  = -1e9;
+        hc->DigMax  = 1e9;
+        hc->Cal    = 1.0;
+        hc->Off    = 0.0;
+
+        /* Channel descriptions. */
+        strncpy(hc->Label, Data[k].GetChannelName().c_str(), MAX_LENGTH_LABEL);
+	    hc->PhysDimCode = PhysDimCode(Data[k].GetYUnits().c_str());
+
+        hc->OnOff      = 1;
+        hc->LeadIdCode = 0;
+
+        hc->TOffset  = 0.0;
+        hc->Notch    = NAN;
+        hc->LowPass  = NAN;
+        hc->HighPass = NAN;
+        hc->Impedance= NAN;
+
+        hc->SPR    = hdr->SPR;
+        hc->GDFTYP = 17; 	// double
+
+        // each segment gets one marker, roughly
+        hdr->EVENT.N += Data[k].size();
+
+        size_t m,len = 0;
+        for (len=0, m = 0; m < Data[k].size(); ++m) {
+            unsigned div = lround(Data[k][m].GetXScale()/Data.GetXScale());
+            hc->SPR = lcm(hc->SPR,div);  // sampling interval of m-th segment in k-th channel
+            len += div*Data[k][m].size();
+        }
+        hdr->SPR = lcm(hdr->SPR, hc->SPR);  // sampling interval of m-th segment in k-th channel
+        if (k==0) {
+            hdr->NRec = len;
+        }
+        else if (hdr->NRec != len) {
+            destructHDR(hdr);
+            throw std::runtime_error("File can't be exported:\n"
+                "No data or Traces have different sizes" );
+
+            return false;
+        }
+    }
+    hdr->AS.bpb = 0;
+    for (k = 0; k < hdr->NS; ++k) {
+        CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+        hc->SPR = hdr->SPR / hc->SPR;
+        hc->bi  = hdr->AS.bpb;
+        hdr->AS.bpb += hc->SPR * GDFTYP_BITS[hc->GDFTYP]/8;
+    }
+
+	/* Event table */
+	size_t N = hdr->EVENT.N * 2;    // about two events per segment
+	hdr->EVENT.POS = (uint32_t*)realloc(hdr->EVENT.POS, N * sizeof(*hdr->EVENT.POS));
+	hdr->EVENT.DUR = (uint32_t*)realloc(hdr->EVENT.DUR, N * sizeof(*hdr->EVENT.DUR));
+	hdr->EVENT.TYP = (uint16_t*)realloc(hdr->EVENT.TYP, N * sizeof(*hdr->EVENT.TYP));
+	hdr->EVENT.CHN = (uint16_t*)realloc(hdr->EVENT.CHN, N * sizeof(*hdr->EVENT.CHN));
+#if (BIOSIG_VERSION >= 10500)
+	hdr->EVENT.TimeStamp = (gdf_time*)realloc(hdr->EVENT.TimeStamp, EventN * sizeof(gdf_time));
+#endif
+	for ( N=0, k=0; k < hdr->NS; ++k) {
+		size_t m;
+		size_t pos = 0;
+        for (m=0; m < Data[m].size(); ++m) {
+            if (pos > 0) {
+                // start of new segment after break
+                hdr->EVENT.POS[N] = pos;
+                hdr->EVENT.TYP[N] = 0x7ffe;
+                hdr->EVENT.CHN[N] = k;
+                hdr->EVENT.DUR[N] = 0;
+                N++;
+            }
+
+            // event description
+            hdr->EVENT.POS[N] = pos;
+            FreeTextEvent(hdr, N, "myevent");
+            //FreeTextEvent(hdr, N, Data[k][m].GetSectionDescription().c_str()); // TODO
+            hdr->EVENT.CHN[N] = k;
+            hdr->EVENT.DUR[N] = 0;
+            N++;
+
+            pos += Data[k][m].size() * lround(Data[k][m].GetXScale()/Data.GetXScale());
+        }
+	}
+
+    hdr->EVENT.N = N;
+    hdr->EVENT.SampleRate = hdr->SampleRate;
+    sort_eventtable(hdr);
+
+	/* convert data into GDF rawdata from  */
+	hdr->AS.rawdata = (uint8_t*)realloc(hdr->AS.rawdata, hdr->AS.bpb*hdr->NRec);
+	for (k=0; k < hdr->NS; ++k) {
+        CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+		size_t m,n,len=0;
+        for (m=0; m < Data[k].size(); ++m) {
+            size_t div = lround(Data[k][m].GetXScale()/Data.GetXScale());
+            size_t div2 = hdr->SPR/div;
+
+            // fprintf(stdout,"k,m,div,div2: %i,%i,%i,%i\n",(int)k,(int)m,(int)div,(int)div2);  //
+            for (n=0; n < Data[k][m].size(); ++n) {
+                double d = Data[k][m][n];
+                uint64_t val = htole64(*(uint64_t*)&d);
+                size_t p, spr = (len + n*div) / hdr->SPR;
+                for (p=0; p < div2; p++)
+                   *(uint64_t*)(hdr->AS.rawdata + hc->bi + hdr->AS.bpb * spr + p*8) = val;
+            }
+            len += div*Data[k][m].size();
+        }
+    }
+
+    /******************************
+        write to file
+    *******************************/
+    hdr = sopen( fName.c_str(), "w", hdr );
+    if (serror2(hdr)) {
+        destructHDR(hdr);
+        return false;
+    }
+
+    ifwrite(hdr->AS.rawdata, hdr->AS.bpb, hdr->NRec, hdr);
+
+    sclose(hdr);
+    destructHDR(hdr);
+
+    return true;
 }
 

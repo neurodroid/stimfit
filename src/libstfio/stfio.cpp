@@ -76,7 +76,6 @@ stfio::findType(const std::string& ext) {
     else if (ext=="*.atf") return stfio::atf;
     else if (ext=="*.dat") return stfio::heka;
     else if (ext=="*.smr") return stfio::son;
-
 #ifdef WITH_BIOSIG
     else if (ext=="*.*") return stfio::biosig;
 #endif
@@ -174,6 +173,12 @@ bool stfio::exportFile(const std::string& fName, stfio::filetype type, const Rec
             stfio::exportIGORFile(fName, Data, progDlg);
             break;
         }
+#ifdef WITH_BIOSIG
+        case stfio::biosig: {
+            stfio::exportBiosigFile(fName, Data, progDlg);
+            break;
+        }
+#endif
         default:
             throw std::runtime_error("Only hdf5 and IGOR are supported for writing at present.");
         }
