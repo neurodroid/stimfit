@@ -148,6 +148,10 @@ void Recording::MakeAverage(Section& AverageReturn,
                 ChannelArray[channel][section_index[l]][k+shift[l]];
         }
         AverageReturn[k] /= n_sections;
+
+        // set sample interval of averaged traces
+        AverageReturn.SetXScale(ChannelArray[channel][section_index[0]].GetXScale());
+
         if (isSig) {
             SigReturn[k]=0.0;
             //Calculate variance
