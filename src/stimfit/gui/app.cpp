@@ -197,7 +197,7 @@ bool wxStfApp::OnInit(void)
                                      CLASSINFO(wxStfView) );
 #ifdef WITH_BIOSIG
     m_biosigTemplate=new wxDocTemplate( docManager,
-                                     wxT("CFS, HEKA, etc. with BioSig"), wxT("*.*"), wxT(""), wxT(""),
+                                     wxT("GDF etc. (BioSig)"), wxT("*.*"), wxT(""), wxT(""),
                                      wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #endif

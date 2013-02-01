@@ -77,28 +77,29 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
      */	
     size_t LenIndexList = 256; 
     if (LenIndexList > hdr->EVENT.N) LenIndexList = hdr->EVENT.N + 2;
-    size_t *SegIndexList = (size_t*)malloc(LenIndexList*sizeof(size_t)); 
-    uint32_t nsections = 0; 
-    SegIndexList[nsections] = 0; 
-    size_t MaxSectionLength = 0; 
+    size_t *SegIndexList = (size_t*)malloc(LenIndexList*sizeof(size_t));
+    uint32_t nsections = 0;
+    SegIndexList[nsections] = 0;
+    size_t MaxSectionLength = 0;
     for (size_t k=0; k <= hdr->EVENT.N; k++) {
-	if (LenIndexList <= nsections+2) {
-		LenIndexList *=2; 
-		SegIndexList = (size_t*)realloc(SegIndexList, LenIndexList*sizeof(size_t)); 
-	}
-	/* 
-           count number of sections and stores it in nsections; 
-  	   EVENT.TYP==0x7ffe indicate number of breaks between sweeps
-	   SegIndexList includes index to first sample and index to last sample,
-	   thus, the effective length of SegIndexList is the number of 0x7ffe plus two.
-	*/
-	if (0) ; 
-        else if (k>=hdr->EVENT.N)		SegIndexList[++nsections] = hdr->NRec*hdr->SPR; 
-	else if (hdr->EVENT.TYP[k]==0x7ffe)	SegIndexList[++nsections] = hdr->EVENT.POS[k]; 
-	else					continue; 
+        if (LenIndexList <= nsections+2) {
+            // allocate more memory as needed
+		    LenIndexList *=2;
+		    SegIndexList = (size_t*)realloc(SegIndexList, LenIndexList*sizeof(size_t));
+	    }
+        /*
+            count number of sections and stores it in nsections;
+            EVENT.TYP==0x7ffe indicate number of breaks between sweeps
+	        SegIndexList includes index to first sample and index to last sample,
+	        thus, the effective length of SegIndexList is the number of 0x7ffe plus two.
+	    */
+        if (0)                              ;
+        else if (k >= hdr->EVENT.N)         SegIndexList[++nsections] = hdr->NRec*hdr->SPR;
+        else if (hdr->EVENT.TYP[k]==0x7ffe) SegIndexList[++nsections] = hdr->EVENT.POS[k];
+        else                                continue;
 
         size_t SPS = SegIndexList[nsections]-SegIndexList[nsections-1];	// length of segment, samples per segment
-	if (MaxSectionLength < SPS) MaxSectionLength = SPS;
+	    if (MaxSectionLength < SPS) MaxSectionLength = SPS;
     }
 
     /*************************************************************************
@@ -283,7 +284,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     hdr->FILE.COMPRESSION = 0;
 
 	/* Initialize all channel parameters */
-    typeof(hdr->NS) k;
+    size_t k, m;
     for (k = 0; k < hdr->NS; ++k) {
         CHANNEL_TYPE *hc = hdr->CHANNEL+k;
 
@@ -339,7 +340,9 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         hdr->AS.bpb += hc->SPR * GDFTYP_BITS[hc->GDFTYP]/8;
     }
 
-	/* Event table */
+	/***
+	    build Event table for storing segment information
+	 ***/
 	size_t N = hdr->EVENT.N * 2;    // about two events per segment
 	hdr->EVENT.POS = (uint32_t*)realloc(hdr->EVENT.POS, N * sizeof(*hdr->EVENT.POS));
 	hdr->EVENT.DUR = (uint32_t*)realloc(hdr->EVENT.DUR, N * sizeof(*hdr->EVENT.DUR));
@@ -348,19 +351,49 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 #if (BIOSIG_VERSION >= 10500)
 	hdr->EVENT.TimeStamp = (gdf_time*)realloc(hdr->EVENT.TimeStamp, EventN * sizeof(gdf_time));
 #endif
-	for ( N=0, k=0; k < hdr->NS; ++k) {
-		size_t m;
+
+    /* check whether all segments have same size */
+    {
+        char flag = (hdr->NS>0);
+        size_t m, POS, pos;
+        for (k=0; k < hdr->NS; ++k) {
+            pos = Data[k].size();
+            if (k==0)
+                POS = pos;
+            else
+                flag &= (POS == pos);
+        }
+        for (m=0; flag && (m < Data[0].size()); ++m) {
+            for (k=0; k < hdr->NS; ++k) {
+                pos = Data[k][m].size() * lround(Data[k][m].GetXScale()/Data.GetXScale());
+                if (k==0)
+                    POS = pos;
+                else
+                    flag &= (POS == pos);
+            }
+        }
+        if (!flag) {
+            destructHDR(hdr);
+            throw std::runtime_error(
+                    "File can't be exported:\n"
+                    "Traces have different sizes or no channels found"
+            );
+            return false;
+        }
+    }
+
+	    N=0;
 		size_t pos = 0;
-        for (m=0; m < Data[m].size(); ++m) {
+        for (m=0; m < Data[0].size(); ++m) {
             if (pos > 0) {
                 // start of new segment after break
                 hdr->EVENT.POS[N] = pos;
                 hdr->EVENT.TYP[N] = 0x7ffe;
-                hdr->EVENT.CHN[N] = k;
+                hdr->EVENT.CHN[N] = 0;
                 hdr->EVENT.DUR[N] = 0;
                 N++;
             }
-
+#if 0
             // event description
             hdr->EVENT.POS[N] = pos;
             FreeTextEvent(hdr, N, "myevent");
@@ -368,19 +401,17 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             hdr->EVENT.CHN[N] = k;
             hdr->EVENT.DUR[N] = 0;
             N++;
-
+#endif
             pos += Data[k][m].size() * lround(Data[k][m].GetXScale()/Data.GetXScale());
         }
-    }
 
     hdr->EVENT.N = N;
     hdr->EVENT.SampleRate = hdr->SampleRate;
     sort_eventtable(hdr);
 
-
-    /* convert data into GDF rawdata from  */
-    hdr->AS.rawdata = (uint8_t*)realloc(hdr->AS.rawdata, hdr->AS.bpb*hdr->NRec);
-    for (k=0; k < hdr->NS; ++k) {
+	/* convert data into GDF rawdata from  */
+	hdr->AS.rawdata = (uint8_t*)realloc(hdr->AS.rawdata, hdr->AS.bpb*hdr->NRec);
+	for (k=0; k < hdr->NS; ++k) {
         CHANNEL_TYPE *hc = hdr->CHANNEL+k;
         size_t m,n,len=0;
         for (m=0; m < Data[k].size(); ++m) {

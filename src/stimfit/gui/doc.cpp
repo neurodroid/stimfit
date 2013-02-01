@@ -652,7 +652,7 @@ bool wxStfDoc::SaveAs() {
     filters += wxT("Igor binary wave (*.ibw)|*.ibw|");
     filters += wxT("Text file series (*.txt)|*.txt|");
 #ifdef WITH_BIOSIG
-    filters += wxT("Biosig/GDF file (*.*)|*.gdf");
+    filters += wxT("GDF file (*.gdf)|*.gdf");
 #endif
 
     wxFileDialog SelectFileDialog( GetDocumentWindow(), wxT("Save file"), wxT(""), wxT(""), filters,
