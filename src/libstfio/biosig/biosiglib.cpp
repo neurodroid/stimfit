@@ -248,6 +248,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     data matrix.
 */
 
+
     HDRTYPE* hdr = constructHDR(Data.size(), 0);
     assert(hdr->NS == Data.size());
 
@@ -321,6 +322,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             len += div*Data[k][m].size();
         }
         hdr->SPR = lcm(hdr->SPR, hc->SPR);  // sampling interval of m-th segment in k-th channel
+
         if (k==0) {
             hdr->NRec = len;
         }
@@ -332,6 +334,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             return false;
         }
     }
+
     hdr->AS.bpb = 0;
     for (k = 0; k < hdr->NS; ++k) {
         CHANNEL_TYPE *hc = hdr->CHANNEL+k;
@@ -383,8 +386,9 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     }
 
 	    N=0;
+		k=0;
 		size_t pos = 0;
-        for (m=0; m < Data[0].size(); ++m) {
+        for (m=0; m < (Data[k].size()); ++m) {
             if (pos > 0) {
                 // start of new segment after break
                 hdr->EVENT.POS[N] = pos;
@@ -407,12 +411,14 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 
     hdr->EVENT.N = N;
     hdr->EVENT.SampleRate = hdr->SampleRate;
+
     sort_eventtable(hdr);
 
 	/* convert data into GDF rawdata from  */
 	hdr->AS.rawdata = (uint8_t*)realloc(hdr->AS.rawdata, hdr->AS.bpb*hdr->NRec);
 	for (k=0; k < hdr->NS; ++k) {
         CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+
         size_t m,n,len=0;
         for (m=0; m < Data[k].size(); ++m) {
             size_t div = lround(Data[k][m].GetXScale()/Data.GetXScale());
