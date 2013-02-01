@@ -12,7 +12,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-// Copyright 2012 Alois Schloegl, IST Austria <alois.schloegl@ist.ac.at>
+// Copyright 2012,2013 Alois Schloegl, IST Austria <alois.schloegl@ist.ac.at>
 
 #include <string>
 #include <iomanip>
@@ -371,25 +371,27 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 
             pos += Data[k][m].size() * lround(Data[k][m].GetXScale()/Data.GetXScale());
         }
-	}
+    }
 
     hdr->EVENT.N = N;
     hdr->EVENT.SampleRate = hdr->SampleRate;
     sort_eventtable(hdr);
 
-	/* convert data into GDF rawdata from  */
-	hdr->AS.rawdata = (uint8_t*)realloc(hdr->AS.rawdata, hdr->AS.bpb*hdr->NRec);
-	for (k=0; k < hdr->NS; ++k) {
+
+    /* convert data into GDF rawdata from  */
+    hdr->AS.rawdata = (uint8_t*)realloc(hdr->AS.rawdata, hdr->AS.bpb*hdr->NRec);
+    for (k=0; k < hdr->NS; ++k) {
         CHANNEL_TYPE *hc = hdr->CHANNEL+k;
-		size_t m,n,len=0;
+        size_t m,n,len=0;
         for (m=0; m < Data[k].size(); ++m) {
             size_t div = lround(Data[k][m].GetXScale()/Data.GetXScale());
             size_t div2 = hdr->SPR/div;
 
             // fprintf(stdout,"k,m,div,div2: %i,%i,%i,%i\n",(int)k,(int)m,(int)div,(int)div2);  //
             for (n=0; n < Data[k][m].size(); ++n) {
-                double d = Data[k][m][n];
-                uint64_t val = htole64(*(uint64_t*)&d);
+                uint64_t val;
+                /* val = htole64(*(uint64_t*)&d); not available on mxe */
+                lef64a(Data[k][m][n], &val);
                 size_t p, spr = (len + n*div) / hdr->SPR;
                 for (p=0; p < div2; p++)
                    *(uint64_t*)(hdr->AS.rawdata + hc->bi + hdr->AS.bpb * spr + p*8) = val;

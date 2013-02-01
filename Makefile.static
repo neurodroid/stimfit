@@ -182,7 +182,7 @@ endif
 
 CC        = $(shell $(WXCONF) --cc)
 CXX       = $(shell $(WXCONF) --cxx)
-CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags)
+CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags)
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
 LIBS     += -lhdf5_hl -lhdf5 -lbiosig -lcholmod 
