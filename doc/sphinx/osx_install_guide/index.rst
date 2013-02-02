@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-OS X Installation Guide
-=======================
+OS X Build Guide
+================
 
 :Author: Christoph Schmidt-Hieber
 :Release: |version|
@@ -17,7 +17,5 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   moduleonly
-   prerequisites
    building
 
