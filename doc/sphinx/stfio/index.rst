@@ -5,7 +5,7 @@ The stfio module
 :Author: Christoph Schmidt-Hieber
 :Date:  |today|
 
-The stfio Python module allows to read and write data in common electrophysiology formats without running Stimfit. Build instructions for GNU/Linux can be found in :doc:`/linux_install_guide/moduleonly`, instructions for OS X are described in :doc:`/osx_install_guide/moduleonly`.
+The stfio Python module allows to read and write data in common electrophysiology formats without running Stimfit. Build instructions for GNU/Linux can be found in :doc:`/linux_install_guide/moduleonly`.
 
 The central object in the stfio module is called a *Recording*. There are two ways to construct a *Recording*: You can either read it in from a file, or you can build it up from scratch using NumPy arrays.
 
