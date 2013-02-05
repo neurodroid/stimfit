@@ -321,7 +321,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             hc->SPR = lcm(hc->SPR,div);  // sampling interval of m-th segment in k-th channel
             len += div*Data[k][m].size();
         }
-        hdr->SPR = lcm(hdr->SPR, hc->SPR);  // sampling interval of m-th segment in k-th channel
+        hdr->SPR = lcm(hdr->SPR, hc->SPR);
 
         if (k==0) {
             hdr->NRec = len;

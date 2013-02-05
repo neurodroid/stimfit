@@ -54,7 +54,7 @@ CPCreateFile(const char* fullFilePath, int overwrite)
 		return 0;
 	#endif
 	
-#if 1//def WIN32
+#if defined(WIN32) && !defined(__MINGW32__)
 	{
 		HANDLE fileH;
 		long accessMode, shareMode;
