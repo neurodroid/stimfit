@@ -155,10 +155,6 @@ ifneq (,$(findstring HAVE_LAPACK, $(DEFINES)))
   LIBS   += -llapack -lblas
 endif
 
-ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
-  DEFINES += -I$(HOME)/src/biosig-code/biosig4c++/
-endif
-
 ifeq (,$(findstring mingw, $(WXCONF)))
   # WITH_AXON is already defined in src/libstfio/stfio.h
   # It's commented here to avoid  recurring definition 
