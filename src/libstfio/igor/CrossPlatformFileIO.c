@@ -54,7 +54,6 @@ CPCreateFile(const char* fullFilePath, int overwrite)
 		return 0;
 	#endif
 	
-#if defined(WIN32) && !defined(__MINGW32__)
 	{
 		HANDLE fileH;
 		long accessMode, shareMode;
@@ -80,7 +79,6 @@ CPCreateFile(const char* fullFilePath, int overwrite)
 #endif
 		return err;
 	}
-	#endif
 }
 
 /*	CPDeleteFile(fullFilePath)
