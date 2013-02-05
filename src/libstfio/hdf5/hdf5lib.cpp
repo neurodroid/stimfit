@@ -12,13 +12,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "./hdf5lib.h"
-
-#ifndef _STFIO_H_
-  // because WITH_AXON is defined in stfio.h
-  #error stfio.h must be included before checking WITH_AXON
-#endif 
-
 #include "hdf5.h"
 #if H5_VERS_MINOR > 6
   #include "hdf5_hl.h"
@@ -30,6 +23,7 @@
 #include <sstream>
 #include <iostream>
 
+#include "./hdf5lib.h"
 #include "../recording.h"
 
 const static unsigned int DATELEN = 128;
