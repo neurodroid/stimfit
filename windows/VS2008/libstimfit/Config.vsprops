@@ -6,15 +6,15 @@
 	>
 	<UserMacro
 		Name="WXDIR"
-		Value="C:\Users\cs\wx"
+		Value="$(SolutionDir)\..\..\..\..\wx"
 	/>
 	<UserMacro
 		Name="BOOSTDIR"
-		Value="C:\Users\cs\boost"
+		Value="$(SolutionDir)\..\..\..\..\boost"
 	/>
 	<UserMacro
 		Name="FFTWDIR"
-		Value="C:\Users\cs\fftw"
+		Value="$(SolutionDir)\..\..\..\..\fftw"
 	/>
 	<UserMacro
 		Name="PYTHONDIR"
