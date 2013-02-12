@@ -440,6 +440,8 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     /******************************
         write to file
     *******************************/
+    std::string errorMsg("Exception while calling std::exportBiosigFile():\n");
+
     hdr = sopen( fName.c_str(), "w", hdr );
 #if (BIOSIG_VERSION > 10400)
     if (serror2(hdr)) {
@@ -449,6 +451,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 	errorMsg += B4C_ERRMSG;
 #endif
         destructHDR(hdr);
+        throw std::runtime_error(errorMsg.c_str());
         return false;
     }
 
