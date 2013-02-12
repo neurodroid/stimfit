@@ -161,8 +161,8 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 #endif
 
     for (size_t nc=0; nc<hdr->NS; ++nc) {
-	Channel TempChannel(nsections);
-	TempChannel.SetChannelName(hdr->CHANNEL[nc].Label);
+       Channel TempChannel(nsections);
+       TempChannel.SetChannelName(hdr->CHANNEL[nc].Label);
 #if defined(BIOSIG_VERSION) && (BIOSIG_VERSION > 10301)
         TempChannel.SetYUnits(PhysDim3(hdr->CHANNEL[nc].PhysDimCode));
 #else
@@ -260,7 +260,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     char *str;
     str = strdup(Data.GetDate().c_str());
     t.tm_year = strtol(str,&str,10)-1900;
-    t.tm_mon = strtol(str+1,&str,10)-1;
+    t.tm_mon  = strtol(str+1,&str,10)-1;
     t.tm_mday = strtol(str+1,&str,10);
 
     str = strdup(Data.GetTime().c_str());
@@ -366,7 +366,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             else
                 flag &= (POS == pos);
         }
-        for (m=0; flag && (m < Data[0].size()); ++m) {
+        for (m=0; flag && (m < Data[(size_t)0].size()); ++m) {
             for (k=0; k < hdr->NS; ++k) {
                 pos = Data[k][m].size() * lround(Data[k][m].GetXScale()/Data.GetXScale());
                 if (k==0)
@@ -385,9 +385,9 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         }
     }
 
-	    N=0;
-		k=0;
-		size_t pos = 0;
+        N=0;
+        k=0;
+        size_t pos = 0;
         for (m=0; m < (Data[k].size()); ++m) {
             if (pos > 0) {
                 // start of new segment after break
@@ -441,7 +441,13 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         write to file
     *******************************/
     hdr = sopen( fName.c_str(), "w", hdr );
+#if (BIOSIG_VERSION > 10400)
     if (serror2(hdr)) {
+        errorMsg += hdr->AS.B4C_ERRMSG;
+#else
+    if (serror()) {
+	errorMsg += B4C_ERRMSG;
+#endif
         destructHDR(hdr);
         return false;
     }
