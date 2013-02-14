@@ -44,7 +44,7 @@ wxWidgets
 ---------
 Get the prebuilt wxWidgets 2.9 libraries from `here <http://www.wxpython.org/download.php#unstable>`_. Choose the 32-bit binaries for MSVC 9. Install to your home directory. Rename the folder to "wx".
 
-wxPython
+wxPythor
 --------
 Get wxPython 2.9 from `here <http://www.wxpython.org/download.php#unstable>`_. Choose the 32-bit version for Python 2.7. Install to your home directory(_not_ to C:\\Python27\\*!). Rename the folder to "wxPython".
 
@@ -52,11 +52,11 @@ FFTW
 ----
 Get the latest 32-bit fftw dlls from `here <http://fftw.org/install/windows.html>`_. Extract to a folder called "fftw" in your home directory. As instructed on the fftw install page, open the Visual Studio Command Prompt that is in the Visual Studio Tools section of the Program menu. cd into the fftw folder and type:
 
-::
+``C:\Users\username\fftw> lib /def:libfftw3-3.def``
 
-    C:\Users\username\fftw> lib /def:libfftw3-3.def
-    C:\Users\username\fftw> lib /def:libfftw3f-3.def
-    C:\Users\username\fftw> lib /def:libfftw3l-3.def
+``C:\Users\username\fftw> lib /def:libfftw3f-3.def``
+
+``C:\Users\username\fftw> lib /def:libfftw3l-3.def``
 
 ===========
 Build Tools
