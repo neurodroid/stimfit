@@ -563,7 +563,7 @@ Jonas, P., Major, G. & Sakmann B. (1993) J Physiol 472:615-63\n\
 Clements, J. D. & Bekkers, J. M. (1997) Biophys J 73:220-229\n\n\
 Thanks to Bill Anderson (www.winltp.com) for helpful suggestions"));
 	info.SetDescription(about);
-	info.SetCopyright(wxT("(C) 2001-2012 Christoph Schmidt-Hieber <christsc@gmx.de>\n\
+	info.SetCopyright(wxT("(C) 2001-2013 Christoph Schmidt-Hieber <christsc@gmx.de>\n\
 Christoph Schmidt-Hieber, University College London\n\
 Published under the GNU general public license (http://www.gnu.org/licenses/gpl.html)"));
 
