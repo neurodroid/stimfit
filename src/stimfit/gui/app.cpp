@@ -196,6 +196,12 @@ bool wxStfApp::OnInit(void)
                                      wxT("HEKA Document"), wxT("HEKA View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #ifdef WITH_BIOSIG
+#if (BIOSIG_VERSION >= 10404) 
+    m_igorTemplate=new wxDocTemplate( docManager,
+                                     wxT("Igor Binary Wave"), wxT("*.ibw"), wxT(""), wxT("ibw"),
+                                     wxT("IGOR Document"), wxT("IGOR View"), CLASSINFO(wxStfDoc),
+                                     CLASSINFO(wxStfView) );
+#endif
     m_biosigTemplate=new wxDocTemplate( docManager,
                                      wxT("GDF etc. (BioSig)"), wxT("*.*"), wxT(""), wxT(""),
                                      wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),

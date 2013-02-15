@@ -1087,6 +1087,9 @@ srcFileNames(0)
     myextensions.Add(wxT("ASCII         [*.*   ]"));
     myextensions.Add(wxT("HDF5          [*.h5  ]"));
     myextensions.Add(wxT("HEKA files    [*.dat ]"));
+#if (BIOSIG_VERSION >= 10404)
+    myextensions.Add(wxT("Igor files    [*.ibw ]"));
+#endif
 
     wxComboBox* myComboBoxExt;
     myComboBoxExt = new wxComboBox(this, wxCOMBOBOX_SRC, myextensions[0], 
@@ -1231,6 +1234,12 @@ void wxStfConvertDlg::OnComboBoxSrcExt(wxCommandEvent& event){
             srcFilterExt =  stfio::heka;
             srcFilter = wxT("*.dat");
             break;
+#if (BIOSIG_VERSION >= 10404)
+        case 7:
+            srcFilterExt =  stfio::igor;
+            srcFilter = wxT("*.ibw");
+            break;
+#endif
         default:   
             srcFilterExt =  stfio::none;
             srcFilter = wxT("*.*");

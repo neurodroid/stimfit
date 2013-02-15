@@ -72,12 +72,16 @@ stfio::findType(const std::string& ext) {
     if (ext=="*.dat;*.cfs") return stfio::cfs;
     else if (ext=="*.abf") return stfio::abf;
     else if (ext=="*.axgd;*.axgx") return stfio::axg;
-    else if (ext=="*.h5") return stfio::hdf5;
+    else if (ext=="*.h5")  return stfio::hdf5;
     else if (ext=="*.atf") return stfio::atf;
     else if (ext=="*.dat") return stfio::heka;
     else if (ext=="*.smr") return stfio::son;
 #ifdef WITH_BIOSIG
-    else if (ext=="*.*") return stfio::biosig;
+    else if (ext=="*.gdf") return stfio::biosig;
+#if (BIOSIG_VERSION >= 10404)
+    else if (ext=="*.ibw") return stfio::igor;
+#endif
+    else if (ext=="*.*")   return stfio::biosig;
 #endif
     else return stfio::none;
 }
@@ -127,6 +131,7 @@ bool stfio::importFile(
         case stfio::cfs:
         case stfio::son:
         case stfio::heka: 
+        case stfio::igor:
         case stfio::biosig:
         default: 
             stfio::importBSFile(fName, ReturnData, progDlg);
