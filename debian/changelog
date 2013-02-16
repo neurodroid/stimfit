@@ -1,3 +1,9 @@
+stimfit (0.11.6-0lucid1) lucid; urgency=low
+
+  * Corrected some bugs in cursor dialogs
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 16 Feb 2013 14:30:00 +0000
+
 stimfit (0.11.4-0precise1) precise; urgency=low
 
   * Fixed monoexponential fit with delay
