@@ -38,8 +38,12 @@ libpystfio_la_CXXFLAGS = $(OPT_CXXFLAGS)
 libpystfio_la_LDFLAGS = $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
 libpystfio_la_LIBADD = $(PYTHON_ADDLIBS) ./../libstfio/libstfio.la
 
+LTTARGET=${PYTHON_DIST_PKG}/stfio
 install-exec-hook:
 	mv ${PYTHON_DEST_DIR}/stfio/${STFIO_PYTHON_LIBNAME} ${PYTHON_DEST_DIR}/stfio/_stfio.so
+if BUILD_DEBIAN
+	chrpath -r $(LTTARGET) ${PYTHON_DEST_DIR}/stfio/_stfio.so
+endif
 	rm -f ${PYTHON_DEST_DIR}/stfio/*.la
 	rm -f ${PYTHON_DEST_DIR}/stfio/*.a
 	cp -p $(top_srcdir)/src/pystfio/stfio_plot.py ${PYTHON_DEST_DIR}/stfio
