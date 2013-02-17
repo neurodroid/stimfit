@@ -418,7 +418,8 @@ void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const w
 
 //Dialog box to display the specific settings of the current CFS file.
 int wxStfDoc::InitCursors() {
-    //Get values from .ini and ensure proper settings
+    //Get values from .Stimfit and ensure proper settings
+    SetMeasCursor(wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("MeasureCursor"), 1));
     SetBaseBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("BaseBegin"), 1));
     SetBaseEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("BaseEnd"), 20));
     SetPeakBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakBegin"), (int)cur().size()-100));
