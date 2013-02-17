@@ -549,9 +549,11 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
 
     // Updates strings in the result box
     if (actView != NULL) {
+
         wxStfChildFrame* pChild=(wxStfChildFrame*)actView->GetFrame();
         if (pChild != NULL)
             pChild->UpdateResults();
+
         wxStfGraph* pGraph = actView->GetGraph();
 		if (pGraph != NULL) 
 			pGraph->SetFocus();

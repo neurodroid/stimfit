@@ -232,7 +232,7 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     wxBoxSizer* pComboActSizer;
     pComboActSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    wxStaticText* pActIndex  = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Active channel:        ") );
+    wxStaticText* pActIndex  = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Active channel:       ") );
 
     pActChannel = new wxComboBox( m_channelCounter, ID_COMBOACTCHANNEL, wxT("0"),
                                   wxDefaultPosition, wxSize(92, wxDefaultCoord), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
