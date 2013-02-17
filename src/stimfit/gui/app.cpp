@@ -446,11 +446,15 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
              actDoc->SetLatencyStartMode(CursorsDialog->GetLatencyStartMode() );
              // write latency start mode in Stimfit Profile
              wxWriteProfileInt(wxT("Settings"), wxT("LatencyStartMode"), CursorsDialog->GetLatencyStartMode() );
+             if (CursorsDialog->GetLatencyStartMode() == stf::manualMode)
+                 wxWriteProfileInt(wxT("Settings"), wxT("LatencyStartCursor"), CursorsDialog->GetCursor1L() );
             
              // Latency end mode
              actDoc->SetLatencyEnd(CursorsDialog->GetCursor2L());
              actDoc->SetLatencyEndMode(CursorsDialog->GetLatencyEndMode() );
              wxWriteProfileInt(wxT("Settings"), wxT("LatencyEndMode"), CursorsDialog->GetLatencyEndMode() );
+             if (CursorsDialog->GetLatencyEndMode() == stf::manualMode)
+                 wxWriteProfileInt(wxT("Settings"), wxT("LatencyEndCursor"), CursorsDialog->GetCursor2L() );
 
              break;
             
