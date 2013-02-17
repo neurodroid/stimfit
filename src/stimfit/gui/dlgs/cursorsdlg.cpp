@@ -361,7 +361,6 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
 
     // Checkbox for using peak window for latency cursors
     wxCheckBox *pUsePeak = new wxCheckBox(nbPage, wxLATENCYWINDOW,
-        //wxT("Use peak window for latency cursor"), wxDefaultPosition,
         wxT("Measure latencies within peak cursors"), wxDefaultPosition,
         wxDefaultSize, 0);
     pageSizer->Add(pUsePeak, 0 , wxALIGN_CENTER | wxALL, 2);
