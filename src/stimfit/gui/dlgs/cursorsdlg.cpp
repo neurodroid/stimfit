@@ -256,8 +256,6 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
 
     usrdefGrid->Add(pMeanPoints, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
 
-    //peakPointsSizer->Add( pMeanPoints, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
-
     wxTextCtrl* textMeanPoints=new wxTextCtrl( nbPage, wxTEXTPM, wxT("1"),
             wxDefaultPosition, wxSize(48,20), wxTE_RIGHT );
     peakPointsSizer->Add( textMeanPoints, 0, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
@@ -937,20 +935,26 @@ void wxStfCursorsDlg::OnComboBoxU2L( wxCommandEvent& event ) {
 void wxStfCursorsDlg::OnRadioLatManualBeg( wxCommandEvent& event ) {
     event.Skip();
     wxTextCtrl* pCursor1L = (wxTextCtrl*)FindWindow(wxTEXT1L);
-    if (pCursor1L == NULL) {
+    wxCheckBox *pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
+    if (pCursor1L == NULL || pUsePeak == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioLatManBeg()"));
         return;
     }
-    // if cursor wxTextCtrl is NOT enabled
+    // if cursor wxTextCtrl is NOT enable2
     if (!pCursor1L->IsEnabled())
         pCursor1L->Enable(true);
 
+    if (pUsePeak->IsChecked()) {
+        pUsePeak->SetValue(false);
+    }
+    pUsePeak->Enable(false);
 }
 
 void wxStfCursorsDlg::OnRadioLatManualEnd( wxCommandEvent& event ) {
     event.Skip();
     wxTextCtrl* pCursor2L = (wxTextCtrl*)FindWindow(wxTEXT2L);
-    if (pCursor2L == NULL) {
+    wxCheckBox *pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
+    if (pCursor2L == NULL || pUsePeak == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioLatManEnd()"));
         return;
     }
@@ -958,12 +962,19 @@ void wxStfCursorsDlg::OnRadioLatManualEnd( wxCommandEvent& event ) {
     if (!pCursor2L->IsEnabled())
         pCursor2L->Enable(true);
 
+    if (pUsePeak->IsChecked()) {
+        pUsePeak->SetValue(false);
+    }
+    pUsePeak->Enable(false);
 }
 
 void wxStfCursorsDlg::OnRadioLatNonManualBeg( wxCommandEvent& event ) {
     event.Skip();
     wxTextCtrl* pCursor1L = (wxTextCtrl*)FindWindow(wxTEXT1L);
-    if (pCursor1L == NULL ) {
+    wxCheckBox* pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
+    wxRadioButton* pLatencyManualEnd = (wxRadioButton*)FindWindow(wxRADIO_LAT_MANUAL2);
+
+    if (pCursor1L == NULL || pUsePeak == NULL || pLatencyManualEnd == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioLatt50Beg()"));
         return;
     }
@@ -971,18 +982,29 @@ void wxStfCursorsDlg::OnRadioLatNonManualBeg( wxCommandEvent& event ) {
     if (pCursor1L->IsEnabled())
         pCursor1L->Enable(false);
 
+    // enable latency between peak cursors if the second latency cursor is NOT manual 
+    if (!pLatencyManualEnd->GetValue())
+        pUsePeak->Enable(true);
+    
 }
 
 void wxStfCursorsDlg::OnRadioLatNonManualEnd( wxCommandEvent& event ) {
     event.Skip();
     wxTextCtrl* pCursor2L = (wxTextCtrl*)FindWindow(wxTEXT2L);
-    if (pCursor2L == NULL) {
+    wxCheckBox *pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
+    wxRadioButton* pLatencyManualBeg = (wxRadioButton*)FindWindow(wxRADIO_LAT_MANUAL1);
+
+    if (pCursor2L == NULL || pUsePeak == NULL || pLatencyManualBeg == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioNonManualEnd()"));
         return;
     }
     // disable cursor wxTextCtrl if it is enabled 
     if (pCursor2L->IsEnabled()) 
         pCursor2L->Enable(false);
+
+    // enable latency between peak cursors if the first second latency cursor is NOT manual
+    if (!pLatencyManualBeg->GetValue())
+        pUsePeak->Enable(true);
 
 }
 
@@ -1262,15 +1284,19 @@ void wxStfCursorsDlg::SetLatencyStartMode(stf::latency_mode latencyBegMode){
     wxRadioButton* pPeak     = (wxRadioButton*)FindWindow(wxRADIO_LAT_PEAK1);
     wxRadioButton* pMaxSlope = (wxRadioButton*)FindWindow(wxRADIO_LAT_MAXSLOPE1);
     wxRadioButton* pt50      = (wxRadioButton*)FindWindow(wxRADIO_LAT_HALFWIDTH1);
+
+    wxCheckBox* pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
+    
     
     if (pManual == NULL || pPeak == NULL
-        || pMaxSlope == NULL || pt50 == NULL) {
+        || pMaxSlope == NULL || pt50 == NULL || pUsePeak==NULL) {
         wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::SetLatencyStartMode()"));
     }
 
     switch (latencyBegMode) {
         case stf::manualMode:
             pManual->SetValue(true);
+            pUsePeak->Enable(false);
             break;
         case stf::peakMode:
             pPeak->SetValue(true);
@@ -1294,15 +1320,18 @@ void wxStfCursorsDlg::SetLatencyEndMode(stf::latency_mode latencyEndMode){
     wxRadioButton* pMaxSlope = (wxRadioButton*)FindWindow(wxRADIO_LAT_MAXSLOPE2);
     wxRadioButton* pt50      = (wxRadioButton*)FindWindow(wxRADIO_LAT_HALFWIDTH2);
     wxRadioButton* pEvent    = (wxRadioButton*)FindWindow(wxRADIO_LAT_EVENT2);
+
+    wxCheckBox* pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
     
     if (pManual == NULL || pPeak == NULL
-        || pMaxSlope == NULL || pt50 == NULL || pEvent == NULL) {
+        || pMaxSlope == NULL || pt50 == NULL || pEvent == NULL || pUsePeak == NULL) {
         wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::SetLatencyEndtMode()"));
     }
 
     switch (latencyEndMode) {
         case stf::manualMode:
             pManual->SetValue(true);
+            pUsePeak->Enable(false);
             break;
         case stf::peakMode:
             pPeak->SetValue(true);
