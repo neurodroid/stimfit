@@ -160,9 +160,13 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     /*int res = */ hdr2ascii(hdr, stdout, 4);
 #endif
 
+    typeof(hdr->NS) NS = 0;   // number of non-empty channels
     for (size_t nc=0; nc<hdr->NS; ++nc) {
-       Channel TempChannel(nsections);
-       TempChannel.SetChannelName(hdr->CHANNEL[nc].Label);
+
+        if (hdr->CHANNEL[nc].OnOff == 0) continue;
+
+        Channel TempChannel(nsections);
+        TempChannel.SetChannelName(hdr->CHANNEL[nc].Label);
 #if defined(BIOSIG_VERSION) && (BIOSIG_VERSION > 10301)
         TempChannel.SetYUnits(PhysDim3(hdr->CHANNEL[nc].PhysDimCode));
 #else
@@ -173,7 +177,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         for (size_t ns=1; ns<=nsections; ns++) {
 	        size_t SPS = SegIndexList[ns]-SegIndexList[ns-1];	// length of segment, samples per segment
 
-		int progbar = 100.0*(1.0*ns/(nsections+1) + nc)/(hdr->NS); 
+		int progbar = 100.0*(1.0*ns/nsections + nc)/(hdr->NS);
 		std::ostringstream progStr;
 		progStr << "Reading channel #" << nc + 1 << " of " << hdr->NS
 			<< ", Section #" << ns + 1 << " of " << nsections;
@@ -201,9 +205,9 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 	}        
         try {
 		if (ReturnData.size() < hdr->NS) {
-			ReturnData.resize(hdr->NS);
+			ReturnData.resize(NumberOfChannels(hdr));
 		}
-		ReturnData.InsertChannel(TempChannel, nc);
+		ReturnData.InsertChannel(TempChannel, NS++);
         }
         catch (...) {
 		ReturnData.resize(0);
