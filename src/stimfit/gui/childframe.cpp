@@ -225,40 +225,20 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     wxBoxSizer* pChannelsBoxSizer; // top-level Sizer
     pChannelsBoxSizer = new wxBoxSizer(wxVERTICAL);
 
-    //wxGridSizer* ChannelsGridSizer; // top-level GridSizer
-    //ChannelsGridSizer = new wxGridSizer(3,1,0,0);
-
-
     // Grid for ChannelCombo
     wxFlexGridSizer* ChannelCombos;
     ChannelCombos = new wxFlexGridSizer(2,2,4,0);
 
-    // Grid for Active comboBox
-    //wxBoxSizer* pComboActSizer;
-    //pComboActSizer = new wxBoxSizer(wxHORIZONTAL);
-
+    // Active channel Combo
     wxStaticText* pActIndex  = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Active channel: ") );
-
     pActChannel = new wxComboBox( m_channelCounter, ID_COMBOACTCHANNEL, wxT("0"),
                                   wxDefaultPosition, wxSize(120, wxDefaultCoord), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
-
-    //pComboActSizer->Add( pActIndex,   0,  wxALIGN_CENTER_VERTICAL| wxALIGN_LEFT  | wxALL, 1);
-    //pComboActSizer->Add( pActChannel, 0,  wxALIGN_CENTER_VERTICAL| wxALIGN_RIGHT | wxALL, 1);
-
-    
-    // Grid for reference comboBox
-    //wxBoxSizer* pComboRefSizer;
-    //pComboRefSizer = new wxBoxSizer(wxHORIZONTAL);
-
+    // Inactive channel Combo
     wxStaticText* pInactIndex = new wxStaticText( m_channelCounter, wxID_ANY, wxT("Reference channel: ") );
     pInactIndex->SetForegroundColour( *wxRED );
-
     pInactChannel = new wxComboBox( m_channelCounter, ID_COMBOINACTCHANNEL, wxT("1"),
                                     wxDefaultPosition, wxSize(120,wxDefaultCoord), channelStrings, wxCB_DROPDOWN | wxCB_READONLY );
 
-    //pComboRefSizer->Add( pInactIndex,   0,  wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT  | wxALL, 1);
-    //pComboRefSizer->Add( pInactChannel, 0,  wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT | wxALL, 1);
-    
     ChannelCombos->Add( pActIndex, 1, wxALIGN_CENTER_VERTICAL, 1);
     ChannelCombos->Add( pActChannel, 1);
     ChannelCombos->Add( pInactIndex,1, wxALIGN_CENTER_VERTICAL, 1);
@@ -277,19 +257,11 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     pShowChannelSizer->Add( pShowAll );
     pShowChannelSizer->Add( pShowSecond );
     
-    // Add everything to top-level GridSizer
-    //ChannelsGridSizer->Add(pComboActSizer,    1, wxALIGN_LEFT | wxALIGN_TOP | wxALL    , 3);
-    //ChannelsGridSizer->Add(pComboRefSizer,    1, wxALIGN_LEFT | wxALIGN_BOTTOM | wxALL , 3);
-    //ChannelsGridSizer->Add(pShowChannelSizer, 1, wxALIGN_LEFT | wxALIGN_BOTTOM | wxALL , 3);
-    
-
-    //pChannelsBoxSizer->Add(ChannelsGridSizer, 0, wxALIGN_CENTER | wxALL, 1);
     pChannelsBoxSizer->Add(ChannelCombos, 0, wxALIGN_CENTER | wxALL, 3);
     pChannelsBoxSizer->Add(pShowChannelSizer, 0, wxALIGN_LEFT | wxALL, 3);
 
     pChannelsBoxSizer->SetSizeHints(m_channelCounter);
 
-    //m_channelCounter->SetSizer( ChannelsGridSizer );
     m_channelCounter->SetSizer( pChannelsBoxSizer );
     m_channelCounter->Layout();
     wxSize size = m_channelCounter->GetSize();
