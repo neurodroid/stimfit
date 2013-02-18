@@ -267,10 +267,10 @@ void wxStfChildFrame::CreateComboChannels(const wxArrayString& channelStrings) {
     wxBoxSizer *pShowChannelSizer;
     pShowChannelSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    // Checkbox to hide reference channel:
+    // Show reference channel? Read from Stimfit registry
     pShowSecond = new wxCheckBox( m_channelCounter, ID_PLOTSELECTED, wxT("Show reference") );
+    pShowSecond->SetValue(wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("ShowReference"),0)); 
     pShowSecond->SetForegroundColour( *wxRED );
-    pShowSecond->SetValue(true);
     
     pShowAll = new wxCheckBox( m_channelCounter, ID_PLOTSELECTED, wxT("Show all  ") );
     pShowAll->SetValue(false);
@@ -495,6 +495,11 @@ void wxStfChildFrame::OnShowselected(wxCommandEvent& WXUNUSED(event)) {
         pView->GetGraph()->Enable();
         pView->GetGraph()->SetFocus();
     }
+}
+
+bool wxStfChildFrame::ShowSecond() {
+    wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("ShowReference"), pShowSecond->IsChecked()); // write config
+    return pShowSecond->IsChecked();
 }
 
 void wxStfChildFrame::ActivateGraph() {
