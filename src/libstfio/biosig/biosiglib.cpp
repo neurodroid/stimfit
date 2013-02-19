@@ -330,10 +330,10 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         if (k==0) {
             hdr->NRec = len;
         }
-        else if (hdr->NRec != len) {
+        else if ((size_t)hdr->NRec != len) {
             destructHDR(hdr);
             throw std::runtime_error("File can't be exported:\n"
-                "No data or Traces have different sizes" );
+                "No data or traces have different sizes" );
 
             return false;
         }
@@ -356,7 +356,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 	hdr->EVENT.TYP = (uint16_t*)realloc(hdr->EVENT.TYP, N * sizeof(*hdr->EVENT.TYP));
 	hdr->EVENT.CHN = (uint16_t*)realloc(hdr->EVENT.CHN, N * sizeof(*hdr->EVENT.CHN));
 #if (BIOSIG_VERSION >= 10500)
-	hdr->EVENT.TimeStamp = (gdf_time*)realloc(hdr->EVENT.TimeStamp, EventN * sizeof(gdf_time));
+	hdr->EVENT.TimeStamp = (gdf_time*)realloc(hdr->EVENT.TimeStamp, N * sizeof(gdf_time));
 #endif
 
     /* check whether all segments have same size */
@@ -413,10 +413,10 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             pos += Data[k][m].size() * lround(Data[k][m].GetXScale()/Data.GetXScale());
         }
 
-    hdr->EVENT.N = N;
-    hdr->EVENT.SampleRate = hdr->SampleRate;
+        hdr->EVENT.N = N;
+        hdr->EVENT.SampleRate = hdr->SampleRate;
 
-    sort_eventtable(hdr);
+        sort_eventtable(hdr);
 
 	/* convert data into GDF rawdata from  */
 	hdr->AS.rawdata = (uint8_t*)realloc(hdr->AS.rawdata, hdr->AS.bpb*hdr->NRec);
