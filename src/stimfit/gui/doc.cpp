@@ -1639,6 +1639,7 @@ bool wxStfDoc::OnNewfromselectedThis( ) {
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
         // Multiply the valarray in Data:
         Section TempSection(get()[GetCurCh()][*cit].get());
+        TempSection.SetXScale(get()[GetCurCh()][*cit].GetXScale());
         TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
                 ", new from selected");
         try {
@@ -1654,6 +1655,7 @@ bool wxStfDoc::OnNewfromselectedThis( ) {
         Recording Selected(TempChannel);
         Selected.CopyAttributes(*this);
         Selected[0].SetYUnits( at(GetCurCh()).GetYUnits() );
+        Selected[0].SetChannelName( at(GetCurCh()).GetChannelName() );
         wxString title(GetTitle());
         title+=wxT(", new from selected");
         wxGetApp().NewChild(Selected,this,title);
