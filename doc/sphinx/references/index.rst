@@ -11,7 +11,7 @@ References
 
 A list of recent publications that have used `Stimfit <http:http://www.stimfit.org>`_ for data analysis. Please let me know if something is missing here.
 
-    * `Turesson HK, Rodriguez-Sierra OE, Pare D (2013). <http://jn.physiology.org/cgi/pmidlookup?view=long&pmid=23446692>`_ Intrinsice connections in the anterior part of the bed nucleus of the striata terminalis. *J Physiol.*  February 27, 2013, doi: 10.1152/jn.00004.2013 
+    * `Turesson HK, Rodriguez-Sierra OE, Pare D (2013). <http://jn.physiology.org/cgi/pmidlookup?view=long&pmid=23446692>`_ Intrinsic connections in the anterior part of the bed nucleus of the striata terminalis. *J Physiol.*  February 27, 2013, doi: 10.1152/jn.00004.2013 
 
     * `Fuzik J, Gellért L, Oláh G, Herédi J, Kocsis K, Knapp L, Nagy D, Kincses ZT, Kis Z, Farkas T, Toldi J (2013). <https://www.sciencedirect.com/science/article/pii/S0306452212010573>`_ Fundamental interstrain differences in cortical activity between Wistar and Sprague-Dawley rats during global ischemia. *Neuroscience* 228:371-381.
     * `McLeod F, Ganley R, Williams L, Selfridge J, Bird A, Cobb SR (2013). <https://www.sciencedirect.com/science/article/pii/S0306452212011748>`_ Reduced seizure threshold and altered network oscillatory properties in a mouse model of Rett syndrome. *Neuroscience* 231:195-205.
