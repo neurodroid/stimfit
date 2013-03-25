@@ -138,17 +138,11 @@ It is recommended to build `Stimfit <http://www.stimfit.org>`_  with the `BioSig
 
     git clone git://git.code.sf.net/p/biosig/code biosig-code
 
-3. Compile the sources: enter the directory **biosig4c++** and type: 
+3. Compile and install the sources: enter the directory **biosig4c++** and type: 
 
 ::
 
-    make install_libbiosig
-
-4. Install the library for all users:
-
-::
-
-    sudo make install
+    sudo make install_libbiosig
 
 After that you can enter the option --with-biosig in the configure script of `Stimfit <http://www.stimfit.org>`_ and compile as usual.
 
