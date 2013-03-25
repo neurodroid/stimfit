@@ -124,7 +124,7 @@ where [N] is the number of parallel builds you want to start. And finally:
 Building Stimfit with BioSig import filter
 ==========================================
 
-It is recommended to build `Stimfit <http://www.stimfit.org>`_  with the BioSig import filter to read HEKA files or to have the possibility import some other file formats used biomedical signal processing. To do it, follow this instructions:
+It is recommended to build `Stimfit <http://www.stimfit.org>`_  with the `BioSig <http://biosig.sourceforge.net>`_ import the file filters to read HEKA files or to have the possibility import some other file formats used biomedical signal processing. To do it, follow this instructions:
 
 1. It is first recommended to install libsuitesparse and libz libraries:
 
@@ -132,26 +132,25 @@ It is recommended to build `Stimfit <http://www.stimfit.org>`_  with the BioSig 
 
     sudo apt-get install libsuitesparse-dev libz-dev
 
-2. Download BioSig sources: you can obtain the latest BioSig version in `Biosig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig. Alternatively, you can obtain the latest developmental version from the repository:
+2. Download BioSig sources: you can obtain the latest BioSig version in `BioSig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig. Alternatively, you can obtain the latest developmental version from the git repository:
 
 ::
 
-    svc co https://biosig.svn.sourceforge.net/svnroot/biosig/truck/biosig4c++
+    git clone git://git.code.sf.net/p/biosig/code biosig-code
 
-3. Compile the sources:
+3. Compile the sources: enter the directory **biosig4c++** and type: 
 
 ::
 
-    make
+    make install_libbiosig
 
-4. Install the library:
+4. Install the library for all users:
 
 ::
 
     sudo make install
 
-
-After that you can enter the option **--with-biosig** in the configure script of `Stimfit <http://www.stimfit.org>`_ and compile as usual.
+After that you can enter the option --with-biosig in the configure script of `Stimfit <http://www.stimfit.org>`_ and compile as usual.
 
 .. [wxWidgets] http://www.wxwidgets.org
 .. [wxPython] http://www.wxpython.org
