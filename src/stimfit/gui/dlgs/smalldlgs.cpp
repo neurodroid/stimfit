@@ -19,9 +19,9 @@ BEGIN_EVENT_TABLE( wxStfFileInfoDlg, wxDialog )
 END_EVENT_TABLE()
 
 wxStfFileInfoDlg::wxStfFileInfoDlg( wxWindow* parent,
-        const wxString& szGeneral,
-        const wxString& szFile,
-        const wxString& szSection,
+        const std::string& szGeneral,
+        const std::string& szFile,
+        const std::string& szSection,
         int id,
         wxString title,
         wxPoint pos,
@@ -33,10 +33,11 @@ wxStfFileInfoDlg::wxStfFileInfoDlg( wxWindow* parent,
     //	this->SetSize(464,464);
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
+    wxString wxs = stf::std2wx(szGeneral);
     wxTextCtrl* textCtrlGeneral = new wxTextCtrl(
             this, 
             wxID_ANY,
-            szGeneral, 
+            wxs,
             wxDefaultPosition,
             wxSize(640,100),
             wxTE_MULTILINE | wxTE_DONTWRAP | wxTE_READONLY
@@ -48,7 +49,7 @@ wxStfFileInfoDlg::wxStfFileInfoDlg( wxWindow* parent,
     wxTextCtrl* textCtrlFile = new wxTextCtrl(
             this, 
             wxID_ANY,
-            szFile, 
+            stf::std2wx(szFile),
             wxDefaultPosition,
             wxSize(416,400),
             wxTE_MULTILINE | wxTE_DONTWRAP | wxTE_READONLY
@@ -58,7 +59,7 @@ wxStfFileInfoDlg::wxStfFileInfoDlg( wxWindow* parent,
     wxTextCtrl* textCtrlSection  = new wxTextCtrl(
             this, 
             wxID_ANY,
-            szSection, 
+            stf::std2wx(szSection),
             wxDefaultPosition,
             wxSize(214,400),
             wxTE_MULTILINE | wxTE_DONTWRAP | wxTE_READONLY

@@ -612,19 +612,13 @@ void wxStfDoc::Fileinfo(wxCommandEvent& WXUNUSED(event)) {
     std::ostringstream oss1, oss2;
     oss1 << "Number of Channels: " << static_cast<unsigned int>(get().size());
     oss2 << "Number of Sweeps: " << static_cast<unsigned int>(get()[GetCurCh()].size());
-    std::ostringstream general;
-    general << "Date:\t" << GetDate() << "\n"
-            << "Time:\t" << GetTime() << "\n"
-            << oss1.str() << "\n" << oss2.str() << "\n"
-            << "Comment:\n" << GetComment();
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-    wxStfFileInfoDlg dlg( GetDocumentWindow(), general.str(), GetFileDescription(),
+    std::string general =
+        "Date:\t" + GetDate() + "\n"
+        + "Time:\t" + GetTime() + "\n"
+        + oss1.str() + "\n" + oss2.str() + "\n"
+        + "Comment:\n" + GetComment();
+    wxStfFileInfoDlg dlg( GetDocumentWindow(), general, GetFileDescription(),
             GetGlobalSectionDescription() );
-#else
-    wxStfFileInfoDlg dlg(GetDocumentWindow(), stf::std2wx(general.str()),
-                         stf::std2wx(GetFileDescription()),
-                         stf::std2wx(GetGlobalSectionDescription()));
-#endif                          
     dlg.ShowModal();
 }
 
