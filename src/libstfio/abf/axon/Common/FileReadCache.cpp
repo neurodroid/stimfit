@@ -32,7 +32,7 @@ CFileReadCache::CFileReadCache()
    m_uCacheSize   = 0;
    m_uCacheStart  = 0;
    m_uCacheCount  = 0;
-   m_pItemCache.reset(NULL);
+   m_pItemCache.reset((BYTE*)0);
 }
 
 //===============================================================================================
