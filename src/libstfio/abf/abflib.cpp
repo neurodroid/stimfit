@@ -155,7 +155,7 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
     }
 #ifdef _STFDEBUG
     else {
-        std::cout << "File successfully opened" << std::endl;
+        std::cout << "Axon binary file (v2) successfully opened" << std::endl;
     }
 #endif
     int nError = 0;
@@ -376,6 +376,12 @@ void stfio::importABF1File(const std::string &fName, Recording &ReturnData, Prog
     throw std::runtime_error(errorMsg);
     }
     */
+
+#ifdef _STFDEBUG
+    else {
+        std::cout << "Axon binary file (v1) successfully opened" << std::endl;
+    }
+#endif
     int numberChannels=FH.nADCNumChannels;
     ABFLONG numberSections=FH.lActualEpisodes;
     if ((DWORD)numberSections>dwMaxEpi) {
