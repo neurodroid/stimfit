@@ -1174,7 +1174,7 @@ CFSLONG CGetFileLen(fDef pFile)
                 return (CFSLONG)(0 - _doserrno);
         #endif
     #endif
-    #if defined(__linux__) || defined(__APPLE__) || !defined(__MINGW32__)
+    #if defined(__linux__) || defined(__APPLE__)
 	fpos_t cur;
 	if (fgetpos(pFile,&cur)!=0)
 		return -1;
