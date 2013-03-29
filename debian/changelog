@@ -1,3 +1,11 @@
+stimfit (0.11.9-1) experimental; urgency=low
+
+  * Fix latency measurements in manual peak mode
+  * GUI adjustments
+  * Build for Debian proper
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Fri, 29 Mar 2013 09:20:13 +0000
+
 stimfit (0.11.8-0lucid1) lucid; urgency=low
 
   * Make objects iterable in pystfio
