@@ -52,7 +52,7 @@ CFileIO::CFileIO(FILEHANDLE hFile)
    m_dwLastError   = 0;
 }
 
-#if !defined(_WINDOWS) || defined(__MINGW32__)
+#if !defined(_WINDOWS)
 CFileIO::CFileIO(HANDLE hFile)
 {
    //MEMBERASSERT();
@@ -102,7 +102,7 @@ BOOL CFileIO::CreateEx(LPCTSTR szFileName, DWORD dwDesiredAccess, DWORD dwShareM
    //MEMBERASSERT();
    //LPSZASSERT(szFileName);
    ASSERT(m_hFileHandle == FILE_NULL);
-#if defined(_WINDOWS) && !defined(__MINGW32__)
+#if defined(_WINDOWS)
    m_hFileHandle = ::CreateFile(szFileName, dwDesiredAccess, dwShareMode, NULL, 
                                 dwCreationDisposition, dwFlagsAndAttributes, NULL);
 #else
@@ -119,9 +119,11 @@ BOOL CFileIO::CreateEx(LPCTSTR szFileName, DWORD dwDesiredAccess, DWORD dwShareM
    if (m_hFileHandle == FILE_NULL)
       return SetLastError();
       
-// TRACE1("Create(%s)\n", szFileName);
+#if defined(_WINDOWS) && !defined(__MINGW32__)
+ // TRACE1("Create(%s)\n", szFileName);
    wcsncpy(m_szFileName, szFileName, _MAX_PATH-1);
    m_szFileName[_MAX_PATH-1] = '\0';
+#endif
    return TRUE;
 }
 
@@ -259,7 +261,7 @@ BOOL CFileIO::SeekFailure(DWORD dwOffset)
 //
 BOOL CFileIO::Seek(LONGLONG lOffset, UINT uFlag, LONGLONG *plNewOffset)
 {
-#if !defined(_WINDOWS) || defined(__MINGW32__)
+#if !defined(_WINDOWS)
 	/*MEMBERASSERT();*/
     short    origin = 0;
 

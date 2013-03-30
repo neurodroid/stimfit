@@ -30,10 +30,8 @@
 
 // TODO #include "./ascii/asciilib.h"
 #include "./hdf5/hdf5lib.h"
-#ifdef WITH_AXON
-  #include "./abf/abflib.h"
-  #include "./atf/atflib.h"
-#endif  
+#include "./abf/abflib.h"
+#include "./atf/atflib.h"
 #include "./axg/axglib.h"
 #include "./igor/igorlib.h"
 #ifdef WITH_BIOSIG
@@ -99,7 +97,6 @@ bool stfio::importFile(
             stfio::importHDF5File(fName, ReturnData, progDlg);
             break;
         }
-#ifdef WITH_AXON
         case stfio::abf: {
             stfio::importABFFile(fName, ReturnData, progDlg);
             break;
@@ -108,7 +105,6 @@ bool stfio::importFile(
             stfio::importATFFile(fName, ReturnData, progDlg);
             break;
         }
-#endif
         case stfio::axg: {
             stfio::importAXGFile(fName, ReturnData, progDlg);
             break;

@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 
-#if defined(WIN32) && !defined(__MINGW32__)
+#if defined(WIN32)
     #include <windows.h>
     #include <stdio.h>
     typedef HANDLE FILEHANDLE;

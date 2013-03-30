@@ -32,16 +32,6 @@
 #include <string>
 #include <cmath>
 
-#ifndef __MINGW32__
-  // defining these compiler flags should eventually move to ./configure.in
-  #define WITH_AXON
-#else
-  #ifdef WITH_AXON
-    #error AXON not supported when compiling with MINGW
-    #undef WITH_AXON
-  #endif 
-#endif
-
 #ifdef _MSC_VER
 #pragma warning( disable : 4251 )  // Disable warning messages
 #pragma warning( disable : 4996 )  // Disable warning messages

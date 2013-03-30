@@ -44,12 +44,7 @@
 #include "./../math/fit.h"
 #include "./../math/measure.h"
 #include "./../../libstfio/cfs/cfslib.h"
-#ifndef _STFIO_H_
-  #error stfio.h must be included before checking WITH_AXON
-#endif 
-#ifdef WITH_AXON
-  #include "./../../libstfio/atf/atflib.h"
-#endif
+#include "./../../libstfio/atf/atflib.h"
 #ifdef WITH_BIOSIG
   #include "./../../libstfio/biosig/biosiglib.h"
 #endif
@@ -662,11 +657,7 @@ bool wxStfDoc::SaveAs() {
              case 1:
                  return stfio::exportCFSFile(stf::wx2std(filename), writeRec, progDlg);
              case 2:
-#ifdef WITH_AXON
                  return stfio::exportATFFile(stf::wx2std(filename), writeRec);
-#else
-                 return false;
-#endif
              case 3:
                  return stfio::exportIGORFile(stf::wx2std(filename), writeRec, progDlg);
              case 4:
@@ -1195,7 +1186,7 @@ void wxStfDoc::LnTransform(wxCommandEvent& WXUNUSED(event)) {
         std::transform(get()[GetCurCh()][*cit].get().begin(), 
                        get()[GetCurCh()][*cit].get().end(), 
                        TempSection.get_w().begin(),
-#ifdef _WINDOWS                       
+#if defined(_WINDOWS) && !defined(__MINGW32__)
                        std::logl);
 #else
                        log);

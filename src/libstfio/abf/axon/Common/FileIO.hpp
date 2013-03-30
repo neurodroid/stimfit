@@ -36,7 +36,7 @@ class CFileIO
   public:   
     CFileIO();
     CFileIO(FILEHANDLE hFile);
-#if !defined(_WINDOWS) || defined(__MINGW32__)
+#if !defined(_WINDOWS)
     CFileIO(HANDLE hFile);
 #endif
     ~CFileIO();

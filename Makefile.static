@@ -155,11 +155,8 @@ ifneq (,$(findstring HAVE_LAPACK, $(DEFINES)))
   LIBS   += -llapack -lblas
 endif
 
+SOURCES += $(SOURCES_ABF)
 ifeq (,$(findstring mingw, $(WXCONF)))
-  # WITH_AXON is already defined in src/libstfio/stfio.h
-  # It's commented here to avoid  recurring definition 
-  #DEFINES += -DWITH_AXON
-  SOURCES += $(SOURCES_ABF)
   TARGET   = stimfit 
   OBJEXT   = o
 else
@@ -179,7 +176,7 @@ endif
 CC        = $(shell $(WXCONF) --cc)
 CXX       = $(shell $(WXCONF) --cxx)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector
-CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags)
+CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -fstack-protector
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
 LIBS     += -lhdf5_hl -lhdf5 -lbiosig -lcholmod 
 LIBS     += -lfftw3 -lz -lpthread

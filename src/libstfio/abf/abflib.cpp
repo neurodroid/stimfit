@@ -148,7 +148,11 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
     //     wfName[i] = (wchar_t)fName[i];
     // }
 
+#ifdef __MINGW32__
+    if (!abf2.Open( fName.c_str() )) {
+#else
     if (!abf2.Open( &wfName[0] )) {
+#endif
         std::string errorMsg("Exception while calling importABF2File():\nCouldn't open file");
         throw std::runtime_error(errorMsg);
         abf2.Close();
@@ -361,9 +365,13 @@ void stfio::importABF1File(const std::string &fName, Recording &ReturnData, Prog
     for(std::string::size_type i=0; i<fName.size(); ++i) {
         wfName += wchar_t(fName[i]);
     }
-
+#ifdef __MINGW32__
+    if (!ABF_ReadOpen(fName.c_str(), &hFile, ABF_DATAFILE, &FH,
+                      &uMaxSamples, &dwMaxEpi, &nError))
+#else
     if (!ABF_ReadOpen(wfName.c_str(), &hFile, ABF_DATAFILE, &FH,
                       &uMaxSamples, &dwMaxEpi, &nError))
+#endif
     {
         std::string errorMsg("Exception while calling ABF_ReadOpen():\n");
         errorMsg+=ABF1Error(fName,nError);
