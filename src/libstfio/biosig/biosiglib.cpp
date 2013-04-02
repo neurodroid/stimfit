@@ -217,7 +217,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 		}
 	}        
     try {
-		if (ReturnData.size() < numberOfChannels) {
+        if ((int)ReturnData.size() < numberOfChannels) {
 			ReturnData.resize(numberOfChannels);
 		}
 		ReturnData.InsertChannel(TempChannel, NS++);
