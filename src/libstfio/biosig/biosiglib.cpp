@@ -35,6 +35,11 @@ extern "C" uint32_t lcm(uint32_t A, uint32_t B);
 
 #include "./biosiglib.h"
 
+/* Redefine BIOSIG_VERSION for versions < 1 */
+#if (BIOSIG_VERSION_MAJOR < 1)
+#undef BIOSIG_VERSION
+#define BIOSIG_VERSION (BIOSIG_VERSION_MAJOR * 10000 + BIOSIG_VERSION_MINOR * 100 + BIOSIG_PATCHLEVEL)
+#endif
 class BiosigHDR {
   public:
     BiosigHDR(unsigned int NS, unsigned int N_EVENT) {
@@ -65,7 +70,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         throw std::runtime_error(errorMsg.c_str());
     }
     errorMsg += "\n";
-#if (BIOSIG_VERSION > 10400)
+#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION > 10400)
     if (serror2(hdr)) {
         errorMsg += hdr->AS.B4C_ERRMSG;
 #else
@@ -114,8 +119,13 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         Date and time conversion
      *************************************************************************/
     struct tm t;
+#if (BIOSIG_VERSION_MAJOR > 0)
     gdf_time2tm_time_r(hdr->T0, &t);
-
+#else
+    struct tm* tp;
+    tp = gdf_time2tm_time(hdr->T0);
+    t = *tp;
+#endif
     // allocate local memory for intermediate results;
     const int strSize=100;
     char str[strSize];
@@ -239,7 +249,13 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     ReturnData.SetScaling("biosig scaling factor");
 
     struct tm T; 
-    gdf_time2tm_time_r(hdr->T0, &T); 
+#if (BIOSIG_VERSION_MAJOR > 0)
+    gdf_time2tm_time_r(hdr->T0, &T);
+#else
+    struct tm* Tp;
+    Tp = gdf_time2tm_time(hdr->T0);
+    T = *Tp;
+#endif
     strftime(str,strSize,"%Y-%m-%d",&T);
     ReturnData.SetDate(str);
     strftime(str,strSize,"%H:%M:%S",&T);
@@ -287,7 +303,11 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     hdr->T0   = tm_time2gdf_time(&t);
 
     const char *xunits = Data.GetXUnits().c_str();
+#if (BIOSIG_VERSION_MAJOR > 0)
     uint16_t pdc = PhysDimCode(xunits);
+#else
+    uint16_t pdc = PhysDimCode((char*)xunits);
+#endif
     if ((pdc & 0xffe0) == PhysDimCode("s")) {
         fprintf(stderr,"Stimfit exportBiosigFile: xunits [%s] has not proper units, assume [ms]\n",Data.GetXUnits().c_str());
         pdc = PhysDimCode("ms");
@@ -314,8 +334,11 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 
         /* Channel descriptions. */
         strncpy(hc->Label, Data[k].GetChannelName().c_str(), MAX_LENGTH_LABEL);
-	    hc->PhysDimCode = PhysDimCode(Data[k].GetYUnits().c_str());
-
+#if (BIOSIG_VERSION_MAJOR > 0)
+        hc->PhysDimCode = PhysDimCode(Data[k].GetYUnits().c_str());
+#else
+        hc->PhysDimCode = PhysDimCode((char*)Data[k].GetYUnits().c_str());
+#endif
         hc->OnOff      = 1;
         hc->LeadIdCode = 0;
 
