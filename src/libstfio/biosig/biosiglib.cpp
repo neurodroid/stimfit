@@ -24,8 +24,9 @@
 
 #include "../stfio.h"
 
+#if defined(__BIOSIG_INTERNAL_H__)
 #include <biosig-dev.h>
-#if !defined(__BIOSIG_INTERNAL_H__)
+#else
 #include <endian.h>
 #include <biosig.h>
 /* these are internal biosig functions, defined in biosig-dev.h which is not always available */
