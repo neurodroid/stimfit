@@ -27,10 +27,8 @@
 #if defined(__BIOSIG_INTERNAL_H__)
 #include <biosig-dev.h>
 #else
-#include <endian.h>
 #include <biosig.h>
 /* these are internal biosig functions, defined in biosig-dev.h which is not always available */
-extern "C" int NumberOfChannels(HDRTYPE *hdr);
 extern "C" size_t ifwrite(void* buf, size_t size, size_t nmemb, HDRTYPE* hdr);
 extern "C" uint32_t lcm(uint32_t A, uint32_t B);
 #endif
@@ -160,8 +158,10 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     hdr->FLAG.ROW_BASED_CHANNELS = 0;
     /* size_t blks = */ sread(NULL, 0, hdr->NRec, hdr);
 
-
-    int numberOfChannels = NumberOfChannels(hdr);
+    int numberOfChannels = 0;
+    for (typeof(hdr->NS) k=0; k < hdr->NS; k++)
+        if (hdr->CHANNEL[k].OnOff==1)
+            numberOfChannels++;
 
 #ifdef _STFDEBUG
     std::cout << "Number of channels: " << hdr->NS << std::endl;
@@ -444,9 +444,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             for (n=0; n < Data[k][m].size(); ++n) {
                 uint64_t val;
                 double d = Data[k][m][n];
-#if defined(htole64)
-                val = htole64(*(uint64_t*)&d); /* htole64 not available on mxe */
-#elif (__BYTE_ORDER == __BIG_ENDIAN)
+#if (__BYTE_ORDER == __BIG_ENDIAN)
                 val = bswap_64(*(uint64_t*)&d);
 #else
                 val = *(uint64_t*)&d;
@@ -470,7 +468,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         errorMsg += hdr->AS.B4C_ERRMSG;
 #else
     if (serror()) {
-	errorMsg += B4C_ERRMSG;
+	    errorMsg += B4C_ERRMSG;
 #endif
         destructHDR(hdr);
         throw std::runtime_error(errorMsg.c_str());
