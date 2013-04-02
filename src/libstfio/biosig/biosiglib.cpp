@@ -25,6 +25,15 @@
 #include "../stfio.h"
 
 #include <biosig-dev.h>
+#if !defined(__BIOSIG_INTERNAL_H__)
+#include <endian.h>
+#include <biosig.h>
+/* these are internal biosig functions, defined in biosig-dev.h which is not always available */
+extern "C" int NumberOfChannels(HDRTYPE *hdr);
+extern "C" size_t ifwrite(void* buf, size_t size, size_t nmemb, HDRTYPE* hdr);
+extern "C" uint32_t lcm(uint32_t A, uint32_t B);
+#endif
+
 #include "./biosiglib.h"
 
 class BiosigHDR {
@@ -150,6 +159,9 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     hdr->FLAG.ROW_BASED_CHANNELS = 0;
     /* size_t blks = */ sread(NULL, 0, hdr->NRec, hdr);
 
+
+    int numberOfChannels = NumberOfChannels(hdr);
+
 #ifdef _STFDEBUG
     std::cout << "Number of channels: " << hdr->NS << std::endl;
     std::cout << "Number of records per channel: " << hdr->NRec << std::endl;
@@ -203,13 +215,13 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 			throw;
 		}
 	}        
-        try {
-		if (ReturnData.size() < hdr->NS) {
-			ReturnData.resize(NumberOfChannels(hdr));
+    try {
+		if (ReturnData.size() < numberOfChannels) {
+			ReturnData.resize(numberOfChannels);
 		}
 		ReturnData.InsertChannel(TempChannel, NS++);
-        }
-        catch (...) {
+    }
+    catch (...) {
 		ReturnData.resize(0);
 		destructHDR(hdr);
 		throw;
@@ -251,7 +263,6 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     The data in converted into the raw data format, and not into the common
     data matrix.
 */
-
 
     HDRTYPE* hdr = constructHDR(Data.size(), 0);
     assert(hdr->NS == Data.size());
@@ -344,7 +355,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         CHANNEL_TYPE *hc = hdr->CHANNEL+k;
         hc->SPR = hdr->SPR / hc->SPR;
         hc->bi  = hdr->AS.bpb;
-        hdr->AS.bpb += hc->SPR * GDFTYP_BITS[hc->GDFTYP]/8;
+        hdr->AS.bpb += hc->SPR * 8; /* its always double */
     }
 
 	/***
@@ -431,8 +442,14 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             // fprintf(stdout,"k,m,div,div2: %i,%i,%i,%i\n",(int)k,(int)m,(int)div,(int)div2);  //
             for (n=0; n < Data[k][m].size(); ++n) {
                 uint64_t val;
-                /* val = htole64(*(uint64_t*)&d); not available on mxe */
-                lef64a(Data[k][m][n], &val);
+                double d = Data[k][m][n];
+#if defined(htole64)
+                val = htole64(*(uint64_t*)&d); /* htole64 not available on mxe */
+#elif (__BYTE_ORDER == __BIG_ENDIAN)
+                val = bswap_64(*(uint64_t*)&d);
+#else
+                val = *(uint64_t*)&d;
+#endif
                 size_t p, spr = (len + n*div) / hdr->SPR;
                 for (p=0; p < div2; p++)
                    *(uint64_t*)(hdr->AS.rawdata + hc->bi + hdr->AS.bpb * spr + p*8) = val;
