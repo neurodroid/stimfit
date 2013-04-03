@@ -1,4 +1,10 @@
-stimfit (0.11.9-1) experimental; urgency=low
+stimfit (0.12.1-1) experimental; urgency=low
+
+  * Use biosig as additional file reading backend
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Tue, 02 Apr 2013 21:22:06 +0000
+
+stimfit (0.11.9-1) UNRELEASED; urgency=low
 
   * Fix latency measurements in manual peak mode
   * GUI adjustments
