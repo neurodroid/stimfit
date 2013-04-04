@@ -24,13 +24,14 @@
 
 #include "../stfio.h"
 
-#if defined(__BIOSIG_INTERNAL_H__)
-#include <biosig-dev.h>
-#else
+#if 1
 #include <biosig.h>
 /* these are internal biosig functions, defined in biosig-dev.h which is not always available */
 extern "C" size_t ifwrite(void* buf, size_t size, size_t nmemb, HDRTYPE* hdr);
 extern "C" uint32_t lcm(uint32_t A, uint32_t B);
+#if !defined(__MINGW32__)
+#include <endian.h>	// not available on mingw
+#endif
 #endif
 
 #include "./biosiglib.h"
@@ -467,8 +468,8 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             for (n=0; n < Data[k][m].size(); ++n) {
                 uint64_t val;
                 double d = Data[k][m][n];
-#if (__BYTE_ORDER == __BIG_ENDIAN)
-                val = bswap_64(*(uint64_t*)&d);
+#if !defined(__MINGW32__)
+                val = htole64(*(uint64_t*)&d);
 #else
                 val = *(uint64_t*)&d;
 #endif
