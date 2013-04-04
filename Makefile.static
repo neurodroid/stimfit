@@ -28,7 +28,8 @@
 #    - PYTHON shell, matplotlib (print) are not supported
 #    - configure not supported
 #
-# Copyright (C) 2012 Alois Schloegl 
+# Copyright (C) 2012,2013 Alois Schloegl 
+# This is part of the stimfit project http://code.google.com/p/stimfit/
 #
 ########################################################################
 
@@ -209,4 +210,4 @@ $(TARGET): $(OBJECTS)
 	$(CXX) -c $(CXXFLAGS) -c -o "$@" "$<"
 
 clean:
-	find src -name "*.$(OBJEXT)" -print0 |xargs -0 rm
+	find src -name "*.$(OBJEXT)" -exec rm {} \;
