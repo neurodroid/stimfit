@@ -719,7 +719,7 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
 
     m_view_menu->AppendSeparator();
     m_view_menu->AppendSubMenu(ch2Sub, wxT("&Channel 2 scaling"));
-    m_view_menu->Append(ID_SWAPCHANNELS, wxT("&Swap channels\tCtrl+X"));
+    m_view_menu->Append(ID_SWAPCHANNELS, wxT("&Swap channels\tX"));
     
     wxMenu *analysis_menu = new wxMenu;
     wxMenu *fitSub = new wxMenu;
