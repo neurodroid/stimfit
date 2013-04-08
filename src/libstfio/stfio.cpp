@@ -98,7 +98,18 @@ bool stfio::importFile(
             break;
         }
         case stfio::abf: {
-            stfio::importABFFile(fName, ReturnData, progDlg);
+#if 0 // activates fallback mechanism
+#if defined(WITH_BIOSIG)
+            try
+            {    // try first with biosig, v1.5.1 or larger is recommended
+                 stfio::importBSFile(fName, ReturnData, progDlg);
+            }
+            catch (...)
+#endif
+#endif
+            {   // fallback to old method
+                stfio::importABFFile(fName, ReturnData, progDlg);
+            }
             break;
         }
         case stfio::atf: {

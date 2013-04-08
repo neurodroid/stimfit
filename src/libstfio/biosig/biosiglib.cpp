@@ -41,6 +41,7 @@ extern "C" uint32_t lcm(uint32_t A, uint32_t B);
 #undef BIOSIG_VERSION
 #define BIOSIG_VERSION (BIOSIG_VERSION_MAJOR * 10000 + BIOSIG_VERSION_MINOR * 100 + BIOSIG_PATCHLEVEL)
 #endif
+
 class BiosigHDR {
   public:
     BiosigHDR(unsigned int NS, unsigned int N_EVENT) {
@@ -70,13 +71,28 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         ReturnData.resize(0);
         throw std::runtime_error(errorMsg.c_str());
     }
+#if !defined(BIOSIG_VERSION) || (BIOSIG_VERSION < 10501)
+    if (hdr->TYPE==ABF) {
+        /*
+           biosig v1.5.0 and earlier does not always return
+           with a proper error message for ABF files.
+           This causes problems with the ABF fallback mechanism
+        */
+#else
+    if (hdr->TYPE==ABF && hdr->AS.B4C_ERRNUM) {
+        /* this triggers the fall back mechanims w/o reporting an error message */
+#endif
+        ReturnData.resize(0);
+        destructHDR(hdr);	// free allocated memory
+        throw std::runtime_error(errorMsg.c_str());
+    }
     errorMsg += "\n";
 #if defined(BIOSIG_VERSION) && (BIOSIG_VERSION > 10400)
     if (serror2(hdr)) {
-        errorMsg += hdr->AS.B4C_ERRMSG;
+        errorMsg += std::string(hdr->AS.B4C_ERRMSG);
 #else
     if (serror()) {
-	errorMsg += B4C_ERRMSG;
+	errorMsg += std::string(B4C_ERRMSG);
 #endif
         ReturnData.resize(0);
         destructHDR(hdr);	// free allocated memory
