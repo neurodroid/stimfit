@@ -242,10 +242,33 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 
     free(SegIndexList); 	
 
+    ReturnData.SetComment ( hdr->ID.Recording );
+
+    std::string Desc = std::string();
+    if (hdr->ID.Technician)
+            Desc += std::string ("Technician:\t") + std::string (hdr->ID.Technician);
+    Desc += std::string( "\nCreated with: ");
+    if (hdr->ID.Manufacturer.Name)
+        Desc += std::string( hdr->ID.Manufacturer.Name );
+    if (hdr->ID.Manufacturer.Model)
+        Desc += std::string( hdr->ID.Manufacturer.Model );
+    if (hdr->ID.Manufacturer.Version)
+        Desc += std::string( hdr->ID.Manufacturer.Version );
+    if (hdr->ID.Manufacturer.SerialNumber)
+        Desc += std::string( hdr->ID.Manufacturer.SerialNumber );
+
+    Desc += std::string ("\nUser specified Annotations:\n");
+    for (size_t k=0; k < hdr->EVENT.N; k++) {
+        if (hdr->EVENT.TYP[k] < 256) {
+            sprintf(str,"%f s:\t",hdr->EVENT.POS[k]/hdr->EVENT.SampleRate);
+            Desc += std::string( str );
+            Desc += std::string( hdr->EVENT.CodeDesc[hdr->EVENT.TYP[k]] ) + "\n";
+        }
+    }
+    ReturnData.SetFileDescription(Desc);
+    //ReturnData.SetGlobalSectionDescription(Desc);
+
     ReturnData.SetXScale(1000.0/hdr->SampleRate);
-    ReturnData.SetComment(hdr->FileName);
-    ReturnData.SetGlobalSectionDescription("global section desc");
-    ReturnData.SetFileDescription("biosig file descr");
     ReturnData.SetXUnits("ms");
     ReturnData.SetScaling("biosig scaling factor");
 
