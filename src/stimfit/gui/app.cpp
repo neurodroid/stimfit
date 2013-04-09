@@ -763,7 +763,7 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
                           );
     analysis_menu->Append(
                           ID_FILTER,
-                          wxT("F&ilter..."),
+                          wxT("Fi&lter..."),
                           wxT("Filter selected traces")
                           );
     analysis_menu->Append(
