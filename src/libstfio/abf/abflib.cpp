@@ -485,7 +485,8 @@ void stfio::importABF1File(const std::string &fName, Recording &ReturnData, Prog
     // Dominique Engel for noticing.
     ReturnData.SetXScale((double)(FH.fADCSampleInterval/1000.0)*(double)numberChannels);
     std::string comment("Created with ");
-    FH.sCreatorInfo[ABF_CREATORINFOLEN+ABF_OLDFILECOMMENTLEN-1]=0;  // make sure string is 0-terminated
+    FH.sCreatorInfo[ABF_CREATORINFOLEN-1]=0;  // make sure string is 0-terminated
+    FH._sFileComment[ABF_OLDFILECOMMENTLEN-1]=0;  // make sure string is 0-terminated
     comment += std::string( FH.sCreatorInfo );
     ReturnData.SetComment(comment);
     ReturnData.SetDate(dateToStr(FH.lFileStartDate));
