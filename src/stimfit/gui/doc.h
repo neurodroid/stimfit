@@ -60,7 +60,6 @@ private:
     void LFit(wxCommandEvent& event);
     void LnTransform(wxCommandEvent& event);
     void Filter(wxCommandEvent& event);
-    void Spectrum(wxCommandEvent& event);
     void P_over_N(wxCommandEvent& event);
     void Plotcriterion(wxCommandEvent& event);
     void Plotcorrelation(wxCommandEvent& event);

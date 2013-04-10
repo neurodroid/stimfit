@@ -767,7 +767,7 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
                           wxT("Filter selected traces")
                           );
     analysis_menu->Append(
-                          ID_SPECTRUM,
+                          ID_MPL_SPECTRUM,
                           wxT("&Power spectrum..."),
                           wxT("Compute an estimate of the power spectrum of the selected traces")
                           );

@@ -77,7 +77,6 @@ EVT_MENU( ID_FIT, wxStfDoc::FitDecay)
 EVT_MENU( ID_LFIT, wxStfDoc::LFit)
 EVT_MENU( ID_LOG, wxStfDoc::LnTransform)
 EVT_MENU( ID_FILTER,wxStfDoc::Filter)
-EVT_MENU( ID_SPECTRUM,wxStfDoc::Spectrum)
 EVT_MENU( ID_POVERN,wxStfDoc::P_over_N)
 EVT_MENU( ID_PLOTCRITERION,wxStfDoc::Plotcriterion)
 EVT_MENU( ID_PLOTCORRELATION,wxStfDoc::Plotcorrelation)
@@ -1882,62 +1881,6 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
         Recording Fft(TempChannel);
         Fft.CopyAttributes(*this);
         wxGetApp().NewChild(Fft, this,GetTitle()+wxT(", filtered"));
-    }
-#endif
-}
-
-void wxStfDoc::Spectrum(wxCommandEvent& WXUNUSED(event)) {
-#ifndef TEST_MINIMAL
-    if (GetSelectedSections().empty()) {
-        wxGetApp().ErrorMsg(wxT("No traces selected"));
-        return;
-    }
-    //insert standard values:
-    std::vector<std::string> labels(1);
-    Vector_double defaults(labels.size());
-    labels[0]="Number of periodograms:";defaults[0]=10;
-    stf::UserInput init(labels,defaults, std::string("Settings for Welch's method"));
-
-    wxStfUsrDlg SegDialog(GetDocumentWindow(),init);
-    if (SegDialog.ShowModal()!=wxID_OK) return;
-    Vector_double input(SegDialog.readInput());
-    if (input.size()!=1) return;
-
-    int n_seg=(int)SegDialog.readInput()[0];
-    wxBusyCursor wc;
-
-    Channel TempChannel(GetSelectedSections().size(),
-            get()[GetCurCh()][GetSelectedSections()[0]].size());
-    double f_s=1.0; // frequency stepsize of the spectrum
-    std::size_t n = 0;
-    for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
-        std::vector< std::complex<double> > temp(get()[GetCurCh()][*cit].size(), std::complex<double>(0.0,0.0));
-        for (int i=0;i<(int)get()[GetCurCh()][*cit].size();++i) {
-            temp[i]=get()[GetCurCh()][*cit][i];
-        }
-        try {
-            Section TempSection(stf::spectrum(temp,n_seg,f_s));
-            TempSection.SetSectionDescription(
-                    get()[GetCurCh()][*cit].GetSectionDescription()+
-                    std::string(", spectrum"));
-            TempChannel.InsertSection(TempSection,n);
-        }
-        catch (const std::runtime_error& e) {
-            wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
-            return;
-        }
-        catch (const std::out_of_range& e) {
-            wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
-        }
-        n++;
-    }
-    if (TempChannel.size()>0) {
-        Recording Fft(TempChannel);
-        Fft.CopyAttributes(*this);
-        double unit_f=f_s/GetXScale();
-        Fft[0].SetYUnits( at( GetCurCh() ).GetYUnits()+char(-78));
-        Fft.SetXScale(unit_f);
-        wxGetApp().NewChild(Fft,this,GetTitle()+wxT(", spectrum"));
     }
 #endif
 }

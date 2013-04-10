@@ -24,6 +24,8 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_wxagg import \
     FigureCanvasWxAgg as FigCanvas, \
     NavigationToolbar2WxAgg as NavigationToolbar
+import matplotlib.mlab as mlab
+import numpy as np
 
 import stfio_plot
 
@@ -92,3 +94,12 @@ class MplPanel(wx.Panel):
         fit = stf.get_fit()
         if fit is not None:
             self.axes.plot(fit[0], fit[1], color='0.2', alpha=0.5, lw=5.0)
+
+    def plot_spectrum(self):
+        import stf
+        Pow, freq = mlab.psd(stf.get_trace(), 
+                             Fs=(1.0/stf.get_sampling_interval())*1e3,
+                             detrend=mlab.detrend_linear)
+        self.axes.plot(freq, 10*np.log10(Pow))
+        self.axes.set_xlabel("Frequency (Hz)")
+        self.axes.set_ylabel("Power spectral density (dB/Hz)")

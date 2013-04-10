@@ -166,23 +166,6 @@ struct StfDll storedFunc {
 
 };
 
-//! Computes a spectral estimate using Welch's method. 
-/*! \param data An input valarray of complex numbers.
- *  \param K \e data will be split into \e K windows.
- *  \param f_n On return, this contains the frequency step between adjacent
- *         indices in the spectrum, in units of 1/index_data.
- *  \return A valarray containing the spectrum.
- */
-Vector_double
-spectrum(const std::vector<std::complex<double> >& data, long K, double& f_n);
-
-//! Window function for psd estimation
-/*! \param n Argument of the window function.
- *  \param N Width of the window.
- *  \return Result of the window function.
- */
-double window(double n, double N);
-
 //! Calculates the square of a number.
 /*! \param a Argument of the function.
  *  \return \e a ^2
@@ -414,10 +397,6 @@ wxString noPath(const wxString& fName);
 }
 
 typedef std::vector< stf::storedFunc >::const_iterator c_stfunc_it; /*!< constant stf::storedFunc iterator */
-
-inline double stf::window(double n, double N) {
-    return 1.0-(pow((2.0*n-N)/N,2.0));
-}
 
 inline int stf::pow2(int arg) {return 1<<arg;}
 

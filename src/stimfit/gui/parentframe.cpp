@@ -156,6 +156,7 @@ EVT_MENU( ID_HIRES, wxStfParentFrame::OnHires )
 EVT_MENU( ID_PRINT_PRINT, wxStfParentFrame::OnPrint)
 
 EVT_MENU( ID_MPL, wxStfParentFrame::OnMpl)
+EVT_MENU( ID_MPL_SPECTRUM,wxStfParentFrame::OnMplSpectrum)
 EVT_MENU( ID_PRINT_PAGE_SETUP, wxStfParentFrame::OnPageSetup)
 EVT_MENU( ID_SAVEPERSPECTIVE, wxStfParentFrame::OnSaveperspective )
 EVT_MENU( ID_LOADPERSPECTIVE, wxStfParentFrame::OnLoadperspective )
@@ -278,6 +279,11 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
                  << wxT("def plotWindowMpl(parent, figsize=(8,6)):\n")
                  << wxT("    win = embedded_mpl.MplPanel(parent, figsize)\n")
                  << wxT("    win.plot_screen()\n")
+                 << wxT("    return win\n")
+                 << wxT("\n")
+                 << wxT("def spectrumWindowMpl(parent, figsize=(8,6)):\n")
+                 << wxT("    win = embedded_mpl.MplPanel(parent, figsize)\n")
+                 << wxT("    win.plot_spectrum()\n")
                  << wxT("    return win\n")
                  << wxT("\n")
                  << wxT("def makeWindowMpl(parent, figsize=(8,6)):\n")
@@ -880,7 +886,21 @@ void wxStfParentFrame::OnMpl(wxCommandEvent& WXUNUSED(event))
     
     if ( pPython == 0 ) 
 #endif
-        wxGetApp().ErrorMsg(wxT("Can not Create figure (python/matplotlib is not available)"));
+        wxGetApp().ErrorMsg(wxT("Can not create figure (python/matplotlib is not available)"));
+}
+
+void wxStfParentFrame::OnMplSpectrum(wxCommandEvent& WXUNUSED(event))
+{
+    if (wxGetApp().GetActiveDoc()==NULL) return;
+
+    std::ostringstream mgr_name;
+    mgr_name << "mpl" << GetMplFigNo();
+#ifdef WITH_PYTHON
+    wxWindow* pPython = MakePythonWindow("spectrumWindowMpl", mgr_name.str(), "Matplotlib", true, false, true, 800, 600).cppWindow;
+    
+    if ( pPython == 0 ) 
+#endif
+        wxGetApp().ErrorMsg(wxT("Can not create figure (python/matplotlib is not available)"));
 }
 
 void wxStfParentFrame::OnPageSetup(wxCommandEvent& WXUNUSED(event))
