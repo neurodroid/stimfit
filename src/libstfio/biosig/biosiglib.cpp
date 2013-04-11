@@ -29,9 +29,24 @@
 /* these are internal biosig functions, defined in biosig-dev.h which is not always available */
 extern "C" size_t ifwrite(void* buf, size_t size, size_t nmemb, HDRTYPE* hdr);
 extern "C" uint32_t lcm(uint32_t A, uint32_t B);
-#if !defined(__MINGW32__)
+#if !defined(__MINGW32__) && !defined(_MSC_VER)
 #include <endian.h>	// not available on mingw
 #endif
+#endif
+
+#ifdef _MSC_VER
+    #ifndef NAN
+        static const unsigned long __nan[2] = {0xffffffff, 0x7fffffff};
+        #define NAN (*(const float *) __nan)
+    #endif
+    long int lround(double x) {
+        int i = (long int) x;
+        if (x >= 0.0) {
+            return ((x-i) >= 0.5) ? (i + 1) : (i);
+        } else {
+            return (-x+i >= 0.5) ? (i - 1) : (i);
+        }
+    }
 #endif
 
 #include "./biosiglib.h"
@@ -155,8 +170,11 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     /*************************************************************************
         rescale data to mV and pA
      *************************************************************************/    
-
+#ifndef _MSC_VER
     for (typeof(hdr->NS) ch=0; ch < hdr->NS; ++ch) {
+#else
+    for (int ch=0; ch < hdr->NS; ++ch) {
+#endif
         CHANNEL_TYPE *hc = hdr->CHANNEL+ch;
         double scale = PhysDimScale(hc->PhysDimCode); 
         switch (hc->PhysDimCode & 0xffe0) {
@@ -186,7 +204,11 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     /* size_t blks = */ sread(NULL, 0, hdr->NRec, hdr);
 
     int numberOfChannels = 0;
+#ifndef _MSC_VER
     for (typeof(hdr->NS) k=0; k < hdr->NS; k++)
+#else
+    for (int k=0; k < hdr->NS; k++)
+#endif
         if (hdr->CHANNEL[k].OnOff==1)
             numberOfChannels++;
 
@@ -200,7 +222,11 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     /*int res = */ hdr2ascii(hdr, stdout, 4);
 #endif
 
+#ifndef _MSC_VER
     typeof(hdr->NS) NS = 0;   // number of non-empty channels
+#else
+    int NS = 0;   // number of non-empty channels
+#endif
     for (size_t nc=0; nc<hdr->NS; ++nc) {
 
         if (hdr->CHANNEL[nc].OnOff == 0) continue;
@@ -507,7 +533,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             for (n=0; n < Data[k][m].size(); ++n) {
                 uint64_t val;
                 double d = Data[k][m][n];
-#if !defined(__MINGW32__)
+#if !defined(__MINGW32__) && !defined(_MSC_VER)
                 val = htole64(*(uint64_t*)&d);
 #else
                 val = *(uint64_t*)&d;
