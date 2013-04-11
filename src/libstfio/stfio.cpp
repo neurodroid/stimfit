@@ -36,10 +36,9 @@
 #include "./igor/igorlib.h"
 #ifdef WITH_BIOSIG
   #include "./biosig/biosiglib.h"
-#else
+#endif
 #include "./cfs/cfslib.h"
 #include "./heka/hekalib.h"
-#endif
 #if 0
 #include "./son/sonlib.h"
 #endif
@@ -120,8 +119,16 @@ bool stfio::importFile(
             stfio::importAXGFile(fName, ReturnData, progDlg);
             break;
         }
-#ifndef WITH_BIOSIG
         case stfio::cfs: {
+#if 0 // activates fallback mechanism
+#if defined(WITH_BIOSIG)
+            try
+            {    // try first with biosig
+                 stfio::importBSFile(fName, ReturnData, progDlg);
+            }
+            catch (...)
+#endif
+#endif
             int res = stfio::importCFSFile(fName, ReturnData, progDlg);
             if (res==-7) {
                 stfio::importHEKAFile(fName, ReturnData, progDlg);
@@ -129,15 +136,23 @@ bool stfio::importFile(
             break;
         }
         case stfio::heka: {
+#if 0 // activates fallback mechanism
+#if defined(WITH_BIOSIG)
+            try
+            {    // try first with biosig
+                 stfio::importBSFile(fName, ReturnData, progDlg);
+            }
+            catch (...)
+#endif
+#endif
             stfio::importHEKAFile(fName, ReturnData, progDlg);
             break;
         }
+#ifndef WITH_BIOSIG
         default:
             throw std::runtime_error("Unknown or unsupported file type");
 #else
-        case stfio::cfs:
         case stfio::son:
-        case stfio::heka: 
         case stfio::igor:
         case stfio::biosig:
         default: 
