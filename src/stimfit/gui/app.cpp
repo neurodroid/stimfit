@@ -606,7 +606,7 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     wxMenu* m_edit_menu=new wxMenu;
     m_edit_menu->Append(
                         ID_CURSORS,
-                        wxT("&Cursor settings..."),
+                        wxT("&Cursor settings...\tCtrl+R"),
                         wxT("Set cursor position, direction, etc.")
                         );
     m_edit_menu->AppendSeparator();
