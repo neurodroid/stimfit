@@ -1390,6 +1390,11 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
          Doc()->Select();
          return;
      }
+     case 88:
+     case 120: {
+        wxCommandEvent foo;
+        Doc()->OnSwapChannels(foo);
+     }
      case 82: // Invalidate();//r
      case 114: {
          Doc()->Remove();

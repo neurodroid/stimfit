@@ -54,7 +54,7 @@ private:
     void OnAnalysisBatch( wxCommandEvent& event );
     void OnAnalysisIntegrate( wxCommandEvent& event );
     void OnAnalysisDifferentiate( wxCommandEvent& event );
-    void OnSwapChannels( wxCommandEvent& event );
+    //void OnSwapChannels( wxCommandEvent& event );
     void Multiply(wxCommandEvent& event);
     void SubtractBaseMenu( wxCommandEvent& event ) { SubtractBase( ); }
     void LFit(wxCommandEvent& event);
@@ -135,6 +135,11 @@ public:
     wxStfDoc();
     //! Destructor.
     ~wxStfDoc();
+
+    //! Swaps active and inactive channel
+    /*! \param event The menu event that made the call.
+     */
+    void OnSwapChannels( wxCommandEvent& event );
 
     //! Override default file opening.
     /*! Attempts to identify the file type from the filter extension (such as "*.dat")
