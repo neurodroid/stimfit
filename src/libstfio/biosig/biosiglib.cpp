@@ -57,19 +57,6 @@ extern "C" uint32_t lcm(uint32_t A, uint32_t B);
 #define BIOSIG_VERSION (BIOSIG_VERSION_MAJOR * 10000 + BIOSIG_VERSION_MINOR * 100 + BIOSIG_PATCHLEVEL)
 #endif
 
-class BiosigHDR {
-  public:
-    BiosigHDR(unsigned int NS, unsigned int N_EVENT) {
-        pHDR = constructHDR(NS, N_EVENT);
-    }
-    ~BiosigHDR() {
-        destructHDR(pHDR);
-    }
-
-  private:
-    HDRTYPE* pHDR;
-};
-
 void stfio::importBSFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
 
     std::string errorMsg("Exception while calling std::importBSFile():\n");
