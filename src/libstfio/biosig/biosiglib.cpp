@@ -170,11 +170,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     /*************************************************************************
         rescale data to mV and pA
      *************************************************************************/    
-#ifndef _MSC_VER
-    for (typeof(hdr->NS) ch=0; ch < hdr->NS; ++ch) {
-#else
     for (int ch=0; ch < hdr->NS; ++ch) {
-#endif
         CHANNEL_TYPE *hc = hdr->CHANNEL+ch;
         double scale = PhysDimScale(hc->PhysDimCode); 
         switch (hc->PhysDimCode & 0xffe0) {
@@ -204,11 +200,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     /* size_t blks = */ sread(NULL, 0, hdr->NRec, hdr);
 
     int numberOfChannels = 0;
-#ifndef _MSC_VER
-    for (typeof(hdr->NS) k=0; k < hdr->NS; k++)
-#else
     for (int k=0; k < hdr->NS; k++)
-#endif
         if (hdr->CHANNEL[k].OnOff==1)
             numberOfChannels++;
 
@@ -222,11 +214,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     /*int res = */ hdr2ascii(hdr, stdout, 4);
 #endif
 
-#ifndef _MSC_VER
-    typeof(hdr->NS) NS = 0;   // number of non-empty channels
-#else
     int NS = 0;   // number of non-empty channels
-#endif
     for (size_t nc=0; nc<hdr->NS; ++nc) {
 
         if (hdr->CHANNEL[nc].OnOff == 0) continue;
@@ -246,11 +234,13 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 		int progbar = 100.0*(1.0*ns/nsections + nc)/(hdr->NS);
 		std::ostringstream progStr;
 		progStr << "Reading channel #" << nc + 1 << " of " << hdr->NS
-			<< ", Section #" << ns + 1 << " of " << nsections;
+			<< ", Section #" << ns << " of " << nsections;
 		progDlg.Update(progbar, progStr.str());
 
+		/* unused //
 		char sweepname[20];
 		sprintf(sweepname,"sweep %i",(int)ns);		
+		*/
 		Section TempSection(
                                 SPS, // TODO: hdr->nsamplingpoints[nc][ns]
                                 "" // TODO: hdr->sectionname[nc][ns]
@@ -286,7 +276,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 
     ReturnData.SetComment ( hdr->ID.Recording );
 
-    sprintf(str,"v%i.%i.%i (compiled on %s)",BIOSIG_VERSION_MAJOR,BIOSIG_VERSION_MINOR,BIOSIG_PATCHLEVEL,__DATE__);
+    sprintf(str,"v%i.%i.%i (compiled on %s %s)",BIOSIG_VERSION_MAJOR,BIOSIG_VERSION_MINOR,BIOSIG_PATCHLEVEL,__DATE__,__TIME__);
     std::string Desc = std::string("importBiosig with libbiosig ")+std::string(str);
 
     if (hdr->ID.Technician)
