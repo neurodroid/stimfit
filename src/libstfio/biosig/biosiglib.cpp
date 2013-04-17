@@ -286,9 +286,11 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 
     ReturnData.SetComment ( hdr->ID.Recording );
 
-    std::string Desc = std::string();
+    sprintf(str,"v%i.%i.%i (compiled on %s)",BIOSIG_VERSION_MAJOR,BIOSIG_VERSION_MINOR,BIOSIG_PATCHLEVEL,__DATE__);
+    std::string Desc = std::string("importBiosig with libbiosig ")+std::string(str);
+
     if (hdr->ID.Technician)
-            Desc += std::string ("Technician:\t") + std::string (hdr->ID.Technician);
+            Desc += std::string ("\nTechnician:\t") + std::string (hdr->ID.Technician);
     Desc += std::string( "\nCreated with: ");
     if (hdr->ID.Manufacturer.Name)
         Desc += std::string( hdr->ID.Manufacturer.Name );

@@ -129,11 +129,13 @@ bool stfio::importFile(
             catch (...)
 #endif
 #endif
+            {
             int res = stfio::importCFSFile(fName, ReturnData, progDlg);
             if (res==-7) {
                 stfio::importHEKAFile(fName, ReturnData, progDlg);
             }
             break;
+            }
         }
         case stfio::heka: {
 #if 0 // activates fallback mechanism
@@ -145,8 +147,10 @@ bool stfio::importFile(
             catch (...)
 #endif
 #endif
+            {
             stfio::importHEKAFile(fName, ReturnData, progDlg);
             break;
+            }
         }
 #ifndef WITH_BIOSIG
         default:
