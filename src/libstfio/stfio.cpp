@@ -74,10 +74,7 @@ stfio::findType(const std::string& ext) {
     else if (ext=="*.dat") return stfio::heka;
     else if (ext=="*.smr") return stfio::son;
 #ifdef WITH_BIOSIG
-    else if (ext=="*.gdf") return stfio::biosig;
-#if (BIOSIG_VERSION >= 10404)
-    else if (ext=="*.ibw") return stfio::igor;
-#endif
+    else if (ext=="*.dat;*.cfs;*.gdf;*.ibw") return stfio::biosig;
     else if (ext=="*.*")   return stfio::biosig;
 #endif
     else return stfio::none;

@@ -163,6 +163,13 @@ bool wxStfApp::OnInit(void)
     //// Create a document manager
     wxDocManager* docManager = new wxDocManager;
     //// Create a template relating drawing documents to their views
+#ifdef WITH_BIOSIG
+    m_biosigTemplate=new wxDocTemplate( docManager,
+                                     wxT("Biosig"), wxT("*.dat;*.cfs;*.gdf;*.ibw"), wxT(""), wxT("dat;cfs;gdf;ibw"),
+                                     wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
+                                     CLASSINFO(wxStfView) );
+#endif
+
     m_cfsTemplate=new wxDocTemplate( docManager,
                                      wxT("CED filing system"), wxT("*.dat;*.cfs"), wxT(""), wxT("dat;cfs"),
                                      wxT("CFS Document"), wxT("CFS View"), CLASSINFO(wxStfDoc),
@@ -196,14 +203,8 @@ bool wxStfApp::OnInit(void)
                                      wxT("HEKA Document"), wxT("HEKA View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #ifdef WITH_BIOSIG
-#if (BIOSIG_VERSION >= 10404) 
-    m_igorTemplate=new wxDocTemplate( docManager,
-                                     wxT("Igor Binary Wave"), wxT("*.ibw"), wxT(""), wxT("ibw"),
-                                     wxT("IGOR Document"), wxT("IGOR View"), CLASSINFO(wxStfDoc),
-                                     CLASSINFO(wxStfView) );
-#endif
     m_biosigTemplate=new wxDocTemplate( docManager,
-                                     wxT("GDF etc. (BioSig)"), wxT("*.*"), wxT(""), wxT(""),
+                                     wxT("Biosig files"), wxT("*.*"), wxT(""), wxT(""),
                                      wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #endif
