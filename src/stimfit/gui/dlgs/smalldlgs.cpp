@@ -368,7 +368,7 @@ wxStfFitInfoDlg::wxStfFitInfoDlg(wxWindow* parent, const wxString& info, int id,
             wxID_ANY,
             info,
             wxDefaultPosition,
-            wxSize(256,96),
+            wxSize(320,120),
             wxTE_MULTILINE | wxTE_READONLY | wxTE_DONTWRAP
     );
     topSizer->Add( m_textCtrl, 0, wxALIGN_CENTER | wxALL, 5 );
