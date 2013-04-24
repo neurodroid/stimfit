@@ -80,8 +80,11 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
            with a proper error message for ABF files.
            This causes problems with the ABF fallback mechanism
         */
-#else
+#elif (BIOSIG_VERSION < 10600)
     if (hdr->TYPE==ABF && hdr->AS.B4C_ERRNUM) {
+        /* this triggers the fall back mechanims w/o reporting an error message */
+#else
+    if (biosig_check_filetype(hdr, ABF) && biosig_check_error(hdr)) {
         /* this triggers the fall back mechanims w/o reporting an error message */
 #endif
         ReturnData.resize(0);
@@ -89,7 +92,10 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         throw std::runtime_error(errorMsg.c_str());
     }
     errorMsg += "\n";
-#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION > 10400)
+#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION >= 10600)
+    if (serror2(hdr)) {
+        errorMsg += std::string(biosig_get_errormsg(hdr));
+#elif defined(BIOSIG_VERSION) && (BIOSIG_VERSION > 10400)
     if (serror2(hdr)) {
         errorMsg += std::string(hdr->AS.B4C_ERRMSG);
 #else
@@ -104,16 +110,51 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     // ensure the event table is in chronological order	
     sort_eventtable(hdr);
 
+    // allocate local memory for intermediate results;
+    const int strSize=100;
+    char str[strSize];
+
     /*
 	count sections and generate list of indices indicating start and end of sweeps
      */	
-    size_t LenIndexList = 256; 
-    if (LenIndexList > hdr->EVENT.N) LenIndexList = hdr->EVENT.N + 2;
+#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION >= 10600)
+    double fs = biosig_get_eventtable_samplerate(hdr);
+    size_t numberOfEvents = biosig_get_number_of_events(hdr);
+    uint32_t nsections = biosig_get_number_of_segments(hdr);
+    size_t *SegIndexList = (size_t*)malloc((nsections+1)*sizeof(size_t));
+    SegIndexList[0] = 0;
+    SegIndexList[nsections] = biosig_get_number_of_samples(hdr);
+    std::string annotationTableDesc = std::string();
+    for (size_t k=0, n=0; k < numberOfEvents; k++) {
+        uint32_t pos;
+        uint16_t typ;
+        const char *desc;
+        /*
+        uint32_t dur;
+        uint16_t chn;
+        gdftype  timestamp;
+        */
+        biosig_get_nth_event(hdr, k, &typ, &pos, NULL, NULL, NULL, &desc);
+
+        if (typ == 0x7ffe) {
+            SegIndexList[++n] = pos;
+        }
+        else if (typ < 256) {
+            sprintf(str,"%f s:\t",pos/fs);
+            annotationTableDesc += std::string( str ) + std::string( desc ) + "\n" ;
+        }
+    }
+    int numberOfChannels = biosig_get_number_of_channels(hdr);
+
+#else
+    size_t numberOfEvents = hdr->EVENT.N;
+    size_t LenIndexList = 256;
+    if (LenIndexList > numberOfEvents) LenIndexList = numberOfEvents + 2;
     size_t *SegIndexList = (size_t*)malloc(LenIndexList*sizeof(size_t));
     uint32_t nsections = 0;
     SegIndexList[nsections] = 0;
     size_t MaxSectionLength = 0;
-    for (size_t k=0; k <= hdr->EVENT.N; k++) {
+    for (size_t k=0; k <= numberOfEvents; k++) {
         if (LenIndexList <= nsections+2) {
             // allocate more memory as needed
 		    LenIndexList *=2;
@@ -134,31 +175,34 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 	    if (MaxSectionLength < SPS) MaxSectionLength = SPS;
     }
 
-    /*************************************************************************
-        Date and time conversion
-     *************************************************************************/
-    struct tm t;
-#if (BIOSIG_VERSION_MAJOR > 0)
-    gdf_time2tm_time_r(hdr->T0, &t);
-#else
-    struct tm* tp;
-    tp = gdf_time2tm_time(hdr->T0);
-    t = *tp;
-#endif
-    // allocate local memory for intermediate results;
-    const int strSize=100;
-    char str[strSize];
+    int numberOfChannels = 0;
+    for (int k=0; k < hdr->NS; k++)
+        if (hdr->CHANNEL[k].OnOff==1)
+            numberOfChannels++;
 
-    strftime(str,100,"%F",&t);
-    ReturnData.SetDate(str);
-    strftime(str,100,"%D",&t);
-    ReturnData.SetTime(str);
+#endif
 
     /*************************************************************************
         rescale data to mV and pA
      *************************************************************************/    
+#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION >= 10600)
+    for (int ch=0; ch < numberOfChannels; ++ch) {
+        CHANNEL_TYPE *hc = biosig_get_channel(hdr, ch);
+        switch (hc->PhysDimCode & 0xffe0) {
+        case 4256:  // Volt
+		//biosig_channel_scale_to_unit(hc, "mV");
+		biosig_channel_change_scale_to_unitcode(hc, 4272);
+		break;
+        case 4160:  // Ampere
+		//biosig_channel_scale_to_unit(hc, "pA");
+		biosig_channel_change_scale_to_unitcode(hc, 4181);
+		break;
+	    }
+    }
+#else
     for (int ch=0; ch < hdr->NS; ++ch) {
         CHANNEL_TYPE *hc = hdr->CHANNEL+ch;
+        if (hc->OnOff != 1) continue;
         double scale = PhysDimScale(hc->PhysDimCode); 
         switch (hc->PhysDimCode & 0xffe0) {
         case 4256:  // Volt
@@ -179,30 +223,38 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
                 break; 
         }     
     }
+#endif
 
     /*************************************************************************
         read bulk data 
      *************************************************************************/    
+#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION >= 10600)
+    biosig_data_type *data = biosig_get_data(hdr, 0);
+    size_t SPR = biosig_get_number_of_samples(hdr);
+#else
     hdr->FLAG.ROW_BASED_CHANNELS = 0;
     /* size_t blks = */ sread(NULL, 0, hdr->NRec, hdr);
-
-    int numberOfChannels = 0;
-    for (int k=0; k < hdr->NS; k++)
-        if (hdr->CHANNEL[k].OnOff==1)
-            numberOfChannels++;
+    biosig_data_type *data = hdr->data.block;
+    size_t SPR = hdr->NRec*hdr->SPR;
+#endif
 
 #ifdef _STFDEBUG
-    std::cout << "Number of channels: " << hdr->NS << std::endl;
-    std::cout << "Number of records per channel: " << hdr->NRec << std::endl;
-    std::cout << "Number of samples per record: " << hdr->SPR << std::endl;
-    std::cout << "Data size: " << hdr->data.size[0] << "x" << hdr->data.size[1] << std::endl;
-    std::cout << "Sampling rate: " << hdr->SampleRate << std::endl;
-    std::cout << "Number of events: " << hdr->EVENT.N << std::endl;
+    std::cout << "Number of events: " << numberOfEvents << std::endl;
     /*int res = */ hdr2ascii(hdr, stdout, 4);
 #endif
 
+#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION >= 10600)
+    for (int NS=0; NS < numberOfChannels; ) {
+        CHANNEL_TYPE *hc = biosig_get_channel(hdr, NS);
+
+        Channel TempChannel(nsections);
+        TempChannel.SetChannelName(biosig_channel_get_label(hc));
+        TempChannel.SetYUnits(biosig_channel_get_physdim(hc));
+#else
+
+
     int NS = 0;   // number of non-empty channels
-    for (size_t nc=0; nc<hdr->NS; ++nc) {
+    for (size_t nc=0; nc < hdr->NS; ++nc) {
 
         if (hdr->CHANNEL[nc].OnOff == 0) continue;
 
@@ -215,12 +267,13 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         TempChannel.SetYUnits(str);
 #endif
 
+#endif  // BIOSIG_VERSION < 10600
         for (size_t ns=1; ns<=nsections; ns++) {
 	        size_t SPS = SegIndexList[ns]-SegIndexList[ns-1];	// length of segment, samples per segment
 
-		int progbar = 100.0*(1.0*ns/nsections + nc)/(hdr->NS);
+		int progbar = 100.0*(1.0*ns/nsections + NS)/numberOfChannels;
 		std::ostringstream progStr;
-		progStr << "Reading channel #" << nc + 1 << " of " << hdr->NS
+		progStr << "Reading channel #" << NS + 1 << " of " << numberOfChannels
 			<< ", Section #" << ns << " of " << nsections;
 		progDlg.Update(progbar, progStr.str());
 
@@ -233,14 +286,14 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
                                 "" // TODO: hdr->sectionname[nc][ns]
             	);
 
-		std::copy(&(hdr->data.block[nc*hdr->SPR*hdr->NRec + SegIndexList[ns-1]]), 
-			  &(hdr->data.block[nc*hdr->SPR*hdr->NRec + SegIndexList[ns]]), 
+		std::copy(&(data[NS*SPR + SegIndexList[ns-1]]),
+			  &(data[NS*SPR + SegIndexList[ns]]),
 			  TempSection.get_w().begin() );
 
-		try {
-			TempChannel.InsertSection(TempSection, ns-1);
-		}
-		catch (...) {
+        try {
+            TempChannel.InsertSection(TempSection, ns-1);
+        }
+        catch (...) {
 			ReturnData.resize(0);
 			destructHDR(hdr);
 			throw;
@@ -248,7 +301,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 	}        
     try {
         if ((int)ReturnData.size() < numberOfChannels) {
-			ReturnData.resize(numberOfChannels);
+            ReturnData.resize(numberOfChannels);
 		}
 		ReturnData.InsertChannel(TempChannel, NS++);
     }
@@ -261,6 +314,28 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 
     free(SegIndexList); 	
 
+#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION >= 10600)
+    ReturnData.SetComment ( biosig_get_recording_id(hdr) );
+
+    sprintf(str,"v%i.%i.%i (compiled on %s %s)",BIOSIG_VERSION_MAJOR,BIOSIG_VERSION_MINOR,BIOSIG_PATCHLEVEL,__DATE__,__TIME__);
+    std::string Desc = std::string("importBiosig with libbiosig ")+std::string(str) + " ";
+
+    const char* tmpstr;
+    if ((tmpstr=biosig_get_technician(hdr)))
+            Desc += std::string ("\nTechnician:\t") + std::string (tmpstr) + " ";
+    Desc += std::string( "\nCreated with: ");
+    if ((tmpstr=biosig_get_manufacturer_name(hdr)))
+        Desc += std::string( tmpstr ) + " ";
+    if ((tmpstr=biosig_get_manufacturer_model(hdr)))
+        Desc += std::string( tmpstr ) + " ";
+    if ((tmpstr=biosig_get_manufacturer_version(hdr)))
+        Desc += std::string( tmpstr ) + " ";
+    if ((tmpstr=biosig_get_manufacturer_serial_number(hdr)))
+        Desc += std::string( tmpstr ) + " ";
+
+    Desc += std::string ("\nUser specified Annotations:\n")+annotationTableDesc;
+
+#else
     ReturnData.SetComment ( hdr->ID.Recording );
 
     sprintf(str,"v%i.%i.%i (compiled on %s %s)",BIOSIG_VERSION_MAJOR,BIOSIG_VERSION_MINOR,BIOSIG_PATCHLEVEL,__DATE__,__TIME__);
@@ -279,31 +354,41 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         Desc += std::string( hdr->ID.Manufacturer.SerialNumber );
 
     Desc += std::string ("\nUser specified Annotations:\n");
-    for (size_t k=0; k < hdr->EVENT.N; k++) {
+    for (size_t k=0; k < numberOfEvents; k++) {
         if (hdr->EVENT.TYP[k] < 256) {
             sprintf(str,"%f s:\t",hdr->EVENT.POS[k]/hdr->EVENT.SampleRate);
             Desc += std::string( str );
             Desc += std::string( hdr->EVENT.CodeDesc[hdr->EVENT.TYP[k]] ) + "\n";
         }
     }
+#endif
     ReturnData.SetFileDescription(Desc);
     //ReturnData.SetGlobalSectionDescription(Desc);
 
+#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION >= 10600)
+    ReturnData.SetXScale(1000.0/biosig_get_samplerate(hdr));
+#else
     ReturnData.SetXScale(1000.0/hdr->SampleRate);
+#endif
     ReturnData.SetXUnits("ms");
     ReturnData.SetScaling("biosig scaling factor");
 
-    struct tm T; 
-#if (BIOSIG_VERSION_MAJOR > 0)
+    /*************************************************************************
+        Date and time conversion
+     *************************************************************************/
+    struct tm T;
+#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION >= 10600)
+    biosig_get_startdatetime(hdr, &T);
+#elif (BIOSIG_VERSION_MAJOR > 0)
     gdf_time2tm_time_r(hdr->T0, &T);
 #else
     struct tm* Tp;
     Tp = gdf_time2tm_time(hdr->T0);
     T = *Tp;
 #endif
-    strftime(str,strSize,"%Y-%m-%d",&T);
+    strftime(str,strSize,"%Y-%m-%d",&T);	// %F
     ReturnData.SetDate(str);
-    strftime(str,strSize,"%H:%M:%S",&T);
+    strftime(str,strSize,"%H:%M:%S",&T);	// %D
     ReturnData.SetTime(str);
 
 #ifdef MODULE_ONLY
