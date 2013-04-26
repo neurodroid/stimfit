@@ -142,11 +142,11 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         switch (hc->PhysDimCode & 0xffe0) {
         case 4256:  // Volt
 		//biosig_channel_scale_to_unit(hc, "mV");
-		biosig_channel_change_scale_to_unitcode(hc, 4272);
+		biosig_channel_change_scale_to_physdimcode(hc, 4272);
 		break;
         case 4160:  // Ampere
 		//biosig_channel_scale_to_unit(hc, "pA");
-		biosig_channel_change_scale_to_unitcode(hc, 4181);
+		biosig_channel_change_scale_to_physdimcode(hc, 4181);
 		break;
 	    }
     }
@@ -263,6 +263,8 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 
 
 #else  // BIOSIG_VERSION < 10600
+
+
     HDRTYPE* hdr =  sopen( fName.c_str(), "r", NULL );
     if (hdr==NULL) {
         errorMsg += "\nBiosig header is empty";
@@ -502,6 +504,15 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 }
 
 
+    // =====================================================================================================================
+    //
+    // Save file with libbiosig into GDF format
+    //
+    // There basically two implementations, one with libbiosig before v1.6.0 and
+    // and one for libbiosig v1.6.0 and later
+    //
+    // =====================================================================================================================
+
 bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, stfio::ProgressInfo& progDlg) {
 /*
     converts the internal data structure to libbiosig's internal structure
@@ -511,12 +522,215 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     data matrix.
 */
 
+#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION >= 10600)
+    int numberOfChannels = Data.size();
+    HDRTYPE* hdr = constructHDR(numberOfChannels, 0);
+
+	/* Initialize all header parameters */
+    biosig_set_filetype(hdr, GDF);
+
+    struct tm t;
+    char *str;
+    str = strdup(Data.GetDate().c_str());
+    t.tm_year = strtol(str,&str,10)-1900;
+    t.tm_mon  = strtol(str+1,&str,10)-1;
+    t.tm_mday = strtol(str+1,&str,10);
+
+    str = strdup(Data.GetTime().c_str());
+    t.tm_hour = strtol(str,&str,10);
+    t.tm_min = strtol(str+1,&str,10);
+    t.tm_sec = strtol(str+1,&str,10);
+
+    biosig_get_startdatetime(hdr, &t);
+
+    const char *xunits = Data.GetXUnits().c_str();
+    uint16_t pdc = PhysDimCode(xunits);
+
+    if ((pdc & 0xffe0) == PhysDimCode("s")) {
+        fprintf(stderr,"Stimfit exportBiosigFile: xunits [%s] has not proper units, assume [ms]\n",Data.GetXUnits().c_str());
+        pdc = PhysDimCode("ms");
+    }
+
+    double fs = 1.0/(PhysDimScale(pdc) * Data.GetXScale());
+    biosig_set_samplerate(hdr, fs);
+
+    biosig_set_number_of_samples_per_record(hdr,1);
+
+    biosig_set_flags(hdr, 0, 0, 0);
+
+    /* Initialize all channel parameters */
+    size_t k, m, numberOfEvents=0;
+    size_t NRec=0;
+    for (k = 0; k < numberOfChannels; ++k) {
+        CHANNEL_TYPE *hc = biosig_get_channel(hdr, k);
+
+	biosig_channel_set_datatype_to_double(hc);
+	biosig_channel_set_scaling(hc, -1e9, 1e9, -1e9, 1e9);
+	biosig_channel_set_label(hc, Data[k].GetChannelName().c_str());
+	biosig_channel_set_physdim(hc, Data[k].GetYUnits().c_str());
+
+        /* Channel descriptions. */
+        hc->PhysDimCode = PhysDimCode(Data[k].GetYUnits().c_str());
+
+	biosig_channel_set_filter(hc, NAN, NAN, NAN);
+	biosig_channel_set_timing_offset(hc, 0.0);
+	biosig_channel_set_impedance(hc, NAN);
+
+        // TODO replace accessing fields of struct
+        hc->SPR    = hdr->SPR;
+
+        // each segment gets one marker, roughly
+        numberOfEvents += Data[k].size();
+
+        size_t m,len = 0;
+        for (len=0, m = 0; m < Data[k].size(); ++m) {
+            unsigned div = lround(Data[k][m].GetXScale()/Data.GetXScale());
+            hc->SPR = lcm(hc->SPR,div);  // sampling interval of m-th segment in k-th channel
+            len += div*Data[k][m].size();
+        }
+        hdr->SPR = lcm(hdr->SPR, hc->SPR);
+
+        if (k==0) {
+            NRec = len;
+        }
+        else if ((size_t)NRec != len) {
+            destructHDR(hdr);
+            throw std::runtime_error("File can't be exported:\n"
+                "No data or traces have different sizes" );
+
+            return false;
+        }
+    }
+
+    biosig_set_number_of_records(hdr, NRec);
+    hdr->AS.bpb = 0;
+    for (k = 0; k < numberOfChannels; ++k) {
+        // TODO replace accessing fields of struct
+        CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+        hc->SPR = hdr->SPR / hc->SPR;
+        hc->bi  = hdr->AS.bpb;
+        hdr->AS.bpb += hc->SPR * 8; /* its always double */
+    }
+
+	/***
+	    build Event table for storing segment information
+	    pre-allocate memory for even table
+         ***/
+
+        numberOfEvents *= 2;    // about two events per segment
+        biosig_set_number_of_events(hdr, numberOfEvents);
+
+    /* check whether all segments have same size */
+    {
+        char flag = (hdr->NS>0);
+        size_t m, POS, pos;
+        for (k=0; k < hdr->NS; ++k) {
+            pos = Data[k].size();
+            if (k==0)
+                POS = pos;
+            else
+                flag &= (POS == pos);
+        }
+        for (m=0; flag && (m < Data[(size_t)0].size()); ++m) {
+            for (k=0; k < biosig_get_number_of_channels(hdr); ++k) {
+                pos = Data[k][m].size() * lround(Data[k][m].GetXScale()/Data.GetXScale());
+                if (k==0)
+                    POS = pos;
+                else
+                    flag &= (POS == pos);
+            }
+        }
+        if (!flag) {
+            destructHDR(hdr);
+            throw std::runtime_error(
+                    "File can't be exported:\n"
+                    "Traces have different sizes or no channels found"
+            );
+            return false;
+        }
+    }
+
+        size_t N=0;
+        k=0;
+        size_t pos = 0;
+        for (m=0; m < (Data[k].size()); ++m) {
+            if (pos > 0) {
+                uint16_t typ=0x7ffe;
+                uint32_t pos32=pos;
+                uint16_t chn=0;
+                uint32_t dur=0;
+                // set break marker
+                biosig_set_nth_event(hdr, N++, &typ, &pos32, &chn, &dur, NULL, NULL);
+                /*
+                // set annotation
+                const char *Desc = Data[k][m].GetSectionDescription().c_str();
+                 if (Desc != NULL && strlen(Desc)>0)
+                    biosig_set_nth_event(hdr, N++, NULL, &pos32, &chn, &dur, NULL, Desc);   // TODO
+                */
+            }
+            pos += Data[k][m].size() * lround(Data[k][m].GetXScale()/Data.GetXScale());
+        }
+
+        biosig_set_number_of_events(hdr, N);
+        biosig_set_eventtable_samplerate(hdr, fs);
+        sort_eventtable(hdr);
+
+	/* convert data into GDF rawdata from  */
+	biosig_data_type *rawdata = (biosig_data_type*)malloc(hdr->AS.bpb * hdr->NRec);
+
+	for (k=0; k < numberOfChannels; ++k) {
+        CHANNEL_TYPE *hc = biosig_get_channel(hdr, k);
+
+        size_t m,n,len=0;
+        for (m=0; m < Data[k].size(); ++m) {
+            size_t div = lround(Data[k][m].GetXScale()/Data.GetXScale());
+            size_t div2 = hdr->SPR/div;
+
+            // fprintf(stdout,"k,m,div,div2: %i,%i,%i,%i\n",(int)k,(int)m,(int)div,(int)div2);  //
+            for (n=0; n < Data[k][m].size(); ++n) {
+                uint64_t val;
+                double d = Data[k][m][n];
+#if !defined(__MINGW32__) && !defined(_MSC_VER)
+                val = htole64(*(uint64_t*)&d);
+#else
+                val = *(uint64_t*)&d;
+#endif
+                size_t p, spr = (len + n*div) / hdr->SPR;
+                for (p=0; p < div2; p++)
+                   *(uint64_t*)(rawdata + hc->bi + hdr->AS.bpb * spr + p*8) = val;
+            }
+            len += div*Data[k][m].size();
+        }
+    }
+
+    /******************************
+        write to file
+    *******************************/
+    std::string errorMsg("Exception while calling std::exportBiosigFile():\n");
+
+    hdr = sopen( fName.c_str(), "w", hdr );
+    if (serror2(hdr)) {
+        errorMsg += biosig_get_errormsg(hdr);
+        destructHDR(hdr);
+        throw std::runtime_error(errorMsg.c_str());
+        return false;
+    }
+
+    ifwrite(rawdata, hdr->AS.bpb, NRec, hdr);
+
+    sclose(hdr);
+    destructHDR(hdr);
+    free(rawdata);
+
+#else	//************ BIOSIG_VERSION < 10600 ****************
+
+
     HDRTYPE* hdr = constructHDR(Data.size(), 0);
     assert(hdr->NS == Data.size());
 
 	/* Initialize all header parameters */
     hdr->TYPE = GDF;
-    hdr->VERSION = 3;   // latest version
+    hdr->VERSION = 3.0;   // latest version
 
     struct tm t;
     char *str;
@@ -556,11 +770,11 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         CHANNEL_TYPE *hc = hdr->CHANNEL+k;
 
         hc->PhysMin = -1e9;
-        hc->PhysMax = 1e9;
+        hc->PhysMax =  1e9;
         hc->DigMin  = -1e9;
-        hc->DigMax  = 1e9;
-        hc->Cal    = 1.0;
-        hc->Off    = 0.0;
+        hc->DigMax  =  1e9;
+        hc->Cal     =  1.0;
+        hc->Off     =  0.0;
 
         /* Channel descriptions. */
         strncpy(hc->Label, Data[k].GetChannelName().c_str(), MAX_LENGTH_LABEL);
@@ -732,6 +946,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 
     sclose(hdr);
     destructHDR(hdr);
+#endif
 
     return true;
 }

@@ -179,7 +179,9 @@ CXX       = $(shell $(WXCONF) --cxx)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -fstack-protector
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
-LIBS     += -lhdf5_hl -lhdf5 -lbiosig -lcholmod 
+LIBS     += -lbiosig
+#LIBS     += -lbiosig2
+LIBS     += -lhdf5_hl -lhdf5 -lcholmod
 LIBS     += -lfftw3 -lz -lpthread
 
 ifeq (mingw,$(findstring mingw, $(WXCONF)))
@@ -194,7 +196,7 @@ endif
 OBJECTS  = $(addsuffix .$(OBJEXT), $(basename $(SOURCES)))
 
 $(TARGET): $(OBJECTS)
-	 $(CXX) $(OBJECTS) $(CXXFLAGS) -fstack-protector-all $(LDFLAGS) $(LIBS) -o "$@"
+	 $(CXX) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o "$@"
 
 %.c: %.h
 
@@ -211,3 +213,4 @@ $(TARGET): $(OBJECTS)
 
 clean:
 	find src -name "*.$(OBJEXT)" -exec rm {} \;
+
