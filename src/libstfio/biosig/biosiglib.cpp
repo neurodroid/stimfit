@@ -25,10 +25,13 @@
 #include "../stfio.h"
 
 #if 1
+#if defined(__GNUC__)
 #include <biosig.h>
-#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION >= 10600)
+#elif defined(_MSC_VER)
+/* level 2 interface of libbiosig is required for ABI compatibility */
 #include <biosig2.h>
 #endif
+
 /* these are internal biosig functions, defined in biosig-dev.h which is not always available */
 extern "C" size_t ifwrite(void* buf, size_t size, size_t nmemb, HDRTYPE* hdr);
 extern "C" uint32_t lcm(uint32_t A, uint32_t B);
@@ -74,7 +77,8 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     // =====================================================================================================================
 
 
-#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION >= 10600)
+#ifdef __LIBBIOSIG2_H__
+
     HDRTYPE* hdr =  sopen( fName.c_str(), "r", NULL );
     if (hdr==NULL) {
         errorMsg += "\nBiosig header is empty";
@@ -262,7 +266,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     destructHDR(hdr);
 
 
-#else  // BIOSIG_VERSION < 10600
+#else  // #ifndef __LIBBIOSIG2_H__
 
 
     HDRTYPE* hdr =  sopen( fName.c_str(), "r", NULL );
@@ -522,7 +526,8 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     data matrix.
 */
 
-#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION >= 10600)
+#ifdef __LIBBIOSIG2_H__
+
     int numberOfChannels = Data.size();
     HDRTYPE* hdr = constructHDR(numberOfChannels, 0);
 
@@ -722,7 +727,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     destructHDR(hdr);
     free(rawdata);
 
-#else	//************ BIOSIG_VERSION < 10600 ****************
+#else   // #ifndef __LIBBIOSIG2_H__
 
 
     HDRTYPE* hdr = constructHDR(Data.size(), 0);
