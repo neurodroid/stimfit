@@ -6,7 +6,7 @@ check_PROGRAMS = stimfittest
 TESTS = ${check_PROGRAMS}
 stimfit_SOURCES = ./src/stimfit/gui/main.cpp
 
-stimfittest_SOURCES = ./src/test/section.cpp ./src/test/channel.cpp ./src/test/recording.cpp ./src/test/measure.cpp \
+stimfittest_SOURCES = ./src/test/section.cpp ./src/test/channel.cpp ./src/test/recording.cpp ./src/test/fit.cpp ./src/test/measure.cpp \
             ./src/test/gtest/src/gtest-all.cc ./src/test/gtest/src/gtest_main.cc
 
 noinst_HEADERS = ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfio/recording.h ./src/libstfio/stfio.h \
