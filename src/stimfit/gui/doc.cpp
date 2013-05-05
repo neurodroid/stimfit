@@ -1069,7 +1069,7 @@ void wxStfDoc::FitDecay(wxCommandEvent& WXUNUSED(event)) {
         wxGetApp().ErrorMsg(wxT("Check fit limits"));
         return;
     }
-    wxString fitInfo;
+    std::string fitInfo;
 
     try {
         n_params=(int)wxGetApp().GetFuncLib().at(fselect).pInfo.size();
@@ -1138,7 +1138,7 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
         wxGetApp().ErrorMsg(wxT("Check fit limits"));
         return;
     }
-    wxString fitInfo;
+    std::string fitInfo;
     n_params=2;
     Vector_double params( n_params );
 
@@ -1163,8 +1163,10 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=(wxStfView*)GetFirstView();
     if (pView!=NULL && pView->GetGraph()!=NULL)
         pView->GetGraph()->Refresh();
-    fitInfo << wxT("slope = ") << params[0] << wxT("\n1/slope = ") << 1.0/params[0]
+    std::ostringstream fitInfoStr;
+    fitInfoStr << wxT("slope = ") << params[0] << wxT("\n1/slope = ") << 1.0/params[0]
             << wxT("\ny-intercept = ") << params[1];
+    fitInfo += fitInfoStr.str();
     wxStfFitInfoDlg InfoDialog(GetDocumentWindow(),fitInfo);
     InfoDialog.ShowModal();
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
@@ -1450,8 +1452,8 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
             params.resize(n_params);
             wxGetApp().GetFuncLib().at(fselect).init( x, GetBase(), GetPeak(),
                     GetXScale(), params );
-            wxString fitInfo;
 
+            std::string fitInfo;
             try {
                 double chisqr = stf::lmFit( x, GetXScale(), wxGetApp().GetFuncLib()[fselect],
                                             FitSelDialog.GetOpts(), FitSelDialog.UseScaling(),

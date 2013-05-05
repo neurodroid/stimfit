@@ -64,7 +64,7 @@ T linFit(
  */
 double StfDll lmFit(const Vector_double& data, double dt,
                     const stf::storedFunc& fitFunc, const Vector_double& opts,
-                    bool use_scaling, Vector_double& p, wxString& info, int& warning );
+                    bool use_scaling, Vector_double& p, std::string& info, int& warning );
 
 //! Linear function.
 /*! \f[f(x)=p_0 x + p_1\f]

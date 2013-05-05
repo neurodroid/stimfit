@@ -145,7 +145,7 @@ Vector_double stf::get_scale(Vector_double& data, double oldx) {
 double stf::lmFit( const Vector_double& data, double dt,
                    const stf::storedFunc& fitFunc, const Vector_double& opts,
                    bool use_scaling,
-                   Vector_double& p, wxString& info, int& warning )
+                   Vector_double& p, std::string& info, int& warning )
 {
     // Basic range checking:
     if (fitFunc.pInfo.size()!=p.size()) {
@@ -243,7 +243,7 @@ double stf::lmFit( const Vector_double& data, double dt,
         Vector_double old_p_toFit(p_toFit);
 
 #ifdef _DEBUG
-        wxString optsMsg;
+        std::string optsMsg;
         optsMsg << wxT("\nopts: ");
         for (std::size_t n_p=0; n_p < opts.size(); ++n_p)
             optsMsg << opts[n_p] << wxT("\t");
@@ -260,13 +260,13 @@ double stf::lmFit( const Vector_double& data, double dt,
 
         while ( 1 ) {
 #ifdef _DEBUG
-            wxString paramMsg;
+            std::ostringstream paramMsg;
             paramMsg << wxT("Pass: ") << it << wxT("\t");
             paramMsg << wxT("p_toFit: ");
             for (std::size_t n_p=0; n_p < p_toFit.size(); ++n_p)
                 paramMsg << p_toFit[n_p] << wxT("\t");
             paramMsg << wxT("\n");
-            std::cout << paramMsg.c_str();
+            std::cout << paramMsg.str().c_str();
 #endif
 
             if ( !fitFunc.hasJac ) {
@@ -336,54 +336,54 @@ double stf::lmFit( const Vector_double& data, double dt,
         }
     }
     
-    wxString str_info;
-    str_info << wxT("Passes: ") << it;
-    str_info << wxT("\nIterations during last pass: ") << info_id[5];
-    str_info << wxT("\nStopping reason during last pass:");
+    std::ostringstream str_info;
+    str_info << "Passes: " << it;
+    str_info << "\nIterations during last pass: " << info_id[5];
+    str_info << "\nStopping reason during last pass:";
     switch ((int)info_id[6]) {
      case 1:
-         str_info << wxT("\nStopped by small gradient of squared error.");
+         str_info << "\nStopped by small gradient of squared error.";
          warning = 0;
          break;
      case 2:
-         str_info << wxT("\nStopped by small rel. parameter change.");
+         str_info << "\nStopped by small rel. parameter change.";
          warning = 0;
          break;
      case 3:
-         str_info << wxT("\nReached max. number of iterations. Restart\n")
-                  << wxT("with smarter initial parameters and / or with\n")
-                  << wxT("increased initial scaling factor and / or with\n")
-                  << wxT("increased max. number of iterations.");
+         str_info << "\nReached max. number of iterations. Restart\n"
+                  << "with smarter initial parameters and / or with\n"
+                  << "increased initial scaling factor and / or with\n"
+                  << "increased max. number of iterations.";
          warning = 3;
          break;
      case 4:
-         str_info << wxT("\nSingular matrix. Restart from current parameters\n")
-                  << wxT("with increased initial scaling factor.");
+         str_info << "\nSingular matrix. Restart from current parameters\n"
+                  << "with increased initial scaling factor.";
          warning = 4;
          break;
      case 5:
-         str_info << wxT("\nNo further error reduction is possible.\n")
-                  << wxT("Restart with increased initial scaling factor.");
+         str_info << "\nNo further error reduction is possible.\n"
+                  << "Restart with increased initial scaling factor.";
          warning = 5;
          break;
      case 6:
-         str_info << wxT("\nStopped by small squared error.");
+         str_info << "\nStopped by small squared error.";
          warning = 0;
          break;
      case 7:
-         str_info << wxT("\nStopped by invalid (i.e. NaN or Inf) \"func\" values.\n");
-         str_info << wxT("This is a user error.");
+         str_info << "\nStopped by invalid (i.e. NaN or Inf) \"func\" values.\n";
+         str_info << "This is a user error.";
          warning = 7;
          break;
      default:
-         str_info << wxT("\nUnknown reason for stopping the fit.");
+         str_info << "\nUnknown reason for stopping the fit.";
          warning = -1;
     }
     if (use_scaling && !can_scale) {
-        str_info << wxT("\nCouldn't use scaling because one or more ")
-                 << wxT("of the parameters don't allow it.");
+        str_info << "\nCouldn't use scaling because one or more "
+                 << "of the parameters don't allow it.";
     }
-    info=str_info;
+    info=str_info.str();
     return info_id[1];
 }
 
