@@ -4,10 +4,10 @@
 #include <gtest/gtest.h>
 #include <cmath>
 
-std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
+static std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
 
-int nmax = 32768;
-int tol = 0.1;
+const static int nmax = 32768;
+const static double tol = 0.1;
 
 
 void par_test(double value, double expected, double tolerance) {
@@ -18,14 +18,12 @@ void par_test(double value, double expected, double tolerance) {
 TEST(fitlib_test, monoexponential) {
 
     double tau = 3000.0;
-    double tol = 0.1;
 
     Vector_double data(32768);
     for (int n = 0; n < data.size(); ++n) {
         data[n] = 1.0-exp(-n/tau);
     }
 
-    std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
     // Respectively the scale factor for initial \mu,
     // stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2,
     // maxIter, maxPass
@@ -85,10 +83,10 @@ TEST(fitlib_test, monoexponential_offset2baseline){
     }
 
     /* Initial parameters */
-    Vector_double param(3);
-    param[0] = -20.1;
-    param[1] = 3050.0;
-    param[2] = 1.1;
+    Vector_double pars(3);
+    pars[0] = -1.1;
+    pars[1] = 3050.0;
+    pars[2] = base; /* Has to be exactly base because this parameter is kept constant */
 
     // stopping thresholds 
     Vector_double opts(6);
@@ -102,10 +100,23 @@ TEST(fitlib_test, monoexponential_offset2baseline){
     std::string info;
     int warning;
     double chisqr = lmFit(data, 1.0, funcLib[1], opts, true,
-        param, info, warning);
+        pars, info, warning);
 
+#if 0
+    int fd = open("debug.log", O_WRONLY|O_CREAT|O_TRUNC, 0660);
+    assert(fd >= 0);
+    int ret = dup2(fd, 1);
+    assert(ret >= 0);
+    std::cout << "chisqr = " << chisqr << std::endl;
+    std::cout << "info = " << info << std::endl;
+    std::cout << "warning = " << warning << std::endl;
+    for (int n = 0; n < pars.size(); ++n) {
+        std::cout << "Pars[" << n << "] = " << pars[n] << std::endl;
+    }
+    close(fd);
+#endif
     EXPECT_EQ(warning,0); 
-    par_test(param[0], base+1, tol); /* Amplitude */
-    par_test(param[1], tau, tol);  /* Time constant */
-    par_test(param[2], base, tol);  /* Baseline */
+    par_test(pars[0], -1.0, tol); /* Amplitude */
+    par_test(pars[1], tau, tol);  /* Time constant */
+    par_test(pars[2], base, tol);  /* Baseline */
 }
