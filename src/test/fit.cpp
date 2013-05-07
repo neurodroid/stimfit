@@ -4,11 +4,18 @@
 #include <gtest/gtest.h>
 #include <cmath>
 
+std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
+
+int nmax = 32768;
+int tol = 0.1;
+
+
 void par_test(double value, double expected, double tolerance) {
     EXPECT_NEAR(value, expected, abs(expected*tolerance));
 }
 
-TEST(fitlib_test, checks) {
+// Tests fiting to a monoexponential function
+TEST(fitlib_test, monoexponential) {
 
     double tau = 3000.0;
     double tol = 0.1;
@@ -46,6 +53,7 @@ TEST(fitlib_test, checks) {
     par_test(pars[1], tau, tol);  /* Time constant */
     par_test(pars[2], 1.0, tol);  /* Baseline */
 
+
 #if 0    
     int fd = open("debug.log", O_WRONLY|O_CREAT|O_TRUNC, 0660);
     assert(fd >= 0);
@@ -59,4 +67,45 @@ TEST(fitlib_test, checks) {
     }
     close(fd);
 #endif
+}
+
+//=========================================================================
+// Tests fitting to a monoexponential function, offset fixed to baseline 
+// f(x; base, tau) = base - exp(-x/tau),
+//=========================================================================
+TEST(fitlib_test, monoexponential_offset2baseline){
+
+    /* generate data */
+    double tau = 3000.0;
+    double base = -20.0;
+
+    Vector_double data(nmax);
+    for (int n = 0; n < data.size(); ++n) {
+        data[n] = base - exp(-n/tau);
+    }
+
+    /* Initial parameters */
+    Vector_double param(3);
+    param[0] = -20.1;
+    param[1] = 3050.0;
+    param[2] = 1.1;
+
+    // stopping thresholds 
+    Vector_double opts(6);
+    opts[0] = 5*1E-3; // scale factor for initial \mu,   default: 1E-03;
+    opts[1] = 1E-17;  // ||J^T e||_inf, default: 1E-17;
+    opts[2] = 1E-17;  // ||Dp||_2, default: 1E-17;
+    opts[3] = 1E-32;  // ||e||_2,  default: 1E-17;
+    opts[4] = 64;     // maxIter, default: 64;
+    opts[5] = 16;     // maxPass
+
+    std::string info;
+    int warning;
+    double chisqr = lmFit(data, 1.0, funcLib[1], opts, true,
+        param, info, warning);
+
+    EXPECT_EQ(warning,0); 
+    par_test(param[0], base+1, tol); /* Amplitude */
+    par_test(param[1], tau, tol);  /* Time constant */
+    par_test(param[2], base, tol);  /* Baseline */
 }
