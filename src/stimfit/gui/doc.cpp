@@ -1110,7 +1110,8 @@ void wxStfDoc::FitDecay(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=(wxStfView*)GetFirstView();
     if (pView!=NULL && pView->GetGraph()!=NULL)
         pView->GetGraph()->Refresh();
-    wxStfFitInfoDlg InfoDialog(GetDocumentWindow(),fitInfo);
+    wxString myfitInfo(fitInfo.c_str(), wxConvUTF8);
+    wxStfFitInfoDlg InfoDialog(GetDocumentWindow(),myfitInfo);
     wxEndBusyCursor();
     InfoDialog.ShowModal();
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
@@ -1167,7 +1168,8 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
     fitInfoStr << wxT("slope = ") << params[0] << wxT("\n1/slope = ") << 1.0/params[0]
             << wxT("\ny-intercept = ") << params[1];
     fitInfo += fitInfoStr.str();
-    wxStfFitInfoDlg InfoDialog(GetDocumentWindow(),fitInfo);
+    wxString myfitInfo(fitInfo.c_str(), wxConvUTF8);
+    wxStfFitInfoDlg InfoDialog(GetDocumentWindow(),myfitInfo);
     InfoDialog.ShowModal();
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
     wxString label; label << wxT("Fit, Section #") << (int)GetCurSec();
