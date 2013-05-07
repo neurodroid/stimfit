@@ -475,11 +475,7 @@ void wxStfDoc::PostInit() {
             channelNames.Alloc( size() );
             for (std::size_t n_c=0; n_c < size(); ++n_c) {
                 wxString channelStream;
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-                channelStream << n_c << wxT(" (") << at(n_c).GetChannelName() << wxT(")");
-#else
-                channelStream << n_c << wxT(" (") << wxString(at(n_c).GetChannelName().c_str(), wxConvUTF8) << wxT(")");
-#endif                
+                channelStream << n_c << wxT(" (") << stf::std2wx( at(n_c).GetChannelName() ) << wxT(")");
                 channelNames.Add( channelStream );
             }
             pFrame->CreateComboChannels( channelNames );
@@ -690,11 +686,7 @@ Recording wxStfDoc::ReorderChannels() {
          cit != get().end() && it != channelNames.end();
          cit++)
     {
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-        *it = cit->GetChannelName();
-#else
-        *it = wxString(cit->GetChannelName().c_str(), wxConvUTF8);
-#endif
+        *it = stf::std2wx( cit->GetChannelName() );
         it++;
     }
     std::vector<int> channelOrder(size());
@@ -1215,12 +1207,7 @@ void wxStfDoc::Viewtable(wxCommandEvent& WXUNUSED(event)) {
     wxBusyCursor wc;
     try {
         wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-        pFrame->ShowTable(CurAsTable(),cur().GetSectionDescription());
-#else
-        pFrame->ShowTable(CurAsTable(),
-                          wxString(cur().GetSectionDescription().c_str(), wxConvUTF8));
-#endif        
+        pFrame->ShowTable( CurAsTable(), stf::std2wx( cur().GetSectionDescription() ) );
     }
     catch (const std::out_of_range& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
