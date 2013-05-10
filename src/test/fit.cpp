@@ -9,6 +9,7 @@ static std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
 const static int nmax = 32768;
 const static double tol = 0.1;
 
+#if 0
 void debug_stdout(double chisqr, std::string info, int warning, Vector_double &pars){
     int fd = open("debug.log", O_WRONLY|O_CREAT|O_TRUNC, 0660);
     assert(fd >= 0);
@@ -22,6 +23,8 @@ void debug_stdout(double chisqr, std::string info, int warning, Vector_double &p
     }
     close(fd);
 }
+
+#endif
 
 double biexp(double x, Vector_double &param){
     double base   = param[0];
@@ -201,5 +204,9 @@ TEST(fitlib_test, biexponential_offset2baseline){
     par_test(pars[3], mypars[3], tol);  /* Factor != amplitude???*/
     par_test(pars[4], mypars[4], tol);  /* long time constant */
 
+
+#if 0
     debug_stdout(chisqr, info, warning, pars);
+
+#endif
 }
