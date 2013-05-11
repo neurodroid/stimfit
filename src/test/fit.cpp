@@ -23,26 +23,7 @@ void debug_stdout(double chisqr, const std::string& info, int warning, const Vec
     }
     close(fd);
 }
-
 #endif
-
-double biexp(double x, const Vector_double &param){
-    double base   = param[0];
-    double tonset = param[1];
-    double tau_m  = param[2];
-    double amp    = param[3];
-    double tau_h  = param[4];
-
-    if (x<tonset) {
-        return 0.0;
-    }
-    else {
-        double val, ymax;
-        val = (1 - exp( (tonset-x)/tau_h) )*(exp((tonset-x)/tau_m));
-        ymax = -(1/(tau_m/tau_h + 1)-1)*exp(-tau_h*log(tau_m/tau_h +1)/tau_m);
-        return amp*(val/ymax) + base;
-    }
-} 
 
 void par_test(double value, double expected, double tolerance) {
     EXPECT_NEAR(value, expected, abs(expected*tolerance));
@@ -171,7 +152,6 @@ TEST(fitlib_test, biexponential_offset2baseline){
 
     Vector_double data(nmax);
     for (int n=0; n < data.size(); ++n){
-        //data[n] = biexp(n, mypars);
         data[n] = stf::fexpbde(n, mypars); //see in funclib.cpp
     }
     
@@ -201,12 +181,11 @@ TEST(fitlib_test, biexponential_offset2baseline){
     par_test(pars[0], mypars[0], tol);  /* baseline */
     par_test(pars[1], mypars[1], tol);  /* delay */
     par_test(pars[2], mypars[2], tol);  /* short time constant */
-    par_test(pars[3], mypars[3], tol);  /* Factor != amplitude???*/
+    par_test(pars[3], mypars[3], tol);  /* Factor != amplitude */
     par_test(pars[4], mypars[4], tol);  /* long time constant */
 
 
 #if 0
     debug_stdout(chisqr, info, warning, pars);
-
 #endif
 }
