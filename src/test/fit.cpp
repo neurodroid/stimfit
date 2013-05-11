@@ -4,10 +4,26 @@
 #include <gtest/gtest.h>
 #include <cmath>
 
-static std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
 
 const static int nmax = 32768;
 const static double tol = 0.1;
+
+/* global variables to define our data */
+const static int tmax = 100;   /* length of data in ms */
+const static float dt = 1/100.; /* sampling interval of data in ms */
+
+/* list of available fitting functions */
+const static std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
+
+Vector_double fexpbde(const Vector_double &param){
+    Vector_double mydata (int(tmax/dt));
+    
+    for (int n=0; n<mydata.size(); ++n){
+        mydata[n] = stf::fexpbde(n*dt, param);
+    }
+    
+    return mydata;
+}
 
 #if 0
 void debug_stdout(double chisqr, const std::string& info, int warning, const Vector_double &pars){
@@ -138,44 +154,40 @@ TEST(fitlib_test, monoexponential_offset2baseline){
 
 //=========================================================================
 // Tests fitting to a biexponential function, offset fixed to baseline 
-// f(x; base, t_on, t_off) = base + ( 1-exp(-x/t_h )*( exp(-x/t_m) ),
+// Stimfit function with ID = 5
 //=========================================================================
-TEST(fitlib_test, biexponential_offset2baseline){
-
-    /* generate data */
-    Vector_double mypars(5);
-    mypars[0] = 0.0;    /* baseline */
-    mypars[1] = 50.;    /* tonset   */
-    mypars[2] = 10.;    /* tau_on   */
-    mypars[3] = 25.;    /* amp      */
-    mypars[4] = 50.;    /* tau_off  */
-
-    Vector_double data(nmax);
-    for (int n=0; n < data.size(); ++n){
-        data[n] = stf::fexpbde(n, mypars); //see in funclib.cpp
-    }
+TEST(fitlib_test, id_05_biexponentialoffset2baseline){
     
+    /* choose function parameteres */
+    Vector_double mypars(5);
+    mypars[0] = 0.0;     /* baseline */
+    mypars[1] = 25.0;    /* Delay    */
+    mypars[2] = 10.0;    /* tau_1    */
+    mypars[3] = 25.0;    /* Factor   */
+    mypars[4] = 50.0;    /* tau_2    */
+
+    /* create a 100 ms trace with mypars */
+    Vector_double data;
+    data = fexpbde(mypars);
+
     /* options for the implemenation of the LM algorithm */
     Vector_double opts(6);
-    opts[0] = 5*1E-3; //default: 1E-03;
-    opts[1] = 1E-17; //default: 1E-17;
-    opts[2] = 1E-17; //default: 1E-17;
-    opts[3] = 1E-32; //default: 1E-17;
-    opts[4] = 64; //default: 64;
-    opts[5] = 16;
+    opts[0] = 5*1E-3; opts[1] = 1E-17; opts[2] = 1E-17;
+    opts[3] = 1E-32; opts[4] = 64; opts[5] = 16;
 
     /* Initial parameter guesses */
     Vector_double pars(5);
-    pars[0] = mypars[0];  /* offset fixed to baseline! */
-    pars[1] = 0.01;       /* delay    */
-    pars[2] = 117.;       /* tau_1    */
-    pars[3] = 42.9256;    /* factor   */
-    pars[4] = 29.5;       /* tau_2    */
+    pars[0] = mypars[0];      /* offset fixed to baseline! */
+    pars[1] = 0.1;            /* Delay    */
+    pars[2] = 19.925;         /* tau_1    */
+    pars[3] = 20.0;           /* Factor   */
+    pars[4] = 24.9875;        /* tau_2    */
 
 
     std::string info;
     int warning;
-    double chisqr = lmFit(data, 1.0, funcLib[5], opts, true, pars, info, warning );
+
+    double chisqr = lmFit(data, dt, funcLib[5], opts, true, pars, info, warning );
 
     EXPECT_EQ(warning, 0);
     par_test(pars[0], mypars[0], tol);  /* baseline */
@@ -184,8 +196,8 @@ TEST(fitlib_test, biexponential_offset2baseline){
     par_test(pars[3], mypars[3], tol);  /* Factor != amplitude */
     par_test(pars[4], mypars[4], tol);  /* long time constant */
 
-
 #if 0
     debug_stdout(chisqr, info, warning, pars);
 #endif
+
 }
