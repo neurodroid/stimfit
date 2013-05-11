@@ -10,7 +10,7 @@ const static int nmax = 32768;
 const static double tol = 0.1;
 
 #if 0
-void debug_stdout(double chisqr, std::string info, int warning, Vector_double &pars){
+void debug_stdout(double chisqr, const std::string& info, int warning, const Vector_double &pars){
     int fd = open("debug.log", O_WRONLY|O_CREAT|O_TRUNC, 0660);
     assert(fd >= 0);
     int ret = dup2(fd, 1);
@@ -26,7 +26,7 @@ void debug_stdout(double chisqr, std::string info, int warning, Vector_double &p
 
 #endif
 
-double biexp(double x, Vector_double &param){
+double biexp(double x, const Vector_double &param){
     double base   = param[0];
     double tonset = param[1];
     double tau_m  = param[2];
