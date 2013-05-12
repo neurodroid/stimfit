@@ -11,6 +11,7 @@ References
 
 A list of recent publications that have used `Stimfit <http:http://www.stimfit.org>`_ for data analysis. Please let me know if something is missing here.
 
+    * `Booker SA, Gross A, Althof D, Shigemoto R, Bettler B, Frotscher M, Hearing M, Wickman K, Watanabe M, Kulik A, Vida I (2013). <http://www.jneurosci.org/content/33/18/7961.full>`_ Differential GABAB-receptor-mediated effects in perisomatic- and dendrite-targeting parvalbumin interneurons. *J Neurosci* 33:7961-7974.
     * `Turesson HK, Rodriguez-Sierra OE, Pare D (2013). <http://jn.physiology.org/cgi/pmidlookup?view=long&pmid=23446692>`_ Intrinsic connections in the anterior part of the bed nucleus of the striata terminalis. *J Neurophysiol*  February 27, 2013, doi: 10.1152/jn.00004.2013 
     * `Schmidt-Hieber C, Häusser M (2013). <http://www.nature.com/neuro/journal/v16/n3/full/nn.3340.html>`_ Cellular mechanisms of spatial navigation in the medial entorhinal cortex. *Nat Neurosci* 16(3):325-331.
     * `Fuzik J, Gellért L, Oláh G, Herédi J, Kocsis K, Knapp L, Nagy D, Kincses ZT, Kis Z, Farkas T, Toldi J (2013). <https://www.sciencedirect.com/science/article/pii/S0306452212010573>`_ Fundamental interstrain differences in cortical activity between Wistar and Sprague-Dawley rats during global ischemia. *Neuroscience* 228:371-381.
