@@ -54,7 +54,7 @@ Vector_double fexpbde(const Vector_double &param){
     return mydata;
 }
 
-//#if 0
+#if 0
 void savetxt(const Vector_double &mydata){
 
     std::ofstream output_file;
@@ -82,7 +82,7 @@ void debug_stdout(double chisqr, const std::string& info, int warning, \
     }
     close(fd);
 }
-//#endif
+#endif
 
 void par_test(double value, double expected, double tolerance) {
     EXPECT_NEAR(value, expected, abs(expected*tolerance));
