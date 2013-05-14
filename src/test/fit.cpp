@@ -11,7 +11,7 @@ const static double tol = 0.1;
 
 /* global variables to define our data */
 const static int tmax = 100;   /* length of data in ms */
-const static float dt = 1/20.0; /* sampling interval of data in ms */
+const static float dt = 1/100.0; /* sampling interval of data in ms */
 
 /* list of available fitting functions */
 const static std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
@@ -76,7 +76,6 @@ void savetxt(const Vector_double &mydata){
 
     for (int n=0; n<mydata.size(); ++n){
         output_file << mydata[n] << std::endl;
-        std::cout << mydata[n] << std::endl;
     }
 
     output_file.close();
@@ -140,7 +139,6 @@ TEST(fitlib_test, monoexponential) {
     par_test(pars[1], tau, tol);  /* Time constant */
     par_test(pars[2], 1.0, tol);  /* Baseline */
 
-    data.clear();
 
 #if 0    
     int fd = open("debug.log", O_WRONLY|O_CREAT|O_TRUNC, 0660);
@@ -209,8 +207,6 @@ TEST(fitlib_test, monoexponential_offset2baseline){
     par_test(pars[0], -1.0, tol); /* Amplitude */
     par_test(pars[1], tau, tol);  /* Time constant */
     par_test(pars[2], base, tol);  /* Baseline */
-
-    data.clear();
 }
 
 //=========================================================================
@@ -264,6 +260,58 @@ TEST(fitlib_test, id_03_monoexponential_with_delay){
 }
 
 //=========================================================================
+// Tests fitting to a biexponential function, offset fixed to baseline
+// Stimfit function with ID = 5
+//=========================================================================
+TEST(fitlib_test, id_05_biexponentialoffset2baseline){
+   
+    /* choose function parameters */
+    Vector_double mypars(5);
+    mypars[0] = 0.0;     /* baseline */
+    mypars[1] = 25.0;    /* Delay    */
+    mypars[2] = 10.0;    /* tau_1    */
+    mypars[3] = 25.0;    /* Factor   */
+    mypars[4] = 50.0;    /* tau_2    */
+
+    /* create a 100 ms trace with mypars */
+    Vector_double data;
+    data = fexpbde(mypars);
+
+    /* options for the implemenation of the LM algorithm */
+    Vector_double opts(6);
+    opts[0] = 5*1E-3; opts[1] = 1E-17; opts[2] = 1E-17;
+    opts[3] = 1E-32; opts[4] = 64; opts[5] = 16;
+
+    /* Initial parameter guesses */
+    Vector_double pars(5);
+    pars[0] = mypars[0];      /* offset fixed to baseline! */
+    pars[1] = 0.1;            /* Delay    */
+    pars[2] = 19.925;         /* tau_1    */
+    pars[3] = 20.0;           /* Factor   */
+    pars[4] = 24.9875;        /* tau_2    */
+
+    std::string info;
+    int warning;
+
+    double chisqr = lmFit(data, dt, funcLib[5], opts, true, pars, info, warning );
+
+    EXPECT_EQ(warning, 0);
+    par_test(pars[0], mypars[0], tol);  /* baseline */
+    par_test(pars[1], mypars[1], tol);  /* delay */
+    par_test(pars[2], mypars[2], tol);  /* short time constant */
+    par_test(pars[3], mypars[3], tol);  /* Factor != amplitude */
+    par_test(pars[4], mypars[4], tol);  /* long time constant */
+
+#if 0
+    debug_stdout(chisqr, info, warning, pars);
+#endif
+
+    data.clear();
+
+}
+
+
+//=========================================================================
 // Tests fitting to an alpha function, 
 // Stimfit function with ID = 9
 //=========================================================================
@@ -272,8 +320,8 @@ TEST(fitlib_test, id_09_alpha){
     /* choose function parameters */
     Vector_double mypars(3);
     mypars[0] = 1500.0;    /* amplitude */
-    mypars[1] = 0.5;       /* rate      */
-    mypars[2] = 50.0;      /* offset    */
+    mypars[1] = 0.5;    /* rate      */
+    mypars[2] = 50.0;    /* offset    */
 
     /* create a 100 ms trace with mypars */
     Vector_double data;
@@ -292,8 +340,8 @@ TEST(fitlib_test, id_09_alpha){
     /* Initial parameter guesses */
     Vector_double pars(3);
     pars[0] = 1000.0;          /* amplitude */
-    pars[1] = 0.10;            /* rate      */
-    pars[2] = 8.0;             /* offset    */
+    pars[1] = 0.10;          /* rate      */
+    pars[2] = 8.0;          /* offset    */
 
     std::string info;
     int warning;
@@ -311,4 +359,5 @@ TEST(fitlib_test, id_09_alpha){
 //#endif
 
     data.clear();
+
 }
