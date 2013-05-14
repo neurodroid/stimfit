@@ -11,7 +11,7 @@ const static double tol = 0.1;
 
 /* global variables to define our data */
 const static int tmax = 100;   /* length of data in ms */
-const static float dt = 1/100.0; /* sampling interval of data in ms */
+const static float dt = 1/20.0; /* sampling interval of data in ms */
 
 /* list of available fitting functions */
 const static std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
@@ -24,7 +24,6 @@ const static std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
 // param[2] is the time constant, 
 // param[3] is the amplitude
 //=========================================================================
-
 Vector_double fexpde(const Vector_double &param){
     Vector_double mydata (int (tmax/dt));
 
@@ -54,7 +53,22 @@ Vector_double fexpbde(const Vector_double &param){
     return mydata;
 }
 
-#if 0
+//=========================================================================
+// 09 - Alpha function with offset to baseline
+// param is an array of parameters, where
+// param[0] is the amplitude, 
+// param[1] is the rate,
+// param[2] is the offset 
+//=========================================================================
+Vector_double falpha(const Vector_double &param){
+    Vector_double mydata (int(tmax/dt));
+    
+    for (int n=0; n<mydata.size(); ++n){
+        mydata[n] = stf::falpha(n*dt, param);
+    }
+}
+
+//#if 0
 void savetxt(const Vector_double &mydata){
 
     std::ofstream output_file;
@@ -62,6 +76,7 @@ void savetxt(const Vector_double &mydata){
 
     for (int n=0; n<mydata.size(); ++n){
         output_file << mydata[n] << std::endl;
+        std::cout << mydata[n] << std::endl;
     }
 
     output_file.close();
@@ -82,7 +97,7 @@ void debug_stdout(double chisqr, const std::string& info, int warning, \
     }
     close(fd);
 }
-#endif
+//#endif
 
 void par_test(double value, double expected, double tolerance) {
     EXPECT_NEAR(value, expected, abs(expected*tolerance));
@@ -125,6 +140,7 @@ TEST(fitlib_test, monoexponential) {
     par_test(pars[1], tau, tol);  /* Time constant */
     par_test(pars[2], 1.0, tol);  /* Baseline */
 
+    data.clear();
 
 #if 0    
     int fd = open("debug.log", O_WRONLY|O_CREAT|O_TRUNC, 0660);
@@ -193,7 +209,10 @@ TEST(fitlib_test, monoexponential_offset2baseline){
     par_test(pars[0], -1.0, tol); /* Amplitude */
     par_test(pars[1], tau, tol);  /* Time constant */
     par_test(pars[2], base, tol);  /* Baseline */
+
+    data.clear();
 }
+
 //=========================================================================
 // Tests fitting to a monoexponential function with delay, start to base 
 // Stimfit function with ID = 3
@@ -241,26 +260,29 @@ TEST(fitlib_test, id_03_monoexponential_with_delay){
 #if 0
     debug_stdout(chisqr, info, warning, pars);
 #endif
+    data.clear();
 }
 
-
 //=========================================================================
-// Tests fitting to a biexponential function, offset fixed to baseline 
-// Stimfit function with ID = 5
+// Tests fitting to an alpha function, 
+// Stimfit function with ID = 9
 //=========================================================================
-TEST(fitlib_test, id_05_biexponentialoffset2baseline){
+TEST(fitlib_test, id_09_alpha){
     
     /* choose function parameters */
-    Vector_double mypars(5);
-    mypars[0] = 0.0;     /* baseline */
-    mypars[1] = 25.0;    /* Delay    */
-    mypars[2] = 10.0;    /* tau_1    */
-    mypars[3] = 25.0;    /* Factor   */
-    mypars[4] = 50.0;    /* tau_2    */
+    Vector_double mypars(3);
+    mypars[0] = 1500.0;    /* amplitude */
+    mypars[1] = 0.5;       /* rate      */
+    mypars[2] = 50.0;      /* offset    */
 
     /* create a 100 ms trace with mypars */
     Vector_double data;
-    data = fexpbde(mypars);
+    data = falpha(mypars);
+
+
+//#if 0
+    savetxt(data);
+//#endif
 
     /* options for the implemenation of the LM algorithm */
     Vector_double opts(6);
@@ -268,27 +290,25 @@ TEST(fitlib_test, id_05_biexponentialoffset2baseline){
     opts[3] = 1E-32; opts[4] = 64; opts[5] = 16;
 
     /* Initial parameter guesses */
-    Vector_double pars(5);
-    pars[0] = mypars[0];      /* offset fixed to baseline! */
-    pars[1] = 0.1;            /* Delay    */
-    pars[2] = 19.925;         /* tau_1    */
-    pars[3] = 20.0;           /* Factor   */
-    pars[4] = 24.9875;        /* tau_2    */
+    Vector_double pars(3);
+    pars[0] = 1000.0;          /* amplitude */
+    pars[1] = 0.10;            /* rate      */
+    pars[2] = 8.0;             /* offset    */
 
     std::string info;
     int warning;
 
-    double chisqr = lmFit(data, dt, funcLib[5], opts, true, pars, info, warning );
+    double chisqr = lmFit(data, dt, funcLib[8], opts, true, pars, info,\
+         warning );
 
     EXPECT_EQ(warning, 0);
-    par_test(pars[0], mypars[0], tol);  /* baseline */
-    par_test(pars[1], mypars[1], tol);  /* delay */
-    par_test(pars[2], mypars[2], tol);  /* short time constant */
-    par_test(pars[3], mypars[3], tol);  /* Factor != amplitude */
-    par_test(pars[4], mypars[4], tol);  /* long time constant */
+    par_test(pars[0], mypars[0], tol);  /* amplitude */
+    par_test(pars[1], mypars[1], tol);  /* rate      */
+    par_test(pars[2], mypars[2], tol);  /* offset    */
 
-#if 0
+//#if 0
     debug_stdout(chisqr, info, warning, pars);
-#endif
+//#endif
 
+    data.clear();
 }
