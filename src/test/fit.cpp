@@ -133,10 +133,12 @@ void par_test(double value, double expected, double tolerance) {
     The computer returns abs(expected*tolerance) equals to zero, and 
     the test fails for that reason, a minimal tolerance value of EPSILON
     is given */
-    if (abs(expected*tolerance) < EPSILON)
+    /*if ( fabs(expected*tolerance) < EPSILON )
         EXPECT_NEAR(value, expected, EPSILON);
     else 
-        EXPECT_NEAR(value, expected, abs(expected*tolerance) );
+        EXPECT_NEAR(value, expected, fabs(expected*tolerance) );
+    */
+    EXPECT_NEAR(value, expected, fabs(expected*tolerance) );
 }
 
 
