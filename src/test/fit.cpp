@@ -27,7 +27,7 @@ const static std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
 Vector_double fexpde(const Vector_double &param){
     Vector_double mydata (int (tmax/dt));
 
-    for (int n=0; n<mydata.size(); ++n){
+    for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
         mydata[n] = stf::fexpde(n*dt, param);
     }
     
@@ -46,7 +46,7 @@ Vector_double fexpde(const Vector_double &param){
 Vector_double fexpbde(const Vector_double &param){
     Vector_double mydata (int(tmax/dt));
     
-    for (int n=0; n<mydata.size(); ++n){
+    for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
         mydata[n] = stf::fexpbde(n*dt, param);
     }
     
@@ -63,19 +63,23 @@ Vector_double fexpbde(const Vector_double &param){
 Vector_double falpha(const Vector_double &param){
     Vector_double mydata (int(tmax/dt));
     
-    for (int n=0; n<mydata.size(); ++n){
+    for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
         mydata[n] = stf::falpha(n*dt, param);
     }
+    
+    return mydata;
 }
 
 //#if 0
-void savetxt(const Vector_double &mydata){
+void savetxt(Vector_double &mydata){
 
     std::ofstream output_file;
     output_file.open("array.out");
 
-    for (int n=0; n<mydata.size(); ++n){
-        output_file << mydata[n] << std::endl;
+    Vector_double::iterator it;
+
+    for (it = mydata.begin(); it != mydata.end(); ++it){
+        output_file << *it << std::endl;
     }
 
     output_file.close();
@@ -91,7 +95,7 @@ void debug_stdout(double chisqr, const std::string& info, int warning, \
     std::cout << "chisqr = " << chisqr << std::endl;
     std::cout << "info = " << info << std::endl;
     std::cout << "warning = " << warning << std::endl;
-    for (int n = 0; n < pars.size(); ++n) {
+    for (std::vector<int>::size_type n = 0; n != pars.size(); ++n) {
         std::cout << "Pars[" << n << "] = " << pars[n] << std::endl;
     }
     close(fd);
