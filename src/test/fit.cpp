@@ -298,6 +298,56 @@ TEST(fitlib_test, id_00_monoexponential){
 }
 
 //=========================================================================
+// Tests fitting to a monoexponential function, offset fixed to baseline
+// Stimfit function with ID = 1 
+//=========================================================================
+TEST(fitlib_test, id_01_monoexponential_offsetfixed){
+
+    /* choose function parameters */
+    Vector_double mypars(3);
+    mypars[0] = 80.0;   /* amplitude */
+    mypars[1] = 34.0;   /* time constant */
+    mypars[2] = -50.0;  /* end  */
+
+
+    /* create a 100 ms trace with mypars */
+    Vector_double data;
+    data = fexp_simple(mypars);
+
+#if 0
+    savetxt(data);
+#endif
+
+    /* options for the implementation of the LM algorithm */
+    Vector_double opts(6);
+    opts[0] = 5*1E-3; opts[1] = 1E-17; opts[2] = 1E-17;
+    opts[3] = 1E-32; opts[4] = 64; opts[5] = 16;
+
+    /* Initial parameters guesses */
+    Vector_double pars(3);
+    pars[0] = mypars[0];        /* Offset fixed to baseline */
+    pars[1] = 5.0;              /* Tau_0 */
+    pars[2] = -35.0;            /* Amp_0 */
+
+    std::string info;
+    int warning;
+
+    double chisqr = lmFit(data, dt, funcLib[0], opts, true, pars, info, warning );
+
+    EXPECT_EQ(warning, 0);
+    par_test(pars[0], mypars[0], tol);  /* Amp_0  */
+    par_test(pars[1], mypars[1], tol);  /* Tau_0  */
+    par_test(pars[2], mypars[2], tol);  /* Offset */
+
+#if 0
+    debug_stdout(chisqr, info, warning, pars);
+#endif
+
+    data.clear();
+
+}
+
+//=========================================================================
 // Tests fitting to a monoexponential function with delay, start to base 
 // Stimfit function with ID = 2
 //=========================================================================
