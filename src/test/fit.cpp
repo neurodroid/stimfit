@@ -106,20 +106,15 @@ void debug_stdout(double chisqr, const std::string& info, int warning, \
 //#endif
 
 void par_test(double value, double expected, double tolerance) {
-    double mytol;
     /* for very small expected values, the product of expected*tolerance
     would be smaller than the computer precission for a double????. 
     The computer returns abs(expected*tolerance) equals to zero, and 
     the test fails for that reason, a minimal tolerance value of EPSILON
     is given */
-    if (abs(expected*tolerance) < EPSILON){
-        mytol = EPSILON;
-    }
-    else {
-        mytol = abs(expected*tolerance);
-    }
-
-    EXPECT_NEAR(value, expected, mytol);
+    if (abs(expected*tolerance) < EPSILON)
+        EXPECT_NEAR(value, expected, EPSILON);
+    else 
+        EXPECT_NEAR(value, expected, abs(expected*tolerance) );
 }
 
 // Tests fiting to a monoexponential function
