@@ -18,6 +18,20 @@ const static float dt = 1/20.0; /* sampling interval of data in ms */
 /* list of available fitting functions */
 const static std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
 
+/* options for the implementation of the LM algorithm */
+const Vector_double LM_opts(){
+
+    Vector_double opts(6);
+    opts[0]=5*1E-3;   // initial \mu, default: 1E-03;
+    opts[1]=1E-17;    // stopping thr for ||J^T e||_inf, default: 1E-17;
+    opts[2]=1E-17;    // stopping trh for ||Dp||_2, default: 1E-17;
+    opts[3]=1E-32;    // stopping thr for ||e||_2, default: 1E-17;
+    opts[4]=64;       // maximal number of iterations/pass, default: 64;
+    opts[5]=16;       // maximal number of passes;
+    
+    return opts;
+}
+
 //=========================================================================
 // Simple monoexponential function
 // available for fitting to function 0 of Stimfit
@@ -30,9 +44,9 @@ Vector_double fexp_simple(const Vector_double &param){
     Vector_double mydata (int (tmax/dt));
     double amp  = param[0];
     double tau  = param[1];
-    double end = param[2]; 
+    double end =  param[2]; 
     
-    for (unsigned n=0; n< mydata.size() ; ++n){
+    for (std::vector<int>::size_type n=0; n != mydata.size() ; ++n){
         mydata[n] =   amp*exp(-(n*dt)/tau) + end; 
     }
     return mydata;
@@ -217,9 +231,8 @@ TEST(fitlib_test, id_00_monoexponential){
 #endif
 
     /* options for the implementation of the LM algorithm */
-    Vector_double opts(6);
-    opts[0] = 5*1E-3; opts[1] = 1E-17; opts[2] = 1E-17;
-    opts[3] = 1E-32; opts[4] = 64; opts[5] = 16;
+    Vector_double opts;
+    opts = LM_opts();
 
     /* Initial parameters guesses */
     Vector_double pars(3);
@@ -267,9 +280,8 @@ TEST(fitlib_test, id_01_monoexponential_offsetfixed){
 #endif
 
     /* options for the implementation of the LM algorithm */
-    Vector_double opts(6);
-    opts[0] = 5*1E-3; opts[1] = 1E-17; opts[2] = 1E-17;
-    opts[3] = 1E-32; opts[4] = 64; opts[5] = 16;
+    Vector_double opts;
+    opts = LM_opts();
 
     /* Initial parameters guesses */
     Vector_double pars(3);
@@ -317,9 +329,8 @@ TEST(fitlib_test, id_02_monoexponential_with_delay){
 #endif
 
     /* options for the implementation of the LM algorithm */
-    Vector_double opts(6);
-    opts[0] = 5*1E-3; opts[1] = 1E-17; opts[2] = 1E-17;
-    opts[3] = 1E-32; opts[4] = 64; opts[5] = 16;
+    Vector_double opts;
+    opts = LM_opts();
 
     /* Initial parameter guesses */
     Vector_double pars(4);
@@ -363,10 +374,9 @@ TEST(fitlib_test, id_05_biexponentialoffset2baseline){
     Vector_double data;
     data = fexpbde(mypars);
 
-    /* options for the implemenation of the LM algorithm */
-    Vector_double opts(6);
-    opts[0] = 5*1E-3; opts[1] = 1E-17; opts[2] = 1E-17;
-    opts[3] = 1E-32; opts[4] = 64; opts[5] = 16;
+    /* options for the implementation of the LM algorithm */
+    Vector_double opts;
+    opts = LM_opts();
 
     /* Initial parameter guesses */
     Vector_double pars(5);
@@ -419,15 +429,14 @@ TEST(fitlib_test, id_09_alpha){
     savetxt(data);
 #endif
 
-    /* options for the implemenation of the LM algorithm */
-    Vector_double opts(6);
-    opts[0] = 5*1E-3; opts[1] = 1E-17; opts[2] = 1E-17;
-    opts[3] = 1E-32; opts[4] = 64; opts[5] = 16;
+    /* options for the implementation of the LM algorithm */
+    Vector_double opts;
+    opts = LM_opts();
 
     /* Initial parameter guesses */
     Vector_double pars(3);
-    pars[0] = 1101.72;        /* Q      */
-    pars[1] = 0.2001;          /* rate   */
+    pars[0] = 1101.72;       /* Q      */
+    pars[1] = 0.2001;        /* rate   */
     pars[2] = 8.0;           /* Offset */
 
     std::string info;
