@@ -6,18 +6,21 @@
 #include <fstream>
 
 
+#define EPSILON 0.00001f
+
 const static int nmax = 32768;
 const static double tol = 0.1;
 
 /* global variables to define our data */
 const static int tmax = 100;   /* length of data in ms */
-const static float dt = 1/100.0; /* sampling interval of data in ms */
+const static float dt = 1/20.0; /* sampling interval of data in ms */
 
 /* list of available fitting functions */
 const static std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
 
 //=========================================================================
-// 03 - Monoexponential function with delay, start fixed to baseline 
+// Monoexponential function with delay, start fixed to baseline 
+// available for fitting to functions 0, 1 and 2 of Stimfit
 // param is an array of parameters, where
 // param[0] is the baseline, 
 // param[1] is the delay,
@@ -103,7 +106,20 @@ void debug_stdout(double chisqr, const std::string& info, int warning, \
 //#endif
 
 void par_test(double value, double expected, double tolerance) {
-    EXPECT_NEAR(value, expected, abs(expected*tolerance));
+    double mytol;
+    /* for very small expected values, the product of expected*tolerance
+    would be smaller than the computer precission for a double????. 
+    The computer returns abs(expected*tolerance) equals to zero, and 
+    the test fails for that reason, a minimal tolerance value of EPSILON
+    is given */
+    if (abs(expected*tolerance) < EPSILON){
+        mytol = EPSILON;
+    }
+    else {
+        mytol = abs(expected*tolerance);
+    }
+
+    EXPECT_NEAR(value, expected, mytol);
 }
 
 // Tests fiting to a monoexponential function
@@ -214,10 +230,62 @@ TEST(fitlib_test, monoexponential_offset2baseline){
 }
 
 //=========================================================================
-// Tests fitting to a monoexponential function with delay, start to base 
-// Stimfit function with ID = 3
+// Tests fitting to a monoexponential function 
+// Stimfit function with ID = 0 
 //=========================================================================
-TEST(fitlib_test, id_03_monoexponential_with_delay){
+//TEST(fitlib_test, id_00_monoexponential){
+
+    /* choose function parameters */
+//    Vector_double mypars(4);
+//    mypars[0] = -80.0; /* baseline */
+//    mypars[1] = 0.0;   /* no delay for simple monoexponential */
+//    mypars[2] = 17.0;  /* time constant */
+//    mypars[3] = 180.0;  /* amplitude */
+
+
+    /* create a 100 ms trace with mypars */
+ //   Vector_double data;
+  //  data = fexpde(mypars);
+
+#if 0
+    savetxt(data);
+#endif
+
+    /* options for the implementation of the LM algorithm */
+   // Vector_double opts(6);
+   // opts[0] = 5*1E-3; opts[1] = 1E-17; opts[2] = 1E-17;
+    //opts[3] = 1E-32; opts[4] = 64; opts[5] = 16;
+
+    /* Initial parameters guesses */
+   // Vector_double pars(4);
+   // pars[0] = 20.0;      /* Offset */
+   // pars[1] = mypars[1]; /* no delay */
+   // pars[2] = 5.0;       /* Tau_0 */
+   // pars[3] = 35.0;      /* Amp_0 */
+
+    //std::string info;
+    //int warning;
+
+//    double chisqr = lmFit(data, dt, funcLib[5], opts, true, pars, info, warning );
+
+//    EXPECT_EQ(warning, 0);
+//    par_test(pars[0], mypars[0], tol);  /* baseline */
+//    par_test(pars[1], 0.0 , tol);       /* delay */
+ //   par_test(pars[2], mypars[2], tol);  /* time constant */
+ //   par_test(pars[3], mypars[3], tol);  /* Amplitude */
+
+//#if 0
+  //  debug_stdout(chisqr, info, warning, pars);
+//#endif
+
+    //data.clear();
+
+//}
+//=========================================================================
+// Tests fitting to a monoexponential function with delay, start to base 
+// Stimfit function with ID = 2
+//=========================================================================
+TEST(fitlib_test, id_02_monoexponential_with_delay){
 
     /* choose function parameters */
     Vector_double mypars(4);
@@ -271,11 +339,11 @@ TEST(fitlib_test, id_05_biexponentialoffset2baseline){
    
     /* choose function parameters */
     Vector_double mypars(5);
-    mypars[0] = 0.0;     /* baseline */
-    mypars[1] = 25.0;    /* Delay    */
-    mypars[2] = 10.0;    /* tau_1    */
-    mypars[3] = 25.0;    /* Factor   */
-    mypars[4] = 50.0;    /* tau_2    */
+    mypars[0] = 0.0;     /* baseline            */
+    mypars[1] = 25.0;    /* Delay               */
+    mypars[2] = 10.0;    /* fast time constant  */
+    mypars[3] = 25.0;    /* Factor              */
+    mypars[4] = 50.0;    /* slow time constant  */
 
     /* create a 100 ms trace with mypars */
     Vector_double data;
@@ -290,9 +358,9 @@ TEST(fitlib_test, id_05_biexponentialoffset2baseline){
     Vector_double pars(5);
     pars[0] = mypars[0];      /* offset fixed to baseline! */
     pars[1] = 0.1;            /* Delay    */
-    pars[2] = 19.925;         /* tau_1    */
+    pars[2] = 19.925;         /* tau1    */
     pars[3] = 20.0;           /* Factor   */
-    pars[4] = 24.9875;        /* tau_2    */
+    pars[4] = 24.9875;        /* tau2    */
 
     std::string info;
     int warning;
@@ -323,9 +391,9 @@ TEST(fitlib_test, id_09_alpha){
     
     /* choose function parameters */
     Vector_double mypars(3);
-    mypars[0] = 1500.0;    /* amplitude */
-    mypars[1] = 0.5;    /* rate      */
-    mypars[2] = 50.0;    /* offset    */
+    mypars[0] = 300.0;    /* amplitude */
+    mypars[1] = 0.1;       /* rate      */
+    mypars[2] = 50.0;      /* offset    */
 
     /* create a 100 ms trace with mypars */
     Vector_double data;
@@ -343,14 +411,14 @@ TEST(fitlib_test, id_09_alpha){
 
     /* Initial parameter guesses */
     Vector_double pars(3);
-    pars[0] = 1000.0;          /* amplitude */
-    pars[1] = 0.10;          /* rate      */
-    pars[2] = 8.0;          /* offset    */
+    pars[0] = 1101.72;        /* Q      */
+    pars[1] = 0.2001;          /* rate   */
+    pars[2] = 8.0;           /* Offset */
 
     std::string info;
     int warning;
 
-    double chisqr = lmFit(data, dt, funcLib[8], opts, true, pars, info,\
+    double chisqr = lmFit(data, dt, funcLib[9], opts, true, pars, info,\
          warning );
 
     EXPECT_EQ(warning, 0);
