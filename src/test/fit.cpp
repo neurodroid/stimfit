@@ -6,10 +6,10 @@
 #include <fstream>
 
 
-#define EPSILON 0.00001f
+#define EPSILON 0.00001f /*absolute tolerance value */
 
 const static int nmax = 32768;
-const static double tol = 0.1;
+const static double tol = 0.1; /* param-relative tolerance value */
 
 /* global variables to define our data */
 const static int tmax = 100;   /* length of data in ms */
@@ -19,8 +19,28 @@ const static float dt = 1/20.0; /* sampling interval of data in ms */
 const static std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
 
 //=========================================================================
+// Simple monoexponential function
+// available for fitting to function 0 of Stimfit
+// param is an array of parameters, where
+// param[0] is the amplitude (peak-offset),
+// param[1] is the time constant,
+// param[2] is the end (offset)
+//=========================================================================
+Vector_double fexp_simple(const Vector_double &param){
+    Vector_double mydata (int (tmax/dt));
+    double amp  = param[0];
+    double tau  = param[1];
+    double end = param[2]; 
+    
+    for (unsigned n=0; n< mydata.size() ; ++n){
+        mydata[n] =   amp*exp(-(n*dt)/tau) + end; 
+    }
+    return mydata;
+}
+
+//=========================================================================
 // Monoexponential function with delay, start fixed to baseline 
-// available for fitting to functions 0, 1 and 2 of Stimfit
+// available for fitting to function 2 of Stimfit
 // param is an array of parameters, where
 // param[0] is the baseline, 
 // param[1] is the delay,
@@ -38,7 +58,8 @@ Vector_double fexpde(const Vector_double &param){
 }
 
 //=========================================================================
-// 05 - Biexponential function with offset to baseline
+// Biexponential function with offset to baseline
+// corresponding to fitting function 5 of Stimfit
 // param is an array of parameters, where
 // param[0] is the baseline, 
 // param[1] is the delay,
@@ -57,7 +78,8 @@ Vector_double fexpbde(const Vector_double &param){
 }
 
 //=========================================================================
-// 09 - Alpha function with offset to baseline
+// Alpha function with offset to baseline
+// corresponding to fitting function 9 of Stimfit
 // param is an array of parameters, where
 // param[0] is the amplitude, 
 // param[1] is the rate,
@@ -116,6 +138,7 @@ void par_test(double value, double expected, double tolerance) {
     else 
         EXPECT_NEAR(value, expected, abs(expected*tolerance) );
 }
+
 
 // Tests fiting to a monoexponential function
 TEST(fitlib_test, monoexponential) {
@@ -228,54 +251,52 @@ TEST(fitlib_test, monoexponential_offset2baseline){
 // Tests fitting to a monoexponential function 
 // Stimfit function with ID = 0 
 //=========================================================================
-//TEST(fitlib_test, id_00_monoexponential){
+TEST(fitlib_test, id_00_monoexponential){
 
     /* choose function parameters */
-//    Vector_double mypars(4);
-//    mypars[0] = -80.0; /* baseline */
-//    mypars[1] = 0.0;   /* no delay for simple monoexponential */
-//    mypars[2] = 17.0;  /* time constant */
-//    mypars[3] = 180.0;  /* amplitude */
+    Vector_double mypars(3);
+    mypars[0] = 50.0;   /* amplitude */
+    mypars[1] = 17.0;   /* time constant */
+    mypars[2] = -20.0;  /* end  */
 
 
     /* create a 100 ms trace with mypars */
- //   Vector_double data;
-  //  data = fexpde(mypars);
+    Vector_double data;
+    data = fexp_simple(mypars);
 
 #if 0
     savetxt(data);
 #endif
 
     /* options for the implementation of the LM algorithm */
-   // Vector_double opts(6);
-   // opts[0] = 5*1E-3; opts[1] = 1E-17; opts[2] = 1E-17;
-    //opts[3] = 1E-32; opts[4] = 64; opts[5] = 16;
+    Vector_double opts(6);
+    opts[0] = 5*1E-3; opts[1] = 1E-17; opts[2] = 1E-17;
+    opts[3] = 1E-32; opts[4] = 64; opts[5] = 16;
 
     /* Initial parameters guesses */
-   // Vector_double pars(4);
-   // pars[0] = 20.0;      /* Offset */
-   // pars[1] = mypars[1]; /* no delay */
-   // pars[2] = 5.0;       /* Tau_0 */
-   // pars[3] = 35.0;      /* Amp_0 */
+    Vector_double pars(3);
+    pars[0] = 0.0;        /* Offset */
+    pars[1] = 5.0;        /* Tau_0 */
+    pars[2] = -35.0;      /* Amp_0 */
 
-    //std::string info;
-    //int warning;
+    std::string info;
+    int warning;
 
-//    double chisqr = lmFit(data, dt, funcLib[5], opts, true, pars, info, warning );
+    double chisqr = lmFit(data, dt, funcLib[0], opts, true, pars, info, warning );
 
-//    EXPECT_EQ(warning, 0);
-//    par_test(pars[0], mypars[0], tol);  /* baseline */
-//    par_test(pars[1], 0.0 , tol);       /* delay */
- //   par_test(pars[2], mypars[2], tol);  /* time constant */
- //   par_test(pars[3], mypars[3], tol);  /* Amplitude */
+    EXPECT_EQ(warning, 0);
+    par_test(pars[0], mypars[0], tol);  /* Amp_0  */
+    par_test(pars[1], mypars[1], tol);  /* Tau_0  */
+    par_test(pars[2], mypars[2], tol);  /* Offset */
 
-//#if 0
-  //  debug_stdout(chisqr, info, warning, pars);
-//#endif
+#if 0
+    debug_stdout(chisqr, info, warning, pars);
+#endif
 
-    //data.clear();
+    data.clear();
 
-//}
+}
+
 //=========================================================================
 // Tests fitting to a monoexponential function with delay, start to base 
 // Stimfit function with ID = 2
@@ -395,9 +416,9 @@ TEST(fitlib_test, id_09_alpha){
     data = falpha(mypars);
 
 
-//#if 0
+#if 0
     savetxt(data);
-//#endif
+#endif
 
     /* options for the implemenation of the LM algorithm */
     Vector_double opts(6);
@@ -421,9 +442,9 @@ TEST(fitlib_test, id_09_alpha){
     par_test(pars[1], mypars[1], tol);  /* rate      */
     par_test(pars[2], mypars[2], tol);  /* offset    */
 
-//#if 0
+#if 0
     debug_stdout(chisqr, info, warning, pars);
-//#endif
+#endif
 
     data.clear();
 
