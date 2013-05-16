@@ -5,8 +5,6 @@
 #include <cmath>
 #include <fstream>
 
-#define EPSILON 0.00001f /*absolute tolerance value */
-
 const static int nmax = 32768;
 const static double tol = 0.1; /* param-relative tolerance value */
 
@@ -162,16 +160,7 @@ void debug_stdout(double chisqr, const std::string& info, int warning, \
 //#endif
 
 void par_test(double value, double expected, double tolerance) {
-    /* for very small expected values, the product of expected*tolerance
-    would be smaller than the computer precission for a double????. 
-    The computer returns abs(expected*tolerance) equals to zero, and 
-    the test fails for that reason, a minimal tolerance value of EPSILON
-    is given */
-    /*if ( fabs(expected*tolerance) < EPSILON )
-        EXPECT_NEAR(value, expected, EPSILON);
-    else 
-        EXPECT_NEAR(value, expected, fabs(expected*tolerance) );
-    */
+
     EXPECT_NEAR(value, expected, fabs(expected*tolerance) );
 }
 
@@ -495,9 +484,9 @@ TEST(fitlib_test, id_10_HH_gNa_offsetfixed){
     Vector_double data;
     data = fHH(mypars);
 
-//#if 0
+#if 0
     savetxt(data);
-//#endif
+#endif
 
     /* options for the implementation of the LM algorithm */
     Vector_double opts;
@@ -522,9 +511,9 @@ TEST(fitlib_test, id_10_HH_gNa_offsetfixed){
     par_test(pars[2], mypars[2], tol);  /* tau_h     */
     par_test(pars[3], 0.0, tol);        /* offset    */
 
-//#if 0
+#if 0
     debug_stdout(chisqr, info, warning, pars);
-//#endif
+#endif
 
     data.clear();
 
