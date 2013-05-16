@@ -5,7 +5,6 @@
 #include <cmath>
 #include <fstream>
 
-
 #define EPSILON 0.00001f /*absolute tolerance value */
 
 const static int nmax = 32768;
@@ -104,6 +103,27 @@ Vector_double falpha(const Vector_double &param){
     
     for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
         mydata[n] = stf::falpha(n*dt, param);
+    }
+    
+    return mydata;
+}
+
+//=========================================================================
+// Hodkin-Huxley-like sodium conductance function of the form:
+// f(v;Na_bar, m, h, base) = Na_bar*m(v)^3*h(v) + base
+// corresponding to fitting function 10 of Stimfit
+// param is an array of parameters, where
+// param[0] is the peak sodium conductance
+// param[1] is the activation time constant (tau_m) 
+// param[2] is the inactivation time constant (tau_h)
+// param[3] is the offset
+//=========================================================================
+Vector_double fHH(const Vector_double &param){
+
+    Vector_double mydata (int(tmax/dt));
+    
+    for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
+        mydata[n] = stf::fHH(n*dt, param);
     }
     
     return mydata;
@@ -357,10 +377,10 @@ TEST(fitlib_test, id_02_monoexponential_with_delay){
 }
 
 //=========================================================================
-// Tests fitting to a biexponential function, offset fixed to baseline
+// Tests fitting to a biexponential with delay, offset fixed to baseline
 // Stimfit function with ID = 5
 //=========================================================================
-TEST(fitlib_test, id_05_biexponentialoffset2baseline){
+TEST(fitlib_test, id_05_biexponential_with_delay_offsetfixed){
    
     /* choose function parameters */
     Vector_double mypars(5);
@@ -453,6 +473,58 @@ TEST(fitlib_test, id_09_alpha){
 #if 0
     debug_stdout(chisqr, info, warning, pars);
 #endif
+
+    data.clear();
+
+}
+//=========================================================================
+// Tests fitting to a HH-type sodium conductance, offset fixed to baseline
+// Stimfit function with ID =10 
+//=========================================================================
+TEST(fitlib_test, id_10_HH_gNa_offsetfixed){
+
+    /* choose function parameters */
+    Vector_double mypars(4);
+    mypars[0] = 120.0;   /* maximal sodium conductance   */
+    mypars[1] = 130e-3;    /* activation time constat (tau_m_) in us    */
+    mypars[2] = 728e-3;   /* inactivation time constant  in us */
+    mypars[3] =   0.0;   /* offset                       */
+
+    /* create a 100 ms trace with mypars */
+    /* here the x-units and x-axis values are not relevant */
+    Vector_double data;
+    data = fHH(mypars);
+
+//#if 0
+    savetxt(data);
+//#endif
+
+    /* options for the implementation of the LM algorithm */
+    Vector_double opts;
+    opts = LM_opts();
+
+    /* Initial parameter guesses */
+    Vector_double pars(4);
+    pars[0] = 1000.72;       /* gprime_na   */
+    pars[1] = 0.2001;        /* tau_m       */
+    pars[2] = 8.0;           /* tau_h       */
+    pars[3] = mypars[3];      /* offset      */
+
+    std::string info;
+    int warning;
+
+    double chisqr = lmFit(data, dt, funcLib[10], opts, true, pars, info,\
+         warning );
+
+    EXPECT_EQ(warning, 0);
+    par_test(pars[0], mypars[0], tol);  /* gprime_na */
+    par_test(pars[1], mypars[1], tol);  /* tau_m     */
+    par_test(pars[2], mypars[2], tol);  /* tau_h     */
+    par_test(pars[3], 0.0, tol);        /* offset    */
+
+//#if 0
+    debug_stdout(chisqr, info, warning, pars);
+//#endif
 
     data.clear();
 
