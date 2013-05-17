@@ -2315,6 +2315,23 @@ void wxStfDoc::Measure( )
     catch (const std::out_of_range&) {
         return;
     }
+
+    long windowLength = 1;
+    /*
+       windowLength (defined in samples) determines the size of the window for computing slopes.
+       if the window length larger than 1 is used, a kind of smoothing and low pass filtering is applied.
+       If slope estimates from data with different sampling rates should be compared, the
+       window should be choosen in such a way that the length in milliseconds is approximately the same.
+       This reduces some variability, the slope estimates are more robust and comparible.
+
+       If the user would be enabled to set the window size in milliseconds, windowLength
+       could be set in the following way:
+
+       windowLength = roundl(0.1 * GetSR());     // use window length of about 0.1 ms.
+       if (windowLength < 1) windowLength = 1;   // use a minimum window length of 1 sample
+    */
+
+
     //Begin peak and base calculation
     //-------------------------------
     try {
@@ -2322,7 +2339,7 @@ void wxStfDoc::Measure( )
         baseSD=sqrt(var);
         peak=stf::peak(cur().get(),base,
                        peakBeg,peakEnd,pM,direction,maxT);
-        threshold = stf::threshold( cur().get(), peakBeg, peakEnd, slopeForThreshold/GetSR(), thrT );
+        threshold = stf::threshold( cur().get(), peakBeg, peakEnd, slopeForThreshold/GetSR(), thrT, windowLength );
     }
     catch (const std::out_of_range& e) {
         base=0.0;
@@ -2376,10 +2393,11 @@ void wxStfDoc::Measure( )
     //Begin Ratio of slopes rise/decay calculation
     //--------------------------------------------
     double left_rise = (peakBeg > t0Real-1 || !fromBase) ? peakBeg : t0Real-1;
-    maxRise=stf::maxRise(cur().get(),left_rise,maxT,maxRiseT,maxRiseY);
+    maxRise=stf::maxRise(cur().get(),left_rise,maxT,maxRiseT,maxRiseY,windowLength);
     double t_half_3=t50RightIndex+2.0*(t50RightIndex-t50LeftIndex);
     double right_decay=peakEnd<=t_half_3 ? peakEnd : t_half_3+1;
-    maxDecay=stf::maxDecay(cur().get(),maxT,right_decay,maxDecayT,maxDecayY);
+    maxDecay=stf::maxDecay(cur().get(),maxT,right_decay,maxDecayT,maxDecayY,windowLength);
+
     //Slope ratio
     if (maxDecay !=0) slopeRatio=maxRise/maxDecay;
     else slopeRatio=0.0;
@@ -2417,7 +2435,7 @@ void wxStfDoc::Measure( )
             left_APRise= APMaxT-searchRange>2.0 ? APMaxT-searchRange : 2.0;
         }
         try {
-            stf::maxRise(sec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY);
+            stf::maxRise(sec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY,windowLength);
         }
         catch (const std::out_of_range& e) {
             APMaxRiseT=0.0;

@@ -137,13 +137,13 @@ double stf::peak(const std::vector<double>& data, double base, std::size_t llp, 
     return peak;
 }
 
-double stf::threshold( const std::vector<double>& data, std::size_t llp, std::size_t ulp, double slope, double& thrT )
+double stf::threshold( const std::vector<double>& data, std::size_t llp, std::size_t ulp, double slope, double& thrT, long windowLength )
 {
     thrT = -1;
     
     if (data.size()==0) return 0;
 
-    // ulb has to be < data.size()-1 (data[i+1] will be used)
+    // ulb has to be < data.size()-windowLength (data[i+windowLength] will be used)
     if (llp > ulp || ulp >= data.size()) {
         throw (std::out_of_range("Exception:\n Index out of range in stf::threshold()"));
     }
@@ -152,10 +152,10 @@ double stf::threshold( const std::vector<double>& data, std::size_t llp, std::si
 
     // find Slope within peak window:
     for (std::size_t i=llp; i < ulp; ++i) {
-        double diff=data[i+1]-data[i];
-        if (diff>slope) {
-            threshold=(data[i+1]+data[i])/(double)2.0;
-            thrT=(double)(i+0.5);
+        double diff = data[i + windowLength] - data[i];
+        if (diff > slope * windowLength) {
+            threshold=(data[i+windowLength] + data[i]) / 2.0;
+            thrT = i + windowLength/2.0;
             break;
         }
     }
@@ -273,57 +273,52 @@ double   stf::maxRise(const std::vector<double>& data,
         double left,
         double right,
         double& maxRiseT,
-        double& maxRiseY)
+        double& maxRiseY,
+        long    windowLength)
 {
-    if (left<0 || right<0 || left>=data.size() || right>=data.size() || data.size()<2) {
+    size_t rightc = lround(right);
+    size_t leftc  = lround(left);
+    if (leftc < 0 || rightc < windowLength || leftc >= data.size()-windowLength || rightc >= data.size() || data.size() < windowLength) {
         throw std::out_of_range("Index out of range in stf::maxRise");
     }
-    int rightc = (right<2? 2 : right);
-    int leftc = (left>=data.size()-1? data.size()-2 : left);        
-    leftc = (leftc<1? 1 : leftc);
-
-    //Maximal rise
-    double maxRise=fabs(data[(int)rightc]-data[(int)rightc-1]);
-    maxRiseT=rightc-(double)0.5;
-    int i=(int)rightc-1;
-    do {
-        double diff=fabs(data[i]-data[i-1]);
+    double maxRise = -1.0/0.0;  // -Infinity
+    maxRiseT = 0.0/0.0;		// non-a-number
+    size_t i,j;
+    for (i = rightc - windowLength, j = right; i >= leftc; i--, j--) {
+        double diff = fabs( data[i] - data[j] );
         if (maxRise<diff) {
             maxRise=diff;
-            maxRiseY=data[i]/(double)2.0+data[i-1]/(double)2.0;
-            maxRiseT=(double)(i-0.5);
+            maxRiseY=(data[i]+data[j])/2.0;
+            maxRiseT=(i+windowLength/2.0);
         }
-        --i;
-    } while (i>=leftc);
-    return maxRise;
+    }
+    return maxRise/windowLength;
 }
 
 double stf::maxDecay(const std::vector<double>& data,
         double left,
         double right,
         double& maxDecayT,
-        double& maxDecayY)
+        double& maxDecayY,
+        long    windowLength)
 {
-    if (left<0 || right<0 || left>=data.size() || right>=data.size() || data.size()<3) {
+    size_t rightc = lround(right);
+    size_t leftc  = lround(left);
+    if (leftc < 0 || rightc < windowLength || leftc >= data.size()-windowLength || rightc >= data.size() || data.size() < windowLength) {
         throw std::out_of_range("Index out of range in stf::maxDecay");
     }
-    int rightc = (right==0? 1 : right);
-    int leftc = (left>=data.size()-2? data.size()-3 : left);        
-    //Maximal decay
-    double maxDecay=fabs(data[(int)leftc+1]-data[(int)leftc]);
-    maxDecayT=leftc+(double)0.5;
-    int i=(int)leftc+2;
-    do {
-        double diff=fabs(data[i]-data[i-1]);
+    double maxDecay = -1.0/0.0;  // -Infinity
+    maxDecayT = 0.0/0.0;		// non-a-number
+    size_t i,j;
+    for (j = leftc, i = leftc + windowLength; i < rightc; i++, j++) {
+        double diff = fabs( data[i] - data[j] );
         if (maxDecay<diff) {
             maxDecay=diff;
-            // maxDecayY = ( data[i]+data[i-1] )/(double)2.0;
-            maxDecayY=data[i]/(double)2.0+data[i-1]/(double)2.0;
-            maxDecayT=(double)(i-0.5);
+            maxDecayY=(data[i]+data[j])/2.0;
+            maxDecayT=(i+windowLength/2.0);
         }
-        ++i;
-    } while (i<rightc);
-    return maxDecay;
+    }
+    return maxDecay/windowLength;
 }
 
 #ifdef WITH_PSLOPE
