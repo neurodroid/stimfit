@@ -150,7 +150,7 @@ double stf::lmFit( const Vector_double& data, double dt,
     // Basic range checking:
     if (fitFunc.pInfo.size()!=p.size()) {
         std::string msg("Error in stf::lmFit()\n"
-                "p_fit and p have different sizes");
+                "function parameters (p_fit) and parameters entered (p) have different sizes");
         throw std::runtime_error(msg);
     }
     if ( opts.size() != 6 ) {
