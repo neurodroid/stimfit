@@ -1,11 +1,48 @@
 #include "../stimfit/stf.h"
 #include "../stimfit/math/measure.h"
 #include <gtest/gtest.h>
+#include <cmath>
+
+#define PI  3.14159265f
+
+const double tol = 0.1; /* tolerance value */
+const static float dt = 1/500.0; /* sampling interval */
+
+//=========================================================================
+// evaluates if the measurement is within the expected value for a given
+// tolerance level that corresponds to 
+//=========================================================================
+void pass_test(double measurement, double expected, double tolerance){
+    EXPECT_NEAR( measurement, expected, fabs(expected*tolerance) );
+}
+
+//=========================================================================
+// a sine wave test basic Stimfit measurements
+// the sine function has well defined maxima and minima that we use 
+// to test the peak algorithm in both directions.
+// In addition, because derivative of the sinus is known (cosine)
+// we can test easily the max slope of rise and decay.
+// The maximal slope of rise correspond to the point where cosine is one 
+// (at 0, 2*PI) and the max slope of decay where the cosine is minus one
+// (at PI, 3*PI). Finally, the 20-80% rise-time should be 0.7, which
+// is the result of calculating arcsin(0.8)-arcsin(0.2)
+//
+// <length> length of the wave in sampling points (e.g long(2*PI))
+//=========================================================================
+std::vector<double> sinwave(long length){
+    std::vector<double> mydata(length);
+
+    for(std::vector<int>::size_type x=0; x != mydata.size() ; ++x){
+        mydata[x] = sin( x*dt ); /* see sampling interval */
+    }
+
+    return mydata;
+}
 
 //=========================================================================
 // test baseline (base)
 //=========================================================================
-TEST(measlib_test, baseline) {
+TEST(measlib_test, baseline_basic) {
 
     std::vector<double> data(32768);
     double var = 0;
@@ -13,10 +50,22 @@ TEST(measlib_test, baseline) {
     EXPECT_EQ(stf::base(var, data, 0, data.size()-1), 0);
     EXPECT_EQ(var, 0);
 
-    /* Check out exceptions */
+}
 
-    /* check out of range */
+//=========================================================================
+// test baseline out of range exceptions 
+//=========================================================================
+TEST(measlib_test, baseline_out_of_range_exceptions) {
+
+    std::vector<double> data(32768);
+    double var;
+
+    /* Out of range: after last point */
     EXPECT_THROW(stf::base(var, data, 0, data.size()),\
+         std::out_of_range);
+
+    /* Out of range: before first point */
+    EXPECT_THROW(stf::base(var, data, -1, data.size()-1),\
          std::out_of_range);
 
 }
@@ -24,8 +73,9 @@ TEST(measlib_test, baseline) {
 //=========================================================================
 // test peak 
 //=========================================================================
-TEST(measlib_test, peak) {
+TEST(measlib_test, peak_basic) {
 
+    /* 1.- Test with a basic example */
     std::vector<double> data(32768);
     data[16385] = 1.0;
     double maxT;
@@ -45,11 +95,60 @@ TEST(measlib_test, peak) {
          1, stf::both, maxT);
     EXPECT_EQ(peak_both, 1.0); /* take larger value */
     EXPECT_EQ(maxT, 16385);
+}
 
-    /* Check out exceptions */
-    /* check out of range */
+//=========================================================================
+// test peak out of range exceptions
+//=========================================================================
+TEST(measlib_test, peak_out_of_range_exceptions) {
+    std::vector<double> data(32768);
+    double maxT;
+
+    /* Out of range: before first point */
     EXPECT_THROW(stf::peak(data, 0.0, 0, data.size(), 
         1, stf::both, maxT), std::out_of_range);
+
+    /* Out of range: before first point */
+    EXPECT_THROW(stf::peak(data, 0.0, -1, data.size()-1, 
+        1, stf::both, maxT), std::out_of_range);
+}
+
+//=========================================================================
+// test peak direction
+//=========================================================================
+TEST(measlib_test, peak_direction) {
+
+    /* Sin wave between 0 and 2PI */
+    std::vector<double> mywave = sinwave( long(2*PI/dt) );
+
+    /* positive peak is at one, located at PI/2 */
+    double maxT;
+    double peak = stf::peak(mywave, 0.0, 0, long(2*PI/dt)-1, \
+        1, stf::up, maxT);
+
+    double peak_xpted = 1.0;               /* peak is at 1.0      */
+    double maxT_xpted = (PI/2.0)/dt;      /* maxT located at PI/2 */
+    EXPECT_NEAR(peak, peak_xpted,  0.1);      
+    EXPECT_NEAR(maxT, maxT_xpted, fabs(maxT_xpted*tol)); 
+
+    /* look for negative peak between zero and 2*PI */
+    double drop = stf::peak(mywave, 0.0, 0, long(2*PI/dt)-1, \
+        1, stf::down, maxT);
+
+    peak_xpted = -1.0;               /* drop is at -1.0    */
+    maxT_xpted = (3*PI/2)/dt;        /* maxT located at 3*PI/2 */
+    EXPECT_NEAR(drop, peak_xpted,  0.1);      
+    EXPECT_NEAR(maxT, maxT_xpted, fabs(maxT_xpted*tol)); 
+
+    /* Cursors between 0 and PI give only possitive peak values*/
+    double p1 = stf::peak(mywave, 0.0, 0, long(PI/dt)-1, \
+        1, stf::down, maxT);
+    EXPECT_TRUE(p1 >= 0);
+
+    /* Cursors between PI and 2*PI give only negative peak values*/
+    double p2 = stf::peak(mywave, 0.0, long(PI/dt), long(2*PI/dt)-1, \
+        1, stf::down, maxT);
+    EXPECT_TRUE(p2 <= 0);
 
 }
 
@@ -57,20 +156,20 @@ TEST(measlib_test, peak) {
 // test threshold 
 //=========================================================================
 // TODO
+
 //=========================================================================
 // test rise time 
 //=========================================================================
 // TODO
 
 //=========================================================================
-// test half-width 
+// test half_duration 
 //=========================================================================
 // TODO
-
 //=========================================================================
 // test maximal slope of rise
 //=========================================================================
-TEST(measlib_test, max_slope_rise) {
+TEST(measlib_test, maxrise_basic) {
 
     std::vector<double> data(32768);
     data[16385] = 1.0;
@@ -82,25 +181,76 @@ TEST(measlib_test, max_slope_rise) {
     EXPECT_EQ(maxRiseT, 16385.5);
     EXPECT_EQ(maxRiseY, 0.5);
 
-    /* Check out exceptions */
+}
+
+//=========================================================================
+// test maximal slope of rise out of range exceptions
+//=========================================================================
+TEST(measlib_test, maxrise_out_of_range_exceptions) {
+
+    std::vector<double> data(32768);
+    double maxRiseT, maxRiseY;
     
-    /* Out of range */
-    EXPECT_THROW(stf::maxRise(data, 1, data.size(), \
-        maxRiseT, maxRiseY, 1), std::out_of_range);
-
-    EXPECT_THROW(stf::maxRise(data, data.size(), data.size()-1,\
-        maxRiseT, maxRiseY, 1), std::out_of_range);
-
-    /* Not possible to compute slope from the 1st sampling point */
+    /* Out of range: peak cursor after last point */
     EXPECT_THROW(stf::maxRise(data, 0, data.size(), \
+        maxRiseT, maxRiseY, 1), std::out_of_range);
+
+    /* Out of range: peak cursor before first point */
+    EXPECT_THROW(stf::maxRise(data, -1, data.size()-1, \
         maxRiseT, maxRiseY, 1), std::out_of_range);
 
 }
 
 //=========================================================================
+// test maximal slope of rise windowLength exceptions 
+//=========================================================================
+TEST(measlib_test, maxrise_windowLength_exceptions){
+
+    std::vector<double> data(32768);
+    double maxRiseT, maxRiseY;
+    long mywindowLength; /* fixed time interval (in sampling points) */
+
+    /* Right peak cursor must be larger than windowLength */
+    mywindowLength = 10;
+    long myRightPeakCursor = mywindowLength-1;
+    EXPECT_THROW(stf::maxRise(data, 0, myRightPeakCursor, \
+        maxRiseT, maxRiseY, mywindowLength), std::out_of_range);
+
+    /* Left peak cursor must be smaller than data.size()-windowLength */
+    long myLeftPeakCursor = data.size()-mywindowLength; 
+    EXPECT_THROW(stf::maxRise(data, myLeftPeakCursor, data.size()-1 , \
+        maxRiseT, maxRiseY, mywindowLength), std::out_of_range);
+
+    /* Data size itself must be smaller than windowLength */
+    mywindowLength = data.size()+1;
+    EXPECT_THROW(stf::maxRise(data, 0, data.size()-1, \
+        maxRiseT, maxRiseY, mywindowLength), std::out_of_range);
+
+}
+
+//=========================================================================
+// test maximal slope of rise with sinus wave
+//=========================================================================
+TEST(measlib_test, maxrise_values) {
+
+    /* sinus wave between 0 and 4*PI */
+    std::vector<double> mywave = sinwave( long(4*PI/dt) );
+    double maxRiseT, maxRiseY;
+    
+    int windowLength = 1;
+    double maxrise = stf::maxRise(mywave, 1, long(4*PI/dt)-1, \
+        maxRiseT, maxRiseY, windowLength);
+
+    /* Max slope of rise should be in 2*PI and give value 0 */
+    double maxRiseT_xpkted = 2*PI/dt;
+    EXPECT_NEAR(maxRiseY, 0 , 0.1);
+    EXPECT_NEAR( maxRiseT, maxRiseT_xpkted, fabs(maxRiseT_xpkted*tol) );
+}
+
+//=========================================================================
 // test maximal slope of decay
 //=========================================================================
-TEST(measlib_test, max_slope_decay) {
+TEST(measlib_test, maxdecay_basic) {
 
     std::vector<double> data(32768);
     data[16385] = 1.0;
@@ -112,10 +262,72 @@ TEST(measlib_test, max_slope_decay) {
     EXPECT_EQ(maxDecayT, 16385.5);
     EXPECT_EQ(maxDecayY, 0.5);
 
-    /* Check out exceptions */
-    /* check out of range */
-    EXPECT_THROW(stf::maxDecay(data, 0, data.size(), \
+}
+
+//=========================================================================
+// test maximal slope of decay out of range exceptions
+//=========================================================================
+TEST(measlib_test, maxdecay_out_of_range_exceptions) {
+
+    std::vector<double> data(32768);
+    double maxDecayT, maxDecayY;
+
+    /* Out of range: peak cursor after last point */
+    EXPECT_THROW(stf::maxRise(data, 0, data.size(), \
         maxDecayT, maxDecayY, 1), std::out_of_range);
+
+    /* Out of range: peak cursor before first point */
+    EXPECT_THROW(stf::maxRise(data, -1, data.size()-1, \
+        maxDecayT, maxDecayY, 1), std::out_of_range);
+
+}
+
+//=========================================================================
+// test maximal slope of decay windowLength exceptions
+//=========================================================================
+TEST(measlib_test, maxdecay_windowLength_exceptions) {
+    
+    std::vector<double> data(32768);
+    double maxDecayT, maxDecayY;
+    long mywindowLength; /* fixed time interval (in sampling points) */
+
+    /* Right peak cursor must be larger than windowLength */
+    mywindowLength = 10;
+    long myRightPeakCursor = mywindowLength-1;
+    EXPECT_THROW(stf::maxDecay(data, 0, myRightPeakCursor, \
+        maxDecayT, maxDecayY, mywindowLength), std::out_of_range);
+
+    /* Left peak cursor must be smaller than data.size()-windowLength */
+    long myLeftPeakCursor = data.size()-mywindowLength; 
+    EXPECT_THROW(stf::maxRise(data, myLeftPeakCursor, data.size()-1 , \
+        maxDecayT, maxDecayY, mywindowLength), std::out_of_range);
+
+    /* Data size itself must be smaller than windowLength */
+    mywindowLength = data.size()+1;
+    EXPECT_THROW(stf::maxRise(data, 0, data.size()-1, \
+        maxDecayT, maxDecayY, mywindowLength), std::out_of_range);
+}
+
+//=========================================================================
+// test maximal slope of decay with a sinus wave 
+//=========================================================================
+TEST(measlib_test, maxdecay_values){
+
+    /* a sinus wave between 0 and 2*PI */
+    std::vector<double> mywave = sinwave( long(2*PI/dt) );
+    double maxDecayT, maxDecayY;
+    
+    int windowLength = 1; 
+    /* compute max slope of decay between 0 and 3*PI/2 */
+    long endCursor = (3*PI/2)/dt ;
+    double maxdecay = stf::maxDecay(mywave, 1, endCursor, \
+        maxDecayT, maxDecayY, windowLength);
+
+    /* Max slope of decay should be in PI and give value 0 */
+    EXPECT_NEAR(maxDecayY, 0 , 0.1);      
+    double maxDecayT_xpkted = PI/dt;
+    EXPECT_NEAR(maxDecayT, maxDecayT_xpkted, fabs(maxDecayT_xpkted*tol));
+
 }
 
 /*
