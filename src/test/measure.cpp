@@ -17,10 +17,10 @@ void pass_test(double measurement, double expected, double tolerance){
 }
 
 //=========================================================================
-// a sine wave test basic Stimfit measurements
+// a sine wave to test basic Stimfit measurements
 // the sine function has well defined maxima and minima that we use 
 // to test the peak algorithm in both directions.
-// In addition, because derivative of the sinus is known (cosine)
+// In addition, because derivative of the sine is known (cosine)
 // we can test easily the max slope of rise and decay.
 // The maximal slope of rise correspond to the point where cosine is one 
 // (at 0, 2*PI) and the max slope of decay where the cosine is minus one
@@ -158,14 +158,35 @@ TEST(measlib_test, peak_direction) {
 // TODO
 
 //=========================================================================
-// test rise time 
+// test risetime values 
 //=========================================================================
-// TODO
+TEST(measlib_test, risetime_values){
+    
+    /* a sine wave between 0 and PI */
+    std::vector<double> mywave = sinwave( long(PI/dt) );
+
+    std::size_t t20, t80;
+    double t20Real;
+     
+    /* check rise time between 0 and PI/2 */
+    double risetime = stf::risetime(mywave, 0.0, 1.0, 1, 
+        long((PI/2)/dt)-1, 0.2, t20, t80, t20Real);
+
+    /* correspond t20 and t80 correspond to 0.2 and 0.8 respectively */
+    EXPECT_NEAR( std::sin(t20*dt), 0.2, 0.02 ); /* sin(t20) = 0.2 */
+    EXPECT_NEAR( std::sin(t80*dt), 0.8, 0.08 ); /* sin(t80) = 0.8 */
+
+    /* the risetime is the arcsin(t80)-arcsin(t20) */
+    double risetime_xpted = std::asin(0.8) - std::asin(0.2); 
+    EXPECT_NEAR(risetime*dt, risetime_xpted, \
+        fabs(risetime_xpted*tol) ); 
+}
 
 //=========================================================================
 // test half_duration 
 //=========================================================================
 // TODO
+
 //=========================================================================
 // test maximal slope of rise
 //=========================================================================
@@ -233,13 +254,14 @@ TEST(measlib_test, maxrise_windowLength_exceptions){
 //=========================================================================
 TEST(measlib_test, maxrise_values) {
 
-    /* sinus wave between 0 and 4*PI */
-    std::vector<double> mywave = sinwave( long(4*PI/dt) );
+    /* sinus wave between 0 and 3*PI */
+    std::vector<double> mywave = sinwave( long(3*PI/dt) );
     double maxRiseT, maxRiseY;
     
+    /* check max rise from peak to peak */
     int windowLength = 1;
-    double maxrise = stf::maxRise(mywave, 1, long(4*PI/dt)-1, \
-        maxRiseT, maxRiseY, windowLength);
+    double maxrise = stf::maxRise(mywave, long((PI/2)/dt), 
+        long((5*PI/2)/dt)-1, maxRiseT, maxRiseY, windowLength);
 
     /* Max slope of rise should be in 2*PI and give value 0 */
     double maxRiseT_xpkted = 2*PI/dt;
