@@ -2392,7 +2392,7 @@ void wxStfDoc::Measure( )
 
     //Begin Ratio of slopes rise/decay calculation
     //--------------------------------------------
-    double left_rise = (peakBeg > t0Real-1 || !fromBase) ? peakBeg : t0Real-1;
+    double left_rise = peakBeg;
     maxRise=stf::maxRise(cur().get(),left_rise,maxT,maxRiseT,maxRiseY,windowLength);
     double t_half_3=t50RightIndex+2.0*(t50RightIndex-t50LeftIndex);
     double right_decay=peakEnd<=t_half_3 ? peakEnd : t_half_3+1;
