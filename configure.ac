@@ -1,4 +1,4 @@
-AC_INIT([stimfit],[0.12.1])
+AC_INIT([stimfit],[0.12.2])
 AC_CONFIG_SRCDIR(src/stimfit/gui/main.cpp)
 AM_INIT_AUTOMAKE([1.11])
 AM_SILENT_RULES([yes])
