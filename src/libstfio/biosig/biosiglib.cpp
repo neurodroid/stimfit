@@ -29,6 +29,7 @@
 #include <biosig.h>
 #elif defined(_MSC_VER)
 /* level 2 interface of libbiosig is required for ABI compatibility */
+typedef int ssize_t;
 #include <biosig2.h>
 #endif
 
