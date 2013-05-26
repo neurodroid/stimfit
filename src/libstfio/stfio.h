@@ -56,14 +56,7 @@ typedef std::vector<float > Vector_float;
         static const unsigned long __nan[2] = {0xffffffff, 0x7fffffff};
         #define NAN (*(const float *) __nan)
     #endif
-    long int lround(double x) {
-        int i = (long int) x;
-        if (x >= 0.0) {
-            return ((x-i) >= 0.5) ? (i + 1) : (i);
-        } else {
-            return (-x+i >= 0.5) ? (i - 1) : (i);
-        }
-    }
+    StfioDll long int lround(double x);
 #endif
 
 #include "./recording.h"

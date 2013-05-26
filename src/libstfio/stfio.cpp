@@ -43,6 +43,17 @@
 #include "./son/sonlib.h"
 #endif
 
+#ifdef _MSC_VER
+    StfioDll long int lround(double x) {
+        int i = (long int) x;
+        if (x >= 0.0) {
+            return ((x-i) >= 0.5) ? (i + 1) : (i);
+        } else {
+            return (-x+i >= 0.5) ? (i - 1) : (i);
+        }
+    }
+#endif
+
 stfio::StdoutProgressInfo::StdoutProgressInfo(const std::string& title, const std::string& message, int maximum, bool verbose)
     : ProgressInfo(title, message, maximum, verbose),
       verbosity(verbose)
