@@ -4,7 +4,7 @@
 PortSystem          1.0
 
 name                stimfit
-version             0.11.9
+version             0.12.2
 categories          science
 platforms           darwin
 license             GPL
@@ -14,8 +14,8 @@ long_description    A program for viewing and analyzing electrophysiological dat
 homepage            http://www.stimfit.org
 master_sites        googlecode:stimfit
 
-checksums           rmd160  c88da0104861335c13d8293a9073c0a2139d260b \
-                    sha256  60f977eb5546b73e9c8a6934d9196862855ba36b7a4c0ff0765344b3ade4553e
+checksums           rmd160  ec94dd7838db4b2d713f5195972fd865f79cedb8 \
+                    sha256  b2ca2fb447e50e7c1610d964dceaf890885877255dc1cafb4ff47601c51b32c4
 
 universal_variant   no
 
