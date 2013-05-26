@@ -51,6 +51,21 @@
 typedef std::vector<double > Vector_double;
 typedef std::vector<float > Vector_float;
 
+#ifdef _MSC_VER
+    #ifndef NAN
+        static const unsigned long __nan[2] = {0xffffffff, 0x7fffffff};
+        #define NAN (*(const float *) __nan)
+    #endif
+    long int lround(double x) {
+        int i = (long int) x;
+        if (x >= 0.0) {
+            return ((x-i) >= 0.5) ? (i + 1) : (i);
+        } else {
+            return (-x+i >= 0.5) ? (i - 1) : (i);
+        }
+    }
+#endif
+
 #include "./recording.h"
 #include "./channel.h"
 #include "./section.h"

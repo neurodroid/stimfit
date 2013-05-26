@@ -40,21 +40,6 @@ extern "C" uint32_t lcm(uint32_t A, uint32_t B);
 #endif
 #endif
 
-#ifdef _MSC_VER
-    #ifndef NAN
-        static const unsigned long __nan[2] = {0xffffffff, 0x7fffffff};
-        #define NAN (*(const float *) __nan)
-    #endif
-    long int lround(double x) {
-        int i = (long int) x;
-        if (x >= 0.0) {
-            return ((x-i) >= 0.5) ? (i + 1) : (i);
-        } else {
-            return (-x+i >= 0.5) ? (i - 1) : (i);
-        }
-    }
-#endif
-
 #include "./biosiglib.h"
 
 /* Redefine BIOSIG_VERSION for versions < 1 */

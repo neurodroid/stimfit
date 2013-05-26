@@ -32,6 +32,7 @@
 
 #include "../stf.h"
 #include "./measure.h"
+#include "../../libstfio/stfio.h"
 
 double stf::base( double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb)
 {
@@ -281,8 +282,8 @@ double   stf::maxRise(const std::vector<double>& data,
     if (leftc < 0 || rightc < windowLength || leftc >= data.size()-windowLength || rightc >= data.size() || data.size() < windowLength) {
         throw std::out_of_range("Index out of range in stf::maxRise");
     }
-    double maxRise = -1.0/0.0;  // -Infinity
-    maxRiseT = 0.0/0.0;		// non-a-number
+    double maxRise = -1e31;  // -Infinity
+    maxRiseT = NAN;		// non-a-number
     size_t i,j;
     for (i = rightc - windowLength, j = right; i >= leftc; i--, j--) {
         double diff = fabs( data[i] - data[j] );
@@ -307,8 +308,8 @@ double stf::maxDecay(const std::vector<double>& data,
     if (leftc < 0 || rightc < windowLength || leftc >= data.size()-windowLength || rightc >= data.size() || data.size() < windowLength) {
         throw std::out_of_range("Index out of range in stf::maxDecay");
     }
-    double maxDecay = -1.0/0.0;  // -Infinity
-    maxDecayT = 0.0/0.0;		// non-a-number
+    double maxDecay = -1e31;  // -Infinity
+    maxDecayT = NAN;		// non-a-number
     size_t i,j;
     for (j = leftc, i = leftc + windowLength; i < rightc; i++, j++) {
         double diff = fabs( data[i] - data[j] );
