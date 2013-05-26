@@ -469,6 +469,12 @@ enum pslope_mode_end {
 
 #endif // WITH_PSLOPE
 
+//! Deconvolution
+enum extraction_mode {
+    criterion,                 /*!< Clements & Bekkers criterion. */
+    correlation,               /*!< Jonas et al. correlation coefficient. */
+    deconvolution               /*!< Pernia-Andrade et al. deconvolution. */
+};
 
 /*@}*/
 

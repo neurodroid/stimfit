@@ -80,6 +80,7 @@ EVT_MENU( ID_FILTER,wxStfDoc::Filter)
 EVT_MENU( ID_POVERN,wxStfDoc::P_over_N)
 EVT_MENU( ID_PLOTCRITERION,wxStfDoc::Plotcriterion)
 EVT_MENU( ID_PLOTCORRELATION,wxStfDoc::Plotcorrelation)
+EVT_MENU( ID_PLOTDECONVOLUTION,wxStfDoc::Plotdeconvolution)
 EVT_MENU( ID_EXTRACT,wxStfDoc::MarkEvents )
 EVT_MENU( ID_THRESHOLD,wxStfDoc::Threshold)
 EVT_MENU( ID_VIEWTABLE, wxStfDoc::Viewtable)
@@ -1931,7 +1932,7 @@ void wxStfDoc::P_over_N(wxCommandEvent& WXUNUSED(event)){
 
 }
 
-void wxStfDoc::Plotcriterion(wxCommandEvent& WXUNUSED(event)) {
+void wxStfDoc::Plotextraction(stf::extraction_mode mode) {
     std::vector<stf::SectionPointer> sectionList(wxGetApp().GetSectionsWithFits());
     if (sectionList.empty()) {
         wxGetApp().ErrorMsg(
@@ -1963,16 +1964,36 @@ void wxStfDoc::Plotcriterion(wxCommandEvent& WXUNUSED(event)) {
         templateWave = stfio::vec_scal_minus(templateWave, fmax);
         double minim=fabs(fmin);
         templateWave = stfio::vec_scal_div(templateWave, minim);
-        stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
-        Section TempSection(stf::detectionCriterion( cur().get(), templateWave, progDlg ) );
+        std::string section_description, window_title;
+        Section TempSection(cur().get().size());
+        switch (mode) {
+         case stf::criterion: {
+             stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
+             TempSection = Section(stf::detectionCriterion( cur().get(), templateWave, progDlg));
+             section_description = "Detection criterion of ";
+             window_title = ", detection criterion";
+             break;
+         }
+         case stf::correlation: {
+             stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
+             TempSection = Section(stf::linCorr(cur().get(), templateWave, progDlg));
+             section_description = "Template correlation of ";
+             window_title = ", linear correlation";
+             break;
+         }
+         case stf::deconvolution:
+             TempSection = Section(stf::deconvolve(cur().get(), templateWave));
+             section_description = "Template deconvolution from ";
+             window_title = ", deconvolution";
+             break;
+        }
         if (TempSection.size()==0) return;
-        TempSection.SetSectionDescription(
-                                          std::string("Detection criterion of ")+cur().GetSectionDescription()
-        );
+        TempSection.SetSectionDescription(section_description +
+                                          cur().GetSectionDescription());
         Channel TempChannel(TempSection);
         Recording detCrit(TempChannel);
         detCrit.CopyAttributes(*this);
-        wxGetApp().NewChild(detCrit,this,GetTitle()+wxT(", detection criterion"));
+        wxGetApp().NewChild(detCrit, this, GetTitle() + window_title);
     }
     catch (const std::runtime_error& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -1982,55 +2003,16 @@ void wxStfDoc::Plotcriterion(wxCommandEvent& WXUNUSED(event)) {
     }
 }
 
-void wxStfDoc::Plotcorrelation(wxCommandEvent& WXUNUSED(event)) {
-    std::vector<stf::SectionPointer> sectionList(wxGetApp().GetSectionsWithFits());
-    if (sectionList.empty()) {
-        wxGetApp().ErrorMsg(
-                wxT("You have to create a template first\nby fitting a function to an event")
-        );
-        return;
-    }
-    wxStfEventDlg MiniDialog(GetDocumentWindow(), sectionList, false);
-    if (MiniDialog.ShowModal()!=wxID_OK)  {
-        return;
-    }
-    int nTemplate=MiniDialog.GetTemplate();
-    try {
-        Vector_double templateWave(
-                sectionList.at(nTemplate).sec_attr.storeFitEnd -
-                sectionList.at(nTemplate).sec_attr.storeFitBeg);
-        for ( std::size_t n_p=0; n_p < templateWave.size(); n_p++ ) {
-            templateWave[n_p] = sectionList.at(nTemplate).sec_attr.fitFunc->func(
-                n_p*GetXScale(), sectionList.at(nTemplate).sec_attr.bestFitP);
-        }
-        wxBusyCursor wc;
-#undef min
-#undef max
-        // subtract offset and normalize:
-        Vector_double::const_iterator max_el = std::max_element(templateWave.begin(), templateWave.end());
-        Vector_double::const_iterator min_el = std::min_element(templateWave.begin(), templateWave.end());
-        double fmin=*min_el;
-        double fmax=*max_el;
-        templateWave = stfio::vec_scal_minus(templateWave, fmax);
-        double minim=fabs(fmin);
-        templateWave = stfio::vec_scal_div(templateWave, minim);
+void wxStfDoc::Plotcriterion(wxCommandEvent& WXUNUSED(event)) {
+    Plotextraction(stf::criterion);
+}
 
-        stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
-        Section TempSection( stf::linCorr(cur().get(), templateWave, progDlg) );
-        if (TempSection.size()==0) return;
-        TempSection.SetSectionDescription(
-                                          std::string("Template correlation of ") + cur().GetSectionDescription() );
-        Channel TempChannel(TempSection);
-        Recording detCrit(TempChannel);
-        detCrit.CopyAttributes(*this);
-        wxGetApp().NewChild(detCrit,this,GetTitle()+wxT(", linear correlation"));
-    }
-    catch (const std::runtime_error& e) {
-        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
-    }
-    catch (const std::exception& e) {
-        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
-    }
+void wxStfDoc::Plotcorrelation(wxCommandEvent& WXUNUSED(event)) {
+    Plotextraction(stf::correlation);
+}
+
+void wxStfDoc::Plotdeconvolution(wxCommandEvent& WXUNUSED(event)) {
+    Plotextraction(stf::deconvolution);
 }
 
 void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {

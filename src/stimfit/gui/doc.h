@@ -61,8 +61,10 @@ private:
     void LnTransform(wxCommandEvent& event);
     void Filter(wxCommandEvent& event);
     void P_over_N(wxCommandEvent& event);
+    void Plotextraction(stf::extraction_mode mode);
     void Plotcriterion(wxCommandEvent& event);
     void Plotcorrelation(wxCommandEvent& event);
+    void Plotdeconvolution(wxCommandEvent& event);
     void MarkEvents(wxCommandEvent& event);
     void Threshold(wxCommandEvent& event);
     void Viewtable(wxCommandEvent& event);

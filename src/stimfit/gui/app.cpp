@@ -780,6 +780,7 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     wxMenu* eventPlotSub = new wxMenu;
     eventPlotSub->Append(ID_PLOTCRITERION, wxT("&Detection criterion..."));
     eventPlotSub->Append(ID_PLOTCORRELATION, wxT("&Correlation coefficient..."));
+    eventPlotSub->Append(ID_PLOTDECONVOLUTION, wxT("&Deconvolution..."));
     wxMenu* eventSub = new wxMenu;
     eventSub->AppendSubMenu(eventPlotSub,wxT("Plot"));
     eventSub->Append(ID_EXTRACT,wxT("&Template matching..."));
