@@ -19,6 +19,7 @@
 
 #include <cmath>
 #include <limits>
+#include <algorithm>
 #include <wx/wxprec.h>
 #include <wx/progdlg.h>
 #include <wx/filename.h>
@@ -580,4 +581,73 @@ stf::Table stf::defaultOutput(
 		throw;
 	}
 	return output;
+}
+
+Vector_double
+stf::deconvolve(const Vector_double& data, const Vector_double& templ) {
+    if (data.size()<=0 || templ.size() <=0 || templ.size() > data.size()) {
+        std::out_of_range e("subscript out of range in stf::filter()");
+        throw e;
+    }
+    /* pad templ */
+    Vector_double templ_padded(data.size());
+    std::copy(templ.begin(), templ.end(), templ_padded.begin());
+    if (templ.size() < templ_padded.size()) {
+        std::fill(templ_padded.begin()+templ.size(), templ_padded.end(),
+                  templ_padded[templ.size()-1]);
+    }
+
+    Vector_double data_return(data.size());
+
+    double *in_data, *in_templ_padded;
+    //fftw_complex is a double[2]; hence, out is an array of
+    //double[2] with out[n][0] being the real and out[n][1] being
+    //the imaginary part.
+    fftw_complex *out_data, *out_templ_padded;
+    fftw_plan p_data, p_templ, p_inv;
+
+    //memory allocation as suggested by fftw:
+    in_data =(double *)fftw_malloc(sizeof(double) * data.size());
+    out_data = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * ((int)(data.size()/2)+1));
+    in_templ_padded =(double *)fftw_malloc(sizeof(double) * templ_padded.size());
+    out_templ_padded = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * ((int)(templ_padded.size()/2)+1));
+
+    std::copy(data.begin(), data.end(), &in_data[0]);
+    std::copy(templ_padded.begin(), templ_padded.end(), &in_templ_padded[0]);
+
+    //plan the ffts and execute them:
+    p_data =fftw_plan_dft_r2c_1d((int)data.size(), in_data, out_data,
+                                 FFTW_ESTIMATE);
+    fftw_execute(p_data);
+    p_templ =fftw_plan_dft_r2c_1d((int)templ_padded.size(),
+                                     in_templ_padded, out_templ_padded, FFTW_ESTIMATE);
+    fftw_execute(p_templ);
+
+    for (std::size_t n_point=0; n_point < (unsigned int)(data.size()/2)+1; ++n_point) {
+        /* do the division in place */
+        out_data[n_point][0] /= out_templ_padded[n_point][0];
+        out_data[n_point][1] /= out_templ_padded[n_point][1];
+    }
+
+    //do the reverse fft:
+    p_inv = fftw_plan_dft_c2r_1d((int)data.size(),out_data, in_data, FFTW_ESTIMATE);
+    fftw_execute(p_inv);
+
+    //fill the return array, adding the offset, and scaling by data.size()
+    //(because fftw computes an unnormalized transform):
+    data_return.resize(data.size());
+    for (std::size_t n_point=0; n_point < data.size(); ++n_point) {
+        data_return[n_point]= in_data[n_point]/data.size();
+    }
+
+    fftw_destroy_plan(p_data);
+    fftw_destroy_plan(p_templ);
+    fftw_destroy_plan(p_inv);
+
+    fftw_free(in_data);
+    fftw_free(out_data);
+    fftw_free(in_templ_padded);
+    fftw_free(out_templ_padded);
+
+    return data_return;
 }

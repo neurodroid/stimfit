@@ -173,7 +173,7 @@ struct StfDll storedFunc {
 template <typename T>
 T SQR (T a);
 
-//! Convolutes a data set with a filter function.
+//! Convolves a data set with a filter function.
 /*! \param toFilter The valarray to be filtered.
  *  \param filter_start The index from which to start filtering.
  *  \param filter_end The index at which to stop filtering.
@@ -181,7 +181,7 @@ T SQR (T a);
  *  \param SR The sampling rate.
  *  \param func The filter function in the frequency domain.
  *  \param inverse true if (1- \e func) should be used as the filter function, false otherwise
- *  \return The convoluted data set.
+ *  \return The convolved data set.
  */
 Vector_double
 filter(
@@ -193,6 +193,14 @@ filter(
         stf::Func func,
         bool inverse = false
 );
+
+//! Deonvolves a template from a signal
+/*! \param data The signal
+ *  \param templ The template
+ *  \return The result of the deconvolution
+ */
+Vector_double
+deconvolve(const Vector_double& data, const Vector_double& templ);
 
 //! Interpolates a dataset using cubic splines.
 /*! \param y The valarray to be interpolated.
