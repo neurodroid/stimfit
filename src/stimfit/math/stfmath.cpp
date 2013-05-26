@@ -584,7 +584,9 @@ stf::Table stf::defaultOutput(
 }
 
 Vector_double
-stf::deconvolve(const Vector_double& data, const Vector_double& templ) {
+stf::deconvolve(const Vector_double& data, const Vector_double& templ,
+                int SR, double lowpass)
+{
     if (data.size()<=0 || templ.size() <=0 || templ.size() > data.size()) {
         std::out_of_range e("subscript out of range in stf::filter()");
         throw e;
@@ -622,15 +624,21 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ) {
                                   in_templ_padded, out_templ_padded, FFTW_ESTIMATE);
     fftw_execute(p_templ);
 
+    double SI=1.0/SR; //the sampling interval
     for (std::size_t n_point=0; n_point < (unsigned int)(data.size()/2)+1; ++n_point) {
+        double f=n_point / (data.size()*SI);
+        Vector_double f_c(1);
+        f_c[0] = lowpass;
+        double rslt= fgaussColqu(f, f_c);
+
         /* do the division in place */
         double a = out_data[n_point][0];
         double b = out_data[n_point][1];
         double c = out_templ_padded[n_point][0];
         double d = out_templ_padded[n_point][1];
         double mag2 = c*c + d*d;
-        out_data[n_point][0] = (a*c + b*d)/mag2;
-        out_data[n_point][1] = (b*c - a*d)/mag2;
+        out_data[n_point][0] = rslt * (a*c + b*d)/mag2;
+        out_data[n_point][1] = rslt * (b*c - a*d)/mag2;
     }
 
     //do the reverse fft:

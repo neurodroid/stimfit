@@ -36,7 +36,8 @@ class wxStfEventDlg : public wxDialog
 
 private:
     double m_threshold;
-    bool m_scaling,isExtract;
+    stf::extraction_mode m_mode;
+    bool isExtract;
     int m_minDistance;
     int m_template;
     wxStdDialogButtonSizer* m_sdbSizer;
@@ -78,10 +79,10 @@ public:
      */
     double GetThreshold() const {return m_threshold;}
     
-    //! Indicates whether template scaling or the correlation coefficient should be used.
-    /*! \return true if template scaling, false if the correlation coefficient should be used.
+    //! Indicates the selected extraction algorithm
+    /*! \return The extraction algorithm.
      */
-    bool GetScaling() const {return m_scaling;}
+    stf::extraction_mode GetMode() const {return m_mode;}
     
     //! Get the minimal distance between events.
     /*! \return The minimal distance between events in units of sampling points.

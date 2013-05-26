@@ -15,7 +15,7 @@ END_EVENT_TABLE()
 
 wxStfEventDlg::wxStfEventDlg(wxWindow* parent, const std::vector<stf::SectionPointer>& templateSections,
                              bool isExtract_, int id, wxString title, wxPoint pos, wxSize size, int style) :
-wxDialog( parent, id, title, pos, size, style ), m_threshold(4.0), m_scaling(true),
+wxDialog( parent, id, title, pos, size, style ), m_threshold(4.0), m_mode(stf::criterion),
     isExtract(isExtract_), m_minDistance(150), m_template(-1)
 {
     wxBoxSizer* topSizer;
@@ -76,6 +76,7 @@ wxDialog( parent, id, title, pos, size, style ), m_threshold(4.0), m_scaling(tru
         wxString m_radioBoxChoices[] = {
                 wxT("Use template scaling (Clements && Bekkers)"),
                 wxT("Use correlation coefficient (Jonas et al.)")
+                wxT("Use deconvolution (Pernia-Andrade et al.)")
         };
         int m_radioBoxNChoices = sizeof( m_radioBoxChoices ) / sizeof( wxString );
         m_radioBox =
@@ -120,8 +121,18 @@ bool wxStfEventDlg::OnOK() {
         long tempLong;
         m_textCtrlDist->GetValue().ToLong( &tempLong );
         m_minDistance = (int)tempLong;
-        m_scaling=(m_radioBox->GetSelection()==0);
-        if (!m_scaling && (m_threshold<0 || m_threshold>1)) {
+        switch (m_radioBox->GetSelection()) {
+         case 0:
+             m_mode = stf::criterion;
+             break;
+         case 1:
+             m_mode = stf::correlation;
+             break;
+         case 2:
+             m_mode = stf::deconvolution;
+             break;
+        }
+        if (m_mode==stf::correlation && (m_threshold<0 || m_threshold>1)) {
             wxLogMessage(wxT("Please select a value between 0 and 1 for the correlation coefficient"));
             return false;
         }

@@ -1982,7 +1982,13 @@ void wxStfDoc::Plotextraction(stf::extraction_mode mode) {
              break;
          }
          case stf::deconvolution:
-             TempSection = Section(stf::deconvolve(cur().get(), templateWave));
+             stf::UserInput Input( std::vector<std::string>(1, "Frequency (kHz)"),
+                                   Vector_double (1, 0.5), "Lowpass filter" );
+             wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
+             if (myDlg.ShowModal()!=wxID_OK) return;
+             Vector_double lowpass = myDlg.readInput();
+             TempSection = Section(stf::deconvolve(cur().get(), templateWave,
+                                                   (int)GetSR(), lowpass[0]));
              section_description = "Template deconvolution from ";
              window_title = ", deconvolution";
              break;
@@ -2047,12 +2053,25 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
         double minim=fabs(fmin);
         templateWave = stfio::vec_scal_div(templateWave, minim);
         Vector_double detect( cur().get().size() - templateWave.size() );
-        if (MiniDialog.GetScaling()) {
-            stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
-            detect=stf::detectionCriterion(cur().get(), templateWave, progDlg);
-        } else {
-            stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
-            detect=stf::linCorr(cur().get(), templateWave, progDlg);
+        switch (MiniDialog.GetMode()) {
+         case stf::criterion: {
+             stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
+             detect=stf::detectionCriterion(cur().get(), templateWave, progDlg);
+             break;
+         }
+         case stf::correlation: {
+             stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
+             detect=stf::linCorr(cur().get(), templateWave, progDlg);
+             break;
+         }
+         case stf::deconvolution:
+             stf::UserInput Input( std::vector<std::string>(1, "Frequency (kHz)"),
+                                   Vector_double (1, 0.5), "Lowpass filter" );
+             wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
+             if (myDlg.ShowModal()!=wxID_OK) return;
+             Vector_double lowpass = myDlg.readInput();
+             detect=stf::deconvolve(cur().get(), templateWave, (int)GetSR(), lowpass[0]);
+             break;
         }
         if (detect.empty()) {
             wxGetApp().ErrorMsg(wxT("Error: Detection criterion is empty."));

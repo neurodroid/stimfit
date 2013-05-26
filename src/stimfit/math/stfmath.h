@@ -197,10 +197,13 @@ filter(
 //! Deonvolves a template from a signal
 /*! \param data The signal
  *  \param templ The template
+ *  \param SR The sampling rate in kHz.
+ *  \param lowpass Lowpass filter cutoff frequency in kHz for the deconvolution result.
  *  \return The result of the deconvolution
  */
 Vector_double
-deconvolve(const Vector_double& data, const Vector_double& templ);
+deconvolve(const Vector_double& data, const Vector_double& templ,
+           int SR, double lowpass=0.5);
 
 //! Interpolates a dataset using cubic splines.
 /*! \param y The valarray to be interpolated.
