@@ -625,8 +625,12 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ) {
 
     for (std::size_t n_point=0; n_point < (unsigned int)(data.size()/2)+1; ++n_point) {
         /* do the division in place */
-        out_data[n_point][0] /= out_templ_padded[n_point][0];
-        out_data[n_point][1] /= out_templ_padded[n_point][1];
+        double a = out_data[n_point][0];
+        double b = out_data[n_point][1];
+        double c = out_templ_padded[n_point][0];
+        double d = out_templ_padded[n_point][1];
+        out_data[n_point][0] = (a*c + b*d)/(c*c + d*d);
+        out_data[n_point][1] = (b*c - a*d)/(c*c + d*d);
     }
 
     //do the reverse fft:
@@ -635,7 +639,7 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ) {
 
     //fill the return array, adding the offset, and scaling by data.size()
     //(because fftw computes an unnormalized transform):
-    data_return.resize(data.size());
+    // data_return.resize(data.size());
     for (std::size_t n_point=0; n_point < data.size(); ++n_point) {
         data_return[n_point]= in_data[n_point]/data.size();
     }
