@@ -44,6 +44,7 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(BOOSTDIR)&quot;;&quot;$(HDF5DIR)\include&quot;;&quot;$(PYTHONDIR)\include&quot;;&quot;$(BIOSIGDIR)\include&quot;"
 				PreprocessorDefinitions="__STF__;STFIODLL;WIN32;_WIN32;__WIN32;_WINDOWS;H5_USE_16_API;_HDF5USEDLL_;_CRT_SECURE_NO_WARNINGS;WITH_BIOSIG"
+				GeneratePreprocessedFile="0"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -62,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="hdf5dll.lib hdf5_hldll.lib libbiosig.lib"
+				AdditionalDependencies="hdf5dll.lib hdf5_hldll.lib libbiosig.lib libbiosig2.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(HDF5DIR)\lib&quot;;&quot;$(BIOSIGDIR)\lib&quot;"
 				GenerateDebugInformation="true"
@@ -121,6 +122,7 @@
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="&quot;$(BOOSTDIR)&quot;;&quot;$(HDF5DIR)\include&quot;;&quot;$(PYTHONDIR)\include&quot;;&quot;$(BIOSIGDIR)\include&quot;"
 				PreprocessorDefinitions="__STF__;STFIODLL;WIN32;_WIN32;__WIN32;_WINDOWS;H5_USE_16_API;_HDF5USEDLL_;_CRT_SECURE_NO_WARNINGS;WITH_BIOSIG"
+				GeneratePreprocessedFile="0"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -138,7 +140,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="hdf5dll.lib hdf5_hldll.lib libbiosig.lib"
+				AdditionalDependencies="hdf5dll.lib hdf5_hldll.lib libbiosig.lib libbiosig2.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(HDF5DIR)\lib&quot;;&quot;$(BIOSIGDIR)\lib&quot;"
 				GenerateDebugInformation="true"
