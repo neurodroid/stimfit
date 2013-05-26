@@ -593,8 +593,7 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ) {
     Vector_double templ_padded(data.size());
     std::copy(templ.begin(), templ.end(), templ_padded.begin());
     if (templ.size() < templ_padded.size()) {
-        std::fill(templ_padded.begin()+templ.size(), templ_padded.end(),
-                  templ_padded[templ.size()-1]);
+        std::fill(templ_padded.begin()+templ.size(), templ_padded.end(), 0);
     }
 
     Vector_double data_return(data.size());
@@ -620,7 +619,7 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ) {
                                  FFTW_ESTIMATE);
     fftw_execute(p_data);
     p_templ =fftw_plan_dft_r2c_1d((int)templ_padded.size(),
-                                     in_templ_padded, out_templ_padded, FFTW_ESTIMATE);
+                                  in_templ_padded, out_templ_padded, FFTW_ESTIMATE);
     fftw_execute(p_templ);
 
     for (std::size_t n_point=0; n_point < (unsigned int)(data.size()/2)+1; ++n_point) {
@@ -629,8 +628,9 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ) {
         double b = out_data[n_point][1];
         double c = out_templ_padded[n_point][0];
         double d = out_templ_padded[n_point][1];
-        out_data[n_point][0] = (a*c + b*d)/(c*c + d*d);
-        out_data[n_point][1] = (b*c - a*d)/(c*c + d*d);
+        double mag2 = c*c + d*d;
+        out_data[n_point][0] = (a*c + b*d)/mag2;
+        out_data[n_point][1] = (b*c - a*d)/mag2;
     }
 
     //do the reverse fft:
