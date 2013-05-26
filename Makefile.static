@@ -115,7 +115,7 @@ SOURCES_ABF = ./src/libstfio/atf/atflib.cpp \
 	./src/libstfio/abf/axon/Common/unix.cpp \
 	./src/libstfio/abf/axon/Common/FileIO.cpp \
 	./src/libstfio/abf/axon/AxAtfFio32/axatffio32.cpp \
-	./src/libstfio/abf/axon/AxAtfFio32/fileio.cpp \
+	./src/libstfio/abf/axon/AxAtfFio32/fileio2.cpp \
 	./src/libstfio/abf/axon/AxAbfFio32/abferror.cpp \
 	./src/libstfio/abf/axon/AxAbfFio32/abfheadr.cpp \
 	./src/libstfio/abf/axon/AxAbfFio32/filedesc.cpp \
