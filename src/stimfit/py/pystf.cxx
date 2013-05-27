@@ -1738,7 +1738,7 @@ PyObject* mpl_panel(const std::vector<double>& figsize) {
     return result;
 }
 
-PyObject* template_matching(double* invec, int size, bool correlate, bool norm) {
+PyObject* template_matching(double* invec, int size, const std::string& mode, bool norm, double lowpass) {
     wrap_array();
 
     if ( !check_doc() ) return NULL;
@@ -1758,12 +1758,15 @@ PyObject* template_matching(double* invec, int size, bool correlate, bool norm) 
     }
     
     Vector_double detect((*actDoc())[channel][trace].get().size());
-    if (correlate) {
+    if (mode=="criterion") {
         stfio::StdoutProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100, true);
         detect = stf::linCorr((*actDoc())[channel][trace].get(), templ, progDlg);
-    } else {
+    } else if (mode=="correlation") {
         stfio::StdoutProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100, true);
         detect = stf::detectionCriterion((*actDoc())[channel][trace].get(), templ, progDlg);
+    } else if (mode=="convolution") {
+        stfio::StdoutProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100, true);
+        detect = stf::deconvolve((*actDoc())[channel][trace].get(), templ, actDoc()->GetSR(), lowpass, progDlg);
     }
     npy_intp dims[1] = {(int)detect.size()};
     PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);

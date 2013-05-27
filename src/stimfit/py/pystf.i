@@ -68,7 +68,7 @@ PyObject* get_trace(int trace=-1, int channel=-1);
       
 Arguments:
 ") template_matching;
-PyObject* template_matching(double* invec, int size, bool correlate=false, bool norm=true);
+PyObject* template_matching(double* invec, int size, const std::string& mode="criterion", bool norm=true, double lowpass=0.5);
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
