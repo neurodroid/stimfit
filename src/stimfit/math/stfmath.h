@@ -203,7 +203,7 @@ filter(
  */
 Vector_double
 deconvolve(const Vector_double& data, const Vector_double& templ,
-           int SR, double lowpass=0.5);
+           int SR, double lowpass, stfio::ProgressInfo& progDlg);
 
 //! Interpolates a dataset using cubic splines.
 /*! \param y The valarray to be interpolated.
@@ -320,21 +320,6 @@ StfDll std::vector<int> peakIndices(const Vector_double& data, double threshold,
  *  \return The linear correlation between the two arrays for each data point of \e va1.
  */
 StfDll Vector_double linCorr(const Vector_double& va1, const Vector_double& va2, stfio::ProgressInfo& progDlg); 
-
-//! Computes the sum of an arbitrary number of Gaussians.
-/*! \f[
- *      f(x) = \sum_{i=0}^{n-1}p_{3i}\mathrm{e}^{- \left( \frac{x-p_{3i+1}}{p_{3i+2}} \right) ^2}
- *  \f] 
- *  \param x Argument of the function.
- *  \param p A valarray of function parameters of size 3\e n, where \n
- *         \e p[3<em>i</em>] is the amplitude of the Gaussian \n
- *         \e p[3<em>i</em>+1] is the position of the center of the peak, \n
- *         \e p[3<em>i</em>+2] is the width of the Gaussian, \n
- *         \e n is the number of Gaussian functions and \n
- *         \e i is the 0-based index of the i-th Gaussian.
- *  \return The evaluated function.
- */
-double fgauss(double x, const Vector_double& p);
 
 //! Computes a Gaussian that can be used as a filter kernel.
 /*! \f[

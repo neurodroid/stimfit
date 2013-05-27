@@ -266,6 +266,21 @@ namespace stf {
      */
     double fHH(double x, const Vector_double& p);
 
+    //! Computes the sum of an arbitrary number of Gaussians.
+    /*! \f[
+     *      f(x) = \sum_{i=0}^{n-1}p_{3i}\mathrm{e}^{- \left( \frac{x-p_{3i+1}}{p_{3i+2}} \right) ^2}
+     *  \f] 
+     *  \param x Argument of the function.
+     *  \param p A valarray of function parameters of size 3\e n, where \n
+     *         \e p[3<em>i</em>] is the amplitude of the Gaussian \n
+     *         \e p[3<em>i</em>+1] is the position of the center of the peak, \n
+     *         \e p[3<em>i</em>+2] is the width of the Gaussian, \n
+     *         \e n is the number of Gaussian functions and \n
+     *         \e i is the 0-based index of the i-th Gaussian.
+     *  \return The evaluated function.
+     */
+    double fgauss(double x, const Vector_double& p);
+    
     //! power of 1 sodium conductance function.
     /*! \f[f(x)=p_0\left(1-\mathrm{e}^{\frac{-x}{p_1}}\right)\mathrm{e}^{\frac{-x}{p_2}} + p_3\f]
      *  \param x Function argument.
@@ -287,6 +302,16 @@ namespace stf {
      *         estimates.
      */
     void falpha_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit );
+
+    //! Initialises parameters for fitting stf::fgauss() to \e data.
+    /*! \param data The waveform of the data for the fit.
+     *  \param base Baseline of \e data.
+     *  \param peak Peak value of \e data.
+     *  \param dt The sampling interval.
+     *  \param pInit On entry, pass a valarray of size 3. On exit, will contain initial parameter
+     *         estimates.
+     */
+    void fgauss_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit );
 
     //! Initialises parameters for fitting stf::falpha() to \e data.
     /*! \param data The waveform of the data for the fit.

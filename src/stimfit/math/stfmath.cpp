@@ -25,18 +25,8 @@
 #include <wx/filename.h>
 
 #include "stfmath.h"
-
-double stf::fgauss(double x, const Vector_double& pars) {
-    double y=0.0, /* fac=0.0, */ ex=0.0, arg=0.0;
-    int npars=static_cast<int>(pars.size());
-    for (int i=0; i < npars-1; i += 3) {
-        arg=(x-pars[i+1])/pars[i+2];
-        ex=exp(-arg*arg);
-        /* fac=pars[i]*ex*2.0*arg; */
-        y += pars[i] * ex;
-    }
-    return y;
-}
+#include "fit.h"
+#include "funclib.h"
 
 double stf::fboltz(double x, const Vector_double& pars) {
     double arg=(pars[0]-x)/pars[1];
@@ -585,8 +575,8 @@ stf::Table stf::defaultOutput(
 std::map<double, int>
 histogram(const Vector_double& data, int nsteps) {
 
-    double fmin = *std::max_element(data.begin(), data.end());
-    double fmax = *std::min_element(data.begin(), data.end());
+    double fmax = *std::max_element(data.begin(), data.end());
+    double fmin = *std::min_element(data.begin(), data.end());
     fmax += (fmax-fmin)*1e-9;
     double step = (fmax-fmin)/nsteps;
     std::map<double,int> histo;
@@ -605,8 +595,10 @@ histogram(const Vector_double& data, int nsteps) {
 
 Vector_double
 stf::deconvolve(const Vector_double& data, const Vector_double& templ,
-                int SR, double lowpass)
+                int SR, double lowpass, stfio::ProgressInfo& progDlg)
 {
+    bool skipped = false;
+    progDlg.Update( 0, "Starting deconvolution...", &skipped );
     if (data.size()<=0 || templ.size() <=0 || templ.size() > data.size()) {
         std::out_of_range e("subscript out of range in stf::filter()");
         throw e;
@@ -619,6 +611,10 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
     }
 
     Vector_double data_return(data.size());
+    if (skipped) {
+        data_return.resize(0);
+        return data_return;
+    }
 
     double *in_data, *in_templ_padded;
     //fftw_complex is a double[2]; hence, out is an array of
@@ -645,6 +641,11 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
     fftw_execute(p_templ);
 
     double SI=1.0/SR; //the sampling interval
+    progDlg.Update( 33, "Performing deconvolution...", &skipped );
+    if (skipped) {
+        data_return.resize(0);
+        return data_return;
+    }
     for (std::size_t n_point=0; n_point < (unsigned int)(data.size()/2)+1; ++n_point) {
         double f=n_point / (data.size()*SI);
         Vector_double f_c(1);
@@ -680,11 +681,53 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
     fftw_free(in_templ_padded);
     fftw_free(out_templ_padded);
 
+    progDlg.Update( 66, "Computing data histogram...", &skipped );
+    if (skipped) {
+        data_return.resize(0);
+        return data_return;
+    }
     std::map<double, int> histo = histogram(data_return, int(data_return.size()/100.0));
-    std::cout << histo.size() << std::endl;
+    double max_value = -1;
+    double max_time = 0;
+    Vector_double histo_fit(0);
     for (std::map<double,int>::const_iterator it=histo.begin();
          it != histo.end(); ++it) {
+        if (it->second > max_value) {
+            max_value = it->second;
+            max_time = it->first;
+        }
+        histo_fit.push_back(it->second);
+#ifdef _STFDEBUG
         std::cout << it->first << "\t" << it->second << std::endl;
+#endif
     }
+    /* Fit Gaussian to histogram */
+    Vector_double opts = LM_default_opts();
+
+    /* Initial parameter guesses */
+    Vector_double pars(3);
+    pars[0] = max_value;
+    pars[1] = max_time - histo.begin()->first;
+    pars[2] = 1.0;
+
+    std::string info;
+    int warning;
+    std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
+    
+    double interval = (++histo.begin())->first-histo.begin()->first;
+    /* double chisqr = */lmFit(histo_fit, interval, funcLib[funcLib.size()-1], opts, false,
+                               pars, info, warning );
+#ifdef _STFDEBUG    
+    std::cout << chisqr << "\t" << interval << std::endl;
+    for (std::size_t np=0; np<pars.size(); ++np) {
+        std::cout << pars[np] << std::endl;
+    }
+#endif
+    double sigma = pars[2]/sqrt(2);
+    /* return data in terms of sigma */
+    for (std::size_t n_point=0; n_point < data.size(); ++n_point) {
+        data_return[n_point] /= sigma;
+    }
+    progDlg.Update( 100, "Done.", &skipped );
     return data_return;
 }

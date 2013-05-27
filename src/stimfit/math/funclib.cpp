@@ -99,6 +99,15 @@ std::vector< stf::storedFunc > stf::GetFuncLib() {
     // power of 1 gNa function:
     funcList.push_back(stf::storedFunc(
                                          "power of 1 g_Na function, offset fixed to baseline", parInfoHH, fgnabiexp, fgnabiexp_init, stf::nojac, false));
+
+    // Gaussian
+    std::vector<stf::parInfo> parInfoGauss(3);
+    parInfoGauss[0].toFit=true; parInfoGauss[0].desc="amp";
+    parInfoGauss[1].toFit=true; parInfoGauss[1].desc="mean";
+    parInfoGauss[2].toFit=true; parInfoGauss[2].desc="width";
+    funcList.push_back(stf::storedFunc(
+                                       "Gaussian", parInfoGauss, fgauss, fgauss_init, stf::nojac, false));
+
     return funcList;
 }
 
@@ -335,6 +344,29 @@ double stf::fgnabiexp(double x, const Vector_double& p) {
     double e1 = exp(-x/p[1]);
     double e2 = exp(-x/p[2]);
     return p[0] * (1-e1) * e2 + p[3];
+}
+
+double stf::fgauss(double x, const Vector_double& pars) {
+    double y=0.0, /* fac=0.0, */ ex=0.0, arg=0.0;
+    int npars=static_cast<int>(pars.size());
+    for (int i=0; i < npars-1; i += 3) {
+        arg=(x-pars[i+1])/pars[i+2];
+        ex=exp(-arg*arg);
+        /* fac=pars[i]*ex*2.0*arg; */
+        y += pars[i] * ex;
+    }
+    return y;
+}
+
+void stf::fgauss_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
+    // Find the peak position in data:
+    double maxT = stf::whereis( data, peak ) * dt;
+    int npars=static_cast<int>(pInit.size());
+    for (int i=0; i < npars-1; i += 3) {
+        pInit[i] = peak;
+        pInit[i+1] = maxT;
+        pInit[i+2] = 1.0;
+    }
 }
 
 void stf::fHH_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {

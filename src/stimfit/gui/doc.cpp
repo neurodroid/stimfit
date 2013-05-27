@@ -42,6 +42,7 @@
 #include "./dlgs/cursorsdlg.h"
 #include "./../math/stfmath.h"
 #include "./../math/fit.h"
+#include "./../math/funclib.h"
 #include "./../math/measure.h"
 #include "./../../libstfio/cfs/cfslib.h"
 #include "./../../libstfio/atf/atflib.h"
@@ -1985,8 +1986,9 @@ void wxStfDoc::Plotextraction(stf::extraction_mode mode) {
              wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
              if (myDlg.ShowModal()!=wxID_OK) return;
              Vector_double lowpass = myDlg.readInput();
+             stf::wxProgressInfo progDlg("Computing deconvolution...", "Starting deconvolution...", 100);
              TempSection = Section(stf::deconvolve(cur().get(), templateWave,
-                                                   (int)GetSR(), lowpass[0]));
+                                                   (int)GetSR(), lowpass[0], progDlg));
              section_description = "Template deconvolution from ";
              window_title = ", deconvolution";
              break;
@@ -2066,7 +2068,8 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
              wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
              if (myDlg.ShowModal()!=wxID_OK) return;
              Vector_double lowpass = myDlg.readInput();
-             detect=stf::deconvolve(cur().get(), templateWave, (int)GetSR(), lowpass[0]);
+             stf::wxProgressInfo progDlg("Computing deconvolution...", "Starting deconvolution...", 100);
+             detect=stf::deconvolve(cur().get(), templateWave, (int)GetSR(), lowpass[0], progDlg);
              break;
         }
         if (detect.empty()) {
