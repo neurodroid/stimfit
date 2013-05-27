@@ -585,7 +585,7 @@ histogram(const Vector_double& data, int nsteps) {
     }
     for (std::size_t npoint=0; npoint < data.size(); ++npoint) {
         int nstep = int((data[npoint]-fmin) / step);
-        histo[nstep*step] += 1;
+        histo[fmin + nstep*step] += 1;
     }
     return histo;
 }
