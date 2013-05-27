@@ -584,11 +584,8 @@ histogram(const Vector_double& data, int nsteps) {
         histo[lobound] = 0;
     }
     for (std::size_t npoint=0; npoint < data.size(); ++npoint) {
-        for (double lobound=fmin; lobound<=fmax; lobound += step) {
-            if (data[npoint] >= lobound && data[npoint] < lobound+step) {
-                histo[lobound] += 1;
-            }
-        }
+        int nstep = int((data[npoint]-fmin) / step);
+        histo[nstep*step] += 1;
     }
     return histo;
 }
@@ -641,7 +638,7 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
     fftw_execute(p_templ);
 
     double SI=1.0/SR; //the sampling interval
-    progDlg.Update( 33, "Performing deconvolution...", &skipped );
+    progDlg.Update( 25, "Performing deconvolution...", &skipped );
     if (skipped) {
         data_return.resize(0);
         return data_return;
@@ -681,7 +678,7 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
     fftw_free(in_templ_padded);
     fftw_free(out_templ_padded);
 
-    progDlg.Update( 66, "Computing data histogram...", &skipped );
+    progDlg.Update( 50, "Computing data histogram...", &skipped );
     if (skipped) {
         data_return.resize(0);
         return data_return;
@@ -700,6 +697,11 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
 #ifdef _STFDEBUG
         std::cout << it->first << "\t" << it->second << std::endl;
 #endif
+    }
+    progDlg.Update( 75, "Fitting Gaussian...", &skipped );
+    if (skipped) {
+        data_return.resize(0);
+        return data_return;
     }
     /* Fit Gaussian to histogram */
     Vector_double opts = LM_default_opts();
