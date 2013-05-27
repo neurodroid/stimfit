@@ -1997,7 +1997,7 @@ void wxStfDoc::Plotextraction(stf::extraction_mode mode) {
         Channel TempChannel(TempSection);
         Recording detCrit(TempChannel);
         detCrit.CopyAttributes(*this);
-        wxGetApp().NewChild(detCrit, this, GetTitle() + window_title);
+        wxGetApp().NewChild(detCrit, this, GetTitle() + stf::std2wx(window_title));
     }
     catch (const std::runtime_error& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
