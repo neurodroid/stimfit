@@ -75,7 +75,7 @@ wxDialog( parent, id, title, pos, size, style ), m_threshold(4.0), m_mode(stf::c
 
         wxString m_radioBoxChoices[] = {
                 wxT("Use template scaling (Clements && Bekkers)"),
-                wxT("Use correlation coefficient (Jonas et al.)")
+                wxT("Use correlation coefficient (Jonas et al.)"),
                 wxT("Use deconvolution (Pernia-Andrade et al.)")
         };
         int m_radioBoxNChoices = sizeof( m_radioBoxChoices ) / sizeof( wxString );
