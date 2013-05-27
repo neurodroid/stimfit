@@ -94,6 +94,12 @@ stf::storedFunc initLinFunc();
  *          [3] y offset
  */
  Vector_double get_scale(Vector_double& data, double oldx);
+
+//! Return default LM options
+/*! \return Default LM options
+ */
+Vector_double LM_default_opts();
+
 }
 
 template <typename T>

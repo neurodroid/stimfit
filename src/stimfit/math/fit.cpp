@@ -402,3 +402,16 @@ stf::storedFunc stf::initLinFunc() {
             stf::flin, stf::flin_init, stf::nojac, false, stf::defaultOutput);
 }
 
+ /* options for the implementation of the LM algorithm */
+Vector_double stf::LM_default_opts() {
+
+    Vector_double opts(6);
+    opts[0]=5*1E-3;   // initial \mu, default: 1E-03;
+    opts[1]=1E-17;    // stopping thr for ||J^T e||_inf, default: 1E-17;
+    opts[2]=1E-17;    // stopping trh for ||Dp||_2, default: 1E-17;
+    opts[3]=1E-32;    // stopping thr for ||e||_2, default: 1E-17;
+    opts[4]=64;       // maximal number of iterations/pass, default: 64;
+    opts[5]=16;       // maximal number of passes;
+    
+    return opts;
+}
