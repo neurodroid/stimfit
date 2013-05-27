@@ -181,11 +181,11 @@ stf::detectionCriterion(const Vector_double& data, const Vector_double& templ, s
         y2_old=data[n_data+0]*data[n_data+0];
 
         double scale=(sum_templ_data-sum_templ*sum_data/templ.size())/
-        (sum_templ_sqr-sum_templ*sum_templ/templ.size());
+            (sum_templ_sqr-sum_templ*sum_templ/templ.size());
         double offset=(sum_data-scale*sum_templ)/templ.size();
-        double sse=sum_data_sqr+scale*scale*sum_templ_sqr+templ.size()*offset*offset
-        -2.0*(scale*sum_templ_data
-                +offset*sum_data-scale*offset*sum_templ);
+        double sse=sum_data_sqr+scale*scale*sum_templ_sqr+templ.size()*offset*offset -
+            2.0*(scale*sum_templ_data +
+                 offset*sum_data-scale*offset*sum_templ);
         double standard_error=sqrt(sse/(templ.size()-1));
         detection_criterion[n_data]=(scale/standard_error);
     }
@@ -193,8 +193,7 @@ stf::detectionCriterion(const Vector_double& data, const Vector_double& templ, s
 }
 
 std::vector<int>
-stf::peakIndices(const Vector_double& data,
-                 double threshold,
+stf::peakIndices(const Vector_double& data, double threshold,
                  int minDistance)
 {
     // to avoid unnecessary copying, we first reserve quite
@@ -583,6 +582,27 @@ stf::Table stf::defaultOutput(
 	return output;
 }
 
+std::map<double, int>
+histogram(const Vector_double& data, int nsteps) {
+
+    double fmin = *std::max_element(data.begin(), data.end());
+    double fmax = *std::min_element(data.begin(), data.end());
+    fmax += (fmax-fmin)*1e-9;
+    double step = (fmax-fmin)/nsteps;
+    std::map<double,int> histo;
+    for (double lobound=fmin; lobound<=fmax; lobound += step) {
+        histo[lobound] = 0;
+    }
+    for (std::size_t npoint=0; npoint < data.size(); ++npoint) {
+        for (double lobound=fmin; lobound<=fmax; lobound += step) {
+            if (data[npoint] >= lobound && data[npoint] < lobound+step) {
+                histo[lobound] += 1;
+            }
+        }
+    }
+    return histo;
+}
+
 Vector_double
 stf::deconvolve(const Vector_double& data, const Vector_double& templ,
                 int SR, double lowpass)
@@ -647,7 +667,6 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
 
     //fill the return array, adding the offset, and scaling by data.size()
     //(because fftw computes an unnormalized transform):
-    // data_return.resize(data.size());
     for (std::size_t n_point=0; n_point < data.size(); ++n_point) {
         data_return[n_point]= in_data[n_point]/data.size();
     }
@@ -661,5 +680,11 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
     fftw_free(in_templ_padded);
     fftw_free(out_templ_padded);
 
+    std::map<double, int> histo = histogram(data_return, int(data_return.size()/100.0));
+    std::cout << histo.size() << std::endl;
+    for (std::map<double,int>::const_iterator it=histo.begin();
+         it != histo.end(); ++it) {
+        std::cout << it->first << "\t" << it->second << std::endl;
+    }
     return data_return;
 }
