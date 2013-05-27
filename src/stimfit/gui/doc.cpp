@@ -1957,10 +1957,8 @@ void wxStfDoc::Plotextraction(stf::extraction_mode mode) {
 #undef max
         // subtract offset and normalize:
 
-        Vector_double::const_iterator max_el = std::max_element(templateWave.begin(), templateWave.end());
-        Vector_double::const_iterator min_el = std::min_element(templateWave.begin(), templateWave.end());
-        double fmin=*min_el;
-        double fmax=*max_el;
+        double fmax = *std::max_element(templateWave.begin(), templateWave.end());
+        double fmin = *std::min_element(templateWave.begin(), templateWave.end());
         templateWave = stfio::vec_scal_minus(templateWave, fmax);
         double minim=fabs(fmin);
         templateWave = stfio::vec_scal_div(templateWave, minim);
@@ -2045,10 +2043,8 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
 #undef min
 #undef max
         // subtract offset and normalize:
-        Vector_double::const_iterator max_el = std::max_element(templateWave.begin(), templateWave.end());
-        Vector_double::const_iterator min_el = std::min_element(templateWave.begin(), templateWave.end());
-        double fmin=*min_el;
-        double fmax=*max_el;
+        double fmax = *std::max_element(templateWave.begin(), templateWave.end());
+        double fmin = *std::min_element(templateWave.begin(), templateWave.end());
         templateWave = stfio::vec_scal_minus(templateWave, fmax);
         double minim=fabs(fmin);
         templateWave = stfio::vec_scal_div(templateWave, minim);
