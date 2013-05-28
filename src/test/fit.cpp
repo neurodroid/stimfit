@@ -12,11 +12,11 @@ const static double tol = 0.1; /* param-relative tolerance value */
 const static int tmax = 100;   /* length of data in ms */
 const static float dt = 1/20.0; /* sampling interval of data in ms */
 
-/* list of available fitting functions */
+/* list of available fitting functions, see /src/stimfit/math/funclib.cpp */
 const static std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
 
 /* Fitting options for the LM algorithm, see /src/stimfit/math/fit.h */
-const double opts = stf::LM_default_opts();
+const Vector_double opts = stf::LM_default_opts();
 
 //=========================================================================
 // Simple monoexponential function
