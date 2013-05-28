@@ -726,6 +726,8 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
     /* double chisqr = */lmFit(histo_fit, interval, funcLib[funcLib.size()-1], opts, false,
                                pars, info, warning );
 #ifdef _STFDEBUG    
+    double chisqr = lmFit(histo_fit, interval, funcLib[funcLib.size()-1], opts, false,
+                               pars, info, warning );
     std::cout << chisqr << "\t" << interval << std::endl;
     for (std::size_t np=0; np<pars.size(); ++np) {
         std::cout << pars[np] << std::endl;
