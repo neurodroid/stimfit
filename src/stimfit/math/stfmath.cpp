@@ -576,7 +576,7 @@ std::map<double, int>
 stf::histogram(const Vector_double& data, int nbins) {
 
     if (nbins==-1) {
-        nbins = int(data_return.size()/100.0);
+        nbins = int(data.size()/100.0);
     }
 
     double fmax = *std::max_element(data.begin(), data.end());
@@ -723,11 +723,12 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
     std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
     
     double interval = (++histo.begin())->first-histo.begin()->first;
-    /* double chisqr = */lmFit(histo_fit, interval, funcLib[funcLib.size()-1], opts, false,
-                               pars, info, warning );
 #ifdef _STFDEBUG    
-    double chisqr = lmFit(histo_fit, interval, funcLib[funcLib.size()-1], opts, false,
-                               pars, info, warning );
+    double chisqr =
+#endif
+        lmFit(histo_fit, interval, funcLib[funcLib.size()-1], opts, false,
+              pars, info, warning );
+#ifdef _STFDEBUG    
     std::cout << chisqr << "\t" << interval << std::endl;
     for (std::size_t np=0; np<pars.size(); ++np) {
         std::cout << pars[np] << std::endl;
