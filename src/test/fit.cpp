@@ -15,6 +15,9 @@ const static float dt = 1/20.0; /* sampling interval of data in ms */
 /* list of available fitting functions */
 const static std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
 
+/* Fitting options for the LM algorithm, see /src/stimfit/math/fit.h */
+const double opts = stf::LM_default_opts();
+
 //=========================================================================
 // Simple monoexponential function
 // available for fitting to function 0 of Stimfit
@@ -164,7 +167,7 @@ TEST(fitlib_test, monoexponential) {
     // Respectively the scale factor for initial \mu,
     // stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2,
     // maxIter, maxPass
-    Vector_double opts = LM_default_opts();
+    Vector_double opts = stf::LM_default_opts();
 
     /* Initial parameter guesses */
     Vector_double pars(3);
@@ -219,10 +222,6 @@ TEST(fitlib_test, id_00_monoexponential){
     savetxt(data);
 #endif
 
-    /* options for the implementation of the LM algorithm */
-    Vector_double opts;
-    opts = LM_default_opts();
-
     /* Initial parameters guesses */
     Vector_double pars(3);
     pars[0] = 0.0;        /* Offset */
@@ -267,10 +266,6 @@ TEST(fitlib_test, id_01_monoexponential_offsetfixed){
 #if 0
     savetxt(data);
 #endif
-
-    /* options for the implementation of the LM algorithm */
-    Vector_double opts;
-    opts = LM_default_opts();
 
     /* Initial parameters guesses */
     Vector_double pars(3);
@@ -317,10 +312,6 @@ TEST(fitlib_test, id_02_monoexponential_with_delay){
     savetxt(data);
 #endif
 
-    /* options for the implementation of the LM algorithm */
-    Vector_double opts;
-    opts = LM_default_opts();
-
     /* Initial parameter guesses */
     Vector_double pars(4);
     pars[0] = mypars[0]; 
@@ -362,10 +353,6 @@ TEST(fitlib_test, id_05_biexponential_with_delay_offsetfixed){
     /* create a 100 ms trace with mypars */
     Vector_double data;
     data = fexpbde(mypars);
-
-    /* options for the implementation of the LM algorithm */
-    Vector_double opts;
-    opts = LM_default_opts();
 
     /* Initial parameter guesses */
     Vector_double pars(5);
@@ -418,10 +405,6 @@ TEST(fitlib_test, id_09_alpha){
     savetxt(data);
 #endif
 
-    /* options for the implementation of the LM algorithm */
-    Vector_double opts;
-    opts = LM_default_opts();
-
     /* Initial parameter guesses */
     Vector_double pars(3);
     pars[0] = 1101.72;       /* Q      */
@@ -467,10 +450,6 @@ TEST(fitlib_test, id_10_HH_gNa_offsetfixed){
 #if 0
     savetxt(data);
 #endif
-
-    /* options for the implementation of the LM algorithm */
-    Vector_double opts;
-    opts = LM_default_opts();
 
     /* Initial parameter guesses */
     Vector_double pars(4);
