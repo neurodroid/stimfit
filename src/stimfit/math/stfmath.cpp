@@ -573,19 +573,25 @@ stf::Table stf::defaultOutput(
 }
 
 std::map<double, int>
-histogram(const Vector_double& data, int nsteps) {
+stf::histogram(const Vector_double& data, int nbins) {
+
+    if (nbins==-1) {
+        nbins = int(data_return.size()/100.0);
+    }
 
     double fmax = *std::max_element(data.begin(), data.end());
     double fmin = *std::min_element(data.begin(), data.end());
     fmax += (fmax-fmin)*1e-9;
-    double step = (fmax-fmin)/nsteps;
+
+    double bin = (fmax-fmin)/nbins;
+
     std::map<double,int> histo;
-    for (double lobound=fmin; lobound<=fmax; lobound += step) {
+    for (double lobound=fmin; lobound<=fmax; lobound += bin) {
         histo[lobound] = 0;
     }
     for (std::size_t npoint=0; npoint < data.size(); ++npoint) {
-        int nstep = int((data[npoint]-fmin) / step);
-        histo[fmin + nstep*step] += 1;
+        int nbin = int((data[npoint]-fmin) / bin);
+        histo[fmin + nbin*bin] += 1;
     }
     return histo;
 }

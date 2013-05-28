@@ -194,7 +194,15 @@ filter(
         bool inverse = false
 );
 
-//! Deonvolves a template from a signal
+//! Computes a histogram
+/*! \param data The signal
+ *  \param nbins Number of bins in the histogram.
+ *  \return A map with lower bin limits as keys, number of observations as values.
+ */
+std::map<double, int>
+histogram(const Vector_double& data, int nbins=-1);
+
+//! Deconvolves a template from a signal
 /*! \param data The signal
  *  \param templ The template
  *  \param SR The sampling rate in kHz.
