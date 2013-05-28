@@ -2324,12 +2324,12 @@ void wxStfDoc::Measure( )
        window should be choosen in such a way that the length in milliseconds is approximately the same.
        This reduces some variability, the slope estimates are more robust and comparible.
 
-       If the user would be enabled to set the window size in milliseconds, windowLength
-       could be set in the following way:
-
-       windowLength = roundl(0.1 * GetSR());     // use window length of about 0.1 ms.
-       if (windowLength < 1) windowLength = 1;   // use a minimum window length of 1 sample
+       Set window length to 0.05 ms, with a minimum of 1 sample. In this way, all data
+       sampled with 20 kHz or lower, will use a 1 sample window, data with a larger sampling rate
+       use a window of 0.05 ms for computing the slope.
     */
+       windowLength = roundl(0.05 * GetSR());    // use window length of about 0.05 ms.
+       if (windowLength < 1) windowLength = 1;   // use a minimum window length of 1 sample
 
 
     //Begin peak and base calculation
