@@ -586,12 +586,12 @@ stf::histogram(const Vector_double& data, int nbins) {
     double bin = (fmax-fmin)/nbins;
 
     std::map<double,int> histo;
-    for (double lobound=fmin; lobound<=fmax; lobound += bin) {
+    for (double lobound=fmin; lobound<fmax; lobound += bin) {
         histo[lobound] = 0;
     }
     for (std::size_t npoint=0; npoint < data.size(); ++npoint) {
         int nbin = int((data[npoint]-fmin) / bin);
-        histo[fmin + nbin*bin] += 1;
+        histo[fmin + nbin*bin]++;
     }
     return histo;
 }
