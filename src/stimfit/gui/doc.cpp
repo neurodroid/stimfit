@@ -1988,7 +1988,7 @@ void wxStfDoc::Plotextraction(stf::extraction_mode mode) {
              Vector_double lowpass = myDlg.readInput();
              stf::wxProgressInfo progDlg("Computing deconvolution...", "Starting deconvolution...", 100);
              TempSection = Section(stf::deconvolve(cur().get(), templateWave,
-                                                   (int)GetSR(), lowpass[0], progDlg));
+                                                   (int)GetSR(), 0.0001, lowpass[0], progDlg));
              section_description = "Template deconvolution from ";
              window_title = ", deconvolution";
              break;
@@ -2069,7 +2069,7 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
              if (myDlg.ShowModal()!=wxID_OK) return;
              Vector_double lowpass = myDlg.readInput();
              stf::wxProgressInfo progDlg("Computing deconvolution...", "Starting deconvolution...", 100);
-             detect=stf::deconvolve(cur().get(), templateWave, (int)GetSR(), lowpass[0], progDlg);
+             detect=stf::deconvolve(cur().get(), templateWave, (int)GetSR(), 0.0001, lowpass[0], progDlg);
              break;
         }
         if (detect.empty()) {

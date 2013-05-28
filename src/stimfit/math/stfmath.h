@@ -203,15 +203,16 @@ std::map<double, int>
 histogram(const Vector_double& data, int nbins=-1);
 
 //! Deconvolves a template from a signal
-/*! \param data The signal
+/*! \param data The input signal
  *  \param templ The template
  *  \param SR The sampling rate in kHz.
- *  \param lowpass Lowpass filter cutoff frequency in kHz for the deconvolution result.
+ *  \param hipass Highpass filter cutoff frequency in kHz
+ *  \param lopass Lowpass filter cutoff frequency in kHz
  *  \return The result of the deconvolution
  */
 Vector_double
 deconvolve(const Vector_double& data, const Vector_double& templ,
-           int SR, double lowpass, stfio::ProgressInfo& progDlg);
+           int SR, double hipass, double lopass, stfio::ProgressInfo& progDlg);
 
 //! Interpolates a dataset using cubic splines.
 /*! \param y The valarray to be interpolated.

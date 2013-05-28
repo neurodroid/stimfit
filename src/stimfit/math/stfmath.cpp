@@ -598,7 +598,7 @@ stf::histogram(const Vector_double& data, int nbins) {
 
 Vector_double
 stf::deconvolve(const Vector_double& data, const Vector_double& templ,
-                int SR, double lowpass, stfio::ProgressInfo& progDlg)
+                int SR, double hipass, double lopass, stfio::ProgressInfo& progDlg)
 {
     bool skipped = false;
     progDlg.Update( 0, "Starting deconvolution...", &skipped );
@@ -649,11 +649,23 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
         data_return.resize(0);
         return data_return;
     }
+    Vector_double f_c(1);
     for (std::size_t n_point=0; n_point < (unsigned int)(data.size()/2)+1; ++n_point) {
-        double f=n_point / (data.size()*SI);
-        Vector_double f_c(1);
-        f_c[0] = lowpass;
-        double rslt= fgaussColqu(f, f_c);
+        /* highpass filter */
+        double f = n_point / (data.size()*SI);
+
+        double rslt_hi = 1.0;
+        if (hipass > 0) {
+            f_c[0] = hipass;
+            rslt_hi = 1.0-fgaussColqu(f, f_c);
+        }
+
+        /* lowpass filter */
+        double rslt_lo = 1.0;
+        if (lopass > 0) {
+            f_c[0] = lopass;
+            rslt_lo= fgaussColqu(f, f_c);
+        }
 
         /* do the division in place */
         double a = out_data[n_point][0];
@@ -661,8 +673,8 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
         double c = out_templ_padded[n_point][0];
         double d = out_templ_padded[n_point][1];
         double mag2 = c*c + d*d;
-        out_data[n_point][0] = rslt * (a*c + b*d)/mag2;
-        out_data[n_point][1] = rslt * (b*c - a*d)/mag2;
+        out_data[n_point][0] = rslt_hi * rslt_lo * (a*c + b*d)/mag2;
+        out_data[n_point][1] = rslt_hi * rslt_lo * (b*c - a*d)/mag2;
     }
 
     //do the reverse fft:
