@@ -1748,10 +1748,8 @@ PyObject* template_matching(double* invec, int size, const std::string& mode, bo
 
     Vector_double templ(invec, &invec[size]);
     if (norm) {
-        Vector_double::const_iterator max_el = std::max_element(templ.begin(), templ.end());
-        Vector_double::const_iterator min_el = std::min_element(templ.begin(), templ.end());
-        double fmin=*min_el;
-        double fmax=*max_el;
+        double fmin = *std::min_element(templ.begin(), templ.end());
+        double fmax = *std::max_element(templ.begin(), templ.end());
         templ = stfio::vec_scal_minus(templ, fmax);
         double minim=fabs(fmin);
         templ = stfio::vec_scal_div(templ, minim);
