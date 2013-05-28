@@ -240,7 +240,7 @@ TEST(measlib_test, half_duration_out_of_range_exceptions){
         long(PI/dt)-1, center, t50LeftId, t50RigthId, t50Real),
         std::out_of_range);
 
-    /* Out of range: if center <0 */
+    /* Out of range: if center > recording length */
     center = mywave.size();
     EXPECT_THROW( stf::t_half(mywave, 0.0, 1.0, 1,
         long(PI/dt)-1, center, t50LeftId, t50RigthId, t50Real),
