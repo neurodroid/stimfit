@@ -1757,11 +1757,11 @@ PyObject* template_matching(double* invec, int size, const std::string& mode, bo
     
     Vector_double detect((*actDoc())[channel][trace].get().size());
     if (mode=="criterion") {
-        stfio::StdoutProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100, true);
-        detect = stf::linCorr((*actDoc())[channel][trace].get(), templ, progDlg);
-    } else if (mode=="correlation") {
         stfio::StdoutProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100, true);
         detect = stf::detectionCriterion((*actDoc())[channel][trace].get(), templ, progDlg);
+    } else if (mode=="correlation") {
+        stfio::StdoutProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100, true);
+        detect = stf::linCorr((*actDoc())[channel][trace].get(), templ, progDlg);
     } else if (mode=="convolution") {
         stfio::StdoutProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100, true);
         detect = stf::deconvolve((*actDoc())[channel][trace].get(), templ, actDoc()->GetSR(), highpass, lowpass, progDlg);
