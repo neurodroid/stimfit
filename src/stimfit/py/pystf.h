@@ -144,7 +144,8 @@ extern double _figsize[];
 #ifdef WITH_PYTHON
 PyObject* mpl_panel(const std::vector<double>& figsize = std::vector<double>(_figsize, _figsize+2));
 
-PyObject* template_matching(double* invec, int size, const std::string& mode="criterion", bool norm=true, double lowpass=0.5);
+PyObject* template_matching(double* invec, int size, const std::string& mode="criterion",
+                            bool norm=true, double lowpass=0.5, double highpass=0.0001);
 PyObject* peak_detection(double* invec, int size, double threshold, int min_distance);
 #endif
  

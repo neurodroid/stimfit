@@ -1738,7 +1738,7 @@ PyObject* mpl_panel(const std::vector<double>& figsize) {
     return result;
 }
 
-PyObject* template_matching(double* invec, int size, const std::string& mode, bool norm, double lowpass) {
+PyObject* template_matching(double* invec, int size, const std::string& mode, bool norm, double lowpass, double highpass) {
     wrap_array();
 
     if ( !check_doc() ) return NULL;
@@ -1764,7 +1764,7 @@ PyObject* template_matching(double* invec, int size, const std::string& mode, bo
         detect = stf::detectionCriterion((*actDoc())[channel][trace].get(), templ, progDlg);
     } else if (mode=="convolution") {
         stfio::StdoutProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100, true);
-        detect = stf::deconvolve((*actDoc())[channel][trace].get(), templ, actDoc()->GetSR(), 0.0001, lowpass, progDlg);
+        detect = stf::deconvolve((*actDoc())[channel][trace].get(), templ, actDoc()->GetSR(), highpass, lowpass, progDlg);
     }
     npy_intp dims[1] = {(int)detect.size()};
     PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);

@@ -1981,14 +1981,16 @@ void wxStfDoc::Plotextraction(stf::extraction_mode mode) {
              break;
          }
          case stf::deconvolution:
-             stf::UserInput Input( std::vector<std::string>(1, "Frequency (kHz)"),
-                                   Vector_double (1, 0.5), "Lowpass filter" );
+             std::string usrInStr[2] = {"Lowpass (kHz)", "Highpass (kHz)"};
+             double usrInDbl[2] = {0.5, 0.0001};
+             stf::UserInput Input( std::vector<std::string>(usrInStr, usrInStr+2),
+                                   Vector_double (usrInDbl, usrInDbl+2), "Filter settings" );
              wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
              if (myDlg.ShowModal()!=wxID_OK) return;
-             Vector_double lowpass = myDlg.readInput();
+             Vector_double filter = myDlg.readInput();
              stf::wxProgressInfo progDlg("Computing deconvolution...", "Starting deconvolution...", 100);
              TempSection = Section(stf::deconvolve(cur().get(), templateWave,
-                                                   (int)GetSR(), 0.0001, lowpass[0], progDlg));
+                                                   (int)GetSR(), filter[1], filter[0], progDlg));
              section_description = "Template deconvolution from ";
              window_title = ", deconvolution";
              break;
@@ -2063,13 +2065,15 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
              break;
          }
          case stf::deconvolution:
-             stf::UserInput Input( std::vector<std::string>(1, "Frequency (kHz)"),
-                                   Vector_double (1, 0.5), "Lowpass filter" );
+             std::string usrInStr[2] = {"Lowpass (kHz)", "Highpass (kHz)"};
+             double usrInDbl[2] = {0.5, 0.0001};
+             stf::UserInput Input( std::vector<std::string>(usrInStr, usrInStr+2),
+                                   Vector_double (usrInDbl, usrInDbl+2), "Filter settings" );
              wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
              if (myDlg.ShowModal()!=wxID_OK) return;
-             Vector_double lowpass = myDlg.readInput();
+             Vector_double filter = myDlg.readInput();
              stf::wxProgressInfo progDlg("Computing deconvolution...", "Starting deconvolution...", 100);
-             detect=stf::deconvolve(cur().get(), templateWave, (int)GetSR(), 0.0001, lowpass[0], progDlg);
+             detect=stf::deconvolve(cur().get(), templateWave, (int)GetSR(), filter[1], filter[0], progDlg);
              break;
         }
         if (detect.empty()) {
