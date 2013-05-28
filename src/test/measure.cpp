@@ -2,12 +2,27 @@
 #include "../stimfit/math/measure.h"
 #include <gtest/gtest.h>
 #include <cmath>
+#include <fstream>
 
 #define PI  3.14159265f
 
 const double tol = 0.1; /* tolerance value */
 const static float dt = 1/500.0; /* sampling interval */
 
+
+void save_txt(Vector_double &mydata){
+
+    std::ofstream output_file;
+    output_file.open("array.out");
+
+    Vector_double::iterator it;
+
+    for (it = mydata.begin(); it != mydata.end(); ++it){
+        output_file << *it << std::endl;
+    }
+
+    output_file.close();
+}
 //=========================================================================
 // evaluates if the measurement is within the expected value for a given
 // tolerance level that corresponds to 
@@ -172,7 +187,7 @@ TEST(measlib_test, risetime_values){
     double risetime = stf::risetime(mywave, 0.0, 1.0, 1, 
         long((PI/2)/dt)-1, 0.2, t20, t80, t20Real);
 
-    /* correspond t20 and t80 correspond to 0.2 and 0.8 respectively */
+    /* t20 and t80 correspond to 0.2 and 0.8 respectively */
     EXPECT_NEAR( std::sin(t20*dt), 0.2, 0.02 ); /* sin(t20) = 0.2 */
     EXPECT_NEAR( std::sin(t80*dt), 0.8, 0.08 ); /* sin(t80) = 0.8 */
 
@@ -185,7 +200,28 @@ TEST(measlib_test, risetime_values){
 //=========================================================================
 // test half_duration 
 //=========================================================================
-// TODO
+TEST(measlib_test, half_duration){
+
+    /* a sine wave between 0 and PI */
+    std::vector <double> mywave = sinwave( long(PI/dt) );
+    
+    std::size_t t50LeftId, t50RigthId;
+    double t50Real;
+    
+    /* check half duration between 0 and PI */
+    double half_dur = stf::t_half(mywave, 0.0, 1.0, 1,
+        long(PI/dt)-1, long((PI/2)/dt),t50LeftId, t50RigthId, t50Real);
+
+    /* t50Left and t50Rigth correspond to 0.5 */
+    EXPECT_NEAR( std::sin(t50LeftId*dt),  0.5, 0.05); /* sin(t50) = 0.5 */
+    EXPECT_NEAR( std::sin(t50RigthId*dt), 0.5, 0.05);
+
+    /* half-duration is arcsin(0.5)+ arcsin(1) */
+    double half_dur_xpted = std::asin(0.5)+std::asin(1.0);
+    EXPECT_NEAR(half_dur*dt, half_dur_xpted, 
+        fabs(half_dur_xpted*tol) );
+
+}
 
 //=========================================================================
 // test maximal slope of rise
