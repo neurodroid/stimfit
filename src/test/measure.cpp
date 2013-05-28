@@ -224,6 +224,31 @@ TEST(measlib_test, half_duration){
 }
 
 //=========================================================================
+// test half_duration exceptions
+//=========================================================================
+TEST(measlib_test, half_duration_out_of_range_exceptions){
+
+    /* a sine wave between 0 and PI */
+    std::vector <double> mywave = sinwave( long(PI/dt) );
+    
+    std::size_t t50LeftId, t50RigthId;
+    double t50Real;
+    double center = -1.0; /* index of the peak */ 
+    
+    /* Out of range: if center <0 */
+    EXPECT_THROW( stf::t_half(mywave, 0.0, 1.0, 1,
+        long(PI/dt)-1, center, t50LeftId, t50RigthId, t50Real),
+        std::out_of_range);
+
+    /* Out of range: if center <0 */
+    center = mywave.size();
+    EXPECT_THROW( stf::t_half(mywave, 0.0, 1.0, 1,
+        long(PI/dt)-1, center, t50LeftId, t50RigthId, t50Real),
+        std::out_of_range);
+
+}
+
+//=========================================================================
 // test maximal slope of rise
 //=========================================================================
 TEST(measlib_test, maxrise_basic) {
