@@ -11,7 +11,7 @@ SetCompressor lzma
 
 ;--------------------------------
 
-!define PRODUCT_VERSION "0.12.2"
+!define PRODUCT_VERSION "0.12.3"
 !define WXW_VERSION "2.9.4.0"
 !define WXW_VERSION_DIR "2.9.4"
 !define WXW_VERSION_SHORT "294"
@@ -205,7 +205,7 @@ Section "!Program files and wxPython" 3 ; Core program files and wxPython
   File "${HDF5DIR}\bin\hdf5dll.dll"
   File "${HDF5DIR}\bin\szip.dll"
   File "${HDF5DIR}\bin\zlib.dll"
-  File "${BIOSIGDIR}\lib\libbiosig.dll"
+  File "${BIOSIGDIR}\lib\libbiosig2.dll"
   File "${WXWDIR}\lib\vc90_dll\wxmsw${WXW_VERSION_SHORT}u_core_vc90.dll"
   File "${WXWDIR}\lib\vc90_dll\wxbase${WXW_VERSION_SHORT}u_vc90.dll"
   File "${WXWDIR}\lib\vc90_dll\wxmsw${WXW_VERSION_SHORT}u_aui_vc90.dll"
@@ -321,7 +321,7 @@ Section "!stfio standalone module" 4 ; Standalone python file i/o module
   File "${HDF5DIR}\bin\hdf5dll.dll"
   File "${HDF5DIR}\bin\szip.dll"
   File "${HDF5DIR}\bin\zlib.dll"
-  File "${BIOSIGDIR}\lib\libbiosig.dll"
+  File "${BIOSIGDIR}\lib\libbiosig2.dll"
   File /nonfatal "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll"
   File /nonfatal "${ALTPRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll"
   File /nonfatal "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
