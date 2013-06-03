@@ -746,7 +746,7 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
         std::cout << pars[np] << std::endl;
     }
 #endif
-    double sigma = pars[2]/sqrt(2);
+    double sigma = pars[2]/sqrt(2.0);
     /* return data in terms of sigma */
     for (std::size_t n_point=0; n_point < data.size(); ++n_point) {
         data_return[n_point] /= sigma;

@@ -44,6 +44,7 @@
 #include "./../math/fit.h"
 #include "./../math/funclib.h"
 #include "./../math/measure.h"
+#include "./../../libstfio/stfio.h"
 #include "./../../libstfio/cfs/cfslib.h"
 #include "./../../libstfio/atf/atflib.h"
 #ifdef WITH_BIOSIG
@@ -2332,7 +2333,7 @@ void wxStfDoc::Measure( )
        sampled with 20 kHz or lower, will use a 1 sample window, data with a larger sampling rate
        use a window of 0.05 ms for computing the slope.
     */
-       windowLength = roundl(0.05 * GetSR());    // use window length of about 0.05 ms.
+	windowLength = lround(0.05 * GetSR());    // use window length of about 0.05 ms.
        if (windowLength < 1) windowLength = 1;   // use a minimum window length of 1 sample
 
 

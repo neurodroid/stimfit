@@ -210,7 +210,7 @@ histogram(const Vector_double& data, int nbins=-1);
  *  \param lopass Lowpass filter cutoff frequency in kHz
  *  \return The result of the deconvolution
  */
-Vector_double
+StfDll Vector_double
 deconvolve(const Vector_double& data, const Vector_double& templ,
            int SR, double hipass, double lopass, stfio::ProgressInfo& progDlg);
 
