@@ -142,12 +142,19 @@ double stf::threshold( const std::vector<double>& data, std::size_t llp, std::si
 {
     thrT = -1;
     
-    if (data.size()==0) return 0;
+    if (data.size()==0) return 0.0;
 
-    // ulb has to be < data.size()-windowLength (data[i+windowLength] will be used)
-    if (llp > ulp || ulp >= data.size()) {
+    // lower limit peak (ulb) has to be zero at least
+    // upper limit peak (ulb) has to be < data.size()-windowLength (data[i+windowLength] will be used)
+    if (llp < 0 || llp > ulp || ulp >= data.size()) {
         throw (std::out_of_range("Exception:\n Index out of range in stf::threshold()"));
     }
+    // windowLength has to be smaller than upper limit peak (ulp) or size of array 
+    // lower limit peak (llp) has to be smaller than lenght of array - windowLength
+    if (windowLength > ulp || windowLength > data.size() || llp >= data.size()-windowLength ) {
+        throw (std::out_of_range("Exception:\n Wrong window length in stf::threshold()"));
+    }
+    
     
     double threshold = 0.0;
 
