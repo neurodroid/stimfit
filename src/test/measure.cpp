@@ -10,10 +10,10 @@ const double tol = 0.1; /* tolerance value */
 const static float dt = 1/500.0; /* sampling interval */
 
 
-void save_txt(Vector_double &mydata){
+void save_txt(const char *fname, Vector_double &mydata){
 
     std::ofstream output_file;
-    output_file.open("array.out");
+    output_file.open(fname);
 
     Vector_double::iterator it;
 
@@ -53,6 +53,26 @@ std::vector<double> sinwave(long length){
 
     return mydata;
 }
+//=========================================================================
+// Exponential function to test the Stimfit threshold measurement
+// we can easily evalute the value and position of the threshold
+// because the slope we fix for the threshold is simply the exponential 
+// for example, for a slope of 1.5, we will find that
+// the obtained threshold obtained is 1.5. The time of the
+// threshold (thrT) can be evaluated at exp(thrT) and give the slope value
+// the function starts at x=0 (y=1), therefore, the slope values
+// to be tested should be greater or equal to ONE!!!.
+//=========================================================================
+std::vector<double> expwave(long length){
+    std::vector<double> mydata(length);
+
+    for(std::vector<int>::size_type x=0; x != mydata.size() ; ++x){
+        mydata[x] = exp( x*dt ); /* see sampling interval */
+    }
+
+    return mydata;
+}
+
 
 //=========================================================================
 // test baseline (base)
@@ -170,7 +190,81 @@ TEST(measlib_test, peak_direction) {
 //=========================================================================
 // test threshold 
 //=========================================================================
-// TODO
+TEST(measlib_test, threshold){
+    
+    /* exp wave between 0 and 1 */
+    std::vector<double> mywave = expwave(1/dt);
+
+    double thrT;
+    double slope = 1.2; /* y-units/sample, choose always >= 1 */
+    int windowLength = 1;
+    
+    /* check threshold value at the given slope */
+    double threshold = stf::threshold(mywave, 1, 
+        long(1/dt)-1, slope*dt, thrT, windowLength);
+
+    /* the threshold should be exactly the slope value */
+    EXPECT_NEAR(threshold, slope, fabs(slope*tol)); 
+
+    /* exp(t) should give the slope value */
+    EXPECT_NEAR(std::exp(thrT*dt), slope, fabs(slope*tol)); 
+    
+}
+//=========================================================================
+// test threshold windowLength exceptions
+//=========================================================================
+TEST(measlib_test, threshold_windowLength_exceptions){
+    
+    std::vector<double> data = expwave(1/dt);
+
+    double thrT;
+    double slope = 1.2; /* y-units/sample, choose always >= 1 */
+    int mywindowLength = 10;
+    
+    /* Right peak cursor must be larger than windowLength */
+    long myRightPeakCursor = mywindowLength-1;
+    EXPECT_THROW(stf::threshold(data, 0, myRightPeakCursor, 
+        slope*dt, thrT, mywindowLength), 
+        std::out_of_range);
+
+    /* Left peak cursor must be smaller than data.size()-windowLength */
+    long myLeftPeakCursor = data.size()-mywindowLength; 
+    EXPECT_THROW(stf::threshold(data, myLeftPeakCursor, data.size()-1, 
+        slope*dt, thrT, mywindowLength), 
+        std::out_of_range);
+
+    /* Data size itself must be smaller than windowLength */
+    mywindowLength = data.size()+1;
+    EXPECT_THROW(stf::threshold(data, 0, data.size()-1, \
+        slope*dt, thrT, mywindowLength), 
+        std::out_of_range);
+
+}
+//=========================================================================
+// test threshold out of range exceptions
+//=========================================================================
+TEST(measlib_test, threshold_out_of_range){
+   
+    std::vector<double> mywave = expwave(1/dt); 
+
+    double thrT;
+    double slope = 0.2; /* y-units/sample, choose always >= 1 */
+    int windowLength = 1;
+    
+    /* Out of range: after last point*/
+    EXPECT_THROW(stf::threshold(mywave, 1, mywave.size(), 
+        slope*dt, thrT, windowLength),
+        std::out_of_range);
+    EXPECT_EQ(thrT,-1); 
+
+    /* Out of range: before first point*/
+    EXPECT_THROW(stf::threshold(mywave, -1, mywave.size()-1, 
+        slope*dt, thrT, windowLength),
+        std::out_of_range);
+    EXPECT_EQ(thrT,-1); 
+
+    
+}
 
 //=========================================================================
 // test risetime values 
@@ -311,11 +405,11 @@ TEST(measlib_test, maxrise_windowLength_exceptions){
 }
 
 //=========================================================================
-// test maximal slope of rise with sinus wave
+// test maximal slope of rise with sine wave
 //=========================================================================
 TEST(measlib_test, maxrise_values) {
 
-    /* sinus wave between 0 and 3*PI */
+    /* sine wave between 0 and 3*PI */
     std::vector<double> mywave = sinwave( long(3*PI/dt) );
     double maxRiseT, maxRiseY;
     
@@ -392,11 +486,11 @@ TEST(measlib_test, maxdecay_windowLength_exceptions) {
 }
 
 //=========================================================================
-// test maximal slope of decay with a sinus wave 
+// test maximal slope of decay with a sine wave 
 //=========================================================================
 TEST(measlib_test, maxdecay_values){
 
-    /* a sinus wave between 0 and 2*PI */
+    /* a sine wave between 0 and 2*PI */
     std::vector<double> mywave = sinwave( long(2*PI/dt) );
     double maxDecayT, maxDecayY;
     
