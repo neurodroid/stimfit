@@ -5,6 +5,7 @@
 #include <fstream>
 
 #define PI  3.14159265f
+#define N_MAX 10000
 
 const double tol = 0.1; /* tolerance value */
 const static float dt = 1/500.0; /* sampling interval */
@@ -53,6 +54,19 @@ std::vector<double> sinwave(long length){
 
     return mydata;
 }
+
+//=========================================================================
+// sine wave as function of amplitude and lambda
+//=========================================================================
+std::vector<double> sinwave(double amp, long length){
+    std::vector<double> mydata(length);
+
+    for(std::vector<int>::size_type x=0; x != mydata.size() ; ++x){
+        mydata[x] = amp*sin( x*dt ); /* see sampling interval */
+    }
+
+    return mydata;
+}
 //=========================================================================
 // Exponential function to test the Stimfit threshold measurement
 // we can easily evalute the value and position of the threshold
@@ -73,7 +87,40 @@ std::vector<double> expwave(long length){
     return mydata;
 }
 
+//=========================================================================
+// A vector with random numbers between 0 and 1
+//=========================================================================
+std::vector<double> rand(long size){
+    /* seed the random number generator */
+    int seed = time(NULL);
+    srand(seed);
 
+    std::vector<double> myrand(size);
+    for (int i=0; i<size;i++){
+        myrand[i] = (double) rand()/(double) RAND_MAX;
+    }
+    return myrand;
+    
+}
+
+//=========================================================================
+// test baseline random 
+//=========================================================================
+TEST(measlib_test, baseline_random) {
+
+    double var;
+
+    std::vector<double> mybase(N_MAX);
+
+    for (int i=0; i<N_MAX; i++){
+        std::vector<double> myrand = rand(N_MAX); 
+        mybase[i] = stf::base(var, myrand, 0, N_MAX-1);
+        EXPECT_NEAR(mybase[i], 1/2., 0.05); /* expected mean = 1/2   */
+        EXPECT_NEAR(var, 1/12., (1/12.)*0.1); /* expected var = 1/12 */
+    }
+
+    save_txt("base.out", mybase);
+}
 //=========================================================================
 // test baseline (base)
 //=========================================================================
@@ -187,6 +234,27 @@ TEST(measlib_test, peak_direction) {
 
 }
 
+//=========================================================================
+// Peak random
+//=========================================================================
+TEST(measlib_test, peak_random) {
+    double maxT;
+    
+    std::vector<double> mypeak(N_MAX);
+    std::vector<double> myrand = rand(N_MAX);
+
+    for (int i=0; i<N_MAX; i++){
+        /* A*sin(x) */
+        std::vector<double> mywave = sinwave(myrand[i], long(2*PI/dt) ); 
+        mypeak[i] = stf::peak(mywave, 0.0, 0, long(2*PI/dt)-1,
+            1, stf::up, maxT);
+        EXPECT_NEAR(mypeak[i], myrand[i], fabs(myrand[i]*tol));
+    }
+
+    save_txt("peaks.out", mypeak);
+    
+    
+}
 //=========================================================================
 // test threshold 
 //=========================================================================
