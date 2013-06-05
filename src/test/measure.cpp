@@ -7,7 +7,7 @@
 #define PI  3.14159265f
 #define N_MAX 10000
 
-const double tol = 0.1; /* tolerance value */
+const double tol = 0.001; /* tolerance value */
 const static float dt = 1/500.0; /* sampling interval */
 
 
@@ -41,7 +41,8 @@ void pass_test(double measurement, double expected, double tolerance){
 // The maximal slope of rise correspond to the point where cosine is one 
 // (at 0, 2*PI) and the max slope of decay where the cosine is minus one
 // (at PI, 3*PI). Finally, the 20-80% rise-time should be 0.7, which
-// is the result of calculating arcsin(0.8)-arcsin(0.2)
+// is the result of calculating arcsin(0.8)-arcsin(0.2) and the half-with
+// is two times the value of arcsin(1)-arcsin(0.5) 
 //
 // <length> length of the wave in sampling points (e.g long(2*PI))
 //=========================================================================
