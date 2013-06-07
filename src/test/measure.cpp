@@ -7,9 +7,9 @@
 #include <boost/random/normal_distribution.hpp>
 
 #define PI  3.14159265f
-#define N_MAX 1000
+#define N_MAX 10000
 
-const double tol = 0.1; /* tolerance value */
+const double tol = 0.01; /* tolerance value */
 const static float dt = 1/500.0; /* sampling interval */
 
 
@@ -90,6 +90,16 @@ std::vector<double> expwave(long length){
     return mydata;
 }
 
+std::vector<double> expwave(double tau, long length){
+    
+    std::vector<double> mydata(length);
+
+    for(std::vector<int>::size_type x=0; x != mydata.size() ; ++x){
+        mydata[x] = exp( x*dt/tau ); /* see sampling interval */
+    }
+
+    return mydata;
+}
 //=========================================================================
 // A vector with random numbers between 0 and 1
 //=========================================================================
@@ -297,7 +307,7 @@ TEST(measlib_test, threshold){
         long(1/dt)-1, slope*dt, thrT, windowLength);
 
     /* the threshold should be exactly the slope value */
-    EXPECT_NEAR(threshold, slope, fabs(slope*tol)); 
+    EXPECT_NEAR(threshold*1, slope, fabs(slope*tol)); 
 
     /* exp(t) should give the slope value */
     EXPECT_NEAR(std::exp(thrT*dt), slope, fabs(slope*tol)); 
@@ -607,7 +617,9 @@ TEST(measlib_test, maxdecay_values){
 //=========================================================================
 TEST(measlib_validation, baseline) {
     double var;
+    double tol = 0.1; /* for this case only, to account for the variance */
 
+    /* measurement results for base */
     std::vector<double> mybase(N_MAX);
     /* random values from a normal dist. */
     std::vector<double> myrand = norm(0, 1); 
@@ -618,7 +630,8 @@ TEST(measlib_validation, baseline) {
         double stddev = fabs(myrand[i]*2.5);
         /* the dataset is a normal distribution */
         std::vector<double> mytrace = norm(mean, stddev);
-        mybase[i] = stf::base(var, mytrace, 0, N_MAX-1);
+        /* calculate base between start and end */
+        mybase[i] = stf::base(var, mytrace, 0, mytrace.size()-1);
         EXPECT_NEAR(mybase[i], myrand[i], fabs(myrand[i]*tol));
         EXPECT_NEAR(std::sqrt(var),stddev, stddev*tol );
     }
@@ -632,6 +645,7 @@ TEST(measlib_validation, baseline) {
 TEST(measlib_validation, peak) {
     double maxT;
 
+    /* measurement results for peak */
     std::vector<double> mypeak(N_MAX);
     /* random values from a normal dist. */
     std::vector<double> myrand = norm(10, 1); 
@@ -640,8 +654,9 @@ TEST(measlib_validation, peak) {
     /* we check the measurement N_MAX times */
     for (int i=0; i<N_MAX; i++){
         double peak = myrand[i];
-        /* the dataset is a sine wave of size N_MAX */
+        /* the dataset is a sine wave with random amplitude */
         std::vector<double> mytrace = sinwave(peak, 9.5,  long(9.5/dt));
+        /* calculate peak between start and end */
         mypeak[i] = stf::peak(mytrace, 0.0, 0, mytrace.size()-1,
             1, stf::up, maxT);
         EXPECT_NEAR(mypeak[i], myrand[i], fabs(myrand[i]*tol));
@@ -657,25 +672,123 @@ TEST(measlib_validation, risetime) {
     std::size_t t20, t80;
     double t20Real;
 
+    /* measurement results for risetime */
     std::vector<double> myrisetime(N_MAX);
     /* N_MAX random values from a normal dist. */
-    std::vector<double> myrand = norm(10, 1); 
+    std::vector<double> myrand = norm(20., 2.); 
 
     /* we check the measurement N_MAX times */
     for (int i=0; i<N_MAX; i++){
         double lambda = myrand[i];
-        /* the dataset is a sine wave of size N_MAX */
+        /* the dataset is a sine wave with random wavelength */
         std::vector<double> mytrace = sinwave(1.0, lambda, long(lambda/dt));
+        /* calculate risetime between start and peak (lambda/4) */
         myrisetime[i] = stf::risetime(mytrace, 0.0, 1.0, 1, 
             long((lambda/4)/dt), 0.2, t20, t80, t20Real);
         double l = 2*PI/lambda;
         double risetime_xpted = (std::asin(.8)-std::asin(.2))/l;
         EXPECT_NEAR(myrisetime[i]*dt, risetime_xpted, 
             fabs(risetime_xpted*tol));
-        //save_txt("risewave.val", mytrace);
+        myrisetime[i] *=dt; /* to save real values in a file */
     }
 
     save_txt("risetime.val", myrisetime);
 }
 
 
+//=========================================================================
+// test half_t N_MAX random traces
+//=========================================================================
+TEST(measlib_validation, half_duration) {
+    std::size_t t50LeftId, t50RigthId;
+    double t50Real;
+
+    /* measurement results for risetime */
+    std::vector<double> myhalf_width(N_MAX);
+    /* N_MAX random values from a normal dist. */
+    std::vector<double> myrand = norm(20., 2.); 
+
+    /* we check the measurement N_MAX times */
+    for (int i=0; i<N_MAX; i++){
+        double lambda = myrand[i];
+        /* the dataset is a sine wave with random wavelength */
+        std::vector<double> mytrace = sinwave(1.0, lambda, long(lambda/dt));
+        /* calculate half width starting form start and entering peak (lambda/4) */
+        myhalf_width[i] = stf::t_half(mytrace, 0.0, 1.0, 1, 
+            long(lambda/dt), long((lambda/4)/dt), t50LeftId, t50RigthId, t50Real);
+        double l = 2*PI/lambda;
+        double half_width_xpted = 2*(std::asin(1.)-std::asin(.5))/l;
+        EXPECT_NEAR(myhalf_width[i]*dt, half_width_xpted, 
+            fabs(half_width_xpted*tol));
+    }
+
+    save_txt("half_width.val", myhalf_width);
+}
+
+//=========================================================================
+// test slope_rise N_MAX random traces
+//=========================================================================
+TEST(measlib_validation, maxrise) {
+    double maxRiseT, maxRiseY;
+
+    /* measurement results for maxrise */
+    std::vector<double> mymaxrise(N_MAX);
+    /* N_MAX random values from a normal dist. */
+    std::vector<double> myrand = norm(10., 2.); 
+
+    /* we check measurements N_MAX times */
+    for (int i=0; i<N_MAX; i++){
+        double lambda = myrand[i];
+        /* the dataset is a sine wave with random wavelength */
+        std::vector<double> mytrace = sinwave(1.0, lambda, long(2*lambda/dt));
+        /* calculate half width cursors .25 around lambda */
+        mymaxrise[i] = stf::maxRise(mytrace, long(0.75*lambda/dt), 
+            long(1.25*lambda/dt), maxRiseT, maxRiseY, 1);
+        double maxRiseT_xpted = lambda;
+        EXPECT_NEAR(maxRiseT*dt, maxRiseT_xpted, 
+            fabs(maxRiseT_xpted*tol));
+        mymaxrise[i] *=dt; /* to save reeal values in a file */
+    }
+
+    save_txt("max_rise.val", mymaxrise);
+}
+
+//=========================================================================
+// test threshold N_MAX random traces
+//=========================================================================
+TEST(measlib_validation, threshold) {
+    double thrT;
+    
+    /* measurements results for threshold */
+    std::vector<double> mythreshold(N_MAX);
+
+    /* N_MAX random values from a normal dist. */
+    std::vector<double> myrand = norm(10., 2.); 
+
+    /* fix a slope and to look for it in different traces */
+    /* this could  be any value between 1 and e (2.718281...) */
+    const double myslope = 2.0;
+    double tau = 10.0;/*random */
+
+    /* we check measurements N_MAX times */
+    for (int i=0; i<N_MAX; i++){
+        double tau = myrand[i];
+        /* the dataset is an exponential with random tau */
+        std::vector<double> mytrace = expwave(tau, 5*long(tau/dt));
+        /* calculate thresholds */
+        mythreshold[i] = stf::threshold(mytrace, 1, mytrace.size()-1,
+            myslope*dt, thrT, 1);
+        
+        /* Threshold is the slope value times tau */
+        double thr_xpted = myslope*tau; 
+        EXPECT_NEAR(mythreshold[i], thr_xpted, fabs(thr_xpted*tol)); 
+        /* sanity check */
+        /* The differential of the exponential function is e^(x/tau)/tau
+        at x=thrT should give us the slope that we used as threshold */
+        double slope_xpted = std::exp(thrT*dt/tau)/tau;
+    }
+
+    save_txt("threshold.val", mythreshold);
+    
+
+}
