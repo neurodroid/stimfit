@@ -657,32 +657,25 @@ TEST(measlib_validation, risetime) {
     std::size_t t20, t80;
     double t20Real;
 
-    //std::vector<double> myrisetime(N_MAX);
-    /* random values from a normal dist. */
-    //std::vector<double> myrand = norm(10, 1); 
-    std::vector<double> mytrace = sinwave(1.0, 9.5, long(9.5*4/dt));
-    double mrisetime = stf::risetime(mytrace, 0.0, 1.0, 1, 
-            mytrace.size()-1, 0.2, t20, t80, t20Real);
-    std::cout << "RISE-TIME = " << mrisetime << std::endl;
-    std::cout << "T20 =" << t20Real << std::endl;
-    std::cout << "T20 =" << t20 << std::endl;
-    std::cout << "T80 =" << t80 << std::endl;
-    save_txt("sine_wave.val", mytrace);
-    /*
+    std::vector<double> myrisetime(N_MAX);
+    /* N_MAX random values from a normal dist. */
+    std::vector<double> myrand = norm(10, 1); 
+
+    /* we check the measurement N_MAX times */
     for (int i=0; i<N_MAX; i++){
         double lambda = myrand[i];
+        /* the dataset is a sine wave of size N_MAX */
         std::vector<double> mytrace = sinwave(1.0, lambda, long(lambda/dt));
         myrisetime[i] = stf::risetime(mytrace, 0.0, 1.0, 1, 
-            mytrace.size()-1, 0.2, t20, t80, t20Real);
-        //double l = 2*PI/lambda;
-        //double risetime_xpted = (std::asin(.8)-std::asin(.2))/l;
-        //EXPECT_NEAR(myrisetime[i]*dt, risetime_xpted, 
-        //    fabs(risetime_xpted*tol));
-        save_txt("risewave.val", mytrace);
+            long((lambda/4)/dt), 0.2, t20, t80, t20Real);
+        double l = 2*PI/lambda;
+        double risetime_xpted = (std::asin(.8)-std::asin(.2))/l;
+        EXPECT_NEAR(myrisetime[i]*dt, risetime_xpted, 
+            fabs(risetime_xpted*tol));
+        //save_txt("risewave.val", mytrace);
     }
-    */
 
-    //save_txt("risetime.val", myrisetime);
+    save_txt("risetime.val", myrisetime);
 }
 
 
