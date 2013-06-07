@@ -3,11 +3,13 @@
 #include <gtest/gtest.h>
 #include <cmath>
 #include <fstream>
+#include <boost/random.hpp>
+#include <boost/random/normal_distribution.hpp>
 
 #define PI  3.14159265f
-#define N_MAX 10000
+#define N_MAX 1000
 
-const double tol = 0.001; /* tolerance value */
+const double tol = 0.1; /* tolerance value */
 const static float dt = 1/500.0; /* sampling interval */
 
 
@@ -59,11 +61,11 @@ std::vector<double> sinwave(long length){
 //=========================================================================
 // sine wave as function of amplitude and lambda
 //=========================================================================
-std::vector<double> sinwave(double amp, long length){
+std::vector<double> sinwave(double amp, double lambda, long length){
     std::vector<double> mydata(length);
 
     for(std::vector<int>::size_type x=0; x != mydata.size() ; ++x){
-        mydata[x] = amp*sin( x*dt ); /* see sampling interval */
+        mydata[x] = amp*sin( 2*PI*x*dt/lambda ); /* see sampling interval */
     }
 
     return mydata;
@@ -105,6 +107,27 @@ std::vector<double> rand(long size){
 }
 
 //=========================================================================
+// A vector of size N_MAX with random numbers from a normal distribution
+//=========================================================================
+std::vector<double> norm(double mean, double stddev){
+
+
+    boost::mt19937 rng; /* seed? */
+    boost::normal_distribution<> norm(mean, stddev);
+    boost::variate_generator<boost::mt19937&,
+        boost::normal_distribution<> > rand_val(rng, norm);
+    
+    std::vector<double> myrand(N_MAX);
+
+    for (int i=0; i<N_MAX; ++i){
+        myrand[i] = rand_val();
+    }
+
+    return myrand;
+    
+}
+
+//=========================================================================
 // test baseline random 
 //=========================================================================
 TEST(measlib_test, baseline_random) {
@@ -120,8 +143,9 @@ TEST(measlib_test, baseline_random) {
         EXPECT_NEAR(var, 1/12., (1/12.)*0.1); /* expected var = 1/12 */
     }
 
-    save_txt("base.out", mybase);
+    //save_txt("base.out", mybase);
 }
+
 //=========================================================================
 // test baseline (base)
 //=========================================================================
@@ -244,9 +268,9 @@ TEST(measlib_test, peak_random) {
     std::vector<double> mypeak(N_MAX);
     std::vector<double> myrand = rand(N_MAX);
 
-    for (int i=0; i<N_MAX; i++){
-        /* A*sin(x) */
-        std::vector<double> mywave = sinwave(myrand[i], long(2*PI/dt) ); 
+    for (int i=0; i<10; i++){
+        /* A*sin(2*PI*x/lambda) */
+        std::vector<double> mywave = sinwave(myrand[i], long(2*PI),long(2*PI/dt) ); 
         mypeak[i] = stf::peak(mywave, 0.0, 0, long(2*PI/dt)-1,
             1, stf::up, maxT);
         EXPECT_NEAR(mypeak[i], myrand[i], fabs(myrand[i]*tol));
@@ -576,41 +600,89 @@ TEST(measlib_test, maxdecay_values){
 
 }
 
-/*
-TEST(measlib_test, checks) {
-    std::vector<double> data(32768);
-    double var = 0;
-    EXPECT_EQ(stf::base(var, data, 0, data.size()-1), 0);
-    EXPECT_EQ(var, 0);
-    EXPECT_THROW(stf::base(var, data, 0, data.size()), std::out_of_range);
 
-    data[16385] = 1.0;
-    double maxT;
-    double peak = stf::peak(data, 0.0, 0, data.size()-1, 1, stf::both, maxT);
-    EXPECT_EQ(peak, 1.0);
-    EXPECT_EQ(maxT, 16385);
-    EXPECT_THROW(stf::peak(data, 0.0, 0, data.size(), 1, stf::both, maxT), std::out_of_range);
 
-    double maxRiseT, maxRiseY;
-    long windowLength = 1; // number of sampling points to calculate slopes
-    double maxrise = stf::maxRise(data, 0, data.size()-1, maxRiseT, maxRiseY, windowLength);
-    EXPECT_EQ(maxrise, 1.0);
-    EXPECT_EQ(maxRiseT, 16385.5);
-    EXPECT_EQ(maxRiseY, 0.5);
-    EXPECT_THROW(stf::maxRise(data, 0, data.size(), maxRiseT, maxRiseY, windowLength),
-                 std::out_of_range);
-    EXPECT_THROW(stf::maxRise(data, data.size(), data.size()-1, maxRiseT, maxRiseY, windowLength),
-                 std::out_of_range);
+//=========================================================================
+// test baseline N_MAX random traces
+//=========================================================================
+TEST(measlib_validation, baseline) {
+    double var;
 
-    double maxDecayT, maxDecayY;
-    double maxdecay = stf::maxDecay(data, 0, data.size()-1, maxDecayT, maxDecayY, windowLength);
-    EXPECT_EQ(maxdecay, 1.0);
-    EXPECT_EQ(maxDecayT, 16384.5);
-    EXPECT_EQ(maxDecayY, 0.5);
-    EXPECT_THROW(stf::maxDecay(data, 0, data.size(), maxDecayT, maxDecayY, windowLength),
-                 std::out_of_range);
-    EXPECT_THROW(stf::maxDecay(data, data.size(), data.size()-1, maxDecayT, maxDecayY, windowLength),
-                 std::out_of_range);
+    std::vector<double> mybase(N_MAX);
+    /* random values from a normal dist. */
+    std::vector<double> myrand = norm(0, 1); 
 
+    /* we check the measurement N_MAX times */
+    for (int i=0; i<N_MAX; i++){
+        double mean = myrand[i];
+        double stddev = fabs(myrand[i]*2.5);
+        /* the dataset is a normal distribution */
+        std::vector<double> mytrace = norm(mean, stddev);
+        mybase[i] = stf::base(var, mytrace, 0, N_MAX-1);
+        EXPECT_NEAR(mybase[i], myrand[i], fabs(myrand[i]*tol));
+        EXPECT_NEAR(std::sqrt(var),stddev, stddev*tol );
+    }
+
+    save_txt("base.val", mybase);
 }
-*/
+
+//=========================================================================
+// test peak N_MAX random traces
+//=========================================================================
+TEST(measlib_validation, peak) {
+    double maxT;
+
+    std::vector<double> mypeak(N_MAX);
+    /* random values from a normal dist. */
+    std::vector<double> myrand = norm(10, 1); 
+
+
+    /* we check the measurement N_MAX times */
+    for (int i=0; i<N_MAX; i++){
+        double peak = myrand[i];
+        /* the dataset is a sine wave of size N_MAX */
+        std::vector<double> mytrace = sinwave(peak, 9.5,  long(9.5/dt));
+        mypeak[i] = stf::peak(mytrace, 0.0, 0, mytrace.size()-1,
+            1, stf::up, maxT);
+        EXPECT_NEAR(mypeak[i], myrand[i], fabs(myrand[i]*tol));
+    }
+
+    save_txt("peak.val", mypeak);
+}
+
+//=========================================================================
+// test risetime N_MAX random traces
+//=========================================================================
+TEST(measlib_validation, risetime) {
+    std::size_t t20, t80;
+    double t20Real;
+
+    //std::vector<double> myrisetime(N_MAX);
+    /* random values from a normal dist. */
+    //std::vector<double> myrand = norm(10, 1); 
+    std::vector<double> mytrace = sinwave(1.0, 9.5, long(9.5*4/dt));
+    double mrisetime = stf::risetime(mytrace, 0.0, 1.0, 1, 
+            mytrace.size()-1, 0.2, t20, t80, t20Real);
+    std::cout << "RISE-TIME = " << mrisetime << std::endl;
+    std::cout << "T20 =" << t20Real << std::endl;
+    std::cout << "T20 =" << t20 << std::endl;
+    std::cout << "T80 =" << t80 << std::endl;
+    save_txt("sine_wave.val", mytrace);
+    /*
+    for (int i=0; i<N_MAX; i++){
+        double lambda = myrand[i];
+        std::vector<double> mytrace = sinwave(1.0, lambda, long(lambda/dt));
+        myrisetime[i] = stf::risetime(mytrace, 0.0, 1.0, 1, 
+            mytrace.size()-1, 0.2, t20, t80, t20Real);
+        //double l = 2*PI/lambda;
+        //double risetime_xpted = (std::asin(.8)-std::asin(.2))/l;
+        //EXPECT_NEAR(myrisetime[i]*dt, risetime_xpted, 
+        //    fabs(risetime_xpted*tol));
+        save_txt("risewave.val", mytrace);
+    }
+    */
+
+    //save_txt("risetime.val", myrisetime);
+}
+
+
