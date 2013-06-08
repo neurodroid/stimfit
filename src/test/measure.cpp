@@ -291,7 +291,7 @@ TEST(measlib_test, peak_random) {
         EXPECT_NEAR(mypeak[i], myrand[i], fabs(myrand[i]*tol));
     }
 
-    save_txt("peaks.out", mypeak);
+    //save_txt("peaks.out", mypeak);
     
     
 }
@@ -641,7 +641,7 @@ TEST(measlib_validation, baseline) {
         EXPECT_NEAR(std::sqrt(var),stddev, stddev*tol );
     }
 
-    save_txt("base.val", mybase);
+    save_txt("/tmp/base.val", mybase);
 }
 
 //=========================================================================
@@ -667,7 +667,7 @@ TEST(measlib_validation, peak) {
         EXPECT_NEAR(mypeak[i], myrand[i], fabs(myrand[i]*tol));
     }
 
-    save_txt("peak.val", mypeak);
+    save_txt("/tmp/peak.val", mypeak);
 }
 
 //=========================================================================
@@ -697,7 +697,7 @@ TEST(measlib_validation, risetime) {
         myrisetime[i] *=dt; /* to save real values in a file */
     }
 
-    save_txt("risetime.val", myrisetime);
+    save_txt("/tmp/risetime.val", myrisetime);
 }
 
 
@@ -727,7 +727,7 @@ TEST(measlib_validation, half_duration) {
             fabs(half_width_xpted*tol));
     }
 
-    save_txt("half_width.val", myhalf_width);
+    save_txt("/tmp/half_width.val", myhalf_width);
 }
 
 //=========================================================================
@@ -755,7 +755,7 @@ TEST(measlib_validation, maxrise) {
         mymaxrise[i] *=dt; /* to save reeal values in a file */
     }
 
-    save_txt("max_rise.val", mymaxrise);
+    save_txt("/tmp/max_rise.val", mymaxrise);
 }
 
 //=========================================================================
@@ -794,7 +794,7 @@ TEST(measlib_validation, threshold) {
         EXPECT_NEAR(myslope, slope_xpted, fabs(slope_xpted*tol)); 
     }
 
-    save_txt("threshold.val", mythreshold);
+    save_txt("/tmp/threshold.val", mythreshold);
     
 
 }
