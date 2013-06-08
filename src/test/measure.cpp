@@ -15,7 +15,7 @@ the tolerance can be, for that reason we these values
 must change accordingly */
 //const double tol = 0.01; /* tolerance value */
 const static float dt = 1/500.0; /* sampling interval */
-const double tol = 2*dt; /* 2 sampling intervals */
+const double tol = 2*dt; /* around 2 sampling intervals */
 
 
 void save_txt(const char *fname, Vector_double &mydata){
@@ -791,6 +791,7 @@ TEST(measlib_validation, threshold) {
         /* The differential of the exponential function is e^(x/tau)/tau
         at x=thrT should give us the slope that we used as threshold */
         double slope_xpted = std::exp(thrT*dt/tau)/tau;
+        EXPECT_NEAR(myslope, slope_xpted, fabs(slope_xpted*tol)); 
     }
 
     save_txt("threshold.val", mythreshold);
