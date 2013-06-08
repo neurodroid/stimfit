@@ -11,7 +11,7 @@
 
 /* limit tolerance value to sampling interval since they are
 related. The higher the sampling interval the lower
-the tolerance can be, for that reason we these values 
+the tolerance can be, for that reason these values 
 must change accordingly */
 //const double tol = 0.01; /* tolerance value */
 const static float dt = 1/500.0; /* sampling interval */
