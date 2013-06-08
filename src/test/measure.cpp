@@ -9,8 +9,13 @@
 #define PI  3.14159265f
 #define N_MAX 10000
 
-const double tol = 0.01; /* tolerance value */
+/* limit tolerance value to sampling interval since they are
+related. The higher the sampling interval the lower
+the tolerance can be, for that reason we these values 
+must change accordingly */
+//const double tol = 0.01; /* tolerance value */
 const static float dt = 1/500.0; /* sampling interval */
+const double tol = 2*dt; /* 2 sampling intervals */
 
 
 void save_txt(const char *fname, Vector_double &mydata){
