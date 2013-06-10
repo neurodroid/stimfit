@@ -725,6 +725,7 @@ TEST(measlib_validation, half_duration) {
         double half_width_xpted = 2*(std::asin(1.)-std::asin(.5))/l;
         EXPECT_NEAR(myhalf_width[i]*dt, half_width_xpted, 
             fabs(half_width_xpted*tol));
+        myhalf_width[i] *=dt; /* to save real values in a file */
     }
 
     save_txt("half_width.val", myhalf_width);
