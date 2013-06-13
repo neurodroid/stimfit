@@ -116,6 +116,25 @@ Vector_double fHH(const Vector_double &param){
     return mydata;
 }
 
+//=========================================================================
+// Sum of gaussian functions of the form
+// f(x, a, b, c) = a*exp((x-b)^2/2*c^2)
+// corresponding to the fitting function 11 of Stimfit
+// param in an array of parameters, where
+// param[0] is the heigth of the Gaussian function (a)
+// param[1] is the position of the peak (b)
+// param[2] is the width of the gaussian (c)
+//=========================================================================
+Vector_double fgauss(const Vector_double &param){
+
+    Vector_double mydata (int(tmax/dt));
+    
+    for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
+        mydata[n] = stf::fgauss(n*dt, param);
+    }
+    
+    return mydata;
+}
 //#if 0
 void savetxt(Vector_double &mydata){
 

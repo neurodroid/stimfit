@@ -7,7 +7,7 @@
 #include <boost/random/normal_distribution.hpp>
 
 #define PI  3.14159265f
-#define N_MAX 10000
+#define N_MAX 1000
 
 /* limit tolerance value to sampling interval since they are
 related. The higher the sampling interval the lower
@@ -641,7 +641,7 @@ TEST(measlib_validation, baseline) {
         EXPECT_NEAR(std::sqrt(var),stddev, stddev*tol );
     }
 
-    save_txt("base.val", mybase);
+    save_txt("/tmp/base.val", mybase);
 }
 
 //=========================================================================
@@ -667,7 +667,7 @@ TEST(measlib_validation, peak) {
         EXPECT_NEAR(mypeak[i], myrand[i], fabs(myrand[i]*tol));
     }
 
-    save_txt("peak.val", mypeak);
+    save_txt("/tmp/peak.val", mypeak);
 }
 
 //=========================================================================
@@ -697,7 +697,7 @@ TEST(measlib_validation, risetime) {
         myrisetime[i] *=dt; /* to save real values in a file */
     }
 
-    save_txt("risetime.val", myrisetime);
+    save_txt("/tmp/risetime.val", myrisetime);
 }
 
 
@@ -728,7 +728,7 @@ TEST(measlib_validation, half_duration) {
         myhalf_width[i] *=dt; /* to save real values in a file */
     }
 
-    save_txt("half_width.val", myhalf_width);
+    save_txt("/tmp/half_width.val", myhalf_width);
 }
 
 //=========================================================================
@@ -748,17 +748,46 @@ TEST(measlib_validation, maxrise) {
         /* the dataset is a sine wave with random wavelength */
         std::vector<double> mytrace = sinwave(1.0, lambda, long(2*lambda/dt));
         /* calculate half width cursors .25 around lambda */
-        mymaxrise[i] = stf::maxRise(mytrace, long(0.75*lambda/dt), 
+        /* locate the first cursor later that 1st peak (lambda/4) to avoid 
+        that this value becomes the max of the rise */
+        mymaxrise[i] = stf::maxRise(mytrace, long(0.25*lambda/dt)+1, 
             long(1.25*lambda/dt), maxRiseT, maxRiseY, 1);
         double maxRiseT_xpted = lambda;
         EXPECT_NEAR(maxRiseT*dt, maxRiseT_xpted, 
             fabs(maxRiseT_xpted*tol));
-        mymaxrise[i] *=dt; /* to save reeal values in a file */
+        mymaxrise[i] *=dt; /* to save real values in a file */
     }
 
-    save_txt("max_rise.val", mymaxrise);
+    save_txt("/tmp/max_rise.val", mymaxrise);
 }
 
+//=========================================================================
+// test slope_rise N_MAX random traces
+//=========================================================================
+//TEST(measlib_validation, maxdecay) {
+//    double maxDecayT, maxDecayY;
+
+ //   /* measurement results for maxrise */
+ //   std::vector<double> mymaxdecay(N_MAX);
+ //   /* N_MAX random values from a normal dist. */
+ //   std::vector<double> myrand = norm(10., 2.); 
+
+    /* we check measurements N_MAX times */
+  //  for (int i=0; i<N_MAX; i++){
+   //     double lambda = myrand[i];
+        /* the dataset is a sine wave with random wavelength */
+    //    std::vector<double> mytrace = sinwave(1.0, lambda, long(2*lambda/dt));
+        /* calculate half width cursors .25 around lambda */
+    //    mymaxdecay[i] = stf::maxRise(mytrace, long(0.75*lambda/dt), 
+     //       long(1.25*lambda/dt), maxDecayT, maxDecayY, 1);
+      //  double maxRiseT_xpted = lambda;
+       // EXPECT_NEAR(maxRiseT*dt, maxRiseT_xpted, 
+        //    fabs(maxRiseT_xpted*tol));
+       // mymaxrise[i] *=dt; /* to save real values in a file */
+  //  }
+
+   // save_txt("max_decay.val", mymaxrise);
+//}
 //=========================================================================
 // test threshold N_MAX random traces
 //=========================================================================
@@ -795,7 +824,7 @@ TEST(measlib_validation, threshold) {
         EXPECT_NEAR(myslope, slope_xpted, fabs(slope_xpted*tol)); 
     }
 
-    save_txt("threshold.val", mythreshold);
+    save_txt("/tmp/threshold.val", mythreshold);
     
 
 }
