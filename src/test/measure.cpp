@@ -7,15 +7,14 @@
 #include <boost/random/normal_distribution.hpp>
 
 #define PI  3.14159265f
-#define N_MAX 1000
+#define N_MAX 10000
 
 /* limit tolerance value to sampling interval since they are
 related. The higher the sampling interval the lower
 the tolerance can be, for that reason these values 
 must change accordingly */
-//const double tol = 0.01; /* tolerance value */
-const static float dt = 1/500.0; /* sampling interval */
-const double tol = 2*dt; /* around 2 sampling intervals */
+const static double dt = 1/100.0; /* sampling interval */
+const static double tol = dt; /* 1 sampling interval */
 
 
 void save_txt(const char *fname, Vector_double &mydata){
@@ -523,7 +522,7 @@ TEST(measlib_test, maxrise_values) {
     
     /* check max rise from peak to peak */
     int windowLength = 1;
-    double maxrise = stf::maxRise(mywave, long((PI/2)/dt), 
+    stf::maxRise(mywave, long((PI/2)/dt), 
         long((5*PI/2)/dt)-1, maxRiseT, maxRiseY, windowLength);
 
     /* Max slope of rise should be in 2*PI and give value 0 */
@@ -605,7 +604,7 @@ TEST(measlib_test, maxdecay_values){
     int windowLength = 1; 
     /* compute max slope of decay between 0 and 3*PI/2 */
     long endCursor = (3*PI/2)/dt ;
-    double maxdecay = stf::maxDecay(mywave, 1, endCursor, \
+    stf::maxDecay(mywave, 1, endCursor, \
         maxDecayT, maxDecayY, windowLength);
 
     /* Max slope of decay should be in PI and give value 0 */
@@ -631,7 +630,7 @@ TEST(measlib_validation, baseline) {
 
     /* we check the measurement N_MAX times */
     for (int i=0; i<N_MAX; i++){
-        double mean = myrand[i];
+        double mean = myrand[i]; /* random mean values */
         double stddev = fabs(myrand[i]*2.5);
         /* the dataset is a normal distribution */
         std::vector<double> mytrace = norm(mean, stddev);
@@ -746,15 +745,15 @@ TEST(measlib_validation, maxrise) {
     for (int i=0; i<N_MAX; i++){
         double lambda = myrand[i];
         /* the dataset is a sine wave with random wavelength */
-        std::vector<double> mytrace = sinwave(1.0, lambda, long(2*lambda/dt));
-        /* calculate half width cursors .25 around lambda */
-        /* locate the first cursor later that 1st peak (lambda/4) to avoid 
-        that this value becomes the max of the rise */
-        mymaxrise[i] = stf::maxRise(mytrace, long(0.25*lambda/dt)+1, 
-            long(1.25*lambda/dt), maxRiseT, maxRiseY, 1);
+        std::vector<double> mytrace = 
+            sinwave(1.0, lambda, long(1.25*lambda/dt));
+        /* calculate maxrise in the second sine peak */
+        /* locate the first cursor later that 1st peak at ~(lambda/4) 
+            to avoid that this value becomes the max of the rise */
+            mymaxrise[i] = stf::maxRise(mytrace, long(0.75*lambda/dt)+1, 
+                mytrace.size()-1, maxRiseT, maxRiseY, 1);
         double maxRiseT_xpted = lambda;
-        EXPECT_NEAR(maxRiseT*dt, maxRiseT_xpted, 
-            fabs(maxRiseT_xpted*tol));
+        EXPECT_NEAR(maxRiseT*dt, maxRiseT_xpted, fabs(maxRiseT_xpted*tol));
         mymaxrise[i] *=dt; /* to save real values in a file */
     }
 
@@ -764,30 +763,28 @@ TEST(measlib_validation, maxrise) {
 //=========================================================================
 // test slope_rise N_MAX random traces
 //=========================================================================
-//TEST(measlib_validation, maxdecay) {
-//    double maxDecayT, maxDecayY;
+TEST(measlib_validation, maxdecay) {
+    double maxDecayT, maxDecayY;
 
- //   /* measurement results for maxrise */
- //   std::vector<double> mymaxdecay(N_MAX);
- //   /* N_MAX random values from a normal dist. */
- //   std::vector<double> myrand = norm(10., 2.); 
-
+    /* measurement results for maxrise */
+    std::vector<double> mymaxdecay(N_MAX);
+    /* N_MAX random values from a normal dist. */
+    std::vector<double> myrand = norm(10., 2.); 
+    
     /* we check measurements N_MAX times */
-  //  for (int i=0; i<N_MAX; i++){
-   //     double lambda = myrand[i];
+    for (int i=0; i<N_MAX; i++){
+        double lambda = myrand[i];
         /* the dataset is a sine wave with random wavelength */
-    //    std::vector<double> mytrace = sinwave(1.0, lambda, long(2*lambda/dt));
-        /* calculate half width cursors .25 around lambda */
-    //    mymaxdecay[i] = stf::maxRise(mytrace, long(0.75*lambda/dt), 
-     //       long(1.25*lambda/dt), maxDecayT, maxDecayY, 1);
-      //  double maxRiseT_xpted = lambda;
-       // EXPECT_NEAR(maxRiseT*dt, maxRiseT_xpted, 
-        //    fabs(maxRiseT_xpted*tol));
-       // mymaxrise[i] *=dt; /* to save real values in a file */
-  //  }
+        std::vector<double> mytrace = sinwave(1.0, lambda, long(lambda/dt));
+        mymaxdecay[i] = stf::maxDecay(mytrace, 1, long(0.75*lambda/dt),
+            maxDecayT, maxDecayY, 1);
+        double maxDecayT_xpted = lambda/2.0;
+        EXPECT_NEAR(maxDecayT*dt, maxDecayT_xpted, fabs(maxDecayT_xpted*tol));
+        mymaxdecay[i] *=dt; /* to save real values in a file */
+    }
 
-   // save_txt("max_decay.val", mymaxrise);
-//}
+        save_txt("/tmp/max_decay.val", mymaxdecay);
+}
 //=========================================================================
 // test threshold N_MAX random traces
 //=========================================================================
@@ -803,7 +800,6 @@ TEST(measlib_validation, threshold) {
     /* fix a slope and to look for it in different traces */
     /* this could  be any value between 1 and e (2.718281...) */
     const double myslope = 2.0;
-    double tau = 10.0;/*random */
 
     /* we check measurements N_MAX times */
     for (int i=0; i<N_MAX; i++){
