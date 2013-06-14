@@ -120,6 +120,22 @@ std::vector<double> rand(long size){
     
 }
 
+
+//=========================================================================
+// A vector with an uniform distribution between 0 and value 
+//=========================================================================
+std::vector<double> uniform(double value, long size){
+    /* seed the random number generator */
+    int seed = time(NULL);
+    srand(seed);
+
+    std::vector<double> myrand(size);
+    for (int i=0; i<size;i++){
+        myrand[i] = value * (double) rand()/(double) RAND_MAX;
+    }
+    return myrand;
+    
+}
 //=========================================================================
 // A vector of size N_MAX with random numbers from a normal distribution
 //=========================================================================
@@ -633,11 +649,15 @@ TEST(measlib_validation, baseline) {
         double mean = myrand[i]; /* random mean values */
         double stddev = fabs(myrand[i]*2.5);
         /* the dataset is a normal distribution */
-        std::vector<double> mytrace = norm(mean, stddev);
+        //std::vector<double> mytrace = norm(mean, stddev);
+        std::vector<double> mytrace = uniform(mean, N_MAX);
         /* calculate base between start and end */
         mybase[i] = stf::base(var, mytrace, 0, mytrace.size()-1);
-        EXPECT_NEAR(mybase[i], myrand[i], fabs(myrand[i]*tol));
-        EXPECT_NEAR(std::sqrt(var),stddev, stddev*tol );
+        double mean_xpted = myrand[i]/2.0; /* 1/2*(a+b) */
+        EXPECT_NEAR(mybase[i], mean_xpted, fabs(mean_xpted*tol));
+        /* sanity check for variance */
+        double var_xpted = fabs(myrand[i]*myrand[i]/12.); /* 1/12*(a+b)^2 */
+        EXPECT_NEAR(var, var_xpted, var_xpted*tol );
     }
 
     save_txt("/tmp/base.val", mybase);
