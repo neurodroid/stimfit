@@ -522,7 +522,7 @@ TEST(measlib_test, maxrise_values) {
     
     /* check max rise from peak to peak */
     int windowLength = 1;
-    double maxrise = stf::maxRise(mywave, long((PI/2)/dt), 
+    stf::maxRise(mywave, long((PI/2)/dt), 
         long((5*PI/2)/dt)-1, maxRiseT, maxRiseY, windowLength);
 
     /* Max slope of rise should be in 2*PI and give value 0 */
@@ -604,7 +604,7 @@ TEST(measlib_test, maxdecay_values){
     int windowLength = 1; 
     /* compute max slope of decay between 0 and 3*PI/2 */
     long endCursor = (3*PI/2)/dt ;
-    double maxdecay = stf::maxDecay(mywave, 1, endCursor, \
+    stf::maxDecay(mywave, 1, endCursor, \
         maxDecayT, maxDecayY, windowLength);
 
     /* Max slope of decay should be in PI and give value 0 */
@@ -630,7 +630,7 @@ TEST(measlib_validation, baseline) {
 
     /* we check the measurement N_MAX times */
     for (int i=0; i<N_MAX; i++){
-        double mean = myrand[i];
+        double mean = myrand[i]; /* random mean values */
         double stddev = fabs(myrand[i]*2.5);
         /* the dataset is a normal distribution */
         std::vector<double> mytrace = norm(mean, stddev);
