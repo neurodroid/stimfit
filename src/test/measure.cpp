@@ -719,6 +719,36 @@ TEST(measlib_validation, risetime) {
     save_txt("/tmp/risetime.val", myrisetime);
 }
 
+//=========================================================================
+// test risetime 10-90 N_MAX random traces
+//=========================================================================
+TEST(measlib_validation, risetime1090) {
+    std::size_t t10, t90;
+    double t10Real;
+
+    /* measurement results for risetime */
+    std::vector<double> myrisetime(N_MAX);
+    /* N_MAX random values from a normal dist. */
+    std::vector<double> myrand = norm(20., 2.); 
+
+    /* we check the measurement N_MAX times */
+    for (int i=0; i<N_MAX; i++){
+        double lambda = myrand[i];
+        /* the dataset is a sine wave with random wavelength */
+        std::vector<double> mytrace = sinwave(1.0, lambda, long(lambda/dt));
+        /* calculate risetime between start and peak (lambda/4) */
+        myrisetime[i] = stf::risetime(mytrace, 0.0, 1.0, 1, 
+            long((lambda/4)/dt), 0.1, t10, t90, t10Real);
+        double l = 2*PI/lambda;
+        double risetime_xpted = (std::asin(.9)-std::asin(.1))/l;
+        EXPECT_NEAR(myrisetime[i]*dt, risetime_xpted, 
+            fabs(risetime_xpted*tol));
+        //myrisetime[i] *=dt; /* to save real values in a file */
+    }
+
+    //save_txt("/tmp/risetime.val", myrisetime);
+}
+
 
 //=========================================================================
 // test half_t N_MAX random traces
