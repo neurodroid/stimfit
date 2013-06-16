@@ -873,6 +873,7 @@ double get_risetime_factor( );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) set_risetime_factor;
+%feature("kwargs") set_risetime_factor;
 %feature("docstring", "Sets the lower proportion factor
 to calculate the rise time
 (e.g 0.2 if we want to calculate the 20--80% rise time. )
