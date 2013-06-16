@@ -96,6 +96,8 @@ double rthigh_index( bool active = true );
 double t50left_index( bool active = true );
 double t50right_index( bool active = true );
 
+double get_risetime_factor();
+bool set_risetime_factor(double factor);
 bool set_marker(double x, double y);
 bool erase_markers();
 

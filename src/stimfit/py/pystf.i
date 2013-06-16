@@ -854,12 +854,41 @@ double get_latency( );
 %feature("autodoc", 0) get_risetime;
 %feature("docstring", "Returns the rise time (in x-units)
 determined by the linear interpolation between sampling points
-at 20% and 80% of the peak amplitude. 
+(e.g at 20% and 80% of the peak amplitude. )
 Call measure() or hit enter to update the cursors.
 
 ") get_risetime;
 double get_risetime( );
 //--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) get_risetime_factor;
+%feature("docstring", "Returns the lower proportion time
+to calculate the rise time (in x-units)
+(e.g 0.2 if we calculate the 20--80% rise time. )
+
+") get_risetime_factor;
+double get_risetime_factor( );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) set_risetime_factor;
+%feature("docstring", "Sets the lower proportion time
+to calculate the rise time (in x-units)
+(e.g 0.2 if we want to calculate the 20--80% rise time. )
+This will NOT update the measurements. You have to either
+call measure() or hit enter in the main window to achieve that.
+
+Arguments:
+factor --  the low proportion to calculate rise time
+
+Returns:
+False upon failure (such as factor larger than 0.5 or lower
+than 0.05)
+") set_risetime_factor;
+bool set_risetime_factor(double factor);
+//--------------------------------------------------------------------
+
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_threshold_value;
 %feature("docstring", "Returns the value found at the threshold 

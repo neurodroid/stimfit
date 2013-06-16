@@ -741,6 +741,13 @@ double get_risetime( ) {
     
 }
 
+double get_risetime_factor() {
+
+    if ( !check_doc() ) return -1.0;
+    return actDoc()->GetRTFactor()/100.;
+    
+}
+
 double get_fit_start( bool is_time ) {
     if ( !check_doc() ) return -1;
 
@@ -749,7 +756,19 @@ double get_fit_start( bool is_time ) {
     else
         return (double)actDoc()->GetFitBeg() * actDoc()->GetXScale();
 }
+bool set_risetime_factor(double factor) {
 
+    if ( !check_doc() ) return false;
+    
+    if (factor > 0.45 || factor < 0.05) {
+        ShowError( wxT("Value out of range (0.05-0.45) in set_risetime_factor()") );
+        return false;
+    }
+    int RTFactor = (int)(factor*100);
+    actDoc()->SetRTFactor(RTFactor);
+    return true;
+        
+}
 bool set_fit_start( double pos, bool is_time ) {
     if ( !check_doc() ) return false;
 
