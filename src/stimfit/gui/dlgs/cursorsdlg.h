@@ -197,10 +197,21 @@ public:
 
     int GetPeakPoints() const;
 
+    //! Gets the lower factor (e.g 20) used to calculate the rise time.
+    /*! \return The lower value of the percentage (e.g 20) to calculate the rise time.
+     */
+
+    int GetRTFactor() const;
+
     //! Sets the number of points used for the binned average during peak detection.
     /*! \param peakPoints The number of points used for the binned average during peak detection.
      */
     void SetPeakPoints(int peakPoints);
+
+    //! Set the lower value (e.g 20) to compute the rise-time. The high value is simply 100-lower value.
+    /*! \param RTFactor is the lower value (e.g 20) .
+     */
+    void SetRTFactor(int RTFactor);
 
     //! Gets the distance to the first PSlope cursor in number of points.
     /*! \return The distance to the first PSlope cursor in number of points. 

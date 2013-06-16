@@ -766,6 +766,16 @@ int wxStfCursorsDlg::GetPeakPoints() const
     }
 }
 
+int wxStfCursorsDlg::GetRTFactor() const {
+    wxSlider *pRTSlider = (wxSlider*)FindWindow(wxRT_SLIDER); 
+    if (pRTSlider == NULL ) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg:GetRTFactor()"));
+        return -1;
+    }
+
+    return pRTSlider->GetValue();
+}
+
 #ifdef WITH_PSLOPE
 int wxStfCursorsDlg::GetDeltaT() const {
     return ReadDeltaT(wxTEXT_PSDELTAT);
@@ -865,6 +875,21 @@ bool wxStfCursorsDlg::GetFromBase() const {
      case 1: return false;
      default: return true;
     }
+}
+
+void wxStfCursorsDlg::SetRTFactor(int RTFactor) {
+    wxSlider *pRTSlider = (wxSlider*)FindWindow(wxRT_SLIDER); 
+    wxStaticText *pRTLabel = (wxStaticText*)FindWindow(wxRT_LABEL); 
+    if (pRTSlider == NULL || pRTLabel == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg:SetRTFactor()"));
+        return;
+    }
+
+    pRTSlider->SetValue(RTFactor);
+    wxString label(wxT("Rise time "));
+    label << pRTSlider->GetValue() << wxT("-");
+    label << 100-pRTSlider->GetValue() << wxT("\%");
+    pRTLabel->SetLabel(label);
 }
 
 void wxStfCursorsDlg::SetFromBase(bool fromBase) {
@@ -1612,6 +1637,8 @@ void wxStfCursorsDlg::UpdateCursors() {
         SetPeakPoints( actDoc->GetPM() );
         SetDirection( actDoc->GetDirection() );
         SetFromBase( actDoc->GetFromBase() );
+        // Update rise time factor
+        SetRTFactor( actDoc->GetRTFactor() );
         break;
 
     case stf::base_cursor: // Base

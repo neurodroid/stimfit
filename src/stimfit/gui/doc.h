@@ -100,6 +100,7 @@ private:
         rtLoHi, halfDuration, slopeRatio, t0Real;
     // cursor windows:
     int pM;  //peakMean, number of points used for averaging
+    int RTFactor; // Lower point for the rise-time calculation
 #ifdef WITH_PSLOPE
 #endif
 
@@ -531,6 +532,10 @@ public:
      */
     double GetSlopeRatio() const { return slopeRatio; }
 
+    //! Retrieves lower value (e.g 20) for the rise time calculation.
+    /*! \return lower value (e.g 20) for rise time calculation.
+     */
+    int GetRTFactor() const { return RTFactor; }
 //#ifdef WITH_PSLOPE
     //! Retrieves the value of the Slope
     /*! \return slope value in y-units/x-units.
@@ -830,6 +835,12 @@ public:
     /*! \param value The number of points to be used.
      */
     void SetPM(int value) { pM=value; }
+
+    //! Sets the lower value (e.g 20) to calculate the rise time.
+    /*! \param value The lower percentage (e.g 20) to be used to c
+        calculate the rise time.
+     */
+    void SetRTFactor(int value) { RTFactor=value; }
 
     //! Sets the mode of the latency start cursor.
     /*! \param value The new mode of the latency start cursor..

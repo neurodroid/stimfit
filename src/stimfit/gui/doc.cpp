@@ -150,6 +150,7 @@ wxStfDoc::wxStfDoc() :
     slopeRatio(0.0),
     t0Real(0.0),
     pM(1),
+    RTFactor(20),
     cc(0),
     sc(1),
     cs(0),
@@ -439,6 +440,7 @@ int wxStfDoc::InitCursors() {
     // Set corresponding menu checkmarks:
     // UpdateMenuCheckmarks();
     SetPM(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakMean"),1));
+    SetRTFactor(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("RTFactor"),20));
     wxString wxsSlope = wxGetApp().wxGetProfileString(wxT("Settings"),wxT("Slope"),wxT("20.0"));
     double fSlope = 0.0;
     wxsSlope.ToDouble(&fSlope);
@@ -748,6 +750,7 @@ void wxStfDoc::WriteToReg() {
     if (!outOfRange(GetPeakEnd()))
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("PeakEnd"), (int)GetPeakEnd());
     wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("PeakMean"),(int)GetPM());
+    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("RTFactor"),(int)GetRTFactor());
     wxString wxsSlope;
     wxsSlope << GetSlopeForThreshold();
     wxGetApp().wxWriteProfileString(wxT("Settings"),wxT("Slope"),wxsSlope);
@@ -2363,10 +2366,12 @@ void wxStfDoc::Measure( )
     double ampl=peak-reference;
     
     tLoReal=0.0;
+    double factor= RTFactor*0.01; /* normalized value */
     try {
         // 2008-04-27: changed limits to start from the beginning of the trace
+        // 2013-06-16: changed to accept different rise-time proportions 
         rtLoHi=stf::risetime(cur().get(),reference,ampl, (double)0/*(double)baseEnd*/,
-                             maxT, 0.2, tLoIndex, tHiIndex, tLoReal);
+                             maxT, factor/*0.2*/, tLoIndex, tHiIndex, tLoReal);
     }
     catch (const std::out_of_range& e) {
         rtLoHi=0.0;

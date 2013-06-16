@@ -514,6 +514,10 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
         // Get reference for AP kinetics from the dialog box
         actDoc->SetFromBase(CursorsDialog->GetFromBase());
         wxWriteProfileInt(wxT("Settings"),wxT("FromBase"), CursorsDialog->GetFromBase());
+
+        // Get factor for rise time calculation
+        actDoc->SetRTFactor(CursorsDialog->GetRTFactor());
+        wxWriteProfileInt(wxT("Settings"),wxT("RTFactor"), CursorsDialog->GetRTFactor());
         
         // Get slope for threshold:
         actDoc->SetSlopeForThreshold( CursorsDialog->GetSlope() );
