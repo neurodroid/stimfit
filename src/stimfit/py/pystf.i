@@ -863,8 +863,8 @@ double get_risetime( );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_risetime_factor;
-%feature("docstring", "Returns the lower proportion time
-to calculate the rise time (in x-units)
+%feature("docstring", "Returns the lower proportion factor used
+to calculate the rise time 
 (e.g 0.2 if we calculate the 20--80% rise time. )
 
 ") get_risetime_factor;
@@ -873,18 +873,17 @@ double get_risetime_factor( );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) set_risetime_factor;
-%feature("docstring", "Sets the lower proportion time
-to calculate the rise time (in x-units)
+%feature("docstring", "Sets the lower proportion factor
+to calculate the rise time
 (e.g 0.2 if we want to calculate the 20--80% rise time. )
-This will NOT update the measurements. You have to either
+This will NOT update the rise time measurement. You have to either
 call measure() or hit enter in the main window to achieve that.
 
 Arguments:
-factor --  the low proportion to calculate rise time
+factor --  the low proportion factor to calculate rise time
 
 Returns:
-False upon failure (such as factor larger than 0.5 or lower
-than 0.05)
+False upon failure (such as factor lower than 0.05 or larger than 0.5)
 ") set_risetime_factor;
 bool set_risetime_factor(double factor);
 //--------------------------------------------------------------------

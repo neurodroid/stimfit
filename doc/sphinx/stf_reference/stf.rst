@@ -213,6 +213,11 @@ The :mod:`stf` module defines the following functions:
 
     Returns the 20-80% rise time (in x-units) by calculation of the interpolated adjacent sampling points at 20% and 80% of the peak amplitude. Returns -1.0 upon failure. Call :func:`measure()` or hit enter to update the value.
 
+.. function:: get_risetime_factor(\*args)
+
+    Returns the lower proportion factor used to calculate the rise time (e.g 0.2 if
+    we calculate the 20--80% rise time).
+
 .. function:: get_slope(\*args)
 
     Returns the slope value using the cursors described in the cursors setting dialog.
@@ -708,6 +713,22 @@ The :mod:`stf` module defines the following functions:
 
         True upon successful completion.
     
+.. function:: set_risetime_factor(factor)
+
+    Sets the lower proportion factor to calculate the rise time (e.g 0.2 if
+    we want to calculate the 20--80% rise time). This will NOT update the risetime
+    measurement. You have to either call :func:`measure()` or hit enter in the main
+    window to achieve that.
+
+        **Arguments:**
+
+        *factor* -- the low proportion factor to calculate the rise time
+
+        **Returns:**
+
+        False upon failure (such a factor lower than 0.05 or larger than 0.45).
+    
+
 .. function:: set_sampling_interval(si)
 
     Sets a new sampling interval.
