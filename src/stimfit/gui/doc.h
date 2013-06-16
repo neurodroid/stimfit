@@ -521,21 +521,23 @@ public:
     /*! \return The difference between GetTHiReal() and GetTLoReal(), expressed in units o data points.
      */
     double GetRTLoHi() const { return rtLoHi; }
-    
+
     //! Retrieves the full width at half-maximal amplitude ("half duration").
     /*! \return The difference between GetT50RightReal() and GetT50LeftReal(), expressed in units of data points.
      */
     double GetHalfDuration() const { return halfDuration; }
+
     
     //! Retrieves ratio of the maximal slopes during the rising and decaying phase.
     /*! \return The ratio of GetMaxRise() and GetMaxDecay().
      */
     double GetSlopeRatio() const { return slopeRatio; }
 
-    //! Retrieves lower value (e.g 20) for the rise time calculation.
-    /*! \return lower value (e.g 20) for rise time calculation.
+    //! Retrieves lower factor (e.g 20) for the rise time calculation.
+    /*! \return lower factor value for rise time calculation expressed in percentage (e.g 20).
      */
     int GetRTFactor() const { return RTFactor; }
+
 //#ifdef WITH_PSLOPE
     //! Retrieves the value of the Slope
     /*! \return slope value in y-units/x-units.
@@ -840,7 +842,7 @@ public:
     /*! \param value The lower percentage (e.g 20) to be used to c
         calculate the rise time.
      */
-    void SetRTFactor(int value) { RTFactor=value; }
+    void SetRTFactor(int value);
 
     //! Sets the mode of the latency start cursor.
     /*! \param value The new mode of the latency start cursor..

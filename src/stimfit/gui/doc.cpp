@@ -2425,6 +2425,7 @@ void wxStfDoc::Measure( )
         const int searchRange=100;
         double APBase=0.0, APPeak=0.0, APVar=0.0;
         try {
+            // in 2013-**, we used the baseline and not the arbitrary 100 points
             //APBase=stf::base(APVar,sec().get(),0,endResting);
             APBase=stf::base(APVar,sec().get(),baseBeg,baseEnd); // use baseline cursors 
             //APPeak=stf::peak(sec().get(),APBase,peakBeg,peakEnd,pM,stf::up,APMaxT);
@@ -2755,6 +2756,17 @@ void wxStfDoc::SetLatencyEnd(double value) {
         value=cur().size()-1.0;
     }
     latencyEndCursor=value;
+}
+
+void wxStfDoc::SetRTFactor(int value) {
+    if (value < 0){
+        value = 5;  
+    }
+    else if (value > 50) {
+        value = 45;  
+    }
+    
+    RTFactor = value;
 }
 
 #ifdef WITH_PSLOPE
