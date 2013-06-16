@@ -99,6 +99,7 @@ private:
     void OnRadioMean( wxCommandEvent& event );
     void OnPeakcalcexec( wxCommandEvent& event );
     void OnBasetoslope( wxCommandEvent& event );
+    void OnRTSlider( wxScrollEvent& event );
     
     //! Only called when a modal dialog is closed with the OK button.
     /*! \return true if all dialog entries could be read successfully
