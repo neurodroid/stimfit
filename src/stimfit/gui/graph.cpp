@@ -454,8 +454,10 @@ void wxStfGraph::PlotGimmicks(wxDC& DC) {
     if ( !Doc()->GetFromBase() && Doc()->GetThrT() >= 0 ) {
         reference = Doc()->GetThreshold();
     }
-    DrawCircle(&DC,Doc()->GetTLoReal(),0.8*reference+0.2*Doc()->GetPeak(), rtPen, rtPrintPen);
-    DrawCircle(&DC,Doc()->GetTHiReal(),0.2*reference+0.8*Doc()->GetPeak(), rtPen, rtPrintPen);
+    double Low = Doc()->GetRTFactor()/100.;
+    double High = 1-Low;
+    DrawCircle( &DC,Doc()->GetTLoReal(), High*reference + Low*Doc()->GetPeak(), rtPen, rtPrintPen);
+    DrawCircle( &DC,Doc()->GetTHiReal(), Low*reference + High*Doc()->GetPeak(), rtPen, rtPrintPen);
 
     //draws circles around the half duration limits
     DrawCircle(&DC,Doc()->GetT50LeftReal(),Doc()->GetT50Y(), hdPen, hdPrintPen);
