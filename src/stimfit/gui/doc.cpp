@@ -2425,7 +2425,7 @@ void wxStfDoc::Measure( )
         const int searchRange=100;
         double APBase=0.0, APPeak=0.0, APVar=0.0;
         try {
-            // in 2012-11-02: used the baseline measure and not the arbitrary 100 points
+            // in 2012-11-02: use baseline cursors and not arbitrarily 100 points
             //APBase=stf::base(APVar,sec().get(),0,endResting);
             APBase=stf::base( APVar,sec().get(), baseBeg, baseEnd ); // use baseline cursors 
             //APPeak=stf::peak(sec().get(),APBase,peakBeg,peakEnd,pM,stf::up,APMaxT);
