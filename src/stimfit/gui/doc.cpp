@@ -92,7 +92,7 @@ EVT_MENU( ID_EVENT_ADDEVENT, wxStfDoc::AddEvent )
 END_EVENT_TABLE()
 
 static const int baseline=100;
-static const double rtfrac = 0.2; // At present, hard coded to Lo-Hi% rise time
+// static const double rtfrac = 0.2; // now expressed in percentage, see RTFactor
 
 wxStfDoc::wxStfDoc() :
     Recording(),peakAtEnd(false),initialized(false),progress(true), Average(0),
