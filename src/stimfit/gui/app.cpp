@@ -528,7 +528,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
 
     }
 
-    // Calculate peak, base, 20/80 rise time, half duration,
+    // Calculate peak, base, Lo/Hi rise time, half duration,
     // ratio of rise/slope, maximum slope and geometrical slope (PSlope).
     try {
         if (actDoc != NULL) {

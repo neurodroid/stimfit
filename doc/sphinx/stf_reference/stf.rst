@@ -716,9 +716,8 @@ The :mod:`stf` module defines the following functions:
 .. function:: set_risetime_factor(factor)
 
     Sets the lower proportion factor to calculate the rise time (e.g 0.2 if
-    we want to calculate the 20--80% rise time). This will NOT update the risetime
-    measurement. You have to either call :func:`measure()` or hit enter in the main
-    window to achieve that.
+    we want to calculate the 20--80% rise time). It will update the risetime
+    measurement. 
 
         **Arguments:**
 

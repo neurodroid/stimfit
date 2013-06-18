@@ -764,8 +764,18 @@ bool set_risetime_factor(double factor) {
         ShowError( wxT("Value out of range (0.05-0.45) in set_risetime_factor()") );
         return false;
     }
+
+    wxStfChildFrame* pFrame = (wxStfChildFrame*)actDoc()->GetDocumentWindow();
+    if ( !pFrame ) {
+        ShowError( wxT("Pointer to frame is zero") );
+        return false;
+    }
+
     int RTFactor = (int)(factor*100);
-    actDoc()->SetRTFactor(RTFactor);
+    actDoc()->SetRTFactor(RTFactor); // defined in wxStfApp::OnPeakcalcexecMsg
+    wxGetApp().OnPeakcalcexecMsg(); // update results table and write Stf registry
+    pFrame->UpdateResults(); // update results table and markers
+ 
     return true;
         
 }

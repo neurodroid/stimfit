@@ -877,8 +877,7 @@ double get_risetime_factor( );
 %feature("docstring", "Sets the lower proportion factor
 to calculate the rise time
 (e.g 0.2 if we want to calculate the 20--80% rise time. )
-This will NOT update the rise time measurement. You have to either
-call measure() or hit enter in the main window to achieve that.
+It will update the rise time measurement.
 
 Arguments:
 factor --  the low proportion factor to calculate rise time
