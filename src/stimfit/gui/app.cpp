@@ -657,35 +657,6 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
                         wxT("&Concatenate selected traces"),
                         wxT("Create one large trace by merging selected traces in this file")
                         );
-#if 0
-    wxMenu *latencyStartSub=new wxMenu;
-    latencyStartSub->AppendCheckItem(ID_LATENCYSTART_MAXSLOPE, wxT("max. slope of second channel"));
-    latencyStartSub->AppendCheckItem(ID_LATENCYSTART_HALFRISE, wxT("half-maximal amplitude of second channel"));
-    latencyStartSub->AppendCheckItem(ID_LATENCYSTART_PEAK, wxT("peak of second channel"));
-    latencyStartSub->AppendCheckItem(ID_LATENCYSTART_MANUAL, wxT("Manual"));
-    wxMenu *latencyEndSub=new wxMenu;
-    latencyEndSub->AppendCheckItem(ID_LATENCYEND_FOOT, wxT("beginning of event in active channel"));
-    latencyEndSub->AppendCheckItem(ID_LATENCYEND_MAXSLOPE, wxT("max. slope of active channel"));
-    latencyEndSub->AppendCheckItem(ID_LATENCYEND_HALFRISE, wxT("half-maximal amplitude of active channel"));
-    latencyEndSub->AppendCheckItem(ID_LATENCYEND_PEAK, wxT("peak of active channel"));
-    latencyEndSub->AppendCheckItem(ID_LATENCYEND_MANUAL, wxT("Manual"));
-    m_edit_menu->AppendSeparator();
-    m_edit_menu->AppendSubMenu(
-                               latencyStartSub,
-                               wxT("Measure latency from..."),
-                               wxT("Choose starting point of latency measurement")
-                               );
-    m_edit_menu->AppendSubMenu(
-                               latencyEndSub,
-                               wxT("Measure latency to..."),
-                               wxT("Choose ending point of latency measurement")
-                               );
-    m_edit_menu->AppendCheckItem(
-                                 ID_LATENCYWINDOW,
-                                 wxT("Use peak window for latency cursor"),
-                                 wxT("Uses the current peak window to measure the peak in the reference channel")
-                                 );
-#endif
     wxMenu* m_view_menu = new wxMenu;
     m_view_menu->Append(
                         ID_VIEW_RESULTS,
