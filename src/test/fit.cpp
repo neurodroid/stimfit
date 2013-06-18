@@ -116,6 +116,27 @@ Vector_double fHH(const Vector_double &param){
 }
 
 //=========================================================================
+// Hodkin-Huxley-like sodium conductance function of the form:
+// f(v;Na_bar, m, h, base) = Na_bar*m(v)*h(v) + base
+// corresponding to fitting function 11 of Stimfit
+// param is an array of parameters, where
+// param[0] is the peak sodium conductance
+// param[1] is the activation time constant (tau_m) 
+// param[2] is the inactivation time constant (tau_h)
+// param[3] is the offset
+//=========================================================================
+Vector_double fgnabiexp(const Vector_double &param){
+
+    Vector_double mydata (int(tmax/dt));
+    
+    for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
+        mydata[n] = stf::fgnabiexp(n*dt, param);
+    }
+    
+    return mydata;
+}
+
+//=========================================================================
 // Sum of gaussian functions of the form
 // f(x, a, b, c) = a*exp((x-b)^2/2*c^2)
 // corresponding to the fitting function 11 of Stimfit
@@ -447,6 +468,7 @@ TEST(fitlib_test, id_09_alpha){
     data.clear();
 
 }
+
 //=========================================================================
 // Tests fitting to a HH-type sodium conductance, offset fixed to baseline
 // Stimfit function with ID =10 
@@ -456,8 +478,8 @@ TEST(fitlib_test, id_10_HH_gNa_offsetfixed){
     /* choose function parameters */
     Vector_double mypars(4);
     mypars[0] = 120.0;   /* maximal sodium conductance   */
-    mypars[1] = 130e-3;    /* activation time constat (tau_m_) in us    */
-    mypars[2] = 728e-3;   /* inactivation time constant  in us */
+    mypars[1] = 130e-3;  /* activation time constat (tau_m_) in us    */
+    mypars[2] = 728e-3;  /* inactivation time constant  in us */
     mypars[3] =   0.0;   /* offset                       */
 
     /* create a 100 ms trace with mypars */
@@ -466,7 +488,7 @@ TEST(fitlib_test, id_10_HH_gNa_offsetfixed){
     data = fHH(mypars);
 
 #if 0
-    savetxt(data);
+    savetxt("/tmp/gnabar.out", data);
 #endif
 
     /* Initial parameter guesses */
@@ -491,6 +513,53 @@ TEST(fitlib_test, id_10_HH_gNa_offsetfixed){
 #if 0
     debug_stdout(chisqr, info, warning, pars);
 #endif
+
+    data.clear();
+
+}
+
+//=========================================================================
+// Tests fitting to a HH-type SINGLE sodium conductance, offset fixed to 
+// baseline, Stimfit function with ID =11 
+//=========================================================================
+TEST(fitlib_test, id_11_HH_gNa_biexpoffsetfixed){
+
+    /* choose function parameters */
+    Vector_double mypars(4);
+    mypars[0] = 120.0;   /* maximal sodium conductance              */
+    mypars[1] = 1.3;    /* activation time constat (tau_m_) in us   */
+    mypars[2] = 5.2;    /* inactivation time constant  in us        */
+    mypars[3] = 10.0;   /* offset                                   */
+
+    /* create a 100 ms trace with mypars */
+    Vector_double data;
+    data = fgnabiexp(mypars);
+
+#if 0
+    savetxt("/tmp/gnabar_single.out", data);
+#endif
+
+    /* Initial parameter guesses */
+    Vector_double pars(4);
+    pars[0] = 123.284;      /* gprime_na   */
+    pars[1] = 2.625;        /* tau_m       */
+    pars[2] = 15.75;        /* tau_h       */
+    pars[3] = mypars[3];    /* offset      */
+
+    std::string info;
+    int warning;
+
+    double chisqr = lmFit(data, dt, funcLib[11], opts, true, pars, info,\
+         warning );
+
+    EXPECT_EQ(warning, 0);
+    par_test(pars[0], mypars[0], tol);  /* gprime_na */
+    par_test(pars[1], mypars[1], tol);  /* tau_m     */
+    par_test(pars[2], mypars[2], tol);  /* tau_h     */
+
+//#if 0
+    debug_stdout(chisqr, info, warning, pars);
+//#endif
 
     data.clear();
 
