@@ -136,10 +136,10 @@ Vector_double fgauss(const Vector_double &param){
     return mydata;
 }
 //#if 0
-void savetxt(Vector_double &mydata){
+void savetxt(const char *fname, Vector_double &mydata){
 
     std::ofstream output_file;
-    output_file.open("array.out");
+    output_file.open(fname);
 
     Vector_double::iterator it;
 
@@ -488,6 +488,50 @@ TEST(fitlib_test, id_10_HH_gNa_offsetfixed){
     par_test(pars[1], mypars[1], tol);  /* tau_m     */
     par_test(pars[2], mypars[2], tol);  /* tau_h     */
     par_test(pars[3], 0.0, tol);        /* offset    */
+
+#if 0
+    debug_stdout(chisqr, info, warning, pars);
+#endif
+
+    data.clear();
+
+}
+//=========================================================================
+// Tests fitting to a gaussian distribution
+// Stimfit function with ID =12
+//=========================================================================
+TEST(fitlib_test, id_12_fgaussian){
+
+    /* choose function parameters */
+    Vector_double mypars(3);
+    mypars[0] = 1.5;  /* height */
+    mypars[1] = 5.0;  /* peak   */
+    mypars[2] = 4.5;  /* width  */
+
+    /* create a trace with mypars */
+    Vector_double data;
+    data = fgauss(mypars);
+
+//#if 0
+    savetxt("mygaussian.out", data);
+//#endif 
+
+    /* Initial parameter guesses */
+    Vector_double pars(3);
+    pars[0] = 1.72;  /* amplitude   */
+    pars[1] = 5.5;   /* mean        */
+    pars[2] = 2.0;   /* width       */
+
+    std::string info;
+    int warning;
+
+    double chisqr = lmFit(data, dt, funcLib[12], opts, true, pars, info,\
+         warning );
+
+    EXPECT_EQ(warning, 0);
+    par_test(pars[0], mypars[0], tol);  /* amplitude */
+    par_test(pars[1], mypars[1], tol);  /* peak     */
+    par_test(pars[2], mypars[2], tol);  /* witdth     */
 
 #if 0
     debug_stdout(chisqr, info, warning, pars);

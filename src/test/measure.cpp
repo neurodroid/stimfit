@@ -647,9 +647,7 @@ TEST(measlib_validation, baseline) {
     /* we check the measurement N_MAX times */
     for (int i=0; i<N_MAX; i++){
         double mean = myrand[i]; /* random mean values */
-        double stddev = fabs(myrand[i]*2.5);
         /* the dataset is a normal distribution */
-        //std::vector<double> mytrace = norm(mean, stddev);
         std::vector<double> mytrace = uniform(mean, N_MAX);
         /* calculate base between start and end */
         mybase[i] = stf::base(var, mytrace, 0, mytrace.size()-1);
