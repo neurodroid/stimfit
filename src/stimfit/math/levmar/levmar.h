@@ -22,27 +22,40 @@
 #ifndef _LEVMAR_H_
 #define _LEVMAR_H_
 
-
 /************************************* Start of configuration options *************************************/
+/* Note that when compiling with CMake, this configuration section is automatically generated
+ * based on the user's input, see levmar.h.in
+ */
 
-/* specify whether to use LAPACK or not. The first option is strongly recommended */
-// #define HAVE_LAPACK /* use LAPACK */
-/* #undef HAVE_LAPACK */  /* uncomment this to force not using LAPACK */
+/* specifies whether to use LAPACK or not. Using LAPACK is strongly recommended */
+#ifndef HAVE_LAPACK
+#define HAVE_LAPACK
+#endif
 
+/* specifies whether the PLASMA parallel library for multicore CPUs is available */
+/* #undef HAVE_PLASMA */
+                      
 /* to avoid the overhead of repeated mallocs(), routines in Axb.c can be instructed to
  * retain working memory between calls. Such a choice, however, renders these routines
  * non-reentrant and is not safe in a shared memory multiprocessing environment.
- * Bellow, this option is turned on only when not compiling with OpenMP.
+ * Bellow, an attempt is made to issue a warning if this option is turned on and OpenMP
+ * is being used (note that this will work only if omp.h is included before levmar.h)
  */
-#if !defined(_OPENMP) 
-#define LINSOLVERS_RETAIN_MEMORY /* comment this if you don't want routines in Axb.c retain working memory between calls */
-#endif
+#define LINSOLVERS_RETAIN_MEMORY
+#if (defined(_OPENMP))
+# ifdef LINSOLVERS_RETAIN_MEMORY
+#  ifdef _MSC_VER
+#  pragma message("LINSOLVERS_RETAIN_MEMORY is not safe in a multithreaded environment and should be turned off!")
+#  else
+#  warning LINSOLVERS_RETAIN_MEMORY is not safe in a multithreaded environment and should be turned off!
+#  endif /* _MSC_VER */
+# endif /* LINSOLVERS_RETAIN_MEMORY */
+#endif /* _OPENMP */
 
-/* determine the precision variants to be build. Default settings build
- * both the single and double precision routines
- */
-#define LM_DBL_PREC  /* comment this if you don't want the double precision routines to be compiled */
-#define LM_SNGL_PREC /* comment this if you don't want the single precision routines to be compiled */
+/* specifies whether double precision routines will be compiled or not */
+#define LM_DBL_PREC
+/* specifies whether single precision routines will be compiled or not */
+#define LM_SNGL_PREC
 
 /****************** End of configuration options, no changes necessary beyond this point ******************/
 
@@ -50,9 +63,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-
-#define FABS(x) (((x)>=0.0)? (x) : -(x))
 
 /* work arrays size for ?levmar_der and ?levmar_dif functions.
  * should be multiplied by sizeof(double) or sizeof(float) to be converted to bytes
@@ -90,7 +100,7 @@ extern "C" {
 #define LM_INIT_MU    	 1E-03
 #define LM_STOP_THRESH	 1E-17
 #define LM_DIFF_DELTA    1E-06
-#define LM_VERSION       "2.5 (December 2009)"
+#define LM_VERSION       "2.6 (November 2011)"
 
 #ifdef LM_DBL_PREC
 /* double precision LM, with & without Jacobian */
@@ -110,12 +120,12 @@ extern int dlevmar_dif(
 extern int dlevmar_bc_der(
        void (*func)(double *p, double *hx, int m, int n, void *adata),
        void (*jacf)(double *p, double *j, int m, int n, void *adata),  
-       double *p, double *x, int m, int n, double *lb, double *ub,
+       double *p, double *x, int m, int n, double *lb, double *ub, double *dscl,
        int itmax, double *opts, double *info, double *work, double *covar, void *adata);
 
 extern int dlevmar_bc_dif(
        void (*func)(double *p, double *hx, int m, int n, void *adata),
-       double *p, double *x, int m, int n, double *lb, double *ub,
+       double *p, double *x, int m, int n, double *lb, double *ub, double *dscl,
        int itmax, double *opts, double *info, double *work, double *covar, void *adata);
 
 #ifdef HAVE_LAPACK
@@ -215,12 +225,12 @@ extern int slevmar_dif(
 extern int slevmar_bc_der(
        void (*func)(float *p, float *hx, int m, int n, void *adata),
        void (*jacf)(float *p, float *j, int m, int n, void *adata),  
-       float *p, float *x, int m, int n, float *lb, float *ub,
+       float *p, float *x, int m, int n, float *lb, float *ub, float *dscl,
        int itmax, float *opts, float *info, float *work, float *covar, void *adata);
 
 extern int slevmar_bc_dif(
        void (*func)(float *p, float *hx, int m, int n, void *adata),
-       float *p, float *x, int m, int n, float *lb, float *ub,
+       float *p, float *x, int m, int n, float *lb, float *ub, float *dscl,
        int itmax, float *opts, float *info, float *work, float *covar, void *adata);
 
 #ifdef HAVE_LAPACK
@@ -334,6 +344,16 @@ extern int sAx_eq_b_LU_noLapack(float *A, float *B, float *x, int n);
 
 #endif /* HAVE_LAPACK */
 
+#ifdef HAVE_PLASMA
+#ifdef LM_DBL_PREC
+extern int dAx_eq_b_PLASMA_Chol(double *A, double *B, double *x, int m);
+#endif
+#ifdef LM_SNGL_PREC
+extern int sAx_eq_b_PLASMA_Chol(float *A, float *B, float *x, int m);
+#endif
+extern void levmar_PLASMA_setnbcores(int cores);
+#endif /* HAVE_PLASMA */
+
 /* Jacobian verification, double & single precision */
 #ifdef LM_DBL_PREC
 extern void dlevmar_chkjac(
@@ -349,7 +369,9 @@ extern void slevmar_chkjac(
     float *p, int m, int n, void *adata, float *err);
 #endif /* LM_SNGL_PREC */
 
-/* standard deviation, coefficient of determination (R2) & Pearson's correlation coefficient for best-fit parameters */
+/* miscellaneous: standard deviation, coefficient of determination (R2),
+ *                Pearson's correlation coefficient for best-fit parameters
+ */
 #ifdef LM_DBL_PREC
 extern double dlevmar_stddev( double *covar, int m, int i);
 extern double dlevmar_corcoef(double *covar, int m, int i, int j);
@@ -361,6 +383,14 @@ extern double dlevmar_R2(void (*func)(double *p, double *hx, int m, int n, void 
 extern float slevmar_stddev( float *covar, int m, int i);
 extern float slevmar_corcoef(float *covar, int m, int i, int j);
 extern float slevmar_R2(void (*func)(float *p, float *hx, int m, int n, void *adata), float *p, float *x, int m, int n, void *adata);
+
+extern void slevmar_locscale(
+        void (*func)(float *p, float *hx, int m, int n, void *adata),
+        float *p, float *x, int m, int n, void *adata,
+        int howto, float locscl[2], float **residptr);
+
+extern int slevmar_outlid(float *r, int n, float thresh, float ls[2], char *outlmap);
+
 #endif /* LM_SNGL_PREC */
 
 #ifdef __cplusplus

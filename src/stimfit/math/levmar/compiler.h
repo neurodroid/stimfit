@@ -36,12 +36,14 @@
 #define LM_FINITE finite // ICC, GCC
 #else
 #define LM_FINITE finite // other than MSVC, ICC, GCC, let's hope this will work
-#endif 
-
-#ifdef _MSC_VER // avoid deprecation warnings in VS2005
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
 #endif
+
+#ifdef _MSC_VER
+#define LM_ISINF(x) (!_finite(x) && !_isnan(x)) // MSVC
+#elif defined(__ICC) || defined(__INTEL_COMPILER) || defined(__GNUC__)
+#define LM_ISINF(x) isinf(x) // ICC, GCC
+#else
+#define LM_ISINF(x) isinf(x) // other than MSVC, ICC, GCC, let's hope this will work
 #endif
 
 #endif /* _COMPILER_H_ */
