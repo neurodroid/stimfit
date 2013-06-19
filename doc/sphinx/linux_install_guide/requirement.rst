@@ -32,6 +32,7 @@ For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build depend
                            libtool \
                            libgtest-dev
 
+
 This will get you, amongst others:
 
 * [boost]_: C++ library that is mainly used for its shared pointers.
@@ -39,6 +40,8 @@ This will get you, amongst others:
 * [fftw]_:  Library for computing Fourier transformations.
 * [NumPy]_: To handle multidimensional arrays and perform more complex numerical computations with Python.
 * [HDF5]_: This is the hierarchical Data Format 5 (HDF5) to manage large amount of data.
+
+In addition, you can install doxygen, python-sphinx and graphviz if you want to have a build of the documentation.
 
 =======================
 Optional: wxWidgets 2.9

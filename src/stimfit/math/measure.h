@@ -17,7 +17,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-/*! \file measlib.h
+/*! \file measure.h
  *  \author Christoph Schmidt-Hieber, Peter Jonas
  *  \date 2011-01-24
  *  \brief Functions for measuring kinetics of events within waveforms.
