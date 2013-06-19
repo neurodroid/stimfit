@@ -168,7 +168,7 @@ namespace stf {
      *  \param x Function argument.
      *  \param p A valarray of parameters, where \n
      *         \e p[0] is the baseline, \n
-     *         \e p[1] is the delay.
+     *         \e p[1] is the delay, \n
      *         \e p[2] is the later (slower) time constant, \n
      *         \e p[3] is the amplitude and \n
      *         \e p[4] is the earlier (faster) time constant, \n
