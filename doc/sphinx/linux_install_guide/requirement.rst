@@ -41,7 +41,7 @@ This will get you, amongst others:
 * [NumPy]_: To handle multidimensional arrays and perform more complex numerical computations with Python.
 * [HDF5]_: This is the hierarchical Data Format 5 (HDF5) to manage large amount of data.
 
-In addition, you can install doxygen, python-sphinx and graphviz if you want to have a build of the documentation.
+In addition, you can install doxygen, python-sphinx and graphviz if you want to build yourself the documentation.
 
 =======================
 Optional: wxWidgets 2.9
