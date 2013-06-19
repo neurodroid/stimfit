@@ -613,6 +613,66 @@ TEST(fitlib_test, id_06_triexponential){
 
 
 //=========================================================================
+// Tests fitting to a triexponential with offset fixed to baseline
+// Stimfit function with ID = 8
+//=========================================================================
+TEST(fitlib_test, id_08_triexponential_offsetfixed){
+
+    /* choose function parameters */
+    Vector_double mypars(7);
+    mypars[0] = 5.76;   /* first amplitude      */
+    mypars[1] = 3.37;   /* first time constant  */
+    mypars[2] = 9.76;   /* second amplitude     */
+    mypars[3] = 21.9;   /* second time constant */
+    mypars[4] = 5.76;   /* third amplitude     */
+    mypars[5] = 41.0;   /* third time constant */
+    mypars[6] = -5.12;    /* baseline             */
+
+    /* create a 100 ms trace with mypars */
+    Vector_double data;
+    data = fexp(mypars);
+
+#if 0
+    savetxt("/tmp/mytriexp6.out", data);
+#endif
+
+    /* Initial parameter guesses */
+    Vector_double pars(7);
+    pars[0] = 4.86764;    /* Amp_0   */
+    pars[1] = 6.44482;    /* Tau_0   */
+    pars[2] = 4.86764;    /* Amp_1   */
+    pars[3] = 49.5586;    /* Tau_1   */
+    pars[4] = 4.86764;    /* Amp_2   */
+    pars[5] = 165.5586;   /* Tau_2   */
+    pars[6] = mypars[6];  /* Offset fixed to baseline */
+
+    std::string info;
+    int warning;
+
+    double chisqr = lmFit(data, dt, funcLib[8], opts,  
+        true, /*use_scaling*/
+        pars, info, warning );
+
+    EXPECT_EQ(warning, 0);
+    par_test(pars[0], mypars[0], tol);  /* Amp_0  */
+    par_test(pars[1], mypars[1], tol);  /* Tau_0  */
+    par_test(pars[2], mypars[2], tol);  /* Amp_1  */
+    par_test(pars[3], mypars[3], tol);  /* Tau_1  */
+    par_test(pars[4], mypars[4], tol);  /* Amp_2  */
+    par_test(pars[5], mypars[5], tol);  /* Tau_2  */
+    EXPECT_EQ(pars[6], mypars[6]);      /* Offset */
+
+
+#if 0
+    debug_stdout(chisqr, info, warning, pars);
+#endif
+
+    data.clear();
+    
+}
+
+
+//=========================================================================
 // Tests fitting to an alpha function, 
 // Stimfit function with ID = 9
 //=========================================================================
