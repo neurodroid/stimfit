@@ -1551,4 +1551,26 @@ DOT_CLEANUP            = YES
 # The SEARCHENGINE tag specifies whether or not a search engine should be 
 # used. If set to NO the values of all tags below this one will be ignored.
 
-SEARCHENGINE           = NO
+SEARCHENGINE           = YES 
+
+# Enable the USE_MATHJAX option to render $\mbox{\LaTeX}$ formulas using 
+# MathJax (see http://www.mathjax.org) which uses client side Javascript 
+# for the rendering instead of using prerendered bitmaps. Use this if you 
+# do not have LaTeX installed or if you want to formulas look prettier 
+# in the HTML output. 
+
+USE_MATHJAX             = YES
+
+# The MATHJAX_EXTENSIONS tag can be used to specify one or MathJax extension
+# names that should be enabled during MathJax rendering. 
+
+MATHJAX_EXTENSIONS      = teX/AMSmath TeX/AMSsymbols
+
+# Use this tag to change the font size of LaTeX formulas included as images 
+# in the HTML documentation. The default is 10. when you change the font 
+# size after a successful doxygen run you need to manually remove any 
+# form_*.png images from the HTML output directory to force them to be 
+# regenerated.
+
+FORMULA_FONTISZE        = 16
+
