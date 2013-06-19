@@ -556,7 +556,7 @@ TEST(measlib_test, maxdecay_basic) {
     data[16385] = 1.0;
 
     double maxDecayT, maxDecayY;
-    double maxdecay = stf::maxDecay(data, 0, data.size()-1, \
+    double maxdecay = stf::maxDecay(data, 16385, data.size()-1, \
         maxDecayT, maxDecayY, 1);
     EXPECT_EQ(maxdecay, 1.0);
     EXPECT_EQ(maxDecayT, 16385.5);
