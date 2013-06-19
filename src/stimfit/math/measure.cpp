@@ -323,7 +323,7 @@ double stf::maxDecay(const std::vector<double>& data,
         if (maxDecay<diff) {
             maxDecay=diff;
             maxDecayY=(data[i]+data[j])/2.0;
-            maxDecayT=(i+windowLength/2.0);
+            maxDecayT=(j+windowLength/2.0);
         }
     }
     return maxDecay/windowLength;
