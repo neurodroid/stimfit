@@ -8,8 +8,9 @@
 
 /* global variables to define our data */
 const static int tmax = 100;   /* length of data in ms */
-const static float dt = 1/50.0; /* sampling interval of data in ms */
-const static double tol = 0.01; /* param-relative tolerance value */
+const static float dt = 1/100.0; /* sampling interval of data in ms */
+//const static double tol = 0.001; /* param-relative tolerance value */
+const static float tol = dt; /* 1 sampling interval */
 
 /* list of available fitting functions, see /src/stimfit/math/funclib.cpp */
 const static std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
