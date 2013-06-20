@@ -149,6 +149,38 @@ It is recommended to build `Stimfit <http://www.stimfit.org>`_  with the `BioSig
 
 After that you can enter the option --with-biosig in the configure script of `Stimfit <http://www.stimfit.org>`_ and compile as usual.
 
+======================
+Building documentation
+======================
+
+The manual of `Stimfit <http://www.stimfit.org>`_ including the documentation is accessible on-line in http://www.stimfit.org/doc/sphix/. To have your own local copy of the documentation, you will need to install sphinx:
+
+::
+
+    sudo apt-get install python-sphinx
+
+Enter in $HOME/doc/sphinx/. It is possible to build a local copy of the documenation there by simply typing:
+
+::
+
+    sphinx-build ./ .build
+
+The documentation will be located in $HOME/stimfit/doc/sphinx/.build/
+
+Additionally, the source code is documented with [Doxygen]_ and is also accessible on-line in http://www.stimfit.org/doc/doxygen/html/. If you want to have a local copy of the documentation, you will need to install the doxygen and gravphvix:
+
+::
+
+    sudo apt-get install doxygen gravphvix
+
+Enter the directory where you downloaded the sources of Stimfit (e.g $HOME/stimfit) and type:
+
+::
+
+    doxygen Doxygen_Debian
+
+The local documentation of the source code will be in $HOME/stimfit/doc/doxygen/html
+
 .. [wxWidgets] http://www.wxwidgets.org
 .. [wxPython] http://www.wxpython.org
 .. [boost] http://www.boost.org
@@ -156,3 +188,4 @@ After that you can enter the option --with-biosig in the configure script of `St
 .. [HDF5] http://www.hdfgroup.org/HDF5/
 .. [NumPy] http://www.numpy.org
 .. [fftw] http://www.fftw.org
+.. [Doxygen] http://www.doxygen.org
