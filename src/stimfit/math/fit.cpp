@@ -276,7 +276,7 @@ double stf::lmFit( const Vector_double& data, double dt,
                             NULL, NULL, &fInfo );
                 } else {
                     dlevmar_bc_dif( c_func_lour, &p_toFit[0], &data_ptr[0], n_fitted, 
-                            (int)data.size(), &constrains_lm_lb[0], &constrains_lm_ub[0], 
+                            (int)data.size(), &constrains_lm_lb[0], &constrains_lm_ub[0], NULL,
                             (int)opts[4], &opts_l[0], info_id, NULL, NULL, &fInfo );
                 }
             } else {
@@ -287,7 +287,7 @@ double stf::lmFit( const Vector_double& data, double dt,
                 } else {
                     dlevmar_bc_der( c_func_lour,  c_jac_lour, &p_toFit[0], 
                             &data_ptr[0], n_fitted, (int)data.size(), &constrains_lm_lb[0], 
-                            &constrains_lm_ub[0], (int)opts[4], &opts_l[0], info_id,
+                            &constrains_lm_ub[0], NULL, (int)opts[4], &opts_l[0], info_id,
                             NULL, NULL, &fInfo );
                 }
             }
