@@ -764,9 +764,9 @@ void wxStfDoc::WriteToReg() {
     if (!outOfRange(GetFitEnd()))
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("FitEnd"), (int)GetFitEnd());
     if (!outOfRange((size_t)GetLatencyBeg()))
-        wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("LatencyCursor"), (int)GetLatencyBeg());
+        wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("LatencyStartCursor"), (int)GetLatencyBeg());
     if (!outOfRange((size_t)GetLatencyEnd()))
-        wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("LatencyCursor"), (int)GetLatencyEnd());
+        wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("LatencyEndCursor"), (int)GetLatencyEnd());
 
     // Write Zoom
     wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.xZoom"), (int)GetXZoom().xZoom*100000);
