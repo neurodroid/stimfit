@@ -63,3 +63,9 @@ default_variants +python27
 # }
 
 destroot.destdir    DESTDIR=${destroot}${applications_dir}
+
+post-destroot {
+    set docdir ${destroot}${prefix}/share/doc/${name}
+    xinstall -d ${docdir}
+    xinstall -m 644 ${worksrcpath}/debian/copyright ${docdir}
+}

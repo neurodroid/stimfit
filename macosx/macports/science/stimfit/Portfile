@@ -4,7 +4,7 @@
 PortSystem          1.0
 
 name                stimfit
-version             0.12.3
+version             0.12.4
 categories          science
 platforms           darwin
 license             GPL-2
@@ -14,8 +14,8 @@ long_description    A program for viewing and analyzing electrophysiological dat
 homepage            http://www.stimfit.org
 master_sites        googlecode:stimfit
 
-checksums           rmd160  fc2b466f62d8abb5b89b9deaba4bc0aeb47fb678 \
-                    sha256  858164aca2442925ef5d8a34b2ad656349eea3cf8e470019aa95d954894a30b0
+checksums           rmd160  042ef333806e960f5b18a911fe4a2ca96d9e4093 \
+                    sha256  3ca98068941f0544fa869bdfc0aae3145ed811e76d237d361eef60f11dfadc0f
 
 universal_variant   no
 
@@ -63,3 +63,9 @@ default_variants +python27
 # }
 
 destroot.destdir    DESTDIR=${destroot}${applications_dir}
+
+post-destroot {
+    set docdir ${destroot}${prefix}/share/doc/${name}
+    xinstall -d ${docdir}
+    xinstall -m 644 ${worksrcpath}/debian/copyright ${docdir}
+}
