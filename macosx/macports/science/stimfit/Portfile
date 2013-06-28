@@ -4,22 +4,22 @@
 PortSystem          1.0
 
 name                stimfit
-version             0.12.2
+version             0.12.3
 categories          science
 platforms           darwin
-license             GPL
+license             GPL-2
 maintainers         gmx.de:christsc
 description         Electrophysiology analysis suite
 long_description    A program for viewing and analyzing electrophysiological data
 homepage            http://www.stimfit.org
 master_sites        googlecode:stimfit
 
-checksums           rmd160  ec94dd7838db4b2d713f5195972fd865f79cedb8 \
-                    sha256  b2ca2fb447e50e7c1610d964dceaf890885877255dc1cafb4ff47601c51b32c4
+checksums           rmd160  fc2b466f62d8abb5b89b9deaba4bc0aeb47fb678 \
+                    sha256  858164aca2442925ef5d8a34b2ad656349eea3cf8e470019aa95d954894a30b0
 
 universal_variant   no
 
-supported_archs     x86_64
+supported_archs     i386 x86_64
 
 depends_lib         port:boost \
                     port:fftw-3 \
@@ -33,7 +33,8 @@ configure.args      --with-wx-config=${prefix}/bin/wx-config \
                     CXX="`${prefix}/bin/wx-config --cxx`" \
                     LD="`${prefix}/bin/wx-config --ld`"
 
-variant python27 description {Build with Python shell. Only 2.7 is supported.} {
+# Only Python 2.7 is supported until wxpython gets available for Python 3.x
+variant python27 description {Build with Python shell.} {
     depends_build-append \
         port:swig-python
 
@@ -56,8 +57,9 @@ variant python27 description {Build with Python shell. Only 2.7 is supported.} {
 configure.ldflags-append \
                     -headerpad_max_install_names
 
-if {![variant_isset python27]} {
-    default_variants +python27
-}
+# Commented out for now; will be required when wxpython gets available for Python 3.x
+# if {![variant_isset python27]} { 
+default_variants +python27
+# }
 
 destroot.destdir    DESTDIR=${destroot}${applications_dir}
