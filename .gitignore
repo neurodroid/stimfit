@@ -109,6 +109,7 @@ m4/ltsugar.m4
 m4/ltversion.m4
 missing
 stfconf.h.in
+compile
 
 #stf_init.py
 
