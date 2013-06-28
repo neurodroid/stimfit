@@ -47,6 +47,6 @@ if { ${subport} != ${name} } {
         set docdir ${destroot}${prefix}/share/doc/${subport}
         xinstall -d ${docdir}
         xinstall -m 644 ${worksrcpath}/debian/copyright \
-            ${docdir}
+            ${worksrcpath}/COPYING ${docdir}
     }
 }
