@@ -116,7 +116,7 @@ Table defaultOutput(const Vector_double& pars,
                     double chisqr);
 
 //! Initialising function for the parameters in stf::Func to start a fit.
-typedef boost::function<void(const Vector_double&,double,double,double,Vector_double&)> Init;
+typedef boost::function<void(const Vector_double&, double, double, double, double, std::size_t, double, Vector_double&)> Init;
 
 //! Function used for least-squares fitting.
 /*! Objects of this class are used for fitting functions 

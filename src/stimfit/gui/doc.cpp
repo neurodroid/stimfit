@@ -1443,8 +1443,8 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
             //fill array:
             std::copy(&cur()[GetFitBeg()], &cur()[GetFitEnd()], &x[0]);
             params.resize(n_params);
-            wxGetApp().GetFuncLib().at(fselect).init( x, GetBase(), GetPeak(),
-                    GetXScale(), params );
+            wxGetApp().GetFuncLib().at(fselect).init( x, GetBase(), GetPeak(), GetRTLoHi(),
+                    GetHalfDuration(), GetFitBeg(), GetXScale(), params );
 
             std::string fitInfo;
             try {

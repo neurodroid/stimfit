@@ -1459,14 +1459,15 @@ PyObject* leastsq( int fselect, bool refresh ) {
 
     // initialize parameters from init function,
     wxGetApp().GetFuncLib().at(fselect).init( x, pDoc->GetBase(), pDoc->GetPeak(),
-            pDoc->GetXScale(), params );
+            pDoc->GetRTLoHi(), pDoc->GetHalfDuration(), pDoc->GetFitBeg(), pDoc->GetXScale(), params );
     std::string fitInfo;
     int fitWarning = 0;
     std::vector< double > opts( 6 );
-    // Respectively the scale factor for initial \mu,
+    // Respectively the scale factor for initial damping term \mu,
     // stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2,
     // maxIter, maxPass
-    opts[0]=5*1E-3; //default: 1E-03;
+    //opts[0]=5*1E-3; //default: 1E-03;
+    opts[0]=1E-3; //default: 1E-03;
     opts[1]=1E-17; //default: 1E-17;
     opts[2]=1E-17; //default: 1E-17;
     opts[3]=1E-17; //default: 1E-17;

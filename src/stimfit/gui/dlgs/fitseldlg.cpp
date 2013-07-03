@@ -25,10 +25,11 @@ wxStfFitSelDlg::wxStfFitSelDlg(wxWindow* parent, wxStfDoc* doc, int id, wxString
     paramDescArray(MAXPAR),
     paramEntryArray(MAXPAR), pDoc(doc)
 {
-    // Respectively the scale factor for initial \mu,
+    // Respectively the scale factor for initial damping term \mu,
     // stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2,
-    // maxIter, maxPass
-    opts[0]=5*1E-3; //default: 1E-03;
+    // maxIter (Kmax), maxPass
+    //opts[0]=5*1E-3; //default: 1E-03;
+    opts[0] = 1E-3; //default: 1E-03;
     opts[1]=1E-17; //default: 1E-17;
     opts[2]=1E-17; //default: 1E-17;
     opts[3]=1E-32; //default: 1E-17;
@@ -297,7 +298,7 @@ void wxStfFitSelDlg::SetPars() {
                 &x[0]);
         Vector_double initPars(wxGetApp().GetFuncLib().at(m_fselect).pInfo.size());
         wxGetApp().GetFuncLib().at(m_fselect).init( x, pDoc->GetBase(),
-                pDoc->GetPeak(), pDoc->GetXScale(), initPars);
+                pDoc->GetPeak(), pDoc->GetRTLoHi(), pDoc->GetHalfDuration(), pDoc->GetFitBeg(), pDoc->GetXScale(), initPars);
         std::vector< wxStaticText* >::iterator it1;
         std::vector< wxTextCtrl* >::iterator it2 = paramEntryArray.begin();
         std::size_t n_p = 0;

@@ -701,7 +701,7 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     wxMenu *fitSub = new wxMenu;
     fitSub->Append(
                    ID_FIT,
-                   wxT("&Nonlinear regression..."),
+                   wxT("&Nonlinear regression...\tCtrl+N"),
                    wxT("Fit a function to this trace between fit cursors")
                    );
     fitSub->Append(

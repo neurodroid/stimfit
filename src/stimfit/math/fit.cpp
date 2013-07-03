@@ -391,7 +391,7 @@ double stf::flin(double x, const Vector_double& p) { return p[0]*x + p[1]; }
 
 //! Dummy function to be passed to stf::storedFunc for linear functions.
 void stf::flin_init(const Vector_double& data, double base, double peak,
-        double dt, Vector_double& pInit )
+        double RTLoHI, double HalfWidth, std::size_t fit_start, double dt, Vector_double& pInit )
 { }
 
 stf::storedFunc stf::initLinFunc() {
@@ -406,7 +406,8 @@ stf::storedFunc stf::initLinFunc() {
 Vector_double stf::LM_default_opts() {
 
     Vector_double opts(6);
-    opts[0]=5*1E-3;   // initial \mu, default: 1E-03;
+    //opts[0]=5*1E-3;   // initial \mu, default: 1E-03;
+    opts[0]=1E-3;   // initial \mu, default: 1E-03;
     opts[1]=1E-17;    // stopping thr for ||J^T e||_inf, default: 1E-17;
     opts[2]=1E-17;    // stopping trh for ||Dp||_2, default: 1E-17;
     opts[3]=1E-32;    // stopping thr for ||e||_2, default: 1E-17;
