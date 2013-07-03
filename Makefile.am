@@ -238,6 +238,7 @@ if BUILD_PYTHON
 	ln -sf ../../lib/stimfit/libpystf.dylib ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/_stf.so
 	cp -v $(top_srcdir)/src/stimfit/py/*.py ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/
 	cp -v $(top_srcdir)/src/pystfio/*.py ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/
+	${PYTHON} -m compileall -l ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/
 endif BUILD_PYTHON
 	$(POSTLINK_COMMAND) ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT) \
 	                    $(srcdir)/macosx/app.r

@@ -37,7 +37,11 @@ typedef int ssize_t;
 extern "C" size_t ifwrite(void* buf, size_t size, size_t nmemb, HDRTYPE* hdr);
 extern "C" uint32_t lcm(uint32_t A, uint32_t B);
 #if !defined(__MINGW32__) && !defined(_MSC_VER)
-#include <endian.h>	// not available on mingw
+    #if defined (__APPLE__)
+        #include <machine/endian.h>
+    #else
+        #include <endian.h>
+    #endif
 #endif
 #endif
 
@@ -681,7 +685,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             for (n=0; n < Data[k][m].size(); ++n) {
                 uint64_t val;
                 double d = Data[k][m][n];
-#if !defined(__MINGW32__) && !defined(_MSC_VER)
+#if !defined(__MINGW32__) && !defined(_MSC_VER) && !defined(__APPLE__)
                 val = htole64(*(uint64_t*)&d);
 #else
                 val = *(uint64_t*)&d;
@@ -902,7 +906,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             for (n=0; n < Data[k][m].size(); ++n) {
                 uint64_t val;
                 double d = Data[k][m][n];
-#if !defined(__MINGW32__) && !defined(_MSC_VER)
+#if !defined(__MINGW32__) && !defined(_MSC_VER) && !defined(__APPLE__)
                 val = htole64(*(uint64_t*)&d);
 #else
                 val = *(uint64_t*)&d;
