@@ -25,14 +25,16 @@ extern "C" {
 // Constants used in defining the ABF file header
 //
 #define ABF2_ADCCOUNT           16    // number of ADC channels supported.
-#define ABF2_DACCOUNT           4     // number of DAC channels supported.
+#define ABF2_DACCOUNT           8     // number of DAC channels supported.
 #define ABF2_EPOCHCOUNT         10    // number of waveform epochs supported.
 #define ABF2_ADCUNITLEN         8     // length of ADC units strings
 #define ABF2_ADCNAMELEN         10    // length of ADC channel name strings
+#define ABF2_ADCNAMELEN_USER    8     // length of user-entered ADC channel name strings
 #define ABF2_DACUNITLEN         8     // length of DAC units strings
 #define ABF2_DACNAMELEN         10    // length of DAC channel name strings
 #define ABF2_USERLISTLEN        256   // length of the user list (V1.6)
-#define ABF2_USERLISTCOUNT      4     // number of independent user lists (V1.6)
+//#define ABF2_USERLISTCOUNT    4       // number of independent user lists (V1.6)
+#define ABF2_USERLISTCOUNT      ABF2_DACCOUNT     // number of independent user lists (V1.6)
 #define ABF2_OLDFILECOMMENTLEN  56    // length of file comment string (pre V1.6)
 #define ABF2_FILECOMMENTLEN     128   // length of file comment string (V1.6)
 #define ABF2_PATHLEN            256   // length of full path, used for DACFile and Protocol name.
@@ -52,6 +54,9 @@ extern "C" {
 //
 // Constants for nDigitizerType
 //
+//
+// Constants for nDigitizerType
+//
 #define ABF2_DIGI_UNKNOWN   0
 #define ABF2_DIGI_DEMO      1
 #define ABF2_DIGI_MINIDIGI  2
@@ -59,6 +64,8 @@ extern "C" {
 #define ABF2_DIGI_OPUS      4
 #define ABF2_DIGI_PATCH     5
 #define ABF2_DIGI_DD1440    6
+#define ABF2_DIGI_MINIDIGI2 7
+#define ABF2_DIGI_DD1550    8
 
 //
 // Constants for nDrawingStrategy
@@ -101,6 +108,10 @@ extern "C" {
 #define ABF2_DELTA_DIGITALOUTS       4
 #define ABF2_DELTA_THRESHOLD         5
 #define ABF2_DELTA_PRETRIGGER        6
+#define ABF2_DELTA_HOLDING4           7
+#define ABF2_DELTA_HOLDING5           8
+#define ABF2_DELTA_HOLDING6           9
+#define ABF2_DELTA_HOLDING7           10
 
 // Because of lack of space, the Autosample Gain ID also contains the ADC number.
 #define ABF2_DELTA_AUTOSAMPLE_GAIN   100   // +ADC channel.
@@ -392,6 +403,7 @@ extern "C" {
 #define ABF2_EPOCH_TYPE_COSINE       5     // cosinusoidal waveform
 #define ABF2_EPOCH_TYPE_UNUSED       6     // was ABF2_EPOCH_TYPE_RESISTANCE
 #define ABF2_EPOCH_TYPE_BIPHASIC     7     // biphasic pulse train
+#define ABF2_EPOCHSLOPE              8     // IonWorks style ramp waveform
 
 //
 // Constants for epoch resistance
@@ -422,7 +434,7 @@ extern "C" {
 #define ABF2_SWEEPSTARTTOSTARTTIME_MAX  1000000.0F 
 #define ABF2_PNPULSECOUNT_MAX           8
 #define ABF2_DIGITALVALUE_MAX           0xFF
-#define ABF2_EPOCHDIGITALVALUE_MAX      0x0F
+#define ABF2_EPOCHDIGITALVALUE_MAX      0xFF
 
 //
 // Constants for nTriggerSource
@@ -499,6 +511,7 @@ extern "C" {
 #define ABF2_PEAK_MEASURE_RISESLOPE           0x00008000
 #define ABF2_PEAK_MEASURE_DECAYSLOPE          0x00010000
 #define ABF2_PEAK_MEASURE_REGIONSLOPE         0x00020000
+#define ABF2_PEAK_MEASURE_DURATION            0x00040000
 
 #define ABF2_PEAK_NORMAL_PEAK                 0x00100000
 #define ABF2_PEAK_NORMAL_ANTIPEAK             0x00400000
@@ -572,13 +585,15 @@ extern "C" {
 #define ABF2_COMPRESSION_NONE     0
 #define ABF2_COMPRESSION_PKWARE   1
 
-#define ABF2_CURRENTVERSION    ABF2_V200        // Current file format version number
+#define ABF2_CURRENTVERSION    ABF2_V203        // Current file format version number
 //
 // Header Version Numbers
 //
 #define ABF2_V200  2.00F                       // Alpha versions of pCLAMP 10 and DataXpress 2
 #define ABF2_V201  2.01F                       // DataXpress 2.0.0.16 and later
-                                              // pCLAMP 10.0.0.6 and later
+                                               // pCLAMP 10.0.0.6 and later
+#define ABF2_V202  2.02F                       // Barracuda 1.0 and later
+#define ABF2_V203  2.03F                       // pCLAMP 10.4.0.7 and later
 
 // Retired constants.
 #undef ABF2_AUTOANALYSE_RUNMACRO
@@ -720,6 +735,7 @@ public:
    float    fSignalHighpassFilter[ABF2_ADCCOUNT];
    char     nLowpassFilterType[ABF2_ADCCOUNT];
    char     nHighpassFilterType[ABF2_ADCCOUNT];
+   bool     bHumFilterEnable[ABF2_ADCCOUNT];
 
    char     sADCChannelName[ABF2_ADCCOUNT][ABF2_ADCNAMELEN];
    char     sADCUnits[ABF2_ADCCOUNT][ABF2_ADCUNITLEN];
@@ -745,9 +761,12 @@ public:
    short    nInterEpisodeLevel[ABF2_DACCOUNT];
    short    nEpochType[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
    float    fEpochInitLevel[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
+   float    fEpochFinalLevel[ABF2_DACCOUNT][ABF2_EPOCHCOUNT]; // Only used for ABF_EPOCHSLOPE.
    float    fEpochLevelInc[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
    ABFLONG     lEpochInitDuration[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
    ABFLONG     lEpochDurationInc[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
+   short    nEpochTableRepetitions[ABF2_DACCOUNT];
+   float    fEpochTableStartToStartInterval[ABF2_DACCOUNT];
 
    // GROUP #10 - DAC Output File
    float    fDACFileScale[ABF2_DACCOUNT];
@@ -756,7 +775,7 @@ public:
    short    nDACFileADCNum[ABF2_DACCOUNT];
    char     sDACFilePath[ABF2_DACCOUNT][ABF2_PATHLEN];
 
-   // GROUP #11 - Presweep (conditioning) pulse train
+   // GROUP #11a - Presweep (conditioning) pulse train
    short    nConditEnable[ABF2_DACCOUNT];
    ABFLONG     lConditNumPulses[ABF2_DACCOUNT];
    float    fBaselineDuration[ABF2_DACCOUNT];
@@ -765,9 +784,24 @@ public:
    float    fStepLevel[ABF2_DACCOUNT];
    float    fPostTrainPeriod[ABF2_DACCOUNT];
    float    fPostTrainLevel[ABF2_DACCOUNT];
+   float    fCTStartLevel[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
+   float    fCTEndLevel[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
+   float    fCTIntervalDuration[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
+   float    fCTStartToStartInterval[ABF2_DACCOUNT];
+
+   // GROUP #11b - Membrane Test Between Sweeps
    short    nMembTestEnable[ABF2_DACCOUNT];
    float    fMembTestPreSettlingTimeMS[ABF2_DACCOUNT];
    float    fMembTestPostSettlingTimeMS[ABF2_DACCOUNT];
+
+    // GROUP #11c - PreSignal test pulse
+   short    nPreSignalEnable[ABF2_DACCOUNT];
+   float    fPreSignalPreStepDuration[ABF2_DACCOUNT];
+   float    fPreSignalPreStepLevel[ABF2_DACCOUNT];
+   float    fPreSignalStepDuration[ABF2_DACCOUNT];
+   float    fPreSignalStepLevel[ABF2_DACCOUNT];
+   float    fPreSignalPostStepDuration[ABF2_DACCOUNT];
+   float    fPreSignalPostStepLevel[ABF2_DACCOUNT];
 
    // GROUP #12 - Variable parameter user list
    short    nULEnable[ABF2_USERLISTCOUNT];
@@ -820,7 +854,7 @@ public:
    float    fPNInterpulse;
    short    nLeakSubtractType[ABF2_DACCOUNT];
    float    fPNHoldingLevel[ABF2_DACCOUNT];
-   bool     bEnabledDuringPN[ABF2_ADCCOUNT];
+   short    nLeakSubtractADCIndex[ABF2_DACCOUNT];
 
    // GROUP #16 - Miscellaneous variables
    short    nLevelHysteresis;
@@ -834,6 +868,7 @@ public:
    short    nExternalTagType;
    ABFLONG     lHeaderSize;
    short    nStatisticsClearStrategy;
+   short    nEnableFirstLastHolding;            // First & Last Holding are now optional.
    
    // GROUP #17 - Trains parameters
    ABFLONG     lEpochPulsePeriod[ABF2_DACCOUNT][ABF2_EPOCHCOUNT];
