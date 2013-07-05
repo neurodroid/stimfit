@@ -68,6 +68,7 @@
 
 #include "./childframe.h"
 #include "./parentframe.h"
+#include "./math/levmar/levmar.h"
 
 #include "./../res/16-em-down.xpm"
 #include "./../res/16-em-open.xpm"
@@ -553,7 +554,7 @@ void wxStfParentFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
 	wxString about = wxString(wxT("Credits:\n\nOriginal idea (Stimfit for DOS):\n\
 Peter Jonas, Physiology Department, University of Freiburg\n\n\
 Fourier transform:\nFFTW, http://www.fftw.org\n\n\
-Levenberg-Marquardt non-linear regression (levmar-2.6):\n\
+Levenberg-Marquardt non-linear regression, version ") + wxString(wxT(LM_VERSION)) + wxT("\n\
 Manolis Lourakis, http://www.ics.forth.gr/~lourakis/levmar/ \n\n")) +
 wxString(wxT(CREDIT_BIOSIG)) +
 wxString(wxT("Documentation:\n\
