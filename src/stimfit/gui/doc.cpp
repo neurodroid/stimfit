@@ -943,8 +943,7 @@ void wxStfDoc::CreateAverage(
     //array indicating how many indices to shift when aligning,
     //has to be filled with zeros:
     std::vector<int> shift(GetSelectedSections().size(),0);
-    //number of points in average:
-    int average_size;
+    int shift_size = 0;
 
     /* Aligned average */
     //find alignment points in the reference (==second) channel:
@@ -1017,11 +1016,19 @@ void wxStfDoc::CreateAverage(
         //restore section and channel settings:
         SetSection(section_old);
         SetCurCh(channel_old);
-        average_size=(int)(get()[0][GetSelectedSections()[0]].size()-(max_index-min_index));
-    } else {
-        average_size=(int)get()[0][GetSelectedSections()[0]].size();
+		shift_size = (max_index-min_index);
     }
-    //initialize temporary sections and channels:
+
+    //number of points in average:
+    size_t average_size = get()[cc].get()[cs].size();
+	for (c_st_it sit = GetSelectedSections().begin(); sit != GetSelectedSections().end(); sit++) {
+		if (get()[cc].get()[*sit].size() < average_size) {
+			average_size = get()[cc].get()[*sit].size();
+		}
+	}
+    average_size -= shift_size;
+
+	//initialize temporary sections and channels:
     Average.resize(size());
     std::size_t n_c = 0;
     for (c_ch_it cit = get().begin(); cit != get().end(); cit++) {
@@ -2448,7 +2455,7 @@ void wxStfDoc::Measure( )
         try {
             stf::maxRise(sec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY,windowLength);
         }
-        catch (const std::out_of_range& e) {
+        catch (const std::out_of_range&) {
             APMaxRiseT=0.0;
             APMaxRiseY=0.0;
             left_APRise = peakBeg; 
