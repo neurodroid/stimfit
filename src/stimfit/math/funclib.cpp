@@ -302,7 +302,7 @@ void stf::fexpbde_init(const Vector_double& data, double base, double peak, doub
     //pInit[1] = 0.01;
     //pInit[1] = 1.0; /* latency */
     // Use the left fitting cursor to estimate latency
-    pInit[1] = (maxT - fit_start)*dt; /* latency */
+    pInit[1] = maxT * dt; /* latency */
     //pInit[2] = 3 * maxT * dt; /* tau1 time constant */
     pInit[2] = 1.5*HalfWidth; /* tau1 time constant */
     //pInit[4] = 0.5 * maxT * dt; /* tau2 time constant */
