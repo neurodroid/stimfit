@@ -1,4 +1,4 @@
-stimfit (0.12.5-1) precise; urgency=low
+stimfit (0.12.5-1) experimental; urgency=low
 
   * More robust initialization for nonlinear regression
   * Faster convergence for most fits
