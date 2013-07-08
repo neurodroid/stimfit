@@ -138,7 +138,21 @@ void Recording::MakeAverage(Section& AverageReturn,
         bool isSig,
         const std::vector<int>& shift) const
 {
+    if (channel >= ChannelArray.size()) {
+        throw std::out_of_range("Channel number out of range in Recording::MakeAverage");
+    }
     int n_sections=(int)section_index.size();
+    if (shift.size() != n_sections) {
+        throw std::out_of_range("Shift out of range in Recording::MakeAverage");
+    }
+    for (int l = 0; l < n_sections; ++l) {
+        if (section_index[l] >= ChannelArray[channel].size()) {
+            throw std::out_of_range("Section number out of range in Recording::MakeAverage");
+        }
+        if (AverageReturn.size() + shift[l] > ChannelArray[channel][section_index[l]].size()) {
+            throw std::out_of_range("Sampling point out of range in Recording::MakeAverage");
+        }
+    }
 
     for (int k=0; k < (int)AverageReturn.size(); ++k) {
         AverageReturn[k]=0.0;

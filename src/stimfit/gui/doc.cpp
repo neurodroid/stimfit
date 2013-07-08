@@ -1016,24 +1016,31 @@ void wxStfDoc::CreateAverage(
         //restore section and channel settings:
         SetSection(section_old);
         SetCurCh(channel_old);
-		shift_size = (max_index-min_index);
+        shift_size = (max_index-min_index);
     }
 
     //number of points in average:
     size_t average_size = get()[cc].get()[cs].size();
-	for (c_st_it sit = GetSelectedSections().begin(); sit != GetSelectedSections().end(); sit++) {
-		if (get()[cc].get()[*sit].size() < average_size) {
-			average_size = get()[cc].get()[*sit].size();
-		}
-	}
+    for (c_st_it sit = GetSelectedSections().begin(); sit != GetSelectedSections().end(); sit++) {
+        if (get()[cc].get()[*sit].size() < average_size) {
+            average_size = get()[cc].get()[*sit].size();
+        }
+    }
     average_size -= shift_size;
 
-	//initialize temporary sections and channels:
+    //initialize temporary sections and channels:
     Average.resize(size());
     std::size_t n_c = 0;
     for (c_ch_it cit = get().begin(); cit != get().end(); cit++) {
         Section TempSection(average_size), TempSig(average_size);
-        MakeAverage(TempSection, TempSig, n_c, GetSelectedSections(), calcSD, shift);
+        try {
+            MakeAverage(TempSection, TempSig, n_c, GetSelectedSections(), calcSD, shift);
+        }
+        catch (const std::out_of_range& e) {
+            Average.resize(0);
+            wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+            return;
+        }
         TempSection.SetSectionDescription(stf::wx2std(GetTitle())
                                           +std::string(", average"));
         Channel TempChannel(TempSection);
