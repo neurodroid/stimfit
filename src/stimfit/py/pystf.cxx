@@ -1459,7 +1459,7 @@ PyObject* leastsq( int fselect, bool refresh ) {
 
     // initialize parameters from init function,
     wxGetApp().GetFuncLib().at(fselect).init( x, pDoc->GetBase(), pDoc->GetPeak(),
-            pDoc->GetRTLoHi(), pDoc->GetHalfDuration(), pDoc->GetFitBeg(), pDoc->GetXScale(), params );
+            pDoc->GetRTLoHi(), pDoc->GetHalfDuration(), pDoc->GetXScale(), params );
     std::string fitInfo;
     int fitWarning = 0;
     std::vector< double > opts( 6 );

@@ -73,7 +73,7 @@ namespace stf {
      *         number of exponential functions. On exit, will contain initial parameter
      *         estimates.
      */
-    void fexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, std::size_t fit_start, double dt, Vector_double& pInit );
+    void fexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit );
 
     //! Yet another initialiser for fitting stf::fexp() to \e data.
     /*! In this case, one of the amplitude terms will have another sign than the others, making
@@ -86,7 +86,7 @@ namespace stf {
      *         number of exponential functions. On exit, will contain initial parameter
      *         estimates.
      */
-    void fexp_init2(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, std::size_t fit_start, double dt, Vector_double& pInit );
+    void fexp_init2(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit );
     
     //! Monoexponential function with delay. 
     /*! \f{eqnarray*}
@@ -153,7 +153,7 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 4.
      *         On exit, will contain initial parameter estimates.
      */
-    void fexpde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, std::size_t fit_start, double dt,  Vector_double& pInit );
+    void fexpde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt,  Vector_double& pInit );
     
     
     //! Biexponential function with delay. 
@@ -223,7 +223,7 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 4.
      *         On exit, will contain initial parameter estimates.
      */
-    void fexpbde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, std::size_t fit_start, double dt,  Vector_double& pInit );
+    void fexpbde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt,  Vector_double& pInit );
 
     //! Alpha function.
     /*! \f[f(x)=p_0 p_1^2 x \mathrm{e}^{-p_1 x} + p_2\f]
@@ -304,7 +304,7 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 3. On exit, will contain initial parameter
      *         estimates.
      */
-    void falpha_init(const Vector_double& data, double base, double peak, double RTLoHI, double HalfWidth, std::size_t fit_start, double dt, Vector_double& pInit );
+    void falpha_init(const Vector_double& data, double base, double peak, double RTLoHI, double HalfWidth, double dt, Vector_double& pInit );
 
     //! Initialises parameters for fitting stf::fgauss() to \e data.
     /*! \param data The waveform of the data for the fit.
@@ -314,7 +314,7 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 3. On exit, will contain initial parameter
      *         estimates.
      */
-    void fgauss_init(const Vector_double& data, double base, double peak, double RTLoHI, double HalfWidth, std::size_t fit_start,  double dt, Vector_double& pInit );
+    void fgauss_init(const Vector_double& data, double base, double peak, double RTLoHI, double HalfWidth, double dt, Vector_double& pInit );
 
     //! Initialises parameters for fitting stf::falpha() to \e data.
     /*! \param data The waveform of the data for the fit.
@@ -324,7 +324,7 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 4. On exit, will contain initial parameter
      *         estimates.
      */
-    void fHH_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, std::size_t fit_start, double dt, Vector_double& pInit );
+    void fHH_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit );
 
     //! Initialises parameters for fitting stf::falpha() to \e data.
     /*! \param data The waveform of the data for the fit.
@@ -334,7 +334,7 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 4. On exit, will contain initial parameter
      *         estimates.
      */
-    void fgnabiexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, std::size_t fit_start, double dt, Vector_double& pInit );
+    void fgnabiexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit );
 
     //! Scales a parameter that linearly depends on x
     /*! \param The parameter to scale
