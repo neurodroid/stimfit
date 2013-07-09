@@ -586,7 +586,6 @@ stf::histogram(const Vector_double& data, int nbins) {
     double bin = (fmax-fmin)/nbins;
 
     std::map<double,int> histo;
-    int nbin = 0;
     for (int nbin=0; fmin + nbin*bin < fmax; ++nbin) {
         histo[fmin + nbin*bin] = 0;
     }
@@ -702,7 +701,7 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
         data_return.resize(0);
         return data_return;
     }
-    int nbins =  int(data_return.size()/1000.0);
+    int nbins =  int(data_return.size()/500.0);
     std::map<double, int> histo = histogram(data_return, nbins);
     double max_value = -1;
     double max_time = 0;
