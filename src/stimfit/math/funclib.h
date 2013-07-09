@@ -280,7 +280,10 @@ namespace stf {
      *  \return The evaluated function.
      */
     double fgauss(double x, const Vector_double& p);
-    
+
+    //! Computes the Jacobian of a sum of Gaussians.
+    Vector_double fgauss_jac(double x, const Vector_double& p);
+
     //! power of 1 sodium conductance function.
     /*! \f[f(x)=p_0\left(1-\mathrm{e}^{\frac{-x}{p_1}}\right)\mathrm{e}^{\frac{-x}{p_2}} + p_3\f]
      *  \param x Function argument.
