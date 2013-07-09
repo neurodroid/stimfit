@@ -586,11 +586,12 @@ stf::histogram(const Vector_double& data, int nbins) {
     double bin = (fmax-fmin)/nbins;
 
     std::map<double,int> histo;
-    for (double lobound=fmin; lobound<fmax; lobound += bin) {
-        histo[lobound] = 0;
+    int nbin = 0;
+    for (int nbin=0; fmin + nbin*bin < fmax; ++nbin) {
+        histo[fmin + nbin*bin] = 0;
     }
     for (std::size_t npoint=0; npoint < data.size(); ++npoint) {
-        int nbin = int((data[npoint]-fmin) / bin);
+        nbin = int((data[npoint]-fmin) / bin);
         histo[fmin + nbin*bin]++;
     }
     return histo;
@@ -701,9 +702,11 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
         data_return.resize(0);
         return data_return;
     }
-    std::map<double, int> histo = histogram(data_return, int(data_return.size()/100.0));
+    int nbins =  int(data_return.size()/1000.0);
+    std::map<double, int> histo = histogram(data_return, nbins);
     double max_value = -1;
     double max_time = 0;
+    double maxhalf_time = 0;
     Vector_double histo_fit(0);
     for (std::map<double,int>::const_iterator it=histo.begin();
          it != histo.end(); ++it) {
@@ -716,6 +719,14 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
         std::cout << it->first << "\t" << it->second << std::endl;
 #endif
     }
+    for (std::map<double,int>::const_iterator it=histo.begin();
+         it != histo.end(); ++it) {
+        if (it->second > 0.5*max_value) {
+            maxhalf_time = it->first;
+            break;
+        }
+    }
+    maxhalf_time = fabs(max_time-maxhalf_time);
     progDlg.Update( 75, "Fitting Gaussian...", &skipped );
     if (skipped) {
         data_return.resize(0);
@@ -724,24 +735,32 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
     /* Fit Gaussian to histogram */
     Vector_double opts = LM_default_opts();
 
-    /* Initial parameter guesses */
-    Vector_double pars(3);
-    pars[0] = max_value;
-    pars[1] = max_time - histo.begin()->first;
-    pars[2] = 1.0;
-
     std::string info;
     int warning;
     std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
     
     double interval = (++histo.begin())->first-histo.begin()->first;
+    /* Initial parameter guesses */
+    Vector_double pars(3);
+    pars[0] = max_value;
+    pars[1] = (max_time - histo.begin()->first);
+    pars[2] = maxhalf_time *sqrt(2.0)/2.35482;
 #ifdef _STFDEBUG    
+    std::cout << "nbins: " << nbins << std::endl;
+    std::cout << "initial values:" << std::endl;
+    for (std::size_t np=0; np<pars.size(); ++np) {
+        std::cout << pars[np] << std::endl;
+    }
+#endif
+
+#ifdef _STFDEBUG
     double chisqr =
 #endif
-        lmFit(histo_fit, interval, funcLib[funcLib.size()-1], opts, false,
+        lmFit(histo_fit, interval, funcLib[funcLib.size()-1], opts, true,
               pars, info, warning );
-#ifdef _STFDEBUG    
+#ifdef _STFDEBUG
     std::cout << chisqr << "\t" << interval << std::endl;
+    std::cout << "final values:" << std::endl;
     for (std::size_t np=0; np<pars.size(); ++np) {
         std::cout << pars[np] << std::endl;
     }
