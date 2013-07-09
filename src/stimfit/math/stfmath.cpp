@@ -590,7 +590,7 @@ stf::histogram(const Vector_double& data, int nbins) {
         histo[fmin + nbin*bin] = 0;
     }
     for (std::size_t npoint=0; npoint < data.size(); ++npoint) {
-        nbin = int((data[npoint]-fmin) / bin);
+        int nbin = int((data[npoint]-fmin) / bin);
         histo[fmin + nbin*bin]++;
     }
     return histo;
