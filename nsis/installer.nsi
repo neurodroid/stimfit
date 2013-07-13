@@ -39,13 +39,14 @@ Var PY_ACT
 !define HDF5DIR "${USRDRV}Users\${LOGIN}\hdf5"
 !define PRODIR "C:\Program Files (x86)"
 !define FULL_WELCOME "This wizard will guide you through the installation \
-of ${REG_NAME} and wxPython. Please uninstall any earlier version of Stimfit (<= 0.10) before \
+of ${REG_NAME} and wxPython. It is strongly recommended that you uninstall any earlier version of Stimfit (< 0.11) before \
 proceeding. You can optionally \
 install Python ${PY_VERSION}, NumPy ${NP_VERSION} \
 and Matplotlib ${MPL_VERSION} \
 if you don't have them on your machine."
 !define UPDATE_WELCOME "This wizard will install \
-${REG_NAME} on your computer. Please make sure Python ${PY_MIN} or ${PY_MAJOR}, \
+${REG_NAME} on your computer. It is strongly recommended that you uninstall any \
+previous versions (< 0.11) first. Please make sure Python ${PY_MAJOR}, \
 NumPy and Matplotlib are installed before proceeding."
 ; The name of the installer
 Name "${REG_NAME}"
@@ -311,6 +312,7 @@ Section "!stfio standalone module" 4 ; Standalone python file i/o module
   ClearErrors
   
   ; Set output path to the installation directory.
+  RMDir /r $9\Lib\site-packages\stfio
   CreateDirectory $9\Lib\site-packages\stfio
   SetOutPath $9\Lib\site-packages\stfio
   
