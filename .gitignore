@@ -60,6 +60,18 @@ stimfit_VS03/stimfit_exe/Debug
 stimfit_VS03/stimfit_exe/stf\ debug
 stimfit_VS03/stimfit_exe/Release
 
+windows/VS2008/libstfio/Debug
+windows/VS2008/libstfio/Release
+windows/VS2008/libstimfit/Debug
+windows/VS2008/libstimfit/Release
+windows/VS2008/pystf/Debug
+windows/VS2008/pystf/Release
+windows/VS2008/pystfio/Debug
+windows/VS2008/pystfio/Release
+windows/VS2008/Stimfit/Debug
+windows/VS2008/Stimfit/Release
+*.user
+
 # macports
 
 PortIndex*
