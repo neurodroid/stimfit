@@ -20,8 +20,4 @@
 		Name="PYTHONDIR"
 		Value="C:\Python27"
 	/>
-	<UserMacro
-		Name="PYTHONDIR"
-		Value="C:\Python27"
-	/>
 </VisualStudioPropertySheet>
