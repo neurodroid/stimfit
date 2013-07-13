@@ -1,6 +1,6 @@
 #! /bin/bash
 
-VERSION=0.11.5
+VERSION=0.12.7
 
 make dist
 mkdir -p ../deb/
@@ -10,7 +10,6 @@ cp -v stimfit-${VERSION}.tar.gz ../deb/stimfit_${VERSION}.orig.tar.gz
 cd ../deb/
 tar -xzf stimfit_${VERSION}.orig.tar.gz
 cd stimfit-${VERSION}
-mkdir -p debian
-cp -rv ../../../debian/* ./debian
+cp -rv ../../../debian ./
 debuild -S -sa
 sudo pbuilder build ../*.dsc

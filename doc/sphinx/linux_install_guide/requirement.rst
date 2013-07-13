@@ -32,6 +32,7 @@ For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build depend
                            libtool \
                            libgtest-dev
 
+
 This will get you, amongst others:
 
 * [boost]_: C++ library that is mainly used for its shared pointers.
@@ -39,6 +40,8 @@ This will get you, amongst others:
 * [fftw]_:  Library for computing Fourier transformations.
 * [NumPy]_: To handle multidimensional arrays and perform more complex numerical computations with Python.
 * [HDF5]_: This is the hierarchical Data Format 5 (HDF5) to manage large amount of data.
+
+In addition, you can install doxygen, python-sphinx and graphviz if you want to build yourself the documentation.
 
 =======================
 Optional: wxWidgets 2.9
@@ -124,7 +127,7 @@ where [N] is the number of parallel builds you want to start. And finally:
 Building Stimfit with BioSig import filter
 ==========================================
 
-It is recommended to build `Stimfit <http://www.stimfit.org>`_  with the BioSig import filter to read HEKA files or to have the possibility import some other file formats used biomedical signal processing. To do it, follow this instructions:
+It is recommended to build `Stimfit <http://www.stimfit.org>`_  with the `BioSig <http://biosig.sourceforge.net>`_ import the file filters to read HEKA files or to have the possibility import some other file formats used biomedical signal processing. To do it, follow this instructions:
 
 1. It is first recommended to install libsuitesparse and libz libraries:
 
@@ -132,26 +135,51 @@ It is recommended to build `Stimfit <http://www.stimfit.org>`_  with the BioSig 
 
     sudo apt-get install libsuitesparse-dev libz-dev
 
-2. Download BioSig sources: you can obtain the latest BioSig version in `Biosig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig. Alternatively, you can obtain the latest developmental version from the repository:
+2. Download BioSig sources: you can obtain the latest BioSig version in `BioSig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig. Alternatively, you can obtain the latest developmental version from the git repository:
 
 ::
 
-    svc co https://biosig.svn.sourceforge.net/svnroot/biosig/truck/biosig4c++
+    git clone git://git.code.sf.net/p/biosig/code biosig-code
 
-3. Compile the sources:
-
-::
-
-    make
-
-4. Install the library:
+3. Compile and install the sources: enter the directory **biosig4c++** and type: 
 
 ::
 
-    sudo make install
+    sudo make install_libbiosig
 
+After that you can enter the option --with-biosig in the configure script of `Stimfit <http://www.stimfit.org>`_ and compile as usual.
 
-After that you can enter the option **--with-biosig** in the configure script of `Stimfit <http://www.stimfit.org>`_ and compile as usual.
+======================
+Building documentation
+======================
+
+The manual of `Stimfit <http://www.stimfit.org>`_ including the documentation is accessible on-line in http://www.stimfit.org/doc/sphix/. To have your own local copy of the documentation, you will need to install sphinx:
+
+::
+
+    sudo apt-get install python-sphinx
+
+Enter in $HOME/doc/sphinx/. It is possible to build a local copy of the documenation there by simply typing:
+
+::
+
+    sphinx-build ./ .build
+
+The documentation will be located in $HOME/stimfit/doc/sphinx/.build/
+
+Additionally, the source code is documented with [Doxygen]_ and is also accessible on-line in http://www.stimfit.org/doc/doxygen/html/. If you want to have a local copy of the documentation, you will need to install the doxygen and gravphvix:
+
+::
+
+    sudo apt-get install doxygen gravphvix
+
+Enter the directory where you downloaded the sources of Stimfit (e.g $HOME/stimfit) and type:
+
+::
+
+    doxygen Doxygen_Debian
+
+The local documentation of the source code will be in $HOME/stimfit/doc/doxygen/html
 
 .. [wxWidgets] http://www.wxwidgets.org
 .. [wxPython] http://www.wxpython.org
@@ -160,3 +188,4 @@ After that you can enter the option **--with-biosig** in the configure script of
 .. [HDF5] http://www.hdfgroup.org/HDF5/
 .. [NumPy] http://www.numpy.org
 .. [fftw] http://www.fftw.org
+.. [Doxygen] http://www.doxygen.org

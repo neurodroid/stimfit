@@ -37,7 +37,7 @@ Section::~Section(void) {
 
 
 double Section::at(std::size_t at_) const {
-    if (at_<0||at_>=data.size()) {
+    if (at_>=data.size()) {
         std::out_of_range e("subscript out of range in class Section");
         throw (e);
     }
@@ -45,7 +45,7 @@ double Section::at(std::size_t at_) const {
 }
 
 double& Section::at(std::size_t at_) {
-    if (at_<0||at_>=data.size()) {
+    if (at_>=data.size()) {
         std::out_of_range e("subscript out of range in class Section");
         throw (e);
     }

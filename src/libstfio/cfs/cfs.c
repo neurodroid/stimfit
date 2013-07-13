@@ -192,8 +192,6 @@
 **
 */
 
-#if !defined(__MINGW32__)
-
 #if defined(qDebug) || defined(_STFDEBUG)
     #undef NDEBUG
     #include <assert.h>
@@ -338,7 +336,7 @@ typedef struct
 
 #pragma pack()
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
 typedef TFileHead  * TpFHead;        /* pointer to start of file header */
 typedef TDataHead  * TpDHead;        /* pointer to start of data header */
 typedef TDSChInfo  * TpDsInfo;
@@ -435,7 +433,7 @@ TFileInfo*  g_fileInfo = NULL;
 **
 *****************************************************************************/
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__)  || defined(__MINGW32__)
 TError errorInfo = {0,0,0,0};
 #else
 TError  _near errorInfo = {0,0,0,0};
@@ -568,7 +566,7 @@ short CCreat(ConstStr255Param name,short vRefNum,CFSLONG dirID, SignedByte perm,
 short CCreat(TpCStr name, short mode, fDef* pFile)
 {
     short    sErr = 0;
-    #ifdef WIN32
+    #if defined(WIN32) && !defined(__MINGW32__)
     DWORD    dwMode;
     #else
     short    pmode;
@@ -587,7 +585,7 @@ short CCreat(TpCStr name, short mode, fDef* pFile)
 //        #endif
 //    #endif
 
-    #ifdef WIN32
+    #if defined(WIN32) && !defined(__MINGW32__)
         if (mode)                         /* Sort out the file access value */
             dwMode = GENERIC_READ;
         else
@@ -946,8 +944,8 @@ WORD CReadHandle(fDef handle, TpStr buffer, WORD bytes)
         return bytes;
 #endif
 
-#ifdef _IS_WINDOWS_
-    #ifdef WIN32
+#if defined(_IS_WINDOWS_)  && !defined(__MINGW32__)
+    #if defined(WIN32)
         DWORD   dwRead;
 
         if (ReadFile(handle, buffer, bytes, &dwRead, NULL))
@@ -980,7 +978,7 @@ WORD CReadHandle(fDef handle, TpStr buffer, WORD bytes)
     #endif /* if LLIO else */
 #endif /* if MSDOS */
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
         if (fread(buffer,1,bytes,handle) != bytes)
             return 0;
         else
@@ -1015,7 +1013,7 @@ WORD CWriteHandle(fDef handle, TpStr buffer, WORD bytes)
         return bytes;
 #endif
 
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_)  && !defined(__MINGW32__)
     #ifdef WIN32
         DWORD   dwWrit;
 
@@ -1051,7 +1049,7 @@ WORD CWriteHandle(fDef handle, TpStr buffer, WORD bytes)
            return bytes;
     #endif /* if LLIO else */
 #endif /* else if MSDOS */
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) && !defined(__MINGW32__)
        if (fwrite(buffer, 1, bytes, handle) != bytes)
            return 0;
        else 
@@ -1091,7 +1089,7 @@ short CSetFileLen(fDef handle, CFSLONG size)
         return ecode; 
     #endif
 
-    #ifdef _IS_WINDOWS_
+    #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
         #ifdef WIN32
             if (SetFilePointer(handle, size, NULL, FILE_BEGIN) != 0xFFFFFFFF)
                 if (SetEndOfFile(handle))
@@ -1124,7 +1122,7 @@ short CSetFileLen(fDef handle, CFSLONG size)
                 return (short)-_doserrno;
         #endif
     #endif
-	#if defined(__linux__) || defined(__APPLE__)
+	#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
 		return -1;
 	#endif			
 }                                                    /* end of CSetFileLen */
@@ -1145,7 +1143,7 @@ CFSLONG CGetFileLen(fDef pFile)
 //        return ecode; 
     #endif
 
-    #ifdef _IS_WINDOWS_
+    #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
         #ifdef WIN32
             lSize = GetFileSize(pFile, NULL);
             if (lSize != -1)             
@@ -1214,13 +1212,14 @@ short COpen(ConstStr255Param name,short vRefNum,CFSLONG dirID,SignedByte perm)
 }                                                         /* CFSOpenOldFile */
 #endif
 
-#if defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)
+#if (defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)) && !defined(__MINGW32__)
+
 short COpen(TpCStr name, short mode, fDef* pFile)
 {
     short   sRes = 0;
     fDef    file;
 
-    #ifdef  WIN32
+    #ifdef WIN32 
         DWORD   dwMode;
     #else
         char    fname[MAXFNCHARS];          /* To get near variable holding string */
@@ -1292,7 +1291,7 @@ short COpen(TpCStr name, short mode, fDef* pFile)
 }                                                           /* end of COpen */
 #endif
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
 short COpen(TpCStr name, short mode, fDef* pFile)
 {
     short   sRes = 0;
@@ -1361,7 +1360,8 @@ void CFreeAllcn(TpVoid p)
 *****************************************************************************/
 void CStrTime(char *timeStr)
 {
-#if defined(__APPLE__) || defined(__linux__)
+#if defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)
+
     time_t    now;
     struct tm *today;
     
@@ -1370,7 +1370,8 @@ void CStrTime(char *timeStr)
     strftime(timeStr, 9, "%H:%M:%S", today);
 #endif
     
-#if defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)
+#if (defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)) && !defined(__MINGW32__)
+
     _strtime(timeStr);                  /* timsStr must be at least 9 bytes */
 #endif
 }                                                        /* end of CStrTime */
@@ -1393,7 +1394,7 @@ void CStrDate(char *dateStr)
     strftime(dateStr, 9, "%d/%m/%y", today);
 #endif
 
-#if defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)
+#if (defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)) && !defined(__MINGW32__)
     char    sdata[9];
 
     _strdate(dateStr);                  /* dateStr must be at least 9 bytes */
@@ -1405,7 +1406,7 @@ void CStrDate(char *dateStr)
     F_strncpy(dateStr,sdata,8);                  /* store time without NULL */
 
 #endif
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
     time_t now;
     struct tm *today;
     
@@ -2796,9 +2797,10 @@ CFSAPI(void) SetVarVal(short   handle,               /* program file handle */
     int    varOff;
     int    stType;                   /* 1 for string transfers 0 for others */
     TpSStr dest = NULL;
+
     BYTE   maxLen = 0;
     BYTE   charCount;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -2912,7 +2914,7 @@ CFSAPI(void) SetVarVal(short   handle,               /* program file handle */
                                                /* how many cahracters in string */
             if (charCount > maxLen)
                 charCount = maxLen;
-            TransferIn((TpStr)varADS,dest,charCount);
+            TransferIn((TpStr)varADS,(TpStr)dest,charCount);
         }
     }
     else
@@ -2970,7 +2972,7 @@ CFSAPI(void) SetVarVal(short   handle,               /* program file handle */
                                                /* how many cahracters in string */
             if (charCount > maxLen)
                 charCount = maxLen;
-            TransferIn((TpStr)varADS,dest,charCount);
+            TransferIn((TpStr)varADS,(TpStr)dest,charCount);
         }
            /* If editing update DS header flag so it gets written to file later */
 
@@ -3208,7 +3210,7 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
         if (COpen(fname,(short)((enableWrite == 0) ? rMode : wMode), &pfileInfo->DOSHdl.d) != 0)
             loop = -1;
     #endif
-    #if defined(__linux__) || defined(__APPLE__)
+    #if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
         loop = 0;
         if (COpen(fname,(short)((enableWrite == 0) ? 0 : 2), &pfileInfo->DOSHdl.d) != 0)
             loop = -1;
@@ -3780,7 +3782,7 @@ CFSAPI(void) GetVarVal(short  handle,                /* program file handle */
             pnext = pfileInfo->FVPoint.nameP + varNo + 1;
 
 /* point to variable in its data (char) array, using its offset, size */
-            sourceP = pfileInfo->FVPoint.dataP + size;
+            sourceP = (TpStr)pfileInfo->FVPoint.dataP + size;
             size = (short)(pnext->vSize - size); /* set size from offsets */
 
 /* 4. move the variable to the location specified */
@@ -3834,7 +3836,7 @@ CFSAPI(void) GetVarVal(short  handle,                /* program file handle */
             pInterDesc = pfileInfo->DSPoint.nameP + varNo;
             size    = pInterDesc->vSize;          /* This is offset for now */
             pnext   = pfileInfo->DSPoint.nameP + varNo + 1;
-            sourceP = pfileInfo->DSPoint.dataP + size;
+            sourceP = (TpStr)pfileInfo->DSPoint.dataP + size;
             size = (short)(pnext->vSize - size);   /* set size from offsets */
                                 /* if variable is lstr things are different */
             if (pInterDesc->vType == LSTR)
@@ -4634,7 +4636,9 @@ CFSAPI(short) CommitCFSFile(short handle)
     }
     #endif
 
-    #ifdef _IS_WINDOWS_                        /* shut the file for Windows */
+    #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
+                      /* shut the file for Windows */
+
         #ifdef WIN32
             if (!FlushFileBuffers(pfileInfo->DOSHdl.d))
                 retCode = BADHANDLE;
@@ -5564,5 +5568,4 @@ short FileUpdate(short    handle,                    /* program file handle */
 }                                                      /* end of FileUpdate */
 
 
-#endif // !defined(__MINGW32__)
 /********************************   E N D  **********************************/

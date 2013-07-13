@@ -13,8 +13,6 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-#if !defined(__MINGW32__)
-
 #include <iostream>
 #include <sstream>
 
@@ -563,4 +561,4 @@ int stfio::importCFSFile(const std::string& fName, Recording& ReturnData, Progre
     return 0;
 }
 
-#endif // __MINGW32__
+

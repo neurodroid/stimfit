@@ -32,21 +32,6 @@
 #include <string>
 #include <cmath>
 
-#ifndef __MINGW32__
-  // defining these compiler flags should eventually move to ./configure.in
-  #define WITH_AXON
-  #define WITH_HDF5
-#else
-  #ifdef WITH_HDF5
-    #error HDF5 not supported when compiling with MINGW
-    #undef WITH_HDF5
-  #endif 
-  #ifdef WITH_AXON
-    #error AXON not supported when compiling with MINGW
-    #undef WITH_AXON
-  #endif 
-#endif
-
 #ifdef _MSC_VER
 #pragma warning( disable : 4251 )  // Disable warning messages
 #pragma warning( disable : 4996 )  // Disable warning messages
@@ -65,6 +50,14 @@
 
 typedef std::vector<double > Vector_double;
 typedef std::vector<float > Vector_float;
+
+#ifdef _MSC_VER
+    #ifndef NAN
+        static const unsigned long __nan[2] = {0xffffffff, 0x7fffffff};
+        #define NAN (*(const float *) __nan)
+    #endif
+    StfioDll long int lround(double x);
+#endif
 
 #include "./recording.h"
 #include "./channel.h"

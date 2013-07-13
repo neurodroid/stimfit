@@ -145,12 +145,12 @@ Vector_double stf::get_scale(Vector_double& data, double oldx) {
 double stf::lmFit( const Vector_double& data, double dt,
                    const stf::storedFunc& fitFunc, const Vector_double& opts,
                    bool use_scaling,
-                   Vector_double& p, wxString& info, int& warning )
+                   Vector_double& p, std::string& info, int& warning )
 {
     // Basic range checking:
     if (fitFunc.pInfo.size()!=p.size()) {
         std::string msg("Error in stf::lmFit()\n"
-                "p_fit and p have different sizes");
+                "function parameters (p_fit) and parameters entered (p) have different sizes");
         throw std::runtime_error(msg);
     }
     if ( opts.size() != 6 ) {
@@ -243,7 +243,7 @@ double stf::lmFit( const Vector_double& data, double dt,
         Vector_double old_p_toFit(p_toFit);
 
 #ifdef _DEBUG
-        wxString optsMsg;
+        std::string optsMsg;
         optsMsg << wxT("\nopts: ");
         for (std::size_t n_p=0; n_p < opts.size(); ++n_p)
             optsMsg << opts[n_p] << wxT("\t");
@@ -260,13 +260,13 @@ double stf::lmFit( const Vector_double& data, double dt,
 
         while ( 1 ) {
 #ifdef _DEBUG
-            wxString paramMsg;
+            std::ostringstream paramMsg;
             paramMsg << wxT("Pass: ") << it << wxT("\t");
             paramMsg << wxT("p_toFit: ");
             for (std::size_t n_p=0; n_p < p_toFit.size(); ++n_p)
                 paramMsg << p_toFit[n_p] << wxT("\t");
             paramMsg << wxT("\n");
-            std::cout << paramMsg.c_str();
+            std::cout << paramMsg.str().c_str();
 #endif
 
             if ( !fitFunc.hasJac ) {
@@ -276,7 +276,7 @@ double stf::lmFit( const Vector_double& data, double dt,
                             NULL, NULL, &fInfo );
                 } else {
                     dlevmar_bc_dif( c_func_lour, &p_toFit[0], &data_ptr[0], n_fitted, 
-                            (int)data.size(), &constrains_lm_lb[0], &constrains_lm_ub[0], 
+                            (int)data.size(), &constrains_lm_lb[0], &constrains_lm_ub[0], NULL,
                             (int)opts[4], &opts_l[0], info_id, NULL, NULL, &fInfo );
                 }
             } else {
@@ -287,7 +287,7 @@ double stf::lmFit( const Vector_double& data, double dt,
                 } else {
                     dlevmar_bc_der( c_func_lour,  c_jac_lour, &p_toFit[0], 
                             &data_ptr[0], n_fitted, (int)data.size(), &constrains_lm_lb[0], 
-                            &constrains_lm_ub[0], (int)opts[4], &opts_l[0], info_id,
+                            &constrains_lm_ub[0], NULL, (int)opts[4], &opts_l[0], info_id,
                             NULL, NULL, &fInfo );
                 }
             }
@@ -336,54 +336,54 @@ double stf::lmFit( const Vector_double& data, double dt,
         }
     }
     
-    wxString str_info;
-    str_info << wxT("Passes: ") << it;
-    str_info << wxT("\nIterations during last pass: ") << info_id[5];
-    str_info << wxT("\nStopping reason during last pass:");
+    std::ostringstream str_info;
+    str_info << "Passes: " << it;
+    str_info << "\nIterations during last pass: " << info_id[5];
+    str_info << "\nStopping reason during last pass:";
     switch ((int)info_id[6]) {
      case 1:
-         str_info << wxT("\nStopped by small gradient of squared error.");
+         str_info << "\nStopped by small gradient of squared error.";
          warning = 0;
          break;
      case 2:
-         str_info << wxT("\nStopped by small rel. parameter change.");
+         str_info << "\nStopped by small rel. parameter change.";
          warning = 0;
          break;
      case 3:
-         str_info << wxT("\nReached max. number of iterations. Restart\n")
-                  << wxT("with smarter initial parameters and / or with\n")
-                  << wxT("increased initial scaling factor and / or with\n")
-                  << wxT("increased max. number of iterations.");
+         str_info << "\nReached max. number of iterations. Restart\n"
+                  << "with smarter initial parameters and / or with\n"
+                  << "increased initial scaling factor and / or with\n"
+                  << "increased max. number of iterations.";
          warning = 3;
          break;
      case 4:
-         str_info << wxT("\nSingular matrix. Restart from current parameters\n")
-                  << wxT("with increased initial scaling factor.");
+         str_info << "\nSingular matrix. Restart from current parameters\n"
+                  << "with increased initial scaling factor.";
          warning = 4;
          break;
      case 5:
-         str_info << wxT("\nNo further error reduction is possible.\n")
-                  << wxT("Restart with increased initial scaling factor.");
+         str_info << "\nNo further error reduction is possible.\n"
+                  << "Restart with increased initial scaling factor.";
          warning = 5;
          break;
      case 6:
-         str_info << wxT("\nStopped by small squared error.");
+         str_info << "\nStopped by small squared error.";
          warning = 0;
          break;
      case 7:
-         str_info << wxT("\nStopped by invalid (i.e. NaN or Inf) \"func\" values.\n");
-         str_info << wxT("This is a user error.");
+         str_info << "\nStopped by invalid (i.e. NaN or Inf) \"func\" values.\n";
+         str_info << "This is a user error.";
          warning = 7;
          break;
      default:
-         str_info << wxT("\nUnknown reason for stopping the fit.");
+         str_info << "\nUnknown reason for stopping the fit.";
          warning = -1;
     }
     if (use_scaling && !can_scale) {
-        str_info << wxT("\nCouldn't use scaling because one or more ")
-                 << wxT("of the parameters don't allow it.");
+        str_info << "\nCouldn't use scaling because one or more "
+                 << "of the parameters don't allow it.";
     }
-    info=str_info;
+    info=str_info.str();
     return info_id[1];
 }
 
@@ -391,7 +391,7 @@ double stf::flin(double x, const Vector_double& p) { return p[0]*x + p[1]; }
 
 //! Dummy function to be passed to stf::storedFunc for linear functions.
 void stf::flin_init(const Vector_double& data, double base, double peak,
-        double dt, Vector_double& pInit )
+        double RTLoHI, double HalfWidth, double dt, Vector_double& pInit )
 { }
 
 stf::storedFunc stf::initLinFunc() {
@@ -402,3 +402,17 @@ stf::storedFunc stf::initLinFunc() {
             stf::flin, stf::flin_init, stf::nojac, false, stf::defaultOutput);
 }
 
+ /* options for the implementation of the LM algorithm */
+Vector_double stf::LM_default_opts() {
+
+    Vector_double opts(6);
+    //opts[0]=5*1E-3;   // initial \mu, default: 1E-03;
+    opts[0]=1E-3;   // initial \mu, default: 1E-03;
+    opts[1]=1E-17;    // stopping thr for ||J^T e||_inf, default: 1E-17;
+    opts[2]=1E-17;    // stopping trh for ||Dp||_2, default: 1E-17;
+    opts[3]=1E-32;    // stopping thr for ||e||_2, default: 1E-17;
+    opts[4]=64;       // maximal number of iterations/pass, default: 64;
+    opts[5]=16;       // maximal number of passes;
+    
+    return opts;
+}

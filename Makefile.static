@@ -8,7 +8,7 @@
 # This is most useful for debugging, when several instances of stimfit
 # should be available. 
 #
-# usage:
+# Usage:
 #   cd ~/src/stimfit/         # change into stimfit's root directory
 #   make -f Makefile.static   # build stimfit 
 #   make -B -f Makefile.static   # rebuild everything
@@ -18,13 +18,18 @@
 #
 #   ./stimfit                 # start stimfit 
 #
+#   win32 built
+#	WXCONF=i686-pc-mingw32-wx-config   make -f Makefile.static 
+#   win64 built
+#	WXCONF=x86_64-static-mingw32-wx-config make -f Makefile.static
+#
 # Limitations: 
 #    - no support for ASCII, SON format
 #    - PYTHON shell, matplotlib (print) are not supported
 #    - configure not supported
-#    - does not compile on Ubuntu 12.04 LTS
 #
-# Copyright (C) 2012 Alois Schloegl 
+# Copyright (C) 2012,2013 Alois Schloegl 
+# This is part of the stimfit project http://code.google.com/p/stimfit/
 #
 ########################################################################
 
@@ -110,7 +115,7 @@ SOURCES_ABF = ./src/libstfio/atf/atflib.cpp \
 	./src/libstfio/abf/axon/Common/unix.cpp \
 	./src/libstfio/abf/axon/Common/FileIO.cpp \
 	./src/libstfio/abf/axon/AxAtfFio32/axatffio32.cpp \
-	./src/libstfio/abf/axon/AxAtfFio32/fileio.cpp \
+	./src/libstfio/abf/axon/AxAtfFio32/fileio2.cpp \
 	./src/libstfio/abf/axon/AxAbfFio32/abferror.cpp \
 	./src/libstfio/abf/axon/AxAbfFio32/abfheadr.cpp \
 	./src/libstfio/abf/axon/AxAbfFio32/filedesc.cpp \
@@ -151,31 +156,14 @@ ifneq (,$(findstring HAVE_LAPACK, $(DEFINES)))
   LIBS   += -llapack -lblas
 endif
 
-ifeq (,$(findstring mingw32, $(WXCONF)))
-  # WITH_HDF5 and WITH_AXON are already defined in src/libstfio/stfio.h
-  # these are commented here to avoid  recurring definition 
-  #DEFINES += -DWITH_HDF5
-  #DEFINES += -DWITH_AXON
-  LIBS    += -lhdf5 -lhdf5_hl 
-  SOURCES += $(SOURCES_ABF)
+SOURCES += $(SOURCES_ABF)
+ifeq (,$(findstring mingw, $(WXCONF)))
   TARGET   = stimfit 
   OBJEXT   = o
-  ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
-    LDFLAGS += -L$(HOME)/src/biosig4c++/
-  endif
 else
   ### MINGW ### 
   TARGET   = stimfit.exe 
-  LIBS    += -lgfortran
   OBJEXT   = obj
-  ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
-    LDFLAGS += -L$(HOME)/src/biosig4c++/win32/
-  endif
-endif
-
-ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
-  DEFINES += -I$(HOME)/src/biosig4c++/
-  LIBS    += -lbiosig -lcholmod 
 endif
 
 ifneq (,$(findstring WITH_PYTHON, $(DEFINES)))
@@ -188,10 +176,18 @@ endif
 
 CC        = $(shell $(WXCONF) --cc)
 CXX       = $(shell $(WXCONF) --cxx)
-CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags)
-CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags)
+CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector
+CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -fstack-protector
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
-LIBS     += -lfftw3 -lssl -lcrypto -lz -lpthread 
+LIBS     += -lbiosig
+#LIBS     += -lbiosig2
+LIBS     += -lhdf5_hl -lhdf5 -lcholmod
+LIBS     += -lfftw3 -lz -lpthread
+
+ifeq (mingw,$(findstring mingw, $(WXCONF)))
+  LIBS   += -lgfortran -liberty
+endif
+
 
 ##############################################################
 ###  BUILT
@@ -216,4 +212,5 @@ $(TARGET): $(OBJECTS)
 	$(CXX) -c $(CXXFLAGS) -c -o "$@" "$<"
 
 clean:
-	find src -name "*.$(OBJEXT)" -print0 |xargs -0 rm
+	find src -name "*.$(OBJEXT)" -exec rm {} \;
+

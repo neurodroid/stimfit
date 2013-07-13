@@ -176,7 +176,7 @@ public:
     //! Indicates whether the second channel should be plotted.
     /*! \return true if it should be plotted, false otherwise.
      */
-    bool ShowSecond() const {return pShowSecond->IsChecked();}
+    bool ShowSecond();// const {return pShowSecond->IsChecked();}
 
     //! Indicates whether all channels should be plotted.
     /*! \return true if they should be plotted, false otherwise.

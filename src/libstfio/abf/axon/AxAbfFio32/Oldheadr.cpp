@@ -108,7 +108,7 @@ BOOL OLDH_GetFileVersion( FILEHANDLE hFile, UINT *puFileType, float *pfFileVersi
    *pbMSBinFormat = FALSE;
 
    // Seek to the start of the file.
-#if defined(_WINDOWS) && !defined(__MINGW32__)
+#if defined(_WINDOWS)
    SetFilePointer(hFile, 0L, NULL, FILE_BEGIN);
 #else
    c_SetFilePointer(hFile, 0L, NULL, FILE_BEGIN);
@@ -256,6 +256,8 @@ static void CorrectDACScaling(ABFFileHeader *pFH)
       UINT uMaxSamples = 0;
       DWORD dwMaxEpi = 0;
       int hFile;
+
+#if !defined(__MINGW32__)
       int fnsize = 0;
       std::wstring wfName;
       while (szFilename[fnsize++] != '\0') {
@@ -263,7 +265,10 @@ static void CorrectDACScaling(ABFFileHeader *pFH)
       }
       wfName += wchar_t('\0');
 
-      if (!ABF_ReadOpen(wfName.c_str(), &hFile, ABF_DATAFILE, 
+      if (!ABF_ReadOpen(wfName.c_str(), &hFile, ABF_DATAFILE,
+#else
+      if (!ABF_ReadOpen(szFilename, &hFile, ABF_DATAFILE,
+#endif
                         // if (!ABF_ReadOpen(wca.cMB2WX(szFilename), &hFile, ABF_DATAFILE, 
                         &DH, &uMaxSamples, &dwMaxEpi, NULL))
          return;
@@ -686,7 +691,7 @@ static void GetOldADCUnits(char *Label, char *ADCLabel)
 static BOOL ReadADCInfo(FILEHANDLE hFile, float *Param, char *ADCLabel )
 {
    // Seek to the start of the ADC channel information.
-#if defined(_WINDOWS) && !defined(__MINGW32__)
+#if defined(_WINDOWS)
 	SetFilePointer(hFile, 640L, NULL, FILE_BEGIN);
 #else
 	c_SetFilePointer(hFile, 640L, NULL, FILE_BEGIN);
@@ -756,7 +761,7 @@ static BOOL ReadADCInfo(FILEHANDLE hFile, float *Param, char *ADCLabel )
 static BOOL ReadADCNames(FILEHANDLE hFile, char *ChannelName)
 {
    // Seek to the channel names area.
-#if defined(_WINDOWS) && !defined(__MINGW32__)
+#if defined(_WINDOWS)
    SetFilePointer(hFile, 480L, NULL, FILE_BEGIN);
 #else
    c_SetFilePointer(hFile, 480L, NULL, FILE_BEGIN);
@@ -1176,7 +1181,7 @@ static BOOL FetchexConvert( FILEHANDLE hFile, ABFFileHeader *pFH, float *Param,
          {
             // Seek to start of tag entries block
             ABFLONG lNumBytes = (ABFLONG)(Param[F53_TAGSECTIONPTR]) * 512L;
-#if defined(_WINDOWS) && !defined(__MINGW32__)
+#if defined(_WINDOWS)
 			SetFilePointer(hFile, lNumBytes, NULL, FILE_BEGIN);
 #else
 			c_SetFilePointer(hFile, lNumBytes, NULL, FILE_BEGIN);
@@ -1248,7 +1253,7 @@ static BOOL FetchexConvert( FILEHANDLE hFile, ABFFileHeader *pFH, float *Param,
 static BOOL ReadCondit(FILEHANDLE hFile, char *Condit)
 {
    // Seek to the presweep (conditioning) string
-#if defined(_WINDOWS) && !defined(__MINGW32__)
+#if defined(_WINDOWS)
 	SetFilePointer(hFile, 512L, NULL, FILE_BEGIN);
 #else
 	c_SetFilePointer(hFile, 512L, NULL, FILE_BEGIN);

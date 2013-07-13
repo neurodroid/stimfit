@@ -36,7 +36,7 @@ clean:
 	dh_clean
 
 install: build
-	./configure --enable-python --enable-debian --prefix=$(DEBPREFIX)
+	./configure --enable-python --enable-debian --with-biosig --prefix=$(DEBPREFIX)
 	$(MAKE)
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) check

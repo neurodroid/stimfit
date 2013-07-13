@@ -42,6 +42,10 @@
 #define AX_EQ_B_LU LM_ADD_PREFIX(Ax_eq_b_LU_noLapack)
 #endif /* HAVE_LAPACK */
 
+#ifdef HAVE_PLASMA
+#define AX_EQ_B_PLASMA_CHOL LM_ADD_PREFIX(Ax_eq_b_PLASMA_Chol)
+#endif
+
 /* 
  * This function seeks the parameter vector p that best describes the measurements vector x.
  * More precisely, given a vector function  func : R^m --> R^n with n>=m,
@@ -211,8 +215,8 @@ int (*linsolver)(LM_REAL *A, LM_REAL *B, LM_REAL *x, int m)=NULL;
        */
 
       /* looping downwards saves a few computations */
-      register int l, im;
-      register LM_REAL alpha, *jaclm;
+      register int l;
+      register LM_REAL alpha, *jaclm, *jacTjacim;
 
       for(i=m*m; i-->0; )
         jacTjac[i]=0.0;
@@ -222,10 +226,10 @@ int (*linsolver)(LM_REAL *A, LM_REAL *B, LM_REAL *x, int m)=NULL;
       for(l=n; l-->0; ){
         jaclm=jac+l*m;
         for(i=m; i-->0; ){
-          im=i*m;
+          jacTjacim=jacTjac+i*m;
           alpha=jaclm[i]; //jac[l*m+i];
           for(j=i+1; j-->0; ) /* j<=i computes lower triangular part only */
-            jacTjac[im+j]+=jaclm[j]*alpha; //jac[l*m+j]
+            jacTjacim[j]+=jaclm[j]*alpha; //jacTjac[i*m+j]+=jac[l*m+j]*alpha
 
           /* J^T e */
           jacTe[i]+=alpha*e[l];
@@ -294,14 +298,19 @@ if(!(k%100)){
 
       /* solve augmented equations */
 #ifdef HAVE_LAPACK
-      /* 6 alternatives are available: LU, Cholesky, 2 variants of QR decomposition, SVD and LDLt.
-       * Cholesky is the fastest but might be inaccurate; QR is slower but more accurate;
-       * SVD is the slowest but most accurate; LU offers a tradeoff between accuracy and speed
+      /* 7 alternatives are available: LU, Cholesky + Cholesky with PLASMA, LDLt, 2 variants of QR decomposition and SVD.
+       * For matrices with dimensions of at least a few hundreds, the PLASMA implementation of Cholesky is the fastest.
+       * From the serial solvers, Cholesky is the fastest but might occasionally be inapplicable due to numerical round-off;
+       * QR is slower but more robust; SVD is the slowest but most robust; LU is quite robust but
+       * slower than LDLt; LDLt offers a good tradeoff between robustness and speed
        */
 
       issolved=AX_EQ_B_BK(jacTjac, jacTe, Dp, m); ++nlss; linsolver=AX_EQ_B_BK;
       //issolved=AX_EQ_B_LU(jacTjac, jacTe, Dp, m); ++nlss; linsolver=AX_EQ_B_LU;
       //issolved=AX_EQ_B_CHOL(jacTjac, jacTe, Dp, m); ++nlss; linsolver=AX_EQ_B_CHOL;
+#ifdef HAVE_PLASMA
+      //issolved=AX_EQ_B_PLASMA_CHOL(jacTjac, jacTe, Dp, m); ++nlss; linsolver=AX_EQ_B_PLASMA_CHOL;
+#endif
       //issolved=AX_EQ_B_QR(jacTjac, jacTe, Dp, m); ++nlss; linsolver=AX_EQ_B_QR;
       //issolved=AX_EQ_B_QRLS(jacTjac, jacTe, Dp, m, m); ++nlss; linsolver=(int (*)(LM_REAL *A, LM_REAL *B, LM_REAL *x, int m))AX_EQ_B_QRLS;
       //issolved=AX_EQ_B_SVD(jacTjac, jacTe, Dp, m); ++nlss; linsolver=AX_EQ_B_SVD;
@@ -601,8 +610,8 @@ int (*linsolver)(LM_REAL *A, LM_REAL *B, LM_REAL *x, int m)=NULL;
          * Note that the non-blocking algorithm is faster on small
          * problems since in this case it avoids the overheads of blocking. 
          */
-        register int l, im;
-        register LM_REAL alpha, *jaclm;
+        register int l;
+        register LM_REAL alpha, *jaclm, *jacTjacim;
 
         /* looping downwards saves a few computations */
         for(i=m*m; i-->0; )
@@ -613,10 +622,10 @@ int (*linsolver)(LM_REAL *A, LM_REAL *B, LM_REAL *x, int m)=NULL;
         for(l=n; l-->0; ){
           jaclm=jac+l*m;
           for(i=m; i-->0; ){
-            im=i*m;
+            jacTjacim=jacTjac+i*m;
             alpha=jaclm[i]; //jac[l*m+i];
             for(j=i+1; j-->0; ) /* j<=i computes lower triangular part only */
-              jacTjac[im+j]+=jaclm[j]*alpha; //jac[l*m+j]
+              jacTjacim[j]+=jaclm[j]*alpha; //jacTjac[i*m+j]+=jac[l*m+j]*alpha
 
             /* J^T e */
             jacTe[i]+=alpha*e[l];
@@ -685,14 +694,19 @@ if(!(k%100)){
 
     /* solve augmented equations */
 #ifdef HAVE_LAPACK
-    /* 6 alternatives are available: LU, Cholesky, 2 variants of QR decomposition, SVD and LDLt.
-     * Cholesky is the fastest but might be inaccurate; QR is slower but more accurate;
-     * SVD is the slowest but most accurate; LU offers a tradeoff between accuracy and speed
+    /* 7 alternatives are available: LU, Cholesky + Cholesky with PLASMA, LDLt, 2 variants of QR decomposition and SVD.
+     * For matrices with dimensions of at least a few hundreds, the PLASMA implementation of Cholesky is the fastest.
+     * From the serial solvers, Cholesky is the fastest but might occasionally be inapplicable due to numerical round-off;
+     * QR is slower but more robust; SVD is the slowest but most robust; LU is quite robust but
+     * slower than LDLt; LDLt offers a good tradeoff between robustness and speed
      */
 
     issolved=AX_EQ_B_BK(jacTjac, jacTe, Dp, m); ++nlss; linsolver=AX_EQ_B_BK;
     //issolved=AX_EQ_B_LU(jacTjac, jacTe, Dp, m); ++nlss; linsolver=AX_EQ_B_LU;
     //issolved=AX_EQ_B_CHOL(jacTjac, jacTe, Dp, m); ++nlss; linsolver=AX_EQ_B_CHOL;
+#ifdef HAVE_PLASMA
+    //issolved=AX_EQ_B_PLASMA_CHOL(jacTjac, jacTe, Dp, m); ++nlss; linsolver=AX_EQ_B_PLASMA_CHOL;
+#endif
     //issolved=AX_EQ_B_QR(jacTjac, jacTe, Dp, m); ++nlss; linsolver=AX_EQ_B_QR;
     //issolved=AX_EQ_B_QRLS(jacTjac, jacTe, Dp, m, m); ++nlss; linsolver=(int (*)(LM_REAL *A, LM_REAL *B, LM_REAL *x, int m))AX_EQ_B_QRLS;
     //issolved=AX_EQ_B_SVD(jacTjac, jacTe, Dp, m); ++nlss; linsolver=AX_EQ_B_SVD;
@@ -837,6 +851,7 @@ if(!(k%100)){
 #undef LEVMAR_L2NRMXMY
 #undef AX_EQ_B_LU
 #undef AX_EQ_B_CHOL
+#undef AX_EQ_B_PLASMA_CHOL
 #undef AX_EQ_B_QR
 #undef AX_EQ_B_QRLS
 #undef AX_EQ_B_SVD

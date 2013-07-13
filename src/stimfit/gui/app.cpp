@@ -163,6 +163,13 @@ bool wxStfApp::OnInit(void)
     //// Create a document manager
     wxDocManager* docManager = new wxDocManager;
     //// Create a template relating drawing documents to their views
+#ifdef WITH_BIOSIG
+    m_biosigTemplate=new wxDocTemplate( docManager,
+                                     wxT("Biosig"), wxT("*.dat;*.cfs;*.gdf;*.ibw"), wxT(""), wxT("dat;cfs;gdf;ibw"),
+                                     wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
+                                     CLASSINFO(wxStfView) );
+#endif
+
     m_cfsTemplate=new wxDocTemplate( docManager,
                                      wxT("CED filing system"), wxT("*.dat;*.cfs"), wxT(""), wxT("dat;cfs"),
                                      wxT("CFS Document"), wxT("CFS View"), CLASSINFO(wxStfDoc),
@@ -197,7 +204,7 @@ bool wxStfApp::OnInit(void)
                                      CLASSINFO(wxStfView) );
 #ifdef WITH_BIOSIG
     m_biosigTemplate=new wxDocTemplate( docManager,
-                                     wxT("CFS, HEKA, etc. with BioSig"), wxT("*.*"), wxT(""), wxT(""),
+                                     wxT("Biosig files"), wxT("*.*"), wxT(""), wxT(""),
                                      wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #endif
@@ -409,6 +416,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
         switch (CursorsDialog->CurrentCursor()) {
          case stf::measure_cursor: 
              actDoc->SetMeasCursor(CursorsDialog->GetCursorM());// * GetDocument()->GetSR()));
+             wxWriteProfileInt(wxT("Settings"), wxT("MeasureCursor"), CursorsDialog->GetCursorM() );
              break;
          
              //Get limits for peak calculation from the dialog box:
@@ -439,11 +447,15 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
              actDoc->SetLatencyStartMode(CursorsDialog->GetLatencyStartMode() );
              // write latency start mode in Stimfit Profile
              wxWriteProfileInt(wxT("Settings"), wxT("LatencyStartMode"), CursorsDialog->GetLatencyStartMode() );
+             if (CursorsDialog->GetLatencyStartMode() == stf::manualMode)
+                 wxWriteProfileInt(wxT("Settings"), wxT("LatencyStartCursor"), CursorsDialog->GetCursor1L() );
             
              // Latency end mode
              actDoc->SetLatencyEnd(CursorsDialog->GetCursor2L());
              actDoc->SetLatencyEndMode(CursorsDialog->GetLatencyEndMode() );
              wxWriteProfileInt(wxT("Settings"), wxT("LatencyEndMode"), CursorsDialog->GetLatencyEndMode() );
+             if (CursorsDialog->GetLatencyEndMode() == stf::manualMode)
+                 wxWriteProfileInt(wxT("Settings"), wxT("LatencyEndCursor"), CursorsDialog->GetCursor2L() );
 
              break;
             
@@ -502,6 +514,10 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
         // Get reference for AP kinetics from the dialog box
         actDoc->SetFromBase(CursorsDialog->GetFromBase());
         wxWriteProfileInt(wxT("Settings"),wxT("FromBase"), CursorsDialog->GetFromBase());
+
+        // Get factor for rise time calculation
+        actDoc->SetRTFactor(CursorsDialog->GetRTFactor());
+        wxWriteProfileInt(wxT("Settings"),wxT("RTFactor"), CursorsDialog->GetRTFactor());
         
         // Get slope for threshold:
         actDoc->SetSlopeForThreshold( CursorsDialog->GetSlope() );
@@ -512,7 +528,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
 
     }
 
-    // Calculate peak, base, 20/80 rise time, half duration,
+    // Calculate peak, base, Lo/Hi rise time, half duration,
     // ratio of rise/slope, maximum slope and geometrical slope (PSlope).
     try {
         if (actDoc != NULL) {
@@ -538,9 +554,11 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
 
     // Updates strings in the result box
     if (actView != NULL) {
+
         wxStfChildFrame* pChild=(wxStfChildFrame*)actView->GetFrame();
         if (pChild != NULL)
             pChild->UpdateResults();
+
         wxStfGraph* pGraph = actView->GetGraph();
 		if (pGraph != NULL) 
 			pGraph->SetFocus();
@@ -593,7 +611,7 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     wxMenu* m_edit_menu=new wxMenu;
     m_edit_menu->Append(
                         ID_CURSORS,
-                        wxT("&Cursor settings..."),
+                        wxT("&Cursor settings...\tCtrl+R"),
                         wxT("Set cursor position, direction, etc.")
                         );
     m_edit_menu->AppendSeparator();
@@ -639,35 +657,6 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
                         wxT("&Concatenate selected traces"),
                         wxT("Create one large trace by merging selected traces in this file")
                         );
-#if 0
-    wxMenu *latencyStartSub=new wxMenu;
-    latencyStartSub->AppendCheckItem(ID_LATENCYSTART_MAXSLOPE, wxT("max. slope of second channel"));
-    latencyStartSub->AppendCheckItem(ID_LATENCYSTART_HALFRISE, wxT("half-maximal amplitude of second channel"));
-    latencyStartSub->AppendCheckItem(ID_LATENCYSTART_PEAK, wxT("peak of second channel"));
-    latencyStartSub->AppendCheckItem(ID_LATENCYSTART_MANUAL, wxT("Manual"));
-    wxMenu *latencyEndSub=new wxMenu;
-    latencyEndSub->AppendCheckItem(ID_LATENCYEND_FOOT, wxT("beginning of event in active channel"));
-    latencyEndSub->AppendCheckItem(ID_LATENCYEND_MAXSLOPE, wxT("max. slope of active channel"));
-    latencyEndSub->AppendCheckItem(ID_LATENCYEND_HALFRISE, wxT("half-maximal amplitude of active channel"));
-    latencyEndSub->AppendCheckItem(ID_LATENCYEND_PEAK, wxT("peak of active channel"));
-    latencyEndSub->AppendCheckItem(ID_LATENCYEND_MANUAL, wxT("Manual"));
-    m_edit_menu->AppendSeparator();
-    m_edit_menu->AppendSubMenu(
-                               latencyStartSub,
-                               wxT("Measure latency from..."),
-                               wxT("Choose starting point of latency measurement")
-                               );
-    m_edit_menu->AppendSubMenu(
-                               latencyEndSub,
-                               wxT("Measure latency to..."),
-                               wxT("Choose ending point of latency measurement")
-                               );
-    m_edit_menu->AppendCheckItem(
-                                 ID_LATENCYWINDOW,
-                                 wxT("Use peak window for latency cursor"),
-                                 wxT("Uses the current peak window to measure the peak in the reference channel")
-                                 );
-#endif
     wxMenu* m_view_menu = new wxMenu;
     m_view_menu->Append(
                         ID_VIEW_RESULTS,
@@ -712,7 +701,7 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     wxMenu *fitSub = new wxMenu;
     fitSub->Append(
                    ID_FIT,
-                   wxT("&Nonlinear regression..."),
+                   wxT("&Nonlinear regression...\tCtrl+N"),
                    wxT("Fit a function to this trace between fit cursors")
                    );
     fitSub->Append(
@@ -750,11 +739,11 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
                           );
     analysis_menu->Append(
                           ID_FILTER,
-                          wxT("F&ilter..."),
+                          wxT("Fi&lter..."),
                           wxT("Filter selected traces")
                           );
     analysis_menu->Append(
-                          ID_SPECTRUM,
+                          ID_MPL_SPECTRUM,
                           wxT("&Power spectrum..."),
                           wxT("Compute an estimate of the power spectrum of the selected traces")
                           );
@@ -766,6 +755,7 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     wxMenu* eventPlotSub = new wxMenu;
     eventPlotSub->Append(ID_PLOTCRITERION, wxT("&Detection criterion..."));
     eventPlotSub->Append(ID_PLOTCORRELATION, wxT("&Correlation coefficient..."));
+    eventPlotSub->Append(ID_PLOTDECONVOLUTION, wxT("&Deconvolution..."));
     wxMenu* eventSub = new wxMenu;
     eventSub->AppendSubMenu(eventPlotSub,wxT("Plot"));
     eventSub->Append(ID_EXTRACT,wxT("&Template matching..."));
@@ -787,8 +777,8 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     }
     analysis_menu->AppendSubMenu(userdefSub,wxT("User-defined functions"));
 #endif
-    wxMenu *extensions_menu = new wxMenu;
 #ifdef WITH_PYTHON
+    wxMenu *extensions_menu = new wxMenu;
     for (std::size_t n=0;n<GetExtensionLib().size();++n) {
         extensions_menu->Append(ID_USERDEF+(int)n,
                                 stf::std2wx(GetExtensionLib()[n].menuEntry));

@@ -19,23 +19,14 @@
 
 #include <cmath>
 #include <limits>
+#include <algorithm>
 #include <wx/wxprec.h>
 #include <wx/progdlg.h>
 #include <wx/filename.h>
 
 #include "stfmath.h"
-
-double stf::fgauss(double x, const Vector_double& pars) {
-    double y=0.0, /* fac=0.0, */ ex=0.0, arg=0.0;
-    int npars=static_cast<int>(pars.size());
-    for (int i=0; i < npars-1; i += 3) {
-        arg=(x-pars[i+1])/pars[i+2];
-        ex=exp(-arg*arg);
-        /* fac=pars[i]*ex*2.0*arg; */
-        y += pars[i] * ex;
-    }
-    return y;
-}
+#include "fit.h"
+#include "funclib.h"
 
 double stf::fboltz(double x, const Vector_double& pars) {
     double arg=(pars[0]-x)/pars[1];
@@ -133,96 +124,6 @@ stf::filter( const Vector_double& data, std::size_t filter_start,
 }
 
 Vector_double
-stf::spectrum(
-        const std::vector<std::complex<double> >& data,
-        long K,
-        double& f_n
-) {
-    // Variable names according to:
-    // Welch, P.D. (1967). IEEE Transaction on Audio and Electroacoustics 15(2):70-37
-
-    // First, perform "small" spectrum estimates of the
-    // segments. Therefore, we need to split the original
-    // data into equal-sized, overlapping segments. The overlap
-    // should be half of the segment's size.
-
-    // Check size of array:
-    if (data.size()==0) {
-        throw std::runtime_error("Exception:\nArray of size 0 in stf::spectrum");
-    }
-    if (K<=0) {
-        throw std::runtime_error("Exception:\nNumber of segments <=0 in stf::spectrum");
-    }
-    double step_size=(double)data.size()/(double)(K+1);
-    // Segment size:
-    long L=stf::round(step_size*2.0);
-    if (L<=0) {
-        throw std::runtime_error("Exception:\nSegment size <=0 in stf::spectrum");
-    }
-    long spec_size=long(L/2)+1;
-    double offset=0.0;
-    fftw_complex* X=(fftw_complex*)fftw_malloc(sizeof(fftw_complex)*L);
-    fftw_complex* A=(fftw_complex*)fftw_malloc(sizeof(fftw_complex)*L);
-    // plan the fft once:
-    fftw_plan p1=fftw_plan_dft_1d(L,X,A,FFTW_FORWARD,FFTW_ESTIMATE);
-    Vector_double P(spec_size, 0.0);
-
-    // Window function summed, squared and normalized:
-    double U=0.0;
-    for (long j=0;j<L;++j) {
-        U+=SQR(stf::window(j,L));
-    }
-    // This should be normalized by L; however,
-    // this can be omitted due to the later multi-
-    // plication with 1/(L*U), which will then get 1/U.
-
-    for (long k=0;k<K;++k) {
-        // Fill the segment, applying the window function:
-        for (long j=0;j<L;++j) {
-            X[j][0]=data[(long)offset+j].real()*window(j,L);
-            X[j][1]=data[(long)offset+j].imag()*window(j,L);
-        }
-
-        // Transform the data:
-        fftw_execute(p1);
-        // Instead of normalizing A right here, we will do this after summing up.
-
-        // Add segment periodogram to spectrum (the intermediate variable I
-        // from Welch's paper is not needed because we add the periodograms
-        // directly to P here).
-        // Treat the 0-component separately (because there is no corresponding
-        // negative part):
-        P[0]+=SQR(A[0][0])+SQR(A[0][1]);
-        for (long i_out=1;i_out<spec_size;++i_out) {
-            // Add corresponding negative and positive frequencies to
-            // the same position in the spectrum:
-            P[i_out]+=(SQR(A[i_out][0])+SQR(A[i_out][1])+
-                    SQR(A[L-i_out][0])+SQR(A[L-i_out][1]));
-            // This should be multiplied by L/U at every step; however,
-            // we can do this once all values have been summed up.
-        }
-        // If this is the second-last loop, calculate the offset from the end:
-        if (k!=K-2) {
-            offset+=step_size;
-        } else {
-            offset=data.size()-L;
-        }
-    }
-    // Do the multiplication and the normalization that we omitted above:
-    P = stfio::vec_scal_div(P,U);
-    // Average:
-    P = stfio::vec_scal_div(P,K);
-
-    // Use FFTW's deallocation routines:
-    fftw_destroy_plan(p1);
-    fftw_free(X);fftw_free(A);
-    // frequency stepsize of P:
-    f_n=1.0/L;
-    return P;
-}
-
-
-Vector_double
 stf::detectionCriterion(const Vector_double& data, const Vector_double& templ, stfio::ProgressInfo& progDlg)
 {
     bool skipped=false;
@@ -270,11 +171,11 @@ stf::detectionCriterion(const Vector_double& data, const Vector_double& templ, s
         y2_old=data[n_data+0]*data[n_data+0];
 
         double scale=(sum_templ_data-sum_templ*sum_data/templ.size())/
-        (sum_templ_sqr-sum_templ*sum_templ/templ.size());
+            (sum_templ_sqr-sum_templ*sum_templ/templ.size());
         double offset=(sum_data-scale*sum_templ)/templ.size();
-        double sse=sum_data_sqr+scale*scale*sum_templ_sqr+templ.size()*offset*offset
-        -2.0*(scale*sum_templ_data
-                +offset*sum_data-scale*offset*sum_templ);
+        double sse=sum_data_sqr+scale*scale*sum_templ_sqr+templ.size()*offset*offset -
+            2.0*(scale*sum_templ_data +
+                 offset*sum_data-scale*offset*sum_templ);
         double standard_error=sqrt(sse/(templ.size()-1));
         detection_criterion[n_data]=(scale/standard_error);
     }
@@ -282,8 +183,7 @@ stf::detectionCriterion(const Vector_double& data, const Vector_double& templ, s
 }
 
 std::vector<int>
-stf::peakIndices(const Vector_double& data,
-                 double threshold,
+stf::peakIndices(const Vector_double& data, double threshold,
                  int minDistance)
 {
     // to avoid unnecessary copying, we first reserve quite
@@ -670,4 +570,205 @@ stf::Table stf::defaultOutput(
 		throw;
 	}
 	return output;
+}
+
+std::map<double, int>
+stf::histogram(const Vector_double& data, int nbins) {
+
+    if (nbins==-1) {
+        nbins = int(data.size()/100.0);
+    }
+
+    double fmax = *std::max_element(data.begin(), data.end());
+    double fmin = *std::min_element(data.begin(), data.end());
+    fmax += (fmax-fmin)*1e-9;
+
+    double bin = (fmax-fmin)/nbins;
+
+    std::map<double,int> histo;
+    for (int nbin=0; fmin + nbin*bin < fmax; ++nbin) {
+        histo[fmin + nbin*bin] = 0;
+    }
+    for (std::size_t npoint=0; npoint < data.size(); ++npoint) {
+        int nbin = int((data[npoint]-fmin) / bin);
+        histo[fmin + nbin*bin]++;
+    }
+    return histo;
+}
+
+Vector_double
+stf::deconvolve(const Vector_double& data, const Vector_double& templ,
+                int SR, double hipass, double lopass, stfio::ProgressInfo& progDlg)
+{
+    bool skipped = false;
+    progDlg.Update( 0, "Starting deconvolution...", &skipped );
+    if (data.size()<=0 || templ.size() <=0 || templ.size() > data.size()) {
+        std::out_of_range e("subscript out of range in stf::filter()");
+        throw e;
+    }
+    /* pad templ */
+    Vector_double templ_padded(data.size());
+    std::copy(templ.begin(), templ.end(), templ_padded.begin());
+    if (templ.size() < templ_padded.size()) {
+        std::fill(templ_padded.begin()+templ.size(), templ_padded.end(), 0);
+    }
+
+    Vector_double data_return(data.size());
+    if (skipped) {
+        data_return.resize(0);
+        return data_return;
+    }
+
+    double *in_data, *in_templ_padded;
+    //fftw_complex is a double[2]; hence, out is an array of
+    //double[2] with out[n][0] being the real and out[n][1] being
+    //the imaginary part.
+    fftw_complex *out_data, *out_templ_padded;
+    fftw_plan p_data, p_templ, p_inv;
+
+    //memory allocation as suggested by fftw:
+    in_data =(double *)fftw_malloc(sizeof(double) * data.size());
+    out_data = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * ((int)(data.size()/2)+1));
+    in_templ_padded =(double *)fftw_malloc(sizeof(double) * templ_padded.size());
+    out_templ_padded = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * ((int)(templ_padded.size()/2)+1));
+
+    std::copy(data.begin(), data.end(), &in_data[0]);
+    std::copy(templ_padded.begin(), templ_padded.end(), &in_templ_padded[0]);
+
+    //plan the ffts and execute them:
+    p_data =fftw_plan_dft_r2c_1d((int)data.size(), in_data, out_data,
+                                 FFTW_ESTIMATE);
+    fftw_execute(p_data);
+    p_templ =fftw_plan_dft_r2c_1d((int)templ_padded.size(),
+                                  in_templ_padded, out_templ_padded, FFTW_ESTIMATE);
+    fftw_execute(p_templ);
+
+    double SI=1.0/SR; //the sampling interval
+    progDlg.Update( 25, "Performing deconvolution...", &skipped );
+    if (skipped) {
+        data_return.resize(0);
+        return data_return;
+    }
+    Vector_double f_c(1);
+    for (std::size_t n_point=0; n_point < (unsigned int)(data.size()/2)+1; ++n_point) {
+        /* highpass filter */
+        double f = n_point / (data.size()*SI);
+
+        double rslt_hi = 1.0;
+        if (hipass > 0) {
+            f_c[0] = hipass;
+            rslt_hi = 1.0-fgaussColqu(f, f_c);
+        }
+
+        /* lowpass filter */
+        double rslt_lo = 1.0;
+        if (lopass > 0) {
+            f_c[0] = lopass;
+            rslt_lo= fgaussColqu(f, f_c);
+        }
+
+        /* do the division in place */
+        double a = out_data[n_point][0];
+        double b = out_data[n_point][1];
+        double c = out_templ_padded[n_point][0];
+        double d = out_templ_padded[n_point][1];
+        double mag2 = c*c + d*d;
+        out_data[n_point][0] = rslt_hi * rslt_lo * (a*c + b*d)/mag2;
+        out_data[n_point][1] = rslt_hi * rslt_lo * (b*c - a*d)/mag2;
+    }
+
+    //do the reverse fft:
+    p_inv = fftw_plan_dft_c2r_1d((int)data.size(),out_data, in_data, FFTW_ESTIMATE);
+    fftw_execute(p_inv);
+
+    //fill the return array, adding the offset, and scaling by data.size()
+    //(because fftw computes an unnormalized transform):
+    for (std::size_t n_point=0; n_point < data.size(); ++n_point) {
+        data_return[n_point]= in_data[n_point]/data.size();
+    }
+
+    fftw_destroy_plan(p_data);
+    fftw_destroy_plan(p_templ);
+    fftw_destroy_plan(p_inv);
+
+    fftw_free(in_data);
+    fftw_free(out_data);
+    fftw_free(in_templ_padded);
+    fftw_free(out_templ_padded);
+
+    progDlg.Update( 50, "Computing data histogram...", &skipped );
+    if (skipped) {
+        data_return.resize(0);
+        return data_return;
+    }
+    int nbins =  int(data_return.size()/500.0);
+    std::map<double, int> histo = histogram(data_return, nbins);
+    double max_value = -1;
+    double max_time = 0;
+    double maxhalf_time = 0;
+    Vector_double histo_fit(0);
+    for (std::map<double,int>::const_iterator it=histo.begin();
+         it != histo.end(); ++it) {
+        if (it->second > max_value) {
+            max_value = it->second;
+            max_time = it->first;
+        }
+        histo_fit.push_back(it->second);
+#ifdef _STFDEBUG
+        std::cout << it->first << "\t" << it->second << std::endl;
+#endif
+    }
+    for (std::map<double,int>::const_iterator it=histo.begin();
+         it != histo.end(); ++it) {
+        if (it->second > 0.5*max_value) {
+            maxhalf_time = it->first;
+            break;
+        }
+    }
+    maxhalf_time = fabs(max_time-maxhalf_time);
+    progDlg.Update( 75, "Fitting Gaussian...", &skipped );
+    if (skipped) {
+        data_return.resize(0);
+        return data_return;
+    }
+    /* Fit Gaussian to histogram */
+    Vector_double opts = LM_default_opts();
+
+    std::string info;
+    int warning;
+    std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
+    
+    double interval = (++histo.begin())->first-histo.begin()->first;
+    /* Initial parameter guesses */
+    Vector_double pars(3);
+    pars[0] = max_value;
+    pars[1] = (max_time - histo.begin()->first);
+    pars[2] = maxhalf_time *sqrt(2.0)/2.35482;
+#ifdef _STFDEBUG    
+    std::cout << "nbins: " << nbins << std::endl;
+    std::cout << "initial values:" << std::endl;
+    for (std::size_t np=0; np<pars.size(); ++np) {
+        std::cout << pars[np] << std::endl;
+    }
+#endif
+
+#ifdef _STFDEBUG
+    double chisqr =
+#endif
+        lmFit(histo_fit, interval, funcLib[funcLib.size()-1], opts, true,
+              pars, info, warning );
+#ifdef _STFDEBUG
+    std::cout << chisqr << "\t" << interval << std::endl;
+    std::cout << "final values:" << std::endl;
+    for (std::size_t np=0; np<pars.size(); ++np) {
+        std::cout << pars[np] << std::endl;
+    }
+#endif
+    double sigma = pars[2]/sqrt(2.0);
+    /* return data in terms of sigma */
+    for (std::size_t n_point=0; n_point < data.size(); ++n_point) {
+        data_return[n_point] /= sigma;
+    }
+    progDlg.Update( 100, "Done.", &skipped );
+    return data_return;
 }

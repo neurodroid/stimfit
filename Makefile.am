@@ -6,7 +6,7 @@ check_PROGRAMS = stimfittest
 TESTS = ${check_PROGRAMS}
 stimfit_SOURCES = ./src/stimfit/gui/main.cpp
 
-stimfittest_SOURCES = ./src/test/section.cpp ./src/test/channel.cpp ./src/test/recording.cpp ./src/test/measure.cpp \
+stimfittest_SOURCES = ./src/test/section.cpp ./src/test/channel.cpp ./src/test/recording.cpp ./src/test/fit.cpp ./src/test/measure.cpp \
             ./src/test/gtest/src/gtest-all.cc ./src/test/gtest/src/gtest_main.cc
 
 noinst_HEADERS = ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfio/recording.h ./src/libstfio/stfio.h \
@@ -104,6 +104,7 @@ EXTRA_DIST+= ./src/stimfit/res/arrow_out.xpm
 EXTRA_DIST+= ./src/stimfit/res/arrow_right.xpm
 EXTRA_DIST+= ./src/stimfit/res/arrow_up.xpm
 EXTRA_DIST+= ./src/stimfit/res/camera.xpm
+EXTRA_DIST+= ./src/stimfit/res/camera_ps.xpm
 EXTRA_DIST+= ./src/stimfit/res/ch1.xpm
 EXTRA_DIST+= ./src/stimfit/res/ch2.xpm
 EXTRA_DIST+= ./src/stimfit/res/cursor.xpm
@@ -226,24 +227,23 @@ install: stimfit
 	mkdir -p ${DESTDIR}/stimfit.app/Contents/Resources/English.lproj
 	mkdir -p ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit
 	mkdir -p ${DESTDIR}/stimfit.app/Contents/lib/stimfit
-	cp -v ./src/stimfit/py/.libs/libpystf.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
 	cp -v ./src/stimfit/.libs/libstimfit.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
 	cp -v ./src/libstfio/.libs/libstfio.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfio.dylib
 	cp $(top_srcdir)/stimfit.plist.in ${DESTDIR}/stimfit.app/Contents/Info.plist
 	echo "APPL????\c" > ${DESTDIR}/stimfit.app/Contents/PkgInfo
 	rm -f ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
-if BUILD_PYTHON
 	cp -p -f .libs/stimfit$(EXEEXT) ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
-else !BUILD_PYTHON
-	cp -p -f ./stimfit$(EXEEXT) ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
-endif !BUILD_PYTHON
+if BUILD_PYTHON
+	cp -v ./src/stimfit/py/.libs/libpystf.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
+	ln -sf ../../lib/stimfit/libpystf.dylib ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/_stf.so
+	cp -v $(top_srcdir)/src/stimfit/py/*.py ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/
+	cp -v $(top_srcdir)/src/pystfio/*.py ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/
+	${PYTHON} -m compileall -l ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/
+endif BUILD_PYTHON
 	$(POSTLINK_COMMAND) ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT) \
 	                    $(srcdir)/macosx/app.r
 	$(MACSETFILE) -a C ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
 	cp -f $(top_srcdir)/macosx/stimfit.icns ${DESTDIR}/stimfit.app/Contents/Resources/stimfit.icns
-	ln -sf ../../lib/stimfit/libpystf.dylib ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/_stf.so
-	cp -v $(top_srcdir)/src/stimfit/py/*.py ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/
-	cp -v $(top_srcdir)/src/pystfio/*.py ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/
 	install_name_tool -change \
 	                  $(LTTARGET)/libstimfit.dylib \
 	                  @executable_path/../lib/stimfit/libstimfit.dylib \
@@ -264,6 +264,7 @@ endif !BUILD_PYTHON
 	                  $(LTTARGET)/libstfio.dylib \
 	                  @executable_path/../lib/stimfit/libstfio.dylib \
 	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfio.dylib
+if BUILD_PYTHON
 	install_name_tool -change \
 	                  $(LTTARGET)/libstimfit.dylib \
 	                  @executable_path/../lib/stimfit/libstimfit.dylib \
@@ -276,6 +277,7 @@ endif !BUILD_PYTHON
 	                  $(LTTARGET)/libpystf.dylib \
 	                  @executable_path/../lib/stimfit/libpystf.dylib \
 	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
+endif BUILD_PYTHON
 
 endif ISDARWIN
 

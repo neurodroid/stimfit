@@ -1,4 +1,11 @@
-pkglibdir = ${PYTHON_SITE_PKG}/stfio
+if ISDARWIN
+PYTHON_TARGET_DIR=${PYTHON_DIST_PKG}
+else
+PYTHON_TARGET_DIR=${PYTHON_SITE_PKG}
+endif
+PYTHON_DEST_DIR=${DESTDIR}/${PYTHON_TARGET_DIR}
+pkglibdir = ${PYTHON_TARGET_DIR}/stfio
+
 pkglib_LTLIBRARIES = libpystfio.la
 
 TESTS_ENVIRONMENT = cp ./test.h5 ./ && \
@@ -31,18 +38,24 @@ libpystfio_la_CXXFLAGS = $(OPT_CXXFLAGS)
 libpystfio_la_LDFLAGS = $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
 libpystfio_la_LIBADD = $(PYTHON_ADDLIBS) ./../libstfio/libstfio.la
 
+LTTARGET=${PYTHON_DIST_PKG}/stfio
 install-exec-hook:
-	mv ${PYTHON_SITE_PKG}/stfio/${STFIO_PYTHON_LIBNAME} ${PYTHON_SITE_PKG}/stfio/_stfio.so
-	rm -f ${PYTHON_SITE_PKG}/stfio/*.la
-	rm -f ${PYTHON_SITE_PKG}/stfio/*.a
-	cp -p $(top_srcdir)/src/pystfio/stfio_plot.py ${PYTHON_SITE_PKG}/stfio
-	cp -p $(top_srcdir)/src/pystfio/stfio.py ${PYTHON_SITE_PKG}/stfio
-	chmod -x ${PYTHON_SITE_PKG}/stfio/*
-	echo stfio > ${PYTHON_SITE_PKG}/stfio.pth
+	mv ${PYTHON_DEST_DIR}/stfio/${STFIO_PYTHON_LIBNAME} ${PYTHON_DEST_DIR}/stfio/_stfio.so
+if BUILD_DEBIAN
+	chrpath -r $(LTTARGET) ${PYTHON_DEST_DIR}/stfio/_stfio.so
+endif
+	rm -f ${PYTHON_DEST_DIR}/stfio/*.la
+	rm -f ${PYTHON_DEST_DIR}/stfio/*.a
+	cp -p $(top_srcdir)/src/pystfio/stfio_plot.py ${PYTHON_DEST_DIR}/stfio
+	cp -p $(top_srcdir)/src/pystfio/stfio.py ${PYTHON_DEST_DIR}/stfio
+	${PYTHON} -m compileall -l ${PYTHON_DEST_DIR}/stfio
+	chmod -x ${PYTHON_DEST_DIR}/stfio/*
+	echo stfio > ${PYTHON_DEST_DIR}/stfio.pth
 
 uninstall-hook:
-	rm -f ${PYTHON_SITE_PKG}/stfio/*.so
-	rm -f ${PYTHON_SITE_PKG}/stfio.pth
+	rm -f ${PYTHON_TARGET_DIR}/stfio/*.so
+	rm -f ${PYTHON_TARGET_DIR}/stfio.pth
+	rm -r ${PYTHON_TARGET_DIR}/stfio
 
 clean-local:
 	rm -f $(top_srcdir)/src/pystfio/pystfio_wrap.cxx $(top_srcdir)/src/pystfio/stfio.py

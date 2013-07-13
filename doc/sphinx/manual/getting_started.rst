@@ -14,7 +14,7 @@ file to fitting functions to data.
 
 * Download a sample file from `here <http://www.stimfit.org/tutorial/minis.dat>`_ .
 
-* Open the data file: you can either double-click it from an Explorer Window, or you can start `Stimfit <http://www.stimfit.org>`__ and choose "File"->"Open..." from the menu.
+* Open the data file: you can either double-click it from an Explorer Window, or you can start `Stimfit <http://www.stimfit.org>`_ and choose "File"->"Open..." from the menu.
 
 * The file will be opened in a new child window, and the first trace will be displayed.
 
@@ -78,12 +78,6 @@ Trace scaling
         **Fig. 6:** Magnifying a region of interest.
         
 * If you cannot see any trace because you zoomed in or out too much, press **F** to fit the trace to the screen again. 
-
-.. note::
-
-    Although all commands mentioned above can be accessible with the
-    mouse, I strongly recommend using the keyboard shortcuts, once you
-    get used to it, the shortcuts are much faster.
 
 Navigate within a file
 ======================

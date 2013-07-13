@@ -25,7 +25,7 @@
 #define DEFAULT_TIME_HYSTERESIS  1     // Two sequences of time hysteresis.
 
 
-#if defined(__linux__) || defined(__STF__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__STF__) || defined(__APPLE__) || defined(__MINGW32__)
 	#define max(a,b)   (((a) > (b)) ? (a) : (b))
 	#define min(a,b)   (((a) < (b)) ? (a) : (b))
 #endif
@@ -793,7 +793,7 @@ void WINAPI ABFH_GetDACtoUUFactors( const ABFFileHeader *pFH, int nChannel,
    ABFH_PromoteHeader( &NewFH, pFH );
    {
       // Prevent accidental use of pFH.
-      int pFH = 0;   pFH = pFH;
+      int pFH = 0; pFH = pFH;
 
       float fScaleFactor       = NewFH.fDACScaleFactor[nChannel];
       float fCalibrationFactor = NewFH.fDACCalibrationFactor[nChannel];

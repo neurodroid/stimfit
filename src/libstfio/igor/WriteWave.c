@@ -104,23 +104,27 @@ WriteVersion2NumericWave(CP_FILE_REF fr, WaveHeader2* whp, const void* data, con
 	do {
 		// Write the BinHeader.
 		numBytesToWrite = sizeof(struct BinHeader2);
-		if (err = CPWriteFile(fr, numBytesToWrite, &bh, &numBytesWritten))
+		err = CPWriteFile(fr, numBytesToWrite, &bh, &numBytesWritten);
+		if (err)
 			break;
 		
 		// Write the WaveHeader, up to but not including the wData field.
 		numBytesToWrite = offsetof(WaveHeader2, wData);
-		if (err = CPWriteFile(fr, numBytesToWrite, whp, &numBytesWritten))
+		err = CPWriteFile(fr, numBytesToWrite, whp, &numBytesWritten);
+                if (err)
 			break;
 		
 		// Write the wave data.
 		numBytesToWrite = waveDataSize;
-		if (err = CPWriteFile(fr, numBytesToWrite, data, &numBytesWritten))
+		err = CPWriteFile(fr, numBytesToWrite, data, &numBytesWritten);
+		if (err)
 			break;
 
 		// Write the 16 byte padding.
 		memset(padding, 0, 16);								// Write padding at the end of the wave data.
 		numBytesToWrite = 16;
-		if (err = CPWriteFile(fr, numBytesToWrite, padding, &numBytesWritten))
+		err = CPWriteFile(fr, numBytesToWrite, padding, &numBytesWritten);
+		if (err)
 			break;
 			
 		// Now write optional data, in the correct order.
@@ -128,7 +132,8 @@ WriteVersion2NumericWave(CP_FILE_REF fr, WaveHeader2* whp, const void* data, con
 		// Write the wave note.
 		numBytesToWrite = noteSize;
 		if (numBytesToWrite > 0) {
-			if (err = CPWriteFile(fr, numBytesToWrite, waveNote, &numBytesWritten))
+			err = CPWriteFile(fr, numBytesToWrite, waveNote, &numBytesWritten);
+			if (err)
 				break;
 		}
 					
@@ -202,17 +207,20 @@ WriteVersion5NumericWave(CP_FILE_REF fr, WaveHeader5* whp, const void* data, con
 	do {
 		// Write the BinHeader.
 		numBytesToWrite = sizeof(struct BinHeader5);
-		if (err = CPWriteFile(fr, numBytesToWrite, &bh, &numBytesWritten))
+		err = CPWriteFile(fr, numBytesToWrite, &bh, &numBytesWritten);
+		if (err)
 			break;
 		
 		// Write the WaveHeader, up to but not including the wData field.
 		numBytesToWrite = offsetof(WaveHeader5, wData);
-		if (err = CPWriteFile(fr, numBytesToWrite, whp, &numBytesWritten))
+		err = CPWriteFile(fr, numBytesToWrite, whp, &numBytesWritten);
+		if (err)
 			break;
 		
 		// Write the wave data.
 		numBytesToWrite = waveDataSize;
-		if (err = CPWriteFile(fr, numBytesToWrite, data, &numBytesWritten))
+		err = CPWriteFile(fr, numBytesToWrite, data, &numBytesWritten);
+		if (err)
 			break;
 			
 		// Now write optional data, in the correct order.
@@ -220,10 +228,11 @@ WriteVersion5NumericWave(CP_FILE_REF fr, WaveHeader5* whp, const void* data, con
 		// Write the wave note.
 		numBytesToWrite = noteSize;
 		if (numBytesToWrite > 0) {
-			if (err = CPWriteFile(fr, numBytesToWrite, waveNote, &numBytesWritten))
+			err = CPWriteFile(fr, numBytesToWrite, waveNote, &numBytesWritten);
+			if (err)
 				break;
 		}
-					
+
 	} while(0);
 
 	return err;

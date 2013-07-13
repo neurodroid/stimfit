@@ -52,9 +52,9 @@ public:
      */
     wxStfFileInfoDlg(
             wxWindow* parent,
-            const wxString& szGeneral=wxT("\0"),
-            const wxString& szFile=wxT("\0"),
-            const wxString& szSection=wxT("\0"),
+            const std::string& szGeneral,
+            const std::string& szFile,
+            const std::string& szSection,
             int id = wxID_ANY,
             wxString title = wxT("File information"),
             wxPoint pos = wxDefaultPosition,

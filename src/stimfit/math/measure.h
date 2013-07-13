@@ -17,7 +17,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-/*! \file measlib.h
+/*! \file measure.h
  *  \author Christoph Schmidt-Hieber, Peter Jonas
  *  \date 2011-01-24
  *  \brief Functions for measuring kinetics of events within waveforms.
@@ -76,9 +76,11 @@ double peak( const std::vector<double>& data, double base, std::size_t llp, std:
  *  \param thrT On exit, The interpolated time point of the threshold crossing
  *              in units of sampling points, or a negative value if the threshold
                 wasn't found.
+ *  \param windowLength is the distance (in number of samples) used to compute the difference,
+                the default value is 1.
  *  \return The interpolated threshold value.
  */
-double threshold( const std::vector<double>& data, std::size_t llp, std::size_t ulp, double slope, double& thrT );
+double threshold( const std::vector<double>& data, std::size_t llp, std::size_t ulp, double slope, double& thrT, long windowLength );
 
 //! Find 20 to 80% rise time of an event in \e data.
 /*! Although t80real is not explicitly returned, it can be calculated
@@ -126,10 +128,12 @@ double t_half( const std::vector<double>& data, double base, double ampl, double
  *  \param maxRiseT The interpolated time point of the maximal slope of rise
  *         in units of sampling points.
  *  \param maxRiseY The interpolated value of \e data at \e maxRiseT.
+ *  \param windowLength is the distance (in number of samples) used to compute
+           the slope, the default value is 1.
  *  \return The maximal slope during the rising phase.
  */
 double  maxRise( const std::vector<double>& data, double left, double right, double& maxRiseT,
-            double& maxRiseY);
+            double& maxRiseY, long windowLength);
 
 //! Find the maximal slope during the decaying phase of an event within \e data.
 /*! \param data The data waveform to be analysed.
@@ -138,10 +142,12 @@ double  maxRise( const std::vector<double>& data, double left, double right, dou
  *  \param maxDecayT The interpolated time point of the maximal slope of decay
  *         in units of sampling points.
  *  \param maxDecayY The interpolated value of \e data at \e maxDecayT.
+ *  \param windowLength is the distance (in number of samples) used to compute
+           the slope, the default value is 1.
  *  \return The maximal slope during the decaying phase.
  */
 double  maxDecay( const std::vector<double>& data, double left, double right, double& maxDecayT,
-             double& maxDecayY);
+             double& maxDecayY, long windowLength);
 
 #ifdef WITH_PSLOPE
 //! Find the slope an event within \e data.

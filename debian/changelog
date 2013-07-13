@@ -1,3 +1,45 @@
+stimfit (0.12.5-1) experimental; urgency=low
+
+  * More robust initialization for nonlinear regression
+  * Faster convergence for most fits
+  * Add support for latest abf2 file format (Clampex 10.4)
+  * Fix potential buffer overflow when computing averages
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Mon, 08 Jul 2013 19:55:04 +0000
+
+stimfit (0.12.1-1) experimental; urgency=low
+
+  * Use biosig as additional file reading backend
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Tue, 02 Apr 2013 21:22:06 +0000
+
+stimfit (0.11.9-1) UNRELEASED; urgency=low
+
+  * Fix latency measurements in manual peak mode
+  * GUI adjustments
+  * Build for Debian proper
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Fri, 29 Mar 2013 09:20:13 +0000
+
+stimfit (0.11.8-0lucid1) lucid; urgency=low
+
+  * Make objects iterable in pystfio
+  * Prettify fit dialog
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sun, 17 Feb 2013 13:02:28 +0000
+
+stimfit (0.11.7-0lucid1) lucid; urgency=low
+
+  * Add missing library to stfio debian package
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 16 Feb 2013 20:20:24 +0000
+
+stimfit (0.11.6-0lucid1) lucid; urgency=low
+
+  * Corrected some bugs in cursor dialogs
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 16 Feb 2013 14:30:00 +0000
+
 stimfit (0.11.4-0precise1) precise; urgency=low
 
   * Fixed monoexponential fit with delay

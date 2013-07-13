@@ -93,8 +93,8 @@ template <class ITEM>
 inline CArrayPtr<ITEM>::CArrayPtr/*CSH<ITEM>*/(UINT uCount)
 {
 //   MEMBERASSERT();
-   m_pArray.reset(NULL);
-   Alloc(uCount);
+    m_pArray.reset((ITEM*)0);
+    Alloc(uCount);
 }
 
 //================================================================================================
@@ -196,7 +196,7 @@ template <class ITEM>
 inline void CArrayPtr<ITEM>::Free()
 {
 //   MEMBERASSERT();
-   m_pArray.reset(NULL);
+    m_pArray.reset((ITEM*)0);
 }
 
 //================================================================================================

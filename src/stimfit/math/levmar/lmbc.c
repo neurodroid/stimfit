@@ -34,6 +34,8 @@
 
 #define EPSILON       1E-12
 #define ONE_THIRD     0.3333333334 /* 1.0/3.0 */
+#define _LSITMAX_     150 /* max #iterations for line search */
+#define _POW_         2.1
 
 #if !defined(LM_DBL_PREC) && !defined(LM_SNGL_PREC)
 #error At least one of LM_DBL_PREC, LM_SNGL_PREC should be defined!

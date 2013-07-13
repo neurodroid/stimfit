@@ -74,6 +74,8 @@ enum {
     wxREFERENCE,
     wxSTARTFITATPEAK,
     wxID_STARTFITATPEAK,
+    wxRT_LABEL,
+    wxRT_SLIDER,
     wxIDNOTEBOOK
 };
 
@@ -109,6 +111,8 @@ EVT_RADIOBUTTON( wxRADIO_LAT_HALFWIDTH2, wxStfCursorsDlg::OnRadioLatNonManualEnd
 EVT_RADIOBUTTON( wxRADIO_LAT_PEAK2,      wxStfCursorsDlg::OnRadioLatNonManualEnd )
 EVT_RADIOBUTTON( wxRADIO_LAT_MAXSLOPE2,  wxStfCursorsDlg::OnRadioLatNonManualEnd )
 EVT_RADIOBUTTON( wxRADIO_LAT_EVENT2,     wxStfCursorsDlg::OnRadioLatNonManualEnd )
+
+EVT_COMMAND_SCROLL( wxRT_SLIDER,        wxStfCursorsDlg::OnRTSlider )
 #ifdef WITH_PSLOPE
 EVT_RADIOBUTTON( wxRADIO_PSManBeg, wxStfCursorsDlg::OnRadioPSManBeg )
 EVT_RADIOBUTTON( wxRADIO_PSEventBeg, wxStfCursorsDlg::OnRadioPSEventBeg )
@@ -126,7 +130,7 @@ END_EVENT_TABLE()
 wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wxString title, wxPoint pos,
                                  wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ), cursorMIsTime(true),
-    cursor1PIsTime(true), cursor2PIsTime(true), cursor1BIsTime(true), cursor2BIsTime(true),
+    cursor1PIsTime(true), cursor2PIsTime(true), cursor1BIsTime(true), cursor2BIsTime(true), cursor1DIsTime(true), cursor2DIsTime(true),
 #ifdef WITH_PSLOPE
     cursor1PSIsTime(true), cursor2PSIsTime(true), 
 #endif
@@ -235,50 +239,83 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     pageSizer->Add( pPeakAtEnd, 0, wxALIGN_CENTER | wxALL, 2);
 
     wxFlexGridSizer* peakSettingsGrid;
-    peakSettingsGrid=new wxFlexGridSizer(1,3,0,0);
+    peakSettingsGrid=new wxFlexGridSizer(2,1,0,0);
 
-    // Number of points for peak calculation:
+    // START: Number of points for peak calculation:
+    wxFlexGridSizer* CommonGrid;
+    CommonGrid = new wxFlexGridSizer(1,2,0,0);
+    wxFlexGridSizer* LeftGrid;
+    LeftGrid = new wxFlexGridSizer(1,1,0,0);
     wxStaticBoxSizer* peakPointsSizer = new wxStaticBoxSizer(
             wxVERTICAL, nbPage, wxT("Number of points for peak") );
 
     wxRadioButton* pAllPoints = new wxRadioButton( nbPage, wxRADIOALL,
             wxT("All points within peak window"), wxDefaultPosition,
             wxDefaultSize, wxRB_GROUP );
-    peakPointsSizer->Add( pAllPoints, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
-    pAllPoints->SetValue(false);
+
+    wxRadioButton* pMeanPoints = new wxRadioButton( nbPage, wxRADIOMEAN, wxT("User-defined:"),
+            wxDefaultPosition, wxDefaultSize );
 
     wxFlexGridSizer* usrdefGrid;
     usrdefGrid = new wxFlexGridSizer(1,2,0,0);
 
-    wxRadioButton* pMeanPoints = new wxRadioButton( nbPage, wxRADIOMEAN, wxT("User-defined:"),
-            wxDefaultPosition, wxDefaultSize );
-    pMeanPoints->SetValue(true);
-
-    usrdefGrid->Add(pMeanPoints, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-
-    //peakPointsSizer->Add( pMeanPoints, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    usrdefGrid->Add(pMeanPoints, 0, wxALIGN_RIGHT |wxALIGN_CENTER_VERTICAL | wxALL, 2);
 
     wxTextCtrl* textMeanPoints=new wxTextCtrl( nbPage, wxTEXTPM, wxT("1"),
-            wxDefaultPosition, wxSize(48,20), wxTE_RIGHT );
-    peakPointsSizer->Add( textMeanPoints, 0, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+            wxDefaultPosition, wxSize(44,20), wxTE_RIGHT );
 
     usrdefGrid->Add(textMeanPoints, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
 
-    //peakSettingsGrid->Add( peakPointsSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2 );
-    peakPointsSizer->Add( usrdefGrid, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2 );
+    peakPointsSizer->Add( pAllPoints, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2 );
+    peakPointsSizer->Add( usrdefGrid, 0, wxALIGN_LEFT | wxALIGN_BOTTOM | wxALL, 2 );
     peakSettingsGrid->Add( peakPointsSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2 );
+    LeftGrid->Add(peakSettingsGrid, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
 
-    // Direction of peak calculation:
+    /** Rise time slider **/
+    wxFlexGridSizer* RTGrid;
+    RTGrid = new wxFlexGridSizer(1,2,0,0);
+    wxStaticText* pRTLabel = new wxStaticText( nbPage, wxRT_LABEL, 
+            wxT("Rise time 20-80%"),
+            wxDefaultPosition, 
+            wxDefaultSize, 
+            wxTE_LEFT );
+    wxSlider *RTSlider = new wxSlider( nbPage, wxRT_SLIDER, 
+        20, 5, 45, 
+        wxDefaultPosition, 
+        wxSize(100, wxDefaultCoord), 
+        wxSL_HORIZONTAL | wxSL_AUTOTICKS,
+        wxDefaultValidator, wxT(""));
+
+    RTSlider->SetTickFreq(5,1);
+    RTGrid->Add(pRTLabel, 0, 
+        wxALIGN_LEFT |  wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    RTGrid->Add(RTSlider, 0, 
+        wxALIGN_LEFT |  wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    LeftGrid->Add(RTGrid, 1, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    CommonGrid->Add(LeftGrid, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
+
+    // END: Number of points for peak calculation:
+
+    // START: Peak direction
+    wxFlexGridSizer* RigthGrid;
+    RigthGrid = new wxFlexGridSizer(1,1,0,0);
     wxString directionChoices[] = { wxT("Up"), wxT("Down"), wxT("Both") };
     int directionNChoices = sizeof( directionChoices ) / sizeof( wxString );
     wxRadioBox* pDirection = new wxRadioBox( nbPage, wxDIRECTION, wxT("Peak direction"),
             wxDefaultPosition, wxDefaultSize, directionNChoices, directionChoices,
             0, wxRA_SPECIFY_ROWS );
     pDirection->SetSelection(1);
-    peakSettingsGrid->Add( pDirection, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
-    pageSizer->Add(peakSettingsGrid, 0, wxALIGN_CENTER | wxALL, 2);
+    //peakSettingsGrid->Add( pDirection, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2 );
+    RigthGrid->Add( pDirection, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2 );
+    CommonGrid->Add(RigthGrid, 0, wxALIGN_RIGHT | wxALIGN_TOP | wxALL, 2);
+
+    pageSizer->Add(CommonGrid, 0, wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    
+    //pageSizer->Add(peakSettingsGrid, 0, wxALIGN_CENTER | wxALL, 2);
+    // END: Peak direction
     
     wxFlexGridSizer* slopeSettingsGrid = new wxFlexGridSizer(1,2,0,0);
+
     
     // Threshold slope
     wxStaticBoxSizer* slopeSizer =
@@ -297,16 +334,17 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     slopeSizer->Add( slopeGrid, 0, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
     slopeSettingsGrid->Add( slopeSizer, 0, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
     
-    // Ap kinetics reference
+    // START: Measure peak kinetics 
     wxString referenceChoices[] = { wxT("From baseline"), wxT("From threshold") };
     int referenceNChoices = sizeof( referenceChoices ) / sizeof( wxString );
-    wxRadioBox* pReference = new wxRadioBox( nbPage, wxREFERENCE, wxT("Measure AP kinetics "),
+    wxRadioBox* pReference = new wxRadioBox( nbPage, wxREFERENCE, wxT("Measure peak kinetics "),
             wxDefaultPosition, wxDefaultSize, referenceNChoices, referenceChoices,
             0, wxRA_SPECIFY_ROWS );
     pReference->SetSelection(0);
     slopeSettingsGrid->Add( pReference, 0, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
     
     pageSizer->Add( slopeSettingsGrid, 0, wxALIGN_CENTER | wxALL, 2 );
+    // END: Measure peak kinetics 
 
     pageSizer->SetSizeHints(nbPage);
     nbPage->SetSizer( pageSizer );
@@ -361,7 +399,6 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
 
     // Checkbox for using peak window for latency cursors
     wxCheckBox *pUsePeak = new wxCheckBox(nbPage, wxLATENCYWINDOW,
-        //wxT("Use peak window for latency cursor"), wxDefaultPosition,
         wxT("Measure latencies within peak cursors"), wxDefaultPosition,
         wxDefaultSize, 0);
     pageSizer->Add(pUsePeak, 0 , wxALIGN_CENTER | wxALL, 2);
@@ -729,6 +766,16 @@ int wxStfCursorsDlg::GetPeakPoints() const
     }
 }
 
+int wxStfCursorsDlg::GetRTFactor() const {
+    wxSlider *pRTSlider = (wxSlider*)FindWindow(wxRT_SLIDER); 
+    if (pRTSlider == NULL ) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg:GetRTFactor()"));
+        return -1;
+    }
+
+    return pRTSlider->GetValue();
+}
+
 #ifdef WITH_PSLOPE
 int wxStfCursorsDlg::GetDeltaT() const {
     return ReadDeltaT(wxTEXT_PSDELTAT);
@@ -828,6 +875,21 @@ bool wxStfCursorsDlg::GetFromBase() const {
      case 1: return false;
      default: return true;
     }
+}
+
+void wxStfCursorsDlg::SetRTFactor(int RTFactor) {
+    wxSlider *pRTSlider = (wxSlider*)FindWindow(wxRT_SLIDER); 
+    wxStaticText *pRTLabel = (wxStaticText*)FindWindow(wxRT_LABEL); 
+    if (pRTSlider == NULL || pRTLabel == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg:SetRTFactor()"));
+        return;
+    }
+
+    pRTSlider->SetValue(RTFactor);
+    wxString label(wxT("Rise time "));
+    label << pRTSlider->GetValue() << wxT("-");
+    label << 100-pRTSlider->GetValue() << wxT("\%");
+    pRTLabel->SetLabel(label);
 }
 
 void wxStfCursorsDlg::SetFromBase(bool fromBase) {
@@ -938,20 +1000,26 @@ void wxStfCursorsDlg::OnComboBoxU2L( wxCommandEvent& event ) {
 void wxStfCursorsDlg::OnRadioLatManualBeg( wxCommandEvent& event ) {
     event.Skip();
     wxTextCtrl* pCursor1L = (wxTextCtrl*)FindWindow(wxTEXT1L);
-    if (pCursor1L == NULL) {
+    wxCheckBox *pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
+    if (pCursor1L == NULL || pUsePeak == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioLatManBeg()"));
         return;
     }
-    // if cursor wxTextCtrl is NOT enabled
+    // if cursor wxTextCtrl is NOT enable2
     if (!pCursor1L->IsEnabled())
         pCursor1L->Enable(true);
 
+    if (pUsePeak->IsChecked()) {
+        pUsePeak->SetValue(false);
+    }
+    pUsePeak->Enable(false);
 }
 
 void wxStfCursorsDlg::OnRadioLatManualEnd( wxCommandEvent& event ) {
     event.Skip();
     wxTextCtrl* pCursor2L = (wxTextCtrl*)FindWindow(wxTEXT2L);
-    if (pCursor2L == NULL) {
+    wxCheckBox *pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
+    if (pCursor2L == NULL || pUsePeak == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioLatManEnd()"));
         return;
     }
@@ -959,12 +1027,19 @@ void wxStfCursorsDlg::OnRadioLatManualEnd( wxCommandEvent& event ) {
     if (!pCursor2L->IsEnabled())
         pCursor2L->Enable(true);
 
+    if (pUsePeak->IsChecked()) {
+        pUsePeak->SetValue(false);
+    }
+    pUsePeak->Enable(false);
 }
 
 void wxStfCursorsDlg::OnRadioLatNonManualBeg( wxCommandEvent& event ) {
     event.Skip();
     wxTextCtrl* pCursor1L = (wxTextCtrl*)FindWindow(wxTEXT1L);
-    if (pCursor1L == NULL ) {
+    wxCheckBox* pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
+    wxRadioButton* pLatencyManualEnd = (wxRadioButton*)FindWindow(wxRADIO_LAT_MANUAL2);
+
+    if (pCursor1L == NULL || pUsePeak == NULL || pLatencyManualEnd == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioLatt50Beg()"));
         return;
     }
@@ -972,18 +1047,29 @@ void wxStfCursorsDlg::OnRadioLatNonManualBeg( wxCommandEvent& event ) {
     if (pCursor1L->IsEnabled())
         pCursor1L->Enable(false);
 
+    // enable latency between peak cursors if the second latency cursor is NOT manual 
+    if (!pLatencyManualEnd->GetValue())
+        pUsePeak->Enable(true);
+    
 }
 
 void wxStfCursorsDlg::OnRadioLatNonManualEnd( wxCommandEvent& event ) {
     event.Skip();
     wxTextCtrl* pCursor2L = (wxTextCtrl*)FindWindow(wxTEXT2L);
-    if (pCursor2L == NULL) {
+    wxCheckBox *pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
+    wxRadioButton* pLatencyManualBeg = (wxRadioButton*)FindWindow(wxRADIO_LAT_MANUAL1);
+
+    if (pCursor2L == NULL || pUsePeak == NULL || pLatencyManualBeg == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg::OnRadioNonManualEnd()"));
         return;
     }
     // disable cursor wxTextCtrl if it is enabled 
     if (pCursor2L->IsEnabled()) 
         pCursor2L->Enable(false);
+
+    // enable latency between peak cursors if the first second latency cursor is NOT manual
+    if (!pLatencyManualBeg->GetValue())
+        pUsePeak->Enable(true);
 
 }
 
@@ -1194,6 +1280,21 @@ void wxStfCursorsDlg::OnRadioMean( wxCommandEvent& event ) {
     pRadioAll->SetValue(false);
 }
 
+void wxStfCursorsDlg::OnRTSlider( wxScrollEvent& event ) {
+    event.Skip();
+    wxSlider *pRTSlider = (wxSlider*)FindWindow(wxRT_SLIDER); 
+    wxStaticText *pRTLabel = (wxStaticText*)FindWindow(wxRT_LABEL); 
+
+    if (pRTSlider==NULL || pRTLabel == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxCursorsDlg:OnRTSlider()"));
+        return;
+    }
+    wxString label(wxT("Rise time "));
+    label << pRTSlider->GetValue() << wxT("-");
+    label << 100-pRTSlider->GetValue() << wxT("\%");
+    pRTLabel->SetLabel(label);
+}
+
 stf::latency_mode wxStfCursorsDlg::GetLatencyStartMode() const {
 
     wxRadioButton* pManual   = (wxRadioButton*)FindWindow(wxRADIO_LAT_MANUAL1);
@@ -1263,15 +1364,19 @@ void wxStfCursorsDlg::SetLatencyStartMode(stf::latency_mode latencyBegMode){
     wxRadioButton* pPeak     = (wxRadioButton*)FindWindow(wxRADIO_LAT_PEAK1);
     wxRadioButton* pMaxSlope = (wxRadioButton*)FindWindow(wxRADIO_LAT_MAXSLOPE1);
     wxRadioButton* pt50      = (wxRadioButton*)FindWindow(wxRADIO_LAT_HALFWIDTH1);
+
+    wxCheckBox* pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
+    
     
     if (pManual == NULL || pPeak == NULL
-        || pMaxSlope == NULL || pt50 == NULL) {
+        || pMaxSlope == NULL || pt50 == NULL || pUsePeak==NULL) {
         wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::SetLatencyStartMode()"));
     }
 
     switch (latencyBegMode) {
         case stf::manualMode:
             pManual->SetValue(true);
+            pUsePeak->Enable(false);
             break;
         case stf::peakMode:
             pPeak->SetValue(true);
@@ -1295,15 +1400,18 @@ void wxStfCursorsDlg::SetLatencyEndMode(stf::latency_mode latencyEndMode){
     wxRadioButton* pMaxSlope = (wxRadioButton*)FindWindow(wxRADIO_LAT_MAXSLOPE2);
     wxRadioButton* pt50      = (wxRadioButton*)FindWindow(wxRADIO_LAT_HALFWIDTH2);
     wxRadioButton* pEvent    = (wxRadioButton*)FindWindow(wxRADIO_LAT_EVENT2);
+
+    wxCheckBox* pUsePeak = (wxCheckBox*)FindWindow(wxLATENCYWINDOW);
     
     if (pManual == NULL || pPeak == NULL
-        || pMaxSlope == NULL || pt50 == NULL || pEvent == NULL) {
+        || pMaxSlope == NULL || pt50 == NULL || pEvent == NULL || pUsePeak == NULL) {
         wxGetApp().ErrorMsg(wxT("Null pointer in wxCursorsDlg::SetLatencyEndtMode()"));
     }
 
     switch (latencyEndMode) {
         case stf::manualMode:
             pManual->SetValue(true);
+            pUsePeak->Enable(false);
             break;
         case stf::peakMode:
             pPeak->SetValue(true);
@@ -1529,6 +1637,8 @@ void wxStfCursorsDlg::UpdateCursors() {
         SetPeakPoints( actDoc->GetPM() );
         SetDirection( actDoc->GetDirection() );
         SetFromBase( actDoc->GetFromBase() );
+        // Update rise time factor
+        SetRTFactor( actDoc->GetRTFactor() );
         break;
 
     case stf::base_cursor: // Base
@@ -1690,3 +1800,5 @@ bool wxStfCursorsDlg::GetRuler() const {
     }
     return pMeasCursor->IsChecked();
 }
+
+

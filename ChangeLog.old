@@ -1,0 +1,4223 @@
+2011-01-22  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/app/doc.cpp, src/app/parentframe.cpp, src/core/core.cpp,
+	src/core/filelib/asciilib.cpp,
+	src/core/filelib/axg/AxoGraph_ReadWrite.cpp,
+	src/core/filelib/axg/fileUtils.cpp, src/core/filelib/hekalib.cpp:
+	* wx-2.9 and llvm-gcc build fixes
+	* zoom selection initialisation bug fix
+	[f6aa4d42fff5] [tip]
+
+	* src/app/app.cpp, src/app/dlgs/cursorsdlg.cpp,
+	src/app/dlgs/eventdlg.cpp, src/app/doc.cpp, src/app/graph.cpp,
+	src/app/unopt.cpp, src/app/usrdlg/usrdlg.cpp, src/core/channel.cpp,
+	src/core/channel.h, src/core/core.cpp, src/core/filelib/abflib.cpp,
+	src/core/filelib/asciilib.cpp, src/core/filelib/atflib.cpp,
+	src/core/filelib/axglib.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp,
+	src/core/filelib/axon/Common/unix.h, src/core/filelib/cfslib.cpp,
+	src/core/filelib/hdf5lib.cpp, src/core/filelib/hekalib.cpp,
+	src/core/recording.cpp, src/core/recording.h, src/core/section.cpp,
+	src/core/section.h, src/core/stimdefs.h, src/stfswig/stfswig.cxx:
+	* Re-established compatibility with wx-2.8 to prepare debian
+	packages.
+	[656d80e179da]
+
+2011-01-20  Jose Guzman  <sjm.guzman@gmail.com>
+
+	* TODO:
+	Added my todo
+	[f43edb6e2cfe]
+
+2011-01-20  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .hgtags:
+	Added tag 0.10.5windows for changeset 2a20ae89c68b
+	[f5d6e314d036]
+
+	* .hgtags:
+	Merged.
+	[2a20ae89c68b] [0.10.5windows]
+
+2011-01-18  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .hgtags:
+	Added tag 0.10.4mac for changeset eb7958be2b8f
+	[9d97c75467c8]
+
+	* m4/lt~obsolete.m4:
+	Tagged 0.10.4linux.
+	[eb7958be2b8f] [0.10.4mac]
+
+2011-01-20  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* configure.in, doc/sphinx/conf.py, doc/website/Home.html,
+	macosx/package.pmdoc/index.xml, nsis/installer.nsi, stfconf.h,
+	stimfit.plist.in, stimfit_VS03/stfioswig/stfioswig.vcproj,
+	stimfit_VS03/stfswig/stfswig.vcproj,
+	stimfit_VS03/stimfit/stimfit.vcproj, stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj:
+	* Accidentally packaged debug build in Windows
+	* Bumped version to 0.10.5
+	[946f8958c212]
+
+2011-01-18  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .hgtags:
+	Added tag 0.10.4linux for changeset aaf0c5f75e25
+	[81bcba2ae953]
+
+2011-01-20  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .hgtags:
+	Added tag 0.10.5windows for changeset bd7753c235c2
+	[a9cca83455cb]
+
+2011-01-18  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .hgtags:
+	Removed tag 0.10.4mac
+	[aaf0c5f75e25] [0.10.4linux]
+
+	* .hgtags:
+	Removed tag 0.10.4mac
+	[bd7753c235c2]
+
+	* .hgtags:
+	Added tag 0.10.4windows for changeset 87b5a8bb7f13
+	[8050abf8d3cf]
+
+	* configure.in, doc/sphinx/conf.py, doc/website/Home.html,
+	macosx/package.pmdoc/index.xml, nsis/installer.nsi, stfconf.h,
+	stimfit.plist.in, stimfit_VS03/stimfit_VS03.suo:
+	Bumped version to 0.10.4
+	[87b5a8bb7f13] [0.10.4windows]
+
+	* .hgtags:
+	Added tag 0.10.4mac for changeset bdbc440cbaff
+	[f153650418ce]
+
+	* src/app/doc.cpp, src/app/parentframe.cpp:
+	Corrected a bug in channel zoom selection. Thanks to Jose for
+	reporting.
+	[bdbc440cbaff]
+
+2011-01-16  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/manual/python.rst, src/stfswig/extensions.py:
+	Updated Extensions documentation
+	[b1c8523aec5f]
+
+	* .hgtags:
+	Added tag 0.10.3mac for changeset 01f137313682
+	[fc1e5e6b647f]
+
+	* .hgtags:
+	Added tag 0.10.3linux for changeset 13b62604acd8
+	[01f137313682] [0.10.3mac]
+
+	* src/core/filelib/hekalib.cpp:
+	* Tagged 0.10.3windows
+	* Warning message for heka binaries
+	[13b62604acd8] [0.10.3linux]
+
+	* .hgtags:
+	Added tag 0.10.3windows for changeset 92739d9c869b
+	[b21889a4ec1f]
+
+	* src/app/doc.cpp, src/app/doc.h, src/app/parentframe.cpp,
+	src/app/parentframe.h, src/stfswig/stfswig.cxx,
+	stimfit_VS03/stimfit_VS03.suo:
+	Some fixes in Python interface for Windows
+	[92739d9c869b] [0.10.3windows]
+
+	* configure.in, doc/sphinx/conf.py, doc/website/Home.html,
+	macosx/package.pmdoc/index.xml, nsis/installer.nsi, src/app/app.cpp,
+	src/app/graph.cpp, src/core/measlib.h, src/core/recording.cpp,
+	stfconf.h, stimfit.plist.in,
+	stimfit_VS03/stfioswig/stfioswig.vcproj,
+	stimfit_VS03/stfswig/stfswig.vcproj,
+	stimfit_VS03/stimfit/stimfit.vcproj, stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj:
+	* Some more range checking in maxRise and maxDecay
+	* Corrected window focusing in Windows
+	[9becb9f44ebb]
+
+	* Makefile.am, src/app/app.cpp, src/app/app.h, src/app/doc.cpp,
+	src/app/graph.cpp, src/app/parentframe.cpp,
+	src/app/plugins/plugins.cpp, src/app/plugins/plugins.h,
+	src/app/unopt.cpp, src/core/measlib.h, src/core/stimdefs.h,
+	src/stfswig/spells.py:
+	* Proof of concept for calling Python functions from the menu.
+	* Some more range checking.
+	[9a59ac035801]
+
+	* nsis/installer.nsi, src/app/app.cpp, src/app/app.h,
+	src/app/unopt.cpp, src/stfswig/Makefile.am,
+	src/stfswig/extensions.py, src/stfswig/spells.py:
+	Started framework for Python extensions that can be called from the
+	menu
+	[9c7f538cce52]
+
+2011-01-15  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* nsis/installer.nsi, src/core/measlib.h, src/stfswig/Makefile.am,
+	src/stfswig/heka.py:
+	* Added heak.py to package
+	* Added missing range check in maxRise and maxDecay
+	[f904f4808447]
+
+	* configure.in, doc/sphinx/conf.py, doc/website/Home.html,
+	macosx/package.pmdoc/index.xml, nsis/installer.nsi, stfconf.h,
+	stimfit.plist.in:
+	Bumped version number to 0.10.2
+	[408c330485e4]
+
+	* .hgtags:
+	Added tag 0.10.2windows for changeset 32a5b1f7c864
+	[8fa13a4bf408]
+
+	* src/app/doc.cpp, stimfit_VS03/stimfit_VS03.suo:
+	Fixed a buffer overflow
+	[32a5b1f7c864] [0.10.2windows]
+
+	* .hgtags:
+	Added tag 0.10.1mac for changeset 907d9bd44b09
+	[e3128f853a03]
+
+	* src/core/filelib/hdf5lib.cpp:
+	Tagged 0.10.1linux
+	[907d9bd44b09] [0.10.1mac]
+
+	* .hgtags:
+	Added tag 0.10.1linux for changeset 4b7b705d35de
+	[62edd39c1cf1]
+
+	* .hgtags:
+	Added tag 0.10.1windows for changeset 5b1d091541fc
+	[4b7b705d35de] [0.10.1linux]
+
+	* .hgtags:
+	Removed tag 0.10.1
+	[5b1d091541fc] [0.10.1windows]
+
+	* .hgtags:
+	Added tag 0.10.1 for changeset dcc74249d0e4
+	[ae312006cad2]
+
+	* configure.in, doc/sphinx/conf.py, doc/website/Home.html,
+	macosx/package.pmdoc/index.xml, nsis/installer.nsi, src/app/app.cpp,
+	src/app/copygrid.cpp, src/app/dlgs/fitseldlg.cpp, src/app/doc.cpp,
+	src/app/graph.cpp, src/app/parentframe.cpp, src/app/view.cpp,
+	src/core/filelib/axg/AxoGraph_ReadWrite.cpp,
+	src/core/filelib/axglib.cpp, src/core/recording.cpp,
+	src/core/recording.h, stfconf.h, stimfit.plist.in,
+	stimfit_VS03/stfswig/stfswig.vcproj,
+	stimfit_VS03/stimfit/stimfit.vcproj, stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj:
+	* Removed some potential buffer overflows and null pointers
+	* Windows build fixes
+	* Bumped version number to 0.10.1
+	[dcc74249d0e4]
+
+2011-01-14  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* nsis/installer.nsi, stimfit_VS03/stfioswig/stfioswig.vcproj,
+	stimfit_VS03/stfswig/stfswig.vcproj,
+	stimfit_VS03/stimfit/stimfit.vcproj, stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj:
+	Windows toolchain update.
+	[fb653a6498f0]
+
+	* src/app/doc.cpp:
+	Added units to dialogs to avoid Threshold ambiguities. Thanks to
+	Janina Kowalski for reporting.
+	[540321b0bc65]
+
+	* Makefile.am, m4/lt~obsolete.m4, src/app/app.cpp, src/app/graph.cpp,
+	src/app/parentframe.cpp, src/app/view.cpp:
+	Mac bug fixes: child frame activation, menu bar swap.
+	[a632df799c1e]
+
+2010-11-30  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/app/app.cpp, src/app/app.h, src/app/childframe.cpp,
+	src/app/childframe.h, src/app/graph.cpp, src/app/view.cpp:
+	Major bug fixes to window focusing behaviour.
+	[335feade9b46]
+
+2010-11-29  Jose Guzman  <sjm.guzman@gmail.com>
+
+	* doc/sphinx/references/index.rst, src/app/.app.cpp.swo:
+	Updated references
+	[e99c3e6f7332]
+
+2010-11-28  Jose Guzman  <sjm.guzman@gmail.com>
+
+	* src/app/.app.cpp.swo, src/app/app.cpp:
+	Removed 'Convert file series' option from Main Menutoolbar under
+	Linux
+	[7f912d5486b5]
+
+	* src/app/app.cpp, src/app/app.h, src/app/doc.cpp,
+	src/app/parentframe.cpp:
+	Remove temporaly latency options from the main toolbar menu
+	[6c3ad561d777]
+
+2010-11-26  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/linux_install_guide/building.rst:
+	Minor documentation correction.
+	[814071c9ba6d]
+
+	* doc/sphinx/linux_install_guide/building.rst,
+	doc/sphinx/linux_install_guide/downloads.rst,
+	doc/sphinx/linux_install_guide/moduleonly.rst,
+	doc/sphinx/linux_install_guide/requirement.rst,
+	doc/sphinx/stfio/index.rst:
+	Considerably shortened and simplified Linux build instructions.
+	[8fbb1774ab64]
+
+	* m4/lt~obsolete.m4, src/app/childframe.cpp:
+	Fixed scrambled trace selection panel.
+	[f270882479ac]
+
+2010-11-07  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* configure.in, doc/sphinx/manual/python.rst, m4/lt~obsolete.m4,
+	macosx/scripts/build-wxpy.sh, macosx/scripts/change_deps_release.sh,
+	macosx/scripts/conf_mac_release.sh:
+	OS X build script updates.
+	[1834a4416ea4]
+
+2010-11-03  Jose Guzman  <sjm.guzman@gmail.com>
+
+	* doc/sphinx/linux_install_guide/building.rst:
+	Small change in Linux installation guide
+	[84929d2569ff]
+
+2010-10-28  Jose Guzman  <sjm.guzman@gmail.com>
+
+	* src/app/childframe.cpp, src/app/childframe.h, src/app/doc.cpp,
+	src/app/graph.cpp:
+	cleaning up code
+	[003df0db325a]
+
+2010-10-28  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/app.h, src/app/childframe.cpp, src/app/childframe.h:
+	Use either zero-based or 1-based indices in the trace menu
+	[3248dfe8b815]
+
+	* src/app/childframe.cpp, src/app/childframe.h:
+	Trace menu more user-friendly
+	[833e72103a83]
+
+	* src/app/childframe.cpp, src/app/childframe.h:
+	Cleaning ugly debugging mensages and unused code
+	[bdb95cb40a28]
+
+	* src/app/childframe.cpp, src/app/childframe.h:
+	Edition in textcontrol allows to set trace number in the Trace
+	Selection window
+	[7f7ead386d0e]
+
+2010-10-26  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/childframe.cpp, src/app/childframe.h:
+	Added wxSpinCtrl header to allow it use withouth the Python
+	environment
+	[395145469ed8]
+
+	* src/app/app.h, src/app/childframe.cpp, src/app/childframe.h:
+	substitution of wxComboBox by wxSpinCtrl in Trace selection menu to
+	provide a better use
+	[0b28a4500036]
+
+2010-10-23  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/dlgs/cursorsdlg.cpp, src/app/dlgs/cursorsdlg.h:
+	'Cleaning debugging sentences'
+	[a179f074f36c]
+
+2010-10-22  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* Merged version with Latency cursor menu
+	[014b0b76514c]
+
+	* src/app/app.cpp, src/app/dlgs/cursorsdlg.cpp,
+	src/app/dlgs/cursorsdlg.h, src/core/recording.h:
+	Latency Cursors Tab finished
+	[4e000c33b023]
+
+	* src/app/dlgs/cursorsdlg.cpp:
+	Latency cursor tab radiobuttons reoganized
+	[a6efa95bdc32]
+
+	* src/app/app.cpp:
+	Corrected menu separator in Menu->View when 2 channels are present
+	[457ea7213744]
+
+2010-10-17  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/stfswig/stfio_plot.py:
+	Add standard 2-axis plot to stfio_plot
+	[0942450c3493]
+
+2010-10-17  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/app.cpp, src/app/dlgs/cursorsdlg.cpp,
+	src/app/dlgs/cursorsdlg.h, src/core/stimdefs.h:
+	Cursor settings menu can set the mode of the latency cursors. Still
+	no update from wxStfApp
+	[e34047d010f9]
+
+	* src/app/app.cpp, src/app/dlgs/cursorsdlg.cpp,
+	src/app/dlgs/cursorsdlg.h:
+	Event handling defined for radio buttons in Latency tab
+	[49872d0aace7]
+
+2010-10-16  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/app.cpp, src/app/dlgs/cursorsdlg.cpp,
+	src/app/dlgs/cursorsdlg.h:
+	Added functionality to Textboxes in latency Tab option of Cursors
+	Settings menu
+	[3d76612d4168]
+
+	* src/app/dlgs/cursorsdlg.cpp, src/app/dlgs/cursorsdlg.h,
+	src/app/dlgs/smalldlgs.h, src/app/parentframe.cpp:
+	Gui for Tab option for latency cursors added (not functional)
+	[3e14e647ae7d]
+
+2010-10-08  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/stfswig/stfio_plot.py:
+	Some updates to plot module.
+	[d09b95c2a6ec]
+
+2010-09-30  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/core/recording.cpp, src/stfswig/stfio_plot.py:
+	Some modifications to stfio_plot module.
+	[73d21af44dda]
+
+2010-09-20  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/stfswig/stfio_plot.py:
+	Updated plotting functions.
+	[57c615051517]
+
+2010-09-19  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* macosx/scripts/change_deps_release.sh,
+	macosx/scripts/conf_mac_release.sh, macosx/scripts/mkimage.sh,
+	src/core/filelib/hekalib.cpp, src/core/filelib/hekalib.h:
+	* Updated os x scripts.
+	* Updated authorship in HEKA library.
+	[874a9f03044b]
+
+	* src/core/filelib/hekalib.cpp:
+	Check for zero before reading sizes.
+	[dd2339e8673f]
+
+2010-09-16  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* nsis/installer.nsi, stimfit_VS03/stimfit_VS03.suo:
+	Updated Windows build chain.
+	[055072cd326a]
+
+	* src/core/filelib/hekalib.cpp:
+	Use for_each throughout.
+	[1607b73cd762]
+
+	* src/core/filelib/hekalib.cpp:
+	Implement byte swapping for HEKA file written in big endian.
+	[b9cdaecf9f97]
+
+2010-09-13  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .hgtags:
+	Added tag 0.10.0linux for changeset 8d25f28c6e3c
+	[a7ddefa65fd2]
+
+	* Makefile.am:
+	Updated linux distribution for 0.10.0
+	[8d25f28c6e3c] [0.10.0linux]
+
+	* src/app/copygrid.cpp, src/app/graph.cpp:
+	Corrected keyboard input behaviour.
+	[3e7f85fcca9a]
+
+2010-09-11  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .hgignore, stimfit_VS03/stfioswig/Release/BuildLog.htm,
+	stimfit_VS03/stfioswig/Release/_stfio.exp,
+	stimfit_VS03/stfioswig/Release/_stfio.lib,
+	stimfit_VS03/stfioswig/Release/_stfio.pyd,
+	stimfit_VS03/stfioswig/Release/_stfio.pyd.intermediate.manifest,
+	stimfit_VS03/stfioswig/Release/mt.dep,
+	stimfit_VS03/stfioswig/Release/stfio.exp,
+	stimfit_VS03/stfioswig/Release/stfio.lib,
+	stimfit_VS03/stfioswig/Release/vc90.idb:
+	Removed build files from repository.
+	[a90cb68fce78]
+
+	* nsis/installer.nsi, src/app/app.cpp, src/app/app.h,
+	src/core/filelib/abflib.cpp, src/core/filelib/axg/fileUtils.cpp,
+	src/core/filelib/hdf5lib.cpp, src/core/filelib/hekalib.cpp,
+	src/core/filelib/igorlib.cpp,
+	stimfit_VS03/stfioswig/Release/BuildLog.htm,
+	stimfit_VS03/stfioswig/Release/_stfio.exp,
+	stimfit_VS03/stfioswig/Release/_stfio.lib,
+	stimfit_VS03/stfioswig/Release/_stfio.pyd,
+	stimfit_VS03/stfioswig/Release/_stfio.pyd.intermediate.manifest,
+	stimfit_VS03/stfioswig/Release/mt.dep,
+	stimfit_VS03/stfioswig/Release/stfio.exp,
+	stimfit_VS03/stfioswig/Release/stfio.lib,
+	stimfit_VS03/stfioswig/Release/vc90.idb,
+	stimfit_VS03/stfioswig/stfioswig.vcproj,
+	stimfit_VS03/stfioswig/stfioswig.vcproj.cs-s20.cs.user,
+	stimfit_VS03/stimfit/stimfit.vcproj, stimfit_VS03/stimfit_VS03.sln,
+	stimfit_VS03/stimfit_VS03.suo:
+	* Added heka library to WIndows build.
+	* Added stfio module to Windows installer.
+	[eafeb656f73e]
+
+	* src/core/core.cpp, src/core/filelib/cfslib.cpp,
+	src/core/filelib/cfslib.h:
+	Read *.dat files as heka if cfs fails.
+	[d641ba0cee92]
+
+2010-09-10  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/core/filelib/hekalib.cpp:
+	Preliminary HEKA file reading.
+	[e8d837406226]
+
+	* src/core/core.cpp, src/core/filelib/hekalib.cpp:
+	Resolve merge conflict
+	[8917808880f9]
+
+	* src/core/filelib/hekalib.cpp, src/stfswig/stfioswig.i,
+	src/stfswig/stfioswig_wrap.cxx:
+	Updated HEKA.
+	[0a0996c3a534]
+
+2010-09-09  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/core/filelib/hekalib.cpp:
+	HEKA update.
+	[f09b99e79c27]
+
+	* src/core/filelib/hekalib.cpp, src/core/filelib/hekalib.h,
+	src/stfswig/stfio.py, src/stfswig/stfioswig_wrap.cxx:
+	Minor HEKA modifications.
+	[57a0f1c6ec36]
+
+2010-09-08  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/core/filelib/hekalib.cpp:
+	Some more work on HEKA library.
+	[04cc7125e33d]
+
+2010-09-07  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.am, src/app/app.cpp, src/core/core.cpp,
+	src/core/filelib/hekalib.cpp, src/core/filelib/hekalib.h,
+	src/stfswig/stfio.py, src/stfswig/stfioswig.cxx,
+	src/stfswig/stfioswig.i:
+	Some more work on the heka library.
+	[bcfa0e8a30d5]
+
+	* doc/sphinx/references/index.rst:
+	Updated references.
+	[0909aa29b116]
+
+	* src/app/unopt.cpp:
+	wxversion.select doesn't return an error code.
+	[a17ef4278207]
+
+2010-09-06  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* nsis/installer.nsi, stimfit_VS03/stimfit_VS03.suo:
+	Windows build chain update
+	[2a1d30231442]
+
+	* src/app/app.cpp, src/app/unopt.cpp:
+	Bug corrections: Registry key error message, keyboard input
+	failures. Thanks to Imre Vida for reporting.
+	[e7a2980bdd4d]
+
+2010-08-30  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/app/doc.cpp, src/core/core.cpp, src/core/core.h,
+	src/core/filelib/axglib.cpp, src/core/filelib/axglib.h,
+	src/core/stimdefs.h, src/stfswig/stfio_plot.py:
+	Some upgrades to Axograph library.
+	[16c65e805495]
+
+	* nsis/installer.nsi:
+	Updated nsis installer.
+	[ba48049fa932]
+
+	* nsis/installer.nsi, stimfit_VS03/stimfit/stimfit.vcproj,
+	stimfit_VS03/stimfit_VS03.suo:
+	Updated Windows build.
+	[de212196d650]
+
+2010-08-13  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/references/index.rst:
+	Added some urls to the references.
+	[10a5968b73fc]
+
+2010-08-02  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/app/app.cpp, src/app/app.h, src/app/copygrid.cpp,
+	src/app/graph.cpp, src/app/parentframe.cpp, src/app/parentframe.h:
+	Corrected wrong events being fired from the toolbar.
+	[e91502e4e7ed]
+
+2010-08-01  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* m4/lt~obsolete.m4, src/app/childframe.cpp, src/app/graph.cpp,
+	src/app/graph.h:
+	Tidied up graph.cpp.
+	[6ffd69a96d82]
+
+	* configure.in, doc/sphinx/conf.py, doc/website/Home.html,
+	macosx/package.pmdoc/index.xml, stfconf.h, stimfit.plist.in,
+	update_version.sh:
+	Bump version to 0.10.0
+	[c5f7c162887f]
+
+	* src/core/filelib/abflib.cpp, src/core/filelib/abflib.h,
+	src/core/filelib/axg/AxoGraph_ReadWrite.cpp,
+	src/core/filelib/axg/AxoGraph_ReadWrite.h,
+	src/core/filelib/axglib.cpp, src/core/filelib/axglib.h,
+	src/core/filelib/cfslib.cpp:
+	Corrected string handling errors.
+	[b17cef4a4998]
+
+2010-07-31  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/app/childframe.cpp:
+	Prevent setting out-of-range value for second channel.
+	[dcedd1a4de53]
+
+	* nsis/installer.nsi, src/core/filelib/abflib.cpp,
+	src/core/filelib/axon/AxAtfFio32/fileio2.cpp,
+	stimfit_VS03/stfswig/stfswig.vcproj,
+	stimfit_VS03/stfswig/stfswig.vcproj.cs-s20.cs.user,
+	stimfit_VS03/stimfit/stimfit.vcproj, stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj.cs-s20.cs.user:
+	Windows build fixes.
+	[e79585d5d527]
+
+2010-07-30  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* acsite.m4, m4/lt~obsolete.m4, src/app/graph.cpp, src/app/unopt.cpp:
+	Prevent access to 2nd channel in single-channel files.
+	[61cfdbb1a728]
+
+2010-07-29  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/dlgs/smalldlgs.cpp, src/app/dlgs/smalldlgs.h:
+	pslope cursors removed from Batch menu option
+	[0a7bf9e330b1]
+
+	* configure.in, src/app/app.cpp, src/app/app.h, src/app/copygrid.cpp,
+	src/app/copygrid.h, src/app/dlgs/cursorsdlg.cpp,
+	src/app/dlgs/cursorsdlg.h, src/app/graph.cpp,
+	src/app/parentframe.cpp, src/app/parentframe.h, src/app/unopt.cpp,
+	src/core/measlib.h, src/core/recording.cpp, src/core/recording.h,
+	src/core/stimdefs.h, src/stfswig/stfswig.cxx, src/stfswig/stfswig.i:
+	1) slope cursors are restricted to WITH_PSLOPE preprocessor
+	directive 2) resolved BUG in PyCrust shell
+	[f71dcfe8ae26]
+
+2010-07-28  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/unopt.cpp:
+	modified Function to import Python avoid **compulsive** reload!
+	[ad0d77df3745]
+
+2010-07-27  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* nsis/installer.nsi:
+	Updated windows installer.
+	[198cb8078f14]
+
+	* src/app/doc.cpp, src/core/filelib/hdf5lib.cpp,
+	src/core/recording.cpp:
+	Corrected some hdf5 string handling bugs.
+	[28a7777f1e74]
+
+2010-07-25  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/graph.cpp, src/app/graph.h:
+	added blue cursors again, I need them to debug ..
+	[cd867e85050e]
+
+2010-07-24  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* Makefile.am, src/app/graph.cpp, src/app/graph.h:
+	removed blue cursors from graph
+	[decb09d301eb]
+
+	* src/app/parentframe.cpp, src/app/parentframe.h:
+	removed Slope Cursors mode from menu Toolbar
+	[c68f9975ce2a]
+
+	* doc/sphinx/stf_reference/stf.rst, src/stfswig/stfswig.cxx,
+	src/stfswig/stfswig.h, src/stfswig/stfswig.i:
+	added get_slope() to the stf Python module
+	[2c6330cdd989]
+
+2010-07-22  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/linux_install_guide/moduleonly.rst:
+	Changed stimfit-module to stimfit directory in the documentation
+	[9c67e7495fe7]
+
+2010-07-21  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.am, nsis/installer.nsi, src/stfswig/Makefile.am,
+	src/stfswig/unittest_stfio.py, unittest.bz2:
+	Added unittest for stfio module. Binary data files are too large for
+	repository.
+	[d7cb004619b1]
+
+	* src/stfswig/stfio.py, src/stfswig/stfioswig.i,
+	src/stfswig/stfioswig_wrap.cxx:
+	Added Jose's suggestions.
+	[80441bcf3b40]
+
+2010-07-21  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* unittest.bz2:
+	Added unittest. Please, remove it as soon as possible
+	[90b17d5ff7cc]
+
+	* doc/sphinx/linux_install_guide/moduleonly.rst, nsis/installer.nsi,
+	src/stfswig/Makefile.am, src/stfswig/stfio.py:
+	added suggested modification to stfio module (please, edit it in the
+	*.i file)
+	[0338eadc1aa8]
+
+2010-07-19  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/.build/doctrees/contents.doctree,
+	doc/sphinx/.build/doctrees/environment.pickle,
+	doc/sphinx/.build/doctrees/howto/amplitudes.doctree,
+	doc/sphinx/.build/doctrees/howto/apcounting.doctree,
+	doc/sphinx/.build/doctrees/howto/cuttingtraces.doctree,
+	doc/sphinx/.build/doctrees/howto/index.doctree,
+	doc/sphinx/.build/doctrees/howto/introclass.doctree,
+	doc/sphinx/.build/doctrees/howto/latencies.doctree,
+	doc/sphinx/.build/doctrees/howto/resistances.doctree,
+	doc/sphinx/.build/doctrees/howto/runningmean.doctree,
+	doc/sphinx/.build/doctrees/links/index.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/building.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/downloads.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/index.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/requirement.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/updates.doctree,
+	doc/sphinx/.build/doctrees/manual/bibliography.doctree,
+	doc/sphinx/.build/doctrees/manual/event_extraction.doctree,
+	doc/sphinx/.build/doctrees/manual/getting_started.doctree,
+	doc/sphinx/.build/doctrees/manual/index.doctree,
+	doc/sphinx/.build/doctrees/manual/latency_measurements.doctree,
+	doc/sphinx/.build/doctrees/manual/preface.doctree,
+	doc/sphinx/.build/doctrees/manual/python.doctree,
+	doc/sphinx/.build/doctrees/osx_install_guide/building.doctree,
+	doc/sphinx/.build/doctrees/osx_install_guide/index.doctree,
+	doc/sphinx/.build/doctrees/osx_install_guide/prerequisites.doctree,
+	doc/sphinx/.build/doctrees/references/index.doctree,
+	doc/sphinx/.build/doctrees/stf_reference/stf.doctree,
+	doc/sphinx/.build/html/.buildinfo,
+	doc/sphinx/.build/html/_images/APmodule.png,
+	doc/sphinx/.build/html/_images/average.png,
+	doc/sphinx/.build/html/_images/bait_template.png,
+	doc/sphinx/.build/html/_images/baseline.png,
+	doc/sphinx/.build/html/_images/batchanalysis.png,
+	doc/sphinx/.build/html/_images/channelselection.png,
+	doc/sphinx/.build/html/_images/channelselectiondrop.png,
+	doc/sphinx/.build/html/_images/cursorsettings.png,
+	doc/sphinx/.build/html/_images/eventbutton.png,
+	doc/sphinx/.build/html/_images/eventdetectionsettings.png,
+	doc/sphinx/.build/html/_images/events.png,
+	doc/sphinx/.build/html/_images/falsenegative.png,
+	doc/sphinx/.build/html/_images/finaltemplate.png,
+	doc/sphinx/.build/html/_images/fit.png,
+	doc/sphinx/.build/html/_images/fitselection.png,
+	doc/sphinx/.build/html/_images/fittowindow.png,
+	doc/sphinx/.build/html/_images/foot.png,
+	doc/sphinx/.build/html/_images/latency.png,
+	doc/sphinx/.build/html/_images/latencytraces.png, doc/sphinx/.build/
+	html/_images/math/0697caad7caa424cb1d6913067117ac1ef4afcfc.png, doc/
+	sphinx/.build/html/_images/math/0772102cbdf827d21b8343e12c2a8766e0f1
+	7d97.png, doc/sphinx/.build/html/_images/math/0936df714cc1754db6b256
+	f7124c88641fdffa2d.png, doc/sphinx/.build/html/_images/math/10ac0238
+	27bb7b549e882c11b0109030b9d86041.png, doc/sphinx/.build/html/_images
+	/math/15c811c72fbb238885328c9dc4d880060dceef3f.png, doc/sphinx/.buil
+	d/html/_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png, do
+	c/sphinx/.build/html/_images/math/3372c1cb6d68cf97c2d231acc0b47b95a9
+	ed04cc.png, doc/sphinx/.build/html/_images/math/34857b3ba74ce5cd8607
+	f3ebd23e9015908ada71.png, doc/sphinx/.build/html/_images/math/371cf6
+	c785f7ed9950174dc1a6fc0cb4aca3ae0b.png, doc/sphinx/.build/html/_imag
+	es/math/3ed5875026627e21c18c5d905b4b62b75f117b3c.png, doc/sphinx/.bu
+	ild/html/_images/math/48cb38340548251a81919e1b5547cc672dd63b41.png, d
+	oc/sphinx/.build/html/_images/math/53828380e66417b92d288f44849b4564c
+	2aefa34.png, doc/sphinx/.build/html/_images/math/6a47ca0fe7cb276abc0
+	22af6ac88ddae1a9d6894.png, doc/sphinx/.build/html/_images/math/99fb5
+	bc1bac149d49d8bf99756ed93173eacbfde.png, doc/sphinx/.build/html/_ima
+	ges/math/9e0ec34cd8860ceb97113f81ba768ba739ad5166.png, doc/sphinx/.b
+	uild/html/_images/math/9ee4b825a2e36ae093ed7be5e4851ef453b34914.png,
+	doc/sphinx/.build/html/_images/math/a041d4af2f54e7490ce650ba9960c7b4
+	9200a594.png, doc/sphinx/.build/html/_images/math/a1ffc0a012620941fe
+	660cedabff822ce7162eca.png, doc/sphinx/.build/html/_images/math/ad28
+	c83c99a8fd0dd2e2e594c9d02ee532765a0a.png, doc/sphinx/.build/html/_im
+	ages/math/c2ded198ceb12ab7c4b85de9f763e16a0631edce.png, doc/sphinx/.
+	build/html/_images/math/c384df5165193c1645f53b30f6d4cf65e488a663.png
+	, doc/sphinx/.build/html/_images/math/dae9fdcd4039896c429769826c4759
+	2370611d6b.png, doc/sphinx/.build/html/_images/math/e0d2bf360290fd61
+	d1c1557e763f2622363b3d35.png, doc/sphinx/.build/html/_images/math/e2
+	a662e2209e4d2ee234a3ae367d5337a31409e0.png, doc/sphinx/.build/html/_
+	images/math/f37bba504894945c07a32f5496d74299a37aa51c.png, doc/sphinx
+	/.build/html/_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.p
+	ng, doc/sphinx/.build/html/_images/math/f8c03b65830c6482e37c5bbc31d3
+	b19ee646ee06.png, doc/sphinx/.build/html/_images/math/fc2cd2267d4502
+	2f197cdb870c1642c539c08dde.png,
+	doc/sphinx/.build/html/_images/overview.png,
+	doc/sphinx/.build/html/_images/peak.png,
+	doc/sphinx/.build/html/_images/resultstable.png,
+	doc/sphinx/.build/html/_images/selectfinaltemplate.png,
+	doc/sphinx/.build/html/_images/selection.png,
+	doc/sphinx/.build/html/_images/stimfit_dos.png,
+	doc/sphinx/.build/html/_images/test.png,
+	doc/sphinx/.build/html/_images/traceselection.png,
+	doc/sphinx/.build/html/_images/viewscalebars.png,
+	doc/sphinx/.build/html/_images/zoom.png,
+	doc/sphinx/.build/html/_images/zoompopup.png,
+	doc/sphinx/.build/html/_sources/contents.txt,
+	doc/sphinx/.build/html/_sources/howto/amplitudes.txt,
+	doc/sphinx/.build/html/_sources/howto/apcounting.txt,
+	doc/sphinx/.build/html/_sources/howto/cuttingtraces.txt,
+	doc/sphinx/.build/html/_sources/howto/index.txt,
+	doc/sphinx/.build/html/_sources/howto/introclass.txt,
+	doc/sphinx/.build/html/_sources/howto/latencies.txt,
+	doc/sphinx/.build/html/_sources/howto/resistances.txt,
+	doc/sphinx/.build/html/_sources/howto/runningmean.txt,
+	doc/sphinx/.build/html/_sources/links/index.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/building.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/downloads.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/index.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/requirement.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/updates.txt,
+	doc/sphinx/.build/html/_sources/manual/bibliography.txt,
+	doc/sphinx/.build/html/_sources/manual/event_extraction.txt,
+	doc/sphinx/.build/html/_sources/manual/getting_started.txt,
+	doc/sphinx/.build/html/_sources/manual/index.txt,
+	doc/sphinx/.build/html/_sources/manual/latency_measurements.txt,
+	doc/sphinx/.build/html/_sources/manual/preface.txt,
+	doc/sphinx/.build/html/_sources/manual/python.txt,
+	doc/sphinx/.build/html/_sources/osx_install_guide/building.txt,
+	doc/sphinx/.build/html/_sources/osx_install_guide/index.txt,
+	doc/sphinx/.build/html/_sources/osx_install_guide/prerequisites.txt,
+	doc/sphinx/.build/html/_sources/references/index.txt,
+	doc/sphinx/.build/html/_sources/stf_reference/stf.txt,
+	doc/sphinx/.build/html/_static/basic.css,
+	doc/sphinx/.build/html/_static/contents.png,
+	doc/sphinx/.build/html/_static/default.css,
+	doc/sphinx/.build/html/_static/doctools.js,
+	doc/sphinx/.build/html/_static/file.png,
+	doc/sphinx/.build/html/_static/jquery.js,
+	doc/sphinx/.build/html/_static/minus.png,
+	doc/sphinx/.build/html/_static/navigation.png,
+	doc/sphinx/.build/html/_static/plus.png,
+	doc/sphinx/.build/html/_static/pygments.css,
+	doc/sphinx/.build/html/_static/rightsidebar.css,
+	doc/sphinx/.build/html/_static/searchtools.js,
+	doc/sphinx/.build/html/_static/sphinxdoc.css,
+	doc/sphinx/.build/html/_static/stickysidebar.css,
+	doc/sphinx/.build/html/_static/traditional.css,
+	doc/sphinx/.build/html/contents.html,
+	doc/sphinx/.build/html/genindex.html,
+	doc/sphinx/.build/html/howto/amplitudes.html,
+	doc/sphinx/.build/html/howto/apcounting.html,
+	doc/sphinx/.build/html/howto/cuttingtraces.html,
+	doc/sphinx/.build/html/howto/index.html,
+	doc/sphinx/.build/html/howto/introclass.html,
+	doc/sphinx/.build/html/howto/latencies.html,
+	doc/sphinx/.build/html/howto/resistances.html,
+	doc/sphinx/.build/html/howto/runningmean.html,
+	doc/sphinx/.build/html/index.html,
+	doc/sphinx/.build/html/links/index.html,
+	doc/sphinx/.build/html/linux_install_guide/building.html,
+	doc/sphinx/.build/html/linux_install_guide/downloads.html,
+	doc/sphinx/.build/html/linux_install_guide/index.html,
+	doc/sphinx/.build/html/linux_install_guide/requirement.html,
+	doc/sphinx/.build/html/linux_install_guide/updates.html,
+	doc/sphinx/.build/html/manual/bibliography.html,
+	doc/sphinx/.build/html/manual/event_extraction.html,
+	doc/sphinx/.build/html/manual/getting_started.html,
+	doc/sphinx/.build/html/manual/index.html,
+	doc/sphinx/.build/html/manual/latency_measurements.html,
+	doc/sphinx/.build/html/manual/preface.html,
+	doc/sphinx/.build/html/manual/python.html,
+	doc/sphinx/.build/html/modindex.html,
+	doc/sphinx/.build/html/objects.inv,
+	doc/sphinx/.build/html/osx_install_guide/building.html,
+	doc/sphinx/.build/html/osx_install_guide/index.html,
+	doc/sphinx/.build/html/osx_install_guide/prerequisites.html,
+	doc/sphinx/.build/html/references/index.html,
+	doc/sphinx/.build/html/search.html,
+	doc/sphinx/.build/html/searchindex.js,
+	doc/sphinx/.build/html/stf_reference/stf.html,
+	doc/sphinx/.build/latex/APmodule.png,
+	doc/sphinx/.build/latex/Stimfitdocumentation.pdf,
+	doc/sphinx/.build/latex/Stimfitdocumentation.tex,
+	doc/sphinx/.build/latex/Stimfitdocumentation.toc,
+	doc/sphinx/.build/latex/average.png,
+	doc/sphinx/.build/latex/bait_template.png,
+	doc/sphinx/.build/latex/baseline.png,
+	doc/sphinx/.build/latex/batchanalysis.png,
+	doc/sphinx/.build/latex/channelselection.png,
+	doc/sphinx/.build/latex/channelselectiondrop.png,
+	doc/sphinx/.build/latex/cursorsettings.png,
+	doc/sphinx/.build/latex/eventbutton.png,
+	doc/sphinx/.build/latex/eventdetectionsettings.png,
+	doc/sphinx/.build/latex/events.png,
+	doc/sphinx/.build/latex/falsenegative.png,
+	doc/sphinx/.build/latex/finaltemplate.png,
+	doc/sphinx/.build/latex/fit.png,
+	doc/sphinx/.build/latex/fitselection.png,
+	doc/sphinx/.build/latex/fittowindow.png,
+	doc/sphinx/.build/latex/fncychap.sty,
+	doc/sphinx/.build/latex/foot.png, doc/sphinx/.build/latex/howto.cls,
+	doc/sphinx/.build/latex/latency.png,
+	doc/sphinx/.build/latex/latencytraces.png,
+	doc/sphinx/.build/latex/manual.cls,
+	doc/sphinx/.build/latex/overview.png,
+	doc/sphinx/.build/latex/peak.png,
+	doc/sphinx/.build/latex/python.ist,
+	doc/sphinx/.build/latex/resultstable.png,
+	doc/sphinx/.build/latex/selectfinaltemplate.png,
+	doc/sphinx/.build/latex/selection.png,
+	doc/sphinx/.build/latex/sphinx.sty,
+	doc/sphinx/.build/latex/stimfit_dos.png,
+	doc/sphinx/.build/latex/tabulary.sty,
+	doc/sphinx/.build/latex/test.png,
+	doc/sphinx/.build/latex/traceselection.png,
+	doc/sphinx/.build/latex/viewscalebars.png,
+	doc/sphinx/.build/latex/zoom.png,
+	doc/sphinx/.build/latex/zoompopup.png, src/core/filelib/cfs.cpp,
+	src/core/recording.cpp, src/core/recording.h, src/core/stimdefs.h,
+	src/stfswig/plottools.py:
+	merged changes from my User Dialog additions
+	[804130f43180]
+
+	* BUGS, TODO:
+	added my TODO list
+	[3f268583366b]
+
+	* src/app/app.cpp, src/app/dlgs/cursorsdlg.cpp,
+	src/app/dlgs/cursorsdlg.h:
+	Status of PSlope cursor mode without extra wxStrCursorsDlg attribute
+	[bc460c04d901]
+
+2010-07-18  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/app.cpp, src/app/app.h, src/app/dlgs/cursorsdlg.cpp,
+	src/app/dlgs/cursorsdlg.h, src/core/stimdefs.h:
+	Added option to set the second slope cursor to a given distance (in
+	x-units) from the first slope cursor
+	[2d1ab28e0346]
+
+2010-07-16  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/core/recording.cpp, src/core/recording.h, src/core/stimdefs.h:
+	Added DeltaT property to the Recording class
+	[2d3049fd501b]
+
+2010-07-18  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .hgignore, Makefile.am, doc/sphinx/.build/doctrees/contents.doctree,
+	doc/sphinx/.build/doctrees/environment.pickle,
+	doc/sphinx/.build/doctrees/howto/amplitudes.doctree,
+	doc/sphinx/.build/doctrees/howto/apcounting.doctree,
+	doc/sphinx/.build/doctrees/howto/cuttingtraces.doctree,
+	doc/sphinx/.build/doctrees/howto/index.doctree,
+	doc/sphinx/.build/doctrees/howto/introclass.doctree,
+	doc/sphinx/.build/doctrees/howto/latencies.doctree,
+	doc/sphinx/.build/doctrees/howto/resistances.doctree,
+	doc/sphinx/.build/doctrees/howto/runningmean.doctree,
+	doc/sphinx/.build/doctrees/links/index.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/building.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/downloads.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/index.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/requirement.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/updates.doctree,
+	doc/sphinx/.build/doctrees/manual/bibliography.doctree,
+	doc/sphinx/.build/doctrees/manual/event_extraction.doctree,
+	doc/sphinx/.build/doctrees/manual/getting_started.doctree,
+	doc/sphinx/.build/doctrees/manual/index.doctree,
+	doc/sphinx/.build/doctrees/manual/latency_measurements.doctree,
+	doc/sphinx/.build/doctrees/manual/preface.doctree,
+	doc/sphinx/.build/doctrees/manual/python.doctree,
+	doc/sphinx/.build/doctrees/osx_install_guide/building.doctree,
+	doc/sphinx/.build/doctrees/osx_install_guide/index.doctree,
+	doc/sphinx/.build/doctrees/osx_install_guide/prerequisites.doctree,
+	doc/sphinx/.build/doctrees/references/index.doctree,
+	doc/sphinx/.build/doctrees/stf_reference/stf.doctree,
+	doc/sphinx/.build/html/.buildinfo,
+	doc/sphinx/.build/html/_images/APmodule.png,
+	doc/sphinx/.build/html/_images/average.png,
+	doc/sphinx/.build/html/_images/bait_template.png,
+	doc/sphinx/.build/html/_images/baseline.png,
+	doc/sphinx/.build/html/_images/batchanalysis.png,
+	doc/sphinx/.build/html/_images/channelselection.png,
+	doc/sphinx/.build/html/_images/channelselectiondrop.png,
+	doc/sphinx/.build/html/_images/cursorsettings.png,
+	doc/sphinx/.build/html/_images/eventbutton.png,
+	doc/sphinx/.build/html/_images/eventdetectionsettings.png,
+	doc/sphinx/.build/html/_images/events.png,
+	doc/sphinx/.build/html/_images/falsenegative.png,
+	doc/sphinx/.build/html/_images/finaltemplate.png,
+	doc/sphinx/.build/html/_images/fit.png,
+	doc/sphinx/.build/html/_images/fitselection.png,
+	doc/sphinx/.build/html/_images/fittowindow.png,
+	doc/sphinx/.build/html/_images/foot.png,
+	doc/sphinx/.build/html/_images/latency.png,
+	doc/sphinx/.build/html/_images/latencytraces.png, doc/sphinx/.build/
+	html/_images/math/0697caad7caa424cb1d6913067117ac1ef4afcfc.png, doc/
+	sphinx/.build/html/_images/math/0772102cbdf827d21b8343e12c2a8766e0f1
+	7d97.png, doc/sphinx/.build/html/_images/math/0936df714cc1754db6b256
+	f7124c88641fdffa2d.png, doc/sphinx/.build/html/_images/math/10ac0238
+	27bb7b549e882c11b0109030b9d86041.png, doc/sphinx/.build/html/_images
+	/math/15c811c72fbb238885328c9dc4d880060dceef3f.png, doc/sphinx/.buil
+	d/html/_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png, do
+	c/sphinx/.build/html/_images/math/3372c1cb6d68cf97c2d231acc0b47b95a9
+	ed04cc.png, doc/sphinx/.build/html/_images/math/34857b3ba74ce5cd8607
+	f3ebd23e9015908ada71.png, doc/sphinx/.build/html/_images/math/371cf6
+	c785f7ed9950174dc1a6fc0cb4aca3ae0b.png, doc/sphinx/.build/html/_imag
+	es/math/3ed5875026627e21c18c5d905b4b62b75f117b3c.png, doc/sphinx/.bu
+	ild/html/_images/math/48cb38340548251a81919e1b5547cc672dd63b41.png, d
+	oc/sphinx/.build/html/_images/math/53828380e66417b92d288f44849b4564c
+	2aefa34.png, doc/sphinx/.build/html/_images/math/6a47ca0fe7cb276abc0
+	22af6ac88ddae1a9d6894.png, doc/sphinx/.build/html/_images/math/99fb5
+	bc1bac149d49d8bf99756ed93173eacbfde.png, doc/sphinx/.build/html/_ima
+	ges/math/9e0ec34cd8860ceb97113f81ba768ba739ad5166.png, doc/sphinx/.b
+	uild/html/_images/math/9ee4b825a2e36ae093ed7be5e4851ef453b34914.png,
+	doc/sphinx/.build/html/_images/math/a041d4af2f54e7490ce650ba9960c7b4
+	9200a594.png, doc/sphinx/.build/html/_images/math/a1ffc0a012620941fe
+	660cedabff822ce7162eca.png, doc/sphinx/.build/html/_images/math/ad28
+	c83c99a8fd0dd2e2e594c9d02ee532765a0a.png, doc/sphinx/.build/html/_im
+	ages/math/c2ded198ceb12ab7c4b85de9f763e16a0631edce.png, doc/sphinx/.
+	build/html/_images/math/c384df5165193c1645f53b30f6d4cf65e488a663.png
+	, doc/sphinx/.build/html/_images/math/dae9fdcd4039896c429769826c4759
+	2370611d6b.png, doc/sphinx/.build/html/_images/math/e0d2bf360290fd61
+	d1c1557e763f2622363b3d35.png, doc/sphinx/.build/html/_images/math/e2
+	a662e2209e4d2ee234a3ae367d5337a31409e0.png, doc/sphinx/.build/html/_
+	images/math/f37bba504894945c07a32f5496d74299a37aa51c.png, doc/sphinx
+	/.build/html/_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.p
+	ng, doc/sphinx/.build/html/_images/math/f8c03b65830c6482e37c5bbc31d3
+	b19ee646ee06.png, doc/sphinx/.build/html/_images/math/fc2cd2267d4502
+	2f197cdb870c1642c539c08dde.png,
+	doc/sphinx/.build/html/_images/overview.png,
+	doc/sphinx/.build/html/_images/peak.png,
+	doc/sphinx/.build/html/_images/resultstable.png,
+	doc/sphinx/.build/html/_images/selectfinaltemplate.png,
+	doc/sphinx/.build/html/_images/selection.png,
+	doc/sphinx/.build/html/_images/stimfit_dos.png,
+	doc/sphinx/.build/html/_images/test.png,
+	doc/sphinx/.build/html/_images/traceselection.png,
+	doc/sphinx/.build/html/_images/viewscalebars.png,
+	doc/sphinx/.build/html/_images/zoom.png,
+	doc/sphinx/.build/html/_images/zoompopup.png,
+	doc/sphinx/.build/html/_sources/contents.txt,
+	doc/sphinx/.build/html/_sources/howto/amplitudes.txt,
+	doc/sphinx/.build/html/_sources/howto/apcounting.txt,
+	doc/sphinx/.build/html/_sources/howto/cuttingtraces.txt,
+	doc/sphinx/.build/html/_sources/howto/index.txt,
+	doc/sphinx/.build/html/_sources/howto/introclass.txt,
+	doc/sphinx/.build/html/_sources/howto/latencies.txt,
+	doc/sphinx/.build/html/_sources/howto/resistances.txt,
+	doc/sphinx/.build/html/_sources/howto/runningmean.txt,
+	doc/sphinx/.build/html/_sources/links/index.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/building.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/downloads.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/index.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/moduleonly.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/requirement.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/updates.txt,
+	doc/sphinx/.build/html/_sources/manual/bibliography.txt,
+	doc/sphinx/.build/html/_sources/manual/event_extraction.txt,
+	doc/sphinx/.build/html/_sources/manual/getting_started.txt,
+	doc/sphinx/.build/html/_sources/manual/index.txt,
+	doc/sphinx/.build/html/_sources/manual/latency_measurements.txt,
+	doc/sphinx/.build/html/_sources/manual/preface.txt,
+	doc/sphinx/.build/html/_sources/manual/python.txt,
+	doc/sphinx/.build/html/_sources/osx_install_guide/building.txt,
+	doc/sphinx/.build/html/_sources/osx_install_guide/index.txt,
+	doc/sphinx/.build/html/_sources/osx_install_guide/prerequisites.txt,
+	doc/sphinx/.build/html/_sources/references/index.txt,
+	doc/sphinx/.build/html/_sources/stf_reference/stf.txt,
+	doc/sphinx/.build/html/_static/basic.css,
+	doc/sphinx/.build/html/_static/contents.png,
+	doc/sphinx/.build/html/_static/default.css,
+	doc/sphinx/.build/html/_static/doctools.js,
+	doc/sphinx/.build/html/_static/file.png,
+	doc/sphinx/.build/html/_static/jquery.js,
+	doc/sphinx/.build/html/_static/minus.png,
+	doc/sphinx/.build/html/_static/navigation.png,
+	doc/sphinx/.build/html/_static/plus.png,
+	doc/sphinx/.build/html/_static/pygments.css,
+	doc/sphinx/.build/html/_static/rightsidebar.css,
+	doc/sphinx/.build/html/_static/searchtools.js,
+	doc/sphinx/.build/html/_static/sphinxdoc.css,
+	doc/sphinx/.build/html/_static/stickysidebar.css,
+	doc/sphinx/.build/html/_static/traditional.css,
+	doc/sphinx/.build/html/contents.html,
+	doc/sphinx/.build/html/genindex.html,
+	doc/sphinx/.build/html/howto/amplitudes.html,
+	doc/sphinx/.build/html/howto/apcounting.html,
+	doc/sphinx/.build/html/howto/cuttingtraces.html,
+	doc/sphinx/.build/html/howto/index.html,
+	doc/sphinx/.build/html/howto/introclass.html,
+	doc/sphinx/.build/html/howto/latencies.html,
+	doc/sphinx/.build/html/howto/resistances.html,
+	doc/sphinx/.build/html/howto/runningmean.html,
+	doc/sphinx/.build/html/index.html,
+	doc/sphinx/.build/html/links/index.html,
+	doc/sphinx/.build/html/linux_install_guide/building.html,
+	doc/sphinx/.build/html/linux_install_guide/downloads.html,
+	doc/sphinx/.build/html/linux_install_guide/index.html,
+	doc/sphinx/.build/html/linux_install_guide/moduleonly.html,
+	doc/sphinx/.build/html/linux_install_guide/requirement.html,
+	doc/sphinx/.build/html/linux_install_guide/updates.html,
+	doc/sphinx/.build/html/manual/bibliography.html,
+	doc/sphinx/.build/html/manual/event_extraction.html,
+	doc/sphinx/.build/html/manual/getting_started.html,
+	doc/sphinx/.build/html/manual/index.html,
+	doc/sphinx/.build/html/manual/latency_measurements.html,
+	doc/sphinx/.build/html/manual/preface.html,
+	doc/sphinx/.build/html/manual/python.html,
+	doc/sphinx/.build/html/modindex.html,
+	doc/sphinx/.build/html/objects.inv,
+	doc/sphinx/.build/html/osx_install_guide/building.html,
+	doc/sphinx/.build/html/osx_install_guide/index.html,
+	doc/sphinx/.build/html/osx_install_guide/prerequisites.html,
+	doc/sphinx/.build/html/references/index.html,
+	doc/sphinx/.build/html/search.html,
+	doc/sphinx/.build/html/searchindex.js,
+	doc/sphinx/.build/html/stf_reference/stf.html,
+	doc/sphinx/.build/latex/APmodule.png,
+	doc/sphinx/.build/latex/Stimfitdocumentation.pdf,
+	doc/sphinx/.build/latex/Stimfitdocumentation.tex,
+	doc/sphinx/.build/latex/Stimfitdocumentation.toc,
+	doc/sphinx/.build/latex/average.png,
+	doc/sphinx/.build/latex/bait_template.png,
+	doc/sphinx/.build/latex/baseline.png,
+	doc/sphinx/.build/latex/batchanalysis.png,
+	doc/sphinx/.build/latex/channelselection.png,
+	doc/sphinx/.build/latex/channelselectiondrop.png,
+	doc/sphinx/.build/latex/cursorsettings.png,
+	doc/sphinx/.build/latex/eventbutton.png,
+	doc/sphinx/.build/latex/eventdetectionsettings.png,
+	doc/sphinx/.build/latex/events.png,
+	doc/sphinx/.build/latex/falsenegative.png,
+	doc/sphinx/.build/latex/finaltemplate.png,
+	doc/sphinx/.build/latex/fit.png,
+	doc/sphinx/.build/latex/fitselection.png,
+	doc/sphinx/.build/latex/fittowindow.png,
+	doc/sphinx/.build/latex/fncychap.sty,
+	doc/sphinx/.build/latex/foot.png, doc/sphinx/.build/latex/howto.cls,
+	doc/sphinx/.build/latex/latency.png,
+	doc/sphinx/.build/latex/latencytraces.png,
+	doc/sphinx/.build/latex/manual.cls,
+	doc/sphinx/.build/latex/overview.png,
+	doc/sphinx/.build/latex/peak.png,
+	doc/sphinx/.build/latex/python.ist,
+	doc/sphinx/.build/latex/resultstable.png,
+	doc/sphinx/.build/latex/selectfinaltemplate.png,
+	doc/sphinx/.build/latex/selection.png,
+	doc/sphinx/.build/latex/sphinx.sty,
+	doc/sphinx/.build/latex/stimfit_dos.png,
+	doc/sphinx/.build/latex/tabulary.sty,
+	doc/sphinx/.build/latex/test.png,
+	doc/sphinx/.build/latex/traceselection.png,
+	doc/sphinx/.build/latex/viewscalebars.png,
+	doc/sphinx/.build/latex/zoom.png,
+	doc/sphinx/.build/latex/zoompopup.png,
+	doc/sphinx/.templates/index.html, doc/sphinx/contents.rst,
+	doc/sphinx/howto/index.rst,
+	doc/sphinx/linux_install_guide/moduleonly.rst,
+	doc/sphinx/osx_install_guide/index.rst,
+	doc/sphinx/osx_install_guide/moduleonly.rst,
+	doc/sphinx/stfio/index.rst, src/stfswig/plottools.py,
+	src/stfswig/stfio_plot.py, src/stfswig/stfioswig.i:
+	Added io module documentation. Please keep .build out of repository.
+	[264a8c1e59c7]
+
+	* src/core/filelib/abflib.cpp, src/core/filelib/atflib.cpp,
+	src/core/filelib/axglib.cpp, src/core/filelib/cfslib.cpp,
+	src/core/filelib/hdf5lib.cpp, src/stfswig/stfioswig.cxx,
+	src/stfswig/stfioswig.i, src/stfswig/stfioswig_wrap.cxx:
+	Corrected a bug in abf2 library. Show progress information while
+	reading files.
+	[fe789d93c115]
+
+2010-07-17  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/.build/doctrees/contents.doctree,
+	doc/sphinx/.build/doctrees/environment.pickle,
+	doc/sphinx/.build/doctrees/howto/amplitudes.doctree,
+	doc/sphinx/.build/doctrees/howto/apcounting.doctree,
+	doc/sphinx/.build/doctrees/howto/cuttingtraces.doctree,
+	doc/sphinx/.build/doctrees/howto/index.doctree,
+	doc/sphinx/.build/doctrees/howto/introclass.doctree,
+	doc/sphinx/.build/doctrees/howto/latencies.doctree,
+	doc/sphinx/.build/doctrees/howto/resistances.doctree,
+	doc/sphinx/.build/doctrees/howto/runningmean.doctree,
+	doc/sphinx/.build/doctrees/links/index.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/building.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/downloads.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/index.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/requirement.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/updates.doctree,
+	doc/sphinx/.build/doctrees/manual/bibliography.doctree,
+	doc/sphinx/.build/doctrees/manual/event_extraction.doctree,
+	doc/sphinx/.build/doctrees/manual/getting_started.doctree,
+	doc/sphinx/.build/doctrees/manual/index.doctree,
+	doc/sphinx/.build/doctrees/manual/latency_measurements.doctree,
+	doc/sphinx/.build/doctrees/manual/preface.doctree,
+	doc/sphinx/.build/doctrees/manual/python.doctree,
+	doc/sphinx/.build/doctrees/osx_install_guide/building.doctree,
+	doc/sphinx/.build/doctrees/osx_install_guide/index.doctree,
+	doc/sphinx/.build/doctrees/osx_install_guide/prerequisites.doctree,
+	doc/sphinx/.build/doctrees/references/index.doctree,
+	doc/sphinx/.build/doctrees/stf_reference/stf.doctree,
+	doc/sphinx/.build/html/_sources/linux_install_guide/building.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/downloads.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/index.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/moduleonly.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/requirement.txt,
+	doc/sphinx/.build/html/_static/default.css,
+	doc/sphinx/.build/html/_static/jquery.js,
+	doc/sphinx/.build/html/_static/searchtools.js,
+	doc/sphinx/.build/html/contents.html,
+	doc/sphinx/.build/html/genindex.html,
+	doc/sphinx/.build/html/howto/amplitudes.html,
+	doc/sphinx/.build/html/howto/apcounting.html,
+	doc/sphinx/.build/html/howto/cuttingtraces.html,
+	doc/sphinx/.build/html/howto/index.html,
+	doc/sphinx/.build/html/howto/introclass.html,
+	doc/sphinx/.build/html/howto/latencies.html,
+	doc/sphinx/.build/html/howto/resistances.html,
+	doc/sphinx/.build/html/howto/runningmean.html,
+	doc/sphinx/.build/html/index.html,
+	doc/sphinx/.build/html/links/index.html,
+	doc/sphinx/.build/html/linux_install_guide/building.html,
+	doc/sphinx/.build/html/linux_install_guide/downloads.html,
+	doc/sphinx/.build/html/linux_install_guide/index.html,
+	doc/sphinx/.build/html/linux_install_guide/moduleonly.html,
+	doc/sphinx/.build/html/linux_install_guide/requirement.html,
+	doc/sphinx/.build/html/linux_install_guide/updates.html,
+	doc/sphinx/.build/html/manual/bibliography.html,
+	doc/sphinx/.build/html/manual/event_extraction.html,
+	doc/sphinx/.build/html/manual/getting_started.html,
+	doc/sphinx/.build/html/manual/index.html,
+	doc/sphinx/.build/html/manual/latency_measurements.html,
+	doc/sphinx/.build/html/manual/preface.html,
+	doc/sphinx/.build/html/manual/python.html,
+	doc/sphinx/.build/html/modindex.html,
+	doc/sphinx/.build/html/objects.inv,
+	doc/sphinx/.build/html/osx_install_guide/building.html,
+	doc/sphinx/.build/html/osx_install_guide/index.html,
+	doc/sphinx/.build/html/osx_install_guide/prerequisites.html,
+	doc/sphinx/.build/html/references/index.html,
+	doc/sphinx/.build/html/search.html,
+	doc/sphinx/.build/html/searchindex.js,
+	doc/sphinx/.build/html/stf_reference/stf.html,
+	doc/sphinx/linux_install_guide/building.rst,
+	doc/sphinx/linux_install_guide/downloads.rst,
+	doc/sphinx/linux_install_guide/index.rst,
+	doc/sphinx/linux_install_guide/moduleonly.rst,
+	doc/sphinx/linux_install_guide/requirement.rst:
+	Added Linux module build instructions.
+	[93d18e3c823c]
+
+	* Makefile.am, m4/lt~obsolete.m4, src/core/channel.cpp,
+	src/core/channel.h, src/core/core.cpp, src/core/core.h,
+	src/core/filelib/atflib.cpp,
+	src/core/filelib/axg/AxoGraph_ReadWrite.cpp,
+	src/core/filelib/axg/AxoGraph_ReadWrite.h,
+	src/core/filelib/axglib.cpp, src/core/filelib/hdf5lib.cpp,
+	src/core/recording.cpp, src/core/recording.h, src/stfswig/stfio.py,
+	src/stfswig/stfioswig.cxx, src/stfswig/stfioswig.h,
+	src/stfswig/stfioswig.i, src/stfswig/stfioswig_wrap.cxx:
+	Added support for reading axg and atf files and writing hdf5 file to
+	io module.
+	[dce4044985c9]
+
+	* Makefile.am, m4/lt~obsolete.m4:
+	Corrected io module install path.
+	[0a00d3bb5dda]
+
+2010-07-16  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.am, src/core/channel.cpp, src/core/channel.h,
+	src/core/core.cpp, src/core/filelib/abflib.cpp,
+	src/core/filelib/axon/AxAbfFio32/Oldheadr.cpp,
+	src/core/filelib/axon/AxAtfFio32/fileio2.cpp,
+	src/core/filelib/axon/Common/FileIO.cpp,
+	src/core/filelib/axon2/ProtocolReaderABF2.cpp,
+	src/core/filelib/hdf5lib.cpp, src/core/recording.cpp,
+	src/core/recording.h, src/core/stimdefs.h, src/stfswig/stfio.py,
+	src/stfswig/stfioswig.cxx, src/stfswig/stfioswig.h,
+	src/stfswig/stfioswig.i, src/stfswig/stfioswig_wrap.cxx:
+	Added reading support for cfs, hdf5 and abf files to io module.
+	[c25315626313]
+
+	* Makefile.am, src/core/filelib/cfs.c, src/core/filelib/cfs.cpp,
+	src/core/filelib/cfs.h, src/core/filelib/cfslib.cpp,
+	src/core/filelib/machine.h:
+	Made cfs library 64bit-compatible.
+	[5334ef73bf3f]
+
+	* Makefile.am, src/core/filelib/cfslib.cpp, src/stfswig/stfio.py,
+	src/stfswig/stfioswig.cxx, src/stfswig/stfioswig.h,
+	src/stfswig/stfioswig.i, src/stfswig/stfioswig_wrap.cxx:
+	IO module: add _open function.
+	[78bc036969b6]
+
+2010-07-16  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/dlgs/cursorsdlg.cpp, src/core/recording.cpp:
+	Corrected wrong behaviour of radio options in Slope tab
+	[667622fcf706]
+
+2010-07-15  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/dlgs/cursorsdlg.cpp, src/app/dlgs/cursorsdlg.h,
+	src/core/recording.cpp, src/core/stimdefs.h:
+	started Delta T option for the location of the 2nd PSlope cursor
+	[baa2284b7dfc]
+
+	* test.png:
+	Removed screenshot of the Slope Cursor Settins tab
+	[f803be132eec]
+
+	* src/app/dlgs/smalldlgs.cpp, test.png:
+	Slope added to Batch Analysis options
+	[802f33d2e05b]
+
+	* src/app/dlgs/smalldlgs.cpp:
+	Size of choose value window used to Batch Analysis modified to show
+	all options
+	[b6e960badc63]
+
+	* src/app/dlgs/smalldlgs.cpp, src/app/dlgs/smalldlgs.h:
+	Slope added to the Analysis Toolbar option
+	[5f78beb0d6c6]
+
+	* src/app/app.h, src/app/copygrid.cpp, src/app/copygrid.h:
+	Slope checkmark to view/hide slope measurements in results window
+	[288ec2496136]
+
+	* src/app/dlgs/cursorsdlg.cpp:
+	user-defined radio button and text are aligned in the Peak Cursor
+	Settings dialog
+	[a6f46b18fc35]
+
+	* src/app/app.cpp, src/app/dlgs/cursorsdlg.cpp, src/app/graph.cpp:
+	Slope cursor box are editable manually
+	[c6baee0f344d]
+
+	* src/app/app.cpp, src/app/dlgs/cursorsdlg.cpp,
+	src/app/dlgs/cursorsdlg.h, src/core/recording.cpp,
+	src/core/recording.h:
+	Recording class handels start/end slope recording (and not
+	wxStfCursorsDlg).Mow Slope measurements are updated dynamically.
+	[da8c0e130913]
+
+2010-07-14  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/app.h, src/app/parentframe.cpp:
+	wxID_TOOL_SLOPE is now ID_TOOL_SLOPE
+	[33f96cb127ad]
+
+	* src/app/dlgs/cursorsdlg.cpp:
+	substitution of Editable by Enable in slope wxTextCtrl cursor
+	[62aae1498d8f]
+
+2010-07-14  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/core/core.cpp, src/core/stimdefs.h:
+	Temporary macro guards for io module.
+	[fc5728467fc2]
+
+	* src/core/stimdefs.h, src/stfswig/stfioswig.cxx,
+	src/stfswig/stfioswig.i:
+	Moved some typedefs out of stf:: namespace.
+	[264f79d432b9]
+
+	* src/core/stimdefs.h:
+	Cleaned up small merge issue.
+	[673747b4301e]
+
+2010-07-14  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* stfconf.h:
+	Added stfconf.h
+	[2860d8a89d9f]
+
+	* src/app/app.cpp, src/app/app.h, src/app/graph.cpp,
+	src/app/parentframe.cpp, src/app/parentframe.h,
+	src/core/recording.cpp, src/core/recording.h, src/core/stimdefs.h,
+	stfconf.h:
+	merged slope with io module
+	[dc3c48f046c9]
+
+	* src/app/app.cpp, src/app/dlgs/cursorsdlg.cpp,
+	src/app/dlgs/cursorsdlg.h:
+	Added Slope tab option in Cursors Settings dialog
+	[3e49446f0f1c]
+
+2010-07-12  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.am, src/stfswig/Makefile.am:
+	Build system simplifications for io module.
+	[b4936b918125]
+
+2010-07-14  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/unopt.cpp:
+	avoid multiline command warning
+	[65fcb00a79ae]
+
+2010-07-12  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.am, configure.in, src/core/filelib/cfs.cpp,
+	src/core/filelib/hdf5lib.cpp:
+	Brought python io module to building stage.
+	[bd118c576b4b]
+
+2010-07-14  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/app.h, src/app/graph.cpp, src/app/graph.h,
+	src/app/parentframe.cpp, src/app/parentframe.h,
+	src/core/recording.cpp, src/core/recording.h, src/core/stimdefs.h,
+	src/icons/slope.xpm:
+	blue Slope cursors added to stf graph
+	[07b8ad7ce278]
+
+2010-07-13  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/core/measlib.h:
+	Define template and function to calculate slope
+	[c0d412bf300e]
+
+2010-07-12  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.am, configure.in, src/app/Makefile.am,
+	src/core/Makefile.am, src/core/channel.cpp, src/core/core.cpp,
+	src/core/core.h, src/core/filelib/cfs.cpp,
+	src/core/filelib/cfslib.cpp, src/core/recording.cpp,
+	src/core/recording.h, src/core/section.cpp, src/core/section.h,
+	src/core/stimdefs.h, src/stfswig/Makefile.am, src/stfswig/stfio.py,
+	src/stfswig/stfioswig.cxx, src/stfswig/stfioswig.h,
+	src/stfswig/stfioswig.i, src/stfswig/stfioswig_wrap.cxx, stfconf.h:
+	Started framework for standalone file io python module.
+	[7b9557e19cba]
+
+2010-07-11  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/.build/html/_static/contents.png,
+	doc/sphinx/.build/html/_static/navigation.png,
+	doc/sphinx/.build/html/_static/rightsidebar.css,
+	doc/sphinx/.build/html/_static/sphinxdoc.css,
+	doc/sphinx/.build/html/_static/stickysidebar.css,
+	doc/sphinx/.build/html/_static/traditional.css, src/app/app.cpp,
+	src/app/app.h, src/app/childframe.cpp, src/app/copygrid.cpp,
+	src/app/doc.cpp, src/app/doc.h, src/app/graph.cpp,
+	src/app/parentframe.cpp, src/app/parentframe.h,
+	src/core/filelib/hekalib.cpp:
+	Cleanup: Distinguish own IDs (ID_*) from wx IDs (wxID_*).
+	[72b63f80e6f9]
+
+2010-07-10  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* .hgignore:
+	Remove /doc/sphinx/.build/doctrees from repository
+	[a4f2aa1c1a7e]
+
+	* .hgignore, doc/sphinx/.build/doctrees/contents.doctree,
+	doc/sphinx/.build/doctrees/environment.pickle,
+	doc/sphinx/.build/doctrees/howto/amplitudes.doctree,
+	doc/sphinx/.build/doctrees/howto/apcounting.doctree,
+	doc/sphinx/.build/doctrees/howto/cuttingtraces.doctree,
+	doc/sphinx/.build/doctrees/howto/index.doctree,
+	doc/sphinx/.build/doctrees/howto/introclass.doctree,
+	doc/sphinx/.build/doctrees/howto/latencies.doctree,
+	doc/sphinx/.build/doctrees/howto/resistances.doctree,
+	doc/sphinx/.build/doctrees/howto/runningmean.doctree,
+	doc/sphinx/.build/doctrees/links/index.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/building.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/downloads.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/index.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/requirement.doctree,
+	doc/sphinx/.build/doctrees/linux_install_guide/updates.doctree,
+	doc/sphinx/.build/doctrees/manual/bibliography.doctree,
+	doc/sphinx/.build/doctrees/manual/event_extraction.doctree,
+	doc/sphinx/.build/doctrees/manual/getting_started.doctree,
+	doc/sphinx/.build/doctrees/manual/index.doctree,
+	doc/sphinx/.build/doctrees/manual/latency_measurements.doctree,
+	doc/sphinx/.build/doctrees/manual/preface.doctree,
+	doc/sphinx/.build/doctrees/manual/python.doctree,
+	doc/sphinx/.build/doctrees/osx_install_guide/building.doctree,
+	doc/sphinx/.build/doctrees/osx_install_guide/index.doctree,
+	doc/sphinx/.build/doctrees/osx_install_guide/prerequisites.doctree,
+	doc/sphinx/.build/doctrees/references/index.doctree,
+	doc/sphinx/.build/doctrees/stf_reference/stf.doctree,
+	doc/sphinx/.build/html/.buildinfo,
+	doc/sphinx/.build/html/_images/APmodule.png,
+	doc/sphinx/.build/html/_images/average.png,
+	doc/sphinx/.build/html/_images/bait_template.png,
+	doc/sphinx/.build/html/_images/baseline.png,
+	doc/sphinx/.build/html/_images/batchanalysis.png,
+	doc/sphinx/.build/html/_images/channelselection.png,
+	doc/sphinx/.build/html/_images/channelselectiondrop.png,
+	doc/sphinx/.build/html/_images/cursorsettings.png,
+	doc/sphinx/.build/html/_images/eventbutton.png,
+	doc/sphinx/.build/html/_images/eventdetectionsettings.png,
+	doc/sphinx/.build/html/_images/events.png,
+	doc/sphinx/.build/html/_images/falsenegative.png,
+	doc/sphinx/.build/html/_images/finaltemplate.png,
+	doc/sphinx/.build/html/_images/fit.png,
+	doc/sphinx/.build/html/_images/fitselection.png,
+	doc/sphinx/.build/html/_images/fittowindow.png,
+	doc/sphinx/.build/html/_images/foot.png,
+	doc/sphinx/.build/html/_images/latency.png,
+	doc/sphinx/.build/html/_images/latencytraces.png, doc/sphinx/.build/
+	html/_images/math/0697caad7caa424cb1d6913067117ac1ef4afcfc.png, doc/
+	sphinx/.build/html/_images/math/0772102cbdf827d21b8343e12c2a8766e0f1
+	7d97.png, doc/sphinx/.build/html/_images/math/0936df714cc1754db6b256
+	f7124c88641fdffa2d.png, doc/sphinx/.build/html/_images/math/10ac0238
+	27bb7b549e882c11b0109030b9d86041.png, doc/sphinx/.build/html/_images
+	/math/15c811c72fbb238885328c9dc4d880060dceef3f.png, doc/sphinx/.buil
+	d/html/_images/math/174fadd07fd54c9afe288e96558c92e0c1da733a.png, do
+	c/sphinx/.build/html/_images/math/3372c1cb6d68cf97c2d231acc0b47b95a9
+	ed04cc.png, doc/sphinx/.build/html/_images/math/34857b3ba74ce5cd8607
+	f3ebd23e9015908ada71.png, doc/sphinx/.build/html/_images/math/371cf6
+	c785f7ed9950174dc1a6fc0cb4aca3ae0b.png, doc/sphinx/.build/html/_imag
+	es/math/3ed5875026627e21c18c5d905b4b62b75f117b3c.png, doc/sphinx/.bu
+	ild/html/_images/math/48cb38340548251a81919e1b5547cc672dd63b41.png, d
+	oc/sphinx/.build/html/_images/math/53828380e66417b92d288f44849b4564c
+	2aefa34.png, doc/sphinx/.build/html/_images/math/6a47ca0fe7cb276abc0
+	22af6ac88ddae1a9d6894.png, doc/sphinx/.build/html/_images/math/99fb5
+	bc1bac149d49d8bf99756ed93173eacbfde.png, doc/sphinx/.build/html/_ima
+	ges/math/9e0ec34cd8860ceb97113f81ba768ba739ad5166.png, doc/sphinx/.b
+	uild/html/_images/math/9ee4b825a2e36ae093ed7be5e4851ef453b34914.png,
+	doc/sphinx/.build/html/_images/math/a041d4af2f54e7490ce650ba9960c7b4
+	9200a594.png, doc/sphinx/.build/html/_images/math/a1ffc0a012620941fe
+	660cedabff822ce7162eca.png, doc/sphinx/.build/html/_images/math/ad28
+	c83c99a8fd0dd2e2e594c9d02ee532765a0a.png, doc/sphinx/.build/html/_im
+	ages/math/c2ded198ceb12ab7c4b85de9f763e16a0631edce.png, doc/sphinx/.
+	build/html/_images/math/c384df5165193c1645f53b30f6d4cf65e488a663.png
+	, doc/sphinx/.build/html/_images/math/dae9fdcd4039896c429769826c4759
+	2370611d6b.png, doc/sphinx/.build/html/_images/math/e0d2bf360290fd61
+	d1c1557e763f2622363b3d35.png, doc/sphinx/.build/html/_images/math/e2
+	a662e2209e4d2ee234a3ae367d5337a31409e0.png, doc/sphinx/.build/html/_
+	images/math/f37bba504894945c07a32f5496d74299a37aa51c.png, doc/sphinx
+	/.build/html/_images/math/f5047d1e0cbb50ec208923a22cd517c55100fa7b.p
+	ng, doc/sphinx/.build/html/_images/math/f8c03b65830c6482e37c5bbc31d3
+	b19ee646ee06.png, doc/sphinx/.build/html/_images/math/fc2cd2267d4502
+	2f197cdb870c1642c539c08dde.png,
+	doc/sphinx/.build/html/_images/overview.png,
+	doc/sphinx/.build/html/_images/peak.png,
+	doc/sphinx/.build/html/_images/resultstable.png,
+	doc/sphinx/.build/html/_images/selectfinaltemplate.png,
+	doc/sphinx/.build/html/_images/selection.png,
+	doc/sphinx/.build/html/_images/stimfit_dos.png,
+	doc/sphinx/.build/html/_images/test.png,
+	doc/sphinx/.build/html/_images/traceselection.png,
+	doc/sphinx/.build/html/_images/viewscalebars.png,
+	doc/sphinx/.build/html/_images/zoom.png,
+	doc/sphinx/.build/html/_images/zoompopup.png,
+	doc/sphinx/.build/html/_sources/contents.txt,
+	doc/sphinx/.build/html/_sources/howto/amplitudes.txt,
+	doc/sphinx/.build/html/_sources/howto/apcounting.txt,
+	doc/sphinx/.build/html/_sources/howto/cuttingtraces.txt,
+	doc/sphinx/.build/html/_sources/howto/index.txt,
+	doc/sphinx/.build/html/_sources/howto/introclass.txt,
+	doc/sphinx/.build/html/_sources/howto/latencies.txt,
+	doc/sphinx/.build/html/_sources/howto/resistances.txt,
+	doc/sphinx/.build/html/_sources/howto/runningmean.txt,
+	doc/sphinx/.build/html/_sources/links/index.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/building.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/downloads.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/index.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/requirement.txt,
+	doc/sphinx/.build/html/_sources/linux_install_guide/updates.txt,
+	doc/sphinx/.build/html/_sources/manual/bibliography.txt,
+	doc/sphinx/.build/html/_sources/manual/event_extraction.txt,
+	doc/sphinx/.build/html/_sources/manual/getting_started.txt,
+	doc/sphinx/.build/html/_sources/manual/index.txt,
+	doc/sphinx/.build/html/_sources/manual/latency_measurements.txt,
+	doc/sphinx/.build/html/_sources/manual/preface.txt,
+	doc/sphinx/.build/html/_sources/manual/python.txt,
+	doc/sphinx/.build/html/_sources/osx_install_guide/building.txt,
+	doc/sphinx/.build/html/_sources/osx_install_guide/index.txt,
+	doc/sphinx/.build/html/_sources/osx_install_guide/prerequisites.txt,
+	doc/sphinx/.build/html/_sources/references/index.txt,
+	doc/sphinx/.build/html/_sources/stf_reference/stf.txt,
+	doc/sphinx/.build/html/_static/basic.css,
+	doc/sphinx/.build/html/_static/default.css,
+	doc/sphinx/.build/html/_static/doctools.js,
+	doc/sphinx/.build/html/_static/file.png,
+	doc/sphinx/.build/html/_static/jquery.js,
+	doc/sphinx/.build/html/_static/minus.png,
+	doc/sphinx/.build/html/_static/plus.png,
+	doc/sphinx/.build/html/_static/pygments.css,
+	doc/sphinx/.build/html/_static/searchtools.js,
+	doc/sphinx/.build/html/contents.html,
+	doc/sphinx/.build/html/genindex.html,
+	doc/sphinx/.build/html/howto/amplitudes.html,
+	doc/sphinx/.build/html/howto/apcounting.html,
+	doc/sphinx/.build/html/howto/cuttingtraces.html,
+	doc/sphinx/.build/html/howto/index.html,
+	doc/sphinx/.build/html/howto/introclass.html,
+	doc/sphinx/.build/html/howto/latencies.html,
+	doc/sphinx/.build/html/howto/resistances.html,
+	doc/sphinx/.build/html/howto/runningmean.html,
+	doc/sphinx/.build/html/index.html,
+	doc/sphinx/.build/html/links/index.html,
+	doc/sphinx/.build/html/linux_install_guide/building.html,
+	doc/sphinx/.build/html/linux_install_guide/downloads.html,
+	doc/sphinx/.build/html/linux_install_guide/index.html,
+	doc/sphinx/.build/html/linux_install_guide/requirement.html,
+	doc/sphinx/.build/html/linux_install_guide/updates.html,
+	doc/sphinx/.build/html/manual/bibliography.html,
+	doc/sphinx/.build/html/manual/event_extraction.html,
+	doc/sphinx/.build/html/manual/getting_started.html,
+	doc/sphinx/.build/html/manual/index.html,
+	doc/sphinx/.build/html/manual/latency_measurements.html,
+	doc/sphinx/.build/html/manual/preface.html,
+	doc/sphinx/.build/html/manual/python.html,
+	doc/sphinx/.build/html/modindex.html,
+	doc/sphinx/.build/html/objects.inv,
+	doc/sphinx/.build/html/osx_install_guide/building.html,
+	doc/sphinx/.build/html/osx_install_guide/index.html,
+	doc/sphinx/.build/html/osx_install_guide/prerequisites.html,
+	doc/sphinx/.build/html/references/index.html,
+	doc/sphinx/.build/html/search.html,
+	doc/sphinx/.build/html/searchindex.js,
+	doc/sphinx/.build/html/stf_reference/stf.html,
+	doc/sphinx/.build/latex/APmodule.png,
+	doc/sphinx/.build/latex/Stimfitdocumentation.pdf,
+	doc/sphinx/.build/latex/Stimfitdocumentation.tex,
+	doc/sphinx/.build/latex/Stimfitdocumentation.toc,
+	doc/sphinx/.build/latex/average.png,
+	doc/sphinx/.build/latex/bait_template.png,
+	doc/sphinx/.build/latex/baseline.png,
+	doc/sphinx/.build/latex/batchanalysis.png,
+	doc/sphinx/.build/latex/channelselection.png,
+	doc/sphinx/.build/latex/channelselectiondrop.png,
+	doc/sphinx/.build/latex/cursorsettings.png,
+	doc/sphinx/.build/latex/eventbutton.png,
+	doc/sphinx/.build/latex/eventdetectionsettings.png,
+	doc/sphinx/.build/latex/events.png,
+	doc/sphinx/.build/latex/falsenegative.png,
+	doc/sphinx/.build/latex/finaltemplate.png,
+	doc/sphinx/.build/latex/fit.png,
+	doc/sphinx/.build/latex/fitselection.png,
+	doc/sphinx/.build/latex/fittowindow.png,
+	doc/sphinx/.build/latex/fncychap.sty,
+	doc/sphinx/.build/latex/foot.png, doc/sphinx/.build/latex/howto.cls,
+	doc/sphinx/.build/latex/latency.png,
+	doc/sphinx/.build/latex/latencytraces.png,
+	doc/sphinx/.build/latex/manual.cls,
+	doc/sphinx/.build/latex/overview.png,
+	doc/sphinx/.build/latex/peak.png,
+	doc/sphinx/.build/latex/python.ist,
+	doc/sphinx/.build/latex/resultstable.png,
+	doc/sphinx/.build/latex/selectfinaltemplate.png,
+	doc/sphinx/.build/latex/selection.png,
+	doc/sphinx/.build/latex/sphinx.sty,
+	doc/sphinx/.build/latex/stimfit_dos.png,
+	doc/sphinx/.build/latex/tabulary.sty,
+	doc/sphinx/.build/latex/test.png,
+	doc/sphinx/.build/latex/traceselection.png,
+	doc/sphinx/.build/latex/viewscalebars.png,
+	doc/sphinx/.build/latex/zoom.png,
+	doc/sphinx/.build/latex/zoompopup.png:
+	Added build html to the repository, necessary to modify index.html
+	[9e2bb11b9d6a]
+
+	* doc/sphinx/references/index.rst, src/app/childframe.cpp,
+	src/app/parentframe.cpp, src/stfswig/embedded_init.py:
+	Added a new reference to the list of publications using Stimfit
+	[da66ca0a594a]
+
+2010-06-25  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.in, config.guess, config.sub, configure, install-sh,
+	src/Makefile.in, src/app/Makefile.in, src/stfswig/Makefile.in:
+	Removed toolchain stuff
+	[1808fcd00e05]
+
+2010-06-13  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/stfswig/embedded_init.py:
+	Small error in location of stf.measure()
+	[45f53466ea68]
+
+	* src/stfswig/embedded_init.py:
+	First Version of Recording, Channel and Section stf class: TODO:
+	hdf5 save compatibility
+	[66407c42ed29]
+
+2010-06-11  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* err:
+	Remove compilation message
+	[fb58b18f8333]
+
+	* err, src/core/filelib/hekalib.cpp, src/stfswig/embedded_init.py:
+	Name of file pointer in hekalib checked for coherence
+	[4ef04ce74c17]
+
+	* .hgignore:
+	Removed files generated by autotools
+	[678cd9b4ccc2]
+
+	* .hgignore, Makefile.in, src/Makefile.in, src/app/Makefile.in,
+	src/stfswig/Makefile.in:
+	Adding Makefile.in
+	[697f1bc0a02e]
+
+	* .hgignore, config.guess:
+	Adding config.guess to repository
+	[3e76ee9abbef]
+
+	* .hgignore, config.sub:
+	Adding config.sub
+	[c1e11d5e0d97]
+
+	* .hgignore, install-sh:
+	Adding install-sh script to the repository
+	[3ffef5216efc]
+
+	* .hgignore, configure, src/stfswig/embedded_init.py:
+	Adding configure
+	[c455bdc7b0ac]
+
+2010-06-06  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/linux_install_guide/building.rst,
+	src/stfswig/embedded_init.py, src/stfswig/embedded_ipython.py:
+	getter/setter operator for dt in new Recording class
+	[3954048ead56]
+
+2010-05-21  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.am, src/app/app.cpp, src/app/app.h, src/core/core.cpp,
+	src/core/filelib/hekalib.cpp, src/core/filelib/hekalib.h,
+	src/core/stimdefs.h:
+	Started heka file reading framework.
+	[dde749297172]
+
+2010-04-23  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/stfswig/hdf5tools.py:
+	Show recording object directly without opening a file.
+	[53fb29b19f82]
+
+	* src/stfswig/hdf5tools.py:
+	Corrected bug in hdf5tools.
+	[86718b08a1d8]
+
+2010-04-22  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/linux_install_guide/building.rst:
+	Small changes Linux installing guide
+	[5290abb7d5da]
+
+2010-04-21  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/linux_install_guide/building.rst:
+	Correction in the documentation about building Stimfit under
+	GNU/Linux
+	[cf0fb4bf6e2e]
+
+2010-04-18  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/linux_install_guide/building.rst, src/app/unopt.cpp,
+	stfconf.h:
+	Linux installation documents autogen.sh script
+	[5e8278018674]
+
+2010-04-11  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* m4/ltoptions.m4, src/app/app.cpp, src/app/app.h, src/app/doc.cpp,
+	src/app/view.cpp:
+	Fixed a bug in OS X: Opened files were not correctly detected from
+	the Python shell.
+	[5e7b468c22ff]
+
+2010-03-30  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/osx_install_guide/building.rst:
+	Added autogen.sh instruction for os x.
+	[ce0786aeebcb]
+
+2010-03-26  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/app/app.cpp, src/app/parentframe.cpp,
+	src/core/filelib/axg/AxoGraph_ReadWrite.cpp,
+	src/core/filelib/axg/AxoGraph_ReadWrite.h,
+	src/core/filelib/axglib.cpp:
+	AxographX reading enhancements.
+	[27b05478c8b2]
+
+2010-03-25  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* bootstrap, prepare:
+	Some more cleaning of outdated files.
+	[3a15fd920e9b]
+
+	* .hgignore, Makefile.in, aclocal.m4, config.guess, config.sub,
+	configure, depcomp, install-sh, ltmain.sh, m4/libtool.m4,
+	m4/ltsugar.m4, m4/ltversion.m4, missing, src/Makefile.in,
+	src/app/Makefile.in, src/app/dlgs/Makefile.in, src/core/Makefile.in,
+	src/core/filelib/axg/AxoGraph_ReadWrite.h,
+	src/core/levmar/Makefile.in, src/stfswig/Makefile.in, stfconf.h.in:
+	Removed autotools output from hg.
+	[e6bc37d8f140]
+
+	* Makefile.in, src/core/filelib/axg/byteswap.cpp,
+	src/core/filelib/axglib.cpp:
+	Axograph X 64bit bug fixes.
+	[f97870577016]
+
+	* Makefile.in, aclocal.m4, config.guess, config.sub, configure,
+	depcomp, install-sh, ltmain.sh, m4/libtool.m4, m4/ltoptions.m4,
+	m4/ltsugar.m4, m4/ltversion.m4, missing, src/Makefile.in,
+	src/app/Makefile.in, src/core/filelib/axg/AxoGraph_ReadWrite.h,
+	src/stfswig/Makefile.in, stfconf.h.in:
+	Avoid preprocessor warning.
+	[a3922646c1dc]
+
+	* Makefile.am, src/core/filelib/axg/AxoGraph_ReadWrite.cpp,
+	src/core/filelib/axg/AxoGraph_ReadWrite.h,
+	src/core/filelib/axg/byteswap.cpp, src/core/filelib/axg/byteswap.h,
+	src/core/filelib/axg/fileUtils.cpp,
+	src/core/filelib/axg/fileUtils.h, src/core/filelib/axg/longdef.h,
+	src/core/filelib/axg/stringUtils.h:
+	Started 64bit support for Axograph X files.
+	[b0b5110c9191]
+
+2010-03-25  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/osx_install_guide/index.rst,
+	doc/sphinx/references/index.rst, stfconf.h:
+	Added links to Stimfit homepage in the OS documentation
+	[a019fe64f2e6]
+
+2010-03-23  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/.templates/index.html,
+	doc/sphinx/osx_install_guide/prerequisites.rst:
+	Integrated OS X building instructions into documentation.
+	[3e6a064cd334]
+
+	* Makefile.in, aclocal.m4, config.guess, config.sub, configure,
+	depcomp, doc/sphinx/contents.rst,
+	doc/sphinx/osx_install_guide/building.rst,
+	doc/sphinx/osx_install_guide/index.rst,
+	doc/sphinx/osx_install_guide/prerequisites.rst, install-sh,
+	ltmain.sh, m4/libtool.m4, m4/ltoptions.m4, m4/ltsugar.m4,
+	m4/ltversion.m4, missing, src/Makefile.in, src/app/Makefile.in,
+	src/stfswig/Makefile.in, stfconf.h.in:
+	Added os x building instructions to documentation.
+	[28c0eb1a0bbb]
+
+2010-03-22  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* configure.in, src/core/filelib/axg/AxoGraph_ReadWrite.h:
+	Added endianness checks.
+	[3cd987695a06]
+
+	* Makefile.in, aclocal.m4, autogen.sh, config.guess, config.sub,
+	configure, depcomp, install-sh, ltmain.sh, m4/libtool.m4,
+	m4/ltversion.m4, missing, src/Makefile.in, src/app/Makefile.in,
+	src/stfswig/Makefile.in:
+	Added autogen.sh to replace outdated bootstrap script.
+	[57d85b174ddb]
+
+2010-03-21  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/app/app.cpp:
+	Keyboard input bug fix.
+	[be428000dd47]
+
+2010-03-20  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.in, aclocal.m4, configure, ltmain.sh, m4/libtool.m4,
+	m4/ltoptions.m4, m4/ltsugar.m4, m4/ltversion.m4,
+	macosx/scripts/configure.10.4.in, replace.sh, src/Makefile.in,
+	src/app/Makefile.in, src/app/app.cpp, src/app/parentframe.cpp,
+	src/core/filelib/abflib.cpp, src/core/filelib/axg/fileUtils.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp,
+	src/core/filelib/axon/AxAbfFio32/abfheadr.cpp,
+	src/core/filelib/axon/AxAbfFio32/abfutil.cpp,
+	src/core/filelib/axon/AxAbfFio32/csynch.cpp,
+	src/core/filelib/axon/AxAbfFio32/filedesc.cpp,
+	src/core/filelib/axon/AxAtfFio32/fileio.cpp,
+	src/core/filelib/axon/AxAtfFio32/fileio2.cpp,
+	src/core/filelib/axon/Common/FileIO.cpp,
+	src/core/filelib/axon/Common/FileReadCache.cpp,
+	src/core/filelib/axon/Common/axodefn.h,
+	src/core/filelib/axon/Common/unix.h,
+	src/core/filelib/axon2/ProtocolReaderABF2.cpp,
+	src/core/filelib/axon2/SimpleStringCache.cpp,
+	src/core/filelib/cfs.c, src/core/filelib/cfs.h,
+	src/core/filelib/machine.h, src/core/levmar/misc.h,
+	src/stfswig/Makefile.in, stfconf.h.in, update_version.sh:
+	Replaced LINUX preprocessor directives.
+	[19e95a879590]
+
+	* src/app/graph.cpp:
+	Corrected preprocessor directive.
+	[6a037a3f282c]
+
+	* macosx/scripts/conf_mac_release.10.4.sh,
+	macosx/scripts/configure.10.4.in, src/app/app.cpp, src/app/app.h,
+	src/app/childframe.cpp, src/app/doc.cpp, src/app/graph.cpp:
+	Bug fixes for OS X:
+	- Keyboard shortcuts
+	- File type recognition
+	[253b548de8d8]
+
+2010-03-18  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.in, aclocal.m4, configure, configure.in,
+	googlecode_upload.py, ltmain.sh, m4/libtool.m4, m4/ltoptions.m4,
+	m4/ltsugar.m4, m4/ltversion.m4, src/Makefile.in,
+	src/app/Makefile.in, src/core/filelib/hdf5lib.cpp,
+	src/stfswig/Makefile.in, stfconf.h.in:
+	Some more hdf5 1.8 compatibility fixes.
+	[6c6ea961f99e]
+
+2010-03-09  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* 1:
+	dummy file removed
+	[f91659d4f5b9]
+
+	* 1, doc/sphinx/howto/latencies.rst, nsis/installer.nsi,
+	src/app/app.cpp, src/stfswig/AP.py, src/stfswig/Makefile.am,
+	src/stfswig/Makefile.in, src/stfswig/spells.py:
+	Spike class is included in spells and AP.py was removed
+	[233d2bd01bd8]
+
+2010-03-04  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/app/app.cpp, src/core/core.cpp, src/core/core.h:
+	Buffer overflow in spectral density function.
+	[8bc467036c54]
+
+	* src/core/filelib/hdf5lib.cpp:
+	Re-established hdf5 1.6 compatibility.
+	[8b6c8f41692d]
+
+2010-03-01  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/core/filelib/hdf5lib.cpp:
+	Make compatible to hdf5 1.8
+	[d6b753b8fc97]
+
+2010-02-23  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/references/index.rst,
+	src/core/filelib/axon/Common/unix.cpp,
+	src/stfswig/embedded_ipython.py:
+	Avoid buffer overflow in abf library. Allow for longer abf path
+	names (1024 chars).
+	[b792e15eb5b7]
+
+2010-02-22  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* warnings:
+	remove dummy file
+	[3d4eeded09e6]
+
+	* .hgignore, src/stfswig/AP.py, src/stfswig/embedded_ipython.py,
+	src/stfswig/stf_init.py, warnings:
+	Added an emtpy stf_init to the repository
+	[92ee2931428b]
+
+2010-02-16  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/unopt.cpp:
+	Remove debug block for menu-based import module function.
+	[a133eb4017c5]
+
+	* src/app/unopt.cpp:
+	typo in the python version message
+	[3b12680b7d30]
+
+	* src/app/app.cpp, src/app/app.h, src/app/parentframe.cpp,
+	src/app/parentframe.h, src/app/unopt.cpp,
+	src/stfswig/embedded_init.py, src/stfswig/embedded_ipython.py:
+	Menu-based "import module" function works with IPython
+	[d998c66f5f64]
+
+2010-02-10  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* config.h.in, src/app/unopt.cpp:
+	Compatibility with wx 2.9.1
+	[defb4d63c803]
+
+2010-02-07  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* macosx/scripts/change_deps_release.sh, macosx/stimfit.dmgCanvas:
+	Mac OS packaging fixes.
+	[406664dac845]
+
+2010-02-07  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* .hgignore, doc/sphinx/manual/event_extraction.rst, src/app/app.cpp,
+	src/app/app.h, stfconf.h:
+	Preprocessor directive changed to avoid error when Stimfit is
+	compiled without Python shell.
+	[bcd6c1ad450d]
+
+2010-01-31  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* nsis/installer.nsi, stimfit_VS03/stimfit_VS03.suo:
+	Windows build update.
+	[b9e10e58e80d]
+
+	* src/core/filelib/axg/AxoGraph_ReadWrite.cpp:
+	Axograph-related bug fixes.
+	[372329c639fe]
+
+2010-01-10  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.in, aclocal.m4, configure,
+	doc/sphinx/linux_install_guide/downloads.rst, ltmain.sh,
+	m4/libtool.m4, m4/ltoptions.m4, m4/ltsugar.m4, m4/ltversion.m4,
+	src/Makefile.in, src/app/Makefile.in, src/stfswig/Makefile.in,
+	stfconf.h.in:
+	Updated wxPython svn revision.
+	[5cd838a8b2d5]
+
+2009-12-31  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/stfswig/stf_init.py:
+	removed test stf_init.py file from repository
+	[f3b347d1dcc4]
+
+	* nsis/installer.nsi, src/app/app.cpp, src/app/unopt.cpp,
+	src/stfswig/Makefile.am, src/stfswig/Makefile.in,
+	src/stfswig/embedded_init.py, src/stfswig/embedded_ipython.py,
+	src/stfswig/embedded_stf.py, src/stfswig/stf_init.py:
+	Import Python module menu imports AND reloads the module. IPython
+	loads numpy and stf in the current namespace (like PyCrust).
+	[e54f199ead55]
+
+2009-12-30  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/linux_install_guide/updates.rst:
+	added link to the Stimfit google groups in Linux installation guide
+	[84b181d5d4e7]
+
+	* doc/sphinx/linux_install_guide/building.rst,
+	doc/sphinx/linux_install_guide/downloads.rst:
+	Minor changes in GNU/Linux installation instructions
+	[8a34279be173]
+
+	* src/stfswig/embedded_stf.py:
+	removed wrong line in embedded_stf.py
+	[d372268108c2]
+
+	* doc/sphinx/linux_install_guide/building.rst,
+	doc/sphinx/linux_install_guide/downloads.rst,
+	doc/sphinx/linux_install_guide/requirement.rst,
+	doc/sphinx/linux_install_guide/updates.rst, src/app/unopt.cpp,
+	src/stfswig/embedded_stf.py, stfconf.h:
+	Updated GNU/Linux installation guide
+	[00756d254f36]
+
+2009-12-26  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* macosx/scripts/change_deps_release.sh, macosx/stimfit.dmgCanvas:
+	Some more modifications to os x build scripts.
+	[0bea08873815]
+
+	* Makefile.in, aclocal.m4, config.guess, config.sub, configure,
+	configure.in, ltmain.sh, m4/libtool.m4, m4/ltoptions.m4,
+	m4/ltsugar.m4, m4/ltversion.m4, macosx/scripts/build-wxpy.sh,
+	macosx/scripts/change_deps_debug.sh, macosx/scripts/conf-wx.sh,
+	macosx/scripts/conf_mac_debug.sh,
+	macosx/scripts/conf_mac_release.sh, src/Makefile.in,
+	src/app/Makefile.in, src/stfswig/Makefile.in, stfconf.h.in:
+	Updated os x build scripts.
+	[7fb6f975cbf2]
+
+2009-12-24  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* aclocal.m4, configure, configure.in, ltmain.sh, m4/libtool.m4,
+	m4/ltversion.m4, macosx/scripts/build-wxpy.sh,
+	macosx/scripts/change_deps_release.sh, macosx/scripts/conf-wx.sh,
+	macosx/scripts/conf_mac_release.sh, macosx/scripts/install-wxpy.sh,
+	macosx/stimfit.dmgCanvas, src/stfswig/Makefile.in:
+	Updated OS X build scripts.
+	[171a6ec2745b]
+
+2009-12-15  cs  <cs@cs-s20>
+
+	* doc/sphinx/linux_install_guide/building.rst,
+	doc/sphinx/linux_install_guide/downloads.rst,
+	doc/sphinx/linux_install_guide/requirement.rst:
+	Updated build instructions.
+	[b354761a1386]
+
+2009-12-11  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/howto/introclass.rst, doc/sphinx/links/index.rst:
+	docu modified, neurohost link removed
+	[4da05b304ac1]
+
+2009-11-30  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/stfswig/Makefile.am:
+	Makefile.am modified to contain AP.py
+	[c4b18de44fb8]
+
+2009-11-29  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/howto/latencies.rst, src/stfswig/AP.py:
+	small typos
+	[a54b2e928d37]
+
+	* doc/sphinx/howto/APmodule.png, doc/sphinx/howto/latencies.rst,
+	nsis/installer.nsi, src/stfswig/AP.py, src/stfswig/Makefile.am,
+	src/stfswig/Makefile.in:
+	Calculate latencies in documentation (book of speels) and AP.py
+	available to the user.
+	[ee15b428f4e0]
+
+2009-11-27  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/howto/introclass.rst:
+	OOP with Stimfit added to documentation (Book of spells)
+	[e01b41303bf6]
+
+2009-11-24  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/howto/index.rst, doc/sphinx/howto/introclass.rst,
+	doc/sphinx/howto/latencies.rst, src/app/app.cpp,
+	src/app/parentframe.cpp:
+	Toggle Python shell works again!
+	[9a0457470bf1]
+
+2009-11-21  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/stfswig/stf.py.orig, src/stfswig/stfswig.cxx.orig,
+	src/stfswig/stfswig_wrap.cxx.orig:
+	Removed merge files.
+	[be42dda1c722]
+
+	* .hgignore, src/stfswig/stf.py, src/stfswig/stf.py.orig,
+	src/stfswig/stfswig.cxx, src/stfswig/stfswig.cxx.orig,
+	src/stfswig/stfswig_wrap.cxx, src/stfswig/stfswig_wrap.cxx.orig:
+	Cleaned hg.
+	[04a50ea98d39]
+
+	* doc/sphinx/references/index.rst, src/app/doc.cpp,
+	src/app/funclib/funclib.cpp, src/core/channel.cpp,
+	src/core/filelib/abflib.cpp, src/core/recording.cpp:
+	Linux build fixes. Extensive code changes during the last 3 commits,
+	please test!!
+	[a317a0c06216]
+
+2009-11-15  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/stfswig/stfswig.i:
+	corrected unappropiate docstring in get_threshold_value()!!
+	[21fb577a7dbe]
+
+	* src/stfswig/stf.py, src/stfswig/stfswig.cxx, src/stfswig/stfswig.i,
+	src/stfswig/stfswig_wrap.cxx:
+	Corrected syntax error in get_threshold_value()
+	[3cca37e02f8b]
+
+	* doc/sphinx/stf_reference/stf.rst, src/stfswig/stfswig.cxx,
+	src/stfswig/stfswig.h, src/stfswig/stfswig.i:
+	get_threshold() was splitted into get_threshold_value() and
+	get_threshold_time(). Thanks to Christoph Schmidt-Hieber for the
+	suggestion. New python functions added to the stf module
+	documentation
+	[a8788c74ee0f]
+
+2009-11-21  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/app/dlgs/fitseldlg.cpp, src/app/dlgs/fitseldlg.h,
+	src/app/doc.cpp, src/app/funclib/funclib.cpp,
+	src/app/funclib/funclib.h, src/app/graph.cpp, src/app/graph.h,
+	src/app/plugins/plugins.cpp, src/app/plugins/plugins.h,
+	src/app/usrdlg/usrdlg.cpp, src/app/usrdlg/usrdlg.h,
+	src/core/channel.cpp, src/core/core.cpp, src/core/core.h,
+	src/core/filelib/abflib.cpp, src/core/filelib/asciilib.cpp,
+	src/core/filelib/axg/AxoGraph_ReadWrite.h,
+	src/core/filelib/axglib.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.h,
+	src/core/filelib/cfslib.cpp, src/core/filelib/hdf5lib.cpp,
+	src/core/filelib/igorlib.cpp, src/core/fitlib.cpp,
+	src/core/fitlib.h, src/core/measlib.h, src/core/recording.cpp,
+	src/core/recording.h, src/core/section.cpp, src/core/section.h,
+	src/core/spline.h, src/core/stimdefs.h, src/stfswig/stf.py,
+	src/stfswig/stfswig.cxx, src/stfswig/stfswig_wrap.cxx,
+	stimfit_VS03/stfswig/stfswig.vcproj,
+	stimfit_VS03/stimfit/stimfit.vcproj, stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj:
+	Use vectors instead of valarrays. Memory aloocation fixes for abf2.
+	[29d8d710beb2]
+
+2009-11-15  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* Doxyfile, src/app/app.h, src/core/recording.cpp,
+	src/core/recording.h, src/stfswig/stf.py, src/stfswig/stfswig.cxx,
+	src/stfswig/stfswig.h, src/stfswig/stfswig.i,
+	src/stfswig/stfswig_wrap.cxx:
+	stf.set_slope(), stf.get_threshold() and stf.set_channel() added to
+	the python commands.
+	[f2f6f4d5d784]
+
+2009-10-21  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/app/app.cpp, src/app/app.h, src/app/doc.cpp,
+	src/app/parentframe.cpp, src/app/parentframe.h, src/app/unopt.cpp:
+	Moved "Import Python module" entry to file menu.
+	[b8570afb0296]
+
+2009-10-21  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/app/unopt.cpp:
+	Removed comented duplicated function
+	[1e3180dd1844]
+
+	* .hgignore, src/app/app.cpp, src/app/app.h, src/app/doc.cpp,
+	src/app/doc.h, src/app/unopt.cpp:
+	OnPythonImport() method in wxStfApp, updated .hgignore
+	[148d1f7be141]
+
+2009-10-21  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .libs/stimfit, Makefile, libtool, src/Makefile, src/app/Makefile,
+	src/app/libstimfit.a, src/stfswig/.libs/libstf.a,
+	src/stfswig/.libs/libstf.la, src/stfswig/.libs/libstf.lai,
+	src/stfswig/.libs/libstf.so, src/stfswig/.libs/libstf.so.0,
+	src/stfswig/.libs/libstf.so.0.0.0, src/stfswig/Makefile,
+	src/stfswig/libstf.la, stamp-h1, stimfit, stimfit.plist:
+	Removed build files.
+	[c2a42ac01b76]
+
+2009-10-21  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* stfconf.h:
+	added menu based import python (Analysis -> Import module...)
+	[fbcda683e1c9]
+
+	* .libs/stimfit, Makefile, libtool, src/Makefile, src/app/Makefile,
+	src/app/app.cpp, src/app/app.h, src/app/doc.cpp, src/app/doc.h,
+	src/app/libstimfit.a, src/app/unopt.cpp, src/stfswig/.libs/libstf.a,
+	src/stfswig/.libs/libstf.la, src/stfswig/.libs/libstf.lai,
+	src/stfswig/.libs/libstf.so, src/stfswig/.libs/libstf.so.0,
+	src/stfswig/.libs/libstf.so.0.0.0, src/stfswig/Makefile,
+	src/stfswig/libstf.la, stamp-h1, stfconf.h, stimfit, stimfit.plist:
+	Added menu based import Python module (Analysis->Import module...)
+	[f34975479f96]
+
+2009-10-21  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* configure, configure.in, doc/sphinx/conf.py, doc/website/Home.html,
+	ltmain.sh, m4/libtool.m4, nsis/installer.nsi, stfconf.h,
+	stimfit.plist.in:
+	Bumped version number to 0.9.3.
+	[46a7f4c8eebb]
+
+	* macosx/stimfit-0.9.3rc1.dmg:
+	Removed disk image.
+	[9bfaec64aec7]
+
+	* .hgignore, macosx/dmg.ai, macosx/dmg.jpg, macosx/package.pmdoc
+	/01stimfit-contents.xml, macosx/package.pmdoc/01stimfit.xml,
+	macosx/package.pmdoc/index.xml, macosx/stimfit-0.9.3rc1.dmg,
+	macosx/stimfit.dmgCanvas:
+	Mac OS X build fixes.
+	[27fb0b769e51]
+
+2009-10-14  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* aclocal.m4, configure, src/app/printout.cpp:
+	Corrected some printing issues under wxgtk.
+	[9a87c17e3123]
+
+2009-10-13  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.am, Makefile.in, macosx/package.pmdoc/01stimfit-
+	contents.xml, macosx/package.pmdoc/01stimfit.xml,
+	macosx/scripts/change_deps_release.sh,
+	macosx/scripts/conf_mac_debug.sh,
+	macosx/scripts/conf_mac_release.sh, src/app/app.cpp, src/app/app.h,
+	src/app/graph.cpp, src/app/printout.cpp, stimfit.plist.in:
+	Some more OS X build and bug fixes.
+	[fe0f31f8e2a9]
+
+	* stimfit.plist.in, update_version.sh:
+	Bumped remaining version numbers.
+	[d21ae07a6d9c]
+
+	* Makefile.am, Makefile.in, macosx/package.pmdoc/01stimfit-
+	contents.xml, macosx/package.pmdoc/01stimfit.xml,
+	macosx/package.pmdoc/index.xml, src/app/childframe.cpp,
+	src/app/graph.cpp, src/app/parentframe.cpp, src/app/printout.cpp,
+	src/core/filelib/axon/Common/unix.h,
+	src/core/filelib/axon2/ProtocolReaderABF2.cpp,
+	src/core/filelib/axon2/ProtocolStructs.h,
+	src/core/filelib/axon2/SimpleStringCache.cpp, update_version.sh:
+	Mac build fixes.
+	[7fb489e9bbcb]
+
+2009-10-11  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.am, Makefile.in, aclocal.m4, configure, configure.in,
+	ltmain.sh, m4/libtool.m4, src/app/doc.cpp,
+	src/core/filelib/axon/AxAbfFio32/AxAbffio32.h,
+	src/core/filelib/axon/AxAbfFio32/abfheadr.h,
+	src/core/filelib/axon2/ProtocolReaderABF2.hpp,
+	src/core/filelib/axon2/ProtocolStructs.h,
+	src/core/filelib/axon2/SimpleStringCache.cpp,
+	src/core/filelib/axon2/abf2headr.h, src/core/filelib/axon2/abffio.h:
+	OS X 10.6 build fixes.
+	[066ee26da66c]
+
+2009-10-09  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.in, aclocal.m4, configure, configure.in,
+	doc/sphinx/conf.py, doc/website/Home.html, ltmain.sh, m4/libtool.m4,
+	macosx/package.pmdoc/index.xml, nsis/installer.nsi, src/Makefile.in,
+	src/app/Makefile.in, src/stfswig/Makefile.in, stfconf.h,
+	stfconf.h.in, update_website.sh:
+	Bumped version number to 0.9.2
+	[fe5f1b4a1989]
+
+2009-10-08  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* nsis/installer.nsi, stimfit_VS03/stimfit_VS03.suo:
+	Updated nsis script.
+	[957e214e365e]
+
+2009-10-07  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/app/doc.cpp, src/app/doc.h, src/app/parentframe.cpp,
+	src/app/view.cpp:
+	Update selection button status when opening a new file or switching
+	between windows.
+	[d829e5e3ed63]
+
+2009-10-06  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* nsis/installer.nsi, src/app/doc.cpp, stfconf.h,
+	stimfit_VS03/stfswig/stfswig.vcproj,
+	stimfit_VS03/stimfit/stimfit.vcproj,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj:
+	Windows build fixes.
+	[e82462e6948b]
+
+	* src/app/doc.cpp, src/app/doc.h, src/app/graph.cpp,
+	src/app/parentframe.cpp, src/app/parentframe.h, src/app/view.cpp:
+	Use toggle button for selection. Ask before erasing all events.
+	[49c5416bbd03]
+
+2009-10-05  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile, libtool, src/Makefile, src/app/Makefile,
+	src/app/libstimfit.a, src/stfswig/Makefile, stamp-h1, stfconf.h,
+	stimfit, stimfit.plist:
+	Removed build files from source repository.
+	[9f4e8b3126c2]
+
+	* Makefile, libtool, src/Makefile, src/app/Makefile,
+	src/app/libstimfit.a, src/core/filelib/abflib.cpp,
+	src/core/filelib/axon/AxAbfFio32/Oldheadr.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.h,
+	src/core/filelib/axon/AxAbfFio32/abfheadr.cpp,
+	src/core/filelib/axon/AxAbfFio32/csynch.cpp,
+	src/core/filelib/axon/AxAbfFio32/filedesc.cpp,
+	src/core/filelib/axon/AxAbfFio32/filedesc.hpp,
+	src/core/filelib/axon/AxAbfFio32/oldheadr.h,
+	src/core/filelib/axon2/ProtocolReaderABF2.hpp,
+	src/core/filelib/axon2/abf2headr.h, src/stfswig/Makefile, stfconf.h,
+	stimfit, stimfit.plist:
+	Added support for abf files on 64 bit systems. Thanks to Jakub
+	Nowacki (libaxon.sourceforge.net) for instructions.
+	[0eb87a0f3b54]
+
+	* src/core/filelib/axon/AxAbfFio32/abfheadr.h,
+	src/core/filelib/axon2/ProtocolStructs.h:
+	Started 64bit support for abf library.
+	[7f9cf6eb0287]
+
+2009-09-30  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/manual/event_extraction.rst:
+	Documentation typo fixes.
+	[1763bf61a509]
+
+	* src/core/filelib/abflib.cpp,
+	src/core/filelib/axon2/ProtocolReaderABF2.cpp:
+	Some more bug fixes for reading gapfree abf2 files.
+	[8001838cfe30]
+
+2009-09-29  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* nsis/installer.nsi, src/stfswig/stf.py, src/stfswig/stfswig.cxx,
+	src/stfswig/stfswig.h, src/stfswig/stfswig.i,
+	src/stfswig/stfswig_wrap.cxx:
+	Windows build fixes.
+	[c061ddeb71a6]
+
+	* src/core/filelib/abflib.cpp:
+	Removed some bugs when reading abf2 files, including wrong sample
+	interval in files with more than one channel.
+	[5fd72a2fd771]
+
+2009-09-28  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* commit.bat, src/core/filelib/abflib.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.h,
+	src/core/filelib/axon2/ProtocolReaderABF2.cpp,
+	src/core/filelib/axon2/ProtocolReaderABF2.hpp,
+	src/core/filelib/axon2/abf2headr.cpp,
+	src/core/filelib/axon2/abf2headr.h:
+	Added support for abf2 gap free files. Thanks to Fiona Müllner for
+	providing samples.
+	[af71feca76fe]
+
+2009-09-23  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .cproject, .project, .pydevproject,
+	.settings/org.eclipse.ltk.core.refactoring.prefs, .texlipse,
+	nsis/installer.nsi, src/stfswig/Makefile.am,
+	src/stfswig/Makefile.in, src/stfswig/console_widget.py,
+	src/stfswig/embedded_ipython.py, src/stfswig/wx_frontend.py:
+	Removed a number of unused files from repository. Using the system's
+	own wx frontend for IPython rather than a local copy.
+	[87fa0f41c4a3]
+
+2009-09-22  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* configure, configure.in, nsis/installer.nsi,
+	src/app/parentframe.cpp, src/app/unopt.cpp, src/stfswig/Makefile.am,
+	src/stfswig/Makefile.in, src/stfswig/console_widget.py,
+	src/stfswig/embedded_ipython.py, src/stfswig/stfswig_wrap.cxx,
+	src/stfswig/wx_frontend.py:
+	Added framework for IPython shell. Use "--enable-ipython" to test.
+	[1e903b5c06a9]
+
+2009-09-15  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/linux_install_guide/downloads.rst, doc/website/Home.html:
+	Updated web site and build instructions.
+	[28d063815487]
+
+2009-09-14  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.in, aclocal.m4, configure, ltmain.sh, m4/libtool.m4,
+	src/Makefile.in, src/app/Makefile.in,
+	src/core/filelib/axg/fileUtils.cpp, src/core/filelib/axglib.cpp,
+	src/stfswig/Makefile.in, src/stfswig/stf.py, src/stfswig/stfswig.i,
+	src/stfswig/stfswig_wrap.cxx, stfconf.h.in:
+	Cleaned up my file merging mess. Minor changes to swig interface
+	file.
+	[52fb10b31dd9]
+
+2009-09-14  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/stfswig/embedded_stf.py:
+	avoid redundant "import stf" in embedded_stf.py
+	[5e5212826dbc]
+
+	* Makefile.am, src/Makefile.am:
+	Added missing Makefile.am's
+	[efc1ee8d2c90]
+
+	* Doxyfile, Makefile.am, nsis/installer.nsi, src/Makefile.am,
+	src/app/parentframe.cpp, src/stfswig/Makefile.am,
+	src/stfswig/embedded_stf.py, src/stfswig/stfswig.cxx,
+	src/stfswig/stfswig.h, src/stfswig/stfswig.i:
+	importing from embedded_stf to load the Python shell
+	[7b9d419ea4a9]
+
+2009-09-09  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/core/filelib/axg/fileUtils.cpp.orig,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp.orig:
+	Removed merge files.
+	[8cfd41e578fc]
+
+	* Makefile.in, aclocal.m4, configure, ltmain.sh, m4/libtool.m4,
+	src/Makefile.in, src/app/Makefile.in, src/app/app.cpp,
+	src/app/unopt.cpp, src/core/filelib/axg/fileUtils.cpp,
+	src/core/filelib/axg/fileUtils.cpp.orig,
+	src/core/filelib/axg/fileUtils.h, src/core/filelib/axglib.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp.orig,
+	src/core/filelib/axon/AxAbfFio32/filedesc.cpp,
+	src/core/filelib/axon/Common/axodefn.h,
+	src/core/filelib/axon/Common/unix.h, src/core/filelib/cfs.c,
+	src/core/filelib/cfs.h, src/core/filelib/machine.h,
+	src/stfswig/Makefile.in, src/stfswig/stf.py,
+	src/stfswig/stfswig_wrap.cxx, stfconf.h.in:
+	Added "Check for updates" to child menu. Inactivated initial update
+	check on Mac.
+	[551dfa4e7614]
+
+2009-09-08  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/core/filelib/abflib.cpp, src/core/filelib/axg/fileUtils.cpp,
+	src/core/filelib/axglib.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp,
+	src/core/filelib/axon/AxAbfFio32/abfheadr.cpp,
+	src/core/filelib/axon/AxAbfFio32/abfutil.cpp,
+	src/core/filelib/axon/AxAbfFio32/csynch.cpp,
+	src/core/filelib/axon/AxAtfFio32/fileio.cpp,
+	src/core/filelib/axon/AxAtfFio32/fileio2.cpp,
+	src/core/filelib/axon/Common/FileIO.cpp,
+	src/core/filelib/axon/Common/FileReadCache.cpp,
+	src/core/filelib/axon2/ProtocolReaderABF2.cpp,
+	src/core/filelib/axon2/SimpleStringCache.cpp:
+	Changed __WXMAC__ to __APPLE__ in non-wx code.
+	[cde840b79beb]
+
+2009-09-06  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/stfswig/spells.py:
+	spells changed to satisfy python PEP8 code standards
+	[a2fdd299ef50]
+
+2009-08-25  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/stf_reference/stf.rst, src/stfswig/stfswig.cxx,
+	src/stfswig/stfswig.h, src/stfswig/stfswig.i:
+	stf.get_peak_mean() returns 0 upon failure
+	[c456f2d24924]
+
+2009-08-24  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* src/stfswig/stfswig.cxx, src/stfswig/stfswig.h,
+	src/stfswig/stfswig.i:
+	added stf.get_peak_mean() to python commands.
+	[c1e3330d57e0]
+
+2009-08-19  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* configure, doc/website/Home.html, update_version.sh:
+	Updated web site.
+	[112bc0871e33]
+
+	* stimfit_VS03/stimfit_VS03.suo:
+	Updated Windows version.
+	[775a420ed159]
+
+	* configure.in, doc/sphinx/conf.py, macosx/package.pmdoc/index.xml,
+	nsis/installer.nsi, stfconf.h, update_version.sh:
+	Added a script to bump version numbers across relevant files. Bumped
+	version number to 0.9.1.
+	[2aa76c7c8a44]
+
+	* src/app/app.cpp, src/app/app.h:
+	Corrected a bug in the command line parser. Thanks to Stefanie
+	Heigele for reporting.
+	[0e72c5a30f53]
+
+2009-08-13  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/website/Home.html, doc/website/Home_files/Home.css:
+	Added google groups subscription widget to homepage.
+	[2582f6607c20]
+
+2009-08-12  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/website/Home.html:
+	Updated web site with link to Google group.
+	[402b0ad25365]
+
+2009-08-08  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/manual/preface.rst:
+	swap figures in manual preface (show the new GUI first)
+	[538d664c3245]
+
+2009-08-05  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.in, aclocal.m4, configure, ltmain.sh, m4/libtool.m4,
+	src/Makefile.in, src/app/Makefile.in, src/app/graph.cpp,
+	src/app/graph.h, src/stfswig/Makefile.am, src/stfswig/Makefile.in,
+	stfconf.h.in:
+	Corrected an accidental pass-by-copy - should have been pass-by-
+	reference.
+	[b59ac2b1e154]
+
+2009-08-02  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/website/Home.html, doc/website/Home_files/Home.css,
+	doc/website/Home_files/Home.js, doc/website/Home_files/HomeIE.css,
+	doc/website/Home_files/HomeMoz.css,
+	doc/website/Home_files/shapeimage_1.jpg,
+	doc/website/Home_files/shapeimage_2.jpg,
+	doc/website/Home_files/shapeimage_3.png,
+	doc/website/Home_files/shapeimage_4.png,
+	doc/website/Media/transparent.gif,
+	doc/website/Scripts/Widgets/Navbar/navbar.js,
+	doc/website/Scripts/Widgets/SharedResources/None.gif,
+	doc/website/Scripts/Widgets/SharedResources/WidgetCommon.js,
+	doc/website/Scripts/iWebImage.js, doc/website/Scripts/iWebSite.js,
+	doc/website/feed.xml, doc/website/index.html:
+	Added web site.
+	[e74cc00404f8]
+
+	* src/core/filelib/axon/Common/unix.cpp,
+	src/core/filelib/axon/Common/unix.h,
+	stimfit_VS03/stimfit/stimfit.vcproj, stimfit_VS03/stimfit_VS03.suo:
+	Windows build fixes.
+	[7c16bd99ddaf]
+
+	* macosx/package.pmdoc/01stimfit-contents.xml,
+	macosx/package.pmdoc/01stimfit.xml, macosx/package.pmdoc/index.xml:
+	PackageMaker updated.
+	[1dabe9cdc2bc]
+
+	* src/app/parentframe.cpp:
+	Corrected an error in version comparison function.
+	[bf2ae59ecf8f]
+
+	* Makefile.in, aclocal.m4, configure, ltmain.sh, m4/libtool.m4,
+	src/Makefile.in, src/app/Makefile.in,
+	src/core/filelib/axon/Common/FileIO.cpp,
+	src/core/filelib/axon/Common/unix.h, src/stfswig/Makefile.in,
+	stfconf.h.in:
+	Mac build fixes.
+	[3ac4cf9c78be]
+
+2009-08-01  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* configure, configure.in, src/app/app.cpp, src/app/app.h,
+	src/app/parentframe.cpp, src/app/parentframe.h, src/app/unopt.cpp:
+	Check for updates during program start.
+	[2af579b77d1f]
+
+2009-07-30  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/manual/preface.rst, doc/sphinx/manual/python.rst:
+	Added some links to documentation.
+	[dde513696425]
+
+2009-07-29  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.am, Makefile.in, aclocal.m4, configure, configure.in,
+	ltmain.sh, m4/libtool.m4, src/Makefile.in, src/app/Makefile.in,
+	src/core/filelib/axon/AxAbfFio32/filedesc.cpp,
+	src/core/filelib/axon/AxAtfFio32/fileio.cpp,
+	src/core/filelib/axon/AxAtfFio32/fileio2.cpp,
+	src/core/filelib/axon/Common/FileIO.cpp,
+	src/core/filelib/axon/Common/unix.c,
+	src/core/filelib/axon/Common/unix.cpp,
+	src/core/filelib/axon/Common/unix.h, src/stfswig/Makefile.in:
+	Linux build fixes.
+	[d498798a48cf]
+
+	* include/fftw3.h, libs/libfftw3-3.lib, nsis/installer.nsi,
+	src/core/filelib/abflib.cpp,
+	src/core/filelib/axon/AxAbfFio32/Oldheadr.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.h,
+	src/core/filelib/axon/AxAbfFio32/abfheadr.cpp,
+	src/core/filelib/axon/AxAbfFio32/abfheadr.h,
+	src/core/filelib/axon/AxAbfFio32/abfutil.cpp,
+	src/core/filelib/axon/AxAbfFio32/csynch.cpp,
+	src/core/filelib/axon/AxAbfFio32/filedesc.cpp,
+	src/core/filelib/axon/AxAbfFio32/filedesc.hpp,
+	src/core/filelib/axon/AxAtfFio32/fileio2.cpp,
+	src/core/filelib/axon/Common/FileIO.cpp,
+	src/core/filelib/axon/Common/FileIO.hpp,
+	src/core/filelib/axon/Common/axodebug.h,
+	src/core/filelib/axon2/ProtocolReaderABF2.cpp,
+	src/core/filelib/axon2/ProtocolReaderABF2.hpp,
+	src/core/filelib/axon2/SimpleStringCache.cpp,
+	src/core/filelib/hdf5lib.cpp, src/core/levmar/liblevmar.a,
+	stimfit_VS03/libfftw3-3.dll, stimfit_VS03/stfswig/stfswig.vcproj,
+	stimfit_VS03/stimfit/stimfit.vcproj,
+	stimfit_VS03/stimfit/stimfit.vcproj.CHRISTOPH.cs.user,
+	stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj.CHRISTOPH.cs.user:
+	Corrected some more potential buffer overflows in abf library.
+	[caf90731a3d0]
+
+2009-07-29  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/howto/amplitudes.rst, doc/sphinx/howto/resistances.rst,
+	doc/sphinx/manual/images/stimfit_dos.png.png,
+	doc/sphinx/manual/images/test.png, doc/sphinx/manual/preface.rst:
+	figure added to documentation
+	[dcc5beec83eb]
+
+	* doc/sphinx/howto/apcounting.rst:
+	Corrected documentation for count_events() in spells.py
+	[e5387ab884df]
+
+2009-07-28  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/core/filelib/abflib.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp,
+	src/core/filelib/axon/AxAbfFio32/abfheadr.h:
+	Fixed potential buffer overlow in abf library. Thanks to Liyi Li for
+	reporting.
+	[fb4118cb9aad]
+
+2009-07-28  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* .hgignore, doc/sphinx/howto/apcounting.rst:
+	Edited documentation
+	[44173f4097ed]
+
+	* doc/sphinx/howto/.resistances.rst.swp,
+	doc/sphinx/howto/apcounting.rst, src/stfswig/spells.py:
+	Prevention of 'Index out of bounds' when points are above/bellow
+	the "crossing point" in spells.py
+	[e12ba52d3098]
+
+2009-07-28  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* nsis/installer.nsi, src/app/app.cpp, src/app/childframe.cpp,
+	src/stfswig/stf.py, src/stfswig/stfswig_wrap.cxx, stfconf.h,
+	stimfit_VS03/stfswig/stfswig.vcproj.CHRISTOPH.cs.user,
+	stimfit_VS03/stimfit/stimfit.vcproj.CHRISTOPH.cs.user,
+	stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj.CHRISTOPH.cs.user:
+	Bump version to 0.9.0, adapt installer to wxWidgets 2.9.0
+	[d4d317a79aed]
+
+2009-07-27  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/core/filelib/abflib.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.h:
+	Removed some potential buffer overflows in axon library.
+	[108516a8d011]
+
+2009-07-09  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.in, aclocal.m4, configure, configure.in, ltmain.sh,
+	m4/libtool.m4, src/Makefile.in, src/app/Makefile.in,
+	src/core/Makefile.in, src/core/levmar/Makefile.in,
+	src/stfswig/Makefile.in:
+	Force atlas/lapack use on darwin.
+	[577bfb7da332]
+
+2009-07-07  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* .hgignore:
+	added swp files to .hgignore
+	[831d70cfd7cb]
+
+	* doc/sphinx/howto/.resistances.rst.swp,
+	doc/sphinx/howto/amplitudes.rst, doc/sphinx/howto/apcounting.rst,
+	doc/sphinx/howto/cuttingtraces.rst, doc/sphinx/howto/index.rst,
+	doc/sphinx/howto/resistances.rst, doc/sphinx/howto/runningmean.rst,
+	doc/sphinx/linux_install_guide/downloads.rst,
+	doc/sphinx/linux_install_guide/requirement.rst,
+	doc/sphinx/linux_install_guide/updates.rst,
+	doc/sphinx/manual/event_extraction.rst,
+	doc/sphinx/manual/getting_started.rst,
+	doc/sphinx/manual/latency_measurements.rst,
+	doc/sphinx/manual/preface.rst, doc/sphinx/manual/python.rst:
+	Stimfit now links to homepage in documentation
+	[106f45873f8c]
+
+2009-07-07  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/manual/event_extraction.rst, src/stfswig/Makefile.in:
+	Corrected totally messed up equation.
+	[cfd96bfb54f9]
+
+2009-07-06  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* nsis/installer.nsi, src/stfswig/Makefile.am:
+	spells.py added to windows installer
+	[37bb9e2493f6]
+
+	* doc/sphinx/howto/index.rst:
+	Edited documentation
+	[f9459d2c9c5d]
+
+	* spells.py added, docu changed accordingly
+	[7ed7d1455826]
+
+	* doc/sphinx/howto/amplitudes.rst, doc/sphinx/howto/apcounting.rst,
+	doc/sphinx/howto/cuttingtraces.rst, doc/sphinx/howto/index.rst,
+	doc/sphinx/howto/resistances.rst, doc/sphinx/howto/runningmean.rst,
+	src/stfswig/spells.py:
+	spells.py added and documentation changed accordingly
+	[35f86c8f160d]
+
+2009-07-06  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/links/index.rst:
+	Typo correction of my last commit.
+	[efb935b7d9a7]
+
+2009-07-06  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* Makefile, libtool, src/Makefile, src/app/Makefile,
+	src/stfswig/Makefile, stfconf.h, stimfit.plist:
+	removed files from my compilation (sorry!)
+	[0ef16be9e573]
+
+	* Makefile, doc/sphinx/.templates/index.html, libtool, src/Makefile,
+	src/app/Makefile, src/stfswig/Makefile, stfconf.h, stimfit.plist:
+	broken link corrected
+	[3621510ffae4]
+
+2009-07-05  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/.templates/index.html, doc/sphinx/contents.rst,
+	doc/sphinx/links/index.rst, doc/sphinx/references/index.rst,
+	src/stfswig/hdf5tools.py:
+	Added links and references to documentation.
+	[023f7d262067]
+
+2009-06-30  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/howto/apcounting.rst:
+	corrected some typos
+	[17a3ac8ec4ff]
+
+	* doc/sphinx/1:
+	dummy file deleted
+	[73616b17b655]
+
+	* doc/sphinx/1, doc/sphinx/howto/apcounting.rst:
+	Edited documentation
+	[3598fe48130a]
+
+2009-06-28  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/howto/apcounting.rst:
+	Edited documentation.
+	[851b0e7e1f95]
+
+2009-06-26  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/howto/amplitudes.rst, doc/sphinx/howto/apcounting.rst,
+	doc/sphinx/howto/cuttingtraces.rst, doc/sphinx/howto/index.rst,
+	doc/sphinx/howto/resistances.rst, doc/sphinx/howto/runningmean.rst,
+	doc/sphinx/logo/logo4.png, doc/sphinx/logo/stf_logo.png,
+	doc/sphinx/logo/stf_logo3.png, doc/sphinx/logo/stflogo.png,
+	doc/sphinx/logo/stflogo.svg, doc/sphinx/logo/stflogo2.png,
+	doc/sphinx/logo/stflogo2.svg, doc/sphinx/logo/stflogo_temp.svg,
+	doc/sphinx/manual/bibliography.rst,
+	doc/sphinx/manual/event_extraction.rst, doc/sphinx/manual/index.rst,
+	doc/sphinx/manual/latency_measurements.rst,
+	doc/sphinx/manual/preface.rst, doc/sphinx/manual/python.rst:
+	event detection added to book of spells and bibliography to manual
+	[1e602ba5f671]
+
+2009-06-16  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/app/graph.cpp:
+	Minor bug fix in line drawing code.
+	[43cae4cb64d1]
+
+	* src/app/childframe.cpp, src/app/doc.cpp:
+	Fixed a batch analysis bug. Thanks to Imre Vida for reporting.
+	[2f90e5a773e9]
+
+2009-06-11  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/app/app.h, src/app/childframe.cpp, src/app/childframe.h,
+	src/app/doc.cpp, src/app/graph.cpp, src/app/graph.h,
+	src/app/parentframe.cpp:
+	-Checkbox to hide second channel
+	-Break scale bars at 5*10^n
+	-Minor code updates
+	[d5a15f068398]
+
+2009-06-10  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* aclocal.m4, configure, configure.in, src/app/graph.cpp,
+	src/app/graph.h:
+	Linux printing tweaks.
+	[13dd3859e470]
+
+	* doc/sphinx/howto/cuttingtraces.rst:
+	More documentation editing.
+	[414730677d74]
+
+	* doc/sphinx/howto/cuttingtraces.rst:
+	More documentation editing
+	[730aa851d1af]
+
+	* doc/sphinx/howto/cuttingtraces.rst:
+	Edited documentation.
+	[482408aa5b4a]
+
+	* nsis/installer.nsi, src/app/parentframe.cpp, src/app/unopt.cpp,
+	stfconf.h, stimfit_VS03/stimfit_VS03.sln,
+	stimfit_VS03/stimfit_VS03.suo:
+	rc5 Windows installer fixes
+	[175ec111b45a]
+
+2009-06-09  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/howto/cuttingtraces.rst:
+	minor changes to documentation in /howto/cuttingtraces.rst
+	[655b500eb364]
+
+	* doc/sphinx/howto/cuttingtraces.rst:
+	changed math.ceil() to round() in documentation
+	/howto/cuttingtraces.rst
+	[724c9507e0b5]
+
+2009-06-09  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* aclocal.m4, configure, doc/sphinx/howto/cuttingtraces.rst,
+	macosx/package.pmdoc/01stimfit-contents.xml,
+	macosx/package.pmdoc/01stimfit.xml, macosx/package.pmdoc/index.xml:
+	Edited documentation.
+	[0e12385b9c67]
+
+2009-06-09  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/howto/cuttingtraces.rst, doc/sphinx/howto/index.rst,
+	doc/sphinx/manual/python.rst:
+	Syntax highlight added to Manual (chapter 2) and cutting traces
+	added to the book of SCHpells
+	[1b0f12f2d848]
+
+2009-06-08  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .hgignore, stimfit_VS03/stimfit_VS03.ncb:
+	Removed large VS browse information file from repository.
+	[89b4f3cbde99]
+
+	* .hgignore, nsis/installer.nsi, src/app/app.cpp, src/app/app.h,
+	src/app/childframe.cpp, src/app/doc.cpp, src/app/dummy.cpp,
+	src/app/graph.cpp, src/app/view.cpp,
+	src/core/filelib/axon2/ProtocolReaderABF2.cpp, stfconf.h,
+	stimfit_VS03/stfswig/stfswig.vcproj,
+	stimfit_VS03/stfswig/stfswig.vcproj.cs-PC.cs.user,
+	stimfit_VS03/stimfit/stimfit.vcproj,
+	stimfit_VS03/stimfit/stimfit.vcproj.cs-PC.cs.user,
+	stimfit_VS03/stimfit_VS03.ncb, stimfit_VS03/stimfit_VS03.sln,
+	stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj.cs-PC.cs.user:
+	Various Windows bug and build fixes.
+	[ee8e10a5bb9b]
+
+2009-06-05  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* 0.9.0-rc3 for Windows
+	[1dc3c718d118]
+
+	* nsis/installer.nsi, stfconf.h, stimfit_VS03/stimfit_VS03.ncb,
+	stimfit_VS03/stimfit_VS03.suo:
+	0.9.0-rc3 for Windows
+	[b7d635d5b344]
+
+	* configure, configure.in, src/app/app.cpp, src/app/app.h,
+	src/app/copygrid.cpp, src/app/copygrid.h,
+	src/app/dlgs/cursorsdlg.cpp, src/app/dlgs/cursorsdlg.h,
+	src/app/dlgs/smalldlgs.cpp, src/app/dlgs/smalldlgs.h,
+	src/app/doc.cpp, src/app/graph.cpp, src/core/recording.cpp,
+	src/core/recording.h:
+	Threshold can now be used as a reference for AP kinetics (rather
+	than baseline). Some modifications to batch analysis according to
+	Imre Vida's suggestions.
+	[5fc5bfbd3ac3]
+
+2009-06-04  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Windows-specific bug fixes. Thanks to Liyi Li for reporting.
+	[4d8fe5325e93]
+
+	* nsis/installer.nsi, src/app/graph.cpp, stfconf.h,
+	stimfit_VS03/stimfit/stimfit.vcproj, stimfit_VS03/stimfit_VS03.suo:
+	Windows-specific bug fixes. Thanks to Liyi Li for reporting.
+	[1239527ad71c]
+
+	* ChangeLog, configure, src/app/app.cpp, src/app/childframe.cpp,
+	src/app/dlgs/cursorsdlg.cpp, src/app/doc.cpp, src/app/graph.cpp,
+	src/core/core.cpp, src/core/measlib.h, src/core/recording.cpp,
+	src/core/recording.h, src/core/section.cpp:
+	Bug fixes regarding integral drawing and batch analysis. Thanks to
+	Imre Vida and Liyi Li for reporting. Implemented slope threshold
+	crossing as a new value.
+	[9df96ab5f3c2]
+
+2009-06-04  cs  <cs@cs-PC.cruciform.wibr.ucl.ac.uk>
+
+	* configure.in, libs/hdf5.lib, libs/hdf5_cpp.lib, libs/hdf5_hl.lib,
+	libs/stimfit.lib, libs/stimfitd.lib, libs/szlib.lib,
+	libs/wxbase29ud.lib, libs/wxbase29ud_net.lib,
+	libs/wxbase29ud_xml.lib, libs/wxexpatd.lib, libs/wxjpegd.lib,
+	libs/wxmsw29ud_adv.lib, libs/wxmsw29ud_aui.lib,
+	libs/wxmsw29ud_core.lib, libs/wxmsw29ud_gl.lib,
+	libs/wxmsw29ud_html.lib, libs/wxmsw29ud_media.lib,
+	libs/wxmsw29ud_richtext.lib, libs/wxmsw29ud_stc.lib,
+	libs/wxmsw29ud_xrc.lib, libs/wxpngd.lib, libs/wxregexud.lib,
+	libs/wxscintillad.lib, libs/wxtiffd.lib, libs/wxzlibd.lib,
+	nsis/installer.nsi, src/app/app.cpp, src/app/parentframe.cpp,
+	src/core/filelib/abflib.cpp,
+	src/core/filelib/axon/Common/FileIO.cpp,
+	src/core/filelib/axon/Common/FileIO.hpp, src/stfswig/stf.py,
+	src/stfswig/stfswig_wrap.cxx, stfconf.h,
+	stimfit_VS03/UpgradeLog.XML,
+	stimfit_VS03/_UpgradeReport_Files/UpgradeReport.css,
+	stimfit_VS03/_UpgradeReport_Files/UpgradeReport.xslt,
+	stimfit_VS03/_UpgradeReport_Files/UpgradeReport_Minus.gif,
+	stimfit_VS03/_UpgradeReport_Files/UpgradeReport_Plus.gif,
+	stimfit_VS03/stfswig/stfswig.vcproj,
+	stimfit_VS03/stfswig/stfswig.vcproj.cs-PC.cs.user,
+	stimfit_VS03/stimfit/stimfit.vcproj,
+	stimfit_VS03/stimfit/stimfit.vcproj.cs-PC.cs.user,
+	stimfit_VS03/stimfit_VS03.ncb, stimfit_VS03/stimfit_VS03.sln,
+	stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj.cs-PC.cs.user:
+	Windows version build fixes.
+	[433f5ca7a6bc]
+
+2009-06-01  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/.templates/layout.html,
+	doc/sphinx/linux_install_guide/index.rst:
+	Documentation update.
+	[cb2bd2f07844]
+
+	* Makefile.am, Makefile.in, aclocal.m4, configure, ltmain.sh,
+	m4/libtool.m4:
+	Added missing file to dist.
+	[c9677381d9b3]
+
+	* src/app/.#app.cpp:
+	Removed stub file.
+	[7919e44bf2a6]
+
+	* macosx/scripts/conf_mac_debug.sh,
+	macosx/scripts/conf_mac_release.sh:
+	Corrected typo in mac configure script.
+	[e2613fe93fb3]
+
+	* Makefile.am, Makefile.in:
+	Added os x build scripts to dist.
+	[386e3e4ccb8b]
+
+	* macosx/scripts/change_deps_release.sh,
+	macosx/scripts/conf_mac_debug.sh,
+	macosx/scripts/conf_mac_release.sh:
+	Edited OS X build scripts.
+	[da468d92542f]
+
+	* configure, configure.in, src/app/.#app.cpp, src/app/graph.cpp,
+	src/app/parentframe.cpp, src/app/unopt.cpp, src/stfswig/numpy.i,
+	src/stfswig/stf.py, src/stfswig/stfswig_wrap.cxx:
+	Force importing packaged numpy on Mac OS X.
+	[aadf2c3ba889]
+
+2009-05-28  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/howto/amplitudes.rst:
+	code commented in amplitudes.
+	[e5964af4b409]
+
+2009-05-28  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* ]:
+	Removed file stub.
+	[ae9fdb4c3282]
+
+2009-05-27  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/howto/amplitudes.rst:
+	Edited sphinx documentation.
+	[94f7d252649b]
+
+2009-05-27  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/howto/amplitudes.rst:
+	syntax error stf.get_selected_indices()
+	[6134bcd294f2]
+
+	* doc/sphinx/howto/amplitudes.rst:
+	Minor corrections in Calculations on selected traces
+	[e35b1014fcc3]
+
+	* doc/sphinx/.templates/index.html, doc/sphinx/.templates/layout.html,
+	doc/sphinx/howto/amplitudes.rst, doc/sphinx/howto/index.rst,
+	doc/sphinx/howto/resistances.rst, doc/sphinx/howto/runningmean.rst,
+	doc/sphinx/manual/getting_started.rst,
+	doc/sphinx/manual/images/fit2.png:
+	Added calculations on selected traces to the book of spells
+	[5943ccab1eca]
+
+2009-05-25  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/.templates/index.html, doc/sphinx/contents.rst,
+	doc/sphinx/howto/index.rst, doc/sphinx/howto/resistances.rst,
+	doc/sphinx/howto/runningmean.rst,
+	doc/sphinx/linux_install_guide/building.rst,
+	doc/sphinx/linux_install_guide/downloads.rst,
+	doc/sphinx/linux_install_guide/index.rst,
+	doc/sphinx/linux_install_guide/requirement.rst,
+	doc/sphinx/linux_install_guide/updates.rst,
+	doc/sphinx/manual/event_extraction.rst,
+	doc/sphinx/manual/getting_started.rst, doc/sphinx/manual/index.rst,
+	doc/sphinx/manual/latency_measurements.rst,
+	doc/sphinx/manual/preface.rst, doc/sphinx/manual/python.rst,
+	doc/sphinx/stf_reference/stf.rst, src/stfswig/stf.py,
+	src/stfswig/stfswig.cxx, src/stfswig/stfswig.h,
+	src/stfswig/stfswig.i, src/stfswig/stfswig_wrap.cxx,
+	update_website.sh:
+	Made all new_window* Python functions consistently return a boolean.
+	Corrected some errors in documentation.
+	[a575de3a831a]
+
+	* doc/sphinx/.templates/index.html, update_website.sh:
+	Corrected link in sphinx documentation.
+	[db84412a9cd0]
+
+	* src/core/filelib/abflib.cpp:
+	Removed debug message.
+	[5c4c860dec49]
+
+2009-05-25  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/.templates/layout.html, doc/sphinx/stf_logo.png:
+	Homepage link redirects to stimfit.org and not to home documentation
+	[61d2a5ca02b5]
+
+2009-05-25  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* ], doc/sphinx/.templates/index.html,
+	doc/sphinx/.templates/layout.html, doc/sphinx/conf.py:
+	Removed portal-related stuff (logo, download links) from sphinx
+	documentation for the time being.
+	[05ff74143ea0]
+
+2009-05-24  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/app/app.cpp, src/app/parentframe.cpp:
+	Make help menu item point to online documentation.
+	[166f930170f0]
+
+2009-05-23  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* aclocal.m4, configure, ltmain.sh, m4/libtool.m4,
+	src/app/dlgs/smalldlgs.cpp, src/app/parentframe.cpp,
+	src/core/filelib/abflib.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp:
+	Reverted toolbar bitmap changes because they look like sh.. on Mac.
+	Fixed Mac build errors.
+	[5d409198d5c8]
+
+	* src/core/stimdefs.h:
+	Minimal changes to stimdefs.h
+	[3ddb52adbac7]
+
+	* src/app/parentframe.cpp:
+	Use some more stock items for toolbar buttons.
+	[418b2e452d69]
+
+	* src/app/app.cpp, src/app/parentframe.cpp, src/app/parentframe.h,
+	src/core/filelib/abflib.cpp:
+	Started Help documentation framework. Removed wrongly positioned
+	macro guard.
+	[d235062e5577]
+
+	* src/core/.#stimdefs.h:
+	Removed weird file.
+	[fdbeaa3bc6a2]
+
+	* commit.sh, src/app/dlgs/smalldlgs.cpp, src/app/dlgs/smalldlgs.h,
+	src/app/doc.cpp, src/core/.#stimdefs.h:
+	Corrected some bugs in batch analysis functions. Thanks to Imre Vida
+	for reporting.
+	[dada6fa1c822]
+
+	* src/app/app.cpp, src/app/dlgs/cursorsdlg.cpp,
+	src/app/dlgs/cursorsdlg.h, src/app/graph.cpp, src/core/core.cpp,
+	src/core/filelib/atflib.cpp, src/core/filelib/hdf5lib.cpp,
+	src/core/filelib/igorlib.cpp, src/core/measlib.h,
+	src/core/recording.cpp, src/core/recording.h, src/core/stimdefs.h,
+	src/stfswig/stf.py, src/stfswig/stfswig.cxx, src/stfswig/stfswig.h,
+	src/stfswig/stfswig.i, src/stfswig/stfswig_wrap.cxx:
+	Set baseline to user-defined base value. X units can now be defined
+	by the user (not hard-coded to "ms" any more).
+	[82bc6b71bf6e]
+
+2009-05-22  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.am, Makefile.in, src/core/filelib/abflib.cpp,
+	src/core/filelib/abflib.h,
+	src/core/filelib/axon/AxAbfFio32/Oldheadr.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.h,
+	src/core/filelib/axon/AxAbfFio32/abfheadr.cpp,
+	src/core/filelib/axon/AxAbfFio32/csynch.hpp,
+	src/core/filelib/axon/AxAbfFio32/filedesc.hpp,
+	src/core/filelib/axon/Common/FileIO.cpp,
+	src/core/filelib/axon/Common/FileIO.hpp,
+	src/core/filelib/axon/Common/unix.h,
+	src/core/filelib/axon2/ProtocolReaderABF2.cpp,
+	src/core/filelib/axon2/ProtocolReaderABF2.hpp,
+	src/core/filelib/axon2/ProtocolStructs.h,
+	src/core/filelib/axon2/SimpleStringCache.cpp,
+	src/core/filelib/axon2/SimpleStringCache.hpp,
+	src/core/filelib/axon2/abf2headr.cpp,
+	src/core/filelib/axon2/abf2headr.h, src/core/filelib/axon2/abffio.h:
+	Added support for abf 2 / pClamp 10 files.
+	[eec2e7398ccb]
+
+2009-05-22  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/.templates/index.html:
+	download links updated
+	[e477ebaab81a]
+
+2009-05-21  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/conf.py, doc/sphinx/contents.rst,
+	doc/sphinx/howto/index.rst, doc/sphinx/howto/resistances.rst,
+	doc/sphinx/howto/runningmean.rst,
+	doc/sphinx/linux_install_guide/building.rst,
+	doc/sphinx/linux_install_guide/downloads.rst,
+	doc/sphinx/linux_install_guide/index.rst,
+	doc/sphinx/linux_install_guide/requirement.rst,
+	doc/sphinx/linux_install_guide/updates.rst,
+	doc/sphinx/manual/event_extraction.rst,
+	doc/sphinx/manual/getting_started.rst, doc/sphinx/manual/index.rst,
+	doc/sphinx/manual/latency_measurements.rst,
+	doc/sphinx/manual/preface.rst, doc/sphinx/manual/python.rst,
+	doc/sphinx/stf_reference/stf.rst:
+	Added authors to documentation.
+	[9224239b56a7]
+
+	* doc/sphinx/howto/runningmean.rst, googlecode_upload.py:
+	Edited sphinx documentation.
+	[b35167dd9f05]
+
+	* doc/sphinx/howto/runningmean.rst:
+	Edited sphinx documentation.
+	[7dfa76d404a0]
+
+	* doc/sphinx/howto/runningmean.rst:
+	Edited sphinx documentation.
+	[e8deb38ffb06]
+
+	* doc/sphinx/howto/resistances.rst:
+	Corrected some typos in sphinx documentation.
+	[f48584036689]
+
+	* doc/sphinx/howto/resistances.rst:
+	Corrected some typos in sphinx documentation.
+	[665ff47363d6]
+
+	* doc/sphinx/howto/index.rst:
+	Typo corrections in documentation.
+	[1bf487ebc38f]
+
+2009-05-21  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/howto/resistances.rst:
+	resistances howto typos corrected
+	[28aeb7eae3cc]
+
+	* doc/sphinx/.templates/index.html, doc/sphinx/.templates/layout.html,
+	doc/sphinx/conf.py, doc/sphinx/contents.rst,
+	doc/sphinx/howto/index.rst, doc/sphinx/howto/resistances.rst,
+	doc/sphinx/howto/runningmean.rst, doc/sphinx/logo/logo4.png,
+	doc/sphinx/logo/stf_logo.png, doc/sphinx/logo/stf_logo3.png,
+	doc/sphinx/logo/stflogo.png, doc/sphinx/logo/stflogo.svg,
+	doc/sphinx/logo/stflogo2.png, doc/sphinx/logo/stflogo2.svg,
+	doc/sphinx/logo/stflogo_temp.svg, doc/sphinx/manual/python.rst,
+	doc/sphinx/stf_logo.png:
+	howto python added to docu, stf logo
+	[9e2d4d4eea2d]
+
+2009-05-21  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* commit.sh, doc/sphinx/conf.py:
+	Added pull to commit script, added Jose to documentation author
+	list.
+	[e03cccf3d1e3]
+
+2009-05-20  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/linux_install_guide/building.rst,
+	doc/sphinx/linux_install_guide/downloads.rst,
+	doc/sphinx/linux_install_guide/index.rst,
+	doc/sphinx/linux_install_guide/requirement.rst:
+	typo corrections in Linux installation manual
+	[9f48fa09ae91]
+
+	* doc/sphinx/manual/event_extraction.rst:
+	minor style corrections in event_extraction
+	[b69d68a279f7]
+
+2009-05-19  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* configure, configure.in:
+	Smarter checking for lapack, especially if atlas is installed.
+	[745a8cd09597]
+
+2009-05-18  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* doc/sphinx/manual/latency_measurements.rst:
+	Minor documentation typo corrections.
+	[7aeec8c14d91]
+
+2009-05-18  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/.templates/index.html, doc/sphinx/contents.rst,
+	doc/sphinx/manual/event_extraction.rst,
+	doc/sphinx/stf_reference/stf.rst:
+	small corrections to the stf module documentation
+	[db257728e948]
+
+2009-05-17  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Doxyfile, src/app/app.h, src/app/childframe.h,
+	src/app/dlgs/cursorsdlg.h, src/app/dlgs/fitseldlg.h, src/app/doc.h,
+	src/app/parentframe.h, src/app/zoom.h, src/core/core.h,
+	src/core/filelib/asciilib.h, src/core/fitlib.h,
+	src/core/recording.h, src/core/section.h, src/core/stimdefs.h:
+	Updated doxygen documentation
+	[b80c3c291495]
+
+2009-05-17  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/stf_reference/stf.rst, doc/sphinx/stf_reference/stf.txt:
+	Release version and date added to the stf module
+	[44820ef94aef]
+
+	* doc/sphinx/contents.rst,
+	doc/sphinx/linux_install_guide/downloads.rst,
+	doc/sphinx/linux_install_guide/index.rst,
+	doc/sphinx/linux_install_guide/requirement.rst,
+	doc/sphinx/manual/event_extraction.rst,
+	doc/sphinx/manual/getting_started.rst, doc/sphinx/manual/index.rst,
+	doc/sphinx/manual/latency_measurements.rst,
+	doc/sphinx/manual/preface.rst, doc/sphinx/manual/python.rst,
+	doc/sphinx/stf_reference/stf.rst, doc/sphinx/stf_reference/stf.txt:
+	Stf reference module added and cross link references to it in the
+	manual
+	[653bd4410859]
+
+2009-05-16  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/linux_install_guide/downloads.rst:
+	syntax of tar command in
+	.doc/sphinx/linux_install_guide/downloads.rst updated
+	[82781e1e4646]
+
+	* doc/sphinx/.templates/.layout.html.swp,
+	doc/sphinx/.templates/index.html, doc/sphinx/.templates/layout.html,
+	doc/sphinx/conf.py, doc/sphinx/linux_install_guide/.updates.rst.swp:
+	small changes in the html template
+	[8ab0e284c56b]
+
+	* doc/sphinx/.templates/.layout.html.swp,
+	doc/sphinx/.templates/layout.html,
+	doc/sphinx/.templates/layout_old.html, doc/sphinx/TODO,
+	doc/sphinx/conf.py, doc/sphinx/contents.rst,
+	doc/sphinx/linux_install_guide/index.rst,
+	doc/sphinx/linux_install_guide/requirement.rst:
+	html layout modified: TOC, search, source and navitation buttons
+	added
+	[d5fd5703a343]
+
+	* commit_jose.sh, doc/sphinx/.templates/indexold.html,
+	doc/sphinx/.templates/indexsage.html,
+	doc/sphinx/linux_install_guide/.updates.rst.swp,
+	doc/sphinx/linux_install_guide/building.rst,
+	doc/sphinx/linux_install_guide/downloads.rst,
+	doc/sphinx/linux_install_guide/index.rst,
+	doc/sphinx/linux_install_guide/requirement.rst,
+	doc/sphinx/linux_install_guide/updates.rst,
+	doc/sphinx/manual/python.rst, update.sh:
+	linux installation guide added to documentation and small
+	corrections
+	[3563499da997]
+
+2009-05-15  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .hgignore, Doxyfile:
+	Updated Doxyfile.
+	[5dae2ec2def8]
+
+	* doc/sphinx/manual/event_extraction.rst,
+	doc/sphinx/manual/latency_measurements.rst,
+	doc/sphinx/manual/python.rst:
+	Corrected some typos in documentation
+	[63169e9de390]
+
+2009-05-15  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* doc/sphinx/.templates/index.html,
+	doc/sphinx/.templates/indexold.html,
+	doc/sphinx/.templates/indexsage.html,
+	doc/sphinx/.templates/layout.html:
+	Minor changes to figures, ./doc/sphinx/.templates folder added
+	necessary to build the html version
+	[d0fdf2f49c43]
+
+2009-05-14  Jose Guzman  <sjm.guzman@googlemail.com>
+
+	* .hgignore, doc/sphinx/Makefile, doc/sphinx/TODO, doc/sphinx/conf.py,
+	doc/sphinx/contents.rst, doc/sphinx/manual/event_extraction.rst,
+	doc/sphinx/manual/getting_started.rst,
+	doc/sphinx/manual/images/average.png,
+	doc/sphinx/manual/images/bait_template.png,
+	doc/sphinx/manual/images/baseline.png,
+	doc/sphinx/manual/images/batchanalysis.png,
+	doc/sphinx/manual/images/bla.png,
+	doc/sphinx/manual/images/channelselection.png,
+	doc/sphinx/manual/images/channelselectiondrop.png,
+	doc/sphinx/manual/images/cursorsettings.png,
+	doc/sphinx/manual/images/eventbutton.png,
+	doc/sphinx/manual/images/eventdetectionsettings.png,
+	doc/sphinx/manual/images/events.png,
+	doc/sphinx/manual/images/falsenegative.png,
+	doc/sphinx/manual/images/finaltemplate.png,
+	doc/sphinx/manual/images/fit.png,
+	doc/sphinx/manual/images/fitselection.png,
+	doc/sphinx/manual/images/fittowindow.png,
+	doc/sphinx/manual/images/foot.png,
+	doc/sphinx/manual/images/latency.png,
+	doc/sphinx/manual/images/latencytraces.png,
+	doc/sphinx/manual/images/overview.png,
+	doc/sphinx/manual/images/peak.png,
+	doc/sphinx/manual/images/resultstable.png,
+	doc/sphinx/manual/images/selectfinaltemplate.png,
+	doc/sphinx/manual/images/selection.png,
+	doc/sphinx/manual/images/stimfit_dos.png,
+	doc/sphinx/manual/images/traceselection.png,
+	doc/sphinx/manual/images/viewscalebars.png,
+	doc/sphinx/manual/images/zoom.png,
+	doc/sphinx/manual/images/zoompopup.png, doc/sphinx/manual/index.rst,
+	doc/sphinx/manual/latency_measurements.rst,
+	doc/sphinx/manual/preface.rst, doc/sphinx/manual/python.rst,
+	doc/sphinx/source/conf.py, doc/sphinx/source/event_extraction.rst,
+	doc/sphinx/source/getting_started.rst,
+	doc/sphinx/source/images/average.png,
+	doc/sphinx/source/images/bait_template.png,
+	doc/sphinx/source/images/baseline.png,
+	doc/sphinx/source/images/batchanalysis.png,
+	doc/sphinx/source/images/bla.png,
+	doc/sphinx/source/images/channelselection.png,
+	doc/sphinx/source/images/channelselectiondrop.png,
+	doc/sphinx/source/images/cursorsettings.png,
+	doc/sphinx/source/images/eventbutton.png,
+	doc/sphinx/source/images/eventdetectionsettings.png,
+	doc/sphinx/source/images/events.png,
+	doc/sphinx/source/images/falsenegative.png,
+	doc/sphinx/source/images/finaltemplate.png,
+	doc/sphinx/source/images/fit.png,
+	doc/sphinx/source/images/fitselection.png,
+	doc/sphinx/source/images/fittowindow.png,
+	doc/sphinx/source/images/foot.png,
+	doc/sphinx/source/images/latency.png,
+	doc/sphinx/source/images/latencytraces.png,
+	doc/sphinx/source/images/overview.png,
+	doc/sphinx/source/images/peak.png,
+	doc/sphinx/source/images/resultstable.png,
+	doc/sphinx/source/images/selectfinaltemplate.png,
+	doc/sphinx/source/images/selection.png,
+	doc/sphinx/source/images/stimfit_dos.png,
+	doc/sphinx/source/images/traceselection.png,
+	doc/sphinx/source/images/viewscalebars.png,
+	doc/sphinx/source/images/zoom.png,
+	doc/sphinx/source/images/zoompopup.png, doc/sphinx/source/index.rst,
+	doc/sphinx/source/latency_measurements.rst,
+	doc/sphinx/source/preface.rst, doc/sphinx/source/python.rst:
+	First version of the html documentation tested with sphinx 0.6
+	[8a5a03e7b9fd]
+
+2009-05-05  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* nsis/stimfit-0.8.14-full.exe, nsis/stimfit-0.8.14-update.exe:
+	Removed Windows installers from repository.
+	[34fea718057d]
+
+	* commit_jose.sh:
+	Added commit_jose.sh.
+	[0c6d4078b75d]
+
+2009-05-04  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .DS_Store, commit.sh, commit_mac.sh, update.sh, update_mac.sh:
+	Edited commit/update scripts.
+	[7a64c328f888]
+
+	* commit_mac.sh:
+	Edited commit script.
+	[56b93788b662]
+
+	* commit_mac.sh, update_mac.sh:
+	Edited update/commit scripts.
+	[c6d3245a8b55]
+
+	* commit_mac.sh:
+	Updated commit script.
+	[d187ed4c5caa]
+
+	* commit_mac.sh:
+	Updated commit script.
+	[9b960ba2d244]
+
+	* commit_mac.sh:
+	Updated commit script.
+	[e907ee5f3da4]
+
+	* commit_mac.sh:
+	Updated commit script.
+	[10bf6070726c]
+
+	* commit_mac.sh, update_mac.sh:
+	Changed hg scripts to point to google code.
+	[af1c4475f71d]
+
+2009-04-28  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* macosx/app.r:
+	Added app.r to repository
+	[19b2b3b7b115]
+
+	* stimfit.plist.in:
+	Added stimfit.plist.in
+	[54f9a5aa4101]
+
+2009-04-27  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/app/dlgs/smalldlgs.cpp:
+	*corrected a bug in the amplitude slider of the filter settings
+	dialog
+	[dbf43f5ead42]
+
+2009-04-23  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* commit.sh, commit_mac.sh, update_mac.sh:
+	Added hg commit and update scripts for mac.
+	[cf4bf61ccae4]
+
+2009-04-22  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .DS_Store, .cproject, .hgignore, .project, .pydevproject,
+	.settings/org.eclipse.ltk.core.refactoring.prefs, .texlipse,
+	AUTHORS, COPYING, ChangeLog, Doxyfile, INSTALL, Makefile.am,
+	Makefile.in, NEWS, O1.txt, README, SyncToyDirectoryId.txt, TODO,
+	aclocal.m4, acsite.m4, bootstrap, commit.bat, commit.sh,
+	config.guess, config.status, config.sub, configure, configure.in,
+	depcomp, doc/chapter1.pdf, doc/chapter2.pdf, doc/chapter3.pdf,
+	doc/chapter4.pdf, doc/events_content.tex,
+	doc/gui_tutorial_content.tex, doc/img/.Screenshot-Event detection
+	settings.png, doc/img/GUI.jpg, doc/img/GUI_thumb.jpg, doc/img
+	/Screenshot-Cursor settings.png, doc/img/Screenshot-Event detection
+	settings-1.png, doc/img/Screenshot-Event detection settings-2.png,
+	doc/img/Screenshot-Event detection settings.png, doc/img/Screenshot-
+	Non-linear regression.png, doc/img/Screenshot-Stimfit-1.png, doc/img
+	/Screenshot-Stimfit-10.png, doc/img/Screenshot-Stimfit-11.png,
+	doc/img/Screenshot-Stimfit-12.png, doc/img/Screenshot-
+	Stimfit-13.png, doc/img/Screenshot-Stimfit-14.png, doc/img
+	/Screenshot-Stimfit-2.png, doc/img/Screenshot-Stimfit-3.png, doc/img
+	/Screenshot-Stimfit-4.png, doc/img/Screenshot-Stimfit-5.png, doc/img
+	/Screenshot-Stimfit-6.png, doc/img/Screenshot-Stimfit-7.png, doc/img
+	/Screenshot-Stimfit-8.png, doc/img/Screenshot-Stimfit-9.png, doc/img
+	/Screenshot-Stimfit.png, doc/img/Screenshot-Windows XP
+	(20080408-0823) [Running] - VirtualBox OSE.png, doc/img/average.eps,
+	doc/img/average.png, doc/img/bait_template.eps,
+	doc/img/bait_template.png, doc/img/baseline.eps,
+	doc/img/baseline.jpg, doc/img/batchanalysis.eps,
+	doc/img/batchanalysis.png, doc/img/channelselection.eps,
+	doc/img/channelselection.png, doc/img/channelselectiondrop.eps,
+	doc/img/channelselectiondrop.png, doc/img/cursorsettings.eps,
+	doc/img/cursorsettings.png, doc/img/event_dialog.eps,
+	doc/img/eventbutton.eps, doc/img/eventbutton.png,
+	doc/img/events.eps, doc/img/events.png, doc/img/falsenegative.eps,
+	doc/img/falsenegative.png, doc/img/finaltemplate.eps,
+	doc/img/finaltemplate.png, doc/img/fit.eps, doc/img/fit.png,
+	doc/img/fitselection.eps, doc/img/fitselection.png,
+	doc/img/fittowindow.eps, doc/img/fittowindow.png, doc/img/foot.pdf,
+	doc/img/foot.ps, doc/img/foot.svg, doc/img/foot.tex,
+	doc/img/latency.eps, doc/img/latency.png, doc/img/latencytraces.eps,
+	doc/img/latencytraces.png, doc/img/overview.eps,
+	doc/img/overview.jpg, doc/img/peak, doc/img/peak.eps,
+	doc/img/peak.jpg, doc/img/resultstable.eps,
+	doc/img/resultstable.png, doc/img/screenshot.png,
+	doc/img/selectfinal.eps, doc/img/selection.eps,
+	doc/img/selection.png, doc/img/siva.png, doc/img/stimfit_dos.eps,
+	doc/img/stimfit_dos.png, doc/img/stimfit_small.bmp,
+	doc/img/traceselection.eps, doc/img/traceselection.png,
+	doc/img/viewscalebars.eps, doc/img/viewscalebars.png,
+	doc/img/zoom.eps, doc/img/zoom.png, doc/img/zoompopup-0.png,
+	doc/img/zoompopup-1.png, doc/img/zoompopup-10.png,
+	doc/img/zoompopup-11.png, doc/img/zoompopup-12.png,
+	doc/img/zoompopup-13.png, doc/img/zoompopup-14.png,
+	doc/img/zoompopup-15.png, doc/img/zoompopup-16.png,
+	doc/img/zoompopup-17.png, doc/img/zoompopup-18.png,
+	doc/img/zoompopup-2.png, doc/img/zoompopup-3.png,
+	doc/img/zoompopup-4.png, doc/img/zoompopup-5.png,
+	doc/img/zoompopup-6.png, doc/img/zoompopup-7.png,
+	doc/img/zoompopup-8.png, doc/img/zoompopup-9.png,
+	doc/img/zoompopup.eps, doc/img/zoompopup.png, doc/jneurosci.bst,
+	doc/jneurosci.sty, doc/latency_content.tex, doc/preface.tex,
+	doc/py_tutorial_content.tex, doc/pydoc/stf.html, doc/quick,
+	doc/shortcut.pdf, doc/shortcuts_content.tex, doc/sphinx/Makefile,
+	doc/sphinx/source/conf.py, doc/sphinx/source/event_extraction.rst,
+	doc/sphinx/source/getting_started.rst,
+	doc/sphinx/source/images/average.png,
+	doc/sphinx/source/images/bait_template.png,
+	doc/sphinx/source/images/baseline.png,
+	doc/sphinx/source/images/batchanalysis.png,
+	doc/sphinx/source/images/bla.png,
+	doc/sphinx/source/images/channelselection.png,
+	doc/sphinx/source/images/channelselectiondrop.png,
+	doc/sphinx/source/images/cursorsettings.png,
+	doc/sphinx/source/images/eventbutton.png,
+	doc/sphinx/source/images/eventdetectionsettings.png,
+	doc/sphinx/source/images/events.png,
+	doc/sphinx/source/images/falsenegative.png,
+	doc/sphinx/source/images/finaltemplate.png,
+	doc/sphinx/source/images/fit.png,
+	doc/sphinx/source/images/fitselection.png,
+	doc/sphinx/source/images/fittowindow.png,
+	doc/sphinx/source/images/foot.png,
+	doc/sphinx/source/images/latency.png,
+	doc/sphinx/source/images/latencytraces.png,
+	doc/sphinx/source/images/overview.png,
+	doc/sphinx/source/images/peak.png,
+	doc/sphinx/source/images/resultstable.png,
+	doc/sphinx/source/images/selectfinaltemplate.png,
+	doc/sphinx/source/images/selection.png,
+	doc/sphinx/source/images/stimfit_dos.png,
+	doc/sphinx/source/images/traceselection.png,
+	doc/sphinx/source/images/viewscalebars.png,
+	doc/sphinx/source/images/zoom.png,
+	doc/sphinx/source/images/zoompopup.png, doc/sphinx/source/index.rst,
+	doc/sphinx/source/latency_measurements.rst,
+	doc/sphinx/source/preface.rst, doc/sphinx/source/python.rst,
+	doc/stf.html, doc/stf_book.pdf, doc/stf_book.ps, doc/stf_book.tex,
+	doc/stf_book.toc, gpl-2.0.txt, include/fftw3.h, install-sh,
+	libs/BLAS.lib, libs/BLASd.lib, libs/clapack.lib, libs/clapackd.lib,
+	libs/hdf5.lib, libs/hdf5_cpp.lib, libs/hdf5_hl.lib, libs/libf2c.lib,
+	libs/libf2cd.lib, libs/libfftw3-3.lib, libs/stimfit.lib,
+	libs/stimfitd.lib, libs/szlib.lib, libs/wxbase29ud.lib,
+	libs/wxbase29ud_net.lib, libs/wxbase29ud_xml.lib, libs/wxexpatd.lib,
+	libs/wxjpegd.lib, libs/wxmsw29ud_adv.lib, libs/wxmsw29ud_aui.lib,
+	libs/wxmsw29ud_core.lib, libs/wxmsw29ud_gl.lib,
+	libs/wxmsw29ud_html.lib, libs/wxmsw29ud_media.lib,
+	libs/wxmsw29ud_richtext.lib, libs/wxmsw29ud_stc.lib,
+	libs/wxmsw29ud_xrc.lib, libs/wxpngd.lib, libs/wxregexud.lib,
+	libs/wxscintillad.lib, libs/wxtiffd.lib, libs/wxzlibd.lib, libtool,
+	ltmain.sh, m4/libtool.m4, m4/ltoptions.m4, m4/ltsugar.m4,
+	m4/ltversion.m4, m4/lt~obsolete.m4, macosx/.DS_Store,
+	macosx/package.pmdoc/01stimfit-contents.xml,
+	macosx/package.pmdoc/01stimfit.xml, macosx/package.pmdoc/index.xml,
+	macosx/scripts/.DS_Store, macosx/scripts/change_deps_debug.sh,
+	macosx/scripts/change_deps_release.sh,
+	macosx/scripts/clean_receipts.sh, macosx/scripts/conf_mac_debug.sh,
+	macosx/scripts/conf_mac_release.sh, macosx/scripts/ln_stf.sh,
+	macosx/scripts/testpyver.sh, macosx/wxmac.icns, missing,
+	nsis/example.nsi, nsis/installer.nsi, nsis/stimfit-0.8.14-full.exe,
+	nsis/stimfit-0.8.14-update.exe, prepare, py-compile, resource.h,
+	revision.m4, src/.DS_Store, src/Makefile.am, src/Makefile.in,
+	src/app/Makefile.am, src/app/Makefile.in, src/app/app.cpp,
+	src/app/app.h, src/app/childframe.cpp, src/app/childframe.h,
+	src/app/copygrid.cpp, src/app/copygrid.h, src/app/dclatex.cpp,
+	src/app/dlgs/Makefile.in, src/app/dlgs/cursorsdlg.cpp,
+	src/app/dlgs/cursorsdlg.h, src/app/dlgs/eventdlg.cpp,
+	src/app/dlgs/eventdlg.h, src/app/dlgs/fitseldlg.cpp,
+	src/app/dlgs/fitseldlg.h, src/app/dlgs/smalldlgs.cpp,
+	src/app/dlgs/smalldlgs.h, src/app/doc.cpp, src/app/doc.h,
+	src/app/dummy.cpp, src/app/frame.cpp, src/app/frame.h,
+	src/app/funclib/funclib.cpp, src/app/funclib/funclib.h,
+	src/app/graph.cpp, src/app/graph.h, src/app/parentframe.cpp,
+	src/app/parentframe.h, src/app/plugins/plugins.cpp,
+	src/app/plugins/plugins.h, src/app/printout.cpp, src/app/printout.h,
+	src/app/stfcheckbox.cpp, src/app/stfcheckbox.h,
+	src/app/stfpython/stfpython.cpp, src/app/stfpython/stfpython.h,
+	src/app/table.cpp, src/app/table.h, src/app/unopt.cpp,
+	src/app/usrdlg/usrdlg.cpp, src/app/usrdlg/usrdlg.h,
+	src/app/view.cpp, src/app/view.h, src/app/wx/dclatex.h,
+	src/app/zoom.cpp, src/app/zoom.h, src/core/Makefile.am,
+	src/core/channel.cpp, src/core/channel.h, src/core/core.cpp,
+	src/core/core.h, src/core/filelib/Son.h,
+	src/core/filelib/abflib.cpp, src/core/filelib/abflib.h,
+	src/core/filelib/asciilib.cpp, src/core/filelib/asciilib.h,
+	src/core/filelib/atflib.cpp, src/core/filelib/atflib.h,
+	src/core/filelib/axg/AxoGraph_ReadWrite.cpp,
+	src/core/filelib/axg/AxoGraph_ReadWrite.h,
+	src/core/filelib/axg/byteswap.cpp, src/core/filelib/axg/byteswap.h,
+	src/core/filelib/axg/fileUtils.cpp,
+	src/core/filelib/axg/fileUtils.h,
+	src/core/filelib/axg/stringUtils.cpp,
+	src/core/filelib/axg/stringUtils.h, src/core/filelib/axglib.cpp,
+	src/core/filelib/axglib.h,
+	src/core/filelib/axon/AxAbfFio32/AxAbffio32.h,
+	src/core/filelib/axon/AxAbfFio32/Oldheadr.cpp,
+	src/core/filelib/axon/AxAbfFio32/abferror.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.h,
+	src/core/filelib/axon/AxAbfFio32/abfheadr.cpp,
+	src/core/filelib/axon/AxAbfFio32/abfheadr.h,
+	src/core/filelib/axon/AxAbfFio32/abfhwave.cpp,
+	src/core/filelib/axon/AxAbfFio32/abfoldnx.h,
+	src/core/filelib/axon/AxAbfFio32/abfutil.cpp,
+	src/core/filelib/axon/AxAbfFio32/abfutil.h,
+	src/core/filelib/axon/AxAbfFio32/csynch.cpp,
+	src/core/filelib/axon/AxAbfFio32/csynch.hpp,
+	src/core/filelib/axon/AxAbfFio32/filedesc.cpp,
+	src/core/filelib/axon/AxAbfFio32/filedesc.hpp,
+	src/core/filelib/axon/AxAbfFio32/msbincvt.cpp,
+	src/core/filelib/axon/AxAbfFio32/msbincvt.h,
+	src/core/filelib/axon/AxAbfFio32/oldheadr.h,
+	src/core/filelib/axon/AxAtfFio32/atfintl.h,
+	src/core/filelib/axon/AxAtfFio32/atfutil.h,
+	src/core/filelib/axon/AxAtfFio32/axatffio32.cpp,
+	src/core/filelib/axon/AxAtfFio32/axatffio32.h,
+	src/core/filelib/axon/AxAtfFio32/fileio.cpp,
+	src/core/filelib/axon/AxAtfFio32/fileio2.cpp,
+	src/core/filelib/axon/Common/ArrayPtr.hpp,
+	src/core/filelib/axon/Common/FileIO.cpp,
+	src/core/filelib/axon/Common/FileIO.hpp,
+	src/core/filelib/axon/Common/FileReadCache.cpp,
+	src/core/filelib/axon/Common/FileReadCache.hpp,
+	src/core/filelib/axon/Common/adcdac.h,
+	src/core/filelib/axon/Common/axodebug.h,
+	src/core/filelib/axon/Common/axodefn.h,
+	src/core/filelib/axon/Common/colors.h,
+	src/core/filelib/axon/Common/resource.h,
+	src/core/filelib/axon/Common/unix.c,
+	src/core/filelib/axon/Common/unix.h,
+	src/core/filelib/axon/Common/wincpp.hpp, src/core/filelib/cfs.c,
+	src/core/filelib/cfs.h, src/core/filelib/cfslib.cpp,
+	src/core/filelib/cfslib.h, src/core/filelib/hdf5lib.cpp,
+	src/core/filelib/hdf5lib.h,
+	src/core/filelib/igor/CrossPlatformFileIO.c,
+	src/core/filelib/igor/CrossPlatformFileIO.h,
+	src/core/filelib/igor/IgorBin.h, src/core/filelib/igor/WriteWave.c,
+	src/core/filelib/igorlib.cpp, src/core/filelib/igorlib.h,
+	src/core/filelib/machine.h, src/core/filelib/sonlib.cpp,
+	src/core/filelib/sonlib.h, src/core/fitlib.cpp, src/core/fitlib.h,
+	src/core/levmar/Axb.c, src/core/levmar/Axb_core.c,
+	src/core/levmar/CMakeLists.txt, src/core/levmar/LICENSE,
+	src/core/levmar/Makefile.am, src/core/levmar/Makefile.icc,
+	src/core/levmar/Makefile.so, src/core/levmar/Makefile.vc,
+	src/core/levmar/README.txt, src/core/levmar/liblevmar.a,
+	src/core/levmar/lm.c, src/core/levmar/lm.h,
+	src/core/levmar/lm_core.c, src/core/levmar/lmbc.c,
+	src/core/levmar/lmbc_core.c, src/core/levmar/lmdemo.c,
+	src/core/levmar/lmlec.c, src/core/levmar/lmlec_core.c,
+	src/core/levmar/misc.c, src/core/levmar/misc.h,
+	src/core/levmar/misc_core.c, src/core/measlib.h,
+	src/core/recording.cpp, src/core/recording.h, src/core/section.cpp,
+	src/core/section.h, src/core/spline.h, src/core/stimdefs.h,
+	src/icons/.DS_Store, src/icons/16-em-down.xpm, src/icons/16-em-
+	open.xpm, src/icons/accept.xpm, src/icons/arrow_down.xpm,
+	src/icons/arrow_left.xpm, src/icons/arrow_out.xpm,
+	src/icons/arrow_right.xpm, src/icons/arrow_up.xpm,
+	src/icons/bin.xpm, src/icons/camera.xpm, src/icons/camera_ps.xpm,
+	src/icons/ch1.xpm, src/icons/ch2.xpm, src/icons/cursor.xpm,
+	src/icons/event.xpm, src/icons/fit.xpm, src/icons/fit_lim.xpm,
+	src/icons/latency_lim.xpm, src/icons/resultset_first.xpm,
+	src/icons/resultset_last.xpm, src/icons/resultset_next.xpm,
+	src/icons/resultset_previous.xpm, src/icons/sample.ico,
+	src/icons/sum_new.xpm, src/icons/sum_new_aligned.xpm,
+	src/icons/table.xpm, src/icons/wxmac.icns, src/icons/zoom.xpm,
+	src/icons/zoom_in.xpm, src/icons/zoom_out.xpm, src/res/stimfit.aps,
+	src/res/stimfit.rc, src/stfswig/Doxyfile, src/stfswig/Makefile.am,
+	src/stfswig/Makefile.in, src/stfswig/Vector.i,
+	src/stfswig/Vector.py, src/stfswig/charlie.py,
+	src/stfswig/doxyHeaderLatex, src/stfswig/hdf5tools.py,
+	src/stfswig/helpers.cpp, src/stfswig/ivtools.py,
+	src/stfswig/minidemo.py, src/stfswig/mintools.py,
+	src/stfswig/natools.py, src/stfswig/numpy.i,
+	src/stfswig/plottools.py, src/stfswig/stf.py,
+	src/stfswig/stfswig.cxx, src/stfswig/stfswig.h,
+	src/stfswig/stfswig.i, src/stfswig/stfswig_wrap.cxx, stamp-h1,
+	stfconf.h, stfconf.h.in, stimfit, stimfit_VS03/libfftw3-3.dll,
+	stimfit_VS03/stfswig/stfswig.vcproj,
+	stimfit_VS03/stimfit/stimfit.vcproj, stimfit_VS03/stimfit_VS03.ncb,
+	stimfit_VS03/stimfit_VS03.sln, stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/release/BuildLog.htm,
+	stimfit_VS03/stimfit_exe/release/stimfit.dll,
+	stimfit_VS03/stimfit_exe/release/stimfit.exe,
+	stimfit_VS03/stimfit_exe/release/stimfit.res,
+	stimfit_VS03/stimfit_exe/release/vc70.idb,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj, update.sh:
+	-Added MacOS X port and bugfixes
+	-Added sphinx documentation, contributed by Jose Guzman
+	-Various additions and bugfixes
+	-Faster plotting without resolution loss
+	[9f7eec9422a7]
+
+2009-01-25  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* config.guess, config.sub, doc/quick, doc/stf_book.pdf,
+	doc/stf_book.ps, doc/stf_book.tex, ltmain.sh, m4/libtool.m4,
+	m4/ltoptions.m4, m4/ltsugar.m4, m4/ltversion.m4, m4/lt~obsolete.m4,
+	prepare, src/app/Makefile.am, src/app/Makefile.in,
+	src/app/frame.cpp:
+	Some changes according to Jose Guzman's suggestions: Color of
+	channel description text, custom Python initialization script.
+	[a123df8431a6]
+
+2008-12-15  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* commit.sh:
+	*Changed mode of commit.sh.
+	[0e7276954054]
+
+	* .cproject, .project, configure, configure.in,
+	src/core/filelib/axg/AxoGraph_ReadWrite.cpp,
+	src/core/filelib/hdf5lib.cpp:
+	Corrected a bug when reading channel names and units of Axograph
+	files.
+	[bdca8a7eb2ca]
+
+2008-12-14  cs  <cs@christoph.cruciform.wibr.ucl.ac.uk>
+
+	* nsis/installer.nsi, src/app/doc.cpp, src/core/filelib/hdf5lib.cpp,
+	stimfit_VS03/stimfit/stimfit.vcproj, stimfit_VS03/stimfit_VS03.ncb,
+	stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/release/BuildLog.htm,
+	stimfit_VS03/stimfit_exe/release/stimfit.dll,
+	stimfit_VS03/stimfit_exe/release/stimfit.exe:
+	Corrected some bugs in the hdf5 filter.
+	[3217d20c6415]
+
+2008-12-14  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* ChangeLog:
+	Edited ChangeLog for release 0.8.15.
+	[50e17ffb609f]
+
+2008-12-14  cs  <cs@christoph>
+
+	* libs/wxbase29ud.lib, libs/wxbase29ud_net.lib,
+	libs/wxbase29ud_xml.lib, libs/wxexpatd.lib, libs/wxjpegd.lib,
+	libs/wxmsw29ud_adv.lib, libs/wxmsw29ud_aui.lib,
+	libs/wxmsw29ud_core.lib, libs/wxmsw29ud_gl.lib,
+	libs/wxmsw29ud_html.lib, libs/wxmsw29ud_media.lib,
+	libs/wxmsw29ud_richtext.lib, libs/wxmsw29ud_stc.lib,
+	libs/wxmsw29ud_xrc.lib, libs/wxpngd.lib, libs/wxregexud.lib,
+	libs/wxscintillad.lib, libs/wxtiffd.lib, libs/wxzlibd.lib,
+	stimfit_VS03/stimfit_VS03.ncb, stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/release/BuildLog.htm,
+	stimfit_VS03/stimfit_exe/release/stimfit.dll,
+	stimfit_VS03/stimfit_exe/release/stimfit.exe,
+	stimfit_VS03/stimfit_exe/release/vc70.idb:
+	updated Windows build
+	[64d302325cb0]
+
+2008-12-14  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* src/core/filelib/axg/AxoGraph_ReadWrite.cpp,
+	src/core/filelib/axg/AxoGraph_ReadWrite.h,
+	src/core/filelib/axg/fileUtils.cpp,
+	src/core/filelib/axg/fileUtils.h, src/core/filelib/axglib.cpp:
+	Use vectors in Axograph code to avoid memory leaks.
+	[f961f1d20393]
+
+	* commit.sh, config.guess, config.status, config.sub, configure,
+	doc/img/stimfit_small.bmp, doc/jneurosci.bst, doc/jneurosci.sty,
+	doc/quick, ltmain.sh, m4/libtool.m4, m4/ltoptions.m4, m4/ltsugar.m4,
+	m4/ltversion.m4, m4/lt~obsolete.m4, nsis/installer.nsi, prepare,
+	resource.h, src/app/frame.cpp,
+	src/core/filelib/axg/AxoGraph_ReadWrite.cpp,
+	src/core/filelib/axg/AxoGraph_ReadWrite.h,
+	src/core/filelib/axg/fileUtils.cpp,
+	src/core/filelib/axg/fileUtils.h, src/core/filelib/axglib.cpp,
+	src/core/levmar/Axb.c, src/core/levmar/Axb_core.c,
+	src/core/levmar/lm.c, src/core/levmar/lm.h,
+	src/core/levmar/lm_core.c, src/core/levmar/lmbc.c,
+	src/core/levmar/lmbc_core.c, src/core/levmar/lmdemo.c,
+	src/core/levmar/lmlec.c, src/core/levmar/lmlec_core.c,
+	src/core/levmar/misc.c, src/core/levmar/misc.h,
+	src/core/levmar/misc_core.c, src/icons/sample.ico,
+	src/stfswig/stfswig.cxx, src/stfswig/stfswig.h,
+	stimfit_VS03/stfswig/stfswig.vcproj,
+	stimfit_VS03/stimfit/stimfit.vcproj, stimfit_VS03/stimfit_VS03.ncb,
+	stimfit_VS03/stimfit_VS03.sln, stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj, update.sh:
+	Fixed some memory leaks in Axograph code. Windows specific changes.
+	[e2711f8fd517]
+
+2008-12-13  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .cproject, .project,
+	.settings/org.eclipse.ltk.core.refactoring.prefs, .texlipse,
+	SyncToyDirectoryId.txt, configure, configure.in, libs/hdf5.lib,
+	libs/hdf5_cpp.lib, libs/hdf5_hl.lib, libs/szlib.lib, libtool,
+	nsis/installer.nsi, nsis/stimfit-0.8.14-update.exe, src/app/app.cpp,
+	src/app/app.h, src/app/doc.cpp, src/app/doc.h, src/app/frame.cpp,
+	src/core/core.cpp, src/core/filelib/atflib.cpp,
+	src/core/filelib/atflib.h, src/core/filelib/cfslib.cpp,
+	src/core/filelib/cfslib.h, src/core/filelib/hdf5lib.cpp,
+	src/core/filelib/hdf5lib.h, src/core/filelib/igorlib.cpp,
+	src/core/filelib/igorlib.h, src/stfswig/stf.py,
+	src/stfswig/stfswig_wrap.cxx, stimfit,
+	stimfit_VS03/stimfit/stimfit.vcproj, stimfit_VS03/stimfit_VS03.ncb,
+	stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/release/BuildLog.htm,
+	stimfit_VS03/stimfit_exe/release/stimfit.dll,
+	stimfit_VS03/stimfit_exe/release/stimfit.exe,
+	stimfit_VS03/stimfit_exe/release/vc70.idb:
+	Moved export menu entries to "Save as" dialog. Use hdf5 as default
+	format for file saving. Correctly display the file history. Updated
+	the Windows build for hdf5 and Axograph.
+	[8295db1859ac]
+
+2008-12-12  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* commit.sh, update.sh:
+	Changed file server locations for commit.
+	[b1c72865f669]
+
+	* Makefile.am, Makefile.in, doc/stf_book.pdf, doc/stf_book.ps,
+	doc/stf_book.tex, doc/stf_book.toc, src/app/app.cpp, src/app/app.h,
+	src/app/doc.cpp, src/core/Makefile.am, src/core/core.cpp,
+	src/core/filelib/abflib.cpp, src/core/filelib/abflib.h,
+	src/core/filelib/asciilib.cpp, src/core/filelib/asciilib.h,
+	src/core/filelib/atflib.cpp, src/core/filelib/atflib.h,
+	src/core/filelib/axg/AxoGraph_ReadWrite.cpp,
+	src/core/filelib/axg/AxoGraph_ReadWrite.h,
+	src/core/filelib/axg/byteswap.cpp, src/core/filelib/axg/byteswap.h,
+	src/core/filelib/axg/fileUtils.cpp,
+	src/core/filelib/axg/fileUtils.h,
+	src/core/filelib/axg/stringUtils.cpp,
+	src/core/filelib/axg/stringUtils.h, src/core/filelib/axglib.cpp,
+	src/core/filelib/axglib.h, src/core/filelib/cfslib.h,
+	src/core/filelib/hdf5lib.cpp, src/core/filelib/hdf5lib.h,
+	src/core/measlib.h, src/core/section.cpp, src/core/stimdefs.h,
+	src/stfswig/hdf5tools.py, src/stfswig/ivtools.py,
+	src/stfswig/natools.py, src/stfswig/stfswig.i:
+	Added hdf5 file support. Added Axograph file support.
+	[3100abb784ce]
+
+2008-10-07  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* .hgignore, Makefile.am, Makefile.in, aclocal.m4, config.guess,
+	config.sub, configure, configure.in, doc/stf.html, ltmain.sh,
+	m4/libtool.m4, m4/ltoptions.m4, m4/ltsugar.m4, m4/ltversion.m4,
+	m4/lt~obsolete.m4, src/Makefile.in, src/app/Makefile.in,
+	src/app/app.cpp, src/app/app.h, src/app/doc.cpp, src/app/doc.h,
+	src/app/frame.cpp, src/app/frame.h, src/core/channel.h,
+	src/core/core.cpp, src/core/core.h, src/core/filelib/cfslib.cpp,
+	src/core/filelib/cfslib.h, src/core/filelib/hdf5lib.cpp,
+	src/core/filelib/hdf5lib.h, src/core/stimdefs.h,
+	src/stfswig/Makefile.am, src/stfswig/Makefile.in,
+	src/stfswig/hdf5tools.py, src/stfswig/ivtools.py,
+	src/stfswig/natools.py, src/stfswig/numpy.i, src/stfswig/stf.py,
+	src/stfswig/stfswig.cxx, src/stfswig/stfswig.h,
+	src/stfswig/stfswig.i, src/stfswig/stfswig_wrap.cxx, stfconf.h.in:
+	Added hdf5 file format, accessible both from the main program as
+	well as from Python. Requires PyTables for the Python toolbox
+	(hdf5tools.py). Removed progress dialog when opening files from
+	python. Added new python funtions:
+	- get/set_recording_time/date/comment
+	- get/set_xunits/yunits
+	- get/set_trace/channel_name
+	- get_size_recording
+	- new_window_list now accepts nested list representing more than 1
+	channel.
+	[e25b823adf46]
+
+2008-10-01  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* ChangeLog:
+	Edited ChangeLog for 0.8.14 release.
+	[af4d879171c7]
+
+	* .hgignore:
+	Removed installers from repository.
+	[c127dfa236ef]
+
+2008-09-30  cs  <cs@christoph.physiol.uni-freiburg.de>
+
+	* .hgignore:
+	Removed installers from repository.
+	[b3b9935ba1b1]
+
+	* .hgignore, commit.bat, nsis/installer.nsi,
+	nsis/stimfit-0.8.14-full.exe, nsis/stimfit-0.8.14-update.exe,
+	src/app/app.h, src/stfswig/stf.py, src/stfswig/stfswig_wrap.cxx,
+	stimfit_VS03/libfftw3-3.dll, stimfit_VS03/stfswig/stfswig.vcproj,
+	stimfit_VS03/stimfit_VS03.ncb, stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/release/BuildLog.htm,
+	stimfit_VS03/stimfit_exe/release/stimfit.dll,
+	stimfit_VS03/stimfit_exe/release/stimfit.exe,
+	stimfit_VS03/stimfit_exe/release/stimfit.res,
+	stimfit_VS03/stimfit_exe/release/vc70.idb:
+	Windows build fixes.
+	[3bd4d38bc320]
+
+2008-09-30  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* configure, configure.in, src/app/app.cpp, src/app/frame.cpp,
+	src/app/frame.h:
+	Correctly stored the visibility of the Python shell to the
+	config/registry when closing the program.
+	[31db7081b126]
+
+2008-09-29  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* Makefile.in, aclocal.m4, config.guess, config.sub, configure,
+	ltmain.sh, prepare, src/Makefile.in, src/app/Makefile.in,
+	src/stfswig/Makefile.in, stfconf.h.in:
+	Minor change to prepare script.
+	[d85669ceab7d]
+
+	* Makefile.in, aclocal.m4, config.guess, config.sub, configure,
+	configure.in, ltmain.sh, prepare, src/Makefile.in,
+	src/app/Makefile.in, src/stfswig/Makefile.am,
+	src/stfswig/Makefile.in, stfconf.h.in:
+	Applied some changes to Makefiles and configure.in.
+	[588d2a861ab9]
+
+	* .cproject, .hgignore, .project, src/app/frame.cpp,
+	src/core/filelib/cfslib.cpp, src/stfswig/natools.py,
+	src/stfswig/stf.py, src/stfswig/stfswig.cxx, src/stfswig/stfswig.h,
+	src/stfswig/stfswig.i, src/stfswig/stfswig_wrap.cxx:
+	* Added get_recording_time() and get_recording_date() to Python
+	interface.
+	* Corrected behaviour of mouse mode buttons.
+	[2e28c981164e]
+
+2008-09-22  Christoph Schmidt-Hieber  <christsc@gmx.de>
+
+	* configure, configure.in:
+	Edited configure.in
+	[fd5737cfd56a]
+
+	* commit.sh, update.sh:
+	Added update.sh, edited commit.sh
+	[2d0f744659fd]
+
+	* commit.sh:
+	Edited commit.sh
+	[fe2c1e380aeb]
+
+	* Makefile.in, commit.sh, src/Makefile.in, src/app/Makefile.in,
+	src/stfswig/Makefile.in:
+	Added commit.sh
+	[e2702af770c8]
+
+	* aclocal.m4, config.guess, config.sub, configure, configure.in,
+	ltmain.sh, prepare, stfconf.h.in:
+	Modified configure and prepare scripts to work with multiple
+	versions of libtoolize.
+	[68a23bc1a7aa]
+
+	* .hgignore, aclocal.m4, configure, ltmain.sh, stfconf.h.in:
+	Edited ltmain.sh to work with newer versions of libtool.
+	[2596175a334b]
+
+	* .cproject, .hgignore, .project, .pydevproject, AUTHORS, COPYING,
+	ChangeLog, Doxyfile, INSTALL, Makefile.am, NEWS, O1.txt, README,
+	TODO, aclocal.m4, acsite.m4, config.guess, config.status,
+	config.sub, configure, configure.in, depcomp, doc/chapter1.pdf,
+	doc/chapter2.pdf, doc/chapter3.pdf, doc/chapter4.pdf,
+	doc/events_content.tex, doc/gui_tutorial_content.tex, doc/img
+	/.Screenshot-Event detection settings.png, doc/img/GUI.jpg,
+	doc/img/GUI_thumb.jpg, doc/img/Screenshot-Cursor settings.png,
+	doc/img/Screenshot-Event detection settings-1.png, doc/img
+	/Screenshot-Event detection settings-2.png, doc/img/Screenshot-Event
+	detection settings.png, doc/img/Screenshot-Non-linear
+	regression.png, doc/img/Screenshot-Stimfit-1.png, doc/img
+	/Screenshot-Stimfit-10.png, doc/img/Screenshot-Stimfit-11.png,
+	doc/img/Screenshot-Stimfit-12.png, doc/img/Screenshot-
+	Stimfit-13.png, doc/img/Screenshot-Stimfit-14.png, doc/img
+	/Screenshot-Stimfit-2.png, doc/img/Screenshot-Stimfit-3.png, doc/img
+	/Screenshot-Stimfit-4.png, doc/img/Screenshot-Stimfit-5.png, doc/img
+	/Screenshot-Stimfit-6.png, doc/img/Screenshot-Stimfit-7.png, doc/img
+	/Screenshot-Stimfit-8.png, doc/img/Screenshot-Stimfit-9.png, doc/img
+	/Screenshot-Stimfit.png, doc/img/Screenshot-Windows XP
+	(20080408-0823) [Running] - VirtualBox OSE.png, doc/img/average.eps,
+	doc/img/average.png, doc/img/bait_template.eps,
+	doc/img/bait_template.png, doc/img/baseline.eps,
+	doc/img/baseline.jpg, doc/img/batchanalysis.eps,
+	doc/img/batchanalysis.png, doc/img/channelselection.eps,
+	doc/img/channelselection.png, doc/img/channelselectiondrop.eps,
+	doc/img/channelselectiondrop.png, doc/img/cursorsettings.eps,
+	doc/img/cursorsettings.png, doc/img/event_dialog.eps,
+	doc/img/eventbutton.eps, doc/img/eventbutton.png,
+	doc/img/events.eps, doc/img/events.png, doc/img/falsenegative.eps,
+	doc/img/falsenegative.png, doc/img/finaltemplate.eps,
+	doc/img/finaltemplate.png, doc/img/fit.eps, doc/img/fit.png,
+	doc/img/fitselection.eps, doc/img/fitselection.png,
+	doc/img/fittowindow.eps, doc/img/fittowindow.png, doc/img/foot.pdf,
+	doc/img/foot.ps, doc/img/foot.svg, doc/img/foot.tex,
+	doc/img/latency.eps, doc/img/latency.png, doc/img/latencytraces.eps,
+	doc/img/latencytraces.png, doc/img/overview.eps,
+	doc/img/overview.jpg, doc/img/peak, doc/img/peak.eps,
+	doc/img/peak.jpg, doc/img/resultstable.eps,
+	doc/img/resultstable.png, doc/img/screenshot.png,
+	doc/img/selectfinal.eps, doc/img/selection.eps,
+	doc/img/selection.png, doc/img/siva.png, doc/img/stimfit_dos.eps,
+	doc/img/stimfit_dos.png, doc/img/stimfit_small.bmp,
+	doc/img/traceselection.eps, doc/img/traceselection.png,
+	doc/img/viewscalebars.eps, doc/img/viewscalebars.png,
+	doc/img/zoom.eps, doc/img/zoom.png, doc/img/zoompopup-0.png,
+	doc/img/zoompopup-1.png, doc/img/zoompopup-10.png,
+	doc/img/zoompopup-11.png, doc/img/zoompopup-12.png,
+	doc/img/zoompopup-13.png, doc/img/zoompopup-14.png,
+	doc/img/zoompopup-15.png, doc/img/zoompopup-16.png,
+	doc/img/zoompopup-17.png, doc/img/zoompopup-18.png,
+	doc/img/zoompopup-2.png, doc/img/zoompopup-3.png,
+	doc/img/zoompopup-4.png, doc/img/zoompopup-5.png,
+	doc/img/zoompopup-6.png, doc/img/zoompopup-7.png,
+	doc/img/zoompopup-8.png, doc/img/zoompopup-9.png,
+	doc/img/zoompopup.eps, doc/img/zoompopup.png, doc/jneurosci.bst,
+	doc/jneurosci.sty, doc/latency_content.tex, doc/preface.tex,
+	doc/py_tutorial_content.tex, doc/pydoc/stf.html, doc/quick,
+	doc/shortcut.pdf, doc/shortcuts_content.tex, doc/stf.html,
+	doc/stf_book.pdf, doc/stf_book.ps, doc/stf_book.tex,
+	doc/stf_book.toc, gpl-2.0.txt, include/fftw3.h, install-sh,
+	libs/BLAS.lib, libs/BLASd.lib, libs/clapack.lib, libs/clapackd.lib,
+	libs/libf2c.lib, libs/libf2cd.lib, libs/libfftw3-3.lib,
+	libs/stimfit.lib, libs/stimfitd.lib, libtool, ltmain.sh, missing,
+	nsis/example.nsi, nsis/installer.nsi, prepare, py-compile,
+	resource.h, src/Makefile.am, src/app/Makefile.am, src/app/app.cpp,
+	src/app/app.h, src/app/copygrid.cpp, src/app/copygrid.h,
+	src/app/dclatex.cpp, src/app/dlgs/Makefile.in,
+	src/app/dlgs/cursorsdlg.cpp, src/app/dlgs/cursorsdlg.h,
+	src/app/dlgs/eventdlg.cpp, src/app/dlgs/eventdlg.h,
+	src/app/dlgs/fitseldlg.cpp, src/app/dlgs/fitseldlg.h,
+	src/app/dlgs/smalldlgs.cpp, src/app/dlgs/smalldlgs.h,
+	src/app/doc.cpp, src/app/doc.h, src/app/dummy.cpp,
+	src/app/frame.cpp, src/app/frame.h, src/app/funclib/funclib.cpp,
+	src/app/funclib/funclib.h, src/app/graph.cpp, src/app/graph.h,
+	src/app/plugins/plugins.cpp, src/app/plugins/plugins.h,
+	src/app/printout.cpp, src/app/printout.h, src/app/stfcheckbox.cpp,
+	src/app/stfcheckbox.h, src/app/stfpython/stfpython.cpp,
+	src/app/stfpython/stfpython.h, src/app/table.cpp, src/app/table.h,
+	src/app/unopt.cpp, src/app/usrdlg/usrdlg.cpp,
+	src/app/usrdlg/usrdlg.h, src/app/view.cpp, src/app/view.h,
+	src/app/wx/dclatex.h, src/app/zoom.cpp, src/app/zoom.h,
+	src/core/Makefile.am, src/core/channel.cpp, src/core/channel.h,
+	src/core/core.cpp, src/core/core.h, src/core/filelib/Son.h,
+	src/core/filelib/abflib.cpp, src/core/filelib/abflib.h,
+	src/core/filelib/asciilib.cpp, src/core/filelib/asciilib.h,
+	src/core/filelib/atflib.cpp, src/core/filelib/atflib.h,
+	src/core/filelib/axon/AxAbfFio32/AxAbffio32.h,
+	src/core/filelib/axon/AxAbfFio32/Oldheadr.cpp,
+	src/core/filelib/axon/AxAbfFio32/abferror.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.cpp,
+	src/core/filelib/axon/AxAbfFio32/abffiles.h,
+	src/core/filelib/axon/AxAbfFio32/abfheadr.cpp,
+	src/core/filelib/axon/AxAbfFio32/abfheadr.h,
+	src/core/filelib/axon/AxAbfFio32/abfhwave.cpp,
+	src/core/filelib/axon/AxAbfFio32/abfoldnx.h,
+	src/core/filelib/axon/AxAbfFio32/abfutil.cpp,
+	src/core/filelib/axon/AxAbfFio32/abfutil.h,
+	src/core/filelib/axon/AxAbfFio32/csynch.cpp,
+	src/core/filelib/axon/AxAbfFio32/csynch.hpp,
+	src/core/filelib/axon/AxAbfFio32/filedesc.cpp,
+	src/core/filelib/axon/AxAbfFio32/filedesc.hpp,
+	src/core/filelib/axon/AxAbfFio32/msbincvt.cpp,
+	src/core/filelib/axon/AxAbfFio32/msbincvt.h,
+	src/core/filelib/axon/AxAbfFio32/oldheadr.h,
+	src/core/filelib/axon/AxAtfFio32/atfintl.h,
+	src/core/filelib/axon/AxAtfFio32/atfutil.h,
+	src/core/filelib/axon/AxAtfFio32/axatffio32.cpp,
+	src/core/filelib/axon/AxAtfFio32/axatffio32.h,
+	src/core/filelib/axon/AxAtfFio32/fileio.cpp,
+	src/core/filelib/axon/AxAtfFio32/fileio2.cpp,
+	src/core/filelib/axon/Common/ArrayPtr.hpp,
+	src/core/filelib/axon/Common/FileIO.cpp,
+	src/core/filelib/axon/Common/FileIO.hpp,
+	src/core/filelib/axon/Common/FileReadCache.cpp,
+	src/core/filelib/axon/Common/FileReadCache.hpp,
+	src/core/filelib/axon/Common/adcdac.h,
+	src/core/filelib/axon/Common/axodebug.h,
+	src/core/filelib/axon/Common/axodefn.h,
+	src/core/filelib/axon/Common/colors.h,
+	src/core/filelib/axon/Common/resource.h,
+	src/core/filelib/axon/Common/unix.c,
+	src/core/filelib/axon/Common/unix.h,
+	src/core/filelib/axon/Common/wincpp.hpp, src/core/filelib/cfs.c,
+	src/core/filelib/cfs.h, src/core/filelib/cfslib.cpp,
+	src/core/filelib/cfslib.h,
+	src/core/filelib/igor/CrossPlatformFileIO.c,
+	src/core/filelib/igor/CrossPlatformFileIO.h,
+	src/core/filelib/igor/IgorBin.h, src/core/filelib/igor/WriteWave.c,
+	src/core/filelib/igorlib.cpp, src/core/filelib/igorlib.h,
+	src/core/filelib/machine.h, src/core/filelib/sonlib.cpp,
+	src/core/filelib/sonlib.h, src/core/fitlib.cpp, src/core/fitlib.h,
+	src/core/levmar/Axb.c, src/core/levmar/Axb_core.c,
+	src/core/levmar/CMakeLists.txt, src/core/levmar/LICENSE,
+	src/core/levmar/Makefile.am, src/core/levmar/Makefile.icc,
+	src/core/levmar/Makefile.so, src/core/levmar/Makefile.vc,
+	src/core/levmar/README.txt, src/core/levmar/liblevmar.a,
+	src/core/levmar/lm.c, src/core/levmar/lm.h,
+	src/core/levmar/lm_core.c, src/core/levmar/lmbc.c,
+	src/core/levmar/lmbc_core.c, src/core/levmar/lmdemo.c,
+	src/core/levmar/lmlec.c, src/core/levmar/lmlec_core.c,
+	src/core/levmar/misc.c, src/core/levmar/misc.h,
+	src/core/levmar/misc_core.c, src/core/measlib.h,
+	src/core/recording.cpp, src/core/recording.h, src/core/section.cpp,
+	src/core/section.h, src/core/spline.h, src/core/stimdefs.h,
+	src/icons/16-em-down.xpm, src/icons/16-em-open.xpm,
+	src/icons/accept.xpm, src/icons/arrow_down.xpm,
+	src/icons/arrow_left.xpm, src/icons/arrow_out.xpm,
+	src/icons/arrow_right.xpm, src/icons/arrow_up.xpm,
+	src/icons/bin.xpm, src/icons/camera.xpm, src/icons/camera_ps.xpm,
+	src/icons/ch1.xpm, src/icons/ch2.xpm, src/icons/cursor.xpm,
+	src/icons/event.xpm, src/icons/fit.xpm, src/icons/fit_lim.xpm,
+	src/icons/latency_lim.xpm, src/icons/resultset_first.xpm,
+	src/icons/resultset_last.xpm, src/icons/resultset_next.xpm,
+	src/icons/resultset_previous.xpm, src/icons/sample.ico,
+	src/icons/sum_new.xpm, src/icons/sum_new_aligned.xpm,
+	src/icons/table.xpm, src/icons/zoom.xpm, src/icons/zoom_in.xpm,
+	src/icons/zoom_out.xpm, src/res/stimfit.aps, src/res/stimfit.rc,
+	src/stfswig/Doxyfile, src/stfswig/Makefile.am, src/stfswig/Vector.i,
+	src/stfswig/Vector.py, src/stfswig/charlie.py,
+	src/stfswig/doxyHeaderLatex, src/stfswig/helpers.cpp,
+	src/stfswig/ivtools.py, src/stfswig/minidemo.py,
+	src/stfswig/mintools.py, src/stfswig/natools.py,
+	src/stfswig/numpy.i, src/stfswig/plottools.py, src/stfswig/stf.py,
+	src/stfswig/stfswig.cxx, src/stfswig/stfswig.h,
+	src/stfswig/stfswig.i, src/stfswig/stfswig_wrap.cxx, stamp-h1,
+	stfconf.h, stfconf.h.in, stimfit,
+	stimfit_VS03/stfswig/stfswig.vcproj,
+	stimfit_VS03/stimfit/stimfit.vcproj, stimfit_VS03/stimfit_VS03.ncb,
+	stimfit_VS03/stimfit_VS03.sln, stimfit_VS03/stimfit_VS03.suo,
+	stimfit_VS03/stimfit_exe/stimfit_exe.vcproj:
+	Initial Mercurial commit
+	[84f2e94c9daa]
+

@@ -17,7 +17,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-/*! \file fitlib.h
+/*! \file fit.h
  *  \author Christoph Schmidt-Hieber
  *  \date 2008-01-16
  *  \brief Functions for linear and non-linear regression.
@@ -64,7 +64,7 @@ T linFit(
  */
 double StfDll lmFit(const Vector_double& data, double dt,
                     const stf::storedFunc& fitFunc, const Vector_double& opts,
-                    bool use_scaling, Vector_double& p, wxString& info, int& warning );
+                    bool use_scaling, Vector_double& p, std::string& info, int& warning );
 
 //! Linear function.
 /*! \f[f(x)=p_0 x + p_1\f]
@@ -78,7 +78,7 @@ double flin(double x, const Vector_double& p);
 
 //! Dummy function to be passed to stf::storedFunc for linear functions.
 void flin_init(const Vector_double& data, double base, double peak,
-        double dt, Vector_double& pInit );
+        double RTLoHi, double HalfWidth, double dt, Vector_double& pInit );
 
 //! initializes a linear function
 /*! \return An stf::storedFunc that can be used to store a linear function after a fit */
@@ -94,6 +94,12 @@ stf::storedFunc initLinFunc();
  *          [3] y offset
  */
  Vector_double get_scale(Vector_double& data, double oldx);
+
+//! Return default LM options
+/*! \return Default LM options
+ */
+Vector_double LM_default_opts();
+
 }
 
 template <typename T>

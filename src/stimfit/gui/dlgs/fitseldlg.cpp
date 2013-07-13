@@ -21,14 +21,15 @@ END_EVENT_TABLE()
 wxStfFitSelDlg::wxStfFitSelDlg(wxWindow* parent, wxStfDoc* doc, int id, wxString title, wxPoint pos,
                                wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ),
-    m_fselect(18),init_p(0),opts(6),noInput(false), use_scaling(false),
+    m_fselect(18), init_p(0), opts(6), noInput(false), use_scaling(false),
     paramDescArray(MAXPAR),
     paramEntryArray(MAXPAR), pDoc(doc)
 {
-    // Respectively the scale factor for initial \mu,
+    // Respectively the scale factor for initial damping term \mu,
     // stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2,
-    // maxIter, maxPass
-    opts[0]=5*1E-3; //default: 1E-03;
+    // maxIter (Kmax), maxPass
+    //opts[0]=5*1E-3; //default: 1E-03;
+    opts[0] = 1E-3; //default: 1E-03;
     opts[1]=1E-17; //default: 1E-17;
     opts[2]=1E-17; //default: 1E-17;
     opts[3]=1E-32; //default: 1E-17;
@@ -40,20 +41,27 @@ wxStfFitSelDlg::wxStfFitSelDlg(wxWindow* parent, wxStfDoc* doc, int id, wxString
 
     // 2-column sizer for funcs (left) and settings (right)
     wxFlexGridSizer* mainGrid = new wxFlexGridSizer(1,2,0,5);
-    m_listCtrl = new wxListCtrl( this, wxID_LIST, wxDefaultPosition, wxSize(240,360),
+
+    wxStaticBoxSizer* m_listSizer = new wxStaticBoxSizer(
+        wxVERTICAL, this, wxT("Available functions") );
+
+    m_listCtrl = new wxListCtrl( this, wxID_LIST, wxDefaultPosition, wxSize(550,300),
             wxLC_LIST );
     int n_f = 0;
     for (c_stfunc_it cit = wxGetApp().GetFuncLib().begin(); cit != wxGetApp().GetFuncLib().end(); cit++) {
         wxString funcName;
-        funcName << n_f << wxT(": ") << stf::std2wx(cit->name);
+        funcName << wxString::Format(wxT("%2d: "), n_f) << stf::std2wx(cit->name);
         m_listCtrl->InsertItem( n_f++, funcName );
     }
 
-    mainGrid->Add( m_listCtrl, 0, wxALIGN_CENTER_HORIZONTAL, 2 );
+    m_listSizer->Add( m_listCtrl, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2 );
+    mainGrid->Add( m_listSizer, 0, wxALIGN_CENTER_HORIZONTAL, 2 );
 
     // vertical sizer for initial parameters (top) and options (bottom)
     wxBoxSizer* settingsSizer;
     settingsSizer=new wxBoxSizer(wxVERTICAL);
+    wxStaticBoxSizer* paramSizer = new wxStaticBoxSizer(
+        wxVERTICAL, this, wxT("Initial parameters") );
 
     // grid for parameters:
     wxFlexGridSizer* paramGrid;
@@ -66,40 +74,50 @@ wxStfFitSelDlg::wxStfFitSelDlg(wxWindow* parent, wxStfDoc* doc, int id, wxString
          it1 != paramDescArray.end() && it2 != paramEntryArray.end();
          it1++) {
         *it1 = new wxStaticText( this, wxID_ANY, wxT(" "), wxDefaultPosition,
-                wxSize(64,20), wxTE_LEFT );
+                wxSize(74,20), wxTE_LEFT );
         paramGrid->Add( *it1, 0, wxALIGN_CENTER_VERTICAL | wxALL, 2 );
         *it2 = new wxTextCtrl( this, wxID_ANY, wxT(" "), wxDefaultPosition,
-                wxSize(64,20), wxTE_RIGHT );
+                wxSize(74,20), wxTE_RIGHT );
         paramGrid->SetFlexibleDirection(wxHORIZONTAL);
         paramGrid->Add( *it2, 0, wxALIGN_CENTER_VERTICAL | wxALL, 2 );
         it2++;
     }
 
-    settingsSizer->Add( paramGrid, 0, wxALIGN_CENTER_HORIZONTAL, 2 );
+    //settingsSizer->Add( paramGrid, 0, wxALIGN_CENTER_HORIZONTAL, 2 );
+    paramSizer->Add( paramGrid, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2 );
+    settingsSizer->Add( paramSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2 );
 
     // Fit options:
     // grid for parameters:
     wxFlexGridSizer* optionsGrid;
     optionsGrid=new wxFlexGridSizer(opts.size()+1, 2, 0, 0);
 
+    wxStaticBoxSizer* fitoptSizer = new wxStaticBoxSizer(
+        wxVERTICAL, this, wxT("Fitting options") );
+
     InitOptions(optionsGrid);
     // add the options grid to the settings sizer:
-    settingsSizer->Add( optionsGrid, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_BOTTOM, 2 );
+    
+    fitoptSizer->Add( optionsGrid, 0, wxEXPAND | wxALL, 2 );
+    settingsSizer->Add( fitoptSizer, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_BOTTOM, 2 );
+    //settingsSizer->Add( optionsGrid, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_BOTTOM, 2 );
     // add the settings sizer to the main grid:
+
     mainGrid->Add( settingsSizer, 0, wxALIGN_CENTER_HORIZONTAL, 2 );
     // add the main grid to the dialog:
     topSizer->Add( mainGrid, 0, wxALIGN_CENTER_HORIZONTAL| wxALL, 5 );
+
     // Ok / Cancel / Preview:
     wxButton* previewButton;
     previewButton = new wxButton( this, wxID_PREVIEW, wxT("Preview"), wxDefaultPosition,
             wxDefaultSize, 0 );
-    topSizer->Add( previewButton, 0, wxALIGN_CENTER | wxALL, 5 );
+    topSizer->Add( previewButton, 0, wxALIGN_CENTER | wxALL, 2 );
 
     m_sdbSizer = new wxStdDialogButtonSizer();
     m_sdbSizer->AddButton( new wxButton( this, wxID_OK ) );
     m_sdbSizer->AddButton( new wxButton( this, wxID_CANCEL ) );
     m_sdbSizer->Realize();
-    topSizer->Add( m_sdbSizer, 0, wxALIGN_CENTER| wxALL, 5 );
+    topSizer->Add( m_sdbSizer, 0, wxALIGN_CENTER| wxALL, 2 );
     topSizer->SetSizeHints(this);
     this->SetSizer( topSizer );
 
@@ -151,7 +169,7 @@ void wxStfFitSelDlg::InitOptions(wxFlexGridSizer* optionsGrid) {
 
     wxString strNPasses; strNPasses << opts[5];
     m_textCtrlMaxpasses = new wxTextCtrl( this, wxID_ANY, strNPasses,
-            wxDefaultPosition, wxSize(64,20), wxTE_RIGHT );
+            wxDefaultPosition, wxSize(74,20), wxTE_RIGHT );
     optionsGrid->Add( m_textCtrlMaxpasses, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
     // Number of iterations----------------------------------------------
@@ -162,7 +180,7 @@ void wxStfFitSelDlg::InitOptions(wxFlexGridSizer* optionsGrid) {
 
     wxString strNIter; strNIter << opts[4];
     m_textCtrlMaxiter=new wxTextCtrl( this, wxID_ANY, strNIter,
-            wxDefaultPosition, wxSize(64,20), wxTE_RIGHT );
+            wxDefaultPosition, wxSize(74,20), wxTE_RIGHT );
     optionsGrid->Add( m_textCtrlMaxiter, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
     // Initial scaling factor--------------------------------------------
@@ -172,7 +190,7 @@ void wxStfFitSelDlg::InitOptions(wxFlexGridSizer* optionsGrid) {
     optionsGrid->Add( staticTextMu, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
     wxString strMu; strMu << opts[0];
-    m_textCtrlMu=new wxTextCtrl( this, wxID_ANY, strMu, wxDefaultPosition, wxSize(64,20),
+    m_textCtrlMu=new wxTextCtrl( this, wxID_ANY, strMu, wxDefaultPosition, wxSize(74,20),
             wxTE_RIGHT );
     optionsGrid->Add( m_textCtrlMu, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
@@ -184,7 +202,7 @@ void wxStfFitSelDlg::InitOptions(wxFlexGridSizer* optionsGrid) {
 
     wxString strJTE; strJTE << opts[1];
     m_textCtrlJTE=new wxTextCtrl( this, wxID_ANY, strJTE, wxDefaultPosition,
-            wxSize(64,20), wxTE_RIGHT );
+            wxSize(74,20), wxTE_RIGHT );
     optionsGrid->Add( m_textCtrlJTE, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
     // Parameter gradient------------------------------------------------
@@ -195,7 +213,7 @@ void wxStfFitSelDlg::InitOptions(wxFlexGridSizer* optionsGrid) {
 
     wxString strDP; strDP << opts[2];
     m_textCtrlDP=new wxTextCtrl( this, wxID_ANY, strDP, wxDefaultPosition,
-            wxSize(64,20), wxTE_RIGHT );
+            wxSize(74,20), wxTE_RIGHT );
     optionsGrid->Add( m_textCtrlDP, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
     // Squared error-----------------------------------------------------
@@ -206,7 +224,7 @@ void wxStfFitSelDlg::InitOptions(wxFlexGridSizer* optionsGrid) {
 
     wxString strE2; strE2 << opts[3];
     m_textCtrlE2=new wxTextCtrl( this, wxID_ANY, strE2, wxDefaultPosition,
-            wxSize(64,20), wxTE_RIGHT );
+            wxSize(74,20), wxTE_RIGHT );
     optionsGrid->Add( m_textCtrlE2, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
     // Use scaling-------------------------------------------------------
@@ -280,7 +298,7 @@ void wxStfFitSelDlg::SetPars() {
                 &x[0]);
         Vector_double initPars(wxGetApp().GetFuncLib().at(m_fselect).pInfo.size());
         wxGetApp().GetFuncLib().at(m_fselect).init( x, pDoc->GetBase(),
-                pDoc->GetPeak(), pDoc->GetXScale(), initPars);
+                pDoc->GetPeak(), pDoc->GetRTLoHi(), pDoc->GetHalfDuration(),                pDoc->GetXScale(), initPars);
         std::vector< wxStaticText* >::iterator it1;
         std::vector< wxTextCtrl* >::iterator it2 = paramEntryArray.begin();
         std::size_t n_p = 0;

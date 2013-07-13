@@ -99,6 +99,19 @@ std::vector< stf::storedFunc > stf::GetFuncLib() {
     // power of 1 gNa function:
     funcList.push_back(stf::storedFunc(
                                          "power of 1 g_Na function, offset fixed to baseline", parInfoHH, fgnabiexp, fgnabiexp_init, stf::nojac, false));
+
+    // Gaussian
+    std::vector<stf::parInfo> parInfoGauss(3);
+    parInfoGauss[0].toFit=true; parInfoGauss[0].desc="amp"; parInfoGauss[0].scale = stf::yscale; parInfoGauss[0].unscale = stf::yunscale;
+    parInfoGauss[1].toFit=true; parInfoGauss[1].desc="mean"; parInfoGauss[1].scale = stf::xscale; parInfoGauss[1].unscale = stf::xunscale;
+
+    parInfoGauss[2].toFit=true;
+    parInfoGauss[2].constrained=true; parInfoGauss[2].constr_lb=0; parInfoGauss[2].constr_ub=DBL_MAX;
+    parInfoGauss[2].desc="width"; parInfoGauss[2].scale = stf::xscale; parInfoGauss[2].unscale = stf::xunscale;
+
+    funcList.push_back(stf::storedFunc(
+                                       "Gaussian", parInfoGauss, fgauss, fgauss_init, fgauss_jac, true));
+
     return funcList;
 }
 
@@ -122,7 +135,7 @@ Vector_double stf::fexp_jac(double x, const Vector_double& p) {
     return jac;
 }
 
-void stf::fexp_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
+void stf::fexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find out direction:
     bool increasing = data[0] < data[data.size()-1];
     Vector_double::const_iterator max_el = std::max_element(data.begin(), data.end());
@@ -166,7 +179,7 @@ void stf::fexp_init(const Vector_double& data, double base, double peak, double 
 
 }
 
-void stf::fexp_init2(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
+void stf::fexp_init2(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     int n_exp=(int)pInit.size()/2;
     for (std::size_t n_p=0;n_p<pInit.size()-1;n_p+=2) {
         // use inverse amplitude for last term:
@@ -233,7 +246,7 @@ Vector_double stf::fexpde_jac(double x, const Vector_double& p) {
 }
 #endif 
 
-void stf::fexpde_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
+void stf::fexpde_init(const Vector_double& data, double base, double peak, double RTLoHI, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT;
     stf::peak( data, base, 0, data.size()-1, 1, stf::both, maxT );
@@ -281,20 +294,26 @@ Vector_double stf::fexpbde_jac(double x, const Vector_double& p) {
 }
 #endif
 
-void stf::fexpbde_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
+void stf::fexpbde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT = stf::whereis( data, peak );
-    // stf::peak( data, base, 0, data.size(), 1, stf::both, maxT );
+    //stf::peak( data, base, 0, data.size()-1, 1, stf::both, maxT );
 
-    
+
     if ( maxT == 0 ) maxT = data.size() * 0.05;
-    pInit[0]=base;
-    pInit[1]=0.01;
-    pInit[2]=3 * maxT * dt;
-    pInit[4]=0.5 * maxT * dt;
+
+    pInit[0] = base; /* baseline */
+    //pInit[1] = 0.01;
+    //pInit[1] = 1.0; /* latency */
+    // Use the left fitting cursor to estimate latency
+    pInit[1] = maxT * dt; /* latency */
+    //pInit[2] = 3 * maxT * dt; /* tau1 time constant */
+    pInit[2] = 1.5*HalfWidth; /* tau1 time constant */
+    //pInit[4] = 0.5 * maxT * dt; /* tau2 time constant */
+    pInit[4] = RTLoHi; /* tau2 time constant */
     double tpeak = pInit[4]*pInit[2]*log(pInit[4]/pInit[2])/(pInit[4]-pInit[2]);
     double adjust = 1.0/((1.0-exp(-tpeak/pInit[4]))-(1.0-exp(-tpeak/pInit[2])));
-    pInit[3]=adjust*(peak-base);
+    pInit[3] = adjust*(peak-base); /* factor */
 }
 
 double stf::falpha(double x, const Vector_double& p) {
@@ -311,7 +330,7 @@ Vector_double stf::falpha_jac(double x, const Vector_double& p) {
     return jac;
 }
 
-void stf::falpha_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
+void stf::falpha_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
         pInit[0]=(peak-base)*data.size()*dt;
         pInit[1]=1.0/(data.size()*dt/20.0);
         pInit[2]=base;
@@ -337,7 +356,44 @@ double stf::fgnabiexp(double x, const Vector_double& p) {
     return p[0] * (1-e1) * e2 + p[3];
 }
 
-void stf::fHH_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
+double stf::fgauss(double x, const Vector_double& pars) {
+    double y=0.0, /* fac=0.0, */ ex=0.0, arg=0.0;
+    int npars=static_cast<int>(pars.size());
+    for (int i=0; i < npars-1; i += 3) {
+        arg=(x-pars[i+1])/pars[i+2];
+        ex=exp(-arg*arg);
+        /* fac=pars[i]*ex*2.0*arg; */
+        y += pars[i] * ex;
+    }
+    return y;
+}
+
+Vector_double stf::fgauss_jac(double x, const Vector_double& pars) {
+    double ex=0.0, arg=0.0;
+    int npars=static_cast<int>(pars.size());
+    Vector_double jac(npars);
+    for (int i=0; i < npars-1; i += 3) {
+        arg=(x-pars[i+1])/pars[i+2];
+        ex=exp(-arg*arg);
+        jac[i] = ex;
+        jac[i+1] = 2.0*ex*pars[i]*(x-pars[i+1]) / (pars[i+2]*pars[i+2]);
+        jac[i+2] = 2.0*ex*pars[i]*(x-pars[i+1])*(x-pars[i+1]) / (pars[i+2]*pars[i+2]*pars[i+2]);
+    }
+    return jac;
+}
+
+void stf::fgauss_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+    // Find the peak position in data:
+    double maxT = stf::whereis( data, peak ) * dt;
+    int npars=static_cast<int>(pInit.size());
+    for (int i=0; i < npars-1; i += 3) {
+        pInit[i] = peak;
+        pInit[i+1] = maxT;
+        pInit[i+2] = HalfWidth;
+    }
+}
+
+void stf::fHH_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT = stf::whereis( data, peak );
     // stf::peak( data, base, 0, data.size(), 1, stf::both, maxT );
@@ -357,7 +413,7 @@ void stf::fHH_init(const Vector_double& data, double base, double peak, double d
     pInit[3]=base;
 }
 
-void stf::fgnabiexp_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit ) {
+void stf::fgnabiexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT = stf::whereis( data, peak );
     // stf::peak( data, base, 0, data.size(), 1, stf::both, maxT );

@@ -148,14 +148,18 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
     //     wfName[i] = (wchar_t)fName[i];
     // }
 
+#ifdef __MINGW32__
+    if (!abf2.Open( fName.c_str() )) {
+#else
     if (!abf2.Open( &wfName[0] )) {
+#endif
         std::string errorMsg("Exception while calling importABF2File():\nCouldn't open file");
         throw std::runtime_error(errorMsg);
         abf2.Close();
     }
 #ifdef _STFDEBUG
     else {
-        std::cout << "File successfully opened" << std::endl;
+        std::cout << "Axon binary file (v2) successfully opened" << std::endl;
     }
 #endif
     int nError = 0;
@@ -361,9 +365,13 @@ void stfio::importABF1File(const std::string &fName, Recording &ReturnData, Prog
     for(std::string::size_type i=0; i<fName.size(); ++i) {
         wfName += wchar_t(fName[i]);
     }
-
+#ifdef __MINGW32__
+    if (!ABF_ReadOpen(fName.c_str(), &hFile, ABF_DATAFILE, &FH,
+                      &uMaxSamples, &dwMaxEpi, &nError))
+#else
     if (!ABF_ReadOpen(wfName.c_str(), &hFile, ABF_DATAFILE, &FH,
                       &uMaxSamples, &dwMaxEpi, &nError))
+#endif
     {
         std::string errorMsg("Exception while calling ABF_ReadOpen():\n");
         errorMsg+=ABF1Error(fName,nError);
@@ -376,6 +384,12 @@ void stfio::importABF1File(const std::string &fName, Recording &ReturnData, Prog
     throw std::runtime_error(errorMsg);
     }
     */
+
+#ifdef _STFDEBUG
+    else {
+        std::cout << "Axon binary file (v1) successfully opened" << std::endl;
+    }
+#endif
     int numberChannels=FH.nADCNumChannels;
     ABFLONG numberSections=FH.lActualEpisodes;
     if ((DWORD)numberSections>dwMaxEpi) {
@@ -471,6 +485,8 @@ void stfio::importABF1File(const std::string &fName, Recording &ReturnData, Prog
     // Dominique Engel for noticing.
     ReturnData.SetXScale((double)(FH.fADCSampleInterval/1000.0)*(double)numberChannels);
     std::string comment("Created with ");
+    FH.sCreatorInfo[ABF_CREATORINFOLEN-1]=0;  // make sure string is 0-terminated
+    FH._sFileComment[ABF_OLDFILECOMMENTLEN-1]=0;  // make sure string is 0-terminated
     comment += std::string( FH.sCreatorInfo );
     ReturnData.SetComment(comment);
     ReturnData.SetDate(dateToStr(FH.lFileStartDate));

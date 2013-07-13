@@ -73,7 +73,7 @@ namespace stf {
      *         number of exponential functions. On exit, will contain initial parameter
      *         estimates.
      */
-    void fexp_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit );
+    void fexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit );
 
     //! Yet another initialiser for fitting stf::fexp() to \e data.
     /*! In this case, one of the amplitude terms will have another sign than the others, making
@@ -86,7 +86,7 @@ namespace stf {
      *         number of exponential functions. On exit, will contain initial parameter
      *         estimates.
      */
-    void fexp_init2(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit );
+    void fexp_init2(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit );
     
     //! Monoexponential function with delay. 
     /*! \f{eqnarray*}
@@ -153,7 +153,7 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 4.
      *         On exit, will contain initial parameter estimates.
      */
-    void fexpde_init(const Vector_double& data, double base, double peak,double dt,  Vector_double& pInit );
+    void fexpde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt,  Vector_double& pInit );
     
     
     //! Biexponential function with delay. 
@@ -168,7 +168,7 @@ namespace stf {
      *  \param x Function argument.
      *  \param p A valarray of parameters, where \n
      *         \e p[0] is the baseline, \n
-     *         \e p[1] is the delay.
+     *         \e p[1] is the delay, \n
      *         \e p[2] is the later (slower) time constant, \n
      *         \e p[3] is the amplitude and \n
      *         \e p[4] is the earlier (faster) time constant, \n
@@ -223,7 +223,7 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 4.
      *         On exit, will contain initial parameter estimates.
      */
-    void fexpbde_init(const Vector_double& data, double base, double peak,double dt,  Vector_double& pInit );
+    void fexpbde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt,  Vector_double& pInit );
 
     //! Alpha function.
     /*! \f[f(x)=p_0 p_1^2 x \mathrm{e}^{-p_1 x} + p_2\f]
@@ -266,6 +266,24 @@ namespace stf {
      */
     double fHH(double x, const Vector_double& p);
 
+    //! Computes the sum of an arbitrary number of Gaussians.
+    /*! \f[
+     *      f(x) = \sum_{i=0}^{n-1}p_{3i}\mathrm{e}^{- \left( \frac{x-p_{3i+1}}{p_{3i+2}} \right) ^2}
+     *  \f] 
+     *  \param x Argument of the function.
+     *  \param p A valarray of function parameters of size 3\e n, where \n
+     *         \e p[3<em>i</em>] is the amplitude of the Gaussian \n
+     *         \e p[3<em>i</em>+1] is the position of the center of the peak, \n
+     *         \e p[3<em>i</em>+2] is the width of the Gaussian, \n
+     *         \e n is the number of Gaussian functions and \n
+     *         \e i is the 0-based index of the i-th Gaussian.
+     *  \return The evaluated function.
+     */
+    double fgauss(double x, const Vector_double& p);
+
+    //! Computes the Jacobian of a sum of Gaussians.
+    Vector_double fgauss_jac(double x, const Vector_double& p);
+
     //! power of 1 sodium conductance function.
     /*! \f[f(x)=p_0\left(1-\mathrm{e}^{\frac{-x}{p_1}}\right)\mathrm{e}^{\frac{-x}{p_2}} + p_3\f]
      *  \param x Function argument.
@@ -286,7 +304,17 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 3. On exit, will contain initial parameter
      *         estimates.
      */
-    void falpha_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit );
+    void falpha_init(const Vector_double& data, double base, double peak, double RTLoHI, double HalfWidth, double dt, Vector_double& pInit );
+
+    //! Initialises parameters for fitting stf::fgauss() to \e data.
+    /*! \param data The waveform of the data for the fit.
+     *  \param base Baseline of \e data.
+     *  \param peak Peak value of \e data.
+     *  \param dt The sampling interval.
+     *  \param pInit On entry, pass a valarray of size 3. On exit, will contain initial parameter
+     *         estimates.
+     */
+    void fgauss_init(const Vector_double& data, double base, double peak, double RTLoHI, double HalfWidth, double dt, Vector_double& pInit );
 
     //! Initialises parameters for fitting stf::falpha() to \e data.
     /*! \param data The waveform of the data for the fit.
@@ -296,7 +324,7 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 4. On exit, will contain initial parameter
      *         estimates.
      */
-    void fHH_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit );
+    void fHH_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit );
 
     //! Initialises parameters for fitting stf::falpha() to \e data.
     /*! \param data The waveform of the data for the fit.
@@ -306,7 +334,7 @@ namespace stf {
      *  \param pInit On entry, pass a valarray of size 4. On exit, will contain initial parameter
      *         estimates.
      */
-    void fgnabiexp_init(const Vector_double& data, double base, double peak, double dt, Vector_double& pInit );
+    void fgnabiexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit );
 
     //! Scales a parameter that linearly depends on x
     /*! \param The parameter to scale

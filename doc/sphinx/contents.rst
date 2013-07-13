@@ -12,6 +12,7 @@ Contents:
    manual/index
    linux_install_guide/index
    osx_install_guide/index
+   win_install_guide/index
    howto/index
    stf_reference/stf
    references/index

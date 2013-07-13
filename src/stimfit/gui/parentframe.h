@@ -237,6 +237,7 @@ private:
     void OnScale(wxCommandEvent& event);
     void OnHires(wxCommandEvent& event);
     void OnMpl(wxCommandEvent& event);
+    void OnMplSpectrum(wxCommandEvent& event);
     void OnPageSetup(wxCommandEvent& event);
     void OnViewResults(wxCommandEvent& event);
     void OnSaveperspective(wxCommandEvent& event);

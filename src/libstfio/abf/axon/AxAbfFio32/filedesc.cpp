@@ -82,8 +82,11 @@ BOOL CFileDescriptor::Open(LPCTSTR szFileName, BOOL bReadOnly)
       return SetLastError(bTooManyFiles ? ABF_NODOSFILEHANDLES : ABF_EOPENFILE);
    }
    m_uFlags = bReadOnly ? FI_READONLY : FI_WRITEONLY;
+
+#ifndef __MINGW32__
    wcsncpy(m_szFileName, szFileName, _MAX_PATH-1);
    m_szFileName[_MAX_PATH-1] = '\0';
+#endif
 
    if (!m_VSynch.OpenFile())
       return SetLastError(ABF_BADTEMPFILE);

@@ -116,7 +116,7 @@ Table defaultOutput(const Vector_double& pars,
                     double chisqr);
 
 //! Initialising function for the parameters in stf::Func to start a fit.
-typedef boost::function<void(const Vector_double&,double,double,double,Vector_double&)> Init;
+typedef boost::function<void(const Vector_double&, double, double, double, double, double, Vector_double&)> Init;
 
 //! Function used for least-squares fitting.
 /*! Objects of this class are used for fitting functions 
@@ -166,23 +166,6 @@ struct StfDll storedFunc {
 
 };
 
-//! Computes a spectral estimate using Welch's method. 
-/*! \param data An input valarray of complex numbers.
- *  \param K \e data will be split into \e K windows.
- *  \param f_n On return, this contains the frequency step between adjacent
- *         indices in the spectrum, in units of 1/index_data.
- *  \return A valarray containing the spectrum.
- */
-Vector_double
-spectrum(const std::vector<std::complex<double> >& data, long K, double& f_n);
-
-//! Window function for psd estimation
-/*! \param n Argument of the window function.
- *  \param N Width of the window.
- *  \return Result of the window function.
- */
-double window(double n, double N);
-
 //! Calculates the square of a number.
 /*! \param a Argument of the function.
  *  \return \e a ^2
@@ -190,7 +173,7 @@ double window(double n, double N);
 template <typename T>
 T SQR (T a);
 
-//! Convolutes a data set with a filter function.
+//! Convolves a data set with a filter function.
 /*! \param toFilter The valarray to be filtered.
  *  \param filter_start The index from which to start filtering.
  *  \param filter_end The index at which to stop filtering.
@@ -198,7 +181,7 @@ T SQR (T a);
  *  \param SR The sampling rate.
  *  \param func The filter function in the frequency domain.
  *  \param inverse true if (1- \e func) should be used as the filter function, false otherwise
- *  \return The convoluted data set.
+ *  \return The convolved data set.
  */
 Vector_double
 filter(
@@ -210,6 +193,26 @@ filter(
         stf::Func func,
         bool inverse = false
 );
+
+//! Computes a histogram
+/*! \param data The signal
+ *  \param nbins Number of bins in the histogram.
+ *  \return A map with lower bin limits as keys, number of observations as values.
+ */
+std::map<double, int>
+histogram(const Vector_double& data, int nbins=-1);
+
+//! Deconvolves a template from a signal
+/*! \param data The input signal
+ *  \param templ The template
+ *  \param SR The sampling rate in kHz.
+ *  \param hipass Highpass filter cutoff frequency in kHz
+ *  \param lopass Lowpass filter cutoff frequency in kHz
+ *  \return The result of the deconvolution
+ */
+StfDll Vector_double
+deconvolve(const Vector_double& data, const Vector_double& templ,
+           int SR, double hipass, double lopass, stfio::ProgressInfo& progDlg);
 
 //! Interpolates a dataset using cubic splines.
 /*! \param y The valarray to be interpolated.
@@ -327,21 +330,6 @@ StfDll std::vector<int> peakIndices(const Vector_double& data, double threshold,
  */
 StfDll Vector_double linCorr(const Vector_double& va1, const Vector_double& va2, stfio::ProgressInfo& progDlg); 
 
-//! Computes the sum of an arbitrary number of Gaussians.
-/*! \f[
- *      f(x) = \sum_{i=0}^{n-1}p_{3i}\mathrm{e}^{- \left( \frac{x-p_{3i+1}}{p_{3i+2}} \right) ^2}
- *  \f] 
- *  \param x Argument of the function.
- *  \param p A valarray of function parameters of size 3\e n, where \n
- *         \e p[3<em>i</em>] is the amplitude of the Gaussian \n
- *         \e p[3<em>i</em>+1] is the position of the center of the peak, \n
- *         \e p[3<em>i</em>+2] is the width of the Gaussian, \n
- *         \e n is the number of Gaussian functions and \n
- *         \e i is the 0-based index of the i-th Gaussian.
- *  \return The evaluated function.
- */
-double fgauss(double x, const Vector_double& p);
-
 //! Computes a Gaussian that can be used as a filter kernel.
 /*! \f[
  *      f(x) = \mathrm{e}^{-0.3466 \left( \frac{x}{p_{0}} \right) ^2}   
@@ -414,10 +402,6 @@ wxString noPath(const wxString& fName);
 }
 
 typedef std::vector< stf::storedFunc >::const_iterator c_stfunc_it; /*!< constant stf::storedFunc iterator */
-
-inline double stf::window(double n, double N) {
-    return 1.0-(pow((2.0*n-N)/N,2.0));
-}
 
 inline int stf::pow2(int arg) {return 1<<arg;}
 

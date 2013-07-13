@@ -44,7 +44,7 @@ private:
     bool ChannelSelDlg();
     void WriteToReg();
     bool outOfRange(std::size_t check) {
-        return (check>=cur().size() || check<0);
+        return (check>=cur().size());
     }
     void Focus();
     void OnNewfromselectedThisMenu( wxCommandEvent& event ) { OnNewfromselectedThis( ); }
@@ -54,16 +54,17 @@ private:
     void OnAnalysisBatch( wxCommandEvent& event );
     void OnAnalysisIntegrate( wxCommandEvent& event );
     void OnAnalysisDifferentiate( wxCommandEvent& event );
-    void OnSwapChannels( wxCommandEvent& event );
+    //void OnSwapChannels( wxCommandEvent& event );
     void Multiply(wxCommandEvent& event);
     void SubtractBaseMenu( wxCommandEvent& event ) { SubtractBase( ); }
     void LFit(wxCommandEvent& event);
     void LnTransform(wxCommandEvent& event);
     void Filter(wxCommandEvent& event);
-    void Spectrum(wxCommandEvent& event);
     void P_over_N(wxCommandEvent& event);
+    void Plotextraction(stf::extraction_mode mode);
     void Plotcriterion(wxCommandEvent& event);
     void Plotcorrelation(wxCommandEvent& event);
+    void Plotdeconvolution(wxCommandEvent& event);
     void MarkEvents(wxCommandEvent& event);
     void Threshold(wxCommandEvent& event);
     void Viewtable(wxCommandEvent& event);
@@ -99,6 +100,7 @@ private:
         rtLoHi, halfDuration, slopeRatio, t0Real;
     // cursor windows:
     int pM;  //peakMean, number of points used for averaging
+    int RTFactor; // Lower point for the rise-time calculation
 #ifdef WITH_PSLOPE
 #endif
 
@@ -136,6 +138,11 @@ public:
     wxStfDoc();
     //! Destructor.
     ~wxStfDoc();
+
+    //! Swaps active and inactive channel
+    /*! \param event The menu event that made the call.
+     */
+    void OnSwapChannels( wxCommandEvent& event );
 
     //! Override default file opening.
     /*! Attempts to identify the file type from the filter extension (such as "*.dat")
@@ -514,16 +521,22 @@ public:
     /*! \return The difference between GetTHiReal() and GetTLoReal(), expressed in units o data points.
      */
     double GetRTLoHi() const { return rtLoHi; }
-    
+
     //! Retrieves the full width at half-maximal amplitude ("half duration").
     /*! \return The difference between GetT50RightReal() and GetT50LeftReal(), expressed in units of data points.
      */
     double GetHalfDuration() const { return halfDuration; }
+
     
     //! Retrieves ratio of the maximal slopes during the rising and decaying phase.
     /*! \return The ratio of GetMaxRise() and GetMaxDecay().
      */
     double GetSlopeRatio() const { return slopeRatio; }
+
+    //! Retrieves lower factor (e.g 20) for the rise time calculation.
+    /*! \return lower factor value for rise time calculation expressed in percentage (e.g 20).
+     */
+    int GetRTFactor() const { return RTFactor; }
 
 //#ifdef WITH_PSLOPE
     //! Retrieves the value of the Slope
@@ -824,6 +837,12 @@ public:
     /*! \param value The number of points to be used.
      */
     void SetPM(int value) { pM=value; }
+
+    //! Sets the lower value (e.g 20) to calculate the rise time.
+    /*! \param value The lower percentage (e.g 20) to be used to c
+        calculate the rise time.
+     */
+    void SetRTFactor(int value);
 
     //! Sets the mode of the latency start cursor.
     /*! \param value The new mode of the latency start cursor..

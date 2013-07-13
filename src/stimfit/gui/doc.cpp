@@ -42,17 +42,15 @@
 #include "./dlgs/cursorsdlg.h"
 #include "./../math/stfmath.h"
 #include "./../math/fit.h"
+#include "./../math/funclib.h"
 #include "./../math/measure.h"
+#include "./../../libstfio/stfio.h"
 #include "./../../libstfio/cfs/cfslib.h"
-#ifndef _STFIO_H_
-  #error stfio.h must be included before checking WITH_AXON, WITH_HDF5
-#endif 
-#ifdef WITH_AXON
-  #include "./../../libstfio/atf/atflib.h"
+#include "./../../libstfio/atf/atflib.h"
+#ifdef WITH_BIOSIG
+  #include "./../../libstfio/biosig/biosiglib.h"
 #endif
-#ifdef WITH_HDF5
-  #include "./../../libstfio/hdf5/hdf5lib.h"
-#endif
+#include "./../../libstfio/hdf5/hdf5lib.h"
 #if 0 // TODO: backport ascii
 #include "./../../libstfio/ascii/asciilib.h"
 #endif
@@ -81,10 +79,10 @@ EVT_MENU( ID_FIT, wxStfDoc::FitDecay)
 EVT_MENU( ID_LFIT, wxStfDoc::LFit)
 EVT_MENU( ID_LOG, wxStfDoc::LnTransform)
 EVT_MENU( ID_FILTER,wxStfDoc::Filter)
-EVT_MENU( ID_SPECTRUM,wxStfDoc::Spectrum)
 EVT_MENU( ID_POVERN,wxStfDoc::P_over_N)
 EVT_MENU( ID_PLOTCRITERION,wxStfDoc::Plotcriterion)
 EVT_MENU( ID_PLOTCORRELATION,wxStfDoc::Plotcorrelation)
+EVT_MENU( ID_PLOTDECONVOLUTION,wxStfDoc::Plotdeconvolution)
 EVT_MENU( ID_EXTRACT,wxStfDoc::MarkEvents )
 EVT_MENU( ID_THRESHOLD,wxStfDoc::Threshold)
 EVT_MENU( ID_VIEWTABLE, wxStfDoc::Viewtable)
@@ -94,7 +92,7 @@ EVT_MENU( ID_EVENT_ADDEVENT, wxStfDoc::AddEvent )
 END_EVENT_TABLE()
 
 static const int baseline=100;
-static const double rtfrac = 0.2; // At present, hard coded to Lo-Hi% rise time
+// static const double rtfrac = 0.2; // now expressed in percentage, see RTFactor
 
 wxStfDoc::wxStfDoc() :
     Recording(),peakAtEnd(false),initialized(false),progress(true), Average(0),
@@ -152,6 +150,7 @@ wxStfDoc::wxStfDoc() :
     slopeRatio(0.0),
     t0Real(0.0),
     pM(1),
+    RTFactor(20),
     cc(0),
     sc(1),
     cs(0),
@@ -417,7 +416,8 @@ void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const w
 
 //Dialog box to display the specific settings of the current CFS file.
 int wxStfDoc::InitCursors() {
-    //Get values from .ini and ensure proper settings
+    //Get values from .Stimfit and ensure proper settings
+    SetMeasCursor(wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("MeasureCursor"), 1));
     SetBaseBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("BaseBegin"), 1));
     SetBaseEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("BaseEnd"), 20));
     SetPeakBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakBegin"), (int)cur().size()-100));
@@ -440,6 +440,7 @@ int wxStfDoc::InitCursors() {
     // Set corresponding menu checkmarks:
     // UpdateMenuCheckmarks();
     SetPM(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakMean"),1));
+    SetRTFactor(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("RTFactor"),20));
     wxString wxsSlope = wxGetApp().wxGetProfileString(wxT("Settings"),wxT("Slope"),wxT("20.0"));
     double fSlope = 0.0;
     wxsSlope.ToDouble(&fSlope);
@@ -479,11 +480,7 @@ void wxStfDoc::PostInit() {
             channelNames.Alloc( size() );
             for (std::size_t n_c=0; n_c < size(); ++n_c) {
                 wxString channelStream;
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-                channelStream << n_c << wxT(" (") << at(n_c).GetChannelName() << wxT(")");
-#else
-                channelStream << n_c << wxT(" (") << wxString(at(n_c).GetChannelName().c_str(), wxConvUTF8) << wxT(")");
-#endif                
+                channelStream << n_c << wxT(" (") << stf::std2wx( at(n_c).GetChannelName() ) << wxT(")");
                 channelNames.Add( channelStream );
             }
             pFrame->CreateComboChannels( channelNames );
@@ -610,19 +607,13 @@ void wxStfDoc::Fileinfo(wxCommandEvent& WXUNUSED(event)) {
     std::ostringstream oss1, oss2;
     oss1 << "Number of Channels: " << static_cast<unsigned int>(get().size());
     oss2 << "Number of Sweeps: " << static_cast<unsigned int>(get()[GetCurCh()].size());
-    std::ostringstream general;
-    general << "Date:\n" << GetDate() << "\n"
-            << "Time:\n" << GetTime() << "\n"
-            << oss1.str() << "\n" << oss2.str() << "\n"
-            << "Comment:\n" << GetComment();
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-    wxStfFileInfoDlg dlg( GetDocumentWindow(), general.str(), GetFileDescription(),
+    std::string general =
+        "Date:\t" + GetDate() + "\n"
+        + "Time:\t" + GetTime() + "\n"
+        + oss1.str() + "\n" + oss2.str() + "\n"
+        + "Comment:\n" + GetComment();
+    wxStfFileInfoDlg dlg( GetDocumentWindow(), general, GetFileDescription(),
             GetGlobalSectionDescription() );
-#else
-    wxStfFileInfoDlg dlg(GetDocumentWindow(), stf::std2wx(general.str()),
-                         stf::std2wx(GetFileDescription()),
-                         stf::std2wx(GetGlobalSectionDescription()));
-#endif                          
     dlg.ShowModal();
 }
 
@@ -649,7 +640,11 @@ bool wxStfDoc::SaveAs() {
     filters += wxT("CED filing system (*.dat;*.cfs)|*.dat;*.cfs|");
     filters += wxT("Axon text file (*.atf)|*.atf|");
     filters += wxT("Igor binary wave (*.ibw)|*.ibw|");
-    filters += wxT("Text file series (*.txt)|*.txt");
+    filters += wxT("Text file series (*.txt)|*.txt|");
+#ifdef WITH_BIOSIG
+    filters += wxT("GDF file (*.gdf)|*.gdf");
+#endif
+
     wxFileDialog SelectFileDialog( GetDocumentWindow(), wxT("Save file"), wxT(""), wxT(""), filters,
             wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_PREVIEW );
     if(SelectFileDialog.ShowModal()==wxID_OK) {
@@ -660,18 +655,9 @@ bool wxStfDoc::SaveAs() {
             stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
             switch (SelectFileDialog.GetFilterIndex()) {
              case 1:
-#ifdef __MINGW32__
-                // FIXME: CFS export does not work with MINGW
-                 return false;
-#else                 
                  return stfio::exportCFSFile(stf::wx2std(filename), writeRec, progDlg);
-#endif
              case 2:
-#ifdef WITH_AXON
                  return stfio::exportATFFile(stf::wx2std(filename), writeRec);
-#else
-                 return false;
-#endif
              case 3:
                  return stfio::exportIGORFile(stf::wx2std(filename), writeRec, progDlg);
              case 4:
@@ -679,13 +665,13 @@ bool wxStfDoc::SaveAs() {
 #if 0 // TODO
                  return stfio::exportASCIIFile(stf::wx2std(filename), get()[GetCurCh()]);
 #endif
+#ifdef WITH_BIOSIG
+             case 5:
+                 return stfio::exportBiosigFile(stf::wx2std(filename), writeRec, progDlg);
+#endif
              case 0:
              default:
-#ifdef WITH_HDF5
                  return stfio::exportHDF5File(stf::wx2std(filename), writeRec, progDlg);
-#else
-                 return false; 
-#endif
             }
         }
         catch (const std::runtime_error& e) {
@@ -705,11 +691,7 @@ Recording wxStfDoc::ReorderChannels() {
          cit != get().end() && it != channelNames.end();
          cit++)
     {
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-        *it = cit->GetChannelName();
-#else
-        *it = wxString(cit->GetChannelName().c_str(), wxConvUTF8);
-#endif
+        *it = stf::std2wx( cit->GetChannelName() );
         it++;
     }
     std::vector<int> channelOrder(size());
@@ -742,11 +724,9 @@ bool wxStfDoc::DoSaveDocument(const wxString& filename) {
     if (writeRec.size() == 0) return false;
     try {
         stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
-#ifdef WITH_HDF5
         if (stfio::exportHDF5File(stf::wx2std(filename), writeRec, progDlg))
             return true;
         else
-#endif
             return false;
     }
     catch (const std::runtime_error& e) {
@@ -770,6 +750,7 @@ void wxStfDoc::WriteToReg() {
     if (!outOfRange(GetPeakEnd()))
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("PeakEnd"), (int)GetPeakEnd());
     wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("PeakMean"),(int)GetPM());
+    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("RTFactor"),(int)GetRTFactor());
     wxString wxsSlope;
     wxsSlope << GetSlopeForThreshold();
     wxGetApp().wxWriteProfileString(wxT("Settings"),wxT("Slope"),wxsSlope);
@@ -783,9 +764,9 @@ void wxStfDoc::WriteToReg() {
     if (!outOfRange(GetFitEnd()))
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("FitEnd"), (int)GetFitEnd());
     if (!outOfRange((size_t)GetLatencyBeg()))
-        wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("LatencyCursor"), (int)GetLatencyBeg());
+        wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("LatencyStartCursor"), (int)GetLatencyBeg());
     if (!outOfRange((size_t)GetLatencyEnd()))
-        wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("LatencyCursor"), (int)GetLatencyEnd());
+        wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("LatencyEndCursor"), (int)GetLatencyEnd());
 
     // Write Zoom
     wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.xZoom"), (int)GetXZoom().xZoom*100000);
@@ -802,8 +783,7 @@ void wxStfDoc::WriteToReg() {
 bool wxStfDoc::SetSection(std::size_t section){
     // Check range:
     if (!(get().size()>1)) {
-        if (section<0 ||
-                section>=get()[GetCurCh()].size())
+        if (section>=get()[GetCurCh()].size())
         {
             wxGetApp().ErrorMsg(wxT("subscript out of range\nwhile calling CStimfitDoc::SetSection()"));
             return false;
@@ -813,9 +793,8 @@ bool wxStfDoc::SetSection(std::size_t section){
             return false;
         }
     } else {
-        if (section<0 ||
-                section>=get()[GetCurCh()].size() ||
-                section>=get()[GetSecCh()].size())
+        if (section>=get()[GetCurCh()].size() ||
+            section>=get()[GetSecCh()].size())
         {
             wxGetApp().ErrorMsg(wxT("subscript out of range\nwhile calling CStimfitDoc::SetSection()"));
             return false;
@@ -964,8 +943,7 @@ void wxStfDoc::CreateAverage(
     //array indicating how many indices to shift when aligning,
     //has to be filled with zeros:
     std::vector<int> shift(GetSelectedSections().size(),0);
-    //number of points in average:
-    int average_size;
+    int shift_size = 0;
 
     /* Aligned average */
     //find alignment points in the reference (==second) channel:
@@ -1038,16 +1016,31 @@ void wxStfDoc::CreateAverage(
         //restore section and channel settings:
         SetSection(section_old);
         SetCurCh(channel_old);
-        average_size=(int)(get()[0][GetSelectedSections()[0]].size()-(max_index-min_index));
-    } else {
-        average_size=(int)get()[0][GetSelectedSections()[0]].size();
+        shift_size = (max_index-min_index);
     }
+
+    //number of points in average:
+    size_t average_size = get()[cc].get()[cs].size();
+    for (c_st_it sit = GetSelectedSections().begin(); sit != GetSelectedSections().end(); sit++) {
+        if (get()[cc].get()[*sit].size() < average_size) {
+            average_size = get()[cc].get()[*sit].size();
+        }
+    }
+    average_size -= shift_size;
+
     //initialize temporary sections and channels:
     Average.resize(size());
     std::size_t n_c = 0;
     for (c_ch_it cit = get().begin(); cit != get().end(); cit++) {
         Section TempSection(average_size), TempSig(average_size);
-        MakeAverage(TempSection, TempSig, n_c, GetSelectedSections(), calcSD, shift);
+        try {
+            MakeAverage(TempSection, TempSig, n_c, GetSelectedSections(), calcSD, shift);
+        }
+        catch (const std::out_of_range& e) {
+            Average.resize(0);
+            wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+            return;
+        }
         TempSection.SetSectionDescription(stf::wx2std(GetTitle())
                                           +std::string(", average"));
         Channel TempChannel(TempSection);
@@ -1088,7 +1081,7 @@ void wxStfDoc::FitDecay(wxCommandEvent& WXUNUSED(event)) {
         wxGetApp().ErrorMsg(wxT("Check fit limits"));
         return;
     }
-    wxString fitInfo;
+    std::string fitInfo;
 
     try {
         n_params=(int)wxGetApp().GetFuncLib().at(fselect).pInfo.size();
@@ -1129,7 +1122,7 @@ void wxStfDoc::FitDecay(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=(wxStfView*)GetFirstView();
     if (pView!=NULL && pView->GetGraph()!=NULL)
         pView->GetGraph()->Refresh();
-    wxStfFitInfoDlg InfoDialog(GetDocumentWindow(),fitInfo);
+    wxStfFitInfoDlg InfoDialog(GetDocumentWindow(), stf::std2wx(fitInfo));
     wxEndBusyCursor();
     InfoDialog.ShowModal();
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
@@ -1157,7 +1150,7 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
         wxGetApp().ErrorMsg(wxT("Check fit limits"));
         return;
     }
-    wxString fitInfo;
+    std::string fitInfo;
     n_params=2;
     Vector_double params( n_params );
 
@@ -1182,9 +1175,11 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=(wxStfView*)GetFirstView();
     if (pView!=NULL && pView->GetGraph()!=NULL)
         pView->GetGraph()->Refresh();
-    fitInfo << wxT("slope = ") << params[0] << wxT("\n1/slope = ") << 1.0/params[0]
+    std::ostringstream fitInfoStr;
+    fitInfoStr << wxT("slope = ") << params[0] << wxT("\n1/slope = ") << 1.0/params[0]
             << wxT("\ny-intercept = ") << params[1];
-    wxStfFitInfoDlg InfoDialog(GetDocumentWindow(),fitInfo);
+    fitInfo += fitInfoStr.str();
+    wxStfFitInfoDlg InfoDialog(GetDocumentWindow(), stf::std2wx(fitInfo));
     InfoDialog.ShowModal();
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
     wxString label; label << wxT("Fit, Section #") << (int)GetCurSec();
@@ -1204,7 +1199,7 @@ void wxStfDoc::LnTransform(wxCommandEvent& WXUNUSED(event)) {
         std::transform(get()[GetCurCh()][*cit].get().begin(), 
                        get()[GetCurCh()][*cit].get().end(), 
                        TempSection.get_w().begin(),
-#ifdef _WINDOWS                       
+#if defined(_WINDOWS) && !defined(__MINGW32__)
                        std::logl);
 #else
                        log);
@@ -1232,12 +1227,7 @@ void wxStfDoc::Viewtable(wxCommandEvent& WXUNUSED(event)) {
     wxBusyCursor wc;
     try {
         wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-        pFrame->ShowTable(CurAsTable(),cur().GetSectionDescription());
-#else
-        pFrame->ShowTable(CurAsTable(),
-                          wxString(cur().GetSectionDescription().c_str(), wxConvUTF8));
-#endif        
+        pFrame->ShowTable( CurAsTable(), stf::std2wx( cur().GetSectionDescription() ) );
     }
     catch (const std::out_of_range& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -1467,10 +1457,10 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
             //fill array:
             std::copy(&cur()[GetFitBeg()], &cur()[GetFitEnd()], &x[0]);
             params.resize(n_params);
-            wxGetApp().GetFuncLib().at(fselect).init( x, GetBase(), GetPeak(),
-                    GetXScale(), params );
-            wxString fitInfo;
+            wxGetApp().GetFuncLib().at(fselect).init( x, GetBase(), GetPeak(), GetRTLoHi(),
+                    GetHalfDuration(), GetXScale(), params );
 
+            std::string fitInfo;
             try {
                 double chisqr = stf::lmFit( x, GetXScale(), wxGetApp().GetFuncLib()[fselect],
                                             FitSelDialog.GetOpts(), FitSelDialog.UseScaling(),
@@ -1642,6 +1632,7 @@ bool wxStfDoc::OnNewfromselectedThis( ) {
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
         // Multiply the valarray in Data:
         Section TempSection(get()[GetCurCh()][*cit].get());
+        TempSection.SetXScale(get()[GetCurCh()][*cit].GetXScale());
         TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
                 ", new from selected");
         try {
@@ -1657,6 +1648,7 @@ bool wxStfDoc::OnNewfromselectedThis( ) {
         Recording Selected(TempChannel);
         Selected.CopyAttributes(*this);
         Selected[0].SetYUnits( at(GetCurCh()).GetYUnits() );
+        Selected[0].SetChannelName( at(GetCurCh()).GetChannelName() );
         wxString title(GetTitle());
         title+=wxT(", new from selected");
         wxGetApp().NewChild(Selected,this,title);
@@ -1902,62 +1894,6 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
 #endif
 }
 
-void wxStfDoc::Spectrum(wxCommandEvent& WXUNUSED(event)) {
-#ifndef TEST_MINIMAL
-    if (GetSelectedSections().empty()) {
-        wxGetApp().ErrorMsg(wxT("No traces selected"));
-        return;
-    }
-    //insert standard values:
-    std::vector<std::string> labels(1);
-    Vector_double defaults(labels.size());
-    labels[0]="Number of periodograms:";defaults[0]=10;
-    stf::UserInput init(labels,defaults, std::string("Settings for Welch's method"));
-
-    wxStfUsrDlg SegDialog(GetDocumentWindow(),init);
-    if (SegDialog.ShowModal()!=wxID_OK) return;
-    Vector_double input(SegDialog.readInput());
-    if (input.size()!=1) return;
-
-    int n_seg=(int)SegDialog.readInput()[0];
-    wxBusyCursor wc;
-
-    Channel TempChannel(GetSelectedSections().size(),
-            get()[GetCurCh()][GetSelectedSections()[0]].size());
-    double f_s=1.0; // frequency stepsize of the spectrum
-    std::size_t n = 0;
-    for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
-        std::vector< std::complex<double> > temp(get()[GetCurCh()][*cit].size(), std::complex<double>(0.0,0.0));
-        for (int i=0;i<(int)get()[GetCurCh()][*cit].size();++i) {
-            temp[i]=get()[GetCurCh()][*cit][i];
-        }
-        try {
-            Section TempSection(stf::spectrum(temp,n_seg,f_s));
-            TempSection.SetSectionDescription(
-                    get()[GetCurCh()][*cit].GetSectionDescription()+
-                    std::string(", spectrum"));
-            TempChannel.InsertSection(TempSection,n);
-        }
-        catch (const std::runtime_error& e) {
-            wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
-            return;
-        }
-        catch (const std::out_of_range& e) {
-            wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
-        }
-        n++;
-    }
-    if (TempChannel.size()>0) {
-        Recording Fft(TempChannel);
-        Fft.CopyAttributes(*this);
-        double unit_f=f_s/GetXScale();
-        Fft[0].SetYUnits( at( GetCurCh() ).GetYUnits()+char(-78));
-        Fft.SetXScale(unit_f);
-        wxGetApp().NewChild(Fft,this,GetTitle()+wxT(", spectrum"));
-    }
-#endif
-}
-
 void wxStfDoc::P_over_N(wxCommandEvent& WXUNUSED(event)){
     //insert standard values:
     std::vector<std::string> labels(1);
@@ -2015,7 +1951,7 @@ void wxStfDoc::P_over_N(wxCommandEvent& WXUNUSED(event)){
 
 }
 
-void wxStfDoc::Plotcriterion(wxCommandEvent& WXUNUSED(event)) {
+void wxStfDoc::Plotextraction(stf::extraction_mode mode) {
     std::vector<stf::SectionPointer> sectionList(wxGetApp().GetSectionsWithFits());
     if (sectionList.empty()) {
         wxGetApp().ErrorMsg(
@@ -2040,23 +1976,50 @@ void wxStfDoc::Plotcriterion(wxCommandEvent& WXUNUSED(event)) {
 #undef max
         // subtract offset and normalize:
 
-        Vector_double::const_iterator max_el = std::max_element(templateWave.begin(), templateWave.end());
-        Vector_double::const_iterator min_el = std::min_element(templateWave.begin(), templateWave.end());
-        double fmin=*min_el;
-        double fmax=*max_el;
+        double fmax = *std::max_element(templateWave.begin(), templateWave.end());
+        double fmin = *std::min_element(templateWave.begin(), templateWave.end());
         templateWave = stfio::vec_scal_minus(templateWave, fmax);
         double minim=fabs(fmin);
         templateWave = stfio::vec_scal_div(templateWave, minim);
-        stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
-        Section TempSection(stf::detectionCriterion( cur().get(), templateWave, progDlg ) );
+        std::string section_description, window_title;
+        Section TempSection(cur().get().size());
+        switch (mode) {
+         case stf::criterion: {
+             stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
+             TempSection = Section(stf::detectionCriterion( cur().get(), templateWave, progDlg));
+             section_description = "Detection criterion of ";
+             window_title = ", detection criterion";
+             break;
+         }
+         case stf::correlation: {
+             stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
+             TempSection = Section(stf::linCorr(cur().get(), templateWave, progDlg));
+             section_description = "Template correlation of ";
+             window_title = ", linear correlation";
+             break;
+         }
+         case stf::deconvolution:
+             std::string usrInStr[2] = {"Lowpass (kHz)", "Highpass (kHz)"};
+             double usrInDbl[2] = {0.5, 0.0001};
+             stf::UserInput Input( std::vector<std::string>(usrInStr, usrInStr+2),
+                                   Vector_double (usrInDbl, usrInDbl+2), "Filter settings" );
+             wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
+             if (myDlg.ShowModal()!=wxID_OK) return;
+             Vector_double filter = myDlg.readInput();
+             stf::wxProgressInfo progDlg("Computing deconvolution...", "Starting deconvolution...", 100);
+             TempSection = Section(stf::deconvolve(cur().get(), templateWave,
+                                                   (int)GetSR(), filter[1], filter[0], progDlg));
+             section_description = "Template deconvolution from ";
+             window_title = ", deconvolution";
+             break;
+        }
         if (TempSection.size()==0) return;
-        TempSection.SetSectionDescription(
-                                          std::string("Detection criterion of ")+cur().GetSectionDescription()
-        );
+        TempSection.SetSectionDescription(section_description +
+                                          cur().GetSectionDescription());
         Channel TempChannel(TempSection);
         Recording detCrit(TempChannel);
         detCrit.CopyAttributes(*this);
-        wxGetApp().NewChild(detCrit,this,GetTitle()+wxT(", detection criterion"));
+        wxGetApp().NewChild(detCrit, this, GetTitle() + stf::std2wx(window_title));
     }
     catch (const std::runtime_error& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -2066,55 +2029,16 @@ void wxStfDoc::Plotcriterion(wxCommandEvent& WXUNUSED(event)) {
     }
 }
 
-void wxStfDoc::Plotcorrelation(wxCommandEvent& WXUNUSED(event)) {
-    std::vector<stf::SectionPointer> sectionList(wxGetApp().GetSectionsWithFits());
-    if (sectionList.empty()) {
-        wxGetApp().ErrorMsg(
-                wxT("You have to create a template first\nby fitting a function to an event")
-        );
-        return;
-    }
-    wxStfEventDlg MiniDialog(GetDocumentWindow(), sectionList, false);
-    if (MiniDialog.ShowModal()!=wxID_OK)  {
-        return;
-    }
-    int nTemplate=MiniDialog.GetTemplate();
-    try {
-        Vector_double templateWave(
-                sectionList.at(nTemplate).sec_attr.storeFitEnd -
-                sectionList.at(nTemplate).sec_attr.storeFitBeg);
-        for ( std::size_t n_p=0; n_p < templateWave.size(); n_p++ ) {
-            templateWave[n_p] = sectionList.at(nTemplate).sec_attr.fitFunc->func(
-                n_p*GetXScale(), sectionList.at(nTemplate).sec_attr.bestFitP);
-        }
-        wxBusyCursor wc;
-#undef min
-#undef max
-        // subtract offset and normalize:
-        Vector_double::const_iterator max_el = std::max_element(templateWave.begin(), templateWave.end());
-        Vector_double::const_iterator min_el = std::min_element(templateWave.begin(), templateWave.end());
-        double fmin=*min_el;
-        double fmax=*max_el;
-        templateWave = stfio::vec_scal_minus(templateWave, fmax);
-        double minim=fabs(fmin);
-        templateWave = stfio::vec_scal_div(templateWave, minim);
+void wxStfDoc::Plotcriterion(wxCommandEvent& WXUNUSED(event)) {
+    Plotextraction(stf::criterion);
+}
 
-        stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
-        Section TempSection( stf::linCorr(cur().get(), templateWave, progDlg) );
-        if (TempSection.size()==0) return;
-        TempSection.SetSectionDescription(
-                                          std::string("Template correlation of ") + cur().GetSectionDescription() );
-        Channel TempChannel(TempSection);
-        Recording detCrit(TempChannel);
-        detCrit.CopyAttributes(*this);
-        wxGetApp().NewChild(detCrit,this,GetTitle()+wxT(", linear correlation"));
-    }
-    catch (const std::runtime_error& e) {
-        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
-    }
-    catch (const std::exception& e) {
-        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
-    }
+void wxStfDoc::Plotcorrelation(wxCommandEvent& WXUNUSED(event)) {
+    Plotextraction(stf::correlation);
+}
+
+void wxStfDoc::Plotdeconvolution(wxCommandEvent& WXUNUSED(event)) {
+    Plotextraction(stf::deconvolution);
 }
 
 void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
@@ -2141,20 +2065,34 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
 #undef min
 #undef max
         // subtract offset and normalize:
-        Vector_double::const_iterator max_el = std::max_element(templateWave.begin(), templateWave.end());
-        Vector_double::const_iterator min_el = std::min_element(templateWave.begin(), templateWave.end());
-        double fmin=*min_el;
-        double fmax=*max_el;
+        double fmax = *std::max_element(templateWave.begin(), templateWave.end());
+        double fmin = *std::min_element(templateWave.begin(), templateWave.end());
         templateWave = stfio::vec_scal_minus(templateWave, fmax);
         double minim=fabs(fmin);
         templateWave = stfio::vec_scal_div(templateWave, minim);
         Vector_double detect( cur().get().size() - templateWave.size() );
-        if (MiniDialog.GetScaling()) {
-            stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
-            detect=stf::detectionCriterion(cur().get(), templateWave, progDlg);
-        } else {
-            stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
-            detect=stf::linCorr(cur().get(), templateWave, progDlg);
+        switch (MiniDialog.GetMode()) {
+         case stf::criterion: {
+             stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
+             detect=stf::detectionCriterion(cur().get(), templateWave, progDlg);
+             break;
+         }
+         case stf::correlation: {
+             stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
+             detect=stf::linCorr(cur().get(), templateWave, progDlg);
+             break;
+         }
+         case stf::deconvolution:
+             std::string usrInStr[2] = {"Lowpass (kHz)", "Highpass (kHz)"};
+             double usrInDbl[2] = {0.5, 0.0001};
+             stf::UserInput Input( std::vector<std::string>(usrInStr, usrInStr+2),
+                                   Vector_double (usrInDbl, usrInDbl+2), "Filter settings" );
+             wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
+             if (myDlg.ShowModal()!=wxID_OK) return;
+             Vector_double filter = myDlg.readInput();
+             stf::wxProgressInfo progDlg("Computing deconvolution...", "Starting deconvolution...", 100);
+             detect=stf::deconvolve(cur().get(), templateWave, (int)GetSR(), filter[1], filter[0], progDlg);
+             break;
         }
         if (detect.empty()) {
             wxGetApp().ErrorMsg(wxT("Error: Detection criterion is empty."));
@@ -2173,9 +2111,9 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.push_back( stf::Event( *cit, 0, templateWave.size() ) );
             // Find peak in this event:
             double baselineMean=0;
-            for ( std::size_t n_mean = (std::size_t)*cit-baseline;
-            n_mean < (std::size_t)(*cit);
-            ++n_mean )
+            for ( int n_mean = *cit-baseline;
+                  n_mean < *cit;
+                  ++n_mean )
             {
                 if (n_mean < 0) {
                     baselineMean += cur().at(0);
@@ -2296,9 +2234,9 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
         stf::Event newEvent(newStartPos, 0, GetCurrentSectionAttributes().eventList.at(0).GetEventSize());
         // Find peak in this event:
         double baselineMean=0;
-        for ( std::size_t n_mean = (std::size_t)newStartPos - baseline;
-        n_mean < (std::size_t)newStartPos;
-        ++n_mean )
+        for ( int n_mean = newStartPos - baseline;
+              n_mean < newStartPos;
+              ++n_mean )
         {
             if (n_mean < 0) {
                 baselineMean += cur().at(0);
@@ -2399,6 +2337,23 @@ void wxStfDoc::Measure( )
     catch (const std::out_of_range&) {
         return;
     }
+
+    long windowLength = 1;
+    /*
+       windowLength (defined in samples) determines the size of the window for computing slopes.
+       if the window length larger than 1 is used, a kind of smoothing and low pass filtering is applied.
+       If slope estimates from data with different sampling rates should be compared, the
+       window should be choosen in such a way that the length in milliseconds is approximately the same.
+       This reduces some variability, the slope estimates are more robust and comparible.
+
+       Set window length to 0.05 ms, with a minimum of 1 sample. In this way, all data
+       sampled with 20 kHz or lower, will use a 1 sample window, data with a larger sampling rate
+       use a window of 0.05 ms for computing the slope.
+    */
+	windowLength = lround(0.05 * GetSR());    // use window length of about 0.05 ms.
+       if (windowLength < 1) windowLength = 1;   // use a minimum window length of 1 sample
+
+
     //Begin peak and base calculation
     //-------------------------------
     try {
@@ -2406,7 +2361,7 @@ void wxStfDoc::Measure( )
         baseSD=sqrt(var);
         peak=stf::peak(cur().get(),base,
                        peakBeg,peakEnd,pM,direction,maxT);
-        threshold = stf::threshold( cur().get(), peakBeg, peakEnd, slopeForThreshold/GetSR(), thrT );
+        threshold = stf::threshold( cur().get(), peakBeg, peakEnd, slopeForThreshold/GetSR(), thrT, windowLength );
     }
     catch (const std::out_of_range& e) {
         base=0.0;
@@ -2425,10 +2380,12 @@ void wxStfDoc::Measure( )
     double ampl=peak-reference;
     
     tLoReal=0.0;
+    double factor= RTFactor*0.01; /* normalized value */
     try {
         // 2008-04-27: changed limits to start from the beginning of the trace
+        // 2013-06-16: changed to accept different rise-time proportions 
         rtLoHi=stf::risetime(cur().get(),reference,ampl, (double)0/*(double)baseEnd*/,
-                             maxT, 0.2, tLoIndex, tHiIndex, tLoReal);
+                             maxT, factor/*0.2*/, tLoIndex, tHiIndex, tLoReal);
     }
     catch (const std::out_of_range& e) {
         rtLoHi=0.0;
@@ -2459,11 +2416,12 @@ void wxStfDoc::Measure( )
 
     //Begin Ratio of slopes rise/decay calculation
     //--------------------------------------------
-    double left_rise = (peakBeg > t0Real-1 || !fromBase) ? peakBeg : t0Real-1;
-    maxRise=stf::maxRise(cur().get(),left_rise,maxT,maxRiseT,maxRiseY);
+    double left_rise = peakBeg;
+    maxRise=stf::maxRise(cur().get(),left_rise,maxT,maxRiseT,maxRiseY,windowLength);
     double t_half_3=t50RightIndex+2.0*(t50RightIndex-t50LeftIndex);
     double right_decay=peakEnd<=t_half_3 ? peakEnd : t_half_3+1;
-    maxDecay=stf::maxDecay(cur().get(),maxT,right_decay,maxDecayT,maxDecayY);
+    maxDecay=stf::maxDecay(cur().get(),maxT,right_decay,maxDecayT,maxDecayY,windowLength);
+
     //Slope ratio
     if (maxDecay !=0) slopeRatio=maxRise/maxDecay;
     else slopeRatio=0.0;
@@ -2481,10 +2439,11 @@ void wxStfDoc::Measure( )
         const int searchRange=100;
         double APBase=0.0, APPeak=0.0, APVar=0.0;
         try {
+            // in 2012-11-02: use baseline cursors and not arbitrarily 100 points
             //APBase=stf::base(APVar,sec().get(),0,endResting);
-            APBase=stf::base(APVar,sec().get(),baseBeg,baseEnd); // use baseline cursors 
+            APBase=stf::base( APVar,sec().get(), baseBeg, baseEnd ); // use baseline cursors 
             //APPeak=stf::peak(sec().get(),APBase,peakBeg,peakEnd,pM,stf::up,APMaxT);
-            APPeak=stf::peak(sec().get(),APBase,peakBeg,peakEnd,pM,direction,APMaxT);
+            APPeak=stf::peak( sec().get(),APBase ,peakBeg ,peakEnd ,pM,direction ,APMaxT );
         }
         catch (const std::out_of_range& e) {
             APBase=0.0;
@@ -2501,9 +2460,9 @@ void wxStfDoc::Measure( )
             left_APRise= APMaxT-searchRange>2.0 ? APMaxT-searchRange : 2.0;
         }
         try {
-            stf::maxRise(sec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY);
+            stf::maxRise(sec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY,windowLength);
         }
-        catch (const std::out_of_range& e) {
+        catch (const std::out_of_range&) {
             APMaxRiseT=0.0;
             APMaxRiseY=0.0;
             left_APRise = peakBeg; 
@@ -2723,10 +2682,6 @@ void wxStfDoc::correctRangeR(int& value) {
 }
 
 void wxStfDoc::correctRangeR(std::size_t& value) {
-    if (value<0) {
-        value=0;
-        return;
-    }
     if (value>=cur().size()) {
         value=cur().size()-1;
         return;
@@ -2735,24 +2690,21 @@ void wxStfDoc::correctRangeR(std::size_t& value) {
 
 
 void wxStfDoc::SetCurCh(size_t value) {
-    if (value<0 || value>=get().size()) {
+    if (value>=get().size()) {
         throw std::out_of_range("channel out of range in wxStfDoc::SetCurCh()");
     }
     cc=value;
 }
 
 void wxStfDoc::SetSecCh(size_t value) {
-    if (value<0 ||
-            value>=get().size() ||
-            value==cc)
-    {
+    if (value>=get().size() || value==cc) {
         throw std::out_of_range("channel out of range in wxStfDoc::SetSecCh()");
     }
     sc=value;
 }
 
 void wxStfDoc::SetCurSec( size_t value ) {
-    if (value<0 || value>=get()[cc].size()) {
+    if (value >= get()[cc].size()) {
         throw std::out_of_range("channel out of range in wxStfDoc::SetCurSec()");
     }
     cs=value;
@@ -2764,7 +2716,7 @@ void wxStfDoc::SetMeasCursor(int value) {
 }
 
 double wxStfDoc::GetMeasValue() {
-    if (measCursor<0 || measCursor>=get()[cc].size()) {
+    if (measCursor>=get()[cc].size()) {
         correctRangeR(measCursor);
     }
     return cur().at(measCursor);
@@ -2820,6 +2772,17 @@ void wxStfDoc::SetLatencyEnd(double value) {
     latencyEndCursor=value;
 }
 
+void wxStfDoc::SetRTFactor(int value) {
+    if (value < 0){
+        value = 5;  
+    }
+    else if (value > 50) {
+        value = 45;  
+    }
+    
+    RTFactor = value;
+}
+
 #ifdef WITH_PSLOPE
 void wxStfDoc::SetPSlopeBeg(int value) {
     correctRangeR(value);
@@ -2836,9 +2799,7 @@ void wxStfDoc::SetPSlopeEnd(int value) {
 void wxStfDoc::SelectTrace(std::size_t sectionToSelect) {
     // Check range so that sectionToSelect can be used
     // without checking again:
-    if (sectionToSelect<0 ||
-        sectionToSelect>=get()[cc].size()) 
-    {
+    if (sectionToSelect>=get()[cc].size()) {
         std::out_of_range e("subscript out of range in wxStfDoc::SelectTrace\n");
         throw e;
     }

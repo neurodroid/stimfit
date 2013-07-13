@@ -29,23 +29,29 @@
 #include "stfio.h"
 
 // TODO #include "./ascii/asciilib.h"
-#ifdef WITH_HDF5
-  #include "./hdf5/hdf5lib.h"
-#endif
-#ifdef WITH_AXON
-  #include "./abf/abflib.h"
-  #include "./atf/atflib.h"
-#endif  
+#include "./hdf5/hdf5lib.h"
+#include "./abf/abflib.h"
+#include "./atf/atflib.h"
 #include "./axg/axglib.h"
 #include "./igor/igorlib.h"
 #ifdef WITH_BIOSIG
   #include "./biosig/biosiglib.h"
-#else
+#endif
 #include "./cfs/cfslib.h"
 #include "./heka/hekalib.h"
-#endif
 #if 0
 #include "./son/sonlib.h"
+#endif
+
+#ifdef _MSC_VER
+    StfioDll long int lround(double x) {
+        int i = (long int) x;
+        if (x >= 0.0) {
+            return ((x-i) >= 0.5) ? (i + 1) : (i);
+        } else {
+            return (-x+i >= 0.5) ? (i - 1) : (i);
+        }
+    }
 #endif
 
 stfio::StdoutProgressInfo::StdoutProgressInfo(const std::string& title, const std::string& message, int maximum, bool verbose)
@@ -74,13 +80,13 @@ stfio::findType(const std::string& ext) {
     if (ext=="*.dat;*.cfs") return stfio::cfs;
     else if (ext=="*.abf") return stfio::abf;
     else if (ext=="*.axgd;*.axgx") return stfio::axg;
-    else if (ext=="*.h5") return stfio::hdf5;
+    else if (ext=="*.h5")  return stfio::hdf5;
     else if (ext=="*.atf") return stfio::atf;
     else if (ext=="*.dat") return stfio::heka;
     else if (ext=="*.smr") return stfio::son;
-
 #ifdef WITH_BIOSIG
-    else if (ext=="*.*") return stfio::biosig;
+    else if (ext=="*.dat;*.cfs;*.gdf;*.ibw") return stfio::biosig;
+    else if (ext=="*.*")   return stfio::biosig;
 #endif
     else return stfio::none;
 }
@@ -94,44 +100,72 @@ bool stfio::importFile(
 ) {
     try {
         switch (type) {
-#ifdef WITH_HDF5
         case stfio::hdf5: {
             stfio::importHDF5File(fName, ReturnData, progDlg);
             break;
         }
-#endif
-#ifdef WITH_AXON
         case stfio::abf: {
-            stfio::importABFFile(fName, ReturnData, progDlg);
+#if 0 // activates fallback mechanism
+#if defined(WITH_BIOSIG)
+            try
+            {    // try first with biosig, v1.5.1 or larger is recommended
+                 stfio::importBSFile(fName, ReturnData, progDlg);
+            }
+            catch (...)
+#endif
+#endif
+            {   // fallback to old method
+                stfio::importABFFile(fName, ReturnData, progDlg);
+            }
             break;
         }
         case stfio::atf: {
             stfio::importATFFile(fName, ReturnData, progDlg);
             break;
         }
-#endif
         case stfio::axg: {
             stfio::importAXGFile(fName, ReturnData, progDlg);
             break;
         }
-#ifndef WITH_BIOSIG
         case stfio::cfs: {
+#if 0 // activates fallback mechanism
+#if defined(WITH_BIOSIG)
+            try
+            {    // try first with biosig
+                 stfio::importBSFile(fName, ReturnData, progDlg);
+            }
+            catch (...)
+#endif
+#endif
+            {
             int res = stfio::importCFSFile(fName, ReturnData, progDlg);
             if (res==-7) {
                 stfio::importHEKAFile(fName, ReturnData, progDlg);
             }
             break;
+            }
         }
         case stfio::heka: {
+#if 0 // activates fallback mechanism
+#if defined(WITH_BIOSIG)
+            try
+            {    // try first with biosig
+                 stfio::importBSFile(fName, ReturnData, progDlg);
+            }
+            catch (...)
+#endif
+#endif
+            {
             stfio::importHEKAFile(fName, ReturnData, progDlg);
             break;
+            }
         }
+#ifndef WITH_BIOSIG
         default:
             throw std::runtime_error("Unknown or unsupported file type");
 #else
-        case stfio::cfs:
         case stfio::son:
-        case stfio::heka: 
+        case stfio::igor:
         case stfio::biosig:
         default: 
             stfio::importBSFile(fName, ReturnData, progDlg);
@@ -171,17 +205,19 @@ bool stfio::exportFile(const std::string& fName, stfio::filetype type, const Rec
     try {
         switch (type) {
         case stfio::hdf5: {
-#ifdef WITH_HDF5
             stfio::exportHDF5File(fName, Data, progDlg);
-#else
-            throw std::runtime_error("hdf5 is not supported in this version.");
-#endif
             break;
         }
         case stfio::igor: {
             stfio::exportIGORFile(fName, Data, progDlg);
             break;
         }
+#ifdef WITH_BIOSIG
+        case stfio::biosig: {
+            stfio::exportBiosigFile(fName, Data, progDlg);
+            break;
+        }
+#endif
         default:
             throw std::runtime_error("Only hdf5 and IGOR are supported for writing at present.");
         }

@@ -19,9 +19,9 @@ BEGIN_EVENT_TABLE( wxStfFileInfoDlg, wxDialog )
 END_EVENT_TABLE()
 
 wxStfFileInfoDlg::wxStfFileInfoDlg( wxWindow* parent,
-        const wxString& szGeneral,
-        const wxString& szFile,
-        const wxString& szSection,
+        const std::string& szGeneral,
+        const std::string& szFile,
+        const std::string& szSection,
         int id,
         wxString title,
         wxPoint pos,
@@ -33,10 +33,11 @@ wxStfFileInfoDlg::wxStfFileInfoDlg( wxWindow* parent,
     //	this->SetSize(464,464);
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
+    wxString wxs = stf::std2wx(szGeneral);
     wxTextCtrl* textCtrlGeneral = new wxTextCtrl(
             this, 
             wxID_ANY,
-            szGeneral, 
+            wxs,
             wxDefaultPosition,
             wxSize(640,100),
             wxTE_MULTILINE | wxTE_DONTWRAP | wxTE_READONLY
@@ -48,7 +49,7 @@ wxStfFileInfoDlg::wxStfFileInfoDlg( wxWindow* parent,
     wxTextCtrl* textCtrlFile = new wxTextCtrl(
             this, 
             wxID_ANY,
-            szFile, 
+            stf::std2wx(szFile),
             wxDefaultPosition,
             wxSize(416,400),
             wxTE_MULTILINE | wxTE_DONTWRAP | wxTE_READONLY
@@ -58,7 +59,7 @@ wxStfFileInfoDlg::wxStfFileInfoDlg( wxWindow* parent,
     wxTextCtrl* textCtrlSection  = new wxTextCtrl(
             this, 
             wxID_ANY,
-            szSection, 
+            stf::std2wx(szSection),
             wxDefaultPosition,
             wxSize(214,400),
             wxTE_MULTILINE | wxTE_DONTWRAP | wxTE_READONLY
@@ -367,7 +368,7 @@ wxStfFitInfoDlg::wxStfFitInfoDlg(wxWindow* parent, const wxString& info, int id,
             wxID_ANY,
             info,
             wxDefaultPosition,
-            wxSize(256,96),
+            wxSize(320,120),
             wxTE_MULTILINE | wxTE_READONLY | wxTE_DONTWRAP
     );
     topSizer->Add( m_textCtrl, 0, wxALIGN_CENTER | wxALL, 5 );
@@ -1087,6 +1088,9 @@ srcFileNames(0)
     myextensions.Add(wxT("ASCII         [*.*   ]"));
     myextensions.Add(wxT("HDF5          [*.h5  ]"));
     myextensions.Add(wxT("HEKA files    [*.dat ]"));
+#if (BIOSIG_VERSION >= 10404)
+    myextensions.Add(wxT("Igor files    [*.ibw ]"));
+#endif
 
     wxComboBox* myComboBoxExt;
     myComboBoxExt = new wxComboBox(this, wxCOMBOBOX_SRC, myextensions[0], 
@@ -1231,6 +1235,12 @@ void wxStfConvertDlg::OnComboBoxSrcExt(wxCommandEvent& event){
             srcFilterExt =  stfio::heka;
             srcFilter = wxT("*.dat");
             break;
+#if (BIOSIG_VERSION >= 10404)
+        case 7:
+            srcFilterExt =  stfio::igor;
+            srcFilter = wxT("*.ibw");
+            break;
+#endif
         default:   
             srcFilterExt =  stfio::none;
             srcFilter = wxT("*.*");

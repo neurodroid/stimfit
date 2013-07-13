@@ -85,7 +85,7 @@ To view the isolated events in a new window, you have to switch to the event edi
 Create the final template
 -------------------------
 
-We now create the average of all extracted events, as explained in chapter 1. Then, we fit a biexponential function to the average, as explained above for the single EPSC. Remember to set the baseline, peak and fit window cursors appropriately before performing the it, and to update all calculations. Again, you can make use of a function from the ``minidemo`` module to set the cursors and perform the fit:
+We now create the average of all extracted events, as explained in chapter 1. Then, we fit a biexponential function to the average, as explained above for the single EPSC. Remember to set the baseline, peak and fit window cursors appropriately before performing the fit, and to update all calculations. Again, you can make use of a function from the ``minidemo`` module to set the cursors and perform the fit:
 
 ::
 

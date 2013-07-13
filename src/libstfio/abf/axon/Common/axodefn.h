@@ -96,7 +96,7 @@
 ** Add other compiler dependant code HERE!
 */
 
-#if defined(__linux__) || defined(__STF__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__STF__) || defined(__APPLE__) || defined(__MINGW32__)
 #define COMPILER "gcc"
 
 #include "unix.h"

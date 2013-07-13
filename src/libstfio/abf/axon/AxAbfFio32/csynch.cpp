@@ -123,7 +123,7 @@ void CSynch::CloseFile()
      /*MEMBERASSERT();*/    
    if (m_hfSynchFile != NULL)
    {
-#if !defined(_WINDOWS) || defined(__MINGW32__)
+#if !defined(_WINDOWS)
  	   c_CloseHandle(m_hfSynchFile);
 #else
 	   CloseHandle(m_hfSynchFile);
@@ -168,7 +168,7 @@ void CSynch::SetMode(eMODE eMode)
       Read( m_SynchBuffer, m_uCacheStart, uCount );
 
       // Set the current position to the start of the bit we last read, and truncate the file here.
-#if defined(_WINDOWS) && !defined(__MINGW32__)
+#if defined(_WINDOWS)
       SetFilePointer(m_hfSynchFile, m_uCacheStart * sizeof(Synch), NULL, FILE_BEGIN);
 #else
       c_SetFilePointer(m_hfSynchFile, m_uCacheStart * sizeof(Synch), NULL, FILE_BEGIN);
@@ -323,7 +323,7 @@ BOOL CSynch::_Flush()
 
       // Write out the current contents of the cache.
       UINT  uBytesToWrite = m_uCacheCount * sizeof(Synch);
-#if defined(_WINDOWS) && !defined(__MINGW32__)
+#if defined(_WINDOWS)
       bRval = WriteFile(m_hfSynchFile, m_SynchBuffer, uBytesToWrite, &dwBytesWritten, NULL);
 #else
       bRval = c_WriteFile(m_hfSynchFile, m_SynchBuffer, uBytesToWrite, &dwBytesWritten, NULL);

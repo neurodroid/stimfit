@@ -493,7 +493,7 @@ BOOL CABF2ProtocolReader::ReadDACInfo()
 
     BOOL bOK = TRUE;
     ABF_DACInfo DACInfo;
-    ASSERT( m_FileInfo.DACSection.llNumEntries <= ABF_DACCOUNT );
+    ASSERT( m_FileInfo.DACSection.llNumEntries <= ABF2_DACCOUNT );
     ASSERT( m_FileInfo.DACSection.uBytes == sizeof( DACInfo ) );
     bOK &= m_pFI->Seek( LONGLONG(m_FileInfo.DACSection.uBlockIndex) * ABF_BLOCKSIZE, FILE_BEGIN );
     if( !bOK )

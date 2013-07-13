@@ -741,6 +741,13 @@ double get_risetime( ) {
     
 }
 
+double get_risetime_factor() {
+
+    if ( !check_doc() ) return -1.0;
+    return actDoc()->GetRTFactor()/100.;
+    
+}
+
 double get_fit_start( bool is_time ) {
     if ( !check_doc() ) return -1;
 
@@ -749,7 +756,29 @@ double get_fit_start( bool is_time ) {
     else
         return (double)actDoc()->GetFitBeg() * actDoc()->GetXScale();
 }
+bool set_risetime_factor(double factor) {
 
+    if ( !check_doc() ) return false;
+    
+    if (factor > 0.45 || factor < 0.05) {
+        ShowError( wxT("Value out of range (0.05-0.45) in set_risetime_factor()") );
+        return false;
+    }
+
+    wxStfChildFrame* pFrame = (wxStfChildFrame*)actDoc()->GetDocumentWindow();
+    if ( !pFrame ) {
+        ShowError( wxT("Pointer to frame is zero") );
+        return false;
+    }
+
+    int RTFactor = (int)(factor*100);
+    actDoc()->SetRTFactor(RTFactor); // defined in wxStfApp::OnPeakcalcexecMsg
+    wxGetApp().OnPeakcalcexecMsg(); // update results table and write Stf registry
+    pFrame->UpdateResults(); // update results table and markers
+ 
+    return true;
+        
+}
 bool set_fit_start( double pos, bool is_time ) {
     if ( !check_doc() ) return false;
 
@@ -1430,14 +1459,15 @@ PyObject* leastsq( int fselect, bool refresh ) {
 
     // initialize parameters from init function,
     wxGetApp().GetFuncLib().at(fselect).init( x, pDoc->GetBase(), pDoc->GetPeak(),
-            pDoc->GetXScale(), params );
-    wxString fitInfo;
+            pDoc->GetRTLoHi(), pDoc->GetHalfDuration(), pDoc->GetXScale(), params );
+    std::string fitInfo;
     int fitWarning = 0;
     std::vector< double > opts( 6 );
-    // Respectively the scale factor for initial \mu,
+    // Respectively the scale factor for initial damping term \mu,
     // stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2,
     // maxIter, maxPass
-    opts[0]=5*1E-3; //default: 1E-03;
+    //opts[0]=5*1E-3; //default: 1E-03;
+    opts[0]=1E-3; //default: 1E-03;
     opts[1]=1E-17; //default: 1E-17;
     opts[2]=1E-17; //default: 1E-17;
     opts[3]=1E-17; //default: 1E-17;
@@ -1738,7 +1768,7 @@ PyObject* mpl_panel(const std::vector<double>& figsize) {
     return result;
 }
 
-PyObject* template_matching(double* invec, int size, bool correlate, bool norm) {
+PyObject* template_matching(double* invec, int size, const std::string& mode, bool norm, double lowpass, double highpass) {
     wrap_array();
 
     if ( !check_doc() ) return NULL;
@@ -1748,22 +1778,23 @@ PyObject* template_matching(double* invec, int size, bool correlate, bool norm) 
 
     Vector_double templ(invec, &invec[size]);
     if (norm) {
-        Vector_double::const_iterator max_el = std::max_element(templ.begin(), templ.end());
-        Vector_double::const_iterator min_el = std::min_element(templ.begin(), templ.end());
-        double fmin=*min_el;
-        double fmax=*max_el;
+        double fmin = *std::min_element(templ.begin(), templ.end());
+        double fmax = *std::max_element(templ.begin(), templ.end());
         templ = stfio::vec_scal_minus(templ, fmax);
         double minim=fabs(fmin);
         templ = stfio::vec_scal_div(templ, minim);
     }
     
     Vector_double detect((*actDoc())[channel][trace].get().size());
-    if (correlate) {
-        stfio::StdoutProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100, true);
-        detect = stf::linCorr((*actDoc())[channel][trace].get(), templ, progDlg);
-    } else {
+    if (mode=="criterion") {
         stfio::StdoutProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100, true);
         detect = stf::detectionCriterion((*actDoc())[channel][trace].get(), templ, progDlg);
+    } else if (mode=="correlation") {
+        stfio::StdoutProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100, true);
+        detect = stf::linCorr((*actDoc())[channel][trace].get(), templ, progDlg);
+    } else if (mode=="deconvolution") {
+        stfio::StdoutProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100, true);
+        detect = stf::deconvolve((*actDoc())[channel][trace].get(), templ, actDoc()->GetSR(), highpass, lowpass, progDlg);
     }
     npy_intp dims[1] = {(int)detect.size()};
     PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);

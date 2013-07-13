@@ -10,7 +10,8 @@ common electrophysiology file formats"
 #include <string>
 #include <iostream>
 #include <numpy/arrayobject.h>
-    
+#include <cassert>
+
 #include "./../libstfio/stfio.h"
 #include "./../libstfio/recording.h"
 #include "./../libstfio/channel.h"
@@ -29,10 +30,11 @@ wrap_array() {
     import_array();
 }
     
-
+static int myErr = 0; // flag to save error state
 %}
 %include "../stimfit/py/numpy.i"
 %include "std_string.i"
+%include "exception.i"
 %init %{
     import_array();
 %}
@@ -61,6 +63,33 @@ class Channel {
 
 class Section {
 };
+
+%exception Recording::__getitem__ {
+    assert(!myErr);
+    $action
+    if (myErr) {
+        myErr = 0;
+        SWIG_exception(SWIG_IndexError, "Index out of bounds");
+    }
+}
+
+%exception Channel::__getitem__ {
+    assert(!myErr);
+    $action
+    if (myErr) {
+        myErr = 0;
+        SWIG_exception(SWIG_IndexError, "Index out of bounds");
+    }
+}
+
+%exception Section::__getitem__ {
+    assert(!myErr);
+    $action
+    if (myErr) {
+        myErr = 0;
+        SWIG_exception(SWIG_IndexError, "Index out of bounds");
+    }
+}
 
 %extend Recording {
  Recording(PyObject* ChannelList) :
@@ -105,13 +134,12 @@ class Section {
     std::string comment;
     std::string xunits;
     
-    Channel& __getitem__(int at) {
+    Channel* __getitem__(int at) {
         if (at >= 0 && at < (int)$self->size()) {
-            return (*($self))[at];
+            return &(*($self))[at];
         } else {
-            PyErr_SetString(PyExc_IndexError, "Channel index out of range");
-            std::cerr << "Channel index " << at << " out of range\n" << std::endl;
-            throw std::out_of_range("Channel index out of range");
+            myErr = 1;
+            return NULL;
         }
     }
     int __len__() { return $self->size(); }
@@ -214,13 +242,12 @@ class Section {
     const std::string& name;
     const std::string& yunits;
     
-    Section& __getitem__(int at) {
+    Section* __getitem__(int at) {
         if (at >= 0 && at < (int)$self->size()) {
-            return (*($self))[at];
+            return &(*($self))[at];
         } else {
-            PyErr_SetString(PyExc_IndexError, "Section index out of range");
-            std::cerr << "Section index " << at << " out of range\n" << std::endl;
-            throw std::out_of_range("Section index out of range");
+            myErr = 1;
+            return NULL;
         }
     }
     int __len__() { return $self->size(); }
@@ -264,9 +291,8 @@ class Section {
         if (at >= 0 && at < (int)$self->size()) {
             return (*($self))[at];
         } else {
-            PyErr_SetString(PyExc_IndexError, "Point index out of range");
-            std::cerr << "Point index " << at << " out of range\n" << std::endl;
-            throw std::out_of_range("Point index out of range");
+            myErr = 1;
+            return 0;
         }
     }
     int __len__() { return $self->size(); }

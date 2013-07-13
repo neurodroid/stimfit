@@ -6,12 +6,16 @@
 	>
 	<UserMacro
 		Name="HDF5DIR"
-		Value="C:\Users\cs\hdf5"
+		Value="$(SolutionDir)\..\..\..\..\hdf5"
 		PerformEnvironmentSet="true"
 	/>
 	<UserMacro
 		Name="BOOSTDIR"
-		Value="C:\Users\cs\boost"
+		Value="$(SolutionDir)\..\..\..\..\boost"
+	/>
+	<UserMacro
+		Name="BIOSIGDIR"
+		Value="$(SolutionDir)\..\..\..\..\biosig"
 	/>
 	<UserMacro
 		Name="PYTHONDIR"

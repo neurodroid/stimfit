@@ -60,17 +60,15 @@
 #include "./printout.h"
 #include "./dlgs/smalldlgs.h"
 #include "./copygrid.h"
-#ifndef _STFIO_H_
-  // because WITH_AXON, WITH_HDF5 are defined in stfio.h
-  #error stfio.h must be included before checking WITH_AXON, WITH_HDF5
-#endif 
-#ifdef WITH_AXON
-  #include "./../../libstfio/atf/atflib.h"
-#endif 
+#include "./../../libstfio/atf/atflib.h"
+#ifdef WITH_BIOSIG
+  #include "./../../libstfio/biosig/biosiglib.h"
+#endif
 #include "./../../libstfio/igor/igorlib.h"
 
 #include "./childframe.h"
 #include "./parentframe.h"
+#include "./../math/levmar/levmar.h"
 
 #include "./../res/16-em-down.xpm"
 #include "./../res/16-em-open.xpm"
@@ -159,6 +157,7 @@ EVT_MENU( ID_HIRES, wxStfParentFrame::OnHires )
 EVT_MENU( ID_PRINT_PRINT, wxStfParentFrame::OnPrint)
 
 EVT_MENU( ID_MPL, wxStfParentFrame::OnMpl)
+EVT_MENU( ID_MPL_SPECTRUM,wxStfParentFrame::OnMplSpectrum)
 EVT_MENU( ID_PRINT_PAGE_SETUP, wxStfParentFrame::OnPageSetup)
 EVT_MENU( ID_SAVEPERSPECTIVE, wxStfParentFrame::OnSaveperspective )
 EVT_MENU( ID_LOADPERSPECTIVE, wxStfParentFrame::OnLoadperspective )
@@ -281,6 +280,11 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
                  << wxT("def plotWindowMpl(parent, figsize=(8,6)):\n")
                  << wxT("    win = embedded_mpl.MplPanel(parent, figsize)\n")
                  << wxT("    win.plot_screen()\n")
+                 << wxT("    return win\n")
+                 << wxT("\n")
+                 << wxT("def spectrumWindowMpl(parent, figsize=(8,6)):\n")
+                 << wxT("    win = embedded_mpl.MplPanel(parent, figsize)\n")
+                 << wxT("    win.plot_spectrum()\n")
                  << wxT("    return win\n")
                  << wxT("\n")
                  << wxT("def makeWindowMpl(parent, figsize=(8,6)):\n")
@@ -550,7 +554,7 @@ void wxStfParentFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
 	wxString about = wxString(wxT("Credits:\n\nOriginal idea (Stimfit for DOS):\n\
 Peter Jonas, Physiology Department, University of Freiburg\n\n\
 Fourier transform:\nFFTW, http://www.fftw.org\n\n\
-Levenberg-Marquardt non-linear regression:\n\
+Levenberg-Marquardt non-linear regression, version ") + wxString(wxT(LM_VERSION)) + wxT("\n\
 Manolis Lourakis, http://www.ics.forth.gr/~lourakis/levmar/ \n\n")) +
 wxString(wxT(CREDIT_BIOSIG)) +
 wxString(wxT("Documentation:\n\
@@ -560,7 +564,7 @@ Jonas, P., Major, G. & Sakmann B. (1993) J Physiol 472:615-63\n\
 Clements, J. D. & Bekkers, J. M. (1997) Biophys J 73:220-229\n\n\
 Thanks to Bill Anderson (www.winltp.com) for helpful suggestions"));
 	info.SetDescription(about);
-	info.SetCopyright(wxT("(C) 2001-2012 Christoph Schmidt-Hieber <christsc@gmx.de>\n\
+	info.SetCopyright(wxT("(C) 2001-2013 Christoph Schmidt-Hieber <christsc@gmx.de>\n\
 Christoph Schmidt-Hieber, University College London\n\
 Published under the GNU general public license (http://www.gnu.org/licenses/gpl.html)"));
 
@@ -767,17 +771,21 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
 
                 stf::wxProgressInfo progDlgOut("Writing file", "Opening file", 100);
                 switch ( eft ) {
-#ifdef WITH_AXON
                  case stfio::atf:
                      stfio::exportATFFile(stf::wx2std(destFilename), sourceFile);
                      dest_ext = wxT("Axon textfile [*.atf]");
                      break;
-#endif
                  case stfio::igor:
                      stfio::exportIGORFile(stf::wx2std(destFilename), sourceFile, progDlgOut);
                      dest_ext = wxT("Igor binary file [*.ibw]");
                      break;
 
+#ifdef WITH_BIOSIG
+                 case stfio::biosig:
+                     stfio::exportBiosigFile(stf::wx2std(destFilename), sourceFile, progDlgOut);
+                     dest_ext = wxT("Biosig/GDF [*.gdf]");
+                     break;
+#endif
                  default:
                      wxString errorMsg(wxT("Unknown export file type\n"));
                      wxGetApp().ErrorMsg(errorMsg);
@@ -879,7 +887,21 @@ void wxStfParentFrame::OnMpl(wxCommandEvent& WXUNUSED(event))
     
     if ( pPython == 0 ) 
 #endif
-        wxGetApp().ErrorMsg(wxT("Can not Create figure (python/matplotlib is not available)"));
+        wxGetApp().ErrorMsg(wxT("Can not create figure (python/matplotlib is not available)"));
+}
+
+void wxStfParentFrame::OnMplSpectrum(wxCommandEvent& WXUNUSED(event))
+{
+    if (wxGetApp().GetActiveDoc()==NULL) return;
+
+    std::ostringstream mgr_name;
+    mgr_name << "mpl" << GetMplFigNo();
+#ifdef WITH_PYTHON
+    wxWindow* pPython = MakePythonWindow("spectrumWindowMpl", mgr_name.str(), "Matplotlib", true, false, true, 800, 600).cppWindow;
+    
+    if ( pPython == 0 ) 
+#endif
+        wxGetApp().ErrorMsg(wxT("Can not create figure (python/matplotlib is not available)"));
 }
 
 void wxStfParentFrame::OnPageSetup(wxCommandEvent& WXUNUSED(event))
