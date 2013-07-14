@@ -160,11 +160,10 @@ namespace stf {
     /*! \f{eqnarray*}
      *      f(x)=
      *      \begin{cases}
-     *          p_0, & \mbox{if }x < p_1 \\ 
-     *          n p_2 \left( \mathrm{e}^{\frac{p_1 - x}{p_2}} - \mathrm{e}^{\frac{p_1 - x}{p_4}} \right) + p_0, & \mbox{if }x \geq p_1
+     *          p_0 & \mbox{if }x < p_1 \\ 
+     *          p_3 \left( \mathrm{e}^{\frac{p_1 - x}{p_2}} - \mathrm{e}^{\frac{p_1 - x}{p_4}} \right) + p_0 & \mbox{if }x \geq p_1
      *      \end{cases}
      *  \f}
-     *  \e n is a normalization factor, \n 
      *  \param x Function argument.
      *  \param p A valarray of parameters, where \n
      *         \e p[0] is the baseline, \n
