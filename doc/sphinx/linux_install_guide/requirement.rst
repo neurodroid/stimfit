@@ -163,9 +163,9 @@ Enter in $HOME/doc/sphinx/. It is possible to build a local copy of the documena
 
 ::
 
-    sphinx-build ./ .build
+    sphinx-build ./ <destinyFolder> 
 
-The documentation will be located in $HOME/stimfit/doc/sphinx/.build/
+The html documentation will be located in <destinyFolder>/index.html 
 
 Additionally, the source code is documented with [Doxygen]_ and is also accessible on-line in http://www.stimfit.org/doc/doxygen/html/. If you want to have a local copy of the documentation, you will need to install the doxygen and gravphvix:
 
@@ -177,7 +177,7 @@ Enter the directory where you downloaded the sources of Stimfit (e.g $HOME/stimf
 
 ::
 
-    doxygen Doxygen_Debian
+    doxygen DoxyFile
 
 The local documentation of the source code will be in $HOME/stimfit/doc/doxygen/html
 
