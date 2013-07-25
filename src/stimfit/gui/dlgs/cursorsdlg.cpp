@@ -1726,15 +1726,9 @@ void wxStfCursorsDlg::UpdateCursors() {
     SetSlope( actDoc->GetSlopeForThreshold() );
     
     wxString slopeUnits;
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-    slopeUnits += actDoc->at(actDoc->GetCurCh()).GetYUnits();
+    slopeUnits += stf::std2wx( actDoc->at(actDoc->GetCurCh()).GetYUnits() );
     slopeUnits += wxT("/");
-    slopeUnits += actDoc->GetXUnits();
-#else
-    slopeUnits += wxString(actDoc->at(actDoc->GetCurCh()).GetYUnits().c_str(), wxConvUTF8);
-    slopeUnits += wxT("/");
-    slopeUnits += wxString(actDoc->GetXUnits().c_str(), wxConvUTF8);
-#endif    
+    slopeUnits += stf::std2wx( actDoc->GetXUnits() );
     SetSlopeUnits(slopeUnits);
 }
 
@@ -1800,5 +1794,4 @@ bool wxStfCursorsDlg::GetRuler() const {
     }
     return pMeasCursor->IsChecked();
 }
-
 
