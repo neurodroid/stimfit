@@ -13,7 +13,7 @@ Getting all the prerequisites takes about an hour, but only needs to be complete
 Visual C++ Express 2008
 =======================
 
-The official Windows version of Python 2.7 was built with Visual Studio 2008. We therefore have to use Visual C++ 2008 so that we link against the same C runtime library. Luckily, there's a free version called Visual C++ 2008 Express that you can get from `here <http://www.microsoft.com/en-us/download/details.aspx?id=14597>`_
+The official Windows version of Python 2.7 was built with Visual Studio 2008. We therefore have to use Visual C++ 2008 so that we link against the same C runtime library. Luckily, there's a free version called Visual C++ 2008 Express that you can get directly from `here <http://go.microsoft.com/?linkid=7729279>`_
 
 
 =========
@@ -26,7 +26,7 @@ Get the HDF5 libraries from `here <http://www.hdfgroup.org/ftp/HDF5/releases/hdf
 
 Boost
 -----
-Get the `Boost C++ libraries <http://www.boost.org>`_. Move the extracted folder to your home directory and rename to "boost". If you used the zip file, you might have to move the first folder (called something like boost_1_52_0) one directory up and rename it to "boost". At any rate, you should check that you have the boost header files (\*.hpp) sitting in C:\\Users\\username\\boost\\boost\\\*.hpp. 
+Get the `Boost C++ libraries <http://www.boost.org>`_. Move the extracted folder to your home directory and rename to "boost". If you used the zip file, you might have to move the first folder (called something like boost_1_54_0, or whatever the current version is) one directory up and rename it to "boost". At any rate, you should check that you have the boost header files (\*.hpp) sitting in C:\\Users\\username\\boost\\boost\\\*.hpp. 
 
 Python
 ------
@@ -42,11 +42,11 @@ Install Matplotlib from `here <http://matplotlib.org/downloads.html>`_. Use the 
 
 wxWidgets
 ---------
-Get the prebuilt wxWidgets 2.9 libraries from `here <http://www.wxpython.org/download.php#unstable>`_. Choose the 32-bit binaries for MSVC 9. Install to your home directory. Rename the folder to "wx".
+Get the prebuilt wxWidgets 2.9 libraries from the wxPython site `here <http://www.wxpython.org/download.php#unstable>`_. Choose the "32-bit binaries for MSVC 9" in the "Windows Development Files" section. Install to your home directory. Rename the folder to "wx".
 
-wxPythor
+wxPython
 --------
-Get wxPython 2.9 from `here <http://www.wxpython.org/download.php#unstable>`_. Choose the 32-bit version for Python 2.7. Install to your home directory(_not_ to C:\\Python27\\*!). Rename the folder to "wxPython".
+Get wxPython 2.9 from `here <http://www.wxpython.org/download.php#unstable>`_. Choose the 32-bit version for Python 2.7 in the "Windows Binaries" section. Install to your home directory(_not_ to C:\\Python27\\*!). Rename the folder to "wxPython".
 
 FFTW
 ----
