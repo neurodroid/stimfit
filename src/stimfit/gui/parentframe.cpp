@@ -766,7 +766,7 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
             Recording sourceFile;
             try {
 
-                stf::wxProgressInfo progDlgIn("ReadiNg file", "Opening file", 100);
+                stf::wxProgressInfo progDlgIn("Reading file", "Opening file", 100);
                 stfio::importFile(stf::wx2std(srcFilenames[nFile]), ift, sourceFile, wxGetApp().GetTxtImport(), progDlgIn);
 
                 stf::wxProgressInfo progDlgOut("Writing file", "Opening file", 100);
