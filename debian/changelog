@@ -1,3 +1,12 @@
+stimfit (0.12.5-1) experimental; urgency=low
+
+  * More robust initialization for nonlinear regression
+  * Faster convergence for most fits
+  * Add support for latest abf2 file format (Clampex 10.4)
+  * Fix potential buffer overflow when computing averages
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Mon, 08 Jul 2013 19:55:04 +0000
+
 stimfit (0.12.1-1) experimental; urgency=low
 
   * Use biosig as additional file reading backend

@@ -298,7 +298,7 @@ void wxStfFitSelDlg::SetPars() {
                 &x[0]);
         Vector_double initPars(wxGetApp().GetFuncLib().at(m_fselect).pInfo.size());
         wxGetApp().GetFuncLib().at(m_fselect).init( x, pDoc->GetBase(),
-                pDoc->GetPeak(), pDoc->GetRTLoHi(), pDoc->GetHalfDuration(), pDoc->GetFitBeg(), pDoc->GetXScale(), initPars);
+                pDoc->GetPeak(), pDoc->GetRTLoHi(), pDoc->GetHalfDuration(),                pDoc->GetXScale(), initPars);
         std::vector< wxStaticText* >::iterator it1;
         std::vector< wxTextCtrl* >::iterator it2 = paramEntryArray.begin();
         std::size_t n_p = 0;

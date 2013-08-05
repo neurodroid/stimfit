@@ -31,7 +31,7 @@ PROJECT_NAME           = Stimfit
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER         = 0.12.4
+PROJECT_NUMBER         = 0.12.7
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -564,28 +564,26 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = ./src/app/stimfit/gui/app.h \
-                         ./src/app/stimfit/gui/copygrid.h \
-                         ./src/app/stimfit/gui/doc.h \
-                         ./src/app/stimfit/gui/childframe.h \
-                         ./src/app/stimfit/gui/parentframe.h \
-                         ./src/app/stimfit/gui/graph.h \
-                         ./src/app/stimfit/gui/printout.h \
-                         ./src/app/stimfit/gui/stfcheckbox.h \
-                         ./src/app/stimfit/gui/table.h \
-                         ./src/app/stimfit/gui/view.h \
-                         ./src/app/stimfit/gui/zoom.h \
+INPUT                  = ./src/stimfit/gui/app.h \
+                         ./src/stimfit/gui/copygrid.h \
+                         ./src/stimfit/gui/doc.h \
+                         ./src/stimfit/gui/childframe.h \
+                         ./src/stimfit/gui/parentframe.h \
+                         ./src/stimfit/gui/graph.h \
+                         ./src/stimfit/gui/printout.h \
+                         ./src/stimfit/gui/stfcheckbox.h \
+                         ./src/stimfit/gui/table.h \
+                         ./src/stimfit/gui/view.h \
+                         ./src/stimfit/gui/zoom.h \
                          ./src/libstfio/channel.h \
                          ./src/libstfio/recording.h \
                          ./src/libstfio/section.h \
                          ./src/libstfio/stfio.h \
-#                         ./src/core/core.h \
-                         ./src/stimfit/stf.h
+                         ./src/stimfit/stf.h \
                          ./src/stimfit/math/fit.h \
                          ./src/stimfit/math/measure.h \
                          ./src/stimfit/math/funclib.h \
                          ./src/stimfit/math/stfmath.h \
-#                         ./src/core/stimdefs.h \
                          ./src/libstfio/abf/abflib.h \
                          ./src/libstfio/ascii/asciilib.h \
                          ./src/libstfio/atf/atflib.h \
@@ -601,9 +599,6 @@ INPUT                  = ./src/app/stimfit/gui/app.h \
                          ./src/stimfit/gui/dlgs/fitseldlg.h \
                          ./src/stimfit/gui/dlgs/smalldlgs.h \
                          ./src/stimfit/gui/usrdlg/usrdlg.h 
-#                         ./src/app/funclib/funclib.h \
-#                         ./src/app/plugins/plugins.h \
-#                         ./src/app/stfpython/stfpython.h
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -1551,3 +1546,24 @@ DOT_CLEANUP            = YES
 # used. If set to NO the values of all tags below this one will be ignored.
 
 SEARCHENGINE           = NO
+
+# Enable the USE_MATHJAX option to render $\mbox{\LaTeX}$ formulas using 
+# MathJax (see http://www.mathjax.org) which uses client side Javascript 
+# for the rendering instead of using prerendered bitmaps. Use this if you 
+# do not have LaTeX installed or if you want to formulas look prettier 
+# in the HTML output. 
+
+USE_MATHJAX             = YES
+
+# The MATHJAX_EXTENSIONS tag can be used to specify one or MathJax extension
+# names that should be enabled during MathJax rendering. 
+
+MATHJAX_EXTENSIONS      = teX/AMSmath TeX/AMSsymbols
+
+# Use this tag to change the font size of LaTeX formulas included as images 
+# in the HTML documentation. The default is 10. when you change the font 
+# size after a successful doxygen run you need to manually remove any 
+# form_*.png images from the HTML output directory to force them to be 
+# regenerated.
+
+FORMULA_FONTSIZE        = 16

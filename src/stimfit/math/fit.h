@@ -78,7 +78,7 @@ double flin(double x, const Vector_double& p);
 
 //! Dummy function to be passed to stf::storedFunc for linear functions.
 void flin_init(const Vector_double& data, double base, double peak,
-        double RTLoHi, double HalfWidth, std::size_t fit_start,  double dt, Vector_double& pInit );
+        double RTLoHi, double HalfWidth, double dt, Vector_double& pInit );
 
 //! initializes a linear function
 /*! \return An stf::storedFunc that can be used to store a linear function after a fit */

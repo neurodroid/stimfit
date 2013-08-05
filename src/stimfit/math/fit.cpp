@@ -391,7 +391,7 @@ double stf::flin(double x, const Vector_double& p) { return p[0]*x + p[1]; }
 
 //! Dummy function to be passed to stf::storedFunc for linear functions.
 void stf::flin_init(const Vector_double& data, double base, double peak,
-        double RTLoHI, double HalfWidth, std::size_t fit_start, double dt, Vector_double& pInit )
+        double RTLoHI, double HalfWidth, double dt, Vector_double& pInit )
 { }
 
 stf::storedFunc stf::initLinFunc() {
