@@ -458,24 +458,24 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
                  wxWriteProfileInt(wxT("Settings"), wxT("LatencyEndCursor"), CursorsDialog->GetCursor2L() );
 
              break;
-            
          
 #ifdef WITH_PSLOPE
-            // Get cursor location from the dialog box:
          case stf::pslope_cursor: 
 
              // first PSlope cursor
-             actDoc->SetPSlopeBegMode(CursorsDialog->GetPSlopeBegMode());
+             actDoc->SetPSlopeBegMode( CursorsDialog->GetPSlopeBegMode() );
+             wxWriteProfileInt(wxT("Settings"), wxT("PSlopeStartMode"), CursorsDialog->GetPSlopeBegMode() );
              if (actDoc->GetPSlopeBegMode() == stf::psBeg_manualMode)
-                actDoc->SetPSlopeBeg(CursorsDialog->GetCursor1PS());
+                actDoc->SetPSlopeBeg( CursorsDialog->GetCursor1PS() );
+                //wxWriteProfileInt(wxT("Settings"), wxT("PSlopeStartCursor"), CursorsDialog->GetCursor1PS() );
 
              // second PSlope cursor
-             actDoc->SetPSlopeEndMode(CursorsDialog->GetPSlopeEndMode());
+             actDoc->SetPSlopeEndMode( CursorsDialog->GetPSlopeEndMode() );
              if (actDoc->GetPSlopeEndMode() == stf::psEnd_manualMode)
-                actDoc->SetPSlopeEnd(CursorsDialog->GetCursor2PS());
+                actDoc->SetPSlopeEnd( CursorsDialog->GetCursor2PS() );
              // we take data from CursorsDialog only if we need the DeltaT
              //else if (actDoc->GetPSlopeEndMode() == stf::psEnd_DeltaTMode){
-                actDoc->SetDeltaT(CursorsDialog->GetDeltaT());
+             actDoc->SetDeltaT(CursorsDialog->GetDeltaT());
              
              break;
 #endif 
@@ -1220,7 +1220,7 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
         wxString progStr;
         progStr << wxT("Reading file #") << n_opened + 1 << wxT(" of ") << nFiles;
         progDlg.Update(
-                       (int)((double)n_opened/(double)nFiles*100.0),
+                       (int)((double)n_opened/(double)nFiles*500.0),
                        progStr
                        );
         if (!singleWindow) {

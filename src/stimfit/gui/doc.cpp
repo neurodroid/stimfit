@@ -362,11 +362,16 @@ void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const w
         SetLatencyStartMode( Sender->GetLatencyStartMode() );
         SetLatencyEndMode( Sender->GetLatencyEndMode() );
         SetLatencyWindowMode( Sender->GetLatencyWindowMode() );
+#ifdef WITH_PSLOPE
+        SetPSlopeBegMode ( Sender->GetPSlopeBegMode() );
+        SetPSlopeEndMode ( Sender->GetPSlopeEndMode() );
+#endif
         // Update menu checks:
         // UpdateMenuCheckmarks();
         //Get value of the peak direction dialog box
         SetDirection( Sender->GetDirection() );
         SetFromBase( Sender->GetFromBase() );
+
         CheckBoundaries();
     } else {
         if (InitCursors()!=wxID_OK) {
@@ -422,7 +427,7 @@ int wxStfDoc::InitCursors() {
     SetBaseEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("BaseEnd"), 20));
     SetPeakBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakBegin"), (int)cur().size()-100));
     SetPeakEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakEnd"), (int)cur().size()-50));
-    int iDirection=wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("Direction"),2);
+    int iDirection = wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("Direction"),2);
     switch (iDirection) {
     case 0: SetDirection(stf::up); break;
     case 1: SetDirection(stf::down); break;
@@ -434,8 +439,8 @@ int wxStfDoc::InitCursors() {
     SetFitEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FitEnd"), 100));
     SetLatencyBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyStartCursor"), 0));	/*CSH*/
     SetLatencyEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyEndCursor"), 2));	/*CSH*/
-    SetLatencyStartMode(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyStartMode"),0));
-    SetLatencyEndMode(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyEndMode"),0));
+    //SetLatencyStartMode( wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyStartMode"),0) );
+    //SetLatencyEndMode( wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyEndMode"),0) );
     SetLatencyWindowMode(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyWindowMode"),1));
     // Set corresponding menu checkmarks:
     // UpdateMenuCheckmarks();
@@ -455,6 +460,47 @@ int wxStfDoc::InitCursors() {
         SetLatencyStartMode(stf::manualMode);
         SetLatencyEndMode(stf::manualMode);
     }
+
+#ifdef WITH_PSLOPE
+    // read PSlope Beg mode from Stimfit registry
+    int iPSlopeMode = wxGetApp().wxGetProfileInt( wxT("Settings"), wxT("PSlopeStartMode"), stf::psBeg_manualMode );
+    switch (iPSlopeMode) {
+        case 0:
+            SetPSlopeBegMode( stf::psBeg_manualMode );
+            break;
+        case 1:
+            SetPSlopeBegMode( stf::psBeg_footMode );
+            break;
+        case 2:
+            SetPSlopeBegMode( stf::psBeg_thrMode );
+            break;
+        case 3:
+            SetPSlopeBegMode( stf::psBeg_t50Mode );
+            break;
+        default:
+            SetPSlopeBegMode( stf::psBeg_undefined );
+    }
+    // read PSlope End mode from Stimfit registry
+    iPSlopeMode = wxGetApp().wxGetProfileInt( wxT("Settings"), wxT("PSlopeEndMode"), stf::psEnd_manualMode );
+    switch (iPSlopeMode) {
+        case 0:
+            SetPSlopeEndMode( stf::psEnd_manualMode );
+            break;
+        case 1:
+            SetPSlopeEndMode( stf::psEnd_t50Mode );
+            break;
+        case 2:
+            SetPSlopeEndMode( stf::psEnd_DeltaTMode );
+            break;
+        case 3:
+            SetPSlopeEndMode( stf::psEnd_peakMode );
+            break;
+        default:
+            SetPSlopeEndMode( stf::psEnd_undefined );
+    }
+            
+#endif
+
     CheckBoundaries();
     return wxID_OK;
 }	//End SettingsDlg()
@@ -520,7 +566,9 @@ void wxStfDoc::PostInit() {
     SetViewSlopeRise(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewSloperise"),1)==1);
     SetViewSlopeDecay(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewSlopedecay"),1)==1);
 #ifdef WITH_PSLOPE
+    //SetViewPSlope(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPSlope"),1)==1);
     SetViewPSlope(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPSlope"),1)==1);
+    //SetPSlopeBegMode( wxGetApp().wxGetProfileInt( wxT("Settings"), wxT("PSlopeStartMode"), 1)==1);
 #endif
     SetViewLatency(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewLatency"),1)==1);
     SetViewCursors(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewCursors"),1)==1);
@@ -763,10 +811,23 @@ void wxStfDoc::WriteToReg() {
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("FitBegin"), (int)GetFitBeg());
     if (!outOfRange(GetFitEnd()))
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("FitEnd"), (int)GetFitEnd());
+
     if (!outOfRange((size_t)GetLatencyBeg()))
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("LatencyStartCursor"), (int)GetLatencyBeg());
     if (!outOfRange((size_t)GetLatencyEnd()))
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("LatencyEndCursor"), (int)GetLatencyEnd());
+
+#ifdef WITH_PSLOPE
+    if (!outOfRange((size_t)GetPSlopeBeg()))
+        wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("PSlopeStartCursor"), GetPSlopeBeg() );
+    if (!outOfRange((size_t)GetPSlopeEnd()))
+        wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("PSlopeEndCursor"), GetPSlopeEnd() );
+
+    wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("PSlopeStartMode"), (int)GetPSlopeBegMode());
+    wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("PSlopeEndMode"), (int)GetPSlopeEndMode());
+    wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("DeltaT"), GetDeltaT() );
+    
+#endif
 
     // Write Zoom
     wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.xZoom"), (int)GetXZoom().xZoom*100000);
@@ -2596,6 +2657,7 @@ void wxStfDoc::CopyCursors(const wxStfDoc& c_Recording) {
     correctRangeR(fitBeg);
     fitEnd=c_Recording.fitEnd;
     correctRangeR(fitEnd);
+
 #ifdef WITH_PSLOPE
     PSlopeBeg = c_Recording.PSlopeBeg; // PSlope left cursor
     correctRangeR(PSlopeBeg);

@@ -451,19 +451,19 @@ enum latency_window_mode {
 #ifdef WITH_PSLOPE
 //! PSlope start cursor settings
 enum pslope_mode_beg {
-    psBeg_manualMode, /*< Set the start Slope cursor manually. */
-    psBeg_footMode,   /*< Set the start Slope cursor to the beginning of an event. */
-    psBeg_thrMode,    /*< Set the start Slope cursor to a threshold. */
-    psBeg_t50Mode,    /*< Set the start Slope cursor to the half-width of an event*/
+    psBeg_manualMode =0,    /*< Set the start Slope cursor manually. */
+    psBeg_footMode   =1,    /*< Set the start Slope cursor to the beginning of an event. */
+    psBeg_thrMode    =2,    /*< Set the start Slope cursor to a threshold. */
+    psBeg_t50Mode    =3,    /*< Set the start Slope cursor to the half-width of an event*/
     psBeg_undefined
 };
 
 //! PSlope end cursor settings
 enum pslope_mode_end {
-    psEnd_manualMode, /*< Set the end Slope cursor manually. */
-    psEnd_t50Mode,   /*< Set the Slope cursor to the half-width of an event. */
-    psEnd_DeltaTMode,  /*< Set the Slope cursor to a given distance from the first cursor. */
-    psEnd_peakMode,    /*< Set the Slope cursor to the peak. */
+    psEnd_manualMode =0,    /*< Set the end Slope cursor manually. */
+    psEnd_t50Mode    =1,    /*< Set the Slope cursor to the half-width of an event. */
+    psEnd_DeltaTMode =2,    /*< Set the Slope cursor to a given distance from the first cursor. */
+    psEnd_peakMode   =3,    /*< Set the Slope cursor to the peak. */
     psEnd_undefined
 };
 
