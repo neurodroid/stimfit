@@ -1220,7 +1220,7 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
         wxString progStr;
         progStr << wxT("Reading file #") << n_opened + 1 << wxT(" of ") << nFiles;
         progDlg.Update(
-                       (int)((double)n_opened/(double)nFiles*500.0),
+                       (int)((double)n_opened/(double)nFiles*100.0),
                        progStr
                        );
         if (!singleWindow) {
