@@ -126,7 +126,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         }
         else if (typ < 256) {
             sprintf(str,"%f s:\t",pos/fs);
-            annotationTableDesc += std::string( str ) + std::string( desc ) + "\n" ;
+            annotationTableDesc += std::string( str ) + std::string( desc ? desc : "" ) + "\n" ;
         }
     }
     int numberOfChannels = biosig_get_number_of_channels(hdr);
