@@ -25,24 +25,26 @@
 #include "../stfio.h"
 
 #if 1
-#if defined(__GNUC__)
-#include <biosig.h>
-#elif defined(_MSC_VER)
-/* level 2 interface of libbiosig is required for ABI compatibility */
-typedef int ssize_t;
-#include <biosig2.h>
-#endif
+  #if defined(__GNUC__)
+    #include <biosig.h>
+  #elif defined(_MSC_VER)
+    /* level 2 interface of libbiosig is required for ABI compatibility */
+    #include <biosig2.h>
+    #if (BIOSIG_VERSION < 10506)
+      #error BIOSIG v1.5.6 or later is required
+    #endif
+  #endif
 
-/* these are internal biosig functions, defined in biosig-dev.h which is not always available */
-extern "C" size_t ifwrite(void* buf, size_t size, size_t nmemb, HDRTYPE* hdr);
-extern "C" uint32_t lcm(uint32_t A, uint32_t B);
-#if !defined(__MINGW32__) && !defined(_MSC_VER)
+  /* these are internal biosig functions, defined in biosig-dev.h which is not always available */
+  extern "C" size_t ifwrite(void* buf, size_t size, size_t nmemb, HDRTYPE* hdr);
+  extern "C" uint32_t lcm(uint32_t A, uint32_t B);
+  #if !defined(__MINGW32__) && !defined(_MSC_VER)
     #if defined (__APPLE__)
         #include <machine/endian.h>
     #else
         #include <endian.h>
     #endif
-#endif
+  #endif
 #endif
 
 #include "./biosiglib.h"
@@ -113,20 +115,21 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     for (size_t k=0, n=0; k < numberOfEvents; k++) {
         uint32_t pos;
         uint16_t typ;
-        const char *desc;
+        char *desc;
         /*
         uint32_t dur;
         uint16_t chn;
         gdftype  timestamp;
         */
+
         biosig_get_nth_event(hdr, k, &typ, &pos, NULL, NULL, NULL, &desc);
 
         if (typ == 0x7ffe) {
             SegIndexList[++n] = pos;
         }
         else if (typ < 256) {
-            sprintf(str,"%f s:\t",pos/fs);
-            annotationTableDesc += std::string( str ) + std::string( desc ? desc : "" ) + "\n" ;
+            sprintf(str,"%f s:\t%s\n", pos/fs, desc);
+            annotationTableDesc += std::string( str );
         }
     }
     int numberOfChannels = biosig_get_number_of_channels(hdr);
