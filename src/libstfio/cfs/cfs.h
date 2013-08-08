@@ -42,7 +42,6 @@
 #endif
 
 #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
-    #include <io.h>                         /* MSC I/O function definitions */
     #include <fcntl.h>
     #define  qDebug 0               /* only used to debug Mac stuff         */
     #define  CFSAPI(type) type WINAPI
