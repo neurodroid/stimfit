@@ -981,6 +981,7 @@ void wxStfDoc::Concatenate(wxCommandEvent &WXUNUSED(event)) {
         n_new+=secSize;
         n_s++;
     }
+    ///TempSection.SetXScale(###FIXME###);
     TempSection.SetSectionDescription(
                                       stf::wx2std(GetTitle())+
                                       ", concatenated"
@@ -1102,6 +1103,7 @@ void wxStfDoc::CreateAverage(
             wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
             return;
         }
+        ///TempSection.SetXScale(###FIXME###);
         TempSection.SetSectionDescription(stf::wx2std(GetTitle())
                                           +std::string(", average"));
         Channel TempChannel(TempSection);
@@ -1265,6 +1267,7 @@ void wxStfDoc::LnTransform(wxCommandEvent& WXUNUSED(event)) {
 #else
                        log);
 #endif
+        TempSection.SetXScale(get()[GetCurCh()][*cit].GetXScale());
         TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
                                            ", transformed (ln)");
         try {
@@ -1318,6 +1321,7 @@ void wxStfDoc::Multiply(wxCommandEvent& WXUNUSED(event)) {
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
         // Multiply the valarray in Data:
         Section TempSection(stfio::vec_scal_mul(get()[GetCurCh()][*cit].get(),factor));
+        TempSection.SetXScale(get()[GetCurCh()][*cit].GetXScale());
         TempSection.SetSectionDescription(
                 get()[GetCurCh()][*cit].GetSectionDescription()+
                 ", multiplied"
@@ -1349,6 +1353,7 @@ bool wxStfDoc::SubtractBase( ) {
     std::size_t n = 0;
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
         Section TempSection(stfio::vec_scal_minus(get()[GetCurCh()][*cit].get(), GetSelectBase()[n]));
+        TempSection.SetXScale(get()[GetCurCh()][*cit].GetXScale());
         TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
                                            ", baseline subtracted");
         try {
@@ -1662,6 +1667,7 @@ void wxStfDoc::OnAnalysisDifferentiate(wxCommandEvent &WXUNUSED(event)) {
     std::size_t n = 0;
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
         Section TempSection( stf::diff( get()[GetCurCh()][*cit].get(), GetXScale() ) );
+        TempSection.SetXScale(get()[GetCurCh()][*cit].GetXScale());
         TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
                 ", differentiated");
         try {
@@ -1713,6 +1719,7 @@ bool wxStfDoc::OnNewfromselectedThis( ) {
         wxString title(GetTitle());
         title+=wxT(", new from selected");
         wxGetApp().NewChild(Selected,this,title);
+
     } else {
         wxGetApp().ErrorMsg( wxT("Channel is empty.") );
         return false;
@@ -1919,6 +1926,7 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
                 case 3: {
                     Section FftTemp(stf::filter(get()[GetCurCh()][*cit].get(),
                             llf,ulf,a,(int)GetSR(),stf::fgaussColqu,false));
+		    FftTemp.SetXScale(get()[GetCurCh()][*cit].GetXScale());
                     FftTemp.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
                                                    ", filtered");
                     TempChannel.InsertSection(FftTemp, n);
@@ -1927,6 +1935,7 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
                 case 2: {
                     Section FftTemp(stf::filter(get()[GetCurCh()][*cit].get(),
                             llf,ulf,a,(int)GetSR(),stf::fbessel4,false));
+		    FftTemp.SetXScale(get()[GetCurCh()][*cit].GetXScale());
                     FftTemp.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
                                                    ", filtered" );
                     TempChannel.InsertSection(FftTemp, n);
@@ -1935,6 +1944,7 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
                 case 1: {
                     Section FftTemp(stf::filter(get()[GetCurCh()][*cit].get(),
                             llf,ulf,a,(int)GetSR(),stf::fgauss,inverse));
+		    FftTemp.SetXScale(get()[GetCurCh()][*cit].GetXScale());
                     FftTemp.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
                                                    std::string(", filtered") );
                     TempChannel.InsertSection(FftTemp, n);
@@ -1950,6 +1960,7 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
     if (TempChannel.size()>0) {
         Recording Fft(TempChannel);
         Fft.CopyAttributes(*this);
+
         wxGetApp().NewChild(Fft, this,GetTitle()+wxT(", filtered"));
     }
 #endif
@@ -1982,6 +1993,7 @@ void wxStfDoc::P_over_N(wxCommandEvent& WXUNUSED(event)){
     for (int n_section=0; n_section < new_sections; n_section++) {
         //Section loop
         Section TempSection(get()[GetCurCh()][n_section].size());
+        TempSection.SetXScale(get()[GetCurCh()][n_section].GetXScale());
         for (int n_point=0; n_point < (int)get()[GetCurCh()][n_section].size(); n_point++)
             TempSection[n_point]=0.0;
 
@@ -2007,6 +2019,7 @@ void wxStfDoc::P_over_N(wxCommandEvent& WXUNUSED(event)){
     if (TempChannel.size()>0) {
         Recording DataPoN(TempChannel);
         DataPoN.CopyAttributes(*this);
+
         wxGetApp().NewChild(DataPoN,this,GetTitle()+wxT(", p over n subtracted"));
     }
 
@@ -2075,11 +2088,13 @@ void wxStfDoc::Plotextraction(stf::extraction_mode mode) {
              break;
         }
         if (TempSection.size()==0) return;
+        TempSection.SetXScale(cur().GetXScale());
         TempSection.SetSectionDescription(section_description +
                                           cur().GetSectionDescription());
         Channel TempChannel(TempSection);
         Recording detCrit(TempChannel);
         detCrit.CopyAttributes(*this);
+
         wxGetApp().NewChild(detCrit, this, GetTitle() + stf::std2wx(window_title));
     }
     catch (const std::runtime_error& e) {
@@ -2243,6 +2258,7 @@ void wxStfDoc::Extract( wxCommandEvent& WXUNUSED(event) ) {
                 }
                 std::ostringstream eventDesc;
                 eventDesc << "Extracted event #" << (int)n_real;
+                //?TempSection2.SetXScale(###FIXME###);
                 TempSection2.SetSectionDescription(eventDesc.str());
                 TempChannel2.InsertSection( TempSection2, n_real );
                 n_real++;
@@ -2252,6 +2268,7 @@ void wxStfDoc::Extract( wxCommandEvent& WXUNUSED(event) ) {
         if (TempChannel2.size()>0) {
             Recording Minis( TempChannel2 );
             Minis.CopyAttributes( *this );
+
             wxStfDoc* pDoc=wxGetApp().NewChild( Minis, this,
                     GetTitle()+wxT(", extracted events") );
             if (pDoc != NULL) {
