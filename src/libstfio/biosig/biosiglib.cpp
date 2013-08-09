@@ -24,28 +24,30 @@
 
 #include "../stfio.h"
 
-#if 1
-  #if defined(__GNUC__)
-    #include <biosig.h>
-  #elif defined(_MSC_VER)
-    /* level 2 interface of libbiosig is required for ABI compatibility */
-    #include <biosig2.h>
-    #if (BIOSIG_VERSION < 10506)
-      #error BIOSIG v1.5.6 or later is required
-    #endif
+#if defined(WITH_BIOSIG2) || defined(_MSC_VER)
+  #include <biosig2.h>
+  #if (BIOSIG_VERSION < 10506)
+	#error libbiosig v1.5.6 or later is required
   #endif
+  #if (BIOSIG_VERSION > 10506)
+	#define  DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
+  #endif
+#else
+  #include <biosig.h>
+#endif
+
 
   /* these are internal biosig functions, defined in biosig-dev.h which is not always available */
-  extern "C" size_t ifwrite(void* buf, size_t size, size_t nmemb, HDRTYPE* hdr);
-  extern "C" uint32_t lcm(uint32_t A, uint32_t B);
-  #if !defined(__MINGW32__) && !defined(_MSC_VER)
+extern "C" size_t ifwrite(void* buf, size_t size, size_t nmemb, HDRTYPE* hdr);
+extern "C" uint32_t lcm(uint32_t A, uint32_t B);
+#if !defined(__MINGW32__) && !defined(_MSC_VER)
     #if defined (__APPLE__)
         #include <machine/endian.h>
     #else
         #include <endian.h>
     #endif
-  #endif
 #endif
+
 
 #include "./biosiglib.h"
 
@@ -57,6 +59,7 @@
 #endif
 #define BIOSIG_VERSION (BIOSIG_VERSION_MAJOR * 10000 + BIOSIG_VERSION_MINOR * 100 + BIOSIG_PATCHLEVEL)
 #endif
+
 
 void stfio::importBSFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
 
@@ -142,7 +145,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         switch (hc->PhysDimCode & 0xffe0) {
         case 4256:  // Volt
 		//biosig_channel_scale_to_unit(hc, "mV");
-		biosig_channel_change_scale_to_physdimcode(hc, 4272);
+		biosig_channel_change_scale_to_physdimcode(hc, 4274);
 		break;
         case 4160:  // Ampere
 		//biosig_channel_scale_to_unit(hc, "pA");
@@ -547,7 +550,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     const char *xunits = Data.GetXUnits().c_str();
     uint16_t pdc = PhysDimCode(xunits);
 
-    if ((pdc & 0xffe0) == PhysDimCode("s")) {
+    if ((pdc & 0xffe0) != PhysDimCode("s")) {
         fprintf(stderr,"Stimfit exportBiosigFile: xunits [%s] has not proper units, assume [ms]\n",Data.GetXUnits().c_str());
         pdc = PhysDimCode("ms");
     }
@@ -555,30 +558,31 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     double fs = 1.0/(PhysDimScale(pdc) * Data.GetXScale());
     biosig_set_samplerate(hdr, fs);
 
-    biosig_set_number_of_samples_per_record(hdr,1);
-
     biosig_set_flags(hdr, 0, 0, 0);
 
-    /* Initialize all channel parameters */
     size_t k, m, numberOfEvents=0;
-    size_t NRec=0;
+    size_t NRec=0;	// corresponds to hdr->NRec
+    size_t SPR=1;	// corresponds to hdr->SPR
+    size_t chSPR=0;	// corresponds to hc->SPR
+
+    /* Initialize all channel parameters */
+#ifndef DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
+	size_t *chanSPR = (size_t*)malloc(numberOfChannels*sizeof(size_t));
+#endif
     for (k = 0; k < numberOfChannels; ++k) {
         CHANNEL_TYPE *hc = biosig_get_channel(hdr, k);
 
-	biosig_channel_set_datatype_to_double(hc);
-	biosig_channel_set_scaling(hc, -1e9, 1e9, -1e9, 1e9);
-	biosig_channel_set_label(hc, Data[k].GetChannelName().c_str());
-	biosig_channel_set_physdim(hc, Data[k].GetYUnits().c_str());
+		biosig_channel_set_datatype_to_double(hc);
+		biosig_channel_set_scaling(hc, 1e9, -1e9, 1e9, -1e9);
+		biosig_channel_set_label(hc, Data[k].GetChannelName().c_str());
+		biosig_channel_set_physdim(hc, Data[k].GetYUnits().c_str());
 
-        /* Channel descriptions. */
-        hc->PhysDimCode = PhysDimCode(Data[k].GetYUnits().c_str());
-
-	biosig_channel_set_filter(hc, NAN, NAN, NAN);
-	biosig_channel_set_timing_offset(hc, 0.0);
-	biosig_channel_set_impedance(hc, NAN);
+		biosig_channel_set_filter(hc, NAN, NAN, NAN);
+		biosig_channel_set_timing_offset(hc, 0.0);
+		biosig_channel_set_impedance(hc, NAN);
 
         // TODO replace accessing fields of struct
-        hc->SPR    = hdr->SPR;
+        chSPR    = SPR;
 
         // each segment gets one marker, roughly
         numberOfEvents += Data[k].size();
@@ -586,10 +590,20 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         size_t m,len = 0;
         for (len=0, m = 0; m < Data[k].size(); ++m) {
             unsigned div = lround(Data[k][m].GetXScale()/Data.GetXScale());
-            hc->SPR = lcm(hc->SPR,div);  // sampling interval of m-th segment in k-th channel
+            chSPR = lcm(chSPR,div);  // sampling interval of m-th segment in k-th channel
             len += div*Data[k][m].size();
         }
-        hdr->SPR = lcm(hdr->SPR, hc->SPR);
+        SPR = lcm(SPR, chSPR);	// TODO: avoid using hdr->SPR
+
+		/*
+		    hc->SPR (i.e. chSPR) is 'abused' to store final hdr->SPR/hc->SPR, this is corrected in the loop below
+			its a hack to avoid the need for another malloc().
+		*/
+#ifdef DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
+		biosig_channel_set_samples_per_record(hc, chSPR);
+#else
+		chanSPR[k]=chSPR;
+#endif
 
         if (k==0) {
             NRec = len;
@@ -603,14 +617,21 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         }
     }
 
-    biosig_set_number_of_records(hdr, NRec);
-    hdr->AS.bpb = 0;
+    biosig_set_number_of_samples(hdr, NRec, SPR);
+    size_t bpb = 0;
     for (k = 0; k < numberOfChannels; ++k) {
         // TODO replace accessing fields of struct
         CHANNEL_TYPE *hc = hdr->CHANNEL+k;
-        hc->SPR = hdr->SPR / hc->SPR;
-        hc->bi  = hdr->AS.bpb;
-        hdr->AS.bpb += hc->SPR * 8; /* its always double */
+        // the 'abuse' of hc->SPR described above is corrected
+#ifdef DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
+        size_t spr = biosig_channel_get_samples_per_record(hc);
+        spr = SPR / spr;
+        biosig_channel_set_samples_per_record(hc, spr);
+#else
+		size_t spr = SPR/chanSPR[k];
+		chanSPR[k] = spr;
+#endif
+        bpb += spr * 8; /* its always double */
     }
 
 	/***
@@ -676,19 +697,27 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         biosig_set_eventtable_samplerate(hdr, fs);
         sort_eventtable(hdr);
 
-	/* convert data into GDF rawdata from  */
-	biosig_data_type *rawdata = (biosig_data_type*)malloc(hdr->AS.bpb * hdr->NRec);
+        /* convert data into GDF rawdata from  */
+        uint8_t *rawdata = (uint8_t*)malloc(bpb * NRec);
 
+        size_t bi=0;
 	for (k=0; k < numberOfChannels; ++k) {
         CHANNEL_TYPE *hc = biosig_get_channel(hdr, k);
-
+#ifdef DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
+        size_t chSPR = biosig_channel_get_samples_per_record(hc);
+#else
+		size_t chSPR = chanSPR[k];
+#endif
         size_t m,n,len=0;
         for (m=0; m < Data[k].size(); ++m) {
+
             size_t div = lround(Data[k][m].GetXScale()/Data.GetXScale());
-            size_t div2 = hdr->SPR/div;
+            size_t div2 = SPR/div;		  // TODO: avoid using hdr->SPR
 
             // fprintf(stdout,"k,m,div,div2: %i,%i,%i,%i\n",(int)k,(int)m,(int)div,(int)div2);  //
             for (n=0; n < Data[k][m].size(); ++n) {
+
+
                 uint64_t val;
                 double d = Data[k][m][n];
 #if !defined(__MINGW32__) && !defined(_MSC_VER) && !defined(__APPLE__)
@@ -696,13 +725,19 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 #else
                 val = *(uint64_t*)&d;
 #endif
-                size_t p, spr = (len + n*div) / hdr->SPR;
+                size_t p, spr = (len + n*div) / SPR;
+
                 for (p=0; p < div2; p++)
-                   *(uint64_t*)(rawdata + hc->bi + hdr->AS.bpb * spr + p*8) = val;
+                   *(uint64_t*)(rawdata + bi + bpb * spr + p*8) = val;
             }
             len += div*Data[k][m].size();
         }
+		bi += chSPR*8;
     }
+
+#ifndef DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
+	if (chanSPR) free(chanSPR);
+#endif
 
     /******************************
         write to file
@@ -717,11 +752,12 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         return false;
     }
 
-    ifwrite(rawdata, hdr->AS.bpb, NRec, hdr);
+    ifwrite(rawdata, bpb, NRec, hdr);
 
     sclose(hdr);
     destructHDR(hdr);
     free(rawdata);
+
 
 #else   // #ifndef __LIBBIOSIG2_H__
 
