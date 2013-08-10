@@ -326,7 +326,7 @@ def deact_batch( filename="" ):
     # Monoexponential fits:
     for n in range( 0, gNMono ):
         if ( stf.set_trace( n ) == False ):
-            print "Couldn't set a new trace; aborting now."
+            print("Couldn't set a new trace; aborting now.")
             return False
         
         print('Analyzing trace %d of %d'%( n+1, stf.get_size_channel()))

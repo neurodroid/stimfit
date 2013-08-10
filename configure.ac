@@ -235,7 +235,11 @@ if test "$enable_module" != "yes"; then
 	    WX_CPPFLAGS="`$WXCONFIG --cppflags`"
 	    WX_CXXFLAGS="`$WXCONFIG --cxxflags`"
 	    if test "$STFKERNEL" = "darwin" ; then
-		WX_LIBS="`$WXCONFIG --libs propgrid,aui,adv,core,net,base`"
+                if test "${PY_AC_VERSION:0:1}" -ge 3; then
+                    WX_LIBS="`$WXCONFIG --libs base`"
+                else
+                    WX_LIBS="`$WXCONFIG --libs propgrid,aui,adv,core,net,base`"
+                fi
 	    else
 		WX_LIBS="`$WXCONFIG --libs base,core,adv,aui,net`"
 	    fi

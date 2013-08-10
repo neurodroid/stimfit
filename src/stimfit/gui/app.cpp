@@ -151,10 +151,13 @@ bool wxStfApp::OnInit(void)
     
 // Load Python extensions before creation of wxMenuBar ( see later CreateUnifiedMenuBar() )
 #ifdef WITH_PYTHON
+#if PY_MAJOR_VERSION < 3
+    
     extensionLib = LoadExtensions();
     #ifdef _STFDEBUG
     std::cout << (int) GetExtensionLib().size() << " Python extension/s loaded"<< std::endl;
     #endif
+#endif
 #endif //WITH_PTYHON
     // Config:
     config.reset(new wxFileConfig(wxT("Stimfit")));

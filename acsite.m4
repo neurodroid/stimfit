@@ -115,13 +115,14 @@ else:
                                         sys.stdout.write(sys.version[[:3]] + '\n')"`
                         fi
                 fi
-
+                PY_AC_VERSION=$py_version
                 PYTHON_LDFLAGS=`$PYTHON -c "import sys; from distutils.sysconfig import *; \
                         sys.stdout.write('-L' + get_config_vars()[['LIBDIR']] + \
                         ' -lpython' + '\n');"`$py_version
         fi
         AC_MSG_RESULT([$PYTHON_LDFLAGS])
         AC_SUBST([PYTHON_LDFLAGS])
+        AC_SUBST([PY_AC_VERSION])
 
         #
         # Check for prefixed site packages

@@ -259,7 +259,6 @@ private:
     void OnLWindow(wxCommandEvent& event);
     DECLARE_EVENT_TABLE()
 };
-
 /*@}*/
 
 #endif

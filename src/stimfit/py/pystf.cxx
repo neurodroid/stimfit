@@ -23,7 +23,7 @@
 #endif
 
 #ifdef WITH_PYTHON
-#include <Python.h>
+    #include <Python.h>
 #endif
 
 #ifdef _POSIX_C_SOURCE_WAS_DEF
@@ -42,7 +42,13 @@
 #endif
 
 #ifdef WITH_PYTHON
-#include <wx/wxPython/wxPython.h>
+    #if PY_MAJOR_VERSION >= 3
+        #include <wx/wxPython/wxpy_api.h>
+        #define PyInt_FromLong PyLong_FromLong
+        #define PyString_AsString PyBytes_AsString
+    #else
+        #include <wx/wxPython/wxPython.h>
+    #endif
 #endif
 
 // revert to previous behaviour
@@ -79,11 +85,22 @@ std::vector< std::vector< Vector_double > > gMatrix;
 std::vector< std::string > gNames;
 double _figsize[] = {8.0,6.0};
 
+#if PY_MAJOR_VERSION >= 3
+int wrap_array() {
+#ifdef WITH_PYTHON
+    import_array();
+    return 0;
+#else
+    return 0;
+#endif
+}
+#else
 void wrap_array() {
 #ifdef WITH_PYTHON
     import_array();
 #endif
 }
+#endif
 
 void ShowExcept(const std::exception& e) {
     wxString msg;

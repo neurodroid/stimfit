@@ -199,7 +199,11 @@ enum {
 #if defined(__WXMAC__) || defined(__WXGTK__)
   #pragma GCC diagnostic ignored "-Wwrite-strings"
 #endif
+#if PY_MAJOR_VERSION >= 3
+#include <wx/wxPython/wxpy_api.h>
+#else
 #include <wx/wxPython/wxPython.h>
+#endif
 // revert to previous behaviour
 #if defined(__WXMAC__) || defined(__WXGTK__)
   #pragma GCC diagnostic warning "-Wwrite-strings"

@@ -267,7 +267,6 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 #else
                  << wxT("import embedded_stf\n")
 #endif
-                 << wxT("import embedded_mpl\n")
                  << wxT("\n")
                  << wxT("def makeWindow(parent, figsize=(8,6)):\n")
 #ifdef IPYTHON
@@ -277,6 +276,8 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 #endif
                  << wxT("    return win\n")
                  << wxT("\n")
+#if PY_MAJOR_VERSION < 3
+                 << wxT("import embedded_mpl\n")
                  << wxT("def plotWindowMpl(parent, figsize=(8,6)):\n")
                  << wxT("    win = embedded_mpl.MplPanel(parent, figsize)\n")
                  << wxT("    win.plot_screen()\n")
@@ -289,8 +290,9 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
                  << wxT("\n")
                  << wxT("def makeWindowMpl(parent, figsize=(8,6)):\n")
                  << wxT("    win = embedded_mpl.MplPanel(parent, figsize)\n")
-                 << wxT("    return win\n");
-
+                 << wxT("    return win\n")
+#endif
+    ;
     /*  The window remains open after the main application has been closed; deactivated for the time being.
      *  RedirectStdio();
      */

@@ -29,7 +29,13 @@
 #if defined(__WXMAC__) || defined(__WXGTK__)
   #pragma GCC diagnostic ignored "-Wwrite-strings"
 #endif
+#if PY_MAJOR_VERSION >= 3
+#include <wx/wxPython/wxpy_api.h>
+#define PyString_Check PyBytes_Check
+#define PyString_AsString PyBytes_AsString
+#else
 #include <wx/wxPython/wxPython.h>
+#endif
 // revert to previous behaviour
 #if defined(__WXMAC__) || defined(__WXGTK__)
   #pragma GCC diagnostic warning "-Wwrite-strings"
@@ -155,6 +161,7 @@ bool wxStfApp::Init_wxPython()
     // local pointer to a function table located there.  The pointer is used
     // internally by the rest of the API functions.
     
+#if PY_MAJOR_VERSION < 3
     // Specify version of the wx module to be imported
     PyObject* wxversion = PyImport_ImportModule("wxversion");
     if (wxversion==NULL) {
@@ -184,7 +191,8 @@ bool wxStfApp::Init_wxPython()
         Py_Finalize();
         return false;
     }
-
+#endif // < python 3
+    
 #if 0 // wxversion.select doesn't return an error code, but raises an exception
     long iresult = PyInt_AsLong(result);
     Py_DECREF(result);
@@ -195,7 +203,11 @@ bool wxStfApp::Init_wxPython()
         return false;
     }
 #endif
+#if PY_MAJOR_VERSION >= 3
+    if (wxPyGetAPIPtr()==NULL) {
+#else
     if ( ! wxPyCoreAPI_IMPORT() ) {
+#endif
         PyErr_Print();
         wxString errormsg;
         errormsg << wxT("Couldn't load wxPython core API.\n");
@@ -223,7 +235,9 @@ bool wxStfApp::Init_wxPython()
 
         ErrorMsg( errormsg );
         Py_Finalize();
+#if PY_MAJOR_VERSION < 3
         Py_DECREF(result);
+#endif
         return false;
     }        
     
@@ -335,7 +349,11 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     // executed.  Put a reference to the builtins module in it.  (Yes, the
     // names are supposed to be different, I don't know why...)
     PyObject* globals = PyDict_New();
+#if PY_MAJOR_VERSION >= 3
+    PyObject* builtins = PyImport_ImportModule("builtins");
+#else
     PyObject* builtins = PyImport_ImportModule("__builtin__");
+#endif
     PyDict_SetItemString(globals, "__builtins__", builtins);
     Py_DECREF(builtins);
 
@@ -364,7 +382,11 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     // Now build an argument tuple and call the Python function.  Notice the
     // use of another wxPython API to take a wxWindows object and build a
     // wxPython object that wraps it.
+#if PY_MAJOR_VERSION >= 3
+    PyObject* arg = wxPyConstructObject((void*)this, wxT("wxWindow"), false);
+#else
     PyObject* arg = wxPyMake_wxObject(this, false);
+#endif
     wxASSERT(arg != NULL);
     PyObject* py_mpl_width = PyFloat_FromDouble(mpl_width);
     wxASSERT(py_mpl_width != NULL);
@@ -381,7 +403,7 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     Py_DECREF(py_mpl_width);
     Py_DECREF(py_mpl_height);
     Py_DECREF(figsize);
-    
+
     // Was there an exception?
     if (! result) {
         PyErr_Print();
@@ -392,7 +414,11 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     else {
         // Otherwise, get the returned window out of Python-land and
         // into C++-ville...
+#if PY_MAJOR_VERSION >= 3
+        if (!wxPyConvertWrappedPtr(result, (void**)&window, _T("wxWindow"))) {
+#else
         if (!wxPyConvertSwigPtr(result, (void**)&window, _T("wxWindow"))) {
+#endif
             PyErr_Print();
             wxGetApp().ErrorMsg(wxT("Returned object was not a wxWindow!"));
             wxPyEndBlockThreads(blocked);

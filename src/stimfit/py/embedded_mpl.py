@@ -19,11 +19,12 @@ if 'linux' in sys.platform:
         pass
 import wx
 import matplotlib
-matplotlib.use('WXAgg')
+if sys.version_info[0] < 3:
+    matplotlib.use('WXAgg')
+    from matplotlib.backends.backend_wxagg import \
+        FigureCanvasWxAgg as FigCanvas, \
+        NavigationToolbar2WxAgg as NavigationToolbar
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_wxagg import \
-    FigureCanvasWxAgg as FigCanvas, \
-    NavigationToolbar2WxAgg as NavigationToolbar
 import matplotlib.mlab as mlab
 import numpy as np
 
