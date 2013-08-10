@@ -138,7 +138,7 @@ double stf::peak(const std::vector<double>& data, double base, std::size_t llp, 
     return peak;
 }
 
-double stf::threshold( const std::vector<double>& data, std::size_t llp, std::size_t ulp, double slope, double& thrT, long windowLength )
+double stf::threshold( const std::vector<double>& data, std::size_t llp, std::size_t ulp, double slope, double& thrT, std::size_t windowLength )
 {
     thrT = -1;
     
@@ -146,7 +146,7 @@ double stf::threshold( const std::vector<double>& data, std::size_t llp, std::si
 
     // lower limit peak (ulb) has to be zero at least
     // upper limit peak (ulb) has to be < data.size()-windowLength (data[i+windowLength] will be used)
-    if (llp < 0 || llp > ulp || ulp >= data.size()) {
+    if (llp > ulp || ulp >= data.size()) {
         throw (std::out_of_range("Exception:\n Index out of range in stf::threshold()"));
     }
     // windowLength has to be smaller than upper limit peak (ulp) or size of array 
@@ -282,11 +282,11 @@ double   stf::maxRise(const std::vector<double>& data,
         double right,
         double& maxRiseT,
         double& maxRiseY,
-        long    windowLength)
+        std::size_t    windowLength)
 {
     size_t rightc = lround(right);
     size_t leftc  = lround(left);
-    if (leftc < 0 || rightc < windowLength || leftc >= data.size()-windowLength || rightc >= data.size() || data.size() < windowLength) {
+    if (rightc < windowLength || leftc >= data.size()-windowLength || rightc >= data.size() || data.size() < windowLength) {
         throw std::out_of_range("Index out of range in stf::maxRise");
     }
     double maxRise = -1e31;  // -Infinity
@@ -308,11 +308,11 @@ double stf::maxDecay(const std::vector<double>& data,
         double right,
         double& maxDecayT,
         double& maxDecayY,
-        long    windowLength)
+        std::size_t    windowLength)
 {
     size_t rightc = lround(right);
     size_t leftc  = lround(left);
-    if (leftc < 0 || rightc < windowLength || leftc >= data.size()-windowLength || rightc >= data.size() || data.size() < windowLength) {
+    if (rightc < windowLength || leftc >= data.size()-windowLength || rightc >= data.size() || data.size() < windowLength) {
         throw std::out_of_range("Index out of range in stf::maxDecay");
     }
     double maxDecay = -1e31;  // -Infinity

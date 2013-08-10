@@ -141,11 +141,11 @@ void Recording::MakeAverage(Section& AverageReturn,
     if (channel >= ChannelArray.size()) {
         throw std::out_of_range("Channel number out of range in Recording::MakeAverage");
     }
-    int n_sections=(int)section_index.size();
+    unsigned int n_sections = section_index.size();
     if (shift.size() != n_sections) {
         throw std::out_of_range("Shift out of range in Recording::MakeAverage");
     }
-    for (int l = 0; l < n_sections; ++l) {
+    for (unsigned int l = 0; l < n_sections; ++l) {
         if (section_index[l] >= ChannelArray[channel].size()) {
             throw std::out_of_range("Section number out of range in Recording::MakeAverage");
         }
@@ -154,10 +154,10 @@ void Recording::MakeAverage(Section& AverageReturn,
         }
     }
 
-    for (int k=0; k < (int)AverageReturn.size(); ++k) {
+    for (unsigned int k=0; k < AverageReturn.size(); ++k) {
         AverageReturn[k]=0.0;
         //Calculate average
-        for (int l = 0; l < n_sections; ++l) {
+        for (unsigned int l = 0; l < n_sections; ++l) {
             AverageReturn[k] += 
                 ChannelArray[channel][section_index[l]][k+shift[l]];
         }
@@ -169,7 +169,7 @@ void Recording::MakeAverage(Section& AverageReturn,
         if (isSig) {
             SigReturn[k]=0.0;
             //Calculate variance
-            for (int l =0; l< n_sections; ++l) {
+            for (unsigned int l=0; l < n_sections; ++l) {
                 SigReturn[k] += 
                     pow(ChannelArray[channel][section_index[l]][k+shift[l]] -
                             AverageReturn[k], 2);

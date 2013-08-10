@@ -80,7 +80,7 @@ double peak( const std::vector<double>& data, double base, std::size_t llp, std:
                 the default value is 1.
  *  \return The interpolated threshold value.
  */
-double threshold( const std::vector<double>& data, std::size_t llp, std::size_t ulp, double slope, double& thrT, long windowLength );
+ double threshold( const std::vector<double>& data, std::size_t llp, std::size_t ulp, double slope, double& thrT, std::size_t windowLength );
 
 //! Find 20 to 80% rise time of an event in \e data.
 /*! Although t80real is not explicitly returned, it can be calculated
@@ -133,7 +133,7 @@ double t_half( const std::vector<double>& data, double base, double ampl, double
  *  \return The maximal slope during the rising phase.
  */
 double  maxRise( const std::vector<double>& data, double left, double right, double& maxRiseT,
-            double& maxRiseY, long windowLength);
+                 double& maxRiseY, std::size_t windowLength);
 
 //! Find the maximal slope during the decaying phase of an event within \e data.
 /*! \param data The data waveform to be analysed.
@@ -147,7 +147,7 @@ double  maxRise( const std::vector<double>& data, double left, double right, dou
  *  \return The maximal slope during the decaying phase.
  */
 double  maxDecay( const std::vector<double>& data, double left, double right, double& maxDecayT,
-             double& maxDecayY, long windowLength);
+                  double& maxDecayY, std::size_t windowLength);
 
 #ifdef WITH_PSLOPE
 //! Find the slope an event within \e data.
