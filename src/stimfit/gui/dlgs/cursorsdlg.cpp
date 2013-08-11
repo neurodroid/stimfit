@@ -285,7 +285,11 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
         wxSL_HORIZONTAL | wxSL_AUTOTICKS,
         wxDefaultValidator, wxT(""));
 
-    RTSlider->SetTickFreq(5);//,1);
+#if (wxCHECK_VERSION(2, 9, 0))
+    RTSlider->SetTickFreq(5);
+#else
+    RTSlider->SetTickFreq(5,1);
+#endif
     RTGrid->Add(pRTLabel, 0, 
         wxALIGN_LEFT |  wxALIGN_CENTER_VERTICAL | wxALL, 2);
     RTGrid->Add(RTSlider, 0, 
