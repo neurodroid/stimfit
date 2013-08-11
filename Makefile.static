@@ -38,7 +38,7 @@ ifeq (,$(WXCONF))
   WXCONF    = $(shell which wx-config)
 endif
 
-DEFINES += -DWITH_BIOSIG
+DEFINES += -DWITH_BIOSIG2
 DEFINES += -DHAVE_LAPACK
 DEFINES += -DWITH_PSLOPE
 #DEFINES += -DPYTHON -DWITH_PYTHON
@@ -179,9 +179,14 @@ CXX       = $(shell $(WXCONF) --cxx)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -fstack-protector
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
-LIBS     += -lbiosig
-#LIBS     += -lbiosig2
-LIBS     += -lhdf5_hl -lhdf5 -lcholmod
+LIBS     += -lhdf5_hl -lhdf5
+ifneq (,$(findstring WITH_BIOSIG2, $(DEFINES)))
+  LIBS   += -lbiosig2  -lcholmod
+else 
+  ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
+    LIBS += -lbiosig -lcholmod
+  endif
+endif
 LIBS     += -lfftw3 -lz -lpthread
 
 ifeq (mingw,$(findstring mingw, $(WXCONF)))
