@@ -14,13 +14,7 @@
 
 // Copyright 2012,2013 Alois Schloegl, IST Austria <alois.schloegl@ist.ac.at>
 
-#include <string>
-#include <iomanip>
-#include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/shared_array.hpp>
 #include <sstream>
-#include <string.h>
 
 #include "../stfio.h"
 
@@ -581,7 +575,6 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 		biosig_channel_set_timing_offset(hc, 0.0);
 		biosig_channel_set_impedance(hc, NAN);
 
-        // TODO replace accessing fields of struct
         chSPR    = SPR;
 
         // each segment gets one marker, roughly
@@ -593,7 +586,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             chSPR = lcm(chSPR,div);  // sampling interval of m-th segment in k-th channel
             len += div*Data[k][m].size();
         }
-        SPR = lcm(SPR, chSPR);	// TODO: avoid using hdr->SPR
+        SPR = lcm(SPR, chSPR);
 
 		/*
 		    hc->SPR (i.e. chSPR) is 'abused' to store final hdr->SPR/hc->SPR, this is corrected in the loop below
@@ -620,8 +613,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     biosig_set_number_of_samples(hdr, NRec, SPR);
     size_t bpb = 0;
     for (k = 0; k < numberOfChannels; ++k) {
-        // TODO replace accessing fields of struct
-        CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+        CHANNEL_TYPE *hc = biosig_get_channel(hdr, k);
         // the 'abuse' of hc->SPR described above is corrected
 #ifdef DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
         size_t spr = biosig_channel_get_samples_per_record(hc);
@@ -716,8 +708,6 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 
             // fprintf(stdout,"k,m,div,div2: %i,%i,%i,%i\n",(int)k,(int)m,(int)div,(int)div2);  //
             for (n=0; n < Data[k][m].size(); ++n) {
-
-
                 uint64_t val;
                 double d = Data[k][m][n];
 #if !defined(__MINGW32__) && !defined(_MSC_VER) && !defined(__APPLE__)
