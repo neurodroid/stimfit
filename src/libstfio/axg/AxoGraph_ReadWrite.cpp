@@ -30,7 +30,7 @@ int AG_GetFileFormat( filehandle refNum, int *fileFormat )
     // Read the 4-byte prefix present in all AxoGraph file formats
     unsigned char AxoGraphFileID[4];
     AXGLONG bytes = 4;	// 4 byte identifier
-    result = ReadFromFile( refNum, bytes, AxoGraphFileID );
+    result = ReadFromFile( refNum, &bytes, AxoGraphFileID );
     if ( result )
         return result;
 
@@ -40,7 +40,7 @@ int AG_GetFileFormat( filehandle refNum, int *fileFormat )
         // Got an AxoGraph version 4 format file. Read the file type.
         short version;
         bytes = sizeof( short );
-        result = ReadFromFile( refNum, bytes, &version );
+        result = ReadFromFile( refNum, &bytes, &version );
         if ( result )
             return result;
 
@@ -58,9 +58,9 @@ int AG_GetFileFormat( filehandle refNum, int *fileFormat )
     else if ( memcmp( AxoGraphFileID, kAxoGraphXDocType, 4 ) == 0 )
     {
         // Got an AxoGraph X format file. Check the file version.
-        AXGLONG version;
+        AXGLONG version = 0;
         bytes = sizeof( AXGLONG );
-        result = ReadFromFile( refNum, bytes, &version );
+        result = ReadFromFile( refNum, &bytes, &version );
         if ( result )
             return result;
 
@@ -99,7 +99,7 @@ int AG_GetNumberOfColumns( filehandle refNum, const int fileFormat, AXGLONG *num
         // Read the number of columns (short integer in AxoGraph 4 files)
         short nColumns;
         AXGLONG bytes = 2;
-        int result = ReadFromFile( refNum, bytes, &nColumns);
+        int result = ReadFromFile( refNum, &bytes, &nColumns);
         if ( result )
             return result;
 
@@ -115,7 +115,7 @@ int AG_GetNumberOfColumns( filehandle refNum, const int fileFormat, AXGLONG *num
         // Read the number of columns (long integer in AxoGraph X files)
         AXGLONG nColumns;
         AXGLONG bytes = 4;
-        int result = ReadFromFile( refNum, bytes, &nColumns);
+        int result = ReadFromFile( refNum, &bytes, &nColumns);
         if ( result )
             return result;
 
@@ -146,7 +146,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
              // Read the standard column header
              ColumnHeader columnHeader;
              AXGLONG bytes = sizeof( ColumnHeader );
-             int result = ReadFromFile( refNum, bytes, &columnHeader );
+             int result = ReadFromFile( refNum, &bytes, &columnHeader );
              if ( result )
                  return result;
 
@@ -168,7 +168,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  return kAG_MemoryErr;
 
              // Read in the column's data
-             result = ReadFromFile( refNum, columnBytes, &(columnData->floatArray[0]) );
+             result = ReadFromFile( refNum, &columnBytes, &(columnData->floatArray[0]) );
 
 #ifdef __LITTLE_ENDIAN__
              ByteSwapFloatArray( &(columnData->floatArray[0]), columnHeader.points );
@@ -184,7 +184,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  // Read the column header
                  DigitizedFirstColumnHeader columnHeader;
                  AXGLONG bytes = sizeof( DigitizedFirstColumnHeader );
-                 int result = ReadFromFile( refNum, bytes, &columnHeader );
+                 int result = ReadFromFile( refNum, &bytes, &columnHeader );
                  if ( result )
                      return result;
 
@@ -209,7 +209,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                  // Read the column header
                  DigitizedColumnHeader columnHeader;
                  AXGLONG bytes = sizeof( DigitizedColumnHeader );
-                 int result = ReadFromFile( refNum, bytes, &columnHeader );
+                 int result = ReadFromFile( refNum, &bytes, &columnHeader );
                  if ( result )
                      return result;
 
@@ -235,7 +235,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                      return kAG_MemoryErr;
 
                  // Read in the column's data
-                 result = ReadFromFile( refNum, columnBytes, &(columnData->scaledShortArray.shortArray[0]) );
+                 result = ReadFromFile( refNum, &columnBytes, &(columnData->scaledShortArray.shortArray[0]) );
 
 #ifdef __LITTLE_ENDIAN__
                  ByteSwapShortArray( &(columnData->scaledShortArray.shortArray[0]), columnHeader.points );
@@ -250,7 +250,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
              // Read the column header
              AxoGraphXColumnHeader columnHeader;
              AXGLONG bytes = sizeof( AxoGraphXColumnHeader );
-             int result = ReadFromFile( refNum, bytes, &columnHeader );
+             int result = ReadFromFile( refNum, &bytes, &columnHeader );
              if ( result )
                  return result;
 
@@ -272,7 +272,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
              columnData->titleLength = columnHeader.titleLength;
              // columnData->title.resize( columnHeader.titleLength );
              std::vector< unsigned char > charBuffer( columnHeader.titleLength, '\0' );
-             result = ReadFromFile( refNum, columnHeader.titleLength, &charBuffer[0] );
+             result = ReadFromFile( refNum, &columnHeader.titleLength, &charBuffer[0] );
              if ( result )
                  return result;
              // Copy characters one by one into title (tedious but safe)
@@ -292,7 +292,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                           return kAG_MemoryErr;
 
                       // Read in the column's data
-                      result = ReadFromFile( refNum, columnBytes, &(columnData->shortArray[0]) );
+                      result = ReadFromFile( refNum, &columnBytes, &(columnData->shortArray[0]) );
 
 #ifdef __LITTLE_ENDIAN__
                       ByteSwapShortArray( &(columnData->shortArray[0]), columnHeader.points );
@@ -309,7 +309,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                           return kAG_MemoryErr;
 
                       // Read in the column's data
-                      result = ReadFromFile( refNum, columnBytes, &(columnData->intArray[0]) );
+                      result = ReadFromFile( refNum, &columnBytes, &(columnData->intArray[0]) );
 
 #ifdef __LITTLE_ENDIAN__
                       ByteSwapLongArray( (AXGLONG *)&(columnData->intArray[0]), columnHeader.points );
@@ -326,7 +326,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                           return kAG_MemoryErr;
 
                       // Read in the column's data
-                      result = ReadFromFile( refNum, columnBytes, &(columnData->floatArray[0]) );
+                      result = ReadFromFile( refNum, &columnBytes, &(columnData->floatArray[0]) );
 
 #ifdef __LITTLE_ENDIAN__
                       ByteSwapFloatArray( &(columnData->floatArray[0]), columnHeader.points );
@@ -342,7 +342,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                           return kAG_MemoryErr;
 
                       // Read in the column's data
-                      result = ReadFromFile( refNum, columnBytes, &(columnData->doubleArray[0]) );
+                      result = ReadFromFile( refNum, &columnBytes, &(columnData->doubleArray[0]) );
 
 #ifdef __LITTLE_ENDIAN__
                       ByteSwapDoubleArray( &(columnData->doubleArray[0]), columnHeader.points );
@@ -354,7 +354,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                   {
                       SeriesArray seriesParameters;
                       AXGLONG bytes = sizeof( SeriesArray );
-                      result = ReadFromFile( refNum, bytes, &seriesParameters );
+                      result = ReadFromFile( refNum, &bytes, &seriesParameters );
 
 #ifdef __LITTLE_ENDIAN__
                       ByteSwapDouble( &seriesParameters.firstValue );
@@ -369,8 +369,8 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                   {
                       double scale, offset;
                       AXGLONG bytes = sizeof( double );
-                      result = ReadFromFile( refNum, bytes, &scale );
-                      result = ReadFromFile( refNum, bytes, &offset );
+                      result = ReadFromFile( refNum, &bytes, &scale );
+                      result = ReadFromFile( refNum, &bytes, &offset );
 #ifdef __LITTLE_ENDIAN__
                       ByteSwapDouble( &scale );
                       ByteSwapDouble( &offset );
@@ -386,7 +386,7 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
                           return kAG_MemoryErr;
 
                       // Read in the column's data
-                      result = ReadFromFile( refNum, columnBytes, &(columnData->scaledShortArray.shortArray[0]) );
+                      result = ReadFromFile( refNum, &columnBytes, &(columnData->scaledShortArray.shortArray[0]) );
 
 #ifdef __LITTLE_ENDIAN__
                       ByteSwapShortArray( &(columnData->scaledShortArray.shortArray[0]), columnHeader.points );
@@ -411,7 +411,8 @@ std::string AG_ReadComment( filehandle refNum )
     std::ostringstream comment; comment << "\0";
 
     AXGLONG comment_size = 0;
-    int result = ReadFromFile( refNum, sizeof(AXGLONG), &comment_size );
+    AXGLONG bytes = sizeof(AXGLONG);
+    int result = ReadFromFile( refNum, &bytes, &comment_size );
     if ( result )
         return comment.str();
 #ifdef __LITTLE_ENDIAN__
@@ -420,7 +421,7 @@ std::string AG_ReadComment( filehandle refNum )
 
     if (comment_size > 0) {
         std::vector< unsigned char > charBuffer( comment_size, '\0' );
-        result = ReadFromFile( refNum, comment_size, &charBuffer[0] );
+        result = ReadFromFile( refNum, &comment_size, &charBuffer[0] );
         if ( result )
             return comment.str();
         // Copy characters one by one into title (tedious but safe)
@@ -459,7 +460,8 @@ std::string AG_ReadNotes( filehandle refNum )
     // File notes
     std::ostringstream notes; notes << "\0";
     AXGLONG notes_size = 0;
-    int result = ReadFromFile( refNum, sizeof(AXGLONG), &notes_size );
+    AXGLONG bytes = sizeof(AXGLONG);
+    int result = ReadFromFile( refNum, &bytes, &notes_size );
     if ( result )
         return notes.str();
 #ifdef __LITTLE_ENDIAN__
@@ -468,7 +470,7 @@ std::string AG_ReadNotes( filehandle refNum )
 
     if (notes_size > 0) {
         std::vector< unsigned char > charBuffer( notes_size, '\0' );
-        result = ReadFromFile( refNum, notes_size, &charBuffer[0] );
+        result = ReadFromFile( refNum, &notes_size, &charBuffer[0] );
         if ( result )
             return notes.str();
         // Copy characters one by one into title (tedious but safe)
@@ -483,7 +485,8 @@ std::string AG_ReadTraceHeaders( filehandle refNum ) {
 
     std::string headers = "\0";
     AXGLONG num_headers = 0;
-    int result = ReadFromFile( refNum, sizeof(AXGLONG), &num_headers );
+    AXGLONG bytes = sizeof(AXGLONG);
+    int result = ReadFromFile( refNum, &bytes, &num_headers );
     if ( result )
         return headers;
 #ifdef __LITTLE_ENDIAN__
@@ -492,7 +495,8 @@ std::string AG_ReadTraceHeaders( filehandle refNum ) {
 
     for (AXGLONG nh=0; nh<num_headers; ++nh) {
         AxoGraphXTraceHeader trace_header;
-        result = ReadFromFile( refNum, sizeof(AxoGraphXTraceHeader), &trace_header );
+        AXGLONG bytes = sizeof(AxoGraphXTraceHeader);
+        result = ReadFromFile( refNum, &bytes, &trace_header );
         if ( result ) {
             return headers;
         }

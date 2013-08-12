@@ -27,6 +27,6 @@ filehandle OpenFile( const char *fileName );
 void CloseFile( filehandle dataRefNum );
 
 int SetFilePosition( filehandle dataRefNum, int posn );
-int ReadFromFile( filehandle dataRefNum, AXGLONG count, void *dataToRead );
+int ReadFromFile( filehandle dataRefNum, AXGLONG *count, void *dataToRead );
 
 #endif

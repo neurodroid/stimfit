@@ -117,7 +117,7 @@
    it may be necessary to add display format information. When reading in a file,
    it may be necessary to access the 'Notes' string. The following is a preliminary description
    of the file format used to store important elements of graph display information.
-   It is not supported in the AxoGraph_ReadWrite example functions.
+   Reading 'notes' and graph format info is not supported in the AxoGraph_ReadWrite example functions. 
 
    The Comment and Notes strings are stored immediately after the last data column.
    Both are stored in Unicode string format..
@@ -139,9 +139,11 @@
 
    Header for each trace
    ----------------------
+   long        header version number (currently = 2)
    long        X column number
    long        Y column number
    long        Error bar column number or -1 if no error bars
+   long        Negative error bar column number or -1 if no negative error bars
 
    long        Group number that this column belongs to
    bool        Trace shown? False if trace is hidden
@@ -170,7 +172,7 @@
 
    bool        True if some symbols are to be skipped
    bool        True if symbols are to be skipped by distance instead of number of points
-   long        Minimum separation of symbols in pixes is previous parameter is true
+   long        Minimum separation of symbols in pixels is previous parameter is true
 
    bool        True for a histogram plot
    long        Type of histogram (zero for standard solid fill)
@@ -189,9 +191,13 @@
 #elif defined(__MINGW32__)
   #define __LITTLE_ENDIAN__
 #elif defined(__linux__)
-  #include <endian.h>
+    #include <endian.h>
 #else
   #define __LITTLE_ENDIAN__
+#endif
+
+#ifdef __LITTLE_ENDIAN
+    #define __LITTLE_ENDIAN__
 #endif
 
 #include "longdef.h"
@@ -246,9 +252,11 @@ struct AxoGraphXColumnHeader
 
 struct AxoGraphXTraceHeader
 {
+    long nHeaderVersion; // header version number (currently = 2)
     long nColumnX; // X column number
     long nColumnY; // Y column number
     long nError;   // Error bar column number or -1 if no error bars
+    long nErrorBarColumn; // Negative error bar column number or -1 if no negative error bars
 
     long  nGroup;  // Group number that this column belongs to
     bool  isShown; // Trace shown? False if trace is hidden

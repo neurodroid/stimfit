@@ -125,20 +125,20 @@ int SetFilePosition( filehandle dataRefNum, int posn )
 #endif
 }
 
-int ReadFromFile( filehandle dataRefNum, AXGLONG count, void *dataToRead )
+int ReadFromFile( filehandle dataRefNum, AXGLONG *count, void *dataToRead )
 {
 #if 0
-    return FSRead( dataRefNum, &count, dataToRead );
+    return FSRead( dataRefNum, count, dataToRead );
 #endif
 #if defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)
-    if ( (AXGLONG)fread( dataToRead, 1, count, dataRefNum ) == count )
+    if ( (AXGLONG)fread( dataToRead, 1, *count, dataRefNum ) == *count )
         return 0;
     else
         return 1;
 #endif
 #if defined(_WINDOWS) && !defined(__MINGW32__)
-    DWORD   dwRead;
-	short res = ReadFile(dataRefNum, dataToRead, count, &dwRead, NULL);
+    DWORD dwRead;
+    short res = ReadFile(dataRefNum, dataToRead, *count, &dwRead, NULL);
     if (res)
         return 0;
     else
