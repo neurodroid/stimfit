@@ -315,9 +315,9 @@ Section "!stfio standalone module" 4 ; Standalone python file i/o module
   ClearErrors
   
   ; Set output path to the installation directory.
-  RMDir /r $9\Lib\site-packages\stfio
-  CreateDirectory $9\Lib\site-packages\stfio
-  SetOutPath $9\Lib\site-packages\stfio
+  RMDir /r ${STFIODIR}
+  CreateDirectory ${STFIODIR}
+  SetOutPath ${STFIODIR}
   
   File "${HDF5DIR}\bin\hdf5_hldll.dll"
   File "${HDF5DIR}\bin\hdf5dll.dll"
@@ -329,6 +329,7 @@ Section "!stfio standalone module" 4 ; Standalone python file i/o module
   File /nonfatal "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
   File /nonfatal "${ALTPRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
   File "${BUILDTARGETDIR}\_stfio.pyd"
+  File "${BUILDTARGETDIR}\libstfio.dll"
   File "${PYSTFIODIR}\stfio.py"
   File "${PYSTFIODIR}\stfio_plot.py"
   File "${PYSTFIODIR}\unittest_stfio.py"
