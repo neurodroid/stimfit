@@ -38,6 +38,7 @@ ifeq (,$(WXCONF))
   WXCONF    = $(shell which wx-config)
 endif
 
+DEFINES += -DWITH_BIOSIG
 DEFINES += -DWITH_BIOSIG2
 DEFINES += -DHAVE_LAPACK
 DEFINES += -DWITH_PSLOPE
