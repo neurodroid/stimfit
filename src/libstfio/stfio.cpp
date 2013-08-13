@@ -34,7 +34,7 @@
 #include "./atf/atflib.h"
 #include "./axg/axglib.h"
 #include "./igor/igorlib.h"
-#ifdef WITH_BIOSIG
+#if defined(WITH_BIOSIG) || defined(WITH_BIOSIG2)
   #include "./biosig/biosiglib.h"
 #endif
 #include "./cfs/cfslib.h"
@@ -84,7 +84,7 @@ stfio::findType(const std::string& ext) {
     else if (ext=="*.atf") return stfio::atf;
     else if (ext=="*.dat") return stfio::heka;
     else if (ext=="*.smr") return stfio::son;
-#ifdef WITH_BIOSIG
+#if defined(WITH_BIOSIG) || defined(WITH_BIOSIG2)
     else if (ext=="*.dat;*.cfs;*.gdf;*.ibw") return stfio::biosig;
     else if (ext=="*.*")   return stfio::biosig;
 #endif
@@ -106,7 +106,7 @@ bool stfio::importFile(
         }
         case stfio::abf: {
 #if 0 // activates fallback mechanism
-#if defined(WITH_BIOSIG)
+#if ((defined(WITH_BIOSIG) || defined(WITH_BIOSIG2)) && (BIOSIG_VERSION > 10500))
             try
             {    // try first with biosig, v1.5.1 or larger is recommended
                  stfio::importBSFile(fName, ReturnData, progDlg);
@@ -127,16 +127,8 @@ bool stfio::importFile(
             stfio::importAXGFile(fName, ReturnData, progDlg);
             break;
         }
+//#if !defined(WITH_BIOSIG) && defined(WITH_BIOSIG2)
         case stfio::cfs: {
-#if 0 // activates fallback mechanism
-#if defined(WITH_BIOSIG)
-            try
-            {    // try first with biosig
-                 stfio::importBSFile(fName, ReturnData, progDlg);
-            }
-            catch (...)
-#endif
-#endif
             {
             int res = stfio::importCFSFile(fName, ReturnData, progDlg);
             if (res==-7) {
@@ -146,21 +138,12 @@ bool stfio::importFile(
             }
         }
         case stfio::heka: {
-#if 0 // activates fallback mechanism
-#if defined(WITH_BIOSIG)
-            try
-            {    // try first with biosig
-                 stfio::importBSFile(fName, ReturnData, progDlg);
-            }
-            catch (...)
-#endif
-#endif
             {
             stfio::importHEKAFile(fName, ReturnData, progDlg);
             break;
             }
         }
-#ifndef WITH_BIOSIG
+#if !defined(WITH_BIOSIG) && defined(WITH_BIOSIG2)
         default:
             throw std::runtime_error("Unknown or unsupported file type");
 #else
@@ -212,7 +195,7 @@ bool stfio::exportFile(const std::string& fName, stfio::filetype type, const Rec
             stfio::exportIGORFile(fName, Data, progDlg);
             break;
         }
-#ifdef WITH_BIOSIG
+#if defined(WITH_BIOSIG) || defined(WITH_BIOSIG2)
         case stfio::biosig: {
             stfio::exportBiosigFile(fName, Data, progDlg);
             break;

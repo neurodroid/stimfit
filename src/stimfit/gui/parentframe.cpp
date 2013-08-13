@@ -51,6 +51,10 @@
 #error You must set wxUSE_MDI_ARCHITECTURE to 1 in setup.h!
 #endif
 
+#if defined(WITH_BIOSIG) || defined(WITH_BIOSIG2)
+  #include "./../../libstfio/biosig/biosiglib.h"
+#endif
+
 #include "../../../stfconf.h"
 #include "./app.h"
 #include "./doc.h"
@@ -60,10 +64,8 @@
 #include "./printout.h"
 #include "./dlgs/smalldlgs.h"
 #include "./copygrid.h"
+
 #include "./../../libstfio/atf/atflib.h"
-#ifdef WITH_BIOSIG
-  #include "./../../libstfio/biosig/biosiglib.h"
-#endif
 #include "./../../libstfio/igor/igorlib.h"
 
 #include "./childframe.h"
@@ -542,11 +544,20 @@ wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
     return cursorToolBar;
 }
 
-#if defined(WITH_BIOSIG)
-#define CREDIT_BIOSIG "Biosig import using libbiosig http://biosig.sf.net\n\n"
+/*
+   stringification of macro value according to http://gcc.gnu.org/onlinedocs/cpp/Stringification.html
+   and http://stackoverflow.com/questions/2653214/stringification-of-a-macro-value
+*/
+#define ESCAPEQUOTE(a) DOUBLEESCAPE(a)
+#define DOUBLEESCAPE(a) #a
+#if defined(WITH_BIOSIG2)
+#define CREDIT_BIOSIG "Biosig import using libbiosig2 v"ESCAPEQUOTE(BIOSIG_VERSION_MAJOR)"."ESCAPEQUOTE(BIOSIG_VERSION_MINOR)"."ESCAPEQUOTE(BIOSIG_PATCHLEVEL) " http://biosig.sf.net\n\n"
+#elif defined(WITH_BIOSIG)
+#define CREDIT_BIOSIG "Biosig import using libbiosig v"ESCAPEQUOTE(BIOSIG_VERSION_MAJOR)"."ESCAPEQUOTE(BIOSIG_VERSION_MINOR)"."ESCAPEQUOTE(BIOSIG_PATCHLEVEL) " http://biosig.sf.net\n\n"
 #else 
 #define CREDIT_BIOSIG ""
 #endif
+
 void wxStfParentFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
 {
 	wxAboutDialogInfo info;
@@ -782,7 +793,7 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
                      dest_ext = wxT("Igor binary file [*.ibw]");
                      break;
 
-#ifdef WITH_BIOSIG
+#if defined(WITH_BIOSIG) || defined(WITH_BIOSIG2)
                  case stfio::biosig:
                      stfio::exportBiosigFile(stf::wx2std(destFilename), sourceFile, progDlgOut);
                      dest_ext = wxT("Biosig/GDF [*.gdf]");
@@ -882,9 +893,9 @@ void wxStfParentFrame::OnMpl(wxCommandEvent& WXUNUSED(event))
 {
     if (wxGetApp().GetActiveDoc()==NULL) return;
 
+#ifdef WITH_PYTHON
     std::ostringstream mgr_name;
     mgr_name << "mpl" << GetMplFigNo();
-#ifdef WITH_PYTHON
     wxWindow* pPython = MakePythonWindow("plotWindowMpl", mgr_name.str(), "Matplotlib", true, false, true, 800, 600).cppWindow;
     
     if ( pPython == 0 ) 
@@ -896,9 +907,9 @@ void wxStfParentFrame::OnMplSpectrum(wxCommandEvent& WXUNUSED(event))
 {
     if (wxGetApp().GetActiveDoc()==NULL) return;
 
+#ifdef WITH_PYTHON
     std::ostringstream mgr_name;
     mgr_name << "mpl" << GetMplFigNo();
-#ifdef WITH_PYTHON
     wxWindow* pPython = MakePythonWindow("spectrumWindowMpl", mgr_name.str(), "Matplotlib", true, false, true, 800, 600).cppWindow;
     
     if ( pPython == 0 ) 
