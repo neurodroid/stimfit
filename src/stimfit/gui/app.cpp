@@ -166,7 +166,7 @@ bool wxStfApp::OnInit(void)
     //// Create a document manager
     wxDocManager* docManager = new wxDocManager;
     //// Create a template relating drawing documents to their views
-#ifdef WITH_BIOSIG
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
     m_biosigTemplate=new wxDocTemplate( docManager,
                                      wxT("Biosig"), wxT("*.dat;*.cfs;*.gdf;*.ibw"), wxT(""), wxT("dat;cfs;gdf;ibw"),
                                      wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
@@ -205,7 +205,7 @@ bool wxStfApp::OnInit(void)
                                      wxT("HEKA file"), wxT("*.dat"), wxT(""), wxT("dat"),
                                      wxT("HEKA Document"), wxT("HEKA View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
-#ifdef WITH_BIOSIG
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
     m_biosigTemplate=new wxDocTemplate( docManager,
                                      wxT("Biosig files"), wxT("*.*"), wxT(""), wxT(""),
                                      wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),

@@ -1133,6 +1133,10 @@ srcFileNames(0)
     wxArrayString mydestextensions; //ordered by importance 
     mydestextensions.Add(wxT("Igor binary   [*.ibw ]"));
     mydestextensions.Add(wxT("Axon textfile [*.atf ]"));
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+    mydestextensions.Add(wxT("GDF (Biosig) [*.gdf ]"));
+#endif
+
 
     wxComboBox* myComboBoxDestExt;
     myComboBoxDestExt = new wxComboBox(this, wxCOMBOBOX_DEST, mydestextensions[0], 
@@ -1190,6 +1194,11 @@ void wxStfConvertDlg::OnComboBoxDestExt(wxCommandEvent& event){
         case 1:
             destFilterExt = stfio::atf;
             break;
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+        case 2:
+            destFilterExt = stfio::biosig;
+            break;
+#endif
         default:
             destFilterExt = stfio::igor;
     }

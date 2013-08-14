@@ -154,7 +154,7 @@ enum filetype {
     son,    /*!< CED Son files. */
     hdf5,   /*!< hdf5 files. */
     heka,   /*!< heka files. */
-#ifdef WITH_BIOSIG
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
     biosig, /*!< biosig files. */
 #endif
     none    /*!< Undefined file type. */
