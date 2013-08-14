@@ -143,7 +143,7 @@ bool stfio::importFile(
             break;
             }
         }
-#if !defined(WITH_BIOSIG) && defined(WITH_BIOSIG2)
+#if (!defined(WITH_BIOSIG) && !defined(WITH_BIOSIG2))
         default:
             throw std::runtime_error("Unknown or unsupported file type");
 #else
