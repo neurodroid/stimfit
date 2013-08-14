@@ -17,7 +17,18 @@
 #include <sstream>
 
 #include "../stfio.h"
-#include "./biosiglib.h"
+
+#if defined(WITH_BIOSIG2) || defined(_MSC_VER)
+  #include <biosig2.h>
+  #if (BIOSIG_VERSION < 10506)
+	#error libbiosig v1.5.6 or later is required
+  #endif
+  #if (BIOSIG_VERSION > 10506)
+	#define  DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
+  #endif
+#else
+  #include <biosig.h>
+#endif
 
 
   /* these are internal biosig functions, defined in biosig-dev.h which is not always available */
@@ -29,6 +40,18 @@ extern "C" uint32_t lcm(uint32_t A, uint32_t B);
     #else
         #include <endian.h>
     #endif
+#endif
+
+
+#include "./biosiglib.h"
+
+/* Redefine BIOSIG_VERSION for versions < 1 */
+#if (BIOSIG_VERSION_MAJOR < 1)
+#undef BIOSIG_VERSION
+#ifndef BIOSIG_PATCHLEVEL
+#define BIOSIG_PATCHLEVEL BIOSIG_VERSION_STEPPING
+#endif
+#define BIOSIG_VERSION (BIOSIG_VERSION_MAJOR * 10000 + BIOSIG_VERSION_MINOR * 100 + BIOSIG_PATCHLEVEL)
 #endif
 
 
