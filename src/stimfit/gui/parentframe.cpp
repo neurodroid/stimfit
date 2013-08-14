@@ -61,7 +61,7 @@
 #include "./dlgs/smalldlgs.h"
 #include "./copygrid.h"
 #include "./../../libstfio/atf/atflib.h"
-#ifdef WITH_BIOSIG
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
   #include "./../../libstfio/biosig/biosiglib.h"
 #endif
 #include "./../../libstfio/igor/igorlib.h"
@@ -542,7 +542,9 @@ wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
     return cursorToolBar;
 }
 
-#if defined(WITH_BIOSIG)
+#if defined(WITH_BIOSIG2)
+#define CREDIT_BIOSIG "Biosig import using libbiosig2 http://biosig.sf.net\n\n"
+#elif defined(WITH_BIOSIG)
 #define CREDIT_BIOSIG "Biosig import using libbiosig http://biosig.sf.net\n\n"
 #else 
 #define CREDIT_BIOSIG ""
@@ -782,7 +784,7 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
                      dest_ext = wxT("Igor binary file [*.ibw]");
                      break;
 
-#ifdef WITH_BIOSIG
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
                  case stfio::biosig:
                      stfio::exportBiosigFile(stf::wx2std(destFilename), sourceFile, progDlgOut);
                      dest_ext = wxT("Biosig/GDF [*.gdf]");
@@ -882,9 +884,9 @@ void wxStfParentFrame::OnMpl(wxCommandEvent& WXUNUSED(event))
 {
     if (wxGetApp().GetActiveDoc()==NULL) return;
 
+#ifdef WITH_PYTHON
     std::ostringstream mgr_name;
     mgr_name << "mpl" << GetMplFigNo();
-#ifdef WITH_PYTHON
     wxWindow* pPython = MakePythonWindow("plotWindowMpl", mgr_name.str(), "Matplotlib", true, false, true, 800, 600).cppWindow;
     
     if ( pPython == 0 ) 
@@ -896,9 +898,9 @@ void wxStfParentFrame::OnMplSpectrum(wxCommandEvent& WXUNUSED(event))
 {
     if (wxGetApp().GetActiveDoc()==NULL) return;
 
+#ifdef WITH_PYTHON
     std::ostringstream mgr_name;
     mgr_name << "mpl" << GetMplFigNo();
-#ifdef WITH_PYTHON
     wxWindow* pPython = MakePythonWindow("spectrumWindowMpl", mgr_name.str(), "Matplotlib", true, false, true, 800, 600).cppWindow;
     
     if ( pPython == 0 ) 

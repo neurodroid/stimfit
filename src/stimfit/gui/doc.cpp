@@ -47,7 +47,7 @@
 #include "./../../libstfio/stfio.h"
 #include "./../../libstfio/cfs/cfslib.h"
 #include "./../../libstfio/atf/atflib.h"
-#ifdef WITH_BIOSIG
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
   #include "./../../libstfio/biosig/biosiglib.h"
 #endif
 #include "./../../libstfio/hdf5/hdf5lib.h"
@@ -689,7 +689,7 @@ bool wxStfDoc::SaveAs() {
     filters += wxT("Axon text file (*.atf)|*.atf|");
     filters += wxT("Igor binary wave (*.ibw)|*.ibw|");
     filters += wxT("Text file series (*.txt)|*.txt|");
-#ifdef WITH_BIOSIG
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
     filters += wxT("GDF file (*.gdf)|*.gdf");
 #endif
 
@@ -713,7 +713,7 @@ bool wxStfDoc::SaveAs() {
 #if 0 // TODO
                  return stfio::exportASCIIFile(stf::wx2std(filename), get()[GetCurCh()]);
 #endif
-#ifdef WITH_BIOSIG
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
              case 5:
                  return stfio::exportBiosigFile(stf::wx2std(filename), writeRec, progDlg);
 #endif
