@@ -1,10 +1,11 @@
 if BUILD_MODULE
 if ISDARWIN
 PYTHON_TARGET_DIR=${PYTHON_DIST_PKG}
-pkglibdir=${PYTHON_TARGET_DIR}/stfio
 else
-pkglibdir = ${PYTHON_SITE_PKG}/stfio
+PYTHON_TARGET_DIR=${PYTHON_DIST_PKG}
+# pkglibdir = ${PYTHON_SITE_PKG}/stfio
 endif
+pkglibdir=${PYTHON_TARGET_DIR}/stfio
 else
 
 endif
