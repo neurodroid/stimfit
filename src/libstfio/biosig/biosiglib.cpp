@@ -136,7 +136,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
      *************************************************************************/
     for (int ch=0; ch < numberOfChannels; ++ch) {
         CHANNEL_TYPE *hc = biosig_get_channel(hdr, ch);
-        switch (hc->PhysDimCode & 0xffe0) {
+        switch (biosig_channel_get_physdimcode(hc) & 0xffe0) {
         case 4256:  // Volt
 		//biosig_channel_scale_to_unit(hc, "mV");
 		biosig_channel_change_scale_to_physdimcode(hc, 4274);
@@ -521,7 +521,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 
 #ifdef __LIBBIOSIG2_H__
 
-    int numberOfChannels = Data.size();
+    size_t numberOfChannels = Data.size();
     HDRTYPE* hdr = constructHDR(numberOfChannels, 0);
 
 	/* Initialize all header parameters */
@@ -636,9 +636,9 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 
     /* check whether all segments have same size */
     {
-        char flag = (hdr->NS>0);
+        char flag = (numberOfChannels > 0);
         size_t m, POS, pos;
-        for (k=0; k < hdr->NS; ++k) {
+        for (k=0; k < numberOfChannels; ++k) {
             pos = Data[k].size();
             if (k==0)
                 POS = pos;
