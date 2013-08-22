@@ -105,7 +105,11 @@ bool stfio::importFile(
             break;
         }
         case stfio::abf: {
-#if 0 // activates fallback mechanism
+#if 1
+    /*   supports reading comments of ABF1 files through importBiosig
+     *   fallback mechanism in case importBiosig can not handle ABF file
+     *   see discussion on issue 30
+     */
 #if ((defined(WITH_BIOSIG) || defined(WITH_BIOSIG2)) && (BIOSIG_VERSION > 10500))
             try
             {    // try first with biosig, v1.5.1 or larger is recommended
@@ -143,16 +147,16 @@ bool stfio::importFile(
             break;
             }
         }
-#if (!defined(WITH_BIOSIG) && !defined(WITH_BIOSIG2))
-        default:
-            throw std::runtime_error("Unknown or unsupported file type");
-#else
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
         case stfio::son:
         case stfio::igor:
         case stfio::biosig:
         default: 
             stfio::importBSFile(fName, ReturnData, progDlg);
             break;
+#else
+        default:
+            throw std::runtime_error("Unknown or unsupported file type");
 #endif
 	}
 
