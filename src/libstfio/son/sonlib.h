@@ -17,8 +17,6 @@
 
 #include <string>
 #include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/shared_array.hpp>
 #include "../../core/stimfit_core.h"
 #include "Son.H"
 #pragma once

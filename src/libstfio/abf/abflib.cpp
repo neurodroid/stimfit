@@ -17,8 +17,6 @@
 #include <string>
 #include <iomanip>
 #include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/shared_array.hpp>
 #include <sstream>
 
 #if defined(__linux__) || defined(__STF__) || defined(__APPLE__) || defined(__MINGW32__)

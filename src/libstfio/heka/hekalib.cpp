@@ -34,8 +34,6 @@
 #include <sstream>
 #include <vector>
 #include <algorithm> //required for std::swap
-#include <boost/shared_ptr.hpp>
-#include <boost/shared_array.hpp>
 
 #include "./hekalib.h"
 #include "../recording.h"
