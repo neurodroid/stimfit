@@ -18,16 +18,21 @@
 
 #include "../stfio.h"
 
-#if defined(WITH_BIOSIG2) || defined(_MSC_VER)
-  #include <biosig2.h>
-  #if (BIOSIG_VERSION < 10506)
-	#error libbiosig v1.5.6 or later is required
-  #endif
-  #if (BIOSIG_VERSION > 10506)
-	#define  DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
-  #endif
+#if defined(WITH_BIOSIG2)
+    #include <biosig2.h>
+    #if (BIOSIG_VERSION < 10506)
+        #error libbiosig2 v1.5.6 or later is required
+    #endif
+    #if (BIOSIG_VERSION > 10506)
+        #define DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
+    #endif
 #else
-  #include <biosig.h>
+    #include <biosig.h>
+    #if defined(_MSC_VER)
+        #if (BIOSIG_VERSION < 10507)
+            #error libbiosig v1.5.7 or later is required
+        #endif
+    #endif
 #endif
 
 
@@ -588,14 +593,14 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         }
         SPR = lcm(SPR, chSPR);
 
-		/*
-		    hc->SPR (i.e. chSPR) is 'abused' to store final hdr->SPR/hc->SPR, this is corrected in the loop below
-			its a hack to avoid the need for another malloc().
-		*/
+        /*
+            hc->SPR (i.e. chSPR) is 'abused' to store final hdr->SPR/hc->SPR, this is corrected in the loop below
+            its a hack to avoid the need for another malloc().
+        */
 #ifdef DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
-		biosig_channel_set_samples_per_record(hc, chSPR);
+        biosig_channel_set_samples_per_record(hc, chSPR);
 #else
-		chanSPR[k]=chSPR;
+        chanSPR[k]=chSPR;
 #endif
 
         if (k==0) {
@@ -620,8 +625,8 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         spr = SPR / spr;
         biosig_channel_set_samples_per_record(hc, spr);
 #else
-		size_t spr = SPR/chanSPR[k];
-		chanSPR[k] = spr;
+        size_t spr = SPR/chanSPR[k];
+        chanSPR[k] = spr;
 #endif
         bpb += spr * 8; /* its always double */
     }
@@ -698,7 +703,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 #ifdef DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
         size_t chSPR = biosig_channel_get_samples_per_record(hc);
 #else
-		size_t chSPR = chanSPR[k];
+        size_t chSPR = chanSPR[k];
 #endif
         size_t m,n,len=0;
         for (m=0; m < Data[k].size(); ++m) {
