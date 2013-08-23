@@ -59,18 +59,38 @@ extern "C" uint32_t lcm(uint32_t A, uint32_t B);
 #define BIOSIG_VERSION (BIOSIG_VERSION_MAJOR * 10000 + BIOSIG_VERSION_MINOR * 100 + BIOSIG_PATCHLEVEL)
 #endif
 
+stfio::filetype stfio_file_type(HDRTYPE* hdr) {
+        switch (hdr->TYPE) {
+        case ABF:
+        case ABF2:	return stfio::abf;
+        case AXG:	return stfio::axg;
+        case CFS:	return stfio::cfs;
+        case HEKA:	return stfio::heka;
+        case HDF:	return stfio::hdf5;
+        case IBW:	return stfio::igor;
+        case SMR:	return stfio::son;
+        case unknown:	return stfio::none;
+        default:	return stfio::biosig;
+        }
+}
 
-void stfio::importBSFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
+
+stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
 
     std::string errorMsg("Exception while calling std::importBSFile():\n");
     std::string yunits;
+    stfio::filetype type;
     // =====================================================================================================================
     //
     // Open file with libbiosig and read in the data
     //
-    // There basically two implementations, one with libbiosig before v1.6.0 and
-    // and one for libbiosig v1.6.0 and later
+    // There basically two implementations, namely for level-1 and level-2 interface of libbiosig.
+    //   level 1 is used when -DWITH_BIOSIG, -lbiosig
+    //   level 2 is used when -DWITH_BIOSIG2, -lbiosig2
     //
+    //   level 1 is better tested, but it did not provide ABI compatibility between MinGW and VisualStudio
+    //   level 2 interface has been developed to provide ABI compatibility, but it is less tested and the API might still
+    //      undergo major changes.
     // =====================================================================================================================
 
 
@@ -78,23 +98,13 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 
     HDRTYPE* hdr =  sopen( fName.c_str(), "r", NULL );
     if (hdr==NULL) {
-        errorMsg += "\nBiosig header is empty";
         ReturnData.resize(0);
-        throw std::runtime_error(errorMsg.c_str());
+        return stfio::none;
     }
-    if (biosig_check_filetype(hdr, ABF) && biosig_check_error(hdr)) {
-        /* this triggers the fall back mechanims w/o reporting an error message */
-        ReturnData.resize(0);
-        destructHDR(hdr);	// free allocated memory
-        throw std::runtime_error(errorMsg.c_str());
-    }
-    errorMsg += "\n";
-    if (serror2(hdr)) {
-        errorMsg += std::string(biosig_get_errormsg(hdr));
-        ReturnData.resize(0);
-        destructHDR(hdr);	// free allocated memory
-        throw std::runtime_error(errorMsg.c_str());
-    }
+
+    type = stfio_file_type(hdr);
+    if (biosig_check_error(hdr))
+        return type;
 
     // ensure the event table is in chronological order	
     sort_eventtable(hdr);
@@ -199,7 +209,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         catch (...) {
 			ReturnData.resize(0);
 			destructHDR(hdr);
-			throw;
+			return type;
 		}
 	}
     try {
@@ -211,7 +221,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     catch (...) {
 		ReturnData.resize(0);
 		destructHDR(hdr);
-		throw;
+		return type;
         }
     }
 
@@ -269,10 +279,11 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 
     HDRTYPE* hdr =  sopen( fName.c_str(), "r", NULL );
     if (hdr==NULL) {
-        errorMsg += "\nBiosig header is empty";
         ReturnData.resize(0);
-        throw std::runtime_error(errorMsg.c_str());
+        return stfio::none;
     }
+    type = stfio_file_type(hdr);
+
 #if !defined(BIOSIG_VERSION) || (BIOSIG_VERSION < 10501)
     if (hdr->TYPE==ABF) {
         /*
@@ -286,19 +297,17 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 #endif
         ReturnData.resize(0);
         destructHDR(hdr);	// free allocated memory
-        throw std::runtime_error(errorMsg.c_str());
+        return type;
     }
-    errorMsg += "\n";
+
 #if defined(BIOSIG_VERSION) && (BIOSIG_VERSION > 10400)
     if (serror2(hdr)) {
-        errorMsg += std::string(hdr->AS.B4C_ERRMSG);
 #else
     if (serror()) {
-	errorMsg += std::string(B4C_ERRMSG);
 #endif
         ReturnData.resize(0);
         destructHDR(hdr);	// free allocated memory
-        throw std::runtime_error(errorMsg.c_str());
+        return type;
     }
 
     // ensure the event table is in chronological order
@@ -426,19 +435,19 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         catch (...) {
 			ReturnData.resize(0);
 			destructHDR(hdr);
-			throw;
+			return type;
 		}
 	}        
     try {
         if ((int)ReturnData.size() < numberOfChannels) {
             ReturnData.resize(numberOfChannels);
-		}
-		ReturnData.InsertChannel(TempChannel, NS++);
+        }
+        ReturnData.InsertChannel(TempChannel, NS++);
     }
     catch (...) {
 		ReturnData.resize(0);
 		destructHDR(hdr);
-		throw;
+		return type;
         }
     }
 
@@ -502,7 +511,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     destructHDR(hdr);
 
 #endif
-
+    return stfio::biosig;
 }
 
 

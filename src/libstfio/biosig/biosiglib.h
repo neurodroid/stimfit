@@ -44,8 +44,12 @@ namespace stfio {
  *  \param ReturnData On entry, an empty Recording object. On exit,
  *         the data stored in \e fName.
  *  \param progress True if the progress dialog should be updated.
+ *
+ *  Return value: in case of success stfio::biosig is returned,
+ *    if the file format is recognized, the corresponding filetype is returned,
+ *    if the filetype is not recognized or not supported. stfio::none is returned.
  */
-    void importBSFile(const std::string& fName, Recording& ReturnData, ProgressInfo& progDlg);
+stfio::filetype importBiosigFile(const std::string& fName, Recording& ReturnData, ProgressInfo& progDlg);
 
 //! Export a Recording to a GDF file using biosig.
 /*! \param fName Full path to the file to be written.

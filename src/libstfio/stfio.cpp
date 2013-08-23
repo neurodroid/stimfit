@@ -110,11 +110,7 @@ bool stfio::importFile(
          *   fallback mechanism in case importBiosig can not handle ABF file
          *   see discussion on issue 30
          */
-            try {
-		  // try first with biosig, v1.5.1 or larger is recommended
-                 stfio::importBSFile(fName, ReturnData, progDlg);
-            }
-            catch (...)
+            if (stfio::biosig != stfio::importBiosigFile(fName, ReturnData, progDlg))
 #endif
             {   // fallback to old method
                 stfio::importABFFile(fName, ReturnData, progDlg);
@@ -149,9 +145,21 @@ bool stfio::importFile(
         case stfio::son:
         case stfio::igor:
         case stfio::biosig:
-        default: 
-            stfio::importBSFile(fName, ReturnData, progDlg);
+        default: {
+            stfio::filetype type1;
+            try {
+                type1 = stfio::importBiosigFile(fName, ReturnData, progDlg);
+            }
+            catch (...) {
+		// this should never occur, importBSFile should always return without exception
+                std::cout << "importBSFile failed with an exception - this is a bug in stimfit";
+            }
+
+            if (stfio::biosig != type1) {
+                throw std::runtime_error("importBiosig Failed to read file");
+            }
             break;
+        }
 #else
         default:
             throw std::runtime_error("Unknown or unsupported file type");
