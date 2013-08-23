@@ -105,18 +105,16 @@ bool stfio::importFile(
             break;
         }
         case stfio::abf: {
-#if 1
-    /*   supports reading comments of ABF1 files through importBiosig
-     *   fallback mechanism in case importBiosig can not handle ABF file
-     *   see discussion on issue 30
-     */
-#if ((defined(WITH_BIOSIG) || defined(WITH_BIOSIG2)) && (BIOSIG_VERSION > 10500))
-            try
-            {    // try first with biosig, v1.5.1 or larger is recommended
+#if ( (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2)) )
+        /*   supports reading comments of ABF1 files through importBiosig
+         *   fallback mechanism in case importBiosig can not handle ABF file
+         *   see discussion on issue 30
+         */
+            try {
+		  // try first with biosig, v1.5.1 or larger is recommended
                  stfio::importBSFile(fName, ReturnData, progDlg);
             }
             catch (...)
-#endif
 #endif
             {   // fallback to old method
                 stfio::importABFFile(fName, ReturnData, progDlg);
