@@ -99,22 +99,33 @@ bool stfio::importFile(
         ProgressInfo& progDlg
 ) {
     try {
+
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+       // make use of automated file type identification
+        try {
+            stfio::filetype type1 = stfio::importBiosigFile(fName, ReturnData, progDlg);
+            switch (type1) {
+            case  stfio::biosig:
+		return true;    // succeeded
+            case  stfio::none:
+		break;          // do nothing, use input argument for deciding on type
+	    default:
+                type = type1;   // filetype is recognized and should be used below
+            }
+        }
+        catch (...) {
+                // this should never occur, importBiosigFile should always return without exception
+                std::cout << "importBiosigFile failed with an exception - this is a bug";
+        }
+#endif
+
         switch (type) {
         case stfio::hdf5: {
             stfio::importHDF5File(fName, ReturnData, progDlg);
             break;
         }
         case stfio::abf: {
-#if ( (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2)) )
-        /*   supports reading comments of ABF1 files through importBiosig
-         *   fallback mechanism in case importBiosig can not handle ABF file
-         *   see discussion on issue 30
-         */
-            if (stfio::biosig != stfio::importBiosigFile(fName, ReturnData, progDlg))
-#endif
-            {   // fallback to old method
-                stfio::importABFFile(fName, ReturnData, progDlg);
-            }
+            stfio::importABFFile(fName, ReturnData, progDlg);
             break;
         }
         case stfio::atf: {
@@ -141,29 +152,8 @@ bool stfio::importFile(
             break;
             }
         }
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
-        case stfio::son:
-        case stfio::igor:
-        case stfio::biosig:
-        default: {
-            stfio::filetype type1;
-            try {
-                type1 = stfio::importBiosigFile(fName, ReturnData, progDlg);
-            }
-            catch (...) {
-		// this should never occur, importBSFile should always return without exception
-                std::cout << "importBSFile failed with an exception - this is a bug in stimfit";
-            }
-
-            if (stfio::biosig != type1) {
-                throw std::runtime_error("importBiosig Failed to read file");
-            }
-            break;
-        }
-#else
         default:
             throw std::runtime_error("Unknown or unsupported file type");
-#endif
 	}
 
 #if 0
