@@ -69,8 +69,7 @@ stfio::filetype stfio_file_type(HDRTYPE* hdr) {
         case HDF:	return stfio::hdf5;
         case IBW:	return stfio::igor;
         case SMR:	return stfio::son;
-        case unknown:	return stfio::none;
-        default:	return stfio::biosig;
+        default:	return stfio::none;
         }
 }
 
