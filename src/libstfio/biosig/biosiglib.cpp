@@ -300,9 +300,9 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     }
 
 #if defined(BIOSIG_VERSION) && (BIOSIG_VERSION > 10400)
-    if (serror2(hdr)) {
+    if (hdr->AS.B4C_ERRNUM) {
 #else
-    if (serror()) {
+    if (B4C_ERRNUM) {
 #endif
         ReturnData.resize(0);
         destructHDR(hdr);	// free allocated memory
