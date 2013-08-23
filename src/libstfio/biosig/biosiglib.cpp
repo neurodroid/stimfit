@@ -29,9 +29,9 @@
 #else
     #include <biosig.h>
     #if defined(_MSC_VER)
-        #if (BIOSIG_VERSION < 10507)
-            #error libbiosig v1.5.7 or later is required
-        #endif
+        //#if (BIOSIG_VERSION < 10507)
+            #error libbiosig is not ABI compatible
+        //#endif
     #endif
 #endif
 
@@ -60,7 +60,7 @@ extern "C" uint32_t lcm(uint32_t A, uint32_t B);
 #endif
 
 stfio::filetype stfio_file_type(HDRTYPE* hdr) {
-        switch (hdr->TYPE) {
+        switch (biosig_get_filetype(hdr)) {
         case ABF:
         case ABF2:	return stfio::abf;
         case AXG:	return stfio::axg;
