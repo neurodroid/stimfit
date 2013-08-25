@@ -63,6 +63,7 @@ stfio::filetype stfio_file_type(HDRTYPE* hdr) {
         switch (biosig_get_filetype(hdr)) {
         case ABF:
         case ABF2:	return stfio::abf;
+        case ATF:	return stfio::atf;
         case AXG:	return stfio::axg;
         case CFS:	return stfio::cfs;
         case HEKA:	return stfio::heka;
@@ -79,17 +80,21 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     std::string errorMsg("Exception while calling std::importBSFile():\n");
     std::string yunits;
     stfio::filetype type;
+
     // =====================================================================================================================
     //
-    // Open file with libbiosig and read in the data
+    // importBiosig opens file with libbiosig
+    //	- performs an automated identification of the file format
+    //  - and decides whether the data is imported through importBiosig (currently CFS, HEKA, ABF1, GDF, and others)
+    //  - or handed back to other import*File functions (currently ABF2, AXG, HDF5)
     //
-    // There basically two implementations, namely for level-1 and level-2 interface of libbiosig.
+    // There are two implementations, level-1 and level-2 interface of libbiosig.
     //   level 1 is used when -DWITH_BIOSIG, -lbiosig
     //   level 2 is used when -DWITH_BIOSIG2, -lbiosig2
     //
-    //   level 1 is better tested, but it did not provide ABI compatibility between MinGW and VisualStudio
-    //   level 2 interface has been developed to provide ABI compatibility, but it is less tested and the API might still
-    //      undergo major changes.
+    //   level 1 is better tested, but it does not provide ABI compatibility between MinGW and VisualStudio
+    //   level 2 interface has been developed to provide ABI compatibility, but it is less tested
+    //      and the API might still undergo major changes.
     // =====================================================================================================================
 
 
@@ -102,8 +107,17 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     }
 
     type = stfio_file_type(hdr);
-    if (biosig_check_error(hdr))
+    if (biosig_check_error(hdr)) {
+        ReturnData.resize(0);
+        destructHDR(hdr);
         return type;
+    }
+    if (biosig_get_filetype(hdr)==ATF) {
+        // ATF support should be handled by importATF not importBiosig
+        ReturnData.resize(0);
+        destructHDR(hdr);
+        return type;
+    }
 
     // ensure the event table is in chronological order	
     sort_eventtable(hdr);
@@ -306,6 +320,12 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
 #endif
         ReturnData.resize(0);
         destructHDR(hdr);	// free allocated memory
+        return type;
+    }
+    if (hdr->TYPE==ATF)) {
+        // ATF support should be handled by importATF not importBiosig
+        ReturnData.resize(0);
+        destructHDR(hdr);
         return type;
     }
 
