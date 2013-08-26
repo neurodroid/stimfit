@@ -60,7 +60,11 @@ extern "C" uint32_t lcm(uint32_t A, uint32_t B);
 #endif
 
 stfio::filetype stfio_file_type(HDRTYPE* hdr) {
+#ifdef __LIBBIOSIG2_H__
         switch (biosig_get_filetype(hdr)) {
+#else
+        switch (hdr->TYPE) {
+#endif
         case ABF:
         case ABF2:	return stfio::abf;
         case ATF:	return stfio::atf;
