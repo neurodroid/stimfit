@@ -322,7 +322,7 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         destructHDR(hdr);	// free allocated memory
         return type;
     }
-    if (hdr->TYPE==ATF)) {
+    if ( hdr->TYPE==ATF ) {
         // ATF support should be handled by importATF not importBiosig
         ReturnData.resize(0);
         destructHDR(hdr);
