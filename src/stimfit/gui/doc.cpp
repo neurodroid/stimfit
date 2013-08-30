@@ -2887,19 +2887,23 @@ void wxStfDoc::SelectTrace(std::size_t sectionToSelect) {
 #ifdef _OPENMP
 #pragma omp parallel for reduction(+:sumY)
 #endif
-    int start = baseBeg;
-    int end = baseEnd;
-    if (start < 0) start = 0;
-    if (start > (int)get()[cc][sectionToSelect].size()-1)
-        start = get()[cc][sectionToSelect].size()-1;
-    if (end < 0) end = 0;
-    if (end > (int)get()[cc][sectionToSelect].size()-1)
-        end = get()[cc][sectionToSelect].size()-1;
-    for (int i=start; i<=end; i++) {
-        sumY += get()[cc][sectionToSelect][i];
+    if (get()[cc][sectionToSelect].size()==0) {
+        selectBase.push_back(0);
+    } else {
+        int start = baseBeg;
+        int end = baseEnd;
+        if (start > (int)get()[cc][sectionToSelect].size()-1)
+            start = get()[cc][sectionToSelect].size()-1;
+        if (start < 0) start = 0;
+        if (end > (int)get()[cc][sectionToSelect].size()-1)
+            end = get()[cc][sectionToSelect].size()-1;
+        if (end < 0) end = 0;
+        for (int i=start; i<=end; i++) {
+            sumY += get()[cc][sectionToSelect][i];
+        }
+        int n=(int)(end-start+1);
+        selectBase.push_back(sumY/n);
     }
-    int n=(int)(end-start+1);
-    selectBase.push_back(sumY/n);
 }
 
 bool wxStfDoc::UnselectTrace(std::size_t sectionToUnselect) {
