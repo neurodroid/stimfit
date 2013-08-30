@@ -266,7 +266,11 @@ bool wxStfApp::OnInit(void)
     // A nice touch: a history of files visited. Use this menu.
     GetDocManager()->FileHistoryLoad( *config );
     GetDocManager()->FileHistoryUseMenu(m_file_menu);
+#if (wxCHECK_VERSION(2, 9, 0))
     GetDocManager()->FileHistoryAddFilesToMenu(m_file_menu);
+#else
+    GetDocManager()->FileHistoryAddFilesToMenu();
+#endif
 
     wxMenu *help_menu = new wxMenu;
     help_menu->Append(wxID_HELP);
@@ -600,14 +604,18 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     file_menu->AppendSeparator();
     file_menu->Append(wxID_EXIT);
 
-#if 1 // ndef __WXGTK__
+#if (wxCHECK_VERSION(2, 9, 0))
     ((wxStfDoc*)doc)->SetFileMenu( file_menu );
 #else
     GetDocManager()->FileHistoryLoad( *config );
 #endif
     
     GetDocManager()->FileHistoryUseMenu(file_menu);
+#if (wxCHECK_VERSION(2, 9, 0))
     GetDocManager()->FileHistoryAddFilesToMenu(file_menu);
+#else
+    GetDocManager()->FileHistoryAddFilesToMenu();
+#endif
 
     wxMenu* m_edit_menu=new wxMenu;
     m_edit_menu->Append(
