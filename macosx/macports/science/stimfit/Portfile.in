@@ -1,10 +1,11 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
-# $Id$
 
 PortSystem          1.0
+PortGroup           wxWidgets 1.0
 
 name                stimfit
 version             0.12.4
+revision            2
 categories          science
 platforms           darwin
 license             GPL-2
@@ -17,21 +18,19 @@ master_sites        googlecode:stimfit
 checksums           rmd160  RMD160 \
                     sha256  SHA256
 
-universal_variant   no
-
-supported_archs     i386 x86_64
+wxWidgets.use       wxPython-3.0
 
 depends_lib         port:boost \
                     port:fftw-3 \
                     port:hdf5-18 \
-                    port:wxWidgets30
+                    port:${wxWidgets.port}
 
-configure.args      --with-wx-config=${prefix}/lib/wx/config/osx_cocoa-unicode-2.9 \
+configure.args      --with-wx-config=${wxWidgets.wxconfig} \
                     --disable-dependency-tracking \
                     --disable-python \
-                    CC="`${prefix}/bin/wx-config --cc`" \
-                    CXX="`${prefix}/bin/wx-config --cxx`" \
-                    LD="`${prefix}/bin/wx-config --ld`"
+                    CC="`${wxWidgets.wxconfig} --cc`" \
+                    CXX="`${wxWidgets.wxconfig} --cxx`" \
+                    LD="`${wxWidgets.wxconfig} --ld`"
 
 # Only Python 2.7 is supported until wxpython gets available for Python 3.x
 variant python27 description {Build with Python shell.} {
@@ -40,7 +39,7 @@ variant python27 description {Build with Python shell.} {
 
     depends_lib-append \
         port:python27 \
-        port:py27-wxpython30 \
+        port:py27-wxpython-3.0 \
         port:py27-numpy \
         port:py27-matplotlib
 
@@ -58,8 +57,8 @@ configure.ldflags-append \
                     -headerpad_max_install_names
 
 # Commented out for now; will be required when wxpython gets available for Python 3.x
-# if {![variant_isset python33]} { 
-    default_variants +python27
+# if {![variant_isset python27]} { 
+default_variants    +python27
 # }
 
 destroot.destdir    DESTDIR=${destroot}${applications_dir}
