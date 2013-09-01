@@ -33,15 +33,15 @@ AC_MSG_CHECKING(for kernel)
 case `uname` in 
     Darwin)
         AC_MSG_RESULT(darwin)
-	CXXFLAGS="${CXXFLAGS} -fPIC"
-	CFLAGS="${CFLAGS} -fPIC"
+        CXXFLAGS="${CXXFLAGS} -fPIC"
+        CFLAGS="${CFLAGS} -fPIC"
         STFKERNEL="darwin"
     ;;
     *)  
         # treat everything else (kfreebsd, hurd) as linux
         AC_MSG_RESULT(linux or similar)
-	CXXFLAGS="-fPIC"
-	CFLAGS="-fPIC"
+        CXXFLAGS="-fPIC"
+        CFLAGS="-fPIC"
         STFKERNEL="linux"
     ;;
 esac
@@ -79,14 +79,14 @@ AC_MSG_CHECKING(for kernel)
 case ${STFKERNEL} in 
     darwin)
         LIBSTF_LDFLAGS="-avoid-version"
-	if test "$enable_module" = "yes" ; then
-	    CPPFLAGS="${CPPFLAGS} -DMODULE_ONLY"
-	else
-	    CPPFLAGS="${CPPFLAGS}"
-	fi
+        if test "$enable_module" = "yes" ; then
+            CPPFLAGS="${CPPFLAGS} -DMODULE_ONLY"
+        else
+            CPPFLAGS="${CPPFLAGS}"
+        fi
         STF_PYTHON_LIBNAME="libpystf.dylib"
         STFIO_PYTHON_LIBNAME="libpystfio.dylib"
-	ARCH_FLAGS=""
+        ARCH_FLAGS=""
         CFLAGS="${CFLAGS} ${ARCH_FLAGS}"
         CXXFLAGS="${CXXFLAGS} ${ARCH_FLAGS}"
         LDFLAGS="${LDFLAGS} ${ARCH_FLAGS}"
@@ -94,17 +94,17 @@ case ${STFKERNEL} in
         OBJCXXFLAGS="${OBJCXXFLAGS} ${ARCH_FLAGS}"
     ;;
     linux)
-	if test "$enable_module" = "yes" ; then
-	    LIBSTF_LDFLAGS="-avoid-version"
-	    CPPFLAGS="${CPPFLAGS} -DMODULE_ONLY"
-	else
-	    if test "$enable_debian" = "yes" ; then
-	      LIBSTF_LDFLAGS="-Wl,-rpath,/usr/lib/stimfit -avoid-version"
-	    else
-	      LIBSTF_LDFLAGS="-Wl,-rpath,${prefix}/lib/stimfit -avoid-version"
-	    fi
-	    CPPFLAGS="${CPPFLAGS}"
-	fi
+        if test "$enable_module" = "yes" ; then
+            LIBSTF_LDFLAGS="-avoid-version"
+            CPPFLAGS="${CPPFLAGS} -DMODULE_ONLY"
+        else
+            if test "$enable_debian" = "yes" ; then
+              LIBSTF_LDFLAGS="-Wl,-rpath,/usr/lib/stimfit -avoid-version"
+            else
+              LIBSTF_LDFLAGS="-Wl,-rpath,${prefix}/lib/stimfit -avoid-version"
+            fi
+            CPPFLAGS="${CPPFLAGS}"
+        fi
         STF_PYTHON_LIBNAME="libpystf.so"
         STFIO_PYTHON_LIBNAME="libpystfio.so"
     ;;
@@ -149,55 +149,56 @@ elif test "$with_biosig" = "yes" ; then
 fi
 AC_SUBST(LIBBIOSIG_LDFLAGS)
 
+AC_ARG_WITH([lapack-lib],
+AS_HELP_STRING([--with-lapack-lib=LAPACKLIB],[Provide full path to custom lapack library]),
+[
+    if test "$withval" != "yes" -a "$withval" != ""; then
+        LAPACKLIB=$withval
+        LIBLAPACK_LDFLAGS="$LAPACKLIB"
+        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK" 
+    fi
+])
+
 # stuff not required for standalone module
 if test "$enable_module" != "yes"; then
     # Checks for libraries.
     AC_CHECK_LIB([fftw3], [fftw_malloc], HAVE_FFTW3="yes")
     if test "${HAVE_FFTW3}" != "yes" ; then
-	AC_MSG_ERROR([Couldn't find fftw3.])
+        AC_MSG_ERROR([Couldn't find fftw3.])
     fi
 
-    # if this is darwin, unconditionally use atlas:
-    if test "$STFKERNEL" = "darwin" ; then
-	AC_CHECK_LIB([atlas], [dgemm_], HAVE_LAPACKX="yes")
-	if test "${HAVE_LAPACKX}" != "yes" ; then
-	    AC_CHECK_LIB([lapack], [dgemm_], HAVE_LAPACKX="yes")
-	    if test "${HAVE_LAPACKX}" != "yes" ; then
-		AC_MSG_ERROR([Couldn't find lapack.])
-	    else
-		LIBLAPACK_LDFLAGS="-llapack -framework vecLib"
-		CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK -DHAVE_LAPACK_SUFFIX" 
-	    fi
-	else
-	    LIBLAPACK_LDFLAGS="-latlas -llapack -lblas"
-	    CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
-	fi
-    else
-	AC_CHECK_LIB([lapack], [dgemm_], HAVE_LAPACKX="yes")
-	if test "${HAVE_LAPACKX}" != "yes" ; then
-	    AC_CHECK_LIB([lapack3], [dgemm_], HAVE_LAPACK3="yes")
-	    if test "${HAVE_LAPACK3}" != "yes" ; then
-		AC_CHECK_LIB([lapack-3], [dgemm_], HAVE_LAPACK_3="yes")
-		    if test "${HAVE_LAPACK_3}" != "yes" ; then
-			AC_CHECK_LIB([blas], [dgemm_], HAVE_ATLAS="yes")
-			if test "${HAVE_ATLAS}" != "yes" ; then
-			    AC_MSG_ERROR([Couldn't find lapack.])
-			else
-			    LIBLAPACK_LDFLAGS="-llapack -lblas"
-			    CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
-			fi
-		    else
-			LIBLAPACK_LDFLAGS="-llapack-3"
-			CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
-		    fi
-	    else
-		LIBLAPACK_LDFLAGS=-llapack3
-		CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
-	    fi
-	else
-	    LIBLAPACK_LDFLAGS="-llapack -lblas"
-	    CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
-	fi
+    if test "$LAPACKLIB" = ""; then
+        if test "$STFKERNEL" = "darwin" ; then
+            # System LAPACK
+            LIBLAPACK_LDFLAGS="/usr/lib/liblapack.dylib -framework vecLib"
+            CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK -DHAVE_LAPACK_SUFFIX" 
+        else
+            AC_CHECK_LIB([lapack], [dgemm_], HAVE_LAPACKX="yes")
+            if test "${HAVE_LAPACKX}" != "yes" ; then
+                AC_CHECK_LIB([lapack3], [dgemm_], HAVE_LAPACK3="yes")
+                if test "${HAVE_LAPACK3}" != "yes" ; then
+                    AC_CHECK_LIB([lapack-3], [dgemm_], HAVE_LAPACK_3="yes")
+                        if test "${HAVE_LAPACK_3}" != "yes" ; then
+                            AC_CHECK_LIB([blas], [dgemm_], HAVE_ATLAS="yes")
+                            if test "${HAVE_ATLAS}" != "yes" ; then
+                                AC_MSG_ERROR([Couldn't find lapack.])
+                            else
+                                LIBLAPACK_LDFLAGS="-llapack -lblas"
+                                CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+                            fi
+                        else
+                            LIBLAPACK_LDFLAGS="-llapack-3"
+                            CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+                        fi
+                else
+                    LIBLAPACK_LDFLAGS=-llapack3
+                    CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+                fi
+            else
+                LIBLAPACK_LDFLAGS="-llapack -lblas"
+                CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+            fi
+        fi
     fi
     AC_SUBST(LIBLAPACK_LDFLAGS)
 
@@ -206,31 +207,31 @@ if test "$enable_module" != "yes"; then
     # Optionally enables aui for doc/view architecture
     AC_ARG_ENABLE([aui], AS_HELP_STRING([--enable-aui],[enable AUI for the doc/view architecture (experimental)]),[])
     if test "$enable_aui" = "yes" ; then
-	CPPFLAGS="${CPPFLAGS} -DWITH_AUIDOCVIEW"
+        CPPFLAGS="${CPPFLAGS} -DWITH_AUIDOCVIEW"
     fi
 
     WXCONFIG=wx-config
     AC_ARG_WITH(wx-config,
     [[  --with-wx-config=FILE     Use the given path to wx-config when determining
-				wxWidgets configuration; defaults to "wx-config"]],
+                                wxWidgets configuration; defaults to "wx-config"]],
     [
-	if test "$withval" != "yes" -a "$withval" != ""; then
-	    WXCONFIG=$withval
-	fi
+        if test "$withval" != "yes" -a "$withval" != ""; then
+            WXCONFIG=$withval
+        fi
     ])
 
     wxversion=0
 
     AC_DEFUN([WXTEST],
     [
-	    AC_REQUIRE([AC_PROG_AWK])
-	    AC_MSG_CHECKING([wxWidgets version])
-	    if wxversion=`$WXCONFIG --version`; then
-		    AC_MSG_RESULT([$wxversion])
-	    else
-		    AC_MSG_RESULT([not found])
-		    AC_MSG_ERROR([wxWidgets is required. Try --with-wx-config.])
-	    fi])
+            AC_REQUIRE([AC_PROG_AWK])
+            AC_MSG_CHECKING([wxWidgets version])
+            if wxversion=`$WXCONFIG --version`; then
+                    AC_MSG_RESULT([$wxversion])
+            else
+                    AC_MSG_RESULT([not found])
+                    AC_MSG_ERROR([wxWidgets is required. Try --with-wx-config.])
+            fi])
 
     # Call WXTEST func
     WXTEST
@@ -239,20 +240,20 @@ if test "$enable_module" != "yes"; then
     AC_MSG_CHECKING(for wxWidgets libraries)
     vers=`echo $wxversion | $AWK 'BEGIN { FS = "."; } { printf "% d", ($2 * 1000 + $2) * 1000 + $3;}'`
     if test -n "$vers" && test "$vers" -ge 2008000; then
-	    WX_CPPFLAGS="`$WXCONFIG --cppflags`"
-	    WX_CXXFLAGS="`$WXCONFIG --cxxflags`"
-	    if test "$STFKERNEL" = "darwin" ; then
+            WX_CPPFLAGS="`$WXCONFIG --cppflags`"
+            WX_CXXFLAGS="`$WXCONFIG --cxxflags`"
+            if test "$STFKERNEL" = "darwin" ; then
                 if test "${PY_AC_VERSION:0:1}" -ge 3; then
                     WX_LIBS="`$WXCONFIG --libs base`"
                 else
                     WX_LIBS="`$WXCONFIG --libs propgrid,aui,adv,core,net,base`"
                 fi
-	    else
-		WX_LIBS="`$WXCONFIG --libs base,core,adv,aui,net`"
-	    fi
-	    AC_MSG_RESULT([$WX_LIBS])
+            else
+                WX_LIBS="`$WXCONFIG --libs base,core,adv,aui,net`"
+            fi
+            AC_MSG_RESULT([$WX_LIBS])
     else
-	    AC_MSG_ERROR([wxWidgets 2.8.0 or newer is required])
+            AC_MSG_ERROR([wxWidgets 2.8.0 or newer is required])
     fi
 
     # CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
@@ -304,15 +305,15 @@ fi
 AC_SUBST(LIBHDF5_LDFLAGS)
 
 AC_ARG_ENABLE([debug],
-	AS_HELP_STRING([--enable-debug],[build stimfit in debug mode]),[
+        AS_HELP_STRING([--enable-debug],[build stimfit in debug mode]),[
 ])
     if test "$enable_debug" = "yes" ; then
-	CPPFLAGS="${CPPFLAGS} -D_STFDEBUG "
-	OPT_CXXFLAGS="-O0 -g3"
-	CFLAGS="${CFLAGS} -O0 -g3"
+        CPPFLAGS="${CPPFLAGS} -D_STFDEBUG "
+        OPT_CXXFLAGS="-O0 -g3"
+        CFLAGS="${CFLAGS} -O0 -g3"
     else
-	OPT_CXXFLAGS="-O2 -g"
-	CFLAGS="${CFLAGS} -O2 -g"
+        OPT_CXXFLAGS="-O2 -g"
+        CFLAGS="${CFLAGS} -O2 -g"
     fi
 AC_SUBST(OPT_CXXFLAGS)
 
