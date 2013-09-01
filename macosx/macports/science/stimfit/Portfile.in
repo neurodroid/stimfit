@@ -5,8 +5,7 @@ PortSystem          1.0
 PortGroup           wxWidgets 1.0
 
 name                stimfit
-version             0.12.8
-revision            0
+version             0.12.9
 categories          science
 platforms           darwin
 license             GPL-2
@@ -28,10 +27,7 @@ depends_lib         port:boost \
 
 configure.args      --with-wx-config=${wxWidgets.wxconfig} \
                     --disable-dependency-tracking \
-                    --disable-python \
-                    CC="`${wxWidgets.wxconfig} --cc`" \
-                    CXX="`${wxWidgets.wxconfig} --cxx`" \
-                    LD="`${wxWidgets.wxconfig} --ld`"
+                    --disable-python
 
 # Only Python 2.7 is supported until wxpython gets available for Python 3.x
 variant python27 description {Build with Python shell.} {
@@ -52,6 +48,14 @@ variant python27 description {Build with Python shell.} {
 
     configure.args-append \
         --enable-python
+}
+
+variant atlas description {Use MacPorts ATLAS libraries.} {
+    depends_lib-append \
+        port:atlas
+
+    configure.args-append \
+        --with-lapack-lib=${prefix}/lib/libatlas.a
 }
 
 configure.ldflags-append \
