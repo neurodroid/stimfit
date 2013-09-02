@@ -42,8 +42,12 @@ libstfio_la_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp ./stfio.cpp \
 	./igor/CrossPlatformFileIO.c \
 	./igor/WriteWave.c
 
+if WITH_BIOSIG2
+libstfio_la_SOURCES += ./biosig/biosiglib.cpp
+else
 if WITH_BIOSIG
 libstfio_la_SOURCES += ./biosig/biosiglib.cpp
+endif
 endif
 
 libstfio_la_LDFLAGS = 
