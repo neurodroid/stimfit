@@ -236,6 +236,7 @@ double stf::risetime2(const std::vector<double>& data, double base, double ampl,
         throw std::out_of_range("frac has to be in ]0,0.5[ in stf::risetime");
     }
 
+#define NDEBUG
 #ifndef NDEBUG
 	fprintf(stdout,"%s %i:RISETIME2\n",__FILE__,__LINE__);
 #endif

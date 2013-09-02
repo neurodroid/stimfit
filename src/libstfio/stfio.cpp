@@ -38,7 +38,12 @@
   #include "./biosig/biosiglib.h"
 #endif
 #include "./cfs/cfslib.h"
-#include "./heka/hekalib.h"
+#ifndef TEST_MINIMAL
+  #include "./heka/hekalib.h"
+  #if (!defined(WITH_BIOSIG) && !defined(WITH_BIOSIG2))
+    #error -DTEST_MINIMAL requires -DWITH_BIOSIG or -DWITH_BIOSIG2
+  #endif
+#endif
 #if 0
 #include "./son/sonlib.h"
 #endif
@@ -74,6 +79,7 @@ bool stfio::StdoutProgressInfo::Update(int value, const std::string& newmsg, boo
     return true;
 }
 
+#ifndef TEST_MINIMAL
 stfio::filetype
 stfio::findType(const std::string& ext) {
     
@@ -90,6 +96,7 @@ stfio::findType(const std::string& ext) {
 #endif
     else return stfio::none;
 }
+#endif
 
 bool stfio::importFile(
         const std::string& fName,
@@ -137,6 +144,7 @@ bool stfio::importFile(
             break;
         }
 
+#ifndef TEST_MINIMAL
         case stfio::cfs: {
             {
             int res = stfio::importCFSFile(fName, ReturnData, progDlg);
@@ -152,6 +160,8 @@ bool stfio::importFile(
             break;
             }
         }
+#endif // TEST_MINIMAL
+
         default:
             throw std::runtime_error("Unknown or unsupported file type");
 	}
@@ -200,9 +210,12 @@ bool stfio::exportFile(const std::string& fName, stfio::filetype type, const Rec
             stfio::exportBiosigFile(fName, Data, progDlg);
             break;
         }
-#endif
+        default:
+            throw std::runtime_error("Only hdf5, IGOR and GDF are supported for writing at present.");
+#else
         default:
             throw std::runtime_error("Only hdf5 and IGOR are supported for writing at present.");
+#endif
         }
     }
     catch (...) {

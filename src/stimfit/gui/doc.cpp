@@ -213,7 +213,11 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
 
         // Detect type of file according to filter:
         wxString filter(GetDocumentTemplate()->GetFileFilter());
+#ifndef TEST_MINIMAL
         stfio::filetype type = stfio::findType(stf::wx2std(filter));
+#else
+        stfio::filetype type = stfio::none;
+#endif
 #if 0 // TODO: backport ascii
         if (type==stf::ascii) {
             if (!wxGetApp().get_directTxtImport()) {

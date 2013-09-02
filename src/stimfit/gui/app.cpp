@@ -171,10 +171,6 @@ bool wxStfApp::OnInit(void)
                                      wxT("Biosig files"), wxT("*.*"), wxT(""), wxT(""),
                                      wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
-    m_biosigTemplate=new wxDocTemplate( docManager,
-                                     wxT("Biosig"), wxT("*.dat;*.cfs;*.gdf;*.ibw"), wxT(""), wxT("dat;cfs;gdf;ibw"),
-                                     wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
-                                     CLASSINFO(wxStfView) );
 #endif
 
     m_cfsTemplate=new wxDocTemplate( docManager,
@@ -1243,12 +1239,15 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
             }
         } else {
             // Add to recording first:
+#ifndef TEST_MINIMAL
             // Find a template:
             wxDocTemplate* templ=GetDocManager()->FindTemplateForPath(fNameArray[n_opened]);
             // Use this template only for type recognition:
             wxString filter(templ->GetFileFilter());
-            stfio::filetype type=
-                stfio::findType(stf::wx2std(templ->GetFileFilter()));
+            stfio::filetype type = stfio::findType(stf::wx2std(templ->GetFileFilter()));
+#else
+            stfio::filetype type = stfio::none;
+#endif
 #if 0 // TODO: re-implement ascii
             if (type==stfio::ascii) {
                 if (!get_directTxtImport()) {
