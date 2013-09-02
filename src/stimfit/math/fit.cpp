@@ -17,7 +17,6 @@
 
 #include <float.h>
 #include <cmath>
-#include <boost/algorithm/minmax_element.hpp>
 
 namespace stf {
 // C-style functions for Lourakis' routines:
@@ -126,18 +125,35 @@ void stf::c_jac_lour(double *p, double *jac, int m, int n, void *adata) {
 
 Vector_double stf::get_scale(Vector_double& data, double oldx) {
     Vector_double xyscale(4);
-    std::pair<Vector_double::const_iterator, Vector_double::const_iterator> minmax;
-    minmax = boost::minmax_element(data.begin(), data.end());
-    double ymin = *minmax.first;
-    double ymax = *minmax.second;
-    double amp = ymax-ymin;
-    data = stfio::vec_scal_mul(data, 1.0/amp);
-    data = stfio::vec_scal_minus(data, ymin/amp);
+
+    if (data.size() == 0) {
+        xyscale[0] = 1.0/oldx;
+        xyscale[1] = 0.0;
+        xyscale[2] = 1.0;
+        xyscale[3] = 0.0;
+
+        return xyscale;
+    }
+
+    double ymin,ymax,amp,off;
+
+    ymin = *data.begin();
+    ymax = ymin;
+    for (Vector_double::iterator it = data.begin(); it != data.end(); ++it) {
+        double v = *it;
+        if (v < ymin) ymin = v;
+        else if (ymax < v) ymax = v;
+    }
+    amp = ymax - ymin;
+    off = ymin / amp;
+
+    data = stfio::vec_scal_mul(data, 1.0 / amp);
+    data = stfio::vec_scal_minus(data, off);
 
     xyscale[0] = 1.0/(data.size()*oldx);
     xyscale[1] = 0;
     xyscale[2] = 1.0/amp;
-    xyscale[3] = ymin/amp;
+    xyscale[3] = off;
     
     return xyscale;
 }

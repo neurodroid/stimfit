@@ -18,7 +18,6 @@
 #else
   #include "H5TA.h"
 #endif
-#include <boost/shared_ptr.hpp>
 #include <cmath>
 #include <sstream>
 #include <iostream>

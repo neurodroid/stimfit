@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <math.h>
-// #include <boost/numeric/ublas/vector.hpp>
 
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
