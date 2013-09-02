@@ -228,6 +228,125 @@ double stf::risetime(const std::vector<double>& data, double base, double ampl,
     return rtLoHi;  
 }
 
+double stf::risetime2(const std::vector<double>& data, double base, double ampl,
+                     double left, double right, double frac,
+                     double& innerRiseTime, double& outerRiseTime )
+{
+    if (frac <= 0 || frac >=0.5) {
+        throw std::out_of_range("frac has to be in ]0,0.5[ in stf::risetime");
+    }
+
+#ifndef NDEBUG
+	fprintf(stdout,"%s %i:RISETIME2\n",__FILE__,__LINE__);
+#endif
+
+    double lo = frac;
+    double hi = 1.0-frac;
+
+    /*
+		outer_tLoId	first index from left which is above lo*ampl
+		outer_tHiId	last  index from left which is below hi*ampl
+
+		inner_tLoId	last  index from left which is below lo*ampl
+		inner_tHiId	first index from left which is above hi*ampl
+
+		Note: in noise free case (outer_tHiId==inner_tHiId-1) and
+		(outer_tLoId==inner_tLoId+1) are true.
+    */
+    long outer_tLoId=-1, outer_tHiId=-1, inner_tLoId=-1, inner_tHiId=-1;
+	long k;
+
+    //Lo%of peak
+    if (right<0 || left<0 || right>=data.size()) {
+        throw std::out_of_range("Index out of range in stf::risetime");
+    }
+
+#ifndef NDEBUG
+	fprintf(stdout,"%s %i:RISETIME2\n",__FILE__,__LINE__);
+#endif
+
+    for (k=(long)left; k<=(long)right; k++) {
+		double v = fabs(data[k]-base);
+		if (v < fabs(lo*ampl)) inner_tLoId = k;
+		if (v < fabs(hi*ampl)) outer_tHiId = k;
+    }
+#ifndef NDEBUG
+	fprintf(stdout,"%s %i:RISETIME2 r:%f l:%f \n",__FILE__,__LINE__,right,left);
+#endif
+
+    for (k=(long)right; k>=(long)left; k--) {
+		double v = fabs(data[k]-base);
+		if (v > fabs(lo*ampl)) outer_tLoId = k;
+		if (v > fabs(hi*ampl)) inner_tHiId = k;
+    }
+
+#ifndef NDEBUG
+	fprintf(stdout,"%s %i:RISETIME2: %i %i %i %i\n",__FILE__,__LINE__,(int)outer_tLoId,(int)inner_tLoId,(int)inner_tHiId,(int)outer_tHiId);
+#endif
+
+    //*** Inner Risetime ***/
+
+    //Calculation of real values by linear interpolation:
+    //Lo%of peak
+    //there was a bug in Stimfit for DOS before 2002 that I used
+    //as a template
+    //corrected 03/01/2006
+    double yLong2=data[ inner_tLoId+1];
+    double yLong1=data[ inner_tLoId];
+    double tLoReal=0.0;
+    double tHiReal=0.0;
+    if (yLong2-yLong1 !=0)
+    {
+        tLoReal=(double)((double)inner_tLoId+
+                fabs((lo*ampl+base-yLong1)/(yLong2-yLong1)));
+    }
+    else tLoReal=(double)inner_tLoId;
+    //Hi%of peak
+    yLong2=data[ inner_tHiId];
+    yLong1=data[ inner_tHiId-1];
+    if (yLong2-yLong1 !=0)
+    {
+        tHiReal=(double)((double)inner_tHiId-
+                fabs(((yLong2-base)-hi*ampl)/(yLong2-yLong1)));
+    }
+    else tHiReal=(double)inner_tHiId;
+
+    innerRiseTime = tHiReal-tLoReal;
+
+#ifndef NDEBUG
+	fprintf(stdout,"%s %i:RISETIME2 %f %s\n",__FILE__,__LINE__,innerRiseTime,innerRiseTime<0.0 ?"!!! inner Rise time is invalid !!!":"");
+#endif
+
+    //*** Outer Risetime ***/
+    yLong2=data[ outer_tLoId];
+    yLong1=data[ outer_tLoId-1];
+    tLoReal=0.0;
+    tHiReal=0.0;
+    if (yLong2-yLong1 !=0)
+    {
+        tLoReal=(double)((double)outer_tLoId-
+                fabs(((yLong2-base)-lo*ampl)/(yLong2-yLong1)));
+    }
+    else tLoReal=(double)outer_tLoId;
+    //Hi%of peak
+    yLong2=data[ outer_tHiId+1];
+    yLong1=data[ outer_tHiId];
+    if (yLong2-yLong1 !=0)
+    {
+        tHiReal=(double)((double)outer_tHiId+
+                fabs((hi*ampl+base-yLong1)/(yLong2-yLong1)));
+    }
+    else tHiReal=(double)outer_tHiId;
+
+    outerRiseTime = tHiReal-tLoReal;
+
+#ifndef NDEBUG
+	fprintf(stdout,"%s %i:RISETIME2: inner %f outer %f\n",__FILE__,__LINE__,innerRiseTime,outerRiseTime);
+#endif
+
+    return (innerRiseTime);
+}
+
 double   stf::t_half(const std::vector<double>& data,
         double base,
         double ampl,

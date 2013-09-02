@@ -146,6 +146,8 @@ wxStfDoc::wxStfDoc() :
     APt50LeftReal(0.0),
     PSlope(0.0),
     rtLoHi(0.0),
+    innerRiseTime(0.0/0.0),
+    outerRiseTime(0.0/0.0),
     halfDuration(0.0),
     slopeRatio(0.0),
     t0Real(0.0),
@@ -561,6 +563,8 @@ void wxStfDoc::PostInit() {
     SetViewPeakBase(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPeakbase"),1)==1);
     SetViewPeakThreshold(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPeakthreshold"),1)==1);
     SetViewRTLoHi(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewRTLoHi"),1)==1);
+    SetViewInnerRiseTime(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewInnerRiseTime"),1)==1);
+    SetViewOuterRiseTime(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewOuterRiseTime"),1)==1);
     SetViewT50(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewT50"),1)==1);
     SetViewRD(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewRD"),1)==1);
     SetViewSlopeRise(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewSloperise"),1)==1);
@@ -2459,6 +2463,22 @@ void wxStfDoc::Measure( )
     
     tLoReal=0.0;
     double factor= RTFactor*0.01; /* normalized value */
+
+    try {
+        // 2008-04-27: changed limits to start from the beginning of the trace
+        // 2013-06-16: changed to accept different rise-time proportions
+        rtLoHi=stf::risetime2(cur().get(),reference,ampl, (double)0/*(double)baseEnd*/,
+                             maxT, factor/*0.2*/, innerRiseTime, outerRiseTime);
+        innerRiseTime/=GetSR();
+        outerRiseTime/=GetSR();
+    }
+    catch (const std::out_of_range& e) {
+        innerRiseTime=0.0/0.0;
+        outerRiseTime=0.0/0.0;
+        throw e;
+    }
+
+
     try {
         // 2008-04-27: changed limits to start from the beginning of the trace
         // 2013-06-16: changed to accept different rise-time proportions 
@@ -2967,6 +2987,8 @@ stf::Table wxStfDoc::CurResultsTable() {
     if (viewPeakbase) n_cols++;
     if (viewPeakthreshold) n_cols++;
     if (viewRTLoHi) n_cols++;
+    if (viewInnerRiseTime) n_cols++;
+    if (viewOuterRiseTime) n_cols++;
     if (viewT50) n_cols++;
     if (viewRD) n_cols++;
     if (viewSloperise) n_cols++;
@@ -2994,6 +3016,8 @@ stf::Table wxStfDoc::CurResultsTable() {
     if (viewPeakbase) table.SetColLabel(nCol++,"Peak (from base)");
     if (viewPeakthreshold) table.SetColLabel(nCol++,"Peak (from threshold)");
     if (viewRTLoHi) table.SetColLabel(nCol++,"RT (Lo-Hi%)");
+    if (viewInnerRiseTime) table.SetColLabel(nCol++,"inner rise time");
+    if (viewOuterRiseTime) table.SetColLabel(nCol++,"outer rise time");
     if (viewT50) table.SetColLabel(nCol++,"t50");
     if (viewRD) table.SetColLabel(nCol++,"Rise/Decay");
     if (viewSloperise) table.SetColLabel(nCol++,"Slope (rise)");
@@ -3082,6 +3106,14 @@ stf::Table wxStfDoc::CurResultsTable() {
             table.at(1,nCol)=GetTLoReal()*GetXScale();
             table.at(2,nCol)=GetTHiReal()*GetXScale();
         }
+        nCol++;
+    }
+
+    if (viewInnerRiseTime) {table.at(0,nCol)=GetInnerRiseTime();
+        nCol++;
+    }
+
+    if (viewOuterRiseTime) {table.at(0,nCol)=GetOuterRiseTime();
         nCol++;
     }
 

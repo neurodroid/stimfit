@@ -97,7 +97,7 @@ private:
 //#ifdef WITH_PSLOPE
         PSlope,
 //#endif
-        rtLoHi, halfDuration, slopeRatio, t0Real;
+        rtLoHi, halfDuration, slopeRatio, t0Real, innerRiseTime, outerRiseTime;
     // cursor windows:
     int pM;  //peakMean, number of points used for averaging
     int RTFactor; // Lower point for the rise-time calculation
@@ -119,7 +119,7 @@ private:
     std::size_t tLoIndex, tHiIndex, t50LeftIndex, t50RightIndex, APt50LeftIndex, APt50RightIndex;
 
     bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold, viewRTLoHi,
-        viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,
+        viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency, viewInnerRiseTime, viewOuterRiseTime,
 #ifdef WITH_PSLOPE
         //viewPSlope,
 #endif
@@ -522,6 +522,16 @@ public:
      */
     double GetRTLoHi() const { return rtLoHi; }
 
+    //! Retrieves the inner rise time.
+    /*! expressed in units o data points.
+     */
+    double GetInnerRiseTime() const { return innerRiseTime; }
+
+    //! Retrieves the outer rise time.
+    /*! expressed in units o data points.
+     */
+    double GetOuterRiseTime() const { return outerRiseTime; }
+
     //! Retrieves the full width at half-maximal amplitude ("half duration").
     /*! \return The difference between GetT50RightReal() and GetT50LeftReal(), expressed in units of data points.
      */
@@ -622,6 +632,16 @@ public:
     /*! \return true if it should be shown, false otherwise.
      */
     bool GetViewRTLoHi() const { return viewRTLoHi; }
+
+    //! Indicates whether the inner rise time should be shown in the results table.
+    /*! \return true if it should be shown, false otherwise.
+     */
+    bool GetViewInnerRiseTime() const { return viewInnerRiseTime; }
+
+    //! Indicates whether the outer rise time should be shown in the results table.
+    /*! \return true if it should be shown, false otherwise.
+     */
+    bool GetViewOuterRiseTime() const { return viewOuterRiseTime; }
 
     //! Indicates whether the half duration should be shown in the results table.
     /*! \return true if it should be shown, false otherwise.
@@ -927,6 +947,16 @@ public:
     /*! \param value Set to true if it should be shown, false otherwise.
      */
     void SetViewRTLoHi(bool value) { viewRTLoHi=value; }
+
+    //! Determines whether the inner rise time should be shown in the results table.
+    /*! \param value Set to true if it should be shown, false otherwise.
+     */
+    void SetViewInnerRiseTime(bool value) { viewInnerRiseTime=value; }
+
+    //! Determines whether the outer rise time should be shown in the results table.
+    /*! \param value Set to true if it should be shown, false otherwise.
+     */
+    void SetViewOuterRiseTime(bool value) { viewOuterRiseTime=value; }
 
     //! Determines whether the half duration should be shown in the results table.
     /*! \param value Set to true if it should be shown, false otherwise.

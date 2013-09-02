@@ -47,6 +47,8 @@ EVT_MENU(ID_VIEW_PEAKZERO,wxStfGrid::ViewPeakzero)
 EVT_MENU(ID_VIEW_PEAKBASE,wxStfGrid::ViewPeakbase)
 EVT_MENU(ID_VIEW_PEAKTHRESHOLD,wxStfGrid::ViewPeakthreshold)
 EVT_MENU(ID_VIEW_RTLOHI,wxStfGrid::ViewRTLoHi)
+EVT_MENU(ID_VIEW_INNERRISETIME,wxStfGrid::ViewInnerRiseTime)
+EVT_MENU(ID_VIEW_OUTERRISETIME,wxStfGrid::ViewOuterRiseTime)
 EVT_MENU(ID_VIEW_T50,wxStfGrid::ViewT50)
 EVT_MENU(ID_VIEW_RD,wxStfGrid::ViewRD)
 EVT_MENU(ID_VIEW_SLOPERISE,wxStfGrid::ViewSloperise)
@@ -83,6 +85,8 @@ wxStfGrid::wxStfGrid(
     m_labelContext->AppendCheckItem(ID_VIEW_PEAKBASE,wxT("Peak (from base)"));
     m_labelContext->AppendCheckItem(ID_VIEW_PEAKTHRESHOLD,wxT("Peak (from threshold)"));
     m_labelContext->AppendCheckItem(ID_VIEW_RTLOHI,wxT("RT (Lo-Hi%)"));
+    m_labelContext->AppendCheckItem(ID_VIEW_INNERRISETIME,wxT("inner Rise Time (experimental)"));
+    m_labelContext->AppendCheckItem(ID_VIEW_OUTERRISETIME,wxT("outer Rise Time (experimental)"));
     m_labelContext->AppendCheckItem(ID_VIEW_T50,wxT("t50"));
     m_labelContext->AppendCheckItem(ID_VIEW_RD,wxT("Rise/Decay"));
     m_labelContext->AppendCheckItem(ID_VIEW_SLOPERISE,wxT("Slope (rise)"));
@@ -152,6 +156,8 @@ void wxStfGrid::OnLabelRClick(wxGridEvent& event) {
     m_labelContext->Check(ID_VIEW_PEAKBASE,wxGetApp().GetActiveDoc()->GetViewPeakBase());
     m_labelContext->Check(ID_VIEW_PEAKTHRESHOLD,wxGetApp().GetActiveDoc()->GetViewPeakThreshold());
     m_labelContext->Check(ID_VIEW_RTLOHI,wxGetApp().GetActiveDoc()->GetViewRTLoHi());
+    m_labelContext->Check(ID_VIEW_INNERRISETIME,wxGetApp().GetActiveDoc()->GetViewInnerRiseTime());
+    m_labelContext->Check(ID_VIEW_OUTERRISETIME,wxGetApp().GetActiveDoc()->GetViewOuterRiseTime());
     m_labelContext->Check(ID_VIEW_T50,wxGetApp().GetActiveDoc()->GetViewT50());
     m_labelContext->Check(ID_VIEW_RD,wxGetApp().GetActiveDoc()->GetViewRD());
     m_labelContext->Check(ID_VIEW_SLOPERISE,wxGetApp().GetActiveDoc()->GetViewSlopeRise());
@@ -252,6 +258,18 @@ void wxStfGrid::ViewRTLoHi(wxCommandEvent& event) {
     event.Skip();
     wxGetApp().GetActiveDoc()->SetViewRTLoHi(m_labelContext->IsChecked(ID_VIEW_RTLOHI));
     SetCheckmark(wxT("ViewRTLoHi"),ID_VIEW_RTLOHI);
+}
+
+void wxStfGrid::ViewInnerRiseTime(wxCommandEvent& event) {
+    event.Skip();
+    wxGetApp().GetActiveDoc()->SetViewInnerRiseTime(m_labelContext->IsChecked(ID_VIEW_INNERRISETIME));
+    SetCheckmark(wxT("ViewInnerRiseTime"),ID_VIEW_INNERRISETIME);
+}
+
+void wxStfGrid::ViewOuterRiseTime(wxCommandEvent& event) {
+    event.Skip();
+    wxGetApp().GetActiveDoc()->SetViewOuterRiseTime(m_labelContext->IsChecked(ID_VIEW_OUTERRISETIME));
+    SetCheckmark(wxT("ViewOuterRiseTime"),ID_VIEW_OUTERRISETIME);
 }
 
 void wxStfGrid::ViewT50(wxCommandEvent& event) {
