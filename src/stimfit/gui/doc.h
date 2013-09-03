@@ -97,8 +97,7 @@ private:
 //#ifdef WITH_PSLOPE
         PSlope,
 //#endif
-        rtLoHi, halfDuration, slopeRatio, t0Real,
-        InnerLoRT, InnerHiRT, OuterLoRT, OuterHiRT;
+        rtLoHi, InnerLoRT, InnerHiRT, OuterLoRT, OuterHiRT, halfDuration, slopeRatio, t0Real;
     // cursor windows:
     int pM;  //peakMean, number of points used for averaging
     int RTFactor; // Lower point for the rise-time calculation
@@ -165,12 +164,13 @@ public:
      */
     virtual bool SaveAs();
 
+#ifndef TEST_MINIMAL
     //! Override default file saving.
     /*! \param filename Full path of the file.
      *  \return true if successfully saved, false otherwise.
      */
     virtual bool DoSaveDocument(const wxString& filename);
-
+#endif
     //! Override default file closing.
     /*! Writes settings to the config file or registry before closing.
      *  \return true if successfully closed, false otherwise.

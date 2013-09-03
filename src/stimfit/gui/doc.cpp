@@ -45,16 +45,6 @@
 #include "./../math/funclib.h"
 #include "./../math/measure.h"
 #include "./../../libstfio/stfio.h"
-#include "./../../libstfio/cfs/cfslib.h"
-#include "./../../libstfio/atf/atflib.h"
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
-  #include "./../../libstfio/biosig/biosiglib.h"
-#endif
-#include "./../../libstfio/hdf5/hdf5lib.h"
-#if 0 // TODO: backport ascii
-#include "./../../libstfio/ascii/asciilib.h"
-#endif
-#include "./../../libstfio/igor/igorlib.h"
 #include "./usrdlg/usrdlg.h"
 #include "./doc.h"
 #include "./graph.h"
@@ -711,26 +701,20 @@ bool wxStfDoc::SaveAs() {
         if (writeRec.size() == 0) return false;
         try {
             stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
+			stfio::filetype type;
             switch (SelectFileDialog.GetFilterIndex()) {
-             case 1:
-                 return stfio::exportCFSFile(stf::wx2std(filename), writeRec, progDlg);
-             case 2:
-                 return stfio::exportATFFile(stf::wx2std(filename), writeRec);
-             case 3:
-                 return stfio::exportIGORFile(stf::wx2std(filename), writeRec, progDlg);
-             case 4:
-                 return false;
-#if 0 // TODO
-                 return stfio::exportASCIIFile(stf::wx2std(filename), get()[GetCurCh()]);
-#endif
+            case 0: type=stfio::hdf5; break;
+            case 1: type=stfio::cfs; break;
+            case 2: type=stfio::atf; break;
+            case 3: type=stfio::igor; break;
+            case 4: type=stfio::ascii; break;
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
-             case 5:
-                 return stfio::exportBiosigFile(stf::wx2std(filename), writeRec, progDlg);
+            default: type=stfio::biosig;
+#else
+            default: type=stfio::hdf5;
 #endif
-             case 0:
-             default:
-                 return stfio::exportHDF5File(stf::wx2std(filename), writeRec, progDlg);
             }
+            return stfio::exportFile(stf::wx2std(filename), type, writeRec, progDlg);
         }
         catch (const std::runtime_error& e) {
             wxGetApp().ExceptMsg(stf::std2wx(e.what()));
@@ -777,12 +761,13 @@ Recording wxStfDoc::ReorderChannels() {
     return writeRec;
 }
 
+#ifndef TEST_MINIMAL
 bool wxStfDoc::DoSaveDocument(const wxString& filename) {
     Recording writeRec(ReorderChannels());
     if (writeRec.size() == 0) return false;
     try {
         stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
-        if (stfio::exportHDF5File(stf::wx2std(filename), writeRec, progDlg))
+        if (stfio::exportFile(stf::wx2std(filename), stfio::hdf5, writeRec, progDlg))
             return true;
         else
             return false;
@@ -792,6 +777,7 @@ bool wxStfDoc::DoSaveDocument(const wxString& filename) {
         return false;
     }
 }
+#endif
 
 void wxStfDoc::WriteToReg() {
     //Write file length
@@ -1081,9 +1067,12 @@ void wxStfDoc::CreateAverage(
             case 2 :	// align to half amplitude time 
                 alignIndex = lround(GetAPT50LeftReal());
                 break;
+            default:
+                wxGetApp().ExceptMsg(wxT("Invalid alignment method"));
+                return;
             }
 
-            *it = int(alignIndex);
+            *it = alignIndex;
             if (alignIndex > max_index) {
                 max_index=alignIndex;
             }
