@@ -111,15 +111,19 @@ double risetime(const std::vector<double>& data, double base, double ampl,
 
  *  \param left Delimits the search to the left.
  *  \param right Delimits the search to the right.
- *  \param innerRiseTime is the smallest, interpolated risetime
- *  \param outerRiseTime is the largest, interpolated risetime
+ *  \param innerTLoReal interpolated starting point of the inner risetime
+ *  \param innerTHiReal interpolated end point of the inner risetime
+ *  \param outerTLoReal interpolated starting point of the outer risetime
+ *  \param outerTHiReal interpolated end point of the outer risetime
+    the inner rise time is (innerTHiReal-innerTLoReal),
+    the outer rise time is (outerTHiReal-outerTLoReal),
     in case of noise free data, inner and outer rise time are the same.
 
  *  \return The inner rise time.
  */
 double risetime2(const std::vector<double>& data, double base, double ampl,
                 double left, double right, double frac,
-                double& innerRiseTime, double& outerRiseTime );
+                double& innerTLoReal, double& innerTHiReal, double& outerTLoReal, double& outerTHiReal );
 
 //! Find the full width at half-maximal amplitude of an event within \e data.
 /*! Although t50RightReal is not explicitly returned, it can be calculated

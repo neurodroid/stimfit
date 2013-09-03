@@ -97,7 +97,8 @@ private:
 //#ifdef WITH_PSLOPE
         PSlope,
 //#endif
-        rtLoHi, halfDuration, slopeRatio, t0Real, innerRiseTime, outerRiseTime;
+        rtLoHi, halfDuration, slopeRatio, t0Real,
+        InnerLoRT, InnerHiRT, OuterLoRT, OuterHiRT;
     // cursor windows:
     int pM;  //peakMean, number of points used for averaging
     int RTFactor; // Lower point for the rise-time calculation
@@ -118,8 +119,9 @@ private:
     
     std::size_t tLoIndex, tHiIndex, t50LeftIndex, t50RightIndex, APt50LeftIndex, APt50RightIndex;
 
-    bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold, viewRTLoHi,
-        viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency, viewInnerRiseTime, viewOuterRiseTime,
+    bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold,
+        viewRTLoHi, viewInnerRiseTime, viewOuterRiseTime,
+        viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,
 #ifdef WITH_PSLOPE
         //viewPSlope,
 #endif
@@ -410,6 +412,30 @@ public:
      */
     double GetTHiReal() const { return tHiReal; }
 
+    //! Retrieves the time point at which Lo% of the maximal amplitude have been reached.
+    /*! \return The time point at which Lo% of the maximal amplitude have been reached, expressed in
+     *  units of data points.
+     */
+    double GetInnerLoRT() const { return InnerLoRT; }
+
+    //! Retrieves the time point at which Hi% of the maximal amplitude have been reached.
+    /*! \return The time point at which Hi% of the maximal amplitude have been reached, expressed in
+     *  units of data points.
+     */
+    double GetInnerHiRT() const { return InnerHiRT; }
+
+    //! Retrieves the time point at which Lo% of the maximal amplitude have been reached.
+    /*! \return The time point at which Lo% of the maximal amplitude have been reached, expressed in
+     *  units of data points.
+     */
+    double GetOuterLoRT() const { return OuterLoRT; }
+
+    //! Retrieves the time point at which Hi% of the maximal amplitude have been reached.
+    /*! \return The time point at which Hi% of the maximal amplitude have been reached, expressed in
+     *  units of data points.
+     */
+    double GetOuterHiRT() const { return OuterHiRT; }
+
     //! Retrieves the time point at which 50% of the maximal amplitude have been reached from the left of the peak.
     /*! \return The time point at which 50% of the maximal amplitude have been reached from the left of the peak, 
      *  expressed in units of data points.
@@ -525,12 +551,12 @@ public:
     //! Retrieves the inner rise time.
     /*! expressed in units o data points.
      */
-    double GetInnerRiseTime() const { return innerRiseTime; }
+    double GetInnerRiseTime() const { return (InnerHiRT-InnerLoRT); }
 
     //! Retrieves the outer rise time.
     /*! expressed in units o data points.
      */
-    double GetOuterRiseTime() const { return outerRiseTime; }
+    double GetOuterRiseTime() const { return (OuterHiRT-OuterLoRT); }
 
     //! Retrieves the full width at half-maximal amplitude ("half duration").
     /*! \return The difference between GetT50RightReal() and GetT50LeftReal(), expressed in units of data points.

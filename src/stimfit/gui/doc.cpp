@@ -146,8 +146,10 @@ wxStfDoc::wxStfDoc() :
     APt50LeftReal(0.0),
     PSlope(0.0),
     rtLoHi(0.0),
-    innerRiseTime(0.0/0.0),
-    outerRiseTime(0.0/0.0),
+    InnerLoRT(0.0/0.0),
+    InnerHiRT(0.0/0.0),
+    OuterLoRT(0.0/0.0),
+    OuterHiRT(0.0/0.0),
     halfDuration(0.0),
     slopeRatio(0.0),
     t0Real(0.0),
@@ -2467,18 +2469,22 @@ void wxStfDoc::Measure( )
     
     tLoReal=0.0;
     double factor= RTFactor*0.01; /* normalized value */
+    InnerLoRT=0.0/0.0;
+    InnerHiRT=0.0/0.0;
+    OuterLoRT=0.0/0.0;
+    OuterHiRT=0.0/0.0;
 
     try {
         // 2008-04-27: changed limits to start from the beginning of the trace
         // 2013-06-16: changed to accept different rise-time proportions
         rtLoHi=stf::risetime2(cur().get(),reference,ampl, (double)0/*(double)baseEnd*/,
-                             maxT, factor/*0.2*/, innerRiseTime, outerRiseTime);
-        innerRiseTime/=GetSR();
-        outerRiseTime/=GetSR();
+                             maxT, factor/*0.2*/, InnerLoRT, InnerHiRT, OuterLoRT, OuterHiRT);
+        InnerLoRT/=GetSR();
+        InnerHiRT/=GetSR();
+        OuterLoRT/=GetSR();
+        OuterHiRT/=GetSR();
     }
     catch (const std::out_of_range& e) {
-        innerRiseTime=0.0/0.0;
-        outerRiseTime=0.0/0.0;
         throw e;
     }
 
@@ -3113,11 +3119,19 @@ stf::Table wxStfDoc::CurResultsTable() {
         nCol++;
     }
 
-    if (viewInnerRiseTime) {table.at(0,nCol)=GetInnerRiseTime();
+    if (viewInnerRiseTime) { table.at(0,nCol)=GetInnerRiseTime();
+        if (viewCursors) {
+            table.at(1,nCol)=GetInnerLoRT();
+            table.at(2,nCol)=GetInnerHiRT();
+        }
         nCol++;
     }
 
-    if (viewOuterRiseTime) {table.at(0,nCol)=GetOuterRiseTime();
+    if (viewOuterRiseTime) { table.at(0,nCol)=GetOuterRiseTime();
+        if (viewCursors) {
+            table.at(1,nCol)=GetOuterLoRT();
+            table.at(2,nCol)=GetOuterHiRT();
+        }
         nCol++;
     }
 

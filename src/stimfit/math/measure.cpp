@@ -230,7 +230,7 @@ double stf::risetime(const std::vector<double>& data, double base, double ampl,
 
 double stf::risetime2(const std::vector<double>& data, double base, double ampl,
                      double left, double right, double frac,
-                     double& innerRiseTime, double& outerRiseTime )
+                     double& innerTLoReal, double& innerTHiReal, double& outerTLoReal, double& outerTHiReal )
 {
     if (frac <= 0 || frac >=0.5) {
         throw std::out_of_range("frac has to be in ]0,0.5[ in stf::risetime");
@@ -294,58 +294,51 @@ double stf::risetime2(const std::vector<double>& data, double base, double ampl,
     //corrected 03/01/2006
     double yLong2=data[ inner_tLoId+1];
     double yLong1=data[ inner_tLoId];
-    double tLoReal=0.0;
-    double tHiReal=0.0;
     if (yLong2-yLong1 !=0)
     {
-        tLoReal=(double)((double)inner_tLoId+
+        innerTLoReal=(double)((double)inner_tLoId+
                 fabs((lo*ampl+base-yLong1)/(yLong2-yLong1)));
     }
-    else tLoReal=(double)inner_tLoId;
+    else innerTLoReal=(double)inner_tLoId;
     //Hi%of peak
     yLong2=data[ inner_tHiId];
     yLong1=data[ inner_tHiId-1];
     if (yLong2-yLong1 !=0)
     {
-        tHiReal=(double)((double)inner_tHiId-
+        innerTHiReal=(double)((double)inner_tHiId-
                 fabs(((yLong2-base)-hi*ampl)/(yLong2-yLong1)));
     }
-    else tHiReal=(double)inner_tHiId;
-
-    innerRiseTime = tHiReal-tLoReal;
+    else innerTHiReal=(double)inner_tHiId;
 
 #ifndef NDEBUG
-	fprintf(stdout,"%s %i:RISETIME2 %f %s\n",__FILE__,__LINE__,innerRiseTime,innerRiseTime<0.0 ?"!!! inner Rise time is invalid !!!":"");
+	fprintf(stdout,"%s %i:RISETIME2 %f %s\n",__FILE__,__LINE__,innerTHiReal-innerTLoReal,innerTHiReal<innerTLoReal ?"!!! inner Rise time is invalid !!!":"");
 #endif
 
     //*** Outer Risetime ***/
     yLong2=data[ outer_tLoId];
     yLong1=data[ outer_tLoId-1];
-    tLoReal=0.0;
-    tHiReal=0.0;
     if (yLong2-yLong1 !=0)
     {
-        tLoReal=(double)((double)outer_tLoId-
+        outerTLoReal=(double)((double)outer_tLoId-
                 fabs(((yLong2-base)-lo*ampl)/(yLong2-yLong1)));
     }
-    else tLoReal=(double)outer_tLoId;
+    else outerTLoReal=(double)outer_tLoId;
     //Hi%of peak
     yLong2=data[ outer_tHiId+1];
     yLong1=data[ outer_tHiId];
     if (yLong2-yLong1 !=0)
     {
-        tHiReal=(double)((double)outer_tHiId+
+        outerTHiReal=(double)((double)outer_tHiId+
                 fabs((hi*ampl+base-yLong1)/(yLong2-yLong1)));
     }
-    else tHiReal=(double)outer_tHiId;
-
-    outerRiseTime = tHiReal-tLoReal;
+    else outerTHiReal=(double)outer_tHiId;
 
 #ifndef NDEBUG
-	fprintf(stdout,"%s %i:RISETIME2: inner %f outer %f\n",__FILE__,__LINE__,innerRiseTime,outerRiseTime);
+	fprintf(stdout,"%s %i:RISETIME2 %f %f %f %f\n",__FILE__,__LINE__,outerTLoReal,innerTLoReal,innerTHiReal,outerTHiReal);
+	fprintf(stdout,"%s %i:RISETIME2 %f %s\n",__FILE__,__LINE__,outerTHiReal-outerTLoReal,outerTHiReal<outerTLoReal ?"!!! outer Rise time is invalid !!!":"");
 #endif
 
-    return (innerRiseTime);
+    return (innerTHiReal-innerTLoReal);
 }
 
 double   stf::t_half(const std::vector<double>& data,
