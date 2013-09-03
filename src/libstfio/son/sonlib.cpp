@@ -15,8 +15,6 @@
 #include "wx/wxprec.h"
 #include "wx/progdlg.h"
 
-#include <boost/shared_ptr.hpp>
-
 #include "./sonlib.h"
 
 std::string stimfit::SON::SONError(short errorCode) {

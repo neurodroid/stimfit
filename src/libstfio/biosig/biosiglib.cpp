@@ -18,16 +18,21 @@
 
 #include "../stfio.h"
 
-#if defined(WITH_BIOSIG2) || defined(_MSC_VER)
-  #include <biosig2.h>
-  #if (BIOSIG_VERSION < 10506)
-	#error libbiosig v1.5.6 or later is required
-  #endif
-  #if (BIOSIG_VERSION > 10506)
-	#define  DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
-  #endif
+#if defined(WITH_BIOSIG2)
+    #include <biosig2.h>
+    #if (BIOSIG_VERSION < 10506)
+        #error libbiosig2 v1.5.6 or later is required
+    #endif
+    #if (BIOSIG_VERSION > 10506)
+        #define DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
+    #endif
 #else
-  #include <biosig.h>
+    #include <biosig.h>
+    #if defined(_MSC_VER)
+        //#if (BIOSIG_VERSION < 10507)
+            #error libbiosig is not ABI compatible
+        //#endif
+    #endif
 #endif
 
 
@@ -54,18 +59,46 @@ extern "C" uint32_t lcm(uint32_t A, uint32_t B);
 #define BIOSIG_VERSION (BIOSIG_VERSION_MAJOR * 10000 + BIOSIG_VERSION_MINOR * 100 + BIOSIG_PATCHLEVEL)
 #endif
 
+stfio::filetype stfio_file_type(HDRTYPE* hdr) {
+#ifdef __LIBBIOSIG2_H__
+        switch (biosig_get_filetype(hdr)) {
+#else
+        switch (hdr->TYPE) {
+#endif
+        case ABF:
+        case ABF2:	return stfio::abf;
+        case ATF:	return stfio::atf;
+        case AXG:	return stfio::axg;
+        case CFS:	return stfio::cfs;
+        case HEKA:	return stfio::heka;
+        case HDF:	return stfio::hdf5;
+        case IBW:	return stfio::igor;
+        case SMR:	return stfio::son;
+        default:	return stfio::none;
+        }
+}
 
-void stfio::importBSFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
+
+stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
 
     std::string errorMsg("Exception while calling std::importBSFile():\n");
     std::string yunits;
+    stfio::filetype type;
+
     // =====================================================================================================================
     //
-    // Open file with libbiosig and read in the data
+    // importBiosig opens file with libbiosig
+    //	- performs an automated identification of the file format
+    //  - and decides whether the data is imported through importBiosig (currently CFS, HEKA, ABF1, GDF, and others)
+    //  - or handed back to other import*File functions (currently ABF2, AXG, HDF5)
     //
-    // There basically two implementations, one with libbiosig before v1.6.0 and
-    // and one for libbiosig v1.6.0 and later
+    // There are two implementations, level-1 and level-2 interface of libbiosig.
+    //   level 1 is used when -DWITH_BIOSIG, -lbiosig
+    //   level 2 is used when -DWITH_BIOSIG2, -lbiosig2
     //
+    //   level 1 is better tested, but it does not provide ABI compatibility between MinGW and VisualStudio
+    //   level 2 interface has been developed to provide ABI compatibility, but it is less tested
+    //      and the API might still undergo major changes.
     // =====================================================================================================================
 
 
@@ -73,22 +106,21 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 
     HDRTYPE* hdr =  sopen( fName.c_str(), "r", NULL );
     if (hdr==NULL) {
-        errorMsg += "\nBiosig header is empty";
         ReturnData.resize(0);
-        throw std::runtime_error(errorMsg.c_str());
+        return stfio::none;
     }
-    if (biosig_check_filetype(hdr, ABF) && biosig_check_error(hdr)) {
-        /* this triggers the fall back mechanims w/o reporting an error message */
+
+    type = stfio_file_type(hdr);
+    if (biosig_check_error(hdr)) {
         ReturnData.resize(0);
-        destructHDR(hdr);	// free allocated memory
-        throw std::runtime_error(errorMsg.c_str());
+        destructHDR(hdr);
+        return type;
     }
-    errorMsg += "\n";
-    if (serror2(hdr)) {
-        errorMsg += std::string(biosig_get_errormsg(hdr));
+    if (biosig_get_filetype(hdr)==ATF) {
+        // ATF support should be handled by importATF not importBiosig
         ReturnData.resize(0);
-        destructHDR(hdr);	// free allocated memory
-        throw std::runtime_error(errorMsg.c_str());
+        destructHDR(hdr);
+        return type;
     }
 
     // ensure the event table is in chronological order	
@@ -136,7 +168,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
      *************************************************************************/
     for (int ch=0; ch < numberOfChannels; ++ch) {
         CHANNEL_TYPE *hc = biosig_get_channel(hdr, ch);
-        switch (hc->PhysDimCode & 0xffe0) {
+        switch (biosig_channel_get_physdimcode(hc) & 0xffe0) {
         case 4256:  // Volt
 		//biosig_channel_scale_to_unit(hc, "mV");
 		biosig_channel_change_scale_to_physdimcode(hc, 4274);
@@ -194,7 +226,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         catch (...) {
 			ReturnData.resize(0);
 			destructHDR(hdr);
-			throw;
+			return type;
 		}
 	}
     try {
@@ -206,7 +238,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     catch (...) {
 		ReturnData.resize(0);
 		destructHDR(hdr);
-		throw;
+		return type;
         }
     }
 
@@ -264,10 +296,11 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 
     HDRTYPE* hdr =  sopen( fName.c_str(), "r", NULL );
     if (hdr==NULL) {
-        errorMsg += "\nBiosig header is empty";
         ReturnData.resize(0);
-        throw std::runtime_error(errorMsg.c_str());
+        return stfio::none;
     }
+    type = stfio_file_type(hdr);
+
 #if !defined(BIOSIG_VERSION) || (BIOSIG_VERSION < 10501)
     if (hdr->TYPE==ABF) {
         /*
@@ -281,19 +314,23 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
 #endif
         ReturnData.resize(0);
         destructHDR(hdr);	// free allocated memory
-        throw std::runtime_error(errorMsg.c_str());
+        return type;
     }
-    errorMsg += "\n";
+
 #if defined(BIOSIG_VERSION) && (BIOSIG_VERSION > 10400)
-    if (serror2(hdr)) {
-        errorMsg += std::string(hdr->AS.B4C_ERRMSG);
+    if (hdr->AS.B4C_ERRNUM) {
 #else
-    if (serror()) {
-	errorMsg += std::string(B4C_ERRMSG);
+    if (B4C_ERRNUM) {
 #endif
         ReturnData.resize(0);
         destructHDR(hdr);	// free allocated memory
-        throw std::runtime_error(errorMsg.c_str());
+        return type;
+    }
+    if ( hdr->TYPE==ATF ) {
+        // ATF support should be handled by importATF not importBiosig
+        ReturnData.resize(0);
+        destructHDR(hdr);
+        return type;
     }
 
     // ensure the event table is in chronological order
@@ -421,19 +458,19 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
         catch (...) {
 			ReturnData.resize(0);
 			destructHDR(hdr);
-			throw;
+			return type;
 		}
 	}        
     try {
         if ((int)ReturnData.size() < numberOfChannels) {
             ReturnData.resize(numberOfChannels);
-		}
-		ReturnData.InsertChannel(TempChannel, NS++);
+        }
+        ReturnData.InsertChannel(TempChannel, NS++);
     }
     catch (...) {
 		ReturnData.resize(0);
 		destructHDR(hdr);
-		throw;
+		return type;
         }
     }
 
@@ -497,7 +534,7 @@ void stfio::importBSFile(const std::string &fName, Recording &ReturnData, Progre
     destructHDR(hdr);
 
 #endif
-
+    return stfio::biosig;
 }
 
 
@@ -521,7 +558,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 
 #ifdef __LIBBIOSIG2_H__
 
-    int numberOfChannels = Data.size();
+    size_t numberOfChannels = Data.size();
     HDRTYPE* hdr = constructHDR(numberOfChannels, 0);
 
 	/* Initialize all header parameters */
@@ -588,14 +625,14 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         }
         SPR = lcm(SPR, chSPR);
 
-		/*
-		    hc->SPR (i.e. chSPR) is 'abused' to store final hdr->SPR/hc->SPR, this is corrected in the loop below
-			its a hack to avoid the need for another malloc().
-		*/
+        /*
+            hc->SPR (i.e. chSPR) is 'abused' to store final hdr->SPR/hc->SPR, this is corrected in the loop below
+            its a hack to avoid the need for another malloc().
+        */
 #ifdef DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
-		biosig_channel_set_samples_per_record(hc, chSPR);
+        biosig_channel_set_samples_per_record(hc, chSPR);
 #else
-		chanSPR[k]=chSPR;
+        chanSPR[k]=chSPR;
 #endif
 
         if (k==0) {
@@ -620,8 +657,8 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         spr = SPR / spr;
         biosig_channel_set_samples_per_record(hc, spr);
 #else
-		size_t spr = SPR/chanSPR[k];
-		chanSPR[k] = spr;
+        size_t spr = SPR/chanSPR[k];
+        chanSPR[k] = spr;
 #endif
         bpb += spr * 8; /* its always double */
     }
@@ -636,9 +673,9 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 
     /* check whether all segments have same size */
     {
-        char flag = (hdr->NS>0);
+        char flag = (numberOfChannels > 0);
         size_t m, POS, pos;
-        for (k=0; k < hdr->NS; ++k) {
+        for (k=0; k < numberOfChannels; ++k) {
             pos = Data[k].size();
             if (k==0)
                 POS = pos;
@@ -698,7 +735,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 #ifdef DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
         size_t chSPR = biosig_channel_get_samples_per_record(hc);
 #else
-		size_t chSPR = chanSPR[k];
+        size_t chSPR = chanSPR[k];
 #endif
         size_t m,n,len=0;
         for (m=0; m < Data[k].size(); ++m) {

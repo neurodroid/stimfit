@@ -15,8 +15,6 @@
 #include <string>
 #include <iomanip>
 #include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/shared_array.hpp>
 #include <iostream>
 #include <sstream>
 

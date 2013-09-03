@@ -97,7 +97,8 @@ private:
 //#ifdef WITH_PSLOPE
         PSlope,
 //#endif
-        rtLoHi, halfDuration, slopeRatio, t0Real;
+        rtLoHi, halfDuration, slopeRatio, t0Real,
+        InnerLoRT, InnerHiRT, OuterLoRT, OuterHiRT;
     // cursor windows:
     int pM;  //peakMean, number of points used for averaging
     int RTFactor; // Lower point for the rise-time calculation
@@ -118,7 +119,8 @@ private:
     
     std::size_t tLoIndex, tHiIndex, t50LeftIndex, t50RightIndex, APt50LeftIndex, APt50RightIndex;
 
-    bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold, viewRTLoHi,
+    bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold,
+        viewRTLoHi, viewInnerRiseTime, viewOuterRiseTime,
         viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,
 #ifdef WITH_PSLOPE
         //viewPSlope,
@@ -410,6 +412,30 @@ public:
      */
     double GetTHiReal() const { return tHiReal; }
 
+    //! Retrieves the time point at which Lo% of the maximal amplitude have been reached.
+    /*! \return The time point at which Lo% of the maximal amplitude have been reached, expressed in
+     *  units of data points.
+     */
+    double GetInnerLoRT() const { return InnerLoRT; }
+
+    //! Retrieves the time point at which Hi% of the maximal amplitude have been reached.
+    /*! \return The time point at which Hi% of the maximal amplitude have been reached, expressed in
+     *  units of data points.
+     */
+    double GetInnerHiRT() const { return InnerHiRT; }
+
+    //! Retrieves the time point at which Lo% of the maximal amplitude have been reached.
+    /*! \return The time point at which Lo% of the maximal amplitude have been reached, expressed in
+     *  units of data points.
+     */
+    double GetOuterLoRT() const { return OuterLoRT; }
+
+    //! Retrieves the time point at which Hi% of the maximal amplitude have been reached.
+    /*! \return The time point at which Hi% of the maximal amplitude have been reached, expressed in
+     *  units of data points.
+     */
+    double GetOuterHiRT() const { return OuterHiRT; }
+
     //! Retrieves the time point at which 50% of the maximal amplitude have been reached from the left of the peak.
     /*! \return The time point at which 50% of the maximal amplitude have been reached from the left of the peak, 
      *  expressed in units of data points.
@@ -522,6 +548,16 @@ public:
      */
     double GetRTLoHi() const { return rtLoHi; }
 
+    //! Retrieves the inner rise time.
+    /*! expressed in units o data points.
+     */
+    double GetInnerRiseTime() const { return (InnerHiRT-InnerLoRT); }
+
+    //! Retrieves the outer rise time.
+    /*! expressed in units o data points.
+     */
+    double GetOuterRiseTime() const { return (OuterHiRT-OuterLoRT); }
+
     //! Retrieves the full width at half-maximal amplitude ("half duration").
     /*! \return The difference between GetT50RightReal() and GetT50LeftReal(), expressed in units of data points.
      */
@@ -622,6 +658,16 @@ public:
     /*! \return true if it should be shown, false otherwise.
      */
     bool GetViewRTLoHi() const { return viewRTLoHi; }
+
+    //! Indicates whether the inner rise time should be shown in the results table.
+    /*! \return true if it should be shown, false otherwise.
+     */
+    bool GetViewInnerRiseTime() const { return viewInnerRiseTime; }
+
+    //! Indicates whether the outer rise time should be shown in the results table.
+    /*! \return true if it should be shown, false otherwise.
+     */
+    bool GetViewOuterRiseTime() const { return viewOuterRiseTime; }
 
     //! Indicates whether the half duration should be shown in the results table.
     /*! \return true if it should be shown, false otherwise.
@@ -927,6 +973,16 @@ public:
     /*! \param value Set to true if it should be shown, false otherwise.
      */
     void SetViewRTLoHi(bool value) { viewRTLoHi=value; }
+
+    //! Determines whether the inner rise time should be shown in the results table.
+    /*! \param value Set to true if it should be shown, false otherwise.
+     */
+    void SetViewInnerRiseTime(bool value) { viewInnerRiseTime=value; }
+
+    //! Determines whether the outer rise time should be shown in the results table.
+    /*! \param value Set to true if it should be shown, false otherwise.
+     */
+    void SetViewOuterRiseTime(bool value) { viewOuterRiseTime=value; }
 
     //! Determines whether the half duration should be shown in the results table.
     /*! \param value Set to true if it should be shown, false otherwise.

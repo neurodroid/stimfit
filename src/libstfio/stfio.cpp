@@ -38,7 +38,13 @@
   #include "./biosig/biosiglib.h"
 #endif
 #include "./cfs/cfslib.h"
-#include "./heka/hekalib.h"
+#ifndef TEST_MINIMAL
+  #include "./heka/hekalib.h"
+#else
+  #if (!defined(WITH_BIOSIG) && !defined(WITH_BIOSIG2))
+    #error -DTEST_MINIMAL requires -DWITH_BIOSIG or -DWITH_BIOSIG2
+  #endif
+#endif
 #if 0
 #include "./son/sonlib.h"
 #endif
@@ -74,6 +80,7 @@ bool stfio::StdoutProgressInfo::Update(int value, const std::string& newmsg, boo
     return true;
 }
 
+#ifndef TEST_MINIMAL
 stfio::filetype
 stfio::findType(const std::string& ext) {
     
@@ -90,6 +97,7 @@ stfio::findType(const std::string& ext) {
 #endif
     else return stfio::none;
 }
+#endif
 
 bool stfio::importFile(
         const std::string& fName,
@@ -99,24 +107,33 @@ bool stfio::importFile(
         ProgressInfo& progDlg
 ) {
     try {
+
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+       // make use of automated file type identification
+        try {
+            stfio::filetype type1 = stfio::importBiosigFile(fName, ReturnData, progDlg);
+            switch (type1) {
+            case  stfio::biosig:
+		return true;    // succeeded
+            case  stfio::none:
+		break;          // do nothing, use input argument for deciding on type
+	    default:
+                type = type1;   // filetype is recognized and should be used below
+            }
+        }
+        catch (...) {
+                // this should never occur, importBiosigFile should always return without exception
+                std::cout << "importBiosigFile failed with an exception - this is a bug";
+        }
+#endif
+
         switch (type) {
         case stfio::hdf5: {
             stfio::importHDF5File(fName, ReturnData, progDlg);
             break;
         }
         case stfio::abf: {
-#if 0 // activates fallback mechanism
-#if ((defined(WITH_BIOSIG) || defined(WITH_BIOSIG2)) && (BIOSIG_VERSION > 10500))
-            try
-            {    // try first with biosig, v1.5.1 or larger is recommended
-                 stfio::importBSFile(fName, ReturnData, progDlg);
-            }
-            catch (...)
-#endif
-#endif
-            {   // fallback to old method
-                stfio::importABFFile(fName, ReturnData, progDlg);
-            }
+            stfio::importABFFile(fName, ReturnData, progDlg);
             break;
         }
         case stfio::atf: {
@@ -128,6 +145,7 @@ bool stfio::importFile(
             break;
         }
 
+#ifndef TEST_MINIMAL
         case stfio::cfs: {
             {
             int res = stfio::importCFSFile(fName, ReturnData, progDlg);
@@ -143,17 +161,10 @@ bool stfio::importFile(
             break;
             }
         }
-#if (!defined(WITH_BIOSIG) && !defined(WITH_BIOSIG2))
+#endif // TEST_MINIMAL
+
         default:
             throw std::runtime_error("Unknown or unsupported file type");
-#else
-        case stfio::son:
-        case stfio::igor:
-        case stfio::biosig:
-        default: 
-            stfio::importBSFile(fName, ReturnData, progDlg);
-            break;
-#endif
 	}
 
 #if 0
@@ -200,9 +211,12 @@ bool stfio::exportFile(const std::string& fName, stfio::filetype type, const Rec
             stfio::exportBiosigFile(fName, Data, progDlg);
             break;
         }
-#endif
+        default:
+            throw std::runtime_error("Only hdf5, IGOR and GDF are supported for writing at present.");
+#else
         default:
             throw std::runtime_error("Only hdf5 and IGOR are supported for writing at present.");
+#endif
         }
     }
     catch (...) {

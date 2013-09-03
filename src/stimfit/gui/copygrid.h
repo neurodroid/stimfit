@@ -73,6 +73,8 @@ private:
     void ViewPeakbase(wxCommandEvent& event);
     void ViewPeakthreshold(wxCommandEvent& event);
     void ViewRTLoHi(wxCommandEvent& event);
+    void ViewInnerRiseTime(wxCommandEvent& event);
+    void ViewOuterRiseTime(wxCommandEvent& event);
     void ViewT50(wxCommandEvent& event);
     void ViewRD(wxCommandEvent& event);
     void ViewSloperise(wxCommandEvent& event);

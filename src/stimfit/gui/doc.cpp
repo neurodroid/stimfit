@@ -146,6 +146,10 @@ wxStfDoc::wxStfDoc() :
     APt50LeftReal(0.0),
     PSlope(0.0),
     rtLoHi(0.0),
+    InnerLoRT(0.0/0.0),
+    InnerHiRT(0.0/0.0),
+    OuterLoRT(0.0/0.0),
+    OuterHiRT(0.0/0.0),
     halfDuration(0.0),
     slopeRatio(0.0),
     t0Real(0.0),
@@ -211,7 +215,11 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
 
         // Detect type of file according to filter:
         wxString filter(GetDocumentTemplate()->GetFileFilter());
+#ifndef TEST_MINIMAL
         stfio::filetype type = stfio::findType(stf::wx2std(filter));
+#else
+        stfio::filetype type = stfio::none;
+#endif
 #if 0 // TODO: backport ascii
         if (type==stf::ascii) {
             if (!wxGetApp().get_directTxtImport()) {
@@ -561,6 +569,8 @@ void wxStfDoc::PostInit() {
     SetViewPeakBase(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPeakbase"),1)==1);
     SetViewPeakThreshold(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewPeakthreshold"),1)==1);
     SetViewRTLoHi(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewRTLoHi"),1)==1);
+    SetViewInnerRiseTime(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewInnerRiseTime"),1)==1);
+    SetViewOuterRiseTime(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewOuterRiseTime"),1)==1);
     SetViewT50(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewT50"),1)==1);
     SetViewRD(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewRD"),1)==1);
     SetViewSlopeRise(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewSloperise"),1)==1);
@@ -1009,6 +1019,7 @@ void wxStfDoc::CreateAverage(
 
     /* Aligned average */
     //find alignment points in the reference (==second) channel:
+
     if (align) {
         // check that we have more than one channel
         if (size()==1){
@@ -1057,9 +1068,21 @@ void wxStfDoc::CreateAverage(
                 return;
             }
 
+            std::size_t alignIndex;
             //check whether the current index is a max or a min,
             //and if so, store it:
-            std::size_t alignIndex= AlignDlg.AlignRise()? (int)GetAPMaxRiseT():(int)GetMaxT();
+            switch (AlignDlg.AlignRise()) {
+            case (stf::ALIGN_TO_PEAK) :
+                alignIndex= lround(GetMaxT());
+                break;
+            case (stf::ALIGN_TO_STEEPEST_SLOPE) :
+                alignIndex= lround(GetAPMaxRiseT());
+                break;
+            case (stf::ALIGN_TO_HALF_AMPLITUDE) :
+                alignIndex= lround(GetAPT50LeftReal());
+                break;
+            }
+
             *it = int(alignIndex);
             if (alignIndex > max_index) {
                 max_index=alignIndex;
@@ -2459,6 +2482,26 @@ void wxStfDoc::Measure( )
     
     tLoReal=0.0;
     double factor= RTFactor*0.01; /* normalized value */
+    InnerLoRT=0.0/0.0;
+    InnerHiRT=0.0/0.0;
+    OuterLoRT=0.0/0.0;
+    OuterHiRT=0.0/0.0;
+
+    try {
+        // 2008-04-27: changed limits to start from the beginning of the trace
+        // 2013-06-16: changed to accept different rise-time proportions
+        rtLoHi=stf::risetime2(cur().get(),reference,ampl, (double)0/*(double)baseEnd*/,
+                             maxT, factor/*0.2*/, InnerLoRT, InnerHiRT, OuterLoRT, OuterHiRT);
+        InnerLoRT/=GetSR();
+        InnerHiRT/=GetSR();
+        OuterLoRT/=GetSR();
+        OuterHiRT/=GetSR();
+    }
+    catch (const std::out_of_range& e) {
+        throw e;
+    }
+
+
     try {
         // 2008-04-27: changed limits to start from the beginning of the trace
         // 2013-06-16: changed to accept different rise-time proportions 
@@ -2887,19 +2930,23 @@ void wxStfDoc::SelectTrace(std::size_t sectionToSelect) {
 #ifdef _OPENMP
 #pragma omp parallel for reduction(+:sumY)
 #endif
-    int start = baseBeg;
-    int end = baseEnd;
-    if (start < 0) start = 0;
-    if (start > (int)get()[cc][sectionToSelect].size()-1)
-        start = get()[cc][sectionToSelect].size()-1;
-    if (end < 0) end = 0;
-    if (end > (int)get()[cc][sectionToSelect].size()-1)
-        end = get()[cc][sectionToSelect].size()-1;
-    for (int i=start; i<=end; i++) {
-        sumY += get()[cc][sectionToSelect][i];
+    if (get()[cc][sectionToSelect].size()==0) {
+        selectBase.push_back(0);
+    } else {
+        int start = baseBeg;
+        int end = baseEnd;
+        if (start > (int)get()[cc][sectionToSelect].size()-1)
+            start = get()[cc][sectionToSelect].size()-1;
+        if (start < 0) start = 0;
+        if (end > (int)get()[cc][sectionToSelect].size()-1)
+            end = get()[cc][sectionToSelect].size()-1;
+        if (end < 0) end = 0;
+        for (int i=start; i<=end; i++) {
+            sumY += get()[cc][sectionToSelect][i];
+        }
+        int n=(int)(end-start+1);
+        selectBase.push_back(sumY/n);
     }
-    int n=(int)(end-start+1);
-    selectBase.push_back(sumY/n);
 }
 
 bool wxStfDoc::UnselectTrace(std::size_t sectionToUnselect) {
@@ -2963,6 +3010,8 @@ stf::Table wxStfDoc::CurResultsTable() {
     if (viewPeakbase) n_cols++;
     if (viewPeakthreshold) n_cols++;
     if (viewRTLoHi) n_cols++;
+    if (viewInnerRiseTime) n_cols++;
+    if (viewOuterRiseTime) n_cols++;
     if (viewT50) n_cols++;
     if (viewRD) n_cols++;
     if (viewSloperise) n_cols++;
@@ -2990,6 +3039,8 @@ stf::Table wxStfDoc::CurResultsTable() {
     if (viewPeakbase) table.SetColLabel(nCol++,"Peak (from base)");
     if (viewPeakthreshold) table.SetColLabel(nCol++,"Peak (from threshold)");
     if (viewRTLoHi) table.SetColLabel(nCol++,"RT (Lo-Hi%)");
+    if (viewInnerRiseTime) table.SetColLabel(nCol++,"inner rise time");
+    if (viewOuterRiseTime) table.SetColLabel(nCol++,"outer rise time");
     if (viewT50) table.SetColLabel(nCol++,"t50");
     if (viewRD) table.SetColLabel(nCol++,"Rise/Decay");
     if (viewSloperise) table.SetColLabel(nCol++,"Slope (rise)");
@@ -3077,6 +3128,22 @@ stf::Table wxStfDoc::CurResultsTable() {
         if (viewCursors) {
             table.at(1,nCol)=GetTLoReal()*GetXScale();
             table.at(2,nCol)=GetTHiReal()*GetXScale();
+        }
+        nCol++;
+    }
+
+    if (viewInnerRiseTime) { table.at(0,nCol)=GetInnerRiseTime();
+        if (viewCursors) {
+            table.at(1,nCol)=GetInnerLoRT();
+            table.at(2,nCol)=GetInnerHiRT();
+        }
+        nCol++;
+    }
+
+    if (viewOuterRiseTime) { table.at(0,nCol)=GetOuterRiseTime();
+        if (viewCursors) {
+            table.at(1,nCol)=GetOuterLoRT();
+            table.at(2,nCol)=GetOuterHiRT();
         }
         nCol++;
     }

@@ -40,9 +40,7 @@
 #include "./../stf.h"
 
 // header for the fourier transform:
-#ifndef TEST_MINIMAL
 #include "fftw3.h"
-#endif
 #include "./spline.h"
 
 namespace stf {

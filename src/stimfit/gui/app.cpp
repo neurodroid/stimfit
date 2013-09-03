@@ -168,7 +168,7 @@ bool wxStfApp::OnInit(void)
     //// Create a template relating drawing documents to their views
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
     m_biosigTemplate=new wxDocTemplate( docManager,
-                                     wxT("Biosig"), wxT("*.dat;*.cfs;*.gdf;*.ibw"), wxT(""), wxT("dat;cfs;gdf;ibw"),
+                                     wxT("Biosig files"), wxT("*.*"), wxT(""), wxT(""),
                                      wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #endif
@@ -205,12 +205,6 @@ bool wxStfApp::OnInit(void)
                                      wxT("HEKA file"), wxT("*.dat"), wxT(""), wxT("dat"),
                                      wxT("HEKA Document"), wxT("HEKA View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
-    m_biosigTemplate=new wxDocTemplate( docManager,
-                                     wxT("Biosig files"), wxT("*.*"), wxT(""), wxT(""),
-                                     wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
-                                     CLASSINFO(wxStfView) );
-#endif
 #if 0
     m_sonTemplate=new wxDocTemplate( docManager,
                                      wxT("CED Spike 2 (SON) file"), wxT("*.smr"), wxT(""), wxT(""),
@@ -268,7 +262,11 @@ bool wxStfApp::OnInit(void)
     // A nice touch: a history of files visited. Use this menu.
     GetDocManager()->FileHistoryLoad( *config );
     GetDocManager()->FileHistoryUseMenu(m_file_menu);
+#if (wxCHECK_VERSION(2, 9, 0))
+    GetDocManager()->FileHistoryAddFilesToMenu(m_file_menu);
+#else
     GetDocManager()->FileHistoryAddFilesToMenu();
+#endif
 
     wxMenu *help_menu = new wxMenu;
     help_menu->Append(wxID_HELP);
@@ -602,14 +600,18 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     file_menu->AppendSeparator();
     file_menu->Append(wxID_EXIT);
 
-#ifndef __WXGTK__
+#if (wxCHECK_VERSION(2, 9, 0))
     ((wxStfDoc*)doc)->SetFileMenu( file_menu );
 #else
     GetDocManager()->FileHistoryLoad( *config );
 #endif
     
     GetDocManager()->FileHistoryUseMenu(file_menu);
+#if (wxCHECK_VERSION(2, 9, 0))
+    GetDocManager()->FileHistoryAddFilesToMenu(file_menu);
+#else
     GetDocManager()->FileHistoryAddFilesToMenu();
+#endif
 
     wxMenu* m_edit_menu=new wxMenu;
     m_edit_menu->Append(
@@ -1237,12 +1239,15 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
             }
         } else {
             // Add to recording first:
+#ifndef TEST_MINIMAL
             // Find a template:
             wxDocTemplate* templ=GetDocManager()->FindTemplateForPath(fNameArray[n_opened]);
             // Use this template only for type recognition:
             wxString filter(templ->GetFileFilter());
-            stfio::filetype type=
-                stfio::findType(stf::wx2std(templ->GetFileFilter()));
+            stfio::filetype type = stfio::findType(stf::wx2std(templ->GetFileFilter()));
+#else
+            stfio::filetype type = stfio::none;
+#endif
 #if 0 // TODO: re-implement ascii
             if (type==stfio::ascii) {
                 if (!get_directTxtImport()) {

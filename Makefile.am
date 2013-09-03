@@ -91,9 +91,13 @@ noinst_HEADERS = ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfi
 	./src/test/gtest/include/gtest/internal/gtest-type-util.h \
 	./src/test/gtest/src/gtest-internal-inl.h
 
+if WITH_BIOSIG2
+    noinst_HEADERS += ./src/libstfio/biosig/biosiglib.h
+else
 if WITH_BIOSIG
     noinst_HEADERS += ./src/libstfio/biosig/biosiglib.h
 endif # WITH_BIOSIG
+endif # WITH_BIOSIG2
 
 EXTRA_DIST = ./src/stimfit/res/16-em-down.xpm
 EXTRA_DIST+= ./src/stimfit/res/16-em-open.xpm

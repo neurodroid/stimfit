@@ -88,17 +88,42 @@ double peak( const std::vector<double>& data, double base, std::size_t llp, std:
  *  \param data The data waveform to be analysed.
  *  \param base The baseline value.
  *  \param ampl The amplitude of the event (typically, peak-base).
+
  *  \param left Delimits the search to the left.
  *  \param right Delimits the search to the right.
  *  \param t20Id On exit, the index wich is closest to the 20%-point.
  *  \param t80Id On exit, the index wich is closest to the 80%-point.
- *  \param t20Real the linearly interpolated 20%-timepoint in 
+ *  \param t20Real the linearly interpolated 20%-timepoint in
  *         units of sampling points.
+
  *  \return The rise time.
  */
 double risetime(const std::vector<double>& data, double base, double ampl,
                 double left, double right, double frac, std::size_t& tLoId, std::size_t& tHiId,
                 double& tLoReal);
+
+//! Find 20 to 80% rise time of an event in \e data.
+/*! Although t80real is not explicitly returned, it can be calculated
+ *  from t20Real+risetime.
+ *  \param data The data waveform to be analysed.
+ *  \param base The baseline value.
+ *  \param ampl The amplitude of the event (typically, peak-base).
+
+ *  \param left Delimits the search to the left.
+ *  \param right Delimits the search to the right.
+ *  \param innerTLoReal interpolated starting point of the inner risetime
+ *  \param innerTHiReal interpolated end point of the inner risetime
+ *  \param outerTLoReal interpolated starting point of the outer risetime
+ *  \param outerTHiReal interpolated end point of the outer risetime
+    the inner rise time is (innerTHiReal-innerTLoReal),
+    the outer rise time is (outerTHiReal-outerTLoReal),
+    in case of noise free data, inner and outer rise time are the same.
+
+ *  \return The inner rise time.
+ */
+double risetime2(const std::vector<double>& data, double base, double ampl,
+                double left, double right, double frac,
+                double& innerTLoReal, double& innerTHiReal, double& outerTLoReal, double& outerTHiReal );
 
 //! Find the full width at half-maximal amplitude of an event within \e data.
 /*! Although t50RightReal is not explicitly returned, it can be calculated
