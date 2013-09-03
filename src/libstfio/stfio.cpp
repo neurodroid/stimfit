@@ -40,6 +40,7 @@
 #include "./cfs/cfslib.h"
 #ifndef TEST_MINIMAL
   #include "./heka/hekalib.h"
+#else
   #if (!defined(WITH_BIOSIG) && !defined(WITH_BIOSIG2))
     #error -DTEST_MINIMAL requires -DWITH_BIOSIG or -DWITH_BIOSIG2
   #endif
