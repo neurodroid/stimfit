@@ -1019,6 +1019,7 @@ void wxStfDoc::CreateAverage(
 
     /* Aligned average */
     //find alignment points in the reference (==second) channel:
+
     if (align) {
         // check that we have more than one channel
         if (size()==1){
@@ -1067,9 +1068,21 @@ void wxStfDoc::CreateAverage(
                 return;
             }
 
+            std::size_t alignIndex;
             //check whether the current index is a max or a min,
             //and if so, store it:
-            std::size_t alignIndex= AlignDlg.AlignRise()? (int)GetAPMaxRiseT():(int)GetMaxT();
+            switch (AlignDlg.AlignRise()) {
+            case (stf::ALIGN_TO_PEAK) :
+                alignIndex= lround(GetMaxT());
+                break;
+            case (stf::ALIGN_TO_STEEPEST_SLOPE) :
+                alignIndex= lround(GetAPMaxRiseT());
+                break;
+            case (stf::ALIGN_TO_HALF_AMPLITUDE) :
+                alignIndex= lround(GetAPT50LeftReal());
+                break;
+            }
+
             *it = int(alignIndex);
             if (alignIndex > max_index) {
                 max_index=alignIndex;

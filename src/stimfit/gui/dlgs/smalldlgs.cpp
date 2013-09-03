@@ -217,9 +217,9 @@ wxStfAlignDlg::wxStfAlignDlg(wxWindow* parent, int id, wxString title, wxPoint p
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
 
-    wxString m_radioBoxChoices[] = { wxT("to peak"),wxT("to steepest slope during rise") };
+    wxString m_radioBoxChoices[] = { wxT("to peak"),wxT("to steepest slope during rise"),wxT("to half amplitude") };
     int m_radioBoxNChoices = sizeof( m_radioBoxChoices ) / sizeof( wxString );
-    m_radioBox = new wxRadioBox( this, wxID_ANY, wxT("Align reference channel"), wxDefaultPosition, wxDefaultSize, m_radioBoxNChoices, m_radioBoxChoices, 2, wxRA_SPECIFY_ROWS );
+    m_radioBox = new wxRadioBox( this, wxID_ANY, wxT("Align reference channel"), wxDefaultPosition, wxDefaultSize, m_radioBoxNChoices, m_radioBoxChoices, 3, wxRA_SPECIFY_ROWS );
     topSizer->Add( m_radioBox, 0, wxALL, 5 );
 
     m_sdbSizer = new wxStdDialogButtonSizer();

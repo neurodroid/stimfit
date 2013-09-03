@@ -476,6 +476,14 @@ enum extraction_mode {
     deconvolution               /*!< Pernia-Andrade et al. deconvolution. */
 };
 
+// used by Create Average
+typedef enum {
+	ALIGN_NO = 0,				/* align to peak of reference channel */
+	ALIGN_TO_PEAK = 1, 			/* align to peak of reference channel */
+	ALIGN_TO_STEEPEST_SLOPE = 2, 		/* align to steepest slope of reference channel */
+	ALIGN_TO_HALF_AMPLITUDE = 3 		/* align to steepest slope of reference channel */
+} alignment_mode;
+
 /*@}*/
 
 } // end of namespace
