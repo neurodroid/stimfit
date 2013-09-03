@@ -146,10 +146,10 @@ wxStfDoc::wxStfDoc() :
     APt50LeftReal(0.0),
     PSlope(0.0),
     rtLoHi(0.0),
-    InnerLoRT(0.0/0.0),
-    InnerHiRT(0.0/0.0),
-    OuterLoRT(0.0/0.0),
-    OuterHiRT(0.0/0.0),
+    InnerLoRT(NAN),
+    InnerHiRT(NAN),
+    OuterLoRT(NAN),
+    OuterHiRT(NAN),
     halfDuration(0.0),
     slopeRatio(0.0),
     t0Real(0.0),
@@ -2482,10 +2482,10 @@ void wxStfDoc::Measure( )
     
     tLoReal=0.0;
     double factor= RTFactor*0.01; /* normalized value */
-    InnerLoRT=0.0/0.0;
-    InnerHiRT=0.0/0.0;
-    OuterLoRT=0.0/0.0;
-    OuterHiRT=0.0/0.0;
+    InnerLoRT=NAN;
+    InnerHiRT=NAN;
+    OuterLoRT=NAN;
+    OuterHiRT=NAN;
 
     try {
         // 2008-04-27: changed limits to start from the beginning of the trace
