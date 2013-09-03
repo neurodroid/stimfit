@@ -1072,14 +1072,14 @@ void wxStfDoc::CreateAverage(
             //check whether the current index is a max or a min,
             //and if so, store it:
             switch (AlignDlg.AlignRise()) {
-            case (stf::ALIGN_TO_PEAK) :
-                alignIndex= lround(GetMaxT());
+            case 0 :	// align to peak time
+                alignIndex = lround(GetMaxT());
                 break;
-            case (stf::ALIGN_TO_STEEPEST_SLOPE) :
-                alignIndex= lround(GetAPMaxRiseT());
+            case 1 :	// align to steepest slope time
+                alignIndex = lround(GetAPMaxRiseT());
                 break;
-            case (stf::ALIGN_TO_HALF_AMPLITUDE) :
-                alignIndex= lround(GetAPT50LeftReal());
+            case 2 :	// align to half amplitude time 
+                alignIndex = lround(GetAPT50LeftReal());
                 break;
             }
 
