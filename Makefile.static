@@ -39,7 +39,6 @@ ifeq (,$(WXCONF))
 endif
 
 DEFINES += -DWITH_BIOSIG
-DEFINES += -DWITH_BIOSIG2
 DEFINES += -DHAVE_LAPACK
 DEFINES += -DWITH_PSLOPE
 DEFINES += -DTEST_MINIMAL
@@ -61,6 +60,7 @@ PY_VERSION := 2.6
 vpath %.cpp ./src/stimfit:./src/stimfit/gui:./src/stimfit/gui/dlgs:./src/stimfit/gui/usrdlg:./src/stimfit/math:./src/libstfio/:./src/libstfio/cfs/:./src/libstfio/atf/:./src/libstfio/abf/:./src/libstfio/abf/axon2:./src/libstfio/abf/axon/Common:./src/libstfio/abf/axon/AxAbfFio32:./src/libstfio/abf/axon/AxAtfFio32/:./src/libstfio/biosig/:./src/libstfio/hdf5/:./src/libstfio/heka/:./src/libstfio/igor:./src/libstfio/ascii/:./src/libstfio/axg/
 
 vpath %.c ./src/stimfit/math/levmar/:./src/libstfio/igor/:./src/libstfio/cfs/
+vpath %.cpp ./src/stimfit/math/:./src/stimfit/math/levmar/:./src/stimfit/gui/:./src/stimfit/gui/dlgs/:./src/libstfio/:./src/libstfio/biosig/:./src/libstfio/igor/:./src/libstfio/cfs/
 
 SOURCES = ./src/stimfit/stf.cpp \
 	./src/stimfit/math/stfmath.cpp \
@@ -175,6 +175,7 @@ ifeq (,$(findstring TEST_MINIMAL, $(DEFINES)))
 endif
 
 ifneq (,$(findstring WITH_PYTHON, $(DEFINES)))
+  SOURCES += ./src/stimfit/py/pystf.cxx ./src/stimfit/py/pystf_wrap.cxx ./src/pystfio/pystfio.cxx
   DEFINES += -I/usr/include/python$(PY_VERSION)
   DEFINES += -I/usr/lib/pymodules/python$(PY_VERSION)/numpy/core/include
   LDFLAGS += -L/usr/lib/python$(PY_VERSION)/
@@ -222,6 +223,9 @@ $(TARGET): $(OBJECTS)
 	$(CXX) -c $(CXXFLAGS) -c -o "$@" "$<"
 
 %.$(OBJEXT): %.cc
+	$(CXX) -c $(CXXFLAGS) -c -o "$@" "$<"
+
+%.$(OBJEXT): %.cxx
 	$(CXX) -c $(CXXFLAGS) -c -o "$@" "$<"
 
 clean:
