@@ -286,12 +286,6 @@ double stf::risetime2(const std::vector<double>& data, double base, double ampl,
 #endif
 
     //*** Inner Risetime ***/
-
-    //Calculation of real values by linear interpolation:
-    //Lo%of peak
-    //there was a bug in Stimfit for DOS before 2002 that I used
-    //as a template
-    //corrected 03/01/2006
     double yLong2=data[ inner_tLoId+1];
     double yLong1=data[ inner_tLoId];
     if (yLong2-yLong1 !=0)

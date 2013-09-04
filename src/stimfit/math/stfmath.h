@@ -37,6 +37,11 @@
 #include <omp.h>
 #endif
 
+#ifdef _MSC_VER
+#define INFINITY (DBL_MAX+DBL_MAX)
+#define NAN (INFINITY-INFINITY)
+#endif
+
 #include "./../stf.h"
 
 // header for the fourier transform:

@@ -198,6 +198,20 @@ bool stfio::exportFile(const std::string& fName, stfio::filetype type, const Rec
 {
     try {
         switch (type) {
+        case stfio::atf: {
+            stfio::exportATFFile(fName, Data);
+            break;
+        }
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+        case stfio::biosig: {
+            stfio::exportBiosigFile(fName, Data, progDlg);
+            break;
+        }
+#endif
+        case stfio::cfs: {
+            stfio::exportCFSFile(fName, Data, progDlg);
+            break;
+        }
         case stfio::hdf5: {
             stfio::exportHDF5File(fName, Data, progDlg);
             break;
@@ -206,17 +220,8 @@ bool stfio::exportFile(const std::string& fName, stfio::filetype type, const Rec
             stfio::exportIGORFile(fName, Data, progDlg);
             break;
         }
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
-        case stfio::biosig: {
-            stfio::exportBiosigFile(fName, Data, progDlg);
-            break;
-        }
         default:
-            throw std::runtime_error("Only hdf5, IGOR and GDF are supported for writing at present.");
-#else
-        default:
-            throw std::runtime_error("Only hdf5 and IGOR are supported for writing at present.");
-#endif
+            throw std::runtime_error("Trying to write an unsupported dataformat.");
         }
     }
     catch (...) {

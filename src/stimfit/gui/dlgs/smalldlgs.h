@@ -126,7 +126,7 @@ class wxStfAlignDlg : public wxDialog
     DECLARE_EVENT_TABLE()
 
 private:
-    bool m_alignRise;
+    int m_alignRise;
     wxRadioBox* m_radioBox;
     wxStdDialogButtonSizer* m_sdbSizer;
 
@@ -157,7 +157,7 @@ public:
     /*!  \return true if it should be aligned to the steepest rise, false if it should be
      *           aligned to the peak.
      */
-    bool AlignRise() const {return m_alignRise;}
+    int AlignRise() const {return m_alignRise;}
     
     //! Called upon ending a modal dialog.
     /*! \param retCode The dialog button id that ended the dialog

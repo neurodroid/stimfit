@@ -246,7 +246,7 @@ void wxStfAlignDlg::EndModal(int retCode) {
 }
 
 bool wxStfAlignDlg::OnOK() {
-    m_alignRise=(m_radioBox->GetSelection()!=0);
+    m_alignRise = m_radioBox->GetSelection();
     return true;
 }
 
