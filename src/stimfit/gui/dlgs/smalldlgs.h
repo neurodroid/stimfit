@@ -326,6 +326,8 @@ class wxStfBatchDlg : public wxDialog
         id_peakbase,
         id_peakthreshold,
         id_rtLoHi,
+        id_innerLoHi,
+        id_outerLoHi,
         id_t50,
         id_slopes,
         id_latencies,
@@ -388,6 +390,16 @@ public:
     /*! \return true if it should be printed, false otherwise.
      */
     bool PrintRTLoHi() const {return LookUp(id_rtLoHi).selection;}
+
+    //! Indicates whether the Lo-Hi% inner rise time should be printed in the batch analysis table.
+    /*! \return true if it should be printed, false otherwise.
+     */
+    bool PrintInnerRTLoHi() const {return LookUp(id_innerLoHi).selection;}
+
+    //! Indicates whether the Lo-Hi% inner rise time should be printed in the batch analysis table.
+    /*! \return true if it should be printed, false otherwise.
+     */
+    bool PrintOuterRTLoHi() const {return LookUp(id_outerLoHi).selection;}
 
     //! Indicates whether the half duration should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
