@@ -180,6 +180,20 @@ The :mod:`stf` module defines the following functions:
     
     Returns the name of the current file.
    
+.. function:: get_fit(trace=-1, channel=-1)
+    
+    Get the waveform resulted from the fitting, if available.
+
+        **Arguments:**
+
+        *trace* -- The zero-based index of the trace of interest. If negative, the name of the active trace will be returned.
+
+        *channel* -- The zero-based index of the trace of interest. If negative, the active channel will be used.
+
+        **Returns:**
+
+        A two dimensional NumPy array with the x-values of the fit in the first dimension and the y-values in the second dimension. None if no fit is available.
+
 .. function:: get_fit_end(is_time=False)
 
     Returns the zero-based index or the time point of the fit end cursor.
