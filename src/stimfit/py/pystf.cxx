@@ -1479,16 +1479,17 @@ PyObject* leastsq( int fselect, bool refresh ) {
     std::string fitInfo;
     int fitWarning = 0;
     std::vector< double > opts( 6 );
+    // check values in src/stimfit/gui/dlgs/fitseldlg.cpp
     // Respectively the scale factor for initial damping term \mu,
     // stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2,
     // maxIter, maxPass
     //opts[0]=5*1E-3; //default: 1E-03;
-    opts[0]=1E-3; //default: 1E-03;
-    opts[1]=1E-17; //default: 1E-17;
-    opts[2]=1E-17; //default: 1E-17;
-    opts[3]=1E-17; //default: 1E-17;
-    opts[4]=64; //default: 64;
-    opts[5]=16;
+    opts[0] = 1E-05; //default: 1E-03;
+    opts[1] = 1E-17; //default: 1E-17;
+    opts[2] = 1E-17; //default: 1E-17;
+    opts[3] = 1E-32; //default: 1E-17;
+    opts[4] = 64; //default: 64;
+    opts[5] = 16;
     double chisqr = 0.0;
     try {
         chisqr = stf::lmFit( x, pDoc->GetXScale(), wxGetApp().GetFuncLib().at(fselect),

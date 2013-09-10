@@ -25,16 +25,15 @@ wxStfFitSelDlg::wxStfFitSelDlg(wxWindow* parent, wxStfDoc* doc, int id, wxString
     paramDescArray(MAXPAR),
     paramEntryArray(MAXPAR), pDoc(doc)
 {
-    // Respectively the scale factor for initial damping term \mu,
-    // stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2,
-    // maxIter (Kmax), maxPass
+    // Check www.ics.forth.gr/~lourakis/levmar/levmar.pdf for details
+    // if you change values here, please change src/stimfit/py/pystf.cxx accordingly
     //opts[0]=5*1E-3; //default: 1E-03;
-    opts[0] = 1E-3; //default: 1E-03;
-    opts[1]=1E-17; //default: 1E-17;
-    opts[2]=1E-17; //default: 1E-17;
-    opts[3]=1E-32; //default: 1E-17;
-    opts[4]=64; //default: 64;
-    opts[5]=16;
+    opts[0] = 1E-05; //scale for initial damping term, default: 1E-03; 
+    opts[1] = 1E-17; //stopping thr. for ||J^T e||, default: 1E-17;
+    opts[2] = 1E-17; //stopping thr. for ||Dp||_2, default: 1E-17;
+    opts[3] = 1E-32; //stopping thr. for squared diff ||e||_2, default: 1E-17;
+    opts[4] = 64;    //max number of iterations (Kmax), default: 64;
+    opts[5] = 16;    //max number of pass per iteration;
 
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
