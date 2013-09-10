@@ -199,12 +199,14 @@ void wxStfGrid::ViewResults() {
     m_labelContext->Check(ID_VIEW_PEAKBASE,wxGetApp().GetActiveDoc()->GetViewPeakBase());
     m_labelContext->Check(ID_VIEW_PEAKTHRESHOLD,wxGetApp().GetActiveDoc()->GetViewPeakThreshold());
     m_labelContext->Check(ID_VIEW_RTLOHI,wxGetApp().GetActiveDoc()->GetViewRTLoHi());
+    m_labelContext->Check(ID_VIEW_INNERRISETIME,wxGetApp().GetActiveDoc()->GetViewInnerRiseTime());
+    m_labelContext->Check(ID_VIEW_OUTERRISETIME,wxGetApp().GetActiveDoc()->GetViewOuterRiseTime());
     m_labelContext->Check(ID_VIEW_T50,wxGetApp().GetActiveDoc()->GetViewT50());
     m_labelContext->Check(ID_VIEW_RD,wxGetApp().GetActiveDoc()->GetViewRD());
     m_labelContext->Check(ID_VIEW_SLOPERISE,wxGetApp().GetActiveDoc()->GetViewSlopeRise());
     m_labelContext->Check(ID_VIEW_SLOPEDECAY,wxGetApp().GetActiveDoc()->GetViewSlopeDecay());
     m_labelContext->Check(ID_VIEW_LATENCY,wxGetApp().GetActiveDoc()->GetViewLatency());
-#ifdef WIHT_PSLOPE
+#ifdef WITH_PSLOPE
     m_labelContext->Check(ID_VIEW_PSLOPE,wxGetApp().GetActiveDoc()->GetViewPSlope());
 #endif
     m_labelContext->Check(ID_VIEW_CURSORS,wxGetApp().GetActiveDoc()->GetViewCursors());

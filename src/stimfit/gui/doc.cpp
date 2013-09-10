@@ -165,6 +165,8 @@ wxStfDoc::wxStfDoc() :
     viewPeakbase(true),
     viewPeakthreshold(false),
     viewRTLoHi(true),
+    viewInnerRiseTime(false),
+    viewOuterRiseTime(false),
     viewT50(true),
     viewRD(true),
     viewSloperise(true),
