@@ -39,6 +39,7 @@
 
 #include "pystfio.h"
 
+#ifndef TEST_MINIMAL
 stfio::filetype gettype(const std::string& ftype) {
     stfio::filetype stftype = stfio::none;
     if (ftype == "cfs") {
@@ -60,10 +61,16 @@ stfio::filetype gettype(const std::string& ftype) {
     }
     return stftype;
 }
+#endif // TEST_MINIMAL
 
 bool _read(const std::string& filename, const std::string& ftype, bool verbose, Recording& Data) {
 
+#ifndef TEST_MINIMAL
     stfio::filetype stftype = gettype(ftype);
+#else
+    const stfio::filetype stftype = stfio::none;
+#endif // TEST_MINIMAL
+
     stfio::txtImportSettings tis;
     stfio::StdoutProgressInfo progDlg("File import", "Starting file import", 100, verbose);
     
