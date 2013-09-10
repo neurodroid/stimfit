@@ -39,7 +39,6 @@
 
 #include "pystfio.h"
 
-#ifndef TEST_MINIMAL
 stfio::filetype gettype(const std::string& ftype) {
     stfio::filetype stftype = stfio::none;
     if (ftype == "cfs") {
@@ -52,6 +51,10 @@ stfio::filetype gettype(const std::string& ftype) {
         stftype = stfio::atf;
     } else if (ftype == "axg") {
         stftype = stfio::axg;
+    } else if (ftype == "biosig") {
+        stftype = stfio::biosig;
+    } else if (ftype == "gdf") {
+        stftype = stfio::biosig;
     } else if (ftype == "heka") {
         stftype = stfio::heka;
     } else if (ftype == "igor") {
@@ -61,7 +64,6 @@ stfio::filetype gettype(const std::string& ftype) {
     }
     return stftype;
 }
-#endif // TEST_MINIMAL
 
 bool _read(const std::string& filename, const std::string& ftype, bool verbose, Recording& Data) {
 

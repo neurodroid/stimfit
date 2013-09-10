@@ -148,7 +148,11 @@ class Section {
 
     Arguments:
     fname  -- file name
+#ifndef TEST_MINIMAL
     ftype  -- file type (string). At present, only \"hdf5\" is supported.
+#else
+    ftype  -- file type (string). At present, \"hdf5\", \"gdf\", \"cfs\" and \"ibw\" are supported.
+#endif // TEST_MINIMAL
     verbose-- Show info while writing
 
     Returns:
