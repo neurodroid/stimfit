@@ -7,9 +7,7 @@
   #define TEST_MINIMAL
 #endif
 
-#ifndef TEST_MINIMAL
-  stfio::filetype gettype(const std::string& ftype);
-#endif // TEST_MINIMAL
+stfio::filetype gettype(const std::string& ftype);
 bool _read(const std::string& filename, const std::string& ftype, bool verbose, Recording& Data);
 
 #endif
