@@ -259,7 +259,7 @@ double stf::lmFit( const Vector_double& data, double dt,
         Vector_double old_p_toFit(p_toFit);
 
 #ifdef _DEBUG
-        std::string optsMsg;
+        std::ostringstream optsMsg;
         optsMsg << wxT("\nopts: ");
         for (std::size_t n_p=0; n_p < opts.size(); ++n_p)
             optsMsg << opts[n_p] << wxT("\t");
