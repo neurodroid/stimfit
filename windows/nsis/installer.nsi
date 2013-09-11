@@ -11,7 +11,7 @@ SetCompressor lzma
 
 ;--------------------------------
 
-!define PRODUCT_VERSION "0.13.0"
+!define PRODUCT_VERSION "0.13.1"
 !define WXW_VERSION "2.9.4.0"
 !define WXW_VERSION_DIR "2.9.4"
 !define WXW_VERSION_SHORT "294"
@@ -23,8 +23,8 @@ Var PY_ACT
 !define MPL_VERSION "1.2.1"
 !define EMF_VERSION "2.0.0"
 !define EXE_NAME "Stimfit"
-!define REG_NAME "Stimfit 0.12"
-!define REG_NAME_IO "stfio 0.12"
+!define REG_NAME "Stimfit 0.13"
+!define REG_NAME_IO "stfio 0.13"
 !define PRODUCT_PUBLISHER "Christoph Schmidt-Hieber"
 !define PRODUCT_WEB_SITE "http://www.stimfit.org"
 !define STFDIR "..\..\stimfit"
