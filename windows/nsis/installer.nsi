@@ -21,6 +21,7 @@ SetCompressor lzma
 Var PY_ACT
 !define NP_VERSION "1.7.1"
 !define MPL_VERSION "1.2.1"
+!define EMF_VERSION "2.0.0"
 !define EXE_NAME "Stimfit"
 !define REG_NAME "Stimfit 0.12"
 !define REG_NAME_IO "stfio 0.12"
@@ -36,13 +37,14 @@ Var PY_ACT
 !define FFTDIR "..\..\fftw"
 !define HDF5DIR "..\..\hdf5"
 !define BIOSIGDIR "..\..\biosig"
+!define PYEMFDIR "..\..\pyemf-${EMF_VERSION}"
 !define PRODIR "C:\Program Files (x86)"
 !define ALTPRODIR "C:\Program Files"
 !define FULL_WELCOME "This wizard will guide you through the installation \
 of ${REG_NAME} and wxPython. It is strongly recommended that you uninstall any earlier version of Stimfit (< 0.11) before \
 proceeding. You can optionally \
 install Python ${PY_VERSION}, NumPy ${NP_VERSION} \
-and Matplotlib ${MPL_VERSION} \
+Matplotlib ${MPL_VERSION} and PyEMF ${EMF_VERSION}\
 if you don't have them on your machine."
 !define UPDATE_WELCOME "This wizard will install \
 ${REG_NAME} on your computer. It is strongly recommended that you uninstall any \
@@ -122,6 +124,10 @@ Section "Python ${PY_VERSION}" 0
   
   ; Delete installer once we are done
   Delete "$INSTDIR\python-${PY_VERSION}.msi"
+
+  ; Install PyEMF
+  ExecWait 'cd "${PYEMFDIR}"; "c:\python27\python.exe" setup.py install'
+  RMDir /r "${PYEMFDIR}"
 
 SectionEnd
 
