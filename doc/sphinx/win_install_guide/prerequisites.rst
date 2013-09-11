@@ -32,6 +32,10 @@ Python
 ------
 Download and install `Python 2.7 <http://www.python.org>`_. Make sure to install it for all users so that it ends up in C:\\Python27
 
+PyEMF
+-----
+Get PyEMF 2.0.0 from `here <http://sourceforge.net/projects/pyemf/files/latest/download?source=files>`_. Install to your home directory(_not_ to C:\\Python27\\*!) to pyemf_2.0.0. Rename the folder to "pyemf-2.0.0".
+
 NumPy
 -----
 Install NumPy from `here <http://sourceforge.net/projects/numpy/files/NumPy/>`_. Use the win32 "superpack" for Python 2.7.
@@ -57,6 +61,13 @@ Get the latest 32-bit fftw dlls from `here <http://fftw.org/install/windows.html
 ``C:\Users\username\fftw> lib /def:libfftw3f-3.def``
 
 ``C:\Users\username\fftw> lib /def:libfftw3l-3.def``
+
+libbiosig
+---------
+Get the latest 32-bit biosig dlls from `here <http://biosig.sourceforge.net/download.html>`_. Extract to a folder called "biosig" in your home directory. Similar to fftw, open the Visual Studio Command Prompt that is in the Visual Studio Tools section of the Program menu. cd into the biosig folder and type:
+
+``C:\Users\username\biosig> lib /def:libbiosig2.def``
+
 
 ===========
 Build Tools
