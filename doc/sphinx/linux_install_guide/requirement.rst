@@ -26,7 +26,7 @@ For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build depend
                            fftw3-dev \
                            liblapack-dev \
                            chrpath \
-                           mercurial \
+                           git \
                            automake \
                            autoconf \
                            libtool \
@@ -63,6 +63,19 @@ Get the source for both wxWidgets and wxPython in a single tarball:
 Check http://www.wxpython.org/download.php#unstable for updates.
 
 From there, follow the build instructions found `here <http://www.wxpython.org/builddoc.php>`_
+
+=======================
+Optional: PyEMF
+=======================
+
+[PyEMF]_ is needed to export figures to the windows meta file format (WMF/EMF). EMF is a vector graphics format and can be imported in different Office software including LibreOffice. In order to install it, do:
+
+::
+
+     $ wget http://sourceforge.net/projects/pyemf/files/pyemf/2.0.0/pyemf-2.0.0.tar.gz/download -O pyemf-2.0.0.tar.gz
+     $ tar xvf pyemf-2.0.0.tar.gz && cd pyemf-2.0.0
+     $ sudo python setup.py install
+
 
 ================================
 Download the Stimfit source code
@@ -133,9 +146,9 @@ It is recommended to build `Stimfit <http://www.stimfit.org>`_  with the `BioSig
 
 ::
 
-    sudo apt-get install libsuitesparse-dev libz-dev
+    sudo apt-get install libsuitesparse-dev libz-dev gawk
 
-2. Download BioSig sources: you can obtain the latest BioSig version in `BioSig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig. Alternatively, you can obtain the latest developmental version from the git repository:
+2. Download BioSig sources: you can obtain the latest BioSig version in `BioSig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig (v1.5.6 or higher is recommended). Alternatively, you can obtain the latest developmental version from the git repository:
 
 ::
 
@@ -187,5 +200,6 @@ The local documentation of the source code will be in $HOME/stimfit/doc/doxygen/
 .. [Lapack] http://www.netlib.org/lapack/
 .. [HDF5] http://www.hdfgroup.org/HDF5/
 .. [NumPy] http://www.numpy.org
+.. [PyEMF] http://http://pyemf.sourceforge.net
 .. [fftw] http://www.fftw.org
 .. [Doxygen] http://www.doxygen.org
