@@ -741,7 +741,7 @@ TEST(fitlib_test, id_09_alpha){
     /* choose function parameters */
     Vector_double mypars(3);
     mypars[0] = 300.0;    /* amplitude */
-    mypars[1] = 0.1;      /* rate      */
+    mypars[1] = 5.7;      /* rate      */
     mypars[2] = 50.0;     /* offset    */
 
     /* create a 100 ms trace with mypars */
@@ -755,9 +755,9 @@ TEST(fitlib_test, id_09_alpha){
 
     /* Initial parameter guesses */
     Vector_double pars(3);
-    pars[0] = 1101.72;       /* Q      */
-    pars[1] = 0.2001;        /* rate   */
-    pars[2] = 8.0;           /* Offset */
+    pars[0] = 350.0;       /* Q      */
+    pars[1] = 5.7;         /* rate   */
+    pars[2] = 0.0;         /* Offset */
 
     std::string info;
     int warning;

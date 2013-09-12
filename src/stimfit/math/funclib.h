@@ -225,7 +225,7 @@ namespace stf {
     void fexpbde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt,  Vector_double& pInit );
 
     //! Alpha function.
-    /*! \f[f(x)=p_0 p_1^2 x \mathrm{e}^{-p_1 x} + p_2\f]
+    /*! \f[f(x)=p_0  \frac{x}{p_1} \mathrm{e}^{1 - x/p_1} + p_2\f]
      *  \param x Function argument.
      *  \param p A valarray of parameters, where \n
      *         \e p[0] is the amplitude, \n
@@ -237,9 +237,10 @@ namespace stf {
     
     //! Computes the Jacobian of stf::falpha().
     /*! \f{eqnarray*}
-     *   j_0(x) &=& \frac{df(x)}{dp_0} = p_1^2 x \mathrm{e}^{-p_1 x} \\
-     *   j_1(x) &=& \frac{df(x)}{dp_1} = p_0 p_1 x \left( 2 \mathrm{e}^{-p_1 x} - p_1 x \mathrm{e}^{-p_1 x} \right) \\
-     *   j_2(x) &=& \frac{df(x)}{dp_2} = 1.0
+     *   j_0(x) &=& \frac{\partial f(x)}{\partial p_0} = \frac{x \mathrm{e}^{\left(1 - \frac{x}{p_1} \right)}}{p_1} \\
+     *   j_1(x) &=& \frac{\partial f(x)}{\partial p_1} = \frac{x \mathrm{e}^{\left(1 - \frac{x}{p_1} \right)}}{p_1} 
+        \left(\frac{p_0 x}{p_1^2} - \frac{p_0}{p_1} \right) \\
+     *   j_2(x) &=& \frac{\partial f(x)}{\partial p_2} = 1.0
      *  \f} 
      *  \param x Function argument.
      *  \param p A valarray of parameters, where \n
