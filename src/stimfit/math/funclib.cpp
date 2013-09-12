@@ -81,8 +81,8 @@ std::vector< stf::storedFunc > stf::GetFuncLib() {
 
     // Alpha function:
     std::vector<stf::parInfo> parInfoAlpha(3);
-    parInfoAlpha[0].toFit=true; parInfoAlpha[0].desc="Q";
-    parInfoAlpha[1].toFit=true; parInfoAlpha[1].desc="rate";
+    parInfoAlpha[0].toFit=true; parInfoAlpha[0].desc="Amplitude";
+    parInfoAlpha[1].toFit=true; parInfoAlpha[1].desc="Rate";
     parInfoAlpha[2].toFit=true; parInfoAlpha[2].desc="Offset";
     funcList.push_back(stf::storedFunc(
                                        "Alpha function", parInfoAlpha,falpha,falpha_init,falpha_jac,true));

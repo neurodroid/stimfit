@@ -225,7 +225,7 @@ namespace stf {
     void fexpbde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt,  Vector_double& pInit );
 
     //! Alpha function.
-    /*! \f[f(x)=p_0  \frac{x}{p_1} \mathrm{e}^{1 - x/p_1} + p_2\f]
+    /*! \f[f(x)=p_0  \frac{x}{p_1} \mathrm{e}^{\left(1 - \frac{x}{p_1} \right)} + p_2\f]
      *  \param x Function argument.
      *  \param p A valarray of parameters, where \n
      *         \e p[0] is the amplitude, \n
