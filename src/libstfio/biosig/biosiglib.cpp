@@ -282,12 +282,6 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     strftime(str,strSize,"%H:%M:%S",&T);	// %D
     ReturnData.SetTime(str);
 
-#ifdef MODULE_ONLY
-    if (progress) {
-        std::cout << "\r";
-        std::cout << "100%" << std::endl;
-    }
-#endif
     destructHDR(hdr);
 
 
@@ -523,13 +517,6 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     ReturnData.SetDate(str);
     strftime(str,strSize,"%H:%M:%S",&T);	// %D
     ReturnData.SetTime(str);
-
-#ifdef MODULE_ONLY
-    if (progress) {
-        std::cout << "\r";
-        std::cout << "100%" << std::endl;
-    }
-#endif
 
     destructHDR(hdr);
 
