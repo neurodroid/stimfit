@@ -414,15 +414,16 @@ void stf::fHH_init(const Vector_double& data, double base, double peak, double R
     // p[1]: tau_m
     // p[2]: tau_h
     // p[3]: offset
+    pInit[1] = RTLoHi;
+    pInit[2] = HalfWidth;
+    pInit[3] = base; //offset fixed to baseline
+
     double norm = (27.0*pow(pInit[2],3)*exp(-(pInit[1]*log((3.0*pInit[2]+pInit[1])/pInit[1]))/pInit[2])) / 
                   (27.0*pow(pInit[2],3)+27.0*pInit[1]*pInit[2]*pInit[2]+9.0*pInit[1]*pInit[1]*pInit[2]+pow(pInit[1],3));
 
     pInit[0] = (peak-base)/norm;
     //pInit[1] = 0.5 * maxT * dt;
     //pInit[2] = 3 * maxT * dt;
-    pInit[1] = RTLoHi;
-    pInit[2] = HalfWidth;
-    pInit[3] = base; //offset fixed to baseline
 }
 
 void stf::fgnabiexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
