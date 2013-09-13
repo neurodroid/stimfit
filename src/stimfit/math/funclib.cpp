@@ -352,9 +352,9 @@ double stf::fHH(double x, const Vector_double& p) {
     // p[1]: tau_m
     // p[2]: tau_h
     // p[3]: offset
-    double e1 = exp(-x/p[1]);
-    double e2 = exp(-x/p[2]);
-    return p[0] * (1-e1)*(1-e1)*(1-e1) * e2 + p[3];
+    double m = 1 - exp(-x/p[1]);
+    double h = exp(-x/p[2]);
+    return p[0] * (m*m*m) * h + p[3];
 }
 
 double stf::fgnabiexp(double x, const Vector_double& p) {
@@ -362,9 +362,9 @@ double stf::fgnabiexp(double x, const Vector_double& p) {
     // p[1]: tau_m
     // p[2]: tau_h
     // p[3]: offset
-    double e1 = exp(-x/p[1]);
-    double e2 = exp(-x/p[2]);
-    return p[0] * (1-e1) * e2 + p[3];
+    double m = 1-exp(-x/p[1]);
+    double h = exp(-x/p[2]);
+    return p[0] * m * h + p[3];
 }
 
 double stf::fgauss(double x, const Vector_double& pars) {
@@ -407,21 +407,22 @@ void stf::fgauss_init(const Vector_double& data, double base, double peak, doubl
 void stf::fHH_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT = stf::whereis( data, peak );
-    // stf::peak( data, base, 0, data.size(), 1, stf::both, maxT );
     
     if ( maxT == 0 ) maxT = data.size() * 0.05;
-    // double tpeak = p[1]*log((3.0*p[2])/p[1]+1.0);
 
     // p[0]: gprime_na
     // p[1]: tau_m
     // p[2]: tau_h
     // p[3]: offset
-    pInit[1]=0.5 * maxT * dt;
-    pInit[2]=3 * maxT * dt;
     double norm = (27.0*pow(pInit[2],3)*exp(-(pInit[1]*log((3.0*pInit[2]+pInit[1])/pInit[1]))/pInit[2])) / 
                   (27.0*pow(pInit[2],3)+27.0*pInit[1]*pInit[2]*pInit[2]+9.0*pInit[1]*pInit[1]*pInit[2]+pow(pInit[1],3));
-    pInit[0]=(peak-base)/norm;
-    pInit[3]=base;
+
+    pInit[0] = (peak-base)/norm;
+    //pInit[1] = 0.5 * maxT * dt;
+    //pInit[2] = 3 * maxT * dt;
+    pInit[1] = RTLoHi;
+    pInit[2] = HalfWidth;
+    pInit[3] = base; //offset fixed to baseline
 }
 
 void stf::fgnabiexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
