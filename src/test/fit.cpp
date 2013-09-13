@@ -755,9 +755,9 @@ TEST(fitlib_test, id_09_alpha){
 
     /* Initial parameter guesses */
     Vector_double pars(3);
-    pars[0] = 350.0;       /* Q      */
-    pars[1] = 5.7;         /* rate   */
-    pars[2] = 0.0;         /* Offset */
+    pars[0] = 350.0;       /* amplitude     */
+    pars[1] = 3.7;         /* rate          */
+    pars[2] = 0.0;         /* Offset        */
 
     std::string info;
     int warning;
