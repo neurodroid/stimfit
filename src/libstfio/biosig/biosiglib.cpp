@@ -65,8 +65,11 @@ stfio::filetype stfio_file_type(HDRTYPE* hdr) {
 #else
         switch (hdr->TYPE) {
 #endif
-        case ABF:
-        case ABF2:	return stfio::abf;
+
+#if (BIOSIG_VERSION > 10500)
+        case ABF2:
+#endif
+        case ABF:	return stfio::abf;
         case ATF:	return stfio::atf;
         case AXG:	return stfio::axg;
         case CFS:	return stfio::cfs;
