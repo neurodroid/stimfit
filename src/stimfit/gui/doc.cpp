@@ -165,6 +165,8 @@ wxStfDoc::wxStfDoc() :
     viewPeakbase(true),
     viewPeakthreshold(false),
     viewRTLoHi(true),
+    viewInnerRiseTime(false),
+    viewOuterRiseTime(false),
     viewT50(true),
     viewRD(true),
     viewSloperise(true),
@@ -1426,6 +1428,12 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
     if (SaveYtDialog.PrintRTLoHi()) {
         colTitles.push_back("RT Lo-Hi%");
     }
+    if (SaveYtDialog.PrintInnerRTLoHi()) {
+        colTitles.push_back("inner Rise Time Lo-Hi%");
+    }
+    if (SaveYtDialog.PrintOuterRTLoHi()) {
+        colTitles.push_back("Outer Rise Time Lo-Hi%");
+    }
     if (SaveYtDialog.PrintT50()) {
         colTitles.push_back("t 1/2");
     }
@@ -1588,6 +1596,10 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
                 table.at(n_s,nCol++)=GetPeak()-GetThreshold();
             if (SaveYtDialog.PrintRTLoHi())
                 table.at(n_s,nCol++)=GetRTLoHi();
+            if (SaveYtDialog.PrintInnerRTLoHi())
+                table.at(n_s,nCol++)=GetInnerRiseTime();
+            if (SaveYtDialog.PrintOuterRTLoHi())
+                table.at(n_s,nCol++)=GetOuterRiseTime();
             if (SaveYtDialog.PrintT50())
                 table.at(n_s,nCol++)=GetHalfDuration();
             if (SaveYtDialog.PrintSlopes()) {

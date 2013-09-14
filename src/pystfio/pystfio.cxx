@@ -51,6 +51,10 @@ stfio::filetype gettype(const std::string& ftype) {
         stftype = stfio::atf;
     } else if (ftype == "axg") {
         stftype = stfio::axg;
+    } else if (ftype == "biosig") {
+        stftype = stfio::biosig;
+    } else if (ftype == "gdf") {
+        stftype = stfio::biosig;
     } else if (ftype == "heka") {
         stftype = stfio::heka;
     } else if (ftype == "igor") {
@@ -63,7 +67,12 @@ stfio::filetype gettype(const std::string& ftype) {
 
 bool _read(const std::string& filename, const std::string& ftype, bool verbose, Recording& Data) {
 
+#ifndef TEST_MINIMAL
     stfio::filetype stftype = gettype(ftype);
+#else
+    const stfio::filetype stftype = stfio::none;
+#endif // TEST_MINIMAL
+
     stfio::txtImportSettings tis;
     stfio::StdoutProgressInfo progDlg("File import", "Starting file import", 100, verbose);
     

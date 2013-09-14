@@ -227,3 +227,5 @@ Fitting functions to data
        
 :func:`stf.leastsq()` can be called from the **Python** shell to fit the function with index *fselect* to the data. *fselect* refers to the number that you can find in front of the function in the fit settings dialog (see Fig. 16). If refresh=False, the trace will not be re-drawn, which can be useful to avoid flicker when performing a series of fits. 
 
+You can use :func:`stf.get_fit()` to get the function resulted from the fitting. This returns the evaluated function as a two dimensional NumPy array. The first dimension is the x-axis (e.g time), and the second dimension is the function evaluation results.
+

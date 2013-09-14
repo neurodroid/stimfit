@@ -148,7 +148,11 @@ class Section {
 
     Arguments:
     fname  -- file name
+#ifndef TEST_MINIMAL
     ftype  -- file type (string). At present, only \"hdf5\" is supported.
+#else
+    ftype  -- file type (string). At present, \"hdf5\", \"gdf\", \"cfs\" and \"ibw\" are supported.
+#endif // TEST_MINIMAL
     verbose-- Show info while writing
 
     Returns:
@@ -316,7 +320,11 @@ class Section {
       
 Arguments:
 filename -- file name
+#ifndef TEST_MINIMAL
 ftype    -- File type
+#else
+ftype    -- File type (obsolete)
+#endif // TEST_MINIMAL
 verbose  -- Show info while reading
 
 Returns:
@@ -351,6 +359,7 @@ def read(fname, ftype=None, verbose=False):
 
     Arguments:
     fname  -- file name
+#ifndef TEST_MINIMAL
     ftype  -- file type (string); can be one of:
               "cfs"  - CED filing system
               "hdf5" - HDF5
@@ -360,6 +369,12 @@ def read(fname, ftype=None, verbose=False):
               "heka" - HEKA binary file
               if ftype is None (default), it will be guessed from the
               extension.
+#else
+    ftype  -- file type (string) is obsolete.
+              in the past it has been used to determine the file type.
+              Now an automated file type identification is used, and this
+              parameter become obsolete; eventually it will be removed.
+#endif // TEST_MINIMAL
     verbose-- Show info while reading file
 
     Returns:
@@ -367,7 +382,8 @@ def read(fname, ftype=None, verbose=False):
     """
     if not os.path.exists(fname):
         raise StfIOException('File %s does not exist' % fname)
-    
+
+#ifndef TEST_MINIMAL
     if ftype is None:
         # Guess file type:
         ext = os.path.splitext(fname)[1]
@@ -375,6 +391,7 @@ def read(fname, ftype=None, verbose=False):
             ftype = filetype[ext]
         except KeyError:
             raise StfIOException('Couldn\'t guess file type from extension (%s)' % ext)
+#endif // TEST_MINIMAL
 
     rec = Recording()
     if not _read(fname, ftype, verbose, rec):

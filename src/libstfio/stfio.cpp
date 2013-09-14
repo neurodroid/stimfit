@@ -97,7 +97,7 @@ stfio::findType(const std::string& ext) {
 #endif
     else return stfio::none;
 }
-#endif
+#endif // TEST_MINIMAL
 
 bool stfio::importFile(
         const std::string& fName,

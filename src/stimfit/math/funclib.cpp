@@ -81,8 +81,8 @@ std::vector< stf::storedFunc > stf::GetFuncLib() {
 
     // Alpha function:
     std::vector<stf::parInfo> parInfoAlpha(3);
-    parInfoAlpha[0].toFit=true; parInfoAlpha[0].desc="Q";
-    parInfoAlpha[1].toFit=true; parInfoAlpha[1].desc="rate";
+    parInfoAlpha[0].toFit=true; parInfoAlpha[0].desc="Amplitude";
+    parInfoAlpha[1].toFit=true; parInfoAlpha[1].desc="Rate";
     parInfoAlpha[2].toFit=true; parInfoAlpha[2].desc="Offset";
     funcList.push_back(stf::storedFunc(
                                        "Alpha function", parInfoAlpha,falpha,falpha_init,falpha_jac,true));
@@ -297,8 +297,6 @@ Vector_double stf::fexpbde_jac(double x, const Vector_double& p) {
 void stf::fexpbde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT = stf::whereis( data, peak );
-    //stf::peak( data, base, 0, data.size()-1, 1, stf::both, maxT );
-
 
     if ( maxT == 0 ) maxT = data.size() * 0.05;
 
@@ -314,26 +312,39 @@ void stf::fexpbde_init(const Vector_double& data, double base, double peak, doub
     double tpeak = pInit[4]*pInit[2]*log(pInit[4]/pInit[2])/(pInit[4]-pInit[2]);
     double adjust = 1.0/((1.0-exp(-tpeak/pInit[4]))-(1.0-exp(-tpeak/pInit[2])));
     pInit[3] = adjust*(peak-base); /* factor */
+
 }
 
 double stf::falpha(double x, const Vector_double& p) {
-    double e=exp(-p[1]*x);
-    return p[0]*p[1]*p[1]*x*e+p[2]; 
+    
+    //double e=exp(-p[1]*x);
+    //return p[0]*p[1]*p[1]*x*e+p[2]; 
+    return p[0]*x/p[1]*exp(1-x/p[1]) + p[2];
+    
 }
 
 Vector_double stf::falpha_jac(double x, const Vector_double& p) {
     Vector_double jac(3);
-    double e=exp(-p[1]*x);
-    jac[0]=p[1]*p[1]*x*e;
-    jac[1]=p[0]*x*p[1]*(2*e-x*p[1]*e);
-    jac[2]=1.0;
+    //double e=exp(-p[1]*x);
+    //jac[0]=p[1]*p[1]*x*e;
+    //jac[1]=p[0]*x*p[1]*(2*e-x*p[1]*e);
+    //jac[2]=1.0;
+    jac[0] = x*exp(1-x/p[1])/p[1];
+    jac[1] = jac[0]*( x*p[0]/(p[1]*p[1]) - p[0]/p[1] );
+    jac[2] = 1.0;
     return jac;
 }
 
 void stf::falpha_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
-        pInit[0]=(peak-base)*data.size()*dt;
-        pInit[1]=1.0/(data.size()*dt/20.0);
-        pInit[2]=base;
+        double maxT = stf::whereis( data, peak )*dt;
+
+        pInit[0] = peak;
+        pInit[1] = maxT;// time of the peak correspond to time constant
+        pInit[2] = base;
+
+        //pInit[0]=(peak-base)*data.size()*dt;
+        //pInit[1]=1.0/(data.size()*dt/20.0);
+        //pInit[2]=base;
 }
 
 double stf::fHH(double x, const Vector_double& p) {
@@ -341,9 +352,9 @@ double stf::fHH(double x, const Vector_double& p) {
     // p[1]: tau_m
     // p[2]: tau_h
     // p[3]: offset
-    double e1 = exp(-x/p[1]);
-    double e2 = exp(-x/p[2]);
-    return p[0] * (1-e1)*(1-e1)*(1-e1) * e2 + p[3];
+    double m = 1 - exp(-x/p[1]);
+    double h = exp(-x/p[2]);
+    return p[0] * (m*m*m) * h + p[3];
 }
 
 double stf::fgnabiexp(double x, const Vector_double& p) {
@@ -351,9 +362,9 @@ double stf::fgnabiexp(double x, const Vector_double& p) {
     // p[1]: tau_m
     // p[2]: tau_h
     // p[3]: offset
-    double e1 = exp(-x/p[1]);
-    double e2 = exp(-x/p[2]);
-    return p[0] * (1-e1) * e2 + p[3];
+    double m = 1-exp(-x/p[1]);
+    double h = exp(-x/p[2]);
+    return p[0] * m * h + p[3];
 }
 
 double stf::fgauss(double x, const Vector_double& pars) {
@@ -396,21 +407,23 @@ void stf::fgauss_init(const Vector_double& data, double base, double peak, doubl
 void stf::fHH_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT = stf::whereis( data, peak );
-    // stf::peak( data, base, 0, data.size(), 1, stf::both, maxT );
     
     if ( maxT == 0 ) maxT = data.size() * 0.05;
-    // double tpeak = p[1]*log((3.0*p[2])/p[1]+1.0);
 
     // p[0]: gprime_na
     // p[1]: tau_m
     // p[2]: tau_h
     // p[3]: offset
-    pInit[1]=0.5 * maxT * dt;
-    pInit[2]=3 * maxT * dt;
+    pInit[1] = RTLoHi;
+    pInit[2] = HalfWidth;
+    pInit[3] = base; //offset fixed to baseline
+
     double norm = (27.0*pow(pInit[2],3)*exp(-(pInit[1]*log((3.0*pInit[2]+pInit[1])/pInit[1]))/pInit[2])) / 
                   (27.0*pow(pInit[2],3)+27.0*pInit[1]*pInit[2]*pInit[2]+9.0*pInit[1]*pInit[1]*pInit[2]+pow(pInit[1],3));
-    pInit[0]=(peak-base)/norm;
-    pInit[3]=base;
+
+    pInit[0] = (peak-base)/norm;
+    //pInit[1] = 0.5 * maxT * dt;
+    //pInit[2] = 3 * maxT * dt;
 }
 
 void stf::fgnabiexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
