@@ -89,7 +89,7 @@ EVT_MENU_RANGE(ID_USERDEF, ID_USERDEF+32, wxStfApp::OnUserdef)
 #endif 
 END_EVENT_TABLE()
 
-wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isHires(false), txtImport(), funcLib(),
+wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), txtImport(), funcLib(),
 #ifdef WITH_PYTHON
 extensionLib(),
 #endif 
@@ -677,11 +677,6 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
                                  ID_SCALE,
                                  wxT("&View scale bars"),
                                  wxT("If checked, use scale bars rather than coordinates")
-                                 );
-    m_view_menu->AppendCheckItem(
-                                 ID_HIRES,
-                                 wxT("View &full resolution"),
-                                 wxT("If checked, plot large traces at high resolution")
                                  );
     m_view_menu->AppendSeparator();
     m_view_menu->Append(ID_SAVEPERSPECTIVE,wxT("&Save window positions"));

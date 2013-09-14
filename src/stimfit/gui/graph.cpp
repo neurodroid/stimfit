@@ -60,7 +60,7 @@ END_EVENT_TABLE()
 // Define a constructor for my canvas
 wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, const wxSize& size, long style):
     wxScrolledWindow(frame, wxID_ANY, pos, size, style),pFrame(frame),
-    isZoomRect(false),no_gimmicks(false),isPrinted(false),isLatex(false),firstPass(true),isSyncx(false),resLimit(100000),
+    isZoomRect(false),no_gimmicks(false),isPrinted(false),isLatex(false),firstPass(true),isSyncx(false),
     printRect(),boebbel(boebbelStd),boebbelPrint(boebbelStd),
 #ifdef __WXGTK__
     printScale(1.0),printSizePen1(4),printSizePen2(8),printSizePen4(16),
@@ -296,22 +296,6 @@ void wxStfGraph::InitPlot() {
         isSyncx=true;
     } else {
         isSyncx=false;
-    }
-
-    if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewHiRes"),1)) {
-        if (pFrame->GetMenuBar() && pFrame->GetMenuBar()->GetMenu(2)) {
-            pFrame->GetMenuBar()->GetMenu(2)->Check(ID_HIRES,true);
-        }
-#ifndef __APPLE__
-        wxGetApp().set_isHires(true);
-#else
-        wxGetApp().set_isHires(false);
-#endif
-    } else {
-        if (pFrame->GetMenuBar() && pFrame->GetMenuBar()->GetMenu(2)) {
-            pFrame->GetMenuBar()->GetMenu(2)->Check(ID_HIRES,false);
-        }
-        wxGetApp().set_isHires(false);
     }
 
     // Ensure proper dimensioning
@@ -640,15 +624,8 @@ void wxStfGraph::PlotTrace( wxDC* pDC, const Vector_double& trace, plottype pt, 
     int xri = int((right-SPX())/XZ())+1;
     if (xri>=0 && xri<(int)trace.size()-1) end=xri;
 
-    // speed up drawing by down-sampling large traces:
-    int step=1;
-    if ((int)(end-start)>resLimit && !wxGetApp().get_isHires()) {
-        // truncate:
-        step=div(int(end-start),resLimit).quot;
-    }
-
     // apply filter at half the new sampling frequency:
-    DoPlot(pDC, trace, start, end, step, pt, bgno);
+    DoPlot(pDC, trace, start, end, 1, pt, bgno);
 }
 
 void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int end, int step, plottype pt, int bgno) {

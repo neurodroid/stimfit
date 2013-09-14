@@ -286,7 +286,6 @@ public:
     bool isLatex;
     bool firstPass;
     bool isSyncx;
-    int resLimit;
 
     //Zoom struct
 //    Zoom zoom;
