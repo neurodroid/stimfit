@@ -1,4 +1,14 @@
-stimfit (0.12.5-1) experimental; urgency=low
+stimfit (0.13.1-0lucid1) lucid; urgency=low
+
+  * Add support for inner and outer rise time computations
+  * Fix some potential buffer overflows
+  * Improve biosig integration
+  * Improve deconvolution-based event detection
+  * Improve fit initialization for some functions
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 14 Sep 2013 13:22:42 +0000
+
+stimfit (0.12.5-1) UNRELEASED; urgency=low
 
   * More robust initialization for nonlinear regression
   * Faster convergence for most fits
