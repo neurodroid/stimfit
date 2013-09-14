@@ -62,7 +62,7 @@
 #include "./copygrid.h"
 #include "./../../libstfio/atf/atflib.h"
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
-  #include "./../../libstfio/biosig/biosiglib.h"
+    #include "./../../libstfio/biosig/biosiglib.h"
 #endif
 #include "./../../libstfio/igor/igorlib.h"
 
@@ -78,7 +78,6 @@
 #include "./../res/arrow_out.xpm"
 #include "./../res/arrow_right.xpm"
 #include "./../res/arrow_up.xpm"
-//#include "./../res/bin.xpm"
 #include "./../res/camera.xpm"
 
 #include "./../res/camera_ps.xpm"
@@ -542,13 +541,16 @@ wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
     return cursorToolBar;
 }
 
+#if 0
 #if defined(WITH_BIOSIG2)
-#define CREDIT_BIOSIG "Biosig import using libbiosig2 http://biosig.sf.net\n\n"
+    #define CREDIT_BIOSIG "Biosig import using libbiosig2 http://biosig.sf.net\n\n"
 #elif defined(WITH_BIOSIG)
-#define CREDIT_BIOSIG "Biosig import using libbiosig http://biosig.sf.net\n\n"
+    #define CREDIT_BIOSIG "Biosig import using libbiosig http://biosig.sf.net\n\n"
 #else 
-#define CREDIT_BIOSIG ""
+    #define CREDIT_BIOSIG ""
 #endif
+#endif
+
 void wxStfParentFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
 {
 	wxAboutDialogInfo info;
@@ -556,21 +558,27 @@ void wxStfParentFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
 	info.SetVersion(wxString(VERSION, wxConvLocal));
 	info.SetWebSite(wxT("http://www.stimfit.org"));
 	wxString about = wxString(wxT("Credits:\n\nOriginal idea (Stimfit for DOS):\n\
-Peter Jonas, Physiology Department, University of Freiburg\n\n\
-Fourier transform:\nFFTW, http://www.fftw.org\n\n\
-Levenberg-Marquardt non-linear regression, version ") + wxString(wxT(LM_VERSION)) + wxT("\n\
-Manolis Lourakis, http://www.ics.forth.gr/~lourakis/levmar/ \n\n")) +
-wxString(wxT(CREDIT_BIOSIG)) +
-wxString(wxT("Documentation:\n\
-Jose Guzman\n\n\
-Event detection by template matching:\n\
-Jonas, P., Major, G. & Sakmann B. (1993) J Physiol 472:615-63\n\
-Clements, J. D. & Bekkers, J. M. (1997) Biophys J 73:220-229\n\n\
-Thanks to Bill Anderson (www.winltp.com) for helpful suggestions"));
+    Peter Jonas, Physiology Department, University of Freiburg\n\n\
+    Fourier transform:\nFFTW, http://www.fftw.org\n\n\
+    Levenberg-Marquardt non-linear regression, version ") + wxString(wxT(LM_VERSION)) + wxT("\n\
+    Manolis Lourakis, http://www.ics.forth.gr/~lourakis/levmar/ \n\n")) +
+
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+    wxString( wxT("BioSig import using libbiosig\n") ) + 
+    //+ wxString( wxT("version ") + wxT(BIOSIG_VERSION ) ) +
+    wxString( wxT("http://biosig.sf.net\n\n") ) +
+#endif
+
+    wxString(wxT("Documentation:\n\
+    Jose Guzman\n\n\
+    Event detection by template matching:\n\
+    Jonas, P., Major, G. & Sakmann B. (1993) J Physiol 472:615-63\n\
+    Clements, J. D. & Bekkers, J. M. (1997) Biophys J 73:220-229\n\n\
+    Thanks to Bill Anderson (www.winltp.com) for helpful suggestions"));
 	info.SetDescription(about);
 	info.SetCopyright(wxT("(C) 2001-2013 Christoph Schmidt-Hieber <christsc@gmx.de>\n\
-Christoph Schmidt-Hieber, University College London\n\
-Published under the GNU general public license (http://www.gnu.org/licenses/gpl.html)"));
+    Christoph Schmidt-Hieber, University College London\n\
+    Published under the GNU general public license (http://www.gnu.org/licenses/gpl.html)"));
 
 	wxAboutBox(info);
 }
