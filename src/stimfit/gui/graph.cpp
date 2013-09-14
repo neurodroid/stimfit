@@ -28,11 +28,6 @@
 #include <wx/printdlg.h>
 #include <wx/paper.h>
 
-#ifdef _STFDEBUG
-#include <iostream>
-#endif
-
-
 #include "./app.h"
 #include "./doc.h"
 #include "./view.h"
@@ -45,6 +40,41 @@
 #include "./usrdlg/usrdlg.h"
 #include "./graph.h"
 #include "./../math/measure.h"
+
+#ifdef _STFDEBUG
+#include <wx/utils.h>
+#include <iostream>
+#include <fstream>
+#include <ctime>
+#ifdef __MACH__
+#include <mach/clock.h>
+#include <mach/mach.h>
+#endif
+/* From https://gist.github.com/jbenet/1087739 */
+void current_utc_time(struct timespec *ts) {
+#ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
+    clock_serv_t cclock;
+    mach_timespec_t mts;
+    host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+    clock_get_time(cclock, &mts);
+    mach_port_deallocate(mach_task_self(), cclock);
+    ts->tv_sec = mts.tv_sec;
+    ts->tv_nsec = mts.tv_nsec;
+#else
+    clock_gettime(CLOCK_REALTIME, ts);
+#endif
+
+}
+static const double BILLION = 1000000000L;
+double tdiff(timespec time1, timespec time0) {
+    return ( time1.tv_sec - time0.tv_sec )
+        + ( time1.tv_nsec - time0.tv_nsec ) / BILLION;
+}
+
+double t2d(timespec time1) {
+    return time1.tv_sec + time1.tv_nsec / BILLION;
+}
+#endif
 
 BEGIN_EVENT_TABLE(wxStfGraph, wxWindow)
 EVT_MENU(ID_ZOOMHV,wxStfGraph::OnZoomHV)
@@ -661,6 +691,33 @@ void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int e
     int y_min = y_last;
     int x_next = 0;
     int y_next = 0;
+#ifdef _STFDEBUG
+    struct timespec time0, time1;
+    current_utc_time(&time0);
+#else
+    wxRect WindowRect(GetRect());
+    if (end-start > 2*WindowRect.width+1) {
+#endif    
+    for (int n=start; n<end-1; ++n) {
+        x_next = xFormat(n+1);
+        y_next = yFormatFunc( trace[n+1] );
+        pDC->DrawLine( x_last, y_last, x_next, y_next );
+        x_last = x_next;
+        y_last = y_next;
+    }
+#ifdef _STFDEBUG
+    current_utc_time(&time1);
+    double accum = tdiff(time1, time0)*1e3;
+    std::string fn_platform = "plt_bench_" + stf::wx2std(wxGetOsDescription()) + ".txt";
+    std::ofstream plt_bench;
+    plt_bench.open(fn_platform.c_str(), std::ios::out | std::ios::app);
+    plt_bench << end-start << "\t" << accum << "\t";
+    current_utc_time(&time0);
+    x_last = xFormat(start);
+    y_last = yFormatFunc( trace[start] );
+#else
+    } else {
+#endif
     for (int n=start; n<end-1; ++n) {
         x_next = xFormat(n+1);
         y_next = yFormatFunc( trace[n+1] );
@@ -689,6 +746,14 @@ void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int e
             y_last = y_next;
         }
     }
+#ifdef _STFDEBUG
+    current_utc_time(&time1);
+    accum = tdiff(time1, time0)*1e3;
+    plt_bench << accum << std::endl;
+    plt_bench.close();
+#else
+    }
+#endif
 }
 
 void wxStfGraph::PrintScale(wxRect& WindowRect) {
