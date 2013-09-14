@@ -105,7 +105,6 @@ enum {
     ID_CH2BASEZOOM,
     ID_SWAPCHANNELS,
     ID_SCALE,
-    ID_HIRES,
     ID_ZOOMHV,
     ID_ZOOMH,
     ID_ZOOMV,
@@ -446,17 +445,6 @@ public:
      */
     bool get_isBars() const { return isBars; }
 
-    //! Determine whether a high or a low resolution should be used for drawing traces.
-    /*! Will attempt to draw at most 50,000 points per trace.
-     *  \param value Set to true for high resolution, false for low resolution.
-     */
-    void set_isHires(bool value) { isHires=value; }
-
-    //! Indicates whether a high or a low resolution is used for drawing traces.
-    /*! \return true for high resolution, false for low resolution.
-     */
-    bool get_isHires() const { return isHires; }
-
     //! Get a formatted version string.
     /*! \return A version string (stimfit x.y.z, release/debug build, date).
      */
@@ -515,7 +503,7 @@ private:
 #pragma optimize( "", on )
 #endif
 
-    bool directTxtImport,isBars,isHires;
+    bool directTxtImport,isBars;
     stfio::txtImportSettings txtImport;
     // Registry:
     boost::shared_ptr<wxFileConfig> config;

@@ -151,7 +151,6 @@ EVT_MENU( ID_CH2POS, wxStfParentFrame::OnCh2pos )
 EVT_MENU( ID_CH2ZOOM, wxStfParentFrame::OnCh2zoom )
 EVT_MENU( ID_CH2BASEZOOM, wxStfParentFrame::OnCh2basezoom )
 EVT_MENU( ID_SCALE, wxStfParentFrame::OnScale )
-EVT_MENU( ID_HIRES, wxStfParentFrame::OnHires )
 
 EVT_MENU( ID_PRINT_PRINT, wxStfParentFrame::OnPrint)
 
@@ -1153,25 +1152,6 @@ void wxStfParentFrame::OnScale(wxCommandEvent& WXUNUSED(event)) {
             wxGetApp().set_isBars(false);
         }
         if (pView->GetGraph() != NULL)
-            pView->GetGraph()->Refresh();
-    }
-}
-
-void wxStfParentFrame::OnHires(wxCommandEvent& WXUNUSED(event)) {
-    wxStfView* pView=wxGetApp().GetActiveView();
-    if (pView!=NULL) {
-        if (GetActiveChild()->GetMenuBar() && GetActiveChild()->GetMenuBar()->GetMenu(2)->IsChecked(ID_HIRES)) {
-            wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("ViewHiRes"),1);
-#ifndef __APPLE__
-            wxGetApp().set_isHires(true);
-#else
-            wxGetApp().set_isHires(false);
-#endif
-        } else {
-            wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("ViewHiRes"),0);
-            wxGetApp().set_isHires(false);
-        }
-        if (pView->GetGraph()!=NULL)
             pView->GetGraph()->Refresh();
     }
 }
