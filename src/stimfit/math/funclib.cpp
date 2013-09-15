@@ -429,19 +429,21 @@ void stf::fHH_init(const Vector_double& data, double base, double peak, double R
 void stf::fgnabiexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT = stf::whereis( data, peak );
-    // stf::peak( data, base, 0, data.size(), 1, stf::both, maxT );
     
     if ( maxT == 0 ) maxT = data.size() * 0.05;
     // p[0]: gprime_na
     // p[1]: tau_m
     // p[2]: tau_h
     // p[3]: offset
-    pInit[1]=0.5 * maxT * dt;
-    pInit[2]=3 * maxT * dt;
-    double tpeak = pInit[1]*log(pInit[2]/pInit[1]+1);
+    // pInit[1]=0.5 * maxT * dt;
+    // pInit[2]=3 * maxT * dt;
+    pInit[1] = RTLoHi;
+    pInit[2] = HalfWidth;
+    pInit[3] = base; // offset fixed to baseline
+
     double norm = (1-exp(-tpeak/pInit[1]))*exp(-tpeak/pInit[2]);
-    pInit[0]=(peak-base)/norm;
-    pInit[3]=base;
+    double tpeak = pInit[1]*log(pInit[2]/pInit[1]+1);
+    pInit[0] = (peak-base)/norm;
 }
 
 std::vector<stf::parInfo> stf::getParInfoExp(int n_exp) {
