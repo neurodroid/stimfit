@@ -441,8 +441,8 @@ void stf::fgnabiexp_init(const Vector_double& data, double base, double peak, do
     pInit[2] = HalfWidth;
     pInit[3] = base; // offset fixed to baseline
 
-    double norm = (1-exp(-tpeak/pInit[1]))*exp(-tpeak/pInit[2]);
     double tpeak = pInit[1]*log(pInit[2]/pInit[1]+1);
+    double norm = (1-exp(-tpeak/pInit[1]))*exp(-tpeak/pInit[2]);
     pInit[0] = (peak-base)/norm;
 }
 
