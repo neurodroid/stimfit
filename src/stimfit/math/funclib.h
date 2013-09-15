@@ -31,7 +31,7 @@ namespace stf {
  */
 
     //! Sum of \e n exponential functions.
-    /*! \f[f(x)=p_{2n} + \sum_{i=0}^{2 n - 1}p_{2i}\mathrm{e}^{\frac{x}{p_{2i + 1}}}\f] 
+    /*! \f[f(x)=p_{2n} + \sum_{i=0}^{2 n - 1}p_{2i}\mathrm{e}^{\left( \frac{x}{p_{2i + 1}}\right)}\f] 
      *  \param x Function argument.
      *  \param p A valarray of parameters of size 2<em>n</em>+1, where \n
      *         \e n is the number of exponential terms, \n
@@ -45,9 +45,9 @@ namespace stf {
     
     //! Computes the Jacobian of stf::fexp().
     /*! \f{eqnarray*}
-     *   j_{2i}(x) &=& \frac{df(x)}{dp_{2i}} = \mathrm{e}^{\frac{-x}{p_{2i+1}}} \\
-     *   j_{2i+1}(x) &=& \frac{df(x)}{dp_{2i+1}} = \frac{p_{2i}}{p_{2i+1}^2} x \mathrm{e}^{\frac{-x}{p_{2i+1}}} \\
-     *   j_n(x) &=& \frac{df(x)}{dp_{n}} = 1
+     *   j_{2i}(x) &=& \frac{\partial f(x)}{\partial p_{2i}} = \mathrm{e}^{\left(\frac{-x}{p_{2i+1}}\right)} \\
+     *   j_{2i+1}(x) &=& \frac{\partial f(x)}{\partial p_{2i+1}} = \frac{p_{2i}}{p_{2i+1}^2} x \mathrm{e}^{\left( \frac{-x}{p_{2i+1}}\right)} \\
+     *   j_n(x) &=& \frac{\partial f(x)}{\partial p_{n}} = 1
      *  \f} 
      *  \param x Function argument.
      *  \param p A valarray of parameters of size 2<em>n</em>+1, where \n
@@ -93,7 +93,7 @@ namespace stf {
      *      f(x)=
      *      \begin{cases}
      *          p_0, & \mbox{if }x < p_3 \\ 
-     *          \left( p_0 - p_2 \right) \mathrm{e}^{\frac{p_3 - x}{p_1}} + p_2, & \mbox{if }x \geq p_3
+     *          \left( p_0 - p_2 \right) \mathrm{e}^{\left (\frac{p_3 - x}{p_1}\right )} + p_2, & \mbox{if }x \geq p_3
      *      \end{cases}
      *  \f} 
      *  \param x Function argument.
@@ -240,7 +240,7 @@ namespace stf {
      *   j_0(x) &=& \frac{\partial f(x)}{\partial p_0} = \frac{x \mathrm{e}^{\left(1 - \frac{x}{p_1} \right)}}{p_1} \\
      *   j_1(x) &=& \frac{\partial f(x)}{\partial p_1} = \frac{x \mathrm{e}^{\left(1 - \frac{x}{p_1} \right)}}{p_1} 
         \left(\frac{p_0 x}{p_1^2} - \frac{p_0}{p_1} \right) \\
-     *   j_2(x) &=& \frac{\partial f(x)}{\partial p_2} = 1.0
+     *   j_2(x) &=& \frac{\partial f(x)}{\partial p_2} = 1
      *  \f} 
      *  \param x Function argument.
      *  \param p A valarray of parameters, where \n
