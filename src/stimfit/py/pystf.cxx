@@ -689,6 +689,21 @@ double t50right_index( bool active ) {
     }
 }
 
+double get_halfwidth( bool active ) {
+    if ( !check_doc() ) return -1.0;
+
+    if ( active ) {
+        double dt = actDoc()->GetXScale();
+        double t50left = actDoc()->GetT50LeftReal();
+        double t50right = actDoc()->GetT50RightReal();
+        return ( t50right-t50left )*dt;
+    } else {
+        ShowError( wxT("At this time, halfwidth is only implemented for the active channel") );
+        return -1.0;
+    }
+    
+}
+
 double rtlow_index( bool active ) {
     if ( !check_doc() ) return -1.0;
 

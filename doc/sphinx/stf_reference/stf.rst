@@ -211,6 +211,18 @@ The :mod:`stf` module defines the following functions:
         
         *is_time* -- If False (default), returns the zero-based index. If True, returns the time from the beginning of the trace to the cursor position.
     
+.. function:: get_halfwidth(active=True)
+
+    Returns the half-maximal amplitude of an event in the specified channel.Uses the currently measured values, i.e. does not update measurements if thepeak or base window cursors have changed. Only implemented for the active channel.
+           
+        **Arguments:**
+
+        *active* -- If True, returns the current half-maximal amplitude within the active channel.
+                  
+        **Returns:**
+
+        The half-maximal amplitude in units of x-units. Returns a negative value upon failure.
+    
 .. function:: get_latency(\*args)
 
     Returns the latency value (in x-units) determined by the latency cursors set in the cursors settings menu. Call :func:`measure()` or hit enter to update the cursors.

@@ -778,6 +778,26 @@ double t50right_index( bool active = true );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) get_halfwidth;
+%feature("kwargs") get_halfwidth;
+%feature("docstring", "Returns the half-maximal amplitude of an event 
+in the specified channel. Uses the currently measured values, i.e. 
+does not update measurements if the peak or base window cursors have 
+changed. Only implemented for the active channel.
+   
+Arguments:
+active -- If True, returns the current half-maximal amplitude within the 
+          active channel. 
+          
+Returns:
+The half-maximal amplitude in units of x-units. Returns a 
+negative value upon failure.") get_halfwidth;
+%callback("%s_cb");
+double get_halfwidth( bool active = true );
+%nocallback;
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %feature("autodoc", 0) rtlow_index;
 %feature("kwargs") rtlow_index;
 %feature("docstring", "Returns the zero-based index of the lower rise-
