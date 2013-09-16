@@ -67,16 +67,18 @@ stfio::filetype stfio_file_type(HDRTYPE* hdr) {
 #endif
 
 #if (BIOSIG_VERSION > 10500)
-        case ABF2:
+        case ABF2:	return stfio::abf;
 #endif
         case ABF:	return stfio::abf;
         case ATF:	return stfio::atf;
-        case AXG:	return stfio::axg;
         case CFS:	return stfio::cfs;
         case HEKA:	return stfio::heka;
         case HDF:	return stfio::hdf5;
+#if (BIOSIG_VERSION > 10403)
+        case AXG:	return stfio::axg;
         case IBW:	return stfio::igor;
         case SMR:	return stfio::son;
+#endif
         default:	return stfio::none;
         }
 }
