@@ -700,7 +700,7 @@ void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int e
     current_utc_time(&time0);
 #else
     wxRect WindowRect(GetRect());
-    if (end-start > 2*WindowRect.width+1) {
+    if (end-start < 2*WindowRect.width+2) {
 #endif    
     for (int n=start; n<end-1; ++n) {
         x_next = xFormat(n+1);
