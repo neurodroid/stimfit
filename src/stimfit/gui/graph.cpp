@@ -45,7 +45,9 @@
 #include <iostream>
 #endif
 
-#if 0 //def _STFDEBUG
+// #define BENCHMARK // uncomment to run benchmark
+
+#ifdef BENCHMARK //def _STFDEBUG
 #include <wx/utils.h>
 #include <iostream>
 #include <fstream>
@@ -693,7 +695,7 @@ void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int e
     int y_last = yFormatFunc( trace[start] );
     int x_next = 0;
     int y_next = 0;
-#if 0 //def _STFDEBUG
+#ifdef BENCHMARK //def _STFDEBUG
     struct timespec time0, time1;
     current_utc_time(&time0);
 #else
@@ -707,7 +709,7 @@ void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int e
         x_last = x_next;
         y_last = y_next;
     }
-#if 0 //def _STFDEBUG
+#ifdef BENCHMARK //def _STFDEBUG
     current_utc_time(&time1);
     double accum = tdiff(time1, time0)*1e3;
     std::string fn_platform = "plt_bench_" + stf::wx2std(wxGetOsDescription()) + ".txt";
@@ -743,7 +745,7 @@ void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int e
             x_last = x_next;
         }
     }
-#if 0 //def _STFDEBUG
+#ifdef BENCHMARK //def _STFDEBUG
     current_utc_time(&time1);
     accum = tdiff(time1, time0)*1e3;
     plt_bench << accum << std::endl;
