@@ -400,7 +400,7 @@ void stf::fgauss_init(const Vector_double& data, double base, double peak, doubl
     for (int i=0; i < npars-1; i += 3) {
         pInit[i] = peak;
         pInit[i+1] = maxT;
-        pInit[i+2] = HalfWidth;
+        pInit[i+2] = HalfWidth/ 1.65; //approximate t50 to one standard deviation
     }
 }
 
