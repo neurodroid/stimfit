@@ -205,9 +205,9 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
     wxGetApp().wxWriteProfileString( wxT("Settings"), wxT("Last directory"), wxfFilename.GetPath() );
     if (wxDocument::OnOpenDocument(filename)) { //calls base class function
 
+#ifndef TEST_MINIMAL
         // Detect type of file according to filter:
         wxString filter(GetDocumentTemplate()->GetFileFilter());
-#ifndef TEST_MINIMAL
         stfio::filetype type = stfio::findType(stf::wx2std(filter));
 #else
         stfio::filetype type = stfio::none;

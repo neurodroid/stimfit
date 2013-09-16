@@ -41,7 +41,7 @@ endif
 DEFINES += -DWITH_BIOSIG
 DEFINES += -DHAVE_LAPACK
 DEFINES += -DWITH_PSLOPE
-DEFINES += -DTEST_MINIMAL
+#DEFINES += -DTEST_MINIMAL
 #DEFINES += -DPYTHON -DWITH_PYTHON
 
 
@@ -89,7 +89,6 @@ SOURCES = ./src/stimfit/stf.cpp \
 	./src/libstfio/cfs/cfslib.cpp \
 	./src/libstfio/section.cpp \
 	./src/libstfio/recording.cpp \
-	./src/libstfio/biosig/biosiglib.cpp \
 	./src/libstfio/hdf5/hdf5lib.cpp \
 	./src/libstfio/channel.cpp \
 	./src/libstfio/stfio.cpp \
@@ -190,9 +189,11 @@ CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -fstack-protector
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
 LIBS     += -lhdf5_hl -lhdf5
 ifneq (,$(findstring WITH_BIOSIG2, $(DEFINES)))
+  SOURCES += ./src/libstfio/biosig/biosiglib.cpp
   LIBS   += -lbiosig2  -lcholmod
 else 
   ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
+    SOURCES += ./src/libstfio/biosig/biosiglib.cpp
     LIBS += -lbiosig -lcholmod
   endif
 endif
