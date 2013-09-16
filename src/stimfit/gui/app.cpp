@@ -168,11 +168,10 @@ bool wxStfApp::OnInit(void)
     //// Create a template relating drawing documents to their views
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
     m_biosigTemplate=new wxDocTemplate( docManager,
-                                     wxT("Biosig files"), wxT("*.*"), wxT(""), wxT(""),
+                                     wxT("Biosig files"), wxT("*.dat;*.cfs;*.gdf;*.ibw"), wxT(""), wxT(""),
                                      wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #endif
-
     m_cfsTemplate=new wxDocTemplate( docManager,
                                      wxT("CED filing system"), wxT("*.dat;*.cfs"), wxT(""), wxT("dat;cfs"),
                                      wxT("CFS Document"), wxT("CFS View"), CLASSINFO(wxStfDoc),
@@ -209,6 +208,12 @@ bool wxStfApp::OnInit(void)
     m_sonTemplate=new wxDocTemplate( docManager,
                                      wxT("CED Spike 2 (SON) file"), wxT("*.smr"), wxT(""), wxT(""),
                                      wxT("SON Document"), wxT("SON View"), CLASSINFO(wxStfDoc),
+                                     CLASSINFO(wxStfView) );
+#endif
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+    m_biosigTemplate=new wxDocTemplate( docManager,
+                                     wxT("Biosig files"), wxT("*.*"), wxT(""), wxT(""),
+                                     wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #endif
     m_txtTemplate=new wxDocTemplate( docManager,
