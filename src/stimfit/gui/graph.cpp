@@ -691,8 +691,6 @@ void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int e
 
     int x_last = xFormat(start);
     int y_last = yFormatFunc( trace[start] );
-    int y_max = y_last;
-    int y_min = y_last;
     int x_next = 0;
     int y_next = 0;
 #if 0 //def _STFDEBUG
@@ -718,36 +716,31 @@ void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int e
     plt_bench << end-start << "\t" << accum << "\t";
     current_utc_time(&time0);
     x_last = xFormat(start);
-    y_last = yFormatFunc( trace[start] );
 #else
     } else {
 #endif
+    double y_max = trace[start];
+    double y_min = trace[start];
     for (int n=start; n<end-1; ++n) {
         x_next = xFormat(n+1);
-        y_next = yFormatFunc( trace[n+1] );
-        // if we are still at the same pixel column, only draw if this is an extremum:
+        // if we are still in the same pixel column, find extrema:
         if (x_next == x_last) {
-            if (y_next < y_min) {
-                y_min = y_next;
+            if (trace[n+1] < y_min) {
+                y_min = trace[n+1];
             }
-            if (y_next > y_max) {
-                y_max = y_next;
+            if (trace[n+1] > y_max) {
+                y_max = trace[n+1];
             }
         } else {
-            // else, always draw and reset extrema:
-            if (y_min != y_next) {
-                pDC->DrawLine( x_last, y_last, x_last, y_min );
-                y_last = y_min;
-            }
-            if (y_max != y_next) {
-                pDC->DrawLine( x_last, y_last, x_last, y_max );
-                y_last = y_max;
-            }
-            pDC->DrawLine( x_last, y_last, x_next, y_next );
-            y_min = y_next;
-            y_max = y_next;
+            // plot line between extrema of previous column:
+            pDC->DrawLine( x_last, yFormatFunc(y_min), x_last, yFormatFunc(y_max) );
+
+            // plot line between last point of previous and first point of this column:
+            pDC->DrawLine( x_last, yFormatFunc(trace[n]), x_next, yFormatFunc(trace[n+1]) );
+
+            y_min = trace[n+1];
+            y_max = trace[n+1];
             x_last = x_next;
-            y_last = y_next;
         }
     }
 #if 0 //def _STFDEBUG
