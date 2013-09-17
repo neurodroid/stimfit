@@ -477,7 +477,7 @@ TEST(measlib_test, maxrise_basic) {
     double maxrise = stf::maxRise(data, 1, data.size()-1, \
         maxRiseT, maxRiseY, 1);
     EXPECT_EQ(maxrise, 1.0);
-    EXPECT_EQ(maxRiseT, 16385.5);
+    EXPECT_EQ(maxRiseT, 16384.5);
     EXPECT_EQ(maxRiseY, 0.5);
 
 }
