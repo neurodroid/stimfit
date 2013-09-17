@@ -141,9 +141,25 @@ sys.stdout.write(distutils.sysconfig.get_python_lib(0,1,prefix=acprefix)+'\n');"
         AC_SUBST([PYTHON_SITE_PKG])
 
         #
-        # Check for unprefixed site packages path
+        # Check for prefixed dist packages
         #
-        AC_MSG_CHECKING([for unprefixed Python site-packages path])
+        AC_MSG_CHECKING([for prefixed Python dist-packages path])
+        if test -z "$PYTHON_PRE_DIST_PKG"; then
+                PYTHON_PRE_DIST_PKG=`$PYTHON -c \
+"import sys, distutils.sysconfig; \
+acprefix = \"${prefix}\"
+if acprefix is \"NONE\": acprefix=\"/usr/local/\"
+sys.stdout.write(distutils.sysconfig.get_python_lib(0,0,prefix=acprefix)+'\n');"`
+                PYTHON_PRE_DIST_PKG=${PYTHON_PRE_DIST_PKG}
+
+        fi
+        AC_MSG_RESULT([$PYTHON_PRE_DIST_PKG])
+        AC_SUBST([PYTHON_PRE_DIST_PKG])
+
+        #
+        # Check for unprefixed dist packages path
+        #
+        AC_MSG_CHECKING([for unprefixed Python dist-packages path])
         if test -z "$PYTHON_DIST_PKG"; then
                 PYTHON_DIST_PKG=`$PYTHON -c \
 "import sys, distutils.sysconfig; \
