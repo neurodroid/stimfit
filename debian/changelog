@@ -1,12 +1,13 @@
-stimfit (0.13.1-0lucid1) lucid; urgency=low
+stimfit (0.13.2-0precise1) precise; urgency=low
 
+  * Faster plotting
   * Add support for inner and outer rise time computations
   * Fix some potential buffer overflows
   * Improve biosig integration
   * Improve deconvolution-based event detection
   * Improve fit initialization for some functions
 
- -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 14 Sep 2013 13:22:42 +0000
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Tue, 17 Sep 2013 16:47:30 +0000
 
 stimfit (0.12.5-1) UNRELEASED; urgency=low
 
