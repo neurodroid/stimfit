@@ -44,7 +44,7 @@ wxStfFitSelDlg::wxStfFitSelDlg(wxWindow* parent, wxStfDoc* doc, int id, wxString
     wxStaticBoxSizer* m_listSizer = new wxStaticBoxSizer(
         wxVERTICAL, this, wxT("Available functions") );
 
-    m_listCtrl = new wxListCtrl( this, wxID_LIST, wxDefaultPosition, wxSize(550,300),
+    m_listCtrl = new wxListCtrl( this, wxID_LIST, wxDefaultPosition, wxSize(550,400),
             wxLC_LIST );
     int n_f = 0;
     for (c_stfunc_it cit = wxGetApp().GetFuncLib().begin(); cit != wxGetApp().GetFuncLib().end(); cit++) {
