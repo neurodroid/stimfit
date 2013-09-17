@@ -56,6 +56,9 @@ typedef std::vector<float > Vector_float;
         static const unsigned long __nan[2] = {0xffffffff, 0x7fffffff};
         #define NAN (*(const float *) __nan)
     #endif
+    #ifndef INFINITY
+        #define INFINITY (DBL_MAX+DBL_MAX)
+    #endif
     StfioDll long int lround(double x);
 #endif
 
