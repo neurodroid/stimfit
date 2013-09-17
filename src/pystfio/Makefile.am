@@ -54,9 +54,9 @@ endif
 	echo stfio > ${PYTHON_DEST_DIR}/stfio.pth
 
 uninstall-hook:
-	rm -f ${PYTHON_TARGET_DIR}/stfio/*.so
-	rm -f ${PYTHON_TARGET_DIR}/stfio.pth
-	rm -r ${PYTHON_TARGET_DIR}/stfio
+	rm -f ${PYTHON_DEST_DIR}/stfio/*.so
+	rm -f ${PYTHON_DEST_DIR}/stfio.pth
+	rm -r ${PYTHON_DEST_DIR}/stfio
 
 clean-local:
 	rm -f $(top_srcdir)/src/pystfio/pystfio_wrap.cxx $(top_srcdir)/src/pystfio/stfio.py
