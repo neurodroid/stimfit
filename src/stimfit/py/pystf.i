@@ -62,14 +62,14 @@ PyObject* get_trace(int trace=-1, int channel=-1);
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-%feature("autodoc", 0) template_matching;
-%feature("kwargs") template_matching;
+%feature("autodoc", 0) detect_events;
+%feature("kwargs") detect_events;
 %feature("docstring", "
       
 Arguments:
-") template_matching;
-PyObject* template_matching(double* invec, int size, const std::string& mode="criterion",
-                            bool norm=true, double lowpass=0.5, double highpass=0.0001);
+") detect_events;
+PyObject* detect_events(double* invec, int size, const std::string& mode="criterion",
+                        bool norm=true, double lowpass=0.5, double highpass=0.0001);
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -1559,6 +1559,10 @@ def cut_traces_multi( pt_list ):
         if len(new_list) > 0: new_list.append( get_trace()[old_pt:] )
     new_window_list( new_list )
     return True
-                  
+
+def template_matching(template, mode="criterion", norm=True, lowpass=0.5, highpass=0.0001):
+    import sys
+    sys.stderr.write("template_matching is deprecated. Use detect_events instead.\n")
+    return detect_events(template, mode, norm, lowpass, highpass)
 }
 //--------------------------------------------------------------------

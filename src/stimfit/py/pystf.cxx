@@ -1800,7 +1800,7 @@ PyObject* mpl_panel(const std::vector<double>& figsize) {
     return result;
 }
 
-PyObject* template_matching(double* invec, int size, const std::string& mode, bool norm, double lowpass, double highpass) {
+PyObject* detect_events(double* invec, int size, const std::string& mode, bool norm, double lowpass, double highpass) {
     wrap_array();
 
     if ( !check_doc() ) return NULL;
