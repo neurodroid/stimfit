@@ -401,15 +401,16 @@ double   stf::maxRise(const std::vector<double>& data,
         double& maxRiseY,
         std::size_t    windowLength)
 {
+
     size_t rightc = lround(right);
     size_t leftc  = lround(left);
     if (rightc < windowLength || leftc >= data.size()-windowLength || rightc >= data.size() || data.size() < windowLength) {
         throw std::out_of_range("Index out of range in stf::maxRise");
     }
-    double maxRise = -1e31;  // -Infinity
+    double maxRise = -INFINITY;  // -Infinity
     maxRiseT = NAN;		// non-a-number
     size_t i,j;
-    for (i = rightc - windowLength, j = right; i >= leftc; i--, j--) {
+    for (i = leftc, j = leftc + windowLength; j <= rightc; i++, j++) {
         double diff = fabs( data[i] - data[j] );
         if (maxRise<diff) {
             maxRise=diff;
