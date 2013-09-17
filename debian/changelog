@@ -2,6 +2,7 @@ stimfit (0.13.2-0precise1) precise; urgency=low
 
   * Faster plotting
   * Add support for inner and outer rise time computations
+  * Add option 'align to half-amplitude' when computing averages
   * Fix some potential buffer overflows
   * Improve biosig integration
   * Improve deconvolution-based event detection
