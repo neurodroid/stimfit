@@ -1,4 +1,4 @@
-stimfit (0.13.2-0precise1) precise; urgency=low
+stimfit (0.13.2-1) unstable; urgency=low
 
   * Faster plotting
   * Add support for inner and outer rise time computations
