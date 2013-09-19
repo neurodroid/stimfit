@@ -1,5 +1,7 @@
 stimfit (0.13.2-1) unstable; urgency=low
 
+  * New upstream release
+    - Disambiguate template type in boost's reset (Closes: #720825)
   * Faster plotting
   * Add support for inner and outer rise time computations
   * Add option 'align to half-amplitude' when computing averages
