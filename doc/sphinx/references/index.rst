@@ -10,6 +10,8 @@ References
 :Date:  |today|
 
 A list of recent publications that have used `Stimfit <http:http://www.stimfit.org>`_ for data analysis. Please let me know if something is missing here.
+
+
     * `Rodriguez-Sierra OE, Turesson HK, Pare D(2013). <http://jn.physiology.org/content/early/2013/08/02/jn.00408.2013.long>`_ Contrasting distribution of physiological cell types in different regions of the bed nucleus of the stria terminalis. *J Neurophysiol* August 7, 2013, doi: 10.1152/jn.00408.2013 
 
     * `Booker SA, Gross A, Althof D, Shigemoto R, Bettler B, Frotscher M, Hearing M, Wickman K, Watanabe M, Kulik A, Vida I (2013). <http://www.jneurosci.org/content/33/18/7961.full>`_ Differential GABAB-receptor-mediated effects in perisomatic- and dendrite-targeting parvalbumin interneurons. *J Neurosci* 33:7961-7974.
