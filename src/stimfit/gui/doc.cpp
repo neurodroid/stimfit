@@ -2452,8 +2452,8 @@ void wxStfDoc::Measure( )
        sampled with 20 kHz or lower, will use a 1 sample window, data with a larger sampling rate
        use a window of 0.05 ms for computing the slope.
     */
-	windowLength = lround(0.05 * GetSR());    // use window length of about 0.05 ms.
-       if (windowLength < 1) windowLength = 1;   // use a minimum window length of 1 sample
+    windowLength = lround(0.05 * GetSR());    // use window length of about 0.05 ms.
+    if (windowLength < 1) windowLength = 1;   // use a minimum window length of 1 sample
 
 
     //Begin peak and base calculation
@@ -2463,7 +2463,6 @@ void wxStfDoc::Measure( )
         baseSD=sqrt(var);
         peak=stf::peak(cur().get(),base,
                        peakBeg,peakEnd,pM,direction,maxT);
-        threshold = stf::threshold( cur().get(), peakBeg, peakEnd, slopeForThreshold/GetSR(), thrT, windowLength );
     }
     catch (const std::out_of_range& e) {
         base=0.0;
@@ -2471,7 +2470,12 @@ void wxStfDoc::Measure( )
         peak=0.0;
         throw e;
     }
-
+    try {
+        threshold = stf::threshold( cur().get(), peakBeg, peakEnd, slopeForThreshold/GetSR(), thrT, windowLength );
+    } catch (const std::out_of_range& e) {
+        threshold = 0;
+        throw e;
+    }
     //Begin Lo to Hi% Rise Time calculation
     //-------------------------------------
     // 2009-06-05: reference is either from baseline or from threshold

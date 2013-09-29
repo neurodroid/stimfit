@@ -149,13 +149,10 @@ double stf::threshold( const std::vector<double>& data, std::size_t llp, std::si
     if (llp > ulp || ulp >= data.size()) {
         throw (std::out_of_range("Exception:\n Index out of range in stf::threshold()"));
     }
-    // windowLength has to be smaller than upper limit peak (ulp) or size of array 
-    // lower limit peak (llp) has to be smaller than lenght of array - windowLength
-    if (windowLength > ulp || windowLength > data.size() || llp >= data.size()-windowLength ) {
+    if (ulp + windowLength > data.size()) {
         throw (std::out_of_range("Exception:\n Wrong window length in stf::threshold()"));
     }
-    
-    
+
     double threshold = 0.0;
 
     // find Slope within peak window:
@@ -404,7 +401,11 @@ double   stf::maxRise(const std::vector<double>& data,
 
     size_t rightc = lround(right);
     size_t leftc  = lround(left);
-    if (rightc < windowLength || leftc >= data.size()-windowLength || rightc >= data.size() || data.size() < windowLength) {
+    if (leftc >= data.size()-windowLength) {
+        leftc = data.size()-windowLength-1;
+    }
+    if (rightc >= data.size() || data.size() < windowLength)
+    {
         throw std::out_of_range("Index out of range in stf::maxRise");
     }
     double maxRise = -INFINITY;  // -Infinity
@@ -430,10 +431,14 @@ double stf::maxDecay(const std::vector<double>& data,
 {
     size_t rightc = lround(right);
     size_t leftc  = lround(left);
-    if (rightc < windowLength || leftc >= data.size()-windowLength || rightc >= data.size() || data.size() < windowLength) {
-        throw std::out_of_range("Index out of range in stf::maxDecay");
+    if (leftc >= data.size()-windowLength) {
+        leftc = data.size()-windowLength-1;
     }
-    double maxDecay = -1e31;  // -Infinity
+    if (rightc >= data.size() || data.size() < windowLength)
+    {
+        throw std::out_of_range("Index out of range in stf::maxRise");
+    }
+    double maxDecay = -INFINITY;  // -Infinity
     maxDecayT = NAN;		// non-a-number
     size_t i,j;
     for (j = leftc, i = leftc + windowLength; i < rightc; i++, j++) {
