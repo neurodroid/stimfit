@@ -449,6 +449,10 @@ void wxStfGraph::PlotGimmicks(wxDC& DC) {
     // Create double-arrow between latency cursors:
     int latStart=xFormat(Doc()->GetLatencyBeg());
     int latEnd=xFormat(Doc()->GetLatencyEnd());
+
+    if (latStart < 0) latStart = 0;
+    if (latEnd > GetRect().width) latEnd = GetRect().width;
+
     DC.DrawLine(latStart,20,latEnd,20);
     // left arrowhead:
     DC.DrawLine(latStart+1,20,latStart+6,15);
