@@ -658,7 +658,7 @@ TEST(measlib_validation, baseline) {
         EXPECT_NEAR(var, var_xpted, var_xpted*tol );
     }
 
-    save_txt("/tmp/base.val", mybase);
+    //save_txt("/tmp/base.val", mybase);
 }
 
 //=========================================================================
@@ -684,7 +684,8 @@ TEST(measlib_validation, peak) {
         EXPECT_NEAR(mypeak[i], myrand[i], fabs(myrand[i]*tol));
     }
 
-    save_txt("/tmp/peak.val", mypeak);
+    save_txt("/tmp/peak_stf.val", mypeak);
+    save_txt("/tmp/peak_real.val", myrand);
 }
 
 //=========================================================================

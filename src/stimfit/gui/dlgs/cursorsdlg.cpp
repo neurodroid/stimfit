@@ -238,7 +238,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     pageSizer->Add( pPeakAtEnd, 0, wxALIGN_CENTER | wxALL, 2);
 
     wxFlexGridSizer* peakSettingsGrid;
-    peakSettingsGrid=new wxFlexGridSizer(2,1,0,0);
+    peakSettingsGrid=new wxFlexGridSizer(1,2,0,0); // rows, cols
 
     // START: Number of points for peak calculation:
     wxFlexGridSizer* CommonGrid;
@@ -412,7 +412,8 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
 
     //**** Radio options "Measure from" ****
     wxStaticBoxSizer* LeftBoxSizer = new wxStaticBoxSizer(
-        wxVERTICAL, nbPage, wxT("Latency from") );
+        wxVERTICAL, nbPage, wxT("Reference channel") );
+        LeftBoxSizer->GetStaticBox()->SetForegroundColour(*wxRED);
 
     // Latency from: Manual
     wxRadioButton* wxRadio_Lat_Manual1 = new wxRadioButton( nbPage, wxRADIO_LAT_MANUAL1, wxT("Manual"),
@@ -442,7 +443,7 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
 
     //**** Radio options "Latency to" ****
     wxStaticBoxSizer* RightBoxSizer = new wxStaticBoxSizer(
-        wxVERTICAL, nbPage, wxT("Latency to") );
+        wxVERTICAL, nbPage, wxT("To active channel") );
 
     // Latency to: Manual
     wxRadioButton* wxRadio_Lat_Manual2 = new wxRadioButton( nbPage, wxRADIO_LAT_MANUAL2, wxT("Manual"),
