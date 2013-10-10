@@ -244,7 +244,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     wxFlexGridSizer* CommonGrid;
     CommonGrid = new wxFlexGridSizer(1,2,0,0);
     wxFlexGridSizer* LeftGrid;
-    LeftGrid = new wxFlexGridSizer(1,1,0,0);
+    LeftGrid = new wxFlexGridSizer(1,0,0);
     wxStaticBoxSizer* peakPointsSizer = new wxStaticBoxSizer(
             wxVERTICAL, nbPage, wxT("Number of points for peak") );
 
@@ -301,7 +301,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
 
     // START: Peak direction
     wxFlexGridSizer* RigthGrid;
-    RigthGrid = new wxFlexGridSizer(1,1,0,0);
+    RigthGrid = new wxFlexGridSizer(1,0,0);
     wxString directionChoices[] = { wxT("Up"), wxT("Down"), wxT("Both") };
     int directionNChoices = sizeof( directionChoices ) / sizeof( wxString );
     wxRadioBox* pDirection = new wxRadioBox( nbPage, wxDIRECTION, wxT("Peak direction"),
