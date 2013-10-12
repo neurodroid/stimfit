@@ -318,8 +318,8 @@ namespace stf {
      *         \e p[3] is the offset. \n
      *  \return A valarray \e j with the evaluated Jacobian, where \n
      *          \e j[0] contains the derivative with respect to \e p[0], \n
-     *          \e j[1] contains the derivative with respect to \e p[1] and \n
-     *          \e j[2] contains the derivative with respect to \e p[2].
+     *          \e j[1] contains the derivative with respect to \e p[1], \n
+     *          \e j[2] contains the derivative with respect to \e p[2] and \n
      *          \e j[3] contains the derivative with respect to \e p[3].
      */
     Vector_double fgnabiexp_jac(double x, const Vector_double& p);
