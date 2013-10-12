@@ -98,7 +98,7 @@ std::vector< stf::storedFunc > stf::GetFuncLib() {
 
     // power of 1 gNa function:
     funcList.push_back(stf::storedFunc(
-                                         "power of 1 g_Na function, offset fixed to baseline", parInfoHH, fgnabiexp, fgnabiexp_init, stf::nojac, false));
+                                         "power of 1 g_Na function, offset fixed to baseline", parInfoHH, fgnabiexp, fgnabiexp_init, fgnabiexp_jac, true));
 
     // Gaussian
     std::vector<stf::parInfo> parInfoGauss(3);
@@ -424,6 +424,15 @@ void stf::fHH_init(const Vector_double& data, double base, double peak, double R
     pInit[0] = (peak-base)/norm;
     //pInit[1] = 0.5 * maxT * dt;
     //pInit[2] = 3 * maxT * dt;
+}
+
+Vector_double stf::fgnabiexp_jac(double x, const Vector_double& p) {
+    Vector_double jac(4);
+    jac[0] = ( 1-exp(-x/p[1]) ) * exp(-x/p[2]);
+    jac[1] = -p[0] * x * exp(-x/p[1] - x/p[2])  /(p[1]*p[1]);
+    jac[2] = p[0] * x * ( 1-exp(-x/p[1]) ) * exp(-x/p[2]) / (p[2]*p[2]);
+    jac[3] = 1.0;
+    return jac;
 }
 
 void stf::fgnabiexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {

@@ -296,6 +296,34 @@ namespace stf {
      */
     double fgnabiexp(double x, const Vector_double& p);
 
+    //! Computes the Jacobian of stf::fgnabiexp().
+    /*! \f{eqnarray*}
+     *   j_0(x) &=& \frac{\partial f(x)}{\partial p_0} = 
+        \left(1 -\mathrm{e}^{\frac{-x}{p_1}}\right) \mathrm{e}^{\frac{-x}{p_2}} \\
+
+     *   j_1(x) &=& \frac{\partial f(x)}{\partial p_1} = 
+        p_0 \frac{ -x \mathrm{e}^{\left(-\frac{x}{p_1} - \frac{x}{p_2} \right)}}{p_1^2} \\
+
+     *   j_2(x) &=& \frac{\partial f(x)}{\partial p_2} = 
+        p_0 \frac{ x \left(1 -\mathrm{e}^{\frac{-x}{p_1}}\right) \mathrm{e}^{\frac{-x}{p_2}}}
+        {p_2^2}\\
+
+     *   j_3(x) &=& \frac{\partial f(x)}{\partial p_3} = 1
+     *  \f} 
+     *  \param x Function argument.
+     *  \param p A valarray of parameters, where \n
+     *         \e p[0] is the amplitude \f$g'_{Na}\f$, \n
+     *         \e p[1] is \f$\tau_m\f$, \n
+     *         \e p[2] is \f$\tau_h\f$ and \n
+     *         \e p[3] is the offset. \n
+     *  \return A valarray \e j with the evaluated Jacobian, where \n
+     *          \e j[0] contains the derivative with respect to \e p[0], \n
+     *          \e j[1] contains the derivative with respect to \e p[1] and \n
+     *          \e j[2] contains the derivative with respect to \e p[2].
+     *          \e j[3] contains the derivative with respect to \e p[3].
+     */
+    Vector_double fgnabiexp_jac(double x, const Vector_double& p);
+
     //! Initialises parameters for fitting stf::falpha() to \e data.
     /*! \param data The waveform of the data for the fit.
      *  \param base Baseline of \e data.
