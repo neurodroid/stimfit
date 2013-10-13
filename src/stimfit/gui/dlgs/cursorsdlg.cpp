@@ -149,9 +149,10 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
     topSizer->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 
     wxStdDialogButtonSizer* pSdbSizer = new wxStdDialogButtonSizer();
-    pSdbSizer->AddButton( new wxButton( this, wxID_OK ) );
+    //pSdbSizer->AddButton( new wxButton( this, wxID_OK ) );
+    //pSdbSizer->AddButton( new wxButton( this, wxID_CANCEL ) );
+    pSdbSizer->AddButton( new wxButton( this, wxID_CANCEL, wxT("Close") ) );
     pSdbSizer->AddButton( new wxButton( this, wxID_APPLY ) );
-    pSdbSizer->AddButton( new wxButton( this, wxID_CANCEL ) );
     pSdbSizer->Realize();
     topSizer->Add( pSdbSizer, 0, wxALIGN_CENTER | wxALL, 5 );
     topSizer->SetSizeHints(this);
@@ -171,10 +172,6 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
 bool wxStfCursorsDlg::TransferDataFromWindow() {
     // Apply settings before closing dialog:
     wxCommandEvent unusedEvent;
-    /* how did this sneak in?!
-       UpdateCursors();
-       OnPeakcalcexec(unusedEvent);
-    */
     return wxWindow::TransferDataFromWindow();
 }
 
