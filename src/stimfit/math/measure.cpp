@@ -38,7 +38,7 @@ double stf::base( double& var, const std::vector<double>& data, std::size_t llb,
 {
     if (data.size()==0) return 0;
     if (llb>ulb || ulb>=data.size()) {
-        throw (std::out_of_range("Exception:\n Index out of range in stf::base()"));
+        return NAN;
     }
     double base=0.0;
 
@@ -75,7 +75,8 @@ double stf::peak(const std::vector<double>& data, double base, std::size_t llp, 
             int pM, stf::direction dir, double& maxT)
 {
     if (llp>ulp || ulp>=data.size()) {
-        throw (std::out_of_range("Exception: Index out of range in stf::peak()"));
+        maxT = NAN;
+        return NAN;
     }
     
     double max=data[llp];
@@ -130,9 +131,8 @@ double stf::peak(const std::vector<double>& data, double base, std::size_t llp, 
             peak=sumY/n;
             maxT=(double)((llp+ulp)/2.0);
         } else {
-            throw (std::out_of_range(
-                    "mean peak points out of range in stf::peak()")
-            );
+            maxT = NAN;
+            peak = NAN;
         }
     }
     return peak;
@@ -147,10 +147,12 @@ double stf::threshold( const std::vector<double>& data, std::size_t llp, std::si
     // lower limit peak (ulb) has to be zero at least
     // upper limit peak (ulb) has to be < data.size()-windowLength (data[i+windowLength] will be used)
     if (llp > ulp || ulp >= data.size()) {
-        throw (std::out_of_range("Exception:\n Index out of range in stf::threshold()"));
+        thrT = NAN;
+        return NAN;
     }
     if (ulp + windowLength > data.size()) {
-        throw (std::out_of_range("Exception:\n Wrong window length in stf::threshold()"));
+        thrT = NAN;
+        return NAN;
     }
 
     double threshold = 0.0;
@@ -173,7 +175,8 @@ double stf::risetime(const std::vector<double>& data, double base, double ampl,
                      double& tLoReal)
 {
     if (frac <= 0 || frac >=0.5) {
-        throw std::out_of_range("frac has to be in ]0,0.5[ in stf::risetime");
+        tLoReal = NAN;
+        return NAN;
     }
     
     double lo = frac;
@@ -181,7 +184,8 @@ double stf::risetime(const std::vector<double>& data, double base, double ampl,
     
     //Lo%of peak
     if (right<0 || left<0 || right>=data.size()) {
-        throw std::out_of_range("Index out of range in stf::risetime");
+        tLoReal = NAN;
+        return NAN;
     }
     tLoId=(int)right>=1? (int)right:1;
     do {
@@ -230,7 +234,11 @@ double stf::risetime2(const std::vector<double>& data, double base, double ampl,
                      double& innerTLoReal, double& innerTHiReal, double& outerTLoReal, double& outerTHiReal )
 {
     if (frac <= 0 || frac >=0.5) {
-        throw std::out_of_range("frac has to be in ]0,0.5[ in stf::risetime");
+        innerTLoReal = NAN;
+        innerTHiReal = NAN;
+        outerTLoReal = NAN;
+        outerTHiReal = NAN;
+        return NAN;
     }
 
 #define NDEBUG
@@ -256,7 +264,11 @@ double stf::risetime2(const std::vector<double>& data, double base, double ampl,
 
     //Lo%of peak
     if (right<0 || left<0 || right>=data.size()) {
-        throw std::out_of_range("Index out of range in stf::risetime");
+        innerTLoReal = NAN;
+        innerTHiReal = NAN;
+        outerTLoReal = NAN;
+        outerTHiReal = NAN;
+        return NAN;
     }
 
 #ifndef NDEBUG
@@ -353,7 +365,8 @@ double   stf::t_half(const std::vector<double>& data,
         double& t50LeftReal)
 {
     if (center<0 || center>=data.size()) {
-        throw std::out_of_range("Index out of range in stf::t_half()");
+        t50LeftReal = NAN;
+        return NAN;
     }
     t50LeftId=(int)center>=1? (int)center:1;
     do {
@@ -404,9 +417,10 @@ double   stf::maxRise(const std::vector<double>& data,
     if (leftc >= data.size()-windowLength) {
         leftc = data.size()-windowLength-1;
     }
-    if (rightc >= data.size() || data.size() < windowLength)
-    {
-        throw std::out_of_range("Index out of range in stf::maxRise");
+    if (rightc >= data.size() || data.size() < windowLength) {
+        maxRiseY = NAN;
+        maxRiseT = NAN;
+        return NAN;
     }
     double maxRise = -INFINITY;  // -Infinity
     maxRiseT = NAN;		// non-a-number
@@ -434,9 +448,10 @@ double stf::maxDecay(const std::vector<double>& data,
     if (leftc >= data.size()-windowLength) {
         leftc = data.size()-windowLength-1;
     }
-    if (rightc >= data.size() || data.size() < windowLength)
-    {
-        throw std::out_of_range("Index out of range in stf::maxRise");
+    if (rightc >= data.size() || data.size() < windowLength) {
+        maxDecayT = NAN;
+        maxDecayY = NAN;
+        return NAN;
     }
     double maxDecay = -INFINITY;  // -Infinity
     maxDecayT = NAN;		// non-a-number
@@ -461,7 +476,7 @@ double stf::pslope(const std::vector<double>& data, std::size_t left, std::size_
 
     // cursor testing out of bounds
     if (left>right || right>data.size()) {
-        throw (std::out_of_range("Exception:\n Index out of range in stf::pslope()"));
+        return NAN;
     }
     // use interpolated data
     double y2 = ( data[right]+data[right+1] )/(double)2.0;
