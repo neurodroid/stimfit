@@ -974,13 +974,21 @@ void wxStfDoc::Concatenate(wxCommandEvent &WXUNUSED(event)) {
             wxGetApp().ErrorMsg(wxT("Memory allocation error"));
             return;
         }
+
+        if (cit == GetSelectedSections().begin()) {
+                TempSection.SetXScale(get()[GetCurCh()][*cit].GetXScale());
+        }
+        else if (TempSection.GetXScale() != get()[GetCurCh()][*cit].GetXScale()) {
+                wxGetApp().ErrorMsg(wxT("can not concatanate because sampling frequency differs"));
+                return;
+        }
+
         std::copy(get()[GetCurCh()][*cit].get().begin(),
                   get()[GetCurCh()][*cit].get().end(),
                   &TempSection[n_new]);
         n_new+=secSize;
         n_s++;
     }
-    ///TempSection.SetXScale(###FIXME###);
     TempSection.SetSectionDescription(
                                       stf::wx2std(GetTitle())+
                                       ", concatenated"
