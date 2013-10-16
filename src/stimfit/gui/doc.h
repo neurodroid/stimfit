@@ -512,6 +512,11 @@ public:
      */
     double GetPeak() const { return peak; }
     
+    //! Retrieves the peak time value.
+    /*! \return The peak time value.
+     */
+    double GetPeakTime() const { return maxT; }
+
     //! Retrieves the baseline.
     /*! \return The baseline value.
      */

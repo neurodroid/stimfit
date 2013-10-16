@@ -401,11 +401,13 @@ wxStfBatchDlg::wxStfBatchDlg(wxWindow* parent, int id, wxString title, wxPoint p
     batchOptions.push_back( BatchOption( wxT("Peak (from 0)"), true, id_peakzero ) );
     batchOptions.push_back( BatchOption( wxT("Peak (from base)"), true, id_peakbase ) );
     batchOptions.push_back( BatchOption( wxT("Peak (from threshold)"), true, id_peakthreshold ) );
+    batchOptions.push_back( BatchOption( wxT("Peak time"), true, id_peaktime ) );
     batchOptions.push_back( BatchOption( wxT("Lo-Hi% risetime"), false, id_rtLoHi ) );
     batchOptions.push_back( BatchOption( wxT("inner risetime"), false, id_innerLoHi ) );
     batchOptions.push_back( BatchOption( wxT("outer risetime"), false, id_outerLoHi ) );
     batchOptions.push_back( BatchOption( wxT("Half duration"), false, id_t50 ) );
     batchOptions.push_back( BatchOption( wxT("Max Slopes"), false, id_slopes ) );
+    batchOptions.push_back( BatchOption( wxT("Max slope times"), false, id_slopetimes ) );
     batchOptions.push_back( BatchOption( wxT("Latencies"), false, id_latencies ) );
     batchOptions.push_back( BatchOption( wxT("Fit results"), false, id_fit ) );
 #ifdef WITH_PSLOPE

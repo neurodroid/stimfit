@@ -1425,6 +1425,9 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
     if (SaveYtDialog.PrintPeakThreshold()) {
         colTitles.push_back("Peak (from threshold)");
     }
+    if (SaveYtDialog.PrintPeakTime()) {
+        colTitles.push_back("Peak time");
+    }
     if (SaveYtDialog.PrintRTLoHi()) {
         colTitles.push_back("RT Lo-Hi%");
     }
@@ -1440,6 +1443,10 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
     if (SaveYtDialog.PrintSlopes()) {
         colTitles.push_back("Max. slope rise");
         colTitles.push_back("Max. slope decay");
+    }
+    if (SaveYtDialog.PrintSlopeTimes()) {
+        colTitles.push_back("Time of max. rise");
+        colTitles.push_back("Time of max. decay");
     }
     if (SaveYtDialog.PrintLatencies()) {
         colTitles.push_back("Latency");
@@ -1594,6 +1601,8 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
                 table.at(n_s,nCol++)=GetPeak()-GetBase();
             if (SaveYtDialog.PrintPeakThreshold())
                 table.at(n_s,nCol++)=GetPeak()-GetThreshold();
+            if (SaveYtDialog.PrintPeakTime())
+                table.at(n_s,nCol++)=GetPeakTime()*GetXScale();
             if (SaveYtDialog.PrintRTLoHi())
                 table.at(n_s,nCol++)=GetRTLoHi();
             if (SaveYtDialog.PrintInnerRTLoHi())
@@ -1605,6 +1614,10 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
             if (SaveYtDialog.PrintSlopes()) {
                 table.at(n_s,nCol++)=GetMaxRise();
                 table.at(n_s,nCol++)=GetMaxDecay();
+            }
+            if (SaveYtDialog.PrintSlopeTimes()) {
+                table.at(n_s,nCol++)=GetMaxRiseT()*GetXScale();
+                table.at(n_s,nCol++)=GetMaxDecayT()*GetXScale();
             }
             if (SaveYtDialog.PrintLatencies()) {
                 table.at(n_s,nCol++)=GetLatency()*GetXScale();

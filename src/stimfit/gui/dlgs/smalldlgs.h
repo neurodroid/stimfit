@@ -325,11 +325,13 @@ class wxStfBatchDlg : public wxDialog
         id_peakzero,
         id_peakbase,
         id_peakthreshold,
+        id_peaktime,
         id_rtLoHi,
         id_innerLoHi,
         id_outerLoHi,
         id_t50,
         id_slopes,
+        id_slopetimes,
         id_latencies,
         id_fit,
 #ifdef WITH_PSLOPE
@@ -385,7 +387,12 @@ public:
     /*! \return true if it should be printed, false otherwise.
      */
     bool PrintPeakThreshold() const {return LookUp(id_peakthreshold).selection;}
-    
+
+    //! Indicates whether the peak value (from threshold) should be printed in the batch analysis table.
+    /*! \return true if it should be printed, false otherwise.
+     */
+    bool PrintPeakTime() const {return LookUp(id_peaktime).selection;}
+
     //! Indicates whether the Lo-Hi% rise time should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
@@ -410,6 +417,11 @@ public:
     /*! \return true if it should be printed, false otherwise.
      */
     bool PrintSlopes() const {return  LookUp(id_slopes).selection;}
+
+    //! Indicates whether the peak value (from threshold) should be printed in the batch analysis table.
+    /*! \return true if it should be printed, false otherwise.
+     */
+    bool PrintSlopeTimes() const {return LookUp(id_slopetimes).selection;}
 
 #ifdef WITH_PSLOPE
     //! Indicates whether the slopes should be printed in the batch analysis table.
