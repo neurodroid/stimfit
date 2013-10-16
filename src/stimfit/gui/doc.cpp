@@ -60,6 +60,7 @@ EVT_MENU( ID_UNSELECTALL, wxStfDoc::Deleteselected )
 EVT_MENU( ID_SELECTSOME, wxStfDoc::Selectsome )
 EVT_MENU( ID_UNSELECTSOME, wxStfDoc::Unselectsome )
 EVT_MENU( ID_CONCATENATE, wxStfDoc::Concatenate )
+EVT_MENU( ID_CONCATENATE_MULTICHANNEL, wxStfDoc::ConcatenateMultiChannel )
 EVT_MENU( ID_BATCH, wxStfDoc::OnAnalysisBatch )
 EVT_MENU( ID_INTEGRATE, wxStfDoc::OnAnalysisIntegrate )
 EVT_MENU( ID_DIFFERENTIATE, wxStfDoc::OnAnalysisDifferentiate )
@@ -986,6 +987,70 @@ void wxStfDoc::Concatenate(wxCommandEvent &WXUNUSED(event)) {
     );
     Channel TempChannel(TempSection);
     Recording Concatenated(TempChannel);
+    Concatenated.CopyAttributes(*this);
+    wxGetApp().NewChild(Concatenated,this,wxString(GetTitle()+wxT(", concatenated")));
+}
+
+void wxStfDoc::ConcatenateMultiChannel(wxCommandEvent &WXUNUSED(event)) {
+
+    if (GetSelectedSections().empty()) {
+        wxGetApp().ErrorMsg(wxT("Select sweeps first"));
+        return;
+    }
+
+    wxProgressDialog progDlg( wxT("Concatenating sweeps"), wxT("Starting..."),
+            100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
+
+    size_t ns, NS = get().size();
+    Recording Concatenated(NS, 1);
+
+    for (ns = 0; ns < NS; ns++) {
+        int new_size=0;
+        for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
+            new_size+=(int)get()[ns][*cit].size();
+        }
+        Section TempSection(new_size);
+        std::size_t n_new=0;
+        std::size_t n_s=0;
+        for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
+            wxString progStr;
+            progStr << wxT("Adding section #") << (int)n_s+1 << wxT(" of ") << (int)GetSelectedSections().size();
+            progDlg.Update(
+                (int)((double)n_s/(double)GetSelectedSections().size()*100.0),
+                progStr
+            );
+
+            if (cit == GetSelectedSections().begin()) {
+                TempSection.SetXScale(get()[ns][*cit].GetXScale());
+            }
+            else if (TempSection.GetXScale() != get()[ns][*cit].GetXScale()) {
+                wxGetApp().ErrorMsg(wxT("can not concatanate because sampling frequency differs"));
+                return;
+            }
+
+            std::size_t secSize=get()[ns][*cit].size();
+            if (n_new+secSize>TempSection.size()) {
+                wxGetApp().ErrorMsg(wxT("Memory allocation error"));
+                return;
+            }
+            std::copy(get()[ns][*cit].get().begin(),
+                  get()[ns][*cit].get().end(),
+                  &TempSection[n_new]);
+            n_new += secSize;
+            n_s++;
+        }
+        ///TempSection.SetXScale(###FIXME###);
+        TempSection.SetSectionDescription(
+                                      stf::wx2std(GetTitle())+
+                                      ", concatenated"
+        );
+        Channel TempChannel(TempSection);
+	TempChannel.SetChannelName(get()[ns].GetChannelName());
+	TempChannel.SetYUnits(get()[ns].GetYUnits());
+	Concatenated.InsertChannel(TempChannel, ns);
+    }
+
+    // Recording Concatenated(TempChannel);
     Concatenated.CopyAttributes(*this);
     wxGetApp().NewChild(Concatenated,this,wxString(GetTitle()+wxT(", concatenated")));
 }

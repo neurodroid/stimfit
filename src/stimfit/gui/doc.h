@@ -51,6 +51,7 @@ private:
     void Selectsome(wxCommandEvent& event);
     void Unselectsome(wxCommandEvent& event);
     void Concatenate(wxCommandEvent& event);
+    void ConcatenateMultiChannel(wxCommandEvent& event);
     void OnAnalysisBatch( wxCommandEvent& event );
     void OnAnalysisIntegrate( wxCommandEvent& event );
     void OnAnalysisDifferentiate( wxCommandEvent& event );
