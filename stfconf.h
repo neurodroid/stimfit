@@ -20,4 +20,4 @@
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "0.13.3"
+#define STIMFIT_VERSION "0.13.3"

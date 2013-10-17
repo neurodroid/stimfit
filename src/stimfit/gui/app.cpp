@@ -1374,7 +1374,7 @@ std::vector<stf::SectionPointer> wxStfApp::GetSectionsWithFits() const {
 wxString wxStfApp::GetVersionString() const {
     wxString verString;
     verString << wxT("Stimfit ")
-              << wxString(VERSION, wxConvLocal)
+              << wxString(STIMFIT_VERSION, wxConvLocal)
 #ifdef _STFDEBUG
               << wxT(", debug build, ");
 #else

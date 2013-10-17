@@ -554,7 +554,7 @@ void wxStfParentFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
 {
 	wxAboutDialogInfo info;
 	info.SetName(wxT("Stimfit"));
-	info.SetVersion(wxString(VERSION, wxConvLocal));
+	info.SetVersion(wxString(STIMFIT_VERSION, wxConvLocal));
 	info.SetWebSite(wxT("http://www.stimfit.org"));
 	wxString about = wxString(wxT("Credits:\n\nOriginal idea (Stimfit for DOS):\n\
     Peter Jonas, Physiology Department, University of Freiburg\n\n\
@@ -631,7 +631,7 @@ std::vector<int> ParseVersionString( const wxString& VersionString ) {
 
 bool CompVersion( const std::vector<int>& version ) {
     // Get current version:
-    wxString currentString(VERSION, wxConvLocal);
+    wxString currentString(STIMFIT_VERSION, wxConvLocal);
     std::vector<int> current = ParseVersionString(currentString);
     if (version[0] > current[0]) {
         return true;
