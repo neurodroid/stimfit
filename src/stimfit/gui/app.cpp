@@ -663,11 +663,6 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     m_edit_menu->AppendSeparator();
     m_edit_menu->AppendSubMenu(editSub,wxT("New window with..."));
     m_edit_menu->Append(
-                        ID_CONCATENATE,
-                        wxT("&Concatenate selected traces"),
-                        wxT("Create one large trace by merging selected traces in this file")
-                        );
-    m_edit_menu->Append(
                         ID_CONCATENATE_MULTICHANNEL,
                         wxT("&Concatenate selected sweeps (multiple channels)"),
                         wxT("Create one large sweep by merging selected sweeps in this file")

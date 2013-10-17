@@ -59,7 +59,6 @@ EVT_MENU( ID_MYSELECTALL, wxStfDoc::Selectall )
 EVT_MENU( ID_UNSELECTALL, wxStfDoc::Deleteselected )
 EVT_MENU( ID_SELECTSOME, wxStfDoc::Selectsome )
 EVT_MENU( ID_UNSELECTSOME, wxStfDoc::Unselectsome )
-EVT_MENU( ID_CONCATENATE, wxStfDoc::Concatenate )
 EVT_MENU( ID_CONCATENATE_MULTICHANNEL, wxStfDoc::ConcatenateMultiChannel )
 EVT_MENU( ID_BATCH, wxStfDoc::OnAnalysisBatch )
 EVT_MENU( ID_INTEGRATE, wxStfDoc::OnAnalysisIntegrate )
@@ -946,57 +945,6 @@ void wxStfDoc::Remove() {
 
     Focus();
 
-}
-
-void wxStfDoc::Concatenate(wxCommandEvent &WXUNUSED(event)) {
-    if (GetSelectedSections().empty()) {
-        wxGetApp().ErrorMsg(wxT("Select traces first"));
-        return;
-    }
-    wxProgressDialog progDlg( wxT("Concatenating traces"), wxT("Starting..."),
-            100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
-    int new_size=0;
-    for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
-        new_size+=(int)get()[GetCurCh()][*cit].size();
-    }
-    Section TempSection(new_size);
-    std::size_t n_new=0;
-    std::size_t n_s=0;
-    for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
-        wxString progStr;
-        progStr << wxT("Adding section #") << (int)n_s+1 << wxT(" of ") << (int)GetSelectedSections().size();
-        progDlg.Update(
-                (int)((double)n_s/(double)GetSelectedSections().size()*100.0),
-                progStr
-        );
-        std::size_t secSize=get()[GetCurCh()][*cit].size();
-        if (n_new+secSize>TempSection.size()) {
-            wxGetApp().ErrorMsg(wxT("Memory allocation error"));
-            return;
-        }
-
-        if (cit == GetSelectedSections().begin()) {
-                TempSection.SetXScale(get()[GetCurCh()][*cit].GetXScale());
-        }
-        else if (TempSection.GetXScale() != get()[GetCurCh()][*cit].GetXScale()) {
-                wxGetApp().ErrorMsg(wxT("can not concatanate because sampling frequency differs"));
-                return;
-        }
-
-        std::copy(get()[GetCurCh()][*cit].get().begin(),
-                  get()[GetCurCh()][*cit].get().end(),
-                  &TempSection[n_new]);
-        n_new+=secSize;
-        n_s++;
-    }
-    TempSection.SetSectionDescription(
-                                      stf::wx2std(GetTitle())+
-                                      ", concatenated"
-    );
-    Channel TempChannel(TempSection);
-    Recording Concatenated(TempChannel);
-    Concatenated.CopyAttributes(*this);
-    wxGetApp().NewChild(Concatenated,this,wxString(GetTitle()+wxT(", concatenated")));
 }
 
 void wxStfDoc::ConcatenateMultiChannel(wxCommandEvent &WXUNUSED(event)) {
