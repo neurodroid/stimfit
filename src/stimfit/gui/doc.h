@@ -94,15 +94,13 @@ private:
         base, APBase, baseSD, threshold, slopeForThreshold, peak, APPeak, tLoReal, tHiReal, t50LeftReal, t50RightReal,
         maxT, thrT, maxRiseY, maxRiseT, maxDecayY, maxDecayT, maxRise, maxDecay,
         t50Y, APMaxT, APMaxRise, APMaxRiseT, APt50LeftReal, 
-//#ifdef WITH_PSLOPE
+#ifdef WITH_PSLOPE
         PSlope,
-//#endif
+#endif
         rtLoHi, InnerLoRT, InnerHiRT, OuterLoRT, OuterHiRT, halfDuration, slopeRatio, t0Real;
     // cursor windows:
     int pM;  //peakMean, number of points used for averaging
     int RTFactor; // Lower point for the rise-time calculation
-#ifdef WITH_PSLOPE
-#endif
 
     // currently accessed channel:
     std::size_t cc;
@@ -121,9 +119,6 @@ private:
     bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold,
         viewRTLoHi, viewInnerRiseTime, viewOuterRiseTime,
         viewT50,viewRD,viewSloperise,viewSlopedecay,viewLatency,
-#ifdef WITH_PSLOPE
-        //viewPSlope,
-#endif
         viewCursors;
 
     XZoom xzoom;
@@ -579,12 +574,12 @@ public:
      */
     int GetRTFactor() const { return RTFactor; }
 
-//#ifdef WITH_PSLOPE
+#ifdef WITH_PSLOPE
     //! Retrieves the value of the Slope
     /*! \return slope value in y-units/x-units.
     */
     double GetPSlope() const { return PSlope; }
-//#endif
+#endif
 
     //! Retrieves the mode of the latency start cursor.
     /*! \return The current mode of the latency start cursor..

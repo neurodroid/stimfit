@@ -1507,6 +1507,11 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         }
         colTitles.push_back("Fit warning code");
     }
+#ifdef WITH_PSLOPE
+    if (SaveYtDialog.PrintPSlopes()) {
+        colTitles.push_back("pSlope");
+    }
+#endif
     if (SaveYtDialog.PrintThr()) {
         colTitles.push_back("# of thr. crossings");
     }
@@ -1666,6 +1671,11 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
                     table.SetEmpty(n_s,nCol++);
                 }
             }
+#ifdef WITH_PSLOPE
+            if (SaveYtDialog.PrintPSlopes()) {
+                table.at(n_s,nCol++)=GetPSlope();
+            }
+#endif
             if (SaveYtDialog.PrintThr()) {
                 table.at(n_s,nCol++)=n_crossings;
             }
