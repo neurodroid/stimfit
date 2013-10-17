@@ -322,6 +322,7 @@ class wxStfBatchDlg : public wxDialog
         id_base=0,
         id_basesd,
         id_threshold,
+        id_slopethresholdtime,
         id_peakzero,
         id_peakbase,
         id_peakthreshold,
@@ -330,6 +331,7 @@ class wxStfBatchDlg : public wxDialog
         id_innerLoHi,
         id_outerLoHi,
         id_t50,
+        id_t50se,
         id_slopes,
         id_slopetimes,
         id_latencies,
@@ -373,6 +375,11 @@ public:
      */
     bool PrintThreshold() const {return LookUp(id_threshold).selection;}
 
+    //! Indicates whether the time of slope threshold crossing should be printed in the batch analysis table.
+    /*! \return true if it should be printed, false otherwise.
+     */
+    bool PrintSlopeThresholdTime() const {return LookUp(id_slopethresholdtime).selection;}
+
     //! Indicates whether the peak (from 0) value should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
@@ -408,10 +415,15 @@ public:
      */
     bool PrintOuterRTLoHi() const {return LookUp(id_outerLoHi).selection;}
 
-    //! Indicates whether the half duration should be printed in the batch analysis table.
+    //! Indicates whether the half amplitude duration should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
      */
     bool PrintT50() const {return  LookUp(id_t50).selection;}
+
+    //! Indicates whether the start and end time for half amplitude should be printed in the batch analysis table.
+    /*! \return true if it should be printed, false otherwise.
+     */
+    bool PrintT50SE() const {return  LookUp(id_t50se).selection;}
 
     //! Indicates whether the maximal slopes should be printed in the batch analysis table.
     /*! \return true if it should be printed, false otherwise.
