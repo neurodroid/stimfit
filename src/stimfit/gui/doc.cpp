@@ -997,7 +997,6 @@ void wxStfDoc::ConcatenateMultiChannel(wxCommandEvent &WXUNUSED(event)) {
             n_new += secSize;
             n_s++;
         }
-        ///TempSection.SetXScale(###FIXME###);
         TempSection.SetSectionDescription(
                                       stf::wx2std(GetTitle())+
                                       ", concatenated"
@@ -1140,7 +1139,7 @@ void wxStfDoc::CreateAverage(
             wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
             return;
         }
-        ///TempSection.SetXScale(###FIXME###);
+        TempSection.SetXScale(get()[n_c][0].GetXScale());	// set xscale for channel n_c and the only section
         TempSection.SetSectionDescription(stf::wx2std(GetTitle())
                                           +std::string(", average"));
         Channel TempChannel(TempSection);
@@ -2341,8 +2340,8 @@ void wxStfDoc::Extract( wxCommandEvent& WXUNUSED(event) ) {
                 }
                 std::ostringstream eventDesc;
                 eventDesc << "Extracted event #" << (int)n_real;
-                //?TempSection2.SetXScale(###FIXME###);
                 TempSection2.SetSectionDescription(eventDesc.str());
+                TempSection2.SetXScale(get()[GetCurCh()][GetCurSec()].GetXScale());
                 TempChannel2.InsertSection( TempSection2, n_real );
                 n_real++;
                 lastEventIt = it;
