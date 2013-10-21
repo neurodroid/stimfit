@@ -82,7 +82,9 @@ bool measure( );
 double get_base( bool active = true );
 double get_peak( );
 double get_halfwidth (bool active = true);
+#ifdef WITH_PSLOPE
 double get_pslope();
+#endif
 double get_threshold_time( bool is_time = false );
 double get_threshold_value( );
 double get_latency();

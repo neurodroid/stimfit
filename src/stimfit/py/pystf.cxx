@@ -1286,12 +1286,15 @@ double get_base( bool active ) {
         return actDoc()->GetAPBase();
     }
 }
+
+#ifdef WITH_PSLOPE
 double get_pslope() {
 
     if (!check_doc() ) return 0.0; 
 
     return actDoc()->GetPSlope();
 }
+#endif
 
 double get_peak( ) {
     

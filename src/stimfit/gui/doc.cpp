@@ -134,7 +134,9 @@ wxStfDoc::wxStfDoc() :
     APMaxRise(0.0),
     APMaxRiseT(0.0),
     APt50LeftReal(0.0),
+#ifdef WITH_PSLOPE
     PSlope(0.0),
+#endif
     rtLoHi(0.0),
     InnerLoRT(NAN),
     InnerHiRT(NAN),

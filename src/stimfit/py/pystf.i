@@ -637,6 +637,7 @@ double get_peak( );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+#ifdef WITH_PSLOPE
 %feature("autodoc", 0) get_pslope;
 %feature("docstring", "Returns the slope, measured from
 slope cursor values defined in the cursors settings menu(!).
@@ -645,6 +646,7 @@ This option is only available under GNU/Linux.
 Returns:
 The current slope value.") get_pslope;
 double get_pslope( );
+#endif
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
