@@ -170,7 +170,7 @@ if test "$enable_module" != "yes"; then
     if test "$LAPACKLIB" = ""; then
         if test "$STFKERNEL" = "darwin" ; then
             # System LAPACK
-            LIBLAPACK_LDFLAGS="/usr/lib/liblapack.dylib -framework vecLib"
+            LIBLAPACK_LDFLAGS="/usr/lib/liblapack.dylib -framework Accelerate"
             CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK -DHAVE_LAPACK_SUFFIX" 
         else
             AC_CHECK_LIB([lapack], [dgemm_], HAVE_LAPACKX="yes")
@@ -272,14 +272,14 @@ case $WX_BASENAME in
     *wx_osx*)
         AC_MSG_RESULT($WX_BASENAME)
         AC_CHECK_PROG(REZ, Rez, Rez, /Developer/Tools/Rez)
-        POSTLINK_COMMAND="\$(REZ) -d __DARWIN__ -t APPL Carbon.r -o"
+        POSTLINK_COMMAND="\$(REZ) -d __DARWIN__ -t APPL -o"
         AC_CHECK_PROG(SETFILE, SetFile, SetFile, /Developer/Tools/SetFile)
         MACSETFILE="\$(SETFILE)"
     ;;
     *wx_mac*)
         AC_MSG_RESULT($WX_BASENAME)
         AC_CHECK_PROG(REZ, Rez, Rez, /Developer/Tools/Rez)
-        POSTLINK_COMMAND="\$(REZ) -d __DARWIN__ -t APPL Carbon.r -o"
+        POSTLINK_COMMAND="\$(REZ) -d __DARWIN__ -t APPL -o"
         AC_CHECK_PROG(SETFILE, SetFile, SetFile, /Developer/Tools/SetFile)
         MACSETFILE="\$(SETFILE)"
     ;;
