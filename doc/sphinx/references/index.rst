@@ -12,8 +12,9 @@ References
 A list of recent publications that have used `Stimfit <http:http://www.stimfit.org>`_ for data analysis. Please let me know if something is missing here.
 
 
+    * `Schmidt-Salzmann C, Li L, Bischofberger J (2013). <http://jp.physoc.org/content/early/2013/11/11/jphysiol.2013.267203.abstract>`_ Functional properties of extrasynaptic AMPA and NMDA receptors during postnatal hippocampal neurogenesis. *J Physiol*,  doi: 10.1113/jphysiol.2013.267203
+    * `Hosp JA, Strüber M, Yanagawa Y, Obata K, Vida I, Jonas P, Bartos M (2013). <http://onlinelibrary.wiley.com/doi/10.1002/hipo.22214/full>`_ Morpho-physiological criteria divide dentate gyrus interneurons into classes. *Hippocampus*, doi: 10.1002/hipo.22214
     * `Rodriguez-Sierra OE, Turesson HK, Pare D (2013). <http://jn.physiology.org/content/early/2013/08/02/jn.00408.2013.long>`_ Contrasting distribution of physiological cell types in different regions of the bed nucleus of the stria terminalis. *J Neurophysiol* August 7, 2013, doi: 10.1152/jn.00408.2013 
-
     * `Booker SA, Gross A, Althof D, Shigemoto R, Bettler B, Frotscher M, Hearing M, Wickman K, Watanabe M, Kulik A, Vida I (2013). <http://www.jneurosci.org/content/33/18/7961.full>`_ Differential GABAB-receptor-mediated effects in perisomatic- and dendrite-targeting parvalbumin interneurons. *J Neurosci* 33:7961-7974.
     * `Turesson HK, Rodriguez-Sierra OE, Pare D (2013). <http://jn.physiology.org/cgi/pmidlookup?view=long&pmid=23446692>`_ Intrinsic connections in the anterior part of the bed nucleus of the stria terminalis. *J Neurophysiol*  February 27, 2013, doi: 10.1152/jn.00004.2013 
     * `Schmidt-Hieber C, Häusser M (2013). <http://www.nature.com/neuro/journal/v16/n3/full/nn.3340.html>`_ Cellular mechanisms of spatial navigation in the medial entorhinal cortex. *Nat Neurosci* 16(3):325-331.
