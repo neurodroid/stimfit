@@ -5,7 +5,7 @@ PortSystem          1.0
 PortGroup           python 1.0
 
 name                py-stfio
-version             0.13.2
+version             0.13.4
 categories          python science
 platforms           darwin
 license             GPL-2
@@ -19,7 +19,7 @@ distname            stimfit-${version}
 checksums           rmd160  RMD160 \
                     sha256  SHA256
 
-python.versions     25 26 27 31 32 33
+python.versions     26 27 32 33
 
 if { ${subport} != ${name} } {
     depends_build   port:swig-python

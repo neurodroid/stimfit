@@ -17,10 +17,16 @@ SHA256=`openssl sha256 -r ../../build/release/stimfit-${STFVERSION}.tar.gz | awk
 echo "rmd160:" ${RMD160}
 echo "sha256:" ${SHA256}
 
-sed 's/RMD160/'${RMD160}'/g' ${MPDIR}/science/stimfit/Portfile.in > ${MPDIR}/science/stimfit/Portfile
-sed -i 's/SHA256/'${SHA256}'/g' ${MPDIR}/science/stimfit/Portfile
-sed 's/RMD160/'${RMD160}'/g' ${MPDIR}/python/py-stfio/Portfile.in > ${MPDIR}/python/py-stfio/Portfile
-sed -i 's/SHA256/'${SHA256}'/g' ${MPDIR}/python/py-stfio/Portfile
+GSED=`which gsed`
+if [ "${GSED}" = "" ]
+then
+    GSED=`which sed`
+fi
+
+${GSED} 's/RMD160/'${RMD160}'/g' ${MPDIR}/science/stimfit/Portfile.in > ${MPDIR}/science/stimfit/Portfile
+${GSED} -i 's/SHA256/'${SHA256}'/g' ${MPDIR}/science/stimfit/Portfile
+${GSED} 's/RMD160/'${RMD160}'/g' ${MPDIR}/python/py-stfio/Portfile.in > ${MPDIR}/python/py-stfio/Portfile
+${GSED} -i 's/SHA256/'${SHA256}'/g' ${MPDIR}/python/py-stfio/Portfile
 
 sudo portindex
 sudo port uninstall stimfit
