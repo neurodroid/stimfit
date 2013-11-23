@@ -9,7 +9,7 @@ embedded_stf.py
 starting code to embed wxPython into the stf application.
 
 """
-
+import sys
 import wx
 from wx.py import shell
 
@@ -37,6 +37,11 @@ class MyPanel(wx.Panel):
         # the Pycrust shell object
         pycrust = shell.Shell(self,-1, \
             introText = intro_msg() + LOADED)
+
+        # Workaround for http://trac.wxwidgets.org/ticket/15008
+        if "darwin" in sys.platform:
+            pycrust.autoCallTip = False
+
         pycrust.push('from embedded_init import *', silent = True)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
