@@ -347,13 +347,16 @@ bool wxStfApp::OnInit(void)
 
 int wxStfApp::OnExit()
 {
+#if wxUSE_CONFIG
+    GetDocManager()->FileHistorySave(*wxConfig::Get());
+#endif // wxUSE_CONFIG
+
+    delete GetDocManager();
+
 #ifdef WITH_PYTHON
     Exit_wxPython();
 #endif
 
-    GetDocManager()->FileHistorySave( *config );
-
-    delete wxDocManager::GetDocumentManager();
     return wxApp::OnExit();
 }
 
