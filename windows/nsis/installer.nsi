@@ -12,9 +12,9 @@ SetCompressor lzma
 ;--------------------------------
 
 !define PRODUCT_VERSION "0.13.4"
-!define WXW_VERSION "3.0.0.0"
-!define WXW_VERSION_DIR "3.0.0"
-!define WXW_VERSION_SHORT "300"
+!define WXW_VERSION "2.9.5.0"
+!define WXW_VERSION_DIR "2.9.5"
+!define WXW_VERSION_SHORT "295"
 !define PY_VERSION "2.7.6"
 !define PY_MAJOR "2.7"
 !define PY_MIN "2.7"
