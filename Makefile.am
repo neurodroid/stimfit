@@ -122,6 +122,8 @@ EXTRA_DIST+= ./src/stimfit/res/resultset_next.xpm
 EXTRA_DIST+= ./src/stimfit/res/resultset_previous.xpm
 EXTRA_DIST+= ./src/stimfit/res/slope.xpm
 EXTRA_DIST+= ./src/stimfit/res/stimfit.png
+EXTRA_DIST+= ./src/stimfit/res/stimfit_16x16.xpm
+EXTRA_DIST+= ./src/stimfit/res/stimfit_32x32.xpm
 EXTRA_DIST+= ./src/stimfit/res/sum_new.xpm
 EXTRA_DIST+= ./src/stimfit/res/sum_new_aligned.xpm
 EXTRA_DIST+= ./src/stimfit/res/table.xpm
@@ -209,7 +211,8 @@ install-exec-hook:
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstfio.so
 	mkdir -p $(prefix)/share/pixmaps
 	mkdir -p $(prefix)/share/applications
-	cp $(top_srcdir)/src/stimfit/res/stimfit.png $(prefix)/share/pixmaps/stimfit.png
+	cp $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
+	cp $(top_srcdir)/src/stimfit/res/stimfit32x32.xpm $(prefix)/share/pixmaps/stimfit32x32.xpm
 	cp $(top_srcdir)/debian/stimfit.desktop $(prefix)/share/applications/
 else !BUILD_DEBIAN
 LTTARGET=$(prefix)/lib/stimfit
@@ -218,11 +221,13 @@ install-exec-hook:
 	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
 	mkdir -p $(prefix)/share/pixmaps
 	mkdir -p $(prefix)/share/applications
-	cp $(top_srcdir)/src/stimfit/res/stimfit.png $(prefix)/share/pixmaps/stimfit.png
+	cp $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
+	cp $(top_srcdir)/src/stimfit/res/stimfit32x32.xpm $(prefix)/share/pixmaps/stimfit32x32.xpm
 	cp $(top_srcdir)/debian/stimfit.desktop $(prefix)/share/applications/
 endif !BUILD_DEBIAN
 uninstall-hook:
-	rm -f $(prefix)/share/pixmaps/stimfit.png
+	rm -f $(prefix)/share/pixmaps/stimfit16x16.xpm
+	rm -f $(prefix)/share/pixmaps/stimfit32x32.xpm
 	rm -f $(prefix)/share/applications/stimfit.desktop
 else ISDARWIN
 LTTARGET=$(prefix)/lib/stimfit
