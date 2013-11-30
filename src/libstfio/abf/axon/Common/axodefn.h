@@ -94,9 +94,10 @@
 
 /*===============================================================================================
 ** Add other compiler dependant code HERE!
+** Treat everything else as gcc
 */
 
-#if defined(__linux__) || defined(__STF__) || defined(__APPLE__) || defined(__MINGW32__)
+#ifndef COMPILER
 #define COMPILER "gcc"
 
 #include "unix.h"
@@ -156,11 +157,9 @@
    #define PLATFORM "Unix"
 #elif defined(__APPLE__) 
    #define PLATFORM "Mac"
-#elif defined(__APPLE__)
-   #define PLATFORM "Mac"
-   #define PLATFORM "Mac"
 #else
-   #error "Platform not recognised... check AXODEFN.H"
+       // Treat everything else as Unix
+   #define PLATFORM "Unix"
 #endif
 
 //=======================================================================================
