@@ -1,3 +1,15 @@
+stimfit (0.13.5-1) unstable; urgency=low
+
+  * New upstream release
+    - Don't write test results to disk
+    - Fall back to gcc/Unix for unknown platforms/compilers
+      in axodefn.h (Closes: #728094)
+  * Improved batch analysis
+  * Multi-channel concatenation
+  * Less disruptive warnings and error messages
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 30 Nov 2013 18:23:23 +0000
+
 stimfit (0.13.2-1) unstable; urgency=low
 
   * New upstream release
