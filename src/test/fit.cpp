@@ -177,7 +177,7 @@ Vector_double fgauss(const Vector_double &param){
     return mydata;
 }
 
-//#if 0
+#if 0
 void savetxt(const char *fname, Vector_double &mydata){
 
     std::ofstream output_file;
@@ -207,7 +207,7 @@ void debug_stdout(double chisqr, const std::string& info, int warning,
     }
     close(fd);
 }
-//#endif
+#endif
 
 void par_test(double value, double expected, double tolerance) {
 
@@ -894,9 +894,9 @@ TEST(fitlib_test, id_12_fgaussian){
     Vector_double data;
     data = fgauss(mypars);
 
-//#if 0
+#if 0
     savetxt("/tmp/mygaussian.out", data);
-//#endif 
+#endif 
 
     /* Initial parameter guesses */
     Vector_double pars(3);
@@ -916,9 +916,9 @@ TEST(fitlib_test, id_12_fgaussian){
     par_test(pars[1], mypars[1], tol);  /* peak     */
     par_test(pars[2], mypars[2], tol);  /* witdth     */
 
-//#if 0
+#if 0
     debug_stdout(chisqr, info, warning, pars);
-//#endif
+#endif
     //data.clear();
 
 }
