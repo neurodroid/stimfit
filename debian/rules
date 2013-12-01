@@ -16,13 +16,13 @@ ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
 endif
 
 build: 
-        build-arch build-indep
+	build-arch build-indep
 build-arch: 
-        build-stamp
+	build-stamp
 build-indep: 
-        build-stamp
+	build-stamp
 build-stamp:
-        dh_testdir
+	dh_testdir
 
 clean:
 	dh_testdir
