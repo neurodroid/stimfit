@@ -9,7 +9,7 @@ Homepage: http://www.stimfit.org
 
 Package: stimfit
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, python-wxgtk2.8 (>= 2.8.9), python-numpy, python-matplotlib
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, libbiosig-dev, libsuitesparse-dev, python-wxgtk2.8 (>= 2.8.9), python-numpy, python-matplotlib
 Recommends: python-scipy
 Description: Program for viewing and analyzing electrophysiological data
  Stimfit is a free, fast and simple program for viewing and analyzing
@@ -33,7 +33,7 @@ Description: Debug symbols for stimfit
 Package: python-stfio
 Section: python
 Architecture: any
-Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, python-numpy
+Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, libbiosig-dev, libsuitesparse-dev, python-numpy
 Provides: ${python:Provides}
 Recommends: python-matplotlib, python-scipy
 Description: Python module to read common electrophysiology file formats.
