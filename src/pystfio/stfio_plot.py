@@ -11,12 +11,16 @@ http://code.google.com/p/stimfit
 
 has_mpl = True
 
+import os
+import sys
+
 import numpy as np
+import numpy.ma as ma
+import scipy.interpolate as interpolate
 
 try:
     import matplotlib
     import matplotlib.pyplot as plt
-    from matplotlib.patches import Rectangle
     from mpl_toolkits.axes_grid.axislines import Subplot
 except ImportError:
     has_mpl = False
@@ -27,19 +31,86 @@ graph_width = 6.0
 graph_height = 4.0
 key_dist = 0.04
 
-class timeseries(object):
-    def __init__(self, section, dt, xunits="ms", yunits="mV",  
-                 linestyle="-", linewidth=1.0, color='k'):
-        if isinstance(section, np.ndarray):
-            self.data = section
+def save_ma(ftrunk, marr):
+    if not isinstance(marr, ma.core.MaskedArray):
+        marr = ma.array(marr, mask=False)
+    data = np.array(marr)
+    mask = np.array(marr.mask)
+    np.save(ftrunk + ".data.npy", data)
+    np.save(ftrunk + ".mask.npy", mask)
+
+def load_ma(ftrunk):
+    data = np.load(ftrunk + ".data.npy")
+    mask = np.load(ftrunk + ".mask.npy")
+    return ma.array(data, mask=mask)
+
+class Timeseries:
+    # it this is 2d, the second axis (shape[1]) is time
+    def __init__(self, *args, **kwargs): # data, dt, xunits="ms", yunits="mV"):
+        if len(args) > 2:
+            raise RuntimeError("Timeseries accepts at most two non-keyworded " + 
+                               "arguments")
+        fromFile = False
+        # First argument has to be either data or file_trunk
+        if isinstance(args[0], str):
+            if len(args) > 1:
+                raise RuntimeError("Timeseries accepts only one non-keyworded " +
+                                   "argument if instantiated from file")
+            if os.path.exists("%s_data.npy" % args[0]):
+                self.data = np.load("%s_data.npy" % args[0])
+            else:
+                self.data = load_ma("%s_data.npy" % args[0])
+
+            self.dt = np.load("%s_dt.npy" % args[0])
+
+            fxu = open("%s_xunits" % args[0], 'r')
+            self.xunits = fxu.read()
+            fxu.close()
+
+            fyu = open("%s_yunits" % args[0], 'r')
+            self.yunits = fyu.read()
+            fyu.close()
+            fromFile = True
         else:
-            self.data = section.asarray()
-        self.dt = dt
-        self.xunits = xunits
-        self.yunits = yunits
-        self.linestyle = linestyle
-        self.linewidth = linewidth
-        self.color = color
+            self.data = args[0]
+            self.dt = args[1]
+
+        if len(kwargs) > 0 and fromFile:
+            raise RuntimeError("Can't set keyword arguments if Timeseries was " +
+                               "instantiated from file")
+
+        for key in kwargs:
+            if key == "xunits":
+                self.xunits = kwargs["xunits"]
+            elif key == "yunits":
+                self.yunits = kwargs["yunits"]
+            elif key == "linestyle":
+                self.linestyle = kwargs["linestyle"]
+            elif key == "linewidth":
+                self.linewidth = kwargs["linewidth"]
+            elif key == "color":
+                self.color = kwargs["color"]
+            elif key == "colour":
+                self.color = kwargs["colour"]
+            else:
+                raise RuntimeError("Unknown keyword argument: " + key)
+
+        if "xunits" not in kwargs and not fromFile:
+            self.xunits = "ms"
+        if "yunits" not in kwargs and not fromFile:
+            self.yunits = "mV"
+        if "linestyle" not in kwargs:
+            self.linestyle = "-"
+        if "linewidth" not in kwargs:
+            self.linewidth=1.0
+        if "color" not in kwargs and "colour" not in kwargs:
+            self.color='k'
+
+    def __getitem__(self, idx):
+        return self.data[idx]
+
+    def __setitem__(self, idx, value):
+        self.data[idx] = value
 
     def x_trange(self, tstart, tend):
         return np.arange(int(tstart/self.dt), int(tend/self.dt), 1.0, 
@@ -53,28 +124,34 @@ class timeseries(object):
             return np.arange(0.0, len(self.data), 1.0) * self.dt
         else:
             return np.arange(0.0, self.data.shape[1], 1.0) * self.dt
-
+               
     def duration(self):
         if len(self.data.shape)==1:
             return len(self.data) * self.dt
         else:
             return self.data.shape[1] * self.dt
 
-    def interpolate(self, newtime, newdt):
+    def interpolate(self, newtime, newdt, kind='linear'):
         if len(self.data.shape) == 1:
             flin = \
                 interpolate.interp1d(self.timearray(), self.data, 
-                                     bounds_error=False, fill_value=0)
-            return timeseries(flin(newtime), newdt)
+                                     bounds_error=False, fill_value=np.nan, 
+                                     kind=kind)
+            return Timeseries(ma.array(flin(newtime)), newdt)
         else:
             # interpolate each row individually:
             iparray = ma.zeros((self.data.shape[0], len(newtime)))
-            for nrow, row in enumerate(self.data):
-                flin = \
+            # for nrow, row in enumerate(self.data):
+            #     flin = \
+            #         interpolate.interp1d(self.timearray(), row, 
+            #                              bounds_error=False, fill_value=np.nan, kind=kind)
+            #     iparray[nrow,:]=flin(newtime)
+            iparray = ma.array([
                     interpolate.interp1d(self.timearray(), row, 
-                                         bounds_error=False, fill_value=0)
-                iparray[nrow,:]=flin(newtime)
-            return timeseries(iparray, newdt)
+                                         bounds_error=False, fill_value=np.nan, 
+                                         kind=kind)(newtime)
+                    for nrow, row in enumerate(self.data)])
+            return Timeseries(iparray, newdt)
     
     def maskedarray(self, center, left, right):
         # check whether we have enough data left and right:
@@ -107,13 +184,43 @@ class timeseries(object):
             rightindex = int((center+right)/self.dt)
         for timest in range(leftindex, rightindex):
                 if len(self.data.shape) > 1:
-                    if timest-leftindex+offset < maskedarray.shape[1] and timest<self.data.shape[1]:
+                    if timest-leftindex+offset < maskedarray.shape[1] and \
+                       timest<self.data.shape[1]:
                         maskedarray[:,timest-leftindex+offset]=self.data[:,timest]
                 else:
                     if timest-leftindex+offset < len(maskedarray):
                         maskedarray[timest-leftindex+offset]=self.data[timest]
         maskedarray.mask = ma.make_mask(mask)
-        return timeseries(maskedarray, self.dt)
+        return Timeseries(maskedarray, self.dt)
+
+    def save(self, file_trunk):
+        if isinstance(self.data, ma.MaskedArray):
+            save_ma("%s_data.npy" % file_trunk, self.data)
+        else:
+            np.save("%s_data.npy" % file_trunk, self.data)
+
+        np.save("%s_dt.npy" % file_trunk, self.dt)
+
+        fxu = open("%s_xunits" % file_trunk, 'w')
+        fxu.write(self.xunits)
+        fxu.close()
+
+        fyu = open("%s_yunits" % file_trunk, 'w')
+        fyu.write(self.yunits)
+        fyu.close()
+        
+    def plot(self):
+        fig = plt.figure(figsize=(8,6))
+
+        ax = stfio_plot.StandardAxis(fig, 111, hasx=True)
+        ax.plot(self.timearray(), self.data, '-k')
+        
+
+class timeseries(Timeseries):
+    def __init__(self, *args, **kwargs):
+        super(timeseries, self).__init__(*args, **kwargs)
+        sys.stderr.write("stfio_plot.timeseries is deprecated. " + 
+                         "Use stfio_plot.Timeseries instead.\n")
 
 class StandardAxis(Subplot):
     def __init__(self, *args, **kwargs):
@@ -154,12 +261,12 @@ def average(tsl):
             ave[its,:,:] = ts.data[:,:]
 
     if len(ts.data.shape)==1:
-        return timeseries(ma.mean(ave, axis=0), dt_common)
+        return Timeseries(ma.mean(ave, axis=0), dt_common)
     else:
         avef = ma.zeros((tslip[0].data.shape[0], tslip[0].data.shape[1]))
         for nrow, row in enumerate(avef):
             avef[nrow,:] = ma.mean(ave[:,nrow,:], axis=0)
-        return timeseries(avef, dt_common)
+        return Timeseries(avef, dt_common)
 
 def prettyNumber(f):
     fScaled = f
