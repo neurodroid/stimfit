@@ -15,9 +15,14 @@ ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
 	MAKEFLAGS += -j$(NUMJOBS)
 endif
 
-build: build-stamp
+build: 
+        build-arch build-indep
+build-arch: 
+        build-stamp
+build-indep: 
+        build-stamp
 build-stamp:
-	dh_testdir
+        dh_testdir
 
 clean:
 	dh_testdir
@@ -43,7 +48,7 @@ ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 endif
 	$(MAKE) install
 
-	./configure --enable-module --enable-debian --prefix=$(DEBPREFIX)
+	./configure --enable-module --enable-debian --with-biosig --prefix=$(DEBPREFIX)
 	$(MAKE)
 	$(MAKE) install
 
@@ -81,7 +86,7 @@ binary-arch: build install
 #	dh_lintian
 #	dh_bugfiles
 #	dh_undocumented
-	dh_pysupport
+	dh_python2
 	dh_installman $(CURDIR)/man/stimfit.1
 	dh_install --sourcedir=$(CURDIR)/debian/tmp
 	dh_link
