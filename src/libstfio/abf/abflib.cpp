@@ -32,9 +32,6 @@ namespace stfio {
 
 std::string ABF1Error(const std::string& fName, int nError);
 
-std::string dateToStr(ABFLONG date);
-std::string timeToStr(ABFLONG time);
-
 }
 
 std::string stfio::ABF1Error(const std::string& fName, int nError) {
@@ -44,32 +41,6 @@ std::string stfio::ABF1Error(const std::string& fName, int nError) {
     std::string wxCp = fName;
     ABF_BuildErrorText(nError, wxCp.c_str(),&errorMsg[0], uMaxLen );
     return std::string( &errorMsg[0] );
-}
-
-std::string stfio::dateToStr(ABFLONG date) {
-    std::ostringstream dateStream;
-    ldiv_t year=ldiv(date,(ABFLONG)10000);
-    dateStream << year.quot;
-    ldiv_t month=ldiv(year.rem,(ABFLONG)100);
-    dateStream << "/" << month.quot;
-    dateStream << "/" << month.rem;
-    return dateStream.str();
-}
-
-std::string stfio::timeToStr(ABFLONG time) {
-    std::ostringstream timeStream;
-    ldiv_t hours=ldiv(time,(ABFLONG)3600);
-    timeStream << hours.quot;
-    ldiv_t minutes=ldiv(hours.rem,(ABFLONG)60);
-    if (minutes.quot<10)
-        timeStream << ":" << '0' << minutes.quot;
-    else
-        timeStream << ":" << minutes.quot;
-    if (minutes.rem<10)
-        timeStream << ":" << '0' << minutes.rem;
-    else
-        timeStream << ":" << minutes.rem;
-    return timeStream.str();
 }
 
 void stfio::importABFFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
@@ -344,8 +315,14 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
     std::string comment("Created with ");
     comment += std::string( pFH->sCreatorInfo );
     ReturnData.SetComment(comment);
-    ReturnData.SetDate(dateToStr(pFH->uFileStartDate));
-    ReturnData.SetTime(timeToStr(pFH->uFileStartTimeMS));
+
+    ldiv_t year=ldiv(pFH->uFileStartDate,(ABFLONG)10000);
+    ldiv_t month=ldiv(year.rem,(ABFLONG)100);
+
+    ldiv_t hours=ldiv(pFH->uFileStartTimeMS,(ABFLONG)3600);
+    ldiv_t minutes=ldiv(hours.rem,(ABFLONG)60);
+
+    ReturnData.SetDateTime(year.quot, month.quot, month.rem, hours.quot, minutes.quot, minutes.rem);
 
     abf2.Close();
 }
@@ -487,9 +464,15 @@ void stfio::importABF1File(const std::string &fName, Recording &ReturnData, Prog
     FH._sFileComment[ABF_OLDFILECOMMENTLEN-1]=0;  // make sure string is 0-terminated
     comment += std::string( FH.sCreatorInfo );
     ReturnData.SetComment(comment);
-    ReturnData.SetDate(dateToStr(FH.lFileStartDate));
-    ReturnData.SetTime(timeToStr(FH.lFileStartTime));
-    
+
+    ldiv_t year=ldiv(FH.lFileStartDate,(ABFLONG)10000);
+    ldiv_t month=ldiv(year.rem,(ABFLONG)100);
+
+    ldiv_t hours=ldiv(FH.lFileStartTime,(ABFLONG)3600);
+    ldiv_t minutes=ldiv(hours.rem,(ABFLONG)60);
+
+    ReturnData.SetDateTime(year.quot, month.quot, month.rem, hours.quot, minutes.quot, minutes.rem);
+
 }
 #if defined(_WINDOWS) && !defined(__MINGW32__)
 #pragma optimize ("", on)
