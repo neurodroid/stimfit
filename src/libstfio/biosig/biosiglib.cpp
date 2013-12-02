@@ -281,11 +281,7 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
      *************************************************************************/
     struct tm T;
     biosig_get_startdatetime(hdr, &T);
-
-    strftime(str,strSize,"%Y-%m-%d",&T);	// %F
-    ReturnData.SetDate(str);
-    strftime(str,strSize,"%H:%M:%S",&T);	// %D
-    ReturnData.SetTime(str);
+    ReturnData.SetDateTime(T);
 
     destructHDR(hdr);
 
@@ -518,10 +514,8 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     Tp = gdf_time2tm_time(hdr->T0);
     T = *Tp;
 #endif
-    strftime(str,strSize,"%Y-%m-%d",&T);	// %F
-    ReturnData.SetDate(str);
-    strftime(str,strSize,"%H:%M:%S",&T);	// %D
-    ReturnData.SetTime(str);
+
+    ReturnData.SetDateTime(T);
 
     destructHDR(hdr);
 
@@ -556,19 +550,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 	/* Initialize all header parameters */
     biosig_set_filetype(hdr, GDF);
 
-    struct tm t;
-    char *str;
-    str = strdup(Data.GetDate().c_str());
-    t.tm_year = strtol(str,&str,10)-1900;
-    t.tm_mon  = strtol(str+1,&str,10)-1;
-    t.tm_mday = strtol(str+1,&str,10);
-
-    str = strdup(Data.GetTime().c_str());
-    t.tm_hour = strtol(str,&str,10);
-    t.tm_min = strtol(str+1,&str,10);
-    t.tm_sec = strtol(str+1,&str,10);
-
-    biosig_get_startdatetime(hdr, &t);
+    biosig_set_startdatetime(hdr, Data.GetDateTime());
 
     const char *xunits = Data.GetXUnits().c_str();
     uint16_t pdc = PhysDimCode(xunits);
@@ -788,19 +770,9 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     hdr->TYPE = GDF;
     hdr->VERSION = 3.0;   // latest version
 
-    struct tm t;
-    char *str;
-    str = strdup(Data.GetDate().c_str());
-    t.tm_year = strtol(str,&str,10)-1900;
-    t.tm_mon  = strtol(str+1,&str,10)-1;
-    t.tm_mday = strtol(str+1,&str,10);
+    struct tm t = Data.GetDateTime();
 
-    str = strdup(Data.GetTime().c_str());
-    t.tm_hour = strtol(str,&str,10);
-    t.tm_min = strtol(str+1,&str,10);
-    t.tm_sec = strtol(str+1,&str,10);
-
-    hdr->T0   = tm_time2gdf_time(&t);
+    hdr->T0 = tm_time2gdf_time(&t);
 
     const char *xunits = Data.GetXUnits().c_str();
 #if (BIOSIG_VERSION_MAJOR > 0)
