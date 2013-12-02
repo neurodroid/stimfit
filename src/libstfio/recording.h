@@ -99,15 +99,26 @@ class StfioDll Recording {
      */
     const std::string& GetScaling() const { return scaling; }
 
+
+    /* TODO: check whether GetDate() and GetTime() should be kept
+             but modified such that it generates the return data 
+             from Recording::datetime
+     */
+
     //! Retrieves the time of recording as a string.
     /*! \return A string containing the time of recording.
      */
-    const std::string& GetTime() const { return time; }
+__attribute__ ((deprecated)) const std::string& GetTime() const { return time; }
 
     //! Retrieves the date of recording as a string.
     /*! \return A string containing the date of recording.
      */
-    const std::string& GetDate() const { return date; }
+__attribute__ ((deprecated)) const std::string& GetDate() const { return date; }
+
+    //! Retrieves the date of recording as a string.
+    /*! \return A string containing the date of recording.
+     */
+    struct tm GetDateTime() const { return datetime; };
 
     //! Retrieves a comment string.
     /*! \return A string containing a comment.
@@ -170,12 +181,20 @@ class StfioDll Recording {
     //! Sets the time of recording as a string.
     /*! \param value A string containing the time of recording.
      */
-    void SetTime(const std::string& value) { time=value; }
+__attribute__ ((deprecated)) void SetTime(const std::string& value) { time=value; }
+    void SetTime(int hour, int minute, int sec);
 
     //! Sets the date of recording as a string.
     /*! \param value A string containing the date of recording.
      */
-    void SetDate(const std::string& value) { date=value; }
+__attribute__ ((deprecated)) void SetDate(const std::string& value) { date=value; }
+    void SetDate(int year, int month, int mday);
+
+    //! Sets the date and time of recording as struct tm
+    /*! \param value  has type struct tm
+     */
+    void SetDateTime(const struct tm &value) { memcpy(&datetime, &value, sizeof(struct tm)); }
+    void SetDateTime(int year, int month, int mday, int hour, int minute, int sec) ;
 
     //! Sets a comment string.
     /*! \param value A string containing a comment.
@@ -265,7 +284,9 @@ class StfioDll Recording {
     /* public: */
     
     double dt;
-    std::string file_description, time, date, comment, xunits;
+    std::string file_description, comment, xunits;
+__attribute__ ((deprecated)) std::string time, date;
+    struct tm datetime;
 
     void init();
 

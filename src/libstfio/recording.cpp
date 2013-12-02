@@ -74,6 +74,27 @@ Channel& Recording::at(std::size_t n_c) {
     }
 }
 
+void Recording::SetTime(int hour, int minute, int sec) {
+    datetime.tm_hour=hour;
+    datetime.tm_min=minute;
+    datetime.tm_sec=sec;
+}
+
+void Recording::SetDate(int year, int month, int mday) {
+    datetime.tm_year=year;
+    datetime.tm_mon=month;
+    datetime.tm_mday=mday;
+}
+
+void Recording::SetDateTime(int year, int month, int mday,int hour, int minute, int sec) {
+    datetime.tm_year=year;
+    datetime.tm_mon=month;
+    datetime.tm_mday=mday;
+    datetime.tm_hour=hour;
+    datetime.tm_min=minute;
+    datetime.tm_sec=sec;
+}
+
 void Recording::InsertChannel(Channel& c_Channel, std::size_t pos) {
     try {
         if ( ChannelArray.at(pos).size() <= c_Channel.size() ) {
