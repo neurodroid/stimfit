@@ -9,8 +9,6 @@ http://code.google.com/p/stimfit
 # TODO: Pin scale bars to their position
 # TODO: Implement 2-channel plots
 
-has_mpl = True
-
 import os
 import sys
 
@@ -18,6 +16,7 @@ import numpy as np
 import numpy.ma as ma
 import scipy.interpolate as interpolate
 
+has_mpl = True
 try:
     import matplotlib
     import matplotlib.pyplot as plt
@@ -212,10 +211,9 @@ class Timeseries:
     def plot(self):
         fig = plt.figure(figsize=(8,6))
 
-        ax = stfio_plot.StandardAxis(fig, 111, hasx=True)
+        ax = StandardAxis(fig, 111, hasx=True)
         ax.plot(self.timearray(), self.data, '-k')
         
-
 class timeseries(Timeseries):
     def __init__(self, *args, **kwargs):
         super(timeseries, self).__init__(*args, **kwargs)
