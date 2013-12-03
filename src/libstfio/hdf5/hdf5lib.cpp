@@ -60,10 +60,12 @@ bool stfio::exportHDF5File(const std::string& fName, const Recording& WData, Pro
     /* Define an array of root tables */
     rt p_data;
     p_data.channels = WData.size();
-    if (WData.GetDate().length() < DATELEN)
-        strcpy( p_data.date, (WData.GetDate()).c_str());
-    if (WData.GetTime().length() < TIMELEN)
-        strcpy( p_data.time, (WData.GetTime()).c_str());
+    struct tm t = WData.GetDateTime();
+    std::size_t date_length = strftime(p_data.date, DATELEN, "%F", &t);
+    std::size_t time_length = strftime(p_data.time, TIMELEN, "%T", &t);
+    // ensure that an undefine string is set to "\0", and that the terminating \0 is counted in string length
+    p_data.date[date_length++] = 0;
+    p_data.time[time_length++] = 0;
 
     /* Define field information */
     const char *field_names[NFIELDS]  =  { "channels", "date", "time" };
@@ -72,10 +74,6 @@ bool stfio::exportHDF5File(const std::string& fName, const Recording& WData, Pro
     /* Initialize the field field_type */
     hid_t string_type1 = H5Tcopy( H5T_C_S1 );
     hid_t string_type2 = H5Tcopy( H5T_C_S1 );
-    std::size_t date_length = WData.GetDate().length();
-    std::size_t time_length = WData.GetTime().length();
-    if (date_length <= 0) date_length = 1; 
-    if (time_length <= 0) time_length = 1; 
     H5Tset_size( string_type1,  date_length);
     H5Tset_size( string_type2,  time_length);
     field_type[0] = H5T_NATIVE_INT;
@@ -326,8 +324,16 @@ void stfio::importHDF5File(const std::string& fName, Recording& ReturnData, Prog
         throw std::runtime_error(errorMsg);
     }
     int numberChannels =rt_buf[0].channels;
-    ReturnData.SetDate( rt_buf[0].date );
-    ReturnData.SetTime( rt_buf[0].time );
+    struct tm t;
+    if ( strptime(rt_buf[0].date, "%F", &t) != NULL
+     &&  strptime(rt_buf[0].time, "%T", &t) != NULL ) {
+        ReturnData.SetDateTime( t );
+    }
+    else {
+        std::cout << "Warning HDF5: could not decode date/time " << rt_buf[0].date << " " << rt_buf[0].time << std::endl;
+    }
+
+
 
     /* Create the data space for the dataset. */
     hsize_t dims;
