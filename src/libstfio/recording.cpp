@@ -16,6 +16,7 @@
 #include "./stfio.h"
 #include "./recording.h"
 
+#include <ctime>
 #include <sstream>
 
 Recording::Recording(void)
@@ -46,11 +47,14 @@ void Recording::init() {
     file_description = "\0";
     global_section_description = "\0";
     scaling = "\0";
-    time = "\0";
-    date = "\0";
     comment = "\0";
     xunits =  "ms" ;
     dt = 1.0;
+
+    // get current time
+    time_t timer;
+    timer = time(0);
+    localtime_r(&timer, &datetime);
 }
 
 Recording::~Recording() {
@@ -72,6 +76,34 @@ Channel& Recording::at(std::size_t n_c) {
     catch (...) {
         throw;
     }
+}
+
+const std::string& Recording::GetDate() {
+    // TODO: there should be a more elegant way than using variable 'date'
+    date.resize(128);
+    struct tm t = GetDateTime();
+    strftime((char*)date.c_str(), 128, "%F", &t);
+    return date;
+};
+
+const std::string& Recording::GetTime() {
+    // TODO: there should be a more elegant way than using variable 'time'
+    time0.resize(128);
+    struct tm t = GetDateTime();
+    strftime((char*)time0.c_str(), 128, "%T", &t);
+    return time0;
+};
+
+void Recording::SetDate(const std::string& value) {
+    struct tm t = GetDateTime();
+    strptime(value.c_str(), "%F", &t);
+    SetDateTime(t);
+}
+
+void Recording::SetTime(const std::string& value) {
+    struct tm t = GetDateTime();
+    strptime(value.c_str    (), "%T", &t);
+    SetDateTime(t);
 }
 
 void Recording::SetTime(int hour, int minute, int sec) {
@@ -119,8 +151,7 @@ void Recording::CopyAttributes(const Recording& c_Recording) {
     file_description=c_Recording.file_description;
     global_section_description=c_Recording.global_section_description;
     scaling=c_Recording.scaling;
-    time=c_Recording.time;
-    date=c_Recording.date;
+    datetime=c_Recording.datetime;
     comment=c_Recording.comment;
     for ( std::size_t n_ch = 0; n_ch < c_Recording.size(); ++n_ch ) {
         if ( size() > n_ch ) {

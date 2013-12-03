@@ -99,21 +99,15 @@ class StfioDll Recording {
      */
     const std::string& GetScaling() const { return scaling; }
 
-
-    /* TODO: check whether GetDate() and GetTime() should be kept
-             but modified such that it generates the return data 
-             from Recording::datetime
-     */
-
     //! Retrieves the time of recording as a string.
     /*! \return A string containing the time of recording.
      */
-__attribute__ ((deprecated)) const std::string& GetTime() const { return time; }
+    const std::string& GetTime();
 
     //! Retrieves the date of recording as a string.
     /*! \return A string containing the date of recording.
      */
-__attribute__ ((deprecated)) const std::string& GetDate() const { return date; }
+    const std::string& GetDate();
 
     //! Retrieves the date of recording as a string.
     /*! \return A string containing the date of recording.
@@ -181,13 +175,13 @@ __attribute__ ((deprecated)) const std::string& GetDate() const { return date; }
     //! Sets the time of recording as a string.
     /*! \param value A string containing the time of recording.
      */
-__attribute__ ((deprecated)) void SetTime(const std::string& value) { time=value; }
+    void SetTime(const std::string& value);
     void SetTime(int hour, int minute, int sec);
 
     //! Sets the date of recording as a string.
     /*! \param value A string containing the date of recording.
      */
-__attribute__ ((deprecated)) void SetDate(const std::string& value) { date=value; }
+    void SetDate(const std::string& value);
     void SetDate(int year, int month, int mday);
 
     //! Sets the date and time of recording as struct tm
@@ -281,11 +275,13 @@ __attribute__ ((deprecated)) void SetDate(const std::string& value) { date=value
     std::vector<Channel> ChannelArray;
     std::string global_section_description, scaling;
 
+    // only neeed for GetData() and GetTime(): should be replaced by alternative interface.
+    __attribute__ ((deprecated)) std::string time0, date; 
+
     /* public: */
     
     double dt;
     std::string file_description, comment, xunits;
-__attribute__ ((deprecated)) std::string time, date;
     struct tm datetime;
 
     void init();
