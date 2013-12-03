@@ -659,9 +659,10 @@ void wxStfDoc::Fileinfo(wxCommandEvent& WXUNUSED(event)) {
     std::ostringstream oss1, oss2;
     oss1 << "Number of Channels: " << static_cast<unsigned int>(get().size());
     oss2 << "Number of Sweeps: " << static_cast<unsigned int>(get()[GetCurCh()].size());
-    std::string general =
-        "Date:\t" + GetDate() + "\n"
-        + "Time:\t" + GetTime() + "\n"
+    char buf[128];
+    struct tm t = GetDateTime();
+    strftime(buf, 128, "Date:\t%F\nTime:\t%T\n", &t);
+    std::string general = buf
         + oss1.str() + "\n" + oss2.str() + "\n"
         + "Comment:\n" + GetComment();
     wxStfFileInfoDlg dlg( GetDocumentWindow(), general, GetFileDescription(),
