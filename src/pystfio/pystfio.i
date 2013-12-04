@@ -9,8 +9,11 @@ common electrophysiology file formats"
 #define SWIG_FILE_WITH_INIT
 #include <string>
 #include <iostream>
-#include <numpy/arrayobject.h>
 #include <cassert>
+#include <ctime>
+
+#include <numpy/arrayobject.h>
+#include <datetime.h>
 
 #include "./../libstfio/stfio.h"
 #include "./../libstfio/recording.h"
@@ -37,6 +40,7 @@ static int myErr = 0; // flag to save error state
 %include "exception.i"
 %init %{
     import_array();
+    PyDateTime_IMPORT;
 %}
 
 class Recording {
@@ -49,7 +53,9 @@ class Recording {
     %feature("autodoc", "The date of recording") date;
     %feature("autodoc", "Comment on the recording") comment;
     %feature("autodoc", "x unit string") xunits;
+    %feature("autodoc", "The date and time of recording") datetime;
     std::string file_description, time, date, comment, xunits;
+    PyObject* datetime;
     */
 };
 
@@ -133,6 +139,7 @@ class Section {
     std::string date;
     std::string comment;
     std::string xunits;
+    PyObject* datetime;
     
     Channel* __getitem__(int at) {
         if (at >= 0 && at < (int)$self->size()) {
@@ -170,15 +177,6 @@ class Section {
     }
 
     %pythoncode {
-        def datetime(self):
-            import sys
-            sys.stderr.write("This function has not been implemented yet\n")
-            return None
-            # TODO:
-            # import datetime
-            # year, month, day, hour, minute, second, microsecond = parse_date_time(self.date, self.time)
-            # return datetime.datetime(year, month, day, hour, minute, second, microsecond)
-
         def aspandas(self):
             import sys
             import numpy as np
@@ -239,6 +237,23 @@ class Section {
     }
     void Recording_comment_set(Recording *r, const std::string& val) {
         r->SetComment(val);
+    }
+    PyObject* Recording_datetime_get(Recording *r) {
+        struct tm rec_tm = r->GetDateTime();
+        assert(rec_tm.tm_hour >= 0 && rec_tm.tm_hour < 24);
+        return PyDateTime_FromDateAndTime(rec_tm.tm_year, rec_tm.tm_mon, rec_tm.tm_mday,
+                                          rec_tm.tm_hour, rec_tm.tm_min, rec_tm.tm_sec, 0);
+    }
+    void Recording_datetime_set(Recording *r, const PyObject* val) {
+        if (val != NULL && PyDate_Check(val)) {
+            int year = PyDateTime_GET_YEAR(val);
+            int month = PyDateTime_GET_MONTH(val);
+            int day = PyDateTime_GET_DAY(val);
+            int hour = PyDateTime_DATE_GET_HOUR(val);
+            int minute = PyDateTime_DATE_GET_MINUTE(val);
+            int second = PyDateTime_DATE_GET_SECOND(val);
+            r->SetDateTime(year, month, day, hour, minute, second);
+        }
     }
 
 %}
