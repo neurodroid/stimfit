@@ -14,7 +14,6 @@ import sys
 
 import numpy as np
 import numpy.ma as ma
-import scipy.interpolate as interpolate
 
 has_mpl = True
 try:
@@ -130,28 +129,23 @@ class Timeseries:
         else:
             return self.data.shape[1] * self.dt
 
-    def interpolate(self, newtime, newdt, kind='linear'):
+    def interpolate(self, newtime, newdt):
         if len(self.data.shape) == 1:
-            flin = \
-                interpolate.interp1d(self.timearray(), self.data, 
-                                     bounds_error=False, fill_value=np.nan, 
-                                     kind=kind)
-            return Timeseries(ma.array(flin(newtime)), newdt)
+            return Timeseries(np.interp(newtime, self.timearray(), self.data, 
+                                        left=np.nan, right=np.nan), newdt)
         else:
             # interpolate each row individually:
-            iparray = ma.zeros((self.data.shape[0], len(newtime)))
+            # iparray = ma.zeros((self.data.shape[0], len(newtime)))
             # for nrow, row in enumerate(self.data):
             #     flin = \
             #         interpolate.interp1d(self.timearray(), row, 
             #                              bounds_error=False, fill_value=np.nan, kind=kind)
             #     iparray[nrow,:]=flin(newtime)
             iparray = ma.array([
-                    interpolate.interp1d(self.timearray(), row, 
-                                         bounds_error=False, fill_value=np.nan, 
-                                         kind=kind)(newtime)
-                    for nrow, row in enumerate(self.data)])
+                np.interp(newtime, self.timearray(), row, left=np.nan, right=np.nan)
+                for nrow, row in enumerate(self.data)])
             return Timeseries(iparray, newdt)
-    
+
     def maskedarray(self, center, left, right):
         # check whether we have enough data left and right:
         if len(self.data.shape) > 1:
