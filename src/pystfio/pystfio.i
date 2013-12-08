@@ -151,7 +151,7 @@ class Section {
     }
     int __len__() { return $self->size(); }
 
-    %feature("autodoc", "Reads a file and returns a Recording object.
+    %feature("autodoc", "Writes a Recording to a file.
 
     Arguments:
     fname  -- file name
