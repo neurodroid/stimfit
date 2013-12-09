@@ -186,14 +186,11 @@ class Section {
             except ImportError:
                 has_pandas = False
             if has_pandas:
-                endtime = [0]
-                for sec in self[0]:
-                    endtime.append(endtime[-1] +  np.arange(len(sec))*self.dt + self.dt)
-                indices = np.concatenate([np.arange(len(sec))*self.dt + endtime[ns] for ns,sec in enumerate(self[0])])
                 chnames = [ch.name for ch in self]
                 channels = np.array([np.concatenate([sec for sec in ch]) for ch in self])
-                # TODO: Use self.datetime() to set the correct date in pandas
-                return pd.DataFrame(channels.transpose(), index=indices, columns=chnames)
+                date_range = pd.date_range(start=self.datetime, periods=channels.shape[1],
+                                           freq='%dU' % np.round(self.dt*1e3))
+                return pd.DataFrame(channels.transpose(), index=date_range, columns=chnames)
             else:
                 sys.stderr.write("Pandas is not available on this system\n")
                 return None
