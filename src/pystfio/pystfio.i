@@ -241,7 +241,7 @@ class Section {
     PyObject* Recording_datetime_get(Recording *r) {
         struct tm rec_tm = r->GetDateTime();
         assert(rec_tm.tm_hour >= 0 && rec_tm.tm_hour < 24);
-        return PyDateTime_FromDateAndTime(rec_tm.tm_year, rec_tm.tm_mon, rec_tm.tm_mday,
+        return PyDateTime_FromDateAndTime(rec_tm.tm_year+1900, rec_tm.tm_mon+1, rec_tm.tm_mday,
                                           rec_tm.tm_hour, rec_tm.tm_min, rec_tm.tm_sec, 0);
     }
     void Recording_datetime_set(Recording *r, const PyObject* val) {
