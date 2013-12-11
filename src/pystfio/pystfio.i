@@ -288,8 +288,8 @@ class Section {
 
     ~Channel() {delete $self;}
 
-    const std::string& name;
-    const std::string& yunits;
+    std::string name;
+    std::string yunits;
     
     Section* __getitem__(int at) {
         if (at >= 0 && at < (int)$self->size()) {
