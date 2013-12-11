@@ -35,7 +35,7 @@ Section: python
 Architecture: any
 Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, libbiosig-dev, libsuitesparse-dev, python-numpy
 Provides: ${python:Provides}
-Recommends: python-matplotlib, python-scipy
+Recommends: python-matplotlib, python-scipy, python-pandas
 Description: Python module to read common electrophysiology file formats.
  The stfio module allows you to read common electrophysiology file formats
  from Python. Axon binaries (abf), Axon text (atf), HEKA (dat),
