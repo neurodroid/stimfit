@@ -1,3 +1,10 @@
+stimfit (0.13.6-1) unstable; urgency=low
+
+  * Export stfio recordings to pandas
+  * Improved support for accessing date and time of recordings
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Wed, 11 Dec 2013 21:42:13 +0000
+
 stimfit (0.13.5-1) unstable; urgency=low
 
   * New upstream release
