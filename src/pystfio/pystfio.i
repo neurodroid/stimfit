@@ -98,14 +98,14 @@ class Section {
 }
 
 %extend Recording {
- Recording(PyObject* ChannelList) :
-    dt(1.0),
-    file_description(""),
-    time(""),
-    date(""),
-    comment(""),
-    xunits("")
- {
+    Recording(PyObject* ChannelList) :
+       dt(1.0),
+       file_description(""),
+       time(""),
+       date(""),
+       comment(""),
+       xunits("")
+    {
         if (!PyList_Check(ChannelList)) {
             std::cerr << "Argument is not a list\n";
             return NULL;
