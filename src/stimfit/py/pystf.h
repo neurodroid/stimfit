@@ -70,7 +70,7 @@ PyObject* leastsq( int fselect, bool refresh = true );
 PyObject* get_fit( int trace = -1, int channel = -1 );
 #endif 
 
-bool check_doc( );
+bool check_doc( bool show_dialog = true );
 std::string get_filename( );
 bool file_open( const char* filename );
 bool file_save( const char* filename );

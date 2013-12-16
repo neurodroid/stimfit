@@ -424,9 +424,13 @@ int leastsq_param_size( int fselect );
 %feature("autodoc", 0) check_doc;
 %feature("docstring", "Checks whether a file is open.
 
+Arguments:
+show_dialog -- True if an error dialog should be shown if no file is
+               open.
+
 Returns:
 True if a file is open, False otherwise.") check_doc;
-bool check_doc( );
+bool check_doc( bool show_dialog=true );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -1467,6 +1471,14 @@ PyObject* mpl_panel(const std::vector<double>& figsize = std::vector<double>(_fi
 //--------------------------------------------------------------------
 %pythoncode {
 
+class StfException(Exception):
+    """ raises Exceptions for the Stfio module """
+    def __init__(self, error_msg):
+        self.msg = error_msg 
+
+    def __str__(self):
+        return repr(self.msg)
+
 def new_window_list( array_list ):
     """Creates a new window showing a sequence of
     1D NumPy arrays, or a sequence of a sequence of 1D
@@ -1566,5 +1578,54 @@ def template_matching(template, mode="criterion", norm=True, lowpass=0.5, highpa
     import sys
     sys.stderr.write("template_matching is deprecated. Use detect_events instead.\n")
     return detect_events(template, mode, norm, lowpass, highpass)
+
+class _cursor_pair(object):
+    def __init__(self, get_start, set_start, get_end, set_end):
+        self.get_start = get_start
+        self.set_start = set_start
+        self.get_end = get_end
+        self.set_end = set_end
+
+    @property
+    def time(self):
+        if not check_doc(show_dialog=False):            
+            raise StfException("Couldn't find open file")
+        return (self.get_start(is_time=True), self.get_end(is_time=True))
+
+    @time.setter
+    def time(self, lims):
+        if not check_doc(show_dialog=False):            
+            raise StfException("Couldn't find open file")
+        try:
+            if len(lims) != 2:
+                raise ValueError("lims has to have length 2 when setting the time value")
+        except TypeError:
+            raise TypeError("lims has to be a tuple or list of length 2")
+        if lims[0] is not None:
+            self.set_start(lims[0], is_time=True)
+        if lims[1] is not None:
+            self.set_end(lims[1], is_time=True)
+
+    @property
+    def index(self):
+        if not check_doc(show_dialog=False):            
+            raise StfException("Couldn't find open file")
+        return (self.get_start(is_time=False), self.get_end(is_time=False))
+
+    @index.setter
+    def index(self, lims):
+        if not check_doc(show_dialog=False):            
+            raise StfException("Couldn't find open file")
+        try:
+            if len(lims) != 2:
+                raise ValueError("lims has to have length 2 when setting the index value")
+        except TypeError:
+            raise TypeError("lims has to be a tuple or list of length 2")
+        if lims[0] is not None:
+            self.set_start(lims[0], is_time=False)
+        if lims[1] is not None:
+            self.set_end(lims[1], is_time=False)
+
+fit_cursors = _cursor_pair(get_fit_start, set_fit_start, get_fit_end, set_fit_end)
 }
 //--------------------------------------------------------------------

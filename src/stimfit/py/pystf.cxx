@@ -131,9 +131,10 @@ wxStfGraph* actGraph() {
     return pView->GetGraph();
 }
 
-bool check_doc( ) {
+bool check_doc( bool show_dialog ) {
     if (actDoc() == NULL)  {
-        ShowError( wxT("Couldn't find open file") );
+        if (show_dialog)
+            ShowError( wxT("Couldn't find open file") );
         return false;
     }
     return true;
