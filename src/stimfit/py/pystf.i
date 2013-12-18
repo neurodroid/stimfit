@@ -1580,48 +1580,56 @@ def template_matching(template, mode="criterion", norm=True, lowpass=0.5, highpa
     return detect_events(template, mode, norm, lowpass, highpass)
 
 class _cursor_pair(object):
-    def __init__(self, get_start, set_start, get_end, set_end):
-        self.get_start = get_start
-        self.set_start = set_start
-        self.get_end = get_end
-        self.set_end = set_end
+    def __init__(self, get_start, set_start, get_end, set_end, get_value=None):
+        self._get_start = get_start
+        self._set_start = set_start
+        self._get_end = get_end
+        self._set_end = set_end
+        self._get_value = get_value
 
-    def _get_val(self, is_time):
+    def _get_cursors(self, is_time):
         if not check_doc(show_dialog=False):            
             raise StfException("Couldn't find open file")
-        return (self.get_start(is_time=is_time), self.get_end(is_time=is_time))
+        return (self._get_start(is_time=is_time), self._get_end(is_time=is_time))
 
-    def _set_val(self, val, is_time):
+    def _set_cursors(self, cursors, is_time):
         if not check_doc(show_dialog=False):            
             raise StfException("Couldn't find open file")
         try:
-            if len(lims) != 2:
-                raise ValueError("lims has to have length 2 when setting the time value")
+            if len(cursors) != 2:
+                raise ValueError("cursors has to have length 2 when setting the time value")
         except TypeError:
-            raise TypeError("lims has to be a tuple or list of length 2")
-        if lims[0] is not None:
-            self.set_start(lims[0], is_time=is_time)
-        if lims[1] is not None:
-            self.set_end(lims[1], is_time=is_time)
+            raise TypeError("cursors has to be a tuple or list of length 2")
+        if cursors[0] is not None:
+            self.set_start(cursors[0], is_time=is_time)
+        if cursors[1] is not None:
+            self.set_end(cursors[1], is_time=is_time)
 
     @property
-    def time(self):
-        return self._get_val(True)
+    def cursor_time(self):
+        return self._get_cursors(True)
 
-    @time.setter
-    def time(self, lims):
-        self._set_val(lims, True)
+    @cursor_time.setter
+    def cursor_time(self, cursors):
+        self._set_cursors(cursors, True)
 
     @property
-    def index(self):
-        return self._get_val(False)
+    def cursor_index(self):
+        return self._get_cursors(False)
 
-    @index.setter
-    def index(self, lims):
-        self._set_val(lims, False)
+    @cursor_index.setter
+    def index(self, cursors):
+        self._set_cursors(cursors, False)
 
-base_cursors = _cursor_pair(get_base_start, set_base_start, get_base_end, set_base_end)
-peak_cursors = _cursor_pair(get_peak_start, set_peak_start, get_peak_end, set_peak_end)
-fit_cursors = _cursor_pair(get_fit_start, set_fit_start, get_fit_end, set_fit_end)
+    @property
+    def value(self):
+        return self._get_value()
+
+base = _cursor_pair(get_base_start, set_base_start, get_base_end, set_base_end,
+                    get_base)
+peak = _cursor_pair(get_peak_start, set_peak_start, get_peak_end, set_peak_end,
+                    get_peak)
+fit = _cursor_pair(get_fit_start, set_fit_start, get_fit_end, set_fit_end)
+
 }
 //--------------------------------------------------------------------
