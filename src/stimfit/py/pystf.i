@@ -1580,12 +1580,13 @@ def template_matching(template, mode="criterion", norm=True, lowpass=0.5, highpa
     return detect_events(template, mode, norm, lowpass, highpass)
 
 class _cursor_pair(object):
-    def __init__(self, get_start, set_start, get_end, set_end, get_value=None):
+    def __init__(self, get_start, set_start, get_end, set_end, get_value=None, index=None):
         self._get_start = get_start
         self._set_start = set_start
         self._get_end = get_end
         self._set_end = set_end
         self._get_value = get_value
+        self._index = index
 
     def _get_cursors(self, is_time):
         if not check_doc(show_dialog=False):            
@@ -1618,17 +1619,26 @@ class _cursor_pair(object):
         return self._get_cursors(False)
 
     @cursor_index.setter
-    def index(self, cursors):
+    def cursor_index(self, cursors):
         self._set_cursors(cursors, False)
 
     @property
     def value(self):
+        if self._get_value is None:
+            raise AttributeError("Missing _get_value function")
         return self._get_value()
 
+    @property
+    def index(self):
+        if self._index is None:
+            raise AttributeError("Missing _index function")
+        return self._index()
+
+    
 base = _cursor_pair(get_base_start, set_base_start, get_base_end, set_base_end,
                     get_base)
 peak = _cursor_pair(get_peak_start, set_peak_start, get_peak_end, set_peak_end,
-                    get_peak)
+                    get_peak, peak_index)
 fit = _cursor_pair(get_fit_start, set_fit_start, get_fit_end, set_fit_end)
 
 }
