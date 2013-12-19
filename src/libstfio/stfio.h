@@ -174,7 +174,7 @@ findType(const std::string& ext);
  *  \param type The file type. 
  *  \param ReturnData Will contain the file data on return.
  *  \param txtImport The text import filter settings.
- *  \param progress Set to true if a progress dialog should be shown.
+ *  \param ProgressInfo Progress indicator
  *  \return true if the file has successfully been read, false otherwise.
  */
 StfioDll bool 
@@ -190,7 +190,7 @@ importFile(
 /*! \param fName The full path name of the file. 
  *  \param type The file type. 
  *  \param Data Data to be written
- *  \param progress Set to true if a progress dialog should be shown.
+ *  \param ProgressInfo Progress indicator
  *  \return true if the file has successfully been written, false otherwise.
  */
 StfioDll bool
@@ -199,6 +199,15 @@ exportFile(const std::string& fName, stfio::filetype type, const Recording& Data
 
 /*@}*/
 
+//! Produce new recording with concatenated sections
+/*! \param src Source recording
+ *  \param sections Indices of selected sections
+ *  \param ProgressInfo Progress indicator
+ *  \return New recording with concatenated selected sections
+ */
+StfioDll Recording
+concatenate(const Recording& src, const std::vector<std::size_t>& sections,
+            ProgressInfo& progDlg);
 } // end of namespace
 
 typedef std::vector< std::string        >::iterator       sst_it;      /*!< std::string iterator */

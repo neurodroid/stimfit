@@ -277,3 +277,58 @@ Vector_double stfio::vec_vec_div(const Vector_double& vec1, const Vector_double&
     std::transform(vec1.begin(), vec1.end(), vec2.begin(), ret_vec.begin(), std::divides<double>());
     return ret_vec;
 }
+
+Recording
+stfio::concatenate(const Recording& src, const std::vector<std::size_t>& sections,
+                   ProgressInfo& progDlg)
+{
+    size_t nc, NC = src.size();
+    Recording Concatenated(NC, 1);
+
+    for (nc = 0; nc < NC; nc++) {
+        int new_size=0;
+        for (c_st_it cit = sections.begin(); cit != sections.end(); cit++) {
+            new_size += (int)src[nc][*cit].size();
+        }
+        Section TempSection(new_size);
+        std::size_t n_new=0;
+        std::size_t n_s=0;
+        for (c_st_it cit = sections.begin(); cit != sections.end(); cit++) {
+            std::ostringstream progStr;
+            progStr << "Adding section #" << (int)n_s+1 << " of " << (int)sections.size();
+            progDlg.Update(
+                (int)((double)n_s/(double)sections.size()*100.0),
+                progStr.str()
+            );
+
+            if (cit == sections.begin()) {
+                TempSection.SetXScale(src[nc][*cit].GetXScale());
+            }
+            else if (TempSection.GetXScale() != src[nc][*cit].GetXScale()) {
+                Concatenated.resize(0);
+                throw std::runtime_error("can not concatanate because sampling frequency differs");
+            }
+
+            std::size_t secSize=src[nc][*cit].size();
+            if (n_new+secSize>TempSection.size()) {
+                Concatenated.resize(0);
+                throw std::runtime_error("memory allocation error");
+            }
+            std::copy(src[nc][*cit].get().begin(),
+                      src[nc][*cit].get().end(),
+                      &TempSection[n_new]);
+            n_new += secSize;
+            n_s++;
+        }
+        TempSection.SetSectionDescription(src[nc][0].GetSectionDescription() + ", concatenated");
+        Channel TempChannel(TempSection);
+	TempChannel.SetChannelName(src[nc].GetChannelName());
+	TempChannel.SetYUnits(src[nc].GetYUnits());
+	Concatenated.InsertChannel(TempChannel, nc);
+    }
+
+    // Recording Concatenated(TempChannel);
+    Concatenated.CopyAttributes(src);
+
+    return Concatenated;
+}
