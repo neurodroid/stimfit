@@ -271,7 +271,7 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
 
     ReturnData.SetFileDescription(Desc);
     // hdr->AS.bci2000 is an alias to hdr->AS.fpulse, which available only in libbiosig v1.6.0 and later
-    ReturnData.SetGlobalSectionDescription(hdr->AS.bci2000 + '\0');
+    if (hdr->AS.bci2000) ReturnData.SetGlobalSectionDescription(hdr->AS.bci2000 + '\0');
 
     ReturnData.SetXScale(1000.0/biosig_get_samplerate(hdr));
     ReturnData.SetXUnits("ms");
@@ -499,7 +499,7 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     }
     ReturnData.SetFileDescription(Desc);
     // hdr->AS.bci2000 is an alias to hdr->AS.fpulse, which available only in libbiosig v1.6.0 or later
-    ReturnData.SetGlobalSectionDescription(hdr->AS.bci2000 + '\0');
+    if (hdr->AS.bci2000) ReturnData.SetGlobalSectionDescription(hdr->AS.bci2000 + '\0');
 
     ReturnData.SetXScale(1000.0/hdr->SampleRate);
     ReturnData.SetXUnits("ms");
