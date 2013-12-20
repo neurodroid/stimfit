@@ -332,3 +332,35 @@ stfio::concatenate(const Recording& src, const std::vector<std::size_t>& section
 
     return Concatenated;
 }
+
+Recording
+stfio::multiply(const Recording& src, const std::vector<std::size_t>& sections,
+                std::size_t channel, double factor)
+{
+    Channel TempChannel(sections.size(), src[channel][sections[0]].size());
+    std::size_t n = 0;
+    for (c_st_it cit = sections.begin(); cit != sections.end(); cit++) {
+        // Multiply the valarray in Data:
+        Section TempSection(stfio::vec_scal_mul(src[channel][*cit].get(),factor));
+        TempSection.SetXScale(src[channel][*cit].GetXScale());
+        TempSection.SetSectionDescription(
+                src[channel][*cit].GetSectionDescription()+
+                ", multiplied"
+        );
+        try {
+            TempChannel.InsertSection(TempSection, n);
+        }
+        catch (const std::out_of_range e) {
+            throw e;
+        }
+        n++;
+    }
+    if (TempChannel.size()>0) {
+        Recording Multiplied(TempChannel);
+        Multiplied.CopyAttributes(src);
+        Multiplied[0].SetYUnits( src.at( channel ).GetYUnits() );
+        return Multiplied;
+    } else {
+        throw std::runtime_error("Channel empty in stfio::multiply");
+    }
+}

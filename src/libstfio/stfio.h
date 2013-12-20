@@ -197,8 +197,6 @@ StfioDll bool
 exportFile(const std::string& fName, stfio::filetype type, const Recording& Data,
            ProgressInfo& progDlg);
 
-/*@}*/
-
 //! Produce new recording with concatenated sections
 /*! \param src Source recording
  *  \param sections Indices of selected sections
@@ -208,6 +206,19 @@ exportFile(const std::string& fName, stfio::filetype type, const Recording& Data
 StfioDll Recording
 concatenate(const Recording& src, const std::vector<std::size_t>& sections,
             ProgressInfo& progDlg);
+
+//! Produce new recording with multiplied sections
+/*! \param src Source recording
+ *  \param sections Indices of selected sections
+ *  \param channel Channel index
+ *  \param factor Multiplication factor
+ *  \return New recording with multiplied selected sections
+ */
+StfioDll Recording
+multiply(const Recording& src, const std::vector<std::size_t>& sections,
+         std::size_t channel, double factor);
+/*@}*/
+
 } // end of namespace
 
 typedef std::vector< std::string        >::iterator       sst_it;      /*!< std::string iterator */

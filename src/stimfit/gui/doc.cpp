@@ -1307,31 +1307,12 @@ void wxStfDoc::Multiply(wxCommandEvent& WXUNUSED(event)) {
     if (input.size()!=1) return;
 
     double factor=input[0];
-    Channel TempChannel(GetSelectedSections().size(), get()[GetCurCh()][GetSelectedSections()[0]].size());
-    std::size_t n = 0;
-    for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
-        // Multiply the valarray in Data:
-        Section TempSection(stfio::vec_scal_mul(get()[GetCurCh()][*cit].get(),factor));
-        TempSection.SetXScale(get()[GetCurCh()][*cit].GetXScale());
-        TempSection.SetSectionDescription(
-                get()[GetCurCh()][*cit].GetSectionDescription()+
-                ", multiplied"
-        );
-        try {
-            TempChannel.InsertSection(TempSection,n);
-        }
-        catch (const std::out_of_range e) {
-            wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
-        }
-        n++;
-    }
-    if (TempChannel.size()>0) {
-        Recording Multiplied(TempChannel);
-        Multiplied.CopyAttributes(*this);
-        Multiplied[0].SetYUnits( at( GetCurCh() ).GetYUnits() );
-        wxString title(GetTitle());
-        title+=wxT(", multiplied");
-        wxGetApp().NewChild(Multiplied,this,title);
+
+    try {
+        Recording Multiplied = stfio::multiply(*this, GetSelectedSections(), GetCurCh(), factor);
+        wxGetApp().NewChild(Multiplied, this, wxString(GetTitle()+wxT(", multiplied")));
+    } catch (const std::exception& e) {
+        wxGetApp().ErrorMsg(wxT("Error during multiplication:\n") + stf::std2wx(e.what()));
     }
 }
 
