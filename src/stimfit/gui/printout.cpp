@@ -187,8 +187,8 @@ void wxStfPrintout::PrintHeader(wxDC* pDC, double scale) {
     // File name and section number:
     wxString description;
     description << Doc()->GetFilename()
-        << wxT(", Trace ") << (int)Doc()->GetCurSec()+1
-        << wxT(" of ") << (int)Doc()->get()[Doc()->GetCurCh()].size();
+        << wxT(", Trace ") << (int)Doc()->GetCurSecIndex()+1
+        << wxT(" of ") << (int)Doc()->get()[Doc()->GetCurChIndex()].size();
     pDC->DrawText(description,xstart,ystart);
 
     // Results:

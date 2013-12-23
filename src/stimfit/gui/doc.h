@@ -44,7 +44,7 @@ private:
     bool ChannelSelDlg();
     void WriteToReg();
     bool outOfRange(std::size_t check) {
-        return (check>=cur().size());
+        return (check >= cursec().size());
     }
     void Focus();
     void OnNewfromselectedThisMenu( wxCommandEvent& event ) { OnNewfromselectedThis( ); }
@@ -101,18 +101,6 @@ private:
     // cursor windows:
     int pM;  //peakMean, number of points used for averaging
     int RTFactor; // Lower point for the rise-time calculation
-
-    // currently accessed channel:
-    std::size_t cc;
-    // second channel:
-    std::size_t sc;
-    // currently accessed section:
-    std::size_t cs;
-
-    // Indices of the selected sections
-    std::vector<std::size_t> selectedSections;
-    // Base line value for each selected trace
-    Vector_double selectBase;
     
     std::size_t tLoIndex, tHiIndex, t50LeftIndex, t50RightIndex, APt50LeftIndex, APt50RightIndex;
 
@@ -301,21 +289,6 @@ public:
     
     //! Put the current measurement results into a text table.
     stf::Table CurResultsTable();
-
-    //! Retrieves the index of the current channel.
-    /*! \return The index of the current channel.
-     */
-    std::size_t GetCurCh() const { return cc; }
-
-    //! Retrieves the index of the second channel.
-    /*! \return The index of the second channel.
-     */
-    std::size_t GetSecCh() const { return sc; }
-
-    //! Retrieves the index of the current section.
-    /*! \return The index of the current section.
-     */
-    std::size_t GetCurSec() const { return cs; }
 
     //! Retrieves the position of the measurement cursor (crosshair).
     /*! \return The index of the measurement cursor within the current section.
@@ -711,41 +684,6 @@ public:
      */
     double GetSlopeForThreshold() const { return slopeForThreshold; }
     
-    //! Retrieves the indices of the selected sections (read-only).
-    /*! \return A vector containing the indices of the selected sections.
-     */
-    const std::vector<std::size_t>& GetSelectedSections() const { return selectedSections; } 
-
-    //! Retrieves the indices of the selected sections (read and write).
-    /*! \return A vector containing the indices of the selected sections.
-     */
-    std::vector<std::size_t>& GetSelectedSectionsW() { return selectedSections; } 
-
-    //! Retrieves the stored baseline values of the selected sections (read-only).
-    /*! \return A vector containing the stored baseline values of the selected sections.
-     */
-    const Vector_double& GetSelectBase() const { return selectBase; } 
-
-    //! Retrieves the stored baseline values of the selected sections (read and write).
-    /*! \return A vector containing the stored baseline values of the selected sections.
-     */
-    Vector_double& GetSelectBaseW() { return selectBase; }
-
-    //! Retrieves the currently accessed section in the active channel (read-only)
-    /*! \return The currently accessed section in the active channel.
-     */
-    const Section& cur() const { return get()[cc][cs]; }
-
-    //! Retrieves the currently accessed section in the active channel (read and write)
-    /*! \return The currently accessed section in the active channel.
-     */
-    Section& cur() { return get()[cc][cs]; }
-
-    //! Retrieves the currently accessed section in the second (reference) channel (read-only)
-    /*! \return The currently accessed section in the second (reference) channel.
-     */
-    const Section& sec() const { return get()[sc][cs]; }
-    
     //! Returns the current zoom settings for this channel (read-only).
     /*! \return The current zoom settings.
      */
@@ -765,32 +703,6 @@ public:
     /*! \return The current zoom settings.
      */
     YZoom& GetYZoomW(int ch) { return yzoom.at(ch); }
-
-    //! Sets the index of the current channel.
-    /*! \param value The index of the current channel.
-     */
-    void SetCurCh(std::size_t value);
-
-    //! Sets the index of the second channel.
-    /*! \param value The index of the second channel.
-     */
-    void SetSecCh(std::size_t value);
-
-    //! Sets the index of the current section.
-    /*! \param value The index of the current section.
-     */
-    void SetCurSec(std::size_t value);
-
-    //! Selects a section
-    /*! \param sectionToSelect The index of the section to be selected.
-     */
-    void SelectTrace(std::size_t sectionToSelect);
-
-    //! Unselects a section if it was selected before
-    /*! \param sectionToUnselect The index of the section to be unselected.
-     *  \return true if the section was previously selected, false otherwise.
-     */
-    bool UnselectTrace(std::size_t sectionToUnselect);
 
     //! Sets the position of the measurement cursor (crosshair).
     /*! \param value The index of the measurement cursor within the current section.

@@ -147,11 +147,6 @@ wxStfDoc::wxStfDoc() :
     t0Real(0.0),
     pM(1),
     RTFactor(20),
-    cc(0),
-    sc(1),
-    cs(0),
-    selectedSections(std::vector<std::size_t>(0)),
-    selectBase(Vector_double(0)),
     tLoIndex(0),
     tHiIndex(0),
     t50LeftIndex(0),
@@ -310,15 +305,13 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
     // so that we can use them safely without range checking:
     wxString msg(wxT( "Error while checking range:\nParts of the file might be empty\nClosing file now" ));
     if (!(get().size()>1)) {
-        if (cur().size()==0) {
+        if (cursec().size()==0) {
             wxGetApp().ErrorMsg(msg);
             get().clear();
             return false;
         }
     } else {
-        if (cur().size()==0 ||
-                sec().size()==0)
-        {
+        if (cursec().size()==0 || secsec().size()==0) {
             wxGetApp().ErrorMsg(msg);
             get().clear();
             return false;
@@ -408,13 +401,11 @@ void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const w
 
     // Make sure once again curChannel and curSection are not out of range:
     if (!(get().size()>1)) {
-        if (cur().size()==0) {
+        if (cursec().size()==0) {
             throw e;
         }
     } else {
-        if (cur().size()==0 ||
-                sec().size()==0)
-        {
+        if (cursec().size()==0 || secsec().size()==0) {
             throw e;
         }
     }
@@ -427,8 +418,8 @@ int wxStfDoc::InitCursors() {
     SetMeasCursor(wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("MeasureCursor"), 1));
     SetBaseBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("BaseBegin"), 1));
     SetBaseEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("BaseEnd"), 20));
-    SetPeakBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakBegin"), (int)cur().size()-100));
-    SetPeakEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakEnd"), (int)cur().size()-50));
+    SetPeakBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakBegin"), (int)cursec().size()-100));
+    SetPeakEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakEnd"), (int)cursec().size()-50));
     int iDirection = wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("Direction"),2);
     switch (iDirection) {
     case 0: SetDirection(stf::up); break;
@@ -522,7 +513,7 @@ void wxStfDoc::PostInit() {
     yzoom.resize(size());
     
     try {
-        pFrame->CreateMenuTraces(get().at(GetCurCh()).size());
+        pFrame->CreateMenuTraces(get().at(GetCurChIndex()).size());
         if ( size() > 1 ) {
             wxArrayString channelNames;
             channelNames.Alloc( size() );
@@ -532,7 +523,7 @@ void wxStfDoc::PostInit() {
                 channelNames.Add( channelStream );
             }
             pFrame->CreateComboChannels( channelNames );
-            pFrame->SetChannels( GetCurCh(), GetSecCh() );
+            pFrame->SetChannels( GetCurChIndex(), GetSecChIndex() );
         }
     }
     catch (const std::out_of_range& e) {
@@ -604,7 +595,7 @@ bool wxStfDoc::ChannelSelDlg() {
     if ( size() < 2 ) {
         return false;
     }
-    // SetCurCh(); done in Recording constructor
+    // SetCurChIndex(); done in Recording constructor
     // SetSecCh( 1 );
     return true;
 }	//End ChannelSelDlg()
@@ -636,8 +627,8 @@ void wxStfDoc::CheckBoundaries()
         wxGetApp().ErrorMsg(wxT("Decay cursors are reversed,\nthey will be exchanged"));
     }
 
-    if (GetPM() > (int)cur().size()) {
-        SetPM((int)cur().size()-1);
+    if (GetPM() > (int)cursec().size()) {
+        SetPM((int)cursec().size()-1);
     }
     if (GetPM() == 0) {
         SetPM(1);
@@ -658,7 +649,7 @@ void wxStfDoc::Fileinfo(wxCommandEvent& WXUNUSED(event)) {
     //Create CFileOpenDlg object 'dlg'
     std::ostringstream oss1, oss2;
     oss1 << "Number of Channels: " << static_cast<unsigned int>(get().size());
-    oss2 << "Number of Sweeps: " << static_cast<unsigned int>(get()[GetCurCh()].size());
+    oss2 << "Number of Sweeps: " << static_cast<unsigned int>(get()[GetCurChIndex()].size());
     char buf[128];
     struct tm t = GetDateTime();
     strftime(buf, 128, "Date:\t%F\nTime:\t%T\n", &t);
@@ -787,7 +778,7 @@ bool wxStfDoc::DoSaveDocument(const wxString& filename) {
 void wxStfDoc::WriteToReg() {
     //Write file length
     wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("FirstPoint"), 1);
-    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("LastPoint"), (int)cur().size()-1);
+    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("LastPoint"), (int)cursec().size()-1);
     
     //Write cursors
     if (!outOfRange(GetBaseBeg()))
@@ -832,43 +823,43 @@ void wxStfDoc::WriteToReg() {
 
     // Write Zoom
     wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.xZoom"), (int)GetXZoom().xZoom*100000);
-    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.yZoom"), GetYZoom(GetCurCh()).yZoom*100000);
+    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.yZoom"), GetYZoom(GetCurChIndex()).yZoom*100000);
     wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.startPosX"), (int)GetXZoom().startPosX);
-    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.startPosY"), GetYZoom(GetCurCh()).startPosY);
+    wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.startPosY"), GetYZoom(GetCurChIndex()).startPosY);
     if ((get().size()>1))
     {
-        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.yZoom2"), (int)GetYZoom(GetSecCh()).yZoom*100000);
-        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.startPosY2"), GetYZoom(GetSecCh()).startPosY);
+        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.yZoom2"), (int)GetYZoom(GetSecChIndex()).yZoom*100000);
+        wxGetApp().wxWriteProfileInt(wxT("Settings"),wxT("Zoom.startPosY2"), GetYZoom(GetSecChIndex()).startPosY);
     }
 }
 
 bool wxStfDoc::SetSection(std::size_t section){
     // Check range:
     if (!(get().size()>1)) {
-        if (section>=get()[GetCurCh()].size())
+        if (section>=get()[GetCurChIndex()].size())
         {
             wxGetApp().ErrorMsg(wxT("subscript out of range\nwhile calling CStimfitDoc::SetSection()"));
             return false;
         }
-        if (get()[GetCurCh()][section].size()==0) {
+        if (get()[GetCurChIndex()][section].size()==0) {
             wxGetApp().ErrorMsg(wxT("Section is empty"));
             return false;
         }
     } else {
-        if (section>=get()[GetCurCh()].size() ||
-            section>=get()[GetSecCh()].size())
+        if (section>=get()[GetCurChIndex()].size() ||
+            section>=get()[GetSecChIndex()].size())
         {
             wxGetApp().ErrorMsg(wxT("subscript out of range\nwhile calling CStimfitDoc::SetSection()"));
             return false;
         }
-        if (get()[GetCurCh()][section].size()==0 ||
-                get()[GetSecCh()][section].size()==0) {
+        if (get()[GetCurChIndex()][section].size()==0 ||
+                get()[GetSecChIndex()][section].size()==0) {
             wxGetApp().ErrorMsg(wxT("Section is empty"));
             return false;
         }
     }
     CheckBoundaries();
-    SetCurSec(section);
+    SetCurSecIndex(section);
     UpdateSelectedButton();
 
     return true;
@@ -882,7 +873,7 @@ void wxStfDoc::OnSwapChannels(wxCommandEvent& WXUNUSED(event)) {
             wxGetApp().ErrorMsg( wxT("Frame is zero in wxStfDoc::SwapChannels"));
             return;
         }
-        pFrame->SetChannels( GetSecCh(), GetCurCh() );
+        pFrame->SetChannels( GetSecChIndex(), GetCurChIndex() );
         pFrame->UpdateChannels();
     }
 }
@@ -894,7 +885,7 @@ void wxStfDoc::ToggleSelect() {
     for (c_st_it cit = GetSelectedSections().begin();
          cit != GetSelectedSections().end() && !selected;
          ++cit) {
-        if (*cit == GetCurSec()) {
+        if (*cit == GetCurSecIndex()) {
             selected = true;
         }
     }
@@ -908,7 +899,7 @@ void wxStfDoc::ToggleSelect() {
 }
 
 void wxStfDoc::Select() {
-    if (GetSelectedSections().size() == get()[GetCurCh()].size()) {
+    if (GetSelectedSections().size() == get()[GetCurChIndex()].size()) {
         wxGetApp().ErrorMsg(wxT("No more traces can be selected\nAll traces are selected"));
         return;
     }
@@ -917,14 +908,14 @@ void wxStfDoc::Select() {
     for (c_st_it cit = GetSelectedSections().begin();
          cit != GetSelectedSections().end() && !already;
          ++cit) {
-        if (*cit == GetCurSec()) {
+        if (*cit == GetCurSecIndex()) {
             already = true;
         }
     }
 
     //add trace number to selected numbers, print number of selected traces
     if (!already) {
-        SelectTrace(GetCurSec());
+        SelectTrace(GetCurSecIndex(), baseBeg, baseEnd);
         //String output in the trace navigator
         wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
         pFrame->SetSelected(GetSelectedSections().size());
@@ -937,7 +928,7 @@ void wxStfDoc::Select() {
 }
 
 void wxStfDoc::Remove() {
-    if (UnselectTrace(GetCurSec())) {
+    if (UnselectTrace(GetCurSecIndex())) {
         //Message update in the trace navigator
         wxStfChildFrame* pFrame = (wxStfChildFrame*)GetDocumentWindow();
         if (pFrame)
@@ -994,12 +985,12 @@ void wxStfDoc::CreateAverage(
         wxStfAlignDlg AlignDlg(GetDocumentWindow());
         if (AlignDlg.ShowModal()!=wxID_OK) return;
         //store current section and channel index:
-        std::size_t section_old=GetCurSec();
-        std::size_t channel_old=GetCurCh();
+        std::size_t section_old=GetCurSecIndex();
+        std::size_t channel_old=GetCurChIndex();
         //initialize the lowest and the highest index:
         std::size_t min_index=0;
         try {
-            min_index=get()[GetSecCh()].at(GetSelectedSections().at(0)).size()-1;
+            min_index=get()[GetSecChIndex()].at(GetSelectedSections().at(0)).size()-1;
         }
         catch (const std::out_of_range& e) {
             wxString msg(wxT("Error while aligning\nIt is safer to re-start the program\n"));
@@ -1008,7 +999,7 @@ void wxStfDoc::CreateAverage(
             return;
         }
         // swap channels temporarily:
-        SetCurCh(GetSecCh());
+        SetCurChIndex(GetSecChIndex());
         std::size_t max_index=0, n=0;
         int_it it = shift.begin();
         //loop through all selected sections:
@@ -1019,7 +1010,7 @@ void wxStfDoc::CreateAverage(
             //Set the selected section as the current section temporarily:
             SetSection(*cit);
             if (peakAtEnd) {
-                SetPeakEnd((int)get()[GetSecCh()][*cit].size()-1);
+                SetPeakEnd((int)get()[GetSecChIndex()][*cit].size()-1);
             }
             // Calculate all variables for the current settings
             // APMaxSlopeT will be calculated for the second (==reference)
@@ -1029,6 +1020,8 @@ void wxStfDoc::CreateAverage(
             }
             catch (const std::out_of_range& e) {
                 Average.resize(0);
+                SetSection(section_old);
+                SetCurChIndex(channel_old);
                 wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
                 return;
             }
@@ -1068,15 +1061,15 @@ void wxStfDoc::CreateAverage(
         }
         //restore section and channel settings:
         SetSection(section_old);
-        SetCurCh(channel_old);
+        SetCurChIndex(channel_old);
         shift_size = (max_index-min_index);
     }
 
     //number of points in average:
-    size_t average_size = get()[cc].get()[cs].size();
+    size_t average_size = cursec().size();
     for (c_st_it sit = GetSelectedSections().begin(); sit != GetSelectedSections().end(); sit++) {
-        if (get()[cc].get()[*sit].size() < average_size) {
-            average_size = get()[cc].get()[*sit].size();
+        if (curch().get()[*sit].size() < average_size) {
+            average_size = curch().get()[*sit].size();
         }
     }
     average_size -= shift_size;
@@ -1152,14 +1145,14 @@ void wxStfDoc::FitDecay(wxCommandEvent& WXUNUSED(event)) {
         std::size_t fitSize = GetFitEnd() - GetFitBeg();
         Vector_double x( fitSize );
         //fill array:
-        std::copy(&cur()[GetFitBeg()], &cur()[GetFitBeg()+fitSize], &x[0]);
+        std::copy(&cursec()[GetFitBeg()], &cursec()[GetFitBeg()+fitSize], &x[0]);
         if (params.size() != n_params) {
             throw std::runtime_error("Wrong size of params in wxStfDoc::lmFit()");
         }
         double chisqr = stf::lmFit( x, GetXScale(), wxGetApp().GetFuncLib()[fselect],
                                     FitSelDialog.GetOpts(), FitSelDialog.UseScaling(),
                                     params, fitInfo, warning );
-        SetIsFitted( GetCurCh(), GetCurSec(), params, wxGetApp().GetFuncLibPtr(fselect),
+        SetIsFitted( GetCurChIndex(), GetCurSecIndex(), params, wxGetApp().GetFuncLibPtr(fselect),
                      chisqr, GetFitBeg(), GetFitEnd() );
     }
     catch (const std::out_of_range& e) {
@@ -1180,9 +1173,9 @@ void wxStfDoc::FitDecay(wxCommandEvent& WXUNUSED(event)) {
     wxEndBusyCursor();
     InfoDialog.ShowModal();
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
-    wxString label; label << wxT("Fit, Section #") << (int)GetCurSec()+1;
+    wxString label; label << wxT("Fit, Section #") << (int)GetCurSecIndex()+1;
     try {
-        pFrame->ShowTable(sec_attr.at(GetCurCh()).at(GetCurSec()).bestFit, label);
+        pFrame->ShowTable(sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).bestFit, label);
     }
     catch (const std::out_of_range e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -1210,14 +1203,14 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
 
     //fill array:
     Vector_double x(n_points);
-    std::copy(&cur()[GetFitBeg()], &cur()[GetFitBeg()+n_points], &x[0]);
+    std::copy(&cursec()[GetFitBeg()], &cursec()[GetFitBeg()+n_points], &x[0]);
     Vector_double t(x.size());
     for (std::size_t n_t=0;n_t<x.size();++n_t) t[n_t]=n_t*GetXScale();
 
     // Perform the fit:
     double chisqr = stf::linFit(t,x,params[0],params[1]);
     try {
-        SetIsFitted( GetCurCh(), GetCurSec(), params, wxGetApp().GetLinFuncPtr(), chisqr, GetFitBeg(), GetFitEnd() );
+        SetIsFitted( GetCurChIndex(), GetCurSecIndex(), params, wxGetApp().GetLinFuncPtr(), chisqr, GetFitBeg(), GetFitEnd() );
     }
     catch (const std::out_of_range e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -1236,9 +1229,9 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
     wxStfFitInfoDlg InfoDialog(GetDocumentWindow(), stf::std2wx(fitInfo));
     InfoDialog.ShowModal();
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
-    wxString label; label << wxT("Fit, Section #") << (int)GetCurSec();
+    wxString label; label << wxT("Fit, Section #") << (int)GetCurSecIndex();
     try {
-        pFrame->ShowTable(sec_attr.at(GetCurCh()).at(GetCurSec()).bestFit, label);
+        pFrame->ShowTable(sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).bestFit, label);
     }
     catch (const std::out_of_range e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -1246,20 +1239,20 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void wxStfDoc::LnTransform(wxCommandEvent& WXUNUSED(event)) {
-    Channel TempChannel(GetSelectedSections().size(), get()[GetCurCh()][GetSelectedSections()[0]].size());
+    Channel TempChannel(GetSelectedSections().size(), get()[GetCurChIndex()][GetSelectedSections()[0]].size());
     std::size_t n = 0;
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
         Section TempSection(size());
-        std::transform(get()[GetCurCh()][*cit].get().begin(), 
-                       get()[GetCurCh()][*cit].get().end(), 
+        std::transform(get()[GetCurChIndex()][*cit].get().begin(), 
+                       get()[GetCurChIndex()][*cit].get().end(), 
                        TempSection.get_w().begin(),
 #if defined(_WINDOWS) && !defined(__MINGW32__)
                        std::logl);
 #else
                        log);
 #endif
-        TempSection.SetXScale(get()[GetCurCh()][*cit].GetXScale());
-        TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
+        TempSection.SetXScale(get()[GetCurChIndex()][*cit].GetXScale());
+        TempSection.SetSectionDescription( get()[GetCurChIndex()][*cit].GetSectionDescription()+
                                            ", transformed (ln)");
         try {
             TempChannel.InsertSection(TempSection,n);
@@ -1282,7 +1275,7 @@ void wxStfDoc::Viewtable(wxCommandEvent& WXUNUSED(event)) {
     wxBusyCursor wc;
     try {
         wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
-        pFrame->ShowTable( CurAsTable(), stf::std2wx( cur().GetSectionDescription() ) );
+        pFrame->ShowTable( CurAsTable(), stf::std2wx( cursec().GetSectionDescription() ) );
     }
     catch (const std::out_of_range& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -1309,7 +1302,7 @@ void wxStfDoc::Multiply(wxCommandEvent& WXUNUSED(event)) {
     double factor=input[0];
 
     try {
-        Recording Multiplied = stfio::multiply(*this, GetSelectedSections(), GetCurCh(), factor);
+        Recording Multiplied = stfio::multiply(*this, GetSelectedSections(), GetCurChIndex(), factor);
         wxGetApp().NewChild(Multiplied, this, wxString(GetTitle()+wxT(", multiplied")));
     } catch (const std::exception& e) {
         wxGetApp().ErrorMsg(wxT("Error during multiplication:\n") + stf::std2wx(e.what()));
@@ -1321,12 +1314,12 @@ bool wxStfDoc::SubtractBase( ) {
         wxGetApp().ErrorMsg(wxT("Select traces first"));
         return false;
     }
-    Channel TempChannel(GetSelectedSections().size(), get()[GetCurCh()][GetSelectedSections()[0]].size());
+    Channel TempChannel(GetSelectedSections().size(), get()[GetCurChIndex()][GetSelectedSections()[0]].size());
     std::size_t n = 0;
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
-        Section TempSection(stfio::vec_scal_minus(get()[GetCurCh()][*cit].get(), GetSelectBase()[n]));
-        TempSection.SetXScale(get()[GetCurCh()][*cit].GetXScale());
-        TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
+        Section TempSection(stfio::vec_scal_minus(get()[GetCurChIndex()][*cit].get(), GetSelectBase()[n]));
+        TempSection.SetXScale(get()[GetCurChIndex()][*cit].GetXScale());
+        TempSection.SetSectionDescription( get()[GetCurChIndex()][*cit].GetSectionDescription()+
                                            ", baseline subtracted");
         try {
             TempChannel.InsertSection(TempSection,n);
@@ -1360,7 +1353,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         return;
     }
 
-    std::size_t section_old=GetCurSec(); //
+    std::size_t section_old=GetCurSecIndex(); //
     wxStfBatchDlg SaveYtDialog(GetDocumentWindow());
     if (SaveYtDialog.ShowModal()!=wxID_OK) return;
     std::vector<std::string> colTitles;
@@ -1456,7 +1449,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
     if (SaveYtDialog.PrintThr()) {
         // Get threshold from user:
         std::ostringstream thrS;
-        thrS << "Threshold (" << at(GetCurCh()).GetYUnits() << ")";
+        thrS << "Threshold (" << at(GetCurChIndex()).GetYUnits() << ")";
         stf::UserInput Input( std::vector<std::string>(1, thrS.str()),
                 Vector_double (1,0.0), "Set threshold");
         wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
@@ -1486,7 +1479,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         progDlg.Update( (int)((double)n_s/ (double)GetSelectedSections().size()*100.0), progStr );
         SetSection(*cit);
         if (peakAtEnd)
-            SetPeakEnd((int)get()[GetCurCh()][*cit].size()-1);
+            SetPeakEnd((int)get()[GetCurChIndex()][*cit].size()-1);
 
         //Calculate all variables for the current settings
         try {
@@ -1518,7 +1511,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
             // not from user input:
             Vector_double x(GetFitEnd()-GetFitBeg());
             //fill array:
-            std::copy(&cur()[GetFitBeg()], &cur()[GetFitEnd()], &x[0]);
+            std::copy(&cursec()[GetFitBeg()], &cursec()[GetFitEnd()], &x[0]);
             params.resize(n_params);
             wxGetApp().GetFuncLib().at(fselect).init( x, GetBase(), GetPeak(), GetRTLoHi(),
                     GetHalfDuration(), GetXScale(), params );
@@ -1528,7 +1521,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
                 double chisqr = stf::lmFit( x, GetXScale(), wxGetApp().GetFuncLib()[fselect],
                                             FitSelDialog.GetOpts(), FitSelDialog.UseScaling(),
                                             params, fitInfo, fitWarning );
-                SetIsFitted( GetCurCh(), GetCurSec(), params, wxGetApp().GetFuncLibPtr(fselect),
+                SetIsFitted( GetCurChIndex(), GetCurSecIndex(), params, wxGetApp().GetFuncLibPtr(fselect),
                              chisqr, GetFitBeg(), GetFitEnd() );
             }
 
@@ -1552,12 +1545,12 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         // count number of threshold crossings if needed:
         std::size_t n_crossings=0;
         if (SaveYtDialog.PrintThr()) {
-            n_crossings= stf::peakIndices( cur().get(), threshold, 0 ).size();
+            n_crossings= stf::peakIndices( cursec().get(), threshold, 0 ).size();
         }
         std::size_t nCol=0;
         //Write the variables of the current channel in a string
         try {
-            table.SetRowLabel(n_s, cur().GetSectionDescription());
+            table.SetRowLabel(n_s, cursec().GetSectionDescription());
 
             if (SaveYtDialog.PrintBase())
                 table.at(n_s,nCol++)=GetBase();
@@ -1633,8 +1626,8 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
 void wxStfDoc::OnAnalysisIntegrate(wxCommandEvent &WXUNUSED(event)) {
     double integral_s = 0.0, integral_t = 0.0;
     try {
-        integral_s = stf::integrate_simpson(cur().get(),GetFitBeg(),GetFitEnd(),GetXScale());
-        integral_t = stf::integrate_trapezium(cur().get(),GetFitBeg(),GetFitEnd(),GetXScale());
+        integral_s = stf::integrate_simpson(cursec().get(),GetFitBeg(),GetFitEnd(),GetXScale());
+        integral_t = stf::integrate_trapezium(cursec().get(),GetFitBeg(),GetFitEnd(),GetXScale());
     }
     catch (const std::exception& e) {
         wxGetApp().ErrorMsg(wxString( e.what(), wxConvLocal ));
@@ -1665,8 +1658,8 @@ void wxStfDoc::OnAnalysisIntegrate(wxCommandEvent &WXUNUSED(event)) {
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
     pFrame->ShowTable(integralTable,wxT("Integral"));
     try {
-        Vector_double quad_p = stf::quad(cur().get(), GetFitBeg(), GetFitEnd());
-        SetIsIntegrated(GetCurCh(), GetCurSec(), true,GetFitBeg(),GetFitEnd(), quad_p);
+        Vector_double quad_p = stf::quad(cursec().get(), GetFitBeg(), GetFitEnd());
+        SetIsIntegrated(GetCurChIndex(), GetCurSecIndex(), true,GetFitBeg(),GetFitEnd(), quad_p);
     }
     catch (const std::runtime_error& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -1681,12 +1674,12 @@ void wxStfDoc::OnAnalysisDifferentiate(wxCommandEvent &WXUNUSED(event)) {
         wxGetApp().ErrorMsg(wxT("Select traces first"));
         return;
     }
-    Channel TempChannel(GetSelectedSections().size(), get()[GetCurCh()][GetSelectedSections()[0]].size());
+    Channel TempChannel(GetSelectedSections().size(), get()[GetCurChIndex()][GetSelectedSections()[0]].size());
     std::size_t n = 0;
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
-        Section TempSection( stf::diff( get()[GetCurCh()][*cit].get(), GetXScale() ) );
-        TempSection.SetXScale(get()[GetCurCh()][*cit].GetXScale());
-        TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
+        Section TempSection( stf::diff( get()[GetCurChIndex()][*cit].get(), GetXScale() ) );
+        TempSection.SetXScale(get()[GetCurChIndex()][*cit].GetXScale());
+        TempSection.SetSectionDescription( get()[GetCurChIndex()][*cit].GetSectionDescription()+
                 ", differentiated");
         try {
             TempChannel.InsertSection(TempSection,n);
@@ -1712,13 +1705,13 @@ bool wxStfDoc::OnNewfromselectedThis( ) {
         return false;
     }
 
-    Channel TempChannel(GetSelectedSections().size(), get()[GetCurCh()][GetSelectedSections()[0]].size());
+    Channel TempChannel(GetSelectedSections().size(), get()[GetCurChIndex()][GetSelectedSections()[0]].size());
     std::size_t n = 0;
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
         // Multiply the valarray in Data:
-        Section TempSection(get()[GetCurCh()][*cit].get());
-        TempSection.SetXScale(get()[GetCurCh()][*cit].GetXScale());
-        TempSection.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
+        Section TempSection(get()[GetCurChIndex()][*cit].get());
+        TempSection.SetXScale(get()[GetCurChIndex()][*cit].GetXScale());
+        TempSection.SetSectionDescription( get()[GetCurChIndex()][*cit].GetSectionDescription()+
                 ", new from selected");
         try {
             TempChannel.InsertSection(TempSection,n);
@@ -1732,8 +1725,8 @@ bool wxStfDoc::OnNewfromselectedThis( ) {
     if (TempChannel.size()>0) {
         Recording Selected(TempChannel);
         Selected.CopyAttributes(*this);
-        Selected[0].SetYUnits( at(GetCurCh()).GetYUnits() );
-        Selected[0].SetChannelName( at(GetCurCh()).GetChannelName() );
+        Selected[0].SetYUnits( at(GetCurChIndex()).GetYUnits() );
+        Selected[0].SetChannelName( at(GetCurChIndex()).GetChannelName() );
         wxString title(GetTitle());
         title+=wxT(", new from selected");
         wxGetApp().NewChild(Selected,this,title);
@@ -1763,10 +1756,10 @@ void wxStfDoc::Selectsome(wxCommandEvent &WXUNUSED(event)) {
     if (input.size()!=2) return;
     int everynth=(int)input[0];
     int everystart=(int)input[1];
-    //div_t n_selected=div((int)get()[GetCurCh()].size(),everynth);
-    for (int n=0; n*everynth+everystart-1 < (int)get()[GetCurCh()].size(); ++n) {
+    //div_t n_selected=div((int)get()[GetCurChIndex()].size(),everynth);
+    for (int n=0; n*everynth+everystart-1 < (int)get()[GetCurChIndex()].size(); ++n) {
         try {
-            SelectTrace(n*everynth+everystart-1);
+            SelectTrace(n*everynth+everystart-1, baseBeg, baseEnd);
         }
         catch (const std::out_of_range& e) {
             wxGetApp().ExceptMsg( wxString::FromAscii(e.what()) );
@@ -1778,7 +1771,7 @@ void wxStfDoc::Selectsome(wxCommandEvent &WXUNUSED(event)) {
 }
 
 void wxStfDoc::Unselectsome(wxCommandEvent &WXUNUSED(event)) {
-    if (GetSelectedSections().size() < get()[GetCurCh()].size()) {
+    if (GetSelectedSections().size() < get()[GetCurChIndex()].size()) {
         wxGetApp().ErrorMsg(wxT("Select all traces first"));
         return;
     }
@@ -1795,8 +1788,8 @@ void wxStfDoc::Unselectsome(wxCommandEvent &WXUNUSED(event)) {
     if (input.size()!=2) return;
     int everynth=(int)input[0];
     int everystart=(int)input[1];
-    //div_t n_unselected=div((int)get()[GetCurCh()].size(),everynth);
-    for (int n=0; n*everynth+everystart-1 < (int)get()[GetCurCh()].size(); ++n) {
+    //div_t n_unselected=div((int)get()[GetCurChIndex()].size(),everynth);
+    for (int n=0; n*everynth+everystart-1 < (int)get()[GetCurChIndex()].size(); ++n) {
         UnselectTrace(n*everynth+everystart-1);
     }
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
@@ -1808,8 +1801,8 @@ void wxStfDoc::Selectall(wxCommandEvent& event) {
     //Make sure all traces are unselected prior to selecting them all:
     if ( !GetSelectedSections().empty() )
         Deleteselected(event);
-    for (int n_s=0; n_s<(int)get()[GetCurCh()].size(); ++n_s) {
-        SelectTrace(n_s);
+    for (int n_s=0; n_s<(int)get()[GetCurChIndex()].size(); ++n_s) {
+        SelectTrace(n_s, baseBeg, baseEnd);
     }
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
     pFrame->SetSelected(GetSelectedSections().size());
@@ -1855,7 +1848,7 @@ void wxStfDoc::UpdateSelectedButton() {
     for (c_st_it cit = GetSelectedSections().begin();
          cit != GetSelectedSections().end() && !selected;
          ++cit) {
-        if (*cit == GetCurSec()) {
+        if (*cit == GetCurSecIndex()) {
             selected = true;
         }
     }
@@ -1879,7 +1872,7 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
     std::vector<std::string> windowLabels(2);
     Vector_double windowDefaults(windowLabels.size());
     windowLabels[0]="From point #:";windowDefaults[0]=0;
-    windowLabels[1]="To point #:";windowDefaults[1]=(int)cur().size()-1;
+    windowLabels[1]="To point #:";windowDefaults[1]=(int)cursec().size()-1;
     stf::UserInput initWindow(windowLabels,windowDefaults,"Filter window");
 
     wxStfUsrDlg FilterWindowDialog(GetDocumentWindow(),initWindow);
@@ -1936,34 +1929,34 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
 
     /*sampling interval in ms*/
 
-    Channel TempChannel(GetSelectedSections().size(), get()[GetCurCh()][GetSelectedSections()[0]].size());
+    Channel TempChannel(GetSelectedSections().size(), get()[GetCurChIndex()][GetSelectedSections()[0]].size());
     std::size_t n = 0;
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
         try {
             switch (fselect) {
                 case 3: {
-                    Section FftTemp(stf::filter(get()[GetCurCh()][*cit].get(),
+                    Section FftTemp(stf::filter(get()[GetCurChIndex()][*cit].get(),
                             llf,ulf,a,(int)GetSR(),stf::fgaussColqu,false));
-		    FftTemp.SetXScale(get()[GetCurCh()][*cit].GetXScale());
-                    FftTemp.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
+		    FftTemp.SetXScale(get()[GetCurChIndex()][*cit].GetXScale());
+                    FftTemp.SetSectionDescription( get()[GetCurChIndex()][*cit].GetSectionDescription()+
                                                    ", filtered");
                     TempChannel.InsertSection(FftTemp, n);
                     break;
                 }
                 case 2: {
-                    Section FftTemp(stf::filter(get()[GetCurCh()][*cit].get(),
+                    Section FftTemp(stf::filter(get()[GetCurChIndex()][*cit].get(),
                             llf,ulf,a,(int)GetSR(),stf::fbessel4,false));
-		    FftTemp.SetXScale(get()[GetCurCh()][*cit].GetXScale());
-                    FftTemp.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
+		    FftTemp.SetXScale(get()[GetCurChIndex()][*cit].GetXScale());
+                    FftTemp.SetSectionDescription( get()[GetCurChIndex()][*cit].GetSectionDescription()+
                                                    ", filtered" );
                     TempChannel.InsertSection(FftTemp, n);
                     break;
                 }
                 case 1: {
-                    Section FftTemp(stf::filter(get()[GetCurCh()][*cit].get(),
+                    Section FftTemp(stf::filter(get()[GetCurChIndex()][*cit].get(),
                             llf,ulf,a,(int)GetSR(),stf::fgauss,inverse));
-		    FftTemp.SetXScale(get()[GetCurCh()][*cit].GetXScale());
-                    FftTemp.SetSectionDescription( get()[GetCurCh()][*cit].GetSectionDescription()+
+		    FftTemp.SetXScale(get()[GetCurChIndex()][*cit].GetXScale());
+                    FftTemp.SetSectionDescription( get()[GetCurChIndex()][*cit].GetSectionDescription()+
                                                    std::string(", filtered") );
                     TempChannel.InsertSection(FftTemp, n);
                     break;
@@ -1997,7 +1990,7 @@ void wxStfDoc::P_over_N(wxCommandEvent& WXUNUSED(event)){
     if (input.size()!=1) return;
     int PoN=(int)fabs(input[0]);
     int ponDirection=input[0]<0? -1:1;
-    int new_sections=(int)get()[GetCurCh()].size()/(PoN+1);
+    int new_sections=(int)get()[GetCurChIndex()].size()/(PoN+1);
     if (new_sections<1) {
         wxGetApp().ErrorMsg(wxT("Not enough traces for P/n correction"));
         return;
@@ -2010,19 +2003,19 @@ void wxStfDoc::P_over_N(wxCommandEvent& WXUNUSED(event)){
     //read and PoN
     for (int n_section=0; n_section < new_sections; n_section++) {
         //Section loop
-        Section TempSection(get()[GetCurCh()][n_section].size());
-        TempSection.SetXScale(get()[GetCurCh()][n_section].GetXScale());
-        for (int n_point=0; n_point < (int)get()[GetCurCh()][n_section].size(); n_point++)
+        Section TempSection(get()[GetCurChIndex()][n_section].size());
+        TempSection.SetXScale(get()[GetCurChIndex()][n_section].GetXScale());
+        for (int n_point=0; n_point < (int)get()[GetCurChIndex()][n_section].size(); n_point++)
             TempSection[n_point]=0.0;
 
         //Addition of the PoN-values:
         for (int n_PoN=1; n_PoN < PoN+1; n_PoN++)
-            for (int n_point=0; n_point < (int)get()[GetCurCh()][n_section].size(); n_point++)
-                TempSection[n_point] += get()[GetCurCh()][n_PoN+(n_section*(PoN+1))][n_point];
+            for (int n_point=0; n_point < (int)get()[GetCurChIndex()][n_section].size(); n_point++)
+                TempSection[n_point] += get()[GetCurChIndex()][n_PoN+(n_section*(PoN+1))][n_point];
 
         //Subtraction from the original values:
-        for (int n_point=0; n_point < (int)get()[GetCurCh()][n_section].size(); n_point++)
-            TempSection[n_point] = get()[GetCurCh()][n_section*(PoN+1)][n_point]-
+        for (int n_point=0; n_point < (int)get()[GetCurChIndex()][n_section].size(); n_point++)
+            TempSection[n_point] = get()[GetCurChIndex()][n_section*(PoN+1)][n_point]-
                     TempSection[n_point]*ponDirection;
         std::ostringstream povernLabel;
         povernLabel << GetTitle() << ", #" << n_section << ", P over N";
@@ -2074,18 +2067,18 @@ void wxStfDoc::Plotextraction(stf::extraction_mode mode) {
         double minim=fabs(fmin);
         templateWave = stfio::vec_scal_div(templateWave, minim);
         std::string section_description, window_title;
-        Section TempSection(cur().get().size());
+        Section TempSection(cursec().get().size());
         switch (mode) {
          case stf::criterion: {
              stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
-             TempSection = Section(stf::detectionCriterion( cur().get(), templateWave, progDlg));
+             TempSection = Section(stf::detectionCriterion( cursec().get(), templateWave, progDlg));
              section_description = "Detection criterion of ";
              window_title = ", detection criterion";
              break;
          }
          case stf::correlation: {
              stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
-             TempSection = Section(stf::linCorr(cur().get(), templateWave, progDlg));
+             TempSection = Section(stf::linCorr(cursec().get(), templateWave, progDlg));
              section_description = "Template correlation of ";
              window_title = ", linear correlation";
              break;
@@ -2099,16 +2092,16 @@ void wxStfDoc::Plotextraction(stf::extraction_mode mode) {
              if (myDlg.ShowModal()!=wxID_OK) return;
              Vector_double filter = myDlg.readInput();
              stf::wxProgressInfo progDlg("Computing deconvolution...", "Starting deconvolution...", 100);
-             TempSection = Section(stf::deconvolve(cur().get(), templateWave,
+             TempSection = Section(stf::deconvolve(cursec().get(), templateWave,
                                                    (int)GetSR(), filter[1], filter[0], progDlg));
              section_description = "Template deconvolution from ";
              window_title = ", deconvolution";
              break;
         }
         if (TempSection.size()==0) return;
-        TempSection.SetXScale(cur().GetXScale());
+        TempSection.SetXScale(cursec().GetXScale());
         TempSection.SetSectionDescription(section_description +
-                                          cur().GetSectionDescription());
+                                          cursec().GetSectionDescription());
         Channel TempChannel(TempSection);
         Recording detCrit(TempChannel);
         detCrit.CopyAttributes(*this);
@@ -2164,16 +2157,16 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
         templateWave = stfio::vec_scal_minus(templateWave, fmax);
         double minim=fabs(fmin);
         templateWave = stfio::vec_scal_div(templateWave, minim);
-        Vector_double detect( cur().get().size() - templateWave.size() );
+        Vector_double detect( cursec().get().size() - templateWave.size() );
         switch (MiniDialog.GetMode()) {
          case stf::criterion: {
              stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
-             detect=stf::detectionCriterion(cur().get(), templateWave, progDlg);
+             detect=stf::detectionCriterion(cursec().get(), templateWave, progDlg);
              break;
          }
          case stf::correlation: {
              stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
-             detect=stf::linCorr(cur().get(), templateWave, progDlg);
+             detect=stf::linCorr(cursec().get(), templateWave, progDlg);
              break;
          }
          case stf::deconvolution:
@@ -2185,7 +2178,7 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
              if (myDlg.ShowModal()!=wxID_OK) return;
              Vector_double filter = myDlg.readInput();
              stf::wxProgressInfo progDlg("Computing deconvolution...", "Starting deconvolution...", 100);
-             detect=stf::deconvolve(cur().get(), templateWave, (int)GetSR(), filter[1], filter[0], progDlg);
+             detect=stf::deconvolve(cursec().get(), templateWave, (int)GetSR(), filter[1], filter[0], progDlg);
              break;
         }
         if (detect.empty()) {
@@ -2200,9 +2193,9 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             return;
         }
         // erase old events:
-        ClearEvents(GetCurCh(), GetCurSec());
+        ClearEvents(GetCurChIndex(), GetCurSecIndex());
         for (c_int_it cit = startIndices.begin(); cit != startIndices.end(); ++cit ) {
-            sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.push_back( stf::Event( *cit, 0, templateWave.size() ) );
+            sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.push_back( stf::Event( *cit, 0, templateWave.size() ) );
             // Find peak in this event:
             double baselineMean=0;
             for ( int n_mean = *cit-baseline;
@@ -2210,18 +2203,18 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
                   ++n_mean )
             {
                 if (n_mean < 0) {
-                    baselineMean += cur().at(0);
+                    baselineMean += cursec().at(0);
                 } else {
-                    baselineMean += cur().at(n_mean);
+                    baselineMean += cursec().at(n_mean);
                 }
             }
             baselineMean /= baseline;
             double peakIndex=0;
-            stf::peak( cur().get(), baselineMean, *cit, *cit + templateWave.size(),
+            stf::peak( cursec().get(), baselineMean, *cit, *cit + templateWave.size(),
                        1, stf::both, peakIndex );
             // set peak index of last event:
             std::size_t last_idx = GetCurrentSectionAttributes().eventList.size()-1;
-            sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.at(last_idx).SetEventPeakIndex((int)peakIndex);
+            sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.at(last_idx).SetEventPeakIndex((int)peakIndex);
         }
     }
     catch (const std::out_of_range& e) {
@@ -2270,14 +2263,14 @@ void wxStfDoc::Extract( wxCommandEvent& WXUNUSED(event) ) {
                     int index = it->GetEventStartIndex() + n_new - baseline;
                     if (index < 0)
                         index = 0;
-                    if (index >= (int)cur().size())
-                        index = cur().size()-1;
-                    TempSection2[n_new] = cur()[index];
+                    if (index >= (int)cursec().size())
+                        index = cursec().size()-1;
+                    TempSection2[n_new] = cursec()[index];
                 }
                 std::ostringstream eventDesc;
                 eventDesc << "Extracted event #" << (int)n_real;
                 TempSection2.SetSectionDescription(eventDesc.str());
-                TempSection2.SetXScale(get()[GetCurCh()][GetCurSec()].GetXScale());
+                TempSection2.SetXScale(get()[GetCurChIndex()][GetCurSecIndex()].GetXScale());
                 TempChannel2.InsertSection( TempSection2, n_real );
                 n_real++;
                 lastEventIt = it;
@@ -2313,7 +2306,7 @@ void wxStfDoc::InteractiveEraseEvents( wxCommandEvent& WXUNUSED(event) ) {
                          wxT("Erase all events"), wxYES_NO ).ShowModal()==wxID_YES)
     {
         try {
-            ClearEvents(GetCurCh(), GetCurSec());
+            ClearEvents(GetCurChIndex(), GetCurSecIndex());
         }
         catch (const std::out_of_range& e) {
             wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -2335,14 +2328,14 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
               ++n_mean )
         {
             if (n_mean < 0) {
-                baselineMean += cur().at(0);
+                baselineMean += cursec().at(0);
             } else {
-                baselineMean += cur().at(n_mean);
+                baselineMean += cursec().at(n_mean);
             }
         }
         baselineMean /= baseline;
         double peakIndex=0;
-        stf::peak( cur().get(), baselineMean, newStartPos,
+        stf::peak( cursec().get(), baselineMean, newStartPos,
                 newStartPos + GetCurrentSectionAttributes().eventList.at(0).GetEventSize(), 1,
                 stf::both, peakIndex );
         // set peak index of last event:
@@ -2350,18 +2343,18 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
         // find the position in the current event list where the new
         // event should be inserted:
         bool found = false;
-        for (event_it it = sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.begin();
-             it != sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.end(); ++it) {
+        for (event_it it = sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.begin();
+             it != sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.end(); ++it) {
             if ( (int)(it->GetEventStartIndex()) > newStartPos ) {
                 // insert new event before this event, then break:
-                sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.insert( it, newEvent );
+                sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.insert( it, newEvent );
                 found = true;
                 break;
             }
         }
         // if we are at the end of the list, append the event:
         if (!found)
-            sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.push_back( newEvent );
+            sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.push_back( newEvent );
     }
     catch (const std::out_of_range& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -2378,7 +2371,7 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
     // get threshold from user input:
     Vector_double threshold(0);
     std::ostringstream thrS;
-    thrS << "Threshold (" << at(GetCurCh()).GetYUnits() << wxT(")");
+    thrS << "Threshold (" << at(GetCurChIndex()).GetYUnits() << wxT(")");
     stf::UserInput Input( std::vector<std::string>(1, thrS.str()),
                           Vector_double (1,0.0), "Set threshold" );
     wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
@@ -2388,7 +2381,7 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
     threshold=myDlg.readInput();
 
     std::vector<int> startIndices(
-            stf::peakIndices( cur().get(), threshold[0], 0 )
+            stf::peakIndices( cursec().get(), threshold[0], 0 )
     );
     if (startIndices.empty()) {
         wxGetApp().ErrorMsg(
@@ -2396,7 +2389,7 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
         );
     }
     for (c_int_it cit = startIndices.begin(); cit != startIndices.end(); ++cit) {
-        sec_attr.at(GetCurCh()).at(GetCurSec()).eventList.push_back( stf::Event( *cit, 0, baseline ) );
+        sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.push_back( stf::Event( *cit, 0, baseline ) );
     }
     // show results in a table:
     stf::Table events(GetCurrentSectionAttributes().eventList.size(),2);
@@ -2426,9 +2419,9 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
 void wxStfDoc::Measure( )
 {
     double var=0.0;
-    if (cur().get().size() == 0) return;
+    if (cursec().get().size() == 0) return;
     try {
-        cur().at(0);
+        cursec().at(0);
     }
     catch (const std::out_of_range&) {
         return;
@@ -2453,9 +2446,9 @@ void wxStfDoc::Measure( )
     //Begin peak and base calculation
     //-------------------------------
     try {
-        base=stf::base(var,cur().get(),baseBeg,baseEnd);
+        base=stf::base(var,cursec().get(),baseBeg,baseEnd);
         baseSD=sqrt(var);
-        peak=stf::peak(cur().get(),base,
+        peak=stf::peak(cursec().get(),base,
                        peakBeg,peakEnd,pM,direction,maxT);
     }
     catch (const std::out_of_range& e) {
@@ -2465,7 +2458,7 @@ void wxStfDoc::Measure( )
         throw e;
     }
     try {
-        threshold = stf::threshold( cur().get(), peakBeg, peakEnd, slopeForThreshold/GetSR(), thrT, windowLength );
+        threshold = stf::threshold( cursec().get(), peakBeg, peakEnd, slopeForThreshold/GetSR(), thrT, windowLength );
     } catch (const std::out_of_range& e) {
         threshold = 0;
         throw e;
@@ -2489,7 +2482,7 @@ void wxStfDoc::Measure( )
     try {
         // 2008-04-27: changed limits to start from the beginning of the trace
         // 2013-06-16: changed to accept different rise-time proportions
-        rtLoHi=stf::risetime2(cur().get(),reference,ampl, (double)0/*(double)baseEnd*/,
+        rtLoHi=stf::risetime2(cursec().get(),reference,ampl, (double)0/*(double)baseEnd*/,
                              maxT, factor/*0.2*/, InnerLoRT, InnerHiRT, OuterLoRT, OuterHiRT);
         InnerLoRT/=GetSR();
         InnerHiRT/=GetSR();
@@ -2504,7 +2497,7 @@ void wxStfDoc::Measure( )
     try {
         // 2008-04-27: changed limits to start from the beginning of the trace
         // 2013-06-16: changed to accept different rise-time proportions 
-        rtLoHi=stf::risetime(cur().get(),reference,ampl, (double)0/*(double)baseEnd*/,
+        rtLoHi=stf::risetime(cursec().get(),reference,ampl, (double)0/*(double)baseEnd*/,
                              maxT, factor/*0.2*/, tLoIndex, tHiIndex, tLoReal);
     }
     catch (const std::out_of_range& e) {
@@ -2520,8 +2513,8 @@ void wxStfDoc::Measure( )
     //t50LeftReal=0.0;
     // 2008-04-27: changed limits to start from the beginning of the trace
     //             and to stop at the end of the trace
-    halfDuration = stf::t_half(cur().get(), reference, ampl, (double)0 /*(double)baseBeg*/,
-            (double)cur().size()-1 /*(double)peakEnd*/,maxT, t50LeftIndex,t50RightIndex,t50LeftReal);
+    halfDuration = stf::t_half(cursec().get(), reference, ampl, (double)0 /*(double)baseBeg*/,
+            (double)cursec().size()-1 /*(double)peakEnd*/,maxT, t50LeftIndex,t50RightIndex,t50LeftReal);
 
     t50RightReal=t50LeftReal+halfDuration;
     halfDuration/=GetSR();
@@ -2537,10 +2530,10 @@ void wxStfDoc::Measure( )
     //Begin Ratio of slopes rise/decay calculation
     //--------------------------------------------
     double left_rise = peakBeg;
-    maxRise=stf::maxRise(cur().get(),left_rise,maxT,maxRiseT,maxRiseY,windowLength);
+    maxRise=stf::maxRise(cursec().get(),left_rise,maxT,maxRiseT,maxRiseY,windowLength);
     double t_half_3=t50RightIndex+2.0*(t50RightIndex-t50LeftIndex);
     double right_decay=peakEnd<=t_half_3 ? peakEnd : t_half_3+1;
-    maxDecay=stf::maxDecay(cur().get(),maxT,right_decay,maxDecayT,maxDecayY,windowLength);
+    maxDecay=stf::maxDecay(cursec().get(),maxT,right_decay,maxDecayT,maxDecayY,windowLength);
 
     //Slope ratio
     if (maxDecay !=0) slopeRatio=maxRise/maxDecay;
@@ -2560,10 +2553,10 @@ void wxStfDoc::Measure( )
         double APBase=0.0, APPeak=0.0, APVar=0.0;
         try {
             // in 2012-11-02: use baseline cursors and not arbitrarily 100 points
-            //APBase=stf::base(APVar,sec().get(),0,endResting);
-            APBase=stf::base( APVar,sec().get(), baseBeg, baseEnd ); // use baseline cursors 
-            //APPeak=stf::peak(sec().get(),APBase,peakBeg,peakEnd,pM,stf::up,APMaxT);
-            APPeak=stf::peak( sec().get(),APBase ,peakBeg ,peakEnd ,pM,direction ,APMaxT );
+            //APBase=stf::base(APVar,secsec().get(),0,endResting);
+            APBase=stf::base( APVar,secsec().get(), baseBeg, baseEnd ); // use baseline cursors 
+            //APPeak=stf::peak(secsec().get(),APBase,peakBeg,peakEnd,pM,stf::up,APMaxT);
+            APPeak=stf::peak( secsec().get(),APBase ,peakBeg ,peakEnd ,pM,direction ,APMaxT );
         }
         catch (const std::out_of_range& e) {
             APBase=0.0;
@@ -2580,7 +2573,7 @@ void wxStfDoc::Measure( )
             left_APRise= APMaxT-searchRange>2.0 ? APMaxT-searchRange : 2.0;
         }
         try {
-            stf::maxRise(sec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY,windowLength);
+            stf::maxRise(secsec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY,windowLength);
         }
         catch (const std::out_of_range&) {
             APMaxRiseT=0.0;
@@ -2596,8 +2589,8 @@ void wxStfDoc::Measure( )
         //----------------------------
         //APt50LeftReal=0.0;
         //std::size_t APt50LeftIndex,APt50RightIndex;
-        stf::t_half(sec().get(), APBase, APPeak-APBase, left_APRise,
-                      (double)sec().get().size(), APMaxT, APt50LeftIndex,
+        stf::t_half(secsec().get(), APBase, APPeak-APBase, left_APRise,
+                      (double)secsec().get().size(), APMaxT, APt50LeftIndex,
                       APt50RightIndex, APt50LeftReal);
         //End determination of the region of maximal slope in the second channel
         //----------------------------
@@ -2698,7 +2691,7 @@ void wxStfDoc::Measure( )
     SetPSlopeEnd(PSlopeEndVal);
 
     try {
-        PSlope = (stf::pslope(cur().get(), PSlopeBeg, PSlopeEnd))*GetSR();
+        PSlope = (stf::pslope(cursec().get(), PSlopeBeg, PSlopeEnd))*GetSR();
     }
     catch (const std::out_of_range& e) {
         PSlope = 0.0;
@@ -2796,39 +2789,17 @@ void wxStfDoc::correctRangeR(int& value) {
         value=0;
         return;
     }
-    if (value>=(int)cur().size()) {
-        value=(int)cur().size()-1;
+    if (value>=(int)cursec().size()) {
+        value=(int)cursec().size()-1;
         return;
     }
 }
 
 void wxStfDoc::correctRangeR(std::size_t& value) {
-    if (value>=cur().size()) {
-        value=cur().size()-1;
+    if (value>=cursec().size()) {
+        value=cursec().size()-1;
         return;
     }
-}
-
-
-void wxStfDoc::SetCurCh(size_t value) {
-    if (value>=get().size()) {
-        throw std::out_of_range("channel out of range in wxStfDoc::SetCurCh()");
-    }
-    cc=value;
-}
-
-void wxStfDoc::SetSecCh(size_t value) {
-    if (value>=get().size() || value==cc) {
-        throw std::out_of_range("channel out of range in wxStfDoc::SetSecCh()");
-    }
-    sc=value;
-}
-
-void wxStfDoc::SetCurSec( size_t value ) {
-    if (value >= get()[cc].size()) {
-        throw std::out_of_range("channel out of range in wxStfDoc::SetCurSec()");
-    }
-    cs=value;
 }
 
 void wxStfDoc::SetMeasCursor(int value) {
@@ -2837,10 +2808,10 @@ void wxStfDoc::SetMeasCursor(int value) {
 }
 
 double wxStfDoc::GetMeasValue() {
-    if (measCursor>=get()[cc].size()) {
+    if (measCursor>=curch().size()) {
         correctRangeR(measCursor);
     }
-    return cur().at(measCursor);
+    return cursec().at(measCursor);
 }
 
 void wxStfDoc::SetBaseBeg(int value) {
@@ -2877,8 +2848,8 @@ void wxStfDoc::SetLatencyBeg(double value) {
     if (value<0.0) {
         value=0.0;
     }
-    if (value>=(double)cur().size()) {
-        value=cur().size()-1.0;
+    if (value>=(double)cursec().size()) {
+        value=cursec().size()-1.0;
     }
     latencyStartCursor=value;
 }
@@ -2887,8 +2858,8 @@ void wxStfDoc::SetLatencyEnd(double value) {
     if (value<0.0) {
         value=0.0;
     }
-    if (value>=(double)cur().size()) {
-        value=cur().size()-1.0;
+    if (value>=(double)cursec().size()) {
+        value=cursec().size()-1.0;
     }
     latencyEndCursor=value;
 }
@@ -2917,75 +2888,15 @@ void wxStfDoc::SetPSlopeEnd(int value) {
 }
 #endif 
 
-void wxStfDoc::SelectTrace(std::size_t sectionToSelect) {
-    // Check range so that sectionToSelect can be used
-    // without checking again:
-    if (sectionToSelect>=get()[cc].size()) {
-        std::out_of_range e("subscript out of range in wxStfDoc::SelectTrace\n");
-        throw e;
-    }
-    selectedSections.push_back(sectionToSelect);
-    double sumY=0;
-#ifdef _OPENMP
-#pragma omp parallel for reduction(+:sumY)
-#endif
-    if (get()[cc][sectionToSelect].size()==0) {
-        selectBase.push_back(0);
-    } else {
-        int start = baseBeg;
-        int end = baseEnd;
-        if (start > (int)get()[cc][sectionToSelect].size()-1)
-            start = get()[cc][sectionToSelect].size()-1;
-        if (start < 0) start = 0;
-        if (end > (int)get()[cc][sectionToSelect].size()-1)
-            end = get()[cc][sectionToSelect].size()-1;
-        if (end < 0) end = 0;
-        for (int i=start; i<=end; i++) {
-            sumY += get()[cc][sectionToSelect][i];
-        }
-        int n=(int)(end-start+1);
-        selectBase.push_back(sumY/n);
-    }
-}
-
-bool wxStfDoc::UnselectTrace(std::size_t sectionToUnselect) {
-
-    //verify whether the trace has really been selected and find the 
-    //number of the trace within the selectedTraces array:
-    bool traceSelected=false;
-    std::size_t traceToRemove=0;
-    for (std::size_t n=0; n < selectedSections.size() && !traceSelected; ++n) { 
-        if (selectedSections[n] == sectionToUnselect) traceSelected=true;
-        if (traceSelected) traceToRemove=n;
-    }
-    //Shift the selectedTraces array by one position, beginning
-    //with the trace to remove: 
-    if (traceSelected) {
-        //shift traces by one position:
-        for (std::size_t k=traceToRemove; k < GetSelectedSections().size()-1; ++k) { 
-            selectedSections[k]=selectedSections[k+1];
-            selectBase[k]=selectBase[k+1];
-        }
-        // resize vectors:
-        selectedSections.resize(selectedSections.size()-1);
-        selectBase.resize(selectBase.size()-1);
-        return true;
-    } else {
-        //msgbox
-        return false;
-    }
-}
-
-
 stf::Table wxStfDoc::CurAsTable() const {
-    stf::Table table(cur().size(),size());
+    stf::Table table(cursec().size(),size());
     try {
         for (std::size_t nRow=0;nRow<table.nRows();++nRow) {
             std::ostringstream rLabel;
             rLabel << nRow*GetXScale();
             table.SetRowLabel(nRow,rLabel.str());
             for (std::size_t nCol=0;nCol<table.nCols();++nCol) {
-                table.at(nRow,nCol)=get().at(nCol).at(cs).at(nRow);
+                table.at(nRow,nCol)=get().at(nCol).at(GetCurSecIndex()).at(nRow);
             }
         }
         for (std::size_t nCol=0;nCol<table.nCols();++nCol) {
@@ -3304,7 +3215,7 @@ const stf::SectionAttributes& wxStfDoc::GetSectionAttributes(std::size_t nchanne
 
 const stf::SectionAttributes& wxStfDoc::GetCurrentSectionAttributes() const {
     try {
-        return sec_attr.at(GetCurCh()).at(GetCurSec());
+        return sec_attr.at(GetCurChIndex()).at(GetCurSecIndex());
     }
     catch(const std::out_of_range& e) {
         throw e;
@@ -3313,7 +3224,7 @@ const stf::SectionAttributes& wxStfDoc::GetCurrentSectionAttributes() const {
 
 stf::SectionAttributes& wxStfDoc::GetCurrentSectionAttributesW() {
     try {
-        return sec_attr.at(GetCurCh()).at(GetCurSec());
+        return sec_attr.at(GetCurChIndex()).at(GetCurSecIndex());
     }
     catch(const std::out_of_range& e) {
         throw e;

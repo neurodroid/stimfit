@@ -1742,7 +1742,7 @@ void wxStfCursorsDlg::UpdateCursors() {
     SetSlope( actDoc->GetSlopeForThreshold() );
     
     wxString slopeUnits;
-    slopeUnits += stf::std2wx( actDoc->at(actDoc->GetCurCh()).GetYUnits() );
+    slopeUnits += stf::std2wx( actDoc->at(actDoc->GetCurChIndex()).GetYUnits() );
     slopeUnits += wxT("/");
     slopeUnits += stf::std2wx( actDoc->GetXUnits() );
     SetSlopeUnits(slopeUnits);

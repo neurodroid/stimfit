@@ -366,18 +366,18 @@ void wxStfChildFrame::UpdateChannels( ) {
             if (pActChannel->GetCurrentSelection() >= 0 ||
                 pActChannel->GetCurrentSelection() <  (int)pDoc->size())
             {
-                pDoc->SetCurCh( pActChannel->GetCurrentSelection() );
+                pDoc->SetCurChIndex( pActChannel->GetCurrentSelection() );
                 if (pInactChannel->GetCurrentSelection() >= 0 ||
                     pInactChannel->GetCurrentSelection() <  (int)pDoc->size())
                 {
-                    pDoc->SetSecCh( pInactChannel->GetCurrentSelection() );
+                    pDoc->SetSecChIndex( pInactChannel->GetCurrentSelection() );
                 } else {
-                    pDoc->SetCurCh(0);
-                    pDoc->SetSecCh(1);
+                    pDoc->SetCurChIndex(0);
+                    pDoc->SetSecChIndex(1);
                 }
             } else {
-                pDoc->SetCurCh(0);
-                pDoc->SetSecCh(1);
+                pDoc->SetCurChIndex(0);
+                pDoc->SetSecChIndex(1);
             }
         }
         catch (const std::out_of_range& e) {

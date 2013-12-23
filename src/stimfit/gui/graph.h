@@ -238,12 +238,12 @@ public:
     //! Returns the current zoom struct.
     /*! \return the current zoom struct.
      */
-//    Zoom get_zoom() { return Doc()->at(Doc()->GetCurCh()).GetZoom(); }
+//    Zoom get_zoom() { return Doc()->at(Doc()->GetCurChIndex()).GetZoom(); }
 
     //! Sets the current zoom struct.
     /*! \param zoom_ The current zoom struct.
      */
-//    void set_zoom(const Zoom& zoom_) { Doc()->at(Doc()->GetCurCh()).GetZoomW()=zoom_; }
+//    void set_zoom(const Zoom& zoom_) { Doc()->at(Doc()->GetCurChIndex()).GetZoomW()=zoom_; }
 
     //! The view attached to this wxStfGraph.
     wxStfView *view;
@@ -411,17 +411,17 @@ public:
 #endif
     int SPX() const { return DocC()->GetXZoom().startPosX; }
     int& SPXW() { return DocC()->GetXZoomW().startPosX; } 
-    int SPY() const { return DocC()->GetYZoom(DocC()->GetCurCh()).startPosY; }
-    int& SPYW() { return DocC()->GetYZoomW(DocC()->GetCurCh()).startPosY; } 
-    int SPY2() const { return DocC()->GetYZoom(DocC()->GetSecCh()).startPosY; }
-    int& SPY2W() { return DocC()->GetYZoomW(DocC()->GetSecCh()).startPosY; }
+    int SPY() const { return DocC()->GetYZoom(DocC()->GetCurChIndex()).startPosY; }
+    int& SPYW() { return DocC()->GetYZoomW(DocC()->GetCurChIndex()).startPosY; } 
+    int SPY2() const { return DocC()->GetYZoom(DocC()->GetSecChIndex()).startPosY; }
+    int& SPY2W() { return DocC()->GetYZoomW(DocC()->GetSecChIndex()).startPosY; }
     
     double XZ() const { return DocC()->GetXZoom().xZoom; }
     double& XZW() { return DocC()->GetXZoomW().xZoom; }
-    double YZ() const { return DocC()->GetYZoom(DocC()->GetCurCh()).yZoom; }
-    double& YZW() { return DocC()->GetYZoomW(DocC()->GetCurCh()).yZoom; }
-    double YZ2() const { return DocC()->GetYZoom(DocC()->GetSecCh()).yZoom; }
-    double& YZ2W() { return DocC()->GetYZoomW(DocC()->GetSecCh()).yZoom; }
+    double YZ() const { return DocC()->GetYZoom(DocC()->GetCurChIndex()).yZoom; }
+    double& YZW() { return DocC()->GetYZoomW(DocC()->GetCurChIndex()).yZoom; }
+    double YZ2() const { return DocC()->GetYZoom(DocC()->GetSecChIndex()).yZoom; }
+    double& YZ2W() { return DocC()->GetYZoomW(DocC()->GetSecChIndex()).yZoom; }
     
     DECLARE_EVENT_TABLE()
 };

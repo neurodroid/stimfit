@@ -55,6 +55,12 @@ void Recording::init() {
     time_t timer;
     timer = time(0);
     localtime_r(&timer, &datetime);
+
+    cc = 0;
+    sc = 1;
+    cs = 0;
+    selectedSections = std::vector<std::size_t>(0);
+    selectBase = Vector_double(0);
 }
 
 Recording::~Recording() {
@@ -171,6 +177,86 @@ size_t Recording::GetChannelSize(std::size_t n_channel) const {
     }
     catch (...) {
         throw;
+    }
+}
+
+void Recording::SetCurChIndex(size_t value) {
+    if (value>=get().size()) {
+        throw std::out_of_range("channel out of range in Recording::SetCurChIndex()");
+    }
+    cc=value;
+}
+
+void Recording::SetSecChIndex(size_t value) {
+    if (value>=get().size() || value==cc) {
+        throw std::out_of_range("channel out of range in Recording::SetSecChIndex()");
+    }
+    sc=value;
+}
+
+void Recording::SetCurSecIndex( size_t value ) {
+    if (value >= get()[cc].size()) {
+        throw std::out_of_range("channel out of range in Recording::SetCurSecIndex()");
+    }
+    cs=value;
+}
+
+void Recording::SelectTrace(std::size_t sectionToSelect, std::size_t base_start, std::size_t base_end) {
+    // Check range so that sectionToSelect can be used
+    // without checking again:
+    if (sectionToSelect>=curch().size()) {
+        std::out_of_range e("subscript out of range in Recording::SelectTrace\n");
+        throw e;
+    }
+    selectedSections.push_back(sectionToSelect);
+    double sumY=0;
+#ifdef _OPENMP
+#pragma omp parallel for reduction(+:sumY)
+#endif
+    if (curch()[sectionToSelect].size()==0) {
+        selectBase.push_back(0);
+    } else {
+        int start = base_start;
+        int end = base_end;
+        if (start > (int)curch()[sectionToSelect].size()-1)
+            start = curch()[sectionToSelect].size()-1;
+        if (start < 0) start = 0;
+        if (end > (int)curch()[sectionToSelect].size()-1)
+            end = curch()[sectionToSelect].size()-1;
+        if (end < 0) end = 0;
+        for (int i=start; i<=end; i++) {
+            sumY += curch()[sectionToSelect][i];
+        }
+        int n=(int)(end-start+1);
+        selectBase.push_back(sumY/n);
+    }
+}
+
+bool Recording::UnselectTrace(std::size_t sectionToUnselect) {
+
+    //verify whether the trace has really been selected and find the 
+    //number of the trace within the selectedTraces array:
+    bool traceSelected=false;
+    std::size_t traceToRemove=0;
+    for (std::size_t n=0; n < selectedSections.size() && !traceSelected; ++n) { 
+        if (selectedSections[n] == sectionToUnselect) traceSelected=true;
+        if (traceSelected) traceToRemove=n;
+    }
+    //Shift the selectedTraces array by one position, beginning
+    //with the trace to remove: 
+    if (traceSelected) {
+        //shift traces by one position:
+        for (std::size_t k=traceToRemove; k < GetSelectedSections().size()-1; ++k) { 
+            selectedSections[k]=selectedSections[k+1];
+            selectBase[k]=selectBase[k+1];
+        }
+        // resize vectors:
+        selectedSections.resize(selectedSections.size()-1);
+        selectBase.resize(selectBase.size()-1);
+        return true;
+    } else {
+        //msgbox
+        return false;
     }
 }
 

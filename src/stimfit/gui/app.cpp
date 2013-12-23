@@ -506,7 +506,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
         if (CursorsDialog->GetPeakAtEnd())
         {	//If 'Upper limit at end of trace' is selected in the dialog box
             //Set upper limit to end of trace
-            actDoc->SetPeakEnd((int)actDoc->cur().size()-1);
+            actDoc->SetPeakEnd((int)actDoc->cursec().size()-1);
             try {
                 CursorsDialog->UpdateCursors();
             }
@@ -1087,7 +1087,7 @@ void wxStfApp::OnNewfromall( wxCommandEvent& WXUNUSED(event) ) {
             return;
         }
         try {
-            nwxT+=pDoc->get().at(pDoc->GetCurCh()).size();
+            nwxT+=pDoc->get().at(pDoc->GetCurChIndex()).size();
         }
         catch (const std::out_of_range& e) {
             ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -1103,7 +1103,7 @@ void wxStfApp::OnNewfromall( wxCommandEvent& WXUNUSED(event) ) {
     std::vector<std::vector<std::string> > channel_names(n_channels);
     while (curNode) {
         pDoc=(wxStfDoc*)curNode->GetData();
-        if (pDoc->get()[pDoc->GetCurCh()].size() > 0) {
+        if (pDoc->get()[pDoc->GetCurChIndex()].size() > 0) {
             for (std::size_t n_c=0;n_c<n_channels;++n_c) {
                 channel_names[n_c].push_back(pDoc->get()[n_c].GetChannelName());
                 for (std::size_t n=0; n<pDoc->get()[n_c].size(); ++n) {
@@ -1117,7 +1117,7 @@ void wxStfApp::OnNewfromall( wxCommandEvent& WXUNUSED(event) ) {
                 }
             }
         }
-        nwxT+=pDoc->get()[pDoc->GetCurCh()].size();
+        nwxT+=pDoc->get()[pDoc->GetCurChIndex()].size();
         curNode=curNode->GetNext();
     }
 
@@ -1360,10 +1360,10 @@ std::vector<stf::SectionPointer> wxStfApp::GetSectionsWithFits() const {
     while (curNode) {
         wxStfDoc* pDoc=(wxStfDoc*)curNode->GetData();
         try {
-            for (std::size_t n_sec=0; n_sec < pDoc->get().at(pDoc->GetCurCh()).size(); ++n_sec) {
-                stf::SectionAttributes sec_attr = pDoc->GetSectionAttributes(pDoc->GetCurCh(), n_sec);
+            for (std::size_t n_sec=0; n_sec < pDoc->get().at(pDoc->GetCurChIndex()).size(); ++n_sec) {
+                stf::SectionAttributes sec_attr = pDoc->GetSectionAttributes(pDoc->GetCurChIndex(), n_sec);
                 if (sec_attr.isFitted) {
-                    sectionList.push_back(stf::SectionPointer(&pDoc->get()[pDoc->GetCurCh()][n_sec],
+                    sectionList.push_back(stf::SectionPointer(&pDoc->get()[pDoc->GetCurChIndex()][n_sec],
                                                               sec_attr)
                                           );
                 }

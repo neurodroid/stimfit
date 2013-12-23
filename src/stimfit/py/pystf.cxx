@@ -175,10 +175,10 @@ PyObject* get_trace(int trace, int channel) {
     if ( !check_doc() ) return NULL;
 
     if ( trace == -1 ) {
-        trace = actDoc()->GetCurSec();
+        trace = actDoc()->GetCurSecIndex();
     }
     if ( channel == -1 ) {
-        channel = actDoc()->GetCurCh();
+        channel = actDoc()->GetCurChIndex();
     }
 
     npy_intp dims[1] = {(int)actDoc()->at(channel).at(trace).size()};
@@ -201,7 +201,7 @@ bool new_window( double* invec, int size ) {
     std::copy( &invec[0], &invec[size], va.begin() );
     Section sec(va);
     Channel ch(sec);
-    ch.SetYUnits( actDoc()->at( actDoc()->GetCurCh() ).GetYUnits() );
+    ch.SetYUnits( actDoc()->at( actDoc()->GetCurChIndex() ).GetYUnits() );
     Recording new_rec( ch );
     new_rec.SetXScale( actDoc()->GetXScale() );
     wxStfDoc* testDoc = wxGetApp().NewChild( new_rec, actDoc(), wxT("From python") );
@@ -225,7 +225,7 @@ bool _new_window_gMatrix( ) {
         }
         std::string yunits = "";
         if (open_doc) {
-            yunits = actDoc()->at( actDoc()->GetCurCh() ).GetYUnits();
+            yunits = actDoc()->at( actDoc()->GetCurChIndex() ).GetYUnits();
         }
         ch.SetYUnits( yunits );
         if ( !gNames.empty() ) {
@@ -261,7 +261,7 @@ bool new_window_matrix( double* invec, int traces, int size ) {
         Section sec(va);
         ch.InsertSection(sec, n);
     }
-    ch.SetYUnits( actDoc()->at( actDoc()->GetCurCh() ).GetYUnits() );
+    ch.SetYUnits( actDoc()->at( actDoc()->GetCurChIndex() ).GetYUnits() );
     Recording new_rec( ch );
     new_rec.SetXScale( actDoc()->GetXScale() );
     wxStfDoc* testDoc = wxGetApp().NewChild( new_rec, actDoc(), wxT("From python") );
@@ -299,10 +299,10 @@ int get_size_trace( int trace, int channel ) {
     if ( !check_doc() ) return 0;
 
     if ( trace == -1 ) {
-        trace = actDoc()->GetCurSec();
+        trace = actDoc()->GetCurSecIndex();
     }
     if ( channel == -1 ) {
-        channel = actDoc()->GetCurCh();
+        channel = actDoc()->GetCurChIndex();
     }
     
     int size = 0;
@@ -320,7 +320,7 @@ int get_size_channel( int channel ) {
     if ( !check_doc() ) return 0;
 
     if ( channel == -1 ) {
-        channel = actDoc()->GetCurCh();
+        channel = actDoc()->GetCurChIndex();
     }
     
     int size = 0;
@@ -388,7 +388,7 @@ bool set_recording_time( const char* time ) {
 
 bool select_trace( int trace ) {
     if ( !check_doc() ) return false;
-    int max_size = (int)actDoc()->at(actDoc()->GetCurCh()).size();
+    int max_size = (int)actDoc()->at(actDoc()->GetCurChIndex()).size();
     if (trace < -1 || trace >= max_size) {
         wxString msg;
         msg << wxT("Select a trace with a zero-based index between 0 and ") << max_size-1;
@@ -400,7 +400,7 @@ bool select_trace( int trace ) {
         return false;
     }
     if ( trace == -1 ) {
-        trace = actDoc()->GetCurSec();
+        trace = actDoc()->GetCurSecIndex();
     }
 
     // control whether trace has already been selected:
@@ -415,7 +415,7 @@ bool select_trace( int trace ) {
 
     // add trace number to selected numbers, print number of selected traces
     if (!already) {
-        actDoc()->SelectTrace( trace );
+        actDoc()->SelectTrace(trace, actDoc()->GetBaseBeg(), actDoc()->GetBaseEnd());
         //String output in the trace navigator
         wxStfChildFrame* pFrame = (wxStfChildFrame*)actDoc()->GetDocumentWindow();
         if ( !pFrame ) {
@@ -483,7 +483,7 @@ int get_trace_index() {
     if ( !check_doc() )
         return -1;
     
-    return actDoc()->GetCurSec();
+    return actDoc()->GetCurSecIndex();
 }
 
 int get_channel_index( bool active ) {
@@ -491,9 +491,9 @@ int get_channel_index( bool active ) {
         return -1;
     
     if ( active )
-        return actDoc()->GetCurCh();
+        return actDoc()->GetCurChIndex();
     else
-        return actDoc()->GetSecCh();        
+        return actDoc()->GetSecChIndex();        
 }
 
 bool set_channel(int channel) {
@@ -506,15 +506,15 @@ bool set_channel(int channel) {
     }
     
     // only if we want to change the active channel
-    if ((unsigned int)channel == actDoc()->GetCurCh() ) {
+    if ((unsigned int)channel == actDoc()->GetCurChIndex() ) {
         return true;
     }
 
-    int reference_ch = actDoc()->GetCurCh();  
+    int reference_ch = actDoc()->GetCurChIndex();  
         
     // catch exceptions (i.e out of range)
     try {
-        actDoc()->SetCurCh(channel); 
+        actDoc()->SetCurChIndex(channel); 
     }
     catch (const std::out_of_range& e) {
         ShowError( wxT("Value exceeds the number of available channels") );
@@ -528,8 +528,8 @@ bool set_channel(int channel) {
         return false;
     }
     // set the channel selection combo 
-    //pFrame->SetChannels( actDoc()->GetCurCh(), actDoc()->GetSecCh()); 
-    pFrame->SetChannels( actDoc()->GetCurCh(), reference_ch); 
+    //pFrame->SetChannels( actDoc()->GetCurChIndex(), actDoc()->GetSecChIndex()); 
+    pFrame->SetChannels( actDoc()->GetCurChIndex(), reference_ch); 
     pFrame->UpdateChannels(); // update according to the combo
     return refresh_graph();
 }
@@ -539,7 +539,7 @@ const char* get_channel_name( int index ) {
     if ( !check_doc() ) return "";
 
     if (index < 0) {
-        index = actDoc()->GetCurCh();
+        index = actDoc()->GetCurChIndex();
     }
     try {
         return actDoc()->at( index ).GetChannelName().c_str();
@@ -556,7 +556,7 @@ bool set_channel_name( const char* name, int index ) {
     if ( !check_doc() ) return "";
 
     if (index < 0) {
-        index = actDoc()->GetCurCh();
+        index = actDoc()->GetCurChIndex();
     }
     try {
         actDoc()->at( index ).SetChannelName(name);
@@ -574,10 +574,10 @@ const char* get_trace_name( int trace, int channel ) {
     if ( !check_doc() ) return "";
 
     if (channel < 0) {
-        channel = actDoc()->GetCurCh();
+        channel = actDoc()->GetCurChIndex();
     }
     if (trace < 0) {
-        trace = actDoc()->GetCurSec();
+        trace = actDoc()->GetCurSecIndex();
     }
     try {
         return actDoc()->at( channel ).at( trace ).GetSectionDescription().c_str();
@@ -819,7 +819,7 @@ bool set_fit_start( double pos, bool is_time ) {
     
     int posInt = stf::round( pos );
     // range check:
-    if ( posInt < 0 || posInt >= (int)actDoc()->cur().size() ) {
+    if ( posInt < 0 || posInt >= (int)actDoc()->cursec().size() ) {
         ShowError( wxT("Value out of range in set_fit_start()") );
         return false;
     }
@@ -853,7 +853,7 @@ bool set_fit_end( double pos, bool is_time ) {
     int posInt = stf::round( pos );
 
     // range check:
-    if ( posInt < 0 || posInt >= (int)actDoc()->cur().size() ) {
+    if ( posInt < 0 || posInt >= (int)actDoc()->cursec().size() ) {
         ShowError( wxT("Value out of range in set_fit_end()") );
         return false;
     }
@@ -887,7 +887,7 @@ bool set_peak_start( double pos, bool is_time ) {
     int posInt = stf::round( pos );
 
     // range check:
-    if ( posInt < 0 || posInt >= (int)actDoc()->cur().size() ) {
+    if ( posInt < 0 || posInt >= (int)actDoc()->cursec().size() ) {
         ShowError( wxT("Value out of range in set_peak_start()") );
         return false;
     }
@@ -915,7 +915,7 @@ bool set_peak_end( double pos, bool is_time ) {
     int posInt = stf::round( pos );
 
     // range check:
-    if ( posInt < 0 || posInt >= (int)actDoc()->cur().size() ) {
+    if ( posInt < 0 || posInt >= (int)actDoc()->cursec().size() ) {
         ShowError( wxT("Value out of range in set_peak_end()") );
         return false;
     }
@@ -1122,7 +1122,7 @@ bool set_base_start( double pos, bool is_time ) {
     int posInt = stf::round( pos );
 
     // range check:
-    if ( posInt < 0 || posInt >= (int)actDoc()->cur().size() ) {
+    if ( posInt < 0 || posInt >= (int)actDoc()->cursec().size() ) {
         ShowError( wxT("Value out of range in set_base_start()") );
         return false;
     }
@@ -1150,7 +1150,7 @@ bool set_base_end( double pos, bool is_time ) {
     int posInt = stf::round( pos );
 
     // range check:
-    if ( posInt < 0 || posInt >= (int)actDoc()->cur().size() ) {
+    if ( posInt < 0 || posInt >= (int)actDoc()->cursec().size() ) {
         ShowError( wxT("Value out of range in set_base_end()") );
         return false;
     }
@@ -1184,10 +1184,10 @@ const char* get_yunits( int trace, int channel ) {
     if ( !check_doc() ) return "";
 
     if (channel < 0) {
-        channel = actDoc()->GetCurCh();
+        channel = actDoc()->GetCurChIndex();
     }
     if (trace < 0) {
-        trace = actDoc()->GetCurSec();
+        trace = actDoc()->GetCurSecIndex();
     }
     try {
         return actDoc()->at( channel ).GetYUnits().c_str();
@@ -1211,10 +1211,10 @@ bool set_yunits( const char* units, int trace, int channel ) {
     if ( !check_doc() ) return false;
 
     if (channel < 0) {
-        channel = actDoc()->GetCurCh();
+        channel = actDoc()->GetCurChIndex();
     }
     if (trace < 0) {
-        trace = actDoc()->GetCurSec();
+        trace = actDoc()->GetCurSecIndex();
     }
     try {
         actDoc()->at( channel ).SetYUnits(units);
@@ -1350,7 +1350,7 @@ void align_selected(  double (*alignment)( bool ), bool active ) {
     wxStfDoc* pDoc = actDoc();
     
     //store current section:
-    std::size_t section_old = pDoc->GetCurSec();
+    std::size_t section_old = pDoc->GetCurSecIndex();
 
     if ( pDoc->GetSelectedSections().empty() ) {
         ShowError( wxT("No selected traces") );
@@ -1360,7 +1360,7 @@ void align_selected(  double (*alignment)( bool ), bool active ) {
     //initialize the lowest and the highest index:
     std::size_t min_index=0;
     try {
-        min_index=pDoc->get()[pDoc->GetSecCh()].at(pDoc->GetSelectedSections().at(0)).size()-1;
+        min_index=pDoc->get()[pDoc->GetSecChIndex()].at(pDoc->GetSelectedSections().at(0)).size()-1;
     }
     catch (const std::out_of_range& e) {
         wxString msg(wxT("Error while aligning\nIt is safer to re-start the program\n"));
@@ -1380,7 +1380,7 @@ void align_selected(  double (*alignment)( bool ), bool active ) {
         //Set the selected section as the current section temporarily:
         pDoc->SetSection(*cit);
         if ( pDoc->GetPeakAtEnd() ) {
-            pDoc->SetPeakEnd((int)pDoc->get()[pDoc->GetSecCh()][*cit].size()-1);
+            pDoc->SetPeakEnd((int)pDoc->get()[pDoc->GetSecChIndex()][*cit].size()-1);
         }
         // Calculate all variables for the current settings
         // APMaxSlopeT will be calculated for the second (==reference)
@@ -1488,7 +1488,7 @@ PyObject* leastsq( int fselect, bool refresh ) {
 
     std::vector< double > x( pDoc->GetFitEnd() - pDoc->GetFitBeg() );
     //fill array:
-    std::copy(&pDoc->cur()[pDoc->GetFitBeg()], &pDoc->cur()[pDoc->GetFitEnd()], &x[0]);
+    std::copy(&pDoc->cursec()[pDoc->GetFitBeg()], &pDoc->cursec()[pDoc->GetFitEnd()], &x[0]);
     
     std::vector< double > params( n_params );            
 
@@ -1513,7 +1513,7 @@ PyObject* leastsq( int fselect, bool refresh ) {
     try {
         chisqr = stf::lmFit( x, pDoc->GetXScale(), wxGetApp().GetFuncLib().at(fselect),
                              opts, true, params, fitInfo, fitWarning );
-        pDoc->SetIsFitted( pDoc->GetCurCh(), pDoc->GetCurSec(), params,
+        pDoc->SetIsFitted( pDoc->GetCurChIndex(), pDoc->GetCurSecIndex(), params,
                            wxGetApp().GetFuncLibPtr(fselect),
                            chisqr, pDoc->GetFitBeg(), pDoc->GetFitEnd() );
     }
@@ -1553,10 +1553,10 @@ PyObject* get_fit( int trace, int channel ) {
     if ( !check_doc() ) return NULL;
 
     if ( trace == -1 ) {
-        trace = actDoc()->GetCurSec();
+        trace = actDoc()->GetCurSecIndex();
     }
     if ( channel == -1 ) {
-        channel = actDoc()->GetCurCh();
+        channel = actDoc()->GetCurChIndex();
     }
 
     /* Does the specified section contain a fit at all? */
@@ -1809,8 +1809,8 @@ PyObject* detect_events(double* invec, int size, const std::string& mode, bool n
 
     if ( !check_doc() ) return NULL;
 
-    int trace = actDoc()->GetCurSec();
-    int channel = actDoc()->GetCurCh();
+    int trace = actDoc()->GetCurSecIndex();
+    int channel = actDoc()->GetCurChIndex();
 
     Vector_double templ(invec, &invec[size]);
     if (norm) {

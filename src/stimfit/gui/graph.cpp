@@ -269,11 +269,11 @@ void wxStfGraph::OnDraw( wxDC& DC )
             //Draw current trace on display
             //For display use point to point drawing
             DC.SetPen(standardPen2);
-            PlotTrace(&DC,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(), reference);
+            PlotTrace(&DC,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(), reference);
         } else {	//Draw second channel for print out
             //For print out use polyline tool
             DC.SetPen(standardPrintPen2);
-            PrintTrace(&DC,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(), reference);
+            PrintTrace(&DC,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(), reference);
         }	// End display or print out
     }		//End plot of the second channel
 
@@ -283,7 +283,7 @@ void wxStfGraph::OnDraw( wxDC& DC )
                 //Draw current trace on display
                 //For display use point to point drawing
                 DC.SetPen(standardPen3);
-                PlotTrace(&DC,Doc()->get()[n][Doc()->GetCurSec()].get(), background, n);
+                PlotTrace(&DC,Doc()->get()[n][Doc()->GetCurSecIndex()].get(), background, n);
             }
         }
     }		//End plot of the second channel
@@ -294,11 +294,11 @@ void wxStfGraph::OnDraw( wxDC& DC )
 	//Draw current trace on display
         //For display use point to point drawing
         DC.SetPen(standardPen);
-        PlotTrace(&DC,Doc()->get()[Doc()->GetCurCh()][Doc()->GetCurSec()].get());
+        PlotTrace(&DC,Doc()->get()[Doc()->GetCurChIndex()][Doc()->GetCurSecIndex()].get());
     } else {
         //For print out use polyline tool
         DC.SetPen(standardPrintPen);
-        PrintTrace(&DC,Doc()->get()[Doc()->GetCurCh()][Doc()->GetCurSec()].get());
+        PrintTrace(&DC,Doc()->get()[Doc()->GetCurChIndex()][Doc()->GetCurSecIndex()].get());
     }	// End display or print out
     //End plot of the current trace
 
@@ -372,7 +372,7 @@ void wxStfGraph::PlotSelected(wxDC& DC) {
             //For display use point to point drawing
             PlotTrace(
                       &DC,
-                      Doc()->get()[Doc()->GetCurCh()][Doc()->GetSelectedSections()[m]].get()
+                      Doc()->get()[Doc()->GetCurChIndex()][Doc()->GetSelectedSections()[m]].get()
                       );
         }
     }  //End draw traces on display
@@ -381,7 +381,7 @@ void wxStfGraph::PlotSelected(wxDC& DC) {
         DC.SetPen(selectPrintPen);
         for (unsigned m=0; m < Doc()->GetSelectedSections().size() && Doc()->GetSelectedSections().size()>0; ++m)
         {
-            PrintTrace(&DC,Doc()->get()[Doc()->GetCurCh()][Doc()->GetSelectedSections()[m]].get());
+            PrintTrace(&DC,Doc()->get()[Doc()->GetCurChIndex()][Doc()->GetSelectedSections()[m]].get());
         }	//End draw for print out
     }	//End if display or print out
 }
@@ -534,7 +534,7 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
         eventArrow(&DC, (int)it->GetEventStartIndex());
         // Create circles indicating the peak of an event:
         try {
-            DrawCircle( &DC, it->GetEventPeakIndex(), Doc()->cur().at(it->GetEventPeakIndex()), eventPen, eventPen );
+            DrawCircle( &DC, it->GetEventPeakIndex(), Doc()->cursec().at(it->GetEventPeakIndex()), eventPen, eventPen );
         }
         catch (const std::out_of_range& e) {
             wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
@@ -917,9 +917,9 @@ void wxStfGraph::DrawFit(wxDC* pDC) {
             std::size_t sel_index = Doc()->GetSelectedSections()[ n_sel ];
             // Check whether this section contains a fit:
             try {
-                stf::SectionAttributes sec_attr = Doc()->GetSectionAttributes(Doc()->GetCurCh(), sel_index);
+                stf::SectionAttributes sec_attr = Doc()->GetSectionAttributes(Doc()->GetCurChIndex(), sel_index);
                 if ( sec_attr.isFitted && pFrame->ShowSelected() ) {
-                    PlotFit( pDC, stf::SectionPointer( &((*Doc())[Doc()->GetCurCh()][sel_index]), sec_attr ) );
+                    PlotFit( pDC, stf::SectionPointer( &((*Doc())[Doc()->GetCurChIndex()][sel_index]), sec_attr ) );
                 }
             } catch (const std::out_of_range& e) {
                 /* Do nothing */
@@ -933,7 +933,7 @@ void wxStfGraph::DrawFit(wxDC* pDC) {
             pDC->SetPen(fitPen);
         stf::SectionAttributes sec_attr = Doc()->GetCurrentSectionAttributes();
         if (sec_attr.isFitted) {
-            PlotFit( pDC, stf::SectionPointer( &((*Doc())[Doc()->GetCurCh()][Doc()->GetCurSec()]),
+            PlotFit( pDC, stf::SectionPointer( &((*Doc())[Doc()->GetCurChIndex()][Doc()->GetCurSecIndex()]),
                                                sec_attr) );
         }
     }
@@ -1039,7 +1039,7 @@ void wxStfGraph::DrawIntegral(wxDC* pDC) {
         quadTrace.push_back(
             wxPoint(
                     xFormat(sec_attr.storeIntEnd),
-                    yFormat(Doc()->cur()[sec_attr.storeIntEnd])
+                    yFormat(Doc()->cursec()[sec_attr.storeIntEnd])
                     ));
     }
     quadTrace.push_back(
@@ -1643,9 +1643,9 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         }
         wxString scaleYString;
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-        scaleYString <<  (int)yScaled << wxT(" ") << Doc()->at(Doc()->GetCurCh()).GetYUnits() << wxT("\0");
+        scaleYString <<  (int)yScaled << wxT(" ") << Doc()->at(Doc()->GetCurChIndex()).GetYUnits() << wxT("\0");
 #else
-        scaleYString <<  (int)yScaled << wxT(" ") << wxString(Doc()->at(Doc()->GetCurCh()).GetYUnits().c_str(), wxConvUTF8) << wxT("\0");
+        scaleYString <<  (int)yScaled << wxT(" ") << wxString(Doc()->at(Doc()->GetCurChIndex()).GetYUnits().c_str(), wxConvUTF8) << wxT("\0");
 #endif        
         // Center of y-scalebar:
         int yCenter=WindowRect.height-bottomDist-(Scale[1].y-Scale[2].y)/2;
@@ -1665,9 +1665,9 @@ void wxStfGraph::CreateScale(wxDC* pDC)
             wxString scaleYString2;
             scaleYString2 << (int)yScaled2 << wxT(" ")
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-                          << Doc()->at(Doc()->GetSecCh()).GetYUnits();
+                          << Doc()->at(Doc()->GetSecChIndex()).GetYUnits();
 #else
-            << wxString(Doc()->at(Doc()->GetSecCh()).GetYUnits().c_str(), wxConvUTF8);
+            << wxString(Doc()->at(Doc()->GetSecChIndex()).GetYUnits().c_str(), wxConvUTF8);
 #endif
             // Center of y2-scalebar:
             int y2Center=WindowRect.height-bottomDist-(Scale[3].y-Scale[4].y)/2;
@@ -1770,9 +1770,9 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         );
         pDC->DrawLabel(
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-                       Doc()->at(Doc()->GetCurCh()).GetYUnits(),
+                       Doc()->at(Doc()->GetCurChIndex()).GetYUnits(),
 #else
-                       wxString(Doc()->at(Doc()->GetCurCh()).GetYUnits().c_str(), wxConvUTF8),
+                       wxString(Doc()->at(Doc()->GetCurChIndex()).GetYUnits().c_str(), wxConvUTF8),
 #endif
                 TextFrame,
                 wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL
@@ -1827,9 +1827,9 @@ void wxStfGraph::CreateScale(wxDC* pDC)
             pDC->SetTextForeground(*wxRED);
             pDC->DrawLabel(
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-                           Doc()->at(Doc()->GetSecCh()).GetYUnits(),
+                           Doc()->at(Doc()->GetSecChIndex()).GetYUnits(),
 #else
-                           wxString(Doc()->at(Doc()->GetSecCh()).GetYUnits().c_str(), wxConvUTF8),
+                           wxString(Doc()->at(Doc()->GetSecChIndex()).GetYUnits().c_str(), wxConvUTF8),
 #endif                           
                     TextFrame2,
                     wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL
@@ -1950,13 +1950,13 @@ void wxStfGraph::FittorectY(YZoom& yzoom, const wxRect& rect, double min, double
 void wxStfGraph::Fittowindow(bool refresh)
 {
     const double screen_part=0.5; //part of the window to be filled
-    std::size_t points=Doc()->cur().size();
+    std::size_t points=Doc()->cursec().size();
     if (points==0) {
         wxGetApp().ErrorMsg(wxT("Array of size zero in wxGraph::Fittowindow()"));
         return;
     }
-    Vector_double::const_iterator max_el = std::max_element(Doc()->cur().get().begin(), Doc()->cur().get().end());
-    Vector_double::const_iterator min_el = std::min_element(Doc()->cur().get().begin(), Doc()->cur().get().end());
+    Vector_double::const_iterator max_el = std::max_element(Doc()->cursec().get().begin(), Doc()->cursec().get().end());
+    Vector_double::const_iterator min_el = std::min_element(Doc()->cursec().get().begin(), Doc()->cursec().get().end());
     double min = *min_el;
     if (min>1.0e12)  min= 1.0e12;
     if (min<-1.0e12) min=-1.0e12;
@@ -1976,7 +1976,7 @@ void wxStfGraph::Fittowindow(bool refresh)
         //Fit to window Ch1
         XZW()=(double)WindowRect.width /points;
         SPXW()=0;
-        FittorectY(Doc()->GetYZoomW(Doc()->GetCurCh()), WindowRect, min, max, screen_part);
+        FittorectY(Doc()->GetYZoomW(Doc()->GetCurChIndex()), WindowRect, min, max, screen_part);
         break;
     case stf::zoomch2:
         //ErrorMsg if no second channel available
@@ -1992,7 +1992,7 @@ void wxStfGraph::Fittowindow(bool refresh)
         //Fit to window Ch1
         XZW()=(double)WindowRect.width /points;
         SPXW()=0;
-        FittorectY(Doc()->GetYZoomW(Doc()->GetCurCh()), WindowRect, min, max, screen_part);
+        FittorectY(Doc()->GetYZoomW(Doc()->GetCurChIndex()), WindowRect, min, max, screen_part);
         break;
     }
     if (refresh) Refresh();
@@ -2006,25 +2006,25 @@ void wxStfGraph::FitToWindowSecCh(bool refresh)
         wxRect WindowRect(GetRect());
 
         const double screen_part=0.5; //part of the window to be filled
-        std::size_t secCh=Doc()->GetSecCh();
+        std::size_t secCh=Doc()->GetSecChIndex();
     #undef min
     #undef max
-        Vector_double::const_iterator max_el = std::max_element(Doc()->get()[secCh][Doc()->GetCurSec()].get().begin(),
-                                                                Doc()->get()[secCh][Doc()->GetCurSec()].get().end());
-        Vector_double::const_iterator min_el = std::min_element(Doc()->get()[secCh][Doc()->GetCurSec()].get().begin(),
-                                                                Doc()->get()[secCh][Doc()->GetCurSec()].get().end());
+        Vector_double::const_iterator max_el = std::max_element(Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().begin(),
+                                                                Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().end());
+        Vector_double::const_iterator min_el = std::min_element(Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().begin(),
+                                                                Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().end());
         double min=*min_el;
         double max=*max_el;
-        FittorectY(Doc()->GetYZoomW(Doc()->GetSecCh()), WindowRect, min, max, screen_part);
+        FittorectY(Doc()->GetYZoomW(Doc()->GetSecChIndex()), WindowRect, min, max, screen_part);
         if (refresh) Refresh();
     }
 }	//End FitToWindowSecCh()
 
 void wxStfGraph::OnPrevious() {
-    if (Doc()->get()[Doc()->GetCurCh()].size()==1) return;
-    std::size_t curSection=Doc()->GetCurSec();
-    if (Doc()->GetCurSec() > 0) curSection--;
-    else curSection=Doc()->get()[Doc()->GetCurCh()].size()-1;
+    if (Doc()->get()[Doc()->GetCurChIndex()].size()==1) return;
+    std::size_t curSection=Doc()->GetCurSecIndex();
+    if (Doc()->GetCurSecIndex() > 0) curSection--;
+    else curSection=Doc()->get()[Doc()->GetCurChIndex()].size()-1;
     Doc()->SetSection(curSection);
     wxGetApp().OnPeakcalcexecMsg();
     pFrame->SetCurTrace(curSection);
@@ -2032,7 +2032,7 @@ void wxStfGraph::OnPrevious() {
 }
 
 void wxStfGraph::OnFirst() {
-    if (Doc()->GetCurSec()==0) return;
+    if (Doc()->GetCurSecIndex()==0) return;
     Doc()->SetSection(0);
     wxGetApp().OnPeakcalcexecMsg();
     pFrame->SetCurTrace(0);
@@ -2040,8 +2040,8 @@ void wxStfGraph::OnFirst() {
 }
 
 void wxStfGraph::OnLast() {
-    if (Doc()->GetCurSec()==Doc()->get()[Doc()->GetCurCh()].size()-1) return;
-    std::size_t curSection=Doc()->get()[Doc()->GetCurCh()].size()-1;
+    if (Doc()->GetCurSecIndex()==Doc()->get()[Doc()->GetCurChIndex()].size()-1) return;
+    std::size_t curSection=Doc()->get()[Doc()->GetCurChIndex()].size()-1;
     Doc()->SetSection(curSection);
     wxGetApp().OnPeakcalcexecMsg();
     pFrame->SetCurTrace(curSection);
@@ -2049,9 +2049,9 @@ void wxStfGraph::OnLast() {
 }
 
 void wxStfGraph::OnNext() {
-    if (Doc()->get()[Doc()->GetCurCh()].size()==1) return;
-    std::size_t curSection=Doc()->GetCurSec();
-    if (curSection < Doc()->get()[Doc()->GetCurCh()].size()-1) curSection++;
+    if (Doc()->get()[Doc()->GetCurChIndex()].size()==1) return;
+    std::size_t curSection=Doc()->GetCurSecIndex();
+    if (curSection < Doc()->get()[Doc()->GetCurChIndex()].size()-1) curSection++;
     else curSection=0;
     Doc()->SetSection(curSection);
     wxGetApp().OnPeakcalcexecMsg();
@@ -2203,7 +2203,7 @@ void wxStfGraph::Ch2base() {
         double base2=0.0;
         try {
             double var2=0.0;
-            base2=stf::base(var2,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(),
+            base2=stf::base(var2,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(),
                     Doc()->GetBaseBeg(),Doc()->GetBaseEnd());
         }
         catch (const std::out_of_range& e) {
@@ -2244,7 +2244,7 @@ void wxStfGraph::Ch2basezoom() {
         double base2=0.0;
         try {
             double var2=0.0;
-            base2=stf::base(var2,Doc()->get()[Doc()->GetSecCh()][Doc()->GetCurSec()].get(),
+            base2=stf::base(var2,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(),
                     Doc()->GetBaseBeg(),Doc()->GetBaseEnd());
         }
         catch (const std::out_of_range& e) {

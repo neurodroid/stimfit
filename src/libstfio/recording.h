@@ -25,11 +25,10 @@
  *  @{
  */
 
-// #include "./channel.h"
+#include "./channel.h"
 // #include "./section.h"
 // #include "./stfio.h"
 
-class Channel;
 class Section;
 
 //! Represents the data within a file.
@@ -139,6 +138,71 @@ class StfioDll Recording {
      */
     double GetSR() const { return 1.0/dt; }
 
+    //! Retrieves the index of the current channel.
+    /*! \return The index of the current channel.
+     */
+    std::size_t GetCurChIndex() const { return cc; }
+
+    //! Retrieves the index of the second channel.
+    /*! \return The index of the second channel.
+     */
+    std::size_t GetSecChIndex() const { return sc; }
+
+    //! Retrieves the index of the current section.
+    /*! \return The index of the current section.
+     */
+    std::size_t GetCurSecIndex() const { return cs; }
+    
+    //! Retrieves the indices of the selected sections (read-only).
+    /*! \return A vector containing the indices of the selected sections.
+     */
+    const std::vector<std::size_t>& GetSelectedSections() const { return selectedSections; } 
+
+    //! Retrieves the indices of the selected sections (read and write).
+    /*! \return A vector containing the indices of the selected sections.
+     */
+    std::vector<std::size_t>& GetSelectedSectionsW() { return selectedSections; } 
+
+    //! Retrieves the stored baseline values of the selected sections (read-only).
+    /*! \return A vector containing the stored baseline values of the selected sections.
+     */
+    const Vector_double& GetSelectBase() const { return selectBase; } 
+
+    //! Retrieves the stored baseline values of the selected sections (read and write).
+    /*! \return A vector containing the stored baseline values of the selected sections.
+     */
+    Vector_double& GetSelectBaseW() { return selectBase; }
+
+    //! Retrieves the currently accessed section in the active channel (read-only)
+    /*! \return The currently accessed section in the active channel.
+     */
+    const Section& cursec() const { return (*this)[cc][cs]; }
+
+    //! Retrieves the currently accessed section in the active channel (read and write)
+    /*! \return The currently accessed section in the active channel.
+     */
+    Section& cursec() { return (*this)[cc][cs]; }
+
+    //! Retrieves the currently accessed section in the second (reference) channel (read-only)
+    /*! \return The currently accessed section in the second (reference) channel.
+     */
+    const Section& secsec() const { return (*this)[sc][cs]; }
+
+    //! Retrieves the active channel (read-only)
+    /*! \return The active channel.
+     */
+    const Channel& curch() const { return (*this)[cc]; }
+
+    //! Retrieves active channel (read and write)
+    /*! \return The active channel.
+     */
+    Channel& curch() { return (*this)[cc]; }
+
+    //! Retrieves the second (reference) channel (read-only)
+    /*! \return The second (reference) channel.
+     */
+    const Channel& secch() const { return (*this)[sc]; }
+
     //! Range-checked access to a channel (read-only).
     /*! Will throw std::out_of_range if out of range.
      *  \param n_c The index of the channel.
@@ -211,7 +275,22 @@ class StfioDll Recording {
      *  \param value The x scaling.
      */
     void SetXScale(double value);
-    
+
+    //! Sets the index of the current channel.
+    /*! \param value The index of the current channel.
+     */
+    void SetCurChIndex(std::size_t value);
+
+    //! Sets the index of the second channel.
+    /*! \param value The index of the second channel.
+     */
+    void SetSecChIndex(std::size_t value);
+
+    //! Sets the index of the current section.
+    /*! \param value The index of the current section.
+     */
+    void SetCurSecIndex(std::size_t value);
+
     //misc-----------------------------------------------------------
 
     //! Resize the Recording to a new number of channels.
@@ -256,6 +335,19 @@ class StfioDll Recording {
     /*! \param toAdd The Recording to be added.
      */
     void AddRec(const Recording& toAdd);
+
+    //! Selects a section
+    /*! \param sectionToSelect The index of the section to be selected.
+     *  \param base_start Start index for baseline
+     *  \param base_end End index for baseline
+     */
+    void SelectTrace(std::size_t sectionToSelect, std::size_t base_start, std::size_t base_end);
+
+    //! Unselects a section if it was selected before
+    /*! \param sectionToUnselect The index of the section to be unselected.
+     *  \return true if the section was previously selected, false otherwise.
+     */
+    bool UnselectTrace(std::size_t sectionToUnselect);
     
     //operators------------------------------------------------------
 
@@ -284,6 +376,19 @@ class StfioDll Recording {
     std::string file_description, comment, xunits;
     struct tm datetime;
 
+
+    // currently accessed channel:
+    std::size_t cc;
+    // second channel:
+    std::size_t sc;
+    // currently accessed section:
+    std::size_t cs;
+
+    // Indices of the selected sections
+    std::vector<std::size_t> selectedSections;
+    // Base line value for each selected trace
+    Vector_double selectBase;
+    
     void init();
 
 };

@@ -138,7 +138,7 @@ void wxStfFitSelDlg::EndModal(int retCode) {
         break;
      case wxID_CANCEL:
          try {
-             pDoc->DeleteFit(pDoc->GetCurCh(), pDoc->GetCurSec());
+             pDoc->DeleteFit(pDoc->GetCurChIndex(), pDoc->GetCurSecIndex());
          } catch (const std::out_of_range& e) {
 
          }
@@ -265,7 +265,7 @@ void wxStfFitSelDlg::OnButtonClick( wxCommandEvent& event ) {
         }
     }
     try {
-        pDoc->SetIsFitted(pDoc->GetCurCh(), pDoc->GetCurSec(), init_p,
+        pDoc->SetIsFitted(pDoc->GetCurChIndex(), pDoc->GetCurSecIndex(), init_p,
                           wxGetApp().GetFuncLibPtr(m_fselect), 0,
                           pDoc->GetFitBeg(), pDoc->GetFitEnd() );
     } catch (const std::out_of_range& e) {
@@ -292,12 +292,13 @@ void wxStfFitSelDlg::SetPars() {
         }
         Vector_double x(fitSize);
         //fill array:
-        std::copy(&pDoc->cur()[pDoc->GetFitBeg()],
-                &pDoc->cur()[pDoc->GetFitBeg()+fitSize],
-                &x[0]);
+        std::copy(&pDoc->cursec()[pDoc->GetFitBeg()],
+                  &pDoc->cursec()[pDoc->GetFitBeg()+fitSize],
+                  &x[0]);
         Vector_double initPars(wxGetApp().GetFuncLib().at(m_fselect).pInfo.size());
         wxGetApp().GetFuncLib().at(m_fselect).init( x, pDoc->GetBase(),
-                pDoc->GetPeak(), pDoc->GetRTLoHi(), pDoc->GetHalfDuration(),                pDoc->GetXScale(), initPars);
+            pDoc->GetPeak(), pDoc->GetRTLoHi(), pDoc->GetHalfDuration(),
+            pDoc->GetXScale(), initPars);
         std::vector< wxStaticText* >::iterator it1;
         std::vector< wxTextCtrl* >::iterator it2 = paramEntryArray.begin();
         std::size_t n_p = 0;
