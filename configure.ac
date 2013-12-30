@@ -239,7 +239,7 @@ if test "$enable_module" != "yes"; then
     # Verify minimus requires
     AC_MSG_CHECKING(for wxWidgets libraries)
     vers=`echo $wxversion | $AWK 'BEGIN { FS = "."; } { printf "% d", ($2 * 1000 + $2) * 1000 + $3;}'`
-    if test -n "$vers" && test "$vers" -ge 2008000; then
+    if (test -n "$vers") && (test "$vers" -ge 2008000 || test "${wxversion:0:1}" = "3"); then
             WX_CPPFLAGS="`$WXCONFIG --cppflags`"
             WX_CXXFLAGS="`$WXCONFIG --cxxflags`"
             if test "$STFKERNEL" = "darwin" ; then

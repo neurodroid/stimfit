@@ -1,7 +1,7 @@
 #! /bin/bash
 
 prefix="/opt/local"
-WX_CONF="${prefix}/Library/Frameworks/wxWidgets.framework/Versions/wxPython/2.9/bin/wx-config"
+WX_CONF="${prefix}/Library/Frameworks/wxWidgets.framework/Versions/wxPython/3.0/bin/wx-config"
 
 MYCC=`${WX_CONF} --cc`
 MYCXX=`${WX_CONF} --cxx`
