@@ -178,7 +178,9 @@ bool wxStfApp::Init_wxPython()
         Py_Finalize();
         return false;
     }
-#if wxCHECK_VERSION(2, 9, 0)
+#if wxCHECK_VERSION(3, 0, 0)
+    PyObject* ver_string = Py_BuildValue("ss","3.0","");
+#elif wxCHECK_VERSION(2, 9, 0)
     PyObject* ver_string = Py_BuildValue("ss","2.9","");
 #else
     PyObject* ver_string = Py_BuildValue("ss","2.8","");
