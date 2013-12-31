@@ -21,7 +21,7 @@ checksums           rmd160  edade1b1e28e797aa48344d875927a2b81f27ab2 \
 
 python.versions     26 27 33 34
 
-if { ${subport} != ${name} } {
+if { ${name} ne ${subport} } {
     depends_build   port:swig-python
 
     depends_lib     port:boost \
