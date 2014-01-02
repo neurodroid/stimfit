@@ -203,8 +203,12 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
     if (wxDocument::OnOpenDocument(filename)) { //calls base class function
 
 #ifndef TEST_MINIMAL
+    #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2) && !defined(__WXMAC__))
         // Detect type of file according to filter:
         wxString filter(GetDocumentTemplate()->GetFileFilter());
+    #else
+        wxString filter(wxT("*.") + wxfFilename.GetExt());
+    #endif
         stfio::filetype type = stfio::findType(stf::wx2std(filter));
 #else
         stfio::filetype type = stfio::none;

@@ -85,7 +85,10 @@ stfio::filetype
 stfio::findType(const std::string& ext) {
     
     if (ext=="*.dat;*.cfs") return stfio::cfs;
+    else if (ext=="*.cfs") return stfio::cfs;
     else if (ext=="*.abf") return stfio::abf;
+    else if (ext=="*.axgd") return stfio::axg;
+    else if (ext=="*.axgx") return stfio::axg;
     else if (ext=="*.axgd;*.axgx") return stfio::axg;
     else if (ext=="*.h5")  return stfio::hdf5;
     else if (ext=="*.atf") return stfio::atf;
@@ -157,8 +160,12 @@ bool stfio::importFile(
         }
         case stfio::heka: {
             {
-            stfio::importHEKAFile(fName, ReturnData, progDlg);
-            break;
+                try {
+                    stfio::importHEKAFile(fName, ReturnData, progDlg);
+                } catch (const std::runtime_error& e) {
+                    stfio::importCFSFile(fName, ReturnData, progDlg);
+                }
+                break;
             }
         }
 #endif // TEST_MINIMAL
