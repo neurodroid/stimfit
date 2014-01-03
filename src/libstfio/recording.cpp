@@ -89,15 +89,15 @@ const std::string& Recording::GetDate() {
     // TODO: there should be a more elegant way than using variable 'date'
     date.resize(128);
     struct tm t = GetDateTime();
-    strftime((char*)date.c_str(), 128, "%F", &t);
+    snprintf((char*)date.c_str(), 128, "%04i-%02i-%02i", t.tm_year+1900, t.tm_mon+1, t.tm_mday);
     return date;
 };
 
 const std::string& Recording::GetTime() {
-    // TODO: there should be a more elegant way than using variable 'time'
+    // TODO: there should be a more elegant way than using variable 'time0'
     time0.resize(128);
     struct tm t = GetDateTime();
-    strftime((char*)time0.c_str(), 128, "%T", &t);
+    snprintf((char*)time0.c_str(), 128, "%02i:%02i:%02i", t.tm_hour,t.tm_min,t.tm_sec);
     return time0;
 };
 
