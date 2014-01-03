@@ -238,15 +238,17 @@ class StfioDll Recording {
  
     //! Sets the time of recording as a string.
     /*! \param value A string containing the time of recording.
+     *  \return 0 in case of success, non-zero in case of failure
      */
-    void SetTime(const std::string& value);
-    void SetTime(int hour, int minute, int sec);
+    int SetTime(const std::string& value);
+    int SetTime(int hour, int minute, int sec);
 
     //! Sets the date of recording as a string.
     /*! \param value A string containing the date of recording.
+     *  \return 0 in case of success, non-zero in case of failure
      */
-    void SetDate(const std::string& value);
-    void SetDate(int year, int month, int mday);
+    int SetDate(const std::string& value);
+    int SetDate(int year, int month, int mday);
 
     //! Sets the date and time of recording as struct tm
     /*! \param value  has type struct tm

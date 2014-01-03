@@ -16,6 +16,7 @@
 #include "./stfio.h"
 #include "./recording.h"
 
+#include <stdio.h>
 #include <ctime>
 #include <sstream>
 
@@ -100,28 +101,63 @@ const std::string& Recording::GetTime() {
     return time0;
 };
 
-void Recording::SetDate(const std::string& value) {
+int Recording::SetDate(const std::string& value) {
     struct tm t = GetDateTime();
+#if HAVE_STRPTIME_H
     strptime(value.c_str(), "%F", &t);
+#else
+    if ( sscanf(value.c_str(),"%i-%i-%i", &t.tm_year, &t.tm_mon, &t.tm_mday)
+      || sscanf(value.c_str(),"%i.%i.%i", &t.tm_mday, &t.tm_mon, &t.tm_year)
+      || sscanf(value.c_str(),"%i/%i/%i", &t.tm_mon, &t.tm_mday, &t.tm_year)
+    ) {
+	t.tm_mon--;
+	if (t.tm_year < 50) t.tm_year += 100;
+	else if (t.tm_year < 139);
+	else if (t.tm_year > 1900) t.tm_year -= 1900;
+    }
+    else {
+	// TODO: error handling
+	fprintf(stderr,"SetDate(%s) failed\n",value.c_str());
+        return(-1);
+    }
+#endif
     SetDateTime(t);
+    return(0);
 }
 
-void Recording::SetTime(const std::string& value) {
+int Recording::SetTime(const std::string& value) {
     struct tm t = GetDateTime();
-    strptime(value.c_str    (), "%T", &t);
+#if HAVE_STRPTIME_H
+    strptime(value.c_str(), "%T", &t);
+#else
+    if ( sscanf(value.c_str(),"%i-%i-%i", &t.tm_hour, &t.tm_min, &t.tm_sec)
+      || sscanf(value.c_str(),"%i.%i.%i", &t.tm_hour, &t.tm_min, &t.tm_sec)
+      || sscanf(value.c_str(),"%i:%i:%i", &t.tm_hour, &t.tm_min, &t.tm_sec)
+    ) {
+	; // everthing is fine
+    }
+    else {
+	// TODO: error handling
+	fprintf(stderr,"SetTime(%s) failed\n",value.c_str());
+	return(-1);
+    }
+#endif
     SetDateTime(t);
+    return(0);
 }
 
-void Recording::SetTime(int hour, int minute, int sec) {
+int Recording::SetTime(int hour, int minute, int sec) {
     datetime.tm_hour=hour;
     datetime.tm_min=minute;
     datetime.tm_sec=sec;
+    return(0);
 }
 
-void Recording::SetDate(int year, int month, int mday) {
+int Recording::SetDate(int year, int month, int mday) {
     datetime.tm_year=year;
     datetime.tm_mon=month;
     datetime.tm_mday=mday;
+    return(0);
 }
 
 void Recording::SetDateTime(int year, int month, int mday,int hour, int minute, int sec) {

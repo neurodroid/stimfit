@@ -324,12 +324,8 @@ void stfio::importHDF5File(const std::string& fName, Recording& ReturnData, Prog
         throw std::runtime_error(errorMsg);
     }
     int numberChannels =rt_buf[0].channels;
-    struct tm t;
-    if ( strptime(rt_buf[0].date, "%F", &t) != NULL
-     &&  strptime(rt_buf[0].time, "%T", &t) != NULL ) {
-        ReturnData.SetDateTime( t );
-    }
-    else {
+    if ( ReturnData.SetDate(rt_buf[0].date)
+      || ReturnData.SetTime(rt_buf[0].time) ) {
         std::cout << "Warning HDF5: could not decode date/time " << rt_buf[0].date << " " << rt_buf[0].time << std::endl;
     }
 
