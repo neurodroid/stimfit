@@ -61,8 +61,8 @@ bool stfio::exportHDF5File(const std::string& fName, const Recording& WData, Pro
     rt p_data;
     p_data.channels = WData.size();
     struct tm t = WData.GetDateTime();
-    std::size_t date_length = strftime(p_data.date, DATELEN, "%F", &t);
-    std::size_t time_length = strftime(p_data.time, TIMELEN, "%T", &t);
+    std::size_t date_length = snprintf(p_data.date, DATELEN, "%04i-%02i-%02i", t.tm_year+1900, t.tm_mon+1, t.tm_mday);
+    std::size_t time_length = snprintf(p_data.time, TIMELEN, "%02i:%02i:%02i", t.tm_hour, t.tm_min, t.tm_sec);
     // ensure that an undefine string is set to "\0", and that the terminating \0 is counted in string length
     p_data.date[date_length++] = 0;
     p_data.time[time_length++] = 0;

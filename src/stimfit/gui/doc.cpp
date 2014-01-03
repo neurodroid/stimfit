@@ -656,7 +656,7 @@ void wxStfDoc::Fileinfo(wxCommandEvent& WXUNUSED(event)) {
     oss2 << "Number of Sweeps: " << static_cast<unsigned int>(get()[GetCurChIndex()].size());
     char buf[128];
     struct tm t = GetDateTime();
-    strftime(buf, 128, "Date:\t%F\nTime:\t%T\n", &t);
+    snprintf(buf, 128, "Date:\t%04i-%02i-%02i\nTime:\t%02i:%02i:%02i\n", t.tm_year+1900, t.tm_mon+1, t.tm_mday, t.tm_hour, t.tm_min, t.tm_sec);
     std::string general = buf
         + oss1.str() + "\n" + oss2.str() + "\n"
         + "Comment:\n" + GetComment();
