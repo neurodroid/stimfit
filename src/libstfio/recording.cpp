@@ -55,7 +55,7 @@ void Recording::init() {
     // get current time
     time_t timer;
     timer = time(0);
-    localtime_r(&timer, &datetime);
+    memcpy(&datetime, localtime(&timer), sizeof(datetime));
 
     cc = 0;
     sc = 1;
