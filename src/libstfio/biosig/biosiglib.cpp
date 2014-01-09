@@ -121,8 +121,9 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         destructHDR(hdr);
         return type;
     }
-    if (biosig_get_filetype(hdr)==ATF) {
-        // ATF support should be handled by importATF not importBiosig
+    enum FileFormat biosig_filetype=biosig_get_filetype(hdr);
+    if (biosig_filetype==ATF || biosig_filetype==ABF2) {
+        // ATF and ABF2 support should be handled by importATF, and importABF not importBiosig
         ReturnData.resize(0);
         destructHDR(hdr);
         return type;
@@ -307,6 +308,12 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
            This causes problems with the ABF fallback mechanism
         */
 #else
+    if ( hdr->TYPE==ABF2 ) {
+        // ABF2 support should be handled by importABF not importBiosig
+        ReturnData.resize(0);
+        destructHDR(hdr);
+        return type;
+    }
     if (hdr->TYPE==ABF && hdr->AS.B4C_ERRNUM) {
         /* this triggers the fall back mechanims w/o reporting an error message */
 #endif
