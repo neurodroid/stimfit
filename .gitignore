@@ -60,6 +60,7 @@ windows/VS2008/pystfio/Debug
 windows/VS2008/pystfio/Release
 windows/VS2008/Stimfit/Debug
 windows/VS2008/Stimfit/Release
+windows/libs
 *.user
 
 # macports
