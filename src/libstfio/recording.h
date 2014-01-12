@@ -370,7 +370,10 @@ class StfioDll Recording {
     std::string global_section_description, scaling;
 
     // only neeed for GetData() and GetTime(): should be replaced by alternative interface.
-    __attribute__ ((deprecated)) std::string time0, date; 
+#ifndef _MSC_VER
+    __attribute__ ((deprecated))
+#endif
+    std::string time0, date; 
 
     /* public: */
     

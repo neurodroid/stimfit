@@ -144,7 +144,7 @@ bool wxStfApp::Init_wxPython()
     wxString app_path = GetExecutablePath();
     wxString cwd;
 	cwd << wxT("cwd = \"") << app_path.BeforeFirst( wxUniChar('\0') ) 
-		<< wxT("\\wx-2.9.0-msw-unicode\"\nimport sys\nsys.path.insert(0,cwd)\n");
+		<< wxT("\\wx-3.0-msw\"\nimport sys\nsys.path.insert(0,cwd)\n");
 	cwd << wxT("cwd = \"") << app_path.BeforeFirst( wxUniChar('\0') ) 
 		<< wxT("\"\nimport sys\nsys.path.insert(0,cwd)\n");
 #endif
@@ -346,6 +346,8 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
 
     // As always, first grab the GIL
     wxPyBlock_t blocked = wxPyBeginBlockThreads();
+
+    RedirectStdio();
 
     // Now make a dictionary to serve as the global namespace when the code is
     // executed.  Put a reference to the builtins module in it.  (Yes, the

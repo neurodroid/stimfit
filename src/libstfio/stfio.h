@@ -60,6 +60,7 @@ typedef std::vector<float > Vector_float;
         #define INFINITY (DBL_MAX+DBL_MAX)
     #endif
     StfioDll long int lround(double x);
+    #define snprintf _snprintf
 #endif
 
 #include "./recording.h"

@@ -10,6 +10,9 @@ starting code to embed wxPython into the stf application.
 
 """
 import sys
+if 'win' in sys.platform:
+    import wxversion
+    wxversion.select('3.0-msw')
 import wx
 from wx.py import shell
 

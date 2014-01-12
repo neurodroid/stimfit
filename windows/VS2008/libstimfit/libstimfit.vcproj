@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wxmsw29u_aui.lib wxmsw29u_html.lib wxmsw29u_adv.lib wxmsw29u_core.lib wxbase29u_net.lib wxbase29u_xml.lib wxbase29u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxexpat.lib wxregexu.lib clapack.lib libf2c.lib BLAS.lib libfftw3-3.lib"
+				AdditionalDependencies="wxmsw30u_aui.lib wxmsw30u_html.lib wxmsw30u_adv.lib wxmsw30u_core.lib wxbase30u_net.lib wxbase30u_xml.lib wxbase30u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxexpat.lib wxregexu.lib clapack.lib libf2c.lib BLAS.lib libfftw3-3.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WXDIR)\lib\vc90_dll&quot;;&quot;$(SolutionDir)\..\..\libs&quot;;&quot;$(PYTHONDIR)\libs&quot;;&quot;$(FFTWDIR)&quot;"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
@@ -139,7 +139,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wxmsw29u_aui.lib wxmsw29u_html.lib wxmsw29u_adv.lib wxmsw29u_core.lib wxbase29u_net.lib wxbase29u_xml.lib wxbase29u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxexpat.lib wxregexu.lib clapack.lib libf2c.lib BLAS.lib libfftw3-3.lib"
+				AdditionalDependencies="wxmsw30u_aui.lib wxmsw30u_html.lib wxmsw30u_adv.lib wxmsw30u_core.lib wxbase30u_net.lib wxbase30u_xml.lib wxbase30u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxexpat.lib wxregexu.lib clapack.lib libf2c.lib BLAS.lib libfftw3-3.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(WXDIR)\lib\vc90_dll&quot;;&quot;$(SolutionDir)\..\..\libs&quot;;&quot;$(PYTHONDIR)\libs&quot;;&quot;$(FFTWDIR)&quot;"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
