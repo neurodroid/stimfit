@@ -1052,8 +1052,7 @@ END_EVENT_TABLE()
 // wxStfConvertDlg constructor 
 wxStfConvertDlg::wxStfConvertDlg(wxWindow* parent, int id, wxString title, wxPoint pos,
         wxSize size, int style)
-: wxDialog( parent, id, title, pos, size, style ), m_srcDirPicker(NULL), m_destDirPicker(NULL),
-m_textCtrlSrcFilter(NULL), 
+: wxDialog( parent, id, title, pos, size, style ),
 #ifdef __linux__
 srcDir(wxT("/home")), destDir(wxT("/home")),
 #else

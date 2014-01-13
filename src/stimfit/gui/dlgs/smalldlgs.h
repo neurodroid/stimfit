@@ -699,8 +699,6 @@ class wxStfConvertDlg : public wxDialog
     DECLARE_EVENT_TABLE()
 
 private:
-    wxDirPickerCtrl *m_srcDirPicker,*m_destDirPicker;
-    wxTextCtrl *m_textCtrlSrcFilter;
     wxGenericDirCtrl *mySrcDirCtrl, *myDestDirCtrl; 
     wxString srcDir,destDir;
     wxString srcFilter;

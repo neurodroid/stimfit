@@ -131,7 +131,7 @@ wxStfDoc::wxStfDoc() :
     maxDecay(0.0),
     t50Y(0.0),
     APMaxT(0.0),
-    APMaxRise(0.0),
+    APMaxRiseY(0.0),
     APMaxRiseT(0.0),
     APt50LeftReal(0.0),
 #ifdef WITH_PSLOPE
@@ -2518,7 +2518,7 @@ void wxStfDoc::Measure( )
     // 2008-04-27: changed limits to start from the beginning of the trace
     //             and to stop at the end of the trace
     halfDuration = stf::t_half(cursec().get(), reference, ampl, (double)0 /*(double)baseBeg*/,
-            (double)cursec().size()-1 /*(double)peakEnd*/,maxT, t50LeftIndex,t50RightIndex,t50LeftReal);
+            (double)cursec().size()-1 /*(double)peakEnd*/,maxT, t50LeftIndex, t50RightIndex, t50LeftReal);
 
     t50RightReal=t50LeftReal+halfDuration;
     halfDuration/=GetSR();
@@ -2554,7 +2554,7 @@ void wxStfDoc::Measure( )
         // during the first 100 sampling points.
         // const int endResting=100;
         const int searchRange=100;
-        double APBase=0.0, APPeak=0.0, APVar=0.0;
+        double APBase=0.0, APVar=0.0;
         try {
             // in 2012-11-02: use baseline cursors and not arbitrarily 100 points
             //APBase=stf::base(APVar,secsec().get(),0,endResting);
@@ -2571,7 +2571,7 @@ void wxStfDoc::Measure( )
         //Maximal slope in the rise before the peak
         //----------------------------
         APMaxRiseT=0.0;
-        double APMaxRiseY=0.0;
+        APMaxRiseY=0.0;
         double left_APRise = peakBeg; 
         if (GetLatencyWindowMode() == stf::defaultMode ) {
             left_APRise= APMaxT-searchRange>2.0 ? APMaxT-searchRange : 2.0;

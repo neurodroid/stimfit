@@ -93,7 +93,7 @@ private:
         latency,	 //time from latency cursor to beginning of event
         base, APBase, baseSD, threshold, slopeForThreshold, peak, APPeak, tLoReal, tHiReal, t50LeftReal, t50RightReal,
         maxT, thrT, maxRiseY, maxRiseT, maxDecayY, maxDecayT, maxRise, maxDecay,
-        t50Y, APMaxT, APMaxRise, APMaxRiseT, APt50LeftReal, 
+        t50Y, APMaxT, APMaxRiseY, APMaxRiseT, APt50LeftReal,
 #ifdef WITH_PSLOPE
         PSlope,
 #endif
