@@ -143,8 +143,7 @@ double risetime2(const std::vector<double>& data, double base, double ampl,
  *  \return The full width at half-maximal amplitude.
  */
 double t_half( const std::vector<double>& data, double base, double ampl, double left, double right,
-          double center, std::size_t& t50LeftId, std::size_t& t50RightId,
-          double& t50LeftReal );
+               double center, std::size_t& t50LeftId, std::size_t& t50RightId, double& t50LeftReal );
 
 //! Find the maximal slope during the rising phase of an event within \e data.
 /*! \param data The data waveform to be analysed.

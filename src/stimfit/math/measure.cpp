@@ -364,18 +364,27 @@ double   stf::t_half(const std::vector<double>& data,
         std::size_t& t50RightId,
         double& t50LeftReal)
 {
-    if (center<0 || center>=data.size()) {
+    if (center<0 || center>=data.size() || data.size()<=2 || left<-1) {
         t50LeftReal = NAN;
         return NAN;
     }
     t50LeftId=(int)center>=1? (int)center:1;
+    if (t50LeftId-1 >= data.size()) {
+        return NAN;
+    }
     do {
         --t50LeftId;
     } while (fabs(data[t50LeftId]-base)>fabs(0.5 * ampl) &&
             t50LeftId > left);
     //Right side half duration
-    t50RightId=(int)center<=(int)data.size()-2? (int)center:data.size()-2;
-    if ((int)right>(int)data.size()-1) right=data.size()-1;  
+    if ((std::size_t)center <= data.size()-2) {
+        t50RightId = center;
+    } else {
+        t50RightId = data.size() >= 2? data.size()-2 : 0;
+    }
+    if (right >= data.size()-1 || t50RightId+1 >= data.size()) {
+        return NAN;
+    }
     do {
         ++t50RightId;
     } while (fabs(data[t50RightId]-base)>fabs(0.5 * ampl) &&
