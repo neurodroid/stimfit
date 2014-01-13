@@ -3,7 +3,7 @@ Section: science
 Priority: optional
 Maintainer: Christoph Schmidt-Hieber <christsc@gmx.de>
 Uploaders: Yaroslav Halchenko <debian@onerussian.com>
-Build-Depends: debhelper (>= 7), libboost-dev (>= 1.40.0), python-dev (>= 2.6.6-3), python-numpy, libhdf5-serial-dev, swig, python-wxgtk2.8 (>= 2.8.9), libwxgtk2.8-dev (>= 2.8.9), libfftw3-dev, liblapack-dev, chrpath, help2man, dh-python, libbiosig-dev, libsuitesparse-dev
+Build-Depends: debhelper (>= 7), libboost-dev (>= 1.40.0), python-dev (>= 2.6.6-3), python-numpy, libhdf5-dev, swig, python-wxgtk2.8 (>= 2.8.9), libwxgtk2.8-dev (>= 2.8.9), libfftw3-dev, liblapack-dev, chrpath, help2man, dh-python, libbiosig-dev, libsuitesparse-dev
 Standards-Version: 3.9.4
 Homepage: http://www.stimfit.org
 
