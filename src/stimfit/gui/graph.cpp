@@ -576,6 +576,10 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
 }
 
 void wxStfGraph::DrawCrosshair( wxDC& DC, const wxPen& pen, const wxPen& printPen, int crosshairSize, double xch, double ych) {
+    if (isnan(xch) && isnan(ych)) {
+        return;
+    }
+
     wxPen chpen = pen;
     if (isPrinted) {
         chpen = printPen;
