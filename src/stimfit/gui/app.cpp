@@ -348,11 +348,7 @@ bool wxStfApp::OnInit(void)
 int wxStfApp::OnExit()
 {
 #if wxUSE_CONFIG
-#if (wxCHECK_VERSION(3, 0, 0))
-    GetDocManager()->FileHistorySave(*wxConfigBase::Get());
-#else
-    GetDocManager()->FileHistorySave(*wxConfig::Get());
-#endif
+    GetDocManager()->FileHistorySave(*config);
 #endif // wxUSE_CONFIG
 
     delete GetDocManager();
