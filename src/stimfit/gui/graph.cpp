@@ -45,6 +45,10 @@
 #include <iostream>
 #endif
 
+#ifdef _MSC_VER
+#include <boost/math/special_functions/fpclassify.hpp> // isnan
+using boost::math::isnan;
+#endif
 // #define BENCHMARK // uncomment to run benchmark
 
 #ifdef BENCHMARK //def _STFDEBUG
