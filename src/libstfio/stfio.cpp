@@ -116,11 +116,11 @@ bool stfio::importFile(
         try {
             stfio::filetype type1 = stfio::importBiosigFile(fName, ReturnData, progDlg);
             switch (type1) {
-            case  stfio::biosig:
-		return true;    // succeeded
-            case  stfio::none:
-		break;          // do nothing, use input argument for deciding on type
-	    default:
+            case stfio::biosig:
+                return true;    // succeeded
+            case stfio::none:
+                break;          // do nothing, use input argument for deciding on type
+            default:
                 type = type1;   // filetype is recognized and should be used below
             }
         }
