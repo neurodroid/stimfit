@@ -271,14 +271,11 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     Desc += std::string ("\nUser specified Annotations:\n")+annotationTableDesc;
 
     ReturnData.SetFileDescription(Desc);
-    // hdr->AS.bci2000 is an alias to hdr->AS.fpulse, which available only in libbiosig v1.6.0 and later
+
 #if (BIOSIG_VERSION > 10509)
-    const char* tmp_char = biosig_get_application_specific_information(hdr);
-    if (tmp_char != 0) {
-        ReturnData.SetGlobalSectionDescription(tmp_char);
-    } else {
-        ReturnData.SetGlobalSectionDescription("");
-    }
+    tmpstr = biosig_get_application_specific_information(hdr);
+    if (tmpstr != NULL) /* MSVC2008 can not properly handle std::string( (char*)NULL ) */
+        ReturnData.SetGlobalSectionDescription(tmpstr);
 #endif
 
     ReturnData.SetXScale(1000.0/biosig_get_samplerate(hdr));
