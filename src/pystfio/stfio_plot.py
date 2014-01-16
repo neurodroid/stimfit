@@ -42,7 +42,7 @@ def load_ma(ftrunk):
     mask = np.load(ftrunk + ".mask.npy")
     return ma.array(data, mask=mask)
 
-class Timeseries:
+class Timeseries(object):
     # it this is 2d, the second axis (shape[1]) is time
     def __init__(self, *args, **kwargs): # data, dt, xunits="ms", yunits="mV"):
         if len(args) > 2:
