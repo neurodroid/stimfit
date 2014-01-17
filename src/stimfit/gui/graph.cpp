@@ -47,6 +47,8 @@
 
 #ifdef _MSC_VER
 #define isnan _isnan
+#else
+using std::isnan;
 #endif
 // #define BENCHMARK // uncomment to run benchmark
 
@@ -579,7 +581,7 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
 }
 
 void wxStfGraph::DrawCrosshair( wxDC& DC, const wxPen& pen, const wxPen& printPen, int crosshairSize, double xch, double ych) {
-    if (std::isnan(xch) || std::isnan(ych)) {
+    if (isnan(xch) || isnan(ych)) {
         return;
     }
 
