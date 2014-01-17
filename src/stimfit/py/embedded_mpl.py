@@ -67,8 +67,8 @@ class MplPanel(wx.Panel):
             l = stf.get_selected_indices()
             for idx in l:
                 tsl.append(stfio_plot.Timeseries(stf.get_trace(idx), 
+                                                 stf.get_sampling_interval(),
                                                  yunits = stf.get_yunits(),
-                                                 dt = stf.get_sampling_interval(),
                                                  color='0.2'))
                 fit = stf.get_fit(idx)
                 if fit is not None:
@@ -76,13 +76,13 @@ class MplPanel(wx.Panel):
         except:
             pass
         
-        tsl.append(stfio_plot.Timeseries(stf.get_trace(), 
-                                         yunits = stf.get_yunits(),
-                                         dt = stf.get_sampling_interval()))
+        tsl.append(stfio_plot.Timeseries(stf.get_trace(),
+                                         stf.get_sampling_interval(),
+                                         yunits = stf.get_yunits()))
         if stf.get_size_recording()>1:
-            tsl2 = [stfio_plot.Timeseries(stf.get_trace(trace=-1, channel=stf.get_channel_index(False)), 
+            tsl2 = [stfio_plot.Timeseries(stf.get_trace(trace=-1, channel=stf.get_channel_index(False)),
+                                          stf.get_sampling_interval(),
                                           yunits = stf.get_yunits(trace=-1, channel=stf.get_channel_index(False)),
-                                          dt = stf.get_sampling_interval(),
                                           color='r', linestyle='-r')]
             stfio_plot.plot_traces(tsl, traces2=tsl2, ax=self.axes, textcolor2 = 'r',
                                    xmin=stf.plot_xmin(), xmax=stf.plot_xmax(),
