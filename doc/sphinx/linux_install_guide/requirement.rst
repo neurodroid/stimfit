@@ -81,11 +81,11 @@ Optional: PyEMF
 Download the Stimfit source code
 ================================
 
-You can download the latest development code for `Stimfit <http://www.stimfit.org>`_ from the `Google code repository <http://code.google.com/p/stimfit/>`_. In your home directory ($HOME)
+You can download the latest development code for `Stimfit <http://www.stimfit.org>`_ from the `Github code repository <https://github.com/neurodroid/stimfit/>`_. For that, simply type from your current $HOME directory: 
 
 ::
 
-    $ git clone https://code.google.com/p/stimfit $HOME/stimfit
+    $ git clone https://github.com/neurodroid/stimfit.git 
 
 This will grab all the required files into $HOME/stimfit. If you'd like to update at a later point, do:
 
@@ -172,11 +172,11 @@ The manual of `Stimfit <http://www.stimfit.org>`_ including the documentation is
 
     sudo apt-get install python-sphinx
 
-Enter in $HOME/doc/sphinx/. It is possible to build a local copy of the documenation there by simply typing:
+It is possible to build a local copy of the documenation there by simply calling:
 
 ::
 
-    sphinx-build ./ <destinyFolder> 
+    sphinx-build $HOME/Stimfit/doc/sphinx/ <destinyFolder> 
 
 The html documentation will be located in <destinyFolder>/index.html 
 
