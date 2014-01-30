@@ -8,7 +8,8 @@ Stimfit is a free, fast and simple program for viewing and analyzing electrophys
 
 
 ## Source code structure
-
+| Directory       | Description |
+| --------------- | ----------- |
 |./src/libstfio   | File i/o library for common electrophysiology formats |
 |./src/pystfio    | Python wrapper around libstfio |
 |./src/stimfit    | Stimfit program |
