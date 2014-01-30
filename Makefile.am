@@ -240,7 +240,7 @@ install: stimfit
 	mkdir -p ${DESTDIR}/stimfit.app/Contents/lib/stimfit
 	cp -v ./src/stimfit/.libs/libstimfit.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
 	cp -v ./src/libstfio/.libs/libstfio.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfio.dylib
-	cp $(top_srcdir)/stimfit.plist.in ${DESTDIR}/stimfit.app/Contents/Info.plist
+	cp $(top_srcdir)/macosx/stimfit.plist.in ${DESTDIR}/stimfit.app/Contents/Info.plist
 	echo "APPL????\c" > ${DESTDIR}/stimfit.app/Contents/PkgInfo
 	rm -f ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
 	cp -p -f .libs/stimfit$(EXEEXT) ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
