@@ -334,6 +334,6 @@ CXXFLAGS="${CXXFLAGS} -Wall"
 
 AC_CONFIG_HEADERS([stfconf.h])
 
-AC_CONFIG_FILES([Makefile src/Makefile src/libstfio/Makefile src/pystfio/Makefile src/stimfit/Makefile src/stimfit/py/Makefile macosx/stimfit.plist])
+AC_CONFIG_FILES([Makefile src/Makefile src/libstfio/Makefile src/pystfio/Makefile src/stimfit/Makefile src/stimfit/py/Makefile dist/macosx/stimfit.plist])
 
 AC_OUTPUT

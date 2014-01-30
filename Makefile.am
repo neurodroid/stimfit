@@ -141,10 +141,10 @@ EXTRA_DIST+= ./Doxyfile
 EXTRA_DIST+= ./acsite.m4
 EXTRA_DIST+= ./autogen.sh
 EXTRA_DIST+= ./Makefile.static
-EXTRA_DIST+= ./macosx/scripts/conf_mac_release.sh
-EXTRA_DIST+= ./macosx/scripts/change_deps_release.sh
-EXTRA_DIST+= ./macosx/app.r
-EXTRA_DIST+= ./macosx/stimfit.icns
+EXTRA_DIST+= ./dist/macosx/scripts/conf_mac_release.sh
+EXTRA_DIST+= ./dist/macosx/scripts/change_deps_release.sh
+EXTRA_DIST+= ./dist/macosx/app.r
+EXTRA_DIST+= ./dist/macosx/stimfit.icns
 # EXTRA_DIST+= ./src/pystfio/stfioswig_wrap.cxx 
 # EXTRA_DIST+= ./src/pystfio/stfio.py 
 EXTRA_DIST+= ./src/pystfio/pystfio.cxx 
@@ -153,20 +153,20 @@ EXTRA_DIST+= ./src/pystfio/stfio_plot.py
 EXTRA_DIST+= ./src/pystfio/unittest_stfio.py
 EXTRA_DIST+= ./src/pystfio/test.h5
 EXTRA_DIST+= ./src/pystfio/pystfio.h 
-# EXTRA_DIST+= ./debian/changelog
-EXTRA_DIST+= ./debian/compat
-EXTRA_DIST+= ./debian/control
-EXTRA_DIST+= ./debian/copyright
-EXTRA_DIST+= ./debian/docs
-EXTRA_DIST+= ./debian/mkdeb.sh
-EXTRA_DIST+= ./debian/python-stfio.files
-EXTRA_DIST+= ./debian/python-stfio.install
-EXTRA_DIST+= ./debian/rules
-EXTRA_DIST+= ./debian/stimfit.1
-EXTRA_DIST+= ./debian/stimfit.desktop
-EXTRA_DIST+= ./debian/stimfit.files
-EXTRA_DIST+= ./debian/stimfit.install
-EXTRA_DIST+= ./debian/stimfit.menu
+# EXTRA_DIST+= ./dist/debian/changelog
+EXTRA_DIST+= ./dist/debian/compat
+EXTRA_DIST+= ./dist/debian/control
+EXTRA_DIST+= ./dist/debian/copyright
+EXTRA_DIST+= ./dist/debian/docs
+EXTRA_DIST+= ./dist/debian/mkdeb.sh
+EXTRA_DIST+= ./dist/debian/python-stfio.files
+EXTRA_DIST+= ./dist/debian/python-stfio.install
+EXTRA_DIST+= ./dist/debian/rules
+EXTRA_DIST+= ./dist/debian/stimfit.1
+EXTRA_DIST+= ./dist/debian/stimfit.desktop
+EXTRA_DIST+= ./dist/debian/stimfit.files
+EXTRA_DIST+= ./dist/debian/stimfit.install
+EXTRA_DIST+= ./dist/debian/stimfit.menu
 EXTRA_DIST+= ./src/test/gtest/CHANGES
 EXTRA_DIST+= ./src/test/gtest/CONTRIBUTORS
 EXTRA_DIST+= ./src/test/gtest/COPYING
@@ -213,7 +213,7 @@ install-exec-hook:
 	mkdir -p $(prefix)/share/applications
 	cp $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
 	cp $(top_srcdir)/src/stimfit/res/stimfit32x32.xpm $(prefix)/share/pixmaps/stimfit32x32.xpm
-	cp $(top_srcdir)/debian/stimfit.desktop $(prefix)/share/applications/
+	cp $(top_srcdir)/dist/debian/stimfit.desktop $(prefix)/share/applications/
 else !BUILD_DEBIAN
 LTTARGET=$(prefix)/lib/stimfit
 install-exec-hook:
@@ -223,7 +223,7 @@ install-exec-hook:
 	mkdir -p $(prefix)/share/applications
 	cp $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
 	cp $(top_srcdir)/src/stimfit/res/stimfit32x32.xpm $(prefix)/share/pixmaps/stimfit32x32.xpm
-	cp $(top_srcdir)/debian/stimfit.desktop $(prefix)/share/applications/
+	cp $(top_srcdir)/dist/debian/stimfit.desktop $(prefix)/share/applications/
 endif !BUILD_DEBIAN
 uninstall-hook:
 	rm -f $(prefix)/share/pixmaps/stimfit16x16.xpm
@@ -240,7 +240,7 @@ install: stimfit
 	mkdir -p ${DESTDIR}/stimfit.app/Contents/lib/stimfit
 	cp -v ./src/stimfit/.libs/libstimfit.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
 	cp -v ./src/libstfio/.libs/libstfio.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfio.dylib
-	cp $(top_srcdir)/macosx/stimfit.plist.in ${DESTDIR}/stimfit.app/Contents/Info.plist
+	cp $(top_srcdir)/dist/macosx/stimfit.plist.in ${DESTDIR}/stimfit.app/Contents/Info.plist
 	echo "APPL????\c" > ${DESTDIR}/stimfit.app/Contents/PkgInfo
 	rm -f ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
 	cp -p -f .libs/stimfit$(EXEEXT) ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
@@ -252,9 +252,9 @@ if BUILD_PYTHON
 	${PYTHON} -m compileall -l ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/
 endif BUILD_PYTHON
 	$(POSTLINK_COMMAND) ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT) \
-	                    $(srcdir)/macosx/app.r
+	                    $(srcdir)/dist/macosx/app.r
 	$(MACSETFILE) -a C ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
-	cp -f $(top_srcdir)/macosx/stimfit.icns ${DESTDIR}/stimfit.app/Contents/Resources/stimfit.icns
+	cp -f $(top_srcdir)/dist/macosx/stimfit.icns ${DESTDIR}/stimfit.app/Contents/Resources/stimfit.icns
 	install_name_tool -change \
 	                  $(LTTARGET)/libstimfit.dylib \
 	                  @executable_path/../lib/stimfit/libstimfit.dylib \
