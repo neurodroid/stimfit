@@ -231,13 +231,7 @@ cubicSpline(
         T newF
 );
 
-//! Converts a Section to a wxString.
-/*! \param section The Section to be written to a string.
- *  \return A string containing the x- and y-values of the section in two columns.
- */
-wxString sectionToString(const Section& section);
-
- //! Differentiate data.
+//! Differentiate data.
 /* \param input The valarray to be differentiated.
  * \param x_scale The sampling interval.
  * \return The result of the differentiation.
@@ -376,12 +370,6 @@ double fbessel(double x, int n);
  */
 double fbessel4(double x, const Vector_double& p);
 
-//! Creates a preview of a text file.
-/*! \param fName Full path name of the file.
- *  \return A string showing at most the initial 100 lines of the text file.
- */
-wxString CreatePreview(const wxString& fName);
-
 //! Computes the faculty of an integer.
 /*! \param arg Argument of the function.
  *  \return The faculty of \e arg.
@@ -393,12 +381,6 @@ int fac(int arg);
  *  \return \f$ 2^{arg} \f$.
  */
 int pow2(int arg);
-
-//! Strips the directory off a full path name, returns only the filename.
-/*! \param fName The full path of a file.
- *  \return The file name without the directory.
- */
-wxString noPath(const wxString& fName);
 
 /*@}*/
 

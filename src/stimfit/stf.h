@@ -89,6 +89,24 @@ private:
 
 std::string wx2std(const wxString& wxs);
 wxString std2wx(const std::string& sst);
+ 
+//! Converts a Section to a wxString.
+/*! \param section The Section to be written to a string.
+ *  \return A string containing the x- and y-values of the section in two columns.
+ */
+wxString sectionToString(const Section& section);
+ 
+//! Creates a preview of a text file.
+/*! \param fName Full path name of the file.
+ *  \return A string showing at most the initial 100 lines of the text file.
+ */
+wxString CreatePreview(const wxString& fName);
+ 
+//! Strips the directory off a full path name, returns only the filename.
+/*! \param fName The full path of a file.
+ *  \return The file name without the directory.
+ */
+wxString noPath(const wxString& fName);
 
 //! Get a Recording, do something with it, return the new Recording.
 typedef boost::function<Recording(const Recording&,const Vector_double&,std::map<std::string, double>&)> PluginFunc;
