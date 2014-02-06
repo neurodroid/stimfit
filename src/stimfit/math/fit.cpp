@@ -260,28 +260,28 @@ double stf::lmFit( const Vector_double& data, double dt,
 
 #ifdef _DEBUG
         std::ostringstream optsMsg;
-        optsMsg << wxT("\nopts: ");
+        optsMsg << "\nopts: ";
         for (std::size_t n_p=0; n_p < opts.size(); ++n_p)
-            optsMsg << opts[n_p] << wxT("\t");
-        optsMsg << wxT("\n") << wxT("data_ptr[") << data_ptr.size()-1 << wxT("]=") << data_ptr[data_ptr.size()-1] << wxT("\n");
-        optsMsg << wxT("constrains_lm_lb: "); 
+            optsMsg << opts[n_p] << "\t";
+        optsMsg << "\n" << "data_ptr[" << data_ptr.size()-1 << "]=" << data_ptr[data_ptr.size()-1] << "\n";
+        optsMsg << "constrains_lm_lb: ";
         for (std::size_t n_p=0; n_p < constrains_lm_lb.size(); ++n_p) 
-            optsMsg << constrains_lm_lb[n_p] << wxT("\t");
-        optsMsg << wxT("\n") << wxT("constrains_lm_ub: "); 
+            optsMsg << constrains_lm_lb[n_p] << "\t";
+        optsMsg << "\n" << "constrains_lm_ub: ";
         for (std::size_t n_p=0; n_p < constrains_lm_ub.size(); ++n_p) 
-            optsMsg << constrains_lm_ub[n_p] << wxT("\t");
-        optsMsg << wxT("\n\n");
+            optsMsg << constrains_lm_ub[n_p] << "\t";
+        optsMsg << "\n\n";
         std::cout << optsMsg;
 #endif
 
         while ( 1 ) {
 #ifdef _DEBUG
             std::ostringstream paramMsg;
-            paramMsg << wxT("Pass: ") << it << wxT("\t");
-            paramMsg << wxT("p_toFit: ");
+            paramMsg << "Pass: " << it << "\t";
+            paramMsg << "p_toFit: ";
             for (std::size_t n_p=0; n_p < p_toFit.size(); ++n_p)
-                paramMsg << p_toFit[n_p] << wxT("\t");
-            paramMsg << wxT("\n");
+                paramMsg << p_toFit[n_p] << "\t";
+            paramMsg << "\n";
             std::cout << paramMsg.str().c_str();
 #endif
 
