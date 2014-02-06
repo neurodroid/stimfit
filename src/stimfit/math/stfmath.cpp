@@ -20,9 +20,6 @@
 #include <cmath>
 #include <limits>
 #include <algorithm>
-#include <wx/wxprec.h>
-#include <wx/progdlg.h>
-#include <wx/filename.h>
 
 #include "stfmath.h"
 #include "fit.h"
