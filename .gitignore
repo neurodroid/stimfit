@@ -52,26 +52,26 @@ lt~obsolete.m4
 m4/lt~obsolete.m4
 
 *.sln.cache
-windows/VS2008/libstfio/Debug
-windows/VS2008/libstfio/Release
-windows/VS2008/libstimfit/Debug
-windows/VS2008/libstimfit/Release
-windows/VS2008/pystf/Debug
-windows/VS2008/pystf/Release
-windows/VS2008/pystfio/Debug
-windows/VS2008/pystfio/Release
-windows/VS2008/Stimfit/Debug
-windows/VS2008/Stimfit/Release
-windows/libs
+dist/windows/VS2008/libstfio/Debug
+dist/windows/VS2008/libstfio/Release
+dist/windows/VS2008/libstimfit/Debug
+dist/windows/VS2008/libstimfit/Release
+dist/windows/VS2008/pystf/Debug
+dist/windows/VS2008/pystf/Release
+dist/windows/VS2008/pystfio/Debug
+dist/windows/VS2008/pystfio/Release
+dist/windows/VS2008/Stimfit/Debug
+dist/windows/VS2008/Stimfit/Release
+dist/windows/libs
 *.user
 
 # macports
 
 PortIndex*
-macosx/macports/science/stimfit/work
-macosx/macports/science/stimfit/work/*
-macosx/macports/python/py-stfio/work
-macosx/macports/python/py-stfio/work/*
+dist/macosx/macports/science/stimfit/work
+dist/macosx/macports/science/stimfit/work/*
+dist/macosx/macports/python/py-stfio/work
+dist/macosx/macports/python/py-stfio/work/*
 
 # build files
 
