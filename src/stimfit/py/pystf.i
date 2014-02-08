@@ -1518,8 +1518,6 @@ def new_window_list( array_list ):
 
     if is_3d:
         n_channels = len(array_list)
-
-    if is_3d:
         _gMatrix_resize( n_channels, len(array_list[0]) )
         for (n_c, c) in enumerate(array_list):
             for (n_s, s) in enumerate(c):
@@ -1531,6 +1529,39 @@ def new_window_list( array_list ):
             _gMatrix_at( a, 0, n )
 
     return _new_window_gMatrix( )
+
+def stfio_open(stfio_rec):
+    """Open an stfio recording object with Stimfit
+
+    Arguments:
+    stfio_rec  -- An stfio recording object, e.g. opened with
+                  stfio.read("filename")
+
+    Returns:
+    True upon successful completion, false otherwise.
+    """
+    n_channels = len(stfio_rec)
+    _gMatrix_resize( n_channels, len(stfio_rec[0]) )
+    for n_c, c in enumerate(stfio_rec):
+        for n_s, s in enumerate(c):
+            _gMatrix_at( c[n_s].asarray(), n_c, n_s )
+
+    succ = _new_window_gMatrix( )
+    if not succ:
+        return False
+
+    for n_c, c in enumerate(stfio_rec):
+        set_channel_name(c.name, n_c)
+        set_yunits(c.yunits, n_c)
+
+    set_recording_date(stfio_rec.date)
+    set_recording_time(stfio_rec.time)
+    set_recording_comment(stfio_rec.comment)
+    set_xunits(stfio_rec.xunits)
+    set_sampling_interval(stfio_rec.dt)
+    measure()
+
+    return True
 
 def cut_traces( pt ):
     """Cuts the selected traces at the sampling point pt,
