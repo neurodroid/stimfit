@@ -49,6 +49,7 @@ endif
 	rm -f ${PYTHON_DEST_DIR}/stfio/*.a
 	cp -p $(top_srcdir)/src/pystfio/__init__.py ${PYTHON_DEST_DIR}/stfio
 	cp -p $(top_srcdir)/src/pystfio/stfio_plot.py ${PYTHON_DEST_DIR}/stfio
+	cp -p $(top_srcdir)/src/pystfio/stfio_neo.py ${PYTHON_DEST_DIR}/stfio
 	cp -p $(top_srcdir)/src/pystfio/stfio.py ${PYTHON_DEST_DIR}/stfio
 	${PYTHON} -m compileall -l ${PYTHON_DEST_DIR}/stfio
 	chmod -x ${PYTHON_DEST_DIR}/stfio/*

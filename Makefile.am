@@ -151,6 +151,7 @@ EXTRA_DIST+= ./src/pystfio/__init__.py
 EXTRA_DIST+= ./src/pystfio/pystfio.cxx 
 EXTRA_DIST+= ./src/pystfio/pystfio.i 
 EXTRA_DIST+= ./src/pystfio/stfio_plot.py 
+EXTRA_DIST+= ./src/pystfio/stfio_neo.py
 EXTRA_DIST+= ./src/pystfio/unittest_stfio.py
 EXTRA_DIST+= ./src/pystfio/test.h5
 EXTRA_DIST+= ./src/pystfio/pystfio.h 

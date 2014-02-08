@@ -339,6 +339,7 @@ Section "!stfio standalone module" 4 ; Standalone python file i/o module
   File "${PYSTFIODIR}\__init__.py"
   File "${PYSTFIODIR}\stfio.py"
   File "${PYSTFIODIR}\stfio_plot.py"
+  File "${PYSTFIODIR}\stfio_neo.py"
   File "${PYSTFIODIR}\unittest_stfio.py"
  
   ; Install for all users
