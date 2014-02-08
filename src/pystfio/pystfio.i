@@ -256,9 +256,9 @@ class Section {
 %}
 
 %extend Channel {
- Channel(PyObject* SectionList) :
+ Channel(PyObject* SectionList, const std::string& yunits_="") :
     name(""),
-    yunits("")
+    yunits(yunits_)
     {
         if (!PyList_Check(SectionList)) {
             std::cerr << "Argument is not a list\n";
@@ -282,6 +282,7 @@ class Section {
 
         // Note that array size is fixed by this allocation:
         Channel *ch = new Channel(SectionCpp);
+        ch->SetYUnits(yunits_);
 
         return ch;
     }
