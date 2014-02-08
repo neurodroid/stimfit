@@ -4,15 +4,15 @@ STFVERSION="0.13.11"
 MPDIR=`pwd`
 
 if [ "$1" != "" ]; then
-    cd ../../ && ./autogen.sh
+    cd ../../../ && ./autogen.sh
     cd build/release
     ./conf_macports_release.sh
     make dist
     cd ${MPDIR}
 fi
 
-RMD160=`openssl rmd160 -r ../../build/release/stimfit-${STFVERSION}.tar.gz | awk '{print $1;}'`
-SHA256=`openssl sha256 -r ../../build/release/stimfit-${STFVERSION}.tar.gz | awk '{print $1;}'`
+RMD160=`openssl rmd160 -r ../../../build/release/stimfit-${STFVERSION}.tar.gz | awk '{print $1;}'`
+SHA256=`openssl sha256 -r ../../../build/release/stimfit-${STFVERSION}.tar.gz | awk '{print $1;}'`
 
 echo "rmd160:" ${RMD160}
 echo "sha256:" ${SHA256}
