@@ -29,7 +29,8 @@ if { ${name} ne ${subport} } {
                     port:py${python.version}-numpy
 
     configure.args  --disable-dependency-tracking \
-                    --enable-module
+                    --enable-module \
+                    --without-biosig
 
     configure.python \
                     ${python.bin}
@@ -47,4 +48,16 @@ if { ${name} ne ${subport} } {
         xinstall -m 644 ${worksrcpath}/debian/copyright \
             ${worksrcpath}/COPYING ${docdir}
     }
+
+    variant biosig description {Use biosig library for file I/O.} {
+        depends_lib-append \
+            port:libbiosig
+
+        configure.args-replace \
+            --without-biosig \
+            --with-biosig
+    }
+
+    default_variants    +biosig
+
 }
