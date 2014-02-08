@@ -145,6 +145,7 @@ EXTRA_DIST+= ./dist/macosx/scripts/conf_mac_release.sh
 EXTRA_DIST+= ./dist/macosx/scripts/change_deps_release.sh
 EXTRA_DIST+= ./dist/macosx/app.r
 EXTRA_DIST+= ./dist/macosx/stimfit.icns
+EXTRA_DIST+= ./src/pystfio/__init__.py
 # EXTRA_DIST+= ./src/pystfio/stfioswig_wrap.cxx 
 # EXTRA_DIST+= ./src/pystfio/stfio.py 
 EXTRA_DIST+= ./src/pystfio/pystfio.cxx 

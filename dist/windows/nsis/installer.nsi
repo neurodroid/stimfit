@@ -310,9 +310,9 @@ Section "!stfio standalone module" 4 ; Standalone python file i/o module
   
   !define STFIODIR "$9\Lib\site-packages\stfio"
   ; Add a path to the installation directory in the python site-packages folder
-  FileOpen $0 $9\Lib\site-packages\stfio.pth w
-  FileWrite $0 ${STFIODIR}
-  FileClose $0
+  ; FileOpen $0 $9\Lib\site-packages\stfio.pth w
+  ; FileWrite $0 ${STFIODIR}
+  ; FileClose $0
   
   IfErrors 0 +3
     MessageBox MB_OK "Couldn't create path for python module"
@@ -336,6 +336,7 @@ Section "!stfio standalone module" 4 ; Standalone python file i/o module
   File /nonfatal "${ALTPRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
   File "${BUILDTARGETDIR}\_stfio.pyd"
   File "${BUILDTARGETDIR}\libstfio.dll"
+  File "${PYSTFIODIR}\__init__.py"
   File "${PYSTFIODIR}\stfio.py"
   File "${PYSTFIODIR}\stfio_plot.py"
   File "${PYSTFIODIR}\unittest_stfio.py"
