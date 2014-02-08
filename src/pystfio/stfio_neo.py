@@ -27,7 +27,6 @@ class StimfitIO(BaseIO):
 
     Usage:
         >>> import stfio
-        >>> import stfio.neo
         >>> neo_obj = stfio.neo.StimfitIO("file.abf")
         or
         >>> stfio_obj = stfio.read("file.abf")
@@ -68,17 +67,6 @@ class StimfitIO(BaseIO):
             
     def read_block(self, lazy = False, cascade = True ):
 
-        """
-        Return an stfio section as a neo Segment.
-
-        self.filename will be ignored.
-
-        Parameters:
-            segment_duration :is the size in secend of the segment.
-            num_analogsignal : number of AnalogSignal in this segment
-            num_spiketrain : number of SpikeTrain in this segment
-
-        """
         if self.filename is not None:
             self.stfio_rec = stfio.read(self.filename)
 
@@ -138,11 +126,11 @@ def neo2stfio(neo_obj):
        * Assumes that the channel units do not change
 
        Usage:
-       >>> import neo
-       >>> neo_obj = neo.io.AxonIO("filename.abf")
-       >>> import stfio.neo
-       >>> stfio_obj = stfio.neo.neo2stfio(neo_obj)
-       >>> assert(stfio_obj[0][0][0] == neo_obj.read()[0].segments[0].analogsignals[0][0])
+           >>> import neo
+           >>> neo_obj = neo.io.AxonIO("filename.abf")
+           >>> import stfio
+           >>> stfio_obj = stfio.neo.neo2stfio(neo_obj)
+           >>> assert(stfio_obj[0][0][0] == neo_obj.read()[0].segments[0].analogsignals[0][0])
     """
     
     blocks = neo_obj.read()
