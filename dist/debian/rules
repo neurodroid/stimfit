@@ -26,7 +26,7 @@ clean:
 	dh_testroot
 	rm -f build-stamp
 
-	# Add here commands to clean up after the build process.
+#       Add here commands to clean up after the build process.
 	rm -rf ./.libs ./_libs ./.deps ./.stimfit
 	rm -rf $(CURDIR)/man
 	find -name '*.o' | xargs -r rm -f
@@ -57,7 +57,7 @@ endif
 	touch build-stamp
 
 	dh_testroot
-	# dh_prep
+#       dh_prep
 	dh_installdirs
 
 # Build architecture-independent files here.
