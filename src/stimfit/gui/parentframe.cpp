@@ -660,19 +660,16 @@ bool CompVersion( const std::vector<int>& version ) {
 
 void wxStfParentFrame::CheckUpdate( wxProgressDialog* progDlg ) const {
     
-#if defined (__linux__)
-    wxString address(wxT("/latest_linux"));
-#elif defined (__MINGW32__)
+#if defined (__MINGW32__)
     wxString address(wxT("/latest_mingw"));
 #elif defined (_WINDOWS)
     wxString address(wxT("/latest_windows"));
 #elif defined (__APPLE__)
     wxString address(wxT("/latest_mac"));
 #else
-    wxString address(wxT("/unspecified"));
-    return;
+    wxString address(wxT("/latest_linux"));
 #endif
-    
+   
     wxHTTP http;
     http.SetHeader( wxT("Accept") , wxT("text/*") );
     http.SetHeader( wxT("User-Agent"), wxT("Mozilla") );
