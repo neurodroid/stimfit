@@ -7,6 +7,7 @@
 #include <wx/filepicker.h>
 #include <wx/dir.h>
 #include <wx/listctrl.h>
+#include <wx/stdpaths.h>
 
 #include "./../../res/arrow_down.xpm"
 #include "./../../res/arrow_up.xpm"
@@ -1053,14 +1054,10 @@ END_EVENT_TABLE()
 wxStfConvertDlg::wxStfConvertDlg(wxWindow* parent, int id, wxString title, wxPoint pos,
         wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ),
-#ifdef __linux__
-srcDir(wxT("/home")), destDir(wxT("/home")),
-#else
-srcDir(wxT("C:\\")), destDir(wxT("C:\\")),
-#endif
-
-srcFilter(wxT("")), srcFilterExt(stfio::cfs), destFilterExt(stfio::igor),
-srcFileNames(0)
+    srcDir(wxStandardPaths::Get().GetDocumentsDir()),
+    destDir(wxStandardPaths::Get().GetDocumentsDir()),
+    srcFilter(wxT("")), srcFilterExt(stfio::cfs), destFilterExt(stfio::igor),
+    srcFileNames(0)
 
 {
     wxBoxSizer* topSizer;
