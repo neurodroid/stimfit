@@ -13,7 +13,7 @@
 #include "../Common/wincpp.hpp"
 #include "filedesc.hpp"
 
-#if defined (__linux__) || defined (__APPLE__) || defined(__MINGW32__)
+#if !defined(_WINDOWS) || defined(__MINGW32__)
 #include <wchar.h>
 #endif
 

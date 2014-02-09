@@ -16,23 +16,10 @@
 #include "../Common/wincpp.hpp"
 #include "abffiles.h"
 #include "../../axon2/abf2headr.h"
-/*
-  #include "abfutil.h"                // Large memory allocation/free
-  #include "StringResource.h"         // Access to string resources.
-  #include "oldheadr.h"               // old header conversion prototypes
-*/
 #include "csynch.hpp"               // Virtual synch array object
 #include "filedesc.hpp"             // File descriptors for ABF files.
 #include "./../Common/ArrayPtr.hpp"   // Smart array pointer template class.
 #include "./../Common/FileReadCache.hpp"
-/*
-  #include "./../AxoUtils32/AxoUtils32.h"     // for AXU_* functions
-  #include "./../Common/crc.h"
-
-  #ifndef __linux__
-  #include <objbase.h>                 // UuidCreate
-  #endif
-*/
 
 //
 // Set the maximum number of files that can be open simultaneously.
@@ -44,9 +31,9 @@
 
 #define ABF_DEFAULTCHUNKSIZE  8192     // Default chunk size for reading gap-free amd var-len files.
 
-#if defined(__linux__) || defined(__STF__) || defined(__APPLE__) || defined(__MINGW32__)
-#define max(a,b)   (((a) > (b)) ? (a) : (b))
-#define min(a,b)   (((a) < (b)) ? (a) : (b))
+#if !defined(_WINDOWS) || defined(__MINGW32__) || defined(__STF__)
+	#define max(a,b)   (((a) > (b)) ? (a) : (b))
+	#define min(a,b)   (((a) < (b)) ? (a) : (b))
 #endif
 
 /*

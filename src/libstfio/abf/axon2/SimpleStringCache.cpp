@@ -30,9 +30,9 @@
 const DWORD c_dwSIGNATURE         = MAKEFOURCC('S','S','C','H');   // Simple String Cache Header
 const DWORD c_dwCURRENT_VERSION   = MAKEFOURCC(1,0,0,0);           // 1.0.0.0
 
-#if defined(__linux__) || defined(__STF__) || defined(__APPLE__) || defined(__MINGW32__) 
-    #define max(a,b)   (((a) > (b)) ? (a) : (b))
-    #define min(a,b)   (((a) < (b)) ? (a) : (b))
+#if !defined(_WINDOWS) || defined(__MINGW32__) || defined(__STF__)
+	#define max(a,b)   (((a) > (b)) ? (a) : (b))
+	#define min(a,b)   (((a) < (b)) ? (a) : (b))
 #endif
 
 struct SimpleStringCacheHeader
