@@ -1,3 +1,2 @@
-usr/lib/python*/*-packages/stfio.pth
 usr/lib/python*/*-packages/stfio/*.so
 usr/lib/python*/*-packages/stfio/*.py
