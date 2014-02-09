@@ -207,11 +207,6 @@
     #include "CfsConv.h"
 #endif
 
-#if 0 //def macintosh
-    #pragma segment Cfs
-#endif
-
-
 /* define some constants needed in the program */
 
 #define INITCEDFILES   16                  /* Initial file array length */
@@ -336,7 +331,7 @@ typedef struct
 
 #pragma pack()
 
-#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
+#if !defined(_IS_WINDOWS_) || defined(__MINGW32__)
 typedef TFileHead  * TpFHead;        /* pointer to start of file header */
 typedef TDataHead  * TpDHead;        /* pointer to start of data header */
 typedef TDSChInfo  * TpDsInfo;
@@ -390,9 +385,6 @@ typedef struct            /* For program to keep track of storage locations */
     TPointers   DSPoint; /* to descrip and values of data section variables */
     TpLong      tableP;  /*  array of offsets in the file of the DS headers */
     TDOSHdl     DOSHdl;
-#ifndef macintosh
-    TBigName    tempFName;
-#endif
     WORD        thisSection;
     short       DSAltered;
 } TFileInfo;
@@ -433,7 +425,7 @@ TFileInfo*  g_fileInfo = NULL;
 **
 *****************************************************************************/
 
-#if defined(__linux__) || defined(__APPLE__)  || defined(__MINGW32__)
+#if !defined(_IS_WINDOWS_) || defined(__MINGW32__)
 TError errorInfo = {0,0,0,0};
 #else
 TError  _near errorInfo = {0,0,0,0};
@@ -465,18 +457,6 @@ static void  ExtractBytes(TpStr destP,WORD dataOffset,
 static short FileUpdate(short handle,TpFHead fileHP);
 
                                  /* Function definitions for IO functions . */
-
-#if 0 //def macintosh
-    static short TempName(short handle,ConstStr255Param name,
-                                                ConstStr255Param str2);
-    static short CCreat(ConstStr255Param name,short vRefNum,CFSLONG dirID,
-                             SignedByte perm, OSType creator,OSType fileType);
-    static short CUnlink(ConstStr255Param name,short vRefNum,CFSLONG dirID);
-    static short COpen(ConstStr255Param name, short vRefNum, CFSLONG dirID,
-                                                             SignedByte perm);
-    static short CCloseAndUnlink(fDef handle);
-
-#endif
 
 static short TempName(short handle,TpCStr name,TpStr str2, unsigned str2len);
 static short CCreat(TpCStr name, short mode, fDef* pFile);
@@ -523,50 +503,10 @@ static void   CStrDate(char *dateStr);
 **
 ***************************************************************************/
 
-#if 0 //def macintosh
-short CCreat(ConstStr255Param name,short vRefNum,CFSLONG dirID, SignedByte perm,
-                                               OSType creator,OSType fileType)
-{
-    short fileRefNum ;              /* Mac file refnum, MUST be a short */
-    OSErr crErr, err ;              /* error codes from create and io ops */
-    FInfo fndrInfo ;                /* for get/setting filetype and creator */
-
-/*
-** Mac version is a little different, as create fails if file exists
-** and open will fail if file does not exist
-*/
-    crErr = HCreate(vRefNum, dirID, name, creator, fileType);
-    err   = HOpen (vRefNum, dirID, name, perm, &fileRefNum);
-    
-    if (err == noErr)                                    /* opened the file */
-    {
-        if (crErr != noErr)                        /* if already existed... */
-            if ((err = SetEOF(fileRefNum, 0)) == noErr)   /* ...truncate it */
-            {                                            /* get finder info */
-                err = HGetFInfo(vRefNum, dirID, name, &fndrInfo); 
-                if (err == noErr)
-                {
-                    fndrInfo.fdType = fileType;            /* Set file type */
-                    fndrInfo.fdCreator  = creator ;          /* and creator */
-                    err = HSetFInfo(vRefNum, dirID, name, &fndrInfo); 
-                }
-        
-            }
-    }
-    else if (crErr != noErr)                    /* check for error creating */
-        err = crErr;                           /* err is now our error code */
-        
-    if (err != noErr)
-        return err ;                             /* This is a Mac OSErr code*/
-    return fileRefNum;                            /* save the ref num if ok */
-
-}                                                          /* end of CCreat */
-#endif
-
 short CCreat(TpCStr name, short mode, fDef* pFile)
 {
     short    sErr = 0;
-    #if defined(WIN32) && !defined(__MINGW32__)
+    #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     DWORD    dwMode;
     #else
     short    pmode;
@@ -574,71 +514,34 @@ short CCreat(TpCStr name, short mode, fDef* pFile)
     #endif
     fDef     file;                      /* The various types of file handle */
 
-//
-//    #ifdef _IS_WINDOWS_
-//        int      file;                     /* local copy of the file handle */
-//    #else
-//        #ifdef LLIO
-//            int      file;                 /* local copy of the file handle */
-//        #else
-//            FILE*    file;                          /* file stream pointer */
-//        #endif
-//    #endif
-
-    #if defined(WIN32) && !defined(__MINGW32__)
+    #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
         if (mode)                         /* Sort out the file access value */
             dwMode = GENERIC_READ;
         else
             dwMode = GENERIC_READ | GENERIC_WRITE;
+        file = CreateFileA(name, dwMode, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+        if (file == INVALID_HANDLE_VALUE)
+            sErr = BADCREAT;
     #else
         if (mode)
             pmode = S_IREAD;
         else
             pmode = S_IREAD|S_IWRITE;
+        char*     omode;
+
+        if (mode)                         /* Sort out the file access value */
+            omode = "r";
+        else
+            omode = "w+";
+
+        if (strlen(name) < MAXFNCHARS)
+            F_strcpy(fname, name);              /* Get filename in near var */
+        file = fopen(fname,omode);
+        if (file == 0)
+            sErr = -1;
+
     #endif
 
-    #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
-        #ifdef WIN32
-            file = CreateFileA(name, dwMode, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-            if (file == INVALID_HANDLE_VALUE)
-                sErr = BADCREAT;
-    #else
-            if (strlen(name) < MAXFNCHARS)
-                F_strcpy(fname, name);              /* Get filename in near var */
-            file = _open(fname, (int)(O_CREAT|O_RDWR|O_TRUNC|O_BINARY), pmode);
-            if (file < 0)
-                sErr = 0 - _doserrno;
-        #endif
-    #else
-        #if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
-            char*     omode;
-
-            if (mode)                         /* Sort out the file access value */
-                omode = "r";
-            else
-                omode = "w+";
-
-            if (strlen(name) < MAXFNCHARS)
-                F_strcpy(fname, name);              /* Get filename in near var */
-            file = fopen(fname,omode);
-            if (file == 0)
-                sErr = -1;
-        #else
-            #ifdef LLIO
-                if (strlen(name) < MAXFNCHARS)
-                    F_strcpy(fname, name);              /* Get filename in near var */
-                file = open(fname,(int)(O_CREAT|O_RDWR|O_TRUNC|O_BINARY),pmode);
-                if (file < 0)
-                    sErr = 0 - _doserrno;
-            #else
-                if (strlen(name) < MAXFNCHARS)
-                    F_strcpy(fname, name);              /* Get filename in near var */
-                file = fopen(fname,"wb");
-                if (file==0)
-                    sErr = -1;
-            #endif                                              /* if LLIO else */
-        #endif                                               /* if Windows else */
-    #endif
     if (sErr == 0)
         *pFile = file;
 
@@ -650,16 +553,9 @@ short CCreat(TpCStr name, short mode, fDef* pFile)
 **   Delete file specified by path. Return 0 if ok, -ve error code
 **
 ****************************************************************************/
-#if 0 //def macintosh
-short CUnlink(ConstStr255Param name,short vRefNum,CFSLONG dirID)
-{
-    return HDelete(vRefNum, dirID, name);
-}
-#endif
-
-#if (defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)) && !defined(__MINGW32__)
 short CUnlink(TpCStr path)
 {
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     int     a;
 
     a = _unlink(path);                                /* C function in io.h */
@@ -667,15 +563,10 @@ short CUnlink(TpCStr path)
         return (short)(0 - _doserrno);
     else
         return 0;
-}
-#endif
-
-#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
-short CUnlink(TpCStr path)
-{
+#else
     return remove(path);                                /* C function in io.h */
-}
 #endif
+}
 
 /*************  3. CClose for closing files given DOS handle ****************
 **
@@ -687,44 +578,11 @@ short CClose(fDef handle)
 {
     int     res = 0;
 
-    #if 0 //def macintosh
-        short   vRefNum = 0;    /* only used by Mac routines, MUST BE SHORT */
-
-        res = GetVRefNum (handle,&vRefNum);           /* get volume ref Num */
-
-         /* if this fails then we probably have a serious programming error */
-
-        res = FSClose (handle);
-        #if qDebug
-            if (res)
-                fprintf(stderr, "ERROR: %d CFSCloseFile\n", res) ;
-        #endif
-        if (!res)                                     /* if close was ok,...*/
-            res = FlushVol (NULL, vRefNum);             /* flush the volume */
-    #endif
-
     #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
-        #ifdef WIN32
-            if (!CloseHandle(handle))
-                res = BADHANDLE;
-        #else
-            res = _close(handle);                   /* C function from io.h */
-            if (res < 0) 
-                res = 0 - _doserrno;
-        #endif
-    #endif
-    
-    #ifdef _IS_MSDOS_
-        #ifdef LLIO
-            res = close(handle);                    /* C function from io.h */
-            if (res<0) 
-                return (short)-_doserrno;
-        #else
-            res = fclose(handle);                          /* shut the file */
-        #endif
-    #endif
-    #if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
-            res = fclose(handle);
+        if (!CloseHandle(handle))
+            res = BADHANDLE;
+    #else
+        res = fclose(handle);
     #endif
 
     return (short)res;
@@ -738,54 +596,18 @@ short CClose(fDef handle)
 **
 ****************************************************************************/
 
-#if (defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)) && !defined(__MINGW32__)
 short CCloseAndUnlink(fDef handle, TpCStr path)
 {
     short err = 0;
     
     err = CClose(handle);
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     err = CUnlink(path);
-
-    return err;
-}
-#endif
-
-#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
-short CCloseAndUnlink(fDef handle, TpCStr path)
-{
-    short err = 0;
-    
-    err = CClose(handle);
+#else
     err += CUnlink(path);
-
+#endif
     return err;
 }
-#endif
-
-#if 0 //def macintosh
-short CCloseAndUnlink(fDef handle)
-{
-    short err = 0;
-    Str31 name;
-    
-    FCBPBRec paramBlock;
-    
-    paramBlock.ioCompletion = NULL;
-    paramBlock.ioNamePtr    = name;
-    paramBlock.ioFCBIndx    = 0;
-    paramBlock.ioRefNum     = handle;
-
-    err = PBGetFCBInfo(&paramBlock, FALSE);     /* call before closing file */
-    if (err == 0)
-    {
-        err = CClose(handle);
-        if (err == 0)
-            err = CUnlink(name,paramBlock.ioFCBVRefNum,paramBlock.ioFCBParID);
-    }
-    return err;
-}
-#endif
-
 
 /*************  4. CLSeek for moving file pointer ***************************
 **
@@ -800,98 +622,27 @@ CFSLONG CLSeek(fDef handle,                              /* DOS handle of file *
                                              1 Move from current file position
                                              2 Move from file end */
 {
-#if 0 //def macintosh
-    OSErr err;
-    CFSLONG eof;
-
-    mode = 0;                                 /* to prevent warning message */
-
-    err = GetEOF(handle, &eof);      /* if need to seek past current end of */
-                                      /*  file then first have to extend it */
-    if (err == noErr)
-    {
-        if (offset > eof)
-            err = SetEOF(handle, offset);
-            
-        if (err == noErr)
-            err = SetFPos (handle, fsFromStart, offset);            /* seek */
-    }
-    
-    #if qDebug
-    if (err)
-        fprintf (stderr,"ERROR: %d SetFPos, offset %d\n",err,offset);
-    #endif
-    
-    return (CFSLONG)err;
-#endif
-
 #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)         /* Windows seek */
     CFSLONG     res = 0;
-    #ifdef WIN32
-        DWORD       dwMode;
 
-        switch (mode)
-        {
-            case 0 : dwMode = FILE_BEGIN;                  /* start of file */
-                     break;
-            case 1 : dwMode = FILE_CURRENT; /* current posn of file pointer */
-                     break;
-            case 2 : dwMode = FILE_END;                      /* end of file */
-                     break;
-        }
-
-        res = SetFilePointer(handle, offset, NULL, dwMode);
-        if (res == 0xFFFFFFFF)
-            return DISKPOS;
-        else
-            return res;
-    #else
-        short    origin = 0;
-
-        switch (mode)
-        {
-            case 0 : origin = SEEK_SET;                    /* start of file */
-                     break;
-            case 1 : origin = SEEK_CUR;     /* current posn of file pointer */
-                     break;
-            case 2 : origin = SEEK_END;                      /* end of file */
-                     break;
-        }
-        res = _lseek(handle, offset, origin);                  /* LLIO read */
-        if (res < 0)
-            return 0 - _doserrno;                 /* _doserrno set by LSEEK */
-        else
-            return res;
-    #endif
-#endif  /* if _IS_WINDOWS_ else */
-
-#ifdef _IS_MSDOS_                                         /* DOS-style seek */
-    CFSLONG     res;
-    short    origin = 0;
+    DWORD       dwMode;
 
     switch (mode)
     {
-            case 0 : origin = SEEK_SET;                    /* start of file */
-                     break;
-            case 1 : origin = SEEK_CUR; /* current position of file pointer */
-                     break;
-            case 2 : origin = SEEK_END;                      /* end of file */
-                     break;
+        case 0 : dwMode = FILE_BEGIN;                  /* start of file */
+                 break;
+        case 1 : dwMode = FILE_CURRENT; /* current posn of file pointer */
+                 break;
+        case 2 : dwMode = FILE_END;                      /* end of file */
+                 break;
     }
-    #ifdef LLIO
-    {
-        res = lseek(handle, offset, origin);                   /* LLIO read */
-        if (res < 0)
-            return - _doserrno;                   /* _doserrno set by LSEEK */
-        else
-            return res;
-    }
-    #else
-        res = fseek (handle, offset, origin);                 /* stdio read */
+
+    res = SetFilePointer(handle, offset, NULL, dwMode);
+    if (res == 0xFFFFFFFF)
+        return DISKPOS;
+    else
         return res;
-    #endif  /* if LLIO else */
-#endif  /* if _IS_MSDOS_ else */
-#if defined(__linux__) || defined(__APPLE__)
+#else
     CFSLONG     res;
     short    origin = 0;
 
@@ -906,10 +657,10 @@ CFSLONG CLSeek(fDef handle,                              /* DOS handle of file *
     }
     res = fseek (handle, offset, origin);                 /* stdio read */
     if (res==0) {
-		return ftell(handle);
-	} else {
-		return -1;
-	}
+        return ftell(handle);
+    } else {
+        return -1;
+    }
 #endif
 }                                                          /* end of CLSeek */
 
@@ -928,57 +679,14 @@ CFSLONG CLSeek(fDef handle,                              /* DOS handle of file *
 
 WORD CReadHandle(fDef handle, TpStr buffer, WORD bytes)
 {
-#ifdef  macintosh
-    OSErr   err;
-    CFSLONG    nBytes = bytes;             /* Mac read routine expects longint */
-
-    err = FSRead (handle, &nBytes, buffer) ;
-    if (err)
-    {
-    #if qDebug
-        fprintf (stderr, "ERROR: %d FSRead, nbytes read %d\n", err, nBytes);
-    #endif
-        return err;
-    }
-    else
-        return bytes;
-#endif
-
 #if defined(_IS_WINDOWS_)  && !defined(__MINGW32__)
-    #if defined(WIN32)
         DWORD   dwRead;
 
         if (ReadFile(handle, buffer, bytes, &dwRead, NULL))
             return bytes;
         else
             return 0;
-    #else
-        unsigned numread;
-
-        numread = _read(handle, buffer, bytes);
-        if (numread != bytes)
-            return 0;
-        else 
-            return bytes;
-    #endif
-#endif
-
-#ifdef _IS_MSDOS_
-    #ifdef LLIO
-        unsigned numread;
-        if (_dos_read(handle,buffer,bytes,&numread) != 0)
-            return 0;
-        else 
-            return (WORD)numread;
-    #else
-        if (fread(buffer, 1, bytes,handle) != bytes)
-            return 0;
-        else 
-            return bytes;
-    #endif /* if LLIO else */
-#endif /* if MSDOS */
-
-#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
+#else
         if (fread(buffer,1,bytes,handle) != bytes)
             return 0;
         else
@@ -1000,60 +708,18 @@ WORD CReadHandle(fDef handle, TpStr buffer, WORD bytes)
 
 WORD CWriteHandle(fDef handle, TpStr buffer, WORD bytes)
 {
-#ifdef  macintosh
-    OSErr err ;
-    CFSLONG nBytes = bytes;                /* Mac read routine expects longint */
-
-    if (bytes == 0)                                    /* Protect our backs */
-        return 0;
-    err = FSWrite (handle, &nBytes, buffer) ;
-    if (err)
-        return 0;
-    else
-        return bytes;
-#endif
-
 #if defined(_IS_WINDOWS_)  && !defined(__MINGW32__)
-    #ifdef WIN32
-        DWORD   dwWrit;
+    DWORD   dwWrit;
 
-        if (WriteFile(handle, buffer, bytes, &dwWrit, NULL))
-            return bytes;
-        else
-            return 0;
-    #else
-        WORD  numwrt;
-
-        if (bytes == 0)                                    /* Protect our backs */
-            return 0;
-        numwrt = (WORD)_write(handle, buffer, bytes);
-        if (numwrt != bytes)
-            return 0;
-        else 
-            return bytes;
-    #endif
-#endif
-
-#ifdef _IS_MSDOS_
-    #ifdef LLIO
-       unsigned numwrt;
-
-       if (_dos_write(handle,buffer,bytes,&numwrt) != 0) 
-           return 0;
-       else 
-           return (WORD)numwrt;
-    #else
-       if (fwrite(buffer, 1, bytes,handle) != bytes)
-           return 0;
-       else 
-           return bytes;
-    #endif /* if LLIO else */
-#endif /* else if MSDOS */
-#if defined(__linux__) || defined(__APPLE__) && !defined(__MINGW32__)
-       if (fwrite(buffer, 1, bytes, handle) != bytes)
-           return 0;
-       else 
-           return bytes;
+    if (WriteFile(handle, buffer, bytes, &dwWrit, NULL))
+        return bytes;
+    else
+        return 0;
+#else
+    if (fwrite(buffer, 1, bytes, handle) != bytes)
+        return 0;
+    else 
+        return bytes;
 #endif
 }                                                    /* end of CWriteHandle */
 
@@ -1080,51 +746,17 @@ short CSetFileLen(fDef handle, CFSLONG size)
 ** Return 0 if successful, -DOS error code if not.
 */
 {
-    #ifndef WIN32
-        short ecode;
-    #endif
-
-    #if 0 //def macintosh
-        ecode = SetEOF(handle, size);
-        return ecode; 
-    #endif
-
     #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
-        #ifdef WIN32
-            if (SetFilePointer(handle, size, NULL, FILE_BEGIN) != 0xFFFFFFFF)
-                if (SetEndOfFile(handle))
-                    return 0;
-                else
-                    return BADHANDLE;
+        if (SetFilePointer(handle, size, NULL, FILE_BEGIN) != 0xFFFFFFFF)
+            if (SetEndOfFile(handle))
+                return 0;
             else
-                return DISKPOS;
-        #else
-            ecode = (short)_chsize(handle, size); /* ANSII C function from io.h */
-            if (ecode == 0)
-                return 0; 
-            else 
-                return (short)(0 - _doserrno);
-        #endif
+                return BADHANDLE;
+        else
+            return DISKPOS;
+    #else
+        return -1;
     #endif
-    
-    #ifdef _IS_MSDOS_
-        #ifdef LLIO
-            ecode = (short)_chsize(handle, size); /* ANSII C function from io.h */
-            if (ecode == 0)
-                return 0; 
-            else 
-                return (short)-_doserrno;
-        #else
-            ecode = (short)_chsize(_fileno(handle), size); /* Streams mechanism */
-            if (ecode == 0)
-                return 0; 
-            else 
-                return (short)-_doserrno;
-        #endif
-    #endif
-	#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
-		return -1;
-	#endif			
 }                                                    /* end of CSetFileLen */
 
 
@@ -1138,43 +770,13 @@ CFSLONG CGetFileLen(fDef pFile)
 {
     CFSLONG    lSize;
     
-    #if 0 //def macintosh
-//        ecode = SetEOF(handle, size);
-//        return ecode; 
-    #endif
-
     #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
-        #ifdef WIN32
-            lSize = GetFileSize(pFile, NULL);
-            if (lSize != -1)             
-                return lSize; 
-            else 
-                return BADHANDLE;
-        #else
-            lSize = _filelength(handle); /* ANSII C function from io.h */
-            if (lSize != -1)             
-                return lSize; 
-            else 
-                return (CFSLONG)(0 - _doserrno);
-        #endif
-    #endif
-    
-    #ifdef _IS_MSDOS_
-        #ifdef LLIO
-            lSize = _filelength(handle); /* ANSII C function from io.h */
-            if (lSize != -1)             
-                return lSize; 
-            else 
-                return (CFSLONG)(0 - _doserrno);
-        #else
-            lSize = _filelength(_fileno(handle)); /* Streams mechanism */
-            if (lSize != -1)             
-                return lSize; 
-            else 
-                return (CFSLONG)(0 - _doserrno);
-        #endif
-    #endif
-    #if defined(__linux__) || defined(__APPLE__)
+        lSize = GetFileSize(pFile, NULL);
+        if (lSize != -1)             
+            return lSize; 
+        else 
+            return BADHANDLE;
+    #else
 	fpos_t cur;
 	if (fgetpos(pFile,&cur)!=0)
 		return -1;
@@ -1201,100 +803,33 @@ CFSLONG CGetFileLen(fDef pFile)
 **
 *****************************************************************************/
 
-#if 0 //def macintosh
-short COpen(ConstStr255Param name,short vRefNum,CFSLONG dirID,SignedByte perm)
-{
-    short i ;                                    /* used as the return code */
-    short refNum;
-
-    i = HOpen (vRefNum, dirID, name, perm, &refNum);
-    return (i == noErr) ? refNum : i;
-}                                                         /* CFSOpenOldFile */
-#endif
-
-#if (defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)) && !defined(__MINGW32__)
-
 short COpen(TpCStr name, short mode, fDef* pFile)
 {
+
     short   sRes = 0;
+
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     fDef    file;
+    DWORD   dwMode;
 
-    #ifdef WIN32 
-        DWORD   dwMode;
-    #else
-        char    fname[MAXFNCHARS];          /* To get near variable holding string */
-        int     oflag;
-    #endif
-
-//    #ifdef LLIO
-//        int     file;                      /* local copy of the file handle */
-//        char     fname[70];          /* To get near variable holding string */
-//    #else
-//        FILE     *file;                              /* file stream pointer */
-//        char     fname[70];          /* To get near variable holding string */
-//    #endif
-
-    #ifdef WIN32
-        switch (mode)                /* use C library constants to set mode */
-        {
-           case 1 : dwMode = GENERIC_WRITE;
-                    break;
-           case 2 : dwMode = GENERIC_READ | GENERIC_WRITE;
-                    break;
-           default: dwMode = GENERIC_READ;
-                    break;
-        }
-    #else
-        switch (mode)                /* use C library constants to set mode */
-        {
-           case 1 : oflag = O_WRONLY|O_BINARY;
-                    break;
-           case 2 : oflag = O_RDWR|O_BINARY;
-                    break;
-           default: oflag = O_RDONLY|O_BINARY;
-                    break;
-        }
-    #endif
-
-    #ifdef _IS_WINDOWS_
-        #ifdef WIN32
-            file = CreateFileA(name, dwMode, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-            if (file == INVALID_HANDLE_VALUE)
-                sRes = BADOPEN;
-    #else
-            if (strlen(name) < MAXFNCHARS)        
-                F_strcpy(fname, name);              /* Get filename in near var */
-            file = _open(fname, oflag);
-            if (file < 0)
-                sRes = 0 - _doserrno;
-        #endif
-    #else
-        #ifdef LLIO
-            if (strlen(name) < MAXFNCHARS)    
-                F_strcpy(fname, name);              /* Get filename in near var */
-            file = open(fname, oflag);
-            if (file < 0)
-                sRes = 0 - _doserrno;
-        #else
-            if (strlen(name) < MAXFNCHARS)    
-                F_strcpy(fname, name);              /* Get filename in near var */
-            file = fopen(fname,"r+b");
-            if (file < 0)
-                sRes = (short)file;
-        #endif                                              /* if LLIO else */
-    #endif                                               /* if Windows else */
+    switch (mode)                /* use C library constants to set mode */
+    {
+     case 1 : dwMode = GENERIC_WRITE;
+         break;
+     case 2 : dwMode = GENERIC_READ | GENERIC_WRITE;
+         break;
+     default: dwMode = GENERIC_READ;
+         break;
+    }
+    file = CreateFileA(name, dwMode, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (file == INVALID_HANDLE_VALUE)
+        sRes = BADOPEN;
 
     if (sRes == 0)
         *pFile = file;
 
-    return sRes;
-}                                                           /* end of COpen */
-#endif
+#else
 
-#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
-short COpen(TpCStr name, short mode, fDef* pFile)
-{
-    short   sRes = 0;
     char    fname[MAXFNCHARS];          /* To get near variable holding string */
     char*     omode;
 
@@ -1312,10 +847,10 @@ short COpen(TpCStr name, short mode, fDef* pFile)
      *pFile = fopen(fname,omode);
      if (*pFile == 0)
           sRes = -1;
+#endif
 
      return sRes;
 }
-#endif
 
 /**************  10. Allocate memory on the far heap ************************
 **
@@ -1360,7 +895,11 @@ void CFreeAllcn(TpVoid p)
 *****************************************************************************/
 void CStrTime(char *timeStr)
 {
-#if defined(__APPLE__) || defined(__linux__) || defined(__MINGW32__)
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
+
+    _strtime(timeStr);                  /* timsStr must be at least 9 bytes */
+
+#else
 
     time_t    now;
     struct tm *today;
@@ -1370,10 +909,6 @@ void CStrTime(char *timeStr)
     strftime(timeStr, 9, "%H:%M:%S", today);
 #endif
     
-#if (defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)) && !defined(__MINGW32__)
-
-    _strtime(timeStr);                  /* timsStr must be at least 9 bytes */
-#endif
 }                                                        /* end of CStrTime */
 
 
@@ -1385,16 +920,7 @@ void CStrTime(char *timeStr)
 *****************************************************************************/
 void CStrDate(char *dateStr)
 {
-#if 0 //def macintosh
-    time_t now;
-    struct tm *today;
-    
-    now   = time(NULL);
-    today = localtime(&now);
-    strftime(dateStr, 9, "%d/%m/%y", today);
-#endif
-
-#if (defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)) && !defined(__MINGW32__)
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     char    sdata[9];
 
     _strdate(dateStr);                  /* dateStr must be at least 9 bytes */
@@ -1405,8 +931,7 @@ void CStrDate(char *dateStr)
     sdata[4] = dateStr[1];
     F_strncpy(dateStr,sdata,8);                  /* store time without NULL */
 
-#endif
-#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
+#else
     time_t now;
     struct tm *today;
     
@@ -1438,20 +963,6 @@ CFSAPI(short) CreateCFSFile(TpCStr    fname,                /* name of file */
                             TpCVDesc  DSArray,  /* DS variable descriptions */
                             short    fileVars,      /* no. of file varables */
                             short    DSVars)         /* no. of DS variables */
-#if 0 //def macintosh
-CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
-                            TpCStr   comment,            /* general comment */
-                            WORD     blockSize,                 /* 1 or 512 */
-                            short    channels,   /* number of data channels */
-                            TpCVDesc fileArray,/* file varable descriptions */
-                            TpCVDesc DSArray,    /* DS varable descriptions */
-                            short    fileVars,      /* no. of file varables */
-                            short    DSVars,         /* no. of DS variables */
-                            short    vRefNum,        /* ..... */
-                            CFSLONG     dirID,          /* ..... */
-                            OSType   creator,        /* ..... */
-                            OSType   fileType)       /* ..... */
-#endif
 {
     short      proc = 18;               /* function number for error record */
     short      retval;                                     /* return value  */
@@ -1464,7 +975,7 @@ CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
     short      DSVarSpace;
     TpShort    filOffsets;                            /* temp store offsets */
     TpShort    DSOffsets;                             /* temp store offsets */
-#ifdef _IS_WINDOWS__
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)_
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -1475,9 +986,6 @@ CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
     TpChInfo   pFilChInfo;
     TpDsInfo   pDSChInfo;
 
-#if 0 //def macintosh
-    
-#endif
 
 /* 1. Get program file handle */
 
@@ -1501,17 +1009,6 @@ CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
             return retval;
         }
 
-    #if 0 //def macintosh
-        pfileInfo->DOSHdl.d = CCreat(fname, vRefNum, dirID, rwMode, creator,
-                                     fileType);           /* Open data file */
-
-        if (pfileInfo->DOSHdl.d < 0)
-        {
-            retval = BADCREAT;                /* error code for unopenable file */
-            InternalError(handle,proc,retval);
-            return retval;
-        }
-    #endif
         TempName(handle, fname, pfileInfo->tempFName, WHOLEFILECHARS+2);  /* get temp file name */
         sErr = CCreat(pfileInfo->tempFName, rwMode, &pfileInfo->DOSHdl.p);
         if (sErr != 0)
@@ -1521,20 +1018,6 @@ CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
             goto Close_1;                       /* close CFS file before return */
         }
                                                           /* open temp file */
-    #if 0 //def macintosh
-    {
-        Str31 tempFName;
-        TempName(handle,fname,tempFName);             /* get temp file name */
-        pfileInfo->DOSHdl.p = CCreat(tempFName,vRefNum,dirID,
-                                rwMode,'trsh','trsh');    /* open temp file */
-    }
-
-    if (pfileInfo->DOSHdl.p < 0)
-    {
-        retval = BADCREAT;
-        goto Close_1;                       /* close CFS file before return */
-    }
-    #endif
 
 /* 3. Get space for file,DS and spare headers */
 
@@ -1570,8 +1053,7 @@ CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
               channels*sizeof(TFilChInfo) +        /* Info for each channel */
           ((fileVars+DSVars+2) * sizeof(TVarDesc)) +   /* desc for each var */
                   filVarSpace); /* space computed for actual file variables */
-#if defined(WIN32) || defined(__linux__) || defined(__APPLE__)
-#else
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     if (bytSz > (WORD)MAXMEMALLOC)
     {
         retval = NOMEMR;                 /* error code for not enough space */
@@ -1598,8 +1080,7 @@ CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
                                   DSVarSpace);     /* DS varable data space */
                                                   /* round to nearest block */
     bytSz = (WORD)(((bytSz+(WORD)(blockSize-1)) / blockSize)*blockSize);
-#if defined(WIN32) || defined(__linux__) || defined(__APPLE__)
-#else
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     if (bytSz>(WORD)MAXMEMALLOC)
     {
         retval = NOMEMR;
@@ -1745,12 +1226,6 @@ CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
     TransferIn(&fname[pathend+1],pFileH->name,FNAMECHARS);
 #endif
 
-#if 0 //def macintosh
-    p2cstr(fname);
-    TransferIn(fname,pFileH->name,FNAMECHARS);
-    c2pstr(fname);
-#endif
-
                        /* return space allocated for temp arrays of affsets */
     CFreeAllcn(filOffsets);
     CFreeAllcn(DSOffsets);
@@ -1771,9 +1246,6 @@ CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
     Close0: 
             CCloseAndUnlink(pfileInfo->DOSHdl.p,
                             pfileInfo->tempFName);      /* delete temp file */
-#if 0 //def macintosh
-            CCloseAndUnlink(pfileInfo->DOSHdl.p);
-#endif
             CFreeAllcn(filOffsets);      /* release space for offset arrays */
             CFreeAllcn(DSOffsets);
 
@@ -1782,9 +1254,6 @@ CFSAPI(short) CreateCFSFile(ConstStr255Param fname,         /* name of file */
                 F_strcpy(gWorkStr,fname);      /* Get file name into global var */
             CCloseAndUnlink(pfileInfo->DOSHdl.d, gWorkStr); 
                                                    /* delete empty CFS file */
-#if 0 //def macintosh
-            CCloseAndUnlink(pfileInfo->DOSHdl.d);
-#endif
 
     InternalError(handle,proc,retval);
     return retval;                                  /* retval is error code */
@@ -1810,7 +1279,7 @@ CFSAPI(void) SetFileChan(short     handle,           /* program file handle */
                          short     other)   /* next channel for matrix data */
 {
     short       proc = 1;               /* function number for error record */
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -1911,7 +1380,7 @@ CFSAPI(void) SetDSChan(short handle,                 /* program file handle */
                        float xOffset)
 {
     short       proc = 2;                       /* number for this function */
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -2050,7 +1519,7 @@ CFSAPI(short) WriteData(short  handle,               /* program file handle */
     short       proc = 19;                      /* number for this function */
     short       ecode = 0;
     CFSLONG        endOffset;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -2172,7 +1641,7 @@ CFSAPI(void) SetWriteData(short  handle,             /* program file handle */
 {
     short       proc = 3;                                /* function number */
     char        oneByte;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -2232,7 +1701,7 @@ CFSAPI(void) SetWriteData(short  handle,             /* program file handle */
 CFSAPI(CFSLONG) CFSFileSize(short  handle)
 {
     short       proc = 24;                               /* function number */
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -2276,7 +1745,7 @@ CFSAPI(short) InsertDS(short   handle,               /* program file handle */
     WORD        index,relevantSize;
     CFSLONG        gtPlace,gtPlace1;
     CFSLONG        tableValue;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -2394,7 +1863,7 @@ CFSAPI(short) AppendDS(short    handle,              /* program file handle */
 {
     short       proc = 25;                               /* function number */
     WORD        headSize, thisDS;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -2511,7 +1980,7 @@ CFSAPI(CFSLONG) GetDSSize(short  handle,                /* program file handle *
 {
     short proc = 22;
     short ecode;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -2565,7 +2034,7 @@ CFSAPI(short) ClearDS(short handle)
 
 {
     short       proc = 20;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -2612,7 +2081,7 @@ CFSAPI(void) RemoveDS(short handle,                  /* program file handle */
     CFSLONG        storeLastDS;
     WORD        relSize,index,ecode;
     CFSLONG        tableValue;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -2727,7 +2196,7 @@ CFSAPI(void) SetComment(short handle,                /* program file handle */
                         TpCStr comment)                 /* comment to store */
 {
     short proc = 15;                                     /* function number */
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -3015,7 +2484,7 @@ CFSAPI(short) CloseCFSFile(short handle)
                 exchange = 0,
                 retval = 0;
     CFSLONG        tabSize, tableValue;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -3067,9 +2536,6 @@ CFSAPI(short) CloseCFSFile(short handle)
                                                          /* delete CFS file */
                     retval = CCloseAndUnlink(pfileInfo->DOSHdl.p,
                                                     pfileInfo->tempFName);
-                #if 0 //def macintosh
-                    retval = CCloseAndUnlink(pfileInfo->DOSHdl.p);
-                #endif
                 
                 if (retval < 0)
                     retval = WRDS;
@@ -3099,9 +2565,6 @@ CFSAPI(short) CloseCFSFile(short handle)
 
                     flag = CCloseAndUnlink(pfileInfo->DOSHdl.p,
                             pfileInfo->tempFName);/* delete pointer file */
-                #if 0 //def macintosh
-                    flag = CCloseAndUnlink(pfileInfo->DOSHdl.p);
-                #endif
                 if ((flag < 0) && (exchange >= 0))
                     retval = WRDS;             /* delete pointer table file */
             }
@@ -3167,22 +2630,13 @@ CFSAPI(short) OpenCFSFile(TpCStr  fname,   /* C string containing file name */
                           short  memoryTable)
                                      /* 1 for table in memory 0 for on disk */
 
-#if 0 //def macintosh
-CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,   
-                                      short  enableWrite,
-                                            /* 1 for editing 0 for readonly */
-                                      short  memoryTable,
-                                     /* 1 for table in memory 0 for on disk */
-                                      short  vRefNum,   
-                                      CFSLONG   dirID)
-#endif
 {
     short       proc;                                    /* function number */
     short       loop,retval;
     WORD        relevantSize;
     CFSLONG        tblSz;
     short       exchange, handle;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -3205,20 +2659,14 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
 
 /* 2. open the file with required status */
                                                /* use loop as temp variable */
-    #if defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)
+    #if defined(_IS_WINDOWS_)) && !defined(__MINGW32__)
         loop = 0;
         if (COpen(fname,(short)((enableWrite == 0) ? rMode : wMode), &pfileInfo->DOSHdl.d) != 0)
             loop = -1;
-    #endif
-    #if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
+    #else
         loop = 0;
         if (COpen(fname,(short)((enableWrite == 0) ? 0 : 2), &pfileInfo->DOSHdl.d) != 0)
             loop = -1;
-    #endif
-    #if 0 //def macintosh
-        loop = COpen(fname,vRefNum,dirID, (short)((enableWrite == 0) ? rMode : wMode));
-        if (loop >= 0)
-            pfileInfo->DOSHdl.d = loop;
     #endif
     if (loop < 0)
     {
@@ -3338,17 +2786,11 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
                 retval = WRITERR;                    /* nearset error poss. */
                 goto Close2;
             }
-            #if defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)
+            #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
                 loop = 0;
                 if (COpen(fname, wMode, &pfileInfo->DOSHdl.d) != 0)
                     loop = -1;
-            #endif
-            #if 0 //def macintosh
-                loop = COpen(fname,vRefNum,dirID,wMode);
-                if (loop >= 0)
-                    pfileInfo->DOSHdl.d = loop;
-            #endif
-     	    #if defined(__linux__) || defined(__APPLE__)
+            #else
         	loop = 0;
         	if (COpen(fname, 2, &pfileInfo->DOSHdl.d) != 0)
             	    loop = -1;
@@ -3384,17 +2826,11 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
                 retval = WRITERR;                    /* nearset error poss. */
                 goto Close2;
             }
-            #if defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)
+            #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
                 loop = 0;
                 if (COpen(fname, rMode, &pfileInfo->DOSHdl.d) != 0)
                     loop = -1;
-            #endif
-            #if 0 //def macintosh
-                loop = COpen(fname,vRefNum,dirID,rMode);
-                if (loop >= 0)
-                    pfileInfo->DOSHdl.d = loop;
-            #endif
-            #if defined(__linux__) || defined(__APPLE__)
+            #else
                 loop = 0;
                 if (COpen(fname, 0, &pfileInfo->DOSHdl.d) != 0)
                     loop = -1;
@@ -3429,20 +2865,12 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
         pfileInfo->tableP = NULL;       /* flag pointer table not in memory */
         if (enableWrite != 0)
         {                   /* editing required so make temp file for table */
-            #if defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)
+            #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
                                         /* make and save name for temp file */
                 TempName(handle,fname,pfileInfo->tempFName, WHOLEFILECHARS+2);
                 if (CCreat(pfileInfo->tempFName, rwMode, &pfileInfo->DOSHdl.p) != 0)
                     pfileInfo->DOSHdl.p = (fDef)-1;
             #endif
-            #if 0 //def macintosh
-            {
-                Str31 tempFName;
-                TempName(handle,fname,tempFName);
-                pfileInfo->DOSHdl.p = CCreat(tempFName,vRefNum,
-                                        dirID,rwMode,'trsh','trsh');
-            }
-            #endif                                           /* create file */
             if (&(pfileInfo->DOSHdl.p) < 0)                   /* create failed */
             {
                 retval = BADCREAT;
@@ -3485,9 +2913,6 @@ CFSAPI(short) OpenCFSFile(ConstStr255Param   fname,
               {
                       loop = CCloseAndUnlink(pfileInfo->DOSHdl.p,
                                     pfileInfo->tempFName);   /* delete file */
-                  #if 0 //def macintosh
-                      loop = CCloseAndUnlink(pfileInfo->DOSHdl.p);
-                  #endif
               }
            }
 
@@ -3529,7 +2954,7 @@ CFSAPI(void) GetGenInfo(short   handle,              /* progran file handle */
                         TpStr   comment)    /* to read back general comment */
 {
     short Proc  = 6;
-#ifdef _IS_WINDOWS_                                     /* function number */
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)                                     /* function number */
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo   *pfileInfo;
@@ -3582,7 +3007,7 @@ CFSAPI(void) GetFileInfo(short    handle,            /* program file handle */
                                                    /* to retrun no. of DS's */
 {
     short Proc   = 7;
-#ifdef _IS_WINDOWS_                                    /* function number */
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)                                    /* function number */
     TFileInfo    _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -3642,7 +3067,7 @@ CFSAPI(void) GetVarDesc(short   handle,              /* program file handle */
     short      maxVarNo;
     short      nextOffset;
     TVarDesc   interDesc;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo  _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -3735,7 +3160,7 @@ CFSAPI(void) GetVarVal(short  handle,                /* program file handle */
     short       Proc = 9;                                /* function number */
     short       maxVarNo,size,ecode;
     TpStr       sourceP;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -3892,7 +3317,7 @@ CFSAPI(void) GetFileChan(short   handle,             /* program file handle */
                          TpShort other)   /* for matrix data rets next chan */
 {
     short       Proc = 10;
-#ifndef _IS_WINDOWS_                               /* function number */
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)                               /* function number */
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -3956,7 +3381,7 @@ CFSAPI(void) GetDSChan(short   handle,               /* program file handle */
 {
     short       Proc = 11;                               /* function number */
     short       ecode;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -4086,7 +3511,7 @@ CFSAPI(WORD) GetChanData(short  handle,              /* program file handle */
     CFSLONG    filePos,totalPoints,numElements,longSpace;
     TpStr   dBufferP;
 //    THandle dummy;
-#ifndef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo _near *pfileInfo;
 #else 
     TFileInfo *pfileInfo;
@@ -4187,12 +3612,10 @@ CFSAPI(WORD) GetChanData(short  handle,              /* program file handle */
             goto Restore;
         spacing = pfileInfo->fileHeadP->FilChArr[channel].dSpacing;
 
-//#ifndef WIN32
                                                      /* get as much as poss */
         if ((numElements*spacing) > MAXMEMALLOC)
             bufferSize = (WORD)(MAXMEMALLOC - (MAXMEMALLOC % spacing));
         else
-//#endif
             bufferSize = (WORD)numElements * spacing;
 
                       /* allocated space must have integral set of channels */
@@ -4280,7 +3703,7 @@ CFSAPI(short) ReadData(short  handle,                /* program file handle */
                        TpVoid dataADS)    /* start address to which to read */
 {
     short       proc = 23;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -4554,7 +3977,7 @@ CFSAPI(short) CommitCFSFile(short handle)
     CFSLONG        oldDataSz = 0;
     CFSLONG        oldFileSz = 0;
     CFSLONG        oldLastDS = 0;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -4613,80 +4036,10 @@ CFSAPI(short) CommitCFSFile(short handle)
         if (retCode == 0)
             retCode = WRITERR;                 /* error writing file header */
 
-    #if 0 //def macintosh                                        /* MAC specific */
-    {
-        short   vRefNum = 0;         /* used by Mac routines, MUST BE SHORT */
-
-        err = GetVRefNum(pfileInfo->DOSHdl.d, &vRefNum);
-        if (!err)
-        {
-            err = FlushVol (NULL, vRefNum);
-                                   /* flush data and directory info to disk */
-            if (err != 0)
-            {
-               if (retCode == 0)
-                   retCode = WRITERR;          /* error writing file header */
-            }
-        }
-        else
-        {
-            if (retCode == 0)
-               retCode = BADHANDLE;
-        }
-    }
-    #endif
-
     #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
                       /* shut the file for Windows */
-
-        #ifdef WIN32
             if (!FlushFileBuffers(pfileInfo->DOSHdl.d))
                 retCode = BADHANDLE;
-        #else
-            hand = _dup(pfileInfo->DOSHdl.d);           /* Duplicate the handle */
-            if (hand < 0)
-            {
-                if (retCode == 0)
-                   retCode = NOHANDLE;
-            }
-            else
-            {
-                err = (short)_close(hand);    /* close dup handle to write thru */
-                if (err != 0)
-                {
-                    if (retCode == 0)
-                       retCode = BADHANDLE;
-                }
-            }
-        #endif
-    #endif
-    
-    #ifdef _IS_MSDOS_
-        #ifdef LLIO                                     /* DOS LLIO version */
-            err = (short) _commit((int)pfileInfo->DOSHdl.d);
-            if (err == -1)
-            {
-                if (retCode == 0)
-                    retCode = BADHANDLE;
-            }
-        #else                                          /* DOS STDIO version */
-            hand = _dup(_fileno(pfileInfo->DOSHdl.d));
-                                                    /* Duplicate the handle */
-            if (hand < 0)
-            {
-                if (retCode == 0)
-                    retCode = NOHANDLE;
-            }
-            else
-            {
-                err = (short)fclose(hand);              /   * shut the file */
-                if (err != 0)
-                {
-                    if (retCode == 0)
-                       retCode = BADHANDLE;
-                }
-            }
-        #endif
     #endif
 
     if (restore)
@@ -4791,17 +4144,9 @@ void CleanUpCfs(void)
 **
 ****************************************************************************/
 
-#if 0 //def macintosh
-short TempName(short handle,ConstStr255Param /*name*/,ConstStr255Param str2)
-{
-    sprintf(str2,"CFS Temporary %d",handle);    /* encode handle into string */
-    c2pstr(str2);
-}
-#endif
-
-#if defined(_IS_MSDOS_) || defined(_IS_WINDOWS_)
 short TempName(short handle, TpCStr name, TpStr str2, unsigned str2len)
 {
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     short   pathstart;
     short   pathend = 0;
     short   search  = 0;
@@ -4833,18 +4178,12 @@ short TempName(short handle, TpCStr name, TpStr str2, unsigned str2len)
     _itoa(handle,gWorkStr,10);                 /* encode handle into string */
     F_strcat(str2,gWorkStr);            /* add handle to make complete name */
     return 0;
-}                                                        /* end of TempName */
-
-
-#endif
-
-#if defined(__linux__) || defined(__APPLE__)
-short TempName(short handle, TpCStr name, TpStr str2, unsigned str2len) {
+#else
     if (str2len > 12)
 	F_strcpy(str2,"CFSTMPXXXXXX");
     return (short)mkstemp(str2);
-}
 #endif
+}
 
 /**************************  Set Sizes  *************************************
 **
@@ -5149,7 +4488,7 @@ CFSLONG GetTable(short handle, WORD position)
 {
     CFSLONG        DSPointer;                       /* return for offset value */
     CFSLONG        filePosn;    /* position in temporary file for offset value */
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -5186,7 +4525,7 @@ CFSLONG GetTable(short handle, WORD position)
 short GetHeader(short handle, WORD getSection)
 {
     CFSLONG            tableValue;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -5232,7 +4571,7 @@ short GetHeader(short handle, WORD getSection)
 void StoreTable(short handle, WORD position, CFSLONG DSPointer)
 {
     CFSLONG                filePosn;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -5293,7 +4632,7 @@ short RecoverTable(short    handle,                  /* program file handle */
 {
     WORD        foundSecs,expSecs;
     CFSLONG        secPos,tablePos,maxSecPos,fileSz,tableSz,maxSecs;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -5444,7 +4783,7 @@ short TransferTable(WORD sects, fDef rdHdl, fDef wrHdl)
 short GetMemTable(short handle)
 {
     CFSLONG            tableSz;
-#ifdef _IS_WINDOWS_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;

@@ -20,47 +20,19 @@
 
 #include "machine.h"
 
-#if 0 //def macintosh                /* define CFSCONVERT in here if you want it */
-    // #include <types.h>
-    // #include <files.h>
-    // #include <errors.h>
-    #define  USEHANDLES
-    #define  CFSAPI(type) type
-    #undef   LLIO                   /* LLIO is not used for Mac             */
-#endif                              /* End of the Mac stuff, now for DOS    */
-
-#ifdef _IS_MSDOS_
-    #define  qDebug 0               /* only used to debug Mac stuff         */
-    #undef   USEHANDLES
-    #include <malloc.h>
-    #include <dos.h>
-    #include <io.h>                         /* MSC I/O function definitions */
-    #include <fcntl.h>
-    #include <errno.h>
-    #define  LLIO                   /* We can use LLIO for MSC/DOS          */
-    #define  CFSAPI(type) type _pascal
-#endif
-
 #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     #include <fcntl.h>
     #define  qDebug 0               /* only used to debug Mac stuff         */
     #define  CFSAPI(type) type WINAPI
-    #ifdef WIN32
-      #undef   LLIO
-      #undef   USEHANDLES
-    #else
-      #define  LLIO                     /* We can use LLIO for MSC/Windows  */
-      #define  USEHANDLES               /* use handles under 16-bit windows */
-    #endif
+    #undef   LLIO
+    #undef   USEHANDLES
     #ifdef _MSC_VER
     #pragma warning( disable : 4251 )  // Disable warning messages
     #pragma warning( disable : 4996 )  // Disable warning messages
     #endif
-#endif
-
-#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
+#else
     #define  qDebug 0               /* only used to debug Mac stuff         */
-    #ifdef __linux__
+    #if !defined(__APPLE__) && !defined(__MINGW32)
         #include <malloc.h>
     #endif
     #include <stdio.h>                         /* MSC I/O function definitions */
@@ -136,7 +108,7 @@ typedef struct
    short     vSize;  /* for type lstr gives no. of chars +1 for length byte */
 } TVarDesc;
 
-#if defined(__linux__) || defined(__APPLE__) || defined(__MINGW32__)
+#if !defined(_IS_WINDOWS_) || defined(__MINGW32__)
 typedef char            * TpStr;
 typedef const char      * TpCStr;
 typedef short           * TpShort;
@@ -169,10 +141,7 @@ typedef signed char    FAR * TpSStr;
 typedef WORD           FAR * TpUShort;
 #endif
 
-#if 0 //def macintosh
-    typedef int     fDef;        /* file handle means something else on Mac */
-#else
-  #if defined(WIN32) && !defined(__MINGW32__)
+  #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     typedef HANDLE  fDef;                              /* WIN32 file handle */
   #else
     #ifdef LLIO
@@ -181,7 +150,6 @@ typedef WORD           FAR * TpUShort;
       typedef FILE* fDef;                              /* stream identifier */
     #endif
   #endif
-#endif
 
 
 #ifdef __cplusplus
