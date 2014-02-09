@@ -385,6 +385,7 @@ typedef struct            /* For program to keep track of storage locations */
     TPointers   DSPoint; /* to descrip and values of data section variables */
     TpLong      tableP;  /*  array of offsets in the file of the DS headers */
     TDOSHdl     DOSHdl;
+    TBigName    tempFName;
     WORD        thisSection;
     short       DSAltered;
 } TFileInfo;
@@ -975,7 +976,7 @@ CFSAPI(short) CreateCFSFile(TpCStr    fname,                /* name of file */
     short      DSVarSpace;
     TpShort    filOffsets;                            /* temp store offsets */
     TpShort    DSOffsets;                             /* temp store offsets */
-#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)_
+#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
     TFileInfo   _near *pfileInfo;
 #else
     TFileInfo *pfileInfo;
@@ -2659,7 +2660,7 @@ CFSAPI(short) OpenCFSFile(TpCStr  fname,   /* C string containing file name */
 
 /* 2. open the file with required status */
                                                /* use loop as temp variable */
-    #if defined(_IS_WINDOWS_)) && !defined(__MINGW32__)
+    #if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
         loop = 0;
         if (COpen(fname,(short)((enableWrite == 0) ? rMode : wMode), &pfileInfo->DOSHdl.d) != 0)
             loop = -1;
