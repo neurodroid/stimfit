@@ -1,3 +1,15 @@
+stimfit (0.13.13-1) unstable; urgency=low
+
+  * Import/Export from/to python-neo
+  * Fix potential buffer overflows
+  * Fix some bugs in Python code
+  * Use libhdf5-dev instead of libhdf5-serial-dev dependency (Closes: #735157)
+  * Use dh-autoreconf to fix FTBFS on ppc64el (Closes: #735231)
+  * Distinguish only between Windows and non-Windows builds (implicitly posix)
+    (Closes: #728094)
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sun, 09 Feb 2014 10:56:06 +0000
+
 stimfit (0.13.6-1) unstable; urgency=low
 
   * Export stfio recordings to pandas
