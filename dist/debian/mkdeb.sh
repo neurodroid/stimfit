@@ -10,6 +10,6 @@ cp -v stimfit-${VERSION}.tar.gz ../deb/stimfit_${VERSION}.orig.tar.gz
 cd ../deb/
 tar -xzf stimfit_${VERSION}.orig.tar.gz
 cd stimfit-${VERSION}
-cp -rv ../../../debian ./
+cp -rv ../../../dist/debian ./
 debuild -S -sa
 sudo pbuilder build ../*.dsc
