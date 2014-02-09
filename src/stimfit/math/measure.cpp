@@ -370,6 +370,11 @@ double   stf::t_half(const std::vector<double>& data,
     }
     t50LeftId=(int)center>=1? (int)center:1;
     if (t50LeftId-1 >= data.size()) {
+        
+#ifndef NDEBUG
+        std::cout << "t50LeftId-1 >= data.size()" << t50LeftId-1 << " "
+                  << data.size() << std::endl;
+#endif
         return NAN;
     }
     do {
@@ -383,6 +388,10 @@ double   stf::t_half(const std::vector<double>& data,
         t50RightId = data.size() >= 2? data.size()-2 : 0;
     }
     if (right >= data.size()-1 || t50RightId+1 >= data.size()) {
+#ifndef NDEBUG
+        std::cout << "right, data.size(), t50RightId+1 " << right << " "
+                  << data.size() << " " << t50RightId+1 << std::endl;
+#endif
         return NAN;
     }
     do {

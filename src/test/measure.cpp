@@ -7,7 +7,7 @@
 #include <boost/random/normal_distribution.hpp>
 
 #define PI  3.14159265f
-#define N_MAX 10000
+#define N_MAX 1000
 
 /* limit tolerance value to sampling interval since they are
 related. The higher the sampling interval the lower
@@ -412,18 +412,18 @@ TEST(measlib_test, risetime_values){
 TEST(measlib_test, half_duration){
 
     /* a sine wave between 0 and PI */
-    std::vector <double> mywave = sinwave( long(PI/dt) );
+    std::vector <double> mywave = sinwave( long(PI/dt)+10 );
     
-    std::size_t t50LeftId, t50RigthId;
+    std::size_t t50LeftId, t50RightId;
     double t50Real;
     
     /* check half duration between 0 and PI */
     double half_dur = stf::t_half(mywave, 0.0, 1.0, 1,
-        long(PI/dt)-1, long((PI/2)/dt),t50LeftId, t50RigthId, t50Real);
+        long(PI/dt)-1, long((PI/2)/dt),t50LeftId, t50RightId, t50Real);
 
-    /* t50Left and t50Rigth correspond to 0.5 */
+    /* t50Left and t50Right correspond to 0.5 */
     EXPECT_NEAR( std::sin(t50LeftId*dt),  0.5, 0.05); /* sin(t50) = 0.5 */
-    EXPECT_NEAR( std::sin(t50RigthId*dt), 0.5, 0.05);
+    EXPECT_NEAR( std::sin(t50RightId*dt), 0.5, 0.05);
 
     /* half-duration is arcsin(0.5)+ arcsin(1) */
     double half_dur_xpted = std::asin(0.5)+std::asin(1.0);
@@ -743,7 +743,7 @@ TEST(measlib_validation, risetime1090) {
 // test half_t N_MAX random traces
 //=========================================================================
 TEST(measlib_validation, half_duration) {
-    std::size_t t50LeftId, t50RigthId;
+    std::size_t t50LeftId, t50RightId;
     double t50Real;
 
     /* measurement results for risetime */
@@ -758,7 +758,7 @@ TEST(measlib_validation, half_duration) {
         std::vector<double> mytrace = sinwave(1.0, lambda, long(lambda/dt));
         /* calculate half width starting form start and entering peak (lambda/4) */
         myhalf_width[i] = stf::t_half(mytrace, 0.0, 1.0, 1, 
-            long(lambda/dt), long((lambda/4)/dt), t50LeftId, t50RigthId, t50Real);
+            long(lambda/dt)-2, long((lambda/4)/dt), t50LeftId, t50RightId, t50Real);
         double l = 2*PI/lambda;
         double half_width_xpted = 2*(std::asin(1.)-std::asin(.5))/l;
         EXPECT_NEAR(myhalf_width[i]*dt, half_width_xpted, 
