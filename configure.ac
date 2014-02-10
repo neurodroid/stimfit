@@ -93,7 +93,7 @@ case ${STFKERNEL} in
         OBJCFLAGS="${OBJCFLAGS} ${ARCH_FLAGS}"
         OBJCXXFLAGS="${OBJCXXFLAGS} ${ARCH_FLAGS}"
     ;;
-    linux)
+    *)
         if test "$enable_module" = "yes" ; then
             LIBSTF_LDFLAGS="-avoid-version"
             CPPFLAGS="${CPPFLAGS} -DMODULE_ONLY"
@@ -105,11 +105,6 @@ case ${STFKERNEL} in
             fi
             CPPFLAGS="${CPPFLAGS}"
         fi
-        STF_PYTHON_LIBNAME="libpystf.so"
-        STFIO_PYTHON_LIBNAME="libpystfio.so"
-    ;;
-    *) 
-        LIBSTF_LDFLAGS="-avoid-version"
         STF_PYTHON_LIBNAME="libpystf.so"
         STFIO_PYTHON_LIBNAME="libpystfio.so"
     ;;
