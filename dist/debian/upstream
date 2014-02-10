@@ -1,0 +1,9 @@
+Name: Stimfit
+Homepage: http://www.stimfit.org
+Reference:
+ - Author: Segundo J. Guzman and Alois Schlögl and Christoph Schmidt-Hieber
+   Title: "Stimfit: quantifying electrophysiological data with Python"
+   Journal: Front. Neuroinform.
+   Year: 2014
+   URL: http://www.frontiersin.org/Journal/10.3389/fninf.2014.00016/abstract
+   DOI: doi: 10.3389/fninf.2014.00016
