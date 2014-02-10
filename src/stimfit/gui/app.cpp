@@ -147,10 +147,8 @@ bool wxStfApp::OnInit(void)
         // don't start the app if we can't initialize wxPython.
         return false;
     }
-#endif
     
 // Load Python extensions before creation of wxMenuBar ( see later CreateUnifiedMenuBar() )
-#ifdef WITH_PYTHON
 #if PY_MAJOR_VERSION < 3
     
     extensionLib = LoadExtensions();
@@ -161,7 +159,6 @@ bool wxStfApp::OnInit(void)
 #endif //WITH_PTYHON
     // Config:
     config.reset(new wxFileConfig(wxT("Stimfit")));
-
 
     //// Create a document manager
     wxDocManager* docManager = new wxDocManager;
