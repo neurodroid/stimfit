@@ -100,6 +100,10 @@ case ${STFKERNEL} in
         else
             if test "$enable_debian" = "yes" ; then
               LIBSTF_LDFLAGS="-Wl,-rpath,/usr/lib/stimfit -avoid-version"
+              CPPFLAGS="${CPPFLAGS} `dpkg-buildflags --get CPPFLAGS`"
+              CFLAGS="${CFLAGS} `dpkg-buildflags --get CFLAGS`"
+              CXXFLAGS="${CXXFLAGS} `dpkg-buildflags --get CXXFLAGS`"
+              LDFLAGS="${LDFLAGS} `dpkg-buildflags --get LDFLAGS`"
             else
               LIBSTF_LDFLAGS="-Wl,-rpath,${prefix}/lib/stimfit -avoid-version"
             fi
