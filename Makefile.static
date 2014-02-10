@@ -197,10 +197,10 @@ else
     LIBS += -lbiosig -lcholmod
   endif
 endif
-LIBS     += -lfftw3 -lz -lpthread -liconv
+LIBS     += -lfftw3 -lz -lpthread
 
 ifeq (mingw,$(findstring mingw, $(WXCONF)))
-  LIBS   += -lgfortran -liberty
+  LIBS   += -lgfortran -liberty -liconv
 endif
 
 
