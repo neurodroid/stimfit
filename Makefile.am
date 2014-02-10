@@ -211,21 +211,21 @@ install-exec-hook:
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libpystf.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstimfit.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstfio.so
-	mkdir -p $(prefix)/share/pixmaps
-	mkdir -p $(prefix)/share/applications
-	cp $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
-	cp $(top_srcdir)/src/stimfit/res/stimfit32x32.xpm $(prefix)/share/pixmaps/stimfit32x32.xpm
-	cp $(top_srcdir)/dist/debian/stimfit.desktop $(prefix)/share/applications/
+	install -d $(prefix)/share/pixmaps
+	install -d $(prefix)/share/applications
+	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
+	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit32x32.xpm $(prefix)/share/pixmaps/stimfit32x32.xpm
+	install -m 644 $(top_srcdir)/dist/debian/stimfit.desktop $(prefix)/share/applications/
 else !BUILD_DEBIAN
 LTTARGET=$(prefix)/lib/stimfit
 install-exec-hook:
 	$(LIBTOOL) --finish $(LTTARGET)
 	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
-	mkdir -p $(prefix)/share/pixmaps
-	mkdir -p $(prefix)/share/applications
-	cp $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
-	cp $(top_srcdir)/src/stimfit/res/stimfit32x32.xpm $(prefix)/share/pixmaps/stimfit32x32.xpm
-	cp $(top_srcdir)/dist/debian/stimfit.desktop $(prefix)/share/applications/
+	install -d $(prefix)/share/pixmaps
+	install -d $(prefix)/share/applications
+	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
+	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit32x32.xpm $(prefix)/share/pixmaps/stimfit32x32.xpm
+	install -m 644 $(top_srcdir)/dist/debian/stimfit.desktop $(prefix)/share/applications/
 endif !BUILD_DEBIAN
 uninstall-hook:
 	rm -f $(prefix)/share/pixmaps/stimfit16x16.xpm
