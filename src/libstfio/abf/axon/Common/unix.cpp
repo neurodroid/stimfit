@@ -165,7 +165,7 @@ void /*CSH __cdecl */ _splitpath(const char* inpath, char * drv, char * dir,
     if (ext) strcpy( ext, end );
 }
 
-#if defined(_MSC_VER)
+#if !defined(__MINGW32__)
 /*********************************************************************
  *                  _strnicmp   (NTDLL.@)
  */

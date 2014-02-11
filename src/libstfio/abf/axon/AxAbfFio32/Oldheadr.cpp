@@ -257,7 +257,7 @@ static void CorrectDACScaling(ABFFileHeader *pFH)
       DWORD dwMaxEpi = 0;
       int hFile;
 
-#if !defined(__MINGW32__)
+#if defined(_MSC_VER)
       int fnsize = 0;
       std::wstring wfName;
       while (szFilename[fnsize++] != '\0') {

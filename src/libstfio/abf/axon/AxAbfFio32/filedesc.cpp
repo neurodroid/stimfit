@@ -13,7 +13,7 @@
 #include "../Common/wincpp.hpp"
 #include "filedesc.hpp"
 
-#if !defined(_WINDOWS) || defined(__MINGW32__)
+#if !defined(_MSC_VER)
 #include <wchar.h>
 #endif
 
@@ -72,7 +72,7 @@ BOOL CFileDescriptor::TestFlag(UINT uFlag)
 //
 BOOL CFileDescriptor::Open(LPCTSTR szFileName, BOOL bReadOnly)
 {
-#if defined(_WINDOWS) && !defined(__MINGW32__)
+#if defined(_MSC_VER)
    MEMBERASSERT();
    // LPSZASSERT(szFileName);
 #endif
@@ -83,7 +83,7 @@ BOOL CFileDescriptor::Open(LPCTSTR szFileName, BOOL bReadOnly)
    }
    m_uFlags = bReadOnly ? FI_READONLY : FI_WRITEONLY;
 
-#ifndef __MINGW32__
+#if defined(_MSC_VER)
    wcsncpy(m_szFileName, szFileName, _MAX_PATH-1);
    m_szFileName[_MAX_PATH-1] = '\0';
 #endif

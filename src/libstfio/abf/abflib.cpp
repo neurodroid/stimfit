@@ -19,7 +19,7 @@
 #include <vector>
 #include <sstream>
 
-#if !defined(_WINDOWS) || defined(__MINGW32__)
+#if !defined(_MSC_VER)
 #include "./axon/Common/axodefn.h"
 #include "./axon/AxAbfFio32/abffiles.h"
 #include "./axon2/ProtocolReaderABF2.hpp"
@@ -47,7 +47,7 @@ void stfio::importABFFile(const std::string &fName, Recording &ReturnData, Progr
     ABF2_FileInfo fileInfo;
 
     // Open file:
-#if !defined(_WINDOWS) || defined(__MINGW32__)
+#if !defined(_MSC_VER)
     FILE* fh = fopen( fName.c_str(), "r" );
     if (!fh) {
         std::string errorMsg("Exception while calling importABFFile():\nCouldn't open file");
@@ -117,7 +117,7 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
     //     wfName[i] = (wchar_t)fName[i];
     // }
 
-#ifdef __MINGW32__
+#if !defined(_MSC_VER)
     if (!abf2.Open( fName.c_str() )) {
 #else
     if (!abf2.Open( &wfName[0] )) {
@@ -170,7 +170,7 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
             grandsize = pFH->lActualAcqLength / numberChannels;
             Vector_double test_size(0);
             ABFLONG maxsize = test_size.max_size()
-#if defined(_WINDOWS) && !defined(__MINGW32__)
+#if defined(_MSC_VER)
                 // doesn't seem to return the correct size on Windows.
                 /8;
 #else
@@ -340,7 +340,7 @@ void stfio::importABF1File(const std::string &fName, Recording &ReturnData, Prog
     for(std::string::size_type i=0; i<fName.size(); ++i) {
         wfName += wchar_t(fName[i]);
     }
-#ifdef __MINGW32__
+#if !defined(_MSC_VER)
     if (!ABF_ReadOpen(fName.c_str(), &hFile, ABF_DATAFILE, &FH,
                       &uMaxSamples, &dwMaxEpi, &nError))
 #else
