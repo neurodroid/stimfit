@@ -103,7 +103,8 @@ DWORD WINAPI c_SetFilePointer( FILEHANDLE hFile, LONG distance, LONG *highword, 
     return SetFilePointer( hFile, distance, highword, method );
 #endif
 }
-#if !defined(_MSC_VER)
+
+#if !defined(_WINDOWS)
 /*********************************************************************
  *		_splitpath (NTDLL.@)
  *
@@ -165,7 +166,6 @@ void /*CSH __cdecl */ _splitpath(const char* inpath, char * drv, char * dir,
     if (ext) strcpy( ext, end );
 }
 
-#if !defined(__MINGW32__)
 /*********************************************************************
  *                  _strnicmp   (NTDLL.@)
  */
@@ -173,7 +173,6 @@ int /*CSH __cdecl*/ _strnicmp( LPCSTR str1, LPCSTR str2, size_t n )
 {
     return strncasecmp( str1, str2, n );
 }
-#endif
 
 /*********************************************************************
  *		_makepath (MSVCRT.@)

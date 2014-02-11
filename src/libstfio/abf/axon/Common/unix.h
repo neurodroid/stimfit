@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 
-#if defined(_WINDOWS) && !defined(__MINGW32__)
+#if defined(_MSC_VER)
     #include <windows.h>
     #include <stdio.h>
     typedef HANDLE FILEHANDLE;
@@ -35,6 +35,8 @@ extern "C" {
 #include "../AxAbfFio32/AxAbffio32.h"
     
 #include <stdio.h>
+    typedef FILE* FILEHANDLE;
+
 //
 // Commonly used typedefs & constants from windows.h.
 //
@@ -94,8 +96,14 @@ typedef const CHAR *LPCSTR, *PCSTR;
 //
 // Neutral ANSI/UNICODE types and macros
 //
-#if 1
-#if !defined(_WINDOWS) && defined(UNICODE)                     // r_winnt
+
+#if defined(__MINGW32__)
+   #include <stdarg.h>
+   #include <windef.h>
+   #include <winbase.h>
+#else
+
+#if defined(UNICODE)  		   // r_winnt
 
 #ifndef _TCHAR_DEFINED
 typedef WCHAR TCHAR, *PTCHAR;
@@ -123,14 +131,7 @@ typedef LPCSTR LPCTSTR;
 #define __TEXT(quote) quote         // r_winnt
 
 #endif /* UNICODE */                // r_winnt
-#endif
 
-typedef FILE* FILEHANDLE;
-
-#if defined(__MINGW32__)
-  #include <minwindef.h>
-  #include <minwinbase.h>
-#else
 // Handle declarations.
 typedef void          *HANDLE;
 typedef HANDLE         HINSTANCE;
@@ -208,17 +209,11 @@ typedef struct _GUID
 void _splitpath(const char* inpath, char * drv, char * dir,
                 char* fname, char * ext );
 int _strnicmp( LPCSTR str1, LPCSTR str2, size_t n );
-#ifdef _MSC_VER
-inline int strnicmp( const char* s1, const char* s2, size_t n ) { 
-    return _strnicmp( s1, s2, n );
-}
-#endif
 void _makepath( char * path, const char * drive,
                 const char *directory, const char * filename,
                 const char * extension );
 
-#ifndef _FILETIME_
-#define _FILETIME_
+#if !defined(__MINGW32__)
 /* 64 bit number of 100 nanoseconds intervals since January 1, 1601 */
 typedef struct _FILETIME
 {
@@ -230,9 +225,7 @@ typedef struct _FILETIME
     DWORD  dwHighDateTime;
 #endif
 } FILETIME, *PFILETIME, *LPFILETIME;
-#endif /* _FILETIME_ */
 
-#ifndef _SYSTEMTIME_
 typedef struct _SYSTEMTIME{
     WORD wYear;
     WORD wMonth;
@@ -243,9 +236,9 @@ typedef struct _SYSTEMTIME{
     WORD wSecond;
     WORD wMilliseconds;
 } SYSTEMTIME, *PSYSTEMTIME, *LPSYSTEMTIME;
-#endif
+#endif // __MINGW32__
 
-#endif
+#endif // _MSC_VER
 
 extern HINSTANCE g_hInstance;
 
