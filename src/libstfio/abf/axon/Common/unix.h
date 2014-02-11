@@ -94,6 +94,7 @@ typedef const CHAR *LPCSTR, *PCSTR;
 //
 // Neutral ANSI/UNICODE types and macros
 //
+#if 0
 #if !defined(_WINDOWS) || defined(UNICODE) || defined(__MINGW32__)                     // r_winnt
 
 #ifndef _TCHAR_DEFINED
@@ -122,9 +123,14 @@ typedef LPCSTR LPCTSTR;
 #define __TEXT(quote) quote         // r_winnt
 
 #endif /* UNICODE */                // r_winnt
+#endif
 
 typedef FILE* FILEHANDLE;
 
+#if defined(__MINGW32__)
+  #include <minwindef.h>
+  #include <minwinbase.h>
+#else
 // Handle declarations.
 typedef void          *HANDLE;
 typedef HANDLE         HINSTANCE;
@@ -134,7 +140,13 @@ typedef void          *LPOVERLAPPED;
 typedef void          *LPSECURITY_ATTRIBUTES;
 
 typedef long long      LONGLONG;
+#if  defined(_WIN64)
+typedef unsigned __int64 UINT_PTR;
+#else
 typedef unsigned int   UINT_PTR;
+#endif
+#endif  //
+
 #define DWORD_PTR UINT_PTR
 
 #define FILE_BEGIN                          0
@@ -181,21 +193,26 @@ typedef unsigned int   UINT_PTR;
 #define cdecl
 #define WINAPI __stdcall
 
+#ifndef GUID_DEFINED
 typedef struct _GUID
 {
+    // TODO: for WIN64 this need to be redefined
     unsigned int   Data1;
     unsigned short Data2;
     unsigned short Data3;
     unsigned char  Data4[ 8 ];
 } GUID;
 #define GUID_DEFINED
+#endif
 
 void _splitpath(const char* inpath, char * drv, char * dir,
                 char* fname, char * ext );
 int _strnicmp( LPCSTR str1, LPCSTR str2, size_t n );
+#ifdef _MSC_VER
 inline int strnicmp( const char* s1, const char* s2, size_t n ) { 
     return _strnicmp( s1, s2, n );
 }
+#endif
 void _makepath( char * path, const char * drive,
                 const char *directory, const char * filename,
                 const char * extension );
@@ -215,6 +232,7 @@ typedef struct _FILETIME
 } FILETIME, *PFILETIME, *LPFILETIME;
 #endif /* _FILETIME_ */
 
+#ifndef _SYSTEMTIME_
 typedef struct _SYSTEMTIME{
     WORD wYear;
     WORD wMonth;
@@ -225,6 +243,7 @@ typedef struct _SYSTEMTIME{
     WORD wSecond;
     WORD wMilliseconds;
 } SYSTEMTIME, *PSYSTEMTIME, *LPSYSTEMTIME;
+#endif
 
 #endif
 

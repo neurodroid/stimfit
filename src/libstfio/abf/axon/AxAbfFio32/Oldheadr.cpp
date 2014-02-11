@@ -108,7 +108,7 @@ BOOL OLDH_GetFileVersion( FILEHANDLE hFile, UINT *puFileType, float *pfFileVersi
    *pbMSBinFormat = FALSE;
 
    // Seek to the start of the file.
-#if defined(_WINDOWS)
+#if defined(_MSC_VER)
    SetFilePointer(hFile, 0L, NULL, FILE_BEGIN);
 #else
    c_SetFilePointer(hFile, 0L, NULL, FILE_BEGIN);
@@ -691,7 +691,7 @@ static void GetOldADCUnits(char *Label, char *ADCLabel)
 static BOOL ReadADCInfo(FILEHANDLE hFile, float *Param, char *ADCLabel )
 {
    // Seek to the start of the ADC channel information.
-#if defined(_WINDOWS)
+#if defined(_MSC_VER)
 	SetFilePointer(hFile, 640L, NULL, FILE_BEGIN);
 #else
 	c_SetFilePointer(hFile, 640L, NULL, FILE_BEGIN);
@@ -761,7 +761,7 @@ static BOOL ReadADCInfo(FILEHANDLE hFile, float *Param, char *ADCLabel )
 static BOOL ReadADCNames(FILEHANDLE hFile, char *ChannelName)
 {
    // Seek to the channel names area.
-#if defined(_WINDOWS)
+#if defined(_MSC_VER)
    SetFilePointer(hFile, 480L, NULL, FILE_BEGIN);
 #else
    c_SetFilePointer(hFile, 480L, NULL, FILE_BEGIN);
@@ -1181,7 +1181,7 @@ static BOOL FetchexConvert( FILEHANDLE hFile, ABFFileHeader *pFH, float *Param,
          {
             // Seek to start of tag entries block
             ABFLONG lNumBytes = (ABFLONG)(Param[F53_TAGSECTIONPTR]) * 512L;
-#if defined(_WINDOWS)
+#if defined(_MSC_VER)
 			SetFilePointer(hFile, lNumBytes, NULL, FILE_BEGIN);
 #else
 			c_SetFilePointer(hFile, lNumBytes, NULL, FILE_BEGIN);
@@ -1253,7 +1253,7 @@ static BOOL FetchexConvert( FILEHANDLE hFile, ABFFileHeader *pFH, float *Param,
 static BOOL ReadCondit(FILEHANDLE hFile, char *Condit)
 {
    // Seek to the presweep (conditioning) string
-#if defined(_WINDOWS)
+#if defined(_MSC_VER)
 	SetFilePointer(hFile, 512L, NULL, FILE_BEGIN);
 #else
 	c_SetFilePointer(hFile, 512L, NULL, FILE_BEGIN);

@@ -52,7 +52,7 @@ CFileIO::CFileIO(FILEHANDLE hFile)
    m_dwLastError   = 0;
 }
 
-#if !defined(_WINDOWS)
+#if !defined(_MSC_VER)
 CFileIO::CFileIO(HANDLE hFile)
 {
    //MEMBERASSERT();
@@ -102,7 +102,7 @@ BOOL CFileIO::CreateEx(LPCTSTR szFileName, DWORD dwDesiredAccess, DWORD dwShareM
    //MEMBERASSERT();
    //LPSZASSERT(szFileName);
    ASSERT(m_hFileHandle == FILE_NULL);
-#if defined(_WINDOWS)
+#if defined(_MSC_VER)
    m_hFileHandle = ::CreateFile(szFileName, dwDesiredAccess, dwShareMode, NULL, 
                                 dwCreationDisposition, dwFlagsAndAttributes, NULL);
 #else
@@ -119,7 +119,7 @@ BOOL CFileIO::CreateEx(LPCTSTR szFileName, DWORD dwDesiredAccess, DWORD dwShareM
    if (m_hFileHandle == FILE_NULL)
       return SetLastError();
       
-#if defined(_WINDOWS) && !defined(__MINGW32__)
+#if defined(_MSC_VER)
  // TRACE1("Create(%s)\n", szFileName);
    wcsncpy(m_szFileName, szFileName, _MAX_PATH-1);
    m_szFileName[_MAX_PATH-1] = '\0';
@@ -182,7 +182,7 @@ BOOL CFileIO::Read(LPVOID lpBuf, DWORD dwBytesToRead, DWORD *pdwBytesRead)
    ASSERT(m_hFileHandle != FILE_NULL);
 
    DWORD dwBytesRead = 0;
-#if defined(_WINDOWS) && !defined(__MINGW32__)
+#if defined(_MSC_VER)
    BOOL bRval = ::ReadFile(m_hFileHandle, lpBuf, dwBytesToRead, &dwBytesRead, NULL);
 #else
    BOOL bRval = ::c_ReadFile(m_hFileHandle, lpBuf, dwBytesToRead, &dwBytesRead, NULL);
@@ -206,7 +206,7 @@ BOOL CFileIO::Close()
    //MEMBERASSERT();
    if (m_hFileHandle != NULL)
    {
-#if defined(_WINDOWS) && !defined(__MINGW32__)
+#if defined(_MSC_VER)
       if (!::CloseHandle(m_hFileHandle))
 #else
       if (!c_CloseHandle(m_hFileHandle))
@@ -261,7 +261,7 @@ BOOL CFileIO::SeekFailure(DWORD dwOffset)
 //
 BOOL CFileIO::Seek(LONGLONG lOffset, UINT uFlag, LONGLONG *plNewOffset)
 {
-#if !defined(_WINDOWS)
+#if !defined(_MSC_VER)
 	/*MEMBERASSERT();*/
     short    origin = 0;
 
@@ -306,7 +306,7 @@ LONGLONG CFileIO::GetFileSize()
 {
    /*MEMBERASSERT();*/
    ASSERT(m_hFileHandle != FILE_NULL);
-#if !defined(_WINDOWS) || defined(__MINGW32__)
+#if !defined(_MSC_VER)
     return c_GetFileSize(m_hFileHandle,NULL);
 #else
    return ::GetFileSize(m_hFileHandle,NULL);

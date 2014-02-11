@@ -36,7 +36,7 @@ class CFileIO
   public:   
     CFileIO();
     CFileIO(FILEHANDLE hFile);
-#if !defined(_WINDOWS)
+#if !defined(_MSC_VER)
     CFileIO(HANDLE hFile);
 #endif
     ~CFileIO();

@@ -22,7 +22,7 @@ int WINAPI AXODBG_printf( char *lpsz, ... ) {
 BOOL WINAPI c_CloseHandle( FILEHANDLE handle )
 {
     // returns the opposite of the Windows-function
-#if !defined(_WINDOWS)
+#if !defined(_MSC_VER)
     return (!fclose(handle));
 #else
     return CloseHandle( handle );
@@ -45,7 +45,7 @@ BOOL WINAPI c_CloseHandle( FILEHANDLE handle )
  */
 DWORD WINAPI c_GetFileSize( FILEHANDLE hFile, LPDWORD filesizehigh )
 {
-#if !defined(_WINDOWS)
+#if !defined(_MSC_VER)
     long lSize;
     fpos_t cur;
     if (fgetpos(hFile,&cur)!=0)
@@ -67,7 +67,7 @@ DWORD WINAPI c_GetFileSize( FILEHANDLE hFile, LPDWORD filesizehigh )
 BOOL WINAPI c_ReadFile( FILEHANDLE hFile, LPVOID buffer, DWORD bytesToRead,
                         LPDWORD bytesRead, LPOVERLAPPED overlapped )
 {
-#if !defined(_WINDOWS)
+#if !defined(_MSC_VER)
     *bytesRead=(DWORD)fread(buffer,1,bytesToRead,hFile);
     if ( *bytesRead != bytesToRead)
         return FALSE;
@@ -84,7 +84,7 @@ BOOL WINAPI c_ReadFile( FILEHANDLE hFile, LPVOID buffer, DWORD bytesToRead,
 
 DWORD WINAPI c_SetFilePointer( FILEHANDLE hFile, LONG distance, LONG *highword, DWORD method )
 {
-#if !defined(_WINDOWS)
+#if !defined(_MSC_VER)
     /*long     res;*/
     short    origin = 0;
 
@@ -103,7 +103,7 @@ DWORD WINAPI c_SetFilePointer( FILEHANDLE hFile, LONG distance, LONG *highword, 
     return SetFilePointer( hFile, distance, highword, method );
 #endif
 }
-#if !defined(_WINDOWS)
+#if !defined(_MSC_VER)
 /*********************************************************************
  *		_splitpath (NTDLL.@)
  *
@@ -165,6 +165,7 @@ void /*CSH __cdecl */ _splitpath(const char* inpath, char * drv, char * dir,
     if (ext) strcpy( ext, end );
 }
 
+#if defined(_MSC_VER)
 /*********************************************************************
  *                  _strnicmp   (NTDLL.@)
  */
@@ -172,6 +173,7 @@ int /*CSH __cdecl*/ _strnicmp( LPCSTR str1, LPCSTR str2, size_t n )
 {
     return strncasecmp( str1, str2, n );
 }
+#endif
 
 /*********************************************************************
  *		_makepath (MSVCRT.@)
@@ -236,7 +238,7 @@ void cdecl _makepath(char * path, const char * drive,
 BOOL WINAPI c_WriteFile( FILEHANDLE hFile, LPCVOID buffer, DWORD bytesToWrite,
                          LPDWORD bytesWritten, LPOVERLAPPED overlapped )
 {
-#if !defined(_WINDOWS)
+#if !defined(_MSC_VER)
     *bytesWritten=(DWORD)fwrite(buffer, 1, bytesToWrite, hFile);
     return (*bytesWritten==bytesToWrite);
 #else
@@ -249,7 +251,7 @@ BOOL WINAPI c_WriteFile( FILEHANDLE hFile, LPCVOID buffer, DWORD bytesToWrite,
  *
  * See CreateFileW.
  */
-#if !defined(_WINDOWS)
+#if !defined(_MSC_VER)
 FILEHANDLE WINAPI c_CreateFile( LPCSTR filename, DWORD access, DWORD sharing,
                                 LPSECURITY_ATTRIBUTES sa, DWORD creation,
                                 DWORD attributes, HANDLE templ)

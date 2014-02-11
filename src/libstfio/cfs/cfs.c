@@ -4147,7 +4147,7 @@ void CleanUpCfs(void)
 
 short TempName(short handle, TpCStr name, TpStr str2, unsigned str2len)
 {
-#if defined(_IS_WINDOWS_) && !defined(__MINGW32__)
+#if defined(_IS_WINDOWS_)
     short   pathstart;
     short   pathend = 0;
     short   search  = 0;
