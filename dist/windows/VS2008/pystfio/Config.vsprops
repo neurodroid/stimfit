@@ -19,6 +19,6 @@
 	/>
 	<UserMacro
 		Name="BOOSTDIR"
-		Value="$(SolutionDir)\..\..\..\..\boost"
+		Value="$(SolutionDir)\..\..\..\..\..\boost"
 	/>
 </VisualStudioPropertySheet>

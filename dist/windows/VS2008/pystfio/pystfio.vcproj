@@ -185,11 +185,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\src\pystfio\pystfio.cxx"
+				RelativePath="..\..\..\..\src\pystfio\pystfio.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\pystfio\pystfio.i"
+				RelativePath="..\..\..\..\src\pystfio\pystfio.i"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -211,7 +211,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\pystfio\pystfio_wrap.cxx"
+				RelativePath="..\..\..\..\src\pystfio\pystfio_wrap.cxx"
 				>
 			</File>
 		</Filter>
@@ -221,7 +221,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\src\pystfio\pystfio.h"
+				RelativePath="..\..\..\..\src\pystfio\pystfio.h"
 				>
 			</File>
 		</Filter>

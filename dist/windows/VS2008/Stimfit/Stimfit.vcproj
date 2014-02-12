@@ -182,7 +182,7 @@
 				Name="gui"
 				>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\main.cpp"
+					RelativePath="..\..\..\..\src\stimfit\gui\main.cpp"
 					>
 				</File>
 			</Filter>

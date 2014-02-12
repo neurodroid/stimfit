@@ -179,26 +179,26 @@
 			Name="Header Files"
 			>
 			<File
-				RelativePath="..\..\..\src\libstfio\channel.h"
+				RelativePath="..\..\..\..\src\libstfio\channel.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\libstfio\recording.h"
+				RelativePath="..\..\..\..\src\libstfio\recording.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\libstfio\section.h"
+				RelativePath="..\..\..\..\src\libstfio\section.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\libstfio\stfio.h"
+				RelativePath="..\..\..\..\src\libstfio\stfio.h"
 				>
 			</File>
 			<Filter
 				Name="abf"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\abf\abflib.h"
+					RelativePath="..\..\..\..\src\libstfio\abf\abflib.h"
 					>
 				</File>
 				<Filter
@@ -208,39 +208,39 @@
 						Name="AxAbfFio32"
 						>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\abffiles.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\abffiles.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\abfheadr.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\abfheadr.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\abfoldnx.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\abfoldnx.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\abfutil.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\abfutil.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\AxAbffio32.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\AxAbffio32.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\csynch.hpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\csynch.hpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\filedesc.hpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\filedesc.hpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\msbincvt.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\msbincvt.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\oldheadr.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\oldheadr.h"
 							>
 						</File>
 					</Filter>
@@ -248,15 +248,15 @@
 						Name="AxAtfFio32"
 						>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAtfFio32\atfintl.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAtfFio32\atfintl.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAtfFio32\atfutil.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAtfFio32\atfutil.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAtfFio32\axatffio32.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAtfFio32\axatffio32.h"
 							>
 						</File>
 					</Filter>
@@ -264,43 +264,43 @@
 						Name="Common"
 						>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\Common\adcdac.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\Common\adcdac.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\Common\ArrayPtr.hpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\Common\ArrayPtr.hpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\Common\axodebug.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\Common\axodebug.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\Common\axodefn.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\Common\axodefn.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\Common\colors.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\Common\colors.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\Common\FileIO.hpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\Common\FileIO.hpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\Common\FileReadCache.hpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\Common\FileReadCache.hpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\Common\resource.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\Common\resource.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\Common\unix.h"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\Common\unix.h"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\Common\wincpp.hpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\Common\wincpp.hpp"
 							>
 						</File>
 					</Filter>
@@ -309,19 +309,19 @@
 					Name="axon2"
 					>
 					<File
-						RelativePath="..\..\..\src\libstfio\abf\axon2\abf2headr.h"
+						RelativePath="..\..\..\..\src\libstfio\abf\axon2\abf2headr.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\libstfio\abf\axon2\ProtocolReaderABF2.hpp"
+						RelativePath="..\..\..\..\src\libstfio\abf\axon2\ProtocolReaderABF2.hpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\libstfio\abf\axon2\ProtocolStructs.h"
+						RelativePath="..\..\..\..\src\libstfio\abf\axon2\ProtocolStructs.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\libstfio\abf\axon2\SimpleStringCache.hpp"
+						RelativePath="..\..\..\..\src\libstfio\abf\axon2\SimpleStringCache.hpp"
 						>
 					</File>
 				</Filter>
@@ -330,7 +330,7 @@
 				Name="atf"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\atf\atflib.h"
+					RelativePath="..\..\..\..\src\libstfio\atf\atflib.h"
 					>
 				</File>
 			</Filter>
@@ -338,27 +338,27 @@
 				Name="axg"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\axg\axglib.h"
+					RelativePath="..\..\..\..\src\libstfio\axg\axglib.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\axg\AxoGraph_ReadWrite.h"
+					RelativePath="..\..\..\..\src\libstfio\axg\AxoGraph_ReadWrite.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\axg\byteswap.h"
+					RelativePath="..\..\..\..\src\libstfio\axg\byteswap.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\axg\fileUtils.h"
+					RelativePath="..\..\..\..\src\libstfio\axg\fileUtils.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\axg\longdef.h"
+					RelativePath="..\..\..\..\src\libstfio\axg\longdef.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\axg\stringUtils.h"
+					RelativePath="..\..\..\..\src\libstfio\axg\stringUtils.h"
 					>
 				</File>
 			</Filter>
@@ -366,7 +366,7 @@
 				Name="biosig"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\biosig\biosiglib.h"
+					RelativePath="..\..\..\..\src\libstfio\biosig\biosiglib.h"
 					>
 				</File>
 			</Filter>
@@ -374,15 +374,15 @@
 				Name="cfs"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\cfs\cfs.h"
+					RelativePath="..\..\..\..\src\libstfio\cfs\cfs.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\cfs\cfslib.h"
+					RelativePath="..\..\..\..\src\libstfio\cfs\cfslib.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\cfs\machine.h"
+					RelativePath="..\..\..\..\src\libstfio\cfs\machine.h"
 					>
 				</File>
 			</Filter>
@@ -390,7 +390,7 @@
 				Name="hdf5"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\hdf5\hdf5lib.h"
+					RelativePath="..\..\..\..\src\libstfio\hdf5\hdf5lib.h"
 					>
 				</File>
 			</Filter>
@@ -398,7 +398,7 @@
 				Name="heka"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\heka\hekalib.h"
+					RelativePath="..\..\..\..\src\libstfio\heka\hekalib.h"
 					>
 				</File>
 			</Filter>
@@ -406,15 +406,15 @@
 				Name="igor"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\igor\CrossPlatformFileIO.h"
+					RelativePath="..\..\..\..\src\libstfio\igor\CrossPlatformFileIO.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\igor\IgorBin.h"
+					RelativePath="..\..\..\..\src\libstfio\igor\IgorBin.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\igor\igorlib.h"
+					RelativePath="..\..\..\..\src\libstfio\igor\igorlib.h"
 					>
 				</File>
 			</Filter>
@@ -423,26 +423,26 @@
 			Name="Source Files"
 			>
 			<File
-				RelativePath="..\..\..\src\libstfio\channel.cpp"
+				RelativePath="..\..\..\..\src\libstfio\channel.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\libstfio\recording.cpp"
+				RelativePath="..\..\..\..\src\libstfio\recording.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\libstfio\section.cpp"
+				RelativePath="..\..\..\..\src\libstfio\section.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\libstfio\stfio.cpp"
+				RelativePath="..\..\..\..\src\libstfio\stfio.cpp"
 				>
 			</File>
 			<Filter
 				Name="abf"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\abf\abflib.cpp"
+					RelativePath="..\..\..\..\src\libstfio\abf\abflib.cpp"
 					>
 				</File>
 				<Filter
@@ -452,39 +452,39 @@
 						Name="AxAbfFio32"
 						>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\abferror.cpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\abferror.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\abffiles.cpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\abffiles.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\abfheadr.cpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\abfheadr.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\abfhwave.cpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\abfhwave.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\abfutil.cpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\abfutil.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\csynch.cpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\csynch.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\filedesc.cpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\filedesc.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\msbincvt.cpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\msbincvt.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAbfFio32\Oldheadr.cpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAbfFio32\Oldheadr.cpp"
 							>
 						</File>
 					</Filter>
@@ -492,11 +492,11 @@
 						Name="AxAtfFio32"
 						>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAtfFio32\axatffio32.cpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAtfFio32\axatffio32.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\AxAtfFio32\fileio2.cpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\AxAtfFio32\fileio2.cpp"
 							>
 						</File>
 					</Filter>
@@ -504,15 +504,15 @@
 						Name="Common"
 						>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\Common\FileIO.cpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\Common\FileIO.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\Common\FileReadCache.cpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\Common\FileReadCache.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\src\libstfio\abf\axon\Common\unix.cpp"
+							RelativePath="..\..\..\..\src\libstfio\abf\axon\Common\unix.cpp"
 							>
 						</File>
 					</Filter>
@@ -521,15 +521,15 @@
 					Name="axon2"
 					>
 					<File
-						RelativePath="..\..\..\src\libstfio\abf\axon2\abf2headr.cpp"
+						RelativePath="..\..\..\..\src\libstfio\abf\axon2\abf2headr.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\libstfio\abf\axon2\ProtocolReaderABF2.cpp"
+						RelativePath="..\..\..\..\src\libstfio\abf\axon2\ProtocolReaderABF2.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\libstfio\abf\axon2\SimpleStringCache.cpp"
+						RelativePath="..\..\..\..\src\libstfio\abf\axon2\SimpleStringCache.cpp"
 						>
 					</File>
 				</Filter>
@@ -538,7 +538,7 @@
 				Name="atf"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\atf\atflib.cpp"
+					RelativePath="..\..\..\..\src\libstfio\atf\atflib.cpp"
 					>
 				</File>
 			</Filter>
@@ -546,23 +546,23 @@
 				Name="axg"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\axg\axglib.cpp"
+					RelativePath="..\..\..\..\src\libstfio\axg\axglib.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\axg\AxoGraph_ReadWrite.cpp"
+					RelativePath="..\..\..\..\src\libstfio\axg\AxoGraph_ReadWrite.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\axg\byteswap.cpp"
+					RelativePath="..\..\..\..\src\libstfio\axg\byteswap.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\axg\fileUtils.cpp"
+					RelativePath="..\..\..\..\src\libstfio\axg\fileUtils.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\axg\stringUtils.cpp"
+					RelativePath="..\..\..\..\src\libstfio\axg\stringUtils.cpp"
 					>
 				</File>
 			</Filter>
@@ -570,7 +570,7 @@
 				Name="biosig"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\biosig\biosiglib.cpp"
+					RelativePath="..\..\..\..\src\libstfio\biosig\biosiglib.cpp"
 					>
 				</File>
 			</Filter>
@@ -578,11 +578,11 @@
 				Name="cfs"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\cfs\cfs.c"
+					RelativePath="..\..\..\..\src\libstfio\cfs\cfs.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\cfs\cfslib.cpp"
+					RelativePath="..\..\..\..\src\libstfio\cfs\cfslib.cpp"
 					>
 				</File>
 			</Filter>
@@ -590,7 +590,7 @@
 				Name="hdf5"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\hdf5\hdf5lib.cpp"
+					RelativePath="..\..\..\..\src\libstfio\hdf5\hdf5lib.cpp"
 					>
 				</File>
 			</Filter>
@@ -598,7 +598,7 @@
 				Name="heka"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\heka\hekalib.cpp"
+					RelativePath="..\..\..\..\src\libstfio\heka\hekalib.cpp"
 					>
 				</File>
 			</Filter>
@@ -606,15 +606,15 @@
 				Name="igor"
 				>
 				<File
-					RelativePath="..\..\..\src\libstfio\igor\CrossPlatformFileIO.c"
+					RelativePath="..\..\..\..\src\libstfio\igor\CrossPlatformFileIO.c"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\igor\igorlib.cpp"
+					RelativePath="..\..\..\..\src\libstfio\igor\igorlib.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\libstfio\igor\WriteWave.c"
+					RelativePath="..\..\..\..\src\libstfio\igor\WriteWave.c"
 					>
 				</File>
 			</Filter>

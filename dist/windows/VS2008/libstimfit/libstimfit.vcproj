@@ -181,77 +181,77 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\src\stimfit\stf.cpp"
+				RelativePath="..\..\..\..\src\stimfit\stf.cpp"
 				>
 			</File>
 			<Filter
 				Name="gui"
 				>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\app.cpp"
+					RelativePath="..\..\..\..\src\stimfit\gui\app.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\childframe.cpp"
+					RelativePath="..\..\..\..\src\stimfit\gui\childframe.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\copygrid.cpp"
+					RelativePath="..\..\..\..\src\stimfit\gui\copygrid.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\doc.cpp"
+					RelativePath="..\..\..\..\src\stimfit\gui\doc.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\graph.cpp"
+					RelativePath="..\..\..\..\src\stimfit\gui\graph.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\parentframe.cpp"
+					RelativePath="..\..\..\..\src\stimfit\gui\parentframe.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\printout.cpp"
+					RelativePath="..\..\..\..\src\stimfit\gui\printout.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\stfcheckbox.cpp"
+					RelativePath="..\..\..\..\src\stimfit\gui\stfcheckbox.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\table.cpp"
+					RelativePath="..\..\..\..\src\stimfit\gui\table.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\unopt.cpp"
+					RelativePath="..\..\..\..\src\stimfit\gui\unopt.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\view.cpp"
+					RelativePath="..\..\..\..\src\stimfit\gui\view.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\zoom.cpp"
+					RelativePath="..\..\..\..\src\stimfit\gui\zoom.cpp"
 					>
 				</File>
 				<Filter
 					Name="dlgs"
 					>
 					<File
-						RelativePath="..\..\..\src\stimfit\gui\dlgs\cursorsdlg.cpp"
+						RelativePath="..\..\..\..\src\stimfit\gui\dlgs\cursorsdlg.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\stimfit\gui\dlgs\eventdlg.cpp"
+						RelativePath="..\..\..\..\src\stimfit\gui\dlgs\eventdlg.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\stimfit\gui\dlgs\fitseldlg.cpp"
+						RelativePath="..\..\..\..\src\stimfit\gui\dlgs\fitseldlg.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\stimfit\gui\dlgs\smalldlgs.cpp"
+						RelativePath="..\..\..\..\src\stimfit\gui\dlgs\smalldlgs.cpp"
 						>
 					</File>
 				</Filter>
@@ -259,7 +259,7 @@
 					Name="userdlg"
 					>
 					<File
-						RelativePath="..\..\..\src\stimfit\gui\usrdlg\usrdlg.cpp"
+						RelativePath="..\..\..\..\src\stimfit\gui\usrdlg\usrdlg.cpp"
 						>
 					</File>
 				</Filter>
@@ -268,42 +268,42 @@
 				Name="math"
 				>
 				<File
-					RelativePath="..\..\..\src\stimfit\math\fit.cpp"
+					RelativePath="..\..\..\..\src\stimfit\math\fit.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\math\funclib.cpp"
+					RelativePath="..\..\..\..\src\stimfit\math\funclib.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\math\measure.cpp"
+					RelativePath="..\..\..\..\src\stimfit\math\measure.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\math\stfmath.cpp"
+					RelativePath="..\..\..\..\src\stimfit\math\stfmath.cpp"
 					>
 				</File>
 				<Filter
 					Name="levmar"
 					>
 					<File
-						RelativePath="..\..\..\src\stimfit\math\levmar\Axb.c"
+						RelativePath="..\..\..\..\src\stimfit\math\levmar\Axb.c"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\stimfit\math\levmar\lm.c"
+						RelativePath="..\..\..\..\src\stimfit\math\levmar\lm.c"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\stimfit\math\levmar\lmbc.c"
+						RelativePath="..\..\..\..\src\stimfit\math\levmar\lmbc.c"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\stimfit\math\levmar\lmlec.c"
+						RelativePath="..\..\..\..\src\stimfit\math\levmar\lmlec.c"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\stimfit\math\levmar\misc.c"
+						RelativePath="..\..\..\..\src\stimfit\math\levmar\misc.c"
 						>
 					</File>
 				</Filter>
@@ -315,77 +315,77 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\src\stimfit\stf.h"
+				RelativePath="..\..\..\..\src\stimfit\stf.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\stfconf.h"
+				RelativePath="..\..\..\..\stfconf.h"
 				>
 			</File>
 			<Filter
 				Name="gui"
 				>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\app.h"
+					RelativePath="..\..\..\..\src\stimfit\gui\app.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\childframe.h"
+					RelativePath="..\..\..\..\src\stimfit\gui\childframe.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\copygrid.h"
+					RelativePath="..\..\..\..\src\stimfit\gui\copygrid.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\doc.h"
+					RelativePath="..\..\..\..\src\stimfit\gui\doc.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\graph.h"
+					RelativePath="..\..\..\..\src\stimfit\gui\graph.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\parentframe.h"
+					RelativePath="..\..\..\..\src\stimfit\gui\parentframe.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\printout.h"
+					RelativePath="..\..\..\..\src\stimfit\gui\printout.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\stfcheckbox.h"
+					RelativePath="..\..\..\..\src\stimfit\gui\stfcheckbox.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\table.h"
+					RelativePath="..\..\..\..\src\stimfit\gui\table.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\view.h"
+					RelativePath="..\..\..\..\src\stimfit\gui\view.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\gui\zoom.h"
+					RelativePath="..\..\..\..\src\stimfit\gui\zoom.h"
 					>
 				</File>
 				<Filter
 					Name="dlgs"
 					>
 					<File
-						RelativePath="..\..\..\src\stimfit\gui\dlgs\cursorsdlg.h"
+						RelativePath="..\..\..\..\src\stimfit\gui\dlgs\cursorsdlg.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\stimfit\gui\dlgs\eventdlg.h"
+						RelativePath="..\..\..\..\src\stimfit\gui\dlgs\eventdlg.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\stimfit\gui\dlgs\fitseldlg.h"
+						RelativePath="..\..\..\..\src\stimfit\gui\dlgs\fitseldlg.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\stimfit\gui\dlgs\smalldlgs.h"
+						RelativePath="..\..\..\..\src\stimfit\gui\dlgs\smalldlgs.h"
 						>
 					</File>
 				</Filter>
@@ -393,7 +393,7 @@
 					Name="userdlg"
 					>
 					<File
-						RelativePath="..\..\..\src\stimfit\gui\usrdlg\usrdlg.h"
+						RelativePath="..\..\..\..\src\stimfit\gui\usrdlg\usrdlg.h"
 						>
 					</File>
 				</Filter>
@@ -402,42 +402,42 @@
 				Name="math"
 				>
 				<File
-					RelativePath="..\..\..\src\stimfit\math\fit.h"
+					RelativePath="..\..\..\..\src\stimfit\math\fit.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\math\funclib.h"
+					RelativePath="..\..\..\..\src\stimfit\math\funclib.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\math\measure.h"
+					RelativePath="..\..\..\..\src\stimfit\math\measure.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\math\spline.h"
+					RelativePath="..\..\..\..\src\stimfit\math\spline.h"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\stimfit\math\stfmath.h"
+					RelativePath="..\..\..\..\src\stimfit\math\stfmath.h"
 					>
 				</File>
 				<Filter
 					Name="levmar"
 					>
 					<File
-						RelativePath="..\..\..\src\stimfit\math\levmar\compiler.h"
+						RelativePath="..\..\..\..\src\stimfit\math\levmar\compiler.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\stimfit\math\levmar\levmar.h"
+						RelativePath="..\..\..\..\src\stimfit\math\levmar\levmar.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\stimfit\math\levmar\lm.h"
+						RelativePath="..\..\..\..\src\stimfit\math\levmar\lm.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\..\src\stimfit\math\levmar\misc.h"
+						RelativePath="..\..\..\..\src\stimfit\math\levmar\misc.h"
 						>
 					</File>
 				</Filter>

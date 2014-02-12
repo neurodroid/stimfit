@@ -181,11 +181,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\..\src\stimfit\py\pystf.cxx"
+				RelativePath="..\..\..\..\src\stimfit\py\pystf.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\stimfit\py\pystf.i"
+				RelativePath="..\..\..\..\src\stimfit\py\pystf.i"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -207,7 +207,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\src\stimfit\py\pystf_wrap.cxx"
+				RelativePath="..\..\..\..\src\stimfit\py\pystf_wrap.cxx"
 				>
 			</File>
 		</Filter>
@@ -217,7 +217,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\..\src\stimfit\py\pystf.h"
+				RelativePath="..\..\..\..\src\stimfit\py\pystf.h"
 				>
 			</File>
 		</Filter>

@@ -19,14 +19,14 @@
 	/>
 	<UserMacro
 		Name="WXDIR"
-		Value="$(SolutionDir)\..\..\..\..\wx"
+		Value="$(SolutionDir)\..\..\..\..\..\wx"
 	/>
 	<UserMacro
 		Name="BOOSTDIR"
-		Value="$(SolutionDir)\..\..\..\..\boost"
+		Value="$(SolutionDir)\..\..\..\..\..\boost"
 	/>
 	<UserMacro
 		Name="FFTWDIR"
-		Value="$(SolutionDir)\..\..\..\..\fftw"
+		Value="$(SolutionDir)\..\..\..\..\..\fftw"
 	/>
 </VisualStudioPropertySheet>
