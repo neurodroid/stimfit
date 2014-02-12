@@ -19,7 +19,7 @@
 #include <vector>
 #include <sstream>
 
-#if !defined(_MSC_VER)
+#if !defined(_MSC_VER) || defined(__STF__)
 #include "./axon/Common/axodefn.h"
 #include "./axon/AxAbfFio32/abffiles.h"
 #include "./axon2/ProtocolReaderABF2.hpp"

@@ -190,7 +190,7 @@
   #include <machine/endian.h>
 #elif defined(__MINGW32__)
   #define __LITTLE_ENDIAN__
-#else
+#elif !defined(_MSC_VER)
     #include <endian.h>
 #endif
 
