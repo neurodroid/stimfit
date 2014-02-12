@@ -1,6 +1,6 @@
 #! /bin/bash
 
-STFVERSION="0.13.13"
+STFVERSION="0.13.14"
 MPDIR=`pwd`
 
 if [ "$1" != "" ]; then
