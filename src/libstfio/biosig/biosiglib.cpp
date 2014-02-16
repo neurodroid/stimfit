@@ -782,7 +782,14 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 
 	/* Initialize all header parameters */
     hdr->TYPE = GDF;
-    hdr->VERSION = 3.0;   // latest version
+#if (BIOSIG_VERSION >= 10508)
+    /* transition in biosig to rename HDR->VERSION to HDR->Version
+       to avoid name space conflict with macro VERSION
+     */
+    hdr->Version = 3.0;   // select latest supported version of GDF format
+#else
+    hdr->VERSION = 3.0;   // select latest supported version of GDF format
+#end
 
     struct tm t = Data.GetDateTime();
 
