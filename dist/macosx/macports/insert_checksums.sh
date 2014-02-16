@@ -8,6 +8,7 @@ if [ "$1" != "" ]; then
     cd build/release
     ./conf_macports_release.sh
     make dist
+    scp stimfit-${STFVERSION}.tar.gz p8210991@schmidt-hieber.de:/kunden/homepages/32/d34288459/htdocs/StimfitJ/
     cd ${MPDIR}
 fi
 
