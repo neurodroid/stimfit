@@ -31,7 +31,7 @@ namespace stf {
  */
 
     //! Sum of \e n exponential functions.
-    /*! \f[f(x)=p_{2n} + \sum_{i=0}^{2 n - 1}p_{2i}\mathrm{e}^{\left( \frac{x}{p_{2i + 1}}\right)}\f] 
+    /*! \f[f(x)=p_{2n} + \sum_{i=0}^{n - 1}p_{2i}\mathrm{e}^{\left( \frac{x}{p_{2i + 1}}\right)}\f] 
      *  \param x Function argument.
      *  \param p A valarray of parameters of size 2<em>n</em>+1, where \n
      *         \e n is the number of exponential terms, \n
