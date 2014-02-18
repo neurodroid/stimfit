@@ -789,7 +789,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     hdr->Version = 3.0;   // select latest supported version of GDF format
 #else
     hdr->VERSION = 3.0;   // select latest supported version of GDF format
-#end
+#endif
 
     struct tm t = Data.GetDateTime();
 
