@@ -28,7 +28,10 @@ from matplotlib.figure import Figure
 import matplotlib.mlab as mlab
 import numpy as np
 
-import stfio_plot
+try:
+    import stfio_plot
+except:
+    from stfio import plot as stfio_plot
 
 class MplPanel(wx.Panel):
     """The matplotlib figure"""
