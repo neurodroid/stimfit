@@ -186,7 +186,7 @@ Additionally, the source code is documented with [Doxygen]_ and is also accessib
 
     sudo apt-get install doxygen gravphvix
 
-Enter the directory where you downloaded the sources of Stimfit (e.g $HOME/stimfit) and type:
+Enter a directory called **doc** inside Stimfit (e.g $HOME/stimfit/doc) and type:
 
 ::
 
