@@ -1633,9 +1633,9 @@ class _cursor_pair(object):
         except TypeError:
             raise TypeError("cursors has to be a tuple or list of length 2")
         if cursors[0] is not None:
-            self.set_start(cursors[0], is_time=is_time)
+            self._set_start(cursors[0], is_time=is_time)
         if cursors[1] is not None:
-            self.set_end(cursors[1], is_time=is_time)
+            self._set_end(cursors[1], is_time=is_time)
 
     @property
     def cursor_time(self):
