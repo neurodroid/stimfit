@@ -1,6 +1,6 @@
 #! /bin/bash
 
-VERSION=0.13.15
+VERSION=0.13.16
 
 make dist
 mkdir -p ../deb/
