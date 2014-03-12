@@ -368,6 +368,29 @@ Section "Uninstall"
   RMDir /r "$INSTDIR"
   Delete "$DESKTOP\${EXE_NAME}.lnk"
 
+  ClearErrors
+  ReadRegStr $9 HKEY_LOCAL_MACHINE "SOFTWARE\Python\PythonCore\${PY_MAJOR}\InstallPath" ""
+  IfErrors 0 +8
+    ClearErrors
+    ReadRegStr $9 HKEY_LOCAL_MACHINE "SOFTWARE\Python\PythonCore\${PY_MIN}\InstallPath" ""
+    IfErrors 0 +7
+	  ClearErrors
+	  ReadRegStr $9 HKEY_CURRENT_USER "Software\Python\PythonCore\${PY_MIN}\InstallPath" ""
+	  IfErrors 0 +4
+        DetailPrint "$StrNoUsablePythonFound"
+  StrCpy $PY_ACT "${PY_MAJOR}"
+  Goto +2
+  StrCpy $PY_ACT "${PY_MIN}"
+
+  ClearErrors
+  DetailPrint "Found a Python $PY_ACT installation at '$9'"
+  
+  !define STFIORMDIR "$9\Lib\site-packages\stfio"
+ 
+  Delete ${STFIORMDIR}\..\stfio.pth
+  Delete ${STFIORMDIR}\..\stimfit.pth
+  RMDir /r ${STFIORMDIR}
+
   SetDetailsPrint textonly
   DetailPrint "Deleting registry keys..."
   SetDetailsPrint listonly
@@ -427,7 +450,6 @@ Section "Uninstall"
   SetDetailsPrint textonly
   DetailPrint "Successfully uninstalled stimfit"
   SetDetailsPrint listonly
-	
 SectionEnd
 
 ; File associations
