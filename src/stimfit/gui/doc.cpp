@@ -2951,8 +2951,8 @@ stf::Table wxStfDoc::CurResultsTable() {
     }
     int nCol=0;
     if (viewCrosshair) table.SetColLabel(nCol++, "Crosshair");
-    if (viewBaseline) table.SetColLabel(nCol++,"Baseline");
-    if (viewBaseSD) table.SetColLabel(nCol++,"Base SD");
+    if (viewBaseline) table.SetColLabel(nCol++, std::string("Baseline ") + (GetBaselineMethod() ? "Median" : "Mean") );
+    if (viewBaseSD) table.SetColLabel(nCol++, std::string("Base ") + (GetBaselineMethod() ? "IQR" : "SD"));
     if (viewThreshold) table.SetColLabel(nCol++,"Threshold");
     if (viewPeakzero) table.SetColLabel(nCol++,"Peak (from 0)");
     if (viewPeakbase) table.SetColLabel(nCol++,"Peak (from base)");
