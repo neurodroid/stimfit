@@ -113,6 +113,7 @@ wxStfDoc::wxStfDoc() :
     base(0.0),
     APBase(0.0),
     baseSD(0.0),
+    baselineMethod(FALSE),
     threshold(0.0),
     slopeForThreshold(20.0),
     peak(0.0),
@@ -2450,7 +2451,7 @@ void wxStfDoc::Measure( )
     //Begin peak and base calculation
     //-------------------------------
     try {
-        base=stf::base(var,cursec().get(),baseBeg,baseEnd);
+        base=stf::base(baselineMethod,var,cursec().get(),baseBeg,baseEnd);
         baseSD=sqrt(var);
         peak=stf::peak(cursec().get(),base,
                        peakBeg,peakEnd,pM,direction,maxT);
@@ -2558,7 +2559,7 @@ void wxStfDoc::Measure( )
         try {
             // in 2012-11-02: use baseline cursors and not arbitrarily 100 points
             //APBase=stf::base(APVar,secsec().get(),0,endResting);
-            APBase=stf::base( APVar,secsec().get(), baseBeg, baseEnd ); // use baseline cursors 
+            APBase=stf::base(baselineMethod,APVar,secsec().get(), baseBeg, baseEnd ); // use baseline cursors
             //APPeak=stf::peak(secsec().get(),APBase,peakBeg,peakEnd,pM,stf::up,APMaxT);
             APPeak=stf::peak( secsec().get(),APBase ,peakBeg ,peakEnd ,pM,direction ,APMaxT );
         }
@@ -2816,6 +2817,10 @@ double wxStfDoc::GetMeasValue() {
         correctRangeR(measCursor);
     }
     return cursec().at(measCursor);
+}
+
+void wxStfDoc::SetBaselineMethod(int value) {
+    baselineMethod = (value!=0);
 }
 
 void wxStfDoc::SetBaseBeg(int value) {

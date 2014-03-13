@@ -435,6 +435,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
          case stf::base_cursor: 
              actDoc->SetBaseBeg(CursorsDialog->GetCursor1B());
              actDoc->SetBaseEnd(CursorsDialog->GetCursor2B());
+             actDoc->SetBaselineMethod(CursorsDialog->GetBaselineMethod());
              break;
          
          case stf::decay_cursor: 

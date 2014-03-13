@@ -38,15 +38,16 @@ namespace stf {
  */
 
 //! Calculate the average of all sampling points between and including \e llb and \e ulb.
-/*! \param var Will contain the variance on exit.
+/*! \param method: 0: mean and s.d.; 1: median
+ *  \param var Will contain the variance on exit (only when method=0).
  *  \param data The data waveform to be analysed.
  *  \param llb Averaging will be started at this index.
  *  \param ulb Index of the last data point included in the average (legacy of the PASCAL version).
  *  \param llp Lower limit of the peak window (see stf::peak()).
  *  \param ulp Upper limit of the peak window (see stf::peak()). 
- *  \return The baseline value.
+ *  \return The baseline value - either the mean or the median depending on method.
  */
-double base( double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb);
+double base(int method, double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb);
 
 
 //! Find the peak value of \e data between \e llp and \e ulp.

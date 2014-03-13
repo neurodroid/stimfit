@@ -39,6 +39,7 @@ enum {
     wxTEXTPM,
     wxRADIOALL,
     wxRADIOMEAN,
+    wxRADIO_BASELINE_METHOD,	// 0: mean + s.d.;  1: median
     wxRADIO_LAT_MAXSLOPE1,
     wxRADIO_LAT_HALFWIDTH1,
     wxRADIO_LAT_PEAK1,
@@ -359,6 +360,15 @@ wxNotebookPage* wxStfCursorsDlg::CreateBasePage() {
     pageSizer=new wxBoxSizer(wxVERTICAL);
     pageSizer->Add( CreateCursorInput( nbPage, wxTEXT1B, wxTEXT2B, wxCOMBOU1B,
             wxCOMBOU2B, 1, 10 ), 0, wxALIGN_CENTER | wxALL, 2 );
+
+    //**** Radio options "mean, or median " ****
+
+    wxFlexGridSizer* decaySettingsGrid = new wxFlexGridSizer(1,3,0,0);
+    wxCheckBox* pBaseSelection = new wxCheckBox( nbPage, wxRADIO_BASELINE_METHOD,
+            wxT("use median"),  wxDefaultPosition,  wxDefaultSize, 0  );
+    decaySettingsGrid->Add( pBaseSelection, 0, wxALIGN_CENTER | wxALL, 2);
+
+    pageSizer->Add( decaySettingsGrid, 0, wxALIGN_CENTER | wxALL, 2 );
 
     pageSizer->SetSizeHints(nbPage);
     nbPage->SetSizer( pageSizer );
@@ -942,6 +952,16 @@ void wxStfCursorsDlg::SetFromBase(bool fromBase) {
     } else {
         pReference->SetSelection(1);
     }
+}
+
+int wxStfCursorsDlg::GetBaselineMethod() const
+{   //Check if Baseline should be computed as average or as median
+    wxCheckBox* pBaseSelection = (wxCheckBox*)FindWindow(wxRADIO_BASELINE_METHOD);
+    if (pBaseSelection == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::GetBaseSelection()"));
+        return false;
+    }
+    return pBaseSelection->IsChecked();
 }
 
 bool wxStfCursorsDlg::GetPeakAtEnd() const

@@ -34,13 +34,44 @@
 #include "./measure.h"
 #include "../../libstfio/stfio.h"
 
-double stf::base( double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb)
+int compareDouble(const void *a, const void *b)
+{
+    return ( ( *(double*)a >  *(double*)b ) - ( *(double*)a < *(double*)b ) );
+}
+
+double stf::base(int method, double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb)
 {
     if (data.size()==0) return 0;
     if (llb>ulb || ulb>=data.size()) {
         return NAN;
     }
-    double base=0.0;
+    size_t n = ulb - llb + 1;
+    double base;
+    assert(n > 0);
+    assert(n <= data.size());
+
+    if (method > 0) {
+        // median
+        var = NAN;	// is not computed
+
+	// make  copy of the data for sorting
+        double *a = (double*)malloc(n *sizeof(double));
+        for (size_t i=0; i<n; ++i) {
+            a[i] = data[i+llb];
+        }
+        qsort(a,n,sizeof(double),&compareDouble);
+
+	// get the median
+        if (n % 2)
+            base = a[(n-1)/2];
+        else {
+            n /=2;
+            base = (a[n-1] + a[n]) / 2;
+        }
+        free(a);
+        return base;
+    }
+    // else   // mean and s.d.
 
     double sumY=0.0;
     //according to the pascal version, every value 
@@ -51,7 +82,7 @@ double stf::base( double& var, const std::vector<double>& data, std::size_t llb,
     for (int i=(int)llb; i<=(int)ulb;++i) {
         sumY+=data[i];
     }
-    int n=(int)(ulb-llb+1);
+
     base=sumY/n;
     // second pass to calculate the variance:
     double varS=0.0;

@@ -82,6 +82,7 @@ private:
     stf::pslope_mode_end pslopeEndMode; // for right mode PSlope cursor
 #endif 
     std::size_t baseBeg, baseEnd, peakBeg, peakEnd, fitBeg, fitEnd; 
+    int baselineMethod;
 #ifdef WITH_PSLOPE
     std::size_t PSlopeBeg, PSlopeEnd;
     int DeltaT;  // distance (number of points) from the first cursor
@@ -294,6 +295,11 @@ public:
     /*! \return The index of the measurement cursor within the current section.
      */
     std::size_t GetMeasCursor() const { return measCursor; }
+
+    //! Indiates whether baseline is computed as mean or as median.
+    /*! \param false indicates computing average (mean & s.d.), 1 indicates median.
+     */
+    std::size_t GetBaselineMethod() const { return baselineMethod; }
 
     //! Retrieves the position of the left baseline cursor.
     /*! \return The index of the left baseline cursor within the current section.
@@ -708,6 +714,11 @@ public:
     /*! \param value The index of the measurement cursor within the current section.
      */
     void SetMeasCursor(int value);
+
+    //! Indiates whether baseline is computed as mean or as median.
+    /*! \param value 0 indicates computing average (mean & s.d.), 1 indicates median.
+     */
+    void SetBaselineMethod(int value);
 
     //! Sets the position of the left baseline cursor.
     /*! \param value The index of the left baseline cursor within the current section.

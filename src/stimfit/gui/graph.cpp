@@ -2212,7 +2212,7 @@ void wxStfGraph::Ch2base() {
         double base2=0.0;
         try {
             double var2=0.0;
-            base2=stf::base(var2,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(),
+            base2=stf::base(Doc()->GetBaselineMethod(),var2,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(),
                     Doc()->GetBaseBeg(),Doc()->GetBaseEnd());
         }
         catch (const std::out_of_range& e) {
@@ -2253,7 +2253,7 @@ void wxStfGraph::Ch2basezoom() {
         double base2=0.0;
         try {
             double var2=0.0;
-            base2=stf::base(var2,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(),
+            base2=stf::base(Doc()->GetBaselineMethod(),var2,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(),
                     Doc()->GetBaseBeg(),Doc()->GetBaseEnd());
         }
         catch (const std::out_of_range& e) {

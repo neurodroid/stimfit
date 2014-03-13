@@ -298,6 +298,11 @@ public:
      */
     void SetFromBase(bool frombase);
     
+    //! Indiates whether baseline is computed as mean or as median.
+    /*! \param false indicates computing average (mean & s.d.), 1 indicates median.
+     */
+    int GetBaselineMethod() const;
+
     //! Indicates whether the right peak cursor should always be at the end of the trace.
     /*! \return true if the peak cursor should always be at the end of the trace.
      */
