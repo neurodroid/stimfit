@@ -246,9 +246,6 @@ void Recording::SelectTrace(std::size_t sectionToSelect, std::size_t base_start,
     }
     selectedSections.push_back(sectionToSelect);
     double sumY=0;
-#ifdef _OPENMP
-#pragma omp parallel for reduction(+:sumY)
-#endif
     if (curch()[sectionToSelect].size()==0) {
         selectBase.push_back(0);
     } else {
@@ -260,6 +257,9 @@ void Recording::SelectTrace(std::size_t sectionToSelect, std::size_t base_start,
         if (end > (int)curch()[sectionToSelect].size()-1)
             end = curch()[sectionToSelect].size()-1;
         if (end < 0) end = 0;
+#ifdef _OPENMP
+#pragma omp parallel for reduction(+:sumY)
+#endif
         for (int i=start; i<=end; i++) {
             sumY += curch()[sectionToSelect][i];
         }
