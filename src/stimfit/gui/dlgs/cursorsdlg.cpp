@@ -39,7 +39,7 @@ enum {
     wxTEXTPM,
     wxRADIOALL,
     wxRADIOMEAN,
-    wxRADIO_BASELINE_METHOD,	// 0: mean + s.d.;  1: median
+    wxRADIO_BASELINE_METHOD,	// 0: mean + s.d.;  1: median + iqr
     wxRADIO_LAT_MAXSLOPE1,
     wxRADIO_LAT_HALFWIDTH1,
     wxRADIO_LAT_PEAK1,
@@ -365,7 +365,7 @@ wxNotebookPage* wxStfCursorsDlg::CreateBasePage() {
 
     wxFlexGridSizer* decaySettingsGrid = new wxFlexGridSizer(1,3,0,0);
     wxCheckBox* pBaseSelection = new wxCheckBox( nbPage, wxRADIO_BASELINE_METHOD,
-            wxT("use median"),  wxDefaultPosition,  wxDefaultSize, 0  );
+            wxT("use Median and IQR for Baseline and BaseSD, resp."),  wxDefaultPosition,  wxDefaultSize, 0  );
     decaySettingsGrid->Add( pBaseSelection, 0, wxALIGN_CENTER | wxALL, 2);
 
     pageSizer->Add( decaySettingsGrid, 0, wxALIGN_CENTER | wxALL, 2 );

@@ -299,7 +299,7 @@ public:
     void SetFromBase(bool frombase);
     
     //! Indiates whether baseline is computed as mean or as median.
-    /*! \param false indicates computing average (mean & s.d.), 1 indicates median.
+    /*! \param false indicates computing average (mean & s.d.), 1 indicates median & iqr.
      */
     int GetBaselineMethod() const;
 

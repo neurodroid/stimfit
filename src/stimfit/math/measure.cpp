@@ -51,13 +51,10 @@ double stf::base(int method, double& var, const std::vector<double>& data, std::
     assert(n <= data.size());
 
     if (method > 0) {
-        // median
-        var = NAN;	// is not computed
-
 	// make  copy of the data for sorting
-        double *a = (double*)malloc(n *sizeof(double));
-        for (size_t i=0; i<n; ++i) {
-            a[i] = data[i+llb];
+        double *a = (double*)malloc(n * sizeof(double));
+        for (size_t i = 0; i < n; ++i) {
+            a[i] = data[i + llb];
         }
         qsort(a,n,sizeof(double),&compareDouble);
 
@@ -68,6 +65,16 @@ double stf::base(int method, double& var, const std::vector<double>& data, std::
             n /=2;
             base = (a[n-1] + a[n]) / 2;
         }
+
+        /*
+         *  compute inter-quartile range (IQR) and return in "var"
+         *  interpolate as average of upper and lower bound
+         *  and make sure that indices are within [0,n-1] interval
+         */
+	double Q32 = a[std::min((long)(n-1), (long)ceil(3*n/4-1))] + a[std::max(0l, (long)floor(3*n/4-1))];
+	double Q12 = a[std::min((long)(n-1), (long)ceil(  n/4-1))] + a[std::max(0l, (long)floor(  n/4-1))];
+	var = (Q32 - Q12) / 2;
+
         free(a);
         return base;
     }
