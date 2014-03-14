@@ -47,7 +47,7 @@ namespace stf {
  *  \param ulp Upper limit of the peak window (see stf::peak()). 
  *  \return The baseline value - either the mean or the median depending on method.
  */
-double base(int method, double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb);
+double base(enum stf::baseline_method method, double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb);
 
 
 //! Find the peak value of \e data between \e llp and \e ulp.

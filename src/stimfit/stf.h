@@ -450,6 +450,12 @@ enum zoom_channels {
     zoomboth /*!< Scaling applies to both channels. */
 };
 
+//! Methods for Baseline computation 
+enum baseline_method {
+    mean_baseline   = 0, /*!< Compute mean and s.d. for Baseline and Base SD. */ 
+    median_baseline = 1  /*!< Compute median and IQR for Baseline and Base SD. */ 
+};
+
 //! Latency cursor settings
 enum latency_mode {
     manualMode = 0, /*!< Set the corresponding latency cursor manually (by clicking on the graph). */ 

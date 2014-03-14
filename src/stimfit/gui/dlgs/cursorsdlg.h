@@ -301,12 +301,12 @@ public:
     //! Sets the reference for baseline measurement.
     /*! \param median true if the median should be used, false if the average is used.
      */
-    void SetBaselineMethod(int median);
+    void SetBaselineMethod(enum stf::baseline_method);
 
     //! Indiates whether baseline is computed as mean or as median.
     /*! \param false indicates computing average (mean & s.d.), 1 indicates median & iqr.
      */
-    int GetBaselineMethod() const;
+    enum stf::baseline_method GetBaselineMethod() const;
 
     //! Indicates whether the right peak cursor should always be at the end of the trace.
     /*! \return true if the peak cursor should always be at the end of the trace.

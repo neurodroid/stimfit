@@ -39,7 +39,7 @@ int compareDouble(const void *a, const void *b)
     return ( ( *(double*)a >  *(double*)b ) - ( *(double*)a < *(double*)b ) );
 }
 
-double stf::base(int method, double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb)
+double stf::base(enum stf::baseline_method method, double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb)
 {
     if (data.size()==0) return 0;
     if (llb>ulb || ulb>=data.size()) {
@@ -50,7 +50,7 @@ double stf::base(int method, double& var, const std::vector<double>& data, std::
     assert(n > 0);
     assert(n <= data.size());
 
-    if (method > 0) {
+    if (method == median_baseline) {
 	// make  copy of the data for sorting
         double *a = (double*)malloc(n * sizeof(double));
         for (size_t i = 0; i < n; ++i) {
@@ -78,7 +78,7 @@ double stf::base(int method, double& var, const std::vector<double>& data, std::
         free(a);
         return base;
     }
-    // else   // mean and s.d.
+    // else  if (method == mean_baseline)
 
     double sumY=0.0;
     //according to the pascal version, every value 

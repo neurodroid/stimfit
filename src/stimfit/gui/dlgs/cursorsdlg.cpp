@@ -953,23 +953,23 @@ void wxStfCursorsDlg::SetFromBase(bool fromBase) {
     }
 }
 
-int wxStfCursorsDlg::GetBaselineMethod() const
+enum stf::baseline_method wxStfCursorsDlg::GetBaselineMethod() const
 {   //Check if Baseline should be computed as average or as median
     wxCheckBox* pBaseSelection = (wxCheckBox*)FindWindow(wxRADIO_BASELINE_METHOD);
     if (pBaseSelection == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::GetBaseSelection()"));
-        return false;
+        return stf::mean_baseline;
     }
-    return pBaseSelection->IsChecked();
+    return (pBaseSelection->IsChecked() ? stf::median_baseline : stf::mean_baseline);
 }
 
-void wxStfCursorsDlg::SetBaselineMethod(int median){
+void wxStfCursorsDlg::SetBaselineMethod(enum stf::baseline_method baselineMethode){
     wxCheckBox* pBaseSelection = (wxCheckBox*)FindWindow(wxRADIO_BASELINE_METHOD);
     if (pBaseSelection == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::SetBaselineMethod()"));
         return;
     } 
-        pBaseSelection->SetValue(median); // 1 if baseline is median, 0 if baseline is avg
+    pBaseSelection->SetValue(baselineMethode);
 }
 
 

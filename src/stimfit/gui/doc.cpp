@@ -100,6 +100,7 @@ wxStfDoc::wxStfDoc() :
     peakEnd(0),
     fitBeg(0),
     fitEnd(0),
+    baselineMethod(stf::mean_baseline),
 #ifdef WITH_PSLOPE
     PSlopeBeg(0),
     PSlopeEnd(0),
@@ -113,7 +114,6 @@ wxStfDoc::wxStfDoc() :
     base(0.0),
     APBase(0.0),
     baseSD(0.0),
-    baselineMethod(FALSE),
     threshold(0.0),
     slopeForThreshold(20.0),
     peak(0.0),
@@ -2817,10 +2817,6 @@ double wxStfDoc::GetMeasValue() {
         correctRangeR(measCursor);
     }
     return cursec().at(measCursor);
-}
-
-void wxStfDoc::SetBaselineMethod(int value) {
-    baselineMethod = (value!=0);
 }
 
 void wxStfDoc::SetBaseBeg(int value) {
