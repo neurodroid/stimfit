@@ -362,10 +362,9 @@ wxNotebookPage* wxStfCursorsDlg::CreateBasePage() {
             wxCOMBOU2B, 1, 10 ), 0, wxALIGN_CENTER | wxALL, 2 );
 
     //**** Radio options "mean, or median " ****
-
     wxFlexGridSizer* decaySettingsGrid = new wxFlexGridSizer(1,3,0,0);
     wxCheckBox* pBaseSelection = new wxCheckBox( nbPage, wxRADIO_BASELINE_METHOD,
-            wxT("use Median and IQR for Baseline and BaseSD, resp."),  wxDefaultPosition,  wxDefaultSize, 0  );
+            wxT("compute median and interquartil range"),  wxDefaultPosition,  wxDefaultSize, 0  );
     decaySettingsGrid->Add( pBaseSelection, 0, wxALIGN_CENTER | wxALL, 2);
 
     pageSizer->Add( decaySettingsGrid, 0, wxALIGN_CENTER | wxALL, 2 );
@@ -963,6 +962,16 @@ int wxStfCursorsDlg::GetBaselineMethod() const
     }
     return pBaseSelection->IsChecked();
 }
+
+void wxStfCursorsDlg::SetBaselineMethod(int median){
+    wxCheckBox* pBaseSelection = (wxCheckBox*)FindWindow(wxRADIO_BASELINE_METHOD);
+    if (pBaseSelection == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::SetBaselineMethod()"));
+        return;
+    } 
+        pBaseSelection->SetValue(median); // 1 if baseline is median, 0 if baseline is avg
+}
+
 
 bool wxStfCursorsDlg::GetPeakAtEnd() const
 {	//Check if 'Upper limit at end of trace' is selected
@@ -1683,6 +1692,7 @@ void wxStfCursorsDlg::UpdateCursors() {
         cursor2isTime=cursor2BIsTime;
         pText1=(wxTextCtrl*)FindWindow(wxTEXT1B);
         pText2=(wxTextCtrl*)FindWindow(wxTEXT2B);
+        SetBaselineMethod( actDoc->GetBaselineMethod() );
         break;
 
     case stf::decay_cursor: // Decay

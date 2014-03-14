@@ -433,6 +433,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
              break;
          
          case stf::base_cursor: 
+             wxWriteProfileInt(wxT("Settings"), wxT("BaseMedian"), CursorsDialog->GetBaselineMethod());
              actDoc->SetBaseBeg(CursorsDialog->GetCursor1B());
              actDoc->SetBaseEnd(CursorsDialog->GetCursor2B());
              actDoc->SetBaselineMethod(CursorsDialog->GetBaselineMethod());

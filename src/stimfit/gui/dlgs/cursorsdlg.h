@@ -298,6 +298,11 @@ public:
      */
     void SetFromBase(bool frombase);
     
+    //! Sets the reference for baseline measurement.
+    /*! \param median true if the median should be used, false if the average is used.
+     */
+    void SetBaselineMethod(int median);
+
     //! Indiates whether baseline is computed as mean or as median.
     /*! \param false indicates computing average (mean & s.d.), 1 indicates median & iqr.
      */
