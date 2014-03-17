@@ -815,18 +815,13 @@ bool set_risetime_factor(double factor) {
         return false;
     }
 
-    wxStfChildFrame* pFrame = (wxStfChildFrame*)actDoc()->GetDocumentWindow();
-    if ( !pFrame ) {
-        ShowError( wxT("Pointer to frame is zero") );
-        return false;
-    }
-
     int RTFactor = (int)(factor*100);
     actDoc()->SetRTFactor(RTFactor); // defined in wxStfApp::OnPeakcalcexecMsg
-    wxGetApp().OnPeakcalcexecMsg(); // update results table and write Stf registry????
-    pFrame->UpdateResults(); // update results table and markers
- 
+    update_cursor_dialog();
+    update_results_table();
+    write_stf_registry(wxT("RTFactor"), RTFactor);
     return true;
+ 
         
 }
 bool set_fit_start( double pos, bool is_time ) {
@@ -1023,12 +1018,14 @@ bool set_baseline_method( const char* method ) {
         update_cursor_dialog();
         update_results_table();
         write_stf_registry(myitem, stf::mean_sd);
+        return true;
     }
     else if ( strcmp( method, "median" ) == 0 ) {
         actDoc()->SetBaselineMethod( stf::median_iqr );
         update_cursor_dialog(); // update wxStfCursorsDlg
         update_results_table(); // update results and labels in the table
         write_stf_registry(myitem, stf::median_iqr); // write in .Stimfit
+        return true;
     }
     else {
         wxString msg;
