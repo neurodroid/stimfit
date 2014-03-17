@@ -100,7 +100,7 @@ wxStfDoc::wxStfDoc() :
     peakEnd(0),
     fitBeg(0),
     fitEnd(0),
-    baselineMethod(stf::mean_baseline),
+    baselineMethod(stf::mean_sd),
 #ifdef WITH_PSLOPE
     PSlopeBeg(0),
     PSlopeEnd(0),
@@ -423,6 +423,12 @@ int wxStfDoc::InitCursors() {
     SetMeasCursor(wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("MeasureCursor"), 1));
     SetBaseBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("BaseBegin"), 1));
     SetBaseEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("BaseEnd"), 20));
+    int ibase_method = wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("BaselineMethod"),0);
+    switch (ibase_method) {
+        case 0: SetBaselineMethod(stf::mean_sd); break;
+        case 1: SetBaselineMethod(stf::median_iqr); break;
+        default: SetBaselineMethod(stf::mean_sd); 
+    }
     SetPeakBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakBegin"), (int)cursec().size()-100));
     SetPeakEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakEnd"), (int)cursec().size()-50));
     int iDirection = wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("Direction"),2);

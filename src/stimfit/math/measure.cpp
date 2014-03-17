@@ -39,7 +39,7 @@ int compareDouble(const void *a, const void *b)
     return ( ( *(double*)a >  *(double*)b ) - ( *(double*)a < *(double*)b ) );
 }
 
-double stf::base(enum stf::baseline_method method, double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb)
+double stf::base(enum stf::baseline_method base_method, double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb)
 {
     if (data.size()==0) return 0;
     if (llb>ulb || ulb>=data.size()) {
@@ -50,7 +50,7 @@ double stf::base(enum stf::baseline_method method, double& var, const std::vecto
     assert(n > 0);
     assert(n <= data.size());
 
-    if (method == median_baseline) {
+    if (base_method == stf::median_iqr) {
 	// make  copy of the data for sorting
         double *a = (double*)malloc(n * sizeof(double));
         for (size_t i = 0; i < n; ++i) {

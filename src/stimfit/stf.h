@@ -452,8 +452,8 @@ enum zoom_channels {
 
 //! Methods for Baseline computation 
 enum baseline_method {
-    mean_baseline   = 0, /*!< Compute mean and s.d. for Baseline and Base SD. */ 
-    median_baseline = 1  /*!< Compute median and IQR for Baseline and Base SD. */ 
+    mean_sd   = 0, /*!< Compute mean and s.d. for Baseline and Base SD. */ 
+    median_iqr = 1  /*!< Compute median and IQR for Baseline and Base SD. */ 
 };
 
 //! Latency cursor settings

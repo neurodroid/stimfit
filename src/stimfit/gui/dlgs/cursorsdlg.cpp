@@ -955,21 +955,26 @@ void wxStfCursorsDlg::SetFromBase(bool fromBase) {
 
 enum stf::baseline_method wxStfCursorsDlg::GetBaselineMethod() const
 {   //Check if Baseline should be computed as average or as median
-    wxCheckBox* pBaseSelection = (wxCheckBox*)FindWindow(wxRADIO_BASELINE_METHOD);
-    if (pBaseSelection == NULL) {
+    wxCheckBox* pBaselineMethod = (wxCheckBox*)FindWindow(wxRADIO_BASELINE_METHOD);
+    if (pBaselineMethod == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::GetBaseSelection()"));
-        return stf::mean_baseline;
+        return stf::mean_sd; //default value mean and standard deviation
     }
-    return (pBaseSelection->IsChecked() ? stf::median_baseline : stf::mean_baseline);
+    
+    // this temporarly allows only for mean and median methods
+    return (pBaselineMethod->IsChecked() ? stf::median_iqr : stf::mean_sd);
 }
 
-void wxStfCursorsDlg::SetBaselineMethod(enum stf::baseline_method baselineMethode){
-    wxCheckBox* pBaseSelection = (wxCheckBox*)FindWindow(wxRADIO_BASELINE_METHOD);
-    if (pBaseSelection == NULL) {
+void wxStfCursorsDlg::SetBaselineMethod(stf::baseline_method base_method){
+    wxCheckBox* pBaselineMethod = (wxCheckBox*)FindWindow(wxRADIO_BASELINE_METHOD);
+    if (pBaselineMethod == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::SetBaselineMethod()"));
         return;
     } 
-    pBaseSelection->SetValue(baselineMethode);
+
+    // in a future we could implement more methods for baseline calculation
+    if (base_method == stf::median_iqr)
+        pBaselineMethod->SetValue(1);
 }
 
 

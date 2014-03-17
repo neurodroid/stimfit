@@ -82,7 +82,7 @@ private:
     stf::pslope_mode_end pslopeEndMode; // for right mode PSlope cursor
 #endif 
     std::size_t baseBeg, baseEnd, peakBeg, peakEnd, fitBeg, fitEnd; 
-    enum stf::baseline_method baselineMethod;
+    stf::baseline_method baselineMethod; // method for calculating baseline
 #ifdef WITH_PSLOPE
     std::size_t PSlopeBeg, PSlopeEnd;
     int DeltaT;  // distance (number of points) from the first cursor
@@ -296,10 +296,10 @@ public:
      */
     std::size_t GetMeasCursor() const { return measCursor; }
 
-    //! Indiates whether baseline is computed as mean or as median.
-    /*! \param false indicates computing average (mean & s.d.), 1 indicates median.
+    //! Retrieves the computation mode for baseline.
+    /*! \return The current mode for computing the baseline.
      */
-    enum stf::baseline_method GetBaselineMethod() const { return baselineMethod; }
+    stf::baseline_method GetBaselineMethod() const { return baselineMethod; }
 
     //! Retrieves the position of the left baseline cursor.
     /*! \return The index of the left baseline cursor within the current section.
@@ -561,7 +561,7 @@ public:
 #endif
 
     //! Retrieves the mode of the latency start cursor.
-    /*! \return The current mode of the latency start cursor..
+    /*! \return The current mode of the latency start cursor.
      */
     stf::latency_mode GetLatencyStartMode() const { return latencyStartMode; }
 
@@ -715,10 +715,10 @@ public:
      */
     void SetMeasCursor(int value);
 
-    //! Indiates whether baseline is computed as mean or as median.
-    /*! \param value 0 indicates computing average (mean & s.d.), 1 indicates median.
+    //! Sets the methdo to compute the baseline.
+    /*! \param value The new method to calculate the baseline.
      */
-    void SetBaselineMethod(enum stf::baseline_method value) { baselineMethod = value; };
+    void SetBaselineMethod(stf::baseline_method value) { baselineMethod = value; }
 
     //! Sets the position of the left baseline cursor.
     /*! \param value The index of the left baseline cursor within the current section.
@@ -814,12 +814,12 @@ public:
     void SetRTFactor(int value);
 
     //! Sets the mode of the latency start cursor.
-    /*! \param value The new mode of the latency start cursor..
+    /*! \param value The new mode of the latency start cursor.
      */
     void SetLatencyStartMode(stf::latency_mode value) { latencyStartMode=value; }
 
     //! Sets the mode of the latency end cursor.
-    /*! \param value The new mode of the latency end cursor..
+    /*! \param value The new mode of the latency end cursor.
      */
     void SetLatencyEndMode(stf::latency_mode value) {
         latencyEndMode=value;
