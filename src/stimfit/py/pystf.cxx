@@ -1008,28 +1008,25 @@ bool set_latency_start_mode( const char* mode ) {
         actDoc()->SetLatencyStartMode( stf::manualMode );
         return update_cursor_dialog();
     }
-
-    if ( strcmp( mode, "peak" ) == 0 ) {
+    else if ( strcmp( mode, "peak" ) == 0 ) {
         actDoc()->SetLatencyStartMode( stf::peakMode );
         return update_cursor_dialog();
     }
-
-    if ( strcmp( mode, "rise" ) == 0 ) {
+    else if ( strcmp( mode, "rise" ) == 0 ) {
         actDoc()->SetLatencyStartMode( stf::riseMode );
         return update_cursor_dialog();
     }
-
-    if ( strcmp( mode, "half" ) == 0 ) {
+    else if ( strcmp( mode, "half" ) == 0 ) {
         actDoc()->SetLatencyStartMode( stf::halfMode );
         return update_cursor_dialog();
     }
-
-    wxString msg;
-    msg << wxT("\"") << wxString::FromAscii(mode) << wxT("\" is not a valid mode\n");
-    msg << wxT("Use \"up\", \"down\" or \"both\"");
-    ShowError( msg );
-    return false;
-
+    else {
+        wxString msg;
+        msg << wxT("\"") << wxString::FromAscii(mode) << wxT("\" is not a valid mode\n");
+        msg << wxT("Use \"manual\", \"peak\", \"rise\" or \"half\"");
+        ShowError( msg );
+        return false;
+    }
 }
 
 const char* get_latency_end_mode( ) {

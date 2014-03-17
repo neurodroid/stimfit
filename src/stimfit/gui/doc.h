@@ -715,7 +715,7 @@ public:
      */
     void SetMeasCursor(int value);
 
-    //! Sets the methdo to compute the baseline.
+    //! Sets the method to compute the baseline.
     /*! \param value The new method to calculate the baseline.
      */
     void SetBaselineMethod(stf::baseline_method value) { baselineMethod = value; }
