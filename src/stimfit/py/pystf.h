@@ -123,6 +123,8 @@ bool set_base_start( double pos, bool is_time = false );
 double get_base_end( bool is_time = false );
 bool set_base_end( double pos, bool is_time = false );
 
+const char* get_baseline_method( );
+bool set_baseline_method( const char* method);
 const char* get_latency_start_mode( );
 bool set_latency_start_mode( const char* direction );
 const char* get_latency_end_mode( );

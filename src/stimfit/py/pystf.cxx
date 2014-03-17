@@ -131,6 +131,47 @@ wxStfGraph* actGraph() {
     return pView->GetGraph();
 }
 
+bool refresh_graph() {
+    wxStfGraph* pGraph = actGraph();
+    if ( !pGraph ) {
+        ShowError( wxT("Pointer to graph is zero") );
+        return false;
+    }
+    pGraph->Refresh();
+    return true;
+}
+
+// update data and labels in the results box
+bool update_results_table(){
+    wxStfChildFrame* pFrame = (wxStfChildFrame*)actDoc()->GetDocumentWindow();
+    if (!pFrame) {
+        ShowError( wxT("Error in update_results_table()") );
+        return false;
+    }
+
+    wxGetApp().OnPeakcalcexecMsg();
+    pFrame->UpdateResults();
+    return true;
+}
+
+void write_stf_registry(const wxString& item, int value){
+    wxGetApp().wxWriteProfileInt(wxT("Settings"), item, value);
+}
+
+bool update_cursor_dialog( ) {
+    if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
+        try {
+            wxGetApp().GetCursorsDialog()->UpdateCursors();
+        }
+        catch (const std::runtime_error& e) {
+            ShowExcept( e );
+            // We don't necessarily need to return false here.
+        }
+    }
+
+    return refresh_graph();
+}
+
 bool check_doc( bool show_dialog ) {
     if (actDoc() == NULL)  {
         if (show_dialog)
@@ -150,15 +191,6 @@ std::string get_filename( ) {
 #endif    
 }
 
-bool refresh_graph() {
-    wxStfGraph* pGraph = actGraph();
-    if ( !pGraph ) {
-        ShowError( wxT("Pointer to graph is zero") );
-        return false;
-    }
-    pGraph->Refresh();
-    return true;
-}
 
 std::string get_versionstring() {
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
@@ -727,20 +759,6 @@ double rthigh_index( bool active ) {
     }
 }
 
-bool update_cursor_dialog( ) {
-    if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
-        try {
-            wxGetApp().GetCursorsDialog()->UpdateCursors();
-        }
-        catch (const std::runtime_error& e) {
-            ShowExcept( e );
-            // We don't necessarily need to return false here.
-        }
-    }
-
-    return refresh_graph();
-}
-
 double get_threshold_time( bool is_time ) {
     if ( !check_doc() ) return -1;
 
@@ -805,7 +823,7 @@ bool set_risetime_factor(double factor) {
 
     int RTFactor = (int)(factor*100);
     actDoc()->SetRTFactor(RTFactor); // defined in wxStfApp::OnPeakcalcexecMsg
-    wxGetApp().OnPeakcalcexecMsg(); // update results table and write Stf registry
+    wxGetApp().OnPeakcalcexecMsg(); // update results table and write Stf registry????
     pFrame->UpdateResults(); // update results table and markers
  
     return true;
@@ -984,6 +1002,43 @@ bool set_peak_direction( const char* direction ) {
     return false;
 
 }
+const char* get_baseline_method() {
+    if ( !check_doc() ) return "";
+
+    const char *method=" ";
+    if ( actDoc()->GetBaselineMethod() == stf::mean_sd )
+        method = "mean";
+    else if ( actDoc()->GetBaselineMethod() == stf::median_iqr )
+        method = "median";
+    
+    return method;
+}
+
+bool set_baseline_method( const char* method ) {
+    if ( !check_doc() ) return false;
+
+    const wxString myitem = wxT("BaselineMethod");
+    if ( strcmp( method, "mean" ) == 0 ) {
+        actDoc()->SetBaselineMethod( stf::mean_sd );
+        update_cursor_dialog();
+        update_results_table();
+        write_stf_registry(myitem, stf::mean_sd);
+    }
+    else if ( strcmp( method, "median" ) == 0 ) {
+        actDoc()->SetBaselineMethod( stf::median_iqr );
+        update_cursor_dialog(); // update wxStfCursorsDlg
+        update_results_table(); // update results and labels in the table
+        write_stf_registry(myitem, stf::median_iqr); // write in .Stimfit
+    }
+    else {
+        wxString msg;
+        msg << wxT("\"") << wxString::FromAscii(method) << wxT("\" is not a valid method\n");
+        msg << wxT("Use \"mean\" or \"median\"");
+        ShowError( msg );
+        return false;
+    }
+}
+
 
 const char* get_latency_start_mode( ) {
     if ( !check_doc() ) return "";
