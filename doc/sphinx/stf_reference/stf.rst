@@ -138,6 +138,14 @@ The :mod:`stf` module defines the following functions:
         **Returns:** 
 
         The current baseline.
+
+.. function:: get_baseline_method()
+
+    Gets the method used to compute the baseline.
+
+        **Returns:**
+
+        A string specifying the method to compute the baseline. Can be one of "mean" or "median"
    
 .. function:: get_base_end(is_time=False)
 
@@ -538,6 +546,18 @@ The :mod:`stf` module defines the following functions:
         
         True if the trace could be selected, False otherwise.
     
+.. function:: set_baseline_method(method)
+
+    Sets the method to compute the baseline.
+    
+        **Arguments:**
+
+        *method* -- A string specifying the method to calculate the baseline. Can be one of "mean" or "median"
+
+        **Returns:**
+
+        False upon failure.
+
 .. function:: set_base_end(pos, is_time=False) 
 
     Sets the base end cursor to a new position.This will NOT update the baseline calculation. You have to either call :func:`measure()` or hit enter in the main window to achieve that.

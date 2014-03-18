@@ -1113,10 +1113,10 @@ bool set_latency_start_mode( const char* mode );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) get_baseline_method;
-%feature("docstring", "Gets the method used to compute the baselie
+%feature("docstring", "Gets the method used to compute the baseline
 
 Returns:
-A string specifying the method. Can be one of
+A string specifying the method to compute the baseline. Can be one of
 \"mean\" or \"median\"") get_baseline_method;
 const char* get_baseline_method( );
 //--------------------------------------------------------------------
@@ -1126,7 +1126,7 @@ const char* get_baseline_method( );
 %feature("docstring", "Sets the method to compute the baseline.
 
 Arguments:
-direction -- A string specifying the method to calculate the baseline.
+method -- A string specifying the method to calculate the baseline.
             Can be one of \"mean\" or \"median\"
 
 Returns:
