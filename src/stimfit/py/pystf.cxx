@@ -1062,7 +1062,7 @@ bool set_latency_start_mode( const char* mode ) {
         actDoc()->SetLatencyStartMode( stf::manualMode );
         dlg_OK = update_cursor_dialog();
         result_OK = update_results_table();
-        if (dlg_OK & result_OK) {
+        if (dlg_OK && result_OK) {
             write_stf_registry(myitem, stf::manualMode);
             return true;
         }
@@ -1072,7 +1072,7 @@ bool set_latency_start_mode( const char* mode ) {
         actDoc()->SetLatencyStartMode( stf::peakMode );
         dlg_OK = update_cursor_dialog();
         result_OK = update_results_table();
-        if (dlg_OK & result_OK) {
+        if (dlg_OK && result_OK) {
             write_stf_registry(myitem, stf::peakMode);
             return true;
         }
@@ -1082,7 +1082,7 @@ bool set_latency_start_mode( const char* mode ) {
         actDoc()->SetLatencyStartMode( stf::riseMode );
         dlg_OK = update_cursor_dialog();
         result_OK = update_results_table();
-        if (dlg_OK & result_OK) {
+        if (dlg_OK && result_OK) {
             write_stf_registry(myitem, stf::riseMode);
             return true;
         }
@@ -1092,7 +1092,7 @@ bool set_latency_start_mode( const char* mode ) {
         actDoc()->SetLatencyStartMode( stf::halfMode );
         dlg_OK = update_cursor_dialog();
         result_OK = update_results_table();
-        if (dlg_OK & result_OK) {
+        if (dlg_OK && result_OK) {
             write_stf_registry(myitem, stf::halfMode);
             return true;
         }
@@ -1135,7 +1135,7 @@ bool set_latency_end_mode( const char* mode ) {
         actDoc()->SetLatencyEndMode( stf::manualMode );
         dlg_OK = update_cursor_dialog();
         result_OK = update_results_table();
-        if (dlg_OK & result_OK) {
+        if (dlg_OK && result_OK) {
             write_stf_registry(myitem, stf::manualMode);
             return true;
         }
@@ -1145,7 +1145,7 @@ bool set_latency_end_mode( const char* mode ) {
         actDoc()->SetLatencyEndMode( stf::peakMode );
         dlg_OK = update_cursor_dialog();
         result_OK = update_results_table();
-        if (dlg_OK & result_OK) {
+        if (dlg_OK && result_OK) {
             write_stf_registry(myitem, stf::peakMode);
             return true;
         }
@@ -1155,7 +1155,7 @@ bool set_latency_end_mode( const char* mode ) {
         actDoc()->SetLatencyEndMode( stf::riseMode );
         dlg_OK = update_cursor_dialog();
         result_OK = update_results_table();
-        if (dlg_OK & result_OK) {
+        if (dlg_OK && result_OK) {
             write_stf_registry(myitem, stf::riseMode);
             return true;
         }
@@ -1165,7 +1165,7 @@ bool set_latency_end_mode( const char* mode ) {
         actDoc()->SetLatencyEndMode( stf::halfMode );
         dlg_OK = update_cursor_dialog();
         result_OK = update_results_table();
-        if (dlg_OK & result_OK) {
+        if (dlg_OK && result_OK) {
             write_stf_registry(myitem, stf::halfMode);
             return true;
         }
@@ -1175,7 +1175,7 @@ bool set_latency_end_mode( const char* mode ) {
         actDoc()->SetLatencyEndMode( stf::footMode );
         dlg_OK = update_cursor_dialog();
         result_OK = update_results_table();
-        if (dlg_OK & result_OK) {
+        if (dlg_OK && result_OK) {
             write_stf_registry(myitem, stf::footMode);
             return true;
         }
