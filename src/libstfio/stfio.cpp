@@ -152,12 +152,17 @@ bool stfio::importFile(
         case stfio::cfs: {
             {
             int res = stfio::importCFSFile(fName, ReturnData, progDlg);
+         /*
+            // disable old Heka import - its broken and will not be fixed, use biosig instead
             if (res==-7) {
                 stfio::importHEKAFile(fName, ReturnData, progDlg);
             }
-            break;
+         */
+          break;
             }
         }
+        /*
+	// disable old Heka import - its broken and will not be fixed, use biosig instead
         case stfio::heka: {
             {
                 try {
@@ -168,6 +173,7 @@ bool stfio::importFile(
                 break;
             }
         }
+        */
 #endif // TEST_MINIMAL
 
         default:
