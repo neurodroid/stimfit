@@ -16,7 +16,7 @@ Guzman SJ, Schlögl A, Schmidt-Hieber C (2014) Stimfit: quantifying electrophysi
 
 * [Online documentation](http://www.stimfit.org/doc/sphinx/index.html)
 * [User mailing list](http://groups.google.com/group/stimfit)
-* [Downloads](https://github.com/neurodroid/stimfit/releases)
+* [Downloads](https://github.com/neurodroid/stimfit/wiki/Downloads)
 
 
 ## Source code structure
