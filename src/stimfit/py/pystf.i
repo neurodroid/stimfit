@@ -1100,11 +1100,10 @@ const char* get_peak_direction( );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) set_latency_start_mode;
-%feature("docstring", "Sets the latency start mode.
+%feature("docstring", "Sets the mode of the latency start cursor.
 
 Arguments:
-direction -- A string specifying the latency start mode. Can be one of
-             \"manual\", \"peak\", \"rise\" or \"half\"
+direction -- A string specifying the mode for the latency start cursor. Can be one of \"manual\", \"peak\", \"rise\" or \"half\"
 
 Returns:
 False upon failure.") set_latency_start_mode;
@@ -1146,10 +1145,10 @@ const char* get_latency_start_mode( );
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) set_latency_end_mode;
-%feature("docstring", "Sets the latency end mode.
+%feature("docstring", "Sets the mode of the latency end cursor.
 
 Arguments:
-direction -- A string specifying the latency end mode. Can be one of
+direction -- A string specifying the mode for the latency end cursor. Can be one of
              \"manual\", \"peak\", \"rise\", \"foot\" or \"half\"
 
 Returns:

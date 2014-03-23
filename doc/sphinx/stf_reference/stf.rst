@@ -619,7 +619,31 @@ The :mod:`stf` module defines the following functions:
         **Returns:**
 
         True upon success.
+
+.. function:: set_latency_end_mode(mode)
+
+    Sets the mode of the latency end cursor
+
+    **Arguments:**
     
+    *mode* -- A string specifying the mode for the latency start cursor. Can be one of "manual", "peak", "rise", "foot" or "half".
+
+    **Returns:**
+
+    False upon failure
+
+.. function:: set_latency_start_mode(mode)
+
+    Sets the mode of the latency start cursor
+
+    **Arguments:**
+    
+    *mode* -- A string specifying the mode for the latency start cursor. Can be one of "manual", "peak", "rise" or "half".
+
+    **Returns:**
+
+    False upon failure
+
 .. function:: set_fit_end(pos, is_time=False) 
 
     Sets the fit end cursor to a new position.
