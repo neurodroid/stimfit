@@ -235,6 +235,14 @@ The :mod:`stf` module defines the following functions:
 
     Returns the latency value (in x-units) determined by the latency cursors set in the cursors settings menu. Call :func:`measure()` or hit enter to update the cursors.
 
+.. function:: get_latency_end_mode(\*args)
+    
+    Returns a string specifying the latency end mode. Can be one of "manual", "peak", "rise", "foot" or "half".
+
+.. function:: get_latency_start_mode(\*args)
+    
+    Returns a string specifying the latency start mode. Can be one of "manual", "peak", "rise", or "half".
+
 .. function:: get_maxdecay(\*args)
 
     Returns the the maximal slope of the decay between the peak cursors. Returns -1.0 upon error. Call :func:`measure()` or hit enter to update the value.
