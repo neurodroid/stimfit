@@ -498,19 +498,20 @@ def latency(soma, dend):
 def count_aps():
     """
     Shows a result table with the number of action potentials (i.e
-    events whose potential is above 0 mV) in selected traces.  
+    events whose potential is above 0 mV) in selected traces.  If
+    no trace is selected, then the current trace is analyzed.
 
     Returns:
-    False if document is not open or no trace is selected
+    False if document is not open.
     """
     if not stf.check_doc():
         print("Open file first")
         return False
-   
-    sel_trace = stf.get_selected_indices()
-    if not sel_trace: 
-        print("Select traces first")
-        return False
+  
+    if len( stf.get_selected_indices() )==0: 
+        sel_trace = [ stf.get_trace_index()]
+    else: 
+        sel_trace = stf.get_selected_indices()
 
     mytable = dict()
     for trace in sel_trace:
