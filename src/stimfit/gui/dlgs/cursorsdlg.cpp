@@ -361,13 +361,21 @@ wxNotebookPage* wxStfCursorsDlg::CreateBasePage() {
     pageSizer->Add( CreateCursorInput( nbPage, wxTEXT1B, wxTEXT2B, wxCOMBOU1B,
             wxCOMBOU2B, 1, 10 ), 0, wxALIGN_CENTER | wxALL, 2 );
 
-    //**** Radio options "mean, or median " ****
-    wxFlexGridSizer* decaySettingsGrid = new wxFlexGridSizer(1,3,0,0);
-    wxCheckBox* pBaseSelection = new wxCheckBox( nbPage, wxRADIO_BASELINE_METHOD,
-            wxT("compute median and interquartil range"),  wxDefaultPosition,  wxDefaultSize, 0  );
-    decaySettingsGrid->Add( pBaseSelection, 0, wxALIGN_CENTER | wxALL, 2);
+    // Grid
+    wxFlexGridSizer* BaseMethodSizer = new wxFlexGridSizer(1, 0, 0);
+    wxString BaselineMethods[] = {
+        wxT("Mean and Standard Deviation (SD)"),
+        wxT("Median and InterQuartil Ratio (IQR)")
+    };
+    int iBaselineMethods = sizeof(BaselineMethods) / sizeof(wxString);
+    //**** Radio options for baseline methods "mean, or median " ****
+    wxRadioBox* pBaselineMethod = new wxRadioBox( nbPage, wxRADIO_BASELINE_METHOD,
+        wxT("Method to compute the baseline"), wxDefaultPosition, wxDefaultSize, 
+        iBaselineMethods, BaselineMethods, 0, wxRA_SPECIFY_ROWS );    
+    pBaselineMethod->SetSelection(0);
 
-    pageSizer->Add( decaySettingsGrid, 0, wxALIGN_CENTER | wxALL, 2 );
+    BaseMethodSizer->Add(pBaselineMethod, 0, wxALIGN_CENTER | wxALIGN_TOP | wxALL, 2);
+    pageSizer->Add( BaseMethodSizer, 0, wxALIGN_CENTER | wxALL, 2 );
 
     pageSizer->SetSizeHints(nbPage);
     nbPage->SetSizer( pageSizer );
@@ -424,7 +432,6 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
     // Latency from: Manual
     wxRadioButton* wxRadio_Lat_Manual1 = new wxRadioButton( nbPage, wxRADIO_LAT_MANUAL1, wxT("Manual"),
             wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-    //wxRadio_Lat_Manual1->SetValue(true);
     
     // Latency from: Peak
     wxRadioButton* wxRadio_Lat_Peak1 = new wxRadioButton( nbPage, wxRADIO_LAT_PEAK1, wxT("Peak"),
@@ -953,30 +960,36 @@ void wxStfCursorsDlg::SetFromBase(bool fromBase) {
     }
 }
 
-enum stf::baseline_method wxStfCursorsDlg::GetBaselineMethod() const
-{   //Check if Baseline should be computed as average or as median
-    wxCheckBox* pBaselineMethod = (wxCheckBox*)FindWindow(wxRADIO_BASELINE_METHOD);
+enum stf::baseline_method wxStfCursorsDlg::GetBaselineMethod() const {   
+    wxRadioBox* pBaselineMethod = (wxRadioBox*)FindWindow(wxRADIO_BASELINE_METHOD);
     if (pBaselineMethod == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::GetBaseSelection()"));
         return stf::mean_sd; //default value mean and standard deviation
     }
     
-    // this temporarly allows only for mean and median methods
-    return (pBaselineMethod->IsChecked() ? stf::median_iqr : stf::mean_sd);
+    switch( pBaselineMethod->GetSelection() ) {
+        case 0: return stf::mean_sd;
+        case 1: return stf::median_iqr;
+        default: return stf::mean_sd;
+    }
 }
 
-void wxStfCursorsDlg::SetBaselineMethod(stf::baseline_method base_method){
-    wxCheckBox* pBaselineMethod = (wxCheckBox*)FindWindow(wxRADIO_BASELINE_METHOD);
+void wxStfCursorsDlg::SetBaselineMethod(stf::baseline_method base_method) {
+    wxRadioBox* pBaselineMethod = (wxRadioBox*)FindWindow(wxRADIO_BASELINE_METHOD);
     if (pBaselineMethod == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::SetBaselineMethod()"));
         return;
     } 
 
-    // in a future we could implement more methods for baseline calculation
-    if (base_method == stf::median_iqr)
-        pBaselineMethod->SetValue(1);
+    switch(base_method) {
+        case stf::median_iqr:
+            pBaselineMethod->SetSelection(1);
+            break;
+        case stf::mean_sd:
+            pBaselineMethod->SetSelection(0);
+            break;
+    }
 }
-
 
 bool wxStfCursorsDlg::GetPeakAtEnd() const
 {	//Check if 'Upper limit at end of trace' is selected
