@@ -441,11 +441,11 @@ int wxStfDoc::InitCursors() {
     SetFromBase( true ); // reset at every program start   wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FromBase"),1) );
     SetFitBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FitBegin"), 10));
     SetFitEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FitEnd"), 100));
+    SetLatencyWindowMode(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyWindowMode"),1));
     SetLatencyBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyStartCursor"), 0));	/*CSH*/
     SetLatencyEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyEndCursor"), 2));	/*CSH*/
-    //SetLatencyStartMode( wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyStartMode"),0) );
-    //SetLatencyEndMode( wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyEndMode"),0) );
-    SetLatencyWindowMode(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyWindowMode"),1));
+    SetLatencyStartMode( wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyStartMode"),0) );
+    SetLatencyEndMode( wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyEndMode"),0) );
     // Set corresponding menu checkmarks:
     // UpdateMenuCheckmarks();
     SetPM(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakMean"),1));
