@@ -11,8 +11,8 @@ References
 
 A list of recent publications that have used `Stimfit <http:http://www.stimfit.org>`_ for data analysis. Please let me know if something is missing here.
 
+    * `Hua H and Jonas P (2014). <http://www.nature.com/neuro/journal/vaop/ncurrent/full/nn.3678.html>`_ A supercritical density of Na+ channels ensures fast signaling in GABAergic interneuron axons. *Nat Neurosci*, doi:10.1038/nn.3678
     * `Vyleta NP and Jonas P (2014). <http://www.ncbi.nlm.nih.gov/pubmed/24503854>`_ Loose coupling between Ca2+ channels and release sensors at a plastic hippocampal synapse. *Science*, Feb 7; 343:665-70. 
-
     * `Schmidt-Salzmann C, Li L, Bischofberger J (2013). <http://jp.physoc.org/content/early/2013/11/11/jphysiol.2013.267203.abstract>`_ Functional properties of extrasynaptic AMPA and NMDA receptors during postnatal hippocampal neurogenesis. *J Physiol*,  doi: 10.1113/jphysiol.2013.267203
     * `Hosp JA, Strüber M, Yanagawa Y, Obata K, Vida I, Jonas P, Bartos M (2013). <http://onlinelibrary.wiley.com/doi/10.1002/hipo.22214/full>`_ Morpho-physiological criteria divide dentate gyrus interneurons into classes. *Hippocampus*, doi: 10.1002/hipo.22214
     * `Rodriguez-Sierra OE, Turesson HK, Pare D (2013). <http://jn.physiology.org/content/early/2013/08/02/jn.00408.2013.long>`_ Contrasting distribution of physiological cell types in different regions of the bed nucleus of the stria terminalis. *J Neurophysiol* August 7, 2013, doi: 10.1152/jn.00408.2013 
