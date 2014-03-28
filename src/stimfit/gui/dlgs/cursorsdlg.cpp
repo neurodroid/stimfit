@@ -730,11 +730,11 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
         return false;
     }
     int nSize = file.GetLineCount();
-    std::vector<int> cursor(nSize);
+    std::vector<long unsigned int> cursor(nSize);
 
     /* start reading the first line of the file */
     wxString line = file.GetFirstLine();
-    int ivalue;
+    long unsigned int ivalue;
 
     wxString token;
     wxStringTokenizer tkz( line, wxT("\t") );
@@ -751,6 +751,7 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
         wxStringTokenizer tkz( line, wxT("\t") );
         while ( tkz.HasMoreTokens() ){
             token = tkz.GetNextToken(); // last one is number
+        }
     }
     std::cout << token.char_str() <<  std::endl;
     ivalue = wxAtoi(token);
@@ -883,8 +884,8 @@ void wxStfCursorsDlg::WriteCursor(wxWindowID textId, bool isTime, long value) co
     }
 
     if (isTime){
-        stf::round( value/actDoc->GetXScale() );
-        myvalue = wxString::Format(wxT("%f"), value);
+        float fvalue = stf::round( value/actDoc->GetXScale() );
+        myvalue = wxString::Format(wxT("%f"), fvalue);
     }
     else {
         myvalue = wxString::Format(wxT("%i"), value);

@@ -27,6 +27,7 @@
 
 #include "./../../stf.h"
 #include <wx/bookctrl.h>
+#include <wx/tokenzr.h>
 #include <fstream>
 #include <sstream>
 #include <iostream>
