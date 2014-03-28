@@ -9,6 +9,8 @@
 #include "./../doc.h"
 
 enum {
+    wxLOADCRS,
+    wxSAVECRS,
     wxCOMBOUM,
     wxCOMBOU1P,
     wxCOMBOU2P,
@@ -94,8 +96,10 @@ EVT_COMBOBOX( wxCOMBOU1PS, wxStfCursorsDlg::OnComboBoxU1PS )
 EVT_COMBOBOX( wxCOMBOU2PS, wxStfCursorsDlg::OnComboBoxU2PS )
 #endif
 
-// bindings radio buttons
 EVT_BUTTON( wxID_APPLY, wxStfCursorsDlg::OnPeakcalcexec )
+EVT_BUTTON( wxID_OPEN, wxStfCursorsDlg::OnLoadCursorConf )
+EVT_BUTTON( wxID_SAVE, wxStfCursorsDlg::OnSaveCursorConf )
+// bindings radio buttons
 EVT_RADIOBUTTON( wxRADIOALL, wxStfCursorsDlg::OnRadioAll )
 EVT_RADIOBUTTON( wxRADIOMEAN, wxStfCursorsDlg::OnRadioMean )
 
@@ -149,12 +153,18 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
 #endif
     topSizer->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 
-    wxStdDialogButtonSizer* pSdbSizer = new wxStdDialogButtonSizer();
-    //pSdbSizer->AddButton( new wxButton( this, wxID_OK ) );
-    //pSdbSizer->AddButton( new wxButton( this, wxID_CANCEL ) );
-    pSdbSizer->AddButton( new wxButton( this, wxID_CANCEL, wxT("Close") ) );
-    pSdbSizer->AddButton( new wxButton( this, wxID_APPLY ) );
-    pSdbSizer->Realize();
+    wxButton* bClose = new wxButton( this, wxID_CANCEL, wxT("Close") );
+    wxButton* bApply = new wxButton( this, wxID_APPLY, wxT("Apply") );
+    wxButton* bLoad = new wxButton( this, wxID_OPEN, wxT("Load") );
+    wxButton* bSave = new wxButton( this, wxID_SAVE, wxT("Save") );
+
+    wxBoxSizer* pSdbSizer = new wxBoxSizer(wxHORIZONTAL);
+    pSdbSizer->Add( bClose, 0, wxALL, 1); 
+    pSdbSizer->Add( bApply, 0, wxALL, 1); 
+    pSdbSizer->Add( bLoad, 0, wxALL, 1); 
+    pSdbSizer->Add( bSave, 0, wxALL, 1); 
+    //pSdbSizer->Realize();
+
     topSizer->Add( pSdbSizer, 0, wxALIGN_CENTER | wxALL, 5 );
     topSizer->SetSizeHints(this);
     this->SetSizer( topSizer );
@@ -711,6 +721,134 @@ void wxStfCursorsDlg::OnPeakcalcexec( wxCommandEvent& event )
     wxGetApp().OnPeakcalcexecMsg(actDoc);
 }
 
+bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
+
+    wxTextFile file;
+    file.Open(filepath);
+    if ( !file.IsOpened() ){
+        wxGetApp().ErrorMsg(wxT("Could not load config cursor file"));
+        return false;
+    }
+    int nSize = file.GetLineCount();
+    std::vector<int> cursor(nSize);
+
+    /* start reading the first line of the file */
+    wxString line = file.GetFirstLine();
+    int ivalue;
+
+    wxString token;
+    wxStringTokenizer tkz( line, wxT("\t") );
+    while ( tkz.HasMoreTokens() ){
+        if (! tkz.GetNextToken().ToULong(&ivalue) );
+            break; // token is not a number
+        std::cout << ivalue << std::endl;
+        cursor.push_back(ivalue);
+    }
+
+    /* continue reading the file */
+    while( !file.Eof() ) {
+        line =  file.GetNextLine() ;
+        wxStringTokenizer tkz( line, wxT("\t") );
+        while ( tkz.HasMoreTokens() ){
+            token = tkz.GetNextToken(); // last one is number
+    }
+    std::cout << token.char_str() <<  std::endl;
+    ivalue = wxAtoi(token);
+    cursor.push_back(ivalue); // last value is the samplig point
+
+    // Standard CPP way of doing it //
+    
+    /* 
+    std::ifstream fp(filepath.mb_str());
+    std::string line;
+    
+    while (getline(fp, line)){
+        std::istringstream tokenizer(line);
+        std::string token;
+    }
+        
+    getline(tokenizer, token, '\t');
+        std::istringstream int_iss(token);
+        int i;
+        int_iss >> i;
+        std::cout << i << std::endl;
+        cursor.push_back(i);
+    }
+
+    */
+    
+
+    // update Cursor Dialog from cursor vector 
+    //WriteCursor(wxTEXT1P, cursor1PIsTime, cursor[1]);
+    //WriteCursor(wxTEXT2P, cursor2PIsTime, cursor[2]);
+    //WriteCursor(wxTEXT1B, cursor1BIsTime, cursor[3]);
+    //WriteCursor(wxTEXT2B, cursor2BIsTime, cursor[4]);
+    //WriteCursor(wxTEXT1D, cursor1DIsTime, cursor[5]);
+    //WriteCursor(wxTEXT2D, cursor2DIsTime, cursor[6]);
+    //WriteCursor(wxTEXT1L, cursor1LIsTime, cursor[7]);
+    //WriteCursor(wxTEXT2L, cursor2LIsTime, cursor[8]);
+    file.Close();
+
+    return true;
+
+}
+
+void wxStfCursorsDlg::OnLoadCursorConf( wxCommandEvent& event ) {
+    event.Skip();
+    wxString crsFilter = wxT("Cursor conf (*.crs)|*crs");
+
+    wxFileDialog LoadCursorDialog (this, wxT("Load Cursor configuration"), 
+        wxT(""), wxT(""), crsFilter, wxFD_OPEN | wxFD_PREVIEW);
+    
+    if (LoadCursorDialog.ShowModal() == wxID_OK ){
+        wxString mypath = LoadCursorDialog.GetPath();
+        LoadCursorConf( mypath );
+        }
+}
+
+bool wxStfCursorsDlg::SaveCursorConf(const wxString& filepath ){
+    
+    wxFile file;
+    if (!file.Open( filepath, wxFile::write )){
+        wxGetApp().ErrorMsg(wxT("Could not save config cursor file"));
+        return false;
+    }
+
+    // Read cursor configuration from active document!
+    if (actDoc == NULL){
+        throw std::runtime_error("No active document found");
+        return false;
+    }
+    
+    wxString CursorConf = wxT("Measure.Cursor\t") + wxString::Format(wxT("%d"),(int)actDoc->GetMeasCursor()) + wxT("\n") ; 
+    CursorConf += wxT("Peak.BeginCursor\t") + wxString::Format(wxT("%d"), (int)actDoc->GetPeakBeg()) + wxT("\n") ; 
+    CursorConf += wxT("Peak.EndCursor\t") + wxString::Format(wxT("%d"),(int)actDoc->GetPeakEnd()) + wxT("\n") ; 
+    CursorConf += wxT("Base.BeginCursor\t") + wxString::Format(wxT("%d"),(int)actDoc->GetBaseBeg()) + wxT("\n") ; 
+    CursorConf += wxT("Base.EndCursor\t") + wxString::Format(wxT("%d"),(int)actDoc->GetBaseEnd()) + wxT("\n") ; 
+    CursorConf += wxT("Decay.BeginCursor\t") + wxString::Format(wxT("%d"),(int)actDoc->GetFitBeg()) + wxT("\n") ; 
+    CursorConf += wxT("Decay.EndCursor\t") + wxString::Format(wxT("%d"),(int)actDoc->GetFitEnd()) + wxT("\n") ; 
+    CursorConf += wxT("Latency.BeginCursor\t") + wxString::Format(wxT("%d"), (int)actDoc->GetLatencyBeg()) + wxT("\n") ;
+    CursorConf += wxT("Latency.EndCursor\t") + wxString::Format(wxT("%d"), (int)actDoc->GetLatencyEnd()) + wxT("\n") ;
+
+    file.Write(CursorConf);
+    file.Close();
+    return true;
+
+}
+
+void wxStfCursorsDlg::OnSaveCursorConf( wxCommandEvent& event ) {
+    event.Skip();
+    wxString crsFilter = wxT("Cursor conf (*.crs)|*crs");
+
+    wxFileDialog SaveCursorDialog (this, wxT("Save Cursor configuration"), 
+        wxT(""), wxT(""), crsFilter, wxFD_SAVE | wxFD_PREVIEW);
+    
+    if (SaveCursorDialog.ShowModal() == wxID_OK ){
+        wxString mypath = SaveCursorDialog.GetPath();
+        SaveCursorConf( mypath ); 
+    }
+}
+
 int wxStfCursorsDlg::ReadCursor(wxWindowID textId, bool isTime) const {
     // always returns in units of sampling points,
     // conversion is necessary if it's in units of time:
@@ -731,6 +869,28 @@ int wxStfCursorsDlg::ReadCursor(wxWindowID textId, bool isTime) const {
         strEdit.ToLong ( &cursor );
     }
     return (int)cursor;
+
+}
+
+void wxStfCursorsDlg::WriteCursor(wxWindowID textId, bool isTime, long value) const {
+
+    wxString myvalue;
+
+    wxTextCtrl *pText = (wxTextCtrl*)FindWindow(textId);
+    if (pText == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::SetCursor()"));
+        return;
+    }
+
+    if (isTime){
+        stf::round( value/actDoc->GetXScale() );
+        myvalue = wxString::Format(wxT("%f"), value);
+    }
+    else {
+        myvalue = wxString::Format(wxT("%i"), value);
+    }
+
+    pText->SetValue(myvalue);
 
 }
 

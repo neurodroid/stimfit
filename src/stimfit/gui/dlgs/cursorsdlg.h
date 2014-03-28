@@ -27,6 +27,9 @@
 
 #include "./../../stf.h"
 #include <wx/bookctrl.h>
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
 class wxStfDoc;
 
@@ -50,6 +53,7 @@ private:
                            std::size_t c2 );
 
     int ReadCursor(wxWindowID textId, bool isTime) const;
+    void WriteCursor(wxWindowID textID, bool isTime, long cursor) const;
     int ReadDeltaT(wxWindowID textId) const;
     void UpdateUnits(wxWindowID comboId, bool& setTime, wxWindowID textID);
     bool cursorMIsTime,
@@ -98,6 +102,10 @@ private:
     void OnRadioAll( wxCommandEvent& event );
     void OnRadioMean( wxCommandEvent& event );
     void OnPeakcalcexec( wxCommandEvent& event );
+    void OnLoadCursorConf( wxCommandEvent& event );
+    void OnSaveCursorConf( wxCommandEvent& event );
+    bool LoadCursorConf( const wxString& filepath );
+    bool SaveCursorConf( const wxString& filepath );
     void OnBasetoslope( wxCommandEvent& event );
     void OnRTSlider( wxScrollEvent& event );
     
