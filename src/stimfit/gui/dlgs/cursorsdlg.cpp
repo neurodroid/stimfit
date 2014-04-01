@@ -729,69 +729,168 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
         wxGetApp().ErrorMsg(wxT("Could not load config cursor file"));
         return false;
     }
-    int nSize = file.GetLineCount();
-    std::vector<long unsigned int> cursor(nSize);
+    std::vector<unsigned long int> cursor;
 
     /* start reading the first line of the file */
     wxString line = file.GetFirstLine();
-    long unsigned int ivalue;
+    unsigned long int ivalue;
 
     wxString token;
-    wxStringTokenizer tkz( line, wxT("\t") );
-    while ( tkz.HasMoreTokens() ){
-        if (! tkz.GetNextToken().ToULong(&ivalue) );
-            break; // token is not a number
-        std::cout << ivalue << std::endl;
-        cursor.push_back(ivalue);
+    wxStringTokenizer tkz( line,  wxT("\t\n") );
+    while (tkz.HasMoreTokens() ){
+        token = tkz.GetNextToken();
     }
+    token.ToULong(&ivalue); //only the last token is valid
+    cursor.push_back(ivalue);
 
     /* continue reading the file */
     while( !file.Eof() ) {
         line =  file.GetNextLine() ;
-        wxStringTokenizer tkz( line, wxT("\t") );
+        wxStringTokenizer tkz( line, wxT("\t\n") );
         while ( tkz.HasMoreTokens() ){
             token = tkz.GetNextToken(); // last one is number
         }
-    }
-    std::cout << token.char_str() <<  std::endl;
-    ivalue = wxAtoi(token);
-    cursor.push_back(ivalue); // last value is the samplig point
-
-    // Standard CPP way of doing it //
-    
-    /* 
-    std::ifstream fp(filepath.mb_str());
-    std::string line;
-    
-    while (getline(fp, line)){
-        std::istringstream tokenizer(line);
-        std::string token;
-    }
-        
-    getline(tokenizer, token, '\t');
-        std::istringstream int_iss(token);
-        int i;
-        int_iss >> i;
-        std::cout << i << std::endl;
-        cursor.push_back(i);
+        token.ToULong(&ivalue);
+        cursor.push_back(ivalue); // last value is the samplig point
     }
 
-    */
-    
+    // when loading the configuration we'll write directly in the active document
+    // The Stimfit registry will be only overwriten if we press "Apply"
+    if (actDoc == NULL) {
+        wxGetApp().ErrorMsg(wxT("No active document found"));
+        return false;
+    }
 
-    // update Cursor Dialog from cursor vector 
-    //WriteCursor(wxTEXT1P, cursor1PIsTime, cursor[1]);
-    //WriteCursor(wxTEXT2P, cursor2PIsTime, cursor[2]);
-    //WriteCursor(wxTEXT1B, cursor1BIsTime, cursor[3]);
-    //WriteCursor(wxTEXT2B, cursor2BIsTime, cursor[4]);
-    //WriteCursor(wxTEXT1D, cursor1DIsTime, cursor[5]);
-    //WriteCursor(wxTEXT2D, cursor2DIsTime, cursor[6]);
-    //WriteCursor(wxTEXT1L, cursor1LIsTime, cursor[7]);
-    //WriteCursor(wxTEXT2L, cursor2LIsTime, cursor[8]);
+    wxString CursorValue;
+    // **** update controls in Measure tab  ****
+    wxTextCtrl *pMeasureCursor = (wxTextCtrl*)FindWindow(wxTEXTM);
+    if (pMeasureCursor == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::LoadCursorConf()"));
+        return false;
+    }
+    if (cursorMIsTime) {
+        float fvalue =  cursor[0]*actDoc->GetXScale() ;
+        CursorValue = wxString::Format( wxT("%f"), fvalue );    
+    }
+    else
+        CursorValue = wxString::Format( wxT("%i"), cursor[0] );
+
+    pMeasureCursor->SetValue( CursorValue );
+    actDoc->SetMeasCursor( GetCursorM() );
+
+    // **** update controls in Peak tab ****
+    wxTextCtrl *pPeak1Cursor = (wxTextCtrl*)FindWindow(wxTEXT1P);
+    wxTextCtrl *pPeak2Cursor = (wxTextCtrl*)FindWindow(wxTEXT2P);
+    if (pPeak1Cursor == NULL || pPeak2Cursor == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::LoadCursorConf()"));
+        return false;
+    }
+    if (cursor1PIsTime) {
+        float fvalue =  cursor[1]*actDoc->GetXScale() ;
+        CursorValue = wxString::Format( wxT("%f"), fvalue );    
+    }
+    else
+        CursorValue = wxString::Format( wxT("%i"), cursor[1] );
+
+    pPeak1Cursor->SetValue( CursorValue );
+    actDoc->SetPeakBeg( GetCursor1P() );
+
+    if (cursor2PIsTime) {
+        float fvalue =  cursor[2]*actDoc->GetXScale() ;
+        CursorValue = wxString::Format( wxT("%f"), fvalue );    
+    }
+    else
+        CursorValue = wxString::Format( wxT("%i"), cursor[2] );
+
+    pPeak2Cursor->SetValue( CursorValue );
+    actDoc->SetPeakEnd( GetCursor2P() );
+
+    // **** update controls in Base tab ****
+    wxTextCtrl *pBase1Cursor = (wxTextCtrl*)FindWindow(wxTEXT1B);
+    wxTextCtrl *pBase2Cursor = (wxTextCtrl*)FindWindow(wxTEXT2B);
+    if (pBase1Cursor == NULL || pBase2Cursor == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::LoadCursorConf()"));
+        return false;
+    }
+    if (cursor1BIsTime) {
+        float fvalue =  cursor[3]*actDoc->GetXScale() ;
+        CursorValue = wxString::Format( wxT("%f"), fvalue );    
+    }
+    else
+        CursorValue = wxString::Format( wxT("%i"), cursor[3] );
+
+    pBase1Cursor->SetValue( CursorValue );
+    actDoc->SetBaseBeg( GetCursor1B() );
+
+    if (cursor2BIsTime) {
+        float fvalue =  cursor[4]*actDoc->GetXScale() ;
+        CursorValue = wxString::Format( wxT("%f"), fvalue );    
+    }
+    else
+        CursorValue = wxString::Format( wxT("%i"), cursor[4] );
+
+    pBase2Cursor->SetValue( CursorValue );
+    actDoc->SetBaseEnd( GetCursor2B() );
+
+
+    // **** update controls in Decay tab ****
+    wxTextCtrl *pFit1Cursor = (wxTextCtrl*)FindWindow(wxTEXT1D);
+    wxTextCtrl *pFit2Cursor = (wxTextCtrl*)FindWindow(wxTEXT2D);
+    if (pBase1Cursor == NULL || pBase2Cursor == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::LoadCursorConf()"));
+        return false;
+    }
+    if (cursor1DIsTime) {
+        float fvalue =  cursor[5]*actDoc->GetXScale() ;
+        CursorValue = wxString::Format( wxT("%f"), fvalue );    
+    }
+    else
+        CursorValue = wxString::Format( wxT("%i"), cursor[5] );
+
+    pFit1Cursor->SetValue( CursorValue );
+    actDoc->SetFitBeg( GetCursor1D() );
+
+    if (cursor2DIsTime) {
+        float fvalue =  cursor[6]*actDoc->GetXScale() ;
+        CursorValue = wxString::Format( wxT("%f"), fvalue );    
+    }
+    else
+        CursorValue = wxString::Format( wxT("%i"), cursor[6] );
+
+    pFit2Cursor->SetValue( CursorValue );
+    actDoc->SetFitEnd( GetCursor2D() );
+
+
+    // **** update controls in Latency tab ****
+    wxTextCtrl *pLatency1Cursor = (wxTextCtrl*)FindWindow(wxTEXT1L);
+    wxTextCtrl *pLatency2Cursor = (wxTextCtrl*)FindWindow(wxTEXT2L);
+    if (pLatency1Cursor == NULL || pLatency2Cursor == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::LoadCursorConf()"));
+        return false;
+    }
+    if (cursor1LIsTime) {
+        float fvalue =  cursor[7]*actDoc->GetXScale() ;
+        CursorValue = wxString::Format( wxT("%f"), fvalue );    
+    }
+    else
+        CursorValue = wxString::Format( wxT("%i"), cursor[7] );
+
+    pLatency1Cursor->SetValue( CursorValue );
+    actDoc->SetLatencyBeg( GetCursor1L() );
+
+    if (cursor2LIsTime) {
+        float fvalue =  cursor[8]*actDoc->GetXScale() ;
+        CursorValue = wxString::Format( wxT("%f"), fvalue );    
+    }
+    else
+        CursorValue = wxString::Format( wxT("%i"), cursor[8] );
+
+    pLatency2Cursor->SetValue( CursorValue );
+    actDoc->SetLatencyEnd( GetCursor2L() );
+
     file.Close();
 
     return true;
-
 }
 
 void wxStfCursorsDlg::OnLoadCursorConf( wxCommandEvent& event ) {
