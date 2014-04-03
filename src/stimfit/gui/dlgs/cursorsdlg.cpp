@@ -906,39 +906,50 @@ void wxStfCursorsDlg::OnLoadCursorConf( wxCommandEvent& event ) {
         }
 }
 
-bool wxStfCursorsDlg::SaveCursorConf(const wxString& filepath ){
+bool wxStfCursorsDlg::SaveCursorConf(const wxString& mypath ){
     
-    wxFile file;
-    if (!file.Open( filepath, wxFile::write )){
-        wxGetApp().ErrorMsg(wxT("Could not save config cursor file"));
-        return false;
-    }
-
     // Read cursor configuration from active document!
     if (actDoc == NULL){
         throw std::runtime_error("No active document found");
         return false;
     }
     
-    wxString CursorConf = wxT("Measure.Cursor\t") + wxString::Format(wxT("%d"),(int)actDoc->GetMeasCursor()) + wxT("\n") ; 
-    CursorConf += wxT("Peak.BeginCursor\t") + wxString::Format(wxT("%d"), (int)actDoc->GetPeakBeg()) + wxT("\n") ; 
-    CursorConf += wxT("Peak.EndCursor\t") + wxString::Format(wxT("%d"),(int)actDoc->GetPeakEnd()) + wxT("\n") ; 
-    CursorConf += wxT("Base.BeginCursor\t") + wxString::Format(wxT("%d"),(int)actDoc->GetBaseBeg()) + wxT("\n") ; 
-    CursorConf += wxT("Base.EndCursor\t") + wxString::Format(wxT("%d"),(int)actDoc->GetBaseEnd()) + wxT("\n") ; 
-    CursorConf += wxT("Decay.BeginCursor\t") + wxString::Format(wxT("%d"),(int)actDoc->GetFitBeg()) + wxT("\n") ; 
-    CursorConf += wxT("Decay.EndCursor\t") + wxString::Format(wxT("%d"),(int)actDoc->GetFitEnd()) + wxT("\n") ; 
-    CursorConf += wxT("Latency.BeginCursor\t") + wxString::Format(wxT("%d"), (int)actDoc->GetLatencyBeg()) + wxT("\n") ;
-    CursorConf += wxT("Latency.EndCursor\t") + wxString::Format(wxT("%d"), (int)actDoc->GetLatencyEnd()) + wxT("\n") ;
+    wxDateTime now = wxDateTime::Now();
 
-    file.Write(CursorConf);
-    file.Close();
+    wxFileConfig* csr_config = new wxFileConfig(wxT(""), wxT(""), mypath );
+    
+    csr_config->SetPath( wxT("__HEADER__") );
+    csr_config->Write( wxT("Date"), now.Format( wxT("%Y/%m/%d"), wxDateTime::CET) );
+    csr_config->Write( wxT("Time"), now.Format( wxT("%H:%M:%S"), wxDateTime::CET) );
+
+    csr_config->SetPath( wxT("../__MEASURE__") );
+    csr_config->Write( wxT("Cursor"), (int)actDoc->GetMeasCursor() );
+
+    csr_config->SetPath( wxT("../__PEAK__") );
+    csr_config->Write( wxT("FirstCursor"), (int)actDoc->GetPeakBeg() );
+    csr_config->Write( wxT("SecondCursor"),(int)actDoc->GetPeakEnd() );
+
+    csr_config->SetPath( wxT("../__BASE__") );
+    csr_config->Write( wxT("FirstCursor"), (int)actDoc->GetBaseBeg() );
+    csr_config->Write( wxT("SecondCursor"),(int)actDoc->GetBaseEnd() );
+
+    csr_config->SetPath( wxT("../__DECAY__") );
+    csr_config->Write( wxT("FirstCursor"), (int)actDoc->GetFitBeg() );
+    csr_config->Write( wxT("SecondCursor"),(int)actDoc->GetFitEnd() );
+
+    csr_config->SetPath( wxT("../__LATENCY__") );
+    csr_config->Write( wxT("FirstCursor"), (int)actDoc->GetLatencyBeg() );
+    csr_config->Write( wxT("SecondCursor"),(int)actDoc->GetLatencyEnd() );
+
+    csr_config->Flush(); // write all changes
+    
     return true;
 
 }
 
 void wxStfCursorsDlg::OnSaveCursorConf( wxCommandEvent& event ) {
     event.Skip();
-    wxString crsFilter = wxT("Cursor conf (*.crs)|*crs");
+    wxString crsFilter = wxT("Cursor conf (*.csr)|*csr");
 
     wxFileDialog SaveCursorDialog (this, wxT("Save Cursor configuration"), 
         wxT(""), wxT(""), crsFilter, wxFD_SAVE | wxFD_PREVIEW);
