@@ -742,7 +742,7 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
 
     wxString CursorValue;
     long start_csr, end_csr;
-    // *** update controls in Measure tab **** 
+    // *** update controls in __MEASURE__ tab **** 
     csr_config->Read( wxT("__MEASURE__/Cursor"), &start_csr ); // read from file
 
     wxTextCtrl *pMeasureCursor = (wxTextCtrl*)FindWindow(wxTEXTM);
@@ -760,9 +760,10 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
     pMeasureCursor->SetValue( CursorValue );
     actDoc->SetMeasCursor( GetCursorM() );
 
-    // **** update controls in Peak tab ****
+    // **** update controls in __PEAK__ tab ****
     csr_config->Read( wxT("__PEAK__/FirstCursor"), &start_csr ); // read from file
     csr_config->Read( wxT("__PEAK__/SecondCursor"), &end_csr ); // read from file
+
     wxTextCtrl *pPeak1Cursor = (wxTextCtrl*)FindWindow(wxTEXT1P);
     wxTextCtrl *pPeak2Cursor = (wxTextCtrl*)FindWindow(wxTEXT2P);
     if (pPeak1Cursor == NULL || pPeak2Cursor == NULL) {
@@ -788,6 +789,42 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
 
     pPeak2Cursor->SetValue( CursorValue );
     actDoc->SetPeakEnd( GetCursor2P() );
+    
+    int npoints; 
+    csr_config->Read( wxT("__PEAK__/NumberOfPoints"), &npoints ); // read from file
+    SetPeakPoints( npoints); 
+    actDoc->SetPM( npoints );
+
+    int direction;
+    csr_config->Read( wxT("__PEAK__/Direction"), &direction ); // read from file
+    stf::direction mydirection;
+    switch (direction) {
+        case 0: mydirection = stf::up; break;
+        case 1: mydirection = stf::down; break;
+        case 2: mydirection = stf::both; break;
+        default: mydirection = stf::undefined_direction;
+    }
+    SetDirection( mydirection ); 
+    actDoc->SetDirection ( mydirection );
+
+    bool confbase;
+    csr_config->Read( wxT("__PEAK__/FromBase"), &confbase ); // read from file
+    SetFromBase( confbase ); 
+    actDoc->SetFromBase( confbase );
+
+    int rt_factor;
+    csr_config->Read( wxT("__PEAK__/RTFactor"), &rt_factor ); // read from file
+    SetRTFactor( rt_factor );
+    actDoc->SetRTFactor( rt_factor );
+
+    double slope;
+    wxString wxSlope; 
+    csr_config->Read( wxT("__PEAK__/Slope"), &wxSlope); // read from file
+    wxSlope.ToDouble(&slope);
+    SetSlope( slope );
+    actDoc->SetSlopeForThreshold( slope );
+    
+    
     
 
     // **** update controls in Base tab ****
@@ -917,7 +954,14 @@ bool wxStfCursorsDlg::SaveCursorConf(const wxString& mypath ){
 
     csr_config->SetPath( wxT("../__PEAK__") );
     csr_config->Write( wxT("FirstCursor"), (int)actDoc->GetPeakBeg() );
-    csr_config->Write( wxT("SecondCursor"),(int)actDoc->GetPeakEnd() );
+    csr_config->Write( wxT("SecondCursor"), (int)actDoc->GetPeakEnd() );
+    csr_config->Write( wxT("NumberOfPoints"), (int)actDoc->GetPM() );
+    csr_config->Write( wxT("Direction"), (int)actDoc->GetDirection() );
+    csr_config->Write( wxT("FromBase"), (int)actDoc->GetFromBase() );
+    csr_config->Write( wxT("RTFactor"), (int)actDoc->GetRTFactor() );
+    wxString mySlope; 
+    mySlope << actDoc->GetSlopeForThreshold();
+    csr_config->Write( wxT("Slope"), mySlope );
 
     csr_config->SetPath( wxT("../__BASE__") );
     csr_config->Write( wxT("FirstCursor"), (int)actDoc->GetBaseBeg() );
@@ -1119,8 +1163,7 @@ void wxStfCursorsDlg::SetDeltaT (int DeltaT) {
 
 #endif // WITH_PSLOPE
 
-void wxStfCursorsDlg::SetPeakPoints(int peakPoints)
-{
+void wxStfCursorsDlg::SetPeakPoints(int peakPoints) {
     wxRadioButton* pRadioButtonAll = (wxRadioButton*)FindWindow(wxRADIOALL);
     wxRadioButton* pRadioButtonMean = (wxRadioButton*)FindWindow(wxRADIOMEAN);
     wxTextCtrl* pTextPM = (wxTextCtrl*)FindWindow(wxTEXTPM);
@@ -1128,23 +1171,24 @@ void wxStfCursorsDlg::SetPeakPoints(int peakPoints)
         wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::SetPeakPoints()"));
         return;
     }
-    if (peakPoints == -1) {
-        pRadioButtonAll->SetValue(true);
-        pRadioButtonMean->SetValue(false);
-        pTextPM->Enable(false);
-        return;
-    }
+
     if (peakPoints==0 || peakPoints<-1) {
         throw std::runtime_error("peak points out of range in wxStfCursorsDlg::SetPeakPoints()");
     }
-    wxString entry;
-    entry << peakPoints;
-    pRadioButtonAll->SetValue(false);
-    pRadioButtonMean->SetValue(true);
-    pTextPM->Enable();
-    pTextPM->SetValue( entry );
+    else if (peakPoints == -1) {
+        pRadioButtonAll->SetValue(true);
+        pRadioButtonMean->SetValue(false);
+        pTextPM->Enable(false);
+    }
+    else {
+        wxString entry;
+        entry << peakPoints;
+        pRadioButtonAll->SetValue(false);
+        pRadioButtonMean->SetValue(true);
+        pTextPM->Enable(true);
+        pTextPM->SetValue( entry );
+    }
 }
-
 
 stf::direction wxStfCursorsDlg::GetDirection() const {
     wxRadioBox* pDirection = (wxRadioBox*)FindWindow(wxDIRECTION);
@@ -1158,6 +1202,8 @@ stf::direction wxStfCursorsDlg::GetDirection() const {
     case 2: return stf::both;
     default: return stf::undefined_direction;
     }
+
+
 }
 
 void wxStfCursorsDlg::SetDirection(stf::direction direction) {
@@ -1962,6 +2008,8 @@ void wxStfCursorsDlg::UpdateCursors() {
         SetFromBase( actDoc->GetFromBase() );
         // Update rise time factor
         SetRTFactor( actDoc->GetRTFactor() );
+        // Update threshold slope
+        SetSlope( actDoc->GetSlopeForThreshold() );
         break;
 
     case stf::base_cursor: // Base
@@ -2048,7 +2096,7 @@ void wxStfCursorsDlg::UpdateCursors() {
         pText2->SetValue( strNewValue2 );
     }
     
-    SetSlope( actDoc->GetSlopeForThreshold() );
+    //SetSlope( actDoc->GetSlopeForThreshold() );
     
     wxString slopeUnits;
     slopeUnits += stf::std2wx( actDoc->at(actDoc->GetCurChIndex()).GetYUnits() );
