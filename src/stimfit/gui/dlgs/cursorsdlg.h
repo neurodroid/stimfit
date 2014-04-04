@@ -355,10 +355,15 @@ public:
      */
     bool GetBaseToSlope() const;
 
-    //! Indicates whether an additional vertical ruler should be drawn through the baseline.
+    //! Indicates whether an additional vertical ruler is drawn through the measurement cursor.
     /*! \return true if an additional ruler should be drawn.
      */
     bool GetRuler() const;
+
+    //! Sets whether an additional vertical ruler should be drawn through the measurement cursor.
+    /*! \param value true if an additional ruler should be drawn, false otherwise.
+     */
+    void SetRuler(bool value);
 
     //! Sets the currently active document.
     /*! \param actDoc_ A pointer to the currently active document.

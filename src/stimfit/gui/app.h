@@ -335,7 +335,7 @@ public:
 
 
     //! Retrieves a pointer to a function for least-squares minimisation.
-    /*! \return A vector containing the available functions.
+    /*! \0eturn A vector containing the available functions.
      */
     stf::storedFunc* GetFuncLibPtr(std::size_t at) { return &funcLib.at(at); }
 

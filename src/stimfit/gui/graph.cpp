@@ -430,6 +430,9 @@ void wxStfGraph::PlotGimmicks(wxDC& DC) {
     // crosshair through threshold:
     DrawCrosshair(DC, peakPen, peakPrintPen, crosshairSize/2.0, Doc()->GetThrT(), Doc()->GetThreshold());
 
+    // creates vertical ruler through measurement peak if needed
+    if ( Doc()->GetMeasRuler() )
+        DrawVLine(&DC, Doc()->GetMeasCursor(), measPen, measPrintPen);
     //creates red vertical and horizontal dashed lines through the peak
     DrawVLine(&DC,Doc()->GetMaxT(), peakPen, peakPrintPen);
     DrawHLine(&DC,Doc()->GetPeak(), peakPen, peakPrintPen);
@@ -606,7 +609,8 @@ void wxStfGraph::DrawCrosshair( wxDC& DC, const wxPen& pen, const wxPen& printPe
         if (wxGetApp().GetCursorsDialog()!=NULL &&
             wxGetApp().GetCursorsDialog()->IsShown())
         {
-            if (wxGetApp().GetCursorsDialog()->GetRuler())
+            //if (wxGetApp().GetCursorsDialog()->GetRuler())
+            if ( Doc()->GetMeasRuler() )
             {
                 DrawVLine(&DC,xch, pen, printPen);
             }

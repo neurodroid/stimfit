@@ -423,6 +423,8 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
          case stf::measure_cursor: 
              actDoc->SetMeasCursor(CursorsDialog->GetCursorM());// * GetDocument()->GetSR()));
              wxWriteProfileInt(wxT("Settings"), wxT("MeasureCursor"), CursorsDialog->GetCursorM() );
+             actDoc->SetMeasRuler( CursorsDialog->GetRuler() );
+             wxWriteProfileInt(wxT("Settings"), wxT("ShowRuler"), CursorsDialog->GetRuler() );
              break;
          
              //Get limits for peak calculation from the dialog box:

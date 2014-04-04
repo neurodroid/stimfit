@@ -219,7 +219,7 @@ wxNotebookPage* wxStfCursorsDlg::CreateMeasurePage() {
     pageSizer->Add( CreateCursorInput( nbPage, wxTEXTM, -1, wxCOMBOUM,
             -1, 1, 10 ), 0, wxALIGN_CENTER | wxALL, 2 );
     wxCheckBox* pMeasCursor=new wxCheckBox( nbPage, wxMEASCURSOR,
-            wxT("Vertical ruler through cursor"), wxDefaultPosition,
+            wxT("Show vertical ruler through cursor"), wxDefaultPosition,
             wxDefaultSize, 0 );
     pageSizer->Add( pMeasCursor, 0, wxALIGN_CENTER | wxALL, 2);
 
@@ -1993,6 +1993,8 @@ void wxStfCursorsDlg::UpdateCursors() {
         iNewValue1=(int)actDoc->GetMeasCursor();
         cursor1isTime=cursorMIsTime;
         pText1=(wxTextCtrl*)FindWindow(wxTEXTM);
+        // update Show ruler
+        SetRuler( actDoc->GetMeasRuler() );
         break;
 
     case stf::peak_cursor: // Peak
@@ -2160,3 +2162,11 @@ bool wxStfCursorsDlg::GetRuler() const {
     return pMeasCursor->IsChecked();
 }
 
+void wxStfCursorsDlg::SetRuler(bool value) {
+    wxCheckBox* pMeasCursor = (wxCheckBox*)FindWindow( wxMEASCURSOR );
+    if (pMeasCursor == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::SetRuler()"));
+        return;
+    }
+        pMeasCursor->SetValue(value);
+}

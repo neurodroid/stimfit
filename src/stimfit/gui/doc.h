@@ -89,6 +89,7 @@ private:
     bool viewPSlope;
 #endif
     std::size_t measCursor;
+    bool ShowRuler; // show a ruler throught the measurement cursor?
     double latencyStartCursor,
         latencyEndCursor,
         latency,	 //time from latency cursor to beginning of event
@@ -714,6 +715,16 @@ public:
     /*! \param value The index of the measurement cursor within the current section.
      */
     void SetMeasCursor(int value);
+
+    //! Sets whether the measurement cursor (crosshair) should be visible.
+    /*! \param value is true if the ruler will be visible, false otherwirse..
+     */
+    void SetMeasRuler(bool value) { ShowRuler = value; }
+    
+    //! Retrieves whether the measurement cursor (crosshair) is visible.
+    /*! \param true if the ruler is visible, false otherwirse..
+     */
+    bool GetMeasRuler() const { return ShowRuler;}
 
     //! Sets the method to compute the baseline.
     /*! \param value The new method to calculate the baseline.

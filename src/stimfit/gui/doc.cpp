@@ -108,6 +108,7 @@ wxStfDoc::wxStfDoc() :
     viewPSlope(true),
 #endif
     measCursor(0),
+    ShowRuler(false), 
     latencyStartCursor(0.0),
     latencyEndCursor(0.0),
     latency(0.0),
@@ -421,6 +422,7 @@ void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const w
 int wxStfDoc::InitCursors() {
     //Get values from .Stimfit and ensure proper settings
     SetMeasCursor(wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("MeasureCursor"), 1));
+    SetMeasRuler( wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("ShowRuler"), 0) );
     SetBaseBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("BaseBegin"), 1));
     SetBaseEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("BaseEnd"), 20));
     int ibase_method = wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("BaselineMethod"),0);
