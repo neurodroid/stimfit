@@ -760,6 +760,11 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
     pMeasureCursor->SetValue( CursorValue );
     actDoc->SetMeasCursor( GetCursorM() );
 
+    int show_ruler;
+    csr_config->Read( wxT("__MEASURE__/ShowRuler"), &show_ruler ); // read from file
+    SetRuler( show_ruler ); 
+    actDoc->SetMeasRuler( show_ruler );
+
     // **** update controls in __PEAK__ tab ****
     csr_config->Read( wxT("__PEAK__/FirstCursor"), &start_csr ); // read from file
     csr_config->Read( wxT("__PEAK__/SecondCursor"), &end_csr ); // read from file
@@ -951,6 +956,7 @@ bool wxStfCursorsDlg::SaveCursorConf(const wxString& mypath ){
 
     csr_config->SetPath( wxT("../__MEASURE__") );
     csr_config->Write( wxT("Cursor"), (int)actDoc->GetMeasCursor() );
+    csr_config->Write( wxT("ShowRuler"), (int)actDoc->GetMeasRuler() );
 
     csr_config->SetPath( wxT("../__PEAK__") );
     csr_config->Write( wxT("FirstCursor"), (int)actDoc->GetPeakBeg() );
