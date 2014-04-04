@@ -951,8 +951,9 @@ bool wxStfCursorsDlg::SaveCursorConf(const wxString& mypath ){
     wxFileConfig* csr_config = new wxFileConfig(wxT(""), wxT(""), mypath );
     
     csr_config->SetPath( wxT("__CSR_HEADER__") );
-    csr_config->Write( wxT("Date"), now.Format( wxT("%Y/%m/%d"), wxDateTime::CET) );
-    csr_config->Write( wxT("Time"), now.Format( wxT("%H:%M:%S"), wxDateTime::CET) );
+    //csr_config->Write( wxT("Date"), now.Format( wxT("%Y/%M/%d"), wxDateTime::CET) );
+    csr_config->Write( wxT("Date"), now.Format( wxT("%A, %d %B, %Y"), wxDateTime::CET) );
+    csr_config->Write( wxT("Time"), now.Format( wxT("%H:%M:%S %p"), wxDateTime::CET) );
 
     csr_config->SetPath( wxT("../__MEASURE__") );
     csr_config->Write( wxT("Cursor"), (int)actDoc->GetMeasCursor() );
