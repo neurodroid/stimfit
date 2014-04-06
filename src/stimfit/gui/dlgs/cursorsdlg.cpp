@@ -795,6 +795,11 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
 
     pPeak2Cursor->SetValue( CursorValue );
     actDoc->SetPeakEnd( GetCursor2P() );
+
+    bool is_end;
+    csr_config->Read( wxT("__PEAK__/PeakAtEnd"), &is_end ); // read from file
+    SetPeakAtEnd( is_end ); 
+    actDoc->SetPeakAtEnd( is_end );
     
     int npoints; 
     csr_config->Read( wxT("__PEAK__/NumberOfPoints"), &npoints ); // read from file
@@ -996,6 +1001,7 @@ bool wxStfCursorsDlg::SaveCursorConf(const wxString& mypath ){
     csr_config->SetPath( wxT("../__PEAK__") );
     csr_config->Write( wxT("FirstCursor"), (int)actDoc->GetPeakBeg() );
     csr_config->Write( wxT("SecondCursor"), (int)actDoc->GetPeakEnd() );
+    csr_config->Write( wxT("PeakAtEnd"), (int)actDoc->GetPeakAtEnd() );
     csr_config->Write( wxT("NumberOfPoints"), (int)actDoc->GetPM() );
     csr_config->Write( wxT("Direction"), (int)actDoc->GetDirection() );
     csr_config->Write( wxT("FromBase"), (int)actDoc->GetFromBase() );
