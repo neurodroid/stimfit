@@ -724,8 +724,10 @@ void wxStfCursorsDlg::OnPeakcalcexec( wxCommandEvent& event )
 
 bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
     
-    // The Stimfit registry will be only overwriten if we press "Apply"
-    // when loading the configuration we'll write directly in the active document
+    // When loading the configuration we'll write directly in the active document
+    // loading a cursor file will also update measurements, cursors, the graph and result table.
+    // It will write the registry as well, since it is similar to pressing "Apply".
+    // see wxStfApp::OnPeakcalcexeMsg() for details.
     if (actDoc == NULL) {
         wxGetApp().ErrorMsg(wxT("No active document found"));
         return false;
@@ -961,6 +963,11 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
     actDoc->SetLatencyEndMode( latency_mode );
 
     delete csr_config;
+    // we use wxStfApp::OnPeakcalcexec() here basically to update the results table.
+    // Because wxStfApp::OnPeakcalcexec() only updates the properties of wxStfDoc in the current tab 
+    // of the cursor dialog, we need to call the methods from actDoc() to update the cursors which
+    // are not currently visible, but stored in the csr file.
+    wxGetApp().OnPeakcalcexecMsg(actDoc);
     return true;
 }
 
