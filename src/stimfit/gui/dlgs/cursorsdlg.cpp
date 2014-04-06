@@ -975,11 +975,11 @@ void wxStfCursorsDlg::OnLoadCursorConf( wxCommandEvent& event ) {
     event.Skip();
     wxString csrFilter = wxT("Cursor conf (*.csr)|*csr");
 
-    wxFileDialog LoadCursorDialog (this, wxT("Load Cursor configuration"), 
+    wxFileDialog*  LoadCursorDialog = new wxFileDialog(this, wxT("Load Cursor configuration"), 
         wxT(""), wxT(""), csrFilter, wxFD_OPEN | wxFD_PREVIEW);
     
-    if (LoadCursorDialog.ShowModal() == wxID_OK ){
-        wxString mypath = LoadCursorDialog.GetPath();
+    if (LoadCursorDialog->ShowModal() == wxID_OK ){
+        wxString mypath = LoadCursorDialog->GetPath();
         LoadCursorConf( mypath );
         }
 }
@@ -1042,11 +1042,11 @@ void wxStfCursorsDlg::OnSaveCursorConf( wxCommandEvent& event ) {
     event.Skip();
     wxString crsFilter = wxT("Cursor conf (*.csr)|*csr");
 
-    wxFileDialog SaveCursorDialog (this, wxT("Save Cursor configuration"), 
+    wxFileDialog*  SaveCursorDialog = new wxFileDialog(this, wxT("Save Cursor configuration"), 
         wxT(""), wxT(""), crsFilter, wxFD_SAVE | wxFD_PREVIEW);
     
-    if (SaveCursorDialog.ShowModal() == wxID_OK ){
-        wxString mypath = SaveCursorDialog.GetPath();
+    if (SaveCursorDialog->ShowModal() == wxID_OK ){
+        wxString mypath = SaveCursorDialog->GetPath();
         SaveCursorConf( mypath ); 
     }
 }
