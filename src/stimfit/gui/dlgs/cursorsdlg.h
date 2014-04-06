@@ -109,6 +109,7 @@ private:
     bool SaveCursorConf( const wxString& filepath );
     void OnBasetoslope( wxCommandEvent& event );
     void OnRTSlider( wxScrollEvent& event );
+    void OnPeakAtEnd( wxCommandEvent& event );
     
     //! Only called when a modal dialog is closed with the OK button.
     /*! \return true if all dialog entries could be read successfully
@@ -211,6 +212,11 @@ public:
      */
 
     int GetRTFactor() const;
+
+    //! Sets whether the right peak cursor should be at the end of the trace.
+    /*! \param true if the peak cursor is at the end of the trace, false otherwise.
+     */
+    void SetPeakAtEnd( bool is_end);
 
     //! Sets the number of points used for the binned average during peak detection.
     /*! \param peakPoints The number of points used for the binned average during peak detection.

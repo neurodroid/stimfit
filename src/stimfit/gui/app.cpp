@@ -499,6 +499,7 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
         }
 
 
+        wxWriteProfileInt(wxT("Settings"), wxT("PeakAtEnd"), CursorsDialog->GetPeakAtEnd() );
         //Update edit peak limits in the peak calculation dialog box
         if (CursorsDialog->GetPeakAtEnd())
         {	//If 'Upper limit at end of trace' is selected in the dialog box
@@ -512,6 +513,9 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
                 return;
             }
             actDoc->SetPeakAtEnd(true);
+        }
+        else {
+            actDoc->SetPeakAtEnd(false);
         }
         // Get number of peak points from the dialog box...
         actDoc->SetPM(CursorsDialog->GetPeakPoints());

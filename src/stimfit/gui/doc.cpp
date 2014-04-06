@@ -441,6 +441,7 @@ int wxStfDoc::InitCursors() {
     default: SetDirection(stf::undefined_direction);
     }
     SetFromBase( true ); // reset at every program start   wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FromBase"),1) );
+    SetPeakAtEnd( wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("PeakAtEnd"), 0));
     SetFitBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FitBegin"), 10));
     SetFitEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FitEnd"), 100));
     SetLatencyWindowMode(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyWindowMode"),1));

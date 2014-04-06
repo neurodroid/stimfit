@@ -115,6 +115,7 @@ EVT_RADIOBUTTON( wxRADIO_LAT_MAXSLOPE2,  wxStfCursorsDlg::OnRadioLatNonManualEnd
 EVT_RADIOBUTTON( wxRADIO_LAT_EVENT2,     wxStfCursorsDlg::OnRadioLatNonManualEnd )
 
 EVT_COMMAND_SCROLL( wxRT_SLIDER,        wxStfCursorsDlg::OnRTSlider )
+EVT_CHECKBOX (wxPEAKATEND, wxStfCursorsDlg::OnPeakAtEnd )
 #ifdef WITH_PSLOPE
 EVT_RADIOBUTTON( wxRADIO_PSManBeg, wxStfCursorsDlg::OnRadioPSManBeg )
 EVT_RADIOBUTTON( wxRADIO_PSEventBeg, wxStfCursorsDlg::OnRadioPSEventBeg )
@@ -1351,6 +1352,35 @@ bool wxStfCursorsDlg::GetPeakAtEnd() const
     return pPeakAtEnd->IsChecked();
 }
 
+void wxStfCursorsDlg::OnPeakAtEnd( wxCommandEvent& event) {
+    event.Skip();
+    wxCheckBox* pPeakAtEnd = (wxCheckBox*)FindWindow(wxPEAKATEND);
+    wxTextCtrl* pCursor2P = (wxTextCtrl*)FindWindow(wxTEXT2P);
+    
+    if (pPeakAtEnd == NULL || pCursor2P == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::OnPeakAtEnd()"));
+        return;
+    }
+    
+    // second peak cursor is inactive if the peak at the end checkbox is checked
+    pCursor2P->Enable(! pPeakAtEnd->IsChecked() ); 
+
+}
+    
+void wxStfCursorsDlg::SetPeakAtEnd( bool is_end ) {	
+    wxCheckBox* pPeakAtEnd = (wxCheckBox*)FindWindow(wxPEAKATEND);
+    wxTextCtrl* pCursor2P = (wxTextCtrl*)FindWindow(wxTEXT2P);
+
+    if (pPeakAtEnd == NULL || pCursor2P == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::SetPeakAtEnd()"));
+        return;
+    }
+        
+    pCursor2P->Enable( ! is_end );
+    pPeakAtEnd->SetValue( is_end );
+}
+
+
 bool wxStfCursorsDlg::GetStartFitAtPeak() const
 {   //Check if 'Upper limit at end of trace' is selected
     wxCheckBox* pStartFitAtPeak = (wxCheckBox*)FindWindow(wxSTARTFITATPEAK);
@@ -2047,6 +2077,8 @@ void wxStfCursorsDlg::UpdateCursors() {
         cursor2isTime=cursor2PIsTime;
         pText1=(wxTextCtrl*)FindWindow(wxTEXT1P);
         pText2=(wxTextCtrl*)FindWindow(wxTEXT2P);
+        // Update peak at the end
+        SetPeakAtEnd( actDoc->GetPeakAtEnd() ); 
         // Update the mean peak points and direction:
         SetPeakPoints( actDoc->GetPM() );
         SetDirection( actDoc->GetDirection() );
