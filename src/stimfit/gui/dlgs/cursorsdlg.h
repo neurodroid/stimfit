@@ -105,8 +105,6 @@ private:
     void OnPeakcalcexec( wxCommandEvent& event );
     void OnLoadCursorConf( wxCommandEvent& event );
     void OnSaveCursorConf( wxCommandEvent& event );
-    bool LoadCursorConf( const wxString& filepath );
-    bool SaveCursorConf( const wxString& filepath );
     void OnBasetoslope( wxCommandEvent& event );
     void OnRTSlider( wxScrollEvent& event );
     void OnPeakAtEnd( wxCommandEvent& event );
@@ -214,7 +212,7 @@ public:
     int GetRTFactor() const;
 
     //! Sets whether the right peak cursor should be at the end of the trace.
-    /*! \param true if the peak cursor is at the end of the trace, false otherwise.
+    /*! \param is_end true if the peak cursor is at the end of the trace, false otherwise.
      */
     void SetPeakAtEnd( bool is_end);
 
@@ -370,6 +368,16 @@ public:
     /*! \param value true if an additional ruler should be drawn, false otherwise.
      */
     void SetRuler(bool value);
+
+    //! Load a cursor configuration file (*csr) in the Cursor Settings menu.
+    /*! \param filepath The path where the csr file is located. 
+     */
+    bool LoadCursorConf( const wxString& filepath );
+
+    //! Save a cursor configuration file (*csr) from the Cursor Settings menu.
+    /*! \param filepath The path where the csr file will be saved
+     */
+    bool SaveCursorConf( const wxString& filepath );
 
     //! Sets the currently active document.
     /*! \param actDoc_ A pointer to the currently active document.
