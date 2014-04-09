@@ -539,6 +539,22 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
         wxsSlope << CursorsDialog->GetSlope();
         wxWriteProfileString(wxT("Settings"), wxT("Slope"), wxsSlope);
 
+        wxWriteProfileInt(wxT("Settings"), wxT("StartFitAtPeak"), CursorsDialog->GetStartFitAtPeak() );
+        //Update start fit at peak
+        if ( CursorsDialog->GetStartFitAtPeak() ) {
+            actDoc->SetFitBeg( actDoc->GetMaxT() );
+            actDoc->SetStartFitAtPeak(true);
+            try {
+                CursorsDialog->UpdateCursors();
+            }
+            catch (const std::runtime_error& e) {
+                ExceptMsg(wxString( e.what(), wxConvLocal ));
+                return;
+            }
+        }
+        else {
+            actDoc->SetStartFitAtPeak(false);
+        }
 
     }
 
@@ -552,19 +568,27 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
     catch (const std::out_of_range& e) {
         ExceptMsg(wxString( e.what(), wxConvLocal ));
     }
-
+    /*
     // Set fit start cursor to new peak if necessary.
+        //std::cout << CursorsDialog->GetPeakAtEnd() << std::endl;
+    //wxWriteProfileInt(wxT("Settings"), wxT("StartFitAtPeak"), CursorsDialog->GetStartFitAtPeak() );
     if (actDoc != NULL && CursorsDialog != NULL && CursorsDialog->GetStartFitAtPeak())
+    //if ( CursorsDialog->GetStartFitAtPeak() )
     {
-        actDoc->SetFitBeg(actDoc->GetMaxT());
-        try {
-            CursorsDialog->UpdateCursors();
-        }
-        catch (const std::runtime_error& e) {
-            ExceptMsg(wxString( e.what(), wxConvLocal ));
-            return;
-        }
+        //actDoc->SetFitBeg(actDoc->GetMaxT());
+        actDoc->SetStartFitAtPeak( true );
+        //try {
+        //    CursorsDialog->UpdateCursors();
+        //}
+        //catch (const std::runtime_error& e) {
+        //    ExceptMsg(wxString( e.what(), wxConvLocal ));
+        //    return;
+        //}
     }
+    else {
+        actDoc->SetStartFitAtPeak( true );
+    }
+    */
 
     // Updates strings in the result box
     if (actView != NULL) {

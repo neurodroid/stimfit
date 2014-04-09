@@ -1405,6 +1405,19 @@ bool wxStfCursorsDlg::GetStartFitAtPeak() const
     return pStartFitAtPeak->IsChecked();
 }
 
+void wxStfCursorsDlg::SetStartFitAtPeak(bool is_peak){
+    wxCheckBox* pStartFitAtPeak = (wxCheckBox*)FindWindow(wxSTARTFITATPEAK);
+    wxTextCtrl* pCursor1D = (wxTextCtrl*)FindWindow(wxTEXT1D);
+
+    if (pStartFitAtPeak == NULL || pCursor1D == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::GetStartFitAtPeak()"));
+        return;
+    }
+
+    pCursor1D->Enable( ! is_peak );
+    pStartFitAtPeak->SetValue( is_peak);
+}
+
 void wxStfCursorsDlg::OnStartFitAtPeak( wxCommandEvent& event) {
     event.Skip();
     wxCheckBox* pStartFitAtPeak = (wxCheckBox*)FindWindow(wxSTARTFITATPEAK);
@@ -2136,6 +2149,8 @@ void wxStfCursorsDlg::UpdateCursors() {
         cursor2isTime=cursor2DIsTime;
         pText1=(wxTextCtrl*)FindWindow(wxTEXT1D);
         pText2=(wxTextCtrl*)FindWindow(wxTEXT2D);
+        // Update left decay cursor to peak 
+        SetStartFitAtPeak( actDoc->GetStartFitAtPeak() );
         break;
 
     case stf::latency_cursor: // Latency

@@ -37,7 +37,7 @@ class StfDll wxStfDoc: public wxDocument, public Recording
     DECLARE_DYNAMIC_CLASS(wxStfDoc)
 #endif
 private:
-    bool peakAtEnd, initialized, progress;
+    bool peakAtEnd, startFitAtPeak, initialized, progress;
     Recording Average;
     int InitCursors();
     void PostInit();
@@ -179,6 +179,11 @@ public:
      */
     bool GetIsAverage() const { return !Average.get().empty(); }
 
+    //! Indicates whether the left decay cursor should always be at the peak of the trace.
+    /*! \return true if the left decay cursor should be at the end of the trace, false otherwise.
+     */
+    bool GetStartFitAtPeak() const { return startFitAtPeak; }
+
     //! Indicates whether the right peak cursor should always be at the end of a trace.
     /*! \return true if the right peak cursor should be at the end, false otherwise.
      */
@@ -196,6 +201,11 @@ public:
     /*! \param value determines whether the peak cursor should be at the end of a trace.
      */
     void SetPeakAtEnd(bool value) { peakAtEnd=value; }
+
+    //! Sets the left decay cursor to the peak of the trace.
+    /*! \param value determines whether the left decay cursor should be at the peak of the trace.
+     */
+    void SetStartFitAtPeak(bool value) { startFitAtPeak=value; }
 
     //! Retrieves the average trace(s).
     /*! \return The average trace as a Recording object.

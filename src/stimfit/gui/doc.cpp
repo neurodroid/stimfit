@@ -85,11 +85,11 @@ static const int baseline=100;
 // static const double rtfrac = 0.2; // now expressed in percentage, see RTFactor
 
 wxStfDoc::wxStfDoc() :
-    Recording(),peakAtEnd(false),initialized(false),progress(true), Average(0),
+    Recording(),peakAtEnd(false), startFitAtPeak(false), initialized(false),progress(true), Average(0),
     latencyStartMode(stf::riseMode),
     latencyEndMode(stf::footMode),
     latencyWindowMode(stf::defaultMode),
-    direction(stf::both),    
+    direction(stf::both), 
 #ifdef WITH_PSLOPE
     pslopeBegMode(stf::psBeg_manualMode),
     pslopeEndMode(stf::psEnd_manualMode),
@@ -444,6 +444,7 @@ int wxStfDoc::InitCursors() {
     SetPeakAtEnd( wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("PeakAtEnd"), 0));
     SetFitBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FitBegin"), 10));
     SetFitEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FitEnd"), 100));
+    SetStartFitAtPeak( wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("StartFitAtPeak"), 0));
     SetLatencyWindowMode(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyWindowMode"),1));
     SetLatencyBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyStartCursor"), 0));	/*CSH*/
     SetLatencyEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("LatencyEndCursor"), 2));	/*CSH*/
@@ -808,15 +809,17 @@ void wxStfDoc::WriteToReg() {
     wxString wxsSlope;
     wxsSlope << GetSlopeForThreshold();
     wxGetApp().wxWriteProfileString(wxT("Settings"),wxT("Slope"),wxsSlope);
-    if (wxGetApp().GetCursorsDialog() != NULL) {
-        wxGetApp().wxWriteProfileInt(
-                wxT("Settings"),wxT("StartFitAtPeak"),(int)wxGetApp().GetCursorsDialog()->GetStartFitAtPeak()
-        );
-    }
+    //if (wxGetApp().GetCursorsDialog() != NULL) {
+    //    wxGetApp().wxWriteProfileInt(
+    //            wxT("Settings"),wxT("StartFitAtPeak"),(int)wxGetApp().GetCursorsDialog()->GetStartFitAtPeak()
+    //    );
+    //}
     if (!outOfRange(GetFitBeg()))
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("FitBegin"), (int)GetFitBeg());
     if (!outOfRange(GetFitEnd()))
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("FitEnd"), (int)GetFitEnd());
+    wxGetApp().wxWriteProfileInt( wxT("Settings"),wxT("StartFitAtPeak"),(int)GetStartFitAtPeak() );
+    
 
     if (!outOfRange((size_t)GetLatencyBeg()))
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("LatencyStartCursor"), (int)GetLatencyBeg());
@@ -1506,7 +1509,8 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         }
 
         // Set fit start cursor to new peak if necessary:
-        if (wxGetApp().GetCursorsDialog() != NULL && wxGetApp().GetCursorsDialog()->GetStartFitAtPeak())
+        //if (wxGetApp().GetCursorsDialog() != NULL && wxGetApp().GetCursorsDialog()->GetStartFitAtPeak())
+        if ( startFitAtPeak )
             SetFitBeg(GetMaxT());
 
         Vector_double params;

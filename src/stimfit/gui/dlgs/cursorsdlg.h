@@ -237,6 +237,12 @@ public:
      */
     void SetDeltaT(int DeltaT);
 
+
+    //! Sets whether the left decay cursor should be at the peak of the trace.
+    /*! \param is_peak true if the decay cursor is at the peak of the trace, false otherwise.
+     */
+    void SetStartFitAtPeak( bool is_peak);
+
     //! Gets the direction of peak calculations.
     /*! \return The current direction of peak calculations.
      */
