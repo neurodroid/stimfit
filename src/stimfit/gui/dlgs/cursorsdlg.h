@@ -108,6 +108,7 @@ private:
     void OnBasetoslope( wxCommandEvent& event );
     void OnRTSlider( wxScrollEvent& event );
     void OnPeakAtEnd( wxCommandEvent& event );
+    void OnStartFitAtPeak( wxCommandEvent& event );
     
     //! Only called when a modal dialog is closed with the OK button.
     /*! \return true if all dialog entries could be read successfully

@@ -73,7 +73,7 @@ enum {
     wxSLOPEUNITS,
     wxREFERENCE,
     wxSTARTFITATPEAK,
-    wxID_STARTFITATPEAK,
+    //wxID_STARTFITATPEAK,
     wxRT_LABEL,
     wxRT_SLIDER,
     wxIDNOTEBOOK
@@ -116,6 +116,7 @@ EVT_RADIOBUTTON( wxRADIO_LAT_EVENT2,     wxStfCursorsDlg::OnRadioLatNonManualEnd
 
 EVT_COMMAND_SCROLL( wxRT_SLIDER,        wxStfCursorsDlg::OnRTSlider )
 EVT_CHECKBOX (wxPEAKATEND, wxStfCursorsDlg::OnPeakAtEnd )
+EVT_CHECKBOX (wxSTARTFITATPEAK, wxStfCursorsDlg::OnStartFitAtPeak )
 #ifdef WITH_PSLOPE
 EVT_RADIOBUTTON( wxRADIO_PSManBeg, wxStfCursorsDlg::OnRadioPSManBeg )
 EVT_RADIOBUTTON( wxRADIO_PSEventBeg, wxStfCursorsDlg::OnRadioPSEventBeg )
@@ -1395,7 +1396,7 @@ void wxStfCursorsDlg::SetPeakAtEnd( bool is_end ) {
 
 
 bool wxStfCursorsDlg::GetStartFitAtPeak() const
-{   //Check if 'Upper limit at end of trace' is selected
+{   //Check if 'Start fit at peak' is selected
     wxCheckBox* pStartFitAtPeak = (wxCheckBox*)FindWindow(wxSTARTFITATPEAK);
     if (pStartFitAtPeak == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::GetStartFitAtPeak()"));
@@ -1403,6 +1404,22 @@ bool wxStfCursorsDlg::GetStartFitAtPeak() const
     }
     return pStartFitAtPeak->IsChecked();
 }
+
+void wxStfCursorsDlg::OnStartFitAtPeak( wxCommandEvent& event) {
+    event.Skip();
+    wxCheckBox* pStartFitAtPeak = (wxCheckBox*)FindWindow(wxSTARTFITATPEAK);
+    wxTextCtrl* pCursor1D = (wxTextCtrl*)FindWindow(wxTEXT1D);
+    
+    if (pStartFitAtPeak == NULL || pCursor1D == NULL) {
+        wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::OnStartFitAtEnd()"));
+        return;
+    }
+    
+    // left decay cursor is inactive if the start fit at peak is checked
+    pCursor1D->Enable(! pStartFitAtPeak->IsChecked() ); 
+
+}
+
 
 void wxStfCursorsDlg::OnPageChanged(wxNotebookEvent& event) {
     event.Skip();
