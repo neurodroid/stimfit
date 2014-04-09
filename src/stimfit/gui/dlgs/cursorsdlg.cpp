@@ -907,6 +907,12 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
     pFit2Cursor->SetValue( CursorValue );
     actDoc->SetFitEnd( GetCursor2D() );
 
+    bool is_peak;
+    csr_config->Read(wxT("__DECAY__/StartFitAtPeak"), &is_peak);
+    SetStartFitAtPeak( is_peak); 
+    actDoc->SetStartFitAtPeak( is_peak );
+    
+
 
     // **** update controls in LATENCY tab ****
     csr_config->Read( wxT("__LATENCY__/FirstCursor"), &start_csr ); // read from file
@@ -1026,6 +1032,7 @@ bool wxStfCursorsDlg::SaveCursorConf(const wxString& mypath ){
     csr_config->SetPath( wxT("../__DECAY__") );
     csr_config->Write( wxT("FirstCursor"), (int)actDoc->GetFitBeg() );
     csr_config->Write( wxT("SecondCursor"),(int)actDoc->GetFitEnd() );
+    csr_config->Write( wxT("StartFitAtPeak"),(int)actDoc->GetStartFitAtPeak() );
 
     csr_config->SetPath( wxT("../__LATENCY__") );
     csr_config->Write( wxT("FirstCursor"), (int)actDoc->GetLatencyBeg() );
