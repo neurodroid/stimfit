@@ -110,6 +110,11 @@ private:
     void OnPeakAtEnd( wxCommandEvent& event );
     void OnStartFitAtPeak( wxCommandEvent& event );
     
+    //!  check the syntax of csr config files and return true if the syntax is correct.
+    /*! \param crs_file, a crs config file
+     */
+    bool IsCSRSyntax( wxFileConfig* crs_file );
+
     //! Only called when a modal dialog is closed with the OK button.
     /*! \return true if all dialog entries could be read successfully
      */

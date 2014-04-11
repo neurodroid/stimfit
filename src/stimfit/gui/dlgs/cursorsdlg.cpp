@@ -207,6 +207,31 @@ void wxStfCursorsDlg::EndModal(int retCode) {
     wxDialog::EndModal(retCode);
 }
 
+bool wxStfCursorsDlg::IsCSRSyntax( wxFileConfig* csr_file) {
+    
+    wxString msg = wxT("Syntax Error: ");
+
+    // Check groups
+    wxString CSR_Group[] = { wxT("__CSR_HEADER__"), wxT("__MEASURE__"), wxT("__PEAK__"),
+        wxT("__BASE__"), wxT("__DECAY__"), wxT("__LATENCY__") };
+    int nGroups = sizeof(CSR_Group)/sizeof(wxString);
+    for (int i=0; i< nGroups; i++) {
+        if (! csr_file->HasGroup(CSR_Group[i])) {
+            wxGetApp().ErrorMsg( msg + CSR_Group[i] + wxT(" not found !") );
+            return false;
+        }
+    }
+    // check entry in every group
+    
+    
+    // Other checkings... number of Groups
+    if (nGroups != csr_file->GetNumberOfGroups()) {
+        wxGetApp().ErrorMsg( wxT("Unexpected number of groups") );
+        return false;
+    }
+    return true;
+}
+
 bool wxStfCursorsDlg::OnOK() {
     //wxCommandEvent unusedEvent;
     //OnPeakcalcexec(unusedEvent);
@@ -736,11 +761,8 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
 
     wxFileConfig* csr_config = new wxFileConfig(wxT(""), wxT(""), filepath );
 
-    // minimal file type checking (header and 6 groups)
-    bool correct_group = csr_config->HasGroup( wxT("__CSR_HEADER__") );
-    bool correct_nGroups = csr_config->GetNumberOfGroups() == 6;
-    if ( !correct_group && !correct_nGroups ) {
-        wxGetApp().ErrorMsg( filepath + wxT("\n is a wrong csr file") );
+    // minimal syntax check
+    if ( !IsCSRSyntax( csr_config ) ) {
         return false;
     }
 
