@@ -294,6 +294,16 @@ AC_SUBST(MACSETFILE)
 fi
 
 # Checks for hdf5 libraries.
+AC_ARG_WITH([hdf5-prefix],
+AS_HELP_STRING([--with-hdf5-prefix=HDF5_PREFIX],[Provide full path to hdf5 prefix]),
+[
+    if test "$withval" != "yes" -a "$withval" != ""; then
+        HDF5_PREFIX=${withval}
+        LDFLAGS="${LDFLAGS} -L${HDF5_PREFIX}/lib"
+        CPPFLAGS="${CPPFLAGS} -I${HDF5_PREFIX}/include" 
+    fi
+])
+
 AC_CHECK_HEADER([hdf5.h], [], [AC_MSG_ERROR([Couldn't find hdf5 header])])
 AC_CHECK_LIB([hdf5],[H5Fopen],HAVE_HDF5="yes")
 if test "${HAVE_HDF5}" != "yes" ; then
