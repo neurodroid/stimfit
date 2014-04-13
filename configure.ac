@@ -294,7 +294,7 @@ AC_SUBST(MACSETFILE)
 fi
 
 # Checks for hdf5 libraries.
-AC_CHECK_HEADER([hdf5.h])
+AC_CHECK_HEADER([hdf5.h], [], [AC_MSG_ERROR([Couldn't find hdf5 header])])
 AC_CHECK_LIB([hdf5],[H5Fopen],HAVE_HDF5="yes")
 if test "${HAVE_HDF5}" != "yes" ; then
     AC_MSG_ERROR([Couldn't find hdf5 libraries.])
