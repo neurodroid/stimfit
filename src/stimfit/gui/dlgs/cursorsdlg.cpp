@@ -214,8 +214,9 @@ bool wxStfCursorsDlg::IsCSRSyntax( wxFileConfig* csr_file) {
     // Check groups
     wxString CSR_Group[] = { wxT("__CSR_HEADER__"), wxT("__MEASURE__"), wxT("__PEAK__"),
         wxT("__BASE__"), wxT("__DECAY__"), wxT("__LATENCY__") };
-    int nGroups = sizeof(CSR_Group)/sizeof(wxString);
-    for (int i=0; i< nGroups; i++) {
+    unsigned int nGroups = sizeof(CSR_Group)/sizeof(wxString);
+
+    for (std::vector<int>::size_type i=0; i<nGroups; i++) {
         if (! csr_file->HasGroup(CSR_Group[i])) {
             wxGetApp().ErrorMsg( msg + CSR_Group[i] + wxT(" not found !") );
             return false;
@@ -792,8 +793,8 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
     actDoc->SetMeasRuler( show_ruler );
 
     // **** update controls in __PEAK__ tab ****
-    csr_config->Read( wxT("__PEAK__/FirstCursor"), &start_csr ); // read from file
-    csr_config->Read( wxT("__PEAK__/SecondCursor"), &end_csr ); // read from file
+    csr_config->Read( wxT("__PEAK__/LeftCursor"), &start_csr ); // read from file
+    csr_config->Read( wxT("__PEAK__/RightCursor"), &end_csr ); // read from file
 
     wxTextCtrl *pPeak1Cursor = (wxTextCtrl*)FindWindow(wxTEXT1P);
     wxTextCtrl *pPeak2Cursor = (wxTextCtrl*)FindWindow(wxTEXT2P);
@@ -861,8 +862,8 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
     actDoc->SetSlopeForThreshold( slope );
 
     // **** update controls in __BASE__ tab ****
-    csr_config->Read( wxT("__BASE__/FirstCursor"), &start_csr ); // read from file
-    csr_config->Read( wxT("__BASE__/SecondCursor"), &end_csr ); // read from file
+    csr_config->Read( wxT("__BASE__/LeftCursor"), &start_csr ); // read from file
+    csr_config->Read( wxT("__BASE__/RightCursor"), &end_csr ); // read from file
     wxTextCtrl *pBase1Cursor = (wxTextCtrl*)FindWindow(wxTEXT1B);
     wxTextCtrl *pBase2Cursor = (wxTextCtrl*)FindWindow(wxTEXT2B);
     if (pBase1Cursor == NULL || pBase2Cursor == NULL) {
@@ -901,8 +902,8 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
     actDoc->SetBaselineMethod( mybase_method );
 
     // **** update controls in __DECAY__ tab ****
-    csr_config->Read( wxT("__DECAY__/FirstCursor"), &start_csr ); // read from file
-    csr_config->Read( wxT("__DECAY__/SecondCursor"), &end_csr ); // read from file
+    csr_config->Read( wxT("__DECAY__/LeftCursor"), &start_csr ); // read from file
+    csr_config->Read( wxT("__DECAY__/RightCursor"), &end_csr ); // read from file
     wxTextCtrl *pFit1Cursor = (wxTextCtrl*)FindWindow(wxTEXT1D);
     wxTextCtrl *pFit2Cursor = (wxTextCtrl*)FindWindow(wxTEXT2D);
     if (pBase1Cursor == NULL || pBase2Cursor == NULL) {
@@ -937,8 +938,8 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
 
 
     // **** update controls in LATENCY tab ****
-    csr_config->Read( wxT("__LATENCY__/FirstCursor"), &start_csr ); // read from file
-    csr_config->Read( wxT("__LATENCY__/SecondCursor"), &end_csr ); // read from file
+    csr_config->Read( wxT("__LATENCY__/LeftCursor"), &start_csr ); // read from file
+    csr_config->Read( wxT("__LATENCY__/RightCursor"), &end_csr ); // read from file
     wxTextCtrl *pLatency1Cursor = (wxTextCtrl*)FindWindow(wxTEXT1L);
     wxTextCtrl *pLatency2Cursor = (wxTextCtrl*)FindWindow(wxTEXT2L);
     if (pLatency1Cursor == NULL || pLatency2Cursor == NULL) {
@@ -966,7 +967,7 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
     actDoc->SetLatencyEnd( GetCursor2L() );
 
     int mode;
-    csr_config->Read( wxT("__LATENCY__/FirstMode"), &mode ); // read from file
+    csr_config->Read( wxT("__LATENCY__/LeftMode"), &mode ); // read from file
     stf::latency_mode latency_mode;
     switch( mode ) {
         case 0: latency_mode =stf::manualMode; break;
@@ -979,7 +980,7 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
     SetLatencyStartMode( latency_mode );
     actDoc->SetLatencyStartMode( latency_mode );
 
-    csr_config->Read( wxT("__LATENCY__/SecondMode"), &mode ); // read from file
+    csr_config->Read( wxT("__LATENCY__/RightMode"), &mode ); // read from file
     switch( mode ) {
         case 0: latency_mode =stf::manualMode; break;
         case 1: latency_mode = stf::peakMode; break;
@@ -1035,8 +1036,8 @@ bool wxStfCursorsDlg::SaveCursorConf(const wxString& mypath ){
     csr_config->Write( wxT("ShowRuler"), (int)actDoc->GetMeasRuler() );
 
     csr_config->SetPath( wxT("../__PEAK__") );
-    csr_config->Write( wxT("FirstCursor"), (int)actDoc->GetPeakBeg() );
-    csr_config->Write( wxT("SecondCursor"), (int)actDoc->GetPeakEnd() );
+    csr_config->Write( wxT("LeftCursor"), (int)actDoc->GetPeakBeg() );
+    csr_config->Write( wxT("Rightcursor"), (int)actDoc->GetPeakEnd() );
     csr_config->Write( wxT("PeakAtEnd"), (int)actDoc->GetPeakAtEnd() );
     csr_config->Write( wxT("NumberOfPoints"), (int)actDoc->GetPM() );
     csr_config->Write( wxT("Direction"), (int)actDoc->GetDirection() );
@@ -1047,20 +1048,20 @@ bool wxStfCursorsDlg::SaveCursorConf(const wxString& mypath ){
     csr_config->Write( wxT("Slope"), mySlope );
 
     csr_config->SetPath( wxT("../__BASE__") );
-    csr_config->Write( wxT("FirstCursor"), (int)actDoc->GetBaseBeg() );
-    csr_config->Write( wxT("SecondCursor"),(int)actDoc->GetBaseEnd() );
+    csr_config->Write( wxT("LeftCursor"), (int)actDoc->GetBaseBeg() );
+    csr_config->Write( wxT("RightCursor"),(int)actDoc->GetBaseEnd() );
     csr_config->Write( wxT("BaselineMethod"), (int)actDoc->GetBaselineMethod() );
 
     csr_config->SetPath( wxT("../__DECAY__") );
-    csr_config->Write( wxT("FirstCursor"), (int)actDoc->GetFitBeg() );
-    csr_config->Write( wxT("SecondCursor"),(int)actDoc->GetFitEnd() );
+    csr_config->Write( wxT("LeftCursor"), (int)actDoc->GetFitBeg() );
+    csr_config->Write( wxT("RightCursor"),(int)actDoc->GetFitEnd() );
     csr_config->Write( wxT("StartFitAtPeak"),(int)actDoc->GetStartFitAtPeak() );
 
     csr_config->SetPath( wxT("../__LATENCY__") );
-    csr_config->Write( wxT("FirstCursor"), (int)actDoc->GetLatencyBeg() );
-    csr_config->Write( wxT("SecondCursor"),(int)actDoc->GetLatencyEnd() );
-    csr_config->Write( wxT("FirstMode"),(int)actDoc->GetLatencyStartMode() );
-    csr_config->Write( wxT("SecondMode"),(int)actDoc->GetLatencyEndMode() );
+    csr_config->Write( wxT("LeftCursor"), (int)actDoc->GetLatencyBeg() );
+    csr_config->Write( wxT("RightCursor"),(int)actDoc->GetLatencyEnd() );
+    csr_config->Write( wxT("LeftMode"),(int)actDoc->GetLatencyStartMode() );
+    csr_config->Write( wxT("RightMode"),(int)actDoc->GetLatencyEndMode() );
 
     csr_config->Flush(); // write all changes
     
