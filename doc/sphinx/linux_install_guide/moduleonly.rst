@@ -16,7 +16,7 @@ Then, you need the `Stimfit <http://www.stimfit.org>`_ source code:
 ::
 
     $ cd $HOME
-    $ git clone https://code.google.com/p/stimfit stfio
+    $ git clone https://github.com/neurodroid/stimfit.git
 
 This will download the code to a directory called *stfio*.
 
