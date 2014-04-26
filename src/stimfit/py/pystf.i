@@ -62,27 +62,6 @@ PyObject* get_trace(int trace=-1, int channel=-1);
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
-%feature("autodoc", 0) detect_events;
-%feature("kwargs") detect_events;
-%feature("docstring", "
-      
-Arguments:
-") detect_events;
-PyObject* detect_events(double* invec, int size, const std::string& mode="criterion",
-                        bool norm=true, double lowpass=0.5, double highpass=0.0001);
-//--------------------------------------------------------------------
-
-//--------------------------------------------------------------------
-%feature("autodoc", 0) peak_detection;
-%feature("kwargs") peak_detection;
-%feature("docstring", "
-      
-Arguments:
-") peak_detection;
-PyObject* peak_detection(double* invec, int size, double threshold, int min_distance);
-//--------------------------------------------------------------------
-
-//--------------------------------------------------------------------
 %feature("autodoc", 0) new_window;
 %feature("docstring", "Creates a new window showing a
 1D NumPy array.
@@ -1631,6 +1610,17 @@ def template_matching(template, mode="criterion", norm=True, lowpass=0.5, highpa
     import sys
     sys.stderr.write("template_matching is deprecated. Use detect_events instead.\n")
     return detect_events(template, mode, norm, lowpass, highpass)
+
+def detect_events(template, mode="criterion", norm=True, lowpass=0.5, highpass=0.0001):
+    if not check_doc():
+        return None
+    import stfio
+    return stfio.detect_events(get_trace(), template, get_sampling_interval(),
+                               mode, norm, lowpass, highpass)
+
+def peak_detection(data, threshold, min_distance):
+    import stfio
+    return stfio.peak_detection(data, threshold, distance)
 
 class _cursor_pair(object):
     def __init__(self, get_start, set_start, get_end, set_end, get_value=None, index=None):

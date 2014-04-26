@@ -22,17 +22,6 @@ common electrophysiology file formats"
 
 #include "pystfio.h"
 
-#define array_data(a)          (((PyArrayObject *)a)->data)
-
-#if PY_MAJOR_VERSION >= 3
-int
-#else
-void
-#endif
-wrap_array() {
-    import_array();
-}
-    
 static int myErr = 0; // flag to save error state
 %}
 %include "../stimfit/py/numpy.i"
@@ -42,6 +31,17 @@ static int myErr = 0; // flag to save error state
     import_array();
     PyDateTime_IMPORT;
 %}
+
+
+%define %apply_numpy_typemaps(TYPE)
+
+%apply (TYPE* IN_ARRAY1, int DIM1) {(TYPE* invec, int size)};
+%apply (TYPE* IN_ARRAY1, int DIM1) {(TYPE* data, int size_data)};
+%apply (TYPE* IN_ARRAY1, int DIM1) {(TYPE* templ, int size_templ)};
+
+%enddef    /* %apply_numpy_typemaps() macro */
+
+%apply_numpy_typemaps(double)
 
 class Recording {
  public:
@@ -381,6 +381,27 @@ A recording object.") _read;
 bool _read(const std::string& filename, const std::string& ftype, bool verbose, Recording& Data);
 //--------------------------------------------------------------------
 
+//--------------------------------------------------------------------
+%feature("autodoc", 0) detect_events;
+%feature("kwargs") detect_events;
+%feature("docstring", "
+      
+Arguments:
+") detect_events;
+PyObject* detect_events(double* data, int size_data, double* templ, int size_templ, double dt,
+                        const std::string& mode="criterion",
+                        bool norm=true, double lowpass=0.5, double highpass=0.0001);
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) peak_detection;
+%feature("kwargs") peak_detection;
+%feature("docstring", "
+
+Arguments:
+") peak_detection;
+PyObject* peak_detection(double* invec, int size, double threshold, int min_distance);
+//--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
 %pythoncode {
