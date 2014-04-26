@@ -68,7 +68,7 @@
 
 #include "./childframe.h"
 #include "./parentframe.h"
-#include "./../math/levmar/levmar.h"
+#include "./../../libstfnum/levmar/levmar.h"
 
 #include "./../res/16-em-down.xpm"
 #include "./../res/16-em-open.xpm"

@@ -22,9 +22,9 @@
 #define _FUNCLIB_H
 
 // common definitions needed here:
-#include "./../stf.h"
+#include "./stfnum.h"
 
-namespace stf {
+namespace stfnum {
 
 /*! \addtogroup stfgen
  *  @{
@@ -43,7 +43,7 @@ namespace stf {
      */
     double fexp(double x, const Vector_double& p);
     
-    //! Computes the Jacobian of stf::fexp().
+    //! Computes the Jacobian of stfnum::fexp().
     /*! \f{eqnarray*}
      *   j_{2i}(x) &=& \frac{\partial f(x)}{\partial p_{2i}} = \mathrm{e}^{\left(\frac{-x}{p_{2i+1}}\right)} \\
      *   j_{2i+1}(x) &=& \frac{\partial f(x)}{\partial p_{2i+1}} = \frac{p_{2i}}{p_{2i+1}^2} x \mathrm{e}^{\left( \frac{-x}{p_{2i+1}}\right)} \\
@@ -63,7 +63,7 @@ namespace stf {
      */
     Vector_double fexp_jac(double x, const Vector_double& p);
 
-    //! Initialises parameters for fitting stf::fexp() to \e data.
+    //! Initialises parameters for fitting stfnum::fexp() to \e data.
     /*! This needs to be made more robust.
      *  \param data The waveform of the data for the fit.
      *  \param base Baseline of \e data.
@@ -75,7 +75,7 @@ namespace stf {
      */
     void fexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit );
 
-    //! Yet another initialiser for fitting stf::fexp() to \e data.
+    //! Yet another initialiser for fitting stfnum::fexp() to \e data.
     /*! In this case, one of the amplitude terms will have another sign than the others, making
      *  it more suitable for fitting PSCs or PSPs. However, this often fails to work in practice.
      *  \param data The waveform of the data for the fit.
@@ -107,7 +107,7 @@ namespace stf {
     double fexpde(double x, const Vector_double& p);
 
 #if 0
-    //! Computes the Jacobian of stf::fexpde().
+    //! Computes the Jacobian of stfnum::fexpde().
     /*! \f{eqnarray*}
      *      j_0(x)&=& \frac{df(x)}{dp_0} = 
      *      \begin{cases}
@@ -145,7 +145,7 @@ namespace stf {
     Vector_double fexpde_jac(double x, const Vector_double& p);
 #endif
     
-    //! Initialises parameters for fitting stf::fexpde() to \e data.
+    //! Initialises parameters for fitting stfnum::fexpde() to \e data.
     /*! \param data The waveform of the data for the fit.
      *  \param base Baseline of \e data.
      *  \param peak Peak value of \e data.
@@ -176,7 +176,7 @@ namespace stf {
     double fexpbde(double x, const Vector_double& p);
 
 #if 0
-    //! Computes the Jacobian of stf::fexpde().
+    //! Computes the Jacobian of stfnum::fexpde().
     /*! \f{eqnarray*}
      *      j_0(x)&=& \frac{df(x)}{dp_0} = 
      *      \begin{cases}
@@ -214,7 +214,7 @@ namespace stf {
     Vector_double fexpbde_jac(double x, const Vector_double& p);
 #endif
     
-    //! Initialises parameters for fitting stf::fexpde() to \e data.
+    //! Initialises parameters for fitting stfnum::fexpde() to \e data.
     /*! \param data The waveform of the data for the fit.
      *  \param base Baseline of \e data.
      *  \param peak Peak value of \e data.
@@ -235,7 +235,7 @@ namespace stf {
      */
     double falpha(double x, const Vector_double& p);
     
-    //! Computes the Jacobian of stf::falpha().
+    //! Computes the Jacobian of stfnum::falpha().
     /*! \f{eqnarray*}
      *   j_0(x) &=& \frac{\partial f(x)}{\partial p_0} = \frac{x \mathrm{e}^{\left(1 - \frac{x}{p_1} \right)}}{p_1} \\
      *   j_1(x) &=& \frac{\partial f(x)}{\partial p_1} = \frac{x \mathrm{e}^{\left(1 - \frac{x}{p_1} \right)}}{p_1} 
@@ -296,7 +296,7 @@ namespace stf {
      */
     double fgnabiexp(double x, const Vector_double& p);
 
-    //! Computes the Jacobian of stf::fgnabiexp().
+    //! Computes the Jacobian of stfnum::fgnabiexp().
     /*! \f{eqnarray*}
      *   j_0(x) &=& \frac{\partial f(x)}{\partial p_0} = 
         \left(1 -\mathrm{e}^{\frac{-x}{p_1}}\right) \mathrm{e}^{\frac{-x}{p_2}} \\
@@ -324,7 +324,7 @@ namespace stf {
      */
     Vector_double fgnabiexp_jac(double x, const Vector_double& p);
 
-    //! Initialises parameters for fitting stf::falpha() to \e data.
+    //! Initialises parameters for fitting stfnum::falpha() to \e data.
     /*! \param data The waveform of the data for the fit.
      *  \param base Baseline of \e data.
      *  \param peak Peak value of \e data.
@@ -334,7 +334,7 @@ namespace stf {
      */
     void falpha_init(const Vector_double& data, double base, double peak, double RTLoHI, double HalfWidth, double dt, Vector_double& pInit );
 
-    //! Initialises parameters for fitting stf::fgauss() to \e data.
+    //! Initialises parameters for fitting stfnum::fgauss() to \e data.
     /*! \param data The waveform of the data for the fit.
      *  \param base Baseline of \e data.
      *  \param peak Peak value of \e data.
@@ -344,7 +344,7 @@ namespace stf {
      */
     void fgauss_init(const Vector_double& data, double base, double peak, double RTLoHI, double HalfWidth, double dt, Vector_double& pInit );
 
-    //! Initialises parameters for fitting stf::falpha() to \e data.
+    //! Initialises parameters for fitting stfnum::falpha() to \e data.
     /*! \param data The waveform of the data for the fit.
      *  \param base Baseline of \e data.
      *  \param peak Peak value of \e data.
@@ -354,7 +354,7 @@ namespace stf {
      */
     void fHH_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit );
 
-    //! Initialises parameters for fitting stf::falpha() to \e data.
+    //! Initialises parameters for fitting stfnum::falpha() to \e data.
     /*! \param data The waveform of the data for the fit.
      *  \param base Baseline of \e data.
      *  \param peak Peak value of \e data.
@@ -422,19 +422,19 @@ namespace stf {
      */
     double yunscaleoffset(double param, double xscale, double xoff, double yscale, double yoff);
 
-    //! Creates stf::parInfo structs for n-exponential functions.
+    //! Creates stfnum::parInfo structs for n-exponential functions.
     /*! \param n_exp Number of exponential terms.
      *  \return A vector of parameter information structs.
      */
-    std::vector<stf::parInfo> getParInfoExp(int n_exp);
+    std::vector<stfnum::parInfo> getParInfoExp(int n_exp);
     
     //! Calculates a weighted time constant.
-    /*! \param p Parameters of an exponential function (see stf::fexp()).
+    /*! \param p Parameters of an exponential function (see stfnum::fexp()).
      *  \param parsInfo Information about the parameters \e p.
      *  \param chisqr The sum of squared errors, as returned from a least-squares fit.
      *  \return A formatted table of results.
      */
-    stf::Table outputWTau(const Vector_double& p, const std::vector<stf::parInfo>& parsInfo, double chisqr);
+    stfnum::Table outputWTau(const Vector_double& p, const std::vector<stfnum::parInfo>& parsInfo, double chisqr);
     
     //! Finds the index of \e data where \e value is encountered for the first time.
     /*! \param data The waveform to be searched.
@@ -446,7 +446,7 @@ namespace stf {
     //! Returns the library of functions for non-linear regression.
     /*! \return A vector of non-linear regression functions.
      */
-    std::vector<stf::storedFunc> GetFuncLib();
+    std::vector<stfnum::storedFunc> GetFuncLib();
 
     /*@}*/
 

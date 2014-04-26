@@ -67,6 +67,7 @@
 #endif
 
 #include "../libstfio/stfio.h"
+#include "../libstfnum/stfnum.h"
 
 //! The stimfit namespace.
 /*! All essential core functions and classes are in this namespace. 
@@ -111,97 +112,6 @@ wxString noPath(const wxString& fName);
 //! Get a Recording, do something with it, return the new Recording.
 typedef boost::function<Recording(const Recording&,const Vector_double&,std::map<std::string, double>&)> PluginFunc;
 
-//! A table used for printing information.
-/*! Members will throw std::out_of_range if out of range.
- */
-class StfDll Table {
-public:
-    //! Constructor
-    /*! \param nRows Initial number of rows.
-     *  \param nCols Initial number of columns.
-     */
-    Table(std::size_t nRows,std::size_t nCols);
-
-    //! Constructor
-    /*! \param map A map used to initialise the table.
-     */
-    Table(const std::map< std::string, double >& map);
-
-    //! Range-checked access. Returns a copy. Throws std::out_of_range if out of range.
-    /*! \param row 0-based row index.
-     *  \param col 0-based column index.
-     *  \return A copy of the double at row, col.
-     */
-    double at(std::size_t row,std::size_t col) const;
-
-    //! Range-checked access. Returns a reference. Throws std::out_of_range if out of range.
-    /*! \param row 0-based row index.
-     *  \param col 0-based column index.
-     *  \return A reference to the double at row, col.
-     */
-    double& at(std::size_t row,std::size_t col);
-    
-    //! Check whether a cell is empty.
-    /*! \param row 0-based row index.
-     *  \param col 0-based column index.
-     *  \return true if empty, false otherwise.
-     */
-    bool IsEmpty(std::size_t row,std::size_t col) const;
-
-    //! Empties or un-empties a cell.
-    /*! \param row 0-based row index.
-     *  \param col 0-based column index.
-     *  \param value true if the cell should be empty, false otherwise.
-     */
-    void SetEmpty(std::size_t row,std::size_t col,bool value=true);
-
-    //! Sets the label of a row.
-    /*! \param row 0-based row index.
-     *  \param label Row label string.
-     */
-    void SetRowLabel(std::size_t row,const std::string& label);
-
-    //! Sets the label of a column.
-    /*! \param col 0-based column index.
-     *  \param label Column label string.
-     */
-    void SetColLabel(std::size_t col,const std::string& label);
-
-    //! Retrieves the label of a row.
-    /*! \param row 0-based row index.
-     *  \return Row label string.
-     */
-    const std::string& GetRowLabel(std::size_t row) const;
-
-    //! Retrieves the label of a column.
-    /*! \param col 0-based column index.
-     *  \return Column label string.
-     */
-    const std::string& GetColLabel(std::size_t col) const;
-
-    //! Retrieves the number of rows.
-    /*! \return The number of rows.
-     */
-    std::size_t nRows() const { return rowLabels.size(); }
-
-    //! Retrieves the number of columns.
-    /*! \return The number of columns.
-     */
-    std::size_t nCols() const { return colLabels.size(); }
-    
-    //! Appends rows to the table.
-    /*! \param nRows The number of rows to be appended.
-     */
-    void AppendRows(std::size_t nRows);
-
-private:
-    // row major order:
-    std::vector< std::vector<double> > values;
-    std::vector< std::deque< bool > > empty;
-    std::vector< std::string > rowLabels;
-    std::vector< std::string > colLabels;
-};
- 
 //! Represents user input from dialogs that can be used in plugins.
 struct UserInput {
     std::vector<std::string> labels; /*!< Dialog entry labels. */
@@ -386,21 +296,19 @@ struct PyMarker {
     double y; /*!< y-coordinate in trace units (e.g. mV) */
 };
 
-struct storedFunc;
- 
 struct StfDll SectionAttributes {
     SectionAttributes();
     std::vector<stf::Event> eventList;
     std::vector<stf::PyMarker> pyMarkers;
     bool isFitted,isIntegrated;
-    stf::storedFunc *fitFunc;
+    stfnum::storedFunc *fitFunc;
     Vector_double bestFitP;
     Vector_double quad_p;
     std::size_t storeFitBeg;
     std::size_t storeFitEnd;
     std::size_t storeIntBeg;
     std::size_t storeIntEnd;
-    stf::Table bestFit;
+    stfnum::Table bestFit;
 };
 
 struct SectionPointer {
@@ -432,28 +340,12 @@ enum cursor_type {
 #endif
     undefined_cursor /*!< Undefined cursor. */
 };
-
- 
- 
-//! The direction of peak calculations
-enum direction {
-    up,                 /*!< Find positive-going peaks. */
-    down,               /*!< Find negative-going peaks. */
-    both,               /*!< Find negative- or positive-going peaks, whichever is larger. */
-    undefined_direction /*!< Undefined direction. */
-};
  
 //! Determines which channels to scale
 enum zoom_channels {
     zoomch1, /*!< Scaling applies to channel 1 only. */
     zoomch2, /*!< Scaling applies to channel 2 only. */
     zoomboth /*!< Scaling applies to both channels. */
-};
-
-//! Methods for Baseline computation 
-enum baseline_method {
-    mean_sd   = 0, /*!< Compute mean and s.d. for Baseline and Base SD. */ 
-    median_iqr = 1  /*!< Compute median and IQR for Baseline and Base SD. */ 
 };
 
 //! Latency cursor settings

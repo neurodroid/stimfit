@@ -834,12 +834,12 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
 
     int direction;
     csr_config->Read( wxT("__PEAK__/Direction"), &direction ); // read from file
-    stf::direction mydirection;
+    stfnum::direction mydirection;
     switch (direction) {
-        case 0: mydirection = stf::up; break;
-        case 1: mydirection = stf::down; break;
-        case 2: mydirection = stf::both; break;
-        default: mydirection = stf::undefined_direction;
+        case 0: mydirection = stfnum::up; break;
+        case 1: mydirection = stfnum::down; break;
+        case 2: mydirection = stfnum::both; break;
+        default: mydirection = stfnum::undefined_direction;
     }
     SetDirection( mydirection ); 
     actDoc->SetDirection ( mydirection );
@@ -892,11 +892,11 @@ bool wxStfCursorsDlg::LoadCursorConf(const wxString& filepath ){
 
     int base_method; 
     csr_config->Read( wxT("__BASE__/BaselineMethod"), &base_method ); // read from file
-    stf::baseline_method mybase_method;
+    stfnum::baseline_method mybase_method;
     switch( base_method ) {
-        case 0: mybase_method = stf::mean_sd; break;
-        case 1: mybase_method = stf::median_iqr; break;
-        default: mybase_method = stf::mean_sd;
+        case 0: mybase_method = stfnum::mean_sd; break;
+        case 1: mybase_method = stfnum::median_iqr; break;
+        default: mybase_method = stfnum::mean_sd;
     }
     SetBaselineMethod ( mybase_method );
     actDoc->SetBaselineMethod( mybase_method );
@@ -1278,37 +1278,37 @@ void wxStfCursorsDlg::SetPeakPoints(int peakPoints) {
     }
 }
 
-stf::direction wxStfCursorsDlg::GetDirection() const {
+stfnum::direction wxStfCursorsDlg::GetDirection() const {
     wxRadioBox* pDirection = (wxRadioBox*)FindWindow(wxDIRECTION);
     if (pDirection == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::GetDirection()"));
-        return stf::undefined_direction;
+        return stfnum::undefined_direction;
     }
     switch (pDirection->GetSelection()) {
-    case 0: return stf::up;
-    case 1: return stf::down;
-    case 2: return stf::both;
-    default: return stf::undefined_direction;
+    case 0: return stfnum::up;
+    case 1: return stfnum::down;
+    case 2: return stfnum::both;
+    default: return stfnum::undefined_direction;
     }
 
 
 }
 
-void wxStfCursorsDlg::SetDirection(stf::direction direction) {
+void wxStfCursorsDlg::SetDirection(stfnum::direction direction) {
     wxRadioBox* pDirection = (wxRadioBox*)FindWindow(wxDIRECTION);
     if (pDirection == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::GetDirection()"));
         return;
     }
     switch (direction) {
-    case stf::up:
+    case stfnum::up:
         pDirection->SetSelection(0);
         break;
-    case stf::down:
+    case stfnum::down:
         pDirection->SetSelection(1);
         break;
-    case stf::both:
-    case stf::undefined_direction:
+    case stfnum::both:
+    case stfnum::undefined_direction:
         pDirection->SetSelection(2);
         break;
     }
@@ -1355,21 +1355,21 @@ void wxStfCursorsDlg::SetFromBase(bool fromBase) {
     }
 }
 
-enum stf::baseline_method wxStfCursorsDlg::GetBaselineMethod() const {   
+enum stfnum::baseline_method wxStfCursorsDlg::GetBaselineMethod() const {   
     wxRadioBox* pBaselineMethod = (wxRadioBox*)FindWindow(wxRADIO_BASELINE_METHOD);
     if (pBaselineMethod == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::GetBaseSelection()"));
-        return stf::mean_sd; //default value mean and standard deviation
+        return stfnum::mean_sd; //default value mean and standard deviation
     }
     
     switch( pBaselineMethod->GetSelection() ) {
-        case 0: return stf::mean_sd;
-        case 1: return stf::median_iqr;
-        default: return stf::mean_sd;
+        case 0: return stfnum::mean_sd;
+        case 1: return stfnum::median_iqr;
+        default: return stfnum::mean_sd;
     }
 }
 
-void wxStfCursorsDlg::SetBaselineMethod(stf::baseline_method base_method) {
+void wxStfCursorsDlg::SetBaselineMethod(stfnum::baseline_method base_method) {
     wxRadioBox* pBaselineMethod = (wxRadioBox*)FindWindow(wxRADIO_BASELINE_METHOD);
     if (pBaselineMethod == NULL) {
         wxGetApp().ErrorMsg(wxT("null pointer in wxStfCursorsDlg::SetBaselineMethod()"));
@@ -1377,10 +1377,10 @@ void wxStfCursorsDlg::SetBaselineMethod(stf::baseline_method base_method) {
     } 
 
     switch(base_method) {
-        case stf::median_iqr:
+        case stfnum::median_iqr:
             pBaselineMethod->SetSelection(1);
             break;
-        case stf::mean_sd:
+        case stfnum::mean_sd:
             pBaselineMethod->SetSelection(0);
             break;
     }

@@ -25,13 +25,13 @@
 #ifndef _SPLINE_H
 #define _SPLINE_H
 
-namespace stf {
-	Vector_double d3_np_fs(Vector_double& a, const Vector_double& b);
+namespace stfnum {
+    Vector_double d3_np_fs(Vector_double& a, const Vector_double& b);
     void dvec_bracket3 (const Vector_double& t, double tval, int& left );
     Vector_double spline_cubic_set ( const Vector_double& t, const Vector_double& y, 
-		int ibcbeg, double ybcbeg, int ibcend, double ybcend );
-	double spline_cubic_val (const Vector_double& t, double tval, const Vector_double& y, 
-		const Vector_double& ypp, double& ypval, double& yppval );
+                                     int ibcbeg, double ybcbeg, int ibcend, double ybcend );
+    double spline_cubic_val (const Vector_double& t, double tval, const Vector_double& y, 
+                             const Vector_double& ypp, double& ypval, double& yppval );
 }
 
 #endif

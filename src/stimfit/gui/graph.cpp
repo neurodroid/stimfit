@@ -39,7 +39,7 @@
 #include "./dlgs/smalldlgs.h"
 #include "./usrdlg/usrdlg.h"
 #include "./graph.h"
-#include "./../math/measure.h"
+#include "./../../libstfnum/measure.h"
 
 #ifdef _STFDEBUG
 #include <iostream>
@@ -2216,7 +2216,7 @@ void wxStfGraph::Ch2base() {
         double base2=0.0;
         try {
             double var2=0.0;
-            base2=stf::base(Doc()->GetBaselineMethod(),var2,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(),
+            base2=stfnum::base(Doc()->GetBaselineMethod(),var2,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(),
                     Doc()->GetBaseBeg(),Doc()->GetBaseEnd());
         }
         catch (const std::out_of_range& e) {
@@ -2257,7 +2257,7 @@ void wxStfGraph::Ch2basezoom() {
         double base2=0.0;
         try {
             double var2=0.0;
-            base2=stf::base(Doc()->GetBaselineMethod(),var2,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(),
+            base2=stfnum::base(Doc()->GetBaselineMethod(),var2,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(),
                     Doc()->GetBaseBeg(),Doc()->GetBaseEnd());
         }
         catch (const std::out_of_range& e) {

@@ -74,7 +74,7 @@
 #include "./../gui/parentframe.h"
 #include "./../gui/childframe.h"
 #include "./../gui/dlgs/cursorsdlg.h"
-#include "./../math/fit.h"
+#include "./../../libstfnum/fit.h"
 
 #ifdef WITH_PYTHON
 #define array_data(a)          (((PyArrayObject *)a)->data)
@@ -962,11 +962,11 @@ const char* get_peak_direction( ) {
     if ( !check_doc() ) return "";
     
     const char *direction = "both";
-    if ( actDoc()->GetDirection() == stf::up )
+    if ( actDoc()->GetDirection() == stfnum::up )
         direction = "up";
-    else if ( actDoc()->GetDirection() == stf::down )
+    else if ( actDoc()->GetDirection() == stfnum::down )
         direction = "down";
-    else if ( actDoc()->GetDirection() == stf::both )
+    else if ( actDoc()->GetDirection() == stfnum::both )
         direction = "both";
     
     return direction;
@@ -976,17 +976,17 @@ bool set_peak_direction( const char* direction ) {
     if ( !check_doc() ) return false;
 
     if ( strcmp( direction, "up" ) == 0 ) {
-        actDoc()->SetDirection( stf::up );
+        actDoc()->SetDirection( stfnum::up );
         return update_cursor_dialog();
     }
 
     if ( strcmp( direction, "down" ) == 0 ) {
-        actDoc()->SetDirection( stf::down );
+        actDoc()->SetDirection( stfnum::down );
         return update_cursor_dialog();
     }
 
     if ( strcmp( direction, "both" ) == 0 ) {
-        actDoc()->SetDirection( stf::both );
+        actDoc()->SetDirection( stfnum::both );
         return update_cursor_dialog();
     }
 
@@ -1001,9 +1001,9 @@ const char* get_baseline_method() {
     if ( !check_doc() ) return "";
 
     const char *method=" ";
-    if ( actDoc()->GetBaselineMethod() == stf::mean_sd )
+    if ( actDoc()->GetBaselineMethod() == stfnum::mean_sd )
         method = "mean";
-    else if ( actDoc()->GetBaselineMethod() == stf::median_iqr )
+    else if ( actDoc()->GetBaselineMethod() == stfnum::median_iqr )
         method = "median";
     
     return method;
@@ -1014,17 +1014,17 @@ bool set_baseline_method( const char* method ) {
 
     const wxString myitem = wxT("BaselineMethod");
     if ( strcmp( method, "mean" ) == 0 ) {
-        actDoc()->SetBaselineMethod( stf::mean_sd );
+        actDoc()->SetBaselineMethod( stfnum::mean_sd );
         update_cursor_dialog();
         update_results_table();
-        write_stf_registry(myitem, stf::mean_sd);
+        write_stf_registry(myitem, stfnum::mean_sd);
         return true;
     }
     else if ( strcmp( method, "median" ) == 0 ) {
-        actDoc()->SetBaselineMethod( stf::median_iqr );
+        actDoc()->SetBaselineMethod( stfnum::median_iqr );
         update_cursor_dialog(); // update wxStfCursorsDlg
         update_results_table(); // update results and labels in the table
-        write_stf_registry(myitem, stf::median_iqr); // write in .Stimfit
+        write_stf_registry(myitem, stfnum::median_iqr); // write in .Stimfit
         return true;
     }
     else {
@@ -1616,7 +1616,7 @@ PyObject* leastsq( int fselect, bool refresh ) {
     opts[5] = 16;
     double chisqr = 0.0;
     try {
-        chisqr = stf::lmFit( x, pDoc->GetXScale(), wxGetApp().GetFuncLib().at(fselect),
+        chisqr = stfnum::lmFit( x, pDoc->GetXScale(), wxGetApp().GetFuncLib().at(fselect),
                              opts, true, params, fitInfo, fitWarning );
         pDoc->SetIsFitted( pDoc->GetCurChIndex(), pDoc->GetCurSecIndex(), params,
                            wxGetApp().GetFuncLibPtr(fselect),
@@ -1713,7 +1713,7 @@ bool show_table( PyObject* dict, const char* caption ) {
         double value = PyFloat_AsDouble( pvalue );
         pyMap[key] = value;
     }
-    stf::Table pyTable( pyMap );
+    stfnum::Table pyTable( pyMap );
 
     wxStfChildFrame* pFrame = (wxStfChildFrame*)actDoc()->GetDocumentWindow();
     if ( !pFrame ) {
@@ -1766,7 +1766,7 @@ bool show_table_dictlist( PyObject* dict, const char* caption, bool reverse ) {
         ShowError( wxT("Dictionary was empty in show_table().") );
         return false;
     }
-    stf::Table pyTable( pyVector[0].size(), pyVector.size() );
+    stfnum::Table pyTable( pyVector[0].size(), pyVector.size() );
     std::vector< std::vector< double > >::const_iterator c_va_it;
     std::size_t n_col = 0;
     for (  c_va_it = pyVector.begin(); c_va_it != pyVector.end(); ++c_va_it ) {
@@ -1929,13 +1929,13 @@ PyObject* detect_events(double* invec, int size, const std::string& mode, bool n
     Vector_double detect((*actDoc())[channel][trace].get().size());
     if (mode=="criterion") {
         stfio::StdoutProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100, true);
-        detect = stf::detectionCriterion((*actDoc())[channel][trace].get(), templ, progDlg);
+        detect = stfnum::detectionCriterion((*actDoc())[channel][trace].get(), templ, progDlg);
     } else if (mode=="correlation") {
         stfio::StdoutProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100, true);
-        detect = stf::linCorr((*actDoc())[channel][trace].get(), templ, progDlg);
+        detect = stfnum::linCorr((*actDoc())[channel][trace].get(), templ, progDlg);
     } else if (mode=="deconvolution") {
         stfio::StdoutProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100, true);
-        detect = stf::deconvolve((*actDoc())[channel][trace].get(), templ, actDoc()->GetSR(), highpass, lowpass, progDlg);
+        detect = stfnum::deconvolve((*actDoc())[channel][trace].get(), templ, actDoc()->GetSR(), highpass, lowpass, progDlg);
     }
     npy_intp dims[1] = {(int)detect.size()};
     PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);
@@ -1954,7 +1954,7 @@ PyObject* peak_detection(double* invec, int size, double threshold, int min_dist
 
     Vector_double data(invec, &invec[size]);
 
-    std::vector<int> peak_idcs = stf::peakIndices(data, threshold, min_distance);
+    std::vector<int> peak_idcs = stfnum::peakIndices(data, threshold, min_distance);
 
     npy_intp dims[1] = {(int)peak_idcs.size()};
     PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_INT);

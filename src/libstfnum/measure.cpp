@@ -30,16 +30,15 @@
 #include <omp.h>
 #endif
 
-#include "../stf.h"
+#include "./stfnum.h"
 #include "./measure.h"
-#include "../../libstfio/stfio.h"
 
 int compareDouble(const void *a, const void *b)
 {
     return ( ( *(double*)a >  *(double*)b ) - ( *(double*)a < *(double*)b ) );
 }
 
-double stf::base(enum stf::baseline_method base_method, double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb)
+double stfnum::base(enum stfnum::baseline_method base_method, double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb)
 {
     if (data.size()==0) return 0;
     if (llb>ulb || ulb>=data.size()) {
@@ -50,7 +49,7 @@ double stf::base(enum stf::baseline_method base_method, double& var, const std::
     assert(n > 0);
     assert(n <= data.size());
 
-    if (base_method == stf::median_iqr) {
+    if (base_method == stfnum::median_iqr) {
 	// make  copy of the data for sorting
         double *a = (double*)malloc(n * sizeof(double));
         for (size_t i = 0; i < n; ++i) {
@@ -109,8 +108,8 @@ double stf::base(enum stf::baseline_method base_method, double& var, const std::
     return base;
 }
 
-double stf::peak(const std::vector<double>& data, double base, std::size_t llp, std::size_t ulp,
-            int pM, stf::direction dir, double& maxT)
+double stfnum::peak(const std::vector<double>& data, double base, std::size_t llp, std::size_t ulp,
+            int pM, stfnum::direction dir, double& maxT)
 {
     if (llp>ulp || ulp>=data.size()) {
         maxT = NAN;
@@ -135,19 +134,19 @@ double stf::peak(const std::vector<double>& data, double base, std::size_t llp, 
             peak /= (counter-start);
             
             //Set peak for BOTH
-            if (dir == stf::both && fabs(peak-base) > fabs (max-base))
+            if (dir == stfnum::both && fabs(peak-base) > fabs (max-base))
             {
                 max = peak;
                 maxT = (double)i;
             }
             //Set peak for UP
-            if (dir == stf::up && peak-base > max-base)
+            if (dir == stfnum::up && peak-base > max-base)
             {
                 max = peak;
                 maxT = (double)i;
             }
             //Set peak for DOWN
-            if (dir == stf::down && peak-base < max-base)
+            if (dir == stfnum::down && peak-base < max-base)
             {
                 max = peak;
                 maxT = (double)i;
@@ -176,7 +175,7 @@ double stf::peak(const std::vector<double>& data, double base, std::size_t llp, 
     return peak;
 }
 
-double stf::threshold( const std::vector<double>& data, std::size_t llp, std::size_t ulp, double slope, double& thrT, std::size_t windowLength )
+double stfnum::threshold( const std::vector<double>& data, std::size_t llp, std::size_t ulp, double slope, double& thrT, std::size_t windowLength )
 {
     thrT = -1;
     
@@ -208,7 +207,7 @@ double stf::threshold( const std::vector<double>& data, std::size_t llp, std::si
     return threshold;
 }
 
-double stf::risetime(const std::vector<double>& data, double base, double ampl,
+double stfnum::risetime(const std::vector<double>& data, double base, double ampl,
                      double left, double right, double frac, std::size_t& tLoId, std::size_t& tHiId,
                      double& tLoReal)
 {
@@ -267,7 +266,7 @@ double stf::risetime(const std::vector<double>& data, double base, double ampl,
     return rtLoHi;  
 }
 
-double stf::risetime2(const std::vector<double>& data, double base, double ampl,
+double stfnum::risetime2(const std::vector<double>& data, double base, double ampl,
                      double left, double right, double frac,
                      double& innerTLoReal, double& innerTHiReal, double& outerTLoReal, double& outerTHiReal )
 {
@@ -392,7 +391,7 @@ double stf::risetime2(const std::vector<double>& data, double base, double ampl,
     return (innerTHiReal-innerTLoReal);
 }
 
-double   stf::t_half(const std::vector<double>& data,
+double   stfnum::t_half(const std::vector<double>& data,
         double base,
         double ampl,
         double left,
@@ -459,7 +458,7 @@ double   stf::t_half(const std::vector<double>& data,
     return t50RightReal-t50LeftReal;
 }
 
-double   stf::maxRise(const std::vector<double>& data,
+double   stfnum::maxRise(const std::vector<double>& data,
         double left,
         double right,
         double& maxRiseT,
@@ -491,7 +490,7 @@ double   stf::maxRise(const std::vector<double>& data,
     return maxRise/windowLength;
 }
 
-double stf::maxDecay(const std::vector<double>& data,
+double stfnum::maxDecay(const std::vector<double>& data,
         double left,
         double right,
         double& maxDecayT,
@@ -523,7 +522,7 @@ double stf::maxDecay(const std::vector<double>& data,
 }
 
 #ifdef WITH_PSLOPE
-double stf::pslope(const std::vector<double>& data, std::size_t left, std::size_t right) {
+double stfnum::pslope(const std::vector<double>& data, std::size_t left, std::size_t right) {
 
     // data testing not zero 
     //if (!data.size()) return 0;

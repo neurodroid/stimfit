@@ -192,7 +192,7 @@ void wxStfPrintout::PrintHeader(wxDC* pDC, double scale) {
     pDC->DrawText(description,xstart,ystart);
 
     // Results:
-    stf::Table table(Doc()->CurResultsTable());
+    stfnum::Table table(Doc()->CurResultsTable());
 
     font.SetWeight(wxFONTWEIGHT_NORMAL);
     pDC->SetFont(font);

@@ -18,14 +18,14 @@
 #include <float.h>
 #include <cmath>
 
-namespace stf {
+namespace stfnum {
 // C-style functions for Lourakis' routines:
 void c_func_lour(double *p, double* hx, int m, int n, void *adata);
 void c_jac_lour(double *p, double *j, int m, int n, void *adata);
 
 // Helper functions for lmFit to store the function at global scope:
-void saveFunc(stf::Func func);
-void saveJac(stf::Jac jac);
+void saveFunc(stfnum::Func func);
+void saveJac(stfnum::Jac jac);
 
 // A struct that will be passed as a pointer to
 // Lourakis' C-functions. It is used to:
@@ -55,18 +55,18 @@ struct fitInfo {
 
 // Functions stored at global scope to be called by c_func_lour
 // and c_jac_lour
-stf::Func func_lour;
-stf::Jac jac_lour; 
+stfnum::Func func_lour;
+stfnum::Jac jac_lour; 
 
-void stf::saveFunc(stf::Func func) {
+void stfnum::saveFunc(stfnum::Func func) {
     func_lour=func;
 }
 
-void stf::saveJac(stf::Jac jac) {
+void stfnum::saveJac(stfnum::Jac jac) {
     jac_lour=jac;
 }
 
-void stf::c_func_lour(double *p, double* hx, int m, int n, void *adata) {
+void stfnum::c_func_lour(double *p, double* hx, int m, int n, void *adata) {
     // m: the number of parameters that are to be fitted
     // adata: pointer to a struct that (1) specifies which parameters are to be fitted
     //		  and (2) contains the constant parameters
@@ -90,7 +90,7 @@ void stf::c_func_lour(double *p, double* hx, int m, int n, void *adata) {
     }	
 }
 
-void stf::c_jac_lour(double *p, double *jac, int m, int n, void *adata) {
+void stfnum::c_jac_lour(double *p, double *jac, int m, int n, void *adata) {
     // m: the number of parameters that are to be fitted
     // adata: pointer to a struct that (1) specifies which parameters are to be fitted
     //		  and (2) contains the constant parameters
@@ -123,7 +123,7 @@ void stf::c_jac_lour(double *p, double *jac, int m, int n, void *adata) {
     }
 }
 
-Vector_double stf::get_scale(Vector_double& data, double oldx) {
+Vector_double stfnum::get_scale(Vector_double& data, double oldx) {
     Vector_double xyscale(4);
 
     if (data.size() == 0) {
@@ -158,19 +158,19 @@ Vector_double stf::get_scale(Vector_double& data, double oldx) {
     return xyscale;
 }
 
-double stf::lmFit( const Vector_double& data, double dt,
-                   const stf::storedFunc& fitFunc, const Vector_double& opts,
+double stfnum::lmFit( const Vector_double& data, double dt,
+                   const stfnum::storedFunc& fitFunc, const Vector_double& opts,
                    bool use_scaling,
                    Vector_double& p, std::string& info, int& warning )
 {
     // Basic range checking:
     if (fitFunc.pInfo.size()!=p.size()) {
-        std::string msg("Error in stf::lmFit()\n"
+        std::string msg("Error in stfnum::lmFit()\n"
                 "function parameters (p_fit) and parameters entered (p) have different sizes");
         throw std::runtime_error(msg);
     }
     if ( opts.size() != 6 ) {
-        std::string msg("Error in stf::lmFit()\n"
+        std::string msg("Error in stfnum::lmFit()\n"
                 "wrong number of options");
         throw std::runtime_error(msg);
     }
@@ -191,7 +191,7 @@ double stf::lmFit( const Vector_double& data, double dt,
             constrains_lm_ub[n_p] = DBL_MAX;
         }
         if ( can_scale ) {
-            if (fitFunc.pInfo[n_p].scale == stf::noscale) {
+            if (fitFunc.pInfo[n_p].scale == stfnum::noscale) {
                 can_scale = false;
             }
         }
@@ -403,23 +403,23 @@ double stf::lmFit( const Vector_double& data, double dt,
     return info_id[1];
 }
 
-double stf::flin(double x, const Vector_double& p) { return p[0]*x + p[1]; }
+double stfnum::flin(double x, const Vector_double& p) { return p[0]*x + p[1]; }
 
-//! Dummy function to be passed to stf::storedFunc for linear functions.
-void stf::flin_init(const Vector_double& data, double base, double peak,
+//! Dummy function to be passed to stfnum::storedFunc for linear functions.
+void stfnum::flin_init(const Vector_double& data, double base, double peak,
         double RTLoHI, double HalfWidth, double dt, Vector_double& pInit )
 { }
 
-stf::storedFunc stf::initLinFunc() {
-    std::vector< stf::parInfo > linParInfo(2);
-    linParInfo[0] = stf::parInfo("Slope", true);
-    linParInfo[1] = stf::parInfo("Y intersect", true);
-    return stf::storedFunc("Linear function", linParInfo,
-            stf::flin, stf::flin_init, stf::nojac, false, stf::defaultOutput);
+stfnum::storedFunc stfnum::initLinFunc() {
+    std::vector< stfnum::parInfo > linParInfo(2);
+    linParInfo[0] = stfnum::parInfo("Slope", true);
+    linParInfo[1] = stfnum::parInfo("Y intersect", true);
+    return stfnum::storedFunc("Linear function", linParInfo,
+            stfnum::flin, stfnum::flin_init, stfnum::nojac, false, stfnum::defaultOutput);
 }
 
  /* options for the implementation of the LM algorithm */
-Vector_double stf::LM_default_opts() {
+Vector_double stfnum::LM_default_opts() {
 
     Vector_double opts(6);
     //opts[0]=5*1E-3;   // initial \mu, default: 1E-03;
