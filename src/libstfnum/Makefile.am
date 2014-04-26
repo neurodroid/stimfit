@@ -15,8 +15,8 @@ libstfnum_la_SOURCES =  ./fit.cpp \
             ./levmar/lm.c ./levmar/Axb.c ./levmar/misc.c ./levmar/lmlec.c ./levmar/lmbc.c \
             ./funclib.cpp ./stfnum.cpp ./measure.cpp
 
-libstfnum_la_LDFLAGS = 
-libstfnum_la_LIBADD = $(LIBSTF_LDFLAGS)
+libstfnum_la_LDFLAGS = $(LIBLAPACK_LDFLAGS)
+libstfnum_la_LIBADD = $(LIBSTF_LDFLAGS) -lfftw3
 
 if ISDARWIN
 # don't install anything because it has to go into the app bundle

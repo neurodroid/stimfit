@@ -159,50 +159,49 @@ AS_HELP_STRING([--with-lapack-lib=LAPACKLIB],[Provide full path to custom lapack
     fi
 ])
 
-# stuff not required for standalone module
-if test "$enable_module" != "yes"; then
-    # Checks for libraries.
-    AC_CHECK_LIB([fftw3], [fftw_malloc], HAVE_FFTW3="yes")
-    if test "${HAVE_FFTW3}" != "yes" ; then
-        AC_MSG_ERROR([Couldn't find fftw3.])
-    fi
+# Checks for libraries.
+AC_CHECK_LIB([fftw3], [fftw_malloc], HAVE_FFTW3="yes")
+if test "${HAVE_FFTW3}" != "yes" ; then
+    AC_MSG_ERROR([Couldn't find fftw3.])
+fi
 
-    if test "$LAPACKLIB" = ""; then
-        if test "$STFKERNEL" = "darwin" ; then
-            # System LAPACK
-            LIBLAPACK_LDFLAGS="/usr/lib/liblapack.dylib -framework Accelerate"
-            CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK -DHAVE_LAPACK_SUFFIX" 
-        else
-            AC_CHECK_LIB([lapack], [dgemm_], HAVE_LAPACKX="yes")
-            if test "${HAVE_LAPACKX}" != "yes" ; then
-                AC_CHECK_LIB([lapack3], [dgemm_], HAVE_LAPACK3="yes")
-                if test "${HAVE_LAPACK3}" != "yes" ; then
-                    AC_CHECK_LIB([lapack-3], [dgemm_], HAVE_LAPACK_3="yes")
-                        if test "${HAVE_LAPACK_3}" != "yes" ; then
-                            AC_CHECK_LIB([blas], [dgemm_], HAVE_ATLAS="yes")
-                            if test "${HAVE_ATLAS}" != "yes" ; then
-                                AC_MSG_ERROR([Couldn't find lapack.])
-                            else
-                                LIBLAPACK_LDFLAGS="-llapack -lblas"
-                                CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
-                            fi
+if test "$LAPACKLIB" = ""; then
+    if test "$STFKERNEL" = "darwin" ; then
+        # System LAPACK
+        LIBLAPACK_LDFLAGS="/usr/lib/liblapack.dylib -framework Accelerate"
+        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK -DHAVE_LAPACK_SUFFIX" 
+    else
+        AC_CHECK_LIB([lapack], [dgemm_], HAVE_LAPACKX="yes")
+        if test "${HAVE_LAPACKX}" != "yes" ; then
+            AC_CHECK_LIB([lapack3], [dgemm_], HAVE_LAPACK3="yes")
+            if test "${HAVE_LAPACK3}" != "yes" ; then
+                AC_CHECK_LIB([lapack-3], [dgemm_], HAVE_LAPACK_3="yes")
+                    if test "${HAVE_LAPACK_3}" != "yes" ; then
+                        AC_CHECK_LIB([blas], [dgemm_], HAVE_ATLAS="yes")
+                        if test "${HAVE_ATLAS}" != "yes" ; then
+                            AC_MSG_ERROR([Couldn't find lapack.])
                         else
-                            LIBLAPACK_LDFLAGS="-llapack-3"
+                            LIBLAPACK_LDFLAGS="-llapack -lblas"
                             CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
                         fi
-                else
-                    LIBLAPACK_LDFLAGS=-llapack3
-                    CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
-                fi
+                    else
+                        LIBLAPACK_LDFLAGS="-llapack-3"
+                        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+                    fi
             else
-                LIBLAPACK_LDFLAGS="-llapack -lblas"
+                LIBLAPACK_LDFLAGS=-llapack3
                 CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
             fi
+        else
+            LIBLAPACK_LDFLAGS="-llapack -lblas"
+            CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
         fi
     fi
-    AC_SUBST(LIBLAPACK_LDFLAGS)
+fi
+AC_SUBST(LIBLAPACK_LDFLAGS)
 
-
+# stuff not required for standalone module
+if test "$enable_module" != "yes"; then
 
     # Optionally enables aui for doc/view architecture
     AC_ARG_ENABLE([aui], AS_HELP_STRING([--enable-aui],[enable AUI for the doc/view architecture (experimental)]),[])
