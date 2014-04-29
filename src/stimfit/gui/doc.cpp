@@ -2709,7 +2709,7 @@ void wxStfDoc::Measure( )
     SetPSlopeEnd(PSlopeEndVal);
 
     try {
-        PSlope = (stf::pslope(cursec().get(), PSlopeBeg, PSlopeEnd))*GetSR();
+        PSlope = (stfnum::pslope(cursec().get(), PSlopeBeg, PSlopeEnd))*GetSR();
     }
     catch (const std::out_of_range& e) {
         PSlope = 0.0;
