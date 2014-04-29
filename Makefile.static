@@ -38,7 +38,7 @@ ifeq (,$(WXCONF))
   WXCONF    = $(shell which wx-config)
 endif
 
-DEFINES += -DWITH_BIOSIG2
+DEFINES += -DWITH_BIOSIG
 DEFINES += -DHAVE_LAPACK
 DEFINES += -DWITH_PSLOPE
 #DEFINES += -DTEST_MINIMAL
@@ -63,10 +63,15 @@ vpath %.c ./src/stimfit/math/levmar/:./src/libstfio/igor/:./src/libstfio/cfs/
 vpath %.cpp ./src/stimfit/math/:./src/stimfit/math/levmar/:./src/stimfit/gui/:./src/stimfit/gui/dlgs/:./src/libstfio/:./src/libstfio/biosig/:./src/libstfio/igor/:./src/libstfio/cfs/
 
 SOURCES = ./src/stimfit/stf.cpp \
-	./src/stimfit/math/stfmath.cpp \
-	./src/stimfit/math/funclib.cpp \
-	./src/stimfit/math/measure.cpp \
-	./src/stimfit/math/fit.cpp \
+	./src/libstfnum/stfnum.cpp \
+	./src/libstfnum/funclib.cpp \
+	./src/libstfnum/measure.cpp \
+	./src/libstfnum/fit.cpp \
+	./src/libstfnum/levmar/lm.c \
+	./src/libstfnum/levmar/Axb.c \
+	./src/libstfnum/levmar/misc.c \
+	./src/libstfnum/levmar/lmbc.c \
+	./src/libstfnum/levmar/lmlec.c \
 	./src/stimfit/gui/doc.cpp \
 	./src/stimfit/gui/zoom.cpp \
 	./src/stimfit/gui/childframe.cpp \
@@ -97,11 +102,6 @@ SOURCES = ./src/stimfit/stf.cpp \
 	./src/libstfio/axg/fileUtils.cpp \
 	./src/libstfio/axg/stringUtils.cpp \
 	./src/libstfio/axg/byteswap.cpp \
-	./src/stimfit/math/levmar/lm.c \
-	./src/stimfit/math/levmar/Axb.c \
-	./src/stimfit/math/levmar/misc.c \
-	./src/stimfit/math/levmar/lmbc.c \
-	./src/stimfit/math/levmar/lmlec.c \
 	./src/libstfio/igor/WriteWave.c \
 	./src/libstfio/igor/CrossPlatformFileIO.c \
 	./src/libstfio/cfs/cfs.c 
