@@ -581,10 +581,10 @@ INPUT                  = ../src/stimfit/gui/app.h \
                          ../src/stimfit/gui/dlgs/fitseldlg.h \
                          ../src/stimfit/gui/dlgs/smalldlgs.h \
                          ../src/stimfit/gui/usrdlg/usrdlg.h \
-                         ../src/stimfit/math/fit.h \
-                         ../src/stimfit/math/measure.h \
-                         ../src/stimfit/math/funclib.h \
-                         ../src/stimfit/math/stfmath.h \
+                         ../src/libstfnum/fit.h \
+                         ../src/libstfnum/measure.h \
+                         ../src/libstfnum/funclib.h \
+                         ../src/libstfnum/stfnum.h \
                          ../src/libstfio/channel.h \
                          ../src/libstfio/recording.h \
                          ../src/libstfio/section.h \

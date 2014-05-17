@@ -17,7 +17,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-/*! \file stfmath.h
+/*! \file stfnum.h
  *  \author Christoph Schmidt-Hieber
  *  \date 2008-01-16
  *  \brief Math functions.
