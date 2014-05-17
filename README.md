@@ -24,6 +24,7 @@ Guzman SJ, Schlögl A, Schmidt-Hieber C (2014) Stimfit: quantifying electrophysi
 | Directory       | Description |
 | --------------- | ----------- |
 |./src/libstfio   | File i/o library for common electrophysiology formats |
+|./src/libstfnum  | Mathematical operations for measurements and fittings |
 |./src/pystfio    | Python wrapper around libstfio |
 |./src/stimfit    | Stimfit program |
 |./src/stimfit/py | stf module that gets imported into the embedded Python shell |
