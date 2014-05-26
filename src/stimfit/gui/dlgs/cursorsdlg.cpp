@@ -561,8 +561,8 @@ wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
             wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
     //pPSManBeg->SetValue(true);
 
-    // Slope from: Commencement
-    wxRadioButton* pPSEventBeg = new wxRadioButton( nbPage, wxRADIO_PSEventBeg, wxT("Commencement"),
+    // Slope from: Beginning of event 
+    wxRadioButton* pPSEventBeg = new wxRadioButton( nbPage, wxRADIO_PSEventBeg, wxT("Beginning of event"),
             wxDefaultPosition, wxDefaultSize );
      
     // Slope from: Threshold slope
