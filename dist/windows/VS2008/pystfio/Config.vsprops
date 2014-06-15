@@ -6,7 +6,7 @@
 	>
 	<UserMacro
 		Name="SWIGBIN"
-		Value="C:\cygwin\bin\swig.exe"
+		Value="C:\cygwin64\bin\swig.exe"
 		PerformEnvironmentSet="true"
 	/>
 	<UserMacro
