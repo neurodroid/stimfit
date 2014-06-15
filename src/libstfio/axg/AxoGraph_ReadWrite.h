@@ -192,6 +192,8 @@
   #define __LITTLE_ENDIAN__
 #elif !defined(_MSC_VER)
     #include <endian.h>
+#else
+    #define __LITTLE_ENDIAN__
 #endif
 
 #ifdef __LITTLE_ENDIAN
