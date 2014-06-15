@@ -129,6 +129,13 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         return type;
     }
 
+    if (biosig_filetype==AXG) {
+        // biosig's AXG import crashes on Windows at this time
+        ReturnData.resize(0);
+        destructHDR(hdr);
+        return type;
+    }
+
     // ensure the event table is in chronological order	
     sort_eventtable(hdr);
 
