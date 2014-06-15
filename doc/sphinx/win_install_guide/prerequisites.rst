@@ -22,7 +22,7 @@ Libraries
 
 HDF5
 ----
-Get the HDF5 libraries from `here <http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.9/bin/windows/>`_. Use HDF5189-win32-vs9-shared.zip. There are no VS2008-prebuilt binaries for HDF5 >= 1.8.10 unfortunately. Extract the zip file, and then install to a folder called "hdf5" in your home directory (e.g. C:\\Users\\username) using the extracted executable.
+Get the HDF5 libraries from `here <http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.13/bin/windows/>`_. Use hdf5-1.8.13-win32-VS2008-shared.zip. Extract the zip file, and then install to a folder called "hdf5" in your home directory (e.g. C:\\Users\\username) using the extracted executable.
 
 Boost
 -----
@@ -46,11 +46,11 @@ Install Matplotlib from `here <http://matplotlib.org/downloads.html>`_. Use the 
 
 wxWidgets
 ---------
-Get the prebuilt wxWidgets 2.9 libraries from the wxPython site `here <http://www.wxpython.org/download.php#unstable>`_. Choose the "32-bit binaries for MSVC 9" in the "Windows Development Files" section. Install to your home directory. Rename the folder to "wx".
+Get the prebuilt wxWidgets 3.0 libraries from the wxPython site `here <http://www.wxpython.org/download.php#unstable>`_. Choose the "32-bit binaries for MSVC 9" in the "Windows Development Files" section. Install to your home directory. Rename the folder to "wx".
 
 wxPython
 --------
-Get wxPython 2.9 from `here <http://www.wxpython.org/download.php#unstable>`_. Choose the 32-bit version for Python 2.7 in the "Windows Binaries" section. Install to your home directory(_not_ to C:\\Python27\\*!). Rename the folder to "wxPython".
+Get wxPython 3.0 from `here <http://www.wxpython.org/download.php#unstable>`_. Choose the 32-bit version for Python 2.7 in the "Windows Binaries" section. Install to your home directory(_not_ to C:\\Python27\\*!). Rename the folder to "wxPython".
 
 FFTW
 ----
@@ -61,6 +61,10 @@ Get the latest 32-bit fftw dlls from `here <http://fftw.org/install/windows.html
 ``C:\Users\username\fftw> lib /def:libfftw3f-3.def``
 
 ``C:\Users\username\fftw> lib /def:libfftw3l-3.def``
+
+BLAS/LAPACK
+-----------
+Get the precompiled BLAS/LAPACK libraries from `here <https://code.google.com/p/stimfit/downloads/detail?name=VS2008_libs.zip>`_. They will be moved into a library folder within the stimfit tree later.
 
 libbiosig
 ---------
@@ -75,7 +79,7 @@ Build Tools
 
 SWIG
 ----
-`Cygwin <http://www.cygwin.com>`_ has SWIG in its repositories. Otherwise, you can download it from `here <http://www.swig.org>`_. At any rate, make sure that the binary is located in C:\\cygwin\\bin\\swig.exe.
+`Cygwin <http://www.cygwin.com>`_ has SWIG in its repositories. Otherwise, you can download it from `here <http://www.swig.org>`_. At any rate, make sure that the binary is located in C:\\cygwin64\\bin\\swig.exe.
 
 git
 ---
