@@ -71,8 +71,8 @@ double stf::base(enum stf::baseline_method base_method, double& var, const std::
          *  interpolate as average of upper and lower bound
          *  and make sure that indices are within [0,n-1] interval
          */
-	double Q32 = a[std::min((long)(n-1), (long)ceil(3*n/4-1))] + a[std::max(0l, (long)floor(3*n/4-1))];
-	double Q12 = a[std::min((long)(n-1), (long)ceil(  n/4-1))] + a[std::max(0l, (long)floor(  n/4-1))];
+	double Q32 = a[std::min<long>((long)(n-1), (long)ceil(3*n/4.0-1))] + a[std::max<long>(0l, (long)floor(3*n/4.0-1))];
+	double Q12 = a[std::min<long>((long)(n-1), (long)ceil(  n/4.0-1))] + a[std::max<long>(0l, (long)floor(  n/4.0-1))];
 	var = (Q32 - Q12) / 2;
 
         free(a);
