@@ -129,7 +129,10 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         return type;
     }
 
-    if (biosig_filetype==AXG) {
+    // earlier versions of biosig support only the file type identification, but did not read AXG files
+    if ( (BIOSIG_VERSION < 10600)
+      && (biosig_filetype==AXG)
+       ) {
         // biosig's AXG import crashes on Windows at this time
         ReturnData.resize(0);
         destructHDR(hdr);
@@ -342,6 +345,16 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     }
     if ( hdr->TYPE==ATF ) {
         // ATF support should be handled by importATF not importBiosig
+        ReturnData.resize(0);
+        destructHDR(hdr);
+        return type;
+    }
+
+    // earlier versions of biosig support only the file type identification, but did not read AXG files
+    if ( (BIOSIG_VERSION < 10600)
+      && (hdr->TYPE==AXG)
+       ) {
+        // biosig's AXG import crashes on Windows at this time
         ReturnData.resize(0);
         destructHDR(hdr);
         return type;
