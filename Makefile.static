@@ -40,6 +40,8 @@ endif
 
 DEFINES += -DWITH_BIOSIG
 DEFINES += -DHAVE_LAPACK
+#DEFINES += -DWITHOUT_ABF
+#DEFINES += -DWITHOUT_AXG
 DEFINES += -DWITH_PSLOPE
 #DEFINES += -DTEST_MINIMAL
 #DEFINES += -DPYTHON -DWITH_PYTHON
@@ -97,11 +99,6 @@ SOURCES = ./src/stimfit/stf.cpp \
 	./src/libstfio/hdf5/hdf5lib.cpp \
 	./src/libstfio/channel.cpp \
 	./src/libstfio/stfio.cpp \
-	./src/libstfio/axg/axglib.cpp \
-	./src/libstfio/axg/AxoGraph_ReadWrite.cpp \
-	./src/libstfio/axg/fileUtils.cpp \
-	./src/libstfio/axg/stringUtils.cpp \
-	./src/libstfio/axg/byteswap.cpp \
 	./src/libstfio/igor/WriteWave.c \
 	./src/libstfio/igor/CrossPlatformFileIO.c \
 	./src/libstfio/cfs/cfs.c 
@@ -153,13 +150,25 @@ TESTSRC = ./src/test/section.cpp \
 	./src/test/gtest/src/gtest_main.cc \
 	./src/test/gtest/src/gtest-filepath.cc 
 
+SOURCES_AXG = ./src/libstfio/axg/axglib.cpp \
+	./src/libstfio/axg/AxoGraph_ReadWrite.cpp \
+	./src/libstfio/axg/fileUtils.cpp \
+	./src/libstfio/axg/stringUtils.cpp \
+	./src/libstfio/axg/byteswap.cpp \
 
 ### DEPENDENCIES ###
 ifneq (,$(findstring HAVE_LAPACK, $(DEFINES)))
   LIBS   += -llapack -lblas
 endif
 
-SOURCES += $(SOURCES_ABF)
+ifeq (,$(findstring WITHOUT_ABF, $(DEFINES)))
+	SOURCES += $(SOURCES_ABF)
+endif
+
+ifeq (,$(findstring WITHOUT_AXG, $(DEFINES)))
+	SOURCES += $(SOURCES_AXG)
+endif
+
 ifeq (,$(findstring mingw, $(WXCONF)))
   TARGET   = stimfit 
   OBJEXT   = o
