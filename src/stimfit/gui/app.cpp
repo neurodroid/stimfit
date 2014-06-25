@@ -191,7 +191,9 @@ bool wxStfApp::OnInit(void)
                                      CLASSINFO(wxStfView) );
 #if defined(__WXGTK__) || defined(__WXMAC__)
 #if !defined(__MINGW32__)
+#if !defined(WITHOUT_ABF)
     ABF_Initialize();
+#endif
 #endif
 #endif
     m_atfTemplate=new wxDocTemplate( docManager,
