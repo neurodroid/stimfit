@@ -11,15 +11,15 @@ SetCompressor lzma
 
 ;--------------------------------
 
-!define PRODUCT_VERSION "0.13.17"
+!define PRODUCT_VERSION "0.13.18"
 !define WXW_VERSION "3.0.0.0"
 !define WXW_VERSION_DIR "3.0.0"
 !define WXW_VERSION_SHORT "30"
-!define PY_VERSION "2.7.6"
+!define PY_VERSION "2.7.7"
 !define PY_MAJOR "2.7"
 !define PY_MIN "2.7"
 Var PY_ACT
-!define NP_VERSION "1.8.0"
+!define NP_VERSION "1.8.1"
 !define MPL_VERSION "1.2.1"
 !define EMF_VERSION "2.0.0"
 !define EXE_NAME "Stimfit"
@@ -208,8 +208,8 @@ Section "!Program files and wxPython" 3 ; Core program files and wxPython
   RMDir /r "$INSTDIR\wx-${WXW_VERSION_DIR}-msw-unicode"
   RMDir /r "$INSTDIR\wx-${WXW_VERSION_DIR}-msw"
   File "${FFTDIR}\libfftw3-3.dll"
-  File "${HDF5DIR}\bin\hdf5_hldll.dll"
-  File "${HDF5DIR}\bin\hdf5dll.dll"
+  File "${HDF5DIR}\bin\hdf5_hl.dll"
+  File "${HDF5DIR}\bin\hdf5.dll"
   File "${HDF5DIR}\bin\szip.dll"
   File "${HDF5DIR}\bin\zlib.dll"
   File "${BIOSIGDIR}\lib\libbiosig2.dll"
@@ -325,8 +325,8 @@ Section "!stfio standalone module" 4 ; Standalone python file i/o module
   CreateDirectory ${STFIODIR}
   SetOutPath ${STFIODIR}
   
-  File "${HDF5DIR}\bin\hdf5_hldll.dll"
-  File "${HDF5DIR}\bin\hdf5dll.dll"
+  File "${HDF5DIR}\bin\hdf5_hl.dll"
+  File "${HDF5DIR}\bin\hdf5.dll"
   File "${HDF5DIR}\bin\szip.dll"
   File "${HDF5DIR}\bin\zlib.dll"
   File "${BIOSIGDIR}\lib\libbiosig2.dll"

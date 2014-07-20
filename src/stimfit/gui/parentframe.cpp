@@ -779,10 +779,12 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
 
                 stf::wxProgressInfo progDlgOut("Writing file", "Opening file", 100);
                 switch ( eft ) {
+#ifndef WITHOUT_ABF
                  case stfio::atf:
                      stfio::exportATFFile(stf::wx2std(destFilename), sourceFile);
                      dest_ext = wxT("Axon textfile [*.atf]");
                      break;
+#endif
                  case stfio::igor:
                      stfio::exportIGORFile(stf::wx2std(destFilename), sourceFile, progDlgOut);
                      dest_ext = wxT("Igor binary file [*.ibw]");

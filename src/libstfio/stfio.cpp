@@ -135,6 +135,7 @@ bool stfio::importFile(
             stfio::importHDF5File(fName, ReturnData, progDlg);
             break;
         }
+#ifndef WITHOUT_ABF
         case stfio::abf: {
             stfio::importABFFile(fName, ReturnData, progDlg);
             break;
@@ -143,10 +144,13 @@ bool stfio::importFile(
             stfio::importATFFile(fName, ReturnData, progDlg);
             break;
         }
+#endif
+#ifndef WITHOUT_AXG
         case stfio::axg: {
             stfio::importAXGFile(fName, ReturnData, progDlg);
             break;
         }
+#endif
 
 #ifndef TEST_MINIMAL
         case stfio::cfs: {
@@ -211,10 +215,12 @@ bool stfio::exportFile(const std::string& fName, stfio::filetype type, const Rec
 {
     try {
         switch (type) {
+#ifndef WITHOUT_ABF
         case stfio::atf: {
             stfio::exportATFFile(fName, Data);
             break;
         }
+#endif
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
         case stfio::biosig: {
             stfio::exportBiosigFile(fName, Data, progDlg);

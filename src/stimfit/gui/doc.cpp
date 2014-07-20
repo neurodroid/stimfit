@@ -2971,8 +2971,8 @@ stf::Table wxStfDoc::CurResultsTable() {
     if (viewOuterRiseTime) table.SetColLabel(nCol++,"outer rise time");
     if (viewT50) table.SetColLabel(nCol++,"t50");
     if (viewRD) table.SetColLabel(nCol++,"Rise/Decay");
-    if (viewSloperise) table.SetColLabel(nCol++,"Slope (rise)");
-    if (viewSlopedecay) table.SetColLabel(nCol++,"Slope (decay)");
+    if (viewSloperise) table.SetColLabel(nCol++,"Max slope (rise)");
+    if (viewSlopedecay) table.SetColLabel(nCol++,"Max slope (decay)");
     if (viewLatency) table.SetColLabel(nCol++,"Latency");
 #ifdef WITH_PSLOPE
     if (viewPSlope) table.SetColLabel(nCol++,"PSlope");
