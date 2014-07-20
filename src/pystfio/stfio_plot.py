@@ -118,16 +118,10 @@ class Timeseries(object):
         return self.data[int(tstart/self.dt):int(tend/self.dt)]
     
     def timearray(self):
-        if len(self.data.shape)==1:
-            return np.arange(0.0, len(self.data), 1.0) * self.dt
-        else:
-            return np.arange(0.0, self.data.shape[1], 1.0) * self.dt
+        return np.arange(0.0, self.data.shape[-1]) * self.dt
                
     def duration(self):
-        if len(self.data.shape)==1:
-            return len(self.data) * self.dt
-        else:
-            return self.data.shape[1] * self.dt
+        return self.data.shape[-1] * self.dt
 
     def interpolate(self, newtime, newdt):
         if len(self.data.shape) == 1:
@@ -268,7 +262,11 @@ def prettyNumber(f):
         correct = 1.0
 
     # set stepsize
-    nZeros = int(np.log10(fScaled))
+    try:
+        nZeros = int(np.log10(fScaled))
+    except OverflowError:
+        nZeros = 0
+
     prev10e = 10.0**nZeros / correct
     next10e = prev10e * 10
 
@@ -278,7 +276,7 @@ def prettyNumber(f):
         return 5 * prev10e
     else:
         return round(fScaled/prev10e) * prev10e
-    
+
 def plot_scalebars(ax, div=3.0, labels=True, 
                    xunits="", yunits="", nox=False, 
                    sb_xoff=0, sb_yoff=0, 
