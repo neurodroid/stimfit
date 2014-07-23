@@ -1,0 +1,42 @@
+2006-01-01  Rob McMullen  <robm@users.sourceforge.net>
+
+	* Released version 2.0.0 to SourceForge
+
+	* added: program to run all tests
+
+	* fixed: problems in some examples with Python 2.2
+	
+
+2005-12-07  Rob McMullen  <robm@users.sourceforge.net>
+
+	* Released version 2.0.0b2 to SourceForge
+
+	* fixed: optimize Pie to display an ellipse when the start line
+	and end line are the same.  This fixes a problem with OpenOffice's
+	rendering.
+
+2005-11-24  Rob McMullen  <robm@users.sourceforge.net>
+
+	* added: PolyPolygon and PolyPolyline
+
+2005-11-22  Rob McMullen  <robm@users.sourceforge.net>
+
+	* fixed: don't automatically create the .out.emf files when pyemf
+	is run as a standalone program.  Now need -s option to save.
+
+2005-11-20  Rob McMullen  <robm@users.sourceforge.net>
+
+	* setup.py now grabs long description from first paragraph of
+	module's docstring
+
+	* fixed setup.py to ignore python2.3 warning message:
+	pyemf.py:2340: FutureWarning: hex/oct constants > sys.maxint 
+		       will return positive values in Python 2.4 and up
+	return obj|0x80000000
+
+
+
+2005-11-19  Rob McMullen  <robm@users.sourceforge.net>
+
+	* initial release of version 2.0.0b1 to SourceForge
+	

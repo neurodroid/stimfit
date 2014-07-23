@@ -1,0 +1,87 @@
+--- Elements.py	2005-05-08 21:48:50.000000000 -0400
++++ Elements.py	2005-10-26 09:52:56.299411400 -0400
+@@ -349,6 +349,56 @@
+ 	return width, height
+ 
+ 
++# EMF support: EMF (Enhanced Meta Files) are standard on Windows, but
++# an open-source library pyemf (pyemf.sf.net) exists to read and write
++# them.  This and WMF (Windows Meta Files) are the only vector
++# graphics formats that RTF supports, but EMF is currently the only
++# choice available for non-Windows platforms.
++#
++# The beginning of an EMF file is shown below.  (header info snarfed
++# from wine/wingdi.h).  Note that DWORD and LONG are both 4 byte
++# little-endian values
++#
++# offset type  name              example data
++# 0      DWORD RecordType;       /* 0100 0000 Record type */
++# 4      DWORD RecordSize;       /* a800 0000 Size of the record in bytes */
++# 8      LONG  BoundsLeft;       /* 0000 0000 Left inclusive bounds */
++# 12     LONG  BoundsTop;        /* 0000 0000 Top inclusive bounds */
++# 16     LONG  BoundsRight;      /* 4001 0000 (320) Right inclusive bounds*/
++# 20     LONG  BoundsBottom;     /* 8002 0000 (640) Bottom inclusive bounds */
++# 24     LONG  FrameLeft;        /* 0000 0000 Left position in .01mm units */
++# 28     LONG  FrameTop;         /* 0000 0000 Top bbox position in .01mm units */
++# 32     LONG  FrameRight;       /* 1027 0000 (10000) Right bbox in .01mm units */
++# 36     LONG  FrameBottom;      /* 204e 0000 (20000) Bottom bbox in .01mm units */
++# 40     DWORD Signature;        /* 2045 4d46 Signature ID (always 0x464D4520) */
++#
++
++def _get_littleendian(data,start):
++    """
++    Convert a long stored in little endian format into an integer.
++    'from struct import unpack' would be a better choice for this, but
++    I don't want to introduce new dependencies in the code -- robm.
++    """
++    return (ord(data[start+3]) * 256*256*256) + (ord(data[start+2]) * 256*256) + (ord(data[start+1]) * 256) + (ord(data[start]))
++
++_EMF_HEADER = '\x20\x45\x4d\x46'
++def _get_emf_dimensions( data ) :
++    """
++    Return the dimensions of an EMF in points.  Dimensions stored in
++    the EMF are in .01mm units, so some conversion has to be done.
++    """
++    if data[40:44] != _EMF_HEADER :
++        raise Exception( 'Invalid EMF image' )
++
++    # Find the width and height from the file (stored in .01 mm units.)
++    width  = _get_littleendian(data,32) - _get_littleendian(data,24)
++    height = _get_littleendian(data,36) - _get_littleendian(data,28)
++    
++    # now have to convert to points.  1 mm/100 .01mm * 1in/25.4mm * 72.0 points/in
++    scale=1.0/100.0/25.4*72.0
++    return int(width*scale), int(height*scale)
++
++
+ class Image( RawCode ) :
+ 	
+ 	#  Need to add in the width and height in twips as it crashes
+@@ -359,8 +409,10 @@
+ 	
+ 	PNG_LIB = 'pngblip'
+ 	JPG_LIB = 'jpegblip'
++	EMF_LIB = 'emfblip'
+ 	PICT_TYPES = { 'png' : PNG_LIB,
+-				   'jpg' : JPG_LIB }
++				   'jpg' : JPG_LIB,
++                   'emf' : EMF_LIB }
+ 
+ 	def __init__( self, file_name, **kwargs ) :
+ 
+@@ -369,6 +421,8 @@
+ 		pict_type = self.PICT_TYPES[ file_name[ -3 : ].lower() ]
+ 		if pict_type == self.PNG_LIB :
+ 			width, height = _get_png_dimensions( fin.read( 100 ) )
++		elif pict_type == self.EMF_LIB :
++			width, height = _get_emf_dimensions( fin.read( 50 ) )
+ 		else :
+ 			width, height = _get_jpg_dimensions( fin )
+ 
+@@ -679,4 +733,4 @@
+ 
+ 	result = Inline( text_props )
+ 	apply( result.append, params )
+-	return result
+\ No newline at end of file
++	return result
