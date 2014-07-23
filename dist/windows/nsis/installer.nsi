@@ -37,7 +37,7 @@ Var PY_ACT
 !define FFTDIR "..\..\..\..\fftw"
 !define HDF5DIR "..\..\..\..\hdf5"
 !define BIOSIGDIR "..\..\..\..\biosig"
-!define PYEMFDIR "..\..\..\..\pyemf-${EMF_VERSION}"
+!define PYEMFDIR "${STFDIR}\src\stimfit\py\emf"
 !define PRODIR "C:\Program Files (x86)"
 !define ALTPRODIR "C:\Program Files"
 !define FULL_WELCOME "This wizard will guide you through the installation \
