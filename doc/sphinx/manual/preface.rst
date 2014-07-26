@@ -27,13 +27,13 @@ errors.
         :align: center        
         :alt: The actual platform-independent Stimfit
 
-        The current platform-independent Stimfit.
+        Stimfit running on GNU/Linux
 
     .. figure:: images/stimfit_dos.png
         :align: center        
         :alt: The original Stimfit for DOS
 
-        **Fig. 1:** Above the current platform-independent Stimfit. Bellow, the original Stimfit for MS-DOS.
+        The original Stimfit for MS-DOS.
 
 When I converted the original Pascal program to C/C++, I rewrote the
 code almost entirely from scratch. Only the algorithms to calculate
@@ -51,7 +51,7 @@ adopted. Bill Anderson has made helpful suggestions concerning the user
 interface and provided some very large files that have been recorded
 with his free program `WinLTP <http://www.winltp.com>`_. A large amount of helpful comments and bug
 reports were filed by Emmanuel Eggermann and Daniel Boischer. The
-`Levenberg-Marquartdt-algorithm <http://www.ics.forth.gr/~lourakis/levmar>`_  used for curve fitting was implemented
+`Levenberg-Marquardt algorithm <http://www.ics.forth.gr/~lourakis/levmar>`_  used for curve fitting was implemented
 by Manolis Lourakis.
 
 .. [#Jonas1993] Jonas P, Major G, Sakman B. (1993) Quantal components of unitary EPSCs at the mossy fibre synapse on CA3 pyramidal cells of rat hippocampus. J Physiol. 472, 615-63.
