@@ -2407,6 +2407,8 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
                 wxT("Couldn't find any events;\ntry again with lower threshold")
         );
     }
+    // clear table from previous detection
+    sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.clear();
     for (c_int_it cit = startIndices.begin(); cit != startIndices.end(); ++cit) {
         sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.push_back( stf::Event( *cit, 0, baseline ) );
     }
