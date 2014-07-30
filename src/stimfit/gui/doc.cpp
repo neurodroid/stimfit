@@ -1710,6 +1710,7 @@ void wxStfDoc::OnAnalysisDifferentiate(wxCommandEvent &WXUNUSED(event)) {
     if (TempChannel.size()>0) {
         Recording Diff(TempChannel);
         Diff.CopyAttributes(*this);
+        Diff[0].SetYUnits(at(GetCurChIndex()).GetYUnits()+" / ms");
         wxString title(GetTitle());
         title+=wxT(", differentiated");
         wxGetApp().NewChild(Diff,this,title);
