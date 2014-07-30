@@ -2390,7 +2390,7 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
     // get threshold from user input:
     Vector_double threshold(0);
     std::ostringstream thrS;
-    thrS << "Threshold (" << at(GetCurChIndex()).GetYUnits() << wxT(")");
+    thrS << "Threshold (" << at(GetCurChIndex()).GetYUnits() << ")";
     stf::UserInput Input( std::vector<std::string>(1, thrS.str()),
                           Vector_double (1,0.0), "Set threshold" );
     wxStfUsrDlg myDlg( GetDocumentWindow(), Input );
