@@ -351,15 +351,17 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     }
 
     // earlier versions of biosig support only the file type identification, but did not read AXG files
+#if defined(BIOSIG_VERSION) && (BIOSIG_VERSION > 10403)
     if ( (BIOSIG_VERSION < 10600)
-      && (hdr->TYPE==AXG)
+         && (hdr->TYPE==AXG)
        ) {
         // biosig's AXG import crashes on Windows at this time
         ReturnData.resize(0);
         destructHDR(hdr);
         return type;
     }
-
+#endif
+    
     // ensure the event table is in chronological order
     sort_eventtable(hdr);
 
