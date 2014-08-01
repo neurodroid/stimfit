@@ -168,7 +168,7 @@ TEST(measlib_test, baseline_random) {
 
     for (int i=0; i<N_MAX; i++){
         std::vector<double> myrand = rand(N_MAX); 
-        mybase[i] = stf::base(var, myrand, 0, N_MAX-1);
+        mybase[i] = stf::base(stf::mean_sd, var, myrand, 0, N_MAX-1);
         EXPECT_NEAR(mybase[i], 1/2., 0.05); /* expected mean = 1/2   */
         EXPECT_NEAR(var, 1/12., (1/12.)*0.1); /* expected var = 1/12 */
     }
@@ -184,7 +184,7 @@ TEST(measlib_test, baseline_basic) {
     std::vector<double> data(32768);
     double var = 0;
 
-    EXPECT_EQ(stf::base(var, data, 0, data.size()-1), 0);
+    EXPECT_EQ(stf::base(stf::mean_sd, var, data, 0, data.size()-1), 0);
     EXPECT_EQ(var, 0);
 
 }
@@ -198,10 +198,10 @@ TEST(measlib_test, baseline_out_of_range_exceptions) {
     double var;
 
     /* Out of range: after last point */
-    EXPECT_TRUE(isnan(stf::base(var, data, 0, data.size())));
+    EXPECT_TRUE(isnan(stf::base(stf::mean_sd, var, data, 0, data.size())));
 
     /* Out of range: before first point */
-    EXPECT_TRUE(isnan(stf::base(var, data, -1, data.size()-1)));
+    EXPECT_TRUE(isnan(stf::base(stf::mean_sd, var, data, -1, data.size()-1)));
 
 }
 
@@ -640,7 +640,7 @@ TEST(measlib_validation, baseline) {
         /* the dataset is a normal distribution */
         std::vector<double> mytrace = uniform(mean, N_MAX);
         /* calculate base between start and end */
-        mybase[i] = stf::base(var, mytrace, 0, mytrace.size()-1);
+        mybase[i] = stf::base(stf::mean_sd, var, mytrace, 0, mytrace.size()-1);
         double mean_xpted = myrand[i]/2.0; /* 1/2*(a+b) */
         EXPECT_NEAR(mybase[i], mean_xpted, fabs(mean_xpted*tol));
         /* sanity check for variance */
