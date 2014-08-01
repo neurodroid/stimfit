@@ -15,6 +15,11 @@ ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
 	MAKEFLAGS += -j$(NUMJOBS)
 endif
 
+ifneq ($(wildcard /usr/lib/$(DEB_HOST_MULTIARCH)/hdf5/serial/libhdf5.so),)
+  export DEB_CPPFLAGS_MAINT_APPEND := -I/usr/include/hdf5/serial
+  export DEB_LDFLAGS_MAINT_APPEND := -Wl,-L/usr/lib/$(DEB_HOST_MULTIARCH)/hdf5/serial
+endif
+
 build: build-arch build-indep
 build-arch: build-stamp
 build-indep: build-stamp
