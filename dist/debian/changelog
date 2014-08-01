@@ -1,4 +1,4 @@
-stimfit (0.13.18) unstable; urgency=low
+stimfit (0.13.18-1) unstable; urgency=low
 
   * Support hdf5 1.8.13 new packaging layout (Closes: #756699)
   * Support dpkg-buildflags with --enable-module
