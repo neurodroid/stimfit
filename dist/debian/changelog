@@ -1,11 +1,10 @@
-stimfit (0.13.15-1.1) unstable; urgency=low
+stimfit (0.13.18) unstable; urgency=low
 
-  * Non-maintainer upload.
-  * Support hdf5 1.8.13 new packaging layout.
-  * New patch fix-enable-debian.patch to support dpkg-buildflags with
-    --enable-module.
+  * Support hdf5 1.8.13 new packaging layout (Closes: #756699)
+  * Support dpkg-buildflags with --enable-module
+  * Improved information/error messages
 
- -- Gilles Filippini <pini@debian.org>  Sat, 26 Jul 2014 18:48:03 +0200
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Fri, 01 Aug 2014 10:57:51 +0000
 
 stimfit (0.13.15-1) unstable; urgency=low
 
