@@ -44,7 +44,7 @@ LTTARGET=${PYTHON_DEST_DIR}/stfio
 install-exec-hook:
 	mv ${PYTHON_DEST_DIR}/stfio/${STFIO_PYTHON_LIBNAME} ${PYTHON_DEST_DIR}/stfio/_stfio.so
 if BUILD_DEBIAN
-	chrpath -r $(LTTARGET) ${PYTHON_DEST_DIR}/stfio/_stfio.so
+	chrpath -r ${PYTHON_DIST_PKG}/stfio ${PYTHON_DEST_DIR}/stfio/_stfio.so
 endif
 	rm -f ${PYTHON_DEST_DIR}/stfio/*.la
 	rm -f ${PYTHON_DEST_DIR}/stfio/*.a
