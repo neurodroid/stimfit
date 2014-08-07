@@ -639,7 +639,7 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     file_menu->AppendSeparator();
     file_menu->Append(wxID_EXIT);
 
-#if (wxCHECK_VERSION(2, 9, 0))
+#if !defined __WXGTK__ && (wxCHECK_VERSION(2, 9, 0))
     ((wxStfDoc*)doc)->SetFileMenu( file_menu );
 #else
     GetDocManager()->FileHistoryLoad( *config );
