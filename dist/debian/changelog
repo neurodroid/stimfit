@@ -1,3 +1,9 @@
+stimfit (0.13.19-1) unstable; urgency=low
+
+  * Update to use wxWidgets 3.0 (Closes: #757289)
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 30 Aug 2014 14:40:04 +0000
+
 stimfit (0.13.18-1) unstable; urgency=low
 
   * Support hdf5 1.8.13 new packaging layout (Closes: #756699)
