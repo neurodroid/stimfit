@@ -1371,7 +1371,8 @@ const char* get_trace_name( int trace = -1, int channel = -1 );
 %feature("kwargs") align_selected;
 %feature("docstring", "Aligns the selected traces to the index that is 
 returned by the alignment function, and then creates a new window 
-showing the aligned traces.
+showing the aligned traces. This function requires to select the
+traces of interest and the presence of a second (i.e reference) channel.
 Arguments:       
 alignment -- The alignment function to be used. Accepts any function
              returning a valid index within a trace. These are some

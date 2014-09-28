@@ -1461,6 +1461,11 @@ void align_selected(  double (*alignment)( bool ), bool active ) {
         ShowError( wxT("No selected traces") );
         return;
     }
+    // check for a second channel
+    if ( actDoc->size() < 2 ) {
+        ShowError( wxT("No second channel found") );
+        return;
+    }
 
     //initialize the lowest and the highest index:
     std::size_t min_index=0;

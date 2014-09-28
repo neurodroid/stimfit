@@ -12,7 +12,7 @@ The :mod:`stf` module defines the following functions:
 
 .. function:: align_selected(alignment, active=False)
 
-    Aligns the selected traces to the index that is returned by the alignment function, and then creates a new window showing the aligned traces.
+    Aligns the selected traces to the index that is returned by the alignment function, and then creates a new window showing the aligned traces. This function requires to select the traces of interest and the presence of a second (i.e reference) channel.
         
         **Arguments:**       
 
