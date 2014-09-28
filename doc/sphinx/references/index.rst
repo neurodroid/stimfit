@@ -9,7 +9,11 @@ References
 
 :Date:  |today|
 
-A list of recent publications that have used `Stimfit <http:http://www.stimfit.org>`_ for data analysis. Please let me know if something is missing here.
+A list of recent publications that have used `Stimfit <http://www.stimfit.org>`_ for data analysis. Please let me know if something is missing here.
+
+    * `Savanthrapadian S, Meyer T, Elgueta C, Booker SA, Vida I, Bartos M (2014) <http://www.jneurosci.org/cgi/pmidlookup?view=long&pmid=24920624>.`_ Synaptic properties of SOM- and CCK-expressing cells in dentate gyrus interneuron networks. *J Neurosci* 24:8197-8209. 
+
+    * `Boudkkazi S, Brechet A, Schwenk J and Fakler B (2014). <http://www.cell.com/neuron/abstract/S0896-6273%2814%2900261-X>`_ Cornichon2 dictates the time course of excitatory transmission at individual hippocampal synapes. *Neuron*, doi: http://dx.doi.org/10.1016/j.neuron.2014.03.031
 
     * `Hua H and Jonas P (2014). <http://www.nature.com/neuro/journal/vaop/ncurrent/full/nn.3678.html>`_ A supercritical density of Na+ channels ensures fast signaling in GABAergic interneuron axons. *Nat Neurosci*, doi:10.1038/nn.3678
     * `Vyleta NP and Jonas P (2014). <http://www.ncbi.nlm.nih.gov/pubmed/24503854>`_ Loose coupling between Ca2+ channels and release sensors at a plastic hippocampal synapse. *Science*, Feb 7; 343:665-70. 
