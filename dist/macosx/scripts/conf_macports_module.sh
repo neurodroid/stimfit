@@ -1,7 +1,7 @@
 #! /bin/bash
 
 prefix="/opt/local"
-PYVER=3.3
+PYVER=3.4
 
 MYCC=/usr/bin/clang
 MYCXX=/usr/bin/clang++
