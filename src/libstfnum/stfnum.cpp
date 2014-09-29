@@ -807,7 +807,7 @@ stfnum::deconvolve(const Vector_double& data, const Vector_double& templ,
         data_return.resize(0);
         return data_return;
     }
-    int nbins =  int(data_return.size()/500.0);
+    int nbins =  500; //int(data_return.size()/500.0);
     std::map<double, int> histo = histogram(data_return, nbins);
     double max_value = -1;
     double max_time = 0;
@@ -845,6 +845,9 @@ stfnum::deconvolve(const Vector_double& data, const Vector_double& templ,
     std::vector< stfnum::storedFunc > funcLib = stfnum::GetFuncLib();
     
     double interval = (++histo.begin())->first-histo.begin()->first;
+    if (maxhalf_time==0) {
+        maxhalf_time = interval;
+    }
     /* Initial parameter guesses */
     Vector_double pars(3);
     pars[0] = max_value;

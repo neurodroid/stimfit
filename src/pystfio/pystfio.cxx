@@ -112,9 +112,22 @@ PyObject* detect_events(double* data, int size_data, double* templ, int size_tem
     if (norm) {
         double fmin = *std::min_element(vtempl.begin(), vtempl.end());
         double fmax = *std::max_element(vtempl.begin(), vtempl.end());
-        vtempl = stfio::vec_scal_minus(vtempl, fmax);
-        double minim=fabs(fmin);
-        vtempl = stfio::vec_scal_div(vtempl, minim);
+        double basel = 0;
+        double normval = 1.0;
+        if (fabs(fmin) > fabs(fmax)) {
+            basel = fmax;
+        } else {
+            basel = fmin;
+        }
+        vtempl = stfio::vec_scal_minus(vtempl, basel);
+        fmin = *std::min_element(vtempl.begin(), vtempl.end());
+        fmax = *std::max_element(vtempl.begin(), vtempl.end());
+        if (fabs(fmin) > fabs(fmax)) {
+            normval = fabs(fmin);
+        } else {
+            normval = fabs(fmax);
+        }
+        vtempl = stfio::vec_scal_div(vtempl, normval);
     }
     Vector_double trace(data, &data[size_data]);
     Vector_double detect(size_data);
