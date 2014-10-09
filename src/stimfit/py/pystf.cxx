@@ -1462,7 +1462,7 @@ void align_selected(  double (*alignment)( bool ), bool active ) {
         return;
     }
     // check for a second channel
-    if ( actDoc->size() < 2 ) {
+    if ( actDoc()->size() < 2 ) {
         ShowError( wxT("No second channel found") );
         return;
     }
