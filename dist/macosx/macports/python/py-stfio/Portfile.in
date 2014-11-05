@@ -5,7 +5,7 @@ PortSystem          1.0
 PortGroup           python 1.0
 
 name                py-stfio
-version             0.13.15
+version             0.14.0
 categories          python science
 platforms           darwin
 license             GPL-2
