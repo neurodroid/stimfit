@@ -586,7 +586,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 	/* Initialize all header parameters */
     biosig_set_filetype(hdr, GDF);
 
-    biosig_set_startdatetime(hdr, Data.GetDateTime());
+    biosig_set_startdatetime(hdr, &Data.GetDateTime());
 
     const char *xunits = Data.GetXUnits().c_str();
     uint16_t pdc = PhysDimCode(xunits);
