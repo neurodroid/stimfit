@@ -1,0 +1,20 @@
+package:
+    name: 7-zip
+    version: "9.20"
+
+source:
+    fn: 7z920.msi
+    url: "http://downloads.sourceforge.net/sevenzip/7z920.msi" # [win32]
+    url: "http://downloads.sourceforge.net/sevenzip/7z920-x64.msi" # [win64]
+
+requirements:
+    build:
+        - 7-zip-cl
+
+build:
+    number: 0
+
+about:
+    home: http://www.7-zip.org
+    license: LGPL + unRAR restriction
+    summary: "7-Zip is a file archiver with a high compression ratio."

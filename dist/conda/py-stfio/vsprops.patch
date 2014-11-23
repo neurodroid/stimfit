@@ -1,0 +1,45 @@
+diff --git dist/windows/VS2008/libstfio/Config.vsprops dist/windows/VS2008/libstfio/Config.vsprops
+index 3b0c0ea..98ffe3f 100755
+--- dist/windows/VS2008/libstfio/Config.vsprops
++++ dist/windows/VS2008/libstfio/Config.vsprops
+@@ -6,19 +6,19 @@
+ 	>
+ 	<UserMacro
+ 		Name="HDF5DIR"
+-		Value="$(SolutionDir)\..\..\..\..\..\hdf5"
++		Value="$(LIBRARY_INC)\.."
+ 		PerformEnvironmentSet="true"
+ 	/>
+ 	<UserMacro
+ 		Name="BOOSTDIR"
+-		Value="$(SolutionDir)\..\..\..\..\..\boost"
++		Value="$(HOMEDRIVE)$(HOMEPATH)\boost"
+ 	/>
+ 	<UserMacro
+ 		Name="BIOSIGDIR"
+-		Value="$(SolutionDir)\..\..\..\..\..\biosig"
++		Value="$(LIBRARY_INC)\.."
+ 	/>
+ 	<UserMacro
+ 		Name="PYTHONDIR"
+-		Value="C:\Python27"
++		Value="$(PREFIX)"
+ 	/>
+ </VisualStudioPropertySheet>
+diff --git dist/windows/VS2008/pystfio/Config.vsprops dist/windows/VS2008/pystfio/Config.vsprops
+index be1b192..9ced898 100755
+--- dist/windows/VS2008/pystfio/Config.vsprops
++++ dist/windows/VS2008/pystfio/Config.vsprops
+@@ -15,10 +15,10 @@
+ 	/>
+ 	<UserMacro
+ 		Name="PYTHONDIR"
+-		Value="C:\Python27"
++		Value="$(PREFIX)"
+ 	/>
+ 	<UserMacro
+ 		Name="BOOSTDIR"
+-		Value="$(SolutionDir)\..\..\..\..\..\boost"
++		Value="$(HOMEDRIVE)$(HOMEPATH)\boost"
+ 	/>
+ </VisualStudioPropertySheet>
