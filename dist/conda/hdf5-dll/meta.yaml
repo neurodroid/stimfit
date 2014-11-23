@@ -1,0 +1,21 @@
+package:
+    name: hdf5-dll
+    version: "1.8.13"
+
+source:
+    fn: hdf5-1.8.13-win32-VS2008-shared.zip # [win32]
+    fn: hdf5-1.8.13-win64-VS2008-shared.zip # [win64]
+    url: "http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win32-VS2008-shared.zip" # [win32]
+    url: "http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.13/bin/windows/hdf5-1.8.13-win64-VS2008-shared.zip" # [win64]
+
+requirements:
+    build:
+        - 7-zip
+
+build:
+    number: 0
+
+about:
+    home: http://www.hdfgroup.org
+    license: BSD-style
+    summary: "HDF5 file format libary"

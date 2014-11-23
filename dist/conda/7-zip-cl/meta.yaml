@@ -1,0 +1,15 @@
+package:
+    name: 7-zip-cl
+    version: "9.20"
+
+source:
+    fn: 7za920.zip
+    url: "http://downloads.sourceforge.net/sevenzip/7za920.zip"
+
+build:
+    number: 0
+
+about:
+    home: http://www.7-zip.org
+    license: LGPL + unRAR restriction
+    summary: "7-Zip is a file archiver with a high compression ratio. This is the command line version."

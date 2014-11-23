@@ -1,0 +1,30 @@
+package:
+    name: py-stfio-debug
+    version: "trunk"
+
+source:
+    # Since this recipe is part of the git repo, the source is just a local path
+    path: ../../..
+    patches:
+        # Need to change the HDF5DIR, BIOSIGDIR, PYTHONDIR, BOOSTDIR, etc. user macros set in the config.vsprops files so that
+        # the Conda package versions are used. Also, since conda builds in it's own build directory, the Boost directory needs
+        # to be changed to an absolute path
+        - vsprops.patch
+
+requirements:
+    build:
+        - hdf5-dll
+        - biosig
+        - python
+        - numpy
+    run:
+        - python
+        - numpy
+
+build:
+    number: 0
+
+about:
+    home: https://github.com/neurodroid/stimfit
+    license: GPL
+    summary: "The stfio Python module allows to read and write data in common electrophysiology formats without running Stimfit."
