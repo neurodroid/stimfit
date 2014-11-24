@@ -7,19 +7,22 @@ Visual C++ Express 2008 will not build 64-bit targets out of the box. However, t
 These instructions have been adapted from the following sources:
 
 http://jenshuebel.wordpress.com/2009/02/12/visual-c-2008-express-edition-and-64-bit-targets/
+
 http://www.cppblog.com/xcpp/archive/2009/09/09/vc2008express_64bit_win7sdk.html
+
 https://github.com/enGits/engrid/wiki/Configure-Microsoft-Visual-Studio-2008-Express-to-also-build-for-Windows-x64
+
 http://wiki.blender.org/index.php/Dev:Doc/Building_Blender/Windows/Visual_C%2B%2B_2008_Express
 
 ===============================
 Get and install the Windows SDK
 ===============================
 
-Download the appropriate SDK for your version of Windows. You need version 3.5, later versions will not work with VS2008. The current Windows release can be found here: `Microsoft Windows SDK for Windows 7 and .NET Framework 3.5 SP1 <http://www.microsoft.com/en-us/download/details.aspx?id=3138>`_.
+Download the appropriate SDK for your version of Windows. You need version 3.5, later versions will not work with VS2008. The current Windows 7 release can be found here: `Microsoft Windows SDK for Windows 7 and .NET Framework 3.5 SP1 <http://www.microsoft.com/en-us/download/details.aspx?id=3138>`_.
 
 When installing the SDK, you need to select "Windows Headers and Libraries", "Visual C++ Compilers" and "Windows Development Tools". The other items are optional, you may not want to install the documentation as it will take up a lot of space and might take a long time to download due to its large size.
 
-It `appears <http://www.cppblog.com/xcpp/archive/2009/09/09/vc2008express_64bit_win7sdk.html>`_ that on 32-bit Windows, the SDK installer may not install the 64-bit tools the first time around. If so, go to the Control Panel->Programs->Programs and Features, choose to "Change" the "Microsoft Windows SDK for Windows 7 (7.0)" and then click the "Change" option when the installer starts up. Reselect the above options, making sure x64 and IA64 are selected in the sub-categories.
+It `appears <http://www.cppblog.com/xcpp/archive/2009/09/09/vc2008express_64bit_win7sdk.html>`_ that on 32-bit Windows, the SDK installer may not install the 64-bit tools the first time around. If so, go to the Control Panel -> Programs -> Programs and Features, choose to "Change" the "Microsoft Windows SDK for Windows 7 (7.0)" and then click the "Change" option when the installer starts up. Reselect the above options, making sure x64 and IA64 are selected in the sub-categories.
 
 ==================================
 Edit the registry and rename files
@@ -57,9 +60,8 @@ To accomplish the above manually, proceed as follows:
 =========================================
 Make the installed SDK the system default
 =========================================
-Open the Windows 7 SDK CMD shell located in "Start -> Programs -> Microsoft Windows SDK v7.0 -> CMD Shell" and in the CMD window type the following: 
+Open the Windows 7 SDK CMD shell located in "Start -> Programs -> Microsoft Windows SDK v7.0 -> CMD Shell" and at the CMD prompt type the following::
 
-::
     Setup\WindowsSdkVer.exe -version:v7.0
 
 You may not need this step if you do not have a previous version of the SDK installed.
