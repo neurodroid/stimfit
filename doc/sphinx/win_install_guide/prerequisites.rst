@@ -15,6 +15,11 @@ Visual C++ Express 2008
 
 The official Windows version of Python 2.7 was built with Visual Studio 2008. We therefore have to use Visual C++ 2008 so that we link against the same C runtime library. Luckily, there's a free version called Visual C++ 2008 Express that you can get directly from `here <http://go.microsoft.com/?linkid=7729279>`_
 
+64-bit
+------
+Visual C++ Express 2008 will not build 64-bit targets out of the box. However, this capability can be added by installing the Windows SDK and making some registry edits. Follow the instructions here to do this: :doc:`VCExpress64bitsetup`. Note that if you have the full rather than express version of Visual C++, this should not be necessary.
+
+You also need 64-bit versions of all the required libraries. Where you see win32 or 32-bit below, get the corresponding 64-bit version instead.
 
 =========
 Libraries
