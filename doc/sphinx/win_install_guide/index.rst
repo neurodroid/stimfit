@@ -16,4 +16,5 @@ Contents:
    :maxdepth: 2
 
    prerequisites
+   VCExpress64bitsetup
    building
