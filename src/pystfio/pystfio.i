@@ -356,8 +356,8 @@ class Section {
         PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);
         double* gDataP = (double*)array_data(np_array);
 
-        std::copy( &($self->operator[](0)),
-                   &($self->operator[]($self->size())),
+        std::copy( $self->get().begin(),
+                   $self->get().end(),
                    gDataP);
         return np_array;
     };
