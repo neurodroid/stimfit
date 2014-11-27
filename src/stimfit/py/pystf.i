@@ -1613,6 +1613,7 @@ def cut_traces_multi( pt_list ):
     in pt_list and shows the cut traces in a new window.
     Returns True upon success, False upon failure."""
     if not get_selected_indices():
+        print( "Trace is not selected!" )
         return False
     new_list = list()
     for n in get_selected_indices():
