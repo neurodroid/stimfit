@@ -532,8 +532,8 @@ def loadtxt(freq=400):
     """
     Loads an ASCII file with extension *.GoR. This file contains 
     ratiometric fluorescent measurements (i.e Green over Red fluorescence) 
-    saved in one colum. This function opens a new Stimfit window and
-    sets the units to ms and "Delta G over R".   
+    saved in one column. This function opens a new Stimfit window and
+    sets the x-units to "ms" and y-units to "Delta G over R".   
     Arguments:
     
     freq  -- (float) the sampling rate (in Hz) for fluorescence acquistion.
