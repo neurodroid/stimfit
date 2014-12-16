@@ -5,6 +5,9 @@ Python recipes to solve frequently requested tasks with Stimfit.
 You can find a complete description of these functions in the 
 Stimfit online documentation (http://www.stimfit.org/doc/sphinx/index.html)
 Check "The Stimfit Book of Spells" for details.
+
+Authors: Jose Guzman, Alois Schloegl and Christoph Schmidt-Hieber
+Last change: Tue Dec 16 10:50:15 CET 2014
 """
 
 
@@ -524,3 +527,28 @@ def count_aps():
     stf.show_table(mytable)
 
     return True
+
+def loadtxt(freq=400):
+    """
+    Loads an ASCII file with extension *.GoR. This file contains 
+    ratiometric fluorescent measurements (i.e Green over Red fluorescence) 
+    saved in one colum. This function opens a new Stimfit window and
+    sets the units to ms and "Delta G over R".   
+    Arguments:
+    
+    freq  -- (float) the sampling rate (in Hz) for fluorescence acquistion.
+             the default value is 400 Hz
+    """
+    
+    fname = wx.FileSelector("Import Ca transients" , 
+        default_extension="Ratiometric" ,
+        default_path="." , 
+        wildcard = "Ratiometric fluorescence (*.GoR)|*.GoR" , 
+        flags = wx.OPEN | wx.FILE_MUST_EXIST)
+
+    stf.new_window( np.loadtxt(fname) )
+    stf.set_xunits('ms')
+    stf.set_yunits('Delta G/R')
+
+    stf.set_sampling_interval(1.0/freq*1000) # acquisition at 400 Hz
+    
