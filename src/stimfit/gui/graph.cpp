@@ -45,10 +45,8 @@
 #include <iostream>
 #endif
 
-#ifdef _MSC_VER
+#ifdef _WIN32
 #define isnan _isnan
-#else
-using std::isnan;
 #endif
 // #define BENCHMARK // uncomment to run benchmark
 
