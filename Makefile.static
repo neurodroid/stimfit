@@ -194,7 +194,7 @@ endif
 CC        = $(shell $(WXCONF) --cc)
 CXX       = $(shell $(WXCONF) --cxx)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector
-CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -fstack-protector
+CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -std=gnu++11 -fstack-protector
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
 LIBS     += -lhdf5_hl -lhdf5
 ifneq (,$(findstring WITH_BIOSIG2, $(DEFINES)))
@@ -209,7 +209,8 @@ endif
 LIBS     += -lfftw3 -lz -lpthread
 
 ifeq (mingw,$(findstring mingw, $(WXCONF)))
-  LIBS   += -lgfortran -liberty -liconv
+  LIBS   += -lgfortran -lquadmath
+  LIBS   += -liberty -liconv
 endif
 
 
