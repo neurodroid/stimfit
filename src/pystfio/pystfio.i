@@ -407,7 +407,6 @@ PyObject* peak_detection(double* invec, int size, double threshold, int min_dist
 %pythoncode {
 import os
 
-# code added by Jose
 class StfIOException(Exception):
     """ raises Exceptions for the Stfio module """
     def __init__(self, error_msg):
@@ -455,7 +454,6 @@ def read(fname, ftype=None, verbose=False):
 
 #ifndef TEST_MINIMAL
     if ftype is None:
-        # Guess file type:
         ext = os.path.splitext(fname)[1]
         try:
             ftype = filetype[ext]
