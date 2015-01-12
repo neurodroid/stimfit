@@ -559,24 +559,40 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
         }
         cbList.resize(sec_attr.eventList.size());
     }
-    std::size_t n_cb = 0;
+
+    // Only draw check boxes if there are less than 1000 events (takes too long
+    // to draw them and it's impossible to check them anyway)
+    wxRect WindowRect=GetRect();
+    if (isPrinted) WindowRect=wxRect(printRect);
+    int right=WindowRect.width;
+    int nevents_plot = 0;
     for (event_it it2 = sec_attr.eventList.begin(); it2 != sec_attr.eventList.end(); ++it2) {
-        try {
-            if (cbList.at(n_cb) == NULL) {
-                cbList.at(n_cb) =
-                    new wxStfCheckBox(
-                                      this, -1, wxEmptyString, &*it2,
-                                      wxPoint(xFormat(it2->GetEventStartIndex()), 0));
+        nevents_plot += (xFormat(it2->GetEventStartIndex()) < right &&
+                         xFormat(it2->GetEventStartIndex()) > 0);
+    }
+    if (nevents_plot < 500) {
+        std::size_t n_cb = 0;
+        for (event_it it2 = sec_attr.eventList.begin(); it2 != sec_attr.eventList.end(); ++it2) {
+            if (xFormat(it2->GetEventStartIndex()) < right &&
+                xFormat(it2->GetEventStartIndex()) > 0) {
+                try {
+                    if (cbList.at(n_cb) == NULL) {
+                        cbList.at(n_cb) =
+                            new wxStfCheckBox(this, -1, wxEmptyString, &*it2,
+                                              wxPoint(xFormat(it2->GetEventStartIndex()), 0));
+                    }
+                    cbList.at(n_cb)->ResetEvent( &*it2 );
+                    cbList.at(n_cb)->Move(wxPoint(xFormat(it2->GetEventStartIndex()), 0));
+                }
+                catch (const std::out_of_range& e) {
+                    wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
+                    return;
+                }
             }
-            cbList.at(n_cb)->ResetEvent( &*it2 );
-            cbList.at(n_cb++)->Move(
-                                    wxPoint(xFormat(it2->GetEventStartIndex()), 0));
-        }
-        catch (const std::out_of_range& e) {
-            wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
-            return;
+            n_cb++;
         }
     }
+
     // return focus to frame:
     SetFocus();
 }
