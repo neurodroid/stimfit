@@ -592,13 +592,7 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
                     return;
                 }
             }
-            cbList.at(n_cb)->ResetEvent( &*it2 );
-            cbList.at(n_cb++)->Move(
-                                    wxPoint(xFormat(it2->GetEventStartIndex()), 0));
-        }
-        catch (const std::out_of_range& e) {
-            wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
-            return;
+            n_cb++;
         }
     } else {
         for (std::size_t n_cbl = 0;
@@ -610,6 +604,7 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
             }
         }
     }
+
     // return focus to frame:
     SetFocus();
 }
