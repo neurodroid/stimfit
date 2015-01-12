@@ -175,6 +175,27 @@ namespace stf {
      */
     double fexpbde(double x, const Vector_double& p);
 
+    //! Triexponential function with delay. 
+    /*! \f{eqnarray*}
+     *      f(x)=
+     *      \begin{cases}
+     *          p_0 & \mbox{if }x < p_1 \\ 
+     *          p_3 \left( p_6\mathrm{e}^{\frac{p_1 - x}{p_2}} + (1-p_6)\mathrm{e}^{\frac{p_1 - x}{p_5}} - \mathrm{e}^{\frac{p_1 - x}{p_4}} \right) + p_0 & \mbox{if }x \geq p_1
+     *      \end{cases}
+     *  \f}
+     *  \param x Function argument.
+     *  \param p A valarray of parameters, where \n
+     *         \e p[0] is the baseline, \n
+     *         \e p[1] is the delay, \n
+     *         \e p[2] is the first later (slower) time constant, \n
+     *         \e p[3] is the amplitude and \n
+     *         \e p[4] is the earlier (faster) time constant, \n
+     *         \e p[5] is the second later (slower) time constant, \n
+     *         \e p[6] is the relative weight of p[2], \n
+     *  \return The evaluated function.
+     */
+    double fexptde(double x, const Vector_double& p);
+
 #if 0
     //! Computes the Jacobian of stf::fexpde().
     /*! \f{eqnarray*}
@@ -223,6 +244,16 @@ namespace stf {
      *         On exit, will contain initial parameter estimates.
      */
     void fexpbde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt,  Vector_double& pInit );
+
+    //! Initialises parameters for fitting stfnum::fexpde() to \e data.
+    /*! \param data The waveform of the data for the fit.
+     *  \param base Baseline of \e data.
+     *  \param peak Peak value of \e data.
+     *  \param dt The sampling interval.
+     *  \param pInit On entry, pass a valarray of size 4.
+     *         On exit, will contain initial parameter estimates.
+     */
+    void fexptde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt,  Vector_double& pInit );
 
     //! Alpha function.
     /*! \f[f(x)=p_0  \frac{x}{p_1} \mathrm{e}^{\left(1 - \frac{x}{p_1} \right)} + p_2\f]

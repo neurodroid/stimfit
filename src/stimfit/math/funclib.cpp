@@ -112,6 +112,21 @@ std::vector< stf::storedFunc > stf::GetFuncLib() {
     funcList.push_back(stf::storedFunc(
                                        "Gaussian", parInfoGauss, fgauss, fgauss_init, fgauss_jac, true));
 
+    // Triexponential function, starting with a delay, start fixed to baseline:
+    std::vector<stfnum::parInfo> parInfoTExpDe(7);
+    parInfoTExpDe[0].toFit=false; parInfoTExpDe[0].desc="Baseline"; parInfoTExpDe[0].scale=stfnum::yscaleoffset; parInfoTExpDe[0].unscale=stfnum::yunscaleoffset;
+    parInfoTExpDe[1].toFit=true;  parInfoTExpDe[1].desc="Delay"; parInfoTExpDe[1].scale=stfnum::xscale; parInfoTExpDe[1].unscale=stfnum::xunscale; 
+    // parInfoTExpDe[1].constrained = true; parInfoTExpDe[1].constr_lb = 0.0; parInfoTExpDe[1].constr_ub = DBL_MAX;
+    parInfoTExpDe[2].toFit=true;  parInfoTExpDe[2].desc="tau1a"; parInfoTExpDe[2].scale=stfnum::xscale; parInfoTExpDe[2].unscale=stfnum::xunscale;
+    // parInfoTExpDe[2].constrained = true; parInfoTExpDe[2].constr_lb = 1.0e-16; parInfoTExpDe[2].constr_ub = DBL_MAX;
+    parInfoTExpDe[3].toFit=true;  parInfoTExpDe[3].desc="Factor"; parInfoTExpDe[3].scale=stfnum::yscale; parInfoTExpDe[3].unscale=stfnum::yunscale;
+    parInfoTExpDe[4].toFit=true;  parInfoTExpDe[4].desc="tau2"; parInfoTExpDe[4].scale=stfnum::xscale; parInfoTExpDe[4].unscale=stfnum::xunscale;
+    parInfoTExpDe[5].toFit=true;  parInfoTExpDe[5].desc="tau1b"; parInfoTExpDe[5].scale=stfnum::xscale; parInfoTExpDe[5].unscale=stfnum::xunscale;
+    parInfoTExpDe[6].toFit=true;  parInfoTExpDe[6].desc="ptau1b"; parInfoTExpDe[6].scale=stfnum::noscale; parInfoTExpDe[6].unscale=stfnum::noscale;
+    funcList.push_back(stfnum::storedFunc(
+                                       "Triexponential with delay, start fixed to baseline, delay constrained to > 0",
+                                       parInfoTExpDe,fexptde,fexptde_init,stfnum::nojac,false));
+
     return funcList;
 }
 
@@ -270,6 +285,20 @@ double stf::fexpbde(double x, const Vector_double& p) {
     }
 }
 
+double stfnum::fexptde(double x, const Vector_double& p) {
+    if (x<p[1]) {
+        return p[0];
+    } else {
+        // double tpeak = p[4]*p[2]*log(p[4]/p[2])/(p[4]-p[2]);
+        // double adjust = 1.0/((1.0-exp(-tpeak/p[4]))-(1.0-exp(-tpeak/p[2])));
+        double e1=exp((p[1]-x)/p[2]);
+        double e2=exp((p[1]-x)/p[4]);
+        double e3=exp((p[1]-x)/p[5]);
+
+        return p[6]*p[3]*e1 + (1.0-p[6])*p[3]*e3 - p[3]*e2 + p[0];
+    }
+}
+
 #if 0
 Vector_double stf::fexpbde_jac(double x, const Vector_double& p) {
     Vector_double jac(5);
@@ -315,7 +344,33 @@ void stf::fexpbde_init(const Vector_double& data, double base, double peak, doub
 
 }
 
+<<<<<<< HEAD:src/stimfit/math/funclib.cpp
 double stf::falpha(double x, const Vector_double& p) {
+=======
+void stfnum::fexptde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+    // Find the peak position in data:
+    double maxT = stfnum::whereis( data, peak );
+
+    if ( maxT == 0 ) maxT = data.size() * 0.05;
+
+    pInit[0] = base; /* baseline */
+    //pInit[1] = 0.01;
+    //pInit[1] = 1.0; /* latency */
+    // Use the left fitting cursor to estimate latency
+    pInit[1] = maxT * dt; /* latency */
+    //pInit[2] = 3 * maxT * dt; /* tau1 time constant */
+    pInit[2] = 1.5*HalfWidth; /* tau1a time constant */
+    pInit[5] = 1.5*HalfWidth; /* tau1b time constant */
+    //pInit[4] = 0.5 * maxT * dt; /* tau2 time constant */
+    pInit[4] = RTLoHi; /* tau2 time constant */
+    double tpeak = pInit[4]*pInit[2]*log(pInit[4]/pInit[2])/(pInit[4]-pInit[2]);
+    double adjust = 1.0/((1.0-exp(-tpeak/pInit[4]))-(1.0-exp(-tpeak/pInit[2])));
+    pInit[3] = adjust*(peak-base); /* factor */
+    pInit[6] = 0.5;
+}
+
+double stfnum::falpha(double x, const Vector_double& p) {
+>>>>>>> ffffe82... Add triexponential function with delay to fit library:src/libstfnum/funclib.cpp
     
     //double e=exp(-p[1]*x);
     //return p[0]*p[1]*p[1]*x*e+p[2]; 
