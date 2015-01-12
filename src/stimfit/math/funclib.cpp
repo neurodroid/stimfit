@@ -113,19 +113,19 @@ std::vector< stf::storedFunc > stf::GetFuncLib() {
                                        "Gaussian", parInfoGauss, fgauss, fgauss_init, fgauss_jac, true));
 
     // Triexponential function, starting with a delay, start fixed to baseline:
-    std::vector<stfnum::parInfo> parInfoTExpDe(7);
-    parInfoTExpDe[0].toFit=false; parInfoTExpDe[0].desc="Baseline"; parInfoTExpDe[0].scale=stfnum::yscaleoffset; parInfoTExpDe[0].unscale=stfnum::yunscaleoffset;
-    parInfoTExpDe[1].toFit=true;  parInfoTExpDe[1].desc="Delay"; parInfoTExpDe[1].scale=stfnum::xscale; parInfoTExpDe[1].unscale=stfnum::xunscale; 
+    std::vector<stf::parInfo> parInfoTExpDe(7);
+    parInfoTExpDe[0].toFit=false; parInfoTExpDe[0].desc="Baseline"; parInfoTExpDe[0].scale=stf::yscaleoffset; parInfoTExpDe[0].unscale=stf::yunscaleoffset;
+    parInfoTExpDe[1].toFit=true;  parInfoTExpDe[1].desc="Delay"; parInfoTExpDe[1].scale=stf::xscale; parInfoTExpDe[1].unscale=stf::xunscale; 
     // parInfoTExpDe[1].constrained = true; parInfoTExpDe[1].constr_lb = 0.0; parInfoTExpDe[1].constr_ub = DBL_MAX;
-    parInfoTExpDe[2].toFit=true;  parInfoTExpDe[2].desc="tau1a"; parInfoTExpDe[2].scale=stfnum::xscale; parInfoTExpDe[2].unscale=stfnum::xunscale;
+    parInfoTExpDe[2].toFit=true;  parInfoTExpDe[2].desc="tau1a"; parInfoTExpDe[2].scale=stf::xscale; parInfoTExpDe[2].unscale=stf::xunscale;
     // parInfoTExpDe[2].constrained = true; parInfoTExpDe[2].constr_lb = 1.0e-16; parInfoTExpDe[2].constr_ub = DBL_MAX;
-    parInfoTExpDe[3].toFit=true;  parInfoTExpDe[3].desc="Factor"; parInfoTExpDe[3].scale=stfnum::yscale; parInfoTExpDe[3].unscale=stfnum::yunscale;
-    parInfoTExpDe[4].toFit=true;  parInfoTExpDe[4].desc="tau2"; parInfoTExpDe[4].scale=stfnum::xscale; parInfoTExpDe[4].unscale=stfnum::xunscale;
-    parInfoTExpDe[5].toFit=true;  parInfoTExpDe[5].desc="tau1b"; parInfoTExpDe[5].scale=stfnum::xscale; parInfoTExpDe[5].unscale=stfnum::xunscale;
-    parInfoTExpDe[6].toFit=true;  parInfoTExpDe[6].desc="ptau1b"; parInfoTExpDe[6].scale=stfnum::noscale; parInfoTExpDe[6].unscale=stfnum::noscale;
-    funcList.push_back(stfnum::storedFunc(
+    parInfoTExpDe[3].toFit=true;  parInfoTExpDe[3].desc="Factor"; parInfoTExpDe[3].scale=stf::yscale; parInfoTExpDe[3].unscale=stf::yunscale;
+    parInfoTExpDe[4].toFit=true;  parInfoTExpDe[4].desc="tau2"; parInfoTExpDe[4].scale=stf::xscale; parInfoTExpDe[4].unscale=stf::xunscale;
+    parInfoTExpDe[5].toFit=true;  parInfoTExpDe[5].desc="tau1b"; parInfoTExpDe[5].scale=stf::xscale; parInfoTExpDe[5].unscale=stf::xunscale;
+    parInfoTExpDe[6].toFit=true;  parInfoTExpDe[6].desc="ptau1b"; parInfoTExpDe[6].scale=stf::noscale; parInfoTExpDe[6].unscale=stf::noscale;
+    funcList.push_back(stf::storedFunc(
                                        "Triexponential with delay, start fixed to baseline, delay constrained to > 0",
-                                       parInfoTExpDe,fexptde,fexptde_init,stfnum::nojac,false));
+                                       parInfoTExpDe,fexptde,fexptde_init,stf::nojac,false));
 
     return funcList;
 }
@@ -285,7 +285,7 @@ double stf::fexpbde(double x, const Vector_double& p) {
     }
 }
 
-double stfnum::fexptde(double x, const Vector_double& p) {
+double stf::fexptde(double x, const Vector_double& p) {
     if (x<p[1]) {
         return p[0];
     } else {
@@ -344,12 +344,9 @@ void stf::fexpbde_init(const Vector_double& data, double base, double peak, doub
 
 }
 
-<<<<<<< HEAD:src/stimfit/math/funclib.cpp
-double stf::falpha(double x, const Vector_double& p) {
-=======
-void stfnum::fexptde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+void stf::fexptde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
-    double maxT = stfnum::whereis( data, peak );
+    double maxT = stf::whereis( data, peak );
 
     if ( maxT == 0 ) maxT = data.size() * 0.05;
 
@@ -369,8 +366,7 @@ void stfnum::fexptde_init(const Vector_double& data, double base, double peak, d
     pInit[6] = 0.5;
 }
 
-double stfnum::falpha(double x, const Vector_double& p) {
->>>>>>> ffffe82... Add triexponential function with delay to fit library:src/libstfnum/funclib.cpp
+double stf::falpha(double x, const Vector_double& p) {
     
     //double e=exp(-p[1]*x);
     //return p[0]*p[1]*p[1]*x*e+p[2]; 

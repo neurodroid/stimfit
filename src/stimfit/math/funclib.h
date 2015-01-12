@@ -245,7 +245,7 @@ namespace stf {
      */
     void fexpbde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt,  Vector_double& pInit );
 
-    //! Initialises parameters for fitting stfnum::fexpde() to \e data.
+    //! Initialises parameters for fitting stf::fexpde() to \e data.
     /*! \param data The waveform of the data for the fit.
      *  \param base Baseline of \e data.
      *  \param peak Peak value of \e data.
