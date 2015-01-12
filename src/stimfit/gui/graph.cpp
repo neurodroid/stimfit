@@ -527,6 +527,8 @@ void wxStfGraph::PlotGimmicks(wxDC& DC) {
 }
 
 void wxStfGraph::PlotEvents(wxDC& DC) {
+    const int MAX_EVENTS_PLOT = 200;
+
     stf::SectionAttributes sec_attr;
     try {
         sec_attr = Doc()->GetCurrentSectionAttributes();
@@ -548,6 +550,16 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
         }
     }
 
+    // Only draw check boxes if there are less than 1000 events (takes too long
+    // to draw them and it's impossible to check them anyway)
+    wxRect WindowRect=GetRect();
+    if (isPrinted) WindowRect=wxRect(printRect);
+    int right=WindowRect.width;
+    int nevents_plot = 0;
+    for (event_it it2 = sec_attr.eventList.begin(); it2 != sec_attr.eventList.end(); ++it2) {
+        nevents_plot += (xFormat(it2->GetEventStartIndex()) < right &&
+                         xFormat(it2->GetEventStartIndex()) > 0);
+    }
     // resize list if necessary:
     if (cbList.size() != sec_attr.eventList.size()) {
         // destroy checkboxes that are not needed:
@@ -560,17 +572,7 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
         cbList.resize(sec_attr.eventList.size());
     }
 
-    // Only draw check boxes if there are less than 1000 events (takes too long
-    // to draw them and it's impossible to check them anyway)
-    wxRect WindowRect=GetRect();
-    if (isPrinted) WindowRect=wxRect(printRect);
-    int right=WindowRect.width;
-    int nevents_plot = 0;
-    for (event_it it2 = sec_attr.eventList.begin(); it2 != sec_attr.eventList.end(); ++it2) {
-        nevents_plot += (xFormat(it2->GetEventStartIndex()) < right &&
-                         xFormat(it2->GetEventStartIndex()) > 0);
-    }
-    if (nevents_plot < 500) {
+    if (nevents_plot < MAX_EVENTS_PLOT) {
         std::size_t n_cb = 0;
         for (event_it it2 = sec_attr.eventList.begin(); it2 != sec_attr.eventList.end(); ++it2) {
             if (xFormat(it2->GetEventStartIndex()) < right &&
@@ -583,6 +585,7 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
                     }
                     cbList.at(n_cb)->ResetEvent( &*it2 );
                     cbList.at(n_cb)->Move(wxPoint(xFormat(it2->GetEventStartIndex()), 0));
+                    cbList.at(n_cb)->Show(true);
                 }
                 catch (const std::out_of_range& e) {
                     wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
@@ -590,6 +593,15 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
                 }
             }
             n_cb++;
+        }
+    } else {
+        for (std::size_t n_cbl = 0;
+             n_cbl < cbList.size();
+             ++n_cbl)
+        {
+            if (cbList[n_cbl] != NULL) {
+                cbList[n_cbl]->Show(false);
+            }
         }
     }
 
