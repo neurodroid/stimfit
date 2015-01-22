@@ -153,11 +153,20 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
     int numberChannels = pFH->nADCNumChannels;
     ABFLONG numberSections = pFH->lActualEpisodes;
     ABFLONG finalSections = numberSections;
+    int hFile = abf2.GetFileNumber();
     bool gapfree = (pFH->nOperationMode == ABF2_GAPFREEFILE);
     if (gapfree) {
+        UINT uMaxSamples = pFH->lNumSamplesPerEpisode / numberChannels;
+        DWORD dwMaxEpi;
+        if (!ABF2_SetChunkSize(hFile,abf2.GetFileHeaderW(),&uMaxSamples,&dwMaxEpi,&nError)) {
+            std::ostringstream errorMsg;
+            errorMsg << "Exception while calling ABF2_SetChunkSize() "
+                     << "\n" << ABF1Error(fName, nError);
+            ABF_Close(hFile,&nError);
+            throw std::runtime_error(errorMsg.str());
+        }
         finalSections = 1;
     }
-    int hFile = abf2.GetFileNumber();
     for (int nChannel=0; nChannel < numberChannels; ++nChannel) {
         int progbar = (int)(((double)nChannel/(double)numberChannels)*100.0);
         progDlg.Update(progbar, "Memory allocation");
