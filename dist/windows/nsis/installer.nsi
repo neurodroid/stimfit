@@ -11,7 +11,7 @@ SetCompressor lzma
 
 ;--------------------------------
 
-!define PRODUCT_VERSION "0.14.0"
+!define PRODUCT_VERSION "0.14.1"
 !define WXW_VERSION "3.0.0.0"
 !define WXW_VERSION_DIR "3.0.0"
 !define WXW_VERSION_SHORT "30"
