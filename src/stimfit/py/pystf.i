@@ -1515,14 +1515,12 @@ def new_window_list( array_list ):
     Returns:
     True upon successful completion, false otherwise.
     """
-    # Check whether first dimension is a sequence (required):
     try: 
         it = iter(array_list)
     except TypeError: 
         print( "Argument is not a sequence" )
         return False
 
-    # Check whether second dimension is a sequence (required):
     try: 
         it = iter(array_list[0])
     except TypeError: 
@@ -1531,7 +1529,6 @@ def new_window_list( array_list ):
         print( "Or a sequence of sequences of 1D NumPy arrays." )
         return False
         
-    # Check whether third dimension is a sequence (optional):
     is_3d = True
     try: 
         it = iter(array_list[0][0])
