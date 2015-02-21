@@ -130,8 +130,12 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     }
 
     // earlier versions of biosig support only the file type identification, but did not read AXG files
-    if ( (BIOSIG_VERSION < 10600)
-      && (biosig_filetype==AXG)
+#ifdef _MSC_VER // CSH: Crashing on 64-bit Windows
+	if (
+#else
+    if ( (BIOSIG_VERSION < 10600) &&
+#endif
+    (biosig_filetype==AXG)
        ) {
         // biosig's AXG import crashes on Windows at this time
         ReturnData.resize(0);
@@ -152,7 +156,7 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
 
     double fs = biosig_get_eventtable_samplerate(hdr);
     size_t numberOfEvents = biosig_get_number_of_events(hdr);
-    uint32_t nsections = biosig_get_number_of_segments(hdr);
+    size_t nsections = biosig_get_number_of_segments(hdr);
     size_t *SegIndexList = (size_t*)malloc((nsections+1)*sizeof(size_t));
     SegIndexList[0] = 0;
     SegIndexList[nsections] = biosig_get_number_of_samples(hdr);
@@ -209,6 +213,10 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
 
     for (int NS=0; NS < numberOfChannels; ) {
         CHANNEL_TYPE *hc = biosig_get_channel(hdr, NS);
+		if (hc==NULL) {
+            ReturnData.resize(0);
+            return stfio::none;
+		}
 
         Channel TempChannel(nsections);
         TempChannel.SetChannelName(biosig_channel_get_label(hc));
@@ -217,7 +225,7 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         for (size_t ns=1; ns<=nsections; ns++) {
 	        size_t SPS = SegIndexList[ns]-SegIndexList[ns-1];	// length of segment, samples per segment
 
-		int progbar = 100.0*(1.0*ns/nsections + NS)/numberOfChannels;
+		int progbar = int(100.0*(1.0*ns/nsections + NS)/numberOfChannels);
 		std::ostringstream progStr;
 		progStr << "Reading channel #" << NS + 1 << " of " << numberOfChannels
 			<< ", Section #" << ns << " of " << nsections;

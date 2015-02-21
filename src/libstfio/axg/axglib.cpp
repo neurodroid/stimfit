@@ -34,6 +34,7 @@ void stfio::importAXGFile(const std::string &fName, Recording &ReturnData, Progr
     //
     // =====================================================================================================================
 
+    progDlg.Update(0, "Opening AXG file...");
     filehandle dataRefNum = OpenFile( fName.c_str() );
     
     if ( dataRefNum == 0 )
@@ -58,7 +59,7 @@ void stfio::importAXGFile(const std::string &fName, Recording &ReturnData, Progr
 
         ReturnData.resize(0);
         CloseFile( dataRefNum );
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
 
     AXGLONG numberOfColumns = 0;
@@ -68,7 +69,7 @@ void stfio::importAXGFile(const std::string &fName, Recording &ReturnData, Progr
         errorMsg += "Error from AG_GetNumberOfColumns";
         ReturnData.resize(0);
         CloseFile( dataRefNum );
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
 
     // Sanity check
@@ -77,7 +78,7 @@ void stfio::importAXGFile(const std::string &fName, Recording &ReturnData, Progr
         errorMsg += "File format error: number of columns is negative in AxoGraph data file";
         ReturnData.resize(0);
         CloseFile( dataRefNum );
-        throw std::runtime_error(std::string(errorMsg.c_str()));
+        throw std::runtime_error(errorMsg);
     }
 
     //	AG_ReadFloatColumn reads column data into a float column structure.
@@ -90,7 +91,7 @@ void stfio::importAXGFile(const std::string &fName, Recording &ReturnData, Progr
     for ( int columnNumber=0; columnNumber<numberOfColumns; columnNumber++ )
     {
         if (columnNumber != 0) {
-            int progbar = (double)columnNumber/(double)numberOfColumns * 100.0;
+            int progbar = int((double)columnNumber/(double)numberOfColumns * 100.0);
             std::ostringstream progStr;
             progStr << "Section #" << columnNumber << " of " << numberOfColumns-1;
             bool skip = false;
