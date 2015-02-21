@@ -69,87 +69,9 @@
 				AdditionalDependencies="hdf5.lib hdf5_hl.lib libbiosig2.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(HDF5DIR)\lib&quot;;&quot;$(BIOSIGDIR)\lib&quot;"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
-			InheritedPropertySheets=".\Config.vsprops"
-			CharacterSet="1"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="2"
-				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(BOOSTDIR)&quot;;&quot;$(HDF5DIR)\include&quot;;&quot;$(PYTHONDIR)\include&quot;;&quot;$(BIOSIGDIR)\include&quot;"
-				PreprocessorDefinitions="__STF__;STFIODLL;WIN32;_WIN32;__WIN32;_WINDOWS;H5_USE_16_API;_HDF5USEDLL_;_CRT_SECURE_NO_WARNINGS;WITH_BIOSIG2"
-				GeneratePreprocessedFile="0"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="hdf5.lib hdf5_hl.lib libbiosig2.lib"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(HDF5DIR)\lib&quot;;&quot;$(BIOSIGDIR)\lib&quot;"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -225,9 +147,90 @@
 				AdditionalDependencies="hdf5.lib hdf5_hl.lib libbiosig2.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(HDF5DIR)\lib&quot;;&quot;$(BIOSIGDIR)\lib&quot;"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			InheritedPropertySheets=".\Config.vsprops"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="&quot;$(BOOSTDIR)&quot;;&quot;$(HDF5DIR)\include&quot;;&quot;$(PYTHONDIR)\include&quot;;&quot;$(BIOSIGDIR)\include&quot;"
+				PreprocessorDefinitions="__STF__;STFIODLL;WIN32;_WIN32;__WIN32;_WINDOWS;H5_USE_16_API;_HDF5USEDLL_;_CRT_SECURE_NO_WARNINGS;WITH_BIOSIG2"
+				GeneratePreprocessedFile="0"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="hdf5.lib hdf5_hl.lib libbiosig2.lib"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(HDF5DIR)\lib&quot;;&quot;$(BIOSIGDIR)\lib&quot;"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -303,6 +306,7 @@
 				AdditionalDependencies="hdf5.lib hdf5_hl.lib libbiosig2.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(HDF5DIR)\lib&quot;;&quot;$(BIOSIGDIR)\lib&quot;"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
