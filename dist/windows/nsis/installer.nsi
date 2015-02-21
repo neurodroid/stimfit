@@ -5,11 +5,13 @@
 ; This may slightly reduce the executable size, but compression is slower.
 SetCompressor lzma
 
+; RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
+
 ;--------------------------------
 ; Use modern interface
 !include MUI2.nsh
-
 ;--------------------------------
+!include LogicLib.nsh
 
 !define PRODUCT_VERSION "0.14.1"
 !define WXW_VERSION "3.0.2.0"
@@ -83,6 +85,16 @@ Var StrNoUsablePythonFound
 
 ;--------------------------------
 
+; Function .onInit
+; UserInfo::GetAccountType
+; pop $0
+; ${If} $0 != "admin" ;Require admin rights on NT4+
+    ; MessageBox mb_iconstop "Administrator rights required!"
+    ; SetErrorLevel 740 ;ERROR_ELEVATION_REQUIRED
+    ; Quit
+; ${EndIf}
+; FunctionEnd
+
 ; Pages
 !ifdef UPDATE
 !define MUI_WELCOMEPAGE_TEXT "${UPDATE_WELCOME}"
@@ -130,7 +142,7 @@ Section "Python ${PY_VERSION}" 0
   Delete "$INSTDIR\${PY_INST_FILE}"
 
   ; Install PyEMF
-  ExecWait 'cd "${PYEMFDIR}"; "c:\python${PY_MAJOR}\python.exe" setup.py install'
+  ExecWait 'cd "${PYEMFDIR}"; "c:\python${PY_MAJOR_SHORT}\python.exe" setup.py install'
   RMDir /r "${PYEMFDIR}"
 
 SectionEnd
@@ -143,7 +155,7 @@ Section "NumPy ${NP_VERSION}" 1
   ; Put installer into installation dir temporarily
   File "${MSIDIR}\${NP_INST_FILE}"
 
-  ExecWait '"c:\python${PY_MAJOR}\Scripts\pip.exe" install "$INSTDIR\${NP_INST_FILE}"'
+  ExecWait '"c:\python${PY_MAJOR_SHORT}\Scripts\pip.exe" install "$INSTDIR\${NP_INST_FILE}"'
   
   ; Delete installer once we are done
   Delete "$INSTDIR\${NP_INST_FILE}"
@@ -158,7 +170,7 @@ Section "Matplotlib ${MPL_VERSION}" 2
   ; Put installer into installation dir temporarily
   File "${MSIDIR}\${MPL_INST_FILE}"
 
-  ExecWait '"c:\python${PY_MAJOR}\Scripts\pip.exe" install "$INSTDIR\${MPL_INST_FILE}"'
+  ExecWait '"c:\python${PY_MAJOR_SHORT}\Scripts\pip.exe" install "$INSTDIR\${MPL_INST_FILE}"'
   
   ; Delete installer once we are done
   Delete "$INSTDIR\${MPL_INST_FILE}"
