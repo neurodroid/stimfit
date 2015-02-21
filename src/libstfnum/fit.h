@@ -82,6 +82,7 @@ void flin_init(const Vector_double& data, double base, double peak,
 
 //! initializes a linear function
 /*! \return An stfnum::storedFunc that can be used to store a linear function after a fit */
+StfioDll
 stfnum::storedFunc initLinFunc();
 
 //! Compute and perform normalisation
