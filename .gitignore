@@ -54,6 +54,8 @@ m4/lt~obsolete.m4
 *.sln.cache
 dist/windows/VS2008/libstfio/Debug
 dist/windows/VS2008/libstfio/Release
+dist/windows/VS2008/libstfnum/Debug
+dist/windows/VS2008/libstfnum/Release
 dist/windows/VS2008/libstimfit/Debug
 dist/windows/VS2008/libstimfit/Release
 dist/windows/VS2008/pystf/Debug
@@ -62,6 +64,18 @@ dist/windows/VS2008/pystfio/Debug
 dist/windows/VS2008/pystfio/Release
 dist/windows/VS2008/Stimfit/Debug
 dist/windows/VS2008/Stimfit/Release
+dist/windows/VS2008/libstfio/x64/Debug
+dist/windows/VS2008/libstfio/x64/Release
+dist/windows/VS2008/libstfnum/x64/Debug
+dist/windows/VS2008/libstfnum/x64/Release
+dist/windows/VS2008/libstimfit/x64/Debug
+dist/windows/VS2008/libstimfit/x64/Release
+dist/windows/VS2008/pystf/x64/Debug
+dist/windows/VS2008/pystf/x64/Release
+dist/windows/VS2008/pystfio/x64/Debug
+dist/windows/VS2008/pystfio/x64/Release
+dist/windows/VS2008/Stimfit/x64/Debug
+dist/windows/VS2008/Stimfit/x64/Release
 dist/windows/libs
 *.user
 
