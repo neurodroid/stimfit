@@ -755,6 +755,7 @@ stfnum::deconvolve(const Vector_double& data, const Vector_double& templ,
         data_return.resize(0);
         return data_return;
     }
+
     Vector_double f_c(1);
     for (std::size_t n_point=0; n_point < (unsigned int)(data.size()/2)+1; ++n_point) {
         /* highpass filter */
@@ -837,13 +838,8 @@ stfnum::deconvolve(const Vector_double& data, const Vector_double& templ,
         data_return.resize(0);
         return data_return;
     }
-    /* Fit Gaussian to histogram */
-    Vector_double opts = LM_default_opts();
-
-    std::string info;
-    int warning;
-    std::vector< stfnum::storedFunc > funcLib = stfnum::GetFuncLib();
     
+    /* Fit Gaussian to histogram */
     double interval = (++histo.begin())->first-histo.begin()->first;
     if (maxhalf_time==0) {
         maxhalf_time = interval;
@@ -861,10 +857,14 @@ stfnum::deconvolve(const Vector_double& data, const Vector_double& templ,
     }
 #endif
 
+    Vector_double opts = LM_default_opts();
+    std::vector< stfnum::storedFunc > funcLib = stfnum::GetFuncLib();
+    std::string info;
+    int warning;
 #ifdef _STFDEBUG
     double chisqr =
 #endif
-        lmFit(histo_fit, interval, funcLib[funcLib.size()-1], opts, true,
+        lmFit(histo_fit, interval, funcLib[funcLib.size()-2], opts, true,
               pars, info, warning );
 #ifdef _STFDEBUG
     std::cout << chisqr << "\t" << interval << std::endl;
