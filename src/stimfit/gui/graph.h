@@ -364,21 +364,25 @@ public:
 
     // Function receives the x-coordinate of a point and returns 
     // its formatted value according to the current Zoom settings
-    int xFormat(double);
-    int xFormat(int); 
-    int xFormat(std::size_t); 
+    long xFormat(double);
+    long xFormat(long); 
+    long xFormat(int); 
+    long xFormat(std::size_t); 
     // The same for the y coordinates
-    int yFormat(double);
-    int yFormat(int);
-    int yFormatD(double f) { return yFormat(f); }
+    long yFormat(double);
+    long yFormat(long);
+    long yFormat(int);
+    long yFormatD(double f) { return yFormat(f); }
     // The same for the y coordinates of the second channel
-    int yFormat2(double);
-    int yFormat2(int);
-    int yFormatD2(double f) { return yFormat2(f); }
+    long yFormat2(double);
+    long yFormat2(long);
+    long yFormat2(int);
+    long yFormatD2(double f) { return yFormat2(f); }
     // The same for the y coordinates of the background channel
-    int yFormatB(double);
-    int yFormatB(int);
-    int yFormatDB(double f) { return yFormatB(f); }
+    long yFormatB(double);
+    long yFormatB(long);
+    long yFormatB(int);
+    long yFormatDB(double f) { return yFormatB(f); }
 
     void FittorectY(YZoom& yzoom, const wxRect& rect, double min, double max, double screen_part);
     void FitToWindowSecCh(bool refresh);
@@ -409,12 +413,12 @@ public:
 #if defined __WXMAC__ && !(wxCHECK_VERSION(2, 9, 0))
     void OnPaint(wxPaintEvent &event);
 #endif
-    int SPX() const { return DocC()->GetXZoom().startPosX; }
-    int& SPXW() { return DocC()->GetXZoomW().startPosX; } 
-    int SPY() const { return DocC()->GetYZoom(DocC()->GetCurChIndex()).startPosY; }
-    int& SPYW() { return DocC()->GetYZoomW(DocC()->GetCurChIndex()).startPosY; } 
-    int SPY2() const { return DocC()->GetYZoom(DocC()->GetSecChIndex()).startPosY; }
-    int& SPY2W() { return DocC()->GetYZoomW(DocC()->GetSecChIndex()).startPosY; }
+    long SPX() const { return DocC()->GetXZoom().startPosX; }
+    long& SPXW() { return DocC()->GetXZoomW().startPosX; } 
+    long SPY() const { return DocC()->GetYZoom(DocC()->GetCurChIndex()).startPosY; }
+    long& SPYW() { return DocC()->GetYZoomW(DocC()->GetCurChIndex()).startPosY; } 
+    long SPY2() const { return DocC()->GetYZoom(DocC()->GetSecChIndex()).startPosY; }
+    long& SPY2W() { return DocC()->GetYZoomW(DocC()->GetSecChIndex()).startPosY; }
     
     double XZ() const { return DocC()->GetXZoom().xZoom; }
     double& XZW() { return DocC()->GetXZoomW().xZoom; }

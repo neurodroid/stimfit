@@ -20,7 +20,7 @@ Clone the latest source code into your home directory (on cygwin, this will be s
 Build Stimfit
 =============
 
-Move the BLAS/LAPACK libraries that you've previously downloaded into a folder "stimfit/dist/windows/libs".
+Move the BLAS/LAPACK libraries that you've previously downloaded into a folder "stimfit/dist/windows/libs". Make sure that the *.lib files are at the top level of this libs folder.
 
 Open the solution in stimfit/dist/windows/VS2008/Stimfit/Stimfit.sln with Visual C++ Express 2008. Build the solution by clicking "Build" -> "Build Solution". Alternatively, open the Visual Studio Command Prompt:
 

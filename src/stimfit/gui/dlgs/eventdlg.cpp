@@ -32,6 +32,10 @@ wxDialog( parent, id, title, pos, size, style ), m_threshold(4.0), m_mode(stf::c
     for (std::size_t n_templ=0;n_templ<templateSections.size();++n_templ) {
         if (templateSections[n_templ].pSection != NULL) {
             wxString sec_desc = stf::std2wx(templateSections[n_templ].pSection->GetSectionDescription());
+            if (sec_desc.empty()) {
+                sec_desc = "Section ";
+                sec_desc << n_templ;
+            }
             int w, h;
             GetTextExtent( sec_desc, &w, &h );
             if ( w > max_w )
