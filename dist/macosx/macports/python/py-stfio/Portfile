@@ -1,11 +1,11 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
-# $Id: Portfile 131063 2015-01-05 17:37:19Z mmoll@macports.org $
+# $Id$
 
 PortSystem          1.0
 PortGroup           python 1.0
 
 name                py-stfio
-version             0.14.1
+version             0.14.2
 categories          python science
 platforms           darwin
 license             GPL-2
@@ -16,8 +16,8 @@ homepage            http://www.stimfit.org
 master_sites        http://www.stimfit.org
 distname            stimfit-${version}
 
-checksums           rmd160  92b9f5b215ecfdbff1eb14eba890b6185f3ebf23 \
-                    sha256  9dcfc21956c5515c97646b79fbe730880ce9268906edbf98446a504cc49902ba
+checksums           rmd160  ef2c15b367798f2af68f448472b2063d793d1027 \
+                    sha256  e3eb8fcc5e8756143db35c08145651f759339ae39af032ab78e4e144ba3922c7
 
 python.versions     26 27 33 34
 
@@ -58,6 +58,6 @@ if { ${name} ne ${subport} } {
             --with-biosig
     }
 
-    default_variants    +biosig
+    # default_variants    +biosig
 
 }
