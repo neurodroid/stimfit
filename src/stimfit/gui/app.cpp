@@ -66,10 +66,6 @@
 #endif
 #endif
 
-#ifdef __WXMAC__
-#include <ApplicationServices/ApplicationServices.h>
-#endif
-
 extern wxStfApp& wxGetApp();
 wxStfApp& wxGetApp() { return *static_cast<wxStfApp*>(wxApp::GetInstance()); }
 
