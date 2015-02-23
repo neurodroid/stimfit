@@ -196,7 +196,16 @@ CXX       = $(shell $(WXCONF) --cxx)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -std=gnu++11 -fstack-protector
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
-LIBS     += -lhdf5_hl -lhdf5
+ifneq ($(wildcard /usr/lib/libhdf5*),)
+  LIBS   += -lhdf5_hl -lhdf5
+else
+  ifneq ($(wildcard /usr/lib/x86_64-linux-gnu/libhdf5_serial*),)
+    CXXFLAGS += -I/usr/include/hdf5/serial
+    LDFLAGS  += -L/usr/lib/x86_64-linux-gnu/
+    LIBS     += -lhdf5_serial_hl -lhdf5_serial
+  endif
+endif
+
 ifneq (,$(findstring WITH_BIOSIG2, $(DEFINES)))
   SOURCES += ./src/libstfio/biosig/biosiglib.cpp
   LIBS   += -lbiosig2  -lcholmod
