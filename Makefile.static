@@ -59,10 +59,10 @@ PY_VERSION := 2.6
 ###  SOURCES
 ##############################################################
 
-vpath %.cpp ./src/stimfit:./src/stimfit/gui:./src/stimfit/gui/dlgs:./src/stimfit/gui/usrdlg:./src/stimfit/math:./src/libstfio/:./src/libstfio/cfs/:./src/libstfio/atf/:./src/libstfio/abf/:./src/libstfio/abf/axon2:./src/libstfio/abf/axon/Common:./src/libstfio/abf/axon/AxAbfFio32:./src/libstfio/abf/axon/AxAtfFio32/:./src/libstfio/biosig/:./src/libstfio/hdf5/:./src/libstfio/heka/:./src/libstfio/igor:./src/libstfio/ascii/:./src/libstfio/axg/
+vpath %.cpp ./src/stimfit:./src/stimfit/gui:./src/stimfit/gui/dlgs:./src/stimfit/gui/usrdlg:./src/libstfnum:./src/libstfio/:./src/libstfio/cfs/:./src/libstfio/atf/:./src/libstfio/abf/:./src/libstfio/abf/axon2:./src/libstfio/abf/axon/Common:./src/libstfio/abf/axon/AxAbfFio32:./src/libstfio/abf/axon/AxAtfFio32/:./src/libstfio/biosig/:./src/libstfio/hdf5/:./src/libstfio/heka/:./src/libstfio/igor:./src/libstfio/ascii/:./src/libstfio/axg/
 
-vpath %.c ./src/stimfit/math/levmar/:./src/libstfio/igor/:./src/libstfio/cfs/
-vpath %.cpp ./src/stimfit/math/:./src/stimfit/math/levmar/:./src/stimfit/gui/:./src/stimfit/gui/dlgs/:./src/libstfio/:./src/libstfio/biosig/:./src/libstfio/igor/:./src/libstfio/cfs/
+vpath %.c ./src/libstfnum/levmar/:./src/libstfio/igor/:./src/libstfio/cfs/
+vpath %.cpp ./src/libstfnum/:./src/libstfnum/levmar/:./src/stimfit/gui/:./src/stimfit/gui/dlgs/:./src/libstfio/:./src/libstfio/biosig/:./src/libstfio/igor/:./src/libstfio/cfs/
 
 SOURCES = ./src/stimfit/stf.cpp \
 	./src/libstfnum/stfnum.cpp \
@@ -128,11 +128,11 @@ SOURCES_ABF = ./src/libstfio/atf/atflib.cpp \
 
 EXCLUDED = ./src/libstfio/ascii/asciilib.cpp \
 	./src/libstfio/abf/axon/AxAtfFio32/fileio2.cpp \
-	./src/stimfit/math/levmar/lmbc_core.c \
-	./src/stimfit/math/levmar/lmlec_core.c \
-	./src/stimfit/math/levmar/misc_core.c \
-	./src/stimfit/math/levmar/lm_core.c \
-	./src/stimfit/math/levmar/Axb_core.c \
+	./src/libstfnum/levmar/lmbc_core.c \
+	./src/libstfnum/levmar/lmlec_core.c \
+	./src/libstfnum/levmar/misc_core.c \
+	./src/libstfnum/levmar/lm_core.c \
+	./src/libstfnum/levmar/Axb_core.c \
 	./src/stimfit/gui/dclatex.cpp \
 
 TESTSRC = ./src/test/section.cpp \
