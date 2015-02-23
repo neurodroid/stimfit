@@ -33,10 +33,10 @@ public:
      *  \param yz1 The y-scaling. 
      *  \param lsy Currently unused.
      */
-    YZoom(int spy1, double yz1, bool lsy=false)
+    YZoom(long spy1, double yz1, bool lsy=false)
     : startPosY(spy1), yZoom(yz1), isLogScaleY(lsy)
     {}
-    int startPosY; /*!< The y offset in pixels. */
+    long startPosY; /*!< The y offset in pixels. */
     double yZoom; /*!< The y-scaling. */
     bool isLogScaleY; /*!< Currently unused. */
     
@@ -56,10 +56,10 @@ public:
      *  \param xz The x-scaling. 
      *  \param lsx Currently unused.
      */
-    XZoom( int spx, double xz, bool lsx=false )
+    XZoom( long spx, double xz, bool lsx=false )
     : startPosX(spx), xZoom(xz), isLogScaleX(lsx)
     {}
-    int startPosX; /*!< The x offset in pixels. */
+    long startPosX; /*!< The x offset in pixels. */
     double xZoom; /*!< The x-scaling. */
     bool isLogScaleX; /*!< Currently unused. */
    

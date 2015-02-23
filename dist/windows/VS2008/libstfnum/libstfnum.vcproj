@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="pystf"
-	ProjectGUID="{2BC7EA17-B8B9-4855-9BCF-35A1D3BCAD51}"
-	RootNamespace="pystf"
+	Name="libstfnum"
+	ProjectGUID="{E4B5B8A4-7555-4A2A-B86A-B7CDF53A072C}"
+	RootNamespace="libstfnum"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -45,8 +45,9 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(FFTWDIR)&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll\mswu&quot;;&quot;$(PYTHONDIR)\include&quot;;&quot;$(NUMPYDIR)&quot;"
-				PreprocessorDefinitions="__STF__;_WIN64;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;__WXMSW__;WXP_USE_THREAD=1;WITH_PYTHON;WITH_BIOSIG2"
+				AdditionalIncludeDirectories="&quot;$(BOOSTDIR)&quot;;&quot;$(FFTWDIR)&quot;"
+				PreprocessorDefinitions="__STF__;STFIODLL;_WIN64;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
+				GeneratePreprocessedFile="0"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -65,10 +66,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wxmsw30u_aui.lib wxmsw30u_html.lib wxmsw30u_adv.lib wxmsw30u_core.lib wxbase30u_xml.lib wxbase30u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregexu.lib wxexpat.lib"
-				OutputFile="$(OutDir)\_stf.pyd"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(PYTHONDIR)\libs&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll&quot;"
+				AdditionalDependencies="clapack.lib libf2c.lib BLAS.lib libfftw3-3.lib"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\libs&quot;;&quot;$(FFTWDIR)&quot;"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -122,8 +123,9 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(FFTWDIR)&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll\mswu&quot;;&quot;$(PYTHONDIR)\include&quot;;&quot;$(NUMPYDIR)&quot;"
-				PreprocessorDefinitions="__STF__;_WIN64;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;__WXMSW__;WXP_USE_THREAD=1;WITH_PYTHON;WITH_BIOSIG2"
+				AdditionalIncludeDirectories="&quot;$(BOOSTDIR)&quot;;&quot;$(FFTWDIR)&quot;"
+				PreprocessorDefinitions="__STF__;STFIODLL;_WIN64;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
+				GeneratePreprocessedFile="0"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -142,10 +144,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wxmsw30u_aui.lib wxmsw30u_html.lib wxmsw30u_adv.lib wxmsw30u_core.lib wxbase30u_xml.lib wxbase30u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregexu.lib wxexpat.lib"
-				OutputFile="$(OutDir)\_stf.pyd"
-				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(PYTHONDIR)\libs&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll&quot;"
+				AdditionalDependencies="clapack.lib libf2c.lib BLAS.lib libfftw3-3.lib"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\libs&quot;;&quot;$(FFTWDIR)&quot;"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="17"
@@ -200,8 +202,9 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(FFTWDIR)&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll\mswu&quot;;&quot;$(PYTHONDIR)\include&quot;;&quot;$(NUMPYDIR)&quot;"
-				PreprocessorDefinitions="__STF__;_WIN64;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;__WXMSW__;WXP_USE_THREAD=1;WITH_PYTHON;WITH_BIOSIG2"
+				AdditionalIncludeDirectories="&quot;$(BOOSTDIR)&quot;;&quot;$(FFTWDIR)&quot;"
+				PreprocessorDefinitions="__STF__;STFIODLL;_WIN64;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
+				GeneratePreprocessedFile="0"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -219,10 +222,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wxmsw30u_aui.lib wxmsw30u_html.lib wxmsw30u_adv.lib wxmsw30u_core.lib wxbase30u_xml.lib wxbase30u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregexu.lib wxexpat.lib"
-				OutputFile="$(OutDir)\_stf.pyd"
+				AdditionalDependencies="clapack.lib libf2c.lib BLAS.lib libfftw3-3.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(PYTHONDIR)\libs&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\libs&quot;;&quot;$(FFTWDIR)&quot;"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -280,8 +283,9 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(FFTWDIR)&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll\mswu&quot;;&quot;$(PYTHONDIR)\include&quot;;&quot;$(NUMPYDIR)&quot;"
-				PreprocessorDefinitions="__STF__;_WIN64;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;__WXMSW__;WXP_USE_THREAD=1;WITH_PYTHON;WITH_BIOSIG2"
+				AdditionalIncludeDirectories="&quot;$(BOOSTDIR)&quot;;&quot;$(FFTWDIR)&quot;"
+				PreprocessorDefinitions="__STF__;STFIODLL;_WIN64;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
+				GeneratePreprocessedFile="0"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -299,10 +303,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wxmsw30u_aui.lib wxmsw30u_html.lib wxmsw30u_adv.lib wxmsw30u_core.lib wxbase30u_xml.lib wxbase30u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregexu.lib wxexpat.lib"
-				OutputFile="$(OutDir)\_stf.pyd"
+				AdditionalDependencies="clapack.lib libf2c.lib BLAS.lib libfftw3-3.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(PYTHONDIR)\libs&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\libs&quot;;&quot;$(FFTWDIR)&quot;"
+				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -336,73 +340,95 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source Files"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			Name="Header Files"
 			>
 			<File
-				RelativePath="..\..\..\..\src\stimfit\py\pystf.cxx"
+				RelativePath="..\..\..\..\src\libstfnum\fit.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\stimfit\py\pystf.i"
+				RelativePath="..\..\..\..\src\libstfnum\funclib.h"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="&quot;$(SWIGBIN)&quot; -c++ -python &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="$(InputName)_wrap.cxx"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="&quot;$(SWIGBIN)&quot; -c++ -python &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="$(InputName)_wrap.cxx"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="&quot;$(SWIGBIN)&quot; -c++ -python &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="$(InputName)_wrap.cxx"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine="&quot;$(SWIGBIN)&quot; -c++ -python &quot;$(InputPath)&quot;&#x0D;&#x0A;"
-						Outputs="$(InputName)_wrap.cxx"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\stimfit\py\pystf_wrap.cxx"
+				RelativePath="..\..\..\..\src\libstfnum\measure.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\..\src\libstfnum\spline.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\libstfnum\stfnum.h"
+				>
+			</File>
+			<Filter
+				Name="levmar"
+				>
+				<File
+					RelativePath="..\..\..\..\src\libstfnum\levmar\compiler.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\src\libstfnum\levmar\levmar.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\src\libstfnum\levmar\lm.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\src\libstfnum\levmar\misc.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			Name="Source Files"
 			>
 			<File
-				RelativePath="..\..\..\..\src\stimfit\py\pystf.h"
+				RelativePath="..\..\..\..\src\libstfnum\fit.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\..\src\libstfnum\funclib.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\libstfnum\measure.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\libstfnum\stfnum.cpp"
+				>
+			</File>
+			<Filter
+				Name="levmar"
+				>
+				<File
+					RelativePath="..\..\..\..\src\libstfnum\levmar\Axb.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\src\libstfnum\levmar\lm.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\src\libstfnum\levmar\lmbc.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\src\libstfnum\levmar\lmlec.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\src\libstfnum\levmar\misc.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
 	</Files>

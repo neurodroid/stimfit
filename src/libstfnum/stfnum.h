@@ -276,7 +276,7 @@ T SQR (T a);
  *  \param inverse true if (1- \e func) should be used as the filter function, false otherwise
  *  \return The convolved data set.
  */
-Vector_double
+StfioDll Vector_double
 filter(
         const Vector_double& toFilter,
         std::size_t filter_start,
@@ -336,6 +336,7 @@ std::vector<T> diff(const std::vector<T>& input, T x_scale);
  *  \param x_scale Sampling interval.
  *  \return The integral of \e input between \e a and \e b.
 */
+StfioDll
 double integrate_simpson(
         const Vector_double& input,
         std::size_t a,
@@ -350,6 +351,7 @@ double integrate_simpson(
  *  \param x_scale Sampling interval.
  *  \return The integral of \e input between \e a and \e b.
 */
+StfioDll
 double integrate_trapezium(
         const Vector_double& input,
         std::size_t a,
@@ -385,7 +387,7 @@ linsolv(
  *  \param end End of interval to be used
  *  \return Parameters of quadratic equation
  */
-Vector_double
+StfioDll Vector_double
 quad(const Vector_double& data, std::size_t begin, std::size_t end);
  
 
@@ -426,6 +428,7 @@ StfioDll Vector_double linCorr(const Vector_double& va1, const Vector_double& va
  *         \e p[0] is the corner frequency (-3 dB according to Colquhoun)
  *  \return The evaluated function.
  */
+StfioDll
 double fgaussColqu(double x, const Vector_double& p);
 
 //! Computes a Boltzmann function.
@@ -458,6 +461,7 @@ double fbessel(double x, int n);
  *         \e p[0] is the corner frequency (-3 dB attenuation)
  *  \return The evaluated function.
  */
+StfioDll
 double fbessel4(double x, const Vector_double& p);
 
 //! Computes the faculty of an integer.

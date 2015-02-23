@@ -310,6 +310,7 @@ namespace stfnum {
      *         \e i is the 0-based index of the i-th Gaussian.
      *  \return The evaluated function.
      */
+	StfioDll
     double fgauss(double x, const Vector_double& p);
 
     //! Computes the Jacobian of a sum of Gaussians.
@@ -477,6 +478,7 @@ namespace stfnum {
     //! Returns the library of functions for non-linear regression.
     /*! \return A vector of non-linear regression functions.
      */
+	StfioDll
     std::vector<stfnum::storedFunc> GetFuncLib();
 
     /*@}*/

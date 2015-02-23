@@ -5,24 +5,24 @@
 	Name="Config"
 	>
 	<UserMacro
-		Name="SWIGBIN"
-		Value="C:\cygwin64\bin\swig.exe"
+		Name="HDF5DIR"
+		Value="$(SolutionDir)\..\..\..\..\..\hdf5"
 		PerformEnvironmentSet="true"
 	/>
 	<UserMacro
-		Name="NUMPYDIR"
-		Value="$(PYTHONDIR)\Lib\site-packages\numpy\core\include"
-	/>
-	<UserMacro
-		Name="PYTHONDIR"
-		Value="C:\Python27"
+		Name="FFTWDIR"
+		Value="$(SolutionDir)\..\..\..\..\..\fftw"
 	/>
 	<UserMacro
 		Name="BOOSTDIR"
 		Value="$(SolutionDir)\..\..\..\..\..\boost"
 	/>
 	<UserMacro
-		Name="FFTWDIR"
-		Value="$(SolutionDir)\..\..\..\..\..\fftw"
+		Name="BIOSIGDIR"
+		Value="$(SolutionDir)\..\..\..\..\..\biosig"
+	/>
+	<UserMacro
+		Name="PYTHONDIR"
+		Value="C:\Python27"
 	/>
 </VisualStudioPropertySheet>

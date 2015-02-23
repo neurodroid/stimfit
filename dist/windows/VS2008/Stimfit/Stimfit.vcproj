@@ -45,8 +45,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(PYTHONDIR)\include&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_dll\mswu&quot;;&quot;$(FFTWDIR)&quot;"
-				PreprocessorDefinitions="__STF__;WIN32;_WIN32;__WIN32;__WIN32__;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;__WXMSW__;WXP_USE_THREAD=1;WITH_PYTHON;WITH_BIOSIG2"
+				AdditionalIncludeDirectories="&quot;$(PYTHONDIR)\include&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll\mswu&quot;;&quot;$(FFTWDIR)&quot;"
+				PreprocessorDefinitions="__STF__;_WIN64;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;__WXMSW__;WXP_USE_THREAD=1;WITH_PYTHON;WITH_BIOSIG2"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -67,87 +67,9 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="wxmsw30u_aui.lib wxmsw30u_html.lib wxmsw30u_adv.lib wxmsw30u_core.lib wxbase30u_xml.lib wxbase30u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregexu.lib wxexpat.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(WXDIR)\lib\vc90_dll&quot;;$(PYTHONDIR)\libs"
+				AdditionalLibraryDirectories="&quot;$(WXDIR)\lib\vc90_x64_dll&quot;;$(PYTHONDIR)\libs"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
-			InheritedPropertySheets=".\Config.vsprops"
-			CharacterSet="1"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="2"
-				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(PYTHONDIR)\include&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_dll\mswu&quot;;&quot;$(FFTWDIR)&quot;"
-				PreprocessorDefinitions="__STF__;WIN32;_WIN32;__WIN32;__WIN32__;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;__WXMSW__;WXP_USE_THREAD=1;WITH_PYTHON;WITH_BIOSIG2"
-				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="wxmsw30u_aui.lib wxmsw30u_html.lib wxmsw30u_adv.lib wxmsw30u_core.lib wxbase30u_xml.lib wxbase30u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregexu.lib wxexpat.lib"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(WXDIR)\lib\vc90_dll&quot;;$(PYTHONDIR)\libs"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -199,8 +121,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(PYTHONDIR)\include&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_dll\mswu&quot;;&quot;$(FFTWDIR)&quot;"
-				PreprocessorDefinitions="__STF__;WIN32;_WIN32;__WIN32;__WIN32__;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;__WXMSW__;WXP_USE_THREAD=1;WITH_PYTHON;WITH_BIOSIG2"
+				AdditionalIncludeDirectories="&quot;$(PYTHONDIR)\include&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll\mswu&quot;;&quot;$(FFTWDIR)&quot;"
+				PreprocessorDefinitions="__STF__;_WIN64;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;__WXMSW__;WXP_USE_THREAD=1;WITH_PYTHON;WITH_BIOSIG2"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -221,10 +143,88 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="wxmsw30u_aui.lib wxmsw30u_html.lib wxmsw30u_adv.lib wxmsw30u_core.lib wxbase30u_xml.lib wxbase30u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregexu.lib wxexpat.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(WXDIR)\lib\vc90_dll&quot;;$(PYTHONDIR)\libs"
+				AdditionalLibraryDirectories="&quot;$(WXDIR)\lib\vc90_x64_dll&quot;;$(PYTHONDIR)\libs"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			InheritedPropertySheets=".\Config.vsprops"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="&quot;$(PYTHONDIR)\include&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll\mswu&quot;;&quot;$(FFTWDIR)&quot;"
+				PreprocessorDefinitions="__STF__;_WIN64;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;__WXMSW__;WXP_USE_THREAD=1;WITH_PYTHON;WITH_BIOSIG2"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="wxmsw30u_aui.lib wxmsw30u_html.lib wxmsw30u_adv.lib wxmsw30u_core.lib wxbase30u_xml.lib wxbase30u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregexu.lib wxexpat.lib"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(WXDIR)\lib\vc90_x64_dll&quot;;$(PYTHONDIR)\libs"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -277,8 +277,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(PYTHONDIR)\include&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_dll\mswu&quot;;&quot;$(FFTWDIR)&quot;"
-				PreprocessorDefinitions="__STF__;WIN32;_WIN32;__WIN32;__WIN32__;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;__WXMSW__;WXP_USE_THREAD=1;WITH_PYTHON;WITH_BIOSIG2"
+				AdditionalIncludeDirectories="&quot;$(PYTHONDIR)\include&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll\mswu&quot;;&quot;$(FFTWDIR)&quot;"
+				PreprocessorDefinitions="__STF__;_WIN64;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;__WXMSW__;WXP_USE_THREAD=1;WITH_PYTHON;WITH_BIOSIG2"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -298,7 +298,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="wxmsw30u_aui.lib wxmsw30u_html.lib wxmsw30u_adv.lib wxmsw30u_core.lib wxbase30u_xml.lib wxbase30u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregexu.lib wxexpat.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(WXDIR)\lib\vc90_dll&quot;;$(PYTHONDIR)\libs"
+				AdditionalLibraryDirectories="&quot;$(WXDIR)\lib\vc90_x64_dll&quot;;$(PYTHONDIR)\libs"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
