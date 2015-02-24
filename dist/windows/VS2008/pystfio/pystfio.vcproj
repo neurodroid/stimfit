@@ -284,14 +284,16 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="3"
 				EnableIntrinsicFunctions="true"
+				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="&quot;$(BOOSTDIR)&quot;;&quot;$(PYTHONDIR)\include&quot;;&quot;$(FFTWDIR)&quot;;&quot;$(NUMPYDIR)&quot;"
 				PreprocessorDefinitions="__STF__;_WIN64;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WITH_BIOSIG2"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
+				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -311,8 +313,11 @@
 				ManifestFile="$(IntDir)\$(TargetFileName).intermediate.manifest"
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				LargeAddressAware="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="0"
+				RandomizedBaseAddress="2"
 				TargetMachine="17"
 			/>
 			<Tool
