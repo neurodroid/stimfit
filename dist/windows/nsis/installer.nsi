@@ -342,6 +342,7 @@ Section "!stfio standalone module" 4 ; Standalone python file i/o module
   CreateDirectory ${STFIODIR}
   SetOutPath ${STFIODIR}
   
+  File "${FFTDIR}\libfftw3-3.dll"
   File "${HDF5DIR}\bin\hdf5_hl.dll"
   File "${HDF5DIR}\bin\hdf5.dll"
   File "${HDF5DIR}\bin\szip.dll"
