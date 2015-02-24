@@ -222,14 +222,14 @@ multiply(const Recording& src, const std::vector<std::size_t>& sections,
 
 } // end of namespace
 
-typedef std::vector< std::string        >::iterator       sst_it;      /*!< std::string iterator */
-typedef std::vector< std::string        >::const_iterator c_sst_it;    /*!< constant std::string iterator */
-typedef std::vector< std::size_t     >::const_iterator c_st_it;     /*!< constant size_t iterator */
-typedef std::vector< int             >::iterator       int_it;      /*!< int iterator */
-typedef std::vector< int             >::const_iterator c_int_it;    /*!< constant int iterator */
-typedef std::vector< Channel         >::iterator       ch_it;       /*!< Channel iterator */
-typedef std::vector< Channel         >::const_iterator c_ch_it;     /*!< constant Channel iterator */
-typedef std::vector< Section         >::iterator       sec_it;      /*!< Section iterator */
-typedef std::vector< Section         >::const_iterator c_sec_it;    /*!< constant Section iterator */
+typedef std::vector< std::string >::iterator       sst_it;      /*!< std::string iterator */
+typedef std::vector< std::string >::const_iterator c_sst_it;    /*!< constant std::string iterator */
+typedef std::vector< std::size_t >::const_iterator c_st_it;     /*!< constant size_t iterator */
+typedef std::vector< int >::iterator       int_it;      /*!< int iterator */
+typedef std::vector< int >::const_iterator c_int_it;    /*!< constant int iterator */
+typedef std::deque< Channel >::iterator       ch_it;       /*!< Channel iterator */
+typedef std::deque< Channel >::const_iterator c_ch_it;     /*!< constant Channel iterator */
+typedef std::deque< Section >::iterator       sec_it;      /*!< Section iterator */
+typedef std::deque< Section >::const_iterator c_sec_it;    /*!< constant Section iterator */
 
 #endif

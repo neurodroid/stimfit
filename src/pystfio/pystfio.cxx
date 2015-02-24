@@ -139,7 +139,12 @@ PyObject* detect_events(double* data, int size_data, double* templ, int size_tem
         detect = stfnum::linCorr(trace, vtempl, progDlg);
     } else if (mode=="deconvolution") {
         stfio::StdoutProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100, true);
-        detect = stfnum::deconvolve(trace, vtempl, 1.0/dt, highpass, lowpass, progDlg);
+        try {
+            detect = stfnum::deconvolve(trace, vtempl, 1.0/dt, highpass, lowpass, progDlg);
+        } catch (const std::runtime_error& e) {
+            std::cerr << e.what() << std::endl;
+            return Py_BuildValue("");
+        }
     }
     npy_intp dims[1] = {(int)detect.size()};
     PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);

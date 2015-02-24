@@ -111,7 +111,7 @@ class Section {
             return NULL;
         }
         Py_ssize_t listsize = PyList_Size(ChannelList);
-        std::vector<Channel> ChannelCpp(listsize);
+        std::deque<Channel> ChannelCpp(listsize);
         
         for (Py_ssize_t i=0; i<listsize; ++i) {
             PyObject* sec0 = PyList_GetItem(ChannelList, i);
@@ -268,7 +268,7 @@ class Section {
             return NULL;
         }
         Py_ssize_t listsize = PyList_Size(SectionList);
-        std::vector<Section> SectionCpp(listsize);
+        std::deque<Section> SectionCpp(listsize);
         
         for (Py_ssize_t i=0; i<listsize; ++i) {
             PyObject* sec0 = PyList_GetItem(SectionList, i);

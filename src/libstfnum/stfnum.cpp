@@ -25,6 +25,8 @@
 #include "fit.h"
 #include "funclib.h"
 
+int isnan(double x) { return x != x; }
+int isinf(double x) { return !isnan(x) && isnan(x - x); }
 
 stfnum::Table::Table(std::size_t nRows,std::size_t nCols) :
 values(nRows,std::vector<double>(nCols,1.0)),
@@ -248,7 +250,7 @@ stfnum::detectionCriterion(const Vector_double& data, const Vector_double& templ
     double y_old=0.0;
     double y2_old=0.0;
     int progCounter=0;
-    double progFraction=(data.size()-templ.size())/100;
+    double progFraction=(data.size()-templ.size())/100.0;
     for (unsigned n_data=0; n_data<data.size()-templ.size(); ++n_data) {
         if (n_data/progFraction>progCounter) {
             progDlg.Update( (int)((double)n_data/(double)(data.size()-templ.size())*100.0),
@@ -358,7 +360,7 @@ stfnum::linCorr(const Vector_double& data, const Vector_double& templ, stfio::Pr
     double y_old=0.0;
     double y2_old=0.0;
     int progCounter=0;
-    double progFraction=(data.size()-templ.size())/100;
+    double progFraction=(data.size()-templ.size())/100.0;
     for (unsigned n_data=0; n_data<data.size()-templ.size(); ++n_data) {
         if (n_data/progFraction>progCounter) {
             progDlg.Update( (int)((double)n_data/(double)(data.size()-templ.size())*100.0),
@@ -703,9 +705,15 @@ stfnum::histogram(const Vector_double& data, int nbins) {
 }
 
 Vector_double
-stfnum::deconvolve(const Vector_double& data, const Vector_double& templ,
+stfnum::deconvolve(const Vector_double& dataIn, const Vector_double& templ,
                 int SR, double hipass, double lopass, stfio::ProgressInfo& progDlg)
 {
+	// Normalize data
+    double fmax = *std::max_element(dataIn.begin(), dataIn.end());
+    double fmin = *std::min_element(dataIn.begin(), dataIn.end());
+    Vector_double data = stfio::vec_scal_minus(dataIn, fmin);
+    data = stfio::vec_scal_div(data, fmax-fmin);
+
     bool skipped = false;
     progDlg.Update( 0, "Starting deconvolution...", &skipped );
     if (data.size()<=0 || templ.size() <=0 || templ.size() > data.size()) {
@@ -713,10 +721,11 @@ stfnum::deconvolve(const Vector_double& data, const Vector_double& templ,
         throw e;
     }
     /* pad templ */
-    Vector_double templ_padded(data.size());
-    std::copy(templ.begin(), templ.end(), templ_padded.begin());
-    if (templ.size() < templ_padded.size()) {
-        std::fill(templ_padded.begin()+templ.size(), templ_padded.end(), 0);
+    double* in_templ_padded =(double *)fftw_malloc(sizeof(double) * data.size());
+    std::copy(templ.begin(), templ.end(), in_templ_padded);
+    if (templ.size() < data.size()) {
+        for (int kp=templ.size(); kp<data.size(); ++kp)
+            in_templ_padded[kp] = 0;
     }
 
     Vector_double data_return(data.size());
@@ -725,27 +734,26 @@ stfnum::deconvolve(const Vector_double& data, const Vector_double& templ,
         return data_return;
     }
 
-    double *in_data, *in_templ_padded;
     //fftw_complex is a double[2]; hence, out is an array of
     //double[2] with out[n][0] being the real and out[n][1] being
     //the imaginary part.
-    fftw_complex *out_data, *out_templ_padded;
     fftw_plan p_data, p_templ, p_inv;
 
     //memory allocation as suggested by fftw:
-    in_data =(double *)fftw_malloc(sizeof(double) * data.size());
-    out_data = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * ((int)(data.size()/2)+1));
-    in_templ_padded =(double *)fftw_malloc(sizeof(double) * templ_padded.size());
-    out_templ_padded = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * ((int)(templ_padded.size()/2)+1));
-
-    std::copy(data.begin(), data.end(), &in_data[0]);
-    std::copy(templ_padded.begin(), templ_padded.end(), &in_templ_padded[0]);
+    double* in_data =(double *)fftw_malloc(sizeof(double) * data.size());
+    std::copy(data.begin(), data.end(), in_data);
+    fftw_complex* out_data = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * ((int)(data.size()/2)+1));
 
     //plan the ffts and execute them:
     p_data =fftw_plan_dft_r2c_1d((int)data.size(), in_data, out_data,
                                  FFTW_ESTIMATE);
     fftw_execute(p_data);
-    p_templ =fftw_plan_dft_r2c_1d((int)templ_padded.size(),
+    if (isnan(out_data[0][0]) || isinf(out_data[0][0])) {
+        data_return.resize(0);
+        throw std::runtime_error("Unstable fft; try again avoiding any test pulses (if present)");
+    }
+    fftw_complex* out_templ_padded = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * ((int)(data.size()/2)+1));
+    p_templ =fftw_plan_dft_r2c_1d((int)data.size(),
                                   in_templ_padded, out_templ_padded, FFTW_ESTIMATE);
     fftw_execute(p_templ);
 

@@ -25,7 +25,7 @@
  *  @{
  */
 
-class Section;
+#include "section.h"
 
 //! A Channel contains several data \link #Section Sections \endlink representing observations of the same physical quantity.
 class StfioDll Channel {
@@ -43,7 +43,7 @@ public:
     //! Constructor
     /*! \param SectionList A vector of Sections from which to construct the channel
      */
-    explicit Channel(const std::vector<Section>& SectionList); 
+    explicit Channel(const std::deque<Section>& SectionList); 
 
     //! Constructor
     /*! Setting the number of sections at construction time will avoid unnecessary 
@@ -107,13 +107,13 @@ public:
     //! Low-level access to the section array (read-only).
     /*! \return The vector containing the sections.
      */
-    const std::vector< Section >& get() const { return SectionArray; }
+    const std::deque< Section >& get() const { return SectionArray; }
 
 
     //! Low-level access to the section array (read and write).
     /*! \return The vector containing the sections.
      */
-    std::vector< Section >& get() { return SectionArray; }
+    std::deque< Section >& get() { return SectionArray; }
 
     //member access: write----------------------------------------
 
@@ -155,7 +155,7 @@ private:
     std::string name, yunits;
 
     // An array of sections
-    std::vector< Section > SectionArray;
+    std::deque< Section > SectionArray;
 
 };
 
