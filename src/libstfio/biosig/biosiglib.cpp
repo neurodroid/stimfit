@@ -130,12 +130,8 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     }
 
     // earlier versions of biosig support only the file type identification, but did not read AXG files
-#ifdef _MSC_VER // CSH: Crashing on 64-bit Windows
-	if (
-#else
-    if ( (BIOSIG_VERSION < 10600) &&
-#endif
-    (biosig_filetype==AXG)
+    if ( (BIOSIG_VERSION < 10602)
+      && (biosig_filetype==AXG)
        ) {
         // biosig's AXG import crashes on Windows at this time
         ReturnData.resize(0);
@@ -213,11 +209,6 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
 
     for (int NS=0; NS < numberOfChannels; ) {
         CHANNEL_TYPE *hc = biosig_get_channel(hdr, NS);
-		if (hc==NULL) {
-            ReturnData.resize(0);
-            return stfio::none;
-		}
-
         Channel TempChannel(nsections);
         TempChannel.SetChannelName(biosig_channel_get_label(hc));
         TempChannel.SetYUnits(biosig_channel_get_physdim(hc));
