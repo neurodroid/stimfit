@@ -122,8 +122,8 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         return type;
     }
     enum FileFormat biosig_filetype=biosig_get_filetype(hdr);
-    if (biosig_filetype==ATF || biosig_filetype==ABF2) {
-        // ATF and ABF2 support should be handled by importATF, and importABF not importBiosig
+    if (biosig_filetype==ATF || biosig_filetype==ABF2 || biosig_filetype==HDF ) {
+        // ATF, ABF2 and HDF5 support should be handled by importATF, and importABF, and importHDF5 not importBiosig
         ReturnData.resize(0);
         destructHDR(hdr);
         return type;
@@ -342,8 +342,8 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         destructHDR(hdr);	// free allocated memory
         return type;
     }
-    if ( hdr->TYPE==ATF ) {
-        // ATF support should be handled by importATF not importBiosig
+    if ( hdr->TYPE==ATF || hdr->TYPE==HDF) {
+        // ATF, HDF5 support should be handled by importATF and importHDF5 not importBiosig
         ReturnData.resize(0);
         destructHDR(hdr);
         return type;
