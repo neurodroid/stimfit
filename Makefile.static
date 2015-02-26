@@ -225,16 +225,16 @@ endif
 endif
 
 ## BIOSIG related stuff ##
-ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
-    SOURCES += ./src/libstfio/biosig/biosiglib.cpp
-    LIBS  += $(shell $(CROSS)pkg-config  --libs libbiosig)
-endif
 ifneq (,$(findstring WITH_BIOSIG2, $(DEFINES)))
   LIBS  += -lbiosig2
 else 
   ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
     LIBS  += -lbiosig
   endif
+endif
+ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
+    SOURCES += ./src/libstfio/biosig/biosiglib.cpp
+    LIBS  += $(shell $(CROSS)pkg-config  --libs libbiosig)
 endif
 
 LIBS     += -lfftw3
