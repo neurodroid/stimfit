@@ -83,6 +83,11 @@ stfio::filetype stfio_file_type(HDRTYPE* hdr) {
         }
 }
 
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+bool stfio::check_biosig_version(int a, int b, int c) {
+	return (BIOSIG_VERSION >= 10000*a + 100*b + c);
+}
+#endif
 
 stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
 
@@ -129,11 +134,10 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         return type;
     }
 
-    // earlier versions of biosig support only the file type identification, but did not read AXG files
-    if ( (BIOSIG_VERSION < 10602)
+    // earlier versions of biosig support only the file type identification, but did not properly read the files
+    if ( (BIOSIG_VERSION < 10603)
       && (biosig_filetype==AXG)
        ) {
-        // biosig's AXG import crashes on Windows at this time
         ReturnData.resize(0);
         destructHDR(hdr);
         return type;
