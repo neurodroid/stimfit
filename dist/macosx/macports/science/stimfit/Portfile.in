@@ -5,7 +5,7 @@ PortSystem          1.0
 PortGroup           wxWidgets 1.0
 
 name                stimfit
-version             0.14.2
+version             STFVERSION
 categories          science
 platforms           darwin
 license             GPL-2
@@ -75,8 +75,8 @@ configure.ldflags-append \
 # if {![variant_isset python27]} { 
 default_variants    +python27
 # }
-# default_variants-append \
-#                     +biosig
+default_variants-append \
+                    +biosig
 
 destroot.destdir    DESTDIR=${destroot}${applications_dir}
 
