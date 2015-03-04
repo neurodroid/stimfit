@@ -6,6 +6,7 @@ PortGroup           wxWidgets 1.0
 
 name                stimfit
 version             STFVERSION
+
 categories          science
 platforms           darwin
 license             GPL-2
@@ -13,7 +14,7 @@ maintainers         gmx.de:christsc
 description         Electrophysiology analysis suite
 long_description    A program for viewing and analyzing electrophysiological data
 homepage            http://www.stimfit.org
-master_sites        http://www.stimfit.org
+master_sites        ${homepage}
 
 checksums           rmd160  RMD160 \
                     sha256  SHA256
@@ -44,10 +45,8 @@ variant python27 description {Build with Python shell.} {
     configure.python \
         ${prefix}/bin/python2.7
 
-    configure.args-delete \
-        --disable-python
-
-    configure.args-append \
+    configure.args-replace \
+        --disable-python \
         --enable-python
 }
 
