@@ -113,6 +113,21 @@ bool stfio::importFile(
 
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
        // make use of automated file type identification
+
+        if (!check_biosig_version(1,6,3)) {
+            try {
+                // workaround for older versions of libbiosig
+                stfio::importABFFile(fName, ReturnData, progDlg);
+                return true;
+            }
+            catch (...) {
+#ifndef NDEBUG
+                fprintf(stdout,"%s (line %i): importABF attempted\n",__FILE__,__LINE__);
+#endif
+            };
+       }
+
+       // if this point is reached, import ABF was not applied or not successful
         try {
             stfio::filetype type1 = stfio::importBiosigFile(fName, ReturnData, progDlg);
             switch (type1) {

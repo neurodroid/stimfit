@@ -39,6 +39,11 @@
 
 namespace stfio {
 
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+//! return version of libbiosig e.g. 10403 correspond to version 1.4.3
+StfioDll bool check_biosig_version(int a, int b, int c);
+#endif
+
 //! Open an BIOSIG file and store its contents to a Recording object.
 /*! \param fName The full path to the file to be opened.
  *  \param ReturnData On entry, an empty Recording object. On exit,

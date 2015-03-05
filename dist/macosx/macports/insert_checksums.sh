@@ -1,6 +1,6 @@
 #! /bin/bash
 
-STFVERSION="0.14.2"
+STFVERSION="0.14.5"
 MPDIR=`pwd`
 
 if [ "$1" != "" ]; then
@@ -26,8 +26,10 @@ fi
 
 ${GSED} 's/RMD160/'${RMD160}'/g' ${MPDIR}/science/stimfit/Portfile.in > ${MPDIR}/science/stimfit/Portfile
 ${GSED} -i 's/SHA256/'${SHA256}'/g' ${MPDIR}/science/stimfit/Portfile
+${GSED} -i 's/STFVERSION/'${STFVERSION}'/g' ${MPDIR}/science/stimfit/Portfile
 ${GSED} 's/RMD160/'${RMD160}'/g' ${MPDIR}/python/py-stfio/Portfile.in > ${MPDIR}/python/py-stfio/Portfile
 ${GSED} -i 's/SHA256/'${SHA256}'/g' ${MPDIR}/python/py-stfio/Portfile
+${GSED} -i 's/STFVERSION/'${STFVERSION}'/g' ${MPDIR}/python/py-stfio/Portfile
 
 sudo portindex
 sudo port uninstall stimfit
@@ -36,5 +38,5 @@ sudo port uninstall py-stfio
 sudo port clean --all py-stfio
 sudo port uninstall py27-stfio
 sudo port clean --all py27-stfio
-sudo port uninstall py33-stfio
-sudo port clean --all py33-stfio
+sudo port uninstall py34-stfio
+sudo port clean --all py34-stfio

@@ -12,7 +12,7 @@ TEST(Channel_test, constructors)
     EXPECT_EQ( ch1.size(), 1 );
     EXPECT_EQ( ch1[0].size(), 32768 );
 
-    std::vector<Section> sec_list(16, Section(32768));
+    std::deque<Section> sec_list(16, Section(32768));
     Channel ch2(sec_list);
     EXPECT_EQ( ch2.size(), 16 );
     EXPECT_EQ( ch2[ch2.size()-1].size(), 32768 );
@@ -29,7 +29,7 @@ TEST(Channel_test, data_access)
     EXPECT_THROW( ch1.at( ch1.size() ), std::out_of_range );
     EXPECT_THROW( ch1[0].at(ch1[0].size()), std::out_of_range );
 
-    std::vector<Section> sec_list(16, Section(32768));
+    std::deque<Section> sec_list(16, Section(32768));
     Channel ch2(sec_list);
     EXPECT_EQ( ch2[ch2.size()-1][ch2[ch2.size()-1].size()-1], 0 );
     EXPECT_THROW( ch2.at( ch2.size() ), std::out_of_range );
