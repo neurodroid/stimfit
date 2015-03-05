@@ -7,13 +7,13 @@ Files: *
 Copyright: 2011, Christoph Schmidt-Hieber <christsc@gmx.de>
 License: GPL-2+
 
-Files: src/libstfio/axon/*
+Files: src/libstfio/abf/axon/*
 Copyright: 1993-2000, Axon Instruments <info@moldev.com>
 License:
  Permission is granted to freely to use, modify and copy 
  the code in this file.
 
-Files: src/libstfio/axon2/*
+Files: src/libstfio/abf/axon2/*
 Copyright: 1993-2005, Molecular Devices <info@moldev.com>
            1993-2002, Axon Instruments <info@moldev.com>
 License:
