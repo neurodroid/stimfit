@@ -25,6 +25,7 @@ References
 ====
     * `Kim S (2014) <http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0113124>`_ Action Potential Modulation in CA1 Pyramidal Neuron Axons Facilitates OLM Interneuron Activaion in Recurrent Inhibitory Microcircuits of Rat Hippocampus. *PLoS One*  9:e113124.
 
+    * `Guzman SJ, Schlögl A, Schmidt-Hieber C (2014) Stimfit: quantifying electrophysiological data with Python <http://www.frontiersin.org/Journal/10.3389/fninf.2014.00016/abstract>`_ Front Neuroinform doi: 10.3389/fninf.2014.00016
     * `Savanthrapadian S, Meyer T, Elgueta C, Booker SA, Vida I, Bartos M (2014) <http://www.jneurosci.org/cgi/pmidlookup?view=long&pmid=24920624>`_ Synaptic properties of SOM- and CCK-expressing cells in dentate gyrus interneuron networks. *J Neurosci* 24:8197-8209. 
 
     * `Boudkkazi S, Brechet A, Schwenk J and Fakler B (2014). <http://www.cell.com/neuron/abstract/S0896-6273%2814%2900261-X>`_ Cornichon2 dictates the time course of excitatory transmission at individual hippocampal synapes. *Neuron*, doi: http://dx.doi.org/10.1016/j.neuron.2014.03.031
@@ -40,7 +41,7 @@ References
 
     * `Hosp JA, Strüber M, Yanagawa Y, Obata K, Vida I, Jonas P, Bartos M (2013). <http://onlinelibrary.wiley.com/doi/10.1002/hipo.22214/full>`_ Morpho-physiological criteria divide dentate gyrus interneurons into classes. *Hippocampus*, doi: 10.1002/hipo.22214
 
-    * `Schloegl A, Jonas P, Schmidt-Hieber C, Guzman SJ (2013). <http://www.degruyter.com/view/j/bmte.2013.58.issue-s1-G/bmt-2013-4181/bmt-2013-4181.xml>`_ Stimfit: a fast visualization and analysis environment for cellular neurophysiology. Biomedical Engineering/Biomedizinische Technik.
+    * ` Schlögl A, Jonas P, Schmidt-Hieber C, Guzman SJ (2013). <http://www.degruyter.com/view/j/bmte.2013.58.issue-s1-G/bmt-2013-4181/bmt-2013-4181.xml>`_ Stimfit: a fast visualization and analysis environment for cellular neurophysiology. Biomedical Engineering/Biomedizinische Technik.
     * `Rodriguez-Sierra OE, Turesson HK, Pare D (2013). <http://jn.physiology.org/content/early/2013/08/02/jn.00408.2013.long>`_ Contrasting distribution of physiological cell types in different regions of the bed nucleus of the stria terminalis. *J Neurophysiol* August 7, 2013, doi: 10.1152/jn.00408.2013 
     * `Booker SA, Gross A, Althof D, Shigemoto R, Bettler B, Frotscher M, Hearing M, Wickman K, Watanabe M, Kulik A, Vida I (2013). <http://www.jneurosci.org/content/33/18/7961.full>`_ Differential GABAB-receptor-mediated effects in perisomatic- and dendrite-targeting parvalbumin interneurons. *J Neurosci* 33:7961-7974.
     * `Turesson HK, Rodriguez-Sierra OE, Pare D (2013). <http://jn.physiology.org/cgi/pmidlookup?view=long&pmid=23446692>`_ Intrinsic connections in the anterior part of the bed nucleus of the stria terminalis. *J Neurophysiol*  February 27, 2013, doi: 10.1152/jn.00004.2013 
