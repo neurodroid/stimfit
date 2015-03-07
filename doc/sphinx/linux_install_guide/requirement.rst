@@ -172,7 +172,7 @@ The manual of `Stimfit <http://www.stimfit.org>`_ including the documentation is
 
     sudo apt-get install python-sphinx
 
-It is possible to build a local copy of the documenation there by simply calling:
+It is possible to build a local copy of the documentation there by simply calling:
 
 ::
 
