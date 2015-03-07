@@ -9,7 +9,7 @@ References
 
 :Last update:  |today|
 
-`Stimfit <http://www.stimfit.org>`_ has been used for data analysis in the following publications. If you miss you publication, please let us know `here <https://groups.google.com/forum/#!forum/stimfit>`_.
+`Stimfit <http://www.stimfit.org>`_ has been used for data analysis in the following publications. If you miss a reference to your publication, please let us know `here <https://groups.google.com/forum/#!forum/stimfit>`_.
 
 
 ====
