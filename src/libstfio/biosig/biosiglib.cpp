@@ -83,6 +83,11 @@ stfio::filetype stfio_file_type(HDRTYPE* hdr) {
         }
 }
 
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+bool stfio::check_biosig_version(int a, int b, int c) {
+	return (BIOSIG_VERSION >= 10000*a + 100*b + c);
+}
+#endif
 
 stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
 
@@ -122,22 +127,17 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         return type;
     }
     enum FileFormat biosig_filetype=biosig_get_filetype(hdr);
-    if (biosig_filetype==ATF || biosig_filetype==ABF2) {
-        // ATF and ABF2 support should be handled by importATF, and importABF not importBiosig
+    if (biosig_filetype==ATF || biosig_filetype==ABF2 || biosig_filetype==HDF ) {
+        // ATF, ABF2 and HDF5 support should be handled by importATF, and importABF, and importHDF5 not importBiosig
         ReturnData.resize(0);
         destructHDR(hdr);
         return type;
     }
 
-    // earlier versions of biosig support only the file type identification, but did not read AXG files
-#ifdef _MSC_VER // CSH: Crashing on 64-bit Windows
-	if (
-#else
-    if ( (BIOSIG_VERSION < 10600) &&
-#endif
-    (biosig_filetype==AXG)
+    // earlier versions of biosig support only the file type identification, but did not properly read the files
+    if ( (BIOSIG_VERSION < 10603)
+      && (biosig_filetype==AXG)
        ) {
-        // biosig's AXG import crashes on Windows at this time
         ReturnData.resize(0);
         destructHDR(hdr);
         return type;
@@ -213,11 +213,6 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
 
     for (int NS=0; NS < numberOfChannels; ) {
         CHANNEL_TYPE *hc = biosig_get_channel(hdr, NS);
-		if (hc==NULL) {
-            ReturnData.resize(0);
-            return stfio::none;
-		}
-
         Channel TempChannel(nsections);
         TempChannel.SetChannelName(biosig_channel_get_label(hc));
         TempChannel.SetYUnits(biosig_channel_get_physdim(hc));
@@ -351,8 +346,8 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         destructHDR(hdr);	// free allocated memory
         return type;
     }
-    if ( hdr->TYPE==ATF ) {
-        // ATF support should be handled by importATF not importBiosig
+    if ( hdr->TYPE==ATF || hdr->TYPE==HDF) {
+        // ATF, HDF5 support should be handled by importATF and importHDF5 not importBiosig
         ReturnData.resize(0);
         destructHDR(hdr);
         return type;

@@ -63,7 +63,7 @@ wxString GetExecutablePath() {
 
     HKEY keyHandle;
 
-    if( RegOpenKeyEx( HKEY_CURRENT_USER, wxT("Software\\Stimfit 0.10"), 0, 
+    if( RegOpenKeyEx( HKEY_CURRENT_USER, wxT("Software\\Stimfit 0.14"), 0, 
                       KEY_QUERY_VALUE, &keyHandle) == ERROR_SUCCESS)
     {
         DWORD BufferSize = 8192;
@@ -104,11 +104,10 @@ bool wxStfApp::Init_wxPython()
     Py_Initialize();
     
     PyEval_InitThreads();
-
+    wxString cwd;
 #ifdef __WXMAC__
     // Add the cwd to the present path:
     wxString app_path = wxFileName( GetExecutablePath() ).GetPath();
-    wxString cwd;
     cwd << wxT("import os\n");
     cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks\"\n");
     cwd << wxT("import sys\n");
@@ -127,7 +126,6 @@ bool wxStfApp::Init_wxPython()
 #ifdef __WXGTK__
     // Add the cwd to the present path:
     wxString app_path = wxFileName( GetExecutablePath() ).GetPath();
-    wxString cwd;
     cwd << wxT("import os\n");
     cwd << wxT("cwd=\"") << app_path << wxT("/../lib/stimfit\"\n");
     cwd << wxT("import sys\n");
@@ -141,12 +139,13 @@ bool wxStfApp::Init_wxPython()
 
 #ifdef _WINDOWS
     // Add the cwd to the present path:
-    wxString app_path = GetExecutablePath();
-    wxString cwd;
-	cwd << wxT("cwd = \"") << app_path.BeforeFirst( wxUniChar('\0') ) 
+    wxString app_path = GetExecutablePath().BeforeFirst( wxUniChar('\0') );
+	cwd << wxT("cwd = \"") << app_path 
 		<< wxT("\\wx-3.0-msw\"\nimport sys\nsys.path.insert(0,cwd)\n");
-	cwd << wxT("cwd = \"") << app_path.BeforeFirst( wxUniChar('\0') ) 
-		<< wxT("\"\nimport sys\nsys.path.insert(0,cwd)\n");
+	cwd << wxT("cwd = \"") << app_path 
+		<< wxT("\\stf-site-packages\"\nsys.path.insert(0,cwd)\n");
+	cwd << wxT("cwd = \"") << app_path
+		<< wxT("\"\nsys.path.insert(0,cwd)\n");
 #endif
 
     int cwd_result = PyRun_SimpleString(cwd.utf8_str());
