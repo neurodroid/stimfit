@@ -13,7 +13,7 @@ SetCompressor lzma
 ;--------------------------------
 !include LogicLib.nsh
 
-!define PRODUCT_VERSION "0.14.5"
+!define PRODUCT_VERSION "0.14.6"
 !define WXW_VERSION "3.0.2.0"
 !define WXW_VERSION_DIR "3.0.2"
 !define WXW_VERSION_SHORT "30"
