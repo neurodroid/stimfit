@@ -2229,11 +2229,17 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             }
             baselineMean /= baseline;
             double peakIndex=0;
-            stfnum::peak( cursec().get(), baselineMean, *cit, *cit + templateWave.size(),
-                       1, stfnum::both, peakIndex );
-            // set peak index of last event:
-            std::size_t last_idx = GetCurrentSectionAttributes().eventList.size()-1;
-            sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.at(last_idx).SetEventPeakIndex((int)peakIndex);
+            int eventl = templateWave.size();
+            if (*cit + eventl >= cursec().get().size()) {
+                eventl = cursec().get().size()-1- (*cit);
+            }
+            stfnum::peak( cursec().get(), baselineMean, *cit, *cit + eventl,
+                          1, stfnum::both, peakIndex );
+            if (peakIndex != peakIndex || peakIndex < 0 || peakIndex >= cursec().get().size()) {
+                throw std::runtime_error("Error during peak detection (result is NAN)\n");
+            }
+            // set peak index of this event:
+            sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.back().SetEventPeakIndex((int)peakIndex);
         }
     }
     catch (const std::out_of_range& e) {
