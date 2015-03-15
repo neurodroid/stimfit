@@ -306,7 +306,7 @@ stfnum::peakIndices(const Vector_double& data, double threshold,
             // ... and if so, find the data point where the threshold
             // is crossed again in the opposite direction, ...
             for (;;) {
-                if (n_data>data.size()-1) {
+                if (n_data>data.size()-2) {
                     ulp=(int)data.size()-1;
                     break;
                 }
