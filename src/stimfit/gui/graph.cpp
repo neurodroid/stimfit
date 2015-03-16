@@ -569,7 +569,9 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
              n_cbl < cbList.size();
              ++n_cbl)
         {
-            cbList[n_cbl]->Destroy();
+            if (cbList[n_cbl] != NULL) {
+                cbList[n_cbl]->Destroy();
+            }
         }
         cbList.resize(sec_attr.eventList.size());
     }
