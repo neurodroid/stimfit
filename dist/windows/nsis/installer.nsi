@@ -156,6 +156,7 @@ Section "!Program files and Python modules" 1 ; Core program files and Python mo
   StrCpy $StrNoUsablePythonFound "${STRING_PYTHON_NOT_FOUND}"
 
   ClearErrors
+  SetRegView 64
   ReadRegStr $9 HKEY_LOCAL_MACHINE "SOFTWARE\Python\PythonCore\${PY_MAJOR}\InstallPath" ""
   IfErrors 0 +9
     ClearErrors
@@ -166,6 +167,7 @@ Section "!Program files and Python modules" 1 ; Core program files and Python mo
 	  IfErrors 0 +5
         MessageBox MB_OK "$StrNoUsablePythonFound"
         Quit
+  SetRegView 32
   StrCpy $PY_ACT "${PY_MAJOR}"
   Goto +2
   StrCpy $PY_ACT "${PY_MIN}"
@@ -279,6 +281,7 @@ Section "!stfio standalone module" 2 ; Standalone python file i/o module
   StrCpy $StrNoUsablePythonFound "${STRING_PYTHON_NOT_FOUND}"
 
   ClearErrors
+  SetRegView 64
   ReadRegStr $9 HKEY_LOCAL_MACHINE "SOFTWARE\Python\PythonCore\${PY_MAJOR}\InstallPath" ""
   IfErrors 0 +9
     ClearErrors
@@ -289,6 +292,7 @@ Section "!stfio standalone module" 2 ; Standalone python file i/o module
 	  IfErrors 0 +5
         MessageBox MB_OK "$StrNoUsablePythonFound"
         Quit
+  SetRegView 32
   StrCpy $PY_ACT "${PY_MAJOR}"
   Goto +2
   StrCpy $PY_ACT "${PY_MIN}"
