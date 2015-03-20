@@ -73,7 +73,7 @@ Get the 64-bit biosig development files from `here <http://www.stimfit.org/libs>
 
 Python modules
 --------------
-A package with all Python modules that Stimfit requires to run (numpy, matplotlib and their dependencies) is available `here <http://www.stimfit.org/libs>`_. They were compiled by `Christoph Gohlke <http://www.lfd.uci.edu/~gohlke/pythonlibs/>`_. Unzip them to a folder "stf-site-packages". They will be required to produce an installer with nsis.
+A package with all Python modules that Stimfit requires to run (numpy, matplotlib and their dependencies) is available `here <http://www.stimfit.org/libs>`_. They were compiled by `Christoph Gohlke <http://www.lfd.uci.edu/~gohlke/pythonlibs/>`_. Unzip them to a folder "stf-site-packages" in your home directory. They will be required to produce an installer with nsis.
 
 ===========
 Build Tools
