@@ -12,6 +12,23 @@ In [this link](http://www.stimfit.org/doc/sphinx/references/index.html) you can 
 
 Guzman SJ, Schlögl A, Schmidt-Hieber C (2014) Stimfit: quantifying electrophysiological data with Python. *Front Neuroinform* [doi: 10.3389/fninf.2014.00016](http://www.frontiersin.org/Journal/10.3389/fninf.2014.00016/abstract)
 
+## Installation
+
+###Window###
+The Windows version, including the python-stfio module, is available [here](https://github.com/neurodroid/stimfit/releases).
+###OS X###
+Stimfit for OS X is available through [MacPorts](http://www.macports.org). After [installation](https://www.macports.org/install.php), run
+```
+$ sudo port install stimfit py27-stfio
+```
+We don't supply installation packages for OS X any longer because of fragmentation issues with OS X versions (10.5--10.9), Python versions (2.x, 3.x) and architectures (i386, x86_64, ppc).
+###GNU/Linux###
+On Debian and Ubuntu systems, you can get Stimfit and the stfio module from the standard repositories:
+```
+$ sudo apt-get install stimfit python-stfio
+```
+More recent versions can be found on [the Debian Neuroscience Repository](http://neuro.debian.net/index.html), and there's [a bleeding-edge ppa for Ubuntu](https://launchpad.net/~christsc-gmx/+archive/neuropy) on launchpad.
+
 ## Important links
 
 * [Online documentation](http://www.stimfit.org/doc/sphinx/index.html)
