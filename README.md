@@ -14,15 +14,15 @@ Guzman SJ, Schlögl A, Schmidt-Hieber C (2014) Stimfit: quantifying electrophysi
 
 ## Installation
 
-###Window###
+####Windows####
 The Windows version, including the python-stfio module, is available [here](https://github.com/neurodroid/stimfit/releases).
-###OS X###
+####OS X####
 Stimfit for OS X is available through [MacPorts](http://www.macports.org). After [installation](https://www.macports.org/install.php), run
 ```
 $ sudo port install stimfit py27-stfio
 ```
 We don't supply installation packages for OS X any longer because of fragmentation issues with OS X versions (10.5--10.9), Python versions (2.x, 3.x) and architectures (i386, x86_64, ppc).
-###GNU/Linux###
+####GNU/Linux####
 On Debian and Ubuntu systems, you can get Stimfit and the stfio module from the standard repositories:
 ```
 $ sudo apt-get install stimfit python-stfio
