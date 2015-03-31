@@ -71,13 +71,17 @@ libbiosig
 ---------
 Get the 64-bit biosig development files from `here <http://www.stimfit.org/libs>`_. They were prepared using `mxe <http://mxe.cc/>`_ and converted with Visual Studio's lib tool. Extract to a folder called "biosig" in your home directory. Make sure that the files and folders are directly in the top-level biosig folder.
 
+Python modules
+--------------
+A package with all Python modules that Stimfit requires to run (numpy, matplotlib and their dependencies) is available `here <http://www.stimfit.org/libs>`_. They were compiled by `Christoph Gohlke <http://www.lfd.uci.edu/~gohlke/pythonlibs/>`_. Unzip them to a folder "stf-site-packages" in your home directory. They will be required to produce an installer with nsis.
+
 ===========
 Build Tools
 ===========
 
 SWIG
 ----
-`Cygwin <http://www.cygwin.com>`_ has SWIG in its repositories. Otherwise, you can download it from `here <http://www.swig.org>`_. At any rate, make sure that the binary is located in C:\\cygwin64\\bin\\swig.exe.
+`Cygwin <http://www.cygwin.com>`_ has SWIG in its repositories. Some users have reported issues with Cygwin's SWIG, so you might be better off downloading the precompiled Windows binary from `here <http://www.swig.org>`_. At any rate, make sure that the binary is located in C:\\cygwin64\\bin\\swig.exe.
 
 git
 ---
