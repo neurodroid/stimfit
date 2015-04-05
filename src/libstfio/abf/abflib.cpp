@@ -323,10 +323,12 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
     ldiv_t year=ldiv(pFH->uFileStartDate,(ABFLONG)10000);
     ldiv_t month=ldiv(year.rem,(ABFLONG)100);
 
-    ldiv_t hours=ldiv(pFH->uFileStartTimeMS,(ABFLONG)3600);
+    ldiv_t hours=ldiv(pFH->uFileStartTimeMS/1000,(ABFLONG)3600);
     ldiv_t minutes=ldiv(hours.rem,(ABFLONG)60);
 
-    ReturnData.SetDateTime(year.quot, month.quot, month.rem, hours.quot, minutes.quot, minutes.rem);
+    // Recording::SetDateTime expects the year to be passed as the number of years since 1900, and the month
+    // as 0 = Jan ... 11 = Dec
+    ReturnData.SetDateTime(year.quot-1900, month.quot-1, month.rem, hours.quot, minutes.quot, minutes.rem);
 
     abf2.Close();
 }
