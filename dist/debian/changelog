@@ -1,4 +1,4 @@
-stimfit (0.14.9-0trusty1) trusty; urgency=low
+stimfit (0.14.9-1) experimental; urgency=low
 
   * Fix several bugs during abf2 (pClamp10) file reading
   * Fix several issues during event detection
