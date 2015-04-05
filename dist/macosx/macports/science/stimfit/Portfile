@@ -5,7 +5,7 @@ PortSystem          1.0
 PortGroup           wxWidgets 1.0
 
 name                stimfit
-version             0.14.7
+version             0.14.8
 
 categories          science
 platforms           darwin
@@ -16,8 +16,8 @@ long_description    A program for viewing and analyzing electrophysiological dat
 homepage            http://www.stimfit.org
 master_sites        ${homepage}
 
-checksums           rmd160  d501cc9590aca13e01a626cc71f2bd65e704c5d8 \
-                    sha256  8d2a3d9faf4ee43afbd76834849195aa76535395a9533d8cdd2f7cbca9daeea3
+checksums           rmd160  f0780addda0c23b5895215ce979c9247b8cbb840 \
+                    sha256  7a59cf21af22317e5d2fcf695380e470be6ea4ddd837612a7108253f48315099
 
 wxWidgets.use       wxPython-3.0
 
