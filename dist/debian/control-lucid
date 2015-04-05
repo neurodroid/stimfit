@@ -1,0 +1,42 @@
+Source: stimfit
+Section: science
+Priority: optional
+Maintainer: Christoph Schmidt-Hieber <christsc@gmx.de>
+Uploaders: Yaroslav Halchenko <debian@onerussian.com>
+Build-Depends: debhelper (>= 7), libboost-dev (>= 1.40.0), python-all-dev (>= 2.6.5-0), python-numpy, libhdf5-serial-dev, swig, python-wxgtk3.0 | python-wxgtk2.8 (>= 2.8.9), python-wxgtk3.0-dev | libwxgtk2.8-dev (>= 2.8.9), libwxgtk3.0-dev | libwxgtk2.8-dev (>= 2.8.9), libfftw3-dev, liblapack-dev, chrpath, help2man
+Standards-Version: 3.9.6
+Homepage: http://www.stimfit.org
+
+Package: stimfit
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, libsuitesparse-dev, python-wxgtk3.0 | python-wxgtk2.8 (>= 2.8.9), python-numpy, python-matplotlib
+Recommends: python-scipy
+Description: Program for viewing and analyzing electrophysiological data
+ Stimfit is a free, fast and simple program for viewing and analyzing
+ electrophysiological data. It features an embedded Python shell that
+ allows you to extend the program functionality by using numerical
+ libraries such as NumPy and SciPy.
+
+Package: stimfit-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Depends: ${misc:Depends}, stimfit
+Recommends: python-matplotlib, python-scipy, python-stfio
+Description: Debug symbols for stimfit
+ Stimfit is a free, fast and simple program for viewing and analyzing
+ electrophysiological data. It features an embedded Python shell that
+ allows you to extend the program functionality by using numerical
+ libraries such as NumPy and SciPy. This package contains the debug
+ symbols for Stimfit.
+
+Package: python-stfio
+Section: python
+Architecture: any
+Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, python-numpy
+Provides: ${python:Provides}
+Recommends: python-matplotlib, python-scipy, python-pandas
+Description: Python module to read common electrophysiology file formats.
+ The stfio module allows you to read common electrophysiology file formats
+ from Python. Axon binaries (abf), Axon text (atf), HEKA (dat),
+ CFS (dat/cfs), Axograph (axgd/axgx) are currently supported.
