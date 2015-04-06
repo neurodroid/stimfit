@@ -1,0 +1,15 @@
+package:
+    name: clapack
+    version: "3.1.1"
+
+source:
+    fn: CLAPACK-VS2008-x64.zip # [win64]
+    url: "http://www.stimfit.org/libs/CLAPACK-VS2008-x64.zip" # [win64]
+
+build:
+    number: 0
+
+about:
+    home: http://www.netlib.org/clapack/
+    license: Modified BSD
+    summary: "The CLAPACK library was built using a Fortran to C conversion utility called f2c. The entire Fortran 77 LAPACK library is run through f2c to obtain C code, and then modified to improve readability. CLAPACK's goal is to provide LAPACK for someone who does not have access to a Fortran compiler."

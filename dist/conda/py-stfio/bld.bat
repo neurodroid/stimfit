@@ -21,12 +21,14 @@ copy %SRC_DIR%\src\pystfio\stfio_neo.py %SP_DIR%\stfio
 copy %SRC_DIR%\src\pystfio\stfio.py %SP_DIR%\stfio
 copy %SRC_DIR%\dist\windows\VS2008\Stimfit\%PLATFORM%\Release\_stfio.pyd %SP_DIR%\stfio
 copy %SRC_DIR%\dist\windows\VS2008\Stimfit\%PLATFORM%\Release\libstfio.dll %SP_DIR%\stfio
+copy %SRC_DIR%\dist\windows\VS2008\Stimfit\%PLATFORM%\Release\libstfnum.dll %SP_DIR%\stfio
 
-:: The hdf5-dll and biosig conda packages put their DLLs in %LIBRARY_BIN%. Since pystfio depends on these, need
-:: to copy them too
+:: The hdf5-dll, biosig and fftw conda packages put their DLLs in %LIBRARY_BIN%. Since pystfio depends on these,
+:: need to copy them too
 copy %LIBRARY_BIN%\hdf5.dll %SP_DIR%\stfio
 copy %LIBRARY_BIN%\hdf5_hl.dll %SP_DIR%\stfio
 copy %LIBRARY_BIN%\zlib.dll %SP_DIR%\stfio
 copy %LIBRARY_BIN%\szip.dll %SP_DIR%\stfio
 copy %LIBRARY_BIN%\libbiosig2.dll %SP_DIR%\stfio
+copy %LIBRARY_BIN%\libfftw3-3.dll %SP_DIR%\stfio
 
