@@ -1,6 +1,6 @@
 package:
     name: py-stfio
-    version: "trunk"
+    version: "0.14.9"
 
 source:
     # Since this recipe is part of the git repo, the source is just a local path
@@ -15,6 +15,8 @@ requirements:
     build:
         - hdf5-dll
         - biosig
+        - fftw
+        - clapack
         - python
         - numpy
     run:

@@ -30,7 +30,12 @@ diff --git dist/windows/VS2008/pystfio/Config.vsprops dist/windows/VS2008/pystfi
 index be1b192..9ced898 100755
 --- dist/windows/VS2008/pystfio/Config.vsprops
 +++ dist/windows/VS2008/pystfio/Config.vsprops
-@@ -15,10 +15,10 @@
+@@ -11,18 +11,18 @@
+ 	/>
+ 	<UserMacro
+ 		Name="NUMPYDIR"
+-		Value="$(SolutionDir)\..\..\..\..\..\stf-site-packages\numpy\core\include"
++		Value="$(PYTHONDIR)\Lib\site-packages\numpy\core\include"
  	/>
  	<UserMacro
  		Name="PYTHONDIR"
@@ -41,5 +46,43 @@ index be1b192..9ced898 100755
  		Name="BOOSTDIR"
 -		Value="$(SolutionDir)\..\..\..\..\..\boost"
 +		Value="$(HOMEDRIVE)$(HOMEPATH)\boost"
+ 	/>
+ 	<UserMacro
+ 		Name="FFTWDIR"
+-		Value="$(SolutionDir)\..\..\..\..\..\fftw"
++		Value="$(LIBRARY_LIB)"
+ 	/>
+ </VisualStudioPropertySheet>
+diff --git dist/windows/VS2008/libstfnum/Config.vsprops dist/windows/VS2008/libstfnum/Config.vsprops
+index be1b192..9ced898 100755
+--- dist/windows/VS2008/libstfnum/Config.vsprops
++++ dist/windows/VS2008/libstfnum/Config.vsprops
+@@ -6,23 +6,23 @@
+ 	>
+ 	<UserMacro
+ 		Name="HDF5DIR"
+-		Value="$(SolutionDir)\..\..\..\..\..\hdf5"
++		Value="$(LIBRARY_INC)\.."
+ 		PerformEnvironmentSet="true"
+ 	/>
+ 	<UserMacro
+ 		Name="FFTWDIR"
+-		Value="$(SolutionDir)\..\..\..\..\..\fftw"
++		Value="$(LIBRARY_LIB)"
+ 	/>
+ 	<UserMacro
+ 		Name="BOOSTDIR"
+-		Value="$(SolutionDir)\..\..\..\..\..\boost"
++		Value="$(HOMEDRIVE)$(HOMEPATH)\boost"
+ 	/>
+ 	<UserMacro
+ 		Name="BIOSIGDIR"
+-		Value="$(SolutionDir)\..\..\..\..\..\biosig"
++		Value="$(LIBRARY_INC)\.."
+ 	/>
+ 	<UserMacro
+ 		Name="PYTHONDIR"
+-		Value="C:\Python27"
++		Value="$(PREFIX)"
  	/>
  </VisualStudioPropertySheet>
