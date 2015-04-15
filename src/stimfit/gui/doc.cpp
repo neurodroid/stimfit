@@ -1668,7 +1668,6 @@ void wxStfDoc::OnAnalysisIntegrate(wxCommandEvent &WXUNUSED(event)) {
         integralTable.at(2,0) =
             integral_t - (GetFitEnd()-GetFitBeg())*GetXScale()*GetBase();
         integralTable.SetEmpty(3,0);
-        //integralTable.at(3,0) = "not implemented";
         integralTable.at(4,0) = integral_s;
         integralTable.at(5,0) =
             integral_s - (GetFitEnd()-GetFitBeg())*GetXScale()*GetBase();
