@@ -1643,6 +1643,8 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
 
 void wxStfDoc::OnAnalysisIntegrate(wxCommandEvent &WXUNUSED(event)) {
     double integral_s = 0.0, integral_t = 0.0;
+    const std::string units = at(GetCurChIndex()).GetYUnits() + " * " + GetXUnits();
+    
     try {
         integral_s = stf::integrate_simpson(cursec().get(),GetFitBeg(),GetFitEnd(),GetXScale());
         integral_t = stf::integrate_trapezium(cursec().get(),GetFitBeg(),GetFitEnd(),GetXScale());
@@ -1659,12 +1661,14 @@ void wxStfDoc::OnAnalysisIntegrate(wxCommandEvent &WXUNUSED(event)) {
         integralTable.SetRowLabel(3, "Simpson (quadratic)");
         integralTable.SetRowLabel(4, "Integral (from 0)");
         integralTable.SetRowLabel(5, "Integral (from base)");
-        integralTable.SetColLabel(0, "Result");
+        //integralTable.SetColLabel(0, "Results");
+        integralTable.SetColLabel(0, units);
         integralTable.SetEmpty(0,0);
         integralTable.at(1,0) = integral_t;
         integralTable.at(2,0) =
             integral_t - (GetFitEnd()-GetFitBeg())*GetXScale()*GetBase();
         integralTable.SetEmpty(3,0);
+        //integralTable.at(3,0) = "not implemented";
         integralTable.at(4,0) = integral_s;
         integralTable.at(5,0) =
             integral_s - (GetFitEnd()-GetFitBeg())*GetXScale()*GetBase();
