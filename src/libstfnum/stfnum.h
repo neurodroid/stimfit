@@ -17,14 +17,14 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-/*! \file stfmath.h
+/*! \file stfnum.h
  *  \author Christoph Schmidt-Hieber
  *  \date 2008-01-16
  *  \brief Math functions.
  */
 
-#ifndef _CORE_H
-#define _CORE_H
+#ifndef _STFNUM_H
+#define _STFNUM_H
 
 #ifdef _WINDOWS
 #pragma warning( disable : 4251 )  // Disable warning messages
@@ -33,22 +33,24 @@
 #include <vector>
 #include <complex>
 #include <deque>
+#include <boost/function.hpp>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#include <fftw3.h>
 
 #ifdef _MSC_VER
 #define INFINITY (DBL_MAX+DBL_MAX)
-#define NAN (INFINITY-INFINITY)
+#ifndef NAN
+        static const unsigned long __nan[2] = {0xffffffff, 0x7fffffff};
+        #define NAN (*(const float *) __nan)
+#endif
 #endif
 
-#include "./../stf.h"
-
-// header for the fourier transform:
-#include "fftw3.h"
+#include "../libstfio/stfio.h"
 #include "./spline.h"
 
-namespace stf {
+namespace stfnum {
 
 /*! \addtogroup stfgen
  *  @{
@@ -61,7 +63,7 @@ namespace stf {
  */
 typedef boost::function<double(double, const Vector_double&)> Func;
 
-//! The jacobian of a stf::Func.
+//! The jacobian of a stfnum::Func.
 typedef boost::function<Vector_double(double, const Vector_double&)> Jac;
 
 //! Scaling function for fit parameters
@@ -110,15 +112,106 @@ struct parInfo {
     Scale unscale; /*!< Unscaling function for this parameter */
 };
 
-//! Print the output of a fit into a stf::Table.
-typedef boost::function<Table(const Vector_double&,const std::vector<stf::parInfo>,double)> Output;
+//! A table used for printing information.
+/*! Members will throw std::out_of_range if out of range.
+ */
+class StfioDll Table {
+public:
+    //! Constructor
+    /*! \param nRows Initial number of rows.
+     *  \param nCols Initial number of columns.
+     */
+    Table(std::size_t nRows,std::size_t nCols);
+
+    //! Constructor
+    /*! \param map A map used to initialise the table.
+     */
+    Table(const std::map< std::string, double >& map);
+
+    //! Range-checked access. Returns a copy. Throws std::out_of_range if out of range.
+    /*! \param row 0-based row index.
+     *  \param col 0-based column index.
+     *  \return A copy of the double at row, col.
+     */
+    double at(std::size_t row,std::size_t col) const;
+
+    //! Range-checked access. Returns a reference. Throws std::out_of_range if out of range.
+    /*! \param row 0-based row index.
+     *  \param col 0-based column index.
+     *  \return A reference to the double at row, col.
+     */
+    double& at(std::size_t row,std::size_t col);
+    
+    //! Check whether a cell is empty.
+    /*! \param row 0-based row index.
+     *  \param col 0-based column index.
+     *  \return true if empty, false otherwise.
+     */
+    bool IsEmpty(std::size_t row,std::size_t col) const;
+
+    //! Empties or un-empties a cell.
+    /*! \param row 0-based row index.
+     *  \param col 0-based column index.
+     *  \param value true if the cell should be empty, false otherwise.
+     */
+    void SetEmpty(std::size_t row,std::size_t col,bool value=true);
+
+    //! Sets the label of a row.
+    /*! \param row 0-based row index.
+     *  \param label Row label string.
+     */
+    void SetRowLabel(std::size_t row,const std::string& label);
+
+    //! Sets the label of a column.
+    /*! \param col 0-based column index.
+     *  \param label Column label string.
+     */
+    void SetColLabel(std::size_t col,const std::string& label);
+
+    //! Retrieves the label of a row.
+    /*! \param row 0-based row index.
+     *  \return Row label string.
+     */
+    const std::string& GetRowLabel(std::size_t row) const;
+
+    //! Retrieves the label of a column.
+    /*! \param col 0-based column index.
+     *  \return Column label string.
+     */
+    const std::string& GetColLabel(std::size_t col) const;
+
+    //! Retrieves the number of rows.
+    /*! \return The number of rows.
+     */
+    std::size_t nRows() const { return rowLabels.size(); }
+
+    //! Retrieves the number of columns.
+    /*! \return The number of columns.
+     */
+    std::size_t nCols() const { return colLabels.size(); }
+    
+    //! Appends rows to the table.
+    /*! \param nRows The number of rows to be appended.
+     */
+    void AppendRows(std::size_t nRows);
+
+private:
+    // row major order:
+    std::vector< std::vector<double> > values;
+    std::vector< std::deque< bool > > empty;
+    std::vector< std::string > rowLabels;
+    std::vector< std::string > colLabels;
+};
+
+//! Print the output of a fit into a stfnum::Table.
+typedef boost::function<Table(const Vector_double&,const std::vector<stfnum::parInfo>,double)> Output;
  
-//! Default fit output function, constructing a stf::Table from the parameters, their description and chisqr.
+//! Default fit output function, constructing a stfnum::Table from the parameters, their description and chisqr.
 Table defaultOutput(const Vector_double& pars, 
                     const std::vector<parInfo>& parsInfo,
                     double chisqr);
 
-//! Initialising function for the parameters in stf::Func to start a fit.
+//! Initialising function for the parameters in stfnum::Func to start a fit.
 typedef boost::function<void(const Vector_double&, double, double, double, double, double, Vector_double&)> Init;
 
 //! Function used for least-squares fitting.
@@ -127,7 +220,7 @@ typedef boost::function<void(const Vector_double&, double, double, double, doubl
  *  jacobian (jac), information about the function's parameters 
  *  (pInfo) and a function to initialize the parameters (init).
  */
-struct StfDll storedFunc {
+struct StfioDll storedFunc {
 
     //! Constructor
     /*! \param name_ Plain function name.
@@ -186,14 +279,14 @@ T SQR (T a);
  *  \param inverse true if (1- \e func) should be used as the filter function, false otherwise
  *  \return The convolved data set.
  */
-Vector_double
+StfioDll Vector_double
 filter(
         const Vector_double& toFilter,
         std::size_t filter_start,
         std::size_t filter_end,  
         const Vector_double &a,
         int SR,
-        stf::Func func,
+        stfnum::Func func,
         bool inverse = false
 );
 
@@ -213,7 +306,7 @@ histogram(const Vector_double& data, int nbins=-1);
  *  \param lopass Lowpass filter cutoff frequency in kHz
  *  \return The result of the deconvolution
  */
-StfDll Vector_double
+StfioDll Vector_double
 deconvolve(const Vector_double& data, const Vector_double& templ,
            int SR, double hipass, double lopass, stfio::ProgressInfo& progDlg);
 
@@ -246,6 +339,7 @@ std::vector<T> diff(const std::vector<T>& input, T x_scale);
  *  \param x_scale Sampling interval.
  *  \return The integral of \e input between \e a and \e b.
 */
+StfioDll
 double integrate_simpson(
         const Vector_double& input,
         std::size_t a,
@@ -260,6 +354,7 @@ double integrate_simpson(
  *  \param x_scale Sampling interval.
  *  \return The integral of \e input between \e a and \e b.
 */
+StfioDll
 double integrate_trapezium(
         const Vector_double& input,
         std::size_t a,
@@ -295,7 +390,7 @@ linsolv(
  *  \param end End of interval to be used
  *  \return Parameters of quadratic equation
  */
-Vector_double
+StfioDll Vector_double
 quad(const Vector_double& data, std::size_t begin, std::size_t end);
  
 
@@ -304,7 +399,7 @@ quad(const Vector_double& data, std::size_t begin, std::size_t end);
  *  \param templ A template waveform that is used for event detection.
  *  \return The detection criterion for every value of \e data.
  */
-StfDll Vector_double
+StfioDll Vector_double
 detectionCriterion(
         const Vector_double& data,
         const Vector_double& templ,
@@ -318,14 +413,14 @@ detectionCriterion(
  *  \param minDistance Minimal distance between subsequent peaks.
  *  \return A vector of indices where peaks have occurred in \e data.
  */
-StfDll std::vector<int> peakIndices(const Vector_double& data, double threshold, int minDistance);
+StfioDll std::vector<int> peakIndices(const Vector_double& data, double threshold, int minDistance);
 
 //! Computes the linear correlation between two arrays.
 /*! \param va1 First array.
  *  \param va2 Second array.
  *  \return The linear correlation between the two arrays for each data point of \e va1.
  */
-StfDll Vector_double linCorr(const Vector_double& va1, const Vector_double& va2, stfio::ProgressInfo& progDlg); 
+StfioDll Vector_double linCorr(const Vector_double& va1, const Vector_double& va2, stfio::ProgressInfo& progDlg); 
 
 //! Computes a Gaussian that can be used as a filter kernel.
 /*! \f[
@@ -336,6 +431,7 @@ StfDll Vector_double linCorr(const Vector_double& va1, const Vector_double& va2,
  *         \e p[0] is the corner frequency (-3 dB according to Colquhoun)
  *  \return The evaluated function.
  */
+StfioDll
 double fgaussColqu(double x, const Vector_double& p);
 
 //! Computes a Boltzmann function.
@@ -362,12 +458,13 @@ double fbessel(double x, int n);
 /*! \f[
  *     f(x) = \frac{b(0,4)}{b(\frac{0.355589x}{p_0},4)}
  *  \f] 
- *  where \f$ b(a,n) \f$ is the bessel polynomial stf::fbessel().
+ *  where \f$ b(a,n) \f$ is the bessel polynomial stfnum::fbessel().
  *  \param x Argument of the function.
  *  \param p Function parameters, where \n
  *         \e p[0] is the corner frequency (-3 dB attenuation)
  *  \return The evaluated function.
  */
+StfioDll
 double fbessel4(double x, const Vector_double& p);
 
 //! Computes the faculty of an integer.
@@ -381,14 +478,28 @@ int fac(int arg);
  *  \return \f$ 2^{arg} \f$.
  */
 int pow2(int arg);
+ 
+//! The direction of peak calculations
+enum direction {
+    up,                 /*!< Find positive-going peaks. */
+    down,               /*!< Find negative-going peaks. */
+    both,               /*!< Find negative- or positive-going peaks, whichever is larger. */
+    undefined_direction /*!< Undefined direction. */
+};
 
+//! Methods for Baseline computation 
+enum baseline_method {
+    mean_sd   = 0, /*!< Compute mean and s.d. for Baseline and Base SD. */ 
+    median_iqr = 1  /*!< Compute median and IQR for Baseline and Base SD. */ 
+};
+ 
 /*@}*/
 
 }
 
-typedef std::vector< stf::storedFunc >::const_iterator c_stfunc_it; /*!< constant stf::storedFunc iterator */
+typedef std::vector< stfnum::storedFunc >::const_iterator c_stfunc_it; /*!< constant stfnum::storedFunc iterator */
 
-inline int stf::pow2(int arg) {return 1<<arg;}
+inline int stfnum::pow2(int arg) {return 1<<arg;}
 
 //! Swaps \e s1 and \e s2.
 /*! \param s1 will be swapped with 
@@ -403,7 +514,7 @@ void SWAP(T s1, T s2) {
 
 template <class T>
 std::vector<T>
-stf::cubicSpline(const std::vector<T>& y,
+stfnum::cubicSpline(const std::vector<T>& y,
         T oldF,
         T newF)
 {
@@ -417,7 +528,7 @@ stf::cubicSpline(const std::vector<T>& y,
         x[n_p]=n_p;
         y_d[n_p]=y[n_p];
     }
-    Vector_double y_i(stf::spline_cubic_set(x,y_d,0,0,0,0));
+    Vector_double y_i(stfnum::spline_cubic_set(x,y_d,0,0,0,0));
 
     std::vector<T> y_if(size_i);
     Vector_double x_i(size_i);
@@ -426,13 +537,13 @@ stf::cubicSpline(const std::vector<T>& y,
     for (int n_i=0; n_i < size_i; ++n_i) {
         x_i[n_i]=(double)n_i * (double)size/(double)size_i;
         double yp, ypp;
-        y_if[n_i]=(T)stf::spline_cubic_val(x,x_i[n_i],y_d,y_i,yp,ypp);
+        y_if[n_i]=(T)stfnum::spline_cubic_val(x,x_i[n_i],y_d,y_i,yp,ypp);
     }
     return y_if;
 }
 
 template <class T>
-std::vector<T> stf::diff(const std::vector<T>& input, T x_scale) {
+std::vector<T> stfnum::diff(const std::vector<T>& input, T x_scale) {
     std::vector<T> diffVA(input.size()-1);
     for (unsigned n=0;n<diffVA.size();++n) {
         diffVA[n]=(input[n+1]-input[n])/x_scale;
@@ -441,6 +552,6 @@ std::vector<T> stf::diff(const std::vector<T>& input, T x_scale) {
 }
 
 template <typename T>
-inline T stf::SQR(T a) {return a*a;}
+inline T stfnum::SQR(T a) {return a*a;}
 
 #endif

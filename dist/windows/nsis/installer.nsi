@@ -5,41 +5,46 @@
 ; This may slightly reduce the executable size, but compression is slower.
 SetCompressor lzma
 
+; RequestExecutionLevel admin ;Require admin rights on NT6+ (When UAC is turned on)
+
 ;--------------------------------
 ; Use modern interface
 !include MUI2.nsh
-
 ;--------------------------------
+!include LogicLib.nsh
 
-!define PRODUCT_VERSION "0.13.19"
-!define WXW_VERSION "3.0.0.0"
-!define WXW_VERSION_DIR "3.0.0"
+!define PRODUCT_VERSION "0.14.9"
+!define WXW_VERSION "3.0.2.0"
+!define WXW_VERSION_DIR "3.0.2"
 !define WXW_VERSION_SHORT "30"
-!define PY_VERSION "2.7.7"
+!define PY_VERSION "2.7.9"
 !define PY_MAJOR "2.7"
+!define PY_MAJOR_SHORT "27"
 !define PY_MIN "2.7"
+!define PY_INST_FILE "python-${PY_VERSION}.amd64.msi"
 Var PY_ACT
-!define NP_VERSION "1.8.1"
-!define MPL_VERSION "1.2.1"
+!define NP_VERSION "1.8.2"
+!define MPL_VERSION "1.4.3"
 !define EMF_VERSION "2.0.0"
 !define EXE_NAME "Stimfit"
-!define REG_NAME "Stimfit 0.13"
-!define REG_NAME_IO "stfio 0.13"
+!define REG_NAME "Stimfit 0.14"
+!define REG_NAME_IO "stfio 0.14"
 !define PRODUCT_PUBLISHER "Christoph Schmidt-Hieber"
 !define PRODUCT_WEB_SITE "http://www.stimfit.org"
 !define STFDIR "..\..\..\..\stimfit"
-!define BUILDTARGETDIR "${STFDIR}\dist\windows\VS2008\${EXE_NAME}\Release"
+!define BUILDTARGETDIR "${STFDIR}\dist\windows\VS2008\${EXE_NAME}\x64\Release"
 !define PYSTFDIR "${STFDIR}\src\stimfit\py"
 !define PYSTFIODIR "${STFDIR}\src\pystfio"
 !define MSIDIR "..\..\..\..\Downloads"
 !define WXWDIR "..\..\..\..\wx"
 !define WXPDIR "..\..\..\..\wxPython"
+!define STFMODULES "..\..\..\..\stf-site-packages"
 !define FFTDIR "..\..\..\..\fftw"
 !define HDF5DIR "..\..\..\..\hdf5"
 !define BIOSIGDIR "..\..\..\..\biosig"
 !define PYEMFDIR "${STFDIR}\src\stimfit\py\emf"
-!define PRODIR "C:\Program Files (x86)"
-!define ALTPRODIR "C:\Program Files"
+!define PRODIR "C:\Program Files"
+!define ALTPRODIR "C:\Program Files (x86)"
 !define FULL_WELCOME "This wizard will guide you through the installation \
 of ${REG_NAME} and wxPython. It is strongly recommended that you uninstall any earlier version of Stimfit (< 0.11) before \
 proceeding. You can optionally \
@@ -62,7 +67,7 @@ OutFile "${EXE_NAME}-${PRODUCT_VERSION}-bundle.exe"
 !endif
 
 ; The default installation directory
-InstallDir "$PROGRAMFILES\${REG_NAME}"
+InstallDir "$PROGRAMFILES64\${REG_NAME}"
 
 ; Request application privileges for Windows Vista
 RequestExecutionLevel admin
@@ -78,6 +83,16 @@ Var StartMenuFolder
 Var StrNoUsablePythonFound
 
 ;--------------------------------
+
+; Function .onInit
+; UserInfo::GetAccountType
+; pop $0
+; ${If} $0 != "admin" ;Require admin rights on NT4+
+    ; MessageBox mb_iconstop "Administrator rights required!"
+    ; SetErrorLevel 740 ;ERROR_ELEVATION_REQUIRED
+    ; Quit
+; ${EndIf}
+; FunctionEnd
 
 ; Pages
 !ifdef UPDATE
@@ -118,51 +133,21 @@ Section "Python ${PY_VERSION}" 0
   SetOutPath $INSTDIR
 
   ; Put installer into installation dir temporarily
-  File "${MSIDIR}\python-${PY_VERSION}.msi"
+  File "${MSIDIR}\${PY_INST_FILE}"
 
-  ExecWait '"Msiexec.exe" /i "$INSTDIR\python-${PY_VERSION}.msi"'
+  ExecWait '"Msiexec.exe" /i "$INSTDIR\${PY_INST_FILE}"'
   
   ; Delete installer once we are done
-  Delete "$INSTDIR\python-${PY_VERSION}.msi"
+  Delete "$INSTDIR\${PY_INST_FILE}"
 
   ; Install PyEMF
-  ExecWait 'cd "${PYEMFDIR}"; "c:\python27\python.exe" setup.py install'
+  ExecWait 'cd "${PYEMFDIR}"; "c:\python${PY_MAJOR_SHORT}\python.exe" setup.py install'
   RMDir /r "${PYEMFDIR}"
-
-SectionEnd
-
-Section "NumPy ${NP_VERSION}" 1
-
-  ; Set output path to the installation directory.
-  SetOutPath $INSTDIR
-
-  ; Put installer into installation dir temporarily
-  File "${MSIDIR}\numpy-${NP_VERSION}-win32-superpack-python${PY_MAJOR}.exe"
-
-  ExecWait '"$INSTDIR\numpy-${NP_VERSION}-win32-superpack-python${PY_MAJOR}.exe"'
-  
-  ; Delete installer once we are done
-  Delete "$INSTDIR\numpy-${NP_VERSION}-win32-superpack-python${PY_MAJOR}.exe"
-
-SectionEnd
-
-Section "Matplotlib ${MPL_VERSION}" 2
-
-  ; Set output path to the installation directory.
-  SetOutPath $INSTDIR
-
-  ; Put installer into installation dir temporarily
-  File "${MSIDIR}\matplotlib-${MPL_VERSION}.win32-py${PY_MAJOR}.exe"
-
-  ExecWait '"$INSTDIR\matplotlib-${MPL_VERSION}.win32-py${PY_MAJOR}.exe"'
-  
-  ; Delete installer once we are done
-  Delete "$INSTDIR\matplotlib-${MPL_VERSION}.win32-py${PY_MAJOR}.exe"
 
 SectionEnd
 !endif
 
-Section "!Program files and wxPython" 3 ; Core program files and wxPython
+Section "!Program files and Python modules" 1 ; Core program files and Python modules
 
   ;This section is required : readonly mode
   SectionIn RO
@@ -171,6 +156,7 @@ Section "!Program files and wxPython" 3 ; Core program files and wxPython
   StrCpy $StrNoUsablePythonFound "${STRING_PYTHON_NOT_FOUND}"
 
   ClearErrors
+  SetRegView 64
   ReadRegStr $9 HKEY_LOCAL_MACHINE "SOFTWARE\Python\PythonCore\${PY_MAJOR}\InstallPath" ""
   IfErrors 0 +9
     ClearErrors
@@ -181,6 +167,7 @@ Section "!Program files and wxPython" 3 ; Core program files and wxPython
 	  IfErrors 0 +5
         MessageBox MB_OK "$StrNoUsablePythonFound"
         Quit
+  SetRegView 32
   StrCpy $PY_ACT "${PY_MAJOR}"
   Goto +2
   StrCpy $PY_ACT "${PY_MIN}"
@@ -207,27 +194,30 @@ Section "!Program files and wxPython" 3 ; Core program files and wxPython
   Delete "$INSTDIR\wx*"
   RMDir /r "$INSTDIR\wx-${WXW_VERSION_DIR}-msw-unicode"
   RMDir /r "$INSTDIR\wx-${WXW_VERSION_DIR}-msw"
+  RMDir /r "$INSTDIR\*site-packages"
   File "${FFTDIR}\libfftw3-3.dll"
   File "${HDF5DIR}\bin\hdf5_hl.dll"
   File "${HDF5DIR}\bin\hdf5.dll"
   File "${HDF5DIR}\bin\szip.dll"
   File "${HDF5DIR}\bin\zlib.dll"
   File "${BIOSIGDIR}\lib\libbiosig2.dll"
-  File "${WXWDIR}\lib\vc90_dll\wxmsw${WXW_VERSION_SHORT}u_core_vc90.dll"
-  File "${WXWDIR}\lib\vc90_dll\wxbase${WXW_VERSION_SHORT}u_vc90.dll"
-  File "${WXWDIR}\lib\vc90_dll\wxmsw${WXW_VERSION_SHORT}u_aui_vc90.dll"
-  File "${WXWDIR}\lib\vc90_dll\wxmsw${WXW_VERSION_SHORT}u_adv_vc90.dll"
-  File "${WXWDIR}\lib\vc90_dll\wxbase${WXW_VERSION_SHORT}u_net_vc90.dll"
-  File "${WXWDIR}\lib\vc90_dll\wxmsw${WXW_VERSION_SHORT}u_html_vc90.dll"
-  File "${WXWDIR}\lib\vc90_dll\wxmsw${WXW_VERSION_SHORT}u_stc_vc90.dll"
-  File /nonfatal "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll"
-  File /nonfatal "${ALTPRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll"
-  File /nonfatal "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
-  File /nonfatal "${ALTPRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
+  File "${WXWDIR}\lib\vc90_x64_dll\wxmsw${WXW_VERSION_SHORT}u_core_vc90_x64.dll"
+  File "${WXWDIR}\lib\vc90_x64_dll\wxbase${WXW_VERSION_SHORT}u_vc90_x64.dll"
+  File "${WXWDIR}\lib\vc90_x64_dll\wxmsw${WXW_VERSION_SHORT}u_aui_vc90_x64.dll"
+  File "${WXWDIR}\lib\vc90_x64_dll\wxmsw${WXW_VERSION_SHORT}u_adv_vc90_x64.dll"
+  File "${WXWDIR}\lib\vc90_x64_dll\wxbase${WXW_VERSION_SHORT}u_net_vc90_x64.dll"
+  File "${WXWDIR}\lib\vc90_x64_dll\wxmsw${WXW_VERSION_SHORT}u_html_vc90_x64.dll"
+  File "${WXWDIR}\lib\vc90_x64_dll\wxmsw${WXW_VERSION_SHORT}u_stc_vc90_x64.dll"
+  File /nonfatal "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcp90.dll"
+  File /nonfatal "${ALTPRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcp90.dll"
+  File /nonfatal "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcr90.dll"
+  File /nonfatal "${ALTPRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcr90.dll"
   File /r "${WXPDIR}\wx*"
+  File /r "${STFMODULES}"
   File "${BUILDTARGETDIR}\${EXE_NAME}.exe"
   File "${BUILDTARGETDIR}\libstimfit.dll"
   File "${BUILDTARGETDIR}\libstfio.dll"
+  File "${BUILDTARGETDIR}\libstfnum.dll"
   File "${BUILDTARGETDIR}\_stf.pyd"
   File "${PYSTFDIR}\stf.py"
   File "${PYSTFDIR}\ivtools.py"
@@ -282,7 +272,7 @@ Section "!Program files and wxPython" 3 ; Core program files and wxPython
  
 SectionEnd ; end the section
 
-Section "!stfio standalone module" 4 ; Standalone python file i/o module
+Section "!stfio standalone module" 2 ; Standalone python file i/o module
   
   ;This section is required : readonly mode
   SectionIn RO
@@ -291,6 +281,7 @@ Section "!stfio standalone module" 4 ; Standalone python file i/o module
   StrCpy $StrNoUsablePythonFound "${STRING_PYTHON_NOT_FOUND}"
 
   ClearErrors
+  SetRegView 64
   ReadRegStr $9 HKEY_LOCAL_MACHINE "SOFTWARE\Python\PythonCore\${PY_MAJOR}\InstallPath" ""
   IfErrors 0 +9
     ClearErrors
@@ -301,6 +292,7 @@ Section "!stfio standalone module" 4 ; Standalone python file i/o module
 	  IfErrors 0 +5
         MessageBox MB_OK "$StrNoUsablePythonFound"
         Quit
+  SetRegView 32
   StrCpy $PY_ACT "${PY_MAJOR}"
   Goto +2
   StrCpy $PY_ACT "${PY_MIN}"
@@ -325,17 +317,19 @@ Section "!stfio standalone module" 4 ; Standalone python file i/o module
   CreateDirectory ${STFIODIR}
   SetOutPath ${STFIODIR}
   
+  File "${FFTDIR}\libfftw3-3.dll"
   File "${HDF5DIR}\bin\hdf5_hl.dll"
   File "${HDF5DIR}\bin\hdf5.dll"
   File "${HDF5DIR}\bin\szip.dll"
   File "${HDF5DIR}\bin\zlib.dll"
   File "${BIOSIGDIR}\lib\libbiosig2.dll"
-  File /nonfatal "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll"
-  File /nonfatal "${ALTPRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcp90.dll"
-  File /nonfatal "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
-  File /nonfatal "${ALTPRODIR}\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
+  File /nonfatal "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcp90.dll"
+  File /nonfatal "${ALTPRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcp90.dll"
+  File /nonfatal "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcr90.dll"
+  File /nonfatal "${ALTPRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcr90.dll"
   File "${BUILDTARGETDIR}\_stfio.pyd"
   File "${BUILDTARGETDIR}\libstfio.dll"
+  File "${BUILDTARGETDIR}\libstfnum.dll"
   File "${PYSTFIODIR}\__init__.py"
   File "${PYSTFIODIR}\stfio.py"
   File "${PYSTFIODIR}\stfio_plot.py"
@@ -534,16 +528,14 @@ SubSectionEnd
 !ifndef UPDATE
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT 0 "Python ${PY_MIN} or ${PY_MAJOR} is required to run stimfit. Unselect this if it's already installed on your system."
-    !insertmacro MUI_DESCRIPTION_TEXT 1 "NumPy is required for efficient numeric computations in python. Unselect this if you already have NumPy on your system."
-    !insertmacro MUI_DESCRIPTION_TEXT 2 "Matplotlib is required for exporting graphics and printing. Unselect this if you already have Matplotlib on your system."
-    !insertmacro MUI_DESCRIPTION_TEXT 3 "The core program files and wxPython 2.9 (mandatory)."
-    !insertmacro MUI_DESCRIPTION_TEXT 4 "Standalone Python file i/o module."
-    !insertmacro MUI_DESCRIPTION_TEXT 5 "Selects Stimfit as the default application for files of these types."
+    !insertmacro MUI_DESCRIPTION_TEXT 1 "The core program files and wxPython 2.9 (mandatory)."
+    !insertmacro MUI_DESCRIPTION_TEXT 2 "Standalone Python file i/o module."
+    !insertmacro MUI_DESCRIPTION_TEXT 3 "Selects Stimfit as the default application for files of these types."
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 !else
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT 3 "The core program files and wxPython 2.9 (mandatory)."
-    !insertmacro MUI_DESCRIPTION_TEXT 4 "Standalone Python file i/o module."
-    !insertmacro MUI_DESCRIPTION_TEXT 5 "Selects Stimfit as the default application for files of these types."
+    !insertmacro MUI_DESCRIPTION_TEXT 1 "The core program files and wxPython 2.9 (mandatory)."
+    !insertmacro MUI_DESCRIPTION_TEXT 2 "Standalone Python file i/o module."
+    !insertmacro MUI_DESCRIPTION_TEXT 3 "Selects Stimfit as the default application for files of these types."
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 !endif

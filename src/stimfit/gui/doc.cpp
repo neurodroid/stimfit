@@ -40,10 +40,10 @@
 #include "./dlgs/fitseldlg.h"
 #include "./dlgs/eventdlg.h"
 #include "./dlgs/cursorsdlg.h"
-#include "./../math/stfmath.h"
-#include "./../math/fit.h"
-#include "./../math/funclib.h"
-#include "./../math/measure.h"
+#include "./../../libstfnum/stfnum.h"
+#include "./../../libstfnum/fit.h"
+#include "./../../libstfnum/funclib.h"
+#include "./../../libstfnum/measure.h"
 #include "./../../libstfio/stfio.h"
 #include "./usrdlg/usrdlg.h"
 #include "./doc.h"
@@ -89,7 +89,7 @@ wxStfDoc::wxStfDoc() :
     latencyStartMode(stf::riseMode),
     latencyEndMode(stf::footMode),
     latencyWindowMode(stf::defaultMode),
-    direction(stf::both), 
+    direction(stfnum::both), 
 #ifdef WITH_PSLOPE
     pslopeBegMode(stf::psBeg_manualMode),
     pslopeEndMode(stf::psEnd_manualMode),
@@ -100,7 +100,7 @@ wxStfDoc::wxStfDoc() :
     peakEnd(0),
     fitBeg(0),
     fitEnd(0),
-    baselineMethod(stf::mean_sd),
+    baselineMethod(stfnum::mean_sd),
 #ifdef WITH_PSLOPE
     PSlopeBeg(0),
     PSlopeEnd(0),
@@ -427,18 +427,18 @@ int wxStfDoc::InitCursors() {
     SetBaseEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("BaseEnd"), 20));
     int ibase_method = wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("BaselineMethod"),0);
     switch (ibase_method) {
-        case 0: SetBaselineMethod(stf::mean_sd); break;
-        case 1: SetBaselineMethod(stf::median_iqr); break;
-        default: SetBaselineMethod(stf::mean_sd); 
+        case 0: SetBaselineMethod(stfnum::mean_sd); break;
+        case 1: SetBaselineMethod(stfnum::median_iqr); break;
+        default: SetBaselineMethod(stfnum::mean_sd); 
     }
     SetPeakBeg(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakBegin"), (int)cursec().size()-100));
     SetPeakEnd(wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("PeakEnd"), (int)cursec().size()-50));
     int iDirection = wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("Direction"),2);
     switch (iDirection) {
-    case 0: SetDirection(stf::up); break;
-    case 1: SetDirection(stf::down); break;
-    case 2: SetDirection(stf::both); break;
-    default: SetDirection(stf::undefined_direction);
+    case 0: SetDirection(stfnum::up); break;
+    case 1: SetDirection(stfnum::down); break;
+    case 2: SetDirection(stfnum::both); break;
+    default: SetDirection(stfnum::undefined_direction);
     }
     SetFromBase( true ); // reset at every program start   wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("FromBase"),1) );
     SetPeakAtEnd( wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("PeakAtEnd"), 0));
@@ -1166,7 +1166,7 @@ void wxStfDoc::FitDecay(wxCommandEvent& WXUNUSED(event)) {
         if (params.size() != n_params) {
             throw std::runtime_error("Wrong size of params in wxStfDoc::lmFit()");
         }
-        double chisqr = stf::lmFit( x, GetXScale(), wxGetApp().GetFuncLib()[fselect],
+        double chisqr = stfnum::lmFit( x, GetXScale(), wxGetApp().GetFuncLib()[fselect],
                                     FitSelDialog.GetOpts(), FitSelDialog.UseScaling(),
                                     params, fitInfo, warning );
         SetIsFitted( GetCurChIndex(), GetCurSecIndex(), params, wxGetApp().GetFuncLibPtr(fselect),
@@ -1225,7 +1225,7 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
     for (std::size_t n_t=0;n_t<x.size();++n_t) t[n_t]=n_t*GetXScale();
 
     // Perform the fit:
-    double chisqr = stf::linFit(t,x,params[0],params[1]);
+    double chisqr = stfnum::linFit(t,x,params[0],params[1]);
     try {
         SetIsFitted( GetCurChIndex(), GetCurSecIndex(), params, wxGetApp().GetLinFuncPtr(), chisqr, GetFitBeg(), GetFitEnd() );
     }
@@ -1478,7 +1478,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
     wxProgressDialog progDlg( wxT("Batch analysis in progress"), wxT("Starting batch analysis"),
             100, GetDocumentWindow(), wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
 
-    stf::Table table(GetSelectedSections().size(),colTitles.size());
+    stfnum::Table table(GetSelectedSections().size(),colTitles.size());
     for (std::size_t nCol=0;nCol<colTitles.size();++nCol) {
         try {
             table.SetColLabel(nCol,colTitles[nCol]);
@@ -1536,7 +1536,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
 
             std::string fitInfo;
             try {
-                double chisqr = stf::lmFit( x, GetXScale(), wxGetApp().GetFuncLib()[fselect],
+                double chisqr = stfnum::lmFit( x, GetXScale(), wxGetApp().GetFuncLib()[fselect],
                                             FitSelDialog.GetOpts(), FitSelDialog.UseScaling(),
                                             params, fitInfo, fitWarning );
                 SetIsFitted( GetCurChIndex(), GetCurSecIndex(), params, wxGetApp().GetFuncLibPtr(fselect),
@@ -1563,7 +1563,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         // count number of threshold crossings if needed:
         std::size_t n_crossings=0;
         if (SaveYtDialog.PrintThr()) {
-            n_crossings= stf::peakIndices( cursec().get(), threshold, 0 ).size();
+            n_crossings= stfnum::peakIndices( cursec().get(), threshold, 0 ).size();
         }
         std::size_t nCol=0;
         //Write the variables of the current channel in a string
@@ -1646,14 +1646,14 @@ void wxStfDoc::OnAnalysisIntegrate(wxCommandEvent &WXUNUSED(event)) {
     const std::string units = at(GetCurChIndex()).GetYUnits() + " * " + GetXUnits();
     
     try {
-        integral_s = stf::integrate_simpson(cursec().get(),GetFitBeg(),GetFitEnd(),GetXScale());
-        integral_t = stf::integrate_trapezium(cursec().get(),GetFitBeg(),GetFitEnd(),GetXScale());
+        integral_s = stfnum::integrate_simpson(cursec().get(),GetFitBeg(),GetFitEnd(),GetXScale());
+        integral_t = stfnum::integrate_trapezium(cursec().get(),GetFitBeg(),GetFitEnd(),GetXScale());
     }
     catch (const std::exception& e) {
         wxGetApp().ErrorMsg(wxString( e.what(), wxConvLocal ));
         return;
     }
-    stf::Table integralTable(6,1);
+    stfnum::Table integralTable(6,1);
     try {
         integralTable.SetRowLabel(0, "Trapezium (linear)");
         integralTable.SetRowLabel(1, "Integral (from 0)");
@@ -1680,7 +1680,7 @@ void wxStfDoc::OnAnalysisIntegrate(wxCommandEvent &WXUNUSED(event)) {
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
     pFrame->ShowTable(integralTable,wxT("Integral"));
     try {
-        Vector_double quad_p = stf::quad(cursec().get(), GetFitBeg(), GetFitEnd());
+        Vector_double quad_p = stfnum::quad(cursec().get(), GetFitBeg(), GetFitEnd());
         SetIsIntegrated(GetCurChIndex(), GetCurSecIndex(), true,GetFitBeg(),GetFitEnd(), quad_p);
     }
     catch (const std::runtime_error& e) {
@@ -1699,7 +1699,7 @@ void wxStfDoc::OnAnalysisDifferentiate(wxCommandEvent &WXUNUSED(event)) {
     Channel TempChannel(GetSelectedSections().size(), get()[GetCurChIndex()][GetSelectedSections()[0]].size());
     std::size_t n = 0;
     for (c_st_it cit = GetSelectedSections().begin(); cit != GetSelectedSections().end(); cit++) {
-        Section TempSection( stf::diff( get()[GetCurChIndex()][*cit].get(), GetXScale() ) );
+        Section TempSection( stfnum::diff( get()[GetCurChIndex()][*cit].get(), GetXScale() ) );
         TempSection.SetXScale(get()[GetCurChIndex()][*cit].GetXScale());
         TempSection.SetSectionDescription( get()[GetCurChIndex()][*cit].GetSectionDescription()+
                 ", differentiated");
@@ -1958,8 +1958,8 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
         try {
             switch (fselect) {
                 case 3: {
-                    Section FftTemp(stf::filter(get()[GetCurChIndex()][*cit].get(),
-                            llf,ulf,a,(int)GetSR(),stf::fgaussColqu,false));
+                    Section FftTemp(stfnum::filter(get()[GetCurChIndex()][*cit].get(),
+                            llf,ulf,a,(int)GetSR(),stfnum::fgaussColqu,false));
 		    FftTemp.SetXScale(get()[GetCurChIndex()][*cit].GetXScale());
                     FftTemp.SetSectionDescription( get()[GetCurChIndex()][*cit].GetSectionDescription()+
                                                    ", filtered");
@@ -1967,8 +1967,8 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
                     break;
                 }
                 case 2: {
-                    Section FftTemp(stf::filter(get()[GetCurChIndex()][*cit].get(),
-                            llf,ulf,a,(int)GetSR(),stf::fbessel4,false));
+                    Section FftTemp(stfnum::filter(get()[GetCurChIndex()][*cit].get(),
+                            llf,ulf,a,(int)GetSR(),stfnum::fbessel4,false));
 		    FftTemp.SetXScale(get()[GetCurChIndex()][*cit].GetXScale());
                     FftTemp.SetSectionDescription( get()[GetCurChIndex()][*cit].GetSectionDescription()+
                                                    ", filtered" );
@@ -1976,8 +1976,8 @@ void wxStfDoc::Filter(wxCommandEvent& WXUNUSED(event)) {
                     break;
                 }
                 case 1: {
-                    Section FftTemp(stf::filter(get()[GetCurChIndex()][*cit].get(),
-                            llf,ulf,a,(int)GetSR(),stf::fgauss,inverse));
+                    Section FftTemp(stfnum::filter(get()[GetCurChIndex()][*cit].get(),
+                            llf,ulf,a,(int)GetSR(),stfnum::fgauss,inverse));
 		    FftTemp.SetXScale(get()[GetCurChIndex()][*cit].GetXScale());
                     FftTemp.SetSectionDescription( get()[GetCurChIndex()][*cit].GetSectionDescription()+
                                                    std::string(", filtered") );
@@ -2094,14 +2094,14 @@ void wxStfDoc::Plotextraction(stf::extraction_mode mode) {
         switch (mode) {
          case stf::criterion: {
              stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
-             TempSection = Section(stf::detectionCriterion( cursec().get(), templateWave, progDlg));
+             TempSection = Section(stfnum::detectionCriterion( cursec().get(), templateWave, progDlg));
              section_description = "Detection criterion of ";
              window_title = ", detection criterion";
              break;
          }
          case stf::correlation: {
              stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
-             TempSection = Section(stf::linCorr(cursec().get(), templateWave, progDlg));
+             TempSection = Section(stfnum::linCorr(cursec().get(), templateWave, progDlg));
              section_description = "Template correlation of ";
              window_title = ", linear correlation";
              break;
@@ -2115,7 +2115,7 @@ void wxStfDoc::Plotextraction(stf::extraction_mode mode) {
              if (myDlg.ShowModal()!=wxID_OK) return;
              Vector_double filter = myDlg.readInput();
              stf::wxProgressInfo progDlg("Computing deconvolution...", "Starting deconvolution...", 100);
-             TempSection = Section(stf::deconvolve(cursec().get(), templateWave,
+             TempSection = Section(stfnum::deconvolve(cursec().get(), templateWave,
                                                    (int)GetSR(), filter[1], filter[0], progDlg));
              section_description = "Template deconvolution from ";
              window_title = ", deconvolution";
@@ -2184,12 +2184,12 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
         switch (MiniDialog.GetMode()) {
          case stf::criterion: {
              stf::wxProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100);
-             detect=stf::detectionCriterion(cursec().get(), templateWave, progDlg);
+             detect=stfnum::detectionCriterion(cursec().get(), templateWave, progDlg);
              break;
          }
          case stf::correlation: {
              stf::wxProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100);
-             detect=stf::linCorr(cursec().get(), templateWave, progDlg);
+             detect=stfnum::linCorr(cursec().get(), templateWave, progDlg);
              break;
          }
          case stf::deconvolution:
@@ -2201,7 +2201,7 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
              if (myDlg.ShowModal()!=wxID_OK) return;
              Vector_double filter = myDlg.readInput();
              stf::wxProgressInfo progDlg("Computing deconvolution...", "Starting deconvolution...", 100);
-             detect=stf::deconvolve(cursec().get(), templateWave, (int)GetSR(), filter[1], filter[0], progDlg);
+             detect=stfnum::deconvolve(cursec().get(), templateWave, (int)GetSR(), filter[1], filter[0], progDlg);
              break;
         }
         if (detect.empty()) {
@@ -2209,7 +2209,7 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             return;
         }
         std::vector<int> startIndices(
-                stf::peakIndices( detect, MiniDialog.GetThreshold(),
+                stfnum::peakIndices( detect, MiniDialog.GetThreshold(),
                         MiniDialog.GetMinDistance() ) );
         if (startIndices.empty()) {
             wxGetApp().ErrorMsg( wxT( "No events were found. Try to lower the threshold." ) );
@@ -2233,11 +2233,17 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             }
             baselineMean /= baseline;
             double peakIndex=0;
-            stf::peak( cursec().get(), baselineMean, *cit, *cit + templateWave.size(),
-                       1, stf::both, peakIndex );
-            // set peak index of last event:
-            std::size_t last_idx = GetCurrentSectionAttributes().eventList.size()-1;
-            sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.at(last_idx).SetEventPeakIndex((int)peakIndex);
+            int eventl = templateWave.size();
+            if (*cit + eventl >= cursec().get().size()) {
+                eventl = cursec().get().size()-1- (*cit);
+            }
+            stfnum::peak( cursec().get(), baselineMean, *cit, *cit + eventl,
+                          1, stfnum::both, peakIndex );
+            if (peakIndex != peakIndex || peakIndex < 0 || peakIndex >= cursec().get().size()) {
+                throw std::runtime_error("Error during peak detection (result is NAN)\n");
+            }
+            // set peak index of this event:
+            sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.back().SetEventPeakIndex((int)peakIndex);
         }
     }
     catch (const std::out_of_range& e) {
@@ -2253,7 +2259,7 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
 
 void wxStfDoc::Extract( wxCommandEvent& WXUNUSED(event) ) {
     try {
-        stf::Table events(GetCurrentSectionAttributes().eventList.size(), 2);
+        stfnum::Table events(GetCurrentSectionAttributes().eventList.size(), 2);
         events.SetColLabel(0, "Time of event onset");
         events.SetColLabel(1, "Inter-event interval");
         // using the peak indices (these are the locations of the beginning of an optimal
@@ -2358,9 +2364,9 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
         }
         baselineMean /= baseline;
         double peakIndex=0;
-        stf::peak( cursec().get(), baselineMean, newStartPos,
+        stfnum::peak( cursec().get(), baselineMean, newStartPos,
                 newStartPos + GetCurrentSectionAttributes().eventList.at(0).GetEventSize(), 1,
-                stf::both, peakIndex );
+                stfnum::both, peakIndex );
         // set peak index of last event:
         newEvent.SetEventPeakIndex( (int)peakIndex );
         // find the position in the current event list where the new
@@ -2404,7 +2410,7 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
     threshold=myDlg.readInput();
 
     std::vector<int> startIndices(
-            stf::peakIndices( cursec().get(), threshold[0], 0 )
+            stfnum::peakIndices( cursec().get(), threshold[0], 0 )
     );
     if (startIndices.empty()) {
         wxGetApp().ErrorMsg(
@@ -2417,7 +2423,7 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
         sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.push_back( stf::Event( *cit, 0, baseline ) );
     }
     // show results in a table:
-    stf::Table events(GetCurrentSectionAttributes().eventList.size(),2);
+    stfnum::Table events(GetCurrentSectionAttributes().eventList.size(),2);
     events.SetColLabel( 0, "Time of event peak");
     events.SetColLabel( 1, "Inter-event interval");
     std::size_t n_event = 0;
@@ -2471,9 +2477,9 @@ void wxStfDoc::Measure( )
     //Begin peak and base calculation
     //-------------------------------
     try {
-        base=stf::base(baselineMethod,var,cursec().get(),baseBeg,baseEnd);
+        base=stfnum::base(baselineMethod,var,cursec().get(),baseBeg,baseEnd);
         baseSD=sqrt(var);
-        peak=stf::peak(cursec().get(),base,
+        peak=stfnum::peak(cursec().get(),base,
                        peakBeg,peakEnd,pM,direction,maxT);
     }
     catch (const std::out_of_range& e) {
@@ -2483,7 +2489,7 @@ void wxStfDoc::Measure( )
         throw e;
     }
     try {
-        threshold = stf::threshold( cursec().get(), peakBeg, peakEnd, slopeForThreshold/GetSR(), thrT, windowLength );
+        threshold = stfnum::threshold( cursec().get(), peakBeg, peakEnd, slopeForThreshold/GetSR(), thrT, windowLength );
     } catch (const std::out_of_range& e) {
         threshold = 0;
         throw e;
@@ -2507,7 +2513,7 @@ void wxStfDoc::Measure( )
     try {
         // 2008-04-27: changed limits to start from the beginning of the trace
         // 2013-06-16: changed to accept different rise-time proportions
-        rtLoHi=stf::risetime2(cursec().get(),reference,ampl, (double)0/*(double)baseEnd*/,
+        rtLoHi=stfnum::risetime2(cursec().get(),reference,ampl, (double)0/*(double)baseEnd*/,
                              maxT, factor/*0.2*/, InnerLoRT, InnerHiRT, OuterLoRT, OuterHiRT);
         InnerLoRT/=GetSR();
         InnerHiRT/=GetSR();
@@ -2522,7 +2528,7 @@ void wxStfDoc::Measure( )
     try {
         // 2008-04-27: changed limits to start from the beginning of the trace
         // 2013-06-16: changed to accept different rise-time proportions 
-        rtLoHi=stf::risetime(cursec().get(),reference,ampl, (double)0/*(double)baseEnd*/,
+        rtLoHi=stfnum::risetime(cursec().get(),reference,ampl, (double)0/*(double)baseEnd*/,
                              maxT, factor/*0.2*/, tLoIndex, tHiIndex, tLoReal);
     }
     catch (const std::out_of_range& e) {
@@ -2538,7 +2544,7 @@ void wxStfDoc::Measure( )
     //t50LeftReal=0.0;
     // 2008-04-27: changed limits to start from the beginning of the trace
     //             and to stop at the end of the trace
-    halfDuration = stf::t_half(cursec().get(), reference, ampl, (double)0 /*(double)baseBeg*/,
+    halfDuration = stfnum::t_half(cursec().get(), reference, ampl, (double)0 /*(double)baseBeg*/,
             (double)cursec().size()-1 /*(double)peakEnd*/,maxT, t50LeftIndex, t50RightIndex, t50LeftReal);
 
     t50RightReal=t50LeftReal+halfDuration;
@@ -2555,10 +2561,10 @@ void wxStfDoc::Measure( )
     //Begin Ratio of slopes rise/decay calculation
     //--------------------------------------------
     double left_rise = peakBeg;
-    maxRise=stf::maxRise(cursec().get(),left_rise,maxT,maxRiseT,maxRiseY,windowLength);
+    maxRise=stfnum::maxRise(cursec().get(),left_rise,maxT,maxRiseT,maxRiseY,windowLength);
     double t_half_3=t50RightIndex+2.0*(t50RightIndex-t50LeftIndex);
     double right_decay=peakEnd<=t_half_3 ? peakEnd : t_half_3+1;
-    maxDecay=stf::maxDecay(cursec().get(),maxT,right_decay,maxDecayT,maxDecayY,windowLength);
+    maxDecay=stfnum::maxDecay(cursec().get(),maxT,right_decay,maxDecayT,maxDecayY,windowLength);
 
     //Slope ratio
     if (maxDecay !=0) slopeRatio=maxRise/maxDecay;
@@ -2578,10 +2584,10 @@ void wxStfDoc::Measure( )
         double APBase=0.0, APVar=0.0;
         try {
             // in 2012-11-02: use baseline cursors and not arbitrarily 100 points
-            //APBase=stf::base(APVar,secsec().get(),0,endResting);
-            APBase=stf::base(baselineMethod,APVar,secsec().get(), baseBeg, baseEnd ); // use baseline cursors
-            //APPeak=stf::peak(secsec().get(),APBase,peakBeg,peakEnd,pM,stf::up,APMaxT);
-            APPeak=stf::peak( secsec().get(),APBase ,peakBeg ,peakEnd ,pM,direction ,APMaxT );
+            //APBase=stfnum::base(APVar,secsec().get(),0,endResting);
+            APBase=stfnum::base(baselineMethod,APVar,secsec().get(), baseBeg, baseEnd ); // use baseline cursors
+            //APPeak=stfnum::peak(secsec().get(),APBase,peakBeg,peakEnd,pM,stfnum::up,APMaxT);
+            APPeak=stfnum::peak( secsec().get(),APBase ,peakBeg ,peakEnd ,pM,direction ,APMaxT );
         }
         catch (const std::out_of_range& e) {
             APBase=0.0;
@@ -2598,7 +2604,7 @@ void wxStfDoc::Measure( )
             left_APRise= APMaxT-searchRange>2.0 ? APMaxT-searchRange : 2.0;
         }
         try {
-            stf::maxRise(secsec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY,windowLength);
+            stfnum::maxRise(secsec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY,windowLength);
         }
         catch (const std::out_of_range&) {
             APMaxRiseT=0.0;
@@ -2614,7 +2620,7 @@ void wxStfDoc::Measure( )
         //----------------------------
         //APt50LeftReal=0.0;
         //std::size_t APt50LeftIndex,APt50RightIndex;
-        stf::t_half(secsec().get(), APBase, APPeak-APBase, left_APRise,
+        stfnum::t_half(secsec().get(), APBase, APPeak-APBase, left_APRise,
                       (double)secsec().get().size(), APMaxT, APt50LeftIndex,
                       APt50RightIndex, APt50LeftReal);
         //End determination of the region of maximal slope in the second channel
@@ -2716,7 +2722,7 @@ void wxStfDoc::Measure( )
     SetPSlopeEnd(PSlopeEndVal);
 
     try {
-        PSlope = (stf::pslope(cursec().get(), PSlopeBeg, PSlopeEnd))*GetSR();
+        PSlope = (stfnum::pslope(cursec().get(), PSlopeBeg, PSlopeEnd))*GetSR();
     }
     catch (const std::out_of_range& e) {
         PSlope = 0.0;
@@ -2913,8 +2919,8 @@ void wxStfDoc::SetPSlopeEnd(int value) {
 }
 #endif 
 
-stf::Table wxStfDoc::CurAsTable() const {
-    stf::Table table(cursec().size(),size());
+stfnum::Table wxStfDoc::CurAsTable() const {
+    stfnum::Table table(cursec().size(),size());
     try {
         for (std::size_t nRow=0;nRow<table.nRows();++nRow) {
             std::ostringstream rLabel;
@@ -2934,7 +2940,7 @@ stf::Table wxStfDoc::CurAsTable() const {
     return table;
 }
 
-stf::Table wxStfDoc::CurResultsTable() {
+stfnum::Table wxStfDoc::CurResultsTable() {
     // resize table:
     std::size_t n_cols=0;
     if (viewCrosshair) n_cols++;
@@ -2957,7 +2963,7 @@ stf::Table wxStfDoc::CurResultsTable() {
 #endif
 
     std::size_t n_rows=(viewCursors? 3:1);
-    stf::Table table(n_rows,n_cols);
+    stfnum::Table table(n_rows,n_cols);
 
     // Labels
     table.SetRowLabel(0, "Value");
@@ -3161,7 +3167,7 @@ void wxStfDoc::InsertChannel(Channel& c_Channel, std::size_t pos) {
 }
 
 void wxStfDoc::SetIsFitted( std::size_t nchannel, std::size_t nsection,
-                            const Vector_double& bestFitP_, stf::storedFunc* fitFunc_,
+                            const Vector_double& bestFitP_, stfnum::storedFunc* fitFunc_,
                             double chisqr, std::size_t fitBeg, std::size_t fitEnd )
 {
     if (nchannel >= sec_attr.size() || nsection >= sec_attr[nchannel].size()) {
@@ -3192,7 +3198,7 @@ void wxStfDoc::DeleteFit(std::size_t nchannel, std::size_t nsection) {
     }
     sec_attr[nchannel][nsection].fitFunc = NULL;
     sec_attr[nchannel][nsection].bestFitP.resize( 0 );
-    sec_attr[nchannel][nsection].bestFit = stf::Table( 0, 0 );
+    sec_attr[nchannel][nsection].bestFit = stfnum::Table( 0, 0 );
     sec_attr[nchannel][nsection].isFitted = false;
 }
 
@@ -3296,7 +3302,7 @@ void wxStfDoc::Userdef(std::size_t id) {
     newTitle += wxGetApp().GetPluginLib().at(fselect).menuEntry;
     wxStfDoc* pDoc = wxGetApp().NewChild(newR,this,newTitle);
     ((wxStfChildFrame*)pDoc->GetDocumentWindow())->ShowTable(
-            stf::Table(resultsMap), wxGetApp().GetPluginLib().at(fselect).menuEntry
+            stfnum::Table(resultsMap), wxGetApp().GetPluginLib().at(fselect).menuEntry
                                                              );
 }
 #endif

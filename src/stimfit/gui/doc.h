@@ -76,13 +76,13 @@ private:
 
     stf::latency_mode latencyStartMode, latencyEndMode;
     stf::latency_window_mode latencyWindowMode;
-    stf::direction	direction; //of peak detection: UP, DOWN or BOTH
+    stfnum::direction	direction; //of peak detection: UP, DOWN or BOTH
 #ifdef WITH_PSLOPE
     stf::pslope_mode_beg pslopeBegMode; // for left mode PSlope cursor
     stf::pslope_mode_end pslopeEndMode; // for right mode PSlope cursor
 #endif 
     std::size_t baseBeg, baseEnd, peakBeg, peakEnd, fitBeg, fitEnd; 
-    stf::baseline_method baselineMethod; // method for calculating baseline
+    stfnum::baseline_method baselineMethod; // method for calculating baseline
 #ifdef WITH_PSLOPE
     std::size_t PSlopeBeg, PSlopeEnd;
     int DeltaT;  // distance (number of points) from the first cursor
@@ -300,7 +300,7 @@ public:
     void Measure();
     
     //! Put the current measurement results into a text table.
-    stf::Table CurResultsTable();
+    stfnum::Table CurResultsTable();
 
     //! Retrieves the position of the measurement cursor (crosshair).
     /*! \return The index of the measurement cursor within the current section.
@@ -310,7 +310,7 @@ public:
     //! Retrieves the computation mode for baseline.
     /*! \return The current mode for computing the baseline.
      */
-    stf::baseline_method GetBaselineMethod() const { return baselineMethod; }
+    stfnum::baseline_method GetBaselineMethod() const { return baselineMethod; }
 
     //! Retrieves the position of the left baseline cursor.
     /*! \return The index of the left baseline cursor within the current section.
@@ -589,7 +589,7 @@ public:
     //! Retrieves the direction of peak calculations.
     /*! \return The current direction of peak calculations.
      */
-    stf::direction GetDirection() const { return direction; }
+    stfnum::direction GetDirection() const { return direction; }
     
 
 #ifdef WITH_PSLOPE
@@ -739,7 +739,7 @@ public:
     //! Sets the method to compute the baseline.
     /*! \param value The new method to calculate the baseline.
      */
-    void SetBaselineMethod(stf::baseline_method value) { baselineMethod = value; }
+    void SetBaselineMethod(stfnum::baseline_method value) { baselineMethod = value; }
 
     //! Sets the position of the left baseline cursor.
     /*! \param value The index of the left baseline cursor within the current section.
@@ -871,7 +871,7 @@ public:
     //! Sets the direction of peak calculations.
     /*! \param value The new direction of peak calculations.
      */
-    void SetDirection(stf::direction value) { direction=value; }
+    void SetDirection(stfnum::direction value) { direction=value; }
 
     //! Sets the reference for AP kinetics measurements.
     /*! \param frombase true if the baseline should be used, false if the threshold should be used.
@@ -971,7 +971,7 @@ public:
     void SetSlopeForThreshold(double value) { slopeForThreshold=value; }
     
     //! Put the current trace into a text table.
-    stf::Table CurAsTable() const;
+    stfnum::Table CurAsTable() const;
     
     //! Copies the cursor positions from another Recording to this Recording.
     /*! This will copy the crosshair, base, peak and fit cursors positions as 
@@ -1010,7 +1010,7 @@ public:
         \param fitEnd Sampling point index where the fit ends
      */
     void SetIsFitted( std::size_t nchannel, std::size_t nsection,
-                      const Vector_double& bestFitP_, stf::storedFunc* fitFunc_,
+                      const Vector_double& bestFitP_, stfnum::storedFunc* fitFunc_,
                       double chisqr, std::size_t fitBeg, std::size_t fitEnd );
 
 

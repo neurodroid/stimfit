@@ -31,7 +31,9 @@
 
 #include <vector>
 
-namespace stf {
+#include "../libstfio/stfio.h"
+
+namespace stfnum {
 
 /*! \addtogroup stfgen
  *  @{
@@ -43,11 +45,12 @@ namespace stf {
  *  \param data The data waveform to be analysed.
  *  \param llb Averaging will be started at this index.
  *  \param ulb Index of the last data point included in the average (legacy of the PASCAL version).
- *  \param llp Lower limit of the peak window (see stf::peak()).
- *  \param ulp Upper limit of the peak window (see stf::peak()). 
+ *  \param llp Lower limit of the peak window (see stfnum::peak()).
+ *  \param ulp Upper limit of the peak window (see stfnum::peak()). 
  *  \return The baseline value - either the mean or the median depending on method.
  */
-double base(enum stf::baseline_method method, double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb);
+StfioDll
+double base(enum stfnum::baseline_method method, double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb);
 
 
 //! Find the peak value of \e data between \e llp and \e ulp.
@@ -61,14 +64,15 @@ double base(enum stf::baseline_method method, double& var, const std::vector<dou
  *  \param pM If \e pM > 1, a sliding (boxcar) average of width \e pM will be used
  *         to measure the peak.
  *  \param dir Can be \n
- *         stf::up for positive-going peaks, \n
- *         stf::down for negative-going peaks or \n
- *         stf::both for negative- or positive-going peaks, whichever is larger.
+ *         stfnum::up for positive-going peaks, \n
+ *         stfnum::down for negative-going peaks or \n
+ *         stfnum::both for negative- or positive-going peaks, whichever is larger.
  *  \param maxT On exit, the index of the peak value. May be interpolated if \e pM > 1.
  *  \return The peak value, measured from 0.
  */
+StfioDll
 double peak( const std::vector<double>& data, double base, std::size_t llp, std::size_t ulp,
-        int pM, stf::direction, double& maxT);
+        int pM, stfnum::direction, double& maxT);
  
 //! Find the value within \e data between \e llp and \e ulp at which \e slope is exceeded.
 /*! \param data The data waveform to be analysed.
@@ -81,7 +85,8 @@ double peak( const std::vector<double>& data, double base, std::size_t llp, std:
                 the default value is 1.
  *  \return The interpolated threshold value.
  */
- double threshold( const std::vector<double>& data, std::size_t llp, std::size_t ulp, double slope, double& thrT, std::size_t windowLength );
+StfioDll
+double threshold( const std::vector<double>& data, std::size_t llp, std::size_t ulp, double slope, double& thrT, std::size_t windowLength );
 
 //! Find 20 to 80% rise time of an event in \e data.
 /*! Although t80real is not explicitly returned, it can be calculated
@@ -99,6 +104,7 @@ double peak( const std::vector<double>& data, double base, std::size_t llp, std:
 
  *  \return The rise time.
  */
+StfioDll
 double risetime(const std::vector<double>& data, double base, double ampl,
                 double left, double right, double frac, std::size_t& tLoId, std::size_t& tHiId,
                 double& tLoReal);
@@ -122,6 +128,7 @@ double risetime(const std::vector<double>& data, double base, double ampl,
 
  *  \return The inner rise time.
  */
+StfioDll
 double risetime2(const std::vector<double>& data, double base, double ampl,
                 double left, double right, double frac,
                 double& innerTLoReal, double& innerTHiReal, double& outerTLoReal, double& outerTHiReal );
@@ -143,6 +150,7 @@ double risetime2(const std::vector<double>& data, double base, double ampl,
  *         units of sampling points.
  *  \return The full width at half-maximal amplitude.
  */
+StfioDll
 double t_half( const std::vector<double>& data, double base, double ampl, double left, double right,
                double center, std::size_t& t50LeftId, std::size_t& t50RightId, double& t50LeftReal );
 
@@ -157,6 +165,7 @@ double t_half( const std::vector<double>& data, double base, double ampl, double
            the slope, the default value is 1.
  *  \return The maximal slope during the rising phase.
  */
+StfioDll
 double  maxRise( const std::vector<double>& data, double left, double right, double& maxRiseT,
                  double& maxRiseY, std::size_t windowLength);
 
@@ -171,6 +180,7 @@ double  maxRise( const std::vector<double>& data, double left, double right, dou
            the slope, the default value is 1.
  *  \return The maximal slope during the decaying phase.
  */
+StfioDll
 double  maxDecay( const std::vector<double>& data, double left, double right, double& maxDecayT,
                   double& maxDecayY, std::size_t windowLength);
 

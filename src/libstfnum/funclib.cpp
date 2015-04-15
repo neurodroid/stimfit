@@ -20,117 +20,117 @@
 #include "./measure.h"
 #include "./funclib.h"
 
-std::vector< stf::storedFunc > stf::GetFuncLib() {
-    std::vector< stf::storedFunc > funcList;
+std::vector< stfnum::storedFunc > stfnum::GetFuncLib() {
+    std::vector< stfnum::storedFunc > funcList;
     
     // Monoexponential function, free fit:
-    std::vector<stf::parInfo> parInfoMExp=getParInfoExp(1);
-    funcList.push_back(stf::storedFunc("Monoexponential",parInfoMExp,fexp,fexp_init,fexp_jac,true));
+    std::vector<stfnum::parInfo> parInfoMExp=getParInfoExp(1);
+    funcList.push_back(stfnum::storedFunc("Monoexponential",parInfoMExp,fexp,fexp_init,fexp_jac,true));
 
     // Monoexponential function, offset fixed to baseline:
     parInfoMExp[2].toFit=false;
-    funcList.push_back(stf::storedFunc("Monoexponential, offset fixed to baseline",
+    funcList.push_back(stfnum::storedFunc("Monoexponential, offset fixed to baseline",
                                          parInfoMExp,fexp,fexp_init,fexp_jac,true));
 
     // Monoexponential function, starting with a delay, start fixed to baseline:
-    std::vector<stf::parInfo> parInfoMExpDe(4);
-    parInfoMExpDe[0].toFit=false; parInfoMExpDe[0].desc="Baseline"; parInfoMExpDe[0].scale=stf::yscaleoffset; parInfoMExpDe[0].unscale=stf::yunscaleoffset; 
-    parInfoMExpDe[1].toFit=true; parInfoMExpDe[1].desc="Delay"; parInfoMExpDe[0].scale=stf::xscale; parInfoMExpDe[0].unscale=stf::xunscale;
-    parInfoMExpDe[2].toFit=true; parInfoMExpDe[2].desc="tau"; parInfoMExpDe[0].scale=stf::xscale; parInfoMExpDe[0].unscale=stf::xunscale;
-    parInfoMExpDe[3].toFit=true; parInfoMExpDe[3].desc="Peak"; parInfoMExpDe[0].scale=stf::yscale; parInfoMExpDe[0].unscale=stf::yunscale;
-    funcList.push_back(stf::storedFunc("Monoexponential with delay, start fixed to baseline",
-                                         parInfoMExpDe,fexpde,fexpde_init,stf::nojac,false));
+    std::vector<stfnum::parInfo> parInfoMExpDe(4);
+    parInfoMExpDe[0].toFit=false; parInfoMExpDe[0].desc="Baseline"; parInfoMExpDe[0].scale=stfnum::yscaleoffset; parInfoMExpDe[0].unscale=stfnum::yunscaleoffset; 
+    parInfoMExpDe[1].toFit=true; parInfoMExpDe[1].desc="Delay"; parInfoMExpDe[0].scale=stfnum::xscale; parInfoMExpDe[0].unscale=stfnum::xunscale;
+    parInfoMExpDe[2].toFit=true; parInfoMExpDe[2].desc="tau"; parInfoMExpDe[0].scale=stfnum::xscale; parInfoMExpDe[0].unscale=stfnum::xunscale;
+    parInfoMExpDe[3].toFit=true; parInfoMExpDe[3].desc="Peak"; parInfoMExpDe[0].scale=stfnum::yscale; parInfoMExpDe[0].unscale=stfnum::yunscale;
+    funcList.push_back(stfnum::storedFunc("Monoexponential with delay, start fixed to baseline",
+                                         parInfoMExpDe,fexpde,fexpde_init,stfnum::nojac,false));
 
     // Biexponential function, free fit:
-    std::vector<stf::parInfo> parInfoBExp=getParInfoExp(2);
-    funcList.push_back(stf::storedFunc(
+    std::vector<stfnum::parInfo> parInfoBExp=getParInfoExp(2);
+    funcList.push_back(stfnum::storedFunc(
                                        "Biexponential",parInfoBExp,fexp,fexp_init,fexp_jac,true,outputWTau));
 
     // Biexponential function, offset fixed to baseline:
     parInfoBExp[4].toFit=false;
-    funcList.push_back(stf::storedFunc("Biexponential, offset fixed to baseline",
+    funcList.push_back(stfnum::storedFunc("Biexponential, offset fixed to baseline",
                                          parInfoBExp,fexp,fexp_init,fexp_jac,true,outputWTau));
 
     // Biexponential function, starting with a delay, start fixed to baseline:
-    std::vector<stf::parInfo> parInfoBExpDe(5);
-    parInfoBExpDe[0].toFit=false; parInfoBExpDe[0].desc="Baseline"; parInfoBExpDe[0].scale=stf::yscaleoffset; parInfoBExpDe[0].unscale=stf::yunscaleoffset;
-    parInfoBExpDe[1].toFit=true;  parInfoBExpDe[1].desc="Delay"; parInfoBExpDe[1].scale=stf::xscale; parInfoBExpDe[1].unscale=stf::xunscale; 
+    std::vector<stfnum::parInfo> parInfoBExpDe(5);
+    parInfoBExpDe[0].toFit=false; parInfoBExpDe[0].desc="Baseline"; parInfoBExpDe[0].scale=stfnum::yscaleoffset; parInfoBExpDe[0].unscale=stfnum::yunscaleoffset;
+    parInfoBExpDe[1].toFit=true;  parInfoBExpDe[1].desc="Delay"; parInfoBExpDe[1].scale=stfnum::xscale; parInfoBExpDe[1].unscale=stfnum::xunscale; 
     // parInfoBExpDe[1].constrained = true; parInfoBExpDe[1].constr_lb = 0.0; parInfoBExpDe[1].constr_ub = DBL_MAX;
-    parInfoBExpDe[2].toFit=true;  parInfoBExpDe[2].desc="tau1"; parInfoBExpDe[2].scale=stf::xscale; parInfoBExpDe[2].unscale=stf::xunscale;
+    parInfoBExpDe[2].toFit=true;  parInfoBExpDe[2].desc="tau1"; parInfoBExpDe[2].scale=stfnum::xscale; parInfoBExpDe[2].unscale=stfnum::xunscale;
     // parInfoBExpDe[2].constrained = true; parInfoBExpDe[2].constr_lb = 1.0e-16; parInfoBExpDe[2].constr_ub = DBL_MAX;
-    parInfoBExpDe[3].toFit=true;  parInfoBExpDe[3].desc="Factor"; parInfoBExpDe[3].scale=stf::yscale; parInfoBExpDe[3].unscale=stf::yunscale;
-    parInfoBExpDe[4].toFit=true;  parInfoBExpDe[4].desc="tau2"; parInfoBExpDe[4].scale=stf::xscale; parInfoBExpDe[4].unscale=stf::xunscale;
+    parInfoBExpDe[3].toFit=true;  parInfoBExpDe[3].desc="Factor"; parInfoBExpDe[3].scale=stfnum::yscale; parInfoBExpDe[3].unscale=stfnum::yunscale;
+    parInfoBExpDe[4].toFit=true;  parInfoBExpDe[4].desc="tau2"; parInfoBExpDe[4].scale=stfnum::xscale; parInfoBExpDe[4].unscale=stfnum::xunscale;
     // parInfoBExpDe[4].constrained = true; parInfoBExpDe[4].constr_lb = 1.0e-16; parInfoBExpDe[4].constr_ub = DBL_MAX;
-    funcList.push_back(stf::storedFunc(
+    funcList.push_back(stfnum::storedFunc(
                                        "Biexponential with delay, start fixed to baseline, delay constrained to > 0",
-                                       parInfoBExpDe,fexpbde,fexpbde_init,stf::nojac,false));
+                                       parInfoBExpDe,fexpbde,fexpbde_init,stfnum::nojac,false));
 
     // Triexponential function, free fit:
-    std::vector<stf::parInfo> parInfoTExp=getParInfoExp(3);
-    funcList.push_back(stf::storedFunc(
+    std::vector<stfnum::parInfo> parInfoTExp=getParInfoExp(3);
+    funcList.push_back(stfnum::storedFunc(
                                        "Triexponential",parInfoTExp,fexp,fexp_init,fexp_jac,true,outputWTau));
 
     // Triexponential function, free fit, different initialization:
-    funcList.push_back(stf::storedFunc(
+    funcList.push_back(stfnum::storedFunc(
                                        "Triexponential, initialize for PSCs/PSPs",parInfoTExp,fexp,fexp_init2,fexp_jac,true,outputWTau));
 
     // Triexponential function, offset fixed to baseline:
     parInfoTExp[6].toFit=false;
-    funcList.push_back(stf::storedFunc(
+    funcList.push_back(stfnum::storedFunc(
                                        "Triexponential, offset fixed to baseline",parInfoTExp,fexp,fexp_init,fexp_jac,true,outputWTau));
 
     // Alpha function:
-    std::vector<stf::parInfo> parInfoAlpha(3);
+    std::vector<stfnum::parInfo> parInfoAlpha(3);
     parInfoAlpha[0].toFit=true; parInfoAlpha[0].desc="Amplitude";
     parInfoAlpha[1].toFit=true; parInfoAlpha[1].desc="Rate";
     parInfoAlpha[2].toFit=true; parInfoAlpha[2].desc="Offset";
-    funcList.push_back(stf::storedFunc(
+    funcList.push_back(stfnum::storedFunc(
                                        "Alpha function", parInfoAlpha,falpha,falpha_init,falpha_jac,true));
 
     // HH gNa function:
-    std::vector<stf::parInfo> parInfoHH(4);
+    std::vector<stfnum::parInfo> parInfoHH(4);
     parInfoHH[0].toFit=true; parInfoHH[0].desc="gprime_na";
     parInfoHH[1].toFit=true; parInfoHH[1].desc="tau_m";
     parInfoHH[2].toFit=true; parInfoHH[2].desc="tau_h";
     parInfoHH[3].toFit=false; parInfoHH[3].desc="offset";
-    funcList.push_back(stf::storedFunc(
-                                         "Hodgkin-Huxley g_Na function, offset fixed to baseline", parInfoHH, fHH, fHH_init, stf::nojac, false));
+    funcList.push_back(stfnum::storedFunc(
+                                         "Hodgkin-Huxley g_Na function, offset fixed to baseline", parInfoHH, fHH, fHH_init, stfnum::nojac, false));
 
     // power of 1 gNa function:
-    funcList.push_back(stf::storedFunc(
+    funcList.push_back(stfnum::storedFunc(
                                          "power of 1 g_Na function, offset fixed to baseline", parInfoHH, fgnabiexp, fgnabiexp_init, fgnabiexp_jac, true));
 
     // Gaussian
-    std::vector<stf::parInfo> parInfoGauss(3);
-    parInfoGauss[0].toFit=true; parInfoGauss[0].desc="amp"; parInfoGauss[0].scale = stf::yscale; parInfoGauss[0].unscale = stf::yunscale;
-    parInfoGauss[1].toFit=true; parInfoGauss[1].desc="mean"; parInfoGauss[1].scale = stf::xscale; parInfoGauss[1].unscale = stf::xunscale;
+    std::vector<stfnum::parInfo> parInfoGauss(3);
+    parInfoGauss[0].toFit=true; parInfoGauss[0].desc="amp"; parInfoGauss[0].scale = stfnum::yscale; parInfoGauss[0].unscale = stfnum::yunscale;
+    parInfoGauss[1].toFit=true; parInfoGauss[1].desc="mean"; parInfoGauss[1].scale = stfnum::xscale; parInfoGauss[1].unscale = stfnum::xunscale;
 
     parInfoGauss[2].toFit=true;
     parInfoGauss[2].constrained=true; parInfoGauss[2].constr_lb=0; parInfoGauss[2].constr_ub=DBL_MAX;
-    parInfoGauss[2].desc="width"; parInfoGauss[2].scale = stf::xscale; parInfoGauss[2].unscale = stf::xunscale;
+    parInfoGauss[2].desc="width"; parInfoGauss[2].scale = stfnum::xscale; parInfoGauss[2].unscale = stfnum::xunscale;
 
-    funcList.push_back(stf::storedFunc(
+    funcList.push_back(stfnum::storedFunc(
                                        "Gaussian", parInfoGauss, fgauss, fgauss_init, fgauss_jac, true));
 
     // Triexponential function, starting with a delay, start fixed to baseline:
-    std::vector<stf::parInfo> parInfoTExpDe(7);
-    parInfoTExpDe[0].toFit=false; parInfoTExpDe[0].desc="Baseline"; parInfoTExpDe[0].scale=stf::yscaleoffset; parInfoTExpDe[0].unscale=stf::yunscaleoffset;
-    parInfoTExpDe[1].toFit=true;  parInfoTExpDe[1].desc="Delay"; parInfoTExpDe[1].scale=stf::xscale; parInfoTExpDe[1].unscale=stf::xunscale; 
+    std::vector<stfnum::parInfo> parInfoTExpDe(7);
+    parInfoTExpDe[0].toFit=false; parInfoTExpDe[0].desc="Baseline"; parInfoTExpDe[0].scale=stfnum::yscaleoffset; parInfoTExpDe[0].unscale=stfnum::yunscaleoffset;
+    parInfoTExpDe[1].toFit=true;  parInfoTExpDe[1].desc="Delay"; parInfoTExpDe[1].scale=stfnum::xscale; parInfoTExpDe[1].unscale=stfnum::xunscale; 
     // parInfoTExpDe[1].constrained = true; parInfoTExpDe[1].constr_lb = 0.0; parInfoTExpDe[1].constr_ub = DBL_MAX;
-    parInfoTExpDe[2].toFit=true;  parInfoTExpDe[2].desc="tau1a"; parInfoTExpDe[2].scale=stf::xscale; parInfoTExpDe[2].unscale=stf::xunscale;
+    parInfoTExpDe[2].toFit=true;  parInfoTExpDe[2].desc="tau1a"; parInfoTExpDe[2].scale=stfnum::xscale; parInfoTExpDe[2].unscale=stfnum::xunscale;
     // parInfoTExpDe[2].constrained = true; parInfoTExpDe[2].constr_lb = 1.0e-16; parInfoTExpDe[2].constr_ub = DBL_MAX;
-    parInfoTExpDe[3].toFit=true;  parInfoTExpDe[3].desc="Factor"; parInfoTExpDe[3].scale=stf::yscale; parInfoTExpDe[3].unscale=stf::yunscale;
-    parInfoTExpDe[4].toFit=true;  parInfoTExpDe[4].desc="tau2"; parInfoTExpDe[4].scale=stf::xscale; parInfoTExpDe[4].unscale=stf::xunscale;
-    parInfoTExpDe[5].toFit=true;  parInfoTExpDe[5].desc="tau1b"; parInfoTExpDe[5].scale=stf::xscale; parInfoTExpDe[5].unscale=stf::xunscale;
-    parInfoTExpDe[6].toFit=true;  parInfoTExpDe[6].desc="ptau1b"; parInfoTExpDe[6].scale=stf::noscale; parInfoTExpDe[6].unscale=stf::noscale;
-    funcList.push_back(stf::storedFunc(
+    parInfoTExpDe[3].toFit=true;  parInfoTExpDe[3].desc="Factor"; parInfoTExpDe[3].scale=stfnum::yscale; parInfoTExpDe[3].unscale=stfnum::yunscale;
+    parInfoTExpDe[4].toFit=true;  parInfoTExpDe[4].desc="tau2"; parInfoTExpDe[4].scale=stfnum::xscale; parInfoTExpDe[4].unscale=stfnum::xunscale;
+    parInfoTExpDe[5].toFit=true;  parInfoTExpDe[5].desc="tau1b"; parInfoTExpDe[5].scale=stfnum::xscale; parInfoTExpDe[5].unscale=stfnum::xunscale;
+    parInfoTExpDe[6].toFit=true;  parInfoTExpDe[6].desc="ptau1b"; parInfoTExpDe[6].scale=stfnum::noscale; parInfoTExpDe[6].unscale=stfnum::noscale;
+    funcList.push_back(stfnum::storedFunc(
                                        "Triexponential with delay, start fixed to baseline, delay constrained to > 0",
-                                       parInfoTExpDe,fexptde,fexptde_init,stf::nojac,false));
+                                       parInfoTExpDe,fexptde,fexptde_init,stfnum::nojac,false));
 
     return funcList;
 }
 
-double stf::fexp(double x, const Vector_double& p) {
+double stfnum::fexp(double x, const Vector_double& p) {
     double sum=0.0;
     for (std::size_t n_p=0;n_p<p.size()-1;n_p+=2) {
         double e=exp(-x/p[n_p+1]);
@@ -139,7 +139,7 @@ double stf::fexp(double x, const Vector_double& p) {
     return sum+p[p.size()-1];
 }
 
-Vector_double stf::fexp_jac(double x, const Vector_double& p) {
+Vector_double stfnum::fexp_jac(double x, const Vector_double& p) {
     Vector_double jac(p.size());
     for (std::size_t n_p=0;n_p<p.size()-1;n_p+=2) {
         double e=exp(-x/p[n_p+1]);
@@ -150,7 +150,7 @@ Vector_double stf::fexp_jac(double x, const Vector_double& p) {
     return jac;
 }
 
-void stf::fexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+void stfnum::fexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find out direction:
     bool increasing = data[0] < data[data.size()-1];
     Vector_double::const_iterator max_el = std::max_element(data.begin(), data.end());
@@ -171,7 +171,7 @@ void stf::fexp_init(const Vector_double& data, double base, double peak, double 
         x[n_x] = (double)n_x * dt;
     }
     double m=0, c=0;
-    stf::linFit(x,peeled,m,c);
+    stfnum::linFit(x,peeled,m,c);
     
     double tau_mean = -1.0 / m;
 
@@ -194,7 +194,7 @@ void stf::fexp_init(const Vector_double& data, double base, double peak, double 
 
 }
 
-void stf::fexp_init2(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+void stfnum::fexp_init2(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     int n_exp=(int)pInit.size()/2;
     for (std::size_t n_p=0;n_p<pInit.size()-1;n_p+=2) {
         // use inverse amplitude for last term:
@@ -208,31 +208,31 @@ void stf::fexp_init2(const Vector_double& data, double base, double peak, double
     pInit[pInit.size()-1]=peak;
 }
 
-double stf::xscale(double param, double xscale, double xoff, double yscale, double yoff) {
+double stfnum::xscale(double param, double xscale, double xoff, double yscale, double yoff) {
     return param*xscale; // + xoff;
 }
 
-double stf::xunscale(double param, double xscale, double xoff, double yscale, double yoff) {
+double stfnum::xunscale(double param, double xscale, double xoff, double yscale, double yoff) {
     return param/xscale; //(param-xoff)/xscale;
 }
 
-double stf::yscale(double param, double xscale, double xoff, double yscale, double yoff) {
+double stfnum::yscale(double param, double xscale, double xoff, double yscale, double yoff) {
     return param*yscale;
 }
 
-double stf::yscaleoffset(double param, double xscale, double xoff, double yscale, double yoff) {
+double stfnum::yscaleoffset(double param, double xscale, double xoff, double yscale, double yoff) {
     return param*yscale - yoff;
 }
 
-double stf::yunscale(double param, double xscale, double xoff, double yscale, double yoff) {
+double stfnum::yunscale(double param, double xscale, double xoff, double yscale, double yoff) {
     return param/yscale;
 }
 
-double stf::yunscaleoffset(double param, double xscale, double xoff, double yscale, double yoff) {
+double stfnum::yunscaleoffset(double param, double xscale, double xoff, double yscale, double yoff) {
     return (param+yoff)/yscale;
 }
 
-double stf::fexpde(double x, const Vector_double& p) {
+double stfnum::fexpde(double x, const Vector_double& p) {
     if (x<p[1]) {
         return p[0];
     } else {
@@ -243,7 +243,7 @@ double stf::fexpde(double x, const Vector_double& p) {
 }
 
 #if 0
-Vector_double stf::fexpde_jac(double x, const Vector_double& p) {
+Vector_double stfnum::fexpde_jac(double x, const Vector_double& p) {
     Vector_double jac(4);
     if (x<p[3]) {
         jac[0]=1.0;
@@ -261,10 +261,10 @@ Vector_double stf::fexpde_jac(double x, const Vector_double& p) {
 }
 #endif 
 
-void stf::fexpde_init(const Vector_double& data, double base, double peak, double RTLoHI, double HalfWidth, double dt, Vector_double& pInit ) {
+void stfnum::fexpde_init(const Vector_double& data, double base, double peak, double RTLoHI, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT;
-    stf::peak( data, base, 0, data.size()-1, 1, stf::both, maxT );
+    stfnum::peak( data, base, 0, data.size()-1, 1, stfnum::both, maxT );
 
     pInit[0]=base;
     pInit[1]=0.0;
@@ -272,7 +272,7 @@ void stf::fexpde_init(const Vector_double& data, double base, double peak, doubl
     pInit[3]=peak;
 }
 
-double stf::fexpbde(double x, const Vector_double& p) {
+double stfnum::fexpbde(double x, const Vector_double& p) {
     if (x<p[1]) {
         return p[0];
     } else {
@@ -285,7 +285,7 @@ double stf::fexpbde(double x, const Vector_double& p) {
     }
 }
 
-double stf::fexptde(double x, const Vector_double& p) {
+double stfnum::fexptde(double x, const Vector_double& p) {
     if (x<p[1]) {
         return p[0];
     } else {
@@ -300,7 +300,7 @@ double stf::fexptde(double x, const Vector_double& p) {
 }
 
 #if 0
-Vector_double stf::fexpbde_jac(double x, const Vector_double& p) {
+Vector_double stfnum::fexpbde_jac(double x, const Vector_double& p) {
     Vector_double jac(5);
     if (x<p[1]) {
         jac[0]=1.0;
@@ -323,9 +323,9 @@ Vector_double stf::fexpbde_jac(double x, const Vector_double& p) {
 }
 #endif
 
-void stf::fexpbde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+void stfnum::fexpbde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
-    double maxT = stf::whereis( data, peak );
+    double maxT = stfnum::whereis( data, peak );
 
     if ( maxT == 0 ) maxT = data.size() * 0.05;
 
@@ -344,9 +344,9 @@ void stf::fexpbde_init(const Vector_double& data, double base, double peak, doub
 
 }
 
-void stf::fexptde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+void stfnum::fexptde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
-    double maxT = stf::whereis( data, peak );
+    double maxT = stfnum::whereis( data, peak );
 
     if ( maxT == 0 ) maxT = data.size() * 0.05;
 
@@ -366,7 +366,7 @@ void stf::fexptde_init(const Vector_double& data, double base, double peak, doub
     pInit[6] = 0.5;
 }
 
-double stf::falpha(double x, const Vector_double& p) {
+double stfnum::falpha(double x, const Vector_double& p) {
     
     //double e=exp(-p[1]*x);
     //return p[0]*p[1]*p[1]*x*e+p[2]; 
@@ -374,7 +374,7 @@ double stf::falpha(double x, const Vector_double& p) {
     
 }
 
-Vector_double stf::falpha_jac(double x, const Vector_double& p) {
+Vector_double stfnum::falpha_jac(double x, const Vector_double& p) {
     Vector_double jac(3);
     //double e=exp(-p[1]*x);
     //jac[0]=p[1]*p[1]*x*e;
@@ -386,8 +386,8 @@ Vector_double stf::falpha_jac(double x, const Vector_double& p) {
     return jac;
 }
 
-void stf::falpha_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
-        double maxT = stf::whereis( data, peak )*dt;
+void stfnum::falpha_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+        double maxT = stfnum::whereis( data, peak )*dt;
 
         pInit[0] = peak;
         pInit[1] = maxT;// time of the peak correspond to time constant
@@ -398,7 +398,7 @@ void stf::falpha_init(const Vector_double& data, double base, double peak, doubl
         //pInit[2]=base;
 }
 
-double stf::fHH(double x, const Vector_double& p) {
+double stfnum::fHH(double x, const Vector_double& p) {
     // p[0]: gprime_na
     // p[1]: tau_m
     // p[2]: tau_h
@@ -408,7 +408,7 @@ double stf::fHH(double x, const Vector_double& p) {
     return p[0] * (m*m*m) * h + p[3];
 }
 
-double stf::fgnabiexp(double x, const Vector_double& p) {
+double stfnum::fgnabiexp(double x, const Vector_double& p) {
     // p[0]: gprime_na
     // p[1]: tau_m
     // p[2]: tau_h
@@ -418,7 +418,7 @@ double stf::fgnabiexp(double x, const Vector_double& p) {
     return p[0] * m * h + p[3];
 }
 
-double stf::fgauss(double x, const Vector_double& pars) {
+double stfnum::fgauss(double x, const Vector_double& pars) {
     double y=0.0, /* fac=0.0, */ ex=0.0, arg=0.0;
     int npars=static_cast<int>(pars.size());
     for (int i=0; i < npars-1; i += 3) {
@@ -430,7 +430,7 @@ double stf::fgauss(double x, const Vector_double& pars) {
     return y;
 }
 
-Vector_double stf::fgauss_jac(double x, const Vector_double& pars) {
+Vector_double stfnum::fgauss_jac(double x, const Vector_double& pars) {
     double ex=0.0, arg=0.0;
     int npars=static_cast<int>(pars.size());
     Vector_double jac(npars);
@@ -444,9 +444,9 @@ Vector_double stf::fgauss_jac(double x, const Vector_double& pars) {
     return jac;
 }
 
-void stf::fgauss_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+void stfnum::fgauss_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
-    double maxT = stf::whereis( data, peak ) * dt;
+    double maxT = stfnum::whereis( data, peak ) * dt;
     int npars=static_cast<int>(pInit.size());
     for (int i=0; i < npars-1; i += 3) {
         pInit[i] = peak;
@@ -455,9 +455,9 @@ void stf::fgauss_init(const Vector_double& data, double base, double peak, doubl
     }
 }
 
-void stf::fHH_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+void stfnum::fHH_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
-    double maxT = stf::whereis( data, peak );
+    double maxT = stfnum::whereis( data, peak );
     
     if ( maxT == 0 ) maxT = data.size() * 0.05;
 
@@ -477,7 +477,7 @@ void stf::fHH_init(const Vector_double& data, double base, double peak, double R
     //pInit[2] = 3 * maxT * dt;
 }
 
-Vector_double stf::fgnabiexp_jac(double x, const Vector_double& p) {
+Vector_double stfnum::fgnabiexp_jac(double x, const Vector_double& p) {
     Vector_double jac(4);
     jac[0] = ( 1-exp(-x/p[1]) ) * exp(-x/p[2]);
     jac[1] = -p[0] * x * exp(-x/p[1] - x/p[2])  /(p[1]*p[1]);
@@ -486,9 +486,9 @@ Vector_double stf::fgnabiexp_jac(double x, const Vector_double& p) {
     return jac;
 }
 
-void stf::fgnabiexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+void stfnum::fgnabiexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
-    double maxT = stf::whereis( data, peak );
+    double maxT = stfnum::whereis( data, peak );
     
     if ( maxT == 0 ) maxT = data.size() * 0.05;
     // p[0]: gprime_na
@@ -506,35 +506,35 @@ void stf::fgnabiexp_init(const Vector_double& data, double base, double peak, do
     pInit[0] = (peak-base)/norm;
 }
 
-std::vector<stf::parInfo> stf::getParInfoExp(int n_exp) {
-    std::vector<stf::parInfo> retParInfo(n_exp*2+1);
+std::vector<stfnum::parInfo> stfnum::getParInfoExp(int n_exp) {
+    std::vector<stfnum::parInfo> retParInfo(n_exp*2+1);
     for (int n_e=0; n_e<n_exp*2; n_e+=2) {
         retParInfo[n_e].toFit=true;
         std::ostringstream adesc;
         adesc << "Amp_" << (int)n_e/2;
         retParInfo[n_e].desc = adesc.str();
-        retParInfo[n_e].scale = stf::yscale;
-        retParInfo[n_e].unscale = stf::yunscale;
+        retParInfo[n_e].scale = stfnum::yscale;
+        retParInfo[n_e].unscale = stfnum::yunscale;
         retParInfo[n_e+1].toFit=true;
         std::ostringstream tdesc;
         tdesc  <<  "Tau_" << (int)n_e/2;
         retParInfo[n_e+1].desc = tdesc.str();
-        retParInfo[n_e+1].scale = stf::xscale;
-        retParInfo[n_e+1].unscale = stf::xunscale;
+        retParInfo[n_e+1].scale = stfnum::xscale;
+        retParInfo[n_e+1].unscale = stfnum::xunscale;
     }
     retParInfo[n_exp*2].toFit=true;
     retParInfo[n_exp*2].desc="Offset";
-    retParInfo[n_exp*2].scale=stf::yscaleoffset;
-    retParInfo[n_exp*2].unscale=stf::yunscaleoffset;
+    retParInfo[n_exp*2].scale=stfnum::yscaleoffset;
+    retParInfo[n_exp*2].unscale=stfnum::yunscaleoffset;
     return retParInfo;
 }
 
-stf::Table stf::outputWTau(
+stfnum::Table stfnum::outputWTau(
     const Vector_double& pars,
-    const std::vector<stf::parInfo>& parsInfo,
+    const std::vector<stfnum::parInfo>& parsInfo,
     double chisqr
 ) {
-    stf::Table output(pars.size()+1,1);
+    stfnum::Table output(pars.size()+1,1);
     // call default version:
     try  {
         output=defaultOutput(pars,parsInfo,chisqr);
@@ -565,7 +565,7 @@ stf::Table stf::outputWTau(
     return output;
 }
 
-std::size_t stf::whereis(const Vector_double& data, double value) {
+std::size_t stfnum::whereis(const Vector_double& data, double value) {
     if (data.size()==0) return 0;
     bool fromtop=false;
     // coming from top or bottom?

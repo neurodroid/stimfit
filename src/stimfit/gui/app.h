@@ -173,7 +173,8 @@ enum {
 #include <wx/fileconf.h>
 #include <wx/settings.h>
 
-#include "./../math/stfmath.h"
+#include "./../stf.h"
+#include "./../../libstfnum/stfnum.h"
 
 #ifdef WITH_PYTHON
 
@@ -331,19 +332,19 @@ public:
     //! Retrieves the functions that are available for least-squares minimisation.
     /*! \return A vector containing the available functions.
      */
-    const std::vector<stf::storedFunc>& GetFuncLib() const { return funcLib; }
+    const std::vector<stfnum::storedFunc>& GetFuncLib() const { return funcLib; }
 
 
     //! Retrieves a pointer to a function for least-squares minimisation.
     /*! \return A vector containing the available functions.
      */
-    stf::storedFunc* GetFuncLibPtr(std::size_t at) { return &funcLib.at(at); }
+    stfnum::storedFunc* GetFuncLibPtr(std::size_t at) { return &funcLib.at(at); }
 
 
     //! Retrieves a pointer to a function for least-squares minimisation.
     /*! \return A vector containing the available functions.
      */
-    stf::storedFunc* GetLinFuncPtr( ) { return &storedLinFunc; }
+    stfnum::storedFunc* GetLinFuncPtr( ) { return &storedLinFunc; }
 
 #ifdef WITH_PYTHON
     //! Retrieves the user-defined extension functions.
@@ -507,7 +508,7 @@ private:
     stfio::txtImportSettings txtImport;
     // Registry:
     boost::shared_ptr<wxFileConfig> config;
-    std::vector<stf::storedFunc> funcLib;
+    std::vector<stfnum::storedFunc> funcLib;
 #ifdef WITH_PYTHON
     std::vector< stf::Extension > extensionLib;
 #endif
@@ -515,7 +516,7 @@ private:
     wxStfCursorsDlg* CursorsDialog;
     wxDocTemplate* m_cfsTemplate, *m_hdf5Template, *m_txtTemplate,*m_abfTemplate,
       *m_atfTemplate,*m_axgTemplate,*m_sonTemplate, *m_hekaTemplate, *m_biosigTemplate;
-    stf::storedFunc storedLinFunc;
+    stfnum::storedFunc storedLinFunc;
     // wxMenu* m_file_menu;
     wxString m_fileToLoad;
     /*std::list<wxStfDoc *> activeDoc;*/

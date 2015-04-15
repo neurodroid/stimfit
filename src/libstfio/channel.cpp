@@ -23,7 +23,7 @@ Channel::Channel(const Section& c_Section)
 : name("\0"), yunits( "\0" ),
 SectionArray(1, c_Section) {}
 
-Channel::Channel(const std::vector<Section>& SectionList) 
+Channel::Channel(const std::deque<Section>& SectionList) 
 : name("\0"), yunits( "\0" ),
 SectionArray(SectionList) {}
 
@@ -67,4 +67,4 @@ Section& Channel::at(std::size_t at_) {
 
 void Channel::resize(std::size_t newSize) { SectionArray.resize(newSize); }
 
-void Channel::reserve(std::size_t resSize) { SectionArray.reserve(resSize); }
+void Channel::reserve(std::size_t resSize) { /* SectionArray.reserve(resSize); */ }

@@ -19,26 +19,35 @@
 #   ./stimfit                 # start stimfit 
 #
 #   win32 built
+#	CROSS=i686-pc-mingw32-   make -f Makefile.static
 #	WXCONF=i686-pc-mingw32-wx-config   make -f Makefile.static 
 #   win64 built
+#	CROSS=x86_64-static-mingw32- make -f Makefile.static
 #	WXCONF=x86_64-static-mingw32-wx-config make -f Makefile.static
 #
+#   The use of WXCONF is deprecated, and might be removed in future
+
 # Limitations: 
 #    - no support for ASCII, SON format
 #    - PYTHON shell, matplotlib (print) are not supported
 #    - configure not supported
 #
-# Copyright (C) 2012,2013 Alois Schloegl 
+# Copyright (C) 2012,2013,2014,2015 Alois Schloegl
 # This is part of the stimfit project http://code.google.com/p/stimfit/
 #
 ########################################################################
 
 ifeq (,$(WXCONF))
   # default wx-config      
-  WXCONF    = $(shell which wx-config)
+  WXCONF    = $(CROSS)wx-config
+else
+ifneq (,$(findstring mingw,$(WXCONF)))
+  # for backwords compatibility to older MXE scripts
+  CROSS = $(subst wx-config,,$(WXCONF))
+endif
 endif
 
-DEFINES += -DWITH_BIOSIG2
+DEFINES += -DWITH_BIOSIG
 DEFINES += -DHAVE_LAPACK
 #DEFINES += -DWITHOUT_ABF
 #DEFINES += -DWITHOUT_AXG
@@ -52,23 +61,28 @@ WXDIR     = $(dir $(WXCONF))../include/wx-$(WXVERSION)/
 DEFINES  += -I$(WXDIR)
 
 
-PY_VERSION := 2.6
+PY_VERSION := 2.7
 
 
 ##############################################################
 ###  SOURCES
 ##############################################################
 
-vpath %.cpp ./src/stimfit:./src/stimfit/gui:./src/stimfit/gui/dlgs:./src/stimfit/gui/usrdlg:./src/stimfit/math:./src/libstfio/:./src/libstfio/cfs/:./src/libstfio/atf/:./src/libstfio/abf/:./src/libstfio/abf/axon2:./src/libstfio/abf/axon/Common:./src/libstfio/abf/axon/AxAbfFio32:./src/libstfio/abf/axon/AxAtfFio32/:./src/libstfio/biosig/:./src/libstfio/hdf5/:./src/libstfio/heka/:./src/libstfio/igor:./src/libstfio/ascii/:./src/libstfio/axg/
+vpath %.cpp ./src/stimfit:./src/stimfit/gui:./src/stimfit/gui/dlgs:./src/stimfit/gui/usrdlg:./src/libstfnum:./src/libstfio/:./src/libstfio/cfs/:./src/libstfio/atf/:./src/libstfio/abf/:./src/libstfio/abf/axon2:./src/libstfio/abf/axon/Common:./src/libstfio/abf/axon/AxAbfFio32:./src/libstfio/abf/axon/AxAtfFio32/:./src/libstfio/biosig/:./src/libstfio/hdf5/:./src/libstfio/heka/:./src/libstfio/igor:./src/libstfio/ascii/:./src/libstfio/axg/
 
-vpath %.c ./src/stimfit/math/levmar/:./src/libstfio/igor/:./src/libstfio/cfs/
-vpath %.cpp ./src/stimfit/math/:./src/stimfit/math/levmar/:./src/stimfit/gui/:./src/stimfit/gui/dlgs/:./src/libstfio/:./src/libstfio/biosig/:./src/libstfio/igor/:./src/libstfio/cfs/
+vpath %.c ./src/libstfnum/levmar/:./src/libstfio/igor/:./src/libstfio/cfs/
+vpath %.cpp ./src/libstfnum/:./src/libstfnum/levmar/:./src/stimfit/gui/:./src/stimfit/gui/dlgs/:./src/libstfio/:./src/libstfio/biosig/:./src/libstfio/igor/:./src/libstfio/cfs/
 
 SOURCES = ./src/stimfit/stf.cpp \
-	./src/stimfit/math/stfmath.cpp \
-	./src/stimfit/math/funclib.cpp \
-	./src/stimfit/math/measure.cpp \
-	./src/stimfit/math/fit.cpp \
+	./src/libstfnum/stfnum.cpp \
+	./src/libstfnum/funclib.cpp \
+	./src/libstfnum/measure.cpp \
+	./src/libstfnum/fit.cpp \
+	./src/libstfnum/levmar/lm.c \
+	./src/libstfnum/levmar/Axb.c \
+	./src/libstfnum/levmar/misc.c \
+	./src/libstfnum/levmar/lmbc.c \
+	./src/libstfnum/levmar/lmlec.c \
 	./src/stimfit/gui/doc.cpp \
 	./src/stimfit/gui/zoom.cpp \
 	./src/stimfit/gui/childframe.cpp \
@@ -94,11 +108,6 @@ SOURCES = ./src/stimfit/stf.cpp \
 	./src/libstfio/hdf5/hdf5lib.cpp \
 	./src/libstfio/channel.cpp \
 	./src/libstfio/stfio.cpp \
-	./src/stimfit/math/levmar/lm.c \
-	./src/stimfit/math/levmar/Axb.c \
-	./src/stimfit/math/levmar/misc.c \
-	./src/stimfit/math/levmar/lmbc.c \
-	./src/stimfit/math/levmar/lmlec.c \
 	./src/libstfio/igor/WriteWave.c \
 	./src/libstfio/igor/CrossPlatformFileIO.c \
 	./src/libstfio/cfs/cfs.c 
@@ -128,11 +137,11 @@ SOURCES_ABF = ./src/libstfio/atf/atflib.cpp \
 
 EXCLUDED = ./src/libstfio/ascii/asciilib.cpp \
 	./src/libstfio/abf/axon/AxAtfFio32/fileio2.cpp \
-	./src/stimfit/math/levmar/lmbc_core.c \
-	./src/stimfit/math/levmar/lmlec_core.c \
-	./src/stimfit/math/levmar/misc_core.c \
-	./src/stimfit/math/levmar/lm_core.c \
-	./src/stimfit/math/levmar/Axb_core.c \
+	./src/libstfnum/levmar/lmbc_core.c \
+	./src/libstfnum/levmar/lmlec_core.c \
+	./src/libstfnum/levmar/misc_core.c \
+	./src/libstfnum/levmar/lm_core.c \
+	./src/libstfnum/levmar/Axb_core.c \
 	./src/stimfit/gui/dclatex.cpp \
 
 TESTSRC = ./src/test/section.cpp \
@@ -196,17 +205,39 @@ CXX       = $(shell $(WXCONF) --cxx)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -std=gnu++11 -fstack-protector
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
-LIBS     += -lhdf5_hl -lhdf5
+
+## HDF5 related stuff ##
+ifneq ($(CROSS),)
+  ## Debian/Wheezy
+  LIBS   += -lhdf5_hl -lhdf5
+else
+ifneq ($(wildcard /usr/lib/libhdf5*),)
+  ## Debian/Wheezy
+  LIBS   += -lhdf5_hl -lhdf5
+else
+  ifneq ($(wildcard /usr/lib/x86_64-linux-gnu/libhdf5_serial*),)
+    ## Debian/Jessie
+    CXXFLAGS += -I/usr/include/hdf5/serial
+    LDFLAGS  += -L/usr/lib/x86_64-linux-gnu/
+    LIBS     += -lhdf5_serial_hl -lhdf5_serial
+endif
+endif
+endif
+
+## BIOSIG related stuff ##
 ifneq (,$(findstring WITH_BIOSIG2, $(DEFINES)))
-  SOURCES += ./src/libstfio/biosig/biosiglib.cpp
-  LIBS   += -lbiosig2  -lcholmod
+  LIBS  += -lbiosig2
 else 
   ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
-    SOURCES += ./src/libstfio/biosig/biosiglib.cpp
-    LIBS += -lbiosig -lcholmod
+    LIBS  += -lbiosig
   endif
 endif
-LIBS     += -lfftw3 -lz -lpthread
+ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
+    SOURCES += ./src/libstfio/biosig/biosiglib.cpp
+    LIBS  += $(shell $(CROSS)pkg-config  --libs libbiosig)
+endif
+
+LIBS     += -lfftw3
 
 ifeq (mingw,$(findstring mingw, $(WXCONF)))
   LIBS   += -lgfortran -lquadmath
@@ -241,4 +272,5 @@ $(TARGET): $(OBJECTS)
 
 clean:
 	find src -name "*.$(OBJEXT)" -exec rm {} \;
+	rm stimfit
 

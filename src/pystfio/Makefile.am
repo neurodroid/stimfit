@@ -37,7 +37,7 @@ EXTRA_DIST = ./pystfio.i ./unittest_stfio.py ./test.h5
 libpystfio_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
 libpystfio_la_CXXFLAGS = $(OPT_CXXFLAGS)
 libpystfio_la_LDFLAGS = $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
-libpystfio_la_LIBADD = $(PYTHON_ADDLIBS) ./../libstfio/libstfio.la
+libpystfio_la_LIBADD = $(PYTHON_ADDLIBS) ./../libstfio/libstfio.la ./../libstfnum/libstfnum.la
 
 # LTTARGET=${PYTHON_DIST_PKG}/stfio
 LTTARGET=${PYTHON_DEST_DIR}/stfio

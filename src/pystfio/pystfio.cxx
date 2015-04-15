@@ -37,7 +37,20 @@
     #endif
 #endif
 
+#include "./../libstfnum/fit.h"
+
 #include "pystfio.h"
+
+#if PY_MAJOR_VERSION >= 3
+int wrap_array() {
+    import_array();
+    return 0;
+}
+#else
+void wrap_array() {
+    import_array();
+}
+#endif
 
 stfio::filetype gettype(const std::string& ftype) {
     stfio::filetype stftype = stfio::none;
@@ -88,4 +101,86 @@ bool _read(const std::string& filename, const std::string& ftype, bool verbose, 
     }
         
     return true;
+}
+
+PyObject* detect_events(double* data, int size_data, double* templ, int size_templ,
+                        double dt, const std::string& mode, bool norm, double lowpass, double highpass)
+{
+    wrap_array();
+
+    Vector_double vtempl(templ, &templ[size_templ]);
+    if (norm) {
+        double fmin = *std::min_element(vtempl.begin(), vtempl.end());
+        double fmax = *std::max_element(vtempl.begin(), vtempl.end());
+        double basel = 0;
+        double normval = 1.0;
+        if (fabs(fmin) > fabs(fmax)) {
+            basel = fmax;
+        } else {
+            basel = fmin;
+        }
+        vtempl = stfio::vec_scal_minus(vtempl, basel);
+        fmin = *std::min_element(vtempl.begin(), vtempl.end());
+        fmax = *std::max_element(vtempl.begin(), vtempl.end());
+        if (fabs(fmin) > fabs(fmax)) {
+            normval = fabs(fmin);
+        } else {
+            normval = fabs(fmax);
+        }
+        vtempl = stfio::vec_scal_div(vtempl, normval);
+    }
+    Vector_double trace(data, &data[size_data]);
+    Vector_double detect(size_data);
+    if (mode=="criterion") {
+        stfio::StdoutProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100, true);
+        detect = stfnum::detectionCriterion(trace, vtempl, progDlg);
+    } else if (mode=="correlation") {
+        stfio::StdoutProgressInfo progDlg("Computing linear correlation...", "Computing linear correlation...", 100, true);
+        detect = stfnum::linCorr(trace, vtempl, progDlg);
+    } else if (mode=="deconvolution") {
+        stfio::StdoutProgressInfo progDlg("Computing detection criterion...", "Computing detection criterion...", 100, true);
+        try {
+            detect = stfnum::deconvolve(trace, vtempl, 1.0/dt, highpass, lowpass, progDlg);
+        } catch (const std::runtime_error& e) {
+            std::cerr << e.what() << std::endl;
+            return Py_BuildValue("");
+        }
+    }
+    npy_intp dims[1] = {(int)detect.size()};
+    PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+    double* gDataP = (double*)array_data(np_array);
+
+    /* fill */
+    std::copy(detect.begin(), detect.end(), gDataP);
+    
+    return np_array;
+}
+
+PyObject* peak_detection(double* invec, int size, double threshold, int min_distance) {
+    wrap_array();
+
+    Vector_double data(invec, &invec[size]);
+
+    std::vector<int> peak_idcs = stfnum::peakIndices(data, threshold, min_distance);
+
+    npy_intp dims[1] = {(int)peak_idcs.size()};
+    PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_INT);
+    if (sizeof(int) == 4) {
+        int* gDataP = (int*)array_data(np_array);
+        /* fill */
+        std::copy(peak_idcs.begin(), peak_idcs.end(), gDataP);
+    
+        return np_array;
+    } else if (sizeof(short) == 4) {
+        short* gDataP = (short*)array_data(np_array);
+        
+        /* fill */
+        std::copy(peak_idcs.begin(), peak_idcs.end(), gDataP);
+    
+        return np_array;
+    } else {
+        std::cerr << "Couldn't find 4-byte integer type\n";
+        return NULL;
+    }
+        
 }

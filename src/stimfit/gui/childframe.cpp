@@ -485,7 +485,7 @@ void wxStfChildFrame::ActivateGraph() {
     }
 }
 
-void wxStfChildFrame::ShowTable(const stf::Table &table,const wxString& caption) {
+void wxStfChildFrame::ShowTable(const stfnum::Table &table,const wxString& caption) {
 
     // Create and show notebook if necessary:
     if (m_notebook==NULL && !m_mgr.GetPane(m_notebook).IsOk()) {
@@ -519,7 +519,7 @@ void wxStfChildFrame::ShowTable(const stf::Table &table,const wxString& caption)
 
 void wxStfChildFrame::UpdateResults() {
     wxStfDoc* pDoc=(wxStfDoc*)GetDocument();
-    stf::Table table(pDoc->CurResultsTable());
+    stfnum::Table table(pDoc->CurResultsTable());
     
     // Delete or append columns:
     if (m_table->GetNumberCols()<(int)table.nCols()) {

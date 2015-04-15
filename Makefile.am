@@ -51,11 +51,12 @@ noinst_HEADERS = ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfi
 	./src/libstfio/igor/igorlib.h \
 	./src/libstfio/igor/CrossPlatformFileIO.h \
 	./src/libstfio/igor/IgorBin.h \
+	./src/libstfnum/stfnum.h ./src/libstfnum/fit.h ./src/libstfnum/spline.h \
+	./src/libstfnum/measure.h \
+	./src/libstfnum/levmar/lm.h ./src/libstfnum/levmar/levmar.h \
+	./src/libstfnum/levmar/misc.h ./src/libstfnum/levmar/compiler.h \
+	./src/libstfnum/funclib.h \
 	./src/stimfit/stf.h \
-	./src/stimfit/math/stfmath.h ./src/stimfit/math/fit.h ./src/stimfit/math/spline.h \
-	./src/stimfit/math/measure.h \
-	./src/stimfit/math/levmar/lm.h ./src/stimfit/math/levmar/levmar.h \
-	./src/stimfit/math/levmar/misc.h ./src/stimfit/math/levmar/compiler.h \
 	./src/stimfit/gui/app.h ./src/stimfit/gui/stfcheckbox.h \
 	./src/stimfit/gui/copygrid.h ./src/stimfit/gui/graph.h \
 	./src/stimfit/gui/printout.h \
@@ -63,7 +64,6 @@ noinst_HEADERS = ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfi
 	./src/stimfit/gui/table.h ./src/stimfit/gui/zoom.h \
 	./src/stimfit/gui/dlgs/cursorsdlg.h ./src/stimfit/gui/dlgs/eventdlg.h \
 	./src/stimfit/gui/dlgs/fitseldlg.h ./src/stimfit/gui/dlgs/smalldlgs.h \
-	./src/stimfit/math/funclib.h \
 	./src/stimfit/gui/usrdlg/usrdlg.h \
 	./src/test/gtest/include/gtest/gtest-death-test.h \
 	./src/test/gtest/include/gtest/gtest-message.h \
@@ -130,13 +130,13 @@ EXTRA_DIST+= ./src/stimfit/res/table.xpm
 EXTRA_DIST+= ./src/stimfit/res/zoom.xpm
 EXTRA_DIST+= ./src/stimfit/res/zoom_in.xpm
 EXTRA_DIST+= ./src/stimfit/res/zoom_out.xpm
-EXTRA_DIST+= ./src/stimfit/math/levmar/Axb_core.c
-EXTRA_DIST+= ./src/stimfit/math/levmar/lmbc_core.c
-EXTRA_DIST+= ./src/stimfit/math/levmar/lm_core.c
-EXTRA_DIST+= ./src/stimfit/math/levmar/lmlec_core.c
-EXTRA_DIST+= ./src/stimfit/math/levmar/misc_core.c
-EXTRA_DIST+= ./src/stimfit/math/levmar/LICENSE
-EXTRA_DIST+= ./src/stimfit/math/levmar/README.txt
+EXTRA_DIST+= ./src/libstfnum/levmar/Axb_core.c
+EXTRA_DIST+= ./src/libstfnum/levmar/lmbc_core.c
+EXTRA_DIST+= ./src/libstfnum/levmar/lm_core.c
+EXTRA_DIST+= ./src/libstfnum/levmar/lmlec_core.c
+EXTRA_DIST+= ./src/libstfnum/levmar/misc_core.c
+EXTRA_DIST+= ./src/libstfnum/levmar/LICENSE
+EXTRA_DIST+= ./src/libstfnum/levmar/README.txt
 EXTRA_DIST+= ./doc/Doxyfile
 EXTRA_DIST+= ./acsite.m4
 EXTRA_DIST+= ./autogen.sh
@@ -195,12 +195,12 @@ INCLUDES = $(PYTHON_ADDINCLUDES)
 
 stimfit_CXXFLAGS = $(OPT_CXXFLAGS) $(WX_CXXFLAGS)
 stimfit_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS) $(LIBBIOSIG_LDFLAGS)
-stimfit_LDADD = $(WX_LIBS) -lfftw3 ./src/stimfit/libstimfit.la ./src/libstfio/libstfio.la # $(PYTHON_ADDLIBS) 
+stimfit_LDADD = $(WX_LIBS) -lfftw3 ./src/stimfit/libstimfit.la ./src/libstfio/libstfio.la ./src/libstfnum/libstfnum.la # $(PYTHON_ADDLIBS) 
 
 stimfittest_CXXFLAGS = $(GT_CXXFLAGS) $(WX_CXXFLAGS)
 stimfittest_CPPFLAGS = ${CPPFLAGS} $(GT_CPPFLAGS) -DSTF_TEST -I$(top_srcdir)/src/test/gtest -I$(top_srcdir)/src/test/gtest/include
 stimfittest_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(GT_LDFLAGS)
-stimfittest_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) $(GT_LIBS) -lfftw3 ./src/stimfit/libstimfit.la ./src/libstfio/libstfio.la
+stimfittest_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) $(GT_LIBS) -lfftw3 ./src/stimfit/libstimfit.la ./src/libstfio/libstfio.la ./src/libstfnum/libstfnum.la
 
 if !ISDARWIN
 if BUILD_DEBIAN
@@ -211,6 +211,7 @@ install-exec-hook:
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libpystf.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstimfit.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstfio.so
+	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstfnum.so
 	install -d $(prefix)/share/pixmaps
 	install -d $(prefix)/share/applications
 	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
@@ -242,6 +243,7 @@ install: stimfit
 	mkdir -p ${DESTDIR}/stimfit.app/Contents/lib/stimfit
 	cp -v ./src/stimfit/.libs/libstimfit.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
 	cp -v ./src/libstfio/.libs/libstfio.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfio.dylib
+	cp -v ./src/libstfnum/.libs/libstfnum.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfnum.dylib
 	cp $(top_srcdir)/dist/macosx/stimfit.plist.in ${DESTDIR}/stimfit.app/Contents/Info.plist
 	echo "APPL????\c" > ${DESTDIR}/stimfit.app/Contents/PkgInfo
 	rm -f ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
@@ -266,6 +268,10 @@ endif BUILD_PYTHON
 	                  @executable_path/../lib/stimfit/libstfio.dylib \
 	                  ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit
 	install_name_tool -change \
+	                  $(LTTARGET)/libstfnum.dylib \
+	                  @executable_path/../lib/stimfit/libstfnum.dylib \
+	                  ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit
+	install_name_tool -change \
 	                  $(LTTARGET)/libstimfit.dylib \
 	                  @executable_path/../lib/stimfit/libstimfit.dylib \
 	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
@@ -277,6 +283,14 @@ endif BUILD_PYTHON
 	                  $(LTTARGET)/libstfio.dylib \
 	                  @executable_path/../lib/stimfit/libstfio.dylib \
 	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfio.dylib
+	install_name_tool -change \
+	                  $(LTTARGET)/libstfnum.dylib \
+	                  @executable_path/../lib/stimfit/libstfnum.dylib \
+	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
+	install_name_tool -change \
+	                  $(LTTARGET)/libstfnum.dylib \
+	                  @executable_path/../lib/stimfit/libstfnum.dylib \
+	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfnum.dylib
 if BUILD_PYTHON
 	install_name_tool -change \
 	                  $(LTTARGET)/libstimfit.dylib \
@@ -285,6 +299,10 @@ if BUILD_PYTHON
 	install_name_tool -change \
 	                  $(LTTARGET)/libstfio.dylib \
 	                  @executable_path/../lib/stimfit/libstfio.dylib \
+	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
+	install_name_tool -change \
+	                  $(LTTARGET)/libstfnum.dylib \
+	                  @executable_path/../lib/stimfit/libstfnum.dylib \
 	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
 	install_name_tool -change \
 	                  $(LTTARGET)/libpystf.dylib \

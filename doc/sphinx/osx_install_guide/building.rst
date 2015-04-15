@@ -9,7 +9,15 @@ Building Stimfit
 Installing with MacPorts
 ========================
 
-Download and install MacPorts from `here <http://www.macports.org>`_, and then run the following command to install git
+Download and install MacPorts from `here <http://www.macports.org>`_.
+
+If you just want to install Stimfit and/or the stfio module, do
+
+::
+
+    sudo port install stimfit py27-stfio py34-stfio
+
+If you want to build stimfit from source, you'll first need to install git:
 
 ::
 

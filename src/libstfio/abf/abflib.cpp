@@ -153,11 +153,20 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
     int numberChannels = pFH->nADCNumChannels;
     ABFLONG numberSections = pFH->lActualEpisodes;
     ABFLONG finalSections = numberSections;
+    int hFile = abf2.GetFileNumber();
     bool gapfree = (pFH->nOperationMode == ABF2_GAPFREEFILE);
     if (gapfree) {
+        UINT uMaxSamples = pFH->lNumSamplesPerEpisode / numberChannels;
+        DWORD dwMaxEpi;
+        if (!ABF2_SetChunkSize(hFile,abf2.GetFileHeaderW(),&uMaxSamples,&dwMaxEpi,&nError)) {
+            std::ostringstream errorMsg;
+            errorMsg << "Exception while calling ABF2_SetChunkSize() "
+                     << "\n" << ABF1Error(fName, nError);
+            ABF_Close(hFile,&nError);
+            throw std::runtime_error(errorMsg.str());
+        }
         finalSections = 1;
     }
-    int hFile = abf2.GetFileNumber();
     for (int nChannel=0; nChannel < numberChannels; ++nChannel) {
         int progbar = (int)(((double)nChannel/(double)numberChannels)*100.0);
         progDlg.Update(progbar, "Memory allocation");
@@ -172,7 +181,7 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
             ABFLONG maxsize = test_size.max_size()
 #if defined(_MSC_VER)
                 // doesn't seem to return the correct size on Windows.
-                /8;
+                ;
 #else
                 ;
 #endif
@@ -225,45 +234,49 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
             // Use a vector here because memory allocation can
             // be controlled more easily:
             // request memory:
-            Vector_float TempSection(uNumSamples, 0.0);
-            unsigned int uNumSamplesW;
-            if (!ABF2_ReadChannel(hFile, pFH, pFH->nADCSamplingSeq[nChannel],nEpisode,TempSection,
-                                  &uNumSamplesW,&nError))
-            {
-                std::string errorMsg("Exception while calling ABF2_ReadChannel():\n");
-                errorMsg += ABF1Error(fName, nError);
-                ReturnData.resize(0);
-                ABF_Close(hFile,&nError);
-                throw std::runtime_error(errorMsg);
-            }
-            if (uNumSamples!=uNumSamplesW && !gapfree) {
-                ABF_Close(hFile,&nError);
-                throw std::runtime_error("Exception while calling ABF2_ReadChannel()");
-            }
-            if (!gapfree) {
-                std::ostringstream label;
-                label
-                    << fName
-                    << ", Section # " << nEpisode;
-                Section TempSectionT(TempSection.size(),label.str());
-                std::copy(TempSection.begin(),TempSection.end(),&TempSectionT[0]);
-                try {
-                    TempChannel.InsertSection(TempSectionT,nEpisode-1);
-                }
-                catch (...) {
+            if (uNumSamples > 0) {
+                Vector_float TempSection(uNumSamples, 0.0);
+                unsigned int uNumSamplesW;
+                if (!ABF2_ReadChannel(hFile, pFH, pFH->nADCSamplingSeq[nChannel],nEpisode,TempSection,
+                                      &uNumSamplesW,&nError))
+                {
+                    std::string errorMsg("Exception while calling ABF2_ReadChannel():\n");
+                    errorMsg += ABF1Error(fName, nError);
+                    ReturnData.resize(0);
                     ABF_Close(hFile,&nError);
-                    throw;
+                    throw std::runtime_error(errorMsg);
+                }
+                if (uNumSamples!=uNumSamplesW && !gapfree) {
+                    ABF_Close(hFile,&nError);
+                    throw std::runtime_error("Exception while calling ABF2_ReadChannel()");
+                }
+                if (!gapfree) {
+                    std::ostringstream label;
+                    label
+                        << fName
+                        << ", Section # " << nEpisode;
+                    Section TempSectionT(TempSection.size(),label.str());
+                    std::copy(TempSection.begin(),TempSection.end(),&TempSectionT[0]);
+                    try {
+                        TempChannel.InsertSection(TempSectionT,nEpisode-1);
+                    }
+                    catch (...) {
+                        ABF_Close(hFile,&nError);
+                        throw;
+                    }
+                } else {
+                    if ((nEpisode-1) * pFH->lNumSamplesPerEpisode / numberChannels + TempSection.size() <= TempSectionGrand.size()) {
+                        std::copy(TempSection.begin(),TempSection.end(),
+                                  &TempSectionGrand[(nEpisode-1) * pFH->lNumSamplesPerEpisode / numberChannels]);
+                    }
+    #ifdef _STFDEBUG
+                    else {
+                        std::cout << "Overflow while copying gapfree sections" << std::endl;
+                    }
+    #endif
                 }
             } else {
-                if ((nEpisode-1) * pFH->lNumSamplesPerEpisode / numberChannels + TempSection.size() <= TempSectionGrand.size()) {
-                    std::copy(TempSection.begin(),TempSection.end(),
-                              &TempSectionGrand[(nEpisode-1) * pFH->lNumSamplesPerEpisode / numberChannels]);
-                }
-#ifdef _STFDEBUG
-                else {
-                    std::cout << "Overflow while copying gapfree sections" << std::endl;
-                }
-#endif
+                TempChannel.resize(TempChannel.size()-1);
             }
         }
         if (gapfree) {
@@ -319,10 +332,12 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
     ldiv_t year=ldiv(pFH->uFileStartDate,(ABFLONG)10000);
     ldiv_t month=ldiv(year.rem,(ABFLONG)100);
 
-    ldiv_t hours=ldiv(pFH->uFileStartTimeMS,(ABFLONG)3600);
+    ldiv_t hours=ldiv(pFH->uFileStartTimeMS/1000,(ABFLONG)3600);
     ldiv_t minutes=ldiv(hours.rem,(ABFLONG)60);
 
-    ReturnData.SetDateTime(year.quot, month.quot, month.rem, hours.quot, minutes.quot, minutes.rem);
+    // Recording::SetDateTime expects the year to be passed as the number of years since 1900, and the month
+    // as 0 = Jan ... 11 = Dec
+    ReturnData.SetDateTime(year.quot-1900, month.quot-1, month.rem, hours.quot, minutes.quot, minutes.rem);
 
     abf2.Close();
 }

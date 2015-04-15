@@ -51,7 +51,7 @@ class StfioDll Recording {
     //! Constructor
     /*! \param ChannelList A vector of channels from which to construct a new Recording.
      */
-    explicit Recording(const std::vector<Channel>& ChannelList); 
+    explicit Recording(const std::deque<Channel>& ChannelList); 
 
     //! Constructor
     /*! Setting the number of channels and sections at construction time will avoid unnecessary 
@@ -76,12 +76,12 @@ class StfioDll Recording {
     //! Retrieves the channels (read-only).
     /*! \return A vector containing the channels.
      */
-    const std::vector<Channel>& get() const { return ChannelArray; }
+    const std::deque<Channel>& get() const { return ChannelArray; }
     
     //! Retrieves the channels (read and write).
     /*! \return A vector containing the channels.
      */
-    std::vector<Channel>& get() { return ChannelArray; }
+    std::deque<Channel>& get() { return ChannelArray; }
     
     //! Retrieves the file description.
     /*! \return The file description.
@@ -366,7 +366,7 @@ class StfioDll Recording {
     const Channel& operator[](std::size_t at) const { return ChannelArray[at]; }
 
  private:
-    std::vector<Channel> ChannelArray;
+    std::deque<Channel> ChannelArray;
     std::string global_section_description, scaling;
 
     // only neeed for GetData() and GetTime(): should be replaced by alternative interface.

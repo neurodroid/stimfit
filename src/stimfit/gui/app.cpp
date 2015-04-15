@@ -56,18 +56,14 @@
 #include "./graph.h"
 #include "./dlgs/cursorsdlg.h"
 #include "./dlgs/smalldlgs.h"
-#include "./../math/funclib.h"
+#include "./../../libstfnum/funclib.h"
+#include "./../../libstfnum/fit.h"
 
 #if defined(__WXGTK__) || defined(__WXMAC__) 
 #if !defined(__MINGW32__)
 #include "./../../libstfio/abf/axon/Common/axodefn.h"
 #include "./../../libstfio/abf/axon/AxAbfFio32/abffiles.h"
 #endif
-#endif
-#include "./../math/fit.h"
-
-#ifdef __WXMAC__
-#include <ApplicationServices/ApplicationServices.h>
 #endif
 
 extern wxStfApp& wxGetApp();
@@ -93,7 +89,7 @@ wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), txtImport(), fu
 #ifdef WITH_PYTHON
 extensionLib(),
 #endif 
-    CursorsDialog(NULL), storedLinFunc( stf::initLinFunc() ), /*m_file_menu(0),*/ m_fileToLoad(wxEmptyString)/*, activeDoc(0)*/ {}
+    CursorsDialog(NULL), storedLinFunc( stfnum::initLinFunc() ), /*m_file_menu(0),*/ m_fileToLoad(wxEmptyString)/*, activeDoc(0)*/ {}
 
 void wxStfApp::OnInitCmdLine(wxCmdLineParser& parser)
 {
@@ -326,7 +322,7 @@ bool wxStfApp::OnInit(void)
 //#endif
     
     // load fit function library:
-    funcLib = stf::GetFuncLib();
+    funcLib = stfnum::GetFuncLib();
 
     SetTopWindow(frame);
 

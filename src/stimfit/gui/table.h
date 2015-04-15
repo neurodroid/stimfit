@@ -27,13 +27,13 @@
  *  @{
  */
 
-//! Adapts stf::Table to be used by wxStfGrid
+//! Adapts stfnum::Table to be used by wxStfGrid
 class wxStfTable : public wxGridTableBase {
 public:
     //! Constructor
-    /*! \param table_ The associated stf::Table
+    /*! \param table_ The associated stfnum::Table
      */
-    wxStfTable(const stf::Table& table_) : table(table_) {}
+    wxStfTable(const stfnum::Table& table_) : table(table_) {}
 
     //! Get the number of rows.
     /*! \return The number of rows.
@@ -73,7 +73,7 @@ public:
     wxString GetSelection(const wxGridCellCoordsArray& selection);
     
 private:
-    stf::Table table;
+    stfnum::Table table;
 };
 
 /*@}*/

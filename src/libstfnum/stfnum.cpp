@@ -13,7 +13,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 // core.cpp
-// Some definitions of functions declared in the stf:: namespace
+// Some definitions of functions declared in the stfnum:: namespace
 // last revision: 07-23-2006
 // C. Schmidt-Hieber
 
@@ -21,37 +21,148 @@
 #include <limits>
 #include <algorithm>
 
-#include "stfmath.h"
+#include "stfnum.h"
 #include "fit.h"
 #include "funclib.h"
 
-double stf::fboltz(double x, const Vector_double& pars) {
+int isnan(double x) { return x != x; }
+int isinf(double x) { return !isnan(x) && isnan(x - x); }
+
+stfnum::Table::Table(std::size_t nRows,std::size_t nCols) :
+values(nRows,std::vector<double>(nCols,1.0)),
+    empty(nRows,std::deque<bool>(nCols,false)),
+    rowLabels(nRows, "\0"),
+    colLabels(nCols, "\0")
+    {}
+
+stfnum::Table::Table(const std::map< std::string, double >& map)
+: values(map.size(),std::vector<double>(1,1.0)), empty(map.size(),std::deque<bool>(1,false)),
+rowLabels(map.size(), "\0"), colLabels(1, "Results")
+{
+    std::map< std::string, double >::const_iterator cit;
+    sst_it it1 = rowLabels.begin();
+    std::vector< std::vector<double> >::iterator it2 = values.begin();
+    for (cit = map.begin();
+         cit != map.end() && it1 != rowLabels.end() && it2 != values.end();
+         cit++)
+    {
+        (*it1) = cit->first;
+        it2->at(0) = cit->second;
+        it1++;
+        it2++;
+    }
+}
+
+double stfnum::Table::at(std::size_t row,std::size_t col) const {
+    try {
+        return values.at(row).at(col);
+    }
+    catch (...) {
+        throw;
+    }
+}
+
+double& stfnum::Table::at(std::size_t row,std::size_t col) {
+    try {
+        return values.at(row).at(col);
+    }
+    catch (...) {
+        throw;
+    }
+}
+
+bool stfnum::Table::IsEmpty(std::size_t row,std::size_t col) const {
+    try {
+        return empty.at(row).at(col);
+    }
+    catch (...) {
+        throw;
+    }
+}
+
+void stfnum::Table::SetEmpty(std::size_t row,std::size_t col,bool value) {
+    try {
+        empty.at(row).at(col)=value;
+    }
+    catch (...) {
+        throw;
+    }
+}
+
+void stfnum::Table::SetRowLabel(std::size_t row,const std::string& label) {
+    try {
+        rowLabels.at(row)=label;
+    }
+    catch (...) {
+        throw;
+    }
+}
+
+void stfnum::Table::SetColLabel(std::size_t col,const std::string& label) {
+    try {
+        colLabels.at(col)=label;
+    }
+    catch (...) {
+        throw;
+    }
+}
+
+const std::string& stfnum::Table::GetRowLabel(std::size_t row) const {
+    try {
+        return rowLabels.at(row);
+    }
+    catch (...) {
+        throw;
+    }
+}
+
+const std::string& stfnum::Table::GetColLabel(std::size_t col) const {
+    try {
+        return colLabels.at(col);
+    }
+    catch (...) {
+        throw;
+    }
+}
+
+void stfnum::Table::AppendRows(std::size_t nRows_) {
+    std::size_t oldRows=nRows();
+    rowLabels.resize(oldRows+nRows_);
+    values.resize(oldRows+nRows_);
+    empty.resize(oldRows+nRows_);
+    for (std::size_t nRow = 0; nRow < oldRows + nRows_; ++nRow) {
+        values[nRow].resize(nCols());
+        empty[nRow].resize(nCols());
+    }
+}
+
+double stfnum::fboltz(double x, const Vector_double& pars) {
     double arg=(pars[0]-x)/pars[1];
     double ex=exp(arg);
     return 1/(1+ex);
 }
 
-double stf::fbessel(double x, int n) {
+double stfnum::fbessel(double x, int n) {
     double sum=0.0;
     for (int k=0;k<=n;++k) {
-        int fac1=stf::fac(2*n-k);
-        int fac2=stf::fac(n-k);
-        int fac3=stf::fac(k);
+        int fac1=stfnum::fac(2*n-k);
+        int fac2=stfnum::fac(n-k);
+        int fac3=stfnum::fac(k);
         sum+=fac1/(fac2*fac3)*pow(x,k)/pow2(n-k);
     }
     return sum;
 }
 
-double stf::fbessel4(double x, const Vector_double& pars) {
+double stfnum::fbessel4(double x, const Vector_double& pars) {
     // normalize so that attenuation is -3dB at cutoff:
     return fbessel(0,4)/fbessel(x*0.355589/pars[0],4);
 }
 
-double stf::fgaussColqu(double x, const Vector_double& pars) {
+double stfnum::fgaussColqu(double x, const Vector_double& pars) {
     return exp(-0.3466*(x/pars[0])*(x/pars[0]));
 }
 
-int stf::fac(int arg) {
+int stfnum::fac(int arg) {
     if (arg<=1) {
         return 1;
     } else {
@@ -60,11 +171,11 @@ int stf::fac(int arg) {
 }
 
 Vector_double
-stf::filter( const Vector_double& data, std::size_t filter_start,
+stfnum::filter( const Vector_double& data, std::size_t filter_start,
         std::size_t filter_end, const Vector_double &a, int SR,
-        stf::Func func, bool inverse ) {
+        stfnum::Func func, bool inverse ) {
     if (data.size()<=0 || filter_start>=data.size() || filter_end > data.size()) {
-        std::out_of_range e("subscript out of range in stf::filter()");
+        std::out_of_range e("subscript out of range in stfnum::filter()");
         throw e;
     }
     std::size_t filter_size=filter_end-filter_start+1;
@@ -121,7 +232,7 @@ stf::filter( const Vector_double& data, std::size_t filter_start,
 }
 
 Vector_double
-stf::detectionCriterion(const Vector_double& data, const Vector_double& templ, stfio::ProgressInfo& progDlg)
+stfnum::detectionCriterion(const Vector_double& data, const Vector_double& templ, stfio::ProgressInfo& progDlg)
 {
     bool skipped=false;
     // variable names are taken from Clements & Bekkers (1997) as long
@@ -139,7 +250,7 @@ stf::detectionCriterion(const Vector_double& data, const Vector_double& templ, s
     double y_old=0.0;
     double y2_old=0.0;
     int progCounter=0;
-    double progFraction=(data.size()-templ.size())/100;
+    double progFraction=(data.size()-templ.size())/100.0;
     for (unsigned n_data=0; n_data<data.size()-templ.size(); ++n_data) {
         if (n_data/progFraction>progCounter) {
             progDlg.Update( (int)((double)n_data/(double)(data.size()-templ.size())*100.0),
@@ -180,7 +291,7 @@ stf::detectionCriterion(const Vector_double& data, const Vector_double& templ, s
 }
 
 std::vector<int>
-stf::peakIndices(const Vector_double& data, double threshold,
+stfnum::peakIndices(const Vector_double& data, double threshold,
                  int minDistance)
 {
     // to avoid unnecessary copying, we first reserve quite
@@ -195,7 +306,7 @@ stf::peakIndices(const Vector_double& data, double threshold,
             // ... and if so, find the data point where the threshold
             // is crossed again in the opposite direction, ...
             for (;;) {
-                if (n_data>data.size()-1) {
+                if (n_data>data.size()-2) {
                     ulp=(int)data.size()-1;
                     break;
                 }
@@ -224,15 +335,15 @@ stf::peakIndices(const Vector_double& data, double threshold,
 }
 
 Vector_double
-stf::linCorr(const Vector_double& data, const Vector_double& templ, stfio::ProgressInfo& progDlg)
+stfnum::linCorr(const Vector_double& data, const Vector_double& templ, stfio::ProgressInfo& progDlg)
 {
     bool skipped = false;
     // the template has to be smaller than the data waveform:
     if (data.size()<templ.size()) {
-        throw std::runtime_error("Template larger than data in stf::crossCorr");
+        throw std::runtime_error("Template larger than data in stfnum::crossCorr");
     }
     if (data.size()==0 || templ.size()==0) {
-        throw std::runtime_error("Array of size 0 in stf::crossCorr");
+        throw std::runtime_error("Array of size 0 in stfnum::crossCorr");
     }
     Vector_double Corr(data.size()-templ.size());
 
@@ -249,7 +360,7 @@ stf::linCorr(const Vector_double& data, const Vector_double& templ, stfio::Progr
     double y_old=0.0;
     double y2_old=0.0;
     int progCounter=0;
-    double progFraction=(data.size()-templ.size())/100;
+    double progFraction=(data.size()-templ.size())/100.0;
     for (unsigned n_data=0; n_data<data.size()-templ.size(); ++n_data) {
         if (n_data/progFraction>progCounter) {
             progDlg.Update( (int)((double)n_data/(double)(data.size()-templ.size())*100.0),
@@ -312,7 +423,7 @@ stf::linCorr(const Vector_double& data, const Vector_double& templ, stfio::Progr
     return Corr;
 }
 
-double stf::integrate_simpson(
+double stfnum::integrate_simpson(
         const Vector_double& input,
         std::size_t i1,
         std::size_t i2,
@@ -322,7 +433,7 @@ double stf::integrate_simpson(
     // Use composite Simpson's rule to approximate the definite integral of f from a to b
     // check for out-of-range:
     if (i2>=input.size() || i1>=i2) {
-        throw std::out_of_range( "integration interval out of range in stf::integrate_simpson" );
+        throw std::out_of_range( "integration interval out of range in stfnum::integrate_simpson" );
     }
     bool even = std::div((int)i2-(int)i1,2).rem==0;
 
@@ -353,14 +464,14 @@ double stf::integrate_simpson(
     return sum;
 }
 
-double stf::integrate_trapezium(
+double stfnum::integrate_trapezium(
         const Vector_double& input,
         std::size_t i1,
         std::size_t i2,
         double x_scale
 ) {
     if (i2>=input.size() || i1>=i2) {
-        throw std::out_of_range( "integration interval out of range in stf::integrate_trapezium" );
+        throw std::out_of_range( "integration interval out of range in stfnum::integrate_trapezium" );
     }
     double a = i1 * x_scale;
     double b = i2 * x_scale;
@@ -384,16 +495,16 @@ extern "C" {
 #endif
 
 int
-stf::linsolv( int m, int n, int nrhs, Vector_double& A,
+stfnum::linsolv( int m, int n, int nrhs, Vector_double& A,
               Vector_double& B)
 {
 #ifndef TEST_MINIMAL
     if (A.size()<=0) {
-        throw std::runtime_error("Matrix A has size 0 in stf::linsolv");
+        throw std::runtime_error("Matrix A has size 0 in stfnum::linsolv");
     }
 
     if (B.size()<=0) {
-        throw std::runtime_error("Matrix B has size 0 in stf::linsolv");
+        throw std::runtime_error("Matrix B has size 0 in stfnum::linsolv");
     }
 
     if (A.size()!= std::size_t(m*n)) {
@@ -495,7 +606,7 @@ stf::linsolv( int m, int n, int nrhs, Vector_double& A,
     return 0;
 }
 
-Vector_double stf::quad(const Vector_double& data, std::size_t begin, std::size_t end) {
+Vector_double stfnum::quad(const Vector_double& data, std::size_t begin, std::size_t end) {
 
     // Solve quadratic equations relating 3 sample points a time
     
@@ -524,7 +635,7 @@ Vector_double stf::quad(const Vector_double& data, std::size_t begin, std::size_
             B[1]=data[n+1];
             B[2]=data[n+2];
             try {
-                stf::linsolv(3,3,1,A,B);
+                stfnum::linsolv(3,3,1,A,B);
             }
             catch (...) {
                 throw;
@@ -537,23 +648,23 @@ Vector_double stf::quad(const Vector_double& data, std::size_t begin, std::size_
     return quad_p;
 }
 
-Vector_double stf::nojac(double x, const Vector_double& p) {
+Vector_double stfnum::nojac(double x, const Vector_double& p) {
     return Vector_double(0);
 }
 
-double stf::noscale(double param, double xscale, double oldx, double yscale, double yoff) {
+double stfnum::noscale(double param, double xscale, double oldx, double yscale, double yoff) {
     return param;
 }
 
-stf::Table stf::defaultOutput(
+stfnum::Table stfnum::defaultOutput(
 	const Vector_double& pars,
-	const std::vector<stf::parInfo>& parsInfo,
+	const std::vector<stfnum::parInfo>& parsInfo,
     double chisqr
 ) {
 	if (pars.size()!=parsInfo.size()) {
-		throw std::out_of_range("index out of range in stf::defaultOutput");
+		throw std::out_of_range("index out of range in stfnum::defaultOutput");
 	}
-        stf::Table output(pars.size()+1,1);
+        stfnum::Table output(pars.size()+1,1);
 	try {
 		output.SetColLabel(0,"Best-fit value");
 		for (std::size_t n_p=0;n_p<pars.size(); ++n_p) {
@@ -570,7 +681,7 @@ stf::Table stf::defaultOutput(
 }
 
 std::map<double, int>
-stf::histogram(const Vector_double& data, int nbins) {
+stfnum::histogram(const Vector_double& data, int nbins) {
 
     if (nbins==-1) {
         nbins = int(data.size()/100.0);
@@ -594,20 +705,27 @@ stf::histogram(const Vector_double& data, int nbins) {
 }
 
 Vector_double
-stf::deconvolve(const Vector_double& data, const Vector_double& templ,
+stfnum::deconvolve(const Vector_double& dataIn, const Vector_double& templ,
                 int SR, double hipass, double lopass, stfio::ProgressInfo& progDlg)
 {
+	// Normalize data
+    double fmax = *std::max_element(dataIn.begin(), dataIn.end());
+    double fmin = *std::min_element(dataIn.begin(), dataIn.end());
+    Vector_double data = stfio::vec_scal_minus(dataIn, fmin);
+    data = stfio::vec_scal_div(data, fmax-fmin);
+
     bool skipped = false;
     progDlg.Update( 0, "Starting deconvolution...", &skipped );
     if (data.size()<=0 || templ.size() <=0 || templ.size() > data.size()) {
-        std::out_of_range e("subscript out of range in stf::filter()");
+        std::out_of_range e("subscript out of range in stfnum::filter()");
         throw e;
     }
     /* pad templ */
-    Vector_double templ_padded(data.size());
-    std::copy(templ.begin(), templ.end(), templ_padded.begin());
-    if (templ.size() < templ_padded.size()) {
-        std::fill(templ_padded.begin()+templ.size(), templ_padded.end(), 0);
+    double* in_templ_padded =(double *)fftw_malloc(sizeof(double) * data.size());
+    std::copy(templ.begin(), templ.end(), in_templ_padded);
+    if (templ.size() < data.size()) {
+        for (int kp=templ.size(); kp<data.size(); ++kp)
+            in_templ_padded[kp] = 0;
     }
 
     Vector_double data_return(data.size());
@@ -616,27 +734,26 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
         return data_return;
     }
 
-    double *in_data, *in_templ_padded;
     //fftw_complex is a double[2]; hence, out is an array of
     //double[2] with out[n][0] being the real and out[n][1] being
     //the imaginary part.
-    fftw_complex *out_data, *out_templ_padded;
     fftw_plan p_data, p_templ, p_inv;
 
     //memory allocation as suggested by fftw:
-    in_data =(double *)fftw_malloc(sizeof(double) * data.size());
-    out_data = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * ((int)(data.size()/2)+1));
-    in_templ_padded =(double *)fftw_malloc(sizeof(double) * templ_padded.size());
-    out_templ_padded = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * ((int)(templ_padded.size()/2)+1));
-
-    std::copy(data.begin(), data.end(), &in_data[0]);
-    std::copy(templ_padded.begin(), templ_padded.end(), &in_templ_padded[0]);
+    double* in_data =(double *)fftw_malloc(sizeof(double) * data.size());
+    std::copy(data.begin(), data.end(), in_data);
+    fftw_complex* out_data = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * ((int)(data.size()/2)+1));
 
     //plan the ffts and execute them:
     p_data =fftw_plan_dft_r2c_1d((int)data.size(), in_data, out_data,
                                  FFTW_ESTIMATE);
     fftw_execute(p_data);
-    p_templ =fftw_plan_dft_r2c_1d((int)templ_padded.size(),
+    if (isnan(out_data[0][0]) || isinf(out_data[0][0])) {
+        data_return.resize(0);
+        throw std::runtime_error("Unstable fft; try again avoiding any test pulses (if present)");
+    }
+    fftw_complex* out_templ_padded = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * ((int)(data.size()/2)+1));
+    p_templ =fftw_plan_dft_r2c_1d((int)data.size(),
                                   in_templ_padded, out_templ_padded, FFTW_ESTIMATE);
     fftw_execute(p_templ);
 
@@ -646,6 +763,7 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
         data_return.resize(0);
         return data_return;
     }
+
     Vector_double f_c(1);
     for (std::size_t n_point=0; n_point < (unsigned int)(data.size()/2)+1; ++n_point) {
         /* highpass filter */
@@ -698,7 +816,7 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
         data_return.resize(0);
         return data_return;
     }
-    int nbins =  int(data_return.size()/500.0);
+    int nbins =  500; //int(data_return.size()/500.0);
     std::map<double, int> histo = histogram(data_return, nbins);
     double max_value = -1;
     double max_time = 0;
@@ -728,14 +846,12 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
         data_return.resize(0);
         return data_return;
     }
-    /* Fit Gaussian to histogram */
-    Vector_double opts = LM_default_opts();
-
-    std::string info;
-    int warning;
-    std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
     
+    /* Fit Gaussian to histogram */
     double interval = (++histo.begin())->first-histo.begin()->first;
+    if (maxhalf_time==0) {
+        maxhalf_time = interval;
+    }
     /* Initial parameter guesses */
     Vector_double pars(3);
     pars[0] = max_value;
@@ -749,10 +865,14 @@ stf::deconvolve(const Vector_double& data, const Vector_double& templ,
     }
 #endif
 
+    Vector_double opts = LM_default_opts();
+    std::vector< stfnum::storedFunc > funcLib = stfnum::GetFuncLib();
+    std::string info;
+    int warning;
 #ifdef _STFDEBUG
     double chisqr =
 #endif
-        lmFit(histo_fit, interval, funcLib[funcLib.size()-1], opts, true,
+        lmFit(histo_fit, interval, funcLib[funcLib.size()-2], opts, true,
               pars, info, warning );
 #ifdef _STFDEBUG
     std::cout << chisqr << "\t" << interval << std::endl;

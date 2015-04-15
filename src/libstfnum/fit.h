@@ -26,10 +26,10 @@
 #ifndef _FITLIB_H
 #define _FITLIB_H
 
-#include "./stfmath.h"
+#include "./stfnum.h"
 #include <deque>
 
-namespace stf {
+namespace stfnum {
 
 /*! \addtogroup stfgen
  *  @{
@@ -53,7 +53,7 @@ T linFit(
 //! Uses the Levenberg-Marquardt algorithm to perform a non-linear least-squares fit.
 /*! \param data A valarray containing the data.
  *  \param dt The sampling interval of \e data.
- *  \param fitFunc An stf::storedFunc to be fitted to \e data.
+ *  \param fitFunc An stfnum::storedFunc to be fitted to \e data.
  *  \param opts Options controlling Lourakis' implementation of the algorithm.
  *  \param use_scaling Whether to scale x and y-amplitudes to 1.0
  *  \param p \e func's parameters. Should be set to an initial guess 
@@ -62,9 +62,9 @@ T linFit(
  *  \param warning A warning code on return.
  *  \return The sum of squred errors between \e data and the best-fit function.
  */
-double StfDll lmFit(const Vector_double& data, double dt,
-                    const stf::storedFunc& fitFunc, const Vector_double& opts,
-                    bool use_scaling, Vector_double& p, std::string& info, int& warning );
+double StfioDll lmFit(const Vector_double& data, double dt,
+                      const stfnum::storedFunc& fitFunc, const Vector_double& opts,
+                      bool use_scaling, Vector_double& p, std::string& info, int& warning );
 
 //! Linear function.
 /*! \f[f(x)=p_0 x + p_1\f]
@@ -76,13 +76,14 @@ double StfDll lmFit(const Vector_double& data, double dt,
  */
 double flin(double x, const Vector_double& p);
 
-//! Dummy function to be passed to stf::storedFunc for linear functions.
+//! Dummy function to be passed to stfnum::storedFunc for linear functions.
 void flin_init(const Vector_double& data, double base, double peak,
         double RTLoHi, double HalfWidth, double dt, Vector_double& pInit );
 
 //! initializes a linear function
-/*! \return An stf::storedFunc that can be used to store a linear function after a fit */
-stf::storedFunc initLinFunc();
+/*! \return An stfnum::storedFunc that can be used to store a linear function after a fit */
+StfioDll
+stfnum::storedFunc initLinFunc();
 
 //! Compute and perform normalisation
 /*! \param data Data vector; will be scaled upon return
@@ -103,7 +104,7 @@ Vector_double LM_default_opts();
 }
 
 template <typename T>
-T stf::linFit(const std::vector<T>& x,
+T stfnum::linFit(const std::vector<T>& x,
         const std::vector<T>& y,
         T& m,
         T& c)

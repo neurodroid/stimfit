@@ -1,0 +1,112 @@
+#!/usr/bin/make -f
+# Sample debian/rules that uses debhelper. 
+# This file is public domain software, originally written by Joey Hess.
+#
+# This version is for packages that are architecture independent.
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+
+DEBPREFIX=$(CURDIR)/debian/tmp/usr
+PYVER   := $(shell pyversions -vd)
+
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+	NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+	MAKEFLAGS += -j$(NUMJOBS)
+endif
+
+ifneq ($(wildcard /usr/lib/$(DEB_HOST_MULTIARCH)/hdf5/serial/libhdf5.so),)
+  export DEB_CPPFLAGS_MAINT_APPEND := -I/usr/include/hdf5/serial
+  export DEB_LDFLAGS_MAINT_APPEND := -Wl,-L/usr/lib/$(DEB_HOST_MULTIARCH)/hdf5/serial
+endif
+
+build: build-arch build-indep
+build-arch: build-stamp
+build-indep: build-stamp
+build-stamp:
+	dh_testdir
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp
+
+#       Add here commands to clean up after the build process.
+	rm -rf ./.libs ./_libs ./.deps ./.stimfit
+	rm -rf $(CURDIR)/man
+	find -name '*.o' | xargs -r rm -f
+	find -name '*.lo' | xargs -r rm -f
+	find -name '*.a' | xargs -r rm -f
+	find -name '*.la' | xargs -r rm -f
+	find -name '*.so' | xargs -r rm -f
+	rm -f $(CURDIR)/test.h5
+#	dh_autoreconf_clean
+	dh_clean
+
+install: build
+#	dh_autoreconf
+	./configure --enable-python --enable-debian --without-biosig --prefix=$(DEBPREFIX)
+	$(MAKE)
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+	$(MAKE) check
+endif
+	$(MAKE) install
+
+	./configure --enable-module --enable-debian --without-biosig --prefix=$(DEBPREFIX)
+	$(MAKE)
+	$(MAKE) install
+
+	mkdir $(CURDIR)/man && \
+	  cp ./debian/stimfit.1 ./man/stimfit.1
+
+	touch build-stamp
+
+	dh_testroot
+#       dh_prep
+	dh_installdirs
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs -X./ChangeLog
+	dh_installdocs
+	dh_installexamples
+	dh_installmenu -pstimfit
+#	dh_installdebconf
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installcatalogs
+#	dh_installpam
+	dh_installmime -pstimfit
+#	dh_installinit
+#	dh_installcron
+#	dh_installinfo
+#	dh_installwm
+#	dh_installudev
+#	dh_lintian
+#	dh_bugfiles
+#	dh_undocumented
+	dh_python
+	dh_installman $(CURDIR)/man/stimfit.1
+	dh_install --sourcedir=$(CURDIR)/debian/tmp
+	dh_link
+	dh_compress
+	dh_strip --dbg-package=stimfit-dbg
+	dh_fixperms
+	dh_icons
+#	dh_perl
+	[ -x /usr/bin/dh_python2 ] && dh_python2 -V$(PYVER) || :
+	[ -x /usr/bin/dh_numpy ] && dh_numpy || :
+	dh_makeshlibs
+	dh_shlibdeps
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install

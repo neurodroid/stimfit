@@ -5,7 +5,7 @@ Prerequisites
 :Author: Christoph Schmidt-Hieber
 :Date:    |today|
 
-This document describes how to build `Stimfit <http://www.stimfit.org>`_ version |version| on Windows. I strongly recommend sticking to the suggested directory names. If for any reason you'd like to use different target directories, you'll have to update all the property sheets (Config.vsprops) in the Visual Studio solution.
+This document describes how to build a 64-bit version of `Stimfit <http://www.stimfit.org>`_ on Windows. I strongly recommend sticking to the suggested directory names. If for any reason you'd like to use different target directories, you'll have to update all the property sheets (Config.vsprops) in the Visual Studio solution.
 
 Getting all the prerequisites takes about an hour, but only needs to be completed once. Building the full solution takes about 3 minutes.
 
@@ -17,9 +17,11 @@ The official Windows version of Python 2.7 was built with Visual Studio 2008. We
 
 64-bit
 ------
-Visual C++ Express 2008 will not build 64-bit targets out of the box. However, this capability can be added by installing the Windows SDK and making some registry edits. Follow the instructions here to do this: :doc:`VCExpress64bitsetup`. Note that if you have the full rather than express version of Visual C++, this should not be necessary.
+Visual C++ Express 2008 will not build 64-bit targets out of the box. This capability has to be added by installing the Windows SDK and making some registry edits. Follow the instructions here to do this: :doc:`VCExpress64bitsetup`. Note that if you have the full rather than express version of Visual C++, this should not be necessary.
 
-You also need 64-bit versions of all the required libraries. Where you see win32 or 32-bit below, get the corresponding 64-bit version instead.
+You also need 64-bit versions of all the required libraries.
+
+We have dropped support for 32-bit with version 0.14.
 
 =========
 Libraries
@@ -27,7 +29,7 @@ Libraries
 
 HDF5
 ----
-Get the HDF5 libraries from `here <http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.13/bin/windows/>`_. Use hdf5-1.8.13-win32-VS2008-shared.zip. Extract the zip file, and then install to a folder called "hdf5" in your home directory (e.g. C:\\Users\\username) using the extracted executable.
+Get the HDF5 libraries from `here <http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.13/bin/windows/>`_. Use hdf5-1.8.13-win64-VS2008-shared.zip. Extract the zip file, and then install to a folder called "hdf5" in your home directory (e.g. C:\\Users\\username) using the extracted executable.
 
 Boost
 -----
@@ -35,7 +37,7 @@ Get the `Boost C++ libraries <http://www.boost.org>`_. Move the extracted folder
 
 Python
 ------
-Download and install `Python 2.7 <http://www.python.org>`_. Make sure to install it for all users so that it ends up in C:\\Python27
+Download and install the 64-bit version of `Python 2.7 <http://www.python.org>`_. Make sure to install it for all users so that it ends up in C:\\Python27
 
 PyEMF
 -----
@@ -43,40 +45,35 @@ Get PyEMF 2.0.0 from `here <http://sourceforge.net/projects/pyemf/files/latest/d
 
 NumPy
 -----
-Install NumPy from `here <http://sourceforge.net/projects/numpy/files/NumPy/>`_. Use the win32 "superpack" for Python 2.7.
+Install NumPy from `Chris Gohlke's repository <http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy>`_. Use the win64 (amd64) wheel for Python 2.7. Install by executing ``pip install *.whl``.
 
 Matplotlib
 ----------
-Install Matplotlib from `here <http://matplotlib.org/downloads.html>`_. Use the win32 version for Python 2.7.
+Install matplotlib from `Chris Gohlke's repository <http://www.lfd.uci.edu/~gohlke/pythonlibs/#matplotlib>`_. Use the win64 (amd64) wheel for Python 2.7. Install by executing ``pip install *.whl``.
 
 wxWidgets
 ---------
-Get the prebuilt wxWidgets 3.0 libraries from the wxPython site `here <http://www.wxpython.org/download.php#unstable>`_. Choose the "32-bit binaries for MSVC 9" in the "Windows Development Files" section. Install to your home directory. Rename the folder to "wx".
+Get the prebuilt wxWidgets 3.0 libraries from the wxPython site `here <http://www.wxpython.org/download.php#unstable>`_. Choose the "64-bit binaries for MSVC 9" in the "Windows Development Files" section. Install to your home directory. Rename the folder to "wx".
 
 wxPython
 --------
-Get wxPython 3.0 from `here <http://www.wxpython.org/download.php#unstable>`_. Choose the 32-bit version for Python 2.7 in the "Windows Binaries" section. Install to your home directory(_not_ to C:\\Python27\\*!). Rename the folder to "wxPython".
+Get wxPython 3.0 from `here <http://www.wxpython.org/download.php#unstable>`_. Choose the 64-bit version for Python 2.7 in the "Windows Binaries" section. Install to your home directory(_not_ to C:\\Python27\\*!). Rename the folder to "wxPython".
 
 FFTW
 ----
-Get the latest 32-bit fftw dlls from `here <http://fftw.org/install/windows.html>`_. Extract to a folder called "fftw" in your home directory. As instructed on the fftw install page, open the Visual Studio Command Prompt that is in the Visual Studio Tools section of the Program menu. cd into the fftw folder and type:
-
-``C:\Users\username\fftw> lib /def:libfftw3-3.def``
-
-``C:\Users\username\fftw> lib /def:libfftw3f-3.def``
-
-``C:\Users\username\fftw> lib /def:libfftw3l-3.def``
+The latest fftw development files are avaible `here <http://www.stimfit.org/libs>`_. Download the zip file and extract to a folder called "fftw" in your home directory. Make sure that the files are at the top level of this fftw folder. These development files were prepared from the latest 64-bit fftw dlls from `here <http://fftw.org/install/windows.html>`_.
 
 BLAS/LAPACK
 -----------
-Get the precompiled BLAS/LAPACK libraries from `here <https://code.google.com/p/stimfit/downloads/detail?name=VS2008_libs.zip>`_. They will be moved into a library folder within the stimfit tree later.
+Get the precompiled 64-bit BLAS/LAPACK libraries from `here <http://www.stimfit.org/libs>`_. They will be moved into a library folder within the stimfit tree later. They were obtained `from the official LAPACK site <http://www.netlib.org/clapack/LIB_WINDOWS/prebuilt_libraries_windows.html>`_ using the "nowrap" versions.
 
 libbiosig
 ---------
-Get the latest 32-bit biosig dlls from `here <http://biosig.sourceforge.net/download.html>`_. Extract to a folder called "biosig" in your home directory. Similar to fftw, open the Visual Studio Command Prompt that is in the Visual Studio Tools section of the Program menu. cd into the biosig folder and type:
+Get the 64-bit biosig development files from `here <http://www.stimfit.org/libs>`_. They were prepared using `mxe <http://mxe.cc/>`_ and converted with Visual Studio's lib tool. Extract to a folder called "biosig" in your home directory. Make sure that the files and folders are directly in the top-level biosig folder.
 
-``C:\Users\username\biosig> lib /def:libbiosig2.def``
-
+Python modules
+--------------
+A package with all Python modules that Stimfit requires to run (numpy, matplotlib and their dependencies) is available `here <http://www.stimfit.org/libs>`_. They were compiled by `Christoph Gohlke <http://www.lfd.uci.edu/~gohlke/pythonlibs/>`_. Unzip them to a folder "stf-site-packages" in your home directory. They will be required to produce an installer with nsis.
 
 ===========
 Build Tools
@@ -84,7 +81,7 @@ Build Tools
 
 SWIG
 ----
-`Cygwin <http://www.cygwin.com>`_ has SWIG in its repositories. Otherwise, you can download it from `here <http://www.swig.org>`_. At any rate, make sure that the binary is located in C:\\cygwin64\\bin\\swig.exe.
+`Cygwin <http://www.cygwin.com>`_ has SWIG in its repositories. Some users have reported issues with Cygwin's SWIG, so you might be better off downloading the precompiled Windows binary from `here <http://www.swig.org>`_. At any rate, make sure that the binary is located in C:\\cygwin64\\bin\\swig.exe.
 
 git
 ---

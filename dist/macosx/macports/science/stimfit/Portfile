@@ -1,11 +1,12 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
-# $Id: Portfile 123274 2014-08-07 19:50:24Z mmoll@macports.org $
+# $Id$
 
 PortSystem          1.0
 PortGroup           wxWidgets 1.0
 
 name                stimfit
-version             0.14.0
+version             0.14.9
+
 categories          science
 platforms           darwin
 license             GPL-2
@@ -13,10 +14,10 @@ maintainers         gmx.de:christsc
 description         Electrophysiology analysis suite
 long_description    A program for viewing and analyzing electrophysiological data
 homepage            http://www.stimfit.org
-master_sites        http://www.stimfit.org
+master_sites        ${homepage}
 
-checksums           rmd160  3e8e08992e6fbebc3a3f728dcfd27088400ca996 \
-                    sha256  e05dc10de6e039a196936aab2c971a07094db79f8b3be870df6bfa6f67c5d50d
+checksums           rmd160  2df776f2803206f57fed615abb6d2222beba3075 \
+                    sha256  23e9e5c90bf9744579127338d5bbc82f38b5870c9abbdac5b11dc2c99c177dae
 
 wxWidgets.use       wxPython-3.0
 
@@ -44,10 +45,8 @@ variant python27 description {Build with Python shell.} {
     configure.python \
         ${prefix}/bin/python2.7
 
-    configure.args-delete \
-        --disable-python
-
-    configure.args-append \
+    configure.args-replace \
+        --disable-python \
         --enable-python
 }
 

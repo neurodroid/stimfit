@@ -1,6 +1,6 @@
 #include "../stimfit/stf.h"
-#include "../stimfit/math/fit.h"
-#include "../stimfit/math/funclib.h"
+#include "../libstfnum/fit.h"
+#include "../libstfnum/funclib.h"
 #include <gtest/gtest.h>
 #include <cmath>
 #include <fstream>
@@ -13,10 +13,10 @@ const static float dt = 1/100.0; /* sampling interval of data in ms */
 const static float tol = dt; /* 1 sampling interval */
 
 /* list of available fitting functions, see /src/stimfit/math/funclib.cpp */
-const static std::vector< stf::storedFunc > funcLib = stf::GetFuncLib();
+const static std::vector< stfnum::storedFunc > funcLib = stfnum::GetFuncLib();
 
 /* Fitting options for the LM algorithm, see /src/stimfit/math/fit.h */
-const Vector_double opts = stf::LM_default_opts();
+const Vector_double opts = stfnum::LM_default_opts();
 
 //=========================================================================
 // Simple monoexponential function
@@ -51,7 +51,7 @@ Vector_double fexpde(const Vector_double &param){
     Vector_double mydata (int (tmax/dt));
 
     for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
-        mydata[n] = stf::fexpde(n*dt, param);
+        mydata[n] = stfnum::fexpde(n*dt, param);
     }
    
     return mydata;
@@ -71,7 +71,7 @@ Vector_double fexp(const Vector_double &param){
     Vector_double mydata (int (tmax/dt));
 
     for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
-        mydata[n] = stf::fexp(n*dt, param);
+        mydata[n] = stfnum::fexp(n*dt, param);
     }
     
     return mydata;
@@ -91,7 +91,7 @@ Vector_double fexpbde(const Vector_double &param){
     Vector_double mydata (int(tmax/dt));
     
     for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
-        mydata[n] = stf::fexpbde(n*dt, param);
+        mydata[n] = stfnum::fexpbde(n*dt, param);
     }
     
     return mydata;
@@ -109,7 +109,7 @@ Vector_double falpha(const Vector_double &param){
     Vector_double mydata (int(tmax/dt));
     
     for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
-        mydata[n] = stf::falpha(n*dt, param);
+        mydata[n] = stfnum::falpha(n*dt, param);
     }
     
     return mydata;
@@ -130,7 +130,7 @@ Vector_double fHH(const Vector_double &param){
     Vector_double mydata (int(tmax/dt));
     
     for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
-        mydata[n] = stf::fHH(n*dt, param);
+        mydata[n] = stfnum::fHH(n*dt, param);
     }
     
     return mydata;
@@ -151,7 +151,7 @@ Vector_double fgnabiexp(const Vector_double &param){
     Vector_double mydata (int(tmax/dt));
     
     for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
-        mydata[n] = stf::fgnabiexp(n*dt, param);
+        mydata[n] = stfnum::fgnabiexp(n*dt, param);
     }
     
     return mydata;
@@ -171,7 +171,7 @@ Vector_double fgauss(const Vector_double &param){
     Vector_double mydata (int(tmax/dt));
     
     for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
-        mydata[n] = stf::fgauss(n*dt, param);
+        mydata[n] = stfnum::fgauss(n*dt, param);
     }
     
     return mydata;
@@ -228,7 +228,7 @@ TEST(fitlib_test, monoexponential) {
     // Respectively the scale factor for initial \mu,
     // stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2,
     // maxIter, maxPass
-    Vector_double opts = stf::LM_default_opts();
+    Vector_double opts = stfnum::LM_default_opts();
 
     /* Initial parameter guesses */
     Vector_double pars(3);
@@ -238,7 +238,7 @@ TEST(fitlib_test, monoexponential) {
 
     std::string info;
     int warning;
-    double chisqr = lmFit(data, 1.0, funcLib[0], opts, 
+    double chisqr = stfnum::lmFit(data, 1.0, funcLib[0], opts, 
         true, /*use_scaling*/
         pars, info, warning );
 
@@ -288,7 +288,7 @@ TEST(fitlib_test, id_00_monoexponential){
     std::string info;
     int warning;
 
-    double chisqr = lmFit(data, dt, funcLib[0], opts, 
+    double chisqr = stfnum::lmFit(data, dt, funcLib[0], opts, 
         true, /* use_scaling */
         pars, info, warning );
 
@@ -335,7 +335,7 @@ TEST(fitlib_test, id_01_monoexponential_offsetfixed){
     std::string info;
     int warning;
 
-    double chisqr = lmFit(data, dt, funcLib[1], opts, 
+    double chisqr = stfnum::lmFit(data, dt, funcLib[1], opts, 
         true, /* use_scaling */
         pars, info, warning );
 
@@ -382,7 +382,7 @@ TEST(fitlib_test, id_02_monoexponential_with_delay){
 
     std::string info;
     int warning;
-    double chisqr = lmFit(data, dt, funcLib[2], opts, 
+    double chisqr = stfnum::lmFit(data, dt, funcLib[2], opts, 
         true, /*use_scaling*/
         pars, info, warning );
 
@@ -431,7 +431,7 @@ TEST(fitlib_test, id_03_biexponential){
     std::string info;
     int warning;
 
-    double chisqr = lmFit(data, dt, funcLib[3], opts,  
+    double chisqr = stfnum::lmFit(data, dt, funcLib[3], opts,  
         true, /*use_scaling*/
         pars, info, warning );
 
@@ -484,7 +484,7 @@ TEST(fitlib_test, id_04_biexponential_offsetfixed){
     std::string info;
     int warning;
 
-    double chisqr = lmFit(data, dt, funcLib[4], opts, 
+    double chisqr = stfnum::lmFit(data, dt, funcLib[4], opts, 
         true, /*use_scaling*/
         pars, info, warning );
 
@@ -533,7 +533,7 @@ TEST(fitlib_test, id_05_biexponential_with_delay_offsetfixed){
     std::string info;
     int warning;
 
-    double chisqr = lmFit(data, dt, funcLib[5], opts,  
+    double chisqr = stfnum::lmFit(data, dt, funcLib[5], opts,  
         true, /*use_scaling*/
         pars, info, warning );
 
@@ -590,7 +590,7 @@ TEST(fitlib_test, id_06_triexponential){
     std::string info;
     int warning;
 
-    double chisqr = lmFit(data, dt, funcLib[6], opts,  
+    double chisqr = stfnum::lmFit(data, dt, funcLib[6], opts,  
         true, /*use_scaling*/
         pars, info, warning );
 
@@ -650,7 +650,7 @@ TEST(fitlib_test, id_07_triexponential_free){
     std::string info;
     int warning;
 
-    double chisqr = lmFit(data, dt, funcLib[7], opts,  
+    double chisqr = stfnum::lmFit(data, dt, funcLib[7], opts,  
         true, /*use_scaling*/
         pars, info, warning );
 
@@ -709,7 +709,7 @@ TEST(fitlib_test, id_08_triexponential_offsetfixed){
     std::string info;
     int warning;
 
-    double chisqr = lmFit(data, dt, funcLib[8], opts,  
+    double chisqr = stfnum::lmFit(data, dt, funcLib[8], opts,  
         true, /*use_scaling*/
         pars, info, warning );
 
@@ -762,7 +762,7 @@ TEST(fitlib_test, id_09_alpha){
     std::string info;
     int warning;
 
-    double chisqr = lmFit(data, dt, funcLib[9], opts, 
+    double chisqr = stfnum::lmFit(data, dt, funcLib[9], opts, 
         true, /*use_scaling*/
         pars, info, warning );
 
@@ -811,7 +811,7 @@ TEST(fitlib_test, id_10_HH_gNa_offsetfixed){
     std::string info;
     int warning;
 
-    double chisqr = lmFit(data, dt, funcLib[10], opts, 
+    double chisqr = stfnum::lmFit(data, dt, funcLib[10], opts, 
         true, /* use_scaling */
         pars, info, warning );
 
@@ -860,7 +860,7 @@ TEST(fitlib_test, id_11_HH_gNa_biexpoffsetfixed){
     std::string info;
     int warning;
 
-    double chisqr = lmFit(data, dt, funcLib[11], opts, 
+    double chisqr = stfnum::lmFit(data, dt, funcLib[11], opts, 
         true, /*use_scaling*/
         pars, info, warning );
 
@@ -907,7 +907,7 @@ TEST(fitlib_test, id_12_fgaussian){
     std::string info;
     int warning;
 
-    double chisqr = lmFit(data, dt, funcLib[12], opts, 
+    double chisqr = stfnum::lmFit(data, dt, funcLib[12], opts, 
         true, /*use_scaling*/
         pars, info, warning );
 

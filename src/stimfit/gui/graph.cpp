@@ -39,14 +39,16 @@
 #include "./dlgs/smalldlgs.h"
 #include "./usrdlg/usrdlg.h"
 #include "./graph.h"
-#include "./../math/measure.h"
+#include "./../../libstfnum/measure.h"
 
 #ifdef _STFDEBUG
 #include <iostream>
 #endif
 
-#ifdef _WIN32
+#if defined (_WIN32)
 #define isnan _isnan
+#elif !defined(isnan)
+#define isnan std::isnan
 #endif
 // #define BENCHMARK // uncomment to run benchmark
 
@@ -351,7 +353,7 @@ void wxStfGraph::InitPlot() {
     SPXW()=wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("zoom.startPosX"), 0);
 
 
-    if (XZ() <= 0 || YZ() <= 0)
+    if (XZ() <= 0 || YZ() <= 0 || fabs(double(SPY())) >= 1e15)
         Fittowindow(false);
     if ((Doc()->size()>1))
     {	//Second channel is not part of the settings dialog =>read from registry
@@ -567,7 +569,9 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
              n_cbl < cbList.size();
              ++n_cbl)
         {
-            cbList[n_cbl]->Destroy();
+            if (cbList[n_cbl] != NULL) {
+                cbList[n_cbl]->Destroy();
+            }
         }
         cbList.resize(sec_attr.eventList.size());
     }
@@ -1091,11 +1095,11 @@ void wxStfGraph::DrawIntegral(wxDC* pDC) {
     pDC->SetBrush(baseBrush);
     pDC->DrawPolygon((int)quadTrace.size(),&quadTrace[0]);
     // Polygon from 0:
-    quadTrace[0]=wxPoint(firstPixel,yFormat(0));
+    quadTrace[0]=wxPoint(firstPixel,yFormat(0L));
     quadTrace[quadTrace.size()-1]=
         wxPoint(
                 xFormat(sec_attr.storeIntEnd),
-                yFormat(0)
+                yFormat(0L)
         );
     pDC->SetBrush(zeroBrush);
     pDC->DrawPolygon((int)quadTrace.size(),&quadTrace[0]);
@@ -1578,7 +1582,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
 {
     // catch bizarre y-Zooms:
     double fstartPosY=(double)SPY();
-    if (fabs(fstartPosY)>(double)1.0e20)
+    if (fabs(fstartPosY)>(double)1.0e15)
         SPYW()=0;
     if (fabs(YZ())>1e15)
         YZW()=1.0;
@@ -1622,6 +1626,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
 
     //get an integer y-value which comes close to 150 pixels:
     double yScaled = prettyNumber(realDistanceY, pixelDistanceY, limit);
+
     int barLengthY=(int)((yScaled/realDistanceY) * pixelDistanceY);
 
     //3. creation of y-scale for the second channel
@@ -1943,46 +1948,62 @@ void wxStfGraph::CreateScale(wxDC* pDC)
     }
 }
 
-inline int wxStfGraph::xFormat(double toFormat) {
+inline long wxStfGraph::xFormat(double toFormat) {
     return (int)(toFormat * XZ() + SPX());
 }
 
-inline int wxStfGraph::xFormat(int toFormat) {
-    return (int)(toFormat * XZ() + SPX());
+inline long wxStfGraph::xFormat(long toFormat) {
+    return (long)(toFormat * XZ() + SPX());
 }
 
-inline int wxStfGraph::xFormat(std::size_t toFormat) {
-    return (int)(toFormat * XZ() + SPX());
+inline long wxStfGraph::xFormat(int toFormat) {
+    return (long)(toFormat * XZ() + SPX());
 }
 
-inline int wxStfGraph::yFormat(double toFormat) {
-    return (int)(SPY() - toFormat * YZ());
+inline long wxStfGraph::xFormat(std::size_t toFormat) {
+    return (long)(toFormat * XZ() + SPX());
 }
 
-inline int wxStfGraph::yFormat(int toFormat) {
-    return (int)(SPY() - toFormat * YZ());
+inline long wxStfGraph::yFormat(double toFormat) {
+    return (long)(SPY() - toFormat * YZ());
 }
 
-inline int wxStfGraph::yFormat2(double toFormat) {
-    return (int)(SPY2() - toFormat * YZ2());
+inline long wxStfGraph::yFormat(long toFormat) {
+    return (long)(SPY() - toFormat * YZ());
 }
 
-inline int wxStfGraph::yFormat2(int toFormat){
-    return (int)(SPY2() - toFormat * YZ2());
+inline long wxStfGraph::yFormat(int toFormat) {
+    return (long)(SPY() - toFormat * YZ());
 }
 
-inline int wxStfGraph::yFormatB(double toFormat) {
-    return (int)(yzoombg.startPosY - toFormat * yzoombg.yZoom);
+inline long wxStfGraph::yFormat2(double toFormat) {
+    return (long)(SPY2() - toFormat * YZ2());
 }
 
-inline int wxStfGraph::yFormatB(int toFormat){
-    return (int)(yzoombg.startPosY - toFormat * yzoombg.yZoom);
+inline long wxStfGraph::yFormat2(long toFormat){
+    return (long)(SPY2() - toFormat * YZ2());
+}
+
+inline long wxStfGraph::yFormat2(int toFormat){
+    return (long)(SPY2() - toFormat * YZ2());
+}
+
+inline long wxStfGraph::yFormatB(double toFormat) {
+    return (long)(yzoombg.startPosY - toFormat * yzoombg.yZoom);
+}
+
+inline long wxStfGraph::yFormatB(long toFormat){
+    return (long)(yzoombg.startPosY - toFormat * yzoombg.yZoom);
+}
+
+inline long wxStfGraph::yFormatB(int toFormat){
+    return (long)(yzoombg.startPosY - toFormat * yzoombg.yZoom);
 }
 
 void wxStfGraph::FittorectY(YZoom& yzoom, const wxRect& rect, double min, double max, double screen_part) {
     
     yzoom.yZoom = (rect.height/fabs(max-min))*screen_part;
-    yzoom.startPosY = (int)(((screen_part+1.0)/2.0)*rect.height
+    yzoom.startPosY = (long)(((screen_part+1.0)/2.0)*rect.height
                             + min * yzoom.yZoom);
 }
 
@@ -2242,7 +2263,7 @@ void wxStfGraph::Ch2base() {
         double base2=0.0;
         try {
             double var2=0.0;
-            base2=stf::base(Doc()->GetBaselineMethod(),var2,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(),
+            base2=stfnum::base(Doc()->GetBaselineMethod(),var2,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(),
                     Doc()->GetBaseBeg(),Doc()->GetBaseEnd());
         }
         catch (const std::out_of_range& e) {
@@ -2283,7 +2304,7 @@ void wxStfGraph::Ch2basezoom() {
         double base2=0.0;
         try {
             double var2=0.0;
-            base2=stf::base(Doc()->GetBaselineMethod(),var2,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(),
+            base2=stfnum::base(Doc()->GetBaselineMethod(),var2,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(),
                     Doc()->GetBaseBeg(),Doc()->GetBaseEnd());
         }
         catch (const std::out_of_range& e) {

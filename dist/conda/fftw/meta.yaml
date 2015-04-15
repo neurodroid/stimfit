@@ -1,0 +1,15 @@
+package:
+    name: fftw
+    version: "3.3.4"
+
+source:
+    fn: fftw-3.3.4-VS2008-x64.zip # [win64]
+    url: "http://www.stimfit.org/libs/fftw-3.3.4-VS2008-x64.zip" # [win64]
+
+build:
+    number: 0
+
+about:
+    home: http://www.fftw.org/
+    license: GPL
+    summary: "FFTW is a C subroutine library for computing the discrete Fourier transform (DFT) in one or more dimensions, of arbitrary input size, and of both real and complex data (as well as of even/odd data, i.e. the discrete cosine/sine transforms or DCT/DST)."

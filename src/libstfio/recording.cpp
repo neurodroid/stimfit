@@ -32,7 +32,7 @@ Recording::Recording(const Channel& c_Channel)
     init();
 }
 
-Recording::Recording(const std::vector<Channel>& ChannelList)
+Recording::Recording(const std::deque<Channel>& ChannelList)
     : ChannelArray(ChannelList)
 {
     init();
@@ -364,7 +364,7 @@ void Recording::AddRec(const Recording &toAdd) {
         throw std::runtime_error("Sampling interval doesn't match");
     }
     // add sections:
-    std::vector< Channel >::iterator it;
+    std::deque< Channel >::iterator it;
     std::size_t n_c = 0;
     for (it = ChannelArray.begin();it != ChannelArray.end(); it++) {
         std::size_t old_size = it->size();

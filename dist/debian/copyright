@@ -7,30 +7,34 @@ Files: *
 Copyright: 2011, Christoph Schmidt-Hieber <christsc@gmx.de>
 License: GPL-2+
 
-Files: src/core/filelib/axon/*
+Files: src/libstfio/abf/axon/*
 Copyright: 1993-2000, Axon Instruments <info@moldev.com>
-License:
- Permission is granted to freely to use, modify and copy 
- the code in this file.
+License: axon1
 
-Files: src/core/filelib/axon2/*
+Files: src/libstfio/abf/axon2/*
 Copyright: 1993-2005, Molecular Devices <info@moldev.com>
            1993-2002, Axon Instruments <info@moldev.com>
-License:
- Permission is granted to freely to use, modify and copy 
- the code in this file.
+License: axon2
 
-Files: src/core/levmar/*
+Files: src/libstfnum/levmar/*
 Copyright: 2004, Manolis Lourakis <lourakis@ics.forth.gr>
 License: GPL-2+
 
-Files: src/stfswig/numpy.i
+Files: src/stimfit/py/numpy.i
 Copyright: 2005-2009, NumPy Developers <numpy-discussion@scipy.org>
 License: BSD-new
 
 Files: src/test/gtest/*
 Copyright: 2008, Google Inc <wan@google.com>
 License: BSD-new
+
+License: axon1
+ Permission is granted to freely to use, modify and copy 
+ the code in this file.
+
+License: axon2
+ Permission is granted to freely to use, modify and copy 
+ the code in this file.
 
 License: GPL-2+
  This program is free software; you can redistribute it
