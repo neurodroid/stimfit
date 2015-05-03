@@ -26,12 +26,28 @@ END_EVENT_TABLE()
 wxStfConvertDlg::wxStfConvertDlg(wxWindow* parent, int id, wxString title, wxPoint pos,
         wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ),
-    srcDir(wxStandardPaths::Get().GetDocumentsDir()),
-    destDir(wxStandardPaths::Get().GetDocumentsDir()),
+    srcDir(""),
+    destDir(""),
     srcFilter(wxT("")), srcFilterExt(stfio::cfs), destFilterExt(stfio::igor),
     srcFileNames(0)
 
 {
+    if (srcDir == wxT("")) {
+        srcDir = wxGetApp().wxGetProfileString(
+            wxT("Settings"), wxT("Most recent batch source directory"), wxT(""));
+        if (srcDir == wxT("") || !wxFileName::DirExists(srcDir)) {
+            srcDir = wxStandardPaths::Get().GetDocumentsDir();
+        }
+    }
+
+    if (destDir == wxT("")) {
+        destDir = wxGetApp().wxGetProfileString(
+            wxT("Settings"), wxT("Most recent batch target directory"), wxT(""));
+        if (destDir == wxT("") || !wxFileName::DirExists(destDir)) {
+            destDir = wxStandardPaths::Get().GetDocumentsDir();
+        }
+    }
+
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
 
@@ -265,6 +281,13 @@ bool wxStfConvertDlg::OnOK() {
         wxLogMessage(msg);
         return false;
     }
+
+    wxGetApp().wxWriteProfileString(
+        wxT("Settings"), wxT("Most recent batch source directory"), srcDir);
+
+    wxGetApp().wxWriteProfileString(
+        wxT("Settings"), wxT("Most recent batch target directory"), destDir);
+
     return true;
 }
 
