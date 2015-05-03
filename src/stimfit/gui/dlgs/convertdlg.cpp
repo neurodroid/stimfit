@@ -26,8 +26,8 @@ END_EVENT_TABLE()
 wxStfConvertDlg::wxStfConvertDlg(wxWindow* parent, int id, wxString title, wxPoint pos,
         wxSize size, int style)
 : wxDialog( parent, id, title, pos, size, style ),
-    srcDir(""),
-    destDir(""),
+    srcDir(wxT("")),
+    destDir(wxT("")),
     srcFilter(wxT("")), srcFilterExt(stfio::cfs), destFilterExt(stfio::igor),
     srcFileNames(0)
 
