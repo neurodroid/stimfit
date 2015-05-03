@@ -58,6 +58,7 @@
 #include "./graph.h"
 #include "./table.h"
 #include "./printout.h"
+#include "./dlgs/convertdlg.h"
 #include "./dlgs/smalldlgs.h"
 #include "./copygrid.h"
 #include "./../../libstfio/atf/atflib.h"

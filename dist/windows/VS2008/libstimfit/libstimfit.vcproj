@@ -404,6 +404,10 @@
 					Name="dlgs"
 					>
 					<File
+						RelativePath="..\..\..\..\src\stimfit\gui\dlgs\convertdlg.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\..\..\src\stimfit\gui\dlgs\cursorsdlg.cpp"
 						>
 					</File>
@@ -493,6 +497,10 @@
 				<Filter
 					Name="dlgs"
 					>
+					<File
+						RelativePath="..\..\..\..\src\stimfit\gui\dlgs\convertdlg.h"
+						>
+					</File>
 					<File
 						RelativePath="..\..\..\..\src\stimfit\gui\dlgs\cursorsdlg.h"
 						>

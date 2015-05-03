@@ -576,6 +576,7 @@ INPUT                  = ./src/stimfit/gui/app.h \
                          ./src/stimfit/gui/table.h \
                          ./src/stimfit/gui/view.h \
                          ./src/stimfit/gui/zoom.h \
+                         ./src/stimfit/gui/dlgs/convertdlg.h \
                          ./src/stimfit/gui/dlgs/cursorsdlg.h \
                          ./src/stimfit/gui/dlgs/eventdlg.h \
                          ./src/stimfit/gui/dlgs/fitseldlg.h \

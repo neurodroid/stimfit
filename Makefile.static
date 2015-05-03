@@ -88,6 +88,7 @@ SOURCES = ./src/stimfit/stf.cpp \
 	./src/stimfit/gui/childframe.cpp \
 	./src/stimfit/gui/app.cpp \
 	./src/stimfit/gui/parentframe.cpp \
+	./src/stimfit/gui/dlgs/convertdlg.cpp \
 	./src/stimfit/gui/dlgs/cursorsdlg.cpp \
 	./src/stimfit/gui/dlgs/eventdlg.cpp \
 	./src/stimfit/gui/dlgs/smalldlgs.cpp \

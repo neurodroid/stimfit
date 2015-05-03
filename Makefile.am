@@ -62,6 +62,7 @@ noinst_HEADERS = ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfi
 	./src/stimfit/gui/printout.h \
 	./src/stimfit/gui/doc.h ./src/stimfit/gui/parentframe.h ./src/stimfit/gui/childframe.h ./src/stimfit/gui/view.h \
 	./src/stimfit/gui/table.h ./src/stimfit/gui/zoom.h \
+	./src/stimfit/gui/dlgs/convertdlg.h \
 	./src/stimfit/gui/dlgs/cursorsdlg.h ./src/stimfit/gui/dlgs/eventdlg.h \
 	./src/stimfit/gui/dlgs/fitseldlg.h ./src/stimfit/gui/dlgs/smalldlgs.h \
 	./src/stimfit/gui/usrdlg/usrdlg.h \
