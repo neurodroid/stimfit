@@ -105,6 +105,10 @@
 #include "./../res/slope.xpm"
 #endif
 
+#ifndef wxS_DIR_DEFAULT
+#define wxS_DIR_DEFAULT 0777
+#endif
+
 IMPLEMENT_CLASS(wxStfParentFrame, wxStfParentType)
 BEGIN_EVENT_TABLE(wxStfParentFrame, wxStfParentType)
 EVT_MENU(wxID_HELP, wxStfParentFrame::OnHelp)
@@ -759,7 +763,7 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
             wxString destFilename(myDlg.GetDestDir() +
                                   wxFileName::GetPathSeparators(wxPATH_NATIVE) +
                                   srcWxFilename.GetFullPath() +
-                                  stfio::findExtension(myDlg.GetDestFileExt()));
+                                  stf::std2wx(stfio::findExtension(myDlg.GetDestFileExt())));
 
             wxString target_path = wxFileName(destFilename).GetPath();
             if (!wxFileName::DirExists(target_path)) {

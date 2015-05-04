@@ -249,7 +249,7 @@ void wxStfConvertDlg::OnComboBoxSrcExt(wxCommandEvent& event){
         default:   
             srcFilterExt =  stfio::none;
     }
-    srcFilter = "*" + stfio::findExtension(srcFilterExt);
+    srcFilter = wxT("*") + stf::std2wx(stfio::findExtension(srcFilterExt));
 
 }
 
