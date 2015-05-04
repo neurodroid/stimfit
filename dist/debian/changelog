@@ -1,3 +1,10 @@
+stimfit (0.14.10-1) experimental; urgency=low
+
+  * Improve batch file conversion usability
+  * Fix Debian dependencies
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Mon, 04 May 2015 04:20:24 +0100
+
 stimfit (0.14.9-1) experimental; urgency=low
 
   * Fix several bugs during abf2 (pClamp10) file reading
