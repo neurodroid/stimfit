@@ -11,7 +11,7 @@
  
  Package: stimfit
  Architecture: any
--Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, libbiosig-dev, libsuitesparse-dev, python-wxgtk3.0, python-numpy, python-matplotlib
+-Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, libbiosig-dev, libsuitesparse-dev, python-wxgtk3.0 | python-wxgtk2.8 (>= 2.8.9), python-numpy, python-matplotlib
 +Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, libbiosig-dev, libsuitesparse-dev, python-wxgtk2.8 (>= 2.8.9), python-numpy, python-matplotlib
  Recommends: python-scipy
  Description: Program for viewing and analyzing electrophysiological data
