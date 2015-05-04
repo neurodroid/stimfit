@@ -6,6 +6,7 @@
 
 #include <wx/stdpaths.h>
 #include <wx/dir.h>
+#include <wx/checkbox.h>
 
 #include "convertdlg.h"
 #include "./../app.h"
@@ -28,7 +29,8 @@ wxStfConvertDlg::wxStfConvertDlg(wxWindow* parent, int id, wxString title, wxPoi
 : wxDialog( parent, id, title, pos, size, style ),
     srcDir(wxT("")),
     destDir(wxT("")),
-    srcFilter(wxT("")), srcFilterExt(stfio::cfs), destFilterExt(stfio::igor),
+    srcFilter(wxT("")), myCheckBoxSubdirs(NULL),
+    srcFilterExt(stfio::cfs), destFilterExt(stfio::igor),
     srcFileNames(0)
 
 {
@@ -60,7 +62,7 @@ wxStfConvertDlg::wxStfConvertDlg(wxWindow* parent, int id, wxString title, wxPoi
     // SOURCE dir ------------------------------------------------------
     // wxFlexGridSizer to place a 1) combo + 2) directory listing
     wxFlexGridSizer *myLeftSizer; // this is a sizer for the left side 
-    myLeftSizer = new wxFlexGridSizer(2, 1, 0, 0);
+    myLeftSizer = new wxFlexGridSizer(3, 1, 0, 0);
 
     // SOURCE 1.- wxComboBox to select the source file extension
     wxFlexGridSizer *mySrcComboSizer; // a sizer for my Combo
@@ -101,6 +103,17 @@ wxStfConvertDlg::wxStfConvertDlg(wxWindow* parent, int id, wxString title, wxPoi
     // add to myLeftSizer
     myLeftSizer->Add( mySrcDirCtrl, 0, wxEXPAND | wxALL , 2 );
     // ---- A wxGenericDirCtrl to select the source directory:
+
+    myCheckBoxSubdirs = new wxCheckBox(
+                this,
+                wxID_ANY,
+                wxT("Include subdirectories"),
+                wxDefaultPosition,
+                wxDefaultSize,
+                0
+        );
+    myCheckBoxSubdirs->SetValue(false);
+    myLeftSizer->Add( myCheckBoxSubdirs, 0, wxALIGN_LEFT | wxALL, 2 );
 
     // Finally add myLeftSizer to the gridSizer
     gridSizer->Add( myLeftSizer, 0, wxALIGN_LEFT, 5 );
@@ -210,40 +223,33 @@ void wxStfConvertDlg::OnComboBoxSrcExt(wxCommandEvent& event){
     switch(pComboBox->GetSelection()){
         case 0:
             srcFilterExt =  stfio::cfs;
-            srcFilter = wxT("*.dat");
             break;
         case 1:
             srcFilterExt =  stfio::abf;
-            srcFilter = wxT("*.abf");
             break;
         case 2:
             srcFilterExt = stfio::axg;
-            srcFilter = wxT("*.axg");
             break;
         case 3: 
             srcFilterExt =  stfio::atf;
-            srcFilter = wxT("*.atf");
             break;
         case 4: 
             break;
         case 5: 
             srcFilterExt =  stfio::hdf5;
-            srcFilter = wxT("*.h5");
             break;
         case 6: 
             srcFilterExt =  stfio::heka;
-            srcFilter = wxT("*.dat");
             break;
 #if (BIOSIG_VERSION >= 10404)
         case 7:
             srcFilterExt =  stfio::igor;
-            srcFilter = wxT("*.ibw");
             break;
 #endif
         default:   
             srcFilterExt =  stfio::none;
-            srcFilter = wxT("*.*");
     }
+    srcFilter = "*" + stfio::findExtension(srcFilterExt);
 
 }
 
@@ -304,20 +310,10 @@ bool wxStfConvertDlg::ReadPath(const wxString& path) {
         return false;
     }
 
-    wxString filename;
+    int dir_flags = myCheckBoxSubdirs->IsChecked() ?
+        wxDIR_FILES | wxDIR_DIRS | wxDIR_HIDDEN :
+        wxDIR_FILES | wxDIR_HIDDEN;
 
-    bool cont = dir.GetFirst(&filename, srcFilter);
-    if (!cont) return false;
-    while ( cont )
-    {
-        srcFileNames.push_back(
-                wxString(
-                        wxString(dir.GetName())+
-                        wxFileName::GetPathSeparators(wxPATH_NATIVE)+  	
-                        wxString(filename.c_str())
-                )
-        );
-        cont = dir.GetNext(&filename);
-    }
+    wxDir::GetAllFiles(path, &srcFileNames, srcFilter, dir_flags);
     return true;
 }

@@ -100,6 +100,36 @@ stfio::findType(const std::string& ext) {
 #endif
     else return stfio::none;
 }
+
+std::string
+stfio::findExtension(stfio::filetype ftype) {
+
+    switch (ftype) {
+     case stfio::cfs:
+         return ".dat";
+     case stfio::abf:
+         return ".abf";
+     case stfio::axg:
+         return ".axg*";
+     case stfio::igor:
+         return ".ibw";
+     case stfio::hdf5:
+         return ".h5";
+     case stfio::atf:
+         return ".atf";
+     case stfio::heka:
+         return ".dat";
+     case stfio::son:
+         return ".smr";
+#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+     case stfio::biosig:
+         return ".gdf";
+#endif
+     default:
+         return ".*";
+    }
+}
+
 #endif // TEST_MINIMAL
 
 bool stfio::importFile(

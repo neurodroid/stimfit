@@ -745,24 +745,31 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
         wxProgressDialog progDlg( wxT("CFS conversion utility"), wxT("Starting file conversion"),
             100, NULL, wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
 
-        std::vector<wxString> srcFilenames(myDlg.GetSrcFileNames());
+        wxArrayString srcFilenames(myDlg.GetSrcFileNames());
         nfiles = srcFilenames.size(); // number of files to convert
         wxString myDestDir = myDlg.GetDestDir();
-        std::cout << myDestDir.c_str() << std::endl;
 
         for (std::size_t nFile=0; nFile<srcFilenames.size(); ++nFile) {
             wxString progStr;
 
-            // construct new filename:
+            // Strip source directory from source file name:
             wxFileName srcWxFilename(srcFilenames[nFile]);
-            wxString destFilename(
-                                  myDlg.GetDestDir()+
-                                  wxFileName::GetPathSeparators(wxPATH_NATIVE)+
-                                  srcWxFilename.GetName()  // returns file name without path and extension
-                                  );
+            srcWxFilename.MakeRelativeTo(myDlg.GetSrcDir());
+            srcWxFilename.ClearExt();
+            wxString destFilename(myDlg.GetDestDir() +
+                                  wxFileName::GetPathSeparators(wxPATH_NATIVE) +
+                                  srcWxFilename.GetFullPath() +
+                                  stfio::findExtension(myDlg.GetDestFileExt()));
+
+            wxString target_path = wxFileName(destFilename).GetPath();
+            if (!wxFileName::DirExists(target_path)) {
+                wxFileName::Mkdir(target_path, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+            }
+
             if ( eft == stfio::atf ) {
                 destFilename += wxT(".atf");
             }
+
             // Update progress bar:
             progStr << wxT("Converting file #") << (int)nFile + 1
                 << wxT(" of ") << (int)srcFilenames.size() << wxT("\n")

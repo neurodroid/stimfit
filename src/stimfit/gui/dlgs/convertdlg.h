@@ -39,9 +39,10 @@ private:
     wxGenericDirCtrl *mySrcDirCtrl, *myDestDirCtrl; 
     wxString srcDir,destDir;
     wxString srcFilter;
+    wxCheckBox* myCheckBoxSubdirs;
 
     stfio::filetype srcFilterExt, destFilterExt;
-    std::vector<wxString> srcFileNames;
+    wxArrayString srcFileNames;
 
     bool ReadPath(const wxString& path);
 
@@ -93,7 +94,7 @@ public:
     //! Get the list of file names.
     /*! \return A vector with source file names.
      */
-    std::vector<wxString> GetSrcFileNames() const {return srcFileNames;}
+    wxArrayString GetSrcFileNames() const {return srcFileNames;}
     
     //! Called upon ending a modal dialog.
     /*! \param retCode The dialog button id that ended the dialog

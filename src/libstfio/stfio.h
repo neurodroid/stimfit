@@ -170,6 +170,13 @@ enum filetype {
 StfioDll stfio::filetype
 findType(const std::string& ext);
 
+//! Returns file extension for a file type
+/*! \param ftype File type
+ *  \return File extension for given file type (in the form ".ext")
+ */
+StfioDll std::string
+findExtension(stfio::filetype ftype);
+
 //! Generic file import.
 /*! \param fName The full path name of the file. 
  *  \param type The file type. 
