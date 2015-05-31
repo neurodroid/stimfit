@@ -86,8 +86,13 @@ private:
     void ViewCursors(wxCommandEvent& event);
     void SetCheckmark(const wxString& RegEntry, int id);
 
+#if (__cplusplus < 201103)
     boost::shared_ptr<wxMenu> m_context;
     boost::shared_ptr<wxMenu> m_labelContext;
+#else
+    std::shared_ptr<wxMenu> m_context;
+    std::shared_ptr<wxMenu> m_labelContext;
+#endif
     DECLARE_EVENT_TABLE()
 };
 

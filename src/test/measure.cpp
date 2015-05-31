@@ -3,8 +3,10 @@
 #include <gtest/gtest.h>
 #include <cmath>
 #include <fstream>
-#include <boost/random.hpp>
-#include <boost/random/normal_distribution.hpp>
+#if (__cplusplus < 201103)
+    #include <boost/random.hpp>
+    #include <boost/random/normal_distribution.hpp>
+#endif
 
 #define PI  3.14159265f
 #define N_MAX 1000
@@ -142,10 +144,17 @@ std::vector<double> uniform(double value, long size){
 std::vector<double> norm(double mean, double stddev){
 
 
+#if (__cplusplus < 201103)
     boost::mt19937 rng; /* seed? */
     boost::normal_distribution<> norm(mean, stddev);
     boost::variate_generator<boost::mt19937&,
         boost::normal_distribution<> > rand_val(rng, norm);
+#else
+    std::mt19937 rng; /* seed? */
+    std::normal_distribution<> norm(mean, stddev);
+    std::variate_generator<boost::mt19937&,
+        std::normal_distribution<> > rand_val(rng, norm);
+#endif
     
     std::vector<double> myrand(N_MAX);
 

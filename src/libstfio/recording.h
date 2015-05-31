@@ -25,6 +25,8 @@
  *  @{
  */
 
+#include <string.h>	// declaration of memcpy
+
 #include "./channel.h"
 // #include "./section.h"
 // #include "./stfio.h"

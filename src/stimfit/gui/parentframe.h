@@ -172,11 +172,21 @@ private:
     wxString python_code2; // python import code
     void RedirectStdio();
 #endif
+
+#if (__cplusplus < 201103)
     // print data, to remember settings during the session
     boost::shared_ptr<wxPrintData> m_printData;
 
     // page setup data
     boost::shared_ptr<wxPageSetupDialogData> m_pageSetupData;
+#else
+    // print data, to remember settings during the session
+    std::shared_ptr<wxPrintData> m_printData;
+
+    // page setup data
+    std::shared_ptr<wxPageSetupDialogData> m_pageSetupData;
+#endif
+
     bool firstResize;
 
     int mpl_figno;

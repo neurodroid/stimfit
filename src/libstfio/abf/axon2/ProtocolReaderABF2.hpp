@@ -14,7 +14,9 @@
 #include "ProtocolStructs.h"            // Struct definitions for actual file contents
 #include "../axon/AxAbfFio32/AxAbffio32.h"
 #include "../axon/AxAbfFio32/filedesc.hpp"
-#include <boost/shared_ptr.hpp>
+#if (__cplusplus < 201103)
+    #include <boost/shared_ptr.hpp>
+#endif
 
 //===============================================================================================
 class CABF2ProtocolReader
@@ -24,7 +26,11 @@ class CABF2ProtocolReader
     CSimpleStringCache   m_Strings;  // The string writing object.
     CFileDescriptor* m_pFI;
     int nFile;
+#if (__cplusplus < 201103)
     boost::shared_ptr<ABF2FileHeader> m_pFH;
+#else
+    std::shared_ptr<ABF2FileHeader> m_pFH;
+#endif
 
     BOOL ReadFileInfo();
     BOOL ReadProtocolInfo();

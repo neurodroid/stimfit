@@ -24,7 +24,9 @@
 #ifndef _STF_H_
 #define _STF_H_
 
-#include <boost/function.hpp>
+#if (__cplusplus < 201103)
+    #include <boost/function.hpp>
+#endif
 #include <vector>
 #include <map>
 #include <string>
@@ -110,7 +112,11 @@ wxString CreatePreview(const wxString& fName);
 wxString noPath(const wxString& fName);
 
 //! Get a Recording, do something with it, return the new Recording.
+#if (__cplusplus < 201103)
 typedef boost::function<Recording(const Recording&,const Vector_double&,std::map<std::string, double>&)> PluginFunc;
+#else
+typedef std::function<Recording(const Recording&,const Vector_double&,std::map<std::string, double>&)> PluginFunc;
+#endif
 
 //! Represents user input from dialogs that can be used in plugins.
 struct UserInput {

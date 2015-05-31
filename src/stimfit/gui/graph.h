@@ -338,8 +338,14 @@ public:
 
     YZoom yzoombg;
     
+#if (__cplusplus < 201103)
     boost::shared_ptr<wxMenu> m_zoomContext;
     boost::shared_ptr<wxMenu> m_eventContext;
+#else
+    std::shared_ptr<wxMenu> m_zoomContext;
+    std::shared_ptr<wxMenu> m_eventContext;
+#endif
+
     std::vector<wxStfCheckBox*> cbList;
     void InitPlot();
     void PlotSelected(wxDC& DC);

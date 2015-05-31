@@ -213,7 +213,9 @@ enum {
 
 #endif // WITH_PYTHON
 
-#include <boost/shared_ptr.hpp>
+#if (__cplusplus < 201103)
+    #include <boost/shared_ptr.hpp>
+#endif
 
 class wxDocManager;
 class wxStfDoc;
@@ -507,7 +509,12 @@ private:
     bool directTxtImport,isBars;
     stfio::txtImportSettings txtImport;
     // Registry:
+#if (__cplusplus < 201103)
     boost::shared_ptr<wxFileConfig> config;
+#else
+    std::shared_ptr<wxFileConfig> config;
+#endif
+
     std::vector<stfnum::storedFunc> funcLib;
 #ifdef WITH_PYTHON
     std::vector< stf::Extension > extensionLib;

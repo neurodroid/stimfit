@@ -712,7 +712,11 @@ void wxStfGraph::PlotTrace( wxDC* pDC, const Vector_double& trace, plottype pt, 
 }
 
 void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int end, int step, plottype pt, int bgno) {
+#if (__cplusplus < 201103)
     boost::function<int(double)> yFormatFunc;
+#else
+    std::function<int(double)> yFormatFunc;
+#endif
 
     switch (pt) {
      case active:
@@ -846,7 +850,11 @@ void wxStfGraph::PrintTrace( wxDC* pDC, const Vector_double& trace, plottype pty
 }
 
 void wxStfGraph::DoPrint( wxDC* pDC, const Vector_double& trace, int start, int end, plottype ptype) {
+#if (__cplusplus < 201103)
     boost::function<int(double)> yFormatFunc;
+#else
+    std::function<int(double)> yFormatFunc;
+#endif
     
     switch (ptype) {
      case active:
@@ -2015,8 +2023,13 @@ void wxStfGraph::Fittowindow(bool refresh)
         wxGetApp().ErrorMsg(wxT("Array of size zero in wxGraph::Fittowindow()"));
         return;
     }
+#if (__cplusplus < 201103)
     Vector_double::const_iterator max_el = std::max_element(Doc()->cursec().get().begin(), Doc()->cursec().get().end());
     Vector_double::const_iterator min_el = std::min_element(Doc()->cursec().get().begin(), Doc()->cursec().get().end());
+#else
+    Vector_double::const_iterator max_el = std::max(Doc()->cursec().get().begin(), Doc()->cursec().get().end());
+    Vector_double::const_iterator min_el = std::min(Doc()->cursec().get().begin(), Doc()->cursec().get().end());
+#endif
     double min = *min_el;
     if (min>1.0e12)  min= 1.0e12;
     if (min<-1.0e12) min=-1.0e12;
@@ -2069,10 +2082,18 @@ void wxStfGraph::FitToWindowSecCh(bool refresh)
         std::size_t secCh=Doc()->GetSecChIndex();
     #undef min
     #undef max
+#if (__cplusplus < 201103)
         Vector_double::const_iterator max_el = std::max_element(Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().begin(),
                                                                 Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().end());
         Vector_double::const_iterator min_el = std::min_element(Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().begin(),
                                                                 Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().end());
+#else
+        Vector_double::const_iterator max_el = std::max(Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().begin(),
+                                                               Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().end());
+        Vector_double::const_iterator min_el = std::min(Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().begin(),
+                                                                Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().end());
+#endif
+
         double min=*min_el;
         double max=*max_el;
         FittorectY(Doc()->GetYZoomW(Doc()->GetSecChIndex()), WindowRect, min, max, screen_part);
