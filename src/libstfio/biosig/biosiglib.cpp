@@ -164,7 +164,11 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     for (size_t k=0, n=0; k < numberOfEvents; k++) {
         uint32_t pos;
         uint16_t typ;
+#if BIOSIG_VERSION < 10605
         char *desc;
+#else
+        const char *desc;
+#endif
         /*
         uint32_t dur;
         uint16_t chn;
