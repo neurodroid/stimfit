@@ -203,8 +203,8 @@ endif
 
 CC        = $(shell $(WXCONF) --cc)
 CXX       = $(shell $(WXCONF) --cxx)
-CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector
-CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -std=gnu++11 -fstack-protector
+CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector -O2
+CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -std=gnu++11 -fstack-protector -O2
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
 
 ## HDF5 related stuff ##
@@ -273,5 +273,5 @@ $(TARGET): $(OBJECTS)
 
 clean:
 	find src -name "*.$(OBJEXT)" -exec rm {} \;
-	rm stimfit
+	rm -f stimfit
 
