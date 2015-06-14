@@ -227,15 +227,19 @@ PyObject* get_trace(int trace, int channel) {
 #endif
 
 bool new_window( double* invec, int size ) {
-    if ( !check_doc() ) return false;
+    bool open_doc = actDoc() != NULL;
 
     std::vector< double > va(size);
     std::copy( &invec[0], &invec[size], va.begin() );
     Section sec(va);
     Channel ch(sec);
-    ch.SetYUnits( actDoc()->at( actDoc()->GetCurChIndex() ).GetYUnits() );
+    if (open_doc) {
+        ch.SetYUnits( actDoc()->at( actDoc()->GetCurChIndex() ).GetYUnits() );
+    }
     Recording new_rec( ch );
-    new_rec.SetXScale( actDoc()->GetXScale() );
+    if (open_doc) {
+        new_rec.SetXScale( actDoc()->GetXScale() );
+    }
     wxStfDoc* testDoc = wxGetApp().NewChild( new_rec, actDoc(), wxT("From python") );
     if ( testDoc == NULL ) {
         ShowError( wxT("Failed to create a new window.") );
@@ -245,9 +249,7 @@ bool new_window( double* invec, int size ) {
 }
 
 bool _new_window_gMatrix( ) {
-    bool open_doc = true;
-    if (actDoc() == NULL)
-        open_doc = false;
+    bool open_doc = actDoc() != NULL;
 
     Recording new_rec( gMatrix.size() );
     for (std::size_t n_c=0; n_c < new_rec.size(); ++n_c) {
@@ -284,7 +286,8 @@ bool _new_window_gMatrix( ) {
 }
 
 bool new_window_matrix( double* invec, int traces, int size ) {
-    if ( !check_doc() ) return false;
+    bool open_doc = actDoc() != NULL;
+
     Channel ch( traces );
     for (int n = 0; n < traces; ++n) {
         std::size_t offset = n * size;
@@ -293,9 +296,13 @@ bool new_window_matrix( double* invec, int traces, int size ) {
         Section sec(va);
         ch.InsertSection(sec, n);
     }
-    ch.SetYUnits( actDoc()->at( actDoc()->GetCurChIndex() ).GetYUnits() );
+    if (open_doc) {
+        ch.SetYUnits( actDoc()->at( actDoc()->GetCurChIndex() ).GetYUnits() );
+    }
     Recording new_rec( ch );
-    new_rec.SetXScale( actDoc()->GetXScale() );
+    if (open_doc) {
+        new_rec.SetXScale( actDoc()->GetXScale() );
+    }
     wxStfDoc* testDoc = wxGetApp().NewChild( new_rec, actDoc(), wxT("From python") );
     if ( testDoc == NULL ) {
         ShowError( wxT("Failed to create a new window.") );
