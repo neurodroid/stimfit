@@ -15,13 +15,18 @@ import sys
 import numpy as np
 import numpy.ma as ma
 
-has_mpl = True
+HAS_MPL = True
 try:
     import matplotlib
     import matplotlib.pyplot as plt
     from mpl_toolkits.axes_grid.axislines import Subplot
-except ImportError:
-    has_mpl = False
+except ImportError as err:
+    HAS_MPL = False
+    MPL_ERR = err
+
+    # dummy class
+    class Subplot(object):
+        pass
 
 scale_dist_x = 0.04
 scale_dist_y = 0.04
@@ -210,6 +215,9 @@ class timeseries(Timeseries):
 
 class StandardAxis(Subplot):
     def __init__(self, *args, **kwargs):
+        if not HAS_MPL:
+            raise MPL_ERR
+
         hasx = kwargs.pop( 'hasx', False)
         hasy = kwargs.pop( 'hasy', True)
         kwargs['frameon'] = False
