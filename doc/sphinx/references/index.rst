@@ -27,7 +27,7 @@ References
 ====
 2014
 ====
-    * `Booker SA, Song J, Vida I (2015) <http://www.jove.com/video/51706/whole-cell-patch-clamp-recordings-from-morphologically>`_ Whole-cell Patch-clamp Recordings from Morphologically- and Neurochemically-identified Hippocampal Interneurons. *J Vis Exp* (91), e51706, doi:10.3791/51706
+    * `Booker SA, Song J, Vida I (2014) <http://www.jove.com/video/51706/whole-cell-patch-clamp-recordings-from-morphologically>`_ Whole-cell Patch-clamp Recordings from Morphologically- and Neurochemically-identified Hippocampal Interneurons. *J Vis Exp* (91), e51706, doi:10.3791/51706
     * `Kim S (2014) <http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0113124>`_ Action Potential Modulation in CA1 Pyramidal Neuron Axons Facilitates OLM Interneuron Activaion in Recurrent Inhibitory Microcircuits of Rat Hippocampus. *PLoS One*  9:e113124.
     * `Guzman SJ, Schlögl A, Schmidt-Hieber C (2014) Stimfit: quantifying electrophysiological data with Python <http://www.frontiersin.org/Journal/10.3389/fninf.2014.00016/abstract>`_ Front Neuroinform doi: 10.3389/fninf.2014.00016
     * `Savanthrapadian S, Meyer T, Elgueta C, Booker SA, Vida I, Bartos M (2014) <http://www.jneurosci.org/cgi/pmidlookup?view=long&pmid=24920624>`_ Synaptic properties of SOM- and CCK-expressing cells in dentate gyrus interneuron networks. *J Neurosci* 24:8197-8209. 
