@@ -15,7 +15,6 @@ References
 ====
 2015
 ====
-    * `Booker SA, Song J, Vida I (2015) <http://www.jove.com/video/51706/whole-cell-patch-clamp-recordings-from-morphologically>`_ Whole-cell Patch-clamp Recordings from Morphologically- and Neurochemically-identified Hippocampal Interneurons. *J Vis Exp* (91), e51706, doi:10.3791/51706
     * `Booker SA, Pires N, Cobb S, Soares-da-Silva P, Vida I (2015) <http://www.sciencedirect.com/science/article/pii/S0028390815000350>`_ Carbamazepine and oxcarbazepine, but not eslicarbazepine, enhance excitatory synaptic transmission onto hippocampal CA1 pyramidal cells through an antagonist action at adenosine A1 receptors. *Neuropharmacology* 93:103-15
     * `Chan V, Neal DM, Uzel SGM, Kim H, Bashir R, Asada HH (2015) <http://pubs.rsc.org/en/content/articlehtml/2015/lc/c5lc00222b>`_ Fabrication and characterization of optogenetic, multi-strip cardiac muscles. *Lab Chip* 15: 2258-2268
     * `Oettinghaus B, Schulz JM, Restelli LM, et al. (2015) <http://www.nature.com/cdd/journal/vaop/ncurrent/full/cdd201539a.html>`_ Synaptic dysfunction, memory deficits and hippocampal atrophy due to ablation of mitochondrial fission in adult forebrain neurons. *Cell Death Diff* doi: 10.1038/cdd.2015.39
@@ -28,6 +27,7 @@ References
 ====
 2014
 ====
+    * `Booker SA, Song J, Vida I (2015) <http://www.jove.com/video/51706/whole-cell-patch-clamp-recordings-from-morphologically>`_ Whole-cell Patch-clamp Recordings from Morphologically- and Neurochemically-identified Hippocampal Interneurons. *J Vis Exp* (91), e51706, doi:10.3791/51706
     * `Kim S (2014) <http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0113124>`_ Action Potential Modulation in CA1 Pyramidal Neuron Axons Facilitates OLM Interneuron Activaion in Recurrent Inhibitory Microcircuits of Rat Hippocampus. *PLoS One*  9:e113124.
     * `Guzman SJ, Schlögl A, Schmidt-Hieber C (2014) Stimfit: quantifying electrophysiological data with Python <http://www.frontiersin.org/Journal/10.3389/fninf.2014.00016/abstract>`_ Front Neuroinform doi: 10.3389/fninf.2014.00016
     * `Savanthrapadian S, Meyer T, Elgueta C, Booker SA, Vida I, Bartos M (2014) <http://www.jneurosci.org/cgi/pmidlookup?view=long&pmid=24920624>`_ Synaptic properties of SOM- and CCK-expressing cells in dentate gyrus interneuron networks. *J Neurosci* 24:8197-8209. 
