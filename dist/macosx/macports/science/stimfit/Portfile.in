@@ -6,7 +6,6 @@ PortGroup           wxWidgets 1.0
 
 name                stimfit
 version             STFVERSION
-
 categories          science
 platforms           darwin
 license             GPL-2
