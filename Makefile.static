@@ -19,23 +19,32 @@
 #   ./stimfit                 # start stimfit 
 #
 #   win32 built
+#	CROSS=i686-pc-mingw32-   make -f Makefile.static
 #	WXCONF=i686-pc-mingw32-wx-config   make -f Makefile.static 
 #   win64 built
+#	CROSS=x86_64-static-mingw32- make -f Makefile.static
 #	WXCONF=x86_64-static-mingw32-wx-config make -f Makefile.static
 #
+#   The use of WXCONF is deprecated, and might be removed in future
+
 # Limitations: 
 #    - no support for ASCII, SON format
 #    - PYTHON shell, matplotlib (print) are not supported
 #    - configure not supported
 #
-# Copyright (C) 2012,2013 Alois Schloegl 
+# Copyright (C) 2012,2013,2014,2015 Alois Schloegl
 # This is part of the stimfit project http://code.google.com/p/stimfit/
 #
 ########################################################################
 
 ifeq (,$(WXCONF))
   # default wx-config      
-  WXCONF    = $(shell which wx-config)
+  WXCONF    = $(CROSS)wx-config
+else
+ifneq (,$(findstring mingw,$(WXCONF)))
+  # for backwords compatibility to older MXE scripts
+  CROSS = $(subst wx-config,,$(WXCONF))
+endif
 endif
 
 DEFINES += -DWITH_BIOSIG
@@ -52,7 +61,7 @@ WXDIR     = $(dir $(WXCONF))../include/wx-$(WXVERSION)/
 DEFINES  += -I$(WXDIR)
 
 
-PY_VERSION := 2.6
+PY_VERSION := 2.7
 
 
 ##############################################################
@@ -196,26 +205,39 @@ CXX       = $(shell $(WXCONF) --cxx)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -std=gnu++11 -fstack-protector
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
+
+## HDF5 related stuff ##
+ifneq ($(CROSS),)
+  ## Debian/Wheezy
+  LIBS   += -lhdf5_hl -lhdf5
+else
 ifneq ($(wildcard /usr/lib/libhdf5*),)
+  ## Debian/Wheezy
   LIBS   += -lhdf5_hl -lhdf5
 else
   ifneq ($(wildcard /usr/lib/x86_64-linux-gnu/libhdf5_serial*),)
+    ## Debian/Jessie
     CXXFLAGS += -I/usr/include/hdf5/serial
     LDFLAGS  += -L/usr/lib/x86_64-linux-gnu/
     LIBS     += -lhdf5_serial_hl -lhdf5_serial
-  endif
+endif
+endif
 endif
 
+## BIOSIG related stuff ##
 ifneq (,$(findstring WITH_BIOSIG2, $(DEFINES)))
-  SOURCES += ./src/libstfio/biosig/biosiglib.cpp
-  LIBS   += -lbiosig2  -lcholmod
+  LIBS  += -lbiosig2
 else 
   ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
-    SOURCES += ./src/libstfio/biosig/biosiglib.cpp
-    LIBS += -lbiosig -lcholmod
+    LIBS  += -lbiosig
   endif
 endif
-LIBS     += -lfftw3 -lz -lpthread
+ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
+    SOURCES += ./src/libstfio/biosig/biosiglib.cpp
+    LIBS  += $(shell $(CROSS)pkg-config  --libs libbiosig)
+endif
+
+LIBS     += -lfftw3
 
 ifeq (mingw,$(findstring mingw, $(WXCONF)))
   LIBS   += -lgfortran -lquadmath
@@ -250,4 +272,5 @@ $(TARGET): $(OBJECTS)
 
 clean:
 	find src -name "*.$(OBJEXT)" -exec rm {} \;
+	rm stimfit
 

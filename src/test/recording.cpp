@@ -6,7 +6,7 @@ TEST(Recording_test, constructors)
     Recording rec0;
     EXPECT_EQ( rec0.size(), 0 );
 
-    std::vector<Section> sec_list(16, Section(32768));
+    std::deque<Section> sec_list(16, Section(32768));
     Channel ch(sec_list);
 
     Recording rec1(ch);
@@ -14,7 +14,7 @@ TEST(Recording_test, constructors)
     EXPECT_EQ( rec1[0].size(), 16 );
     EXPECT_EQ( rec1[0][0].size(), 32768 );
 
-    std::vector<Channel> ch_list(4, Channel(16, 32768));
+    std::deque<Channel> ch_list(4, Channel(16, 32768));
     Recording rec2(ch_list);
     EXPECT_EQ( rec2.size(), 4 );
     EXPECT_EQ( rec2[rec2.size()-1].size(), 16 );
@@ -28,7 +28,7 @@ TEST(Recording_test, constructors)
 
 TEST(Recording_test, data_access)
 {
-    std::vector<Section> sec_list(16, Section(32768));
+    std::deque<Section> sec_list(16, Section(32768));
     Channel ch(sec_list);
 
     Recording rec1(ch);
@@ -39,7 +39,7 @@ TEST(Recording_test, data_access)
     EXPECT_THROW( rec1[0].at(chsize), std::out_of_range );
     EXPECT_THROW( rec1[0][chsize-1].at(secsize), std::out_of_range );
 
-    std::vector<Channel> ch_list(4, Channel(16, 32768));
+    std::deque<Channel> ch_list(4, Channel(16, 32768));
     Recording rec2(ch_list);
     int recsize = rec2.size();
     chsize = rec2[recsize-1].size();
