@@ -528,6 +528,21 @@ def count_aps():
 
     return True
 
+def loadnrn( file ):
+    """
+    Load a NEURON datafile and opens a new Stimfit window
+    with a trace with the default units (e.g ms and mV)
+
+    Arguments:
+    
+    file    -- (string) file to be read
+    """
+
+    time, trace = np.loadtxt(fname = file, skiprows = 2, unpack =1)
+    dt = time[1] # the second temporal sampling point is the sampling
+    stf.new_window( trace )
+    stf.set_sampling_interval( dt )
+    
 def loadtxt(freq=400):
     """
     Loads an ASCII file with extension *.GoR. This file contains 

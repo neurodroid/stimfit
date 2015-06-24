@@ -41,3 +41,4 @@ Contents:
    apcounting
    introclass
    latencies
+   ascii
