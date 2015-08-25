@@ -15,6 +15,7 @@ References
 ====
 2015
 ====
+<<<<<<< HEAD
     * `Booker SA, Pires N, Cobb S, Soares-da-Silva P, Vida I (2015) <http://www.sciencedirect.com/science/article/pii/S0028390815000350>`_ Carbamazepine and oxcarbazepine, but not eslicarbazepine, enhance excitatory synaptic transmission onto hippocampal CA1 pyramidal cells through an antagonist action at adenosine A1 receptors. *Neuropharmacology* 93:103-15
     * `Chan V, Neal DM, Uzel SGM, Kim H, Bashir R, Asada HH (2015) <http://pubs.rsc.org/en/content/articlehtml/2015/lc/c5lc00222b>`_ Fabrication and characterization of optogenetic, multi-strip cardiac muscles. *Lab Chip* 15: 2258-2268
     * `Oettinghaus B, Schulz JM, Restelli LM, et al. (2015) <http://www.nature.com/cdd/journal/vaop/ncurrent/full/cdd201539a.html>`_ Synaptic dysfunction, memory deficits and hippocampal atrophy due to ablation of mitochondrial fission in adult forebrain neurons. *Cell Death Diff* doi: 10.1038/cdd.2015.39
@@ -22,6 +23,13 @@ References
     * `Degro CE, Kulik A, Booker SA, Vida I. (2015) <http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4369648/>`_ Compartmental distribution of GABAB receptor-mediated currents along the somatodendritic axis of hippocampal principal cells. *Front Synaptic Neurosci* 7:6.
     * `Hönigsperger C, Marosi M, Murphy R, Storm JF. (2015) <http://onlinelibrary.wiley.com/doi/10.1113/jphysiol.2014.280826/abstract>`_ Dorsoventral differences in Kv7/M-current and its impact on resonance, temporal summation and excitability in rat hippocampal pyramidal cells. *J Physiol* 593(7): 1551-1580.
     * `You X, Vlatkovic I, Babic A, et al. (2015) <http://www.nature.com/neuro/journal/vaop/ncurrent/full/nn.3975.html>`_ Neural circular RNAs are derived from synaptic genes and regulated by development and plasticity. *Nat Neurosci* doi:10.1038/nn.3975.
+=======
+
+    * `Scheib U, Stehest K, Gee CE, Körschen HG, Fudim R, Oertner TG, Hegemann P. (2015) <http://stke.sciencemag.org/content/8/389/rs8.abstract>`_ The rhodopsin-guanylyl cyclase of the aquatic fungus Blastocladiella emersonii enables fast optical control of cGMP signaling. *Sci Signal* 2015 Aug 11;8(389):rs8. doi: 10.1126/scisignal.aab0611.
+
+    * `You X, Vlatkovic I, Babic A, Will T, Epstein I, Tushev G, Akbalik G, Wang M, Glock C, Quedenau C, Wang X, Hou J, Liu H, Sun W, Sambandan S, Chen T, Schuman EM, Chen W. (2015) <http://www.nature.com/neuro/journal/vaop/ncurrent/full/nn.3975.html>`_ Neural circular RNAs are derived from synaptic genes and regulated by development and plasticity. *Nat Neurosci* doi:10.1038/nn.3975.
+
+>>>>>>> f30de6f... add reference to the documentation
     * `Strüber M, Jonas P, Bartos M (2015) <http://www.pnas.org/content/112/4/1220.long>`_ Strength and duration of perisomatic GABAergic inhibition depend on distance between synaptically connected cells. *PNAS* 112:1220-5
 
 ====
