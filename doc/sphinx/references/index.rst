@@ -16,6 +16,8 @@ References
 2015
 ====
 
+    * `Scheib U, Stehest K, Gee CE, Körschen HG, Fudim R, Oertner TG, Hegemann P. (2015) <http://stke.sciencemag.org/content/8/389/rs8.abstract>`_ The rhodopsin-guanylyl cyclase of the aquatic fungus Blastocladiella emersonii enables fast optical control of cGMP signaling. *Sci Signal* 2015 Aug 11;8(389):rs8. doi: 10.1126/scisignal.aab0611.
+
     * `You X, Vlatkovic I, Babic A, Will T, Epstein I, Tushev G, Akbalik G, Wang M, Glock C, Quedenau C, Wang X, Hou J, Liu H, Sun W, Sambandan S, Chen T, Schuman EM, Chen W. (2015) <http://www.nature.com/neuro/journal/vaop/ncurrent/full/nn.3975.html>`_ Neural circular RNAs are derived from synaptic genes and regulated by development and plasticity. *Nat Neurosci* doi:10.1038/nn.3975.
 
     * `Strüber M, Jonas P, Bartos M (2015) <http://www.pnas.org/content/112/4/1220.long>`_ Strength and duration of perisomatic GABAergic inhibition depend on distance between synaptically connected cells. *PNAS* 112:1220-5
