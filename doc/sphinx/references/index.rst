@@ -15,6 +15,8 @@ References
 ====
 2015
 ====
+    * `Scheib U, Stehest K, Gee CE, Körschen HG, Fudim R, Oertner TG, Hegemann P. (2015) <http://stke.sciencemag.org/content/8/389/rs8.abstract>`_ The rhodopsin-guanylyl cyclase of the aquatic fungus Blastocladiella emersonii enables fast optical control of cGMP signaling. *Sci Signal* 2015 Aug 11;8(389):rs8. doi: 10.1126/scisignal.aab0611.
+
     * `Booker SA, Pires N, Cobb S, Soares-da-Silva P, Vida I (2015) <http://www.sciencedirect.com/science/article/pii/S0028390815000350>`_ Carbamazepine and oxcarbazepine, but not eslicarbazepine, enhance excitatory synaptic transmission onto hippocampal CA1 pyramidal cells through an antagonist action at adenosine A1 receptors. *Neuropharmacology* 93:103-15
     * `Chan V, Neal DM, Uzel SGM, Kim H, Bashir R, Asada HH (2015) <http://pubs.rsc.org/en/content/articlehtml/2015/lc/c5lc00222b>`_ Fabrication and characterization of optogenetic, multi-strip cardiac muscles. *Lab Chip* 15: 2258-2268
     * `Oettinghaus B, Schulz JM, Restelli LM, et al. (2015) <http://www.nature.com/cdd/journal/vaop/ncurrent/full/cdd201539a.html>`_ Synaptic dysfunction, memory deficits and hippocampal atrophy due to ablation of mitochondrial fission in adult forebrain neurons. *Cell Death Diff* doi: 10.1038/cdd.2015.39
