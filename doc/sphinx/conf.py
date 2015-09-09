@@ -90,7 +90,8 @@ pygments_style = 'sphinx'
 
 # Options for HTML output
 # -----------------------
-html_theme = "alabaster"
+#html_theme = "alabaster"
+html_theme = "default"
 # html_theme_options = {
 #         "rightsidebar": "false",
 #         "relbarbgcolor": "black"
