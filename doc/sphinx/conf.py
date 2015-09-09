@@ -42,7 +42,7 @@ master_doc = 'contents'
 
 # General information about the project.
 project = u'Stimfit'
-copyright = u'2014, Christoph Schmidt-Hieber'
+copyright = u'2015, Christoph Schmidt-Hieber'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -61,7 +61,7 @@ release = '0.14.11'
 # non-false value, then it is used:
 #today = ''
 # Else, today_fmt is used as the format for a strftime call.
-#today_fmt = '%B %d, %Y'
+today_fmt = '%d %B, %Y'
 
 # List of documents that shouldn't be included in the build.
 #unused_docs = []
@@ -128,7 +128,7 @@ html_logo = '../../src/stimfit/res/stimfit_128.png'
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-html_last_updated_fmt = '%b %d, %Y'
+html_last_updated_fmt = '%d %B, %Y'
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.

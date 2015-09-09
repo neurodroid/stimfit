@@ -2,8 +2,8 @@
 Calculations on selected traces
 *******************************
 
-:Author: Jose Guzman
-:Date:  |today|
+:Authors: Jose Guzman, Alois Schlögl and Christoph Schmidt-Hieber
+:Updated: |today|
 
 A widely used feature of `Stimfit <http://www.stimfit.org>`_ is the selection of some traces of interest within a file to make some calculations on them (average, peaks, amplitudes, etc.). The batch-analysis of `Stimfit <http://www.stimfit.org>`_ does precisely that. However, in some cases we can enhance its possibilities writing our custom functions in Python for the selected traces. 
 

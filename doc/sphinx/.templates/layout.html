@@ -11,9 +11,10 @@
 {# to show the bar on the left side #}
 {#{{ sidebar() }}#}
 
-{# show the relbar only before the document
-{% block relbar2 %}{{ sidebar() }}{% endblock %}
-#}
+{# show the relbar only before the document #}
+{% block relbar2 %}
+    {{ sidebar() }}
+    {% endblock %}
 
 
 

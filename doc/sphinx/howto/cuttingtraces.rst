@@ -2,8 +2,8 @@
 Cutting traces
 **************
 
-:Author: Jose Guzman
-:Date:  |today|
+:Authors: Jose Guzman, Alois Schlögl and Christoph Schmidt-Hieber
+:Updated: |today|
 
 As described in :doc:`/manual/python` chapter of the :doc:`/manual/index`, a very often requested feature of `Stimfit <http://www.stimfit.org>`_ is to cut an original trace to show it in a presentation or publication. This feature, however, has been only integrated into the stf module, and not in the `Stimfit <http://www.stimfit.org>`_ main menubar. With this, `Stimfit <http://www.stimfit.org>`_ preserves its user interface as clear and user-friendly as possible.
 

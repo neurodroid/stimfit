@@ -2,8 +2,58 @@
 Calculating latencies
 *********************
 
-:Author: Jose Guzman
-:Date:  |today|
+:Authors: Jose Guzman, Alois Schlögl and Christoph Schmidt-Hieber
+:Updated: |today|
+
+Very often we want to analyze data in `Stimfit <http://stimfit.org>`_ that is generated from a simulation or stored in non-stardard formats, like for example fluorescence. While `Stimfit <http://stimfit.org>`_ supports a huge variety of file formats, data from more exotic sources can be copied to a text file loaded in with a very simple Python script.
+
+Examples of such cases are NEURON files, which are saved as text files as \*.dat format. Alternatively, users configure custom files formats to, for example, analyze the timecourse of a fluorescent measurement with `Stimfit <https://stimfit.org>`_.  
+
+=========================
+Reading NEURON text files
+=========================
+
+NEURON allows to save a simulation in a very simple text file format. The file consists of a header with two lines containing the event that was recorded and the number of samples. After that, it is followed by the recording time and the sampled data data in a two-column format. To load such a file, we would like to skip the first two rows, and to load the adquisition time.
+
+::
+
+    import stf
+    
+    def loadnrn(file):
+        """
+        Loads a NEURON datafile and opens a new Stimfit window
+        with a trace with the default units (e.g ms and mV)
+
+        file    -- (string) file to read
+        """
+
+        time, trace = np.loadtxt(fname = file, skiprows = 2, unpack= True )
+
+        dt = time[1] # the second temporal sampling point is the sampling
+        stf.new_window( trace )
+        stf.set_sampling_interval( dt )
+
+        
+You can download an example of such a file `here <http://stimfit.org/doc/EPSP.dat>`_
+
+Note that the argument of the function *loadnrn* is a string containing the exact path and filename of the file that we want to load. For very lengthy paths, it can be convenient to write a small gadget that cares about the proper identification of the file. This is what we propose in the section below.
+
+==========================================
+Custom ascii files containing fluorescence 
+==========================================
+
+When creating custom text files to be loaded later, it is generally convenient to take into account the folowing advices:
+
+1. Use a custom extension ( generally dat, .text or similar denote files associated with specific applications).
+2. Add comments that contains the experimental conditions. 
+3. Information about the author and date of file modification can be included in the header inside these comments.
+
+In the example below, a function will load a file with extension \*.GoR that contains fluorescent measurements in time (acquired at 400 Hz). In addition, a small wx gadget will allow us to create a small window to select the file that we want to import. 
+
+::
+
+    import stf
+
 
 `Stimfit <http://www.stimfit.org>`_ was originally used to calculate synaptic latencies (Katz and Miledi, 1965 [#KatzMiledi1965]_) but now can be used to calculate synaptic latencies and latencies between events or action potentials in the same or between different channels (see :doc:`/manual/latency_measurements` in the :doc:`/manual/index`). `Stimfit <http://www.stimfit.org>`_ also provides a very useful collection of Python functions which allow us to easily adapt the latency calculation for our particular conditions. We will use these functions to calculate the latency between two signals in two different channels (e.g. one corresponding to the soma, and another to the dendrite). We will use the object oriented programming paradigm (OOP) to solve this problem and applied it in the embedded Python shell of `Stimfit <http://www.stimfit.org>`_ .  
 

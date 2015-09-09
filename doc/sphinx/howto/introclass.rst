@@ -2,9 +2,8 @@
 Object oriented programming with Stimfit
 ****************************************
 
-:Author: Jose Guzman
-:Date:  |today|
-
+:Authors: Jose Guzman, Alois Schlögl and Christoph Schmidt-Hieber
+:Updated: |today|
 
 Object-oriented programming (OOP) is a software philosophy where the problems are solved with objects rather than with simple functions. These objects  behave similarly to objects in the physical world. For example, image you may want to travel from Freiburg (Germany) to London (UK). For that, you will need to use a transport (e.g car, airplane, etc...) which certain properties (e.g airplanes are much faster than cars, whereas cars are more flexible in terms of schedule). The key concept here is that an object has distinct attributes (associated variables) and methods (associated functions). Interestingly, object attributes are extremely dynamic. They may change as they are involved in different tasks. Because object *have an state* they provide much more versatility to solve problems than static function alone. Thus, in OOP the design of the code is near to the question, and much more far away from the machine and the hardware details.
 
