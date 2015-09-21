@@ -2,7 +2,7 @@
 Calculating latencies
 *********************
 
-:Authors: Jose Guzman, Alois Schlögl and Christoph Schmidt-Hieber
+:Authors: Jose Guzman
 :Updated: |today|
 
 Very often we want to analyze data in `Stimfit <http://stimfit.org>`_ that is generated from a simulation or stored in non-stardard formats, like for example fluorescence. While `Stimfit <http://stimfit.org>`_ supports a huge variety of file formats, data from more exotic sources can be copied to a text file loaded in with a very simple Python script.

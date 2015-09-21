@@ -2,7 +2,7 @@
 Event counting
 **************
 
-:Authors: Jose Guzman, Alois Schlögl and Christoph Schmidt-Hieber
+:Authors: Jose Guzman
 :Updated: |today|
 
 Counting the number of events (for example action potentials) within a time window is a very common task in electrophysiology. In its simplest form, the user would like to know how many spikes occur following the onset of a stimulus (i.e current injection). We can write a simple Python function which automatically performs this calculation with a simple event detection routine. 
