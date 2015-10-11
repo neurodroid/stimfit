@@ -309,7 +309,7 @@ if test "${HDF5PREFIX}" = ""; then
     if test "$STFKERNEL" = "linux" ; then
         PKG_CHECK_MODULES([HDF5], [hdf5-serial], [
             CPPFLAGS="${CPPFLAGS} ${HDF5_CFLAGS} -DH5_USE_16_API"
-            LIBHDF5_LDFLAGS="${HDF5_LIBS}"
+            LIBHDF5_LDFLAGS="${HDF5_LIBS} -lhdf5_hl"
 	    LDFLAGS="${LDFLAGS} ${LIBHDF5_LDFLAGS}"
 	])
     fi
