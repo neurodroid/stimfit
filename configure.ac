@@ -307,11 +307,14 @@ AS_HELP_STRING([--with-hdf5-prefix=HDF5_PREFIX],[Provide full path to hdf5 prefi
 
 if test "${HDF5PREFIX}" = ""; then
     if test "$STFKERNEL" = "linux" ; then
-        PKG_CHECK_MODULES([HDF5], [hdf5-serial], [
+        PKG_CHECK_MODULES([HDF5], [hdf5], [
             CPPFLAGS="${CPPFLAGS} ${HDF5_CFLAGS} -DH5_USE_16_API"
             LIBHDF5_LDFLAGS="${HDF5_LIBS} -lhdf5_hl"
 	    LDFLAGS="${LDFLAGS} ${LIBHDF5_LDFLAGS}"
-	])
+	], [
+	    HDF5_CFLAGS=""
+	    HDF5_LIBS=""
+        ])
     fi
 fi
 
