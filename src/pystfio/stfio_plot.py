@@ -120,6 +120,47 @@ class Timeseries(object):
     def __setitem__(self, idx, value):
         self.data[idx] = value
 
+    def __add__(self, other):
+        if isinstance(other, np.ndarray):
+            result = self.data+other
+        elif isinstance(other, Timeseries):
+            result = self.data+other.data
+        else:
+            raise TypeError("Can only add numpy arrays or Timeseries")
+        return self.copy_attributes(result)
+
+    def __mul__(self, other):
+        if isinstance(other, np.ndarray):
+            result = self.data*other
+        elif isinstance(other, Timeseries):
+            result = self.data*other.data
+        else:
+            raise TypeError("Can only multiply numpy arrays or Timeseries")
+        return self.copy_attributes(result)
+
+    def __sub__(self, other):
+        if isinstance(other, np.ndarray):
+            result = self.data-other
+        elif isinstance(other, Timeseries):
+            result = self.data-other.data
+        else:
+            raise TypeError("Can only multiply numpy arrays or Timeseries")
+        return self.copy_attributes(result)
+
+    def __div__(self, other):
+        if isinstance(other, np.ndarray):
+            result = self.data/other
+        elif isinstance(other, Timeseries):
+            result = self.data/other.data
+        else:
+            raise TypeError("Can only divide numpy arrays or Timeseries")
+        return self.copy_attributes(result)
+
+    def copy_attributes(self, data):
+        return Timeseries(
+            data, self.dt, self.xunits, self.yunits,
+            self.linestyle, self.linewidth, self.color)
+
     def x_trange(self, tstart, tend):
         return np.arange(int(tstart/self.dt), int(tend/self.dt), 1.0,
                          dtype=np.float) * self.dt
