@@ -158,8 +158,9 @@ class Timeseries(object):
 
     def copy_attributes(self, data):
         return Timeseries(
-            data, self.dt, self.xunits, self.yunits,
-            self.linestyle, self.linewidth, self.color)
+            data, self.dt, xunits=self.xunits, yunits=self.yunits,
+            linestyle=self.linestyle, linewidth=self.linewidth,
+            color=self.color)
 
     def x_trange(self, tstart, tend):
         return np.arange(int(tstart/self.dt), int(tend/self.dt), 1.0,
