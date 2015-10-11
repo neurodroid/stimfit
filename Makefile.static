@@ -201,11 +201,19 @@ ifneq (,$(findstring WITH_PYTHON, $(DEFINES)))
 endif
 
 
-CC        = $(shell $(WXCONF) --cc)
-CXX       = $(shell $(WXCONF) --cxx)
+CC       ?= $(shell $(WXCONF) --cc)
+CXX      ?= $(shell $(WXCONF) --cxx)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector -O2
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -std=gnu++11 -fstack-protector -O2
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
+
+ifneq ($(shell $(WXCONF) --cxx),$(CXX))
+ifeq (5,$(shell $(CXX) -v 2>&1 | awk '/gcc version / {print substr($$3,1,1)}' ))
+  # g++-5 changes default ABI, if WX was compiled with an earlier compiler
+  CXXFLAGS += -fabi-version=2
+endif
+endif
+
 
 ## HDF5 related stuff ##
 ifneq ($(CROSS),)
