@@ -121,40 +121,39 @@ class Timeseries(object):
         self.data[idx] = value
 
     def __add__(self, other):
-        if isinstance(other, np.ndarray):
-            result = self.data+other
-        elif isinstance(other, Timeseries):
-            result = self.data+other.data
+        if isinstance(other, Timeseries):
+            result = self.data + other.data
         else:
-            raise TypeError("Can only add numpy arrays or Timeseries")
+            result = self.data + other
+
         return self.copy_attributes(result)
 
     def __mul__(self, other):
-        if isinstance(other, np.ndarray):
-            result = self.data*other
-        elif isinstance(other, Timeseries):
-            result = self.data*other.data
+        if isinstance(other, Timeseries):
+            result = self.data * other.data
         else:
-            raise TypeError("Can only multiply numpy arrays or Timeseries")
+            result = self.data * other
+
         return self.copy_attributes(result)
 
     def __sub__(self, other):
-        if isinstance(other, np.ndarray):
-            result = self.data-other
-        elif isinstance(other, Timeseries):
-            result = self.data-other.data
+        if isinstance(other, Timeseries):
+            result = self.data - other.data
         else:
-            raise TypeError("Can only multiply numpy arrays or Timeseries")
+            result = self.data - other
+
         return self.copy_attributes(result)
 
     def __div__(self, other):
-        if isinstance(other, np.ndarray):
-            result = self.data/other
-        elif isinstance(other, Timeseries):
-            result = self.data/other.data
+        if isinstance(other, Timeseries):
+            result = self.data / other.data
         else:
-            raise TypeError("Can only divide numpy arrays or Timeseries")
+            result = self.data / other
+
         return self.copy_attributes(result)
+
+    def __truediv__(self, other):
+        return self.__div__(other)
 
     def copy_attributes(self, data):
         return Timeseries(
