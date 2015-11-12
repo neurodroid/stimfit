@@ -100,6 +100,7 @@ stfio::findType(const std::string& ext) {
 #endif
     else return stfio::none;
 }
+#endif // TEST_MINIMAL
 
 std::string
 stfio::findExtension(stfio::filetype ftype) {
@@ -130,8 +131,6 @@ stfio::findExtension(stfio::filetype ftype) {
     }
 }
 
-#endif // TEST_MINIMAL
-
 bool stfio::importFile(
         const std::string& fName,
         stfio::filetype type,
@@ -144,6 +143,7 @@ bool stfio::importFile(
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
        // make use of automated file type identification
 
+#ifndef WITHOUT_ABF
         if (!check_biosig_version(1,6,3)) {
             try {
                 // workaround for older versions of libbiosig
@@ -156,6 +156,7 @@ bool stfio::importFile(
 #endif
             };
        }
+#endif // WITHOUT_ABF
 
        // if this point is reached, import ABF was not applied or not successful
         try {

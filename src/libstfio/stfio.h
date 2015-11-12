@@ -163,12 +163,14 @@ enum filetype {
 };
 
   
+#ifndef TEST_MINIMAL
 //! Attempts to determine the filetype from the filter extension.
 /*! \param ext The filter extension to be tested (in the form wxT("*.ext")).
  *  \return The corresponding file type.
  */
 StfioDll stfio::filetype
 findType(const std::string& ext);
+#endif // TEST_MINIMAL
 
 //! Returns file extension for a file type
 /*! \param ftype File type
