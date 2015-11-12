@@ -206,6 +206,7 @@ CXX      ?= $(shell $(WXCONF) --cxx)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector -O2
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -std=gnu++11 -fstack-protector -O2
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
+PREFIX   ?= /usr
 
 ifneq ($(shell $(WXCONF) --cxx),$(CXX))
 ifeq (5,$(shell $(CXX) -v 2>&1 | awk '/gcc version / {print substr($$3,1,1)}' ))
@@ -223,11 +224,16 @@ else
 ifneq ($(wildcard /usr/lib/libhdf5*),)
   ## Debian/Wheezy
   LIBS   += -lhdf5_hl -lhdf5
+else ifneq ($(wildcard $(PREFIX)/lib/libhdf5*),)
+  CXXFLAGS += -I$(PREFIX)/include
+  LDFLAGS  += -L$(PREFIX)/lib
+  LIBS     += -lhdf5_hl -lhdf5
 else
-  ifneq ($(wildcard /usr/lib/x86_64-linux-gnu/libhdf5_serial*),)
+  PLATFORM = $(shell dpkg-architecture -q DEB_TARGET_MULTIARCH)
+  ifneq ($(wildcard /usr/lib/$(PLATFORM)/libhdf5_serial*),)
     ## Debian/Jessie
     CXXFLAGS += -I/usr/include/hdf5/serial
-    LDFLAGS  += -L/usr/lib/x86_64-linux-gnu/
+    LDFLAGS  += -L/usr/lib/$(PLATFORM)
     LIBS     += -lhdf5_serial_hl -lhdf5_serial
 endif
 endif
@@ -282,4 +288,10 @@ $(TARGET): $(OBJECTS)
 clean:
 	find src -name "*.$(OBJEXT)" -exec rm {} \;
 	rm -f stimfit
+
+install: $(TARGET)
+	install $(TARGET) $(PREFIX)/bin/
+
+uninstall:
+	rm $(PREFIX)/bin/stimfit
 
