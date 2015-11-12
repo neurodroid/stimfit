@@ -13,8 +13,11 @@
 #   make -f Makefile.static   # build stimfit 
 #   make -B -f Makefile.static   # rebuild everything
 #
-#   WXCONF=/usr/bin/wx-config make -f Makefile.static   
+#   WXCONF=/usr/bin/wx-config make -f Makefile.static
 #                             # build built with non-default WX
+#
+#   PREFIX=/usr/local make -f Makefile.static
+#                             search for libhdf5 in ${PREFIX}/{include,lib}
 #
 #   ./stimfit                 # start stimfit 
 #
@@ -33,7 +36,7 @@
 #    - configure not supported
 #
 # Copyright (C) 2012,2013,2014,2015 Alois Schloegl
-# This is part of the stimfit project http://code.google.com/p/stimfit/
+# This is part of the stimfit project http://stimfit.org
 #
 ########################################################################
 
@@ -208,11 +211,9 @@ CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -std=gnu++11 -fstack-protec
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
 PREFIX   ?= /usr
 
-ifneq ($(shell $(WXCONF) --cxx),$(CXX))
 ifeq (5,$(shell $(CXX) -v 2>&1 | awk '/gcc version / {print substr($$3,1,1)}' ))
   # g++-5 changes default ABI, if WX was compiled with an earlier compiler
   CXXFLAGS += -fabi-version=2
-endif
 endif
 
 
