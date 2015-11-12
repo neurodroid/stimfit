@@ -606,7 +606,11 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     double fs = 1.0/(PhysDimScale(pdc) * Data.GetXScale());
     biosig_set_samplerate(hdr, fs);
 
+#if (BIOSIG_VERSION < 10700)
     biosig_set_flags(hdr, 0, 0, 0);
+#else
+    biosig_reset_flag(hdr, BIOSIG_FLAG_COMPRESSION | BIOSIG_FLAG_UCAL | BIOSIG_FLAG_OVERFLOWDETECTION | BIOSIG_FLAG_ROW_BASED_CHANNELS );
+#endif
 
     size_t k, m, numberOfEvents=0;
     size_t NRec=0;	// corresponds to hdr->NRec
