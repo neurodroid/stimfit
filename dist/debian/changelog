@@ -1,3 +1,10 @@
+stimfit (0.14.11-1) unstable; urgency=low
+
+  * Improve usability of stfio_plot.Timeseries
+  * Debian build fixes bug #804592
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Wed, 18 Nov 2015 09:52:53 +0000
+
 stimfit (0.14.10-1) experimental; urgency=low
 
   * Improve batch file conversion usability
