@@ -89,7 +89,7 @@ wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), txtImport(), fu
 #ifdef WITH_PYTHON
 extensionLib(),
 #endif 
-    CursorsDialog(NULL), storedLinFunc( stfnum::initLinFunc() ), /*m_file_menu(0),*/ m_fileToLoad(wxEmptyString)/*, activeDoc(0)*/ {}
+    CursorsDialog(NULL), storedLinFunc( stfnum::initLinFunc() ), /*m_file_menu(0),*/ m_fileToLoad(wxEmptyString), mrActiveDoc(0) {}
 
 void wxStfApp::OnInitCmdLine(wxCmdLineParser& parser)
 {
@@ -294,8 +294,8 @@ bool wxStfApp::OnInit(void)
 #ifdef __WXMAC__
     // wxApp::SetExitOnFrameDelete(false);
     wxMenuBar::MacSetCommonMenuBar(menu_bar);
-#endif //def __WXMAC__
-    //// Associate the menu bar with the frame
+#endif
+
 #else // __WXGTK__
     wxMenuBar* menu_bar = CreateUnifiedMenuBar();
 #endif //__WXGTK__
@@ -918,7 +918,13 @@ wxStfView* wxStfApp::GetActiveView() const {
         ErrorMsg( wxT("Couldn't access the document manager"));
         return NULL;
     }
-    return (wxStfView*)GetDocManager()->GetCurrentView();
+    wxStfView* pView = (wxStfView*)GetDocManager()->GetCurrentView();
+    if (pView == NULL) {
+        if (mrActiveDoc != NULL) {
+            return (wxStfView*)mrActiveDoc->GetFirstView();
+        }
+    }
+    return pView;
 }
 
 wxStfDoc* wxStfApp::GetActiveDoc() const {
@@ -929,16 +935,12 @@ wxStfDoc* wxStfApp::GetActiveDoc() const {
     if (GetDocManager()->GetDocuments().empty())
         return NULL;
     wxStfDoc* pDoc = (wxStfDoc*)GetDocManager()->GetCurrentDocument();
-    
+    if (pDoc == NULL) {
+        return mrActiveDoc;
+    }
     return pDoc;
 }
-/*
-void wxStfApp::SetActiveDoc(wxStfDoc* pDoc) {
-    if (pDoc != activeDoc.back()) {
-        activeDoc.push_back( pDoc );
-    }
-}
-*/
+
 void wxStfApp::OnKeyDown( wxKeyEvent& event ) {
     event.Skip();
     wxStfDoc* actDoc = GetActiveDoc();

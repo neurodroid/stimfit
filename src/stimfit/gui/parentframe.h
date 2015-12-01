@@ -224,6 +224,7 @@ private:
     void OnToolLatency(wxCommandEvent& event);
     void OnToolZoom(wxCommandEvent& event);
     void OnToolEvent(wxCommandEvent& event);
+    void OnToolFitdecay(wxCommandEvent& event);
 
 #ifdef WITH_PSLOPE
     void OnToolPSlope(wxCommandEvent& event);

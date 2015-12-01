@@ -56,7 +56,7 @@ enum {
     ID_TOOL_SNAPSHOT,
 
     ID_TOOL_SNAPSHOT_WMF,
-
+    ID_TOOL_FITDECAY,
 #ifdef WITH_PYTHON
     ID_IMPORTPYTHON,
 #endif
@@ -268,11 +268,6 @@ public:
      */
     wxStfDoc* GetActiveDoc() const;
 
-    //! Sets the currently active document.
-    /*! \param pDoc A pointer to the currently active document.
-     */
-    /*void SetActiveDoc(wxStfDoc* pDoc);*/
-
     //! Retrieves the currently active view.
     /*! \return A pointer to the currently active view.
      */
@@ -418,6 +413,11 @@ public:
      */
     void OnPeakcalcexecMsg(wxStfDoc* actDoc = 0);
 
+    //! Sets the currently active document.
+    /*! \param pDoc A pointer to the currently active document.
+     */
+    void SetMRActiveDoc(wxStfDoc* pDoc) {mrActiveDoc = pDoc;}
+
     //! Destroys the last cursor settings dialog when the last document is closed
     /*! Do not use this function directly. It only needs to be called from wxStfDoc::OnCloseDocument().
      *  \param pDoc Pointer to the document that is being closed.
@@ -527,7 +527,8 @@ private:
     // wxMenu* m_file_menu;
     wxString m_fileToLoad;
     /*std::list<wxStfDoc *> activeDoc;*/
-    
+    wxStfDoc* mrActiveDoc;
+
 #ifdef WITH_PYTHON
     PyThreadState* m_mainTState;
 #endif

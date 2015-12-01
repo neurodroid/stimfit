@@ -150,7 +150,8 @@ void wxStfView::OnActivateView(bool activate, wxView *activeView, wxView *deacti
 #endif
     
     }
-
-    // wxGetApp().SetActiveDoc(Doc());
+#ifdef __WXMAC__
+    wxGetApp().SetMRActiveDoc(Doc());
+#endif
     wxView::OnActivateView(activate,activeView,deactiveView);
 }

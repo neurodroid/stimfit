@@ -145,6 +145,7 @@ EVT_TOOL(ID_TOOL_PSLOPE,wxStfParentFrame::OnToolPSlope)
 EVT_TOOL(ID_TOOL_LATENCY,wxStfParentFrame::OnToolLatency)
 EVT_TOOL(ID_TOOL_ZOOM,wxStfParentFrame::OnToolZoom)
 EVT_TOOL(ID_TOOL_EVENT,wxStfParentFrame::OnToolEvent)
+EVT_TOOL(ID_TOOL_FITDECAY, wxStfParentFrame::OnToolFitdecay)
 
 EVT_MENU(ID_CONVERT, wxStfParentFrame::OnConvert)
 
@@ -459,7 +460,7 @@ wxStfToolBar* wxStfParentFrame::CreateEditTb() {
                   wxBitmap(sum_new_aligned),
                   wxT("Aligned average of selected traces"),
                   wxITEM_NORMAL );
-    tb4->AddTool( ID_FIT,
+    tb4->AddTool( ID_TOOL_FITDECAY,
                   wxT("Fit"),
                   wxBitmap(fit),//chart_line),
                   wxT("Fit function to data"),
@@ -1053,6 +1054,13 @@ void wxStfParentFrame::OnToolCh2(wxCommandEvent& WXUNUSED(event)) {
             m_scaleToolBar->ToggleTool(ID_TOOL_CH1,true);
     }
     m_scaleToolBar->Refresh();
+}
+
+void wxStfParentFrame::OnToolFitdecay(wxCommandEvent& event) {
+    wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
+    if (pDoc!=NULL) {
+        pDoc->FitDecay(event);
+    }
 }
 
 void wxStfParentFrame::SetSingleChannel(bool value) {
