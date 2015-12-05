@@ -2250,6 +2250,10 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             // set peak index of this event:
             sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.back().SetEventPeakIndex((int)peakIndex);
         }
+
+        if (pGraph != NULL) {
+            pGraph->Refresh();
+        }
     }
     catch (const std::out_of_range& e) {
         wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ));
