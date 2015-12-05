@@ -58,7 +58,7 @@ noinst_HEADERS = ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfi
 	./src/libstfnum/levmar/misc.h ./src/libstfnum/levmar/compiler.h \
 	./src/libstfnum/funclib.h \
 	./src/stimfit/stf.h \
-	./src/stimfit/gui/app.h ./src/stimfit/gui/stfcheckbox.h \
+	./src/stimfit/gui/app.h \
 	./src/stimfit/gui/copygrid.h ./src/stimfit/gui/graph.h \
 	./src/stimfit/gui/printout.h \
 	./src/stimfit/gui/doc.h ./src/stimfit/gui/parentframe.h ./src/stimfit/gui/childframe.h ./src/stimfit/gui/view.h \

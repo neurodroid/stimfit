@@ -346,7 +346,6 @@ public:
     std::shared_ptr<wxMenu> m_eventContext;
 #endif
 
-    std::vector<wxStfCheckBox*> cbList;
     void InitPlot();
     void PlotSelected(wxDC& DC);
     void PlotAverage(wxDC& DC);

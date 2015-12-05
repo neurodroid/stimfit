@@ -34,7 +34,6 @@
 #include "./parentframe.h"
 #include "./childframe.h"
 #include "./printout.h"
-#include "./stfcheckbox.h"
 #include "./dlgs/cursorsdlg.h"
 #include "./dlgs/smalldlgs.h"
 #include "./usrdlg/usrdlg.h"
@@ -503,15 +502,6 @@ void wxStfGraph::PlotGimmicks(wxDC& DC) {
         stf::SectionAttributes sec_attr = Doc()->GetCurrentSectionAttributes();
         if (!sec_attr.eventList.empty()) {
             PlotEvents(DC);
-        } else { // no events
-            // Destroy checkboxes (if any)
-            std::vector<wxStfCheckBox*>::iterator it2;
-            for (it2 = cbList.begin(); it2 != cbList.end(); ++it2) {
-                if (*it2 != NULL)
-                    (*it2)->Destroy();
-            }
-            if (!cbList.empty())
-                cbList.clear();
         }
         if (!sec_attr.pyMarkers.empty()) {
             DC.SetPen(eventPen);
@@ -562,50 +552,21 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
         nevents_plot += (xFormat(it2->GetEventStartIndex()) < right &&
                          xFormat(it2->GetEventStartIndex()) > 0);
     }
-    // resize list if necessary:
-    if (cbList.size() != sec_attr.eventList.size()) {
-        // destroy checkboxes that are not needed:
-        for (std::size_t n_cbl = sec_attr.eventList.size();
-             n_cbl < cbList.size();
-             ++n_cbl)
-        {
-            if (cbList[n_cbl] != NULL) {
-                cbList[n_cbl]->Destroy();
-            }
-        }
-        cbList.resize(sec_attr.eventList.size());
-    }
 
     if (nevents_plot < MAX_EVENTS_PLOT) {
-        std::size_t n_cb = 0;
         for (event_it it2 = sec_attr.eventList.begin(); it2 != sec_attr.eventList.end(); ++it2) {
             if (xFormat(it2->GetEventStartIndex()) < right &&
-                xFormat(it2->GetEventStartIndex()) > 0) {
-                try {
-                    if (cbList.at(n_cb) == NULL) {
-                        cbList.at(n_cb) =
-                            new wxStfCheckBox(this, -1, wxEmptyString, &*it2,
-                                              wxPoint(xFormat(it2->GetEventStartIndex()), 0));
-                    }
-                    cbList.at(n_cb)->ResetEvent( &*it2 );
-                    cbList.at(n_cb)->Move(wxPoint(xFormat(it2->GetEventStartIndex()), 0));
-                    cbList.at(n_cb)->Show(true);
-                }
-                catch (const std::out_of_range& e) {
-                    wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
-                    return;
-                }
+                xFormat(it2->GetEventStartIndex()) > 0)
+            {
+                it2->GetCheckBox()->Move(wxPoint(xFormat(it2->GetEventStartIndex()), 0));
+                it2->GetCheckBox()->Show(true);
+            } else {
+                it2->GetCheckBox()->Show(false);
             }
-            n_cb++;
         }
     } else {
-        for (std::size_t n_cbl = 0;
-             n_cbl < cbList.size();
-             ++n_cbl)
-        {
-            if (cbList[n_cbl] != NULL) {
-                cbList[n_cbl]->Show(false);
-            }
+        for (event_it it2 = sec_attr.eventList.begin(); it2 != sec_attr.eventList.end(); ++it2) {
+            it2->GetCheckBox()->Show(false);
         }
     }
 

@@ -2216,8 +2216,14 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
         }
         // erase old events:
         ClearEvents(GetCurChIndex(), GetCurSecIndex());
+
+        wxStfView* pView = (wxStfView*)GetFirstView();
+        wxStfGraph* pGraph = pView->GetGraph();
+
         for (c_int_it cit = startIndices.begin(); cit != startIndices.end(); ++cit ) {
-            sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.push_back( stf::Event( *cit, 0, templateWave.size() ) );
+            sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.push_back(
+                stf::Event( *cit, 0, templateWave.size(), new wxCheckBox(
+                    pGraph, -1, wxEmptyString) ) );
             // Find peak in this event:
             double baselineMean=0;
             for ( int n_mean = *cit-baseline;
@@ -2348,7 +2354,8 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
         wxStfView* pView = (wxStfView*)GetFirstView();
         wxStfGraph* pGraph = pView->GetGraph();
         int newStartPos = pGraph->get_eventPos();
-        stf::Event newEvent(newStartPos, 0, GetCurrentSectionAttributes().eventList.at(0).GetEventSize());
+        stf::Event newEvent(newStartPos, 0, GetCurrentSectionAttributes().eventList.at(0).GetEventSize(),
+                            new wxCheckBox(pGraph, -1, wxEmptyString));
         // Find peak in this event:
         double baselineMean=0;
         for ( int n_mean = newStartPos - baseline;
@@ -2417,9 +2424,12 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
         );
     }
     // clear table from previous detection
+    wxStfView* pView=(wxStfView*)GetFirstView();
+    wxStfGraph* pGraph = pView->GetGraph();
     sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.clear();
     for (c_int_it cit = startIndices.begin(); cit != startIndices.end(); ++cit) {
-        sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.push_back( stf::Event( *cit, 0, baseline ) );
+        sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.push_back(
+            stf::Event(*cit, 0, baseline, new wxCheckBox(pGraph, -1, wxEmptyString)));
     }
     // show results in a table:
     stfnum::Table events(GetCurrentSectionAttributes().eventList.size(),2);

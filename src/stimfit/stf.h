@@ -241,11 +241,10 @@ struct ofstreamMan {
 class Event {
 public:
     //! Constructor
-    explicit Event(std::size_t start, std::size_t peak, std::size_t size, bool discard_ = false) : 
-        eventStartIndex(start), eventPeakIndex(peak), eventSize(size), discard(discard_) { }
+    explicit Event(std::size_t start, std::size_t peak, std::size_t size, wxCheckBox* cb);
     
     //! Destructor
-    ~Event() {}
+    ~Event();
 
     //! Retrieves the start index of an event.
     /*! \return The start index of an event within a section. */
@@ -261,7 +260,11 @@ public:
 
     //! Indicates whether an event should be discarded.
     /*! \return true if it should be discarded, false otherwise. */
-    bool GetDiscard() const { return discard; }
+    bool GetDiscard() const { return checkBox->GetValue(); }
+
+    //! Get the check box associated with this event
+    /*! \return The wxCheckBox associated with this event  */
+    wxCheckBox* GetCheckBox() {return checkBox;}
 
     //! Sets the start index of an event.
     /*! \param value The start index of an event within a section. */
@@ -276,17 +279,18 @@ public:
     void SetEventSize( std::size_t value ) { eventSize = value; }
 
     //! Determines whether an event should be discarded.
-    /*! \return true if it should be discarded, false otherwise. */
-    void SetDiscard( bool value ) { discard = value; }
+    /*! \param true if it should be discarded, false otherwise. */
+    /*void SetDiscard( bool value ) { discard = value; }*/
 
     //! Sets discard to true if it was false and vice versa.
-    void ToggleStatus() { discard = !discard; }
+    /*void ToggleStatus() { discard = !discard; }*/
 
 private:
     std::size_t eventStartIndex;
     std::size_t eventPeakIndex;
     std::size_t eventSize;
-    bool discard;
+    wxCheckBox* checkBox;
+
 };
 
 //! A marker that can be set from Python
