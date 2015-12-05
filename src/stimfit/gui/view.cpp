@@ -128,6 +128,11 @@ void wxStfView::OnActivateView(bool activate, wxView *activeView, wxView *deacti
     if (activeView!=NULL) {
         wxStfDoc *pDoc = ((wxStfView*)activeView)->Doc();
         if (pDoc) {
+            // Update menu checks:
+            // pDoc->UpdateMenuCheckmarks();
+            if (frame!=NULL)
+                frame->SetSingleChannel(pDoc->size()<2);
+            pDoc->UpdateSelectedButton();
             if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
                 wxGetApp().GetCursorsDialog()->SetActiveDoc(Doc());
                 try {
@@ -137,11 +142,6 @@ void wxStfView::OnActivateView(bool activate, wxView *activeView, wxView *deacti
                     wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
                 }
             }
-            // Update menu checks:
-            // pDoc->UpdateMenuCheckmarks();
-            pDoc->UpdateSelectedButton();
-            if (frame!=NULL)
-                frame->SetSingleChannel(pDoc->size()<2);
         }
 #ifdef __WXGTK__
         wxStfGraph *pGraph = ((wxStfView*)activeView)->GetGraph();
