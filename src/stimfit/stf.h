@@ -260,7 +260,7 @@ public:
 
     //! Indicates whether an event should be discarded.
     /*! \return true if it should be discarded, false otherwise. */
-    bool GetDiscard() const { return checkBox->GetValue(); }
+    bool GetDiscard() const { return !checkBox->GetValue(); }
 
     //! Get the check box associated with this event
     /*! \return The wxCheckBox associated with this event  */
