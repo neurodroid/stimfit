@@ -83,6 +83,12 @@ public:
      */
     void OnKeyDown(wxKeyEvent& event);
     
+    //! Change trace
+    /*! Takes care of refreshing everything when a new trace is shown
+     *  \param trace Index of next trace to be displayed 
+     */
+    void ChangeTrace(int trace);
+
     //! Show and analyse next trace.
     /*! Called when either the "next trace"-button is clicked or the right
      *  arrow cursor key is pressed. Wraps around when last trace is reached.

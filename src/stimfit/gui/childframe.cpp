@@ -313,11 +313,8 @@ void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
         return;
     }
 
-    pDoc->SetSection(GetCurTrace()); 
-    wxGetApp().OnPeakcalcexecMsg();
-
     if (pView->GetGraph() != NULL) {
-        pView->GetGraph()->Refresh();
+        pView->GetGraph()->ChangeTrace(GetCurTrace());
         pView->GetGraph()->Enable();
         pView->GetGraph()->SetFocus();
     }

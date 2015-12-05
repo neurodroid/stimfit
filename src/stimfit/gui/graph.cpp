@@ -2062,32 +2062,37 @@ void wxStfGraph::FitToWindowSecCh(bool refresh)
     }
 }	//End FitToWindowSecCh()
 
+void wxStfGraph::ChangeTrace(int trace) {
+    stf::SectionAttributes sec_attr = Doc()->GetCurrentSectionAttributes();
+    if (!sec_attr.eventList.empty() && trace != Doc()->GetCurSecIndex()) {
+        for (event_it it2 = sec_attr.eventList.begin(); it2 != sec_attr.eventList.end(); ++it2) {
+            it2->GetCheckBox()->Show(false);
+        }
+    }
+
+    Doc()->SetSection(trace);
+    wxGetApp().OnPeakcalcexecMsg();
+    pFrame->SetCurTrace(trace);
+    Refresh();
+}
+
 void wxStfGraph::OnPrevious() {
     if (Doc()->get()[Doc()->GetCurChIndex()].size()==1) return;
     std::size_t curSection=Doc()->GetCurSecIndex();
     if (Doc()->GetCurSecIndex() > 0) curSection--;
     else curSection=Doc()->get()[Doc()->GetCurChIndex()].size()-1;
-    Doc()->SetSection(curSection);
-    wxGetApp().OnPeakcalcexecMsg();
-    pFrame->SetCurTrace(curSection);
-    Refresh();
+    ChangeTrace(curSection);
 }
 
 void wxStfGraph::OnFirst() {
     if (Doc()->GetCurSecIndex()==0) return;
-    Doc()->SetSection(0);
-    wxGetApp().OnPeakcalcexecMsg();
-    pFrame->SetCurTrace(0);
-    Refresh();
+    ChangeTrace(0);
 }
 
 void wxStfGraph::OnLast() {
     if (Doc()->GetCurSecIndex()==Doc()->get()[Doc()->GetCurChIndex()].size()-1) return;
     std::size_t curSection=Doc()->get()[Doc()->GetCurChIndex()].size()-1;
-    Doc()->SetSection(curSection);
-    wxGetApp().OnPeakcalcexecMsg();
-    pFrame->SetCurTrace(curSection);
-    Refresh();
+    ChangeTrace(curSection);
 }
 
 void wxStfGraph::OnNext() {
@@ -2095,10 +2100,7 @@ void wxStfGraph::OnNext() {
     std::size_t curSection=Doc()->GetCurSecIndex();
     if (curSection < Doc()->get()[Doc()->GetCurChIndex()].size()-1) curSection++;
     else curSection=0;
-    Doc()->SetSection(curSection);
-    wxGetApp().OnPeakcalcexecMsg();
-    pFrame->SetCurTrace(curSection);
-    Refresh();
+    ChangeTrace(curSection);
 }
 
 void wxStfGraph::OnUp() {
