@@ -142,7 +142,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wxmsw30u_aui.lib wxmsw30u_html.lib wxmsw30u_adv.lib wxmsw30u_core.lib wxbase30u_net.lib wxbase30u_xml.lib wxbase30u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxexpat.lib wxregexu.lib"
+				AdditionalDependencies="python27.lib wxmsw30u_aui.lib wxmsw30u_html.lib wxmsw30u_adv.lib wxmsw30u_core.lib wxbase30u_net.lib wxbase30u_xml.lib wxbase30u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxexpat.lib wxregexu.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(WXDIR)\lib\vc90_x64_dll&quot;;&quot;$(SolutionDir)\..\..\libs&quot;;&quot;$(PYTHONDIR)\libs&quot;;&quot;$(FFTWDIR)&quot;"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
@@ -301,7 +301,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wxmsw30u_aui.lib wxmsw30u_html.lib wxmsw30u_adv.lib wxmsw30u_core.lib wxbase30u_net.lib wxbase30u_xml.lib wxbase30u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxexpat.lib wxregexu.lib"
+				AdditionalDependencies="python27.lib wxmsw30u_aui.lib wxmsw30u_html.lib wxmsw30u_adv.lib wxmsw30u_core.lib wxbase30u_net.lib wxbase30u_xml.lib wxbase30u.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxexpat.lib wxregexu.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(WXDIR)\lib\vc90_x64_dll&quot;;&quot;$(SolutionDir)\..\..\libs&quot;;&quot;$(PYTHONDIR)\libs&quot;;&quot;$(FFTWDIR)&quot;"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
