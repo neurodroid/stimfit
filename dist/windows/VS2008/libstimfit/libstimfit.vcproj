@@ -381,10 +381,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\src\stimfit\gui\stfcheckbox.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\..\src\stimfit\gui\table.cpp"
 					>
 				</File>
@@ -476,10 +472,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\..\src\stimfit\gui\printout.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\..\src\stimfit\gui\stfcheckbox.h"
 					>
 				</File>
 				<File
