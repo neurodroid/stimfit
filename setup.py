@@ -1,4 +1,9 @@
 from distutils.core import setup, Extension
+
+import sys
+import subprocess
+import shlex
+
 from numpy.distutils import system_info
 import numpy as np
 
@@ -20,25 +25,48 @@ numpy_config_keys = [
 np_define_macros = []
 np_extra_compile_args = []
 np_extra_link_args = []
+np_libraries = []
 
 for key in numpy_config_keys:
     try:
+        np_libraries += np.__config__.get_info(key)['libraries']
+    except:
+        pass
+    try:
         np_define_macros += np.__config__.get_info(key)['define_macros']
+    except:
+        pass
+    try:
         np_extra_compile_args += np.__config__.get_info(key)[
             'extra_compile_args']
+    except:
+        pass
+    try:
         np_extra_link_args += np.__config__.get_info(key)['extra_link_args']
     except:
         pass
 
+hdf5_extra_compile_args = []
+hdf5_extra_link_args = []
+if 'linux' in sys.platform:
+    cmd = shlex.split('pkg-config --cflags hdf5')
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    p.wait()
+    hdf5_extra_compile_args = [p.stdout.read()[:-2]]
+
+    cmd = shlex.split('pkg-config --libs hdf5')
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    p.wait()
+    hdf5_extra_link_args = [p.stdout.read()[:-2]]
+
 stfio_module = Extension(
     '_stfio',
-    py_modules=['stfio'],
     swig_opts=['-c++'],
     libraries=['hdf5', 'hdf5_hl'] +
-    system_info.get_info('fftw3')['libraries'],
+    system_info.get_info('fftw3')['libraries'] + np_libraries,
     define_macros=np_define_macros,
-    extra_compile_args=np_extra_compile_args,
-    extra_link_args=np_extra_link_args,
+    extra_compile_args=np_extra_compile_args + hdf5_extra_compile_args,
+    extra_link_args=np_extra_link_args + hdf5_extra_link_args,
     sources=[
         'src/pystfio/pystfio.i',
         'src/pystfio/pystfio.cxx',
@@ -91,4 +119,7 @@ setup(name='stfio',
       description='stfio module',
       include_dirs=system_info.default_include_dirs + [
           np.get_include()],
+      scripts=['src/pystfio/stfio.py'],
+      package_dir={'stfio': 'src/pystfio'},
+      packages=['stfio'],
       ext_modules=[stfio_module])
