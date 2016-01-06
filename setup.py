@@ -59,12 +59,19 @@ if 'linux' in sys.platform:
     p.wait()
     hdf5_extra_link_args = [p.stdout.read()[:-2]]
 
+if 'linux' not in sys.platform:
+    biosig_define_macros = [('WITH_BIOSIG2', None)]
+else:
+    biosig_define_macros = [('WITH_BIOSIG', None)]
+biosig_libraries = ['biosig']
+
 stfio_module = Extension(
     '_stfio',
     swig_opts=['-c++'],
     libraries=['hdf5', 'hdf5_hl'] +
-    system_info.get_info('fftw3')['libraries'] + np_libraries,
-    define_macros=np_define_macros,
+    system_info.get_info('fftw3')['libraries'] + np_libraries +
+    biosig_libraries,
+    define_macros=np_define_macros + biosig_define_macros,
     extra_compile_args=np_extra_compile_args + hdf5_extra_compile_args,
     extra_link_args=np_extra_link_args + hdf5_extra_link_args,
     sources=[
@@ -92,6 +99,7 @@ stfio_module = Extension(
         'src/libstfio/axg/byteswap.cpp',
         'src/libstfio/axg/fileUtils.cpp',
         'src/libstfio/axg/stringUtils.cpp',
+        'src/libstfio/biosig/biosiglib.cpp',
         'src/libstfio/cfs/cfs.c',
         'src/libstfio/cfs/cfslib.cpp',
         'src/libstfio/channel.cpp',
