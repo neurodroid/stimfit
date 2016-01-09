@@ -52,12 +52,23 @@ if 'linux' in sys.platform:
     cmd = shlex.split('pkg-config --cflags hdf5')
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     p.wait()
-    hdf5_extra_compile_args = [p.stdout.read()[:-2]]
+    pkg_config_out = p.stdout.read()[:-2]
+    if "No package" in pkg_config_out:
+        hdf5_extra_compile_args = ["-I/usr/include/hdf5/serial"]
+    else:
+        hdf5_extra_compile_args = [pkg_config_out]
 
     cmd = shlex.split('pkg-config --libs hdf5')
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     p.wait()
-    hdf5_extra_link_args = [p.stdout.read()[:-2]]
+    pkg_config_out = p.stdout.read()[:-2]
+    if "No package" in pkg_config_out:
+        hdf5_extra_link_args = [
+            "-L/usr/lib/x86_64-linux-gnu/",
+            "-L/usr/lib/x86_64-linux-gnu/hdf5/serial"]
+    else:
+        hdf5_extra_link_args = [pkg_config_out]
+
 
 if 'linux' not in sys.platform:
     biosig_define_macros = [('WITH_BIOSIG2', None)]
@@ -65,11 +76,14 @@ else:
     biosig_define_macros = [('WITH_BIOSIG', None)]
 biosig_libraries = ['biosig']
 
+fftw3_libraries = ['-lfftw3']
+if 'libraries' in system_info.get_info('fftw3').keys():
+    fftw3_libraries = system_info.get_info('fftw3')['libraries']
+
 stfio_module = Extension(
     '_stfio',
     swig_opts=['-c++'],
-    libraries=['hdf5', 'hdf5_hl'] +
-    system_info.get_info('fftw3')['libraries'] + np_libraries +
+    libraries=['hdf5', 'hdf5_hl'] + fftw3_libraries + np_libraries +
     biosig_libraries,
     define_macros=np_define_macros + biosig_define_macros,
     extra_compile_args=np_extra_compile_args + hdf5_extra_compile_args,
