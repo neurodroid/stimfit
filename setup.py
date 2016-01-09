@@ -50,19 +50,21 @@ hdf5_extra_compile_args = []
 hdf5_extra_link_args = []
 if 'linux' in sys.platform:
     cmd = shlex.split('pkg-config --cflags hdf5')
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.wait()
-    pkg_config_out = p.stdout.read()[:-2]
-    if "No package" in pkg_config_out:
+    pkg_config_out = p.stdout.read().decode("utf-8")[:-2]
+    pkg_config_err = p.stderr.read().decode("utf-8")[:-2]
+    if "No package" in pkg_config_err:
         hdf5_extra_compile_args = ["-I/usr/include/hdf5/serial"]
     else:
         hdf5_extra_compile_args = [pkg_config_out]
 
     cmd = shlex.split('pkg-config --libs hdf5')
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.wait()
-    pkg_config_out = p.stdout.read()[:-2]
-    if "No package" in pkg_config_out:
+    pkg_config_out = p.stdout.read().decode("utf-8")[:-2]
+    pkg_config_err = p.stderr.read().decode("utf-8")[:-2]
+    if "No package" in pkg_config_err:
         hdf5_extra_link_args = [
             "-L/usr/lib/x86_64-linux-gnu/",
             "-L/usr/lib/x86_64-linux-gnu/hdf5/serial"]
@@ -75,9 +77,9 @@ if 'linux' not in sys.platform:
     biosig_libraries = ['biosig2']
 else:
     biosig_define_macros = [('WITH_BIOSIG', None)]
-    biosig_libraries = ['biosig']
+    biosig_libraries = ['biosig', 'cholmod']
 
-fftw3_libraries = ['-lfftw3']
+fftw3_libraries = ['fftw3']
 if 'libraries' in system_info.get_info('fftw3').keys():
     fftw3_libraries = system_info.get_info('fftw3')['libraries']
 
