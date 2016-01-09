@@ -72,9 +72,10 @@ if 'linux' in sys.platform:
 
 if 'linux' not in sys.platform:
     biosig_define_macros = [('WITH_BIOSIG2', None)]
+    biosig_libraries = ['biosig2']
 else:
     biosig_define_macros = [('WITH_BIOSIG', None)]
-biosig_libraries = ['biosig']
+    biosig_libraries = ['biosig']
 
 fftw3_libraries = ['-lfftw3']
 if 'libraries' in system_info.get_info('fftw3').keys():
