@@ -76,7 +76,10 @@ if 'linux' in sys.platform:
 
 if 'linux' not in sys.platform:
     biosig_define_macros = [('WITH_BIOSIG2', None)]
-    biosig_libraries = ['biosig2']
+    if os.name == "nt":
+        biosig_libraries = ['libbiosig2']
+    else:
+        biosig_libraries = ['biosig2']
 else:
     biosig_define_macros = [('WITH_BIOSIG', None)]
     biosig_libraries = ['biosig', 'cholmod']
@@ -95,23 +98,23 @@ if os.name == "nt":
                          ("_HDF5USEDLL_", None),
                          ("_CRT_SECURE_NO_WARNINGS", None),
                          ("UNICODE", None),
-                         ("_UNICODE", None),
-                         ("WITH_BIOSIG2", None)]
+                         ("_UNICODE", None)]
     win_compile_args = ["/EHsc"]
     home_dir = os.path.expanduser("~")
-    win_include_dirs = [os.path.join(home_dir, 'boost'),
-                        os.path.join(home_dir, 'biosig', 'include'),
-                        os.path.join(home_dir, 'hdf5', 'include'),
-                        os.path.join(home_dir, 'fftw'),
+    win_include_dirs = [
+        os.path.join(home_dir, 'boost'),
+        os.path.join(home_dir, 'biosig', 'include'),
+        os.path.join(home_dir, 'hdf5', 'include'),
+        os.path.join(home_dir, 'fftw'),
     ]
-    win_library_dirs = [os.path.join(home_dir, 'hdf5', 'lib'),
-                        os.path.join(home_dir, 'biosig', 'lib'),
-                        os.path.join(home_dir, 'stimfit', 'dist', 'windows', 'libs'),
-                        os.path.join(home_dir, 'fftw'),
+    win_library_dirs = [
+        os.path.join(home_dir, 'hdf5', 'lib'),
+        os.path.join(home_dir, 'biosig', 'lib'),
+        os.path.join(home_dir, 'stimfit', 'dist', 'windows', 'libs'),
+        os.path.join(home_dir, 'fftw'),
     ]
     fftw3_libraries = ['libfftw3-3']
     np_libraries = ['BLAS', 'clapack', 'libf2c']
-    biosig_libraries = ['libbiosig2']
     win_libraries = ['user32']
     win_link_args = ["/SUBSYSTEM:WINDOWS",
                      "/LARGEADDRESSAWARE",
@@ -121,13 +124,12 @@ if os.name == "nt":
                      "/NXCOMPAT",
                      "/MACHINE:X64",
                      "/NODEFAULTLIB:\"libc.lib\"",
-                     "/NODEFAULTLIB:\"libcmt.lib\"" ]
-    win_data_files = [
-        (distutils.sysconfig.get_python_lib(), [
+                     "/NODEFAULTLIB:\"libcmt.lib\""]
+    win_data_files = [(
+        distutils.sysconfig.get_python_lib(), [
             os.path.join(home_dir, 'biosig', 'lib', 'libbiosig2.dll'),
-            os.path.join(home_dir, 'fftw', 'libfftw3-3.dll'),]
-        )
-    ]
+            os.path.join(home_dir, 'fftw', 'libfftw3-3.dll'), ]
+    )]
 else:
     win_define_macros = []
     win_include_dirs = []
@@ -207,5 +209,5 @@ setup(name='stfio',
       scripts=['src/pystfio/stfio.py'],
       package_dir={'stfio': 'src/pystfio'},
       packages=['stfio'],
-      data_files = win_data_files,
+      data_files=win_data_files,
       ext_modules=[stfio_module])
