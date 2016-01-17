@@ -1,6 +1,8 @@
+import distutils
 from distutils.core import setup, Extension
 
 import sys
+import os
 import subprocess
 import shlex
 
@@ -83,14 +85,71 @@ fftw3_libraries = ['fftw3']
 if 'libraries' in system_info.get_info('fftw3').keys():
     fftw3_libraries = system_info.get_info('fftw3')['libraries']
 
+if os.name == "nt":
+    win_define_macros = [("_WINDOWS", None),
+                         ("__STF__", None),
+                         ("STFIODLL", None),
+                         ("_WIN64", None),
+                         ("_WINDLL", None),
+                         ("H5_USE_16_API", None),
+                         ("_HDF5USEDLL_", None),
+                         ("_CRT_SECURE_NO_WARNINGS", None),
+                         ("UNICODE", None),
+                         ("_UNICODE", None),
+                         ("WITH_BIOSIG2", None)]
+    win_compile_args = ["/EHsc"]
+    home_dir = os.path.expanduser("~")
+    win_include_dirs = [os.path.join(home_dir, 'boost'),
+                        os.path.join(home_dir, 'biosig', 'include'),
+                        os.path.join(home_dir, 'hdf5', 'include'),
+                        os.path.join(home_dir, 'fftw'),
+    ]
+    win_library_dirs = [os.path.join(home_dir, 'hdf5', 'lib'),
+                        os.path.join(home_dir, 'biosig', 'lib'),
+                        os.path.join(home_dir, 'stimfit', 'dist', 'windows', 'libs'),
+                        os.path.join(home_dir, 'fftw'),
+    ]
+    fftw3_libraries = ['libfftw3-3']
+    np_libraries = ['BLAS', 'clapack', 'libf2c']
+    biosig_libraries = ['libbiosig2']
+    win_libraries = ['user32']
+    win_link_args = ["/SUBSYSTEM:WINDOWS",
+                     "/LARGEADDRESSAWARE",
+                     "/OPT:REF",
+                     "/OPT:ICF",
+                     "/DYNAMICBASE",
+                     "/NXCOMPAT",
+                     "/MACHINE:X64",
+                     "/NODEFAULTLIB:\"libc.lib\"",
+                     "/NODEFAULTLIB:\"libcmt.lib\"" ]
+    win_data_files = [
+        (distutils.sysconfig.get_python_lib(), [
+            os.path.join(home_dir, 'biosig', 'lib', 'libbiosig2.dll'),
+            os.path.join(home_dir, 'fftw', 'libfftw3-3.dll'),]
+        )
+    ]
+else:
+    win_define_macros = []
+    win_include_dirs = []
+    win_compile_args = []
+    win_library_dirs = []
+    win_libraries = []
+    win_link_args = []
+    win_data_files = []
+
 stfio_module = Extension(
     '_stfio',
     swig_opts=['-c++'],
+    library_dirs=win_library_dirs,
     libraries=['hdf5', 'hdf5_hl'] + fftw3_libraries + np_libraries +
-    biosig_libraries,
-    define_macros=np_define_macros + biosig_define_macros,
-    extra_compile_args=np_extra_compile_args + hdf5_extra_compile_args,
-    extra_link_args=np_extra_link_args + hdf5_extra_link_args,
+    biosig_libraries + win_libraries,
+    define_macros=np_define_macros + biosig_define_macros +
+    win_define_macros,
+    extra_compile_args=np_extra_compile_args + hdf5_extra_compile_args +
+    win_compile_args,
+    extra_link_args=np_extra_link_args + hdf5_extra_link_args +
+    win_link_args,
+    include_dirs=win_include_dirs,
     sources=[
         'src/libstfio/abf/abflib.cpp',
         'src/libstfio/abf/axon/AxAbfFio32/Oldheadr.cpp',
@@ -148,4 +207,5 @@ setup(name='stfio',
       scripts=['src/pystfio/stfio.py'],
       package_dir={'stfio': 'src/pystfio'},
       packages=['stfio'],
+      data_files = win_data_files,
       ext_modules=[stfio_module])
