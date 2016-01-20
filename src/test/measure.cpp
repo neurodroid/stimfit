@@ -6,6 +6,8 @@
 #if (__cplusplus < 201103)
     #include <boost/random.hpp>
     #include <boost/random/normal_distribution.hpp>
+#else
+    #include <random>
 #endif
 
 #define PI  3.14159265f
@@ -143,25 +145,25 @@ std::vector<double> uniform(double value, long size){
 //=========================================================================
 std::vector<double> norm(double mean, double stddev){
 
+    std::vector<double> myrand(N_MAX);
 
 #if (__cplusplus < 201103)
     boost::mt19937 rng; /* seed? */
     boost::normal_distribution<> norm(mean, stddev);
     boost::variate_generator<boost::mt19937&,
         boost::normal_distribution<> > rand_val(rng, norm);
-#else
-    std::mt19937 rng; /* seed? */
-    std::normal_distribution<> norm(mean, stddev);
-    std::variate_generator<boost::mt19937&,
-        std::normal_distribution<> > rand_val(rng, norm);
-#endif
-    
-    std::vector<double> myrand(N_MAX);
-
-    for (int i=0; i<N_MAX; ++i){
+    for (int i=0; i < myrand.size(); ++i){
         myrand[i] = rand_val();
     }
-
+#else
+    std::random_device rd;
+    std::mt19937 rng(rd()); /* seed? */
+    std::normal_distribution<> norm(mean, stddev);
+    for (int i=0; i < myrand.size(); ++i){
+        myrand[i] = norm(rng);
+    }
+#endif
+    
     return myrand;
     
 }
