@@ -21,7 +21,6 @@ Stimfit for OS X is available through [MacPorts](http://www.macports.org). After
 ```
 $ sudo port install stimfit py27-stfio
 ```
-We don't supply installation packages for OS X any longer because of fragmentation issues with OS X versions (10.5--10.9), Python versions (2.x, 3.x) and architectures (i386, x86_64, ppc).
 ####GNU/Linux####
 On Debian and Ubuntu systems, you can get Stimfit and the stfio module from the standard repositories:
 ```
