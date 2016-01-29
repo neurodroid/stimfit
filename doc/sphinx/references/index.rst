@@ -13,9 +13,15 @@ References
 
 
 ====
+2016
+====
+    * `Heigele S, Sultan S, Toni N, Bischofberger J (2016) <http://www.nature.com/neuro/journal/v19/n2/full/nn.4218.html>`_ Bidirectional GABAergic control of action potential firing in newborn hippocampal granule cells. *Nat Neurosci* 19, 263-270.
+
+====
 2015
 ====
-    * `Kowalski J, Gan J, Jonas P, Pernía-Andrade AJ. (2015) http://onlinelibrary.wiley.com/doi/10.1002/hipo.22550/abstract>`_ Intrinsic membrane properties determine hippocampal differential firing pattern in vivo in anesthetized rats. *Hippocampus* doi: 10.1002/hipo.22550.
+    * `Sultan S, Li L, Moss J, Petrelli F, Casse F, Gebara E, Lopatar J, Pfrieger FW, Bezzi P, Bischofberger J, Toni N (2015) <http://www.sciencedirect.com/science/article/pii/S0896627315009319>`_ Synaptic Integration of Adult-Born Hippocampal Neurons Is Locally Controlled by Astrocytes. *Neuron* 88(5):957-72.
+    * `Kowalski J, Gan J, Jonas P, Pernía-Andrade AJ (2015) <http://onlinelibrary.wiley.com/doi/10.1002/hipo.22550/abstract>`_ Intrinsic membrane properties determine hippocampal differential firing pattern in vivo in anesthetized rats. *Hippocampus* doi: 10.1002/hipo.22550.
     * `Scheib U, Stehest K, Gee CE, Körschen HG, Fudim R, Oertner TG, Hegemann P. (2015) <http://stke.sciencemag.org/content/8/389/rs8.abstract>`_ The rhodopsin-guanylyl cyclase of the aquatic fungus Blastocladiella emersonii enables fast optical control of cGMP signaling. *Sci Signal* 2015 Aug 11;8(389):rs8. doi: 10.1126/scisignal.aab0611.
     * `Booker SA, Pires N, Cobb S, Soares-da-Silva P, Vida I (2015) <http://www.sciencedirect.com/science/article/pii/S0028390815000350>`_ Carbamazepine and oxcarbazepine, but not eslicarbazepine, enhance excitatory synaptic transmission onto hippocampal CA1 pyramidal cells through an antagonist action at adenosine A1 receptors. *Neuropharmacology* 93:103-15
     * `Chan V, Neal DM, Uzel SGM, Kim H, Bashir R, Asada HH (2015) <http://pubs.rsc.org/en/content/articlehtml/2015/lc/c5lc00222b>`_ Fabrication and characterization of optogenetic, multi-strip cardiac muscles. *Lab Chip* 15: 2258-2268
