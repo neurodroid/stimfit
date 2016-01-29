@@ -101,11 +101,11 @@ libtool
 stimfit.plist
 # stimfit
 stamp-h1
-stfswig_wrap.cxx
-pystf_wrap.cxx
+stfswig_wrap.c*
+pystf_wrap.c*
 stf.py
-stfioswig_wrap.cxx
-pystfio_wrap.cxx
+stfioswig_wrap.c*
+pystfio_wrap.c*
 stfio.py
 
 .libs/

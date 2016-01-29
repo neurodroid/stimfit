@@ -134,13 +134,16 @@ bool wxStfApp::OnCmdLineParsed(wxCmdLineParser& parser)
 bool wxStfApp::OnInit(void)
 {
     if (!wxApp::OnInit()) {
+        std::cerr << "Could not start application" << std::endl;
         return false;
     }
-
 
 #ifdef WITH_PYTHON
     if ( !Init_wxPython() ) {
         // don't start the app if we can't initialize wxPython.
+        wxString msg;
+        msg << wxT("Could not start wxPython");
+        ErrorMsg( msg );
         return false;
     }
     

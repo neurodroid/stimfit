@@ -1140,7 +1140,7 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
 #else
     if (wxWindow::FindFocus()!=(wxWindow*)this)
 #endif
-        SetFocus();
+        SetFocusIgnoringChildren();
 
     wxClientDC dc(this);
     PrepareDC(dc);
@@ -1216,7 +1216,7 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
 #else
     if (wxWindow::FindFocus()!=(wxWindow*)this)
 #endif
-        SetFocus();
+        SetFocusIgnoringChildren();
 
     wxClientDC dc(this);
     PrepareDC(dc);

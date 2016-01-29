@@ -101,9 +101,12 @@ wxString GetExecutablePath() {
 bool wxStfApp::Init_wxPython()
 {
     // Initialize the Python interpreter
-    Py_Initialize();
-    
+    if (!Py_IsInitialized()) {
+        Py_Initialize();
+    }
+
     PyEval_InitThreads();
+
     wxString cwd;
 #ifdef __WXMAC__
     // Add the cwd to the present path:

@@ -250,7 +250,7 @@ Finally, we can check if an object belongs to certain class with the function is
 or we can use the __class__ method included in every instance to check the type of the object:
 
 >>> myChannel.__class__
->>> <class 'test.Channel'>   
+<class 'test.Channel'>   
 
 we can get this class definition as string with:
 

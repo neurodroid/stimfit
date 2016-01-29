@@ -13,7 +13,7 @@ SetCompressor lzma
 ;--------------------------------
 !include LogicLib.nsh
 
-!define PRODUCT_VERSION "0.14.13"
+!define PRODUCT_VERSION "0.14.14"
 !define WXW_VERSION "3.0.2.0"
 !define WXW_VERSION_DIR "3.0.2"
 !define WXW_VERSION_SHORT "30"
@@ -23,8 +23,8 @@ SetCompressor lzma
 !define PY_MIN "2.7"
 !define PY_INST_FILE "python-${PY_VERSION}.amd64.msi"
 Var PY_ACT
-!define NP_VERSION "1.8.2"
-!define MPL_VERSION "1.4.3"
+!define NP_VERSION "1.9.3"
+!define MPL_VERSION "1.5.0"
 !define EMF_VERSION "2.0.0"
 !define EXE_NAME "Stimfit"
 !define REG_NAME "Stimfit 0.14"

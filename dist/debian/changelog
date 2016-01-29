@@ -1,3 +1,9 @@
+stimfit (0.14.XY-1) unstable; urgency=low
+
+  * Fix RNG in tests with >= C++11 (Closes: #811904)
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  XYZ
+
 stimfit (0.14.11-1) unstable; urgency=low
 
   * Improve usability of stfio_plot.Timeseries

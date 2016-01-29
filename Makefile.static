@@ -60,8 +60,10 @@ DEFINES += -DWITH_PSLOPE
 
 
 WXVERSION = $(basename $(shell $(WXCONF) --version))
-WXDIR     = $(dir $(WXCONF))../include/wx-$(WXVERSION)/
-DEFINES  += -I$(WXDIR)
+#WXDIR     = $(dir $(WXCONF))../include/wx-$(WXVERSION)/
+WXDIR     = $(dir $(WXCONF))../include/
+#DEFINES  += -I$(WXDIR)
+#DEFINES  += -I$(WXDIR)/..
 
 
 PY_VERSION := 2.7
@@ -104,7 +106,6 @@ SOURCES = ./src/stimfit/stf.cpp \
 	./src/stimfit/gui/table.cpp \
 	./src/stimfit/gui/printout.cpp \
 	./src/stimfit/gui/main.cpp \
-	./src/stimfit/gui/stfcheckbox.cpp \
 	./src/libstfio/igor/igorlib.cpp \
 	./src/libstfio/cfs/cfslib.cpp \
 	./src/libstfio/section.cpp \
@@ -207,6 +208,7 @@ endif
 CC       ?= $(shell $(WXCONF) --cc)
 CXX      ?= $(shell $(WXCONF) --cxx)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector -O2
+CPPFLAGS  = $(DEFINES) $(shell $(WXCONF) --cppflags) -std=gnu++11 -fstack-protector -O2
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -std=gnu++11 -fstack-protector -O2
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
 PREFIX   ?= /usr
@@ -216,6 +218,7 @@ ifeq (5,$(shell $(CXX) -v 2>&1 | awk '/gcc version / {print substr($$3,1,1)}' ))
   CXXFLAGS += -fabi-version=2
 endif
 
+CPPFLAGS  += -I$(WXDIR)
 
 ## HDF5 related stuff ##
 ifneq ($(CROSS),)
@@ -224,8 +227,15 @@ ifneq ($(CROSS),)
 else
 ifneq ($(wildcard /usr/lib/libhdf5*),)
   ## Debian/Wheezy
+  CPPFLAGS += -I$(PREFIX)/include
   LIBS   += -lhdf5_hl -lhdf5
+else ifneq ($(wildcard $(PREFIX)/$(TARGET)/lib/libhdf5*),)
+  CPPFLAGS += -I$(PREFIX)/$(TARGET)/include
+  CXXFLAGS += -I$(PREFIX)/$(TARGET)/include
+  LDFLAGS  += -L$(PREFIX)/$(TARGET)/lib
+  LIBS     += -lhdf5_hl -lhdf5
 else ifneq ($(wildcard $(PREFIX)/lib/libhdf5*),)
+  CPPFLAGS += -I$(PREFIX)/include
   CXXFLAGS += -I$(PREFIX)/include
   LDFLAGS  += -L$(PREFIX)/lib
   LIBS     += -lhdf5_hl -lhdf5
@@ -233,7 +243,7 @@ else
   PLATFORM = $(shell dpkg-architecture -q DEB_TARGET_MULTIARCH)
   ifneq ($(wildcard /usr/lib/$(PLATFORM)/libhdf5_serial*),)
     ## Debian/Jessie
-    CXXFLAGS += -I/usr/include/hdf5/serial
+    CPPFLAGS += -I/usr/include/hdf5/serial
     LDFLAGS  += -L/usr/lib/$(PLATFORM)
     LIBS     += -lhdf5_serial_hl -lhdf5_serial
 endif
@@ -268,7 +278,7 @@ endif
 OBJECTS  = $(addsuffix .$(OBJEXT), $(basename $(SOURCES)))
 
 $(TARGET): $(OBJECTS)
-	 $(CXX) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o "$@"
+	$(CXX) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o "$@"
 
 %.c: %.h
 
@@ -278,7 +288,7 @@ $(TARGET): $(OBJECTS)
 	$(CC) -c $(CFLAGS) -c -o "$@" "$<"
 
 %.$(OBJEXT): %.cpp
-	$(CXX) -c $(CXXFLAGS) -c -o "$@" "$<"
+	$(CXX) -c $(CPPFLAGS) -c -o "$@" "$<"
 
 %.$(OBJEXT): %.cc
 	$(CXX) -c $(CXXFLAGS) -c -o "$@" "$<"
