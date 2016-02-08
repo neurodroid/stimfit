@@ -139,6 +139,14 @@ The :mod:`stf` module defines the following functions:
 
         The current baseline.
 
+.. function:: get_base_SD()
+
+    Returns the standard deviation of the baseline in the current (active) channel. Uses the currently measured values, i.e. does not update measurements if the baseline cursors have changed.
+
+        **Returns:**
+
+        0.0 upon failure (i.e. no file opened), otherwise, the standard deviation of the baseline.
+
 .. function:: get_baseline_method()
 
     Gets the method used to compute the baseline.
