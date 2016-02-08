@@ -1216,6 +1216,12 @@ double get_latency_end( bool is_time ) {
         return (double)actDoc()->GetLatencyEnd() * actDoc()->GetXScale();
 }
 
+double get_base_SD() {
+    if ( !check_doc() ) return 0.0;
+
+    return actDoc()->GetBaseSD();
+}
+
 double get_base_start( bool is_time ) {
     if ( !check_doc() ) return -1;
 

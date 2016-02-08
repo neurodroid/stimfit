@@ -1173,6 +1173,18 @@ double get_latency_end( bool is_time = false );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) get_base_SD;
+%feature("docstring", "Returns the standard deviation of the baseline
+in the current (active) channel. Uses the currently measured values,
+i.e. does not update measurements if the baseline cursors have changed. 
+
+Returns:
+0.0 upon failure (i.e no file opened), otherwise, the standard deviation
+of the baseline.") get_base_SD;
+double get_base_SD( );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %feature("autodoc", 0) get_base_start;
 %feature("kwargs") get_base_start;
 %feature("docstring", "Returns the zero-based index or the time point
