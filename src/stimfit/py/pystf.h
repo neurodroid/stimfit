@@ -80,6 +80,7 @@ bool close_this( );
 bool measure( );
 
 double get_base( bool active = true );
+double get_base_SD( );
 double get_peak( );
 double get_halfwidth (bool active = true);
 #ifdef WITH_PSLOPE
