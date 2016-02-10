@@ -212,6 +212,7 @@ CPPFLAGS  = $(DEFINES) $(shell $(WXCONF) --cppflags) -std=gnu++11 -fstack-protec
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -std=gnu++11 -fstack-protector -O2
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
 PREFIX   ?= /usr
+PKGCONF  ?= $(CROSS)pkg-config
 
 ifeq (5,$(shell $(CXX) -v 2>&1 | awk '/gcc version / {print substr($$3,1,1)}' ))
   # g++-5 changes default ABI, if WX was compiled with an earlier compiler
@@ -260,7 +261,7 @@ else
 endif
 ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
     SOURCES += ./src/libstfio/biosig/biosiglib.cpp
-    LIBS  += $(shell $(CROSS)pkg-config  --libs libbiosig)
+    LIBS  += $(shell $(PKGCONF) --libs libbiosig)
 endif
 
 LIBS     += -lfftw3
@@ -278,7 +279,7 @@ endif
 OBJECTS  = $(addsuffix .$(OBJEXT), $(basename $(SOURCES)))
 
 $(TARGET): $(OBJECTS)
-	$(CXX) $(OBJECTS) $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o "$@"
+	$(CXX) $(OBJECTS) $(CPPFLAGS) $(LDFLAGS) $(LIBS) -o "$@"
 
 %.c: %.h
 
