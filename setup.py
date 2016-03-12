@@ -202,7 +202,7 @@ stfio_module = Extension(
 
 
 setup(name='stfio',
-      version='0.14.14',
+      version='0.14.15',
       description='stfio module',
       include_dirs=system_info.default_include_dirs + [
           np.get_include()],
