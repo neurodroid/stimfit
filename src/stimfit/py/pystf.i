@@ -1631,7 +1631,7 @@ def detect_events(template, mode="criterion", norm=True, lowpass=0.5, highpass=0
 
 def peak_detection(data, threshold, min_distance):
     import stfio
-    return stfio.peak_detection(data, threshold, distance)
+    return stfio.peak_detection(data, threshold, min_distance)
 
 class _cursor_pair(object):
     def __init__(self, get_start, set_start, get_end, set_end, get_value=None, index=None):
