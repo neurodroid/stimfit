@@ -158,7 +158,8 @@ It is recommended to build `Stimfit <http://www.stimfit.org>`_  with the `BioSig
 
 ::
 
-    sudo make install_libbiosig
+    make 
+    sudo make install
 
 After that you can enter the option --with-biosig in the configure script of `Stimfit <http://www.stimfit.org>`_ and compile as usual.
 
