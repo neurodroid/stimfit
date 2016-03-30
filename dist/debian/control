@@ -3,13 +3,13 @@ Section: science
 Priority: optional
 Maintainer: Christoph Schmidt-Hieber <christsc@gmx.de>
 Uploaders: Yaroslav Halchenko <debian@onerussian.com>
-Build-Depends: debhelper (>= 7), libboost-dev (>= 1.40.0), python-all-dev (>= 2.6.6-3), python-numpy, libhdf5-dev, swig, python-wxgtk3.0 | python-wxgtk2.8 (>= 2.8.9), python-wxgtk3.0-dev | libwxgtk2.8-dev (>= 2.8.9), libwxgtk3.0-dev | libwxgtk2.8-dev (>= 2.8.9), libfftw3-dev, liblapack-dev, chrpath, help2man, libbiosig-dev, libsuitesparse-dev, dh-autoreconf, pkg-config
+Build-Depends: debhelper (>= 7), libboost-dev (>= 1.40.0), python-all-dev (>= 2.6.6-3), python-numpy, libhdf5-dev, swig, python-wxgtk3.0 | python-wxgtk2.8 (>= 2.8.9), python-wxgtk3.0-dev | libwxgtk2.8-dev (>= 2.8.9), libwxgtk3.0-dev | libwxgtk2.8-dev (>= 2.8.9), libfftw3-dev, liblapack-dev, chrpath, help2man, libsuitesparse-dev, zlib1g-dev, dh-autoreconf, pkg-config
 Standards-Version: 3.9.6
 Homepage: http://www.stimfit.org
 
 Package: stimfit
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, libbiosig-dev, libsuitesparse-dev, python-wxgtk3.0 | python-wxgtk2.8 (>= 2.8.9), python-numpy, python-matplotlib
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, libsuitesparse-dev, zlib1g-dev, python-wxgtk3.0 | python-wxgtk2.8 (>= 2.8.9), python-numpy, python-matplotlib
 Recommends: python-scipy
 Description: Program for viewing and analyzing electrophysiological data
  Stimfit is a free, fast and simple program for viewing and analyzing
@@ -33,7 +33,7 @@ Description: Debug symbols for stimfit
 Package: python-stfio
 Section: python
 Architecture: any
-Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, libbiosig-dev, libsuitesparse-dev, python-numpy
+Depends: ${python:Depends}, ${shlibs:Depends}, ${misc:Depends}, libsuitesparse-dev, zlib1g-dev, python-numpy
 Provides: ${python:Provides}
 Recommends: python-matplotlib, python-scipy, python-pandas
 Description: Python module to read common electrophysiology file formats.

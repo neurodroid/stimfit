@@ -45,14 +45,14 @@ clean:
 
 install: build
 	dh_autoreconf
-	./configure --enable-python --enable-debian --with-biosig --prefix=$(DEBPREFIX)
+	./configure --enable-python --enable-debian --with-biosiglite --prefix=$(DEBPREFIX)
 	$(MAKE)
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) check
 endif
 	$(MAKE) install
 
-	./configure --enable-module --enable-debian --with-biosig --prefix=$(DEBPREFIX)
+	./configure --enable-module --enable-debian --with-biosiglite --prefix=$(DEBPREFIX)
 	$(MAKE)
 	$(MAKE) install
 
