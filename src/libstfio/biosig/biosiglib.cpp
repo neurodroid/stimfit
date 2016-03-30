@@ -19,7 +19,11 @@
 #include "../stfio.h"
 
 #if defined(WITH_BIOSIG2)
-    #include <biosig2.h>
+    #if defined(WITH_BIOSIGLITE)
+        #include "../../libbiosiglite/biosig4c++/biosig2.h"
+    #else
+        #include <biosig2.h>
+    #endif
     #if (BIOSIG_VERSION < 10506)
         #error libbiosig2 v1.5.6 or later is required
     #endif

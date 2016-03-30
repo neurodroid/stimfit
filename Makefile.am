@@ -10,7 +10,26 @@ stimfit_SOURCES = ./src/stimfit/gui/main.cpp
 stimfittest_SOURCES = ./src/test/section.cpp ./src/test/channel.cpp ./src/test/recording.cpp ./src/test/fit.cpp ./src/test/measure.cpp \
             ./src/test/gtest/src/gtest-all.cc ./src/test/gtest/src/gtest_main.cc
 
-noinst_HEADERS = ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfio/recording.h ./src/libstfio/stfio.h \
+noinst_HEADERS = \
+        ./src/libbiosiglite/biosig4c++/igor/IgorBin.h \
+        ./src/libbiosiglite/biosig4c++/t210/abfheadr.h \
+        ./src/libbiosiglite/biosig4c++/t210/axon_structs.h \
+        ./src/libbiosiglite/biosig4c++/t210/codes.h \
+        ./src/libbiosiglite/biosig4c++/t210/structures.h \
+        ./src/libbiosiglite/biosig4c++/XMLParser/tinyxml.h \
+        ./src/libbiosiglite/biosig4c++/XMLParser/tinystr.h \
+        ./src/libbiosiglite/biosig4c++/biosig.h \
+        ./src/libbiosiglite/biosig4c++/biosig2.h \
+        ./src/libbiosiglite/biosig4c++/biosig-dev.h \
+        ./src/libbiosiglite/biosig4c++/biosig-network.h \
+        ./src/libbiosiglite/biosig4c++/gdftime.h \
+        ./src/libbiosiglite/biosig4c++/mdc_ecg_codes.h \
+        ./src/libbiosiglite/biosig4c++/physicalunits.h \
+	./src/libbiosiglite/biosig4c++/11073-10102-AnnexB.i \
+	./src/libbiosiglite/biosig4c++/eventcodes.i \
+	./src/libbiosiglite/biosig4c++/eventcodegroups.i \
+	./src/libbiosiglite/biosig4c++/units.i \
+        ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfio/recording.h ./src/libstfio/stfio.h \
 	./src/libstfio/cfs/cfslib.h ./src/libstfio/cfs/cfs.h ./src/libstfio/cfs/machine.h \
 	./src/libstfio/hdf5/hdf5lib.h \
 	./src/libstfio/heka/hekalib.h \
@@ -49,6 +68,7 @@ noinst_HEADERS = ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfi
 	./src/libstfio/axg/stringUtils.h \
 	./src/libstfio/axg/byteswap.h \
 	./src/libstfio/axg/longdef.h \
+        ./src/libstfio/biosig/biosiglib.h \
 	./src/libstfio/igor/igorlib.h \
 	./src/libstfio/igor/CrossPlatformFileIO.h \
 	./src/libstfio/igor/IgorBin.h \
@@ -204,12 +224,18 @@ stimfittest_CPPFLAGS = ${CPPFLAGS} $(GT_CPPFLAGS) -DSTF_TEST -I$(top_srcdir)/src
 stimfittest_LDFLAGS = $(LIBLAPACK_LDFLAGS) $(PYTHON_ADDLDFLAGS) $(GT_LDFLAGS)
 stimfittest_LDADD = $(WX_LIBS) $(PYTHON_ADDLIBS) $(GT_LIBS) -lfftw3 ./src/stimfit/libstimfit.la ./src/libstfio/libstfio.la ./src/libstfnum/libstfnum.la
 
+if WITH_BIOSIGLITE
+stimfit_LDADD += ./src/libbiosiglite/libbiosiglite.la
+stimfittest_LDADD += ./src/libbiosiglite/libbiosiglite.la
+endif
+
 if !ISDARWIN
 if BUILD_DEBIAN
 LTTARGET=/usr/lib/stimfit
 install-exec-hook:
 	$(LIBTOOL) --finish $(prefix)/lib/stimfit
 	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
+	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libbiosiglite.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libpystf.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstimfit.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstfio.so
@@ -246,6 +272,9 @@ install: stimfit
 	cp -v ./src/stimfit/.libs/libstimfit.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
 	cp -v ./src/libstfio/.libs/libstfio.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfio.dylib
 	cp -v ./src/libstfnum/.libs/libstfnum.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfnum.dylib
+if WITH_BIOSIGLITE
+	cp -v ./src/libbiosiglite/.libs/libbiosiglite.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libbiosiglite.dylib
+endif
 	cp $(top_srcdir)/dist/macosx/stimfit.plist.in ${DESTDIR}/stimfit.app/Contents/Info.plist
 	echo "APPL????\c" > ${DESTDIR}/stimfit.app/Contents/PkgInfo
 	rm -f ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
@@ -293,6 +322,20 @@ endif BUILD_PYTHON
 	                  $(LTTARGET)/libstfnum.dylib \
 	                  @executable_path/../lib/stimfit/libstfnum.dylib \
 	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfnum.dylib
+if WITH_BIOSIGLITE
+	install_name_tool -change \
+	                  $(LTTARGET)/libstfbiosiglite.dylib \
+	                  @executable_path/../lib/stimfit/libstfbiosiglite.dylib \
+	                  ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit
+	install_name_tool -change \
+	                  $(LTTARGET)/libstfbiosiglite.dylib \
+	                  @executable_path/../lib/stimfit/libstfbiosiglite.dylib \
+	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
+	install_name_tool -change \
+	                  $(LTTARGET)/libstfbiosiglite.dylib \
+	                  @executable_path/../lib/stimfit/libstfbiosiglite.dylib \
+	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfnum.dylib
+endif
 if BUILD_PYTHON
 	install_name_tool -change \
 	                  $(LTTARGET)/libstimfit.dylib \
@@ -310,6 +353,12 @@ if BUILD_PYTHON
 	                  $(LTTARGET)/libpystf.dylib \
 	                  @executable_path/../lib/stimfit/libpystf.dylib \
 	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
+if WITH_BIOSIGLITE
+	install_name_tool -change \
+	                  $(LTTARGET)/libstfbiosiglite.dylib \
+	                  @executable_path/../lib/stimfit/libstfbiosiglite.dylib \
+	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
+endif
 endif BUILD_PYTHON
 
 endif ISDARWIN

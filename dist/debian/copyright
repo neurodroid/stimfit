@@ -7,6 +7,10 @@ Files: *
 Copyright: 2011, Christoph Schmidt-Hieber <christsc@gmx.de>
 License: GPL-2+
 
+Files: src/libbiosiglite/*
+Copyright: 2005-2016, Alois Schloegl <alois.schloegl@ist.ac.at>
+License: GPL-3
+
 Files: src/libstfio/abf/axon/*
 Copyright: 1993-2000, Axon Instruments <info@moldev.com>
 License: axon1
@@ -57,6 +61,27 @@ License: GPL-2+
  On Debian systems, the full text of the GNU General Public
  License version 2 can be found in the file
  `/usr/share/common-licenses/GPL-2'.
+
+License: GPL-3
+ This program is free software; you can redistribute it
+ and/or modify it under the terms of the GNU General Public
+ License as published by the Free Software Foundation, either
+ version 3 of the License, or (at your option) any later
+ version.
+ .
+ This program is distributed in the hope that it will be
+ useful, but WITHOUT ANY WARRANTY; without even the implied
+ warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ PURPOSE.  See the GNU General Public License for more
+ details.
+ .
+ You should have received a copy of the GNU General Public
+ License along with this package. If not, see
+ <http://www.gnu.org/licenses/>.
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 3 can be found in the file
+ `/usr/share/common-licenses/GPL-3'.
 
 License: BSD-new
  All rights reserved.

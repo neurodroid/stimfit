@@ -48,11 +48,19 @@ libstfio_la_SOURCES += ./biosig/biosiglib.cpp
 else
 if WITH_BIOSIG
 libstfio_la_SOURCES += ./biosig/biosiglib.cpp
+else
+if WITH_BIOSIGLITE
+libstfio_la_SOURCES += ./biosig/biosiglib.cpp
+endif
 endif
 endif
 
-libstfio_la_LDFLAGS = 
+libstfio_la_LDFLAGS =
 libstfio_la_LIBADD = $(LIBSTF_LDFLAGS) $(LIBHDF5_LDFLAGS) $(LIBBIOSIG_LDFLAGS)
+
+if WITH_BIOSIGLITE
+libstfio_la_LIBADD += ./../libbiosiglite/libbiosiglite.la
+endif
 
 if ISDARWIN
 # don't install anything because it has to go into the app bundle

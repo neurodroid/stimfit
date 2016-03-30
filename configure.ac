@@ -142,12 +142,18 @@ AM_CONDITIONAL(WITH_BIOSIG, test "$with_biosig" = "yes")
 AC_ARG_WITH([biosig2], AS_HELP_STRING([--with-biosig2],[alternative to --with-biosig - eventually, this will provide better ABI compatibility when upgrading libbiosig; currently it's in a testing state; requires libbiosig2 v1.5.6 or higher]),[])
 AM_CONDITIONAL(WITH_BIOSIG2, test "$with_biosig2" = "yes")
 
+AC_ARG_WITH([biosiglite], AS_HELP_STRING([--with-biosiglite], [use builtin biosig library]), [])
+AM_CONDITIONAL(WITH_BIOSIGLITE, test "$with_biosiglite" = "yes")
+
 if test "$with_biosig2" = "yes" ; then
     CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG2"
     LIBBIOSIG_LDFLAGS="-lbiosig2 -lcholmod"
 elif test "$with_biosig" = "yes" ; then
     CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG"
     LIBBIOSIG_LDFLAGS="-lbiosig -lcholmod"
+elif test "$with_biosiglite" = "yes" ; then
+    CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG2 -DWITH_BIOSIGLITE"
+    LIBBIOSIG_LDFLAGS="-lcholmod"
 fi
 AC_SUBST(LIBBIOSIG_LDFLAGS)
 
@@ -360,6 +366,6 @@ CXXFLAGS="${CXXFLAGS} -Wall"
 
 AC_CONFIG_HEADERS([stfconf.h])
 
-AC_CONFIG_FILES([Makefile src/Makefile src/libstfio/Makefile src/libstfnum/Makefile src/pystfio/Makefile src/stimfit/Makefile src/stimfit/py/Makefile dist/macosx/stimfit.plist])
+AC_CONFIG_FILES([Makefile src/Makefile src/libstfio/Makefile src/libstfnum/Makefile src/libbiosiglite/Makefile src/pystfio/Makefile src/stimfit/Makefile src/stimfit/py/Makefile dist/macosx/stimfit.plist])
 
 AC_OUTPUT

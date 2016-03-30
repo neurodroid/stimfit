@@ -1,0 +1,10 @@
+Thanks to the contributors:  
+
+Thomas Brunner 
+	Makefile, testing 
+Eugenio Cervesato
+	reading of SCP-ECG format
+Franco Chiarugi 
+	writing of SCP-ECG format
+Elias Apostolopoulos
+	read/write support of HL7aECG format	
