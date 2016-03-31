@@ -235,11 +235,11 @@ LTTARGET=/usr/lib/stimfit
 install-exec-hook:
 	$(LIBTOOL) --finish $(prefix)/lib/stimfit
 	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
-	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libbiosiglite.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libpystf.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstimfit.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstfio.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstfnum.so
+	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libbiosiglite.so
 	install -d $(prefix)/share/pixmaps
 	install -d $(prefix)/share/applications
 	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
