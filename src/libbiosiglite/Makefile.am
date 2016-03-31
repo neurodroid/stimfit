@@ -38,7 +38,7 @@ libbiosiglite_la_SOURCES = \
 
 libbiosiglite_la_CPPFLAGS = -DWITH_BIOSIG2 -DWITH_ZLIB -DWITH_CHOLMOD -DWITHOUT_NETWORK
 libbiosiglite_la_LDFLAGS = 
-libbiosiglite_la_LIBADD = -lz -lcholmod
+libbiosiglite_la_LIBADD = $(LIBSTF_LDFLAGS) -lz -lcholmod
 
 
 if ISDARWIN
