@@ -19,7 +19,7 @@ libpystf_la_CXXFLAGS = $(OPT_CXXFLAGS) $(WX_CXXFLAGS)
 libpystf_la_LDFLAGS = $(LIBPYTHON_LDFLAGS) $(LIBSTF_LDFLAGS) $(LIBBIOSIG_LDFLAGS)
 libpystf_la_LIBADD = ../libstimfit.la ../../libstfio/libstfio.la $(WX_LIBS)
 if WITH_BIOSIGLITE
-libpystf_la_LIBADD += ../libbiosiglite/libbiosiglite.la
+libpystf_la_LIBADD += ../../libbiosiglite/libbiosiglite.la
 endif
 
 EXTRA_DIST = pystf.i numpy.i ivtools.py mintools.py natools.py minidemo.py charlie.py mintools.py hdf5tools.py spells.py embedded_init.py embedded_stf.py embedded_mpl.py embedded_ipython.py heka.py extensions.py gccwarn

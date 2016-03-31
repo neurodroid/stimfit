@@ -39,7 +39,7 @@ libpystfio_la_CXXFLAGS = $(OPT_CXXFLAGS)
 libpystfio_la_LDFLAGS = $(PYTHON_ADDLDFLAGS) $(LIBSTF_LDFLAGS)
 libpystfio_la_LIBADD = $(PYTHON_ADDLIBS) ./../libstfio/libstfio.la ./../libstfnum/libstfnum.la
 if WITH_BIOSIGLITE
-libpystfio_la_LIBADD += ../libbiosiglite/libbiosiglite.la
+libpystfio_la_LIBADD += ./../libbiosiglite/libbiosiglite.la
 endif
 
 # LTTARGET=${PYTHON_DIST_PKG}/stfio
