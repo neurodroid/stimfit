@@ -1,3 +1,15 @@
+if BUILD_MODULE
+if ISDARWIN
+PYTHON_TARGET_DIR=${PYTHON_DIST_PKG}
+else
+PYTHON_TARGET_DIR=${PYTHON_PRE_DIST_PKG}
+# PYTHON_TARGET_DIR=${PYTHON_DIST_PKG}
+endif
+PYTHON_DEST_DIR=${DESTDIR}${PYTHON_TARGET_DIR}
+pkglibdir = ${PYTHON_TARGET_DIR}/stfio
+
+endif
+
 pkglib_LTLIBRARIES = libbiosiglite.la
 
 libbiosiglite_la_SOURCES = \
@@ -27,3 +39,11 @@ libbiosiglite_la_SOURCES = \
 libbiosiglite_la_CPPFLAGS = -DWITH_BIOSIG2 -DWITH_ZLIB -DWITH_CHOLMOD -DWITHOUT_NETWORK
 libbiosiglite_la_LDFLAGS = 
 libbiosiglite_la_LIBADD = -lz -lcholmod
+
+
+if ISDARWIN
+# don't install anything because it has to go into the app bundle
+if !BUILD_MODULE
+install:
+endif
+endif
