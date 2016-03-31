@@ -11,6 +11,9 @@ libstimfit_la_CPPFLAGS =
 libstimfit_la_CXXFLAGS = $(OPT_CXXFLAGS) $(WX_CXXFLAGS)
 libstimfit_la_LDFLAGS = $(LIBPYTHON_LDFLAGS) $(LIBSTF_LDFLAGS)
 libstimfit_la_LIBADD = $(WX_LIBS) ../libstfio/libstfio.la ../libstfnum/libstfnum.la
+if WITH_BIOSIGLITE
+libstimfit_la_LIBADD += ../libbiosiglite/libbiosiglite.la
+endif
 
 # the application source, library search path, and link libraries
 if BUILD_PYTHON
