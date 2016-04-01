@@ -114,8 +114,10 @@ extern "C" {
 
 int sopen_SCP_read     (HDRTYPE* hdr);
 int sopen_SCP_write    (HDRTYPE* hdr);
+#ifndef WITH_BIOSIGLITE
 int sopen_HL7aECG_read (HDRTYPE* hdr);
 void sopen_HL7aECG_write(HDRTYPE* hdr);
+#endif
 void sopen_abf_read    (HDRTYPE* hdr);
 void sopen_abf2_read   (HDRTYPE* hdr);
 void sopen_axg_read    (HDRTYPE* hdr);
@@ -123,7 +125,9 @@ void sopen_alpha_read  (HDRTYPE* hdr);
 void sopen_cfs_read    (HDRTYPE* hdr);
 void sopen_FAMOS_read  (HDRTYPE* hdr);
 void sopen_fiff_read   (HDRTYPE* hdr);
+#ifndef WITH_BIOSIGLITE
 int sclose_HL7aECG_write(HDRTYPE* hdr);
+#endif
 void sopen_ibw_read    (HDRTYPE* hdr);
 void sopen_itx_read    (HDRTYPE* hdr);
 void sopen_smr_read    (HDRTYPE* hdr);
@@ -11094,7 +11098,7 @@ if (VERBOSE_LEVEL>2)
     		return(hdr);
 	}
 #endif
-
+#ifndef WITH_BIOSIGLITE
 	else if (hdr->TYPE==HL7aECG || hdr->TYPE==XML) {
 		sopen_HL7aECG_read(hdr);
 		if (VERBOSE_LEVEL>7)
@@ -11105,7 +11109,7 @@ if (VERBOSE_LEVEL>2)
 		hdr->FILE.LittleEndian = (__BYTE_ORDER == __LITTLE_ENDIAN); // no swapping
 		hdr->AS.length  = hdr->NRec;
 	}
-
+#endif
 #ifdef WITH_MICROMED
     	else if (hdr->TYPE==TRC) {
     		sopen_TRC_read(hdr);
@@ -11776,13 +11780,14 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
 		}
 	}
 
+#ifndef WITH_BIOSIGLITE
     	else if (hdr->TYPE==HL7aECG) {
 		sopen_HL7aECG_write(hdr);
 
 		// hdr->FLAG.SWAP = 0;
 		hdr->FILE.LittleEndian = (__BYTE_ORDER == __LITTLE_ENDIAN); // no byte-swapping
 	}
-
+#endif
     	else if (hdr->TYPE==MFER) {
     		uint8_t tag;
     		size_t  len, curPos=0;
@@ -13602,11 +13607,13 @@ int sclose(HDRTYPE* hdr)
 		leu16a(crc, ptr);
 		ifwrite(hdr->AS.Header, sizeof(char), hdr->HeadLen, hdr);
 	}
+#ifndef WITH_BIOSIGLITE
 	else if ((hdr->FILE.OPEN>1) && (hdr->TYPE==HL7aECG))
 	{
 		sclose_HL7aECG_write(hdr);
 		hdr->FILE.OPEN = 0;
 	}
+#endif
 #endif //ONLYGDF
 
 	if (hdr->FILE.OPEN > 0) {
