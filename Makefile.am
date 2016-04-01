@@ -16,8 +16,6 @@ noinst_HEADERS = \
         ./src/libbiosiglite/biosig4c++/t210/axon_structs.h \
         ./src/libbiosiglite/biosig4c++/t210/codes.h \
         ./src/libbiosiglite/biosig4c++/t210/structures.h \
-        ./src/libbiosiglite/biosig4c++/XMLParser/tinyxml.h \
-        ./src/libbiosiglite/biosig4c++/XMLParser/tinystr.h \
         ./src/libbiosiglite/biosig4c++/biosig.h \
         ./src/libbiosiglite/biosig4c++/biosig2.h \
         ./src/libbiosiglite/biosig4c++/biosig-dev.h \
