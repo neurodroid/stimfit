@@ -1,6 +1,6 @@
 package:
     name: py-stfio
-    version: "0.15.1"
+    version: "0.15.2"
 
 source:
     # Since this recipe is part of the git repo, the source is just a local path

@@ -1,9 +1,9 @@
-stimfit (0.15.1-1) unstable; urgency=low
+stimfit (0.15.2-1) unstable; urgency=low
 
   * Fix RNG in tests with >= C++11 (Closes: #811904)
   * Use builtin biosig library
 
- -- Christoph Schmidt-Hieber <christsc@gmx.de>  Thu, 31 Mar 2016 20:29:23 +0100
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Fri, 01 Apr 2016 10:29:55 +0100
 
 stimfit (0.14.11-1) unstable; urgency=low
 
