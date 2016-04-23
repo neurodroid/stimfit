@@ -33,6 +33,7 @@
 #include "./abf/abflib.h"
 #include "./atf/atflib.h"
 #include "./axg/axglib.h"
+#include "./tdms/tdmslib.h"
 #include "./igor/igorlib.h"
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
   #include "./biosig/biosiglib.h"
@@ -94,6 +95,7 @@ stfio::findType(const std::string& ext) {
     else if (ext=="*.atf") return stfio::atf;
     else if (ext=="*.dat") return stfio::heka;
     else if (ext=="*.smr") return stfio::son;
+    else if (ext=="*.tdms") return stfio::tdms;
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
     else if (ext=="*.dat;*.cfs;*.gdf;*.ibw") return stfio::biosig;
     else if (ext=="*.*")   return stfio::biosig;
@@ -122,6 +124,8 @@ stfio::findExtension(stfio::filetype ftype) {
          return ".dat";
      case stfio::son:
          return ".smr";
+     case stfio::tdms:
+         return ".tdms";
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
      case stfio::biosig:
          return ".gdf";
@@ -179,6 +183,10 @@ bool stfio::importFile(
         switch (type) {
         case stfio::hdf5: {
             stfio::importHDF5File(fName, ReturnData, progDlg);
+            break;
+        }
+        case stfio::tdms: {
+            stfio::importTDMSFile(fName, ReturnData, progDlg);
             break;
         }
 #ifndef WITHOUT_ABF

@@ -31,6 +31,7 @@ noinst_HEADERS = \
 	./src/libstfio/cfs/cfslib.h ./src/libstfio/cfs/cfs.h ./src/libstfio/cfs/machine.h \
 	./src/libstfio/hdf5/hdf5lib.h \
 	./src/libstfio/heka/hekalib.h \
+	./src/libstfio/tdms/tdmslib.h \
 	./src/libstfio/abf/abflib.h \
 	./src/libstfio/abf/axon/AxAbfFio32/abffiles.h \
 	./src/libstfio/abf/axon/AxAbfFio32/csynch.hpp \

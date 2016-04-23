@@ -159,6 +159,7 @@ enum filetype {
     hdf5,   /*!< hdf5 files. */
     heka,   /*!< heka files. */
     biosig, /*!< biosig files. */
+    tdms,   /*!< TDMS files. */
     none    /*!< Undefined file type. */
 };
 
