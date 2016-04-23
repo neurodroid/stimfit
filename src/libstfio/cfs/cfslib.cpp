@@ -541,7 +541,7 @@ int stfio::importCFSFile(const std::string& fName, Recording& ReturnData, Progre
             throw;
         }
     }	//Begin loop: n_channel
-    ReturnData.SetXScale(xScale + '\0');
+    ReturnData.SetXScale(xScale);
     ReturnData.SetFileDescription(file_description + '\0');
     ReturnData.SetGlobalSectionDescription(section_description + '\0');
     ReturnData.SetScaling(scaling);
