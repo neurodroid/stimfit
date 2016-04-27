@@ -185,6 +185,7 @@ stfio_module = Extension(
         'src/libstfio/igor/CrossPlatformFileIO.c',
         'src/libstfio/igor/WriteWave.c',
         'src/libstfio/igor/igorlib.cpp',
+        'src/libstfio/tdms/tdmslib.cpp',
         'src/libstfio/recording.cpp',
         'src/libstfio/section.cpp',
         'src/libstfio/stfio.cpp',
