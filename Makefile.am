@@ -323,16 +323,16 @@ endif BUILD_PYTHON
 	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfnum.dylib
 if WITH_BIOSIGLITE
 	install_name_tool -change \
-	                  $(LTTARGET)/libstfbiosiglite.dylib \
-	                  @executable_path/../lib/stimfit/libstfbiosiglite.dylib \
+	                  $(LTTARGET)/libbiosiglite.dylib \
+	                  @executable_path/../lib/stimfit/libbiosiglite.dylib \
 	                  ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit
 	install_name_tool -change \
-	                  $(LTTARGET)/libstfbiosiglite.dylib \
-	                  @executable_path/../lib/stimfit/libstfbiosiglite.dylib \
+	                  $(LTTARGET)/libbiosiglite.dylib \
+	                  @executable_path/../lib/stimfit/libbiosiglite.dylib \
 	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
 	install_name_tool -change \
-	                  $(LTTARGET)/libstfbiosiglite.dylib \
-	                  @executable_path/../lib/stimfit/libstfbiosiglite.dylib \
+	                  $(LTTARGET)/libbiosiglite.dylib \
+	                  @executable_path/../lib/stimfit/libbiosiglite.dylib \
 	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfnum.dylib
 endif
 if BUILD_PYTHON
@@ -354,8 +354,8 @@ if BUILD_PYTHON
 	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
 if WITH_BIOSIGLITE
 	install_name_tool -change \
-	                  $(LTTARGET)/libstfbiosiglite.dylib \
-	                  @executable_path/../lib/stimfit/libstfbiosiglite.dylib \
+	                  $(LTTARGET)/libbiosiglite.dylib \
+	                  @executable_path/../lib/stimfit/libbiosiglite.dylib \
 	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
 endif
 endif BUILD_PYTHON
