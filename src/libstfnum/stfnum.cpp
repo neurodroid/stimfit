@@ -724,7 +724,7 @@ stfnum::deconvolve(const Vector_double& dataIn, const Vector_double& templ,
     double* in_templ_padded =(double *)fftw_malloc(sizeof(double) * data.size());
     std::copy(templ.begin(), templ.end(), in_templ_padded);
     if (templ.size() < data.size()) {
-        for (int kp=templ.size(); kp<data.size(); ++kp)
+        for (size_t kp=templ.size(); kp<data.size(); ++kp)
             in_templ_padded[kp] = 0;
     }
 
