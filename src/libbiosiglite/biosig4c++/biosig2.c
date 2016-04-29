@@ -1275,6 +1275,119 @@ int biosig_set_datarecord_duration(int handle, double duration) {
 	return 0;
 }
 
+/******************************************************************************************
+	biosig_unserialize_header: converts memory buffer into header structure HDR
+
+	biosig_unserialize: converts memory buffer into header structure HDR, and
+	if data != NULL, data samples will be read into a matrix,
+		the starting address of this data matrix will be stored in *data
+		point to *data
+	input:
+		mem : buffer
+		len : length of buffer mem
+		start: starting position to extract data
+		length: number of samples for extracting data,
+		flags: BIOSIG_FLAG_UCAL | BIOSIG_FLAG_OVERFLOWDETECTION | BIOSIG_FLAG_ROW_BASED_CHANNELS
+	output:
+		*data will contain start address to matrix data samples, of size
+		hdr->NS * (hdr->SPR * hdr->NRec) or its transpose form depending on flags
+	return value:
+		header structure HDRTYPE* hdr.
+ ******************************************************************************************/
+HDRTYPE* biosig_unserialize(void *mem, size_t len, size_t start, size_t length, biosig_data_type **data, int flags) {
+
+	fprintf(stdout,"%s (line %i) %s:\n",__FILE__,__LINE__,__func__);
+
+	HDRTYPE *hdr = constructHDR(0,0);
+
+	// decode header
+	fprintf(stdout,"%s (line %i) %s:\n",__FILE__,__LINE__,__func__);
+
+	hdr->AS.Header = mem;
+	// in case of error, memory is deallocated through destructHDR(hdr);
+	if (gdfbin2struct(hdr)) return(hdr);
+	// in case of success, memory is managed by its own pointer *mem
+	hdr->AS.Header = NULL;
+
+	fprintf(stdout,"%s (line %i) %s:\n",__FILE__,__LINE__,__func__);
+
+	// get data block
+	biosig_set_flag(hdr, flags);
+	if (data != NULL) {
+		hdr->AS.rawdata = mem+hdr->HeadLen;
+		size_t L = sread(*data, start, length, hdr);
+		*data    = hdr->data.block;
+		hdr->data.block = NULL;
+	}
+	hdr->AS.rawdata = NULL;
+
+	fprintf(stdout,"%s (line %i) %s:\n",__FILE__,__LINE__,__func__);
+
+	// read eventtable
+	hdr->AS.rawEventData = (hdr->NRec != -1) ? mem + hdr->HeadLen + hdr->NRec*hdr->AS.bpb : NULL;
+	rawEVT2hdrEVT(hdr, len - hdr->HeadLen - hdr->NRec*hdr->AS.bpb);
+
+	// in case of success, memory is managed by its own pointer *mem
+	hdr->AS.rawEventData = NULL;
+
+	fprintf(stdout,"%s (line %i) %s:\n",__FILE__,__LINE__,__func__);
+
+	return(hdr);
+}
+
+/******************************************************************************************
+	biosig_serialize: converts header structure into memory buffer
+	input:
+		hdr: header structure, including event table.
+
+	output:
+		*mem will contain start address of buffer
+		*len will contain length of buffer mem.
+ ******************************************************************************************/
+
+void* biosig_serialize(HDRTYPE *hdr, void **mem, size_t *len) {
+	// encode header
+
+	fprintf(stdout,"%s (line %i) %s:\n",__FILE__,__LINE__,__func__);
+
+	hdr->TYPE=GDF;
+	hdr->VERSION=3.0;
+
+	struct2gdfbin(hdr);
+
+	fprintf(stdout,"%s (line %i) %s:\n",__FILE__,__LINE__,__func__);
+
+	// write event table
+	size_t len3 = hdrEVT2rawEVT(hdr);
+
+	fprintf(stdout,"%s (line %i) %s:\n",__FILE__,__LINE__,__func__);
+
+	size_t len0 = hdr->HeadLen + hdr->NRec*hdr->AS.bpb + len3;
+	char* M = (char*)realloc(*mem,len0);
+	if (M == NULL) return(NULL);
+
+	*mem = M;
+	*len = len0;
+	// write header into buffer
+	memcpy(M, hdr->AS.Header, hdr->HeadLen);
+
+	fprintf(stdout,"%s (line %i) %s:\n",__FILE__,__LINE__,__func__);
+
+	// write data into buffer, and collapse unused channels
+	size_t count = sread_raw(0, hdr->NRec, hdr, 1, M + hdr->HeadLen, hdr->NRec*hdr->AS.bpb);
+
+	fprintf(stdout,"%s (line %i) %s:\n",__FILE__,__LINE__,__func__);
+
+	// write event table into buffer
+	memcpy(M + hdr->HeadLen + hdr->NRec*hdr->AS.bpb, hdr->AS.rawEventData, len3);
+
+	fprintf(stdout,"%s (line %i) %s:\n",__FILE__,__LINE__,__func__);
+
+	return(M);
+}
+
+
+
 
 #if defined(MAKE_EDFLIB)
 

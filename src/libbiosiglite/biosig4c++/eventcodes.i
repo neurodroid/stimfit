@@ -6,12 +6,12 @@
 # GDF v2.x http://arxiv.org/abs/cs.DB/0608052 and 
 # GDF v1.x http://pub.ist.ac.at/~schloegl/matlab/eeg/gdf4/TR_GDF.pdf
 # and part of the BioSig project http://biosig.sf.net/
-# Copyright (C) 2004,2005,2006,2008,2009,2010,2011 Alois Schloegl <alois.schloegl@gmail.com>
-# $Id: eventcodes.txt,v 1.15 2009-01-20 16:09:46 schloegl Exp $
+# Copyright (C) 2004-2015 Alois Schloegl <alois.schloegl@ist.ac.at>
 # 
 # BioSig is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public
 # License as published by the Free Software Foundation; either
+# Version 3 of the License, or (at your option) any later version.
 #endif
 	{ 0x0001, 0x0000, "condition 1" },
 	{ 0x0002, 0x0000, "condition 2" },
@@ -298,8 +298,10 @@
 	{ 0x0143, 0x0140, "response code 3" },
 	{ 0x0144, 0x0140, "Go, or response code 4" },
 	{ 0x0145, 0x0140, "NoGo, or response code 5" },
-	{ 0x0201, 0x0200, "Spike onset, action potential " },
+	{ 0x0201, 0x0200, "Spike, action potential (fiducial point)" },
 	{ 0x0202, 0x0200, "Burst " },
+	{ 0x0203, 0x0200, "maximum slope time" },
+	{ 0x0204, 0x0200, "peak time of spike" },
 	{ 0x0300, 0x0300, "Start of Trial, Trigger at t=0s" },
 	{ 0x0301, 0x0300, "class1, Left hand" },
 	{ 0x0302, 0x0300, "class2, Right hand" },
@@ -372,11 +374,11 @@
 	{ 0x0449, 0x0440, "arm movement" },
 	{ 0x044a, 0x0440, "arm (right) movement" },
 	{ 0x0501, 0x0500, "ecg:Fiducial point of QRS complex" },
-	{ 0x0502, 0x0500, "ecg:P-wave-onset" },
-	{ 0x0503, 0x0500, "ecg:Q-wave-onset, QRS-onset" },
+	{ 0x0502, 0x0500, "ecg:P-wave-onset, MDC_ECG_TIME_START_P" },
+	{ 0x0503, 0x0500, "ecg:Q-wave-onset, QRS-onset, MDC_ECG_TIME_START_QRS" },
 	{ 0x0504, 0x0500, "ecg:R-point" },
 	{ 0x0505, 0x0500, "ecg:S-wave-onset, S-wave-peak" },
-	{ 0x0506, 0x0500, "ecg:T-wave-onset" },
+	{ 0x0506, 0x0500, "ecg:T-wave-onset, MDC_ECG_TIME_START_T" },
 	{ 0x0507, 0x0500, "ecg:U-wave-onset" },
 	{ 0x0580, 0x0580, "start" },
 	{ 0x0581, 0x0580, " 25 Watt" },

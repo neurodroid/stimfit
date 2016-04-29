@@ -310,6 +310,44 @@ ATT_DEPREC int biosig_write_annotation_utf8(int handle, size_t onset, size_t dur
 ATT_DEPREC int biosig_write_annotation_latin1(int handle, size_t onset, size_t duration, const char *description);
 ATT_DEPREC int biosig_set_datarecord_duration(int handle, double duration);
 
+/* =============================================================
+	serialize/unserialize data
+	converts between linear buffer memory and header structure
+   ============================================================= */
+
+ATT_DEPREC void* biosig_serialize(HDRTYPE *hdr, void **mem, size_t *len);
+/******************************************************************************************
+	biosig_serialize: converts header structure into memory buffer
+	input:
+		hdr: header structure, including event table.
+
+	output:
+		*mem will contain start address of buffer
+		*len will contain length of buffer mem.
+ ******************************************************************************************/
+
+ATT_DEPREC HDRTYPE* biosig_unserialize(void *mem, size_t len, size_t start, size_t length, biosig_data_type **data, int flags);
+#define biosig_unserialize_header(a,b) biosig_unserialize(a,b,0,0,NULL,0)
+/******************************************************************************************
+	biosig_unserialize_header: converts memory buffer into header structure HDR
+
+	biosig_unserialize: converts memory buffer into header structure HDR, and
+	if data != NULL, data samples will be read into a matrix,
+		the starting address of this data matrix will be stored in *data
+		point to *data
+	input:
+		mem : buffer
+		len : length of buffer mem
+		start: starting position to extract data
+		length: number of samples for extracting data,
+		flags: BIOSIG_FLAG_UCAL | BIOSIG_FLAG_OVERFLOWDETECTION | BIOSIG_FLAG_ROW_BASED_CHANNELS
+	output:
+		*data will contain start address to matrix data samples, of size
+		hdr->NS * (hdr->SPR * hdr->NRec) or its transpose form depending on flags
+	return value:
+		header structure HDRTYPE* hdr.
+ ******************************************************************************************/
+
 
 #if defined(MAKE_EDFLIB)
 

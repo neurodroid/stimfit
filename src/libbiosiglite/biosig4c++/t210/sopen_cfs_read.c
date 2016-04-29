@@ -143,8 +143,9 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"%s:%i sopen_cfs_read started [%s]\n",__FILE
 		}
 
 		if (NumberOfDataSections) {
-			hdr->EVENT.TYP = (typeof(hdr->EVENT.TYP)) realloc(hdr->EVENT.TYP, (hdr->EVENT.N + NumberOfDataSections - 1) * sizeof(*hdr->EVENT.TYP));
-			hdr->EVENT.POS = (typeof(hdr->EVENT.POS)) realloc(hdr->EVENT.POS, (hdr->EVENT.N + NumberOfDataSections - 1) * sizeof(*hdr->EVENT.POS));
+			hdr->EVENT.TYP = (typeof(hdr->EVENT.TYP)) realloc(hdr->EVENT.TYP, (hdr->EVENT.N + 2*NumberOfDataSections - 1) * sizeof(*hdr->EVENT.TYP));
+			hdr->EVENT.POS = (typeof(hdr->EVENT.POS)) realloc(hdr->EVENT.POS, (hdr->EVENT.N + 2*NumberOfDataSections - 1) * sizeof(*hdr->EVENT.POS));
+			hdr->EVENT.TimeStamp = (typeof(hdr->EVENT.TimeStamp)) realloc(hdr->EVENT.TimeStamp, (hdr->EVENT.N + 2*NumberOfDataSections - 1) * sizeof(*hdr->EVENT.TimeStamp));
 		}
 
 if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) CFS - %d,%d,%d,0x%x,0x%x,0x%x,%d,0x%x\n",__FILE__,__LINE__,hdr->NS,n,d,FileHeaderSize,DataHeaderSize,LastDataSectionHeaderOffset,NumberOfDataSections,leu32p(hdr->AS.Header+0x86));
@@ -167,14 +168,14 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) CFS - %d,%d,%d,0x%x,0x%x,0x%x,
 			hc->LeadIdCode = 0;
 			hc->bi8 = 0;
 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(line %i) Channel #%i: %i<%s>/%i<%s>\n",__FILE__,__LINE__,k+1, H2[22 + k*H2LEN], H2 + 23 + k*H2LEN, H2[32 + k*H2LEN], H2 + 33 + k*H2LEN);
+if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(line %i) Channel #%i/%i: %i<%s>/%i<%s>\n",__FILE__,__LINE__,k+1, hdr->NS, H2[22 + k*H2LEN], H2 + 23 + k*H2LEN, H2[32 + k*H2LEN], H2 + 33 + k*H2LEN);
 
 			strncpy(hc->Label,              trim_trailing_space(H2 + k*H2LEN, 20), 21);	// Channel name
 			hc->PhysDimCode  = PhysDimCode (trim_trailing_space(H2 + 22 + k*H2LEN,9));		// Y axis units
 			xPhysDimScale[k] = PhysDimScale(PhysDimCode(trim_trailing_space(H2 + 32 + k*H2LEN,9)));	// X axis units
 
 			uint8_t  dataType  = H2[42 + k*H2LEN];
-			//uint8_t  dataKind  = H2[43 + k*H2LEN];
+			uint8_t  dataKind  = H2[43 + k*H2LEN];
 			//uint16_t byteSpace = leu16p(H2+44 + k*H2LEN);		// stride
 			//uint16_t next      = leu16p(H2+46 + k*H2LEN);
 			hc->GDFTYP = cfs_data_type(dataType);
@@ -193,10 +194,13 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(line %i) Channel #%i: %i<%s>/%i<%s>\n",_
 			hc->LowPass  = NAN;
 			hc->HighPass = NAN;
 			hc->Notch    = NAN;
-if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(line %i) Channel #%i: [%s](%i/%i) <%s>/<%s> ByteSpace%i,Next#%i\n",__FILE__,__LINE__,k+1, H2 + 1 + k*H2LEN, dataType, H2[43], H2 + 23 + k*H2LEN, H2 + 33 + k*H2LEN, leu16p(H2+44+k*H2LEN), leu16p(H2+46+k*H2LEN));
+
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(line %i) Channel #%i: [%s](%i/%i) <%s>/<%s> ByteSpace%i,Next#%i\n",
+			__FILE__, __LINE__, k+1, H2 + 1 + k*H2LEN, dataType, dataKind,
+			H2 + 23 + k*H2LEN, H2 + 33 + k*H2LEN, leu16p(H2+44+k*H2LEN), leu16p(H2+46+k*H2LEN));
+
 		}
 		hdr->AS.bpb = bpb;
-
 
 		size_t datapos = H1LEN + H2LEN*hdr->NS;
 
@@ -273,7 +277,17 @@ else if (VERBOSE_LEVEL>7)
 				}
 			}
 			if (k==0) {
+				// File variable zero
 				flag_FPulse = !strcmp(unit,"FPulse");
+
+				if (typ==2)
+					hdr->VERSION = i/100.0;
+				else
+					fprintf(stderr,"Warning (%s line %i): File variable zeros is not of type INT2\n",__func__,__LINE__);
+
+				char *e = (char*)&(hdr->ID.Equipment);
+				memcpy(e,unit,8);
+				lei16a(i,e+6);
 			}
 		}
 
@@ -304,14 +318,10 @@ else if (VERBOSE_LEVEL>7)
 		hdr->NRec = NumberOfDataSections;
 		size_t SPR = 0, SZ = 0;
 		for (m = 0; m < NumberOfDataSections; m++) {
-			if (m>0) {
-				hdr->EVENT.TYP[hdr->EVENT.N] = 0x7ffe;
-				hdr->EVENT.POS[hdr->EVENT.N] = SPR;
-				hdr->EVENT.N++;
-			}
+			int32_t tmp_event_typ=0;
+			double  tmp_event_pos=0;
 
 			datapos = DATAPOS[m];
-
 			for (k = 0; k < d; k++) {
 				/***** DS variable k information *****/
 				int i=-1; double f=NAN;
@@ -336,6 +346,12 @@ else if (VERBOSE_LEVEL>7)
 				case 6: f = lef64p(hdr->AS.Header+p3); break;
 				}
 
+				if ((k==1) && (typ==4) && !strcmp(desc,"State")) {
+					tmp_event_typ = i;
+				}
+				else if ((k==3) && (typ==6) && !strcmp(desc,"Start") && !strcmp(unit,"s"))
+					tmp_event_pos = f;
+
 if (VERBOSE_LEVEL>7) 		{
 				fprintf(stdout,"#%2i [%i:%i] <%s>",k,typ,off,desc);
 				if (typ<1) ;
@@ -344,6 +360,20 @@ if (VERBOSE_LEVEL>7) 		{
 				else if (typ==7) fprintf(stdout,"[%s]",hdr->AS.Header+p3+1);
 				fprintf(stdout,"[%s]\n",unit);
 				}
+			}
+
+			typeof (hdr->T0) TS = tmp_event_pos ? (hdr->T0 + ldexp(tmp_event_pos/(24.0*3600.0),32)) : 0;
+			if (m>0) {
+				hdr->EVENT.TYP[hdr->EVENT.N] = 0x7ffe;
+				hdr->EVENT.POS[hdr->EVENT.N] = SPR;
+				hdr->EVENT.TimeStamp[hdr->EVENT.N] = TS;
+				hdr->EVENT.N++;
+			}
+			if (tmp_event_typ > 0) {
+				hdr->EVENT.TYP[hdr->EVENT.N] = tmp_event_typ;
+				hdr->EVENT.POS[hdr->EVENT.N] = SPR;
+				hdr->EVENT.TimeStamp[hdr->EVENT.N] = TS;
+				hdr->EVENT.N++;
 			}
 
 			if (!leu32p(hdr->AS.Header+datapos+8)) continue; 	// empty segment
@@ -375,7 +405,8 @@ if (VERBOSE_LEVEL>7) 		{
 							__FILE__,__LINE__, (int)m, (int)NumberOfDataSections, (int)k,(int)hdr->NS, XCal, XOff, \
 							(int)hc->SPR,(int)xspr,hc->Cal,Cal,hc->Off,Off);
 
-				if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) [%i %i] %i %i %p %i\n", __FILE__, __LINE__, m, k, xspr0, xspr, pos, datapos + 30 + 24 * k);
+				if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) [%i %i] %i %i %p %i\n",
+							__FILE__, __LINE__, m, k, xspr0, xspr, pos, (int)(datapos + 30 + 24 * k));
 
 				if (xspr0 == 0)
 					xspr0 = xspr;
@@ -413,7 +444,8 @@ if (VERBOSE_LEVEL>7) 		{
 					hc->Off = Off;
 				}
 
-				if (VERBOSE_LEVEL>7) fprintf(stdout,"CFS 408: %i #%i: SPR=%i=%i=%i  x%f+-%f %i x%g %g %g\n",m,k,spr,(int)SPR,hc->SPR,hc->Cal,hc->Off,hc->bi,xPhysDimScale[k], XCal, XOff);
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): %i #%i: SPR=%i=%i=%i  x%f+-%f %i x%g %g %g\n",
+					__func__,__LINE__,m,k,spr,(int)SPR,hc->SPR,hc->Cal,hc->Off,hc->bi,xPhysDimScale[k], XCal, XOff);
 
 				double Fs = 1.0 / (xPhysDimScale[k] * XCal);
 				if ( (hc->OnOff == 0) || (XCal == 0.0) ) {
@@ -447,9 +479,7 @@ if (VERBOSE_LEVEL>7) 		{
 		*/
 		hdr->AS.flag_collapsed_rawdata = 0;
 		void *ptr = realloc(hdr->AS.rawdata, hdr->AS.bpb * SPR);
-		if (!ptr) {
-			biosigERROR(hdr,B4C_MEMORY_ALLOCATION_FAILED, "CFS: memory allocation failed in line __LINE__");
-		}
+		if (!ptr) biosigERROR(hdr,B4C_MEMORY_ALLOCATION_FAILED, "CFS: memory allocation failed in line __LINE__");
 		hdr->AS.rawdata = (uint8_t*)ptr;
 
 		SPR = 0, SZ = 0;
@@ -523,17 +553,18 @@ if (VERBOSE_LEVEL>7) 		{
 					uint32_t memoffset = leu32p(pos);
 					uint8_t *srcaddr = hdr->AS.Header + leu32p(hdr->AS.Header+datapos + 4) ;
 					//uint16_t byteSpace = leu16p(H2+44 + k*H2LEN);
-					int16_t stride = leu16p(H2+44 + k*H2LEN);
 
 					uint8_t  dataType  = H2[42 + k*H2LEN];
-					//uint8_t  dataKind  = H2[43 + k*H2LEN];		// equidistant, Subsidiary or Matrix data
-					//uint16_t stride = leu16p(H2+44 + k*H2LEN);		// byteSpace
+					uint8_t  dataKind  = H2[43 + k*H2LEN];			// equidistant, Subsidiary or Matrix data
+					uint16_t stride    = leu16p(H2+44 + k*H2LEN);		// byteSpace
 					uint16_t next      = leu16p(H2+46 + k*H2LEN);
 					uint16_t gdftyp    = cfs_data_type(dataType);
 					if (gdftyp > 580)	// sizeof GDFTYP_BITS[]
 						biosigERROR(hdr, B4C_DATATYPE_UNSUPPORTED, "CFS: unknown/unsupported data type !");
 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"CFS 412 #%i %i %i %i %i: %i @%p %i\n", k, hc->SPR, gdftyp,hc->GDFTYP, stride, memoffset, srcaddr, leu32p(hdr->AS.Header+datapos + 4) + leu32p(hdr->AS.Header + datapos + 30 + 24 * k));
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) #%i %i,%i %i %i %i %i: %i @%p %i\n",
+					__func__, __LINE__, k, dataType, dataKind, hc->SPR, gdftyp,hc->GDFTYP, stride, memoffset,
+					srcaddr, leu32p(hdr->AS.Header+datapos + 4) + leu32p(hdr->AS.Header + datapos + 30 + 24 * k));
 
 					if (hc->OnOff==0) continue;	// Time and Marker channels are not supported, yet
 
@@ -706,7 +737,8 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): SPR=%i=%i NRec=%i  @%p\n",__F
 			assert(hdr->AS.bpb==bpb);
 		}
 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"CFS 429: SPR=%i=%i NRec=%i\n",(int)SPR,hdr->SPR,(int)hdr->NRec);
+if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): SPR=%i=%i NRec=%i\n",__func__,__LINE__,(int)SPR,hdr->SPR,(int)hdr->NRec);
+
 		datapos   = FileHeaderSize;  //+DataHeaderSize;
 
 		if (flag_ChanInfoChanged) {

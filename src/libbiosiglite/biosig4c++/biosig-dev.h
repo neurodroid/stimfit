@@ -39,7 +39,11 @@
 #include <sys/param.h>
 #include <time.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int VERBOSE_LEVEL; 	// used for debugging, variable is always defined
+
 
 #ifdef NDEBUG
 #define VERBOSE_LEVEL 0 	// turn off debugging information, but its only used without NDEBUG
@@ -201,10 +205,6 @@ char *getlogin (void);
 #endif 
 
 
-
-#ifdef __cplusplus
-EXTERN_C {
-#endif 
 
 #if __BYTE_ORDER == __BIG_ENDIAN
 #define l_endian_u16(x) ((uint16_t)bswap_16((uint16_t)(x)))
@@ -549,7 +549,7 @@ int gdfbin2struct(HDRTYPE *hdr);
  ------------------------------------------------------------------------*/
 
 size_t hdrEVT2rawEVT(HDRTYPE *hdr);
-void rawEVT2hdrEVT(HDRTYPE *hdr);
+void rawEVT2hdrEVT(HDRTYPE *hdr, size_t length_rawEventTable);
 /* rawEVT2hdrEVT and hdrEVT2rawEVT
 	convert between streamed event table and the structure
 	HDRTYPE.EVENT.
@@ -574,16 +574,25 @@ void FreeGlobalEventCodeTable();
 	free memory allocated for global event code
  ------------------------------------------------------------------------*/
 
-size_t	sread_raw(size_t START, size_t LEN, HDRTYPE* hdr, char flag);
+size_t	sread_raw(size_t START, size_t LEN, HDRTYPE* hdr, char flag, void *buf, size_t bufsize);
 /* sread_raw: 
 	LEN data segments are read from file associated with hdr, starting from 
-	segment START. A sufficient amount of memory is (re-)allocated in 
-	hdr->AS.rawdata and the data is copied into  hdr->AS.rawdata
-	Typically, LEN*hdr->AS.bpb bytes are read and stored in its native format.
-	No Overflowdetection or calibration is applied. 
-	
+	segment START.
+
+	If buf==NULL,  a sufficient amount of memory is (re-)allocated in
+	hdr->AS.rawdata and the data is copied into  hdr->AS.rawdata, and LEN*hdr->AS.bpb bytes
+	are read and stored.
+
+	If buf is points to some memory location of size bufsize, the data is stored
+	in buf, no reallocation of memory is possible, and only the
+	minimum(bufsize, LEN*hdr->AS.bpb) is stored.
+
+	No Overflowdetection or calibration is applied.
+
 	The number of successfully read data blocks is returned, this can be smaller 
-	than LEN at the end of the file. The data can be "cached", this means 
+	than LEN at the end of the file, of when bufsize is not large enough.
+
+	The data can be "cached", this means
 	that more than the requested number of blocks is available in hdr->AS.rawdata. 
 	hdr->AS.first and hdr->AS.length contain the number of the first 
 	block and the number of blocks, respectively.  

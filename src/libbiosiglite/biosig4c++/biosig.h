@@ -39,8 +39,8 @@
 #define __BIOSIG_EXT_H__
 
 #define BIOSIG_VERSION_MAJOR 1
-#define BIOSIG_VERSION_MINOR 7
-#define BIOSIG_PATCHLEVEL 7
+#define BIOSIG_VERSION_MINOR 8
+#define BIOSIG_PATCHLEVEL 0
 // for backward compatibility
 #define BIOSIG_VERSION_STEPPING BIOSIG_PATCHLEVEL
 #define BIOSIG_VERSION (BIOSIG_VERSION_MAJOR * 10000 + BIOSIG_VERSION_MINOR * 100 + BIOSIG_PATCHLEVEL)
@@ -165,11 +165,11 @@ enum FileFormat {
 	SASXPT, SCP_ECG, SIGIF, Sigma, SMA, SMR, SND, SQLite,
 	SPSS, STATA, SVG, SXI, SYNERGY,
 	TDMS, TIFF, TMS32, TMSiLOG, TRC, UNIPRO, VRML, VTK,
-	WAV, WG1, WinEEG, WMF, XML, XPM,
+	WAV, WCP, WG1, WinEEG, WMF, XML, XPM,
 	Z, ZIP, ZIP2
 };
 
-#if (BIOSIG_VERSION >= 10800)
+#if (BIOSIG_VERSION >= 10900)
 #error ABI change: order enum FileFormat alphabethically
 #endif
 
@@ -455,16 +455,6 @@ typedef struct HDR_STRUCT {
 		uint32_t Section9Length;
 		uint32_t Section10Length;
 		uint32_t Section11Length;
-#if (BIOSIG_VERSION >= 10700)
-	        struct Section12 {
-			size_t   NumberOfEntries;
-			struct {
-				uint32_t id;
-				uint16_t physicalunits;
-				uint32_t value;
-			} *annotatedECG;
-	        } Section12 ATT_DEPREC;	// deprecated as of Dec 2015 - will not be used in this way
-#endif
 	} SCP;
 #endif
 

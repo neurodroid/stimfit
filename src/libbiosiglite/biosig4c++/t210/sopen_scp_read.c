@@ -1506,17 +1506,10 @@ EXTERN_C int sopen_SCP_read(HDRTYPE* hdr) {
 #endif
 		}
 
-		/**** SECTION 12 ****/
 #if defined(WITH_SCP3)
-		else if ( (curSect==12)  &&  (versionSection  = 30) && (versionProtocol == 30) ) {
-			size_t n, sz = (leu32p(PtrCurSect+4) - curSectPos);
-			hdr->SCP.Section12.NumberOfEntries = sz / sizeof(hdr->SCP.Section12.annotatedECG[0]);
-			hdr->SCP.Section12.annotatedECG = (typeof (hdr->SCP.Section12.annotatedECG)) realloc(hdr->SCP.Section12.annotatedECG, sz );
-
-			memcpy(hdr->SCP.Section12.annotatedECG , PtrCurSect+curSectPos, sz);	// keep it little endian
-		}
-#endif
-		else if (curSect==12) {
+		/**** SECTION 12 ****/
+		else if ( (curSect==12)  &&  (versionSection > 25) && (versionProtocol > 25) ) {
+			size_t sz = (leu32p(PtrCurSect+4) - curSectPos);
 		}
 
 		/**** SECTION 13 ****/
@@ -1526,6 +1519,7 @@ EXTERN_C int sopen_SCP_read(HDRTYPE* hdr) {
 		/**** SECTION 14 ****/
 		else if (curSect==14)  {
 		}
+#endif
 		else {
 		}
 	}

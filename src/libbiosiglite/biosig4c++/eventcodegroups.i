@@ -6,12 +6,12 @@
 # GDF v2.x http://arxiv.org/abs/cs.DB/0608052 and 
 # GDF v1.x http://pub.ist.ac.at/~schloegl/matlab/eeg/gdf4/TR_GDF.pdf
 # and part of the BioSig project http://biosig.sf.net/
-# Copyright (C) 2004,2005,2006,2008,2009,2010,2011 Alois Schloegl <alois.schloegl@gmail.com>
-# $Id: eventcodes.txt,v 1.15 2009-01-20 16:09:46 schloegl Exp $
+# Copyright (C) 2004-2015 Alois Schloegl <alois.schloegl@ist.ac.at>
 # 
 # BioSig is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public
 # License as published by the Free Software Foundation; either
+# Version 3 of the License, or (at your option) any later version.
 #endif
 	{ 0x0100, "EEG artifacts" },
 	{ 0x0110, "EEG patterns" },

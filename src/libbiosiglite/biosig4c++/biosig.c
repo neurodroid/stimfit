@@ -1581,10 +1581,6 @@ HDRTYPE* constructHDR(const unsigned NS, const unsigned N_EVENT)
 	hdr->SCP.Section9Length  = 0;
 	hdr->SCP.Section10Length = 0;
 	hdr->SCP.Section11Length = 0;
-#if (BIOSIG_VERSION >= 10700)
-	hdr->SCP.Section12.NumberOfEntries = 0;
-	hdr->SCP.Section12.annotatedECG = NULL;
-#endif
 #endif
 
 	return(hdr);
@@ -1627,14 +1623,7 @@ void destructHDR(HDRTYPE* hdr) {
     		free(hdr->aECG);
     	}
 #endif
-#if (BIOSIG_VERSION >= 10700)
-	if (hdr->SCP.Section12.annotatedECG != NULL) {
-		free(hdr->SCP.Section12.annotatedECG);
-		hdr->SCP.Section12.annotatedECG = NULL;
-		hdr->SCP.Section12.NumberOfEntries = 0;
-	}
-	hdr->SCP.Section12.NumberOfEntries = 0;
-#endif
+
 	if (hdr->ID.Technician != NULL) free(hdr->ID.Technician);
 	if (hdr->ID.Hospital   != NULL) free(hdr->ID.Hospital);
 
@@ -1749,7 +1738,7 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
 
     	hdr->TYPE = unknown;
 
-	if (VERBOSE_LEVEL>7) fprintf(stdout,"[GETFILETYPE 101]! %i\n", hdr->HeadLen);
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"[%s line %i]! %i\n", __func__,__LINE__, hdr->HeadLen);
 
 #ifndef  ONLYGDF
    	const uint8_t MAGIC_NUMBER_FEF1[] = {67,69,78,13,10,0x1a,4,0x84};
@@ -1806,7 +1795,7 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
 
 #endif //ONLYGDF
 
-	if (VERBOSE_LEVEL>7) fprintf(stdout,"[GETFILETYPE 200] %x %x!\n",leu16p(hdr->AS.Header),leu16p(hdr->AS.Header+154));
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"(%s line %i: %x %x!  <%8s>\n",__func__,__LINE__, leu16p(hdr->AS.Header),leu16p(hdr->AS.Header+154),hdr->AS.Header);
 
     	if (hdr->TYPE != unknown)
       		return(hdr);
@@ -2220,10 +2209,12 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
 	}
 	else if (!strncmp(Header1,"Serial number",13))
 		hdr->TYPE = ASCII_IBI;
-	else if (!memcmp(Header1,MAGIC_NUMBER_Z,3))
-		hdr->TYPE = Z;
+	else if (!memcmp(Header1,"VER=9\r\nCTIME=",13))
+		hdr->TYPE = WCP;
 	else if (!memcmp(Header1,"\xAF\xFE\xDA\xDA",4) || !memcmp(Header1,"\xDA\xDA\xFE\xAF",4) || !memcmp(Header1,"\x55\x55\xFE\xAF",4) )
 		hdr->TYPE = WG1;	// Walter Graphtek
+	else if (!memcmp(Header1,MAGIC_NUMBER_Z,3))
+		hdr->TYPE = Z;
 	else if (!strncmp(Header1,"PK\003\004",4))
 		hdr->TYPE = ZIP;
 	else if (!strncmp(Header1,"PK\005\006",4))
@@ -2395,6 +2386,7 @@ const struct FileFormatStringTable_t FileFormatStringTable[] = {
 	{ VRML,    	"VRML" },
 	{ VTK,    	"VTK" },
 	{ WAV,    	"WAV" },
+	{ WCP,    	"WCP" },
 	{ WG1,    	"Walter Graphtek" },
 	{ WMF,    	"WMF" },
 	{ XML,    	"XML" },
@@ -2570,17 +2562,7 @@ void struct2gdfbin(HDRTYPE *hdr)
 			}
 		}
 #endif
-#ifdef GDF_WITH_SCP_SECTION12
-		// TODO: SCPECGv3 - this is very experimental, do not use it for production !!!
-		tag = 14;
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"GDFw tag %i\n",tag);
-		if (hdr->SCP.Section12.NumberOfEntries >0) {
-			TagNLen[tag] = 4 + 4 + sizeof(hdr->SCP.Section12.annotatedECG[0]) * hdr->SCP.Section12.NumberOfEntries;
-			if (TagNLen[tag]) {
-				hdr->HeadLen += 4+TagNLen[tag];
-			}
-		}
-#endif
+
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"GDFw101 %i %i %i\n",tag, hdr->HeadLen,TagNLen[tag]);
 	     	/* end */
 
@@ -2946,25 +2928,6 @@ void struct2gdfbin(HDRTYPE *hdr)
 			Header2 += 4+TagNLen[tag];
 		}
 #endif
-#ifdef GDF_WITH_SCP_SECTION12
-		// TODO: SCPECGv3 - this is very experimental, do not use it for production !!!
-		tag = 14;
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"GDFw tag %i\n",tag);
-		if (TagNLen[tag]>0) {
-			leu32a(tag + (TagNLen[tag]<<8), Header2); 	// Tag=14 & Length of Tag 14
-			leu32a(hdr->SCP.Section12.NumberOfEntries, Header2+4);
-			uint32_t m; 
-			uint8_t *off = Header2+8;
-			for (m=0; m < hdr->SCP.Section12.NumberOfEntries; m++) {
-				leu32a(hdr->SCP.Section12.annotatedECG[m].id,            off);
-				leu32a(hdr->SCP.Section12.annotatedECG[m].physicalunits, off+4);
-				leu32a(hdr->SCP.Section12.annotatedECG[m].value,         off+6);
-				off += sizeof(hdr->SCP.Section12.annotatedECG[0]); 
-			}
-			memcpy((char*)(Header2+4),&(hdr->SCP.Section12.NumberOfEntries), TagNLen[tag]);		/* Flawfinder: ignore *** memory is allocated after 1st H3 scan above */
-			Header2 += 4+TagNLen[tag];
-		}
-#endif
 
 		while (Header2 < (hdr->AS.Header + hdr->HeadLen) ) {
 			*Header2 = 0;
@@ -2987,12 +2950,19 @@ int gdfbin2struct(HDRTYPE *hdr)
 	struct tm 	tm_time;
 //	time_t		tt;
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"[GDFBIN2STRUCT 202] #%i \n",hdr->NS);
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %p\n",__func__,__LINE__,hdr->AS.Header);
+
+		if (!memcmp("GDF",(char*)(hdr->AS.Header+3),3)) {
+			biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Only GDF is supported");
+			return (hdr->AS.B4C_ERRNUM);
+		}
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) #%i \n",__func__,__LINE__, (int)hdr->NS);
 
       	    	strncpy(tmp,(char*)(hdr->AS.Header+3),5); tmp[5]=0;
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"[GDFBIN2STRUCT 202] #%i Ver=<%s>\n",hdr->NS,tmp);
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) #%i  Ver=<%s>\n",__func__,__LINE__, (int)hdr->NS,tmp);
 	    	hdr->VERSION 	= atof(tmp);
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"[GDFBIN2STRUCT 202] #%i Ver=<%s>\n",hdr->NS,tmp);
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) #%i  Ver=<%s>\n",__func__,__LINE__, (int)hdr->NS,tmp);
 
 	    	hdr->NRec 	= lei64p(hdr->AS.Header+236);
 	    	hdr->NS   	= leu16p(hdr->AS.Header+252);
@@ -3004,7 +2974,7 @@ int gdfbin2struct(HDRTYPE *hdr)
 		else
 			Dur = lef64p(hdr->AS.Header+244);
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"[GDFBIN2STRUCT 212] #%i Ver=%f\n", hdr->NS, hdr->VERSION);
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) #%i  Ver=%g\n",__func__,__LINE__, hdr->NS, hdr->VERSION);
 
 	    	if (hdr->VERSION > 1.90) {
 
@@ -3022,7 +2992,7 @@ int gdfbin2struct(HDRTYPE *hdr)
 		    		strncpy(hdr->Patient.Name,tmpptr,MAX_LENGTH_NAME);
 		    	}
 
-			if (VERBOSE_LEVEL>7) fprintf(stdout,"[202] FMT=%s Ver=%4.2f\n",GetFileTypeString(hdr->TYPE),hdr->VERSION);
+			if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) FMT=%s Ver=%4.2f\n",__func__,__LINE__, GetFileTypeString(hdr->TYPE), hdr->VERSION);
 
 	    		hdr->Patient.Smoking      =  Header1[84]%4;
 	    		hdr->Patient.AlcoholAbuse = (Header1[84]>>2)%4;
@@ -3051,7 +3021,7 @@ int gdfbin2struct(HDRTYPE *hdr)
 				memcpy(&hdr->LOC, hdr->AS.Header+152, 16);
 			}
 
-			if (VERBOSE_LEVEL>7) fprintf(stdout,"[203] FMT=%s Ver=%4.2f\n",GetFileTypeString(hdr->TYPE),hdr->VERSION);
+			if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) FMT=%s Ver=%4.2f\n",__func__,__LINE__, GetFileTypeString(hdr->TYPE), hdr->VERSION);
 
 			hdr->T0 		= lei64p(hdr->AS.Header+168);
 			hdr->Patient.Birthday 	= lei64p(hdr->AS.Header+176);
@@ -3081,7 +3051,7 @@ int gdfbin2struct(HDRTYPE *hdr)
 			    	}
 		    	}
 
-			if (VERBOSE_LEVEL>8) fprintf(stdout,"[209] FMT=%s Ver=%4.2f\n",GetFileTypeString(hdr->TYPE),hdr->VERSION);
+			if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) FMT=%s Ver=%4.2f\n",__func__,__LINE__, GetFileTypeString(hdr->TYPE), hdr->VERSION);
 
 	    	}
 	    	else if (hdr->VERSION > 0.0) {
@@ -3119,7 +3089,7 @@ int gdfbin2struct(HDRTYPE *hdr)
 	    		return (hdr->AS.B4C_ERRNUM);
 	    	}
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"[GDFBIN2STRUCT 242] #%i Ver=%f\n", hdr->NS, hdr->VERSION);
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) #%i Ver=%4.2f\n",__func__,__LINE__, hdr->NS, hdr->VERSION);
 
 		if (hdr->HeadLen < (256u * (hdr->NS + 1u))) {
 			biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "(GDF) Length of Header is too small");
@@ -3134,7 +3104,7 @@ int gdfbin2struct(HDRTYPE *hdr)
 		for (k=0; k<hdr->NS; k++)	{
 			CHANNEL_TYPE *hc = hdr->CHANNEL+k;
 
-			if (VERBOSE_LEVEL>7) fprintf(stdout,"[GDF 252] #=%i/%i\n",k,hdr->NS);
+			if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) #%i/%i\n",__func__,__LINE__, k, hdr->NS);
 
 			hc->LeadIdCode = 0;
 			size_t len = min(16, MAX_LENGTH_LABEL);
@@ -3347,20 +3317,6 @@ if (VERBOSE_LEVEL>6) fprintf(stdout,"user-specific events defined\n");
 					hdr->SCP.Section11Length = len;
 				}
 #endif
-#ifdef GDF_WITH_SCP_SECTION12
-				// TODO: SCPECGv3 - this is very experimental, do not use it for production !!!
-				else if (tag==14) {
-					hdr->SCP.Section12.NumberOfEntries = leu32p(Header2+pos+4);
-					uint32_t m; 
-					uint8_t *off = Header2+pos+8;
-					for (m=0; m < hdr->SCP.Section12.NumberOfEntries; m++) {
-						hdr->SCP.Section12.annotatedECG[m].id            = leu32p(off);
-						hdr->SCP.Section12.annotatedECG[m].physicalunits = leu16p(off+4);
-						hdr->SCP.Section12.annotatedECG[m].value         = leu32p(off+6);
-						off += sizeof(hdr->SCP.Section12.annotatedECG[0]); 
-					}
-				}
-#endif
 
 		    		/* further tags may include
 		    		- Manufacturer: SCP, MFER, GDF1
@@ -3457,11 +3413,11 @@ size_t hdrEVT2rawEVT(HDRTYPE *hdr) {
 	
 	TODO: support of EVENT.TimeStamp
  *********************************************************************************/
-void rawEVT2hdrEVT(HDRTYPE *hdr) {
+void rawEVT2hdrEVT(HDRTYPE *hdr, size_t length_rawEventData) {
 	// TODO: avoid additional copying
 	size_t k;
 			uint8_t *buf = hdr->AS.rawEventData;
-			if (buf==NULL) {
+			if ((buf==NULL) || (length_rawEventData < 8)) {
 				hdr->EVENT.N = 0;
 				return;
 			}
@@ -3483,6 +3439,12 @@ void rawEVT2hdrEVT(HDRTYPE *hdr) {
 			char flag = buf[0];
 			int sze = (flag & 2) ? 12 : 6;
 			if (flag & 4) sze+=8;
+
+			if (sze*hdr->EVENT.N+8 < length_rawEventData) {
+				hdr->EVENT.N = 0;
+		                biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Error GDF: event table is corrupted");
+		                return;
+			}
 
 			if (hdr->NS==0 && !isfinite(hdr->SampleRate)) hdr->SampleRate = hdr->EVENT.SampleRate; 
 
@@ -3718,7 +3680,7 @@ int read_header(HDRTYPE *hdr) {
 	-3	error reading event table
  */
 
-	if (VERBOSE_LEVEL>7) fprintf(stdout,"READ_HEADER: %i %i %f\n", (int)hdr->FILE.size, (int)hdr->HeadLen, hdr->VERSION);
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): %i %i %f\n",__func__,__LINE__, (int)hdr->FILE.size, (int)hdr->HeadLen, hdr->VERSION);
 
 	size_t count = hdr->HeadLen;
 	if (hdr->HeadLen<=512) {
@@ -3740,7 +3702,7 @@ int read_header(HDRTYPE *hdr) {
 	else
 	    	hdr->HeadLen = leu64p(hdr->AS.Header+184);
 
-	if (VERBOSE_LEVEL>7) fprintf(stdout,"READ_HEADER: %i %i %i %f\n", (int)hdr->FILE.size, (int)hdr->HeadLen, (int)count, hdr->VERSION);
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): %i %i %i %f\n", __func__, __LINE__,(int)hdr->FILE.size, (int)hdr->HeadLen, (int)count, hdr->VERSION);
 
 	hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header,hdr->HeadLen);
         if (count < hdr->HeadLen) {
@@ -3748,20 +3710,22 @@ int read_header(HDRTYPE *hdr) {
 	    	count += ifread(hdr->AS.Header+count, 1, hdr->HeadLen-count, hdr);
 	}
 
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): %i %i %i %f\n",__func__, __LINE__, (int)hdr->FILE.size, (int)hdr->HeadLen, (int)count, hdr->VERSION);
+
         if (count < hdr->HeadLen) {
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"ambigous GDF header size: %i %i\n",(int)count,hdr->HeadLen);
                 biosigERROR(hdr, B4C_INCOMPLETE_FILE, "reading GDF header failed");
                 return(-2);
 	}
 
-	if (VERBOSE_LEVEL>7) fprintf(stdout,"READ_HEADER: %i %i %i %f\n", (int)hdr->FILE.size, (int)hdr->HeadLen, (int)count, hdr->VERSION);
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): %i %i %i %f\n",__func__, __LINE__, (int)hdr->FILE.size, (int)hdr->HeadLen, (int)count, hdr->VERSION);
 
 	if ( gdfbin2struct(hdr) ) {
-	if (VERBOSE_LEVEL>7) fprintf(stdout,"READ_HEADER--: %i %i %i %f\n", (int)hdr->FILE.size, (int)hdr->HeadLen, (int)count, hdr->VERSION);
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): %i %i %i %f\n",__func__, __LINE__, (int)hdr->FILE.size, (int)hdr->HeadLen, (int)count, hdr->VERSION);
 		return(-2);
 	}
 
-	if (VERBOSE_LEVEL>7) fprintf(stdout,"READ_HEADER: %i %i %i %f\n", (int)hdr->FILE.size, (int)hdr->HeadLen, (int)count, hdr->VERSION);
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): %i %i %i %f\n",__func__, __LINE__, (int)hdr->FILE.size, (int)hdr->HeadLen, (int)count, hdr->VERSION);
 
  	hdr->EVENT.N   = 0;
 	hdr->EVENT.POS = NULL;
@@ -3791,27 +3755,22 @@ int read_header(HDRTYPE *hdr) {
     			uint8_t *buf = hdr->AS.rawEventData;
 
 			if (c<8) {
-				hdr->EVENT.SampleRate = hdr->SampleRate;
 				hdr->EVENT.N = 0;
 			}
 			else if (hdr->VERSION < 1.94) {
-				if (buf[1] | buf[2] | buf[3])
-					hdr->EVENT.SampleRate = buf[1] + (buf[2] + buf[3]*256.0)*256.0;
-				else {
-					fprintf(stdout,"Warning GDF v1: SampleRate in Eventtable is not set in %s !!!\n",hdr->FileName);
-					hdr->EVENT.SampleRate = hdr->SampleRate;
-				}
 				hdr->EVENT.N = leu32p(buf + 4);
 			}
 			else {
 				hdr->EVENT.N = buf[1] + (buf[2] + buf[3]*256)*256;
-				hdr->EVENT.SampleRate = lef32p(buf + 4);
 			}
 
 			if (VERBOSE_LEVEL > 7) 
 				fprintf(stdout,"EVENT.N = %i,%i\n",hdr->EVENT.N,(int)c); 
 
-			int sze = (buf[0]>1) ? 12 : 6;
+			char flag = buf[0];
+			int sze = (flag & 2) ? 12 : 6;
+			if (flag & 4) sze+=8;
+
 			hdr->AS.rawEventData = (uint8_t*)realloc(hdr->AS.rawEventData,8+hdr->EVENT.N*sze);
 			c = ifread(hdr->AS.rawEventData+8, sze, hdr->EVENT.N, hdr);
 			ifseek(hdr, hdr->HeadLen, SEEK_SET);
@@ -3819,7 +3778,7 @@ int read_header(HDRTYPE *hdr) {
                                 biosigERROR(hdr, B4C_INCOMPLETE_FILE, "reading GDF eventtable failed");
                                 return(-3);
 			}
-			rawEVT2hdrEVT(hdr);
+			rawEVT2hdrEVT(hdr, 8+hdr->EVENT.N*sze);
 		}
 		else
 			hdr->EVENT.N = 0;
@@ -4084,7 +4043,7 @@ else if (!strncmp(MODE,"r",1)) {
 	if (VERBOSE_LEVEL>7) fprintf(stdout,"[222] %i\n",(int)count);
 	hdr->HeadLen = count;
 	getfiletype(hdr);
-	if (VERBOSE_LEVEL>7) fprintf(stdout,"[201] FMT=%s Ver=%4.2f\n",GetFileTypeString(hdr->TYPE),hdr->VERSION);
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) FMT=%s Ver=%4.2f\n",__FILE__,__LINE__,GetFileTypeString(hdr->TYPE),hdr->VERSION);
 
 #ifndef  ONLYGDF
 	if (hdr->TYPE != unknown)
@@ -4099,8 +4058,7 @@ else if (!strncmp(MODE,"r",1)) {
 		return(hdr);
 	}
 
-	if (VERBOSE_LEVEL>7)
-		fprintf(stdout,"[201] FMT=%s Ver=%4.2f\n",GetFileTypeString(hdr->TYPE),hdr->VERSION);
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) FMT=%s Ver=%4.2f\n",__FILE__,__LINE__,GetFileTypeString(hdr->TYPE),hdr->VERSION);
 
     	count = iftell(hdr);
     	hdr->AS.first  =  0;
@@ -4137,6 +4095,8 @@ else if (!strncmp(MODE,"r",1)) {
     	}
     	else
 #endif
+
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) FMT=%s Ver=%4.2f\n",__FILE__,__LINE__,GetFileTypeString(hdr->TYPE),hdr->VERSION);
 
 	if (hdr->TYPE == GDF) {
 
@@ -4624,6 +4584,8 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ event\n\ts1:\t<%s>\n\ts2:\t<%s>\n\ts3:
 		hdr->HeadLen = count;
 		hdr->VERSION = atof((char*)(hdr->AS.Header+4));
 
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) FMT=%s Ver=%4.2f\n",__FILE__,__LINE__,GetFileTypeString(hdr->TYPE),hdr->VERSION);
+
 		if (hdr->FILE.COMPRESSION) {
 			biosigERROR(hdr, B4C_DATATYPE_UNSUPPORTED, "compressed ATF file format not supported");
 			return hdr;
@@ -4709,7 +4671,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ event\n\ts1:\t<%s>\n\ts2:\t<%s>\n\ts3:
 				}
 				if (!strncasecmp(hc->Label,"time",4)) {
 					TIMECHANNEL = k+1;
-					hc->OnOff   = 2;   // mark channel as containing the time axis
+					hc->OnOff   = 0;   // mark channel as containing the time axis
 					if (k==0) hdr->SampleRate /= PhysDimScale(hc->PhysDimCode);
 				}
 			}
@@ -5473,8 +5435,7 @@ fprintf(stdout,"ACQ EVENT: %i POS: %i\n",k,POS);
     	}
 
 	else if (hdr->TYPE==BCI2000) {
-		if (VERBOSE_LEVEL>7)
-			fprintf(stdout,"[201] start reading BCI2000 data!\n");
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) FMT=%s Ver=%4.2f\n",__FILE__,__LINE__,GetFileTypeString(hdr->TYPE),hdr->VERSION);
 
 		char *ptr, *t1;
 
@@ -10608,7 +10569,7 @@ if (VERBOSE_LEVEL>2)
 			however, there are also TDMS data out there, that is based on an XML header 
  			and a separate binary file. This is somewhat confusing. 
 		 */ 
-		fprintf(stderr,"Format TDMS is very experimental");
+		fprintf(stderr,"%s (line %i): Format TDMS is very experimental\n",__func__,__LINE__);
 
 #define kTocMetaData 		(1L<<1)
 #define kTocRawData 		(1L<<3)
@@ -10617,11 +10578,40 @@ if (VERBOSE_LEVEL>2)
 #define kTocBigEndian 		(1L<<6)
 #define kTocNewObjList 		(1L<<2)
 
-		// char flagBigEndian = (beu32p(hdr->AS.Header+4) & kTocBigEndian) != 0; 
-		// uint32_t ToCmask = leu32p(hdr->AS.Header+4);
-		hdr->VERSION 	 = leu32p(hdr->AS.Header+8);
+		/***** Lead In *****/
+		hdr->FILE.LittleEndian     = (leu32p(hdr->AS.Header+4) & kTocBigEndian) != 0; 	// affects only raw data
+		hdr->VERSION 	           = leu32p(hdr->AS.Header+8);
 		uint64_t nextSegmentOffset = leu64p(hdr->AS.Header+12);
-		uint64_t rawDataOffset = leu64p(hdr->AS.Header+20);
+		uint64_t LengthMetaData    = leu64p(hdr->AS.Header+20);
+
+		/***** Meta data *****/
+		if (LengthMetaData > 0) {
+			uint32_t k;
+			uint32_t numberOfObjects  = leu32p(hdr->AS.Header+28);
+			size_t pos = 32;
+			char *pstr=NULL;
+			for (k=0; k < numberOfObjects; k++) {
+				uint32_t plen = leu32p(hdr->AS.Header+pos);
+				uint32_t idx  = leu32p(hdr->AS.Header+pos+4+plen);
+
+				pstr  = realloc(pstr,plen+1);
+				memcpy(pstr,hdr->AS.Header+pos+4,plen);
+				pstr[plen]=0;
+
+	if (VERBOSE_LEVEL>6) fprintf(stdout,"%s (line %i): object %i path %s rawDataIdx=0x%08x\n",__func__,__LINE__, k, pstr, idx);
+
+				switch (idx) {
+				case 0xffffffff :	// no raw data
+					break;
+				case 0x00001269 :	// DAQmx Format Changing scaler
+					break;
+				case 0x00001369 :	// DAQmx Digital Line scaler
+					break;
+				case 0x00000000 : 	//
+					;
+				}
+			}
+		}
 
 		biosigERROR(hdr,B4C_FORMAT_UNSUPPORTED,"Format TDMS is currently not supported"); 
 	}
@@ -11098,6 +11088,7 @@ if (VERBOSE_LEVEL>2)
     		return(hdr);
 	}
 #endif
+
 #ifndef WITH_BIOSIGLITE
 	else if (hdr->TYPE==HL7aECG || hdr->TYPE==XML) {
 		sopen_HL7aECG_read(hdr);
@@ -11123,6 +11114,119 @@ if (VERBOSE_LEVEL>2)
 
     		if (hdr->AS.B4C_ERRNUM) return(hdr);
     		// hdr->FLAG.SWAP = 0;
+	}
+
+	else if (hdr->TYPE==WCP) {
+
+		fprintf(stderr,"%s (line %i) %s: WARNING WCP support is experimental!\n", __FILE__,__LINE__,__func__);
+
+		const int WCP_HEADER_LENGTH=2048;
+		if (hdr->HeadLen < WCP_HEADER_LENGTH) {
+			hdr->AS.Header = realloc(hdr->AS.Header, WCP_HEADER_LENGTH);
+			hdr->HeadLen  += ifread(hdr->AS.Header+hdr->HeadLen, 1, WCP_HEADER_LENGTH - hdr->HeadLen, hdr);
+		}
+		int ADCMAX=0;
+
+		char  *tok = strtok(hdr->AS.Header,"\r\n");
+		while (tok != NULL) {
+			char *sep = strchr(tok,'=');
+			*sep = 0;
+			char *val = sep+1;
+			char *key = tok;
+			if (!strcmp(key,"VER"))
+				hdr->VERSION=atof(val);
+			else if (!strcmp(key,"RTIME")) {
+				struct tm T;
+#if !defined(_WIN32)
+				strptime(val,"%d/%m/%Y %T",&T);
+#else
+				char *p=val+strlen(val);
+				do p--; while (isdigit(*p) && (p>val));
+				T.tm_sec = atoi(p+1);
+				*p=0;
+				do p--; while (isdigit(*p) && (p>val));
+				T.tm_min = atoi(p+1);
+				*p=0;
+				do p--; while (isdigit(*p) && (p>val));
+				T.tm_hour = atoi(p+1);
+				*p=0;
+				do p--; while (isdigit(*p) && (p>val));
+				T.tm_year = atoi(p+1);
+				*p=0;
+				do p--; while (isdigit(*p) && (p>val));
+				T.tm_mon = atoi(p+1);
+				*p=0;
+				do p--; while (isdigit(*p) && (p>val));
+				T.tm_mday = atoi(p+1);
+#endif
+				hdr->T0 = tm_time2gdf_time(&T);
+			}
+			else if (!strcmp(key,"NC")) {
+				hdr->NS=atoi(val);
+				hdr->CHANNEL = realloc(hdr->CHANNEL, sizeof(CHANNEL_TYPE)*hdr->NS);
+			}
+			else if (!strcmp(key,"DT"))
+				hdr->SampleRate=1.0/atof(val);
+			else if (!strcmp(key,"ADCMAX"))
+				ADCMAX=atoi(val);
+			else if (!strcmp(key,"NR"))
+				hdr->NRec=atoi(val);
+			else if (key[0]=='Y') {
+				int chan = atoi(key+2);
+				CHANNEL_TYPE *hc = hdr->CHANNEL+chan;
+				switch (key[1]) {
+				case 'U':	// YU
+					hc->PhysDimCode = PhysDimCode(val);
+					break;
+				case 'N':	// YN
+					strncpy(hc->Label, val, MAX_LENGTH_LABEL+1);
+					break;
+				case 'G':	// YG
+					hc->Cal = atof(val);
+					break;
+				}
+			}
+			else {
+				fprintf(stdout,"%s-WCP: %s=%s ignored\n",__func__,key,val);
+			}
+			tok = strtok(NULL,"\r\n");
+		}
+
+		uint16_t gdftyp=3;
+		if (ADCMAX==32767) gdftyp = 3;
+
+		struct stat FileBuf;
+		stat(hdr->FileName,&FileBuf);
+
+		hdr->SPR  = 1;
+		typeof (hdr->NS) k;
+		size_t bpb8=0;
+		for (k = 0; k < hdr->NS; k++) {
+			CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+			hc->GDFTYP  =  gdftyp;
+			hc->OnOff   =  1;
+			hc->bi      =  bpb8>>3;
+			hc->Off     =  0.0;
+			hc->DigMax  =  ADCMAX;
+			hc->DigMin  = -ADCMAX;
+			hc->PhysMax =  ADCMAX*hc->Cal;
+			hc->PhysMin = -ADCMAX*hc->Cal;
+			hc->SPR     = 1;
+			hc->TOffset = 0.0;
+			hc->LowPass = 0.0;
+			hc->HighPass= 0.0;
+			hc->Notch   = 0.0;
+			hc->Impedance     = NAN;
+			hc->LeadIdCode    = 0;
+			hc->Transducer[0] = 0;
+			hc->XYZ[0]  = 0.0;
+			hc->XYZ[1]  = 0.0;
+			hc->XYZ[2]  = 0.0;
+			hc->bufptr  = NULL;
+			bpb8 += GDFTYP_BITS[gdftyp];
+		}
+		hdr->AS.bpb = bpb8>>3;
+		hdr->NRec   = (FileBuf.st_size - WCP_HEADER_LENGTH)/hdr->AS.bpb;
 	}
 
 	else if (hdr->TYPE==WG1) {
@@ -12016,7 +12120,7 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
 	}
 
     	else if (hdr->TYPE==SCP_ECG) {
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN_SCP_WRITE -112\n");
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(line %i) %s -> SOPEN_SCP_WRITE v%f\n",__FILE__,__LINE__,__func__,hdr->VERSION);
     		sopen_SCP_write(hdr);
     		if (hdr->AS.B4C_ERRNUM) return(hdr);
 	}
@@ -12186,19 +12290,17 @@ size_t bpb8_collapsed_rawdata(HDRTYPE *hdr)
 	as been already converted into the event table)
 	that are not needed in GDF.
 
-	re-allocates buffer (buf) to hold collapsed data
-	bpb are the bytes per block.
+	if buf==NULL, hdr->AS.rawdata will be collapsed
 
  ****************************************************************************/
+void collapse_rawdata(HDRTYPE *hdr, void *buf, size_t count) {
 
-void collapse_rawdata(HDRTYPE *hdr)
-{
 	CHANNEL_TYPE *CHptr;
-	size_t bpb;
-//	char bitflag = 0;
-	size_t	k1,k4,count,SZ;
+	size_t bpb, k4;
+	size_t bi1=0, bi2=0, SZ;
+	int num3Segments=0,k1;
 
-	if (VERBOSE_LEVEL>8) fprintf(stdout,"collapse: started\n");
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): started\n",__func__,__LINE__);
 
 	bpb = bpb8_collapsed_rawdata(hdr);
 	if (bpb == hdr->AS.bpb<<3) return; 	// no collapsing needed
@@ -12208,48 +12310,62 @@ void collapse_rawdata(HDRTYPE *hdr)
 	}
 	bpb >>= 3;
 
-	if (VERBOSE_LEVEL>8) fprintf(stdout,"collapse: bpb=%i/%i\n",(int)bpb,hdr->AS.bpb);
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): bpb=%i/%i\n",__func__,__LINE__,(int)bpb,hdr->AS.bpb);
 
-	count = hdr->AS.length;
-
-	uint8_t *buf = (uint8_t*) malloc(count*bpb);
-	size_t bi = 0;
-	for (k1=0; k1<hdr->NS; k1++) {
-		CHptr 	= hdr->CHANNEL+k1;
-
-		SZ = (size_t)CHptr->SPR*GDFTYP_BITS[CHptr->GDFTYP];
-		if (SZ & 7) {
-			biosigERROR(hdr, B4C_RAWDATA_COLLAPSING_FAILED, "collapse_rawdata: does not support bitfields");
-		}
-		SZ >>= 3;
-
-		if (CHptr->OnOff)	/* read selected channels only */
-		if (CHptr->SPR > 0) {
-
-			if (VERBOSE_LEVEL>8) fprintf(stdout,"%i: %i %i %i %i \n",(int)k1,(int)bi,CHptr->bi,(int)bpb,hdr->AS.bpb);
-
-			for (k4 = 0; k4 < count; k4++) {
-				size_t off1 = k4*hdr->AS.bpb + CHptr->bi;
-				size_t off2 = k4*bpb + bi;
-
-			if (VERBOSE_LEVEL>8) fprintf(stdout,"%i %i: %i %i \n",(int)k1,(int)k4,(int)off1,(int)off2);
-
-				memcpy(buf + off2, hdr->AS.rawdata + off1, SZ);
-			}
-			bi += SZ;
-		}
+	if (buf == NULL) {
+		buf   = hdr->AS.rawdata;
+		count = hdr->AS.length;
 	}
-	free(hdr->AS.rawdata);
-	hdr->AS.rawdata = buf;
-	hdr->AS.flag_collapsed_rawdata = 1;	// rawdata is now "collapsed"
 
-	if (VERBOSE_LEVEL>8) fprintf(stdout,"collapse: finished\n");
+	// prepare idxlist for copying segments within a single block (i.e. record)
+	size_t *idxList= alloca(3*hdr->NS*sizeof(size_t));
+	CHptr = hdr->CHANNEL;
+	while (1) {
+		SZ = 0;
+		while (!CHptr->OnOff && (CHptr < hdr->CHANNEL+hdr->NS) ) {
+			SZ += (size_t)CHptr->SPR * GDFTYP_BITS[CHptr->GDFTYP];
+			if (SZ & 7) biosigERROR(hdr, B4C_RAWDATA_COLLAPSING_FAILED, "collapse_rawdata: does not support bitfields");
+			CHptr++;
+		}
+		bi1 += SZ;
+
+		SZ = 0;
+		while (CHptr->OnOff && (CHptr < hdr->CHANNEL+hdr->NS)) {
+			SZ += (size_t)CHptr->SPR * GDFTYP_BITS[CHptr->GDFTYP];
+			if (SZ & 7) biosigERROR(hdr, B4C_RAWDATA_COLLAPSING_FAILED, "collapse_rawdata: does not support bitfields");
+			CHptr++;
+		}
+
+		if (SZ > 0) {
+			SZ >>= 3;
+			idxList[num3Segments]   = bi2;	// offset of destination
+			idxList[num3Segments+1] = bi1;	// offset of source
+			idxList[num3Segments+2] = SZ;	// size
+			num3Segments           += 3;
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): #%i  src:%i dest:%i size:%i\n",__func__,__LINE__,num3Segments/3,(int)bi1,(int)bi2,(int)SZ);
+		}
+
+	if (CHptr >= hdr->CHANNEL+hdr->NS) break;
+		bi1 += SZ;
+		bi2 += SZ;
+	}
+
+	for (k4 = 0; k4 < count; k4++) {
+		void *src  = buf + k4*hdr->AS.bpb;
+		void *dest = buf + k4*bpb;
+		for (k1=0; k1 < num3Segments; k1+=3)
+			memcpy(dest + idxList[k1], src + idxList[k1+1], idxList[k1+2]);
+	}
+
+	if (buf == hdr->AS.rawdata) {
+		hdr->AS.flag_collapsed_rawdata = 1;	// rawdata is now "collapsed"
+	}
 }
 
 /****************************************************************************/
 /**	SREAD_RAW : segment-based                                          **/
 /****************************************************************************/
-size_t sread_raw(size_t start, size_t length, HDRTYPE* hdr, char flag) {
+size_t sread_raw(size_t start, size_t length, HDRTYPE* hdr, char flag, void *buf, size_t bufsize) {
 /*
  *	Reads LENGTH blocks with HDR.AS.bpb BYTES each
  * 	(and HDR.SPR samples).
@@ -12261,7 +12377,36 @@ size_t sread_raw(size_t start, size_t length, HDRTYPE* hdr, char flag) {
  *
  *	  flag!=0 : unused channels (those channels k where HDR.CHANNEL[k].OnOff==0)
  *		are collapsed
+ *
+ * 	  for reading whole data section, bufsize must be length*hdr->AS.bpb (also if flag is set)
  */
+
+	if (buf != NULL) {
+		if (length > (bufsize / hdr->AS.bpb)) {
+			fprintf(stderr, "Warning %s (line %i): bufsize is not large enough for converting %i blocks.\n", \
+				__func__, __LINE__, (int)length);
+			length = bufsize / hdr->AS.bpb;
+		}
+
+		if ( (hdr->AS.first <= start) && ((start+length) <= (hdr->AS.first+hdr->AS.length)) ) {
+			/****  copy from rawData if available:
+				- better performance
+				- required for some data formats (e.g. CFS, when hdr->AS.rawdata is populated in SOPEN)
+			 ****/
+
+			if (!hdr->AS.flag_collapsed_rawdata) {
+				memcpy(buf, hdr->AS.rawdata + (start - hdr->AS.first) * hdr->AS.bpb, bufsize);
+				if (flag) collapse_rawdata(hdr, buf, length);
+				return (length);
+			}
+			else if (flag) {
+				size_t bpb = bpb8_collapsed_rawdata(hdr)>>3;
+				memcpy(buf, hdr->AS.rawdata + (start - hdr->AS.first) * bpb, bufsize);
+				return (bufsize / bpb);
+			}
+			// else if (hdr->AS.flag_collapsed_rawdata && !flag) is handled below
+		}
+	}
 
 	if (hdr->AS.flag_collapsed_rawdata && !flag)
 		hdr->AS.length = 0; // 	force reloading of data
@@ -12269,19 +12414,16 @@ size_t sread_raw(size_t start, size_t length, HDRTYPE* hdr, char flag) {
 	size_t	count, nelem;
 
 	if (VERBOSE_LEVEL>7)
-		fprintf(stdout,"####SREAD-RAW########## start=%d length=%d bpb=%i\n",(int)start,(int)length, hdr->AS.bpb);
-
-	if (VERBOSE_LEVEL>7)
-		fprintf(stdout,"sread raw 211: %d %d %d %d\n",(int)start, (int)length,  (int)hdr->NRec, (int)hdr->FILE.POS);
+		fprintf(stdout,"%s (line %i): start=%d length=%d nrec=%d POS=%d bpb=%i\n",__func__,__LINE__, \
+			(int)start,(int)length,(int)hdr->NRec, (int)hdr->FILE.POS, hdr->AS.bpb);
 
 	if ((nrec_t)start > hdr->NRec)
 		return(0);
 	else if ((ssize_t)start < 0)
 		start = hdr->FILE.POS;
 
-
 	if (VERBOSE_LEVEL>7)
-		fprintf(stdout,"sread raw 216: %d %d %d %d\n",(int)start, (int)length, (int)hdr->NRec, (int)hdr->FILE.POS);
+		fprintf(stdout,"%s (line %i): %d %d %d %d\n",__func__,__LINE__, (int)start, (int)length, (int)hdr->NRec, (int)hdr->FILE.POS);
 
 	// limit reading to end of data block
 	if (hdr->NRec<0)
@@ -12292,19 +12434,16 @@ size_t sread_raw(size_t start, size_t length, HDRTYPE* hdr, char flag) {
 		nelem = min(length, hdr->NRec - start);
 
 	if (VERBOSE_LEVEL>7)
-		fprintf(stdout,"sread raw 221: %i %i %i %i %i\n",(int)start, (int)length, (int)nelem, (int)hdr->NRec, (int)hdr->FILE.POS);
+		fprintf(stdout,"%s (line %i): %i %i %i %i %i %p\n",__func__,__LINE__, \
+			(int)start, (int)length, (int)nelem, (int)hdr->NRec, (int)hdr->FILE.POS, hdr->AS.rawdata);
 
-	if (VERBOSE_LEVEL>7)
-		fprintf(stdout,"sread raw 221 %i=?=%i  %i=?=%i \n", (int)start,(int)hdr->AS.first,(int)(start+nelem),(int)hdr->AS.length);
-
-
-	if ((start >= hdr->AS.first) && ((start+nelem) <= (hdr->AS.first+hdr->AS.length))) {
+	if ( (buf == NULL) && (start >= hdr->AS.first) && ( (start + nelem) <= (hdr->AS.first + hdr->AS.length) ) ) {
 		// Caching, no file-IO, data is already loaded into hdr->AS.rawdata
 		hdr->FILE.POS = start;
 		count = nelem;
 
 		if (VERBOSE_LEVEL>7)
-			fprintf(stdout,"sread-raw: 222\n");
+			fprintf(stdout,"%s (line %i): \n",__func__,__LINE__);
 
 	}
 #ifndef WITHOUT_NETWORK
@@ -12322,7 +12461,7 @@ size_t sread_raw(size_t start, size_t length, HDRTYPE* hdr, char flag) {
 		assert(hdr->TYPE != SMR);	// CFS data has been already cached in SOPEN
 
 		if (VERBOSE_LEVEL>7)
-			fprintf(stdout,"sread-raw: 223\n");
+			fprintf(stdout,"%s (line %i): \n",__func__,__LINE__);
 
 		// read required data block(s)
 		if (ifseek(hdr, start*hdr->AS.bpb + hdr->HeadLen, SEEK_SET)<0) {
@@ -12334,38 +12473,43 @@ size_t sread_raw(size_t start, size_t length, HDRTYPE* hdr, char flag) {
 			hdr->FILE.POS = start;
 
 		if (VERBOSE_LEVEL>7)
-			fprintf(stdout,"sread-raw: 224 %i\n",hdr->AS.bpb);
+			fprintf(stdout,"%s (line %i): bpb=%i\n",__func__,__LINE__,(int)hdr->AS.bpb);
 
 		// allocate AS.rawdata
-		void *tmpptr = realloc(hdr->AS.rawdata, hdr->AS.bpb*nelem);
-		if (tmpptr!=NULL || hdr->AS.bpb*nelem==0) 
-			hdr->AS.rawdata = (uint8_t*) tmpptr;
-		else {
-                        biosigERROR(hdr, B4C_MEMORY_ALLOCATION_FAILED, "memory allocation failed");
-                        return(0);
-		}	
+		void* tmpptr = buf;
+		if (buf == NULL) {
+			tmpptr = realloc(hdr->AS.rawdata, hdr->AS.bpb*nelem);
+			if ((tmpptr!=NULL) || (hdr->AS.bpb*nelem==0)) {
+				if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i)  %i %i \n",__func__,__LINE__,(int)hdr->AS.bpb,(int)nelem);
+				hdr->AS.rawdata = (uint8_t*) tmpptr;
+			}
+			else {
+				biosigERROR(hdr, B4C_MEMORY_ALLOCATION_FAILED, "memory allocation failed");
+				return(0);
+			}
+		}
 
 		if (VERBOSE_LEVEL>8)
 			fprintf(stdout,"#sread(%i %li)\n",(int)(hdr->HeadLen + hdr->FILE.POS*hdr->AS.bpb), iftell(hdr));
 
 		// read data
-		count = ifread(hdr->AS.rawdata, hdr->AS.bpb, nelem, hdr);
-		hdr->AS.flag_collapsed_rawdata = 0;	// is rawdata not collapsed
-//		if ((count<nelem) && ((hdr->NRec < 0) || (hdr->NRec > start+count))) hdr->NRec = start+count; // get NRec if NRec undefined, not tested yet.
+		count = ifread(tmpptr, hdr->AS.bpb, nelem, hdr);
+		if (buf != NULL) {
+			hdr->AS.flag_collapsed_rawdata = 0;	// is rawdata not collapsed
+			hdr->AS.first = start;
+			hdr->AS.length= count;
+		}
+
 		if (count < nelem) {
 			fprintf(stderr,"warning: less than the number of requested blocks read (%i/%i) from file %s - something went wrong\n",(int)count,(int)nelem,hdr->FileName);
 			if (VERBOSE_LEVEL>7)
 				fprintf(stderr,"warning: only %i instead of %i blocks read - something went wrong (bpb=%i,pos=%li)\n",(int)count,(int)nelem,hdr->AS.bpb,iftell(hdr));
 		}
-//		else    fprintf(stderr,"              %i            %i blocks read                        (bpb=%i,pos=%li)\n",count,nelem,hdr->AS.bpb,iftell(hdr));
-
-		hdr->AS.first = start;
-		hdr->AS.length= count;
 	}
 	// (uncollapsed) data is now in buffer hdr->AS.rawdata
 
 	if (flag) {
-		collapse_rawdata(hdr);
+		collapse_rawdata(hdr, NULL, 0);
 	}
 	return(count);
 }
@@ -12376,7 +12520,7 @@ size_t sread_raw(size_t start, size_t length, HDRTYPE* hdr, char flag) {
  ****************************************************************************/
 int cachingWholeFile(HDRTYPE* hdr) {
 
-	sread_raw(0,hdr->NRec,hdr, 0);
+	sread_raw(0,hdr->NRec,hdr, 0, NULL, 0);
 
 	return((hdr->AS.first != 0) || (hdr->AS.length != (size_t)hdr->NRec));
 }
@@ -12422,7 +12566,7 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 
 
 	if (VERBOSE_LEVEL>6)
-		fprintf(stdout,"SREAD( %p, %i, %i, %s ) MODE=%i\n",data, (int)start, (int)length, hdr->FileName, hdr->FILE.OPEN);
+		fprintf(stdout,"%s( %p, %i, %i, %s ) MODE=%i bpb=%i\n",__func__,data, (int)start, (int)length, hdr->FileName, hdr->FILE.OPEN, (int)hdr->AS.bpb);
 
 #ifndef ONLYGDF
 	if (hdr->TYPE == ATF) {
@@ -12439,7 +12583,7 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 		count = hdr->NRec;
 		break;
 	default: 
-	 	count = sread_raw(start, length, hdr, 0);
+		count = sread_raw(start, length, hdr, 0, NULL, 0);
 	}
 
 	if (hdr->AS.B4C_ERRNUM) return(0);
@@ -12455,7 +12599,9 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 		if (hdr->CHANNEL[k1].OnOff) ++NS;
 
 	if (VERBOSE_LEVEL>7)
-		fprintf(stdout,"SREAD: count=%i pos=[%i,%i,%i,%i], size of data = %ix%ix%ix%i = %i\n",(int)count,(int)start,(int)length,(int)POS,(int)hdr->FILE.POS,(int)hdr->SPR, (int)count, (int)NS, (int)sizeof(biosig_data_type), (int)(hdr->SPR * count * NS * sizeof(biosig_data_type)));
+		fprintf(stdout,"SREAD: count=%i pos=[%i,%i,%i,%i], size of data = %ix%ix%ix%i = %i\n", \
+			(int)count,(int)start,(int)length,(int)POS,(int)hdr->FILE.POS,(int)hdr->SPR, (int)count, \
+			(int)NS, (int)sizeof(biosig_data_type), (int)(hdr->SPR * count * NS * sizeof(biosig_data_type)));
 
 #ifndef ANDROID 
 //Stoyan: Arm has some problem with log2 - or I dont know how to fix it - it exists but do not work.
@@ -12505,13 +12651,13 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 #endif //ONLYGDF
 
 	if (VERBOSE_LEVEL>7)
-		fprintf(stdout,"sread 223 alpha12bit=%i SWAP=%i spr=%i   %p\n", ALPHA12BIT, SWAP, hdr->SPR, hdr->AS.rawdata);
+		fprintf(stdout,"%s (line %i)  alpha12bit=%i SWAP=%i spr=%i   %p\n",__func__,__LINE__, ALPHA12BIT, SWAP, hdr->SPR, hdr->AS.rawdata);
 
 	for (k1=0,k2=0; k1<hdr->NS; k1++) {
 		CHANNEL_TYPE *CHptr = hdr->CHANNEL+k1;
 
 	if (VERBOSE_LEVEL>7)
-		fprintf(stdout,"sread 223a #%i#%i: alpha12bit=%i SWAP=%i spr=%i   %p | bi=%i bpb=%i \n", (int)k1, (int)k2, ALPHA12BIT, SWAP, hdr->SPR, hdr->AS.rawdata,(int)CHptr->bi,(int)hdr->AS.bpb );
+		fprintf(stdout,"%s (line %i) #%i#%i: alpha12bit=%i SWAP=%i spr=%i   %p | bi=%i bpb=%i \n",__func__,__LINE__, (int)k1, (int)k2, ALPHA12BIT, SWAP, hdr->SPR, hdr->AS.rawdata,(int)CHptr->bi,(int)hdr->AS.bpb );
 
 	if (CHptr->OnOff) {	/* read selected channels only */
 	if (CHptr->SPR > 0) {
@@ -12990,7 +13136,7 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
 	} val;
 
 	if (VERBOSE_LEVEL>6)
-		fprintf(stdout,"SWRITE( %p, %i, %s ) MODE=%i\n",data, (int)nelem, hdr->FileName, hdr->FILE.OPEN);
+		fprintf(stdout,"%s( %p, %i, %s ) MODE=%i\n",__func__, data, (int)nelem, hdr->FileName, hdr->FILE.OPEN);
 
 		// write data
 
@@ -13019,7 +13165,7 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
 	size_t bpb8 = bpb8_collapsed_rawdata(hdr);
 
 	if (VERBOSE_LEVEL>7)
-		fprintf(stdout,"swrite 307 <%s> sz=%i\n",hdr->FileName,(int)(hdr->NRec*bpb8>>3));
+		fprintf(stdout,"%s (line %i): <%s> sz=%i\n",__func__,__LINE__,hdr->FileName,(int)(hdr->NRec*bpb8>>3));
 
 	if (hdr->TYPE==ATF) {
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"ATF swrite\n");
@@ -13095,7 +13241,7 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
 
 
 	if (VERBOSE_LEVEL>7)
-		fprintf(stdout,"swrite 311: %i %i\n",(int)hdr->NRec,hdr->NS);
+		fprintf(stdout,"%s (line %i): %i %i\n",__func__,__LINE__,(int)hdr->NRec,hdr->NS);
 
 	size_t bi8 = 0;
 	for (k1=0,k2=0; k1<hdr->NS; k1++) {
@@ -13114,20 +13260,25 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
 		size_t col = (hdr->data.size[1-hdr->FLAG.ROW_BASED_CHANNELS]<hdr->NS) ? k2 : k1;        // if collapsed data, use k2, otherwise use k1
 
 	if (VERBOSE_LEVEL>7)
-		fprintf(stdout,"swrite 312=#%i gdftyp=%i %i %i %i %f %f %f %f %i\n",(int)k1,GDFTYP,(int)bi8,(int)SZ,(int)CHptr->SPR,CHptr->Cal,CHptr->Off,iCal,iOff,(int)bpb8);
+		fprintf(stdout,"%s (line %i): #%i gdftyp=%i %i %i %i %f %f %f %f %i\n",
+			__func__,__LINE__,(int)k1,GDFTYP,(int)bi8,(int)SZ,(int)CHptr->SPR,CHptr->Cal,CHptr->Off,iCal,iOff,(int)bpb8);
 
 		for (k4 = 0; k4 < (size_t)hdr->NRec; k4++) {
 			if (VERBOSE_LEVEL>8)
-				fprintf(stdout,"swrite 313- #%i: [%i %i] %i %i %i %i %i\n",(int)k1,(int)hdr->data.size[0],(int)hdr->data.size[1],(int)k4,(int)0,(int)hdr->SPR,(int)DIV,(int)nelem);
+				fprintf(stdout,"%s (line %i): #%i: [%i %i] %i %i %i %i %i\n",
+					__func__,__LINE__,(int)k1,(int)hdr->data.size[0],(int)hdr->data.size[1],(int)k4,(int)0,(int)hdr->SPR,(int)DIV,(int)nelem);
 
 		for (k5 = 0; k5 < CHptr->SPR; k5++) {
 
 			if (VERBOSE_LEVEL>8)
-				fprintf(stdout,"swrite 313a #%i: [%i %i] %i %i %i %i %i\n",(int)k1,(int)hdr->data.size[0],(int)hdr->data.size[1],(int)k4,(int)k5,(int)hdr->SPR,(int)DIV,(int)nelem);
+				fprintf(stdout,"%s (line %i): #%i: [%i %i] %i %i %i %i %i\n",
+					__func__,__LINE__,(int)k1,(int)hdr->data.size[0],(int)hdr->data.size[1],(int)k4,(int)k5,(int)hdr->SPR,(int)DIV,(int)nelem);
 
 			size_t k3=0;
 			if (VERBOSE_LEVEL>8)
-				fprintf(stdout,"swrite 313+: [%i %i %i %i %i] %i %i %i %i %i %i\n",(int)k1,(int)k2,(int)k3,(int)k4,(int)k5,(int)col,(int)hdr->data.size[0],(int)hdr->data.size[1],(int)hdr->SPR,(int)nelem,(int)hdr->NRec);
+				fprintf(stdout,"%s (line %i): [%i %i %i %i %i] %i %i %i %i %i %i\n",
+					__func__,__LINE__,(int)k1,(int)k2,(int)k3,(int)k4,(int)k5,(int)col,
+					(int)hdr->data.size[0],(int)hdr->data.size[1],(int)hdr->SPR,(int)nelem,(int)hdr->NRec);
 
         		if (hdr->FLAG.ROW_BASED_CHANNELS) {
             			for (k3=0, sample_value=0.0; k3 < DIV; k3++)
@@ -13139,7 +13290,7 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
                         }
 
 			if (VERBOSE_LEVEL>8)
-				fprintf(stdout,"swrite 313b: %f/%i\n",sample_value,(int)DIV);
+				fprintf(stdout,"%s (line %i): %f/%i\n",__func__,__LINE__,sample_value,(int)DIV);
 
 			sample_value /= DIV;
 
@@ -13155,7 +13306,8 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
 			ptr = hdr->AS.rawdata + (off>>3);
 
 			if (VERBOSE_LEVEL>8)
-				fprintf(stdout,"swrite 313e %i %i %i %f\n",(int)k4,(int)k5,(int)(off>>3),sample_value);
+				fprintf(stdout,"%s (line %i): %i %i %i %f %p %p\n",
+					__func__,__LINE__,(int)k4,(int)k5,(int)(off>>3),sample_value, hdr->AS.Header, ptr);
 
 			// mapping of raw data type to (biosig_data_type)
 			switch (GDFTYP) {
@@ -13931,7 +14083,7 @@ int fprintf_hdr2json(FILE *fid, HDRTYPE* hdr)
                         NumberOfSweeps++;
         }
 
-        fprintf(fid,"\n{\n");
+        fprintf(fid,"{\n");
         fprintf(fid,"\t\"TYPE\"\t: \"%s\",\n",GetFileTypeString(hdr->TYPE));
         fprintf(fid,"\t\"VERSION\"\t: %4.2f,\n",hdr->VERSION);
 
