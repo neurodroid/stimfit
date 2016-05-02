@@ -7,7 +7,7 @@ Latency measurements
 
 Measurement of synaptic delay
 =============================
-`Stimfit <http://www.stimfit.org>`_ is frequently used to measure the delay between a synaptic signal and a post-synaptic response. Classically, this synaptic delay or latency is defined as "the time interval between the peak of the inward current through the synaptic membrane and commencement of inward current through the postsynaptic membrane" (Katz and Miledi, 1965 [#KatzMiledi1965]_). Neglecting cable properties of neurons for a while, the maximal inward current during an action potential is expected to flow at the time of maximal slope during the rising phase (Jack et al., 1983 [#Jack1983]_), since
+`Stimfit <http://www.stimfit.org>`_ measures latencies between two events. It is frequently used to measure the delay between a synaptic signal and a post-synaptic response. Classically, the synaptic delay or latency is defined as "the time interval between the peak of the inward current through the synaptic membrane and commencement of inward current through the postsynaptic membrane" (Katz and Miledi, 1965 [#KatzMiledi1965]_). Neglecting cable properties of neurons for a while, the maximal inward current during an action potential is expected to flow at the time of maximal slope during the rising phase (Jack et al., 1983 [#Jack1983]_), since
 
 .. math::
 
@@ -24,7 +24,32 @@ The commencement (sometimes called "foot") of the postsynaptic current can robus
 
         **Fig. 18:** Foot of an EPSC (red circle), estimated from the extrapolated intersection of the baseline with a line through the two points of time when the current is 20 and 80% of the peak current (black open circles).
 
-Although the method described above yields reliable results when both the pre- and the postsynaptic whole-cell recording show little noise and few artifacts, it may sometimes be favorable to use other estimates for the pre- and postsynaptic signals, for example, when extracellular stimulation was used or when there are a lot o failures in the postsynaptic response. The following sections will explain how this is done in practice.
+The method described above yields reliable results when both the pre- and the postsynaptic whole-cell recording with little noise and few artifacts. However, it may sometimes be favorable to use other estimates for the pre- and postsynaptic signals. For example, when extracellular stimulation is used or when there are a lot o failures in the postsynaptic response, latencies can be adjusted manually or fixed to predetermined measures (e.g the peak or the half-width of the reference channel). The following sections will explain how this is done in practice.
+
+Setting the latency cursors
+===========================
+
+Two latency cursors exist in `Stimfit <http://www.stimfit.org>`_ that are plotted as dotted vertical blue lines. Latency is simply computed as the time interval between the first and the second latency cursor. You can set the cursors manually by simply pressing the key **L** or the latency button on the toolbar (Fig. 19A). 
+
+    .. figure:: images/latency.png
+        :align: center
+
+        **Fig. 19A:** Activate latency mode.
+
+In addition, latency cursors can be adjusted to some predefined measurements using the Cursors settings menu with "Edit->Cursors Settings" (Fig. 19B). In the reference channel (red), Peak, Maximal slope and Half-width can be choosen as the first latency cursor. In the active channel (black), Peak, Maximal Slope, Half-width and Beginning of event can be used as second latency cursor. The resulting latency will now be computed from the measurement in the reference channel to the measurement in the active channel. 
+
+    .. figure:: images/latency_menu.png
+        :align: center
+
+        **Fig. 19B:** Cursors settings for latency.
+
+Then, if options other than manual are selected, the latencies will be computed based on the updated measurements from the reference and active channels (Fig. 20). The latency will be indicated as a double-headed arrow connecting the two latency cursors.
+
+    .. figure:: images/latencytraces.png
+        :align: center
+        
+
+        **Fig. 20:** The first latency cursor is set to meet the slope of rise of an action potential (in the reference channel, red) and the second latency cursor was selected to match the beginning of event (in the active channel, in black). The latency is indicated by a horizontal double-headed arrow.
 
 Trace alignment
 ===============
@@ -81,25 +106,6 @@ The following code can be used to align all traces within a file to the maximal 
         return True
         
  
-
-Setting the latency cursors
-===========================
-
-The latency cursors (plotted as dotted vertical blue lines) can either be set automatically to some predefined points within a trace, or manually using the mouse buttons. The predefined points can be chosen from the menu: "Edit"->"Measure latency from..." and "Edit"->"Measure latency to...". The "beginning" of an event refers to the foot as explained above (Fig. 18). If "manually" is selected, the left and right mouse buttons can be used to set the first and second latency cursors while the latency mode is activated. To switch to the latency mode, you can either click the corresponding button in the toolbar (Fig 19) or press **L**.
-
-    .. figure:: images/latency.png
-        :align: center
-
-        **Fig. 19:** Activate latency mode.
-
-    .. figure:: images/latencytraces.png
-        :align: center
-        
-
-        **Fig. 20:** The latency between maximal slope of rise of an action potential (red) and the foot of an EPSC (black) is indicated by a horizontal double-headed arrow.
-
-
-To confirm your latency cursor settings and measure latencies, you can either press **Enter** or call :func:`stf.measure()` from the shell. The latency, i.e. the time interval between the first and the second latency cursor, will be shown in the results table as long as you activated this value. The latency will be indicated as double-headed arrow connecting the two latency cursors (Fig. 20).
 
 
 .. [#KatzMiledi1965] Katz B, Miledi R. (1965) The measurement of synaptic delay, and the time course of acetylcholine release at the neuromuscular junction. Proc R Soc Lond B Biol Sci. 161:483-495.
