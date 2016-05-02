@@ -15,6 +15,8 @@ References
 ====
 2016
 ====
+    * `Booker SA, Althof D, Gross A, Loreth D, Müller J, Unger A, Fakler B, Varrao A, Watanabe M, Gassmann M, Bettler B, Shigemoto R, Vida I and Kulik A (2016) <https://cercor.oxfordjournals.org/content/early/2016/04/11/cercor.bhw090.full>` KCTD12 Auxiliary Proteins Modulate Kinetics of GABAB Receptor-Mediated Inhibition in Cholecystokinin-Containing Interneurons. *Cereb Cortex* pii:bhw090
+
     * `Heigele S, Sultan S, Toni N, Bischofberger J (2016) <http://www.nature.com/neuro/journal/v19/n2/full/nn.4218.html>`_ Bidirectional GABAergic control of action potential firing in newborn hippocampal granule cells. *Nat Neurosci* 19, 263-270.
 
 ====
