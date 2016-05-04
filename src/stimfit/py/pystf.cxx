@@ -1060,6 +1060,35 @@ const char* get_latency_start_mode( ) {
     return mode;
 }
 
+bool set_latency_start(double pos, bool is_time) {
+    if ( !check_doc() ) return false;
+    
+    if (is_time) pos /= actDoc()->GetXScale();
+
+    int posInt = stf::round( pos );
+
+    /* range check */
+    if ( posInt < 0 || posInt >= (int)actDoc()->cursec().size() ){
+        ShowError( wxT("Value out of range in set_latency_start()") );
+        return false;
+    }
+    
+    actDoc()->SetLatencyStartMode( stf::manualMode );
+    actDoc()->SetLatencyBeg( posInt );
+
+    /* set start latency mode to manual and write in registry */
+    const wxString myitem = wxT("LatencyStartMode");
+    bool dlg_OK, result_OK;
+    dlg_OK = update_cursor_dialog();
+    result_OK = update_results_table();
+    if (dlg_OK && result_OK) {
+        write_stf_registry(myitem, stf::manualMode);
+        return true;
+        }
+    return false;
+    
+}
+
 bool set_latency_start_mode( const char* mode ) {
     if ( !check_doc() ) return false;
 
@@ -1132,6 +1161,34 @@ const char* get_latency_end_mode( ) {
     return mode;
 }
 
+bool set_latency_end(double pos, bool is_time) {
+    if ( !check_doc() ) return false;
+    
+    if (is_time) pos /= actDoc()->GetXScale();
+
+    int posInt = stf::round( pos );
+
+    /* range check */
+    if ( posInt < 0 || posInt >= (int)actDoc()->cursec().size() ){
+        ShowError( wxT("Value out of range in set_latency_start()") );
+        return false;
+    }
+    
+    actDoc()->SetLatencyEndMode( stf::manualMode );
+    actDoc()->SetLatencyEnd( posInt );
+
+    /* set start latency mode to manual and write in registry */
+    const wxString myitem = wxT("LatencyEndMode");
+    bool dlg_OK, result_OK;
+    dlg_OK = update_cursor_dialog();
+    result_OK = update_results_table();
+    if (dlg_OK && result_OK) {
+        write_stf_registry(myitem, stf::manualMode);
+        return true;
+        }
+    return false;
+    
+}
 bool set_latency_end_mode( const char* mode ) {
     if ( !check_doc() ) return false;
 

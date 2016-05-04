@@ -1078,6 +1078,22 @@ const char* get_peak_direction( );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) set_latency_start;
+%feature("kwargs") set_latency_start;
+%feature("docstring", "Sets the first latency cursor to a new position.
+
+Arguments:
+pos --     The new cursor position, either in units of sampling points
+           if is_time == False (default) or in units of time if
+           is_time == True.
+is_time -- see above.
+
+Returns:
+False upon failure (such as out-of-range).") set_latency_start;
+bool set_latency_start( double pos, bool is_time = false );
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %feature("autodoc", 0) set_latency_start_mode;
 %feature("docstring", "Sets the mode of the latency start cursor.
 
@@ -1120,6 +1136,23 @@ Returns:
 A string specifying the latency start mode. Can be one of
 \"manual\", \"peak\", \"rise\" or \"half\"") get_latency_start_mode;
 const char* get_latency_start_mode( );
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+%feature("autodoc", 0) set_latency_end;
+%feature("kwargs") set_latency_end;
+%feature("docstring", "Sets the second latency cursor to a new position.
+
+Arguments:
+pos --     The new cursor position, either in units of sampling points
+           if is_time == False (default) or in units of time if
+           is_time == True.
+is_time -- see above.
+
+Returns:
+False upon failure (such as out-of-range).") set_latency_end;
+bool set_latency_end( double pos, bool is_time = false );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
