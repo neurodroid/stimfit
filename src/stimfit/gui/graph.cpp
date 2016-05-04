@@ -1175,12 +1175,13 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
         break;
     case stf::latency_cursor:
         if (Doc()->GetLatencyStartMode() != stf::manualMode) {
+            Doc()->SetLatencyStartMode( stf::manualMode );
             wxGetApp().ErrorMsg(
-                    wxT("The latency cursor can not be set in the current mode\nChoose manual mode to set the latency cursor manually")
+                    wxT("The first latency cursor is set to manual mode")
             );
-            break;
         }
         Doc()->SetLatencyBeg(((double)lastLDown.x-(double)SPX())/XZ());
+        Refresh();
         break;
     case stf::zoom_cursor:
         llz_x=(double)lastLDown.x;
@@ -1236,11 +1237,10 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
         break;
     case stf::latency_cursor:
         if (Doc()->GetLatencyEndMode() != stf::manualMode) {
+            Doc()->SetLatencyEndMode( stf::manualMode ); 
             wxGetApp().ErrorMsg(
-                    wxT("The latency cursor can not be set in the current mode\n \
-                    Choose manual mode to set the latency cursor manually")
+                wxT("The second latency cursor is set to manual mode")
             );
-            break;
         }
         Doc()->SetLatencyEnd(((double)point.x-(double)SPX())/XZ());
         Refresh();
