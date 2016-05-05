@@ -536,9 +536,11 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     Desc += std::string ("\nUser specified Annotations:\n");
     for (size_t k=0; k < numberOfEvents; k++) {
         if (hdr->EVENT.TYP[k] < 256) {
-            sprintf(str,"%f s:\t",hdr->EVENT.POS[k]/hdr->EVENT.SampleRate);
+            sprintf(str,"%f s\t",hdr->EVENT.POS[k]/hdr->EVENT.SampleRate);
             Desc += std::string( str );
-            Desc += std::string( hdr->EVENT.CodeDesc[hdr->EVENT.TYP[k]] ) + "\n";
+            if (hdr->EVENT.CodeDesc != NULL)
+                Desc += std::string( hdr->EVENT.CodeDesc[hdr->EVENT.TYP[k]] );
+            Desc += "\n";
         }
     }
     ReturnData.SetFileDescription(Desc);
