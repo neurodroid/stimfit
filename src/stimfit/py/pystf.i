@@ -1727,6 +1727,9 @@ base = _cursor_pair(get_base_start, set_base_start, get_base_end, set_base_end,
 peak = _cursor_pair(get_peak_start, set_peak_start, get_peak_end, set_peak_end,
                     get_peak, peak_index)
 fit = _cursor_pair(get_fit_start, set_fit_start, get_fit_end, set_fit_end)
+latency = _cursor_pair(
+    get_latency_start, set_latency_start, get_latency_end, set_latency_end,
+    get_latency, latency_index)
 
 }
 //--------------------------------------------------------------------
