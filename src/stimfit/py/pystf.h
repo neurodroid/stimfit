@@ -131,7 +131,9 @@ bool set_latency_start_mode( const char* direction );
 const char* get_latency_end_mode( );
 bool set_latency_end_mode( const char* direction );
 double get_latency_start( bool is_time = false );
+bool set_latency_start( double pos, bool is_time = false );
 double get_latency_end( bool is_time = false );
+bool set_latency_end( double pos, bool is_time = false );
 
 bool set_slope(double slope);
 

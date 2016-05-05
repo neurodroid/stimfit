@@ -43,6 +43,10 @@ In addition, latency cursors can be adjusted to some predefined measurements usi
 
         **Fig. 19B:** Cursors settings for latency.
 
+.. note::
+
+    If manual is not set, cursor latencies will be located within the peak cursors. Be sure that you set the peak cursors in the right location on both active and reference channel. This is necessary to detect the peak, maximal slope, half-width or beginning of the event.
+
 Then, if options other than manual are selected, the latencies will be computed based on the updated measurements from the reference and active channels (Fig. 20). The latency will be indicated as a double-headed arrow connecting the two latency cursors.
 
     .. figure:: images/latencytraces.png

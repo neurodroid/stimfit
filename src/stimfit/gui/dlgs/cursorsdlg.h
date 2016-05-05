@@ -273,16 +273,6 @@ public:
      */
     void SetLatencyEndMode(stf::latency_mode latencyEndMode);
 
-    //! Indicates whether latency measurements should be taken within the current peak cursors.
-    /*! \return true if latency measurement is taken within the peak cursors.
-     */
-    bool UsePeak4Latency() const;
-
-    //! Sets the latency measurements to current peak cursors.
-    /*! \param val.
-     */
-    void SetPeak4Latency(int val);
-    
 #ifdef WITH_PSLOPE
     //! Gets the mode of measure for the beginning of the slope cursor.
     /*! \return The current mode for the beginning slope cursor.

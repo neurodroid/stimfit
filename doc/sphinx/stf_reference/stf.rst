@@ -628,6 +628,20 @@ The :mod:`stf` module defines the following functions:
 
         True upon success.
 
+.. function:: set_latency_end(pos, is_time=False)
+
+    Sets the second latency cursor to a new position and the mode of the cursor to Manual. 
+
+        **Arguments:**
+
+        *pos* --     The new cursor position, either in units of sampling points if *is_time* == False (default) or in units of time if *is_time* == True.
+        *is_time* -- see above.
+        
+        **Returns:**
+
+        False upon failure (such as out-of-range).
+    
+
 .. function:: set_latency_end_mode(mode)
 
     Sets the mode of the latency end cursor
@@ -639,6 +653,19 @@ The :mod:`stf` module defines the following functions:
     **Returns:**
 
     False upon failure
+
+.. function:: set_latency_start(pos, is_time=False)
+
+    Sets the first latency cursor to a new position and the mode of the cursor to Manual. 
+
+        **Arguments:**
+
+        *pos* --     The new cursor position, either in units of sampling points if *is_time* == False (default) or in units of time if *is_time* == True.
+        *is_time* -- see above.
+        
+        **Returns:**
+
+        False upon failure (such as out-of-range).
 
 .. function:: set_latency_start_mode(mode)
 

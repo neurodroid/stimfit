@@ -362,7 +362,7 @@ void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const w
         //0=Off, 1=Peak, 2=Rise
         SetLatencyStartMode( Sender->GetLatencyStartMode() );
         SetLatencyEndMode( Sender->GetLatencyEndMode() );
-        SetLatencyWindowMode( Sender->GetLatencyWindowMode() );
+        //SetLatencyWindowMode( Sender->GetLatencyWindowMode() );
 #ifdef WITH_PSLOPE
         SetPSlopeBegMode ( Sender->GetPSlopeBegMode() );
         SetPSlopeEndMode ( Sender->GetPSlopeEndMode() );
@@ -2613,8 +2613,8 @@ void wxStfDoc::Measure( )
         APMaxRiseT=0.0;
         APMaxRiseY=0.0;
         double left_APRise = peakBeg; 
-        if (GetLatencyWindowMode() == stf::defaultMode ) {
-            left_APRise= APMaxT-searchRange>2.0 ? APMaxT-searchRange : 2.0;
+        //if (GetLatencyWindowMode() == stf::defaultMode ) {
+        if (left_APRise= APMaxT-searchRange>2.0 ? APMaxT-searchRange : 2.0){;
         }
         try {
             stfnum::maxRise(secsec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY,windowLength);
