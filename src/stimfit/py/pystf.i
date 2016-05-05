@@ -1729,7 +1729,7 @@ peak = _cursor_pair(get_peak_start, set_peak_start, get_peak_end, set_peak_end,
 fit = _cursor_pair(get_fit_start, set_fit_start, get_fit_end, set_fit_end)
 latency = _cursor_pair(
     get_latency_start, set_latency_start, get_latency_end, set_latency_end,
-    get_latency, latency_index)
+    get_latency)
 
 }
 //--------------------------------------------------------------------
