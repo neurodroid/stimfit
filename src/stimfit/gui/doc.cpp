@@ -2614,8 +2614,7 @@ void wxStfDoc::Measure( )
         APMaxRiseY=0.0;
         double left_APRise = peakBeg; 
         //if (GetLatencyWindowMode() == stf::defaultMode ) {
-        if (left_APRise= APMaxT-searchRange>2.0 ? APMaxT-searchRange : 2.0){;
-        }
+        left_APRise= APMaxT-searchRange>2.0 ? APMaxT-searchRange : 2.0);
         try {
             stfnum::maxRise(secsec().get(),left_APRise,APMaxT,APMaxRiseT,APMaxRiseY,windowLength);
         }
