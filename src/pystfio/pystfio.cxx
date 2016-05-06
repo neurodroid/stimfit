@@ -38,6 +38,7 @@
 #endif
 
 #include "./../libstfnum/fit.h"
+#include "./../libstfnum/measure.h"
 
 #include "pystfio.h"
 
@@ -183,4 +184,14 @@ PyObject* peak_detection(double* invec, int size, double threshold, int min_dist
         return NULL;
     }
         
+}
+
+double risetime(double* invec, int size, double base, double amp, double frac) {
+    wrap_array();
+
+    Vector_double data(invec, &invec[size]);
+    std::size_t tLoId, tHiId;
+    double tLoReal;
+
+    return stfnum::risetime(data, base, amp, 0, size-1, frac, tLoId, tHiId, tLoReal);
 }

@@ -21,5 +21,6 @@ PyObject* detect_events(double* data, int size_data, double* templ, int size_tem
                         const std::string& mode="criterion",
                         bool norm=true, double lowpass=0.5, double highpass=0.0001);
 PyObject* peak_detection(double* invec, int size, double threshold, int min_distance);
+double risetime(double* invec, int size, double base, double amp, double frac=0.2);
 
 #endif

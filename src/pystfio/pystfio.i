@@ -404,6 +404,16 @@ PyObject* peak_detection(double* invec, int size, double threshold, int min_dist
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
+%feature("autodoc", 0) risetime;
+%feature("kwargs") risetime;
+%feature("docstring", "
+
+Arguments:
+") risetime;
+double risetime(double* invec, int size, double base, double amp, double frac=0.2);
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
 %pythoncode {
 import os
 
