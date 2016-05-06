@@ -191,13 +191,12 @@ double risetime(double* invec, int size, double base, double amp, double frac) {
     wrap_array();
 
     Vector_double data(invec, &invec[size]);
-    std::size_t tLoId, tHiId;
-    double tLoReal;
+    double itLoReal, itHiReal, otLoReal, otHiReal;
     std::size_t nd = 0;
     for (nd=1; nd < data.size(); ++nd) {
         if (data[nd] < data[nd-1]) {
             break;
         }
     }
-    return stfnum::risetime(data, base, amp, 0, nd-1, frac, tLoId, tHiId, tLoReal);
+    return stfnum::risetime2(data, base, amp, 0, nd-1, frac, itLoReal, itHiReal, otLoReal, otHiReal);
 }
