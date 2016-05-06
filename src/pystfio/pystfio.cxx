@@ -192,11 +192,15 @@ double risetime(double* invec, int size, double base, double amp, double frac) {
 
     Vector_double data(invec, &invec[size]);
     double itLoReal, itHiReal, otLoReal, otHiReal;
-    std::size_t nd = 0;
-    for (nd=1; nd < data.size(); ++nd) {
-        if (data[nd] < data[nd-1]) {
-            break;
+    std::size_t argmax = 0;
+    if (size > 0) {
+        double max = data[0];
+        for (std::size_t nd=1; nd < data.size(); ++nd) {
+            if (data[nd] > max) {
+                max = data[nd];
+                argmax = nd;
+            }
         }
     }
-    return stfnum::risetime2(data, base, amp, 0, nd-1, frac, itLoReal, itHiReal, otLoReal, otHiReal);
+    return stfnum::risetime2(data, base, amp, 0, argmax, frac, itLoReal, itHiReal, otLoReal, otHiReal);
 }
