@@ -1375,10 +1375,20 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
         return;
     }
     case WXK_DOWN:   //down cursor
-        OnDown();
+        if (event.ControlDown()) {
+            ChanUp();
+        }
+        else {
+            OnDown();
+        }
         return;
      case WXK_UP:     //up cursor
-        OnUp();
+        if (event.ControlDown()) {
+            ChanDown();
+        }
+        else {
+            OnUp();
+        }
         return;
      case 49: //1
          ParentFrame()->SetZoomQual(stf::zoomch1);
@@ -1456,6 +1466,7 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
         Doc()->OnSwapChannels(foo);
         return;
      }
+    
      case 82: // Invalidate();//r
      case 114: {
          Doc()->Remove();
@@ -2151,6 +2162,69 @@ void wxStfGraph::OnDown() {
     }
     Refresh();
 }
+
+void wxStfGraph::ChanUp() {
+    // on Control + Up press, increase the channel number by one and
+    // refresh the window
+    
+    int reference_ch = Doc()->GetCurChIndex();  
+    
+    int channel = reference_ch + 1;
+    
+    // Rollover to 0 if channel out of range
+    try {
+        Doc()->SetCurChIndex(channel); 
+    }
+    catch (const std::out_of_range& e) {
+        Doc()->SetCurChIndex(0);
+    }
+
+    // Pointer to wxStfChildFrame to access Channel selection combo
+    wxStfChildFrame* pFrame = (wxStfChildFrame*)actDoc()->GetDocumentWindow();
+    if (!pFrame) {
+        ShowError( wxT("Pointer to frame is zero") );
+        return false;
+    }
+    // set the channel selection combo 
+    //pFrame->SetChannels( actDoc()->GetCurChIndex(), actDoc()->GetSecChIndex()); 
+    pFrame->SetChannels( Doc()->GetCurChIndex(), reference_ch); 
+    pFrame->UpdateChannels(); // update according to the combo
+    Refresh();
+}
+/*
+void wxStfGraph::ChanDown() {
+    
+    // on Control + Down press, decrease the channel number by one and
+    // refresh the window. This is incomplete and also the solution feels
+    // like a hack...
+
+    int reference_ch = actDoc()->GetCurChIndex();
+    int channel = reference_ch - 1;
+    
+    // channel negative         
+    if (channel<0) {
+        // set channel to the last channel in the list....
+        // channel = N_channels
+        
+    }
+                        
+    // catch exceptions (i.e out of range)
+
+    actDoc()->SetCurChIndex(channel); 
+
+    // Pointer to wxStfChildFrame to access Channel selection combo
+    wxStfChildFrame* pFrame = (wxStfChildFrame*)actDoc()->GetDocumentWindow();
+    if (!pFrame) {
+        ShowError( wxT("Pointer to frame is zero") );
+        return false;
+    }
+    // set the channel selection combo 
+    //pFrame->SetChannels( actDoc()->GetCurChIndex(), actDoc()->GetSecChIndex()); 
+    pFrame->SetChannels( actDoc()->GetCurChIndex(), reference_ch); 
+    pFrame->UpdateChannels(); // update according to the combo
+    refresh_graph();
+}
+*/
 
 void wxStfGraph::OnRight() {
     SPXW()=SPX() + 20;
