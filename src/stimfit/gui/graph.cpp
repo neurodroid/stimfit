@@ -2191,9 +2191,12 @@ void wxStfGraph::ChanUp() {
     pFrame->UpdateChannels(); // update according to the combo
     Refresh();
 }
-/*
+
 void wxStfGraph::ChanDown() {
-    
+	// TODO: find a way to get the index of the last channel to allow for graceful rollover
+	Refresh();
+}
+/*    
     // on Control + Down press, decrease the channel number by one and
     // refresh the window. This is incomplete and also the solution feels
     // like a hack...
