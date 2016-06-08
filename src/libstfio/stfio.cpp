@@ -33,7 +33,6 @@
 #include "./abf/abflib.h"
 #include "./atf/atflib.h"
 #include "./axg/axglib.h"
-#include "./tdms/tdmslib.h"
 #include "./igor/igorlib.h"
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
   #include "./biosig/biosiglib.h"
@@ -187,10 +186,6 @@ bool stfio::importFile(
         switch (type) {
         case stfio::hdf5: {
             stfio::importHDF5File(fName, ReturnData, progDlg);
-            break;
-        }
-        case stfio::tdms: {
-            stfio::importTDMSFile(fName, ReturnData, progDlg);
             break;
         }
 #ifndef WITHOUT_ABF
