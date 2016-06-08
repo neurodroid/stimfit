@@ -40,8 +40,10 @@
 #if defined(__WXMAC__) || defined(__WXGTK__)
   #pragma GCC diagnostic warning "-Wwrite-strings"
 #endif
+#include <numpy/arrayobject.h>
 
 #include "./app.h"
+#include "./doc.h"
 #include "./parentframe.h"
 
 int stf::Extension::n_extensions = 0;
@@ -598,6 +600,91 @@ void wxStfApp::OnUserdef(wxCommandEvent& event) {
     
 }
 
+bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
+    // Grab the Global Interpreter Lock.
+    wxPyBlock_t blocked = wxPyBeginBlockThreads();
+
+    PyObject* stf_mod = PyImport_ImportModule("tdms");
+    if (!stf_mod) {
+        PyErr_Print();
+#ifdef _STFDEBUG
+        wxGetApp().ErrorMsg(wxT("Couldn't load tdms.py"));
+#endif
+        wxPyEndBlockThreads(blocked);
+        return false;
+    }
+
+    PyObject* py_fn = PyString_FromString(filename.c_str());
+    PyObject* stf_tdms_f = PyObject_GetAttrString(stf_mod, "tdms_open");
+    PyObject* stf_tdms_res = NULL;
+
+    if (PyCallable_Check(stf_tdms_f)) {
+        PyObject* stf_tdms_args = PyTuple_Pack(1, py_fn);
+        stf_tdms_res = PyObject_CallObject(stf_tdms_f, stf_tdms_args);
+        PyErr_Print();
+        Py_DECREF(stf_mod);
+        Py_DECREF(py_fn);
+        Py_DECREF(stf_tdms_args);
+    } else {
+        Py_DECREF(stf_mod);
+        Py_DECREF(py_fn);
+
+        return false;
+    }
+
+    if (stf_tdms_res == Py_None) {
+        wxGetApp().ErrorMsg("nptdms module unavailable. Cannot read tdms files.");
+        Py_DECREF(stf_tdms_res);
+        return false;
+    }
+
+    if (!PyTuple_Check(stf_tdms_res)) {
+        wxGetApp().ErrorMsg("Return value of tdms_open is not a tuple. Aborting now.");
+        Py_DECREF(stf_tdms_res);
+        return false;
+    }
+
+    if (PyTuple_Size(stf_tdms_res) != 2) {
+        wxGetApp().ErrorMsg("Return value of tdms_open is not a 2-tuple. Aborting now.");
+        Py_DECREF(stf_tdms_res);
+        return false;
+    }
+
+    PyObject* data_list = PyTuple_GetItem(stf_tdms_res, 0);
+    PyObject* py_dt = PyTuple_GetItem(stf_tdms_res, 1);
+    double dt = PyFloat_AsDouble(py_dt);
+    Py_DECREF(py_dt);
+
+    Py_ssize_t nchannels = PyList_Size(data_list);
+    ReturnData.resize(nchannels);
+    int nchannels_nonempty = 0;
+    for (int nc=0; nc<nchannels; ++nc) {
+        PyObject* section_list = PyList_GetItem(data_list, nc);
+        Py_ssize_t nsections = PyList_Size(section_list);
+        if (nsections != 0) {
+            Channel ch(nsections);
+            for (int ns=0; ns<nsections; ++ns) {
+                PyObject* np_array = PyList_GetItem(section_list, ns);
+                npy_intp* arr_shape = PyArray_DIMS(np_array);
+                int nsamples = arr_shape[0];
+                Section sec(nsamples);
+                double* data = (double*)PyArray_DATA(np_array);
+                std::copy(&data[0], &data[nsamples], &sec.get_w()[0]);
+                ch.InsertSection(sec, ns);
+                Py_DECREF(np_array);
+            }
+            ReturnData.InsertChannel(ch, nc);
+            nchannels_nonempty++;
+        }
+        Py_DECREF(section_list);
+    }
+    Py_DECREF(data_list);
+    Py_DECREF(stf_tdms_res);
+    ReturnData.resize(nchannels_nonempty);
+    ReturnData.SetXScale(dt);
+    wxPyEndBlockThreads(blocked);
+
+    return true;
+}
 
 #endif // WITH_PYTHON
-

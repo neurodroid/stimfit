@@ -227,6 +227,7 @@ Section "!Program files and Python modules" 1 ; Core program files and Python mo
   File "${PYSTFDIR}\charlie.py"
   File "${PYSTFDIR}\hdf5tools.py"
   File "${PYSTFDIR}\spells.py"
+  File "${PYSTFDIR}\tdms.py"
   File "${PYSTFDIR}\embedded_init.py"
   File "${PYSTFDIR}\embedded_stf.py"
   File "${PYSTFDIR}\embedded_mpl.py"

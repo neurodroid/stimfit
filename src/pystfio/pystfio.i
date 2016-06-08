@@ -480,5 +480,37 @@ def read(fname, ftype=None, verbose=False):
         
     return rec
 
+
+def read_tdms(fn):
+    import numpy as np
+    import sys
+    try:
+        from nptdms import TdmsFile
+    except ImportError:
+        sys.stderr.write("nptdms module unavailable")
+        return None
+
+    tdms_file = TdmsFile(fn)
+
+    times = np.array(
+        [[channel.data
+          for channel in tdms_file.group_channels(group)
+          if channel.data is not None]
+         for group in tdms_file.groups()
+         if group.lower() == "time"][0][0])
+    dt = np.mean(np.diff(times))
+    chlist = [Channel(
+        [Section(channel.data)
+         for channel in tdms_file.group_channels(group)
+         if channel.data is not None])
+        for group in tdms_file.groups()
+        if group.lower() != "time"]
+    chlist[0].xunits = "mV"
+    chlist[1].yunits = "pA"
+    rec = Recording(chlist)
+    rec.dt = dt
+    rec.xunits = "ms"
+    sys.stderr.write(fn + "\n")
+    return rec
 }
 //--------------------------------------------------------------------

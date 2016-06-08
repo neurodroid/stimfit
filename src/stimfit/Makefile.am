@@ -17,7 +17,7 @@ endif
 
 # the application source, library search path, and link libraries
 if BUILD_PYTHON
-    PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
+    PYTHON_ADDINCLUDES = $(LIBNUMPY_INCLUDES) $(LIBPYTHON_INCLUDES)
 else
     PYTHON_ADDINCLUDES = 
 endif

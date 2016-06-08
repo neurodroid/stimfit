@@ -22,7 +22,7 @@ if WITH_BIOSIGLITE
 libpystf_la_LIBADD += ../../libbiosiglite/libbiosiglite.la
 endif
 
-EXTRA_DIST = pystf.i numpy.i ivtools.py mintools.py natools.py minidemo.py charlie.py mintools.py hdf5tools.py spells.py embedded_init.py embedded_stf.py embedded_mpl.py embedded_ipython.py heka.py extensions.py gccwarn
+EXTRA_DIST = pystf.i numpy.i ivtools.py mintools.py natools.py minidemo.py charlie.py mintools.py hdf5tools.py spells.py tdms.py embedded_init.py embedded_stf.py embedded_mpl.py embedded_ipython.py heka.py extensions.py gccwarn
 
 install-exec-hook:
 	cd ${prefix}/lib/stimfit && ln -sf ${STF_PYTHON_LIBNAME} _stf.so
@@ -36,6 +36,7 @@ install-exec-hook:
 	cp -p $(srcdir)/hdf5tools.py ${prefix}/lib/stimfit
 	cp -p $(srcdir)/stf.py ${prefix}/lib/stimfit
 	cp -p $(srcdir)/spells.py ${prefix}/lib/stimfit
+	cp -p $(srcdir)/tdms.py ${prefix}/lib/stimfit
 	cp -p $(srcdir)/embedded_init.py ${prefix}/lib/stimfit
 	cp -p $(srcdir)/embedded_stf.py ${prefix}/lib/stimfit
 	cp -p $(srcdir)/embedded_mpl.py ${prefix}/lib/stimfit

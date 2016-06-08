@@ -45,6 +45,7 @@
 #include "./../../libstfnum/funclib.h"
 #include "./../../libstfnum/measure.h"
 #include "./../../libstfio/stfio.h"
+#include "./../../pystfio/pystfio.h"
 #include "./usrdlg/usrdlg.h"
 #include "./doc.h"
 #include "./graph.h"
@@ -229,34 +230,43 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
             }
         }
 #endif
-        try {
-            if (progress) {
-                stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
-                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
-            } else {
-                stfio::StdoutProgressInfo progDlg("Reading file", "Opening file", 100, true);
-                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+        if (type == stfio::tdms) {
+            if (!LoadTDMS(stf::wx2std(filename), *this)) {
+                wxString errorMsg(wxT("Error opening file\n"));
+                wxGetApp().ExceptMsg(errorMsg);
+                get().clear();
+                return false;
             }
-        }
-        catch (const std::runtime_error& e) {
-            wxString errorMsg(wxT("Error opening file\n"));
-            errorMsg += wxString( e.what(),wxConvLocal );
-            wxGetApp().ExceptMsg(errorMsg);
-            get().clear();
-            return false;
-        }
-        catch (const std::exception& e) {
-            wxString errorMsg(wxT("Error opening file\n"));
-            errorMsg += wxString( e.what(), wxConvLocal );
-            wxGetApp().ExceptMsg(errorMsg);
-            get().clear();
-            return false;
-        }
-        catch (...) {
-            wxString errorMsg(wxT("Error opening file\n"));
-            wxGetApp().ExceptMsg(errorMsg);
-            get().clear();
-            return false;
+        } else {
+            try {
+                if (progress) {
+                    stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
+                    stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+                } else {
+                    stfio::StdoutProgressInfo progDlg("Reading file", "Opening file", 100, true);
+                    stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+                }
+            }
+            catch (const std::runtime_error& e) {
+                wxString errorMsg(wxT("Error opening file\n"));
+                errorMsg += wxString( e.what(),wxConvLocal );
+                wxGetApp().ExceptMsg(errorMsg);
+                get().clear();
+                return false;
+            }
+            catch (const std::exception& e) {
+                wxString errorMsg(wxT("Error opening file\n"));
+                errorMsg += wxString( e.what(), wxConvLocal );
+                wxGetApp().ExceptMsg(errorMsg);
+                get().clear();
+                return false;
+            }
+            catch (...) {
+                wxString errorMsg(wxT("Error opening file\n"));
+                wxGetApp().ExceptMsg(errorMsg);
+                get().clear();
+                return false;
+            }
         }
         if (get().empty()) {
             wxGetApp().ErrorMsg(wxT("File is probably empty\n"));

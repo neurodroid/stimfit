@@ -74,6 +74,8 @@ stfio::filetype gettype(const std::string& ftype) {
         stftype = stfio::heka;
     } else if (ftype == "igor") {
         stftype = stfio::igor;
+    } else if (ftype == "tdms") {
+        stftype = stfio::tdms;
     } else {
         stftype = stfio::none;
     }

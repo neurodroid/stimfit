@@ -1025,6 +1025,7 @@ public:
 
     void correctRangeR(int& value);
     void correctRangeR(std::size_t& value);
+    bool LoadTDMS(const std::string& filename, Recording& ReturnData);
     
     DECLARE_EVENT_TABLE()
 };
