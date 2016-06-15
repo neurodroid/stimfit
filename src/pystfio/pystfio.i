@@ -492,13 +492,23 @@ def read_tdms(fn):
 
     tdms_file = TdmsFile(fn)
 
-    times = np.array(
-        [[channel.data
-          for channel in tdms_file.group_channels(group)
-          if channel.data is not None]
-         for group in tdms_file.groups()
-         if group.lower() == "time"][0][0])
-    dt = np.mean(np.diff(times))
+    try:
+        times = np.array(
+            [[channel.data
+              for channel in tdms_file.group_channels(group)
+              if channel.data is not None]
+             for group in tdms_file.groups()
+             if group.lower() == "time"][0][0])
+        dt = np.mean(np.diff(times))
+    except IndexError:
+        if not "Sampling Rate" in tdms_file.object().properties.keys():
+            dt = 1.0
+        else:
+            sr = tdms_file.object().properties['Sampling Rate']
+            if sr > 0:
+                dt = 1e3/sr
+            else:
+                dt = 1.0
     chlist = [Channel(
         [Section(channel.data)
          for channel in tdms_file.group_channels(group)
