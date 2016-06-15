@@ -38,16 +38,16 @@ class MyPanel(wx.Panel):
             style = wx.BORDER_NONE | wx.MAXIMIZE)
 
         # the Pycrust shell object
-        pycrust = shell.Shell(self,-1, \
+        self.pycrust = shell.Shell(self,-1, \
             introText = intro_msg() + LOADED)
 
         # Workaround for http://trac.wxwidgets.org/ticket/15008
         if "darwin" in sys.platform:
-            pycrust.autoCallTip = False
+            self.pycrust.autoCallTip = False
 
-        pycrust.push('from embedded_init import *', silent = True)
+        self.pycrust.push('from embedded_init import *', silent = True)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(pycrust, 1, wx.EXPAND | wx.BOTTOM | wx.LEFT | wx.RIGHT, 10)
+        sizer.Add(self.pycrust, 1, wx.EXPAND | wx.BOTTOM | wx.LEFT | wx.RIGHT, 10)
         self.SetSizer(sizer)
 

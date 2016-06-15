@@ -43,4 +43,3 @@ def intro_msg():
     intro = '%s, using %s' % (stf.get_versionstring(), version_s)
 
     return intro
-
