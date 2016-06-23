@@ -15,8 +15,13 @@ References
 ====
 2016
 ====
-    * `Booker SA, Althof D, Gross A, Loreth D, Müller J, Unger A, Fakler B, Varrao A, Watanabe M, Gassmann M, Bettler B, Shigemoto R, Vida I and Kulik A (2016) <https://cercor.oxfordjournals.org/content/early/2016/04/11/cercor.bhw090.full>` KCTD12 Auxiliary Proteins Modulate Kinetics of GABAB Receptor-Mediated Inhibition in Cholecystokinin-Containing Interneurons. *Cereb Cortex* pii:bhw090
-
+    * `Iijima Y, Behr K, Iijima T, Biemans B, Bischofberger J, Scheiffele P <http://www.nature.com/articles/srep27400>`_ Distinct Defects in Synaptic Differentiation of Neocortical Neurons in Response to Prenatal Valproate Exposure. *Sci Rep* 6:27400.
+    * `Janz P, Savanthrapadian S, Haussler U, Kilias A, Nestel S, Kretz O, Kirsch M, Bartos M, Egert U, Haas CA <http://cercor.oxfordjournals.org/content/early/2016/04/12/cercor.bhw093.short>`_ Synaptic Remodeling of Entorhinal Input Contributes to an Aberrant Hippocampal Network in Temporal Lobe Epilepsy. *Cerebral Cortex* bhw093.
+    * `Money TG, Sproule MK, Cross KP, Robertson RM <http://jn.physiology.org/content/early/2016/06/03/jn.00354.2016.abstract>`_ Octopamine stabilizes conduction reliability of an unmyelinated axon during hypoxic stress. *J Neurophysiol* jn-00354.
+    * `Cross KP, Robertson RM (2016) <http://physreports.physiology.org/content/4/10/e12814.abstract>`_ Ionic mechanisms maintaining action potential conduction velocity at high firing frequencies in an unmyelinated axon. *Physiol Reports* 4(10):e12814.
+    * `Mishra RK, Kim S, Guzman SJ, Jonas P (2016) <http://www.nature.com/ncomms/2016/160513/ncomms11552/full/ncomms11552.html>`_ Symmetric spike timing-dependent plasticity at CA3-CA3 synapses optimizes storage and recall in autoassociative networks. *Nat Comm* 7.
+    * `Merel J, Shababo B, Naka A, Adesnik H, Paninski L (2016) <http://www.sciencedirect.com/science/article/pii/S0165027016301030>`_ Bayesian methods for event analysis of intracellular currents. *J Neurosci Methods* 269:21-32.
+    * `Booker SA, Althof D, Gross A, Loreth D, Müller J, Unger A, Fakler B, Varrao A, Watanabe M, Gassmann M, Bettler B, Shigemoto R, Vida I and Kulik A (2016) <https://cercor.oxfordjournals.org/content/early/2016/04/11/cercor.bhw090.full>`_ KCTD12 Auxiliary Proteins Modulate Kinetics of GABAB Receptor-Mediated Inhibition in Cholecystokinin-Containing Interneurons. *Cereb Cortex* pii:bhw090
     * `Heigele S, Sultan S, Toni N, Bischofberger J (2016) <http://www.nature.com/neuro/journal/v19/n2/full/nn.4218.html>`_ Bidirectional GABAergic control of action potential firing in newborn hippocampal granule cells. *Nat Neurosci* 19, 263-270.
 
 ====
