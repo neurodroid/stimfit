@@ -1,0 +1,412 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Latency measurements &mdash; Stimfit 0.15.2 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.15.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
+    <link rel="up" title="Stimfit manual" href="index.html" />
+    <link rel="next" title="Event extraction by template matching" href="event_extraction.html" />
+    <link rel="prev" title="The Python shell" href="python.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="event_extraction.html" title="Event extraction by template matching"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="python.html" title="The Python shell"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://github.com/neurodroid/stimfit/wiki/Stimfit">Stimfit Homepage</a> | &nbsp; </li>
+    <li><a href="http://github.com/neurodroid/stimfit" }}>Developer (Github)</a> | &nbsp; </li>
+    <li><a href=../index.html>Documentation Home</a> | &nbsp; </li>
+
+    
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Stimfit manual</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="latency-measurements">
+<h1>Latency measurements<a class="headerlink" href="#latency-measurements" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber (christsc at gmx.de)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">23 June, 2016</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="measurement-of-synaptic-delay">
+<h2>Measurement of synaptic delay<a class="headerlink" href="#measurement-of-synaptic-delay" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://www.stimfit.org">Stimfit</a> measures latencies between two events. It is frequently used to measure the delay between a synaptic signal and a post-synaptic response. Classically, the synaptic delay or latency is defined as &#8220;the time interval between the peak of the inward current through the synaptic membrane and commencement of inward current through the postsynaptic membrane&#8221; (Katz and Miledi, 1965 <a class="footnote-reference" href="#katzmiledi1965" id="id1">[1]</a>). Neglecting cable properties of neurons for a while, the maximal inward current during an action potential is expected to flow at the time of maximal slope during the rising phase (Jack et al., 1983 <a class="footnote-reference" href="#jack1983" id="id2">[2]</a>), since</p>
+<div class="system-message">
+<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">I_{\text{m}}=I_{\text{cap}}+I_{\text{ionic}} = C_\text{m}\frac{\text{d}V_\text{m}}{\text{d}t} + I_{\text{ionic}} = 0, \mbox{and hence}
+
+
+I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{d}t}</tt>)</p>
+latex exited with error
+[stdout]
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=latex)
+ restricted \write18 enabled.
+entering extended mode
+(./math.tex
+LaTeX2e &lt;2016/03/31&gt; patch level 1
+Babel &lt;3.9r&gt; and hyphenation patterns for 83 language(s) loaded.
+(/usr/local/texlive/2016/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/local/texlive/2016/texmf-dist/tex/latex/base/size12.clo))
+(/usr/local/texlive/2016/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/local/texlive/2016/texmf-dist/tex/latex/ucs/utf8x.def))
+(/usr/local/texlive/2016/texmf-dist/tex/latex/ucs/ucs.sty
+(/usr/local/texlive/2016/texmf-dist/tex/latex/ucs/data/uni-global.def))
+(/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?&#8217; option.
+(/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/local/texlive/2016/texmf-dist/tex/latex/amscls/amsthm.sty)
+(/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/amssymb.sty
+(/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
+(/usr/local/texlive/2016/texmf-dist/tex/latex/tools/bm.sty) (./math.aux)
+(/usr/local/texlive/2016/texmf-dist/tex/latex/ucs/ucsencs.def)
+(/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/umsb.fd)
+Runaway argument?
+\!\begin {aligned} I_{\text {m}}=I_{\text {cap}}+I_{\text {ionic}} = \ETC.
+! Paragraph ended before \align* was complete.
+&lt;to be read again&gt; 
+                   \par 
+l.14 
+     
+! Missing $ inserted.
+&lt;inserted text&gt; 
+                $
+l.14 
+     
+! Missing \endgroup inserted.
+&lt;inserted text&gt; 
+                \endgroup 
+l.14 
+     
+! Display math should end with $$.
+&lt;to be read again&gt; 
+                   \par 
+l.14 
+     
+! Missing $ inserted.
+&lt;inserted text&gt; 
+                $
+l.15 I_
+       {\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}...
+
+! Misplaced \crcr.
+\endaligned -&gt;\crcr 
+                    \egroup \restorecolumn&#64; \egroup 
+l.16 \end{aligned}
+                  \end{align*}
+! Extra }, or forgotten $.
+\endaligned -&gt;\crcr \egroup 
+                            \restorecolumn&#64; \egroup 
+l.16 \end{aligned}
+                  \end{align*}
+! Extra }, or forgotten $.
+\endaligned ...cr \egroup \restorecolumn&#64; \egroup 
+                                                  
+l.16 \end{aligned}
+                  \end{align*}
+
+! LaTeX Error: \begin{align*} on input line 12 ended by \end{aligned}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H &lt;return&gt;  for immediate help.
+ ...                                              
+                                                  
+l.16 \end{aligned}
+                  \end{align*}
+! Missing $ inserted.
+&lt;inserted text&gt; 
+                $
+l.16 \end{aligned}
+                  \end{align*}
+! Misplaced \cr.
+\math&#64;cr&#64;&#64;&#64; -&gt;\cr 
+                  
+l.16 \end{aligned}\end{align*}
+                              
+! Misplaced \noalign.
+\math&#64;cr&#64;&#64; ... \iffalse }\fi \math&#64;cr&#64;&#64;&#64; \noalign 
+                                                  {\vskip #1\relax }
+l.16 \end{aligned}\end{align*}
+                              
+
+Underfull \hbox (badness 10000) in paragraph at lines 15&#8211;16
+
+! Misplaced \noalign.
+\black&#64; #1-&gt;\noalign 
+                     {\ifdim #1&gt;\displaywidth \dimen&#64; \prevdepth \nointerlin...
+l.16 \end{aligned}\end{align*}
+                              
+! Too many }&#8217;s.
+\endalign -&gt;\math&#64;cr \black&#64; \totwidth&#64; \egroup 
+                                                \ifingather&#64; \restorealignst...
+l.16 \end{aligned}\end{align*}
+                              
+
+! LaTeX Error: \begin{document} ended by \end{align*}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H &lt;return&gt;  for immediate help.
+ ...                                              
+                                                  
+l.16 \end{aligned}\end{align*}
+                              
+! Missing $ inserted.
+&lt;inserted text&gt; 
+                $
+l.16 \end{aligned}\end{align*}
+                              
+! Display math should end with $$.
+&lt;to be read again&gt; 
+                   \endgroup 
+l.16 \end{aligned}\end{align*}
+                              
+! Extra \endgroup.
+&lt;recently read&gt; \endgroup 
+                          
+l.16 \end{aligned}\end{align*}
+                              
+[1] (./math.aux) )
+(see the transcript file for additional information)
+Output written on math.dvi (1 page, 552 bytes).
+Transcript written on math.log.
+</div>
+<p>The commencement (sometimes called &#8220;foot&#8221;) of the postsynaptic current can robustly be estimated from the extrapolated intersection of the baseline with a line through the two points of time when the current is 20 and 80% of the peak current (Jonas et al., 1993 <a class="footnote-reference" href="#jonas1993" id="id3">[4]</a>, Bartos et al., 2001 <a class="footnote-reference" href="#bartos2001" id="id4">[3]</a>).</p>
+<blockquote>
+<div><div class="figure align-center" id="id6">
+<img alt="../_images/foot.png" src="../_images/foot.png" />
+<p class="caption"><span class="caption-text"><strong>Fig. 18:</strong> Foot of an EPSC (red circle), estimated from the extrapolated intersection of the baseline with a line through the two points of time when the current is 20 and 80% of the peak current (black open circles).</span></p>
+</div>
+</div></blockquote>
+<p>The method described above yields reliable results when both the pre- and the postsynaptic whole-cell recording with little noise and few artifacts. However, it may sometimes be favorable to use other estimates for the pre- and postsynaptic signals. For example, when extracellular stimulation is used or when there are a lot o failures in the postsynaptic response, latencies can be adjusted manually or fixed to predetermined measures (e.g the peak or the half-width of the reference channel). The following sections will explain how this is done in practice.</p>
+</div>
+<div class="section" id="setting-the-latency-cursors">
+<h2>Setting the latency cursors<a class="headerlink" href="#setting-the-latency-cursors" title="Permalink to this headline">¶</a></h2>
+<p>Two latency cursors exist in <a class="reference external" href="http://www.stimfit.org">Stimfit</a> that are plotted as dotted vertical blue lines. Latency is simply computed as the time interval between the first and the second latency cursor. You can set the cursors manually by simply pressing the key <strong>L</strong> or the latency button on the toolbar (Fig. 19A).</p>
+<blockquote>
+<div><div class="figure align-center" id="id7">
+<img alt="../_images/latency.png" src="../_images/latency.png" />
+<p class="caption"><span class="caption-text"><strong>Fig. 19A:</strong> Activate latency mode.</span></p>
+</div>
+</div></blockquote>
+<p>In addition, latency cursors can be adjusted to some predefined measurements using the Cursors settings menu with &#8220;Edit-&gt;Cursors Settings&#8221; (Fig. 19B). In the reference channel (red), Peak, Maximal slope and Half-width can be choosen as the first latency cursor. In the active channel (black), Peak, Maximal Slope, Half-width and Beginning of event can be used as second latency cursor. The resulting latency will now be computed from the measurement in the reference channel to the measurement in the active channel.</p>
+<blockquote>
+<div><div class="figure align-center" id="id8">
+<img alt="../_images/latency_menu.png" src="../_images/latency_menu.png" />
+<p class="caption"><span class="caption-text"><strong>Fig. 19B:</strong> Cursors settings for latency.</span></p>
+</div>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If manual is not set, cursor latencies will be located within the peak cursors. Be sure that you set the peak cursors in the right location on both active and reference channel. This is necessary to detect the peak, maximal slope, half-width or beginning of the event.</p>
+</div>
+<p>Then, if options other than manual are selected, the latencies will be computed based on the updated measurements from the reference and active channels (Fig. 20). The latency will be indicated as a double-headed arrow connecting the two latency cursors.</p>
+<blockquote>
+<div><div class="figure align-center" id="id9">
+<img alt="../_images/latencytraces.png" src="../_images/latencytraces.png" />
+<p class="caption"><span class="caption-text"><strong>Fig. 20:</strong> The first latency cursor is set to meet the slope of rise of an action potential (in the reference channel, red) and the second latency cursor was selected to match the beginning of event (in the active channel, in black). The latency is indicated by a horizontal double-headed arrow.</span></p>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="trace-alignment">
+<h2>Trace alignment<a class="headerlink" href="#trace-alignment" title="Permalink to this headline">¶</a></h2>
+<p>It may sometimes be useful to align traces before measuring the latency, either for visualization purposes or to create an average without temporal jitter. Although an aligned average can be created using a tool-bar button, the recommended way to align traces is to use the Python shell.</p>
+<ul class="simple">
+<li><strong>align_selected(alignment, active=False)</strong></li>
+</ul>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.align_selected" title="stf.align_selected"><code class="xref py py-func docutils literal"><span class="pre">stf.align_selected()</span></code></a> aligns the selected traces to a point that is determined by the user-supplied function <code class="docutils literal"><span class="pre">alignment</span></code> and then shows the aligned traces in a new window. The alignment function is applied to the active channel if <em>active=True</em> or to the inactive channel if <em>active=False</em>. The alignment function has to return an index within a traces, and it should adhere to the general form <code class="docutils literal"><span class="pre">index(active)</span></code>, where <code class="docutils literal"><span class="pre">active</span></code> is a boolean indicating whether the active or the inactive channel should be used. The most common alignment functions are built into the program:</p>
+<ul class="simple">
+<li><strong>maxrise_index(active)</strong></li>
+</ul>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.maxrise_index" title="stf.maxrise_index"><code class="xref py py-func docutils literal"><span class="pre">stf.maxrise_index()</span></code></a> returns the zero-based index of the maximal slope of the rise in units of sampling points (see Fig. 13), interpolated between adjacent sampling points, or a negative value upon failure.</p>
+<ul class="simple">
+<li><strong>peak_index(active)</strong></li>
+</ul>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.peak_index" title="stf.peak_index"><code class="xref py py-func docutils literal"><span class="pre">stf.peak_index()</span></code></a> returns the zero-based index of the peak value in units of sampling points (see Fig. 13) or a negative value upon failure. The return value may be interpolated if a moving average is used for the peak calculation.</p>
+<ul class="simple">
+<li><strong>foot_index(active)</strong></li>
+</ul>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.foot_index" title="stf.foot_index"><code class="xref py py-func docutils literal"><span class="pre">stf.foot_index()</span></code></a> returns the zero-based index of the foot of an event, as described in Fig. 18, or a negative value upon failure.</p>
+<ul class="simple">
+<li><strong>t50left_index(active)</strong></li>
+</ul>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.t50left_index" title="stf.t50left_index"><code class="xref py py-func docutils literal"><span class="pre">stf.t50left_index()</span></code></a> returns the zero-based index of the left half-maximal amplitude in units of sampling points (see Fig. 13), or a negative value upon failure. The return value will be interpolated between sampling points.</p>
+<ul class="simple">
+<li><strong>t50right_index(active)</strong></li>
+</ul>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.t50right_index" title="stf.t50right_index"><code class="xref py py-func docutils literal"><span class="pre">stf.t50right_index()</span></code></a> returns the zero-based index of he right half-maximal amplitude in units of sampling points (see Fig. 13), or a negative value upon failure. The return value will be interpolated between sampling points.</p>
+<p>The following code can be used to align all traces within a file to the maximal slope of rise in the inactive channel.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># import the Stimfit core module:</span>
+<span class="kn">import</span> <span class="nn">stf</span>
+
+<span class="k">def</span> <span class="nf">align_maxrise</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Aligns all traces to the maximal slope of rise \</span>
+<span class="sd">    of the inactive channel. Baseline and peak cursors \</span>
+<span class="sd">     have to be set appropriately before using this function.</span>
+<span class="sd">    Return value:</span>
+<span class="sd">    True upon success. False otherwise.&quot;&quot;&quot;</span>
+
+    <span class="n">stf</span><span class="o">.</span><span class="n">select_all</span><span class="p">()</span>
+
+    <span class="c1"># check whether there is an inactive channel at all:</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="n">stf</span><span class="o">.</span><span class="n">maxrise_index</span><span class="p">(</span> <span class="kc">False</span> <span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">):</span>
+        <span class="nb">print</span> <span class="s2">&quot;File not open, or no second channel; aborting now&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">stf</span><span class="o">.</span><span class="n">align_selected</span><span class="p">(</span> <span class="n">stf</span><span class="o">.</span><span class="n">maxrise_index</span><span class="p">,</span> <span class="kc">False</span> <span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<table class="docutils footnote" frame="void" id="katzmiledi1965" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Katz B, Miledi R. (1965) The measurement of synaptic delay, and the time course of acetylcholine release at the neuromuscular junction. Proc R Soc Lond B Biol Sci. 161:483-495.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="jack1983" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Jack JB, Noble D, Tsien RW (1983) Electric current flow in excitable cells. Oxford University Press, Oxford, UK.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="bartos2001" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[3]</a></td><td>Bartos M, Vida I, Frotscher M, Geiger JRP, Jonas P (2001) Rapid signaling at inhibitory synapses in a dentate gyrus interneuron network. J Neurosci 21:2687–2698.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="jonas1993" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[4]</a></td><td>Jonas P, Major G, Sakman B. (1993) Quantal components of unitary EPSCs at the mossy fibre synapse on CA3 pyramidal cells of rat hippocampus. J Physiol. 472, 615-663.</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Latency measurements</a><ul>
+<li><a class="reference internal" href="#measurement-of-synaptic-delay">Measurement of synaptic delay</a></li>
+<li><a class="reference internal" href="#setting-the-latency-cursors">Setting the latency cursors</a></li>
+<li><a class="reference internal" href="#trace-alignment">Trace alignment</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="python.html"
+                        title="previous chapter">The Python shell</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="event_extraction.html"
+                        title="next chapter">Event extraction by template matching</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Latency measurements</a><ul>
+<li><a class="reference internal" href="#measurement-of-synaptic-delay">Measurement of synaptic delay</a></li>
+<li><a class="reference internal" href="#setting-the-latency-cursors">Setting the latency cursors</a></li>
+<li><a class="reference internal" href="#trace-alignment">Trace alignment</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="python.html"
+                        title="previous chapter">The Python shell</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="event_extraction.html"
+                        title="next chapter">Event extraction by template matching</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 23 June, 2016.
+    </div>
+  </body>
+</html>

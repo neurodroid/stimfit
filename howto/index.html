@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Stimfit book of spells &mdash; Stimfit 0.15.2 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.15.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
+    <link rel="next" title="Resistance Calculation" href="resistances.html" />
+    <link rel="prev" title="Building Stimfit" href="../win_install_guide/building.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="resistances.html" title="Resistance Calculation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../win_install_guide/building.html" title="Building Stimfit"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://github.com/neurodroid/stimfit/wiki/Stimfit">Stimfit Homepage</a> | &nbsp; </li>
+    <li><a href="http://github.com/neurodroid/stimfit" }}>Developer (Github)</a> | &nbsp; </li>
+    <li><a href=../index.html>Documentation Home</a> | &nbsp; </li>
+
+    
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="the-stimfit-book-of-spells">
+<h1>The Stimfit book of spells<a class="headerlink" href="#the-stimfit-book-of-spells" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Jose Guzman</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Release:</th><td class="field-body">0.15.2</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">23 June, 2016</td>
+</tr>
+</tbody>
+</table>
+<p>This document collects answers to some questions like &#8220;How do I make ... in <a class="reference external" href="http://www.stimfit.org">Stimfit</a> with python?&#8221;. Though much of the material can be easily found in the <a class="reference internal" href="../manual/index.html"><span class="doc">Stimfit manual</span></a>, the examples provided here are a good way for the casual user to start using Python in <a class="reference external" href="http://www.stimfit.org">Stimfit</a>.</p>
+<p>It assumes a basic knowledge of the embedded Python shell of <a class="reference external" href="http://www.stimfit.org">Stimfit</a>. Some Python knowledge and a substantial proficiency in <a class="reference external" href="http://www.stimfit.org">Stimfit</a> are recommendable. Please note that this is not a Python manual, but a way to use Python for some basic analysis tasks provided with <a class="reference external" href="http://www.stimfit.org">Stimfit</a>. For a detailed Python manual, we encourage the user to visit the official Python documentation on the <a class="reference internal" href="../manual/python.html#python-website" id="id5">[Python-website]</a> and to read carefully the <a class="reference internal" href="../manual/index.html"><span class="doc">Stimfit manual</span></a>.</p>
+<p>The functions described along this document are available in your current <a class="reference external" href="http://www.stimfit.org">Stimfit</a> version. To make use of them you have simply to type the following line in the <a class="reference external" href="http://www.stimfit.org">Stimfit</a> embedded Python shell:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">spells</span>
+</pre></div>
+</div>
+<p>After that, functions can be called with the dot notation (i.e just typing <strong>spells</strong> before the function) For example, if we want to call the function rmean() we  would simply do it in this way:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">rmean</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, the contents of this document are organized with increased level of complexity, assuming some of the last chapters concepts and topics described in the first chapters. Thus, we encourage the newcomer to follow the order exposed below or to visit the section <strong>code commented</strong> in previous chapters.</p>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="resistances.html">Resistance Calculation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="resistances.html#the-resistance-function">The resistance function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resistances.html#code-commented">Code commented</a></li>
+<li class="toctree-l2"><a class="reference internal" href="resistances.html#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="runningmean.html">Running mean</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="runningmean.html#the-running-mean-function">The running mean function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="runningmean.html#code-commented">Code commented</a></li>
+<li class="toctree-l2"><a class="reference internal" href="runningmean.html#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="amplitudes.html">Calculations on selected traces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="amplitudes.html#using-selected-traces">Using selected traces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amplitudes.html#code-commented">Code commented</a></li>
+<li class="toctree-l2"><a class="reference internal" href="amplitudes.html#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cuttingtraces.html">Cutting traces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cuttingtraces.html#the-cutting-traces-function">The cutting traces  function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuttingtraces.html#code-commented">Code commented</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cuttingtraces.html#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apcounting.html">Event counting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="apcounting.html#the-counter-event-function">The counter event function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apcounting.html#code-commented">Code commented</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apcounting.html#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="introclass.html">Object oriented programming with Stimfit</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introclass.html#classes-and-objects">Classes and  objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introclass.html#object-attributes">Object attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introclass.html#encapsulation">Encapsulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introclass.html#dynamic-nature-of-objects">Dynamic nature of objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introclass.html#class-inheritance">Class inheritance</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="latencies.html">Calculating latencies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="latencies.html#reading-neuron-text-files">Reading NEURON text files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="latencies.html#custom-ascii-files-containing-fluorescence">Custom ascii files containing fluorescence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="latencies.html#the-spike-class">The Spike class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="latencies.html#code-commented">Code commented</a></li>
+<li class="toctree-l2"><a class="reference internal" href="latencies.html#usage">Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ascii.html">Loading custom text files</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ascii.html#reading-neuron-text-files">Reading NEURON text files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ascii.html#custom-ascii-files-containing-fluorescence">Custom ascii files containing fluorescence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ascii.html#code-commented">Code commented</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ascii.html#usage">Usage</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../win_install_guide/building.html"
+                        title="previous chapter">Building Stimfit</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="resistances.html"
+                        title="next chapter">Resistance Calculation</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../win_install_guide/building.html"
+                        title="previous chapter">Building Stimfit</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="resistances.html"
+                        title="next chapter">Resistance Calculation</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 23 June, 2016.
+    </div>
+  </body>
+</html>

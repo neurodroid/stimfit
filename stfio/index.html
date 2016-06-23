@@ -1,0 +1,280 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The stfio module &mdash; Stimfit 0.15.2 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.15.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
+    <link rel="next" title="Links" href="../links/index.html" />
+    <link rel="prev" title="References" href="../references/index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../links/index.html" title="Links"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../references/index.html" title="References"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://github.com/neurodroid/stimfit/wiki/Stimfit">Stimfit Homepage</a> | &nbsp; </li>
+    <li><a href="http://github.com/neurodroid/stimfit" }}>Developer (Github)</a> | &nbsp; </li>
+    <li><a href=../index.html>Documentation Home</a> | &nbsp; </li>
+
+    
+ 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="the-stfio-module">
+<h1>The stfio module<a class="headerlink" href="#the-stfio-module" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">23 June, 2016</td>
+</tr>
+</tbody>
+</table>
+<p>The stfio Python module allows to read and write data in common electrophysiology formats without running Stimfit. Build instructions for GNU/Linux can be found in <a class="reference internal" href="../linux_install_guide/moduleonly.html"><span class="doc">Building the Python module only</span></a>.</p>
+<p>The central object in the stfio module is called a <em>Recording</em>. There are two ways to construct a <em>Recording</em>: You can either read it in from a file, or you can build it up from scratch using NumPy arrays.</p>
+<div class="section" id="reading-files">
+<h2>Reading files<a class="headerlink" href="#reading-files" title="Permalink to this headline">¶</a></h2>
+<p>Files can be opened using the <em>read</em> function that returns a <em>Recording</em> object:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">stfio</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rec</span> <span class="o">=</span> <span class="n">stfio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;/home/cs/data/test.abf&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><em>read</em> takes a filename and optionally a file type (as a string) as an argument. At present, the following types are supported:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">ftype</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>&#8220;cfs&#8221;</td>
+<td>CED filing system</td>
+</tr>
+<tr class="row-odd"><td>&#8220;hdf5&#8221;</td>
+<td>HDF5</td>
+</tr>
+<tr class="row-even"><td>&#8220;abf&#8221;</td>
+<td>Axon binary file</td>
+</tr>
+<tr class="row-odd"><td>&#8220;atf&#8221;</td>
+<td>Axon text file</td>
+</tr>
+<tr class="row-even"><td>&#8220;axg&#8221;</td>
+<td>Axograph X binary file</td>
+</tr>
+<tr class="row-odd"><td>&#8220;heka&#8221;</td>
+<td>HEKA binary file</td>
+</tr>
+</tbody>
+</table>
+<p>If the file type is <em>None</em> (default), it will be guessed from the file name extension.</p>
+<p>A <em>Recording</em> has a number of attributes that describe the recording:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+<span class="go">Created with Clampex</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">date</span><span class="p">)</span>
+<span class="go">2008/1/18</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span> <span class="c1"># sampling interval</span>
+<span class="go">0.1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">file_description</span><span class="p">)</span> <span class="c1"># no file description in this case</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+<span class="go">15:08:20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">rec</span><span class="o">.</span><span class="n">xunits</span><span class="p">)</span>
+<span class="go">ms</span>
+</pre></div>
+</div>
+<p>A <em>Recording</em> consists of one or more <em>Channel</em>s, which in turn are composed of one or more <em>Section</em>s. They can be accessed using indexing operators ([]).</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">rec</span><span class="p">)</span> <span class="c1"># Recording consists of 2 Channels</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># First Channel consists of 13 Sections</span>
+<span class="go">13</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># First Section in first channel contains 146450 data points</span>
+<span class="go">146450</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="c1"># channel name</span>
+<span class="go">Current</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="go">IN 3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">yunits</span><span class="p">)</span> <span class="c1"># channel units</span>
+<span class="go">pA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">yunits</span><span class="p">)</span>
+<span class="go">C</span>
+</pre></div>
+</div>
+<p>The time series in a <em>Section</em> can be accessed as a NumPy array:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arr</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">asarray</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+<span class="go">&lt;type &#39;numpy.ndarray&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(146450,)</span>
+</pre></div>
+</div>
+<p>Note that the <em>Section</em> itself is <em>not</em> a NumPy array and therefore needs to be converted as described above before you can do fancy arithmetics:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">&lt;class &#39;stfio.Section&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">2.0</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">TypeError</span>: <span class="n">unsupported operand type(s) for +: &#39;Section&#39; and &#39;float&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">asarray</span><span class="p">()</span> <span class="o">+</span> <span class="mf">2.0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="constructing-recordings-from-scratch">
+<h2>Constructing Recordings from scratch<a class="headerlink" href="#constructing-recordings-from-scratch" title="Permalink to this headline">¶</a></h2>
+<p><em>Recording</em>s can be assembled from NumPy arrays. Here&#8217;s a particularly stupid example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">stfio</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">500</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="c1"># construct Sections from arrays:</span>
+<span class="n">seclist</span> <span class="o">=</span> <span class="p">[</span><span class="n">stfio</span><span class="o">.</span><span class="n">Section</span><span class="p">(</span><span class="n">arr</span><span class="p">),</span> <span class="n">stfio</span><span class="o">.</span><span class="n">Section</span><span class="p">(</span><span class="n">arr</span><span class="p">)]</span>
+
+<span class="c1"># construct Channels from lists of Sections</span>
+<span class="n">chlist</span> <span class="o">=</span> <span class="p">[</span><span class="n">stfio</span><span class="o">.</span><span class="n">Channel</span><span class="p">(</span><span class="n">seclist</span><span class="p">),</span> <span class="n">stfio</span><span class="o">.</span><span class="n">Channel</span><span class="p">(</span><span class="n">seclist</span><span class="p">)]</span>
+<span class="c1"># Set channel units</span>
+<span class="n">chlist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">yunits</span> <span class="o">=</span> <span class="s2">&quot;pA&quot;</span>
+<span class="n">chlist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">yunits</span> <span class="o">=</span> <span class="s2">&quot;mV&quot;</span>
+
+<span class="c1"># construct a Recording from a list of channels</span>
+<span class="n">rec</span> <span class="o">=</span> <span class="n">stfio</span><span class="o">.</span><span class="n">Recording</span><span class="p">(</span><span class="n">chlist</span><span class="p">)</span>
+<span class="n">rec</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="c1"># set sampling interval</span>
+<span class="n">rec</span><span class="o">.</span><span class="n">xunits</span> <span class="o">=</span> <span class="s2">&quot;ms&quot;</span> <span class="c1"># set time units</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="writing-files">
+<h2>Writing files<a class="headerlink" href="#writing-files" title="Permalink to this headline">¶</a></h2>
+<p><em>Recording</em>s can be stored to files using the <em>write</em> method:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">stfio</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rec</span> <span class="o">=</span> <span class="n">stfio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;/home/cs/data/test.abf&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rec</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;/home/cs/data/out.h5&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At present, <em>write</em> only supports hdf5 files.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The stfio module</a><ul>
+<li><a class="reference internal" href="#reading-files">Reading files</a></li>
+<li><a class="reference internal" href="#constructing-recordings-from-scratch">Constructing Recordings from scratch</a></li>
+<li><a class="reference internal" href="#writing-files">Writing files</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../references/index.html"
+                        title="previous chapter">References</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../links/index.html"
+                        title="next chapter">Links</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The stfio module</a><ul>
+<li><a class="reference internal" href="#reading-files">Reading files</a></li>
+<li><a class="reference internal" href="#constructing-recordings-from-scratch">Constructing Recordings from scratch</a></li>
+<li><a class="reference internal" href="#writing-files">Writing files</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../references/index.html"
+                        title="previous chapter">References</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../links/index.html"
+                        title="next chapter">Links</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 23 June, 2016.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Running mean &mdash; Stimfit 0.15.2 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.15.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
+    <link rel="up" title="The Stimfit book of spells" href="index.html" />
+    <link rel="next" title="Calculations on selected traces" href="amplitudes.html" />
+    <link rel="prev" title="Resistance Calculation" href="resistances.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="amplitudes.html" title="Calculations on selected traces"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="resistances.html" title="Resistance Calculation"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://github.com/neurodroid/stimfit/wiki/Stimfit">Stimfit Homepage</a> | &nbsp; </li>
+    <li><a href="http://github.com/neurodroid/stimfit" }}>Developer (Github)</a> | &nbsp; </li>
+    <li><a href=../index.html>Documentation Home</a> | &nbsp; </li>
+
+    
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Stimfit book of spells</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="running-mean">
+<h1>Running mean<a class="headerlink" href="#running-mean" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Jose Guzman</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">23 June, 2016</td>
+</tr>
+</tbody>
+</table>
+<p>The running mean (or running average) is simple way to smooth the data. Given a certain set of points, a running average will create a new set of data points which will be computed by adding a series of averages of different subsets of the full data set.</p>
+<p>Given for example a sequence <img class="math" src="../_images/math/f026aecf11ec7f6141ab863f260d395f94b10f51.png" alt="X"/> of <img class="math" src="../_images/math/413f8a8e40062a9090d9d50b88bc7b551b314c26.png" alt="n"/> points, we can create a new set of data points <img class="math" src="../_images/math/11a85f3c69ae6702cb1d99d3de451913b8f84c04.png" alt="S"/> of length <img class="math" src="../_images/math/413f8a8e40062a9090d9d50b88bc7b551b314c26.png" alt="n"/> by simply taking the average of a subset of <img class="math" src="../_images/math/8659700e6646cd91bc02c32affaa5ec046ee9935.png" alt="w"/> points from the original data set for every point <img class="math" src="../_images/math/3f1a4e430c239029fe31b52c95bb3278d0bc3d49.png" alt="S_i"/> within the set:</p>
+<div class="math">
+<p><img src="../_images/math/f7f2bc50b1600f13269e2665c4ed2e6312d80840.png" alt="{\displaystyle S_i=\frac{1}{w} \sum^{w+i}_{j=i} X_j }"/></p>
+</div><div class="section" id="the-running-mean-function">
+<h2>The running mean function<a class="headerlink" href="#the-running-mean-function" title="Permalink to this headline">¶</a></h2>
+<p>The following Python function calculates the running mean of the current channel. Both trace and channel can be selected as zero-based indices. The width of the running average (refereed to here as binwidth) can be selected. The resulting average will appear in a new <a class="reference external" href="http://www.stimfit.org">Stimfit</a> window.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># load main Stimfit module</span>
+<span class="kn">import</span> <span class="nn">stf</span>
+
+<span class="c1"># load NumPy for numerical analysis</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">def</span> <span class="nf">rmean</span><span class="p">(</span><span class="n">binwidth</span><span class="p">,</span> <span class="n">trace</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">channel</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates a running mean of a single trace</span>
+
+<span class="sd">    Arguments:</span>
+
+<span class="sd">    binwidth    -- size of the bin in sampling points (pt).</span>
+<span class="sd">    Obviously, it should be smaller than the length of the trace.</span>
+
+<span class="sd">    trace:  -- ZERO-BASED index of the trace within the channel.</span>
+<span class="sd">    Note that this is one less than what is shown in the drop-down box.</span>
+<span class="sd">    The default value of -1 returns the currently displayed trace.</span>
+
+<span class="sd">    channel  -- ZERO-BASED index of the channel. This is independent</span>
+<span class="sd">    of whether a channel is active or not. The default value of -1</span>
+<span class="sd">    returns the currently active channel.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    A smoothed traced in a new stf window.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># loads the current trace of the channel in a 1D Numpy Array</span>
+    <span class="n">sweep</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span><span class="n">channel</span><span class="p">)</span>
+
+    <span class="c1"># creates a destination python list to append the data</span>
+    <span class="n">dsweep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">sweep</span><span class="p">)))</span>
+
+    <span class="c1"># running mean algorithm</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sweep</span><span class="p">)):</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sweep</span><span class="p">)</span><span class="o">-</span><span class="n">i</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">binwidth</span><span class="p">:</span>
+            <span class="c1"># append to list the running mean of `binwidth` values</span>
+            <span class="c1"># np.mean(sweep) calculates the mean of list</span>
+            <span class="c1"># sweep[p0:p10] takes the values in the vector between p0 and p10 (zero-based)</span>
+            <span class="n">dsweep</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">sweep</span><span class="p">[</span><span class="n">i</span><span class="p">:(</span><span class="n">binwidth</span><span class="o">+</span><span class="n">i</span><span class="p">)]</span> <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># use all remaining points for the average:</span>
+            <span class="n">dsweep</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">sweep</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span> <span class="p">)</span>
+
+
+    <span class="n">stf</span><span class="o">.</span><span class="n">new_window</span><span class="p">(</span><span class="n">dsweep</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="code-commented">
+<h2>Code commented<a class="headerlink" href="#code-commented" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://www.stimfit.org">Stimfit</a> commonly uses the value -1 to set the current trace/Channel. In this function the default argument values are -1 (see the function arguments <em>trace=-1</em> and <em>channel=-1</em>).</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sweep</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span><span class="n">channel</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.get_trace" title="stf.get_trace"><code class="xref py py-func docutils literal"><span class="pre">stf.get_trace()</span></code></a> simply imports the <strong>trace</strong> of the <strong>channel</strong> into a 1D-Numpy array that we called sweep. The default values provided by the function are -1. This means that by default, the current trace/channel will be imported.</p>
+<p>We create a new stf window with the following</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span><span class="n">new_window</span><span class="p">(</span><span class="n">dsweep</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>where dsweep is the 1D-NumPy array obtained after performing  the running average.</p>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>To perform the running average of 10 sampling points of the current trace, simply type:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">rmean</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A new window with the running mean will appear.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Running mean</a><ul>
+<li><a class="reference internal" href="#the-running-mean-function">The running mean function</a></li>
+<li><a class="reference internal" href="#code-commented">Code commented</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="resistances.html"
+                        title="previous chapter">Resistance Calculation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="amplitudes.html"
+                        title="next chapter">Calculations on selected traces</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Running mean</a><ul>
+<li><a class="reference internal" href="#the-running-mean-function">The running mean function</a></li>
+<li><a class="reference internal" href="#code-commented">Code commented</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="resistances.html"
+                        title="previous chapter">Resistance Calculation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="amplitudes.html"
+                        title="next chapter">Calculations on selected traces</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 23 June, 2016.
+    </div>
+  </body>
+</html>

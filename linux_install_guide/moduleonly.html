@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Building the Python module only &mdash; Stimfit 0.15.2 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.15.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  false
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
+    <link rel="up" title="GNU/Linux Build Guide" href="index.html" />
+    <link rel="next" title="Building Stimfit" href="requirement.html" />
+    <link rel="prev" title="GNU/Linux Build Guide" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="requirement.html" title="Building Stimfit"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="GNU/Linux Build Guide"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://github.com/neurodroid/stimfit/wiki/Stimfit">Stimfit Homepage</a> | &nbsp; </li>
+    <li><a href="http://github.com/neurodroid/stimfit" }}>Developer (Github)</a> | &nbsp; </li>
+    <li><a href=../index.html>Documentation Home</a> | &nbsp; </li>
+
+    
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">GNU/Linux Build Guide</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="building-the-python-module-only">
+<h1>Building the Python module only<a class="headerlink" href="#building-the-python-module-only" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">23 June, 2016</td>
+</tr>
+</tbody>
+</table>
+<p>Building only the standalone Python file i/o module is fairly straightforward. First, you need a couple of libraries:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ sudo apt-get install build-essential git libboost-dev python-dev python-numpy libhdf5-serial-dev swig
+</pre></div>
+</div>
+<p>Then, you need the <a class="reference external" href="http://www.stimfit.org">Stimfit</a> source code:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd $HOME
+$ git clone https://github.com/neurodroid/stimfit.git
+</pre></div>
+</div>
+<p>This will download the code to a directory called <em>stfio</em>.</p>
+<p>Next, you need to generate the build system:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd $HOME/stfio
+$ ./autogen.sh
+</pre></div>
+</div>
+<p>Now you can configure. I strongly recommend building in a separate directory.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd $HOME/stfio
+$ mkdir build
+$ cd build
+$ mkdir module
+$ cd module
+$ ../../configure --enable-module
+</pre></div>
+</div>
+<p>Remember to add the argument <em>&#8211;with-biosig</em> to the configure script
+if you want to have extra biomedical fileformats for stfio.</p>
+<p>Then, build and install:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make -j 4 # where 4 refers to the number of parallel build processes
+$ sudo make install
+</pre></div>
+</div>
+<p>Finally, run python to test the module, as described in <a class="reference internal" href="../stfio/index.html"><span class="doc">The stfio module</span></a>.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">GNU/Linux Build Guide</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="requirement.html"
+                        title="next chapter">Building Stimfit</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">GNU/Linux Build Guide</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="requirement.html"
+                        title="next chapter">Building Stimfit</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 23 June, 2016.
+    </div>
+  </body>
+</html>
