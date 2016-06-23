@@ -8,7 +8,7 @@ Stimfit is a free, fast and simple program for viewing and analyzing electrophys
 
 ## List of references 
 
-In [this link](http://www.stimfit.org/doc/sphinx/references/index.html) you can find a list of publications that used Stimfit for analysis. We'd appreciate if you could cite the following publication when you use Stimfit for your research:
+In [this link](https://neurodroid.github.io/stimfit/references/index.html) you can find a list of publications that used Stimfit for analysis. We'd appreciate if you could cite the following publication when you use Stimfit for your research:
 
 Guzman SJ, Schlögl A, Schmidt-Hieber C (2014) Stimfit: quantifying electrophysiological data with Python. *Front Neuroinform* [doi: 10.3389/fninf.2014.00016](http://www.frontiersin.org/Journal/10.3389/fninf.2014.00016/abstract)
 
@@ -30,7 +30,7 @@ More recent versions can be found on [the Debian Neuroscience Repository](http:/
 
 ## Important links
 
-* [Online documentation](http://www.stimfit.org/doc/sphinx/index.html)
+* [Online documentation](https://neurodroid.github.io/stimfit)
 * [User mailing list](http://groups.google.com/group/stimfit)
 * [Downloads](https://github.com/neurodroid/stimfit/wiki/Downloads)
 
