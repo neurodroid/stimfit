@@ -1,6 +1,6 @@
 # Stimfit
 
-Issue tracker and Wiki are still on [Google Code](https://code.google.com/p/stimfit).
+Documentation is available [here](https://neurodroid.github.io/stimfit).
 
 ## Introduction
 
