@@ -1276,7 +1276,7 @@ void wxStfDoc::LnTransform(wxCommandEvent& WXUNUSED(event)) {
 #if defined(_WINDOWS) && !defined(__MINGW32__)
                        std::logl);
 #else
-                       log);
+        (double(*)(double))log);
 #endif
         TempSection.SetXScale(get()[GetCurChIndex()][*cit].GetXScale());
         TempSection.SetSectionDescription( get()[GetCurChIndex()][*cit].GetSectionDescription()+
