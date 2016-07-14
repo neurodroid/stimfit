@@ -1,3 +1,10 @@
+stimfit (0.15.3-1) unstable; urgency=low
+
+  * Fix building with gcc-6 (Closes: #811904)
+  * Improve latency cursor Python interface
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Thu, 14 Jul 2016 10:49:03 +0100
+
 stimfit (0.15.2-1) unstable; urgency=low
 
   * Fix RNG in tests with >= C++11 (Closes: #811904)
