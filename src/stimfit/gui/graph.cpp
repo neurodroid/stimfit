@@ -2193,41 +2193,38 @@ void wxStfGraph::ChanUp() {
 }
 
 void wxStfGraph::ChanDown() {
-	// TODO: find a way to get the index of the last channel to allow for graceful rollover
-	Refresh();
-}
-/*    
+
     // on Control + Down press, decrease the channel number by one and
     // refresh the window. This is incomplete and also the solution feels
-    // like a hack...
+    // like a hack...    
 
-    int reference_ch = actDoc()->GetCurChIndex();
+	// TODO: find a way to get the index of the last channel to allow for graceful rollover
+	
+    int reference_ch = Doc()->GetCurChIndex();  
+    
     int channel = reference_ch - 1;
     
-    // channel negative         
-    if (channel<0) {
-        // set channel to the last channel in the list....
-        // channel = N_channels
-        
+    // Rollover to 0 if channel out of range
+    try {
+        Doc()->SetCurChIndex(channel); 
     }
-                        
-    // catch exceptions (i.e out of range)
-
-    actDoc()->SetCurChIndex(channel); 
+    catch (const std::out_of_range& e) {
+        Doc()->SetCurChIndex(0); //TODO: roll to the max channel instead
+    }
 
     // Pointer to wxStfChildFrame to access Channel selection combo
-    wxStfChildFrame* pFrame = (wxStfChildFrame*)actDoc()->GetDocumentWindow();
+    wxStfChildFrame* pFrame = (wxStfChildFrame*)Doc()->GetDocumentWindow();
     if (!pFrame) {
-        ShowError( wxT("Pointer to frame is zero") );
-        return false;
+        // IS this even neccesary??
+        // ShowError( wxT("Pointer to frame is zero") );
+        return;
     }
     // set the channel selection combo 
-    //pFrame->SetChannels( actDoc()->GetCurChIndex(), actDoc()->GetSecChIndex()); 
-    pFrame->SetChannels( actDoc()->GetCurChIndex(), reference_ch); 
+    pFrame->SetChannels( Doc()->GetCurChIndex(), reference_ch); 
     pFrame->UpdateChannels(); // update according to the combo
-    refresh_graph();
+    Refresh();
+	
 }
-*/
 
 void wxStfGraph::OnRight() {
     SPXW()=SPX() + 20;
