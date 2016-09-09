@@ -2180,10 +2180,10 @@ void wxStfGraph::ChanUp() {
     }
 
     // Pointer to wxStfChildFrame to access Channel selection combo
-    wxStfChildFrame* pFrame = (wxStfChildFrame*)actDoc()->GetDocumentWindow();
+    wxStfChildFrame* pFrame = (wxStfChildFrame*)Doc()->GetDocumentWindow();
     if (!pFrame) {
-        ShowError( wxT("Pointer to frame is zero") );
-        return false;
+        // ShowError( wxT("Pointer to frame is zero") );
+        return;
     }
     // set the channel selection combo 
     //pFrame->SetChannels( actDoc()->GetCurChIndex(), actDoc()->GetSecChIndex()); 
