@@ -194,6 +194,10 @@ public:
      */
     void Ch2basezoom();
 
+    void ChanUp();
+    void ChanDown();
+    //! advance /  decrement the active channel by one
+
 #if 0
     //! Swaps the active and the reference channel.
     void SwapChannels();
