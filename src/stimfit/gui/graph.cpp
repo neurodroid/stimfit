@@ -2167,18 +2167,19 @@ void wxStfGraph::ChanUp() {
     // on Control + Up press, increase the channel number by one and
     // refresh the window
     
-    int reference_ch = Doc()->GetCurChIndex();  
+    int reference_ch = Doc()->GetSecChIndex();  
     
-    int channel = reference_ch + 1;
+    int channel = Doc()->GetCurChIndex() + 1;
     
-    // Rollover to 0 if channel out of range
-    try {
-        Doc()->SetCurChIndex(channel); 
+    if (channel == reference_ch) {
+    	// Skip the reference channel
+    	channel += 1;
     }
-    catch (const std::out_of_range& e) {
-        Doc()->SetCurChIndex(0);
+    if (channel > Doc()->Size()) {
+    	// Rollover to 0 if channel out of range
+    	channel = 0;
     }
-
+    
     // Pointer to wxStfChildFrame to access Channel selection combo
     wxStfChildFrame* pFrame = (wxStfChildFrame*)Doc()->GetDocumentWindow();
     if (!pFrame) {
@@ -2187,7 +2188,7 @@ void wxStfGraph::ChanUp() {
     }
     // set the channel selection combo 
     //pFrame->SetChannels( actDoc()->GetCurChIndex(), actDoc()->GetSecChIndex()); 
-    pFrame->SetChannels( Doc()->GetCurChIndex(), reference_ch); 
+    pFrame->SetChannels(channel, reference_ch); 
     pFrame->UpdateChannels(); // update according to the combo
     Refresh();
 }
@@ -2199,31 +2200,30 @@ void wxStfGraph::ChanDown() {
     // like a hack...    
 
 	// TODO: find a way to get the index of the last channel to allow for graceful rollover
-	
-    int reference_ch = Doc()->GetCurChIndex();  
+int reference_ch = Doc()->GetSecChIndex();  
     
-    int channel = reference_ch - 1;
+    int channel = Doc()->GetCurChIndex() + 1;
     
-    // Rollover to 0 if channel out of range
-    try {
-        Doc()->SetCurChIndex(channel); 
+    if (channel == reference_ch) {
+    	// Skip the reference channel
+    	channel -= 1;
     }
-    catch (const std::out_of_range& e) {
-        Doc()->SetCurChIndex(0); //TODO: roll to the max channel instead
+    if (channel < 0) {
+    	// Rollover to 0 if channel out of range
+    	channel = Doc()->Size();
     }
-
+    
     // Pointer to wxStfChildFrame to access Channel selection combo
     wxStfChildFrame* pFrame = (wxStfChildFrame*)Doc()->GetDocumentWindow();
     if (!pFrame) {
-        // IS this even neccesary??
         // ShowError( wxT("Pointer to frame is zero") );
         return;
     }
     // set the channel selection combo 
-    pFrame->SetChannels( Doc()->GetCurChIndex(), reference_ch); 
+    //pFrame->SetChannels( actDoc()->GetCurChIndex(), actDoc()->GetSecChIndex()); 
+    pFrame->SetChannels(channel, reference_ch); 
     pFrame->UpdateChannels(); // update according to the combo
-    Refresh();
-	
+    Refresh();	
 }
 
 void wxStfGraph::OnRight() {
