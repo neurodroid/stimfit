@@ -1376,7 +1376,7 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
     }
     case WXK_DOWN:   //down cursor
         if (event.ControlDown()) {
-            ChanUp();
+            ChanDown();
         }
         else {
             OnDown();
@@ -1384,7 +1384,7 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
         return;
      case WXK_UP:     //up cursor
         if (event.ControlDown()) {
-            ChanDown();
+            ChanUp();
         }
         else {
             OnUp();
@@ -2175,7 +2175,7 @@ void wxStfGraph::ChanUp() {
     	// Skip the reference channel
     	channel += 1;
     }
-    if (channel > Doc()->Size()) {
+    if (channel >= Doc()->size()) {
     	// Rollover to 0 if channel out of range
     	channel = 0;
     }
@@ -2199,10 +2199,9 @@ void wxStfGraph::ChanDown() {
     // refresh the window. This is incomplete and also the solution feels
     // like a hack...    
 
-	// TODO: find a way to get the index of the last channel to allow for graceful rollover
-int reference_ch = Doc()->GetSecChIndex();  
+    int reference_ch = Doc()->GetSecChIndex();  
     
-    int channel = Doc()->GetCurChIndex() + 1;
+    int channel = Doc()->GetCurChIndex() - 1;
     
     if (channel == reference_ch) {
     	// Skip the reference channel
@@ -2210,7 +2209,7 @@ int reference_ch = Doc()->GetSecChIndex();
     }
     if (channel < 0) {
     	// Rollover to 0 if channel out of range
-    	channel = Doc()->Size();
+    	channel = Doc()->size();
     }
     
     // Pointer to wxStfChildFrame to access Channel selection combo
