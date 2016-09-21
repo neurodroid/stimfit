@@ -2175,7 +2175,7 @@ void wxStfGraph::ChanUp() {
     	// Skip the reference channel
     	channel += 1;
     }
-    if (channel >= Doc()->size()) {
+    if (channel >= Doc()->size()-1) {
     	// Rollover to 0 if channel out of range
     	channel = 0;
     }
@@ -2209,7 +2209,7 @@ void wxStfGraph::ChanDown() {
     }
     if (channel < 0) {
     	// Rollover to 0 if channel out of range
-    	channel = Doc()->size();
+    	channel = Doc()->size()-1;
     }
     
     // Pointer to wxStfChildFrame to access Channel selection combo
