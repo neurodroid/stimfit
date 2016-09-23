@@ -2173,27 +2173,22 @@ void wxStfGraph::ChanScroll(int direction) {
     int new_channel = Doc()->GetCurChIndex() + direction;
     
     
-    if (new_channel == reference_ch) {
-        	// Skip the reference channel
-        	channel += units;
-    }
-    
+    //------------------------------------------
     // Rollover conditions
-    // if the direction is up, rollover at the end of document
-    // if derction is down, rollover at start of document
-    
-    if (direction > 0) {
-        if (new_channel >= Doc()->size()-1) {
-        	// Rollover to start if channel out of range
-        	new_channel = 0;
-        }
+    //------------------------------------------
+    if (new_channel >= Doc()->size() - 1) {
+    	// Rollover to start if channel out of range
+	new_channel = 0;
     }
-    else {
-        if (new_channel < 0) {
-        	// Rollover to end if channel out of range
-        	new_channel = Doc()->size() -1;
-        }
+    if (new_channel < 0) {
+	// Rollover to end if channel out of range
+	new_channel = Doc()->size() - 1;
     } 
+    
+   if (new_channel == reference_ch) {
+	// Skip the reference channel
+	new_channel += direction;
+    }
     
     //----------------------------------------
     // Update the window
