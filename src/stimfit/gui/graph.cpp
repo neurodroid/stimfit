@@ -2174,6 +2174,11 @@ void wxStfGraph::ChanScroll(int direction) {
     int new_chan = Doc()->GetCurChIndex() + direction;
     int last_chan = Doc()->size()-1;
     
+    // Exit early if there is only one channel    
+    if (last_chan == 0) {
+        return;
+    }
+    
     /*Rollover conditions
       -------------------
       I ended up resorting to ternery operators because I need to
