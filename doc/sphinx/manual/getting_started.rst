@@ -97,6 +97,7 @@ Navigate within a file
         
         **Fig. 8:** Setting the active and inactive channel.
 
+* In files with more than two channels you can scroll the active channel using the up and down keys while holding down **Ctrl**. In addition pressing the **X** key will set the currently active channel to the reference channel.
 
 Analysis of individual events
 =============================
