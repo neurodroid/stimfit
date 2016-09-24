@@ -2175,7 +2175,7 @@ void wxStfGraph::ChanScroll(int direction) {
     int last_chan = Doc()->size()-1;
     
     // Exit early if there is only one channel    
-    if (last_chan == 0) {
+    if (Doc()->size() == 1) {
         return;
     }
     
