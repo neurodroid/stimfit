@@ -1375,10 +1375,20 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
         return;
     }
     case WXK_DOWN:   //down cursor
-        OnDown();
+        if (event.ControlDown()) {
+            ChanScroll(-1);
+        }
+        else {
+            OnDown();
+        }
         return;
      case WXK_UP:     //up cursor
-        OnUp();
+        if (event.ControlDown()) {
+            ChanScroll(1);
+        }
+        else {
+            OnUp();
+        }
         return;
      case 49: //1
          ParentFrame()->SetZoomQual(stf::zoomch1);
@@ -1456,6 +1466,7 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
         Doc()->OnSwapChannels(foo);
         return;
      }
+    
      case 82: // Invalidate();//r
      case 114: {
          Doc()->Remove();
@@ -2149,6 +2160,62 @@ void wxStfGraph::OnDown() {
         SPYW()=SPY() + 20;
         break;
     }
+    Refresh();
+}
+
+void wxStfGraph::ChanScroll(int direction) {
+    /* on Control + cursor press, adjust the active channel
+       up or down. 
+    */
+    
+    // direction is either +1, or -1 
+    
+    int ref_chan = Doc()->GetSecChIndex();  
+    int new_chan = Doc()->GetCurChIndex() + direction;
+    int last_chan = Doc()->size()-1;
+    
+    // Exit early if there is only one channel    
+    if (Doc()->size() == 1) {
+        return;
+    }
+    
+    /*Rollover conditions
+      -------------------
+      I ended up resorting to ternery operators because I need to
+      check both that we haven't gone over the document range and
+      that we aren't hitting the reference channel
+    */
+    
+    if (new_chan == ref_chan) {
+        // Skip the reference channel
+        new_chan += direction;
+        // move one unit past the ref channel.
+    }
+    
+    if (new_chan > last_chan) {
+    	// Rollover to start if channel out of range
+    	// making sure to skip the reference channel
+        new_chan = (ref_chan == 0)? 1 : 0;
+    }
+    else if (new_chan < 0) {
+        // Rollover to end if channel out of range
+        // making sure to skip the reference channel
+        new_chan = (ref_chan == last_chan)? last_chan-1 : last_chan;
+    } 
+    
+    /*Update the window
+      -----------------
+    */
+    
+    // Pointer to wxStfChildFrame to access Channel selection combo
+    wxStfChildFrame* pFrame = (wxStfChildFrame*)Doc()->GetDocumentWindow();
+    if (!pFrame) {
+        return;
+    }
+    // set the channel selection combo 
+    //pFrame->SetChannels( actDoc()->GetCurChIndex(), actDoc()->GetSecChIndex()); 
+    pFrame->SetChannels(new_chan, ref_chan); 
+    pFrame->UpdateChannels(); // update according to the combo
     Refresh();
 }
 
