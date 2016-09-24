@@ -2168,41 +2168,48 @@ void wxStfGraph::ChanScroll(int direction) {
        up or down. 
     */
     
-    int reference_ch = Doc()->GetSecChIndex();  
+    // direction is either +1, or -1 
     
-    int new_channel = Doc()->GetCurChIndex() + direction;
+    int ref_chan = Doc()->GetSecChIndex();  
+    int new_chan = Doc()->GetCurChIndex() + direction;
+    int last_chan = Doc()->size()-1;
     
+    /*Rollover conditions
+      -------------------
+      I ended up resorting to ternery operators because I need to
+      check both that we haven't gone over the document range and
+      that we aren't hitting the reference channel
+    */
     
-    //------------------------------------------
-    // Rollover conditions
-    //------------------------------------------
-    if (new_channel >= Doc()->size() - 1) {
-    	// Rollover to start if channel out of range
-	new_channel = 0;
+    if (new_chan == ref_chan) {
+        // Skip the reference channel
+        new_chan += direction;
+        // move one unit past the ref channel.
     }
-    if (new_channel < 0) {
-	// Rollover to end if channel out of range
-	new_channel = Doc()->size() - 1;
+    
+    if (new_chan > last_chan) {
+    	// Rollover to start if channel out of range
+    	// making sure to skip the reference channel
+        new_chan = (ref_chan == 0)? 1 : 0;
+    }
+    else if (new_chan < 0) {
+        // Rollover to end if channel out of range
+        // making sure to skip the reference channel
+        new_chan = (ref_chan == last_chan)? last_chan-1 : last_chan;
     } 
     
-   if (new_channel == reference_ch) {
-	// Skip the reference channel
-	new_channel += direction;
-    }
-    
-    //----------------------------------------
-    // Update the window
-    //----------------------------------------
+    /*Update the window
+      -----------------
+    */
     
     // Pointer to wxStfChildFrame to access Channel selection combo
     wxStfChildFrame* pFrame = (wxStfChildFrame*)Doc()->GetDocumentWindow();
     if (!pFrame) {
-        // ShowError( wxT("Pointer to frame is zero") );
         return;
     }
     // set the channel selection combo 
     //pFrame->SetChannels( actDoc()->GetCurChIndex(), actDoc()->GetSecChIndex()); 
-    pFrame->SetChannels(new_channel, reference_ch); 
+    pFrame->SetChannels(new_chan, ref_chan); 
     pFrame->UpdateChannels(); // update according to the combo
     Refresh();
 }
