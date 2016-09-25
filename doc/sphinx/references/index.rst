@@ -15,9 +15,10 @@ References
 ====
 2016
 ====
-    * `Iijima Y, Behr K, Iijima T, Biemans B, Bischofberger J, Scheiffele P <http://www.nature.com/articles/srep27400>`_ Distinct Defects in Synaptic Differentiation of Neocortical Neurons in Response to Prenatal Valproate Exposure. *Sci Rep* 6:27400.
-    * `Janz P, Savanthrapadian S, Haussler U, Kilias A, Nestel S, Kretz O, Kirsch M, Bartos M, Egert U, Haas CA <http://cercor.oxfordjournals.org/content/early/2016/04/12/cercor.bhw093.short>`_ Synaptic Remodeling of Entorhinal Input Contributes to an Aberrant Hippocampal Network in Temporal Lobe Epilepsy. *Cerebral Cortex* bhw093.
-    * `Money TG, Sproule MK, Cross KP, Robertson RM <http://jn.physiology.org/content/early/2016/06/03/jn.00354.2016.abstract>`_ Octopamine stabilizes conduction reliability of an unmyelinated axon during hypoxic stress. *J Neurophysiol* jn-00354.
+    * `Guzman SJ, Schlögl A, Frotscher M,  Jonas P (2016) <http://science.sciencemag.org/content/353/6304/1117.long>`_ Synaptic mechanisms of pattern completion in the hippocampal CA3 network. *Science*, Sep 9; 353:1117-23.
+    * `Iijima Y, Behr K, Iijima T, Biemans B, Bischofberger J, Scheiffele P (2016) <http://www.nature.com/articles/srep27400>`_ Distinct Defects in Synaptic Differentiation of Neocortical Neurons in Response to Prenatal Valproate Exposure. *Sci Rep* 6:27400.
+    * `Janz P, Savanthrapadian S, Haussler U, Kilias A, Nestel S, Kretz O, Kirsch M, Bartos M, Egert U, Haas CA (2016) <http://cercor.oxfordjournals.org/content/early/2016/04/12/cercor.bhw093.short>`_ Synaptic Remodeling of Entorhinal Input Contributes to an Aberrant Hippocampal Network in Temporal Lobe Epilepsy. *Cerebral Cortex* bhw093.
+    * `Money TG, Sproule MK, Cross KP, Robertson RM (2016) <http://jn.physiology.org/content/early/2016/06/03/jn.00354.2016.abstract>`_ Octopamine stabilizes conduction reliability of an unmyelinated axon during hypoxic stress. *J Neurophysiol* jn-00354.
     * `Cross KP, Robertson RM (2016) <http://physreports.physiology.org/content/4/10/e12814.abstract>`_ Ionic mechanisms maintaining action potential conduction velocity at high firing frequencies in an unmyelinated axon. *Physiol Reports* 4(10):e12814.
     * `Mishra RK, Kim S, Guzman SJ, Jonas P (2016) <http://www.nature.com/ncomms/2016/160513/ncomms11552/full/ncomms11552.html>`_ Symmetric spike timing-dependent plasticity at CA3-CA3 synapses optimizes storage and recall in autoassociative networks. *Nat Comm* 7.
     * `Merel J, Shababo B, Naka A, Adesnik H, Paninski L (2016) <http://www.sciencedirect.com/science/article/pii/S0165027016301030>`_ Bayesian methods for event analysis of intracellular currents. *J Neurosci Methods* 269:21-32.
@@ -43,8 +44,8 @@ References
 2014
 ====
     * `Booker SA, Song J, Vida I (2014) <http://www.jove.com/video/51706/whole-cell-patch-clamp-recordings-from-morphologically>`_ Whole-cell Patch-clamp Recordings from Morphologically- and Neurochemically-identified Hippocampal Interneurons. *J Vis Exp* (91), e51706, doi:10.3791/51706
-    * `Kim S (2014) <http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0113124>`_ Action Potential Modulation in CA1 Pyramidal Neuron Axons Facilitates OLM Interneuron Activaion in Recurrent Inhibitory Microcircuits of Rat Hippocampus. *PLoS One*  9:e113124.
-    * `Guzman SJ, Schlögl A, Schmidt-Hieber C (2014) Stimfit: quantifying electrophysiological data with Python <http://www.frontiersin.org/Journal/10.3389/fninf.2014.00016/abstract>`_ Front Neuroinform doi: 10.3389/fninf.2014.00016
+    * `Kim S (2014) <http://www.plosone.org/article/info%3Adoi%2F10.1371%2Fjournal.pone.0113124>`_ Action Potential Modulation in CA1 Pyramidal Neuron Axons Facilitates OLM Interneuron Activation in Recurrent Inhibitory Microcircuits of Rat Hippocampus. *PLoS One*  9:e113124.
+    * `Guzman SJ, Schlögl A, Schmidt-Hieber C (2014) <http://www.frontiersin.org/Journal/10.3389/fninf.2014.00016/abstract>`_ Stimfit: quantifying electrophysiological data with Python. *Front Neuroinform* doi: 10.3389/fninf.2014.00016
     * `Savanthrapadian S, Meyer T, Elgueta C, Booker SA, Vida I, Bartos M (2014) <http://www.jneurosci.org/cgi/pmidlookup?view=long&pmid=24920624>`_ Synaptic properties of SOM- and CCK-expressing cells in dentate gyrus interneuron networks. *J Neurosci* 24:8197-8209. 
     * `Boudkkazi S, Brechet A, Schwenk J and Fakler B (2014). <http://www.cell.com/neuron/abstract/S0896-6273%2814%2900261-X>`_ Cornichon2 dictates the time course of excitatory transmission at individual hippocampal synapes. *Neuron*, doi: http://dx.doi.org/10.1016/j.neuron.2014.03.031
     * `Hu H and Jonas P (2014). <http://www.nature.com/neuro/journal/vaop/ncurrent/full/nn.3678.html>`_ A supercritical density of Na+ channels ensures fast signaling in GABAergic interneuron axons. *Nat Neurosci*, doi:10.1038/nn.3678
