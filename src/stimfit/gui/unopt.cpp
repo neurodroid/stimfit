@@ -40,6 +40,8 @@
 #if defined(__WXMAC__) || defined(__WXGTK__)
   #pragma GCC diagnostic warning "-Wwrite-strings"
 #endif
+
+//#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <numpy/arrayobject.h>
 
 #include "./app.h"
@@ -633,19 +635,19 @@ bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
     }
 
     if (stf_tdms_res == Py_None) {
-        wxGetApp().ErrorMsg("nptdms module unavailable. Cannot read tdms files.");
+        wxGetApp().ErrorMsg( wxT("nptdms module unavailable. Cannot read tdms files."));
         Py_DECREF(stf_tdms_res);
         return false;
     }
 
     if (!PyTuple_Check(stf_tdms_res)) {
-        wxGetApp().ErrorMsg("Return value of tdms_open is not a tuple. Aborting now.");
+        wxGetApp().ErrorMsg(wxT("Return value of tdms_open is not a tuple. Aborting now."));
         Py_DECREF(stf_tdms_res);
         return false;
     }
 
     if (PyTuple_Size(stf_tdms_res) != 2) {
-        wxGetApp().ErrorMsg("Return value of tdms_open is not a 2-tuple. Aborting now.");
+        wxGetApp().ErrorMsg( wxT("Return value of tdms_open is not a 2-tuple. Aborting now."));
         Py_DECREF(stf_tdms_res);
         return false;
     }
