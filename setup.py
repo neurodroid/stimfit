@@ -207,7 +207,7 @@ setup(name='stfio',
       description='stfio module',
       include_dirs=system_info.default_include_dirs + [
           np.get_include()],
-      scripts=['src/pystfio/stfio.py'],
+      scripts=[],
       package_dir={'stfio': 'src/pystfio'},
       packages=['stfio'],
       data_files=win_data_files,
