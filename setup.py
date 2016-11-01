@@ -29,24 +29,25 @@ np_extra_compile_args = []
 np_extra_link_args = []
 np_libraries = []
 
-for key in numpy_config_keys:
-    try:
-        np_libraries += np.__config__.get_info(key)['libraries']
-    except:
-        pass
-    try:
-        np_define_macros += np.__config__.get_info(key)['define_macros']
-    except:
-        pass
-    try:
-        np_extra_compile_args += np.__config__.get_info(key)[
-            'extra_compile_args']
-    except:
-        pass
-    try:
-        np_extra_link_args += np.__config__.get_info(key)['extra_link_args']
-    except:
-        pass
+if not 'linux' in sys.platform:
+    for key in numpy_config_keys:
+        try:
+            np_libraries += np.__config__.get_info(key)['libraries']
+        except:
+            pass
+        try:
+            np_define_macros += np.__config__.get_info(key)['define_macros']
+        except:
+            pass
+        try:
+            np_extra_compile_args += np.__config__.get_info(key)[
+                'extra_compile_args']
+        except:
+            pass
+        try:
+            np_extra_link_args += np.__config__.get_info(key)['extra_link_args']
+        except:
+            pass
 
 hdf5_extra_compile_args = []
 hdf5_extra_link_args = []
@@ -54,8 +55,8 @@ if 'linux' in sys.platform:
     cmd = shlex.split('pkg-config --cflags hdf5')
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.wait()
-    pkg_config_out = p.stdout.read().decode("utf-8")[:-2]
-    pkg_config_err = p.stderr.read().decode("utf-8")[:-2]
+    pkg_config_out = p.stdout.read().decode("utf-8")[:-1]
+    pkg_config_err = p.stderr.read().decode("utf-8")[:-1]
     if "No package" in pkg_config_err:
         hdf5_extra_compile_args = ["-I/usr/include/hdf5/serial"]
     else:
@@ -64,8 +65,8 @@ if 'linux' in sys.platform:
     cmd = shlex.split('pkg-config --libs hdf5')
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.wait()
-    pkg_config_out = p.stdout.read().decode("utf-8")[:-2]
-    pkg_config_err = p.stderr.read().decode("utf-8")[:-2]
+    pkg_config_out = p.stdout.read().decode("utf-8")[:-1]
+    pkg_config_err = p.stderr.read().decode("utf-8")[:-1]
     if "No package" in pkg_config_err:
         hdf5_extra_link_args = [
             "-L/usr/lib/x86_64-linux-gnu/",
@@ -185,7 +186,6 @@ stfio_module = Extension(
         'src/libstfio/igor/CrossPlatformFileIO.c',
         'src/libstfio/igor/WriteWave.c',
         'src/libstfio/igor/igorlib.cpp',
-        'src/libstfio/tdms/tdmslib.cpp',
         'src/libstfio/recording.cpp',
         'src/libstfio/section.cpp',
         'src/libstfio/stfio.cpp',
