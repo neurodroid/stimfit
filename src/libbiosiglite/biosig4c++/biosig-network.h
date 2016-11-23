@@ -1,8 +1,8 @@
 /*
-% $Id: biosig-network.h,v 1.5 2009/03/23 22:01:51 schloegl Exp $
-% Copyright (C) 2005,2006,2007,2008,2009 Alois Schloegl <a.schloegl@ieee.org>
-% This file is part of the "BioSig for C/C++" repository 
-% (biosig4c++) at http://biosig.sf.net/ 
+
+    Copyright (C) 2005,2006,2007,2008,2009,2016 Alois Schloegl <alois.schloegl@gmail.com>
+    This file is part of the "BioSig for C/C++" repository
+    (biosig4c++) at http://biosig.sf.net/
 
 
     This program is free software; you can redistribute it and/or
@@ -90,48 +90,48 @@
 #define BSCS_ID_BITLEN 64 	
 #define BSCS_MAX_BUFSIZ_LOG2 14 
 #define BSCS_MAX_BUFSIZ (1<<BSCS_MAX_BUFSIZ_LOG2) 
-#define BSCS_VERSION (b_endian_u32(0x01000000)) 	// version 1
+#define BSCS_VERSION (htobe32(0x01000000)) 	// version 1
 
-#define	VER_MASK   (b_endian_u32(0xff000000))
-#define	CMD_MASK   (b_endian_u32(0x00ff0000))
-#define	STATE_MASK (b_endian_u32(0x0000ff00))
-#define	ERR_MASK   (b_endian_u32(0x000000ff))
+#define	VER_MASK   (htobe32(0xff000000))
+#define	CMD_MASK   (htobe32(0x00ff0000))
+#define	STATE_MASK (htobe32(0x0000ff00))
+#define	ERR_MASK   (htobe32(0x000000ff))
 
-#define	BSCS_VERSION_0 (b_endian_u32(0x00000000)) 		// Version 0  
-#define	BSCS_VERSION_01 (b_endian_u32(0x01000000)) 		// Version 0.1		  
-#define	BSCS_VERSION_02 (b_endian_u32(0x02000000)) 		// Version 0.2  
+#define	BSCS_VERSION_0 (htobe32(0x00000000)) 		// Version 0
+#define	BSCS_VERSION_01 (htobe32(0x01000000)) 		// Version 0.1
+#define	BSCS_VERSION_02 (htobe32(0x02000000)) 		// Version 0.2
 
-#define	BSCS_NOP       (b_endian_u32(0x00000000))	// no operation 
-#define	BSCS_OPEN      (b_endian_u32(0x00010000))	// open 
-#define	BSCS_OPEN_R    (b_endian_u32(0x00010000))	// open read
-#define	BSCS_OPEN_W    (b_endian_u32(0x00010000))	// open write 
-#define	BSCS_CLOSE     (b_endian_u32(0x00020000))	// close 
-#define	BSCS_SEND_MSG  (b_endian_u32(0x00030000))	// send message 
-#define	BSCS_SEND_HDR  (b_endian_u32(0x00040000))	// send header information
-#define	BSCS_SEND_DAT  (b_endian_u32(0x00050000))	// send data block 
-#define	BSCS_SEND_EVT  (b_endian_u32(0x00060000))	// send event information 
-#define	BSCS_REQU_HDR  (b_endian_u32(0x00070000))	// reqest header info 
-#define	BSCS_REQU_DAT  (b_endian_u32(0x00080000))	// request data block
-#define	BSCS_REQU_EVT  (b_endian_u32(0x00090000))	// request event table 
-#define	BSCS_PUT_FILE  (b_endian_u32(0x000a0000))	// request event table 
-#define	BSCS_GET_FILE  (b_endian_u32(0x000b0000))	// request event table 
-#define	BSCS_REPLY     (b_endian_u32(0x00800000))	// replay flag: can be combined with any of the above codes   
+#define	BSCS_NOP       (htobe32(0x00000000))	// no operation
+#define	BSCS_OPEN      (htobe32(0x00010000))	// open
+#define	BSCS_OPEN_R    (htobe32(0x00010000))	// open read
+#define	BSCS_OPEN_W    (htobe32(0x00010000))	// open write
+#define	BSCS_CLOSE     (htobe32(0x00020000))	// close
+#define	BSCS_SEND_MSG  (htobe32(0x00030000))	// send message
+#define	BSCS_SEND_HDR  (htobe32(0x00040000))	// send header information
+#define	BSCS_SEND_DAT  (htobe32(0x00050000))	// send data block
+#define	BSCS_SEND_EVT  (htobe32(0x00060000))	// send event information
+#define	BSCS_REQU_HDR  (htobe32(0x00070000))	// reqest header info
+#define	BSCS_REQU_DAT  (htobe32(0x00080000))	// request data block
+#define	BSCS_REQU_EVT  (htobe32(0x00090000))	// request event table
+#define	BSCS_PUT_FILE  (htobe32(0x000a0000))	// request event table
+#define	BSCS_GET_FILE  (htobe32(0x000b0000))	// request event table
+#define	BSCS_REPLY     (htobe32(0x00800000))	// replay flag: can be combined with any of the above codes
 
-#define	STATE_INIT    	      (b_endian_u32(0x00000000)) 		// initial state 
-#define	STATE_OPEN_READ       (b_endian_u32(0x00000a00)) 	// connection opened for reading 
-#define	STATE_OPEN_WRITE_HDR  (b_endian_u32(0x00000b00)) 	// connection opened for writing header 
-#define	STATE_OPEN_WRITE      (b_endian_u32(0x00000c00)) 	// connection opened for writing data and events #define	
+#define	STATE_INIT    	      (htobe32(0x00000000)) 		// initial state
+#define	STATE_OPEN_READ       (htobe32(0x00000a00)) 	// connection opened for reading
+#define	STATE_OPEN_WRITE_HDR  (htobe32(0x00000b00)) 	// connection opened for writing header
+#define	STATE_OPEN_WRITE      (htobe32(0x00000c00)) 	// connection opened for writing data and events #define
 
-#define	BSCS_NO_ERROR    			 (b_endian_u32(0x00000000))	// no error  
-#define	BSCS_ERROR_CANNOT_OPEN_FILE 		 (b_endian_u32(0x00000001))	// writing error 
-#define	BSCS_ERROR_INCORRECT_PACKET_LENGTH 	 (b_endian_u32(0x00000002))	// writing error 
-#define	BSCS_ERROR_CLOSE_FILE 			 (b_endian_u32(0x00000003))	// any error  
-#define	BSCS_ERROR_COULD_NOT_WRITE_HDR 		 (b_endian_u32(0x00000004))	// any error  
-#define	BSCS_ERROR_COULD_NOT_WRITE_DAT 		 (b_endian_u32(0x00000005))	// any error  
-#define	BSCS_ERROR_COULD_NOT_WRITE_EVT 		 (b_endian_u32(0x00000006))	// any error  
-#define	BSCS_INCORRECT_REPLY_PACKET_LENGTH 	 (b_endian_u32(0x00000007))	// writing error 
-#define	BSCS_ERROR_MEMORY_OVERFLOW 		 (b_endian_u32(0x00000008))	// any error  
-#define	BSCS_ERROR       			 (b_endian_u32(0x000000ff))	// any error  
+#define	BSCS_NO_ERROR    			 (htobe32(0x00000000))	// no error
+#define	BSCS_ERROR_CANNOT_OPEN_FILE 		 (htobe32(0x00000001))	// writing error
+#define	BSCS_ERROR_INCORRECT_PACKET_LENGTH 	 (htobe32(0x00000002))	// writing error
+#define	BSCS_ERROR_CLOSE_FILE 			 (htobe32(0x00000003))	// any error
+#define	BSCS_ERROR_COULD_NOT_WRITE_HDR 		 (htobe32(0x00000004))	// any error
+#define	BSCS_ERROR_COULD_NOT_WRITE_DAT 		 (htobe32(0x00000005))	// any error
+#define	BSCS_ERROR_COULD_NOT_WRITE_EVT 		 (htobe32(0x00000006))	// any error
+#define	BSCS_INCORRECT_REPLY_PACKET_LENGTH 	 (htobe32(0x00000007))	// writing error
+#define	BSCS_ERROR_MEMORY_OVERFLOW 		 (htobe32(0x00000008))	// any error
+#define	BSCS_ERROR       			 (htobe32(0x000000ff))	// any error
 
 // error code for connecting to server: must be negative numbers
 #define	BSCS_UNKNOWN_HOST		 	 (-1)	//  

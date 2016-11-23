@@ -1,6 +1,6 @@
 /*
 
-% Copyright (C) 2005,2006,2007,2008,2009,2011,2013 Alois Schloegl <alois.schloegl@gmail.com>
+% Copyright (C) 2005-2016 Alois Schloegl <alois.schloegl@gmail.com>
 % This file is part of the "BioSig for C/C++" repository 
 % (biosig4c++) at http://biosig.sf.net/ 
 
@@ -36,6 +36,7 @@
 #include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/param.h>
 #include <time.h>
 
@@ -115,11 +116,51 @@ char *getlogin (void);
 #elif defined(__WIN32__)
 #  include <stdlib.h>
 #  define __BIG_ENDIAN		4321
-#  define __LITTLE_ENDIAN  	1234
-#  define __BYTE_ORDER 		__LITTLE_ENDIAN
-#  define bswap_16(x) _byteswap_ushort(x)
-#  define bswap_32(x) _byteswap_ulong(x)
-#  define bswap_64(x) _byteswap_uint64(x)
+#  define __LITTLE_ENDIAN	1234
+#  define __BYTE_ORDER		__LITTLE_ENDIAN
+#  define bswap_16(x) __builtin_bswap16(x)
+#  define bswap_32(x) __builtin_bswap32(x)
+#  define bswap_64(x) __builtin_bswap64(x)
+
+#	include <winsock2.h>
+#	include <sys/param.h>
+
+#	if BYTE_ORDER == LITTLE_ENDIAN
+#		define htobe16(x) htons(x)
+#		define htole16(x) (x)
+#		define be16toh(x) ntohs(x)
+#		define le16toh(x) (x)
+
+#		define htobe32(x) htonl(x)
+#		define htole32(x) (x)
+#		define be32toh(x) ntohl(x)
+#		define le32toh(x) (x)
+
+#		define htobe64(x) __builtin_bswap64(x)
+#		define htole64(x) (x)
+#		define be64toh(x) __builtin_bswap64(x)
+#		define le64toh(x) (x)
+
+#	elif BYTE_ORDER == BIG_ENDIAN
+		/* that would be xbox 360 */
+#		define htobe16(x) (x)
+#		define htole16(x) __builtin_bswap16(x)
+#		define be16toh(x) (x)
+#		define le16toh(x) __builtin_bswap16(x)
+
+#		define htobe32(x) (x)
+#		define htole32(x) __builtin_bswap32(x)
+#		define be32toh(x) (x)
+#		define le32toh(x) __builtin_bswap32(x)
+
+#		define htobe64(x) (x)
+#		define htole64(x) __builtin_bswap64(x)
+#		define be64toh(x) (x)
+#		define le64toh(x) __builtin_bswap64(x)
+
+#	else
+#		error byte order not supported
+#	endif
 
 #elif defined(__NetBSD__)
 #  include <sys/bswap.h>
@@ -131,17 +172,48 @@ char *getlogin (void);
 #  define bswap_64(x) bswap64(x)
 
 #elif defined(__APPLE__)
-#  include <CoreFoundation/CFByteOrder.h>
-#  define __BIG_ENDIAN       4321
-#  define __LITTLE_ENDIAN  1234
+#	define __BIG_ENDIAN      4321
+#	define __LITTLE_ENDIAN  1234
 #if (defined(__LITTLE_ENDIAN__) && (__LITTLE_ENDIAN__ == 1))
-    #define __BYTE_ORDER __LITTLE_ENDIAN
+	#define __BYTE_ORDER __LITTLE_ENDIAN
 #else
-    #define __BYTE_ORDER __BIG_ENDIAN
+	#define __BYTE_ORDER __BIG_ENDIAN
 #endif
-#  define bswap_16(x) CFSwapInt16(x)
-#  define bswap_32(x) CFSwapInt32(x)
-#  define bswap_64(x) CFSwapInt64(x)
+
+#	include <libkern/OSByteOrder.h>
+#	define bswap_16 OSSwapInt16
+#	define bswap_32 OSSwapInt32
+#	define bswap_64 OSSwapInt64
+
+#	define htobe16(x) OSSwapHostToBigInt16(x)
+#	define htole16(x) OSSwapHostToLittleInt16(x)
+#	define be16toh(x) OSSwapBigToHostInt16(x)
+#	define le16toh(x) OSSwapLittleToHostInt16(x)
+
+#	define htobe32(x) OSSwapHostToBigInt32(x)
+#	define htole32(x) OSSwapHostToLittleInt32(x)
+#	define be32toh(x) OSSwapBigToHostInt32(x)
+#	define le32toh(x) OSSwapLittleToHostInt32(x)
+
+#	define htobe64(x) OSSwapHostToBigInt64(x)
+#	define htole64(x) OSSwapHostToLittleInt64(x)
+#	define be64toh(x) OSSwapBigToHostInt64(x)
+#	define le64toh(x) OSSwapLittleToHostInt64(x)
+
+#elif defined(__OpenBSD__)
+#	include <sys/endian.h>
+#	define bswap_16 __swap16
+#	define bswap_32 __swap32
+#	define bswap_64 __swap64
+
+#elif defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
+#	include <sys/endian.h>
+#	define be16toh(x) betoh16(x)
+#	define le16toh(x) letoh16(x)
+#	define be32toh(x) betoh32(x)
+#	define le32toh(x) letoh32(x)
+#	define be64toh(x) betoh64(x)
+#	define le64toh(x) letoh64(x)
 
 #elif (defined(BSD) && (BSD >= 199103)) && !defined(__GLIBC__)
 #  include <machine/endian.h>
@@ -204,126 +276,189 @@ char *getlogin (void);
 #error  ENDIANITY is not known 
 #endif 
 
+static inline uint16_t leu16p(const void* i) {
+	uint16_t a;
+	memcpy(&a, i, sizeof(a));
+	return (le16toh(a));
+}
+static inline int16_t lei16p(const void* i) {
+	uint16_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int16_t)le16toh(a));
+}
+static inline uint32_t leu32p(const void* i) {
+	uint32_t a;
+	memcpy(&a, i, sizeof(a));
+	return (le32toh(a));
+}
+static inline int32_t lei32p(const void* i) {
+	uint32_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int32_t)le32toh(a));
+}
+static inline uint64_t leu64p(const void* i) {
+	uint64_t a;
+	memcpy(&a, i, sizeof(a));
+	return (le64toh(a));
+}
+static inline int64_t lei64p(const void* i) {
+	uint64_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int64_t)le64toh(a));
+}
+
+static inline uint16_t beu16p(const void* i) {
+	uint16_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int16_t)be16toh(a));
+}
+static inline int16_t bei16p(const void* i) {
+	uint16_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int16_t)be16toh(a));
+}
+static inline uint32_t beu32p(const void* i) {
+	uint32_t a;
+	memcpy(&a, i, sizeof(a));
+	return (be32toh(a));
+}
+static inline int32_t bei32p(const void* i) {
+	uint32_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int32_t)be32toh(a));
+}
+static inline uint64_t beu64p(const void* i) {
+	uint64_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int64_t)be64toh(a));
+}
+static inline int64_t bei64p(const void* i) {
+	uint64_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int64_t)be64toh(a));
+}
+
+static inline void leu16a(uint16_t i, void* r) {
+	i = htole16(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void lei16a( int16_t i, void* r) {
+	i = htole16(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void leu32a(uint32_t i, void* r) {
+	i = htole32(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void lei32a( int32_t i, void* r) {
+	i = htole32(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void leu64a(uint64_t i, void* r) {
+	i = htole64(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void lei64a( int64_t i, void* r) {
+	i = htole64(i);
+	memcpy(r, &i, sizeof(i));
+}
+
+static inline void beu16a(uint16_t i, void* r) {
+	i = htobe16(i);
+	memcpy(r, &i, sizeof(i));
+};
+static inline void bei16a( int16_t i, void* r) {
+	i = htobe16(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void beu32a(uint32_t i, void* r) {
+	i = htobe32(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void bei32a( int32_t i, void* r) {
+	i = htobe32(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void beu64a(uint64_t i, void* r) {
+	i = htobe64(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void bei64a( int64_t i, void* r) {
+	i = htobe64(i);
+	memcpy(r, &i, sizeof(i));
+}
+
+static inline float lef32p(const void* i) {
+	// decode little endian float pointer
+	uint32_t o;
+	union {
+		uint32_t i;
+		float   r;
+	} c;
+	memcpy(&o,i,4);
+	c.i = le32toh(o);
+	return(c.r);
+}
+static inline double lef64p(const void* i) {
+	// decode little endian double pointer
+	uint64_t o=0;
+	union {
+		uint64_t i;
+		double   r;
+	} c;
+	memcpy(&o,i,8);
+	c.i = le64toh(o);
+	return(c.r);
+}
+static inline float bef32p(const void* i) {
+	// decode little endian float pointer
+	uint32_t o;
+	union {
+		uint32_t i;
+		float   r;
+	} c;
+	memcpy(&o,i,4);
+	c.i = be32toh(o);
+	return(c.r);
+}
+static inline double bef64p(const void* i) {
+	// decode little endian double pointer
+	uint64_t o=0;
+	union {
+		uint64_t i;
+		double   r;
+	} c;
+	memcpy(&o,i,8);
+	c.i = be64toh(o);
+	return(c.r);
+}
+
+static inline void lef32a( float i, void* r) {
+	uint32_t i32;
+	memcpy(&i32, &i, sizeof(i));
+	i32 = le32toh(i32);
+	memcpy(r, &i32, sizeof(i32));
+}
+static inline void lef64a(  double i, void* r) {
+	uint64_t i64;
+	memcpy(&i64, &i, sizeof(i));
+	i64 = le64toh(i64);
+	memcpy(r, &i64, sizeof(i64));
+}
+static inline void bef32a(   float i, void* r) {
+	uint32_t i32;
+	memcpy(&i32, &i, sizeof(i));
+	i32 = be32toh(i32);
+	memcpy(r, &i32, sizeof(i32));
+}
+static inline void bef64a(  double i, void* r) {
+	uint64_t i64;
+	memcpy(&i64, &i, sizeof(i));
+	i64 = be64toh(i64);
+	memcpy(r, &i64, sizeof(i64));
+}
 
 
-#if __BYTE_ORDER == __BIG_ENDIAN
-#define l_endian_u16(x) ((uint16_t)bswap_16((uint16_t)(x)))
-#define l_endian_u32(x) ((uint32_t)bswap_32((uint32_t)(x)))
-#define l_endian_u64(x) ((uint64_t)bswap_64((uint64_t)(x)))
-#define l_endian_i16(x) ((int16_t)bswap_16((int16_t)(x)))
-#define l_endian_i32(x) ((int32_t)bswap_32((int32_t)(x)))
-#define l_endian_i64(x) ((int64_t)bswap_64((int64_t)(x)))
-float   l_endian_f32(float x); 
-double  l_endian_f64(double x); 
-
-#define b_endian_u16(x) ((uint16_t)(x))
-#define b_endian_u32(x) ((uint32_t)(x))
-#define b_endian_u64(x) ((uint64_t)(x))
-#define b_endian_i16(x) ((int16_t)(x))
-#define b_endian_i32(x) ((int32_t)(x))
-#define b_endian_i64(x) ((int64_t)(x))
-#define b_endian_f32(x) ((float)(x))
-#define b_endian_f64(x) ((double)(x))
-
-#elif __BYTE_ORDER==__LITTLE_ENDIAN
-#define l_endian_u16(x) ((uint16_t)(x))
-#define l_endian_u32(x) ((uint32_t)(x))
-#define l_endian_u64(x) ((uint64_t)(x))
-#define l_endian_i16(x) ((int16_t)(x))
-#define l_endian_i32(x) ((int32_t)(x))
-#define l_endian_i64(x) ((int64_t)(x))
-#define l_endian_f32(x) ((float)(x))
-#define l_endian_f64(x) ((double)(x))
-
-#define b_endian_u16(x) ((uint16_t)bswap_16((uint16_t)(x)))
-#define b_endian_u32(x) ((uint32_t)bswap_32((uint32_t)(x)))
-#define b_endian_u64(x) ((uint64_t)bswap_64((uint64_t)(x)))
-#define b_endian_i16(x) ((int16_t)bswap_16((int16_t)(x)))
-#define b_endian_i32(x) ((int32_t)bswap_32((int32_t)(x)))
-#define b_endian_i64(x) ((int64_t)bswap_64((int64_t)(x)))
-float   b_endian_f32(float x); 
-double  b_endian_f64(double x); 
-
-#endif /* __BYTE_ORDER */
-
-
-#if !defined(__sparc__) && !defined(__ia64__)
-// if misaligned data words can be handled 
-#define leu16p(i) l_endian_u16(*(uint16_t*)(i))
-#define lei16p(i) l_endian_i16(*( int16_t*)(i))
-#define leu32p(i) l_endian_u32(*(uint32_t*)(i))
-#define lei32p(i) l_endian_i32(*( int32_t*)(i))
-#define leu64p(i) l_endian_u64(*(uint64_t*)(i))
-#define lei64p(i) l_endian_i64(*( int64_t*)(i))
-#define lef32p(i) l_endian_f32(*(float*)(i))
-#define lef64p(i) l_endian_f64(*(double*)(i))
-
-#define beu16p(i) b_endian_u16(*(uint16_t*)(i))
-#define bei16p(i) b_endian_i16(*( int16_t*)(i))
-#define beu32p(i) b_endian_u32(*(uint32_t*)(i))
-#define bei32p(i) b_endian_i32(*( int32_t*)(i))
-#define beu64p(i) b_endian_u64(*(uint64_t*)(i))
-#define bei64p(i) b_endian_i64(*( int64_t*)(i))
-#define bef32p(i) b_endian_f32(*(float*)(i))
-#define bef64p(i) b_endian_f64(*(double*)(i))
-
-#define leu16a(i,r) (*(uint16_t*)(r) = l_endian_u16(i))
-#define lei16a(i,r) (*( int16_t*)(r) = l_endian_i16(i))
-#define leu32a(i,r) (*(uint32_t*)(r) = l_endian_u32(i))
-#define lei32a(i,r) (*( int32_t*)(r) = l_endian_i32(i))
-#define leu64a(i,r) (*(uint64_t*)(r) = l_endian_u64(i))
-#define lei64a(i,r) (*( int64_t*)(r) = l_endian_i64(i))
-#define lef32a(i,r) (*(   float*)(r) = l_endian_f32(i))
-#define lef64a(i,r) (*(  double*)(r) = l_endian_f64(i))
-
-#define beu16a(i,r) (*(uint16_t*)(r) = b_endian_u16(i))
-#define bei16a(i,r) (*( int16_t*)(r) = b_endian_i16(i))
-#define beu32a(i,r) (*(uint32_t*)(r) = b_endian_u32(i))
-#define bei32a(i,r) (*( int32_t*)(r) = b_endian_i32(i))
-#define beu64a(i,r) (*(uint64_t*)(r) = b_endian_u64(i))
-#define bei64a(i,r) (*( int64_t*)(r) = b_endian_i64(i))
-#define bef32a(i,r) (*(   float*)(r) = b_endian_f32(i))
-#define bef64a(i,r) (*(  double*)(r) = b_endian_f64(i))
-
-#else
-/*    SPARC,IA64: missing alignment must be explicitly handled     */ 
-uint16_t leu16p(uint8_t* i);
-int16_t  lei16p(uint8_t* i);
-uint32_t leu32p(uint8_t* i);
-int32_t  lei32p(uint8_t* i);
-uint64_t leu64p(uint8_t* i);
-int64_t  lei64p(uint8_t* i);
-float    lef32p(uint8_t* i);
-double   lef64p(uint8_t* i);
-
-uint16_t beu16p(uint8_t* i);
-int16_t  bei16p(uint8_t* i);
-uint32_t beu32p(uint8_t* i);
-int32_t  bei32p(uint8_t* i);
-uint64_t beu64p(uint8_t* i);
-int64_t  bei64p(uint8_t* i);
-float    bef32p(uint8_t* i);
-double   bef64p(uint8_t* i);
-
-void leu16a(uint16_t i, uint8_t* r);
-void lei16a( int16_t i, uint8_t* r);
-void leu32a(uint32_t i, uint8_t* r);
-void lei32a( int32_t i, uint8_t* r);
-void leu64a(uint64_t i, uint8_t* r);
-void lei64a( int64_t i, uint8_t* r);
-void lef32a(   float i, uint8_t* r);
-void lef64a(  double i, uint8_t* r);
-
-void beu16a(uint16_t i, uint8_t* r);
-void bei16a( int16_t i, uint8_t* r);
-void beu32a(uint32_t i, uint8_t* r);
-void bei32a( int32_t i, uint8_t* r);
-void beu64a(uint64_t i, uint8_t* r);
-void bei64a( int64_t i, uint8_t* r);
-void bef32a(   float i, uint8_t* r);
-void bef64a(  double i, uint8_t* r);
-
-#endif
 #ifdef __cplusplus
 }
 #endif
@@ -583,7 +718,7 @@ size_t	sread_raw(size_t START, size_t LEN, HDRTYPE* hdr, char flag, void *buf, s
 	hdr->AS.rawdata and the data is copied into  hdr->AS.rawdata, and LEN*hdr->AS.bpb bytes
 	are read and stored.
 
-	If buf is points to some memory location of size bufsize, the data is stored
+	If buf points to some memory location of size bufsize, the data is stored
 	in buf, no reallocation of memory is possible, and only the
 	minimum(bufsize, LEN*hdr->AS.bpb) is stored.
 

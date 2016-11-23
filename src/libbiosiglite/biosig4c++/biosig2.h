@@ -1,6 +1,6 @@
 /*
 
-    Copyright (C) 2012,2013 Alois Schloegl <alois.schloegl@gmail.com>
+    Copyright (C) 2012,2013,2016 Alois Schloegl <alois.schloegl@gmail.com>
     This file is part of the "BioSig for C/C++" repository
     (biosig4c++) at http://biosig.sf.net/
 
@@ -24,8 +24,7 @@
 #ifndef __LIBBIOSIG2_H__
 #define __LIBBIOSIG2_H__
 
-// TODO: eventually biosig.h should not be removed
-#include "biosig.h"
+#include "biosig-dev.h"
 
 #define BIOSIG_FLAG_COMPRESSION        0x0001
 #define BIOSIG_FLAG_UCAL               0x0002

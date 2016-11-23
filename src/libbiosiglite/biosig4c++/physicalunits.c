@@ -1,6 +1,5 @@
 /*
 
-    $Id$
     Copyright (C) 2005-2012 Alois Schloegl <alois.schloegl@gmail.com>
     This file is part of the "BioSig for C/C++" repository
     (biosig4c++) at http://biosig.sf.net/
