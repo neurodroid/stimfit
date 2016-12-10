@@ -1,3 +1,11 @@
+stimfit (0.15.4-1) unstable; urgency=low
+
+  * Fix building with gcc-6 on armhf (Closes: #847526)
+  * Add channel scrolling
+  * Upgrade libbiosiglite to 1.8.4
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 10 Dec 2016 16:55:51 +0000
+
 stimfit (0.15.3-1) unstable; urgency=low
 
   * Fix building with gcc-6 (Closes: #811904)
