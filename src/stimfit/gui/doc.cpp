@@ -45,7 +45,10 @@
 #include "./../../libstfnum/funclib.h"
 #include "./../../libstfnum/measure.h"
 #include "./../../libstfio/stfio.h"
+#ifdef WITH_PYTHON
 #include "./../../pystfio/pystfio.h"
+#endif
+
 #include "./usrdlg/usrdlg.h"
 #include "./doc.h"
 #include "./graph.h"
@@ -231,8 +234,13 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
         }
 #endif
         if (type == stfio::tdms) {
+#ifdef WITH_PYTHON
             if (!LoadTDMS(stf::wx2std(filename), *this)) {
                 wxString errorMsg(wxT("Error opening file\n"));
+#else
+            {
+                wxString errorMsg(wxT("Error opening file - TDMS requires python \n"));
+#endif
                 wxGetApp().ExceptMsg(errorMsg);
                 get().clear();
                 return false;
