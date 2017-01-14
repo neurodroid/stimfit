@@ -155,7 +155,7 @@ int gdf_time2tm_time_r(gdf_time t, struct tm *t3) {
 	t3->tm_hour = (int)(floor (s / 3600));
 	s = s - 3600 * t3->tm_hour;
 	t3->tm_min = (int)(floor (s / 60));
-	t3->tm_sec = (int)(s) - 60 * t3->tm_min;
+	t3->tm_sec = round(s - 60 * t3->tm_min);
 	//t3->tm_gmtoff = 3600;
 
         return(0);

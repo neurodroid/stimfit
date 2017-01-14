@@ -26,7 +26,7 @@
 #include <sys/stat.h>
 #include <iconv.h>
 
-#if defined (_LIBICONV_H)
+#if !defined(__APPLE__) && defined (_LIBICONV_H)
  #define iconv		libiconv
  #define iconv_open	libiconv_open
  #define iconv_close	libiconv_close

@@ -2224,7 +2224,7 @@ void struct2gdfbin(HDRTYPE *hdr)
 
  	    	hdr->HeadLen = (NS+1)*256;
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %i \n", __func__, __LINE__, hdr->HeadLen);
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %i %i %p\n", __func__, __LINE__, hdr->HeadLen, hdr->EVENT.LenCodeDesc, hdr->EVENT.CodeDesc);
 
 	     	/****** 
 	     	 *	The size of Header 3 is computed by going through all TLV triples, 
@@ -2235,9 +2235,9 @@ void struct2gdfbin(HDRTYPE *hdr)
 		/* writing header 3, in Tag-Length-Value from
 		 */
 		uint32_t TagNLen[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	     	uint8_t tag=1;
-	     	if (hdr->EVENT.LenCodeDesc > 1) {	// first entry is always empty - no need to save tag1
-	     		for (k=0; k<hdr->EVENT.LenCodeDesc; k++)
+		uint8_t tag=1;
+		if (hdr->EVENT.LenCodeDesc > 1) {	// first entry is always empty - no need to save tag1
+			for (k=0; k<hdr->EVENT.LenCodeDesc; k++)
 		     		TagNLen[tag] += strlen(hdr->EVENT.CodeDesc[k])+1;
 	     		TagNLen[tag] += 1; 			// acounts for terminating \0
 	     		hdr->HeadLen += 4+TagNLen[tag];
@@ -8791,11 +8791,10 @@ if (VERBOSE_LEVEL>2)
 
 		if (VERBOSE_LEVEL>7)
 			fprintf(stdout,"[MFER] -V=%i NE=%i\n",VERBOSE_LEVEL,hdr->EVENT.N);
-//		hdr2ascii(hdr,stdout,4);
 	}
 
 	else if (hdr->TYPE==MIT) {
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"[MIT 111]: %i \n",VERBOSE_LEVEL);
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %s(...): %i \n",__FILE__,__LINE__,__func__,VERBOSE_LEVEL);
 
     		size_t bufsiz = 1024;
 	    	while (!ifeof(hdr)) {
@@ -8806,7 +8805,7 @@ if (VERBOSE_LEVEL>2)
 
 		/* MIT: decode header information */
 		if (VERBOSE_LEVEL>7)
-		    	fprintf(stdout,"[MIT 112]: %s\n",(char*)hdr->AS.Header);
+			fprintf(stdout,"%s (line %i) %s(...): %s \n",__FILE__,__LINE__,__func__, (char*)hdr->AS.Header);
 
 	    	hdr->SampleRate = 250.0;
 	    	hdr->NRec = 0;
@@ -8819,7 +8818,7 @@ if (VERBOSE_LEVEL>2)
 		ptr = strpbrk(line,"\x09\x0a\x0d\x20"); 	// skip 1st field
 		ptr[0] = 0;
 		if (VERBOSE_LEVEL>7)
-		    	fprintf(stdout,"[MIT 113]:<%s>\n",ptr);
+			fprintf(stdout,"%s (line %i) %s(...): %s \n",__FILE__,__LINE__,__func__, ptr);
 
 		if (strchr(line,'/') != NULL) {
 			NumberOfSegments = atol(strchr(line,'/')+1);
@@ -8828,11 +8827,12 @@ if (VERBOSE_LEVEL>2)
 		hdr->NS = (typeof(hdr->NS))strtod(ptr+1,&ptr);		// number of channels
 
 		if (VERBOSE_LEVEL>7)
-		    	fprintf(stdout,"[MIT 121]: NS=%i\n",hdr->NS);
+			fprintf(stdout,"%s (line %i) %s(...): NS=%i %p\n",__FILE__,__LINE__,__func__, hdr->NS, ptr);
 
 	    	if ((ptr != NULL) && strlen(ptr)) {
-			if (VERBOSE_LEVEL>8)
-			    	fprintf(stdout,"123: <%s>\n",ptr);
+			if (VERBOSE_LEVEL>7)
+				fprintf(stdout,"%s (line %i) %s(...) MIT : 123: <%s>\n",__FILE__,__LINE__,__func__, ptr);
+
 			hdr->SampleRate = strtod(ptr,&ptr);
 			if (ptr[0]=='/') {
 				double CounterFrequency = strtod(ptr+1,&ptr);
@@ -8860,7 +8860,7 @@ if (VERBOSE_LEVEL>2)
 			hdr->T0 = tm_time2gdf_time(&t);
 		}
 
-                if (VERBOSE_LEVEL>7) hdr2ascii(hdr,stdout,4);                 
+                if (VERBOSE_LEVEL>8) hdr2ascii(hdr,stdout,2);	// channel header not parsed yet
 
 		int fmt=0,FMT=0;
 		size_t MUL=1;
@@ -8885,7 +8885,8 @@ if (VERBOSE_LEVEL>2)
 			CHANNEL_TYPE* hc = hdr->CHANNEL+k;
 		    	do line = strtok(NULL,"\x0d\x0a"); while (line[0]=='#'); // read next line
 
-			if (VERBOSE_LEVEL>7) fprintf(stdout,"[MIT 111] #%i/%i <%s>\n",(int)k, hdr->NS, line);
+			if (VERBOSE_LEVEL>7)
+				fprintf(stdout,"%s (line %i) %s(...): %i/%i <%s>\n",__FILE__,__LINE__,__func__, (int)k, hdr->NS, line);
 
 			for (ptr=line; !isspace(ptr[0]); ptr++) {}; 	// skip 1st field
 			ptr[0]=0;
@@ -8912,6 +8913,8 @@ if (VERBOSE_LEVEL>2)
 			if (ptr[0]=='+') ByteOffset[k] = (size_t)strtod(ptr+1,&ptr);
 
 			if (ptr != NULL) ADCgain = strtod(ptr+1,&ptr);
+			if (ADCgain==0) ADCgain=200;	// DEFGAIN: https://www.physionet.org/physiotools/wag/header-5.htm
+
 			if (ptr[0] == '(') {
 				baseline = strtod(ptr+1,&ptr);
 				ptr++;
@@ -9049,7 +9052,8 @@ if (VERBOSE_LEVEL>2)
 			}
 		}
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"[MIT 177] #%i: (%i) %s FMT=%i + %i\n",(int)k+1,(int)nDatFiles,DatFiles[0],fmt,(int)ByteOffset[0]);
+		if (VERBOSE_LEVEL>7)
+			fprintf(stdout,"%s (line %i) %s(...): %i (%i) %s FMT=%i + %i\n",__FILE__,__LINE__,__func__, (int)k+1,(int)nDatFiles,DatFiles[0],fmt,(int)ByteOffset[0]);
 
 		/* MIT: read ATR annotation file */
 		char *f0 = hdr->FileName;
@@ -9070,7 +9074,8 @@ if (VERBOSE_LEVEL>2)
 			hdr   = ifopen(hdr,"r");
 		}
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"[MIT 179] <%s> %i %i\n",hdr->FileName,hdr->FILE.OPEN,(int)bufsiz);
+		if (VERBOSE_LEVEL>7)
+			fprintf(stdout,"%s (line %i) %s(...): <%s> %i %i\n",__FILE__,__LINE__,__func__, hdr->FileName,hdr->FILE.OPEN,(int)bufsiz);
 
 		if (hdr->FILE.OPEN) {
         		uint16_t *Marker=NULL;
@@ -9087,18 +9092,17 @@ if (VERBOSE_LEVEL>2)
                         Marker[count]=0;
 
                         /* define user specified events according to http://www.physionet.org/physiotools/wfdb/lib/ecgcodes.h */
-        		hdr->EVENT.CodeDesc = (typeof(hdr->EVENT.CodeDesc)) realloc(hdr->EVENT.CodeDesc,257*sizeof(*hdr->EVENT.CodeDesc));
-        		for (k=0; strlen(MIT_EVENT_DESC[k])>0; k++) {
+                        hdr->EVENT.CodeDesc = (typeof(hdr->EVENT.CodeDesc)) realloc(hdr->EVENT.CodeDesc,257*sizeof(*hdr->EVENT.CodeDesc));
+                        hdr->EVENT.CodeDesc[0] = "";
+                        for (k=0; strlen(MIT_EVENT_DESC[k])>0; k++) {
+				if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %s(...) [MIT 182]:  %i\n",__FILE__,__LINE__,__func__, (int)k);
 
-        			if (VERBOSE_LEVEL>7) fprintf(stdout,"[MIT 182] %i\n",(int)k);
-
-                                //hdr->EVENT.CodeDesc[k+1] = MIT_EVENT_DESC[k];
                                 hdr->EVENT.CodeDesc[k+1] = (char*)MIT_EVENT_DESC[k];   // hack to satisfy MinGW (gcc version 4.2.1-sjlj)
-        		        if (VERBOSE_LEVEL>7) fprintf(stdout,"[MIT 182] %i %s %s\n",(int)k,MIT_EVENT_DESC[k],hdr->EVENT.CodeDesc[k]);
+                                if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %s(...) [MIT 182]: %i %s %s\n",__FILE__,__LINE__,__func__, (int)k,MIT_EVENT_DESC[k],hdr->EVENT.CodeDesc[k]);
                         }
         		hdr->EVENT.LenCodeDesc = k+1;
 
-			if (VERBOSE_LEVEL>7) fprintf(stdout,"[MIT 183] %s %i\n",f1,(int)count);
+			if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %s(...)[MIT 183] %s %i\n",__FILE__,__LINE__,__func__, f1,(int)count);
 
 			/* decode ATR annotation information */
 			size_t N = count;
@@ -9116,7 +9120,8 @@ if (VERBOSE_LEVEL>2)
 				uint16_t A   = a16 >> 10;
 				uint16_t len = a16 & 0x03ff;
 
-				if (VERBOSE_LEVEL>8) fprintf(stdout,"[MIT 183] k=%i/%i N=%i A=%i l=%i\n", (int)k, (int)N, (int)hdr->EVENT.N, a16>>10, len);
+				if (VERBOSE_LEVEL>8)
+					fprintf(stdout,"%s (line %i) %s(...)[MIT 183] k=%i/%i N=%i A=%i l=%i\n", __FILE__,__LINE__,__func__, (int)k, (int)N, (int)hdr->EVENT.N, a16>>10, len);
 
 				switch (A) {
 				case 59:	// SKIP
@@ -9154,7 +9159,7 @@ if (VERBOSE_LEVEL>2)
 
 		hdr->FileName = f0;
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"[MIT 185] \n");
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %s(...)[MIT 185] \n",__FILE__,__LINE__,__func__);
 
 		/* MIT: open data file */
 		if (nDatFiles == 1) {
@@ -9194,13 +9199,13 @@ if (VERBOSE_LEVEL>2)
 		}
 
 		if (VERBOSE_LEVEL > 7)
-		    	fprintf(stdout,"[MIT 198] #%i: (%i) %s FMT=%i\n",(int)k+1,(int)nDatFiles,DatFiles[0],fmt);
+			fprintf(stdout,"%s (line %i) %s(...)[MIT 198] #%i: (%i) %s FMT=%i\n",__FILE__,__LINE__,__func__,(int)k+1,(int)nDatFiles,DatFiles[0],fmt);
 
 		free(DatFiles);
 		free(ByteOffset);
 
 		if (VERBOSE_LEVEL > 7)
-		    	fprintf(stdout,"[MIT 199] #%i: (%i) %s FMT=%i\n",(int)k+1,(int)nDatFiles,DatFiles[0],fmt);
+			fprintf(stdout,"%s (line %i) %s(...)[MIT 199] #%i: (%i) %s FMT=%i\n",__FILE__,__LINE__,__func__,(int)k+1,(int)nDatFiles,DatFiles[0],fmt);
 
 		if (nDatFiles != 1) {
 			biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "MIT/HEA/PhysioBank: multiply data files within a single data set is not supported");
@@ -12452,7 +12457,7 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 		if (hdr->CHANNEL[k1].OnOff) ++NS;
 
 	if (VERBOSE_LEVEL>7)
-		fprintf(stdout,"SREAD: count=%i pos=[%i,%i,%i,%i], size of data = %ix%ix%ix%i = %i\n", \
+		fprintf(stdout,"%s (line %i): count=%i pos=[%i,%i,%i,%i], size of data = %ix%ix%ix%i = %i\n", __func__, __LINE__, \
 			(int)count,(int)start,(int)length,(int)POS,(int)hdr->FILE.POS,(int)hdr->SPR, (int)count, \
 			(int)NS, (int)sizeof(biosig_data_type), (int)(hdr->SPR * count * NS * sizeof(biosig_data_type)));
 
@@ -12491,20 +12496,14 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 	int stride = 1; 
 
 #ifndef  ONLYGDF
-	uint16_t MITTYP=0;
-	if (hdr->TYPE==MIT) {
-		MITTYP = *(uint16_t*)hdr->AS.auxBUF;
-		if (VERBOSE_LEVEL>7)
-			fprintf(stdout,"FMT=%i 0x%x 0x%x \n",MITTYP, *(uint32_t*)hdr->AS.rawdata,*(uint32_t*)hdr->AS.rawdata);
-	} 
-	else if (hdr->TYPE==Axona) 
+	if (hdr->TYPE==Axona)
 		stride = 64; 
-	else if (hdr->TYPE==TMS32) 
+	else if (hdr->TYPE==TMS32)
 		stride = hdr->NS; 
 #endif //ONLYGDF
 
 	if (VERBOSE_LEVEL>7)
-		fprintf(stdout,"%s (line %i)  alpha12bit=%i SWAP=%i spr=%i   %p\n",__func__,__LINE__, ALPHA12BIT, SWAP, hdr->SPR, hdr->AS.rawdata);
+		fprintf(stdout,"%s (line %i): alpha12bit=%i SWAP=%i spr=%i   %p\n",__func__,__LINE__, ALPHA12BIT, SWAP, hdr->SPR, hdr->AS.rawdata);
 
 	for (k1=0,k2=0; k1<hdr->NS; k1++) {
 		CHANNEL_TYPE *CHptr = hdr->CHANNEL+k1;
@@ -12542,7 +12541,7 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 		uint8_t *ptr = ptr1 + (stride * k5 * SZ >> 3);
 
 		if (VERBOSE_LEVEL>8)
-			fprintf(stdout,"SREAD 555: k_i = [%d %d %d %d ] 0x%08x[%g] @%p => ",(int)k1,(int)k2,(int)k4,(int)k5,(int)leu32p(ptr),lef64p(ptr),ptr);
+			fprintf(stdout,"%s (line %i): k_i = [%d %d %d %d ] 0x%08x[%g] @%p => ",__func__,__LINE__,(int)k1,(int)k2,(int)k4,(int)k5,(int)leu32p(ptr),lef64p(ptr),ptr);
 
 		switch (GDFTYP) {
 		case 1:
@@ -12712,16 +12711,6 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 			break;
 
 		default:
-/*
-			if (MITTYP==212)
-				;
-			else if (MITTYP==310)
-				;
-			else if (MITTYP==311)
-				;
-			else
- */
-
 			if (VERBOSE_LEVEL > 7) fprintf(stdout,"%s (line %i) GDFTYP=%i %i %i \n", __FILE__, __LINE__, GDFTYP, (int)k1, (int)k2);
 			biosigERROR(hdr, B4C_DATATYPE_UNSUPPORTED, "Error SREAD: datatype not supported");
 			return(-1);

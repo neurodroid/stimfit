@@ -80,6 +80,10 @@ char *trim_trailing_space(uint8_t *pstr, unsigned maxLength) {
 }
 
 
+const char *Signal6_StateTable[]={
+                        "","State 1","State 2","State 3","State 4","State 5","State 6","State 7","State 8","State 9",
+		"State 10","State 11","State 12","State 13","State 14","State 15","State 16","State 17","State 18","State 19" };
+
 EXTERN_C void sopen_cfs_read(HDRTYPE* hdr) {
 /*
 	this function will be called by the function SOPEN in "biosig.c"
@@ -194,6 +198,9 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(line %i) Channel #%i/%i: %i<%s>/%i<%s>\n
 			hc->LowPass  = NAN;
 			hc->HighPass = NAN;
 			hc->Notch    = NAN;
+			hc->XYZ[0]   = NAN;
+			hc->XYZ[1]   = NAN;
+			hc->XYZ[2]   = NAN;
 
 	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(line %i) Channel #%i: [%s](%i/%i) <%s>/<%s> ByteSpace%i,Next#%i\n",
 			__FILE__, __LINE__, k+1, H2 + 1 + k*H2LEN, dataType, dataKind,
@@ -316,6 +323,7 @@ else if (VERBOSE_LEVEL>7)
 //		void *VarChanInfoPos = hdr->AS.Header + datapos + 30;  // unused
 		char flag_ChanInfoChanged = 0;
 		hdr->NRec = NumberOfDataSections;
+		int Signal6_CodeDescLen = 0;
 		size_t SPR = 0, SZ = 0;
 		for (m = 0; m < NumberOfDataSections; m++) {
 			int32_t tmp_event_typ=0;
@@ -348,6 +356,8 @@ else if (VERBOSE_LEVEL>7)
 
 				if ((k==1) && (typ==4) && !strcmp(desc,"State")) {
 					tmp_event_typ = i;
+					if ((Signal6_CodeDescLen < i) && (i < 256))
+						Signal6_CodeDescLen = i;
 				}
 				else if ((k==3) && (typ==6) && !strcmp(desc,"Start") && !strcmp(unit,"s"))
 					tmp_event_pos = f;
@@ -469,6 +479,20 @@ if (VERBOSE_LEVEL>7) 		{
 			SPR += xspr0;
 			SZ  += sz;
 			hdr->AS.bpb = bpb;
+		}
+		if (Signal6_CodeDescLen > 0) {
+
+			if (Signal6_CodeDescLen > 19) {
+				// 19 is sizeof Signal6_StateTable
+				fprintf(stderr, "Warning %s (line %i): Event code description exceed table\n",__func__,__LINE__);
+				Signal6_CodeDescLen = 19;
+			}
+
+			hdr->EVENT.LenCodeDesc = Signal6_CodeDescLen+1; //20 is sizeof(Signal6_StateTable)
+			hdr->EVENT.CodeDesc    = realloc(hdr->EVENT.CodeDesc, sizeof(char*) * (Signal6_CodeDescLen+1));
+			for (int k=0; k <= Signal6_CodeDescLen; k++) {
+				hdr->EVENT.CodeDesc[k] = Signal6_StateTable[k];
+			}
 		}
 
 		/*
@@ -798,12 +822,12 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (%i): %f %f %f %f %f %f\n",__FILE__,__LI
 
  *****************************************************************************/
 
-#if !defined(NDEBUG) && defined(WITH_SON)
-  #ifdef __MINGW32__
-    #include <windows.h>
-  #endif
+#if defined(WITH_SON)
   #include "sonintl.h"
   // defines __SONINTL__
+#else
+#define ADCdataBlkSize  32000
+
 #endif
 
 
@@ -866,73 +890,74 @@ EXTERN_C void sopen_smr_read(HDRTYPE* hdr) {
 			(int)sizeof(*tfh),hdr->NS,(int)offsetof(TFileHead,channels),(int)sizeof(TChannel),(int)sizeof(TDataBlock));
 
 		fprintf(stdout,"systemID\t%i %i %i\n",(int)offsetof(TFileHead,systemID),
-			sizeof(tfh->systemID),lei16p(hdr->AS.Header+offsetof(TFileHead,systemID)));
-		fprintf(stdout,"copyright\t%i %i\n",(int)offsetof(TFileHead,copyright),sizeof(tfh->copyright));
+			(int)sizeof(tfh->systemID),lei16p(hdr->AS.Header+offsetof(TFileHead,systemID)));
+		fprintf(stdout,"copyright\t%i %i\n",(int)offsetof(TFileHead,copyright),(int)sizeof(tfh->copyright));
 		fprintf(stdout,"creator  \t%i %i <%8s>\n",(int)offsetof(TFileHead,creator),
-			sizeof(tfh->creator),hdr->AS.Header+offsetof(TFileHead,creator));
+			(int)sizeof(tfh->creator),hdr->AS.Header+offsetof(TFileHead,creator));
 		fprintf(stdout,"usPerTime\t%i %i %i\n",(int)offsetof(TFileHead,usPerTime),
-			sizeof(tfh->usPerTime),lei16p(hdr->AS.Header+offsetof(TFileHead,usPerTime)));
+			(int)sizeof(tfh->usPerTime),lei16p(hdr->AS.Header+offsetof(TFileHead,usPerTime)));
 		fprintf(stdout,"timePerADC\t%i %i %i\n",(int)offsetof(TFileHead,timePerADC),
-			sizeof(tfh->timePerADC),lei16p(hdr->AS.Header+offsetof(TFileHead,timePerADC)));
+			(int)sizeof(tfh->timePerADC),lei16p(hdr->AS.Header+offsetof(TFileHead,timePerADC)));
 		fprintf(stdout,"fileState\t%i %i %i\n",(int)offsetof(TFileHead,fileState),
-			sizeof(tfh->fileState),lei16p(hdr->AS.Header+offsetof(TFileHead,fileState)));
+			(int)sizeof(tfh->fileState),lei16p(hdr->AS.Header+offsetof(TFileHead,fileState)));
 		fprintf(stdout,"firstData\t%i %i %i\n",(int)offsetof(TFileHead,firstData),
-			sizeof(tfh->firstData),lei32p(hdr->AS.Header+offsetof(TFileHead,firstData)));
+			(int)sizeof(tfh->firstData),lei32p(hdr->AS.Header+offsetof(TFileHead,firstData)));
 		fprintf(stdout,"channels\t%i %i 0x%04x\n",(int)offsetof(TFileHead,channels),
-			sizeof(tfh->channels),lei16p(hdr->AS.Header+offsetof(TFileHead,channels)));
+			(int)sizeof(tfh->channels),lei16p(hdr->AS.Header+offsetof(TFileHead,channels)));
 		fprintf(stdout,"chanSize\t%i %i 0x%04x\n",(int)offsetof(TFileHead,chanSize),
-			sizeof(tfh->chanSize),lei16p(hdr->AS.Header+offsetof(TFileHead,chanSize)));
+			(int)sizeof(tfh->chanSize),lei16p(hdr->AS.Header+offsetof(TFileHead,chanSize)));
 		fprintf(stdout,"extraData\t%i %i %i\n",(int)offsetof(TFileHead,extraData),
-			sizeof(tfh->extraData),lei16p(hdr->AS.Header+offsetof(TFileHead,extraData)));
+			(int)sizeof(tfh->extraData),lei16p(hdr->AS.Header+offsetof(TFileHead,extraData)));
 		fprintf(stdout,"bufferSz\t%i %i %i\n",(int)offsetof(TFileHead,bufferSz),
-			sizeof(tfh->bufferSz),lei16p(hdr->AS.Header+offsetof(TFileHead,bufferSz)));
+			(int)sizeof(tfh->bufferSz),lei16p(hdr->AS.Header+offsetof(TFileHead,bufferSz)));
 		fprintf(stdout,"osFormat\t%i %i %i\n",(int)offsetof(TFileHead,osFormat),
-			sizeof(tfh->osFormat),lei16p(hdr->AS.Header+offsetof(TFileHead,osFormat)));
+			(int)sizeof(tfh->osFormat),lei16p(hdr->AS.Header+offsetof(TFileHead,osFormat)));
 		fprintf(stdout,"maxFTime\t%i %i %i\n",(int)offsetof(TFileHead,maxFTime),
-			sizeof(tfh->maxFTime),lei32p(hdr->AS.Header+offsetof(TFileHead,maxFTime)));
+			(int)sizeof(tfh->maxFTime),lei32p(hdr->AS.Header+offsetof(TFileHead,maxFTime)));
 		fprintf(stdout,"dTimeBase\t%i %i %g\n",(int)offsetof(TFileHead,dTimeBase),
-			sizeof(tfh->dTimeBase),lef64p(hdr->AS.Header+offsetof(TFileHead,dTimeBase)));
-		fprintf(stdout,"timeDate\t%i %i\n",(int)offsetof(TFileHead,timeDate),sizeof(tfh->timeDate));
-		fprintf(stdout,"cAlignFlag\t%i %i\n",(int)offsetof(TFileHead,cAlignFlag),sizeof(tfh->cAlignFlag));
-		fprintf(stdout,"pad0     \t%i %i\n",(int)offsetof(TFileHead,pad0),sizeof(tfh->pad0));
-		fprintf(stdout,"LUTable  \t%i %i\n",(int)offsetof(TFileHead,LUTable),sizeof(tfh->LUTable));
-		fprintf(stdout,"pad      \t%i %i\n",(int)offsetof(TFileHead,pad),sizeof(tfh->pad));
-		fprintf(stdout,"fileComment\t%i %i\n",(int)offsetof(TFileHead,fileComment),sizeof(tfh->fileComment));
+			(int)sizeof(tfh->dTimeBase),lef64p(hdr->AS.Header+offsetof(TFileHead,dTimeBase)));
+		fprintf(stdout,"timeDate\t%i %i\n",(int)offsetof(TFileHead,timeDate),(int)sizeof(tfh->timeDate));
+		fprintf(stdout,"cAlignFlag\t%i %i\n",(int)offsetof(TFileHead,cAlignFlag),(int)sizeof(tfh->cAlignFlag));
+		fprintf(stdout,"pad0     \t%i %i\n",(int)offsetof(TFileHead,pad0),(int)sizeof(tfh->pad0));
+		fprintf(stdout,"LUTable  \t%i %i\n",(int)offsetof(TFileHead,LUTable),(int)sizeof(tfh->LUTable));
+		fprintf(stdout,"pad      \t%i %i\n",(int)offsetof(TFileHead,pad),(int)sizeof(tfh->pad));
+		fprintf(stdout,"fileComment\t%i %i\n",(int)offsetof(TFileHead,fileComment),(int)sizeof(tfh->fileComment));
 
 		fprintf(stdout,"==CHANNEL==\n");
-		fprintf(stdout,"delSize  \t%i %i\n",(int)offsetof(TChannel,delSize),sizeof(tc->delSize));
-		fprintf(stdout,"nextDelBlock\t%i %i\n",(int)offsetof(TChannel,nextDelBlock),sizeof(tc->nextDelBlock));
-		fprintf(stdout,"firstBlock\t%i %i\n",(int)offsetof(TChannel,firstBlock),sizeof(tc->firstBlock));
-		fprintf(stdout,"lastBlock\t%i %i\n",(int)offsetof(TChannel,lastBlock),sizeof(tc->lastBlock));
-		fprintf(stdout,"blocks   \t%i %i\n",(int)offsetof(TChannel,blocks),sizeof(tc->blocks));
-		fprintf(stdout,"nExtra   \t%i %i\n",(int)offsetof(TChannel,nExtra),sizeof(tc->nExtra));
-		fprintf(stdout,"preTrig  \t%i %i\n",(int)offsetof(TChannel,preTrig),sizeof(tc->preTrig));
-		fprintf(stdout,"blocksMSW\t%i %i\n",(int)offsetof(TChannel,blocksMSW),sizeof(tc->blocksMSW));
-		fprintf(stdout,"phySz    \t%i %i\n",(int)offsetof(TChannel,phySz),sizeof(tc->phySz));
-		fprintf(stdout,"maxData  \t%i %i\n",(int)offsetof(TChannel,maxData),sizeof(tc->maxData));
-		fprintf(stdout,"comment  \t%i %i\n",(int)offsetof(TChannel,comment),sizeof(tc->comment));
+		fprintf(stdout,"delSize  \t%i %i\n",(int)offsetof(TChannel,delSize),(int)sizeof(tc->delSize));
+		fprintf(stdout,"nextDelBlock\t%i %i\n",(int)offsetof(TChannel,nextDelBlock),(int)sizeof(tc->nextDelBlock));
+		fprintf(stdout,"firstBlock\t%i %i\n",(int)offsetof(TChannel,firstBlock),(int)sizeof(tc->firstBlock));
+		fprintf(stdout,"lastBlock\t%i %i\n",(int)offsetof(TChannel,lastBlock),(int)sizeof(tc->lastBlock));
+		fprintf(stdout,"blocks   \t%i %i\n",(int)offsetof(TChannel,blocks),(int)sizeof(tc->blocks));
+		fprintf(stdout,"nExtra   \t%i %i\n",(int)offsetof(TChannel,nExtra),(int)sizeof(tc->nExtra));
+		fprintf(stdout,"preTrig  \t%i %i\n",(int)offsetof(TChannel,preTrig),(int)sizeof(tc->preTrig));
+		fprintf(stdout,"blocksMSW\t%i %i\n",(int)offsetof(TChannel,blocksMSW),(int)sizeof(tc->blocksMSW));
+		fprintf(stdout,"phySz    \t%i %i\n",(int)offsetof(TChannel,phySz),(int)sizeof(tc->phySz));
+		fprintf(stdout,"maxData  \t%i %i\n",(int)offsetof(TChannel,maxData),(int)sizeof(tc->maxData));
+		fprintf(stdout,"comment  \t%i %i\n",(int)offsetof(TChannel,comment),(int)sizeof(tc->comment));
 
-		fprintf(stdout,"maxChanTime  \t%i %i\n",(int)offsetof(TChannel,maxChanTime),sizeof(tc->maxChanTime));
+		fprintf(stdout,"maxChanTime  \t%i %i\n",(int)offsetof(TChannel,maxChanTime),(int)sizeof(tc->maxChanTime));
 
-		fprintf(stdout,"lChanDvd\t%i %i\n",(int)offsetof(TChannel,lChanDvd),sizeof(tc->lChanDvd));
-		fprintf(stdout,"phyChan  \t%i %i\n",(int)offsetof(TChannel,phyChan),sizeof(tc->phyChan));
-		fprintf(stdout,"title    \t%i %i %s\n",(int)offsetof(TChannel,title),sizeof(tc->title),((char*)&(tc->title))+1);
-		fprintf(stdout,"idealRate\t%i %i\n",(int)offsetof(TChannel,idealRate),sizeof(tc->idealRate));
-		fprintf(stdout,"kind     \t%i %i\n",(int)offsetof(TChannel,kind),sizeof(tc->kind));
-		fprintf(stdout,"delSizeMSB\t%i %i\n",(int)offsetof(TChannel,delSizeMSB),sizeof(tc->delSizeMSB));
+		fprintf(stdout,"lChanDvd\t%i %i\n",(int)offsetof(TChannel,lChanDvd),(int)sizeof(tc->lChanDvd));
+		fprintf(stdout,"phyChan  \t%i %i\n",(int)offsetof(TChannel,phyChan),(int)sizeof(tc->phyChan));
+		fprintf(stdout,"title    \t%i %i %s\n",(int)offsetof(TChannel,title),(int)sizeof(tc->title),((char*)&(tc->title))+1);
+		fprintf(stdout,"idealRate\t%i %i\n",(int)offsetof(TChannel,idealRate),(int)sizeof(tc->idealRate));
+		fprintf(stdout,"kind     \t%i %i\n",(int)offsetof(TChannel,kind),(int)sizeof(tc->kind));
+		fprintf(stdout,"delSizeMSB\t%i %i\n",(int)offsetof(TChannel,delSizeMSB),(int)sizeof(tc->delSizeMSB));
 
-		fprintf(stdout,"v.adc.scale\t%i %i\n",(int)offsetof(TChannel,v.adc.scale),sizeof(tc->v.adc.scale));
-		fprintf(stdout,"v.adc.offset\t%i %i\n",(int)offsetof(TChannel,v.adc.offset),sizeof(tc->v.adc.offset));
-		fprintf(stdout,"v.adc.units\t%i %i\n",(int)offsetof(TChannel,v.adc.units),sizeof(tc->v.adc.units));
-		fprintf(stdout,"v.adc.divide\t%i %i\n",(int)offsetof(TChannel,v.adc.divide),sizeof(tc->v.adc.divide));
+		fprintf(stdout,"v.adc.scale\t%i %i\n",(int)offsetof(TChannel,v.adc.scale),(int)sizeof(tc->v.adc.scale));
+		fprintf(stdout,"v.adc.offset\t%i %i\n",(int)offsetof(TChannel,v.adc.offset),(int)sizeof(tc->v.adc.offset));
+		fprintf(stdout,"v.adc.units\t%i %i\n",(int)offsetof(TChannel,v.adc.units),(int)sizeof(tc->v.adc.units));
+		fprintf(stdout,"v.adc.divide\t%i %i\n",(int)offsetof(TChannel,v.adc.divide),(int)sizeof(tc->v.adc.divide));
 
-		fprintf(stdout,"v.event.initLow\t%i %i\n",(int)offsetof(TChannel,v.event.initLow),sizeof(tc->v.event.initLow));
-		fprintf(stdout,"v.event.nextLow\t%i %i\n",(int)offsetof(TChannel,v.event.nextLow),sizeof(tc->v.event.nextLow));
+		fprintf(stdout,"v.event.initLow\t%i %i\n",(int)offsetof(TChannel,v.event.initLow),(int)sizeof(tc->v.event.initLow));
+		fprintf(stdout,"v.event.nextLow\t%i %i\n",(int)offsetof(TChannel,v.event.nextLow),(int)sizeof(tc->v.event.nextLow));
 
-		fprintf(stdout,"v.real.min\t%i %i\n",(int)offsetof(TChannel,v.real.min),sizeof(tc->v.real.min));
-		fprintf(stdout,"v.real.max\t%i %i\n",(int)offsetof(TChannel,v.real.max),sizeof(tc->v.real.max));
-		fprintf(stdout,"v.real.units\t%i %i\n",(int)offsetof(TChannel,v.real.units),sizeof(tc->v.real.units));
+		fprintf(stdout,"v.real.min\t%i %i\n",(int)offsetof(TChannel,v.real.min),(int)sizeof(tc->v.real.min));
+		fprintf(stdout,"v.real.max\t%i %i\n",(int)offsetof(TChannel,v.real.max),(int)sizeof(tc->v.real.max));
+		fprintf(stdout,"v.real.units\t%i %i\n",(int)offsetof(TChannel,v.real.units),(int)sizeof(tc->v.real.units));
 
+		assert(sizeof(TSONTimeDate)==8);
 		assert(sizeof(TFileHead)==512);
 		assert(sizeof(TChannel)==140);
 		assert(sizeof(TDataBlock)==64020);
@@ -960,20 +985,20 @@ EXTERN_C void sopen_smr_read(HDRTYPE* hdr) {
 	}
 	hdr->SPR = 1;
 
-	assert( timebase == 1e-6 || hdr->VERSION >= 6 );
-	if (VERBOSE_LEVEL > 6) {
-		fprintf(stdout,"SMR:\tmaxFTime=%i\n\t timebase=%g\n\t dTimeBase=%g timePerADC=%i\n",maxFTime,timebase,dTimeBase,timePerADC);
+	while (!ifeof(hdr)) {
+		// read channel header and extra data
+		hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header,hdr->HeadLen*2);
+		hdr->HeadLen  *= 2;
+		count += ifread(hdr->AS.Header+count, 1, hdr->HeadLen-count, hdr);
 	}
-
-
+	hdr->HeadLen = count;
 
 	/*********************************************
 	  read channel header
  	 *********************************************/
 	hdr->CHANNEL = (CHANNEL_TYPE*)realloc(hdr->CHANNEL, hdr->NS * sizeof(CHANNEL_TYPE));
 
-	typeof(hdr->NS) k,ns=0;
-
+	typeof(hdr->NS) k;
 	size_t bpb = 0;
 	for (k = 0; k < hdr->NS; k++) {
 		uint32_t off = 512 + k*140;
@@ -981,12 +1006,10 @@ EXTERN_C void sopen_smr_read(HDRTYPE* hdr) {
 
 		hc->Cal   = lef32p(hdr->AS.Header + off + 124);	// v.adc.scale
 		hc->Off   = lef32p(hdr->AS.Header + off + 128);	// v.adc.off
-		hc->OnOff = *(int16_t*)(hdr->AS.Header + off + 106) != 0;
+		hc->OnOff = 0;   //*(int16_t*)(hdr->AS.Header + off + 106) != 0;
+		hc->SPR   = 0;
 		hc->GDFTYP = 3;
-		hc->DigMax = (double)(int16_t)0x7fff;
-		hc->DigMin = (double)(int16_t)0x8000;
-		hc->PhysMax = hc->DigMax * hc->Cal + hc->Off;
-		hc->PhysMin = hc->DigMin * hc->Cal + hc->Off;
+		hc->LeadIdCode = 0;
 
 		int stringLength = hdr->AS.Header[off+108];
 		assert(stringLength < MAX_LENGTH_LABEL);
@@ -1001,22 +1024,56 @@ EXTERN_C void sopen_smr_read(HDRTYPE* hdr) {
 		memcpy(PhysicalUnit, hdr->AS.Header+off+132+1, stringLength);
 		PhysicalUnit[stringLength] = '\0';
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): #%i <%s> <%s>\n",__FILE__,__LINE__, k+1, hc->Label, PhysicalUnit);
-		hc->PhysDimCode = PhysDimCode(PhysicalUnit);
+
+		if (!strcmp(PhysicalUnit,"Volt") || !strcmp(PhysicalUnit," Volt"))
+			hc->PhysDimCode = 4256;
+		else if (!strcmp(PhysicalUnit,"mVolt"))
+			hc->PhysDimCode = 4274;
+		else if (!strcmp(PhysicalUnit,"uVolt"))
+			hc->PhysDimCode = 4275;
+		else
+			hc->PhysDimCode = PhysDimCode(PhysicalUnit);
 		}
 
+		uint32_t firstBlock = leu32p(hdr->AS.Header+off+6);
+		uint32_t lastBlock  = leu32p(hdr->AS.Header+off+10);
+
 		hc->bi = bpb;
+		hc->bi8= 0;
 		uint8_t kind = hdr->AS.Header[off+122];
 		switch (kind) {
 		case 0: //
 			//    ChanOff=0,          /* the channel is OFF - */
 			hc->OnOff = 0;
 			break;
-		case 1:
+		case 1: {
 			//    Adc,                /* a 16-bit waveform channel */
-			hc->OnOff = 1;
-			hc->GDFTYP = 3;
-			bpb += 2;
+			hc->OnOff   = 1;
+			hc->GDFTYP  = 3;
+			hc->Cal     = lef32p(hdr->AS.Header + off + 124) / 6553.6;
+			hc->Off     = lef32p(hdr->AS.Header + off + 128);
+			hc->DigMax  = (double)(int16_t)0x7fff;
+			hc->DigMin  = (double)(int16_t)0x8000;
+			hc->PhysMax = hc->DigMax * hc->Cal + hc->Off;
+			hc->PhysMin = hc->DigMin * hc->Cal + hc->Off;
+
+			uint32_t blocks = leu16p(hdr->AS.Header+off+14);
+			size_t bpbnew   = bpb + blocks * ADCdataBlkSize * 2;
+			hdr->AS.rawdata = realloc(hdr->AS.rawdata,bpbnew);
+
+			uint32_t pos = firstBlock;
+			while (1) {
+				uint32_t items = leu16p(hdr->AS.Header+pos+18);
+				memcpy(hdr->AS.rawdata+bpb, hdr->AS.Header+pos+20, items*2);
+				bpb     += items*2;
+				hc->SPR += items;
+			if (pos == lastBlock) break;
+				pos  = leu32p(hdr->AS.Header+pos+4);
+			};
+
+			hdr->SPR    = lcm(hdr->SPR, hc->SPR);
 			break;
+		}
 		case 2:
 			//    EventFall,          /* Event times (falling edges) */
 			hc->OnOff = 0;
@@ -1045,25 +1102,40 @@ EXTERN_C void sopen_smr_read(HDRTYPE* hdr) {
 			//    TextMark,           /* Marker plus text string */
 			hc->OnOff = 0;
 			break;
-		case 9:
+		case 9: {
 			//    RealWave            /* waveform of float numbers */
-			hc->OnOff = 0;
-			hc->GDFTYP = 16;
-			bpb += 4;
+			hc->OnOff   = 1;
+			hc->GDFTYP  = 16;
+			hc->LeadIdCode = 0;
+			hc->Cal     = lef32p(hdr->AS.Header + off + 124) / 6553.6;
+			hc->Off     = lef32p(hdr->AS.Header + off + 128);
+			hc->DigMax  = +1e9;
+			hc->DigMin  = -1e9;
+			hc->PhysMax = hc->DigMax * hc->Cal + hc->Off;
+			hc->PhysMin = hc->DigMin * hc->Cal + hc->Off;
+
+			uint32_t blocks = leu16p(hdr->AS.Header+off+14);
+			size_t bpbnew   = bpb + blocks * ADCdataBlkSize * 4;
+			hdr->AS.rawdata = realloc(hdr->AS.rawdata, bpbnew);
+
+			uint32_t pos = firstBlock;
+			while (1) {
+				uint32_t items = leu16p(hdr->AS.Header+pos+18);
+				memcpy(hdr->AS.rawdata+bpb, hdr->AS.Header+pos+20, items*4);
+				bpb     += items*4;
+				hc->SPR += items;
+			if (pos == lastBlock) break;
+				pos  = leu32p(hdr->AS.Header+pos+4);
+			}
+
+			hdr->SPR    = lcm(hdr->SPR, hc->SPR);
 			break;
+		}
 		default:
 			//    unknown
 			hc->OnOff = 0;
 			fprintf(stderr,"SMR/SON: channel %i ignored - unknown type %i\n",k,kind);
 		}
-
-		if (hc->OnOff) {
-			hc->SPR = 1;
-			ns++;
-		} else {
-			hc->SPR = 0;
-		}
-
 
 		if (VERBOSE_LEVEL > 6) {
 			char tmp[98-26+1];
@@ -1113,131 +1185,14 @@ EXTERN_C void sopen_smr_read(HDRTYPE* hdr) {
 
 			fprintf(stdout,"[%i].v.real.max\t%f\n", (int)k, lef32p(hdr->AS.Header+off+124));
 			fprintf(stdout,"[%i].v.real.min\t%f\n", (int)k, lef32p(hdr->AS.Header+off+128));
+			fprintf(stdout,"[%i].v.real.units\t%s\n", (int)k, hdr->AS.Header+off+132+1);
 
-			fprintf(stdout,"[%i].v.event\t%0x\n", (int)k, leu32p(hdr->AS.Header+off+124));
+			fprintf(stdout,"[%i].v.event\t%0x\t%g\n", (int)k, leu32p(hdr->AS.Header+off+124), lef32p(hdr->AS.Header+off+124));
 		}
         }
 
-	/*********************************************
-	  read blocks
- 	 *********************************************/
-
-	// size_t H0Len = hdr->HeadLen; 	// unused variable
-	while (!ifeof(hdr)) {
-		// read channel header and extra data
-		hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header,hdr->HeadLen*2);
-		hdr->HeadLen *= 2;
-		count += ifread(hdr->AS.Header+count, 1, hdr->HeadLen-count, hdr);
-	}
-	hdr->HeadLen = count;
-
-	// size_t noblocks = (hdr->HeadLen - H0Len) / 64020;	// unused variable
-
-	hdr->SPR        = maxFTime+1;
 	hdr->NRec       = 1;
-
-	hdr->AS.rawdata = realloc(hdr->AS.rawdata, hdr->NRec * hdr->SPR * bpb);
-	memset(hdr->AS.rawdata,-1,hdr->NRec * hdr->NRec * bpb);
-
-	// Initialize with NaN, 0x8000 in case of INT16
-	typeof(hdr->NS) m;
-	for (m = 0; m < hdr->NS; m++) {
-		CHANNEL_TYPE *hc = hdr->CHANNEL + m;
-		hc->bi          *= hdr->SPR*hdr->NRec;
-
-		if (hc->OnOff)	{
-			if (hc->GDFTYP==3) {
-				nrec_t k;
-				for (k = 0; k < hdr->SPR * hdr->NRec; k++)
-					*(int16_t*)(hdr->AS.rawdata + hc->bi + k*sizeof(int16_t) ) = 0x8000;
-			}
-			else if (hc->GDFTYP==16) {
-				nrec_t k;
-				for (k = 0; k < hdr->SPR * hdr->NRec; k++)
-					*(float*)(hdr->AS.rawdata + hc->bi + k*sizeof(float) ) = (float)NAN;
-			}
-		}
-	}
-
-
-	hdr->FILE.LittleEndian = 1;
-	hdr->AS.first = 0;
-	hdr->AS.length = hdr->NRec;
-	hdr->AS.flag_collapsed_rawdata = 1;
-
-	// size_t maxTime = 0; 		// unused variable
-	ns = 0;
-	int32_t i,j;
-	for (m = 0; m < hdr->NS; m++) {
-		CHANNEL_TYPE *hc = hdr->CHANNEL + m;
-
-		uint8_t kind = hdr->AS.Header[512 + m*140 + 122];
-		// TODO: supporting event and marker channels
-		switch (kind) {
-		case 0: 	//    channel is off, ignore it and get next channel
-			continue;
-
-		case 1: 	//    Adc,                /* a 16-bit waveform channel */
-
-		//case 6: 	//    AdcMark,            /* Marker plus Adc waveform data */
-
-		case 9: 	//    RealWave            /* waveform of float numbers */
-			break;
-
-		default:
-			fprintf(stderr,"SON/SMR: channel %i ignored, kind %i is not supported\n",m+1,kind);
-			continue; 	// ignore this channel and get next one
-		}
-
-		hc->SPR = hdr->SPR;
-		uint32_t firstblock = leu32p(hdr->AS.Header + 512 + m * 140 + 6); 	// first block of channel k
-		// uint32_t lastblock  = leu32p(hdr->AS.Header + 512 + m * 140 + 10); 	// last block of channel k
-
-		uint32_t pos = firstblock;
-		k = 0;
-		do {
-			k++;
-
-                        if (VERBOSE_LEVEL>8)
- 				fprintf(stdout,"#%i\t%i\t%8i\t%8i\t%8i\t%8i\t%8i\t%8i\t%i\n",m,k,
-					leu32p(hdr->AS.Header+pos)   , leu32p(hdr->AS.Header+pos+4),
-					leu32p(hdr->AS.Header+pos+8) , leu32p(hdr->AS.Header+pos+12),
-					leu16p(hdr->AS.Header+pos+16), leu16p(hdr->AS.Header+pos+18),
-					lei32p(hdr->AS.Header+pos+98-6)
-					);
-
-			size_t predBlock     = leu32p(hdr->AS.Header+pos) * size_factor;
-			size_t succBlock     = leu32p(hdr->AS.Header+pos+4) * size_factor;
-			uint32_t startTime   = leu32p(hdr->AS.Header+pos+8);
-
-			 int32_t lChanDvD    = lei32p(hdr->AS.Header + 512 + m * 140 + 102);
-			uint32_t endTime     = leu32p(hdr->AS.Header + pos + 12) + lChanDvD;
-
-			uint16_t chanNumber  = leu16p(hdr->AS.Header+pos+16);
-			uint16_t item        = leu16p(hdr->AS.Header+pos+18);
-			// int32_t maxChanTime = lei32p(hdr->AS.Header+pos+98-6);	// not used
-
-			assert (chanNumber == m+1);
-
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i):\t%i\t%i\t%i\t%i\t%i\t%i\t%i\t%i\t%i\t%i\t%i\n",__FILE__,__LINE__,m,k,hc->GDFTYP,(int)predBlock,(int)succBlock,startTime,endTime,chanNumber,item,lChanDvD,startTime+item*lChanDvD-endTime);
-
-			for (i = 0; i < item; i++) {
-				// convert data to little endian
-				int16_t val = lei16p(hdr->AS.Header + pos + 20 + i*2);
-
-		if (VERBOSE_LEVEL>8) fprintf(stdout,"%i\t%i\t%i\t%i\n",m,k,i,val);
-
-				for (j = 0; j < lChanDvD; j++)
-					*(int16_t*)(hdr->AS.rawdata + hc->bi + (startTime + i * lChanDvD + j) * (GDFTYP_BITS[hc->GDFTYP]>>3) ) = val;
-
-			}
-
-			//fprintf(stdout,"#%i == %i ==\n",k,leu32p(hdr->AS.Header+pos+4)-pos);
-			pos = leu32p(hdr->AS.Header + pos + 4);
-
-		} while (pos != 0xffffffff);
-	}
-//	hdr->NS = ns;
-
+	hdr->AS.bpb	= bpb;
 }
+
 
