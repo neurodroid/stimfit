@@ -1081,7 +1081,7 @@ void wxStfDoc::CreateAverage(
                 alignIndex = lround(GetAPT50LeftReal());
                 break;
             case 3:     // align to onset
-                alignIndex = lround(GetAPT50LeftReal());
+                alignIndex = lround(GetAPT0Real());
                 break;
             default:
                 wxGetApp().ExceptMsg(wxT("Invalid alignment method"));
