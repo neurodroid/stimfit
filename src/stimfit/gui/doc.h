@@ -96,6 +96,7 @@ private:
         base, APBase, baseSD, threshold, slopeForThreshold, peak, APPeak, tLoReal, tHiReal, t50LeftReal, t50RightReal,
         maxT, thrT, maxRiseY, maxRiseT, maxDecayY, maxDecayT, maxRise, maxDecay,
         t50Y, APMaxT, APMaxRiseY, APMaxRiseT, APt50LeftReal,
+        APrtLoHi, APtLoReal, APtHiReal, APt0Real,
 #ifdef WITH_PSLOPE
         PSlope,
 #endif
@@ -104,7 +105,7 @@ private:
     int pM;  //peakMean, number of points used for averaging
     int RTFactor; // Lower point for the rise-time calculation
     
-    std::size_t tLoIndex, tHiIndex, t50LeftIndex, t50RightIndex, APt50LeftIndex, APt50RightIndex;
+    std::size_t tLoIndex, tHiIndex, t50LeftIndex, t50RightIndex, APt50LeftIndex, APt50RightIndex, APtLoIndex, APtHiIndex;
 
     bool fromBase, viewCrosshair,viewBaseline,viewBaseSD,viewThreshold, viewPeakzero,viewPeakbase,viewPeakthreshold,
         viewRTLoHi, viewInnerRiseTime, viewOuterRiseTime,
@@ -466,6 +467,12 @@ public:
      *  in the reference channel, expressed in units of data points.
      */
     double GetAPT50LeftReal() const { return APt50LeftReal; }
+
+    //! Retrieves the extrapolated onset time point of an event in the reference channel.
+    /*! \return The onset time point of an event, extrapolated from the crossing of a line through 
+     *  20 and 80% of the event amplitude with the baseline. Expressed in units of data points.
+     */
+    double GetAPT0Real() const { return APt0Real; }
 
     //! Retrieves the time point of the maximal slope during the rising phase.
     /*! \return The time point of the maximal slope during the rising phase, expressed in units of data points.

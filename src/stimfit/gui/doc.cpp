@@ -140,6 +140,12 @@ wxStfDoc::wxStfDoc() :
     APMaxRiseY(0.0),
     APMaxRiseT(0.0),
     APt50LeftReal(0.0),
+    APrtLoHi(0.0),
+    APtLoIndex(0),
+    APtHiIndex(0),
+    APtLoReal(0.0),
+    APtHiReal(0.0),
+    APt0Real(0.0),
 #ifdef WITH_PSLOPE
     PSlope(0.0),
 #endif
@@ -1018,7 +1024,7 @@ void wxStfDoc::CreateAverage(
             return;
         }
         wxStfAlignDlg AlignDlg(GetDocumentWindow());
-        if (AlignDlg.ShowModal()!=wxID_OK) return;
+        if (AlignDlg.ShowModal() != wxID_OK) return;
         //store current section and channel index:
         std::size_t section_old=GetCurSecIndex();
         std::size_t channel_old=GetCurChIndex();
@@ -1065,13 +1071,16 @@ void wxStfDoc::CreateAverage(
             //check whether the current index is a max or a min,
             //and if so, store it:
             switch (AlignDlg.AlignRise()) {
-            case 0 :	// align to peak time
+            case 0:	// align to peak time
                 alignIndex = lround(GetMaxT());
                 break;
-            case 1 :	// align to steepest slope time
+            case 1:	// align to steepest slope time
                 alignIndex = lround(GetAPMaxRiseT());
                 break;
-            case 2 :	// align to half amplitude time 
+            case 2:	// align to half amplitude time 
+                alignIndex = lround(GetAPT50LeftReal());
+                break;
+            case 3:     // align to onset
                 alignIndex = lround(GetAPT50LeftReal());
                 break;
             default:
@@ -2584,7 +2593,7 @@ void wxStfDoc::Measure( )
 
     //Calculate the beginning of the event by linear extrapolation:
     if (latencyEndMode==stf::footMode) {
-        t0Real=tLoReal-(tHiReal-tLoReal)/3.0;
+        t0Real=tLoReal-(tHiReal-tLoReal)/3.0; // using 20-80% rise time (f/(1-2f) = 0.2/(1-0.4) = 1/3.0)
     } else {
         t0Real=t50LeftReal;
     }
@@ -2655,6 +2664,12 @@ void wxStfDoc::Measure( )
                       APt50RightIndex, APt50LeftReal);
         //End determination of the region of maximal slope in the second channel
         //----------------------------
+
+        // Get onset in 2nd channel
+        APrtLoHi=stfnum::risetime(secsec().get(), APBase, APPeak-APBase, (double)0,
+                                  APMaxT, 0.2, APtLoIndex, APtHiIndex, APtLoReal);
+        APtHiReal = APtLoReal + APrtLoHi;
+        APt0Real = APtLoReal-(APtHiReal-APtLoReal)/3.0;  // using 20-80% rise time (f/(1-2f) = 0.2/(1-0.4) = 1/3.0)
     }
 
     // get and set start of latency measurement:
@@ -2679,14 +2694,15 @@ void wxStfDoc::Measure( )
     }
     SetLatencyBeg(latStart);
 
+    APt0Real = tLoReal-(tHiReal-tLoReal)/3.0;  // using 20-80% rise time (f/(1-2f) = 0.2/(1-0.4) = 1/3.0)
     // get and set end of latency measurement:
     double latEnd=0.0;
     switch (latencyEndMode) {
     // Interestingly, latencyCursor is an int in pascal, although
     // the maxTs aren't. That's why there are double type casts
     // here.
-    case stf::footMode: //Latency cursor is set to the peak						
-        latEnd=tLoReal-(tHiReal-tLoReal)/3.0;
+    case stf::footMode:
+        latEnd=tLoReal-(tHiReal-tLoReal)/3.0; // using 20-80% rise time (f/(1-2f) = 0.2/(1-0.4) = 1/3.0)
         break;
     case stf::riseMode:
         latEnd=maxRiseT;
