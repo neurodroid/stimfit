@@ -1019,11 +1019,7 @@ void wxStfDoc::CreateAverage(
 
     if (align) {
         // check that we have more than one channel
-        if (size()==1){
-            wxGetApp().ErrorMsg(wxT("Aligned average requires more than one channel"));
-            return;
-        }
-        wxStfAlignDlg AlignDlg(GetDocumentWindow());
+        wxStfAlignDlg AlignDlg(GetDocumentWindow(), size()>1);
         if (AlignDlg.ShowModal() != wxID_OK) return;
         //store current section and channel index:
         std::size_t section_old=GetCurSecIndex();
@@ -1031,7 +1027,10 @@ void wxStfDoc::CreateAverage(
         //initialize the lowest and the highest index:
         std::size_t min_index=0;
         try {
-            min_index=get()[GetSecChIndex()].at(GetSelectedSections().at(0)).size()-1;
+            if (AlignDlg.UseReference())
+                min_index=get()[GetSecChIndex()].at(GetSelectedSections().at(0)).size()-1;
+            else
+                min_index=get()[GetCurChIndex()].at(GetSelectedSections().at(0)).size()-1;
         }
         catch (const std::out_of_range& e) {
             wxString msg(wxT("Error while aligning\nIt is safer to re-start the program\n"));
@@ -1040,7 +1039,8 @@ void wxStfDoc::CreateAverage(
             return;
         }
         // swap channels temporarily:
-        SetCurChIndex(GetSecChIndex());
+        // if (AlignDlg.UseReference())
+        //     SetCurChIndex(GetSecChIndex());
         std::size_t max_index=0, n=0;
         int_it it = shift.begin();
         //loop through all selected sections:
@@ -1071,18 +1071,30 @@ void wxStfDoc::CreateAverage(
             //check whether the current index is a max or a min,
             //and if so, store it:
             switch (AlignDlg.AlignRise()) {
-            case 0:	// align to peak time
-                alignIndex = lround(GetMaxT());
-                break;
-            case 1:	// align to steepest slope time
-                alignIndex = lround(GetAPMaxRiseT());
-                break;
-            case 2:	// align to half amplitude time 
-                alignIndex = lround(GetAPT50LeftReal());
-                break;
+             case 0:	// align to peak time
+                 if (AlignDlg.UseReference())
+                     alignIndex = lround(GetAPMaxT());
+                 else
+                     alignIndex = lround(GetMaxT());
+                 break;
+             case 1:	// align to steepest slope time
+                 if (AlignDlg.UseReference())
+                     alignIndex = lround(GetAPMaxRiseT());
+                 else
+                     alignIndex = lround(GetMaxRiseT());
+                 break;
+             case 2:	// align to half amplitude time 
+                 if (AlignDlg.UseReference())
+                     alignIndex = lround(GetAPT50LeftReal());
+                 else
+                     alignIndex = lround(GetT50LeftReal());
+                 break;
             case 3:     // align to onset
-                alignIndex = lround(GetAPT0Real());
-                break;
+                 if (AlignDlg.UseReference())
+                     alignIndex = lround(GetAPT0Real());
+                 else
+                     alignIndex = lround(GetT0Real());
+                 break;
             default:
                 wxGetApp().ExceptMsg(wxT("Invalid alignment method"));
                 return;

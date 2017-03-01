@@ -422,6 +422,12 @@ public:
      */
     double GetOuterHiRT() const { return OuterHiRT; }
 
+    //! Retrieves the extrapolated onset time point of an event in the active channel.
+    /*! \return The onset time point of an event, extrapolated from the crossing of a line through 
+     *  20 and 80% of the event amplitude with the baseline. Expressed in units of data points.
+     */
+    double GetT0Real() const { return t0Real; }
+
     //! Retrieves the time point at which 50% of the maximal amplitude have been reached from the left of the peak.
     /*! \return The time point at which 50% of the maximal amplitude have been reached from the left of the peak, 
      *  expressed in units of data points.
