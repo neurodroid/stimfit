@@ -222,7 +222,8 @@ wxStfAlignDlg::wxStfAlignDlg(wxWindow* parent, bool hasReference, int id, wxStri
             wxDefaultPosition, 
             wxDefaultSize, 
             0
-        );
+                                   );
+        m_checkBox->SetValue(true);
         topSizer->Add( m_checkBox, 0, wxALIGN_LEFT | wxALL, 5 );
     }
 
