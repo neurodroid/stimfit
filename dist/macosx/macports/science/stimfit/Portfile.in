@@ -63,7 +63,7 @@ variant biosig description {Use biosig library for file I/O.} {
 
     configure.args-replace \
         --without-biosig \
-        --with-biosig
+        --with-biosig2
 }
 
 configure.ldflags-append \

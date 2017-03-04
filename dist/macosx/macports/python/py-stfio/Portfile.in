@@ -56,7 +56,7 @@ if { ${name} ne ${subport} } {
 
         configure.args-replace \
             --without-biosig \
-            --with-biosig
+            --with-biosig2
     }
 
     default_variants    +biosig
