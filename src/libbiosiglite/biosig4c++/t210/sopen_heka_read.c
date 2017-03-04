@@ -516,8 +516,8 @@ if (VERBOSE_LEVEL>6) fprintf(stdout,"HEKA L5 @%i= #%i,%i, %s %g/%g %g/%g \n",(in
 
 							/* TODO: fix remaining channel header  */
 							/* LowPass, HighPass, Notch, Impedance, */
-							hc->LowPass = NAN; 
-							hc->HighPass = (Bandwidth > 0) ? Bandwidth : NAN;
+							hc->HighPass = NAN;
+							hc->LowPass = (Bandwidth > 0) ? Bandwidth : NAN;
 							hc->Notch = NAN;
 							hc->Impedance = (RsValue > 0) ? RsValue : NAN;	
 

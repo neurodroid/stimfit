@@ -43,11 +43,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern int VERBOSE_LEVEL; 	// used for debugging, variable is always defined
 
 
 #ifdef NDEBUG
 #define VERBOSE_LEVEL 0 	// turn off debugging information, but its only used without NDEBUG
+#else
+extern int VERBOSE_LEVEL; 	// used for debugging, variable is always defined
 #endif
 
 
