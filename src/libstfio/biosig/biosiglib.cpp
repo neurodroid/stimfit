@@ -37,6 +37,7 @@
             #error libbiosig is not ABI compatible
         //#endif
     #endif
+    #error Loading SectionDescription from Biosig Event Table not yet supported when compiling WITH_BIOSIG, use WITH_BIOSIG2 instead.
 #endif
 
 
@@ -158,28 +159,30 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
 	count sections and generate list of indices indicating start and end of sweeps
      */	
 
+    int numberOfChannels = biosig_get_number_of_channels(hdr);
     double fs = biosig_get_eventtable_samplerate(hdr);
     size_t numberOfEvents = biosig_get_number_of_events(hdr);
     size_t nsections = biosig_get_number_of_segments(hdr);
     size_t *SegIndexList = (size_t*)malloc((nsections+1)*sizeof(size_t));
+    uint16_t *ChannelSegmentAnnotationMatrix = (uint16_t*)calloc(nsections*numberOfChannels,sizeof(uint16_t));
     SegIndexList[0] = 0;
     SegIndexList[nsections] = biosig_get_number_of_samples(hdr);
     std::string annotationTableDesc = std::string();
     for (size_t k=0, n=0; k < numberOfEvents; k++) {
         uint32_t pos;
         uint16_t typ;
+        uint32_t dur;
+        uint16_t chn;
 #if BIOSIG_VERSION < 10605
         char *desc;
 #else
         const char *desc;
 #endif
         /*
-        uint32_t dur;
-        uint16_t chn;
         gdftype  timestamp;
         */
 
-        biosig_get_nth_event(hdr, k, &typ, &pos, NULL, NULL, NULL, &desc);
+        biosig_get_nth_event(hdr, k, &typ, &pos, &chn, &dur, NULL, &desc);
 
         if (typ == 0x7ffe) {
             SegIndexList[++n] = pos;
@@ -187,9 +190,23 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         else if (typ < 256) {
             sprintf(str,"%f s:\t%s\n", pos/fs, desc);
             annotationTableDesc += std::string( str );
+
+            size_t curSegIdx;
+            if (pos < SegIndexList[n]) {
+                curSegIdx = n;
+            }
+            else {
+                curSegIdx = n+1;
+            }
+            if (chn>0)
+                ChannelSegmentAnnotationMatrix[curSegIdx*numberOfChannels+chn]=typ;
+            else {
+                uint16_t c;
+                for (c=0; c<numberOfChannels; c++)
+                    ChannelSegmentAnnotationMatrix[curSegIdx*numberOfChannels+c]=typ;
+            }
         }
     }
-    int numberOfChannels = biosig_get_number_of_channels(hdr);
 
     /*************************************************************************
         rescale data to mV and pA
@@ -228,54 +245,51 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         for (size_t ns=1; ns<=nsections; ns++) {
 	        size_t SPS = SegIndexList[ns]-SegIndexList[ns-1];	// length of segment, samples per segment
 
-		int progbar = int(100.0*(1.0*ns/nsections + NS)/numberOfChannels);
-		std::ostringstream progStr;
-		progStr << "Reading channel #" << NS + 1 << " of " << numberOfChannels
-			<< ", Section #" << ns << " of " << nsections;
-		progDlg.Update(progbar, progStr.str());
+            uint16_t markerTyp = ChannelSegmentAnnotationMatrix[(ns-1)*numberOfChannels + NS];
 
-		/* unused //
-		char sweepname[20];
-		sprintf(sweepname,"sweep %i",(int)ns);
-		*/
-		Section TempSection(
-                                SPS, // TODO: hdr->nsamplingpoints[nc][ns]
-                                "" // TODO: hdr->sectionname[nc][ns]
-        );
+            int progbar = int(100.0*(1.0*ns/nsections + NS)/numberOfChannels);
+            std::ostringstream progStr;
+            progStr << "Reading channel #" << NS + 1 << " of " << numberOfChannels
+                << ", Section #" << ns << " of " << nsections;
+            progDlg.Update(progbar, progStr.str());
 
-		std::copy(&(data[NS*SPR + SegIndexList[ns-1]]),
+            char segmentMarker[20];
+            sprintf(segmentMarker,"%i",markerTyp);
+
+            Section TempSection(SPS, segmentMarker);
+
+            std::copy(&(data[NS*SPR + SegIndexList[ns-1]]),
 			  &(data[NS*SPR + SegIndexList[ns]]),
 			  TempSection.get_w().begin() );
 
+            try {
+                TempChannel.InsertSection(TempSection, ns-1);
+            }
+            catch (...) {
+                ReturnData.resize(0);
+                destructHDR(hdr);
+                return type;
+            }
+        }   // end for sections
         try {
-            TempChannel.InsertSection(TempSection, ns-1);
+            if ((int)ReturnData.size() < numberOfChannels)
+                ReturnData.resize(numberOfChannels);
+            ReturnData.InsertChannel(TempChannel, NS++);
         }
         catch (...) {
-			ReturnData.resize(0);
-			destructHDR(hdr);
-			return type;
-		}
-	}
-    try {
-        if ((int)ReturnData.size() < numberOfChannels) {
-            ReturnData.resize(numberOfChannels);
-		}
-		ReturnData.InsertChannel(TempChannel, NS++);
-    }
-    catch (...) {
-		ReturnData.resize(0);
-		destructHDR(hdr);
-		return type;
+            ReturnData.resize(0);
+            destructHDR(hdr);
+            return type;
         }
-    }
+    }   // end for channels
 
-    free(SegIndexList);
+    if (SegIndexList) free(SegIndexList);
+    if (ChannelSegmentAnnotationMatrix) free(ChannelSegmentAnnotationMatrix);
 
     ReturnData.SetComment ( biosig_get_recording_id(hdr) );
 
     sprintf(str,"v%i.%i.%i (compiled on %s %s)",BIOSIG_VERSION_MAJOR,BIOSIG_VERSION_MINOR,BIOSIG_PATCHLEVEL,__DATE__,__TIME__);
     std::string Desc = std::string("importBiosig with libbiosig ")+std::string(str) + " ";
-
     const char* tmpstr;
     if ((tmpstr=biosig_get_technician(hdr)))
             Desc += std::string ("\nTechnician:\t") + std::string (tmpstr) + " ";

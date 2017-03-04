@@ -50,7 +50,7 @@ ifneq (,$(findstring mingw,$(WXCONF)))
 endif
 endif
 
-DEFINES += -DWITH_BIOSIG
+DEFINES += -DWITH_BIOSIG2
 DEFINES += -DHAVE_LAPACK
 #DEFINES += -DWITHOUT_ABF
 #DEFINES += -DWITHOUT_AXG
