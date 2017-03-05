@@ -62,9 +62,11 @@ void Recording::init() {
     cs = 0;
     selectedSections = std::vector<std::size_t>(0);
     selectBase = Vector_double(0);
+    sectionMarker = NULL;
 }
 
 Recording::~Recording() {
+    if (sectionMarker) free(sectionMarker);
 }
 
 const Channel& Recording::at(std::size_t n_c) const {
@@ -380,3 +382,27 @@ void Recording::AddRec(const Recording &toAdd) {
         n_c++;
     }
 }
+
+
+std::string Recording::GetEventDescription(int type) {
+    return listOfMarkers[type];
+}
+
+std::string Recording::SetEventDescription(int type, const char* Description) {
+    listOfMarkers[type] = Description;
+}
+
+void Recording::InitSectionMarkerList(size_t n) {
+    sectionMarker=(typeof(sectionMarker))calloc(n,sizeof(*sectionMarker));
+    return;
+}
+
+int Recording::GetSectionType(size_t section_number) {
+    return sectionMarker[section_number];
+}
+
+void Recording::SetSectionType(size_t section_number, int type) {
+    sectionMarker[section_number]=type;
+    return;
+}
+

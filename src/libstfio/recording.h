@@ -367,6 +367,21 @@ class StfioDll Recording {
      */
     const Channel& operator[](std::size_t at) const { return ChannelArray[at]; }
 
+    //! Get Description of Event Type
+    std::string GetEventDescription(int type);
+
+    //! Set Description of Event Type
+    std::string SetEventDescription(int type, const char* Description);
+
+    //! Initialize List of Section Markers
+    void InitSectionMarkerList(size_t n);
+
+    //! Get Type of Section
+    int GetSectionType(size_t section_number);
+
+    //! Set Type of Section
+    void SetSectionType(size_t section_number, int type);
+
  private:
     std::deque<Channel> ChannelArray;
     std::string global_section_description, scaling;
@@ -396,6 +411,15 @@ class StfioDll Recording {
     // Base line value for each selected trace
     Vector_double selectBase;
     
+    // defined when data is loaded
+    const char* listOfMarkers[256];
+
+    /* SectionMarker contains, for each section, it's type
+       as defined event table. 
+       currently only one event type per segment is supported. 
+     */
+    int* sectionMarker=NULL;
+
     void init();
 
 };
