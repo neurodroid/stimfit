@@ -12,7 +12,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-// Copyright 2012,2013 Alois Schloegl, IST Austria <alois.schloegl@ist.ac.at>
+// Copyright 2012,2013,2017 Alois Schloegl, IST Austria
 
 #include <sstream>
 
@@ -163,8 +163,8 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     double fs = biosig_get_eventtable_samplerate(hdr);
     size_t numberOfEvents = biosig_get_number_of_events(hdr);
     size_t nsections = biosig_get_number_of_segments(hdr);
+    ReturnData.InitSectionMarkerList(nsections);
     size_t *SegIndexList = (size_t*)malloc((nsections+1)*sizeof(size_t));
-    uint16_t *ChannelSegmentAnnotationMatrix = (uint16_t*)calloc(nsections*numberOfChannels,sizeof(uint16_t));
     SegIndexList[0] = 0;
     SegIndexList[nsections] = biosig_get_number_of_samples(hdr);
     std::string annotationTableDesc = std::string();
@@ -183,7 +183,6 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         */
 
         biosig_get_nth_event(hdr, k, &typ, &pos, &chn, &dur, NULL, &desc);
-
         if (typ == 0x7ffe) {
             SegIndexList[++n] = pos;
         }
@@ -191,20 +190,10 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
             sprintf(str,"%f s:\t%s\n", pos/fs, desc);
             annotationTableDesc += std::string( str );
 
-            size_t curSegIdx;
-            if (pos < SegIndexList[n]) {
-                curSegIdx = n;
-            }
-            else {
-                curSegIdx = n+1;
-            }
-            if (chn>0)
-                ChannelSegmentAnnotationMatrix[curSegIdx*numberOfChannels+chn]=typ;
-            else {
-                uint16_t c;
-                for (c=0; c<numberOfChannels; c++)
-                    ChannelSegmentAnnotationMatrix[curSegIdx*numberOfChannels+c]=typ;
-            }
+            size_t currentSectionNumber = (pos < SegIndexList[n]) ? n : (n+1);
+            ReturnData.SetSectionType(currentSectionNumber-1, typ);
+            // TODO: Description of EvenTypes
+            // ReturnData.SetEventDescription( currentSectionNumber-1, desc);
         }
     }
 
@@ -245,22 +234,17 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         for (size_t ns=1; ns<=nsections; ns++) {
 	        size_t SPS = SegIndexList[ns]-SegIndexList[ns-1];	// length of segment, samples per segment
 
-            uint16_t markerTyp = ChannelSegmentAnnotationMatrix[(ns-1)*numberOfChannels + NS];
-
-            int progbar = int(100.0*(1.0*ns/nsections + NS)/numberOfChannels);
+            int progbar = int(100.0 * (1.0 * ns / nsections + NS) / numberOfChannels);
             std::ostringstream progStr;
             progStr << "Reading channel #" << NS + 1 << " of " << numberOfChannels
                 << ", Section #" << ns << " of " << nsections;
             progDlg.Update(progbar, progStr.str());
 
-            char segmentMarker[20];
-            sprintf(segmentMarker,"%i",markerTyp);
-
-            Section TempSection(SPS, segmentMarker);
+            Section TempSection(SPS, "");
 
             std::copy(&(data[NS*SPR + SegIndexList[ns-1]]),
-			  &(data[NS*SPR + SegIndexList[ns]]),
-			  TempSection.get_w().begin() );
+			    &(data[NS*SPR + SegIndexList[ns]]),
+			    TempSection.get_w().begin() );
 
             try {
                 TempChannel.InsertSection(TempSection, ns-1);
@@ -284,7 +268,6 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     }   // end for channels
 
     if (SegIndexList) free(SegIndexList);
-    if (ChannelSegmentAnnotationMatrix) free(ChannelSegmentAnnotationMatrix);
 
     ReturnData.SetComment ( biosig_get_recording_id(hdr) );
 
