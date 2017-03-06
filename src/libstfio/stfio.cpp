@@ -95,6 +95,7 @@ stfio::findType(const std::string& ext) {
     else if (ext=="*.dat") return stfio::heka;
     else if (ext=="*.smr") return stfio::son;
     else if (ext=="*.tdms") return stfio::tdms;
+    else if (ext=="*.clp") return stfio::intan;
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
 #  if (BIOSIG_VERSION < 10800)
     else if (ext=="*.dat;*.cfs;*.gdf;*.ibw") return stfio::biosig;
@@ -129,6 +130,8 @@ stfio::findExtension(stfio::filetype ftype) {
          return ".smr";
      case stfio::tdms:
          return ".tdms";
+     case stfio::intan:
+         return ".clp";
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
      case stfio::biosig:
          return ".gdf";
