@@ -50,6 +50,8 @@ private:
     void OnNewfromselectedThisMenu( wxCommandEvent& event ) { OnNewfromselectedThis( ); }
     void Selectsome(wxCommandEvent& event);
     void Unselectsome(wxCommandEvent& event);
+    void SelectTracesOfType(wxCommandEvent& event);
+    void UnselectTracesOfType(wxCommandEvent& event);
     void ConcatenateMultiChannel(wxCommandEvent& event);
     void OnAnalysisBatch( wxCommandEvent& event );
     void OnAnalysisIntegrate( wxCommandEvent& event );

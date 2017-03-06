@@ -59,10 +59,15 @@ BEGIN_EVENT_TABLE( wxStfDoc, wxDocument )
 EVT_MENU( ID_SWAPCHANNELS, wxStfDoc::OnSwapChannels )
 EVT_MENU( ID_FILEINFO, wxStfDoc::Fileinfo)
 EVT_MENU( ID_NEWFROMSELECTEDTHIS, wxStfDoc::OnNewfromselectedThisMenu  )
+
 EVT_MENU( ID_MYSELECTALL, wxStfDoc::Selectall )
 EVT_MENU( ID_UNSELECTALL, wxStfDoc::Deleteselected )
 EVT_MENU( ID_SELECTSOME, wxStfDoc::Selectsome )
 EVT_MENU( ID_UNSELECTSOME, wxStfDoc::Unselectsome )
+
+EVT_MENU( ID_SELECT_AND_ADD, wxStfDoc::SelectTracesOfType )
+EVT_MENU( ID_SELECT_AND_REMOVE, wxStfDoc::UnselectTracesOfType )
+
 EVT_MENU( ID_CONCATENATE_MULTICHANNEL, wxStfDoc::ConcatenateMultiChannel )
 EVT_MENU( ID_BATCH, wxStfDoc::OnAnalysisBatch )
 EVT_MENU( ID_INTEGRATE, wxStfDoc::OnAnalysisIntegrate )
@@ -1825,6 +1830,50 @@ void wxStfDoc::Selectsome(wxCommandEvent &WXUNUSED(event)) {
         catch (const std::out_of_range& e) {
             wxGetApp().ExceptMsg( wxString::FromAscii(e.what()) );
         }
+    }
+    wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
+    pFrame->SetSelected(GetSelectedSections().size());
+    Focus();
+}
+
+void wxStfDoc::SelectTracesOfType(wxCommandEvent &WXUNUSED(event)) {
+    // TODO: dialog should display possible selections
+
+    //insert standard values:
+    std::vector<std::string> labels(1);
+    Vector_double defaults(labels.size());
+    labels[0]="Select Trace of Type";defaults[0]=1;
+    stf::UserInput init(labels,defaults,"Select trace of type");
+
+    wxStfUsrDlg EveryDialog(GetDocumentWindow(),init);
+    if (EveryDialog.ShowModal()!=wxID_OK) return;
+    Vector_double input(EveryDialog.readInput());
+    if (input.size()!=1) return;
+    int selTyp=(int)input[0];
+    for (size_t n=0; n < (int)get()[GetCurChIndex()].size(); ++n) {
+        if (GetSectionType(n)==selTyp) SelectTrace(n, baseBeg, baseEnd);
+    }
+    wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
+    pFrame->SetSelected(GetSelectedSections().size());
+    Focus();
+}
+
+void wxStfDoc::UnselectTracesOfType(wxCommandEvent &WXUNUSED(event)) {
+    // TODO: dialog should display possible selections
+
+    //insert standard values:
+    std::vector<std::string> labels(1);
+    Vector_double defaults(labels.size());
+    labels[0]="Unselect Traces of Type";defaults[0]=1;
+    stf::UserInput init(labels,defaults,"Unselect trace of type");
+
+    wxStfUsrDlg EveryDialog(GetDocumentWindow(),init);
+    if (EveryDialog.ShowModal()!=wxID_OK) return;
+    Vector_double input(EveryDialog.readInput());
+    if (input.size()!=1) return;
+    int selTyp=(int)input[0];
+    for (int n=0; n < (int)get()[GetCurChIndex()].size(); ++n) {
+        if (GetSectionType(n)==selTyp) UnselectTrace(n);
     }
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
     pFrame->SetSelected(GetSelectedSections().size());

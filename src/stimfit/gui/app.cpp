@@ -673,6 +673,11 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
                         wxT("Select every n-th trace in this file")
                         );
     m_edit_menu->Append(
+                        ID_SELECT_AND_ADD,
+                        wxT("Se&lect and add traces of type ..."),
+                        wxT("Traces of a certain type are added to the select")
+                        );
+    m_edit_menu->Append(
                         ID_UNSELECTALL,
                         wxT("&Unselect all traces\tCtrl+U"),
                         wxT("Unselect all traces in this file")
@@ -681,6 +686,11 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
                         ID_UNSELECTSOME,
                         wxT("U&nselect some traces"),
                         wxT("Unselect some traces in this file")
+                        );
+    m_edit_menu->Append(
+                        ID_SELECT_AND_REMOVE,
+                        wxT("Unse&lect traces of type ..."),
+                        wxT("Traces of a certain type are removed from the selection")
                         );
     wxMenu *editSub=new wxMenu;
     editSub->Append(
