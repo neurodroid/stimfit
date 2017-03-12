@@ -70,6 +70,9 @@ noinst_HEADERS = \
 	./src/libstfio/igor/igorlib.h \
 	./src/libstfio/igor/CrossPlatformFileIO.h \
 	./src/libstfio/igor/IgorBin.h \
+	./src/libstfio/intan/common.h \
+	./src/libstfio/intan/intanlib.h \
+	./src/libstfio/intan/streams.h \
 	./src/libstfnum/stfnum.h ./src/libstfnum/fit.h ./src/libstfnum/spline.h \
 	./src/libstfnum/measure.h \
 	./src/libstfnum/levmar/lm.h ./src/libstfnum/levmar/levmar.h \

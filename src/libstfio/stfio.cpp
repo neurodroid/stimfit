@@ -38,6 +38,7 @@
   #include "./biosig/biosiglib.h"
 #endif
 #include "./cfs/cfslib.h"
+#include "./intan/intanlib.h"
 #ifndef TEST_MINIMAL
   #include "./heka/hekalib.h"
 #else
@@ -207,6 +208,10 @@ bool stfio::importFile(
             break;
         }
 #endif
+        case stfio::intan: {
+            stfio::importIntanFile(fName, ReturnData, progDlg);
+            break;
+        }
 
 #ifndef TEST_MINIMAL
         case stfio::cfs: {

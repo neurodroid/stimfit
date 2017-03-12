@@ -41,7 +41,10 @@ libstfio_la_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp ./stfio.cpp \
         ./heka/hekalib.cpp \
 	./igor/igorlib.cpp \
 	./igor/CrossPlatformFileIO.c \
-	./igor/WriteWave.c
+	./igor/WriteWave.c \
+	./intan/common.cpp \
+	./intan/intanlib.cpp \
+	./intan/streams.cpp
 
 if WITH_BIOSIG2
 libstfio_la_SOURCES += ./biosig/biosiglib.cpp
