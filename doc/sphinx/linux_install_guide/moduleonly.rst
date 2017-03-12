@@ -18,20 +18,20 @@ Then, you need the `Stimfit <http://www.stimfit.org>`_ source code:
     $ cd $HOME
     $ git clone https://github.com/neurodroid/stimfit.git
 
-This will download the code to a directory called *stfio*.
+This will download the code to a directory called *stimfit*.
 
 Next, you need to generate the build system:
 
 ::
 
-    $ cd $HOME/stfio
+    $ cd $HOME/stimfit
     $ ./autogen.sh
 
 Now you can configure. I strongly recommend building in a separate directory.
 
 ::
 
-    $ cd $HOME/stfio
+    $ cd $HOME/stimfit
     $ mkdir build
     $ cd build
     $ mkdir module
@@ -40,6 +40,12 @@ Now you can configure. I strongly recommend building in a separate directory.
 
 Remember to add the argument *--with-biosig* to the configure script 
 if you want to have extra biomedical fileformats for stfio. 
+
+If you want to install the *stfio* module for a non-default Python distribution, such as **Anaconda Python**, use the argument *--prefix=* to specify the installation path as the *site-packages* folder of your favorite Python distribution. The following example will install *stfio* for Anaconda Python 2.7:
+
+::
+
+    $ ../../configure --enable-module --prefix=$HOME/anaconda/lib/python2.7/site-packages
 
 Then, build and install:
 
