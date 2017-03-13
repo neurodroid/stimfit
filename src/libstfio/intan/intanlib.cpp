@@ -249,7 +249,9 @@ void stfio::importIntanFile(const std::string &fName, Recording &ReturnData, Pro
         ReturnData.resize(channels.size());
         ReturnData.SetXScale(1e3/hIntan.Settings.samplingRate);
         ReturnData.SetXUnits("ms");
-        ReturnData.SetDateTime(hIntan.date_Year, hIntan.date_Month, hIntan.date_Day,
+        int mon = hIntan.date_Month-1;
+        int year = hIntan.date_Year - 1900;
+        ReturnData.SetDateTime(year, mon, hIntan.date_Day,
                                hIntan.date_Hour, hIntan.date_Minute, hIntan.date_Second);
         for (unsigned int nchan = 0; nchan < channels.size(); ++nchan) {
             // ReturnData[nchan].resize(hIntan.Settings.waveform.size());
