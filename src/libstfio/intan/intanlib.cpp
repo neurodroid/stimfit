@@ -185,21 +185,32 @@ IntanHeader read_header(BinaryReader& binreader) {
     return hIntan;
 }
 
-std::vector<float> read_data(BinaryReader& binreader) {
+std::vector<std::vector<float> > read_data(BinaryReader& binreader, const IntanHeader& hIntan) {
     uint64_t bytes_remaining = binreader.bytesRemaining();
     uint64_t length = bytes_remaining / (4+4+4+4);
     std::vector<uint32_t> timestamps(length);
     std::vector<float> applied(length);
-    std::vector<float> clampValues(length);
-    std::vector<float> measuredData(length);
+    std::vector<float> totalClamp(length);
+    std::vector<std::vector<float> > channels(2);
+    channels[0].resize(length);
+    channels[1].resize(length);
     for (unsigned int idata = 0; idata < length; ++idata) {
         binreader >> timestamps[idata];
         binreader >> applied[idata]; 
-        binreader >> clampValues[idata];
-        binreader >> measuredData[idata];
+        binreader >> channels[1][idata];
+        binreader >> channels[0][idata];
+        float vfactor = 1e3; // V -> mV
+        float ifactor = 1e12; // A -> pA
+        if (hIntan.Settings.isVoltageClamp) {
+            channels[0][idata] *= ifactor;
+            channels[1][idata] *= vfactor;
+        } else {
+            channels[1][idata] *= ifactor;
+            channels[0][idata] *= vfactor;
+        }
     }
 
-    return measuredData;
+    return channels;
 }
 
 std::vector<std::vector<float> > read_aux_data(BinaryReader& binreader, uint16_t numADCs) {
@@ -233,16 +244,49 @@ void stfio::importIntanFile(const std::string &fName, Recording &ReturnData, Pro
     std::unique_ptr<BinaryReader> binreader(new BinaryReader(std::move(fs)));
 
     IntanHeader hIntan = read_header(*binreader);
-    std::vector<float> section_data;
     if (hIntan.datatype == 0) {
-        section_data = read_data(*binreader);
+        std::vector<std::vector<float> > channels = read_data(*binreader, hIntan);
+        ReturnData.resize(channels.size());
+        ReturnData.SetXScale(1e3/hIntan.Settings.samplingRate);
+        ReturnData.SetXUnits("ms");
+        ReturnData.SetDateTime(hIntan.date_Year, hIntan.date_Month, hIntan.date_Day,
+                               hIntan.date_Hour, hIntan.date_Minute, hIntan.date_Second);
+        for (unsigned int nchan = 0; nchan < channels.size(); ++nchan) {
+            // ReturnData[nchan].resize(hIntan.Settings.waveform.size());
+            ReturnData[nchan].resize(1);
+        }
+        if (hIntan.Settings.isVoltageClamp) {
+            ReturnData[0].SetYUnits("pA");
+            ReturnData[1].SetYUnits("mV");
+        } else {
+            ReturnData[1].SetYUnits("pA");
+            ReturnData[0].SetYUnits("mV");
+        }
+        unsigned int nsec = 0;
+        for (unsigned int nchan = 0; nchan < channels.size(); ++nchan) {
+            ReturnData[nchan][nsec].resize(channels[nchan].size());
+            std::copy(channels[nchan].begin(), channels[nchan].end(),
+                      ReturnData[nchan][nsec].get_w().begin());
+        }
+
+        // for (std::vector<Segment>::const_iterator it = hIntan.Settings.waveform.begin();
+        //      it != hIntan.Settings.waveform.end();
+        //      ++it)
+        // {
+        //     for (unsigned int nchan = 0; nchan < channels.size(); ++nchan) {
+        //         ReturnData[nchan][nsec].resize(it->endIndex - it->startIndex);
+        //         std::copy(&(channels[nchan][it->startIndex]), &(channels[nchan][it->endIndex]),
+        //                   ReturnData[nchan][nsec].get_w().begin());
+        //     }
+        //     nsec++;
+        // }
+
     } else {
         std::vector<std::vector<float> > aux_data = read_aux_data(*binreader, hIntan.numADCs);
-        section_data = aux_data[0];
+        ReturnData.resize(1);
+        ReturnData[0].resize(1);
+        ReturnData[0][0].resize(aux_data[0].size());
+        std::copy(aux_data[0].begin(), aux_data[0].end(), ReturnData[0][0].get_w().begin());
     }
-    ReturnData.resize(1);
-    ReturnData[0].resize(1);
-    ReturnData[0][0].resize(section_data.size());
-    std::copy(section_data.begin(), section_data.end(), ReturnData[0][0].get_w().begin());
 
 }
