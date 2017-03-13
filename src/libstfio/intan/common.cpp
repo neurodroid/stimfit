@@ -1,3 +1,28 @@
+//----------------------------------------------------------------------------------
+// common.h
+// Downloaded from http://www.intantech.com/files/CLAMP_source_code_v1_0.zip
+// as of 2017-03-13
+//
+// Original comment and license information for the header file common.h:
+// Intan Technologies
+// Common Source File
+// Version 2.0 (25 August 2015)
+//
+// Provides common functionality for RHD and CLAMP source code.
+//
+// Copyright (c) 2014-2015 Intan Technologies LLC
+//
+// This software is provided 'as-is', without any express or implied warranty.
+// In no event will the authors be held liable for any damages arising from the
+// use of this software.
+//
+// Permission is granted to anyone to use this software for any applications that
+// use Intan Technologies integrated circuits, and to alter it and redistribute it
+// freely.
+//
+// See http://www.intantech.com for documentation and product information.
+//----------------------------------------------------------------------------------
+
 #include "common.h"
 #include <iostream>
 

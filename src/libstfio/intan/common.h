@@ -1,6 +1,9 @@
 //----------------------------------------------------------------------------------
 // common.h
+// Downloaded from http://www.intantech.com/files/CLAMP_source_code_v1_0.zip
+// as of 2017-03-13
 //
+// Original comment and license information:
 // Intan Technologies
 // Common Header File
 // Version 2.0 (25 August 2015)

@@ -20,6 +20,14 @@ Copyright: 1993-2005, Molecular Devices <info@moldev.com>
            1993-2002, Axon Instruments <info@moldev.com>
 License: axon2
 
+Files: src/libstfio/intan/common.*
+Copyright: 2016, Intan Technologies <info@intantech.com>
+License: GPL-3
+
+Files: src/libstfio/intan/streams.*
+Copyright: 2016, Intan Technologies <info@intantech.com>
+License: GPL-3
+
 Files: src/libstfnum/levmar/*
 Copyright: 2004, Manolis Lourakis <lourakis@ics.forth.gr>
 License: GPL-2+

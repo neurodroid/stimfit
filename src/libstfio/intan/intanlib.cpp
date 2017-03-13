@@ -19,17 +19,9 @@
  */
 
 /*
-Mostly a Python version of read_Intan_CLP_file.m from
+Mostly a C++ version of read_Intan_CLP_file.m from
 http://www.intantech.com/files/Intan_CLAMP_software_compiled_v1_0.zip
 as of 2016-11-05
-
-Example:
->>> import matplotlib.pyplot as plt
->>> import intan
->>> intan_file = intan.IntanFile('myexperiment_A_160916_142731.clp')
->>> plt.plot(intan_file.data["Time"], intan_file.data["Measured"])
->>> intan_file = intan.IntanFile('myexperiment_AUX_160916_142731.clp')
->>> plt.plot(intan_file.data["Time"], intan_file.data["ADC"][1])
 */
 
 #include <vector>
