@@ -29,70 +29,26 @@
 
 #include <memory>
 #include <string>
+#if __cplusplus > 199711L
 #include <cstdint>
+using std::unique_ptr;
+using std::move;
+#else
+#include <boost/cstdint.hpp>
+#include <boost/move/unique_ptr.hpp>
+using boost::movelib::unique_ptr;
+using boost::move;
+#define nullptr NULL
+#endif
 #include <iosfwd>
 #include <istream>
+
 
 #if defined(_WIN32) && defined(_UNICODE)
     typedef std::wstring FILENAME;
 #else
     typedef std::string FILENAME;
 #endif
-
-//  ------------------------------------------------------------------------
-class FileOutStream  {
-public:
-    FileOutStream();
-    ~FileOutStream();
-
-    void open(const FILENAME& filename); // Opens with new name
-    int write(const char* data, int len);
-
-private:
-    std::unique_ptr<std::ofstream> filestream;
-
-    void close();
-};
-
-//  ------------------------------------------------------------------------
-const unsigned int KILO = 1024;
-
-class BufferedOutStream {
-public:
-    BufferedOutStream(std::unique_ptr<FileOutStream>&& other_, unsigned int bufferSize_);
-    ~BufferedOutStream();
-
-    int write(const char* data, int len);
-    void flushIfNecessary();
-    void flush();
-    
-private:
-    std::unique_ptr<FileOutStream> other;
-    char* dataStreamBuffer;
-    unsigned int bufferIndex;
-    unsigned int bufferSize;
-};
-
-//  ------------------------------------------------------------------------
-class BinaryWriter {
-public:
-    BinaryWriter(std::unique_ptr<FileOutStream>&& other_, unsigned int bufferSize_);
-    virtual ~BinaryWriter();
-
-protected:
-    friend BinaryWriter& operator<<(BinaryWriter& ostream, int32_t value);
-    friend BinaryWriter& operator<<(BinaryWriter& ostream, uint32_t value);
-    friend BinaryWriter& operator<<(BinaryWriter& ostream, int16_t value);
-    friend BinaryWriter& operator<<(BinaryWriter& ostream, uint16_t value);
-    friend BinaryWriter& operator<<(BinaryWriter& ostream, int8_t value);
-    friend BinaryWriter& operator<<(BinaryWriter& ostream, uint8_t value);
-    friend BinaryWriter& operator<<(BinaryWriter& ostream, float value);
-    friend BinaryWriter& operator<<(BinaryWriter& ostream, double value);
-    friend BinaryWriter& operator<<(BinaryWriter& ostream, const std::wstring& value);
-
-private:
-    BufferedOutStream other;
-};
 
 //  ------------------------------------------------------------------------
 class InStream {
@@ -116,7 +72,7 @@ public:
     std::istream::pos_type currentPos() override;
 
 private:
-    std::unique_ptr<std::ifstream> filestream;
+    unique_ptr<std::ifstream> filestream;
     std::istream::pos_type filesize;
 
     virtual void close();
@@ -125,7 +81,11 @@ private:
 //  ------------------------------------------------------------------------
 class BinaryReader {
 public:
-    BinaryReader(std::unique_ptr<FileInStream>&& other_);
+#if __cplusplus > 199711L
+    BinaryReader(unique_ptr<FileInStream>&& other_);
+#else
+    BinaryReader(BOOST_RV_REF(unique_ptr<FileInStream>) other_);
+#endif
     virtual ~BinaryReader();
 
     uint64_t bytesRemaining() { return other->bytesRemaining();  }
@@ -143,7 +103,7 @@ protected:
     friend BinaryReader& operator>>(BinaryReader& istream, std::wstring& value);
 
 private:
-    std::unique_ptr<FileInStream> other;
+    unique_ptr<FileInStream> other;
 };
 
 FILENAME toFileName(const std::string& s);

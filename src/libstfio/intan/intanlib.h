@@ -32,7 +32,11 @@ Example:
 >>> plt.plot(intan_file.data["Time"], intan_file.data["ADC"][1])
 */
 
+#if __cplusplus > 199711L
 #include <cstdint>
+#else
+#include <boost/cstdint.hpp>
+#endif
 
 #include "./../stfio.h"
 

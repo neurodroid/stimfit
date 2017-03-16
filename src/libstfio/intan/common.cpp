@@ -30,6 +30,10 @@ using std::ostream;
 using std::string;
 using std::wstring;
 
+#if __cplusplus <= 199711L
+#define nullptr NULL
+#endif
+
 class nullbuf : public std::streambuf
 {
 protected:
