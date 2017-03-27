@@ -75,15 +75,30 @@ if 'linux' in sys.platform:
         hdf5_extra_link_args = [pkg_config_out]
 
 
-if 'linux' not in sys.platform:
-    biosig_define_macros = [('WITH_BIOSIG2', None)]
-    if os.name == "nt":
-        biosig_libraries = ['libbiosig2']
-    else:
-        biosig_libraries = ['biosig2']
+biosig_define_macros = [('WITH_BIOSIG2', None)]
+if os.name == "nt":
+    biosig_libraries = ['libbiosig2']
+    biosig_lite_sources = []
 else:
-    biosig_define_macros = [('WITH_BIOSIG', None)]
-    biosig_libraries = ['biosig', 'cholmod']
+    biosig_libraries = []
+    biosig_lite_sources = [
+        'src/libbiosiglite/biosig4c++/t210/sopen_abf_read.c',
+        'src/libbiosiglite/biosig4c++/t210/sopen_alpha_read.c',
+        'src/libbiosiglite/biosig4c++/t210/sopen_axg_read.c',
+        'src/libbiosiglite/biosig4c++/t210/sopen_cfs_read.c',
+        'src/libbiosiglite/biosig4c++/t210/sopen_heka_read.c',
+        'src/libbiosiglite/biosig4c++/t210/sopen_igor.c',
+        'src/libbiosiglite/biosig4c++/t210/sopen_scp_read.c',
+        'src/libbiosiglite/biosig4c++/t210/scp-decode.cpp',
+        'src/libbiosiglite/biosig4c++/t220/crc4scp.c',
+        'src/libbiosiglite/biosig4c++/t220/sopen_scp_write.c',
+        'src/libbiosiglite/biosig4c++/test0/sandbox.c',
+        'src/libbiosiglite/biosig4c++/biosig.c',
+        'src/libbiosiglite/biosig4c++/biosig2.c',
+        'src/libbiosiglite/biosig4c++/gdftime.c',
+        'src/libbiosiglite/biosig4c++/mdc_ecg_codes.c',
+        'src/libbiosiglite/biosig4c++/physicalunits.c'
+    ]
 
 fftw3_libraries = ['fftw3']
 if 'libraries' in system_info.get_info('fftw3').keys():
@@ -202,7 +217,7 @@ stfio_module = Extension(
         'src/libstfnum/stfnum.cpp',
         'src/pystfio/pystfio.cxx',
         'src/pystfio/pystfio.i',
-    ])
+    ] + biosig_lite_sources)
 
 
 setup(name='stfio',
