@@ -80,7 +80,7 @@ if os.name == "nt":
     biosig_libraries = ['libbiosig2']
     biosig_lite_sources = []
 else:
-    biosig_define_macros = [('WITH_BIOSIG2', None), ('WITH_BIOSIGLITE', None)]
+    biosig_define_macros = [('WITH_BIOSIG2', None), ('WITH_BIOSIGLITE', None), ('WITHOUT_NETWORK', None)]
     biosig_libraries = ['iconv']
     biosig_lite_sources = [
         'src/libbiosiglite/biosig4c++/t210/sopen_abf_read.c',
