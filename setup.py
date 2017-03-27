@@ -75,12 +75,13 @@ if 'linux' in sys.platform:
         hdf5_extra_link_args = [pkg_config_out]
 
 
-biosig_define_macros = [('WITH_BIOSIG2', None)]
 if os.name == "nt":
+    biosig_define_macros = [('WITH_BIOSIG2', None)]
     biosig_libraries = ['libbiosig2']
     biosig_lite_sources = []
 else:
-    biosig_libraries = []
+    biosig_define_macros = [('WITH_BIOSIG2', None), ('WITH_BIOSIGLITE', None)]
+    biosig_libraries = ['iconv']
     biosig_lite_sources = [
         'src/libbiosiglite/biosig4c++/t210/sopen_abf_read.c',
         'src/libbiosiglite/biosig4c++/t210/sopen_alpha_read.c',
