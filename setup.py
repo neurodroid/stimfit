@@ -95,6 +95,7 @@ else:
         'src/libbiosiglite/biosig4c++/test0/sandbox.c',
         'src/libbiosiglite/biosig4c++/biosig.c',
         'src/libbiosiglite/biosig4c++/biosig2.c',
+        'src/libbiosiglite/biosig4c++/biosig-network.c',
         'src/libbiosiglite/biosig4c++/gdftime.c',
         'src/libbiosiglite/biosig4c++/mdc_ecg_codes.c',
         'src/libbiosiglite/biosig4c++/physicalunits.c'
