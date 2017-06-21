@@ -9,7 +9,7 @@ MYLD=`${WX_CONF} --ld`
 
 config_args="--with-wx-config=${WX_CONF} \
              --disable-dependency-tracking \
-             --with-biosig2"
+             --with-biosiglite"
 #              --with-lapack-lib=/opt/local/lib/libatlas.a \
 #              --enable-debug \
 
