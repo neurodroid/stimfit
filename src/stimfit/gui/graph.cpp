@@ -1819,7 +1819,12 @@ void wxStfGraph::CreateScale(wxDC* pDC)
             double y2First=nextTickMult*yScaled2;
             int y2FirstTick=yFormat2(y2First);
             // How many times does the y-scale bar fit into the window?
-            int y2ScaleInWindow=(y2FirstTick-topDist)/barLengthY2;
+            int y2ScaleInWindow = 1;
+            if (barLengthY2 > 0) {
+                y2ScaleInWindow = (y2FirstTick-topDist)/barLengthY2;
+            } else {
+                y2ScaleInWindow = (y2FirstTick-topDist)/1e-15;
+            }
             // y-Axis ticks:
             for (int n_tick_y=0;n_tick_y<=y2ScaleInWindow;++n_tick_y) {
                 pDC->DrawLine(leftDist*2-tickLength,
