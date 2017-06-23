@@ -31,6 +31,8 @@ Example:
 >>> intan_file = intan.IntanFile('myexperiment_AUX_160916_142731.clp')
 >>> plt.plot(intan_file.data["Time"], intan_file.data["ADC"][1])
 */
+#ifndef INTANLIB_H
+#define INTANLIB_H
 
 #if __cplusplus > 199711L
 #include <cstdint>
@@ -39,6 +41,17 @@ Example:
 #endif
 
 #include "./../stfio.h"
+
+#ifdef _WINDOWS
+typedef __int8 int8_t;
+typedef __int16 int16_t;
+typedef __int32 int32_t;
+typedef __int64 int64_t;
+typedef unsigned __int8 uint8_t;
+typedef unsigned __int16 uint16_t;
+typedef unsigned __int32 uint32_t;
+typedef unsigned __int64 uint64_t;
+#endif
 
 class Recording;
 
@@ -128,3 +141,4 @@ namespace stfio {
     void importIntanFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg);
 
 }
+#endif

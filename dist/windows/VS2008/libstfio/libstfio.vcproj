@@ -587,6 +587,22 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="intan"
+				>
+				<File
+					RelativePath="..\..\..\..\src\libstfio\intan\common.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\src\libstfio\intan\intanlib.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\src\libstfio\intan\streams.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Source Files"
@@ -784,6 +800,22 @@
 				</File>
 				<File
 					RelativePath="..\..\..\..\src\libstfio\igor\WriteWave.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="intan"
+				>
+				<File
+					RelativePath="..\..\..\..\src\libstfio\intan\common.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\src\libstfio\intan\intanlib.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\..\src\libstfio\intan\streams.cpp"
 					>
 				</File>
 			</Filter>

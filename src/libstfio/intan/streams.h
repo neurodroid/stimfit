@@ -43,6 +43,7 @@ using boost::move;
 #include <iosfwd>
 #include <istream>
 
+#include "./intanlib.h"
 
 #if defined(_WIN32) && defined(_UNICODE)
     typedef std::wstring FILENAME;

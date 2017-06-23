@@ -212,6 +212,10 @@ bool wxStfApp::OnInit(void)
                                      wxT("HEKA file"), wxT("*.dat"), wxT(""), wxT("dat"),
                                      wxT("HEKA Document"), wxT("HEKA View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
+    m_intanTemplate=new wxDocTemplate( docManager,
+                                     wxT("Intan CLAMP file"), wxT("*.clp"), wxT(""), wxT("clp"),
+                                     wxT("Intan CLAMP Document"), wxT("Intan View"), CLASSINFO(wxStfDoc),
+                                     CLASSINFO(wxStfView) );
 #if 0
     m_sonTemplate=new wxDocTemplate( docManager,
                                      wxT("CED Spike 2 (SON) file"), wxT("*.smr"), wxT(""), wxT(""),

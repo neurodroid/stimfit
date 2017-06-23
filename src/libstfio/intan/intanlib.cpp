@@ -239,7 +239,8 @@ std::vector<std::vector<float> > read_aux_data(BinaryReader& binreader, uint16_t
 
 void stfio::importIntanFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
     unique_ptr<FileInStream> fs(new FileInStream());
-    fs->open(fName);
+	std::wstring wfName(fName.begin(), fName.end());
+    fs->open(wfName);
 
     unique_ptr<BinaryReader> binreader(new BinaryReader(move(fs)));
 

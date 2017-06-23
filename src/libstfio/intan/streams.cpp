@@ -184,10 +184,17 @@ BinaryReader& operator>>(BinaryReader& istream, wstring& value) {
     value.clear();
     if (size > 0) {
         vector<char> tmp(size + 2);
+#ifndef _WINDOWS
         istream.other->read(tmp.data(), size);
         tmp[size] = 0;
         tmp[size + 1] = 0;
         value = reinterpret_cast<wchar_t*>(tmp.data());
+#else
+        istream.other->read(&tmp[0], size);
+        tmp[size] = 0;
+        tmp[size + 1] = 0;
+        value = reinterpret_cast<wchar_t*>(&tmp[0]);
+#endif
     }
     return istream;
 }

@@ -371,7 +371,7 @@ class StfioDll Recording {
     std::string GetEventDescription(int type);
 
     //! Set Description of Event Type
-    std::string SetEventDescription(int type, const char* Description);
+    void SetEventDescription(int type, const char* Description);
 
     //! Initialize List of Section Markers
     void InitSectionMarkerList(size_t n);
@@ -418,7 +418,7 @@ class StfioDll Recording {
        as defined event table. 
        currently only one event type per segment is supported. 
      */
-    int* sectionMarker=NULL;
+	std::vector<int> sectionMarker;
 
     void init();
 
