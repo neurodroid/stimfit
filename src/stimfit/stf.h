@@ -29,6 +29,10 @@
     #include <boost/function.hpp>
 #endif
 #endif
+
+#if (__GNUC__ > 5)
+  #include <functional>
+#endif
 #include <vector>
 #include <map>
 #include <string>
