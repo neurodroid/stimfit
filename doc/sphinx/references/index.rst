@@ -11,6 +11,74 @@ References
 
 `Stimfit <http://www.stimfit.org>`_ has been used for data analysis in the following publications. If you miss a reference to your publication, please let us know `here <https://groups.google.com/forum/#!forum/stimfit>`_.
 
+====
+2017
+====
+
+	* `Schmidt-Hieber C, Toleikyte G, Aitchison L, Roth A, Clark BA, Branco T, Häusser M (2017)
+<https://www.ncbi.nlm.nih.gov/pubmed/28628104>`_
+Active dendritic integration as a mechanism for robust and precise grid cell firing.
+*Nat Neurosci* 8:1114-1121
+
+	* `Rueckl M, Lenzi SC, Moreno-Velasquez L, Parthier D, Schmitz D, Ruediger S, Johenning FW (2017)
+<https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5489661/>`_
+SamuROI, a Python-Based Software Tool for Visualization and Analysis of Dynamic Time Series Imaging at Multiple Spatial Scales.
+*Front Neuroinform* doi: 10.3389/fninf.2017.00044
+
+	* `Saras A, Wu VV, Brawer HJ, Tanouye MA (2017)
+<http://www.genetics.org/content/206/4/1739>`_
+Investigation of Seizure-Susceptibility in a Drosophila melanogaster Model of Human Epilepsy with Optogenetic Stimulation
+*Genetics* 206:1739-1746.
+
+	* `Batsikadze G, Paulus W, Hasan A, Grundey J, Kuo MF, Nitsche MA (2017)
+<https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5431184/>`_
+Compromised neuroplasticity in cigarette smokers under nicotine withdrawal is restituted by the nicotinic α4β2-receptor partial agonist varenicline.
+*Sci Rep* 7:1387.
+
+	* `Booker SA, Campbell GR, Mysiak KS, Brophy PJ, Kind PC, Mahad DJ, Wyllie DJ (2017)
+<http://onlinelibrary.wiley.com/doi/10.1113/JP273581/full>`_
+Loss of protohaem IX farnesyltransferase in mature dentate granule cells impairs short-term facilitation at mossy fibre to CA3 pyramidal cell synapses
+*J Physiol* 195:2147-2160.
+
+	* `Akbalik G, Langebeck-Jensen K, Tushev G, Sambandan S, Rinne J, Epstein I, Cajigas 1, Vlatkovic I, Schuman EM (2017)
+<http://www.tandfonline.com/doi/abs/10.1080/15476286.2016.1251541>`_
+Visualization of newly synthesized neuronal RNA in vitro and in vivo using click-chemistry.
+*RNA Biol.* 14:20-28.
+
+	* `Merel J, Shababo B, Naka A, Adesnik H, Paninski (2017) 
+<http://www.sciencedirect.com/science/article/pii/S0165027016301030>`_
+Bayesian methods for event analysis of intracellular currents.
+*J Neurosci Methods* 30:21-31.
+
+	* `Cross KP, Britton S, Mangulins R, Money TG, Robertson RM (2017)
+<http://www.sciencedirect.com/science/article/pii/S0022191016303249>`_
+Food deprivation and prior anoxic coma have opposite effects on the activity of a visual interneuron in the locust.
+*J Inset Physiol* 98:336-346.
+
+	* `Gan J, Weng SM, Pernía-Andrade AJ, Csicsvari J, Jonas P (2017)
+<http://www.sciencedirect.com/science/article/pii/S0896627316309606>`_
+Phase-Locked Inhibition, but Not Excitation, Underlies Hippocampal Ripple Oscillations in Awake Mice In Vivo.
+*Neuron* 10.1016/j.neuron.2016.12.018
+
+	* `Sinclair JL, Fischl MJ, Alexandrova O, Heβ M, Grothe B, Leibold C, Kopp-Scheinpflug C (2017)  
+<https://doi.org/10.1523/JNEUROSCI.3728-16.2017>`_ 
+Sound-Evoked Activity Influences Myelination of Brainstem Axons in the Trapezoid Body. 
+*J Neurosci* 37 (34) 8239-8255.
+
+	* `Sambandan S, Akbalik G, Kochen L, Rinne J, Kahlstatt J, Glock C, Tushev G, Alvarez-Castelao B, Heckel A, Schuman EM (2017)
+<https://doi.org/10.1126/science.aaf8995>`_
+Activity-dependent spatially localized miRNA maturation in neuronal dendrites.
+*Science*, Feb 10; 355:634-637.
+
+	* `Christiansen GB, Andersen KH, Riis S, Nykjaer A, Bolcho U, Jensen MS, Holm MM (2017)
+<http://onlinelibrary.wiley.com/doi/10.1002/hipo.22689/full>`_
+The sorting receptor SorCS3 is a stronger regulator of glutamate receptor functions compared to GABAergic mechanisms in the hippocampus
+*Hippocampus* 10.1002/hipo.22689
+
+	* `Sinclair JL, Barnes-Davies M, Kopp-Scheinpflug C, Forsythe ID (2017)
+<http://www.sciencedirect.com/science/article/pii/S0378595516305482>`_
+Strain-specific differences in the development of neuronal excitability in the mouse ventral nucleus of the trapezoid body.
+*Hear Res* 18:28-37.
 
 ====
 2016
@@ -18,6 +86,10 @@ References
     * `Vyleta NP, Borges-Merjane C, Jonas P (2016) <https://elifesciences.org/content/5/e17977>`_ Plasticity-dependent, full detonation at hippocampal mossy fiber–CA3 pyramidal neuron synapses. *eLife* 2016;5;e17977.
     * `Brunner J and Szabadics J (2016) <http://www.nature.com/articles/ncomms13033>`_ Analogue modulation of back-propagating action potentials enables dendritic hybrid signalling. *Nat Comm* Oct 5;7:13033. 
     * `Hanus C, Geptin H, Tushev G, Garg S, Alvarez-Castelao B, Sambandan S, Kochen L, Hafner AS, Langer JD, Schuman EM (2016) <https://elifesciences.org/content/5/e20609>`_ Unconventional secretory processing diversifies neuronal ion channel properties.  *eLife* 2016;5:e20609.
+    * `Engel D
+<https://www.jove.com/video/54601/subcellular-patch-clamp-recordings-from-somatodendritic-domain-nigral>`_
+Subcellular Patch-clamp Recordings from the Somatodendritic Domain of Nigral Dopamine Neurons
+*J Vis Exp* doi: 10.3791/54601
     * `Guzman SJ, Schlögl A, Frotscher M,  Jonas P (2016) <http://science.sciencemag.org/content/353/6304/1117.long>`_ Synaptic mechanisms of pattern completion in the hippocampal CA3 network. *Science*, Sep 9; 353:1117-23.
     * `Iijima Y, Behr K, Iijima T, Biemans B, Bischofberger J, Scheiffele P (2016) <http://www.nature.com/articles/srep27400>`_ Distinct Defects in Synaptic Differentiation of Neocortical Neurons in Response to Prenatal Valproate Exposure. *Sci Rep* 6:27400.
     * `Janz P, Savanthrapadian S, Haussler U, Kilias A, Nestel S, Kretz O, Kirsch M, Bartos M, Egert U, Haas CA (2016) <http://cercor.oxfordjournals.org/content/early/2016/04/12/cercor.bhw093.short>`_ Synaptic Remodeling of Entorhinal Input Contributes to an Aberrant Hippocampal Network in Temporal Lobe Epilepsy. *Cerebral Cortex* bhw093.
@@ -31,6 +103,11 @@ References
 ====
 2015
 ====
+	
+    * `Kroll JR, Wong KG, Siddiqui FM, Tanouye MA (2015)
+`<http://www.genetics.org/content/201/3/1087>`_
+Disruption of Endocytosis with the Dynamin Mutant shibirets1 Suppresses Seizures in Drosophila. 
+*Genetics* 201:1087-1102.
     * `Sultan S, Li L, Moss J, Petrelli F, Casse F, Gebara E, Lopatar J, Pfrieger FW, Bezzi P, Bischofberger J, Toni N (2015) <http://www.sciencedirect.com/science/article/pii/S0896627315009319>`_ Synaptic Integration of Adult-Born Hippocampal Neurons Is Locally Controlled by Astrocytes. *Neuron* 88(5):957-72.
     * `Kowalski J, Gan J, Jonas P, Pernía-Andrade AJ (2015) <http://onlinelibrary.wiley.com/doi/10.1002/hipo.22550/abstract>`_ Intrinsic membrane properties determine hippocampal differential firing pattern in vivo in anesthetized rats. *Hippocampus* doi: 10.1002/hipo.22550.
     * `Scheib U, Stehest K, Gee CE, Körschen HG, Fudim R, Oertner TG, Hegemann P. (2015) <http://stke.sciencemag.org/content/8/389/rs8.abstract>`_ The rhodopsin-guanylyl cyclase of the aquatic fungus Blastocladiella emersonii enables fast optical control of cGMP signaling. *Sci Signal* 2015 Aug 11;8(389):rs8. doi: 10.1126/scisignal.aab0611.
