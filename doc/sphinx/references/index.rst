@@ -16,35 +16,23 @@ References
 ====
 
     * `Schmidt-Hieber C, Toleikyte G, Aitchison L, Roth A, Clark BA, Branco T, Häusser M (2017). <https://www.ncbi.nlm.nih.gov/pubmed/28628104>`_ Active dendritic integration as a mechanism for robust and precise grid cell firing. *Nat Neurosci* 8:1114-1121
-
-
     * `Rueckl M, Lenzi SC, Moreno-Velasquez L, Parthier D, Schmitz D, Ruediger S, Johenning FW (2017). <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5489661/>`_ SamuROI, a Python-Based Software Tool for Visualization and Analysis of Dynamic Time Series Imaging at Multiple Spatial Scales. *Front Neuroinform* doi: 10.3389/fninf.2017.00044
-
-    * `Saras A, Wu VV, Brawer HJ, Tanouye MA (2017). <http://www.genetics.org/content/206/4/1739>`_ Investigation of Seizure-Susceptibility in a Drosophila melanogaster Model of Human Epilepsy with Optogenetic Stimulation. *Genetics* 206:1739-1746.
-
-    * `Batsikadze G, Paulus W, Hasan A, Grundey J, Kuo MF, Nitsche MA (2017). <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5431184/>`_ Compromised neuroplasticity in cigarette smokers under nicotine withdrawal is restituted by the nicotinic α4β2-receptor partial agonist varenicline. *Sci Rep* 7:1387.
-
+    * `Saras A, Wu VV, Brawer HJ, Tanouye MA (2017). <http://www.genetics.org/content/206/4/1739>`_ Investigation of Seizure-Susceptibility in a Drosophila melanogaster Model of Human Epilepsy with Optogenetic Stimulation. *Genetics* 206:1739-1746
+    * `Batsikadze G, Paulus W, Hasan A, Grundey J, Kuo MF, Nitsche MA (2017). <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5431184/>`_ Compromised neuroplasticity in cigarette smokers under nicotine withdrawal is restituted by the nicotinic α4β2-receptor partial agonist varenicline. *Sci Rep* 7:1387
     * `Booker SA, Campbell GR, Mysiak KS, Brophy PJ, Kind PC, Mahad DJ, Wyllie DJ (2017). <http://onlinelibrary.wiley.com/doi/10.1113/JP273581/full>`_ Loss of protohaem IX farnesyltransferase in mature dentate granule cells impairs short-term facilitation at mossy fibre to CA3 pyramidal cell synapses. *J Physiol* 195:2147-2160.
-
     * `Akbalik G, Langebeck-Jensen K, Tushev G, Sambandan S, Rinne J, Epstein I, Cajigas 1, Vlatkovic I, Schuman EM (2017). <http://www.tandfonline.com/doi/abs/10.1080/15476286.2016.1251541>`_ Visualization of newly synthesized neuronal RNA in vitro and in vivo using click-chemistry. *RNA Biol.* 14:20-28.
-
     * `Merel J, Shababo B, Naka A, Adesnik H, Paninski (2017). <http://www.sciencedirect.com/science/article/pii/S0165027016301030>`_ Bayesian methods for event analysis of intracellular currents. *J Neurosci Methods* 30:21-31.
-
     * `Cross KP, Britton S, Mangulins R, Money TG, Robertson RM (2017). <http://www.sciencedirect.com/science/article/pii/S0022191016303249>`_ Food deprivation and prior anoxic coma have opposite effects on the activity of a visual interneuron in the locust. *J Inset Physiol* 98:336-346.
-
     * `Gan J, Weng SM, Pernía-Andrade AJ, Csicsvari J, Jonas P (2017). <http://www.sciencedirect.com/science/article/pii/S0896627316309606>`_ Phase-Locked Inhibition, but Not Excitation, Underlies Hippocampal Ripple Oscillations in Awake Mice In Vivo. *Neuron* 10.1016/j.neuron.2016.12.018
-
     * `Sinclair JL, Fischl MJ, Alexandrova O, Heβ M, Grothe B, Leibold C, Kopp-Scheinpflug C (2017). <https://doi.org/10.1523/JNEUROSCI.3728-16.2017>`_ Sound-Evoked Activity Influences Myelination of Brainstem Axons in the Trapezoid Body. *J Neurosci* 37 (34) 8239-8255.
-
     * `Sambandan S, Akbalik G, Kochen L, Rinne J, Kahlstatt J, Glock C, Tushev G, Alvarez-Castelao B, Heckel A, Schuman EM (2017). <https://doi.org/10.1126/science.aaf8995>`_ Activity-dependent spatially localized miRNA maturation in neuronal dendrites. *Science*, Feb 10; 355:634-637.
-
     * `Christiansen GB, Andersen KH, Riis S, Nykjaer A, Bolcho U, Jensen MS, Holm MM (2017). <http://onlinelibrary.wiley.com/doi/10.1002/hipo.22689/full>`_ The sorting receptor SorCS3 is a stronger regulator of glutamate receptor functions compared to GABAergic mechanisms in the hippocampus. *Hippocampus* 10.1002/hipo.22689
-
     * `Sinclair JL, Barnes-Davies M, Kopp-Scheinpflug C, Forsythe ID (2017). <http://www.sciencedirect.com/science/article/pii/S0378595516305482>`_ Strain-specific differences in the development of neuronal excitability in the mouse ventral nucleus of the trapezoid body. *Hear Res* 18:28-37.
 
 ====
 2016
 ====
+
     * `Vyleta NP, Borges-Merjane C, Jonas P (2016) <https://elifesciences.org/content/5/e17977>`_ Plasticity-dependent, full detonation at hippocampal mossy fiber–CA3 pyramidal neuron synapses. *eLife* 2016;5;e17977.
     * `Brunner J and Szabadics J (2016) <http://www.nature.com/articles/ncomms13033>`_ Analogue modulation of back-propagating action potentials enables dendritic hybrid signalling. *Nat Comm* Oct 5;7:13033. 
     * `Hanus C, Geptin H, Tushev G, Garg S, Alvarez-Castelao B, Sambandan S, Kochen L, Hafner AS, Langer JD, Schuman EM (2016) <https://elifesciences.org/content/5/e20609>`_ Unconventional secretory processing diversifies neuronal ion channel properties.  *eLife* 2016;5:e20609.
@@ -87,7 +75,6 @@ References
     * `Boudkkazi S, Brechet A, Schwenk J and Fakler B (2014). <http://www.cell.com/neuron/abstract/S0896-6273%2814%2900261-X>`_ Cornichon2 dictates the time course of excitatory transmission at individual hippocampal synapes. *Neuron*, doi: http://dx.doi.org/10.1016/j.neuron.2014.03.031
     * `Hu H and Jonas P (2014). <http://www.nature.com/neuro/journal/vaop/ncurrent/full/nn.3678.html>`_ A supercritical density of Na+ channels ensures fast signaling in GABAergic interneuron axons. *Nat Neurosci*, doi:10.1038/nn.3678
     * `Vyleta NP and Jonas P (2014). <http://www.ncbi.nlm.nih.gov/pubmed/24503854>`_ Loose coupling between Ca2+ channels and release sensors at a plastic hippocampal synapse. *Science*, Feb 7; 343:665-70. 
-
     * `Schmidt-Salzmann C, Li L, Bischofberger J (2013). <http://jp.physoc.org/content/early/2013/11/11/jphysiol.2013.267203.abstract>`_ Functional properties of extrasynaptic AMPA and NMDA receptors during postnatal hippocampal neurogenesis. *J Physiol*,  doi: 10.1113/jphysiol.2013.267203
     * `Hosp JA, Strüber M, Yanagawa Y, Obata K, Vida I, Jonas P, Bartos M (2013). <http://onlinelibrary.wiley.com/doi/10.1002/hipo.22214/full>`_ Morpho-physiological criteria divide dentate gyrus interneurons into classes. *Hippocampus*, doi: 10.1002/hipo.22214
     * `Schlögl A, Jonas P, Schmidt-Hieber C, Guzman SJ (2013). <http://www.degruyter.com/view/j/bmte.2013.58.issue-s1-G/bmt-2013-4181/bmt-2013-4181.xml>`_ Stimfit: a fast visualization and analysis environment for cellular neurophysiology. Biomedical Engineering/Biomedizinische Technik.
@@ -97,14 +84,11 @@ References
     * `Schmidt-Hieber C, Häusser M (2013). <http://www.nature.com/neuro/journal/v16/n3/full/nn.3340.html>`_ Cellular mechanisms of spatial navigation in the medial entorhinal cortex. *Nat Neurosci* 16(3):325-331.
     * `Fuzik J, Gellért L, Oláh G, Herédi J, Kocsis K, Knapp L, Nagy D, Kincses ZT, Kis Z, Farkas T, Toldi J (2013). <https://www.sciencedirect.com/science/article/pii/S0306452212010573>`_ Fundamental interstrain differences in cortical activity between Wistar and Sprague-Dawley rats during global ischemia. *Neuroscience* 228:371-381.
     * `McLeod F, Ganley R, Williams L, Selfridge J, Bird A, Cobb SR (2013). <https://www.sciencedirect.com/science/article/pii/S0306452212011748>`_ Reduced seizure threshold and altered network oscillatory properties in a mouse model of Rett syndrome. *Neuroscience* 231:195-205.
-
     * `Ho EC, Strüber M, Bartos M, Zhang L, Skinner FK (2012). <http://www.jneurosci.org/content/32/29/9931.full>`_ Inhibitory Networks of Fast-Spiking Interneurons Generate Slow Population Activities due to Excitatory Fluctuations and Network Multistability. *J Neurosci* 29:9931-9946.
     * `Kim S, Guzman SJ, Hu H, Jonas P (2012). <http://dx.doi.org/10.1038/nn.3060>`_ Active dendrites support efficient initiation of dendritic spikes in hippocampal CA3 pyramidal neurons. *Nat Neurosci* 15(4):600-606.
     * `Eggermann E and Jonas P (2012). <http://dx.doi.org/10.1038/nn.3002>`_ How the 'slow' Ca\ :sup:`2+` buffer parvalbumin affects transmitter release in nanodomains-coupling regimes. *Nat Neurosci* 15(1):2022.
     * `Sauer JF, Strüber M, Bartos M (2012) <http://www.jneurosci.org/cgi/pmidlookup?view=long&pmid=22442084>`_ Interneurons provide circuit-specific depolarization and hyperpolarization. *J Neurosci* 32(12):4224-4229.
-
     * `Poh YC, Beyder A, Strege PR, Farrugia G, Buist ML (2011). <http://www.sciencedirect.com/science/article/pii/S002251931100470X>`_ Quantification of gastrointestinal sodium channelopathy. *J Theor Biol* 293:41-48.
-
     * `Sambandan S, Sauer JF, Vida I, Bartos M (2010). <http://www.jneurosci.org/cgi/content/full/30/35/11826>`_ Associative plasticity at excitatory synapses facilitates recruitment of fast-spiking interneurons in the dentate gyrus. *J Neurosci* 30:11826-11837.
     * `Pelkonen A, Hiltunen M, Kiianmaa K, Yavich L (2010). <http://www3.interscience.wiley.com/journal/123488780/abstract>`_ Stimulated dopamine overflow and alpha-synuclein expression in the nucleus accumbens core distinguish rats bred for differential ethanol preference. *J Neurochem* 114:1168-1176.
     * `Schmidt-Hieber C, Bischofberger J (2010). <http://www.jneurosci.org/cgi/content/abstract/30/30/10233>`_ Fast sodium channel gating supports localized and efficient axonal action potential initiation. *J Neurosci* 30(30):10233-10242.
@@ -112,7 +96,6 @@ References
     * `Seutin V, Engel D (2010) <http://jn.physiology.org/cgi/content/abstract/103/6/3099>`_ Differences in Na\ :sup:`+` Conductance Density and Na\ :sup:`+` Channel Functional Properties Between Dopamine and GABA Neurons of the Rat Substantia Nigra. *J Neurophysiol* 103:3099-3114.
     * `Kowalski J, Geuting M, Paul S, Dieni S, Laurens J, Zhao S, Drakew A, Haas CA, Frotscher M, Vida I (2010). <http://cercor.oxfordjournals.org/content/20/9/2043.long>`_ Proper Layering Is Important for Precisely Timed Activation of Hippocampal Mossy Cells. *Cereb Cortex.* 20(9):2043-2054. 
     * `Sauer JF, Bartos M (2010). <http://www.jneurosci.org/cgi/content/full/30/1/110>`_ Recruitment of early postnatal parvalbumin-positive hippocampal interneurons by GABAergic excitation. *J Neurosci.* 30(1):110-5.
-
     * `Babu H, Ramirez-Rodriguez, Fabel K, Bischofberger J, Kempermann G (2009). <http://www.frontiersin.org/neurogenesis/10.3389/neuro.22/001.2009/abstract>`_ Synaptic network activity induces neuronal differentiation of adult hippocampal precursor cells through BDNF signaling. *Front. Neurogenesis* 30:3-49.
     * `Doischer D, Hosp JA, Yanagawa Y, Obata K, Jonas P, Vida I, Bartos M (2008). <http://www.jneurosci.org/cgi/content/full/28/48/12956>`_ Postnatal differentiation of basket cells from slow to fast signaling devices. *J Neurosci.* 28(48):12956-68.
     * `Stocca G, Schmidt-Hieber C, Bischofberger J (2008). <http://jp.physoc.org/content/586/16/3795.long>`_ Differential dendritic Ca\ :sup:`2+` signalling in young and mature hippocampal granule cells. *J Physiol.* 586(16):3795-811.
