@@ -41,12 +41,16 @@
 #include "../biosig-dev.h"
 
 #include "structures.h"
-static const uint8_t _NUM_SECTION = 12U;	//consider first 11 sections of SCP
+static const uint8_t _NUM_SECTION = 20;	   //consider first 19 sections of SCP
 static bool add_filter = true;             // additional filtering gives better shape, but use with care
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef WITHOUT_SCP_DECODE
-EXTERN_C int scp_decode(HDRTYPE* hdr, struct pointer_section *section, struct DATA_DECODE*, struct DATA_RECORD*, struct DATA_INFO*, bool );
-EXTERN_C void sopen_SCP_clean(struct DATA_DECODE*, struct DATA_RECORD*, struct DATA_INFO*);
+int scp_decode(HDRTYPE* hdr, struct pointer_section *section, struct DATA_DECODE*, struct DATA_RECORD*, struct DATA_INFO*, bool );
+void sopen_SCP_clean(struct DATA_DECODE*, struct DATA_RECORD*, struct DATA_INFO*);
 #endif
 
 // Huffman Tables
@@ -341,8 +345,13 @@ int decode_scp_text(HDRTYPE *hdr, size_t inbytesleft, char *input, size_t outbyt
 
 	int exitcode = 0;
 	switch (versionSection) {
-	case 13:
-	case 20:
+	case 13:	// EN1064:2005
+	case 20:	// EN1064:2007
+	case 26:
+	case 27:
+	case 28:
+	case 29:	// SCP3: experimental, testing versions - not official
+	case 30:	// SCP3: prEN1064:2017
 		break;  // use language conversion code below
 	case 10:
 		exitcode =  0;
@@ -404,6 +413,9 @@ int decode_scp_text(HDRTYPE *hdr, size_t inbytesleft, char *input, size_t outbyt
 
 	else if (LanguageSupportCode == 0x27)
 		cd = iconv_open ("UTF-8", "GB2312");
+
+	else if (LanguageSupportCode == 0x37)
+		cd = iconv_open ("UTF-8", "UTF-8");
 
 	else if (LanguageSupportCode == 0x2F)  // KS C5601-1987 (Korean) - does not match exactly
 		cd = iconv_open ("UTF-8", "EUC-KR");
@@ -476,7 +488,7 @@ int decode_scp_text(HDRTYPE *hdr, size_t inbytesleft, char *input, size_t outbyt
 }
 
 
-EXTERN_C int sopen_SCP_read(HDRTYPE* hdr) {
+int sopen_SCP_read(HDRTYPE* hdr) {
 /*
 	this function is a stub or placeholder and need to be defined in order to be useful. 
 	It will be called by the function SOPEN in "biosig.c"
@@ -657,7 +669,7 @@ EXTERN_C int sopen_SCP_read(HDRTYPE* hdr) {
 			if (curSectPos+len1 > len) break;
 				if (tag==14) {
 					aECG->Section1.Tag14.LANG_SUPP_CODE  = *(PtrCurSect+curSectPos+16);	// tag 14, byte 16 (LANG_SUPP_CODE has to be 0x00 => Ascii only, 
-					if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) Language Support Code is 0x%x\n",__FILE__,__LINE__,aECG->Section1.Tag14.LANG_SUPP_CODE);
+					if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) Language Support Code is 0x%02x\n",__FILE__,__LINE__,aECG->Section1.Tag14.LANG_SUPP_CODE);
 					break;
 				}
 				curSectPos += len1;
@@ -1079,6 +1091,9 @@ EXTERN_C int sopen_SCP_read(HDRTYPE* hdr) {
 			hdr->NS = *(PtrCurSect+curSectPos);
 			aECG->FLAG.REF_BEAT = (*(PtrCurSect+curSectPos+1) & 0x01);
 			en1064.Section3.flags = *(PtrCurSect+curSectPos+1);
+			if (aECG->FLAG.REF_BEAT && (aECG->Section1.Tag14.VERSION > 25)) {
+				biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "REF-BEAT compression is invalid in SCP v3");
+			}
 			if (aECG->FLAG.REF_BEAT && !section[4].length) {
 #ifndef ANDROID
 				fprintf(stderr,"Warning (SCP): Reference Beat but no Section 4\n");
@@ -1099,10 +1114,16 @@ EXTERN_C int sopen_SCP_read(HDRTYPE* hdr) {
 			for (i = 0, hdr->SPR=1; i < hdr->NS; i++) {
 				en1064.Section3.lead[i].start = leu32p(PtrCurSect+curSectPos);
 				en1064.Section3.lead[i].end   = leu32p(PtrCurSect+curSectPos+4);
+				uint8_t LeadIdCode            = *(PtrCurSect+curSectPos+8);
+				if (LeadIdCode > 184) {
+					// consider this as undefined LeadId
+					LeadIdCode = 0;
+					fprintf(stderr,"Warning (SCP): LeadId of channel %i is %i - which is unspecified\n",i+1, LeadIdCode);
+				}
 
 				hdr->CHANNEL[i].SPR 	= en1064.Section3.lead[i].end - en1064.Section3.lead[i].start + 1;
 				hdr->SPR 		= lcm(hdr->SPR,hdr->CHANNEL[i].SPR);
-				hdr->CHANNEL[i].LeadIdCode =  *(PtrCurSect+curSectPos+8);
+				hdr->CHANNEL[i].LeadIdCode = LeadIdCode;
 				hdr->CHANNEL[i].Label[0]= 0;
 				hdr->CHANNEL[i].Transducer[0]= 0;
 				hdr->CHANNEL[i].LowPass = LowPass;
@@ -1118,6 +1139,10 @@ EXTERN_C int sopen_SCP_read(HDRTYPE* hdr) {
 		}
 		/**** SECTION 4: QRS LOCATIONS (IF REFERENCE BEATS ARE ENCODED) ****/
 		else if (curSect==4)  {
+
+			if (aECG->Section1.Tag14.VERSION > 25)
+				biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Section 4 must not be used in SCP v3");
+
 			en1064.Section4.len_ms	= leu16p(PtrCurSect+curSectPos);		// ### TODO: SCPECGv3 ###
 			en1064.Section4.fiducial_sample	= leu16p(PtrCurSect+curSectPos+2);	// ### TODO: SCPECGv3 ###
 			en1064.Section4.N	= leu16p(PtrCurSect+curSectPos+4);		// ### TODO: SCPECGv3 ###
@@ -1201,25 +1226,35 @@ EXTERN_C int sopen_SCP_read(HDRTYPE* hdr) {
 		}
 
 		/**** SECTION 6 ****/
-		else if (curSect==6)  {
+		else if ((curSect==6) && (section[12].length==0)) {
+			// Read Section6 only if no Section 12 is available
 			hdr->NRec = 1;
 
+			uint8_t FLAG_HUFFMAN = 0;
 			uint16_t gdftyp 	= 5;	// int32: internal raw data type
 			hdr->AS.rawdata = (uint8_t*)realloc(hdr->AS.rawdata,4 * hdr->NS * hdr->SPR * hdr->NRec);
 			data = (int32_t*)hdr->AS.rawdata;
 
 			en1064.Section6.AVM	= leu16p(PtrCurSect+curSectPos);
 			en1064.Section6.dT_us	= leu16p(PtrCurSect+curSectPos+2);
-			hdr->SampleRate	= 1e6/en1064.Section6.dT_us;
+			hdr->SampleRate	        = 1e6/en1064.Section6.dT_us;
 			en1064.Section6.DIFF	= *(PtrCurSect+curSectPos+4);
 			en1064.FLAG.DIFF	= *(PtrCurSect+curSectPos+4);
-			en1064.Section6.BIMODAL	= *(PtrCurSect+curSectPos+5);
-			en1064.FLAG.BIMODAL	= *(PtrCurSect+curSectPos+5);
+			if (hdr->VERSION < 3.0) {
+				en1064.Section6.BIMODAL	= *(PtrCurSect+curSectPos+5);
+				en1064.FLAG.BIMODAL	= *(PtrCurSect+curSectPos+5);
+				aECG->FLAG.BIMODAL      = *(PtrCurSect+curSectPos+5);
+			}
+			else {
+				en1064.Section6.BIMODAL	= 0;
+				en1064.FLAG.BIMODAL	= 0;
+				aECG->FLAG.BIMODAL      = 0;
+				FLAG_HUFFMAN = *(PtrCurSect+curSectPos+5);
+			}
 
 			Cal6 			= leu16p(PtrCurSect+curSectPos);
 			en1064.Section6.dT_us	= leu16p(PtrCurSect+curSectPos+2);
 			aECG->FLAG.DIFF 	= *(PtrCurSect+curSectPos+4);
-			aECG->FLAG.BIMODAL = *(PtrCurSect+curSectPos+5);
 
 			if ((section[5].length>4) &&  en1064.Section5.dT_us)
 				dT_us = en1064.Section5.dT_us;
@@ -1229,18 +1264,25 @@ EXTERN_C int sopen_SCP_read(HDRTYPE* hdr) {
 
 			typeof(hdr->SPR) SPR  = ( en1064.FLAG.BIMODAL ? en1064.Section4.SPR : hdr->SPR);
 
-			if      (Cal5==0 && Cal6 >0) Cal0 = Cal6;
-			else if (Cal5 >0 && Cal6==0) Cal0 = Cal5;
-			else if (Cal5 >0 && Cal6 >0) Cal0 = gcd(Cal5,Cal6);
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): %i %i %i\n", __func__ ,__LINE__, dT_us, Cal5, Cal6);
+
+			if      ((Cal5==0) && (Cal6 >0)) Cal0 = Cal6;
+			else if ((Cal5 >0) && (Cal6==0)) Cal0 = Cal5;
+			else if ((Cal5 >0) && (Cal6 >0)) Cal0 = gcd(Cal5,Cal6);
+			else
+				biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "SCP with invalid AVM data !");
+
 			uint16_t cal5 = Cal5/Cal0; 
 			uint16_t cal6 = Cal6/Cal0; 
+
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): %i %i %i\n",__func__,__LINE__,dT_us,Cal5,Cal6);
 
 			Ptr2datablock = (PtrCurSect+curSectPos + 6 + hdr->NS*2);   // pointer for huffman decoder
 			len = 0;
 			size_t ix;
 			hdr->AS.bpb   = hdr->NS * hdr->SPR*GDFTYP_BITS[gdftyp]>>3;
 			for (i=0; i < hdr->NS; i++) {
-				if (VERBOSE_LEVEL>8)
+				if (VERBOSE_LEVEL>7)
 					fprintf(stdout,"sec6-%i\n",i);
 				
 				CHANNEL_TYPE *hc = hdr->CHANNEL+i;
@@ -1259,7 +1301,7 @@ EXTERN_C int sopen_SCP_read(HDRTYPE* hdr) {
 				hc->PhysMax     = hc->DigMax * hc->Cal;
 				hc->PhysMin     = hc->DigMin * hc->Cal;
 
-				uint16_t inlen    = leu16p(PtrCurSect+curSectPos+6+2*i);	// ### TODO: SCPECGv3 ###
+				uint16_t inlen  = leu16p(PtrCurSect+curSectPos+6+2*i);	// ### TODO: SCPECGv3 ###
 				if (en1064.FLAG.HUFFMAN) {
 					if (DecodeHuffman(HTrees, Huffman, Ptr2datablock, inlen, data + i*hdr->SPR, hdr->SPR)) {
 						biosigERROR(hdr, B4C_DECOMPRESSION_FAILED, "Empty node in Huffman table! Do not know what to do !");
@@ -1459,8 +1501,8 @@ EXTERN_C int sopen_SCP_read(HDRTYPE* hdr) {
 		else if (curSect==9)  {
 			// TODO: convert to UTF8
 #if (BIOSIG_VERSION >= 10500)
-			hdr->SCP.Section9Length = leu32p(PtrCurSect+4)-curSectPos;
-			hdr->SCP.Section9       = PtrCurSect+curSectPos;
+//			hdr->SCP.Section9Length = leu32p(PtrCurSect+4)-curSectPos;
+//			hdr->SCP.Section9       = PtrCurSect+curSectPos;
 #else
 			aECG->Section9.StartPtr = (char*)(PtrCurSect+curSectPos);
 			aECG->Section9.Length   = len;
@@ -1508,8 +1550,93 @@ EXTERN_C int sopen_SCP_read(HDRTYPE* hdr) {
 
 #if defined(WITH_SCP3)
 		/**** SECTION 12 ****/
-		else if ( (curSect==12)  &&  (versionSection > 25) && (versionProtocol > 25) ) {
-			size_t sz = (leu32p(PtrCurSect+4) - curSectPos);
+		else if ( (curSect==12)  &&  (versionSection > 25) && (versionProtocol > 25) && (len > 70) ) {
+
+			uint32_t sec12_LN = leu32p(PtrCurSect+curSectPos+62);
+			uint32_t sec12_LMI= leu32p(PtrCurSect+curSectPos+66);
+			uint32_t sec12_Len1 = 70+sec12_LN+sec12_LMI;
+			uint8_t  sec12_FRST = *(PtrCurSect+curSectPos+16);	// TODO: get rid of this field, no benefit
+			uint8_t  sec12_FBMP = *(PtrCurSect+curSectPos+31);
+
+			uint16_t gdftyp = 0;
+			uint8_t bps     = *(uint8_t*)(PtrCurSect+curSectPos+9);
+			double DigMin   = -1.0/0.0;
+			double DigMax   = +1.0/0.0;
+			switch (bps) {
+			case 1: gdftyp = 1; break;
+			case 2: gdftyp = 2; break;
+			case 3: gdftyp = 255+24; break;
+			case 4: gdftyp = 5; break;
+			default:
+				biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "invalid number of bytes per samplein SCP3:Section12");
+			}
+			DigMin = -ldexp(1.0,bps-1);
+			DigMax =  ldexp(1.0,bps-1)-1.0;
+
+			// TODO: why is this needed, why is Section 1 not good enough ?
+			struct tm t0;
+			t0.tm_year = leu16p(PtrCurSect+curSectPos+10)-1900;
+			t0.tm_mon  = (*(PtrCurSect+curSectPos+12)) - 1;
+			t0.tm_mday = *(PtrCurSect+curSectPos+13);
+			t0.tm_hour = *(PtrCurSect+curSectPos+14);
+			t0.tm_min  = *(PtrCurSect+curSectPos+15);
+			t0.tm_sec  = *(PtrCurSect+curSectPos+16);
+			hdr->T0    = tm_time2gdf_time(&t0);
+			hdr->SampleRate = leu32p(PtrCurSect+curSectPos);
+			hdr->NS         = *(uint8_t*)(PtrCurSect+curSectPos+4);
+			hdr->NRec       = leu32p(PtrCurSect+curSectPos+5);
+			hdr->SPR        = 1; 	// multiplexed
+			hdr->AS.bpb     = bps*hdr->NS;
+
+			hdr->AS.rawdata = (uint8_t*)realloc(hdr->AS.rawdata,4 * hdr->NS * hdr->SPR * hdr->NRec);
+			data = (int32_t*)hdr->AS.rawdata;
+
+			/* Leads Definition Block */
+			hdr->CHANNEL = (CHANNEL_TYPE *) realloc(hdr->CHANNEL,hdr->NS* sizeof(CHANNEL_TYPE));
+			for (i = 0; i < hdr->NS; i++) {
+				CHANNEL_TYPE *hc = hdr->CHANNEL+i;
+				uint8_t LeadIdCode = *(PtrCurSect+curSectPos+sec12_Len1+i*4);
+				if (LeadIdCode > 184) {
+					// consider this as undefined LeadId
+					LeadIdCode = 0;
+					fprintf(stderr,"Warning (SCP): LeadId of channel %i is %i - which is unspecified\n",i+1, LeadIdCode);
+				}
+
+				hc->bi		  = bps*i;
+				hc->bi8		  = (bps*i)<<3;
+				hc->SPR           = 1;
+				hc->LeadIdCode    = LeadIdCode;
+				hc->Label[0]      = 0;
+				hc->Transducer[0] = 0;
+				hc->OnOff 	  = 1;
+				hc->Impedance 	  = 0.0/0.0;
+				hc->GDFTYP 	  = gdftyp;
+				hc->DigMin 	  = DigMin;
+				hc->DigMax 	  = DigMax;
+				hc->Off 	  = 0.0;
+				hc->Cal 	  = leu16p(PtrCurSect+curSectPos+sec12_Len1+i*4+1)*1e-3;
+				hc->PhysDimCode   = 4275; // PhysDimCode("uV") physical unit "uV"
+				hc->PhysMin	  = DigMin*hc->Cal;
+				hc->PhysMax	  = DigMax*hc->Cal;
+				if (sec12_FRST) {
+					hc->LowPass  = leu16p(PtrCurSect+curSectPos+29);
+					hc->HighPass = leu16p(PtrCurSect+curSectPos+27);
+					hc->Notch    = ((sec12_FBMP==0) ? 60 : ((sec12_FBMP==1) ? 50 : NAN));
+				}
+				else { // From Section 1 tags 27-28
+					hc->LowPass  = LowPass;
+					hc->HighPass = HighPass;
+					hc->Notch    = Notch;
+				}
+			}
+/*
+			size_t sz = GDFTYP_BITS[gdftyp] * hdr->NS * hdr->SPR * hdr->NRec / 8;
+			hdr->AS.rawdata = (uint8_t*)realloc(hdr->AS.rawdata, sz);
+			memcpy(hdr->AS.rawdata, PtrCurSect+curSectPos+sec12_Len1+hdr->NS*4, sz);
+*/
+			hdr->AS.rawdata = PtrCurSect+curSectPos+sec12_Len1+hdr->NS*4;
+			hdr->AS.first  = 0;
+			hdr->AS.length = hdr->SPR*hdr->NRec;
 		}
 
 		/**** SECTION 13 ****/
@@ -1518,6 +1645,22 @@ EXTERN_C int sopen_SCP_read(HDRTYPE* hdr) {
 
 		/**** SECTION 14 ****/
 		else if (curSect==14)  {
+		}
+
+		/**** SECTION 15 ****/
+		else if (curSect==15)  {
+		}
+
+		/**** SECTION 16 ****/
+		else if (curSect==16)  {
+		}
+
+		/**** SECTION 17 ****/
+		else if (curSect==17)  {
+		}
+
+		/**** SECTION 18 ****/
+		else if (curSect==18)  {
 		}
 #endif
 		else {
@@ -1589,3 +1732,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	return(1);
 #endif
 };
+
+#ifdef __cplusplus
+}
+#endif
+

@@ -1,6 +1,6 @@
 /*
 
-    Copyright (C) 2005-2016 Alois Schloegl <alois.schloegl@gmail.com>
+    Copyright (C) 2005-2017 Alois Schloegl <alois.schloegl@gmail.com>
     Copyright (C) 2011 Stoyan Mihaylov
     This file is part of the "BioSig for C/C++" repository
     (biosig4c++) at http://biosig.sf.net/
@@ -60,7 +60,7 @@
 
 int VERBOSE_LEVEL = 0;		// this variable is always available, but only used without NDEBUG 
 
-#include "biosig-dev.h"
+#include "biosig.h"
 #include "biosig-network.h"
 
 
@@ -113,10 +113,8 @@ extern "C" {
 
 int sopen_SCP_read     (HDRTYPE* hdr);
 int sopen_SCP_write    (HDRTYPE* hdr);
-#ifndef WITH_BIOSIGLITE
 int sopen_HL7aECG_read (HDRTYPE* hdr);
 void sopen_HL7aECG_write(HDRTYPE* hdr);
-#endif
 void sopen_abf_read    (HDRTYPE* hdr);
 void sopen_abf2_read   (HDRTYPE* hdr);
 void sopen_axg_read    (HDRTYPE* hdr);
@@ -124,9 +122,7 @@ void sopen_alpha_read  (HDRTYPE* hdr);
 void sopen_cfs_read    (HDRTYPE* hdr);
 void sopen_FAMOS_read  (HDRTYPE* hdr);
 void sopen_fiff_read   (HDRTYPE* hdr);
-#ifndef WITH_BIOSIGLITE
 int sclose_HL7aECG_write(HDRTYPE* hdr);
-#endif
 void sopen_ibw_read    (HDRTYPE* hdr);
 void sopen_itx_read    (HDRTYPE* hdr);
 void sopen_smr_read    (HDRTYPE* hdr);
@@ -428,6 +424,7 @@ int ftoa8(char* buf, double num)
 int is_nihonkohden_signature(char *str) 
 {
   return (!(
+	strncmp(str, "EEG-1200A V01.00", 16) &&
 	strncmp(str, "EEG-1100A V01.00", 16) &&
 	strncmp(str, "EEG-1100B V01.00", 16) &&
 	strncmp(str, "EEG-1100C V01.00", 16) &&
@@ -1405,7 +1402,9 @@ void destructHDR(HDRTYPE* hdr) {
 
 	if (VERBOSE_LEVEL>7)  fprintf(stdout,"destructHDR: free HDR.AS.rawdata @%p\n",hdr->AS.rawdata);
 
-	if (hdr->AS.rawdata != NULL) free(hdr->AS.rawdata);
+	// in case of SCPv3, rawdata can be loaded into Header
+	if ( (hdr->AS.rawdata < hdr->AS.Header) || (hdr->AS.rawdata > (hdr->AS.Header+hdr->HeadLen)) )
+		if (hdr->AS.rawdata != NULL) free(hdr->AS.rawdata);
 
 	if (VERBOSE_LEVEL>7)  fprintf(stdout,"destructHDR: free HDR.data.block @%p\n",hdr->data.block);
 
@@ -1684,9 +1683,10 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
 	}
 
 	/* Nihon Kohden */
-	else if (is_nihonkohden_signature((char*)Header1) && is_nihonkohden_signature((char*)(Header1+0x81)))
+	else if (is_nihonkohden_signature((char*)Header1) && is_nihonkohden_signature((char*)(Header1+0x81))) {
 	    	hdr->TYPE = EEG1100;
-
+		hdr->VERSION = strtod((char*)Header1+11,NULL);
+	}
     	else if (!memcmp(Header1, "RIFF",4) && !memcmp(Header1+8, "CNT ",4))
 	    	hdr->TYPE = EEProbe;
     	else if (!memcmp(Header1, "EEP V2.0",8))
@@ -1842,8 +1842,18 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
 	    	hdr->TYPE = Persyst;
     	else if (!memcmp(Header1,"SXDF",4))
 	    	hdr->TYPE = OpenXDF;
-    	else if (!memcmp(Header1,"PLEX",4))
-	    	hdr->TYPE = PLEXON;
+	else if (!memcmp(Header1,"PLEX",4)) {
+		hdr->TYPE = PLEXON;
+		hdr->VERSION=1.0;
+	}
+	else if (!memcmp(Header1+10,"PLEXON",6)) {
+		hdr->TYPE = PLEXON;
+		hdr->VERSION=2.0;
+	}
+	else if (!memcmp(Header1,"\x02\x27\x91\xC6",4)) {
+		hdr->TYPE = RHD2000;	// Intan RHD2000 format
+		hdr->FILE.LittleEndian = 1;
+	}
     	else if (!memcmp(Header1,"\x55\xAA\x00\xb0",2)) {
 	    	hdr->TYPE = RDF;	// UCSD ERPSS aquisition system
 	    	hdr->FILE.LittleEndian = 1;
@@ -2143,7 +2153,9 @@ const struct FileFormatStringTable_t FileFormatStringTable[] = {
 	{ Persyst,    	"Persyst" },
 	{ OGG,    	"OGG" },
 	{ PDP,    	"PDP" },
+	{ PLEXON,    	"PLEXON" },
 	{ RDF,    	"RDF" },
+	{ RHD2000,    	"RHD2000" },
 	{ RIFF,    	"RIFF" },
 	{ SASXPT,    	"SAS_XPORT" },
 	{ SCP_ECG,    	"SCP" },
@@ -3298,7 +3310,7 @@ int RerefCHANNEL(HDRTYPE *hdr, void *arg2, char Mode)
 
                 switch (Mode) {
                 case 1: {
-                        HDRTYPE *RR = sopen((char*)arg2,"r",NULL);
+                        HDRTYPE *RR = sopen((const char*)arg2,"r",NULL);
                         ReRef       = RR->Calib;
                         if (RR->rerefCHANNEL != NULL) {
                                 flagLabelIsSet = 1; 
@@ -6768,8 +6780,9 @@ if (VERBOSE_LEVEL>8)
 				count = 0;
 
 			 	while (!feof(fid)) {
-					LOG = (char*) realloc(LOG,count+1025);
-					count += fread(LOG+count,1,1024,fid);
+					size_t r = max(count*2,1024);
+					LOG = (char*) realloc(LOG,r+1);
+					count += fread(LOG+count,1,r-count,fid);
 			 	}
 				fclose(fid);
 
@@ -10169,6 +10182,11 @@ if (VERBOSE_LEVEL>2)
 
 	}
 
+	else if (hdr->TYPE==PLEXON) {
+		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Format PLEXON not supported");
+		return(hdr);
+
+	}
 	else if (hdr->TYPE==RDF) {
 
 		// UCSD ERPSS aquisition system
@@ -10234,8 +10252,32 @@ if (VERBOSE_LEVEL>2)
 			strncpy(hc->Label,(char*)(hdr->AS.Header+32+24+8*k),8);
 			hc->LeadIdCode = 0; 
 		}
-
     		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Format RDF (UCSD ERPSS) not supported");
+	}
+
+	else if (hdr->TYPE==RHD2000) {
+		float minor = leu16p(hdr->AS.Header+6);
+		minor      *= (minor < 10) ? 0.1 : 0.01;
+		hdr->VERSION = leu16p(hdr->AS.Header+4) + minor;
+
+		hdr->NS = 1;
+		hdr->SampleRate = lef32p(hdr->AS.Header+8);
+
+		float HighPass = ( leu16p(hdr->AS.Header+12) ? 0.0 : lef32p(hdr->AS.Header+14) );
+		      HighPass = max( HighPass, lef32p(hdr->AS.Header+18) );
+		float LowPass = lef32p(hdr->AS.Header+22);
+		const int ListNotch[] = {0,50,60};
+		uint16_t tmp = leu16p(hdr->AS.Header+34);
+		if (tmp>2) tmp=0;
+		float Notch = ListNotch[tmp];
+		float fZ    = lef32p(hdr->AS.Header+40);
+
+		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Format Intan RHD2000 not supported");
+
+		/*
+		hdr->CHANNEL = (CHANNEL_TYPE*)realloc(hdr->CHANNEL, hdr->NS * sizeof(CHANNEL_TYPE));
+		CHANNEL_TYPE *hc = hdr->CHANNEL;
+		*/
 	}
 
 	else if (hdr->TYPE==SCP_ECG) {
@@ -10944,7 +10986,6 @@ if (VERBOSE_LEVEL>2)
 	}
 #endif
 
-#ifndef WITH_BIOSIGLITE
 	else if (hdr->TYPE==HL7aECG || hdr->TYPE==XML) {
 		sopen_HL7aECG_read(hdr);
 		if (VERBOSE_LEVEL>7)
@@ -10955,7 +10996,6 @@ if (VERBOSE_LEVEL>2)
 		hdr->FILE.LittleEndian = (__BYTE_ORDER == __LITTLE_ENDIAN); // no swapping
 		hdr->AS.length  = hdr->NRec;
 	}
-#endif
 
 #ifdef WITH_MICROMED
     	else if (hdr->TYPE==TRC) {
@@ -11740,14 +11780,12 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
 		}
 	}
 
-#ifndef WITH_BIOSIGLITE
     	else if (hdr->TYPE==HL7aECG) {
 		sopen_HL7aECG_write(hdr);
 
 		// hdr->FLAG.SWAP = 0;
 		hdr->FILE.LittleEndian = (__BYTE_ORDER == __LITTLE_ENDIAN); // no byte-swapping
 	}
-#endif
 
     	else if (hdr->TYPE==MFER) {
     		uint8_t tag;
@@ -13594,6 +13632,11 @@ int sclose(HDRTYPE* hdr)
 			uint16_t crc = CRCEvaluate(hdr->AS.Header + aECG->Section6.StartPtr+2,aECG->Section6.Length-2); // compute CRC
 			leu16a(crc, hdr->AS.Header + aECG->Section6.StartPtr);
 		}
+		if ((aECG->Section12.Length>0) && (hdr->VERSION >2.5)){
+			// compute CRC for Section 12
+			uint16_t crc = CRCEvaluate(hdr->AS.Header + aECG->Section12.StartPtr+2,aECG->Section12.Length-2); // compute CRC
+			leu16a(crc, hdr->AS.Header + aECG->Section12.StartPtr);
+		}
 		// compute crc and len and write to preamble
 		ptr = hdr->AS.Header;
 		leu32a(hdr->HeadLen, ptr+2);
@@ -13601,13 +13644,11 @@ int sclose(HDRTYPE* hdr)
 		leu16a(crc, ptr);
 		ifwrite(hdr->AS.Header, sizeof(char), hdr->HeadLen, hdr);
 	}
-#ifndef WITH_BIOSIGLITE
 	else if ((hdr->FILE.OPEN>1) && (hdr->TYPE==HL7aECG))
 	{
 		sclose_HL7aECG_write(hdr);
 		hdr->FILE.OPEN = 0;
 	}
-#endif
 #endif //ONLYGDF
 
 	if (hdr->FILE.OPEN > 0) {

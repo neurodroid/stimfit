@@ -29,6 +29,7 @@
 #include <sys/stat.h>
 
 #include "../biosig-dev.h"
+#include "../biosig.h"
 
 // these functions are stubs
 

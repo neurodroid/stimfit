@@ -21,7 +21,11 @@
 #include <string.h>
 #include "../biosig-dev.h"
 
-EXTERN_C int sopen_SCP_write(HDRTYPE* hdr) {	
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+int sopen_SCP_write(HDRTYPE* hdr) {
 /*
 	This function is an auxillary function and is only called by the function SOPEN in "biosig.c"
 
@@ -44,13 +48,14 @@ EXTERN_C int sopen_SCP_write(HDRTYPE* hdr) {
 	assert(hdr != NULL);
 	assert(hdr->TYPE == SCP_ECG);
 
-	if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN_SCP_WRITE 101\n");
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) : V%f\n",__FILE__,__LINE__,hdr->VERSION);
 
-	if ((fabs(hdr->VERSION - 1.3)<0.01) && (fabs(hdr->VERSION-2.0)<0.01))
+	if ((fabs(hdr->VERSION - 1.3)<0.01) && (fabs(hdr->VERSION-2.0)<0.01) && (fabs(hdr->VERSION-3.0)<0.01))
 		fprintf(stderr,"Warning SOPEN (SCP-WRITE): Version %f not supported\n",hdr->VERSION);
 		
+	uint8_t versionSection  = (hdr->VERSION < 3.0) ? 20 : 29; // (uint8_t)round(hdr->VERSION*10); // implemented version number
+	uint8_t versionProtocol = versionSection;
 
-	uint8_t VERSION = 20; // (uint8_t)round(hdr->VERSION*10); // implemented version number 
 	if (hdr->aECG==NULL) {
 		fprintf(stderr,"Warning SOPEN_SCP_WRITE: No aECG info defined\n");
 		hdr->aECG = malloc(sizeof(struct aecg));
@@ -81,9 +86,10 @@ EXTERN_C int sopen_SCP_write(HDRTYPE* hdr) {
 	aECG->Section1.Tag14.DeviceType 	= 0;		// tag 14, byte 7: 0: Cart, 1: System (or Host) 
 	aECG->Section1.Tag14.MANUF_CODE 	= 255;		// tag 14, byte 8 (MANUF_CODE has to be 255)
 	aECG->Section1.Tag14.MOD_DESC  	= "Cart1";	// tag 14, byte 9 (MOD_DESC has to be "Cart1")
-	aECG->Section1.Tag14.VERSION	= VERSION;	// tag 14, byte 15 (VERSION * 10)
+	aECG->Section1.Tag14.VERSION	= versionSection;	// tag 14, byte 15 (VERSION * 10)
 	aECG->Section1.Tag14.PROT_COMP_LEVEL = 0xA0;	// tag 14, byte 16 (PROT_COMP_LEVEL has to be 0xA0 => level II)
-	aECG->Section1.Tag14.LANG_SUPP_CODE  = 0x00;	// tag 14, byte 17 (LANG_SUPP_CODE has to be 0x00 => Ascii only, latin and 1-byte code)
+		// tag 14, byte 17 (LANG_SUPP_CODE has to be 0x00 => Ascii only, latin and 1-byte code, 0x37: UTF-8)
+	aECG->Section1.Tag14.LANG_SUPP_CODE  = (versionSection < 25) ? 0x00 : 0x37;
 	aECG->Section1.Tag14.ECG_CAP_DEV 	= 0xD0;		// tag 14, byte 18 (ECG_CAP_DEV has to be 0xD0 => Acquire, (No Analysis), Print and Store)
 	aECG->Section1.Tag14.MAINS_FREQ  	= 0;		// tag 14, byte 19 (MAINS_FREQ has to be 0: unspecified, 1: 50 Hz, 2: 60Hz)
 	aECG->Section1.Tag14.ANAL_PROG_REV_NUM 	= "";
@@ -120,30 +126,30 @@ EXTERN_C int sopen_SCP_write(HDRTYPE* hdr) {
 		NS++;
 	}
 
-	if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN_SCP_WRITE 111\n");
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) : v%f VERSION=%i\n",__FILE__,__LINE__, hdr->VERSION, versionSection);
 
 	ptr = (uint8_t*)hdr->AS.Header;
 
-	int NSections = 12; 
+	int NSections = (versionSection < 25) ? 12 : 19;
 	// initialize section 0
 	sectionStart  = 6+16+NSections*10;
 	ptr = (uint8_t*)realloc(ptr,sectionStart); 
 	memset(ptr,0,sectionStart);
 	
-	uint32_t curSectLen = 0; // current section length
+	uint32_t curSectLen; // current section length
 	for (curSect=NSections-1; curSect>=0; curSect--) {
 
 		curSectLen = 0; // current section length
 		//ptr = (uint8_t*)realloc(ptr,sectionStart+curSectLen); 
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"Section %i %p\n",curSect,ptr);
+//		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) : Section %i/%i %i %p\n",__FILE__,__LINE__,curSect,NSections,sectionStart,ptr);
 
 		if (curSect==0)  // SECTION 0 
 		{
 			hdr->HeadLen = sectionStart; // length of all other blocks together
 			ptr = (uint8_t*)realloc(ptr,hdr->HeadLen); // total file length
 
-			curSectLen = 16; // current section length
+			curSectLen  = 16; // current section length
 			sectionStart = 6; 
 		
 			curSectLen += NSections*10;
@@ -280,12 +286,12 @@ EXTERN_C int sopen_SCP_write(HDRTYPE* hdr) {
 			*(ptr+sectionStart+curSectLen+ 6) = aECG->Section1.Tag14.DeviceType;
 			*(ptr+sectionStart+curSectLen+ 7) = aECG->Section1.Tag14.MANUF_CODE;	// tag 14, byte 7 (MANUF_CODE has to be 255)
 			strncpy((char*)(ptr+sectionStart+curSectLen+8), aECG->Section1.Tag14.MOD_DESC, 6);	// tag 14, byte 7 (MOD_DESC has to be "Cart1")
-			*(ptr+sectionStart+curSectLen+14) = VERSION;		// tag 14, byte 14 (VERSION has to be 20)
+			*(ptr+sectionStart+curSectLen+14) = versionSection;			// tag 14, byte 14 (VERSION has to be 20)
 			*(ptr+sectionStart+curSectLen+14) = aECG->Section1.Tag14.VERSION;
-			*(ptr+sectionStart+curSectLen+15) = aECG->Section1.Tag14.PROT_COMP_LEVEL; 		// tag 14, byte 15 (PROT_COMP_LEVEL has to be 0xA0 => level II)
-			*(ptr+sectionStart+curSectLen+16) = aECG->Section1.Tag14.LANG_SUPP_CODE;		// tag 14, byte 16 (LANG_SUPP_CODE has to be 0x00 => Ascii only, latin and 1-byte code)
-			*(ptr+sectionStart+curSectLen+17) = aECG->Section1.Tag14.ECG_CAP_DEV;		// tag 14, byte 17 (ECG_CAP_DEV has to be 0xD0 => Acquire, (No Analysis), Print and Store)
-			*(ptr+sectionStart+curSectLen+18) = aECG->Section1.Tag14.MAINS_FREQ;		// tag 14, byte 18 (MAINS_FREQ has to be 0: unspecified, 1: 50 Hz, 2: 60Hz)
+			*(ptr+sectionStart+curSectLen+15) = aECG->Section1.Tag14.PROT_COMP_LEVEL; 	// tag 14, byte 15 (PROT_COMP_LEVEL has to be 0xA0 => level II)
+			*(ptr+sectionStart+curSectLen+16) = aECG->Section1.Tag14.LANG_SUPP_CODE;	// tag 14, byte 16 (LANG_SUPP_CODE has to be 0x00 => Ascii only, latin and 1-byte code)
+			*(ptr+sectionStart+curSectLen+17) = aECG->Section1.Tag14.ECG_CAP_DEV;	// tag 14, byte 17 (ECG_CAP_DEV has to be 0xD0 => Acquire, (No Analysis), Print and Store)
+			*(ptr+sectionStart+curSectLen+18) = aECG->Section1.Tag14.MAINS_FREQ;	// tag 14, byte 18 (MAINS_FREQ has to be 0: unspecified, 1: 50 Hz, 2: 60Hz)
 			*(ptr+sectionStart+curSectLen+35) = strlen(aECG->Section1.Tag14.ANAL_PROG_REV_NUM)+1;		// tag 14, byte 34 => length of ANAL_PROG_REV_NUM + 1 = 1
 			uint16_t len1 = 36;
 
@@ -501,18 +507,19 @@ EXTERN_C int sopen_SCP_write(HDRTYPE* hdr) {
 		{
 			curSectLen = 0; // current section length
 			aECG->Section5.StartPtr = sectionStart; 
-			aECG->Section5.Length = curSectLen; 
+			aECG->Section5.Length = curSectLen;
 		}
 		else if (curSect==6)  // SECTION 6
 		{
+		    if (versionSection < 25)  // SECTION 6
+		    {
 			uint16_t GDFTYP = 3;
 			size_t SZ = GDFTYP_BITS[GDFTYP]>>3;
 			typeof(hdr->NS) i=0;
 			for (i = 0; i < hdr->NS; i++) {
-				CHANNEL_TYPE *CH=hdr->CHANNEL+i;
-				if (CH->OnOff != 1) continue;
-
-				hdr->CHANNEL[i].GDFTYP = GDFTYP; 
+				CHANNEL_TYPE *hc=hdr->CHANNEL+i;
+				if (hc->OnOff != 1) continue;
+				hc->GDFTYP = GDFTYP;
 			}
 			ptr = (uint8_t*)realloc(ptr,sectionStart+16+6+2*NS+SZ*(hdr->data.size[0]*hdr->data.size[1]));
 
@@ -583,8 +590,6 @@ EXTERN_C int sopen_SCP_write(HDRTYPE* hdr) {
 			hdr->NRec = 1; 
 
 			// Prepare filling the data block with the ECG samples by SWRITE
-			// free(hdr->AS.rawdata);
-			// hdr->AS.rawdata = PtrCurSect+16+6+2*hdr->NS;
 			curSectLen += SZ * (hdr->data.size[hdr->FLAG.ROW_BASED_CHANNELS] * NS);
 
 			// Evaluate the size and correct it if odd
@@ -596,8 +601,8 @@ EXTERN_C int sopen_SCP_write(HDRTYPE* hdr) {
 			memset(ptr+sectionStart+10,0,6); // reserved
 			aECG->Section6.StartPtr = sectionStart; 
 			aECG->Section6.Length = curSectLen; 
+		    }
 		}
-#if (BIOSIG_VERSION >= 10500)
 		else if (curSect==7)  // SECTION 7 
 		{
 			if (hdr->SCP.Section7 != NULL) {
@@ -625,7 +630,7 @@ EXTERN_C int sopen_SCP_write(HDRTYPE* hdr) {
 				memcpy(PtrCurSect,hdr->SCP.Section9,hdr->SCP.Section9Length);
 			}
 		}
-		else if (curSect==10)  // SECTION 10 
+		else if (curSect==10)  // SECTION 10
 		{
 			if (hdr->SCP.Section10 != NULL) {
 				curSectLen = hdr->SCP.Section10Length+16; // current section length
@@ -643,19 +648,99 @@ EXTERN_C int sopen_SCP_write(HDRTYPE* hdr) {
 				memcpy(PtrCurSect+16,hdr->SCP.Section11,hdr->SCP.Section11Length);
 			}
 		}
-#if defined(WITH_SCP3)
 		else if (curSect==12) // SECTION 12
 		{
-			if ( (VERSION == 30) && (hdr->SCP.Section12.NumberOfEntries > 0) ) {
-				curSectLen = hdr->SCP.Section12.NumberOfEntries * sizeof(hdr->SCP.Section12.annotatedECG[0]);  // current section length without 16 bytes
-				ptr = (uint8_t*)realloc(ptr,sectionStart+curSectLen);
-				PtrCurSect = ptr+sectionStart;
-				memcpy(PtrCurSect+16,hdr->SCP.Section12.annotatedECG, curSectLen);
-				curSectLen += 16;  // current section length
+		    if (versionSection > 25 ) // SECTION 12, SCP version 3
+		    {
+			uint16_t gdftyp= 0;
+			uint8_t bps    = 0;
+			//double PhysMax = -1.0/0.0;
+			uint16_t PhysDimBaseCode = 4256;  // Volt
+			for (k = 0; k < hdr->NS; k++) {
+				CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+				if (hc->OnOff == 1) {
+					if (bps < GDFTYP_BITS[gdftyp]) {
+						bps = GDFTYP_BITS[hc->GDFTYP];
+						gdftyp = hc->GDFTYP;
+					}
+				}
 			}
+
+			if (NS>255) {
+				NS=255;
+				fprintf(stderr,"Warning SOPEN (SCP-WRITE): Number of channels exceeds 255, limited to 255.\n");
+			}
+
+			bps = GDFTYP_BITS[gdftyp]>>3;
+			double DigMax = ldexp(1.0, GDFTYP_BITS[gdftyp]-1)-1;
+
+			int ns=0;
+			for (k=0; k < hdr->NS; k++) {
+				CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+				if (hc->OnOff > 0) {
+					if (ns > 255) {
+						hc->OnOff = 0;
+						continue;
+					}
+					ns++;
+
+					double scale = PhysDimScale(hc->PhysDimCode);
+					hc->GDFTYP  =  gdftyp;
+					hc->PhysMax =  max(fabs(hc->PhysMax),fabs(-hc->PhysMin))*scale*1e9;
+					hc->PhysMin = -hc->PhysMax;
+					hc->Off     =  0.0;
+					hc->Cal     =  ceil(hc->PhysMax / hc->DigMax);	// AVM must be integer
+					//hc->DigMax  =  hc->PhysMax / hc->Cal;
+					hc->DigMin  = -hc->DigMax;
+					hc->PhysDimCode = 4276;		// nV
+				}
+			}
+
+			curSectLen = 16 + 70 + NS * (4 + hdr->SPR*hdr->NRec * bps); // current section length without 16 bytes
+			curSectLen+= (curSectLen & 1);
+
+			ptr        = (uint8_t*)realloc(ptr, sectionStart + curSectLen);
+			memset(ptr + sectionStart, 0, 16+70);
+
+			PtrCurSect = ptr + sectionStart + 16;
+			leu32a((uint32_t)hdr->SampleRate, PtrCurSect);
+			PtrCurSect[4] = (uint8_t)NS;
+			leu32a((uint32_t)(hdr->NRec*hdr->SPR), PtrCurSect + 5);
+			PtrCurSect[9] = (uint8_t)bps;
+
+			// Recording Date and Time
+			gdf_time T1 = hdr->T0;
+#ifndef __APPLE__
+			T1 += (int32_t)ldexp(timezone/86400.0,32);
+#endif
+			T0_tm = gdf_time2tm_time(T1);
+
+			leu16a(T0_tm->tm_year+1900, PtrCurSect+10);     // year
+			PtrCurSect[12] = (uint8_t)(T0_tm->tm_mon + 1);  // month
+			PtrCurSect[13] = (uint8_t)T0_tm->tm_mday; 	// day
+			PtrCurSect[14] = (uint8_t)T0_tm->tm_hour;	// hour
+			PtrCurSect[15] = (uint8_t)T0_tm->tm_min;	// minute
+			PtrCurSect[16] = (uint8_t)T0_tm->tm_sec; 	// second
+			// all other fields are set to zero. filter settings are defined in Section 1, Tags 27-29
+
+			/* Leads Definistion block */
+			PtrCurSect += 70;
+			for (k=0,ns=0; k < hdr->NS; k++) {
+				CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+				if (hc->OnOff > 0) {
+					PtrCurSect[ns*4]   = hc->LeadIdCode;
+					leu16a(hc->Cal, PtrCurSect+1+ns*4);     // AVM per lead
+					PtrCurSect[3+ns*4] = 0;
+					ns++;
+				}
+			}
+
+			/* ECG signals data block */
+			PtrCurSect += 4*NS;
+		    }
+		    aECG->Section12.StartPtr = sectionStart;
+		    aECG->Section12.Length   = curSectLen;
 		}
-#endif
-#endif
 		else {
 		}
 
@@ -665,16 +750,15 @@ EXTERN_C int sopen_SCP_write(HDRTYPE* hdr) {
 		// Section start - must be odd. See EN1064:2005(E) Section 5.2.1 
 
 		// write to Section ID Header
-		if (curSectLen>0)
-		{
+		if (curSectLen>0) {
 			// Section 0: startpos in pointer field 
 			leu32a(sectionStart+1, ptr+curSect*10+6+16+6); 
 
 			// Section ID header (16 bytes)
 			leu16a(curSect, ptr+sectionStart+2); 	// Section ID
 			leu32a(curSectLen, ptr+sectionStart+4); 	// section length->section header
-			ptr[sectionStart+8] = VERSION; 	// Section Version Number 
-			ptr[sectionStart+9] = VERSION; 	// Protocol Version Number
+			ptr[sectionStart+8] = versionSection; 	// Section Version Number
+			ptr[sectionStart+9] = versionProtocol; 	// Protocol Version Number
 			if (curSect==0) {
 				memcpy(ptr+16,"SCPECG",6);	// defined as in ISO/DIS 11073-91064 Section 5.3.2
 			}
@@ -686,17 +770,23 @@ EXTERN_C int sopen_SCP_write(HDRTYPE* hdr) {
 		}	
 		sectionStart += curSectLen;	// offset for next section
 	}
-	
+
 	if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN_SCP_WRITE 300\n");
 
 	// Prepare filling the data block with the ECG samples by SWRITE
-	hdr->AS.rawdata = ptr+aECG->Section6.StartPtr+16+6+2*hdr->NS;
-	
-	hdr->AS.Header = ptr; 
+	if (versionSection < 25)
+		hdr->AS.rawdata = ptr+aECG->Section6.StartPtr+16+6+2*NS;
+	else
+		hdr->AS.rawdata = ptr+aECG->Section12.StartPtr+16+70+4*NS;
 
-	if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN_SCP_WRITE 400\n");
+	hdr->AS.Header = ptr;
+
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): %i,%i %i,%i \n",__func__,__LINE__,(int)aECG->Section6.StartPtr,(int)aECG->Section6.Length,(int)aECG->Section12.StartPtr,(int)aECG->Section12.Length);
 
 	return(0);
 }
 
+#ifdef __cplusplus
+}
+#endif
 

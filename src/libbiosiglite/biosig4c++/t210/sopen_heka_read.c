@@ -26,7 +26,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include "../biosig-dev.h"
+#include "../biosig.h"
 
 /* TODO: 
 	- need to separate sopen_heka() and sread_heka()
@@ -145,7 +145,7 @@ void sopen_heka(HDRTYPE* hdr, FILE *itx) {
 		/* get file size and read whole file */
 		count += ifread(hdr->AS.Header+count, 1, FileBuf.st_size - count, hdr);
 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA 114\n");
+if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %s(...): %i bytes read\n",__FILE__,__LINE__,__func__, count);
 
 		// double oTime;
 		uint32_t nItems;
@@ -158,7 +158,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA 114\n");
 			nItems = beu32p(hdr->AS.Header+48);
 		}
 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA 121 nItems=%i\n",nItems);
+if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %s(...): nItems=%i\n",__FILE__,__LINE__,__func__, nItems);
 
 		if (hdr->VERSION == 1) {
 			Sizes.Rec.Root   = 544;
@@ -170,7 +170,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA 121 nItems=%i\n",nItems);
 		else if (hdr->VERSION == 2)
 		for (k=0; k < min(12,nItems); k++) {
 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA 131 nItems=%i\n",k);
+if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): HEKA nItems=%i\n",__func__,__LINE__, k);
 
 			uint32_t start  = *(uint32_t*)(hdr->AS.Header+k*16+64);
 			uint32_t length = *(uint32_t*)(hdr->AS.Header+k*16+64+4);
@@ -180,9 +180,14 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA 131 nItems=%i\n",k);
 			}
 			uint8_t *ext = hdr->AS.Header + k*16 + 64 + 8;
 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA #%i: <%s> [%i:+%i]\n",k,ext,start,length);
+if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): HEKA #%i: <%s> [%i:+%i]\n",__func__,__LINE__,k,ext,start,length);
 
 			if (!start) break;
+
+			if ((start+8) > count) {
+				biosigERROR(hdr,  B4C_INCOMPLETE_FILE, "Heka/Patchmaster: file is corrupted - segment with pulse data is not available!");
+				return;
+			}
 
 			if (!memcmp(ext,".pul\0\0\0\0",8)) {
 				// find pulse data
@@ -196,7 +201,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA #%i: <%s> [%i:+%i]\n",k,ext,start,leng
 					return;
 				}
 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA124 #%i    Levels=%i\n",k,Levels);
+if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): HEKA #%i    Levels=%i\n",__func__,__LINE__,k,Levels);
 
 				memcpy(Sizes.all,hdr->AS.Header+start+8,sizeof(int32_t)*Levels);
 				if (SWAP) {
@@ -204,7 +209,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA124 #%i    Levels=%i\n",k,Levels);
 					for (l=0; l < Levels; l++) Sizes.all[l] = bswap_32(Sizes.all[l]);
 				}
 
-if (VERBOSE_LEVEL>7) {int l; for (l=0; l < Levels; l++) fprintf(stdout,"HEKA #%i       %i\n",l, Sizes.all[l]); }
+if (VERBOSE_LEVEL>7) {int l; for (l=0; l < Levels; l++) fprintf(stdout,"%s (line %i): HEKA #%i       %i\n",__func__,__LINE__,l, Sizes.all[l]); }
 
 				StartOfPulse = start + 8 + 4 * Levels;
 			}
@@ -214,7 +219,7 @@ if (VERBOSE_LEVEL>7) {int l; for (l=0; l < Levels; l++) fprintf(stdout,"HEKA #%i
 			}
 		}
 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA 989: \n");
+if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %s(...): \n",__FILE__,__LINE__,__func__);
 
 		// if (!Sizes) free(Sizes); Sizes=NULL;
 
@@ -257,14 +262,14 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA 989: \n");
 			t  		= (*(double*)(hdr->AS.Header + StartOfPulse + 520));
 		}
 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA 997\n");
+if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %s(...): \n",__FILE__,__LINE__,__func__);
 		
 		hdr->T0 = heka2gdftime(t);	// this is when when heka was started, data is recorded later.
 		hdr->SampleRate = 0.0;
 		double *DT = NULL; 	// list of sampling intervals per channel
 		hdr->SPR = 0;
 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA 999 %p\n",hdr->EVENT.CodeDesc);
+if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %s(...): %p\n",__FILE__,__LINE__,__func__,hdr->EVENT.CodeDesc);
 
 		/*******************************************************************************************************
 			HEKA: read structural information

@@ -82,7 +82,13 @@ char *trim_trailing_space(uint8_t *pstr, unsigned maxLength) {
 
 const char *Signal6_StateTable[]={
                         "","State 1","State 2","State 3","State 4","State 5","State 6","State 7","State 8","State 9",
-		"State 10","State 11","State 12","State 13","State 14","State 15","State 16","State 17","State 18","State 19" };
+		"State 10","State 11","State 12","State 13","State 14","State 15","State 16","State 17","State 18","State 19",
+		"State 20","State 21","State 22","State 23","State 24","State 25","State 26","State 27","State 28","State 29",
+		"State 30","State 31","State 32","State 33","State 34","State 35","State 36","State 37","State 38","State 39",
+		"State 40","State 41","State 42","State 43","State 44","State 45","State 46","State 47","State 48","State 49",
+		"State 50","State 51","State 52","State 53","State 54","State 55","State 56","State 57","State 58","State 59",
+		"State 60","State 61","State 62","State 63","State 64","State 65","State 66","State 67","State 68","State 69",
+		"State 70" };
 
 EXTERN_C void sopen_cfs_read(HDRTYPE* hdr) {
 /*
@@ -482,13 +488,13 @@ if (VERBOSE_LEVEL>7) 		{
 		}
 		if (Signal6_CodeDescLen > 0) {
 
-			if (Signal6_CodeDescLen > 19) {
+			if (Signal6_CodeDescLen > 70) {
 				// 19 is sizeof Signal6_StateTable
-				fprintf(stderr, "Warning %s (line %i): Event code description exceed table\n",__func__,__LINE__);
-				Signal6_CodeDescLen = 19;
+				fprintf(stderr, "Warning %s (line %i): Event code description exceed table (Signal6_CodeDescLen=%i)\n",__func__,__LINE__,Signal6_CodeDescLen);
+				Signal6_CodeDescLen = 70;
 			}
 
-			hdr->EVENT.LenCodeDesc = Signal6_CodeDescLen+1; //20 is sizeof(Signal6_StateTable)
+			hdr->EVENT.LenCodeDesc = Signal6_CodeDescLen+1; //70 is sizeof(Signal6_StateTable)
 			hdr->EVENT.CodeDesc    = realloc(hdr->EVENT.CodeDesc, sizeof(char*) * (Signal6_CodeDescLen+1));
 			for (int k=0; k <= Signal6_CodeDescLen; k++) {
 				hdr->EVENT.CodeDesc[k] = Signal6_StateTable[k];
