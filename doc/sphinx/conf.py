@@ -15,6 +15,8 @@
 # serve to show the default.
 
 import sys, os
+from sphinx import __display_version__
+from sphinx.errors import VersionRequirementError
 
 # If your extensions (or modules documented by autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -23,6 +25,11 @@ import sys, os
 
 # General configuration
 # ---------------------
+needs_sphinx = '1.4.3' # required for sphinx.ext.imgmath
+current_sphinx = __display_version__
+if needs_sphinx > current_sphinx:
+    msg = 'Stimfit documentation needs at least Sphinx v%s' %needs_sphinx
+    raise VersionRequirementError( msg )
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
