@@ -29,7 +29,7 @@ The method described above yields reliable results when both the pre- and the po
 Setting the latency cursors
 ===========================
 
-Two latency cursors exist in `Stimfit <http://www.stimfit.org>`_ that are plotted as dotted vertical blue lines. Latency is simply computed as the time interval between the first and the second latency cursor. You can set the cursors manually by simply pressing the key **L** or the latency button on the toolbar (Fig. 19A). 
+Two latency cursors exist in `Stimfit <http://www.stimfit.org>`_ that are plotted as dotted vertical blue lines. Latency is computed as the time interval between the first and the second latency cursor. You can set the cursors manually by pressing the key **L** or the latency button on the toolbar (Fig. 19A). 
 
     .. figure:: images/latency.png
         :align: center

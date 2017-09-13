@@ -94,7 +94,7 @@ To make the experience more interactive, we can load the string of the file with
 Usage
 =====
 
-To see how both function work simply import the spells module in the Python console of Stimfit and try the example files. For example: 
+To see how both function work import the spells module in the Python console of Stimfit and try the example files. For example: 
 
 ::
 

@@ -7,7 +7,7 @@ Running mean
 
 The running mean (or running average) is simple way to smooth the data. Given a certain set of points, a running average will create a new set of data points which will be computed by adding a series of averages of different subsets of the full data set.
 
-Given for example a sequence :math:`X` of :math:`n` points, we can create a new set of data points :math:`S` of length :math:`n` by simply taking the average of a subset of :math:`w` points from the original data set for every point :math:`S_i` within the set:
+Given for example a sequence :math:`X` of :math:`n` points, we can create a new set of data points :math:`S` of length :math:`n` by taking the average of a subset of :math:`w` points from the original data set for every point :math:`S_i` within the set:
 
 .. math::
 
@@ -81,7 +81,7 @@ Code commented
 
     >>> sweep = stf.get_trace(trace,channel)
 
-:func:`stf.get_trace()` simply imports the **trace** of the **channel** into a 1D-Numpy array that we called sweep. The default values provided by the function are -1. This means that by default, the current trace/channel will be imported.
+:func:`stf.get_trace()` imports the **trace** of the **channel** into a 1D-Numpy array that we called sweep. The default values provided by the function are -1. This means that by default, the current trace/channel will be imported.
 
 We create a new stf window with the following 
 
@@ -95,7 +95,7 @@ where dsweep is the 1D-NumPy array obtained after performing  the running averag
 Usage
 =====
 
-To perform the running average of 10 sampling points of the current trace, simply type:
+To perform the running average of 10 sampling points of the current trace, type:
 
 ::
 

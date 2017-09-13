@@ -5,7 +5,7 @@ Resistance Calculation
 :Authors: Jose Guzman
 :Updated: |today|
 
-The resistance can be simply calculated using Ohm's law. Currents passing through the pipette will be proportional to the applied voltage difference. This proportional factor is the resistance.  
+The resistance can be calculated using Ohm's law. Currents passing through the pipette will be proportional to the applied voltage difference. This proportional factor is the resistance.  
 
 .. math::
 
@@ -101,7 +101,7 @@ Now base_starts should be given in units of x (i.e ms). This is more intiutive i
 =====
 Usage
 =====
-Now, you can use this function for different purposes. For example, you may want to test the value of the series resistance in response to a 5 mV hyperpolarizing pulse. First, let's assume that your recording has the current peak between the 10700 and 10999 sampling points. You should set the baseline (for example between 0 and 999) and then peak between 10700 and 10999. After that, and given that 5 mV is the voltage difference, you simply type:
+Now, you can use this function for different purposes. For example, you may want to test the value of the series resistance in response to a 5 mV hyperpolarizing pulse. First, let's assume that your recording has the current peak between the 10700 and 10999 sampling points. You should set the baseline (for example between 0 and 999) and then peak between 10700 and 10999. After that, and given that 5 mV is the voltage difference, you type:
 
 
 >>> spells.resistance(0,999,10700,1999,-5)

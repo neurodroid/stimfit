@@ -81,7 +81,7 @@ Optional: PyEMF
 Download the Stimfit source code
 ================================
 
-You can download the latest development code for `Stimfit <http://www.stimfit.org>`_ from the `Github code repository <https://github.com/neurodroid/stimfit/>`_. For that, simply type from your current $HOME directory: 
+You can download the latest development code for `Stimfit <http://www.stimfit.org>`_ from the `Github code repository <https://github.com/neurodroid/stimfit/>`_. For that, type from your current $HOME directory: 
 
 ::
 
@@ -134,7 +134,7 @@ where [N] is the number of parallel builds you want to start. And finally:
 
     $ ./configure --prefix= $HOME/.local PYTHON = $HOME/.local/lib/python2.6 --enable-python
 
-    and after that simply call **make** and **make install** as normal user. The Stimfit executable will be now in $HOME/.local
+    and after that call **make** and **make install** as normal user. The Stimfit executable will be now in $HOME/.local
 
 ==========================================
 Building Stimfit with BioSig import filter
@@ -173,7 +173,7 @@ The manual of `Stimfit <http://www.stimfit.org>`_ including the documentation is
 
     sudo apt-get install python-sphinx
 
-It is possible to build a local copy of the documentation there by simply calling:
+It is possible to build a local copy of the documentation there by calling:
 
 ::
 

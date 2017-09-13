@@ -139,7 +139,7 @@ this will look for events below the value -40 but not in the current trace, only
 
     >>> spells.count_events(threshold=-40,start=500,up=False,delta=1000,mark=False,trace=10)
 
-If you want to create a list of events with the events found in a selection of traces, you can simply type:
+If you want to create a list of events with the events found in a selection of traces, you can type:
 
 ::
 

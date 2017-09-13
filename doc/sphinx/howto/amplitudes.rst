@@ -82,7 +82,7 @@ The amplitude function will be calculated based on the traces selected by *trace
 Code commented
 ==============
 
-*None* is a Python built-in constant. It is used in to represent the absence of a value. Therefore, in our example, when the argument *trace* is empty (its value is *None*) we will simply select the current trace with :func:`stf.get_trace_index()` and store it in the variable **sweep**. If not, the variable **sweep** will take the value taken by *trace*. This iscontroled by the following if-block within the function:
+*None* is a Python built-in constant. It is used in to represent the absence of a value. Therefore, in our example, when the argument *trace* is empty (its value is *None*) we will select the current trace with :func:`stf.get_trace_index()` and store it in the variable **sweep**. If not, the variable **sweep** will take the value taken by *trace*. This iscontroled by the following if-block within the function:
 
 ::
 
@@ -108,7 +108,7 @@ Note that after setting the stf cursors, we update the measurements in the trace
 Usage
 =====
 
-The function accepts an optional *trace* argument. That means, that we do not need to declare it when using the function. In that case, the function will work on the current trace. For example, if we want to calculate the amplitude between a baseline between (500+10) msec and a peak between 750 and 760 msec on the current trace, we simply enter:
+The function accepts an optional *trace* argument. That means, that we do not need to declare it when using the function. In that case, the function will work on the current trace. For example, if we want to calculate the amplitude between a baseline between (500+10) msec and a peak between 750 and 760 msec on the current trace, we enter:
 
 ::
 

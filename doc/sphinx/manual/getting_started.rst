@@ -201,7 +201,7 @@ First, you have to select the traces to average (Fig. 14). Once you are done, cl
 
 .. note::
 
-    If you want to perform an average (or any other measurement) of all traces in a recording, simply select Edit-> Select all, or type Ctrl+A
+    If you want to perform an average (or any other measurement) of all traces in a recording, select Edit-> Select all, or type Ctrl+A
 
 Fitting functions to data
 =========================

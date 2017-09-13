@@ -48,7 +48,7 @@ The function documentation will pop up when you type in the opening
 bracket. The function returns the boolean False because you have not
 opened any file yet. Since the stf module is imported in the namespace,
 you can omit the initial ```stf.``` when calling functions. Thus, you
-could get just the same result by simply typing
+could get just the same result by typing
 
 ::
 
@@ -343,7 +343,7 @@ To import and use this file, you would do:
 
 .. note::
 
-    You can import a file from any directory by selecting **File->Import Python module** or simpy by pressing ``Ctrl+I``. The file will be automatically loaded in the embedded Python shell and ready to be used (it is not necessary to type import(myFile). To reload the file, you have simply to select **File->Import Python module** or ``Ctrl+I`` again. 
+    You can import a file from any directory by selecting **File->Import Python module** or simpy by pressing ``Ctrl+I``. The file will be automatically loaded in the embedded Python shell and ready to be used (it is not necessary to type import(myFile). To reload the file, you have to select **File->Import Python module** or ``Ctrl+I`` again. 
 
 
 Add a Python function to the Stimfit menu
