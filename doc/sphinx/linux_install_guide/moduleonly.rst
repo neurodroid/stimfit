@@ -41,7 +41,7 @@ Now you can configure. I strongly recommend building in a separate directory.
 Remember to add the argument *--with-biosig* to the configure script 
 if you want to have extra biomedical fileformats for stfio. 
 
-If you want to install the *stfio* module for a non-default Python distribution, such as **Anaconda Python**, use the argument *--prefix=* to specify the installation path as the *site-packages* folder of your favorite Python distribution. The following example will install *stfio* for Anaconda Python 2.7:
+If you want to install the *stfio* module for a non-default Python distribution, such as **Anaconda Python**, use the argument *--prefix=* to specify the installation path as where your favorite Python distribution is installed. The following example will install *stfio* for Anaconda Python 2.7:
 
 ::
 
