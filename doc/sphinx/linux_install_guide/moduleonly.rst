@@ -45,7 +45,14 @@ If you want to install the *stfio* module for a non-default Python distribution,
 
 ::
 
-    $ ../../configure --enable-module --prefix=$HOME/anaconda/lib/python2.7/site-packages
+    $ ../../configure --enable-module --prefix=$HOME/anaconda/
+
+If using virtual environment, try something like this:
+
+::
+
+    $ ../../configure --enable-module --prefix=$HOME/anaconda/envs/py36
+
 
 Then, build and install:
 
