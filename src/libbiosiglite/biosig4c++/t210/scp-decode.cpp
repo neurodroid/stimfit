@@ -105,6 +105,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <stdlib.h>
 using namespace std;
 
+/*
+   error handling should use error variables local to each HDR
+   otherwise, sopen() etc. is not re-entrant.
+
+   Therefore, use of variables B4C_ERRNUM and B4C_ERRMSG is deprecated;
+   Instead, use biosigERROR for setting error status, and
+   serror2(hdr), hdr->AS.B4C_ERRNUM, hdr->AS.B4C_ERRMSG for error handling.
+
+ */
+__attribute__ ((deprecated)) extern int B4C_ERRNUM;
+__attribute__ ((deprecated)) extern const char *B4C_ERRMSG;
+
+
 //______________________________________________________________________________
 //               FILE POINTERS
 

@@ -27,7 +27,7 @@
 #include <string.h>
 #include "physicalunits.h"
 
-#ifdef WITH_PTHREAD
+#ifdef HAVE_PTHREAD
 // This is optional, because so far there are no multi-threaded applications for libbiosig.
 #include <pthread.h>
 #endif

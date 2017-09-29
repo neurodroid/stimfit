@@ -28,6 +28,8 @@
 #include <string.h>
 #include "../biosig-dev.h"
 
+#define min(a,b)        (((a) < (b)) ? (a) : (b))
+
 uint16_t cfs_data_type(uint8_t dataType) {
 	switch (dataType) {
 	case 0:	//int8

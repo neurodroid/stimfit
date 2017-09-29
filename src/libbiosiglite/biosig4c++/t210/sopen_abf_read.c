@@ -35,6 +35,8 @@
 #include "axon_structs.h"	// ABF2
 #include "abfheadr.h"		// ABF1
 
+#define min(a,b)        (((a) < (b)) ? (a) : (b))
+#define max(a,b)        (((a) > (b)) ? (a) : (b))
 
 /*
 	read data block of ATF file into the cache

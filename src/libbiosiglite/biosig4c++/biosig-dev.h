@@ -57,7 +57,7 @@ extern int VERBOSE_LEVEL; 	// used for debugging, variable is always defined
 	The output files can be zipped, too.
  */
 
-#ifdef WITH_ZLIB
+#ifdef HAVE_ZLIB
 #include <zlib.h>
 #ifndef ZLIB_H
     #if defined(__MINGW64__)
@@ -68,7 +68,7 @@ extern int VERBOSE_LEVEL; 	// used for debugging, variable is always defined
 #endif
 #endif
 
-#ifdef WITH_CHOLMOD
+#ifdef HAVE_CHOLMOD
     #ifdef __APPLE__
         #include <cholmod.h>
     #else
@@ -76,7 +76,7 @@ extern int VERBOSE_LEVEL; 	// used for debugging, variable is always defined
     #endif
 #endif
 
-#ifdef WITH_HDF5
+#ifdef HAVE_HDF5
     #include <hdf5.h>
 #endif
 #ifdef WITH_NIFTI
@@ -233,18 +233,6 @@ enum FileFormat {
 	Z, ZIP, ZIP2, RHD2000,
 	invalid=0xffff
 };
-
-/*
-   error handling should use error variables local to each HDR
-   otherwise, sopen() etc. is not re-entrant.
-
-   Therefore, use of variables B4C_ERRNUM and B4C_ERRMSG is deprecated;
-   Instead, use biosigERROR for setting error status, and
-   serror2(hdr), hdr->AS.B4C_ERRNUM, hdr->AS.B4C_ERRMSG for error handling.
-
- */
-ATT_DEPREC extern int B4C_ERRNUM;
-ATT_DEPREC extern const char *B4C_ERRMSG;
 
 
 /*
@@ -930,11 +918,6 @@ static inline void bef64a(  double i, void* r) {
 #ifndef isnan
 # define isnan(a) ((a)!=(a))
 #endif
-
-
-#define min(a,b)	(((a) < (b)) ? (a) : (b))
-#define max(a,b)	(((a) > (b)) ? (a) : (b))
-
 
 /*
     The macro IS_SET() can be used to test for defines in 

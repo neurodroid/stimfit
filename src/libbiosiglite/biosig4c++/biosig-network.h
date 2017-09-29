@@ -140,6 +140,7 @@
 #define	BSCS_CANNOT_CONNECT		 	 (-4)	//  
 #define	BSCS_SERVER_NOT_SUPPORTED	 	 (-5)	//  
 
+#define max(a,b)        (((a) > (b)) ? (a) : (b))
 
 typedef struct {
 	uint32_t STATE; 

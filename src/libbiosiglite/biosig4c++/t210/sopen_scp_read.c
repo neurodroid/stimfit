@@ -40,6 +40,8 @@
 
 #include "../biosig-dev.h"
 
+#define min(a,b)        (((a) < (b)) ? (a) : (b))
+
 #include "structures.h"
 static const uint8_t _NUM_SECTION = 20;	   //consider first 19 sections of SCP
 static bool add_filter = true;             // additional filtering gives better shape, but use with care

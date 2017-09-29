@@ -43,10 +43,10 @@ EXTERN_C int sopen_dicom_read(HDRTYPE* hdr) {
 
 #endif
 
-#ifdef WITH_HDF
+#ifdef HAVE_HDF
 #include <hdf5.h>
 #endif
-#ifdef WITH_MATIO
+#ifdef HAVE_MATIO
 #include <matio.h>
 #endif
 
@@ -201,7 +201,7 @@ int sopen_hdf5(HDRTYPE* hdr) {
 }
 #endif
 
-#ifdef WITH_MATIO
+#ifdef HAVE_MATIO
 int sopen_matlab(HDRTYPE* hdr) {
         /*
                 file hdr->FileName is already opened and hdr->HeadLen bytes are read

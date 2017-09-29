@@ -60,6 +60,7 @@
 
 int VERBOSE_LEVEL = 0;		// this variable is always available, but only used without NDEBUG 
 
+#include "config.h"
 #include "biosig.h"
 #include "biosig-network.h"
 
@@ -75,6 +76,9 @@ int VERBOSE_LEVEL = 0;		// this variable is always available, but only used with
   #include <unistd.h>
   #define FILESEP '/'
 #endif
+
+#define min(a,b)        (((a) < (b)) ? (a) : (b))
+#define max(a,b)        (((a) > (b)) ? (a) : (b))
 
 char* getlogin (void);
 char* xgethostname (void);
@@ -93,7 +97,7 @@ ATT_DEPREC const char *B4C_ERRMSG;
 #endif
 
 
-#ifdef WITH_CHOLMOD
+#ifdef HAVE_CHOLMOD
     cholmod_common CHOLMOD_COMMON_VAR;
 void CSstop() {
 	cholmod_finish(&CHOLMOD_COMMON_VAR);
@@ -134,10 +138,10 @@ int sopen_fef_read(HDRTYPE* hdr);
 int sclose_fef_read(HDRTYPE* hdr);
 #endif
 void sopen_heka(HDRTYPE* hdr,FILE *fid);
-#ifdef WITH_HDF
+#ifdef HAVE_HDF
 int sopen_hdf5(HDRTYPE *hdr);
 #endif 
-#ifdef WITH_MATIO
+#ifdef HAVE_MATIO
 int sopen_matlab(HDRTYPE *hdr);
 #endif 
 #ifdef WITH_DICOM
@@ -8172,7 +8176,7 @@ if (VERBOSE_LEVEL>8)
 	}
 
     	else if (hdr->TYPE==Matlab) {
-#ifdef WITH_MATIO
+#ifdef HAVE_MATIO
                 if (sopen_matlab(hdr) != 0) {
         		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Error reading MATLAB file");
                 }

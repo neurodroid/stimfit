@@ -35,6 +35,9 @@
 
 #include "../biosig-dev.h"
 
+#define min(a,b)        (((a) < (b)) ? (a) : (b))
+#define max(a,b)        (((a) > (b)) ? (a) : (b))
+
 void sopen_axg_read(HDRTYPE* hdr) {
 
 		hdr->FILE.LittleEndian = 0;
