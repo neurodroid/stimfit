@@ -20,6 +20,7 @@ noinst_HEADERS = \
         ./src/libbiosiglite/biosig4c++/biosig2.h \
         ./src/libbiosiglite/biosig4c++/biosig-dev.h \
         ./src/libbiosiglite/biosig4c++/biosig-network.h \
+        ./src/libbiosiglite/biosig4c++/config.h \
         ./src/libbiosiglite/biosig4c++/gdftime.h \
         ./src/libbiosiglite/biosig4c++/mdc_ecg_codes.h \
         ./src/libbiosiglite/biosig4c++/physicalunits.h \
