@@ -57,13 +57,19 @@ variant atlas description {Use MacPorts ATLAS libraries.} {
         --with-lapack-lib=${prefix}/lib/libatlas.a
 }
 
-variant biosig description {Use biosig library for file I/O.} {
+variant biosig conflicts biosiglite description {Use external biosig library for file I/O.} {
     depends_lib-append \
         port:libbiosig
 
     configure.args-replace \
         --without-biosig \
         --with-biosig2
+}
+
+variant biosiglite conflicts biosig description {Use internal biosiglite library for file I/O.} {
+    configure.args-replace \
+        --without-biosig \
+        --with-biosiglite
 }
 
 configure.ldflags-append \
@@ -74,7 +80,7 @@ configure.ldflags-append \
 default_variants    +python27
 # }
 default_variants-append \
-                    +biosig
+                    +biosiglite
 
 destroot.destdir    DESTDIR=${destroot}${applications_dir}
 
