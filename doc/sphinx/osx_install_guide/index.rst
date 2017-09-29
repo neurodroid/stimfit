@@ -24,4 +24,4 @@ Contents:
    :maxdepth: 2
 
    building
-
+   moduleonly

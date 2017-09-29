@@ -25,7 +25,7 @@ Installing stfio for non-MacPorts Python distributions
 Note: The officially-supported *stfio* module is not currently available for non-MacPorts Python distributions. You can either link the MacPorts *stfio* to your favorite Python distribution or build the module from source. 
 
 Linking the MacPorts stfio module to your Python PATH
-----------------------------------------------
+-----------------------------------------------------
 Note: This works most of the times, but is not always recommended. 
 
 First, install the *stfio* module using MacPorts as described above. Then find the path where *stfio* is installed 
@@ -61,7 +61,7 @@ Finally, run python to test the module, as described in :doc:`/stfio/index`.
 
 
 Building the stfio module from source
---------------------
+-------------------------------------
 
 Install `Homebrew <https://brew.sh/>`_
 
