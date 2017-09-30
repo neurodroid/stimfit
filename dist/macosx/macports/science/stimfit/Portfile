@@ -15,8 +15,8 @@ long_description    A program for viewing and analyzing electrophysiological dat
 homepage            http://www.stimfit.org
 master_sites        ${homepage}
 
-checksums           rmd160  cb1e4e29cd516ec997638d736c98a2c244907c01 \
-                    sha256  f8696952c76f0d67331128f3c763e6032cec53dc7ced7c9d1e18982ad93a8e83
+checksums           rmd160  683df46ed12543bd4e0b668e92d1d91156b61881 \
+                    sha256  aa7d5adc97c60e5f3748c807b98184daeeeac1149ae94281105fed128b910fe0
 
 wxWidgets.use       wxPython-3.0
 
