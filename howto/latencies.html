@@ -1,34 +1,32 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Calculating latencies &mdash; Stimfit 0.15.2 documentation</title>
-    
+    <title>Calculating latencies &#8212; Stimfit 0.15.4 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.15.2',
+        VERSION:     '0.15.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false
+        HAS_SOURCE:  false,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
-    <link rel="up" title="The Stimfit book of spells" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Loading custom text files" href="ascii.html" />
     <link rel="prev" title="Object oriented programming with Stimfit" href="introclass.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -50,7 +48,7 @@
 
     
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Stimfit book of spells</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Stimfit book of spells</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,7 +65,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Jose Guzman</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">23 June, 2016</td>
+<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">08 November, 2017</td>
 </tr>
 </tbody>
 </table>
@@ -299,11 +297,11 @@
 </pre></div>
 </div>
 <p>the former will give the peak value when in the trace where the object was created, and the later will return the peak in the current trace.</p>
-<p>Additionally, we can decide to change the threshold value of the AP in a trace. For that, we can simply type:</p>
+<p>Additionally, we can decide to change the threshold value of the AP in a trace. For that, we can type:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myspike</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>And now the Spike attributes will be updated with the new threshold in the current trace. The function __call__ simply allows to call the object with a given argument, and we used it to set a different threshold and update the object attributes.</p>
+<p>And now the Spike attributes will be updated with the new threshold in the current trace. The function __call__ allows to call the object with a given argument, and we used it to set a different threshold and update the object attributes.</p>
 </div>
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
@@ -341,7 +339,7 @@
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">latency</span> <span class="o">=</span> <span class="n">dend</span><span class="o">.</span><span class="n">t50_left</span> <span class="o">-</span> <span class="n">soma</span><span class="o">.</span><span class="n">t50_left</span>
 </pre></div>
 </div>
-<p>You can find the class Spike described above in your current <a class="reference external" href="http://www.stimfit.org">Stimfit</a> version. To use it, you can simply import it from the spells module with the following command;</p>
+<p>You can find the class Spike described above in your current <a class="reference external" href="http://www.stimfit.org">Stimfit</a> version. To use it, you can import it from the spells module with the following command;</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">spells</span> <span class="k">import</span> <span class="n">Spike</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">soma</span> <span class="o">=</span> <span class="n">Spike</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dend</span> <span class="o">=</span> <span class="n">Spike</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span> <span class="c1"># in a different trace/window</span>
@@ -469,8 +467,8 @@
       </div>
     
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 23 June, 2016.
+        &#169; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 08 November, 2017.
     </div>
   </body>
 </html>

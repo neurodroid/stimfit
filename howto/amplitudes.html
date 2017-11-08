@@ -1,34 +1,32 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Calculations on selected traces &mdash; Stimfit 0.15.2 documentation</title>
-    
+    <title>Calculations on selected traces &#8212; Stimfit 0.15.4 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.15.2',
+        VERSION:     '0.15.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false
+        HAS_SOURCE:  false,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
-    <link rel="up" title="The Stimfit book of spells" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Cutting traces" href="cuttingtraces.html" />
     <link rel="prev" title="Running mean" href="runningmean.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -50,7 +48,7 @@
 
     
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Stimfit book of spells</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Stimfit book of spells</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,7 +65,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Jose Guzman</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">23 June, 2016</td>
+<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">08 November, 2017</td>
 </tr>
 </tbody>
 </table>
@@ -78,7 +76,7 @@
 </pre></div>
 </div>
 <p>In this case, we selected the 2nd, 3rd and 4th trace in the file (note the zero-based index!).</p>
-<p>The routine described below performs a simple algorithm only on the traces selected previously (either with the menu bar or with typing <strong>S</strong>). I&#8217;ve chosen a very simple calculation (amplitude of the signal) for didactic purposes, but a more complex function can be writen.</p>
+<p>The routine described below performs a simple algorithm only on the traces selected previously (either with the menu bar or with typing <strong>S</strong>). I’ve chosen a very simple calculation (amplitude of the signal) for didactic purposes, but a more complex function can be writen.</p>
 <div class="section" id="using-selected-traces">
 <h2>Using selected traces<a class="headerlink" href="#using-selected-traces" title="Permalink to this headline">¶</a></h2>
 <p>In the following function we calculate the amplitude of the signal of the selected traces. One of the arguments of the function (<em>trace=None</em>) will select the trace that we want to use to make the calculation. Note that this is an optional argument; by default it will accept the current trace (or sweep) of the file, but if not, you can enter the zero-based index of the traces in the channel.</p>
@@ -134,7 +132,7 @@
 </div>
 <div class="section" id="code-commented">
 <h2>Code commented<a class="headerlink" href="#code-commented" title="Permalink to this headline">¶</a></h2>
-<p><em>None</em> is a Python built-in constant. It is used in to represent the absence of a value. Therefore, in our example, when the argument <em>trace</em> is empty (its value is <em>None</em>) we will simply select the current trace with <a class="reference internal" href="../stf_reference/stf.html#stf.get_trace_index" title="stf.get_trace_index"><code class="xref py py-func docutils literal"><span class="pre">stf.get_trace_index()</span></code></a> and store it in the variable <strong>sweep</strong>. If not, the variable <strong>sweep</strong> will take the value taken by <em>trace</em>. This iscontroled by the following if-block within the function:</p>
+<p><em>None</em> is a Python built-in constant. It is used in to represent the absence of a value. Therefore, in our example, when the argument <em>trace</em> is empty (its value is <em>None</em>) we will select the current trace with <a class="reference internal" href="../stf_reference/stf.html#stf.get_trace_index" title="stf.get_trace_index"><code class="xref py py-func docutils literal"><span class="pre">stf.get_trace_index()</span></code></a> and store it in the variable <strong>sweep</strong>. If not, the variable <strong>sweep</strong> will take the value taken by <em>trace</em>. This iscontroled by the following if-block within the function:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">sweep</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace_index</span><span class="p">()</span>
 <span class="k">else</span><span class="p">:</span>
@@ -153,7 +151,7 @@
 </div>
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>The function accepts an optional <em>trace</em> argument. That means, that we do not need to declare it when using the function. In that case, the function will work on the current trace. For example, if we want to calculate the amplitude between a baseline between (500+10) msec and a peak between 750 and 760 msec on the current trace, we simply enter:</p>
+<p>The function accepts an optional <em>trace</em> argument. That means, that we do not need to declare it when using the function. In that case, the function will work on the current trace. For example, if we want to calculate the amplitude between a baseline between (500+10) msec and a peak between 750 and 760 msec on the current trace, we enter:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">get_amplitude</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="mi">750</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -172,7 +170,7 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span><span class="n">show_table</span><span class="p">(</span><span class="n">mytable</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Note that the dictionary will be sorted alphabetically according to its keys. Therefore, using &#8220;%.3d&#8221; is used to keep the table in the same order as the traces. If you wanted to print out more than one value for each trace, you could use <a class="reference internal" href="../stf_reference/stf.html#stf.show_table_dictlist" title="stf.show_table_dictlist"><code class="xref py py-func docutils literal"><span class="pre">stf.show_table_dictlist()</span></code></a> that uses a similar syntax, but requires a list of numbers as the values of the dictionary.</p>
+<p>Note that the dictionary will be sorted alphabetically according to its keys. Therefore, using “%.3d” is used to keep the table in the same order as the traces. If you wanted to print out more than one value for each trace, you could use <a class="reference internal" href="../stf_reference/stf.html#stf.show_table_dictlist" title="stf.show_table_dictlist"><code class="xref py py-func docutils literal"><span class="pre">stf.show_table_dictlist()</span></code></a> that uses a similar syntax, but requires a list of numbers as the values of the dictionary.</p>
 </div>
 </div>
 
@@ -251,8 +249,8 @@
       </div>
     
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 23 June, 2016.
+        &#169; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 08 November, 2017.
     </div>
   </body>
 </html>

@@ -1,33 +1,32 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>stf &mdash; Stimfit 0.15.2 documentation</title>
-    
+    <title>stf &#8212; Stimfit 0.15.4 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.15.2',
+        VERSION:     '0.15.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false
+        HAS_SOURCE:  false,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="References" href="../references/index.html" />
     <link rel="prev" title="Loading custom text files" href="../howto/ascii.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -65,9 +64,9 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber (christsc at gmx.de)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Release:</th><td class="field-body">0.15.2</td>
+<tr class="field-even field"><th class="field-name">Release:</th><td class="field-body">0.15.4</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">23 June, 2016</td>
+<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">08 November, 2017</td>
 </tr>
 </tbody>
 </table>
@@ -78,10 +77,10 @@
 <dd><p>Aligns the selected traces to the index that is returned by the alignment function, and then creates a new window showing the aligned traces. This function requires to select the traces of interest and the presence of a second (i.e reference) channel.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>alignment</em> &#8211; The alignment function to be used.
+<p><em>alignment</em> – The alignment function to be used.
 Accepts any function returning a valid index within a trace. These are some predefined possibilities: maxrise_index (default; maximal slope during rising phase), peak_index (Peak of an event), foot_index (Beginning of an event), t50left_index, t50right_index (Left/right half-maximal amplitude)</p>
-<p><em>active</em> &#8211;    If True, the alignment function will be applied to the active channel. If False (default), it will be applied to the inactive channel.</p>
-<p><em>zeropad</em> &#8211;   Not yet implemented:If True, missing parts at the beginning or end of a trace  will be padded with zeros after the alignment. If False (default), traces will be cropped so that all traces have equal sizes.</p>
+<p><em>active</em> –    If True, the alignment function will be applied to the active channel. If False (default), it will be applied to the inactive channel.</p>
+<p><em>zeropad</em> –   Not yet implemented:If True, missing parts at the beginning or end of a trace  will be padded with zeros after the alignment. If False (default), traces will be cropped so that all traces have equal sizes.</p>
 </div></blockquote>
 </dd></dl>
 
@@ -147,7 +146,7 @@ Accepts any function returning a valid index within a trace. These are some pred
 <dd><p>Opens a file.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>filename</em> &#8211; The file to be opened. On Windows, use double back-slashes (&#8220;\&#8221;) between directories to avoid conversion to special characters such as &#8220;t&#8221; or &#8220;n&#8221;.
+<p><em>filename</em> – The file to be opened. On Windows, use double back-slashes (“&quot;) between directories to avoid conversion to special characters such as “t” or “n”.
 Example usage in Windows:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_open</span><span class="p">(</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">datafile.dat&quot;</span><span class="p">)</span><span class="o">.</span>
 </pre></div>
@@ -156,7 +155,7 @@ Example usage in Windows:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_open</span><span class="p">(</span><span class="s2">&quot;/home/cs/data/datafile.dat&quot;</span><span class="p">)</span><span class="o">.</span>
 </pre></div>
 </div>
-<p>This is surprisingly slow when called from python. Haven&#8217;t figured out the reason yet.</p>
+<p>This is surprisingly slow when called from python. Haven’t figured out the reason yet.</p>
 <p><strong>Returns:</strong></p>
 <p>True is the file could be opened, False otherwise.</p>
 </div></blockquote>
@@ -168,7 +167,7 @@ Example usage in Windows:</p>
 <dd><p>Saves a file.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>filename</em> &#8211; The file to be saved. On Windows, use double back-slashes (&#8220;\&#8221;) between directories to avoid con-version to special characters such as &#8220;t&#8221; or &#8220;n&#8221;.</p>
+<p><em>filename</em> – The file to be saved. On Windows, use double back-slashes (“&quot;) between directories to avoid con-version to special characters such as “t” or “n”.</p>
 <p>Example usage in Windows:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_save</span><span class="p">(</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">datafile.dat&quot;</span><span class="p">)</span>
 </pre></div>
@@ -177,7 +176,7 @@ Example usage in Windows:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_save</span><span class="p">(</span><span class="s2">&quot;/home/cs/data/datafile.dat&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This is surprisingly slow when called from python. Haven&#8217;t figured out the reason yet.</p>
+<p>This is surprisingly slow when called from python. Haven’t figured out the reason yet.</p>
 <p><strong>Returns:</strong></p>
 <p>True if the file could be saved, False otherwise.</p>
 </div></blockquote>
@@ -189,7 +188,7 @@ Example usage in Windows:</p>
 <dd><p>Returns the zero-based index of the foot of an event in the active channel. The foot is the intersection of an interpolated line through the points of 20 and 80% rise with the baseline. Uses the currently measured values, i.e. does not update measurements if the peak or base window cursors have changed.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>active</em> &#8211; If True, returns the current index of the foot within the active channel. Only implemented for the active channelat this time. Will return a negative value and show an error message if <em>active</em> == False.</p>
+<p><em>active</em> – If True, returns the current index of the foot within the active channel. Only implemented for the active channelat this time. Will return a negative value and show an error message if <em>active</em> == False.</p>
 <p><strong>Returns:</strong></p>
 <p>The zero-based index of the foot of an event in units of sampling points. Interpolates between sampling points. Returns a negative value upon failure.</p>
 </div></blockquote>
@@ -221,7 +220,7 @@ Example usage in Windows:</p>
 <dd><p>Gets the method used to compute the baseline.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
-<p>A string specifying the method to compute the baseline. Can be one of &#8220;mean&#8221; or &#8220;median&#8221;</p>
+<p>A string specifying the method to compute the baseline. Can be one of “mean” or “median”</p>
 </div></blockquote>
 </dd></dl>
 
@@ -231,7 +230,7 @@ Example usage in Windows:</p>
 <dd><p>Returns the zero-based index or the time point of the base end cursor.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>is_time</em> &#8211; If False (default), returns the zero-based index. If True,returns the time from the beginning of the trace to the cursor position.</p>
+<p><em>is_time</em> – If False (default), returns the zero-based index. If True,returns the time from the beginning of the trace to the cursor position.</p>
 </div></blockquote>
 </dd></dl>
 
@@ -241,7 +240,7 @@ Example usage in Windows:</p>
 <dd><p>Returns the zero-based index or the time point of the base start cursor.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>is_time</em> &#8211; If False (default), returns the zero-based index. If True,returns the time from the beginning of the trace to the cursor position.</p>
+<p><em>is_time</em> – If False (default), returns the zero-based index. If True,returns the time from the beginning of the trace to the cursor position.</p>
 </div></blockquote>
 </dd></dl>
 
@@ -251,7 +250,7 @@ Example usage in Windows:</p>
 <dd><p>Returns the ZERO-BASED index of the specified channel.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>active</em> &#8211; If True, returns the index of the active (black) channel. If False, returns the index of the inactive (red) channel.</p>
+<p><em>active</em> – If True, returns the index of the active (black) channel. If False, returns the index of the inactive (red) channel.</p>
 </div></blockquote>
 </dd></dl>
 
@@ -261,7 +260,7 @@ Example usage in Windows:</p>
 <dd><p>Returns the name of the channel with the specified index.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>index</em> &#8211; The zero-based index of the channel of interest. If &lt; 0, the name of the active channel will be returned.</p>
+<p><em>index</em> – The zero-based index of the channel of interest. If &lt; 0, the name of the active channel will be returned.</p>
 <p><strong>Returns:</strong></p>
 <p>the name of the channel with the specified index.</p>
 </div></blockquote>
@@ -279,8 +278,8 @@ Example usage in Windows:</p>
 <dd><p>Get the waveform resulted from the fitting, if available.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>trace</em> &#8211; The zero-based index of the trace of interest. If negative, the name of the active trace will be returned.</p>
-<p><em>channel</em> &#8211; The zero-based index of the trace of interest. If negative, the active channel will be used.</p>
+<p><em>trace</em> – The zero-based index of the trace of interest. If negative, the name of the active trace will be returned.</p>
+<p><em>channel</em> – The zero-based index of the trace of interest. If negative, the active channel will be used.</p>
 <p><strong>Returns:</strong></p>
 <p>A two dimensional NumPy array with the x-values of the fit in the first dimension and the y-values in the second dimension. None if no fit is available.</p>
 </div></blockquote>
@@ -292,7 +291,7 @@ Example usage in Windows:</p>
 <dd><p>Returns the zero-based index or the time point of the fit end cursor.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>is_time</em> &#8211; If False (default), returns the zero-based index. If True,returns the time from the beginning of the trace to the cursor position.</p>
+<p><em>is_time</em> – If False (default), returns the zero-based index. If True,returns the time from the beginning of the trace to the cursor position.</p>
 </div></blockquote>
 </dd></dl>
 
@@ -302,7 +301,7 @@ Example usage in Windows:</p>
 <dd><p>Returns the zero-based index or the time point of the fit start cursor.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>is_time</em> &#8211; If False (default), returns the zero-based index. If True, returns the time from the beginning of the trace to the cursor position.</p>
+<p><em>is_time</em> – If False (default), returns the zero-based index. If True, returns the time from the beginning of the trace to the cursor position.</p>
 </div></blockquote>
 </dd></dl>
 
@@ -312,7 +311,7 @@ Example usage in Windows:</p>
 <dd><p>Returns the half-maximal amplitude of an event in the specified channel.Uses the currently measured values, i.e. does not update measurements if thepeak or base window cursors have changed. Only implemented for the active channel.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>active</em> &#8211; If True, returns the current half-maximal amplitude within the active channel.</p>
+<p><em>active</em> – If True, returns the current half-maximal amplitude within the active channel.</p>
 <p><strong>Returns:</strong></p>
 <p>The half-maximal amplitude in units of x-units. Returns a negative value upon failure.</p>
 </div></blockquote>
@@ -327,13 +326,13 @@ Example usage in Windows:</p>
 <dl class="function">
 <dt id="stf.get_latency_end_mode">
 <code class="descclassname">stf.</code><code class="descname">get_latency_end_mode</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_latency_end_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a string specifying the latency end mode. Can be one of &#8220;manual&#8221;, &#8220;peak&#8221;, &#8220;rise&#8221;, &#8220;foot&#8221; or &#8220;half&#8221;.</p>
+<dd><p>Returns a string specifying the latency end mode. Can be one of “manual”, “peak”, “rise”, “foot” or “half”.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="stf.get_latency_start_mode">
 <code class="descclassname">stf.</code><code class="descname">get_latency_start_mode</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_latency_start_mode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a string specifying the latency start mode. Can be one of &#8220;manual&#8221;, &#8220;peak&#8221;, &#8220;rise&#8221;, or &#8220;half&#8221;.</p>
+<dd><p>Returns a string specifying the latency start mode. Can be one of “manual”, “peak”, “rise”, or “half”.</p>
 </dd></dl>
 
 <dl class="function">
@@ -358,7 +357,7 @@ Example usage in Windows:</p>
 <dt id="stf.get_risetime_factor">
 <code class="descclassname">stf.</code><code class="descname">get_risetime_factor</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_risetime_factor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the lower proportion factor used to calculate the rise time (e.g 0.2 if
-we calculate the 20&#8211;80% rise time).</p>
+we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="function">
@@ -387,7 +386,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Returns the zero-based index or the time point jof the peak end cursor.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>is_time</em> &#8211; If False (default), returns the zero-based index. If True, returns the time from the beginning of the trace to the cursor position.</p>
+<p><em>is_time</em> – If False (default), returns the zero-based index. If True, returns the time from the beginning of the trace to the cursor position.</p>
 </div></blockquote>
 </dd></dl>
 
@@ -397,7 +396,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Returns the zero-based index or the time point of the peak start cursor.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>is_time</em> &#8211; If False (default), returns the zero-based index. If True, returns the time from the beginning of the trace to the cursor position.</p>
+<p><em>is_time</em> – If False (default), returns the zero-based index. If True, returns the time from the beginning of the trace to the cursor position.</p>
 </div></blockquote>
 </dd></dl>
 
@@ -437,7 +436,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Retrieves the number of traces in a channel.Note that at present, stimfit only supports equal-sized channels, i.e. all channels within a file need to have the same number of traces. The channel argument is only for future extensions.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>channel</em> &#8211; ZERO-BASED index of the channel. Default value of -1 will use the current channel.</p>
+<p><em>channel</em> – ZERO-BASED index of the channel. Default value of -1 will use the current channel.</p>
 <p><strong>Returns:</strong></p>
 <p>The number traces in a channel.</p>
 </div></blockquote>
@@ -459,8 +458,8 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Retrieves the number of sample points of a trace.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>trace</em> &#8211;   ZERO-BASED index of the trace. Default value of -1 will use the currently displayed trace. Note that this is one less than what is displayed in the drop- down list.</p>
-<p><em>channel</em> &#8211; ZERO-BASED index of the channel. Default value of -1 will use the current channel.</p>
+<p><em>trace</em> –   ZERO-BASED index of the trace. Default value of -1 will use the currently displayed trace. Note that this is one less than what is displayed in the drop- down list.</p>
+<p><em>channel</em> – ZERO-BASED index of the channel. Default value of -1 will use the current channel.</p>
 <p><strong>Returns:</strong></p>
 <p>The number of sample points.</p>
 </div></blockquote>
@@ -472,8 +471,8 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Returns a trace as a 1-dimensional NumPy array.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>trace</em> &#8211;   ZERO-BASED index of the trace within the channel. Note that this is one less than what is shown in the drop-down box. The default value of -1 returns the currently displayed trace.</p>
-<p><em>channel</em> &#8211; ZERO-BASED index of the channel. This is independent of whether a channel is active or not. The default value of -1 returns the currently active channel.</p>
+<p><em>trace</em> –   ZERO-BASED index of the trace within the channel. Note that this is one less than what is shown in the drop-down box. The default value of -1 returns the currently displayed trace.</p>
+<p><em>channel</em> – ZERO-BASED index of the channel. This is independent of whether a channel is active or not. The default value of -1 returns the currently active channel.</p>
 <p><strong>Returns:</strong></p>
 <p>The trace as a 1D NumPy array.</p>
 </div></blockquote>
@@ -491,8 +490,8 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Returns the name of the trace with the specified index.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>trace</em> &#8211; The zero-based index of the trace of interest. If &lt; 0, the name of the active trace will be returned.</p>
-<p><em>channel</em> &#8211; The zero-based index of the channel of interest. If &lt; 0, the active channel will be used.</p>
+<p><em>trace</em> – The zero-based index of the trace of interest. If &lt; 0, the name of the active trace will be returned.</p>
+<p><em>channel</em> – The zero-based index of the channel of interest. If &lt; 0, the active channel will be used.</p>
 <p><strong>Returns:</strong></p>
 <p>the name of the trace with the specified index.</p>
 </div></blockquote>
@@ -504,7 +503,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Returns the crossing value of the threshold slope. Note that this value is not update after changing the AP threshold. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter in the main window to update the cursors.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>is_time</em> &#8211; If false (default), returns the zero-based index at which the threshold slope is crossed. If True, returns the time at which the threshold slope is crossed (e.g. in units of the y-axis). A negative number is returned upon failure.</p>
+<p><em>is_time</em> – If false (default), returns the zero-based index at which the threshold slope is crossed. If True, returns the time at which the threshold slope is crossed (e.g. in units of the y-axis). A negative number is returned upon failure.</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure (such as out-of-range).</p>
 </div></blockquote>
@@ -523,11 +522,11 @@ we calculate the 20&#8211;80% rise time).</p>
 <dl class="function">
 <dt id="stf.get_xunits">
 <code class="descclassname">stf.</code><code class="descname">get_xunits</code><span class="sig-paren">(</span><em>trace=-1</em>, <em>channel=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_xunits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the x units of the specified section. X units are not allowed to change between sections at present, and they are hard-coded to &#8220;ms&#8221;. This function is for future extension.</p>
+<dd><p>Returns the x units of the specified section. X units are not allowed to change between sections at present, and they are hard-coded to “ms”. This function is for future extension.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>trace</em> &#8211; The zero-based index of the trace of interest. If &lt; 0, the name of the active trace will be returned.</p>
-<p><em>channel</em> &#8211; The zero-based index of the channel of interest. If &lt; 0, the active channel will be used.</p>
+<p><em>trace</em> – The zero-based index of the trace of interest. If &lt; 0, the name of the active trace will be returned.</p>
+<p><em>channel</em> – The zero-based index of the channel of interest. If &lt; 0, the active channel will be used.</p>
 <p><strong>Returns:</strong></p>
 <p>The x units as a string.</p>
 </div></blockquote>
@@ -539,8 +538,8 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Returns the y units of the specified trace. Y units are not allowed to change between traces at present.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>trace</em> &#8211; The zero-based index of the trace of interest. If &lt; 0, the name of the active trace will be returned.</p>
-<p><em>channel</em> &#8211; The zero-based index of the channel of interest. If &lt; 0, the active channel will be used.</p>
+<p><em>trace</em> – The zero-based index of the trace of interest. If &lt; 0, the name of the active trace will be returned.</p>
+<p><em>channel</em> – The zero-based index of the channel of interest. If &lt; 0, the active channel will be used.</p>
 <p><strong>Returns:</strong></p>
 <p>The x units as a string.</p>
 </div></blockquote>
@@ -552,8 +551,8 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Fits a function to the data between the current fit cursors.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>fselect</em> &#8211; Zero-based index of the function as it appears in the fit selection dialog.</p>
-<p><em>refresh</em> &#8211; To avoid flicker during batch analysis, this may be set to False so that the fitted function will not immediately be drawn.</p>
+<p><em>fselect</em> – Zero-based index of the function as it appears in the fit selection dialog.</p>
+<p><em>refresh</em> – To avoid flicker during batch analysis, this may be set to False so that the fitted function will not immediately be drawn.</p>
 <p><strong>Returns:</strong></p>
 <p>A dictionary with the best-fit parameters and the least-squared error, or a null pointer upon failure.</p>
 </div></blockquote>
@@ -565,7 +564,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Retrieves the number of parameters for a function.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>fselect</em> &#8211; Zero-based index of the function as it appears in the fit selection dialog.</p>
+<p><em>fselect</em> – Zero-based index of the function as it appears in the fit selection dialog.</p>
 <p><strong>Returns:</strong></p>
 <p>The number of parameters for the function with index fselect, or a negative value upon failure.</p>
 </div></blockquote>
@@ -577,7 +576,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Returns the zero-based index of the maximal slope of rise in the specified channel. Uses the currently measured values, i.e. does not update measurements if the peak window cursors have changed.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>active</em>&#8211; If True, returns the current index of the maximal slope of rise within the active channel. Otherwise, returns the current index of the maximal slope of rise within the inactive channel.</p>
+<p><em>active</em>– If True, returns the current index of the maximal slope of rise within the active channel. Otherwise, returns the current index of the maximal slope of rise within the inactive channel.</p>
 <p><strong>Returns:</strong></p>
 <p>The zero-based index of the maximal slope of  rise in units of sampling points interpolated between adjacent sampling points. Returns a negative value upon failure.</p>
 </div></blockquote>
@@ -609,7 +608,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Creates a new window showing a 1D NumPy array.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>arg</em> &#8211; The NumPy array to be shown.</p>
+<p><em>arg</em> – The NumPy array to be shown.</p>
 </div></blockquote>
 </dd></dl>
 
@@ -619,7 +618,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Creates a new window showing a sequence of 1D NumPy arrays, or a sequence of a sequence of 1D NumPy arrays. As opposed to <a class="reference internal" href="#stf.new_window_matrix" title="stf.new_window_matrix"><code class="xref py py-func docutils literal"><span class="pre">new_window_matrix()</span></code></a>, this has the advantage that the arrays need not have equal sizes.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>array_list</em> &#8211; A sequence (e.g. list or tuple) of numpy arrays, or a sequence of a sequence of numpy arrays.</p>
+<p><em>array_list</em> – A sequence (e.g. list or tuple) of numpy arrays, or a sequence of a sequence of numpy arrays.</p>
 </div></blockquote>
 </dd></dl>
 
@@ -629,7 +628,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Creates a new window showing a 2D NumPy array.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>arg</em> &#8211;   The NumPy array to be shown. First dimension are the traces, second dimension the sampling points within the traces.</p>
+<p><em>arg</em> –   The NumPy array to be shown. First dimension are the traces, second dimension the sampling points within the traces.</p>
 </div></blockquote>
 </dd></dl>
 
@@ -659,7 +658,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Returns the zero-based index of the current peak position in the specified channel. Uses the currently measured values, i.e. does not update measurements if the peak window cursors have changed.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>active</em> &#8211; If True, returns the current peak index of the active channel. Otherwise, returns the current peak index of the inactive channel.</p>
+<p><em>active</em> – If True, returns the current peak index of the active channel. Otherwise, returns the current peak index of the inactive channel.</p>
 <p><strong>Returns:</strong></p>
 <p>The zero-based index in units of sampling points. May be interpolated if more than one point is used for the peak calculation. Returns a negative value upon failure.</p>
 </div></blockquote>
@@ -677,7 +676,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Selects a trace. Checks for out-of-range indices and stores the baseline along with the trace index.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>trace</em> &#8211;   ZERO-BASED index of the trace. Default value of -1 will select the currently displayed trace. Note that this is one less than what is displayed in the drop-down list.</p>
+<p><em>trace</em> –   ZERO-BASED index of the trace. Default value of -1 will select the currently displayed trace. Note that this is one less than what is displayed in the drop-down list.</p>
 <p><strong>Returns:</strong></p>
 <p>True if the trace could be selected, False otherwise.</p>
 </div></blockquote>
@@ -689,7 +688,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets the method to compute the baseline.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>method</em> &#8211; A string specifying the method to calculate the baseline. Can be one of &#8220;mean&#8221; or &#8220;median&#8221;</p>
+<p><em>method</em> – A string specifying the method to calculate the baseline. Can be one of “mean” or “median”</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure.</p>
 </div></blockquote>
@@ -701,8 +700,8 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets the base end cursor to a new position.This will NOT update the baseline calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>pos</em> &#8211; The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.</p>
-<p><em>is_time</em> &#8211; see above.</p>
+<p><em>pos</em> – The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.</p>
+<p><em>is_time</em> – see above.</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure (such as out-of-range).</p>
 </div></blockquote>
@@ -714,8 +713,8 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets the base start cursor to a new position.This will NOT update the baseline calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>pos</em> &#8211;     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.</p>
-<p><em>is_time</em> &#8211; see above.</p>
+<p><em>pos</em> –     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.</p>
+<p><em>is_time</em> – see above.</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure (such as out-of-range).</p>
 </div></blockquote>
@@ -727,7 +726,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets the currently displayed channel to a new index. Subsequently updatges all measurements (e.g. peak, base, latency, i.e. you do not have to call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> yourself.)</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>channel</em>&#8211; The zero-based index of the new trace to be displayed.</p>
+<p><em>channel</em>– The zero-based index of the new trace to be displayed.</p>
 <p><strong>Returns:</strong></p>
 <p>True upon sucess, false otherwise (such as out-of-range).</p>
 </div></blockquote>
@@ -739,8 +738,8 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets the name of the channel with the specified index.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>name</em>  &#8211; The new name of the channel.</p>
-<p><em>index</em> &#8211; The zero-based index of the channel of interest. If &lt; 0, the active channel will be used.</p>
+<p><em>name</em>  – The new name of the channel.</p>
+<p><em>index</em> – The zero-based index of the channel of interest. If &lt; 0, the active channel will be used.</p>
 <p><strong>Returns:</strong></p>
 <p>True upon success.</p>
 </div></blockquote>
@@ -752,8 +751,8 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets the second latency cursor to a new position and the mode of the cursor to Manual.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>pos</em> &#8211;     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.
-<em>is_time</em> &#8211; see above.</p>
+<p><em>pos</em> –     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.
+<em>is_time</em> – see above.</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure (such as out-of-range).</p>
 </div></blockquote>
@@ -764,7 +763,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <code class="descclassname">stf.</code><code class="descname">set_latency_end_mode</code><span class="sig-paren">(</span><em>mode</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_latency_end_mode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the mode of the latency end cursor</p>
 <p><strong>Arguments:</strong></p>
-<p><em>mode</em> &#8211; A string specifying the mode for the latency start cursor. Can be one of &#8220;manual&#8221;, &#8220;peak&#8221;, &#8220;rise&#8221;, &#8220;foot&#8221; or &#8220;half&#8221;.</p>
+<p><em>mode</em> – A string specifying the mode for the latency start cursor. Can be one of “manual”, “peak”, “rise”, “foot” or “half”.</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure</p>
 </dd></dl>
@@ -775,8 +774,8 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets the first latency cursor to a new position and the mode of the cursor to Manual.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>pos</em> &#8211;     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.
-<em>is_time</em> &#8211; see above.</p>
+<p><em>pos</em> –     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.
+<em>is_time</em> – see above.</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure (such as out-of-range).</p>
 </div></blockquote>
@@ -787,7 +786,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <code class="descclassname">stf.</code><code class="descname">set_latency_start_mode</code><span class="sig-paren">(</span><em>mode</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_latency_start_mode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the mode of the latency start cursor</p>
 <p><strong>Arguments:</strong></p>
-<p><em>mode</em> &#8211; A string specifying the mode for the latency start cursor. Can be one of &#8220;manual&#8221;, &#8220;peak&#8221;, &#8220;rise&#8221; or &#8220;half&#8221;.</p>
+<p><em>mode</em> – A string specifying the mode for the latency start cursor. Can be one of “manual”, “peak”, “rise” or “half”.</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure</p>
 </dd></dl>
@@ -798,8 +797,8 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets the fit end cursor to a new position.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>pos</em> &#8211;     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.</p>
-<p><em>is_time</em> &#8211; see above.</p>
+<p><em>pos</em> –     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.</p>
+<p><em>is_time</em> – see above.</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure (such as out-of-range).</p>
 </div></blockquote>
@@ -811,8 +810,8 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets the fit start cursor to a new position.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>pos</em> &#8211;     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.</p>
-<p><em>is_time</em> &#8211; see above.</p>
+<p><em>pos</em> –     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.</p>
+<p><em>is_time</em> – see above.</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure (such as out-of-range).</p>
 </div></blockquote>
@@ -824,8 +823,8 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets a marker to the specified position in the current trace.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>x</em> &#8211; The horizontal marker position in units of sampling points.</p>
-<p><em>y</em> &#8211; The vertical marker position in measurement units (e.g. mV).</p>
+<p><em>x</em> – The horizontal marker position in units of sampling points.</p>
+<p><em>y</em> – The vertical marker position in measurement units (e.g. mV).</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure (such as out-of-range).</p>
 </div></blockquote>
@@ -837,7 +836,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets the direction of the peak detection.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>direction</em> &#8211; A string specifying the peak direction. Can be one of: &#8220;up&#8221;, &#8220;down&#8221; or &#8220;both&#8221;</p>
+<p><em>direction</em> – A string specifying the peak direction. Can be one of: “up”, “down” or “both”</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure.</p>
 </div></blockquote>
@@ -849,8 +848,8 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets the peak end cursor to a new position. This will NOT update the peak calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>pos</em> &#8211;     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.
-<em>is_time</em> &#8211; see above.</p>
+<p><em>pos</em> –     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.
+<em>is_time</em> – see above.</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure (such as out-of-range).</p>
 </div></blockquote>
@@ -862,7 +861,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets the number of points used for the peak calculation.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>pts</em> &#8211; A moving average (aka sliding, boxcar or running average) is used to determine the peak value. Pts specifies the number of sampling points used for the moving window.Passing a value of -1 will calculate the average of all sampling points within the peak window.</p>
+<p><em>pts</em> – A moving average (aka sliding, boxcar or running average) is used to determine the peak value. Pts specifies the number of sampling points used for the moving window.Passing a value of -1 will calculate the average of all sampling points within the peak window.</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure (such as out-of-range).</p>
 </div></blockquote>
@@ -874,7 +873,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Gets the direction of the peak detection.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
-<p>A string specifying the peak direction. Can be one of: &#8220;up&#8221;, &#8220;donw&#8221;,or &#8220;both&#8221;.</p>
+<p>A string specifying the peak direction. Can be one of: “up”, “donw”,or “both”.</p>
 </div></blockquote>
 </dd></dl>
 
@@ -894,8 +893,8 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets the peak start cursor to a new position. This will NOT update the peak calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>pos</em> &#8211;     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.
-<em>is_time</em> &#8211; see above.</p>
+<p><em>pos</em> –     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.
+<em>is_time</em> – see above.</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure (such as out-of-range).</p>
 </div></blockquote>
@@ -907,7 +906,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets a comment about the recording.</p>
 <blockquote>
 <div><p><strong>Argument:</strong></p>
-<p><em>comment</em> &#8211; A comment string.</p>
+<p><em>comment</em> – A comment string.</p>
 <p><strong>Returns:</strong></p>
 <p>True upon successful completion.</p>
 </div></blockquote>
@@ -919,7 +918,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets a date about the recording.</p>
 <blockquote>
 <div><p><strong>Argument:</strong></p>
-<p><em>date</em> &#8211; A date string.</p>
+<p><em>date</em> – A date string.</p>
 <p><strong>Returns:</strong></p>
 <p>True upon successful completion.</p>
 </div></blockquote>
@@ -931,7 +930,7 @@ we calculate the 20&#8211;80% rise time).</p>
 <dd><p>Sets a time about the recording.</p>
 <blockquote>
 <div><p><strong>Argument:</strong></p>
-<p><em>time</em> &#8211; A time string.</p>
+<p><em>time</em> – A time string.</p>
 <p><strong>Returns:</strong></p>
 <p>True upon successful completion.</p>
 </div></blockquote>
@@ -941,11 +940,11 @@ we calculate the 20&#8211;80% rise time).</p>
 <dt id="stf.set_risetime_factor">
 <code class="descclassname">stf.</code><code class="descname">set_risetime_factor</code><span class="sig-paren">(</span><em>factor</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_risetime_factor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the lower proportion factor to calculate the rise time (e.g 0.2 if
-we want to calculate the 20&#8211;80% rise time). It will update the risetime
+we want to calculate the 20–80% rise time). It will update the risetime
 measurement.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>factor</em> &#8211; the low proportion factor to calculate the rise time</p>
+<p><em>factor</em> – the low proportion factor to calculate the rise time</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure (such a factor lower than 0.05 or larger than 0.45).</p>
 </div></blockquote>
@@ -957,7 +956,7 @@ measurement.</p>
 <dd><p>Sets a new sampling interval.</p>
 <blockquote>
 <div><p><strong>Argument:</strong></p>
-<p><em>si</em> &#8211; The new sampling interval.</p>
+<p><em>si</em> – The new sampling interval.</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure.</p>
 </div></blockquote>
@@ -969,7 +968,7 @@ measurement.</p>
 <dd><p>Sets the AP threshold to the value given by the slope and takes it as reference for AP kinetic measurements. Note that you have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter to update calculations.</p>
 <blockquote>
 <div><p><strong>Argument:</strong></p>
-<p><em>slope</em> &#8211;  Slope value in mV/ms</p>
+<p><em>slope</em> –  Slope value in mV/ms</p>
 <p><strong>Returns:</strong></p>
 <p>False upon failure (such as out-of-range)</p>
 </div></blockquote>
@@ -978,10 +977,10 @@ measurement.</p>
 <dl class="function">
 <dt id="stf.set_trace">
 <code class="descclassname">stf.</code><code class="descname">set_trace</code><span class="sig-paren">(</span><em>trace</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_trace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the currently displayed trace to a new index. Subsequently updates all measurements (e.g. peak, base, latency, i.e. you don&#8217;t need to call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> yourself.)</p>
+<dd><p>Sets the currently displayed trace to a new index. Subsequently updates all measurements (e.g. peak, base, latency, i.e. you don’t need to call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> yourself.)</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>trace</em> &#8211; The zero-based index of the new trace to be displayed.</p>
+<p><em>trace</em> – The zero-based index of the new trace to be displayed.</p>
 <p><strong>Returns:</strong></p>
 <p>True upon success, false otherwise (such as out-of-range).</p>
 </div></blockquote>
@@ -990,12 +989,12 @@ measurement.</p>
 <dl class="function">
 <dt id="stf.set_xunits">
 <code class="descclassname">stf.</code><code class="descname">set_xunits</code><span class="sig-paren">(</span><em>units</em>, <em>trace=-1</em>, <em>channel=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_xunits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the x unit string of the specified section. X units are not allowed to change between sections at present, and they are hard-coded to &#8220;ms&#8221;. This function is for future extension.</p>
+<dd><p>Sets the x unit string of the specified section. X units are not allowed to change between sections at present, and they are hard-coded to “ms”. This function is for future extension.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>units</em> &#8211;   The new x unit string.</p>
-<p><em>trace</em> &#8211;   The zero-based index of the trace of interest. If &lt; 0, the name of the active trace will be returned.</p>
-<p><em>channel</em> &#8211; The zero-based index of the channel of interest. If &lt; 0, the active channel will be used.</p>
+<p><em>units</em> –   The new x unit string.</p>
+<p><em>trace</em> –   The zero-based index of the trace of interest. If &lt; 0, the name of the active trace will be returned.</p>
+<p><em>channel</em> – The zero-based index of the channel of interest. If &lt; 0, the active channel will be used.</p>
 <p><strong>Returns:</strong></p>
 <p>True if successful.</p>
 </div></blockquote>
@@ -1007,9 +1006,9 @@ measurement.</p>
 <dd><p>Sets the y unit string of the specified trace. Y units are not allowed to change between traces at present.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>units</em> &#8211;   The new y unit string.</p>
-<p><em>trace</em> &#8211;   The zero-based index of the trace of interest. If &lt; 0, the name of the active trace will be returned.</p>
-<p><em>channel</em> &#8211; The zero-based index of the channel of interest. If &lt; 0, the active channel will be used.</p>
+<p><em>units</em> –   The new y unit string.</p>
+<p><em>trace</em> –   The zero-based index of the trace of interest. If &lt; 0, the name of the active trace will be returned.</p>
+<p><em>channel</em> – The zero-based index of the channel of interest. If &lt; 0, the active channel will be used.</p>
 <p><strong>Returns:</strong></p>
 <p>True if successful.</p>
 </div></blockquote>
@@ -1018,11 +1017,11 @@ measurement.</p>
 <dl class="function">
 <dt id="stf.show_table">
 <code class="descclassname">stf.</code><code class="descname">show_table</code><span class="sig-paren">(</span><em>dict</em>, <em>caption=&quot;Python table&quot;</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.show_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Shows a python dictionary in a results table. The dictionary has to have the form &#8220;string&#8221;.</p>
+<dd><p>Shows a python dictionary in a results table. The dictionary has to have the form “string”.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>dict</em> &#8211;    A dictionary with strings as key values and floating point numbers as values.</p>
-<p><em>caption</em> &#8211; An optional caption for the table.</p>
+<p><em>dict</em> –    A dictionary with strings as key values and floating point numbers as values.</p>
+<p><em>caption</em> – An optional caption for the table.</p>
 <p><strong>Returns:</strong></p>
 <p>True if successful.</p>
 </div></blockquote>
@@ -1031,12 +1030,12 @@ measurement.</p>
 <dl class="function">
 <dt id="stf.show_table_dictlist">
 <code class="descclassname">stf.</code><code class="descname">show_table_dictlist</code><span class="sig-paren">(</span><em>dict</em>, <em>caption=&quot;Python table&quot;</em>, <em>reverse=True</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.show_table_dictlist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Shows a python dictionary in a results table. The dictionary has to have the form &#8220;string&#8221; : list.</p>
+<dd><p>Shows a python dictionary in a results table. The dictionary has to have the form “string” : list.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>dict</em> &#8211;    A dictionary with strings as key values and lists of floating point numbers as values.</p>
-<p><em>caption</em> &#8211; An optional caption for the table.</p>
-<p><em>reverse</em> &#8211; If True, The table will be filled in column-major order, i.e. dictionary keys will become column titles. Setting it to False has not been implemented yet.</p>
+<p><em>dict</em> –    A dictionary with strings as key values and lists of floating point numbers as values.</p>
+<p><em>caption</em> – An optional caption for the table.</p>
+<p><em>reverse</em> – If True, The table will be filled in column-major order, i.e. dictionary keys will become column titles. Setting it to False has not been implemented yet.</p>
 <p><strong>Returns:</strong></p>
 <p>True if successful.</p>
 </div></blockquote>
@@ -1058,7 +1057,7 @@ measurement.</p>
 <dd><p>Returns the zero-based index of the left half-maximal amplitude of an event in the specified channel. Uses the currently measured values, i.e. does not update measurements if the peak or base window cursors have changed.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>active</em> &#8211; If True, returns the current index of the left half-maximal amplitude within the active channel. If False,returns the current index of the left half-maximal amplitude within the inactive channel.</p>
+<p><em>active</em> – If True, returns the current index of the left half-maximal amplitude within the active channel. If False,returns the current index of the left half-maximal amplitude within the inactive channel.</p>
 <p><strong>Returns:</strong></p>
 <p>The zero-based index of the left half-maximal amplitude in units of sampling points. Interpolates between sampling points. Returns a negative value upon failure.</p>
 </div></blockquote>
@@ -1070,7 +1069,7 @@ measurement.</p>
 <dd><p>Returns the zero-based index of the right half-maximal amplitude of an event in the active channel. Uses the currently measured values, i.e. does not update measurements if the peak or base window cursors have changed.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>active</em>&#8211; If True, returns the current index of the right half maximal amplitude within the active channel. Only implemented for the active channel at this time. Will return a negative value and show an error message if <em>active</em> == False.</p>
+<p><em>active</em>– If True, returns the current index of the right half maximal amplitude within the active channel. Only implemented for the active channel at this time. Will return a negative value and show an error message if <em>active</em> == False.</p>
 <p><strong>Returns:</strong></p>
 <p>The zero-based index of the right half-maximal amplitude in units of sampling points. Interpolates between sampling points. Returns a negative value upon failure.</p>
 </div></blockquote>
@@ -1139,8 +1138,8 @@ measurement.</p>
       </div>
     
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 23 June, 2016.
+        &#169; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 08 November, 2017.
     </div>
   </body>
 </html>

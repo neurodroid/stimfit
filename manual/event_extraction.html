@@ -1,34 +1,32 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Event extraction by template matching &mdash; Stimfit 0.15.2 documentation</title>
-    
+    <title>Event extraction by template matching &#8212; Stimfit 0.15.4 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.15.2',
+        VERSION:     '0.15.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false
+        HAS_SOURCE:  false,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
-    <link rel="up" title="Stimfit manual" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Bibliography" href="bibliography.html" />
     <link rel="prev" title="Latency measurements" href="latency_measurements.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -50,7 +48,7 @@
 
     
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Stimfit manual</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Stimfit manual</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,16 +65,16 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber (christsc at gmx.de)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">23 June, 2016</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">08 November, 2017</td>
 </tr>
 </tbody>
 </table>
 <div class="section" id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
-<p>To isolate individual events such as EPSCs or EPSPs from recorded data, <a class="reference external" href="http://www.stimfit.org">Stimfit</a> uses a template matching algorithm as described by Jonas et al. (1993) <a class="footnote-reference" href="#jonas1993" id="id1">[1]</a>, with some implementation details adopted from Clemens and Bekkers (1997) <a class="footnote-reference" href="#clemensbekkers1997" id="id2">[2]</a>. The template consists of a waveform <img class="math" src="../_images/math/1e9194773ee92c201d9ca785b348761aeae8001a.png" alt="p(t)"/> with a length of <img class="math" src="../_images/math/413f8a8e40062a9090d9d50b88bc7b551b314c26.png" alt="n"/> sampling points that represents the time course of a typical event. The template is slid over the trace of recorded values <img class="math" src="../_images/math/47ba680b66ef70ce922f8f7d8e180055b68812b2.png" alt="r(t)"/>, and at each sampling point with index <img class="math" src="../_images/math/6859317dd1b439cef34131bcd4bafee8393444e0.png" alt="s"/>, it is multiplied by a scaling factor <img class="math" src="../_images/math/c4bb40dd65eae6c11b325989b14e0b8d35e4e3ef.png" alt="m"/> and an offset <img class="math" src="../_images/math/65868d23a5bfe5b3b2d819386b19c14fa36af134.png" alt="c"/> is added or subtracted so that the sum of squared errors <img class="math" src="../_images/math/5a028376b7d2542c94251577697636f3a3656c51.png" alt="\chi^2(t_s)"/> between the trace and the template is minimized:</p>
+<p>To isolate individual events such as EPSCs or EPSPs from recorded data, <a class="reference external" href="http://www.stimfit.org">Stimfit</a> uses a template matching algorithm as described by Jonas et al. (1993) <a class="footnote-reference" href="#jonas1993" id="id1">[1]</a>, with some implementation details adopted from Clemens and Bekkers (1997) <a class="footnote-reference" href="#clemensbekkers1997" id="id2">[2]</a>. The template consists of a waveform <img class="math" src="../_images/math/9637b3dff12abf5752e6c828cd6236d58419496d.png" alt="p(t)"/> with a length of <img class="math" src="../_images/math/e11f2701c4a39c7fe543a6c4150b421d50f1c159.png" alt="n"/> sampling points that represents the time course of a typical event. The template is slid over the trace of recorded values <img class="math" src="../_images/math/4070430aad8471b7d1d3d67169afa87584999e9c.png" alt="r(t)"/>, and at each sampling point with index <img class="math" src="../_images/math/63751cb2e98ba393b0f22e45ca127c3cebb61487.png" alt="s"/>, it is multiplied by a scaling factor <img class="math" src="../_images/math/edba97b4c0d864d26e92ea7ea73767fa38eef3f7.png" alt="m"/> and an offset <img class="math" src="../_images/math/ae12a24f88803b5895632e4848d87d46483c492c.png" alt="c"/> is added or subtracted so that the sum of squared errors <img class="math" src="../_images/math/b03a5e670cb6c900b0079476a6d607f443ff2822.png" alt="\chi^2(t_s)"/> between the trace and the template is minimized:</p>
 <div class="math">
-<p><img src="../_images/math/d6c759e6b63f80624c73768cb2dc81af04cd2130.png" alt="{\displaystyle \chi^2(t_s)= \sum_{k=0}^{n-1}\left[r(t_{s+k})-\left(m{\cdot}p(t_k)+c\right)\right]^2}"/></p>
-</div><p>As can be seen from this equation, this amounts to the fairly simple operation of fitting a straight line that relates <img class="math" src="../_images/math/1e9194773ee92c201d9ca785b348761aeae8001a.png" alt="p(t)"/> and <img class="math" src="../_images/math/47ba680b66ef70ce922f8f7d8e180055b68812b2.png" alt="r(t)"/> at every sampling point.</p>
+<p><img src="../_images/math/40dc9f2ad4845de5bb724506d96ff708b7bd44d3.png" alt="{\displaystyle \chi^2(t_s)= \sum_{k=0}^{n-1}\left[r(t_{s+k})-\left(m{\cdot}p(t_k)+c\right)\right]^2}"/></p>
+</div><p>As can be seen from this equation, this amounts to the fairly simple operation of fitting a straight line that relates <img class="math" src="../_images/math/9637b3dff12abf5752e6c828cd6236d58419496d.png" alt="p(t)"/> and <img class="math" src="../_images/math/4070430aad8471b7d1d3d67169afa87584999e9c.png" alt="r(t)"/> at every sampling point.</p>
 <p>Finally, some detection criterion has to be applied to decide whether an event has occurred at a sampling point. Two options are available in <a class="reference external" href="http://www.stimfit.org">Stimfit</a>: Jonas et al. (1993) <a class="footnote-reference" href="#jonas1993" id="id4">[1]</a> suggest to use the linear correlation coefficient between the optimally scaled template and the data, whereas Clements and Bekkers (1997) <a class="footnote-reference" href="#clemensbekkers1997" id="id5">[2]</a> compare the scaling factor with the noise standard deviation.</p>
 </div>
 <div class="section" id="a-practical-guide-to-event-detection">
@@ -92,14 +90,14 @@
 <p>This procedure will be explained in some more detail in the following sections.</p>
 <div class="section" id="create-a-preliminary-template">
 <h3>Create a preliminary template<a class="headerlink" href="#create-a-preliminary-template" title="Permalink to this headline">¶</a></h3>
-<p>In general, the template waveform <img class="math" src="../_images/math/1e9194773ee92c201d9ca785b348761aeae8001a.png" alt="p(t)"/> can be of arbitrary shape. A typical way of creating such a template is to fit a function with a time course matching the event kinetics to some exemplary events. For example, EPSCs can typically be modeled with the sum or the product of two exponential functions <a class="footnote-reference" href="#f1" id="id7">[3]</a>. In practice, a robust estimate for a template can be obtained using an iterative approach, which will be illustrated here using a recording of miniature EPSCs that you can download <a class="reference external" href="http://stimfit.org/tutorial/minis.dat">here</a>.</p>
+<p>In general, the template waveform <img class="math" src="../_images/math/9637b3dff12abf5752e6c828cd6236d58419496d.png" alt="p(t)"/> can be of arbitrary shape. A typical way of creating such a template is to fit a function with a time course matching the event kinetics to some exemplary events. For example, EPSCs can typically be modeled with the sum or the product of two exponential functions <a class="footnote-reference" href="#f1" id="id7">[3]</a>. In practice, a robust estimate for a template can be obtained using an iterative approach, which will be illustrated here using a recording of miniature EPSCs that you can download <a class="reference external" href="http://stimfit.org/tutorial/minis.dat">here</a>.</p>
 <blockquote>
 <div><div class="figure align-center" id="id9">
 <img alt="../_images/bait_template.png" src="../_images/bait_template.png" />
-<p class="caption"><span class="caption-text"><strong>Fig. 21:</strong> Creation of a &#8220;bait&#8221; template.</span></p>
+<p class="caption"><span class="caption-text"><strong>Fig. 21:</strong> Creation of a “bait” template.</span></p>
 </div>
 </div></blockquote>
-<p>First, we fit a function to a single large an isolated event to create a preliminary &#8220;bait&#8221; template. In this case, we will use the EPSC that can be found roughly between t = 20990 ms and t = 21050 ms. Then, we fit the sum of two exponential functions with a delay to this EPSC. To obtain the same template as in the example, you can call the function <code class="docutils literal"><span class="pre">preliminary</span></code> from the <code class="docutils literal"><span class="pre">minidemo</span></code> module that comes  bundled with <a class="reference external" href="http://www.stimfit.org">Stimfit</a></p>
+<p>First, we fit a function to a single large an isolated event to create a preliminary “bait” template. In this case, we will use the EPSC that can be found roughly between t = 20990 ms and t = 21050 ms. Then, we fit the sum of two exponential functions with a delay to this EPSC. To obtain the same template as in the example, you can call the function <code class="docutils literal"><span class="pre">preliminary</span></code> from the <code class="docutils literal"><span class="pre">minidemo</span></code> module that comes  bundled with <a class="reference external" href="http://www.stimfit.org">Stimfit</a></p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">minidemo</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">minidemo</span><span class="o">.</span><span class="n">preliminary</span><span class="p">()</span>
 </pre></div>
@@ -108,21 +106,21 @@
 </div>
 <div class="section" id="extract-exemplary-events">
 <h3>Extract exemplary events<a class="headerlink" href="#extract-exemplary-events" title="Permalink to this headline">¶</a></h3>
-<p>We now use the bait example to fish some more large and isolate events. Choose &#8220;Analysis&#8221;-&gt;&#8221;Event detection&#8221;-&gt;&#8221;Template matching...&#8221; from the menu.</p>
+<p>We now use the bait example to fish some more large and isolate events. Choose “Analysis”-&gt;”Event detection”-&gt;”Template matching…” from the menu.</p>
 <blockquote>
 <div><div class="figure align-center" id="id10">
 <img alt="../_images/eventdetectionsettings.png" src="../_images/eventdetectionsettings.png" />
 <p class="caption"><span class="caption-text"><strong>Fig. 22:</strong> Event detection settings.</span></p>
 </div>
 </div></blockquote>
-<p>In the dialog that will pop up (Fig. 22), you can set the threshold for the detection criterion. Since we want to extract some large and isolated events during this first pass, we set this to a high number, say 10, using the template scaling factor (Clemens and Bekkers, 1997). Click &#8220;OK&#8221; to start the event detection. When finished, press <strong>F</strong> to fit the whole trace to the window. The detected events will be marked by blue arrows in the upper part of the window, and blue circles will indicate the peak values of the detected events (Fig 23).</p>
+<p>In the dialog that will pop up (Fig. 22), you can set the threshold for the detection criterion. Since we want to extract some large and isolated events during this first pass, we set this to a high number, say 10, using the template scaling factor (Clemens and Bekkers, 1997). Click “OK” to start the event detection. When finished, press <strong>F</strong> to fit the whole trace to the window. The detected events will be marked by blue arrows in the upper part of the window, and blue circles will indicate the peak values of the detected events (Fig 23).</p>
 <blockquote>
 <div><div class="figure align-center" id="id11">
 <img alt="../_images/events.png" src="../_images/events.png" />
 <p class="caption"><span class="caption-text"><strong>Fig. 23:</strong>  Detected events.</span></p>
 </div>
 </div></blockquote>
-<p>To view the isolated events in a new window, you have to switch to the event editing mode, either by pressing <strong>E</strong> or by activating the corresponding button in the toolbar (Fig. 24). When you now click on the trace with the right mouse button, a menu will show up. Select &#8220;Extract selected events&#8221; from this menu. this will put the exemplary EPSCs into a new window.</p>
+<p>To view the isolated events in a new window, you have to switch to the event editing mode, either by pressing <strong>E</strong> or by activating the corresponding button in the toolbar (Fig. 24). When you now click on the trace with the right mouse button, a menu will show up. Select “Extract selected events” from this menu. this will put the exemplary EPSCs into a new window.</p>
 <blockquote>
 <div><div class="figure align-center" id="id12">
 <img alt="../_images/eventbutton.png" src="../_images/eventbutton.png" />
@@ -157,7 +155,7 @@
 </div>
 <div class="section" id="edit-detected-events">
 <h3>Edit detected events<a class="headerlink" href="#edit-detected-events" title="Permalink to this headline">¶</a></h3>
-<p>Usually, the detected events have to be screened visually to remove false-positives and add false-negatives. Removing false-positives is done by unselected the checkbox next to the arrow indicating an event (Fig. 23). To add false-negatives, you have to switch to the event-editing mode (Fig. 24) and then right-click on the trace at the at the position where the event starts. from the context menu that will pop up, select &#8220;Add an event that starts here&#8221; (Fig. 27). To efficiently screen the whole trace, it is convenient to use <strong>Shift</strong>  and left arrow at the same time. this will move the trace left by the width of one window. Once you are done with editing, choose &#8220;Extract selected events&#8221; from the context menu.</p>
+<p>Usually, the detected events have to be screened visually to remove false-positives and add false-negatives. Removing false-positives is done by unselected the checkbox next to the arrow indicating an event (Fig. 23). To add false-negatives, you have to switch to the event-editing mode (Fig. 24) and then right-click on the trace at the at the position where the event starts. from the context menu that will pop up, select “Add an event that starts here” (Fig. 27). To efficiently screen the whole trace, it is convenient to use <strong>Shift</strong>  and left arrow at the same time. this will move the trace left by the width of one window. Once you are done with editing, choose “Extract selected events” from the context menu.</p>
 <blockquote>
 <div><div class="figure align-center" id="id15">
 <img alt="../_images/falsenegative.png" src="../_images/falsenegative.png" />
@@ -171,14 +169,14 @@
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">minidemo</span><span class="o">.</span><span class="n">batch_cursors</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>To analyze all traces efficiently, you can now perform a &#8220;batch analysis&#8221; on all traces at once: First, select all traces, either using <a class="reference internal" href="../stf_reference/stf.html#stf.select_all" title="stf.select_all"><code class="xref py py-func docutils literal"><span class="pre">stf.select_all()</span></code></a> from the shell, or &#8220;Edit&#8221;-&gt;&#8221;Select all traces&#8221; from the menu or pressing <strong>Ctrl + A</strong>. Then choose &#8220;Analysis&#8221;-&gt;&#8221;Batch analysis&#8221; from the menu.</p>
+<p>To analyze all traces efficiently, you can now perform a “batch analysis” on all traces at once: First, select all traces, either using <a class="reference internal" href="../stf_reference/stf.html#stf.select_all" title="stf.select_all"><code class="xref py py-func docutils literal"><span class="pre">stf.select_all()</span></code></a> from the shell, or “Edit”-&gt;”Select all traces” from the menu or pressing <strong>Ctrl + A</strong>. Then choose “Analysis”-&gt;”Batch analysis” from the menu.</p>
 <blockquote>
 <div><div class="figure align-center" id="id16">
 <img alt="../_images/batchanalysis.png" src="../_images/batchanalysis.png" />
 <p class="caption"><span class="caption-text"><strong>Fig. 28:</strong> Batch analysis settings.</span></p>
 </div>
 </div></blockquote>
-<p>From the dialog (Fig 28) choose the analysis functions that you want to apply to your data. Click &#8220;OK&#8221; once your are done. A new table will appear to the left of the traces. You can copy and paste values from the tables to spreadsheet programs for further analysis.</p>
+<p>From the dialog (Fig 28) choose the analysis functions that you want to apply to your data. Click “OK” once your are done. A new table will appear to the left of the traces. You can copy and paste values from the tables to spreadsheet programs for further analysis.</p>
 </div>
 <div class="section" id="adjusting-event-detection-settings">
 <h3>Adjusting event detection settings<a class="headerlink" href="#adjusting-event-detection-settings" title="Permalink to this headline">¶</a></h3>
@@ -223,7 +221,7 @@
 <table class="docutils footnote" frame="void" id="f1" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[3]</a></td><td>Note that the product of two exponentials <img class="math" src="../_images/math/1640aab8f55efe80b21ec2eb84a6f6b14bcc2da6.png" alt="{\displaystyle f(t)=a(1-e^{-\frac{t}{\tau_1}})e^{-\frac{t}{\tau_2}}}"/> can equivalently be expressed as the sum of two exponentials: <img class="math" src="../_images/math/9fb4ab86bfcd4eda42c7fdfcbab28d7f76e38a67.png" alt="{\displaystyle f(t)=a(e^{-\frac{t}{\tau_2}}-e^{-\frac{t}{\tau_3}}) }"/>, with <img class="math" src="../_images/math/8191eb07f5267356a7f57e3d4c5d80d810c52852.png" alt="{\displaystyle \tau_3=\frac{\tau_2 \tau_1}{\tau_2-\tau_1}}"/>.</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id7">[3]</a></td><td>Note that the product of two exponentials <img class="math" src="../_images/math/940f31773942d693f6b03a528ebdbe34f8756765.png" alt="{\displaystyle f(t)=a(1-e^{-\frac{t}{\tau_1}})e^{-\frac{t}{\tau_2}}}"/> can equivalently be expressed as the sum of two exponentials: <img class="math" src="../_images/math/9a842cf0578afbd7754525502bab11d3feef2342.png" alt="{\displaystyle f(t)=a(e^{-\frac{t}{\tau_2}}-e^{-\frac{t}{\tau_3}}) }"/>, with <img class="math" src="../_images/math/f61ea0a67635a7d1646df303dedc0f7b63e6a325.png" alt="{\displaystyle \tau_3=\frac{\tau_2 \tau_1}{\tau_2-\tau_1}}"/>.</td></tr>
 </tbody>
 </table>
 </div>
@@ -321,8 +319,8 @@
       </div>
     
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 23 June, 2016.
+        &#169; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 08 November, 2017.
     </div>
   </body>
 </html>

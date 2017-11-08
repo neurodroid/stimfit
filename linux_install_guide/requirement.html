@@ -1,34 +1,32 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Building Stimfit &mdash; Stimfit 0.15.2 documentation</title>
-    
+    <title>Building Stimfit &#8212; Stimfit 0.15.4 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.15.2',
+        VERSION:     '0.15.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false
+        HAS_SOURCE:  false,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
-    <link rel="up" title="GNU/Linux Build Guide" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="OS X Build Guide" href="../osx_install_guide/index.html" />
     <link rel="prev" title="Building the Python module only" href="moduleonly.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -50,7 +48,7 @@
 
     
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">GNU/Linux Build Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">GNU/Linux Build Guide</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,11 +65,11 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Jose Guzman, Christoph Schmidt-Hieber</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">23 June, 2016</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">08 November, 2017</td>
 </tr>
 </tbody>
 </table>
-<p>This document describes how to install <a class="reference external" href="http://www.stimfit.org">Stimfit</a> 0.15.2 under GNU/Linux. The installation was tested on a GNU/Debian testing/unstable system, with a 2.6-based kernel and with support for Python 2.5. and Python 2.6. It should work on other Debian-based systems (e.g Ubuntu) aswith newer version of Stimfit as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) already installed in your system. Please, check that both versions match. For our installation we will use gcc-4.2.4 and the same version of g++.</p>
+<p>This document describes how to install <a class="reference external" href="http://www.stimfit.org">Stimfit</a> 0.15.4 under GNU/Linux. The installation was tested on a GNU/Debian testing/unstable system, with a 2.6-based kernel and with support for Python 2.5. and Python 2.6. It should work on other Debian-based systems (e.g Ubuntu) aswith newer version of Stimfit as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) already installed in your system. Please, check that both versions match. For our installation we will use gcc-4.2.4 and the same version of g++.</p>
 <div class="section" id="what-we-need-before-we-start">
 <h2>What we need before we start<a class="headerlink" href="#what-we-need-before-we-start" title="Permalink to this headline">¶</a></h2>
 <p>For the impatient, here are all <a class="reference external" href="http://www.stimfit.org">Stimfit</a> build dependencies:</p>
@@ -106,7 +104,7 @@
 <div class="section" id="optional-wxwidgets-2-9">
 <h2>Optional: wxWidgets 2.9<a class="headerlink" href="#optional-wxwidgets-2-9" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><a class="reference internal" href="#wxwidgets" id="id7">[wxWidgets]</a> and <a class="reference internal" href="#wxpython" id="id8">[wxPython]</a> 2.9 (unstable): If you&#8217;d like to live on the bleeding edge and get decent printing support through gtk-print, you can build against wxWidgets 2.9, which in turn needs to be built from source. To get the build dependencies (which are the same as for 2.8), do:</li>
+<li><a class="reference internal" href="#wxwidgets" id="id7">[wxWidgets]</a> and <a class="reference internal" href="#wxpython" id="id8">[wxPython]</a> 2.9 (unstable): If you’d like to live on the bleeding edge and get decent printing support through gtk-print, you can build against wxWidgets 2.9, which in turn needs to be built from source. To get the build dependencies (which are the same as for 2.8), do:</li>
 </ul>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$  sudo apt-get build-dep wxwidgets2.8
 </pre></div>
@@ -130,11 +128,11 @@ $ sudo python setup.py install
 </div>
 <div class="section" id="download-the-stimfit-source-code">
 <h2>Download the Stimfit source code<a class="headerlink" href="#download-the-stimfit-source-code" title="Permalink to this headline">¶</a></h2>
-<p>You can download the latest development code for <a class="reference external" href="http://www.stimfit.org">Stimfit</a> from the <a class="reference external" href="https://github.com/neurodroid/stimfit/">Github code repository</a>. For that, simply type from your current $HOME directory:</p>
+<p>You can download the latest development code for <a class="reference external" href="http://www.stimfit.org">Stimfit</a> from the <a class="reference external" href="https://github.com/neurodroid/stimfit/">Github code repository</a>. For that, type from your current $HOME directory:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ git clone https://github.com/neurodroid/stimfit.git
 </pre></div>
 </div>
-<p>This will grab all the required files into $HOME/stimfit. If you&#8217;d like to update at a later point, do:</p>
+<p>This will grab all the required files into $HOME/stimfit. If you’d like to update at a later point, do:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ cd $HOME/stimfit
 $ git pull
 </pre></div>
@@ -150,7 +148,7 @@ $ git pull
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ ./configure --enable-python
 </pre></div>
 </div>
-<p>The <strong>&#8211;enable-python</strong> option is absolutely necessary to install <a class="reference external" href="http://www.stimfit.org">Stimfit</a> since some of the functionality depends on Python. The configure script has some additional options. For example, we may want to use <a class="reference external" href="http://www.scipy.org">IPython</a>  instead of the default embedded python shell with the option <strong>&#8212;enable-ipython</strong>  (note that the <a class="reference external" href="http://www.scipy.org">IPython</a> shell is only available under GNU/Linux and it is still very experimental).</p>
+<p>The <strong>–enable-python</strong> option is absolutely necessary to install <a class="reference external" href="http://www.stimfit.org">Stimfit</a> since some of the functionality depends on Python. The configure script has some additional options. For example, we may want to use <a class="reference external" href="http://www.scipy.org">IPython</a>  instead of the default embedded python shell with the option <strong>—enable-ipython</strong>  (note that the <a class="reference external" href="http://www.scipy.org">IPython</a> shell is only available under GNU/Linux and it is still very experimental).</p>
 <p>Finally, after running configure, you can type</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ make -j[N]
 </pre></div>
@@ -164,8 +162,8 @@ $ sudo /sbin/ldconfig
 <p class="first admonition-title">Note</p>
 <p>If you want to install Stimfit as local user (e.g in ~/.local) with a local version of Python (e.g ~/.local/lib/python2.6) you have to add the following argument to configure
 script:</p>
-<p>$ ./configure &#8211;prefix= $HOME/.local PYTHON = $HOME/.local/lib/python2.6 &#8211;enable-python</p>
-<p class="last">and after that simply call <strong>make</strong> and <strong>make install</strong> as normal user. The Stimfit executable will be now in $HOME/.local</p>
+<p>$ ./configure –prefix= $HOME/.local PYTHON = $HOME/.local/lib/python2.6 –enable-python</p>
+<p class="last">and after that call <strong>make</strong> and <strong>make install</strong> as normal user. The Stimfit executable will be now in $HOME/.local</p>
 </div>
 </div>
 <div class="section" id="building-stimfit-with-biosig-import-filter">
@@ -190,7 +188,7 @@ script:</p>
 <span class="n">sudo</span> <span class="n">make</span> <span class="n">install</span>
 </pre></div>
 </div>
-<p>After that you can enter the option &#8211;with-biosig in the configure script of <a class="reference external" href="http://www.stimfit.org">Stimfit</a> and compile as usual.</p>
+<p>After that you can enter the option –with-biosig in the configure script of <a class="reference external" href="http://www.stimfit.org">Stimfit</a> and compile as usual.</p>
 </div>
 <div class="section" id="building-documentation">
 <h2>Building documentation<a class="headerlink" href="#building-documentation" title="Permalink to this headline">¶</a></h2>
@@ -198,7 +196,7 @@ script:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">python</span><span class="o">-</span><span class="n">sphinx</span>
 </pre></div>
 </div>
-<p>It is possible to build a local copy of the documentation there by simply calling:</p>
+<p>It is possible to build a local copy of the documentation there by calling:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>sphinx-build $HOME/Stimfit/doc/sphinx/ &lt;destinyFolder&gt;
 </pre></div>
 </div>
@@ -352,8 +350,8 @@ script:</p>
       </div>
     
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 23 June, 2016.
+        &#169; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 08 November, 2017.
     </div>
   </body>
 </html>

@@ -1,34 +1,32 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>The Python shell &mdash; Stimfit 0.15.2 documentation</title>
-    
+    <title>The Python shell &#8212; Stimfit 0.15.4 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.15.2',
+        VERSION:     '0.15.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false
+        HAS_SOURCE:  false,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
-    <link rel="up" title="Stimfit manual" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Latency measurements" href="latency_measurements.html" />
     <link rel="prev" title="Getting started" href="getting_started.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -50,7 +48,7 @@
 
     
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Stimfit manual</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Stimfit manual</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,7 +65,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber (christsc at gmx.de)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">23 June, 2016</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">08 November, 2017</td>
 </tr>
 </tbody>
 </table>
@@ -109,7 +107,7 @@ list:</p>
 bracket. The function returns the boolean False because you have not
 opened any file yet. Since the stf module is imported in the namespace,
 you can omit the initial <code class="docutils literal"><span class="pre">`stf.`</span></code> when calling functions. Thus, you
-could get just the same result by simply typing</p>
+could get just the same result by typing</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">check_doc</span><span class="p">()</span>
 <span class="go">False</span>
 </pre></div>
@@ -142,7 +140,7 @@ has the index 0.</p>
 </pre></div>
 </div>
 <p>Python will check for indices that are out of range. For example,</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="n">e9</span><span class="p">]</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">a</span><span class="p">[</span><span class="mf">1e9</span><span class="p">]</span>
 <span class="gt">Traceback (most recent call last):</span>
   File <span class="nb">&quot;&lt;input&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
 <span class="gr">IndexError</span>: <span class="n">index out of bounds</span>
@@ -286,7 +284,7 @@ of course). Remember that indices are zero-based!</p>
 <ul class="simple">
 <li><strong>file_open(filename)</strong> and <strong>file_save(filename)</strong></li>
 </ul>
-<p>will open or save a file specified by <code class="docutils literal"><span class="pre">filename</span></code>. On windows, use double backslashes (\\) between directories to avoid conversion to special characters, such as \t or \n; for example:</p>
+<p>will open or save a file specified by <code class="docutils literal"><span class="pre">filename</span></code>. On windows, use double backslashes (\) between directories to avoid conversion to special characters, such as \t or \n; for example:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_save</span><span class="p">(</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">datafile.dat&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -365,7 +363,7 @@ of course). Remember that indices are zero-based!</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">You can import a file from any directory by selecting <strong>File-&gt;Import Python module</strong> or simpy by pressing <code class="docutils literal"><span class="pre">Ctrl+I</span></code>. The file will be automatically loaded in the embedded Python shell and ready to be used (it is not necessary to type import(myFile). To reload the file, you have simply to select <strong>File-&gt;Import Python module</strong> or <code class="docutils literal"><span class="pre">Ctrl+I</span></code> again.</p>
+<p class="last">You can import a file from any directory by selecting <strong>File-&gt;Import Python module</strong> or simpy by pressing <code class="docutils literal"><span class="pre">Ctrl+I</span></code>. The file will be automatically loaded in the embedded Python shell and ready to be used (it is not necessary to type import(myFile). To reload the file, you have to select <strong>File-&gt;Import Python module</strong> or <code class="docutils literal"><span class="pre">Ctrl+I</span></code> again.</p>
 </div>
 </div>
 <div class="section" id="add-a-python-function-to-the-stimfit-menu">
@@ -378,13 +376,13 @@ of course). Remember that indices are zero-based!</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">myAPCounter</span> <span class="o">=</span> <span class="n">Extension</span><span class="p">(</span><span class="s2">&quot;Count APs&quot;</span><span class="p">,</span> <span class="n">spells</span><span class="o">.</span><span class="n">count_aps</span><span class="p">,</span> <span class="s2">&quot;Counts APs in selected traces&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>this command creates the extension called myAPCounter, which has the name &#8220;Counts APs&#8221; and executes the function spells.count_aps. If we add the extension <em>myAPCounter</em> to the extensionList, we will see now that a submenu appear within the Extension menu.</p>
+<p>this command creates the extension called myAPCounter, which has the name “Counts APs” and executes the function spells.count_aps. If we add the extension <em>myAPCounter</em> to the extensionList, we will see now that a submenu appear within the Extension menu.</p>
 <p>In general, an extension requires four arguments:</p>
 <ol class="arabic simple">
-<li><strong>Function name</strong>: this is the name that will appear in the submenu (in our example this is &#8220;Counts APs&#8221;).</li>
+<li><strong>Function name</strong>: this is the name that will appear in the submenu (in our example this is “Counts APs”).</li>
 <li><strong>Python function</strong>: the custom Python function to be executed when clicking on the submenu. We used here spells.counts_aps</li>
-<li><strong>Description</strong>: a more elaborate description of what the function is doing. We wrote &#8220;Counts APs in selected traces&#8221;.</li>
-<li><strong>Does your function require a file?</strong>: If your function needs a file to be open type &#8216;True&#8217;, otherwise &#8216;False&#8217;. Because our Python function operate on files, we typed &#8216;True&#8217;.</li>
+<li><strong>Description</strong>: a more elaborate description of what the function is doing. We wrote “Counts APs in selected traces”.</li>
+<li><strong>Does your function require a file?</strong>: If your function needs a file to be open type ‘True’, otherwise ‘False’. Because our Python function operate on files, we typed ‘True’.</li>
 </ol>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -583,8 +581,8 @@ of course). Remember that indices are zero-based!</p>
       </div>
     
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 23 June, 2016.
+        &#169; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 08 November, 2017.
     </div>
   </body>
 </html>

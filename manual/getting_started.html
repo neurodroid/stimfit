@@ -1,34 +1,32 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Getting started &mdash; Stimfit 0.15.2 documentation</title>
-    
+    <title>Getting started &#8212; Stimfit 0.15.4 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.15.2',
+        VERSION:     '0.15.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false
+        HAS_SOURCE:  false,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
-    <link rel="up" title="Stimfit manual" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="The Python shell" href="python.html" />
     <link rel="prev" title="Preface" href="preface.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -50,7 +48,7 @@
 
     
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Stimfit manual</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Stimfit manual</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,7 +65,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber (christsc at gmx.de)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">23 June, 2016</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">08 November, 2017</td>
 </tr>
 </tbody>
 </table>
@@ -78,7 +76,7 @@ file to fitting functions to data.</p>
 <ul class="simple">
 <li>Download <a class="reference external" href="http://code.google.com/p/stimfit/downloads/list">Stimfit from here</a> and install it on your computer.</li>
 <li>Download a sample file from <a class="reference external" href="http://www.stimfit.org/tutorial/minis.dat">here</a> .</li>
-<li>Open the data file: you can either double-click it from an Explorer Window, or you can start <a class="reference external" href="http://www.stimfit.org">Stimfit</a> and choose &#8220;File&#8221;-&gt;&#8221;Open...&#8221; from the menu.</li>
+<li>Open the data file: you can either double-click it from an Explorer Window, or you can start <a class="reference external" href="http://www.stimfit.org">Stimfit</a> and choose “File”-&gt;”Open…” from the menu.</li>
 <li>The file will be opened in a new child window, and the first trace will be displayed.</li>
 </ul>
 <div class="section" id="opening-multiple-files">
@@ -102,7 +100,7 @@ file to fitting functions to data.</p>
 </div>
 </div></blockquote>
 </li>
-<li><p class="first">If you prefer coordinates to scale bars, you can check &#8220;View&#8221;-&gt;&#8221;Scale bars&#8221; in the menu (Fig. 3).</p>
+<li><p class="first">If you prefer coordinates to scale bars, you can check “View”-&gt;”Scale bars” in the menu (Fig. 3).</p>
 </li>
 <li><p class="first">Fit the inactive channel (plotted in red) to the screen as well. Press <strong>3</strong> . The buttons labeled <strong>1</strong> and <strong>2</strong> should now both be highlighted (Fig. 4). That means that any changes to the scaling will now be applied to both channels simultaneously.</p>
 <blockquote>
@@ -130,7 +128,7 @@ file to fitting functions to data.</p>
 </li>
 <li><p class="first">You can zoom into parts of the trace using a zoom window: Press <strong>Z</strong>. The zoom button (showing a magnifying glass) will be highlighted (Fig. 5).</p>
 </li>
-<li><p class="first">Drag a window over the region of interest holding down the left mouse button. Release the left mouse button once you are done. When you right-click on the window, a menu will pop up showing different zoom options. Select &#8220;Expand zoom window horizontally &amp; vertically&#8221; (Fig.6).</p>
+<li><p class="first">Drag a window over the region of interest holding down the left mouse button. Release the left mouse button once you are done. When you right-click on the window, a menu will pop up showing different zoom options. Select “Expand zoom window horizontally &amp; vertically” (Fig.6).</p>
 <blockquote>
 <div><div class="figure align-center" id="id6">
 <img alt="../_images/zoom.png" src="../_images/zoom.png" />
@@ -149,9 +147,9 @@ file to fitting functions to data.</p>
 <div class="section" id="navigate-within-a-file">
 <h2>Navigate within a file<a class="headerlink" href="#navigate-within-a-file" title="Permalink to this headline">¶</a></h2>
 <ul>
-<li><p class="first">You can toggle through traces using the left and right keys (<em>without</em> pressing <strong>Ctrl</strong> at the same time). The current trace number will be displayed in the drop-down box labeled &#8220;Trace ... of ...&#8221;. You can directly select a trace from this box as well (Fig. 7).</p>
+<li><p class="first">You can toggle through traces using the left and right keys (<em>without</em> pressing <strong>Ctrl</strong> at the same time). The current trace number will be displayed in the drop-down box labeled “Trace … of …”. You can directly select a trace from this box as well (Fig. 7).</p>
 </li>
-<li><p class="first">All measurements will be performed on the active channel plotted in black. You can swap channels by either selecting &#8220;View&#8221;-&gt;&#8221;Swap channels&#8221; from the menu, or setting the channels in the drop-down boxes (Fig. 8).</p>
+<li><p class="first">All measurements will be performed on the active channel plotted in black. You can swap channels by either selecting “View”-&gt;”Swap channels” from the menu, or setting the channels in the drop-down boxes (Fig. 8).</p>
 <blockquote>
 <div><div class="figure align-center" id="id8">
 <img alt="../_images/traceselection.png" src="../_images/traceselection.png" />
@@ -163,11 +161,13 @@ file to fitting functions to data.</p>
 </div>
 </div></blockquote>
 </li>
+<li><p class="first">In files with more than two channels you can scroll the active channel using the up and down keys while holding down <strong>Ctrl</strong>. In addition pressing the <strong>X</strong> key will set the currently active channel to the reference channel.</p>
+</li>
 </ul>
 </div>
 <div class="section" id="analysis-of-individual-events">
 <h2>Analysis of individual events<a class="headerlink" href="#analysis-of-individual-events" title="Permalink to this headline">¶</a></h2>
-<p>An &#8220;event&#8221; can be anything from an EPSC to an action potential. In this case, we will analyze a large spontaneous EPSC in trace no. 12 of the second channel. Navigate to trace number 12, swap channels, and zoom into the large EPSC as described above. All results are displayed in the results table (Fig. 9). You can select which results to show in the bar by right-clicking on one of the column or row title labels, and then selecting or unselecting the corresponding items.</p>
+<p>An “event” can be anything from an EPSC to an action potential. In this case, we will analyze a large spontaneous EPSC in trace no. 12 of the second channel. Navigate to trace number 12, swap channels, and zoom into the large EPSC as described above. All results are displayed in the results table (Fig. 9). You can select which results to show in the bar by right-clicking on one of the column or row title labels, and then selecting or unselecting the corresponding items.</p>
 <p><a class="reference external" href="http://www.stimfit.org">Stimfit</a> uses cursors to define measurement windows. Cursors are represented by vertical dashed lines extending throughout the window, similar as on an oscilloscope. For example, the baseline can be calculated as the average of all sampling points between the two base window cursors (vertical two dashed lines) or the median of the points between these cursors. To move the cursors by clicking the left mouse button where you want the baseline calculation to start. Set the right cursor by clicking the right mouse button where you want the baseline calculation to end. Press <strong>Enter</strong>. The result of the baseline calculation is displayed in the results table, and the baseline is plotted as a horizontal green dashed line (Fig. 10).</p>
 <blockquote>
 <div><div class="figure align-center" id="id10">
@@ -186,14 +186,14 @@ update all calculations. Otherwise, you will see the results of your
 previous cursors settings. Alternatively, you can call <a class="reference internal" href="../stf_reference/stf.html#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">stf.measure()</span></code></a>
 from the Python shell.</p>
 </div>
-<p>The peak value will be determined between the two peak window cursors (vertical red dashed lines). To move the cursors press <strong>P</strong>. The corresponding tool-bar button will be highlighted. Set the left cursor by clicking the left mouse button where you want the peak detection to start. Set the right cursor by clicking the right mouse button where you want the peak detection to end. Press <strong>Enter</strong>. The result of the peak calculation is displayed in the results bar. &#8220;Peak (from base)&#8221; is the difference between the peak value and the baseline, and &#8220;Peak (from 0)&#8221; is the &#8220;raw&#8221; value of the peak, measured from zero, without any subtraction. A horizontal red dashed line will indicate the peak value, and a vertical dashed line will indicate the point in time when this peak value has been detected (Fig. 11).</p>
+<p>The peak value will be determined between the two peak window cursors (vertical red dashed lines). To move the cursors press <strong>P</strong>. The corresponding tool-bar button will be highlighted. Set the left cursor by clicking the left mouse button where you want the peak detection to start. Set the right cursor by clicking the right mouse button where you want the peak detection to end. Press <strong>Enter</strong>. The result of the peak calculation is displayed in the results bar. “Peak (from base)” is the difference between the peak value and the baseline, and “Peak (from 0)” is the “raw” value of the peak, measured from zero, without any subtraction. A horizontal red dashed line will indicate the peak value, and a vertical dashed line will indicate the point in time when this peak value has been detected (Fig. 11).</p>
 <blockquote>
 <div><div class="figure align-center" id="id12">
 <img alt="../_images/peak.png" src="../_images/peak.png" />
 <p class="caption"><span class="caption-text"><strong>Fig. 11:</strong> Setting the peak window cursors.</span></p>
 </div>
 </div></blockquote>
-<p>There are three ways the peak value can be calculated: As a default, it is calculated as the maximal absolute value measured from baseline; hence, both positive- or negative-going events may be detected, whichever is larger. If you want only positive-going events to be detected, select &#8220;Edit&#8221;-&gt;&#8221;Cursor settings&#8221; from the menu. A dialog will appear. Select the &#8220;Peak&#8221; tab, and then check &#8220;Up&#8221; radio button (Fig. 12). Click the &#8220;Apply&#8221; button to measure the peak using your new settings. If you only want negative-going events to be detected, select &#8220;Down&#8221; instead. Selecting &#8220;Both&#8221; resets the peak calculation to the default mode. If you want to set the peak direction from the <strong>Python</strong> shell, you can call <a class="reference internal" href="../stf_reference/stf.html#stf.set_peak_direction" title="stf.set_peak_direction"><code class="xref py py-func docutils literal"><span class="pre">stf.set_peak_direction()</span></code></a>, where direction can be one of &#8220;up&#8221;,&#8221;down&#8221; or &#8220;both&#8221;. The Python shell will be explained in some more detail in chapter 2.</p>
+<p>There are three ways the peak value can be calculated: As a default, it is calculated as the maximal absolute value measured from baseline; hence, both positive- or negative-going events may be detected, whichever is larger. If you want only positive-going events to be detected, select “Edit”-&gt;”Cursor settings” from the menu. A dialog will appear. Select the “Peak” tab, and then check “Up” radio button (Fig. 12). Click the “Apply” button to measure the peak using your new settings. If you only want negative-going events to be detected, select “Down” instead. Selecting “Both” resets the peak calculation to the default mode. If you want to set the peak direction from the <strong>Python</strong> shell, you can call <a class="reference internal" href="../stf_reference/stf.html#stf.set_peak_direction" title="stf.set_peak_direction"><code class="xref py py-func docutils literal"><span class="pre">stf.set_peak_direction()</span></code></a>, where direction can be one of “up”,”down” or “both”. The Python shell will be explained in some more detail in chapter 2.</p>
 <blockquote>
 <div><div class="figure align-center" id="id13">
 <img alt="../_images/cursorsettings.png" src="../_images/cursorsettings.png" />
@@ -203,8 +203,8 @@ from the Python shell.</p>
 <p>In case the event you want to analyze is noisy, it may be helpful to use the average of several neighboring sampling points for the peak calculation instead of a single sampling point. A moving average algorithm will then be used to calculate the peak value. The number of sampling points can either be set in the cursor settings dialog (Fig. 12) or from the <strong>Python</strong> shell using <a class="reference internal" href="../stf_reference/stf.html#stf.set_peak_mean" title="stf.set_peak_mean"><code class="xref py py-func docutils literal"><span class="pre">stf.set_peak_mean()</span></code></a>, where pts is the number of sampling points.</p>
 <p>Some other values describing the event can be found in the results table (Fig. 13):</p>
 <ul class="simple">
-<li><strong>RT(20_80%)</strong> refers to the time required for the signal to change from 20% to 80% of the peak value (measured from the baseline), commonly called the &#8220;20-to-80%-rise time&#8221;. The points corresponding to 20 and 80% of the peak value are indicated by green circles. They are determined by linear interpolation between neighboring sampling points.</li>
-<li><strong>t1/2</strong> refers to the full width of the signal at half-maximal amplitude (measured from the baseline), commonly called &#8220;half-duration&#8221;. The points where the signal reaches its half-maximal amplitude are indicated by blue circles. Again, this is determined by linear interpolation between neighboring sampling points.</li>
+<li><strong>RT(20_80%)</strong> refers to the time required for the signal to change from 20% to 80% of the peak value (measured from the baseline), commonly called the “20-to-80%-rise time”. The points corresponding to 20 and 80% of the peak value are indicated by green circles. They are determined by linear interpolation between neighboring sampling points.</li>
+<li><strong>t1/2</strong> refers to the full width of the signal at half-maximal amplitude (measured from the baseline), commonly called “half-duration”. The points where the signal reaches its half-maximal amplitude are indicated by blue circles. Again, this is determined by linear interpolation between neighboring sampling points.</li>
 <li><strong>Rise</strong> and <strong>Decay</strong> refer to the maximal slope during the rising and the falling phase of the signal, respectively. The corresponding points are indicated by violet circles.</li>
 <li><strong>R/D</strong> is the ratio of the maximal slopes during the rising and the falling phase of the signal</li>
 </ul>
@@ -251,7 +251,7 @@ from the Python shell.</p>
 </div>
 <div class="section" id="average-calculation">
 <h2>Average calculation<a class="headerlink" href="#average-calculation" title="Permalink to this headline">¶</a></h2>
-<p>First, you have to select the traces to average (Fig. 14). Once you are done, click the &#8220;Average&#8221; button to compute the average of all selected traces (Fig. 15). A new child window will pop up showing the average. In the original child window, the average is shown as blue trace.</p>
+<p>First, you have to select the traces to average (Fig. 14). Once you are done, click the “Average” button to compute the average of all selected traces (Fig. 15). A new child window will pop up showing the average. In the original child window, the average is shown as blue trace.</p>
 <blockquote>
 <div><div class="figure align-center" id="id16">
 <img alt="../_images/average.png" src="../_images/average.png" />
@@ -260,7 +260,7 @@ from the Python shell.</p>
 </div></blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">If you want to perform an average (or any other measurement) of all traces in a recording, simply select Edit-&gt; Select all, or type Ctrl+A</p>
+<p class="last">If you want to perform an average (or any other measurement) of all traces in a recording, select Edit-&gt; Select all, or type Ctrl+A</p>
 </div>
 </div>
 <div class="section" id="fitting-functions-to-data">
@@ -270,9 +270,9 @@ from the Python shell.</p>
 </li>
 <li><p class="first">Set the peak and baseline cursors appropriately; the peak and baseline values will be used as initial values for the fit. Do not forget to press <strong>Enter</strong></p>
 </li>
-<li><p class="first">The function will be fitted to the data between the two fit window cursors (gray vertical dashed lines). To move the cursors, press <strong>D</strong> (historically &#8220;D&#8221; stands for &#8220;decay&#8221;). The corresponding button will be highlighted. Set the left cursor by clicking the left mouse button where you want the fit to start. Set the right cursor by clicking the right mouse button where you want the fit to end. Press <strong>Enter</strong> to confirm the cursor settings.</p>
+<li><p class="first">The function will be fitted to the data between the two fit window cursors (gray vertical dashed lines). To move the cursors, press <strong>D</strong> (historically “D” stands for “decay”). The corresponding button will be highlighted. Set the left cursor by clicking the left mouse button where you want the fit to start. Set the right cursor by clicking the right mouse button where you want the fit to end. Press <strong>Enter</strong> to confirm the cursor settings.</p>
 </li>
-<li><p class="first">Select &#8220;Analysis&#8221;-&gt;&#8221;Fit&#8221;-&gt;&#8221;Non-linear regression&#8221; from the menu. Select a bi exponential function (Fig. 16).</p>
+<li><p class="first">Select “Analysis”-&gt;”Fit”-&gt;”Non-linear regression” from the menu. Select a bi exponential function (Fig. 16).</p>
 <blockquote>
 <div><div class="figure align-center" id="id17">
 <img alt="../_images/fitselection.png" src="../_images/fitselection.png" />
@@ -383,8 +383,8 @@ from the Python shell.</p>
       </div>
     
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 23 June, 2016.
+        &#169; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 08 November, 2017.
     </div>
   </body>
 </html>

@@ -1,34 +1,32 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Running mean &mdash; Stimfit 0.15.2 documentation</title>
-    
+    <title>Running mean &#8212; Stimfit 0.15.4 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.15.2',
+        VERSION:     '0.15.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false
+        HAS_SOURCE:  false,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
-    <link rel="up" title="The Stimfit book of spells" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Calculations on selected traces" href="amplitudes.html" />
     <link rel="prev" title="Resistance Calculation" href="resistances.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -50,7 +48,7 @@
 
     
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Stimfit book of spells</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Stimfit book of spells</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,14 +65,14 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Jose Guzman</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">23 June, 2016</td>
+<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">08 November, 2017</td>
 </tr>
 </tbody>
 </table>
 <p>The running mean (or running average) is simple way to smooth the data. Given a certain set of points, a running average will create a new set of data points which will be computed by adding a series of averages of different subsets of the full data set.</p>
-<p>Given for example a sequence <img class="math" src="../_images/math/f026aecf11ec7f6141ab863f260d395f94b10f51.png" alt="X"/> of <img class="math" src="../_images/math/413f8a8e40062a9090d9d50b88bc7b551b314c26.png" alt="n"/> points, we can create a new set of data points <img class="math" src="../_images/math/11a85f3c69ae6702cb1d99d3de451913b8f84c04.png" alt="S"/> of length <img class="math" src="../_images/math/413f8a8e40062a9090d9d50b88bc7b551b314c26.png" alt="n"/> by simply taking the average of a subset of <img class="math" src="../_images/math/8659700e6646cd91bc02c32affaa5ec046ee9935.png" alt="w"/> points from the original data set for every point <img class="math" src="../_images/math/3f1a4e430c239029fe31b52c95bb3278d0bc3d49.png" alt="S_i"/> within the set:</p>
+<p>Given for example a sequence <img class="math" src="../_images/math/7a7bb470119808e2db2879fc2b2526f467b7a40b.png" alt="X"/> of <img class="math" src="../_images/math/e11f2701c4a39c7fe543a6c4150b421d50f1c159.png" alt="n"/> points, we can create a new set of data points <img class="math" src="../_images/math/1dbc400fcc213305415872f9f625cd2828f97a00.png" alt="S"/> of length <img class="math" src="../_images/math/e11f2701c4a39c7fe543a6c4150b421d50f1c159.png" alt="n"/> by taking the average of a subset of <img class="math" src="../_images/math/ecd1ee2a1cd226b40c37e079aca62398d4b774f5.png" alt="w"/> points from the original data set for every point <img class="math" src="../_images/math/fb8ccc4c36b68e38680b68016473a630edc0e0f4.png" alt="S_i"/> within the set:</p>
 <div class="math">
-<p><img src="../_images/math/f7f2bc50b1600f13269e2665c4ed2e6312d80840.png" alt="{\displaystyle S_i=\frac{1}{w} \sum^{w+i}_{j=i} X_j }"/></p>
+<p><img src="../_images/math/de6da026ec423d0ef68600b3143e3f5cdf569d1e.png" alt="{\displaystyle S_i=\frac{1}{w} \sum^{w+i}_{j=i} X_j }"/></p>
 </div><div class="section" id="the-running-mean-function">
 <h2>The running mean function<a class="headerlink" href="#the-running-mean-function" title="Permalink to this headline">¶</a></h2>
 <p>The following Python function calculates the running mean of the current channel. Both trace and channel can be selected as zero-based indices. The width of the running average (refereed to here as binwidth) can be selected. The resulting average will appear in a new <a class="reference external" href="http://www.stimfit.org">Stimfit</a> window.</p>
@@ -136,7 +134,7 @@
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sweep</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span><span class="n">channel</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><a class="reference internal" href="../stf_reference/stf.html#stf.get_trace" title="stf.get_trace"><code class="xref py py-func docutils literal"><span class="pre">stf.get_trace()</span></code></a> simply imports the <strong>trace</strong> of the <strong>channel</strong> into a 1D-Numpy array that we called sweep. The default values provided by the function are -1. This means that by default, the current trace/channel will be imported.</p>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.get_trace" title="stf.get_trace"><code class="xref py py-func docutils literal"><span class="pre">stf.get_trace()</span></code></a> imports the <strong>trace</strong> of the <strong>channel</strong> into a 1D-Numpy array that we called sweep. The default values provided by the function are -1. This means that by default, the current trace/channel will be imported.</p>
 <p>We create a new stf window with the following</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span><span class="n">new_window</span><span class="p">(</span><span class="n">dsweep</span><span class="p">)</span>
 </pre></div>
@@ -145,7 +143,7 @@
 </div>
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>To perform the running average of 10 sampling points of the current trace, simply type:</p>
+<p>To perform the running average of 10 sampling points of the current trace, type:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">rmean</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -228,8 +226,8 @@
       </div>
     
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 23 June, 2016.
+        &#169; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 08 November, 2017.
     </div>
   </body>
 </html>

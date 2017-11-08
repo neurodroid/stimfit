@@ -1,34 +1,32 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Object oriented programming with Stimfit &mdash; Stimfit 0.15.2 documentation</title>
-    
+    <title>Object oriented programming with Stimfit &#8212; Stimfit 0.15.4 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.15.2',
+        VERSION:     '0.15.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false
+        HAS_SOURCE:  false,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
-    <link rel="up" title="The Stimfit book of spells" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Calculating latencies" href="latencies.html" />
     <link rel="prev" title="Event counting" href="apcounting.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -50,7 +48,7 @@
 
     
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Stimfit book of spells</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Stimfit book of spells</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,11 +65,11 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Jose Guzman</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">23 June, 2016</td>
+<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">08 November, 2017</td>
 </tr>
 </tbody>
 </table>
-<p>Object-oriented programming (OOP) is a software philosophy where the problems are solved with objects rather than with simple functions. These objects  behave similarly to objects in the physical world. For example, image you may want to travel from Freiburg (Germany) to London (UK). For that, you will need to use a transport (e.g car, airplane, etc...) which certain properties (e.g airplanes are much faster than cars, whereas cars are more flexible in terms of schedule). The key concept here is that an object has distinct attributes (associated variables) and methods (associated functions). Interestingly, object attributes are extremely dynamic. They may change as they are involved in different tasks. Because object <em>have an state</em> they provide much more versatility to solve problems than static function alone. Thus, in OOP the design of the code is near to the question, and much more far away from the machine and the hardware details.</p>
+<p>Object-oriented programming (OOP) is a software philosophy where the problems are solved with objects rather than with simple functions. These objects  behave similarly to objects in the physical world. For example, image you may want to travel from Freiburg (Germany) to London (UK). For that, you will need to use a transport (e.g car, airplane, etc…) which certain properties (e.g airplanes are much faster than cars, whereas cars are more flexible in terms of schedule). The key concept here is that an object has distinct attributes (associated variables) and methods (associated functions). Interestingly, object attributes are extremely dynamic. They may change as they are involved in different tasks. Because object <em>have an state</em> they provide much more versatility to solve problems than static function alone. Thus, in OOP the design of the code is near to the question, and much more far away from the machine and the hardware details.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">moving from the procedural/functional programming paradigm to the object oriented programming paradigm requires some mind re-wiring. In principle, everything what you can do in OOP can be done in functional programming. However, large programs would benefit from the OOP approach as their code is more reusable. Abstraction level is higher, because we will work with concepts rather than with complex software algorithms.</p>
@@ -105,7 +103,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">owner</span> <span class="o">=</span> <span class="n">owner</span>
 </pre></div>
 </div>
-<p>We can save this class in a file called test.py and import into our Python session. After importing the file, nothing will happen. This is because we simply loaded the class (i.e instructions of how to create the object), but not the object itself. Now, we can create an object called <strong>myTrace</strong> with the instructions described in that class as follows:</p>
+<p>We can save this class in a file called test.py and import into our Python session. After importing the file, nothing will happen. This is because we loaded the class (i.e instructions of how to create the object), but not the object itself. Now, we can create an object called <strong>myTrace</strong> with the instructions described in that class as follows:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myTrace</span><span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">Trace</span><span class="p">(</span><span class="s1">&#39;root&#39;</span><span class="p">)</span> <span class="c1"># test.py contains the class Trace()</span>
 </pre></div>
 </div>
@@ -113,7 +111,7 @@
 </div>
 <div class="section" id="object-attributes">
 <h2>Object attributes<a class="headerlink" href="#object-attributes" title="Permalink to this headline">¶</a></h2>
-<p>Object attributes can be accessed with the dot notation. To test the attributes of &#8220;myTrace&#8221; we simply type:</p>
+<p>Object attributes can be accessed with the dot notation. To test the attributes of “myTrace” we type:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myTrace</span><span class="o">.</span><span class="n">dt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="mf">0.05000000074505806</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">myTrace</span><span class="o">.</span><span class="n">trace</span>
@@ -130,12 +128,12 @@
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myTrace</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="mi">3</span>
 </pre></div>
 </div>
-<p>This potentially very dangerous (imagine the consecuences of setting the sampling rate to 3 in further calculations). For that reason, it is a very good programming practice to hide some object attributes to the user. This is called <strong>encapsulation</strong>. To hide the attributes of &#8220;myTrace&#8221;, we have just to insert a single underscore before the attribute in the class. These objects are <strong>private</strong> which simply means, &#8220;look, but do not touch!&#8221;</p>
+<p>This potentially very dangerous (imagine the consecuences of setting the sampling rate to 3 in further calculations). For that reason, it is a very good programming practice to hide some object attributes to the user. This is called <strong>encapsulation</strong>. To hide the attributes of “myTrace”, we have just to insert a single underscore before the attribute in the class. These objects are <strong>private</strong> which means, “look, but do not touch!”</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Python strongly relies on convention rather than on enforcement. For example, encapsulated attributes are not really private (i.e user can overwrite them if necessary), but the underscore notation is used to indicate internal use only. If you find a good reason to overwrite them, Python is not going to stop you. However, it is a good programming practice to keep the Python conventions if you want to share your programs with other users.</p>
 </div>
-<p>Additionally, we could give the user the opportunity to retrieve these values without the dot notation by simply creating some functions available to this object. These would be the object methods. For example, we can create 2 functions called get_sampling_interval() and get_trace_index() inside the class. These are the methods of the object.</p>
+<p>Additionally, we could give the user the opportunity to retrieve these values without the dot notation by creating some functions available to this object. These would be the object methods. For example, we can create 2 functions called get_sampling_interval() and get_trace_index() inside the class. These are the methods of the object.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">stf</span>
 
 <span class="k">class</span> <span class="nc">Trace</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -218,7 +216,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span>
 </pre></div>
 </div>
-<p>After reloading this class, and creating &#8220;myTrace&#8221; we can use the update() method. This simply collects the current trace index and sampling interval. If we change the trace or even the window, we have to call update() again to retreive the current index and sampling interval.</p>
+<p>After reloading this class, and creating “myTrace” we can use the update() method. This collects the current trace index and sampling interval. If we change the trace or even the window, we have to call update() again to retreive the current index and sampling interval.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myTrace3</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">myTrace</span><span class="p">(</span><span class="s1">&#39;user&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">myTrace3</span><span class="o">.</span><span class="n">get_trace_index</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="mi">0</span>
@@ -233,7 +231,7 @@
 </div>
 <div class="section" id="class-inheritance">
 <h2>Class inheritance<a class="headerlink" href="#class-inheritance" title="Permalink to this headline">¶</a></h2>
-<p>Object-oriented languages like Python support class inheritance. This means that we can inherit attributes and methods from a pre-existing class. Thus, we do not need to rewrite again this code. We can simply inherit from another class (called mother class).
+<p>Object-oriented languages like Python support class inheritance. This means that we can inherit attributes and methods from a pre-existing class. Thus, we do not need to rewrite again this code. We can inherit from another class (called mother class).
 To inherit code from another class, we have to add the name of the mother class in the class headline. For example:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Channel</span><span class="p">(</span><span class="n">Trace</span><span class="p">):</span>
 </pre></div>
@@ -244,7 +242,7 @@ To inherit code from another class, we have to add the name of the mother class 
 <span class="sd">    A class derived from Trace class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">owner</span><span class="p">):</span>
-        <span class="n">Trace</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="p">)</span> <span class="c1"># let Trace to get owner</span>
+        <span class="n">Trace</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="p">)</span> <span class="c1"># let Trace to get owner</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_channel_index</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -290,12 +288,12 @@ To inherit code from another class, we have to add the name of the mother class 
 </pre></div>
 </div>
 <p>or we can use the __class__ method included in every instance to check the type of the object:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myChannel</span><span class="o">.</span><span class="n">__class__</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myChannel</span><span class="o">.</span><span class="vm">__class__</span>
 <span class="go">&lt;class &#39;test.Channel&#39;&gt;</span>
 </pre></div>
 </div>
 <p>we can get this class definition as string with:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myChannel</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myChannel</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;Channel&#39;</span>
 </pre></div>
 </div>
@@ -381,8 +379,8 @@ To inherit code from another class, we have to add the name of the mother class 
       </div>
     
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 23 June, 2016.
+        &#169; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 08 November, 2017.
     </div>
   </body>
 </html>

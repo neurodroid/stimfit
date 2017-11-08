@@ -1,34 +1,32 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Loading custom text files &mdash; Stimfit 0.15.2 documentation</title>
-    
+    <title>Loading custom text files &#8212; Stimfit 0.15.4 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.15.2',
+        VERSION:     '0.15.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false
+        HAS_SOURCE:  false,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
-    <link rel="up" title="The Stimfit book of spells" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="stf" href="../stf_reference/stf.html" />
     <link rel="prev" title="Calculating latencies" href="latencies.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -50,7 +48,7 @@
 
     
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Stimfit book of spells</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Stimfit book of spells</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,7 +65,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Jose Guzman</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">23 June, 2016</td>
+<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">08 November, 2017</td>
 </tr>
 </tbody>
 </table>
@@ -139,11 +137,11 @@
 <div class="section" id="code-commented">
 <h2>Code commented<a class="headerlink" href="#code-commented" title="Permalink to this headline">¶</a></h2>
 <p>In both script cases, most of the work is done with <em>loadtxt</em> from the <em>NumPy</em> package. The first argument that we provide is a string with the name of the file to be loaded. Note that the argument options of <em>loadtxt</em> permits a lot of flexibility when loading ASCII files (for example, skiprows = 2 will skip the first two lines). Check the <a class="reference external" href="http://docs.scipy.org/doc/">NumPy documentation</a> of this function for further details.</p>
-<p>To make the experience more interactive, we can load the string of the file with a the GUI that is provided by the wxPython package. This is what we do when we called the wx.FileSelector object in the second example. wxPython is loaded at the beginnig of Stimfit as &#8216;wx&#8217; and runs already under the Stimfit application. Remember to create a wxPython application if you want to use wx.FileSelector outside Stimfit.</p>
+<p>To make the experience more interactive, we can load the string of the file with a the GUI that is provided by the wxPython package. This is what we do when we called the wx.FileSelector object in the second example. wxPython is loaded at the beginnig of Stimfit as ‘wx’ and runs already under the Stimfit application. Remember to create a wxPython application if you want to use wx.FileSelector outside Stimfit.</p>
 </div>
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<p>To see how both function work simply import the spells module in the Python console of Stimfit and try the example files. For example:</p>
+<p>To see how both function work import the spells module in the Python console of Stimfit and try the example files. For example:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spells</span>
 
 <span class="c1"># to load the file in a give location</span>
@@ -233,8 +231,8 @@
       </div>
     
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 23 June, 2016.
+        &#169; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 08 November, 2017.
     </div>
   </body>
 </html>

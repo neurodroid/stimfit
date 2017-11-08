@@ -1,34 +1,32 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Latency measurements &mdash; Stimfit 0.15.2 documentation</title>
-    
+    <title>Latency measurements &#8212; Stimfit 0.15.4 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.15.2',
+        VERSION:     '0.15.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false
+        HAS_SOURCE:  false,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
-    <link rel="up" title="Stimfit manual" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Event extraction by template matching" href="event_extraction.html" />
     <link rel="prev" title="The Python shell" href="python.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -50,7 +48,7 @@
 
     
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Stimfit manual</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Stimfit manual</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,156 +65,19 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber (christsc at gmx.de)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">23 June, 2016</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">08 November, 2017</td>
 </tr>
 </tbody>
 </table>
 <div class="section" id="measurement-of-synaptic-delay">
 <h2>Measurement of synaptic delay<a class="headerlink" href="#measurement-of-synaptic-delay" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="http://www.stimfit.org">Stimfit</a> measures latencies between two events. It is frequently used to measure the delay between a synaptic signal and a post-synaptic response. Classically, the synaptic delay or latency is defined as &#8220;the time interval between the peak of the inward current through the synaptic membrane and commencement of inward current through the postsynaptic membrane&#8221; (Katz and Miledi, 1965 <a class="footnote-reference" href="#katzmiledi1965" id="id1">[1]</a>). Neglecting cable properties of neurons for a while, the maximal inward current during an action potential is expected to flow at the time of maximal slope during the rising phase (Jack et al., 1983 <a class="footnote-reference" href="#jack1983" id="id2">[2]</a>), since</p>
-<div class="system-message">
-<p class="system-message-title">System Message: WARNING/2 (<tt class="docutils">I_{\text{m}}=I_{\text{cap}}+I_{\text{ionic}} = C_\text{m}\frac{\text{d}V_\text{m}}{\text{d}t} + I_{\text{ionic}} = 0, \mbox{and hence}
+<p><a class="reference external" href="http://www.stimfit.org">Stimfit</a> measures latencies between two events. It is frequently used to measure the delay between a synaptic signal and a post-synaptic response. Classically, the synaptic delay or latency is defined as “the time interval between the peak of the inward current through the synaptic membrane and commencement of inward current through the postsynaptic membrane” (Katz and Miledi, 1965 <a class="footnote-reference" href="#katzmiledi1965" id="id1">[1]</a>). Neglecting cable properties of neurons for a while, the maximal inward current during an action potential is expected to flow at the time of maximal slope during the rising phase (Jack et al., 1983 <a class="footnote-reference" href="#jack1983" id="id2">[2]</a>), since</p>
+<div class="math">
+<p><img src="../_images/math/23a4dd05f3a6e0a0ebae6375deb804597e29c396.png" alt="I_{\text{m}}=I_{\text{cap}}+I_{\text{ionic}} = C_\text{m}\frac{\text{d}V_\text{m}}{\text{d}t} + I_{\text{ionic}} = 0, \mbox{and hence}
 
 
-I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{d}t}</tt>)</p>
-latex exited with error
-[stdout]
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=latex)
- restricted \write18 enabled.
-entering extended mode
-(./math.tex
-LaTeX2e &lt;2016/03/31&gt; patch level 1
-Babel &lt;3.9r&gt; and hyphenation patterns for 83 language(s) loaded.
-(/usr/local/texlive/2016/texmf-dist/tex/latex/base/article.cls
-Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
-(/usr/local/texlive/2016/texmf-dist/tex/latex/base/size12.clo))
-(/usr/local/texlive/2016/texmf-dist/tex/latex/base/inputenc.sty
-(/usr/local/texlive/2016/texmf-dist/tex/latex/ucs/utf8x.def))
-(/usr/local/texlive/2016/texmf-dist/tex/latex/ucs/ucs.sty
-(/usr/local/texlive/2016/texmf-dist/tex/latex/ucs/data/uni-global.def))
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsmath.sty
-For additional information on amsmath, use the `?&#8217; option.
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amstext.sty
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsgen.sty))
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsbsy.sty)
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsmath/amsopn.sty))
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amscls/amsthm.sty)
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/amssymb.sty
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/amsfonts.sty))
-(/usr/local/texlive/2016/texmf-dist/tex/latex/tools/bm.sty) (./math.aux)
-(/usr/local/texlive/2016/texmf-dist/tex/latex/ucs/ucsencs.def)
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/umsa.fd)
-(/usr/local/texlive/2016/texmf-dist/tex/latex/amsfonts/umsb.fd)
-Runaway argument?
-\!\begin {aligned} I_{\text {m}}=I_{\text {cap}}+I_{\text {ionic}} = \ETC.
-! Paragraph ended before \align* was complete.
-&lt;to be read again&gt; 
-                   \par 
-l.14 
-     
-! Missing $ inserted.
-&lt;inserted text&gt; 
-                $
-l.14 
-     
-! Missing \endgroup inserted.
-&lt;inserted text&gt; 
-                \endgroup 
-l.14 
-     
-! Display math should end with $$.
-&lt;to be read again&gt; 
-                   \par 
-l.14 
-     
-! Missing $ inserted.
-&lt;inserted text&gt; 
-                $
-l.15 I_
-       {\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}...
-
-! Misplaced \crcr.
-\endaligned -&gt;\crcr 
-                    \egroup \restorecolumn&#64; \egroup 
-l.16 \end{aligned}
-                  \end{align*}
-! Extra }, or forgotten $.
-\endaligned -&gt;\crcr \egroup 
-                            \restorecolumn&#64; \egroup 
-l.16 \end{aligned}
-                  \end{align*}
-! Extra }, or forgotten $.
-\endaligned ...cr \egroup \restorecolumn&#64; \egroup 
-                                                  
-l.16 \end{aligned}
-                  \end{align*}
-
-! LaTeX Error: \begin{align*} on input line 12 ended by \end{aligned}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H &lt;return&gt;  for immediate help.
- ...                                              
-                                                  
-l.16 \end{aligned}
-                  \end{align*}
-! Missing $ inserted.
-&lt;inserted text&gt; 
-                $
-l.16 \end{aligned}
-                  \end{align*}
-! Misplaced \cr.
-\math&#64;cr&#64;&#64;&#64; -&gt;\cr 
-                  
-l.16 \end{aligned}\end{align*}
-                              
-! Misplaced \noalign.
-\math&#64;cr&#64;&#64; ... \iffalse }\fi \math&#64;cr&#64;&#64;&#64; \noalign 
-                                                  {\vskip #1\relax }
-l.16 \end{aligned}\end{align*}
-                              
-
-Underfull \hbox (badness 10000) in paragraph at lines 15&#8211;16
-
-! Misplaced \noalign.
-\black&#64; #1-&gt;\noalign 
-                     {\ifdim #1&gt;\displaywidth \dimen&#64; \prevdepth \nointerlin...
-l.16 \end{aligned}\end{align*}
-                              
-! Too many }&#8217;s.
-\endalign -&gt;\math&#64;cr \black&#64; \totwidth&#64; \egroup 
-                                                \ifingather&#64; \restorealignst...
-l.16 \end{aligned}\end{align*}
-                              
-
-! LaTeX Error: \begin{document} ended by \end{align*}.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H &lt;return&gt;  for immediate help.
- ...                                              
-                                                  
-l.16 \end{aligned}\end{align*}
-                              
-! Missing $ inserted.
-&lt;inserted text&gt; 
-                $
-l.16 \end{aligned}\end{align*}
-                              
-! Display math should end with $$.
-&lt;to be read again&gt; 
-                   \endgroup 
-l.16 \end{aligned}\end{align*}
-                              
-! Extra \endgroup.
-&lt;recently read&gt; \endgroup 
-                          
-l.16 \end{aligned}\end{align*}
-                              
-[1] (./math.aux) )
-(see the transcript file for additional information)
-Output written on math.dvi (1 page, 552 bytes).
-Transcript written on math.log.
-</div>
-<p>The commencement (sometimes called &#8220;foot&#8221;) of the postsynaptic current can robustly be estimated from the extrapolated intersection of the baseline with a line through the two points of time when the current is 20 and 80% of the peak current (Jonas et al., 1993 <a class="footnote-reference" href="#jonas1993" id="id3">[4]</a>, Bartos et al., 2001 <a class="footnote-reference" href="#bartos2001" id="id4">[3]</a>).</p>
+I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{d}t}"/></p>
+</div><p>The commencement (sometimes called “foot”) of the postsynaptic current can robustly be estimated from the extrapolated intersection of the baseline with a line through the two points of time when the current is 20 and 80% of the peak current (Jonas et al., 1993 <a class="footnote-reference" href="#jonas1993" id="id3">[4]</a>, Bartos et al., 2001 <a class="footnote-reference" href="#bartos2001" id="id4">[3]</a>).</p>
 <blockquote>
 <div><div class="figure align-center" id="id6">
 <img alt="../_images/foot.png" src="../_images/foot.png" />
@@ -227,14 +88,14 @@ Transcript written on math.log.
 </div>
 <div class="section" id="setting-the-latency-cursors">
 <h2>Setting the latency cursors<a class="headerlink" href="#setting-the-latency-cursors" title="Permalink to this headline">¶</a></h2>
-<p>Two latency cursors exist in <a class="reference external" href="http://www.stimfit.org">Stimfit</a> that are plotted as dotted vertical blue lines. Latency is simply computed as the time interval between the first and the second latency cursor. You can set the cursors manually by simply pressing the key <strong>L</strong> or the latency button on the toolbar (Fig. 19A).</p>
+<p>Two latency cursors exist in <a class="reference external" href="http://www.stimfit.org">Stimfit</a> that are plotted as dotted vertical blue lines. Latency is computed as the time interval between the first and the second latency cursor. You can set the cursors manually by pressing the key <strong>L</strong> or the latency button on the toolbar (Fig. 19A).</p>
 <blockquote>
 <div><div class="figure align-center" id="id7">
 <img alt="../_images/latency.png" src="../_images/latency.png" />
 <p class="caption"><span class="caption-text"><strong>Fig. 19A:</strong> Activate latency mode.</span></p>
 </div>
 </div></blockquote>
-<p>In addition, latency cursors can be adjusted to some predefined measurements using the Cursors settings menu with &#8220;Edit-&gt;Cursors Settings&#8221; (Fig. 19B). In the reference channel (red), Peak, Maximal slope and Half-width can be choosen as the first latency cursor. In the active channel (black), Peak, Maximal Slope, Half-width and Beginning of event can be used as second latency cursor. The resulting latency will now be computed from the measurement in the reference channel to the measurement in the active channel.</p>
+<p>In addition, latency cursors can be adjusted to some predefined measurements using the Cursors settings menu with “Edit-&gt;Cursors Settings” (Fig. 19B). In the reference channel (red), Peak, Maximal slope and Half-width can be choosen as the first latency cursor. In the active channel (black), Peak, Maximal Slope, Half-width and Beginning of event can be used as second latency cursor. The resulting latency will now be computed from the measurement in the reference channel to the measurement in the active channel.</p>
 <blockquote>
 <div><div class="figure align-center" id="id8">
 <img alt="../_images/latency_menu.png" src="../_images/latency_menu.png" />
@@ -405,8 +266,8 @@ Transcript written on math.log.
       </div>
     
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 23 June, 2016.
+        &#169; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 08 November, 2017.
     </div>
   </body>
 </html>

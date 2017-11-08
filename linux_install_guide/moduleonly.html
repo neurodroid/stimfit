@@ -1,34 +1,32 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Building the Python module only &mdash; Stimfit 0.15.2 documentation</title>
-    
+    <title>Building the Python module only &#8212; Stimfit 0.15.4 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.15.2',
+        VERSION:     '0.15.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false
+        HAS_SOURCE:  false,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="Stimfit 0.15.2 documentation" href="../contents.html" />
-    <link rel="up" title="GNU/Linux Build Guide" href="index.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Building Stimfit" href="requirement.html" />
     <link rel="prev" title="GNU/Linux Build Guide" href="index.html" /> 
   </head>
-  <body role="document">
+  <body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -50,7 +48,7 @@
 
     
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">GNU/Linux Build Guide</a> &raquo;</li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">GNU/Linux Build Guide</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -67,7 +65,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">23 June, 2016</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">08 November, 2017</td>
 </tr>
 </tbody>
 </table>
@@ -80,14 +78,14 @@
 $ git clone https://github.com/neurodroid/stimfit.git
 </pre></div>
 </div>
-<p>This will download the code to a directory called <em>stfio</em>.</p>
+<p>This will download the code to a directory called <em>stimfit</em>.</p>
 <p>Next, you need to generate the build system:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd $HOME/stfio
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd $HOME/stimfit
 $ ./autogen.sh
 </pre></div>
 </div>
 <p>Now you can configure. I strongly recommend building in a separate directory.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd $HOME/stfio
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd $HOME/stimfit
 $ mkdir build
 $ cd build
 $ mkdir module
@@ -95,8 +93,16 @@ $ cd module
 $ ../../configure --enable-module
 </pre></div>
 </div>
-<p>Remember to add the argument <em>&#8211;with-biosig</em> to the configure script
+<p>Remember to add the argument <em>–with-biosig</em> to the configure script
 if you want to have extra biomedical fileformats for stfio.</p>
+<p>If you want to install the <em>stfio</em> module for a non-default Python distribution, such as <strong>Anaconda Python</strong>, use the argument <em>–prefix=</em> to specify the installation path as where your favorite Python distribution is installed. The following example will install <em>stfio</em> for Anaconda Python 2.7:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ../../configure --enable-module --prefix=$HOME/anaconda/
+</pre></div>
+</div>
+<p>If using virtual environment, try something like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ../../configure --enable-module --prefix=$HOME/anaconda/envs/py36
+</pre></div>
+</div>
 <p>Then, build and install:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ make -j 4 # where 4 refers to the number of parallel build processes
 $ sudo make install
@@ -160,8 +166,8 @@ $ sudo make install
       </div>
     
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 23 June, 2016.
+        &#169; Copyright 2015, Christoph Schmidt-Hieber.
+      Last updated on 08 November, 2017.
     </div>
   </body>
 </html>
