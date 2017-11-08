@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef __CODES_H__
 #define __CODES_H__
 
-static const char STR_END[]={-1,'\0'};
+static const char STR_END[]={(char)-1,'\0'};
 static char STR_NULL[]=" unspecified/unknown ";
 
 static alfabetic _special[]={

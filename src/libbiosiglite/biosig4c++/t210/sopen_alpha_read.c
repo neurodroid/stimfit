@@ -29,6 +29,8 @@
 
 #include "../biosig-dev.h"
 
+#define min(a,b)        (((a) < (b)) ? (a) : (b))
+#define max(a,b)        (((a) > (b)) ? (a) : (b))
 
 EXTERN_C void sopen_alpha_read(HDRTYPE* hdr) {	
 /*

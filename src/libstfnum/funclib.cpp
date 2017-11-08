@@ -161,6 +161,8 @@ void stfnum::fexp_init(const Vector_double& data, double base, double peak, doub
     std::transform(peeled.begin(), peeled.end(), peeled.begin(),
 #if defined(_WINDOWS) && !defined(__MINGW32__)                      
                    std::logl);
+#elif defined(__APPLE__)
+                   std::logl);
 #else
                    log);
 #endif

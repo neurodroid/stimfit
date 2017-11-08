@@ -15,13 +15,13 @@ This document collects answers to some questions like "How do I make ... in `Sti
 
 It assumes a basic knowledge of the embedded Python shell of `Stimfit <http://www.stimfit.org>`_. Some Python knowledge and a substantial proficiency in `Stimfit <http://www.stimfit.org>`_ are recommendable. Please note that this is not a Python manual, but a way to use Python for some basic analysis tasks provided with `Stimfit <http://www.stimfit.org>`_. For a detailed Python manual, we encourage the user to visit the official Python documentation on the [Python-website]_ and to read carefully the :doc:`/manual/index`.
 
-The functions described along this document are available in your current `Stimfit <http://www.stimfit.org>`_ version. To make use of them you have simply to type the following line in the `Stimfit <http://www.stimfit.org>`_ embedded Python shell:
+The functions described along this document are available in your current `Stimfit <http://www.stimfit.org>`_ version. To make use of them you have to type the following line in the `Stimfit <http://www.stimfit.org>`_ embedded Python shell:
 
 ::
 
     >>> import spells 
     
-After that, functions can be called with the dot notation (i.e just typing **spells** before the function) For example, if we want to call the function rmean() we  would simply do it in this way:
+After that, functions can be called with the dot notation (i.e just typing **spells** before the function) For example, if we want to call the function rmean() we  would do it in this way:
 
 ::
 

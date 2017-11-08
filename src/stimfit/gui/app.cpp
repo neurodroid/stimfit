@@ -66,8 +66,6 @@
 #endif
 #endif
 
-#include <biosig.h>
-
 extern wxStfApp& wxGetApp();
 wxStfApp& wxGetApp() { return *static_cast<wxStfApp*>(wxApp::GetInstance()); }
 
@@ -213,6 +211,10 @@ bool wxStfApp::OnInit(void)
     m_hekaTemplate=new wxDocTemplate( docManager,
                                      wxT("HEKA file"), wxT("*.dat"), wxT(""), wxT("dat"),
                                      wxT("HEKA Document"), wxT("HEKA View"), CLASSINFO(wxStfDoc),
+                                     CLASSINFO(wxStfView) );
+    m_intanTemplate=new wxDocTemplate( docManager,
+                                     wxT("Intan CLAMP file"), wxT("*.clp"), wxT(""), wxT("clp"),
+                                     wxT("Intan CLAMP Document"), wxT("Intan View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #if 0
     m_sonTemplate=new wxDocTemplate( docManager,
@@ -675,6 +677,11 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
                         wxT("Select every n-th trace in this file")
                         );
     m_edit_menu->Append(
+                        ID_SELECT_AND_ADD,
+                        wxT("Se&lect and add traces of type ..."),
+                        wxT("Traces of a certain type are added to the select")
+                        );
+    m_edit_menu->Append(
                         ID_UNSELECTALL,
                         wxT("&Unselect all traces\tCtrl+U"),
                         wxT("Unselect all traces in this file")
@@ -683,6 +690,11 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
                         ID_UNSELECTSOME,
                         wxT("U&nselect some traces"),
                         wxT("Unselect some traces in this file")
+                        );
+    m_edit_menu->Append(
+                        ID_SELECT_AND_REMOVE,
+                        wxT("Unse&lect traces of type ..."),
+                        wxT("Traces of a certain type are removed from the selection")
                         );
     wxMenu *editSub=new wxMenu;
     editSub->Append(

@@ -1,6 +1,5 @@
 /*
 
-    $Id$
     Copyright (C) 2005-2012 Alois Schloegl <alois.schloegl@gmail.com>
     This file is part of the "BioSig for C/C++" repository
     (biosig4c++) at http://biosig.sf.net/
@@ -23,11 +22,12 @@
 
 #include <ctype.h>
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "physicalunits.h"
 
-#ifdef WITH_PTHREAD
+#ifdef HAVE_PTHREAD
 // This is optional, because so far there are no multi-threaded applications for libbiosig.
 #include <pthread.h>
 #endif

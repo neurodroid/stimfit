@@ -160,6 +160,7 @@ enum filetype {
     heka,   /*!< heka files. */
     biosig, /*!< biosig files. */
     tdms,   /*!< TDMS files. */
+    intan,   /*!< Intan CLAMP files. */
     none    /*!< Undefined file type. */
 };
 

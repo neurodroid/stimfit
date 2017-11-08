@@ -24,8 +24,14 @@
 #ifndef _STF_H_
 #define _STF_H_
 
+#ifndef _WINDOWS
 #if (__cplusplus < 201103)
     #include <boost/function.hpp>
+#endif
+#endif
+
+#if (__GNUC__ > 5)
+  #include <functional>
 #endif
 #include <vector>
 #include <map>

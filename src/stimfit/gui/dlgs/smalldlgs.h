@@ -127,6 +127,8 @@ class wxStfAlignDlg : public wxDialog
 
 private:
     int m_alignRise;
+    bool m_useReference, m_hasReference;
+    wxCheckBox* m_checkBox;
     wxRadioBox* m_radioBox;
     wxStdDialogButtonSizer* m_sdbSizer;
 
@@ -146,6 +148,7 @@ public:
      */
     wxStfAlignDlg(
             wxWindow* parent,
+            bool hasReference,
             int id = wxID_ANY,
             wxString title = wxT("Alignment mode"),
             wxPoint pos = wxDefaultPosition,
@@ -158,6 +161,12 @@ public:
      *           aligned to the peak.
      */
     int AlignRise() const {return m_alignRise;}
+
+    //! Indicates whether the reference channel should be used for alignment
+    /*!  \return true if the reference channel should be used, false if the active
+     *           channel should be used
+     */
+    bool UseReference() const {return m_useReference;}
     
     //! Called upon ending a modal dialog.
     /*! \param retCode The dialog button id that ended the dialog

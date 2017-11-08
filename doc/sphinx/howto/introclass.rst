@@ -50,7 +50,7 @@ We will start with a basic example to start using objects in the embedded Python
             self.owner = owner 
 
 
-We can save this class in a file called test.py and import into our Python session. After importing the file, nothing will happen. This is because we simply loaded the class (i.e instructions of how to create the object), but not the object itself. Now, we can create an object called **myTrace** with the instructions described in that class as follows:
+We can save this class in a file called test.py and import into our Python session. After importing the file, nothing will happen. This is because we loaded the class (i.e instructions of how to create the object), but not the object itself. Now, we can create an object called **myTrace** with the instructions described in that class as follows:
 
 >>> myTrace= test.Trace('root') # test.py contains the class Trace()
 
@@ -60,7 +60,7 @@ myTrace is now my particular object. It was created with the instructions given 
 Object attributes
 =================
 
-Object attributes can be accessed with the dot notation. To test the attributes of "myTrace" we simply type:
+Object attributes can be accessed with the dot notation. To test the attributes of "myTrace" we type:
 
 >>> myTrace.dt
 >>> 0.05000000074505806
@@ -79,13 +79,13 @@ As you can see bellow, nothing would prevent us to assign a new value to any of 
 
 >>> myTrace.dt = 3
 
-This potentially very dangerous (imagine the consecuences of setting the sampling rate to 3 in further calculations). For that reason, it is a very good programming practice to hide some object attributes to the user. This is called **encapsulation**. To hide the attributes of "myTrace", we have just to insert a single underscore before the attribute in the class. These objects are **private** which simply means, "look, but do not touch!"
+This potentially very dangerous (imagine the consecuences of setting the sampling rate to 3 in further calculations). For that reason, it is a very good programming practice to hide some object attributes to the user. This is called **encapsulation**. To hide the attributes of "myTrace", we have just to insert a single underscore before the attribute in the class. These objects are **private** which means, "look, but do not touch!"
 
 .. note::
 
     Python strongly relies on convention rather than on enforcement. For example, encapsulated attributes are not really private (i.e user can overwrite them if necessary), but the underscore notation is used to indicate internal use only. If you find a good reason to overwrite them, Python is not going to stop you. However, it is a good programming practice to keep the Python conventions if you want to share your programs with other users.
     
-Additionally, we could give the user the opportunity to retrieve these values without the dot notation by simply creating some functions available to this object. These would be the object methods. For example, we can create 2 functions called get_sampling_interval() and get_trace_index() inside the class. These are the methods of the object.
+Additionally, we could give the user the opportunity to retrieve these values without the dot notation by creating some functions available to this object. These would be the object methods. For example, we can create 2 functions called get_sampling_interval() and get_trace_index() inside the class. These are the methods of the object.
 
 ::
 
@@ -173,7 +173,7 @@ As soon as we move through the recording, the trace index may change. However, i
             """ get trace index """
             return self._trace
 
-After reloading this class, and creating "myTrace" we can use the update() method. This simply collects the current trace index and sampling interval. If we change the trace or even the window, we have to call update() again to retreive the current index and sampling interval.
+After reloading this class, and creating "myTrace" we can use the update() method. This collects the current trace index and sampling interval. If we change the trace or even the window, we have to call update() again to retreive the current index and sampling interval.
 
 >>> myTrace3 = test.myTrace('user')
 >>> myTrace3.get_trace_index()
@@ -189,7 +189,7 @@ After reloading this class, and creating "myTrace" we can use the update() metho
 Class inheritance
 =================
 
-Object-oriented languages like Python support class inheritance. This means that we can inherit attributes and methods from a pre-existing class. Thus, we do not need to rewrite again this code. We can simply inherit from another class (called mother class). 
+Object-oriented languages like Python support class inheritance. This means that we can inherit attributes and methods from a pre-existing class. Thus, we do not need to rewrite again this code. We can inherit from another class (called mother class). 
 To inherit code from another class, we have to add the name of the mother class in the class headline. For example:
 
 >>> class Channel(Trace):

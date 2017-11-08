@@ -97,6 +97,7 @@ Navigate within a file
         
         **Fig. 8:** Setting the active and inactive channel.
 
+* In files with more than two channels you can scroll the active channel using the up and down keys while holding down **Ctrl**. In addition pressing the **X** key will set the currently active channel to the reference channel.
 
 Analysis of individual events
 =============================
@@ -200,7 +201,7 @@ First, you have to select the traces to average (Fig. 14). Once you are done, cl
 
 .. note::
 
-    If you want to perform an average (or any other measurement) of all traces in a recording, simply select Edit-> Select all, or type Ctrl+A
+    If you want to perform an average (or any other measurement) of all traces in a recording, select Edit-> Select all, or type Ctrl+A
 
 Fitting functions to data
 =========================

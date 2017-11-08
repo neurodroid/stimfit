@@ -20,4 +20,8 @@
 		Name="PYTHONDIR"
 		Value="C:\Python27"
 	/>
+	<UserMacro
+		Name="NUMPYDIR"
+		Value="C:\Python27\Lib\site-packages\numpy\core\include"
+	/>
 </VisualStudioPropertySheet>

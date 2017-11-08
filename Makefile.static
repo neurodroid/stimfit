@@ -50,7 +50,7 @@ ifneq (,$(findstring mingw,$(WXCONF)))
 endif
 endif
 
-DEFINES += -DWITH_BIOSIG
+DEFINES += -DWITH_BIOSIG2
 DEFINES += -DHAVE_LAPACK
 #DEFINES += -DWITHOUT_ABF
 #DEFINES += -DWITHOUT_AXG
@@ -111,6 +111,9 @@ SOURCES = ./src/stimfit/stf.cpp \
 	./src/libstfio/section.cpp \
 	./src/libstfio/recording.cpp \
 	./src/libstfio/hdf5/hdf5lib.cpp \
+	./src/libstfio/intan/intanlib.cpp \
+	./src/libstfio/intan/common.cpp \
+	./src/libstfio/intan/streams.cpp \
 	./src/libstfio/channel.cpp \
 	./src/libstfio/stfio.cpp \
 	./src/libstfio/igor/WriteWave.c \
@@ -247,7 +250,9 @@ else
     CPPFLAGS += -I/usr/include/hdf5/serial
     LDFLAGS  += -L/usr/lib/$(PLATFORM)
     LIBS     += -lhdf5_serial_hl -lhdf5_serial
-endif
+  else
+    LIBS     += -lhdf5_hl -lhdf5
+  endif
 endif
 endif
 

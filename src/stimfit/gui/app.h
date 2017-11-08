@@ -136,6 +136,8 @@ enum {
     ID_UNSELECTSOME,
     ID_MYSELECTALL,
     ID_UNSELECTALL,
+    ID_SELECT_AND_ADD,
+    ID_SELECT_AND_REMOVE,
     ID_NEWFROMSELECTED,
     ID_NEWFROMSELECTEDTHIS,
     ID_NEWFROMALL,
@@ -201,10 +203,12 @@ enum {
 #if defined(__WXMAC__) || defined(__WXGTK__)
   #pragma GCC diagnostic ignored "-Wwrite-strings"
 #endif
+#ifdef WITH_PYTHON
 #if PY_MAJOR_VERSION >= 3
 #include <wx/wxPython/wxpy_api.h>
 #else
 #include <wx/wxPython/wxPython.h>
+#endif
 #endif
 // revert to previous behaviour
 #if defined(__WXMAC__) || defined(__WXGTK__)
@@ -522,7 +526,7 @@ private:
     // Pointer to the cursors settings dialog box
     wxStfCursorsDlg* CursorsDialog;
     wxDocTemplate* m_cfsTemplate, *m_hdf5Template, *m_txtTemplate,*m_abfTemplate,
-      *m_atfTemplate,*m_axgTemplate,*m_sonTemplate, *m_hekaTemplate, *m_biosigTemplate;
+      *m_atfTemplate,*m_axgTemplate,*m_sonTemplate, *m_hekaTemplate, *m_intanTemplate, *m_biosigTemplate;
     stfnum::storedFunc storedLinFunc;
     // wxMenu* m_file_menu;
     wxString m_fileToLoad;

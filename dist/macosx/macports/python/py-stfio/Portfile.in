@@ -19,7 +19,7 @@ distname            stimfit-${version}
 checksums           rmd160  RMD160 \
                     sha256  SHA256
 
-python.versions     27 34 35
+python.versions     27 35 36
 
 if { ${name} ne ${subport} } {
     depends_build   port:swig-python
@@ -50,14 +50,20 @@ if { ${name} ne ${subport} } {
             ${worksrcpath}/COPYING ${docdir}
     }
 
-    variant biosig description {Use biosig library for file I/O.} {
+    variant biosig conflicts biosiglite description {Use external biosig library for file I/O.} {
         depends_lib-append \
             port:libbiosig
 
         configure.args-replace \
             --without-biosig \
-            --with-biosig
+            --with-biosig2
     }
 
-    default_variants    +biosig
+    variant biosiglite conflicts biosig description {Use internal biosiglite library for file I/O.} {
+        configure.args-replace \
+            --without-biosig \
+            --with-biosiglite
+    }
+
+    default_variants    +biosiglite
 }

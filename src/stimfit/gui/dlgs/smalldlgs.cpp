@@ -208,16 +208,35 @@ bool wxStfChannelSelDlg::OnOK() {
 BEGIN_EVENT_TABLE( wxStfAlignDlg, wxDialog )
 END_EVENT_TABLE()
 
-wxStfAlignDlg::wxStfAlignDlg(wxWindow* parent, int id, wxString title, wxPoint pos,
+wxStfAlignDlg::wxStfAlignDlg(wxWindow* parent, bool hasReference, int id, wxString title, wxPoint pos,
         wxSize size, int style)
-: wxDialog( parent, id, title, pos, size, style ), m_alignRise(false)
+: wxDialog( parent, id, title, pos, size, style ), m_alignRise(0), m_useReference(true), m_hasReference(hasReference)
 {
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
+    if (m_hasReference) {
+        m_checkBox=new wxCheckBox( 
+            this, 
+            wxID_ANY, 
+            wxT("Use reference channel"),
+            wxDefaultPosition, 
+            wxDefaultSize, 
+            0
+                                   );
+        m_checkBox->SetValue(true);
+        topSizer->Add( m_checkBox, 0, wxALIGN_LEFT | wxALL, 5 );
+    }
 
-    wxString m_radioBoxChoices[] = { wxT("to peak"),wxT("to steepest slope during rise"),wxT("to half amplitude") };
+    wxString m_radioBoxChoices[] = {
+        wxT("peak"),
+        wxT("steepest slope during rise"),
+        wxT("half amplitude"),
+        wxT("onset")
+    };
     int m_radioBoxNChoices = sizeof( m_radioBoxChoices ) / sizeof( wxString );
-    m_radioBox = new wxRadioBox( this, wxID_ANY, wxT("Align reference channel"), wxDefaultPosition, wxDefaultSize, m_radioBoxNChoices, m_radioBoxChoices, 3, wxRA_SPECIFY_ROWS );
+    m_radioBox = new wxRadioBox(
+        this, wxID_ANY, wxT("Alignment point"), wxDefaultPosition,
+        wxDefaultSize, m_radioBoxNChoices, m_radioBoxChoices, m_radioBoxNChoices, wxRA_SPECIFY_ROWS);
     topSizer->Add( m_radioBox, 0, wxALL, 5 );
 
     m_sdbSizer = new wxStdDialogButtonSizer();
@@ -245,6 +264,11 @@ void wxStfAlignDlg::EndModal(int retCode) {
 
 bool wxStfAlignDlg::OnOK() {
     m_alignRise = m_radioBox->GetSelection();
+    if (m_hasReference) {
+        m_useReference = m_checkBox->IsChecked();
+    } else {
+        m_useReference = false;
+    }
     return true;
 }
 

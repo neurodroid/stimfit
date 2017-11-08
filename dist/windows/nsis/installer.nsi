@@ -13,22 +13,22 @@ SetCompressor lzma
 ;--------------------------------
 !include LogicLib.nsh
 
-!define PRODUCT_VERSION "0.15.2"
+!define PRODUCT_VERSION "0.15.4"
 !define WXW_VERSION "3.0.2.0"
 !define WXW_VERSION_DIR "3.0.2"
 !define WXW_VERSION_SHORT "30"
-!define PY_VERSION "2.7.9"
+!define PY_VERSION "2.7.13"
 !define PY_MAJOR "2.7"
 !define PY_MAJOR_SHORT "27"
 !define PY_MIN "2.7"
 !define PY_INST_FILE "python-${PY_VERSION}.amd64.msi"
 Var PY_ACT
-!define NP_VERSION "1.9.3"
-!define MPL_VERSION "1.5.0"
+!define NP_VERSION ""
+!define MPL_VERSION ""
 !define EMF_VERSION "2.0.0"
 !define EXE_NAME "Stimfit"
-!define REG_NAME "Stimfit 0.14"
-!define REG_NAME_IO "stfio 0.14"
+!define REG_NAME "Stimfit 0.15"
+!define REG_NAME_IO "stfio 0.15"
 !define PRODUCT_PUBLISHER "Christoph Schmidt-Hieber"
 !define PRODUCT_WEB_SITE "http://www.stimfit.org"
 !define STFDIR "..\..\..\..\stimfit"

@@ -26,7 +26,7 @@
 #include <sys/stat.h>
 #include <iconv.h>
 
-#if defined (_LIBICONV_H)
+#if !defined(__APPLE__) && defined (_LIBICONV_H)
  #define iconv		libiconv
  #define iconv_open	libiconv_open
  #define iconv_close	libiconv_close
@@ -34,6 +34,9 @@
 
 
 #include "../biosig-dev.h"
+
+#define min(a,b)        (((a) < (b)) ? (a) : (b))
+#define max(a,b)        (((a) > (b)) ? (a) : (b))
 
 void sopen_axg_read(HDRTYPE* hdr) {
 

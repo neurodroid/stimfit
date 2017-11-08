@@ -259,11 +259,11 @@ and move after that to another trace, we could calculate the difference between 
 
 the former will give the peak value when in the trace where the object was created, and the later will return the peak in the current trace.
 
-Additionally, we can decide to change the threshold value of the AP in a trace. For that, we can simply type:
+Additionally, we can decide to change the threshold value of the AP in a trace. For that, we can type:
 
 >>> myspike(20)
 
-And now the Spike attributes will be updated with the new threshold in the current trace. The function __call__ simply allows to call the object with a given argument, and we used it to set a different threshold and update the object attributes.
+And now the Spike attributes will be updated with the new threshold in the current trace. The function __call__ allows to call the object with a given argument, and we used it to set a different threshold and update the object attributes.
 
 =====
 Usage
@@ -300,7 +300,7 @@ Additionally, we have methods like **get_tamplitude()**, **get_threshold()** and
 
 >>> latency = dend.t50_left - soma.t50_left
 
-You can find the class Spike described above in your current `Stimfit <http://www.stimfit.org>`_ version. To use it, you can simply import it from the spells module with the following command;  
+You can find the class Spike described above in your current `Stimfit <http://www.stimfit.org>`_ version. To use it, you can import it from the spells module with the following command;  
 
 >>> from spells import Spike
 >>> soma = Spike(50)

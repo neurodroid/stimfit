@@ -121,7 +121,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(PYTHONDIR)\include&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll\mswu&quot;;&quot;$(FFTWDIR)&quot;"
+				AdditionalIncludeDirectories="&quot;$(PYTHONDIR)\include&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll\mswu&quot;;&quot;$(FFTWDIR)&quot;;&quot;$(PYTHONDIR)\Lib\site-packages\numpy\core\include&quot;"
 				PreprocessorDefinitions="__STF__;_WIN64;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;__WXMSW__;WXP_USE_THREAD=1;WITH_PYTHON;WITH_BIOSIG2"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -278,7 +278,7 @@
 				Optimization="3"
 				EnableIntrinsicFunctions="true"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="&quot;$(PYTHONDIR)\include&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll\mswu&quot;;&quot;$(FFTWDIR)&quot;"
+				AdditionalIncludeDirectories="&quot;$(PYTHONDIR)\include&quot;;&quot;$(BOOSTDIR)&quot;;&quot;$(WXDIR)\include&quot;;&quot;$(WXDIR)\lib\vc90_x64_dll\mswu&quot;;&quot;$(FFTWDIR)&quot;;&quot;$(PYTHONDIR)\Lib\site-packages\numpy\core\include&quot;"
 				PreprocessorDefinitions="__STF__;_WIN64;_WINDOWS;_CRT_SECURE_NO_WARNINGS;WXUSINGDLL;__WXMSW__;WXP_USE_THREAD=1;WITH_PYTHON;WITH_BIOSIG2"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"

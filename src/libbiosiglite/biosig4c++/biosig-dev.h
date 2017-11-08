@@ -1,6 +1,6 @@
 /*
 
-% Copyright (C) 2005,2006,2007,2008,2009,2011,2013 Alois Schloegl <alois.schloegl@gmail.com>
+% Copyright (C) 2005-2016 Alois Schloegl <alois.schloegl@gmail.com>
 % This file is part of the "BioSig for C/C++" repository 
 % (biosig4c++) at http://biosig.sf.net/ 
 
@@ -23,30 +23,32 @@
 /**                                                                        **/
 /****************************************************************************/
 
-
-
-/****************************************************************************/
-/**                                                                        **/
-/**                 DEFINITIONS, TYPEDEFS AND MACROS                       **/
-/**                                                                        **/
-/****************************************************************************/
 #ifndef __BIOSIG_INTERNAL_H__
 #define __BIOSIG_INTERNAL_H__
 
 #include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <string.h>
 #include <sys/param.h>
 #include <time.h>
+#include "physicalunits.h"
+
+#ifdef __cplusplus
+#define EXTERN_C extern "C"
+#else
+#define EXTERN_C
+#endif
+
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern int VERBOSE_LEVEL; 	// used for debugging, variable is always defined
-
 
 #ifdef NDEBUG
 #define VERBOSE_LEVEL 0 	// turn off debugging information, but its only used without NDEBUG
+#else
+extern int VERBOSE_LEVEL; 	// used for debugging, variable is always defined
 #endif
 
 
@@ -55,7 +57,7 @@ extern int VERBOSE_LEVEL; 	// used for debugging, variable is always defined
 	The output files can be zipped, too.
  */
 
-#ifdef WITH_ZLIB
+#ifdef HAVE_ZLIB
 #include <zlib.h>
 #ifndef ZLIB_H
     #if defined(__MINGW64__)
@@ -66,7 +68,7 @@ extern int VERBOSE_LEVEL; 	// used for debugging, variable is always defined
 #endif
 #endif
 
-#ifdef WITH_CHOLMOD
+#ifdef HAVE_CHOLMOD
     #ifdef __APPLE__
         #include <cholmod.h>
     #else
@@ -74,7 +76,7 @@ extern int VERBOSE_LEVEL; 	// used for debugging, variable is always defined
     #endif
 #endif
 
-#ifdef WITH_HDF5
+#ifdef HAVE_HDF5
     #include <hdf5.h>
 #endif
 #ifdef WITH_NIFTI
@@ -86,14 +88,461 @@ extern int VERBOSE_LEVEL; 	// used for debugging, variable is always defined
     #include <gsl/gsl_matrix_double.h>
 #endif
 
-#include "biosig.h"
-
 #ifdef	__WIN32__
 #define FILESEP '\\'
 char *getlogin (void);
 #else
 #define FILESEP '/'
 #endif
+
+
+/* test whether HDR.CHANNEL[].{bi,bi8} can be replaced, reduction of header size by about 3%
+   currently this is not working, because FAMOS seems to need it.
+//#define NO_BI
+*/
+
+/* External API definitions - this was part of old biosig.h */
+// #include "biosig.h"
+
+/****************************************************************************/
+/**                                                                        **/
+/**                 DEFINITIONS, TYPEDEFS AND MACROS                       **/
+/**                                                                        **/
+/****************************************************************************/
+
+#define BIOSIG_VERSION_MAJOR 1
+#define BIOSIG_VERSION_MINOR 9
+#define BIOSIG_PATCHLEVEL    0
+// for backward compatibility
+#define BIOSIG_VERSION_STEPPING BIOSIG_PATCHLEVEL
+#define BIOSIG_VERSION (BIOSIG_VERSION_MAJOR * 10000 + BIOSIG_VERSION_MINOR * 100 + BIOSIG_PATCHLEVEL)
+// biosigCHECK_VERSION returns true if BIOSIG_VERSION is at least a.b.c
+#define biosigCHECK_VERSION(a,b,c) (BIOSIG_VERSION >= ( 10000*(a) + 100*(b) + (c) ) )
+
+#if defined(_MSC_VER) && (_MSC_VER < 1600)
+#if defined(_WIN64)
+    typedef __int64		ssize_t;
+    typedef unsigned __int64	size_t;
+#else
+    typedef __int32		ssize_t;
+    typedef unsigned __int32	size_t;
+#endif
+    typedef unsigned __int64	uint64_t;
+    typedef __int64		int64_t;
+    typedef unsigned __int32	uint32_t;
+    typedef __int32		int32_t;
+    typedef unsigned __int16	uint16_t;
+    typedef __int16		int16_t;
+    typedef unsigned __int8	uint8_t;
+    typedef __int8		int8_t;
+#else
+    #include <inttypes.h>
+#endif
+
+#include "gdftime.h"
+
+/*
+ * pack structures to fullfil following requirements:
+ * (1) Matlab v7.3+ requires 8 byte alignment
+ * (2) in order to use mingw-compiled libbiosig with MS' VisualStudio,
+ *     the structurs must be packed in a MS compatible way.
+ */
+#pragma pack(push, 8)
+
+//* this is probably redundant to the #pragma pack(8) statement, its here to do it the gnu way, too. */
+#ifdef __GNUC__
+  #define ATT_ALI __attribute__ ((aligned (8)))
+  #define ATT_DEPREC __attribute__ ((deprecated))
+#else
+  #define ATT_ALI
+  #define ATT_DEPREC
+#endif
+
+#if defined(_MINGW32__) || defined(__CYGWIN__)
+  #pragma ms_struct on
+  #define ATT_MSSTRUCT __attribute__ ((ms_struct))
+#else
+  #define ATT_MSSTRUCT
+#endif
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+	biosig_data_type    data type of  internal data format
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+typedef double biosig_data_type;
+
+
+/****************************************************************************/
+/**                                                                        **/
+/**                CONSTANTS and Global variables                          **/
+/**                                                                        **/
+/****************************************************************************/
+
+
+/* for error handling */
+enum B4C_ERROR {
+	B4C_NO_ERROR=0,
+	B4C_FORMAT_UNKNOWN,
+	B4C_FORMAT_UNSUPPORTED,
+	B4C_CANNOT_OPEN_FILE,
+	B4C_CANNOT_WRITE_FILE,
+	B4C_CANNOT_APPEND_FILE,
+	B4C_INSUFFICIENT_MEMORY,
+	B4C_ENDIAN_PROBLEM,
+	B4C_CRC_ERROR,
+	B4C_DATATYPE_UNSUPPORTED,
+	B4C_SCLOSE_FAILED,
+	B4C_DECOMPRESSION_FAILED,
+	B4C_MEMORY_ALLOCATION_FAILED,
+	B4C_RAWDATA_COLLAPSING_FAILED,
+	B4C_REREF_FAILED,
+	B4C_INCOMPLETE_FILE,
+	B4C_UNSPECIFIC_ERROR,
+	B4C_CHAR_ENCODING_UNSUPPORTED
+};
+
+#ifdef BIN
+#undef BIN 	// needed for biosig4perl
+#endif
+#ifdef EVENT
+#undef EVENT 	// defined by MS VC++
+#endif
+
+	/* list of file formats */
+enum FileFormat {
+	noFile, unknown,
+	ABF, ABF2, ACQ, ACR_NEMA, AIFC, AIFF, AINF, alpha, ARFF,
+	ASCII_IBI, ASCII, AU, ASF, ATES, ATF, AVI, AXG, Axona,
+	BCI2000, BDF, BESA, BIN, BKR, BLSC, BMP, BNI, BSCS,
+	BrainVision, BrainVisionVAmp, BrainVisionMarker, BZ2,
+	CDF, CFS, CFWB, CNT, CTF, DICOM, DEMG,
+	EBS, EDF, EEG1100, EEProbe, EEProbe2, EEProbeAvr, EGI,
+	EGIS, ELF, EMBLA, EMSA, ePrime, ET_MEG, ETG4000, EVENT, EXIF,
+	FAMOS, FEF, FIFF, FITS, FLAC, GDF, GDF1,
+	GIF, GTF, GZIP, HDF, HL7aECG, HEKA,
+	IBW, ISHNE, ITX, JPEG, JSON, Lexicor,
+	Matlab, MFER, MIDI, MIT, MM, MSI, MSVCLIB, MS_LNK, MX,
+	native, NeuroLoggerHEX, NetCDF, NEURON, NEV, NEX1, NIFTI, NUMPY,
+	OGG, OpenXDF,
+	PBMA, PBMN, PDF, PDP, Persyst, PGMA, PGMB,
+	PLEXON, PNG, PNM, POLY5, PPMA, PPMB, PS,
+	RDF, RIFF,
+	SASXPT, SCP_ECG, SIGIF, Sigma, SMA, SMR, SND, SQLite,
+	SPSS, STATA, SVG, SXI, SYNERGY,
+	TDMS, TIFF, TMS32, TMSiLOG, TRC, UNIPRO, VRML, VTK,
+	WAV, WCP, WG1, WinEEG, WMF, XML, XPM,
+	Z, ZIP, ZIP2, RHD2000,
+	invalid=0xffff
+};
+
+
+/*
+This part has moved into biosig-dev.h in v1.4.1, because VERBOSE_LEVEL is just
+used for debugging and should not be exposed to common applications
+#ifdef NDEBUG
+#define VERBOSE_LEVEL 0		// turn off debugging information
+#else
+extern int VERBOSE_LEVEL; 	// used for debugging
+#endif
+*/
+
+/****************************************************************************/
+/**                                                                        **/
+/**                 DEFINITIONS, TYPEDEFS AND MACROS                       **/
+/**                                                                        **/
+/****************************************************************************/
+
+
+
+typedef int64_t 		nrec_t;	/* type for number of records */
+
+/****************************************************************************/
+/**                                                                        **/
+/**                     TYPEDEFS AND STRUCTURES                            **/
+/**                                                                        **/
+/****************************************************************************/
+
+/*
+	This structure defines the header for each channel (variable header)
+ */
+// TODO: change fixed length strings to dynamically allocated strings
+#define MAX_LENGTH_LABEL 	80	// TMS: 40, AXG: 79
+#define MAX_LENGTH_TRANSDUCER 	80
+#if (BIOSIG_VERSION < 10600)
+  #define MAX_LENGTH_PHYSDIM    20	// DEPRECATED - DO NOT USE
+#else
+  #undef MAX_LENGTH_PHYSDIM
+#endif
+#define MAX_LENGTH_PID	 	80  	// length of Patient ID: MFER<65, GDF<67, EDF/BDF<81, etc.
+#define MAX_LENGTH_RID		80	// length of Recording ID: EDF,GDF,BDF<80, HL7 ?
+#define MAX_LENGTH_NAME 	132	// max length of personal name: MFER<=128, EBS<=33*4
+#define MAX_LENGTH_MANUF 	128	// max length of manufacturer field: MFER<128
+#define MAX_LENGTH_TECHNICIAN 	128	// max length of manufacturer field: SCP<41
+
+typedef struct CHANNEL_STRUCT {
+	double 		PhysMin ATT_ALI;	/* physical minimum */
+	double 		PhysMax ATT_ALI;	/* physical maximum */
+	double 		DigMin 	ATT_ALI;	/* digital minimum */
+	double	 	DigMax 	ATT_ALI;	/* digital maximum */
+	double		Cal 	ATT_ALI;	/* gain factor */
+	double		Off 	ATT_ALI;	/* bias */
+
+	char		Label[MAX_LENGTH_LABEL+1] ATT_ALI; 	/* Label of channel */
+	char		OnOff	ATT_ALI;	/* 0: channel is off, not consider for data output; 1: channel is turned on; 2: channel containing time axis */
+	uint16_t	LeadIdCode ATT_ALI;	/* Lead identification code */
+	char 		Transducer[MAX_LENGTH_TRANSDUCER+1] ATT_ALI;	/* transducer e.g. EEG: Ag-AgCl electrodes */
+#ifdef MAX_LENGTH_PHYSDIM
+        char            PhysDim[MAX_LENGTH_PHYSDIM+1] ATT_ALI ATT_DEPREC;       /* DONOT USE - use PhysDim3(PhysDimCode) instead */
+#endif
+	uint16_t	PhysDimCode ATT_ALI;	/* code for physical dimension - PhysDim3(PhysDimCode) returns corresponding string */
+
+	float 		TOffset 	ATT_ALI;	/* time delay of sampling */
+	float 		LowPass		ATT_ALI;	/* lowpass filter */
+	float 		HighPass	ATT_ALI;	/* high pass */
+	float 		Notch		ATT_ALI;	/* notch filter */
+	float 		XYZ[3]		ATT_ALI;	/* sensor position */
+
+	union {
+        /* context specific channel information */
+	float 		Impedance	ATT_ALI;   	/* Electrode Impedance in Ohm, defined only if PhysDim = _Volt */
+	float 		fZ        	ATT_ALI;   	/* ICG probe frequency, defined only if PhysDim = _Ohm */
+	} ATT_ALI;
+
+	/* this part should not be used by application programs */
+	uint8_t*	bufptr		ATT_ALI;	/* pointer to buffer: NRec<=1 and bi,bi8 not used */
+	uint32_t 	SPR 		ATT_ALI;	/* samples per record (block) */
+	uint32_t	bi 		ATT_ALI;	/* start byte (byte index) of channel within data block */
+	uint32_t	bi8 		ATT_ALI;	/* start bit  (bit index) of channel within data block */
+	uint16_t 	GDFTYP 		ATT_ALI;	/* data type */
+} CHANNEL_TYPE	ATT_ALI ATT_MSSTRUCT;
+
+
+/*
+	This structure defines the general (fixed) header
+*/
+typedef struct HDR_STRUCT {
+
+	char* 	        FileName ATT_ALI;       /* FileName - dynamically allocated, local copy of file name */
+
+	union {
+		// workaround for transition to cleaner fieldnames
+		float VERSION;		/* GDF version number */
+		float Version;		/* GDF version number */
+	} ATT_ALI;
+
+	union {
+		// workaround for transition to cleaner fieldnames
+		enum FileFormat TYPE;		 	/* type of file format */
+		enum FileFormat Type; 			/* type of file format */
+	} ATT_ALI;
+
+	struct {
+		size_t 			size[2] ATT_ALI; /* size {rows, columns} of data block	 */
+		biosig_data_type* 	block ATT_ALI; 	 /* data block */
+	} data ATT_ALI;
+
+	uint8_t 	IPaddr[16] ATT_ALI; 	/* IP address of recording device (if applicable) */
+	double 		SampleRate ATT_ALI;	/* Sampling rate */
+	nrec_t  	NRec 	ATT_ALI;	/* number of records/blocks -1 indicates length is unknown. */
+	gdf_time 	T0 	ATT_ALI; 	/* starttime of recording */
+	uint32_t 	HeadLen ATT_ALI;	/* length of header in bytes */
+	uint32_t 	SPR 	ATT_ALI;	/* samples per block (when different sampling rates are used, this is the LCM(CHANNEL[..].SPR) */
+	uint32_t  	LOC[4] 	ATT_ALI;	/* location of recording according to RFC1876 */
+	uint16_t 	NS 	ATT_ALI;	/* number of channels */
+	int16_t 	tzmin 	ATT_ALI;	/* time zone : minutes east of UTC */
+
+#ifdef CHOLMOD_H
+	cholmod_sparse  *Calib ATT_ALI;                  /* re-referencing matrix */
+#else
+        void        *Calib ATT_ALI;                  /* re-referencing matrix */
+#endif
+	CHANNEL_TYPE 	*rerefCHANNEL ATT_ALI;
+
+	/* Patient specific information */
+	struct {
+		gdf_time 	Birthday; 	/* Birthday of Patient */
+		// 		Age;		// the age is HDR.T0 - HDR.Patient.Birthday, even if T0 and Birthday are not known
+		uint16_t	Headsize[3]; 	/* circumference, nasion-inion, left-right mastoid in millimeter;  */
+		char		Name[MAX_LENGTH_NAME+1]; /* because for privacy protection it is by default not supported, support is turned on with FLAG.ANONYMOUS */
+//		char*		Name;	// because for privacy protection it is by default not supported, support is turned on with FLAG.ANONYMOUS
+		char		Id[MAX_LENGTH_PID+1];	/* patient identification, identification code as used in hospital  */
+		uint8_t		Weight;		/* weight in kilograms [kg] 0:unkown, 255: overflow  */
+		uint8_t		Height;		/* height in centimeter [cm] 0:unkown, 255: overflow  */
+		//		BMI;		// the body-mass index = weight[kg]/height[m]^2
+		/* Patient classification */
+		int8_t	 	Sex;		/* 0:Unknown, 1: Male, 2: Female */
+		int8_t		Handedness;	/* 0:Unknown, 1: Right, 2: Left, 3: Equal */
+		int8_t		Smoking;	/* 0:Unknown, 1: NO, 2: YES */
+		int8_t		AlcoholAbuse;	/* 0:Unknown, 1: NO, 2: YES */
+		int8_t		DrugAbuse;	/* 0:Unknown, 1: NO, 2: YES */
+		int8_t		Medication;	/* 0:Unknown, 1: NO, 2: YES */
+		struct {
+			int8_t 	Visual;		/* 0:Unknown, 1: NO, 2: YES, 3: Corrected */
+			int8_t 	Heart;		/* 0:Unknown, 1: NO, 2: YES, 3: Pacemaker */
+		} Impairment;
+	} Patient ATT_ALI;
+
+	struct {
+		char		Recording[MAX_LENGTH_RID+1]; 	/* HL7, EDF, GDF, BDF replaces HDR.AS.RID */
+		char* 		Technician;
+		char* 		Hospital;	/* recording institution */
+		uint64_t 	Equipment; 	/* identifies this software */
+		struct {
+			/* see
+				SCP: section1, tag14,
+				MFER: tag23:  "Manufacturer^model^version number^serial number"
+			*/
+			const char*	Name;
+			const char*	Model;
+			const char*	Version;
+			const char*	SerialNumber;
+			char	_field[MAX_LENGTH_MANUF+1];	/* buffer */
+		} Manufacturer;
+	} ID ATT_ALI;
+
+	/* position of electrodes; see also HDR.CHANNEL[k].XYZ */
+	struct {
+		float		REF[3];	/* XYZ position of reference electrode */
+		float		GND[3];	/* XYZ position of ground electrode */
+	} ELEC ATT_ALI;
+
+	/* EVENTTABLE */
+	struct {
+		double  	SampleRate ATT_ALI;	/* for converting POS and DUR into seconds  */
+		uint16_t 	*TYP ATT_ALI;	/* defined at http://biosig.svn.sourceforge.net/viewvc/biosig/trunk/biosig/doc/eventcodes.txt */
+		uint32_t 	*POS ATT_ALI;	/* starting position [in samples] using a 0-based indexing */
+		uint32_t 	*DUR ATT_ALI;	/* duration [in samples] */
+		uint16_t 	*CHN ATT_ALI;	/* channel number; 0: all channels  */
+#if (BIOSIG_VERSION >= 10500)
+		gdf_time        *TimeStamp ATT_ALI;  /* store time stamps */
+#endif
+		const char*	*CodeDesc ATT_ALI;	/* describtion of "free text"/"user specific" events (encoded with TYP=0..255 */
+		uint32_t  	N ATT_ALI;	/* number of events */
+		uint16_t	LenCodeDesc ATT_ALI;	/* length of CodeDesc Table */
+	} EVENT ATT_ALI;
+
+	struct {	/* flags */
+		char		OVERFLOWDETECTION; 	/* overflow & saturation detection 0: OFF, !=0 ON */
+		char		UCAL; 		/* UnCalibration  0: scaling  !=0: NO scaling - raw data return  */
+		char		ANONYMOUS; 	/* 1: anonymous mode, no personal names are processed */
+		char		ROW_BASED_CHANNELS;     /* 0: column-based data [default]; 1: row-based data */
+		char		TARGETSEGMENT; /* in multi-segment files (like Nihon-Khoden, EEG1100), it is used to select a segment */
+	} FLAG ATT_ALI;
+
+	CHANNEL_TYPE 	*CHANNEL ATT_ALI;
+		// moving CHANNEL after the next struct (HDR.FILE) gives problems at AMD64 MEX-file.
+		// perhaps some alignment problem.
+
+	struct {	/* File specific data  */
+#ifdef ZLIB_H
+		gzFile		gzFID;
+#else
+		void*		gzFID;
+#endif
+#ifdef _BZLIB_H
+//		BZFILE*		bzFID;
+#endif
+		FILE* 		FID;		/* file handle  */
+		size_t 		size;		/* size of file - experimental: only partly supported */
+		size_t 		POS;		/* current reading/writing position [in blocks] */
+		//size_t 	POS2;		// current reading/writing position [in samples] */
+		int		Des;		/* file descriptor */
+		int		DES;		/* descriptor for streams */
+		uint8_t		OPEN; 		/* 0: closed, 1:read, 2: write */
+		uint8_t		LittleEndian;   /* 1 if file is LittleEndian data format and 0 for big endian data format*/
+		uint8_t		COMPRESSION;    /* 0: no compression 9: best compression */
+	} FILE ATT_ALI;
+
+	/*	internal variables (not public)  */
+	struct {
+		const char*	B4C_ERRMSG;	/* error message */
+//		char 		PID[MAX_LENGTH_PID+1];	// use HDR.Patient.Id instead
+//		char* 		RID;		// recording identification
+		uint32_t 	bpb;  		/* total bytes per block */
+		uint32_t 	bpb8;  		/* total bits per block */
+
+		uint8_t*	Header;
+		uint8_t*	rawEventData;
+		uint8_t*	rawdata; 	/* raw data block */
+		size_t		first;		/* first block loaded in buffer - this is equivalent to hdr->FILE.POS */
+		size_t		length;		/* number of block(s) loaded in buffer */
+		uint8_t*	auxBUF;  	/* auxillary buffer - used for storing EVENT.CodeDesc, MIT FMT infor, alpha:rawdata header */
+		union {
+		    char*	bci2000;	/* application specific free text field */
+		    char*	fpulse;
+		    char*	stimfit;
+		};
+		uint32_t	SegSel[5];	/* segment selection in a hirachical data formats, e.g. sweeps in HEKA/PatchMaster format */
+		enum B4C_ERROR	B4C_ERRNUM;	/* error code */
+		char		flag_collapsed_rawdata; /* 0 if rawdata contain obsolete channels, too. 	*/
+	} AS ATT_ALI;
+
+	void *aECG;				/* used as an pointer to (non-standard) auxilary information - mostly used for hacks */
+	uint64_t viewtime; 			/* used by edfbrowser */
+
+#if (BIOSIG_VERSION >= 10500)
+	struct {
+		/*
+			This part contains Section 7-11 of the SCP-ECG format
+			without its 16 byte "Section ID header".
+			These sections are also stored in GDF Header 3 (tag 9-13)
+			It is mostly used for SCP<->GDF conversion.
+
+			The pointers points into hdr->AS.Header,
+			so do not dynamically re-allocate the pointers.
+		*/
+		const uint8_t* Section7;
+		const uint8_t* Section8;
+		const uint8_t* Section9;
+		const uint8_t* Section10;
+		const uint8_t* Section11;
+		uint32_t Section7Length;
+		uint32_t Section8Length;
+		uint32_t Section9Length;
+		uint32_t Section10Length;
+		uint32_t Section11Length;
+	} SCP;
+#endif
+
+} HDRTYPE ATT_MSSTRUCT;
+
+/*
+	This structure defines codes and groups of the event table
+ */
+
+// Desription of event codes
+struct etd_t {
+        uint16_t typ;		// used in HDR.EVENT.TYP
+        uint16_t groupid;	// defines the group id as used in EventCodeGroups below
+        const char* desc;	// name/description of event code // const decrease signifitiantly number of warning
+} ATT_MSSTRUCT;
+// Groups of event codes
+struct event_groups_t {
+        uint16_t groupid;
+        const char* GroupDescription; // const decrease signifitiantly number of warning
+} ATT_MSSTRUCT;
+struct FileFormatStringTable_t {
+	enum FileFormat	fmt;
+	const char*	FileTypeString;
+} ATT_MSSTRUCT;
+struct NomenclatureAnnotatedECG_t {
+	uint16_t part;
+	uint16_t code10;
+	uint32_t cf_code10;
+	const char *refid;
+} ATT_MSSTRUCT;
+
+extern const struct etd_t ETD [];
+extern const struct event_groups_t EventCodeGroups [];
+extern const struct FileFormatStringTable_t FileFormatStringTable [];
+
+
+/* reset structure packing to default settings */
+#pragma pack(pop)
+#if defined(_MINGW32__) || defined(__CYGWIN__)
+#pragma ms_struct reset
+#endif
+
+
 
 
 #define GCC_VERSION (__GNUC__ * 10000  + __GNUC_MINOR__ * 100  + __GNUC_PATCHLEVEL__)
@@ -115,11 +564,51 @@ char *getlogin (void);
 #elif defined(__WIN32__)
 #  include <stdlib.h>
 #  define __BIG_ENDIAN		4321
-#  define __LITTLE_ENDIAN  	1234
-#  define __BYTE_ORDER 		__LITTLE_ENDIAN
-#  define bswap_16(x) _byteswap_ushort(x)
-#  define bswap_32(x) _byteswap_ulong(x)
-#  define bswap_64(x) _byteswap_uint64(x)
+#  define __LITTLE_ENDIAN	1234
+#  define __BYTE_ORDER		__LITTLE_ENDIAN
+#  define bswap_16(x) __builtin_bswap16(x)
+#  define bswap_32(x) __builtin_bswap32(x)
+#  define bswap_64(x) __builtin_bswap64(x)
+
+#	include <winsock2.h>
+#	include <sys/param.h>
+
+#	if BYTE_ORDER == LITTLE_ENDIAN
+#		define htobe16(x) htons(x)
+#		define htole16(x) (x)
+#		define be16toh(x) ntohs(x)
+#		define le16toh(x) (x)
+
+#		define htobe32(x) htonl(x)
+#		define htole32(x) (x)
+#		define be32toh(x) ntohl(x)
+#		define le32toh(x) (x)
+
+#		define htobe64(x) __builtin_bswap64(x)
+#		define htole64(x) (x)
+#		define be64toh(x) __builtin_bswap64(x)
+#		define le64toh(x) (x)
+
+#	elif BYTE_ORDER == BIG_ENDIAN
+		/* that would be xbox 360 */
+#		define htobe16(x) (x)
+#		define htole16(x) __builtin_bswap16(x)
+#		define be16toh(x) (x)
+#		define le16toh(x) __builtin_bswap16(x)
+
+#		define htobe32(x) (x)
+#		define htole32(x) __builtin_bswap32(x)
+#		define be32toh(x) (x)
+#		define le32toh(x) __builtin_bswap32(x)
+
+#		define htobe64(x) (x)
+#		define htole64(x) __builtin_bswap64(x)
+#		define be64toh(x) (x)
+#		define le64toh(x) __builtin_bswap64(x)
+
+#	else
+#		error byte order not supported
+#	endif
 
 #elif defined(__NetBSD__)
 #  include <sys/bswap.h>
@@ -131,17 +620,48 @@ char *getlogin (void);
 #  define bswap_64(x) bswap64(x)
 
 #elif defined(__APPLE__)
-#  include <CoreFoundation/CFByteOrder.h>
-#  define __BIG_ENDIAN       4321
-#  define __LITTLE_ENDIAN  1234
+#	define __BIG_ENDIAN      4321
+#	define __LITTLE_ENDIAN  1234
 #if (defined(__LITTLE_ENDIAN__) && (__LITTLE_ENDIAN__ == 1))
-    #define __BYTE_ORDER __LITTLE_ENDIAN
+	#define __BYTE_ORDER __LITTLE_ENDIAN
 #else
-    #define __BYTE_ORDER __BIG_ENDIAN
+	#define __BYTE_ORDER __BIG_ENDIAN
 #endif
-#  define bswap_16(x) CFSwapInt16(x)
-#  define bswap_32(x) CFSwapInt32(x)
-#  define bswap_64(x) CFSwapInt64(x)
+
+#	include <libkern/OSByteOrder.h>
+#	define bswap_16 OSSwapInt16
+#	define bswap_32 OSSwapInt32
+#	define bswap_64 OSSwapInt64
+
+#	define htobe16(x) OSSwapHostToBigInt16(x)
+#	define htole16(x) OSSwapHostToLittleInt16(x)
+#	define be16toh(x) OSSwapBigToHostInt16(x)
+#	define le16toh(x) OSSwapLittleToHostInt16(x)
+
+#	define htobe32(x) OSSwapHostToBigInt32(x)
+#	define htole32(x) OSSwapHostToLittleInt32(x)
+#	define be32toh(x) OSSwapBigToHostInt32(x)
+#	define le32toh(x) OSSwapLittleToHostInt32(x)
+
+#	define htobe64(x) OSSwapHostToBigInt64(x)
+#	define htole64(x) OSSwapHostToLittleInt64(x)
+#	define be64toh(x) OSSwapBigToHostInt64(x)
+#	define le64toh(x) OSSwapLittleToHostInt64(x)
+
+#elif defined(__OpenBSD__)
+#	include <sys/endian.h>
+#	define bswap_16 __swap16
+#	define bswap_32 __swap32
+#	define bswap_64 __swap64
+
+#elif defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
+#	include <sys/endian.h>
+#	define be16toh(x) betoh16(x)
+#	define le16toh(x) letoh16(x)
+#	define be32toh(x) betoh32(x)
+#	define le32toh(x) letoh32(x)
+#	define be64toh(x) betoh64(x)
+#	define le64toh(x) letoh64(x)
 
 #elif (defined(BSD) && (BSD >= 199103)) && !defined(__GLIBC__)
 #  include <machine/endian.h>
@@ -204,130 +724,187 @@ char *getlogin (void);
 #error  ENDIANITY is not known 
 #endif 
 
-
-
-#if __BYTE_ORDER == __BIG_ENDIAN
-#define l_endian_u16(x) ((uint16_t)bswap_16((uint16_t)(x)))
-#define l_endian_u32(x) ((uint32_t)bswap_32((uint32_t)(x)))
-#define l_endian_u64(x) ((uint64_t)bswap_64((uint64_t)(x)))
-#define l_endian_i16(x) ((int16_t)bswap_16((int16_t)(x)))
-#define l_endian_i32(x) ((int32_t)bswap_32((int32_t)(x)))
-#define l_endian_i64(x) ((int64_t)bswap_64((int64_t)(x)))
-float   l_endian_f32(float x); 
-double  l_endian_f64(double x); 
-
-#define b_endian_u16(x) ((uint16_t)(x))
-#define b_endian_u32(x) ((uint32_t)(x))
-#define b_endian_u64(x) ((uint64_t)(x))
-#define b_endian_i16(x) ((int16_t)(x))
-#define b_endian_i32(x) ((int32_t)(x))
-#define b_endian_i64(x) ((int64_t)(x))
-#define b_endian_f32(x) ((float)(x))
-#define b_endian_f64(x) ((double)(x))
-
-#elif __BYTE_ORDER==__LITTLE_ENDIAN
-#define l_endian_u16(x) ((uint16_t)(x))
-#define l_endian_u32(x) ((uint32_t)(x))
-#define l_endian_u64(x) ((uint64_t)(x))
-#define l_endian_i16(x) ((int16_t)(x))
-#define l_endian_i32(x) ((int32_t)(x))
-#define l_endian_i64(x) ((int64_t)(x))
-#define l_endian_f32(x) ((float)(x))
-#define l_endian_f64(x) ((double)(x))
-
-#define b_endian_u16(x) ((uint16_t)bswap_16((uint16_t)(x)))
-#define b_endian_u32(x) ((uint32_t)bswap_32((uint32_t)(x)))
-#define b_endian_u64(x) ((uint64_t)bswap_64((uint64_t)(x)))
-#define b_endian_i16(x) ((int16_t)bswap_16((int16_t)(x)))
-#define b_endian_i32(x) ((int32_t)bswap_32((int32_t)(x)))
-#define b_endian_i64(x) ((int64_t)bswap_64((int64_t)(x)))
-float   b_endian_f32(float x); 
-double  b_endian_f64(double x); 
-
-#endif /* __BYTE_ORDER */
-
-
-#if !defined(__sparc__) && !defined(__ia64__)
-// if misaligned data words can be handled 
-#define leu16p(i) l_endian_u16(*(uint16_t*)(i))
-#define lei16p(i) l_endian_i16(*( int16_t*)(i))
-#define leu32p(i) l_endian_u32(*(uint32_t*)(i))
-#define lei32p(i) l_endian_i32(*( int32_t*)(i))
-#define leu64p(i) l_endian_u64(*(uint64_t*)(i))
-#define lei64p(i) l_endian_i64(*( int64_t*)(i))
-#define lef32p(i) l_endian_f32(*(float*)(i))
-#define lef64p(i) l_endian_f64(*(double*)(i))
-
-#define beu16p(i) b_endian_u16(*(uint16_t*)(i))
-#define bei16p(i) b_endian_i16(*( int16_t*)(i))
-#define beu32p(i) b_endian_u32(*(uint32_t*)(i))
-#define bei32p(i) b_endian_i32(*( int32_t*)(i))
-#define beu64p(i) b_endian_u64(*(uint64_t*)(i))
-#define bei64p(i) b_endian_i64(*( int64_t*)(i))
-#define bef32p(i) b_endian_f32(*(float*)(i))
-#define bef64p(i) b_endian_f64(*(double*)(i))
-
-#define leu16a(i,r) (*(uint16_t*)(r) = l_endian_u16(i))
-#define lei16a(i,r) (*( int16_t*)(r) = l_endian_i16(i))
-#define leu32a(i,r) (*(uint32_t*)(r) = l_endian_u32(i))
-#define lei32a(i,r) (*( int32_t*)(r) = l_endian_i32(i))
-#define leu64a(i,r) (*(uint64_t*)(r) = l_endian_u64(i))
-#define lei64a(i,r) (*( int64_t*)(r) = l_endian_i64(i))
-#define lef32a(i,r) (*(   float*)(r) = l_endian_f32(i))
-#define lef64a(i,r) (*(  double*)(r) = l_endian_f64(i))
-
-#define beu16a(i,r) (*(uint16_t*)(r) = b_endian_u16(i))
-#define bei16a(i,r) (*( int16_t*)(r) = b_endian_i16(i))
-#define beu32a(i,r) (*(uint32_t*)(r) = b_endian_u32(i))
-#define bei32a(i,r) (*( int32_t*)(r) = b_endian_i32(i))
-#define beu64a(i,r) (*(uint64_t*)(r) = b_endian_u64(i))
-#define bei64a(i,r) (*( int64_t*)(r) = b_endian_i64(i))
-#define bef32a(i,r) (*(   float*)(r) = b_endian_f32(i))
-#define bef64a(i,r) (*(  double*)(r) = b_endian_f64(i))
-
-#else
-/*    SPARC,IA64: missing alignment must be explicitly handled     */ 
-uint16_t leu16p(uint8_t* i);
-int16_t  lei16p(uint8_t* i);
-uint32_t leu32p(uint8_t* i);
-int32_t  lei32p(uint8_t* i);
-uint64_t leu64p(uint8_t* i);
-int64_t  lei64p(uint8_t* i);
-float    lef32p(uint8_t* i);
-double   lef64p(uint8_t* i);
-
-uint16_t beu16p(uint8_t* i);
-int16_t  bei16p(uint8_t* i);
-uint32_t beu32p(uint8_t* i);
-int32_t  bei32p(uint8_t* i);
-uint64_t beu64p(uint8_t* i);
-int64_t  bei64p(uint8_t* i);
-float    bef32p(uint8_t* i);
-double   bef64p(uint8_t* i);
-
-void leu16a(uint16_t i, uint8_t* r);
-void lei16a( int16_t i, uint8_t* r);
-void leu32a(uint32_t i, uint8_t* r);
-void lei32a( int32_t i, uint8_t* r);
-void leu64a(uint64_t i, uint8_t* r);
-void lei64a( int64_t i, uint8_t* r);
-void lef32a(   float i, uint8_t* r);
-void lef64a(  double i, uint8_t* r);
-
-void beu16a(uint16_t i, uint8_t* r);
-void bei16a( int16_t i, uint8_t* r);
-void beu32a(uint32_t i, uint8_t* r);
-void bei32a( int32_t i, uint8_t* r);
-void beu64a(uint64_t i, uint8_t* r);
-void bei64a( int64_t i, uint8_t* r);
-void bef32a(   float i, uint8_t* r);
-void bef64a(  double i, uint8_t* r);
-
-#endif
-#ifdef __cplusplus
+static inline uint16_t leu16p(const void* i) {
+	uint16_t a;
+	memcpy(&a, i, sizeof(a));
+	return (le16toh(a));
 }
-#endif
+static inline int16_t lei16p(const void* i) {
+	uint16_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int16_t)le16toh(a));
+}
+static inline uint32_t leu32p(const void* i) {
+	uint32_t a;
+	memcpy(&a, i, sizeof(a));
+	return (le32toh(a));
+}
+static inline int32_t lei32p(const void* i) {
+	uint32_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int32_t)le32toh(a));
+}
+static inline uint64_t leu64p(const void* i) {
+	uint64_t a;
+	memcpy(&a, i, sizeof(a));
+	return (le64toh(a));
+}
+static inline int64_t lei64p(const void* i) {
+	uint64_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int64_t)le64toh(a));
+}
 
+static inline uint16_t beu16p(const void* i) {
+	uint16_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int16_t)be16toh(a));
+}
+static inline int16_t bei16p(const void* i) {
+	uint16_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int16_t)be16toh(a));
+}
+static inline uint32_t beu32p(const void* i) {
+	uint32_t a;
+	memcpy(&a, i, sizeof(a));
+	return (be32toh(a));
+}
+static inline int32_t bei32p(const void* i) {
+	uint32_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int32_t)be32toh(a));
+}
+static inline uint64_t beu64p(const void* i) {
+	uint64_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int64_t)be64toh(a));
+}
+static inline int64_t bei64p(const void* i) {
+	uint64_t a;
+	memcpy(&a, i, sizeof(a));
+	return ((int64_t)be64toh(a));
+}
+
+static inline void leu16a(uint16_t i, void* r) {
+	i = htole16(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void lei16a( int16_t i, void* r) {
+	i = htole16(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void leu32a(uint32_t i, void* r) {
+	i = htole32(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void lei32a( int32_t i, void* r) {
+	i = htole32(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void leu64a(uint64_t i, void* r) {
+	i = htole64(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void lei64a( int64_t i, void* r) {
+	i = htole64(i);
+	memcpy(r, &i, sizeof(i));
+}
+
+static inline void beu16a(uint16_t i, void* r) {
+	i = htobe16(i);
+	memcpy(r, &i, sizeof(i));
+};
+static inline void bei16a( int16_t i, void* r) {
+	i = htobe16(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void beu32a(uint32_t i, void* r) {
+	i = htobe32(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void bei32a( int32_t i, void* r) {
+	i = htobe32(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void beu64a(uint64_t i, void* r) {
+	i = htobe64(i);
+	memcpy(r, &i, sizeof(i));
+}
+static inline void bei64a( int64_t i, void* r) {
+	i = htobe64(i);
+	memcpy(r, &i, sizeof(i));
+}
+
+static inline float lef32p(const void* i) {
+	// decode little endian float pointer
+	uint32_t o;
+	union {
+		uint32_t i;
+		float   r;
+	} c;
+	memcpy(&o,i,4);
+	c.i = le32toh(o);
+	return(c.r);
+}
+static inline double lef64p(const void* i) {
+	// decode little endian double pointer
+	uint64_t o=0;
+	union {
+		uint64_t i;
+		double   r;
+	} c;
+	memcpy(&o,i,8);
+	c.i = le64toh(o);
+	return(c.r);
+}
+static inline float bef32p(const void* i) {
+	// decode little endian float pointer
+	uint32_t o;
+	union {
+		uint32_t i;
+		float   r;
+	} c;
+	memcpy(&o,i,4);
+	c.i = be32toh(o);
+	return(c.r);
+}
+static inline double bef64p(const void* i) {
+	// decode little endian double pointer
+	uint64_t o=0;
+	union {
+		uint64_t i;
+		double   r;
+	} c;
+	memcpy(&o,i,8);
+	c.i = be64toh(o);
+	return(c.r);
+}
+
+static inline void lef32a( float i, void* r) {
+	uint32_t i32;
+	memcpy(&i32, &i, sizeof(i));
+	i32 = le32toh(i32);
+	memcpy(r, &i32, sizeof(i32));
+}
+static inline void lef64a(  double i, void* r) {
+	uint64_t i64;
+	memcpy(&i64, &i, sizeof(i));
+	i64 = le64toh(i64);
+	memcpy(r, &i64, sizeof(i64));
+}
+static inline void bef32a(   float i, void* r) {
+	uint32_t i32;
+	memcpy(&i32, &i, sizeof(i));
+	i32 = be32toh(i32);
+	memcpy(r, &i32, sizeof(i32));
+}
+static inline void bef64a(  double i, void* r) {
+	uint64_t i64;
+	memcpy(&i64, &i, sizeof(i));
+	i64 = be64toh(i64);
+	memcpy(r, &i64, sizeof(i64));
+}
 
 #ifndef NAN
 # define NAN (0.0/0.0)        /* used for encoding of missing values */
@@ -341,11 +918,6 @@ void bef64a(  double i, uint8_t* r);
 #ifndef isnan
 # define isnan(a) ((a)!=(a))
 #endif
-
-
-#define min(a,b)	(((a) < (b)) ? (a) : (b))
-#define max(a,b)	(((a) > (b)) ? (a) : (b))
-
 
 /*
     The macro IS_SET() can be used to test for defines in 
@@ -465,6 +1037,10 @@ typedef struct aecg {
 		uint8_t	 NumberOfStatements;
 		char 	 **Statements;
         } Section11;
+        struct {
+		size_t   StartPtr;
+		size_t	 Length;
+        } Section12;
 
 } aECG_TYPE;
 
@@ -473,10 +1049,6 @@ typedef struct aecg {
 /**                     INTERNAL FUNCTIONS                                 **/
 /**                                                                        **/
 /****************************************************************************/
-
-#ifdef __cplusplus
-EXTERN_C {
-#endif 
 
 /*
         file access wrapper: use ZLIB (if available) or STDIO
@@ -583,7 +1155,7 @@ size_t	sread_raw(size_t START, size_t LEN, HDRTYPE* hdr, char flag, void *buf, s
 	hdr->AS.rawdata and the data is copied into  hdr->AS.rawdata, and LEN*hdr->AS.bpb bytes
 	are read and stored.
 
-	If buf is points to some memory location of size bufsize, the data is stored
+	If buf points to some memory location of size bufsize, the data is stored
 	in buf, no reallocation of memory is possible, and only the
 	minimum(bufsize, LEN*hdr->AS.bpb) is stored.
 
@@ -602,6 +1174,25 @@ size_t bpb8_collapsed_rawdata(HDRTYPE *hdr);
 /* bpb8_collapsed_rawdata
 	computes the bits per block when rawdata is collapsed
 --------------------------------------------------------------- */
+
+HDRTYPE* getfiletype(HDRTYPE* hdr);
+/* 	identify file format from header information
+	input:
+		hdr->AS.Header contains header of hdr->HeadLen bytes
+		hdr->TYPE must be unknown, otherwise no FileFormat evaluation is performed
+	output:
+		hdr->TYPE	file format
+		hdr->VERSION	is defined for some selected formats e.g. ACQ, EDF, BDF, GDF
+ --------------------------------------------------------------- */
+
+const char* GetFileTypeString(enum FileFormat FMT);
+/*	returns a string with file format
+ --------------------------------------------------------------- */
+
+enum FileFormat GetFileTypeFromString(const char *);
+/*	returns file format from string
+ --------------------------------------------------------------- */
+
 
 #ifdef __cplusplus
 }

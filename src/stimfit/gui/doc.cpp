@@ -45,7 +45,10 @@
 #include "./../../libstfnum/funclib.h"
 #include "./../../libstfnum/measure.h"
 #include "./../../libstfio/stfio.h"
+#ifdef WITH_PYTHON
 #include "./../../pystfio/pystfio.h"
+#endif
+
 #include "./usrdlg/usrdlg.h"
 #include "./doc.h"
 #include "./graph.h"
@@ -56,10 +59,15 @@ BEGIN_EVENT_TABLE( wxStfDoc, wxDocument )
 EVT_MENU( ID_SWAPCHANNELS, wxStfDoc::OnSwapChannels )
 EVT_MENU( ID_FILEINFO, wxStfDoc::Fileinfo)
 EVT_MENU( ID_NEWFROMSELECTEDTHIS, wxStfDoc::OnNewfromselectedThisMenu  )
+
 EVT_MENU( ID_MYSELECTALL, wxStfDoc::Selectall )
 EVT_MENU( ID_UNSELECTALL, wxStfDoc::Deleteselected )
 EVT_MENU( ID_SELECTSOME, wxStfDoc::Selectsome )
 EVT_MENU( ID_UNSELECTSOME, wxStfDoc::Unselectsome )
+
+EVT_MENU( ID_SELECT_AND_ADD, wxStfDoc::SelectTracesOfType )
+EVT_MENU( ID_SELECT_AND_REMOVE, wxStfDoc::UnselectTracesOfType )
+
 EVT_MENU( ID_CONCATENATE_MULTICHANNEL, wxStfDoc::ConcatenateMultiChannel )
 EVT_MENU( ID_BATCH, wxStfDoc::OnAnalysisBatch )
 EVT_MENU( ID_INTEGRATE, wxStfDoc::OnAnalysisIntegrate )
@@ -137,6 +145,10 @@ wxStfDoc::wxStfDoc() :
     APMaxRiseY(0.0),
     APMaxRiseT(0.0),
     APt50LeftReal(0.0),
+    APrtLoHi(0.0),
+    APtLoReal(0.0),
+    APtHiReal(0.0),
+    APt0Real(0.0),
 #ifdef WITH_PSLOPE
     PSlope(0.0),
 #endif
@@ -156,6 +168,8 @@ wxStfDoc::wxStfDoc() :
     t50RightIndex(0),
     APt50LeftIndex(0),
     APt50RightIndex(0),
+    APtLoIndex(0),
+    APtHiIndex(0),
     fromBase(true),
     viewCrosshair(true),
     viewBaseline(true),
@@ -231,8 +245,13 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
         }
 #endif
         if (type == stfio::tdms) {
+#ifdef WITH_PYTHON
             if (!LoadTDMS(stf::wx2std(filename), *this)) {
                 wxString errorMsg(wxT("Error opening file\n"));
+#else
+            {
+                wxString errorMsg(wxT("Error opening file - TDMS requires python \n"));
+#endif
                 wxGetApp().ExceptMsg(errorMsg);
                 get().clear();
                 return false;
@@ -1005,19 +1024,18 @@ void wxStfDoc::CreateAverage(
 
     if (align) {
         // check that we have more than one channel
-        if (size()==1){
-            wxGetApp().ErrorMsg(wxT("Aligned average requires more than one channel"));
-            return;
-        }
-        wxStfAlignDlg AlignDlg(GetDocumentWindow());
-        if (AlignDlg.ShowModal()!=wxID_OK) return;
+        wxStfAlignDlg AlignDlg(GetDocumentWindow(), size()>1);
+        if (AlignDlg.ShowModal() != wxID_OK) return;
         //store current section and channel index:
         std::size_t section_old=GetCurSecIndex();
         std::size_t channel_old=GetCurChIndex();
         //initialize the lowest and the highest index:
         std::size_t min_index=0;
         try {
-            min_index=get()[GetSecChIndex()].at(GetSelectedSections().at(0)).size()-1;
+            if (AlignDlg.UseReference())
+                min_index=get()[GetSecChIndex()].at(GetSelectedSections().at(0)).size()-1;
+            else
+                min_index=get()[GetCurChIndex()].at(GetSelectedSections().at(0)).size()-1;
         }
         catch (const std::out_of_range& e) {
             wxString msg(wxT("Error while aligning\nIt is safer to re-start the program\n"));
@@ -1026,7 +1044,8 @@ void wxStfDoc::CreateAverage(
             return;
         }
         // swap channels temporarily:
-        SetCurChIndex(GetSecChIndex());
+        // if (AlignDlg.UseReference())
+        //     SetCurChIndex(GetSecChIndex());
         std::size_t max_index=0, n=0;
         int_it it = shift.begin();
         //loop through all selected sections:
@@ -1057,15 +1076,30 @@ void wxStfDoc::CreateAverage(
             //check whether the current index is a max or a min,
             //and if so, store it:
             switch (AlignDlg.AlignRise()) {
-            case 0 :	// align to peak time
-                alignIndex = lround(GetMaxT());
-                break;
-            case 1 :	// align to steepest slope time
-                alignIndex = lround(GetAPMaxRiseT());
-                break;
-            case 2 :	// align to half amplitude time 
-                alignIndex = lround(GetAPT50LeftReal());
-                break;
+             case 0:	// align to peak time
+                 if (AlignDlg.UseReference())
+                     alignIndex = lround(GetAPMaxT());
+                 else
+                     alignIndex = lround(GetMaxT());
+                 break;
+             case 1:	// align to steepest slope time
+                 if (AlignDlg.UseReference())
+                     alignIndex = lround(GetAPMaxRiseT());
+                 else
+                     alignIndex = lround(GetMaxRiseT());
+                 break;
+             case 2:	// align to half amplitude time 
+                 if (AlignDlg.UseReference())
+                     alignIndex = lround(GetAPT50LeftReal());
+                 else
+                     alignIndex = lround(GetT50LeftReal());
+                 break;
+            case 3:     // align to onset
+                 if (AlignDlg.UseReference())
+                     alignIndex = lround(GetAPT0Real());
+                 else
+                     alignIndex = lround(GetT0Real());
+                 break;
             default:
                 wxGetApp().ExceptMsg(wxT("Invalid alignment method"));
                 return;
@@ -1276,7 +1310,7 @@ void wxStfDoc::LnTransform(wxCommandEvent& WXUNUSED(event)) {
 #if defined(_WINDOWS) && !defined(__MINGW32__)
                        std::logl);
 #else
-                       log);
+        (double(*)(double))log);
 #endif
         TempSection.SetXScale(get()[GetCurChIndex()][*cit].GetXScale());
         TempSection.SetSectionDescription( get()[GetCurChIndex()][*cit].GetSectionDescription()+
@@ -1796,6 +1830,50 @@ void wxStfDoc::Selectsome(wxCommandEvent &WXUNUSED(event)) {
         catch (const std::out_of_range& e) {
             wxGetApp().ExceptMsg( wxString::FromAscii(e.what()) );
         }
+    }
+    wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
+    pFrame->SetSelected(GetSelectedSections().size());
+    Focus();
+}
+
+void wxStfDoc::SelectTracesOfType(wxCommandEvent &WXUNUSED(event)) {
+    // TODO: dialog should display possible selections
+
+    //insert standard values:
+    std::vector<std::string> labels(1);
+    Vector_double defaults(labels.size());
+    labels[0]="Select Trace of Type";defaults[0]=1;
+    stf::UserInput init(labels,defaults,"Select trace of type");
+
+    wxStfUsrDlg EveryDialog(GetDocumentWindow(),init);
+    if (EveryDialog.ShowModal()!=wxID_OK) return;
+    Vector_double input(EveryDialog.readInput());
+    if (input.size()!=1) return;
+    int selTyp=(int)input[0];
+    for (size_t n=0; n < (int)get()[GetCurChIndex()].size(); ++n) {
+        if (GetSectionType(n)==selTyp) SelectTrace(n, baseBeg, baseEnd);
+    }
+    wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
+    pFrame->SetSelected(GetSelectedSections().size());
+    Focus();
+}
+
+void wxStfDoc::UnselectTracesOfType(wxCommandEvent &WXUNUSED(event)) {
+    // TODO: dialog should display possible selections
+
+    //insert standard values:
+    std::vector<std::string> labels(1);
+    Vector_double defaults(labels.size());
+    labels[0]="Unselect Traces of Type";defaults[0]=1;
+    stf::UserInput init(labels,defaults,"Unselect trace of type");
+
+    wxStfUsrDlg EveryDialog(GetDocumentWindow(),init);
+    if (EveryDialog.ShowModal()!=wxID_OK) return;
+    Vector_double input(EveryDialog.readInput());
+    if (input.size()!=1) return;
+    int selTyp=(int)input[0];
+    for (int n=0; n < (int)get()[GetCurChIndex()].size(); ++n) {
+        if (GetSectionType(n)==selTyp) UnselectTrace(n);
     }
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
     pFrame->SetSelected(GetSelectedSections().size());
@@ -2576,7 +2654,7 @@ void wxStfDoc::Measure( )
 
     //Calculate the beginning of the event by linear extrapolation:
     if (latencyEndMode==stf::footMode) {
-        t0Real=tLoReal-(tHiReal-tLoReal)/3.0;
+        t0Real=tLoReal-(tHiReal-tLoReal)/3.0; // using 20-80% rise time (f/(1-2f) = 0.2/(1-0.4) = 1/3.0)
     } else {
         t0Real=t50LeftReal;
     }
@@ -2647,6 +2725,12 @@ void wxStfDoc::Measure( )
                       APt50RightIndex, APt50LeftReal);
         //End determination of the region of maximal slope in the second channel
         //----------------------------
+
+        // Get onset in 2nd channel
+        APrtLoHi=stfnum::risetime(secsec().get(), APBase, APPeak-APBase, (double)0,
+                                  APMaxT, 0.2, APtLoIndex, APtHiIndex, APtLoReal);
+        APtHiReal = APtLoReal + APrtLoHi;
+        APt0Real = APtLoReal-(APtHiReal-APtLoReal)/3.0;  // using 20-80% rise time (f/(1-2f) = 0.2/(1-0.4) = 1/3.0)
     }
 
     // get and set start of latency measurement:
@@ -2671,14 +2755,15 @@ void wxStfDoc::Measure( )
     }
     SetLatencyBeg(latStart);
 
+    APt0Real = tLoReal-(tHiReal-tLoReal)/3.0;  // using 20-80% rise time (f/(1-2f) = 0.2/(1-0.4) = 1/3.0)
     // get and set end of latency measurement:
     double latEnd=0.0;
     switch (latencyEndMode) {
     // Interestingly, latencyCursor is an int in pascal, although
     // the maxTs aren't. That's why there are double type casts
     // here.
-    case stf::footMode: //Latency cursor is set to the peak						
-        latEnd=tLoReal-(tHiReal-tLoReal)/3.0;
+    case stf::footMode:
+        latEnd=tLoReal-(tHiReal-tLoReal)/3.0; // using 20-80% rise time (f/(1-2f) = 0.2/(1-0.4) = 1/3.0)
         break;
     case stf::riseMode:
         latEnd=maxRiseT;

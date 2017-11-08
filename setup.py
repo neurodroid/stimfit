@@ -29,24 +29,25 @@ np_extra_compile_args = []
 np_extra_link_args = []
 np_libraries = []
 
-for key in numpy_config_keys:
-    try:
-        np_libraries += np.__config__.get_info(key)['libraries']
-    except:
-        pass
-    try:
-        np_define_macros += np.__config__.get_info(key)['define_macros']
-    except:
-        pass
-    try:
-        np_extra_compile_args += np.__config__.get_info(key)[
-            'extra_compile_args']
-    except:
-        pass
-    try:
-        np_extra_link_args += np.__config__.get_info(key)['extra_link_args']
-    except:
-        pass
+if not 'linux' in sys.platform:
+    for key in numpy_config_keys:
+        try:
+            np_libraries += np.__config__.get_info(key)['libraries']
+        except:
+            pass
+        try:
+            np_define_macros += np.__config__.get_info(key)['define_macros']
+        except:
+            pass
+        try:
+            np_extra_compile_args += np.__config__.get_info(key)[
+                'extra_compile_args']
+        except:
+            pass
+        try:
+            np_extra_link_args += np.__config__.get_info(key)['extra_link_args']
+        except:
+            pass
 
 hdf5_extra_compile_args = []
 hdf5_extra_link_args = []
@@ -54,8 +55,8 @@ if 'linux' in sys.platform:
     cmd = shlex.split('pkg-config --cflags hdf5')
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.wait()
-    pkg_config_out = p.stdout.read().decode("utf-8")[:-2]
-    pkg_config_err = p.stderr.read().decode("utf-8")[:-2]
+    pkg_config_out = p.stdout.read().decode("utf-8")[:-1]
+    pkg_config_err = p.stderr.read().decode("utf-8")[:-1]
     if "No package" in pkg_config_err:
         hdf5_extra_compile_args = ["-I/usr/include/hdf5/serial"]
     else:
@@ -64,8 +65,8 @@ if 'linux' in sys.platform:
     cmd = shlex.split('pkg-config --libs hdf5')
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.wait()
-    pkg_config_out = p.stdout.read().decode("utf-8")[:-2]
-    pkg_config_err = p.stderr.read().decode("utf-8")[:-2]
+    pkg_config_out = p.stdout.read().decode("utf-8")[:-1]
+    pkg_config_err = p.stderr.read().decode("utf-8")[:-1]
     if "No package" in pkg_config_err:
         hdf5_extra_link_args = [
             "-L/usr/lib/x86_64-linux-gnu/",
@@ -74,15 +75,32 @@ if 'linux' in sys.platform:
         hdf5_extra_link_args = [pkg_config_out]
 
 
-if 'linux' not in sys.platform:
+if os.name == "nt":
     biosig_define_macros = [('WITH_BIOSIG2', None)]
-    if os.name == "nt":
-        biosig_libraries = ['libbiosig2']
-    else:
-        biosig_libraries = ['biosig2']
+    biosig_libraries = ['libbiosig2']
+    biosig_lite_sources = []
 else:
-    biosig_define_macros = [('WITH_BIOSIG', None)]
-    biosig_libraries = ['biosig', 'cholmod']
+    biosig_define_macros = [('WITH_BIOSIG2', None), ('WITH_BIOSIGLITE', None), ('WITHOUT_NETWORK', None)]
+    biosig_libraries = ['iconv']
+    biosig_lite_sources = [
+        'src/libbiosiglite/biosig4c++/t210/sopen_abf_read.c',
+        'src/libbiosiglite/biosig4c++/t210/sopen_alpha_read.c',
+        'src/libbiosiglite/biosig4c++/t210/sopen_axg_read.c',
+        'src/libbiosiglite/biosig4c++/t210/sopen_cfs_read.c',
+        'src/libbiosiglite/biosig4c++/t210/sopen_heka_read.c',
+        'src/libbiosiglite/biosig4c++/t210/sopen_igor.c',
+        'src/libbiosiglite/biosig4c++/t210/sopen_scp_read.c',
+        'src/libbiosiglite/biosig4c++/t210/scp-decode.cpp',
+        'src/libbiosiglite/biosig4c++/t220/crc4scp.c',
+        'src/libbiosiglite/biosig4c++/t220/sopen_scp_write.c',
+        'src/libbiosiglite/biosig4c++/test0/sandbox.c',
+        'src/libbiosiglite/biosig4c++/biosig.c',
+        'src/libbiosiglite/biosig4c++/biosig2.c',
+        'src/libbiosiglite/biosig4c++/biosig-network.c',
+        'src/libbiosiglite/biosig4c++/gdftime.c',
+        'src/libbiosiglite/biosig4c++/mdc_ecg_codes.c',
+        'src/libbiosiglite/biosig4c++/physicalunits.c'
+    ]
 
 fftw3_libraries = ['fftw3']
 if 'libraries' in system_info.get_info('fftw3').keys():
@@ -185,7 +203,9 @@ stfio_module = Extension(
         'src/libstfio/igor/CrossPlatformFileIO.c',
         'src/libstfio/igor/WriteWave.c',
         'src/libstfio/igor/igorlib.cpp',
-        'src/libstfio/tdms/tdmslib.cpp',
+	'src/libstfio/intan/common.cpp',
+	'src/libstfio/intan/intanlib.cpp',
+	'src/libstfio/intan/streams.cpp',
         'src/libstfio/recording.cpp',
         'src/libstfio/section.cpp',
         'src/libstfio/stfio.cpp',
@@ -199,15 +219,15 @@ stfio_module = Extension(
         'src/libstfnum/stfnum.cpp',
         'src/pystfio/pystfio.cxx',
         'src/pystfio/pystfio.i',
-    ])
+    ] + biosig_lite_sources)
 
 
 setup(name='stfio',
-      version='0.15.2',
+      version='0.15.4',
       description='stfio module',
       include_dirs=system_info.default_include_dirs + [
           np.get_include()],
-      scripts=['src/pystfio/stfio.py'],
+      scripts=[],
       package_dir={'stfio': 'src/pystfio'},
       packages=['stfio'],
       data_files=win_data_files,
