@@ -14,6 +14,9 @@ References
 ====
 2017
 ====
+
+    * `Sinclair JL, Fischl MJ, Alexandrova O, Heβ M, Grothe B, Leibold C, Kopp-Scheinpflug C. (2017) <http://www.jneurosci.org/content/early/2017/07/31/JNEUROSCI.3728-16.2017>`_ Sound-evoked activity influences myelination of brainstem axons in the trapezoid body. *J Neurosci* 23;37(34):8239-8255.
+
     * `Li L, Sultan S, Heigele S, Schmidt-Salzmann C, Toni N, Bischofberger J. (2017) <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5580881/>`_ Silent synapses generate sparse and orthogonal action potential firing in adult-born hippocampal granule cells. *eLife* 2017;6:e23612
 
     * `Schmidt-Hieber C, Toleikyte G, Aitchison L, Roth A, Clark BA, Branco T, Häusser M (2017). <https://www.ncbi.nlm.nih.gov/pubmed/28628104>`_ Active dendritic integration as a mechanism for robust and precise grid cell firing. *Nat Neurosci* 8:1114-1121
