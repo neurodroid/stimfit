@@ -14,7 +14,6 @@ References
 ====
 2017
 ====
-    * `Schmidt-Hieber C, Toleikyte G, Aitchison L, Roth A, Clark BA, Branco T, Häusser M. (2017) <https://www.nature.com/articles/nn.4582>`_ Active dendritic integration as a mechanism for robust and precise grid cell firing. *Nat Neurosci* 20(8):1114-1121
 
     * `Sinclair JL, Fischl MJ, Alexandrova O, Heβ M, Grothe B, Leibold C, Kopp-Scheinpflug C. (2017) <http://www.jneurosci.org/content/early/2017/07/31/JNEUROSCI.3728-16.2017>`_ Sound-evoked activity influences myelination of brainstem axons in the trapezoid body. *J Neurosci* 23;37(34):8239-8255.
 
