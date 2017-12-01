@@ -15,7 +15,7 @@ References
 2017
 ====
 
-    * `Chen C, Satterfield R, Young SM Jr, Jonas P (2017). <https://linkinghub.elsevier.com/retrieve/pii/S2211-1247(17)31602-9>_` Triple Function of Synaptotagmin 7 Ensures Efficiency of High-Frequency Transmission at Central GABAergic Synapses. *Cell Rep* 21:2082-2089.
+    * `Chen C, Satterfield R, Young SM Jr, Jonas P (2017). <https://linkinghub.elsevier.com/retrieve/pii/S2211-1247(17)31602-9>`_ Triple Function of Synaptotagmin 7 Ensures Efficiency of High-Frequency Transmission at Central GABAergic Synapses. *Cell Rep* 21:2082-2089.
 
     * `Christiansen GB Andersen KH, Riis S, Nykjaer A, Bolcho U, Jensen MS, Holm MM (2017). <http://dx.doi.org/10.1002/hipo.22689>`_ The sorting receptor SorCS3 is a stronger regulator of glutamate receptor functions compared to GABAergic mechanisms in the hippocampus. *Hippocampus* 27:235-248.
 
