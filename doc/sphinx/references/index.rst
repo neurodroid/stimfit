@@ -15,7 +15,9 @@ References
 2017
 ====
 
-    * `Sinclair JL, Fischl MJ, Alexandrova O, Heβ M, Grothe B, Leibold C, Kopp-Scheinpflug C. (2017) <http://www.jneurosci.org/content/early/2017/07/31/JNEUROSCI.3728-16.2017>`_ Sound-evoked activity influences myelination of brainstem axons in the trapezoid body. *J Neurosci* 23;37(34):8239-8255.
+    * `Chen C, Satterfield R, Young SM Jr, Jonas P (2017). <https://linkinghub.elsevier.com/retrieve/pii/S2211-1247(17)31602-9>_` Triple Function of Synaptotagmin 7 Ensures Efficiency of High-Frequency Transmission at Central GABAergic Synapses. *Cell Rep* 21:2082-2089.
+
+    * `Christiansen GB Andersen KH, Riis S, Nykjaer A, Bolcho U, Jensen MS, Holm MM (2017). <http://dx.doi.org/10.1002/hipo.22689>`_ The sorting receptor SorCS3 is a stronger regulator of glutamate receptor functions compared to GABAergic mechanisms in the hippocampus. *Hippocampus* 27:235-248.
 
     * `Li L, Sultan S, Heigele S, Schmidt-Salzmann C, Toni N, Bischofberger J. (2017) <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5580881/>`_ Silent synapses generate sparse and orthogonal action potential firing in adult-born hippocampal granule cells. *eLife* 2017;6:e23612
 
