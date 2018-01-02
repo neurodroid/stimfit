@@ -1,0 +1,93 @@
+""" I have been using the function count_events from stimfit
+in order to count action potentials in several selected traces.
+The function returns a table containing the number of AP/traces and use the regular 
+count_events function of spells. The function created: counting allow to 
+count the action potentials for several traces selected, and works well (line 10-20). However 
+I would like this function to return in the table the time of the events. To do so 
+I have modified the count_events function this way (line 22-92). However now 
+only -1 one is returned from this section. I am not sure why?"""
+
+   
+def counting():
+	""" This function allows to show a table of the number of events above or 
+	underneath a threshold (action potentials for example), and it goes in 
+	all the sweeps selected"""
+	import stf
+	import spells
+	spikes_list = [spells.count_events(1000,1000,-35,True,i,False) for i in stf.get_selected_indices()]
+	mytable = dict()
+	for i in stf.get_selected_indices(): mytable["Trace %.3d" %i] = spikes_list[i]
+	stf.show_table(mytable)
+	return True
+  
+  def count_events(start = 1000, delta = 1000, threshold=-35, up=True, trace=None, mark=True):
+    """
+    Counts the number of events (e.g action potentials (AP)) in the current trace.
+
+    Arguments:
+
+    start       -- starting time (in ms) to look for events.
+    delta       -- time interval (in ms) to look for events.
+    threshold   -- (optional) detection threshold (default = 0).
+    up          -- (optional) True (default) will look for upward events,
+                    False downwards.
+    trace       -- (optional) zero-based index of the trace in the current 
+                    channel, if None, the current trace is selected.
+    mark        -- (optional) if True (default), set a mark at the point 
+                    of threshold crossing
+    Returns:
+    An integer with the number of events.
+
+    Examples:
+    count_events(500,1000) returns the number of events found between t=500
+         ms and t=1500 ms above 0 in the current trace and shows a stf 
+         marker.
+    count_events(500,1000,0,False,-10,i) returns the number of events found
+         below -10 in the trace i and shows the corresponding stf markers.
+    """
+
+    # sets the current trace or the one given in trace.
+    if trace is None:
+        sweep = stf.get_trace_index()
+    else:
+        if type(trace) !=int:
+            print('trace argument admits only integers')
+            return False
+        sweep = trace
+
+    # set the trace described in sweep
+    stf.set_trace(sweep)
+
+    # transform time into sampling points
+    dt = stf.get_sampling_interval()
+
+    pstart = int(round(start/dt))
+    pdelta = int(round(delta/dt))
+
+    # select the section of interest within the trace
+    selection = stf.get_trace()[pstart:(pstart+pdelta)]
+
+    # algorithm to detect events
+    event_counter, i = 0, 0 # set counter and index to zero
+    event_time = ""
+    return_value = ""
+    # choose comparator according to direction:
+    if up:
+        comp = lambda a, b: a > b
+    else:
+        comp = lambda a, b: a < b
+
+    # run the loop
+    while i < len(selection):
+        if comp(selection[i], threshold):
+            event_counter += 1
+            event_time = str(i) + ","
+            if mark:
+                stf.set_marker(pstart+i, selection[i])
+            # This loop continues along the time until threshold has been reached again.
+            while i < len(selection) and comp(selection[i], threshold):
+                i += 1 # skip  until value is below/above threshold
+        else:
+            i += 1
+    event_value = str(event_counter) + "," + event_time
+    return event_value
