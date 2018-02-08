@@ -144,7 +144,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="hdf5.lib hdf5_hl.lib libbiosig2.lib"
+				AdditionalDependencies="hdf5.lib hdf5_hl.lib libbiosig.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;$(HDF5DIR)\lib&quot;;&quot;$(BIOSIGDIR)\lib&quot;"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"
@@ -305,7 +305,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="hdf5.lib hdf5_hl.lib libbiosig2.lib"
+				AdditionalDependencies="hdf5.lib hdf5_hl.lib libbiosig.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(HDF5DIR)\lib&quot;;&quot;$(BIOSIGDIR)\lib&quot;"
 				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib"

@@ -6,12 +6,12 @@
 	>
 	<UserMacro
 		Name="SWIGBIN"
-		Value="C:\cygwin64\bin\swig.exe"
+		Value="$(SolutionDir)\..\..\..\..\..\swigwin\swig.exe"
 		PerformEnvironmentSet="true"
 	/>
 	<UserMacro
 		Name="NUMPYDIR"
-		Value="$(SolutionDir)\..\..\..\..\..\stf-site-packages\numpy\core\include"
+		Value="C:\Python27\Lib\site-packages\numpy\core\include"
 	/>
 	<UserMacro
 		Name="PYTHONDIR"

@@ -1,6 +1,6 @@
 ; installer.nsi
 ;
-; NSI script for stimfit 
+; NSI script for stimfit
 
 ; This may slightly reduce the executable size, but compression is slower.
 SetCompressor lzma
@@ -17,7 +17,7 @@ SetCompressor lzma
 !define WXW_VERSION "3.0.2.0"
 !define WXW_VERSION_DIR "3.0.2"
 !define WXW_VERSION_SHORT "30"
-!define PY_VERSION "2.7.13"
+!define PY_VERSION "2.7.14"
 !define PY_MAJOR "2.7"
 !define PY_MAJOR_SHORT "27"
 !define PY_MIN "2.7"
@@ -25,7 +25,7 @@ SetCompressor lzma
 Var PY_ACT
 !define NP_VERSION ""
 !define MPL_VERSION ""
-!define EMF_VERSION "2.0.0"
+!define EMF_VERSION ""
 !define EXE_NAME "Stimfit"
 !define REG_NAME "Stimfit 0.15"
 !define REG_NAME_IO "stfio 0.15"
@@ -38,7 +38,6 @@ Var PY_ACT
 !define MSIDIR "..\..\..\..\Downloads"
 !define WXWDIR "..\..\..\..\wx"
 !define WXPDIR "..\..\..\..\wxPython"
-!define STFMODULES "..\..\..\..\stf-site-packages"
 !define FFTDIR "..\..\..\..\fftw"
 !define HDF5DIR "..\..\..\..\hdf5"
 !define BIOSIGDIR "..\..\..\..\biosig"
@@ -46,7 +45,8 @@ Var PY_ACT
 !define PRODIR "C:\Program Files"
 !define ALTPRODIR "C:\Program Files (x86)"
 !define FULL_WELCOME "This wizard will guide you through the installation \
-of ${REG_NAME} and wxPython. It is strongly recommended that you uninstall any earlier version of Stimfit (< 0.11) before \
+of ${REG_NAME} and wxPython. You will need an internet connection during the installation to download required Python packages. \
+It is strongly recommended that you uninstall any earlier version of Stimfit (< 0.11) before \
 proceeding. You can optionally \
 install Python ${PY_VERSION}, NumPy ${NP_VERSION} \
 Matplotlib ${MPL_VERSION} and PyEMF ${EMF_VERSION}\
@@ -106,10 +106,10 @@ Var StrNoUsablePythonFound
 !insertmacro MUI_PAGE_DIRECTORY
 
 ;Start Menu Folder Page Configuration
-!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
-!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${REG_NAME}" 
+!define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU"
+!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${REG_NAME}"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
-  
+
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
 
 !insertmacro MUI_PAGE_INSTFILES
@@ -120,7 +120,7 @@ Var StrNoUsablePythonFound
 
 ;--------------------------------
 ;Languages
- 
+
 !insertmacro MUI_LANGUAGE "English"
 
 ;--------------------------------
@@ -136,13 +136,16 @@ Section "Python ${PY_VERSION}" 0
   File "${MSIDIR}\${PY_INST_FILE}"
 
   ExecWait '"Msiexec.exe" /i "$INSTDIR\${PY_INST_FILE}"'
-  
+
   ; Delete installer once we are done
   Delete "$INSTDIR\${PY_INST_FILE}"
 
   ; Install PyEMF
   ExecWait 'cd "${PYEMFDIR}"; "c:\python${PY_MAJOR_SHORT}\python.exe" setup.py install'
   RMDir /r "${PYEMFDIR}"
+
+  ; Install / upgrade numpy, scipy, matplotlib
+  ExecWait '"c:\Python${PY_MAJOR_SHORT}\Scripts\pip.exe" install --upgrade numpy scipy matplotlib'
 
 SectionEnd
 !endif
@@ -151,7 +154,7 @@ Section "!Program files and Python modules" 1 ; Core program files and Python mo
 
   ;This section is required : readonly mode
   SectionIn RO
-   
+
   ; Create default error message
   StrCpy $StrNoUsablePythonFound "${STRING_PYTHON_NOT_FOUND}"
 
@@ -171,24 +174,24 @@ Section "!Program files and Python modules" 1 ; Core program files and Python mo
   StrCpy $PY_ACT "${PY_MAJOR}"
   Goto +2
   StrCpy $PY_ACT "${PY_MIN}"
-  
+
   ClearErrors
   DetailPrint "Found a Python $PY_ACT installation at '$9'"
-  
+
   ; Add a path to the installation directory in the python site-packages folder
   FileOpen $0 $9\Lib\site-packages\stimfit.pth w
   FileWrite $0 "$INSTDIR"
   FileClose $0
-  
+
   IfErrors 0 +3
     MessageBox MB_OK "Couldn't create path for python module"
-    Quit    
+    Quit
 
   ClearErrors
-  
+
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
-  
+
   Delete "$INSTDIR\*.exe"
   Delete "$INSTDIR\*.dll"
   Delete "$INSTDIR\wx*"
@@ -200,7 +203,7 @@ Section "!Program files and Python modules" 1 ; Core program files and Python mo
   File "${HDF5DIR}\bin\hdf5.dll"
   File "${HDF5DIR}\bin\szip.dll"
   File "${HDF5DIR}\bin\zlib.dll"
-  File "${BIOSIGDIR}\lib\libbiosig2.dll"
+  File "${BIOSIGDIR}\lib\libbiosig.dll"
   File "${WXWDIR}\lib\vc90_x64_dll\wxmsw${WXW_VERSION_SHORT}u_core_vc90_x64.dll"
   File "${WXWDIR}\lib\vc90_x64_dll\wxbase${WXW_VERSION_SHORT}u_vc90_x64.dll"
   File "${WXWDIR}\lib\vc90_x64_dll\wxmsw${WXW_VERSION_SHORT}u_aui_vc90_x64.dll"
@@ -208,12 +211,9 @@ Section "!Program files and Python modules" 1 ; Core program files and Python mo
   File "${WXWDIR}\lib\vc90_x64_dll\wxbase${WXW_VERSION_SHORT}u_net_vc90_x64.dll"
   File "${WXWDIR}\lib\vc90_x64_dll\wxmsw${WXW_VERSION_SHORT}u_html_vc90_x64.dll"
   File "${WXWDIR}\lib\vc90_x64_dll\wxmsw${WXW_VERSION_SHORT}u_stc_vc90_x64.dll"
-  File /nonfatal "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcp90.dll"
-  File /nonfatal "${ALTPRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcp90.dll"
-  File /nonfatal "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcr90.dll"
-  File /nonfatal "${ALTPRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcr90.dll"
+  File "${HDF5DIR}\bin\msvcp90.dll"
+  File "${HDF5DIR}\bin\msvcr90.dll"
   File /r "${WXPDIR}\wx*"
-  File /r "${STFMODULES}"
   File "${BUILDTARGETDIR}\${EXE_NAME}.exe"
   File "${BUILDTARGETDIR}\libstimfit.dll"
   File "${BUILDTARGETDIR}\libstfio.dll"
@@ -235,10 +235,10 @@ Section "!Program files and Python modules" 1 ; Core program files and Python mo
   File "${PYSTFDIR}\heka.py"
   File "${PYSTFDIR}\extensions.py"
   File /r /x .hg "${STFDIR}\src"
-  
+
   ;Store installation folder
-  WriteRegStr HKCU "Software\${REG_NAME}" "" $INSTDIR 
-  WriteRegStr HKCU "Software\${REG_NAME}" "InstallLocation" $INSTDIR 
+  WriteRegStr HKCU "Software\${REG_NAME}" "" $INSTDIR
+  WriteRegStr HKCU "Software\${REG_NAME}" "InstallLocation" $INSTDIR
   WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${REG_NAME}" "UninstallString" '"$INSTDIR\Uninstall.exe"'
   WriteRegExpandStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${REG_NAME}" "InstallLocation" "$INSTDIR"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${REG_NAME}" "DisplayName" "${REG_NAME}"
@@ -259,25 +259,25 @@ Section "!Program files and Python modules" 1 ; Core program files and Python mo
   SetShellVarContext all
 
   ;Start Menu
-  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application   
+  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 
     ; Create shortcuts
     CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\${REG_NAME}.lnk" "$INSTDIR\${EXE_NAME}.exe"
- 
+
  !insertmacro MUI_STARTMENU_WRITE_END
 
   ; Create desktop link
   CreateShortCut "$DESKTOP\${REG_NAME}.lnk" "$INSTDIR\${EXE_NAME}.exe"
- 
+
 SectionEnd ; end the section
 
 Section "!stfio standalone module" 2 ; Standalone python file i/o module
-  
+
   ;This section is required : readonly mode
   SectionIn RO
-   
+
   ; Create default error message
   StrCpy $StrNoUsablePythonFound "${STRING_PYTHON_NOT_FOUND}"
 
@@ -300,34 +300,32 @@ Section "!stfio standalone module" 2 ; Standalone python file i/o module
 
   ClearErrors
   DetailPrint "Found a Python $PY_ACT installation at '$9'"
-  
+
   !define STFIODIR "$9\Lib\site-packages\stfio"
   ; Add a path to the installation directory in the python site-packages folder
   ; FileOpen $0 $9\Lib\site-packages\stfio.pth w
   ; FileWrite $0 ${STFIODIR}
   ; FileClose $0
-  
+
   IfErrors 0 +3
     MessageBox MB_OK "Couldn't create path for python module"
-    Quit    
+    Quit
 
   ClearErrors
-  
+
   ; Set output path to the installation directory.
   RMDir /r ${STFIODIR}
   CreateDirectory ${STFIODIR}
   SetOutPath ${STFIODIR}
-  
+
   File "${FFTDIR}\libfftw3-3.dll"
   File "${HDF5DIR}\bin\hdf5_hl.dll"
   File "${HDF5DIR}\bin\hdf5.dll"
   File "${HDF5DIR}\bin\szip.dll"
   File "${HDF5DIR}\bin\zlib.dll"
-  File "${BIOSIGDIR}\lib\libbiosig2.dll"
-  File /nonfatal "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcp90.dll"
-  File /nonfatal "${ALTPRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcp90.dll"
-  File /nonfatal "${PRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcr90.dll"
-  File /nonfatal "${ALTPRODIR}\Microsoft Visual Studio 9.0\VC\redist\amd64\Microsoft.VC90.CRT\msvcr90.dll"
+  File "${BIOSIGDIR}\lib\libbiosig.dll"
+  File "${HDF5DIR}\bin\msvcp90.dll"
+  File "${HDF5DIR}\bin\msvcr90.dll"
   File "${BUILDTARGETDIR}\_stfio.pyd"
   File "${BUILDTARGETDIR}\libstfio.dll"
   File "${BUILDTARGETDIR}\libstfnum.dll"
@@ -336,10 +334,10 @@ Section "!stfio standalone module" 2 ; Standalone python file i/o module
   File "${PYSTFIODIR}\stfio_plot.py"
   File "${PYSTFIODIR}\stfio_neo.py"
   File "${PYSTFIODIR}\unittest_stfio.py"
- 
+
   ; Install for all users
   SetShellVarContext all
- 
+
 SectionEnd ; end the section
 
 Section "Uninstall"
@@ -350,7 +348,7 @@ Section "Uninstall"
 
   ;Uninstall Stimfit for all users
   SetShellVarContext all
-  
+
   ReadRegStr $StartMenuFolder HKCU "Software\${REG_NAME}" "Start Menu Folder"
   IfFileExists "$SMPROGRAMS\$StartMenuFolder\${EXE_NAME}.lnk" stimfit_smp_installed
     Goto stimfit_smp_notinstalled
@@ -379,9 +377,9 @@ Section "Uninstall"
 
   ClearErrors
   DetailPrint "Found a Python $PY_ACT installation at '$9'"
-  
+
   !define STFIORMDIR "$9\Lib\site-packages\stfio"
- 
+
   Delete ${STFIORMDIR}\..\stfio.pth
   Delete ${STFIORMDIR}\..\stimfit.pth
   RMDir /r ${STFIORMDIR}
@@ -405,7 +403,7 @@ Section "Uninstall"
   StrCmp $R0 "${REG_NAME}" 0 +3
     ReadRegStr $R0 HKCR ".dat" "AM_OLD_VALUE"
     WriteRegStr HKCR ".dat" "" $R0
-	
+
   ; --> .cfs
   ReadRegStr $R0 HKCR ".cfs" ""
   StrCmp $R0 "${REG_NAME}" 0 +3
@@ -423,7 +421,7 @@ Section "Uninstall"
   StrCmp $R0 "${REG_NAME}" 0 +3
     ReadRegStr $R0 HKCR ".axgd" "AM_OLD_VALUE"
     WriteRegStr HKCR ".axgd" "" $R0
-	
+
   ; --> .axgx
   ReadRegStr $R0 HKCR ".axgx" ""
   StrCmp $R0 "${REG_NAME}" 0 +3
@@ -435,7 +433,7 @@ Section "Uninstall"
   StrCmp $R0 "${REG_NAME}" 0 +3
     ReadRegStr $R0 HKCR ".abf" "AM_OLD_VALUE"
     WriteRegStr HKCR ".abf" "" $R0
-	
+
   ; --> .atf
   ReadRegStr $R0 HKCR ".atf" ""
   StrCmp $R0 "${REG_NAME}" 0 +3
