@@ -1,6 +1,6 @@
 /*
 
-    Copyright (C) 2005,2006,2007,2012,2013,2015 Alois Schloegl <alois.schloegl@ist.ac.at>
+    Copyright (C) 2005-2018 Alois Schloegl <alois.schloegl@ist.ac.at>
 
     This file is part of the "BioSig for C/C++" repository 
     (biosig4c++) at http://biosig.sf.net/ 
@@ -162,30 +162,34 @@ int sopen_SCP_write(HDRTYPE* hdr) {
 			ptr = (uint8_t*)realloc(ptr,sectionStart+10000); 
 			PtrCurSect = ptr+sectionStart; 
 			curSectLen = 16; // current section length
+			char *nextPartOfPatientName=hdr->Patient.Name;
 
 			if (VERBOSE_LEVEL>7) fprintf(stdout,"Section 1 Tag 0 \n");
 
 			// Tag 0 (max len = 64)
-			if (!hdr->FLAG.ANONYMOUS && (hdr->Patient.Name != NULL)) 
+			if (!hdr->FLAG.ANONYMOUS && (nextPartOfPatientName != NULL) && strlen(nextPartOfPatientName))
 			{
 				*(ptr+sectionStart+curSectLen) = 0;	// tag
-				len = strlen(hdr->Patient.Name) + 1;
+				len = strcspn(nextPartOfPatientName, "\x1f");
 				leu16a(len, ptr+sectionStart+curSectLen+1);	// length
-				strncpy((char*)ptr+sectionStart+curSectLen+3,hdr->Patient.Name,len);	// field
+				strncpy((char*)ptr+sectionStart+curSectLen+3,nextPartOfPatientName,len);	// field
+				nextPartOfPatientName += len+1;
 				curSectLen += len+3; 
 			}
 
 			if (VERBOSE_LEVEL>7) fprintf(stdout,"Section 1 Tag 1 \n");
 
 			// Tag 1 (max len = 64) Firstname 
-/*
-			*(ptr+sectionStart+curSectLen) = 1;	// tag
-			len = strlen(hdr->Patient.Name) + 1;
-			leu16a(len, ptr+sectionStart+curSectLen+1);	// length
-			strncpy((char*)ptr+sectionStart+curSectLen+3,hdr->Patient.Name,len);	// field
-			curSectLen += len+3; 
-*/	
-		
+			if (!hdr->FLAG.ANONYMOUS && (nextPartOfPatientName != NULL) && strlen(nextPartOfPatientName))
+			{
+				*(ptr+sectionStart+curSectLen) = 1;	// tag
+				len = strcspn(nextPartOfPatientName, "\x1f");
+				leu16a(len, ptr+sectionStart+curSectLen+1);	// length
+				strncpy((char*)ptr+sectionStart+curSectLen+3,nextPartOfPatientName,len);	// field
+				nextPartOfPatientName += len+1;
+				curSectLen += len+3;
+			}
+
 			// Tag 2 (max len = 64) Patient ID 
 			if (VERBOSE_LEVEL>7) fprintf(stdout,"Section 1 Tag 2 \n");
 
@@ -198,16 +202,18 @@ int sopen_SCP_write(HDRTYPE* hdr) {
 				curSectLen += len+3;
 			}	 
 
-// fprintf(stdout,"Section %i Len %i %x\n",curSect,curSectLen,sectionStart);
-
 			// Tag 3 (max len = 64) Second Last Name 
-/*
-			*(ptr+sectionStart+curSectLen) = 3;	// tag
-			len = strlen(hdr->Patient.Name) + 1;
-			leu16a(len, ptr+sectionStart+curSectLen+1);	// length
-			strncpy(ptr+sectionStart+curSectLen+3,hdr->Patient.Name,len);	// field
-			curSectLen += len+3; 
-*/
+			if (VERBOSE_LEVEL>7) fprintf(stdout,"Section 1 Tag 3 \n");
+
+			if (!hdr->FLAG.ANONYMOUS && (nextPartOfPatientName != NULL) && strlen(nextPartOfPatientName))
+			{
+				*(ptr+sectionStart+curSectLen) = 3;	// tag
+				len = strcspn(nextPartOfPatientName, "\x1f");
+				leu16a(len, ptr+sectionStart+curSectLen+1);	// length
+				strncpy((char*)ptr+sectionStart+curSectLen+3,nextPartOfPatientName,len);	// field
+				nextPartOfPatientName += len+1;
+				curSectLen += len+3;
+			}
 
 			// Tag 5 (len = 4) 
 			if ((hdr->Patient.Birthday) > 0) {

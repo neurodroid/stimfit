@@ -1,6 +1,6 @@
 /*
 
-    Copyright (C) 2005,2006,2007,2011,2012,2013 Alois Schloegl <alois.schloegl@gmail.com>
+    Copyright (C) 2005-2018 Alois Schloegl <alois.schloegl@gmail.com>
     Copyright (C) 2011 Stoyan Mihaylov
 
     This file is part of the "BioSig for C/C++" repository 
@@ -752,18 +752,18 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 				if (tag==0) {
 					// convert to UTF8
 					if (!hdr->FLAG.ANONYMOUS) {
-						// strncpy(hdr->Patient.Name, (char*)(PtrCurSect+curSectPos),min(len1,MAX_LENGTH_NAME));
-						 // convert to UTF8
+						// Last name or entire name if no first name is provided
 						decode_scp_text(hdr, len1, (char*)PtrCurSect+curSectPos, MAX_LENGTH_NAME, hdr->Patient.Name, versionSection);
 					}
 				}
 				else if (tag==1) {
 					if (!hdr->FLAG.ANONYMOUS) {
+						// First name
 						size_t len = strlen(hdr->Patient.Name);
 						if (len+3 < MAX_LENGTH_NAME) {
-							strcat(hdr->Patient.Name,", ");
-							len+=2;
-							// convert to UTF8
+							// unit separator ascii(31), 0x1f is used for separating name componentes
+							strcat(hdr->Patient.Name,"\x1f");
+							len+=1;
 							decode_scp_text(hdr, len1, (char*)PtrCurSect+curSectPos, MAX_LENGTH_NAME-len+1, hdr->Patient.Name+len, versionSection);
 						}
 					}
@@ -783,11 +783,12 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 				}
 				else if (tag==3) {
 					if (!hdr->FLAG.ANONYMOUS) {
+						// Second last name
 						size_t len = strlen(hdr->Patient.Name);
 						if (len+2 < MAX_LENGTH_NAME) {
-							strcat(hdr->Patient.Name," ");
+							// unit separator ascii(31), 0x1f is used for separating name componentes
+							strcat(hdr->Patient.Name,"\x1f");
 							len+=1;
-							// convert to UTF8
 							decode_scp_text(hdr, len1, (char*)PtrCurSect+curSectPos, MAX_LENGTH_NAME-len+1, hdr->Patient.Name+len, versionSection);
 						}
 					}

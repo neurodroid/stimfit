@@ -1,6 +1,6 @@
 /*
 
-    Copyright (C) 2012,2013 Alois Schloegl <alois.schloegl@gmail.com>
+    Copyright (C) 2012-2018 Alois Schloegl <alois.schloegl@gmail.com>
     This file is part of the "BioSig for C/C++" repository
     (biosig4c++) at http://biosig.sf.net/
 
@@ -350,6 +350,36 @@ const char* biosig_get_patient_name(HDRTYPE *hdr) {
 	if (hdr==NULL) return NULL;
 	return hdr->Patient.Name;
 }
+
+const char* biosig_get_patient_lastname(HDRTYPE *hdr, size_t *LengthLastName) {
+	if (hdr==NULL) return NULL;
+	*LengthLastName	=  strcspn(hdr->Patient.Name, "\x1f");
+	return hdr->Patient.Name;
+}
+const char* biosig_get_patient_firstname(HDRTYPE *hdr, size_t *LengthFirstName) {
+	if (hdr==NULL) return NULL;
+	char *tmpstr = strchr(hdr->Patient.Name, 0x1f);
+	if (tmpstr==NULL) {
+		*LengthFirstName = 0;
+		return NULL;
+	}
+	*LengthFirstName = strcspn(tmpstr, "\x1f");
+	return tmpstr;
+}
+const char* biosig_get_patient_secondlastname(HDRTYPE *hdr, size_t *LengthSecondLastName) {
+	if (hdr==NULL) return NULL;
+	char *tmpstr = strchr(hdr->Patient.Name, 0x1f);
+	if (tmpstr != NULL)
+		tmpstr = strchr(tmpstr, 0x1f);
+	if (tmpstr==NULL) {
+		*LengthSecondLastName = 0;
+		return NULL;
+	}
+	*LengthSecondLastName = strcspn(tmpstr, "\x1f");
+	return tmpstr;
+}
+
+
 const char* biosig_get_patient_id(HDRTYPE *hdr) {
 	if (hdr==NULL) return NULL;
 	return hdr->Patient.Id;
@@ -387,6 +417,26 @@ int biosig_set_patient_name(HDRTYPE *hdr, const char* name) {
 	if (hdr==NULL) return -1;
 	strncpy(hdr->Patient.Name, name, MAX_LENGTH_NAME);
 	hdr->Patient.Name[MAX_LENGTH_NAME]=0;
+}
+
+int biosig_set_patient_name_structured(HDRTYPE *hdr, const char* LastName, const char* FirstName, const char* SecondLastName) {
+	if (hdr==NULL) return -1;
+	size_t len1 = (LastName ? strlen(LastName) : 0 );
+	size_t len2 = (FirstName ? strlen(FirstName) : 0 );
+	size_t len3 = (SecondLastName ? strlen(SecondLastName) : 0 );
+	if (len1+len2+len3+2 > MAX_LENGTH_NAME) {
+		fprintf(stderr,"Error in function %f: total length of name too large (%i > %i)\n",__func__,len1+len2+len3+2,MAX_LENGTH_NAME);
+		return -1;
+	}
+	strcpy(hdr->Patient.Name, LastName);					// Flawfinder: ignore
+	if (FirstName != NULL) {
+		hdr->Patient.Name[len1]=0x1f;
+		strcpy(hdr->Patient.Name+len1+1, FirstName);			// Flawfinder: ignore
+	}
+	if (SecondLastName != NULL) {
+		hdr->Patient.Name[len1+len2+1]=0x1f;
+		strcpy(hdr->Patient.Name+len1+len2+2, SecondLastName);		// Flawfinder: ignore
+	}
 	return 0;
 }
 int biosig_set_patient_id(HDRTYPE *hdr, const char* id) {

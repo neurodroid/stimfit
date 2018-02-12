@@ -1,6 +1,6 @@
 /*
 
-% Copyright (C) 2005-2016 Alois Schloegl <alois.schloegl@gmail.com>
+% Copyright (C) 2005-2018 Alois Schloegl <alois.schloegl@gmail.com>
 % This file is part of the "BioSig for C/C++" repository 
 % (biosig4c++) at http://biosig.sf.net/ 
 
@@ -30,7 +30,9 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#if !defined(_MSC_VER)
 #include <sys/param.h>
+#endif
 #include <time.h>
 #include "physicalunits.h"
 
@@ -131,7 +133,6 @@ char *getlogin (void);
     typedef __int64		int64_t;
     typedef unsigned __int32	uint32_t;
     typedef __int32		int32_t;
-    typedef unsigned __int16	uint16_t;
     typedef __int16		int16_t;
     typedef unsigned __int8	uint8_t;
     typedef __int8		int8_t;
@@ -362,8 +363,14 @@ typedef struct HDR_STRUCT {
 		gdf_time 	Birthday; 	/* Birthday of Patient */
 		// 		Age;		// the age is HDR.T0 - HDR.Patient.Birthday, even if T0 and Birthday are not known
 		uint16_t	Headsize[3]; 	/* circumference, nasion-inion, left-right mastoid in millimeter;  */
-		char		Name[MAX_LENGTH_NAME+1]; /* because for privacy protection it is by default not supported, support is turned on with FLAG.ANONYMOUS */
-//		char*		Name;	// because for privacy protection it is by default not supported, support is turned on with FLAG.ANONYMOUS
+
+		/* Patient Name:
+		 * can consist of up to three components, separated by the unit separator ascii(31), 0x1f, containing in that order
+			Last name, first name, second last name (see also SCP-ECG specification EN1064, Section 1, tag 0, 1, and 3)
+		 * for privacy protection this field is by default not supported, support can be turned on with FLAG.ANONYMOUS
+                 */
+		char		Name[MAX_LENGTH_NAME+1];
+
 		char		Id[MAX_LENGTH_PID+1];	/* patient identification, identification code as used in hospital  */
 		uint8_t		Weight;		/* weight in kilograms [kg] 0:unkown, 255: overflow  */
 		uint8_t		Height;		/* height in centimeter [cm] 0:unkown, 255: overflow  */
@@ -561,7 +568,7 @@ extern const struct FileFormatStringTable_t FileFormatStringTable [];
 #  include <endian.h>
 #  include <byteswap.h>
 
-#elif defined(__WIN32__)
+#elif defined(__WIN32__) || defined(_WIN32)
 #  include <stdlib.h>
 #  define __BIG_ENDIAN		4321
 #  define __LITTLE_ENDIAN	1234
@@ -571,8 +578,9 @@ extern const struct FileFormatStringTable_t FileFormatStringTable [];
 #  define bswap_64(x) __builtin_bswap64(x)
 
 #	include <winsock2.h>
-#	include <sys/param.h>
-
+#   if !defined(_MSC_VER)
+#	    include <sys/param.h>
+#   endif
 #	if BYTE_ORDER == LITTLE_ENDIAN
 #		define htobe16(x) htons(x)
 #		define htole16(x) (x)
@@ -584,9 +592,16 @@ extern const struct FileFormatStringTable_t FileFormatStringTable [];
 #		define be32toh(x) ntohl(x)
 #		define le32toh(x) (x)
 
-#		define htobe64(x) __builtin_bswap64(x)
 #		define htole64(x) (x)
-#		define be64toh(x) __builtin_bswap64(x)
+#       if !defined(_MSC_VER)
+#           define htobe64(x) __builtin_bswap64(x)
+#           define be64toh(x) __builtin_bswap64(x)
+#       else
+#           define ntohll(x) (((_int64)(ntohl((int)((x << 32) >> 32))) << 32) | (unsigned int)ntohl(((int)(x >> 32))))
+#           define htonll(x) ntohll(x)
+#           define htobe64(x) htonll(x)
+#           define be64toh(x) ntohll(x)
+#       endif
 #		define le64toh(x) (x)
 
 #	elif BYTE_ORDER == BIG_ENDIAN

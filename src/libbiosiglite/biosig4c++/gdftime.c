@@ -128,6 +128,7 @@ int gdf_time2tm_time_r(gdf_time t, struct tm *t3) {
 
 	int32_t rd = (int32_t)floor(ldexp((double)t,-32)); // days since 0001-01-01
 	double s = ldexp((t & 0x00000000ffffffff)*86400,-32); // seconds of the day
+	int32_t sec = round (s);
 	// s += timezone;
 
 	/* derived from datenum.m from Octave 3.0.0 */
@@ -152,10 +153,10 @@ int gdf_time2tm_time_r(gdf_time t, struct tm *t3) {
 	t3->tm_mon  = (int)m-1;
 	t3->tm_mday = (int)d;
 
-	t3->tm_hour = (int)(floor (s / 3600));
-	s = s - 3600 * t3->tm_hour;
-	t3->tm_min = (int)(floor (s / 60));
-	t3->tm_sec = round(s - 60 * t3->tm_min);
+	t3->tm_hour = sec / 3600;
+	sec = sec - (3600 * t3->tm_hour);
+	t3->tm_min = sec / 60;
+	t3->tm_sec = sec - (60 * t3->tm_min);
 	//t3->tm_gmtoff = 3600;
 
         return(0);
