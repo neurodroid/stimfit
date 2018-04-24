@@ -12,4 +12,4 @@ tar -xzf stimfit_${VERSION}.orig.tar.gz
 cd stimfit-${VERSION}
 cp -rv ../../../dist/debian ./
 debuild -S -sa
-sudo pbuilder build --basetgz /home/csh/pbuilder/unstable.tgz ../*.dsc
+sudo pbuilder build --basetgz /var/cache/pbuilder/base.tgz ../*.dsc

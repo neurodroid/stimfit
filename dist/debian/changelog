@@ -1,3 +1,10 @@
+stimfit (0.15.5-1) unstable; urgency=low
+
+  * Adds native intan CLP & tdms file reading
+  * Upgrade libbiosiglite to 1.9.1
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Mon, 12 Feb 2018 16:13:09 +0100
+
 stimfit (0.15.4-1) unstable; urgency=low
 
   * Fix building with gcc-6 on armhf (Closes: #847526)
