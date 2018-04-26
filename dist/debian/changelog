@@ -1,7 +1,7 @@
 stimfit (0.15.6-1) unstable; urgency=low
 
   * Adress shared library renaming error during debian packaging.
-    Fixes Debian bug #896407
+    (Closes: #896407)
 
  -- Christoph Schmidt-Hieber <christsc@gmx.de>  Tue, 24 Apr 2018 23:05:28 +0200
 

@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-# Sample debian/rules that uses debhelper. 
+# Sample debian/rules that uses debhelper.
 # This file is public domain software, originally written by Joey Hess.
 #
 # This version is for packages that are architecture independent.
