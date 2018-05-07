@@ -21,8 +21,9 @@ For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build depend
                            python-matplotlib \
                            libhdf5-serial-dev \
                            swig \
-                           python-wxgtk2.8 \
-                           libwxgtk2.8-dev \
+                           python-wxgtk3.0-dev \
+                           libwxgtk3.0-dev \
+                           wx-common \
                            fftw3-dev \
                            liblapack-dev \
                            chrpath \
@@ -42,27 +43,6 @@ This will get you, amongst others:
 * [HDF5]_: This is the hierarchical Data Format 5 (HDF5) to manage large amount of data.
 
 In addition, you can install doxygen, python-sphinx and graphviz if you want to build yourself the documentation.
-
-=======================
-Optional: wxWidgets 2.9
-=======================
-
-* [wxWidgets]_ and [wxPython]_ 2.9 (unstable): If you'd like to live on the bleeding edge and get decent printing support through gtk-print, you can build against wxWidgets 2.9, which in turn needs to be built from source. To get the build dependencies (which are the same as for 2.8), do:
-
-::
-
-    $  sudo apt-get build-dep wxwidgets2.8
-
-Get the source for both wxWidgets and wxPython in a single tarball:
-
-::
-
-    $ wget http://downloads.sourceforge.net/wxpython/wxPython-src-2.9.1.1.tar.bz2
-    $ tar xvfj wxPython-src-2.9.1.1.tar.bz2
-
-Check http://www.wxpython.org/download.php#unstable for updates.
-
-From there, follow the build instructions found `here <http://www.wxpython.org/builddoc.php>`_
 
 =======================
 Optional: PyEMF
