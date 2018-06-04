@@ -440,6 +440,12 @@ Section "Uninstall"
     ReadRegStr $R0 HKCR ".atf" "AM_OLD_VALUE"
     WriteRegStr HKCR ".atf" "" $R0
 
+  ; --> .tdms
+  ReadRegStr $R0 HKCR ".tdms" ""
+  StrCmp $R0 "${REG_NAME}" 0 +3
+    ReadRegStr $R0 HKCR ".tdms" "AM_OLD_VALUE"
+    WriteRegStr HKCR ".tdms" "" $R0
+
   SetDetailsPrint textonly
   DetailPrint "Successfully uninstalled stimfit"
   SetDetailsPrint listonly
@@ -515,6 +521,16 @@ Section ".atf (Axon text file)" SecAssATF
   no_stf:
     WriteRegStr HKCR ".atf" "AM_OLD_VALUE" $R0
   WriteRegStr HKCR ".atf" "" "${REG_NAME}"
+  already_stf:
+SectionEnd
+
+; --> .tdms
+Section ".tdms (Mantis TDMS file)" SecAssTDMS
+  ReadRegStr $R0 HKCR ".tdms" ""
+  StrCmp $R0 "${REG_NAME}" already_stf no_stf
+  no_stf:
+    WriteRegStr HKCR ".tdms" "AM_OLD_VALUE" $R0
+  WriteRegStr HKCR ".tdms" "" "${REG_NAME}"
   already_stf:
 SectionEnd
 
