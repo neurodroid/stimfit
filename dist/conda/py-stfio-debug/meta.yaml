@@ -1,6 +1,6 @@
 package:
     name: py-stfio-debug
-    version: "0.15.6"
+    version: "0.15.7"
 
 source:
     # Since this recipe is part of the git repo, the source is just a local path
