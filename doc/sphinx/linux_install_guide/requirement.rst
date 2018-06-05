@@ -42,7 +42,7 @@ This will get you, amongst others:
 * [NumPy]_: To handle multidimensional arrays and perform more complex numerical computations with Python.
 * [HDF5]_: This is the hierarchical Data Format 5 (HDF5) to manage large amount of data.
 
-In addition, you can install doxygen, python-sphinx and graphviz if you want to build yourself the documentation.
+In addition, you can install doxygen, python-sphinx and graphviz if you want to build the documentation.
 
 =======================
 Optional: PyEMF
@@ -82,6 +82,7 @@ Go to the stimfit directory (in our example $HOME/stimfit) and type:
 
 ::
 
+    $ cd $HOME/stimfit
     $ ./autogen.sh
 
 to generate the configure script. Remember that we need Autoconf, Automake and LibTool to use autogen. After that, you can call it with
@@ -120,24 +121,27 @@ where [N] is the number of parallel builds you want to start. And finally:
 Building Stimfit with BioSig import filter
 ==========================================
 
-It is recommended to build `Stimfit <http://www.stimfit.org>`_  with the `BioSig <http://biosig.sourceforge.net>`_ import the file filters to read HEKA files or to have the possibility import some other file formats used biomedical signal processing. To do it, follow this instructions:
+We recommend to build `Stimfit <http://www.stimfit.org>`_  with the `BioSig library <http://biosig.sourceforge.net>`_  to import files in from different biomedical disciplines. It is necessary to read files acquired with `HEKA amplifiers <http://www.heka.com>`_ or with `Signal <http://ced.co.uk/products/sigovin>`_ from CED. To do it, follow this instructions:
 
-1. It is first recommended to install libsuitesparse and libz libraries:
+1. Install libsuitesparse and libz libraries:
 
 ::
 
     sudo apt-get install libsuitesparse-dev libz-dev gawk
 
-2. Download BioSig sources: you can obtain the latest BioSig version in `BioSig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig (v1.5.6 or higher is recommended). Alternatively, you can obtain the latest developmental version from the git repository:
+2. Download the BioSig sources: you can obtain the latest BioSig version in `BioSig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig (v1.5.6 or higher is recommended). Alternatively, you can obtain the latest developmental version from the git repository:
 
 ::
 
-    git clone git://git.code.sf.net/p/biosig/code biosig-code
+    git clone https://git.code.sf.net/p/biosig/code biosig-code
 
-3. Compile and install the sources: enter the directory **biosig4c++** and type: 
+3. Enter the directory **biosig4c++** and compile and install the sources: 
 
 ::
 
+    cd biosig-code/biosig4c+
+    autoconf # needed first time after getting repository
+    ./configure
     make 
     sudo make install
 
@@ -147,17 +151,17 @@ After that you can enter the option --with-biosig in the configure script of `St
 Building documentation
 ======================
 
-The manual of `Stimfit <http://www.stimfit.org>`_ including the documentation is accessible on-line in http://www.stimfit.org/doc/sphix/. To have your own local copy of the documentation, you will need to install sphinx:
+The manual of `Stimfit <http://www.stimfit.org>`_ including the documentation is accessible on-line in http://www.stimfit.org/doc/sphix/. To have your local copy, you will need to install sphinx:
 
 ::
 
     sudo apt-get install python-sphinx
 
-It is possible to build a local copy of the documentation there by calling:
+To build a local copy call:
 
 ::
 
-    sphinx-build $HOME/Stimfit/doc/sphinx/ <destinyFolder> 
+    sphinx-build $HOME/Stimfit/doc/sphinx/ <destinyFolder> # destiny folder could be $HOME/tmp/stf/doc/
 
 The html documentation will be located in <destinyFolder>/index.html 
 
@@ -171,6 +175,7 @@ Enter a directory called **doc** inside Stimfit (e.g $HOME/stimfit/doc) and type
 
 ::
 
+    cd $HOME/stimfit/doc
     doxygen DoxyFile
 
 The local documentation of the source code will be in $HOME/stimfit/doc/doxygen/html
