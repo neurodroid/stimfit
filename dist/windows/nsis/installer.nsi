@@ -144,8 +144,8 @@ Section "Python ${PY_VERSION}" 0
   ExecWait 'cd "${PYEMFDIR}"; "c:\python${PY_MAJOR_SHORT}\python.exe" setup.py install'
   RMDir /r "${PYEMFDIR}"
 
-  ; Install / upgrade numpy, scipy, matplotlib
-  ExecWait '"c:\Python${PY_MAJOR_SHORT}\Scripts\pip.exe" install --upgrade numpy scipy matplotlib'
+  ; Install / upgrade numpy, scipy, matplotlib, nptdms
+  ExecWait '"c:\Python${PY_MAJOR_SHORT}\Scripts\pip.exe" install --upgrade numpy scipy matplotlib nptdms'
 
 SectionEnd
 !endif
