@@ -117,6 +117,8 @@ where [N] is the number of parallel builds you want to start. And finally:
 
     and after that call **make** and **make install** as normal user. The Stimfit executable will be now in $HOME/.local
 
+.. _BioSigBuild:
+
 ==========================================
 Building Stimfit with BioSig import filter
 ==========================================
