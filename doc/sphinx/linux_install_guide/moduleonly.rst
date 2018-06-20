@@ -18,7 +18,7 @@ Then, you need the `Stimfit <http://www.stimfit.org>`_ source code:
     $ cd $HOME
     $ git clone https://github.com/neurodroid/stimfit.git
 
-This will download the code to a directory called *stimfit*.
+It will download the code to a directory called *stimfit*.
 
 Next, you need to generate the build system:
 
@@ -38,10 +38,17 @@ Now you can configure. I strongly recommend building in a separate directory.
     $ cd module
     $ ../../configure --enable-module
 
-Remember to add the argument *--with-biosig* to the configure script 
-if you want to have extra biomedical fileformats for stfio. 
+We recommend to use BioSig to read extra biomedical fileformats (see :ref:`BioSigBuild`) :
 
-If you want to install the *stfio* module for a non-default Python distribution, such as **Anaconda Python**, use the argument *--prefix=* to specify the installation path as where your favorite Python distribution is installed. The following example will install *stfio* for Anaconda Python 2.7:
+::
+
+    $ ../../configure --enable-module --with-biosig
+
+===================================================
+Building stfio for non-default Python distributions
+===================================================
+
+To install the *stfio* module in distributions such as **Anaconda Python**, use the argument *--prefix=* to specify the path where the Python distribution is installed. For example, to install *stfio* for Anaconda Python 2.7 use:
 
 ::
 
@@ -53,6 +60,11 @@ If using virtual environment, try something like this:
 
     $ ../../configure --enable-module --prefix=$HOME/anaconda/envs/py36
 
+Other Python versions are also possible. For example, to install the module in your local Python version, you could use:
+
+::
+
+    $ ../../configure --enable-module --prefix=$HOME/.local/lib/python2.7
 
 Then, build and install:
 
