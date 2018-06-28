@@ -220,7 +220,7 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
     if (wxDocument::OnOpenDocument(filename)) { //calls base class function
 
 #ifndef TEST_MINIMAL
-    #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2) && !defined(__WXMAC__))
+    #if 0 //(defined(WITH_BIOSIG) || defined(WITH_BIOSIG2) && !defined(__WXMAC__))
         // Detect type of file according to filter:
         wxString filter(GetDocumentTemplate()->GetFileFilter());
     #else
@@ -728,6 +728,7 @@ bool wxStfDoc::SaveAs() {
     filters += wxT("CED filing system (*.dat;*.cfs)|*.dat;*.cfs|");
     filters += wxT("Axon text file (*.atf)|*.atf|");
     filters += wxT("Igor binary wave (*.ibw)|*.ibw|");
+    filters += wxT("Mantis TDMS file (*.tdms)|*.tdms|");
     filters += wxT("Text file series (*.txt)|*.txt|");
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
     filters += wxT("GDF file (*.gdf)|*.gdf");
@@ -747,7 +748,8 @@ bool wxStfDoc::SaveAs() {
             case 1: type=stfio::cfs; break;
             case 2: type=stfio::atf; break;
             case 3: type=stfio::igor; break;
-            case 4: type=stfio::ascii; break;
+            case 4: type=stfio::tdms; break;
+            case 5: type=stfio::ascii; break;
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
             default: type=stfio::biosig;
 #else

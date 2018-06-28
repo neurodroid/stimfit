@@ -526,7 +526,7 @@ private:
     // Pointer to the cursors settings dialog box
     wxStfCursorsDlg* CursorsDialog;
     wxDocTemplate* m_cfsTemplate, *m_hdf5Template, *m_txtTemplate,*m_abfTemplate,
-      *m_atfTemplate,*m_axgTemplate,*m_sonTemplate, *m_hekaTemplate, *m_intanTemplate, *m_biosigTemplate;
+      *m_atfTemplate,*m_axgTemplate,*m_sonTemplate, *m_hekaTemplate, *m_intanTemplate, *m_tdmsTemplate, *m_biosigTemplate;
     stfnum::storedFunc storedLinFunc;
     // wxMenu* m_file_menu;
     wxString m_fileToLoad;

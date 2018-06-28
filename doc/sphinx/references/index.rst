@@ -12,6 +12,16 @@ References
 `Stimfit <http://www.stimfit.org>`_ has been used for data analysis in the following publications. If you miss a reference to your publication, please let us know `here <https://groups.google.com/forum/#!forum/stimfit>`_.
 
 ====
+2018
+====
+
+    * `Hua Hu, Fabian C. Roth, David Vandael, Peter Jonas (2018) https://www.sciencedirect.com/science/article/pii/S0896627318301454?via%3Dihub>`_ Complementary Tuning of Na+ and K+ Channel Gating Underlies Fast and Energy-Efficient Action Potentials in GABAergic Interneuron Axons. *Neuron*  10.1016/j.neuron.2018.02.024.
+
+    * `Sooyun Kim, Yoonsub Kim, Suk-Ho Lee, Won-Kyung Ho (2018) https://elifesciences.org/articles/35269>`_ Dendritic spikes in hippocampal granule cells are necessary for long-term potentiation at the perforant path synapse. *eLife* 2018:Mar 26:7.
+
+    * `John J Marshall, Jian Xu, Anis Contractor (2018) <http://www.jneurosci.org/content/early/2018/03/14/JNEUROSCI.1788-17.2018>`_ Kainate receptors inhibit glutamate release via mobilization of endocannabinoids in striatal direct pathway Spiny Projection Neurons (dSPNs). *J Neurosci* 38(16):1788-17.
+
+====
 2017
 ====
 

@@ -523,7 +523,7 @@ def read_tdms(fn):
              for channel in tdms_file.group_channels(group)
              if channel.data is not None]
                  for group in tdms_file.groups()
-                 if group.lower() != "time"],
+            if group.lower()[:2] == "ai" or group.lower()[:2] == "ao"],
         "dt": dt,
     }
     return return_dict

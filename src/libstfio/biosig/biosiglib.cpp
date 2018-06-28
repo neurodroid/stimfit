@@ -164,7 +164,7 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     size_t numberOfEvents = biosig_get_number_of_events(hdr);
     size_t nsections = biosig_get_number_of_segments(hdr);
     ReturnData.InitSectionMarkerList(nsections);
-    size_t *SegIndexList = (size_t*)malloc((nsections+1)*sizeof(size_t));
+    std::vector<size_t> SegIndexList(nsections+1);
     SegIndexList[0] = 0;
     SegIndexList[nsections] = biosig_get_number_of_samples(hdr);
     std::string annotationTableDesc = std::string();
@@ -232,7 +232,12 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         TempChannel.SetYUnits(biosig_channel_get_physdim(hc));
 
         for (size_t ns=1; ns<=nsections; ns++) {
-	        size_t SPS = SegIndexList[ns]-SegIndexList[ns-1];	// length of segment, samples per segment
+            if (SegIndexList[ns]-SegIndexList[ns-1] < 0) {
+                ReturnData.resize(0);
+                destructHDR(hdr);
+                return type;
+            }
+            size_t SPS = SegIndexList[ns]-SegIndexList[ns-1];	// length of segment, samples per segment
 
             int progbar = int(100.0 * (1.0 * ns / nsections + NS) / numberOfChannels);
             std::ostringstream progStr;
@@ -266,8 +271,6 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
             return type;
         }
     }   // end for channels
-
-    if (SegIndexList) free(SegIndexList);
 
     ReturnData.SetComment ( biosig_get_recording_id(hdr) );
 

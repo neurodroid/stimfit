@@ -1,6 +1,6 @@
 /*
 
-    Copyright (C) 2008-2013 Alois Schloegl <alois.schloegl@gmail.com>
+    Copyright (C) 2008-2013,2018 Alois Schloegl <alois.schloegl@gmail.com>
     This file is part of the "BioSig for C/C++" repository
     (biosig4c++) at http://biosig.sf.net/
 
@@ -567,14 +567,13 @@ if (VERBOSE_LEVEL>6) fprintf(stdout,"HEKA L5 @%i= #%i,%i, %s %g/%g %g/%g \n",(in
 							} 
 
 							if ((pdc & 0xFFE0) != (hc->PhysDimCode & 0xFFE0)) {
-	                                                        fprintf(stdout, "Warning: Yunits do not match #%i,%f-%fHz\n",ns, DT[ns],dT);
-	                                                        biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Heka/Patchmaster: Yunits do not match");
+	                                                        fprintf(stdout, "ERROR: [%i,%i,%i,%i] Yunits in %s do not match %04x(%s) ! %04x(%s)\n",k1,k2,k3,k4, Label, pdc, PhysDim3(pdc), hc->PhysDimCode, PhysDim3(hc->PhysDimCode));
+								biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Heka/Patchmaster: Yunits do not match");
 							}
 	                                                if ( ( VERBOSE_LEVEL > 7 ) && ( fabs( DT[ns] - dT) > 1e-9 * dT) ) {
 								fprintf(stdout, "%s (line %i) different sampling rates [%i,%i,%i,%i]#%i,%f/%f \n",__FILE__,__LINE__,(int)k1,(int)k2,(int)k3,(int)k4,(int)ns, 1.0/DT[ns],1.0/dT);
 	                                                }
 						}
-
 
 						if (YOffset) {
 							biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Heka/Patchmaster: YOffset is not zero");

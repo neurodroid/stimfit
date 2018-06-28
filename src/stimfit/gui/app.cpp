@@ -216,6 +216,10 @@ bool wxStfApp::OnInit(void)
                                      wxT("Intan CLAMP file"), wxT("*.clp"), wxT(""), wxT("clp"),
                                      wxT("Intan CLAMP Document"), wxT("Intan View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
+    m_tdmsTemplate=new wxDocTemplate( docManager,
+                                     wxT("Mantis TDMS file"), wxT("*.tdms"), wxT(""), wxT("tdms"),
+                                     wxT("Mantis TDMS Document"), wxT("TDMS View"), CLASSINFO(wxStfDoc),
+                                     CLASSINFO(wxStfView) );
 #if 0
     m_sonTemplate=new wxDocTemplate( docManager,
                                      wxT("CED Spike 2 (SON) file"), wxT("*.smr"), wxT(""), wxT(""),

@@ -1,6 +1,6 @@
 /*
 
-    Copyright (C) 2012,2013,2016,2017 Alois Schloegl <alois.schloegl@gmail.com>
+    Copyright (C) 2012-2018 Alois Schloegl <alois.schloegl@gmail.com>
     This file is part of the "BioSig for C/C++" repository
     (biosig4c++) at http://biosig.sf.net/
 
@@ -434,6 +434,7 @@ const char* biosig_get_manufacturer_serial_number(HDRTYPE *hdr);
 const char* biosig_get_application_specific_information(HDRTYPE *hdr);
 
 int biosig_set_patient_name(HDRTYPE *hdr, const char* rid);
+int biosig_set_patient_name_structured(HDRTYPE *hdr, const char* LastName, const char* FirstName, const char* SecondLastName);
 int biosig_set_patient_id(HDRTYPE *hdr, const char* rid);
 int biosig_set_recording_id(HDRTYPE *hdr, const char* rid);
 int biosig_set_technician(HDRTYPE *hdr, const char* rid);

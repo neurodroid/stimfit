@@ -1,6 +1,6 @@
 /*
 
-    Copyright (C) 2005-2017 Alois Schloegl <alois.schloegl@gmail.com>
+    Copyright (C) 2005-2018 Alois Schloegl <alois.schloegl@gmail.com>
     Copyright (C) 2011 Stoyan Mihaylov
     This file is part of the "BioSig for C/C++" repository
     (biosig4c++) at http://biosig.sf.net/
@@ -3477,7 +3477,7 @@ int read_header(HDRTYPE *hdr) {
 	size_t count = hdr->HeadLen;
 	if (hdr->HeadLen<=512) {
 		ifseek(hdr, count, SEEK_SET);
-	    	hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header, 513);
+		hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header, 513);
 		count += ifread(hdr->AS.Header+hdr->HeadLen, 1, 512-count, hdr);
 		getfiletype(hdr);
 	}
@@ -3718,7 +3718,13 @@ else if (!strncmp(MODE,"r",1)) {
     	}
 #endif
 
-    	hdr->AS.Header = (uint8_t*)malloc(513);
+	// modern cpu's have cache lines of 4096 bytes, so for performance reasons we use this size as well.
+	const size_t PAGESIZE=4096;
+	/* reading some formats may imply that at least 512 bytes are read,
+           if you want to use a smaller page size, double check whether your format(s) are correctly handled. */
+	assert(PAGESIZE >= 512);
+	hdr->AS.Header = (uint8_t*)malloc(PAGESIZE+1);
+
 	size_t k;
 #ifndef  ONLYGDF
 	size_t name=0,ext=0;
@@ -3769,8 +3775,8 @@ else if (!strncmp(MODE,"r",1)) {
 	                curl_easy_cleanup(curl);
 
 			/* */
-			count = ifread(hdr->AS.Header, 1, 512, hdr);
-	        	hdr->AS.Header[512]=0;
+			count = ifread(hdr->AS.Header, 1, PAGESIZE, hdr);
+			hdr->AS.Header[count]=0;
 	        }
 	} else
 #endif
@@ -3811,7 +3817,7 @@ else if (!strncmp(MODE,"r",1)) {
 	    		return(hdr);
 		}
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN 101:\n");
-		count = ifread(hdr->AS.Header, 1, 512, hdr);
+		count = ifread(hdr->AS.Header, 1, PAGESIZE, hdr);
 		hdr->AS.Header[count]=0;
 
 
@@ -3823,8 +3829,8 @@ else if (!strncmp(MODE,"r",1)) {
 			hdr->FILE.gzFID = gzdopen(fileno(hdr->FILE.FID),"r"); 
 		        hdr->FILE.COMPRESSION = (uint8_t)1;
 			hdr->FILE.FID = NULL;
-			count = ifread(hdr->AS.Header, 1, 512, hdr);
-	        	hdr->AS.Header[512]=0;
+			count = ifread(hdr->AS.Header, 1, PAGESIZE, hdr);
+			hdr->AS.Header[count]=0;
 #else
 			biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Error SOPEN(READ); *.gz file not supported because not linked with zlib.");
 #endif
@@ -8041,12 +8047,13 @@ if (VERBOSE_LEVEL>8)
 
 		if (!hdr->FLAG.ANONYMOUS) {
 			len = min(40, MAX_LENGTH_NAME);
-			char *s = (char*)(hdr->AS.Header+28);
+			char *s;
+			s = (char*)(hdr->AS.Header+68);	// lastname
 			int len1 = min(40, strlen(s));
 			strncpy(hdr->Patient.Name, s, len1);
-			hdr->Patient.Name[len] = ' ';
+			hdr->Patient.Name[len] = 0x1f;	// unit separator ascii(31)
 
-			s = (char*)(hdr->AS.Header+68);
+			s = (char*)(hdr->AS.Header+28);	// firstname
 			int len2 = min(strlen(s), MAX_LENGTH_NAME-len-1);
 			strncpy(hdr->Patient.Name+len1+1, s, len2);
 			hdr->Patient.Name[len1+len2+1] = 0;
@@ -10103,20 +10110,23 @@ if (VERBOSE_LEVEL>2)
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (Persyst) [270] %d<%s>\n",status,line); 		
 			
 		if (!hdr->FLAG.ANONYMOUS) {
-			size_t len = 0; 
-			if (FirstName!=NULL) len = strlen(FirstName); 
-			if (len < MAX_LENGTH_NAME) {
-				strcpy(hdr->Patient.Name, FirstName);
-				hdr->Patient.Name[len++]=' ';
-			}
-			if (MiddleName!=NULL) len += strlen(MiddleName); 
-			if (len < MAX_LENGTH_NAME) {
-				strcpy(hdr->Patient.Name, MiddleName);
-				hdr->Patient.Name[len++]=' ';
-			}
-			if (SurName!=NULL) len += strlen(SurName); 
+			size_t len = 0, len0=0;
+			if (SurName!=NULL) len += strlen(SurName);
 			if (len < MAX_LENGTH_NAME) {
 				strcpy(hdr->Patient.Name, SurName);
+				hdr->Patient.Name[len]=0x1f;
+				len0 = ++len;
+			}
+			if (FirstName!=NULL) len += strlen(FirstName);
+			if (len < MAX_LENGTH_NAME) {
+				strcpy(hdr->Patient.Name+len0, FirstName);
+				hdr->Patient.Name[len]=' ';
+				len0 = ++len;
+			}
+			if (MiddleName!=NULL) len += strlen(MiddleName);
+			if (len < MAX_LENGTH_NAME) {
+				strcpy(hdr->Patient.Name+len0, MiddleName);
+				hdr->Patient.Name[len0]=' ';
 			}
 			hdr->Patient.Name[len]=0;
 		}
@@ -13415,10 +13425,10 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
 
 #ifdef ZLIB_H
 					if (H1.FILE.COMPRESSION)
-						gzprintf(H1.FILE.gzFID,"%f\n",i/DIV);
+						gzprintf(H1.FILE.gzFID,"%g\n",i/DIV);
 					else
 #endif
-						fprintf(H1.FILE.FID,"%f\n",i/DIV);
+						fprintf(H1.FILE.FID,"%g\n",i/DIV);
 				}
 			}
 			else if (hdr->TYPE == BIN) {
@@ -13798,7 +13808,17 @@ if (VERBOSE_LEVEL>7) fprintf(stdout, "asprintf_hdr2json: sz=%i\n", (int)sz);
 	c += sprintf(STR, "\t\"NumberOfGroupsOrUserSpecifiedEvents\"\t: %d,\n", (unsigned)NumberOfUserSpecifiedEvents);
 
 	c += sprintf(STR, "\t\"Patient\"\t: {\n");
-	if (hdr->Patient.Name) c += sprintf(STR, "\t\t\"Name\"\t: \"%s\",\n", hdr->Patient.Name);
+	if (strlen(hdr->Patient.Name)) {
+		c += sprintf(STR, "\t\t\"Name\"\t: \"%s\",\n", hdr->Patient.Name);
+		char Name[MAX_LENGTH_NAME+1];
+		strcpy(Name, hdr->Patient.Name);
+		char *lastname = strtok(Name,"\x1f");
+		char *firstname = strtok(NULL,"\x1f");
+		char *secondlastname = strtok(NULL,"\x1f");
+		c += sprintf(STR, "\t\t\"Lastname\"\t: \"%s\",\n", lastname);
+		c += sprintf(STR, "\t\t\"Firstname\"\t: \"%s\",\n", firstname);
+		c += sprintf(STR, "\t\t\"Second_Lastname\"\t: \"%s\",\n", secondlastname);
+	}
 	if (hdr->Patient.Id)   c += sprintf(STR, "\t\t\"Id\"\t: \"%s\",\n", hdr->Patient.Id);
 	if (hdr->Patient.Weight) c += sprintf(STR, "\t\t\"Weight\"\t: \"%i kg\",\n", hdr->Patient.Weight);
 	if (hdr->Patient.Height) c += sprintf(STR, "\t\t\"Height\"\t: \"%i cm\",\n", hdr->Patient.Height);
@@ -13987,7 +14007,17 @@ int fprintf_hdr2json(FILE *fid, HDRTYPE* hdr)
 	fprintf(fid,"\t\"NumberOfGroupsOrUserSpecifiedEvents\"\t: %d,\n",(unsigned)NumberOfUserSpecifiedEvents);
 
 	fprintf(fid,"\t\"Patient\"\t: {\n");
-	if (hdr->Patient.Name)   fprintf(fid,"\t\t\"Name\"\t: \"%s\",\n", hdr->Patient.Name);
+	if (strlen(hdr->Patient.Name)) {
+		fprintf(fid, "\t\t\"Name\"\t: \"%s\",\n", hdr->Patient.Name);
+		char Name[MAX_LENGTH_NAME+1];
+		strcpy(Name, hdr->Patient.Name);
+		char *lastname = strtok(Name,"\x1f");
+		char *firstname = strtok(NULL,"\x1f");
+		char *secondlastname = strtok(NULL,"\x1f");
+		fprintf(fid, "\t\t\"Lastname\"\t: \"%s\",\n", lastname);
+		fprintf(fid, "\t\t\"Firstname\"\t: \"%s\",\n", firstname);
+		fprintf(fid, "\t\t\"Second_Lastname\"\t: \"%s\",\n", secondlastname);
+	}
 	if (hdr->Patient.Id)     fprintf(fid,"\t\t\"Id\"\t: \"%s\",\n", hdr->Patient.Id);
 	if (hdr->Patient.Weight) fprintf(fid,"\t\t\"Weight\"\t: \"%i kg\",\n", hdr->Patient.Weight);
 	if (hdr->Patient.Height) fprintf(fid,"\t\t\"Height\"\t: \"%i cm\",\n", hdr->Patient.Height);
@@ -14157,7 +14187,17 @@ int hdr2ascii(HDRTYPE* hdr, FILE *fid, int VERBOSE)
 		fprintf(fid,               "\tVersion         : %s\n",hdr->ID.Manufacturer.Version);
 		fprintf(fid,               "\tSerialNumber    : %s\n",hdr->ID.Manufacturer.SerialNumber);
 		fprintf(fid,     "Patient:\n\tID              : %s\n",hdr->Patient.Id);
-		fprintf(fid,               "\tName            : %s\n",hdr->Patient.Name);
+		if (strlen(hdr->Patient.Name)) {
+			fprintf(fid,               "\tName            : %s\n",hdr->Patient.Name);
+			char Name[MAX_LENGTH_NAME+1];
+			strcpy(Name, hdr->Patient.Name);
+			char *lastname = strtok(Name,"\x1f");
+			char *firstname = strtok(NULL,"\x1f");
+			char *secondlastname = strtok(NULL,"\x1f");
+			fprintf(fid,"\t\tLastname        : %s\n",lastname);
+			fprintf(fid,"\t\tFirstname       : %s\n",firstname);
+			fprintf(fid,"\t\tSecondLastName  : %s\n",secondlastname);
+		}
 
 		if (hdr->Patient.Birthday>0)
 			age = (hdr->T0 - hdr->Patient.Birthday)/ldexp(365.25,32);

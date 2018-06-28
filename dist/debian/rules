@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-# Sample debian/rules that uses debhelper. 
+# Sample debian/rules that uses debhelper.
 # This file is public domain software, originally written by Joey Hess.
 #
 # This version is for packages that are architecture independent.
@@ -99,7 +99,7 @@ binary-arch: build install
 	dh_fixperms
 	dh_icons
 #	dh_perl
-	[ -x /usr/bin/dh_python2 ] && dh_python2 -V$(PYVER) || :
+	[ -x /usr/bin/dh_python2 ] && dh_python2 -V$(PYVER) --no-ext-rename || :
 	[ -x /usr/bin/dh_numpy ] && dh_numpy || :
 	dh_makeshlibs
 	dh_shlibdeps
