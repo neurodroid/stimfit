@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Latency measurements &#8212; Stimfit 0.15.4 documentation</title>
+    <title>Latency measurements &#8212; Stimfit 0.15.8 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.15.4',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -25,8 +17,7 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Event extraction by template matching" href="event_extraction.html" />
     <link rel="prev" title="The Python shell" href="python.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -65,7 +56,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber (christsc at gmx.de)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">08 November, 2017</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">28 June, 2018</td>
 </tr>
 </tbody>
 </table>
@@ -120,29 +111,29 @@ I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{
 <ul class="simple">
 <li><strong>align_selected(alignment, active=False)</strong></li>
 </ul>
-<p><a class="reference internal" href="../stf_reference/stf.html#stf.align_selected" title="stf.align_selected"><code class="xref py py-func docutils literal"><span class="pre">stf.align_selected()</span></code></a> aligns the selected traces to a point that is determined by the user-supplied function <code class="docutils literal"><span class="pre">alignment</span></code> and then shows the aligned traces in a new window. The alignment function is applied to the active channel if <em>active=True</em> or to the inactive channel if <em>active=False</em>. The alignment function has to return an index within a traces, and it should adhere to the general form <code class="docutils literal"><span class="pre">index(active)</span></code>, where <code class="docutils literal"><span class="pre">active</span></code> is a boolean indicating whether the active or the inactive channel should be used. The most common alignment functions are built into the program:</p>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.align_selected" title="stf.align_selected"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.align_selected()</span></code></a> aligns the selected traces to a point that is determined by the user-supplied function <code class="docutils literal notranslate"><span class="pre">alignment</span></code> and then shows the aligned traces in a new window. The alignment function is applied to the active channel if <em>active=True</em> or to the inactive channel if <em>active=False</em>. The alignment function has to return an index within a traces, and it should adhere to the general form <code class="docutils literal notranslate"><span class="pre">index(active)</span></code>, where <code class="docutils literal notranslate"><span class="pre">active</span></code> is a boolean indicating whether the active or the inactive channel should be used. The most common alignment functions are built into the program:</p>
 <ul class="simple">
 <li><strong>maxrise_index(active)</strong></li>
 </ul>
-<p><a class="reference internal" href="../stf_reference/stf.html#stf.maxrise_index" title="stf.maxrise_index"><code class="xref py py-func docutils literal"><span class="pre">stf.maxrise_index()</span></code></a> returns the zero-based index of the maximal slope of the rise in units of sampling points (see Fig. 13), interpolated between adjacent sampling points, or a negative value upon failure.</p>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.maxrise_index" title="stf.maxrise_index"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.maxrise_index()</span></code></a> returns the zero-based index of the maximal slope of the rise in units of sampling points (see Fig. 13), interpolated between adjacent sampling points, or a negative value upon failure.</p>
 <ul class="simple">
 <li><strong>peak_index(active)</strong></li>
 </ul>
-<p><a class="reference internal" href="../stf_reference/stf.html#stf.peak_index" title="stf.peak_index"><code class="xref py py-func docutils literal"><span class="pre">stf.peak_index()</span></code></a> returns the zero-based index of the peak value in units of sampling points (see Fig. 13) or a negative value upon failure. The return value may be interpolated if a moving average is used for the peak calculation.</p>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.peak_index" title="stf.peak_index"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.peak_index()</span></code></a> returns the zero-based index of the peak value in units of sampling points (see Fig. 13) or a negative value upon failure. The return value may be interpolated if a moving average is used for the peak calculation.</p>
 <ul class="simple">
 <li><strong>foot_index(active)</strong></li>
 </ul>
-<p><a class="reference internal" href="../stf_reference/stf.html#stf.foot_index" title="stf.foot_index"><code class="xref py py-func docutils literal"><span class="pre">stf.foot_index()</span></code></a> returns the zero-based index of the foot of an event, as described in Fig. 18, or a negative value upon failure.</p>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.foot_index" title="stf.foot_index"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.foot_index()</span></code></a> returns the zero-based index of the foot of an event, as described in Fig. 18, or a negative value upon failure.</p>
 <ul class="simple">
 <li><strong>t50left_index(active)</strong></li>
 </ul>
-<p><a class="reference internal" href="../stf_reference/stf.html#stf.t50left_index" title="stf.t50left_index"><code class="xref py py-func docutils literal"><span class="pre">stf.t50left_index()</span></code></a> returns the zero-based index of the left half-maximal amplitude in units of sampling points (see Fig. 13), or a negative value upon failure. The return value will be interpolated between sampling points.</p>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.t50left_index" title="stf.t50left_index"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.t50left_index()</span></code></a> returns the zero-based index of the left half-maximal amplitude in units of sampling points (see Fig. 13), or a negative value upon failure. The return value will be interpolated between sampling points.</p>
 <ul class="simple">
 <li><strong>t50right_index(active)</strong></li>
 </ul>
-<p><a class="reference internal" href="../stf_reference/stf.html#stf.t50right_index" title="stf.t50right_index"><code class="xref py py-func docutils literal"><span class="pre">stf.t50right_index()</span></code></a> returns the zero-based index of he right half-maximal amplitude in units of sampling points (see Fig. 13), or a negative value upon failure. The return value will be interpolated between sampling points.</p>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.t50right_index" title="stf.t50right_index"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.t50right_index()</span></code></a> returns the zero-based index of he right half-maximal amplitude in units of sampling points (see Fig. 13), or a negative value upon failure. The return value will be interpolated between sampling points.</p>
 <p>The following code can be used to align all traces within a file to the maximal slope of rise in the inactive channel.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># import the Stimfit core module:</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># import the Stimfit core module:</span>
 <span class="kn">import</span> <span class="nn">stf</span>
 
 <span class="k">def</span> <span class="nf">align_maxrise</span><span class="p">():</span>
@@ -218,12 +209,14 @@ I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{
                         title="next chapter">Event extraction by template matching</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -254,12 +247,14 @@ I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{
                         title="next chapter">Event extraction by template matching</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -267,7 +262,7 @@ I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{
     
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 08 November, 2017.
+      Last updated on 28 June, 2018.
     </div>
   </body>
 </html>

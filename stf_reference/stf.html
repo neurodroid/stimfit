@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>stf &#8212; Stimfit 0.15.4 documentation</title>
+    <title>stf &#8212; Stimfit 0.15.8 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.15.4',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -25,8 +17,7 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="References" href="../references/index.html" />
     <link rel="prev" title="Loading custom text files" href="../howto/ascii.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -57,20 +48,20 @@
           <div class="body" role="main">
             
   <div class="section" id="stf">
-<h1><a class="reference internal" href="#module-stf" title="stf: The stf module allows to access a running stimfit application from the embedded python shell."><code class="xref py py-mod docutils literal"><span class="pre">stf</span></code></a><a class="headerlink" href="#stf" title="Permalink to this headline">¶</a></h1>
+<h1><a class="reference internal" href="#module-stf" title="stf: The stf module allows to access a running stimfit application from the embedded python shell."><code class="xref py py-mod docutils literal notranslate"><span class="pre">stf</span></code></a><a class="headerlink" href="#stf" title="Permalink to this headline">¶</a></h1>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber (christsc at gmx.de)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Release:</th><td class="field-body">0.15.4</td>
+<tr class="field-even field"><th class="field-name">Release:</th><td class="field-body">0.15.8</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">08 November, 2017</td>
+<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">28 June, 2018</td>
 </tr>
 </tbody>
 </table>
-<span class="target" id="module-stf"></span><p>The <a class="reference internal" href="#module-stf" title="stf: The stf module allows to access a running stimfit application from the embedded python shell."><code class="xref py py-mod docutils literal"><span class="pre">stf</span></code></a> module defines the following functions:</p>
+<span class="target" id="module-stf"></span><p>The <a class="reference internal" href="#module-stf" title="stf: The stf module allows to access a running stimfit application from the embedded python shell."><code class="xref py py-mod docutils literal notranslate"><span class="pre">stf</span></code></a> module defines the following functions:</p>
 <dl class="function">
 <dt id="stf.align_selected">
 <code class="descclassname">stf.</code><code class="descname">align_selected</code><span class="sig-paren">(</span><em>alignment</em>, <em>active=False</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.align_selected" title="Permalink to this definition">¶</a></dt>
@@ -137,7 +128,7 @@ Accepts any function returning a valid index within a trace. These are some pred
 <dl class="function">
 <dt id="stf.erase_markers">
 <code class="descclassname">stf.</code><code class="descname">erase_markers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.erase_markers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete the markes created with <a class="reference internal" href="#stf.set_marker" title="stf.set_marker"><code class="xref py py-func docutils literal"><span class="pre">set_marker()</span></code></a></p>
+<dd><p>Delete the markes created with <a class="reference internal" href="#stf.set_marker" title="stf.set_marker"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_marker()</span></code></a></p>
 </dd></dl>
 
 <dl class="function">
@@ -148,11 +139,11 @@ Accepts any function returning a valid index within a trace. These are some pred
 <div><p><strong>Arguments:</strong></p>
 <p><em>filename</em> – The file to be opened. On Windows, use double back-slashes (“&quot;) between directories to avoid conversion to special characters such as “t” or “n”.
 Example usage in Windows:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_open</span><span class="p">(</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">datafile.dat&quot;</span><span class="p">)</span><span class="o">.</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_open</span><span class="p">(</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">datafile.dat&quot;</span><span class="p">)</span><span class="o">.</span>
 </pre></div>
 </div>
 <p>Example usage in Linux:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_open</span><span class="p">(</span><span class="s2">&quot;/home/cs/data/datafile.dat&quot;</span><span class="p">)</span><span class="o">.</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_open</span><span class="p">(</span><span class="s2">&quot;/home/cs/data/datafile.dat&quot;</span><span class="p">)</span><span class="o">.</span>
 </pre></div>
 </div>
 <p>This is surprisingly slow when called from python. Haven’t figured out the reason yet.</p>
@@ -169,11 +160,11 @@ Example usage in Windows:</p>
 <div><p><strong>Arguments:</strong></p>
 <p><em>filename</em> – The file to be saved. On Windows, use double back-slashes (“&quot;) between directories to avoid con-version to special characters such as “t” or “n”.</p>
 <p>Example usage in Windows:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_save</span><span class="p">(</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">datafile.dat&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_save</span><span class="p">(</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">datafile.dat&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Example usage in Linux:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_save</span><span class="p">(</span><span class="s2">&quot;/home/cs/data/datafile.dat&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_save</span><span class="p">(</span><span class="s2">&quot;/home/cs/data/datafile.dat&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This is surprisingly slow when called from python. Haven’t figured out the reason yet.</p>
@@ -320,7 +311,7 @@ Example usage in Windows:</p>
 <dl class="function">
 <dt id="stf.get_latency">
 <code class="descclassname">stf.</code><code class="descname">get_latency</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_latency" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the latency value (in x-units) determined by the latency cursors set in the cursors settings menu. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter to update the cursors.</p>
+<dd><p>Returns the latency value (in x-units) determined by the latency cursors set in the cursors settings menu. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter to update the cursors.</p>
 </dd></dl>
 
 <dl class="function">
@@ -338,19 +329,19 @@ Example usage in Windows:</p>
 <dl class="function">
 <dt id="stf.get_maxdecay">
 <code class="descclassname">stf.</code><code class="descname">get_maxdecay</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_maxdecay" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the the maximal slope of the decay between the peak cursors. Returns -1.0 upon error. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter to update the value.</p>
+<dd><p>Returns the the maximal slope of the decay between the peak cursors. Returns -1.0 upon error. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter to update the value.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="stf.get_maxrise">
 <code class="descclassname">stf.</code><code class="descname">get_maxrise</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_maxrise" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the the maximal slope of the rise between the peak cursors. Returns -1.0 upon error. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter to update the value.</p>
+<dd><p>Returns the the maximal slope of the rise between the peak cursors. Returns -1.0 upon error. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter to update the value.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="stf.get_risetime">
 <code class="descclassname">stf.</code><code class="descname">get_risetime</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_risetime" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the 20-80% rise time (in x-units) by calculation of the interpolated adjacent sampling points at 20% and 80% of the peak amplitude. Returns -1.0 upon failure. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter to update the value.</p>
+<dd><p>Returns the 20-80% rise time (in x-units) by calculation of the interpolated adjacent sampling points at 20% and 80% of the peak amplitude. Returns -1.0 upon failure. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter to update the value.</p>
 </dd></dl>
 
 <dl class="function">
@@ -500,7 +491,7 @@ we calculate the 20–80% rise time).</p>
 <dl class="function">
 <dt id="stf.get_threshold_time">
 <code class="descclassname">stf.</code><code class="descname">get_threshold_time</code><span class="sig-paren">(</span><em>is_time=False</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_threshold_time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the crossing value of the threshold slope. Note that this value is not update after changing the AP threshold. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter in the main window to update the cursors.</p>
+<dd><p>Returns the crossing value of the threshold slope. Note that this value is not update after changing the AP threshold. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter in the main window to update the cursors.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
 <p><em>is_time</em> – If false (default), returns the zero-based index at which the threshold slope is crossed. If True, returns the time at which the threshold slope is crossed (e.g. in units of the y-axis). A negative number is returned upon failure.</p>
@@ -512,7 +503,7 @@ we calculate the 20–80% rise time).</p>
 <dl class="function">
 <dt id="stf.get_threshold_value">
 <code class="descclassname">stf.</code><code class="descname">get_threshold_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_threshold_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns value found at the threshold slope. Note that this value is not update after changing the AP threshold. Calle <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter in the main window to update the cursors.</p>
+<dd><p>Returns value found at the threshold slope. Note that this value is not update after changing the AP threshold. Calle <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter in the main window to update the cursors.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
 <p>False upon failure (such as out-of-range).</p>
@@ -585,7 +576,7 @@ we calculate the 20–80% rise time).</p>
 <dl class="function">
 <dt id="stf.maxdecay_index">
 <code class="descclassname">stf.</code><code class="descname">maxdecay_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.maxdecay_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the zero-based index of the maximal slope of decay in the current channel. Uses the currently measured values, i.e. does not update measurements if the peak window cursors have changed. Note that in contrast to <a class="reference internal" href="#stf.maxrise_index" title="stf.maxrise_index"><code class="xref py py-func docutils literal"><span class="pre">maxrise_index()</span></code></a>, this function only works on the active channel.</p>
+<dd><p>Returns the zero-based index of the maximal slope of decay in the current channel. Uses the currently measured values, i.e. does not update measurements if the peak window cursors have changed. Note that in contrast to <a class="reference internal" href="#stf.maxrise_index" title="stf.maxrise_index"><code class="xref py py-func docutils literal notranslate"><span class="pre">maxrise_index()</span></code></a>, this function only works on the active channel.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
 <p>The zero-based index of the maximal slope of decay in units of sampling points interpolated between adjacent sampling points. Returns a negative value upon failure.</p>
@@ -615,7 +606,7 @@ we calculate the 20–80% rise time).</p>
 <dl class="function">
 <dt id="stf.new_window_list">
 <code class="descclassname">stf.</code><code class="descname">new_window_list</code><span class="sig-paren">(</span><em>array_list</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.new_window_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a new window showing a sequence of 1D NumPy arrays, or a sequence of a sequence of 1D NumPy arrays. As opposed to <a class="reference internal" href="#stf.new_window_matrix" title="stf.new_window_matrix"><code class="xref py py-func docutils literal"><span class="pre">new_window_matrix()</span></code></a>, this has the advantage that the arrays need not have equal sizes.</p>
+<dd><p>Creates a new window showing a sequence of 1D NumPy arrays, or a sequence of a sequence of 1D NumPy arrays. As opposed to <a class="reference internal" href="#stf.new_window_matrix" title="stf.new_window_matrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_window_matrix()</span></code></a>, this has the advantage that the arrays need not have equal sizes.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
 <p><em>array_list</em> – A sequence (e.g. list or tuple) of numpy arrays, or a sequence of a sequence of numpy arrays.</p>
@@ -697,7 +688,7 @@ we calculate the 20–80% rise time).</p>
 <dl class="function">
 <dt id="stf.set_base_end">
 <code class="descclassname">stf.</code><code class="descname">set_base_end</code><span class="sig-paren">(</span><em>pos</em>, <em>is_time=False</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_base_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the base end cursor to a new position.This will NOT update the baseline calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
+<dd><p>Sets the base end cursor to a new position.This will NOT update the baseline calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
 <p><em>pos</em> – The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.</p>
@@ -710,7 +701,7 @@ we calculate the 20–80% rise time).</p>
 <dl class="function">
 <dt id="stf.set_base_start">
 <code class="descclassname">stf.</code><code class="descname">set_base_start</code><span class="sig-paren">(</span><em>pos</em>, <em>is_time=False</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_base_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the base start cursor to a new position.This will NOT update the baseline calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
+<dd><p>Sets the base start cursor to a new position.This will NOT update the baseline calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
 <p><em>pos</em> –     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.</p>
@@ -723,7 +714,7 @@ we calculate the 20–80% rise time).</p>
 <dl class="function">
 <dt id="stf.set_channel">
 <code class="descclassname">stf.</code><code class="descname">set_channel</code><span class="sig-paren">(</span><em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_channel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the currently displayed channel to a new index. Subsequently updatges all measurements (e.g. peak, base, latency, i.e. you do not have to call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> yourself.)</p>
+<dd><p>Sets the currently displayed channel to a new index. Subsequently updatges all measurements (e.g. peak, base, latency, i.e. you do not have to call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> yourself.)</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
 <p><em>channel</em>– The zero-based index of the new trace to be displayed.</p>
@@ -845,7 +836,7 @@ we calculate the 20–80% rise time).</p>
 <dl class="function">
 <dt id="stf.set_peak_end">
 <code class="descclassname">stf.</code><code class="descname">set_peak_end</code><span class="sig-paren">(</span><em>pos</em>, <em>is_time=False</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_peak_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the peak end cursor to a new position. This will NOT update the peak calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
+<dd><p>Sets the peak end cursor to a new position. This will NOT update the peak calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
 <p><em>pos</em> –     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.
@@ -890,7 +881,7 @@ we calculate the 20–80% rise time).</p>
 <dl class="function">
 <dt id="stf.set_peak_start">
 <code class="descclassname">stf.</code><code class="descname">set_peak_start</code><span class="sig-paren">(</span><em>pos</em>, <em>is_time=False</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_peak_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the peak start cursor to a new position. This will NOT update the peak calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
+<dd><p>Sets the peak start cursor to a new position. This will NOT update the peak calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
 <p><em>pos</em> –     The new cursor position, either in units of sampling points if <em>is_time</em> == False (default) or in units of time if <em>is_time</em> == True.
@@ -965,7 +956,7 @@ measurement.</p>
 <dl class="function">
 <dt id="stf.set_slope">
 <code class="descclassname">stf.</code><code class="descname">set_slope</code><span class="sig-paren">(</span><em>slope</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_slope" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the AP threshold to the value given by the slope and takes it as reference for AP kinetic measurements. Note that you have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> or hit enter to update calculations.</p>
+<dd><p>Sets the AP threshold to the value given by the slope and takes it as reference for AP kinetic measurements. Note that you have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter to update calculations.</p>
 <blockquote>
 <div><p><strong>Argument:</strong></p>
 <p><em>slope</em> –  Slope value in mV/ms</p>
@@ -977,7 +968,7 @@ measurement.</p>
 <dl class="function">
 <dt id="stf.set_trace">
 <code class="descclassname">stf.</code><code class="descname">set_trace</code><span class="sig-paren">(</span><em>trace</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_trace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the currently displayed trace to a new index. Subsequently updates all measurements (e.g. peak, base, latency, i.e. you don’t need to call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">measure()</span></code></a> yourself.)</p>
+<dd><p>Sets the currently displayed trace to a new index. Subsequently updates all measurements (e.g. peak, base, latency, i.e. you don’t need to call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> yourself.)</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
 <p><em>trace</em> – The zero-based index of the new trace to be displayed.</p>
@@ -1100,12 +1091,14 @@ measurement.</p>
                         title="next chapter">References</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -1126,12 +1119,14 @@ measurement.</p>
                         title="next chapter">References</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -1139,7 +1134,7 @@ measurement.</p>
     
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 08 November, 2017.
+      Last updated on 28 June, 2018.
     </div>
   </body>
 </html>

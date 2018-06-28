@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Event counting &#8212; Stimfit 0.15.4 documentation</title>
+    <title>Event counting &#8212; Stimfit 0.15.8 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.15.4',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -25,8 +17,7 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Object oriented programming with Stimfit" href="introclass.html" />
     <link rel="prev" title="Cutting traces" href="cuttingtraces.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -65,7 +56,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Jose Guzman</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">08 November, 2017</td>
+<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">28 June, 2018</td>
 </tr>
 </tbody>
 </table>
@@ -77,7 +68,7 @@
 <div class="section" id="the-counter-event-function">
 <h2>The counter event function<a class="headerlink" href="#the-counter-event-function" title="Permalink to this headline">¶</a></h2>
 <p>The following function counts the number of events (e.g action potentials) by detecting upward (up=True) or downward (up=False) threshold-crossings.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># load main Stimfit module</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># load main Stimfit module</span>
 <span class="kn">import</span> <span class="nn">stf</span>
 
 <span class="k">def</span> <span class="nf">count_events</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">up</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -151,7 +142,7 @@
 <div class="section" id="code-commented">
 <h2>Code commented<a class="headerlink" href="#code-commented" title="Permalink to this headline">¶</a></h2>
 <p>The traces are selected by the optional argument trace, as explained in <a class="reference internal" href="amplitudes.html"><span class="doc">Calculations on selected traces</span></a>. The algorithm to detect action potentials requires some familiarity with Python iterations but it is easy to understand.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="n">i</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="n">selection</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="n">i</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="n">selection</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">comp</span><span class="p">(</span><span class="n">selection</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">threshold</span><span class="p">):</span>
         <span class="n">EventCounter</span> <span class="o">+=</span><span class="mi">1</span>
         <span class="k">while</span> <span class="n">i</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span> <span class="ow">and</span> <span class="n">comp</span><span class="p">(</span><span class="n">selection</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">threshold</span><span class="p">):</span>
@@ -161,7 +152,7 @@
 </pre></div>
 </div>
 <p>The while loop allows us to move within the indices of the array called selection. We insert an if-block inside to test whether the threshold is crossed at [i]. In this case we will add 1 to the counter (EventCounter +=1) and move to the second while loop.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="n">i</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span> <span class="ow">and</span> <span class="n">comp</span><span class="p">(</span><span class="n">selection</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">threshold</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="n">i</span><span class="o">&lt;</span><span class="nb">len</span><span class="p">(</span><span class="n">selection</span><span class="p">)</span> <span class="ow">and</span> <span class="n">comp</span><span class="p">(</span><span class="n">selection</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">threshold</span><span class="p">):</span>
     <span class="n">i</span><span class="o">+=</span><span class="mi">1</span> <span class="c1"># skip if index in bounds AND values until the value is below or above threshold again</span>
 </pre></div>
 </div>
@@ -175,23 +166,23 @@
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <p>As in <a class="reference internal" href="amplitudes.html"><span class="doc">Calculations on selected traces</span></a> we can use the function in different ways:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">count_events</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">delta</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">count_events</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">delta</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>will return the number of events above 0 mV in the current trace/channel between t=500 ms and t=1500 ms, and shows a blue stf marker</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">count_events</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">delta</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">threshold</span><span class="o">=-</span><span class="mi">40</span><span class="p">,</span><span class="n">up</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">trace</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">mark</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">count_events</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">delta</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">threshold</span><span class="o">=-</span><span class="mi">40</span><span class="p">,</span><span class="n">up</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">trace</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">mark</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>this will look for events below the value -40 but not in the current trace, only in the trace 11 (zero-based index is 10) in the downwards direction. Here a blue marker around the point found bellow the threshold will be shown too. Note that functions with a large number of arguments are difficult to remember. You can always change the order of the arguments if you describe the arguments in the function. For example, the following sentence has the same effect as the one above, but shows a different argument order:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">count_events</span><span class="p">(</span><span class="n">threshold</span><span class="o">=-</span><span class="mi">40</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">up</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">delta</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">mark</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">trace</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">count_events</span><span class="p">(</span><span class="n">threshold</span><span class="o">=-</span><span class="mi">40</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span><span class="n">up</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">delta</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">mark</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">trace</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If you want to create a list of events with the events found in a selection of traces, you can type:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spikes_list</span><span class="o">=</span> <span class="p">[</span><span class="n">spells</span><span class="o">.</span><span class="n">count_events</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="kc">True</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_selected_indices</span><span class="p">()]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spikes_list</span><span class="o">=</span> <span class="p">[</span><span class="n">spells</span><span class="o">.</span><span class="n">count_events</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="kc">True</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_selected_indices</span><span class="p">()]</span>
 </pre></div>
 </div>
 <p>this will create a Python list with the number of events (e.g spikes) found between t=500ms and t=1500ms above 0 in the selected traces and no marker will be shown. In the same way as described previously in , you can create a table to copy the results.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mytable</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mytable</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_selected_indices</span><span class="p">():</span> <span class="n">mytable</span><span class="p">[</span><span class="s2">&quot;Trace </span><span class="si">%.3d</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">spikes_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span><span class="n">show_table</span><span class="p">(</span><span class="n">mytable</span><span class="p">)</span>
 </pre></div>
@@ -200,7 +191,7 @@
 <p>Obviously, the function could be extended to return the time points of threshold crossings so that the interspike intervals can be calculated. This is left as an exercise to the reader.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Use the <a class="reference internal" href="../stf_reference/stf.html#stf.erase_markers" title="stf.erase_markers"><code class="xref py py-func docutils literal"><span class="pre">stf.erase_markers()</span></code></a> to clean the blue markers on the main stf window. If not, every time that you call the routine in the given trace, a series of blue markers showing the crossing points of the different threshold will overlap with each other. Alternatively, you can add <a class="reference internal" href="../stf_reference/stf.html#stf.erase_markers" title="stf.erase_markers"><code class="xref py py-func docutils literal"><span class="pre">stf.erase_markers()</span></code></a> in the beginning of count_events() to delete any marker presented previously:</p>
+<p class="last">Use the <a class="reference internal" href="../stf_reference/stf.html#stf.erase_markers" title="stf.erase_markers"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.erase_markers()</span></code></a> to clean the blue markers on the main stf window. If not, every time that you call the routine in the given trace, a series of blue markers showing the crossing points of the different threshold will overlap with each other. Alternatively, you can add <a class="reference internal" href="../stf_reference/stf.html#stf.erase_markers" title="stf.erase_markers"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.erase_markers()</span></code></a> in the beginning of count_events() to delete any marker presented previously:</p>
 </div>
 </div>
 </div>
@@ -232,12 +223,14 @@
                         title="next chapter">Object oriented programming with Stimfit</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -268,12 +261,14 @@
                         title="next chapter">Object oriented programming with Stimfit</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -281,7 +276,7 @@
     
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 08 November, 2017.
+      Last updated on 28 June, 2018.
     </div>
   </body>
 </html>

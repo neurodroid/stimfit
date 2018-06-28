@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Calculations on selected traces &#8212; Stimfit 0.15.4 documentation</title>
+    <title>Calculations on selected traces &#8212; Stimfit 0.15.8 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.15.4',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -25,8 +17,7 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Cutting traces" href="cuttingtraces.html" />
     <link rel="prev" title="Running mean" href="runningmean.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -65,13 +56,13 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Jose Guzman</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">08 November, 2017</td>
+<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">28 June, 2018</td>
 </tr>
 </tbody>
 </table>
 <p>A widely used feature of <a class="reference external" href="http://www.stimfit.org">Stimfit</a> is the selection of some traces of interest within a file to make some calculations on them (average, peaks, amplitudes, etc.). The batch-analysis of <a class="reference external" href="http://www.stimfit.org">Stimfit</a> does precisely that. However, in some cases we can enhance its possibilities writing our custom functions in Python for the selected traces.</p>
-<p>In <a class="reference external" href="http://www.stimfit.org">Stimfit</a>, the indices of selected traces can be easily retrieved using <a class="reference internal" href="../stf_reference/stf.html#stf.get_selected_indices" title="stf.get_selected_indices"><code class="xref py py-func docutils literal"><span class="pre">stf.get_selected_indices()</span></code></a>. This function returns a tuple with the selected indices.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span><span class="n">get_selected_indices</span><span class="p">()</span>
+<p>In <a class="reference external" href="http://www.stimfit.org">Stimfit</a>, the indices of selected traces can be easily retrieved using <a class="reference internal" href="../stf_reference/stf.html#stf.get_selected_indices" title="stf.get_selected_indices"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_selected_indices()</span></code></a>. This function returns a tuple with the selected indices.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span><span class="n">get_selected_indices</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># traces 2,3 and 4 were selected</span>
 </pre></div>
 </div>
@@ -81,7 +72,7 @@
 <h2>Using selected traces<a class="headerlink" href="#using-selected-traces" title="Permalink to this headline">¶</a></h2>
 <p>In the following function we calculate the amplitude of the signal of the selected traces. One of the arguments of the function (<em>trace=None</em>) will select the trace that we want to use to make the calculation. Note that this is an optional argument; by default it will accept the current trace (or sweep) of the file, but if not, you can enter the zero-based index of the traces in the channel.</p>
 <p>The amplitude function will be calculated based on the traces selected by <em>trace</em>. Here is the function:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># stimfit python module</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># stimfit python module</span>
 <span class="kn">import</span> <span class="nn">stf</span>
 
 <span class="k">def</span> <span class="nf">get_amplitude</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">peak</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -132,8 +123,8 @@
 </div>
 <div class="section" id="code-commented">
 <h2>Code commented<a class="headerlink" href="#code-commented" title="Permalink to this headline">¶</a></h2>
-<p><em>None</em> is a Python built-in constant. It is used in to represent the absence of a value. Therefore, in our example, when the argument <em>trace</em> is empty (its value is <em>None</em>) we will select the current trace with <a class="reference internal" href="../stf_reference/stf.html#stf.get_trace_index" title="stf.get_trace_index"><code class="xref py py-func docutils literal"><span class="pre">stf.get_trace_index()</span></code></a> and store it in the variable <strong>sweep</strong>. If not, the variable <strong>sweep</strong> will take the value taken by <em>trace</em>. This iscontroled by the following if-block within the function:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<p><em>None</em> is a Python built-in constant. It is used in to represent the absence of a value. Therefore, in our example, when the argument <em>trace</em> is empty (its value is <em>None</em>) we will select the current trace with <a class="reference internal" href="../stf_reference/stf.html#stf.get_trace_index" title="stf.get_trace_index"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_trace_index()</span></code></a> and store it in the variable <strong>sweep</strong>. If not, the variable <strong>sweep</strong> will take the value taken by <em>trace</em>. This iscontroled by the following if-block within the function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">sweep</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace_index</span><span class="p">()</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span> <span class="o">!=</span><span class="nb">int</span><span class="p">:</span>
@@ -143,34 +134,34 @@
 </pre></div>
 </div>
 <p>An additional if block inside the else instruction allows us to control that trace will be an integer.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span> <span class="o">!=</span><span class="nb">int</span><span class="p">:</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span> <span class="o">!=</span><span class="nb">int</span><span class="p">:</span>
 </pre></div>
 </div>
 <p>If the argument traces is not an integer, the function will be cancell and returns False.</p>
-<p>Note that after setting the stf cursors, we update the measurements in the trace whose index is given by the local variable <strong>sweep</strong> with <a class="reference internal" href="../stf_reference/stf.html#stf.set_trace" title="stf.set_trace"><code class="xref py py-func docutils literal"><span class="pre">stf.set_trace()</span></code></a>.</p>
+<p>Note that after setting the stf cursors, we update the measurements in the trace whose index is given by the local variable <strong>sweep</strong> with <a class="reference internal" href="../stf_reference/stf.html#stf.set_trace" title="stf.set_trace"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.set_trace()</span></code></a>.</p>
 </div>
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <p>The function accepts an optional <em>trace</em> argument. That means, that we do not need to declare it when using the function. In that case, the function will work on the current trace. For example, if we want to calculate the amplitude between a baseline between (500+10) msec and a peak between 750 and 760 msec on the current trace, we enter:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">get_amplitude</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="mi">750</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">get_amplitude</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="mi">750</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>To calculate the same amplitude in the trace number 10 (zero-based index is 9) we can type:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">get_amplitude</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="mi">750</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">9</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">get_amplitude</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="mi">750</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">9</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>More interesting is to get the amplitude in the selected traces, we can pass the tuple of selected traces to the <em>trace</em> argument and thereby calculate the amplitude on our selected traces:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">amplitudes_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">spells</span><span class="o">.</span><span class="n">get_amplitude</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="mi">750</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_selected_indices</span><span class="p">()]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">amplitudes_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">spells</span><span class="o">.</span><span class="n">get_amplitude</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span><span class="mi">750</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_selected_indices</span><span class="p">()]</span>
 </pre></div>
 </div>
 <p>In this way the tuple of selected indices is passed by the for loop to the function. Next, everything is wrapped in a Python list called amplitudes_list.</p>
-<p>For further analysis in spreadsheet programs (Calc, Gnumeric, Excel or similar), the values can be printed into a table that allows to copy and paste the contents. <a class="reference internal" href="../stf_reference/stf.html#stf.show_table" title="stf.show_table"><code class="xref py py-func docutils literal"><span class="pre">stf.show_table()</span></code></a> takes a dictionary as its first argument. The dictionary has to be composed of strings as keys and numbers as values. You could use it as follows:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mytable</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<p>For further analysis in spreadsheet programs (Calc, Gnumeric, Excel or similar), the values can be printed into a table that allows to copy and paste the contents. <a class="reference internal" href="../stf_reference/stf.html#stf.show_table" title="stf.show_table"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.show_table()</span></code></a> takes a dictionary as its first argument. The dictionary has to be composed of strings as keys and numbers as values. You could use it as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mytable</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_selected_indices</span><span class="p">():</span> <span class="n">mytable</span><span class="p">[</span><span class="s2">&quot;Trace </span><span class="si">%.3d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">amplitudes_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span><span class="n">show_table</span><span class="p">(</span><span class="n">mytable</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Note that the dictionary will be sorted alphabetically according to its keys. Therefore, using “%.3d” is used to keep the table in the same order as the traces. If you wanted to print out more than one value for each trace, you could use <a class="reference internal" href="../stf_reference/stf.html#stf.show_table_dictlist" title="stf.show_table_dictlist"><code class="xref py py-func docutils literal"><span class="pre">stf.show_table_dictlist()</span></code></a> that uses a similar syntax, but requires a list of numbers as the values of the dictionary.</p>
+<p>Note that the dictionary will be sorted alphabetically according to its keys. Therefore, using “%.3d” is used to keep the table in the same order as the traces. If you wanted to print out more than one value for each trace, you could use <a class="reference internal" href="../stf_reference/stf.html#stf.show_table_dictlist" title="stf.show_table_dictlist"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.show_table_dictlist()</span></code></a> that uses a similar syntax, but requires a list of numbers as the values of the dictionary.</p>
 </div>
 </div>
 
@@ -201,12 +192,14 @@
                         title="next chapter">Cutting traces</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -237,12 +230,14 @@
                         title="next chapter">Cutting traces</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -250,7 +245,7 @@
     
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 08 November, 2017.
+      Last updated on 28 June, 2018.
     </div>
   </body>
 </html>

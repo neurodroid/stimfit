@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Building Stimfit &#8212; Stimfit 0.15.4 documentation</title>
+    <title>Building Stimfit &#8212; Stimfit 0.15.8 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.15.4',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -25,8 +17,7 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Building the stfio Python Module Only" href="moduleonly.html" />
     <link rel="prev" title="OS X Build Guide" href="index.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -65,7 +56,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">08 November, 2017</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">28 June, 2018</td>
 </tr>
 </tbody>
 </table>
@@ -73,35 +64,35 @@
 <h2>Installing with MacPorts<a class="headerlink" href="#installing-with-macports" title="Permalink to this headline">¶</a></h2>
 <p>Download and install MacPorts from <a class="reference external" href="http://www.macports.org">here</a>.</p>
 <p>If you just want to install Stimfit and/or the stfio module, do</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">port</span> <span class="n">install</span> <span class="n">stimfit</span> <span class="n">py27</span><span class="o">-</span><span class="n">stfio</span> <span class="n">py34</span><span class="o">-</span><span class="n">stfio</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">port</span> <span class="n">install</span> <span class="n">stimfit</span> <span class="n">py27</span><span class="o">-</span><span class="n">stfio</span> <span class="n">py34</span><span class="o">-</span><span class="n">stfio</span>
 </pre></div>
 </div>
 <p>If you want to build stimfit from source, you’ll first need to install git:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">port</span> <span class="n">install</span> <span class="n">git</span><span class="o">-</span><span class="n">core</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">port</span> <span class="n">install</span> <span class="n">git</span><span class="o">-</span><span class="n">core</span>
 </pre></div>
 </div>
 <p>Get the <a class="reference external" href="http://www.stimfit.org">Stimfit</a> source from the git repository</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">code</span><span class="o">.</span><span class="n">google</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">p</span><span class="o">/</span><span class="n">stimfit</span><span class="o">/</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">code</span><span class="o">.</span><span class="n">google</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">p</span><span class="o">/</span><span class="n">stimfit</span><span class="o">/</span>
 </pre></div>
 </div>
 <p>Edit the MacPorts sources configuration file (/opt/local/etc/macports/sources.conf) and place the following line before the one that reads</p>
-<p><code class="docutils literal"><span class="pre">rsync://rsync.macports.org/release/tarballs/ports.tar</span> <span class="pre">[default]</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">rsync://rsync.macports.org/release/tarballs/ports.tar</span> <span class="pre">[default]</span></code></p>
 <p>(change the path to the <a class="reference external" href="http://www.stimfit.org">Stimfit</a> directory accordingly).</p>
-<p><code class="docutils literal"><span class="pre">file:///${STIMFITDIR}/stimfit/macosx/macports</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">file:///${STIMFITDIR}/stimfit/macosx/macports</span></code></p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">using the root of your account as opposed to a subdirectory (ie, Documents or Downloads folders) may prevent permissions access errors when building.</p>
 </div>
 <p>Next, go to the <a class="reference external" href="http://www.stimfit.org">Stimfit</a> macports directory</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>cd ${STIMFITDIR}/macosx/macports
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd ${STIMFITDIR}/macosx/macports
 </pre></div>
 </div>
 <p>Add the local ports file to MacPorts by running the following command at this location</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">portindex</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">portindex</span>
 </pre></div>
 </div>
 <p>When finished, you can now build <a class="reference external" href="http://www.stimfit.org">Stimfit</a> in MacPorts</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">port</span> <span class="n">install</span> <span class="n">stimfit</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">port</span> <span class="n">install</span> <span class="n">stimfit</span>
 </pre></div>
 </div>
 <p>MacPorts will download and install various dependencies, and then attempt to build <a class="reference external" href="http://www.stimfit.org">Stimfit</a> from source.</p>
@@ -133,12 +124,14 @@
                         title="next chapter">Building the stfio Python Module Only</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -167,12 +160,14 @@
                         title="next chapter">Building the stfio Python Module Only</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -180,7 +175,7 @@
     
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 08 November, 2017.
+      Last updated on 28 June, 2018.
     </div>
   </body>
 </html>

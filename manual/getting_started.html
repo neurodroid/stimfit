@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Getting started &#8212; Stimfit 0.15.4 documentation</title>
+    <title>Getting started &#8212; Stimfit 0.15.8 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.15.4',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -25,8 +17,7 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="The Python shell" href="python.html" />
     <link rel="prev" title="Preface" href="preface.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -65,7 +56,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber (christsc at gmx.de)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">08 November, 2017</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">28 June, 2018</td>
 </tr>
 </tbody>
 </table>
@@ -183,7 +174,7 @@ file to fitting functions to data.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">You have to press <strong>Enter</strong> after changing any cursor position to
 update all calculations. Otherwise, you will see the results of your
-previous cursors settings. Alternatively, you can call <a class="reference internal" href="../stf_reference/stf.html#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal"><span class="pre">stf.measure()</span></code></a>
+previous cursors settings. Alternatively, you can call <a class="reference internal" href="../stf_reference/stf.html#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.measure()</span></code></a>
 from the Python shell.</p>
 </div>
 <p>The peak value will be determined between the two peak window cursors (vertical red dashed lines). To move the cursors press <strong>P</strong>. The corresponding tool-bar button will be highlighted. Set the left cursor by clicking the left mouse button where you want the peak detection to start. Set the right cursor by clicking the right mouse button where you want the peak detection to end. Press <strong>Enter</strong>. The result of the peak calculation is displayed in the results bar. “Peak (from base)” is the difference between the peak value and the baseline, and “Peak (from 0)” is the “raw” value of the peak, measured from zero, without any subtraction. A horizontal red dashed line will indicate the peak value, and a vertical dashed line will indicate the point in time when this peak value has been detected (Fig. 11).</p>
@@ -193,14 +184,14 @@ from the Python shell.</p>
 <p class="caption"><span class="caption-text"><strong>Fig. 11:</strong> Setting the peak window cursors.</span></p>
 </div>
 </div></blockquote>
-<p>There are three ways the peak value can be calculated: As a default, it is calculated as the maximal absolute value measured from baseline; hence, both positive- or negative-going events may be detected, whichever is larger. If you want only positive-going events to be detected, select “Edit”-&gt;”Cursor settings” from the menu. A dialog will appear. Select the “Peak” tab, and then check “Up” radio button (Fig. 12). Click the “Apply” button to measure the peak using your new settings. If you only want negative-going events to be detected, select “Down” instead. Selecting “Both” resets the peak calculation to the default mode. If you want to set the peak direction from the <strong>Python</strong> shell, you can call <a class="reference internal" href="../stf_reference/stf.html#stf.set_peak_direction" title="stf.set_peak_direction"><code class="xref py py-func docutils literal"><span class="pre">stf.set_peak_direction()</span></code></a>, where direction can be one of “up”,”down” or “both”. The Python shell will be explained in some more detail in chapter 2.</p>
+<p>There are three ways the peak value can be calculated: As a default, it is calculated as the maximal absolute value measured from baseline; hence, both positive- or negative-going events may be detected, whichever is larger. If you want only positive-going events to be detected, select “Edit”-&gt;”Cursor settings” from the menu. A dialog will appear. Select the “Peak” tab, and then check “Up” radio button (Fig. 12). Click the “Apply” button to measure the peak using your new settings. If you only want negative-going events to be detected, select “Down” instead. Selecting “Both” resets the peak calculation to the default mode. If you want to set the peak direction from the <strong>Python</strong> shell, you can call <a class="reference internal" href="../stf_reference/stf.html#stf.set_peak_direction" title="stf.set_peak_direction"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.set_peak_direction()</span></code></a>, where direction can be one of “up”,”down” or “both”. The Python shell will be explained in some more detail in chapter 2.</p>
 <blockquote>
 <div><div class="figure align-center" id="id13">
 <img alt="../_images/cursorsettings.png" src="../_images/cursorsettings.png" />
 <p class="caption"><span class="caption-text"><strong>Fig. 12:</strong> Setting the peak calculation properties.</span></p>
 </div>
 </div></blockquote>
-<p>In case the event you want to analyze is noisy, it may be helpful to use the average of several neighboring sampling points for the peak calculation instead of a single sampling point. A moving average algorithm will then be used to calculate the peak value. The number of sampling points can either be set in the cursor settings dialog (Fig. 12) or from the <strong>Python</strong> shell using <a class="reference internal" href="../stf_reference/stf.html#stf.set_peak_mean" title="stf.set_peak_mean"><code class="xref py py-func docutils literal"><span class="pre">stf.set_peak_mean()</span></code></a>, where pts is the number of sampling points.</p>
+<p>In case the event you want to analyze is noisy, it may be helpful to use the average of several neighboring sampling points for the peak calculation instead of a single sampling point. A moving average algorithm will then be used to calculate the peak value. The number of sampling points can either be set in the cursor settings dialog (Fig. 12) or from the <strong>Python</strong> shell using <a class="reference internal" href="../stf_reference/stf.html#stf.set_peak_mean" title="stf.set_peak_mean"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.set_peak_mean()</span></code></a>, where pts is the number of sampling points.</p>
 <p>Some other values describing the event can be found in the results table (Fig. 13):</p>
 <ul class="simple">
 <li><strong>RT(20_80%)</strong> refers to the time required for the signal to change from 20% to 80% of the peak value (measured from the baseline), commonly called the “20-to-80%-rise time”. The points corresponding to 20 and 80% of the peak value are indicated by green circles. They are determined by linear interpolation between neighboring sampling points.</li>
@@ -289,8 +280,8 @@ from the Python shell.</p>
 </div></blockquote>
 </li>
 </ul>
-<p><a class="reference internal" href="../stf_reference/stf.html#stf.leastsq" title="stf.leastsq"><code class="xref py py-func docutils literal"><span class="pre">stf.leastsq()</span></code></a> can be called from the <strong>Python</strong> shell to fit the function with index <em>fselect</em> to the data. <em>fselect</em> refers to the number that you can find in front of the function in the fit settings dialog (see Fig. 16). If refresh=False, the trace will not be re-drawn, which can be useful to avoid flicker when performing a series of fits.</p>
-<p>You can use <a class="reference internal" href="../stf_reference/stf.html#stf.get_fit" title="stf.get_fit"><code class="xref py py-func docutils literal"><span class="pre">stf.get_fit()</span></code></a> to get the function resulted from the fitting. This returns the evaluated function as a two dimensional NumPy array. The first dimension is the x-axis (e.g time), and the second dimension is the function evaluation results.</p>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.leastsq" title="stf.leastsq"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.leastsq()</span></code></a> can be called from the <strong>Python</strong> shell to fit the function with index <em>fselect</em> to the data. <em>fselect</em> refers to the number that you can find in front of the function in the fit settings dialog (see Fig. 16). If refresh=False, the trace will not be re-drawn, which can be useful to avoid flicker when performing a series of fits.</p>
+<p>You can use <a class="reference internal" href="../stf_reference/stf.html#stf.get_fit" title="stf.get_fit"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_fit()</span></code></a> to get the function resulted from the fitting. This returns the evaluated function as a two dimensional NumPy array. The first dimension is the x-axis (e.g time), and the second dimension is the function evaluation results.</p>
 </div>
 </div>
 
@@ -328,12 +319,14 @@ from the Python shell.</p>
                         title="next chapter">The Python shell</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -371,12 +364,14 @@ from the Python shell.</p>
                         title="next chapter">The Python shell</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -384,7 +379,7 @@ from the Python shell.</p>
     
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 08 November, 2017.
+      Last updated on 28 June, 2018.
     </div>
   </body>
 </html>

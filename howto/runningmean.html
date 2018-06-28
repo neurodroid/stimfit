@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Running mean &#8212; Stimfit 0.15.4 documentation</title>
+    <title>Running mean &#8212; Stimfit 0.15.8 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.15.4',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -25,8 +17,7 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Calculations on selected traces" href="amplitudes.html" />
     <link rel="prev" title="Resistance Calculation" href="resistances.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -65,7 +56,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Jose Guzman</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">08 November, 2017</td>
+<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">28 June, 2018</td>
 </tr>
 </tbody>
 </table>
@@ -76,7 +67,7 @@
 </div><div class="section" id="the-running-mean-function">
 <h2>The running mean function<a class="headerlink" href="#the-running-mean-function" title="Permalink to this headline">¶</a></h2>
 <p>The following Python function calculates the running mean of the current channel. Both trace and channel can be selected as zero-based indices. The width of the running average (refereed to here as binwidth) can be selected. The resulting average will appear in a new <a class="reference external" href="http://www.stimfit.org">Stimfit</a> window.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># load main Stimfit module</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># load main Stimfit module</span>
 <span class="kn">import</span> <span class="nn">stf</span>
 
 <span class="c1"># load NumPy for numerical analysis</span>
@@ -131,12 +122,12 @@
 <div class="section" id="code-commented">
 <h2>Code commented<a class="headerlink" href="#code-commented" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="http://www.stimfit.org">Stimfit</a> commonly uses the value -1 to set the current trace/Channel. In this function the default argument values are -1 (see the function arguments <em>trace=-1</em> and <em>channel=-1</em>).</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sweep</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span><span class="n">channel</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sweep</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span><span class="n">channel</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><a class="reference internal" href="../stf_reference/stf.html#stf.get_trace" title="stf.get_trace"><code class="xref py py-func docutils literal"><span class="pre">stf.get_trace()</span></code></a> imports the <strong>trace</strong> of the <strong>channel</strong> into a 1D-Numpy array that we called sweep. The default values provided by the function are -1. This means that by default, the current trace/channel will be imported.</p>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.get_trace" title="stf.get_trace"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_trace()</span></code></a> imports the <strong>trace</strong> of the <strong>channel</strong> into a 1D-Numpy array that we called sweep. The default values provided by the function are -1. This means that by default, the current trace/channel will be imported.</p>
 <p>We create a new stf window with the following</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span><span class="n">new_window</span><span class="p">(</span><span class="n">dsweep</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span><span class="n">new_window</span><span class="p">(</span><span class="n">dsweep</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>where dsweep is the 1D-NumPy array obtained after performing  the running average.</p>
@@ -144,7 +135,7 @@
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
 <p>To perform the running average of 10 sampling points of the current trace, type:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">rmean</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">rmean</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>A new window with the running mean will appear.</p>
@@ -178,12 +169,14 @@
                         title="next chapter">Calculations on selected traces</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -214,12 +207,14 @@
                         title="next chapter">Calculations on selected traces</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -227,7 +222,7 @@
     
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 08 November, 2017.
+      Last updated on 28 June, 2018.
     </div>
   </body>
 </html>

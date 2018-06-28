@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Building Stimfit &#8212; Stimfit 0.15.4 documentation</title>
+    <title>Building Stimfit &#8212; Stimfit 0.15.8 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.15.4',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -25,8 +17,7 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="The Stimfit book of spells" href="../howto/index.html" />
     <link rel="prev" title="Instructions for setting up Visual C++ Express 2008 to compile 64-bit targets" href="VCExpress64bitsetup.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -65,14 +56,14 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">08 November, 2017</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">28 June, 2018</td>
 </tr>
 </tbody>
 </table>
 <div class="section" id="get-the-source-code">
 <h2>Get the source code<a class="headerlink" href="#get-the-source-code" title="Permalink to this headline">¶</a></h2>
 <p>Clone the latest source code into your home directory (on cygwin, this will be something like /cygdrive/c/Users/username/)</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd /cygdrive/c/Users/username
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd /cygdrive/c/Users/username
 $ git clone https://github.com/neurodroid/stimfit.git
 </pre></div>
 </div>
@@ -81,7 +72,7 @@ $ git clone https://github.com/neurodroid/stimfit.git
 <h2>Build Stimfit<a class="headerlink" href="#build-stimfit" title="Permalink to this headline">¶</a></h2>
 <p>Move the BLAS/LAPACK libraries that you’ve previously downloaded into a folder “stimfit/dist/windows/libs”. Make sure that the <a href="#id1"><span class="problematic" id="id2">*</span></a>.lib files are at the top level of this libs folder.</p>
 <p>Open the solution in stimfit/dist/windows/VS2008/Stimfit/Stimfit.sln with Visual C++ Express 2008. Build the solution by clicking “Build” -&gt; “Build Solution”. Alternatively, open the Visual Studio Command Prompt:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">C</span><span class="p">:</span>\<span class="o">&gt;</span> <span class="n">cd</span> <span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="n">username</span>\<span class="n">stimfit</span>\<span class="n">dist</span>\<span class="n">windows</span>\<span class="n">VS2008</span>\<span class="n">Stimfit</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">C</span><span class="p">:</span>\<span class="o">&gt;</span> <span class="n">cd</span> <span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="n">username</span>\<span class="n">stimfit</span>\<span class="n">dist</span>\<span class="n">windows</span>\<span class="n">VS2008</span>\<span class="n">Stimfit</span>
 <span class="n">C</span><span class="p">:</span>\<span class="n">Users</span>\<span class="n">username</span>\<span class="n">stimfit</span>\<span class="n">dist</span>\<span class="n">windows</span>\<span class="n">VS2008</span>\<span class="n">Stimfit</span><span class="o">&gt;</span> <span class="n">msbuild</span> <span class="n">Stimfit</span><span class="o">.</span><span class="n">sln</span> <span class="o">/</span><span class="n">p</span><span class="p">:</span><span class="n">Configuration</span><span class="o">=</span><span class="n">Release</span>
 </pre></div>
 </div>
@@ -119,12 +110,14 @@ $ git clone https://github.com/neurodroid/stimfit.git
                         title="next chapter">The Stimfit book of spells</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -155,12 +148,14 @@ $ git clone https://github.com/neurodroid/stimfit.git
                         title="next chapter">The Stimfit book of spells</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -168,7 +163,7 @@ $ git clone https://github.com/neurodroid/stimfit.git
     
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 08 November, 2017.
+      Last updated on 28 June, 2018.
     </div>
   </body>
 </html>

@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Building the stfio Python Module Only &#8212; Stimfit 0.15.4 documentation</title>
+    <title>Building the stfio Python Module Only &#8212; Stimfit 0.15.8 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.15.4',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  false,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -25,8 +17,7 @@
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Windows Build Guide" href="../win_install_guide/index.html" />
     <link rel="prev" title="Building Stimfit" href="building.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -65,7 +56,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Yueqi Wang</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">08 November, 2017</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">28 June, 2018</td>
 </tr>
 </tbody>
 </table>
@@ -74,7 +65,7 @@
 <div class="section" id="installing-stfio-for-macports-python">
 <h2>Installing stfio for MacPorts Python<a class="headerlink" href="#installing-stfio-for-macports-python" title="Permalink to this headline">¶</a></h2>
 <p>Download and install MacPorts from <a class="reference external" href="http://www.macports.org">here</a>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ sudo port install py27-stfio py34-stfio
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo port install py27-stfio py34-stfio
 </pre></div>
 </div>
 <p>Using this method, the stfio module can only be imported using MacPorts Python.</p>
@@ -86,7 +77,7 @@
 <h3>Linking the MacPorts stfio module to your Python PATH<a class="headerlink" href="#linking-the-macports-stfio-module-to-your-python-path" title="Permalink to this headline">¶</a></h3>
 <p>Note: This works most of the times, but is not always recommended.</p>
 <p>First, install the <em>stfio</em> module using MacPorts as described above. Then find the path where <em>stfio</em> is installed</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ port content py27-stfio
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ port content py27-stfio
 </pre></div>
 </div>
 <p>The install path will look something like this: <em>/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/stfio/</em></p>
@@ -94,19 +85,19 @@
 <ol class="arabic simple">
 <li>open <em>$HOME/.bash_profile</em>, add the following line to the file, and save the file:</li>
 </ol>
-<div class="highlight-default"><div class="highlight"><pre><span></span>export PATHONPATH=$PYTHONPATH:/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/stfio/
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export PATHONPATH=$PYTHONPATH:/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/stfio/
 </pre></div>
 </div>
 <ul class="simple">
 <li>Then, update the bash profile:</li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ source $HOME/.bash_profile
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ source $HOME/.bash_profile
 </pre></div>
 </div>
 <ol class="arabic simple" start="2">
 <li>Alternatively, you can soft link the MacPorts <em>stfio</em> module folder to the <em>site-packages</em> folder of your favorite Python distribution. The following example will link MacPorts <em>stfio</em> to Anaconda Python 2.7:</li>
 </ol>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/stfio/ $HOME/anaconda/lib/python2.7/site-packages/
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ln -s /opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/stfio/ $HOME/anaconda/lib/python2.7/site-packages/
 </pre></div>
 </div>
 <p>Finally, run python to test the module, as described in <a class="reference internal" href="../stfio/index.html"><span class="doc">The stfio module</span></a>.</p>
@@ -114,11 +105,11 @@
 <div class="section" id="building-the-stfio-module-from-source">
 <h3>Building the stfio module from source<a class="headerlink" href="#building-the-stfio-module-from-source" title="Permalink to this headline">¶</a></h3>
 <p>Install <a class="reference external" href="https://brew.sh/">Homebrew</a></p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ /usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ /usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
 </pre></div>
 </div>
 <p>Install dependencies using Homebrew</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ brew update
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew update
 $ brew install boost
 $ brew install boost-python
 $ brew install autoconf
@@ -129,17 +120,17 @@ $ brew install homebrew/science/hdf5
 </pre></div>
 </div>
 <p>If you want support for extra biomedical file formats, install the <em>libbiosig</em> library:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ brew tap schloegl/biosig
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew tap schloegl/biosig
 $ brew install libbiosig
 </pre></div>
 </div>
 <p>Now download the stimfit source code:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd $HOME
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd $HOME
 $ git clone https://github.com/neurodroid/stimfit.git
 </pre></div>
 </div>
 <p>Next, Generate the build system and configure:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd stimfit
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd stimfit
 $ ./autogen.sh
 $ mkdir build
 $ mkdir build/module
@@ -149,15 +140,15 @@ $ ../../configure --enable-module
 </div>
 <p>Add the argument <em>–with-biosiglite</em> to the configure script if you want extra biomedical fileformats for <em>stfio</em>, but did not install the full <em>libbiosig</em> library.</p>
 <p>If you want to install the stfio module for a non-default Python distribution, such as <strong>Anaconda Python</strong>, use the argument <em>–prefix=</em> to specify the installation path as where your favorite Python distribution is installed. The following example will install stfio for Anaconda Python 2.7:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ ../../configure --enable-module --prefix=$HOME/anaconda/
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ../../configure --enable-module --prefix=$HOME/anaconda/
 </pre></div>
 </div>
 <p>If using virtual environment, try something like this:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ ../../configure --enable-module --prefix=$HOME/anaconda/envs/py36
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ../../configure --enable-module --prefix=$HOME/anaconda/envs/py36
 </pre></div>
 </div>
 <p>Then, build and install:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ make -j 4
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make -j 4
 $ make install
 </pre></div>
 </div>
@@ -196,12 +187,14 @@ $ make install
                         title="next chapter">Windows Build Guide</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -235,12 +228,14 @@ $ make install
                         title="next chapter">Windows Build Guide</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -248,7 +243,7 @@ $ make install
     
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 08 November, 2017.
+      Last updated on 28 June, 2018.
     </div>
   </body>
 </html>
