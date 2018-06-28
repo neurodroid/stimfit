@@ -9,6 +9,8 @@ export DH_VERBOSE=1
 
 DEBPREFIX=$(CURDIR)/debian/tmp/usr
 PYVER   := $(shell pyversions -vd)
+# Whenever libwxgtk3.0-gtk3-dev installed and wx-config present, need custom opts
+WXCONFIG_OPTS=$(shell wx-config --toolkit=gtk3 2>/dev/null 1>&2 && echo '--with-wx-config="wx-config --toolkit=gtk3"' || echo '')
 
 ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
 	NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
@@ -45,14 +47,14 @@ clean:
 
 install: build
 	dh_autoreconf
-	./configure --enable-python --enable-debian --with-biosiglite --prefix=$(DEBPREFIX)
+	./configure --enable-python --enable-debian --with-biosiglite --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
 	$(MAKE)
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) check
 endif
 	$(MAKE) install
 
-	./configure --enable-module --enable-debian --with-biosiglite --prefix=$(DEBPREFIX)
+	./configure --enable-module --enable-debian --with-biosiglite --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
 	$(MAKE)
 	$(MAKE) install
 
