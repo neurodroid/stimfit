@@ -1125,6 +1125,10 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 				}
 
 				hdr->CHANNEL[i].SPR 	= en1064.Section3.lead[i].end - en1064.Section3.lead[i].start + 1;
+
+	if (VERBOSE_LEVEL>7)
+		fprintf(stdout,"%s (line %i): SCP Section %i   #%i SPR=%d/%d\n",__FILE__,__LINE__,curSect,i,hdr->CHANNEL[i].SPR,hdr->SPR);
+
 				hdr->SPR 		= lcm(hdr->SPR,hdr->CHANNEL[i].SPR);
 				hdr->CHANNEL[i].LeadIdCode = LeadIdCode;
 				hdr->CHANNEL[i].Label[0]= 0;
@@ -1258,6 +1262,8 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 			Cal6 			= leu16p(PtrCurSect+curSectPos);
 			en1064.Section6.dT_us	= leu16p(PtrCurSect+curSectPos+2);
 			aECG->FLAG.DIFF 	= *(PtrCurSect+curSectPos+4);
+
+	if (VERBOSE_LEVEL>7) fprintf(stdout, "%s (line %i) Compression(Diff=%i Huffman=%i RefBeat=%i Bimodal=%i)\n", __func__, __LINE__, aECG->FLAG.DIFF, aECG->FLAG.HUFFMAN, aECG->FLAG.REF_BEAT, aECG->FLAG.BIMODAL);
 
 			if ((section[5].length>4) &&  en1064.Section5.dT_us)
 				dT_us = en1064.Section5.dT_us;
@@ -1707,7 +1713,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	*/
 
 #ifndef ANDROID
-	fprintf(stdout, "\nUse SCP_DECODE (Huffman=%i RefBeat=%i Bimodal=%i)\n", aECG->FLAG.HUFFMAN, aECG->FLAG.REF_BEAT, aECG->FLAG.BIMODAL);
+	if (VERBOSE_LEVEL > 7)
+		fprintf(stdout, "\nUse SCP_DECODE (Diff=%i Huffman=%i RefBeat=%i Bimodal=%i)\n", aECG->FLAG.DIFF, aECG->FLAG.HUFFMAN, aECG->FLAG.REF_BEAT, aECG->FLAG.BIMODAL);
 #endif
 
 	textual.des.acquiring.protocol_revision_number = aECG->Section1.Tag14.VERSION;

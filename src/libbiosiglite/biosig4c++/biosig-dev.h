@@ -30,17 +30,11 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-#if !defined(_MSC_VER)
+#if defined(__MINGW32__)
 #include <sys/param.h>
 #endif
 #include <time.h>
 #include "physicalunits.h"
-
-#ifdef __cplusplus
-#define EXTERN_C extern "C"
-#else
-#define EXTERN_C
-#endif
 
 
 #ifdef __cplusplus
@@ -114,7 +108,7 @@ char *getlogin (void);
 
 #define BIOSIG_VERSION_MAJOR 1
 #define BIOSIG_VERSION_MINOR 9
-#define BIOSIG_PATCHLEVEL    0
+#define BIOSIG_PATCHLEVEL    2
 // for backward compatibility
 #define BIOSIG_VERSION_STEPPING BIOSIG_PATCHLEVEL
 #define BIOSIG_VERSION (BIOSIG_VERSION_MAJOR * 10000 + BIOSIG_VERSION_MINOR * 100 + BIOSIG_PATCHLEVEL)
@@ -578,9 +572,9 @@ extern const struct FileFormatStringTable_t FileFormatStringTable [];
 #  define bswap_64(x) __builtin_bswap64(x)
 
 #	include <winsock2.h>
-#   if !defined(_MSC_VER)
+#	if defined(__MINGW32__)
 #	    include <sys/param.h>
-#   endif
+#	endif
 #	if BYTE_ORDER == LITTLE_ENDIAN
 #		define htobe16(x) htons(x)
 #		define htole16(x) (x)
@@ -593,15 +587,15 @@ extern const struct FileFormatStringTable_t FileFormatStringTable [];
 #		define le32toh(x) (x)
 
 #		define htole64(x) (x)
-#       if !defined(_MSC_VER)
-#           define htobe64(x) __builtin_bswap64(x)
-#           define be64toh(x) __builtin_bswap64(x)
-#       else
-#           define ntohll(x) (((_int64)(ntohl((int)((x << 32) >> 32))) << 32) | (unsigned int)ntohl(((int)(x >> 32))))
-#           define htonll(x) ntohll(x)
-#           define htobe64(x) htonll(x)
-#           define be64toh(x) ntohll(x)
-#       endif
+#		if defined(__MINGW32__)
+#       	    define htobe64(x) __builtin_bswap64(x)
+#       	    define be64toh(x) __builtin_bswap64(x)
+#       	else
+#       	    define ntohll(x) (((_int64)(ntohl((int)((x << 32) >> 32))) << 32) | (unsigned int)ntohl(((int)(x >> 32))))
+#       	    define htonll(x) ntohll(x)
+#       	    define htobe64(x) htonll(x)
+#       	    define be64toh(x) ntohll(x)
+#       	endif
 #		define le64toh(x) (x)
 
 #	elif BYTE_ORDER == BIG_ENDIAN
@@ -929,9 +923,6 @@ static inline void bef64a(  double i, void* r) {
 #endif
 #ifndef isfinite
 # define isfinite(a) (-INFINITY < (a) && (a) < INFINITY)
-#endif
-#ifndef isnan
-# define isnan(a) ((a)!=(a))
 #endif
 
 /*

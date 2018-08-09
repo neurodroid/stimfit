@@ -305,6 +305,10 @@ else if (VERBOSE_LEVEL>7)
 				lei16a(i,e+6);
 			}
 		}
+		hdr->ID.Manufacturer.Name = "CED - Cambridge Electronic Devices";
+		hdr->ID.Manufacturer.Model = NULL;
+		hdr->ID.Manufacturer.Version = NULL;
+		hdr->ID.Manufacturer.SerialNumber = NULL;
 
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"\n******* Data Section variable information (n=%i,%i)*********\n", d,NumberOfDataSections);
 		datapos = LastDataSectionHeaderOffset; //H1LEN + H2LEN*hdr->NS + n*36;

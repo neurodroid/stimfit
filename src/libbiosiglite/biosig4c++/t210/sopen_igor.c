@@ -27,6 +27,7 @@
 #include <stddef.h>
 */
 #include <ctype.h>
+#include <math.h>      // define macro isnan()
 #include <stdlib.h>
 #include <string.h>
 #include "../biosig-dev.h"
