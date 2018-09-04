@@ -42,8 +42,18 @@ private:
     int m_template;
     wxStdDialogButtonSizer* m_sdbSizer;
     wxTextCtrl *m_textCtrlThr, *m_textCtrlDist;
-    wxRadioBox* m_radioBox;
+    wxStaticBoxSizer* m_radioBox;
     wxComboBox* m_comboBoxTemplates;
+
+    wxStaticText* staticTextThr;
+
+    wxRadioButton* wxRadioClements;
+    wxRadioButton* wxRadioJonas;
+    wxRadioButton* wxRadioPernia;
+
+    void OnClements( wxCommandEvent & event );
+    void OnJonas( wxCommandEvent & event );
+    void OnPernia( wxCommandEvent & event );
 
     //! Only called when a modal dialog is closed with the OK button.
     /*! \return true if all dialog entries could be read successfully
