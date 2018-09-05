@@ -24,7 +24,7 @@ if stf.get_filename()[-9:] != 'minis.dat':
 def preliminary():
     """
     Sets peak, base and fit cursors around a synaptic event
-    and performs a biexponetial fit to create the preliminary template
+    and performs a biexponential fit to create the preliminary template
     for event detection.
     """
     stf.base.cursor_index = (209600, 209900)
