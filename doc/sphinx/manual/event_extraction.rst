@@ -7,19 +7,19 @@ Event extraction by template matching
 
 Introduction
 =============================
-`Stimfit <http://www.stimfit.org>`_ can analyze spontaneous events such as EPSCs or EPSPs using a template matching algorithm (described by Jonas et al. (1993) [#Jonas1993]_ and with some implementations from Clemens and Bekkers (1997) [#ClemensBekkers1997]_). A template is a waveform :math:`p(t)` of length :math:`n` that represents the time course of a typical or exemplary event. The template is slid over the recording trace :math:`r(t)`, and at each sampling point (:math:`s`) is multiplied by a scaling factor :math:`m`, and an offset :math:`c` is added or subtracted so that the sum of squared errors :math:`\chi^2(t_s)` between the trace and the template is minimized:
+To isolate individual events such as EPSCs or EPSPs from recorded data, `Stimfit <http://www.stimfit.org>`_ uses a template matching algorithm as described by Jonas et al. (1993) [#Jonas1993]_, with some implementation details adopted from Clemens and Bekkers (1997) [#ClemensBekkers1997]_. The template consists of a waveform :math:`p(t)` with a length of :math:`n` sampling points that represents the time course of a typical event. The template is slid over the trace of recorded values :math:`r(t)`, and at each sampling point with index :math:`s`, it is multiplied by a scaling factor :math:`m` and an offset :math:`c` is added or subtracted so that the sum of squared errors :math:`\chi^2(t_s)` between the trace and the template is minimized:
 
 .. math::
 
     {\displaystyle \chi^2(t_s)= \sum_{k=0}^{n-1}\left[r(t_{s+k})-\left(m{\cdot}p(t_k)+c\right)\right]^2}
 
-This equation amounts to the fairly simple operation of fitting a straight line that relates :math:`p(t)` and :math:`r(t)` at every sampling point. 
+As can be seen from this equation, this amounts to the fairly simple operation of fitting a straight line that relates :math:`p(t)` and :math:`r(t)` at every sampling point. 
 
-A detection criterion is applied to decide whether an event has occurred at a sampling point. Two options are available in `Stimfit <http://www.stimfit.org>`_: Jonas et al. (1993) [#Jonas1993]_ suggest to use the linear correlation coefficient between the optimally scaled template and the data, whereas Clements and Bekkers (1997) [#ClemensBekkers1997]_ compare the scaling factor with the noise standard deviation.
+Finally, some detection criterion has to be applied to decide whether an event has occurred at a sampling point. Two options are available in `Stimfit <http://www.stimfit.org>`_: Jonas et al. (1993) [#Jonas1993]_ suggest to use the linear correlation coefficient between the optimally scaled template and the data, whereas Clements and Bekkers (1997) [#ClemensBekkers1997]_ compare the scaling factor with the noise standard deviation.
 
 A practical guide to event detection
 ====================================
-The following steps allow to extract events with `Stimfit <http://www.stimfit.org>`_:
+In practice, the following steps need to be performed to extract events with `Stimfit <http://www.stimfit.org>`_:
 
 1. Create a preliminary template by fitting a function to a single, large and isolated event.
 
@@ -33,17 +33,17 @@ The following steps allow to extract events with `Stimfit <http://www.stimfit.or
 
 This procedure will be explained in some more detail in the following sections.
 
-1. Create a preliminary template
---------------------------------
+Create a preliminary template
+-----------------------------
 
-A typical way of creating the template is to fit an exemplary or typical event to a model with similar kinetics. For example, EPSCs can typically be modeled with the sum or the product of two exponential functions [#f1]_. In practice, a robust estimate for a template can be obtained fitting an event to a biexponential function, selecting the detected events and repeating this operation iteratively. You can try this iterative approach with a file that you can download `here <http://stimfit.org/tutorial/minis.dat>`_.
+In general, the template waveform :math:`p(t)` can be of arbitrary shape. A typical way of creating such a template is to fit a function with a time course matching the event kinetics to some exemplary events. For example, EPSCs can typically be modeled with the sum or the product of two exponential functions [#f1]_. In practice, a robust estimate for a template can be obtained using an iterative approach, which will be illustrated here using a recording of miniature EPSCs that you can download `here <http://stimfit.org/tutorial/minis.dat>`_.
 
     .. figure:: images/bait_template.png
         :align: center
 
         **Fig. 21:** Creation of a "bait" template.
 
-First, we fit a function to a single large an isolated event to create a preliminary "bait" template. In this case, we will use an event that can be found roughly between t = 20990 ms and t = 21050 ms. Then, we fit the sum of two exponential functions with a delay to this EPSC. To obtain the same template as in the example, you can call the function ``preliminary`` from the ``minidemo`` module that comes  bundled with `Stimfit <http://www.stimfit.org>`_.
+First, we fit a function to a single large an isolated event to create a preliminary "bait" template. In this case, we will use the EPSC that can be found roughly between t = 20990 ms and t = 21050 ms. Then, we fit the sum of two exponential functions with a delay to this EPSC. To obtain the same template as in the example, you can call the function ``preliminary`` from the ``minidemo`` module that comes  bundled with `Stimfit <http://www.stimfit.org>`_
 
 ::
 
@@ -53,8 +53,8 @@ First, we fit a function to a single large an isolated event to create a prelimi
 This will take care of the appropriate cursor positions and the biexponential fit. If you prefer, you can use the fit settings dialog, as described in chapter 1 (Fig. 16).
 
 
-2. Extract exemplary events
----------------------------
+Extract exemplary events
+------------------------
 
 We now use the bait example to fish some more large and isolate events. Choose "Analysis"->"Event detection"->"Template matching..." from the menu. 
 
@@ -64,7 +64,7 @@ We now use the bait example to fish some more large and isolate events. Choose "
 
         **Fig. 22:** Event detection settings.
 
-In the dialog that will pop up (Fig. 22), you can set the threshold for the detection criterion. Since we want to extract some large and isolated events during this first pass, we set this to a high number, say 10, using the template scaling factor (Clemens and Bekkers, 1997). Click "OK" to start the event detection. When finished, press **F** to fit the whole trace to the window. The detected events will be marked by blue arrows in the upper part of the window, and blue circles will indicate the peak values of the detected events. With a threshold of 10, only two events are detected. Repeating the same procedure with a threshold of 4 will detect 33 events (Fig 23). 
+In the dialog that will pop up (Fig. 22), you can set the threshold for the detection criterion. Since we want to extract some large and isolated events during this first pass, we set this to a high number, say 10, using the template scaling factor (Clemens and Bekkers, 1997). Click "OK" to start the event detection. When finished, press **F** to fit the whole trace to the window. The detected events will be marked by blue arrows in the upper part of the window, and blue circles will indicate the peak values of the detected events (Fig 23). 
 
 
     .. figure:: images/events.png
@@ -72,7 +72,7 @@ In the dialog that will pop up (Fig. 22), you can set the threshold for the dete
 
         **Fig. 23:**  Detected events.
 
-To have a new window with the isolated events, switch to the event editing mode by pressing **E** or by activating the corresponding button in the toolbar (Fig. 24). Clicking on the trace with the right mouse button will allow a menu to appear. Select "Extract selected events" from this menu to put the exemplary events into a new window.
+To view the isolated events in a new window, you have to switch to the event editing mode, either by pressing **E** or by activating the corresponding button in the toolbar (Fig. 24). When you now click on the trace with the right mouse button, a menu will show up. Select "Extract selected events" from this menu. this will put the exemplary EPSCs into a new window.
 
 
     .. figure:: images/eventbutton.png
@@ -82,17 +82,17 @@ To have a new window with the isolated events, switch to the event editing mode 
 
 
 
-3. Create the final template
-----------------------------
+Create the final template
+-------------------------
 
-To create the final template, we need to get the average of all detected events and fit it to a biexponential function. Remember to set the baseline, peak and fit window cursors appropriately before performing the fit, and to update all calculations. Again, you can make use of a function from the ``minidemo`` module to set the cursors and perform the fit:
+We now create the average of all extracted events, as explained in chapter 1. Then, we fit a biexponential function to the average, as explained above for the single EPSC. Remember to set the baseline, peak and fit window cursors appropriately before performing the fit, and to update all calculations. Again, you can make use of a function from the ``minidemo`` module to set the cursors and perform the fit:
 
 ::
 
     >>> import minidemo # if you have not imported it already
     >>> minidemo.final()
 
-The final template should look similar as shown in Fig. 25 and give time constants of 0.13 and 15.36 ms respectively.
+The final template should look similar as shown in Fig. 25
 
 
     .. figure:: images/finaltemplate.png
@@ -100,10 +100,10 @@ The final template should look similar as shown in Fig. 25 and give time constan
 
         **Fig. 25:** Creating a final template.
 
-4. Extract all events
----------------------
+Extract all events
+------------------
 
-In the original file (minis.dat) we will extract all events with the final template. As before, select in Analysis -> Event detection -> Template matching, but now the final template is the second on the menu list (Fig. 26). For this final run, we will lower the detection threshold to a value of 3, as suggested by Clements and Bekkers (1997).
+Go back to the original file (minis.dat). Extracting all events with the final template is done in nearly the same way as described above for the preliminary template. However, you have to choose the correct template in the event dialog: The final template in this case is the second on the list (Fig. 26). For this final run, we will lower the detection threshold to a value of 3, as suggested by Clements and Bekkers (1997).
 
 
     .. figure:: images/selectfinaltemplate.png
@@ -111,10 +111,9 @@ In the original file (minis.dat) we will extract all events with the final templ
 
         **Fig. 26:** Selecting the final template.
 
-5. Edit detected events
------------------------
-
-The detected events have to be visually inspected to remove false-positives and add false-negatives. Remove false-positives with the unselected the checkbox next to the arrow indicating an event (Fig. 23). To add false-negatives, switch to the event-editing mode (Fig. 24) and right-click on the trace at the position where the event starts (Fig. 27). To screen the whole trace, it is convenient to use **Shift**  and left arrow at the same time. Once you are done with editing, choose "Extract selected events" from the context menu.
+Edit detected events
+--------------------
+Usually, the detected events have to be screened visually to remove false-positives and add false-negatives. Removing false-positives is done by unselected the checkbox next to the arrow indicating an event (Fig. 23). To add false-negatives, you have to switch to the event-editing mode (Fig. 24) and then right-click on the trace at the at the position where the event starts. from the context menu that will pop up, select "Add an event that starts here" (Fig. 27). To efficiently screen the whole trace, it is convenient to use **Shift**  and left arrow at the same time. this will move the trace left by the width of one window. Once you are done with editing, choose "Extract selected events" from the context menu.
 
 
     .. figure:: images/falsenegative.png
@@ -125,14 +124,21 @@ The detected events have to be visually inspected to remove false-positives and 
 Analyze extracted events
 ------------------------
 
-With the settings as suggested above, 83 events are extracted. You will find a table on the left of the traces: This will show you the time of onset of the events and the inter-event intervals. To apply some further analysis to the extracted events, you can set the baseline, peak and fit cursors and perform a batch analysis. Use ``minidemo.bath_cursors()`` to set cursors for the batch analysis:
+If you used the same settings as suggested above, 97 events will be extracted. You will find a table on the left of the traces: This will show you the time of onset of the events and the inter-event intervals. Usually, you will want to apply some further analysis to the extracted events. To do so, you first have to adjust the baseline, peak and fit cursors. Again, there is a function in the ``minidemo`` module taking care of that:
+
+::
+
+    >>> minidemo.batch_cursors()
+
+To analyze all traces efficiently, you can now perform a "batch analysis" on all traces at once: First, select all traces, either using :func:`stf.select_all()` from the shell, or "Edit"->"Select all traces" from the menu or pressing **Ctrl + A**. Then choose "Analysis"->"Batch analysis" from the menu. 
+
 
     .. figure:: images/batchanalysis.png
         :align: center
 
         **Fig. 28:** Batch analysis settings.
 
-From the dialog (Fig 28) choose the analysis functions that you want to apply to your data. Click "OK" once you are done. A new table will appear to the left of the traces. You can copy and paste values from the tables to spreadsheet programs for further analysis.
+From the dialog (Fig 28) choose the analysis functions that you want to apply to your data. Click "OK" once your are done. A new table will appear to the left of the traces. You can copy and paste values from the tables to spreadsheet programs for further analysis.
 
 
 Adjusting event detection settings

@@ -133,7 +133,7 @@ void wxStfEventDlg::EndModal(int retCode) {
 
     case wxID_OK:
         if (!OnOK()) {
-            wxLogMessage(wxT("Please, select a detection method"));
+            wxLogMessage(wxT("Select a detection method"));
             return;
         }
         break;
