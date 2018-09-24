@@ -7,10 +7,20 @@
 
 #include "./../../stf.h"
 #include "./eventdlg.h"
+#include "./../app.h"
 
-enum {wxID_COMBOTEMPLATES};
+enum {
+    wxID_COMBOTEMPLATES,
+    wxID_CRITERIA,
+    wxDETECTIONCLEMENTS,
+    wxDETECTIONJONAS,
+    wxDETECTIONPERNIA
+};
 
 BEGIN_EVENT_TABLE( wxStfEventDlg, wxDialog )
+EVT_RADIOBUTTON( wxDETECTIONCLEMENTS, wxStfEventDlg::OnClements )
+EVT_RADIOBUTTON( wxDETECTIONJONAS,   wxStfEventDlg::OnJonas )
+EVT_RADIOBUTTON( wxDETECTIONPERNIA,  wxStfEventDlg::OnPernia )
 END_EVENT_TABLE()
 
 wxStfEventDlg::wxStfEventDlg(wxWindow* parent, const std::vector<stf::SectionPointer>& templateSections,
@@ -58,7 +68,7 @@ wxDialog( parent, id, title, pos, size, style ), m_threshold(4.0), m_mode(stf::c
 
         wxStaticText* staticTextThr;
         staticTextThr =
-            new wxStaticText( this, wxID_ANY, wxT("Threshold:"), wxDefaultPosition, wxDefaultSize, 0 );
+            new wxStaticText( this, wxID_CRITERIA, wxT("Threshold:"), wxDefaultPosition, wxDefaultSize, 0 );
         gridSizer->Add( staticTextThr, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
         wxString def; def << m_threshold;
         m_textCtrlThr =
@@ -77,16 +87,30 @@ wxDialog( parent, id, title, pos, size, style ), m_threshold(4.0), m_mode(stf::c
 
         topSizer->Add( gridSizer, 0, wxALIGN_CENTER | wxALL, 5 );
 
+        //*** Radio options for event detection methods ***//
+        m_radioBox = new wxStaticBoxSizer( wxVERTICAL, this, wxT("Detection method"));
+
         wxString m_radioBoxChoices[] = {
-                wxT("Use template scaling (Clements && Bekkers)"),
-                wxT("Use correlation coefficient (Jonas et al.)"),
-                wxT("Use deconvolution (Pernia-Andrade et al.)")
+                wxT("Template scaling (Clements && Bekkers)"),
+                wxT("Correlation coefficient (Jonas et al.)"),
+                wxT("Deconvolution (Pernia-Andrade et al.)")
         };
-        int m_radioBoxNChoices = sizeof( m_radioBoxChoices ) / sizeof( wxString );
-        m_radioBox =
-            new wxRadioBox( this, wxID_ANY, wxT("Select method"), wxDefaultPosition, wxDefaultSize,
-                            m_radioBoxNChoices, m_radioBoxChoices, 0, wxRA_SPECIFY_ROWS );
-        m_radioBox->SetSelection(0);
+
+
+        wxRadioButton* wxRadioClements = new wxRadioButton(this, wxDETECTIONCLEMENTS, m_radioBoxChoices[0],
+            wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+
+        wxRadioButton* wxRadioJonas = new wxRadioButton(this, wxDETECTIONJONAS, m_radioBoxChoices[1],
+            wxDefaultPosition, wxDefaultSize);
+
+        wxRadioButton* wxRadioPernia = new wxRadioButton(this, wxDETECTIONPERNIA, m_radioBoxChoices[2],
+            wxDefaultPosition, wxDefaultSize);
+
+        m_radioBox->Add(wxRadioClements, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+        m_radioBox->Add(wxRadioJonas,   0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+        m_radioBox->Add(wxRadioPernia,  0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+        //m_radioBox->SetSelection(0);
+
         topSizer->Add( m_radioBox, 0, wxALIGN_CENTER | wxALL, 5 );
     }
 
@@ -103,18 +127,29 @@ wxDialog( parent, id, title, pos, size, style ), m_threshold(4.0), m_mode(stf::c
 }
 
 void wxStfEventDlg::EndModal(int retCode) {
+    wxCommandEvent unusedEvent;
     // similar to overriding OnOK in MFC (I hope...)
-    if (retCode==wxID_OK) {
+    switch( retCode) {
+
+    case wxID_OK:
         if (!OnOK()) {
+            wxLogMessage(wxT("Select a detection method"));
             return;
         }
+        break;
+
+    case wxID_CANCEL:
+        break;
+
+    default:
+        return;
     }
     wxDialog::EndModal(retCode);
 }
 
 bool wxStfEventDlg::OnOK() {
     // Read template:
-    m_template=m_comboBoxTemplates->GetCurrentSelection();
+    m_template = m_comboBoxTemplates->GetCurrentSelection();
     if (m_template<0) {
         wxLogMessage(wxT("Please select a valid template"));
         return false;
@@ -125,7 +160,22 @@ bool wxStfEventDlg::OnOK() {
         long tempLong;
         m_textCtrlDist->GetValue().ToLong( &tempLong );
         m_minDistance = (int)tempLong;
-        switch (m_radioBox->GetSelection()) {
+
+        wxRadioButton* wxRadioClements = (wxRadioButton*)FindWindow(wxDETECTIONCLEMENTS);
+        wxRadioButton* wxRadioJonas = (wxRadioButton*)FindWindow(wxDETECTIONJONAS);
+        wxRadioButton* wxRadioPernia = (wxRadioButton*)FindWindow(wxDETECTIONPERNIA);
+
+        if ( wxRadioClements->GetValue() ) 
+            m_mode = stf::criterion;
+        else if ( wxRadioJonas->GetValue() ) 
+            m_mode = stf::correlation;
+        else if ( wxRadioPernia->GetValue() )
+            m_mode = stf::deconvolution;
+        else
+            return false;
+
+        
+        /*switch (m_radioBox->GetSelection()) {
          case 0:
              m_mode = stf::criterion;
              break;
@@ -135,11 +185,53 @@ bool wxStfEventDlg::OnOK() {
          case 2:
              m_mode = stf::deconvolution;
              break;
-        }
+        }*/
         if (m_mode==stf::correlation && (m_threshold<0 || m_threshold>1)) {
             wxLogMessage(wxT("Please select a value between 0 and 1 for the correlation coefficient"));
             return false;
         }
     }
     return true;
+}
+
+void wxStfEventDlg::OnClements( wxCommandEvent& event) {
+    event.Skip();
+    
+    wxRadioButton* wxRadioClements = (wxRadioButton*)FindWindow(wxDETECTIONCLEMENTS);
+    wxStaticText* staticTextThr = (wxStaticText*)FindWindow(wxID_CRITERIA);
+
+    if (wxRadioClements == NULL || staticTextThr == NULL){
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxStfEvenDlg::OnClements()"));
+        return;
+    }
+    staticTextThr->SetLabel(wxT("Threshold:"));
+    
+}
+
+void wxStfEventDlg::OnJonas( wxCommandEvent& event) {
+    event.Skip();
+    
+    wxRadioButton* wxRadioJonas = (wxRadioButton*)FindWindow(wxDETECTIONJONAS);
+    wxStaticText* staticTextThr = (wxStaticText*)FindWindow(wxID_CRITERIA);
+
+    if (wxRadioJonas == NULL || staticTextThr == NULL){
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxStfEvenDlg::OnJonas()"));
+        return;
+    }
+    staticTextThr->SetLabel(wxT("Correlation:"));
+    
+}
+
+void wxStfEventDlg::OnPernia( wxCommandEvent& event) {
+    event.Skip();
+    
+    wxRadioButton* wxRadioPernia = (wxRadioButton*)FindWindow(wxDETECTIONPERNIA);
+    wxStaticText* staticTextThr = (wxStaticText*)FindWindow(wxID_CRITERIA);
+
+    if (wxRadioPernia == NULL || staticTextThr == NULL){
+        wxGetApp().ErrorMsg(wxT("Null pointer in wxStfEvenDlg::OnPernia()"));
+        return;
+    }
+    staticTextThr->SetLabel( wxT("Standard deviation:") );
+    
 }
