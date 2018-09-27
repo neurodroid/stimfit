@@ -79,9 +79,6 @@ int VERBOSE_LEVEL = 0;		// this variable is always available, but only used with
   #define FILESEP '/'
 #endif
 
-#define min(a,b)        (((a) < (b)) ? (a) : (b))
-#define max(a,b)        (((a) > (b)) ? (a) : (b))
-
 char* getlogin (void);
 char* xgethostname (void);
 

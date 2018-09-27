@@ -47,6 +47,8 @@ extern "C" {
 extern int VERBOSE_LEVEL; 	// used for debugging, variable is always defined
 #endif
 
+#define min(a,b)        (((a) < (b)) ? (a) : (b))
+#define max(a,b)        (((a) > (b)) ? (a) : (b))
 
 /*
 	Including ZLIB enables reading gzipped files (they are decompressed on-the-fly)
