@@ -147,7 +147,7 @@ AM_CONDITIONAL(WITH_BIOSIGLITE, test "$with_biosiglite" = "yes")
 
 if test "$with_biosig2" = "yes" ; then
     CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG2"
-    LIBBIOSIG_LDFLAGS="-lbiosig2 -lcholmod"
+    LIBBIOSIG_LDFLAGS="-lbiosig -lcholmod"
 elif test "$with_biosig" = "yes" ; then
     CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG"
     LIBBIOSIG_LDFLAGS="-lbiosig -lcholmod"
