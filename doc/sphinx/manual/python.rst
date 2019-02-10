@@ -158,7 +158,7 @@ You can pass a 2D-NumPy array to :func:`stf.new_window_matrix()`. The first dime
     >>> numpy_matrix[1] = np.sqrt( np.abs(get_trace()) )
     >>> new_window_matrix(numpy_matrix)
 
-In this example, np is the NumPy namespace. Typing np. at the command prompt will show you all available NumPy functions. :func:`stf.get_size_trace()` will be explained later on.
+In this example, np is the [NumPy]_ namespace. Typing np. at the command prompt will show you all available [NumPy]_ functions. :func:`stf.get_size_trace()` will be explained later on.
 
 * **new_window_list()**
 
@@ -394,7 +394,7 @@ Cutting traces is best done using the squared braked operators ([]) to slice a [
     >>> new_window(a[:100])
     >>> new_window(a[100:])
 
-In this example, a[:100] refers to a sliced NumPy array that comprises all sampling points from index 0 to index 99, and a[100:] refers to an array from index 100 to the last sampling point.
+In this example, a[:100] refers to a sliced [NumPy]_ array that comprises all sampling points from index 0 to index 99, and a[100:] refers to an array from index 100 to the last sampling point.
 
 * **cut_traces(pt)** and **cut_traces_multi(pt_list)**
 
@@ -452,5 +452,4 @@ will cut the selected traces at every 100th sampling point, starting with the 10
 
 .. [Python-tutorial] http://docs.python.org/tut/
 .. [Python-website]  http://www.python.org/doc/
-.. [NumPy] http://numpy.scipy.org/
 .. [SciPy] http://www.scipy.org/
