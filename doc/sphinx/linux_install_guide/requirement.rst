@@ -5,7 +5,7 @@ Building Stimfit
 :Author: Jose Guzman, Christoph Schmidt-Hieber
 :Date:    |today|
 
-This document describes how to install `Stimfit <http://www.stimfit.org>`_ |version| under GNU/Linux. The installation was tested on a GNU/Debian testing/unstable with support for Python 2.*. It should work on other Debian-based systems (e.g. Ubuntu) as with newer version of Stimfit as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) and that both versions match. For this installation, we tested 4.2.4versions.
+This document describes how to install `Stimfit <http://www.stimfit.org>`_ |version| under GNU/Linux. The installation was tested on a GNU/Debian testing/unstable with support for Python 2.*. It should work on other Debian-based systems (e.g. Ubuntu) as with newer version of Stimfit as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) and that both versions match. For this installation, we tested 4.2.4 versions.
 
 ============================
 What we need before we start
@@ -51,7 +51,7 @@ In addition, you can install doxygen, python-sphinx (with graphviz and Latex) if
 Optional: PyEMF
 =======================
 
-[PyEMF]_ is needed to export figures to the windows meta fileformat (WMF/EMF). EMF is a vector graphics format and can be imported in different Office software including LibreOffice. To install it, do:
+[PyEMF]_ is needed to export figures to the windows meta file format (WMF/EMF). EMF is a vector graphics format and can be imported in different Office software including LibreOffice. To install it, do:
 
 ::
 
