@@ -42,3 +42,5 @@ sudo port uninstall py35-stfio
 sudo port clean --all py35-stfio
 sudo port uninstall py36-stfio
 sudo port clean --all py36-stfio
+sudo port uninstall py37-stfio
+sudo port clean --all py37-stfio
