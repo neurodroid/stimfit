@@ -36,7 +36,7 @@ For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build depend
 
 This will get you, amongst others:
 
-* [wxWidgets]_: C++ library that contains the user interface (version 2.8 is only recommended!)
+* [wxWidgets]_: C++ library that contains the user interface (version = 2.8.12 , but 3.0.4 is highly recommended!)
 * [wxPython]_: GUI toolkit for the Python language.
 * [boost]_: C++ library that is mainly used for its shared pointers.
 * [Lapack]_: A linear algebra library.
