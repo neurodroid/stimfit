@@ -1,9 +1,9 @@
 /*
 
-    Copyright (C) 2010,2011,2012,2015,2016 Alois Schloegl <alois.schloegl@ist.ac.at>
+    Copyright (C) 2010-2019 Alois Schloegl <alois.schloegl@ist.ac.at>
 
     This file is part of the "BioSig for C/C++" repository
-    (biosig4c++) at http://biosig.sf.net/
+    (biosig4c++) at http://biosig.sourceforge.io/
 
     BioSig is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../biosig-dev.h"
+#include "../biosig.h"
 
 #define min(a,b)        (((a) < (b)) ? (a) : (b))
 

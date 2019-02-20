@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../biosig-dev.h"
+#include "../biosig.h"
 
 #define ABFLONG int32_t
 #include "axon_structs.h"	// ABF2

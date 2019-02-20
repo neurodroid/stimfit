@@ -47,8 +47,6 @@ extern "C" {
 extern int VERBOSE_LEVEL; 	// used for debugging, variable is always defined
 #endif
 
-#define min(a,b)        (((a) < (b)) ? (a) : (b))
-#define max(a,b)        (((a) > (b)) ? (a) : (b))
 
 /*
 	Including ZLIB enables reading gzipped files (they are decompressed on-the-fly)
@@ -110,7 +108,7 @@ char *getlogin (void);
 
 #define BIOSIG_VERSION_MAJOR 1
 #define BIOSIG_VERSION_MINOR 9
-#define BIOSIG_PATCHLEVEL    2
+#define BIOSIG_PATCHLEVEL    3
 // for backward compatibility
 #define BIOSIG_VERSION_STEPPING BIOSIG_PATCHLEVEL
 #define BIOSIG_VERSION (BIOSIG_VERSION_MAJOR * 10000 + BIOSIG_VERSION_MINOR * 100 + BIOSIG_PATCHLEVEL)
@@ -139,7 +137,7 @@ char *getlogin (void);
 #include "gdftime.h"
 
 /*
- * pack structures to fullfil following requirements:
+ * pack structures to fulfil following requirements:
  * (1) Matlab v7.3+ requires 8 byte alignment
  * (2) in order to use mingw-compiled libbiosig with MS' VisualStudio,
  *     the structurs must be packed in a MS compatible way.
@@ -228,7 +226,8 @@ enum FileFormat {
 	TDMS, TIFF, TMS32, TMSiLOG, TRC, UNIPRO, VRML, VTK,
 	WAV, WCP, WG1, WinEEG, WMF, XML, XPM,
 	Z, ZIP, ZIP2, RHD2000,
-	invalid=0xffff
+	EBNEURO, SigViewerEventsCSV, XDF,
+	LastPlaceHolder, invalid=0xffff
 };
 
 
