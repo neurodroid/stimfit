@@ -26,11 +26,12 @@ libbiosiglite_la_SOURCES = \
   biosig4c++/test0/sandbox.c \
   biosig4c++/biosig.c \
   biosig4c++/biosig2.c \
-  biosig4c++/biosig-network.c \
   biosig4c++/biosig-HL7aECG-stub.c \
   biosig4c++/gdftime.c \
   biosig4c++/mdc_ecg_codes.c \
   biosig4c++/physicalunits.c
+
+  # biosig4c++/biosig-network.c
 
 libbiosiglite_la_CPPFLAGS = -DWITH_BIOSIG2 -DWITH_ZLIB -DWITH_CHOLMOD -DWITHOUT_NETWORK
 libbiosiglite_la_LDFLAGS = 
