@@ -36,7 +36,7 @@ For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build depend
 
 This will get you, amongst others:
 
-* [wxWidgets]_: C++ graphical user interface toolkit (version >= 2.8). Tested with 2.8.12 and 3.0.4)
+* [wxWidgets]_: C++ graphical user interface toolkit (version >= 2.8; tested with 2.8.12 and 3.0.4)
 * [wxPython]_: GUI toolkit for the Python language.
 * [boost]_: C++ library that is mainly used for its shared pointers.
 * [Lapack]_: A linear algebra library.
@@ -92,9 +92,9 @@ to generate the configure script. Remember that we need Autoconf, Automake and L
 
 ::
 
-    $ ./configure --enable-python
+    $ ./configure
 
-The **--enable-python** option is absolutely necessary to install `Stimfit <http://www.stimfit.org>`_ since some of the functionality depends on Python. The configure script has some additional options. 
+The **--enable-python** option is activated as a default.
 
 
 Finally, after running configure, you can type
@@ -115,9 +115,11 @@ where [N] is the number of parallel builds you want to start. And finally:
     If you want to install Stimfit as local user (e.g in ~/.local) with a local version of Python (e.g ~/.local/lib/python2.6) you have to add the following argument to configure
     script:
 
-    $ ./configure --prefix= $HOME/.local PYTHON = $HOME/.local/lib/python2.6 --enable-python
+::
 
-    and after that call **make** and **make install** as normal user. The Stimfit executable will be now in $HOME/.local
+    $ PYTHON=$HOME/.local/lib/python2.6 ./configure --prefix=$HOME/.local
+
+and after that call **make** and **make install** as normal user. The Stimfit executable will be now in $HOME/.local
 
 .. _BioSigBuild:
 
@@ -127,19 +129,25 @@ Building Stimfit with BioSig import filter
 
 We recommend to build `Stimfit <http://www.stimfit.org>`_  with the `BioSig library <http://biosig.sourceforge.net>`_  to import files in from different biomedical disciplines. It is necessary to read files acquired with `HEKA amplifiers <http://www.heka.com>`_ or with `Signal <http://ced.co.uk/products/sigovin>`_ from CED. To do it, follow this instructions:
 
-1. Install libsuitesparse and libz libraries:
+Install libsuitesparse and libz libraries:
 
 ::
 
     sudo apt-get install libsuitesparse-dev libz-dev gawk
 
-2. Download the BioSig sources: you can obtain the latest BioSig version in `BioSig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig (v1.5.6 or higher is recommended). Alternatively, you can obtain the latest developmental version from the git repository:
+To avoid ABI incompatibilities, we recommend building Stimfit with the version of biosig that ships with the Stimfit source:
+
+::
+
+    $ ./configure --with-biosiglite
+
+Alternatively, get the full version of biosig: you can obtain the latest BioSig version in `BioSig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig (v1.5.6 or higher is recommended). Alternatively, you can obtain the latest developmental version from the git repository:
 
 ::
 
     git clone https://git.code.sf.net/p/biosig/code biosig-code
 
-3. Enter the directory **biosig4c++** and compile and install the sources: 
+Enter the directory **biosig4c++** and compile and install the sources: 
 
 ::
 
@@ -165,9 +173,9 @@ To build a local copy call:
 
 ::
 
-    sphinx-build $HOME/Stimfit/doc/sphinx/ <destinyFolder> # destiny folder could be $HOME/tmp/stf/doc/
+    sphinx-build $HOME/Stimfit/doc/sphinx/ <destination> # destination folder could be $HOME/tmp/stf/doc/
 
-The html documentation will be located in <destinyFolder>/index.html 
+The html documentation will be located in <destination>/index.html 
 
 Additionally, the source code is documented with [Doxygen]_ and is also accessible on-line in http://www.stimfit.org/doc/doxygen/html/. If you want to have a local copy of the documentation, you will need to install the doxygen and gravphvix:
 
