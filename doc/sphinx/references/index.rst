@@ -15,11 +15,29 @@ References
 2018
 ====
 
+    * `Espinoza C, Guzman SJ, Zhang X, Peter Jonas (2018) <https://www.nature.com/articles/s41467-018-06899-3>`_ Parvalbumin+ interneurons obey unique connectivity rules and establish a powerful lateral-inhibition microcircuit in dentate gyrus. *Nat Comm* Nov 2;9:4605.
+
+    * `Schulz JM, Knoflach F, Hernandez MC, Bischofgerber J (2018) <https://www.nature.com/articles/s41467-018-06004-8>`_ Dendrite-targeting interneurons control synaptic NMDA-receptor activation via nonlinear α5-GABAA receptors. *Nat Comm* Sep 3;9:3576.
+
+    * `Parras A, Anta H, Santos-Galindo M, Swarup V, Elorza A, Nieto-González JL, Picó S, Hernández IH, Díaz-Hernández JI, Belloc E, Rodolosse A, Parikshak NN, Peñagarikano O, Fernández-Chacón R, Irimia M, Navarro P, Geschwind DH, Méndez R, Lucas JJ (2018) <https://www.nature.com/articles/s41586-018-0423-5>`_ Autism-like phenotype and risk gene mRNA deadenylation by CPEB4 mis-splicing. Nature 560, 441-446.
+    
+    * `Rifkin RA, Huyghe D, Li X, Parakala M, Aisenberg E, Moss SJ, Slesinger PA (2018) <https://www.pnas.org/content/115/40/E9479.long>`_ GIRK currents in VTA dopamine neurons control the sensitivity of mice to cocaine-induced locomotor sensitization. *PNAS* 115:9479-9488.
+
+    *  `Scheib U, Broser M, Constantin OM, Yang S, Gao S, Mukherjee S, Stehfest K, Nagel G, Gee CE, Hegemann P (2018) <https://www.nature.com/articles/s41467-018-04428-w>`_ Rhodopsin-cyclases for photocontrol of cGMP/cAMP and 2.3 Å structure of the adenylyl cyclase domain. *Nat Comm* May 24:9;2046.
+
     * `Hua Hu, Fabian C. Roth, David Vandael, Peter Jonas (2018) <https://www.sciencedirect.com/science/article/pii/S0896627318301454?via%3Dihub>`_ Complementary Tuning of Na+ and K+ Channel Gating Underlies Fast and Energy-Efficient Action Potentials in GABAergic Interneuron Axons. *Neuron*  10.1016/j.neuron.2018.02.024.
+
+    * `John J Marshall, Jian Xu, Anis Contractor (2018) <http://www.jneurosci.org/content/early/2018/03/14/JNEUROSCI.1788-17.2018>`_ Kainate receptors inhibit glutamate release via mobilization of endocannabinoids in striatal direct pathway Spiny Projection Neurons (dSPNs). *J Neurosci* 38(16):1788-17.
+
+    * `Grimm C, Silapetere A, Vogt A, Bernal Sierra YA, Hegemann P (2018) <https://www.nature.com/articles/s41598-018-27690-w>`_ Electrical properties, substrate specificity and optogenetic potential of the engineered light-driven sodium pump eKR2. *Sci Rep* 8:9316.
+
+    * `Turko P, Groberman K, Browa F, Cobb S, Vida I (2018) <https://academic.oup.com/cercor/article/29/3/1230/4841690>`_ Differential Dependence of GABAergic and Glutamatergic Neurons on Glia for the Establishment of Synaptic Transmission. *Cereb Cortex* 3:1230-1243.
 
     * `Sooyun Kim, Yoonsub Kim, Suk-Ho Lee, Won-Kyung Ho (2018) <https://elifesciences.org/articles/35269>`_ Dendritic spikes in hippocampal granule cells are necessary for long-term potentiation at the perforant path synapse. *eLife* 2018:Mar 26:7.
 
-    * `John J Marshall, Jian Xu, Anis Contractor (2018) <http://www.jneurosci.org/content/early/2018/03/14/JNEUROSCI.1788-17.2018>`_ Kainate receptors inhibit glutamate release via mobilization of endocannabinoids in striatal direct pathway Spiny Projection Neurons (dSPNs). *J Neurosci* 38(16):1788-17.
+    * `Ortega-de San Luis C, Sanchez-Garcia MA, Nieto-Gonzalez JL, García-Junco-Clemente P, Montero-Sanchez A, Fernandez-Chacon R, Pascual A (2018) <https://onlinelibrary.wiley.com/doi/full/10.1111/acel.12821>`_ Substantia nigra dopaminergic neurons and striatal interneurons are engaged in three parallel but interdependent postnatal neurotrophic circuits. *Aging Cell* Oct;17(5):e12821.
+
+    * `Rothman JS and Silver RA (2018) <https://www.frontiersin.org/articles/10.3389/fninf.2018.00014/full>`_ NeuroMatic: An Integrated Open-Source Software Toolkit for Acquisition, Analysis and Simulation of Electrophysiological Data. *Front Neuroinform* doi: 10.3389/fninf.2018.00014. 
 
 ====
 2017

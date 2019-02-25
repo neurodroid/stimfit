@@ -129,11 +129,11 @@ Building Stimfit with BioSig import filter
 
 We recommend to build `Stimfit <http://www.stimfit.org>`_  with the `BioSig library <http://biosig.sourceforge.net>`_  to import files in from different biomedical disciplines. It is necessary to read files acquired with `HEKA amplifiers <http://www.heka.com>`_ or with `Signal <http://ced.co.uk/products/sigovin>`_ from CED. To do it, follow this instructions:
 
-Install libsuitesparse and libz libraries:
+Install libsuitesparse, libz and dcmtk libraries:
 
 ::
 
-    sudo apt-get install libsuitesparse-dev libz-dev gawk
+    sudo apt-get install libsuitesparse-dev libz-dev gawk libdcmtk-dev
 
 To avoid ABI incompatibilities, we recommend building Stimfit with the version of biosig that ships with the Stimfit source:
 
