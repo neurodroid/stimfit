@@ -9,10 +9,13 @@
     <title>The Python shell &#8212; Stimfit 0.15.8 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Latency measurements" href="latency_measurements.html" />
@@ -56,7 +59,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber (christsc at gmx.de)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">28 June, 2018</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">14 May, 2019</td>
 </tr>
 </tbody>
 </table>
@@ -113,7 +116,7 @@ useful when you want to call a function several times in a row.</p>
 <li><strong>get_trace(trace=-1, channel=-1)</strong></li>
 </ul>
 <p>The <a class="reference internal" href="../stf_reference/stf.html#stf.get_trace" title="stf.get_trace"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_trace()</span></code></a> function returns the currently displayed trace as
-one-dimension <a class="reference internal" href="#numpy" id="id6">[NumPy]</a> array when called without arguments:</p>
+one-dimension <a class="reference internal" href="../linux_install_guide/requirement.html#numpy" id="id6">[NumPy]</a> array when called without arguments:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">get_trace</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -151,7 +154,7 @@ of course). Remember that indices are zero-based!</p>
 </div>
 <div class="section" id="using-numpy-with-stimfit">
 <h2>Using NumPy with Stimfit<a class="headerlink" href="#using-numpy-with-stimfit" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="#numpy" id="id7">[NumPy]</a> allows you to efficiently perform array computations from the <code class="docutils literal notranslate"><span class="pre">Python</span></code> shell. For example, you can multiply an array with a scalar:</p>
+<p><a class="reference internal" href="../linux_install_guide/requirement.html#numpy" id="id7">[NumPy]</a> allows you to efficiently perform array computations from the <code class="docutils literal notranslate"><span class="pre">Python</span></code> shell. For example, you can multiply an array with a scalar:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">get_trace</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">a</span><span class="p">[</span><span class="mi">234</span><span class="p">]</span>
 <span class="go">-27.0385742188</span>
@@ -189,7 +192,7 @@ of course). Remember that indices are zero-based!</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_window_matrix</span><span class="p">(</span><span class="n">numpy_matrix</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In this example, np is the NumPy namespace. Typing np. at the command prompt will show you all available NumPy functions. <a class="reference internal" href="../stf_reference/stf.html#stf.get_size_trace" title="stf.get_size_trace"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_size_trace()</span></code></a> will be explained later on.</p>
+<p>In this example, np is the <a class="reference internal" href="../linux_install_guide/requirement.html#numpy" id="id8">[NumPy]</a> namespace. Typing np. at the command prompt will show you all available <a class="reference internal" href="../linux_install_guide/requirement.html#numpy" id="id9">[NumPy]</a> functions. <a class="reference internal" href="../stf_reference/stf.html#stf.get_size_trace" title="stf.get_size_trace"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_size_trace()</span></code></a> will be explained later on.</p>
 <ul class="simple">
 <li><strong>new_window_list()</strong></li>
 </ul>
@@ -200,7 +203,7 @@ of course). Remember that indices are zero-based!</p>
 </pre></div>
 </div>
 <p>Note that items in Python list are written between <em>squared</em> brakes, and that a comma is required at the end of single-item lists.</p>
-<p>The <a class="reference internal" href="#scipy" id="id8">[SciPy]</a> library, which is build on top of <a class="reference internal" href="#numpy" id="id9">[NumPy]</a>, provides a huge amount of numerical tools, such as special functions, integration, ordinary differential equation solvers, gradient optimization, genetic algorithms or parallel programming tools. Due to its size, it is not packaged with <a class="reference external" href="http://www.stimfit.org">Stimfit</a> by default, but I highly recommend installing it for more advanced numerical analysis.</p>
+<p>The <a class="reference internal" href="#scipy" id="id10">[SciPy]</a> library, which is build on top of <a class="reference internal" href="../linux_install_guide/requirement.html#numpy" id="id11">[NumPy]</a>, provides a huge amount of numerical tools, such as special functions, integration, ordinary differential equation solvers, gradient optimization, genetic algorithms or parallel programming tools. Due to its size, it is not packaged with <a class="reference external" href="http://www.stimfit.org">Stimfit</a> by default, but I highly recommend installing it for more advanced numerical analysis.</p>
 </div>
 <div class="section" id="control-stimfit-from-the-python-shell">
 <h2>Control Stimfit from the Python shell<a class="headerlink" href="#control-stimfit-from-the-python-shell" title="Permalink to this headline">¶</a></h2>
@@ -386,13 +389,13 @@ of course). Remember that indices are zero-based!</p>
 <p>Some often-requested features could not be integrated into the program easily without cluttering up the user interface. The following sections will show how the Python shell can be used to solve these problems.</p>
 <div class="section" id="cutting-traces-to-arbitrary-lengths">
 <h3>Cutting traces to arbitrary lengths<a class="headerlink" href="#cutting-traces-to-arbitrary-lengths" title="Permalink to this headline">¶</a></h3>
-<p>Cutting traces is best done using the squared braked operators ([]) to slice a <a class="reference internal" href="#numpy" id="id12">[NumPy]</a> array. For example, if you wanted to cut a trace at the 100th sampling point, you could do:</p>
+<p>Cutting traces is best done using the squared braked operators ([]) to slice a <a class="reference internal" href="../linux_install_guide/requirement.html#numpy" id="id14">[NumPy]</a> array. For example, if you wanted to cut a trace at the 100th sampling point, you could do:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">get_trace</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_window</span><span class="p">(</span><span class="n">a</span><span class="p">[:</span><span class="mi">100</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">new_window</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">100</span><span class="p">:])</span>
 </pre></div>
 </div>
-<p>In this example, a[:100] refers to a sliced NumPy array that comprises all sampling points from index 0 to index 99, and a[100:] refers to an array from index 100 to the last sampling point.</p>
+<p>In this example, a[:100] refers to a sliced <a class="reference internal" href="../linux_install_guide/requirement.html#numpy" id="id15">[NumPy]</a> array that comprises all sampling points from index 0 to index 99, and a[100:] refers to an array from index 100 to the last sampling point.</p>
 <ul class="simple">
 <li><strong>cut_traces(pt)</strong> and <strong>cut_traces_multi(pt_list)</strong></li>
 </ul>
@@ -453,16 +456,10 @@ of course). Remember that indices are zero-based!</p>
 <tr><td class="label"><a class="fn-backref" href="#id3">[Python-website]</a></td><td><a class="reference external" href="http://www.python.org/doc/">http://www.python.org/doc/</a></td></tr>
 </tbody>
 </table>
-<table class="docutils citation" frame="void" id="numpy" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label">[NumPy]</td><td><em>(<a class="fn-backref" href="#id6">1</a>, <a class="fn-backref" href="#id7">2</a>, <a class="fn-backref" href="#id9">3</a>, <a class="fn-backref" href="#id12">4</a>)</em> <a class="reference external" href="http://numpy.scipy.org/">http://numpy.scipy.org/</a></td></tr>
-</tbody>
-</table>
 <table class="docutils citation" frame="void" id="scipy" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label">[SciPy]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id8">2</a>)</em> <a class="reference external" href="http://www.scipy.org/">http://www.scipy.org/</a></td></tr>
+<tr><td class="label">[SciPy]</td><td><em>(<a class="fn-backref" href="#id1">1</a>, <a class="fn-backref" href="#id10">2</a>)</em> <a class="reference external" href="http://www.scipy.org/">http://www.scipy.org/</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -478,7 +475,7 @@ of course). Remember that indices are zero-based!</p>
             <p class="logo"><a href="../contents.html">
               <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
             </a></p>
-  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <h3><a href="../contents.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">The Python shell</a><ul>
 <li><a class="reference internal" href="#why-use-python">Why use Python?</a></li>
@@ -530,7 +527,7 @@ of course). Remember that indices are zero-based!</p>
             <p class="logo"><a href="../contents.html">
               <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
             </a></p>
-  <h3><a href="../contents.html">Table Of Contents</a></h3>
+  <h3><a href="../contents.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">The Python shell</a><ul>
 <li><a class="reference internal" href="#why-use-python">Why use Python?</a></li>
@@ -576,8 +573,8 @@ of course). Remember that indices are zero-based!</p>
       </div>
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2015, Christoph Schmidt-Hieber.
-      Last updated on 28 June, 2018.
+        &#169; Copyright 2018, Christoph Schmidt-Hieber.
+      Last updated on 14 May, 2019.
     </div>
   </body>
 </html>
