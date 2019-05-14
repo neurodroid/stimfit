@@ -574,6 +574,19 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
     SetFocus();
 }
 
+void wxStfGraph::ClearEvents() {
+    stf::SectionAttributes sec_attr;
+    try {
+        sec_attr = Doc()->GetCurrentSectionAttributes();
+    }
+    catch (const std::out_of_range& e) {
+        return;
+    }
+    for (event_it it2 = sec_attr.eventList.begin(); it2 != sec_attr.eventList.end(); ++it2) {
+        it2->GetCheckBox()->Destroy();
+    }
+}
+
 void wxStfGraph::DrawCrosshair( wxDC& DC, const wxPen& pen, const wxPen& printPen, int crosshairSize, double xch, double ych) {
     if (isnan(xch) || isnan(ych)) {
         return;

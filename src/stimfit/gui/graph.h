@@ -210,6 +210,9 @@ public:
      */
     void Fittowindow(bool refresh);
 
+    //! Destroys all event check boxes
+    void ClearEvents();
+
     //! Set to true if the graph is drawn on a printer.
     /*! \param value boolean determining whether the graph is printed.
      */

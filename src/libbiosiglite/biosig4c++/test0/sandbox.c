@@ -28,20 +28,23 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include "../biosig-dev.h"
 #include "../biosig.h"
 
-// these functions are stubs
 
+/*************************************************************************
+ use DCMTK for reading DICOM files 
+ *************************************************************************/
 #ifdef WITH_DCMTK
-#undef WITH_DICOM
-#undef WITH_GDCM
+#undef WITH_DICOM	// disable internal DICOM implementation
+#undef WITH_GDCM	// disable interface to GDCM
 
-EXTERN_C int sopen_dicom_read(HDRTYPE* hdr) {
-	fprintf(stdout,"DCMTK is used to read dicom files.\n");
+extern "C" int sopen_dcmtk_read(HDRTYPE* hdr);
+
+extern "C" int sopen_dicom_read(HDRTYPE* hdr) {
+	return sopen_dcmtk_read(hdr);
 }
 
-#endif
+#endif  // DCMTK
 
 #ifdef HAVE_HDF
 #include <hdf5.h>
@@ -51,6 +54,9 @@ EXTERN_C int sopen_dicom_read(HDRTYPE* hdr) {
 #endif
 
 
+/*************************************************************************
+ use GDCM for reading DICOM files
+ *************************************************************************/
 #ifdef WITH_GDCM
 #undef WITH_DICOM
 
@@ -98,7 +104,7 @@ EXTERN_C int sopen_dicom_read(HDRTYPE* hdr) {
 
 EXTERN_C int sopen_dicom_read(HDRTYPE* hdr) {
 
-	fprintf(stdout,"GDCM is used to read dicom files.\n");
+	fprintf(stdout,"%s ( line %d): GDCM is used to read dicom files.\n",__func__,__LINE__);
 
 	gdcm::Reader reader;
         const gdcm::DataElement *de;
@@ -375,6 +381,9 @@ int sopen_unipro_read(HDRTYPE* hdr) {
 }
 
 
+/*************************************************************************
+ use internal implementation for reading DICOM files
+ *************************************************************************/
 #ifdef WITH_DICOM
 int sopen_dicom_read(HDRTYPE* hdr) {
 

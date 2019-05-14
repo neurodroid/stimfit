@@ -49,7 +49,7 @@ master_doc = 'contents'
 
 # General information about the project.
 project = u'Stimfit'
-copyright = u'2015, Christoph Schmidt-Hieber'
+copyright = u'2018, Christoph Schmidt-Hieber'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

@@ -617,7 +617,7 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 
 	/**** SECTION 0 ****/
 	len = leu32p(PtrCurSect+4); 
-	NSections = min((len-16)/10,_NUM_SECTION);
+	NSections = (len-16)/10;
 
 	if (memcmp(ptr+16, "SCPECG\0\0", 8)) {
 		fprintf(stderr,"Warning SOPEN (SCP): Bytes 11-16 of Section 0 do not contain SCPECG - this violates ISO/DIS 11073-91064 Section 5.3.2.\n" );
@@ -632,18 +632,25 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 		section[K].index  = 0;
 	}
 
-	for (K=1; K<NSections; K++)	{
+	for (K = 1; K < NSections; K++)	{
 		// this is needed because fields are not always sorted
 		curSect = leu32p(ptr+6+16+K*10);
+		len     = leu32p(ptr+6+16+K*10+2);
+
+		if (VERBOSE_LEVEL > 7)
+			fprintf(stdout,"%s (line %i): #%d section %d/%d %d %d\n",__FILE__,__LINE__,K,curSect,NSections,leu32p(ptr+6+16+K*10+2),leu32p(ptr+6+16+K*10+6)-1);
+
 		if (curSect < _NUM_SECTION) {
 			if (section[curSect].ID >= 0) {
 				biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "SCP Section must not be defined twice");
 				return -1;
 			}
 			section[curSect].ID 	= curSect;
-			section[curSect].length = leu32p(ptr+6+16+K*10+2);
+			section[curSect].length = len;
 			section[curSect].index  = leu32p(ptr+6+16+K*10+6)-1;
 		}
+		else if (len > 0)
+			fprintf(stderr,"Warning SOPEN (SCP) : vendor specific section %d is not supported\n",curSect);
 	}
 
 	if (section[1].length) {
@@ -678,7 +685,7 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 			}
 	}
 
-	for (K=1; K<NSections; K++)	{
+	for (K=1; K<_NUM_SECTION; K++)	{
 
 		curSect           = section[K].ID;
 		len		  = section[K].length;
@@ -731,7 +738,7 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 			t0.tm_hour = 0;
 			t0.tm_min  = 0;
 			t0.tm_sec  = 0;
-			t0.tm_isdst= -1; // daylight savings time - unknown 
+			t0.tm_isdst= -1; // daylight savings time - unknown
 			hdr->T0    = 0;
 			hdr->Patient.Birthday = 0;
 			uint32_t len1;
@@ -740,7 +747,7 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 				tag = *(PtrCurSect+curSectPos);
 				len1 = leu16p(PtrCurSect+curSectPos+1);
 				if (VERBOSE_LEVEL > 7)
-					fprintf(stdout,"SCP(r): Section 1 Tag %i Len %i\n",tag,len1); 
+					fprintf(stdout,"SCP(r): Section 1 Tag %i Len %i <%s>\n",tag,len1, (char*)PtrCurSect+curSectPos);
 
 				curSectPos += 3;
 				if (curSectPos+len1 > len) {
@@ -901,8 +908,6 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 					}
 					if (VERBOSE_LEVEL>7)
 						fprintf(stdout,"%s (line %i): Version %i\n",__FILE__,__LINE__,aECG->Section1.Tag14.VERSION);
-
-
 					
 				}
 				else if (tag==15) {
@@ -1043,6 +1048,9 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 
 			NHT = leu16p(PtrCurSect+curSectPos);
 			curSectPos += 2;
+
+			if (VERBOSE_LEVEL > 7) fprintf(stdout,"SCP(r): Section 2 NHT=%d\n", NHT);
+
 			if (NHT==19999) {
 				en1064.FLAG.HUFFMAN = 1;
 				Huffman = (huffman_t*)malloc(sizeof(huffman_t));
@@ -1054,7 +1062,8 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 #ifndef ANDROID
 				if (VERBOSE_LEVEL==9)
 					for (k1=0; k1<Huffman[k2].NCT; k1++)
-					fprintf(stdout,"%3i: %2i %2i %1i %3i %6u \n",k1,Huffman[k2].Table[k1].PrefixLength,Huffman[k2].Table[k1].CodeLength,Huffman[k2].Table[k1].TableModeSwitch,Huffman[k2].Table[k1].BaseValue,Huffman[k2].Table[k1].BaseCode); 
+					fprintf(stdout,"%3i: %2i %2i %1i %3i %6u \n",k1,Huffman[k2].Table[k1].PrefixLength,Huffman[k2].Table[k1].CodeLength,Huffman[k2].Table[k1].TableModeSwitch,Huffman[k2].Table[k1].BaseValue,Huffman[k2].Table[k1].BaseCode);
+
 				if (!checkTree(HTrees[0])) // ### OPTIONAL, not needed ###
 					fprintf(stderr,"Warning: invalid Huffman Tree\n");
 #endif 
@@ -1125,6 +1134,9 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 				}
 
 				hdr->CHANNEL[i].SPR 	= en1064.Section3.lead[i].end - en1064.Section3.lead[i].start + 1;
+
+	if (VERBOSE_LEVEL>7)
+		fprintf(stdout,"%s (line %i): SCP Section %i   #%i SPR=%d/%d [%d..%d]\n",__FILE__,__LINE__,curSect, i, hdr->CHANNEL[i].SPR, hdr->SPR, en1064.Section3.lead[i].end,  en1064.Section3.lead[i].start );
 				hdr->SPR 		= lcm(hdr->SPR,hdr->CHANNEL[i].SPR);
 				hdr->CHANNEL[i].LeadIdCode = LeadIdCode;
 				hdr->CHANNEL[i].Label[0]= 0;
@@ -1258,6 +1270,8 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 			Cal6 			= leu16p(PtrCurSect+curSectPos);
 			en1064.Section6.dT_us	= leu16p(PtrCurSect+curSectPos+2);
 			aECG->FLAG.DIFF 	= *(PtrCurSect+curSectPos+4);
+
+	if (VERBOSE_LEVEL>7) fprintf(stdout, "%s (line %i) Compression(Diff=%i Huffman=%i RefBeat=%i Bimodal=%i)\n", __func__, __LINE__, aECG->FLAG.DIFF, aECG->FLAG.HUFFMAN, aECG->FLAG.REF_BEAT, aECG->FLAG.BIMODAL);
 
 			if ((section[5].length>4) &&  en1064.Section5.dT_us)
 				dT_us = en1064.Section5.dT_us;
@@ -1480,6 +1494,9 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 #if (BIOSIG_VERSION >= 10500)
 			hdr->SCP.Section8Length = leu32p(PtrCurSect+4)-curSectPos;
 			hdr->SCP.Section8 = PtrCurSect+curSectPos;
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %p %d %d %d\n", __func__, __LINE__, hdr->AS.Header, hdr->SCP.Section8Length, (int)curSectPos, (int)(hdr->SCP.Section8-hdr->AS.Header));
+
 #else
 			aECG->Section8.Confirmed = *(char*)(PtrCurSect+curSectPos);
 			aECG->Section8.t.tm_year = leu16p(PtrCurSect+curSectPos+1)-1900;
@@ -1707,7 +1724,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	*/
 
 #ifndef ANDROID
-	fprintf(stdout, "\nUse SCP_DECODE (Huffman=%i RefBeat=%i Bimodal=%i)\n", aECG->FLAG.HUFFMAN, aECG->FLAG.REF_BEAT, aECG->FLAG.BIMODAL);
+	if (VERBOSE_LEVEL > 7)
+		fprintf(stdout, "\nUse SCP_DECODE (Diff=%i Huffman=%i RefBeat=%i Bimodal=%i)\n", aECG->FLAG.DIFF, aECG->FLAG.HUFFMAN, aECG->FLAG.REF_BEAT, aECG->FLAG.BIMODAL);
 #endif
 
 	textual.des.acquiring.protocol_revision_number = aECG->Section1.Tag14.VERSION;

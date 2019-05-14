@@ -3336,6 +3336,13 @@ void wxStfDoc::SetIsIntegrated(std::size_t nchannel, std::size_t nsection, bool 
 }
 
 void wxStfDoc::ClearEvents(std::size_t nchannel, std::size_t nsection) {
+    wxStfView* pView=(wxStfView*)GetFirstView();
+    if (pView!=NULL) {
+        wxStfGraph* pGraph = pView->GetGraph();
+        if (pGraph != NULL) {
+            pGraph->ClearEvents();
+        }
+    }
     try {
         sec_attr.at(nchannel).at(nsection).eventList.clear();
     }

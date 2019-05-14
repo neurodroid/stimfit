@@ -5,7 +5,7 @@ Building Stimfit
 :Author: Jose Guzman, Christoph Schmidt-Hieber
 :Date:    |today|
 
-This document describes how to install `Stimfit <http://www.stimfit.org>`_ |version| under GNU/Linux. The installation was tested on a GNU/Debian testing/unstable system, with a 2.6-based kernel and with support for Python 2.5. and Python 2.6. It should work on other Debian-based systems (e.g Ubuntu) aswith newer version of Stimfit as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) already installed in your system. Please, check that both versions match. For our installation we will use gcc-4.2.4 and the same version of g++.
+This document describes how to install `Stimfit <http://www.stimfit.org>`_ |version| under GNU/Linux. The installation was tested on a GNU/Debian testing/unstable with support for Python 2.*. It should work on other Debian-based systems (e.g. Ubuntu) as with newer version of Stimfit as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) and that both versions match. For this installation, we tested 4.2.4 versions.
 
 ============================
 What we need before we start
@@ -36,19 +36,22 @@ For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build depend
 
 This will get you, amongst others:
 
+* [wxWidgets]_: C++ graphical user interface toolkit (version >= 2.8; tested with 2.8.12 and 3.0.4)
+* [wxPython]_: GUI toolkit for the Python language.
 * [boost]_: C++ library that is mainly used for its shared pointers.
 * [Lapack]_: A linear algebra library.
 * [fftw]_:  Library for computing Fourier transformations.
-* [NumPy]_: To handle multidimensional arrays and perform more complex numerical computations with Python.
-* [HDF5]_: This is the hierarchical Data Format 5 (HDF5) to manage large amount of data.
+* [NumPy]_: To handle numerical computations with Python (use version >=1.7.1).
+* [HDF5]_: Hierarchical Data Format 5 (HDF5) to manage large amount of data.
+* [Matplotlib]_: Plotting library for Python (use version >= 1.5.1)
 
-In addition, you can install doxygen, python-sphinx and graphviz if you want to build the documentation.
+In addition, you can install doxygen, python-sphinx (with graphviz and Latex) if you want to build the documentation.
 
 =======================
 Optional: PyEMF
 =======================
 
-[PyEMF]_ is needed to export figures to the windows meta file format (WMF/EMF). EMF is a vector graphics format and can be imported in different Office software including LibreOffice. In order to install it, do:
+[PyEMF]_ is needed to export figures to the windows meta file format (WMF/EMF). EMF is a vector graphics format and can be imported in different Office software including LibreOffice. To install it, do:
 
 ::
 
@@ -89,10 +92,9 @@ to generate the configure script. Remember that we need Autoconf, Automake and L
 
 ::
 
-    $ ./configure --enable-python
+    $ ./configure
 
-The **--enable-python** option is absolutely necessary to install `Stimfit <http://www.stimfit.org>`_ since some of the functionality depends on Python. The configure script has some additional options. For example, we may want to use `IPython <http://www.scipy.org>`_  instead of the default embedded python shell with the option **---enable-ipython**  (note that the `IPython <http://www.scipy.org>`_ shell is only available under GNU/Linux and it is still very experimental). 
-
+The **--enable-python** option is activated as a default.
 
 
 Finally, after running configure, you can type
@@ -113,9 +115,11 @@ where [N] is the number of parallel builds you want to start. And finally:
     If you want to install Stimfit as local user (e.g in ~/.local) with a local version of Python (e.g ~/.local/lib/python2.6) you have to add the following argument to configure
     script:
 
-    $ ./configure --prefix= $HOME/.local PYTHON = $HOME/.local/lib/python2.6 --enable-python
+::
 
-    and after that call **make** and **make install** as normal user. The Stimfit executable will be now in $HOME/.local
+    $ PYTHON=$HOME/.local/lib/python2.6 ./configure --prefix=$HOME/.local
+
+and after that call **make** and **make install** as normal user. The Stimfit executable will be now in $HOME/.local
 
 .. _BioSigBuild:
 
@@ -125,23 +129,29 @@ Building Stimfit with BioSig import filter
 
 We recommend to build `Stimfit <http://www.stimfit.org>`_  with the `BioSig library <http://biosig.sourceforge.net>`_  to import files in from different biomedical disciplines. It is necessary to read files acquired with `HEKA amplifiers <http://www.heka.com>`_ or with `Signal <http://ced.co.uk/products/sigovin>`_ from CED. To do it, follow this instructions:
 
-1. Install libsuitesparse and libz libraries:
+Install libsuitesparse and libz libraries:
 
 ::
 
     sudo apt-get install libsuitesparse-dev libz-dev gawk
 
-2. Download the BioSig sources: you can obtain the latest BioSig version in `BioSig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig (v1.5.6 or higher is recommended). Alternatively, you can obtain the latest developmental version from the git repository:
+To avoid ABI incompatibilities, we recommend building Stimfit with the version of biosig that ships with the Stimfit source:
+
+::
+
+    $ ./configure --with-biosiglite
+
+Alternatively, get the full version of biosig: you can obtain the latest BioSig version in `BioSig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig (v1.5.6 or higher is recommended). Alternatively, you can obtain the latest developmental version from the git repository:
 
 ::
 
     git clone https://git.code.sf.net/p/biosig/code biosig-code
 
-3. Enter the directory **biosig4c++** and compile and install the sources: 
+Enter the directory **biosig4c++** and compile and install the sources: 
 
 ::
 
-    cd biosig-code/biosig4c+
+    cd biosig-code/biosig4c++
     autoconf # needed first time after getting repository
     ./configure
     make 
@@ -153,7 +163,7 @@ After that you can enter the option --with-biosig in the configure script of `St
 Building documentation
 ======================
 
-The manual of `Stimfit <http://www.stimfit.org>`_ including the documentation is accessible on-line in http://www.stimfit.org/doc/sphix/. To have your local copy, you will need to install sphinx:
+The manual of `Stimfit <http://www.stimfit.org>`_ including the documentation is accessible on-line in http://www.stimfit.org/doc/sphix/. To have your local copy, you will need to install sphinx version 1.7 or older:
 
 ::
 
@@ -163,9 +173,9 @@ To build a local copy call:
 
 ::
 
-    sphinx-build $HOME/Stimfit/doc/sphinx/ <destinyFolder> # destiny folder could be $HOME/tmp/stf/doc/
+    sphinx-build $HOME/Stimfit/doc/sphinx/ <destination> # destination folder could be $HOME/tmp/stf/doc/
 
-The html documentation will be located in <destinyFolder>/index.html 
+The html documentation will be located in <destination>/index.html 
 
 Additionally, the source code is documented with [Doxygen]_ and is also accessible on-line in http://www.stimfit.org/doc/doxygen/html/. If you want to have a local copy of the documentation, you will need to install the doxygen and gravphvix:
 
@@ -188,6 +198,7 @@ The local documentation of the source code will be in $HOME/stimfit/doc/doxygen/
 .. [Lapack] http://www.netlib.org/lapack/
 .. [HDF5] http://www.hdfgroup.org/HDF5/
 .. [NumPy] http://www.numpy.org
-.. [PyEMF] http://http://pyemf.sourceforge.net
+.. [PyEMF] http://pyemf.sourceforge.net
 .. [fftw] http://www.fftw.org
 .. [Doxygen] http://www.doxygen.org
+.. [Matplotlib] https://matplotlib.org

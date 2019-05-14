@@ -1,8 +1,7 @@
 /*
-% Copyright (C) 2005-2012,2015 Alois Schloegl <alois.schloegl@ist.ac.at>
-% This file is part of the "BioSig for C/C++" repository
-% (biosig4c++) at http://biosig.sf.net/
-
+    Copyright (C) 2005-2019 Alois Schloegl <alois.schloegl@ist.ac.at>
+    This file is part of the "BioSig for C/C++" repository
+    (biosig4c++) at http://biosig.sf.net/
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License

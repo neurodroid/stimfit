@@ -27,8 +27,6 @@
 
 #include "biosig-network.h"
 
-#define min(a,b)        (((a) < (b)) ? (a) : (b))
-
 #ifdef _WIN32
 #define TC (char*)	// WINSOCK's send and recv require (char*)buf 
 

@@ -38,6 +38,8 @@
 #define socklen_t int
 #endif
 
+/* mingw/include/errno.h */
+#ifndef _INC_ERRNO
 #define EALREADY      WSAEALREADY    
 #define ECONNABORTED  WSAECONNABORTED
 #define ECONNREFUSED  WSAECONNREFUSED
@@ -58,6 +60,7 @@
 #define EMSGSIZE      WSAEMSGSIZE
 #define EADDRNOTAVAIL WSAEADDRNOTAVAIL
 #define EPROTONOSUPPORT WSAEPROTONOSUPPORT
+#endif
 
 #if 0 //!__linux__
 // needed by MinGW on Windows

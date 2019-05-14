@@ -1,3 +1,10 @@
+stimfit (0.15.8-1) unstable; urgency=low
+
+  * Address wx-gtk2 / wxpython-gtk3 incompatibility issue on bionic
+    (LP: #1778433)
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Fri, 29 Jun 2018 09:18:39 +0200
+
 stimfit (0.15.6-1) unstable; urgency=low
 
   * Adress shared library renaming error during debian packaging.

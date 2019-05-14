@@ -214,7 +214,17 @@ CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector -O2
 CPPFLAGS  = $(DEFINES) $(shell $(WXCONF) --cppflags) -std=gnu++11 -fstack-protector -O2
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -std=gnu++11 -fstack-protector -O2
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
-PREFIX   ?= /usr
+
+
+prefix       ?= $(PREFIX)
+exec_prefix   = ${prefix}
+datarootdir   = ${prefix}/share
+datadir       = ${datarootdir}
+libdir        = ${exec_prefix}/lib
+includedir    = ${prefix}/include
+bindir        = ${exec_prefix}/bin
+mandir        = ${datarootdir}/man
+
 PKGCONF  ?= $(CROSS)pkg-config
 
 ifeq (5,$(shell $(CXX) -v 2>&1 | awk '/gcc version / {print substr($$3,1,1)}' ))
@@ -231,17 +241,17 @@ ifneq ($(CROSS),)
 else
 ifneq ($(wildcard /usr/lib/libhdf5*),)
   ## Debian/Wheezy
-  CPPFLAGS += -I$(PREFIX)/include
+  CPPFLAGS += -I$(includedir)
   LIBS   += -lhdf5_hl -lhdf5
-else ifneq ($(wildcard $(PREFIX)/$(TARGET)/lib/libhdf5*),)
-  CPPFLAGS += -I$(PREFIX)/$(TARGET)/include
-  CXXFLAGS += -I$(PREFIX)/$(TARGET)/include
-  LDFLAGS  += -L$(PREFIX)/$(TARGET)/lib
+else ifneq ($(wildcard $(prefix)/$(TARGET)/lib/libhdf5*),)
+  CPPFLAGS += -I$(prefix)/$(TARGET)/include
+  CXXFLAGS += -I$(prefix)/$(TARGET)/include
+  LDFLAGS  += -L$(prefix)/$(TARGET)/lib
   LIBS     += -lhdf5_hl -lhdf5
-else ifneq ($(wildcard $(PREFIX)/lib/libhdf5*),)
-  CPPFLAGS += -I$(PREFIX)/include
-  CXXFLAGS += -I$(PREFIX)/include
-  LDFLAGS  += -L$(PREFIX)/lib
+else ifneq ($(wildcard $(libdir)/libhdf5*),)
+  CPPFLAGS += -I$(includedir)
+  CXXFLAGS += -I$(includedir)
+  LDFLAGS  += -L$(libdir)
   LIBS     += -lhdf5_hl -lhdf5
 else
   PLATFORM = $(shell dpkg-architecture -q DEB_TARGET_MULTIARCH)
@@ -258,7 +268,7 @@ endif
 
 ## BIOSIG related stuff ##
 ifneq (,$(findstring WITH_BIOSIG2, $(DEFINES)))
-  LIBS  += -lbiosig2
+  LIBS  += -lbiosig
 else 
   ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
     LIBS  += -lbiosig
@@ -275,6 +285,7 @@ ifeq (mingw,$(findstring mingw, $(WXCONF)))
   LIBS   += -lgfortran -lquadmath
   LIBS   += -liberty -liconv
 endif
+LIBS   += -liconv -ltinyxml -lstdc++
 
 
 ##############################################################
@@ -307,8 +318,8 @@ clean:
 	rm -f stimfit
 
 install: $(TARGET)
-	install $(TARGET) $(PREFIX)/bin/
+	install $(TARGET) $(bindir)
 
 uninstall:
-	rm $(PREFIX)/bin/stimfit
+	rm $(bindir)/stimfit
 

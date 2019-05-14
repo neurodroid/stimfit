@@ -1,9 +1,9 @@
 /*
 
-    Copyright (C) 2010,2011,2012,2015,2016 Alois Schloegl <alois.schloegl@ist.ac.at>
+    Copyright (C) 2010-2019 Alois Schloegl <alois.schloegl@ist.ac.at>
 
     This file is part of the "BioSig for C/C++" repository
-    (biosig4c++) at http://biosig.sf.net/
+    (biosig4c++) at http://biosig.sourceforge.io/
 
     BioSig is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../biosig-dev.h"
+#include "../biosig.h"
 
 #define min(a,b)        (((a) < (b)) ? (a) : (b))
 
@@ -305,6 +305,10 @@ else if (VERBOSE_LEVEL>7)
 				lei16a(i,e+6);
 			}
 		}
+		hdr->ID.Manufacturer.Name = "CED - Cambridge Electronic Devices";
+		hdr->ID.Manufacturer.Model = NULL;
+		hdr->ID.Manufacturer.Version = NULL;
+		hdr->ID.Manufacturer.SerialNumber = NULL;
 
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"\n******* Data Section variable information (n=%i,%i)*********\n", d,NumberOfDataSections);
 		datapos = LastDataSectionHeaderOffset; //H1LEN + H2LEN*hdr->NS + n*36;
