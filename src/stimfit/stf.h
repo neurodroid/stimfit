@@ -27,6 +27,9 @@
 #ifndef _WINDOWS
 #if (__cplusplus < 201103)
     #include <boost/function.hpp>
+#else
+    #include <algorithm>
+    #include <memory>
 #endif
 #endif
 
