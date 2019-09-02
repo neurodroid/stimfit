@@ -19,7 +19,10 @@ HAS_MPL = True
 try:
     import matplotlib
     import matplotlib.pyplot as plt
-    from mpl_toolkits.axes_grid.axislines import Subplot
+    if (float(matplotlib.__version__[0:3]) > 2.1):
+        from mpl_toolkits.axisartist import Subplot
+    else:
+        from mpl_toolkits.axes_grid.axislines import Subplot
 except ImportError as err:
     HAS_MPL = False
     MPL_ERR = err

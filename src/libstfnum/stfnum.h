@@ -33,7 +33,15 @@
 #include <vector>
 #include <complex>
 #include <deque>
-#include <boost/function.hpp>
+
+#if (__cplusplus < 201103)
+#  include <boost/function.hpp>
+#else
+#  include <algorithm>
+#  include <cassert>
+#  include <functional>
+#endif
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -61,6 +69,8 @@ namespace stfnum {
  *  that takes a double (the x-value) and a vector of parameters and returns 
  *  the function's result (the y-value).
  */
+#if (__cplusplus < 201103)
+
 typedef boost::function<double(double, const Vector_double&)> Func;
 
 //! The jacobian of a stfnum::Func.
@@ -69,6 +79,17 @@ typedef boost::function<Vector_double(double, const Vector_double&)> Jac;
 //! Scaling function for fit parameters
 typedef boost::function<double(double, double, double, double, double)> Scale;
 
+#else
+
+typedef std::function<double(double, const Vector_double&)> Func;
+
+//! The jacobian of a stfnum::Func.
+typedef std::function<Vector_double(double, const Vector_double&)> Jac;
+
+//! Scaling function for fit parameters
+typedef std::function<double(double, double, double, double, double)> Scale;
+
+#endif
 //! Dummy function, serves as a placeholder to initialize functions without a Jacobian.
 Vector_double nojac( double x, const Vector_double& p);
 
@@ -203,16 +224,29 @@ private:
     std::vector< std::string > colLabels;
 };
 
+#if (__cplusplus < 201103)
 //! Print the output of a fit into a stfnum::Table.
 typedef boost::function<Table(const Vector_double&,const std::vector<stfnum::parInfo>,double)> Output;
  
 //! Default fit output function, constructing a stfnum::Table from the parameters, their description and chisqr.
-Table defaultOutput(const Vector_double& pars, 
+Table defaultOutput(const Vector_double& pars,
                     const std::vector<parInfo>& parsInfo,
                     double chisqr);
 
 //! Initialising function for the parameters in stfnum::Func to start a fit.
 typedef boost::function<void(const Vector_double&, double, double, double, double, double, Vector_double&)> Init;
+#else
+//! Print the output of a fit into a stfnum::Table.
+typedef std::function<Table(const Vector_double&,const std::vector<stfnum::parInfo>,double)> Output;
+
+//! Default fit output function, constructing a stfnum::Table from the parameters, their description and chisqr.
+Table defaultOutput(const Vector_double& pars,
+                    const std::vector<parInfo>& parsInfo,
+                    double chisqr);
+
+//! Initialising function for the parameters in stfnum::Func to start a fit.
+typedef std::function<void(const Vector_double&, double, double, double, double, double, Vector_double&)> Init;
+#endif
 
 //! Function used for least-squares fitting.
 /*! Objects of this class are used for fitting functions 

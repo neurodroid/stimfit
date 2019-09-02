@@ -136,10 +136,10 @@ if test "$with_pslope" = "yes" ; then
     CPPFLAGS="${CPPFLAGS} -DWITH_PSLOPE"
 fi
 
-AC_ARG_WITH([biosig], AS_HELP_STRING([--with-biosig],[build with libbiosig support - better tested than --with-biosig2]),[])
+AC_ARG_WITH([biosig], AS_HELP_STRING([--with-biosig],[build with libbiosig support]),[])
 AM_CONDITIONAL(WITH_BIOSIG, test "$with_biosig" = "yes")
 
-AC_ARG_WITH([biosig2], AS_HELP_STRING([--with-biosig2],[alternative to --with-biosig - eventually, this will provide better ABI compatibility when upgrading libbiosig; currently it's in a testing state; requires libbiosig2 v1.5.6 or higher]),[])
+AC_ARG_WITH([biosig2], AS_HELP_STRING([--with-biosig2],[equivalent to --with-biosig]),[])
 AM_CONDITIONAL(WITH_BIOSIG2, test "$with_biosig2" = "yes")
 
 AC_ARG_WITH([biosiglite], AS_HELP_STRING([--with-biosiglite], [use builtin biosig library]), [])

@@ -655,7 +655,7 @@ bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
     PyObject* data_list = PyTuple_GetItem(stf_tdms_res, 0);
     PyObject* py_dt = PyTuple_GetItem(stf_tdms_res, 1);
     double dt = PyFloat_AsDouble(py_dt);
-    Py_DECREF(py_dt);
+    // Py_DECREF(py_dt);
 
     Py_ssize_t nchannels = PyList_Size(data_list);
     ReturnData.resize(nchannels);
@@ -673,15 +673,15 @@ bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
                 double* data = (double*)PyArray_DATA(np_array);
                 std::copy(&data[0], &data[nsamples], &sec.get_w()[0]);
                 ch.InsertSection(sec, ns);
-                Py_DECREF(np_array);
+                // Py_DECREF(np_array);
             }
             ReturnData.InsertChannel(ch, nc);
             nchannels_nonempty++;
         }
-        Py_DECREF(section_list);
+        // Py_DECREF(section_list);
     }
-    Py_DECREF(data_list);
-    Py_DECREF(stf_tdms_res);
+    // Py_DECREF(data_list);
+    // Py_DECREF(stf_tdms_res);
     ReturnData.resize(nchannels_nonempty);
     ReturnData.SetXScale(dt);
     wxPyEndBlockThreads(blocked);

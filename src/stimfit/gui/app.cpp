@@ -170,11 +170,7 @@ bool wxStfApp::OnInit(void)
 #endif
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
     m_biosigTemplate=new wxDocTemplate( docManager,
-#   if (BIOSIG_VERSION < 10800)
-                                     wxT("Biosig files"), wxT("*.dat;*.cfs;*.gdf;*.ibw"), wxT(""), wxT(""),
-#   else
                                      wxT("Biosig files"), wxT("*.dat;*.cfs;*.gdf;*.ibw;*.wcp"), wxT(""), wxT(""),
-#   endif
                                      wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #endif

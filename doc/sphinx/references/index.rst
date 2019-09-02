@@ -39,6 +39,8 @@ References
 
     * `Rothman JS and Silver RA (2018) <https://www.frontiersin.org/articles/10.3389/fninf.2018.00014/full>`_ NeuroMatic: An Integrated Open-Source Software Toolkit for Acquisition, Analysis and Simulation of Electrophysiological Data. *Front Neuroinform* doi: 10.3389/fninf.2018.00014. 
 
+    * Booker, S. A., Domanski, A. P., Dando, O. R., Jackson, A. D., Isaac, J. T., Hardingham, G. E., ... & Kind, P. C. (2018). Altered dendritic spine function and integration in a mouse model of Fragile X Syndrome. bioRxiv, 396986.
+
 ====
 2017
 ====

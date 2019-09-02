@@ -76,6 +76,8 @@ stfio::filetype gettype(const std::string& ftype) {
         stftype = stfio::igor;
     } else if (ftype == "tdms") {
         stftype = stfio::tdms;
+    } else if (ftype == "intan") {
+        stftype = stfio::intan;
     } else {
         stftype = stfio::none;
     }
