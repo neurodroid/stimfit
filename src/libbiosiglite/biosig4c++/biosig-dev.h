@@ -44,7 +44,7 @@ extern "C" {
 #ifdef NDEBUG
 #define VERBOSE_LEVEL 0 	// turn off debugging information, but its only used without NDEBUG
 #else
-extern int VERBOSE_LEVEL; 	// used for debugging, variable is always defined
+extern int VERBOSE_LEVEL __attribute__ ((visibility ("default") )); 	// used for debugging, variable is always defined
 #endif
 
 
@@ -108,7 +108,7 @@ char *getlogin (void);
 
 #define BIOSIG_VERSION_MAJOR 1
 #define BIOSIG_VERSION_MINOR 9
-#define BIOSIG_PATCHLEVEL    3
+#define BIOSIG_PATCHLEVEL    5
 // for backward compatibility
 #define BIOSIG_VERSION_STEPPING BIOSIG_PATCHLEVEL
 #define BIOSIG_VERSION (BIOSIG_VERSION_MAJOR * 10000 + BIOSIG_VERSION_MINOR * 100 + BIOSIG_PATCHLEVEL)
@@ -533,10 +533,15 @@ struct NomenclatureAnnotatedECG_t {
 	const char *refid;
 } ATT_MSSTRUCT;
 
-extern const struct etd_t ETD [];
-extern const struct event_groups_t EventCodeGroups [];
+extern const struct etd_t ETD [] __attribute__ ((visibility ("default") ));
+extern const struct event_groups_t EventCodeGroups [] __attribute__ ((visibility ("default") ));
 extern const struct FileFormatStringTable_t FileFormatStringTable [];
 
+typedef struct {
+	const char *free_text_event_limiter;
+} biosig_options_type;
+
+HDRTYPE* sopen_extended(const char* FileName, const char* MODE, HDRTYPE* hdr, biosig_options_type* options) __attribute__ ((visibility ("default") ));
 
 /* reset structure packing to default settings */
 #pragma pack(pop)
@@ -1057,6 +1062,8 @@ typedef struct aecg {
 /**                                                                        **/
 /****************************************************************************/
 
+#pragma GCC visibility push(default)
+
 /*
         file access wrapper: use ZLIB (if available) or STDIO
  */
@@ -1083,6 +1090,8 @@ int             iferror(HDRTYPE* hdr);
 uint32_t gcd(uint32_t A, uint32_t B);
 uint32_t lcm(uint32_t A, uint32_t B);
 
+#pragma GCC visibility pop
+
 extern const uint16_t GDFTYP_BITS[];
 extern const char *LEAD_ID_TABLE[];
 
@@ -1103,7 +1112,7 @@ int month_string2int(const char *s);
 
 int u32cmp(const void *a, const void *b); 
 
-void biosigERROR(HDRTYPE *hdr, enum B4C_ERROR errnum, const char *errmsg);
+void biosigERROR(HDRTYPE *hdr, enum B4C_ERROR errnum, const char *errmsg) __attribute__ ((visibility ("default") ));
 /*
 	sets the local and the (deprecated) global error variables B4C_ERRNUM and B4C_ERRMSG
 	the global error variables are kept for backwards compatibility.
@@ -1116,8 +1125,8 @@ void biosigERROR(HDRTYPE *hdr, enum B4C_ERROR errnum, const char *errmsg);
 	therefore not exported to standard user applications. 
 */
 
-void struct2gdfbin(HDRTYPE *hdr);
-int gdfbin2struct(HDRTYPE *hdr);
+void struct2gdfbin(HDRTYPE *hdr) __attribute__ ((visibility ("default") ));
+int gdfbin2struct(HDRTYPE *hdr) __attribute__ ((visibility ("default") ));
 /* struct2gdfbin and gdfbin2struct
 	convert between the streamed header information (as in a GDF file or 
 	on a network connection) and the header structure HDRTYPE 
@@ -1127,14 +1136,14 @@ int gdfbin2struct(HDRTYPE *hdr);
 	event table itself. 
  ------------------------------------------------------------------------*/
 
-size_t hdrEVT2rawEVT(HDRTYPE *hdr);
-void rawEVT2hdrEVT(HDRTYPE *hdr, size_t length_rawEventTable);
+size_t hdrEVT2rawEVT(HDRTYPE *hdr) __attribute__ ((visibility ("default") ));
+void rawEVT2hdrEVT(HDRTYPE *hdr, size_t length_rawEventTable) __attribute__ ((visibility ("default") ));
 /* rawEVT2hdrEVT and hdrEVT2rawEVT
 	convert between streamed event table and the structure
 	HDRTYPE.EVENT.
  ------------------------------------------------------------------------*/
 
-int NumberOfChannels(HDRTYPE *hdr); 
+int NumberOfChannels(HDRTYPE *hdr) __attribute__ ((visibility ("default") ));
 /*
         returns the number of channels returned by SREAD. 
         This might be different than the number of data channels in the file
@@ -1153,7 +1162,7 @@ void FreeGlobalEventCodeTable();
 	free memory allocated for global event code
  ------------------------------------------------------------------------*/
 
-size_t	sread_raw(size_t START, size_t LEN, HDRTYPE* hdr, char flag, void *buf, size_t bufsize);
+size_t	sread_raw(size_t START, size_t LEN, HDRTYPE* hdr, char flag, void *buf, size_t bufsize) __attribute__ ((visibility ("default") ));
 /* sread_raw: 
 	LEN data segments are read from file associated with hdr, starting from 
 	segment START.
@@ -1177,7 +1186,7 @@ size_t	sread_raw(size_t START, size_t LEN, HDRTYPE* hdr, char flag, void *buf, s
 	block and the number of blocks, respectively.  
  --------------------------------------------------------------- */
 
-size_t bpb8_collapsed_rawdata(HDRTYPE *hdr);
+size_t bpb8_collapsed_rawdata(HDRTYPE *hdr) __attribute__ ((visibility ("default") ));
 /* bpb8_collapsed_rawdata
 	computes the bits per block when rawdata is collapsed
 --------------------------------------------------------------- */
@@ -1192,11 +1201,11 @@ HDRTYPE* getfiletype(HDRTYPE* hdr);
 		hdr->VERSION	is defined for some selected formats e.g. ACQ, EDF, BDF, GDF
  --------------------------------------------------------------- */
 
-const char* GetFileTypeString(enum FileFormat FMT);
+const char* GetFileTypeString(enum FileFormat FMT) __attribute__ ((visibility ("default") ));
 /*	returns a string with file format
  --------------------------------------------------------------- */
 
-enum FileFormat GetFileTypeFromString(const char *);
+enum FileFormat GetFileTypeFromString(const char *) __attribute__ ((visibility ("default") ));
 /*	returns file format from string
  --------------------------------------------------------------- */
 

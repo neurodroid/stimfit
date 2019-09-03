@@ -745,6 +745,7 @@ EXTERN_C void sopen_abf2_read(HDRTYPE* hdr) {
 			hc->bufptr = NULL;
 			hc->LeadIdCode = 0;
 			hc->OnOff = 1;
+			hc->Transducer[0] = 0;
 
 			hc->LowPass  = lef32p(hdr->AS.auxBUF + S.uBytes*k + offsetof(struct ABF_ADCInfo, fSignalLowpassFilter));
 			hc->HighPass = lef32p(hdr->AS.auxBUF + S.uBytes*k + offsetof(struct ABF_ADCInfo, fSignalHighpassFilter));

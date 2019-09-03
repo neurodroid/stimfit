@@ -201,6 +201,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(line %i) Channel #%i/%i: %i<%s>/%i<%s>\n
 			}
 			hc->bi = bpb;
 			bpb += GDFTYP_BITS[hc->GDFTYP]>>3;	// per single sample
+			hc->Transducer[0] = '\0';
 			hc->Impedance = NAN;
 			hc->TOffset  = NAN;
 			hc->LowPass  = NAN;
@@ -1022,6 +1023,7 @@ EXTERN_C void sopen_smr_read(HDRTYPE* hdr) {
 		hc->SPR   = 0;
 		hc->GDFTYP = 3;
 		hc->LeadIdCode = 0;
+		hc->Transducer[0] = '\0';
 
 		int stringLength = hdr->AS.Header[off+108];
 		assert(stringLength < MAX_LENGTH_LABEL);
