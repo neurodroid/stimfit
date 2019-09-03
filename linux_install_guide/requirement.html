@@ -59,7 +59,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Jose Guzman, Christoph Schmidt-Hieber</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">14 May, 2019</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">03 September, 2019</td>
 </tr>
 </tbody>
 </table>
@@ -154,8 +154,8 @@ script:</p>
 <div class="section" id="building-stimfit-with-biosig-import-filter">
 <span id="biosigbuild"></span><h2>Building Stimfit with BioSig import filter<a class="headerlink" href="#building-stimfit-with-biosig-import-filter" title="Permalink to this headline">¶</a></h2>
 <p>We recommend to build <a class="reference external" href="http://www.stimfit.org">Stimfit</a>  with the <a class="reference external" href="http://biosig.sourceforge.net">BioSig library</a>  to import files in from different biomedical disciplines. It is necessary to read files acquired with <a class="reference external" href="http://www.heka.com">HEKA amplifiers</a> or with <a class="reference external" href="http://ced.co.uk/products/sigovin">Signal</a> from CED. To do it, follow this instructions:</p>
-<p>Install libsuitesparse and libz libraries:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">libsuitesparse</span><span class="o">-</span><span class="n">dev</span> <span class="n">libz</span><span class="o">-</span><span class="n">dev</span> <span class="n">gawk</span>
+<p>Install libsuitesparse, libz and dcmtk libraries:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">libsuitesparse</span><span class="o">-</span><span class="n">dev</span> <span class="n">libz</span><span class="o">-</span><span class="n">dev</span> <span class="n">gawk</span> <span class="n">libdcmtk</span><span class="o">-</span><span class="n">dev</span>
 </pre></div>
 </div>
 <p>To avoid ABI incompatibilities, we recommend building Stimfit with the version of biosig that ships with the Stimfit source:</p>
@@ -346,7 +346,7 @@ doxygen DoxyFile
     
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Christoph Schmidt-Hieber.
-      Last updated on 14 May, 2019.
+      Last updated on 03 September, 2019.
     </div>
   </body>
 </html>
