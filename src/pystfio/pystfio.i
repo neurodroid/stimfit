@@ -431,7 +431,8 @@ filetype = {
     '.abf':'abf',
     '.atf':'atf',
     '.axgd':'axg',
-    '.axgx':'axg'}
+    '.axgx':'axg',
+    '.clp':'intan'}
 
 def read(fname, ftype=None, verbose=False):
     """Reads a file and returns a Recording object.
@@ -446,6 +447,7 @@ def read(fname, ftype=None, verbose=False):
               "atf"  - Axon text file
               "axg"  - Axograph X binary file
               "heka" - HEKA binary file
+              "intan" - INTAN clamp binary file
               if ftype is None (default), it will be guessed from the
               extension.
 #else

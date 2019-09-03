@@ -191,7 +191,7 @@ double stfnum::lmFit( const Vector_double& data, double dt,
             constrains_lm_ub[n_p] = DBL_MAX;
         }
         if ( can_scale ) {
-            if (fitFunc.pInfo[n_p].scale == stfnum::noscale) {
+            if (!fitFunc.pInfo[n_p].scale) {
                 can_scale = false;
             }
         }

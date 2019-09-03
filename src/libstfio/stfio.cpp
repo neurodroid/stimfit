@@ -98,11 +98,7 @@ stfio::findType(const std::string& ext) {
     else if (ext=="*.tdms") return stfio::tdms;
     else if (ext=="*.clp") return stfio::intan;
 #if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
-#  if (BIOSIG_VERSION < 10800)
-    else if (ext=="*.dat;*.cfs;*.gdf;*.ibw") return stfio::biosig;
-#  else
     else if (ext=="*.dat;*.cfs;*.gdf;*.ibw;*.wcp") return stfio::biosig;
-#  endif
     else if (ext=="*.*")   return stfio::biosig;
 #endif
     else return stfio::none;

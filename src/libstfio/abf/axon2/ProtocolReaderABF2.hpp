@@ -16,6 +16,8 @@
 #include "../axon/AxAbfFio32/filedesc.hpp"
 #if (__cplusplus < 201103)
     #include <boost/shared_ptr.hpp>
+#else
+    #include <memory>
 #endif
 
 //===============================================================================================

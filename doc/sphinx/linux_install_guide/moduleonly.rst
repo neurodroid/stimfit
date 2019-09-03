@@ -42,7 +42,7 @@ We recommend to use BioSig to read extra biomedical fileformats (see :ref:`BioSi
 
 ::
 
-    $ ../../configure --enable-module --with-biosig
+    $ ../../configure --enable-module --with-biosiglite
 
 ===================================================
 Building stfio for non-default Python distributions
