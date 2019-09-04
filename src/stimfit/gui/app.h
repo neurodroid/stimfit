@@ -205,7 +205,8 @@ enum {
 #endif
 #ifdef WITH_PYTHON
 #if PY_MAJOR_VERSION >= 3
-#include <wx/wxPython/wxpy_api.h>
+#include <sip.h>
+#include <wxPython/wxpy_api.h>
 #else
 #include <wx/wxPython/wxPython.h>
 #endif

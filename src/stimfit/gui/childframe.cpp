@@ -498,10 +498,10 @@ void wxStfChildFrame::ShowTable(const stfnum::Table &table,const wxString& capti
     wxStfGrid* pGrid = new wxStfGrid( m_notebook, wxID_ANY, wxPoint(0,20), wxDefaultSize );
     wxStfTable* pTable(new wxStfTable(table));
     pGrid->SetTable(pTable,true); // the grid will take care of the deletion
-    pGrid->SetEditable(false);
+    pGrid->EnableEditing(false);
     pGrid->SetDefaultCellAlignment(wxALIGN_RIGHT,wxALIGN_CENTRE);
     for (std::size_t n_row=0; n_row<=table.nRows()+1; ++n_row) {
-        pGrid->SetCellAlignment(wxALIGN_LEFT,(int)n_row,0);
+        pGrid->SetCellAlignment((int)n_row, 0, wxALIGN_LEFT, wxALIGN_CENTRE);
     }
     m_notebook->AddPage( pGrid, caption, true );
 

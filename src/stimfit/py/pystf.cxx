@@ -42,7 +42,8 @@
 
 #ifdef WITH_PYTHON
     #if PY_MAJOR_VERSION >= 3
-        #include <wx/wxPython/wxpy_api.h>
+        #include <sip.h>
+        #include <wxPython/wxpy_api.h>
         #define PyInt_FromLong PyLong_FromLong
         #define PyString_AsString PyBytes_AsString
     #else

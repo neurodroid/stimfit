@@ -30,9 +30,11 @@
   #pragma GCC diagnostic ignored "-Wwrite-strings"
 #endif
 #if PY_MAJOR_VERSION >= 3
-#include <wx/wxPython/wxpy_api.h>
-#define PyString_Check PyBytes_Check
+#include <sip.h>
+#include <wxPython/wxpy_api.h>
+#define PyString_Check PyUnicode_Check
 #define PyString_AsString PyBytes_AsString
+#define PyString_FromString PyUnicode_FromString
 #else
 #include <wx/wxPython/wxPython.h>
 #endif
@@ -101,6 +103,70 @@ wxString GetExecutablePath() {
 }
 #endif // _WINDOWS
 
+#if PY_MAJOR_VERSION >= 3
+PyObject*  wxPyMake_wxObject(wxObject* source, bool setThisOwn) {
+    bool checkEvtHandler = true;
+    PyObject* target = NULL;
+    bool      isEvtHandler = false;
+    bool      isSizer = false;
+
+    if (source) {
+        // If it's derived from wxEvtHandler then there may
+        // already be a pointer to a Python object that we can use
+        // in the OOR data.
+        if (checkEvtHandler && wxIsKindOf(source, wxEvtHandler)) {
+            isEvtHandler = true;
+            wxEvtHandler* eh = (wxEvtHandler*)source;
+            wxPyClientData* data = (wxPyClientData*)eh->GetClientObject();
+            if (data) {
+                target = data->GetData();
+            }
+        }
+
+        // Also check for wxSizer
+        if (!target && wxIsKindOf(source, wxSizer)) {
+            isSizer = true;
+            wxSizer* sz = (wxSizer*)source;
+            wxPyClientData* data = (wxPyClientData*)sz->GetClientObject();
+            if (data) {
+                target = data->GetData();
+            }
+        }
+        if (! target) {
+            // Otherwise make it the old fashioned way by making a new shadow
+            // object and putting this pointer in it.  Look up the class
+            // heirarchy until we find a class name that is located in the
+            // python module.
+            const wxClassInfo* info   = source->GetClassInfo();
+            wxString           name   = info->GetClassName();
+	    wxString           childname = name.Clone();
+            if (info) {
+                target = wxPyConstructObject((void*)source, name.c_str(), setThisOwn);
+		while (target == NULL) {
+		    info = info->GetBaseClass1();
+		    name = info->GetClassName();
+		    if (name == childname)
+                        break;
+		    childname = name.Clone();
+		    target = wxPyConstructObject((void*)source, name.c_str(), setThisOwn);
+		}
+                if (target && isEvtHandler)
+                    ((wxEvtHandler*)source)->SetClientObject(new wxPyClientData(target));
+                if (target && isSizer)
+                    ((wxSizer*)source)->SetClientObject(new wxPyClientData(target));
+            } else {
+                wxString msg(wxT("wxPython class not found for "));
+                msg += source->GetClassInfo()->GetClassName();
+                PyErr_SetString(PyExc_NameError, msg.mbc_str());
+                target = NULL;
+            }
+        }
+    } else {  // source was NULL so return None.
+        Py_INCREF(Py_None); target = Py_None;
+    }
+    return target;
+}
+#endif
 
 bool wxStfApp::Init_wxPython()
 {
@@ -184,7 +250,9 @@ bool wxStfApp::Init_wxPython()
         Py_Finalize();
         return false;
     }
-#if wxCHECK_VERSION(3, 0, 0)
+#if wxCHECK_VERSION(3, 1, 0)
+    PyObject* ver_string = Py_BuildValue("ss","3.1","");
+#elif wxCHECK_VERSION(3, 0, 0)
     PyObject* ver_string = Py_BuildValue("ss","3.0","");
 #elif wxCHECK_VERSION(2, 9, 0)
     PyObject* ver_string = Py_BuildValue("ss","2.9","");
@@ -353,7 +421,7 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     // As always, first grab the GIL
     wxPyBlock_t blocked = wxPyBeginBlockThreads();
 
-    RedirectStdio();
+    //RedirectStdio();
 
     // Now make a dictionary to serve as the global namespace when the code is
     // executed.  Put a reference to the builtins module in it.  (Yes, the
@@ -368,7 +436,7 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     Py_DECREF(builtins);
 
     // Execute the code to make the makeWindow function
-    result = PyRun_String(python_code2.char_str(), Py_file_input, globals, globals);
+    result = PyRun_String(python_code2.c_str(), Py_file_input, globals, globals);
     // Was there an exception?
     if (! result) {
         PyErr_Print();
@@ -392,11 +460,7 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     // Now build an argument tuple and call the Python function.  Notice the
     // use of another wxPython API to take a wxWindows object and build a
     // wxPython object that wraps it.
-#if PY_MAJOR_VERSION >= 3
-    PyObject* arg = wxPyConstructObject((void*)this, wxT("wxWindow"), false);
-#else
     PyObject* arg = wxPyMake_wxObject(this, false);
-#endif
     wxASSERT(arg != NULL);
     PyObject* py_mpl_width = PyFloat_FromDouble(mpl_width);
     wxASSERT(py_mpl_width != NULL);
