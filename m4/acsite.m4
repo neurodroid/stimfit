@@ -197,6 +197,32 @@ $ac_numpy_result])
         AC_SUBST([PYTHON_NUMPY_INCLUDE])
 
         #
+        # Check if you have wxPython, else fail
+        #
+        AC_MSG_CHECKING([for wxPython])
+        ac_wxpython_result=`$PYTHON -c "import wx" 2>&1`
+        if test -z "$ac_wxpython_result"; then
+                AC_MSG_RESULT([yes])
+        else
+                AC_MSG_RESULT([no])
+                AC_MSG_ERROR([cannot import Python module "wxpython".
+Please check your wxpython installation. The error was:
+$ac_wxpython_result])
+                PYTHON_VERSION=""
+        fi
+
+        #
+        # Check for wxpython headers
+        #
+        AC_MSG_CHECKING([for wxpython include path])
+        if test -z "$PYTHON_WXPYTHON_INCLUDE"; then
+                PYTHON_WXPYTHON_INCLUDE=-I`$PYTHON -c "import os, sys, wx; \
+                        sys.stdout.write(os.path.join(os.path.dirname(wx.__spec__.origin), 'include') + '\n');"`
+        fi
+        AC_MSG_RESULT([$PYTHON_WXPYTHON_INCLUDE])
+        AC_SUBST([PYTHON_WXPYTHON_INCLUDE])
+
+        #
         # libraries which must be linked in when embedding
         #
         AC_MSG_CHECKING(python extra libraries)
