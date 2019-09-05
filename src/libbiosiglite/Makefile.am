@@ -19,6 +19,7 @@ libbiosiglite_la_SOURCES = \
   biosig4c++/t210/sopen_cfs_read.c \
   biosig4c++/t210/sopen_heka_read.c \
   biosig4c++/t210/sopen_igor.c \
+  biosig4c++/t210/sopen_rhd2000_read.c \
   biosig4c++/t210/sopen_scp_read.c \
   biosig4c++/t210/scp-decode.cpp \
   biosig4c++/t220/crc4scp.c \

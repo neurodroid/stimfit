@@ -1855,6 +1855,14 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
 		hdr->TYPE = RHD2000;	// Intan RHD2000 format
 		hdr->FILE.LittleEndian = 1;
 	}
+	else if (!memcmp(Header1,"\xAC\x27\x91\xD6",4)) {
+		hdr->TYPE = RHS2000;	// Intan RHS2000 format
+		hdr->FILE.LittleEndian = 1;
+	}
+	else if (!memcmp(Header1,"\x81\xa4\xb1\xf3",4) & (leu16p(Header1+8) < 2)) {
+		hdr->TYPE = IntanCLP;	// Intan CLP format, we'll use same read for now
+		hdr->FILE.LittleEndian = 1;
+	}
     	else if (!memcmp(Header1,"\x55\xAA\x00\xb0",2)) {
 	    	hdr->TYPE = RDF;	// UCSD ERPSS aquisition system
 	    	hdr->FILE.LittleEndian = 1;
@@ -2163,7 +2171,9 @@ const struct FileFormatStringTable_t FileFormatStringTable[] = {
 	{ PDP,    	"PDP" },
 	{ PLEXON,    	"PLEXON" },
 	{ RDF,    	"RDF" },
+	{ IntanCLP,    	"IntanCLP" },
 	{ RHD2000,    	"RHD2000" },
+	{ RHS2000,    	"RHS2000" },
 	{ RIFF,    	"RIFF" },
 	{ SASXPT,    	"SAS_XPORT" },
 	{ SCP_ECG,    	"SCP" },
@@ -10486,9 +10496,17 @@ if (VERBOSE_LEVEL>2)
     		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Format RDF (UCSD ERPSS) not supported");
 	}
 
+#ifdef WITH_INTAN
+	else if (hdr->TYPE==IntanCLP) {
+		sopen_intan_clp_read(hdr);
+	}
 	else if (hdr->TYPE==RHD2000) {
 		sopen_rhd2000_read(hdr);
 	}
+	else if (hdr->TYPE==RHS2000) {
+		sopen_rhs2000_read(hdr);
+	}
+#endif
 
 	else if (hdr->TYPE==SCP_ECG) {
 		hdr->HeadLen   = leu32p(hdr->AS.Header+2);

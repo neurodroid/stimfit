@@ -225,7 +225,7 @@ enum FileFormat {
 	SPSS, STATA, SVG, SXI, SYNERGY,
 	TDMS, TIFF, TMS32, TMSiLOG, TRC, UNIPRO, VRML, VTK,
 	WAV, WCP, WG1, WinEEG, WMF, XML, XPM,
-	Z, ZIP, ZIP2, RHD2000,
+	Z, ZIP, ZIP2, RHD2000, RHS2000, IntanCLP,
 	EBNEURO, SigViewerEventsCSV, XDF,
 	LastPlaceHolder, invalid=0xffff
 };
