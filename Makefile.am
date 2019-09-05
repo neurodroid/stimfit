@@ -206,7 +206,7 @@ EXTRA_DIST+= ./src/test/gtest/src/gtest-test-part.cc
 EXTRA_DIST+= ./src/test/gtest/src/gtest-typed-test.cc
 
 if BUILD_PYTHON
-    PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
+    PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES) $(LIBWXPYTHON_INCLUDES)
     PYTHON_ADDLDFLAGS = $(LIBPYTHON_LDFLAGS)
     PYTHON_ADDLIBS = ./src/stimfit/py/libpystf.la
 else !BUILD_PYTHON

@@ -421,7 +421,7 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     // As always, first grab the GIL
     wxPyBlock_t blocked = wxPyBeginBlockThreads();
 
-    //RedirectStdio();
+    RedirectStdio();
 
     // Now make a dictionary to serve as the global namespace when the code is
     // executed.  Put a reference to the builtins module in it.  (Yes, the
