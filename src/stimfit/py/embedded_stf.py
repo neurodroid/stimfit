@@ -14,6 +14,7 @@ if 'win' in sys.platform:
     import wxversion
     wxversion.select('3.0-msw')
 import wx
+wx.CallAfter = lambda x, y : (x, y)
 from wx.py import shell
 
 # to access the current versions of Stimfit, NumPy and wxPython
@@ -38,7 +39,6 @@ class MyPanel(wx.Panel):
             style = wx.BORDER_NONE | wx.MAXIMIZE)
 
         # the Pycrust shell object
-        wx.CallAfter = lambda x, y : (x, y)
         self.pycrust = shell.Shell(self,-1, \
             introText = intro_msg() + LOADED)
 
@@ -46,7 +46,7 @@ class MyPanel(wx.Panel):
         if "darwin" in sys.platform:
             self.pycrust.autoCallTip = False
 
-        # self.pycrust.push('from embedded_init import *', silent = True)
+        self.pycrust.push('from embedded_init import *', silent = True)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.pycrust, 1, wx.EXPAND | wx.BOTTOM | wx.LEFT | wx.RIGHT, 10)

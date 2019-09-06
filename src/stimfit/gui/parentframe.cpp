@@ -265,6 +265,7 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 
 #ifdef WITH_PYTHON
     python_code2 << wxT("import sys\n")
+                 << wxT("sys.path.append('.')\n")
                  << wxT("sys.path.append('/usr/local/lib/stimfit')\n")
 #ifdef IPYTHON
                  << wxT("import embedded_ipython\n")
