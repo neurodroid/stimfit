@@ -47,14 +47,14 @@ clean:
 
 install: build
 	dh_autoreconf
-	./configure --enable-python --enable-debian --with-biosiglite --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
+	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) ./configure --enable-python --enable-debian --with-biosiglite --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
 	$(MAKE)
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) check
 endif
 	$(MAKE) install
 
-	./configure --enable-module --enable-debian --with-biosiglite --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
+	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) ./configure --enable-module --enable-debian --with-biosiglite --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
 	$(MAKE)
 	$(MAKE) install
 

@@ -46,7 +46,7 @@ to something else than an empty string.
         if test -n "$1"; then
                 AC_MSG_CHECKING([for a version of Python $1])
                 ac_supports_python_ver=`$PYTHON -c "import sys, string; \
-                        ver = string.split(sys.version)[[0]]; \
+                        ver = sys.version.split()[[0]]; \
                         sys.stdout.write(ver + '$1' + '\n')"`
                 if test "$ac_supports_python_ver" = "True"; then
                    AC_MSG_RESULT([yes])

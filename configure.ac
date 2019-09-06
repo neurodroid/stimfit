@@ -57,7 +57,7 @@ AC_ARG_ENABLE([python],
 
 AM_CONDITIONAL(BUILD_PYTHON, test "$enable_python" = "yes")
 if (test "$enable_python" = "yes") || (test "$enable_module" = "yes"); then
-    AC_PYTHON_DEVEL
+    AC_PYTHON_DEVEL()
     AC_PROG_SWIG(1.3.17)
     SWIG_ENABLE_CXX
     SWIG_PYTHON
