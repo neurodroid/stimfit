@@ -348,7 +348,11 @@ void wxStfApp::ImportPython(const wxString &modulelocation) {
     python_import << wxT("ip = IPython.ipapi.get()\n");
     python_import << wxT("import sys\n");
     python_import << wxT("sys.path.append(\"") << python_path << wxT("\")\n");
+#if (PY_VERSION_HEX < 0x03000000)
     python_import << wxT("if not sys.modules.has_key(\"") << python_file << wxT("\"):");
+#else
+    python_import << wxT("if '") << python_file << wxT("' not in sys.modules:");
+#endif
     python_import << wxT("ip.ex(\"import ") << python_file << wxT("\")\n");
     python_import << wxT("else:") << wxT("ip.ex(\"reload(") << python_file << wxT(")") << wxT("\")\n");
     python_import << wxT("sys.path.remove(\"") << python_path << wxT("\")\n");
@@ -357,7 +361,11 @@ void wxStfApp::ImportPython(const wxString &modulelocation) {
     // Python code to import a module with PyCrust 
     python_import << wxT("import sys\n");
     python_import << wxT("sys.path.append(\"") << python_path << wxT("\")\n");
+#if (PY_VERSION_HEX < 0x03000000)
     python_import << wxT("if not sys.modules.has_key(\"") << python_file << wxT("\"):");
+#else
+    python_import << wxT("if '") << python_file << wxT("' not in sys.modules:");
+#endif
     python_import << wxT("import ") << python_file << wxT("\n");
     python_import << wxT("else:") << wxT("reload(") << python_file << wxT(")") << wxT("\n");
     python_import << wxT("sys.path.remove(\"") << python_path << wxT("\")\n");
