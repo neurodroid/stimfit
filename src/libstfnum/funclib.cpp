@@ -159,13 +159,11 @@ void stfnum::fexp_init(const Vector_double& data, double base, double peak, doub
     Vector_double peeled( stfio::vec_scal_minus(data, floor));
     if (increasing) peeled = stfio::vec_scal_mul(peeled, -1.0);
     std::transform(peeled.begin(), peeled.end(), peeled.begin(),
-#if defined(__GNUC__)
-                   log);
-#elif defined(_WINDOWS)
+#if defined(_MSC_VER)
                    std::logl);
-#elif defined(__APPLE__)
+#elif defined(__clang__)
                    std::logl);
-#else
+#else	// defined(__GNUC__)  // all gcc-based compilers including mingw
                    log);
 #endif
 
