@@ -2,7 +2,7 @@ stimfit (0.16.0-1) unstable; urgency=low
 
   * Upgrade to Python 3 (Closes: #938572)
 
- -- Christoph Schmidt-Hieber <christsc@gmx.de>  Fri, 06 Sep 2019 14:25:22 +0200
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Tue, 26 Nov 2019 09:35:41 +0200
 
 stimfit (0.15.8-1) unstable; urgency=low
 
