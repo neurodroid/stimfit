@@ -514,11 +514,9 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA L4 @%i= #%i,%i, %s %f %fHz\t%i/%i %i/%
 							double Off2 = hc->PhysMin - Cal2 * hc->DigMin;
 							double Off3 = hc->PhysMax - Cal2 * hc->DigMax;
 
-if (VERBOSE_LEVEL>6) fprintf(stdout,"HEKA L5 @%i= #%i,%i, %s %g/%g %g/%g \n",(int)(pos+StartOfData),ns,AdcChan,Label,Cal,Cal2,Off,Off2);
-
-							assert(Cal==Cal2);
-							assert(Off==Off2);
-							assert(Off==Off3);
+							assert(fabs(Cal-Cal2) < 1e-8 * Cal);
+							assert(fabs(Off-Off2) < 1e-8 * Cal);
+							assert(fabs(Off-Off3) < 1e-8 * Cal);
 #endif
 
 							/* TODO: fix remaining channel header  */

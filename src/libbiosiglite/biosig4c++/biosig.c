@@ -1,6 +1,6 @@
 /*
 
-    Copyright (C) 2005-2018 Alois Schloegl <alois.schloegl@gmail.com>
+    Copyright (C) 2005-2020 Alois Schloegl <alois.schloegl@gmail.com>
     Copyright (C) 2011 Stoyan Mihaylov
     This file is part of the "BioSig for C/C++" repository
     (biosig4c++) at http://biosig.sf.net/
@@ -60,7 +60,7 @@
 #  include <curl/curl.h>
 #endif 
 
-int VERBOSE_LEVEL = 0;		// this variable is always available, but only used without NDEBUG 
+int VERBOSE_LEVEL __attribute__ ((visibility ("default") )) = 0;	// this variable is always available, but only used without NDEBUG
 
 #include "biosig.h"
 #include "biosig-network.h"
@@ -131,7 +131,14 @@ int sclose_HL7aECG_write(HDRTYPE* hdr);
 void sopen_ibw_read    (HDRTYPE* hdr);
 void sopen_itx_read    (HDRTYPE* hdr);
 void sopen_smr_read    (HDRTYPE* hdr);
+#ifdef WITH_INTAN
+void sopen_rhd2000_read (HDRTYPE* hdr);
+void sopen_rhs2000_read (HDRTYPE* hdr);
+void sopen_intan_clp_read (HDRTYPE* hdr);
+#endif
+#ifdef WITH_TDMS
 void sopen_tdms_read   (HDRTYPE* hdr);
+#endif
 int sopen_trc_read   (HDRTYPE* hdr);
 int sopen_unipro_read   (HDRTYPE* hdr);
 #ifdef WITH_FEF
@@ -3863,6 +3870,11 @@ else if (!strncmp(MODE,"r",1)) {
 		}
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN 101:\n");
 		count = ifread(hdr->AS.Header, 1, PAGESIZE, hdr);
+		if (count<32) {
+			biosigERROR(hdr, B4C_CANNOT_OPEN_FILE, "Error SOPEN(READ); file is empty (or too short)");
+			ifclose(hdr);
+			return(hdr);
+		}
 		hdr->AS.Header[count]=0;
 
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) count=%i\n", __func__, __LINE__,(int)count);
