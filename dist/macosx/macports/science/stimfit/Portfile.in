@@ -17,7 +17,7 @@ master_sites        ${homepage}
 checksums           rmd160  RMD160 \
                     sha256  SHA256
 
-wxWidgets.use       wxPython-3.0
+wxWidgets.use       wxWidgets-3.2
 
 depends_lib         port:boost \
                     port:fftw-3 \
@@ -29,20 +29,20 @@ configure.args      --with-wx-config=${wxWidgets.wxconfig} \
                     --disable-python \
                     --without-biosig
 
-# Only Python 2.7 is supported until wxpython gets available for Python 3.x
-variant python27 description {Build with Python shell.} {
+# Only Python 3.8+ is supported as of stimfit 0.16+
+variant python38 description {Build with Python shell.} {
     depends_build-append \
         port:swig-python
 
     depends_lib-append \
-        port:python27 \
-        port:py27-wxpython-3.0 \
-        port:py27-numpy \
-        port:py27-matplotlib \
-        port:py27-cvxopt
+        port:python38 \
+        port:py38-wxpython-4.0 \
+        port:py38-numpy \
+        port:py38-matplotlib \
+        port:py38-cvxopt
 
     configure.python \
-        ${prefix}/bin/python2.7
+        ${prefix}/bin/python3.8
 
     configure.args-replace \
         --disable-python \
@@ -75,10 +75,11 @@ variant biosiglite conflicts biosig description {Use internal biosiglite library
 configure.ldflags-append \
                     -headerpad_max_install_names
 
-# Commented out for now; will be required when wxpython gets available for Python 3.x
-# if {![variant_isset python27]} {
-default_variants    +python27
+# Commented out for now; will be required when we support python 3.9+
+# if {![variant_isset python38]} {
+default_variants    +python38
 # }
+
 if {![variant_isset biosig]} {
     default_variants-append \
                     +biosiglite
