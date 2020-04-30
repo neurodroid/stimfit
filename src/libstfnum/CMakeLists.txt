@@ -13,5 +13,6 @@ set(SRCS
     stfnum.cpp
     measure.cpp)
 
-add_library(stfnum STATIC ${SRCS})
-target_link_libraries(stfnum ${FFTW_LIBRARIES})
+add_library(stfnum_static STATIC ${SRCS})
+set_target_properties(stfnum_static PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(stfnum_static PUBLIC ${FFTW_LIBRARIES})

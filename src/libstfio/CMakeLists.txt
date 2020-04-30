@@ -43,14 +43,11 @@ set(SRCS
     intan/intanlib.cpp 
     intan/streams.cpp)
 
-add_library(stfio STATIC ${SRCS})
-set_target_properties(stfio PROPERTIES POSITION_INDEPENDENT_CODE ON)
+add_library(stfio_static STATIC ${SRCS})
+set_target_properties(stfio_static PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-target_include_directories(stfio PRIVATE ${HDF5_CXX_INCLUDE_DIRS})
-target_include_directories(stfio PRIVATE ${HDF5_HL_INCLUDE_DIRS})
-target_link_libraries(stfio PUBLIC ${HDF5_CXX_LIBRARIES})
-target_link_libraries(stfio PUBLIC ${HDF5_HL_LIBRARIES})
-target_link_libraries(stfio PUBLIC ${LAPACK_LIBRARIES})
-
-# install targets.
-install(TARGETS stfio DESTINATION bin)
+target_include_directories(stfio_static PRIVATE ${HDF5_CXX_INCLUDE_DIRS})
+target_include_directories(stfio_static PRIVATE ${HDF5_HL_INCLUDE_DIRS})
+target_link_libraries(stfio_static PUBLIC ${HDF5_CXX_LIBRARIES})
+target_link_libraries(stfio_static PUBLIC ${HDF5_HL_LIBRARIES})
+target_link_libraries(stfio_static PUBLIC ${LAPACK_LIBRARIES})
