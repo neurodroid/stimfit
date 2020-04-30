@@ -61,3 +61,6 @@ if(WITH_PYTHON)
     target_include_directories(stimfit.exe PRIVATE ${Python_INCLUDE_DIRS})
     target_link_libraries(stimfit.exe PUBLIC ${Python_LIBRARIES})
 endif()
+
+# install stimfit
+install(TARGETS stimfit.exe DESTINATION bin)

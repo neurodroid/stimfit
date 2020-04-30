@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(stimfit)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+set(STIMFIT_VERSION 0.16.0) 
 
 # Options.
 option(WITH_PYTHON "Build python module" ON)
