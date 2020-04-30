@@ -5,8 +5,9 @@ if(OSX)
 else()
     find_package(wxWidgets REQUIRED COMPONENTS net core base aui adv)
 endif()
+include(${wxWidgets_USE_FILE})
 
-add_library(stimfit STATIC
+set(SRCS
     ./stf.cpp 
     ./gui/app.cpp 
     ./gui/unopt.cpp 
@@ -26,15 +27,17 @@ add_library(stimfit STATIC
     ./gui/dlgs/smalldlgs.cpp 
     ./gui/usrdlg/usrdlg.cpp)
 
+add_library(stimfit STATIC ${SRCS})
+
+if(WITH_PYTHON)
+    add_subdirectory(py)
+endif()
+
 target_link_libraries(stimfit PRIVATE stfnum)
 
 # binary.
 add_executable(stimfit.exe gui/main.cpp)
 target_link_libraries(stimfit.exe PRIVATE stimfit stfio stfnum)
-
-if(wxWidgets_FOUND)
-    include(${wxWidgets_USE_FILE})
-    target_include_directories(stimfit PRIVATE ${wxWidgets_INCLUDE_DIRS})
-    target_link_libraries(stimfit PUBLIC ${wxWidgets_LIBRARIES})
-endif()
+target_include_directories(stimfit PRIVATE ${wxWidgets_INCLUDE_DIRS})
+target_link_libraries(stimfit PUBLIC ${wxWidgets_LIBRARIES})
 

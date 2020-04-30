@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.12)
 find_package(HDF5 COMPONENTS CXX HL REQUIRED)
 find_package(LAPACK REQUIRED)
 
-add_library(stfio STATIC
+set(SRCS
     channel.cpp 
     section.cpp 
     recording.cpp 
@@ -43,8 +43,14 @@ add_library(stfio STATIC
     intan/intanlib.cpp 
     intan/streams.cpp)
 
+add_library(stfio STATIC ${SRCS})
+set_target_properties(stfio PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 target_include_directories(stfio PRIVATE ${HDF5_CXX_INCLUDE_DIRS})
 target_include_directories(stfio PRIVATE ${HDF5_HL_INCLUDE_DIRS})
 target_link_libraries(stfio PUBLIC ${HDF5_CXX_LIBRARIES})
 target_link_libraries(stfio PUBLIC ${HDF5_HL_LIBRARIES})
 target_link_libraries(stfio PUBLIC ${LAPACK_LIBRARIES})
+
+# install targets.
+install(TARGETS stfio DESTINATION bin)
