@@ -20,6 +20,7 @@ if(WITH_PYTHON)
     find_package(Python COMPONENTS Interpreter Development)
     find_package(SWIG REQUIRED)
     include(UseSWIG)
+    add_definitions(-DWITH_PYTHON)
 endif()
 
 add_subdirectory(src/libbiosiglite)

@@ -25,19 +25,38 @@ set(SRCS
     ./gui/dlgs/eventdlg.cpp 
     ./gui/dlgs/fitseldlg.cpp 
     ./gui/dlgs/smalldlgs.cpp 
-    ./gui/usrdlg/usrdlg.cpp)
+    ./gui/usrdlg/usrdlg.cpp
+    )
 
 add_library(stimfit STATIC ${SRCS})
+
+if(WITH_PYTHON)
+    # Include path for sip.h and wx_api.h 
+    execute_process(COMMAND 
+        ${Python_EXECUTABLE} -c 
+            "import wx;import os;print(os.path.dirname(wx.__file__))"
+        OUTPUT_VARIABLE PYWX_INSTALL_DIR
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set(WX_INCLUDE_DIRS ${PYWX_INSTALL_DIR}/include)
+    message(STATUS "WX_INCLUDE_DIR=${WX_INCLUDE_DIRS}")
+    target_include_directories(stimfit PRIVATE ${WX_INCLUDE_DIRS})
+    target_include_directories(stimfit PRIVATE ${Python_INCLUDE_DIRS})
+endif()
 
 if(WITH_PYTHON)
     add_subdirectory(py)
 endif()
 
+target_include_directories(stimfit PRIVATE ${wxWidgets_INCLUDE_DIRS})
+
+target_link_libraries(stimfit PUBLIC ${wxWidgets_LIBRARIES})
 target_link_libraries(stimfit PRIVATE stfnum)
 
 # binary.
 add_executable(stimfit.exe gui/main.cpp)
 target_link_libraries(stimfit.exe PRIVATE stimfit stfio stfnum)
-target_include_directories(stimfit PRIVATE ${wxWidgets_INCLUDE_DIRS})
-target_link_libraries(stimfit PUBLIC ${wxWidgets_LIBRARIES})
-
+if(WITH_PYTHON)
+    target_include_directories(stimfit.exe PRIVATE ${WX_INCLUDE_DIRS})
+    target_include_directories(stimfit.exe PRIVATE ${Python_INCLUDE_DIRS})
+    target_link_libraries(stimfit.exe PUBLIC ${Python_LIBRARIES})
+endif()

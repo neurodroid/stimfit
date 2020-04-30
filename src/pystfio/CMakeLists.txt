@@ -8,11 +8,11 @@ target_include_directories(pystfio PRIVATE ${Python_INCLUDE_DIRS} ${CMAKE_CURREN
 
 swig_link_libraries(pystfio PRIVATE stfio stfnum)
 
-# Copy test file to build directory.
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/unittest_stfio.py
-    DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+# Generate the module in source directory.
+set_target_properties(pystfio PROPERTIES LIBRARY_OUTPUT_DIRECTORY
+    ${CMAKE_CURRENT_SOURCE_DIR})
 
 enable_testing()
 add_test(NAME test_stfio 
     COMMAND Python::Interpreter unittest_stfio.py
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
