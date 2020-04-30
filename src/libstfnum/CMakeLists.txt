@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.12)
 
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake)
-
 find_package(FFTW REQUIRED)
 
-add_library(stfnum SHARED 
+set(SRCS
     fit.cpp 
     levmar/lm.c 
     levmar/Axb.c
@@ -15,4 +13,5 @@ add_library(stfnum SHARED
     stfnum.cpp
     measure.cpp)
 
+add_library(stfnum STATIC ${SRCS})
 target_link_libraries(stfnum ${FFTW_LIBRARIES})

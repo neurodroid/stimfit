@@ -6,7 +6,7 @@ else()
     find_package(wxWidgets REQUIRED COMPONENTS net core base aui adv)
 endif()
 
-add_library(stimfit SHARED
+add_library(stimfit STATIC
     ./stf.cpp 
     ./gui/app.cpp 
     ./gui/unopt.cpp 
@@ -26,8 +26,11 @@ add_library(stimfit SHARED
     ./gui/dlgs/smalldlgs.cpp 
     ./gui/usrdlg/usrdlg.cpp)
 
-target_link_libraries(stimfit PUBLIC stifnum)
-target_include_directories(stimfit PRIVATE ${WXPREC_INCLUDE_PATH})
+target_link_libraries(stimfit PRIVATE stfnum)
+
+# binary.
+add_executable(stimfit.exe gui/main.cpp)
+target_link_libraries(stimfit.exe PRIVATE stimfit)
 
 if(wxWidgets_FOUND)
     include(${wxWidgets_USE_FILE})
