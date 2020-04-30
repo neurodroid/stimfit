@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
-find_package(HDF5 REQUIRED COMPONENTS CXX HL)
+find_package(HDF5 COMPONENTS CXX HL REQUIRED)
+find_package(LAPACK REQUIRED)
 
 add_library(stfio STATIC
     channel.cpp 
@@ -43,4 +44,7 @@ add_library(stfio STATIC
     intan/streams.cpp)
 
 target_include_directories(stfio PRIVATE ${HDF5_CXX_INCLUDE_DIRS})
-target_link_libraries(stfio PUBLIC ${HDF5_LIBRARIES})
+target_include_directories(stfio PRIVATE ${HDF5_HL_INCLUDE_DIRS})
+target_link_libraries(stfio PUBLIC ${HDF5_CXX_LIBRARIES})
+target_link_libraries(stfio PUBLIC ${HDF5_HL_LIBRARIES})
+target_link_libraries(stfio PUBLIC ${LAPACK_LIBRARIES})

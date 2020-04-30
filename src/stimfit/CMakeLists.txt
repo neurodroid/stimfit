@@ -30,7 +30,7 @@ target_link_libraries(stimfit PRIVATE stfnum)
 
 # binary.
 add_executable(stimfit.exe gui/main.cpp)
-target_link_libraries(stimfit.exe PRIVATE stimfit)
+target_link_libraries(stimfit.exe PRIVATE stimfit stfio stfnum)
 
 if(wxWidgets_FOUND)
     include(${wxWidgets_USE_FILE})
