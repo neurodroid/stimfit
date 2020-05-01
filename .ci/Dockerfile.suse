@@ -1,0 +1,14 @@
+FROM opensuse/leap
+MAINTAINER Dilawar Singh <dilawar.s.rajput@gmail.com>
+
+RUN zypper install -y cmake gcc-c++ make \
+    python3-devel \
+    python3-numpy \
+    python3-wxWidgets \
+    wxWidgets-devel \
+    && rm -rf /var/cache/zypp/packages/*
+
+COPY . /root
+WORKDIR /root
+RUN ls -ltr 
+RUN mkdir _build && cd _build && cmake .. && make -j$(nproc) && make install

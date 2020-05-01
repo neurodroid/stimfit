@@ -1,0 +1,4 @@
+FROM ubuntu
+MAINTAINER Dilawar Singh <dilawar.s.rajput@gmail.com>
+COPY . /root
+CMD mkdir _build && cd _build && cmake .. && make -j$(nproc) && make install
