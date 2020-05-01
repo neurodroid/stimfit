@@ -1,8 +1,15 @@
 cmake_minimum_required(VERSION 3.12)
 
+if(NOT Numpy_INCLUDE_DIRS)
+    message(FATAL_ERROR "Could not find numpy for ${Python_EXECUTABLE}")
+endif()
+
 set_property(SOURCE pystfio.i PROPERTY CPLUSPLUS ON)
 swig_add_library(stfio LANGUAGE python SOURCES pystfio.i pystfio.cxx)
-target_include_directories(stfio PRIVATE ${Python_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(stfio PRIVATE 
+    ${Python_INCLUDE_DIRS} 
+    ${Numpy_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR})
 swig_link_libraries(stfio PRIVATE stfio_static stfnum_static)
 
 

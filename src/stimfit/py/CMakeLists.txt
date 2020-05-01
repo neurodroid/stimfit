@@ -12,6 +12,7 @@ target_include_directories(stf PRIVATE
 target_link_libraries(stf PUBLIC ${wxWidgets_LIBRARIES})
 target_include_directories(stf PRIVATE ${WX_INCLUDE_DIRS})
 target_include_directories(stf PRIVATE ${Python_INCLUDE_DIRS})
+target_include_directories(stf PRIVATE ${Numpy_INCLUDE_DIRS})
 
 # copy the python source tree to build directory.
 add_custom_command(TARGET stf 

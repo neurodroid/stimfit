@@ -18,7 +18,16 @@ if(WITH_PYTHON)
     if(POLICY CMP0086)
         cmake_policy(SET CMP0086 NEW)
     endif()
-    find_package(Python COMPONENTS Interpreter Development)
+    find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+    set(Python_EXECUTABLE ${Python3_EXECUTABLE})
+    set(Python_INCLUDE_DIRS ${Python3_INCLUDE_DIRS})
+    set(Python_LIBRARIES ${Python3_LIBRARIES})
+    # Find nympy
+    execute_process(COMMAND 
+        ${Python_EXECUTABLE} -c "import numpy;print(numpy.get_include())"
+        OUTPUT_VARIABLE Numpy_INCLUDE_DIRS
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+
     find_package(SWIG REQUIRED)
     include(UseSWIG)
     add_definitions(-DWITH_PYTHON)
