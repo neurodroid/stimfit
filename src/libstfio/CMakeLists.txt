@@ -45,7 +45,10 @@ set(SRCS
 
 # Shared library.
 add_library(libstfio SHARED ${SRCS})
-set_target_properties(libstfio PROPERTIES LIBRARY_OUTPUT_NAME stfio)
+set_target_properties(libstfio PROPERTIES 
+    LIBRARY_OUTPUT_NAME stfio
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
 target_include_directories(libstfio PRIVATE ${HDF5_CXX_INCLUDE_DIRS})
 target_include_directories(libstfio PRIVATE ${HDF5_HL_INCLUDE_DIRS})
 target_link_libraries(libstfio PUBLIC ${HDF5_CXX_LIBRARIES})

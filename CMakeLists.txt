@@ -11,10 +11,6 @@ option(WITH_PYTHON "Build python module" ON)
 add_definitions(-fmax-errors=10)
 
 # Configuration 
-
-# where to generate libraries.
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-
 if(WITH_PYTHON)
     if(POLICY CMP0078)
         cmake_policy(SET CMP0078 NEW)

@@ -30,7 +30,10 @@ set(SRCS
 
 
 add_library(libstimfit SHARED ${SRCS})
-set_target_properties(libstimfit PROPERTIES LIBRARY_OUTPUT_NAME stimfit) 
+
+set_target_properties(libstimfit PROPERTIES 
+    LIBRARY_OUTPUT_DIRECTORY "${CAMKE_BINARY_DIR}"
+    LIBRARY_OUTPUT_NAME stimfit)
 
 if(WITH_PYTHON)
     # Include path for sip.h and wx_api.h 

@@ -20,7 +20,7 @@ add_custom_command(TARGET stf
         ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
     VERBATIM)
 
-set(STF_INSTALL_DIR ${CMAKE_BINARY_DIR}/_STF)
+set(STF_INSTALL_DIR ${CMAKE_BINARY_DIR}/_stf_install_dir)
 file(MAKE_DIRECTORY ${STF_INSTALL_DIR}/${Python_SITELIB})
 add_custom_command(TARGET stf POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy 

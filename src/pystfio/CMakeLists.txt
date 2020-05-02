@@ -10,8 +10,8 @@ target_include_directories(stfio PRIVATE
     ${Python_INCLUDE_DIRS} 
     ${Numpy_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR})
-swig_link_libraries(stfio PRIVATE libstfio libstfnum)
 
+swig_link_libraries(stfio PRIVATE libstfio libstfnum)
 
 # copy source tree to build directory.
 add_custom_command(TARGET stfio POST_BUILD
@@ -23,7 +23,7 @@ add_custom_command(TARGET stfio POST_BUILD
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in
     ${CMAKE_CURRENT_SOURCE_DIR}/setup.py)
 
-set(STFIO_INSTALL_DIR ${CMAKE_BINARY_DIR}/STFIO)
+set(STFIO_INSTALL_DIR ${CMAKE_BINARY_DIR}/_stfio_install_dir)
 add_custom_target(bdist ALL
     DEPENDS stfio
     COMMAND ${Python_EXECUTABLE} setup.py bdist_wheel
@@ -34,7 +34,6 @@ add_custom_target(bdist ALL
 
 install(FILES stfio_plot.py DESTINATION lib/stimfit)
 install(DIRECTORY ${STFIO_INSTALL_DIR}/usr/lib/ DESTINATION lib)
-
 
 enable_testing()
 add_test(NAME test_stfio 
