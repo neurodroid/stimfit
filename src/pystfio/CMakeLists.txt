@@ -11,7 +11,7 @@ target_include_directories(stfio PRIVATE
     ${Numpy_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR})
 
-swig_link_libraries(stfio PRIVATE libstfio libstfnum)
+swig_link_libraries(stfio PUBLIC libstfnum libstfio)
 
 # copy source tree to build directory.
 add_custom_command(TARGET stfio POST_BUILD

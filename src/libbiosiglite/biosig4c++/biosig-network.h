@@ -79,9 +79,11 @@
 
 #endif
 
+/* min, max are not defined on linux */
+#define min(X,Y) ((X) < (Y) ? (X) : (Y))
+#define max(X,Y) ((X) > (Y) ? (X) : (Y))
 
 /* External API definitions */
-
 /****************************************************************************/
 /**                                                                        **/
 /**                 DEFINITIONS, TYPEDEFS AND MACROS                       **/

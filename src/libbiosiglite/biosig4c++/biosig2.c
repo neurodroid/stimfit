@@ -417,6 +417,7 @@ int biosig_set_patient_name(HDRTYPE *hdr, const char* name) {
 	if (hdr==NULL) return -1;
 	strncpy(hdr->Patient.Name, name, MAX_LENGTH_NAME);
 	hdr->Patient.Name[MAX_LENGTH_NAME]=0;
+        return 0;
 }
 
 int biosig_set_patient_name_structured(HDRTYPE *hdr, const char* LastName, const char* FirstName, const char* SecondLastName) {

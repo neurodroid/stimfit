@@ -82,7 +82,9 @@ int VERBOSE_LEVEL __attribute__ ((visibility ("default") )) = 0;	// this variabl
 #define max(a,b)        (((a) > (b)) ? (a) : (b))
 
 char* getlogin (void);
-char* xgethostname (void);
+char* xgethostname (void){
+    return "Not implemented";
+};
 
 /*-----------------------------------------------------------------------
    error handling should use error variables local to each HDR
