@@ -21,7 +21,7 @@ PYTHON_ADDLIBS =
 
 $(top_srcdir)/src/pystfio/pystfio_wrap.cxx $(top_srcdir)/src/pystfio/stfio.py: $(top_srcdir)/src/pystfio/pystfio.i
 	$(SWIG) $(SWIG_PYTHON_OPT) -o $@ $<
-	cat $(top_srcdir)/src/ttimfit/py/gccwarn $(top_srcdir)/src/pystfio/pystfio_wrap.cxx > $(top_srcdir)/src/pystfio/pystfio_wrap_tmp.cxx
+	cat $(top_srcdir)/src/stimfit/py/gccwarn $(top_srcdir)/src/pystfio/pystfio_wrap.cxx > $(top_srcdir)/src/pystfio/pystfio_wrap_tmp.cxx
 	mv $(top_srcdir)/src/pystfio/pystfio_wrap_tmp.cxx $(top_srcdir)/src/pystfio/pystfio_wrap.cxx
 
 nodist_libpystfio_la_SOURCES = $(top_srcdir)/src/pystfio/pystfio_wrap.cxx
