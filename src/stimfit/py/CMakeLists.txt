@@ -23,10 +23,10 @@ add_custom_command(TARGET stf
 set(STF_INSTALL_DIR ${CMAKE_BINARY_DIR}/_STF)
 file(MAKE_DIRECTORY ${STF_INSTALL_DIR}/${Python_SITELIB})
 add_custom_command(TARGET stf POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/stf.py
-        ${STF_INSTALL_DIR}/${Python_SITELIB}/
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/_stf.so
-        ${STF_INSTALL_DIR}/${Python_SITELIB}/
+    COMMAND ${CMAKE_COMMAND} -E copy 
+        ${CMAKE_CURRENT_BINARY_DIR}/stf.py
+        $<TARGET_FILE:stf>
+        ${STF_INSTALL_DIR}/${Python_SITELIB}
     VERBATIM)
 
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
