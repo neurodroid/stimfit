@@ -8,7 +8,8 @@ set(STIMFIT_VERSION 0.16.0)
 option(WITH_PYTHON "Build python module" ON)
 
 # Global compiler options.
-add_definitions(-fmax-errors=10)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Configuration 
 if(WITH_PYTHON)

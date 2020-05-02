@@ -25,12 +25,9 @@
 #define _STFIO_H_
 
 #include <iostream>
-#if (__cplusplus < 201103)
-#  include <boost/function.hpp>
-#else
-#  include <algorithm>
-#  include <functional>
-#endif
+#include <algorithm>
+#include <functional>
+
 #include <vector>
 #include <deque>
 #include <map>

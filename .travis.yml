@@ -1,0 +1,20 @@
+language: cpp
+sudo: required
+
+matrix:
+  include:
+  - os: linux
+    dist: bionic
+    services:
+        - xvfb
+  - os: osx
+    osx_image: 
+     - xcode11.3
+
+addons:
+  apt:
+    update: true
+
+script:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./.ci/build_stimfit_osx.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./.ci/build_stimfit_ubuntu.sh; fi

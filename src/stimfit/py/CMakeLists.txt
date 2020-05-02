@@ -8,11 +8,17 @@ swig_link_libraries(stf PUBLIC libstimfit libstfio ${wxWidgets_LIBRARIES})
 target_include_directories(${SWIG_MODULE_stf_REAL_NAME} PRIVATE 
     ${Python_INCLUDE_DIRS} 
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${FFTW_INCLUDE_DIRS}
     ${wxWidgets_INCLUDE_DIRS})
-
 
 target_include_directories(${SWIG_MODULE_stf_REAL_NAME} PRIVATE
     ${WX_INCLUDE_DIRS} ${Python_INCLUDE_DIRS} ${Numpy_INCLUDE_DIRS})
+
+if(APPLE)
+    set_target_properties(${SWIG_MODULE_stf_REAL_NAME} 
+        PROPERTIES
+        LINK_FLAGS "-undefined dynamic_lookup")
+endif()
 
 # copy the python source tree to build directory.
 add_custom_command(TARGET ${SWIG_MODULE_stf_REAL_NAME}

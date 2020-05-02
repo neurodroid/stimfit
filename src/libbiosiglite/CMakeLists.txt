@@ -26,4 +26,9 @@ set(SRCS
 
 
 add_library(biosiglite SHARED ${SRCS})
-target_link_libraries(biosiglite ${ZLIB_LIBRARIES} m)
+target_link_libraries(biosiglite PUBLIC ${ZLIB_LIBRARIES} m)
+
+if(APPLE)
+    find_package(Iconv REQUIRED)
+    target_link_libraries(biosiglite PUBLIC ${Iconv_LIBRARIES})
+endif()
