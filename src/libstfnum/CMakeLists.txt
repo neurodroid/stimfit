@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
+find_package(LAPACK REQUIRED)
 find_package(FFTW REQUIRED)
 
 set(SRCS
@@ -13,6 +14,8 @@ set(SRCS
     stfnum.cpp
     measure.cpp)
 
-add_library(stfnum_static STATIC ${SRCS})
-set_target_properties(stfnum_static PROPERTIES POSITION_INDEPENDENT_CODE ON)
-target_link_libraries(stfnum_static PUBLIC ${FFTW_LIBRARIES})
+add_library(libstfnum SHARED ${SRCS})
+set_target_properties(libstfnum PROPERTIES LIBRARY_OUTPUT_NAME stfnum)
+target_link_libraries(libstfnum PUBLIC ${FFTW_LIBRARIES} ${LAPACK_LIBRARIES})
+
+install(TARGETS libstfnum DESTINATION lib)

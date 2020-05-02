@@ -10,5 +10,5 @@ set(SRCS biosig4c++/biosig2.c
     biosig4c++/mdc_ecg_codes.c
     biosig4c++/physicalunits.c)
 
-add_library(biosiglite STATIC ${SRCS})
+add_library(biosiglite SHARED ${SRCS})
 target_link_libraries(biosiglite ${ZLIB_LIBRARIES})

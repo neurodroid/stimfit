@@ -10,7 +10,7 @@ target_include_directories(stfio PRIVATE
     ${Python_INCLUDE_DIRS} 
     ${Numpy_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR})
-swig_link_libraries(stfio PRIVATE stfio_static stfnum_static)
+swig_link_libraries(stfio PRIVATE libstfio libstfnum)
 
 
 # copy source tree to build directory.
@@ -23,20 +23,20 @@ add_custom_command(TARGET stfio POST_BUILD
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in
     ${CMAKE_CURRENT_SOURCE_DIR}/setup.py)
 
-add_custom_target(wheel ALL
+set(STFIO_INSTALL_DIR ${CMAKE_BINARY_DIR}/STFIO)
+add_custom_target(bdist ALL
     DEPENDS stfio
-    COMMAND ${Python_EXECUTABLE} setup.py bdist_wheel 
-        -d ${CMAKE_BINARY_DIR}
-    COMMENT "Creating python wheel"
+    COMMAND ${Python_EXECUTABLE} setup.py bdist_wheel
+        -b ${STFIO_INSTALL_DIR}/${Python_SITELIB} -k 
+    COMMENT "Creating python bdist"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     VERBATIM)
+
+install(FILES stfio_plot.py DESTINATION lib/stimfit)
+install(DIRECTORY ${STFIO_INSTALL_DIR}/usr/lib/ DESTINATION lib)
+
 
 enable_testing()
 add_test(NAME test_stfio 
-    COMMAND Python::Interpreter unittest_stfio.py
+    COMMAND ${Python_EXECUTABLE} unittest_stfio.py
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-
-# install targets
-install(CODE 
-    "execute_process(COMMAND ${Python_EXECUTABLE} -m pip install
-        ${CMAKE_CURRENT_BINARY_DIR} --prefix ${CMAKE_INSTALL_PREFIX})"
-    )

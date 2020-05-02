@@ -28,7 +28,9 @@ set(SRCS
     ./gui/usrdlg/usrdlg.cpp
     )
 
-add_library(stimfit_static STATIC ${SRCS})
+
+add_library(libstimfit SHARED ${SRCS})
+set_target_properties(libstimfit PROPERTIES LIBRARY_OUTPUT_NAME stimfit) 
 
 if(WITH_PYTHON)
     # Include path for sip.h and wx_api.h 
@@ -40,24 +42,24 @@ if(WITH_PYTHON)
     set(WX_INCLUDE_DIR ${PYWX_INSTALL_DIR}/include)
     set(WX_INCLUDE_DIRS ${WX_INCLUDE_DIR} ${WX_INCLUDE_DIR}/wxPython)
     message(STATUS "wx include paths: ${WX_INCLUDE_DIRS}")
-    target_include_directories(stimfit_static PRIVATE ${WX_INCLUDE_DIRS})
-    target_include_directories(stimfit_static PRIVATE ${Python_INCLUDE_DIRS})
-    target_include_directories(stimfit_static PRIVATE ${Numpy_INCLUDE_DIRS})
+    target_include_directories(libstimfit PRIVATE ${WX_INCLUDE_DIRS})
+    target_include_directories(libstimfit PRIVATE ${Python_INCLUDE_DIRS})
+    target_include_directories(libstimfit PRIVATE ${Numpy_INCLUDE_DIRS})
 endif()
 
 if(WITH_PYTHON)
     add_subdirectory(py)
 endif()
 
-target_include_directories(stimfit_static PRIVATE ${wxWidgets_INCLUDE_DIRS})
-
-target_link_libraries(stimfit_static PUBLIC ${wxWidgets_LIBRARIES})
-target_link_libraries(stimfit_static PRIVATE stfnum_static)
+target_include_directories(libstimfit PRIVATE ${wxWidgets_INCLUDE_DIRS})
+target_link_libraries(libstimfit PUBLIC ${wxWidgets_LIBRARIES})
+target_link_libraries(libstimfit PUBLIC libstfnum)
 
 # binary.
 add_executable(stimfit.exe gui/main.cpp)
-set_target_properties(stimfit.exe PROPERTIES OUTPUT_NAME "stimfit")
-target_link_libraries(stimfit.exe PRIVATE stimfit_static stfio_static stfnum_static)
+set_target_properties(stimfit.exe PROPERTIES OUTPUT_NAME stimfit)
+target_link_libraries(stimfit.exe PUBLIC libstimfit libstfio libstfnum)
+
 if(WITH_PYTHON)
     target_include_directories(stimfit.exe PRIVATE ${WX_INCLUDE_DIRS})
     target_include_directories(stimfit.exe PRIVATE ${Python_INCLUDE_DIRS} 
@@ -65,5 +67,6 @@ if(WITH_PYTHON)
     target_link_libraries(stimfit.exe PUBLIC ${Python_LIBRARIES})
 endif()
 
-# install stimfit
+# install
 install(TARGETS stimfit.exe DESTINATION bin)
+install(TARGETS libstimfit DESTINATION lib)
