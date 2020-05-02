@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.10)
 
 find_package(LAPACK REQUIRED)
 find_package(FFTW REQUIRED)

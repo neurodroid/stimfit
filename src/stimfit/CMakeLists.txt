@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.10)
 
 if(OSX)
     find_package(wxWidgets REQUIRED COMPONENTS net core base propgrid aui adv)
@@ -36,12 +36,15 @@ set_target_properties(libstimfit PROPERTIES
     LIBRARY_OUTPUT_NAME stimfit)
 
 if(WITH_PYTHON)
-    # Include path for sip.h and wx_api.h 
+    # Include path for sip.h and wx_api.h if wx module is importable.
     execute_process(COMMAND 
         ${Python_EXECUTABLE} -c 
             "import wx;import os;print(os.path.dirname(wx.__file__))"
         OUTPUT_VARIABLE PYWX_INSTALL_DIR
         OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if(NOT PYWX_INSTALL_DIR)
+        message(FATAL_ERROR "wx module is not found.")
+    endif()
     set(WX_INCLUDE_DIR ${PYWX_INSTALL_DIR}/include)
     set(WX_INCLUDE_DIRS ${WX_INCLUDE_DIR} ${WX_INCLUDE_DIR}/wxPython)
     message(STATUS "wx include paths: ${WX_INCLUDE_DIRS}")
