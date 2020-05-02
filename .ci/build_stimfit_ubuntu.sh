@@ -20,9 +20,9 @@ sudo apt install -y \
     cmake \
     python3-sip-dev
 
-python3 -m pip install \
-    -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-18.04 \ 
-    wxPython --user
+python3 -m pip install -U \
+    -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-18.04 \
+    wxPython 
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 (
