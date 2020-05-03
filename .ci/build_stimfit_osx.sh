@@ -21,4 +21,4 @@ brew install fftw || brew upgrade fftw
     make install 
 )
 
-$(PYTHON) -c "import stfio"
+$(PYTHON) -c "import stfio;print(dir(stfio))"
