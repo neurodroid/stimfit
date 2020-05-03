@@ -20,9 +20,15 @@ sudo apt install -y \
     cmake \
     python3-sip-dev
 
+
 python3 -m pip install -U \
     -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-18.04 \
     wxPython 
+
+# Missing libraries after wxPython install.
+# https://stackoverflow.com/a/59277031/1805129 
+sudo apt install -y \
+    curl libsdl2-mixer-2.0-0 libsdl2-image-2.0-0 libsdl2-2.0-0
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 (
