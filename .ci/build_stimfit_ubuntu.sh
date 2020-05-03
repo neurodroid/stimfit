@@ -37,4 +37,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     cmake ../../  -DCMAKE_INSTALL_PREFIX:PATH=/usr \
         -DCMAKE_BUILD_TYPE=RelWithDebInfo
     make -j$(nproc)
+    make install
 )
+
+python3 -c "import stfio; print(stfio.__version__)"
