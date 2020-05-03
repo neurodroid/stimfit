@@ -9,9 +9,9 @@ PYTHON=$(which python3)
 brew install wxpython
 brew install wxwidgets
 brew install swig
-brew install cmake  || brew update cmake
-brew install lapack  || brew update lapack
-brew install fftw || brew update fftw
+brew install cmake  || brew upgrade cmake
+brew install lapack  || brew upgrade lapack
+brew install fftw || brew upgrade fftw
 
 (
     cd $SCRIPT_DIR
