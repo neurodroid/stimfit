@@ -3,10 +3,38 @@ cmake_minimum_required(VERSION 3.10)
 find_package(FFTW REQUIRED)
 
 if(APPLE)
-    find_package(wxWidgets REQUIRED COMPONENTS net core base propgrid aui adv)
+    find_package(wxWidgets COMPONENTS net core base propgrid aui adv)
 else()
-    find_package(wxWidgets REQUIRED COMPONENTS net core base aui adv)
+    find_package(wxWidgets COMPONENTS net core base aui adv)
 endif()
+
+if(NOT wxWidgets_FOUND)
+    message(WARNING "*************************************************"
+                    "wxWidgets are not found. Disabling GUI."
+                    "*************************************************")
+    return()
+endif()
+
+# Include path for sip.h and wx_api.h if wx module is importable.
+execute_process(COMMAND 
+    ${Python_EXECUTABLE} -c 
+        "import wx;import os;print(os.path.dirname(wx.__file__))"
+    OUTPUT_VARIABLE PYWX_INSTALL_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+if(NOT PYWX_INSTALL_DIR)
+    message(WARNING "wx module is not found. Disabling gui.")
+    return()
+endif()
+
+set(WX_INCLUDE_DIR ${PYWX_INSTALL_DIR}/include)
+set(WX_INCLUDE_DIRS ${WX_INCLUDE_DIR} ${WX_INCLUDE_DIR}/wxPython)
+message(STATUS "wx include paths: ${WX_INCLUDE_DIRS}")
+target_include_directories(libstimfit PRIVATE ${WX_INCLUDE_DIRS})
+target_include_directories(libstimfit PRIVATE ${Python_INCLUDE_DIRS})
+target_include_directories(libstimfit PRIVATE ${Numpy_INCLUDE_DIRS})
+
+
 include(${wxWidgets_USE_FILE})
 
 set(SRCS
@@ -43,25 +71,6 @@ if(APPLE)
         PROPERTIES 
         LINK_FLAGS "-undefined dynamic_lookup")
 endif()
-
-if(WITH_PYTHON)
-    # Include path for sip.h and wx_api.h if wx module is importable.
-    execute_process(COMMAND 
-        ${Python_EXECUTABLE} -c 
-            "import wx;import os;print(os.path.dirname(wx.__file__))"
-        OUTPUT_VARIABLE PYWX_INSTALL_DIR
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    if(NOT PYWX_INSTALL_DIR)
-        message(FATAL_ERROR "wx module is not found.")
-    endif()
-    set(WX_INCLUDE_DIR ${PYWX_INSTALL_DIR}/include)
-    set(WX_INCLUDE_DIRS ${WX_INCLUDE_DIR} ${WX_INCLUDE_DIR}/wxPython)
-    message(STATUS "wx include paths: ${WX_INCLUDE_DIRS}")
-    target_include_directories(libstimfit PRIVATE ${WX_INCLUDE_DIRS})
-    target_include_directories(libstimfit PRIVATE ${Python_INCLUDE_DIRS})
-    target_include_directories(libstimfit PRIVATE ${Numpy_INCLUDE_DIRS})
-endif()
-
 if(WITH_PYTHON)
     add_subdirectory(py)
 endif()
