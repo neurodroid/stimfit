@@ -37,7 +37,7 @@ if(WITH_PYTHON)
             "from distutils import sysconfig; print(sysconfig.get_python_lib(prefix='', plat_specific=False))")
 
         execute_process(COMMAND "${Python_EXECUTABLE}" "-c" "${PYTHON_SITELIB_CMD}"
-            OUTPUT_VARIABLE PYTHON_SITELIB
+            OUTPUT_VARIABLE Python_SITELIB
             OUTPUT_STRIP_TRAILING_WHITESPACE
             ERROR_QUIET)
     endif()
