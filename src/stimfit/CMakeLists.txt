@@ -3,11 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 find_package(FFTW REQUIRED)
 
 if(APPLE)
-<<<<<<< HEAD
-    find_package(wxWidgets REQUIRED COMPONENTS net core base propgrid aui adv)
-=======
     find_package(wxWidgets COMPONENTS net core base propgrid aui adv)
->>>>>>> master
 else()
     find_package(wxWidgets COMPONENTS net core base aui adv)
 endif()
