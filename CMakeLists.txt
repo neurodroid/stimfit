@@ -6,6 +6,7 @@ set(STIMFIT_VERSION 0.16.0)
 
 # Options.
 option(WITH_PYTHON "Build python module" ON)
+option(WITH_BIOSIGLITE "Use builtin biosig library" ON)
 
 # Global compiler options.
 set(CMAKE_CXX_STANDARD 11)
@@ -52,7 +53,10 @@ if(WITH_PYTHON)
     add_definitions(-DWITH_PYTHON)
 endif()
 
-add_subdirectory(src/libbiosiglite)
+if(WITH_BIOSIGLITE)
+    add_subdirectory(src/libbiosiglite)
+endif()
+
 add_subdirectory(src/libstfio)
 add_subdirectory(src/libstfnum)
 add_subdirectory(src/pystfio)

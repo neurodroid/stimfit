@@ -9,6 +9,32 @@ else()
 endif()
 include(${wxWidgets_USE_FILE})
 
+# find path for sip.h and wx_api.h .
+execute_process(COMMAND 
+    ${Python_EXECUTABLE} -c 
+    "import wx;import os;print(os.path.dirname(wx.__file__))"
+    OUTPUT_VARIABLE PYWX_INSTALL_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+if(NOT PYWX_INSTALL_DIR)
+    message(STATUS "***********************************")
+    message(STATUS "warn: `python3 -c 'import wx'` failed. GUI is disabled.")
+    message(STATUS "Only python module will be built.")
+    message(STATUS "***********************************")
+    set(WITH_WX_GUI FALSE)
+    return()
+else()
+    set(PYWX_INCLUDE_DIR ${PYWX_INSTALL_DIR}/include)
+    set(PYWX_INCLUDE_DIRS ${PYWX_INCLUDE_DIR} ${PYWX_INCLUDE_DIR}/wxPython)
+    message(STATUS "wx include paths: ${PYWX_INCLUDE_DIRS}")
+    target_include_directories(libstimfit PRIVATE ${PYWX_INCLUDE_DIRS})
+endif()
+
+target_include_directories(libstimfit PRIVATE ${Python_INCLUDE_DIRS})
+target_include_directories(libstimfit PRIVATE ${Numpy_INCLUDE_DIRS})
+
+add_subdirectory(py)
+
 set(SRCS
     ./stf.cpp 
     ./gui/app.cpp 
@@ -42,28 +68,6 @@ if(APPLE)
     set_target_properties(libstimfit 
         PROPERTIES 
         LINK_FLAGS "-undefined dynamic_lookup")
-endif()
-
-if(WITH_PYTHON)
-    # Include path for sip.h and wx_api.h if wx module is importable.
-    execute_process(COMMAND 
-        ${Python_EXECUTABLE} -c 
-            "import wx;import os;print(os.path.dirname(wx.__file__))"
-        OUTPUT_VARIABLE PYWX_INSTALL_DIR
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    if(NOT PYWX_INSTALL_DIR)
-        message(FATAL_ERROR "wx module is not found.")
-    endif()
-    set(WX_INCLUDE_DIR ${PYWX_INSTALL_DIR}/include)
-    set(WX_INCLUDE_DIRS ${WX_INCLUDE_DIR} ${WX_INCLUDE_DIR}/wxPython)
-    message(STATUS "wx include paths: ${WX_INCLUDE_DIRS}")
-    target_include_directories(libstimfit PRIVATE ${WX_INCLUDE_DIRS})
-    target_include_directories(libstimfit PRIVATE ${Python_INCLUDE_DIRS})
-    target_include_directories(libstimfit PRIVATE ${Numpy_INCLUDE_DIRS})
-endif()
-
-if(WITH_PYTHON)
-    add_subdirectory(py)
 endif()
 
 target_link_libraries(libstimfit PUBLIC ${wxWidgets_LIBRARIES})
