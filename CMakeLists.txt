@@ -32,15 +32,15 @@ if(WITH_PYTHON)
         find_package(PythonLibs REQUIRED)
         set(Python_INCLUDE_DIRS ${PYTHON_INCLUDE_DIRS})
         set(Python_LIBRARIES ${PYTHON_LIBRARIES})
-
-        set(PYTHON_SITELIB_CMD 
-            "from distutils import sysconfig; print(sysconfig.get_python_lib(prefix='', plat_specific=False))")
-
-        execute_process(COMMAND "${Python_EXECUTABLE}" "-c" "${PYTHON_SITELIB_CMD}"
-            OUTPUT_VARIABLE PYTHON_SITELIB
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            ERROR_QUIET)
     endif()
+
+    set(PYTHON_SITELIB_CMD 
+        "from distutils import sysconfig; print(sysconfig.get_python_lib(plat_specific=True,prefix=''))")
+    execute_process(COMMAND "${Python_EXECUTABLE}" "-c" "${PYTHON_SITELIB_CMD}"
+        OUTPUT_VARIABLE Python_SITELIB
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET)
+
     # Find nympy
     execute_process(COMMAND 
         ${Python_EXECUTABLE} -c "import numpy;print(numpy.get_include())"

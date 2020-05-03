@@ -43,7 +43,7 @@ add_custom_target(bdist ALL
     VERBATIM)
 
 install(FILES stfio_plot.py DESTINATION lib/stimfit)
-install(DIRECTORY ${STFIO_INSTALL_DIR}/usr/lib/ DESTINATION lib)
+install(DIRECTORY ${STFIO_INSTALL_DIR}/ DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 enable_testing()
 add_test(NAME test_stfio 
