@@ -2,18 +2,23 @@
 set -e
 set -x
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 PYTHON=$(which python3)
 
 brew install wxpython
 brew install wxwidgets
-brew install cmake  || echo "already installed?"
-brew install lapack  || echo "Failed to install lapack"
-brew install blas || echo "Failed to install blas"
-btew install fftw || echo "failed to install fftw"
+brew install swig
+brew install cmake  || brew update cmake
+brew install lapack  || brew update lapack
+brew install fftw || brew update fftw
 
-mkdir _osx && cd _osx
-cmake ..
-make -j$(nproc)
-make install 
+(
+    cd $SCRIPT_DIR
+    mkdir -p _osx && cd _osx
+    cmake ../..
+    make -j$(nproc)
+    make install 
+)
 
 $(PYTHON) -c "import stfio"
