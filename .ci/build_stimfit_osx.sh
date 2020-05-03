@@ -5,7 +5,6 @@ set -x
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 PATH=/usr/local/bin:$PATH
-export PATH
 
 PYTHON=/usr/local/bin/python3
 
