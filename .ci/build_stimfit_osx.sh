@@ -4,6 +4,9 @@ set -x
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+PATH=/usr/local/bin:$PATH
+export PATH
+
 PYTHON=$(which python3)
 
 brew install wxpython
@@ -13,6 +16,8 @@ brew install numpy || brew upgrade numpy
 brew install cmake  || brew upgrade cmake
 brew install lapack  || brew upgrade lapack
 brew install fftw || brew upgrade fftw
+
+$PYTHON -m pip install numpy --user
 
 (
     cd $SCRIPT_DIR
