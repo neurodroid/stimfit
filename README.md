@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/dilawar/stimfit.svg?branch=master)](https://travis-ci.org/dilawar/stimfit)
+
 # Stimfit
 
 Documentation is available [here](https://neurodroid.github.io/stimfit).

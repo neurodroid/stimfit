@@ -13,11 +13,8 @@
 #define INC_FILEREADCACHE_HPP
 
 #include "./../Common/FileIO.hpp"
-#if (__cplusplus < 201402L)
-#  include <boost/shared_array.hpp>
-#else
-#  include <memory>
-#endif
+#include <memory>
+
 //-----------------------------------------------------------------------------------------------
 // CFileReadCache class definition
 
@@ -31,11 +28,7 @@ private:
    UINT     m_uCacheSize;
    UINT     m_uCacheStart;
    UINT     m_uCacheCount;
-#if (__cplusplus <  201402L)
-   boost::shared_array<BYTE>    m_pItemCache;
-#else
    std::shared_ptr<BYTE>    m_pItemCache;
-#endif
 
 private:    // Unimplemented default member functions.
    // Declare but don't define copy constructors to prevent use of defaults.

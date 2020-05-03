@@ -1,20 +1,30 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.10)
+
+find_package(FFTW REQUIRED)
 
 if(NOT Numpy_INCLUDE_DIRS)
     message(FATAL_ERROR "Could not find numpy for ${Python_EXECUTABLE}")
 endif()
 
 set_property(SOURCE pystfio.i PROPERTY CPLUSPLUS ON)
-swig_add_library(stfio LANGUAGE python SOURCES pystfio.i pystfio.cxx)
-target_include_directories(stfio PRIVATE 
-    ${Python_INCLUDE_DIRS} 
-    ${Numpy_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR})
 
+swig_add_library(stfio LANGUAGE python SOURCES pystfio.i pystfio.cxx)
 swig_link_libraries(stfio PUBLIC libstfnum libstfio)
 
+target_include_directories(${SWIG_MODULE_stfio_REAL_NAME} PRIVATE 
+    ${Python_INCLUDE_DIRS} 
+    ${Numpy_INCLUDE_DIRS}
+    ${FFTW_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR})
+
+if(APPLE)
+    set_target_properties(${SWIG_MODULE_stfio_REAL_NAME} 
+        PROPERTIES
+        LINK_FLAGS "-undefined dynamic_lookup")
+endif()
+
 # copy source tree to build directory.
-add_custom_command(TARGET stfio POST_BUILD
+add_custom_command(TARGET ${SWIG_MODULE_stfio_REAL_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory 
         ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
     VERBATIM)
@@ -25,7 +35,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in
 
 set(STFIO_INSTALL_DIR ${CMAKE_BINARY_DIR}/_stfio_install_dir)
 add_custom_target(bdist ALL
-    DEPENDS stfio
+    DEPENDS ${SWIG_MODULE_stfio_REAL_NAME}
     COMMAND ${Python_EXECUTABLE} setup.py bdist_wheel
         -b ${STFIO_INSTALL_DIR}/${Python_SITELIB} -k 
     COMMENT "Creating python bdist"

@@ -1,6 +1,8 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.10)
 
-if(OSX)
+find_package(FFTW REQUIRED)
+
+if(APPLE)
     find_package(wxWidgets REQUIRED COMPONENTS net core base propgrid aui adv)
 else()
     find_package(wxWidgets REQUIRED COMPONENTS net core base aui adv)
@@ -25,23 +27,33 @@ set(SRCS
     ./gui/dlgs/eventdlg.cpp 
     ./gui/dlgs/fitseldlg.cpp 
     ./gui/dlgs/smalldlgs.cpp 
-    ./gui/usrdlg/usrdlg.cpp
-    )
-
+    ./gui/usrdlg/usrdlg.cpp)
 
 add_library(libstimfit SHARED ${SRCS})
+
+target_include_directories(libstimfit PRIVATE ${wxWidgets_INCLUDE_DIRS})
+target_include_directories(libstimfit PRIVATE ${FFTW_INCLUDE_DIRS})
 
 set_target_properties(libstimfit PROPERTIES 
     LIBRARY_OUTPUT_DIRECTORY "${CAMKE_BINARY_DIR}"
     LIBRARY_OUTPUT_NAME stimfit)
 
+if(APPLE)
+    set_target_properties(libstimfit 
+        PROPERTIES 
+        LINK_FLAGS "-undefined dynamic_lookup")
+endif()
+
 if(WITH_PYTHON)
-    # Include path for sip.h and wx_api.h 
+    # Include path for sip.h and wx_api.h if wx module is importable.
     execute_process(COMMAND 
         ${Python_EXECUTABLE} -c 
             "import wx;import os;print(os.path.dirname(wx.__file__))"
         OUTPUT_VARIABLE PYWX_INSTALL_DIR
         OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if(NOT PYWX_INSTALL_DIR)
+        message(FATAL_ERROR "wx module is not found.")
+    endif()
     set(WX_INCLUDE_DIR ${PYWX_INSTALL_DIR}/include)
     set(WX_INCLUDE_DIRS ${WX_INCLUDE_DIR} ${WX_INCLUDE_DIR}/wxPython)
     message(STATUS "wx include paths: ${WX_INCLUDE_DIRS}")
@@ -54,19 +66,18 @@ if(WITH_PYTHON)
     add_subdirectory(py)
 endif()
 
-target_include_directories(libstimfit PRIVATE ${wxWidgets_INCLUDE_DIRS})
 target_link_libraries(libstimfit PUBLIC ${wxWidgets_LIBRARIES})
 target_link_libraries(libstimfit PUBLIC libstfnum)
 
-# binary.
+# Executable
 add_executable(stimfit.exe gui/main.cpp)
+target_include_directories(stimfit.exe PRIVATE ${FFTW_INCLUDE_DIRS})
 set_target_properties(stimfit.exe PROPERTIES OUTPUT_NAME stimfit)
 target_link_libraries(stimfit.exe PUBLIC libstimfit libstfio libstfnum)
 
 if(WITH_PYTHON)
     target_include_directories(stimfit.exe PRIVATE ${WX_INCLUDE_DIRS})
-    target_include_directories(stimfit.exe PRIVATE ${Python_INCLUDE_DIRS} 
-        ${Numpy_INCLUDE_DIRS})
+    target_include_directories(stimfit.exe PRIVATE ${Python_INCLUDE_DIRS} ${Numpy_INCLUDE_DIRS})
     target_link_libraries(stimfit.exe PUBLIC ${Python_LIBRARIES})
 endif()
 

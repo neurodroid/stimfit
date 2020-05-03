@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.10)
 
 find_package(HDF5 COMPONENTS CXX HL REQUIRED)
 find_package(LAPACK REQUIRED)

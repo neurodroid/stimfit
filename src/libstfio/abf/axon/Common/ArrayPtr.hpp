@@ -14,11 +14,7 @@
 
 #pragma once
 #include <stdlib.h> 
-#if (__cplusplus < 201402L)
-#  include <boost/shared_array.hpp>
-#else
-#  include <memory>
-#endif
+#include <memory>
 
 #if defined(__UNIX__) || defined(__STF__)
 	#define max(a,b)   (((a) > (b)) ? (a) : (b))
@@ -33,11 +29,7 @@ template<class ITEM>
 class CArrayPtr
 {
 private:    // Private data.
-#if (__cplusplus <  201402L)
-   boost::shared_array<ITEM> m_pArray;
-#else
    std::shared_ptr<ITEM> m_pArray;
-#endif
 
 private:    // Prevent copy constructors and operator=().
    CArrayPtr(const CArrayPtr &);
