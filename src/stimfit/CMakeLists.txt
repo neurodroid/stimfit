@@ -23,9 +23,35 @@ execute_process(COMMAND
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 if(NOT PYWX_INSTALL_DIR)
-    message(WARNING "wx module is not found. Disabling gui.")
+    message(WARNING 
+        "\n*************************************************"
+        "\n${Python_EXECUTABLE} Could not import wx module. Disabling GUI."
+        "\n*************************************************")
     return()
 endif()
+
+# libstimfit target.
+set(SRCS
+    ./stf.cpp 
+    ./gui/app.cpp 
+    ./gui/unopt.cpp 
+    ./gui/doc.cpp 
+    ./gui/copygrid.cpp 
+    ./gui/graph.cpp 
+    ./gui/printout.cpp 
+    ./gui/parentframe.cpp
+    ./gui/childframe.cpp 
+    ./gui/view.cpp 
+    ./gui/table.cpp 
+    ./gui/zoom.cpp 
+    ./gui/dlgs/convertdlg.cpp
+    ./gui/dlgs/cursorsdlg.cpp 
+    ./gui/dlgs/eventdlg.cpp 
+    ./gui/dlgs/fitseldlg.cpp 
+    ./gui/dlgs/smalldlgs.cpp 
+    ./gui/usrdlg/usrdlg.cpp)
+
+add_library(libstimfit SHARED ${SRCS})
 
 set(WX_INCLUDE_DIR ${PYWX_INSTALL_DIR}/include)
 set(WX_INCLUDE_DIRS ${WX_INCLUDE_DIR} ${WX_INCLUDE_DIR}/wxPython)
@@ -63,27 +89,6 @@ target_include_directories(libstimfit PRIVATE ${Numpy_INCLUDE_DIRS})
 
 add_subdirectory(py)
 
-set(SRCS
-    ./stf.cpp 
-    ./gui/app.cpp 
-    ./gui/unopt.cpp 
-    ./gui/doc.cpp 
-    ./gui/copygrid.cpp 
-    ./gui/graph.cpp 
-    ./gui/printout.cpp 
-    ./gui/parentframe.cpp
-    ./gui/childframe.cpp 
-    ./gui/view.cpp 
-    ./gui/table.cpp 
-    ./gui/zoom.cpp 
-    ./gui/dlgs/convertdlg.cpp
-    ./gui/dlgs/cursorsdlg.cpp 
-    ./gui/dlgs/eventdlg.cpp 
-    ./gui/dlgs/fitseldlg.cpp 
-    ./gui/dlgs/smalldlgs.cpp 
-    ./gui/usrdlg/usrdlg.cpp)
-
-add_library(libstimfit SHARED ${SRCS})
 
 target_include_directories(libstimfit PRIVATE ${wxWidgets_INCLUDE_DIRS})
 target_include_directories(libstimfit PRIVATE ${FFTW_INCLUDE_DIRS})
@@ -97,8 +102,6 @@ if(APPLE)
         PROPERTIES 
         LINK_FLAGS "-undefined dynamic_lookup")
 endif()
-
-add_subdirectory(py)
 
 target_link_libraries(libstimfit PUBLIC ${wxWidgets_LIBRARIES})
 target_link_libraries(libstimfit PUBLIC libstfnum)

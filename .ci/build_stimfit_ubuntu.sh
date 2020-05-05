@@ -18,12 +18,19 @@ sudo apt install -y \
     wx-common \
     fftw3-dev \
     cmake \
+    lsb-release \
     python3-sip-dev
 
 
-python3 -m pip install -U \
-    -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-18.04 \
-    wxPython 
+Var=$(lsb_release -r | cut -f2)
+
+if [[ "$Var" == *18.04* ]]; then
+    python3 -m pip install -U \
+        -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ubuntu-18.04 \
+        wxPython 
+else
+    echo "python-wx-gtk4.0 contains required files for ubuntu 19.10+"
+fi
 
 # Missing libraries after wxPython install.
 # https://stackoverflow.com/a/59277031/1805129 
@@ -33,7 +40,7 @@ sudo apt install -y \
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 (
     cd $SCRIPT_DIR
-    mkdir _ubuntu && cd _ubuntu
+    mkdir -p _ubuntu && cd _ubuntu
     cmake ../../  -DCMAKE_INSTALL_PREFIX:PATH=/usr \
         -DCMAKE_BUILD_TYPE=RelWithDebInfo
     make -j$(nproc)

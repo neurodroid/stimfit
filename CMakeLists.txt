@@ -8,9 +8,23 @@ set(STIMFIT_VERSION 0.16.0)
 option(WITH_PYTHON "Build python module" ON)
 option(WITH_BIOSIGLITE "Use builtin biosig library" ON)
 
+###########################################################################
 # Global compiler options.
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+###########################################################################
+
+set(CMAKE_C_STANDARD 99)
+include(CheckCXXCompilerFlag)
+# Prefer C++17 if possible else fall back to lower available std. If c++17 is
+# not found, then use boost.
+check_cxx_compiler_flag(-std=c++17 HAVE_FLAG_STD_CXX17)
+if(NOT HAVE_FLAG_STD_CXX17)
+    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    find_package(Boost REQUIRED)
+    add_definitions(-DUSE_BOOST)
+endif()
+
+add_definitions(-DWITH_CMAKE)
 
 # Configuration 
 if(WITH_PYTHON)
@@ -41,7 +55,6 @@ if(WITH_PYTHON)
         OUTPUT_VARIABLE Python_SITELIB
         OUTPUT_STRIP_TRAILING_WHITESPACE
         ERROR_QUIET)
-
     # Find nympy
     execute_process(COMMAND 
         ${Python_EXECUTABLE} -c "import numpy;print(numpy.get_include())"

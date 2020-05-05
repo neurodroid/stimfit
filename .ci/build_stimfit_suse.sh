@@ -27,4 +27,6 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     sudo make install
 )
 
-python3 -c "import stfio; print(dir(stfio))"
+sudo make install
+sudo ldconfig /usr/lib
+stimfit

@@ -5,7 +5,6 @@ set -x
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 PATH=/usr/local/bin:$PATH
-
 PYTHON=/usr/local/bin/python3
 
 brew install wxpython
@@ -22,7 +21,7 @@ $PYTHON -m pip install wxPython --user
 (
     cd $SCRIPT_DIR
     mkdir -p _osx && cd _osx
-    cmake ../..
+    cmake ../.. -DPYTHON_EXECUTABLE=$PYTHON
     make -j$(nproc)
     make install 
 )
