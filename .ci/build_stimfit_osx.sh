@@ -8,6 +8,7 @@ PATH=/usr/local/bin:$PATH
 PYTHON=/usr/local/bin/python3
 
 brew install wxpython
+brew install boost
 brew install wxwidgets
 brew install swig
 brew install numpy || brew upgrade numpy

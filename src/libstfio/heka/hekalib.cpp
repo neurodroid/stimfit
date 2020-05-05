@@ -408,8 +408,14 @@ void printHeader(const BundleHeader& header) {
 
 void ByteSwap(unsigned char * b, int n)
 {
+#if __cplusplus < 201703L
     register int i = 0;
     register int j = n-1;
+#else
+    // register storage class has been removed in c++17
+    int i = 0;
+    int j = n-1;
+#endif
     while (i<j)
     {
         std::swap(b[i], b[j]);
