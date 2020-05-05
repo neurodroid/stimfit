@@ -9,10 +9,11 @@ else()
 endif()
 
 if(NOT wxWidgets_FOUND)
-    message(WARNING "*************************************************"
-                    "wxWidgets are not found. Disabling GUI."
-                    "*************************************************")
-    return()
+    message(
+        "*************************************************\n"
+        "wxWidgets are not found. Disabling GUI.\n"
+        "*************************************************")
+    set(NO_GUI TRUE)
 endif()
 
 # Include path for sip.h and wx_api.h if wx module is importable.
@@ -23,10 +24,19 @@ execute_process(COMMAND
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 if(NOT PYWX_INSTALL_DIR)
-    message(WARNING 
-        "\n*************************************************"
-        "\n${Python_EXECUTABLE} Could not import wx module. Disabling GUI."
-        "\n*************************************************")
+    message("*************************************************\n"
+        "${Python_EXECUTABLE} Could not import wx module. Disabling GUI.\n"
+        "*************************************************")
+    set(NO_GUI TRUE)
+endif()
+
+if(NO_GUI)
+
+    # Create a dummy target for stimfit.exe
+    add_executable(stimfit.exe ${CMAKE_SOURCE_DIR}/.ci/dummy.cpp)
+    set_target_properties(stimfit.exe PROPERTIES OUTPUT_NAME stimfit)
+    install(TARGETS stimfit.exe DESTINATION bin)
+
     return()
 endif()
 
