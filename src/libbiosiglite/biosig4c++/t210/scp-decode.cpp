@@ -376,6 +376,7 @@ EXTERN_C int scp_decode(HDRTYPE* hdr, pointer_section *section, struct DATA_DECO
 	CRC=ReadCRC();
 	pos=_COUNT_BYTE;
 	ReadByte(_DIM_FILE);
+//	if (CRC != 0xFFFF) Check_CRC(CRC,pos,_DIM_FILE-2U);  // by E.C. may 2004 CARDIOLINE 1.0
 	ifseek(in, 0L, SEEK_SET);
 
 //mandatory sections

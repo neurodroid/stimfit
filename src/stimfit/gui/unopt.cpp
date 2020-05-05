@@ -373,15 +373,14 @@ void wxStfApp::ImportPython(const wxString &modulelocation) {
 
 #endif
 
-// #if ((wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY)) && !defined(__WXMAC__))
-//     PyRun_SimpleString(python_import);
-// #else
-//     PyRun_SimpleString(python_import.char_str());
-// #endif
+#if ((wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY)) && !defined(__WXMAC__))
+    PyRun_SimpleString(python_import);
+#else
     PyRun_SimpleString(python_import.char_str());
 
     // Release the Global Interpreter Lock
     wxPyEndBlockThreads(blocked);
+#endif
 
 }
 
@@ -406,12 +405,11 @@ void wxStfParentFrame::RedirectStdio()
     python_redirect << wxT("del sys, wx\n");
 
     wxPyBlock_t blocked = wxPyBeginBlockThreads();
-// #if ((wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY)) && !defined(__WXMAC__))
-//     PyRun_SimpleString(python_redirect);
-// #else
-//     PyRun_SimpleString(python_redirect.char_str());
-// #endif
+#if ((wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY)) && !defined(__WXMAC__))
+    PyRun_SimpleString(python_redirect);
+#else
     PyRun_SimpleString(python_redirect.char_str());
+#endif
     
     wxPyEndBlockThreads(blocked);
 }
