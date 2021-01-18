@@ -3,7 +3,7 @@ Section: science
 Priority: optional
 Maintainer: Christoph Schmidt-Hieber <christsc@gmx.de>
 Uploaders: Yaroslav Halchenko <debian@onerussian.com>
-Build-Depends: debhelper (>= 9), dh-python, python3-all-dev, python3-numpy, libhdf5-dev, swig, python3-sip-dev, python3-wxgtk4.0 (>= 4.0.7), libwxgtk3.0-gtk3-dev, libfftw3-dev, liblapack-dev, chrpath, help2man, libbiosig-dev, zlib1g-dev, dh-autoreconf, pkg-config
+Build-Depends: debhelper (>= 9), dh-python, python3-dev, python3-numpy, libhdf5-dev, swig, python3-sip-dev, python3-wxgtk4.0 (>= 4.0.7), libwxgtk3.0-gtk3-dev, libfftw3-dev, liblapack-dev, chrpath, help2man, libbiosig-dev, zlib1g-dev, dh-autoreconf, pkg-config
 Standards-Version: 4.4.1
 Homepage: http://www.stimfit.org
 

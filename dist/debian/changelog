@@ -4,6 +4,7 @@ stimfit (0.16.0-2) unstable; urgency=low
     this ensures that the latest features and data formats of
     libbiosig (v2.1.2 and later) are supported by Stimfit, too.
   * remove dependency on libboost since -std=c++17 (default in gcc-8) is used
+  * dependency on python3-dev instead of python3-all-dev (closes #972423 #948020)
 
  -- Alois Schlögl <alois.schloegl@gmail.com>  Sun, 17 Jan 2021 17:05:41 +0100
 
