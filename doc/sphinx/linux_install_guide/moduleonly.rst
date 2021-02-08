@@ -74,3 +74,31 @@ Then, build and install:
     $ sudo make install
 
 Finally, run python to test the module, as described in :doc:`/stfio/index`.
+
+
+==========================
+Building stfio using cmake
+==========================
+
+__Beta__
+
+In addition to dependencies listed about, you need to install the followings.
+
+1. cmake version 3.12 or higher.
+2. python-wheel. Use `apt get install python3-wheel` or `python3 -m pip install wheel --user`.
+
+Build instructions.
+
+::
+    
+    $ mkdir build
+    $ cd build
+    $ cmake ..
+    $ make -j4
+
+You should have a `whl` file in the `build` directory. You can install it using
+`pip`
+
+::
+
+    $ python3 -m pip install stimfit*.whl

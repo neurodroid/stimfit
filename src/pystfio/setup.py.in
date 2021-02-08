@@ -1,0 +1,14 @@
+# NOTE: This file is generated from setup.py.in file. If you are modifying
+# setup.py file, changes will be lost. Modify setup.py.in file instead.
+try:
+    from setuptools import setup
+except Exception:
+    from distutils.core import setup
+
+setup(name='stfio',
+      version='@STIMFIT_VERSION@',
+      description='stfio module',
+      package_dir={'stfio': '.'},
+      packages=['stfio'],
+      package_data={'stfio': ['_stfio.so']},
+      )

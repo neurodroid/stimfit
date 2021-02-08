@@ -60,6 +60,7 @@
 #include <mach/clock.h>
 #include <mach/mach.h>
 #endif
+
 /* From https://gist.github.com/jbenet/1087739 */
 void current_utc_time(struct timespec *ts) {
 #ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
@@ -692,12 +693,15 @@ void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int e
     std::function<int(double)> yFormatFunc;
 #endif
 
+    // NOTE: bind1st is removed in c++17.
     switch (pt) {
      case active:
-         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD), this);
+         // yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD), this);
+         yFormatFunc = std::bind(std::mem_fn(&wxStfGraph::yFormatD), this, std::placeholders::_1);
          break;
      case reference:
-         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD2), this);
+         // yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD2), this);
+         yFormatFunc = std::bind(std::mem_fn(&wxStfGraph::yFormatD2), this, std::placeholders::_1);
          break;
      case background:
          Vector_double::const_iterator max_el = std::max_element(trace.begin(), trace.end());
@@ -712,7 +716,8 @@ void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int e
          WindowRect.height /= Doc()->size();
          FittorectY(yzoombg, WindowRect, min, max, 1.0);
          yzoombg.startPosY += bgno*WindowRect.height;
-         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatDB), this);
+         // yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatDB), this);
+         yFormatFunc = std::bind(std::mem_fn(&wxStfGraph::yFormatDB), this, std::placeholders::_1);
          break;
     }
 
@@ -824,18 +829,21 @@ void wxStfGraph::PrintTrace( wxDC* pDC, const Vector_double& trace, plottype pty
 }
 
 void wxStfGraph::DoPrint( wxDC* pDC, const Vector_double& trace, int start, int end, plottype ptype) {
+
 #if (__cplusplus < 201103)
     boost::function<int(double)> yFormatFunc;
 #else
-    std::function<int(double)> yFormatFunc;
+    std::function<long(double)> yFormatFunc;
 #endif
     
     switch (ptype) {
      case active:
-         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD), this);
+         // yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD), this);
+         yFormatFunc = std::bind( std::mem_fn(&wxStfGraph::yFormatD), this, std::placeholders::_1);
          break;
      default:
-         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD2), this);
+         // yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD2), this);
+         yFormatFunc = std::bind(std::mem_fn(&wxStfGraph::yFormatD2), this, std::placeholders::_1);
          break;
     }
 

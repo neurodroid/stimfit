@@ -377,10 +377,10 @@ void wxStfApp::ImportPython(const wxString &modulelocation) {
     PyRun_SimpleString(python_import);
 #else
     PyRun_SimpleString(python_import.char_str());
-#endif
 
     // Release the Global Interpreter Lock
     wxPyEndBlockThreads(blocked);
+#endif
 
 }
 

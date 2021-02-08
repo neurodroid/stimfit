@@ -1,0 +1,51 @@
+cmake_minimum_required(VERSION 3.10)
+
+find_package(FFTW REQUIRED)
+
+if(NOT Numpy_INCLUDE_DIRS)
+    message(FATAL_ERROR "Could not find numpy for ${Python_EXECUTABLE}")
+endif()
+
+set_property(SOURCE pystfio.i PROPERTY CPLUSPLUS ON)
+
+swig_add_library(stfio LANGUAGE python SOURCES pystfio.i pystfio.cxx)
+swig_link_libraries(stfio PUBLIC libstfnum libstfio)
+
+target_include_directories(${SWIG_MODULE_stfio_REAL_NAME} PRIVATE 
+    ${Python_INCLUDE_DIRS} 
+    ${Numpy_INCLUDE_DIRS}
+    ${FFTW_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR})
+
+if(APPLE)
+    set_target_properties(${SWIG_MODULE_stfio_REAL_NAME} 
+        PROPERTIES
+        LINK_FLAGS "-undefined dynamic_lookup")
+endif()
+
+# copy source tree to build directory.
+add_custom_command(TARGET ${SWIG_MODULE_stfio_REAL_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory 
+        ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM)
+
+# make wheel shall make the wheel
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/setup.py)
+
+set(STFIO_INSTALL_DIR ${CMAKE_BINARY_DIR}/_stfio_install_dir)
+add_custom_target(bdist ALL
+    DEPENDS ${SWIG_MODULE_stfio_REAL_NAME}
+    COMMAND ${Python_EXECUTABLE} setup.py bdist_wheel
+        -b ${STFIO_INSTALL_DIR}/${Python_SITELIB} -k 
+    COMMENT "Creating python bdist"
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM)
+
+install(FILES stfio_plot.py DESTINATION lib/stimfit)
+install(DIRECTORY ${STFIO_INSTALL_DIR}/ DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+enable_testing()
+add_test(NAME test_stfio 
+    COMMAND ${Python_EXECUTABLE} unittest_stfio.py
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})

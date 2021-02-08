@@ -24,6 +24,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "biosig-network.h"
 
@@ -254,6 +255,7 @@ int bscs_disconnect(int sd) {
 #ifdef _WIN32		
 	WSACleanup();
 #endif
+        return 0;
 }
 
 
@@ -263,6 +265,7 @@ int send_packet(int sd, uint32_t state, uint32_t len, void* load) {
 	msg.LEN = htobe32(len);
 	send(sd, TC &msg, 8, 0);
 	if (len>0) send(sd, TC load, len, 0);
+        return 0;
 }
 
 
@@ -306,7 +309,7 @@ fprintf(stdout,"savelink %s\n",logfile);
 	fprintf(fid,"bscs://%s/%016"PRIx64"\n",B4C_HOSTNAME,B4C_ID);
 	fclose(fid);
 	free(logfile);
-
+        return 0; 
 }
 
 
@@ -800,7 +803,6 @@ int bscs_nop(int sd) {
 	msg.STATE = BSCS_NOP | SERVER_STATE;
 	msg.LEN = htobe32(0);
 	int s = send(sd, TC &msg, 8, 0);
-	
-
+        return 0;
 }
 

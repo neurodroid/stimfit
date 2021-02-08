@@ -31,7 +31,7 @@ wxStfConvertDlg::wxStfConvertDlg(wxWindow* parent, int id, wxString title, wxPoi
     destDir(wxT("")),
     srcFilter(wxT("")), myCheckBoxSubdirs(NULL),
     srcFilterExt(stfio::cfs), destFilterExt(stfio::igor),
-    srcFileNames(0)
+    srcFileNames(wxArrayString())
 
 {
     if (srcDir == wxT("")) {
