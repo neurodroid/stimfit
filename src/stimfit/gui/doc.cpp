@@ -219,17 +219,9 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
     wxGetApp().wxWriteProfileString( wxT("Settings"), wxT("Last directory"), wxfFilename.GetPath() );
     if (wxDocument::OnOpenDocument(filename)) { //calls base class function
 
-#ifndef TEST_MINIMAL
-    #if 0 //(defined(WITH_BIOSIG) || defined(WITH_BIOSIG2) && !defined(__WXMAC__))
-        // Detect type of file according to filter:
-        wxString filter(GetDocumentTemplate()->GetFileFilter());
-    #else
         wxString filter(wxT("*.") + wxfFilename.GetExt());
-    #endif
         stfio::filetype type = stfio::findType(stf::wx2std(filter));
-#else
-        stfio::filetype type = stfio::none;
-#endif
+
 #if 0 // TODO: backport ascii
         if (type==stf::ascii) {
             if (!wxGetApp().get_directTxtImport()) {
@@ -730,7 +722,7 @@ bool wxStfDoc::SaveAs() {
     filters += wxT("Igor binary wave (*.ibw)|*.ibw|");
     filters += wxT("Mantis TDMS file (*.tdms)|*.tdms|");
     filters += wxT("Text file series (*.txt)|*.txt|");
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+#if defined(WITH_BIOSIG)
     filters += wxT("GDF file (*.gdf)|*.gdf");
 #endif
 
@@ -750,7 +742,7 @@ bool wxStfDoc::SaveAs() {
             case 3: type=stfio::igor; break;
             case 4: type=stfio::tdms; break;
             case 5: type=stfio::ascii; break;
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+#if defined(WITH_BIOSIG)
             default: type=stfio::biosig;
 #else
             default: type=stfio::hdf5;
@@ -803,7 +795,6 @@ Recording wxStfDoc::ReorderChannels() {
     return writeRec;
 }
 
-#ifndef TEST_MINIMAL
 bool wxStfDoc::DoSaveDocument(const wxString& filename) {
     Recording writeRec(ReorderChannels());
     if (writeRec.size() == 0) return false;
@@ -819,7 +810,6 @@ bool wxStfDoc::DoSaveDocument(const wxString& filename) {
         return false;
     }
 }
-#endif
 
 void wxStfDoc::WriteToReg() {
     //Write file length

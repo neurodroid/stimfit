@@ -39,7 +39,7 @@
 
 namespace stfio {
 
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+#if defined(WITH_BIOSIG)
 //! return version of libbiosig e.g. 10403 correspond to version 1.4.3
 StfioDll bool check_biosig_version(int a, int b, int c);
 #endif
