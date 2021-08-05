@@ -33,6 +33,7 @@
     #include <inttypes.h>
 #endif
 
+#pragma GCC visibility push(default)
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,6 +54,8 @@ double PhysDimScale(uint16_t PhysDimCode);
 	e.g. 0.001 for milli, 1000 for kilo etc.
 	for undefined codes, not-a-number (NAN) is returned
  --------------------------------------------------------------- */
+
+#pragma GCC visibility pop
 
 #ifdef __cplusplus
 }

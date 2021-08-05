@@ -81,14 +81,8 @@ Install dependencies using Homebrew
   $ brew install libtool
   $ brew install fftw
   $ brew install homebrew/science/hdf5
+  $ brew install biosig
   
-If you want support for extra biomedical file formats, install the *libbiosig* library:
-
-::
-
-  $ brew tap schloegl/biosig
-  $ brew install libbiosig
-
 Now download the stimfit source code:
 
 ::
@@ -105,9 +99,7 @@ Next, Generate the build system and configure:
   $ mkdir build
   $ mkdir build/module
   $ cd build/module
-  $ ../../configure --enable-module 
-
-Add the argument *--with-biosiglite* to the configure script if you want extra biomedical fileformats for *stfio*, but did not install the full *libbiosig* library. 
+  $ ../../configure --enable-module --with-biosig
 
 If you want to install the stfio module for a non-default Python distribution, such as **Anaconda Python**, use the argument *--prefix=* to specify the installation path as where your favorite Python distribution is installed. The following example will install stfio for Anaconda Python 2.7:
 

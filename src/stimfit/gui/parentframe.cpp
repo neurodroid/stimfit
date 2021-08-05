@@ -62,7 +62,7 @@
 #include "./dlgs/smalldlgs.h"
 #include "./copygrid.h"
 #include "./../../libstfio/atf/atflib.h"
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+#if defined(WITH_BIOSIG)
     #include "./../../libstfio/biosig/biosiglib.h"
 #endif
 #include "./../../libstfio/igor/igorlib.h"
@@ -266,6 +266,7 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 #ifdef WITH_PYTHON
     python_code2 << wxT("import sys\n")
                  << wxT("sys.path.append('.')\n")
+                 << wxT("sys.path.append('/usr/local/lib/stimfit')\n")
 #ifdef IPYTHON
                  << wxT("import embedded_ipython\n")
 #else
@@ -547,9 +548,7 @@ wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
 }
 
 #if 0
-#if defined(WITH_BIOSIG2)
-    #define CREDIT_BIOSIG "Biosig import using libbiosig2 http://biosig.sf.net\n\n"
-#elif defined(WITH_BIOSIG)
+#if defined(WITH_BIOSIG)
     #define CREDIT_BIOSIG "Biosig import using libbiosig http://biosig.sf.net\n\n"
 #else 
     #define CREDIT_BIOSIG ""
@@ -568,7 +567,7 @@ void wxStfParentFrame::OnAbout(wxCommandEvent& WXUNUSED(event) )
     Levenberg-Marquardt non-linear regression, version ") + wxString(wxT(LM_VERSION)) + wxT("\n\
     Manolis Lourakis, http://www.ics.forth.gr/~lourakis/levmar/ \n\n")) +
 
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+#if defined(WITH_BIOSIG)
     wxString( wxT("BioSig import using libbiosig\n") ) + 
     //+ wxString( wxT("version ") + wxT(BIOSIG_VERSION ) ) +
     wxString( wxT("http://biosig.sf.net\n\n") ) +
@@ -793,18 +792,16 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
 
                 stf::wxProgressInfo progDlgOut("Writing file", "Opening file", 100);
                 switch ( eft ) {
-#ifndef WITHOUT_ABF
                  case stfio::atf:
                      stfio::exportATFFile(stf::wx2std(destFilename), sourceFile);
                      dest_ext = wxT("Axon textfile [*.atf]");
                      break;
-#endif
                  case stfio::igor:
                      stfio::exportIGORFile(stf::wx2std(destFilename), sourceFile, progDlgOut);
                      dest_ext = wxT("Igor binary file [*.ibw]");
                      break;
 
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+#if defined(WITH_BIOSIG)
                  case stfio::biosig:
                      stfio::exportBiosigFile(stf::wx2std(destFilename), sourceFile, progDlgOut);
                      dest_ext = wxT("Biosig/GDF [*.gdf]");

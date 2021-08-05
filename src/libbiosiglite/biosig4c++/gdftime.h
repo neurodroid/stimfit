@@ -71,6 +71,8 @@ typedef int64_t 		gdf_time, gdftime_t; /* gdf time is represented in 64 bits */
 #define	ntp_time2gdf_time(t)	((gdf_time)ldexp(ldexp(((double)(t)),-32)/86400 + 719529.0 - 70,32))
 #define	gdf_time2ntp_time(t)	((int64_t)ldexp((ldexp(((double)(t)),-32) - 719529.0 + 70) * 86400,32))
 
+#pragma GCC visibility push(default)
+
 #ifdef __cplusplus
 EXTERN_C {
 #endif
@@ -110,6 +112,8 @@ void gdftime2date(&int,&int,&int)
 #ifdef __cplusplus
 }
 #endif
+
+#pragma GCC visibility pop
 
 
 /****************************************************************************/

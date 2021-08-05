@@ -1,4 +1,4 @@
-Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: stimfit
 Upstream-Contact: Christoph Schmidt-Hieber <christsc@gmx.de>
 Source: https://github.com/neurodroid/stimfit

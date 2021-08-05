@@ -59,7 +59,7 @@ stfio::filetype stfio_file_type(HDRTYPE* hdr) {
         }
 }
 
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+#if defined(WITH_BIOSIG)
 bool stfio::check_biosig_version(int a, int b, int c) {
 	return (BIOSIG_VERSION >= 10000*a + 100*b + c);
 }
@@ -96,8 +96,11 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         return type;
     }
     enum FileFormat biosig_filetype=biosig_get_filetype(hdr);
-    if (biosig_filetype==ATF || biosig_filetype==ABF2 || biosig_filetype==HDF ) {
-        // ATF, ABF2 and HDF5 support should be handled by importATF, and importABF, and importHDF5 not importBiosig
+    if ( (biosig_filetype==ATF  && get_biosig_version() < 0x030001) \
+      || (biosig_filetype==ABF2 && get_biosig_version() < 0x030001) \
+      ||  biosig_filetype==HDF ) {
+        // ATF, ABF2 HDF5 support should be handled by importATF, and importABF, and importHDF5 not importBiosig
+        // with libbiosig v3.0.1 (release 2.3.1) and later, ATF and ABF2 should be handled by Biosig
         ReturnData.resize(0);
         destructHDR(hdr);
         return type;

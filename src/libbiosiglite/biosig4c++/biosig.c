@@ -1,6 +1,6 @@
 /*
 
-    Copyright (C) 2005-2018 Alois Schloegl <alois.schloegl@gmail.com>
+    Copyright (C) 2005-2020 Alois Schloegl <alois.schloegl@gmail.com>
     Copyright (C) 2011 Stoyan Mihaylov
     This file is part of the "BioSig for C/C++" repository
     (biosig4c++) at http://biosig.sf.net/
@@ -60,7 +60,7 @@
 #  include <curl/curl.h>
 #endif 
 
-int VERBOSE_LEVEL = 0;		// this variable is always available, but only used without NDEBUG 
+int VERBOSE_LEVEL __attribute__ ((visibility ("default") )) = 0;	// this variable is always available, but only used without NDEBUG
 
 #include "biosig.h"
 #include "biosig-network.h"
@@ -131,7 +131,14 @@ int sclose_HL7aECG_write(HDRTYPE* hdr);
 void sopen_ibw_read    (HDRTYPE* hdr);
 void sopen_itx_read    (HDRTYPE* hdr);
 void sopen_smr_read    (HDRTYPE* hdr);
+#ifdef WITH_INTAN
+void sopen_rhd2000_read (HDRTYPE* hdr);
+void sopen_rhs2000_read (HDRTYPE* hdr);
+void sopen_intan_clp_read (HDRTYPE* hdr);
+#endif
+#ifdef WITH_TDMS
 void sopen_tdms_read   (HDRTYPE* hdr);
+#endif
 int sopen_trc_read   (HDRTYPE* hdr);
 int sopen_unipro_read   (HDRTYPE* hdr);
 #ifdef WITH_FEF
@@ -968,14 +975,14 @@ void FreeTextEvent(HDRTYPE* hdr,size_t N_EVENT, const char* annotation) {
 	}
 
 	// Third, add event description if needed
-	if (flag) {
+	if (flag && (hdr->EVENT.LenCodeDesc < 256)) {
 		hdr->EVENT.TYP[N_EVENT] = hdr->EVENT.LenCodeDesc;
 		hdr->EVENT.CodeDesc[hdr->EVENT.LenCodeDesc] = annotation;
 		hdr->EVENT.LenCodeDesc++;
 	}
 
 	if (hdr->EVENT.LenCodeDesc > 255) {
-		biosigERROR(hdr, B4C_INSUFFICIENT_MEMORY, "Maximum number of user-defined events (256) exceeded");
+		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Maximum number of user-defined events (256) exceeded");
 	}
 }
 
@@ -1855,6 +1862,14 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
 		hdr->TYPE = RHD2000;	// Intan RHD2000 format
 		hdr->FILE.LittleEndian = 1;
 	}
+	else if (!memcmp(Header1,"\xAC\x27\x91\xD6",4)) {
+		hdr->TYPE = RHS2000;	// Intan RHS2000 format
+		hdr->FILE.LittleEndian = 1;
+	}
+	else if (!memcmp(Header1,"\x81\xa4\xb1\xf3",4) & (leu16p(Header1+8) < 2)) {
+		hdr->TYPE = IntanCLP;	// Intan CLP format, we'll use same read for now
+		hdr->FILE.LittleEndian = 1;
+	}
     	else if (!memcmp(Header1,"\x55\xAA\x00\xb0",2)) {
 	    	hdr->TYPE = RDF;	// UCSD ERPSS aquisition system
 	    	hdr->FILE.LittleEndian = 1;
@@ -1969,7 +1984,7 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
 	else if (!memcmp(Header1,".snd",5))
 		hdr->TYPE = SND;
 
-	else if (!memcmp(Header1,"\x54\x44\x53\x6d",4))
+	else if (!memcmp(Header1,"TDSm",4))
 		hdr->TYPE = TDMS; 	// http://www.ni.com/white-paper/5696/en
 
 	else if ((hdr->HeadLen>30) && !memcmp(Header1,"POLY SAMPLE FILEversion ",24) && !memcmp(Header1+28, "\x0d\x0a\x1a",3))
@@ -2163,7 +2178,9 @@ const struct FileFormatStringTable_t FileFormatStringTable[] = {
 	{ PDP,    	"PDP" },
 	{ PLEXON,    	"PLEXON" },
 	{ RDF,    	"RDF" },
+	{ IntanCLP,    	"IntanCLP" },
 	{ RHD2000,    	"RHD2000" },
+	{ RHS2000,    	"RHS2000" },
 	{ RIFF,    	"RIFF" },
 	{ SASXPT,    	"SAS_XPORT" },
 	{ SCP_ECG,    	"SCP" },
@@ -3608,14 +3625,20 @@ int read_header(HDRTYPE *hdr) {
 /****************************************************************************/
 /**                     SOPEN                                              **/
 /****************************************************************************/
-HDRTYPE* sopen(const char* FileName, const char* MODE, HDRTYPE* hdr)
+HDRTYPE* sopen(const char* FileName, const char* MODE, HDRTYPE* hdr) {
+
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %d): sopen(%s,%s)\n",__func__,__LINE__, FileName, MODE);
+
+	return sopen_extended(FileName, MODE, hdr, NULL);
+}
+
+HDRTYPE* sopen_extended(const char* FileName, const char* MODE, HDRTYPE* hdr, biosig_options_type *biosig_options) {
 /*
 	MODE="r"
 		reads file and returns HDR
 	MODE="w"
 		writes HDR into file
  */
-{
 
 //    	unsigned int 	k2;
 //    	uint32_t	k32u;
@@ -3634,7 +3657,12 @@ HDRTYPE* sopen(const char* FileName, const char* MODE, HDRTYPE* hdr)
 	uint16_t	BCI2000_StatusVectorLength=0;	// specific for BCI2000 format
 #endif //ONLYGDF 
 
-	if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN( %s, %s) \n",FileName, MODE);
+	biosig_options_type default_options;
+	default_options.free_text_event_limiter="\0";
+
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(%s,%s) (line %d): --delimiter=<%s> %p\n",__func__, FileName, MODE, __LINE__, biosig_options->free_text_event_limiter, biosig_options);
+
+	if (biosig_options==NULL) biosig_options = &default_options;
 
 	if (FileName == NULL) {
 		biosigERROR(hdr, B4C_CANNOT_OPEN_FILE, "no filename specified");
@@ -3842,6 +3870,11 @@ else if (!strncmp(MODE,"r",1)) {
 		}
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN 101:\n");
 		count = ifread(hdr->AS.Header, 1, PAGESIZE, hdr);
+		if (count<32) {
+			biosigERROR(hdr, B4C_CANNOT_OPEN_FILE, "Error SOPEN(READ); file is empty (or too short)");
+			ifclose(hdr);
+			return(hdr);
+		}
 		hdr->AS.Header[count]=0;
 
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) count=%i\n", __func__, __LINE__,(int)count);
@@ -4273,6 +4306,13 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(line %i): EDF+ line<%s>\n",__FILE__,__LI
 								return (hdr);
 							};
 						}
+
+						/*
+							This is a workaround to read BDF data with large number of free text events containing meta information
+							Free text is limited to the first occurence of limiter character, default is "\0" which does not remove anything
+						 */
+						s2 = strtok(s2, biosig_options->free_text_event_limiter);
+
 						switch (flag) {
 						case 0:
 							// EDF+C
@@ -4694,6 +4734,7 @@ fprintf(stdout,"ACQ EVENT: %i POS: %i\n",k,POS);
 			CHANNEL_TYPE *hc = hdr->CHANNEL+k;
 			snprintf(hc->Label, MAX_LENGTH_LABEL+1, "%s %03i",label, chno2);
 
+			hc->Transducer[0] = 0;
 			hc->LeadIdCode = 0;
 			hc->SPR    = 1;
 			hc->Cal    = f1*f2;
@@ -5026,6 +5067,7 @@ fprintf(stdout,"ACQ EVENT: %i POS: %i\n",k,POS);
 					++hdr->NS;
 					hdr->CHANNEL = (CHANNEL_TYPE*)realloc(hdr->CHANNEL, hdr->NS*sizeof(CHANNEL_TYPE));
 					cp = hdr->CHANNEL+hdr->NS-1;
+					cp->Transducer[0] = 0;
 					cp->bi = hdr->AS.bpb;
 					cp->PhysDimCode = 0;
 					cp->HighPass = NAN;
@@ -5294,6 +5336,7 @@ fprintf(stdout,"ACQ EVENT: %i POS: %i\n",k,POS);
 		hdr->CHANNEL = (CHANNEL_TYPE*) realloc(hdr->CHANNEL,hdr->NS*sizeof(CHANNEL_TYPE));
 		for (k=0; k<hdr->NS; k++) {
 			CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+			hc->Transducer[0] = 0;
 			sprintf(hc->Label,"#%03i",(int)k+1);
 			hc->Cal    = gain;
 			hc->Off    = offset;
@@ -6458,6 +6501,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 			hc->OnOff   = 1;
 
 			hc->PhysDimCode = 0;
+			hc->Transducer[0] = 0;
 		    	hc->DigMax	= ldexp( 1.0,31);
 		    	hc->DigMin	= ldexp(-1.0,31);
 		    	hc->PhysMax	= hc->DigMax * hc->Cal + hc->Off;
@@ -7098,7 +7142,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 
 //						FreeTextEvent(hdr,hdr->EVENT.N,(char*)(LOG+lba+20+k1*45));
 					if (VERBOSE_LEVEL>7) {
-						  fprintf(stdout,"   <%s>\n   <%s>\n",(char*)(LOG+lba+9+k1*45),(char*)(LOG+lba+29+k1*45));
+						fprintf(stdout,"   <%s>\n   <%s>\n",(char*)(LOG+lba+9+k1*45),(char*)(LOG+lba+29+k1*45));
 						int kk; for (kk=0; kk<45; kk++) putchar(LOG[lba+9+k1*45+kk]);
 						putchar('\n');
 					}
@@ -7240,6 +7284,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 			hc->GDFTYP = gdftyp;
 			hc->PhysDimCode = 4275;  // "uV"
 			hc->LeadIdCode  = 0;
+			hc->Transducer[0] = 0;
 			sprintf(hc->Label,"# %03i",(int)k);
 			hc->Cal	= PhysMax/ldexp(1,Bits);
 			hc->Off	= 0;
@@ -7370,7 +7415,92 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 
 #ifdef WITH_EMBLA
 	else if (hdr->TYPE==EMBLA) {
-		ifseek(hdr,48,SEEK_SET);
+
+		while (!ifeof(hdr)) {
+			size_t bufsiz = max(2*count, PAGESIZE);
+			hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header, bufsiz+1);
+			count  += ifread(hdr->AS.Header+count, 1, bufsiz-count, hdr);
+		}
+		hdr->AS.Header[count]=0;
+		hdr->HeadLen = count;
+		ifclose(hdr);
+
+		count = 48;
+
+		int chan;
+		uint32_t cal;
+		float chan32;
+		uint16_t pdc=0;
+		while (count+8 < hdr->HeadLen) {
+			uint32_t tag = leu32p(hdr->AS.Header+count);
+			uint32_t len = leu32p(hdr->AS.Header+count+4);
+			count+=8;
+/*
+			uint32_t taglen[2];
+			uint32_t *tag = &taglen[0];
+			uint32_t *len = &taglen[1];
+			size_t c = ifread(taglen, 4, 2, hdr);
+			if (ifeof(hdr)) break;
+*/
+			if (VERBOSE_LEVEL > 7) {
+				int ssz = min(80,len);
+				char S[81];
+				strncpy(S, hdr->AS.Header+count, ssz); S[ssz]=0;
+				fprintf(stdout,"tag %8d [%d]: <%s>\n",tag,len, S);
+			}
+
+			switch (tag) {
+			case 32:
+				hdr->SPR = len/2;
+//				hdr->AS.rawdata = realloc(hdr->AS.rawdata,len);
+				break;
+			case 133:
+				chan = leu16p(hdr->AS.Header+count);
+				fprintf(stdout,"\tchan=%d\n",chan);
+				break;
+			case 134:	// Sampling Rate
+				hdr->SampleRate=leu32p(hdr->AS.Header+count)/1000.0;
+				fprintf(stdout,"\tFs=%g #134\n",hdr->SampleRate);
+				break;
+			case 135:	//
+				cal=leu32p(hdr->AS.Header+count)/1000.0;
+				hc->Cal = (cal==1 ? 1.0 : cal*1e-9);
+				break;
+			case 136:	// session count
+				fprintf(stdout,"\t%d (session count)\n",leu32p(hdr->AS.Header+count));
+				break;
+			case 137:	// Sampling Rate
+				hdr->SampleRate=lef64p(hdr->AS.Header+count);
+				fprintf(stdout,"\tFs=%g #137\n",hdr->SampleRate);
+				break;
+			case 141:
+				chan32 = lef32p(hdr->AS.Header+count);
+				fprintf(stdout,"\tchan32=%g\n",chan32);
+				break;
+			case 144:	// Label
+				strncpy(hc->Label, hdr->AS.Header+count, MAX_LENGTH_LABEL);
+				hc->Label[min(MAX_LENGTH_LABEL,len)]=0;
+				break;
+			case 153:	// Label
+				pdc=PhysDimCode(hdr->AS.Header+count);
+				fprintf(stdout,"\tpdc=0x%x\t<%s>\n",pdc,PhysDim3(pdc));
+				break;
+			case 208:	// Patient Name
+				if (!hdr->FLAG.ANONYMOUS)
+					strncpy(hdr->Patient.Name, hdr->AS.Header+count, MAX_LENGTH_NAME);
+					hdr->Patient.Name[min(MAX_LENGTH_NAME,len)]=0;
+				break;
+			case 209:	// Patient Name
+				strncpy(hdr->Patient.Id, hdr->AS.Header+count, MAX_LENGTH_PID);
+				hdr->Patient.Id[min(MAX_LENGTH_PID,len)]=0;
+				break;
+			default:
+				;
+			}
+			count+=len;
+		}
+
+
 		hdr->NS = 1;
 		hdr->CHANNEL = (CHANNEL_TYPE*)realloc(hdr->CHANNEL, hdr->NS * sizeof(CHANNEL_TYPE));
 		for (k=0; k < hdr->NS; k++) {
@@ -7392,7 +7522,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 			hc->bi   = k*hdr->SPR*2;
 
 			char *label = (char*)(hdr->AS.Header+1034+k*512);
-			len    = min(16,MAX_LENGTH_LABEL);
+			const size_t len    = min(16,MAX_LENGTH_LABEL);
 			if ( (hdr->AS.Header[1025+k*512]=='E') && strlen(label)<13) {
 				strcpy(hc->Label, "EEG ");
 				strcat(hc->Label, label);		// Flawfinder: ignore
@@ -7403,26 +7533,9 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 			}
 		}
 
-		while (1) {
-			uint32_t taglen[2];
-			uint32_t *tag = &taglen[0];
-			uint32_t *len = &taglen[1];
-			size_t c = ifread(taglen, 4, 2, hdr);
-			if (ifeof(hdr)) break;
-			switch (*tag) {
-			case 32:
-				hdr->HeadLen = iftell(hdr);
-				hdr->SPR = *len/2;
-				hdr->AS.rawdata = realloc(hdr->AS.rawdata,*len);
-				ifread(hdr->AS.rawdata,2,*len/2,hdr);
-
-			default:
-				ifseek(hdr,*len,SEEK_CUR);
-			}
-			//strncpy(hdr->CHANNEL[k].Label,buf+0x116,MAX_LENGTH_LABEL);
-		}
 	}
-#endif
+
+#endif // EMBLA
 	else if (hdr->TYPE==EMSA) {
 		
 		hdr->NS = (uint8_t)hdr->AS.Header[3];
@@ -8431,6 +8544,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"MFER: TLV %i %i %i \n",tag,len,(int)hdr->NS
 					hc->Cal = 1.0;
 					hc->LeadIdCode = 0; 
 					hc->GDFTYP = 3;
+					hc->Transducer[0] = 0;
 				}
 			}
 			else if (tag==6) 	// 0x06 "number of sequences"
@@ -8907,6 +9021,7 @@ if (VERBOSE_LEVEL>2)
 	 			fprintf(stdout,"sopen(MFER): #%i\n",(int)k);
 
 			CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+			hc->Transducer[0] = 0;
 	 		if (!hc->PhysDimCode) hc->PhysDimCode = MFER_PhysDimCodeTable[UnitCode];
 	 		if (hc->Cal==1.0) hc->Cal = Cal;
 	 		hc->Off = Off * hc->Cal;
@@ -9394,6 +9509,7 @@ if (VERBOSE_LEVEL>2)
 
 						while (ns < ch) {
 							hdr->rerefCHANNEL[ns].Label[0] = 0;
+							hdr->rerefCHANNEL[ns].Transducer[0] = 0;
 							ns++;
 						}
 					}	 
@@ -9455,6 +9571,7 @@ if (VERBOSE_LEVEL>2)
 		hdr->CHANNEL[0].LowPass  = NAN;
 		hdr->CHANNEL[0].HighPass = NAN;
 		hdr->CHANNEL[0].Notch    = NAN;
+		hdr->CHANNEL[0].Transducer[0] = 0;
 
 	if (VERBOSE_LEVEL>7) fprintf(stdout,"NEURON 202: \n");
 
@@ -9638,6 +9755,7 @@ if (VERBOSE_LEVEL>2)
 				//neuralEventWaveform = identifier + 8;
 				CHANNEL_TYPE *hc = hdr->CHANNEL+(NS++);
 				sprintf(hc->Label,"#%d",leu16p(identifier + 8));	// electrodeId
+				hc->Transducer[0] = 0;
 				// (uint8_t)(identifier + 8 + 2);	// module
 				// (uint8_t)(identifier + 8 + 3);	// channel
 				hc->OnOff = 1;
@@ -9661,7 +9779,6 @@ if (VERBOSE_LEVEL>2)
 				hc->XYZ[1] = 0;
 				hc->XYZ[2] = 0;
 				hc->Impedance = NAN;
-
 				
 				hc->SPR = 0;
 				hc->bi = hdr->AS.bpb;
@@ -9746,6 +9863,7 @@ if (VERBOSE_LEVEL>2)
 
 			strncpy(hc->Label, hdr->AS.Header + H1LEN + k*H2LEN + 8, min(64,MAX_LENGTH_LABEL));
 			hc->Label[min(64, MAX_LENGTH_LABEL)] = 0;
+			hc->Transducer[0] = 0;
 
 			size_t n;
 			if (v==5) {
@@ -9970,6 +10088,8 @@ if (VERBOSE_LEVEL>2)
 		typeof (hdr->NS) k;
 		for (k=0; k<hdr->NS; k++) {
 			CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+			hc->Transducer[0] = 0;
+			hc->Label[0] = 0;
 			hc->GDFTYP = gdftyp;
 			hc->SPR    = hdr->SPR;
 			hc->Cal    = 1.0;
@@ -10382,35 +10502,23 @@ if (VERBOSE_LEVEL>2)
 			CHANNEL_TYPE *hc = hdr->CHANNEL + k;
 			hc->OnOff = 1;
 			strncpy(hc->Label,(char*)(hdr->AS.Header+32+24+8*k),8);
+			hc->Transducer[0] = 0;
 			hc->LeadIdCode = 0; 
 		}
     		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Format RDF (UCSD ERPSS) not supported");
 	}
 
-	else if (hdr->TYPE==RHD2000) {
-		float minor = leu16p(hdr->AS.Header+6);
-		minor      *= (minor < 10) ? 0.1 : 0.01;
-		hdr->VERSION = leu16p(hdr->AS.Header+4) + minor;
-
-		hdr->NS = 1;
-		hdr->SampleRate = lef32p(hdr->AS.Header+8);
-
-		float HighPass = ( leu16p(hdr->AS.Header+12) ? 0.0 : lef32p(hdr->AS.Header+14) );
-		      HighPass = max( HighPass, lef32p(hdr->AS.Header+18) );
-		float LowPass = lef32p(hdr->AS.Header+22);
-		const int ListNotch[] = {0,50,60};
-		uint16_t tmp = leu16p(hdr->AS.Header+34);
-		if (tmp>2) tmp=0;
-		float Notch = ListNotch[tmp];
-		float fZ    = lef32p(hdr->AS.Header+40);
-
-		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Format Intan RHD2000 not supported");
-
-		/*
-		hdr->CHANNEL = (CHANNEL_TYPE*)realloc(hdr->CHANNEL, hdr->NS * sizeof(CHANNEL_TYPE));
-		CHANNEL_TYPE *hc = hdr->CHANNEL;
-		*/
+#ifdef WITH_INTAN
+	else if (hdr->TYPE==IntanCLP) {
+		sopen_intan_clp_read(hdr);
 	}
+	else if (hdr->TYPE==RHD2000) {
+		sopen_rhd2000_read(hdr);
+	}
+	else if (hdr->TYPE==RHS2000) {
+		sopen_rhs2000_read(hdr);
+	}
+#endif
 
 	else if (hdr->TYPE==SCP_ECG) {
 		hdr->HeadLen   = leu32p(hdr->AS.Header+2);
@@ -10527,7 +10635,9 @@ if (VERBOSE_LEVEL>2)
 	      		hc->XYZ[0]    = 0.0;
 		      	hc->XYZ[1]    = 0.0;
 		      	hc->XYZ[2]    = 0.0;
-			hc->LeadIdCode = 0; 
+			hc->LeadIdCode = 0;
+			hc->Transducer[0] = 0;
+			hc->Label[0] = 0;
 
 			unsigned k1;
 			for (k1 = sizeof(p)/sizeof(p[0]); k1>0; ) {
@@ -10642,13 +10752,12 @@ if (VERBOSE_LEVEL>2)
 		}
 	}
 
-	else if (hdr->TYPE==TDMS) {
 #if defined(WITH_TDMS)
+	else if (hdr->TYPE==TDMS) {
 		sopen_tdms_read(hdr);
-#else
-		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "TDMS (NI): data format is not supported");
-#endif
 	}
+#endif
+
 	else if (hdr->TYPE==TMS32) {
 		hdr->VERSION 	= leu16p(hdr->AS.Header+31);
 		hdr->SampleRate = leu16p(hdr->AS.Header+114);
@@ -11234,6 +11343,7 @@ if (VERBOSE_LEVEL>2)
 		size_t bpb8=0;
 		for (k = 0; k < hdr->NS; k++) {
 			CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+			hc->Transducer[0] = 0;
 			hc->GDFTYP  =  gdftyp;
 			hc->OnOff   =  1;
 			hc->bi      =  bpb8>>3;

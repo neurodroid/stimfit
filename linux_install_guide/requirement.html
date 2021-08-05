@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Building Stimfit &#8212; Stimfit 0.15.8 documentation</title>
+    <title>Building Stimfit &#8212; Stimfit 0.16.0 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -59,11 +59,11 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Jose Guzman, Christoph Schmidt-Hieber</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">03 September, 2019</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">05 August, 2021</td>
 </tr>
 </tbody>
 </table>
-<p>This document describes how to install <a class="reference external" href="http://www.stimfit.org">Stimfit</a> 0.15.8 under GNU/Linux. The installation was tested on a GNU/Debian testing/unstable with support for Python 2.*. It should work on other Debian-based systems (e.g. Ubuntu) as with newer version of Stimfit as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) and that both versions match. For this installation, we tested 4.2.4 versions.</p>
+<p>This document describes how to install <a class="reference external" href="http://www.stimfit.org">Stimfit</a> 0.16.0 under GNU/Linux. The installation was tested on a GNU/Debian testing/unstable with support for Python 2.*. It should work on other Debian-based systems (e.g. Ubuntu) as with newer version of Stimfit as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) and that both versions match. For this installation, we tested 4.2.4 versions.</p>
 <div class="section" id="what-we-need-before-we-start">
 <h2>What we need before we start<a class="headerlink" href="#what-we-need-before-we-start" title="Permalink to this headline">¶</a></h2>
 <p>For the impatient, here are all <a class="reference external" href="http://www.stimfit.org">Stimfit</a> build dependencies:</p>
@@ -77,6 +77,7 @@
                        libwxgtk3.0-dev \
                        wx-common \
                        fftw3-dev \
+                       libbiosig-dev \
                        liblapack-dev \
                        chrpath \
                        git \
@@ -90,18 +91,19 @@
 <ul class="simple">
 <li><a class="reference internal" href="#wxwidgets" id="id2">[wxWidgets]</a>: C++ graphical user interface toolkit (version &gt;= 2.8; tested with 2.8.12 and 3.0.4)</li>
 <li><a class="reference internal" href="#wxpython" id="id3">[wxPython]</a>: GUI toolkit for the Python language.</li>
-<li><a class="reference internal" href="#boost" id="id4">[boost]</a>: C++ library that is mainly used for its shared pointers.</li>
-<li><a class="reference internal" href="#lapack" id="id5">[Lapack]</a>: A linear algebra library.</li>
-<li><a class="reference internal" href="#fftw" id="id6">[fftw]</a>:  Library for computing Fourier transformations.</li>
-<li><a class="reference internal" href="#numpy" id="id7">[NumPy]</a>: To handle numerical computations with Python (use version &gt;=1.7.1).</li>
-<li><a class="reference internal" href="#hdf5" id="id8">[HDF5]</a>: Hierarchical Data Format 5 (HDF5) to manage large amount of data.</li>
-<li><a class="reference internal" href="#matplotlib" id="id9">[Matplotlib]</a>: Plotting library for Python (use version &gt;= 1.5.1)</li>
+<li><a class="reference internal" href="#boost" id="id4">[boost]</a>: C++ library that is mainly used for its shared pointers. (only needed when -std=c++17 is not supported)</li>
+<li><a class="reference internal" href="#biosig" id="id5">[Biosig]</a>: A library for reading a large number biomedical signal data formats.</li>
+<li><a class="reference internal" href="#lapack" id="id6">[Lapack]</a>: A linear algebra library.</li>
+<li><a class="reference internal" href="#fftw" id="id7">[fftw]</a>:  Library for computing Fourier transformations.</li>
+<li><a class="reference internal" href="#numpy" id="id8">[NumPy]</a>: To handle numerical computations with Python (use version &gt;=1.7.1).</li>
+<li><a class="reference internal" href="#hdf5" id="id9">[HDF5]</a>: Hierarchical Data Format 5 (HDF5) to manage large amount of data.</li>
+<li><a class="reference internal" href="#matplotlib" id="id10">[Matplotlib]</a>: Plotting library for Python (use version &gt;= 1.5.1)</li>
 </ul>
 <p>In addition, you can install doxygen, python-sphinx (with graphviz and Latex) if you want to build the documentation.</p>
 </div>
 <div class="section" id="optional-pyemf">
 <h2>Optional: PyEMF<a class="headerlink" href="#optional-pyemf" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="#pyemf" id="id10">[PyEMF]</a> is needed to export figures to the windows meta file format (WMF/EMF). EMF is a vector graphics format and can be imported in different Office software including LibreOffice. To install it, do:</p>
+<p><a class="reference internal" href="#pyemf" id="id11">[PyEMF]</a> is needed to export figures to the windows meta file format (WMF/EMF). EMF is a vector graphics format and can be imported in different Office software including LibreOffice. To install it, do:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ wget http://sourceforge.net/projects/pyemf/files/pyemf/2.0.0/pyemf-2.0.0.tar.gz/download -O pyemf-2.0.0.tar.gz
 $ tar xvf pyemf-2.0.0.tar.gz &amp;&amp; cd pyemf-2.0.0
 $ sudo python setup.py install
@@ -154,20 +156,15 @@ script:</p>
 <div class="section" id="building-stimfit-with-biosig-import-filter">
 <span id="biosigbuild"></span><h2>Building Stimfit with BioSig import filter<a class="headerlink" href="#building-stimfit-with-biosig-import-filter" title="Permalink to this headline">¶</a></h2>
 <p>We recommend to build <a class="reference external" href="http://www.stimfit.org">Stimfit</a>  with the <a class="reference external" href="http://biosig.sourceforge.net">BioSig library</a>  to import files in from different biomedical disciplines. It is necessary to read files acquired with <a class="reference external" href="http://www.heka.com">HEKA amplifiers</a> or with <a class="reference external" href="http://ced.co.uk/products/sigovin">Signal</a> from CED. To do it, follow this instructions:</p>
-<p>Install libsuitesparse, libz and dcmtk libraries:</p>
+<p>Install libbiosig-dev through the package manager of your distribution:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">libbiosig</span><span class="o">-</span><span class="n">dev</span>
+</pre></div>
+</div>
+<p>Alternatively, get the full version of biosig and its build requirements: you can obtain the latest BioSig version in <a class="reference external" href="http://biosig.sourceforge.net/download.html">BioSig downloads</a> . Choose BioSig for C/C++, libbiosig (2.0.3 or higher is recommended). Alternatively, you can obtain the latest developmental version from the git repository:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">libsuitesparse</span><span class="o">-</span><span class="n">dev</span> <span class="n">libz</span><span class="o">-</span><span class="n">dev</span> <span class="n">gawk</span> <span class="n">libdcmtk</span><span class="o">-</span><span class="n">dev</span>
-</pre></div>
-</div>
-<p>To avoid ABI incompatibilities, we recommend building Stimfit with the version of biosig that ships with the Stimfit source:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./configure --with-biosiglite
-</pre></div>
-</div>
-<p>Alternatively, get the full version of biosig: you can obtain the latest BioSig version in <a class="reference external" href="http://biosig.sourceforge.net/download.html">BioSig downloads</a> . Choose BioSig for C/C++, libbiosig (v1.5.6 or higher is recommended). Alternatively, you can obtain the latest developmental version from the git repository:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">sf</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">p</span><span class="o">/</span><span class="n">biosig</span><span class="o">/</span><span class="n">code</span> <span class="n">biosig</span><span class="o">-</span><span class="n">code</span>
-</pre></div>
-</div>
-<p>Enter the directory <strong>biosig4c++</strong> and compile and install the sources:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">biosig</span><span class="o">-</span><span class="n">code</span><span class="o">/</span><span class="n">biosig4c</span><span class="o">++</span>
+
+<span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">sf</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">p</span><span class="o">/</span><span class="n">biosig</span><span class="o">/</span><span class="n">code</span> <span class="n">biosig</span><span class="o">-</span><span class="n">code</span>
+<span class="n">cd</span> <span class="n">biosig</span><span class="o">-</span><span class="n">code</span>
 <span class="n">autoconf</span> <span class="c1"># needed first time after getting repository</span>
 <span class="o">./</span><span class="n">configure</span>
 <span class="n">make</span>
@@ -187,7 +184,7 @@ script:</p>
 </pre></div>
 </div>
 <p>The html documentation will be located in &lt;destination&gt;/index.html</p>
-<p>Additionally, the source code is documented with <a class="reference internal" href="#doxygen" id="id15">[Doxygen]</a> and is also accessible on-line in <a class="reference external" href="http://www.stimfit.org/doc/doxygen/html/">http://www.stimfit.org/doc/doxygen/html/</a>. If you want to have a local copy of the documentation, you will need to install the doxygen and gravphvix:</p>
+<p>Additionally, the source code is documented with <a class="reference internal" href="#doxygen" id="id16">[Doxygen]</a> and is also accessible on-line in <a class="reference external" href="http://www.stimfit.org/doc/doxygen/html/">http://www.stimfit.org/doc/doxygen/html/</a>. If you want to have a local copy of the documentation, you will need to install the doxygen and gravphvix:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">doxygen</span> <span class="n">gravphvix</span>
 </pre></div>
 </div>
@@ -209,6 +206,12 @@ doxygen DoxyFile
 <tr><td class="label"><a class="fn-backref" href="#id3">[wxPython]</a></td><td><a class="reference external" href="http://www.wxpython.org">http://www.wxpython.org</a></td></tr>
 </tbody>
 </table>
+<table class="docutils citation" frame="void" id="biosig" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id5">[Biosig]</a></td><td><a class="reference external" href="http://biosig.sourceforge.net">http://biosig.sourceforge.net</a></td></tr>
+</tbody>
+</table>
 <table class="docutils citation" frame="void" id="boost" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
@@ -218,43 +221,43 @@ doxygen DoxyFile
 <table class="docutils citation" frame="void" id="lapack" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[Lapack]</a></td><td><a class="reference external" href="http://www.netlib.org/lapack/">http://www.netlib.org/lapack/</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id6">[Lapack]</a></td><td><a class="reference external" href="http://www.netlib.org/lapack/">http://www.netlib.org/lapack/</a></td></tr>
 </tbody>
 </table>
 <table class="docutils citation" frame="void" id="hdf5" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id8">[HDF5]</a></td><td><a class="reference external" href="http://www.hdfgroup.org/HDF5/">http://www.hdfgroup.org/HDF5/</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id9">[HDF5]</a></td><td><a class="reference external" href="http://www.hdfgroup.org/HDF5/">http://www.hdfgroup.org/HDF5/</a></td></tr>
 </tbody>
 </table>
 <table class="docutils citation" frame="void" id="numpy" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id7">[NumPy]</a></td><td><a class="reference external" href="http://www.numpy.org">http://www.numpy.org</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id8">[NumPy]</a></td><td><a class="reference external" href="http://www.numpy.org">http://www.numpy.org</a></td></tr>
 </tbody>
 </table>
 <table class="docutils citation" frame="void" id="pyemf" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id10">[PyEMF]</a></td><td><a class="reference external" href="http://pyemf.sourceforge.net">http://pyemf.sourceforge.net</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id11">[PyEMF]</a></td><td><a class="reference external" href="http://pyemf.sourceforge.net">http://pyemf.sourceforge.net</a></td></tr>
 </tbody>
 </table>
 <table class="docutils citation" frame="void" id="fftw" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id6">[fftw]</a></td><td><a class="reference external" href="http://www.fftw.org">http://www.fftw.org</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id7">[fftw]</a></td><td><a class="reference external" href="http://www.fftw.org">http://www.fftw.org</a></td></tr>
 </tbody>
 </table>
 <table class="docutils citation" frame="void" id="doxygen" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id15">[Doxygen]</a></td><td><a class="reference external" href="http://www.doxygen.org">http://www.doxygen.org</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id16">[Doxygen]</a></td><td><a class="reference external" href="http://www.doxygen.org">http://www.doxygen.org</a></td></tr>
 </tbody>
 </table>
 <table class="docutils citation" frame="void" id="matplotlib" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id9">[Matplotlib]</a></td><td><a class="reference external" href="https://matplotlib.org">https://matplotlib.org</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id10">[Matplotlib]</a></td><td><a class="reference external" href="https://matplotlib.org">https://matplotlib.org</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -346,7 +349,7 @@ doxygen DoxyFile
     
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Christoph Schmidt-Hieber.
-      Last updated on 03 September, 2019.
+      Last updated on 05 August, 2021.
     </div>
   </body>
 </html>

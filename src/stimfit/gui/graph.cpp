@@ -694,10 +694,10 @@ void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int e
 
     switch (pt) {
      case active:
-         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD), this);
+         yFormatFunc = std::bind1st( std::mem_fn(&wxStfGraph::yFormatD), this);
          break;
      case reference:
-         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD2), this);
+         yFormatFunc = std::bind1st( std::mem_fn(&wxStfGraph::yFormatD2), this);
          break;
      case background:
          Vector_double::const_iterator max_el = std::max_element(trace.begin(), trace.end());
@@ -712,7 +712,7 @@ void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int e
          WindowRect.height /= Doc()->size();
          FittorectY(yzoombg, WindowRect, min, max, 1.0);
          yzoombg.startPosY += bgno*WindowRect.height;
-         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatDB), this);
+         yFormatFunc = std::bind1st( std::mem_fn(&wxStfGraph::yFormatDB), this);
          break;
     }
 
@@ -832,10 +832,10 @@ void wxStfGraph::DoPrint( wxDC* pDC, const Vector_double& trace, int start, int 
     
     switch (ptype) {
      case active:
-         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD), this);
+         yFormatFunc = std::bind1st( std::mem_fn(&wxStfGraph::yFormatD), this);
          break;
      default:
-         yFormatFunc = std::bind1st( std::mem_fun(&wxStfGraph::yFormatD2), this);
+         yFormatFunc = std::bind1st( std::mem_fn(&wxStfGraph::yFormatD2), this);
          break;
     }
 

@@ -115,13 +115,9 @@ noinst_HEADERS = \
 	./src/test/gtest/include/gtest/internal/gtest-type-util.h \
 	./src/test/gtest/src/gtest-internal-inl.h
 
-if WITH_BIOSIG2
-    noinst_HEADERS += ./src/libstfio/biosig/biosiglib.h
-else
 if WITH_BIOSIG
     noinst_HEADERS += ./src/libstfio/biosig/biosiglib.h
 endif # WITH_BIOSIG
-endif # WITH_BIOSIG2
 
 EXTRA_DIST = ./src/stimfit/res/16-em-down.xpm
 EXTRA_DIST+= ./src/stimfit/res/16-em-open.xpm
@@ -185,8 +181,8 @@ EXTRA_DIST+= ./dist/debian/control
 EXTRA_DIST+= ./dist/debian/copyright
 EXTRA_DIST+= ./dist/debian/docs
 EXTRA_DIST+= ./dist/debian/mkdeb.sh
-EXTRA_DIST+= ./dist/debian/python-stfio.files
-EXTRA_DIST+= ./dist/debian/python-stfio.install
+EXTRA_DIST+= ./dist/debian/python3-stfio.files
+EXTRA_DIST+= ./dist/debian/python3-stfio.install
 EXTRA_DIST+= ./dist/debian/rules
 EXTRA_DIST+= ./dist/debian/stimfit.1
 EXTRA_DIST+= ./dist/debian/stimfit.desktop
@@ -206,7 +202,7 @@ EXTRA_DIST+= ./src/test/gtest/src/gtest-test-part.cc
 EXTRA_DIST+= ./src/test/gtest/src/gtest-typed-test.cc
 
 if BUILD_PYTHON
-    PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES)
+    PYTHON_ADDINCLUDES = $(LIBPYTHON_INCLUDES) $(LIBWXPYTHON_INCLUDES)
     PYTHON_ADDLDFLAGS = $(LIBPYTHON_LDFLAGS)
     PYTHON_ADDLIBS = ./src/stimfit/py/libpystf.la
 else !BUILD_PYTHON

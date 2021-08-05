@@ -19,6 +19,7 @@ libbiosiglite_la_SOURCES = \
   biosig4c++/t210/sopen_cfs_read.c \
   biosig4c++/t210/sopen_heka_read.c \
   biosig4c++/t210/sopen_igor.c \
+  biosig4c++/t210/sopen_rhd2000_read.c \
   biosig4c++/t210/sopen_scp_read.c \
   biosig4c++/t210/scp-decode.cpp \
   biosig4c++/t220/crc4scp.c \
@@ -33,7 +34,7 @@ libbiosiglite_la_SOURCES = \
 
   # biosig4c++/biosig-network.c
 
-libbiosiglite_la_CPPFLAGS = -DWITH_BIOSIG2 -DWITH_ZLIB -DWITH_CHOLMOD -DWITHOUT_NETWORK
+libbiosiglite_la_CPPFLAGS = -DWITH_BIOSIG -DWITH_ZLIB -DWITH_CHOLMOD -DWITHOUT_NETWORK
 libbiosiglite_la_LDFLAGS = 
 libbiosiglite_la_LIBADD = $(LIBSTF_LDFLAGS) -lz -lcholmod
 

@@ -8,7 +8,7 @@
 export DH_VERBOSE=1
 
 DEBPREFIX=$(CURDIR)/debian/tmp/usr
-PYVER   := $(shell pyversions -vd)
+PYVER   := $(shell py3versions -vd)
 # Whenever libwxgtk3.0-gtk3-dev installed and wx-config present, need custom opts
 WXCONFIG_OPTS=$(shell wx-config --toolkit=gtk3 2>/dev/null 1>&2 && echo '--with-wx-config="wx-config --toolkit=gtk3"' || echo '')
 
@@ -47,14 +47,14 @@ clean:
 
 install: build
 	dh_autoreconf
-	./configure --enable-python --enable-debian --with-biosiglite --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
+	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) ./configure --enable-python --enable-debian --with-biosig --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
 	$(MAKE)
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) check
 endif
 	$(MAKE) install
 
-	./configure --enable-module --enable-debian --with-biosiglite --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
+	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) ./configure --enable-module --enable-debian --with-biosig --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
 	$(MAKE)
 	$(MAKE) install
 
@@ -92,7 +92,7 @@ binary-arch: build install
 #	dh_lintian
 #	dh_bugfiles
 #	dh_undocumented
-	dh_python2
+	dh_python3
 	dh_installman $(CURDIR)/man/stimfit.1
 	dh_install --sourcedir=$(CURDIR)/debian/tmp
 	dh_link
@@ -101,7 +101,7 @@ binary-arch: build install
 	dh_fixperms
 	dh_icons
 #	dh_perl
-	[ -x /usr/bin/dh_python2 ] && dh_python2 -V$(PYVER) --no-ext-rename || :
+	[ -x /usr/bin/dh_python3 ] && dh_python3 -V$(PYVER) --no-ext-rename || :
 	[ -x /usr/bin/dh_numpy ] && dh_numpy || :
 	dh_makeshlibs
 	dh_shlibdeps

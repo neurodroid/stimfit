@@ -35,7 +35,7 @@
 #    - PYTHON shell, matplotlib (print) are not supported
 #    - configure not supported
 #
-# Copyright (C) 2012,2013,2014,2015 Alois Schloegl
+# Copyright (C) 2012,2013,2014,2015,2021 Alois Schloegl
 # This is part of the stimfit project http://stimfit.org
 #
 ########################################################################
@@ -50,10 +50,8 @@ ifneq (,$(findstring mingw,$(WXCONF)))
 endif
 endif
 
-DEFINES += -DWITH_BIOSIG2
+DEFINES += -DWITH_BIOSIG
 DEFINES += -DHAVE_LAPACK
-#DEFINES += -DWITHOUT_ABF
-#DEFINES += -DWITHOUT_AXG
 DEFINES += -DWITH_PSLOPE
 #DEFINES += -DTEST_MINIMAL
 #DEFINES += -DPYTHON -DWITH_PYTHON
@@ -66,7 +64,7 @@ WXDIR     = $(dir $(WXCONF))../include/
 #DEFINES  += -I$(WXDIR)/..
 
 
-PY_VERSION := 2.7
+PY_VERSION := $(shell py3versions -i | sed 's/python//g')
 
 
 ##############################################################
@@ -118,6 +116,7 @@ SOURCES = ./src/stimfit/stf.cpp \
 	./src/libstfio/stfio.cpp \
 	./src/libstfio/igor/WriteWave.c \
 	./src/libstfio/igor/CrossPlatformFileIO.c \
+	./src/libstfio/biosig/biosiglib.cpp \
 	./src/libstfio/cfs/cfs.c 
 
 SOURCES_OPTIONAL = \
@@ -178,13 +177,10 @@ ifneq (,$(findstring HAVE_LAPACK, $(DEFINES)))
   LIBS   += -llapack -lblas
 endif
 
-ifeq (,$(findstring WITHOUT_ABF, $(DEFINES)))
-	SOURCES += $(SOURCES_ABF)
-endif
+# needed because of exportATF
+SOURCES += $(SOURCES_ABF)
+SOURCES += $(SOURCES_AXG)
 
-ifeq (,$(findstring WITHOUT_AXG, $(DEFINES)))
-	SOURCES += $(SOURCES_AXG)
-endif
 
 ifeq (,$(findstring mingw, $(WXCONF)))
   TARGET   = stimfit 
@@ -208,8 +204,9 @@ ifneq (,$(findstring WITH_PYTHON, $(DEFINES)))
 endif
 
 
-CC       ?= $(shell $(WXCONF) --cc)
-CXX      ?= $(shell $(WXCONF) --cxx)
+CC        = $(shell $(WXCONF) --cc)
+CXX       = $(shell $(WXCONF) --cxx)
+LD        = $(CXX) #$(shell $(WXCONF) --ld)
 CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector -O2
 CPPFLAGS  = $(DEFINES) $(shell $(WXCONF) --cppflags) -std=gnu++17 -fstack-protector -O2
 CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -std=gnu++17 -fstack-protector -O2
@@ -262,17 +259,8 @@ endif
 endif
 
 ## BIOSIG related stuff ##
-ifneq (,$(findstring WITH_BIOSIG2, $(DEFINES)))
-  LIBS  += -lbiosig
-else 
-  ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
-    LIBS  += -lbiosig
-  endif
-endif
-ifneq (,$(findstring WITH_BIOSIG, $(DEFINES)))
-    SOURCES += ./src/libstfio/biosig/biosiglib.cpp
-    LIBS  += $(shell $(PKGCONF) --libs libbiosig)
-endif
+LIBS  += -lbiosig
+LIBS  += -lbiosig $(shell $(PKGCONF) --libs libbiosig)
 
 LIBS     += -lfftw3
 
@@ -289,7 +277,7 @@ LIBS   += -ltinyxml -lstdc++
 OBJECTS  = $(addsuffix .$(OBJEXT), $(basename $(SOURCES)))
 
 $(TARGET): $(OBJECTS)
-	$(CXX) $(OBJECTS) $(CPPFLAGS) $(LDFLAGS) $(LIBS) -o "$@"
+	$(LD) $(OBJECTS) $(CPPFLAGS) $(LDFLAGS) $(LIBS) -o "$@"
 
 %.c: %.h
 

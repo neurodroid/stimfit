@@ -12,7 +12,7 @@ nodist_libpystf_la_SOURCES = $(srcdir)/pystf_wrap.cxx
 libpystf_la_SOURCES = $(srcdir)/pystf.cxx # $(SWIG_SOURCES)
 noinst_HEADERS = pystf.h
 
-INCLUDES = $(LIBNUMPY_INCLUDES)
+INCLUDES = $(LIBNUMPY_INCLUDES) $(LIBPYTHON_INCLUDES) $(LIBWXPYTHON_INCLUDES)
 
 libpystf_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
 libpystf_la_CXXFLAGS = $(OPT_CXXFLAGS) $(WX_CXXFLAGS)

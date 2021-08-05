@@ -25,6 +25,7 @@ For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build depend
                            libwxgtk3.0-dev \
                            wx-common \
                            fftw3-dev \
+                           libbiosig-dev \
                            liblapack-dev \
                            chrpath \
                            git \
@@ -38,7 +39,8 @@ This will get you, amongst others:
 
 * [wxWidgets]_: C++ graphical user interface toolkit (version >= 2.8; tested with 2.8.12 and 3.0.4)
 * [wxPython]_: GUI toolkit for the Python language.
-* [boost]_: C++ library that is mainly used for its shared pointers.
+* [boost]_: C++ library that is mainly used for its shared pointers. (only needed when -std=c++17 is not supported)
+* [Biosig]_: A library for reading a large number biomedical signal data formats.
 * [Lapack]_: A linear algebra library.
 * [fftw]_:  Library for computing Fourier transformations.
 * [NumPy]_: To handle numerical computations with Python (use version >=1.7.1).
@@ -129,29 +131,20 @@ Building Stimfit with BioSig import filter
 
 We recommend to build `Stimfit <http://www.stimfit.org>`_  with the `BioSig library <http://biosig.sourceforge.net>`_  to import files in from different biomedical disciplines. It is necessary to read files acquired with `HEKA amplifiers <http://www.heka.com>`_ or with `Signal <http://ced.co.uk/products/sigovin>`_ from CED. To do it, follow this instructions:
 
-Install libsuitesparse, libz and dcmtk libraries:
+Install libbiosig-dev through the package manager of your distribution:
+
+::
+
+    sudo apt-get install libbiosig-dev
+
+Alternatively, get the full version of biosig and its build requirements: you can obtain the latest BioSig version in `BioSig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig (2.0.3 or higher is recommended). Alternatively, you can obtain the latest developmental version from the git repository:
 
 ::
 
     sudo apt-get install libsuitesparse-dev libz-dev gawk libdcmtk-dev
 
-To avoid ABI incompatibilities, we recommend building Stimfit with the version of biosig that ships with the Stimfit source:
-
-::
-
-    $ ./configure --with-biosiglite
-
-Alternatively, get the full version of biosig: you can obtain the latest BioSig version in `BioSig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig (v1.5.6 or higher is recommended). Alternatively, you can obtain the latest developmental version from the git repository:
-
-::
-
     git clone https://git.code.sf.net/p/biosig/code biosig-code
-
-Enter the directory **biosig4c++** and compile and install the sources: 
-
-::
-
-    cd biosig-code/biosig4c++
+    cd biosig-code
     autoconf # needed first time after getting repository
     ./configure
     make 
@@ -194,6 +187,7 @@ The local documentation of the source code will be in $HOME/stimfit/doc/doxygen/
 
 .. [wxWidgets] http://www.wxwidgets.org
 .. [wxPython] http://www.wxpython.org
+.. [Biosig] http://biosig.sourceforge.net
 .. [boost] http://www.boost.org
 .. [Lapack] http://www.netlib.org/lapack/
 .. [HDF5] http://www.hdfgroup.org/HDF5/

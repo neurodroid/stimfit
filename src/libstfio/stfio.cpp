@@ -34,21 +34,13 @@
 #include "./atf/atflib.h"
 #include "./axg/axglib.h"
 #include "./igor/igorlib.h"
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+#if (defined(WITH_BIOSIG))
   #include "./biosig/biosiglib.h"
+#else
+  #include "./heka/hekalib.h"
 #endif
 #include "./cfs/cfslib.h"
 #include "./intan/intanlib.h"
-#ifndef TEST_MINIMAL
-  #include "./heka/hekalib.h"
-#else
-  #if (!defined(WITH_BIOSIG) && !defined(WITH_BIOSIG2))
-    #error -DTEST_MINIMAL requires -DWITH_BIOSIG or -DWITH_BIOSIG2
-  #endif
-#endif
-#if 0
-#include "./son/sonlib.h"
-#endif
 
 #ifdef _MSC_VER
     StfioDll long int lround(double x) {
@@ -97,7 +89,7 @@ stfio::findType(const std::string& ext) {
     else if (ext=="*.smr") return stfio::son;
     else if (ext=="*.tdms") return stfio::tdms;
     else if (ext=="*.clp") return stfio::intan;
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+#if defined(WITH_BIOSIG)
     else if (ext=="*.dat;*.cfs;*.gdf;*.ibw;*.wcp") return stfio::biosig;
     else if (ext=="*.*")   return stfio::biosig;
 #endif
@@ -129,7 +121,7 @@ stfio::findExtension(stfio::filetype ftype) {
          return ".tdms";
      case stfio::intan:
          return ".clp";
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+#if defined(WITH_BIOSIG)
      case stfio::biosig:
          return ".gdf";
 #endif
@@ -147,25 +139,9 @@ bool stfio::importFile(
 ) {
     try {
 
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+#if defined(WITH_BIOSIG)
        // make use of automated file type identification
 
-#ifndef WITHOUT_ABF
-        if (!check_biosig_version(1,6,3)) {
-            try {
-                // workaround for older versions of libbiosig
-                stfio::importABFFile(fName, ReturnData, progDlg);
-                return true;
-            }
-            catch (...) {
-#ifndef NDEBUG
-                fprintf(stdout,"%s (line %i): importABF attempted\n",__FILE__,__LINE__);
-#endif
-            };
-       }
-#endif // WITHOUT_ABF
-
-       // if this point is reached, import ABF was not applied or not successful
         try {
             stfio::filetype type1 = stfio::importBiosigFile(fName, ReturnData, progDlg);
             switch (type1) {
@@ -188,7 +164,6 @@ bool stfio::importFile(
             stfio::importHDF5File(fName, ReturnData, progDlg);
             break;
         }
-#ifndef WITHOUT_ABF
         case stfio::abf: {
             stfio::importABFFile(fName, ReturnData, progDlg);
             break;
@@ -197,69 +172,22 @@ bool stfio::importFile(
             stfio::importATFFile(fName, ReturnData, progDlg);
             break;
         }
-#endif
-#ifndef WITHOUT_AXG
         case stfio::axg: {
             stfio::importAXGFile(fName, ReturnData, progDlg);
             break;
         }
-#endif
         case stfio::intan: {
             stfio::importIntanFile(fName, ReturnData, progDlg);
             break;
         }
-
-#ifndef TEST_MINIMAL
         case stfio::cfs: {
-            {
             int res = stfio::importCFSFile(fName, ReturnData, progDlg);
-         /*
-            // disable old Heka import - its broken and will not be fixed, use biosig instead
-            if (res==-7) {
-                stfio::importHEKAFile(fName, ReturnData, progDlg);
-            }
-         */
-          break;
-            }
-        }
-        /*
-	// disable old Heka import - its broken and will not be fixed, use biosig instead
-        case stfio::heka: {
-            {
-                try {
-                    stfio::importHEKAFile(fName, ReturnData, progDlg);
-                } catch (const std::runtime_error& e) {
-                    stfio::importCFSFile(fName, ReturnData, progDlg);
-                }
-                break;
-            }
-        }
-        */
-#endif // TEST_MINIMAL
-
+            break;
+           }
         default:
             throw std::runtime_error("Unknown or unsupported file type");
 	}
 
-#if 0
-        case stfio::son: {
-            stfio::SON::importSONFile(fName,ReturnData);
-            break;
-        }
-        case stfio::ascii: {
-            stfio::importASCIIFile( fName, txtImport.hLines, txtImport.ncolumns,
-                    txtImport.firstIsTime, txtImport.toSection, ReturnData );
-            if (!txtImport.firstIsTime) {
-                ReturnData.SetXScale(1.0/txtImport.sr);
-            }
-            if (ReturnData.size()>0)
-                ReturnData[0].SetYUnits(txtImport.yUnits);
-            if (ReturnData.size()>1)
-                ReturnData[1].SetYUnits(txtImport.yUnitsCh2);
-            ReturnData.SetXUnits(txtImport.xUnits);
-            break;
-        }
-#endif
     }
     catch (...) {
         throw;
@@ -272,13 +200,11 @@ bool stfio::exportFile(const std::string& fName, stfio::filetype type, const Rec
 {
     try {
         switch (type) {
-#ifndef WITHOUT_ABF
         case stfio::atf: {
             stfio::exportATFFile(fName, Data);
             break;
         }
-#endif
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+#if defined(WITH_BIOSIG)
         case stfio::biosig: {
             stfio::exportBiosigFile(fName, Data, progDlg);
             break;

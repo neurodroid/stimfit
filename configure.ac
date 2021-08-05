@@ -1,15 +1,14 @@
-AC_INIT([stimfit],[0.15.8])
+AC_INIT([stimfit],[0.16.1])
 AC_CONFIG_SRCDIR(src/stimfit/gui/main.cpp)
 AM_INIT_AUTOMAKE([1.11])
 AM_SILENT_RULES([yes])
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_PROG_CC
+AC_PROG_CC_STDC
 AC_PROG_INSTALL
 
 _LT_SET_OPTION([LT_INIT],[dlopen])
-AC_DIAGNOSE([obsolete],[AC_LIBTOOL_DLOPEN: Remove this warning and the call to _LT_SET_OPTION when you
-put the `dlopen' option into LT_INIT's first parameter.])
 
 LT_INIT
 AC_PROG_CPP
@@ -31,14 +30,14 @@ AC_ARG_ENABLE([debian], AS_HELP_STRING([--enable-debian],[special build for pbui
 AM_CONDITIONAL(BUILD_DEBIAN, test "$enable_debian" = "yes")
 
 AC_MSG_CHECKING(for kernel)
-case `uname` in 
+case `uname` in
     Darwin)
         AC_MSG_RESULT(darwin)
         CXXFLAGS="${CXXFLAGS} -fPIC"
         CFLAGS="${CFLAGS} -fPIC"
         STFKERNEL="darwin"
     ;;
-    *)  
+    *)
         # treat everything else (kfreebsd, hurd) as linux
         AC_MSG_RESULT(linux or similar)
         CXXFLAGS="-fPIC"
@@ -49,7 +48,7 @@ esac
 AM_CONDITIONAL([ISDARWIN], [test $STFKERNEL = "darwin"])
 
 # Checks for python libraries.
-AC_ARG_ENABLE([python], 
+AC_ARG_ENABLE([python],
   AS_HELP_STRING(
     [--enable-python],
     [enable python console (default="yes")]),,
@@ -57,27 +56,30 @@ AC_ARG_ENABLE([python],
 
 AM_CONDITIONAL(BUILD_PYTHON, test "$enable_python" = "yes")
 if (test "$enable_python" = "yes") || (test "$enable_module" = "yes"); then
-    AC_PYTHON_DEVEL
+    AC_PYTHON_DEVEL()
     AC_PROG_SWIG(1.3.17)
     SWIG_ENABLE_CXX
     SWIG_PYTHON
     AC_SUBST(SWIG)
     CXXFLAGS="${CXXFLAGS}"
     CFLAGS="${CFLAGS}"
-    LIBPYTHON_LDFLAGS=$PYTHON_LDFLAGS 
+    LIBPYTHON_LDFLAGS=$PYTHON_LDFLAGS
     LIBPYTHON_INCLUDES=$PYTHON_CPPFLAGS
     LIBNUMPY_INCLUDES=$PYTHON_NUMPY_INCLUDE
+    LIBWXPYTHON_INCLUDES=$PYTHON_WXPYTHON_INCLUDE
 else
-    LIBPYTHON_LDFLAGS= 
-    LIBPYTHON_INCLUDES= 
-    LIBNUMPY_INCLUDES= 
+    LIBPYTHON_LDFLAGS=
+    LIBPYTHON_INCLUDES=
+    LIBNUMPY_INCLUDES=
+    LIBWXPYTHON_INCLUDES=
 fi
 AC_SUBST(LIBPYTHON_LDFLAGS)
 AC_SUBST(LIBPYTHON_INCLUDES)
 AC_SUBST(LIBNUMPY_INCLUDES)
+AC_SUBST(LIBWXPYTHON_INCLUDES)
 
 AC_MSG_CHECKING(for kernel)
-case ${STFKERNEL} in 
+case ${STFKERNEL} in
     darwin)
         LIBSTF_LDFLAGS="-avoid-version"
         if test "$enable_module" = "yes" ; then
@@ -136,24 +138,26 @@ if test "$with_pslope" = "yes" ; then
     CPPFLAGS="${CPPFLAGS} -DWITH_PSLOPE"
 fi
 
-AC_ARG_WITH([biosig], AS_HELP_STRING([--with-biosig],[build with libbiosig support]),[])
-AM_CONDITIONAL(WITH_BIOSIG, test "$with_biosig" = "yes")
-
-AC_ARG_WITH([biosig2], AS_HELP_STRING([--with-biosig2],[equivalent to --with-biosig]),[])
-AM_CONDITIONAL(WITH_BIOSIG2, test "$with_biosig2" = "yes")
+# by default build WITH_BIOSIG
+AC_ARG_WITH([biosig],
+	[AS_HELP_STRING([--without-biosig], [disable support for biosig])],
+	[],
+	[with_biosig=yes] )
+AM_CONDITIONAL(WITH_BIOSIG, test "x$with_biosig" = "xyes")
+AM_CONDITIONAL(WITH_BIOSIG2, test "x$with_biosig" = "xyes")
 
 AC_ARG_WITH([biosiglite], AS_HELP_STRING([--with-biosiglite], [use builtin biosig library]), [])
-AM_CONDITIONAL(WITH_BIOSIGLITE, test "$with_biosiglite" = "yes")
+AM_CONDITIONAL(WITH_BIOSIGLITE, test "x$with_biosiglite" = "xyes")
+AM_CONDITIONAL(WITH_BIOSIG, test "x$with_biosig" = "xyes")
 
-if test "$with_biosig2" = "yes" ; then
-    CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG2"
-    LIBBIOSIG_LDFLAGS="-lbiosig -lcholmod"
-elif test "$with_biosig" = "yes" ; then
-    CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG"
-    LIBBIOSIG_LDFLAGS="-lbiosig -lcholmod"
-elif test "$with_biosiglite" = "yes" ; then
-    CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG2 -DWITH_BIOSIGLITE"
+if test "x$with_biosiglite" = xyes ; then
+    CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG -DWITH_BIOSIGLITE"
     LIBBIOSIG_LDFLAGS="-lcholmod"
+elif test "x$with_biosig" != xno ; then
+    CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG"
+    LIBBIOSIG_LDFLAGS="-lbiosig"
+else
+    AC_MSG_WARN([Stimfit recommends using --with-biosig or --with-biosiglite])
 fi
 AC_SUBST(LIBBIOSIG_LDFLAGS)
 
@@ -163,11 +167,20 @@ AS_HELP_STRING([--with-lapack-lib=LAPACKLIB],[Provide full path to custom lapack
     if test "$withval" != "yes" -a "$withval" != ""; then
         LAPACKLIB=$withval
         LIBLAPACK_LDFLAGS="$LAPACKLIB"
-        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK" 
+        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK"
     fi
 ])
 
 # Checks for libraries.
+AC_CHECK_LIB([biosig], [sread], [with_biosig="yes"])
+AM_CONDITIONAL(WITH_BIOSIG, test "x$with_biosig" == "xyes")
+if test "x$with_biosiglite" != "xyes" ; then
+if test "x$with_biosig" == "xyes" ; then
+    CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG"
+    LIBBIOSIG_LDFLAGS="-lbiosig"
+fi
+fi
+
 AC_CHECK_LIB([fftw3], [fftw_malloc], HAVE_FFTW3="yes")
 if test "${HAVE_FFTW3}" != "yes" ; then
     AC_MSG_ERROR([Couldn't find fftw3.])
@@ -177,8 +190,10 @@ if test "$LAPACKLIB" = ""; then
     if test "$STFKERNEL" = "darwin" ; then
         # System LAPACK
         LIBLAPACK_LDFLAGS="/usr/lib/liblapack.dylib -framework Accelerate"
-        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK -DHAVE_LAPACK_SUFFIX" 
+        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK -DHAVE_LAPACK_SUFFIX"
     else
+      AC_CHECK_LIB([openblas], [dgemm_], HAVE_OPENBLAS="yes",, [-lgomp -lpthread -lm])
+      if test "${HAVE_OPENBLAS}" != "yes" ; then
         AC_CHECK_LIB([lapack], [dgemm_], HAVE_LAPACKX="yes")
         if test "${HAVE_LAPACKX}" != "yes" ; then
             AC_CHECK_LIB([lapack3], [dgemm_], HAVE_LAPACK3="yes")
@@ -186,24 +201,24 @@ if test "$LAPACKLIB" = ""; then
                 AC_CHECK_LIB([lapack-3], [dgemm_], HAVE_LAPACK_3="yes")
                     if test "${HAVE_LAPACK_3}" != "yes" ; then
                         AC_CHECK_LIB([blas], [dgemm_], HAVE_ATLAS="yes")
-                        if test "${HAVE_ATLAS}" != "yes" ; then
-                            AC_MSG_ERROR([Couldn't find lapack.])
-                        else
-                            LIBLAPACK_LDFLAGS="-llapack -lblas"
-                            CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
-                        fi
+                        LIBLAPACK_LDFLAGS="-llapack -lblas"
+                        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK "
                     else
                         LIBLAPACK_LDFLAGS="-llapack-3"
-                        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+                        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK "
                     fi
             else
                 LIBLAPACK_LDFLAGS=-llapack3
-                CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+                CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK "
             fi
         else
             LIBLAPACK_LDFLAGS="-llapack -lblas"
-            CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+            CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK "
         fi
+      else
+        LIBLAPACK_LDFLAGS="-lopenblas"
+        CPPFLAGS="${CPPFLAGS} -DWITH_OPENBLAS -DHAVE_LAPACK"
+      fi
     fi
 fi
 AC_SUBST(LIBLAPACK_LDFLAGS)
@@ -275,7 +290,7 @@ MACSETFILE="@true"
 
 AC_MSG_CHECKING(for wxWidgets platform)
 WX_BASENAME="`$WXCONFIG --basename`"
-case $WX_BASENAME in 
+case $WX_BASENAME in
     *wx_osx*)
         AC_MSG_RESULT($WX_BASENAME)
         AC_CHECK_PROG(REZ, Rez, Rez, /Developer/Tools/Rez)
@@ -290,7 +305,7 @@ case $WX_BASENAME in
         AC_CHECK_PROG(SETFILE, SetFile, SetFile, /Developer/Tools/SetFile)
         MACSETFILE="\$(SETFILE)"
     ;;
-    *) 
+    *)
         AC_MSG_RESULT(other)
     ;;
 esac
@@ -307,7 +322,7 @@ AS_HELP_STRING([--with-hdf5-prefix=HDF5_PREFIX],[Provide full path to hdf5 prefi
     if test "$withval" != "yes" -a "$withval" != ""; then
         HDF5_PREFIX=${withval}
         LDFLAGS="${LDFLAGS} -L${HDF5_PREFIX}/lib"
-        CPPFLAGS="${CPPFLAGS} -I${HDF5_PREFIX}/include" 
+        CPPFLAGS="${CPPFLAGS} -I${HDF5_PREFIX}/include"
     fi
 ])
 
@@ -326,14 +341,10 @@ fi
 
 AC_CHECK_HEADER([hdf5.h], [], [AC_MSG_ERROR([Couldn't find hdf5 header])])
 AC_CHECK_LIB([hdf5],[H5Fopen],HAVE_HDF5="yes")
-if test "${HAVE_HDF5}" != "yes" ; then
-    AC_MSG_ERROR([Couldn't find hdf5 libraries.])
-else
     if test "${HDF5_CFLAGS}" = ""; then
         CPPFLAGS="${CPPFLAGS} -DH5_USE_16_API"
         LIBHDF5_LDFLAGS="-lhdf5 -lhdf5_hl"
     fi
-fi
 AC_SUBST(LIBHDF5_LDFLAGS)
 
 AC_ARG_ENABLE([debug],

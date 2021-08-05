@@ -383,7 +383,7 @@ TEST(fitlib_test, id_02_monoexponential_with_delay){
     std::string info;
     int warning;
     double chisqr = stfnum::lmFit(data, dt, funcLib[2], opts, 
-        true, /*use_scaling*/
+        false, /*use_scaling*/
         pars, info, warning );
 
     EXPECT_EQ(warning, 0);
@@ -763,7 +763,7 @@ TEST(fitlib_test, id_09_alpha){
     int warning;
 
     double chisqr = stfnum::lmFit(data, dt, funcLib[9], opts, 
-        true, /*use_scaling*/
+        false, /*use_scaling*/
         pars, info, warning );
 
     EXPECT_EQ(warning, 0);
@@ -812,7 +812,7 @@ TEST(fitlib_test, id_10_HH_gNa_offsetfixed){
     int warning;
 
     double chisqr = stfnum::lmFit(data, dt, funcLib[10], opts, 
-        true, /* use_scaling */
+	false, /* use_scaling */
         pars, info, warning );
 
     EXPECT_EQ(warning, 0);
@@ -861,7 +861,7 @@ TEST(fitlib_test, id_11_HH_gNa_biexpoffsetfixed){
     int warning;
 
     double chisqr = stfnum::lmFit(data, dt, funcLib[11], opts, 
-        true, /*use_scaling*/
+        false, /*use_scaling*/
         pars, info, warning );
 
     EXPECT_EQ(warning, 0);

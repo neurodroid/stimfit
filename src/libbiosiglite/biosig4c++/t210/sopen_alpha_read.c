@@ -158,6 +158,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"<%6.2f> %i- %s | %s\n",hdr->VERSION, STATUS
 						hc->Off     = 0.0; 
 						hc->PhysMax = hc->DigMax; 
 						hc->PhysMin = hc->DigMin; 
+						hc->Transducer[0] = 0;
 					
 						strncpy(hc->Label, t, MAX_LENGTH_LABEL+1);
 						char* t2= strchr(t1,',');

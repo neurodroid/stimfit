@@ -27,10 +27,10 @@ libstfio_la_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp ./stfio.cpp \
 	./abf/axon/AxAbfFio32/msbincvt.cpp \
 	./abf/axon/Common/unix.cpp \
 	./abf/axon/AxAbfFio32/abferror.cpp \
-        ./abf/axon/AxAtfFio32/axatffio32.cpp \
-        ./abf/axon/AxAtfFio32/fileio2.cpp \
-        ./abf/axon2/ProtocolReaderABF2.cpp \
-        ./abf/axon2/SimpleStringCache.cpp \
+	./abf/axon/AxAtfFio32/axatffio32.cpp \
+	./abf/axon/AxAtfFio32/fileio2.cpp \
+	./abf/axon2/ProtocolReaderABF2.cpp \
+	./abf/axon2/SimpleStringCache.cpp \
 	./abf/axon2/abf2headr.cpp \
 	./atf/atflib.cpp \
 	./axg/axglib.cpp \
@@ -38,7 +38,7 @@ libstfio_la_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp ./stfio.cpp \
 	./axg/fileUtils.cpp \
 	./axg/stringUtils.cpp \
 	./axg/byteswap.cpp \
-        ./heka/hekalib.cpp \
+	./biosig/biosiglib.cpp \
 	./igor/igorlib.cpp \
 	./igor/CrossPlatformFileIO.c \
 	./igor/WriteWave.c \
@@ -46,16 +46,9 @@ libstfio_la_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp ./stfio.cpp \
 	./intan/intanlib.cpp \
 	./intan/streams.cpp
 
-if WITH_BIOSIG2
-libstfio_la_SOURCES += ./biosig/biosiglib.cpp
-else
-if WITH_BIOSIG
-libstfio_la_SOURCES += ./biosig/biosiglib.cpp
-else
-if WITH_BIOSIGLITE
-libstfio_la_SOURCES += ./biosig/biosiglib.cpp
-endif
-endif
+if !WITH_BIOSIG
+libstfio_la_SOURCES += \
+	./heka/hekalib.cpp
 endif
 
 libstfio_la_LDFLAGS =

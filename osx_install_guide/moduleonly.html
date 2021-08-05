@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Building the stfio Python Module Only &#8212; Stimfit 0.15.8 documentation</title>
+    <title>Building the stfio Python Module Only &#8212; Stimfit 0.16.0 documentation</title>
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
@@ -59,7 +59,7 @@
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Yueqi Wang</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">20 February, 2019</td>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">05 August, 2021</td>
 </tr>
 </tbody>
 </table>
@@ -120,11 +120,7 @@ $ brew install automake
 $ brew install libtool
 $ brew install fftw
 $ brew install homebrew/science/hdf5
-</pre></div>
-</div>
-<p>If you want support for extra biomedical file formats, install the <em>libbiosig</em> library:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ brew tap schloegl/biosig
-$ brew install libbiosig
+$ brew install biosig
 </pre></div>
 </div>
 <p>Now download the stimfit source code:</p>
@@ -138,10 +134,9 @@ $ ./autogen.sh
 $ mkdir build
 $ mkdir build/module
 $ cd build/module
-$ ../../configure --enable-module
+$ ../../configure --enable-module --with-biosig
 </pre></div>
 </div>
-<p>Add the argument <em>–with-biosiglite</em> to the configure script if you want extra biomedical fileformats for <em>stfio</em>, but did not install the full <em>libbiosig</em> library.</p>
 <p>If you want to install the stfio module for a non-default Python distribution, such as <strong>Anaconda Python</strong>, use the argument <em>–prefix=</em> to specify the installation path as where your favorite Python distribution is installed. The following example will install stfio for Anaconda Python 2.7:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ../../configure --enable-module --prefix=$HOME/anaconda/
 </pre></div>
@@ -246,7 +241,7 @@ $ make install
     
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Christoph Schmidt-Hieber.
-      Last updated on 14 May, 2019.
+      Last updated on 05 August, 2021.
     </div>
   </body>
 </html>

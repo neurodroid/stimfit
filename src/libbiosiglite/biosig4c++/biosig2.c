@@ -488,7 +488,8 @@ CHANNEL_TYPE* biosig_get_channel(HDRTYPE *hdr, int M) {
 	typeof(hdr->NS) k,m;
 	for (k=0,m=0; k<hdr->NS; k++)
 		if (hdr->CHANNEL[k].OnOff==1) {
-			if (M==k) return hdr->CHANNEL+k;
+			if (M==m) return hdr->CHANNEL+k;
+			m++;
 		}
 	return NULL;
 }

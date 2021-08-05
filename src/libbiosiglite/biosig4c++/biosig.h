@@ -31,6 +31,9 @@
 #define BIOSIG_FLAG_OVERFLOWDETECTION  0x0004
 #define BIOSIG_FLAG_ROW_BASED_CHANNELS 0x0008
 
+
+#pragma GCC visibility push(default)
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -513,6 +516,8 @@ int  biosig_channel_set_datatype(CHANNEL_TYPE *hc, uint16_t gdftyp);
 
 const char *biosig_channel_get_transducer(CHANNEL_TYPE *hc);
 int biosig_channel_set_transducer(CHANNEL_TYPE *hc, const char *transducer);
+
+#pragma GCC visibility pop
 
 
 /*

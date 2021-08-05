@@ -76,8 +76,8 @@ if 'linux' in sys.platform:
 
 
 if os.name == "nt":
-    biosig_define_macros = [('WITH_BIOSIG2', None)]
-    biosig_libraries = ['libbiosig2']
+    biosig_define_macros = [('WITH_BIOSIG', None)]
+    biosig_libraries = ['libbiosig']
     biosig_lite_sources = []
 else:
     biosig_define_macros = [('WITH_BIOSIG2', None), ('WITH_BIOSIGLITE', None), ('WITHOUT_NETWORK', None)]
@@ -223,7 +223,7 @@ stfio_module = Extension(
 
 
 setup(name='stfio',
-      version='0.15.8',
+      version='0.16.0',
       description='stfio module',
       include_dirs=system_info.default_include_dirs + [
           np.get_include()],
