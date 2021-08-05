@@ -1,0 +1,246 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Resistance Calculation &#8212; Stimfit 0.16.0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Running mean" href="runningmean.html" />
+    <link rel="prev" title="The Stimfit book of spells" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="runningmean.html" title="Running mean"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="The Stimfit book of spells"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://github.com/neurodroid/stimfit/wiki/Stimfit">Stimfit Homepage</a> | &nbsp; </li>
+    <li><a href="http://github.com/neurodroid/stimfit" }}>Developer (Github)</a> | &nbsp; </li>
+    <li><a href=../index.html>Documentation Home</a> | &nbsp; </li>
+
+    
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Stimfit book of spells</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="resistance-calculation">
+<h1>Resistance Calculation<a class="headerlink" href="#resistance-calculation" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Jose Guzman</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">05 August, 2021</td>
+</tr>
+</tbody>
+</table>
+<p>The resistance can be calculated using Ohm’s law. Currents passing through the pipette will be proportional to the applied voltage difference. This proportional factor is the resistance.</p>
+<div class="math">
+<p><img src="../_images/math/6c61c1b40143325469933aa97b7e1c70e686a48e.png" alt="{\displaystyle R=\frac{\Delta V}{I} }"/></p>
+</div><p>In voltage clamp, resistance can be calculated by recording the current once the voltage difference is known. This Python routine should calculate the current difference, and resistance will be calculated given the voltage amplitude.</p>
+<div class="section" id="the-resistance-function">
+<h2>The resistance function<a class="headerlink" href="#the-resistance-function" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can find different routines to calculate the resistance in the file <strong>charlie.py</strong>. This file can be found in the Stimfit program directory (C:\Program Files\Stimfit in Windows or /usr/lib/python2.5/site-packages/Stimfit in GNU/Linux, assuming python2.5 is your current python environment). The name <strong>charlie.py</strong> is in acknowledgment to Charlie, for her contribution to the development of the given routines.</p>
+</div>
+<p>Note that this function assumes that current is recorded in pA. It sets the stf cursors (peak and baseline) to calculate the current deviation in response to the voltage difference. Finally, the voltage <strong>amplitude</strong> should be entered in mV.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># stimfit python module:</span>
+<span class="kn">import</span> <span class="nn">stf</span>
+
+<span class="k">def</span> <span class="nf">resistance</span><span class="p">(</span> <span class="n">base_start</span><span class="p">,</span> <span class="n">base_end</span><span class="p">,</span> <span class="n">peak_start</span><span class="p">,</span> <span class="n">peak_end</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the resistance from a series of voltage clamp traces.</span>
+
+<span class="sd">    Keyword arguments:</span>
+<span class="sd">    base_start -- Starting index (zero-based) of the baseline cursors.</span>
+<span class="sd">    base_end   -- End index (zero-based) of the baseline cursors.</span>
+<span class="sd">    peak_start -- Starting index (zero-based) of the peak cursors.</span>
+<span class="sd">    peak_end   -- End index (zero-based) of the peak cursors.</span>
+<span class="sd">    amplitude  -- Amplitude of the voltage command.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    The resistance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">stf</span><span class="o">.</span><span class="n">check_doc</span><span class="p">():</span>
+        <span class="nb">print</span> <span class="s2">&quot;Couldn&#39;t find an open file; aborting now.&quot;</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="c1">#A temporary array to calculate the average:</span>
+    <span class="nb">set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span> <span class="p">(</span><span class="n">stf</span><span class="o">.</span><span class="n">get_size_channel</span><span class="p">(),</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_size_trace</span><span class="p">())</span> <span class="p">)</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span>  <span class="n">stf</span><span class="o">.</span><span class="n">get_size_channel</span><span class="p">()</span> <span class="p">):</span>
+        <span class="c1"># Add this trace to set:</span>
+        <span class="nb">set</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span> <span class="n">n</span> <span class="p">)</span>
+
+
+    <span class="c1"># calculate average and create a new section from it:</span>
+    <span class="n">stf</span><span class="o">.</span><span class="n">new_window</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="nb">set</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="p">)</span>
+
+    <span class="c1"># set peak cursors:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">stf</span><span class="o">.</span><span class="n">set_peak_mean</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span> <span class="k">return</span> <span class="mi">0</span> <span class="c1"># -1 means all points within peak window.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">stf</span><span class="o">.</span><span class="n">set_peak_start</span><span class="p">(</span><span class="n">peak_start</span><span class="p">):</span> <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">stf</span><span class="o">.</span><span class="n">set_peak_end</span><span class="p">(</span><span class="n">peak_end</span><span class="p">):</span> <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="c1"># set base cursors:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">stf</span><span class="o">.</span><span class="n">set_base_start</span><span class="p">(</span><span class="n">base_start</span><span class="p">):</span> <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">stf</span><span class="o">.</span><span class="n">set_base_end</span><span class="p">(</span><span class="n">base_end</span><span class="p">):</span> <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="c1"># measure everything:</span>
+    <span class="n">stf</span><span class="o">.</span><span class="n">measure</span><span class="p">()</span>
+
+    <span class="c1"># calculate r_seal and return:</span>
+    <span class="k">return</span> <span class="n">amplitude</span> <span class="o">/</span> <span class="p">(</span><span class="n">stf</span><span class="o">.</span><span class="n">get_peak</span><span class="p">()</span><span class="o">-</span><span class="n">stf</span><span class="o">.</span><span class="n">get_base</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="code-commented">
+<h2>Code commented<a class="headerlink" href="#code-commented" title="Permalink to this headline">¶</a></h2>
+<p>The stf functions <a class="reference internal" href="../stf_reference/stf.html#stf.set_base_start" title="stf.set_base_start"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.set_base_start()</span></code></a> and <a class="reference internal" href="../stf_reference/stf.html#stf.set_base_end" title="stf.set_base_end"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.set_base_end()</span></code></a> set the corresponding baseline cursors. The functions <a class="reference internal" href="../stf_reference/stf.html#stf.set_peak_start" title="stf.set_peak_start"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.set_peak_start()</span></code></a> and <a class="reference internal" href="../stf_reference/stf.html#stf.set_peak_end" title="stf.set_peak_end"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.set_peak_end()</span></code></a> set the corresponding peak cursors. These functions returns the Boolean <strong>True</strong> if the cursor was properly set in the desired position, and <strong>False</strong> if the cursors can not be set (for example, they are out of the limits of the trace). This was designed to provide a control of the cursor positioning.</p>
+<p>It is a good practice to test the correct position of the cursors with the conditional sentence <strong>if</strong>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="ow">not</span> <span class="n">stf</span><span class="o">.</span><span class="n">set_base_start</span><span class="p">(</span><span class="n">base_start</span><span class="p">):</span> <span class="k">return</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>if the stf function returns <strong>False</strong> the if condition will be <strong>True</strong> (not False means True).  Our defined function will be finished with return and give the value 0.</li>
+<li>In contrary, if the stf function returns <strong>True</strong> the if condition will be <strong>False</strong> (not True means False). In our function, the if condition will not be executed (does not read the return 0) and continue the operations.</li>
+</ul>
+<p>We can enter directly the x-value (e.g ms) as argument, in stead of using the zero-based index of the sampling points. By adding the argument <em>is_time==True</em> to the function we set the cursor in the give time position:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="ow">not</span> <span class="n">setf</span><span class="o">.</span><span class="n">set_base_start</span><span class="p">(</span><span class="n">base_start</span><span class="p">,</span><span class="kc">True</span><span class="p">)</span> <span class="p">:</span> <span class="k">return</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>Now base_starts should be given in units of x (i.e ms). This is more intiutive if you are using the stf interface.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference internal" href="../stf_reference/stf.html#stf.set_base_start" title="stf.set_base_start"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.set_base_start()</span></code></a>, <a class="reference internal" href="../stf_reference/stf.html#stf.set_base_end" title="stf.set_base_end"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.set_base_end()</span></code></a>, <a class="reference internal" href="../stf_reference/stf.html#stf.set_peak_start" title="stf.set_peak_start"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.set_peak_start()</span></code></a> and <a class="reference internal" href="../stf_reference/stf.html#stf.set_peak_end" title="stf.set_peak_end"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.set_peak_end()</span></code></a> do not upgrade the measurements. For that reason, we call <a class="reference internal" href="../stf_reference/stf.html#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.measure()</span></code></a> (this is analogous to hit <strong>Enter</strong> in the main window). Thereby the values of <a class="reference internal" href="../stf_reference/stf.html#stf.get_peak" title="stf.get_peak"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_peak()</span></code></a> and <a class="reference internal" href="../stf_reference/stf.html#stf.get_base" title="stf.get_base"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_base()</span></code></a> are updated.</p>
+</div>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>Now, you can use this function for different purposes. For example, you may want to test the value of the series resistance in response to a 5 mV hyperpolarizing pulse. First, let’s assume that your recording has the current peak between the 10700 and 10999 sampling points. You should set the baseline (for example between 0 and 999) and then peak between 10700 and 10999. After that, and given that 5 mV is the voltage difference, you type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">resistance</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">999</span><span class="p">,</span><span class="mi">10700</span><span class="p">,</span><span class="mi">1999</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that <strong>charlie.py</strong> has a routine called <strong>r_in(amplitude=-5)</strong> that does exactly this.</p>
+<p>In the same way, if you wanted to calculate the value of the seal resistance (assuming this is the smallest resistance in the circuit, so no current will flow through any other resistance), you could test it with a larger voltage pulse.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">resistance</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">199</span><span class="p">,</span><span class="mi">1050</span><span class="p">,</span><span class="mi">1199</span><span class="p">,</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Again, the file <strong>charlie.py</strong> has a routine called <strong>r_seal(50)</strong> to calculate the seal resistance. Just change the parameters (baseline and peaks) to adapt it for your recordings.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Resistance Calculation</a><ul>
+<li><a class="reference internal" href="#the-resistance-function">The resistance function</a></li>
+<li><a class="reference internal" href="#code-commented">Code commented</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">The Stimfit book of spells</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="runningmean.html"
+                        title="next chapter">Running mean</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Resistance Calculation</a><ul>
+<li><a class="reference internal" href="#the-resistance-function">The resistance function</a></li>
+<li><a class="reference internal" href="#code-commented">Code commented</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">The Stimfit book of spells</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="runningmean.html"
+                        title="next chapter">Running mean</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Christoph Schmidt-Hieber.
+      Last updated on 05 August, 2021.
+    </div>
+  </body>
+</html>

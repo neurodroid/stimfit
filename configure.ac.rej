@@ -1,0 +1,21 @@
+--- configure.ac
++++ configure.ac
+@@ -189,15 +192,11 @@ if test "$LAPACKLIB" = ""; then
+                 AC_CHECK_LIB([lapack-3], [dgemm_], HAVE_LAPACK_3="yes")
+                     if test "${HAVE_LAPACK_3}" != "yes" ; then
+                         AC_CHECK_LIB([blas], [dgemm_], HAVE_ATLAS="yes")
+-                        if test "${HAVE_ATLAS}" != "yes" ; then
+-                            AC_MSG_ERROR([Couldn't find lapack.])
+-                        else
+-                            LIBLAPACK_LDFLAGS="-llapack -lblas"
+-                            CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
+-                        fi
++                        LIBLAPACK_LDFLAGS="-llapack -lblas"
++                        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK "
+                     else
+                         LIBLAPACK_LDFLAGS="-llapack-3"
+-                        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK " 
++                        CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK "
+                     fi
+             else
+                 LIBLAPACK_LDFLAGS=-llapack3

@@ -1,0 +1,10 @@
+ dpkg-buildpackage -us -uc -ui
+dpkg-buildpackage: info: source package stimfit
+dpkg-buildpackage: info: source version 0.16.0-2
+dpkg-buildpackage: info: source distribution unstable
+dpkg-buildpackage: info: source changed by Alois Schlögl <alois.schloegl@gmail.com>
+ dpkg-source --before-build .
+dpkg-buildpackage: info: host architecture amd64
+dpkg-checkbuilddeps: error: Unmet build dependencies: python3-wxgtk4.0 (>= 4.0.7)
+dpkg-buildpackage: warning: build dependencies/conflicts unsatisfied; aborting
+dpkg-buildpackage: warning: (Use -d flag to override.)

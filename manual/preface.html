@@ -1,0 +1,180 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Preface &#8212; Stimfit 0.16.0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Getting started" href="getting_started.html" />
+    <link rel="prev" title="Stimfit manual" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting started"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Stimfit manual"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://github.com/neurodroid/stimfit/wiki/Stimfit">Stimfit Homepage</a> | &nbsp; </li>
+    <li><a href="http://github.com/neurodroid/stimfit" }}>Developer (Github)</a> | &nbsp; </li>
+    <li><a href=../index.html>Documentation Home</a> | &nbsp; </li>
+
+    
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Stimfit manual</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="preface">
+<h1>Preface<a class="headerlink" href="#preface" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Christoph Schmidt-Hieber (christsc at gmx.de)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">05 August, 2021</td>
+</tr>
+</tbody>
+</table>
+<p><a class="reference external" href="http://www.stimfit.org">Stimfit</a> was originally written by Peter Jonas, University of Freiburg,
+in the early 1990s. It was primarily designed to analyze the kinetics of
+evoked excitatory postsynaptic potentials (EPSCs; Jonas et al., 1993 <a class="footnote-reference" href="#jonas1993" id="id1">[1]</a>).
+The name <a class="reference external" href="http://www.stimfit.org">Stimfit</a> was chosen because the program allowed to <em>fit</em>
+exponential functions to the decay of EPSCs evoked by extracellular
+<em>stim</em>-ulation. The program was written in Borland Pascal, running under
+DOS and entirely controlled using keyboards shortcuts. The user
+interface was similar to a digital oscilloscope, with vertical cursors
+defining measurement windows for baseline calculation, peak detection
+and curve fitting. This allowed to analyze data with surprising
+efficiency once the keyboard shortcuts were mastered. However, the
+Borland Pascal compiler imposed some significant restrictions which
+became apparent with increasing data size and computing power: for
+instance, arrays were not allowed to be longer than <img class="math" src="../_images/math/f72ccdbe88e1e46c75cfd717a4aaa05f861c2482.png" alt="10^{4}"/>  elements, and
+faster processors had to be artificially slowed down to avoid runtime
+errors.</p>
+<blockquote>
+<div><div class="figure align-center" id="id4">
+<img alt="The actual platform-independent Stimfit" src="../_images/test.png" />
+<p class="caption"><span class="caption-text">Stimfit running on GNU/Linux</span></p>
+</div>
+<div class="figure align-center" id="id5">
+<img alt="The original Stimfit for DOS" src="../_images/stimfit_dos.png" />
+<p class="caption"><span class="caption-text">The original Stimfit for MS-DOS.</span></p>
+</div>
+</div></blockquote>
+<p>When I converted the original Pascal program to C/C++, I rewrote the
+code almost entirely from scratch. Only the algorithms to calculate
+latencies, rise times, half durations and slopes are direct translations
+of the original Pascal code. By contrast, I tried to preserve the user
+interface as far as possible. Therefore, the program only poorly adheres
+to common conventions for graphical user interfaces: for instance,
+clicking the right mouse button will usually set a cursor position
+rather than popping up a context menu.</p>
+<p>A number of people have contributed to the program: First, I would like
+to thank Peter Jonas for the original <a class="reference external" href="http://www.stimfit.org">Stimfit</a> code. Josef
+Bischofberger has added some functions to the DOS version which I have
+adopted. Bill Anderson has made helpful suggestions concerning the user
+interface and provided some very large files that have been recorded
+with his free program <a class="reference external" href="http://www.winltp.com">WinLTP</a>. A large amount of helpful comments and bug
+reports were filed by Emmanuel Eggermann and Daniel Boischer. The
+<a class="reference external" href="http://www.ics.forth.gr/~lourakis/levmar">Levenberg-Marquardt algorithm</a>  used for curve fitting was implemented
+by Manolis Lourakis.</p>
+<table class="docutils footnote" frame="void" id="jonas1993" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Jonas P, Major G, Sakman B. (1993) Quantal components of unitary EPSCs at the mossy fibre synapse on CA3 pyramidal cells of rat hippocampus. J Physiol. 472, 615-63.</td></tr>
+</tbody>
+</table>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Stimfit manual</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="getting_started.html"
+                        title="next chapter">Getting started</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Stimfit manual</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="getting_started.html"
+                        title="next chapter">Getting started</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Christoph Schmidt-Hieber.
+      Last updated on 05 August, 2021.
+    </div>
+  </body>
+</html>

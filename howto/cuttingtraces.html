@@ -1,0 +1,256 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Cutting traces &#8212; Stimfit 0.16.0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Event counting" href="apcounting.html" />
+    <link rel="prev" title="Calculations on selected traces" href="amplitudes.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="apcounting.html" title="Event counting"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="amplitudes.html" title="Calculations on selected traces"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://github.com/neurodroid/stimfit/wiki/Stimfit">Stimfit Homepage</a> | &nbsp; </li>
+    <li><a href="http://github.com/neurodroid/stimfit" }}>Developer (Github)</a> | &nbsp; </li>
+    <li><a href=../index.html>Documentation Home</a> | &nbsp; </li>
+
+    
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Stimfit book of spells</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cutting-traces">
+<h1>Cutting traces<a class="headerlink" href="#cutting-traces" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Jose Guzman</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">05 August, 2021</td>
+</tr>
+</tbody>
+</table>
+<p>As described in <a class="reference internal" href="../manual/python.html"><span class="doc">The Python shell</span></a> chapter of the <a class="reference internal" href="../manual/index.html"><span class="doc">Stimfit manual</span></a>, a very often requested feature of <a class="reference external" href="http://www.stimfit.org">Stimfit</a> is to cut an original trace to show it in a presentation or publication. This feature, however, has been only integrated into the stf module, and not in the <a class="reference external" href="http://www.stimfit.org">Stimfit</a> main menubar. With this, <a class="reference external" href="http://www.stimfit.org">Stimfit</a> preserves its user interface as clear and user-friendly as possible.</p>
+<p>We can use the built-in stf function <a class="reference internal" href="../stf_reference/stf.html#stf.new_window" title="stf.new_window"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.new_window()</span></code></a> to show a new stf window with the current trace within an interval. For example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span><span class="n">new_window</span><span class="p">(</span><span class="n">stf</span><span class="o">.</span><span class="n">get_trace</span><span class="p">()[</span><span class="mi">1600</span><span class="p">:</span><span class="mi">3200</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>presents a new window with the current trace between the sampling points 1600 and 3200. Remember that <a class="reference internal" href="../stf_reference/stf.html#stf.new_window" title="stf.new_window"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.new_window()</span></code></a> takes a 1D-NumPy array as argument. To cut the trace within the desired limits, we have to slice it before with</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span><span class="n">get_trace</span><span class="p">()[</span><span class="mi">1600</span><span class="p">:</span><span class="mi">3200</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Note that the index <img class="math" src="../_images/math/df0deb143e5ac127f00bd248ee8001ecae572adc.png" alt="i"/> of a sampling point and the corresponding time <img class="math" src="../_images/math/5ec053cf70dc1c98cc297322250569eda193e7a4.png" alt="t"/>, measured from the start of the trace, are related as follows:</p>
+<div class="math">
+<p><img src="../_images/math/d29aac7aba50bbb4ec564e347b9431596ae04f54.png" alt="{\displaystyle i=\frac{t}{\Delta t}}"/></p>
+</div><p>where the sampling interval <img class="math" src="../_images/math/ec002955bdf95ee9869878fbad4f80fc98539359.png" alt="\Delta t"/> can be obtained with the following function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_sampling_interval</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Then, if our sampling interval (dt) is 0.05 ms, the points selected correspond to 80 and 160 ms respectively. Alternatively, one could have thought about this command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span><span class="n">get_trace</span><span class="p">()[</span><span class="mi">80</span><span class="o">/</span><span class="n">dt</span><span class="p">:</span><span class="mi">160</span><span class="o">/</span><span class="n">dt</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>However this will not work.  Slicing requires integers as argument and not floats (both 80/dt and 160/dt are floats). So we have to transform this ratios to integers with int(80/dt) and int(160/dt). Besides that, the float precision of python will play against us here. If we make dt = stf.get_sampling_interval and get a value dt = 0.05000000074505806 (rather than 0.05) then the corresponding values for 80/dt will be 1599.99. The function int() will take only the value without decimal and will take erroneously 1599 in stead of 1600. We have to use the python function <strong>round(float,ndigits)</strong> to round up this value.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pstart</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span> <span class="nb">round</span><span class="p">(</span><span class="mi">80</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span> <span class="p">)</span> <span class="c1"># now round(80/dt) = 1600.0 instead of 1599.99</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pend</span> <span class="o">=</span>  <span class="nb">int</span><span class="p">(</span> <span class="nb">round</span><span class="p">(</span><span class="mi">160</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span> <span class="p">)</span> <span class="c1"># now round(160/dt) = 3200.0 instead of 3199.99</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span><span class="n">get_trace</span><span class="p">()[</span><span class="n">pstart</span><span class="p">:</span><span class="n">pend</span><span class="p">]</span> <span class="c1"># now the slicing withing the integer values</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can round up dt with <strong>round(dt,ndigits)</strong> or the ratio 80/dt with <strong>round(80/dt,ndigits)</strong> (with <em>ndigits=2</em> for example). In any case, do it always before int() takes the integer part of the real number.</p>
+</div>
+<div class="section" id="the-cutting-traces-function">
+<h2>The cutting traces  function<a class="headerlink" href="#the-cutting-traces-function" title="Permalink to this headline">¶</a></h2>
+<p>In the chapter devoted to Python (<a class="reference internal" href="../manual/python.html"><span class="doc">The Python shell</span></a>)  in  <a class="reference internal" href="../manual/index.html"><span class="doc">Stimfit manual</span></a> you can find a function to cut a given trace within the sampling points. This function is slightly different. As described above, we would take times and not sampling points as argument. After that, we will take list of traces and not a single trace to cut. This function will use <a class="reference internal" href="../stf_reference/stf.html#stf.new_window_list" title="stf.new_window_list"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.new_window_list()</span></code></a> which takes a list of 1D-Numpy arrays to present a new stf window.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># load main Stimfit module</span>
+<span class="kn">import</span> <span class="nn">stf</span>
+
+<span class="k">def</span> <span class="nf">cut_sweeps</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cuts a sequence of traces and present</span>
+<span class="sd">    them in a new window.</span>
+
+<span class="sd">    Arguments:</span>
+
+<span class="sd">    start       -- starting point (in ms) to cut.</span>
+<span class="sd">    delta       -- time interval (in ms) to cut</span>
+<span class="sd">    sequence    -- list of indices to be cut. If None, every trace in the</span>
+<span class="sd">                    channel will be cut.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    A new window with the traced cut.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    cut_sweeps(200,300) cut the traces between t=200 ms and t=500 ms within the whole channel.</span>
+<span class="sd">    cut_sweeps(200,300,range(30,60)) the same as above, but only between traces 30 and 60.</span>
+<span class="sd">    cut_sweeps(200,300,stf.get_selected_indices()) cut between 200 ms and 500 ms</span>
+<span class="sd">        only in the selected traces.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># select every trace in the channel if not selection is given in sequence</span>
+    <span class="k">if</span> <span class="n">sequence</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sequence</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">stf</span><span class="o">.</span><span class="n">get_size_channel</span><span class="p">())</span>
+
+    <span class="c1"># transform time into sampling points</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_sampling_interval</span><span class="p">()</span>
+
+    <span class="n">pstart</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span> <span class="nb">round</span><span class="p">(</span><span class="n">start</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">pdelta</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span> <span class="nb">round</span><span class="p">(</span><span class="n">delta</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span> <span class="p">)</span>
+
+    <span class="c1"># creates a destination python list</span>
+    <span class="n">dlist</span> <span class="o">=</span> <span class="p">[</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="n">pstart</span><span class="p">:(</span><span class="n">pstart</span><span class="o">+</span><span class="n">pdelta</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sequence</span> <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">stf</span><span class="o">.</span><span class="n">new_window_list</span><span class="p">(</span><span class="n">dlist</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="code-commented">
+<h2>Code commented<a class="headerlink" href="#code-commented" title="Permalink to this headline">¶</a></h2>
+<p>We provide some flexibility with the argument <em>sequence</em>. If we do not give any argument to <em>sequence</em>, we will select every trace in the channel with the function <a class="reference internal" href="../stf_reference/stf.html#stf.get_size_channel" title="stf.get_size_channel"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_size_channel()</span></code></a>, which returns the number of traces in the channel.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">sequence</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">sequence</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">stf</span><span class="o">.</span><span class="n">get_size_channel</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Finally we add to the list the 1D-NumPy arrays whose index is described in the sequence.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dlist</span> <span class="o">=</span> <span class="p">[</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace</span><span class="p">(</span><span class="n">i</span><span class="p">)[</span><span class="n">pstart</span><span class="p">:(</span><span class="n">pstart</span><span class="o">+</span><span class="n">pdelta</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">sequence</span> <span class="p">]</span>
+</pre></div>
+</div>
+<p>and slice the 1D-NumPy array as described above.</p>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>In any case, a new stf window with the traces cut will appear</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">cut_sweeps</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="mi">300</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>will create a new window with all the traces of the channel cut between t=200 ms and t=500 ms.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">cut_sweeps</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="mi">300</span><span class="p">,</span><span class="nb">range</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span><span class="mi">60</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>will create a new window with the same selection, but only between the traces 30 and 60.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spells</span><span class="o">.</span><span class="n">cut_sweeps</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="mi">300</span><span class="p">,</span><span class="n">stf</span><span class="o">.</span><span class="n">get_selected_indices</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>will create a new window with the cut traces only if they were previously selected.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Cutting traces</a><ul>
+<li><a class="reference internal" href="#the-cutting-traces-function">The cutting traces  function</a></li>
+<li><a class="reference internal" href="#code-commented">Code commented</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="amplitudes.html"
+                        title="previous chapter">Calculations on selected traces</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="apcounting.html"
+                        title="next chapter">Event counting</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Cutting traces</a><ul>
+<li><a class="reference internal" href="#the-cutting-traces-function">The cutting traces  function</a></li>
+<li><a class="reference internal" href="#code-commented">Code commented</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="amplitudes.html"
+                        title="previous chapter">Calculations on selected traces</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="apcounting.html"
+                        title="next chapter">Event counting</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Christoph Schmidt-Hieber.
+      Last updated on 05 August, 2021.
+    </div>
+  </body>
+</html>

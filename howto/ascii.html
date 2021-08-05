@@ -1,0 +1,236 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Loading custom text files &#8212; Stimfit 0.16.0 documentation</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="stf" href="../stf_reference/stf.html" />
+    <link rel="prev" title="Calculating latencies" href="latencies.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../stf_reference/stf.html" title="stf"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="latencies.html" title="Calculating latencies"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://github.com/neurodroid/stimfit/wiki/Stimfit">Stimfit Homepage</a> | &nbsp; </li>
+    <li><a href="http://github.com/neurodroid/stimfit" }}>Developer (Github)</a> | &nbsp; </li>
+    <li><a href=../index.html>Documentation Home</a> | &nbsp; </li>
+
+    
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">The Stimfit book of spells</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="loading-custom-text-files">
+<h1>Loading custom text files<a class="headerlink" href="#loading-custom-text-files" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Jose Guzman</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Updated:</th><td class="field-body">05 August, 2021</td>
+</tr>
+</tbody>
+</table>
+<p>Very often we want to analyze data in <a class="reference external" href="http://stimfit.org">Stimfit</a> that is generated from a simulation or stored in non-stardard formats, like for example fluorescence. While <a class="reference external" href="http://stimfit.org">Stimfit</a> supports a huge variety of file formats, data from more exotic sources can be copied to a text file loaded in with a very simple Python script.</p>
+<p>Examples of such cases are NEURON files, which are saved as text files as *.dat format. Alternatively, users configure custom files formats to, for example, analyze the timecourse of a fluorescent measurement with <a class="reference external" href="https://stimfit.org">Stimfit</a>.</p>
+<div class="section" id="reading-neuron-text-files">
+<h2>Reading NEURON text files<a class="headerlink" href="#reading-neuron-text-files" title="Permalink to this headline">¶</a></h2>
+<p>NEURON allows to save a simulation in a very simple text file format. The file consists of a header with two lines containing the event that was recorded and the number of samples. After that, it is followed by the recording time and the sampled data data in a two-column format. To load such a file, we would like to skip the first two rows, and to load the adquisition time.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">stf</span>
+
+<span class="k">def</span> <span class="nf">loadnrn</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads a NEURON datafile and opens a new Stimfit window</span>
+<span class="sd">    with a trace with the default units (e.g ms and mV)</span>
+
+<span class="sd">    file    -- (string) file to read</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">time</span><span class="p">,</span> <span class="n">trace</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">fname</span> <span class="o">=</span> <span class="n">file</span><span class="p">,</span> <span class="n">skiprows</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">unpack</span><span class="o">=</span> <span class="kc">True</span> <span class="p">)</span>
+
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">time</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># the second temporal sampling point is the sampling</span>
+    <span class="n">stf</span><span class="o">.</span><span class="n">new_window</span><span class="p">(</span> <span class="n">trace</span> <span class="p">)</span>
+    <span class="n">stf</span><span class="o">.</span><span class="n">set_sampling_interval</span><span class="p">(</span> <span class="n">dt</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>You can download an example of such a file <a class="reference external" href="http://stimfit.org/doc/EPSP.dat">here</a></p>
+<p>Note that the argument of the function <em>loadnrn</em> is a string containing the exact path and filename of the file that we want to load. For very lengthy paths, it can be convenient to write a small gadget that cares about the proper identification of the file. This is what we propose in the section below.</p>
+</div>
+<div class="section" id="custom-ascii-files-containing-fluorescence">
+<h2>Custom ascii files containing fluorescence<a class="headerlink" href="#custom-ascii-files-containing-fluorescence" title="Permalink to this headline">¶</a></h2>
+<p>When creating custom text files to be loaded later, it is generally convenient to take into account the folowing advices:</p>
+<ol class="arabic simple">
+<li>Use a custom extension ( generally dat, .text or similar denote files associated with specific applications).</li>
+<li>Add comments that contains the experimental conditions.</li>
+<li>Information about the author and date of file modification can be included in the header inside these comments.</li>
+</ol>
+<p>In the example below, a function will load a file with extension *.GoR that contains fluorescent measurements in time (acquired at 400 Hz). In addition, a small wx gadget will allow us to create a small window to select the file that we want to import.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">stf</span>
+
+<span class="k">def</span> <span class="nf">loadtxt</span><span class="p">(</span> <span class="n">freq</span><span class="o">=</span><span class="mi">400</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads and ASCII file with extension *.GoR.</span>
+<span class="sd">    This file contains ratiometric fluorescent measurementes</span>
+<span class="sd">    (i.e Green over Red fluorescence)</span>
+<span class="sd">    saved in one column. This function opens a new Stimfit window and</span>
+<span class="sd">    sets the x-units to ms and y-units &quot;Delta G over R&quot;.</span>
+<span class="sd">    Arguments:</span>
+
+<span class="sd">    freq -- (float) the sampling rate (in Hz) for the acquistion.</span>
+<span class="sd">            the default value is 400 Hz.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># wx Widgets to create a file selection window</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">FileSelector</span><span class="p">(</span><span class="s2">&quot;Import Ca transients&quot;</span> <span class="p">,</span>
+        <span class="n">default_extension</span> <span class="o">=</span> <span class="s2">&quot;Ratiometric&quot;</span> <span class="p">,</span>
+        <span class="n">default_path</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="p">,</span>
+        <span class="n">wildcard</span> <span class="o">=</span> <span class="s2">&quot;Ratiometric fluorescence (*.GoR)|*.GoR&quot;</span> <span class="p">,</span>
+        <span class="n">flags</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">OPEN</span> <span class="o">|</span> <span class="n">wx</span><span class="o">.</span><span class="n">FILE_MUST_EXIST</span><span class="p">)</span>
+
+    <span class="n">stf</span><span class="o">.</span><span class="n">new_window</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span> <span class="n">fname</span> <span class="p">)</span> <span class="p">)</span>
+    <span class="n">stf</span><span class="o">.</span><span class="n">set_xunits</span><span class="p">(</span><span class="s1">&#39;ms&#39;</span><span class="p">)</span>
+    <span class="n">stf</span><span class="o">.</span><span class="n">set_yunits</span><span class="p">(</span><span class="s1">&#39;Delta G/R&#39;</span><span class="p">)</span>
+
+    <span class="n">stf</span><span class="o">.</span><span class="n">set_sampling_interval</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">freq</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span> <span class="c1"># acquision in ms</span>
+</pre></div>
+</div>
+<p>You can download an example file containing fluorescence <a class="reference external" href="http://stimfit.org/tutorial/transient.GoR">here</a>.</p>
+</div>
+<div class="section" id="code-commented">
+<h2>Code commented<a class="headerlink" href="#code-commented" title="Permalink to this headline">¶</a></h2>
+<p>In both script cases, most of the work is done with <em>loadtxt</em> from the <em>NumPy</em> package. The first argument that we provide is a string with the name of the file to be loaded. Note that the argument options of <em>loadtxt</em> permits a lot of flexibility when loading ASCII files (for example, skiprows = 2 will skip the first two lines). Check the <a class="reference external" href="http://docs.scipy.org/doc/">NumPy documentation</a> of this function for further details.</p>
+<p>To make the experience more interactive, we can load the string of the file with a the GUI that is provided by the wxPython package. This is what we do when we called the wx.FileSelector object in the second example. wxPython is loaded at the beginnig of Stimfit as ‘wx’ and runs already under the Stimfit application. Remember to create a wxPython application if you want to use wx.FileSelector outside Stimfit.</p>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>To see how both function work import the spells module in the Python console of Stimfit and try the example files. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">spells</span>
+
+<span class="c1"># to load the file in a give location</span>
+<span class="n">spells</span><span class="o">.</span><span class="n">loadnrn</span><span class="p">(</span> <span class="s2">&quot;/home/myuser/myDownloads/EPSP.dat&quot;</span> <span class="p">)</span>
+
+<span class="c1"># to select a file containing fluorescence with a selection menue</span>
+<span class="n">spells</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Loading custom text files</a><ul>
+<li><a class="reference internal" href="#reading-neuron-text-files">Reading NEURON text files</a></li>
+<li><a class="reference internal" href="#custom-ascii-files-containing-fluorescence">Custom ascii files containing fluorescence</a></li>
+<li><a class="reference internal" href="#code-commented">Code commented</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="latencies.html"
+                        title="previous chapter">Calculating latencies</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../stf_reference/stf.html"
+                        title="next chapter"><code class="docutils literal notranslate"><span class="pre">stf</span></code></a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Loading custom text files</a><ul>
+<li><a class="reference internal" href="#reading-neuron-text-files">Reading NEURON text files</a></li>
+<li><a class="reference internal" href="#custom-ascii-files-containing-fluorescence">Custom ascii files containing fluorescence</a></li>
+<li><a class="reference internal" href="#code-commented">Code commented</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="latencies.html"
+                        title="previous chapter">Calculating latencies</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../stf_reference/stf.html"
+                        title="next chapter"><code class="docutils literal notranslate"><span class="pre">stf</span></code></a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Christoph Schmidt-Hieber.
+      Last updated on 05 August, 2021.
+    </div>
+  </body>
+</html>
