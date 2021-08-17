@@ -205,10 +205,14 @@ enum {
 #endif
 #ifdef WITH_PYTHON
 #if PY_MAJOR_VERSION >= 3
-#include <sip.h>
-#include <wxPython/wxpy_api.h>
+  #ifdef __APPPLE__
+    #include <wxPython/sip.h>
+  #else
+    #include <sip.h>
+  #endif
+  #include <wxPython/wxpy_api.h>
 #else
-#include <wx/wxPython/wxPython.h>
+  #include <wx/wxPython/wxPython.h>
 #endif
 #endif
 // revert to previous behaviour
@@ -364,7 +368,7 @@ public:
     /*! \return A vector containing pointers to all sections in which fits have been performed
      */
     std::vector<stf::SectionPointer> GetSectionsWithFits() const;
-    
+
     //! Writes an integer value to the configuration.
     /*! \param main The main path within the configuration.
      *  \param sub The sub-path within the configuration.
@@ -467,7 +471,7 @@ public:
     /*! \return A pointer to the document manager.
      */
     wxDocManager* GetDocManager() const { return wxDocManager::GetDocumentManager(); }
-    
+
     virtual void OnInitCmdLine(wxCmdLineParser& parser);
     virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
 
@@ -477,13 +481,13 @@ public:
      *  \return true upon successful opening, false otherwise.
      */
     bool OpenFilePy(const wxString& fNameArray);
-    
+
     //! Opens a dialog to import a Python module
     /*! \param event The associated menu event
      */
     void OnPythonImport( wxCommandEvent& event );
 #endif
-    
+
 protected:
 
 private:
@@ -492,7 +496,7 @@ private:
     void OnApplytoall( wxCommandEvent& event );
     void OnProcessCustom( wxCommandEvent& event );
     void OnKeyDown( wxKeyEvent& event );
-    
+
 #ifdef WITH_PYTHON
     void ImportPython(const wxString& modulelocation);
     void OnUserdef(wxCommandEvent& event);
@@ -502,7 +506,7 @@ private:
 #endif // WITH_PYTHON
 
     wxMenuBar* CreateUnifiedMenuBar(wxStfDoc* doc=NULL);
-    
+
 #ifdef _WINDOWS
 #pragma optimize( "", off )
 #endif

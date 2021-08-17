@@ -30,13 +30,17 @@
   #pragma GCC diagnostic ignored "-Wwrite-strings"
 #endif
 #if PY_MAJOR_VERSION >= 3
-#include <sip.h>
-#include <wxPython/wxpy_api.h>
-#define PyString_Check PyUnicode_Check
-#define PyString_AsString PyBytes_AsString
-#define PyString_FromString PyUnicode_FromString
+  #ifdef __APPPLE__
+    #include <wxPython/sip.h>
+  #else
+    #include <sip.h>
+  #endif
+  #include <wxPython/wxpy_api.h>
+  #define PyString_Check PyUnicode_Check
+  #define PyString_AsString PyBytes_AsString
+  #define PyString_FromString PyUnicode_FromString
 #else
-#include <wx/wxPython/wxPython.h>
+  #include <wx/wxPython/wxPython.h>
 #endif
 // revert to previous behaviour
 #if defined(__WXMAC__) || defined(__WXGTK__)
@@ -69,12 +73,12 @@ wxString GetExecutablePath() {
 
     HKEY keyHandle;
 
-    if( RegOpenKeyEx( HKEY_CURRENT_USER, wxT("Software\\Stimfit 0.14"), 0, 
+    if( RegOpenKeyEx( HKEY_CURRENT_USER, wxT("Software\\Stimfit 0.14"), 0,
                       KEY_QUERY_VALUE, &keyHandle) == ERROR_SUCCESS)
     {
         DWORD BufferSize = 8192;
         DWORD cbData = BufferSize;
-        		
+
         wxCharTypeBuffer<wxChar> data( BufferSize );
         DWORD dwRet = RegQueryValueEx( keyHandle, TEXT("InstallLocation"),
                                        NULL, NULL, (LPBYTE) data.data(), &cbData );
@@ -195,7 +199,7 @@ bool wxStfApp::Init_wxPython()
     cwd << wxT("print(numpy.version.version)\n");
 #endif // _STFDEBUG
 #endif // __WXMAC__
-    
+
 #ifdef __WXGTK__
     // Add the cwd to the present path:
     wxString app_path = wxFileName( GetExecutablePath() ).GetPath();
@@ -213,9 +217,9 @@ bool wxStfApp::Init_wxPython()
 #ifdef _WINDOWS
     // Add the cwd to the present path:
     wxString app_path = GetExecutablePath().BeforeFirst( wxUniChar('\0') );
-	cwd << wxT("cwd = \"") << app_path 
+	cwd << wxT("cwd = \"") << app_path
 		<< wxT("\\wx-3.0-msw\"\nimport sys\nsys.path.insert(0,cwd)\n");
-	cwd << wxT("cwd = \"") << app_path 
+	cwd << wxT("cwd = \"") << app_path
 		<< wxT("\\stf-site-packages\"\nsys.path.insert(0,cwd)\n");
 	cwd << wxT("cwd = \"") << app_path
 		<< wxT("\"\nsys.path.insert(0,cwd)\n");
@@ -232,7 +236,7 @@ bool wxStfApp::Init_wxPython()
     // Load the wxPython core API.  Imports the wx._core_ module and sets a
     // local pointer to a function table located there.  The pointer is used
     // internally by the rest of the API functions.
-    
+
 #if PY_MAJOR_VERSION < 3
     // Specify version of the wx module to be imported
     PyObject* wxversion = PyImport_ImportModule("wxversion");
@@ -268,7 +272,7 @@ bool wxStfApp::Init_wxPython()
         return false;
     }
 #endif // < python 3
-    
+
 #if 0 // wxversion.select doesn't return an error code, but raises an exception
     long iresult = PyInt_AsLong(result);
     Py_DECREF(result);
@@ -315,8 +319,8 @@ bool wxStfApp::Init_wxPython()
         Py_DECREF(result);
 #endif
         return false;
-    }        
-    
+    }
+
     // Save the current Python thread state and release the
     // Global Interpreter Lock.
     m_mainTState = wxPyBeginAllowThreads();
@@ -333,8 +337,8 @@ bool wxStfApp::Init_wxPython()
 }
 
 void wxStfApp::ImportPython(const wxString &modulelocation) {
-        
-    // Get path and filename from modulelocation 
+
+    // Get path and filename from modulelocation
     wxString python_path = wxFileName(modulelocation).GetPath();
     wxString python_file = wxFileName(modulelocation).GetName();
 
@@ -358,7 +362,7 @@ void wxStfApp::ImportPython(const wxString &modulelocation) {
     python_import << wxT("sys.path.remove(\"") << python_path << wxT("\")\n");
 
 #else
-    // Python code to import a module with PyCrust 
+    // Python code to import a module with PyCrust
     python_import << wxT("import sys\n");
     python_import << wxT("sys.path.append(\"") << python_path << wxT("\")\n");
 #if (PY_VERSION_HEX < 0x03000000)
@@ -410,7 +414,7 @@ void wxStfParentFrame::RedirectStdio()
 #else
     PyRun_SimpleString(python_redirect.char_str());
 #endif
-    
+
     wxPyEndBlockThreads(blocked);
 }
 
@@ -514,7 +518,7 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
 
     // Finally, after all Python stuff is done, release the GIL
     wxPyEndBlockThreads(blocked);
-    
+
     if (!full) {
         if (isfloat) {
             m_mgr.AddPane( window, wxAuiPaneInfo().Name(stf::std2wx(mgr_name)).
@@ -533,7 +537,7 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
                        BestSize(GetClientSize().GetWidth(),GetClientSize().GetHeight()).Fixed() );
     }
     m_mgr.Update();
-    
+
     return new_wxwindow(window, result);
 }
 
@@ -619,7 +623,7 @@ std::vector<stf::Extension> wxStfApp::LoadExtensions() {
             }
         }
     }
-    
+
     Py_DECREF(pExtList);
     Py_DECREF(pModule);
 
@@ -666,12 +670,12 @@ void wxStfApp::OnUserdef(wxCommandEvent& event) {
         wxString msg(FuncName << wxT(" returned False"));
         ErrorMsg( msg );
     }
-    
+
     Py_XDECREF(res);
 
     // Finally, after all Python stuff is done, release the GIL
     wxPyEndBlockThreads(blocked);
-    
+
 }
 
 bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
