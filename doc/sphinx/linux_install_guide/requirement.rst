@@ -66,11 +66,11 @@ Optional: PyEMF
 Download the Stimfit source code
 ================================
 
-You can download the latest development code for `Stimfit <http://www.stimfit.org>`_ from the `Github code repository <https://github.com/neurodroid/stimfit/>`_. For that, type from your current $HOME directory: 
+You can download the latest development code for `Stimfit <http://www.stimfit.org>`_ from the `Github code repository <https://github.com/neurodroid/stimfit/>`_. For that, type from your current $HOME directory:
 
 ::
 
-    $ git clone https://github.com/neurodroid/stimfit.git 
+    $ git clone https://github.com/neurodroid/stimfit.git
 
 This will grab all the required files into $HOME/stimfit. If you'd like to update at a later point, do:
 
@@ -93,8 +93,7 @@ Go to the stimfit directory (in our example $HOME/stimfit) and type:
 to generate the configure script. Remember that we need Autoconf, Automake and LibTool to use autogen. After that, you can call it with
 
 ::
-
-    $ ./configure
+    $ ./configure PYTHON_VERSION=3
 
 The **--enable-python** option is activated as a default.
 
@@ -137,7 +136,16 @@ Install libbiosig-dev through the package manager of your distribution:
 
     sudo apt-get install libbiosig-dev
 
-Alternatively, get the full version of biosig and its build requirements: you can obtain the latest BioSig version in `BioSig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig (2.0.3 or higher is recommended). Alternatively, you can obtain the latest developmental version from the git repository:
+Alternatively, get the full version of biosig and its build requirements: you can obtain the latest BioSig version in `BioSig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig (2.3.1 or higher is recommended because of improved support for ABF2, ATF, and AXG format).
+
+::
+
+	./configure
+	make
+	sudo make install
+
+
+Alternatively, you can obtain the latest developmental version from the git repository:
 
 ::
 
@@ -147,7 +155,7 @@ Alternatively, get the full version of biosig and its build requirements: you ca
     cd biosig-code
     autoconf # needed first time after getting repository
     ./configure
-    make 
+    make
     sudo make install
 
 After that you can enter the option --with-biosig in the configure script of `Stimfit <http://www.stimfit.org>`_ and compile as usual.
@@ -168,7 +176,7 @@ To build a local copy call:
 
     sphinx-build $HOME/Stimfit/doc/sphinx/ <destination> # destination folder could be $HOME/tmp/stf/doc/
 
-The html documentation will be located in <destination>/index.html 
+The html documentation will be located in <destination>/index.html
 
 Additionally, the source code is documented with [Doxygen]_ and is also accessible on-line in http://www.stimfit.org/doc/doxygen/html/. If you want to have a local copy of the documentation, you will need to install the doxygen and gravphvix:
 

@@ -42,7 +42,11 @@
 
 #ifdef WITH_PYTHON
     #if PY_MAJOR_VERSION >= 3
-        #include <sip.h>
+        #ifdef __APPPLE__
+            #include <wxPython/sip.h>
+        #else
+            #include <sip.h>
+        #endif
         #include <wxPython/wxpy_api.h>
         #define PyInt_FromLong PyLong_FromLong
         #define PyString_AsString PyBytes_AsString
@@ -124,7 +128,7 @@ wxStfDoc* actDoc() {
 
 wxStfGraph* actGraph() {
     if ( !check_doc() ) return NULL;
-    
+
     wxStfView* pView=(wxStfView*)actDoc()->GetFirstView();
     if ( !pView )
         return NULL;
@@ -189,7 +193,7 @@ std::string get_filename( ) {
     return std::string(actDoc()->GetFilename());
 #else
     return std::string(actDoc()->GetFilename().mb_str());
-#endif    
+#endif
 }
 
 
@@ -222,7 +226,7 @@ PyObject* get_trace(int trace, int channel) {
     std::copy( (*actDoc())[channel][trace].get().begin(),
                (*actDoc())[channel][trace].get().end(),
                gDataP);
-    
+
     return np_array;
 }
 #endif
@@ -268,7 +272,7 @@ bool _new_window_gMatrix( ) {
         }
         new_rec.InsertChannel( ch, n_c );
     }
-    gNames.resize(0);    
+    gNames.resize(0);
     double xscale = 1.0;
     if (open_doc) {
         xscale =  actDoc()->GetXScale();
@@ -323,7 +327,7 @@ bool new_window_selected_this( ) {
 
 bool new_window_selected_all( ) {
     if ( !check_doc() ) return false;
-    
+
     try {
         wxCommandEvent wce;
         wxGetApp().OnNewfromselected( wce );
@@ -344,7 +348,7 @@ int get_size_trace( int trace, int channel ) {
     if ( channel == -1 ) {
         channel = actDoc()->GetCurChIndex();
     }
-    
+
     int size = 0;
     try {
         size = actDoc()->at(channel).at(trace).size();
@@ -362,7 +366,7 @@ int get_size_channel( int channel ) {
     if ( channel == -1 ) {
         channel = actDoc()->GetCurChIndex();
     }
-    
+
     int size = 0;
     try {
         size = actDoc()->at(channel).size();
@@ -447,7 +451,7 @@ bool select_trace( int trace ) {
     bool already=false;
     for (c_st_it cit = actDoc()->GetSelectedSections().begin();
          cit != actDoc()->GetSelectedSections().end() && !already;
-         ++cit) { 
+         ++cit) {
         if ((int)*cit == trace) {
             already = true;
         }
@@ -472,14 +476,14 @@ bool select_trace( int trace ) {
 
 void select_all( ) {
     if ( !check_doc() ) return;
-    
+
     wxCommandEvent wce;
     actDoc()->Selectall( wce );
 }
 
 void unselect_all( ) {
     if ( !check_doc() ) return;
-    
+
     wxCommandEvent wce;
     actDoc()->Deleteselected( wce );
 }
@@ -487,19 +491,19 @@ void unselect_all( ) {
 #ifdef WITH_PYTHON
 PyObject* get_selected_indices() {
     if ( !check_doc() ) return NULL;
-    
+
     PyObject* retObj = PyTuple_New( (int)actDoc()->GetSelectedSections().size() );
     c_st_it cit;
     int n=0;
     for ( cit = actDoc()->GetSelectedSections().begin(); cit != actDoc()->GetSelectedSections().end(); ++cit ) {
         PyTuple_SetItem(retObj, n++, PyInt_FromLong( (long)*cit ) );
     }
-    
+
     // The main program apparently takes the ownership of the tuple;
     // no reference count decrement should be performed here.
     return retObj;
 }
-#endif 
+#endif
 
 bool set_trace( int trace ) {
     if ( !check_doc() ) return false; // use only with open document
@@ -522,39 +526,39 @@ bool set_trace( int trace ) {
 int get_trace_index() {
     if ( !check_doc() )
         return -1;
-    
+
     return actDoc()->GetCurSecIndex();
 }
 
 int get_channel_index( bool active ) {
     if ( !check_doc() )
         return -1;
-    
+
     if ( active )
         return actDoc()->GetCurChIndex();
     else
-        return actDoc()->GetSecChIndex();        
+        return actDoc()->GetSecChIndex();
 }
 
 bool set_channel(int channel) {
     if ( !check_doc() ) return false; // use only with open document
 
-    // channel negative  
+    // channel negative
     if (channel<0) {
         ShowError( wxT("Negative value is not allowed") );
         return false;
     }
-    
+
     // only if we want to change the active channel
     if ((unsigned int)channel == actDoc()->GetCurChIndex() ) {
         return true;
     }
 
-    int reference_ch = actDoc()->GetCurChIndex();  
-        
+    int reference_ch = actDoc()->GetCurChIndex();
+
     // catch exceptions (i.e out of range)
     try {
-        actDoc()->SetCurChIndex(channel); 
+        actDoc()->SetCurChIndex(channel);
     }
     catch (const std::out_of_range& e) {
         ShowError( wxT("Value exceeds the number of available channels") );
@@ -567,9 +571,9 @@ bool set_channel(int channel) {
         ShowError( wxT("Pointer to frame is zero") );
         return false;
     }
-    // set the channel selection combo 
-    //pFrame->SetChannels( actDoc()->GetCurChIndex(), actDoc()->GetSecChIndex()); 
-    pFrame->SetChannels( actDoc()->GetCurChIndex(), reference_ch); 
+    // set the channel selection combo
+    //pFrame->SetChannels( actDoc()->GetCurChIndex(), actDoc()->GetSecChIndex());
+    pFrame->SetChannels( actDoc()->GetCurChIndex(), reference_ch);
     pFrame->UpdateChannels(); // update according to the combo
     return refresh_graph();
 }
@@ -632,7 +636,7 @@ const char* get_trace_name( int trace, int channel ) {
 
 bool subtract_base( ) {
     if ( !check_doc() ) return false;
-    
+
     return actDoc()->SubtractBase();
 }
 
@@ -689,7 +693,7 @@ double maxrise_index( bool active ) {
 
 double maxdecay_index( ) {
     if ( !check_doc() ) return -1.0;
-    
+
     return actDoc()->GetMaxDecayT();
 }
 
@@ -742,7 +746,7 @@ double get_halfwidth( bool active ) {
         ShowError( wxT("At this time, halfwidth is only implemented for the active channel") );
         return -1.0;
     }
-    
+
 }
 
 double rtlow_index( bool active ) {
@@ -785,7 +789,7 @@ double get_threshold_value( ) {
 
 double get_latency( ) {
     if ( !check_doc() ) return -1.0;
-        
+
         double dt = actDoc()->GetXScale();
         return ( actDoc()->GetLatency() )*dt;
 
@@ -796,14 +800,14 @@ double get_risetime( ) {
 
     double dt = actDoc()->GetXScale();
     return ( actDoc()->GetTHiReal()-actDoc()->GetTLoReal() )*dt;
-    
+
 }
 
 double get_risetime_factor() {
 
     if ( !check_doc() ) return -1.0;
     return actDoc()->GetRTFactor()/100.;
-    
+
 }
 
 double get_fit_start( bool is_time ) {
@@ -817,7 +821,7 @@ double get_fit_start( bool is_time ) {
 bool set_risetime_factor(double factor) {
 
     if ( !check_doc() ) return false;
-    
+
     if (factor > 0.45 || factor < 0.05) {
         ShowError( wxT("Value out of range (0.05-0.45) in set_risetime_factor()") );
         return false;
@@ -829,15 +833,15 @@ bool set_risetime_factor(double factor) {
     update_results_table();
     write_stf_registry(wxT("RTFactor"), RTFactor);
     return true;
- 
-        
+
+
 }
 bool set_fit_start( double pos, bool is_time ) {
     if ( !check_doc() ) return false;
 
     if ( is_time )
         pos /= actDoc()->GetXScale();
-    
+
     int posInt = stf::round( pos );
     // range check:
     if ( posInt < 0 || posInt >= (int)actDoc()->cursec().size() ) {
@@ -850,7 +854,7 @@ bool set_fit_start( double pos, bool is_time ) {
                 wxT("Fit will start at the peak. Change cursor settings (Edit->Cursor settings) to set manually.") );
         return false;
     }
-    
+
     actDoc()->SetFitBeg( posInt );
 
     return update_cursor_dialog();
@@ -870,7 +874,7 @@ bool set_fit_end( double pos, bool is_time ) {
 
     if ( is_time )
         pos /= actDoc()->GetXScale();
-    
+
     int posInt = stf::round( pos );
 
     // range check:
@@ -884,7 +888,7 @@ bool set_fit_end( double pos, bool is_time ) {
                 wxT("Fit will start at the peak. Change cursor settings (Edit->Cursor settings) to set manually.") );
         return false;
     }
-    
+
     actDoc()->SetFitEnd( posInt );
 
     return update_cursor_dialog();
@@ -904,7 +908,7 @@ bool set_peak_start( double pos, bool is_time ) {
 
     if ( is_time )
         pos /= actDoc()->GetXScale();
-    
+
     int posInt = stf::round( pos );
 
     // range check:
@@ -912,7 +916,7 @@ bool set_peak_start( double pos, bool is_time ) {
         ShowError( wxT("Value out of range in set_peak_start()") );
         return false;
     }
-    
+
     actDoc()->SetPeakBeg( posInt );
 
     return update_cursor_dialog();
@@ -932,7 +936,7 @@ bool set_peak_end( double pos, bool is_time ) {
 
     if ( is_time )
         pos /= actDoc()->GetXScale();
-    
+
     int posInt = stf::round( pos );
 
     // range check:
@@ -940,7 +944,7 @@ bool set_peak_end( double pos, bool is_time ) {
         ShowError( wxT("Value out of range in set_peak_end()") );
         return false;
     }
-    
+
     actDoc()->SetPeakEnd( posInt );
 
     return update_cursor_dialog();
@@ -954,7 +958,7 @@ bool set_peak_mean( int pts ) {
         ShowError( wxT("Value out of range in set_peak_mean()") );
         return false;
     }
-    
+
     actDoc()->SetPM( pts );
 
     return update_cursor_dialog();
@@ -968,7 +972,7 @@ int get_peak_mean() {
 
 const char* get_peak_direction( ) {
     if ( !check_doc() ) return "";
-    
+
     const char *direction = "both";
     if ( actDoc()->GetDirection() == stfnum::up )
         direction = "up";
@@ -976,7 +980,7 @@ const char* get_peak_direction( ) {
         direction = "down";
     else if ( actDoc()->GetDirection() == stfnum::both )
         direction = "both";
-    
+
     return direction;
 }
 
@@ -1013,7 +1017,7 @@ const char* get_baseline_method() {
         method = "mean";
     else if ( actDoc()->GetBaselineMethod() == stfnum::median_iqr )
         method = "median";
-    
+
     return method;
 }
 
@@ -1047,7 +1051,7 @@ bool set_baseline_method( const char* method ) {
 
 const char* get_latency_start_mode( ) {
     if ( !check_doc() ) return "";
-    
+
     const char *mode = "undefined";
     if ( actDoc()->GetLatencyStartMode() == stf::manualMode )
         mode = "manual";
@@ -1057,13 +1061,13 @@ const char* get_latency_start_mode( ) {
         mode = "rise";
     else if ( actDoc()->GetLatencyStartMode() == stf::halfMode )
         mode = "half";
-    
+
     return mode;
 }
 
 bool set_latency_start(double pos, bool is_time) {
     if ( !check_doc() ) return false;
-    
+
     if (is_time) pos /= actDoc()->GetXScale();
 
     int posInt = stf::round( pos );
@@ -1073,7 +1077,7 @@ bool set_latency_start(double pos, bool is_time) {
         ShowError( wxT("Value out of range in set_latency_start()") );
         return false;
     }
-    
+
     actDoc()->SetLatencyStartMode( stf::manualMode );
     actDoc()->SetLatencyBeg( posInt );
 
@@ -1087,7 +1091,7 @@ bool set_latency_start(double pos, bool is_time) {
         return true;
         }
     return false;
-    
+
 }
 
 bool set_latency_start_mode( const char* mode ) {
@@ -1146,7 +1150,7 @@ bool set_latency_start_mode( const char* mode ) {
 
 const char* get_latency_end_mode( ) {
     if ( !check_doc() ) return "";
-    
+
     const char *mode = "undefined";
     if ( actDoc()->GetLatencyEndMode() == stf::manualMode )
         mode = "manual";
@@ -1158,13 +1162,13 @@ const char* get_latency_end_mode( ) {
         mode = "half";
     else if ( actDoc()->GetLatencyEndMode() == stf::footMode )
         mode = "foot";
-    
+
     return mode;
 }
 
 bool set_latency_end(double pos, bool is_time) {
     if ( !check_doc() ) return false;
-    
+
     if (is_time) pos /= actDoc()->GetXScale();
 
     int posInt = stf::round( pos );
@@ -1174,7 +1178,7 @@ bool set_latency_end(double pos, bool is_time) {
         ShowError( wxT("Value out of range in set_latency_start()") );
         return false;
     }
-    
+
     actDoc()->SetLatencyEndMode( stf::manualMode );
     actDoc()->SetLatencyEnd( posInt );
 
@@ -1188,7 +1192,7 @@ bool set_latency_end(double pos, bool is_time) {
         return true;
         }
     return false;
-    
+
 }
 bool set_latency_end_mode( const char* mode ) {
     if ( !check_doc() ) return false;
@@ -1294,7 +1298,7 @@ bool set_base_start( double pos, bool is_time ) {
 
     if ( is_time )
         pos /= actDoc()->GetXScale();
-    
+
     int posInt = stf::round( pos );
 
     // range check:
@@ -1302,7 +1306,7 @@ bool set_base_start( double pos, bool is_time ) {
         ShowError( wxT("Value out of range in set_base_start()") );
         return false;
     }
-    
+
     actDoc()->SetBaseBeg( posInt );
 
     return update_cursor_dialog();
@@ -1322,7 +1326,7 @@ bool set_base_end( double pos, bool is_time ) {
 
     if ( is_time )
         pos /= actDoc()->GetXScale();
-    
+
     int posInt = stf::round( pos );
 
     // range check:
@@ -1330,7 +1334,7 @@ bool set_base_end( double pos, bool is_time ) {
         ShowError( wxT("Value out of range in set_base_end()") );
         return false;
     }
-    
+
     actDoc()->SetBaseEnd( posInt );
 
     return update_cursor_dialog();
@@ -1426,7 +1430,7 @@ bool measure( ) {
         ShowError( wxT("Peak window cursors are reversed; will abort now.") );
         return false;
     }
-    
+
     if ( actDoc()->GetBaseBeg() > actDoc()->GetBaseEnd() ) {
         ShowError( wxT("Base window cursors are reversed; will abort now.") );
         return false;
@@ -1436,20 +1440,20 @@ bool measure( ) {
         ShowError( wxT("Fit window cursors are reversed; will abort now.") );
         return false;
     }
-    
+
     wxStfChildFrame* pFrame = (wxStfChildFrame*)actDoc()->GetDocumentWindow();
     if ( !pFrame ) {
         ShowError( wxT("Pointer to frame is zero") );
         return false;
     }
-    
+
     wxGetApp().OnPeakcalcexecMsg();
     pFrame->UpdateResults();
     return true;
 }
 
 double get_base( bool active ) {
-    
+
     if ( !check_doc() ) return -1.0;
 
     if ( active ) {
@@ -1467,18 +1471,18 @@ double get_base( bool active ) {
 #ifdef WITH_PSLOPE
 double get_pslope() {
 
-    if (!check_doc() ) return 0.0; 
+    if (!check_doc() ) return 0.0;
 
     return actDoc()->GetPSlope();
 }
 #endif
 
 double get_peak( ) {
-    
+
     if ( !check_doc() ) return 0.0;
 
     return actDoc()->GetPeak();
-    
+
 }
 
 void _gMatrix_resize( std::size_t channels, std::size_t sections ) {
@@ -1524,7 +1528,7 @@ void _gNames_at( const char* name, int channel ) {
 void align_selected(  double (*alignment)( bool ), bool active ) {
     if ( !check_doc() ) return;
     wxStfDoc* pDoc = actDoc();
-    
+
     //store current section:
     std::size_t section_old = pDoc->GetCurSecIndex();
 
@@ -1554,7 +1558,7 @@ void align_selected(  double (*alignment)( bool ), bool active ) {
     std::vector<int> shift( pDoc->GetSelectedSections().size(), 0 );
     int_it it = shift.begin();
     //loop through all selected sections:
-    for (c_st_it cit = pDoc->GetSelectedSections().begin(); 
+    for (c_st_it cit = pDoc->GetSelectedSections().begin();
          cit != pDoc->GetSelectedSections().end() && it != shift.end();
          cit++)
     {
@@ -1586,14 +1590,14 @@ void align_selected(  double (*alignment)( bool ), bool active ) {
         }
         it++;
     }
-    // now that max and min indices are known, calculate the number of 
+    // now that max and min indices are known, calculate the number of
     // points that need to be shifted:
     for (int_it it2 = shift.begin(); it2 != shift.end(); it2++) {
         (*it2) -= (int)min_index;
     }
     //restore section and channel settings:
     pDoc->SetSection( section_old );
-    
+
     int new_size=(int)(pDoc->get()[0][pDoc->GetSelectedSections()[0]].size()-(max_index-min_index));
 
     Recording Aligned( pDoc->size(), pDoc->GetSelectedSections().size(), new_size );
@@ -1609,12 +1613,12 @@ void align_selected(  double (*alignment)( bool ), bool active ) {
         ch.SetYUnits(  pDoc->at(n_ch).GetYUnits() );
         std::size_t n_sec = 0;
         int_it it3 = shift.begin();
-        for ( c_st_it sel_it = pDoc->GetSelectedSections().begin(); 
+        for ( c_st_it sel_it = pDoc->GetSelectedSections().begin();
               sel_it != pDoc->GetSelectedSections().end() && it3 != shift.end();
               ++sel_it )
         {
             Vector_double va( new_size );
-            std::copy( &(chan_it->at( *sel_it ).get_w()[ 0 + (*it3) ]), 
+            std::copy( &(chan_it->at( *sel_it ).get_w()[ 0 + (*it3) ]),
                        &(chan_it->at( *sel_it ).get_w()[ (*it3) + new_size ]),
                        &va[0] );
             Section sec(va);
@@ -1623,7 +1627,7 @@ void align_selected(  double (*alignment)( bool ), bool active ) {
         }
         Aligned.InsertChannel( ch, n_ch++ );
     }
-    
+
     wxString title( pDoc->GetTitle() );
     title += wxT(", aligned");
     Aligned.CopyAttributes( *pDoc );
@@ -1653,7 +1657,7 @@ PyObject* leastsq( int fselect, bool refresh ) {
     if ( !check_doc() ) return NULL;
 
     wxStfDoc* pDoc = actDoc();
-    
+
     wxCommandEvent wce;
 
     int n_params = 0;
@@ -1670,8 +1674,8 @@ PyObject* leastsq( int fselect, bool refresh ) {
     std::vector< double > x( pDoc->GetFitEnd() - pDoc->GetFitBeg() );
     //fill array:
     std::copy(&pDoc->cursec()[pDoc->GetFitBeg()], &pDoc->cursec()[pDoc->GetFitEnd()], &x[0]);
-    
-    std::vector< double > params( n_params );            
+
+    std::vector< double > params( n_params );
 
     // initialize parameters from init function,
     wxGetApp().GetFuncLib().at(fselect).init( x, pDoc->GetBase(), pDoc->GetPeak(),
@@ -1698,7 +1702,7 @@ PyObject* leastsq( int fselect, bool refresh ) {
                            wxGetApp().GetFuncLibPtr(fselect),
                            chisqr, pDoc->GetFitBeg(), pDoc->GetFitEnd() );
     }
-    
+
     catch (const std::out_of_range& e) {
         ShowExcept( e );
         return NULL;
@@ -1715,15 +1719,15 @@ PyObject* leastsq( int fselect, bool refresh ) {
     if ( refresh ) {
         if ( !refresh_graph() ) return NULL;
     }
-    
+
     // Dictionaries apparently grow as needed; no initial size is required.
     PyObject* retDict = PyDict_New( );
     for ( std::size_t n_dict = 0; n_dict < params.size(); ++n_dict ) {
-         PyDict_SetItemString( retDict, wxGetApp().GetFuncLib()[fselect].pInfo.at(n_dict).desc.c_str(), 
+         PyDict_SetItemString( retDict, wxGetApp().GetFuncLib()[fselect].pInfo.at(n_dict).desc.c_str(),
                 PyFloat_FromDouble( params[n_dict] ) );
     }
     PyDict_SetItemString( retDict, "SSE", PyFloat_FromDouble( chisqr ) );
-    
+
     return retDict;
 }
 
@@ -1757,7 +1761,7 @@ PyObject* get_fit( int trace, int channel ) {
         xy_fit[x] = (x+sec_attr.storeFitBeg) * actDoc()->GetXScale();
         xy_fit[x+size] = sec_attr.fitFunc->func(x*actDoc()->GetXScale(), sec_attr.bestFitP);
     }
-    
+
     npy_intp dims[2] = {2, size};
     PyObject* np_array = PyArray_SimpleNew(2, dims, NPY_DOUBLE);
     double* gDataP = (double*)array_data(np_array);
@@ -1802,12 +1806,12 @@ bool show_table( PyObject* dict, const char* caption ) {
 
 bool show_table_dictlist( PyObject* dict, const char* caption, bool reverse ) {
     if ( !check_doc() ) return false;
-    
+
     if ( !reverse ) {
         ShowError( wxT("Row-major order (reverse = False) has not been implemented yet.") );
         return false;
     }
-    
+
     // Check whether the dictionary is intact:
     if ( !PyDict_Check( dict ) ) {
         ShowError( wxT("First argument to ShowTable() is not a dictionary.") );
@@ -1833,7 +1837,7 @@ bool show_table_dictlist( PyObject* dict, const char* caption, bool reverse ) {
             if ( !plistvalue ) {
                 ShowError( wxT("Can't read list elements in show_table().") );
                 return false;
-            }            
+            }
             values[n_list] = PyFloat_AsDouble( plistvalue );
         }
         pyVector.push_back( values );
@@ -1967,7 +1971,7 @@ PyObject* mpl_panel(const std::vector<double>& figsize) {
     if (figsize.size() < 2) {
         ShowError( wxT("figsize has to have length 2") );
     }
-    
+
     wxStfParentFrame* parent = GetMainFrame();
     if ( !parent ) {
         ShowError( wxT("Parent window is NULL") );
