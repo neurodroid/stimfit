@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GNU/Linux Build Guide &#8212; Stimfit 0.16.0 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Building the Python module only" href="moduleonly.html" />
+    <link rel="prev" title="Bibliography" href="../manual/bibliography.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="moduleonly.html" title="Building the Python module only"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../manual/bibliography.html" title="Bibliography"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://github.com/neurodroid/stimfit/wiki/Stimfit">Stimfit Homepage</a> | &nbsp; </li>
+    <li><a href="http://github.com/neurodroid/stimfit" }}>Developer (Github)</a> | &nbsp; </li>
+    <li><a href=../index.html>Documentation Home</a> | &nbsp; </li>
+
+    
+
+        <li class="nav-item nav-item-this"><a href="">GNU/Linux Build Guide</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="gnu-linux-build-guide">
+<h1>GNU/Linux Build Guide<a class="headerlink" href="#gnu-linux-build-guide" title="Permalink to this headline">¶</a></h1>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Jose Guzman</p>
+</dd>
+<dt class="field-even">Release</dt>
+<dd class="field-even"><p>0.16.0</p>
+</dd>
+<dt class="field-odd">Date</dt>
+<dd class="field-odd"><p>19 August, 2021</p>
+</dd>
+</dl>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="moduleonly.html">Building the Python module only</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="moduleonly.html#building-stfio-for-non-default-python-distributions">Building stfio for non-default Python distributions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="requirement.html">Building Stimfit</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="requirement.html#what-we-need-before-we-start">What we need before we start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="requirement.html#optional-pyemf">Optional: PyEMF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="requirement.html#download-the-stimfit-source-code">Download the Stimfit source code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="requirement.html#build-stimfit">Build Stimfit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="requirement.html#building-stimfit-with-biosig-import-filter">Building Stimfit with BioSig import filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="requirement.html#building-documentation">Building documentation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../manual/bibliography.html"
+                        title="previous chapter">Bibliography</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="moduleonly.html"
+                        title="next chapter">Building the Python module only</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../manual/bibliography.html"
+                        title="previous chapter">Bibliography</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="moduleonly.html"
+                        title="next chapter">Building the Python module only</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Christoph Schmidt-Hieber.
+      Last updated on 19 August, 2021.
+    </div>
+  </body>
+</html>
