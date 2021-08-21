@@ -2,10 +2,10 @@
 Building Stimfit
 ****************
 
-:Author: Jose Guzman, Christoph Schmidt-Hieber
+:Author: Alois Schlögl, Jose Guzman, Christoph Schmidt-Hieber
 :Date:    |today|
 
-This document describes how to install `Stimfit <http://www.stimfit.org>`_ |version| under GNU/Linux. The installation was tested on a GNU/Debian testing/unstable with support for Python 2.*. It should work on other Debian-based systems (e.g. Ubuntu) as with newer version of Stimfit as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) and that both versions match. For this installation, we tested 4.2.4 versions.
+This document describes how to install `Stimfit <http://www.stimfit.org>`_ |version| under GNU/Linux. The installation was tested on Debian 10 (Buster) and 11 (Bullseye) with support for Python 3.*. It should work on other Debian-based systems (e.g. Ubuntu) as with newer version of Stimfit as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) and that both versions match.
 
 ============================
 What we need before we start
@@ -16,12 +16,12 @@ For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build depend
 ::
 
     $ sudo apt-get install libboost-dev \
-                           python-dev \
-                           python-numpy \
-                           python-matplotlib \
+                           python3-dev \
+                           python3-numpy \
+                           python3-matplotlib \
                            libhdf5-serial-dev \
                            swig \
-                           python-wxgtk3.0-dev \
+                           python3-wxgtk4.0 \
                            libwxgtk3.0-dev \
                            wx-common \
                            fftw3-dev \
@@ -37,13 +37,13 @@ For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build depend
 
 This will get you, amongst others:
 
-* [wxWidgets]_: C++ graphical user interface toolkit (version >= 2.8; tested with 2.8.12 and 3.0.4)
+* [wxWidgets]_: C++ graphical user interface toolkit (version >= 2.8; tested with 3.0.5)
 * [wxPython]_: GUI toolkit for the Python language.
-* [boost]_: C++ library that is mainly used for its shared pointers. (only needed when -std=c++17 is not supported)
+* [boost]_: C++ library that is mainly used for its shared pointers (only needed when -std=c++17 is not supported)
 * [Biosig]_: A library for reading a large number biomedical signal data formats.
 * [Lapack]_: A linear algebra library.
 * [fftw]_:  Library for computing Fourier transformations.
-* [NumPy]_: To handle numerical computations with Python (use version >=1.7.1).
+* [NumPy]_: To handle numerical computations with Python (tested with version >=1.19).
 * [HDF5]_: Hierarchical Data Format 5 (HDF5) to manage large amount of data.
 * [Matplotlib]_: Plotting library for Python (use version >= 1.5.1)
 
@@ -113,12 +113,12 @@ where [N] is the number of parallel builds you want to start. And finally:
 
 .. note::
 
-    If you want to install Stimfit as local user (e.g in ~/.local) with a local version of Python (e.g ~/.local/lib/python2.6) you have to add the following argument to configure
+    If you want to install Stimfit as local user (e.g in ~/.local) with a local version of Python (e.g ~/.local/lib/python3.9) you have to add the following argument to configure
     script:
 
 ::
 
-    $ PYTHON=$HOME/.local/lib/python2.6 ./configure --prefix=$HOME/.local
+    $ PYTHON=$HOME/.local/lib/python3.9 ./configure --prefix=$HOME/.local
 
 and after that call **make** and **make install** as normal user. The Stimfit executable will be now in $HOME/.local
 
