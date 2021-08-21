@@ -1,0 +1,567 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Python shell &#8212; Stimfit 0.16.0 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Latency measurements" href="latency_measurements.html" />
+    <link rel="prev" title="Getting started" href="getting_started.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="latency_measurements.html" title="Latency measurements"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting started"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://github.com/neurodroid/stimfit/wiki/Stimfit">Stimfit Homepage</a> | &nbsp; </li>
+    <li><a href="http://github.com/neurodroid/stimfit" }}>Developer (Github)</a> | &nbsp; </li>
+    <li><a href=../index.html>Documentation Home</a> | &nbsp; </li>
+
+    
+
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Stimfit manual</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">The Python shell</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="the-python-shell">
+<h1>The Python shell<a class="headerlink" href="#the-python-shell" title="Permalink to this headline">¶</a></h1>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Christoph Schmidt-Hieber (christsc at gmx.de)</p>
+</dd>
+<dt class="field-even">Date</dt>
+<dd class="field-even"><p>19 August, 2021</p>
+</dd>
+</dl>
+<div class="section" id="why-use-python">
+<h2>Why use Python?<a class="headerlink" href="#why-use-python" title="Permalink to this headline">¶</a></h2>
+<p>Why would you want to use Python (or more specifically <a class="reference internal" href="#scipy" id="id1"><span>[SciPy]</span></a> ) to analyse neuroscientific data? Here are a couple of reasons:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://www.python.org/about/success/">Widely used</a>, <a class="reference external" href="http://www.python.org/about/">general-purpose</a> programming language</p></li>
+<li><p><a class="reference external" href="http://www.frontiersin.org/neuroinformatics/specialtopics/8/">Predicted to become the major programming language in neurosciences</a></p></li>
+<li><p><a class="reference external" href="http://www.frontiersin.org/neuroinformatics/paper/10.3389/neuro.11/001.2009/">About to replace hoc as the standard NEURON interpreter</a>, allowing to analyse the output from NEURON simulations in a single, integrated development environment</p></li>
+<li><p><a class="reference external" href="http://www.sciencedirect.com/science?_ob=ArticleURL&amp;_udi=B6T08-4SRCJN1-1&amp;_user=125795&amp;_rdoc=1&amp;_fmt=&amp;_orig=search&amp;_sort=d&amp;view=c&amp;_acct=C000010182&amp;_version=1&amp;_urlVersion=0&amp;_userid=125795&amp;md5=3e6b8a3ab362b67480225d83cc17a9ef">Favoured by the German Neuroinformatics Node as the standard neural data analysis language</a></p></li>
+<li><p>has a reputation of having a <a class="reference external" href="http://www.larssono.com/musings/matmatpy/index.html">cleaner syntax</a> than most other scientific programming languages</p></li>
+<li><p><a class="reference external" href="http://www.python.org/psf/license/">Free software</a></p></li>
+</ul>
+</div>
+<div class="section" id="before-you-start">
+<h2>Before you start<a class="headerlink" href="#before-you-start" title="Permalink to this headline">¶</a></h2>
+<p>If you are new to <code class="docutils literal notranslate"><span class="pre">Python</span></code>, I suggest that you first have a look at the
+<a class="reference internal" href="#python-tutorial" id="id2"><span>[Python-tutorial]</span></a>. If that is not enough, abundant documentation is freely
+available on the <a class="reference internal" href="#python-website" id="id3"><span>[Python-website]</span></a>. If you are new to <a class="reference external" href="http://www.stimfit.org">Stimfit</a>, I recommend going through the tutorial in chapter 1 of this manual first.</p>
+</div>
+<div class="section" id="id4">
+<h2>The Python shell<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<p>When you start up <a class="reference external" href="http://www.stimfit.org">Stimfit</a>,  you will find an embedded Python shell in
+the lower part of the program window. From this shell, you have full
+access to the Python interpreter. For instance, you could type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>which will pop up a window showing all the available functions from the
+Stimfit module (abbreviated stf). For example, you could now check
+whether a file is open by selecting the <a class="reference internal" href="../stf_reference/stf.html#stf.check_doc" title="stf.check_doc"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.check_doc()</span></code></a> function from that
+list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span><span class="n">check_doc</span><span class="p">()</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>The function documentation will pop up when you type in the opening
+bracket. The function returns the boolean False because you have not
+opened any file yet. Since the stf module is imported in the namespace,
+you can omit the initial <code class="docutils literal notranslate"><span class="pre">`stf.`</span></code> when calling functions. Thus, you
+could get just the same result by typing</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">check_doc</span><span class="p">()</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>If you press <code class="docutils literal notranslate"><span class="pre">`Ctrl+UP-arrow`</span></code> at the same time, you can go through
+all the commands that you have previously typed in. This can be very
+useful when you want to call a function several times in a row.</p>
+</div>
+<div class="section" id="accessing-data-from-the-python-shell">
+<h2>Accessing data from the Python shell<a class="headerlink" href="#accessing-data-from-the-python-shell" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><strong>get_trace(trace=-1, channel=-1)</strong></p></li>
+</ul>
+<p>The <a class="reference internal" href="../stf_reference/stf.html#stf.get_trace" title="stf.get_trace"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_trace()</span></code></a> function returns the currently displayed trace as
+one-dimension <a class="reference internal" href="../linux_install_guide/requirement.html#numpy" id="id6"><span>[NumPy]</span></a> array when called without arguments:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">get_trace</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can now access individual sampling points using squared brackets to
+specify the index. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">a</span><span class="p">[</span><span class="mi">123</span><span class="p">]</span>
+<span class="go">-26.3671875</span>
+</pre></div>
+</div>
+<p>prints out the y-value of the sampling point with index 123. Note that
+indices in <code class="docutils literal notranslate"><span class="pre">Python</span></code> are <em>zero-based</em>, i.e. the first sampling point
+has the index 0.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">-21.2249755859</span>
+</pre></div>
+</div>
+<p>Python will check for indices that are out of range. For example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">a</span><span class="p">[</span><span class="mf">1e9</span><span class="p">]</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;input&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+<span class="gr">IndexError</span>: <span class="n">index out of bounds</span>
+</pre></div>
+</div>
+<p>You can use the <a class="reference internal" href="../stf_reference/stf.html#stf.get_trace" title="stf.get_trace"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_trace()</span></code></a> function to return any
+trace within a file. The default values of trace = -1 and channel = -1
+will return the currently displayed trace of the active channel. By
+passing a value of 1 as the first argument, you could access the second
+trace within your file (assuming it contains more than one trace
+of course). Remember that indices are zero-based!</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">get_trace</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">b</span><span class="p">[</span><span class="mi">234</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">-</span><span class="mf">23.7731933594</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-numpy-with-stimfit">
+<h2>Using NumPy with Stimfit<a class="headerlink" href="#using-numpy-with-stimfit" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../linux_install_guide/requirement.html#numpy" id="id7"><span>[NumPy]</span></a> allows you to efficiently perform array computations from the <code class="docutils literal notranslate"><span class="pre">Python</span></code> shell. For example, you can multiply an array with a scalar:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">get_trace</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">a</span><span class="p">[</span><span class="mi">234</span><span class="p">]</span>
+<span class="go">-27.0385742188</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">b</span><span class="p">[</span><span class="mi">234</span><span class="p">]</span>
+<span class="go">-54.0771484375</span>
+</pre></div>
+</div>
+<p>Or multiply two arrays:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">get_trace</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">get_trace</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">b</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">a</span><span class="p">[</span><span class="mi">234</span><span class="p">],</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span><span class="n">b</span><span class="p">[</span><span class="mi">234</span><span class="p">],</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="n">c</span><span class="p">[</span><span class="mi">234</span><span class="p">]</span>
+<span class="go">-27.0385742188 * -23.7731933594 = 642.793253064</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>new_window()</strong></p></li>
+</ul>
+<p>You can now display the results of the operation in a new window by passing a 1D-NumPy array to the <a class="reference internal" href="../stf_reference/stf.html#stf.new_window" title="stf.new_window"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.new_window()</span></code></a> function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_window</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The sampling rate and units will be copied from the window of origin. A short way of doing all of the above within a single line would have been:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_window</span><span class="p">(</span><span class="n">get_trace</span><span class="p">()</span> <span class="o">*</span> <span class="n">get_trace</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>new_window_matrix()</strong></p></li>
+</ul>
+<p>You can pass a 2D-NumPy array to <a class="reference internal" href="../stf_reference/stf.html#stf.new_window_matrix" title="stf.new_window_matrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.new_window_matrix()</span></code></a>. The first dimension will be translated into individual traces, the second dimension into sampling points. This example will put the current trace and its square root into subsequent traces of a new window:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">numpy_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">get_size_trace</span><span class="p">())</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_trace</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy_matrix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">get_trace</span><span class="p">())</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_window_matrix</span><span class="p">(</span><span class="n">numpy_matrix</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this example, np is the <a class="reference internal" href="../linux_install_guide/requirement.html#numpy" id="id8"><span>[NumPy]</span></a> namespace. Typing np. at the command prompt will show you all available <a class="reference internal" href="../linux_install_guide/requirement.html#numpy" id="id9"><span>[NumPy]</span></a> functions. <a class="reference internal" href="../stf_reference/stf.html#stf.get_size_trace" title="stf.get_size_trace"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_size_trace()</span></code></a> will be explained later on.</p>
+<ul class="simple">
+<li><p><strong>new_window_list()</strong></p></li>
+</ul>
+<p>Although using a 2D_NumPy array is very efficient, there are a few drawbacks: the size of the array has to be known at construction time, and all traces have to be of equal lengths. Both problems can be avoided using <a class="reference internal" href="../stf_reference/stf.html#stf.new_window_list" title="stf.new_window_list"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.new_window_list()</span></code></a>, albeit at the price of a significant performance loss. <a class="reference internal" href="../stf_reference/stf.html#stf.new_window_list" title="stf.new_window_list"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.new_window_list()</span></code></a> takes a Python list of 1D-NumPy arrays as an argument:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">python_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_trace</span><span class="p">,]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">python_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span> <span class="p">(</span><span class="n">get_trace</span><span class="p">(),</span> <span class="n">get_trace</span><span class="p">())</span> <span class="p">)</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_window_list</span><span class="p">(</span><span class="n">python_list</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that items in Python list are written between <em>squared</em> brakes, and that a comma is required at the end of single-item lists.</p>
+<p>The <a class="reference internal" href="#scipy" id="id10"><span>[SciPy]</span></a> library, which is build on top of <a class="reference internal" href="../linux_install_guide/requirement.html#numpy" id="id11"><span>[NumPy]</span></a>, provides a huge amount of numerical tools, such as special functions, integration, ordinary differential equation solvers, gradient optimization, genetic algorithms or parallel programming tools. Due to its size, it is not packaged with <a class="reference external" href="http://www.stimfit.org">Stimfit</a> by default, but I highly recommend installing it for more advanced numerical analysis.</p>
+</div>
+<div class="section" id="control-stimfit-from-the-python-shell">
+<h2>Control Stimfit from the Python shell<a class="headerlink" href="#control-stimfit-from-the-python-shell" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cursors">
+<h3>Cursors<a class="headerlink" href="#cursors" title="Permalink to this headline">¶</a></h3>
+<p>Cursors can be positioned from the Python shell using one of the <code class="docutils literal notranslate"><span class="pre">set_[xy]_start</span></code> or <code class="docutils literal notranslate"><span class="pre">set_[xy]_end</span></code> functions, where <code class="docutils literal notranslate"><span class="pre">[xy]</span></code> stands for one of peak, base or fit, depending on which cursor you want to set. Correspondingly, the <code class="docutils literal notranslate"><span class="pre">get_[xy]_start</span></code> or <code class="docutils literal notranslate"><span class="pre">get_[xy]_end</span></code> functions can be used to retrieve the current cursor positions.</p>
+<ul class="simple">
+<li><p><strong>set_[xy]_start(pos, is_time = False)</strong> and <strong>set_[xy]_end(pos, is_time = False)</strong> take one or two arguments. <code class="docutils literal notranslate"><span class="pre">pos</span></code> specifies the new cursor position. <code class="docutils literal notranslate"><span class="pre">is_time</span></code> indicates whether <code class="docutils literal notranslate"><span class="pre">pos</span></code> is an index, i.e. in units of sampling points (False, default), or in units of time (True), with the trace starting at t=0 ms. If there was an error, such as an out-of-bounds-index, these functions will return False.</p></li>
+<li><p><strong>get_[xy]_start(pos, is_time = False)</strong> and <strong>get_[xy]_end(pos, is_time = False)</strong> optionally take a single argument that indicates whether the return value should be in units of sampling points (<code class="docutils literal notranslate"><span class="pre">is_time</span> <span class="pre">=</span> <span class="pre">False</span></code>,default) or in units of time (<code class="docutils literal notranslate"><span class="pre">is_time</span> <span class="pre">=</span> <span class="pre">True</span></code>). Again, traces start at t=0 ms. These functions will return -1 if no file is opened at the time of the function call. Indices can be converted into time values by multiplying with <a class="reference internal" href="../stf_reference/stf.html#stf.get_sampling_interval" title="stf.get_sampling_interval"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_sampling_interval()</span></code></a>. For example:</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s2">&quot;Peak start cursor index:&quot;</span><span class="p">,</span> <span class="n">get_peak_start</span><span class="p">()</span>
+<span class="go">Peak start cursor index: 254</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s2">&quot;corresponds to t =&quot;</span><span class="p">,</span> <span class="n">get_peak_start</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span> <span class="s2">&quot;ms&quot;</span>
+<span class="go">corresponds to t = 2.54 ms</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="n">get_peak_start</span><span class="p">()</span><span class="o">*</span><span class="n">get_sampling_interval</span><span class="p">(),</span> <span class="s2">&quot;ms&quot;</span>
+<span class="go">= 2.54 ms</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">set_peak_start</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s2">&quot;new cursor position:&quot;</span><span class="p">,</span> <span class="n">get_peak_start</span><span class="p">()</span>
+<span class="go">new cursor position: 1000.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s2">&quot;at t =&quot;</span><span class="p">,</span> <span class="n">get_peak_start</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span> <span class="s2">&quot;ms&quot;</span>
+<span class="go">at t = 10 ms</span>
+</pre></div>
+</div>
+<p>The peak, baseline and latency values will not be updated until you either select a new trace, press <strong>Enter</strong> in the main window or call <a class="reference internal" href="../stf_reference/stf.html#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.measure()</span></code></a> from the Python shell.</p>
+</div>
+<div class="section" id="trace-selection-and-navigation">
+<h3>Trace selection and navigation<a class="headerlink" href="#trace-selection-and-navigation" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><strong>select_trace(trace = -1)</strong></p></li>
+</ul>
+<p>You can select any trace within a file by passing its zero-based index to <a class="reference internal" href="../stf_reference/stf.html#stf.select_trace" title="stf.select_trace"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.select_trace()</span></code></a>. The function will return <code class="docutils literal notranslate"><span class="pre">False</span></code> if there was an error. The default value of -1 will select the currently displayed trace as if you had pressed <strong>S</strong>. If you wanted to select every fifth trace, starting with an index of 0 and ending with an index of 9 (corresponding to numbers 1 to 10 in the drop-down box), you could do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span> <span class="n">select_trace</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">True</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>Note that the Python range function omits the end point.</p>
+<ul class="simple">
+<li><p><strong>unselect_all() select_all() get_selected_traces() new_window_selected_this()</strong></p></li>
+</ul>
+<p>The list of selected traces can be cleared using <a class="reference internal" href="../stf_reference/stf.html#stf.unselect_all" title="stf.unselect_all"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.unselect_all()</span></code></a>, and conversely, all traces can be selected using <a class="reference internal" href="../stf_reference/stf.html#stf.select_all" title="stf.select_all"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.select_all()</span></code></a>. <a class="reference internal" href="../stf_reference/stf.html#stf.get_selected_indices" title="stf.get_selected_indices"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_selected_indices()</span></code></a> returns the indices of all selected traces as a Python tuple. Finally, the selected traces within a file can be shown in a new window using <a class="reference internal" href="../stf_reference/stf.html#stf.new_window_selected_this" title="stf.new_window_selected_this"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.new_window_selected_this()</span></code></a>.</p>
+<ul class="simple">
+<li><p><strong>get_size_trace(trace=-1, channel=-1)</strong> and <strong>get_size_channel(channel=-1)</strong></p></li>
+</ul>
+<p>Return the number of sampling points in a trace the number of traces in a channel, respectively. <code class="docutils literal notranslate"><span class="pre">trace</span></code> and <code class="docutils literal notranslate"><span class="pre">channel</span></code> have the same meaning as in <a class="reference internal" href="../stf_reference/stf.html#stf.get_trace" title="stf.get_trace"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_trace()</span></code></a>. These functions can be used to iterate over an entire file or to check ranges;</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">unselect_all</span><span class="p">(</span><span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">get_size_channel</span><span class="p">(),</span> <span class="mi">5</span><span class="p">):</span> <span class="n">select_trace</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">get_selected_indices</span><span class="p">()</span>
+<span class="go">(0, 5)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">get_selected_indices</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="nb">print</span> <span class="s2">&quot;Length of trace&quot;</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">get_size_trace</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">Length of trace 0 : 13050</span>
+<span class="go">Length of trace 1 : 13050</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>set_trace(trace)</strong></p></li>
+</ul>
+<p>sets the currently displayed trace to the specified zero-based index and returns <code class="docutils literal notranslate"><span class="pre">False</span></code> if there was an error. This will update the peak, base and latency values, so there is need to call <a class="reference internal" href="../stf_reference/stf.html#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.measure()</span></code></a> directly after this function.</p>
+<ul class="simple">
+<li><p><strong>get_trace_index()</strong></p></li>
+</ul>
+<p>Correspondingly, <a class="reference internal" href="../stf_reference/stf.html#stf.get_trace_index" title="stf.get_trace_index"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_trace_index()</span></code></a> allows you to retrieve the zero-based index of the currently displayed trace. There is a slight inconsistency in function naming here: do not confound this function with <a class="reference internal" href="../stf_reference/stf.html#stf.get_trace" title="stf.get_trace"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_trace()</span></code></a>.</p>
+</div>
+<div class="section" id="file-i-o">
+<h3>File I/O<a class="headerlink" href="#file-i-o" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><strong>file_open(filename)</strong> and <strong>file_save(filename)</strong></p></li>
+</ul>
+<p>will open or save a file specified by <code class="docutils literal notranslate"><span class="pre">filename</span></code>. On windows, use double backslashes (\\) between directories to avoid conversion to special characters, such as \t or \n; for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_save</span><span class="p">(</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">datafile.dat&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>in Windows or</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_save</span><span class="p">(</span><span class="s2">&quot;/home/cs/data/datafile.dat&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>in GNU/Linux.</p>
+<ul class="simple">
+<li><p><strong>close_this()</strong></p></li>
+</ul>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.close_this" title="stf.close_this"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.close_this()</span></code></a> will close the currently displayed file, whereas</p>
+<ul class="simple">
+<li><p><strong>close_all()</strong></p></li>
+</ul>
+<p><a class="reference internal" href="../stf_reference/stf.html#stf.close_all" title="stf.close_all"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.close_all()</span></code></a> closes all open files.</p>
+</div>
+<div class="section" id="define-your-own-functions">
+<h3>Define your own functions<a class="headerlink" href="#define-your-own-functions" title="Permalink to this headline">¶</a></h3>
+<p>By defining your own functions, you can apply identical complex analysis to different traces and files. The following steps are required to make use of your own Python files:</p>
+<ol class="arabic simple">
+<li><p>Create a Python file in a directory that the Python interpreter will find. If you do not know where that is , use the Stimfit program directory (typically, this will be C:\Program Files\Stimfit in Windows or /usr/lib/phython2.5/site-packages/Stimfit in GNU/Linux, assuming that python 2.5 is your current python environment). You will find some example files in that directory that you can use as a template, but you should not touch stf.py which is the core Stimfit module.</p></li>
+<li><p>Import the Stimfit module in your file:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">stf</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Start <a class="reference external" href="http://www.stimfit.org">Stimfit</a> and import your file in the embedded Python shell. Assuming that your file is called <code class="docutils literal notranslate"><span class="pre">myFile.py</span></code>, you would do:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">myFile</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>If you have applied changes to your file, there is no need to restart Stimfit. Just do:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">reload</span><span class="p">(</span><span class="n">myFile</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To give you an example, this program shows a function that returns the sum of the squared amplitude values across all selected traces of a file.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># import the Stimfit core module:</span>
+<span class="kn">import</span> <span class="nn">stf</span>
+
+<span class="k">def</span> <span class="nf">get_amp</span><span class="p">():</span>
+   <span class="sd">&quot;&quot;&quot; Returns the amplitude (peak-base)&quot;&quot;&quot;</span>
+   <span class="k">return</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_peak</span><span class="p">()</span><span class="o">-</span><span class="n">stf</span><span class="o">.</span><span class="n">get_base</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">sqr_amp</span><span class="p">():</span>
+   <span class="sd">&quot;&quot;&quot; Returns the sum of squared amplitudes of all</span>
+<span class="sd">   selected traces, or -1 if there was an error. Uses</span>
+<span class="sd">   the current settings for the peak direction and</span>
+<span class="sd">   cursor positions.&quot;&quot;&quot;</span>
+
+   <span class="c1"># store the current trace index:</span>
+   <span class="n">old_index</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace_index</span><span class="p">()</span>
+
+   <span class="n">sum_sqr</span> <span class="o">=</span> <span class="mi">0</span>
+   <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_selected_indices</span><span class="p">():</span>
+       <span class="c1"># setting a trace will update all measurements</span>
+       <span class="c1"># so there is no need to call measure()</span>
+       <span class="k">if</span> <span class="ow">not</span> <span class="n">stf</span><span class="o">.</span><span class="n">set_trace</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+           <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+       <span class="n">sum_sqr</span> <span class="o">+=</span> <span class="n">get_amp</span><span class="p">()</span><span class="o">**</span><span class="mi">2</span>
+
+   <span class="c1"># restore the displayed trace:</span>
+   <span class="n">stf</span><span class="o">.</span><span class="n">set_trace</span><span class="p">(</span><span class="n">old_index</span><span class="p">)</span>
+
+   <span class="k">return</span> <span class="n">sum_sqr</span>
+</pre></div>
+</div>
+<p>To import and use this file, you would do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">myFile</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">myFile</span><span class="o">.</span><span class="n">sqr_amp</span><span class="p">()</span>
+<span class="go">497.70163353882447</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can import a file from any directory by selecting <strong>File-&gt;Import Python module</strong> or simpy by pressing <code class="docutils literal notranslate"><span class="pre">Ctrl+I</span></code>. The file will be automatically loaded in the embedded Python shell and ready to be used (it is not necessary to type import(myFile). To reload the file, you have to select <strong>File-&gt;Import Python module</strong> or <code class="docutils literal notranslate"><span class="pre">Ctrl+I</span></code> again.</p>
+</div>
+</div>
+<div class="section" id="add-a-python-function-to-the-stimfit-menu">
+<h3>Add a Python function to the Stimfit menu<a class="headerlink" href="#add-a-python-function-to-the-stimfit-menu" title="Permalink to this headline">¶</a></h3>
+<p>It is possible to create a submenu with your own Python functions in the <code class="docutils literal notranslate"><span class="pre">Extensions</span></code> menu of <a class="reference external" href="http://www.stimfit.org">Stimfit</a>. To include your own function as a submenu you have to edit the file <code class="docutils literal notranslate"><span class="pre">extensions.py</span></code>. This file is located in the Stimfit program folder. <code class="docutils literal notranslate"><span class="pre">extensions.py</span></code> contains a list called <strong>extensionsList</strong> that contains a list of submenus. For example, in the following example, only one submenu can be found, called <em>myAPCounter</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">extensionList</span> <span class="o">=</span> <span class="p">[</span><span class="n">myAPCounter</span><span class="p">,]</span>
+</pre></div>
+</div>
+<p>To create a submenu we have first to define it as Extension. In <code class="docutils literal notranslate"><span class="pre">extensions.py</span></code> we should add:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">myAPCounter</span> <span class="o">=</span> <span class="n">Extension</span><span class="p">(</span><span class="s2">&quot;Count APs&quot;</span><span class="p">,</span> <span class="n">spells</span><span class="o">.</span><span class="n">count_aps</span><span class="p">,</span> <span class="s2">&quot;Counts APs in selected traces&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>this command creates the extension called myAPCounter, which has the name “Counts APs” and executes the function spells.count_aps. If we add the extension <em>myAPCounter</em> to the extensionList, we will see now that a submenu appear within the Extension menu.</p>
+<p>In general, an extension requires four arguments:</p>
+<ol class="arabic simple">
+<li><p><strong>Function name</strong>: this is the name that will appear in the submenu (in our example this is “Counts APs”).</p></li>
+<li><p><strong>Python function</strong>: the custom Python function to be executed when clicking on the submenu. We used here spells.counts_aps</p></li>
+<li><p><strong>Description</strong>: a more elaborate description of what the function is doing. We wrote “Counts APs in selected traces”.</p></li>
+<li><p><strong>Does your function require a file?</strong>: If your function needs a file to be open type ‘True’, otherwise ‘False’. Because our Python function operate on files, we typed ‘True’.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Use a boolean return type when using your own Python functions in the extensions Menu. If you write a function that returns False upon failure, Stimfit will show a warning indicating that your custom function did not work propertly.</p>
+</div>
+</div>
+</div>
+<div class="section" id="some-recipes-for-commonly-requested-features">
+<h2>Some recipes for commonly requested features<a class="headerlink" href="#some-recipes-for-commonly-requested-features" title="Permalink to this headline">¶</a></h2>
+<p>Some often-requested features could not be integrated into the program easily without cluttering up the user interface. The following sections will show how the Python shell can be used to solve these problems.</p>
+<div class="section" id="cutting-traces-to-arbitrary-lengths">
+<h3>Cutting traces to arbitrary lengths<a class="headerlink" href="#cutting-traces-to-arbitrary-lengths" title="Permalink to this headline">¶</a></h3>
+<p>Cutting traces is best done using the squared braked operators ([]) to slice a <a class="reference internal" href="../linux_install_guide/requirement.html#numpy" id="id14"><span>[NumPy]</span></a> array. For example, if you wanted to cut a trace at the 100th sampling point, you could do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">get_trace</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_window</span><span class="p">(</span><span class="n">a</span><span class="p">[:</span><span class="mi">100</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_window</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">100</span><span class="p">:])</span>
+</pre></div>
+</div>
+<p>In this example, a[:100] refers to a sliced <a class="reference internal" href="../linux_install_guide/requirement.html#numpy" id="id15"><span>[NumPy]</span></a> array that comprises all sampling points from index 0 to index 99, and a[100:] refers to an array from index 100 to the last sampling point.</p>
+<ul class="simple">
+<li><p><strong>cut_traces(pt)</strong> and <strong>cut_traces_multi(pt_list)</strong></p></li>
+</ul>
+<p>These functions cut all selected traces at a single sampling point (pt) or at multiple sampling points (pt_list). The cut traces will be shown in a new window. Both functions are included in the <strong>stf namespace</strong> from version 0.8.11 on. The code for <a class="reference internal" href="../stf_reference/stf.html#stf.cut_traces" title="stf.cut_traces"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.cut_traces()</span></code></a> is listed here.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">stf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">def</span> <span class="nf">cut_traces</span><span class="p">(</span> <span class="n">pt</span> <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Cuts the selected traces at the sampling point pt,</span>
+<span class="sd">    and shows the cut traces in a new window.</span>
+<span class="sd">    Returns True upon success, False upon failure.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Check whether anything has been selected:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_selected_indices</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trace is not selected!&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">new_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_selected_indices</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stf</span><span class="o">.</span><span class="n">set_trace</span><span class="p">(</span><span class="n">n</span><span class="p">):</span> <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># Check for out of range:</span>
+    <span class="k">if</span> <span class="n">pt</span> <span class="o">&lt;</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_size_trace</span><span class="p">():</span>
+        <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace</span><span class="p">()[:</span><span class="n">pt</span><span class="p">]</span> <span class="p">)</span>
+        <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace</span><span class="p">()[</span><span class="n">pt</span><span class="p">:]</span> <span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span> <span class="s2">&quot;Cutting point&quot;</span><span class="p">,</span> <span class="n">pt</span><span class="p">,</span> <span class="s2">&quot;is out of range&quot;</span>
+
+    <span class="c1"># Don&#39;t create a new window if everything was out of range</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">stf</span><span class="o">.</span><span class="n">new_window_list</span><span class="p">(</span> <span class="n">new_list</span> <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dt</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_sampling_interval</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cutPoints</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="mi">100</span><span class="o">/</span><span class="n">dt</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mi">900</span><span class="o">/</span><span class="n">dt</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cut_traces_multi</span><span class="p">(</span><span class="n">cutPoints</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>will cut all selected traces at time 100 and 900 (in units of the x axis) and show the cut traces in a new window. Note that you can pass a list or a tuple as argument.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cut_traces_multi</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">2000</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span> <span class="c1"># cut at 100 sampling points not ms!</span>
+</pre></div>
+</div>
+<p>will cut the selected traces at every 100th sampling point, starting with the 100th and ending with the 1900th.</p>
+<dl class="citation">
+<dt class="label" id="python-tutorial"><span class="brackets"><a class="fn-backref" href="#id2">Python-tutorial</a></span></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/tut/">http://docs.python.org/tut/</a></p>
+</dd>
+<dt class="label" id="python-website"><span class="brackets"><a class="fn-backref" href="#id3">Python-website</a></span></dt>
+<dd><p><a class="reference external" href="http://www.python.org/doc/">http://www.python.org/doc/</a></p>
+</dd>
+<dt class="label" id="scipy"><span class="brackets">SciPy</span><span class="fn-backref">(<a href="#id1">1</a>,<a href="#id10">2</a>)</span></dt>
+<dd><p><a class="reference external" href="http://www.scipy.org/">http://www.scipy.org/</a></p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The Python shell</a><ul>
+<li><a class="reference internal" href="#why-use-python">Why use Python?</a></li>
+<li><a class="reference internal" href="#before-you-start">Before you start</a></li>
+<li><a class="reference internal" href="#id4">The Python shell</a></li>
+<li><a class="reference internal" href="#accessing-data-from-the-python-shell">Accessing data from the Python shell</a></li>
+<li><a class="reference internal" href="#using-numpy-with-stimfit">Using NumPy with Stimfit</a></li>
+<li><a class="reference internal" href="#control-stimfit-from-the-python-shell">Control Stimfit from the Python shell</a><ul>
+<li><a class="reference internal" href="#cursors">Cursors</a></li>
+<li><a class="reference internal" href="#trace-selection-and-navigation">Trace selection and navigation</a></li>
+<li><a class="reference internal" href="#file-i-o">File I/O</a></li>
+<li><a class="reference internal" href="#define-your-own-functions">Define your own functions</a></li>
+<li><a class="reference internal" href="#add-a-python-function-to-the-stimfit-menu">Add a Python function to the Stimfit menu</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#some-recipes-for-commonly-requested-features">Some recipes for commonly requested features</a><ul>
+<li><a class="reference internal" href="#cutting-traces-to-arbitrary-lengths">Cutting traces to arbitrary lengths</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="getting_started.html"
+                        title="previous chapter">Getting started</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="latency_measurements.html"
+                        title="next chapter">Latency measurements</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../contents.html">
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../contents.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The Python shell</a><ul>
+<li><a class="reference internal" href="#why-use-python">Why use Python?</a></li>
+<li><a class="reference internal" href="#before-you-start">Before you start</a></li>
+<li><a class="reference internal" href="#id4">The Python shell</a></li>
+<li><a class="reference internal" href="#accessing-data-from-the-python-shell">Accessing data from the Python shell</a></li>
+<li><a class="reference internal" href="#using-numpy-with-stimfit">Using NumPy with Stimfit</a></li>
+<li><a class="reference internal" href="#control-stimfit-from-the-python-shell">Control Stimfit from the Python shell</a><ul>
+<li><a class="reference internal" href="#cursors">Cursors</a></li>
+<li><a class="reference internal" href="#trace-selection-and-navigation">Trace selection and navigation</a></li>
+<li><a class="reference internal" href="#file-i-o">File I/O</a></li>
+<li><a class="reference internal" href="#define-your-own-functions">Define your own functions</a></li>
+<li><a class="reference internal" href="#add-a-python-function-to-the-stimfit-menu">Add a Python function to the Stimfit menu</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#some-recipes-for-commonly-requested-features">Some recipes for commonly requested features</a><ul>
+<li><a class="reference internal" href="#cutting-traces-to-arbitrary-lengths">Cutting traces to arbitrary lengths</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="getting_started.html"
+                        title="previous chapter">Getting started</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="latency_measurements.html"
+                        title="next chapter">Latency measurements</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+    
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Christoph Schmidt-Hieber.
+      Last updated on 19 August, 2021.
+    </div>
+  </body>
+</html>

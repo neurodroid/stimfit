@@ -227,138 +227,17 @@ stimfit_LDADD += ./src/libbiosiglite/libbiosiglite.la
 stimfittest_LDADD += ./src/libbiosiglite/libbiosiglite.la
 endif
 
-if !ISDARWIN
-if BUILD_DEBIAN
-LTTARGET=/usr/lib/stimfit
-install-exec-hook:
-	$(LIBTOOL) --finish $(prefix)/lib/stimfit
-	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
-	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libpystf.so
-	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstimfit.so
-	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstfio.so
-	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstfnum.so
-	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libbiosiglite.so
-	install -d $(prefix)/share/pixmaps
-	install -d $(prefix)/share/applications
-	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
-	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit32x32.xpm $(prefix)/share/pixmaps/stimfit32x32.xpm
-	install -m 644 $(top_srcdir)/dist/debian/stimfit.desktop $(prefix)/share/applications/
-else !BUILD_DEBIAN
 LTTARGET=$(prefix)/lib/stimfit
 install-exec-hook:
 	$(LIBTOOL) --finish $(LTTARGET)
-	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
 	install -d $(prefix)/share/pixmaps
 	install -d $(prefix)/share/applications
 	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
 	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit32x32.xpm $(prefix)/share/pixmaps/stimfit32x32.xpm
 	install -m 644 $(top_srcdir)/dist/debian/stimfit.desktop $(prefix)/share/applications/
-endif !BUILD_DEBIAN
 uninstall-hook:
 	rm -f $(prefix)/share/pixmaps/stimfit16x16.xpm
 	rm -f $(prefix)/share/pixmaps/stimfit32x32.xpm
 	rm -f $(prefix)/share/applications/stimfit.desktop
-else ISDARWIN
-LTTARGET=$(prefix)/lib/stimfit
-# wxMac resource fork/unbundled app
-install: stimfit
-	mkdir -p ${DESTDIR}/stimfit.app/Contents/MacOS
-	mkdir -p ${DESTDIR}/stimfit.app/Contents/Resources
-	mkdir -p ${DESTDIR}/stimfit.app/Contents/Resources/English.lproj
-	mkdir -p ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit
-	mkdir -p ${DESTDIR}/stimfit.app/Contents/lib/stimfit
-	cp -v ./src/stimfit/.libs/libstimfit.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
-	cp -v ./src/libstfio/.libs/libstfio.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfio.dylib
-	cp -v ./src/libstfnum/.libs/libstfnum.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfnum.dylib
-if WITH_BIOSIGLITE
-	cp -v ./src/libbiosiglite/.libs/libbiosiglite.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libbiosiglite.dylib
-endif
-	cp $(top_srcdir)/dist/macosx/stimfit.plist.in ${DESTDIR}/stimfit.app/Contents/Info.plist
-	echo "APPL????\c" > ${DESTDIR}/stimfit.app/Contents/PkgInfo
-	rm -f ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
-	cp -p -f .libs/stimfit$(EXEEXT) ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
-if BUILD_PYTHON
-	cp -v ./src/stimfit/py/.libs/libpystf.dylib ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
-	ln -sf ../../lib/stimfit/libpystf.dylib ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/_stf.so
-	cp -v $(top_srcdir)/src/stimfit/py/*.py ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/
-	cp -v $(top_srcdir)/src/pystfio/*.py ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/
-	${PYTHON} -m compileall -l ${DESTDIR}/stimfit.app/Contents/Frameworks/stimfit/
-endif BUILD_PYTHON
-	$(POSTLINK_COMMAND) ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT) \
-	                    $(srcdir)/dist/macosx/app.r
-	$(MACSETFILE) -a C ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit$(EXEEXT)
-	cp -f $(top_srcdir)/dist/macosx/stimfit.icns ${DESTDIR}/stimfit.app/Contents/Resources/stimfit.icns
-	install_name_tool -change \
-	                  $(LTTARGET)/libstimfit.dylib \
-	                  @executable_path/../lib/stimfit/libstimfit.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit
-	install_name_tool -change \
-	                  $(LTTARGET)/libstfio.dylib \
-	                  @executable_path/../lib/stimfit/libstfio.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit
-	install_name_tool -change \
-	                  $(LTTARGET)/libstfnum.dylib \
-	                  @executable_path/../lib/stimfit/libstfnum.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit
-	install_name_tool -change \
-	                  $(LTTARGET)/libstimfit.dylib \
-	                  @executable_path/../lib/stimfit/libstimfit.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
-	install_name_tool -change \
-	                  $(LTTARGET)/libstfio.dylib \
-	                  @executable_path/../lib/stimfit/libstfio.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
-	install_name_tool -change \
-	                  $(LTTARGET)/libstfio.dylib \
-	                  @executable_path/../lib/stimfit/libstfio.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfio.dylib
-	install_name_tool -change \
-	                  $(LTTARGET)/libstfnum.dylib \
-	                  @executable_path/../lib/stimfit/libstfnum.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
-	install_name_tool -change \
-	                  $(LTTARGET)/libstfnum.dylib \
-	                  @executable_path/../lib/stimfit/libstfnum.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfnum.dylib
-if WITH_BIOSIGLITE
-	install_name_tool -change \
-	                  $(LTTARGET)/libbiosiglite.dylib \
-	                  @executable_path/../lib/stimfit/libbiosiglite.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/MacOS/stimfit
-	install_name_tool -change \
-	                  $(LTTARGET)/libbiosiglite.dylib \
-	                  @executable_path/../lib/stimfit/libbiosiglite.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstimfit.dylib
-	install_name_tool -change \
-	                  $(LTTARGET)/libbiosiglite.dylib \
-	                  @executable_path/../lib/stimfit/libbiosiglite.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libstfnum.dylib
-endif
-if BUILD_PYTHON
-	install_name_tool -change \
-	                  $(LTTARGET)/libstimfit.dylib \
-	                  @executable_path/../lib/stimfit/libstimfit.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
-	install_name_tool -change \
-	                  $(LTTARGET)/libstfio.dylib \
-	                  @executable_path/../lib/stimfit/libstfio.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
-	install_name_tool -change \
-	                  $(LTTARGET)/libstfnum.dylib \
-	                  @executable_path/../lib/stimfit/libstfnum.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
-	install_name_tool -change \
-	                  $(LTTARGET)/libpystf.dylib \
-	                  @executable_path/../lib/stimfit/libpystf.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
-if WITH_BIOSIGLITE
-	install_name_tool -change \
-	                  $(LTTARGET)/libbiosiglite.dylib \
-	                  @executable_path/../lib/stimfit/libbiosiglite.dylib \
-	                  ${DESTDIR}/stimfit.app/Contents/lib/stimfit/libpystf.dylib
-endif
-endif BUILD_PYTHON
-
-endif ISDARWIN
 
 endif  # !BUILD_MODULE
