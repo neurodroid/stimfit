@@ -54,23 +54,23 @@
 <h1>Building Stimfit<a class="headerlink" href="#building-stimfit" title="Permalink to this headline">¶</a></h1>
 <dl class="field-list simple">
 <dt class="field-odd">Author</dt>
-<dd class="field-odd"><p>Jose Guzman, Christoph Schmidt-Hieber</p>
+<dd class="field-odd"><p>Alois Schlögl, Jose Guzman, Christoph Schmidt-Hieber</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>19 August, 2021</p>
+<dd class="field-even"><p>21 August, 2021</p>
 </dd>
 </dl>
-<p>This document describes how to install <a class="reference external" href="http://www.stimfit.org">Stimfit</a> 0.16.0 under GNU/Linux. The installation was tested on a GNU/Debian testing/unstable with support for Python 2.*. It should work on other Debian-based systems (e.g. Ubuntu) as with newer version of Stimfit as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) and that both versions match. For this installation, we tested 4.2.4 versions.</p>
+<p>This document describes how to install <a class="reference external" href="http://www.stimfit.org">Stimfit</a> 0.16.0 under GNU/Linux. The installation was tested on Debian 10 (Buster) and 11 (Bullseye) with support for Python 3.*. It should work on other Debian-based systems (e.g. Ubuntu) as with newer version of Stimfit as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) and that both versions match.</p>
 <div class="section" id="what-we-need-before-we-start">
 <h2>What we need before we start<a class="headerlink" href="#what-we-need-before-we-start" title="Permalink to this headline">¶</a></h2>
 <p>For the impatient, here are all <a class="reference external" href="http://www.stimfit.org">Stimfit</a> build dependencies:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo apt-get install libboost-dev \
-                       python-dev \
-                       python-numpy \
-                       python-matplotlib \
+                       python3-dev \
+                       python3-numpy \
+                       python3-matplotlib \
                        libhdf5-serial-dev \
                        swig \
-                       python-wxgtk3.0-dev \
+                       python3-wxgtk4.0 \
                        libwxgtk3.0-dev \
                        wx-common \
                        fftw3-dev \
@@ -86,13 +86,13 @@
 </div>
 <p>This will get you, amongst others:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#wxwidgets" id="id2"><span>[wxWidgets]</span></a>: C++ graphical user interface toolkit (version &gt;= 2.8; tested with 2.8.12 and 3.0.4)</p></li>
+<li><p><a class="reference internal" href="#wxwidgets" id="id2"><span>[wxWidgets]</span></a>: C++ graphical user interface toolkit (version &gt;= 2.8; tested with 3.0.5)</p></li>
 <li><p><a class="reference internal" href="#wxpython" id="id3"><span>[wxPython]</span></a>: GUI toolkit for the Python language.</p></li>
-<li><p><a class="reference internal" href="#boost" id="id4"><span>[boost]</span></a>: C++ library that is mainly used for its shared pointers. (only needed when -std=c++17 is not supported)</p></li>
+<li><p><a class="reference internal" href="#boost" id="id4"><span>[boost]</span></a>: C++ library that is mainly used for its shared pointers (only needed when -std=c++17 is not supported)</p></li>
 <li><p><a class="reference internal" href="#biosig" id="id5"><span>[Biosig]</span></a>: A library for reading a large number biomedical signal data formats.</p></li>
 <li><p><a class="reference internal" href="#lapack" id="id6"><span>[Lapack]</span></a>: A linear algebra library.</p></li>
 <li><p><a class="reference internal" href="#fftw" id="id7"><span>[fftw]</span></a>:  Library for computing Fourier transformations.</p></li>
-<li><p><a class="reference internal" href="#numpy" id="id8"><span>[NumPy]</span></a>: To handle numerical computations with Python (use version &gt;=1.7.1).</p></li>
+<li><p><a class="reference internal" href="#numpy" id="id8"><span>[NumPy]</span></a>: To handle numerical computations with Python (tested with version &gt;=1.19).</p></li>
 <li><p><a class="reference internal" href="#hdf5" id="id9"><span>[HDF5]</span></a>: Hierarchical Data Format 5 (HDF5) to manage large amount of data.</p></li>
 <li><p><a class="reference internal" href="#matplotlib" id="id10"><span>[Matplotlib]</span></a>: Plotting library for Python (use version &gt;= 1.5.1)</p></li>
 </ul>
@@ -143,10 +143,10 @@ $ sudo /sbin/ldconfig
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If you want to install Stimfit as local user (e.g in ~/.local) with a local version of Python (e.g ~/.local/lib/python2.6) you have to add the following argument to configure
+<p>If you want to install Stimfit as local user (e.g in ~/.local) with a local version of Python (e.g ~/.local/lib/python3.9) you have to add the following argument to configure
 script:</p>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ PYTHON=$HOME/.local/lib/python2.6 ./configure --prefix=$HOME/.local
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ PYTHON=$HOME/.local/lib/python3.9 ./configure --prefix=$HOME/.local
 </pre></div>
 </div>
 <p>and after that call <strong>make</strong> and <strong>make install</strong> as normal user. The Stimfit executable will be now in $HOME/.local</p>
@@ -319,7 +319,7 @@ doxygen DoxyFile
     
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Christoph Schmidt-Hieber.
-      Last updated on 19 August, 2021.
+      Last updated on 21 August, 2021.
     </div>
   </body>
 </html>
