@@ -15,16 +15,17 @@ For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build depend
 
 ::
 
-    $ sudo apt-get install libboost-dev \
+    $ sudo apt-get install \
                            python3-dev \
                            python3-numpy \
                            python3-matplotlib \
                            libhdf5-serial-dev \
                            swig \
+                           python3-sip-dev \
                            python3-wxgtk4.0 \
-                           libwxgtk3.0-dev \
+                           libwxgtk3.0-gtk3-dev \
                            wx-common \
-                           fftw3-dev \
+                           libfftw3-dev \
                            libbiosig-dev \
                            liblapack-dev \
                            chrpath \
