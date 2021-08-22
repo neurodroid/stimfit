@@ -2091,7 +2091,7 @@ void wxStfGraph::FitToWindowSecCh(bool refresh)
     }
 }	//End FitToWindowSecCh()
 
-void wxStfGraph::ChangeTrace(int trace) {
+void wxStfGraph::ChangeTrace(std::size_t trace) {
     stf::SectionAttributes sec_attr = Doc()->GetCurrentSectionAttributes();
     if (!sec_attr.eventList.empty() && trace != Doc()->GetCurSecIndex()) {
         for (event_it it2 = sec_attr.eventList.begin(); it2 != sec_attr.eventList.end(); ++it2) {
