@@ -57,23 +57,24 @@
 <dd class="field-odd"><p>Alois Schlögl, Jose Guzman, Christoph Schmidt-Hieber</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>21 August, 2021</p>
+<dd class="field-even"><p>24 August, 2021</p>
 </dd>
 </dl>
 <p>This document describes how to install <a class="reference external" href="http://www.stimfit.org">Stimfit</a> 0.16.0 under GNU/Linux. The installation was tested on Debian 10 (Buster) and 11 (Bullseye) with support for Python 3.*. It should work on other Debian-based systems (e.g. Ubuntu) as with newer version of Stimfit as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) and that both versions match.</p>
 <div class="section" id="what-we-need-before-we-start">
 <h2>What we need before we start<a class="headerlink" href="#what-we-need-before-we-start" title="Permalink to this headline">¶</a></h2>
 <p>For the impatient, here are all <a class="reference external" href="http://www.stimfit.org">Stimfit</a> build dependencies:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo apt-get install libboost-dev \
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo apt-get install \
                        python3-dev \
                        python3-numpy \
                        python3-matplotlib \
                        libhdf5-serial-dev \
                        swig \
+                       python3-sip-dev \
                        python3-wxgtk4.0 \
-                       libwxgtk3.0-dev \
+                       libwxgtk3.0-gtk3-dev \
                        wx-common \
-                       fftw3-dev \
+                       libfftw3-dev \
                        libbiosig-dev \
                        liblapack-dev \
                        chrpath \
@@ -319,7 +320,7 @@ doxygen DoxyFile
     
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, Christoph Schmidt-Hieber.
-      Last updated on 21 August, 2021.
+      Last updated on 24 August, 2021.
     </div>
   </body>
 </html>
