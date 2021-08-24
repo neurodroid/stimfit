@@ -46,6 +46,17 @@ case `uname` in
 esac
 AM_CONDITIONAL([ISDARWIN], [test $STFKERNEL = "darwin"])
 
+# https://stackoverflow.com/questions/11909347/autotools-check-for-c11
+AC_MSG_CHECKING(for C++ standard (boost is not required with c++17 and later) )
+DIALECT="-std=gnu++17"
+echo 'int main() {return 0;}' > ./log.cpp && $CXX $DIALECT ./log.cpp || DIALECT="-std=c++17" $CXX $DIALECT ./log.cpp || $DIALECT="no"
+if test $DIALECT = no; then
+    AC_MSG_RESULT([c++17 not supported - boost is required])
+else
+    AC_MSG_RESULT($DIALECT)
+    CXXFLAGS="${CXXFLAGS} ${DIALECT}"
+fi
+
 # Checks for python libraries.
 AC_ARG_ENABLE([python],
   AS_HELP_STRING(

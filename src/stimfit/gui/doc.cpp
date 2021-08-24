@@ -1230,7 +1230,7 @@ void wxStfDoc::FitDecay(wxCommandEvent& WXUNUSED(event)) {
     try {
         pFrame->ShowTable(sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).bestFit, label);
     }
-    catch (const std::out_of_range e) {
+    catch (std::out_of_range const& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
     }
 }
@@ -1265,7 +1265,7 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
     try {
         SetIsFitted( GetCurChIndex(), GetCurSecIndex(), params, wxGetApp().GetLinFuncPtr(), chisqr, GetFitBeg(), GetFitEnd() );
     }
-    catch (const std::out_of_range e) {
+    catch (std::out_of_range const& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
         return;
     }
@@ -1286,7 +1286,7 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
     try {
         pFrame->ShowTable(sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).bestFit, label);
     }
-    catch (const std::out_of_range e) {
+    catch (std::out_of_range const& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
     }
 }
@@ -1310,7 +1310,7 @@ void wxStfDoc::LnTransform(wxCommandEvent& WXUNUSED(event)) {
         try {
             TempChannel.InsertSection(TempSection,n);
         }
-        catch (const std::out_of_range e) {
+        catch (std::out_of_range const& e) {
             wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
         }
         n++;
@@ -1774,7 +1774,7 @@ bool wxStfDoc::OnNewfromselectedThis( ) {
         try {
             TempChannel.InsertSection(TempSection,n);
         }
-        catch (const std::out_of_range e) {
+        catch (std::out_of_range const& e) {
             wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
             return false;
         }
@@ -1842,7 +1842,7 @@ void wxStfDoc::SelectTracesOfType(wxCommandEvent &WXUNUSED(event)) {
     Vector_double input(EveryDialog.readInput());
     if (input.size()!=1) return;
     int selTyp=(int)input[0];
-    for (size_t n=0; n < (int)get()[GetCurChIndex()].size(); ++n) {
+    for (size_t n=0; n < get()[GetCurChIndex()].size(); ++n) {
         if (GetSectionType(n)==selTyp) SelectTrace(n, baseBeg, baseEnd);
     }
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
@@ -2318,7 +2318,7 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             }
             baselineMean /= baseline;
             double peakIndex=0;
-            int eventl = templateWave.size();
+            size_t eventl = templateWave.size();
             if (*cit + eventl >= cursec().get().size()) {
                 eventl = cursec().get().size()-1- (*cit);
             }
@@ -2335,7 +2335,7 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             pGraph->Refresh();
         }
     }
-    catch (const std::out_of_range& e) {
+    catch (std::out_of_range const& e) {
         wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ));
     }
     catch (const std::runtime_error& e) {
