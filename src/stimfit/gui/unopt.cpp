@@ -32,6 +32,8 @@
 #if PY_MAJOR_VERSION >= 3
   #ifdef __APPPLE__
     #include <wxPython/sip.h>
+  #elif defined(__CYGWIN__)
+    #include <wxPython/sip.h>
   #else
     #include <sip.h>
   #endif
