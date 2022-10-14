@@ -205,13 +205,7 @@ enum {
 #endif
 #ifdef WITH_PYTHON
 #if PY_MAJOR_VERSION >= 3
-  #ifdef __APPPLE__
-    #include <wxPython/sip.h>
-  #elif defined(__CYGWIN__)
-      #include <wxPython/sip.h>
-  #else
-    #include <sip.h>
-  #endif
+  #include <wxPython/sip.h>
   #include <wxPython/wxpy_api.h>
 #else
   #include <wx/wxPython/wxPython.h>
