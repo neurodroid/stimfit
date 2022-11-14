@@ -1,6 +1,6 @@
 /*
 
-    Copyright (C) 2005-2020 Alois Schloegl <alois.schloegl@gmail.com>
+    Copyright (C) 2005-2021 Alois Schloegl <alois.schloegl@gmail.com>
     Copyright (C) 2011 Stoyan Mihaylov
     This file is part of the "BioSig for C/C++" repository
     (biosig4c++) at http://biosig.sf.net/
@@ -46,6 +46,8 @@
 
 /* TODO: ensure that hdr->CHANNEL[.].TOffset gets initialized after every alloc() */
 
+#define _GNU_SOURCE
+
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
@@ -53,12 +55,33 @@
 #include <locale.h>
 #include <math.h>      // define macro isnan()
 #include <stdlib.h>
-#include <sys/stat.h>
+#include <string.h>
+
+#ifdef _WIN32
+// Can't include sys/stat.h or sopen is declared twice.
+#include <sys/types.h>
+struct stat {
+  _dev_t st_dev;
+  _ino_t st_ino;
+  unsigned short st_mode;
+  short st_nlink;
+  short st_uid;
+  short st_gid;
+  _dev_t st_rdev;
+  _off_t st_size;
+  time_t st_atime;
+  time_t st_mtime;
+  time_t st_ctime;
+};
+int __cdecl stat(const char *_Filename,struct stat *_Stat);
+#else
+  #include <sys/stat.h>
+#endif
 
 
 #ifdef WITH_CURL
 #  include <curl/curl.h>
-#endif 
+#endif
 
 int VERBOSE_LEVEL __attribute__ ((visibility ("default") )) = 0;	// this variable is always available, but only used without NDEBUG
 
@@ -86,12 +109,12 @@ char* xgethostname (void);
 
 /*-----------------------------------------------------------------------
    error handling should use error variables local to each HDR
-   otherwise, sopen() etc. is not re-entrant. 
+   otherwise, sopen() etc. is not re-entrant.
 
-   Therefore, use of variables B4C_ERRNUM and B4C_ERRMSG is deprecated; 	
-   Use instead serror2(hdr), hdr->AS.B4C_ERRNUM, hdr->AS.B4C_ERRMSG.   
+   Therefore, use of variables B4C_ERRNUM and B4C_ERRMSG is deprecated;
+   Use instead serror2(hdr), hdr->AS.B4C_ERRNUM, hdr->AS.B4C_ERRMSG.
   ----------------------------------------------------------------------- */
-// do not expose deprecated interface in libgdf	
+// do not expose deprecated interface in libgdf
 #ifndef  ONLYGDF
 ATT_DEPREC int B4C_ERRNUM = 0;
 ATT_DEPREC const char *B4C_ERRMSG;
@@ -124,6 +147,8 @@ void sopen_abf_read    (HDRTYPE* hdr);
 void sopen_abf2_read   (HDRTYPE* hdr);
 void sopen_axg_read    (HDRTYPE* hdr);
 void sopen_alpha_read  (HDRTYPE* hdr);
+void sopen_cadwell_read(HDRTYPE* hdr);
+void sopen_biosigdump_read (HDRTYPE* hdr);
 void sopen_cfs_read    (HDRTYPE* hdr);
 void sopen_FAMOS_read  (HDRTYPE* hdr);
 void sopen_fiff_read   (HDRTYPE* hdr);
@@ -131,11 +156,9 @@ int sclose_HL7aECG_write(HDRTYPE* hdr);
 void sopen_ibw_read    (HDRTYPE* hdr);
 void sopen_itx_read    (HDRTYPE* hdr);
 void sopen_smr_read    (HDRTYPE* hdr);
-#ifdef WITH_INTAN
 void sopen_rhd2000_read (HDRTYPE* hdr);
 void sopen_rhs2000_read (HDRTYPE* hdr);
 void sopen_intan_clp_read (HDRTYPE* hdr);
-#endif
 #ifdef WITH_TDMS
 void sopen_tdms_read   (HDRTYPE* hdr);
 #endif
@@ -146,13 +169,10 @@ int sopen_fef_read(HDRTYPE* hdr);
 int sclose_fef_read(HDRTYPE* hdr);
 #endif
 void sopen_heka(HDRTYPE* hdr,FILE *fid);
-#ifdef HAVE_HDF
-int sopen_hdf5(HDRTYPE *hdr);
-#endif 
-#ifdef HAVE_MATIO
-int sopen_matlab(HDRTYPE *hdr);
-#endif 
-#ifdef WITH_DICOM
+int sopen_hdf5        (HDRTYPE *hdr);
+int sopen_matlab      (HDRTYPE *hdr);
+int sopen_sqlite      (HDRTYPE* hdr);
+#if defined(WITH_DICOM) || defined(WITH_DCMTK)
 int sopen_dicom_read(HDRTYPE* hdr);
 #endif
 
@@ -166,7 +186,7 @@ void sread_atf(HDRTYPE* hdr);
 
 #endif //ONLYGDF
 
-const uint16_t GDFTYP_BITS[] = {
+const uint16_t GDFTYP_BITS[] __attribute__ ((visibility ("default") )) = {
 	8, 8, 8,16,16,32,32,64,64,32,64, 0, 0, 0, 0, 0,   /* 0  */
 	32,64,128,0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   /* 16 */
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   /* 32 */
@@ -327,12 +347,12 @@ ATT_DEPREC struct global_t {
 #endif
 
 // event table desription
-const struct etd_t ETD [] = { 
+const struct etd_t ETD [] = {
 #include "eventcodes.i"
 	{0, 0, ""}
 };
 
-// event groups 
+// event groups
 const struct event_groups_t EventCodeGroups [] = {
 #include "eventcodegroups.i"
 	{0xffff,  "end-of-table" },
@@ -346,29 +366,28 @@ const struct event_groups_t EventCodeGroups [] = {
 /****************************************************************************/
 
 // greatest common divisor
-uint32_t gcd(uint32_t A, uint32_t B)
-{	uint32_t t;
+uint32_t gcd(uint32_t A, uint32_t B) {
+	uint32_t t;
 	if (A<B) {t=B; B=A; A=t;};
 	while (B>0) {
 		t = B;
-		B = A%B;	
+		B = A%B;
 		A = t;
 	}
 	return(A);
 };
 
 // least common multiple - used for obtaining the common HDR.SPR
-uint32_t lcm(uint32_t A, uint32_t B)
-{
+uint32_t lcm(uint32_t A, uint32_t B) {
+	if (A==0 || B==0) {
+		fprintf(stderr,"%s (line %d) %s(%d,%d)\n",__FILE__,__LINE__,__func__,A,B);
+		return 0;
+	}
 	// return(A*(B/gcd(A,B)) with overflow detection
 	uint64_t A64 = A;
 	A64 *= B/gcd(A,B);
 	if (A64 > 0x00000000ffffffffllu) {
 		fprintf(stderr,"Error: HDR.SPR=LCM(%u,%u) overflows and does not fit into uint32.\n",(unsigned)A,(unsigned)B);
-#ifndef ONLYGDF
-		B4C_ERRNUM = B4C_UNSPECIFIC_ERROR;
-		B4C_ERRMSG = "Computing LCM failed.";
-#endif
 	}
 	return((uint32_t)A64);
 };
@@ -381,7 +400,7 @@ void* mfer_swap8b(uint8_t *buf, int8_t len, char FLAG_SWAP)
 {
 	if (VERBOSE_LEVEL==9)
         	fprintf(stdout,"swap=%i %i %i \nlen=%i %2x%2x%2x%2x%2x%2x%2x%2x\n",
-			(int)FLAG_SWAP, __BYTE_ORDER, __LITTLE_ENDIAN, (int)len, 
+			(int)FLAG_SWAP, __BYTE_ORDER, __LITTLE_ENDIAN, (int)len,
 			(unsigned)buf[0],(unsigned)buf[1],(unsigned)buf[2],(unsigned)buf[3],
 			(unsigned)buf[4],(unsigned)buf[5],(unsigned)buf[6],(unsigned)buf[7] );
 
@@ -433,7 +452,7 @@ int ftoa8(char* buf, double num)
 	return (fabs(f1-f2) > (fabs(f1)+fabs(f2)) * 1e-6);
 }
 
-int is_nihonkohden_signature(char *str) 
+int is_nihonkohden_signature(char *str)
 {
   return (!(
 	strncmp(str, "EEG-1200A V01.00", 16) &&
@@ -456,12 +475,12 @@ int is_nihonkohden_signature(char *str)
 int strncmpi(const char* str1, const char* str2, size_t n)
 {
 	fprintf(stderr,"Warning from libbiosig: use of function strncmpi() is deprecated - use instead strncasecmp()\n");
-	return strncasecmp(str1,str2,n); 
+	return strncasecmp(str1,str2,n);
 }
 int strcmpi(const char* str1, const char* str2)
 {
 	fprintf(stderr,"Warning from libbiosig: use of function strcmpi() is deprecated - use instead strcasecmp()\n");
-	return strcasecmp(str1,str2); 
+	return strcasecmp(str1,str2);
 }
 #endif
 
@@ -582,7 +601,7 @@ char* ifgets(char *str, int n, HDRTYPE* hdr) {
 	return(fgets(str,n,hdr->FILE.FID));
 }
 
-int ifseek(HDRTYPE* hdr, long offset, int whence) {
+int ifseek(HDRTYPE* hdr, ssize_t offset, int whence) {
 #ifdef ZLIB_H
 	if (hdr->FILE.COMPRESSION) {
 	if (whence==SEEK_END)
@@ -590,10 +609,14 @@ int ifseek(HDRTYPE* hdr, long offset, int whence) {
 	return(gzseek(hdr->FILE.gzFID,offset,whence));
 	} else
 #endif
+#if defined(__MINGW64__)
+	return(_fseeki64(hdr->FILE.FID,offset,whence));
+#else
 	return(fseek(hdr->FILE.FID,offset,whence));
+#endif
 }
 
-long int iftell(HDRTYPE* hdr) {
+ssize_t iftell(HDRTYPE* hdr) {
 #ifdef ZLIB_H
 	if (hdr->FILE.COMPRESSION)
 	return(gztell(hdr->FILE.gzFID));
@@ -604,10 +627,10 @@ long int iftell(HDRTYPE* hdr) {
 
 int ifsetpos(HDRTYPE* hdr, size_t *pos) {
 #if __gnu_linux__
-	// gnu linux on sparc needs this 
+	// gnu linux on sparc needs this
 	fpos_t p;
 	p.__pos = *pos;
-#elif __sparc__ || __APPLE__ || __MINGW32__ || ANDROID || __NetBSD__ || __CYGWIN__
+#elif __sparc__ || __APPLE__ || __MINGW32__ || ANDROID || __NetBSD__ || __CYGWIN__ || __FreeBSD__
 	fpos_t p = *pos;
 #else
 	fpos_t p;
@@ -626,9 +649,9 @@ int ifsetpos(HDRTYPE* hdr, size_t *pos) {
 	{
 	int c= fsetpos(hdr->FILE.FID,&p);
 #if __gnu_linux__
-	// gnu linux on sparc needs this 
+	// gnu linux on sparc needs this
 	*pos = p.__pos;
-#elif __sparc__ || __APPLE__ || __MINGW32__ || ANDROID || __NetBSD__ || __CYGWIN__
+#elif __sparc__ || __APPLE__ || __MINGW32__ || ANDROID || __NetBSD__ || __CYGWIN__ || __FreeBSD__
 	*pos = p;
 #else
 	*pos = p.__pos;
@@ -652,9 +675,9 @@ int ifgetpos(HDRTYPE* hdr, size_t *pos) {
 		fpos_t p;
 		int c = fgetpos(hdr->FILE.FID, &p);
 #if __gnu_linux__
-		// gnu linux on sparc needs this 
+		// gnu linux on sparc needs this
 		*pos = p.__pos;	// ugly hack but working
-#elif __sparc__ || __APPLE__ || __MINGW32__ || ANDROID || __NetBSD__ || __CYGWIN__
+#elif __sparc__ || __APPLE__ || __MINGW32__ || ANDROID || __NetBSD__ || __CYGWIN__ || __FreeBSD__
 		*pos = p;
 #else
 		*pos = p.__pos;	// ugly hack but working
@@ -751,7 +774,7 @@ void sort_eventtable(HDRTYPE *hdr) {
 }
 
 /*------------------------------------------------------------------------
-	re-allocates memory for Eventtable. 
+	re-allocates memory for Eventtable.
 	hdr->EVENT.N contains actual number of events
 	EventN determines the size of the allocated memory
 
@@ -864,7 +887,7 @@ void convert4to2_eventtable(HDRTYPE *hdr) {
 /*------------------------------------------------------------------------
 	write GDF event table
 	utility function for SCLOSE and SFLUSH_GDF_EVENT_TABLE
-	
+
 	TODO: writing of TimeStamps
   ------------------------------------------------------------------------*/
 void write_gdf_eventtable(HDRTYPE *hdr)
@@ -936,10 +959,10 @@ ATT_DEPREC void LoadGlobalEventCodeTable() {} // deprecated since Oct 2012, v1.4
 void FreeTextEvent(HDRTYPE* hdr,size_t N_EVENT, const char* annotation) {
 	/* free text annotations encoded as user specific events (codes 1-255) */
 
-/* !!! 
-	annotation is not copied, but it is assumed that annotation string is also available after return 
+/* !!!
+	annotation is not copied, but it is assumed that annotation string is also available after return
 	usually, the string is available in hdr->AS.Header; still this can disappear (free, or rellocated)
-	before the Event table is destroyed. 
+	before the Event table is destroyed.
    !!! */
 
 	size_t k;
@@ -990,34 +1013,34 @@ void FreeTextEvent(HDRTYPE* hdr,size_t N_EVENT, const char* annotation) {
       returns clear text description of n-th event
   -------------------------------------------------------------- */
 const char* GetEventDescription(HDRTYPE *hdr, size_t N) {
-        if (hdr==NULL || N >= hdr->EVENT.N) return NULL; 
+        if (hdr==NULL || N >= hdr->EVENT.N) return NULL;
         uint16_t TYP = hdr->EVENT.TYP[N];
 
         if (TYP < hdr->EVENT.LenCodeDesc) // user-specified events, TYP < 256
-                return hdr->EVENT.CodeDesc[TYP]; 
+                return hdr->EVENT.CodeDesc[TYP];
 
 	if (TYP < 256) // not defined by user
-		return NULL; 
+		return NULL;
 
-        // end of event: encoded by 0x8000+TYP  
+        // end of event: encoded by 0x8000+TYP
 	if ((hdr->EVENT.TYP[N] & 0x8000) && (hdr->TYPE==GDF))
-			return (NULL);  
+			return (NULL);
 
 	if ((hdr->EVENT.TYP[N] == 0x7fff) && (hdr->TYPE==GDF))
 			return "[neds]";
 
         // event definition according to GDF's eventcodes.txt table
         uint16_t k;
-        for (k=0; ETD[k].typ != 0; k++) 
-                if (ETD[k].typ==TYP) 
+        for (k=0; ETD[k].typ != 0; k++)
+                if (ETD[k].typ==TYP)
                         return ETD[k].desc;
-        
+
         fprintf(stderr,"Warning: invalid event type 0x%04x\n",TYP);
         return (NULL);
 }
 
 /*------------------------------------------------------------------------
-	DUR2VAL converts sparse sample values in the event table 
+	DUR2VAL converts sparse sample values in the event table
 	from the DUR format (uint32, machine endian) to the sample value.
 	Endianity of the platform is considered.
   ------------------------------------------------------------------------*/
@@ -1123,7 +1146,7 @@ int biosig_set_hdr_ipaddr(HDRTYPE *hdr, const char *hostname) {
 /**                                                                        **/
 /****************************************************************************/
 
-uint32_t get_biosig_version () {
+uint32_t get_biosig_version (void) {
 	return ((BIOSIG_VERSION_MAJOR<<16) + (BIOSIG_VERSION_MINOR<<8) + BIOSIG_PATCHLEVEL);
 }
 
@@ -1155,7 +1178,7 @@ HDRTYPE* constructHDR(const unsigned NS, const unsigned N_EVENT)
 	EndianTest.testword = 0x4a3b2c1d;
 	LittleEndian = (EndianTest.testbyte[0]==0x1d && EndianTest.testbyte[1]==0x2c  && EndianTest.testbyte[2]==0x3b  && EndianTest.testbyte[3]==0x4a );
 
-	assert (  ( LittleEndian && __BYTE_ORDER == __LITTLE_ENDIAN) 
+	assert (  ( LittleEndian && __BYTE_ORDER == __LITTLE_ENDIAN)
 	       || (!LittleEndian && __BYTE_ORDER == __BIG_ENDIAN   ) );
 
 	hdr->FileName = NULL;
@@ -1182,7 +1205,7 @@ HDRTYPE* constructHDR(const unsigned NS, const unsigned N_EVENT)
 	hdr->AS.flag_collapsed_rawdata = 0;	// is rawdata not collapsed
 	hdr->AS.first = 0;
 	hdr->AS.length  = 0;  			// no data loaded
-	memset(hdr->AS.SegSel,0,sizeof(hdr->AS.SegSel)); 
+	memset(hdr->AS.SegSel,0,sizeof(hdr->AS.SegSel));
 	hdr->Calib = NULL;
 	hdr->rerefCHANNEL = NULL;
 
@@ -1195,9 +1218,15 @@ HDRTYPE* constructHDR(const unsigned NS, const unsigned N_EVENT)
 	hdr->data.size[0] = 0; 	// rows
 	hdr->data.size[1] = 0;  // columns
 	hdr->data.block = NULL;
+#if __FreeBSD__ || __APPLE__ || __NetBSD__
+	time_t t=time(NULL);
+	struct tm *tt = localtime(&t);
+	hdr->tzmin    = tt->tm_gmtoff/60;
+	hdr->T0       = t_time2gdf_time(time(NULL)-tt->tm_gmtoff); // localtime
+#else
 	hdr->T0    = t_time2gdf_time(time(NULL)-timezone); // localtime
 	hdr->tzmin = -timezone/60;      // convert from seconds west of UTC to minutes east;
-
+#endif
 	{
 	uint8_t Equipment[8] = "b4c_1.5 ";
 	Equipment[4] = BIOSIG_VERSION_MAJOR+'0';
@@ -1218,22 +1247,22 @@ HDRTYPE* constructHDR(const unsigned NS, const unsigned N_EVENT)
 #ifdef _WIN32
    #if 1
 	// getlogin() a flawfinder level [4] issue, recommended to use getpwuid(geteuid()) but not available on Windows
-	hdr->ID.Technician = strdup(getlogin()); 
+	hdr->ID.Technician = strdup(getlogin());
    #else	// this compiles but stops with "Program error" on wine
 	char str[1001];
-	GetUserName(str,1000);	
+	GetUserName(str,1000);
 	if (VERBOSE_LEVEL>7)  fprintf(stdout,"Name:%s\n",str);
-	hdr->ID.Technician = strdup(str); 
+	hdr->ID.Technician = strdup(str);
    #endif
-#else	
+#else
 	char *username = NULL;
 	struct passwd *p = getpwuid(geteuid());
 	if (p != NULL)
 		username = p->pw_name;
 	if (username)
-		hdr->ID.Technician = strdup(username); 
-		
-#endif 
+		hdr->ID.Technician = strdup(username);
+
+#endif
 	}
 
 
@@ -1285,7 +1314,7 @@ HDRTYPE* constructHDR(const unsigned NS, const unsigned N_EVENT)
 	hdr->FLAG.ANONYMOUS = 1; 	// <>0: no personal names are processed
 	hdr->FLAG.TARGETSEGMENT = 1;	// read 1st segment
 	hdr->FLAG.ROW_BASED_CHANNELS=0;
-	
+
        	// define variable header
 	hdr->CHANNEL = (CHANNEL_TYPE*)calloc(hdr->NS, sizeof(CHANNEL_TYPE));
 	BitsPerBlock = 0;
@@ -1534,6 +1563,7 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
 	const char* MAGIC_NUMBER_BRAINVISION       = "Brain Vision Data Exchange Header File";
 	const char* MAGIC_NUMBER_BRAINVISION1      = "Brain Vision V-Amp Data Header File Version";
 	const char* MAGIC_NUMBER_BRAINVISIONMARKER = "Brain Vision Data Exchange Marker File, Version";
+	const uint8_t MAGIC_NUMBER_NICOLET_WFT[] = {0x33,0,0x32,0,0x31,0,0x30,0};
 
     	/******** read 1st (fixed)  header  *******/
   	uint32_t U32 = leu32p(hdr->AS.Header+2);
@@ -1580,10 +1610,10 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
 
 #endif //ONLYGDF
 
-	if (VERBOSE_LEVEL>7) fprintf(stdout,"(%s line %i: %x %x!  <%8s>\n",__func__,__LINE__, leu16p(hdr->AS.Header),leu16p(hdr->AS.Header+154),hdr->AS.Header);
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"(%s line %i: %x %x!  <%8s> TYPE=<%s>\n",__func__,__LINE__, leu16p(hdr->AS.Header),leu16p(hdr->AS.Header+154),hdr->AS.Header,GetFileTypeString(hdr->TYPE));
 
-    	if (hdr->TYPE != unknown)
-      		return(hdr);
+	if (hdr->TYPE != unknown)
+		return(hdr);
 
 #ifndef  ONLYGDF
 	else if (!memcmp(hdr->AS.Header, "ABF ", 4)) {
@@ -1591,9 +1621,9 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
 		hdr->TYPE    = ABF;
     		hdr->VERSION = lef32p(hdr->AS.Header+4);
     	}
-	else if (!memcmp(hdr->AS.Header, "ABF2\x00\x00", 6) && ( hdr->AS.Header[7] < 10 ) ) {
+	else if (!memcmp(hdr->AS.Header, "ABF2\x00\x00", 6) && ( hdr->AS.Header[6] < 10 )  && ( hdr->AS.Header[7] < 10 ) ) {
 		hdr->TYPE    = ABF2;
-		hdr->VERSION = hdr->AS.Header[6] + ( hdr->AS.Header[7] / 10.0 );
+		hdr->VERSION = hdr->AS.Header[7] + ( hdr->AS.Header[6] / 10.0 );
     	}
     	else if (!memcmp(Header1+20,"ACR-NEMA",8))
 	    	hdr->TYPE = ACR_NEMA;
@@ -1641,8 +1671,16 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
     		 || !memcmp(hdr->AS.Header+307, "E\x00\x00\x00\x00\x00\x00\x00DAT", 11)
     		)
 	    	hdr->TYPE = BLSC;
+    	else if (!memcmp(Header1,"#BIOSIGDUMP v1.0",16)) {
+	    	hdr->TYPE = BiosigDump;
+	    	hdr->VERSION = 1.0;
+	}
     	else if (!memcmp(Header1,"FileFormat = BNI-1-BALTIMORE",28))
 	    	hdr->TYPE = BNI;
+	else if (!memcmp(Header1, MAGIC_NUMBER_NICOLET_WFT, 8))	{ // WFT/Nicolet format
+		hdr->TYPE = WFT;
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %s \n", __FILE__, __LINE__, __func__);
+	}
         else if (!memcmp(Header1,MAGIC_NUMBER_BRAINVISION,strlen(MAGIC_NUMBER_BRAINVISION)) || ((leu32p(hdr->AS.Header)==0x42bfbbef) && !memcmp(Header1+3, MAGIC_NUMBER_BRAINVISION,38)))
                 hdr->TYPE = BrainVision;
         else if (!memcmp(Header1,MAGIC_NUMBER_BRAINVISION1,strlen(MAGIC_NUMBER_BRAINVISION1)))
@@ -1653,12 +1691,12 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
 	    	hdr->TYPE = BZ2;
     	else if (!memcmp(Header1,"CDF",3))
 	    	hdr->TYPE = CDF;
-    	else if (!memcmp(Header1,"CEDFILE",7))
-	    	hdr->TYPE = CFS;
-    	else if (!memcmp(Header1+2,"(C) CED 87",10))  
-	    	hdr->TYPE = SMR;        // CED's SMR/SON format 
-    	else if (!memcmp(Header1,"CFWB\1\0\0\0",8))
-	    	hdr->TYPE = CFWB;
+	else if (!memcmp(Header1,"CEDFILE",7))
+		hdr->TYPE = CFS;
+	else if (!memcmp(Header1+2,"(C) CED 87",10))
+		hdr->TYPE = SMR;        // CED's SMR/SON format
+	else if (!memcmp(Header1,"CFWB\1\0\0\0",8))
+		hdr->TYPE = CFWB;
     	else if (!memcmp(Header1,"Version 3.0",11))
 	    	hdr->TYPE = CNT;
 
@@ -1679,6 +1717,14 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
 	    	hdr->TYPE = DICOM;
     	else if (!memcmp(Header1+12, MAGIC_NUMBER_DICOM,8))
 	    	hdr->TYPE = DICOM;
+
+	else if (!memcmp(Header1, "SctHdr\0\0Directory\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\xff\xff\xff\xff\xff\xff\xff\xff\0\0\0\0\0\0\0\0", 48)
+	      && (leu32p((hdr->AS.Header+0x3C))==0x68) ) {
+		hdr->TYPE = EAS;
+	}
+	else if (!memcmp(Header1,"Easy3File",10)) {
+		hdr->TYPE = EZ3;
+	}
 
     	else if (!memcmp(Header1,"EBS\x94\x0a\x13\x1a\x0d",8))
 	    	hdr->TYPE = EBS;
@@ -1823,15 +1869,15 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
     	else if (!memcmp(Header1,"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x3E\x00\x03\x00\xFE\xFF\x09\x00\x06",0x21))
 	    	hdr->TYPE = MSI;
 
-    	else if (!strcmp(Header1,"(*This is a Mathematica binary dump file. It can be loaded with Get.*)"))
-	    	hdr->TYPE = MX;
+	else if (!strcmp(Header1,"(*This is a Mathematica binary dump file. It can be loaded with Get.*)"))
+		hdr->TYPE = MX;
 
-    	else if ( (hdr->HeadLen>346) && 
-                  (Header1[344]=='n') && (Header1[347]=='\0') && \
-    		  ((Header1[345]=='i') || (Header1[345]=='+') ) && \
-    		   (Header1[346]>'0') && (Header1[346]<='9') ) {
-	    	hdr->TYPE = NIFTI;
-	    	hdr->VERSION = Header1[346]-'0';
+	else if ( (hdr->HeadLen>346) &&
+		  (Header1[344]=='n') && (Header1[347]=='\0') && \
+		  ((Header1[345]=='i') || (Header1[345]=='+') ) && \
+		   (Header1[346]>'0') && (Header1[346]<='9') ) {
+			hdr->TYPE = NIFTI;
+			hdr->VERSION = Header1[346]-'0';
 		}
     	else if ( (hdr->HeadLen > 344) && (!memcmp(Header1+344,"ni1",4) || !memcmp(Header1+344,"n+1",4) ) )
 	    	hdr->TYPE = NIFTI;
@@ -1888,7 +1934,7 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
 	    		hdr->TYPE = AVI;
 	}
 	// general SCP
-	else if (  (hdr->HeadLen>32) && 
+	else if (  (hdr->HeadLen>32) &&
                    ( MAGIC_EN1064_Section0Length    >  120)
 		&& ( MAGIC_EN1064_Section0Length    <  16+10*1024)
 		&& ((MAGIC_EN1064_Section0Length%10)== 6)
@@ -2004,10 +2050,10 @@ HDRTYPE* getfiletype(HDRTYPE* hdr)
 	else if ((hdr->HeadLen > 17) && !memcmp(hdr->AS.Header+4,MAGIC_NUMBER_UNIPRO,14))
 		hdr->TYPE = UNIPRO;
 
-    	else if (!memcmp(Header1,MAGIC_NUMBER_SYNERGY,sizeof(MAGIC_NUMBER_SYNERGY)) 
-                && !strncmp(Header1+63,"CRawDataElement",15) 
-                && !strncmp(Header1+85,"CRawDataBuffer",14) )  {
-	    	hdr->TYPE = SYNERGY;
+	else if (!memcmp(Header1,MAGIC_NUMBER_SYNERGY,sizeof(MAGIC_NUMBER_SYNERGY))
+		&& !strncmp(Header1+63,"CRawDataElement",15)
+		&& !strncmp(Header1+85,"CRawDataBuffer",14) )  {
+		hdr->TYPE = SYNERGY;
     	}
 	else if ((hdr->HeadLen > 23) && !memcmp(Header1,"# vtk DataFile Version ",23)) {
 		hdr->TYPE = VTK;
@@ -2098,6 +2144,7 @@ const struct FileFormatStringTable_t FileFormatStringTable[] = {
 	{ AINF,    	"AINF" },
 	{ AIFC,    	"AIFC" },
 	{ AIFF,    	"AIFF" },
+	{ ARC,    	"ARC(Cadwell)" },
 	{ ARFF,    	"ARFF" },
 	{ ASCII,    	"ASCII" },
 	{ ATES,    	"ATES" },
@@ -2109,6 +2156,7 @@ const struct FileFormatStringTable_t FileFormatStringTable[] = {
 	{ BDF,    	"BDF" },
 	{ BESA,    	"BESA" },
 	{ BIN,    	"BINARY" },
+	{ BiosigDump,   "BIOSIGDUMP" },
 	{ BKR,    	"BKR" },
 	{ BLSC,    	"BLSC" },
 	{ BMP,    	"BMP" },
@@ -2124,6 +2172,7 @@ const struct FileFormatStringTable_t FileFormatStringTable[] = {
 	{ CTF,    	"CTF" },
 	{ DEMG,    	"DEMG" },
 	{ DICOM,    	"DICOM" },
+	{ EAS,    	"EAS(Cadwell)" },
 	{ EBNEURO,	"EBNEURO"},
 	{ EBS,    	"EBS" },
 	{ EDF,    	"EDF" },
@@ -2139,6 +2188,7 @@ const struct FileFormatStringTable_t FileFormatStringTable[] = {
 	{ ETG4000,    	"ETG4000" },
 	{ EVENT,    	"EVENT" },
 	{ EXIF,    	"EXIF" },
+	{ EZ3,    	"EZ3(Cadwell)" },
 	{ FAMOS,    	"FAMOS" },
 	{ FEF,    	"FEF" },
 	{ FIFF,    	"FIFF" },
@@ -2205,6 +2255,7 @@ const struct FileFormatStringTable_t FileFormatStringTable[] = {
 	{ VTK,    	"VTK" },
 	{ WAV,    	"WAV" },
 	{ WCP,    	"WCP" },
+	{ WFT,    	"WFT/Nicolet" },
 	{ WG1,    	"Walter Graphtek" },
 	{ WMF,    	"WMF" },
 	{ XDF,    	"XDF" },
@@ -2222,10 +2273,10 @@ const struct FileFormatStringTable_t FileFormatStringTable[] = {
 const char* GetFileTypeString(enum FileFormat FMT) {
 	uint16_t k;
 	for (k=0; ; k++) {
-		if (FMT==FileFormatStringTable[k].fmt) 
-			return (FileFormatStringTable[k].FileTypeString);   
-		if (noFile==FileFormatStringTable[k].fmt)  	// stopping criteria: last element in FileFormatStringTable 
-			return (NULL);   
+		if (FMT==FileFormatStringTable[k].fmt)
+			return (FileFormatStringTable[k].FileTypeString);
+		if (noFile==FileFormatStringTable[k].fmt)  	// stopping criteria: last element in FileFormatStringTable
+			return (NULL);
 	}
 }
 
@@ -2235,10 +2286,10 @@ const char* GetFileTypeString(enum FileFormat FMT) {
 enum FileFormat GetFileTypeFromString(const char *FileTypeString) {
 	uint16_t k;
 	for (k=0; ; k++) {
-		if (FileFormatStringTable[k].FileTypeString == NULL) 	// stopping criteria: last element in FileFormatStringTable 
-			return (noFile);   
-		if (!strcmp(FileFormatStringTable[k].FileTypeString, FileTypeString)) 
-			return (FileFormatStringTable[k].fmt);   
+		if (FileFormatStringTable[k].FileTypeString == NULL) 	// stopping criteria: last element in FileFormatStringTable
+			return (noFile);
+		if (!strcmp(FileFormatStringTable[k].FileTypeString, FileTypeString))
+			return (FileFormatStringTable[k].fmt);
 	}
 }
 
@@ -2265,11 +2316,11 @@ void struct2gdfbin(HDRTYPE *hdr)
 
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %i %i %p\n", __func__, __LINE__, hdr->HeadLen, hdr->EVENT.LenCodeDesc, hdr->EVENT.CodeDesc);
 
-	     	/****** 
-	     	 *	The size of Header 3 is computed by going through all TLV triples, 
-	     	 *	and compute HeadLen to allocate sufficient amount of memory
-		 *	Header 3 is filled later in a 2nd scan below 
-	     	 ******/	
+		/******
+		 *	The size of Header 3 is computed by going through all TLV triples,
+		 *	and compute HeadLen to allocate sufficient amount of memory
+		 *	Header 3 is filled later in a 2nd scan below
+		 ******/
 
 		/* writing header 3, in Tag-Length-Value from
 		 */
@@ -2424,8 +2475,9 @@ void struct2gdfbin(HDRTYPE *hdr)
 		}
 	    	if (hdr->AS.Header == NULL) {
 	    		biosigERROR(hdr, B4C_MEMORY_ALLOCATION_FAILED, "Memory allocation failed");
-			return; 
+			return;
 	    	}
+		memset(Header1, 0, 256*(1+hdr->NS));
 	     	sprintf((char*)hdr->AS.Header,"GDF %4.2f",hdr->VERSION);
 	    	uint8_t* Header2 = hdr->AS.Header+256;
 
@@ -2461,7 +2513,7 @@ void struct2gdfbin(HDRTYPE *hdr)
 
 	     	size_t len = strlen(hdr->ID.Recording);
 	     	memcpy(Header1+88, hdr->ID.Recording, min(len,80));
-                Header1[88 + min(len,80)] = 0; 
+                Header1[88 + min(len,80)] = 0;
 		if (hdr->VERSION>1.90) {
 			memcpy(Header1+152, &hdr->LOC, 16);
 #if __BYTE_ORDER == __BIG_ENDIAN
@@ -2520,7 +2572,7 @@ void struct2gdfbin(HDRTYPE *hdr)
 	*/
 
 		double fDur = hdr->SPR/hdr->SampleRate;
- 		if (hdr->NS==0 && 0.0 < hdr->EVENT.SampleRate && hdr->EVENT.SampleRate < INFINITY) 
+		if (hdr->NS==0 && 0.0 < hdr->EVENT.SampleRate && hdr->EVENT.SampleRate < INFINITY)
 			fDur = 1.0 / hdr->EVENT.SampleRate;
 
 		if (hdr->VERSION < 2.21) {
@@ -2566,11 +2618,11 @@ void struct2gdfbin(HDRTYPE *hdr)
 
 			len = strlen(tmpstr)+1;
 		     	memcpy(Header2+16*k2,tmpstr,min(len,16));
-                        Header2[16*k2+min(len,16)] = 0; 
+                        Header2[16*k2+min(len,16)] = 0;
 
 		     	len = strlen(hdr->CHANNEL[k].Transducer);
 		     	memcpy(Header2+80*k2 + 16*NS, hdr->CHANNEL[k].Transducer, min(len,80));
-			Header2[80*k2 + min(len,80) + 16*NS] = 0; 
+			Header2[80*k2 + min(len,80) + 16*NS] = 0;
 
 			tmpstr = PhysDim3(hdr->CHANNEL[k].PhysDimCode);
 			len = strlen(tmpstr)+1;
@@ -2595,7 +2647,7 @@ void struct2gdfbin(HDRTYPE *hdr)
 				lef32a(hdr->CHANNEL[k].LowPass, Header2 + 4*k2 + 204*NS);
 				lef32a(hdr->CHANNEL[k].HighPass, Header2 + 4*k2 + 208*NS);
 				lef32a(hdr->CHANNEL[k].Notch, Header2 + 4*k2 + 212*NS);
-				
+
 				lef32a(hdr->CHANNEL[k].XYZ[0], Header2 + 4*k2 + 224*NS);
 				lef32a(hdr->CHANNEL[k].XYZ[1], Header2 + 4*k2 + 228*NS);
 				lef32a(hdr->CHANNEL[k].XYZ[2], Header2 + 4*k2 + 232*NS);
@@ -2623,9 +2675,9 @@ void struct2gdfbin(HDRTYPE *hdr)
 
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %d)  %d %s\n", __func__, __LINE__, errno, strerror(errno));
 
-	     	/***** 
-	     	 *	This is the 2nd scan of Header3 - memory is allocated, now H3 is filled in with content 
-	     	 *****/
+		/*****
+		 *	This is the 2nd scan of Header3 - memory is allocated, now H3 is filled in with content
+		 *****/
 	    	Header2 = hdr->AS.Header+(NS+1)*256;
 	    	tag = 1;
 	     	if (TagNLen[tag]>0) {
@@ -2944,7 +2996,7 @@ int gdfbin2struct(HDRTYPE *hdr)
 			strncpy(hc->Label,(char*)Header2 + 16*k, len);
 			hc->Label[len] = 0;
 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"#%2i: <%s> %i %i\n",k,hc->Label,(int)len,(int)strlen(hc->Label)); 
+if (VERBOSE_LEVEL>7) fprintf(stdout,"#%2i: <%s> %i %i\n",k,hc->Label,(int)len,(int)strlen(hc->Label));
 
 			len = min(MAX_LENGTH_TRANSDUCER, 80);
 			memcpy(hc->Transducer, (char*)Header2 + 16*hdr->NS + 80*k, len);
@@ -3173,7 +3225,7 @@ if (VERBOSE_LEVEL>6) fprintf(stdout,"user-specific events defined\n");
 /*********************************************************************************
 	hdrEVT2rawEVT(HDRTYPE *hdr)
 	converts structure HDR.EVENT into raw event data (hdr->AS.rawEventData)
-	
+
 	TODO: support of EVENT.TimeStamp
  *********************************************************************************/
 size_t hdrEVT2rawEVT(HDRTYPE *hdr) {
@@ -3243,7 +3295,7 @@ size_t hdrEVT2rawEVT(HDRTYPE *hdr) {
 /*********************************************************************************
 	rawEVT2hdrEVT(HDRTYPE *hdr)
 	converts raw event data (hdr->AS.rawEventData) into structure HDR.EVENT
-	
+
 	TODO: support of EVENT.TimeStamp
  *********************************************************************************/
 void rawEVT2hdrEVT(HDRTYPE *hdr, size_t length_rawEventData) {
@@ -3279,7 +3331,7 @@ void rawEVT2hdrEVT(HDRTYPE *hdr, size_t length_rawEventData) {
 		                return;
 			}
 
-			if (hdr->NS==0 && !isfinite(hdr->SampleRate)) hdr->SampleRate = hdr->EVENT.SampleRate; 
+			if (hdr->NS==0 && !isfinite(hdr->SampleRate)) hdr->SampleRate = hdr->EVENT.SampleRate;
 
 	 		hdr->EVENT.POS = (uint32_t*) realloc(hdr->EVENT.POS, hdr->EVENT.N*sizeof(*hdr->EVENT.POS) );
 			hdr->EVENT.TYP = (uint16_t*) realloc(hdr->EVENT.TYP, hdr->EVENT.N*sizeof(*hdr->EVENT.TYP) );
@@ -3351,17 +3403,17 @@ int RerefCHANNEL(HDRTYPE *hdr, void *arg2, char Mode)
 		uint16_t flag,NS;
                 size_t i,j,k;
                 long r;
-		char flagLabelIsSet = 0; 
+		char flagLabelIsSet = 0;
 
                 switch (Mode) {
                 case 1: {
                         HDRTYPE *RR = sopen((const char*)arg2,"r",NULL);
                         ReRef       = RR->Calib;
-                        if (RR->rerefCHANNEL != NULL) {
-                                flagLabelIsSet = 1; 
-                        	if (hdr->rerefCHANNEL) free(hdr->rerefCHANNEL); 
-                        	hdr->rerefCHANNEL = RR->rerefCHANNEL;
-                        	RR->rerefCHANNEL  = NULL; 
+			if (RR->rerefCHANNEL != NULL) {
+                                flagLabelIsSet = 1;
+				if (hdr->rerefCHANNEL) free(hdr->rerefCHANNEL);
+				hdr->rerefCHANNEL = RR->rerefCHANNEL;
+				RR->rerefCHANNEL  = NULL;
                         }
                         RR->Calib   = NULL; // do not destroy ReRef
                         destructHDR(RR);
@@ -3407,7 +3459,7 @@ int RerefCHANNEL(HDRTYPE *hdr, void *arg2, char Mode)
                 if (hdr->rerefCHANNEL==NULL)
 			hdr->rerefCHANNEL = (CHANNEL_TYPE*) realloc(hdr->rerefCHANNEL, A->ncol*sizeof(CHANNEL_TYPE));
 
-		CHANNEL_TYPE *NEWCHANNEL = hdr->rerefCHANNEL; 
+		CHANNEL_TYPE *NEWCHANNEL = hdr->rerefCHANNEL;
                 hdr->FLAG.ROW_BASED_CHANNELS = 1;
 
                 // check each component
@@ -3478,7 +3530,7 @@ int RerefCHANNEL(HDRTYPE *hdr, void *arg2, char Mode)
 			else r = -1;
 
 			if (flagLabelIsSet)
-                               ; 
+                               ;
 			else if (!flag && (r<hdr->NS) && (r>=0)) {
 			        // if successful
 			        memcpy(NEWCHANNEL[i].Label, hdr->CHANNEL[r].Label, MAX_LENGTH_LABEL);
@@ -3505,8 +3557,8 @@ int read_header(HDRTYPE *hdr) {
 		hdr->TYPE must be unknown, otherwise no FileFormat evaluation is performed
 		hdr->FILE.size
 	output:
-		defines whole header structure and event table 			
-	return value:	
+		defines whole header structure and event table
+	return value:
 	0	no error
 	-1	error reading header 1
 	-2	error reading header 2
@@ -3526,7 +3578,7 @@ int read_header(HDRTYPE *hdr) {
     	strncpy(tmp,(char*)hdr->AS.Header+3,5); tmp[5]=0;
     	hdr->VERSION 	= atof(tmp);
 
-	// currently, only GDF is supported	
+	// currently, only GDF is supported
 	if ( (hdr->TYPE != GDF) || (hdr->VERSION < 0.01) )
 		return ( -1 );
 
@@ -3546,7 +3598,7 @@ int read_header(HDRTYPE *hdr) {
 	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): %i %i %i %f\n",__func__, __LINE__, (int)hdr->FILE.size, (int)hdr->HeadLen, (int)count, hdr->VERSION);
 
         if (count < hdr->HeadLen) {
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"ambigous GDF header size: %i %i\n",(int)count,hdr->HeadLen);
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"ambiguous GDF header size: %i %i\n",(int)count,hdr->HeadLen);
                 biosigERROR(hdr, B4C_INCOMPLETE_FILE, "reading GDF header failed");
                 return(-2);
 	}
@@ -3578,8 +3630,8 @@ int read_header(HDRTYPE *hdr) {
 	}
 	else if (hdr->FILE.size > hdr->HeadLen + hdr->AS.bpb*(size_t)hdr->NRec + 8)
 	{
-			if (VERBOSE_LEVEL > 7) 
-				fprintf(stdout,"GDF EVENT: %i,%i %i,%i,%i\n",(int)hdr->FILE.size, (int)(hdr->HeadLen + hdr->AS.bpb*hdr->NRec + 8), hdr->HeadLen, hdr->AS.bpb, (int)hdr->NRec); 
+			if (VERBOSE_LEVEL > 7)
+				fprintf(stdout,"GDF EVENT: %i,%i %i,%i,%i\n",(int)hdr->FILE.size, (int)(hdr->HeadLen + hdr->AS.bpb*hdr->NRec + 8), hdr->HeadLen, hdr->AS.bpb, (int)hdr->NRec);
 
 			ifseek(hdr, hdr->HeadLen + hdr->AS.bpb*hdr->NRec, SEEK_SET);
 			// READ EVENTTABLE
@@ -3597,8 +3649,8 @@ int read_header(HDRTYPE *hdr) {
 				hdr->EVENT.N = buf[1] + (buf[2] + buf[3]*256)*256;
 			}
 
-			if (VERBOSE_LEVEL > 7) 
-				fprintf(stdout,"EVENT.N = %i,%i\n",hdr->EVENT.N,(int)c); 
+			if (VERBOSE_LEVEL > 7)
+				fprintf(stdout,"EVENT.N = %i,%i\n",hdr->EVENT.N,(int)c);
 
 			char flag = buf[0];
 			int sze = (flag & 2) ? 12 : 6;
@@ -3618,7 +3670,7 @@ int read_header(HDRTYPE *hdr) {
 
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"[228] FMT=%s Ver=%4.2f\n",GetFileTypeString(hdr->TYPE),hdr->VERSION);
 
-	return (0); 
+	return (0);
 }
 
 
@@ -3649,24 +3701,24 @@ HDRTYPE* sopen_extended(const char* FileName, const char* MODE, HDRTYPE* hdr, bi
 	struct tm 	tm_time;
 //	time_t		tt;
 
-	const char*	GENDER = "XMFX";
+	const char	GENDER[] = "XMFX";
 	const uint16_t	CFWB_GDFTYP[] = {17,16,3};
 	const float	CNT_SETTINGS_NOTCH[] = {0.0, 50.0, 60.0};
 	const float	CNT_SETTINGS_LOWPASS[] = {30, 40, 50, 70, 100, 200, 500, 1000, 1500, 2000, 2500, 3000};
 	const float	CNT_SETTINGS_HIGHPASS[] = {NAN, 0, .05, .1, .15, .3, 1, 5, 10, 30, 100, 150, 300};
 	uint16_t	BCI2000_StatusVectorLength=0;	// specific for BCI2000 format
-#endif //ONLYGDF 
+#endif //ONLYGDF
 
 	biosig_options_type default_options;
 	default_options.free_text_event_limiter="\0";
 
-	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(%s,%s) (line %d): --delimiter=<%s> %p\n",__func__, FileName, MODE, __LINE__, biosig_options->free_text_event_limiter, biosig_options);
-
 	if (biosig_options==NULL) biosig_options = &default_options;
+
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(%s,%s) (line %d): --delimiter=<%s> %p\n",__func__, FileName, MODE, __LINE__, biosig_options->free_text_event_limiter, biosig_options);
 
 	if (FileName == NULL) {
 		biosigERROR(hdr, B4C_CANNOT_OPEN_FILE, "no filename specified");
-		return (hdr); 
+		return (hdr);
 	}
 	if (hdr==NULL)
 		hdr = constructHDR(0,0);	// initializes fields that may stay undefined during SOPEN
@@ -3687,33 +3739,33 @@ HDRTYPE* sopen_extended(const char* FileName, const char* MODE, HDRTYPE* hdr, bi
 if (!strncmp(MODE,"a",1)) {
 
 	/***** 	SOPEN APPEND *****/
-	HDRTYPE *hdr2 = NULL; 
+	HDRTYPE *hdr2 = NULL;
 	struct stat FileBuf;
-	if (stat(FileName, &FileBuf)==0) 
-		hdr->FILE.size = FileBuf.st_size; 
-	else 
+	if (stat(FileName, &FileBuf)==0)
+		hdr->FILE.size = FileBuf.st_size;
+	else
 		hdr->FILE.size = 0;
 
 	if (hdr->FILE.size==0) {
 		if (hdr->FILE.OPEN) ifclose(hdr);
 		return( sopen(FileName, "w", hdr) );
-	} 
+	}
 	else if (hdr->FILE.size < 256) {
 		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Error SOPEN(APPEND);  file format not supported.");
 		return (hdr);
-	} 
+	}
 	else {
-		// read header of existing file 
-		hdr2 = sopen(FileName, "r", hdr2); 
+		// read header of existing file
+		hdr2 = sopen(FileName, "r", hdr2);
 		sclose(hdr2);
- 	}; 
+	};
 
 	if (hdr2->TYPE != GDF) {
 		// currently only GDF is tested and supported
 		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Error SOPEN(APPEND);  file format not supported.");
 		destructHDR(hdr2);
 		return (hdr);
-	} 
+	}
 
 	// test for additional restrictions
 	if ( hdr2->EVENT.N > 0 && hdr2->FILE.COMPRESSION ) {
@@ -3721,12 +3773,12 @@ if (!strncmp(MODE,"a",1)) {
 		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Error SOPEN(GDF APPEND);  cannot append to compressed GDF file containing event table.");
 		destructHDR(hdr2);
 		return (hdr);
-	} 
+	}
 
-	// use header of existing file, sopen does hdr=hdr2, and open files for writing. 
+	// use header of existing file, sopen does hdr=hdr2, and open files for writing.
 	destructHDR(hdr);
-	if (hdr2->FILE.COMPRESSION) 
-		hdr = ifopen(hdr2, "ab");	
+	if (hdr2->FILE.COMPRESSION)
+		hdr = ifopen(hdr2, "ab");
 	else {
 		hdr = ifopen(hdr2, "rb+");
 		ifseek(hdr, hdr->HeadLen + hdr->NRec*hdr->AS.bpb, SEEK_SET);
@@ -3790,23 +3842,23 @@ else if (!strncmp(MODE,"r",1)) {
 #endif //ONLYGDF
 
 #ifdef __CURL_CURL_H
-	if (! strncmp(hdr->FileName,"file://", 7) 
-         || ! strncmp(hdr->FileName,"ftp://", 6) 
-         || ! strncmp(hdr->FileName,"http://", 7) 
-         || ! strncmp(hdr->FileName,"https://", 8) ) 
+	if (! strncmp(hdr->FileName,"file://", 7)
+         || ! strncmp(hdr->FileName,"ftp://", 6)
+         || ! strncmp(hdr->FileName,"http://", 7)
+         || ! strncmp(hdr->FileName,"https://", 8) )
 	{
 	        CURL *curl;
 	        char errbuffer[CURL_ERROR_SIZE];
- 
+
 	        if ((curl = curl_easy_init()) != NULL) {
-			FILE *tmpfid = tmpfile(); 
+			FILE *tmpfid = tmpfile();
 
 	                curl_easy_setopt(curl, CURLOPT_URL, hdr->FileName);
 	                curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 	                curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, errbuffer);
-			if (VERBOSE_LEVEL > 6) 
+			if (VERBOSE_LEVEL > 6)
 		                curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, tmpfid); 
+			curl_easy_setopt(curl, CURLOPT_WRITEDATA, tmpfid);
 	                if (curl_easy_perform(curl) != CURLE_OK) {
 				fprintf(stderr,"CURL ERROR: %s\n",errbuffer);
 				biosigERROR(hdr, B4C_CANNOT_OPEN_FILE, "Error SOPEN(READ); file download failed.");
@@ -3814,12 +3866,12 @@ else if (!strncmp(MODE,"r",1)) {
 				return(hdr);
 			}
 
-			/* 
+			/*
 				associate temporary file with input stream
-				channeling everything through zlib ensures that *.gz files 
+				channeling everything through zlib ensures that *.gz files
 				are automatically decompressed
-				According to http://www.acm.uiuc.edu/webmonkeys/book/c_guide/2.12.html#tmpfile, 
-				the tmpfile will be removed when stream is closed 
+				According to http://www.acm.uiuc.edu/webmonkeys/book/c_guide/2.12.html#tmpfile,
+				the tmpfile will be removed when stream is closed
 			*/
 			fseek(tmpfid,0,SEEK_SET);
 			hdr->FILE.gzFID = gzdopen(fileno(tmpfid), "r");
@@ -3861,7 +3913,7 @@ else if (!strncmp(MODE,"r",1)) {
 			free(AINF_RAW_FILENAME);
 		}
 #endif //ONLYGDF
-	
+
 	        hdr->FILE.COMPRESSION = 0;
 		hdr   = ifopen(hdr,"rb");
 		if (!hdr->FILE.OPEN) {
@@ -3870,7 +3922,8 @@ else if (!strncmp(MODE,"r",1)) {
 		}
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN 101:\n");
 		count = ifread(hdr->AS.Header, 1, PAGESIZE, hdr);
-		if (count<32) {
+		if (count<25) {
+			if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %d): %s(...) count = %d\n",__FILE__,__LINE__,__func__,count);
 			biosigERROR(hdr, B4C_CANNOT_OPEN_FILE, "Error SOPEN(READ); file is empty (or too short)");
 			ifclose(hdr);
 			return(hdr);
@@ -3882,9 +3935,9 @@ else if (!strncmp(MODE,"r",1)) {
 		if (!memcmp(Header1,MAGIC_NUMBER_GZIP,strlen(MAGIC_NUMBER_GZIP))) {
 #ifdef ZLIB_H
 			if (VERBOSE_LEVEL>7) fprintf(stdout,"[221] %i\n",(int)count);
-	
+
 			ifseek(hdr, 0, SEEK_SET);
-			hdr->FILE.gzFID = gzdopen(fileno(hdr->FILE.FID),"r"); 
+			hdr->FILE.gzFID = gzdopen(fileno(hdr->FILE.FID),"r");
 		        hdr->FILE.COMPRESSION = (uint8_t)1;
 			hdr->FILE.FID = NULL;
 			count = ifread(hdr->AS.Header, 1, PAGESIZE, hdr);
@@ -3896,7 +3949,7 @@ else if (!strncmp(MODE,"r",1)) {
 
 	}
 
-	if (VERBOSE_LEVEL>7) fprintf(stdout,"[222] %i\n",(int)count);
+	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...): count%i\n",__FILE__,__LINE__,__func__,(int)count);
 	hdr->HeadLen = count;
 	getfiletype(hdr);
 	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) FMT=%s Ver=%4.2f\n",__FILE__,__LINE__,GetFileTypeString(hdr->TYPE),hdr->VERSION);
@@ -3961,7 +4014,7 @@ else if (!strncmp(MODE,"r",1)) {
 	if (hdr->TYPE == GDF) {
 
 		struct stat FileBuf;
-		if (stat(hdr->FileName,&FileBuf)==0) hdr->FILE.size = FileBuf.st_size; 
+		if (stat(hdr->FileName,&FileBuf)==0) hdr->FILE.size = FileBuf.st_size;
 
 	    	if ( read_header(hdr) ) {
 			return (hdr);
@@ -3975,8 +4028,10 @@ else if (!strncmp(MODE,"r",1)) {
                         return(hdr);
                 }
 
-		typeof(hdr->NS)	AnnotationChannel = 0;
 		typeof(hdr->NS)	StatusChannel = 0;
+		int annotStartBi=-1;
+		int annotEndBi=-1;
+		int annotNumBytesPerBlock=0;
 
 		int last = min(MAX_LENGTH_PID, 80);
 		strncpy(hdr->Patient.Id, Header1+8, last);
@@ -4066,9 +4121,9 @@ else if (!strncmp(MODE,"r",1)) {
 				strncpy(hdr->ID.Recording, Header1+88+pos+1, 80-pos);
 				hdr->ID.Recording[80-pos-1] = 0;
 				if (strtok(hdr->ID.Recording," ")!=NULL) {
-					char *tech = strtok(NULL," "); 
-					if (hdr->ID.Technician) free(hdr->ID.Technician); 
-					hdr->ID.Technician = (tech != NULL) ?  strdup(tech) : NULL; 
+					char *tech = strtok(NULL," ");
+					if (hdr->ID.Technician) free(hdr->ID.Technician);
+					hdr->ID.Technician = (tech != NULL) ?  strdup(tech) : NULL;
 					hdr->ID.Manufacturer.Name  = strtok(NULL," ");
 				}
 
@@ -4107,7 +4162,7 @@ else if (!strncmp(MODE,"r",1)) {
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"[EDF 211z] #=%li\n",iftell(hdr));
 
 		}
-		hdr->T0 = tm_time2gdf_time(&tm_time);
+		hdr->T0 = tm_time2gdf_time(&tm_time);  // note: sub-second information will be extracted from first annotation
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"[EDF 212] #=%li\n",iftell(hdr));
 
 		if (hdr->NS==0) return(hdr);
@@ -4115,7 +4170,8 @@ else if (!strncmp(MODE,"r",1)) {
 	    	hdr->CHANNEL = (CHANNEL_TYPE*) realloc(hdr->CHANNEL, hdr->NS * sizeof(CHANNEL_TYPE));
 	    	hdr->AS.Header = (uint8_t*) realloc(Header1,hdr->HeadLen);
 	    	char *Header2 = (char*)hdr->AS.Header+256;
-	    	count  += ifread(hdr->AS.Header+count, 1, hdr->HeadLen-count, hdr);
+		if (hdr->HeadLen > count)
+			count  += ifread(hdr->AS.Header+count, 1, hdr->HeadLen-count, hdr);
 
                 if (count < hdr->HeadLen) {
                         biosigERROR(hdr, B4C_INCOMPLETE_FILE, "reading BDF/EDF variable header failed");
@@ -4124,10 +4180,10 @@ else if (!strncmp(MODE,"r",1)) {
 
                 /* identify buggy NeuroLoggerEDF  export with bytes 236-257
                 	EDF requires that the fields are left-justified, thus the first byte should be different than a space
-                	Therefore, the probability of a false positive detection is highly unlikely. 
+			Therefore, the probability of a false positive detection is highly unlikely.
                 */
-                char FLAG_BUGGY_NEUROLOGGER_EDF = !strncmp(Header1+236," 1       0       8   ",21) && Header1[0x180]==' ' 
-						&& Header1[0x7c0]==' ' && Header1[0x400]==' ' && Header1[0x440]==' ' 
+                char FLAG_BUGGY_NEUROLOGGER_EDF = !strncmp(Header1+236," 1       0       8   ",21) && Header1[0x180]==' '
+						&& Header1[0x7c0]==' ' && Header1[0x400]==' ' && Header1[0x440]==' '
 						&& Header1[0x480]==' ' && Header1[0x4c0]==' ' && Header1[0x500]==' ';
 
                 if (FLAG_BUGGY_NEUROLOGGER_EDF) for (k=236; k<9*256; k++) Header1[k-1]=Header1[k];
@@ -4140,7 +4196,7 @@ else if (!strncmp(MODE,"r",1)) {
 			if (VERBOSE_LEVEL>7)
 				fprintf(stdout,"[EDF 213] #%i/%i\n",(int)k,hdr->NS);
 
-			hc->LeadIdCode = 0; 
+			hc->LeadIdCode = 0;
 			last = min(MAX_LENGTH_LABEL, 16);
 			strncpy(hc->Label, Header2 + 16*k, last);
 			while ((0 <= last) && (isspace(hc->Label[--last]))) ;
@@ -4199,10 +4255,10 @@ else if (!strncmp(MODE,"r",1)) {
 			hc->Impedance = NAN;
 
 			// decode filter information into hdr->Filter.{Lowpass, Highpass, Notch}
-			uint8_t kk; 			
+			uint8_t kk;
 			char PreFilt[81];
 			strncpy(PreFilt, Header2+ 80*k + 136*hdr->NS, 80);
-			for (kk=0; kk<80; kk++) PreFilt[kk] = toupper(PreFilt[kk]);	
+			for (kk=0; kk<80; kk++) PreFilt[kk] = toupper(PreFilt[kk]);
 			PreFilt[80] = 0;
 
 			if (VERBOSE_LEVEL>7)
@@ -4218,14 +4274,18 @@ else if (!strncmp(MODE,"r",1)) {
 
 			if (VERBOSE_LEVEL>7)
 				fprintf(stdout,"#%i# HP: %fHz  LP:%fHz NOTCH=%f\n",(int)k,hc->HighPass,hc->LowPass,hc->Notch);
-				
-			if ((hdr->TYPE==EDF) && !strncmp(Header1+192,"EDF+",4) && !strcmp(hc->Label,"EDF Annotations")) {
+
+			if ((hdr->TYPE==EDF) && !strcmp(hc->Label,"EDF Annotations")) {
 				hc->OnOff = 0;
-				AnnotationChannel = k+1;
+				if (annotStartBi < 0) annotStartBi = hc->bi;
+				annotEndBi = hdr->AS.bpb;
+				annotNumBytesPerBlock += nbytes;
 			}
-			else if ((hdr->TYPE==BDF) && !strncmp(Header1+192,"BDF+",4) && !strcmp(hc->Label,"BDF Annotations")) {
+			else if ((hdr->TYPE==BDF) && !strcmp(hc->Label,"BDF Annotations")) {
 				hc->OnOff = 0;
-				AnnotationChannel = k+1;
+				if (annotStartBi < 0) annotStartBi = hc->bi;
+				annotEndBi = hdr->AS.bpb;
+				annotNumBytesPerBlock += nbytes;
 			}
 			if ((hdr->TYPE==BDF) && !strcmp(hc->Label,"Status")) {
 				hc->OnOff = 0;
@@ -4244,7 +4304,7 @@ else if (!strncmp(MODE,"r",1)) {
 	    	if (Dur==0.0 && FLAG_BUGGY_NEUROLOGGER_EDF) Dur = hdr->SPR/496.0;
 		hdr->SampleRate = hdr->SPR/Dur;
 
-		if (VERBOSE_LEVEL>8) fprintf(stdout,"[EDF 220] #=%i SPR=%i\n",(int)iftell(hdr),(int)hdr->SPR);
+		if (VERBOSE_LEVEL>8) fprintf(stdout,"[EDF 220] #=%i SPR=%i Dur=%g\n",(int)iftell(hdr),(int)hdr->SPR, Dur);
 
 		if (hdr->NRec <= 0) {
         		struct stat FileBuf;
@@ -4252,16 +4312,15 @@ else if (!strncmp(MODE,"r",1)) {
 			hdr->NRec = (FileBuf.st_size - hdr->HeadLen)/hdr->AS.bpb;
 		}
 
-		if (AnnotationChannel) {
+		if (annotStartBi + annotNumBytesPerBlock - annotEndBi)
+			fprintf(stdout, "WARNING: this file has multiple non-contigous blocks of EDF+/BDF+ annotations channels - annotation channels are not decoded");
+		else {
 			/* read Annotation and Status channel and extract event information */
-			CHANNEL_TYPE *hc = hdr->CHANNEL+AnnotationChannel-1;
-
-			size_t sz   	= GDFTYP_BITS[hc->GDFTYP]>>3;
-			size_t bpb	= hc->SPR * sz;
+			size_t bpb	= annotNumBytesPerBlock;
 			size_t len 	= bpb * hdr->NRec;
 			uint8_t *Marker = (uint8_t*)malloc(len + 1);
 			size_t skip 	= hdr->AS.bpb - bpb;
-			ifseek(hdr, hdr->HeadLen + hc->bi, SEEK_SET);
+			ifseek(hdr, hdr->HeadLen + annotStartBi, SEEK_SET);
 			nrec_t k3;
 			for (k3=0; k3<hdr->NRec; k3++) {
 			    	ifread(Marker+k3*bpb, 1, bpb, hdr);
@@ -4272,17 +4331,18 @@ else if (!strncmp(MODE,"r",1)) {
 			hdr->EVENT.SampleRate = hdr->SampleRate;
 
 			/* convert EDF+/BDF+ annotation channel into event table */
+			char flag_subsec_isset = 0;
 			for (k3 = 0; k3 < hdr->NRec; k3++) {
-				double timeKeeping = 0;	
+				double timeKeeping = 0;
 				char *line = (char*)(Marker + k3 * bpb);
-				
+
 				char flag = !strncmp(Header1+193,"DF+D",4); // no time keeping for EDF+C
 				while (line < (char*)(Marker + (k3+1) * bpb)) {
-					// loop through all annotations within a segment	
-										
+					// loop through all annotations within a segment
+
 if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ line<%s>\n",line);
 
-					char *next = strchr(line,0); // next points to end of annotation	
+					char *next = strchr(line,0); // next points to end of annotation
 
 					char *s1 = strtok(line,"\x14");
 					char *s2 = strtok(NULL,"\x14");
@@ -4298,6 +4358,19 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(line %i): EDF+ line<%s>\n",__FILE__,__LI
 					}
 
 					double t = atof(tstr);
+
+					/* set sub-second start time: see also
+						https://github.com/mne-tools/mne-python/pull/7875
+						https://www.edfplus.info/specs/edfplus.html#tal
+					*/
+					if ( !flag_subsec_isset && (s2==NULL) && (tstr[0]=='+' || tstr[0]=='-' ) ) {
+						// first t contains subsecond information of starttime
+						if (VERBOSE_LEVEL>7) fprintf(stdout,"T0=%20f + %f s\n",ldexp(hdr->T0,-32)*24*3600,t);
+						hdr->T0 += ldexp(t / (24 * 3600.0), +32);
+						if (VERBOSE_LEVEL>7) fprintf(stdout,"T0=%20f\n", ldexp(hdr->T0,-32) * 24 * 3600);
+					}
+					flag_subsec_isset = 1;
+
 					if (flag>0 || s2!=NULL) {
 						if (N_EVENT <= hdr->EVENT.N+1) {
 							N_EVENT = reallocEventTable(hdr, max(6,hdr->EVENT.N*2));
@@ -4323,7 +4396,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(line %i): EDF+ line<%s>\n",__FILE__,__LI
 							// EDF+D: marker for beginning of segment
 							hdr->EVENT.TYP[hdr->EVENT.N] = 0x7ffe;
 							hdr->EVENT.POS[hdr->EVENT.N] = k3 * hdr->SPR;
-							timeKeeping = t; 
+							timeKeeping = t;
 							flag = 2;
 							break;
 						default:
@@ -4336,20 +4409,20 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"%s(line %i): EDF+ line<%s>\n",__FILE__,__LI
 #if (BIOSIG_VERSION >= 10500)
 						hdr->EVENT.TimeStamp[hdr->EVENT.N] = hdr->T0 + ldexp(t/(24*3600),32);
 #endif
-						hdr->EVENT.DUR[hdr->EVENT.N] = durstr ? (atof(durstr)*hdr->EVENT.SampleRate) : 0; 
-						hdr->EVENT.CHN[hdr->EVENT.N] = 0; 
+						hdr->EVENT.DUR[hdr->EVENT.N] = durstr ? (atof(durstr)*hdr->EVENT.SampleRate) : 0;
+						hdr->EVENT.CHN[hdr->EVENT.N] = 0;
 						hdr->EVENT.N++;
 					}
 
 if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ event\n\ts1:\t<%s>\n\ts2:\t<%s>\n\ts3:\t<%s>\n\tsdelay:\t<%s>\n\tdur:\t<%s>\n\t\n",s1,s2,s3,tstr,durstr);
 
-					for (line=next; *line==0; line++) {};  // skip \0's and set line to start of next annotation 
+					for (line=next; *line==0; line++) {};  // skip \0's and set line to start of next annotation
 				}
 			}
 
 			hdr->AS.auxBUF = Marker;	// contains EVENT.CodeDesc strings
-		}	/* End reading if Annotation channel */ 
-			
+		}	/* End reading if Annotation channel */
+
 		if (StatusChannel) {
 				/* read Status channel and extract event information */
 				CHANNEL_TYPE *hc = hdr->CHANNEL+StatusChannel-1;
@@ -4393,7 +4466,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ event\n\ts1:\t<%s>\n\ts2:\t<%s>\n\ts3:
 					biosigERROR(hdr, B4C_MEMORY_ALLOCATION_FAILED, "Allocating memory for event table failed.");
 					return (hdr);
 				}
-				
+
 				for (d0=0, k=0; k < len/3; d0=d1, k++) {
 					d1 = ((uint32_t)Marker[3*k+2]<<16) + ((uint32_t)Marker[3*k+1]<<8) + (uint32_t)Marker[3*k];
 
@@ -4423,7 +4496,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ event\n\ts1:\t<%s>\n\ts2:\t<%s>\n\ts3:
 						hdr->EVENT.TYP[hdr->EVENT.N] = d2;
 						++hdr->EVENT.N;
 						if (d2==0x7ffe)
-							fprintf(stdout,"Warning: BDF file %s uses ambigous code 0x7ffe; For details see file eventcodes.txt. \n",hdr->FileName);
+							fprintf(stdout,"Warning: BDF file %s uses ambiguous code 0x7ffe; For details see file eventcodes.txt. \n",hdr->FileName);
 					}
 				*/
 				}
@@ -4435,7 +4508,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ event\n\ts1:\t<%s>\n\ts2:\t<%s>\n\ts3:
 	}
 
 	else if (hdr->TYPE==ABF) {
-		hdr->HeadLen = count; 
+		hdr->HeadLen = count;
 		sopen_abf_read(hdr);
 	}
 
@@ -4444,7 +4517,6 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ event\n\ts1:\t<%s>\n\ts2:\t<%s>\n\ts3:
 		sopen_abf2_read(hdr);
 	}
 
-#if defined(WITH_ATF)
 	else if (hdr->TYPE==ATF) {
 		// READ ATF
 		hdr->HeadLen = count;
@@ -4459,7 +4531,6 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ event\n\ts1:\t<%s>\n\ts2:\t<%s>\n\ts3:
 		sopen_atf_read(hdr);
 
 	}
-#endif // WITH_ATF
 
 	else if (hdr->TYPE==ACQ) {
 
@@ -4503,7 +4574,8 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ event\n\ts1:\t<%s>\n\ts2:\t<%s>\n\ts3:
 		hdr->HeadLen  += 4;
 		// read header up to nLenght and nID of foreign data section
 		hdr->AS.Header = (uint8_t*) realloc(hdr->AS.Header, hdr->HeadLen);
-		count         += ifread(Header1+count, 1, hdr->HeadLen-count, hdr);
+		if (hdr->HeadLen > count)
+			count += ifread(Header1+count, 1, hdr->HeadLen-count, hdr);
 		uint32_t POS   = hdr->HeadLen;
 		// read "foreign data section" and "per channel data types section"
 		hdr->HeadLen  += leu16p(hdr->AS.Header + hdr->HeadLen-4) - 4;
@@ -4511,7 +4583,8 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ event\n\ts1:\t<%s>\n\ts2:\t<%s>\n\ts3:
 		// read "foreign data section" and "per channel data types section"
 		hdr->HeadLen  += 4*hdr->NS;
 		hdr->AS.Header = (uint8_t*)realloc(Header1, hdr->HeadLen+8);
-		count         += ifread(Header1+POS, 1, hdr->HeadLen-POS, hdr);
+		if (hdr->HeadLen > POS)
+			count += ifread(Header1+POS, 1, hdr->HeadLen-POS, hdr);
 
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %s %i/%i %i/%i %i/%i %i/%i %i/%i \n", \
 			__FILE__, __LINE__, __func__, \
@@ -4532,7 +4605,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ event\n\ts1:\t<%s>\n\ts2:\t<%s>\n\ts3:
 			CHANNEL_TYPE *hc = hdr->CHANNEL+k;
 
 	    		uint8_t* Header2 = hdr->AS.Header+POS;
-			hc->LeadIdCode = 0; 
+			hc->LeadIdCode = 0;
 			hc->Transducer[0] = '\0';
 
 			//CHAN = leu16p(Header2+4);
@@ -4753,7 +4826,7 @@ fprintf(stdout,"ACQ EVENT: %i POS: %i\n",k,POS);
 			else
 				hc->PhysDimCode = 4256; // "V"
 
-			if (label) free(label); 
+			if (label) free(label);
 		 	t = strtok(NULL,"\x0a\x0d");
 		}
 
@@ -4789,7 +4862,7 @@ fprintf(stdout,"ACQ EVENT: %i POS: %i\n",k,POS);
     		hdr->SPR 	=  3;
     		hdr->SampleRate = 24e3;
 		struct stat FileBuf;
-		if (stat(hdr->FileName, &FileBuf)==0) hdr->FILE.size = FileBuf.st_size; 
+		if (stat(hdr->FileName, &FileBuf)==0) hdr->FILE.size = FileBuf.st_size;
     		hdr->NRec 	= hdr->FILE.size / hdr->AS.bpb;
 
 		hdr->CHANNEL = (CHANNEL_TYPE*) realloc(hdr->CHANNEL, hdr->NS * sizeof(CHANNEL_TYPE));
@@ -4798,8 +4871,8 @@ fprintf(stdout,"ACQ EVENT: %i POS: %i\n",k,POS);
 			hc = hdr->CHANNEL + k;
 			// hc->PhysDimCode = 4256; // "V"
 			hc->PhysDimCode   = 0;
-			hc->Transducer[0] = 0; 
-			
+			hc->Transducer[0] = 0;
+
 			hc->LeadIdCode = 0;
 			hc->SPR        = hdr->SPR;
 			hc->Cal        = 1.0;
@@ -4831,7 +4904,7 @@ fprintf(stdout,"ACQ EVENT: %i POS: %i\n",k,POS);
 			hc->DigMin  = 0.0;
 			hc->DigMax  = ldexp(1.0, 32) - 1.0;
 			hc->bi      = 4;
-				
+
 			hc = hdr->CHANNEL + 1;
 			strcpy(hc->Label, "Digital I/O");
 			hc->SPR     = 1;
@@ -4844,7 +4917,7 @@ fprintf(stdout,"ACQ EVENT: %i POS: %i\n",k,POS);
 			strcpy(hc->Label, "FunKey");
 			hc->SPR     = 1;
 			hc->GDFTYP  = 2;	// uint8
-			hc->DigMin  = 0.0; 
+			hc->DigMin  = 0.0;
 			hc->DigMax  = 255.0;
 			hc->bi      = 416;
 
@@ -4852,7 +4925,7 @@ fprintf(stdout,"ACQ EVENT: %i POS: %i\n",k,POS);
 			strcpy(hc->Label, "Key Code");
 			hc->SPR     = 1;
 			hc->GDFTYP  = 2;	// uint8
-			hc->DigMin  = 0.0; 
+			hc->DigMin  = 0.0;
 			hc->DigMax  = 255.0;
 			hc->bi 	    = 417;
 
@@ -4862,28 +4935,28 @@ fprintf(stdout,"ACQ EVENT: %i POS: %i\n",k,POS);
 			hc->PhysMin = hc->DigMin * hc->Cal + hc->Off;
 		}
 
-		hdr->HeadLen = 0; 
-		ifseek(hdr, 0, SEEK_SET); 	
+		hdr->HeadLen = 0;
+		ifseek(hdr, 0, SEEK_SET);
 
-		HDRTYPE H1; 
-		H1.FILE.COMPRESSION = 1; 	// try always with zlib, libz reverts to  no compression anyway. 
+		HDRTYPE H1;
+		H1.FILE.COMPRESSION = 1; 	// try always with zlib, libz reverts to  no compression anyway.
 		H1.FileName = malloc(strlen(hdr->FileName)+5);
 		strcpy(H1.FileName, hdr->FileName); 		// Flawfinder: ignore
 		char *e = strrchr(H1.FileName,'.');
-		if (e==NULL) e = H1.FileName+strlen(H1.FileName); 
-		strcpy(e,".set"); 
-		ifopen(&H1, "r"); 
-		unsigned MaxLineLen = 1000; 
+		if (e==NULL) e = H1.FileName+strlen(H1.FileName);
+		strcpy(e,".set");
+		ifopen(&H1, "r");
+		unsigned MaxLineLen = 1000;
 		char *line = malloc(MaxLineLen);
-		double PhysMax = NAN; 
+		double PhysMax = NAN;
 		//char* ifgets(char *str, int n, HDRTYPE* hdr) {
 		while (!ifeof(&H1)) {
-			ifgets(line, MaxLineLen, &H1); 
+			ifgets(line, MaxLineLen, &H1);
 			if (MaxLineLen <= strlen(line)) {
-				fprintf(stderr,"Warning (Axona): line ## in file <%s> exceeds maximum length\n",H1.FileName); 
+				fprintf(stderr,"Warning (Axona): line ## in file <%s> exceeds maximum length\n",H1.FileName);
 			}
-			char *tag = strtok(line," \t\n\r"); 
-			char *val = strtok(NULL,"\n\r"); 
+			char *tag = strtok(line," \t\n\r");
+			char *val = strtok(NULL,"\n\r");
 
 			if (tag==NULL || val==NULL)
 				;
@@ -4896,38 +4969,38 @@ fprintf(stdout,"ACQ EVENT: %i POS: %i\n",k,POS);
 			else if (!strcmp(tag,"sw_version"))
 				;
 			else if (!strcmp(tag,"ADC_fullscale_mv")) {
-				char *e; 
+				char *e;
 				PhysMax = strtod(val, &e);
-				if (e==NULL) continue; // ignore value because its invalid 
-				
+				if (e==NULL) continue; // ignore value because its invalid
+
 			}
 			else if (!strncmp(tag,"gain_ch_",4)) {
-				char *e; 
+				char *e;
 				size_t ch = strtol(tag+8, &e, 10);
-				if (e==NULL || ch >= hdr->NS) continue; // ignore value because its invalid 
+				if (e==NULL || ch >= hdr->NS) continue; // ignore value because its invalid
 				double Cal = strtod(val, &e);
-				if (e==NULL) continue; // ignore value because its invalid 
+				if (e==NULL) continue; // ignore value because its invalid
 
-				hdr->CHANNEL[ch].Cal = 1.0/Cal; 
-				hdr->CHANNEL[ch].Off = 0.0; 
-				hdr->CHANNEL[ch].PhysMax = +PhysMax; 
-				hdr->CHANNEL[ch].PhysMin = -PhysMax; 
-				hdr->CHANNEL[ch].DigMax  = +PhysMax/Cal; 
+				hdr->CHANNEL[ch].Cal = 1.0/Cal;
+				hdr->CHANNEL[ch].Off = 0.0;
+				hdr->CHANNEL[ch].PhysMax = +PhysMax;
+				hdr->CHANNEL[ch].PhysMin = -PhysMax;
+				hdr->CHANNEL[ch].DigMax  = +PhysMax/Cal;
 				hdr->CHANNEL[ch].DigMin  = -PhysMax/Cal;
 			}
 			else if (!strcmp(tag,"rawRate")) {
-				char *e; 
+				char *e;
 				double fs = strtod(val, &e);
-				if (e==NULL) continue; // ignore value because its invalid 
+				if (e==NULL) continue; // ignore value because its invalid
 				hdr->SampleRate = fs;
 			}
 			else if (!strcmp(tag,"")) {
 				;
 			}
 		}
-		free(line); 
-		ifclose(&H1); 
-		free(H1.FileName); 	
+		free(line);
+		ifclose(&H1);
+		free(H1.FileName);
 	}
 
     	else if ((hdr->TYPE==ASCII) || (hdr->TYPE==BIN)) {
@@ -5385,7 +5458,7 @@ fprintf(stdout,"ACQ EVENT: %i POS: %i\n",k,POS);
 					fb_pos = i[2]*8 + i[3];
 					fb_len = i[0];
 				}
-				if (item) free(item); 
+				if (item) free(item);
 			}
 
 			else if (status==2) {
@@ -5552,7 +5625,8 @@ fprintf(stdout,"ACQ EVENT: %i POS: %i\n",k,POS);
 
 	    	hdr->HeadLen 	 = 1024;
 	    	hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header, hdr->HeadLen);
-	    	count   += ifread(hdr->AS.Header+count,1,hdr->HeadLen-count,hdr);
+		if (hdr->HeadLen > count)
+			count   += ifread(hdr->AS.Header+count, 1, hdr->HeadLen-count, hdr);
 		hdr->NS  	 = leu16p(hdr->AS.Header+2);
 		hdr->NRec   	 = leu32p(hdr->AS.Header+6);
 		hdr->SPR  	 = leu32p(hdr->AS.Header+10);
@@ -5662,6 +5736,234 @@ if (VERBOSE_LEVEL>8)
 		hdr->NRec = FileBuf.st_size/hdr->NS;
 	        ifseek(hdr, hdr->HeadLen, SEEK_SET);
 
+	}
+
+	else if (hdr->TYPE==WFT) {
+		// WFT/Nicolet
+		hdr->HeadLen = atol((char*)hdr->AS.Header+8);
+		if (count<hdr->HeadLen) {
+			hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header, hdr->HeadLen);
+			count   += ifread(hdr->AS.Header+count,1,hdr->HeadLen-count,hdr);
+		}
+		uint16_t gdftyp=3;  // int16_t
+
+		// File_size
+		char *next = strchr(hdr->AS.Header+8,0)+1;
+		while (*next==32) next++;
+		hdr->FILE.size = atol(next);
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// File format version
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		hdr->VERSION = atol(next);
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		hdr->NS   = 1;
+		hdr->CHANNEL = (CHANNEL_TYPE*) realloc(hdr->CHANNEL,hdr->NS*sizeof(CHANNEL_TYPE));
+		CHANNEL_TYPE *hc = hdr->CHANNEL;
+		hc->OnOff = 1;
+		hc->LeadIdCode = 0;
+		hc->Transducer[0]=0;
+		hc->TOffset = 0.0;
+		hc->LowPass = 0.0;
+		hc->HighPass = 0.0;
+		hc->Notch   = 0.0;
+		hc->XYZ[0]  = 0;
+		hc->XYZ[1]  = 0;
+		hc->XYZ[2]  = 0;
+		hc->Impedance = NAN;
+		hc->bi = 0;
+		hc->bi8 = 0;
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// Waveform title
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		memcpy(hc->Label, next, MAX_LENGTH_LABEL+1);
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		struct tm T0;
+		T0.tm_sec=0;
+		T0.tm_min=0;
+		T0.tm_hour=0;
+		// date year
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		T0.tm_year = atol(next);
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// date month
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		T0.tm_mon = atol(next)-1;
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// date day
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		T0.tm_mday = atol(next);
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// milliseconds since midnight
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		long msec = atol(next);
+		T0.tm_sec = msec / 1000;
+		msec      = msec % 1000;
+		hdr->T0 = tm_time2gdf_time(&T0) + ldexp(msec/(3600*24*1000.0),32) ;
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// date day
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		hdr->SPR  = 1;
+		hdr->NRec = atol(next);
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		hc->Transducer[0] = '\0';
+		hc->GDFTYP 	= 3;	// int16
+		hc->SPR 	= hdr->SPR; //
+		hc->LowPass	= -1.0;
+		hc->HighPass 	= -1.0;
+		hc->Notch	= -1.0;  // unknown
+		hc->DigMax	= 32767;
+		hc->DigMin	= -32768;
+
+		hc->OnOff    	= 1;
+		hc->PhysDimCode = 4275; // uV
+		hc->LeadIdCode  = 0;
+
+		// vertical zero
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		int vz = atol(next);
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// vertical norm
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		double vn = atof(next);
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// user vertical zero
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		double uvz = atof(next);
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// user vertical norm
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		double uvn = atof(next);
+		hc->Cal = vn*uvn;
+		hc->Off = uvz - vz*vn*uvn;
+		hc->PhysMax	= hc->DigMax * hc->Cal + hc->Off;
+		hc->PhysMin	= hc->DigMin * hc->Cal + hc->Off;
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// user vertical label
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		const char *physdim = next;
+		if (!memcmp(next,"V ",2))
+			hc->PhysDimCode = 4256;
+		else
+			hc->PhysDimCode = PhysDimCode(next);
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// user horizontal zero
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		hdr->SampleRate = 1.0/atof(next);
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// user horizontal norm
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		double uhn = atof(next);
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// user horizontal label
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		const char *my_physdim = next;
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// user notes
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		const char *user_notes = next;
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// audit
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		const char *audit = next;
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// nicolet_digitizer_type
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		const char nicolet_digitizer_type = *next;
+		strcpy(hdr->ID.Manufacturer._field, "Nicolet");
+		strcpy(hdr->ID.Manufacturer._field+8, next);
+		hdr->ID.Manufacturer.Name  = hdr->ID.Manufacturer._field;
+		hdr->ID.Manufacturer.Model = hdr->ID.Manufacturer._field+8;
+		hdr->ID.Manufacturer.Version = NULL;
+		hdr->ID.Manufacturer.SerialNumber = NULL;
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// bytes per data point
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		hdr->AS.bpb = atol(next);
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		// resolution
+		next = strchr(next,0)+1;
+		while (*next==32) next++;
+		int resolution = atol(next);
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s line %d: %s(...) <%s>:\n", __FILE__,__LINE__,__func__,next);
+
+		int k=24;
+		hdr->SampleRate = 200;	// unknown
+		while (next < (char*)(hdr->AS.Header + hdr->HeadLen)) {
+
+			if (k==189) hdr->SampleRate = 1.0/atof(next);
+
+			if (VERBOSE_LEVEL>8) fprintf(stdout,"%s line %d: %s(...) : %d <%s>\n", __FILE__,__LINE__,__func__, k, next);
+			next = strchr(next,0)+1;
+			while (*next==32) next++;
+			k++;
+		}
+	}
+
+	else if (hdr->TYPE==BiosigDump) {
+	        hdr->HeadLen = count;
+		sopen_biosigdump_read(hdr);
 	}
 
 	else if (hdr->TYPE==BNI) {
@@ -6145,12 +6447,12 @@ if (VERBOSE_LEVEL>8)
 
 	else if (hdr->TYPE==CFS) {
 	        hdr->HeadLen = count;
-		sopen_cfs_read(hdr); 
+		sopen_cfs_read(hdr);
 	}
 
 	else if (hdr->TYPE==SMR) {
 	        hdr->HeadLen = count;
-		sopen_smr_read(hdr); 
+		sopen_smr_read(hdr);
 	}
 
 	else if (hdr->TYPE==CFWB) {
@@ -6632,6 +6934,18 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 	    	ifseek(hdr, 19, SEEK_SET);
 	}
 
+	else if ((hdr->TYPE==EAS) || (hdr->TYPE==EZ3) || (hdr->TYPE==ARC)) {
+		while (!ifeof(hdr)) {
+			size_t bufsiz = max(2*count, PAGESIZE);
+			hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header, bufsiz+1);
+			count  += ifread(hdr->AS.Header+count, 1, bufsiz-count, hdr);
+		}
+		hdr->AS.Header[count]=0;
+		hdr->HeadLen = count;
+		ifclose(hdr);
+
+		sopen_cadwell_read(hdr);
+	}
 	else if (hdr->TYPE==EBS) {
 
 		fprintf(stderr,"Warning SOPEN(EBS): support for EBS format is experimental\n");
@@ -6845,7 +7159,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 			hc->PhysMax = hc->DigMax*hc->Cal;
 			hc->PhysMin = hc->DigMin*hc->Cal;
 			hc->Transducer[0] = 0;
-			hc->LeadIdCode = 0; 
+			hc->LeadIdCode = 0;
 			hc->Notch     = NAN;
 			hc->Impedance = INFINITY;
 		      	hc->fZ        = NAN;
@@ -6862,9 +7176,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 	else if (hdr->TYPE==EEG1100) {
 		// the information of this format is derived from nk2edf-0.43beta-src of Teunis van Beelen
 
-		if (VERBOSE_LEVEL>7)
-			fprintf(stdout,"EEG1100 [207]: \n");
-
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %d) %s(...)\n",__FILE__,__LINE__,__func__);
 
 		char *fn = (char*)malloc((strlen(hdr->FileName)+5)*sizeof(char));
 		strcpy(fn, hdr->FileName);	// Flawfinder: ignore
@@ -6914,11 +7226,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 
 			}
 
-
-		if (VERBOSE_LEVEL>7)
-			fprintf(stdout,"EEG1100 [222]: \n");
-
-
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %d) %s(...)\n",__FILE__,__LINE__,__func__);
 
 		size_t n1,n2,k2,pos1,pos2;
 		n1 = hdr->AS.Header[145];
@@ -6941,10 +7249,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 		uint8_t *h3 = (uint8_t*)malloc(40);
 		for (k=0; k<n1; k++) {
 
-
-		if (VERBOSE_LEVEL>7)
-			fprintf(stdout,"EEG1100 [232] %i: \n",(int)k);
-
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %d) %s(...) k=%d\n",__FILE__,__LINE__,__func__,k);
 
 			pos1 = leu32p(hdr->AS.Header+146+k*20);
 			ifseek(hdr, pos1, SEEK_SET);
@@ -7069,7 +7374,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 						hc->PhysMin = -3200.0;
 						hc->PhysMax =  3200.0*((1<<15)-1)/(1<<15);
 					}
-				    	hc->GDFTYP = 128;	// Nihon-Kohden int16 format
+					hc->GDFTYP =  128;	// Nihon-Kohden int16 format
 					hc->DigMax =  32767.0;
 					hc->DigMin = -32768.0;
 
@@ -7093,18 +7398,19 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 		if ((numSegments>1) && (hdr->FLAG.TARGETSEGMENT==1))
 			fprintf(stdout,"File %s has more than one (%i) segment; use TARGET_SEGMENT argument to select other segments.\n",hdr->FileName,numSegments);
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"EEG1100 [242]: <%s>\n",fn);
-
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %d) %s(...) <%s>\n",__FILE__,__LINE__,__func__,fn);
 
 		/* read .log */
 		char *c = strrchr(fn,'.');
 		if (c != NULL) {
 			strcpy(c+1,"log");
 			FILE *fid = fopen(fn,"rb");
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %d) %s(...) <%s>\n",__FILE__,__LINE__,__func__,fn);
 			if (fid == NULL) {
 				strcpy(c+1,"LOG");
 				fid = fopen(fn,"rb");
 			}
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %d) %s(...) <%s>\n",__FILE__,__LINE__,__func__,fn);
 			if (fid != NULL) {
 
 				count = 0;
@@ -7118,13 +7424,13 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 
 				for (k=0; k<(unsigned)LOG[145]; k++) {
 
-				if (VERBOSE_LEVEL>7) fprintf(stdout,"EEG1100 [252]: %i,%i<%s>\n",(int)k,(int)count,fn);
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %d) %s(...) %i,%i<%s>\n",__FILE__,__LINE__,__func__,(int)k,(int)count,fn);
 
 					//uint32_t lba = leu32p(LOG+146+k*20);
 					uint32_t lba = atoi(LOG+146+k*20);
 
 				if (VERBOSE_LEVEL>7) fprintf(stdout,"EEG1100 [253]: <%d> %d 0x%x\n",(int)k,lba,lba);
-//break;		// FIXME: there is at least one EEG1100C file that breaks this 
+//break;		// FIXME: there is at least one EEG1100C file that breaks this
 					uint32_t N = LOG[lba+18];
 
 				if (VERBOSE_LEVEL>7) fprintf(stdout,"EEG1100 [254]: <%d> %d %d\n",(int)k,(int)lba,N);
@@ -7151,7 +7457,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 
 						if (desc[0] == 0) continue;
 /*
-						char secstr[7]; 
+						char secstr[7];
 						memcpy(secstr, LOG+lba+29+k1*45, 6);
 						secstr[6] = 0;
 */
@@ -7160,14 +7466,14 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 /*
 						int c = sscanf((char*)(LOG+lba+46+k1*45),"(%02u%02u%02u%02u%02u%02u)",&tm_time.tm_year,&tm_time.tm_mon,&tm_time.tm_mday,&tm_time.tm_hour,&tm_time.tm_min,&tm_time.tm_sec);
 
-						if (c<6) continue; 
+						if (c<6) continue;
 
 						tm_time.tm_year += tm_time.tm_year<20 ? 100:0;
 						tm_time.tm_mon--;	// Jan=0, Feb=1, ...
 						gdf_time t0 = tm_time2gdf_time(&tm_time);
 
 						char tmpstr[80];
-						strftime(tmpstr,80,"%Y-%m-%d %H:%M:%S", &tm_time);				
+						strftime(tmpstr,80,"%Y-%m-%d %H:%M:%S", &tm_time);
 						if (VERBOSE_LEVEL>7) fprintf(stdout,"EEG1100 [261]: %s\n",tmpstr);
 */
 						if (1) //(t0 >= hdr->T0)
@@ -7191,9 +7497,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 		hdr->AS.auxBUF = (uint8_t*)LOG;
 		free(fn);
 
-		if (VERBOSE_LEVEL>7)
-			fprintf(stdout,"EEG1100 [292]: \n");
-
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %d) %s(...)\n",__FILE__,__LINE__,__func__);
 	}
 
 	else if (hdr->TYPE==EEProbe) {
@@ -7225,7 +7529,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 		hdr->T0 = tm_time2gdf_time(&tm_time);
 		hdr->SampleRate = beu16p(hdr->AS.Header+20);
 		hdr->NS         = beu16p(hdr->AS.Header+22);
-		// uint16_t  Gain  = beu16p(Header1+24);	// not used 
+		// uint16_t  Gain  = beu16p(Header1+24);	// not used
 		uint16_t  Bits  = beu16p(hdr->AS.Header+26);
 		uint16_t PhysMax= beu16p(hdr->AS.Header+28);
 		size_t POS;
@@ -7407,7 +7711,8 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 
 		/* read file */
 		hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header,hdr->HeadLen+1);
-		count  += ifread(hdr->AS.Header+count,1,hdr->HeadLen-count,hdr);
+		if (hdr->HeadLen > count)
+			count += ifread(hdr->AS.Header+count, 1, hdr->HeadLen-count, hdr);
 		hdr->AS.Header[count]=0;
 
 	}
@@ -7537,18 +7842,18 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 
 #endif // EMBLA
 	else if (hdr->TYPE==EMSA) {
-		
+
 		hdr->NS = (uint8_t)hdr->AS.Header[3];
-		hdr->HeadLen = 1024 + hdr->NS*512; 
+		hdr->HeadLen = 1024 + hdr->NS*512;
 		if (count < hdr->HeadLen) {
 			hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header, hdr->HeadLen);
 			count  += ifread(hdr->AS.Header+count, 1, hdr->HeadLen-count, hdr);
 		}
 		if (count < hdr->HeadLen) {
-			biosigERROR(hdr, B4C_INCOMPLETE_FILE, "EMSA file corrupted"); 
+			biosigERROR(hdr, B4C_INCOMPLETE_FILE, "EMSA file corrupted");
 		}
 		hdr->HeadLen = count;
-		
+
 		sprintf(hdr->Patient.Id,"%05i",leu32p(hdr->AS.Header+4));
 		unsigned seq_nr = hdr->AS.Header[8];
 		uint16_t fs = leu16p(hdr->AS.Header+9);
@@ -7556,65 +7861,65 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 			hdr->SPR = fs;
 		else
 			hdr->SPR = fs/10;
-		
+
 		hdr->AS.bpb = 2*hdr->NS*hdr->SPR;
 		hdr->NRec = (hdr->FILE.size - hdr->HeadLen) / hdr->AS.bpb;
-		hdr->SampleRate = fs; 
+		hdr->SampleRate = fs;
 
 		{
 			struct tm t;
 			char tmp[9];
-			// Birthday 
-			strncpy(tmp, (char*)(hdr->AS.Header+169), 8); 
-			for (k=0; k<8; k++) 
-				if (tmp[k]<'0' || tmp[k]>'9') 
+			// Birthday
+			strncpy(tmp, (char*)(hdr->AS.Header+169), 8);
+			for (k=0; k<8; k++)
+				if (tmp[k]<'0' || tmp[k]>'9')
 					biosigERROR(hdr, B4C_FORMAT_UNKNOWN, NULL); // error ;
-			tmp[8] = 0; t.tm_mday = atoi(tmp+6); 
-			tmp[6] = 0; t.tm_mon = atoi(tmp+4)-1; 
-			tmp[4] = 0; t.tm_year  = atoi(tmp+4)-1900; 
+			tmp[8] = 0; t.tm_mday = atoi(tmp+6);
+			tmp[6] = 0; t.tm_mon = atoi(tmp+4)-1;
+			tmp[4] = 0; t.tm_year  = atoi(tmp+4)-1900;
 			t.tm_hour = 12;
 			t.tm_min = 0;
 			t.tm_sec = 0;
-			hdr->Patient.Birthday = tm_time2gdf_time(&t); 
+			hdr->Patient.Birthday = tm_time2gdf_time(&t);
 
 			// startdate
-			strncpy(tmp, (char*)hdr->AS.Header+205, 8); 
-			for (k=0; k<8; k++) 
-				if (tmp[k]<'0' || tmp[k]>'9') 
+			strncpy(tmp, (char*)hdr->AS.Header+205, 8);
+			for (k=0; k<8; k++)
+				if (tmp[k]<'0' || tmp[k]>'9')
 					biosigERROR(hdr, B4C_FORMAT_UNKNOWN, NULL); // error ;
-			tmp[8] = 0; t.tm_mday  = atoi(tmp+6); 
-			tmp[6] = 0; t.tm_mon = atoi(tmp+4)-1; 
-			tmp[4] = 0; t.tm_year  = atoi(tmp+4)-1900; 
+			tmp[8] = 0; t.tm_mday  = atoi(tmp+6);
+			tmp[6] = 0; t.tm_mon = atoi(tmp+4)-1;
+			tmp[4] = 0; t.tm_year  = atoi(tmp+4)-1900;
 
 			// starttime
-			strncpy(tmp, (char*)hdr->AS.Header+214, 8); 
+			strncpy(tmp, (char*)hdr->AS.Header+214, 8);
 			for (k=0; k<8; k++) {
-				if ((k==2 || k==5) && tmp[k] != ':') 
+				if ((k==2 || k==5) && tmp[k] != ':')
 					biosigERROR(hdr, B4C_FORMAT_UNKNOWN, NULL); // error ;
-				else if (tmp[k]<'0' || tmp[k]>'9') 
+				else if (tmp[k]<'0' || tmp[k]>'9')
 					biosigERROR(hdr, B4C_FORMAT_UNKNOWN, NULL); // error ;
 			}
-			tmp[8] = 0; t.tm_sec = atoi(tmp+6); 
-			tmp[5] = 0; t.tm_min = atoi(tmp+3); 
-			tmp[2] = 0; t.tm_hour= atoi(tmp); 
-			hdr->T0 = tm_time2gdf_time(&t); 
+			tmp[8] = 0; t.tm_sec = atoi(tmp+6);
+			tmp[5] = 0; t.tm_min = atoi(tmp+3);
+			tmp[2] = 0; t.tm_hour= atoi(tmp);
+			hdr->T0 = tm_time2gdf_time(&t);
 
-			if (hdr->AS.B4C_ERRNUM) 
-				biosigERROR(hdr, B4C_FORMAT_UNKNOWN, "Reading EMSA file failed - invalid data / time format"); 
-			
+			if (hdr->AS.B4C_ERRNUM)
+				biosigERROR(hdr, B4C_FORMAT_UNKNOWN, "Reading EMSA file failed - invalid data / time format");
+
 		}
 
 		size_t len = min(MAX_LENGTH_NAME,30);
 		strncpy(hdr->Patient.Name, (char*)hdr->AS.Header+11, len);
-		hdr->Patient.Name[len]=0;		
+		hdr->Patient.Name[len]=0;
 
-		// equipment 
+		// equipment
 		len = min(MAX_LENGTH_MANUF,40);
 		strncpy(hdr->ID.Manufacturer._field, (char*)hdr->AS.Header+309, len);
-		hdr->ID.Manufacturer._field[len]=0;		
+		hdr->ID.Manufacturer._field[len]=0;
 
 		char c = toupper(hdr->AS.Header[203]);
-		hdr->Patient.Sex = (c=='M') + (c=='F')*2; 
+		hdr->Patient.Sex = (c=='M') + (c=='F')*2;
 		c = hdr->AS.Header[204];
 		hdr->Patient.Handedness = (c=='D') + (c=='E')*2; //D->1: right-handed, E->2: left-handed, 0 unknown
 
@@ -7644,7 +7949,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 			if ( (hdr->AS.Header[1025+k*512]=='E') && strlen(label)<13) {
 				strcpy(hc->Label, "EEG ");
 				strcat(hc->Label, label);	// Flawfinder: ignore
-			} 
+			}
 			else {
 			    	strncpy(hc->Label, label, len);
 				hc->Label[len]=0;
@@ -7655,58 +7960,58 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 		char* tmpfile = (char*)calloc(strlen(hdr->FileName)+4, 1);
 		strcpy(tmpfile, hdr->FileName);
 		char* ext = strrchr(tmpfile,'.');
-		if (ext != NULL) 
+		if (ext != NULL)
 			strcpy(ext+1,"LBK");	// Flawfinder: ignore
-		else 		
+		else
 			strcat(tmpfile,".LBK");	// Flawfinder: ignore
 
-		FILE *fid = fopen(tmpfile,"rb"); 
+		FILE *fid = fopen(tmpfile,"rb");
 		if (fid==NULL) {
-			if (ext != NULL) 
+			if (ext != NULL)
 				strcpy(ext+1,"lbk");
-			else 		
+			else
 				strcat(tmpfile,".lbk");
 		}
 		if (fid != NULL) {
-			size_t N_EVENTS = 0; 
-			const int sz = 69; 
-			char buf[sz+1]; 
+			size_t N_EVENTS = 0;
+			const int sz = 69;
+			char buf[sz+1];
 			hdr->EVENT.SampleRate = hdr->SampleRate;
 			while (!feof(fid)) {
 				if (fread(buf,sz,1,fid) <= 0) break;
-				
+
 				// starttime
 				char *tmp = buf;
 				for (k=0; k<8; k++) {
-					if ((k==2 || k==5) && tmp[k] != ':') 
+					if ((k==2 || k==5) && tmp[k] != ':')
 						biosigERROR(hdr, B4C_FORMAT_UNKNOWN, NULL); // error ;
-					else if (tmp[k]<'0' || tmp[k]>'9') 
+					else if (tmp[k]<'0' || tmp[k]>'9')
 						biosigERROR(hdr, B4C_FORMAT_UNKNOWN, NULL); // error ;
 				}
-				tmp[2] = 0; 
-				tmp[5] = 0; 
-				tmp[8] = 0; 
-				size_t tstart = atoi(tmp)*3600 + atoi(tmp+3)*60 + atoi(tmp+6); 
+				tmp[2] = 0;
+				tmp[5] = 0;
+				tmp[8] = 0;
+				size_t tstart = atoi(tmp)*3600 + atoi(tmp+3)*60 + atoi(tmp+6);
 
 				fread(buf,sz,1,fid);
-				
+
 				// endtime
 				tmp = buf+9;
 				for (k=0; k<8; k++) {
-					if ((k==2 || k==5) && tmp[k] != ':') 
+					if ((k==2 || k==5) && tmp[k] != ':')
 						biosigERROR(hdr, B4C_FORMAT_UNKNOWN, NULL); // error ;
-					else if (tmp[k]<'0' || tmp[k]>'9') 
+					else if (tmp[k]<'0' || tmp[k]>'9')
 						biosigERROR(hdr, B4C_FORMAT_UNKNOWN, NULL); // error ;
 				}
-				tmp[2] = 0; 
-				tmp[5] = 0; 
-				tmp[8] = 0; 
-				size_t tend = atoi(tmp)*3600 + atoi(tmp+3)*60 + atoi(tmp+6); 
-				if (tend<tstart) tend+=24*3600; 
+				tmp[2] = 0;
+				tmp[5] = 0;
+				tmp[8] = 0;
+				size_t tend = atoi(tmp)*3600 + atoi(tmp+3)*60 + atoi(tmp+6);
+				if (tend<tstart) tend+=24*3600;
 
 				tmp = buf+18;
-				k=68; 
-				while (k>18 && isspace(buf[k])) k--; 
+				k=68;
+				while (k>18 && isspace(buf[k])) k--;
 				buf[k+1]=0;
 
 				if (hdr->EVENT.N+2 >= N_EVENTS) {
@@ -7718,13 +8023,13 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 					};
 				}
 				FreeTextEvent(hdr,hdr->EVENT.N,(char*)buf);
-				hdr->EVENT.POS[hdr->EVENT.N] = tstart*hdr->EVENT.SampleRate; 
-				hdr->EVENT.DUR[hdr->EVENT.N] = (tend-tstart)*hdr->EVENT.SampleRate; 
+				hdr->EVENT.POS[hdr->EVENT.N] = tstart*hdr->EVENT.SampleRate;
+				hdr->EVENT.DUR[hdr->EVENT.N] = (tend-tstart)*hdr->EVENT.SampleRate;
 				hdr->EVENT.CHN[hdr->EVENT.N] = 0;
 #if (BIOSIG_VERSION >= 10500)
 				hdr->EVENT.TimeStamp[hdr->EVENT.N] = 0;
 #endif
-				hdr->EVENT.N++;  
+				hdr->EVENT.N++;
 			}
 		}
 		free(tmpfile);
@@ -7742,27 +8047,27 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 		ifclose(hdr);
 
 		struct Target {
-			size_t OnsetTime; 
-			size_t RTTime; 
-			size_t RT; 
-			size_t TrigTarget; 
-			uint8_t RESP; 
-			char *Stimulus; 
-		} Target; 
+			size_t OnsetTime;
+			size_t RTTime;
+			size_t RT;
+			size_t TrigTarget;
+			uint8_t RESP;
+			char *Stimulus;
+		} Target;
 		Target.RESP = 0xff;
-		Target.Stimulus = NULL; 
-		Target.OnsetTime = 0; 
-		Target.RTTime = 0; 
-		Target.RT = 0; 
-		Target.TrigTarget = 0; 
+		Target.Stimulus = NULL;
+		Target.OnsetTime = 0;
+		Target.RTTime = 0;
+		Target.RT = 0;
+		Target.TrigTarget = 0;
 
 		int colSubject      = -1, colSampleRate = -1, colDate = -1, colTime = -1, colOnsetTime = -1;
 		int colResponseTime = -1, colRTTime = -1, colStimulus = -1, colTrigTarget = -1, colRESP = -1;
-		size_t N_EVENTS = 0; 
-		struct tm t; 
+		size_t N_EVENTS = 0;
+		struct tm t;
 		char nextRow = 0;
-	
-		int col=0, row=0, len; 
+
+		int col=0, row=0, len;
 		char *f = (char*)hdr->AS.Header;
 		while (*f != 0) {
 			len = strcspn(f,"\t\n\r");
@@ -7784,9 +8089,9 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 
 					// add trigger event
 					if (Target.Stimulus != NULL || Target.TrigTarget > 0) {
-						if (Target.Stimulus) 
+						if (Target.Stimulus)
 							FreeTextEvent(hdr, hdr->EVENT.N, Target.Stimulus);
-						else 
+						else
 							hdr->EVENT.TYP[hdr->EVENT.N] = Target.TrigTarget;
 						hdr->EVENT.POS[hdr->EVENT.N] = Target.OnsetTime;
 						hdr->EVENT.DUR[hdr->EVENT.N] = Target.RT;
@@ -7798,7 +8103,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 					}
 
 					if (Target.RESP < 0x0f) {
-						// add response event 
+						// add response event
 						hdr->EVENT.TYP[hdr->EVENT.N] = Target.RESP + 0x0140;	// eventcodes.txt: response codes are in the range between 0x0140 to 0x014f
 						hdr->EVENT.POS[hdr->EVENT.N] = Target.OnsetTime + Target.RT;
 						hdr->EVENT.CHN[hdr->EVENT.N] = 0;
@@ -7813,47 +8118,47 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"=======%i: %i\t%s\t%i\t%i\t%i\t%i\n", hdr->EVENT.N-1, (int)Target.TrigTarget, Target.Stimulus, (int)Target.OnsetTime, (int)Target.RT, (int)Target.RTTime, Target.RESP);
 
 				Target.RESP = 0xff;
-				Target.Stimulus = NULL; 
-				Target.OnsetTime = 0; 
-				Target.RTTime = 0; 
-				Target.RT = 0; 
-				Target.TrigTarget = 0; 
+				Target.Stimulus = NULL;
+				Target.OnsetTime = 0;
+				Target.RTTime = 0;
+				Target.RT = 0;
+				Target.TrigTarget = 0;
 			}
 			f[len] = 0;
 
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"r%i\tc%i\t%s\t%i\t%i\t%i\t%i\t%i\t%i\t%i\t%i\n",(int)row,(int)col,f,colSubject, colSampleRate, colDate, colTime, colOnsetTime, colResponseTime, colStimulus, colRTTime);
 
 			if (row==0) {
-				// decode header line 
+				// decode header line
 				if (!strcmp(f,"Subject")) {
-					colSubject = col; 	
+					colSubject = col;
 				}
 				else if (!strcmp(f,"Display.RefreshRate")) {
-					colSampleRate = col; 	
+					colSampleRate = col;
 				}
 				else if (!strcmp(f,"SessionDate")) {
-					colDate = col; 	
+					colDate = col;
 				}
 				else if (!strcmp(f,"SessionTime")) {
-					colTime = col; 	
+					colTime = col;
 				}
 				else if (strstr(f,"Target.OnsetTime")) {
-					colOnsetTime = col; 	
+					colOnsetTime = col;
 				}
 				else if (strstr(f,"Target.RTTime")) {
-					colRTTime = col; 	
+					colRTTime = col;
 				}
 				else if (strstr(f,"Target.RT")) {
-					colResponseTime = col; 	
+					colResponseTime = col;
 				}
 				else if (!strcmp(f,"Stimulus")) {
-					colStimulus = col; 	
+					colStimulus = col;
 				}
 				else if (!strcmp(f,"TrigTarget")) {
-					colTrigTarget = col; 	
+					colTrigTarget = col;
 				}
 				else if (strstr(f,"Target.RESP")) {
-					colRESP = col; 	
+					colRESP = col;
 				}
 			}
 			else {
@@ -7861,7 +8166,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 				// decode line of body
 				if (row==1) {
 					t.tm_isdst = 0;
-					char *eptr; 
+					char *eptr;
 					if (col==colTime) {
 						t.tm_hour = strtol(f, &eptr, 10);
 						t.tm_min  = strtol(eptr+1, &eptr, 10);
@@ -7879,7 +8184,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 						hdr->EVENT.SampleRate = atof(f);
 					}
 				}
-				
+
 				if (col==colOnsetTime) {
 					Target.OnsetTime = atol(f);
 				}
@@ -7890,7 +8195,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 					Target.RTTime = atol(f);
 				}
 				else if (col==colStimulus) {
-					Target.Stimulus = f; 
+					Target.Stimulus = f;
 				}
 				else if (col==colTrigTarget) {
 					Target.TrigTarget = atoi(f);
@@ -7898,17 +8203,17 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 				else if ((col==colRESP) && strlen(f)) {
 					Target.RESP = atoi(f);
 				}
-								
+
 			}
 
 			f += len+1;
 			if (nextRow) {
 				f   += strspn(f,"\n\r");
 				row += nextRow;
-				col = 0; 
+				col = 0;
 			}
-		}; 
-		hdr->T0 = tm_time2gdf_time(&t); 
+		};
+		hdr->T0 = tm_time2gdf_time(&t);
 	}
 
 	else if (hdr->TYPE==SigViewerEventsCSV) {
@@ -8033,7 +8338,6 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 				tm_time.tm_sec = 0;
 				tm_time.tm_year -= 1900;
 				tm_time.tm_mon -= 1;
-				//fprintf(stdout,"%s\n",asctime(&tm_time));
 				hdr->T0 = tm_time2gdf_time(&tm_time);
 			}
 			else if (!strncmp(t,"HPF[Hz]",7))
@@ -8210,16 +8514,84 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 		sopen_fiff_read(hdr);
 	}
 
-    	else if (hdr->TYPE==HDF) {
-#ifdef WITH_HDF
-                if (sopen_hdf5(hdr) != 0) {
-        		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Error reading HDF file");
-                }
-#else
-		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Format HDF not supported");
+	else if (hdr->TYPE==GTF) {
+		/* read file */
+		while (!ifeof(hdr)) {
+			size_t bufsiz = max(2*count,1<<16);
+			hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header, bufsiz);
+			count  += ifread(hdr->AS.Header+count, 1, bufsiz-count, hdr);
+		}
 		ifclose(hdr);
-#endif
-		return(hdr);
+		hdr->HeadLen    = 512+15306+8146;
+		count          -= hdr->HeadLen;
+
+		char tmp[8];
+		strncpy(tmp,hdr->AS.Header+34,2); tmp[2]=0;
+		hdr->NS  = atoi(tmp);
+		strncpy(tmp,hdr->AS.Header+36,3); tmp[3]=0;
+		hdr->SampleRate = atoi(tmp);
+		hdr->SPR = 10 * hdr->SampleRate;
+		if (hdr->NS <= 0 || hdr->SampleRate<=0.0)
+			biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Invalid GTF header");
+
+	        hdr->AS.bpb = hdr->SampleRate*240+2048;
+		hdr->NRec   = floor(count / hdr->AS.bpb);
+		//hdr->AS.bpb = hdr->NS*GDFTYP_BITS[gdftyp]>>3;
+
+		const float tau[]     = {0.01, 0.03, 0.1, 0.3, 1};	// ignored for now
+		const float Lowpass[] = {30, 70};	// ignored for now
+		const float Sens[]    = {.5, .7, 1, 1.4, 2, 5, 7, 10, 14, 20, 50, 70, 100, 140, 200};
+		// FIXME
+		// x    = reshape(s4(13:6:1932,:),32,HDR.NRec*HDR.Dur);
+		// Cal  = Sens(x(1:HDR.NS,:)+1)'/4;
+
+		uint16_t gdftyp = 1;			// int8
+		double DigMax = 127, DigMin = -127;
+		hdr->FLAG.OVERFLOWDETECTION = 1; 	// automated overflow and saturation detection supported
+		hdr->CHANNEL = (CHANNEL_TYPE*)realloc(hdr->CHANNEL, hdr->NS * sizeof(CHANNEL_TYPE));
+		for (int k=0; k < hdr->NS; k++) {
+			CHANNEL_TYPE* hc = hdr->CHANNEL+k;
+			hc->OnOff    = 1;
+			hc->GDFTYP   = gdftyp;
+			hc->SPR      = hdr->SPR;
+			hc->Cal      = 1.0;
+			hc->Off      = 0.0;
+			hc->Transducer[0] = '\0';
+			hc->LowPass  = NAN;	// TODO: get switch info about Lowpass filter
+			hc->HighPass = NAN;	// TODO: get switch info about Lowpass filter
+			hc->PhysMax  = DigMax;
+			hc->PhysMin  = DigMin;
+			hc->DigMax   = DigMax;
+			hc->DigMin   = DigMin;
+			hc->LeadIdCode  = 0;
+			hc->PhysDimCode = 4275;	// uV
+			hc->bi       = k*GDFTYP_BITS[gdftyp]>>3;
+
+			assert(MAX_LENGTH_LABEL > 32);
+			char* tmp = hdr->AS.Header+512+15306+1070+k*32;
+			// Trim trailing space
+			int c;
+			for (c=31; isspace(tmp[c]) && c>0; c--);
+			memcpy(hc->Label, tmp, c);
+			hc->Label[c] = 0;
+
+			if (VERBOSE_LEVEL>7)
+				fprintf(stdout,"%s (line %d) : Label #%02d: len(%d) <%s>\n",__FILE__,__LINE__, k, c, hc->Label);
+		}
+		hdr->AS.rawdata = hdr->AS.Header+512+15306+8146;
+		// hdr->AS.rawdata = hdr->AS.Header+count+9248;
+
+		for (size_t m=0; m < hdr->NRec; m++) {
+			size_t t2pos = 9248 + m * hdr->AS.bpb;
+			for (size_t l=0; l < hdr->SampleRate*240; l++) {
+				;
+			}
+		}
+	}
+
+    	else if (hdr->TYPE==HDF) {
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %d): %s(...)\n", __FILE__,__LINE__,__func__);
+		if (sopen_hdf5(hdr) != 0) return(hdr);
 	}
 
     	else if (hdr->TYPE==HEKA) {
@@ -8228,7 +8600,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 
 		FILE *itx = fopen((char*)hdr->aECG, "w");
 		hdr->aECG = NULL; 	// reset auxillary pointer
-		
+
     		sopen_heka(hdr, itx);
 
 		if (itx) fclose(itx);
@@ -8272,7 +8644,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 				fprintf(stdout,"%02x ",hdr->AS.Header[k]);
 				if (k%32==0) fputc('\n',stdout);
 			}
-                }	
+                }
 		//int offsetVarHdr = lei32p(hdr->AS.Header+18);
 		hdr->VERSION = (float)lei16p(hdr->AS.Header+26);
 
@@ -8280,9 +8652,10 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 			len = min(40, MAX_LENGTH_NAME);
 			char *s;
 			s = (char*)(hdr->AS.Header+68);	// lastname
-			int len1 = min(40, strlen(s));
-			strncpy(hdr->Patient.Name, s, len1);
-			hdr->Patient.Name[len] = 0x1f;	// unit separator ascii(31)
+			size_t slen = strlen(s);
+			int len1 = min(40, slen);
+			memcpy(hdr->Patient.Name, s, len1);
+			hdr->Patient.Name[len1] = 0x1f;	// unit separator ascii(31)
 
 			s = (char*)(hdr->AS.Header+28);	// firstname
 			int len2 = min(strlen(s), MAX_LENGTH_NAME-len-1);
@@ -8306,7 +8679,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
                 if (VERBOSE_LEVEL>6) {
                 	fprintf(stdout,"SOPEN(ISNHE): Birthday: %04i-%02i-%02i %02i:%02i:%02i\n",t.tm_year,t.tm_mon,t.tm_mday,t.tm_hour,t.tm_min,t.tm_sec);
                 	fprintf(stdout,"SOPEN(ISNHE): @%p %x %x %x %x %x %x\n",hdr->AS.Header,hdr->AS.Header[132],hdr->AS.Header[133],hdr->AS.Header[134],hdr->AS.Header[135],hdr->AS.Header[136],hdr->AS.Header[137]);
-                }	
+                }
 		if (t.tm_mday>0 && t.tm_mon>=0 && t.tm_year>=0)
 	                hdr->Patient.Birthday = tm_time2gdf_time(&t);
 
@@ -8414,20 +8787,15 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 	}
 
     	else if (hdr->TYPE==Matlab) {
-#ifdef HAVE_MATIO
-                if (sopen_matlab(hdr) != 0) {
-        		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Error reading MATLAB file");
-                }
-#else
-		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Format MAT not supported");
-		ifclose(hdr);
-#endif
-		return(hdr);
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %d): %s(...)\n", __FILE__,__LINE__,__func__);
+		if (sopen_matlab(hdr) != 0) return(hdr);
 	}
 
     	else if (hdr->TYPE==MFER) {
+		/*
 		// ISO/TS 11073-92001:2007(E), Table 5, p.9
-    		/* ###  FIXME: some units are not encoded */
+		physicalunits({'V','mmHg','Pa','cm H2O', 'mmHg s-1','dyn','N','%','°C','min-1','s-1','Ohm','A','rpm','W','dB','kg','J','dyne s m-2 cm-5','l','l s-1','l min-1','cd'})
+		*/
     		const uint16_t MFER_PhysDimCodeTable[30] = {
     			4256, 3872, 3840, 3904,65330,	// Volt, mmHg, Pa, mmH2O, mmHg/s
 			3808, 3776,  544, 6048, 2528,	// dyne, N, %, °C, 1/min
@@ -8452,7 +8820,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
 		uint8_t tag = hdr->AS.Header[0];
     		ifseek(hdr,1,SEEK_SET);
     		int curPos = 1;
-		size_t N_EVENT=0;	// number of events, memory is allocated for in the event table. 
+		size_t N_EVENT=0;	// number of events, memory is allocated for in the event table.
 		while (!ifeof(hdr)) {
 			uint32_t len, val32=0;
 			int32_t  chan=-1;
@@ -8532,17 +8900,20 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"MFER: TLV %i %i %i \n",tag,len,(int)hdr->SP
 			}
 			else if (tag==5)     //0x05: number of channels
 			{
+				uint16_t oldNS=hdr->NS;
 				if (len>4) fprintf(stderr,"Warning MFER tag5 incorrect length %i>4\n",len);
 				curPos += ifread(buf,1,len,hdr);
 				hdr->NS = *(int64_t*) mfer_swap8b(buf, len, SWAP);
 if (VERBOSE_LEVEL>7) fprintf(stdout,"MFER: TLV %i %i %i \n",tag,len,(int)hdr->NS);
 				hdr->CHANNEL = (CHANNEL_TYPE*)realloc(hdr->CHANNEL, hdr->NS*sizeof(CHANNEL_TYPE));
-				for (k=0; k<hdr->NS; k++) {
+				for (k=oldNS; k<hdr->NS; k++) {
 					CHANNEL_TYPE *hc = hdr->CHANNEL+k;
 					hc->SPR = 0;
-					hc->PhysDimCode = 0;
+					hc->PhysDimCode = 4275;	// uV : default value in Table 5, ISO/FDIS 22077-1(E)ISO/WD 22077-1
 					hc->Cal = 1.0;
-					hc->LeadIdCode = 0; 
+					hc->Off = 0.0;
+					hc->OnOff = 1;
+					hc->LeadIdCode = 0;
 					hc->GDFTYP = 3;
 					hc->Transducer[0] = 0;
 				}
@@ -8558,12 +8929,12 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"MFER: TLV %i %i %i \n",tag,len,(int)hdr->NR
 			else if (tag==8) {
 				if (len>2) fprintf(stderr,"Warning MFER tag8 incorrect length %i>2\n",len);
 				curPos += ifread(buf,1,len,hdr);
-			/*	// NOT USED 				
+			/*	// NOT USED
 				// Type of Waveform
 				union {
 					uint8_t TypeOfWaveForm8[2];
 					uint16_t TypeOfWaveForm;
-				} t;	
+				} t;
 				if (len==1)
 					t.TypeOfWaveForm = buf[0];
 				else {
@@ -8571,8 +8942,8 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"MFER: TLV %i %i %i \n",tag,len,(int)hdr->NR
 					t.TypeOfWaveForm8[1] = buf[1];
 					if (SWAP)
 						t.TypeOfWaveForm = bswap_16(t.TypeOfWaveForm);
-				}		
-			*/	
+				}
+			*/
 			}
 			else if (tag==10) {
 				// GDFTYP
@@ -8783,7 +9154,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"MFER: TLV %i %i %i %i %i %i %i %i %i\n",tag
 if (VERBOSE_LEVEL>7) fprintf(stdout,"MFER: TLV %i %i %i %i %i %i %i\n",tag, len, chan, tag2, len2, buf[0], gdftyp);
 
 					}
-					else if (tag2==11) {	// sampling resolution
+					else if (tag2==11) {	// sampling rate
 						if (len2>6) fprintf(stderr,"Warning MFER tag63-11 incorrect length %i>6\n",len2);
 						double  fval;
 						fval = *(int64_t*) mfer_swap8b(buf+2, len2-2, SWAP);
@@ -8797,9 +9168,12 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"MFER: TLV %i %i %i %i %i %i %i\n",tag, len,
 if (VERBOSE_LEVEL>7) fprintf(stdout,"MFER: TLV %i %i %i %i %i %i %i %g %i %g\n",tag,len, chan, tag2,len2, buf[0], buf[1], fval, (int)hdr->SPR, hdr->SampleRate);
 
 					}
-					else if (tag2==12) {	// sensitivity
-						// FIXME
-						fprintf(stdout,"MFER: change f channel specific scaling/sensitivity is not supported"); 
+					else if (tag2==12) {	// MWF_SEN (0Ch): Sampling resolution
+						CHANNEL_TYPE *hc = hdr->CHANNEL+chan;
+						hc->PhysDimCode = 4275;	// uV : default value in Table 5, ISO/FDIS 22077-1(E)ISO/WD 22077-1
+						hc->Cal  = *(int64_t*) mfer_swap8b(buf+2, len2-2, SWAP);
+						hc->Cal *= pow(10.0, (int8_t)(buf[1]));
+						hc->PhysDimCode = MFER_PhysDimCodeTable[buf[0]];
 					}
 
 					else if (tag2==13) {	// Offset
@@ -8954,8 +9328,8 @@ if (VERBOSE_LEVEL>2)
 				// Patient Age
 				if (len!=7) fprintf(stderr,"Warning MFER tag131 incorrect length %i!=7\n",len);
 				curPos += ifread(buf,1,len,hdr);
-				uint16_t t16; 
-				memcpy(&t16, buf+3, 2); 
+				uint16_t t16;
+				memcpy(&t16, buf+3, 2);
 				if (SWAP) t16 = bswap_16(t16);
 		    		tm_time.tm_year = t16 - 1900;
 		    		tm_time.tm_mon  = buf[5]-1;
@@ -8975,8 +9349,8 @@ if (VERBOSE_LEVEL>2)
 			else if (tag==133)    //0x85
 			{
 				curPos += ifread(buf,1,len,hdr);
-				uint16_t t16, u16; 
-				memcpy(&t16, buf+3, 2); 
+				uint16_t t16, u16;
+				memcpy(&t16, buf+3, 2);
 				if (SWAP) t16 = bswap_16(t16);
 		    		tm_time.tm_year = t16 - 1900;
 		    		tm_time.tm_mon  = buf[2] - 1;
@@ -8987,8 +9361,8 @@ if (VERBOSE_LEVEL>2)
 
 				hdr->T0  = tm_time2gdf_time(&tm_time);
 				// add milli- and micro-seconds
-				memcpy(&t16, buf+7, 2); 
-				memcpy(&u16, buf+9, 2); 
+				memcpy(&t16, buf+7, 2);
+				memcpy(&u16, buf+9, 2);
 				if (SWAP)
 					hdr->T0 += (uint64_t) ( bswap_16(t16) * 1e+3 + bswap_16(u16) * ldexp(1.0,32) / (24*3600e6) );
 				else
@@ -9094,14 +9468,14 @@ if (VERBOSE_LEVEL>2)
 			if (ptr[0]=='/') {
 				double CounterFrequency = strtod(ptr+1,&ptr);
 				if (fabs(CounterFrequency-hdr->SampleRate) > 1e-5) {
-					biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "MIT format: Sampling rate and counter frequency differ - this is currently not supported!");	
-				} 		
+					biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "MIT format: Sampling rate and counter frequency differ - this is currently not supported!");
+				}
 			}
 			if (ptr[0]=='(') {
 				double BaseCounterValue = strtod(ptr+1,&ptr);
 				if (BaseCounterValue) {
-					biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "MIT format: BaseCounterValue is not zero - this is currently not supported !");	
-				} 		
+					biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "MIT format: BaseCounterValue is not zero - this is currently not supported !");
+				}
 				ptr++; // skip ")"
 			}
 	    	}
@@ -9140,6 +9514,8 @@ if (VERBOSE_LEVEL>2)
 			double BlockSize=0;
 
 			CHANNEL_TYPE* hc = hdr->CHANNEL+k;
+			if (VERBOSE_LEVEL > 7) fprintf(stdout,"%s (line %d): %s(...)\n",__FILE__,__LINE__,__func__);
+
 		    	do line = strtok(NULL,"\x0d\x0a"); while (line[0]=='#'); // read next line
 
 			if (VERBOSE_LEVEL>7)
@@ -9157,6 +9533,7 @@ if (VERBOSE_LEVEL>2)
 			else if (FMT != fmt) {
 				biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "MIT/HEA/PhysioBank: different formats within a single data set is not supported");
 			}
+			if (VERBOSE_LEVEL > 7) fprintf(stdout,"%s (line %d): %s(...)\n",__FILE__,__LINE__,__func__);
 
 			size_t DIV=1;
 			if (ptr[0]=='x') {
@@ -9165,13 +9542,15 @@ if (VERBOSE_LEVEL>2)
 				MUL = lcm(MUL, DIV);
 			}
 			hdr->CHANNEL[k].SPR = DIV;
-	
+			if (VERBOSE_LEVEL > 7) fprintf(stdout,"%s (line %d): %s(...)\n",__FILE__,__LINE__,__func__);
+
 			if (ptr[0]==':') skew = strtod(ptr+1,&ptr);
 			if (ptr[0]=='+') ByteOffset[k] = (size_t)strtod(ptr+1,&ptr);
 
 			if (ptr != NULL) ADCgain = strtod(ptr+1,&ptr);
 			if (ADCgain==0) ADCgain=200;	// DEFGAIN: https://www.physionet.org/physiotools/wag/header-5.htm
 
+			if (VERBOSE_LEVEL > 7) fprintf(stdout,"%s (line %d): %s(...)\n",__FILE__,__LINE__,__func__);
 			if (ptr[0] == '(') {
 				baseline = strtod(ptr+1,&ptr);
 				ptr++;
@@ -9183,6 +9562,7 @@ if (VERBOSE_LEVEL>2)
 				ptr[0] = 0;
 				hc->PhysDimCode = PhysDimCode(PhysUnits);
 			}
+			if (VERBOSE_LEVEL > 7) fprintf(stdout,"%s (line %d): %s(...)\n",__FILE__,__LINE__,__func__);
 
 			if (ptr != NULL) ADCresolution = strtod(ptr+1,&ptr);
 			if (ptr != NULL) ADCzero       = strtod(ptr+1,&ptr);
@@ -9195,6 +9575,7 @@ if (VERBOSE_LEVEL>2)
 			while (isspace(ptr[0])) ++ptr;
 
 			strncpy(hdr->CHANNEL[k].Label,ptr,MAX_LENGTH_LABEL);
+			if (VERBOSE_LEVEL > 7) fprintf(stdout,"%s (line %d): %s(...)\n",__FILE__,__LINE__,__func__);
 
 			hc->Cal      = 1/ADCgain;
 			hc->Off      = -ADCzero*hc->Cal;
@@ -9202,6 +9583,8 @@ if (VERBOSE_LEVEL>2)
 			hc->Transducer[0] = '\0';
 			hc->LowPass  = -1;
 			hc->HighPass = -1;
+
+			if (VERBOSE_LEVEL > 7) fprintf(stdout,"%s (line %d): %s(...)\n",__FILE__,__LINE__,__func__);
 			// hdr->FLAG.SWAP = (__BYTE_ORDER == __BIG_ENDIAN);
 			hdr->FILE.LittleEndian = 1;
 			switch (fmt) {
@@ -9218,6 +9601,7 @@ if (VERBOSE_LEVEL>2)
 				hc->DigMin = 0.0;
 				break;
 			case 16:
+				if (VERBOSE_LEVEL > 7) fprintf(stdout,"%s (line %d): %s(...)\n",__FILE__,__LINE__,__func__);
 			 	gdftyp = 3;
 				NUM = 2; DEN = 1;
 				hc->DigMax = ldexp( 1.0,15)-1.0;
@@ -9278,11 +9662,13 @@ if (VERBOSE_LEVEL>2)
 	 		hc->bi = hdr->AS.bpb;
 			hdr->AS.bpb += hdr->AS.bpb8>>3;
 
+			if (VERBOSE_LEVEL > 7) fprintf(stdout,"%s (line %d): %s(...)\n",__FILE__,__LINE__,__func__);
 		}
 		hdr->SampleRate *= MUL;
 		hdr->SPR 	*= MUL;
 
-                if (VERBOSE_LEVEL>7) hdr2ascii(hdr,stdout,4);                 
+		if (VERBOSE_LEVEL > 7) hdr2ascii(hdr,stdout,4);
+		if (VERBOSE_LEVEL > 7) fprintf(stdout,"%s (line %d): %s(...)\n",__FILE__,__LINE__,__func__);
 
 		/* read age, sex etc. */
 		line = strtok(NULL,"\x0d\x0a");
@@ -9340,7 +9726,7 @@ if (VERBOSE_LEVEL>2)
 
 		    	while (!ifeof(hdr)) {
                                 if (bufsiz<1024) bufsiz = 1024;
-                                bufsiz *= 2; 
+                                bufsiz *= 2;
 				void *tmp = realloc(Marker, 2 * bufsiz );
                                 Marker = (uint16_t*) tmp;
 			    	count += ifread (Marker+count, 2, bufsiz-count, hdr);
@@ -9440,7 +9826,7 @@ if (VERBOSE_LEVEL>2)
 			count  = 0;
                         bufsiz = 1024;
 		    	while (!ifeof(hdr)) {
-                                bufsiz *= 2; 
+                                bufsiz *= 2;
 				void *tmpptr = realloc(hdr->AS.rawdata, bufsiz + 1 );
 				hdr->AS.rawdata = (uint8_t*) tmpptr;
 			    	count += ifread (hdr->AS.rawdata+count, 1, bufsiz-count, hdr);
@@ -9486,14 +9872,14 @@ if (VERBOSE_LEVEL>2)
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"[MM 003] %i,%i\n",hdr->HeadLen,hdr->FILE.COMPRESSION);
 
 		char *line = strtok((char*)hdr->AS.Header, "\x0a\x0d");
-		char status = 0; 
-		unsigned long ns = 0; 
+		char status = 0;
+		unsigned long ns = 0;
 		while (line != NULL) {
 
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"[MM 013] <%s>\n",line);
 
 			if ((line[0]=='%') && (line[1]=='%') && isspace(line[2])) {
-				if (!strncmp(line+3,"LABELS",6)) 
+				if (!strncmp(line+3,"LABELS",6))
 					status = 1;
 				else if (!strncmp(line+3,"ENDLABEL",8)) {
 					status = 0;
@@ -9501,10 +9887,10 @@ if (VERBOSE_LEVEL>2)
 				}
 				if (status) {
 					int k = 3;
-					while (isspace(line[k])) k++; 
+					while (isspace(line[k])) k++;
 					unsigned long ch = strtoul(line+k, &line, 10);
 					while (isspace(line[0])) line++;
-					if (ch >= ns) {	
+					if (ch >= ns) {
 						hdr->rerefCHANNEL = (CHANNEL_TYPE*)realloc(hdr->rerefCHANNEL, ch*sizeof(CHANNEL_TYPE));
 
 						while (ns < ch) {
@@ -9512,12 +9898,12 @@ if (VERBOSE_LEVEL>2)
 							hdr->rerefCHANNEL[ns].Transducer[0] = 0;
 							ns++;
 						}
-					}	 
+					}
 					strncpy(hdr->rerefCHANNEL[ch-1].Label, line, MAX_LENGTH_LABEL);
 					hdr->rerefCHANNEL[ch-1].OnOff = 1;
 					hdr->rerefCHANNEL[ch-1].Label[MAX_LENGTH_LABEL] = 0;
 					hdr->rerefCHANNEL[ch-1].LeadIdCode = 0;
-					
+
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"[MM 027] %i <%s>\n",(int)ch,line);
 				}
 			}
@@ -9591,7 +9977,7 @@ if (VERBOSE_LEVEL>2)
 	if (VERBOSE_LEVEL>7) fprintf(stdout,"NEURON 311: <%s>\n",t);
 				char *val = t+strlen(t);
 				while (isspace(*(--val))) {}; val[1]=0;	// remove trailing blanks
-				val = strchr(t,':');			// find right value 
+				val = strchr(t,':');			// find right value
 				val[0] = 0;
 				while (isspace(*(++val))) {};
 
@@ -9630,13 +10016,13 @@ if (VERBOSE_LEVEL>2)
 				if (hdr->NRec >= 0)
 				if (spr >= (size_t)hdr->NRec) {
 					void *ptr = realloc(hdr->AS.rawdata, 2 * min(spr, (size_t)hdr->NRec) * sizeof(double));
-					if (ptr==NULL) break; 
-					hdr->AS.rawdata = (uint8_t*)ptr; 
+					if (ptr==NULL) break;
+					hdr->AS.rawdata = (uint8_t*)ptr;
 				}
 			}
 			t = strtok(NULL, "\x0A\x0D");
 		}
-		free(hdr->AS.Header); 
+		free(hdr->AS.Header);
 		hdr->AS.Header = NULL;
 		hdr->AS.first  = 0;
 		hdr->AS.length = spr;
@@ -9654,9 +10040,9 @@ if (VERBOSE_LEVEL>2)
 #if defined(WITH_NEV)
 	else if (hdr->TYPE==NEV) {
 
-		fprintf(stdout,"Support for NEV format is under construction - most likely its not useful yet.\n"); 		
+		fprintf(stdout,"Support for NEV format is under construction - most likely its not useful yet.\n");
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (NEV)\n"); 		
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (NEV)\n");
 
 		hdr->VERSION = beu16p(hdr->AS.Header+8)>>8;
 		switch (beu16p(hdr->AS.Header+8)) {
@@ -9665,47 +10051,47 @@ if (VERBOSE_LEVEL>2)
 		case 0x0200:	// readnev2
 			//biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, NULL);
 			break;
-		default: 
+		default:
 			biosigERROR(hdr, B4C_FORMAT_UNKNOWN, NULL);
 		}
-		const int H1Len = 28+16+32+256+4; 
+		const int H1Len = 28+16+32+256+4;
 
 		/* read Basic Header */
-		// uint16_t fileFormat = beu16p(hdr->AS.Header+10);	
-		uint32_t HeadLen = leu32p(hdr->AS.Header+12);	
+		// uint16_t fileFormat = beu16p(hdr->AS.Header+10);
+		uint32_t HeadLen = leu32p(hdr->AS.Header+12);
 		if (HeadLen < H1Len) {
 			biosigERROR(hdr, B4C_INCOMPLETE_FILE, NULL);
 			return(hdr);
 		}
-		hdr->AS.bpb = leu32p(hdr->AS.Header+16);	
-		uint32_t TimeStepFrequency = leu32p(hdr->AS.Header+20);	
+		hdr->AS.bpb = leu32p(hdr->AS.Header+16);
+		uint32_t TimeStepFrequency = leu32p(hdr->AS.Header+20);
 		// samples = TimeStepFrequency / 10; // Freq in 0.1 seconds
-		hdr->SampleRate = leu32p(hdr->AS.Header+24);	
+		hdr->SampleRate = leu32p(hdr->AS.Header+24);
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (NEV) [210] %d %d \n", (int)count, (int)HeadLen); 		
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (NEV) [210] %d %d \n", (int)count, (int)HeadLen);
 
 		if (count<HeadLen) {
 			hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header,HeadLen);
 			count += ifread(hdr->AS.Header+count, 1, HeadLen-count, hdr);
 		}
-		uint32_t extHdrN = leu32p(hdr->AS.Header+H1Len-4);	
+		uint32_t extHdrN = leu32p(hdr->AS.Header+H1Len-4);
 
 		if (count < H1Len + 32*extHdrN) {
 			hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header,HeadLen);
 			count += ifread(hdr->AS.Header+count, 1, HeadLen-count, hdr);
 		}
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (NEV) [220] %d %d %d \n", extHdrN, (int)count, (int)HeadLen); 		
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (NEV) [220] %d %d %d \n", extHdrN, (int)count, (int)HeadLen);
 
-		struct tm t; 
-		t.tm_year = leu32p(hdr->AS.Header+28);	
-		t.tm_mon  = leu32p(hdr->AS.Header+30);	
-		//t.tm_wday = beu32p(hdr->AS.Header+32);	
-		t.tm_mday = leu32p(hdr->AS.Header+34);	
-		t.tm_hour = leu32p(hdr->AS.Header+36);	
-		t.tm_min  = leu32p(hdr->AS.Header+38);	
-		t.tm_sec  = leu32p(hdr->AS.Header+40);	
-		//milliseconds = beu32p(hdr->AS.Header+42);	
+		struct tm t;
+		t.tm_year = leu32p(hdr->AS.Header+28);
+		t.tm_mon  = leu32p(hdr->AS.Header+30);
+		//t.tm_wday = beu32p(hdr->AS.Header+32);
+		t.tm_mday = leu32p(hdr->AS.Header+34);
+		t.tm_hour = leu32p(hdr->AS.Header+36);
+		t.tm_min  = leu32p(hdr->AS.Header+38);
+		t.tm_sec  = leu32p(hdr->AS.Header+40);
+		//milliseconds = beu32p(hdr->AS.Header+42);
 		hdr->T0   = tm_time2gdf_time(&t);
 
 		double time_interval = 1e3 * (hdr->AS.bpb-8) / TimeStepFrequency;
@@ -9714,31 +10100,31 @@ if (VERBOSE_LEVEL>2)
 
 		//******** read Extended Header *********
 		const char *nameOfElectrode, *extraComment, *continuedComment, *mapfile;
-		
+
 		const char *H2 = (char*)hdr->AS.Header + H1Len;
-		hdr->NS = 0; 
+		hdr->NS = 0;
     		for (k = 0; k < extHdrN; k++) {
-			const char *identifier =  H2 + k*32;		
+			const char *identifier =  H2 + k*32;
 
 			if (VERBOSE_LEVEL>8) {
-				char tmp[9];tmp[8]=0; 
+				char tmp[9];tmp[8]=0;
 				char tmp24[25]; tmp24[24]=0;
 				memcpy(tmp,identifier,8);
 				memcpy(tmp24,identifier+8,24);
-				
+
 				fprintf(stdout,"SOPEN (NEV) [225] %d %d <%s> <%s>\n",(int)k,hdr->NS,tmp,tmp24);
 			}
 
 			if (!memcmp (identifier, "NEUEVWAV",8)) hdr->NS++;
 		}
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (NEV) [230]\n"); 		
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (NEV) [230]\n");
 
 		hdr->CHANNEL = (CHANNEL_TYPE*)realloc(hdr->CHANNEL, hdr->NS * sizeof(CHANNEL_TYPE));
 
-		uint16_t NS = 0; 
+		uint16_t NS = 0;
     		for (k = 0; k < extHdrN; k++) {
-			const char *identifier =  H2 + k*32;		
+			const char *identifier =  H2 + k*32;
 			if (!memcmp (identifier, "ARRAYNME",8)) {
 				nameOfElectrode = identifier + 8;
 			}
@@ -9779,19 +10165,19 @@ if (VERBOSE_LEVEL>2)
 				hc->XYZ[1] = 0;
 				hc->XYZ[2] = 0;
 				hc->Impedance = NAN;
-				
+
 				hc->SPR = 0;
 				hc->bi = hdr->AS.bpb;
 				hc->bi8 = hdr->AS.bpb*8;
 				hc->bufptr = NULL;
- 
+
 			}
 			else if (!memcmp (identifier, "NSASEXEV",8)) {
 				char *nsas = identifier + 8;
 			}
 			else  {
 /*
-				// IGNORE 	
+				// IGNORE
 				biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "NEV: unknown extended header");
 */
 			}
@@ -9961,7 +10347,7 @@ if (VERBOSE_LEVEL>2)
 	}
 
 	else if (hdr->TYPE==NIFTI) {
-		if (count<352) 
+		if (count<352)
 		    	count += ifread(hdr->AS.Header+count, 1, 352-count, hdr);
 
 	    	// nifti_1_header *NIFTI_HDR = (nifti_1_header*)hdr-AS.Header;
@@ -10121,64 +10507,64 @@ if (VERBOSE_LEVEL>2)
 		hdr->SPR = 1;
 
 		int32_t gdftyp = 3;
-		double Cal = 1.0; 
+		double Cal = 1.0;
 		int status = 0;
 		char *remHDR=(char*)hdr->AS.Header;
 		const char *FirstName=NULL, *MiddleName=NULL, *SurName=NULL;
 		char *datfile = NULL;
-		struct tm RecTime; 	
+		struct tm RecTime;
 		size_t NEvent = 0;
-		hdr->FLAG.OVERFLOWDETECTION = 0; // overflow detection is not supported for this format 
+		hdr->FLAG.OVERFLOWDETECTION = 0; // overflow detection is not supported for this format
 		double DigMax =  ldexp(1,-15);
 		double DigMin = -ldexp(1,-15)-1;
 		char *line;
-		char flag_interleaved = 1; 
+		char flag_interleaved = 1;
 		while (1) {
-			if (*remHDR == '\0') break; 
+			if (*remHDR == '\0') break;
 			// line = strsep(&remHDR,"\n\r");
-			line = remHDR; 
-			remHDR = strpbrk(remHDR,"\n\r\0");	
+			line = remHDR;
+			remHDR = strpbrk(remHDR,"\n\r\0");
 			*remHDR++ = 0;
-							
+
 			remHDR += strspn(remHDR,"\n\r");
 
 			if (!strncmp(line,"[FileInfo]",10))
 				status = 1;
 			else if (!strncmp(line,"[ChannelMap]",12)) {
 				status = 2;
-				hdr->AS.bpb = hdr->NS*GDFTYP_BITS[gdftyp]>>3; 
+				hdr->AS.bpb = hdr->NS*GDFTYP_BITS[gdftyp]>>3;
 				hdr->CHANNEL = (CHANNEL_TYPE*)realloc(hdr->CHANNEL,hdr->NS*sizeof(CHANNEL_TYPE));
-				uint16_t ch; 
+				uint16_t ch;
 				for (ch=0; ch < hdr->NS; ch++) {
 					CHANNEL_TYPE *hc = hdr->CHANNEL+ch;
 
-					hc->PhysMax = DigMax*Cal; 
-					hc->PhysMin = DigMin*Cal; 
-					hc->DigMax  = DigMax; 
-					hc->DigMin  = DigMin; 
-					hc->Cal     = Cal; 
-					hc->Off     = 0.0; 
-					hc->OnOff   = 1; 
+					hc->PhysMax = DigMax*Cal;
+					hc->PhysMin = DigMin*Cal;
+					hc->DigMax  = DigMax;
+					hc->DigMin  = DigMin;
+					hc->Cal     = Cal;
+					hc->Off     = 0.0;
+					hc->OnOff   = 1;
 
-					hc->Label[0]      = 0; 
+					hc->Label[0]      = 0;
 					hc->LeadIdCode    = 0;
-					hc->Transducer[0] = 0; 
+					hc->Transducer[0] = 0;
 					hc->PhysDimCode   = 0; 	//TODO
-					hc->GDFTYP        = gdftyp; 
+					hc->GDFTYP        = gdftyp;
 
-					hc->TOffset   = NAN; 
-					hc->LowPass   = NAN; 
-					hc->HighPass  = NAN; 
-					hc->Notch     = NAN; 
-					hc->XYZ[0]    = 0.0; 
-					hc->XYZ[1]    = 0.0; 
-					hc->XYZ[2]    = 0.0; 
-					hc->Impedance = NAN; 
+					hc->TOffset   = NAN;
+					hc->LowPass   = NAN;
+					hc->HighPass  = NAN;
+					hc->Notch     = NAN;
+					hc->XYZ[0]    = 0.0;
+					hc->XYZ[1]    = 0.0;
+					hc->XYZ[2]    = 0.0;
+					hc->Impedance = NAN;
 
 					hc->SPR = hdr->SPR;
-					hc->bi8 = ch*GDFTYP_BITS[gdftyp]; 
-					hc->bi  = hc->bi8>>3; 
-					hc->bufptr = NULL; 
+					hc->bi8 = ch*GDFTYP_BITS[gdftyp];
+					hc->bi  = hc->bi8>>3;
+					hc->bufptr = NULL;
 				}
 			}
 			else if (!strncmp(line,"[Sheets]",8))
@@ -10193,15 +10579,15 @@ if (VERBOSE_LEVEL>2)
 
 				switch (status) {
 				case 1: {
-					char *tag = line; 
+					char *tag = line;
 					char *val = strchr(line,'=');
 					*val= 0;		// replace "=" with terminating \0
 					val++;			// next character is the start of the value parameters
 
 					if (!strcmp(tag,"File")) {
-						datfile = strrchr(val,'/'); 
-						if (!datfile) datfile = strrchr(val,'\\')+1;	
-						if (!datfile) datfile = val;	
+						datfile = strrchr(val,'/');
+						if (!datfile) datfile = strrchr(val,'\\')+1;
+						if (!datfile) datfile = val;
 					}
 					else if (!strcmp(line,"FileType"))
 						flag_interleaved = !strcmp(val,"Interleaved");
@@ -10215,37 +10601,37 @@ if (VERBOSE_LEVEL>2)
 						switch (atol(val)) {
 						case 0: gdftyp = 3; 	// int 16
 							hdr->FILE.LittleEndian = 1;
-							hdr->AS.bpb *= 2; 
+							hdr->AS.bpb *= 2;
 							DigMin = -ldexp(1.0,-15)-1;
 							DigMax =  ldexp(1.0,-15);
-							break; 
+							break;
 						case 4: gdftyp = 3; 	// int16
 							hdr->FILE.LittleEndian = 0;
-							hdr->AS.bpb *= 2; 
+							hdr->AS.bpb *= 2;
 							DigMin = -ldexp(1.0,-15)-1;
 							DigMax =  ldexp(1.0,-15);
-							break; 
-						case 6: gdftyp = 1; 	// int8 
+							break;
+						case 6: gdftyp = 1; 	// int8
 							DigMin = -ldexp(1.0,-7)-1;
 							DigMax =  ldexp(1.0,-7);
 							break;
-						default: 
+						default:
 							biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Format Persyst: unsupported data type");
 						}
 					}
 					break;
 				}
 				case 2: {
-					char *tag = line; 
+					char *tag = line;
 					char *val = strchr(line,'=');
 					*val = 0;		// replace "=" with terminating \0
 					val++;			// next character is the start of the value parameters
 
-					int channo = atol(val)-1; 
+					int channo = atol(val)-1;
 					if (0 <= channo && channo < hdr->NS) {
 						strncpy(hdr->CHANNEL[channo].Label, tag, MAX_LENGTH_LABEL);
 					}
-					break; 
+					break;
 				}
 				case 3: {
 					break;
@@ -10258,13 +10644,13 @@ if (VERBOSE_LEVEL>2)
 							return (hdr);
 						};
 					}
-					char *tmp2,*tmp1 = line; 
-					tmp2 = strchr(tmp1,',');   *tmp2 = 0; 				
-					hdr->EVENT.POS[hdr->EVENT.N] = atof(tmp1)*hdr->SampleRate; 
-					tmp1 = strchr(tmp2+1,','); *tmp1 = 0; 				
-					hdr->EVENT.DUR[hdr->EVENT.N]  = atof(tmp1)*hdr->SampleRate; 
-					tmp2 = strchr(tmp1+1,','); *tmp2 = 0; 	// ignore next field				
-					tmp1 = strchr(tmp2+1,','); *tmp1 = 0;  	// ignore next field				
+					char *tmp2,*tmp1 = line;
+					tmp2 = strchr(tmp1,',');   *tmp2 = 0;
+					hdr->EVENT.POS[hdr->EVENT.N] = atof(tmp1)*hdr->SampleRate;
+					tmp1 = strchr(tmp2+1,','); *tmp1 = 0;
+					hdr->EVENT.DUR[hdr->EVENT.N]  = atof(tmp1)*hdr->SampleRate;
+					tmp2 = strchr(tmp1+1,','); *tmp2 = 0; 	// ignore next field
+					tmp1 = strchr(tmp2+1,','); *tmp1 = 0;  	// ignore next field
 					char *Desc = tmp1+1;
 					FreeTextEvent(hdr,hdr->EVENT.N,Desc);
 					hdr->EVENT.N++;
@@ -10286,7 +10672,7 @@ if (VERBOSE_LEVEL>2)
 					else if (!strcmp(line,"Sex"))
 						hdr->Patient.Sex = (toupper(val[0])=='M') + 2*(toupper(val[0])=='F') ;
 					else if (!strcmp(line,"BirthDate")) {
-						struct tm t; 	
+						struct tm t;
 						t.tm_year = atol(val+6);
 						if (t.tm_year < 80) t.tm_year+=100;
 						val[5]=0;
@@ -10321,7 +10707,7 @@ if (VERBOSE_LEVEL>2)
 					/* Omitted, because it is not important, identification through ID, and T0; quality is determined by Technician
 					else if (!strcmp(line,"Physician"))
 						Physician=val;
-					*/	
+					*/
 					else if (!strcmp(line,"Technician"))
 						hdr->ID.Technician = strdup(val);
 					else if (!strcmp(line,"Medications"))
@@ -10340,13 +10726,13 @@ if (VERBOSE_LEVEL>2)
 		}
 
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (Persyst) [260] %d<%s>\n",status,line); 		
-			
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (Persyst) [260] %d<%s>\n",status,line);
+
 		hdr->T0 = tm_time2gdf_time(&RecTime);
 
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (Persyst) [270] %d<%s>\n",status,line); 		
-			
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (Persyst) [270] %d<%s>\n",status,line);
+
 		if (!hdr->FLAG.ANONYMOUS) {
 			size_t len = 0, len0=0;
 			if (SurName!=NULL) len += strlen(SurName);
@@ -10370,45 +10756,45 @@ if (VERBOSE_LEVEL>2)
 		}
 
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (Persyst) [280] %d<%s>\n",status,datfile); 		
-			
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (Persyst) [280] %d<%s>\n",status,datfile);
+
 		size_t len = strlen(hdr->FileName);
 		char *FileName = hdr->FileName;
 		hdr->FileName = (char*) malloc(len+strlen(datfile)+2);
-	
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (Persyst) [283] %d<%s>  %d/%d\n",(int)len,datfile,(int)hdr->SPR,(int)hdr->NRec); 		
-			
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (Persyst) [283] %d<%s>  %d/%d\n",(int)len,datfile,(int)hdr->SPR,(int)hdr->NRec);
+
 		if (strspn(FileName,"/\\")) {
 			strcpy(hdr->FileName, FileName);
 			char *tmpstr = strrchr(hdr->FileName,'/')+1;
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (Persyst) [285] %d<%s>\n",(int)len,tmpstr); 		
-			
-			if (tmpstr==NULL) 
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (Persyst) [285] %d<%s>\n",(int)len,tmpstr);
+
+			if (tmpstr==NULL)
 				tmpstr = strrchr(hdr->FileName,'\\')+1;
 
-			if (tmpstr!=NULL) 
+			if (tmpstr!=NULL)
 				strcpy(tmpstr,datfile);
 			else {
 		    		biosigERROR(hdr, B4C_CANNOT_OPEN_FILE, "Format Persyst: cannot open dat file.");
 			}
 		}
 		else {
-			strcpy(hdr->FileName, datfile);			
+			strcpy(hdr->FileName, datfile);
 		}
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (Persyst) [290] %d<%s>\n",status, hdr->FileName); 		
-			
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (Persyst) [290] %d<%s>\n",status, hdr->FileName);
+
 		struct stat FileBuf;
 		if (stat(hdr->FileName, &FileBuf)==0) {
-			hdr->FILE.size = FileBuf.st_size; 
+			hdr->FILE.size = FileBuf.st_size;
 			hdr->NRec = FileBuf.st_size*8/(hdr->NS*GDFTYP_BITS[gdftyp]);
 
 			if (!flag_interleaved) {
-				hdr->SPR = hdr->NRec; 
-				hdr->NRec = 1; 
+				hdr->SPR = hdr->NRec;
+				hdr->NRec = 1;
 
-				uint16_t ch; 
+				uint16_t ch;
 				for (ch=0; ch < hdr->NS; ch++) {
 					CHANNEL_TYPE *hc = hdr->CHANNEL+ch;
 
@@ -10422,15 +10808,15 @@ if (VERBOSE_LEVEL>2)
 		}
 		else {
 	    		biosigERROR(hdr, B4C_CANNOT_OPEN_FILE, "Format Persyst: cannot open dat file.");
-		}	
+		}
 
 		ifopen(hdr,"r");
 		hdr->HeadLen = 0;	// datfile has no header
 
 		free(hdr->FileName);
-		hdr->FileName = FileName; 
-		
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (Persyst) [298] %d %d %d\n",(int)FileBuf.st_size,(int)hdr->AS.bpb,(int)(FileBuf.st_size/hdr->AS.bpb)); 		
+		hdr->FileName = FileName;
+
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"SOPEN (Persyst) [298] %d %d %d\n",(int)FileBuf.st_size,(int)hdr->AS.bpb,(int)(FileBuf.st_size/hdr->AS.bpb));
 
 	}
 
@@ -10503,12 +10889,11 @@ if (VERBOSE_LEVEL>2)
 			hc->OnOff = 1;
 			strncpy(hc->Label,(char*)(hdr->AS.Header+32+24+8*k),8);
 			hc->Transducer[0] = 0;
-			hc->LeadIdCode = 0; 
+			hc->LeadIdCode = 0;
 		}
     		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Format RDF (UCSD ERPSS) not supported");
 	}
 
-#ifdef WITH_INTAN
 	else if (hdr->TYPE==IntanCLP) {
 		sopen_intan_clp_read(hdr);
 	}
@@ -10518,7 +10903,6 @@ if (VERBOSE_LEVEL>2)
 	else if (hdr->TYPE==RHS2000) {
 		sopen_rhs2000_read(hdr);
 	}
-#endif
 
 	else if (hdr->TYPE==SCP_ECG) {
 		hdr->HeadLen   = leu32p(hdr->AS.Header+2);
@@ -10598,7 +10982,7 @@ if (VERBOSE_LEVEL>2)
 			hdr->NRec = (stbuf.st_size-hdr->HeadLen)/(2*hdr->NS);
 		else
 			fprintf(stdout,"Compressed Sigma file (%s) is currently not supported. Uncompress file and try again.", hdr->FileName);
-		}	
+		}
 
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"333 SIGMA NS=%i/0x%x, Fs=%f, SPR=%i, NRec=%i\n",hdr->NS,hdr->NS, hdr->SampleRate,hdr->SPR,(int)hdr->NRec);
 
@@ -10694,6 +11078,11 @@ if (VERBOSE_LEVEL>2)
 		}
 		free(fs);
 	}	/******* end of Sigma PLpro ********/
+
+	else if (hdr->TYPE==SQLite) {
+		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %d): %s(...)\n", __FILE__,__LINE__,__func__);
+		if (sopen_sqlite(hdr)) return(hdr);
+	}
 
 /*
 	else if (hdr->TYPE==SMA) {
@@ -10985,17 +11374,17 @@ if (VERBOSE_LEVEL>2)
 			else {
 				size_t sz  = (hdr->NS+1)*24;
 				char *line = (char*) malloc(sz);
-				// read and ignore (i.e. skip) 3 lines 	
-				int c = 3;  
+				// read and ignore (i.e. skip) 3 lines
+				int c = 3;
 				while (c>0) {
 					if (fgetc(fid)=='\n') {
 						c--;
 						int ch = fgetc(fid);
-						// skip '\r'	
-						if (ch=='\r') ungetc(ch,fid);	
-					}	
+						// skip '\r'
+						if (ch=='\r') ungetc(ch,fid);
+					}
 				}
-				
+
 				// TODO: sanity checks
 				if (0) {
 					biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "TMSiLOG: Binary file corrupted");
@@ -11197,7 +11586,7 @@ if (VERBOSE_LEVEL>2)
 					FreeTextEvent(hdr,N,desc);
 
 				++N;
-				if (desc) free(desc); 
+				if (desc) free(desc);
 			}
 			else {
 				strtok(line,":");
@@ -11371,26 +11760,26 @@ if (VERBOSE_LEVEL>2)
 	}
 
 	else if (hdr->TYPE==WG1) {
-		uint32_t VER = leu32p(hdr->AS.Header); 
+		uint32_t VER = leu32p(hdr->AS.Header);
 		if (VER==0xAFFE5555) {
 			// FIXME: this version is currently not implemented
 			if (count < 5120) {
 				hdr->AS.Header = realloc(hdr->AS.Header, 5120);
 				count += ifread(hdr->AS.Header,5120-count,1,hdr);
 			}
-			hdr->HeadLen = count; 
-			hdr->NS   = leu16p(hdr->AS.Header+0x40);			
+			hdr->HeadLen = count;
+			hdr->NS   = leu16p(hdr->AS.Header+0x40);
 			hdr->NRec = leu16p(hdr->AS.Header+0x110);	// total number of blocks
 			/*
-			uint16_t gdftyp = 1; 
-			uint16_t startblock = leu16p(hdr->AS.Header+0x112);			
-			// FIXME: 
+			uint16_t gdftyp = 1;
+			uint16_t startblock = leu16p(hdr->AS.Header+0x112);
+			// FIXME:
 			*/
 	    		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "ERROR BIOSIG SOPEN(READ): WG1 0x5555FEAF format is not supported yet");
 		}
 		else {
-			hdr->SampleRate = 1e6 / leu32p(Header1+16);			
-			hdr->NS = leu16p(Header1+22);			
+			hdr->SampleRate = 1e6 / leu32p(Header1+16);
+			hdr->NS = leu16p(Header1+22);
 	    		biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "ERROR BIOSIG SOPEN(READ): WG1 data format is not supported yet");
 		}
     		return(hdr);
@@ -11442,9 +11831,9 @@ if (VERBOSE_LEVEL>2)
 
 	}
 
-	if (!hdr->EVENT.SampleRate) hdr->EVENT.SampleRate = hdr->SampleRate; 	
+	if (!hdr->EVENT.SampleRate) hdr->EVENT.SampleRate = hdr->SampleRate;
 	/*
-	convert2to4_event_table(hdr->EVENT);
+	convert2to4_eventtable(hdr);
 	convert into canonical form if needed
 	*/
 
@@ -11486,12 +11875,12 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
      		typeof(hdr->NS) k;
 		for (k=0; k<hdr->NS; k++)
 			if (hdr->CHANNEL[k].OnOff) NS++;
-	}		
+	}
 
 	if (VERBOSE_LEVEL>7)
 		fprintf(stdout,"sopen-W ns=%i (%s)\n",NS,GetFileTypeString(hdr->TYPE));
 
-#ifndef  ONLYGDF 
+#ifndef  ONLYGDF
     	if ((hdr->TYPE==ASCII) || (hdr->TYPE==BIN)) {
 
 		size_t k;
@@ -11505,13 +11894,14 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
     		// fprintf(fid,"\n[Header 1]\nNumberOfChannels\t= %i\n",hdr->NS);
     		//fprintf(fid,"NRec\t= %i\n",hdr->NRec);
     		fprintf(fid,"Duration         \t= %f\t# in seconds\n",hdr->SPR*hdr->NRec/hdr->SampleRate);
-    		struct tm *t = gdf_time2tm_time(hdr->T0);
-    		fprintf(fid,"Recording.Time    \t= %04i-%02i-%02i %02i:%02i:%02i\t# YYYY-MM-DD hh:mm:ss\n",t->tm_year+1900,t->tm_mon+1,t->tm_mday,t->tm_hour,t->tm_min,t->tm_sec);
+		char tmp[40];
+		snprintf_gdfdatetime(tmp, sizeof(tmp), hdr->T0);
+		fprintf(fid,"Recording.Time    \t= %s\t# YYYY-MM-DD hh:mm:ss.uuuuuu\n",tmp);
 		fprintf(fid,"Timezone          \t= +%i min\n",hdr->tzmin);
 
     		fprintf(fid,"Patient.Id        \t= %s\n",hdr->Patient.Id);
-    		t = gdf_time2tm_time(hdr->Patient.Birthday);
-    		fprintf(fid,"Patient.Birthday  \t= %04i-%02i-%02i %02i:%02i:%02i\t# YYYY-MM-DD hh:mm:ss\n",t->tm_year+1900,t->tm_mon+1,t->tm_mday,t->tm_hour,t->tm_min,t->tm_sec);
+		snprintf_gdfdate(tmp, sizeof(tmp), hdr->Patient.Birthday);
+		fprintf(fid,"Patient.Birthday  \t= %s\t# YYYY-MM-DD\n",tmp);
     		fprintf(fid,"Patient.Weight    \t= %i\t# in [kg]\n",hdr->Patient.Weight);
     		fprintf(fid,"Patient.Height    \t= %i\t# in [cm]\n",hdr->Patient.Height);
     		fprintf(fid,"Patient.Gender    \t= %i\t# 0:Unknown, 1: Male, 2: Female, 9: Unspecified\n",hdr->Patient.Sex);
@@ -11539,13 +11929,13 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
 		char* fn = (char*)calloc(k + 10,1);
 		strcpy(fn, hdr->FileName);
 		char *e = strrchr(fn,'.');
-		if (e==NULL) { 
+		if (e==NULL) {
 			fn[k] = '.';
 			e = fn+k;
 		}
 
 		e[1] = (hdr->TYPE == ASCII ? 'a' : 's');
-		e+=2; 
+		e+=2;
 
     		for (k=0; k<hdr->NS; k++)
     		if (hdr->CHANNEL[k].OnOff) {
@@ -11623,7 +12013,7 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
 				fprintf(fid,"\t\t");
 
 			if (hdr->EVENT.TYP[k] == 0x7fff) {
-				typeof(hdr->NS) chan = hdr->EVENT.CHN[k] - 1; 	
+				typeof(hdr->NS) chan = hdr->EVENT.CHN[k] - 1;
 				double val = dur2val(hdr->EVENT.DUR[k], hdr->CHANNEL[chan].GDFTYP);
 
 				val *= hdr->CHANNEL[chan].Cal;
@@ -11632,7 +12022,7 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
 				fprintf(fid,"%g\t# sparse sample ", val);	// value of sparse samples
 			}
 			else {
-				const char *str = GetEventDescription(hdr,k); 
+				const char *str = GetEventDescription(hdr,k);
  				if (str) fprintf(fid,"%s",str);
 			}
 		}
@@ -11651,18 +12041,19 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
 		for (k = 0; k < hdr->NS; k++) {
 			NS += (hdr->CHANNEL[k].OnOff > 0);
 		}
-		hdr->HeadLen += fprintf(hdr->FILE.FID, "ATF\t1.0\n%"PRIu64"u\t%u", max(0,hdr->NRec * hdr->SPR), NS + 1);
 
-		char *sep = "\n";
+		hdr->HeadLen += fprintf(hdr->FILE.FID, "ATF\t1.0\n0\t%d", NS);
+
+		char sep = '\n';
 		if (getTimeChannelNumber(hdr) == 0) {
-			hdr->HeadLen += fprintf(hdr->FILE.FID, "%s\"Time (s)\"",sep);
-			sep = "\t";
+			hdr->HeadLen += fprintf(hdr->FILE.FID, "%c\"Time (ms)\"", sep);
+			sep = '\t';
 		}
 
 		for (k = 0; k < hdr->NS; k++) {
 			if (hdr->CHANNEL[k].OnOff) {
-				hdr->HeadLen += fprintf(hdr->FILE.FID, "%s\"%s (%s)\"", sep, hdr->CHANNEL[k].Label, PhysDim3(hdr->CHANNEL[k].PhysDimCode));
-				sep = "\t";
+				hdr->HeadLen += fprintf(hdr->FILE.FID, "%c\"%s (%s)\"", sep, hdr->CHANNEL[k].Label, PhysDim3(hdr->CHANNEL[k].PhysDimCode));
+				sep = '\t';
 			}
 		}
 	}
@@ -11816,13 +12207,6 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
 	    	memcpy(hdr->AS.Header,"CFWB\1\0\0\0",8);
 		lef64a(1/hdr->SampleRate, hdr->AS.Header+8);
 
-		struct tm *t = gdf_time2tm_time(hdr->T0);
-    		leu32a(t->tm_year + 1900, hdr->AS.Header+16);
-	    	leu32a(t->tm_mon + 1, hdr->AS.Header+20);
-	    	leu32a(t->tm_mday, hdr->AS.Header+24);
-	    	leu32a(t->tm_hour, hdr->AS.Header+28);
-	    	leu32a(t->tm_min, hdr->AS.Header+32);
-		lef64a(t->tm_sec, hdr->AS.Header+36);
 		lef64a(0.0,  hdr->AS.Header+44);	// pretrigger time
 	    	leu32a(NS, hdr->AS.Header+52);
 	    	hdr->NRec *= hdr->SPR; hdr->SPR = 1;
@@ -11869,9 +12253,9 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
 		}
 	}
 
-    	else 
+	else
 
-#endif //ONLYGDF 
+#endif //ONLYGDF
 
 	      if ((hdr->TYPE==GDF) || (hdr->TYPE==GDF1)) {
 		/* use of GDF1 is deprecated, instead hdr->TYPE=GDF and hdr->VERSION=1.25 should be used.
@@ -11900,7 +12284,7 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
 
 	}
 
-#ifndef  ONLYGDF 
+#ifndef  ONLYGDF
 
     	else if ((hdr->TYPE==EDF) || (hdr->TYPE==BDF)) {
 	     	hdr->HeadLen   = (NS+1)*256;
@@ -11915,23 +12299,18 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
 			Header1[0] = '0';
 	     	}
 
-/* obsolete
-		tt = gdf_time2t_time(hdr->Patient.Birthday);
-		if (hdr->Patient.Birthday>1) strftime(tmp,81,"%d-%b-%Y",localtime(&tt));
-*/
 		char tmp[81];
-		struct tm *t = gdf_time2tm_time(hdr->Patient.Birthday);
 		if (hdr->Patient.Birthday>1)
-			strftime(tmp,81,"%02d-%b-%04Y",t);
+			strfgdftime(tmp,81,"%02d-%b-%04Y",hdr->Patient.Birthday);
 		else strcpy(tmp,"X");
 
 		if (strlen(hdr->Patient.Id) > 0) {
-			size_t k; 
+			size_t k;
 			for (k=0; hdr->Patient.Id[k]; k++)
 				if (isspace(hdr->Patient.Id[k]))
 					hdr->Patient.Id[k] = '_';
 		}
-		
+
 	    	char cmd[256];
 		if (!hdr->FLAG.ANONYMOUS)
 			snprintf(cmd,MAX_LENGTH_PID+1,"%s %c %s %s",hdr->Patient.Id,GENDER[hdr->Patient.Sex],tmp,hdr->Patient.Name);
@@ -11940,19 +12319,17 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
 
 	     	memcpy(Header1+8, cmd, strlen(cmd));
 
-		t = gdf_time2tm_time(hdr->T0);
-		if (hdr->T0>1)
-			strftime(tmp,81,"%02d-%b-%04Y",t);
+		if (hdr->T0 > 1)
+			strfgdftime(tmp,81,"%d-%b-%Y", hdr->T0);
 		else strcpy(tmp,"X");
 
-		char *tmpstr = hdr->ID.Technician;	
+		char *tmpstr = hdr->ID.Technician;
 		if (!tmpstr || !strlen(tmp)) tmpstr = "X";
 		size_t len = snprintf(cmd,sizeof(cmd),"Startdate %s X %s ", tmp, tmpstr);
 	     	memcpy(Header1+88, cmd, len);
 	     	memcpy(Header1+88+len, &hdr->ID.Equipment, 8);
 
-		t = gdf_time2tm_time(hdr->T0);
-		strftime(tmp,81,"%d.%m.%y%H.%M.%S",t);
+		strfgdftime(tmp,81,"%d.%m.%y%H.%M.%S",hdr->T0);
 	     	memcpy(Header1+168, tmp, 16);
 
 		len = sprintf(tmp,"%i",hdr->HeadLen);
@@ -12069,21 +12446,21 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
 			size_t l2,l1 = strlen(str);
 
 			l2 = (hdr->ID.Manufacturer.Model==NULL) ? MAX_LENGTH_MANUF*2 : strlen(hdr->ID.Manufacturer.Model);
-			str[l1++]='^';  
+			str[l1++]='^';
 			if (l1+l2 <= MAX_LENGTH_MANUF) {
 				memcpy(str+l1, hdr->ID.Manufacturer.Model, l2);
 				l1 += l2;
 			}
 
 			l2 = (hdr->ID.Manufacturer.Version==NULL) ? MAX_LENGTH_MANUF*2 : strlen(hdr->ID.Manufacturer.Version);
-			str[l1++]='^';  
+			str[l1++]='^';
 			if (l1+l2 <= MAX_LENGTH_MANUF) {
 				memcpy(str+l1, hdr->ID.Manufacturer.Version, l2);
 				l1 += l2;
 			}
 
 			l2 = (hdr->ID.Manufacturer.SerialNumber==NULL) ? MAX_LENGTH_MANUF*2 : strlen(hdr->ID.Manufacturer.SerialNumber);
-			str[l1++]='^';  
+			str[l1++]='^';
 			if (l1+l2 <= MAX_LENGTH_MANUF) {
 				memcpy(str+l1, hdr->ID.Manufacturer.SerialNumber, l2);
 				l1 += l2;
@@ -12314,7 +12691,7 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
 	}
 #endif  // WITH_TMSiLOG
 
-#endif //ONLYGDF 
+#endif //ONLYGDF
 
 
 	else {
@@ -12351,10 +12728,10 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
 		bpb8 = 32;
 	}
 	else
-#endif //ONLYGDF 
+#endif //ONLYGDF
 		hdr->AS.bpb = 0;
 
-	typeof(hdr->NS) k; 
+	typeof(hdr->NS) k;
 	for (k=0, hdr->SPR = 1; k < hdr->NS; k++) {
 		hdr->CHANNEL[k].bi  = bpb8>>3;
 		hdr->CHANNEL[k].bi8 = bpb8;
@@ -12597,7 +12974,7 @@ size_t sread_raw(size_t start, size_t length, HDRTYPE* hdr, char flag, void *buf
 	}
 #endif
 	else {
-		
+
 		assert(hdr->TYPE != CFS);	// CFS data has been already cached in SOPEN
 		assert(hdr->TYPE != SMR);	// CFS data has been already cached in SOPEN
 
@@ -12709,23 +13086,18 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 	if (VERBOSE_LEVEL>6)
 		fprintf(stdout,"%s( %p, %i, %i, %s ) MODE=%i bpb=%i\n",__func__,data, (int)start, (int)length, hdr->FileName, hdr->FILE.OPEN, (int)hdr->AS.bpb);
 
-#if !defined(ONLYGDF) && defined(WITH_ATF)
-	if (hdr->TYPE == ATF) {
-		sread_atf(hdr);
-		count = hdr->NRec;
-	}
-#endif
-
 	if ((ssize_t)start < 0) start=hdr->FILE.POS;
 
 	if (start >= (size_t)hdr->NRec) return(0);
 
 	switch (hdr->TYPE) {
 	case AXG:
+	case ABF2:
+	case ATF:
 	case SMR: // data is already cached
 		count = hdr->NRec;
 		break;
-	default: 
+	default:
 		count = sread_raw(start, length, hdr, 0, NULL, 0);
 	}
 
@@ -12746,7 +13118,7 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 			(int)count,(int)start,(int)length,(int)POS,(int)hdr->FILE.POS,(int)hdr->SPR, (int)count, \
 			(int)NS, (int)sizeof(biosig_data_type), (int)(hdr->SPR * count * NS * sizeof(biosig_data_type)));
 
-#ifndef ANDROID 
+#ifndef ANDROID
 //Stoyan: Arm has some problem with log2 - or I dont know how to fix it - it exists but do not work.
         if (log2(hdr->SPR) + log2(count) + log2(NS) + log2(sizeof(biosig_data_type)) + 1 >= sizeof(size_t)*8) {
                 // used to check the 2GByte limit on 32bit systems
@@ -12759,12 +13131,12 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 		// local data memory required
 		size_t sz = hdr->SPR * count * NS * sizeof(biosig_data_type);
 		void *tmpptr = realloc(hdr->data.block, sz);
-		if (tmpptr!=NULL || !sz) 
+		if (tmpptr!=NULL || !sz)
 			data1 = (biosig_data_type*) tmpptr;
 		else {
                         biosigERROR(hdr, B4C_MEMORY_ALLOCATION_FAILED, "memory allocation failed - not enough memory");
                         return(0);
-		}	
+		}
 		hdr->data.block = data1;
 	}
 	else
@@ -12778,13 +13150,13 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 	char SWAP = !hdr->FILE.LittleEndian;
 #endif
 
-	int stride = 1; 
+	int stride = 1;
 
 #ifndef  ONLYGDF
 	if (hdr->TYPE==Axona)
-		stride = 64; 
+		stride = 64;
 	else if (hdr->TYPE==TMS32)
-		stride = hdr->NS; 
+		stride = hdr->NS;
 #endif //ONLYGDF
 
 	if (VERBOSE_LEVEL>7)
@@ -13005,7 +13377,7 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 		// overflow and saturation detection
 		if ((hdr->FLAG.OVERFLOWDETECTION) && ((sample_value <= CHptr->DigMin) || (sample_value >= CHptr->DigMax)))
 			sample_value = NAN; 	// missing value
-		
+
 		if (!hdr->FLAG.UCAL)	// scaling
 			sample_value = sample_value * CHptr->Cal + CHptr->Off;
 
@@ -13078,7 +13450,7 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 			CHANNEL_TYPE *CHptr = hdr->CHANNEL+k2;
 			size_t DIV 	= (uint32_t)ceil(hdr->SampleRate/hdr->EVENT.SampleRate);
 			uint16_t GDFTYP = CHptr->GDFTYP;
-//			size_t SZ  	= GDFTYP_BITS[GDFTYP]>>3;	// obsolete 
+//			size_t SZ  	= GDFTYP_BITS[GDFTYP]>>3;	// obsolete
 			int32_t int32_value = 0;
 
 			if (0);
@@ -13123,7 +13495,7 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 			// overflow and saturation detection
 			if ((hdr->FLAG.OVERFLOWDETECTION) && ((sample_value<=CHptr->DigMin) || (sample_value>=CHptr->DigMax)))
 				sample_value = NAN; 	// missing value
-			
+
 			if (!hdr->FLAG.UCAL)	// scaling
 				sample_value = sample_value * CHptr->Cal + CHptr->Off;
 
@@ -13148,8 +13520,8 @@ size_t sread(biosig_data_type* data, size_t start, size_t length, HDRTYPE* hdr) 
 	else if (hdr->TYPE==TMS32) {
 		// post-processing TMS32 files: last block can contain undefined samples
 		size_t spr = lei32p(hdr->AS.Header+121);
-		if (hdr->FILE.POS*hdr->SPR > spr) 
-		for (k2=0; k2<NS; k2++) 
+		if (hdr->FILE.POS*hdr->SPR > spr)
+		for (k2=0; k2<NS; k2++)
 		for (k5 = spr - POS*hdr->SPR; k5 < hdr->SPR*count; k5++) {
 			if (hdr->FLAG.ROW_BASED_CHANNELS)
 				data1[k2 + k5*NS] = NAN;		// row-based channels
@@ -13304,18 +13676,15 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
 		nrec_t c = 0;
 
 		unsigned timeChan = getTimeChannelNumber(hdr);
-		// char tabflag = 0;
-		if ( timeChan == 0) {
-			hdr->HeadLen += fprintf(hdr->FILE.FID, "\"Time (s)\"");
-		//	tabflag = 1;
-		}
 
 		if (hdr->data.size[1-hdr->FLAG.ROW_BASED_CHANNELS] < hdr->NS) {
 			// if collapsed data, use k2, otherwise use k1
 			for (c = 0; c < nr; c++) {
 				char *sep = "\n";
-				if (timeChan == 0)
-					fprintf(hdr->FILE.FID,"%s%.16g",sep,(++hdr->FILE.POS)/hdr->SampleRate);
+				if (timeChan == 0) {
+					fprintf(hdr->FILE.FID,"%s%.16g",sep,(++hdr->FILE.POS)*1000.0/hdr->SampleRate);
+					sep = "\t";
+				}
 				for (k = 0, k2=0; k < hdr->NS; k++) {
 					if (hdr->CHANNEL[k].OnOff) {
 						size_t idx;
@@ -13334,8 +13703,10 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
 		else {	// if not collapsed data, use k1
 			for (c = 0; c < nr; c++) {
 				char *sep = "\n";
-				if (timeChan == 0)
-					fprintf(hdr->FILE.FID,"%s%.16g",sep,(++hdr->FILE.POS)/hdr->SampleRate);
+				if (timeChan == 0) {
+					fprintf(hdr->FILE.FID,"%s%.16g",sep,(++hdr->FILE.POS)*1000.0/hdr->SampleRate);
+					sep = "\t";
+				}
 				for (k = 0; k < hdr->NS; k++) {
 					if (hdr->CHANNEL[k].OnOff) {
 						size_t idx;
@@ -13362,13 +13733,12 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
 			biosigERROR(hdr, B4C_INSUFFICIENT_MEMORY, "SWRITE: memory allocation failed.");
 			return(0);
 		}
-		else
-			hdr->AS.rawdata = (uint8_t*)ptr;
+		hdr->AS.rawdata = (uint8_t*)ptr;
 	}
 
 
 	if (VERBOSE_LEVEL>7)
-		fprintf(stdout,"%s (line %i): %i %i\n",__func__,__LINE__,(int)hdr->NRec,hdr->NS);
+		fprintf(stdout,"%s (line %i): %dx%d %d\n",__func__,__LINE__,(int)hdr->NRec,hdr->SPR,hdr->NS);
 
 	size_t bi8 = 0;
 	for (k1=0,k2=0; k1<hdr->NS; k1++) {
@@ -13407,19 +13777,19 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
 					__func__,__LINE__,(int)k1,(int)k2,(int)k3,(int)k4,(int)k5,(int)col,
 					(int)hdr->data.size[0],(int)hdr->data.size[1],(int)hdr->SPR,(int)nelem,(int)hdr->NRec);
 
+			sample_value = 0.0;
         		if (hdr->FLAG.ROW_BASED_CHANNELS) {
-            			for (k3=0, sample_value=0.0; k3 < DIV; k3++)
+				for (k3=0; k3 < DIV; k3++)
         				sample_value += data[col + (k4*hdr->SPR + k5*DIV + k3)*hdr->data.size[0]];
                         }
             		else {
-            			for (k3=0, sample_value=0.0; k3 < DIV; k3++)
+				for (k3=0; k3 < DIV; k3++)
         				sample_value += data[col*nelem*hdr->SPR + k4*hdr->SPR + k5*DIV + k3];
                         }
+			sample_value /= DIV;
 
 			if (VERBOSE_LEVEL>8)
 				fprintf(stdout,"%s (line %i): %f/%i\n",__func__,__LINE__,sample_value,(int)DIV);
-
-			sample_value /= DIV;
 
 			if (!hdr->FLAG.UCAL)	// scaling
 				sample_value = sample_value * iCal + iOff;
@@ -13588,7 +13958,7 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
 #ifndef  ONLYGDF
 	if ((hdr->TYPE == ASCII) || (hdr->TYPE == BIN)) {
 		HDRTYPE H1;
-		H1.CHANNEL = NULL; 
+		H1.CHANNEL = NULL;
 		H1.FILE.COMPRESSION = hdr->FILE.COMPRESSION;
 
 		if (VERBOSE_LEVEL>7)
@@ -13598,19 +13968,19 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
 		char* fn = (char*)calloc(k1 + 10,1);
 		strcpy(fn, hdr->FileName);
 		char *e = strrchr(fn,'.');
-		if (e==NULL) { 
+		if (e==NULL) {
 			fn[k1] = '.';
 			e = fn+k1;
 		}
 		e[1] = (hdr->TYPE == ASCII ? 'a' : 's');
 		e+=2;
-		
+
 		for (k1=0; k1<hdr->NS; k1++)
 		if (hdr->CHANNEL[k1].OnOff) {
 		//if (hdr->CHANNEL[k1].OnOff && hdr->CHANNEL[k1].SPR) {
-			/* Off channels and sparse channels (SPR) are not exported; 
-				sparse samples are available throught the header file 
-				containing the event table. 
+			/* Off channels and sparse channels (SPR) are not exported;
+				sparse samples are available throught the header file
+				containing the event table.
 			*/
 			CHptr 	= hdr->CHANNEL+k1;
     			if (hdr->FILE.COMPRESSION) sprintf(e,"%02i_gz",(int)k1+1);
@@ -13673,7 +14043,7 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
 		count = hdr->NRec;
 		free(fn);
 	}
-	else 
+	else
 #endif //ONLYGDF
 	     if ((hdr->TYPE != SCP_ECG) && (hdr->TYPE != HL7aECG)) {
 		// for SCP: writing to file is done in SCLOSE
@@ -13722,7 +14092,7 @@ void srewind(HDRTYPE* hdr)
 /****************************************************************************/
 /**                     SSEEK                                              **/
 /****************************************************************************/
-int sseek(HDRTYPE* hdr, long int offset, int whence)
+int sseek(HDRTYPE* hdr, ssize_t offset, int whence)
 {
 	int64_t pos=0;
 
@@ -13747,9 +14117,9 @@ int sseek(HDRTYPE* hdr, long int offset, int whence)
 /****************************************************************************/
 /**                     STELL                                              **/
 /****************************************************************************/
-long int stell(HDRTYPE* hdr)
+ssize_t stell(HDRTYPE* hdr)
 {
-	long int pos = iftell(hdr);
+	ssize_t pos = iftell(hdr);
 
 	if (pos<0)
 		return(-1);
@@ -13764,9 +14134,8 @@ long int stell(HDRTYPE* hdr)
 /****************************************************************************/
 /**                     SCLOSE                                             **/
 /****************************************************************************/
-int sclose(HDRTYPE* hdr)
-{
-	int32_t 	pos, len;
+int sclose(HDRTYPE* hdr) {
+	ssize_t pos, len;
 
 	if (VERBOSE_LEVEL>6)
 		fprintf(stdout,"SCLOSE( %s ) MODE=%i\n",hdr->FileName, hdr->FILE.OPEN);
@@ -13822,12 +14191,12 @@ int sclose(HDRTYPE* hdr)
 		// WRITE HDR.NRec
 		pos = (iftell(hdr)-hdr->HeadLen);
 		if (hdr->NRec<0)
-		{	
-			union {			
+		{
+			union {
 				char tmp[88];
 				int64_t i64;
-			} t;	
-		
+			} t;
+
 			if (pos>0) 	hdr->NRec = pos/hdr->AS.bpb;
 			else		hdr->NRec = 0;
 			if (hdr->TYPE==GDF) {
@@ -13879,7 +14248,12 @@ int sclose(HDRTYPE* hdr)
 			uint16_t crc = CRCEvaluate(hdr->AS.Header + aECG->Section6.StartPtr+2,aECG->Section6.Length-2); // compute CRC
 			leu16a(crc, hdr->AS.Header + aECG->Section6.StartPtr);
 		}
-		if ((aECG->Section12.Length>0) && (hdr->VERSION >2.5)){
+		if (aECG->Section7.Length>0) {
+			// compute CRC for Section 7
+			uint16_t crc = CRCEvaluate(hdr->AS.Header + aECG->Section7.StartPtr+2,aECG->Section7.Length-2); // compute CRC
+			leu16a(crc, hdr->AS.Header + aECG->Section7.StartPtr);
+		}
+		if ((aECG->Section12.Length>0) && (hdr->VERSION > 2.5)) {
 			// compute CRC for Section 12
 			uint16_t crc = CRCEvaluate(hdr->AS.Header + aECG->Section12.StartPtr+2,aECG->Section12.Length-2); // compute CRC
 			leu16a(crc, hdr->AS.Header + aECG->Section12.StartPtr);
@@ -13918,17 +14292,17 @@ void biosigERROR(HDRTYPE *hdr, enum B4C_ERROR errnum, const char *errmsg) {
 */
 #if (BIOSIG_VERSION < 10500)
 #ifndef  ONLYGDF
-	B4C_ERRNUM = errnum; 
-	B4C_ERRMSG = errmsg; 
+	B4C_ERRNUM = errnum;
+	B4C_ERRMSG = errmsg;
 #endif //ONLYGDF
 #endif
-	hdr->AS.B4C_ERRNUM = errnum; 
-	hdr->AS.B4C_ERRMSG = errmsg; 
+	hdr->AS.B4C_ERRNUM = errnum;
+	hdr->AS.B4C_ERRMSG = errmsg;
 }
 
 #if (BIOSIG_VERSION < 10500)
 #ifndef  ONLYGDF
-// do not expose deprecated interface in libgdf	
+// do not expose deprecated interface in libgdf
 int serror() {
 	int status = B4C_ERRNUM;
 	fprintf(stderr,"Warning: use of function SERROR() is deprecated - use SERROR2() instead");
@@ -13974,7 +14348,7 @@ int sflush_gdf_event_table(HDRTYPE* hdr)
 	if ((hdr->TYPE!=GDF) || hdr->FILE.COMPRESSION)
 		return(-1);
 
-	long int filepos = iftell(hdr);
+	ssize_t filepos = iftell(hdr);
 	ifclose(hdr);
 	hdr = ifopen(hdr,"rb+");
 	if (!hdr->FILE.OPEN) {
@@ -14006,21 +14380,21 @@ int asprintf_hdr2json(char **str, HDRTYPE *hdr)
 {
         size_t k;
 	char tmp[41];
-	char flag_comma = 0; 
+	char flag_comma = 0;
 
 	size_t sz = 25*50 + hdr->NS * 16 * 50 + hdr->EVENT.N * 6 * 50;	// rough estimate of memory needed
-	size_t c  = 0; 
-	*str = (char*) realloc(*str, sz); 
-#define STR ((*str)+c)	
+	size_t c  = 0;
+	*str = (char*) realloc(*str, sz);
+#define STR ((*str)+c)
 
 if (VERBOSE_LEVEL>7) fprintf(stdout, "asprintf_hdr2json: sz=%i\n", (int)sz);
 
-	size_t NumberOfSweeps = (hdr->SPR*hdr->NRec > 0); 
-        size_t NumberOfUserSpecifiedEvents = 0; 
+	size_t NumberOfSweeps = (hdr->SPR*hdr->NRec > 0);
+        size_t NumberOfUserSpecifiedEvents = 0;
         for (k = 0; k < hdr->EVENT.N; k++) {
-                if (hdr->EVENT.TYP[k] < 255) 
+                if (hdr->EVENT.TYP[k] < 255)
                         NumberOfUserSpecifiedEvents++;
-                else if (hdr->EVENT.TYP[k]==0x7ffe) 
+                else if (hdr->EVENT.TYP[k]==0x7ffe)
                         NumberOfSweeps++;
         }
 
@@ -14033,8 +14407,9 @@ if (VERBOSE_LEVEL>7) fprintf(stdout, "asprintf_hdr2json: sz=%i\n", (int)sz);
 	c += sprintf(STR, "\t\"NumberOfRecords\"\t: %i,\n",(int)hdr->NRec);
 	c += sprintf(STR, "\t\"SamplesPerRecords\"\t: %i,\n",(int)hdr->SPR);
 	c += sprintf(STR, "\t\"NumberOfSamples\"\t: %i,\n",(int)(hdr->NRec*hdr->SPR));
-	if (!isnan(hdr->SampleRate)) c += sprintf(STR, "\t\"Samplingrate\"\t: %f,\n",hdr->SampleRate);
-	strftime(tmp,40,"%Y-%m-%d %H:%M:%S",gdf_time2tm_time(hdr->T0));
+	if ((0.0 <= hdr->SampleRate) && (hdr->SampleRate < INFINITY))
+		c += sprintf(STR, "\t\"Samplingrate\"\t: %f,\n",hdr->SampleRate);
+	snprintf_gdfdatetime(tmp, 40, hdr->T0);
 	c += sprintf(STR, "\t\"StartOfRecording\"\t: \"%s\",\n",tmp);
 	c += sprintf(STR, "\t\"TimezoneMinutesEastOfUTC\"\t: %i,\n", hdr->tzmin);
 	c += sprintf(STR, "\t\"NumberOfSweeps\"\t: %d,\n",(unsigned)NumberOfSweeps);
@@ -14064,21 +14439,21 @@ if (VERBOSE_LEVEL>7) fprintf(stdout, "asprintf_hdr2json: sz=%i\n", (int)sz);
 		flag_comma = 0;
 		if (hdr->ID.Manufacturer.Name) {
 			c += sprintf(STR,"\t\t\"Name\"\t: \"%s\"", hdr->ID.Manufacturer.Name);
-			flag_comma = 1; 
+			flag_comma = 1;
 		}
 		if (hdr->ID.Manufacturer.Model) {
 			if (flag_comma) c += sprintf(STR,",\n");
 			c += sprintf(STR,"\t\t\"Model\"\t: \"%s\"", hdr->ID.Manufacturer.Model);
-			flag_comma = 1; 
+			flag_comma = 1;
 		}
 		if (hdr->ID.Manufacturer.Version) {
 			if (flag_comma) c += sprintf(STR,",\n");
 			c += sprintf(STR,"\t\t\"Version\"\t: \"%s\"", hdr->ID.Manufacturer.Version);
-			flag_comma = 1; 
+			flag_comma = 1;
 		}
 		if (hdr->ID.Manufacturer.SerialNumber) {
 			if (flag_comma) c += sprintf(STR,",\n");
-			c += sprintf(STR,"\t\t\"SerialNumber\"\t: \"%s\"", hdr->ID.Manufacturer.SerialNumber); 
+			c += sprintf(STR,"\t\t\"SerialNumber\"\t: \"%s\"", hdr->ID.Manufacturer.SerialNumber);
 		}
 		c += sprintf(STR,"\n\t},\n");   // end-of-Manufacturer
 	}
@@ -14091,9 +14466,9 @@ if (VERBOSE_LEVEL>7) fprintf(stdout, "asprintf_hdr2json: count=%i\n", (int)c);
 	for (k = 0; k < hdr->NS; k++) {
 
 		if (sz < c + 1000) {
-			// double allocated memory 	
-			sz *= 2; 	
-			*str = (char*) realloc(*str, sz); 
+			// double allocated memory
+			sz *= 2;
+			*str = (char*) realloc(*str, sz);
 		}
 
 		CHANNEL_TYPE *hc = hdr->CHANNEL+k;
@@ -14101,33 +14476,33 @@ if (VERBOSE_LEVEL>7) fprintf(stdout, "asprintf_hdr2json: count=%i\n", (int)c);
                 c += sprintf(STR,"\n\t\t{\n");
 		c += sprintf(STR,"\t\t\"ChannelNumber\"\t: %i,\n", (int)k+1);
 		c += sprintf(STR,"\t\t\"Label\"\t: \"%s\",\n", hc->Label);
+		double fs = hdr->SampleRate * hc->SPR/hdr->SPR;
+		if ((0.0 <= fs) && (fs < INFINITY)) c += sprintf(STR, "\t\t\"Samplingrate\"\t: %f,\n", fs);
 		if ( hc->Transducer && strlen(hc->Transducer) ) c += sprintf(STR,"\t\t\"Transducer\"\t: \"%s\",\n", hc->Transducer);
-		c += sprintf(STR,"\t\t\"PhysicalUnit\"\t: \"%s\",\n", PhysDim3(hc->PhysDimCode));
 		if (!isnan(hc->PhysMax)) c += sprintf(STR,"\t\t\"PhysicalMaximum\"\t: %g,\n", hc->PhysMax);
 		if (!isnan(hc->PhysMin)) c += sprintf(STR,"\t\t\"PhysicalMinimum\"\t: %g,\n", hc->PhysMin);
 		if (!isnan(hc->DigMax))  c += sprintf(STR,"\t\t\"DigitalMaximum\"\t: %f,\n", hc->DigMax);
 		if (!isnan(hc->DigMin))  c += sprintf(STR,"\t\t\"DigitalMinimum\"\t: %f,\n", hc->DigMin);
 		if (!isnan(hc->Cal))     c += sprintf(STR,"\t\t\"scaling\"\t: %g,\n", hc->Cal);
 		if (!isnan(hc->Off))     c += sprintf(STR,"\t\t\"offset\"\t: %g,\n", hc->Off);
-		if (!isnan(hc->TOffset)) c += sprintf(STR,"\t\t\"TimeDelay\"\t: %g,\n", hc->TOffset);
-		uint8_t flag = (0 < hc->LowPass && hc->LowPass<INFINITY) | ((0 < hc->HighPass && hc->HighPass<INFINITY)<<1) | ((0 < hc->Notch && hc->Notch<INFINITY)<<2); 
+		if (!isnan(hc->TOffset)) c += sprintf(STR,"\t\t\"TimeDelay\"\t: %g", hc->TOffset);
+		uint8_t flag = (0 < hc->LowPass && hc->LowPass<INFINITY) | ((0 < hc->HighPass && hc->HighPass<INFINITY)<<1) | ((0 < hc->Notch && hc->Notch<INFINITY)<<2);
 		if (flag) {
 			c += sprintf(STR, "\t\t\"Filter\" : {\n");
-			if (flag & 0x01) c += sprintf(STR, "\t\t\t\"Lowpass\"\t: %g%c\n", hc->LowPass, flag & 0x06 ? ',' : ' '); 
-			if (flag & 0x02) c += sprintf(STR, "\t\t\t\"Highpass\"\t: %g%c\n", hc->HighPass, flag & 0x04 ? ',' : ' ' ); 
-			if (flag & 0x04) c += sprintf(STR, "\t\t\t\"Notch\"\t: %g\n", hc->Notch); 
+			if (flag & 0x01) c += sprintf(STR, "\t\t\t\"Lowpass\"\t: %g%c\n", hc->LowPass, flag & 0x06 ? ',' : ' ');
+			if (flag & 0x02) c += sprintf(STR, "\t\t\t\"Highpass\"\t: %g%c\n", hc->HighPass, flag & 0x04 ? ',' : ' ' );
+			if (flag & 0x04) c += sprintf(STR, "\t\t\t\"Notch\"\t: %g\n", hc->Notch);
 			c += sprintf(STR, "\n\t\t},\n");
 		}
 		switch (hc->PhysDimCode & 0xffe0) {
-		case 4256: // Volt       
+		case 4256: // Volt
 			if (!isnan(hc->Impedance)) c += sprintf(STR, "\t\t\"Impedance\"\t: %g,\n", hc->Impedance);
 			break;
 		case 4288: // Ohm
 			if (!isnan(hc->fZ)) c += sprintf(STR, "\t\t\"fZ\"\t: %g,\n", hc->fZ);
 			break;
 		}
-                double fs = hdr->SampleRate * hc->SPR/hdr->SPR;
-		if (!isnan(fs)) c += sprintf(STR, "\t\t\"Samplingrate\"\t: %f", fs);
+		c += sprintf(STR,"\t\t\"PhysicalUnit\"\t: \"%s\"", PhysDim3(hc->PhysDimCode));
 		c += sprintf(STR, "\n\t\t}");   // end-of-CHANNEL
 	}
         c += sprintf(STR, "\n\t]");   // end-of-CHANNELS
@@ -14136,14 +14511,14 @@ if (VERBOSE_LEVEL>7) fprintf(stdout, "asprintf_hdr2json: count=%i\n", (int)c);
 
         if (hdr->EVENT.N>0) {
 	    c += sprintf(STR, ",\n\t\"EVENT\"\t: [");
-            flag_comma = 0; 
+            flag_comma = 0;
             for (k = 0; k < hdr->EVENT.N; k++) {
 	    	if ( hdr->EVENT.TYP[k] == 0 ) continue;
 
 		if (sz < c + 1000) {
-			// double allocated memory 	
-			sz *= 2; 	
-			*str = (char*) realloc(*str, sz); 
+			// double allocated memory
+			sz *= 2;
+			*str = (char*) realloc(*str, sz);
 		}
 
                 if ( flag_comma ) c += sprintf(STR,",");
@@ -14156,35 +14531,33 @@ if (VERBOSE_LEVEL>7) fprintf(stdout, "asprintf_hdr2json: count=%i\n", (int)c);
 			if (hdr->EVENT.TYP[k] != 0x7fff)
 	                        c += sprintf(STR, ",\n\t\t\"DUR\"\t: %f", hdr->EVENT.DUR[k]/hdr->EVENT.SampleRate);
                 }
-#if (BIOSIG_VERSION >= 10500)
+
 		if (hdr->EVENT.TimeStamp != NULL && hdr->EVENT.TimeStamp[k] != 0) {
-			struct tm tm;
 			char buf[255];
-			gdf_time2tm_time_r(hdr->EVENT.TimeStamp[k],&tm);
-			strftime(buf,sizeof(buf), "%Y-%b-%d %H:%M:%S", &tm);
+			snprintf_gdfdatetime(buf, sizeof(buf), hdr->EVENT.TimeStamp[k]);
                         c += sprintf(STR,",\n\t\t\"TimeStamp\"\t: \"%s\"", buf);
 		}
-#endif
+
 		if (hdr->EVENT.TYP[k] == 0x7fff) {
 			// c += sprintf(STR, ",\n\t\t\"Description\"\t: \"[sparse sample]\"");
 			typeof(hdr->NS) chan = hdr->EVENT.CHN[k] - 1;
 
 			double val = dur2val(hdr->EVENT.DUR[k], hdr->CHANNEL[chan].GDFTYP);
 
-			val *= hdr->CHANNEL[chan].Cal; 
-			val += hdr->CHANNEL[chan].Off; 
+			val *= hdr->CHANNEL[chan].Cal;
+			val += hdr->CHANNEL[chan].Off;
 
 			if (isfinite(val))
 				c += sprintf(STR, ",\n\t\t\"Value\"\t: %g", val);        // no comma at the end because its the last element
 		}
 		else {
-			const char *tmpstr = GetEventDescription(hdr,k); 
-			if (tmpstr != NULL) 
+			const char *tmpstr = GetEventDescription(hdr,k);
+			if (tmpstr != NULL)
 				c += sprintf(STR, ",\n\t\t\"Description\"\t: \"%s\"", tmpstr);        // no comma at the end because its the last element
 		}
 
                 c += sprintf(STR, "\n\t\t}");
-		flag_comma = 1; 
+		flag_comma = 1;
             }
             c += sprintf(STR, "\n\t]");   // end-of-EVENT
         }
@@ -14192,7 +14565,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout, "asprintf_hdr2json: count=%i\n", (int)c);
 
 if (VERBOSE_LEVEL>7) fprintf(stdout, "asprintf_hdr2json: count=%i\n", (int)c);
 
-        return (0); 
+        return (0);
 #undef STR
 }
 
@@ -14212,14 +14585,14 @@ int fprintf_hdr2json(FILE *fid, HDRTYPE* hdr)
 {
         size_t k;
 	char tmp[41];
-	char flag_comma = 0; 
+	char flag_comma = 0;
 
-	size_t NumberOfSweeps = (hdr->SPR*hdr->NRec > 0); 
-        size_t NumberOfUserSpecifiedEvents = 0; 
+	size_t NumberOfSweeps = (hdr->SPR*hdr->NRec > 0);
+        size_t NumberOfUserSpecifiedEvents = 0;
         for (k = 0; k < hdr->EVENT.N; k++) {
-                if (hdr->EVENT.TYP[k] < 255) 
+                if (hdr->EVENT.TYP[k] < 255)
                         NumberOfUserSpecifiedEvents++;
-                else if (hdr->EVENT.TYP[k]==0x7ffe) 
+                else if (hdr->EVENT.TYP[k]==0x7ffe)
                         NumberOfSweeps++;
         }
 
@@ -14232,8 +14605,10 @@ int fprintf_hdr2json(FILE *fid, HDRTYPE* hdr)
 	fprintf(fid,"\t\"NumberOfRecords\"\t: %i,\n",(int)hdr->NRec);
 	fprintf(fid,"\t\"SamplesPerRecords\"\t: %i,\n",(int)hdr->SPR);
 	fprintf(fid,"\t\"NumberOfSamples\"\t: %i,\n",(int)(hdr->NRec*hdr->SPR));
-	if (!isnan(hdr->SampleRate)) fprintf(fid,"\t\"Samplingrate\"\t: %f,\n",hdr->SampleRate);
-	strftime(tmp,40,"%Y-%m-%d %H:%M:%S",gdf_time2tm_time(hdr->T0));
+	if ((0.0 <= hdr->SampleRate) && (hdr->SampleRate < INFINITY))
+		fprintf(fid,"\t\"Samplingrate\"\t: %f,\n", hdr->SampleRate);
+
+	snprintf_gdfdatetime(tmp, 40, hdr->T0);
 	fprintf(fid,"\t\"StartOfRecording\"\t: \"%s\",\n",tmp);
 	fprintf(fid,"\t\"TimezoneMinutesEastOfUTC\"\t: %i,\n", hdr->tzmin);
 	fprintf(fid,"\t\"NumberOfSweeps\"\t: %d,\n",(unsigned)NumberOfSweeps);
@@ -14263,17 +14638,17 @@ int fprintf_hdr2json(FILE *fid, HDRTYPE* hdr)
 		flag_comma = 0;
 		if (hdr->ID.Manufacturer.Name) {
 			fprintf(fid,"\t\t\"Name\"\t: \"%s\"", hdr->ID.Manufacturer.Name);
-			flag_comma = 1; 
+			flag_comma = 1;
 		}
 		if (hdr->ID.Manufacturer.Model) {
 			if (flag_comma) fprintf(fid,",\n");
 			fprintf(fid,"\t\t\"Model\"\t: \"%s\"", hdr->ID.Manufacturer.Model);
-			flag_comma = 1; 
+			flag_comma = 1;
 		}
 		if (hdr->ID.Manufacturer.Version) {
 			if (flag_comma) fprintf(fid,",\n");
 			fprintf(fid,"\t\t\"Version\"\t: \"%s\"", hdr->ID.Manufacturer.Version);
-			flag_comma = 1; 
+			flag_comma = 1;
 		}
 		if (hdr->ID.Manufacturer.SerialNumber) {
 			if (flag_comma) fprintf(fid,",\n");
@@ -14289,8 +14664,9 @@ int fprintf_hdr2json(FILE *fid, HDRTYPE* hdr)
                 fprintf(fid,"\n\t\t{\n");
 		fprintf(fid,"\t\t\"ChannelNumber\"\t: %i,\n", (int)k+1);
 		fprintf(fid,"\t\t\"Label\"\t: \"%s\",\n", hc->Label);
+		double fs = hdr->SampleRate * hc->SPR/hdr->SPR;
+		if ((0.0 <= fs) && (fs < INFINITY)) fprintf(fid,"\t\t\"Samplingrate\"\t: %f,\n", fs);
 		if ( hc->Transducer && strlen(hc->Transducer) ) fprintf(fid,"\t\t\"Transducer\"\t: \"%s\",\n", hc->Transducer);
-		fprintf(fid,"\t\t\"PhysicalUnit\"\t: \"%s\",\n", PhysDim3(hc->PhysDimCode));
 		if (!isnan(hc->PhysMax)) fprintf(fid,"\t\t\"PhysicalMaximum\"\t: %g,\n", hc->PhysMax);
 		if (!isnan(hc->PhysMin)) fprintf(fid,"\t\t\"PhysicalMinimum\"\t: %g,\n", hc->PhysMin);
 		if (!isnan(hc->DigMax))  fprintf(fid,"\t\t\"DigitalMaximum\"\t: %f,\n", hc->DigMax);
@@ -14298,30 +14674,29 @@ int fprintf_hdr2json(FILE *fid, HDRTYPE* hdr)
 		if (!isnan(hc->Cal))     fprintf(fid,"\t\t\"scaling\"\t: %g,\n", hc->Cal);
 		if (!isnan(hc->Off))     fprintf(fid,"\t\t\"offset\"\t: %g,\n", hc->Off);
 		if (!isnan(hc->TOffset)) fprintf(fid,"\t\t\"TimeDelay\"\t: %g,\n", hc->TOffset);
-		uint8_t flag = (0 < hc->LowPass && hc->LowPass<INFINITY) | ((0 < hc->HighPass && hc->HighPass<INFINITY)<<1) | ((0 < hc->Notch && hc->Notch<INFINITY)<<2); 
+		uint8_t flag = (0 < hc->LowPass && hc->LowPass<INFINITY) | ((0 < hc->HighPass && hc->HighPass<INFINITY)<<1) | ((0 < hc->Notch && hc->Notch<INFINITY)<<2);
 		if (flag) {
 			fprintf(fid,"\t\t\"Filter\" : {\n");
-			if (flag & 0x01) fprintf(fid,"\t\t\t\"Lowpass\"\t: %g%c\n",hc->LowPass, flag & 0x06 ? ',' : ' '); 
-			if (flag & 0x02) fprintf(fid,"\t\t\t\"Highpass\"\t: %g%c\n",hc->HighPass, flag & 0x04 ? ',' : ' ' ); 
-			if (flag & 0x04) fprintf(fid,"\t\t\t\"Notch\"\t: %g\n",hc->Notch); 
+			if (flag & 0x01) fprintf(fid,"\t\t\t\"Lowpass\"\t: %g%c\n",hc->LowPass, flag & 0x06 ? ',' : ' ');
+			if (flag & 0x02) fprintf(fid,"\t\t\t\"Highpass\"\t: %g%c\n",hc->HighPass, flag & 0x04 ? ',' : ' ' );
+			if (flag & 0x04) fprintf(fid,"\t\t\t\"Notch\"\t: %g\n",hc->Notch);
 			fprintf(fid,"\n\t\t},\n");
 		}
 		switch (hc->PhysDimCode & 0xffe0) {
-		case 4256: // Volt       
+		case 4256: // Volt
 			if (!isnan(hc->Impedance)) fprintf(fid,"\t\t\"Impedance\"\t: %g,\n", hc->Impedance);
 			break;
 		case 4288: // Ohm
 			if (!isnan(hc->fZ)) fprintf(fid,"\t\t\"fZ\"\t: %g,\n", hc->fZ);
 			break;
 		}
-                double fs = hdr->SampleRate * hc->SPR/hdr->SPR;
-		if (!isnan(fs)) fprintf(fid,"\t\t\"Samplingrate\"\t: %f", fs);        // no comma at the end because its the last element
+		fprintf(fid,"\t\t\"PhysicalUnit\"\t: \"%s\"", PhysDim3(hc->PhysDimCode));	// no comma at the end because its the last element
 		fprintf(fid,"\n\t\t}");   // end-of-CHANNEL
 	}
         fprintf(fid,"\n\t]");   // end-of-CHANNELS
 
         if (hdr->EVENT.N>0) {
-            flag_comma = 0; 
+            flag_comma = 0;
             fprintf(fid,",\n\t\"EVENT\"\t: [");
             for (k = 0; k < hdr->EVENT.N; k++) {
                 if ( hdr->EVENT.TYP[k] == 0 ) continue;
@@ -14335,15 +14710,13 @@ int fprintf_hdr2json(FILE *fid, HDRTYPE* hdr)
 			if (hdr->EVENT.TYP[k] != 0x7fff)
 	                        fprintf(fid,",\n\t\t\"DUR\"\t: %f", hdr->EVENT.DUR[k]/hdr->EVENT.SampleRate);
                 }
-#if (BIOSIG_VERSION >= 10500)
+
 		if (hdr->EVENT.TimeStamp != NULL && hdr->EVENT.TimeStamp[k] != 0) {
-			struct tm tm;
 			char buf[255];
-			gdf_time2tm_time_r(hdr->EVENT.TimeStamp[k],&tm);
-			strftime(buf,sizeof(buf), "%Y-%b-%d %H:%M:%S", &tm);
+			snprintf_gdfdatetime(buf,sizeof(buf), hdr->EVENT.TimeStamp[k]);
                         fprintf(fid,",\n\t\t\"TimeStamp\"\t: \"%s\"", buf);
 		}
-#endif
+
 		if ((hdr->EVENT.TYP[k] == 0x7fff) && (hdr->TYPE==GDF)) {
 			//fprintf(fid,"\t\t\"Description\"\t: [neds]\n");        // no comma at the end because its the last element
 
@@ -14351,26 +14724,26 @@ int fprintf_hdr2json(FILE *fid, HDRTYPE* hdr)
 			typeof(hdr->NS) chan = hdr->EVENT.CHN[k] - 1;
 
 			double val = dur2val(hdr->EVENT.DUR[k], hdr->CHANNEL[chan].GDFTYP);
-				
-			val *= hdr->CHANNEL[chan].Cal; 
-			val += hdr->CHANNEL[chan].Off; 
+
+			val *= hdr->CHANNEL[chan].Cal;
+			val += hdr->CHANNEL[chan].Off;
 
 			if (isfinite(val))
 				fprintf(fid,",\n\t\t\"Value\"\t: %g", val);        // no comma at the end because its the last element
 		}
-		else {	
-			const char *str = GetEventDescription(hdr,k); 
+		else {
+			const char *str = GetEventDescription(hdr,k);
 			if (str != NULL)
 				fprintf(fid,",\n\t\t\"Description\"\t: \"%s\"",str);        // no comma at the end because its the last element
 		}
 
 		fprintf(fid,"\n\t\t}");
-		flag_comma = 1; 
-            }	
+		flag_comma = 1;
+            }
             fprintf(fid,"\n\t]");   // end-of-EVENT
         }
         fprintf(fid,"\n}\n");
-        return (0); 
+        return (0);
 }
 
 
@@ -14386,9 +14759,8 @@ int hdr2ascii(HDRTYPE* hdr, FILE *fid, int VERBOSE)
 	float		age;
 
 	if (VERBOSE==7) {
-		T0 = gdf_time2tm_time(hdr->T0);
 		char tmp[60];
-		strftime(tmp, 59, "%x %X %Z", T0);
+		snprintf_gdfdatetime(tmp, sizeof(tmp), hdr->T0);
 		fprintf(fid,"\tStartOfRecording: %s\nbci2000: %p\n",tmp,hdr->AS.bci2000);
 		return(0);
 	}
@@ -14449,15 +14821,14 @@ int hdr2ascii(HDRTYPE* hdr, FILE *fid, int VERBOSE)
 		fprintf(fid,"\tEye Impairment  : %s\n",EyeImpairment[hdr->Patient.Impairment.Visual]);
 		fprintf(fid,"\tHeart Impairment: %s\n",HeartImpairment[hdr->Patient.Impairment.Heart]);
 		if (hdr->Patient.Birthday) {
-			T0 = gdf_time2tm_time(hdr->Patient.Birthday);
-			fprintf(fid,"\tAge             : %4.1f years\n\tBirthday        : (%.6f) %s ",age,ldexp(hdr->Patient.Birthday,-32),asctime(T0));
+			snprintf_gdfdatetime(tmp, sizeof(tmp), hdr->T0);
+			fprintf(fid,"\tAge             : %4.1f years\n\tBirthday        : (%.6f) %s ",age,ldexp(hdr->Patient.Birthday,-32),tmp);
 		}
 		else
 			fprintf(fid,"\tAge             : ----\n\tBirthday        : unknown\n");
 
-		T0 = gdf_time2tm_time(hdr->T0);
-		strftime(tmp, 59, "%x %X %Z", T0);
-		fprintf(fid,"\tStartOfRecording: (%.6f) %s",ldexp(hdr->T0,-32),asctime(T0));
+		snprintf_gdfdatetime(tmp, sizeof(tmp), hdr->T0);
+		fprintf(fid,"\tStartOfRecording: (%.6f) %s",ldexp(hdr->T0,-32),tmp);
 		fprintf(fid,"\tTimezone        : %+i min\n\n", hdr->tzmin);
 		if (hdr->AS.bci2000 != NULL) {
 		   if (VERBOSE < 4) {
@@ -14530,15 +14901,12 @@ int hdr2ascii(HDRTYPE* hdr, FILE *fid, int VERBOSE)
 		for (k=0; k<hdr->EVENT.N; k++) {
 			fprintf(fid,"\n%5i\t0x%04x\t%d",(int)(k+1),hdr->EVENT.TYP[k],hdr->EVENT.POS[k]);
 
-#if (BIOSIG_VERSION >= 10500)
 			if (hdr->EVENT.TimeStamp != NULL && hdr->EVENT.TimeStamp[k] != 0) {
-				struct tm tm;
 				char buf[255];
-				gdf_time2tm_time_r(hdr->EVENT.TimeStamp[k],&tm);
-				strftime(buf,sizeof(buf), "%Y-%b-%d %H:%M:%S", &tm);
+				snprintf_gdfdatetime(buf,sizeof(buf), hdr->EVENT.TimeStamp[k]);
 				fprintf(fid,"\t%s",buf);
 			}
-#endif
+
 			if (hdr->EVENT.TYP[k] == 0x7fff)
 				fprintf(fid,"\t%d",hdr->EVENT.CHN[k]);
 			else if (hdr->EVENT.DUR != NULL)
@@ -14549,13 +14917,13 @@ int hdr2ascii(HDRTYPE* hdr, FILE *fid, int VERBOSE)
 
 				double val = dur2val(hdr->EVENT.DUR[k], hdr->CHANNEL[chan].GDFTYP);
 
-				val *= hdr->CHANNEL[chan].Cal; 
-				val += hdr->CHANNEL[chan].Off; 
+				val *= hdr->CHANNEL[chan].Cal;
+				val += hdr->CHANNEL[chan].Off;
 
 				fprintf(fid, "\t%g %s\t## sparse sample", val, PhysDim3(hdr->CHANNEL[chan].PhysDimCode));        // no comma at the end because its the last element
 			}
 			else {
-				const char *str = GetEventDescription(hdr,k); 
+				const char *str = GetEventDescription(hdr,k);
 				if (str) fprintf(fid,"\t\t%s",str);
 			}
 		}

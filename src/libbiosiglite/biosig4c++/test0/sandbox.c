@@ -26,7 +26,6 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
 
 #include "../biosig.h"
 
@@ -38,20 +37,21 @@
 #undef WITH_DICOM	// disable internal DICOM implementation
 #undef WITH_GDCM	// disable interface to GDCM
 
-extern "C" int sopen_dcmtk_read(HDRTYPE* hdr);
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-extern "C" int sopen_dicom_read(HDRTYPE* hdr) {
+int sopen_dcmtk_read(HDRTYPE* hdr);
+
+int sopen_dicom_read(HDRTYPE* hdr) {
 	return sopen_dcmtk_read(hdr);
 }
 
-#endif  // DCMTK
+#ifdef __cplusplus
+}
+#endif
 
-#ifdef HAVE_HDF
-#include <hdf5.h>
-#endif
-#ifdef HAVE_MATIO
-#include <matio.h>
-#endif
+#endif  // DCMTK
 
 
 /*************************************************************************
@@ -102,7 +102,7 @@ extern "C" int sopen_dicom_read(HDRTYPE* hdr) {
 */
 
 
-EXTERN_C int sopen_dicom_read(HDRTYPE* hdr) {
+int sopen_dicom_read(HDRTYPE* hdr) {
 
 	fprintf(stdout,"%s ( line %d): GDCM is used to read dicom files.\n",__func__,__LINE__);
 
@@ -188,131 +188,6 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): attr <0x003a,0x001a> %f\n",__
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#ifdef WITH_HDF
-int sopen_hdf5(HDRTYPE* hdr) {
-        /*
-                file hdr->FileName is already opened and hdr->HeadLen bytes are read
-                These are available from hdr->AS.Header.
-
-                ToDo: populate hdr
-        */
-	size_t count = hdr->HeadLen;
-        fprintf(stdout,"Trying to read HDF data using \"%s\"\n",H5_VERS_INFO);
-
-	ifclose(hdr);
-
-        return(-1);
-}
-#endif
-
-#ifdef HAVE_MATIO
-int sopen_matlab(HDRTYPE* hdr) {
-        /*
-                file hdr->FileName is already opened and hdr->HeadLen bytes are read
-                These are available from hdr->AS.Header.
-
-                ToDo: populate hdr
-			sanity checks
-			memory leaks
-        */
-	ifclose(hdr);
-	//size_t count = hdr->HeadLen;
-
-        fprintf(stdout, "Trying to read Matlab data using MATIO v%i.%i.%i\n", MATIO_MAJOR_VERSION, MATIO_MINOR_VERSION, MATIO_RELEASE_LEVEL);
-
-	mat_t *matfile = Mat_Open(hdr->FileName, MAT_ACC_RDONLY);
-	matvar_t *EEG=NULL, *pnts=NULL, *nbchan=NULL, *trials=NULL, *srate=NULL, *data=NULL, *chanlocs=NULL, *event=NULL;
-	if (matfile != NULL) {
-		EEG    = Mat_VarRead(matfile, "EEG" );
-		if (EEG != NULL) {
-			Mat_VarReadDataAll(matfile, EEG );
-			pnts   = Mat_VarGetStructField(EEG, "pnts", BY_NAME, 0);
-			nbchan = Mat_VarGetStructField(EEG, "nbchan", BY_NAME, 0);
-			trials = Mat_VarGetStructField(EEG, "trials", BY_NAME, 0);
-			srate  = Mat_VarGetStructField(EEG, "srate", BY_NAME, 0);
-			data   = Mat_VarGetStructField(EEG, "data", BY_NAME, 0);
-			chanlocs = Mat_VarGetStructField(EEG, "chanlocs", BY_NAME, 0);
-			event    = Mat_VarGetStructField(EEG, "event", BY_NAME, 0);
-
-			hdr->NS  = *(double*)(nbchan->data);
-			hdr->SPR = *(double*)(pnts->data);
-			hdr->NRec= *(double*)(trials->data);
-			hdr->SampleRate = *(double*)(srate->data);
-
-/* TODO CB
-			hdr->NRec 	 = ;
-			hdr->SPR  	 = ;
-			hdr->T0 	 = 0;        // Unknown;
-			uint16_t gdftyp  = ;	16: float; 17: double
-*/
-			hdr->CHANNEL = (CHANNEL_TYPE*) realloc(hdr->CHANNEL, hdr->NS * sizeof(CHANNEL_TYPE));
-			size_t k;
-			for (k=0; k<hdr->NS; k++) {
-				CHANNEL_TYPE *hc = hdr->CHANNEL+k;
-				sprintf(hc->Label,"#%2d",k+1);
-				hc->SPR = hdr->SPR;
-/* TODO CB
-				hc->GDFTYP = gdftyp;
-				hc->Transducer[0] = '\0';
-			    	hc->LowPass	= ;
-			    	hc->HighPass = ;
-			    	hc->Notch	= ;  // unknown
-			    	hc->PhysMax	= ;
-			    	hc->DigMax	= ;
-			    	hc->PhysMin	= ;
-			    	hc->DigMin	= ;
-			    	hc->Cal	 	= 1.0;
-			    	hc->Off	 	= 0.0;
-				hc->OnOff    	= 1;
-			    	hc->PhysDimCode = 4275; // uV
-			    	hc->LeadIdCode  = 0;
-			    	hc->bi      	= k*GDFTYP_BITS[gdftyp]>>3;	// TODO AS
-*/
-			}
-
-			size_t sz = hdr->NS*hdr->SPR*hdr->NRec*GDFTYP_BITS[gdftyp]>>3;
-			hdr->AS.rawdata = realloc(hdr->AS.rawdata, sz);
-/* TODO CB
-			memcpy(hdr->AS.rawdata,...,sz);
-*/
-			hdr->EVENT.N = 0; 	// TODO CB
-			hdr->EVENT.POS = (uint32_t*) realloc(hdr->EVENT.POS, hdr->EVENT.N*sizeof(*hdr->EVENT.POS));
-			hdr->EVENT.TYP = (uint16_t*) realloc(hdr->EVENT.TYP, hdr->EVENT.N*sizeof(*hdr->EVENT.TYP));
-			hdr->EVENT.DUR = (uint32_t*) realloc(hdr->EVENT.DUR, hdr->EVENT.N*sizeof(*hdr->EVENT.DUR));
-			hdr->EVENT.CHN = (uint16_t*) realloc(hdr->EVENT.CHN, hdr->EVENT.N*sizeof(*hdr->EVENT.CHN));
-			for (k=0; k<hdr->EVENT.N; k++) {
-/* TODO CB
-				hdr->EVENT.TYP[k] =
-				FreeTextEvent(hdr, k, annotation)
-				hdr->EVENT.POS[k] =
-				hdr->EVENT.CHN[k] = 0;
-				hdr->EVENT.DUR[k] = 0;
-*/
-			}
-
-		hdr->AS.bpb = hdr->NS*2;
-		hdr->FLAG.OVERFLOWDETECTION = 0; 	// BKR does not support automated overflow and saturation detection
-
-
-			Mat_VarPrint(pnts,   1);
-			Mat_VarPrint(nbchan, 1);
-			Mat_VarPrint(trials, 1);
-			Mat_VarPrint(srate,  1);
-			//Mat_VarPrint(data,   1);
-			//Mat_VarPrint(chanlocs, 1);
-			//Mat_VarPrint(event,  1);
-
-
-			Mat_VarFree(EEG);
-		}
-
-		Mat_Close(matfile);
-	}
-
-        return (0);
-}
 #endif
 
 

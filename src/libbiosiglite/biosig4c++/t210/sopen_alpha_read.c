@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../biosig-dev.h"
+#include "../biosig.h"
 
 #define min(a,b)        (((a) < (b)) ? (a) : (b))
 #define max(a,b)        (((a) > (b)) ? (a) : (b))
@@ -254,7 +254,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"<%6.2f> %i- %s | %s\n",hdr->VERSION, STATUS
 	
 				n  = atoi(t);	// n==0 if label is provided, n>0 if channel number is provided
 
-/*				does not work because ambigous labels are used in rawhead and cal_res (e.g. T3 and T7)
+/*				does not work because ambiguous labels are used in rawhead and cal_res (e.g. T3 and T7)
 				if (!n) for (n=0; n<hdr->NS; n++) {
 					if (!strcmp(hdr->CHANNEL[n].Label,t))
 					{ 	n++; 

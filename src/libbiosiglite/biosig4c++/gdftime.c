@@ -1,6 +1,6 @@
 /*
 
-    Copyright (C) 2005-2013 Alois Schloegl <alois.schloegl@gmail.com>
+    Copyright (C) 2005-2013,2020 Alois Schloegl <alois.schloegl@gmail.com>
     This file is part of the "BioSig for C/C++" repository
     (biosig4c++) at http://biosig.sf.net/
 
@@ -32,6 +32,7 @@
 
 */
 
+#define _GNU_SOURCE
 
 #include "gdftime.h"
 
@@ -57,7 +58,7 @@
 #define fix(m)     	(m<0 ? ceil(m) : floor(m))
 
 gdf_time tm_time2gdf_time(struct tm *t){
-	/* based Octave's datevec.m
+	/* based on Octave's datevec.m
 	it referes Peter Baum's algorithm at http://vsg.cape.com/~pbaum/date/date0.htm
 	but the link is not working anymore as of 2008-12-03.
 
@@ -115,8 +116,17 @@ struct tm *gdf_time2tm_time(gdf_time t) {
 	return(&tt);
 }
 
+struct gdf_time_tm_t {
+	int YEAR;
+	int MONTH;
+	int MDAY;
+	int HOUR;
+	int MINUTE;
+	double SECOND;
+};
 
-int gdf_time2tm_time_r(gdf_time t, struct tm *t3) {
+
+int split_gdf_time(gdftime_t t, struct gdf_time_tm_t *gte) {
 	/* based Octave's datevec.m
 	it referes Peter Baum's algorithm at http://vsg.cape.com/~pbaum/date/date0.htm
 	but the link is not working anymore as of 2008-12-03.
@@ -128,7 +138,7 @@ int gdf_time2tm_time_r(gdf_time t, struct tm *t3) {
 
 	int32_t rd = (int32_t)floor(ldexp((double)t,-32)); // days since 0001-01-01
 	double s = ldexp((t & 0x00000000ffffffff)*86400,-32); // seconds of the day
-	int32_t sec = round (s);
+	// int32_t sec = round (s);
 	// s += timezone;
 
 	/* derived from datenum.m from Octave 3.0.0 */
@@ -149,22 +159,38 @@ int gdf_time2tm_time_r(gdf_time t, struct tm *t3) {
 
 	// Move to Jan 1 as start of year.
 	if (m>12) {y++; m-=12;}
-	t3->tm_year = y-1900;
-	t3->tm_mon  = (int)m-1;
-	t3->tm_mday = (int)d;
+	gte->YEAR = y;
+	gte->MONTH  = (int)m;
+	gte->MDAY = (int)d;
 
-	t3->tm_hour = sec / 3600;
-	sec = sec - (3600 * t3->tm_hour);
-	t3->tm_min = sec / 60;
-	t3->tm_sec = sec - (60 * t3->tm_min);
+	int h = (int) s / 3600;
+	s = s - (3600 * h);
+	m = s / 60;	// !! reuse of m: is now minutes instead of month
+	gte->HOUR = h;
+	gte->MINUTE = (int) m;
+	gte->SECOND = s - (60 * gte->MINUTE);
 	//t3->tm_gmtoff = 3600;
 
         return(0);
 }
 
+int gdf_time2tm_time_r(gdftime_t t, struct tm *t3) {
+	struct gdf_time_tm_t gte;
+
+	split_gdf_time(t, &gte);
+
+	t3->tm_year = gte.YEAR-1900;
+	t3->tm_mon  = gte.MONTH-1;
+	t3->tm_mday = gte.MDAY;
+
+	t3->tm_hour = gte.HOUR;
+	t3->tm_min  = gte.MINUTE;
+	t3->tm_sec  = (int)gte.SECOND;
+}
+
 #if 0
 gdftime_t string2gdftime(const char* str) {
-	struct tm t; 
+	struct tm t;
 	strptime(str,"%d %b %Y",&t);
 	t.tm_hour = 0;
 	t.tm_min  = 0;
@@ -173,7 +199,7 @@ gdftime_t string2gdftime(const char* str) {
 }
 
 gdftime_t string2gdfdate(const char* str) {
-	struct tm t; 
+	struct tm t;
 	strptime(str,"%d %b %Y",&t);
 	t.tm_hour = 0;
 	t.tm_min  = 0;
@@ -182,13 +208,112 @@ gdftime_t string2gdfdate(const char* str) {
 }
 
 gdftime_t string2gdfdatetime(const char* str) {
-	struct tm t; 
-	
+	struct tm t;
+
 	return tm_time2gdf_time(getdate(str));
 
 }
-
 #endif
+
+size_t snprintf_gdftime(char *out, size_t outbytesleft, gdftime_t T) {
+	struct gdf_time_tm_t gte;
+	size_t len;
+
+	split_gdf_time(T, &gte);
+	len = snprintf(out, outbytesleft, "%02d:%02d:", gte.HOUR, gte.MINUTE);
+	outbytesleft -= len;
+	out += len;
+
+	double intSec;
+	double fracSec=modf(gte.SECOND, &intSec);
+	if (fracSec == 0.0)
+		len = snprintf(out, outbytesleft, "%02d", (int)gte.SECOND);
+	else
+		len = snprintf(out, outbytesleft, "%09.6f", gte.SECOND);
+
+	outbytesleft -= len;
+	out += len;
+	return len;
+}
+
+size_t snprintf_gdfdate(char *out, size_t outbytesleft, gdftime_t T) {
+	struct gdf_time_tm_t gte;
+	size_t len;
+
+	split_gdf_time(T, &gte);
+	len = snprintf(out, outbytesleft, "%04d-%02d-%02d", gte.YEAR, gte.MONTH, gte.MDAY);
+
+	outbytesleft -= len;
+	out += len;
+	return len;
+}
+
+size_t snprintf_gdfdatetime(char *out, size_t outbytesleft, gdftime_t T) {
+	struct gdf_time_tm_t gte;
+	size_t len;
+
+	split_gdf_time(T, &gte);
+	len = snprintf(out, outbytesleft, "%04d-%02d-%02d %02d:%02d:", gte.YEAR, gte.MONTH, gte.MDAY, gte.HOUR, gte.MINUTE);
+	outbytesleft -= len;
+	out += len;
+
+	double intSec;
+	double fracSec=modf(gte.SECOND, &intSec);
+	if (fracSec == 0.0)
+		len = snprintf(out, outbytesleft, "%02d", (int)gte.SECOND);
+	else
+		len = snprintf(out, outbytesleft, "%09.6f", gte.SECOND);
+
+	outbytesleft -= len;
+	out += len;
+	return len;
+}
+
+
+size_t strfgdftime(char *out, size_t outbytesleft, const char *FMT, gdftime_t T) {
+	struct gdf_time_tm_t gte;
+	struct tm tm;
+	size_t len;
+	int cin=0;
+	int cout=0;
+	char FMT2[4]="%%\0\0";
+
+	split_gdf_time(T, &gte);
+	gdf_time2tm_time_r(T, &tm);
+
+	while ( cout < outbytesleft && cin<strlen(FMT)) {
+		switch (FMT[cin]) {
+		case '%':
+			FMT2[1] = FMT[cin+1];
+			switch (FMT2[1]) {
+			case 's':
+				cout += snprintf(out+cout, outbytesleft-cout, "%f", gdf_time2t_time(T));
+				cin += 2;
+				break;
+			case 'S':
+				cout += snprintf(out+cout, outbytesleft-cout, "%09.6f", gte.SECOND);
+				cin += 2;
+				break;
+			case 'E':
+			case 'O':
+				FMT2[2] = FMT[cin+2];
+				cout += strftime(out+cout, outbytesleft-cout, FMT2, &tm);
+				cin += 3;
+				FMT2[2]=0;	// reset terminating \0
+				break;
+			default:
+				cout += strftime(out+cout, outbytesleft-cout, FMT2, &tm);
+				cin += 2;
+			}
+			break;
+		default:
+			out[cout++] = FMT[cin++];
+		}
+	}
+	if (0 < outbytesleft) out[cout]=0;
+	return cout;
+}
+
 
 /*
 char *gdftime2string(gdftime_t)

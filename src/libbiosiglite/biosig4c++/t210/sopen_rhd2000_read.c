@@ -318,7 +318,23 @@ int sopen_rhs2000_read(HDRTYPE* hdr) {
 		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %u); %s(...) group=%u %u+%u %d\n", __FILE__, __LINE__, __func__, nsg, NS, NumberOfChannelsInSignalGroup, (int)pos);
 
 			if (flag_SignalGroupEnabled) {
-				hdr->CHANNEL = (CHANNEL_TYPE*) realloc(hdr->CHANNEL, (1+NS+NumberOfChannelsInSignalGroup*(2+flag_DC_amplifier_data_saved)) * sizeof(CHANNEL_TYPE));
+				typeof(pos) tmppos = pos;
+				int NumChans0 = 0;
+				int NumChans1 = 0;
+				// get number of enabled channels
+				for (unsigned k = 0; k < NumberOfChannelsInSignalGroup; k++) {
+					read_qstring(hdr, &tmppos, NULL, 0);
+					read_qstring(hdr, &tmppos, NULL, 0);
+					tmppos += 4;
+					int16_t SignalType = lei16p(hdr->AS.Header+tmppos);
+					tmppos += 2;
+					int16_t ChannelEnabled = lei16p(hdr->AS.Header+tmppos);
+					tmppos += 24;
+					NumChans0 += (ChannelEnabled > 0);
+					NumChans1 += (ChannelEnabled > 0) * (1 + (SignalType==0) * (flag_DC_amplifier_data_saved+1));
+				}
+
+				hdr->CHANNEL = (CHANNEL_TYPE*) realloc(hdr->CHANNEL, (1+NS+NumChans1) * sizeof(CHANNEL_TYPE));
 				for (unsigned k = 0; k < NumberOfChannelsInSignalGroup; k++) {
 					char NativeChannelName[MAX_LENGTH_LABEL+1];
 					char CustomChannelName[MAX_LENGTH_LABEL+1];
@@ -327,7 +343,7 @@ int sopen_rhs2000_read(HDRTYPE* hdr) {
 					pos += 4;
 					int16_t SignalType = lei16p(hdr->AS.Header+pos);
 					pos += 2;
-					int16_t ChannelEnabled = lei16p(hdr->AS.Header+pos);
+					int16_t ChannelEnabled = leu16p(hdr->AS.Header+pos)>0;
 					pos += 2;
 					int16_t ChipChannel = lei16p(hdr->AS.Header+pos);
 					pos += 2;
@@ -348,37 +364,39 @@ int sopen_rhs2000_read(HDRTYPE* hdr) {
 					float ElectrodeImpedancePhase = lef32p(hdr->AS.Header+pos);
 					pos += 4;
 
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %u); %s(...) group=%u %u %d SignalType=%d ChannelEnabled=%d flagDC=%d pos=%d NS=%u bi=%u\n",
-			__FILE__,__LINE__,__func__,
-			nsg,k,ChannelEnabled,SignalType,ChannelEnabled,flag_DC_amplifier_data_saved,(int)pos,NS,(unsigned)bi);
-
-					int nn = 1 + (SignalType==0) + flag_DC_amplifier_data_saved*(SignalType==0);
+				if (ChannelEnabled) {
+					int nn = 1 + (SignalType==0) * (1 + flag_DC_amplifier_data_saved);
 					char *ChannelName = NULL;
-					for (int k2=0; k2 < ChannelEnabled * nn; k2++) {
-						NS++;	// first channel is Time channel
-						CHANNEL_TYPE *hc = hdr->CHANNEL + NS;
+					NS++;	// first channel is Time channel
+					for (int k2=0; k2 < nn; k2++) {
+						// k2>0 takes care of StimDatea and DCamp channels
+						CHANNEL_TYPE *hc = hdr->CHANNEL + NS + NumChans0*k2;
 						strcpy(hc->Label, NativeChannelName);
+						strncat(hc->Label, ":", MAX_LENGTH_LABEL-strlen(hc->Label));
+						strncat(hc->Label, CustomChannelName, MAX_LENGTH_LABEL-strlen(hc->Label));
 #ifdef MAX_LENGTH_PHYSDIM
 						strcpy(hc->PhysDim,"?");
 #endif
 						hc->OnOff  = 1;
 						hc->GDFTYP = 4; // uint16
-						hc->bi     = bi;
+						hc->bi     = bi + hdr->SPR * NumChans0 * k2 * 2;
 						hc->bi8    = bi << 3;
 						hc->LeadIdCode = 0;
 						hc->DigMin = 0.0;
 						hc->DigMax = ldexp(1,16)-1;
 
-						hc->PhysDimCode = 0; // [?] default
-						hc->Cal    = 1;	//default
-						hc->Off    = 0; // default
-						hc->SPR    = hdr->SPR; //default
+						hc->PhysDimCode = 0;	// [?] default
+						hc->Cal    = 1;		// default
+						hc->Off    = 0;		// default
+						hc->SPR    = hdr->SPR;	// default
+
 						switch (SignalType) {
 						case 0: 	// RHS2000 amplifier channel
 							if (k2==0) {
 								ChannelName = hc->Label;
 								hc->Cal    = 0.195;
 								hc->Off    = -32768 * hc->Cal;
+								hc->PhysDimCode = 4275; // [uV]
 							}
 							else if ((k2+1)==nn) {
 								// Stimulation Data
@@ -386,13 +404,17 @@ int sopen_rhs2000_read(HDRTYPE* hdr) {
 								hc->PhysDimCode = 4160; // [A]
 								hc->Cal    = StimStepSize;
 								hc->Off    = 0;
+								/* NOTE: reading StimData disabled - this is not supported yet.
+								   Issues are decoding and scaling of data (bit9-16)
+								 */
+								hc->OnOff  = 0;
 							}
 							else {
 								sprintf(hc->Label,"DC_AmpData %s",ChannelName);
 								hc->Cal    = 19.23;
 								hc->Off    = -512 * hc->Cal;
+								hc->PhysDimCode = 4274; // [mV]
 							}
-							hc->PhysDimCode = 4256; // [V]
 							break;
 						/*
 						case 2: 	// supply voltage channel
@@ -415,7 +437,6 @@ int sopen_rhs2000_read(HDRTYPE* hdr) {
 						default:
 							biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Format Intan RHS2000 - not conformant to specification");
 						}
-						bi += hc->SPR*2;
 						hc->PhysMin = hc->DigMin * hc->Cal + hc->Off;
 						hc->PhysMax = hc->DigMax * hc->Cal + hc->Off;
 
@@ -427,12 +448,15 @@ int sopen_rhs2000_read(HDRTYPE* hdr) {
 						hc->XYZ[0] = NAN;
 						hc->XYZ[1] = NAN;
 						hc->XYZ[2] = NAN;
-						hc->Impedance = ElectrodeImpedanceMagnitude;
-
-		if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %u); %s(...) %u %2u %3u Label<%s>\n",__FILE__,__LINE__,__func__,nsg,k,NS,hc->Label);
-
+						if ( (hc->PhysDimCode & 0xffe0) == 4256) // [V]
+							hc->Impedance = ElectrodeImpedanceMagnitude;
 					}
+					bi += hdr->SPR * 2;
+				}	// if (ChannelEnabled)
 				}
+				// take care of StimData Channels and AmpDC channels
+				bi += (NumChans1 - NumChans0) * hdr->SPR * 2;
+				NS +=  NumChans1 - NumChans0;
 			}
 		}
 		{	// channel 0 - time channel
@@ -490,9 +514,10 @@ int sopen_rhs2000_read(HDRTYPE* hdr) {
 */
 int sopen_rhd2000_read(HDRTYPE* hdr) {
 
+		uint16_t major = leu16p(hdr->AS.Header+4);
 		float minor = leu16p(hdr->AS.Header+6);
 		minor      *= (minor < 10) ? 0.1 : 0.01;
-		hdr->VERSION = leu16p(hdr->AS.Header+4) + minor;
+		hdr->VERSION = major + minor;
 
 		hdr->NS = 1;
 		hdr->SampleRate = lef32p(hdr->AS.Header+8);
@@ -502,129 +527,154 @@ int sopen_rhd2000_read(HDRTYPE* hdr) {
 		float LowPass = lef32p(hdr->AS.Header+22);
 
 		const int ListNotch[] = {0,50,60};
-		uint16_t tmp = leu16p(hdr->AS.Header+34);
+		uint16_t tmp = leu16p(hdr->AS.Header+38);
 		if (tmp>2) tmp=0;
 		float Notch = ListNotch[tmp];
 		float fZ_desired   = lef32p(hdr->AS.Header+40); // desired impedance test frequency
 		float fZ_actual    = lef32p(hdr->AS.Header+44); // actual impedance test frequency
 
 		size_t pos = 48;
-		read_qstring(hdr, &pos, NULL, 0);	// note1
-		read_qstring(hdr, &pos, NULL, 0);	// note2
-		read_qstring(hdr, &pos, NULL, 0);	// note3
+		char tmpstr[101];
+		read_qstring(hdr, &pos, tmpstr, 100);	// note1
+		read_qstring(hdr, &pos, tmpstr, 100);	// note2
+		read_qstring(hdr, &pos, tmpstr, 100);	// note3
 
-		uint16_t numberTemperatureSensors = leu16p(hdr->AS.Header+pos);
-		pos += 2;
+		uint16_t numberTemperatureSensors = 0;
+		if (hdr->Version >= 1.1) {
+			numberTemperatureSensors = leu16p(hdr->AS.Header+pos);
+			pos += 2;
+		}
 
-		int BoardMode = leu16p(hdr->AS.Header+pos);
-		pos += 2;
-
-/*
-		float PhysMin=0.;
-		float PhysMax=1.;
-		float Cal=1, DigOff=0;
-		switch (BoardMode) {
-		case 0: PhysMax=3.3; Cal=0.000050354; break;
-		case 1: PhysMin=-5.0; PhysMax=5.0; Cal = 0.00015259; break;
-		case 13: PhysMin=-10.24; PhysMax=10.24; Cal = 0.0003125; break;
-		default:
-			fprintf(stderr,"%s (line %d): Intan/RHD2000 - unknown Boardmode %d\n", __func__,__LINE__,BoardMode);
-			// boardMode unknown
-		};
-*/
-
-		char *referenceChannelName = NULL;
-		read_qstring(hdr, &pos, referenceChannelName, 0);
-
+		int BoardMode = 0;
+		if (hdr->Version >= 1.3) {
+			BoardMode = leu16p(hdr->AS.Header+pos);
+			pos += 2;
+		}
+		char referenceChannelName[101]; referenceChannelName[0]=0;
+		if (hdr->Version >= 2.0) {
+			read_qstring(hdr, &pos, referenceChannelName, 100);
+		}
 		uint16_t numberOfSignalGroups = leu16p(hdr->AS.Header+pos);
 		pos += 2;
 
-		hdr->NS = 1;
-		uint32_t chan = 1 ;
+		hdr->NS = 1+numberTemperatureSensors; // time channel + temparature channels
 		hdr->CHANNEL = (CHANNEL_TYPE*)realloc(hdr->CHANNEL, hdr->NS * sizeof(CHANNEL_TYPE));
 		CHANNEL_TYPE *hc = hdr->CHANNEL;
 		strcpy(hc->Label,"Time");
 		hc->Transducer[0] = 0;
 		hc->OnOff  = 2;
+		hc->bi     = 0;
 		hc->GDFTYP = 5; //int32_t
 		hc->DigMin = -ldexp(1,31);
-		hc->DigMax = ldexp(1,31)-1;
-		hdr->SPR   = (hdr->Version < 2.0) ? 60 : 128;
-		unsigned bi = 0;
-		for (uint16_t k = 0; k<numberOfSignalGroups; k++) {
-			char *groupName = NULL;
-			read_qstring(hdr, &pos, groupName, 0);
-			char *groupNamePrefix = NULL;
-			read_qstring(hdr, &pos, groupNamePrefix, 0);
+		hc->DigMax = ldexp(1,31) - 1;
+		hdr->SPR   = (major==1) ? 60 : 128;
+		hc->SPR    = hdr->SPR;
+		size_t bi  = (0+4)*hdr->SPR;
 
-			uint16_t enabled = leu16p(hdr->AS.Header+pos);
+		for (uint16_t k = 0; k<numberOfSignalGroups; k++) {
+
+			char groupName[MAX_LENGTH_LABEL+1];
+			char groupNamePrefix[MAX_LENGTH_LABEL+1];
+
+			read_qstring(hdr, &pos, groupName, MAX_LENGTH_LABEL);
+			read_qstring(hdr, &pos, groupNamePrefix, MAX_LENGTH_LABEL);
+
+			uint16_t enabledGroup = leu16p(hdr->AS.Header+pos);
 			pos += 2;
 			uint16_t numberChannelsInGroup = leu16p(hdr->AS.Header+pos);
 			pos += 2;
 			uint16_t numberAmplifierChannels = leu16p(hdr->AS.Header+pos);
 			pos += 2;
 
-			if (enabled && (numberChannelsInGroup > 0)) {
-				hdr->NS += numberChannelsInGroup;
-				hdr->CHANNEL = (CHANNEL_TYPE*)realloc(hdr->CHANNEL, hdr->NS * sizeof(CHANNEL_TYPE));
+			if (enabledGroup && (numberChannelsInGroup > 0) ) {
 
-				for (; chan < hdr->NS; chan++); {
-					CHANNEL_TYPE *hc = hdr->CHANNEL + chan;
+				hdr->CHANNEL = realloc(hdr->CHANNEL, ((size_t)hdr->NS + (size_t)numberChannelsInGroup) * sizeof(CHANNEL_TYPE));
 
-					char *NativeChannelName = NULL;
+				int ns = 0;
+				uint32_t chan;
+				for (chan=0; chan < numberChannelsInGroup; chan++) {
+					char NativeChannelName[MAX_LENGTH_LABEL+1];
+					char CustomChannelName[MAX_LENGTH_LABEL+1];
+
 					read_qstring(hdr, &pos, NativeChannelName, MAX_LENGTH_LABEL);
-					char *CustomChannelName = NULL;
-					read_qstring(hdr, &pos, CustomChannelName, 0);
+					read_qstring(hdr, &pos, CustomChannelName, MAX_LENGTH_LABEL);
 
-					uint16_t customOrder = leu16p(hdr->AS.Header+pos);
-					pos += 2;
 					uint16_t nativeOrder = leu16p(hdr->AS.Header+pos);
 					pos += 2;
-					uint16_t signalType = leu16p(hdr->AS.Header+pos);
+					uint16_t customOrder = leu16p(hdr->AS.Header+pos);
 					pos += 2;
+					uint16_t signalType  = leu16p(hdr->AS.Header+pos);
+					pos += 2;
+
 					uint16_t channelEnabled = leu16p(hdr->AS.Header+pos);
-					hc->OnOff = channelEnabled;
 					pos += 2;
 					uint16_t chipChannel = leu16p(hdr->AS.Header+pos);
 					pos += 2;
 					uint16_t boardStream = leu16p(hdr->AS.Header+pos);
 					pos += 2;
 
+					// Spike Scope
 					uint16_t triggerMode = leu16p(hdr->AS.Header+pos);
 					pos += 2;
 					int16_t voltageThreshold = leu16p(hdr->AS.Header+pos); // uV
 					pos += 2;
 					uint16_t triggerChannel = leu16p(hdr->AS.Header+pos);
 					pos += 2;
+					uint16_t edgePolarity = leu16p(hdr->AS.Header+pos);
+					pos += 2;
 					float ImpedanceMagnitude = lef32p(hdr->AS.Header+pos); // Ohm
 					pos += 4;
 					float ImpedancePhase = lef32p(hdr->AS.Header+pos); 	// degree
 					pos += 4;
 
-					// translate into biosig HDR channel structure
-						hc->GDFTYP = 4; 	// uint16_t
-						hc->PhysDimCode = 0; // [?] default
-						hc->Cal    = 1;	//default
-						hc->Off    = 0; // default
-						hc->SPR    = hdr->SPR; //default
+					if (!(chipChannel<32) || !(signalType<6)) {
+						biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Format Intan RHD2000 - not conformant to specification");
+						return -1;
+					}
+
+					if (channelEnabled) {
+						CHANNEL_TYPE *hc = hdr->CHANNEL + hdr->NS + ns;
+						ns += channelEnabled > 0;
+
+						// translate into biosig HDR channel structure
+						hc->GDFTYP = 4;		// uint16_t
+						hc->PhysDimCode = 0;	// [?] default
+						hc->Cal    = 1;		// default
+						hc->Off    = 0;		// default
+						hc->SPR    = hdr->SPR;	// default
+						strcpy(hc->Label, NativeChannelName);
+						strncat(hc->Label, ":", MAX_LENGTH_LABEL - strlen(hc->Label));
+						strncat(hc->Label, CustomChannelName, MAX_LENGTH_LABEL - strlen(hc->Label));
+						hc->Transducer[0] = 0;
+#ifdef MAX_LENGTH_PHYSDIM
+						strcpy(hc->PhysDim, "?");
+#endif
+						hc->OnOff  = 1;
+						hc->bi     = bi;
+						hc->bi8    = bi << 3;
+						hc->LeadIdCode = 0;
+						hc->DigMin = 0.0;
+						hc->DigMax = ldexp(1,16)-1;
+
 						switch (signalType) {
 						case 0: 	// amplifier channel
 							hc->Cal    = 0.195;
 							hc->Off    = -32768*hc->Cal;
-							hc->PhysDimCode = 4256; // [V]
+							hc->PhysDimCode = 4275; // [uV]
 							break;
 						case 1: 	// auxilary input channel
-							hc->SPR    = hdr->SPR/4;
-							hc->Cal    = 0.195;
+							hc->SPR    = hc->SPR/4;
+							hc->Cal    = 0.0000374;
 							hc->Off    = -32768*hc->Cal;
+							hc->PhysDimCode = 4256; // [V]
 							break;
 						case 2: 	// supply voltage channel
-							hc->SPR    = 1;
+							hc->SPR    = channelEnabled;
 							hc->Cal    = 0.0000748;
 							hc->Off    = 0;
 							hc->PhysDimCode = 4256; // [V]
 							break;
-						case -1: 	// Temperature Sensor channel
+						case 0xffff: 	// Temperature Sensor channel
 							hc->GDFTYP = 3; // int16
 							hc->SPR    = 1;
 							hc->Cal    = 0.01;
@@ -632,7 +682,6 @@ int sopen_rhd2000_read(HDRTYPE* hdr) {
 							hc->PhysDimCode = 6048; // [°C]
 							break;
 						case 3: 	// USB board ADC input channel
-							hc->SPR    = hc->SPR;
 							hc->PhysDimCode = 4256; // [V]
 							switch(BoardMode) {
 							case 0:
@@ -641,7 +690,7 @@ int sopen_rhd2000_read(HDRTYPE* hdr) {
 								break;
 							case 1:
 								hc->Cal    = 0.00015259;
-								hc->Off    = 3-2768*hc->Cal;
+								hc->Off    = -32768*hc->Cal;
 								break;
 							case 13:
 								hc->Cal    = 0.0003125;
@@ -658,22 +707,25 @@ int sopen_rhd2000_read(HDRTYPE* hdr) {
 						hc->PhysMin = hc->DigMin * hc->Cal + hc->Off;
 						hc->PhysMax = hc->DigMax * hc->Cal + hc->Off;
 
-					hc->Transducer[0]=0;
-
-				if (VERBOSE_LEVEL >7)
-					fprintf(stdout, "%s (line %d): Intan/RHD2000:  #%d %d %s\n",__FILE__,__LINE__, chan, hc->OnOff, hc->Label);
-
-					if (!(chipChannel<32) || !(signalType<6)) {
-						biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Format Intan RHD2000 - not conformant to specification");
-						return -1;
-					}
+						if ( (hc->PhysDimCode & 0xffe0) == 4256) // [V]
+							hc->Impedance = ImpedanceMagnitude;
+					}  // if (channelEnabled)
 				}
+				hdr->NS += ns;
 			}
 		}
-		hdr->HeadLen = pos;
+		hdr->CHANNEL = realloc(hdr->CHANNEL, hdr->NS * sizeof(CHANNEL_TYPE));
 
-	biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Format Intan RHD2000 not supported");
-	return -1;
+		hdr->HeadLen = pos;
+		hdr->NRec = -1;
+		hdr->AS.bpb = bi;
+		ifseek(hdr, hdr->HeadLen, SEEK_SET);
+
+		struct stat FileBuf;
+		if (stat(hdr->FileName,&FileBuf)==0) hdr->FILE.size = FileBuf.st_size;
+		hdr->NRec = (hdr->FILE.size - hdr->HeadLen) / hdr->AS.bpb;
+
+	return 0;
 }
 
 #ifdef __cplusplus

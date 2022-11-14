@@ -26,7 +26,6 @@
 #ifndef __BIOSIG_INTERNAL_H__
 #define __BIOSIG_INTERNAL_H__
 
-#include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -108,7 +107,7 @@ char *getlogin (void);
 
 #define BIOSIG_VERSION_MAJOR 3
 #define BIOSIG_VERSION_MINOR 0
-#define BIOSIG_PATCHLEVEL    0
+#define BIOSIG_PATCHLEVEL    1
 // for backward compatibility
 #define BIOSIG_VERSION_STEPPING BIOSIG_PATCHLEVEL
 #define BIOSIG_VERSION (BIOSIG_VERSION_MAJOR * 10000 + BIOSIG_VERSION_MINOR * 100 + BIOSIG_PATCHLEVEL)
@@ -227,6 +226,7 @@ enum FileFormat {
 	WAV, WCP, WG1, WinEEG, WMF, XML, XPM,
 	Z, ZIP, ZIP2, RHD2000, RHS2000, IntanCLP,
 	EBNEURO, SigViewerEventsCSV, XDF,
+	EAS, EZ3, ARC, WFT, BiosigDump, 
 	LastPlaceHolder, invalid=0xffff
 };
 
@@ -550,6 +550,9 @@ HDRTYPE* sopen_extended(const char* FileName, const char* MODE, HDRTYPE* hdr, bi
 #  include <endian.h>
 #  include <byteswap.h>
 
+#elif defined(__FreeBSD__)
+#  include <machine/endian.h>
+
 #elif defined(__GLIBC__)	// for Hurd
 #  include <endian.h>
 #  include <byteswap.h>
@@ -659,7 +662,7 @@ HDRTYPE* sopen_extended(const char* FileName, const char* MODE, HDRTYPE* hdr, bi
 #	define bswap_32 __swap32
 #	define bswap_64 __swap64
 
-#elif defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
+#elif defined(__NetBSD__) || defined(__DragonFly__)
 #	include <sys/endian.h>
 #	define be16toh(x) betoh16(x)
 #	define le16toh(x) letoh16(x)
@@ -1015,6 +1018,10 @@ typedef struct aecg {
         	size_t	 Length;
         } Section6;
         struct {
+		size_t   StartPtr;
+		size_t	 Length;
+        } Section7;
+        struct {
         	char	 Confirmed; // 0: original report (not overread); 1:Confirmed report; 2: Overread report (not confirmed)
 		struct tm t; 
 		uint8_t	 NumberOfStatements;
@@ -1052,6 +1059,7 @@ typedef struct aecg {
 /*
         file access wrapper: use ZLIB (if available) or STDIO
  */
+
 HDRTYPE* 	ifopen(HDRTYPE* hdr, const char* mode );
 int 		ifclose(HDRTYPE* hdr);
 int             ifeof(HDRTYPE* hdr);
@@ -1062,8 +1070,8 @@ int             ifprintf(HDRTYPE* hdr, const char *format, va_list arg);
 int             ifputc(int c, HDRTYPE* hdr);
 int 		ifgetc(HDRTYPE* hdr);
 char*           ifgets(char *str, int n, HDRTYPE* hdr);
-int             ifseek(HDRTYPE* hdr, long offset, int whence );
-long            iftell(HDRTYPE* hdr);
+int             ifseek(HDRTYPE* hdr, ssize_t offset, int whence );
+ssize_t         iftell(HDRTYPE* hdr);
 int 		ifgetpos(HDRTYPE* hdr, size_t *pos);
 int             iferror(HDRTYPE* hdr);
 
@@ -1077,7 +1085,7 @@ uint32_t lcm(uint32_t A, uint32_t B);
 
 #pragma GCC visibility pop
 
-extern const uint16_t GDFTYP_BITS[];
+extern const uint16_t GDFTYP_BITS[] __attribute__ ((visibility ("default") )) ;
 extern const char *LEAD_ID_TABLE[];
 
 uint16_t CRCEvaluate(uint8_t* datablock, uint32_t datalength);
@@ -1142,7 +1150,7 @@ size_t reallocEventTable(HDRTYPE *hdr, size_t EventN);
 	allocate, and resize memory of event table
  ------------------------------------------------------------------------*/
 
-void FreeGlobalEventCodeTable();
+void FreeGlobalEventCodeTable(void);
 /*
 	free memory allocated for global event code
  ------------------------------------------------------------------------*/

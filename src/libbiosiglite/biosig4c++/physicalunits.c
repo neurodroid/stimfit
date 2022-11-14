@@ -188,7 +188,7 @@ pthread_mutex_t mutexPhysDimTable = PTHREAD_MUTEX_INITIALIZER;
 /***** 
 	Release allocated memory 
 *****/
-void ClearPhysDimTable() {
+void ClearPhysDimTable(void) {
 #ifdef _PTHREAD_H
 	pthread_mutex_lock(&mutexPhysDimTable);
 #endif

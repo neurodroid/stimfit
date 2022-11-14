@@ -189,7 +189,7 @@ typedef struct en1064_t {
 en1064_t en1064;
 
 /* new node in Huffman tree */
-htree_t* newNode() {
+htree_t* newNode(void) {
 	htree_t* T  = (htree_t*) malloc(sizeof(htree_t));
 	T->child0   = NULL;
 	T->child1   = NULL;
@@ -1286,9 +1286,10 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 			if      ((Cal5==0) && (Cal6 >0)) Cal0 = Cal6;
 			else if ((Cal5 >0) && (Cal6==0)) Cal0 = Cal5;
 			else if ((Cal5 >0) && (Cal6 >0)) Cal0 = gcd(Cal5,Cal6);
-			else
+			else {
 				biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "SCP with invalid AVM data !");
-
+				return(-1);
+			}
 			uint16_t cal5 = Cal5/Cal0; 
 			uint16_t cal6 = Cal6/Cal0; 
 
@@ -1584,7 +1585,7 @@ int sopen_SCP_read(HDRTYPE* hdr) {
 			double DigMax   = +1.0/0.0;
 			switch (bps) {
 			case 1: gdftyp = 1; break;
-			case 2: gdftyp = 2; break;
+			case 2: gdftyp = 3; break;
 			case 3: gdftyp = 255+24; break;
 			case 4: gdftyp = 5; break;
 			default:

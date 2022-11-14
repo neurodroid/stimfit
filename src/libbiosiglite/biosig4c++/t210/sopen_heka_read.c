@@ -24,7 +24,26 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef _WIN32
+// Can't include sys/stat.h or sopen is declared twice.
+#include <sys/types.h>
+struct stat {
+  _dev_t st_dev;
+  _ino_t st_ino;
+  unsigned short st_mode;
+  short st_nlink;
+  short st_uid;
+  short st_gid;
+  _dev_t st_rdev;
+  _off_t st_size;
+  time_t st_atime;
+  time_t st_mtime;
+  time_t st_ctime;
+};
+int __cdecl stat(const char *_Filename,struct stat *_Stat);
+#else
 #include <sys/stat.h>
+#endif
 
 #include "../biosig.h"
 
@@ -131,7 +150,8 @@ void sopen_heka(HDRTYPE* hdr, FILE *itx) {
 		struct stat FileBuf;
 		stat(hdr->FileName,&FileBuf);
 		hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header, FileBuf.st_size);
-		count += ifread(hdr->AS.Header+count, 1, 1024-count, hdr);
+		if (count < 1024)
+			count += ifread(hdr->AS.Header+count, 1, 1024-count, hdr);
 		hdr->HeadLen = count;
 
 		hdr->FILE.LittleEndian = *(uint8_t*)(hdr->AS.Header+52) > 0;
@@ -147,7 +167,7 @@ void sopen_heka(HDRTYPE* hdr, FILE *itx) {
 		/* get file size and read whole file */
 		count += ifread(hdr->AS.Header+count, 1, FileBuf.st_size - count, hdr);
 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %s(...): %i bytes read\n",__FILE__,__LINE__,__func__, count);
+if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %s(...): %i bytes read\n",__FILE__,__LINE__,__func__, (int)count);
 
 		// double oTime;
 		uint32_t nItems;
@@ -304,9 +324,11 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA L1 @%i=\t%i/%i \n",(int)(pos+StartOfDa
 
 				gdf_time t = heka2gdftime(tt);
 		
-				struct tm tm;
-				gdf_time2tm_time_r(t,&tm); 
-if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA L2 @%i=%s %f\t%i/%i %i/%i     t=%.17g %s\n",(int)(pos+StartOfData),SeLabel,Delay.f64,k1,K1,k2,K2,ldexp(t,-32),asctime(&tm));
+				if (VERBOSE_LEVEL>7) {
+					char tmp[60];
+					snprintf_gdfdate(tmp, sizeof(tmp), t);
+					fprintf(stdout,"HEKA L2 @%i=%s %f\t%i/%i %i/%i     t=%.17g %s\n",(int)(pos+StartOfData),SeLabel,Delay.f64,k1,K1,k2,K2,ldexp(t,-32),tmp);
+				}
 
 				pos += Sizes.Rec.Series + 4;
 				// read number of children
@@ -335,9 +357,11 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA L2 @%i=%s %f\t%i/%i %i/%i     t=%.17g 
 					size_t SPR = 0, spr = 0;
 					gdf_time t   = heka2gdftime(*(double*)(hdr->AS.Header+pos+48));		// time of sweep. TODO: this should be taken into account 
 
-					gdf_time2tm_time_r(t,&tm); 
-
-if (VERBOSE_LEVEL>7) fprintf(stdout,"HEKA L3 @%i= %fHz\t%i/%i %i/%i %i/%i %s\n",(int)(pos+StartOfData),hdr->SampleRate,k1,K1,k2,K2,k3,K3,asctime(&tm));
+					if (VERBOSE_LEVEL>7) {
+						char tmp[60];
+						snprintf_gdfdate(tmp, sizeof(tmp), t);
+						fprintf(stdout,"HEKA L3 @%i= %fHz\t%i/%i %i/%i %i/%i %s\n",(int)(pos+StartOfData),hdr->SampleRate,k1,K1,k2,K2,k3,K3,tmp);
+					}
 
 					char flagSweepSelected = (hdr->AS.SegSel[0]==0 || k1+1==hdr->AS.SegSel[0])
 						              && (hdr->AS.SegSel[1]==0 || k2+1==hdr->AS.SegSel[1])

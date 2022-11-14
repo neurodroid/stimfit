@@ -21,6 +21,8 @@
 
  */
 
+#define _GNU_SOURCE
+
 /*
 #include <assert.h>
 #include <ctype.h>
@@ -381,7 +383,7 @@ void sopen_ibw_read (HDRTYPE* hdr) {
 	int16_t type = 0;			// See types (e.g. NT_FP64) above. Zero for text waves.
 
 	hdr->NS = 1;
-	hdr->SampleRate = 1;
+	hdr->SampleRate = 1.0;
 	hdr->CHANNEL = (CHANNEL_TYPE*) realloc(hdr->CHANNEL, hdr->NS * sizeof(CHANNEL_TYPE));
 
 	// Read some of the WaveHeader fields.
@@ -405,7 +407,8 @@ void sopen_ibw_read (HDRTYPE* hdr) {
 				hdr->CHANNEL[0].DigMin = (w2->botFullScale-w2->hsB) / w2->hsA;
 */
 #else
-				hdr->SampleRate = 1.0 / w2->hsA;
+				uint16_t pdc = PhysDimCode(w5->dimUnits[0]);
+				hdr->SampleRate /= w2->hsA * (pdc==0 ? 0.001 : PhysDimScale(pdc));	// if physical units unspecified, assume millisecond
 				hdr->CHANNEL[0].PhysMax = w2->topFullScale;
 				hdr->CHANNEL[0].PhysMin = w2->botFullScale;
 #endif
@@ -444,6 +447,8 @@ void sopen_ibw_read (HDRTYPE* hdr) {
 					for (n = 0; n < hdr->EVENT.N; n++) {
 						hdr->EVENT.TYP[n] = 0x7ffe;
 						hdr->EVENT.POS[n] = (n+1)*w5->nDim[0];
+						hdr->EVENT.DUR[n] = 0;
+						hdr->EVENT.CHN[n] = 0;
 					}
 				}
 
@@ -456,7 +461,11 @@ void sopen_ibw_read (HDRTYPE* hdr) {
 				hdr->CHANNEL[0].PhysDimCode = PhysDimCode(w5->dataUnits);
 				hdr->CHANNEL[0].SPR = hdr->SPR = 1;
 				hdr->NRec        = w5->npnts;
-				hdr->SampleRate /= w5->sfA[0];
+				uint16_t pdc = PhysDimCode(w5->dimUnits[0]);
+				hdr->SampleRate /= w5->sfA[0] * (pdc==0 ? 0.001 : PhysDimScale(pdc));	// if physical units unspecified, assume millisecond
+
+				if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): %g.x+%g \n",__FILE__,__LINE__,w5->sfA[0],w5->sfB[0]);
+				if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): |%s|%s|%s|%s|\n",__FILE__,__LINE__,w5->dimUnits[0],w5->dimUnits[1],w5->dimUnits[2],w5->dimUnits[3]);
 
 #ifdef IGOROLD
 				hdr->CHANNEL[0].Cal = 1.0;
@@ -914,6 +923,8 @@ void sopen_itx_read (HDRTYPE* hdr) {
 		hdr->EVENT.SampleRate = hdr->SampleRate;
 		hdr->EVENT.POS = (uint32_t*) realloc(hdr->EVENT.POS, hdr->EVENT.N * sizeof(*hdr->EVENT.POS));
 		hdr->EVENT.TYP = (uint16_t*) realloc(hdr->EVENT.TYP, hdr->EVENT.N * sizeof(*hdr->EVENT.TYP));
+		hdr->EVENT.CHN = (uint16_t*) realloc(hdr->EVENT.CHN, hdr->EVENT.N * sizeof(*hdr->EVENT.CHN));
+		hdr->EVENT.DUR = (uint32_t*) realloc(hdr->EVENT.DUR, hdr->EVENT.N * sizeof(*hdr->EVENT.DUR));
 #if (BIOSIG_VERSION >= 10500)
 		hdr->EVENT.TimeStamp = (gdf_time*)realloc(hdr->EVENT.TimeStamp, hdr->EVENT.N*sizeof(gdf_time));
 #endif
@@ -977,6 +988,8 @@ void sopen_itx_read (HDRTYPE* hdr) {
 				if (sweepNo > 0 && chanNo==0) {
 					hdr->EVENT.POS[sweepNo-1] = SPR;
 					hdr->EVENT.TYP[sweepNo-1] = 0x7ffe;
+					hdr->EVENT.DUR[sweepNo-1] = 0;
+					hdr->EVENT.CHN[sweepNo-1] = 0;
 #if (BIOSIG_VERSION >= 10500)
 					hdr->EVENT.TimeStamp[sweepNo-1] = 0;
 #endif

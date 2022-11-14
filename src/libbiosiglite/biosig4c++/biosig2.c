@@ -314,7 +314,8 @@ int biosig_change_eventtable_samplerate(HDRTYPE *hdr, double fs) {
 	return 0;
 }
 
-int biosig_get_startdatetime(HDRTYPE *hdr, struct tm *T) {
+// deprecated because time resolution is lost, use gdftime and its tools instead.
+__attribute__ ((deprecated)) int biosig_get_startdatetime(HDRTYPE *hdr, struct tm *T) {
 	if (hdr==NULL) return -1;
 	gdf_time2tm_time_r(hdr->T0, T);
 	return (ldexp(hdr->T0,-32)<100.0);
@@ -335,7 +336,8 @@ int biosig_set_startdatetime_gdf(HDRTYPE *hdr, gdf_time T) {
 	return (ldexp(hdr->T0,-32)<100.0);
 }
 
-int biosig_get_birthdate(HDRTYPE *hdr, struct tm *T) {
+// deprecated because time resolution is lost, use gdftime and its tools instead.
+__attribute__ ((deprecated)) int biosig_get_birthdate(HDRTYPE *hdr, struct tm *T) {
 	if (hdr==NULL) return -1;
 	gdf_time2tm_time_r(hdr->Patient.Birthday, T);
 	return (ldexp(hdr->Patient.Birthday,-32)<100.0);
@@ -425,7 +427,7 @@ int biosig_set_patient_name_structured(HDRTYPE *hdr, const char* LastName, const
 	size_t len2 = (FirstName ? strlen(FirstName) : 0 );
 	size_t len3 = (SecondLastName ? strlen(SecondLastName) : 0 );
 	if (len1+len2+len3+2 > MAX_LENGTH_NAME) {
-		fprintf(stderr,"Error in function %f: total length of name too large (%i > %i)\n",__func__,len1+len2+len3+2,MAX_LENGTH_NAME);
+		fprintf(stderr,"Error in function %s(...): total length of name too large (%i > %i)\n",__func__, (int)(len1+len2+len3+2), MAX_LENGTH_NAME);
 		return -1;
 	}
 	strcpy(hdr->Patient.Name, LastName);					// Flawfinder: ignore
@@ -839,19 +841,6 @@ void biosig_rewind(int handle, int biosig_signal) {
 	srewind(hdrlist[handle].hdr);
 }
 
-int biosig_get_annotation(int handle, size_t n, struct biosig_annotation_struct *annot) {
-
-	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
-	HDRTYPE *hdr = hdrlist[handle].hdr;
-	if (n>=hdr->EVENT.N) return (-1); 
-
-	annot->onset = hdr->EVENT.POS[n];
-	annot->duration = hdr->EVENT.DUR[n];
-	annot->annotation = GetEventDescription(hdr, n);
-
-	return(0);
-}
-
 biosig_handle_t biosig2_open_file_writeonly(const char *path, enum FileFormat filetype, int number_of_signals) {
 
         /* TODO: does not open file and write to file */
@@ -1137,22 +1126,6 @@ int biosig_set_physical_dimension(int handle, int biosig_signal, const char *phy
 	return (0);
 }
 
-/*
-int biosig_get_startdatetime(int handle, struct tm *T) {
-	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
-	HDRTYPE *hdr = hdrlist[handle].hdr;
-	gdf_time2tm_time_r(hdr->T0, T);
-	return (0);
-}
-
-int biosig_set_startdatetime(int handle, const struct tm *T) {
-	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
-	HDRTYPE *hdr = hdrlist[handle].hdr;
-	hdr->T0   = tm_time2gdf_time(T);
-	return (0);
-}
-*/
-
 int edf_set_startdatetime(int handle, int startdate_year, int startdate_month, int startdate_day, int starttime_hour, int starttime_minute, int starttime_second) {
 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
 	HDRTYPE *hdr = hdrlist[handle].hdr;
@@ -1210,22 +1183,6 @@ int biosig_set_gender(int handle, int gender) {
 		return(0); 
 	}
 }
-
-/*
-int biosig_get_birthdate(int handle, struct tm *T) {
-	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
-	HDRTYPE *hdr = hdrlist[handle].hdr;
-	gdf_time2tm_time_r(hdr->Patient.Birthday, T);
-	return (0);
-}
-
-int biosig_set_birthdate(int handle, const struct tm *T) {
-	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
-	HDRTYPE *hdr = hdrlist[handle].hdr;
-	hdr->Patient.Birthday = tm_time2gdf_time(T);
-	return (0);
-}
-*/
 
 int edf_set_birthdate(int handle, int birthdate_year, int birthdate_month, int birthdate_day) {
 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);

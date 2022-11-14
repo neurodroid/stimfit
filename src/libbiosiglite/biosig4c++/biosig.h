@@ -44,7 +44,7 @@ extern "C" {
 /**                                                                        **/
 /****************************************************************************/
 
-uint32_t get_biosig_version ();
+uint32_t get_biosig_version (void);
 /* 	returns the version number in hex-decimal representation
 	get_biosig_version() & 0x00ff0000 :  major version number
 	get_biosig_version() & 0x0000ff00 :  minor version number
@@ -156,19 +156,19 @@ void	srewind(HDRTYPE* hdr);
  --------------------------------------------------------------- */
 
 
-int 	sseek(HDRTYPE* hdr, long int offset, int whence);
+int 	sseek(HDRTYPE* hdr, ssize_t offset, int whence);
 /*	positions file pointer
  *
  *	Currently, this function is meaning less because sread requires always the start value
  --------------------------------------------------------------- */
 
 
-long int stell(HDRTYPE* hdr);
+ssize_t stell(HDRTYPE* hdr);
 /*	returns position of file point in segments
  --------------------------------------------------------------- */
 
 #ifndef  ONLYGDF
-ATT_DEPREC int serror();
+ATT_DEPREC int serror(void);
 /*	handles errors; it reports whether an error has occured.
  *	if yes, an error message is displayed, and the error status is reset.
  * 	the return value is 0 if no error has occured, otherwise the error code
@@ -519,149 +519,7 @@ int biosig_channel_set_transducer(CHANNEL_TYPE *hc, const char *transducer);
 
 #pragma GCC visibility pop
 
-
-/*
-        DO NOT USE         DO NOT USE         DO NOT USE         DO NOT USE
-
-        the functions below are experimental and have not been used so far
-        in any productions system
-        They will be removed or significantly changed .
-
-        DO NOT USE         DO NOT USE         DO NOT USE         DO NOT USE
-*/
-
-struct ATT_DEPREC biosig_annotation_struct {       /* this structure is used for annotations */
-        size_t onset;                   /* onset time of the event, expressed in units of 100 nanoSeconds and relative to the starttime in the header */
-        size_t duration;                /* duration time, this is a null-terminated ASCII text-string */
-        const char *annotation; 	/* description of the event in UTF-8, this is a null terminated string */
-       };
-
 typedef HDRTYPE *biosig_handle_t ;
-
-ATT_DEPREC int biosig_lib_version(void);
-
-ATT_DEPREC int biosig_open_file_readonly(const char *path, int read_annotations);
-
-ATT_DEPREC int biosig_close_file(int handle);
-ATT_DEPREC int biosig_read_samples(int handle, size_t channel, size_t n, double *buf, unsigned char UCAL);
-ATT_DEPREC int biosig_read_physical_samples(int handle, size_t channel, size_t n, double *buf);
-ATT_DEPREC int biosig_read_digital_samples(int handle, size_t channel, size_t n, double *buf);
-//#define biosig_read_physical_samples(a,b,c,d) biosig_read_samples(a,b,c,d,0) 
-//#define biosig_read_digital_samples(a,b,c,d)  biosig_read_samples(a,b,c,d,1) 
-ATT_DEPREC size_t biosig_seek(int handle, long long offset, int whence);
-ATT_DEPREC size_t biosig_tell(int handle);
-ATT_DEPREC void biosig_rewind(int handle, int biosig_signal);
-ATT_DEPREC int biosig_get_annotation(int handle, size_t n, struct biosig_annotation_struct *annot);
-ATT_DEPREC int biosig_open_file_writeonly(const char *path, enum FileFormat filetype, int number_of_signals);
-
-ATT_DEPREC double biosig_get_global_samplefrequency(int handle);
-ATT_DEPREC int biosig_set_global_samplefrequency(int handle, double samplefrequency);
-
-ATT_DEPREC double biosig_get_samplefrequency(int handle, int biosig_signal);
-ATT_DEPREC int biosig_set_samplefrequency(int handle, int biosig_signal,  double samplefrequency);
-
-ATT_DEPREC double biosig_get_physical_maximum(int handle, int biosig_signal);
-ATT_DEPREC int biosig_set_physical_maximum(int handle, int biosig_signal, double phys_max);
-
-ATT_DEPREC double biosig_get_physical_minimum(int handle, int biosig_signal);
-ATT_DEPREC int biosig_set_physical_minimum(int handle, int biosig_signal, double phys_min);
-
-ATT_DEPREC double biosig_get_digital_maximum(int handle, int biosig_signal);
-ATT_DEPREC int biosig_set_digital_maximum(int handle, int biosig_signal, double dig_max);
-
-ATT_DEPREC double biosig_get_digital_minimum(int handle, int biosig_signal);
-ATT_DEPREC int biosig_set_digital_minimum(int handle, int biosig_signal, double dig_min);
-
-ATT_DEPREC const char *biosig_get_label(int handle, int biosig_signal);
-ATT_DEPREC int biosig_set_label(int handle, int biosig_signal, const char *label);
-
-//const char *biosig_get_prefilter(int handle, int biosig_signal);
-ATT_DEPREC int biosig_set_prefilter(int handle, int biosig_signal, const char *prefilter);
-ATT_DEPREC double biosig_get_highpassfilter(int handle, int biosig_signal);
-ATT_DEPREC int biosig_set_highpassfilter(int handle, int biosig_signal, double frequency);
-ATT_DEPREC double biosig_get_lowpassfilter(int handle, int biosig_signal);
-ATT_DEPREC int biosig_set_lowpassfilter(int handle, int biosig_signal, double frequency);
-ATT_DEPREC double biosig_get_notchfilter(int handle, int biosig_signal);
-ATT_DEPREC int biosig_set_notchfilter(int handle, int biosig_signal, double frequency);
-
-ATT_DEPREC const char *biosig_get_transducer(int handle, int biosig_signal);
-ATT_DEPREC int biosig_set_transducer(int handle, int biosig_signal, const char *transducer);
-
-ATT_DEPREC const char *biosig_get_physical_dimension(int handle, int biosig_signal);
-ATT_DEPREC int biosig_set_physical_dimension(int handle, int biosig_signal, const char *phys_dim);
-
-/*
-int biosig_get_startdatetime(int handle, struct tm *T);
-int biosig_set_startdatetime(int handle, const struct tm *T);
-*/
-
-ATT_DEPREC const char *biosig_get_patientname(int handle);
-ATT_DEPREC int biosig_set_patientname(int handle, const char *patientname);
-ATT_DEPREC const char *biosig_get_patientcode(int handle);
-ATT_DEPREC int biosig_set_patientcode(int handle, const char *patientcode);
-ATT_DEPREC int biosig_get_gender(int handle);
-ATT_DEPREC int biosig_set_gender(int handle, int gender);
-
-/*
-int biosig_get_birthdate(int handle, struct tm *T);
-int biosig_set_birthdate(int handle, const struct tm *T);
-*/
-
-ATT_DEPREC int biosig_set_patient_additional(int handle, const char *patient_additional);
-ATT_DEPREC int biosig_set_admincode(int handle, const char *admincode);
-/*
-const char *biosig_get_technician(int handle);
-int biosig_set_technician(int handle, const char *technician);
-*/
-ATT_DEPREC int biosig_set_equipment(int handle, const char *equipment);
-ATT_DEPREC int biosig_set_recording_additional(int handle, const char *recording_additional);
-
-ATT_DEPREC int biosig_write_physical_samples(int handle, double *buf);
-ATT_DEPREC int biosig_blockwrite_physical_samples(int handle, double *buf);
-ATT_DEPREC int biosig_write_digital_samples(int handle, int *buf);
-ATT_DEPREC int biosig_blockwrite_digital_samples(int handle, int *buf);
-ATT_DEPREC int biosig_write_annotation_utf8(int handle, size_t onset, size_t duration, const char *description);
-ATT_DEPREC int biosig_write_annotation_latin1(int handle, size_t onset, size_t duration, const char *description);
-ATT_DEPREC int biosig_set_datarecord_duration(int handle, double duration);
-
-/* =============================================================
-	serialize/unserialize data
-	converts between linear buffer memory and header structure
-   ============================================================= */
-
-ATT_DEPREC void* biosig_serialize(HDRTYPE *hdr, void **mem, size_t *len);
-/******************************************************************************************
-	biosig_serialize: converts header structure into memory buffer
-	input:
-		hdr: header structure, including event table.
-
-	output:
-		*mem will contain start address of buffer
-		*len will contain length of buffer mem.
- ******************************************************************************************/
-
-ATT_DEPREC HDRTYPE* biosig_unserialize(void *mem, size_t len, size_t start, size_t length, biosig_data_type **data, int flags);
-#define biosig_unserialize_header(a,b) biosig_unserialize(a,b,0,0,NULL,0)
-/******************************************************************************************
-	biosig_unserialize_header: converts memory buffer into header structure HDR
-
-	biosig_unserialize: converts memory buffer into header structure HDR, and
-	if data != NULL, data samples will be read into a matrix,
-		the starting address of this data matrix will be stored in *data
-		point to *data
-	input:
-		mem : buffer
-		len : length of buffer mem
-		start: starting position to extract data
-		length: number of samples for extracting data,
-		flags: BIOSIG_FLAG_UCAL | BIOSIG_FLAG_OVERFLOWDETECTION | BIOSIG_FLAG_ROW_BASED_CHANNELS
-	output:
-		*data will contain start address to matrix data samples, of size
-		hdr->NS * (hdr->SPR * hdr->NRec) or its transpose form depending on flags
-	return value:
-		header structure HDRTYPE* hdr.
- ******************************************************************************************/
-
 
 #if defined(MAKE_EDFLIB)
 

@@ -1,6 +1,6 @@
 /*
 
-% Copyright (C) 2005-2013 Alois Schloegl <alois.schloegl@gmail.com>
+% Copyright (C) 2005-2013,2020 Alois Schloegl <alois.schloegl@gmail.com>
 % This file is part of the "BioSig for C/C++" repository
 % (biosig4c++/libbiosig) at http://biosig.sf.net/
 
@@ -37,8 +37,16 @@
 #else
     #include <inttypes.h>
 #endif
-#include <math.h>
+#include <stdio.h>
+#include <string.h>
 #include <time.h>
+/* ensure that definition of "byte" does not conflict between
+    rpcndr.h (Windows/mingw only) and bits/cpp_type_traits.h under g++
+    see also https://github.com/mxe/mxe/issues/2759
+ */
+#define _GLIBCXX_INCLUDE_NEXT_C_HEADERS
+#include <math.h>
+#undef _GLIBCXX_INCLUDE_NEXT_C_HEADERS
 
 #ifdef __cplusplus
 #define EXTERN_C extern "C"
@@ -82,19 +90,31 @@ EXTERN_C {
 gdftime_t   tm_time2gdf_time(struct tm *t);
 /*
  * gdf_time2tm_time converts gdf-time into struct tm format,
+   this is deprecated because time resolution (sub-seconds) are lost
  */
 struct tm *gdf_time2tm_time(gdftime_t t);
 /*
  * re-entrant version of gdf_time2tm_time, memory for t must be allocated
+   this is deprecated because time resolution (sub-seconds) are lost
  */
 int gdf_time2tm_time_r(gdftime_t t, struct tm *tm);
 
+/*
+   converts date and time to strings using this format %Y-%m-%d %H:%M:%S
+   with microsecond resolution, if needed.
+	%04d-%02d-%02d %02d:%02d:%02d
+	%04d-%02d-%02d %02d:%02d:%09.6f
+   strfgdftime resembles strftime(...), except for format
+	%s and %S which will also present 6 digits the fraction of the second
+*/
+
+size_t snprintf_gdftime(char *out, size_t outbytesleft, gdftime_t T);
+size_t snprintf_gdfdate(char *out, size_t outbytesleft, gdftime_t T);
+size_t snprintf_gdfdatetime(char *out, size_t outbytesleft, gdftime_t T);
+size_t strfgdftime(char *out, size_t outbytesleft, const char *FMT, gdftime_t T);
+
 
 /*
-char *gdftime2string(gdftime_t)
-char *gdfdate2string(gdftime_t)
-char *gdfdatetime2string(gdftime_t)
-
 gdftime_t string2gdftime(const char*)
 gdftime_t string2gdfdate(const char*)
 gdftime_t string2gdfdatetime(const char*)
