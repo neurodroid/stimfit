@@ -199,7 +199,8 @@ fi
 if test "$LAPACKLIB" = ""; then
     if test "$STFKERNEL" = "darwin" ; then
         # System LAPACK
-        LIBLAPACK_LDFLAGS="/usr/lib/liblapack.dylib -framework Accelerate"
+        # LIBLAPACK_LDFLAGS="/usr/lib/liblapack.dylib -framework Accelerate"
+        LIBLAPACK_LDFLAGS="-framework Accelerate"
         CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK -DHAVE_LAPACK_SUFFIX"
     else
       AC_CHECK_LIB([openblas], [dgemm_], HAVE_OPENBLAS="yes",, [-lgomp -lpthread -lm])
