@@ -190,13 +190,18 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     // ::wxInitAllImageHandlers();
 
     m_mgr.SetManagedWindow(this);
+#ifndef __WXMAC__
     m_mgr.SetFlags(
         wxAUI_MGR_ALLOW_FLOATING |
         wxAUI_MGR_TRANSPARENT_DRAG |
         wxAUI_MGR_VENETIAN_BLINDS_HINT |
         wxAUI_MGR_ALLOW_ACTIVE_PANE
                    );
-
+#else
+    m_mgr.SetFlags(
+        wxAUI_MGR_DEFAULT
+                   );
+#endif
 #if wxUSE_DRAG_AND_DROP
     m_drop = new wxStfFileDrop; // obviously gets deleted when the frame is destructed
     SetDropTarget(m_drop);

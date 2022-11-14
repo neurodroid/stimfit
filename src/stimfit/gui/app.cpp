@@ -69,8 +69,6 @@
 extern wxStfApp& wxGetApp();
 wxStfApp& wxGetApp() { return *static_cast<wxStfApp*>(wxApp::GetInstance()); }
 
-wxStfParentFrame *frame = (wxStfParentFrame *) NULL;
-
 BEGIN_EVENT_TABLE( wxStfApp, wxApp )
 EVT_KEY_DOWN( wxStfApp::OnKeyDown )
 
@@ -230,8 +228,9 @@ bool wxStfApp::OnInit(void)
     }
     docManager->SetLastDirectory( lastDir );
 
+    wxFrame *frame = nullptr;
     //// Create the main frame window
-    frame = new wxStfParentFrame(docManager, (wxFrame *)NULL,
+    frame = new wxStfParentFrame(docManager, nullptr,
                                  wxT("Stimfit"), wxDefaultPosition,
 #ifndef __WXMAC__
                                  wxSize(1024, 768),
@@ -869,9 +868,9 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
 #endif
     wxStfChildFrame *subframe = new wxStfChildFrame(
                                                     doc, view, 
-                                                    GetMainFrame(), wxID_ANY, doc->GetTitle(),
+                                                    wxStaticCast(GetTopWindow(), wxStfParentFrame), wxID_ANY, doc->GetTitle(),
 #ifdef __WXMAC__
-                                                    wxPoint(xpos,ypos), wxSize(800,600),
+                                                    wxDefaultPosition, wxDefaultSize,
 #else
                                                     wxDefaultPosition, wxDefaultSize,
 #endif
@@ -977,7 +976,7 @@ void wxStfApp::OnKeyDown( wxKeyEvent& event ) {
 void wxStfApp::OnCursorSettings( wxCommandEvent& WXUNUSED(event) ) {
     wxStfDoc* actDoc=GetActiveDoc();
     if (CursorsDialog==NULL && actDoc!=NULL) {
-        CursorsDialog=new wxStfCursorsDlg(frame, actDoc);
+        CursorsDialog=new wxStfCursorsDlg((wxStfParentFrame*)GetTopWindow(), actDoc);
         CursorsDialog->Show();
         CursorsDialog->SetActiveDoc(actDoc);
         //set CEdit controls to given values
@@ -1255,7 +1254,7 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
     if (nFiles!=1) {
         // Ask whether to put files into a single window:
         singleWindow=(wxMessageDialog(
-                                      frame,
+                                      (wxStfParentFrame*)GetTopWindow(),
                                       wxT("Put files into a single window?"),
                                       wxT("File series import"),
                                       wxYES_NO
@@ -1265,7 +1264,7 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
                              wxT("Importing file series"),
                              wxT("Starting file import"),
                              100,
-                             frame,
+                             (wxStfParentFrame*)GetTopWindow(),
                              wxPD_SMOOTH | wxPD_AUTO_HIDE
                              );
     int n_opened=0;
@@ -1435,11 +1434,6 @@ wxString wxStfApp::GetVersionString() const {
     return verString;
 }
 
-StfDll wxStfParentFrame *GetMainFrame(void)
-{
-    return frame;
-}
-
 //  LocalWords:  wxStfView
 
 #ifdef WITH_PYTHON
@@ -1448,7 +1442,7 @@ void wxStfApp::OnPythonImport(wxCommandEvent& WXUNUSED(event)) {
     // show a file selection dialog menu.
     wxString pyFilter; // file filter only show *.py
     pyFilter = wxT("Python file (*.py)|*.py");
-    wxFileDialog LoadModuleDialog (frame,
+    wxFileDialog LoadModuleDialog ((wxStfParentFrame*)GetTopWindow(),
                 wxT("Import/reload Python module"),
                 wxT(""),
                 wxT(""),

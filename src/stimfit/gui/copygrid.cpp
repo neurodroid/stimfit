@@ -326,6 +326,6 @@ void wxStfGrid::SetCheckmark(const wxString& RegEntry, int id) {
         wxGetApp().wxWriteProfileInt(wxT("Settings"),RegEntry,0);
     }
     // Update table:
-    wxStfChildFrame* pChild=(wxStfChildFrame*)GetMainFrame()->GetActiveChild();
+    wxStfChildFrame* pChild=(wxStfChildFrame*)(wxGetApp().GetMainFrame()->GetActiveChild());
     pChild->UpdateResults();
 }

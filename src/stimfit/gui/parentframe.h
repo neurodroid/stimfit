@@ -37,21 +37,6 @@ class wxStfGrid;
 class wxStfFileDrop;
 class wxProgressDialog;
     
-//! child frame type; depends on whether aui is used for the doc/view interface
-#ifdef WITH_AUIDOCVIEW
-typedef wxAuiDocMDIChildFrame wxStfChildType;
-#else
-typedef wxDocMDIChildFrame wxStfChildType;
-#endif
-
-//! parent frame type; depends on whether aui is used for the doc/view interface
-#ifdef WITH_AUIDOCVIEW
-typedef wxAuiDocMDIParentFrame wxStfParentType;
-#else
-typedef wxDocMDIParentFrame wxStfParentType;
-#endif
-
-
 typedef wxAuiToolBar wxStfToolBar;
 
 #ifdef WITH_PYTHON

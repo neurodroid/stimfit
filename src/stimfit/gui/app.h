@@ -468,6 +468,8 @@ public:
      */
     wxDocManager* GetDocManager() const { return wxDocManager::GetDocumentManager(); }
 
+    wxStfParentFrame* GetMainFrame() {return (wxStfParentFrame*)GetTopWindow();}
+
     virtual void OnInitCmdLine(wxCmdLineParser& parser);
     virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
 
@@ -547,10 +549,6 @@ extern StfDll wxStfApp& wxGetApp();
 #else
 DECLARE_APP(wxStfApp)
 #endif
-
-//! Retrieve the application's top-level frame
-/*! \return A pointer to the top-level frame. */
-extern StfDll wxStfParentFrame *GetMainFrame();
 
 //! true if in single-window mode
 extern bool singleWindowMode;

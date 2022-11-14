@@ -47,8 +47,6 @@ IMPLEMENT_DYNAMIC_CLASS(wxStfView, wxView)
 BEGIN_EVENT_TABLE(wxStfView, wxView)
 END_EVENT_TABLE()
 
-extern wxStfParentFrame* frame;
-
 wxStfView::wxStfView() :
     graph((wxStfGraph *) NULL),
     childFrame((wxStfChildFrame *) NULL)
@@ -66,7 +64,7 @@ bool wxStfView::OnCreate(wxDocument *doc, long WXUNUSED(flags) )
     // extract file name:
     wxFileName fn(doc->GetFilename());
     childFrame->SetTitle(fn.GetName());
-    graph = GetMainFrame()->CreateGraph(this, childFrame);
+    graph = wxGetApp().GetMainFrame()->CreateGraph(this, childFrame);
     if (graph==NULL) {
         return false;
     }
@@ -79,7 +77,9 @@ bool wxStfView::OnCreate(wxDocument *doc, long WXUNUSED(flags) )
     // X seems to require a forced resize
     // childFrame->SetClientSize(800,600);
 #endif
+    //#ifndef __WXMAC__
     childFrame->Show(true);
+    //#endif
     Activate(true);
     return true;
 }
@@ -130,8 +130,8 @@ void wxStfView::OnActivateView(bool activate, wxView *activeView, wxView *deacti
         if (pDoc) {
             // Update menu checks:
             // pDoc->UpdateMenuCheckmarks();
-            if (frame!=NULL)
-                frame->SetSingleChannel(pDoc->size()<2);
+            if (wxGetApp().GetMainFrame()!=NULL)
+                wxGetApp().GetMainFrame()->SetSingleChannel(pDoc->size()<2);
             pDoc->UpdateSelectedButton();
             if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
                 wxGetApp().GetCursorsDialog()->SetActiveDoc(Doc());

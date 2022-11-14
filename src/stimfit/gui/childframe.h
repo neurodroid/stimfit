@@ -37,20 +37,6 @@ class wxStfGraph;
 class wxStfTable;
 class wxStfGrid;
 
-//! child frame type; depends on whether aui is used for the doc/view interface
-#ifdef WITH_AUIDOCVIEW
-typedef wxAuiDocMDIChildFrame wxStfChildType;
-#else
-typedef wxDocMDIChildFrame wxStfChildType;
-#endif
-
-//! parent frame type; depends on whether aui is used for the doc/view interface
-#ifdef WITH_AUIDOCVIEW
-typedef wxAuiDocMDIParentFrame wxStfParentType;
-#else
-typedef wxDocMDIParentFrame wxStfParentType;
-#endif
-
 //! Default perspective string.
 /*! Can be loaded to restore the default AUI perspective. */
 const wxString defaultPersp =
@@ -191,13 +177,7 @@ public:
     //! Override default GetMenuBar
     /*! \return the menu bar if non-NULL; otherwise, the parent's menu bar
      */
-    virtual wxMenuBar *GetMenuBar() const {
-        if (wxStfChildType::GetMenuBar()) {
-            return wxStfChildType::GetMenuBar();
-        } else {
-            return m_parent->GetMenuBar();
-        }
-    }
+    virtual wxMenuBar *GetMenuBar() const;
     
  private:
     wxStfParentType* m_parent;

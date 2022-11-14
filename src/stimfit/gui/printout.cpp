@@ -31,8 +31,6 @@
 #include "./printout.h"
 #include "./graph.h"
 
-extern wxStfParentFrame* frame;
-
 wxStfPrintout::wxStfPrintout(const wxChar *title) :
 wxPrintout(title) ,
 store_noGimmicks(false)
@@ -111,7 +109,7 @@ void wxStfPrintout::DrawPageOne()
     }
     wxRect screenRect(pGraph->GetRect());
     // Get size of page, in pixels:
-    wxRect printRect=GetLogicalPageMarginsRect(*(frame->GetPageSetup()));
+    wxRect printRect=GetLogicalPageMarginsRect(*(wxGetApp().GetMainFrame()->GetPageSetup()));
 
     // A first guess at the scale:
     double hScale=(double)printRect.height/(double)screenRect.height;
@@ -213,7 +211,7 @@ void wxStfPrintout::PrintHeader(wxDC* pDC, double scale) {
     try {
         stf::SectionAttributes sec_attr = Doc()->GetCurrentSectionAttributes();
         if (sec_attr.isFitted) {
-            wxRect WindowRect(GetLogicalPageMarginsRect(*(frame->GetPageSetup())));
+            wxRect WindowRect(GetLogicalPageMarginsRect(*(wxGetApp().GetMainFrame()->GetPageSetup())));
             int increment=WindowRect.height/50;
             int yPos=(int)(WindowRect.height*0.5);
             int xPos=(int)(WindowRect.width*0.75);

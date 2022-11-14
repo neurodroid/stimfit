@@ -56,6 +56,7 @@
 #include "./printout.h"
 #include "./dlgs/smalldlgs.h"
 #include "./copygrid.h"
+#include "./parentframe.h"
 #ifdef _WINDOWS
 #include "./../../libstfio/atf/atflib.h"
 #include "./../../libstfio/igor/igorlib.h"
@@ -82,8 +83,12 @@ wxStfChildType(doc,view,parent,id,title,pos,size,style,name), m_parent(parent),
     m_notebook(NULL)
 {
     m_mgr.SetManagedWindow(this);
+#ifndef __WXMAC__
     m_mgr.SetFlags( wxAUI_MGR_ALLOW_FLOATING | wxAUI_MGR_TRANSPARENT_DRAG |
                     wxAUI_MGR_VENETIAN_BLINDS_HINT | wxAUI_MGR_ALLOW_ACTIVE_PANE );
+#else
+    m_mgr.SetFlags( wxAUI_MGR_DEFAULT );
+#endif
 }
 
 wxStfChildFrame::~wxStfChildFrame() {
@@ -586,6 +591,14 @@ void wxStfChildFrame::OnMenuHighlight(wxMenuEvent& event) {
     }
     event.Skip();
 
+}
+
+wxMenuBar* wxStfChildFrame::GetMenuBar() const {
+    if (wxStfChildType::GetMenuBar()) {
+        return wxStfChildType::GetMenuBar();
+    } else {
+        return m_parent->GetMenuBar();
+    }
 }
 
 #if wxUSE_DRAG_AND_DROP

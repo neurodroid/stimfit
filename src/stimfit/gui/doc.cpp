@@ -294,7 +294,7 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
             get().clear();
             return false;
         }
-        wxStfParentFrame* pFrame = GetMainFrame();
+        wxStfParentFrame* pFrame = wxGetApp().GetMainFrame();
         if (pFrame == NULL) {
             throw std::runtime_error("pFrame is 0 in wxStfDoc::OnOpenDocument");
         }
@@ -362,7 +362,7 @@ void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const w
         throw e;
     }
 
-    wxStfParentFrame* pFrame = GetMainFrame();
+    wxStfParentFrame* pFrame = wxGetApp().GetMainFrame();
     if (pFrame == NULL) {
         throw std::runtime_error("pFrame is 0 in wxStfDoc::SetData");
     }
@@ -609,7 +609,7 @@ void wxStfDoc::PostInit() {
     pFrame->SetCurTrace(0);
     UpdateSelectedButton();
     wxGetApp().OnPeakcalcexecMsg();
-    wxStfParentFrame* parentFrame = GetMainFrame();
+    wxStfParentFrame* parentFrame = wxGetApp().GetMainFrame();
     if (parentFrame) {
         parentFrame->SetFocus();
     }
@@ -1956,7 +1956,7 @@ void wxStfDoc::UpdateSelectedButton() {
     }
 
     // Set status of selection button:
-    wxStfParentFrame* parentFrame = GetMainFrame();
+    wxStfParentFrame* parentFrame = wxGetApp().GetMainFrame();
     if (parentFrame) {
         parentFrame->SetSelectedButton( selected );
     }

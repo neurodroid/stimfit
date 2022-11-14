@@ -66,10 +66,19 @@
 
     #ifndef WX_PRECOMP
         #include <wx/wx.h>
+        #include <wx/aui/aui.h>
+        #include <wx/docview.h>
+        #include <wx/docmdi.h>
     #endif
 
     #include <wx/wfstream.h>
     #include <wx/progdlg.h>
+    //! child frame type; depends on whether aui is used for the doc/view interface
+    // typedef wxDocChildFrameAny<wxAuiMDIChildFrame, wxAuiMDIParentFrame> wxStfChildType;
+    typedef wxDocMDIChildFrame wxStfChildType;
+
+    //! parent frame type; depends on whether aui is used for the doc/view interface
+    typedef wxDocMDIParentFrame wxStfParentType;
 #else
     typedef std::string wxString;
     typedef int wxWindow;

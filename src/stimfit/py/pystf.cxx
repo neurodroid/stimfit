@@ -1968,7 +1968,7 @@ PyObject* mpl_panel(const std::vector<double>& figsize) {
         ShowError( wxT("figsize has to have length 2") );
     }
 
-    wxStfParentFrame* parent = GetMainFrame();
+    wxStfParentFrame* parent = wxGetApp().GetMainFrame();
     if ( !parent ) {
         ShowError( wxT("Parent window is NULL") );
         return 0;
