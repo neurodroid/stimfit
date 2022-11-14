@@ -4,7 +4,7 @@ PortSystem          1.0
 PortGroup           python 1.0
 
 name                py-stfio
-version             0.15.8
+version             0.16.2
 categories          python science
 platforms           darwin
 license             GPL-2
@@ -15,8 +15,8 @@ homepage            http://www.stimfit.org
 master_sites        ${homepage}
 distname            stimfit-${version}
 
-checksums           rmd160  960efd2fa4f88aba153af560cc49adc40090995b \
-                    sha256  0fc6b0f52057d9c45107557e615f314179ac92e180123ed9d1da98e7f812df8b
+checksums           rmd160  0c7d2b1595c0d72d7d5c168d6f656b31a778d914 \
+                    sha256  f9a13c4a58db810da2f8acf6a56402ad93764a800b15f0703de2a89903239ebd
 
 python.versions     27 35 36 37
 

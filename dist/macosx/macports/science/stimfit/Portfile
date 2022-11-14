@@ -1,10 +1,10 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
-# $Id$
+
 PortSystem          1.0
 PortGroup           wxWidgets 1.0
 
 name                stimfit
-version             0.15.8
+version             0.16.2
 categories          science
 platforms           darwin
 license             GPL-2
@@ -14,39 +14,68 @@ long_description    A program for viewing and analyzing electrophysiological dat
 homepage            http://www.stimfit.org
 master_sites        ${homepage}
 
-checksums           rmd160  960efd2fa4f88aba153af560cc49adc40090995b \
-                    sha256  0fc6b0f52057d9c45107557e615f314179ac92e180123ed9d1da98e7f812df8b
+checksums           rmd160  0c7d2b1595c0d72d7d5c168d6f656b31a778d914 \
+                    sha256  f9a13c4a58db810da2f8acf6a56402ad93764a800b15f0703de2a89903239ebd
 
-wxWidgets.use       wxPython-3.0
+wxWidgets.use       wxWidgets-3.2
 
-depends_lib         port:boost \
-                    port:fftw-3 \
+depends_lib         port:fftw-3 \
                     port:hdf5 \
                     port:${wxWidgets.port}
 
-configure.args      --with-wx-config=${wxWidgets.wxconfig} \
-                    --disable-dependency-tracking \
+configure.args      --disable-dependency-tracking \
                     --disable-python \
-                    --without-biosig
+                    --with-biosiglite \
+                    --with-wx-config=${wxWidgets.wxconfig}
 
-# Only Python 2.7 is supported until wxpython gets available for Python 3.x
-variant python27 description {Build with Python shell.} {
-    depends_build-append \
-        port:swig-python
+set python_branches {3.9 3.10}
 
-    depends_lib-append \
-        port:python27 \
-        port:py27-wxpython-3.0 \
-        port:py27-numpy \
-        port:py27-matplotlib \
-        port:py27-cvxopt
+foreach python_branch ${python_branches} {
+    set python_version [join [lrange [split ${python_branch} .] 0 1] ""]
 
-    configure.python \
-        ${prefix}/bin/python2.7
+    set variant_line {variant python${python_version} description "Enable Python ${python_version} shell"}
 
-    configure.args-replace \
-        --disable-python \
-        --enable-python
+    foreach over ${python_branches} {
+        if {${python_branch} == ${over}} {
+            continue
+        }
+
+        set over_no_dot [join [lrange [split ${over} .] 0 1] ""]
+        append variant_line " conflicts python${over_no_dot}"
+    }
+    append variant_line { {}}
+
+    eval $variant_line
+}
+
+foreach python_branch ${python_branches} {
+    set python_version [join [lrange [split ${python_branch} .] 0 1] ""]
+    if {[variant_isset python${python_version}]} {
+        depends_build-append \
+            port:swig-python
+
+        depends_lib-replace \
+            port:${wxWidgets.port} \
+            port:py${python_version}-wxpython-4.0
+
+        depends_lib-append \
+            port:python${python_version} \
+            port:py${python_version}-wxpython-4.0 \
+            port:py${python_version}-numpy \
+            port:py${python_version}-matplotlib \
+            port:py${python_version}-cvxopt
+
+        configure.python \
+            ${prefix}/bin/python${python_branch}
+
+        configure.args-replace \
+            --disable-python \
+            --enable-python
+
+        configure.args-replace \
+            --with-wx-config=${wxWidgets.wxconfig} \
+            --with-wx-config=${frameworks_dir}/Python.framework/Versions/${python_branch}/bin/wx-config
+    }
 }
 
 variant atlas description {Use MacPorts ATLAS libraries.} {
@@ -57,30 +86,10 @@ variant atlas description {Use MacPorts ATLAS libraries.} {
         --with-lapack-lib=${prefix}/lib/libatlas.a
 }
 
-variant biosig conflicts biosiglite description {Use external biosig library for file I/O.} {
-    depends_lib-append \
-        port:libbiosig
-
-    configure.args-replace \
-        --without-biosig \
-        --with-biosig2
-}
-
-variant biosiglite conflicts biosig description {Use internal biosiglite library for file I/O.} {
-    configure.args-replace \
-        --without-biosig \
-        --with-biosiglite
-}
+default_variants    +python310
 
 configure.ldflags-append \
                     -headerpad_max_install_names
-
-# Commented out for now; will be required when wxpython gets available for Python 3.x
-# if {![variant_isset python27]} {
-default_variants    +python27
-# }
-default_variants-append \
-                    +biosiglite
 
 destroot.destdir    DESTDIR=${destroot}${applications_dir}
 

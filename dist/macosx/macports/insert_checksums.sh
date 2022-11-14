@@ -8,7 +8,7 @@ if [ "$1" != "" ]; then
     cd build/release
     ./conf_macports_release.sh
     make dist
-    scp stimfit-${STFVERSION}.tar.gz p8210991@schmidt-hieber.de:/kunden/homepages/32/d34288459/htdocs/StimfitJ/
+    scp stimfit-${STFVERSION}.tar.gz p8210991@ftp.schmidt-hieber.de:/kunden/homepages/32/d34288459/htdocs/StimfitJ/
     cd ${MPDIR}
 fi
 
@@ -44,3 +44,11 @@ sudo port uninstall py36-stfio
 sudo port clean --all py36-stfio
 sudo port uninstall py37-stfio
 sudo port clean --all py37-stfio
+sudo port uninstall py38-stfio
+sudo port clean --all py38-stfio
+sudo port uninstall py39-stfio
+sudo port clean --all py39-stfio
+sudo port uninstall py310-stfio
+sudo port clean --all py310-stfio
+sudo port uninstall py311-stfio
+sudo port clean --all py311-stfio
