@@ -228,9 +228,8 @@ bool wxStfApp::OnInit(void)
     }
     docManager->SetLastDirectory( lastDir );
 
-    wxFrame *frame = nullptr;
     //// Create the main frame window
-    frame = new wxStfParentFrame(docManager, nullptr,
+    wxStfParentFrame* frame = new wxStfParentFrame(docManager, nullptr,
                                  wxT("Stimfit"), wxDefaultPosition,
 #ifndef __WXMAC__
                                  wxSize(1024, 768),
@@ -318,7 +317,7 @@ bool wxStfApp::OnInit(void)
     
     // check for updates in background:
 #ifndef __WXMAC__
-    frame->CheckUpdate();
+    frame->CheckUpdate(NULL);
 #endif
     // load user-defined plugins:
     // pluginLib = stf::GetPluginLib();
