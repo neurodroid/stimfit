@@ -192,7 +192,7 @@ void stfnum::fexp_init(const Vector_double& data, double base, double peak, doub
         pInit[n_p] = amp_total / n_exp;
     }
     // offset:
-    pInit[pInit.size()-1] = data[data.size()-1];
+    pInit[pInit.size()-1] = base;
 
 }
 
