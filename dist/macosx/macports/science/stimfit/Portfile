@@ -1,5 +1,5 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
-
+# $Id$
 PortSystem          1.0
 PortGroup           wxWidgets 1.0
 
@@ -14,8 +14,8 @@ long_description    A program for viewing and analyzing electrophysiological dat
 homepage            http://www.stimfit.org
 master_sites        ${homepage}
 
-checksums           rmd160  ba8ea20c5a9b554a082b38b895c77a662ef8e51e \
-                    sha256  8914a8765c1be8eba0716e460a4c85d0f8335a4b6d2320e2ecbf705d166a5a1a
+checksums           rmd160  bab67cce67e60bc8251942c83f73f643fae15a5c \
+                    sha256  309cd3381caabb2d2fdc258520d376e11f8ab2ab047ba7851c3e6ab3ee78e20f
 
 wxWidgets.use       wxWidgets-3.2
 
@@ -26,15 +26,16 @@ depends_lib         port:fftw-3 \
 configure.args      --disable-dependency-tracking \
                     --disable-python \
                     --with-biosiglite \
-                    --with-wx-config=${wxWidgets.wxconfig} \
-                    --enable-debug
+                    --with-wx-config=${wxWidgets.wxconfig}
+
+default_variants    +python310
 
 set python_branches {3.9 3.10}
 
 foreach python_branch ${python_branches} {
     set python_version [join [lrange [split ${python_branch} .] 0 1] ""]
 
-    set variant_line {variant python${python_version} description "Enable Python ${python_version} shell"}
+    set variant_line {variant python${python_version} description "Enable Python ${python_branch} shell"}
 
     foreach over ${python_branches} {
         if {${python_branch} == ${over}} {
@@ -61,7 +62,6 @@ foreach python_branch ${python_branches} {
 
         depends_lib-append \
             port:python${python_version} \
-            port:py${python_version}-wxpython-4.0 \
             port:py${python_version}-numpy \
             port:py${python_version}-matplotlib \
             port:py${python_version}-cvxopt
@@ -86,8 +86,6 @@ variant atlas description {Use MacPorts ATLAS libraries.} {
     configure.args-append \
         --with-lapack-lib=${prefix}/lib/libatlas.a
 }
-
-default_variants    +python310
 
 configure.ldflags-append \
                     -headerpad_max_install_names

@@ -89,6 +89,7 @@ dist/macosx/macports/science/stimfit/work/*
 dist/macosx/macports/python/py-stfio/work
 dist/macosx/macports/python/py-stfio/work/*
 dist/macosx/macports/*.diff
+dist/macosx/macports/upload_stimfit
 
 # build files
 

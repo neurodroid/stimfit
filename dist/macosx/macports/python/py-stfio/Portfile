@@ -15,8 +15,8 @@ homepage            http://www.stimfit.org
 master_sites        ${homepage}
 distname            stimfit-${version}
 
-checksums           rmd160  ba8ea20c5a9b554a082b38b895c77a662ef8e51e \
-                    sha256  8914a8765c1be8eba0716e460a4c85d0f8335a4b6d2320e2ecbf705d166a5a1a
+checksums           rmd160  bab67cce67e60bc8251942c83f73f643fae15a5c \
+                    sha256  309cd3381caabb2d2fdc258520d376e11f8ab2ab047ba7851c3e6ab3ee78e20f
 
 python.versions     27 35 36 37
 

@@ -2,13 +2,20 @@
 
 STFVERSION="0.16.2"
 MPDIR=`pwd`
+GSED=`which gsed`
+if [ "${GSED}" = "" ]
+then
+    GSED=`which sed`
+fi
+
 
 if [ "$1" != "" ]; then
     cd ../../../ && ./autogen.sh
     cd build/release
-    ./conf_macports_release.sh
+    ./../../dist/macosx/scripts/conf_macports_release.sh
     make dist
-    scp stimfit-${STFVERSION}.tar.gz p8210991@ftp.schmidt-hieber.de:/kunden/homepages/32/d34288459/htdocs/StimfitJ/
+    ${GSED} 's/STFVERSION/'${STFVERSION}'/g' ${MPDIR}/upload_stimfit.in > ${MPDIR}/upload_stimfit
+    sftp -b ${MPDIR}/upload_stimfit p8210991@ftp.schmidt-hieber.de
     cd ${MPDIR}
 fi
 
@@ -17,12 +24,6 @@ SHA256=`openssl sha256 -r ../../../build/release/stimfit-${STFVERSION}.tar.gz | 
 
 echo "rmd160:" ${RMD160}
 echo "sha256:" ${SHA256}
-
-GSED=`which gsed`
-if [ "${GSED}" = "" ]
-then
-    GSED=`which sed`
-fi
 
 ${GSED} 's/RMD160/'${RMD160}'/g' ${MPDIR}/science/stimfit/Portfile.in > ${MPDIR}/science/stimfit/Portfile
 ${GSED} -i 's/SHA256/'${SHA256}'/g' ${MPDIR}/science/stimfit/Portfile
