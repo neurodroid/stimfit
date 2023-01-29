@@ -160,22 +160,15 @@ EXTERN_C void sopen_atf_read(HDRTYPE* hdr) {
 			hdr->AS.bpb    += GDFTYP_BITS[hc->GDFTYP]/8;
 
 			// split string into label and unit "label (unit)";
-			char *str = Label[K2+k];
-			if (str != NULL) {
-				char *unit = strchr(str+1, '('); *unit=0; unit++;
-				strncpy(hc->Label, str+1, MAX_LENGTH_LABEL+1); // do not copy quotes
+			char *label = strtok(Label[K2+k], "(\"");
+			char *unit  = strtok(NULL, ")\"");
 
-				// extract physical units enclosed in parenthesis "Label (units)"
-				if (unit != NULL) {
-					char *tmpstr = strchr(unit,')');
-					if (tmpstr != NULL) {
-						*tmpstr = 0;
-						hc->PhysDimCode = PhysDimCode(unit);
+			if (label != NULL) strncpy(hc->Label, label, MAX_LENGTH_LABEL+1);
+			if (unit != NULL) {
+				hc->PhysDimCode = PhysDimCode(unit);
 #ifdef MAX_LENGTH_PHYSDIM
-						strncpy(hc->PhysDim, unit, MAX_LENGTH_PHYSDIM+1);
+				strncpy(hc->PhysDim, unit, MAX_LENGTH_PHYSDIM+1);
 #endif
-					}
-				}
 			}
 		}
 		hdr->HeadLen = iftell(hdr);
