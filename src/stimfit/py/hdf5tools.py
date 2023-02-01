@@ -58,73 +58,72 @@ class SectionDescription(tables.IsDescription):
 
 def save_hdf5( rec, filename ):
 
-    h5file = tables.openFile(filename, mode = "w", title = "%s, converted to hdf5" % filename)
-    # write global file description
-    root_table = h5file.createTable(h5file.root, "description", RecordingDescription, "Description of %s" % filename)
-    root_row = root_table.row
-    
-    root_row['channels'] = len(rec)
-    root_row['date'] = rec.date
-    root_row['time'] = rec.time
-    root_row.append()
-    root_table.flush()
+    with tables.open_file(filename, mode = "w", title = "%s, converted to hdf5" % filename) as h5file:
+        # write global file description
+        root_table = h5file.create_table(h5file.root, "description", RecordingDescription, "Description of %s" % filename)
+        root_row = root_table.row
 
-    # write comment
-    comment_group = h5file.createGroup("/", "comment", "multiline file comment")
-    strarray = h5file.createArray(comment_group, "comment", [rec.comment,], "multiline file comment")
-    
-    # create group for channel names:
-    chroot_group = h5file.createGroup("/", "channels", "channel names")
+        root_row['channels'] = len(rec)
+        root_row['date'] = rec.date
+        root_row['time'] = rec.time
+        root_row.append()
+        root_table.flush()
 
-    # loop through channels:
-    for n_c in range(len(rec)):
-        channel_name = rec[n_c].name
-        if channel_name == "":
-            channel_name = "ch%d" % (n_c)
-            
-        channel_group = h5file.createGroup("/", channel_name, "channel%d" % (n_c))
+        # write comment
+        comment_group = h5file.create_group("/", "comment", "multiline file comment")
+        strarray = h5file.create_array(comment_group, "comment", [rec.comment,], "multiline file comment")
 
-        # write channel name to root group:
-        strarray = h5file.createArray(chroot_group, "ch%d" % n_c, [channel_name,], "channel name")
-        
-        channel_table = h5file.createTable(channel_group, "description", ChannelDescription, "Description of %s" % channel_name)
-        channel_row = channel_table.row
-        channel_row['n_sections'] = len(rec[n_c])
-        channel_row.append()
-        channel_table.flush()
-        
-        if len(rec[n_c])==1:
-            max_log10 = 0
-        else:
-            max_log10 = int(np.log10(len(rec[n_c])-1))
-        
-        for n_s in range(len(rec[n_c])):
-            # construct a number with leading zeros:
-            if n_s==0:
-                n10 = 0
+        # create group for channel names:
+        chroot_group = h5file.create_group("/", "channels", "channel names")
+
+        # loop through channels:
+        for n_c in range(len(rec)):
+            channel_name = rec[n_c].name
+            if channel_name == "":
+                channel_name = "ch%d" % (n_c)
+
+            channel_group = h5file.create_group("/", channel_name, "channel%d" % (n_c))
+
+            # write channel name to root group:
+            strarray = h5file.create_array(chroot_group, "ch%d" % n_c, [channel_name,], "channel name")
+
+            channel_table = h5file.create_table(channel_group, "description", ChannelDescription, "Description of %s" % channel_name)
+            channel_row = channel_table.row
+            channel_row['n_sections'] = len(rec[n_c])
+            channel_row.append()
+            channel_table.flush()
+
+            if len(rec[n_c])==1:
+                max_log10 = 0
             else:
-                n10 = int(np.log10(n_s))
-            strZero = ""
-            for n_z in range(n10,max_log10):
-                strZero += "0"
+                max_log10 = int(np.log10(len(rec[n_c])-1))
 
-            # construct a section name:
-            section_name = "sec%d" % (n_s)
+            for n_s in range(len(rec[n_c])):
+                # construct a number with leading zeros:
+                if n_s==0:
+                    n10 = 0
+                else:
+                    n10 = int(np.log10(n_s))
+                strZero = ""
+                for n_z in range(n10,max_log10):
+                    strZero += "0"
 
-            # create a child group in the channel:
-            section_group = h5file.createGroup(channel_group, "section_%s%d" % (strZero, n_s), section_name)
-            
-            # add data and description:
-            array = h5file.createArray(section_group, "data", np.array(rec[n_c][n_s].data, dtype=np.float32), "data in %s" % section_name)
-            desc_table = h5file.createTable(section_group, "description", SectionDescription, "description of %s" % section_name)
-            desc_row = desc_table.row
-            desc_row['dt'] = rec[n_c][n_s].dt
-            desc_row['xunits'] = rec[n_c][n_s].xunits
-            desc_row['yunits'] = rec[n_c][n_s].yunits
-            desc_row.append()
-            desc_table.flush()
+                # construct a section name:
+                section_name = "sec%d" % (n_s)
 
-    h5file.close()
+                # create a child group in the channel:
+                section_group = h5file.create_group(channel_group, "section_%s%d" % (strZero, n_s), section_name)
+
+                # add data and description:
+                array = h5file.create_array(section_group, "data", np.array(rec[n_c][n_s].data, dtype=np.float32), "data in %s" % section_name)
+                desc_table = h5file.create_table(section_group, "description", SectionDescription, "description of %s" % section_name)
+                desc_row = desc_table.row
+                desc_row['dt'] = rec[n_c][n_s].dt
+                desc_row['xunits'] = rec[n_c][n_s].xunits
+                desc_row['yunits'] = rec[n_c][n_s].yunits
+                desc_row.append()
+                desc_table.flush()
+
     return True
 
 def export_hdf5( filename="" ):
@@ -141,7 +140,7 @@ def export_hdf5( filename="" ):
     
     for n_c in range(stf.get_size_recording()):
         section_list = [ 
-            Section( stf.get_trace(n_s, n_c), stf.get_sampling_interval(), stf.get_xunits(n_s, n_c), stf.get_yunits(n_s, n_c) ) \
+            Section( stf.get_trace(n_s, n_c), stf.get_sampling_interval(), stf.get_xunits(), stf.get_yunits(n_s, n_c) ) \
                 for n_s in range(stf.get_size_channel(n_c)) 
             ]
         channel_list.append( Channel( section_list, stf.get_channel_name() ) )
@@ -154,7 +153,7 @@ def import_hdf5( filename ):
     """
     Imports a file in hdf5 format stored by stimfit using PyTables, returns a Recording object.
     """
-    h5file = tables.openFile( filename, mode='r' )
+    h5file = tables.open_file( filename, mode='r' )
 
     # read global file description
     root_node = h5file.getNode("/", "description")
