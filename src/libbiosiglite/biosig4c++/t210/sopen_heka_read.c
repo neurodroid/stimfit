@@ -24,6 +24,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #ifdef _WIN32
 // Can't include sys/stat.h or sopen is declared twice.
 #include <sys/types.h>
@@ -71,7 +72,7 @@ void rational (double x, double tol, long *n, long *d) {
                 return;
         }
 
-	if (!finite(x)) {
+	if (!isfinite(x)) {
 	        *n = x>0; 	// i.e. sign(x)
                 *d = 0;
                 return;
