@@ -550,6 +550,10 @@ extern StfDll wxStfApp& wxGetApp();
 DECLARE_APP(wxStfApp)
 #endif
 
+#ifndef _STFDEBUG
+    wxDISABLE_DEBUG_SUPPORT();
+#endif
+
 //! true if in single-window mode
 extern bool singleWindowMode;
 

@@ -106,9 +106,9 @@ wxDialog( parent, id, title, pos, size, style ), m_threshold(4.0), m_mode(stf::c
         wxRadioButton* wxRadioPernia = new wxRadioButton(this, wxDETECTIONPERNIA, m_radioBoxChoices[2],
             wxDefaultPosition, wxDefaultSize);
 
-        m_radioBox->Add(wxRadioClements, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-        m_radioBox->Add(wxRadioJonas,   0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-        m_radioBox->Add(wxRadioPernia,  0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+        m_radioBox->Add(wxRadioClements, 0, wxALIGN_LEFT | wxALL, 2);
+        m_radioBox->Add(wxRadioJonas,   0, wxALIGN_LEFT | wxALL, 2);
+        m_radioBox->Add(wxRadioPernia,  0, wxALIGN_LEFT | wxALL, 2);
         //m_radioBox->SetSelection(0);
 
         topSizer->Add( m_radioBox, 0, wxALIGN_CENTER | wxALL, 5 );

@@ -98,7 +98,7 @@ wxStfFitSelDlg::wxStfFitSelDlg(wxWindow* parent, wxStfDoc* doc, int id, wxString
     // add the options grid to the settings sizer:
     
     fitoptSizer->Add( optionsGrid, 0, wxEXPAND | wxALL, 2 );
-    settingsSizer->Add( fitoptSizer, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_BOTTOM, 2 );
+    settingsSizer->Add( fitoptSizer, 0, wxALIGN_CENTER_HORIZONTAL, 2 );
     //settingsSizer->Add( optionsGrid, 0, wxALIGN_CENTER_HORIZONTAL | wxALIGN_BOTTOM, 2 );
     // add the settings sizer to the main grid:
 

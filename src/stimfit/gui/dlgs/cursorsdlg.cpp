@@ -301,7 +301,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     usrdefGrid->Add(textMeanPoints, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
 
     peakPointsSizer->Add( pAllPoints, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2 );
-    peakPointsSizer->Add( usrdefGrid, 0, wxALIGN_LEFT | wxALIGN_BOTTOM | wxALL, 2 );
+    peakPointsSizer->Add( usrdefGrid, 0, wxALIGN_LEFT | wxALL, 2 );
     peakSettingsGrid->Add( peakPointsSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2 );
     LeftGrid->Add(peakSettingsGrid, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
 
@@ -347,7 +347,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     RigthGrid->Add( pDirection, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2 );
     CommonGrid->Add(RigthGrid, 0, wxALIGN_RIGHT | wxALIGN_TOP | wxALL, 2);
 
-    pageSizer->Add(CommonGrid, 0, wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    pageSizer->Add(CommonGrid, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2);
     
     //pageSizer->Add(peakSettingsGrid, 0, wxALIGN_CENTER | wxALL, 2);
     // END: Peak direction
@@ -484,10 +484,10 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
      
 
     // Sizer to group the radio options
-    LeftBoxSizer->Add( wxRadio_Lat_Manual1,    0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-    LeftBoxSizer->Add( wxRadio_Lat_Peak1,      0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-    LeftBoxSizer->Add( wxRadio_Lat_MaxSlope1,  0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-    LeftBoxSizer->Add( wxRadio_Lat_HalfWidth1, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    LeftBoxSizer->Add( wxRadio_Lat_Manual1,    0, wxALIGN_LEFT | wxALL, 2);
+    LeftBoxSizer->Add( wxRadio_Lat_Peak1,      0, wxALIGN_LEFT | wxALL, 2);
+    LeftBoxSizer->Add( wxRadio_Lat_MaxSlope1,  0, wxALIGN_LEFT | wxALL, 2);
+    LeftBoxSizer->Add( wxRadio_Lat_HalfWidth1, 0, wxALIGN_LEFT | wxALL, 2);
     // Add to LatBegEndGrid
     LatBegEndGrid->Add(LeftBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
 
@@ -518,11 +518,11 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
 
 
     // Sizer to group the radio options
-    RightBoxSizer->Add( wxRadio_Lat_Manual2,    0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-    RightBoxSizer->Add( wxRadio_Lat_Peak2,      0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-    RightBoxSizer->Add( wxRadio_Lat_MaxSlope2,  0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-    RightBoxSizer->Add( wxRadio_Lat_HalfWidth2, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-    RightBoxSizer->Add( wxRadio_Lat_Event2,     0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    RightBoxSizer->Add( wxRadio_Lat_Manual2,    0, wxALIGN_LEFT | wxALL, 2);
+    RightBoxSizer->Add( wxRadio_Lat_Peak2,      0, wxALIGN_LEFT | wxALL, 2);
+    RightBoxSizer->Add( wxRadio_Lat_MaxSlope2,  0, wxALIGN_LEFT | wxALL, 2);
+    RightBoxSizer->Add( wxRadio_Lat_HalfWidth2, 0, wxALIGN_LEFT | wxALL, 2);
+    RightBoxSizer->Add( wxRadio_Lat_Event2,     0, wxALIGN_LEFT | wxALL, 2);
 
     // Add to LatBegEndGrid
     LatBegEndGrid->Add(RightBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
