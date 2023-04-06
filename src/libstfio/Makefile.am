@@ -38,7 +38,6 @@ libstfio_la_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp ./stfio.cpp \
 	./axg/fileUtils.cpp \
 	./axg/stringUtils.cpp \
 	./axg/byteswap.cpp \
-	./biosig/biosiglib.cpp \
 	./igor/igorlib.cpp \
 	./igor/CrossPlatformFileIO.c \
 	./igor/WriteWave.c \
@@ -49,6 +48,14 @@ libstfio_la_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp ./stfio.cpp \
 if !WITH_BIOSIG
 libstfio_la_SOURCES += \
 	./heka/hekalib.cpp
+endif
+if WITH_BIOSIG
+libstfio_la_SOURCES += \
+	./biosig/biosiglib.cpp
+endif
+if WITH_BIOSIGLITE
+libstfio_la_SOURCES += \
+	./biosig/biosiglib.cpp
 endif
 
 libstfio_la_LDFLAGS =
