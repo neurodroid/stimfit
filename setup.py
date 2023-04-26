@@ -83,23 +83,23 @@ else:
     biosig_define_macros = [('WITH_BIOSIG2', None), ('WITH_BIOSIGLITE', None), ('WITHOUT_NETWORK', None)]
     biosig_libraries = ['iconv']
     biosig_lite_sources = [
-        'src/libbiosiglite/biosig4c++/t210/sopen_abf_read.c',
-        'src/libbiosiglite/biosig4c++/t210/sopen_alpha_read.c',
-        'src/libbiosiglite/biosig4c++/t210/sopen_axg_read.c',
-        'src/libbiosiglite/biosig4c++/t210/sopen_cfs_read.c',
-        'src/libbiosiglite/biosig4c++/t210/sopen_heka_read.c',
-        'src/libbiosiglite/biosig4c++/t210/sopen_igor.c',
-        'src/libbiosiglite/biosig4c++/t210/sopen_scp_read.c',
-        'src/libbiosiglite/biosig4c++/t210/scp-decode.cpp',
-        'src/libbiosiglite/biosig4c++/t220/crc4scp.c',
-        'src/libbiosiglite/biosig4c++/t220/sopen_scp_write.c',
-        'src/libbiosiglite/biosig4c++/test0/sandbox.c',
-        'src/libbiosiglite/biosig4c++/biosig.c',
-        'src/libbiosiglite/biosig4c++/biosig2.c',
-        'src/libbiosiglite/biosig4c++/biosig-network.c',
-        'src/libbiosiglite/biosig4c++/gdftime.c',
-        'src/libbiosiglite/biosig4c++/mdc_ecg_codes.c',
-        'src/libbiosiglite/biosig4c++/physicalunits.c'
+        'src/libbiosiglite/../biosig/biosig4c++/t210/sopen_abf_read.c',
+        'src/libbiosiglite/../biosig/biosig4c++/t210/sopen_alpha_read.c',
+        'src/libbiosiglite/../biosig/biosig4c++/t210/sopen_axg_read.c',
+        'src/libbiosiglite/../biosig/biosig4c++/t210/sopen_cfs_read.c',
+        'src/libbiosiglite/../biosig/biosig4c++/t210/sopen_heka_read.c',
+        'src/libbiosiglite/../biosig/biosig4c++/t210/sopen_igor.c',
+        'src/libbiosiglite/../biosig/biosig4c++/t210/sopen_scp_read.c',
+        'src/libbiosiglite/../biosig/biosig4c++/t210/scp-decode.cpp',
+        'src/libbiosiglite/../biosig/biosig4c++/t220/crc4scp.c',
+        'src/libbiosiglite/../biosig/biosig4c++/t220/sopen_scp_write.c',
+        'src/libbiosiglite/../biosig/biosig4c++/test0/sandbox.c',
+        'src/libbiosiglite/../biosig/biosig4c++/biosig.c',
+        'src/libbiosiglite/../biosig/biosig4c++/biosig2.c',
+        'src/libbiosiglite/../biosig/biosig4c++/biosig-network.c',
+        'src/libbiosiglite/../biosig/biosig4c++/gdftime.c',
+        'src/libbiosiglite/../biosig/biosig4c++/mdc_ecg_codes.c',
+        'src/libbiosiglite/../biosig/biosig4c++/physicalunits.c'
     ]
 
 fftw3_libraries = ['fftw3']
