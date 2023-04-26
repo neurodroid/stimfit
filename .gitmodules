@@ -1,0 +1,3 @@
+[submodule "src/biosig"]
+	path = src/biosig
+	url = https://git.code.sf.net/p/biosig/code
