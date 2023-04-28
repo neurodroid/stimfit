@@ -97,7 +97,7 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     }
     enum FileFormat biosig_filetype=biosig_get_filetype(hdr);
     if ( (biosig_filetype==ATF  && get_biosig_version() < 0x030001) \
-      || (biosig_filetype==ABF2 && get_biosig_version() < 0x030001) \
+      || (biosig_filetype==ABF2 && get_biosig_version() < 0xf30001) \
       ||  biosig_filetype==HDF ) {
         // ATF, ABF2 HDF5 support should be handled by importATF, and importABF, and importHDF5 not importBiosig
         // with libbiosig v3.0.1 (release 2.3.1) and later, ATF and ABF2 should be handled by Biosig
