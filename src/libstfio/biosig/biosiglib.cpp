@@ -19,7 +19,7 @@
 #include "../stfio.h"
 
     #if defined(WITH_BIOSIGLITE)
-        #include "../../libbiosiglite/biosig4c++/biosig2.h"
+        #include "../../biosig/biosig4c++/biosig2.h"
     #else
         #include <biosig.h>
     #endif

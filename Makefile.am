@@ -11,23 +11,23 @@ stimfittest_SOURCES = ./src/test/section.cpp ./src/test/channel.cpp ./src/test/r
             ./src/test/gtest/src/gtest-all.cc ./src/test/gtest/src/gtest_main.cc
 
 noinst_HEADERS = \
-        ./src/libbiosiglite/biosig4c++/igor/IgorBin.h \
-        ./src/libbiosiglite/biosig4c++/t210/abfheadr.h \
-        ./src/libbiosiglite/biosig4c++/t210/axon_structs.h \
-        ./src/libbiosiglite/biosig4c++/t210/codes.h \
-        ./src/libbiosiglite/biosig4c++/t210/structures.h \
-        ./src/libbiosiglite/biosig4c++/biosig.h \
-        ./src/libbiosiglite/biosig4c++/biosig2.h \
-        ./src/libbiosiglite/biosig4c++/biosig-dev.h \
-        ./src/libbiosiglite/biosig4c++/biosig-network.h \
-        ./src/libbiosiglite/biosig4c++/config.h \
-        ./src/libbiosiglite/biosig4c++/gdftime.h \
-        ./src/libbiosiglite/biosig4c++/mdc_ecg_codes.h \
-        ./src/libbiosiglite/biosig4c++/physicalunits.h \
-	./src/libbiosiglite/biosig4c++/11073-10102-AnnexB.i \
-	./src/libbiosiglite/biosig4c++/eventcodes.i \
-	./src/libbiosiglite/biosig4c++/eventcodegroups.i \
-	./src/libbiosiglite/biosig4c++/units.i \
+        ./src/biosig/biosig4c++/igor/IgorBin.h \
+        ./src/biosig/biosig4c++/t210/abfheadr.h \
+        ./src/biosig/biosig4c++/t210/axon_structs.h \
+        ./src/biosig/biosig4c++/t210/codes.h \
+        ./src/biosig/biosig4c++/t210/structures.h \
+        ./src/biosig/biosig4c++/biosig.h \
+        ./src/biosig/biosig4c++/biosig2.h \
+        ./src/biosig/biosig4c++/biosig-dev.h \
+        ./src/biosig/biosig4c++/biosig-network.h \
+        ./src/biosig/config.h \
+        ./src/biosig/biosig4c++/gdftime.h \
+        ./src/biosig/biosig4c++/mdc_ecg_codes.h \
+        ./src/biosig/biosig4c++/physicalunits.h \
+	./src/biosig/biosig4c++/11073-10102-AnnexB.i \
+	./src/biosig/biosig4c++/eventcodes.i \
+	./src/biosig/biosig4c++/eventcodegroups.i \
+	./src/biosig/biosig4c++/units.i \
         ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfio/recording.h ./src/libstfio/stfio.h \
 	./src/libstfio/cfs/cfslib.h ./src/libstfio/cfs/cfs.h ./src/libstfio/cfs/machine.h \
 	./src/libstfio/hdf5/hdf5lib.h \
