@@ -11,18 +11,6 @@ stimfittest_SOURCES = ./src/test/section.cpp ./src/test/channel.cpp ./src/test/r
             ./src/test/gtest/src/gtest-all.cc ./src/test/gtest/src/gtest_main.cc
 
 noinst_HEADERS = \
-        ./src/biosig/biosig4c++/igor/IgorBin.h \
-        ./src/biosig/biosig4c++/t210/abfheadr.h \
-        ./src/biosig/biosig4c++/t210/axon_structs.h \
-        ./src/biosig/biosig4c++/t210/codes.h \
-        ./src/biosig/biosig4c++/t210/structures.h \
-        ./src/biosig/biosig4c++/biosig.h \
-        ./src/biosig/biosig4c++/biosig2.h \
-        ./src/biosig/biosig4c++/biosig-dev.h \
-        ./src/biosig/biosig4c++/biosig-network.h \
-        ./src/biosig/biosig4c++/gdftime.h \
-        ./src/biosig/biosig4c++/mdc_ecg_codes.h \
-        ./src/biosig/biosig4c++/physicalunits.h \
 	./src/libbiosiglite/11073-10102-AnnexB.i \
 	./src/libbiosiglite/eventcodes.i \
 	./src/libbiosiglite/eventcodegroups.i \
@@ -116,6 +104,20 @@ noinst_HEADERS = \
 
 if WITH_BIOSIG
     noinst_HEADERS += ./src/libstfio/biosig/biosiglib.h
+else
+noinst_HEADERS += \
+        ./src/biosig/biosig4c++/igor/IgorBin.h \
+        ./src/biosig/biosig4c++/t210/abfheadr.h \
+        ./src/biosig/biosig4c++/t210/axon_structs.h \
+        ./src/biosig/biosig4c++/t210/codes.h \
+        ./src/biosig/biosig4c++/t210/structures.h \
+        ./src/biosig/biosig4c++/biosig.h \
+        ./src/biosig/biosig4c++/biosig2.h \
+        ./src/biosig/biosig4c++/biosig-dev.h \
+        ./src/biosig/biosig4c++/biosig-network.h \
+        ./src/biosig/biosig4c++/gdftime.h \
+        ./src/biosig/biosig4c++/mdc_ecg_codes.h \
+        ./src/biosig/biosig4c++/physicalunits.h
 endif # WITH_BIOSIG
 
 EXTRA_DIST = ./src/stimfit/res/16-em-down.xpm
