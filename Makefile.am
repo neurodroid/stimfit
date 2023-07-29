@@ -11,10 +11,6 @@ stimfittest_SOURCES = ./src/test/section.cpp ./src/test/channel.cpp ./src/test/r
             ./src/test/gtest/src/gtest-all.cc ./src/test/gtest/src/gtest_main.cc
 
 noinst_HEADERS = \
-	./src/libbiosiglite/11073-10102-AnnexB.i \
-	./src/libbiosiglite/eventcodes.i \
-	./src/libbiosiglite/eventcodegroups.i \
-	./src/libbiosiglite/units.i \
         ./src/libstfio/channel.h ./src/libstfio/section.h ./src/libstfio/recording.h ./src/libstfio/stfio.h \
 	./src/libstfio/cfs/cfslib.h ./src/libstfio/cfs/cfs.h ./src/libstfio/cfs/machine.h \
 	./src/libstfio/hdf5/hdf5lib.h \
@@ -54,7 +50,7 @@ noinst_HEADERS = \
 	./src/libstfio/axg/stringUtils.h \
 	./src/libstfio/axg/byteswap.h \
 	./src/libstfio/axg/longdef.h \
-        ./src/libstfio/biosig/biosiglib.h \
+	./src/libstfio/biosig/biosiglib.h \
 	./src/libstfio/igor/igorlib.h \
 	./src/libstfio/igor/CrossPlatformFileIO.h \
 	./src/libstfio/igor/IgorBin.h \
@@ -102,10 +98,12 @@ noinst_HEADERS = \
 	./src/test/gtest/include/gtest/internal/gtest-type-util.h \
 	./src/test/gtest/src/gtest-internal-inl.h
 
-if WITH_BIOSIG
-    noinst_HEADERS += ./src/libstfio/biosig/biosiglib.h
-else
+if !WITH_BIOSIG
 noinst_HEADERS += \
+        ./src/libbiosiglite/11073-10102-AnnexB.i \
+        ./src/libbiosiglite/eventcodes.i \
+        ./src/libbiosiglite/eventcodegroups.i \
+        ./src/libbiosiglite/units.i \
         ./src/biosig/biosig4c++/igor/IgorBin.h \
         ./src/biosig/biosig4c++/t210/abfheadr.h \
         ./src/biosig/biosig4c++/t210/axon_structs.h \
