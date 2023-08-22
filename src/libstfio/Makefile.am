@@ -52,10 +52,11 @@ endif
 if WITH_BIOSIG
 libstfio_la_SOURCES += \
 	./biosig/biosiglib.cpp
-endif
+else
 if WITH_BIOSIGLITE
 libstfio_la_SOURCES += \
 	./biosig/biosiglib.cpp
+endif
 endif
 
 libstfio_la_LDFLAGS =
