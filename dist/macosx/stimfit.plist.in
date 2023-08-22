@@ -26,13 +26,13 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.16.2</string>
+	<string>0.16.3</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.16.2</string>
+	<string>0.16.3</string>
 	<key>CFBundleGetInfoString</key>
-	<string>stimfit version 0.16.2, (c) 2003-2011 C. Schmidt-Hieber</string>
+	<string>stimfit version 0.16.3, (c) 2003-2011 C. Schmidt-Hieber</string>
 	<key>CFBundleLongVersionString</key>
-	<string>0.16.2, (c) 2003-2011 C. Schmidt-Hieber</string>
+	<string>0.16.3, (c) 2003-2011 C. Schmidt-Hieber</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright 2003-2011 C. Schmidt-Hieber</string>
 	<key>LSRequiresCarbon</key>

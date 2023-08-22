@@ -1,6 +1,6 @@
 #! /bin/bash
 
-STFVERSION="0.16.2"
+STFVERSION="0.16.3"
 MPDIR=`pwd`
 GSED=`which gsed`
 if [ "${GSED}" = "" ]
