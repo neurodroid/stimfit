@@ -1,6 +1,6 @@
 #! /bin/bash
 
-VERSION=0.16.3rc1
+VERSION=@PACKAGE_VERSION@
 
 make dist
 mkdir -p ../deb/
@@ -10,6 +10,6 @@ cp -v stimfit-${VERSION}.tar.gz ../deb/stimfit_${VERSION}.orig.tar.gz
 cd ../deb/
 tar -xzf stimfit_${VERSION}.orig.tar.gz
 cd stimfit-${VERSION}
-mkdir -p debian
-cp -rv ../../../debian/* ./debian
-fakeroot debian/rules binary
+cp -rv ../../../dist/debian ./
+debuild -S -sa
+sudo pbuilder build --basetgz /var/cache/pbuilder/base.tgz ../*.dsc

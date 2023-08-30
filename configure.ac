@@ -390,6 +390,7 @@ AC_CONFIG_HEADERS([stfconf.h])
 
 AC_CONFIG_FILES([Makefile src/Makefile src/libstfio/Makefile src/libstfnum/Makefile src/libbiosiglite/Makefile src/pystfio/Makefile src/stimfit/Makefile src/stimfit/py/Makefile 
 dist/macosx/stimfit.plist dist/macosx/macports/insert_checksums.sh dist/macosx/scripts/mkimage.sh dist/macosx/package.pmdoc/index.xml
+dist/debian/mkdeb.sh dist/debian/mkquick.sh
 ])
 
 AC_OUTPUT
