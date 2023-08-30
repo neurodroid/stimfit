@@ -44,6 +44,7 @@ doc/stfbook.ps
 doc/html/*
 doc/latex/*
 doc/doxygen/*
+doc/DoxygenLayout.xml
 doc/sphinx/.build/*
 doc/sphinx/.build/doctrees/*
 doc/sphinx/.build/latex/*
@@ -90,6 +91,15 @@ dist/macosx/macports/python/py-stfio/work
 dist/macosx/macports/python/py-stfio/work/*
 dist/macosx/macports/*.diff
 dist/macosx/macports/upload_stimfit
+dist/macosx/macports/insert_checksums.sh
+dist/macosx/package.pmdoc/index.xml
+dist/macosx/scripts/mkimage.sh
+
+# Debian
+
+dist/debian/mkdeb.sh
+dist/debian/mkquick.sh
+
 
 # build files
 
@@ -110,6 +120,9 @@ stf.py
 stfioswig_wrap.c*
 pystfio_wrap.c*
 stfio.py
+setup.py
+dist/conda/py-stfio-debug/meta.yaml
+dist/conda/py-stfio/meta.yaml
 
 .libs/
 .deps/
