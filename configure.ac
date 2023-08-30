@@ -1,4 +1,4 @@
-AC_INIT([stimfit],[0.16.3])
+AC_INIT([stimfit],[0.16.3rc1])
 AC_CONFIG_SRCDIR(src/stimfit/gui/main.cpp)
 AM_INIT_AUTOMAKE([1.11])
 AM_SILENT_RULES([yes])
@@ -388,6 +388,8 @@ CXXFLAGS="${CXXFLAGS} -Wall"
 
 AC_CONFIG_HEADERS([stfconf.h])
 
-AC_CONFIG_FILES([Makefile src/Makefile src/libstfio/Makefile src/libstfnum/Makefile src/libbiosiglite/Makefile src/pystfio/Makefile src/stimfit/Makefile src/stimfit/py/Makefile dist/macosx/stimfit.plist])
+AC_CONFIG_FILES([Makefile src/Makefile src/libstfio/Makefile src/libstfnum/Makefile src/libbiosiglite/Makefile src/pystfio/Makefile src/stimfit/Makefile src/stimfit/py/Makefile 
+dist/macosx/stimfit.plist dist/macosx/macports/insert_checksums.sh dist/macosx/scripts/mkimage.sh dist/macosx/package.pmdoc/index.xml
+])
 
 AC_OUTPUT

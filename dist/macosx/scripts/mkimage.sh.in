@@ -1,0 +1,3 @@
+#! /bin/bash
+
+hdiutil create stimfit-@PACKAGE_VERSION@.dmg -srcfolder ./stimfit.app -ov -format UDBZ
