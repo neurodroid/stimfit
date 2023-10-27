@@ -63,8 +63,7 @@ foreach python_branch ${python_branches} {
         depends_lib-append \
             port:python${python_version} \
             port:py${python_version}-numpy \
-            port:py${python_version}-matplotlib \
-            port:py${python_version}-cvxopt
+            port:py${python_version}-matplotlib
 
         configure.python \
             ${prefix}/bin/python${python_branch}
