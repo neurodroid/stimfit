@@ -28,9 +28,9 @@ configure.args      --disable-dependency-tracking \
                     --with-biosiglite \
                     --with-wx-config=${wxWidgets.wxconfig}
 
-default_variants    +python310
+default_variants    +python311
 
-set python_branches {3.9 3.10}
+set python_branches {3.9 3.10 3.11}
 
 foreach python_branch ${python_branches} {
     set python_version [join [lrange [split ${python_branch} .] 0 1] ""]

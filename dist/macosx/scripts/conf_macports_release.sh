@@ -3,7 +3,7 @@
 prefix="/opt/local"
 # WX_CONF="${prefix}/Library/Frameworks/wxWidgets.framework/Versions/wxWidgets/3.1/bin/wx-config"
 # WX_CONF="/Users/cs/wxPython-4.0.7.post2/build/wxbld/wx-config"
-PYVER="3.10"
+PYVER="3.11"
 WX_CONF="${prefix}/Library/Frameworks/Python.framework/Versions/${PYVER}/bin/wx-config"
 MYCC=`${WX_CONF} --cc`
 MYCFLAGS=`${WX_CONF} --cflags`
