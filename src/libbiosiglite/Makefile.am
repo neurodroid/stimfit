@@ -43,9 +43,11 @@ libbiosiglite_la_SOURCES = \
 
   # ../biosig/biosig4c++/biosig-network.c
 
-libbiosiglite_la_CPPFLAGS = -DWITH_BIOSIG -DWITH_ZLIB -DWITH_CHOLMOD -DWITHOUT_NETWORK
+# libbiosiglite_la_CPPFLAGS = -DWITH_BIOSIG -DWITH_ZLIB -DWITH_CHOLMOD -DWITHOUT_NETWORK
+libbiosiglite_la_CPPFLAGS = -DWITH_BIOSIG -DWITH_ZLIB -DWITHOUT_NETWORK
 libbiosiglite_la_LDFLAGS = 
-libbiosiglite_la_LIBADD = $(LIBSTF_LDFLAGS) -lz -lcholmod
+# libbiosiglite_la_LIBADD = $(LIBSTF_LDFLAGS) -lz -lcholmod
+libbiosiglite_la_LIBADD = $(LIBSTF_LDFLAGS) -lz
 
 
 if ISDARWIN

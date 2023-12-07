@@ -162,7 +162,8 @@ AM_CONDITIONAL(WITH_BIOSIG, test "x$with_biosig" = "xyes")
 
 if test "x$with_biosiglite" = xyes ; then
     CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG -DWITH_BIOSIGLITE"
-    LIBBIOSIG_LDFLAGS="-lcholmod"
+    LIBBIOSIG_LDFLAGS=""
+    # LIBBIOSIG_LDFLAGS="-lcholmod"
 elif test "x$with_biosig" != xno ; then
     CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG"
     LIBBIOSIG_LDFLAGS="-lbiosig"
