@@ -11,7 +11,33 @@ This document describes how to install `Stimfit <http://www.stimfit.org>`_ |vers
 What we need before we start
 ============================
 
-For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build dependencies:
+For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build dependencies :
+for Debian12/bookworm (and probably Ubuntu 22.xx and later)
+
+::
+
+    $ sudo apt-get install \
+                           python3-dev \
+                           python3-numpy \
+                           python3-matplotlib \
+                           libhdf5-dev \
+                           swig \
+                           python3-sip-dev \
+                           python3-wxgtk4.0 \
+                           libwxgtk3.2-dev \
+                           wx-common \
+                           libfftw3-dev \
+                           libbiosig-dev \
+                           liblapack-dev \
+                           chrpath \
+                           git \
+                           automake \
+                           autoconf \
+                           libtool \
+                           libgtest-dev
+
+
+for Debian11/bullseye (and probably Ubuntu 20.x) it was
 
 ::
 
@@ -183,14 +209,14 @@ Additionally, the source code is documented with [Doxygen]_ and is also accessib
 
 ::
 
-    sudo apt-get install doxygen gravphvix
+    sudo apt-get install doxygen graphviz
 
 Enter a directory called **doc** inside Stimfit (e.g $HOME/stimfit/doc) and type:
 
 ::
 
     cd $HOME/stimfit/doc
-    doxygen DoxyFile
+    doxygen Doxyfile
 
 The local documentation of the source code will be in $HOME/stimfit/doc/doxygen/html
 
