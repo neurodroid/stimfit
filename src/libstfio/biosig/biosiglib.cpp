@@ -121,13 +121,15 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     int numberOfChannels = biosig_get_number_of_channels(hdr);
     double fs = biosig_get_eventtable_samplerate(hdr);
     size_t numberOfEvents = biosig_get_number_of_events(hdr);
-    size_t nsections = biosig_get_number_of_segments(hdr);
+    size_t nsections = numberOfEvents + 1; 	// worst case, resize when actual number becomes known
     ReturnData.InitSectionMarkerList(nsections);
     std::vector<size_t> SegIndexList(nsections+1);
     SegIndexList[0] = 0;
     SegIndexList[nsections] = biosig_get_number_of_samples(hdr);
     std::string annotationTableDesc = std::string();
-    for (size_t k=0, n=0; k < numberOfEvents; k++) {
+    size_t SPR = biosig_get_number_of_samples(hdr);
+    size_t n = 0;
+    for (size_t k=0; k < numberOfEvents; k++) {
         uint32_t pos;
         uint16_t typ;
         uint32_t dur;
@@ -138,8 +140,11 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         */
 
         biosig_get_nth_event(hdr, k, &typ, &pos, &chn, &dur, NULL, &desc);
-        if (typ == 0x7ffe) {
-            SegIndexList[++n] = pos;
+        if ( (pos <= 1) || (pos > SPR) )
+	    continue; // ignore event, because outside of valid range
+        else if (typ == 0x7ffe) {
+            if (pos != SegIndexList[n])
+                SegIndexList[++n] = pos;
         }
         else if (typ < 256) {
             sprintf(str,"%f s:\t%s\n", pos/fs, desc);
@@ -151,6 +156,9 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
             // ReturnData.SetEventDescription( currentSectionNumber-1, desc);
         }
     }
+    nsections = n + 1;
+    SegIndexList[nsections] = SPR;
+    SegIndexList.resize(nsections+1);
 
     /*************************************************************************
         rescale data to mV and pA
@@ -173,7 +181,6 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         read bulk data
      *************************************************************************/
     biosig_data_type *data = biosig_get_data(hdr, 0);
-    size_t SPR = biosig_get_number_of_samples(hdr);
 
 #ifdef _STFDEBUG
     std::cout << "Number of events: " << numberOfEvents << std::endl;
@@ -187,11 +194,6 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         TempChannel.SetYUnits(biosig_channel_get_physdim(hc));
 
         for (size_t ns=1; ns<=nsections; ns++) {
-            if (SegIndexList[ns]-SegIndexList[ns-1] < 0) {
-                ReturnData.resize(0);
-                destructHDR(hdr);
-                return type;
-            }
             size_t SPS = SegIndexList[ns]-SegIndexList[ns-1];	// length of segment, samples per segment
 
             int progbar = int(100.0 * (1.0 * ns / nsections + NS) / numberOfChannels);
