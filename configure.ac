@@ -393,7 +393,7 @@ AC_CONFIG_FILES([Makefile src/Makefile src/libstfio/Makefile src/libstfnum/Makef
 dist/macosx/stimfit.plist dist/macosx/macports/insert_checksums.sh dist/macosx/scripts/mkimage.sh dist/macosx/package.pmdoc/index.xml
 dist/debian/mkdeb.sh dist/debian/mkquick.sh
 setup.py dist/conda/py-stfio-debug/meta.yaml dist/conda/py-stfio/meta.yaml 
-Doxyfile doc/sphinx/conf.py
+doc/Doxyfile doc/sphinx/conf.py
 ])
 
 AC_OUTPUT
