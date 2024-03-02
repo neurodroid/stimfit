@@ -152,13 +152,12 @@ fi
 AC_ARG_WITH([biosig],
 	[AS_HELP_STRING([--without-biosig], [disable support for biosig])],
 	[],
-	[with_biosig=yes] )
+	AC_CHECK_LIB([biosig], [sread], [with_biosig="yes"], [with_biosig="no"]) )
+
 AM_CONDITIONAL(WITH_BIOSIG, test "x$with_biosig" = "xyes")
-AM_CONDITIONAL(WITH_BIOSIG2, test "x$with_biosig" = "xyes")
 
 AC_ARG_WITH([biosiglite], AS_HELP_STRING([--with-biosiglite], [use builtin biosig library]), [])
 AM_CONDITIONAL(WITH_BIOSIGLITE, test "x$with_biosiglite" = "xyes")
-AM_CONDITIONAL(WITH_BIOSIG, test "x$with_biosig" = "xyes")
 
 if test "x$with_biosiglite" = xyes ; then
     CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG -DWITH_BIOSIGLITE"
@@ -181,16 +180,6 @@ AS_HELP_STRING([--with-lapack-lib=LAPACKLIB],[Provide full path to custom lapack
         CPPFLAGS="${CPPFLAGS} -DHAVE_LAPACK"
     fi
 ])
-
-# Checks for libraries.
-AC_CHECK_LIB([biosig], [sread], [with_biosig="yes"])
-AM_CONDITIONAL(WITH_BIOSIG, test "x$with_biosig" == "xyes")
-if test "x$with_biosiglite" != "xyes" ; then
-if test "x$with_biosig" == "xyes" ; then
-    CPPFLAGS="${CPPFLAGS} -DWITH_BIOSIG"
-    LIBBIOSIG_LDFLAGS="-lbiosig"
-fi
-fi
 
 AC_CHECK_LIB([fftw3], [fftw_malloc], HAVE_FFTW3="yes")
 if test "${HAVE_FFTW3}" != "yes" ; then

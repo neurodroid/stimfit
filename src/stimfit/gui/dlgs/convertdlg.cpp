@@ -134,7 +134,7 @@ wxStfConvertDlg::wxStfConvertDlg(wxWindow* parent, int id, wxString title, wxPoi
     wxArrayString mydestextensions; //ordered by importance 
     mydestextensions.Add(wxT("Igor binary   [*.ibw ]"));
     mydestextensions.Add(wxT("Axon textfile [*.atf ]"));
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+#if defined(WITH_BIOSIG)
     mydestextensions.Add(wxT("GDF (Biosig) [*.gdf ]"));
 #endif
 
@@ -195,7 +195,7 @@ void wxStfConvertDlg::OnComboBoxDestExt(wxCommandEvent& event){
         case 1:
             destFilterExt = stfio::atf;
             break;
-#if (defined(WITH_BIOSIG) || defined(WITH_BIOSIG2))
+#if defined(WITH_BIOSIG)
         case 2:
             destFilterExt = stfio::biosig;
             break;
