@@ -9,7 +9,7 @@ pkglibdir = ${PYTHON_TARGET_DIR}/stfio
 
 pkglib_LTLIBRARIES = libpystfio.la
 
-TESTS_ENVIRONMENT = cp ./test.h5 ./ && \
+TESTS_ENVIRONMENT = \
   cp .libs/libpystfio.so ./_stfio.so && \
   $(PYTHON)
 TESTS = ./unittest_stfio.py
@@ -32,7 +32,7 @@ noinst_HEADERS = $(top_srcdir)/src/pystfio/pystfio.h
 
 INCLUDES = $(LIBNUMPY_INCLUDES) $(PYTHON_ADDINCLUDES)
 
-EXTRA_DIST = ./pystfio.i ./unittest_stfio.py ./test.h5
+EXTRA_DIST = ./pystfio.i ./unittest_stfio.py
 
 libpystfio_la_CPPFLAGS = $(SWIG_PYTHON_CPPFLAGS) -I$(top_srcdir)/src
 libpystfio_la_CXXFLAGS = $(OPT_CXXFLAGS)
@@ -65,5 +65,4 @@ uninstall-hook:
 
 clean-local:
 	rm -f $(top_srcdir)/src/pystfio/pystfio_wrap.cxx $(top_srcdir)/src/pystfio/stfio.py
-	rm -f test.h5
 	rm -f _stfio.so

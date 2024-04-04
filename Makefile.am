@@ -98,26 +98,6 @@ noinst_HEADERS = \
 	./src/test/gtest/include/gtest/internal/gtest-type-util.h \
 	./src/test/gtest/src/gtest-internal-inl.h
 
-if !WITH_BIOSIG
-noinst_HEADERS += \
-        ./src/libbiosiglite/11073-10102-AnnexB.i \
-        ./src/libbiosiglite/eventcodes.i \
-        ./src/libbiosiglite/eventcodegroups.i \
-        ./src/libbiosiglite/units.i \
-        ./src/biosig/biosig4c++/igor/IgorBin.h \
-        ./src/biosig/biosig4c++/t210/abfheadr.h \
-        ./src/biosig/biosig4c++/t210/axon_structs.h \
-        ./src/biosig/biosig4c++/t210/codes.h \
-        ./src/biosig/biosig4c++/t210/structures.h \
-        ./src/biosig/biosig4c++/biosig.h \
-        ./src/biosig/biosig4c++/biosig2.h \
-        ./src/biosig/biosig4c++/biosig-dev.h \
-        ./src/biosig/biosig4c++/biosig-network.h \
-        ./src/biosig/biosig4c++/gdftime.h \
-        ./src/biosig/biosig4c++/mdc_ecg_codes.h \
-        ./src/biosig/biosig4c++/physicalunits.h
-endif # WITH_BIOSIG
-
 EXTRA_DIST = ./src/stimfit/res/16-em-down.xpm
 EXTRA_DIST+= ./src/stimfit/res/16-em-open.xpm
 EXTRA_DIST+= ./src/stimfit/res/accept.xpm
@@ -172,9 +152,9 @@ EXTRA_DIST+= ./src/pystfio/pystfio.i
 EXTRA_DIST+= ./src/pystfio/stfio_plot.py 
 EXTRA_DIST+= ./src/pystfio/stfio_neo.py
 EXTRA_DIST+= ./src/pystfio/unittest_stfio.py
-EXTRA_DIST+= ./src/pystfio/test.h5
+# EXTRA_DIST+= ./src/pystfio/test.h5
 EXTRA_DIST+= ./src/pystfio/pystfio.h 
-# EXTRA_DIST+= ./dist/debian/changelog
+EXTRA_DIST+= ./dist/debian/changelog
 EXTRA_DIST+= ./dist/debian/compat
 EXTRA_DIST+= ./dist/debian/control
 EXTRA_DIST+= ./dist/debian/copyright
@@ -236,7 +216,9 @@ install-exec-hook:
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstimfit.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstfio.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstfnum.so
+if WITH_BIOSIGLITE
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libbiosiglite.so
+endif
 	install -d $(prefix)/share/pixmaps
 	install -d $(prefix)/share/applications
 	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm

@@ -47,14 +47,14 @@ clean:
 
 install: build
 	dh_autoreconf
-	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) ./configure --enable-python --enable-debian --with-biosiglite --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
+	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) ./configure --enable-python --enable-debian --with-biosig --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
 	$(MAKE)
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) check
 endif
 	$(MAKE) install
 
-	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) ./configure --enable-module --enable-debian --with-biosiglite --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
+	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) ./configure --enable-module --enable-debian --with-biosig --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
 	$(MAKE)
 	$(MAKE) install
 
@@ -104,7 +104,8 @@ binary-arch: build install
 	[ -x /usr/bin/dh_python3 ] && dh_python3 -V$(PYVER) --no-ext-rename || :
 	[ -x /usr/bin/dh_numpy ] && dh_numpy || :
 	dh_makeshlibs
-	dh_shlibdeps
+	# https://stackoverflow.com/questions/11238134/dpkg-shlibdeps-error-no-dependency-information-found-for
+	dh_shlibdeps  --dpkg-shlibdeps-params=--ignore-missing-info
 	dh_installdeb
 	dh_gencontrol
 	dh_md5sums
