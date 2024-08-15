@@ -1,3 +1,11 @@
+stimfit (0.16.4-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * use external libbiosig instead of internal
+    (configure --with-biosig instead of --with-biosiglite)
+
+ -- Alois Schloegl <alois.schloegl@gmail.com>  Thu, 15 Aug 2024 12:56:35 +1300
+
 stimfit (0.16.4-1) unstable; urgency=medium
 
   * Non-maintainer upload.
