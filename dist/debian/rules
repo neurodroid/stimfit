@@ -42,11 +42,9 @@ clean:
 	find -name '*.la' | xargs -r rm -f
 	find -name '*.so' | xargs -r rm -f
 	rm -f $(CURDIR)/test.h5
-	dh_autoreconf_clean
 	dh_clean
 
 install: build
-	dh_autoreconf
 	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) ./configure --enable-python --enable-debian --with-biosig --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
 	$(MAKE)
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))

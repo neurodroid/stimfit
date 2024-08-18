@@ -7,10 +7,6 @@ Files: *
 Copyright: 2011, Christoph Schmidt-Hieber <christsc@gmx.de>
 License: GPL-2+
 
-Files: src/libbiosiglite/*
-Copyright: 2005-2016, Alois Schloegl <alois.schloegl@ist.ac.at>
-License: GPL-3
-
 Files: src/libstfio/abf/axon/*
 Copyright: 1993-2000, Axon Instruments <info@moldev.com>
 License: axon1
