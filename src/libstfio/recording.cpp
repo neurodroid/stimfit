@@ -107,9 +107,9 @@ int Recording::SetDate(const std::string& value) {
 #if HAVE_STRPTIME_H
     strptime(value.c_str(), "%F", &t);
 #else
-    if ( sscanf(value.c_str(),"%i-%i-%i", &t.tm_year, &t.tm_mon, &t.tm_mday)
-      || sscanf(value.c_str(),"%i.%i.%i", &t.tm_mday, &t.tm_mon, &t.tm_year)
-      || sscanf(value.c_str(),"%i/%i/%i", &t.tm_mon, &t.tm_mday, &t.tm_year)
+    if ( sscanf(value.c_str(),"%i-%i-%i", &t.tm_year, &t.tm_mon, &t.tm_mday)==3
+      || sscanf(value.c_str(),"%i.%i.%i", &t.tm_mday, &t.tm_mon, &t.tm_year)==3
+      || sscanf(value.c_str(),"%i/%i/%i", &t.tm_mon, &t.tm_mday, &t.tm_year)==3
     ) {
 	t.tm_mon--;
 	if (t.tm_year < 50) t.tm_year += 100;
@@ -131,9 +131,9 @@ int Recording::SetTime(const std::string& value) {
 #if HAVE_STRPTIME_H
     strptime(value.c_str(), "%T", &t);
 #else
-    if ( sscanf(value.c_str(),"%i-%i-%i", &t.tm_hour, &t.tm_min, &t.tm_sec)
-      || sscanf(value.c_str(),"%i.%i.%i", &t.tm_hour, &t.tm_min, &t.tm_sec)
-      || sscanf(value.c_str(),"%i:%i:%i", &t.tm_hour, &t.tm_min, &t.tm_sec)
+    if ( sscanf(value.c_str(),"%i-%i-%i", &t.tm_hour, &t.tm_min, &t.tm_sec)==3
+      || sscanf(value.c_str(),"%i.%i.%i", &t.tm_hour, &t.tm_min, &t.tm_sec)==3
+      || sscanf(value.c_str(),"%i:%i:%i", &t.tm_hour, &t.tm_min, &t.tm_sec)==3
     ) {
 	; // everthing is fine
     }
