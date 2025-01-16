@@ -204,12 +204,11 @@ ifneq (,$(findstring WITH_PYTHON, $(DEFINES)))
 endif
 
 
-CC        = $(shell $(WXCONF) --cc)
-CXX       = $(shell $(WXCONF) --cxx)
-LD        = $(CXX) #$(shell $(WXCONF) --ld)
-CFLAGS    = $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector -O2
-CPPFLAGS  = $(DEFINES) $(shell $(WXCONF) --cppflags) -std=gnu++17 -fstack-protector -O2
-CXXFLAGS  = $(DEFINES) $(shell $(WXCONF) --cxxflags) -std=gnu++17 -fstack-protector -O2
+CC       ?= $(shell $(WXCONF) --cc)
+CXX      ?= $(shell $(WXCONF) --cxx)
+LD        = $(shell $(WXCONF) --ld)
+CFLAGS   += $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector -O2
+CPPFLAGS += $(DEFINES) $(shell $(WXCONF) --cppflags) -std=gnu++17 -fstack-protector
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
 
 
@@ -228,38 +227,45 @@ CPPFLAGS  += -I$(WXDIR)
 
 ## HDF5 related stuff ##
 ifneq ($(CROSS),)
-  ## Debian/Wheezy
   LIBS   += -lhdf5_hl -lhdf5
 else
 ifneq ($(wildcard /usr/lib/libhdf5*),)
   ## Debian/Wheezy
   CPPFLAGS += -I$(includedir)
   LIBS   += -lhdf5_hl -lhdf5
+else ifneq ($(wildcard $(prefix)/lib/libhdf5*),)
+  CPPFLAGS += -I$(prefix)/include
+  LDFLAGS  += -L$(prefix)/lib
+  LIBS     += -lhdf5_hl -lhdf5
 else ifneq ($(wildcard $(prefix)/$(TARGET)/lib/libhdf5*),)
   CPPFLAGS += -I$(prefix)/$(TARGET)/include
-  CXXFLAGS += -I$(prefix)/$(TARGET)/include
   LDFLAGS  += -L$(prefix)/$(TARGET)/lib
   LIBS     += -lhdf5_hl -lhdf5
 else ifneq ($(wildcard $(libdir)/libhdf5*),)
   CPPFLAGS += -I$(includedir)
-  CXXFLAGS += -I$(includedir)
   LDFLAGS  += -L$(libdir)
   LIBS     += -lhdf5_hl -lhdf5
 else
   PLATFORM = $(shell dpkg-architecture -q DEB_TARGET_MULTIARCH)
-  ifneq ($(wildcard /usr/lib/$(PLATFORM)/libhdf5_serial*),)
+  ifneq ($(wildcard /usr/lib/$(PLATFORM)/hdf5/serial/libhdf5*),)
+    ## Debian/bookwork
+    CPPFLAGS += -I/usr/include/hdf5/serial
+    LDFLAGS  += -L/usr/lib/$(PLATFORM)/hdf5/serial
+    LIBS     += -lhdf5_hl -lhdf5
+  else ifneq ($(wildcard /usr/lib/$(PLATFORM)/libhdf5_serial*),)
     ## Debian/Jessie
     CPPFLAGS += -I/usr/include/hdf5/serial
     LDFLAGS  += -L/usr/lib/$(PLATFORM)
     LIBS     += -lhdf5_serial_hl -lhdf5_serial
   else
-    LIBS     += -lhdf5_hl -lhdf5 -lz
+    LIBS     += -lhdf5_hl -lhdf5
   endif
 endif
 endif
 
+CXXFLAGS += $(CFLAGS) $(CPPFLAGS)
+
 ## BIOSIG related stuff ##
-LIBS  += -lbiosig
 LIBS  += -lbiosig $(shell $(PKGCONF) --libs libbiosig)
 
 LIBS     += -lfftw3
@@ -277,23 +283,14 @@ LIBS   += -ltinyxml -lstdc++
 OBJECTS  = $(addsuffix .$(OBJEXT), $(basename $(SOURCES)))
 
 $(TARGET): $(OBJECTS)
-	$(LD) $(OBJECTS) $(CPPFLAGS) $(LDFLAGS) $(LIBS) -o "$@"
+	$(LD) "$@" $(OBJECTS) $(LDFLAGS) $(LIBS)
 
 %.c: %.h
 
 %.cpp: %.h
 
-%.$(OBJEXT): %.c 
-	$(CC) -c $(CFLAGS) -c -o "$@" "$<"
-
 %.$(OBJEXT): %.cpp
-	$(CXX) -c $(CPPFLAGS) -c -o "$@" "$<"
-
-%.$(OBJEXT): %.cc
-	$(CXX) -c $(CXXFLAGS) -c -o "$@" "$<"
-
-%.$(OBJEXT): %.cxx
-	$(CXX) -c $(CXXFLAGS) -c -o "$@" "$<"
+	$(CXX) -o "$@" $(CXXFLAGS) -c "$<"
 
 clean:
 	find src -name "*.$(OBJEXT)" -exec rm {} \;
