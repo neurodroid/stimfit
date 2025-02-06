@@ -6,7 +6,7 @@
 
 #include <numpy/arrayobject.h>
 
-#define array_data(a)          (((PyArrayObject *)a)->data)
+#define array_data(a)          PyArray_DATA((PyArrayObject*)a)
 
 #if PY_MAJOR_VERSION >= 3
 int

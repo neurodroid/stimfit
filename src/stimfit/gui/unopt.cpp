@@ -480,7 +480,7 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     PyObject* argtuple = PyTuple_New(2);
     PyTuple_SET_ITEM(argtuple, 0, arg);
     PyTuple_SET_ITEM(argtuple, 1, figsize);
-    result = PyEval_CallObject(func, argtuple);
+    result = PyObject_CallObject(func, argtuple);
     Py_DECREF(argtuple);
     Py_DECREF(py_mpl_width);
     Py_DECREF(py_mpl_height);
@@ -738,7 +738,12 @@ bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
         if (nsections != 0) {
             Channel ch(nsections);
             for (int ns=0; ns<nsections; ++ns) {
-                PyObject* np_array = PyList_GetItem(section_list, ns);
+                PyObject* list_item = PyList_GetItem(section_list, ns);
+                if (!PyArray_Check(list_item)) {
+                    wxGetApp().ErrorMsg( wxT("Expected a numpy array"));
+                    return false;
+                }
+                PyArrayObject* np_array = (PyArrayObject*)list_item;
                 npy_intp* arr_shape = PyArray_DIMS(np_array);
                 int nsamples = arr_shape[0];
                 Section sec(nsamples);

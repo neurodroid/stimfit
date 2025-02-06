@@ -191,7 +191,7 @@ $ac_numpy_result])
         AC_MSG_CHECKING([for numpy include path])
         if test -z "$PYTHON_NUMPY_INCLUDE"; then
                 PYTHON_NUMPY_INCLUDE=-I`$PYTHON -c "import sys, numpy; \
-                        sys.stdout.write(numpy.lib.get_include() + '\n');"`
+                        sys.stdout.write(numpy.get_include() + '\n');"`
         fi
         AC_MSG_RESULT([$PYTHON_NUMPY_INCLUDE])
         AC_SUBST([PYTHON_NUMPY_INCLUDE])

@@ -324,7 +324,7 @@ class Section {
 
 %extend Section {
 
-    Section(PyObject* nparray) {
+    Section(PyArrayObject* nparray) {
         wrap_array();
         
         npy_intp nplen = PyArray_DIM(nparray, 0);
@@ -351,9 +351,9 @@ class Section {
     int __len__() { return $self->size(); }
 
     %feature("autodoc", "Returns the section as a numpy array.") asarray;
-    PyObject* asarray() {
+    PyArrayObject* asarray() {
         npy_intp dims[1] = {$self->size()};
-        PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+        PyArrayObject* np_array = (PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_DOUBLE);
         double* gDataP = (double*)array_data(np_array);
 
         std::copy( $self->get().begin(),
