@@ -162,6 +162,7 @@ EXTRA_DIST+= ./dist/debian/docs
 EXTRA_DIST+= ./dist/debian/mkdeb.sh
 EXTRA_DIST+= ./dist/debian/python3-stfio.files
 EXTRA_DIST+= ./dist/debian/python3-stfio.install
+EXTRA_DIST+= ./dist/debian/python3-stfio.lintian-overrides
 EXTRA_DIST+= ./dist/debian/rules
 EXTRA_DIST+= ./dist/debian/stimfit.1
 EXTRA_DIST+= ./dist/debian/stimfit.desktop
