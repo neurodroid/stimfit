@@ -383,6 +383,7 @@ dist/macosx/stimfit.plist dist/macosx/macports/insert_checksums.sh dist/macosx/s
 dist/debian/mkdeb.sh dist/debian/mkquick.sh
 setup.py dist/conda/py-stfio-debug/meta.yaml dist/conda/py-stfio/meta.yaml 
 doc/Doxyfile doc/sphinx/conf.py
+Makefile.static
 ])
 
 AC_OUTPUT

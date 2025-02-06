@@ -1,47 +1,46 @@
 ########################################################################
-# Makefile for static compilation Stimfit 
-# no auto-tools (autoconf, automake, libtool, shave etc.) are needed. 
+# Makefile for static compilation Stimfit
+# no automake, or libtool, are needed.
 #
-# No global installation (sudo make install) is needed, but 
-# stimfit can be started immediately after compilation. 
+# No global installation (sudo make install) is needed, but
+# stimfit can be started immediately after compilation.
 #
 # This is most useful for debugging, when several instances of stimfit
-# should be available. 
+# should be available.
 #
 # Usage:
 #   cd ~/src/stimfit/         # change into stimfit's root directory
-#   make -f Makefile.static   # build stimfit 
-#   make -B -f Makefile.static   # rebuild everything
+#   ./autogen.sh
+#   ./configure --with-biosig --disable-python --with-pslope
+#   make -f Makefile.static          # build stimfit(-lite) i.e. w/o python support
+#   make -f Makefile.static install  # install stimfit into bindir
 #
 #   WXCONF=/usr/bin/wx-config make -f Makefile.static
 #                             # build built with non-default WX
 #
 #   PREFIX=/usr/local make -f Makefile.static
-#                             search for libhdf5 in ${PREFIX}/{include,lib}
 #
-#   ./stimfit                 # start stimfit 
+#   ./stimfit                 # start stimfit
 #
 #   win32 built
 #	CROSS=i686-pc-mingw32-   make -f Makefile.static
-#	WXCONF=i686-pc-mingw32-wx-config   make -f Makefile.static 
+#	WXCONF=i686-pc-mingw32-wx-config   make -f Makefile.static
 #   win64 built
 #	CROSS=x86_64-static-mingw32- make -f Makefile.static
 #	WXCONF=x86_64-static-mingw32-wx-config make -f Makefile.static
 #
 #   The use of WXCONF is deprecated, and might be removed in future
 
-# Limitations: 
-#    - no support for ASCII, SON format
+# Limitations:
 #    - PYTHON shell, matplotlib (print) are not supported
-#    - configure not supported
 #
-# Copyright (C) 2012,2013,2014,2015,2021 Alois Schloegl
+# Copyright (C) 2012,2013,2014,2015,2021,2025 Alois Schloegl
 # This is part of the stimfit project http://stimfit.org
 #
 ########################################################################
 
 ifeq (,$(WXCONF))
-  # default wx-config      
+  # default wx-config
   WXCONF    = $(CROSS)wx-config
 else
 ifneq (,$(findstring mingw,$(WXCONF)))
@@ -51,21 +50,12 @@ endif
 endif
 
 DEFINES += -DWITH_BIOSIG
-DEFINES += -DHAVE_LAPACK
 DEFINES += -DWITH_PSLOPE
 #DEFINES += -DTEST_MINIMAL
 #DEFINES += -DPYTHON -DWITH_PYTHON
 
-
 WXVERSION = $(basename $(shell $(WXCONF) --version))
-#WXDIR     = $(dir $(WXCONF))../include/wx-$(WXVERSION)/
-WXDIR     = $(dir $(WXCONF))../include/
-#DEFINES  += -I$(WXDIR)
-#DEFINES  += -I$(WXDIR)/..
-
-
 PY_VERSION := $(shell py3versions -i | sed 's/python//g')
-
 
 ##############################################################
 ###  SOURCES
@@ -117,7 +107,7 @@ SOURCES = ./src/stimfit/stf.cpp \
 	./src/libstfio/igor/WriteWave.c \
 	./src/libstfio/igor/CrossPlatformFileIO.c \
 	./src/libstfio/biosig/biosiglib.cpp \
-	./src/libstfio/cfs/cfs.c 
+	./src/libstfio/cfs/cfs.c
 
 SOURCES_OPTIONAL = \
 	./src/libstfio/heka/hekalib.cpp \
@@ -140,7 +130,7 @@ SOURCES_ABF = ./src/libstfio/atf/atflib.cpp \
 	./src/libstfio/abf/axon/AxAbfFio32/abffiles.cpp \
 	./src/libstfio/abf/axon/AxAbfFio32/Oldheadr.cpp \
 	./src/libstfio/abf/axon/AxAbfFio32/abfhwave.cpp \
-	./src/libstfio/abf/axon/AxAbfFio32/csynch.cpp 
+	./src/libstfio/abf/axon/AxAbfFio32/csynch.cpp
 
 EXCLUDED = ./src/libstfio/ascii/asciilib.cpp \
 	./src/libstfio/abf/axon/AxAtfFio32/fileio2.cpp \
@@ -164,7 +154,7 @@ TESTSRC = ./src/test/section.cpp \
 	./src/test/gtest/src/gtest-death-test.cc \
 	./src/test/gtest/src/gtest-all.cc \
 	./src/test/gtest/src/gtest_main.cc \
-	./src/test/gtest/src/gtest-filepath.cc 
+	./src/test/gtest/src/gtest-filepath.cc
 
 SOURCES_AXG = ./src/libstfio/axg/axglib.cpp \
 	./src/libstfio/axg/AxoGraph_ReadWrite.cpp \
@@ -172,10 +162,6 @@ SOURCES_AXG = ./src/libstfio/axg/axglib.cpp \
 	./src/libstfio/axg/stringUtils.cpp \
 	./src/libstfio/axg/byteswap.cpp \
 
-### DEPENDENCIES ###
-ifneq (,$(findstring HAVE_LAPACK, $(DEFINES)))
-  LIBS   += -llapack -lblas
-endif
 
 # needed because of exportATF
 SOURCES += $(SOURCES_ABF)
@@ -183,11 +169,11 @@ SOURCES += $(SOURCES_AXG)
 
 
 ifeq (,$(findstring mingw, $(WXCONF)))
-  TARGET   = stimfit 
+  TARGET   = stimfit
   OBJEXT   = o
 else
-  ### MINGW ### 
-  TARGET   = stimfit.exe 
+  ### MINGW ###
+  TARGET   = stimfit.exe
   OBJEXT   = obj
 endif
 
@@ -196,11 +182,11 @@ ifeq (,$(findstring TEST_MINIMAL, $(DEFINES)))
 endif
 
 ifneq (,$(findstring WITH_PYTHON, $(DEFINES)))
-  SOURCES += ./src/stimfit/py/pystf.cxx ./src/stimfit/py/pystf_wrap.cxx ./src/pystfio/pystfio.cxx
-  DEFINES += -I/usr/include/python$(PY_VERSION)
-  DEFINES += -I/usr/lib/pymodules/python$(PY_VERSION)/numpy/core/include
-  LDFLAGS += -L/usr/lib/python$(PY_VERSION)/
-  LIBS    += -lpython$(PY_VERSION) 
+  SOURCES += $(SOURCES_PYSTFIO)
+  CFLAGS  += $(shell python$(PY_VERSION)-config --cflags)
+  DEFINES += -I$(shell python$(PY_VERSION)-config --prefix)/lib/pymodules/python$(PY_VERSION)/numpy/core/include
+  LDFLAGS += $(shell python$(PY_VERSION)-config --ldflags)
+  LIBS    += $(shell python$(PY_VERSION)-config --libs)
 endif
 
 
@@ -208,9 +194,10 @@ CC       ?= $(shell $(WXCONF) --cc)
 CXX      ?= $(shell $(WXCONF) --cxx)
 LD        = $(shell $(WXCONF) --ld)
 CFLAGS   += $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector -O2
-CPPFLAGS += $(DEFINES) $(shell $(WXCONF) --cppflags) -std=gnu++17 -fstack-protector
+CPPFLAGS += $(DEFINES) $(shell $(WXCONF) --cppflags) -std=c++17 -fstack-protector -O2
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
-
+SWIG	  = @SWIG@
+SWIG_PYTHON_OPT = @SWIG_PYTHON_OPT@
 
 prefix       ?= $(PREFIX)
 exec_prefix   = ${prefix}
@@ -223,58 +210,27 @@ mandir        = ${datarootdir}/man
 
 PKGCONF  ?= $(CROSS)pkg-config
 
-CPPFLAGS  += -I$(WXDIR)
+HDF5_CFLAGS = @HDF5_CFLAGS@
+CPPFLAGS += $(HDF5_CFLAGS)
 
-## HDF5 related stuff ##
-ifneq ($(CROSS),)
-  LIBS   += -lhdf5_hl -lhdf5
-else
-ifneq ($(wildcard /usr/lib/libhdf5*),)
-  ## Debian/Wheezy
-  CPPFLAGS += -I$(includedir)
-  LIBS   += -lhdf5_hl -lhdf5
-else ifneq ($(wildcard $(prefix)/lib/libhdf5*),)
-  CPPFLAGS += -I$(prefix)/include
-  LDFLAGS  += -L$(prefix)/lib
-  LIBS     += -lhdf5_hl -lhdf5
-else ifneq ($(wildcard $(prefix)/$(TARGET)/lib/libhdf5*),)
-  CPPFLAGS += -I$(prefix)/$(TARGET)/include
-  LDFLAGS  += -L$(prefix)/$(TARGET)/lib
-  LIBS     += -lhdf5_hl -lhdf5
-else ifneq ($(wildcard $(libdir)/libhdf5*),)
-  CPPFLAGS += -I$(includedir)
-  LDFLAGS  += -L$(libdir)
-  LIBS     += -lhdf5_hl -lhdf5
-else
-  PLATFORM = $(shell dpkg-architecture -q DEB_TARGET_MULTIARCH)
-  ifneq ($(wildcard /usr/lib/$(PLATFORM)/hdf5/serial/libhdf5*),)
-    ## Debian/bookwork
-    CPPFLAGS += -I/usr/include/hdf5/serial
-    LDFLAGS  += -L/usr/lib/$(PLATFORM)/hdf5/serial
-    LIBS     += -lhdf5_hl -lhdf5
-  else ifneq ($(wildcard /usr/lib/$(PLATFORM)/libhdf5_serial*),)
-    ## Debian/Jessie
-    CPPFLAGS += -I/usr/include/hdf5/serial
-    LDFLAGS  += -L/usr/lib/$(PLATFORM)
-    LIBS     += -lhdf5_serial_hl -lhdf5_serial
-  else
-    LIBS     += -lhdf5_hl -lhdf5
-  endif
-endif
-endif
+LIBHDF5_LDFLAGS = @LIBHDF5_LDFLAGS@
+LIBS   += $(LIBHDF5_LDFLAGS)
+
+LIBLAPACK_LDFLAGS = @LIBLAPACK_LDFLAGS@
+LIBS   += $(LIBLAPACK_LDFLAGS)
 
 CXXFLAGS += $(CFLAGS) $(CPPFLAGS)
 
 ## BIOSIG related stuff ##
-LIBS  += -lbiosig $(shell $(PKGCONF) --libs libbiosig)
+LIBS  += $(shell $(PKGCONF) --libs libbiosig)
 
 LIBS     += -lfftw3
 
 ifeq (mingw,$(findstring mingw, $(WXCONF)))
   LIBS   += -lgfortran -lquadmath
 endif
-LIBS   += -ltinyxml -lstdc++
 
+@BUILD_PYTHON_TRUE@PYTHON_DEST_DIR = ${prefix}${PYTHON_TARGET_DIR}
 
 ##############################################################
 ###  BUILT
@@ -289,12 +245,23 @@ $(TARGET): $(OBJECTS)
 
 %.cpp: %.h
 
+%.$(OBJEXT): %.c
+	$(CC) -o "$@" $(CFLAGS) -c "$<"
+
+%.$(OBJEXT): %.cc
+	$(CC) -o "$@" $(CFLAGS) -c "$<"
+
 %.$(OBJEXT): %.cpp
+	$(CXX) -o "$@" $(CPPFLAGS) -c "$<"
+
+%.$(OBJEXT): %.cxx
 	$(CXX) -o "$@" $(CXXFLAGS) -c "$<"
+
 
 clean:
 	find src -name "*.$(OBJEXT)" -exec rm {} \;
 	rm -f stimfit
+
 
 install: $(TARGET)
 	install $(TARGET) $(bindir)
