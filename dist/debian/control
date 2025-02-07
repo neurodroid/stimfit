@@ -3,7 +3,7 @@ Section: science
 Priority: optional
 Maintainer: Christoph Schmidt-Hieber <christsc@gmx.de>
 Uploaders: Yaroslav Halchenko <debian@onerussian.com>
-Build-Depends: debhelper (>= 10), dh-python, libbiosig-dev (>= 2.1.0), python3-dev, python3-numpy, libhdf5-dev, swig, python3-sip-dev, python3-wxgtk4.0 (>= 4.0.7), libwxgtk3.2-dev, libfftw3-dev, liblapack-dev, chrpath, help2man, zlib1g-dev, dh-autoreconf, pkg-config
+Build-Depends: debhelper (>= 10), dh-python, libbiosig-dev (>= 2.1.0), python3-dev, python3-numpy, libhdf5-dev, swig, python3-sip-dev, python3-wxgtk4.0 (>= 4.0.7), libwxgtk3.2-dev, libfftw3-dev, liblapack-dev, chrpath, help2man, zlib1g-dev, pkgconf
 Standards-Version: 3.9.8
 Homepage: http://www.stimfit.org
 
@@ -19,7 +19,7 @@ Description: Program for viewing and analyzing electrophysiological data
 
 Package: stimfit-dbg
 Section: debug
-Priority: extra
+Priority: optional
 Architecture: any
 Depends: ${misc:Depends}, stimfit
 Recommends: python3-matplotlib, python3-scipy, python3-stfio

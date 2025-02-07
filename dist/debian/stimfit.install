@@ -1,3 +1,4 @@
 usr/lib/stimfit/*.py
 usr/lib/stimfit/*.so
 usr/bin/stimfit
+usr/share/applications/stimfit.desktop
