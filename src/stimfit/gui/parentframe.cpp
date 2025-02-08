@@ -51,7 +51,7 @@
 #error You must set wxUSE_MDI_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#include "../../../stfconf.h"
+#include "stfconf.h"
 #include "./app.h"
 #include "./doc.h"
 #include "./view.h"
