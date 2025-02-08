@@ -43,6 +43,21 @@ libbiosiglite_la_SOURCES = \
 
   # ../biosig/biosig4c++/biosig-network.c
 
+BUILT_SOURCES = eventcodes.i eventcodegroups.i 11073-10102-AnnexB.i units.i
+CLEANFILES = eventcodes.i eventcodegroups.i 11073-10102-AnnexB.i units.i
+
+eventcodes.i:
+	@touch eventcodes.i
+
+eventcodegroups.i:
+	@touch eventcodegroups.i
+
+11073-10102-AnnexB.i:
+	@touch 11073-10102-AnnexB.i
+
+units.i:
+	@touch units.i
+
 # libbiosiglite_la_CPPFLAGS = -DWITH_BIOSIG -DWITH_ZLIB -DWITH_CHOLMOD -DWITHOUT_NETWORK
 libbiosiglite_la_CPPFLAGS = -DWITH_BIOSIG -DWITH_ZLIB -DWITHOUT_NETWORK
 libbiosiglite_la_LDFLAGS = 

@@ -378,7 +378,7 @@ CXXFLAGS="${CXXFLAGS} -Wall"
 
 AC_CONFIG_HEADERS([stfconf.h])
 
-AC_CONFIG_FILES([Makefile src/Makefile src/libstfio/Makefile src/libstfnum/Makefile src/pystfio/Makefile src/stimfit/Makefile src/stimfit/py/Makefile
+AC_CONFIG_FILES([Makefile src/Makefile src/libstfio/Makefile src/libstfnum/Makefile src/libbiosiglite/Makefile src/pystfio/Makefile src/stimfit/Makefile src/stimfit/py/Makefile
 dist/macosx/stimfit.plist dist/macosx/macports/insert_checksums.sh dist/macosx/scripts/mkimage.sh dist/macosx/package.pmdoc/index.xml
 dist/debian/mkdeb.sh dist/debian/mkquick.sh
 setup.py dist/conda/py-stfio-debug/meta.yaml dist/conda/py-stfio/meta.yaml 
