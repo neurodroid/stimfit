@@ -1,7 +1,7 @@
-stimfit (0.16.5-1.1) unstable; urgency=low
+stimfit (0.16.5-1) unstable; urgency=low
 
   * Update to latest NumPy C API
-  * Fix building and packaging on sid
+  * Fix debian building and packaging (Closes: #1068032)
 
  -- Christoph Schmidt-Hieber <christsc@gmx.de>  Fri, 07 Feb 2025 18:39:37 +0000
 
@@ -10,7 +10,6 @@ stimfit (0.16.4-1.1) unstable; urgency=medium
   * Non-maintainer upload.
   * use external libbiosig instead of internal
     (configure --with-biosig instead of --with-biosiglite)
-    (Closes: #1068032)
 
  -- Alois Schloegl <alois.schloegl@gmail.com>  Thu, 15 Aug 2024 12:56:35 +1300
 
