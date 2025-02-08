@@ -181,7 +181,7 @@ bool stfio::importFile(
             break;
         }
         case stfio::cfs: {
-            int res = stfio::importCFSFile(fName, ReturnData, progDlg);
+            stfio::importCFSFile(fName, ReturnData, progDlg);
             break;
            }
         default:

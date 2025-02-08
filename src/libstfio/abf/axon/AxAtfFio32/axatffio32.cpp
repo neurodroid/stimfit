@@ -731,7 +731,7 @@ static BOOL WriteHeaderInfo(ATF_FILEINFO *pATF, int nColumns, int *pnError)
 
    // Write the special marker string and the file version number
    char *pszIOBuffer = pATF->pszIOBuffer;
-   sprintf(pszIOBuffer, "%s%s%.1f%s", ATF_FILE_ID, pATF->szSeparator, ATF_CURRENTVERSION, s_szEndOfLine);
+   snprintf(pszIOBuffer, sizeof(pszIOBuffer), "%s%s%.1f%s", ATF_FILE_ID, pATF->szSeparator, ATF_CURRENTVERSION, s_szEndOfLine);
    if (!putsBuf(pATF, pszIOBuffer))
       ERRORRETURN(pnError, ATF_ERROR_IOERROR);
 
@@ -740,7 +740,7 @@ static BOOL WriteHeaderInfo(ATF_FILEINFO *pATF, int nColumns, int *pnError)
 
    // Write the number of headers and columns that will be written, leaving
    // enough trailing spaces for 4 digits of headers (more than enough)
-   sprintf(pszIOBuffer, "0%s%d     %s", pATF->szSeparator, nColumns, s_szEndOfLine);
+   snprintf(pszIOBuffer, sizeof(pszIOBuffer), "0%s%d     %s", pATF->szSeparator, nColumns, s_szEndOfLine);
    if (!putsBuf(pATF, pszIOBuffer))
       ERRORRETURN(pnError, ATF_ERROR_IOERROR);
 
@@ -764,7 +764,7 @@ static BOOL _FormatNumber(double dNum, int nDigits, char *pszString, UINT uSize)
    ARRAYASSERT(pszString, uSize);
 
 #if !defined(_WINDOWS) || defined(__MINGW32__)
-   sprintf(pszString, "%.*g", nDigits, dNum);
+   snprintf(pszString, sizeof(pszString), "%.*g", nDigits, dNum);
    // char* res = gcvt(dNum, nDigits, pszString);
 #else
    _gcvt(dNum, nDigits, pszString);
@@ -950,7 +950,7 @@ static BOOL UpdateHeaders(ATF_FILEINFO *pATF, int *pnError)
 
    // Create the string for the number of header records
    {
-      sprintf(pszIOBuffer, "%d%s%d", pATF->nHeaders, pATF->szSeparator, pATF->nColumns);
+      snprintf(pszIOBuffer, sizeof(pszIOBuffer), "%d%s%d", pATF->nHeaders, pATF->szSeparator, pATF->nColumns);
       if (!putsBuf(pATF, pszIOBuffer))
          ERRORRETURN(pnError, ATF_ERROR_IOERROR);
    }

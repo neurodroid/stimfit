@@ -63,7 +63,17 @@
 #endif
 
 #ifdef WITH_PYTHON
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#endif
+
 #include <numpy/arrayobject.h>
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 #endif
 
 #include "pystf.h"
@@ -88,11 +98,9 @@ double _figsize[] = {8.0,6.0};
 #if PY_MAJOR_VERSION >= 3
 int wrap_array() {
 #ifdef WITH_PYTHON
-    import_array();
-    return 0;
-#else
-    return 0;
+    import_array1(-1);
 #endif
+    return 0;
 }
 #else
 void wrap_array() {
@@ -216,7 +224,7 @@ PyObject* get_trace(int trace, int channel) {
 
     npy_intp dims[1] = {(int)actDoc()->at(channel).at(trace).size()};
     PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);
-    double* gDataP = (double*)array_data(np_array);
+    double* gDataP = (double*)PyArray_DATA((PyArrayObject*)np_array);
 
     /* fill */
     std::copy( (*actDoc())[channel][trace].get().begin(),
@@ -393,12 +401,24 @@ double get_maxrise() {
 
 const char* get_recording_time( ) {
     if ( !check_doc() ) return 0;
-    return actDoc()->GetTime().c_str();
+    static char buffer[9];
+    struct tm dt = actDoc()->GetDateTime();
+    // Use strftime to format the time into the buffer.
+    if (strftime(buffer, sizeof(buffer), "%H:%M:%S", &dt) == 0) {
+        return NULL;
+    }
+    return buffer;
 }
 
 const char* get_recording_date( ) {
     if ( !check_doc() ) return 0;
-    return actDoc()->GetDate().c_str();
+    static char buffer[11];
+    struct tm dt = actDoc()->GetDateTime();
+    // Use strftime to format the time into the buffer.
+    if (strftime(buffer, sizeof(buffer), "%Y:%m:%d", &dt) == 0) {
+        return NULL;
+    }
+    return buffer;
 }
 
 std::string get_recording_comment( ) {
@@ -1760,7 +1780,7 @@ PyObject* get_fit( int trace, int channel ) {
 
     npy_intp dims[2] = {2, size};
     PyObject* np_array = PyArray_SimpleNew(2, dims, NPY_DOUBLE);
-    double* gDataP = (double*)array_data(np_array);
+    double* gDataP = (double*)PyArray_DATA((PyArrayObject*)np_array);
 
     /* fill */
     std::copy(xy_fit.begin(), xy_fit.end(), gDataP);

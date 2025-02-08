@@ -545,9 +545,9 @@ int stfio::importCFSFile(const std::string& fName, Recording& ReturnData, Progre
     ReturnData.SetFileDescription(file_description + '\0');
     ReturnData.SetGlobalSectionDescription(section_description + '\0');
     ReturnData.SetScaling(scaling);
-    ReturnData.SetTime(time + '\0');
-    ReturnData.SetDate(date + '\0');
-    ReturnData.SetComment(comment + '\0');
+    ReturnData.SetTime(time);
+    ReturnData.SetDate(date);
+    ReturnData.SetComment(comment);
 #if 0
     std::cout << time << std::endl
               << ReturnData.GetTime() << std::endl

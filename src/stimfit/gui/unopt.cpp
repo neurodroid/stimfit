@@ -43,8 +43,17 @@
   #pragma GCC diagnostic warning "-Wwrite-strings"
 #endif
 
-//#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#endif
+
 #include <numpy/arrayobject.h>
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 #include "./app.h"
 #include "./doc.h"
@@ -175,7 +184,9 @@ bool wxStfApp::Init_wxPython()
         Py_Initialize();
     }
 
+#if PY_MAJOR_VERSION < 3 || (PY_MAJOR_VERSION == 3 && PY_MINOR_VERSION < 7)
     PyEval_InitThreads();
+#endif
 
     wxString cwd;
 #ifdef __WXMAC__

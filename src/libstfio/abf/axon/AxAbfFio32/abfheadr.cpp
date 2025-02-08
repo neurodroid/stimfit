@@ -115,7 +115,7 @@ void WINAPI ABFH_Initialize( ABFFileHeader *pFH )
    for (i=0; i<ABF_ADCCOUNT; i++)
    {
       char szName[13];      
-      sprintf(szName, "AI #%-8d", i);
+      snprintf(szName, sizeof(szName), "AI #%-8d", i);
       strncpy(NewFH.sADCChannelName[i], szName, ABF_ADCNAMELEN);
       strncpy(NewFH.sADCUnits[i], "pA        ", ABF_ADCUNITLEN);
       
@@ -137,7 +137,7 @@ void WINAPI ABFH_Initialize( ABFFileHeader *pFH )
    for (i=0; i<ABF_DACCOUNT; i++)
    {
       char szName[13];
-      sprintf(szName, "AO #%-8d", i);
+      snprintf(szName, sizeof(szName), "AO #%-8d", i);
       strncpy(NewFH.sDACChannelName[i], szName, ABF_DACNAMELEN);
       strncpy(NewFH.sDACChannelUnits[i], "mV        ", ABF_ADCUNITLEN);
       NewFH.fDACScaleFactor[i] = 20.0F;
@@ -225,7 +225,8 @@ void WINAPI ABFH_Initialize( ABFFileHeader *pFH )
    // Epoch resistance
    for( i = 0; i < ABF_WAVEFORMCOUNT; i++ )
    {
-      sprintf( NewFH.sEpochResistanceSignalName[ i ], "IN #%d", i);
+      snprintf( NewFH.sEpochResistanceSignalName[ i ],
+                 sizeof(NewFH.sEpochResistanceSignalName[ i ]), "IN #%d", i);
       NewFH.nEpochResistanceState[ i ] = 0; 
    }
 
@@ -793,7 +794,8 @@ void WINAPI ABFH_GetDACtoUUFactors( const ABFFileHeader *pFH, int nChannel,
    ABFH_PromoteHeader( &NewFH, pFH );
    {
       // Prevent accidental use of pFH.
-      int pFH = 0; pFH = pFH;
+      int pFH = 0;
+      (void)pFH;
 
       float fScaleFactor       = NewFH.fDACScaleFactor[nChannel];
       float fCalibrationFactor = NewFH.fDACCalibrationFactor[nChannel];
@@ -1155,7 +1157,7 @@ BOOL WINAPI ABFH_GetErrorText( int nError, char *sTxtBuf, UINT uMaxLen)
       c_LoadString(g_hInstance, IDS_ENOMESSAGESTR, szTemplate, sizeof(szTemplate));
 #endif
       char szErrorMsg[128];
-      sprintf(szErrorMsg, szTemplate, nError);
+      snprintf(szErrorMsg, sizeof(szErrorMsg), szTemplate, nError);
 //      ERRORMSG(szErrorMsg);
 
       strncpy(sTxtBuf, szErrorMsg, uMaxLen-1);

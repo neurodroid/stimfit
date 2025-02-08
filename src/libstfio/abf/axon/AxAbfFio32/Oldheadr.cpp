@@ -560,7 +560,8 @@ void OLDH_ABFtoCurrentVersion(ABFFileHeader *pFH)
    {
       for( int i = 0; i < ABF_WAVEFORMCOUNT; i++ )
       {
-         sprintf( pFH->sEpochResistanceSignalName[ i ], "IN #%d", i);
+         snprintf( pFH->sEpochResistanceSignalName[ i ],
+                   sizeof(pFH->sEpochResistanceSignalName[ i ]), "IN #%d", i);
          pFH->nEpochResistanceState[ i ] = 0; 
       }
    }

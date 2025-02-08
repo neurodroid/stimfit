@@ -10,6 +10,7 @@ application from the embedded python shell."
 %module(docstring=DOCSTRING) stf
 
 %{
+#define SWIG_HAVE_SNPRINTF
 #define SWIG_FILE_WITH_INIT
 #include "pystf.h"
 %}

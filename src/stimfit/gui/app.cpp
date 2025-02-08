@@ -864,10 +864,6 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
 wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
 {
     //// Make a child frame
-#ifdef __WXMAC__
-    int xpos = (GetDocCount()-1) * 16 + 64;
-    int ypos = (GetDocCount()-1) * 16 + 80;
-#endif
     wxStfChildFrame *subframe = new wxStfChildFrame(
                                                     doc, view, 
                                                     wxStaticCast(GetTopWindow(), wxStfParentFrame), wxID_ANY, doc->GetTitle(),

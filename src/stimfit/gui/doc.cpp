@@ -1038,7 +1038,7 @@ void wxStfDoc::CreateAverage(
         // swap channels temporarily:
         // if (AlignDlg.UseReference())
         //     SetCurChIndex(GetSecChIndex());
-        std::size_t max_index=0, n=0;
+        std::size_t max_index=0;
         int_it it = shift.begin();
         //loop through all selected sections:
         for (c_st_it cit = GetSelectedSections().begin();
@@ -1104,7 +1104,6 @@ void wxStfDoc::CreateAverage(
             if (alignIndex < min_index) {
                 min_index=alignIndex;
             }
-            n++;
             it++;
         }
         //now that max and min indices are known, calculate the number of

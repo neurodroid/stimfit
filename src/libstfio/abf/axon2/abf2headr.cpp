@@ -72,7 +72,7 @@ void WINAPI ABF2H_Initialize( ABF2FileHeader *pFH )
    for (i=0; i<ABF2_ADCCOUNT; i++)
    {
       char szName[13];      
-      sprintf(szName, "AI #%-8d", i);
+      snprintf(szName, sizeof(szName), "AI #%-8d", i);
       strncpy(pFH->sADCChannelName[i], szName, ABF2_ADCNAMELEN);
       strncpy(pFH->sADCUnits[i], "pA        ", ABF2_ADCUNITLEN);
       
@@ -94,7 +94,7 @@ void WINAPI ABF2H_Initialize( ABF2FileHeader *pFH )
    for (i=0; i<ABF2_DACCOUNT; i++)
    {
       char szName[13];
-      sprintf(szName, "AO #%-8d", i);
+      snprintf(szName, sizeof(szName), "AO #%-8d", i);
       strncpy(pFH->sDACChannelName[i], szName, ABF2_DACNAMELEN);
       strncpy(pFH->sDACChannelUnits[i], "mV        ", ABF2_ADCUNITLEN);
       pFH->fDACScaleFactor[i] = 20.0F;

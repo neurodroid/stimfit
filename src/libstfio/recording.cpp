@@ -86,22 +86,6 @@ Channel& Recording::at(std::size_t n_c) {
     }
 }
 
-const std::string& Recording::GetDate() {
-    // TODO: there should be a more elegant way than using variable 'date'
-    date.resize(128);
-    struct tm t = GetDateTime();
-    snprintf((char*)date.c_str(), 128, "%04i-%02i-%02i", t.tm_year+1900, t.tm_mon+1, t.tm_mday);
-    return date;
-};
-
-const std::string& Recording::GetTime() {
-    // TODO: there should be a more elegant way than using variable 'time0'
-    time0.resize(128);
-    struct tm t = GetDateTime();
-    snprintf((char*)time0.c_str(), 128, "%02i:%02i:%02i", t.tm_hour,t.tm_min,t.tm_sec);
-    return time0;
-};
-
 int Recording::SetDate(const std::string& value) {
     struct tm t = GetDateTime();
 #if HAVE_STRPTIME_H

@@ -110,60 +110,60 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     downsampling(1),eventPos(0),
     llz_x(0.0),ulz_x(1.0),llz_y(0.0),ulz_y(1.0),llz_y2(0.0),ulz_y2(1.0),
     results1(wxT("\0")),results2(wxT("\0")),results3(wxT("\0")),results4(wxT("\0")),results5(wxT("\0")),results6(wxT("\0")),
-    standardPen(*wxBLACK,1,wxSOLID), //Solid black line
-    standardPen2(*wxRED,1,wxSOLID), //Solid red line
-    standardPen3(wxColour(255,192,192),1,wxSOLID), //Solid red line
-    scalePen(*wxBLACK,2,wxSOLID), //Solid black line
-    scalePen2(*wxRED,2,wxSOLID), //Solid red line
-    peakPen(*wxRED,1,wxSHORT_DASH), //Dashed red line
-    peakLimitPen(*wxRED,1,wxDOT), //Dotted red line
-    basePen(*wxGREEN,1,wxSHORT_DASH), //Dashed green line
-    baseLimitPen(*wxGREEN,1,wxDOT), //Dotted green line
-    decayLimitPen(wxColour(127,127,127),1,wxDOT), //Dotted dark blue line
-    ZoomRectPen(*wxLIGHT_GREY,1,wxDOT), //Dotted grey line
-    fitPen(wxColour(127,127,127),4,wxSOLID), //Solid dark grey line
-    fitSelectedPen(wxColour(192,192,192),2,wxSOLID), //Solid dark grey line
-    selectPen(wxColour(127,127,127),1,wxSOLID), //Solid grey line
-    averagePen(*wxBLUE,1,wxSOLID), //Solid light blue line
-    rtPen(*wxGREEN,2,wxSOLID), //Solid green line
-    hdPen(*wxCYAN,2,wxSOLID), //Solid violet line
-    rdPen(*wxRED,2,wxSOLID), //Solid dark violet line
+    standardPen(*wxBLACK,1,wxPENSTYLE_SOLID), //Solid black line
+    standardPen2(*wxRED,1,wxPENSTYLE_SOLID), //Solid red line
+    standardPen3(wxColour(255,192,192),1,wxPENSTYLE_SOLID), //Solid red line
+    scalePen(*wxBLACK,2,wxPENSTYLE_SOLID), //Solid black line
+    scalePen2(*wxRED,2,wxPENSTYLE_SOLID), //Solid red line
+    peakPen(*wxRED,1,wxPENSTYLE_SHORT_DASH), //Dashed red line
+    peakLimitPen(*wxRED,1,wxPENSTYLE_DOT), //Dotted red line
+    basePen(*wxGREEN,1,wxPENSTYLE_SHORT_DASH), //Dashed green line
+    baseLimitPen(*wxGREEN,1,wxPENSTYLE_DOT), //Dotted green line
+    decayLimitPen(wxColour(127,127,127),1,wxPENSTYLE_DOT), //Dotted dark blue line
+    ZoomRectPen(*wxLIGHT_GREY,1,wxPENSTYLE_DOT), //Dotted grey line
+    fitPen(wxColour(127,127,127),4,wxPENSTYLE_SOLID), //Solid dark grey line
+    fitSelectedPen(wxColour(192,192,192),2,wxPENSTYLE_SOLID), //Solid dark grey line
+    selectPen(wxColour(127,127,127),1,wxPENSTYLE_SOLID), //Solid grey line
+    averagePen(*wxBLUE,1,wxPENSTYLE_SOLID), //Solid light blue line
+    rtPen(*wxGREEN,2,wxPENSTYLE_SOLID), //Solid green line
+    hdPen(*wxCYAN,2,wxPENSTYLE_SOLID), //Solid violet line
+    rdPen(*wxRED,2,wxPENSTYLE_SOLID), //Solid dark violet line
 #ifdef WITH_PSLOPE
-    slopePen(*wxBLUE,2,wxSOLID), //Solid blue line
+    slopePen(*wxBLUE,2,wxPENSTYLE_SOLID), //Solid blue line
 #endif
-    latencyPen(*wxBLUE,1,wxDOT),
-    alignPen(*wxBLUE,1,wxSHORT_DASH),
-    measPen(*wxBLACK,1,wxDOT),
-    eventPen(*wxBLUE,2,wxSOLID),
+    latencyPen(*wxBLUE,1,wxPENSTYLE_DOT),
+    alignPen(*wxBLUE,1,wxPENSTYLE_SHORT_DASH),
+    measPen(*wxBLACK,1,wxPENSTYLE_DOT),
+    eventPen(*wxBLUE,2,wxPENSTYLE_SOLID),
 #ifdef WITH_PSLOPE
     PSlopePen(wxColor(30,144,255), 1, wxDOT), // Dotted bright blue line
 #endif
-    standardPrintPen(*wxBLACK,printSizePen1,wxSOLID), //Solid black line
-    standardPrintPen2(*wxRED,printSizePen1,wxSOLID), //Solid red line
-    standardPrintPen3(wxColour(255,192,192),printSizePen1,wxSOLID), //Solid red line
-    scalePrintPen(*wxBLACK,printSizePen2,wxSOLID), //Solid black line
-    scalePrintPen2(*wxRED,printSizePen2,wxSOLID), //Solid red line
-    measPrintPen(*wxBLACK,printSizePen1,wxDOT),
-    peakPrintPen(*wxRED,printSizePen1,wxSHORT_DASH), //Dashed red line
-    peakLimitPrintPen(*wxRED,printSizePen1,wxDOT), //Dotted red line
-    basePrintPen(*wxGREEN,printSizePen1,wxSHORT_DASH), //Dashed green line
-    baseLimitPrintPen(*wxGREEN,printSizePen1,wxDOT), //Dotted green line
-    decayLimitPrintPen(wxColour(63,63,63),printSizePen1,wxDOT), //Dotted dark blue line
-    fitPrintPen(wxColour(63,63,63),printSizePen2,wxSOLID), //Solid dark grey line
-    fitSelectedPrintPen(wxColour(128,128,128),printSizePen2,wxSOLID), //Solid dark grey line
-    selectPrintPen(wxColour(31,31,31),printSizePen1,wxSOLID), //Solid grey line
-    averagePrintPen(*wxBLUE,printSizePen1,wxSOLID), //Solid light blue line
-    rtPrintPen(*wxGREEN,printSizePen2,wxSOLID), //Solid green line
-    hdPrintPen(*wxCYAN,printSizePen2,wxSOLID), //Solid violet line
-    rdPrintPen(*wxRED,printSizePen2,wxSOLID), //Solid dark violet line
+    standardPrintPen(*wxBLACK,printSizePen1,wxPENSTYLE_SOLID), //Solid black line
+    standardPrintPen2(*wxRED,printSizePen1,wxPENSTYLE_SOLID), //Solid red line
+    standardPrintPen3(wxColour(255,192,192),printSizePen1,wxPENSTYLE_SOLID), //Solid red line
+    scalePrintPen(*wxBLACK,printSizePen2,wxPENSTYLE_SOLID), //Solid black line
+    scalePrintPen2(*wxRED,printSizePen2,wxPENSTYLE_SOLID), //Solid red line
+    measPrintPen(*wxBLACK,printSizePen1,wxPENSTYLE_DOT),
+    peakPrintPen(*wxRED,printSizePen1,wxPENSTYLE_SHORT_DASH), //Dashed red line
+    peakLimitPrintPen(*wxRED,printSizePen1,wxPENSTYLE_DOT), //Dotted red line
+    basePrintPen(*wxGREEN,printSizePen1,wxPENSTYLE_SHORT_DASH), //Dashed green line
+    baseLimitPrintPen(*wxGREEN,printSizePen1,wxPENSTYLE_DOT), //Dotted green line
+    decayLimitPrintPen(wxColour(63,63,63),printSizePen1,wxPENSTYLE_DOT), //Dotted dark blue line
+    fitPrintPen(wxColour(63,63,63),printSizePen2,wxPENSTYLE_SOLID), //Solid dark grey line
+    fitSelectedPrintPen(wxColour(128,128,128),printSizePen2,wxPENSTYLE_SOLID), //Solid dark grey line
+    selectPrintPen(wxColour(31,31,31),printSizePen1,wxPENSTYLE_SOLID), //Solid grey line
+    averagePrintPen(*wxBLUE,printSizePen1,wxPENSTYLE_SOLID), //Solid light blue line
+    rtPrintPen(*wxGREEN,printSizePen2,wxPENSTYLE_SOLID), //Solid green line
+    hdPrintPen(*wxCYAN,printSizePen2,wxPENSTYLE_SOLID), //Solid violet line
+    rdPrintPen(*wxRED,printSizePen2,wxPENSTYLE_SOLID), //Solid dark violet line
 #ifdef WITH_PSLOPE
-    slopePrintPen(*wxBLUE,printSizePen4,wxSOLID), //Solid blue line
+    slopePrintPen(*wxBLUE,printSizePen4,wxPENSTYLE_SOLID), //Solid blue line
 #endif
-    resultsPrintPen(*wxLIGHT_GREY,printSizePen2,wxSOLID),//Solid light grey line
-    latencyPrintPen(*wxBLUE,printSizePen1,wxDOT),//Dotted violett line
-    PSlopePrintPen(wxColour(30,144,255), printSizePen1, wxDOT), // Dotted bright blue line
-    baseBrush(*wxLIGHT_GREY,wxBDIAGONAL_HATCH),
-    zeroBrush(*wxLIGHT_GREY,wxFDIAGONAL_HATCH),
+    resultsPrintPen(*wxLIGHT_GREY,printSizePen2,wxPENSTYLE_SOLID),//Solid light grey line
+    latencyPrintPen(*wxBLUE,printSizePen1,wxPENSTYLE_DOT),//Dotted violett line
+    PSlopePrintPen(wxColour(30,144,255), printSizePen1, wxPENSTYLE_DOT), // Dotted bright blue line
+    baseBrush(*wxLIGHT_GREY,wxBRUSHSTYLE_BDIAGONAL_HATCH),
+    zeroBrush(*wxLIGHT_GREY,wxBRUSHSTYLE_FDIAGONAL_HATCH),
     lastLDown(0,0),
     yzoombg(),
     m_zoomContext( new wxMenu ),

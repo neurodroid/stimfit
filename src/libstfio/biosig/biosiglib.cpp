@@ -147,7 +147,7 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
                 SegIndexList[++n] = pos;
         }
         else if (typ < 256) {
-            sprintf(str,"%f s:\t%s\n", pos/fs, desc);
+            snprintf(str, sizeof(str), "%f s:\t%s\n", pos/fs, desc);
             annotationTableDesc += std::string( str );
 
             size_t currentSectionNumber = (pos < SegIndexList[n]) ? n : (n+1);
@@ -231,7 +231,7 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
 
     ReturnData.SetComment ( biosig_get_recording_id(hdr) );
 
-    sprintf(str,"v%i.%i.%i (compiled on %s %s)",BIOSIG_VERSION_MAJOR,BIOSIG_VERSION_MINOR,BIOSIG_PATCHLEVEL,__DATE__,__TIME__);
+    snprintf(str, sizeof(str), "v%i.%i.%i (compiled on %s %s)",BIOSIG_VERSION_MAJOR,BIOSIG_VERSION_MINOR,BIOSIG_PATCHLEVEL,__DATE__,__TIME__);
     std::string Desc = std::string("importBiosig with libbiosig ")+std::string(str) + " ";
     const char* tmpstr;
     if ((tmpstr=biosig_get_technician(hdr)))

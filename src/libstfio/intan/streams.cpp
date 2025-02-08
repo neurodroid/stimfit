@@ -104,7 +104,7 @@ int FileInStream::read(char* data, int len) {
 #else
     BinaryReader::BinaryReader(BOOST_RV_REF(unique_ptr<FileInStream>) other_) :
 #endif
-    other(move(other_))
+    other(std::move(other_))
 {
 }
 

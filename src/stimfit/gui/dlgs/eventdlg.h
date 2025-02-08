@@ -45,12 +45,6 @@ private:
     wxStaticBoxSizer* m_radioBox;
     wxComboBox* m_comboBoxTemplates;
 
-    wxStaticText* staticTextThr;
-
-    wxRadioButton* wxRadioClements;
-    wxRadioButton* wxRadioJonas;
-    wxRadioButton* wxRadioPernia;
-
     void OnClements( wxCommandEvent & event );
     void OnJonas( wxCommandEvent & event );
     void OnPernia( wxCommandEvent & event );

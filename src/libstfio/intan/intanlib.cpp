@@ -248,7 +248,7 @@ void stfio::importIntanFile(const std::string &fName, Recording &ReturnData, Pro
 
     fs->open(wfName);
 
-    unique_ptr<BinaryReader> binreader(new BinaryReader(move(fs)));
+    unique_ptr<BinaryReader> binreader(new BinaryReader(std::move(fs)));
 
     IntanHeader hIntan = read_header(*binreader);
     if (hIntan.datatype == 0) {

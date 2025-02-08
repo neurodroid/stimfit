@@ -349,16 +349,14 @@ stfnum::linCorr(const Vector_double& data, const Vector_double& templ, stfio::Pr
 
     // Optimal scaling & offset:
     // avoid redundant computations:
-    double sum_templ_data=0.0, sum_templ=0.0, sum_templ_sqr=0.0, sum_data=0.0, sum_data_sqr=0.0;
+    double sum_templ_data=0.0, sum_templ=0.0, sum_templ_sqr=0.0, sum_data=0.0;
     for (int n_templ=0; n_templ<(int)templ.size();++n_templ) {
         sum_templ_data+=templ[n_templ]*data[0+n_templ];
         sum_data+=data[0+n_templ];
-        sum_data_sqr+=data[0+n_templ]*data[0+n_templ];
         sum_templ+=templ[n_templ];
         sum_templ_sqr+=templ[n_templ]*templ[n_templ];
     }
     double y_old=0.0;
-    double y2_old=0.0;
     int progCounter=0;
     double progFraction=(data.size()-templ.size())/100.0;
     for (unsigned n_data=0; n_data<data.size()-templ.size(); ++n_data) {
@@ -379,14 +377,11 @@ stfnum::linCorr(const Vector_double& data, const Vector_double& templ, stfio::Pr
             }
             // The new value that will be added is:
             double y_new=data[n_data+templ.size()-1];
-            double y2_new=data[n_data+templ.size()-1]*data[n_data+templ.size()-1];
             sum_data+=y_new-y_old;
-            sum_data_sqr+=y2_new-y2_old;
         }
         // The first value that was added (and will have to be subtracted during
         // the next loop):
         y_old=data[n_data+0];
-        y2_old=data[n_data+0]*data[n_data+0];
 
         double scale=(sum_templ_data-sum_templ*sum_data/templ.size())/
         (sum_templ_sqr-sum_templ*sum_templ/templ.size());

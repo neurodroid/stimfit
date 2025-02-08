@@ -4,7 +4,17 @@
 #include "../libstfio/stfio.h"
 
 
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#endif
+
 #include <numpy/arrayobject.h>
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 #define array_data(a)          PyArray_DATA((PyArrayObject*)a)
 

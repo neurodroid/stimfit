@@ -3846,7 +3846,7 @@ BOOL WINAPI ABF_BuildErrorText(int nErrorNum, const char *szFileName, char *sTxt
 #else
         c_LoadString(g_hInstance, IDS_ENOMESSAGESTR, szTemplate, sizeof(szTemplate));
 #endif
-        sprintf(szErrorMsg, szTemplate, nErrorNum);
+        snprintf(szErrorMsg, sizeof(szErrorMsg), szTemplate, nErrorNum);
         //     ERRORMSG(szErrorMsg);
 
         strncpy(sTxtBuf, szErrorMsg, uMaxLen-1);

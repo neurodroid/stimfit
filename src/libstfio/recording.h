@@ -100,16 +100,6 @@ class StfioDll Recording {
      */
     const std::string& GetScaling() const { return scaling; }
 
-    //! Retrieves the time of recording as a string.
-    /*! \return A string containing the time of recording.
-     */
-    const std::string& GetTime();
-
-    //! Retrieves the date of recording as a string.
-    /*! \return A string containing the date of recording.
-     */
-    const std::string& GetDate();
-
     //! Retrieves the date of recording as a string.
     /*! \return A string containing the date of recording.
      */
@@ -385,12 +375,6 @@ class StfioDll Recording {
  private:
     std::deque<Channel> ChannelArray;
     std::string global_section_description, scaling;
-
-    // only neeed for GetData() and GetTime(): should be replaced by alternative interface.
-#ifndef _MSC_VER
-    __attribute__ ((deprecated))
-#endif
-    std::string time0, date; 
 
     /* public: */
     
