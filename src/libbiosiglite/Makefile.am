@@ -40,23 +40,27 @@ libbiosiglite_la_SOURCES = \
   ../biosig/biosig4c++/XMLParser/tinyxmlparser.cpp \
   ../biosig/biosig4c++/XMLParser/tinyxmlerror.cpp \
   ../biosig/biosig4c++/XMLParser/tinystr.cpp
-
   # ../biosig/biosig4c++/biosig-network.c
+
+EXTRA_DIST = \
+  ../biosig/biosig4matlab/doc/eventcodes.txt \
+  ../biosig/biosig4matlab/doc/11073-10102-AnnexB.txt \
+  ../biosig/biosig4matlab/doc/units.csv \
+  ../biosig/biosig4c++/annotatedECG.awk \
+  ../biosig/biosig4c++/eventcodes.awk \
+  ../biosig/biosig4c++/units.awk
 
 BUILT_SOURCES = eventcodes.i eventcodegroups.i 11073-10102-AnnexB.i units.i
 CLEANFILES = eventcodes.i eventcodegroups.i 11073-10102-AnnexB.i units.i
 
-eventcodes.i:
-	@touch eventcodes.i
+eventcodes.i eventcodegroups.i: ../biosig/biosig4c++/eventcodes.awk ../biosig/biosig4matlab/doc/eventcodes.txt
+	$(AWK) -f $(top_srcdir)/src/biosig/biosig4c++/eventcodes.awk $(top_srcdir)/src/biosig/biosig4matlab/doc/eventcodes.txt
 
-eventcodegroups.i:
-	@touch eventcodegroups.i
+units.i: ../biosig/biosig4c++/units.awk ../biosig/biosig4matlab/doc/units.csv
+	$(AWK) -f $(top_srcdir)/src/biosig/biosig4c++/units.awk $(top_srcdir)/src/biosig/biosig4matlab/doc/units.csv > units.i
 
-11073-10102-AnnexB.i:
-	@touch 11073-10102-AnnexB.i
-
-units.i:
-	@touch units.i
+11073-10102-AnnexB.i : ../biosig/biosig4c++/annotatedECG.awk ../biosig/biosig4matlab/doc/11073-10102-AnnexB.txt
+	$(AWK) -f $(top_srcdir)/src/biosig/biosig4c++/annotatedECG.awk $(top_srcdir)/src/biosig/biosig4matlab/doc/11073-10102-AnnexB.txt > 11073-10102-AnnexB.i
 
 # libbiosiglite_la_CPPFLAGS = -DWITH_BIOSIG -DWITH_ZLIB -DWITH_CHOLMOD -DWITHOUT_NETWORK
 libbiosiglite_la_CPPFLAGS = -DWITH_BIOSIG -DWITH_ZLIB -DWITHOUT_NETWORK
