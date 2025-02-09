@@ -1,3 +1,10 @@
+stimfit (0.16.6-1) unstable; urgency=low
+
+  * Install icons into appropriate locations
+  * Drop build dependency on sip
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sun, 09 Feb 2025 21:17:35 +0000
+
 stimfit (0.16.5-1) unstable; urgency=low
 
   * Update to latest NumPy C API

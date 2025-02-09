@@ -1,6 +1,9 @@
 usr/share/applications/stimfit.desktop
-usr/share/pixmaps/stimfit16x16.xpm
-usr/share/pixmaps/stimfit32x32.xpm
+usr/share/icons/hicolor/16x16/apps/stimfit.png
+usr/share/icons/hicolor/32x32/apps/stimfit.png
+usr/share/icons/hicolor/48x48/apps/stimfit.png
+usr/share/icons/hicolor/128x128/apps/stimfit.png
+usr/share/icons/hicolor/512x512/apps/stimfit.png
 usr/lib/stimfit/*.py
 usr/lib/stimfit/*.so
 usr/bin/stimfit

@@ -98,7 +98,7 @@ binary-arch: build install
 	dh_strip --dbg-package=stimfit-dbg
 	dh_fixperms
 	dh_icons
-#	dh_perl
+	#	dh_perl
 	[ -x /usr/bin/dh_python3 ] && dh_python3 -V$(PYVER) --no-ext-rename || :
 	[ -x /usr/bin/dh_numpy ] && dh_numpy || :
 	dh_makeshlibs

@@ -123,6 +123,11 @@ EXTRA_DIST+= ./src/stimfit/res/slope.xpm
 EXTRA_DIST+= ./src/stimfit/res/stimfit.png
 EXTRA_DIST+= ./src/stimfit/res/stimfit16x16.xpm
 EXTRA_DIST+= ./src/stimfit/res/stimfit32x32.xpm
+EXTRA_DIST+= ./src/stimfit/res/stimfit_16.png
+EXTRA_DIST+= ./src/stimfit/res/stimfit_32.png
+EXTRA_DIST+= ./src/stimfit/res/stimfit_48.png
+EXTRA_DIST+= ./src/stimfit/res/stimfit_128.png
+EXTRA_DIST+= ./src/stimfit/res/stimfit_512.png
 EXTRA_DIST+= ./src/stimfit/res/sum_new.xpm
 EXTRA_DIST+= ./src/stimfit/res/sum_new_aligned.xpm
 EXTRA_DIST+= ./src/stimfit/res/table.xpm
@@ -209,10 +214,15 @@ endif
 
 if !ISDARWIN
 if BUILD_DEBIAN
-LTTARGET=/usr/lib/stimfit
+LTTARGET = /usr/lib/stimfit
+else
+LTTARGET = $(prefix)/lib/stimfit
+endif
+
 install-exec-hook:
 	$(LIBTOOL) --finish $(prefix)/lib/stimfit
 	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
+if BUILD_DEBIAN
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libpystf.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstimfit.so
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libstfio.so
@@ -220,25 +230,26 @@ install-exec-hook:
 if WITH_BIOSIGLITE
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libbiosiglite.so
 endif
-	install -d $(prefix)/share/pixmaps
+endif
+	install -d $(prefix)/share/icons/hicolor/16x16/apps
+	install -d $(prefix)/share/icons/hicolor/32x32/apps
+	install -d $(prefix)/share/icons/hicolor/48x48/apps
+	install -d $(prefix)/share/icons/hicolor/128x128/apps
+	install -d $(prefix)/share/icons/hicolor/512x512/apps
 	install -d $(prefix)/share/applications
-	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
-	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit32x32.xpm $(prefix)/share/pixmaps/stimfit32x32.xpm
+	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit_16.png $(prefix)/share/icons/hicolor/16x16/apps/stimfit.png
+	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit_32.png $(prefix)/share/icons/hicolor/32x32/apps/stimfit.png
+	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit_48.png $(prefix)/share/icons/hicolor/48x48/apps/stimfit.png
+	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit_128.png $(prefix)/share/icons/hicolor/128x128/apps/stimfit.png
+	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit_512.png $(prefix)/share/icons/hicolor/512x512/apps/stimfit.png
 	install -m 644 $(top_srcdir)/dist/debian/stimfit.desktop $(prefix)/share/applications/
-else !BUILD_DEBIAN
-LTTARGET=$(prefix)/lib/stimfit
-install-exec-hook:
-	$(LIBTOOL) --finish $(LTTARGET)
-	chrpath -r $(LTTARGET) $(prefix)/bin/stimfit
-	install -d $(prefix)/share/pixmaps
-	install -d $(prefix)/share/applications
-	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
-	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit32x32.xpm $(prefix)/share/pixmaps/stimfit32x32.xpm
-	install -m 644 $(top_srcdir)/dist/debian/stimfit.desktop $(prefix)/share/applications/
-endif !BUILD_DEBIAN
+
 uninstall-hook:
-	rm -f $(prefix)/share/pixmaps/stimfit16x16.xpm
-	rm -f $(prefix)/share/pixmaps/stimfit32x32.xpm
+	rm -f $(prefix)/share/icons/hicolor/16x16/apps/stimfit.png
+	rm -f $(prefix)/share/icons/hicolor/32x32/apps/stimfit.png
+	rm -f $(prefix)/share/icons/hicolor/48x48/apps/stimfit.png
+	rm -f $(prefix)/share/icons/hicolor/128x128/apps/stimfit.png
+	rm -f $(prefix)/share/icons/hicolor/512x512/apps/stimfit.png
 	rm -f $(prefix)/share/applications/stimfit.desktop
 else ISDARWIN
 LTTARGET=$(prefix)/lib/stimfit
