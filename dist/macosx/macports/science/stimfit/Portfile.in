@@ -1,10 +1,14 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
-# $Id$
+
 PortSystem          1.0
 PortGroup           wxWidgets 1.0
 
 name                stimfit
 version             STFVERSION
+checksums           rmd160  RMD160 \
+                    sha256  SHA256 \
+                    size SIZE
+
 categories          science
 platforms           darwin
 license             GPL-2
@@ -14,23 +18,26 @@ long_description    A program for viewing and analyzing electrophysiological dat
 homepage            http://www.stimfit.org
 master_sites        ${homepage}
 
-checksums           rmd160  RMD160 \
-                    sha256  SHA256
-
 wxWidgets.use       wxWidgets-3.2
 
 depends_lib         port:fftw-3 \
                     port:hdf5 \
                     port:${wxWidgets.port}
 
+compiler.cxx_standard \
+                    2017
+
 configure.args      --disable-dependency-tracking \
+                    --disable-silent-rules \
                     --disable-python \
                     --with-biosiglite \
                     --with-wx-config=${wxWidgets.wxconfig}
 
-default_variants    +python311
+if {![variant_isset python39] && ![variant_isset python310] && ![variant_isset python311] && ![variant_isset python312]} {
+    default_variants +python312
+}
 
-set python_branches {3.9 3.10 3.11}
+set python_branches {3.9 3.10 3.11 3.12}
 
 foreach python_branch ${python_branches} {
     set python_version [join [lrange [split ${python_branch} .] 0 1] ""]
@@ -63,7 +70,8 @@ foreach python_branch ${python_branches} {
         depends_lib-append \
             port:python${python_version} \
             port:py${python_version}-numpy \
-            port:py${python_version}-matplotlib
+            port:py${python_version}-matplotlib \
+            port:py${python_version}-cvxopt
 
         configure.python \
             ${prefix}/bin/python${python_branch}
@@ -78,7 +86,7 @@ foreach python_branch ${python_branches} {
     }
 }
 
-variant atlas description {Use MacPorts ATLAS libraries.} {
+variant atlas description {Use MacPorts ATLAS libraries} {
     depends_lib-append \
         port:atlas
 

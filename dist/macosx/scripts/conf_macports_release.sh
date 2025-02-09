@@ -3,7 +3,7 @@
 prefix="/opt/local"
 # WX_CONF="${prefix}/Library/Frameworks/wxWidgets.framework/Versions/wxWidgets/3.1/bin/wx-config"
 # WX_CONF="/Users/cs/wxPython-4.0.7.post2/build/wxbld/wx-config"
-PYVER="3.11"
+PYVER="3.12"
 WX_CONF="${prefix}/Library/Frameworks/Python.framework/Versions/${PYVER}/bin/wx-config"
 MYCC=`${WX_CONF} --cc`
 MYCFLAGS=`${WX_CONF} --cflags`
@@ -21,8 +21,8 @@ MYLDFLAGS=`${WX_CONF} --libs all`
 MYLDFLAGS="${MYLDFLAGS} -headerpad_max_install_names -L${prefix}/lib"
 config_args="--with-wx-config=${WX_CONF} \
              --disable-dependency-tracking \
-             --with-biosiglite \
-             --enable-debug"
+             --with-biosiglite"
+#              --enable-debug"
 #             --with-lapack-lib="
 #              --enable-debug \
 
