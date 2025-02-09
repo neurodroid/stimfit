@@ -132,7 +132,7 @@ bool wxStfApp::OnCmdLineParsed(wxCmdLineParser& parser)
 bool wxStfApp::OnInit(void)
 {
 #ifndef _STFDEBUG
-    wxLogLevel(wxLOG_FatalError);
+    wxLog::SetLogLevel(wxLOG_FatalError);
 #endif
     if (!wxApp::OnInit()) {
         std::cerr << "Could not start application" << std::endl;
