@@ -1,4 +1,4 @@
-stimfit (0.16.6-1) unstable; urgency=low
+stimfit (0.16.6-1) unstable; urgency=medium
 
   * Install icons into appropriate locations
   * Drop build dependency on sip
