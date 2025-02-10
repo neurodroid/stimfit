@@ -43,7 +43,23 @@ libbiosiglite_la_SOURCES = \
   ../biosig/biosig4c++/XMLParser/tinystr.cpp
   # ../biosig/biosig4c++/biosig-network.c
 
-libbiosiglite_la_EXTRA_DIST = \
+noinst_HEADERS = \
+  ../biosig/biosig4c++/biosig.h \
+  ../biosig/biosig4c++/biosig2.h \
+  ../biosig/biosig4c++/biosig-dev.h \
+  ../biosig/biosig4c++/biosig-network.h \
+  ../biosig/biosig4c++/gdftime.h \
+  ../biosig/biosig4c++/mdc_ecg_codes.h \
+  ../biosig/biosig4c++/physicalunits.h \
+  ../biosig/biosig4c++/igor/IgorBin.h \
+  ../biosig/biosig4c++/t210/abfheadr.h \
+  ../biosig/biosig4c++/t210/axon_structs.h \
+  ../biosig/biosig4c++/t210/codes.h \
+  ../biosig/biosig4c++/t210/structures.h \
+  ../biosig/biosig4c++/XMLParser/tinyxml.h \
+  ../biosig/biosig4c++/XMLParser/tinystr.h
+
+EXTRA_DIST = \
   ../biosig/biosig4matlab/doc/eventcodes.txt \
   ../biosig/biosig4matlab/doc/11073-10102-AnnexB.txt \
   ../biosig/biosig4matlab/doc/units.csv \
@@ -51,8 +67,8 @@ libbiosiglite_la_EXTRA_DIST = \
   ../biosig/biosig4c++/eventcodes.awk \
   ../biosig/biosig4c++/units.awk
 
-libbiosiglite_la_BUILT_SOURCES = eventcodes.i eventcodegroups.i 11073-10102-AnnexB.i units.i
-libbiosiglite_la_CLEANFILES = eventcodes.i eventcodegroups.i 11073-10102-AnnexB.i units.i
+BUILT_SOURCES = eventcodes.i eventcodegroups.i 11073-10102-AnnexB.i units.i
+CLEANFILES = eventcodes.i eventcodegroups.i 11073-10102-AnnexB.i units.i
 
 eventcodes.i eventcodegroups.i: ../biosig/biosig4c++/eventcodes.awk ../biosig/biosig4matlab/doc/eventcodes.txt
 	$(AWK) -f $(top_srcdir)/src/biosig/biosig4c++/eventcodes.awk $(top_srcdir)/src/biosig/biosig4matlab/doc/eventcodes.txt
