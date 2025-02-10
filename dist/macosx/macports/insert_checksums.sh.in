@@ -21,7 +21,7 @@ fi
 
 RMD160=`openssl rmd160 -r ../../../build/release/stimfit-${STFVERSION}.tar.gz | awk '{print $1;}'`
 SHA256=`openssl sha256 -r ../../../build/release/stimfit-${STFVERSION}.tar.gz | awk '{print $1;}'`
-SIZE=`wc -c <  ../../../build/release/stimfit-${STFVERSION}.tar.gz`
+SIZE=`wc -c <  ../../../build/release/stimfit-${STFVERSION}.tar.gz | awk '{print $1;}'`
 
 echo "rmd160:" ${RMD160}
 echo "sha256:" ${SHA256}
