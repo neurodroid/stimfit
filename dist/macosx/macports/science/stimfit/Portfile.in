@@ -10,7 +10,6 @@ checksums           rmd160  RMD160 \
                     size SIZE
 
 categories          science
-platforms           darwin
 license             GPL-2
 maintainers         {gmx.de:christsc @neurodroid}
 description         Electrophysiology analysis suite
