@@ -212,13 +212,25 @@ class Section {
         r->SetFileDescription(val);
     }
     const std::string& Recording_time_get(Recording *r) {
-        return r->GetTime();
+        static char buffer[9];
+	struct tm dt = r->GetDateTime();
+        // Use strftime to format the time into the buffer.
+        if (strftime(buffer, sizeof(buffer), "%H:%M:%S", &dt) == 0) {
+            return "na";
+        }
+        return std::string(buffer);
     }
     void Recording_time_set(Recording *r, const std::string& val) {
         r->SetTime(val);
     }
     const std::string& Recording_date_get(Recording *r) {
-        return r->GetDate();
+        static char buffer[11];
+        struct tm dt = r->GetDateTime();
+	// Use strftime to format the time into the buffer.
+        if (strftime(buffer, sizeof(buffer), "%Y:%m:%d", &dt) == 0) {
+            return "";
+        }
+        return std::string(buffer);
     }
     void Recording_date_set(Recording *r, const std::string& val) {
         r->SetDate(val);

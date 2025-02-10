@@ -1,3 +1,4 @@
+if WITH_BIOSIGLITE
 if BUILD_MODULE
 if ISDARWIN
 PYTHON_TARGET_DIR=${PYTHON_DIST_PKG}
@@ -42,7 +43,7 @@ libbiosiglite_la_SOURCES = \
   ../biosig/biosig4c++/XMLParser/tinystr.cpp
   # ../biosig/biosig4c++/biosig-network.c
 
-EXTRA_DIST = \
+libbiosiglite_la_EXTRA_DIST = \
   ../biosig/biosig4matlab/doc/eventcodes.txt \
   ../biosig/biosig4matlab/doc/11073-10102-AnnexB.txt \
   ../biosig/biosig4matlab/doc/units.csv \
@@ -50,8 +51,8 @@ EXTRA_DIST = \
   ../biosig/biosig4c++/eventcodes.awk \
   ../biosig/biosig4c++/units.awk
 
-BUILT_SOURCES = eventcodes.i eventcodegroups.i 11073-10102-AnnexB.i units.i
-CLEANFILES = eventcodes.i eventcodegroups.i 11073-10102-AnnexB.i units.i
+libbiosiglite_la_BUILT_SOURCES = eventcodes.i eventcodegroups.i 11073-10102-AnnexB.i units.i
+libbiosiglite_la_CLEANFILES = eventcodes.i eventcodegroups.i 11073-10102-AnnexB.i units.i
 
 eventcodes.i eventcodegroups.i: ../biosig/biosig4c++/eventcodes.awk ../biosig/biosig4matlab/doc/eventcodes.txt
 	$(AWK) -f $(top_srcdir)/src/biosig/biosig4c++/eventcodes.awk $(top_srcdir)/src/biosig/biosig4matlab/doc/eventcodes.txt
@@ -73,5 +74,6 @@ if ISDARWIN
 # don't install anything because it has to go into the app bundle
 if !BUILD_MODULE
 install:
+endif
 endif
 endif
