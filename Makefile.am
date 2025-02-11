@@ -121,8 +121,6 @@ EXTRA_DIST+= ./src/stimfit/res/resultset_next.xpm
 EXTRA_DIST+= ./src/stimfit/res/resultset_previous.xpm
 EXTRA_DIST+= ./src/stimfit/res/slope.xpm
 EXTRA_DIST+= ./src/stimfit/res/stimfit.png
-EXTRA_DIST+= ./src/stimfit/res/stimfit16x16.xpm
-EXTRA_DIST+= ./src/stimfit/res/stimfit32x32.xpm
 EXTRA_DIST+= ./src/stimfit/res/stimfit_16.png
 EXTRA_DIST+= ./src/stimfit/res/stimfit_32.png
 EXTRA_DIST+= ./src/stimfit/res/stimfit_48.png
@@ -174,7 +172,6 @@ EXTRA_DIST+= ./dist/debian/stimfit.1
 EXTRA_DIST+= ./dist/debian/stimfit.desktop
 EXTRA_DIST+= ./dist/debian/stimfit.files
 EXTRA_DIST+= ./dist/debian/stimfit.install
-EXTRA_DIST+= ./dist/debian/stimfit.menu
 EXTRA_DIST+= ./src/test/gtest/CHANGES
 EXTRA_DIST+= ./src/test/gtest/CONTRIBUTORS
 EXTRA_DIST+= ./src/test/gtest/COPYING
@@ -232,9 +229,6 @@ if WITH_BIOSIGLITE
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libbiosiglite.so
 endif
 endif
-	install -d $(prefix)/share/pixmaps
-	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
-	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit32x32.xpm $(prefix)/share/pixmaps/stimfit32x32.xpm
 	install -d $(prefix)/share/applications
 	install -m 644 $(top_srcdir)/dist/debian/stimfit.desktop $(prefix)/share/applications/
 	for size in 16 32 48 128 256 512; do \
@@ -246,8 +240,6 @@ uninstall-hook:
 	for size in 16 32 48 128 256 512; do \
 		rm -f $(prefix)/share/icons/hicolor/$${size}x$${size}/apps/stimfit.png; \
 	done
-	rm -f $(prefix)/share/pixmaps/stimfit16x16.xpm
-	rm -f $(prefix)/share/pixmaps/stimfit32x32.xpm
 	rm -f $(prefix)/share/applications/stimfit.desktop
 else ISDARWIN
 LTTARGET=$(prefix)/lib/stimfit
