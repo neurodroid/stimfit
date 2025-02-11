@@ -127,6 +127,7 @@ EXTRA_DIST+= ./src/stimfit/res/stimfit_16.png
 EXTRA_DIST+= ./src/stimfit/res/stimfit_32.png
 EXTRA_DIST+= ./src/stimfit/res/stimfit_48.png
 EXTRA_DIST+= ./src/stimfit/res/stimfit_128.png
+EXTRA_DIST+= ./src/stimfit/res/stimfit_256.png
 EXTRA_DIST+= ./src/stimfit/res/stimfit_512.png
 EXTRA_DIST+= ./src/stimfit/res/sum_new.xpm
 EXTRA_DIST+= ./src/stimfit/res/sum_new_aligned.xpm
@@ -231,25 +232,22 @@ if WITH_BIOSIGLITE
 	chrpath -r $(LTTARGET) $(prefix)/lib/stimfit/libbiosiglite.so
 endif
 endif
-	install -d $(prefix)/share/icons/hicolor/16x16/apps
-	install -d $(prefix)/share/icons/hicolor/32x32/apps
-	install -d $(prefix)/share/icons/hicolor/48x48/apps
-	install -d $(prefix)/share/icons/hicolor/128x128/apps
-	install -d $(prefix)/share/icons/hicolor/512x512/apps
+	install -d $(prefix)/share/pixmaps
+	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit16x16.xpm $(prefix)/share/pixmaps/stimfit16x16.xpm
+	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit32x32.xpm $(prefix)/share/pixmaps/stimfit32x32.xpm
 	install -d $(prefix)/share/applications
-	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit_16.png $(prefix)/share/icons/hicolor/16x16/apps/stimfit.png
-	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit_32.png $(prefix)/share/icons/hicolor/32x32/apps/stimfit.png
-	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit_48.png $(prefix)/share/icons/hicolor/48x48/apps/stimfit.png
-	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit_128.png $(prefix)/share/icons/hicolor/128x128/apps/stimfit.png
-	install -m 644 $(top_srcdir)/src/stimfit/res/stimfit_512.png $(prefix)/share/icons/hicolor/512x512/apps/stimfit.png
 	install -m 644 $(top_srcdir)/dist/debian/stimfit.desktop $(prefix)/share/applications/
+	for size in 16 32 48 128 256 512; do \
+		install -d $(prefix)/share/icons/hicolor/$${size}x$${size}/apps; \
+		install -m 644 $(top_srcdir)/src/stimfit/res/stimfit_$${size}.png $(prefix)/share/icons/hicolor/$${size}x$${size}/apps/stimfit.png; \
+	done
 
 uninstall-hook:
-	rm -f $(prefix)/share/icons/hicolor/16x16/apps/stimfit.png
-	rm -f $(prefix)/share/icons/hicolor/32x32/apps/stimfit.png
-	rm -f $(prefix)/share/icons/hicolor/48x48/apps/stimfit.png
-	rm -f $(prefix)/share/icons/hicolor/128x128/apps/stimfit.png
-	rm -f $(prefix)/share/icons/hicolor/512x512/apps/stimfit.png
+	for size in 16 32 48 128 256 512; do \
+		rm -f $(prefix)/share/icons/hicolor/$${size}x$${size}/apps/stimfit.png; \
+	done
+	rm -f $(prefix)/share/pixmaps/stimfit16x16.xpm
+	rm -f $(prefix)/share/pixmaps/stimfit32x32.xpm
 	rm -f $(prefix)/share/applications/stimfit.desktop
 else ISDARWIN
 LTTARGET=$(prefix)/lib/stimfit

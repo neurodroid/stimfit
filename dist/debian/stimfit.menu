@@ -1,7 +1,7 @@
 ?package(stimfit): needs="X11" section="Applications/Programming"\
   hints="Documents"\
   title="Stimfit" command="/usr/bin/stimfit"\
-  icon="/usr/share/icons/hicolor/32x32/apps/stimfit.png"\
-  icon16x16="/usr/share/icons/hicolor/16x16/apps/stimfit.png"\
-  icon32x32="/usr/share/icons/hicolor/32x32/apps/stimfit.png"\
+  icon="/usr/share/pixmaps/stimfit32x32.xpm"\
+  icon16x16="/usr/share/pixmaps/stimfit16x16.xpm"\
+  icon32x32="/usr/share/pixmaps/stimfit32x32.xpm"\
   longtitle="View and analyze electrophysiology files"
