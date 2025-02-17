@@ -193,8 +193,8 @@ endif
 CC       ?= $(shell $(WXCONF) --cc)
 CXX      ?= $(shell $(WXCONF) --cxx)
 LD        = $(shell $(WXCONF) --ld)
-CFLAGS   += $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector -O2
-CPPFLAGS += $(DEFINES) $(shell $(WXCONF) --cppflags) -std=c++17 -fstack-protector -O2
+CFLAGS   += $(DEFINES) $(shell $(WXCONF) --cflags) -fstack-protector -O2 -I./
+CPPFLAGS += $(DEFINES) $(shell $(WXCONF) --cppflags) -std=c++17 -fstack-protector -O2 -I./
 LIBS     += $(shell $(WXCONF) --libs net,adv,aui,core,base)
 SWIG	  = @SWIG@
 SWIG_PYTHON_OPT = @SWIG_PYTHON_OPT@
@@ -230,7 +230,7 @@ ifeq (mingw,$(findstring mingw, $(WXCONF)))
   LIBS   += -lgfortran -lquadmath
 endif
 
-@BUILD_PYTHON_TRUE@PYTHON_DEST_DIR = ${prefix}${PYTHON_TARGET_DIR}
+PYTHON_DEST_DIR = ${prefix}${PYTHON_TARGET_DIR}
 
 ##############################################################
 ###  BUILT
