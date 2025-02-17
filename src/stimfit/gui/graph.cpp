@@ -44,9 +44,7 @@
 #include <iostream>
 #endif
 
-#if defined (_WIN32)
-#define isnan _isnan
-#elif !defined(isnan)
+#if !defined(isnan)
 #define isnan std::isnan
 #endif
 // #define BENCHMARK // uncomment to run benchmark
