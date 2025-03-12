@@ -1,3 +1,10 @@
+stimfit (0.16.7-1) unstable; urgency=medium
+
+  * Add build dependency on python3-setuptools (Closes: #1100323)
+  * Drop menu entry in favour of desktop file
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Wed, 12 Mar 2025 18:39:07 +0000
+
 stimfit (0.16.6-1) unstable; urgency=medium
 
   * Install icons into appropriate locations
