@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Christoph Schmidt-Hieber <christsc@gmx.de>
 Uploaders: Yaroslav Halchenko <debian@onerussian.com>
 Build-Depends: debhelper (>= 10), dh-python, libbiosig-dev (>= 2.1.0), python3-dev, python3-numpy, python3-setuptools, libhdf5-dev, swig, python3-wxgtk4.0 (>= 4.0.7), libwxgtk3.2-dev, libfftw3-dev, liblapack-dev, chrpath, help2man, zlib1g-dev, pkgconf
-Standards-Version: 3.9.8
+Standards-Version: 4.7.2
 Homepage: http://www.stimfit.org
 
 Package: stimfit
