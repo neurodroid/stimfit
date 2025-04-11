@@ -30,7 +30,7 @@
   #pragma GCC diagnostic ignored "-Wwrite-strings"
 #endif
 #if PY_MAJOR_VERSION >= 3
-  #include <wxPython/sip.h>
+  #include "sip.h"
   #include <wxPython/wxpy_api.h>
   #define PyString_Check PyUnicode_Check
   #define PyString_AsString PyBytes_AsString

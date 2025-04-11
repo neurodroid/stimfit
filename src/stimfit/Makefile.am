@@ -1,5 +1,9 @@
 pkglib_LTLIBRARIES = libstimfit.la
 
+sip.h: FORCE
+	sip-module PyQt5.sip --sip-h
+FORCE:
+
 libstimfit_la_SOURCES = ./stf.cpp \
             ./gui/app.cpp ./gui/unopt.cpp ./gui/doc.cpp ./gui/copygrid.cpp ./gui/graph.cpp \
             ./gui/printout.cpp ./gui/parentframe.cpp ./gui/childframe.cpp ./gui/view.cpp ./gui/table.cpp ./gui/zoom.cpp \
