@@ -32,6 +32,8 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp
+	rm -f a.out config.status libtool config.log stimfittest.log
+	rm -rf src/pystfio/.libs src/stimfit/.libs src/stimfit/py/.libs
 
 #       Add here commands to clean up after the build process.
 	rm -rf ./.libs ./_libs ./.deps ./.stimfit

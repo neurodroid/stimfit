@@ -50,7 +50,9 @@ endif
 endif
 
 DEFINES += -DWITH_BIOSIG
-DEFINES += -DWITH_PSLOPE
+ifeq (@ENABLE_PSLOPE@,yes)
+	DEFINES += -DWITH_PSLOPE
+endif
 #DEFINES += -DTEST_MINIMAL
 #DEFINES += -DPYTHON -DWITH_PYTHON
 
@@ -223,7 +225,7 @@ CXXFLAGS += $(CFLAGS) $(CPPFLAGS)
 
 ## BIOSIG related stuff ##
 LIBS  += $(shell $(PKGCONF) --libs libbiosig)
-
+LIBS  += -lhdf5 -lhdf5_hl
 LIBS     += -lfftw3
 
 ifeq (mingw,$(findstring mingw, $(WXCONF)))
@@ -245,6 +247,10 @@ $(TARGET): $(OBJECTS)
 
 %.cpp: %.h
 
+src/stimfit/sip.h: FORCE
+	(cd src/stimfit/ && sip-module PyQt5.sip --sip-h)
+FORCE:
+
 %.$(OBJEXT): %.c
 	$(CC) -o "$@" $(CFLAGS) -c "$<"
 
@@ -257,10 +263,9 @@ $(TARGET): $(OBJECTS)
 %.$(OBJEXT): %.cxx
 	$(CXX) -o "$@" $(CXXFLAGS) -c "$<"
 
-
 clean:
 	find src -name "*.$(OBJEXT)" -exec rm {} \;
-	rm -f stimfit
+	rm -f stimfit src/stimfit/sip.h
 
 
 install: $(TARGET)
