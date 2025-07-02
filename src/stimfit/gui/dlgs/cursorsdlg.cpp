@@ -166,7 +166,7 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
     pSdbSizer->Add( bSave, 0, wxALL, 1); 
     //pSdbSizer->Realize();
 
-    topSizer->Add( pSdbSizer, 0, wxALIGN_CENTER | wxALL, 5 );
+    topSizer->Add( pSdbSizer, 0, wxALIGN_CENTER_HORIZONTAL| wxALL, 5 );
     topSizer->SetSizeHints(this);
     this->SetSizer( topSizer );
 
@@ -244,11 +244,11 @@ wxNotebookPage* wxStfCursorsDlg::CreateMeasurePage() {
     wxBoxSizer* pageSizer;
     pageSizer=new wxBoxSizer(wxVERTICAL);
     pageSizer->Add( CreateCursorInput( nbPage, wxTEXTM, -1, wxCOMBOUM,
-            -1, 1, 10 ), 0, wxALIGN_CENTER | wxALL, 2 );
+            -1, 1, 10 ), 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2 );
     wxCheckBox* pMeasCursor=new wxCheckBox( nbPage, wxMEASCURSOR,
             wxT("Show vertical ruler through cursor"), wxDefaultPosition,
             wxDefaultSize, 0 );
-    pageSizer->Add( pMeasCursor, 0, wxALIGN_CENTER | wxALL, 2);
+    pageSizer->Add( pMeasCursor, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2);
 
     pageSizer->SetSizeHints( nbPage );
     nbPage->SetSizer( pageSizer );
@@ -264,13 +264,13 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     pageSizer=new wxBoxSizer(wxVERTICAL);
 
     pageSizer->Add( CreateCursorInput( nbPage, wxTEXT1P, wxTEXT2P, wxCOMBOU1P,
-            wxCOMBOU2P, 1, 10 ), 0, wxALIGN_CENTER | wxALL, 2 );
+            wxCOMBOU2P, 1, 10 ), 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2 );
 
     wxCheckBox* pPeakAtEnd=new wxCheckBox( nbPage, wxPEAKATEND,
             wxT("Peak window ends at end of trace"), wxDefaultPosition,
             wxDefaultSize, 0 );
     pPeakAtEnd->SetValue(false);
-    pageSizer->Add( pPeakAtEnd, 0, wxALIGN_CENTER | wxALL, 2);
+    pageSizer->Add( pPeakAtEnd, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2);
 
     wxFlexGridSizer* peakSettingsGrid;
     peakSettingsGrid=new wxFlexGridSizer(1,2,0,0); // rows, cols
@@ -300,7 +300,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
 
     usrdefGrid->Add(textMeanPoints, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
 
-    peakPointsSizer->Add( pAllPoints, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2 );
+    peakPointsSizer->Add( pAllPoints, 0, wxALIGN_LEFT | wxALL, 2 );
     peakPointsSizer->Add( usrdefGrid, 0, wxALIGN_LEFT | wxALL, 2 );
     peakSettingsGrid->Add( peakPointsSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2 );
     LeftGrid->Add(peakSettingsGrid, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
@@ -329,7 +329,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
         wxALIGN_LEFT |  wxALIGN_CENTER_VERTICAL | wxALL, 2);
     RTGrid->Add(RTSlider, 0, 
         wxALIGN_LEFT |  wxALIGN_CENTER_VERTICAL | wxALL, 2);
-    LeftGrid->Add(RTGrid, 1, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    LeftGrid->Add(RTGrid, 1, wxALIGN_CENTER  | wxALL, 2);
     CommonGrid->Add(LeftGrid, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
 
     // END: Number of points for peak calculation:
@@ -349,7 +349,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
 
     pageSizer->Add(CommonGrid, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2);
     
-    //pageSizer->Add(peakSettingsGrid, 0, wxALIGN_CENTER | wxALL, 2);
+    //pageSizer->Add(peakSettingsGrid, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2);
     // END: Peak direction
     
     wxFlexGridSizer* slopeSettingsGrid = new wxFlexGridSizer(1,2,0,0);
@@ -362,15 +362,15 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     wxFlexGridSizer* slopeGrid = new wxFlexGridSizer(1,2,0,0);
     // user entry
     wxTextCtrl* pSlope=new wxTextCtrl( nbPage, wxSLOPE, wxT(""), wxDefaultPosition,
-            wxSize(64,20), wxTE_RIGHT );
+            wxSize(80,20), wxTE_RIGHT );
     slopeGrid->Add( pSlope, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
     // Units
     wxStaticText* pSlopeUnits=new wxStaticText( nbPage, wxSLOPEUNITS, wxT("      "),
             wxDefaultPosition, wxDefaultSize, wxTE_LEFT );
-    slopeGrid->Add( pSlopeUnits, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
-    slopeSizer->Add( slopeGrid, 0, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
-    slopeSettingsGrid->Add( slopeSizer, 0, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    slopeGrid->Add( pSlopeUnits, 0, wxALIGN_LEFT | wxALL, 2 );
+    slopeSizer->Add( slopeGrid, 0, wxALIGN_CENTER_HORIZONTAL  | wxALL, 2 );
+    slopeSettingsGrid->Add( slopeSizer, 0, wxALIGN_CENTER  | wxALL, 2 );
     
     // START: Measure peak kinetics 
     wxString referenceChoices[] = { wxT("From baseline"), wxT("From threshold") };
@@ -379,9 +379,9 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
             wxDefaultPosition, wxDefaultSize, referenceNChoices, referenceChoices,
             0, wxRA_SPECIFY_ROWS );
     pReference->SetSelection(0);
-    slopeSettingsGrid->Add( pReference, 0, wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    slopeSettingsGrid->Add( pReference, 0, wxALIGN_CENTER  | wxALL, 2 );
     
-    pageSizer->Add( slopeSettingsGrid, 0, wxALIGN_CENTER | wxALL, 2 );
+    pageSizer->Add( slopeSettingsGrid, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2 );
     // END: Measure peak kinetics 
 
     pageSizer->SetSizeHints(nbPage);
@@ -396,7 +396,7 @@ wxNotebookPage* wxStfCursorsDlg::CreateBasePage() {
     wxBoxSizer* pageSizer;
     pageSizer=new wxBoxSizer(wxVERTICAL);
     pageSizer->Add( CreateCursorInput( nbPage, wxTEXT1B, wxTEXT2B, wxCOMBOU1B,
-            wxCOMBOU2B, 1, 10 ), 0, wxALIGN_CENTER | wxALL, 2 );
+            wxCOMBOU2B, 1, 10 ), 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2 );
 
     // Grid
     wxFlexGridSizer* BaseMethodSizer = new wxFlexGridSizer(1, 0, 0);
@@ -426,14 +426,14 @@ wxNotebookPage* wxStfCursorsDlg::CreateDecayPage() {
     wxBoxSizer* pageSizer;
     pageSizer=new wxBoxSizer(wxVERTICAL);
     pageSizer->Add( CreateCursorInput( nbPage, wxTEXT1D, wxTEXT2D, wxCOMBOU1D,
-            wxCOMBOU2D, 1, 10 ), 0, wxALIGN_CENTER | wxALL, 2 );
+            wxCOMBOU2D, 1, 10 ), 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2 );
 
     wxFlexGridSizer* decaySettingsGrid = new wxFlexGridSizer(1,3,0,0);
     wxCheckBox* pStartFitAtPeak = new wxCheckBox( nbPage, wxSTARTFITATPEAK,
             wxT("Start fit at peak"),  wxDefaultPosition,  wxDefaultSize, 0  );
     decaySettingsGrid->Add( pStartFitAtPeak, 0, wxALIGN_CENTER | wxALL, 2);
 
-    pageSizer->Add( decaySettingsGrid, 0, wxALIGN_CENTER | wxALL, 2 );
+    pageSizer->Add( decaySettingsGrid, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2 );
 
     pageSizer->SetSizeHints(nbPage);
     nbPage->SetSizer( pageSizer );
@@ -449,13 +449,13 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
     pageSizer = new wxBoxSizer(wxVERTICAL);
 
     pageSizer->Add(CreateCursorInput(nbPage, wxTEXT1L, wxTEXT2L, wxCOMBOU1L,
-        wxCOMBOU2L, 1, 10), 0, wxALIGN_CENTER | wxALL, 2);
+        wxCOMBOU2L, 1, 10), 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2);
 
     // Checkbox for using peak window for latency cursors
     wxStaticText *pUsePeak = new wxStaticText(nbPage, wxID_ANY,
         wxT("If not manual, latencies are within peak cursors"), wxDefaultPosition,
         wxDefaultSize, 0);
-    pageSizer->Add(pUsePeak, 0 , wxALIGN_CENTER | wxALL, 2);
+    pageSizer->Add(pUsePeak, 0 , wxALIGN_CENTER_HORIZONTAL | wxALL, 2);
 
     // Grid
     wxFlexGridSizer* LatBegEndGrid;
@@ -527,7 +527,7 @@ wxNotebookPage* wxStfCursorsDlg:: CreateLatencyPage(){
     // Add to LatBegEndGrid
     LatBegEndGrid->Add(RightBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
 
-    pageSizer->Add(LatBegEndGrid, 0, wxALIGN_CENTER | wxALL, 2);
+    pageSizer->Add(LatBegEndGrid, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2);
 
     nbPage->SetSizer(pageSizer);
     nbPage->Layout();
@@ -545,7 +545,7 @@ wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
     pageSizer=new wxBoxSizer(wxVERTICAL);
 
     pageSizer->Add( CreateCursorInput( nbPage, wxTEXT1PS, wxTEXT2PS, wxCOMBOU1PS,
-            wxCOMBOU2PS, 1, 10 ), 0, wxALIGN_CENTER | wxALL, 2 );
+            wxCOMBOU2PS, 1, 10 ), 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2 );
 
     // Grid
     wxFlexGridSizer* PSBegEndGrid;
@@ -601,10 +601,10 @@ wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
     
     }
     // Sizer to group the radio options
-    LeftBoxSizer->Add( pPSManBeg, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-    LeftBoxSizer->Add( pPSEventBeg, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-    LeftBoxSizer->Add( thrGrid, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-    LeftBoxSizer->Add( pPSt50Beg, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    LeftBoxSizer->Add( pPSManBeg, 0, wxALIGN_LEFT | wxALL, 2);
+    LeftBoxSizer->Add( pPSEventBeg, 0, wxALIGN_LEFT | wxALL, 2);
+    LeftBoxSizer->Add( thrGrid, 0, wxALIGN_LEFT | wxALL, 2);
+    LeftBoxSizer->Add( pPSt50Beg, 0, wxALIGN_LEFT | wxALL, 2);
     // Add to PSBegEndGrid
     PSBegEndGrid->Add(LeftBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
 
@@ -664,14 +664,14 @@ wxNotebookPage* wxStfCursorsDlg::CreatePSlopePage() {
     }
 
     // Sizer to group the radio options
-    RightBoxSizer->Add( pPSManEnd, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-    RightBoxSizer->Add( pPSt50End, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-    RightBoxSizer->Add( DeltaTGrid, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
-    RightBoxSizer->Add( pPSPeakEnd, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2);
+    RightBoxSizer->Add( pPSManEnd, 0, wxALIGN_LEFT | wxALL, 2);
+    RightBoxSizer->Add( pPSt50End, 0, wxALIGN_LEFT | wxALL, 2);
+    RightBoxSizer->Add( DeltaTGrid, 0, wxALIGN_LEFT | wxALL, 2);
+    RightBoxSizer->Add( pPSPeakEnd, 0, wxALIGN_LEFT | wxALL, 2);
     // Add to PSBegEndGrid
     PSBegEndGrid->Add(RightBoxSizer, 0, wxALIGN_LEFT | wxALIGN_TOP | wxALL, 2);
 
-    pageSizer->Add(PSBegEndGrid, 0, wxALIGN_CENTER | wxALL, 2);
+    pageSizer->Add(PSBegEndGrid, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2);
 
     nbPage->SetSizer(pageSizer);
     nbPage->Layout();
@@ -691,14 +691,16 @@ wxFlexGridSizer* wxStfCursorsDlg::CreateCursorInput( wxPanel* nbPage, wxWindowID
     wxStaticText *Cursor1;
     Cursor1 = new wxStaticText( nbPage, wxID_ANY, wxT("First cursor:"),
             wxDefaultPosition, wxDefaultSize, wxTE_LEFT );
-    cursorGrid->Add( Cursor1, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    // cursorGrid->Add( Cursor1, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 ); 
+    cursorGrid->Add( Cursor1, 0, wxALIGN_LEFT | wxALL, 2 );
 
     // user entry
     wxString strc1,strc2;
     strc1 << (int)c1;
     wxTextCtrl* textC1 = new wxTextCtrl( nbPage, textC1id, strc1, wxDefaultPosition,
             wxSize(64,20), wxTE_RIGHT );
-    cursorGrid->Add( textC1, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    // cursorGrid->Add( textC1, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+    cursorGrid->Add( textC1, 0, wxALIGN_LEFT| wxALL, 2 );
 
     // units
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
