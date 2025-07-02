@@ -164,7 +164,7 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
 
     // 1) the wxSpinCtrl object 
     trace_spinctrl = new wxSpinCtrl( m_traceCounter, ID_SPINCTRLTRACES, wxEmptyString, wxDefaultPosition,
-                     wxSize(64, wxDefaultCoord), wxSP_WRAP);
+                     wxDefaultSize, wxSP_WRAP);
 
     // the "of n", where n is the number of traces
     // n is zero-based in zero-based check box is selected
@@ -174,8 +174,8 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
     wxString sizeStr;
 
     pSpinCtrlTraceSizer->Add( pIndexText,     0, wxALIGN_CENTER_VERTICAL  | wxALL, 1) ;
-    pSpinCtrlTraceSizer->Add( trace_spinctrl, 0, wxALIGN_LEFT, 1) ;
-    pSpinCtrlTraceSizer->Add( pSize,          0, wxALIGN_LEFT  | wxALIGN_CENTER, 1) ;
+    pSpinCtrlTraceSizer->Add( trace_spinctrl, 0, wxALIGN_LEFT | wxALL, 1) ;
+    pSpinCtrlTraceSizer->Add( pSize,          0, wxALIGN_LEFT  | wxALIGN_CENTER_VERTICAL | wxALL, 1) ;
 
     // 2) Show zero-based index? Read from Stimfit registry
     pZeroIndex = new wxCheckBox( m_traceCounter, ID_ZERO_INDEX, wxT("Zero-based index ") );
