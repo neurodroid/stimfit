@@ -134,7 +134,7 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     measPen(*wxBLACK,1,wxPENSTYLE_DOT),
     eventPen(*wxBLUE,2,wxPENSTYLE_SOLID),
 #ifdef WITH_PSLOPE
-    PSlopePen(wxColor(30,144,255), 1, wxDOT), // Dotted bright blue line
+    PSlopePen(wxColor(30,144,255), 1, wxPENSTYLE_DOT), // Dotted bright blue line
 #endif
     standardPrintPen(*wxBLACK,printSizePen1,wxPENSTYLE_SOLID), //Solid black line
     standardPrintPen2(*wxRED,printSizePen1,wxPENSTYLE_SOLID), //Solid red line
