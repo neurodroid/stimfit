@@ -224,9 +224,10 @@ LIBS   += $(LIBLAPACK_LDFLAGS)
 CXXFLAGS += $(CFLAGS) $(CPPFLAGS)
 
 ## BIOSIG related stuff ##
-LIBS  += $(shell $(PKGCONF) --libs libbiosig)
+LIBS  += $(shell $(PKGCONF) --libs libbiosig) -ltinyxml
+LIBS  += $(shell $(PKGCONF) --libs openblas) -lgomp -lbiosig
 LIBS  += -lhdf5 -lhdf5_hl
-LIBS     += -lfftw3
+LIBS  += -lfftw3
 
 ifeq (mingw,$(findstring mingw, $(WXCONF)))
   LIBS   += -lgfortran -lquadmath
