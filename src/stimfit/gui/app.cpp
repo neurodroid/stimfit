@@ -975,7 +975,7 @@ void wxStfApp::OnCursorSettings( wxCommandEvent& WXUNUSED(event) ) {
     wxStfDoc* actDoc=GetActiveDoc();
     if (CursorsDialog==NULL && actDoc!=NULL) {
         CursorsDialog=new wxStfCursorsDlg((wxStfParentFrame*)GetTopWindow(), actDoc);
-        CursorsDialog->Show();
+        CursorsDialog->ShowModal();
         CursorsDialog->SetActiveDoc(actDoc);
         //set CEdit controls to given values
         try {
@@ -994,7 +994,7 @@ void wxStfApp::OnCursorSettings( wxCommandEvent& WXUNUSED(event) ) {
     }
 
     if(CursorsDialog!=NULL && !CursorsDialog->IsShown() && actDoc!=NULL) {
-        CursorsDialog->Show();
+        CursorsDialog->ShowModal();
         CursorsDialog->SetActiveDoc(actDoc);
         //set CEdit controls to given values
         try {
