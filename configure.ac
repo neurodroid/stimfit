@@ -143,7 +143,7 @@ if test "$enable_ipython" = "yes" ; then
 fi
 
 # Build the exotic Stimfit flavour with Slope cursors
-AC_ARG_ENABLE([pslope], AS_HELP_STRING([--enable-pslope],[include slope measure cursors]),[],[enable_pslope="yes"])
+AC_ARG_ENABLE([pslope], AS_HELP_STRING([--enable-pslope],[include slope measure cursors]))
 AC_SUBST(ENABLE_PSLOPE, $enable_pslope)
 if test "$enable_pslope" = "yes" ; then
     CPPFLAGS="${CPPFLAGS} -DWITH_PSLOPE"

@@ -11,7 +11,7 @@
 # Usage:
 #   cd ~/src/stimfit/         # change into stimfit's root directory
 #   ./autogen.sh
-#   ./configure --with-biosig --disable-python --with-pslope
+#   ./configure --with-biosig --disable-python
 #   make -f Makefile.static          # build stimfit(-lite) i.e. w/o python support
 #   make -f Makefile.static install  # install stimfit into bindir
 #
