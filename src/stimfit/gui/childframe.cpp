@@ -164,7 +164,7 @@ void wxStfChildFrame::CreateMenuTraces(const std::size_t value) {
 
     // 1) the wxSpinCtrl object 
     trace_spinctrl = new wxSpinCtrl( m_traceCounter, ID_SPINCTRLTRACES, wxEmptyString, wxDefaultPosition,
-                     wxDefaultSize, wxSP_WRAP);
+                     wxDefaultSize, wxSP_WRAP | wxTE_PROCESS_ENTER); // wxTE_PROCESS_ENTER is important to be defined otherwise default handlers would be triggered.
 
     // the "of n", where n is the number of traces
     // n is zero-based in zero-based check box is selected
@@ -317,9 +317,10 @@ void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
         wxGetApp().ErrorMsg(wxT("Null pointer in wxStfChildFrame::OnSpinCtrlTraces()"));
         return;
     }
+    std::size_t trace = GetCurTrace();
 
     if (pView->GetGraph() != NULL) {
-        pView->GetGraph()->ChangeTrace(GetCurTrace());
+        pView->GetGraph()->ChangeTrace(trace);
         pView->GetGraph()->Enable();
         pView->GetGraph()->SetFocus();
     }
