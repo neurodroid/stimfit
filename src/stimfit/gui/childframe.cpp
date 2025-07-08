@@ -318,8 +318,6 @@ void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
         return;
     }
 
-
-
     if (pView->GetGraph() != NULL) {      
         pView->GetGraph()->ChangeTrace(GetCurTrace());
         pView->GetGraph()->Enable();
