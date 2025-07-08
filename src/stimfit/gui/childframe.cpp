@@ -320,10 +320,8 @@ void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
 
 
 
-    if (pView->GetGraph() != NULL) {
-        std::size_t trace = GetCurTrace();
-        
-        pView->GetGraph()->ChangeTrace(trace);
+    if (pView->GetGraph() != NULL) {      
+        pView->GetGraph()->ChangeTrace(GetCurTrace());
         pView->GetGraph()->Enable();
         pView->GetGraph()->SetFocus();
     }
