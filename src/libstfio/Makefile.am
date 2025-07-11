@@ -33,11 +33,6 @@ libstfio_la_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp ./stfio.cpp \
 	./abf/axon2/SimpleStringCache.cpp \
 	./abf/axon2/abf2headr.cpp \
 	./atf/atflib.cpp \
-	./axg/axglib.cpp \
-	./axg/AxoGraph_ReadWrite.cpp \
-	./axg/fileUtils.cpp \
-	./axg/stringUtils.cpp \
-	./axg/byteswap.cpp \
 	./igor/igorlib.cpp \
 	./igor/CrossPlatformFileIO.c \
 	./igor/WriteWave.c \
@@ -47,6 +42,11 @@ libstfio_la_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp ./stfio.cpp \
 
 if !WITH_BIOSIG
 libstfio_la_SOURCES += \
+	./axg/axglib.cpp \
+	./axg/AxoGraph_ReadWrite.cpp \
+	./axg/fileUtils.cpp \
+	./axg/stringUtils.cpp \
+	./axg/byteswap.cpp \
 	./heka/hekalib.cpp
 endif
 if WITH_BIOSIG
