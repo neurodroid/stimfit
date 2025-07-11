@@ -171,7 +171,7 @@ bool wxStfApp::OnInit(void)
 #endif
 #if defined(WITH_BIOSIG)
     m_biosigTemplate=new wxDocTemplate( docManager,
-                                     wxT("Biosig files"), wxT("*.dat;*.cfs;*.gdf;*.ibw;*.wcp"), wxT(""), wxT(""),
+                                     wxT("Biosig files"), wxT("*.abf;*.axgd;*.axgx;*.dat;*.cfs;*.gdf;*.ibw;*.wcp"), wxT(""), wxT(""),
                                      wxT("Biosig Document"), wxT("Biosig View"), CLASSINFO(wxStfDoc),
                                      CLASSINFO(wxStfView) );
 #endif
@@ -865,11 +865,7 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     wxStfChildFrame *subframe = new wxStfChildFrame(
                                                     doc, view, 
                                                     wxStaticCast(GetTopWindow(), wxStfParentFrame), wxID_ANY, doc->GetTitle(),
-#ifdef __WXMAC__
                                                     wxDefaultPosition, wxDefaultSize,
-#else
-                                                    wxDefaultPosition, wxDefaultSize,
-#endif
                                                     wxDEFAULT_FRAME_STYLE |
                                                     // wxNO_FULL_REPAINT_ON_RESIZE |
                                                     wxWANTS_CHARS | wxMAXIMIZE
