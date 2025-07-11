@@ -405,11 +405,11 @@ void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
         ErrorMsg(wxT("Uninitialized file in wxStfApp::OnPeakcalcexecMsg()"));
         return;
     }
-#ifdef __WXMAC__        
+// #ifdef __WXMAC__        
     wxStfView* actView = (wxStfView*)actDoc->GetFirstView();
-#else
-    wxStfView* actView = GetActiveView();
-#endif
+// #else
+    // wxStfView* actView = GetActiveView();
+// #endif
     if (actView!=NULL) {
         wxStfGraph* pGraph = actView->GetGraph();
         if (pGraph != NULL)
