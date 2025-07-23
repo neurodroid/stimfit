@@ -2011,81 +2011,73 @@ void wxStfGraph::Fittowindow(bool refresh)
         wxGetApp().ErrorMsg(wxT("Array of size zero in wxGraph::Fittowindow()"));
         return;
     }
-#if (__cplusplus < 201103)
-    Vector_double::const_iterator max_el = std::max_element(Doc()->cursec().get().begin(), Doc()->cursec().get().end());
-    Vector_double::const_iterator min_el = std::min_element(Doc()->cursec().get().begin(), Doc()->cursec().get().end());
-#else
-    Vector_double::const_iterator max_el = std::max(Doc()->cursec().get().begin(), Doc()->cursec().get().end());
-    Vector_double::const_iterator min_el = std::min(Doc()->cursec().get().begin(), Doc()->cursec().get().end());
-#endif
-    double min = *min_el;
-    if (min>1.0e12)  min= 1.0e12;
-    if (min<-1.0e12) min=-1.0e12;
-    double max = *max_el;
-    if (max>1.0e12)  max= 1.0e12;
-    if (max<-1.0e12) max=-1.0e12;
-    wxRect WindowRect(GetRect());
-    switch (ParentFrame()->GetZoomQual())
-    {	//Depending on the zoom radio buttons (Mouse field)
-    //in the (trace navigator) control box
-    case stf::zoomboth:
-        if(!(Doc()->size()>1))
-            return;
 
-        //Fit to window Ch2
+    const auto& sec = Doc()->cursec().get();
+    if (sec.empty()) return;
+
+    auto max_el = std::max_element(sec.begin(), sec.end());
+    auto min_el = std::min_element(sec.begin(), sec.end());
+
+    double min = std::clamp(*min_el, -1.0e12, 1.0e12);
+    double max = std::clamp(*max_el, -1.0e12, 1.0e12);
+
+    wxSize size = GetClientSize();
+    if (size.GetWidth() <= 0 || points == 0)
+        return;
+
+    wxRect WindowRect(0, 0, size.GetWidth(), size.GetHeight());
+
+    switch (ParentFrame()->GetZoomQual()) {
+    case stf::zoomboth:
+        if (Doc()->size() <= 1) return;
         FitToWindowSecCh(false);
-        //Fit to window Ch1
-        XZW()=(double)WindowRect.width /points;
-        SPXW()=0;
+        XZW() = static_cast<double>(WindowRect.width) / points;
+        SPXW() = 0;
         FittorectY(Doc()->GetYZoomW(Doc()->GetCurChIndex()), WindowRect, min, max, screen_part);
         break;
     case stf::zoomch2:
-        //ErrorMsg if no second channel available
-        if(!(Doc()->size()>1))
-            return;
-
-        //Fit to window Ch2
+        if (Doc()->size() <= 1) return;
         FitToWindowSecCh(false);
         break;
+
     default:
-        //ErrorMsg if no second channel available
-        //			Invalidate();
-        //Fit to window Ch1
-        XZW()=(double)WindowRect.width /points;
-        SPXW()=0;
+        XZW() = static_cast<double>(WindowRect.width) / points;
+        SPXW() = 0;
         FittorectY(Doc()->GetYZoomW(Doc()->GetCurChIndex()), WindowRect, min, max, screen_part);
         break;
     }
-    if (refresh) Refresh();
+
+    if (refresh) {
+        Refresh();
+        Update(); // Ensure actual paint occurs
+    }
 }
 
 void wxStfGraph::FitToWindowSecCh(bool refresh)
 {
+    if (Doc()->size() <= 1) return;
 
-    if (Doc()->size()>1) {
-        //Get coordinates of the main window
-        wxRect WindowRect(GetRect());
+    wxSize size = GetClientSize();
+    if (size.GetWidth() <= 0 || size.GetHeight() <= 0) return;
 
-        const double screen_part=0.5; //part of the window to be filled
-        std::size_t secCh=Doc()->GetSecChIndex();
-    #undef min
-    #undef max
-#if (__cplusplus < 201103)
-        Vector_double::const_iterator max_el = std::max_element(Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().begin(),
-                                                                Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().end());
-        Vector_double::const_iterator min_el = std::min_element(Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().begin(),
-                                                                Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().end());
-#else
-        Vector_double::const_iterator max_el = std::max(Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().begin(),
-                                                               Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().end());
-        Vector_double::const_iterator min_el = std::min(Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().begin(),
-                                                                Doc()->get()[secCh][Doc()->GetCurSecIndex()].get().end());
-#endif
+    wxRect WindowRect(0, 0, size.GetWidth(), size.GetHeight());
+    const double screen_part = 0.5;
 
-        double min=*min_el;
-        double max=*max_el;
-        FittorectY(Doc()->GetYZoomW(Doc()->GetSecChIndex()), WindowRect, min, max, screen_part);
-        if (refresh) Refresh();
+    std::size_t secCh = Doc()->GetSecChIndex();
+    auto& secData = Doc()->get()[secCh][Doc()->GetCurSecIndex()].get();
+    if (secData.empty()) return;
+
+    auto max_el = std::max_element(secData.begin(), secData.end());
+    auto min_el = std::min_element(secData.begin(), secData.end());
+
+    double min = std::clamp(*min_el, -1.0e12, 1.0e12);
+    double max = std::clamp(*max_el, -1.0e12, 1.0e12);
+
+    FittorectY(Doc()->GetYZoomW(secCh), WindowRect, min, max, screen_part);
+
+    if (refresh) {
+        Refresh();
+        Update(); // forces redraw in wx 3.x
     }
 }	//End FitToWindowSecCh()
 
