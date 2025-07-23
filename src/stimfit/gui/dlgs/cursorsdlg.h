@@ -31,6 +31,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <wx/aui/aui.h>
 
 class wxStfDoc;
 
@@ -67,9 +68,9 @@ private:
     cursor1LIsTime,cursor2LIsTime;
 
     wxStfDoc* actDoc;
-    wxNotebook* m_notebook;
+    wxAuiNotebook* m_notebook;
 
-    void OnPageChanged( wxNotebookEvent& event );
+    void OnPageChanged( wxAuiNotebookEvent& event );
     void OnComboBoxUM( wxCommandEvent& event );
     void OnComboBoxU1P( wxCommandEvent& event );
     void OnComboBoxU2P( wxCommandEvent& event );

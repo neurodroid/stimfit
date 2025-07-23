@@ -167,7 +167,7 @@ SOURCES_AXG = ./src/libstfio/axg/axglib.cpp \
 
 # needed because of exportATF
 SOURCES += $(SOURCES_ABF)
-SOURCES += $(SOURCES_AXG)
+# SOURCES += $(SOURCES_AXG)
 
 
 ifeq (,$(findstring mingw, $(WXCONF)))
@@ -266,7 +266,6 @@ FORCE:
 
 clean:
 	find src -name "*.$(OBJEXT)" -exec rm {} \;
-	rm -f stimfit src/stimfit/sip.h
 
 
 install: $(TARGET)

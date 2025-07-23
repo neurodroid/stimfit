@@ -7,6 +7,7 @@
 #include "./../app.h"
 #include "./cursorsdlg.h"
 #include "./../doc.h"
+#include <wx/aui/aui.h>
 
 enum {
     wxLOADCRS,
@@ -75,11 +76,11 @@ enum {
     //wxID_STARTFITATPEAK,
     wxRT_LABEL,
     wxRT_SLIDER,
-    wxIDNOTEBOOK
+    wxIDAUINOTEBOOK
 };
 
 BEGIN_EVENT_TABLE( wxStfCursorsDlg, wxDialog )
-EVT_NOTEBOOK_PAGE_CHANGED(wxIDNOTEBOOK, wxStfCursorsDlg::OnPageChanged)
+EVT_AUINOTEBOOK_PAGE_CHANGED(wxIDAUINOTEBOOK, wxStfCursorsDlg::OnPageChanged)
 
 EVT_COMBOBOX( wxCOMBOUM, wxStfCursorsDlg::OnComboBoxUM )
 EVT_COMBOBOX( wxCOMBOU1P, wxStfCursorsDlg::OnComboBoxU1P )
@@ -143,7 +144,9 @@ wxStfCursorsDlg::wxStfCursorsDlg(wxWindow* parent, wxStfDoc* initDoc, int id, wx
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
 
-    m_notebook = new wxNotebook( this, wxIDNOTEBOOK, wxDefaultPosition, wxDefaultSize, 0 );
+m_notebook = new wxAuiNotebook(this, wxIDAUINOTEBOOK,
+    wxDefaultPosition, wxDefaultSize,
+    wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS);
     m_notebook->AddPage( CreateMeasurePage(), wxT("Measure"));
     m_notebook->AddPage( CreatePeakPage(), wxT("Peak"));
     m_notebook->AddPage( CreateBasePage(), wxT("Base"));
@@ -362,12 +365,11 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     wxFlexGridSizer* slopeGrid = new wxFlexGridSizer(1,2,0,0);
     // user entry
     wxTextCtrl* pSlope=new wxTextCtrl( nbPage, wxSLOPE, wxT(""), wxDefaultPosition,
-            wxSize(80,20), wxTE_RIGHT );
+            wxSize(50,20), wxTE_RIGHT );
     slopeGrid->Add( pSlope, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
     // Units
-    wxStaticText* pSlopeUnits=new wxStaticText( nbPage, wxSLOPEUNITS, wxT("      "),
-            wxDefaultPosition, wxDefaultSize, wxTE_LEFT );
+    wxStaticText* pSlopeUnits=new wxStaticText( nbPage, wxSLOPEUNITS, wxT("units"));
     slopeGrid->Add( pSlopeUnits, 0, wxALIGN_LEFT | wxALL, 2 );
     slopeSizer->Add( slopeGrid, 0, wxALIGN_CENTER_HORIZONTAL  | wxALL, 2 );
     slopeSettingsGrid->Add( slopeSizer, 0, wxALIGN_CENTER  | wxALL, 2 );
@@ -383,7 +385,6 @@ wxNotebookPage* wxStfCursorsDlg::CreatePeakPage() {
     
     pageSizer->Add( slopeSettingsGrid, 0, wxALIGN_CENTER_HORIZONTAL | wxALL, 2 );
     // END: Measure peak kinetics 
-
     pageSizer->SetSizeHints(nbPage);
     nbPage->SetSizer( pageSizer );
     nbPage->Layout();
@@ -1465,7 +1466,7 @@ void wxStfCursorsDlg::OnStartFitAtPeak( wxCommandEvent& event) {
 }
 
 
-void wxStfCursorsDlg::OnPageChanged(wxNotebookEvent& event) {
+void wxStfCursorsDlg::OnPageChanged(wxAuiNotebookEvent& event) {
     event.Skip();
     if (actDoc!=NULL) {
         try {

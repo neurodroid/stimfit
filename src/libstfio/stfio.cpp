@@ -164,6 +164,7 @@ bool stfio::importFile(
             stfio::importHDF5File(fName, ReturnData, progDlg);
             break;
         }
+#if !defined(WITH_BIOSIG)
         case stfio::abf: {
             stfio::importABFFile(fName, ReturnData, progDlg);
             break;
@@ -176,6 +177,7 @@ bool stfio::importFile(
             stfio::importAXGFile(fName, ReturnData, progDlg);
             break;
         }
+#endif
         case stfio::intan: {
             stfio::importIntanFile(fName, ReturnData, progDlg);
             break;
