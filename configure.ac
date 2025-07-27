@@ -286,6 +286,7 @@ if test "$enable_module" != "yes"; then
     AC_SUBST(WX_LIBS)
     AC_SUBST(WX_CPPFLAGS)
     AC_SUBST(WX_CXXFLAGS)
+    AC_SUBST(WXCONFIG)
 dnl default value is to (silently) do nothing in the makefile
 POSTLINK_COMMAND="@true"
 MACSETFILE="@true"

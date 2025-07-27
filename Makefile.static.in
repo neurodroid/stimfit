@@ -39,16 +39,6 @@
 #
 ########################################################################
 
-ifeq (,$(WXCONF))
-  # default wx-config
-  WXCONF    = $(CROSS)wx-config
-else
-ifneq (,$(findstring mingw,$(WXCONF)))
-  # for backwords compatibility to older MXE scripts
-  CROSS = $(subst wx-config,,$(WXCONF))
-endif
-endif
-
 DEFINES += -DWITH_BIOSIG
 ifeq (@ENABLE_PSLOPE@,yes)
 	DEFINES += -DWITH_PSLOPE
@@ -56,7 +46,8 @@ endif
 #DEFINES += -DTEST_MINIMAL
 #DEFINES += -DPYTHON -DWITH_PYTHON
 
-WXVERSION = $(basename $(shell $(WXCONF) --version))
+WXCONF    = @WXCONFIG@
+WXVERSION = $(shell $(WXCONF) --version)
 PY_VERSION := $(shell py3versions -i | sed 's/python//g')
 
 ##############################################################

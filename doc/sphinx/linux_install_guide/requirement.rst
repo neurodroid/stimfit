@@ -12,7 +12,7 @@ What we need before we start
 ============================
 
 For the impatient, here are all `Stimfit <http://www.stimfit.org>`_ build dependencies :
-for Debian12/bookworm (and probably Ubuntu 22.xx and later)
+for Debian13/bookworm (and probably Ubuntu 24.xx) and later
 
 ::
 
@@ -22,7 +22,7 @@ for Debian12/bookworm (and probably Ubuntu 22.xx and later)
                            python3-matplotlib \
                            libhdf5-dev \
                            swig \
-                           python3-sip-dev \
+                           sip-tools \
                            python3-wxgtk4.0 \
                            libwxgtk3.2-dev \
                            wx-common \
@@ -64,7 +64,7 @@ for Debian11/bullseye (and probably Ubuntu 20.x) it was
 
 This will get you, amongst others:
 
-* [wxWidgets]_: C++ graphical user interface toolkit (version >= 2.8; tested with 3.0.5)
+* [wxWidgets]_: C++ graphical user interface toolkit (version >= 2.8; tested with 3.2.8, 3.3.1)
 * [wxPython]_: GUI toolkit for the Python language.
 * [boost]_: C++ library that is mainly used for its shared pointers (only needed when -std=c++17 is not supported)
 * [Biosig]_: A library for reading a large number biomedical signal data formats.
