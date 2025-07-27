@@ -155,12 +155,13 @@ typedef unsigned int   UINT_PTR;
 #define FILE_END                            2
 #define FILE_ATTRIBUTE_NORMAL      0x00000080
 
-#define GENERIC_READ               0x80000000
-#define GENERIC_WRITE              0x40000000
-
 #define CREATE_NEW                          1
 #define CREATE_ALWAYS                       2
 #define OPEN_EXISTING                       3
+
+#if !defined(__MINGW32__)
+#define GENERIC_READ               0x80000000
+#define GENERIC_WRITE              0x40000000
 
 #define FILE_SHARE_READ           0x00000001L
 
@@ -176,6 +177,9 @@ typedef unsigned int   UINT_PTR;
 #define LOWORD(l)              ((WORD)((DWORD_PTR)(l) & 0xFFFF))
 #define HIWORD(l)              ((WORD)((DWORD_PTR)(l) >> 16))
 
+#define ERROR_TOO_MANY_OPEN_FILES       4
+#endif //!defined(__MINGW32__)
+
 #ifndef _MAX_PATH
 #define _MAX_DRIVE          3
 #define _MAX_FNAME          256
@@ -183,7 +187,6 @@ typedef unsigned int   UINT_PTR;
 #define _MAX_EXT            _MAX_FNAME
 #define _MAX_PATH           260
 #endif
-#define ERROR_TOO_MANY_OPEN_FILES       4
 
 
     // #define __stdcall __attribute__((__stdcall__))
@@ -206,6 +209,7 @@ typedef struct _GUID
 #define GUID_DEFINED
 #endif
 
+#if !defined(__MINGW32__)
 void _splitpath(const char* inpath, char * drv, char * dir,
                 char* fname, char * ext );
 int _strnicmp( LPCSTR str1, LPCSTR str2, size_t n );
@@ -213,7 +217,6 @@ void _makepath( char * path, const char * drive,
                 const char *directory, const char * filename,
                 const char * extension );
 
-#if !defined(__MINGW32__)
 /* 64 bit number of 100 nanoseconds intervals since January 1, 1601 */
 typedef struct _FILETIME
 {
