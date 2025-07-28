@@ -1026,7 +1026,8 @@ bool wxStfCursorsDlg::SaveCursorConf(const wxString& mypath ){
     
     wxDateTime now = wxDateTime::Now();
 
-    wxFileConfig* csr_config = new wxFileConfig(wxT(""), wxT(""), mypath );
+    const char * settingsFileExtension = ".csr";
+    wxFileConfig* csr_config = new wxFileConfig(wxT(""), wxT(""), mypath + settingsFileExtension);
     
     csr_config->SetPath( wxT("__CSR_HEADER__") );
     //csr_config->Write( wxT("Date"), now.Format( wxT("%Y/%M/%d"), wxDateTime::CET) );
