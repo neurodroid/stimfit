@@ -717,8 +717,8 @@ bool wxStfDoc::SaveAs() {
     // file types
     wxString filters;
     filters += wxT("hdf5 file (*.h5)|*.h5|");
-    filters += wxT("CED filing system (*.dat;*.cfs)|*.dat;*.cfs|");
-    filters += wxT("Axon text file (*.atf)|*.atf|");
+    filters += wxT("deprecated: CED filing system (*.dat;*.cfs) (will be disabled in future)|*.dat;*.cfs|");
+    filters += wxT("deprecated: Axon text file (*.atf) (will be disabled in future)|*.atf|");
     filters += wxT("Igor binary wave (*.ibw)|*.ibw|");
     filters += wxT("Mantis TDMS file (*.tdms)|*.tdms|");
     filters += wxT("Text file series (*.txt)|*.txt|");

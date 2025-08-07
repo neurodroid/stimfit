@@ -133,7 +133,7 @@ wxStfConvertDlg::wxStfConvertDlg(wxWindow* parent, int id, wxString title, wxPoi
 
     wxArrayString mydestextensions; //ordered by importance 
     mydestextensions.Add(wxT("Igor binary   [*.ibw ]"));
-    mydestextensions.Add(wxT("Axon textfile [*.atf ]"));
+    mydestextensions.Add(wxT("deprecated: Axon textfile [*.atf ] (will be disabled in future)"));
 #if defined(WITH_BIOSIG)
     mydestextensions.Add(wxT("GDF (Biosig) [*.gdf ]"));
 #endif

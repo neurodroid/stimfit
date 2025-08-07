@@ -799,7 +799,7 @@ void wxStfParentFrame::OnConvert(wxCommandEvent& WXUNUSED(event) ) {
                 switch ( eft ) {
                  case stfio::atf:
                      stfio::exportATFFile(stf::wx2std(destFilename), sourceFile);
-                     dest_ext = wxT("Axon textfile [*.atf]");
+                     dest_ext = wxT("deprecated: Axon textfile [*.atf] (will be disabled in future)");
                      break;
                  case stfio::igor:
                      stfio::exportIGORFile(stf::wx2std(destFilename), sourceFile, progDlgOut);
