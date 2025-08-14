@@ -1,3 +1,9 @@
+stimfit (0.16.9-1) unstable; urgency=medium
+
+  * Fix several UI issues with trace display and dialog behaviour
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Thu, 14 Aug 2025 16:14:14 +0200
+
 stimfit (0.16.7-1) unstable; urgency=medium
 
   * Add build dependency on python3-setuptools (Closes: #1100323)
