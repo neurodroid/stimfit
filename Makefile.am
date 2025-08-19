@@ -62,6 +62,7 @@ noinst_HEADERS = \
 	./src/libstfnum/levmar/lm.h ./src/libstfnum/levmar/levmar.h \
 	./src/libstfnum/levmar/misc.h ./src/libstfnum/levmar/compiler.h \
 	./src/libstfnum/funclib.h \
+	./src/stimfit/sip.h \
 	./src/stimfit/stf.h \
 	./src/stimfit/gui/app.h \
 	./src/stimfit/gui/copygrid.h ./src/stimfit/gui/graph.h \
