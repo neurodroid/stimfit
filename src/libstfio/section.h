@@ -133,6 +133,19 @@ public:
     /*! \param value A string describing this section.
      */
     void SetSectionDescription(const std::string& value) { section_description=value; }
+
+    // Annotation operations //
+    // Add Annotation at sample number 'position'
+    void AddAnnotation(int position);
+
+    // Change position of Annotation[index] to new sample number 'position'
+    void MoveAnnotation(size_t index, int new_position);
+
+    // Remove Annotation[index] from list of Annotations
+    void RemoveAnnotation(size_t index);
+
+    size_t GetNumberOfAnnotations()  { return Annotations.size(); };
+    int    GetNthAnnotation(size_t index)  { return Annotations[index]; }
     
  private:
     //Private members-------------------------------------------------------
@@ -145,6 +158,10 @@ public:
 
     // The data:
     Vector_double data;
+
+    // list of annotations in this section
+    std::vector<int> Annotations;
+
 };
 
 /*@}*/
