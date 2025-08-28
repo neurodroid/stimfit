@@ -85,3 +85,8 @@ std::vector<Annotation> Section::GetAnnotationList()
 {
     return this->AnnotationsList;
 }
+
+std::size_t Section::GetSectionSize()
+{
+    return data.size();
+}

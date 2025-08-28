@@ -134,6 +134,17 @@ public:
      */
     void SetSectionDescription(const std::string& value) { section_description=value; }
     
+    //! Range-checked access. Returns a non-const reference.
+    /*! Throws std::out_of_range if out of range.
+     *  \param at_ Data point index.
+     *  \return Reference to the data point at index at_
+     */
+
+    //! Retrieves a section's data size.
+    /*! \return A size_t describing this section's data size.
+    */
+    std::size_t GetSectionSize();
+
     // Annotation operations //
     // Add Annotation at sample number 'position'
     void AddAnnotation(int position, Annotation annotation);

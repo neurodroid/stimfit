@@ -2522,21 +2522,32 @@ void wxStfDoc::OnExportAnnotations(wxCommandEvent &WXUNUSED)
                 std::cerr << "Error opening file!\n" ;
                 return;
             }
+            
+            //print a header to the file
+            wxFileName fn(GetFilename());
+            std::stringstream ss;
+            ss << "#STIMFITv0.16.9" << "\n"
+            << "#generated from file " << fn.GetFullName() << "\n"
+            << "#SampleRate " << GetSR() << "Hz" << "\n";
 
+            wxString line(ss.str());
+            asc_file.Write(line);
+
+            std::size_t relativePositionBase = 0;
             for (std::size_t channelIndex = 0; channelIndex < this->size(); channelIndex++){
                 for (std::size_t sectionIndex = 0; sectionIndex < this->at(channelIndex).size(); sectionIndex++){
                     std::vector<Annotation> annotationsList = this->at(channelIndex)[sectionIndex].GetAnnotationList();
                     for (std::size_t annotationIndex = 0; annotationIndex < annotationsList.size(); annotationIndex++){
                         std::stringstream ss;
                         ss << channelIndex << "\t"
-                        << sectionIndex << "\t"
-                        << annotationIndex << "\t"
-                        << annotationsList.at(annotationIndex).GetAnnotationPosition() << "\n";
+                        << relativePositionBase + annotationsList.at(annotationIndex).GetAnnotationPosition() << "\n";
 
                         wxString line(ss.str());
                         asc_file.Write(line);
 
                     }
+                    relativePositionBase += this->at(channelIndex)[sectionIndex].GetSectionSize();
+
                 }
             }
 
@@ -2578,19 +2589,21 @@ void wxStfDoc::OnImportAnnotations(wxCommandEvent &WXUNUSED)
 
             while (lines.HasMoreTokens()) {
                 wxString line = lines.GetNextToken().Trim(true).Trim(false);
-                if (line.IsEmpty()) continue;
+                if (line.IsEmpty()|| line.StartsWith("#")) continue; //skip comments or header
 
                 wxStringTokenizer tokens(line, "\t", wxTOKEN_STRTOK);
-                if (tokens.CountTokens() < 4) continue;
+                if (tokens.CountTokens() < 2) continue; 
 
-                long channelIndex, sectionIndex, annotationIndex, position;
+                long channelIndex, relativePosition;
                 tokens.GetNextToken().ToLong(&channelIndex);
-                tokens.GetNextToken().ToLong(&sectionIndex);
-                tokens.GetNextToken().ToLong(&annotationIndex);
-                tokens.GetNextToken().ToLong(&position);
+                tokens.GetNextToken().ToLong(&relativePosition);
+                    
+                std::size_t sectionSize = this->at(channelIndex)[0].GetSectionSize();
 
-                Annotation annotation(position, 0);
-                this->at(channelIndex)[sectionIndex].AddAnnotation(annotationIndex, annotation);
+                std::size_t sectionIndex = ceil(relativePosition / sectionSize);
+                
+                Annotation annotation(relativePosition % sectionSize, 0);
+                this->at(channelIndex)[sectionIndex].AddAnnotation(-1, annotation);
             }
         }
     }
