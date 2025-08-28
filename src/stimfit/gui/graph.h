@@ -39,7 +39,7 @@ enum plottype {
     reference,
     background
 };
-    
+
 //! Handles drawing of traces and keyboard or mouse input.
 /*! Derived from wxScrolledWindow, although no scrolling is implemented
  *  at this time. All the trace scaling and drawing happens here. Mouse
@@ -58,9 +58,9 @@ public:
 
     //! The central drawing function. Used for drawing to any output device, such as a printer or a screen.
     /*! \param dc is the device context used for drawing (can be a printer, a screen or a file).
-     */ 
+     */
     virtual void OnDraw(wxDC& dc);
-    
+
     //! Copies the drawing to the clipboard as a windows metafile.
     /*! Metafiles are only implemented in Windows. Some applications
      *  allow you to paste as an enhanced metafile (usually through
@@ -71,7 +71,7 @@ public:
     //! Handles mouse events.
     /*! The different possibilities (e.g. left or right click) split up
      *  within this function.
-     *  \param event The mouse event. Contains information such as whether 
+     *  \param event The mouse event. Contains information such as whether
      *  the left or right button was clicked.
      */
     void OnMouseEvent(wxMouseEvent& event);
@@ -82,10 +82,10 @@ public:
      *  that was pressed.
      */
     void OnKeyDown(wxKeyEvent& event);
-    
+
     //! Change trace
     /*! Takes care of refreshing everything when a new trace is shown
-     *  \param trace Index of next trace to be displayed 
+     *  \param trace Index of next trace to be displayed
      */
     void ChangeTrace(std::size_t trace);
 
@@ -110,7 +110,7 @@ public:
     /*! Called when the "first trace"-button is clicked.
      */
     void OnFirst();
-    
+
     //! Moves the traces up by 20 px.
     /*! Called when either the up arrow cursor key is pressed
      *  or the "Move traces up"-button is clicked.
@@ -198,11 +198,11 @@ public:
     void ChanScroll(int direction);
 
 
-#if 0
+    #if 0
     //! Swaps the active and the reference channel.
     void SwapChannels();
 #endif
-    
+
     //! Fits the graph to the window.
     /*! Fits the graph to 100% of the width and 50% of the height
      *  of the window and centers it.
@@ -251,12 +251,12 @@ public:
     //! Returns the current zoom struct.
     /*! \return the current zoom struct.
      */
-//    Zoom get_zoom() { return Doc()->at(Doc()->GetCurChIndex()).GetZoom(); }
+    //    Zoom get_zoom() { return Doc()->at(Doc()->GetCurChIndex()).GetZoom(); }
 
     //! Sets the current zoom struct.
     /*! \param zoom_ The current zoom struct.
      */
-//    void set_zoom(const Zoom& zoom_) { Doc()->at(Doc()->GetCurChIndex()).GetZoomW()=zoom_; }
+    //    void set_zoom(const Zoom& zoom_) { Doc()->at(Doc()->GetCurChIndex()).GetZoomW()=zoom_; }
 
     //! The view attached to this wxStfGraph.
     wxStfView *view;
@@ -280,7 +280,7 @@ public:
     /*! \return y value of the top screen border
      */
     double get_plot_ymax() const;
-    
+
     //! Returns y value of the bottom screen border for the reference channel
     /*! \return y value of the bottom screen border for the reference channel
      */
@@ -291,7 +291,7 @@ public:
      */
     double get_plot_y2max() const;
 
- private:
+private:
     wxStfChildFrame* pFrame;
     bool isZoomRect; //True if zoom window is set
     bool no_gimmicks; //True if no extra rulers/lines and circles shall be displayed
@@ -301,13 +301,13 @@ public:
     bool isSyncx;
 
     //Zoom struct
-//    Zoom zoom;
+    //    Zoom zoom;
 
     //Zoom struct to retain StdOut
-//    Zoom zoomOld;
+    //    Zoom zoomOld;
 
     //Zoom struct for PrintOut
-//    Zoom zoomPrint;
+    //    Zoom zoomPrint;
 
     //Variables for the scaling of the print out
     wxRect printRect;
@@ -346,17 +346,19 @@ public:
         slopePrintPen, resultsPrintPen, latencyPrintPen, PSlopePrintPen;
 
     wxBrush baseBrush, zeroBrush;
-    
+
     wxPoint lastLDown;
 
     YZoom yzoombg;
-    
+
 #if (__cplusplus < 201103)
     boost::shared_ptr<wxMenu> m_zoomContext;
     boost::shared_ptr<wxMenu> m_eventContext;
+    boost::shared_ptr<wxMenu> m_annotationContext;
 #else
     std::shared_ptr<wxMenu> m_zoomContext;
     std::shared_ptr<wxMenu> m_eventContext;
+    std::shared_ptr<wxMenu> m_annotationContext;
 #endif
 
     void InitPlot();
@@ -365,6 +367,7 @@ public:
     void DrawZoomRect(wxDC& DC);
     void PlotGimmicks(wxDC& DC);
     void PlotEvents(wxDC& DC);
+    void PlotAnnotations(wxDC& DC);
     void DrawCrosshair( wxDC& DC, const wxPen& pen, const wxPen& printPen, int crosshairSize, double xch, double ych);
     void PlotTrace( wxDC* pDC, const Vector_double& trace, plottype pt=active, int bgno=0 );
     void DoPlot( wxDC* pDC, const Vector_double& trace, int start, int end, int step, plottype pt=active, int bgno=0 );
@@ -380,12 +383,12 @@ public:
     void DrawIntegral(wxDC* pDC);
     void CreateScale(wxDC* pDC);
 
-    // Function receives the x-coordinate of a point and returns 
+    // Function receives the x-coordinate of a point and returns
     // its formatted value according to the current Zoom settings
     long xFormat(double);
-    long xFormat(long); 
-    long xFormat(int); 
-    long xFormat(std::size_t); 
+    long xFormat(long);
+    long xFormat(int);
+    long xFormat(std::size_t);
     // The same for the y coordinates
     long yFormat(double);
     long yFormat(long);
@@ -411,13 +414,13 @@ public:
 
     // shorthand:
     wxStfDoc* Doc() {
-        if (view != NULL) 
+        if (view != NULL)
             return view->Doc();
         else
             return NULL;
     }
     wxStfDoc* DocC() const {
-        if (view != NULL) 
+        if (view != NULL)
             return view->DocC();
         else
             return NULL;
@@ -437,14 +440,14 @@ public:
     long& SPYW() { return DocC()->GetYZoomW(DocC()->GetCurChIndex()).startPosY; } 
     long SPY2() const { return DocC()->GetYZoom(DocC()->GetSecChIndex()).startPosY; }
     long& SPY2W() { return DocC()->GetYZoomW(DocC()->GetSecChIndex()).startPosY; }
-    
+
     double XZ() const { return DocC()->GetXZoom().xZoom; }
     double& XZW() { return DocC()->GetXZoomW().xZoom; }
     double YZ() const { return DocC()->GetYZoom(DocC()->GetCurChIndex()).yZoom; }
     double& YZW() { return DocC()->GetYZoomW(DocC()->GetCurChIndex()).yZoom; }
     double YZ2() const { return DocC()->GetYZoom(DocC()->GetSecChIndex()).yZoom; }
     double& YZ2W() { return DocC()->GetYZoomW(DocC()->GetSecChIndex()).yZoom; }
-    
+
     DECLARE_EVENT_TABLE()
 };
 

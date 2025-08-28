@@ -95,6 +95,13 @@ EVT_PAINT( wxStfGraph::OnPaint )
 #endif
 END_EVENT_TABLE()
 
+struct AnnotationLine {
+    wxPoint start;
+    wxPoint end;
+};
+
+std::vector<AnnotationLine> annotationLines;
+
 // Define a constructor for my canvas
 wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, const wxSize& size, long style):
     wxScrolledWindow(frame, wxID_ANY, pos, size, style),pFrame(frame),
@@ -165,7 +172,8 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     lastLDown(0,0),
     yzoombg(),
     m_zoomContext( new wxMenu ),
-    m_eventContext( new wxMenu )
+    m_eventContext( new wxMenu ),
+    m_annotationContext( new wxMenu )
 {
     m_zoomContext->Append( ID_ZOOMHV, wxT("Expand zoom window horizontally && vertically") );
     m_zoomContext->Append( ID_ZOOMH, wxT("Expand zoom window horizontally") );
@@ -174,6 +182,12 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     m_eventContext->Append( ID_EVENT_ADDEVENT, wxT("Add an event that starts here") );
     m_eventContext->Append( ID_EVENT_ERASE, wxT("Erase all events") );
     m_eventContext->Append( ID_EVENT_EXTRACT, wxT("Extract selected events") );
+
+    m_annotationContext->Append( ID_ANNOTATION_ADDANNOTATION, wxT("Add an annotation that starts here") );
+    m_annotationContext->Append( ID_ANNOTATION_REMOVEANNOTATION, wxT("Remove this annotation") );
+    m_annotationContext->Append( ID_ANNOTATION_ERASEALLANNOTATIONS, wxT("Erase all annotations") );
+    m_annotationContext->Append( ID_ANNOTATION_EXPORTANNOTATIONS, wxT("Export the annotations") );
+    m_annotationContext->Append( ID_ANNOTATION_IMPORTANNOTATIONS, wxT("Import all annotations") );
 
     SetBackgroundColour(*wxWHITE);
     view = (wxStfView*)v;
@@ -499,8 +513,10 @@ void wxStfGraph::PlotGimmicks(wxDC& DC) {
     try {
         stf::SectionAttributes sec_attr = Doc()->GetCurrentSectionAttributes();
         if (!sec_attr.eventList.empty()) {
-            PlotEvents(DC);
+             PlotEvents(DC);
         }
+        PlotAnnotations(DC);
+
         if (!sec_attr.pyMarkers.empty()) {
             DC.SetPen(eventPen);
             for (c_marker_it it = sec_attr.pyMarkers.begin(); it != sec_attr.pyMarkers.end(); ++it) {
@@ -515,6 +531,29 @@ void wxStfGraph::PlotGimmicks(wxDC& DC) {
 
 
 }
+
+void wxStfGraph::PlotAnnotations(wxDC& dc) {
+
+    std::vector<Annotation> annotations = Doc()->at(Doc()->GetCurChIndex())[Doc()->GetCurSecIndex()].GetAnnotationList();
+    annotationLines.clear();
+    for (auto& ann : annotations) {
+
+        // position to x coordinate
+        int x = xFormat(ann.GetAnnotationPosition());
+        // Choose a y position (top of graph)
+        int y = GetClientSize().y;
+
+        // Draw a marker
+        dc.SetPen(*wxRED_PEN);
+        wxPoint startPoint(x, 0);
+        wxPoint endPoint(x, y);
+        dc.DrawLine(startPoint, endPoint);
+
+        AnnotationLine line = {.start = startPoint, .end = endPoint};
+        annotationLines.push_back(line);
+    }
+}
+
 
 void wxStfGraph::PlotEvents(wxDC& DC) {
     const int MAX_EVENTS_PLOT = 200;
@@ -546,6 +585,7 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
     if (isPrinted) WindowRect=wxRect(printRect);
     int right=WindowRect.width;
     int nevents_plot = 0;
+
     for (event_it it2 = sec_attr.eventList.begin(); it2 != sec_attr.eventList.end(); ++it2) {
         nevents_plot += (xFormat(it2->GetEventStartIndex()) < right &&
                          xFormat(it2->GetEventStartIndex()) > 0);
@@ -1266,13 +1306,21 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
     case stf::event_cursor:
         try {
             if (!Doc()->GetCurrentSectionAttributes().eventList.empty()) {
-                // store the position that has been clicked:
-                eventPos = stf::round( ((double)point.x - (double)SPX())/XZ() );
-                PopupMenu(m_eventContext.get());
+            // store the position that has been clicked:
+            eventPos = stf::round( ((double)point.x - (double)SPX())/XZ() );
+            PopupMenu(m_eventContext.get());
             } else {
                 wxGetApp().ErrorMsg(wxT("No events have been detected yet"));
             }
         } catch (const std::out_of_range& e) {
+
+        }
+        break;
+    case stf::annotation_cursor:
+        try{
+            eventPos = stf::round( ((double)point.x - (double)SPX())/XZ() );
+            PopupMenu(m_annotationContext.get());
+        }catch(const std::out_of_range& e){
 
         }
         break;
@@ -1458,6 +1506,10 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
      case 76:  // l
      case 108:
          ParentFrame()->SetMouseQual(stf::latency_cursor);
+         return;
+     case 78:  // n
+     case 110:
+         ParentFrame()->SetMouseQual(stf::annotation_cursor);
          return;
      case WXK_RETURN:    //Enter or Return
      {

@@ -280,6 +280,32 @@ public:
      */
     void AddEvent( wxCommandEvent& event );
 
+    //! Adds an annotation at the current eventPos
+    /*! \param event The menu event that made the call.
+     */
+    void OnAddAnnotation( wxCommandEvent& WXUNUSED(event) );
+
+    //! Removes an annotation at the current eventPos or a very close one to it.
+    /*! \param event The menu event that made the call.
+     */
+    void OnRemoveAnnotation( wxCommandEvent& WXUNUSED(event) );
+
+    //! Erase all annotations at the current channel and sweep
+    /*! \param event The menu event that made the call.
+     */
+    void OnEraseAllAnnotations( wxCommandEvent& WXUNUSED(event) );
+
+    //! Export all annotations of current doc
+    /*! \param event The menu event that made the call.
+     */
+    void OnExportAnnotations( wxCommandEvent& WXUNUSED(event) );
+
+    //! Import all annotations of current doc
+    /*! \param event The menu event that made the call.
+     */
+    void OnImportAnnotations( wxCommandEvent& WXUNUSED(event) );
+
+
     //! Subtracts the baseline of all selected traces.
     /*! \return true upon success, false otherwise.
      */

@@ -1,0 +1,25 @@
+/* XPM */
+static const char *annotation[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 3 1",
+"  c None",
+"x c grey32",
+"X c grey64",
+/* pixels */
+"                ",
+"       X        ",
+"      XXX       ",
+"     XXXXX      ",
+"    XXXXXXX     ",
+"    XXXXXXX     ",
+"     XXXXX      ",
+"     XXXXX      ",
+"     XXXXX      ",
+"     XXXXX      ",
+"     XXXXX      ",
+"     XXXXX      ",
+"     XXXXX      ",
+"     XXXXX      ",
+"     XXXXX      ",
+"                "
+};

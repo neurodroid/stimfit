@@ -363,6 +363,7 @@ enum cursor_type {
     latency_cursor,  /*!< Latency cursor. */
     zoom_cursor,     /*!< Zoom rectangle cursor. */
     event_cursor,    /*!< Event mode cursor. */
+    annotation_cursor, /*!< Annotation mode cursor. */
 #ifdef WITH_PSLOPE
     pslope_cursor,   /*!< PSlope mode cursor. */
 #endif

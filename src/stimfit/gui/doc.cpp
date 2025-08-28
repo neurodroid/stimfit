@@ -31,7 +31,7 @@
 #if !wxUSE_DOC_VIEW_ARCHITECTURE
 #error You must set wxUSE_DOC_VIEW_ARCHITECTURE to 1 in setup.h!
 #endif
-
+#include "../Annotation.h"
 #include "./app.h"
 #include "./view.h"
 #include "./parentframe.h"
@@ -88,6 +88,11 @@ EVT_MENU( ID_VIEWTABLE, wxStfDoc::Viewtable)
 EVT_MENU( ID_EVENT_EXTRACT, wxStfDoc::Extract )
 EVT_MENU( ID_EVENT_ERASE, wxStfDoc::InteractiveEraseEvents )
 EVT_MENU( ID_EVENT_ADDEVENT, wxStfDoc::AddEvent )
+EVT_MENU( ID_ANNOTATION_ADDANNOTATION, wxStfDoc::OnAddAnnotation )
+EVT_MENU( ID_ANNOTATION_REMOVEANNOTATION, wxStfDoc::OnRemoveAnnotation )
+EVT_MENU( ID_ANNOTATION_ERASEALLANNOTATIONS, wxStfDoc::OnEraseAllAnnotations )
+EVT_MENU( ID_ANNOTATION_EXPORTANNOTATIONS, wxStfDoc::OnExportAnnotations )
+EVT_MENU( ID_ANNOTATION_IMPORTANNOTATIONS, wxStfDoc::OnImportAnnotations )
 END_EVENT_TABLE()
 
 static const int baseline=100;
@@ -2428,6 +2433,172 @@ void wxStfDoc::InteractiveEraseEvents( wxCommandEvent& WXUNUSED(event) ) {
         catch (const std::out_of_range& e) {
             wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
         }
+    }
+}
+
+void wxStfDoc::OnAddAnnotation( wxCommandEvent& WXUNUSED(event) ) {
+    try {
+        // retrieve the position where to add the annotation:
+        wxStfView* pView = (wxStfView*)GetFirstView();
+        wxStfGraph* pGraph = pView->GetGraph();
+        int newStartPos = pGraph->get_eventPos();
+        Annotation newAnnotation(newStartPos, 0);
+
+        // find the position in the current annotations list where the new
+        // annotation should be inserted:
+        bool found = false;
+        std::vector<Annotation> annotationsList = this->at(GetCurChIndex())[GetCurSecIndex()].GetAnnotationList();
+        for (std::size_t i = 0; i < annotationsList.size(); ++i) {
+            if ((int)(annotationsList.at(i).GetAnnotationPosition()) > newStartPos ) {
+                // insert new annotation before this annotation, then break:
+                this->at(GetCurChIndex())[GetCurSecIndex()].AddAnnotation(i, newAnnotation);
+                found = true;
+                break;
+            }
+        }
+        // if we are at the end of the list, append the annotation:
+        if (!found)
+        this->at(GetCurChIndex())[GetCurSecIndex()].AddAnnotation(-1, newAnnotation);
+    }
+    catch (const std::runtime_error& e) {
+        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+    }
+    catch (const std::exception& e) {
+        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+    }
+
+
+}
+
+void wxStfDoc::OnRemoveAnnotation( wxCommandEvent& WXUNUSED(event) ) {
+    try {
+        wxStfView* pView = (wxStfView*)GetFirstView();
+        wxStfGraph* pGraph = pView->GetGraph();
+        int cursorPos = pGraph->get_eventPos();
+        int minDist = INT_MAX;
+        std::vector<Annotation> annotationsList = this->at(GetCurChIndex())[GetCurSecIndex()].GetAnnotationList();
+        int distFromCursor;
+        std::size_t indexOfMinDist;
+
+        for (std::size_t i = 0; i < annotationsList.size(); ++i) {
+            distFromCursor = abs((int)(annotationsList.at(i).GetAnnotationPosition()) - cursorPos);
+            if (distFromCursor < minDist ) {
+                indexOfMinDist = i;
+                minDist = distFromCursor;
+            }
+        }
+
+        this->at(GetCurChIndex())[GetCurSecIndex()].RemoveAnnotation(indexOfMinDist);
+    }
+    catch (const std::runtime_error& e) {
+        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+    }
+    catch (const std::exception& e) {
+        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+    }
+}
+
+void wxStfDoc::OnEraseAllAnnotations(wxCommandEvent &WXUNUSED)
+{
+    this->at(GetCurChIndex())[GetCurSecIndex()].EraseAllAnnotations();
+
+}
+
+void wxStfDoc::OnExportAnnotations(wxCommandEvent &WXUNUSED)
+{
+    try{
+        wxStfView* pView = (wxStfView*)GetFirstView();
+        wxStfGraph* pGraph = pView->GetGraph();
+
+        wxString ascFilter = wxT("Annotations (*.asc)|*asc");
+        wxFileDialog*  exportAnnotationsDialog = new wxFileDialog(pGraph, wxT("Export Annotations"),wxT(""), wxT(""),
+            ascFilter, wxFD_SAVE | wxFD_PREVIEW);
+
+        if (exportAnnotationsDialog->ShowModal() == wxID_OK ){
+            wxString filepath = exportAnnotationsDialog->GetPath();
+
+            wxFile asc_file;
+            if (!asc_file.Open(filepath + ".asc", wxFile::write)) {
+                std::cerr << "Error opening file!\n" ;
+                return;
+            }
+
+            for (std::size_t channelIndex = 0; channelIndex < this->size(); channelIndex++){
+                for (std::size_t sectionIndex = 0; sectionIndex < this->at(channelIndex).size(); sectionIndex++){
+                    std::vector<Annotation> annotationsList = this->at(channelIndex)[sectionIndex].GetAnnotationList();
+                    for (std::size_t annotationIndex = 0; annotationIndex < annotationsList.size(); annotationIndex++){
+                        std::stringstream ss;
+                        ss << channelIndex << "\t"
+                        << sectionIndex << "\t"
+                        << annotationIndex << "\t"
+                        << annotationsList.at(annotationIndex).GetAnnotationPosition() << "\n";
+
+                        wxString line(ss.str());
+                        asc_file.Write(line);
+
+                    }
+                }
+            }
+
+            asc_file.Close();
+        }
+    }
+    catch (const std::runtime_error& e) {
+        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+    }
+    catch (const std::exception& e) {
+        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+    }
+}
+
+void wxStfDoc::OnImportAnnotations(wxCommandEvent &WXUNUSED)
+{
+    try{
+        wxStfView* pView = (wxStfView*)GetFirstView();
+        wxStfGraph* pGraph = pView->GetGraph();
+
+        wxString ascFilter = wxT("Annotations (*.asc)|*asc");
+        wxFileDialog*  importAnnotationsDialog = new wxFileDialog(pGraph, wxT("Import Annotations"),wxT(""), wxT(""),
+            ascFilter, wxFD_SAVE | wxFD_PREVIEW);
+
+        if (importAnnotationsDialog->ShowModal() == wxID_OK ){
+            wxString filepath = importAnnotationsDialog->GetPath();
+
+            wxFile asc_file;
+            if (!asc_file.Open(filepath, wxFile::read)) {
+                std::cerr << "Error opening file!\n" ;
+                return;
+            }
+
+            wxString content;
+            asc_file.ReadAll(&content);
+            asc_file.Close();
+
+            wxStringTokenizer lines(content, "\n", wxTOKEN_STRTOK);
+
+            while (lines.HasMoreTokens()) {
+                wxString line = lines.GetNextToken().Trim(true).Trim(false);
+                if (line.IsEmpty()) continue;
+
+                wxStringTokenizer tokens(line, "\t", wxTOKEN_STRTOK);
+                if (tokens.CountTokens() < 4) continue;
+
+                long channelIndex, sectionIndex, annotationIndex, position;
+                tokens.GetNextToken().ToLong(&channelIndex);
+                tokens.GetNextToken().ToLong(&sectionIndex);
+                tokens.GetNextToken().ToLong(&annotationIndex);
+                tokens.GetNextToken().ToLong(&position);
+
+                Annotation annotation(position, 0);
+                this->at(channelIndex)[sectionIndex].AddAnnotation(annotationIndex, annotation);
+            }
+        }
+    }
+    catch (const std::runtime_error& e) {
+        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+    }
+    catch (const std::exception& e) {
+        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
     }
 }
 

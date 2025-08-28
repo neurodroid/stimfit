@@ -26,7 +26,7 @@
 // only compile once, even if included more often:
 #ifndef _SECTION_H
 #define _SECTION_H
-
+#include "../stimfit/Annotation.h"
 /*! \addtogroup stfgen
  *  @{
  */
@@ -75,7 +75,7 @@ public:
     // Public member functions------------------------------------------------
 
     //! Range-checked access. Returns a copy.
-    /*! Throws std::out_of_range if out of range.
+    /*! Throws std::out_of_range if+#include "../stimfit/Annotation.h" out of range.
      *  \param at_ Data point index.
      *  \return Copy of the data point at index at_
      */
@@ -134,6 +134,19 @@ public:
      */
     void SetSectionDescription(const std::string& value) { section_description=value; }
     
+    // Annotation operations //
+    // Add Annotation at sample number 'position'
+    void AddAnnotation(int position, Annotation annotation);
+    // Change position of Annotation[index] to new sample number 'position'
+    void MoveAnnotation(size_t index, int new_position);
+    // Remove Annotation[index] from list of Annotations
+    void RemoveAnnotation(size_t index);
+    //Erase all annotation in the list of Annotations
+    void EraseAllAnnotations();
+    //Get list of all annotation in this section.
+    std::vector<Annotation> GetAnnotationList();
+
+
  private:
     //Private members-------------------------------------------------------
 
@@ -145,8 +158,15 @@ public:
 
     // The data:
     Vector_double data;
+
+    // list of annotations in this section
+    std::vector<Annotation> AnnotationsList;
 };
 
 /*@}*/
 
 #endif
+
+
+
+

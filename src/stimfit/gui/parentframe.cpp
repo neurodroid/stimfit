@@ -87,6 +87,7 @@
 #include "./../res/ch2.xpm"
 #include "./../res/cursor.xpm"
 #include "./../res/event.xpm"
+#include "./../res/annotation.xpm"
 #include "./../res/fit.xpm"
 #include "./../res/fit_lim.xpm"
 #include "./../res/latency_lim.xpm"
@@ -145,6 +146,7 @@ EVT_TOOL(ID_TOOL_PSLOPE,wxStfParentFrame::OnToolPSlope)
 EVT_TOOL(ID_TOOL_LATENCY,wxStfParentFrame::OnToolLatency)
 EVT_TOOL(ID_TOOL_ZOOM,wxStfParentFrame::OnToolZoom)
 EVT_TOOL(ID_TOOL_EVENT,wxStfParentFrame::OnToolEvent)
+EVT_TOOL(ID_TOOL_ANNOTATION, wxStfParentFrame::OnToolAnnotation)
 EVT_TOOL(ID_TOOL_FITDECAY, wxStfParentFrame::OnToolFitdecay)
 
 EVT_MENU(ID_CONVERT, wxStfParentFrame::OnConvert)
@@ -544,11 +546,16 @@ wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
                             wxBitmap(zoom),
                             wxT("Draw a zoom window with left mouse button (\"Z\")"),
                             wxITEM_CHECK );
-    cursorToolBar->AddTool( ID_TOOL_EVENT,
-                            _T("Events"),
-                            wxBitmap(event),
-                            wxT( "Add, erase or extract events manually with right mouse button (\"E\")" ),
-                            wxITEM_CHECK );
+        cursorToolBar->AddTool( ID_TOOL_EVENT,
+                                _T("Events"),
+                                wxBitmap(event),
+                                wxT( "Add, erase or extract events manually with right mouse button (\"E\")" ),
+                                wxITEM_CHECK );
+        cursorToolBar->AddTool( ID_TOOL_ANNOTATION,
+                                _T("Annotations"),
+                                wxBitmap(annotation),
+                                wxT( "Add, remove, erase or export/import annotations manually with right mouse button (\"N\")" ),
+                                wxITEM_CHECK );
     return cursorToolBar;
 }
 
@@ -1128,6 +1135,10 @@ void wxStfParentFrame::OnToolEvent(wxCommandEvent& WXUNUSED(event)) {
     SetMouseQual( stf::event_cursor );
 }
 
+void wxStfParentFrame::OnToolAnnotation(wxCommandEvent& WXUNUSED(event)) {
+    SetMouseQual( stf::annotation_cursor );
+}
+
 void wxStfParentFrame::OnCh2zoom(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=wxGetApp().GetActiveView();
     if (pView!=NULL) {
@@ -1391,6 +1402,8 @@ stf::cursor_type wxStfParentFrame::GetMouseQual() const {
         return stf::zoom_cursor;
     if (m_cursorToolBar->GetToolToggled(ID_TOOL_EVENT))
         return stf::event_cursor;
+    if (m_cursorToolBar->GetToolToggled(ID_TOOL_ANNOTATION))
+        return stf::annotation_cursor;
 #ifdef WITH_PSLOPE
     if (m_cursorToolBar->GetToolToggled(ID_TOOL_PSLOPE))
         return stf::pslope_cursor;
@@ -1411,6 +1424,7 @@ void wxStfParentFrame::SetMouseQual(stf::cursor_type value) {
     m_cursorToolBar->ToggleTool(ID_TOOL_LATENCY,false);
     m_cursorToolBar->ToggleTool(ID_TOOL_ZOOM,false);
     m_cursorToolBar->ToggleTool(ID_TOOL_EVENT,false);
+    m_cursorToolBar->ToggleTool(ID_TOOL_ANNOTATION,false);
 #ifdef WITH_PSLOPE
     m_cursorToolBar->ToggleTool(ID_TOOL_PSLOPE,false);
 #endif
@@ -1434,7 +1448,8 @@ void wxStfParentFrame::SetMouseQual(stf::cursor_type value) {
         m_cursorToolBar->ToggleTool(ID_TOOL_ZOOM,true);
     if (value==stf::event_cursor)
         m_cursorToolBar->ToggleTool(ID_TOOL_EVENT,true);
-
+    if (value == stf::annotation_cursor)
+        m_cursorToolBar->ToggleTool(ID_TOOL_ANNOTATION, true);
     m_cursorToolBar->Refresh();
 }
 

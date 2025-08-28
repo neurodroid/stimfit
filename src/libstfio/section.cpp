@@ -21,15 +21,15 @@
 // within the constructor, see [1]248 and [2]28
 
 Section::Section(void)
-    : section_description(), x_scale(1.0), data(0)
+    : section_description(), x_scale(1.0), data(0), AnnotationsList()
 {}
 
 Section::Section( const Vector_double& valA, const std::string& label )
-    : section_description(label), x_scale(1.0), data(valA)
+    : section_description(label), x_scale(1.0), data(valA), AnnotationsList()
 {}
 
 Section::Section(std::size_t size, const std::string& label)
-    : section_description(label), x_scale(1.0), data(size)
+    : section_description(label), x_scale(1.0), data(size), AnnotationsList()
 {}
 
 Section::~Section(void) {
@@ -57,4 +57,31 @@ void Section::SetXScale( double value ) {
         x_scale=value;
     else
         throw std::runtime_error( "Attempt to set x-scale <= 0" );
+}
+
+void Section::AddAnnotation(int position, Annotation annotation)
+{
+    if (position == -1) {
+        this->AnnotationsList.push_back(annotation);
+    }
+    else{
+        this->AnnotationsList.insert(AnnotationsList.begin() + position, annotation);
+    }
+}
+
+void Section::RemoveAnnotation(size_t index)
+{
+    if (index < this->AnnotationsList.size()){
+        this->AnnotationsList.erase(this->AnnotationsList.begin() + index);
+    }
+}
+
+void Section::EraseAllAnnotations()
+{
+    this->AnnotationsList.clear();
+}
+
+std::vector<Annotation> Section::GetAnnotationList()
+{
+    return this->AnnotationsList;
 }

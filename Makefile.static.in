@@ -59,7 +59,8 @@ vpath %.cpp ./src/stimfit:./src/stimfit/gui:./src/stimfit/gui/dlgs:./src/stimfit
 vpath %.c ./src/libstfnum/levmar/:./src/libstfio/igor/:./src/libstfio/cfs/
 vpath %.cpp ./src/libstfnum/:./src/libstfnum/levmar/:./src/stimfit/gui/:./src/stimfit/gui/dlgs/:./src/libstfio/:./src/libstfio/biosig/:./src/libstfio/igor/:./src/libstfio/cfs/
 
-SOURCES = ./src/stimfit/stf.cpp \
+SOURCES = ./src/stimfit/Annotation.cpp \
+	./src/stimfit/stf.cpp \
 	./src/libstfnum/stfnum.cpp \
 	./src/libstfnum/funclib.cpp \
 	./src/libstfnum/measure.cpp \
