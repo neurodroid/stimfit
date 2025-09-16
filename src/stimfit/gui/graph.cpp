@@ -188,6 +188,7 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     m_annotationContext->Append( ID_ANNOTATION_ERASEALLANNOTATIONS, wxT("Erase all annotations") );
     m_annotationContext->Append( ID_ANNOTATION_EXPORTANNOTATIONS, wxT("Export the annotations") );
     m_annotationContext->Append( ID_ANNOTATION_IMPORTANNOTATIONS, wxT("Import all annotations") );
+    m_annotationContext->Append( ID_ANNOTATION_DetectEvents, wxT("Detect events based on expert data") );
 
     SetBackgroundColour(*wxWHITE);
     view = (wxStfView*)v;
