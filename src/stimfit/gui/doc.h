@@ -117,7 +117,6 @@ private:
     std::vector<YZoom> yzoom;
 
     std::vector< std::vector<stf::SectionAttributes> > sec_attr;
-    
 public:
 
     //! Constructor.
