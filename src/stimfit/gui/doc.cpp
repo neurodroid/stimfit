@@ -2453,6 +2453,7 @@ void wxStfDoc::OnAddAnnotation( wxCommandEvent& WXUNUSED(event) ) {
         Annotation newAnnotation(newStartPos, 0);
 
         this->at(GetCurChIndex())[GetCurSecIndex()].AddAnnotation(newAnnotation);
+        eventThreshold = INT32_MAX;
     }
     catch (const std::runtime_error& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -2483,6 +2484,8 @@ void wxStfDoc::OnRemoveAnnotation( wxCommandEvent& WXUNUSED(event) ) {
         }
 
         this->at(GetCurChIndex())[GetCurSecIndex()].RemoveAnnotation(indexOfMinDist);
+        eventThreshold = INT32_MAX;
+
     }
     catch (const std::runtime_error& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -2495,6 +2498,7 @@ void wxStfDoc::OnRemoveAnnotation( wxCommandEvent& WXUNUSED(event) ) {
 void wxStfDoc::OnEraseAllAnnotations(wxCommandEvent &WXUNUSED)
 {
     this->at(GetCurChIndex())[GetCurSecIndex()].EraseAllAnnotations();
+    eventThreshold = INT32_MAX;
 
 }
 
@@ -2522,7 +2526,7 @@ void wxStfDoc::OnExportAnnotations(wxCommandEvent &WXUNUSED)
             std::stringstream ss;
             ss << "#STIMFITv0.16.9" << "\n"
             << "#generated from file " << fn.GetFullName() << "\n"
-            << "#SampleRate " << GetSR() << "Hz" << "\n";
+            << "#SampleRate " << GetSR() << "KHz" << "\n";
 
             wxString line(ss.str());
             asc_file.Write(line);
@@ -2567,14 +2571,12 @@ void wxStfDoc::OnExpertDetectEvents(wxCommandEvent &WXUNUSED)
 {   
     try{
 
-        
         std::size_t filterOrder = round(0.004 * 1000  * GetSR());
-        std::vector<Annotation> positions = cursec().GetAnnotationList();
         
-        if (positions.size() == 0 && eventThreshold == INT32_MAX)  throw std::out_of_range("No scoring was set by the expert!");
-
-
         if (eventThreshold == INT32_MAX){
+            
+            std::vector<Annotation> positions = cursec().GetAnnotationList();
+            if (positions.size() == 0)  throw std::out_of_range("No scoring was set by the expert!");
 
             wxStfView* pView = (wxStfView*)GetFirstView();
             wxStfGraph* pGraph = pView->GetGraph();
@@ -2610,6 +2612,7 @@ void wxStfDoc::OnExpertDetectEvents(wxCommandEvent &WXUNUSED)
 
             
             std::vector<double> fullRawDetectionTrace = CalcRawDetectionTrace(filterOrder, 0, cursec().GetSectionSize() - 1);
+            ClearEvents(GetCurChIndex(), GetCurSecIndex());
             std::vector<stf::Event> detectedEvents = DetectEvents(threshold, fullRawDetectionTrace);
             eventThreshold = threshold;
             wxString msg;
@@ -2619,7 +2622,8 @@ void wxStfDoc::OnExpertDetectEvents(wxCommandEvent &WXUNUSED)
                     
             wxMessageBox(msg, "Metadata", wxOK | wxICON_INFORMATION, nullptr);
 
-        }else{ // new calculation needed
+        }else{ // no new calculation needed
+            ClearEvents(GetCurChIndex(), GetCurSecIndex());
             OnCalculatedThresholdExpertDetectEvents(eventThreshold, filterOrder);
         }
     }
