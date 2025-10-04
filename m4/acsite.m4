@@ -132,7 +132,7 @@ else:
                 PYTHON_SITE_PKG=`$PYTHON -c \
 "import sys, distutils.sysconfig; \
 acprefix = \"${prefix}\"
-if acprefix is \"NONE\": acprefix=\"/usr/local/\"
+if acprefix == \"NONE\": acprefix=\"/usr/local/\"
 sys.stdout.write(distutils.sysconfig.get_python_lib(0,1,prefix=acprefix)+'\n');"`
                 PYTHON_SITE_PKG="${PYTHON_SITE_PKG}/dist-packages"
 
@@ -148,7 +148,7 @@ sys.stdout.write(distutils.sysconfig.get_python_lib(0,1,prefix=acprefix)+'\n');"
                 PYTHON_PRE_DIST_PKG=`$PYTHON -c \
 "import sys, distutils.sysconfig; \
 acprefix = \"${prefix}\"
-if acprefix is \"NONE\": acprefix=\"/usr/local/\"
+if acprefix == \"NONE\": acprefix=\"/usr/local/\"
 sys.stdout.write(distutils.sysconfig.get_python_lib(0,0,prefix=acprefix)+'\n');"`
                 PYTHON_PRE_DIST_PKG=${PYTHON_PRE_DIST_PKG}
 
