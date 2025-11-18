@@ -36,11 +36,7 @@ libbiosiglite_la_SOURCES = \
   ../biosig/biosig4c++/biosig2.c \
   ../biosig/biosig4c++/gdftime.c \
   ../biosig/biosig4c++/mdc_ecg_codes.c \
-  ../biosig/biosig4c++/physicalunits.c \
-  ../biosig/biosig4c++/XMLParser/tinyxml.cpp \
-  ../biosig/biosig4c++/XMLParser/tinyxmlparser.cpp \
-  ../biosig/biosig4c++/XMLParser/tinyxmlerror.cpp \
-  ../biosig/biosig4c++/XMLParser/tinystr.cpp
+  ../biosig/biosig4c++/physicalunits.c
   # ../biosig/biosig4c++/biosig-network.c
 
 noinst_HEADERS = \
@@ -55,9 +51,7 @@ noinst_HEADERS = \
   ../biosig/biosig4c++/t210/abfheadr.h \
   ../biosig/biosig4c++/t210/axon_structs.h \
   ../biosig/biosig4c++/t210/codes.h \
-  ../biosig/biosig4c++/t210/structures.h \
-  ../biosig/biosig4c++/XMLParser/tinyxml.h \
-  ../biosig/biosig4c++/XMLParser/tinystr.h
+  ../biosig/biosig4c++/t210/structures.h
 
 EXTRA_DIST = \
   ../biosig/biosig4matlab/doc/eventcodes.txt \
