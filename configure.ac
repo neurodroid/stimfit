@@ -49,8 +49,8 @@ AM_CONDITIONAL([ISDARWIN], [test $STFKERNEL = "darwin"])
 # https://stackoverflow.com/questions/11909347/autotools-check-for-c11
 AC_PROG_CXX
 AX_CXX_COMPILE_STDCXX([17], [], [optional])
-AS_IF([test "x$ax_cv_cxx_compile_cxx17" = "xyes"], [
-  AC_MSG_RESULT([C++17 supported – Boost not required])
+AS_IF([test "x$HAVE_CXX17" = "x1"], [
+  AC_MSG_RESULT([C++17 supported (possibly with -std flag) – Boost not required])
 ], [
   AC_MSG_RESULT([C++17 NOT supported – Boost is required])
 ])
