@@ -1,8 +1,11 @@
-stimfit (0.16.9-1) unstable; urgency=medium
+stimfit (0.16.10-1) UNRELEASED; urgency=medium
 
   * Fix several UI issues with trace display and dialog behaviour
+  * Generate sip.h during build for PyQt5 compatibility (Closes: #1060744)
+  * Bump debhelper to version 14
+  * Convert Debian rules to use dh-sequencer
 
- -- Christoph Schmidt-Hieber <christsc@gmx.de>  Thu, 14 Aug 2025 16:14:14 +0200
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  UNRELEASED
 
 stimfit (0.16.7-1) unstable; urgency=medium
 
