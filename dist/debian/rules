@@ -1,10 +1,8 @@
 #!/usr/bin/make -f
-# Sample debian/rules that uses debhelper.
-# This file is public domain software, originally written by Joey Hess.
-#
-# This version is for packages that are architecture independent.
+# Simplified rules using dh-sequencer.
+# When dh-sequencer is used, the usual debhelper sequence is driven by
+# the dh command; only overrides are required for custom build steps.
 
-# Uncomment this to turn on verbose mode.
 export DH_VERBOSE=1
 
 DEBPREFIX=$(CURDIR)/debian/tmp/usr
@@ -22,20 +20,15 @@ ifneq ($(wildcard /usr/lib/$(DEB_HOST_MULTIARCH)/hdf5/serial/libhdf5.so),)
   export DEB_LDFLAGS_MAINT_APPEND := -Wl,-L/usr/lib/$(DEB_HOST_MULTIARCH)/hdf5/serial
 endif
 
-build: build-arch build-indep
-build-arch: build-stamp
-build-indep: build-stamp
-build-stamp:
-	dh_testdir
+# default dh sequencer target
+%:
+	dh $@ --with python3
 
-clean:
+override_dh_auto_clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp
-	rm -f a.out config.status libtool config.log stimfittest.log
+	rm -f build-stamp a.out config.status libtool config.log stimfittest.log
 	rm -rf src/pystfio/.libs src/stimfit/.libs src/stimfit/py/.libs
-
-#       Add here commands to clean up after the build process.
 	rm -rf ./.libs ./_libs ./.deps ./.stimfit
 	rm -rf $(CURDIR)/man
 	find -name '*.o' | xargs -r rm -f
@@ -46,70 +39,34 @@ clean:
 	rm -f $(CURDIR)/test.h5
 	dh_clean
 
-install: build
-	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) ./configure --enable-python --enable-debian --with-biosig --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
+override_dh_auto_configure:
+	# first build: python-enabled
+	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) \
+		./configure --enable-python --enable-debian --with-biosig \
+		--prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
+	
+override_dh_auto_build:
+	# build & test python-enabled tree
 	$(MAKE)
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) check
 endif
-	$(MAKE) install
-
-	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) ./configure --enable-module --enable-debian --with-biosig --prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
+	# second build: module-only
+	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) \
+		./configure --enable-module --enable-debian --with-biosig \
+		--prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
 	$(MAKE)
+
+override_dh_auto_install:
+	# install both configurations into debian/tmp
+	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) \
+		./configure --enable-python --enable-debian --with-biosig \
+		--prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
 	$(MAKE) install
+	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) \
+		./configure --enable-module --enable-debian --with-biosig \
+		--prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
+	$(MAKE) install
+	mkdir -p $(CURDIR)/man && cp ./debian/stimfit.1 ./man/stimfit.1
 
-	mkdir $(CURDIR)/man && \
-	  cp ./debian/stimfit.1 ./man/stimfit.1
-
-	touch build-stamp
-
-	dh_testroot
-#       dh_prep
 	dh_installdirs
-
-# Build architecture-independent files here.
-binary-indep: build install
-# We have nothing to do by default.
-
-binary-arch: build install
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs -X./ChangeLog
-	dh_installdocs
-	dh_installexamples
-	dh_installmenu -pstimfit
-#	dh_installdebconf
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installcatalogs
-#	dh_installpam
-	dh_installmime -pstimfit
-#	dh_installinit
-#	dh_installcron
-#	dh_installinfo
-#	dh_installwm
-#	dh_installudev
-	dh_lintian
-#	dh_bugfiles
-#	dh_undocumented
-	dh_python3
-	dh_installman $(CURDIR)/man/stimfit.1
-	dh_install --sourcedir=$(CURDIR)/debian/tmp
-	dh_link
-	dh_compress
-	dh_strip --dbg-package=stimfit-dbg
-	dh_fixperms
-	dh_icons
-	#	dh_perl
-	[ -x /usr/bin/dh_python3 ] && dh_python3 -V$(PYVER) --no-ext-rename || :
-	[ -x /usr/bin/dh_numpy ] && dh_numpy || :
-	dh_makeshlibs
-	# https://stackoverflow.com/questions/11238134/dpkg-shlibdeps-error-no-dependency-information-found-for
-	dh_shlibdeps  --dpkg-shlibdeps-params=--ignore-missing-info
-	dh_installdeb
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install
