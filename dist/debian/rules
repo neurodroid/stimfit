@@ -51,11 +51,16 @@ override_dh_auto_build:
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
 	$(MAKE) check
 endif
-	# second build: module-only
+	# second build: module-only (no tests needed)
 	PYTHON=/usr/bin/python$(PYVER) PYTHON_VERSION=$(PYVER) \
 		./configure --enable-module --enable-debian --with-biosig \
 		--prefix=$(DEBPREFIX) $(WXCONFIG_OPTS)
 	$(MAKE)
+
+override_dh_auto_test:
+	# tests for the python-enabled build are already run above;
+	# skip dh_auto_test so we don’t accidentally test the module-only tree
+	:
 
 override_dh_auto_install:
 	# install both configurations into debian/tmp

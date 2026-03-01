@@ -162,7 +162,6 @@ EXTRA_DIST+= ./src/pystfio/unittest_stfio.py
 # EXTRA_DIST+= ./src/pystfio/test.h5
 EXTRA_DIST+= ./src/pystfio/pystfio.h 
 EXTRA_DIST+= ./dist/debian/changelog
-EXTRA_DIST+= ./dist/debian/compat
 EXTRA_DIST+= ./dist/debian/control
 EXTRA_DIST+= ./dist/debian/copyright
 EXTRA_DIST+= ./dist/debian/docs
