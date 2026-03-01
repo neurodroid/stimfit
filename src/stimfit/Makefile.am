@@ -5,6 +5,7 @@ sip.h: FORCE
 FORCE:
 
 libstimfit_la_SOURCES = ./stf.cpp \
+            ./Annotation.cpp \
             ./gui/app.cpp ./gui/unopt.cpp ./gui/doc.cpp ./gui/copygrid.cpp ./gui/graph.cpp \
             ./gui/printout.cpp ./gui/parentframe.cpp ./gui/childframe.cpp ./gui/view.cpp ./gui/table.cpp ./gui/zoom.cpp \
             ./gui/dlgs/convertdlg.cpp ./gui/dlgs/cursorsdlg.cpp ./gui/dlgs/eventdlg.cpp \

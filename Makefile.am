@@ -64,6 +64,7 @@ noinst_HEADERS = \
 	./src/libstfnum/funclib.h \
 	./src/stimfit/sip.h \
 	./src/stimfit/stf.h \
+	./src/stimfit/Annotation.h \
 	./src/stimfit/gui/app.h \
 	./src/stimfit/gui/copygrid.h ./src/stimfit/gui/graph.h \
 	./src/stimfit/gui/printout.h \
@@ -102,6 +103,7 @@ noinst_HEADERS = \
 EXTRA_DIST = ./src/stimfit/res/16-em-down.xpm
 EXTRA_DIST+= ./src/stimfit/res/16-em-open.xpm
 EXTRA_DIST+= ./src/stimfit/res/accept.xpm
+EXTRA_DIST+= ./src/stimfit/res/annotation.xpm
 EXTRA_DIST+= ./src/stimfit/res/arrow_down.xpm
 EXTRA_DIST+= ./src/stimfit/res/arrow_left.xpm
 EXTRA_DIST+= ./src/stimfit/res/arrow_out.xpm
