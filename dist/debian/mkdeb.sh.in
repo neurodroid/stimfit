@@ -13,17 +13,44 @@ RESULTDIR="${DEBDIR}/result"
 # Persist package downloads across runs
 APT_CACHE_DIR="${HOME}/pbuilder/aptcache"
 
-# Optional: set this in your environment, e.g.
-#   export DEBSIGN_KEYID=0xYOURKEYID
+# Used only to auto-pick the signing key (fingerprint) from your local keyring
 MAINT_EMAIL="christsc@gmx.de"
 
-DEBSIGN_KEYID="$(
-  gpg --list-secret-keys --with-colons --fingerprint 2>/dev/null \
-  | awk -F: -v email="$MAINT_EMAIL" '
-      $1=="uid" && $10 ~ email { found=1 }
-      found && $1=="fpr" { print $10; exit }
-    '
-)"
+# Prefer signing as the invoking user (not root), so ~/.gnupg is used.
+SIGN_USER="${SUDO_USER:-$USER}"
+
+# ---------------------------------------------------------------------------
+# Helper: pick a signing key fingerprint for MAINT_EMAIL (or fall back to first secret key)
+# ---------------------------------------------------------------------------
+pick_debsign_keyid() {
+  local email="$1"
+
+  # Try: secret key whose UID contains the email; take its fingerprint
+  local key
+  key="$(
+    gpg --list-secret-keys --with-colons --fingerprint 2>/dev/null \
+    | awk -F: -v email="$email" '
+        $1=="uid" && $10 ~ email { found=1 }
+        found && $1=="fpr" { print $10; exit }
+      '
+  )"
+  if [[ -n "${key}" ]]; then
+    printf '%s\n' "${key}"
+    return 0
+  fi
+
+  # Fallback: first secret key fingerprint
+  key="$(
+    gpg --list-secret-keys --with-colons --fingerprint 2>/dev/null \
+    | awk -F: '/^fpr:/ { print $10; exit }'
+  )"
+  if [[ -n "${key}" ]]; then
+    printf '%s\n' "${key}"
+    return 0
+  fi
+
+  return 1
+}
 
 make dist
 
@@ -56,53 +83,67 @@ sudo cowbuilder execute \
     apt-get update
     apt-get -y build-dep '${DEBDIR}/stimfit-${VERSION}'
     cd '${DEBDIR}/stimfit-${VERSION}'
-    # Build source package WITHOUT signing; we'll sign on the host.
+    # Build source package WITHOUT signing; we'll sign once on the host at the very end.
     dpkg-buildpackage -S -sa -us -uc
   "
 
 # cowbuilder execute ran as root inside chroot; artifacts may be root-owned on host.
-sudo chown -R "$(id -u):$(id -g)" "${DEBDIR}" "${RESULTDIR}"
+sudo chown -R "$(id -u):$(id -g)" "${DEBDIR}"
 
-# Find the newly created source .changes / .dsc (should be in ${DEBDIR})
-CHANGES="$(ls -1t "${DEBDIR}"/*_source.changes | head -n1)"
-DSC="$(ls -1t "${DEBDIR}"/*.dsc | head -n1)"
+# Find the newly created source artifacts (in ${DEBDIR})
+CHANGES_SRC="$(ls -1t "${DEBDIR}"/*_source.changes | head -n1)"
+DSC_SRC="$(ls -1t "${DEBDIR}"/*.dsc | head -n1)"
 
-echo "Source package: ${DSC}"
-echo "Source changes: ${CHANGES}"
-
-# ---------------------------------------------------------------------------
-# Sign the source package on the host (recommended; keeps private key out of chroot)
-# ---------------------------------------------------------------------------
-
-SIGN_USER="${SUDO_USER:-$USER}"
-
-if [[ -n "${DEBSIGN_KEYID}" ]]; then
-  sudo -u "${SIGN_USER}" debsign -k"${DEBSIGN_KEYID}" "${CHANGES}"
-else
-  sudo -u "${SIGN_USER}" debsign "${CHANGES}"
-fi
-
-# Optional: verify signatures immediately (helps catch agent/pinentry issues early)
-sudo -u "${SIGN_USER}" gpg --verify "${CHANGES}"
-sudo -u "${SIGN_USER}" gpg --verify "${DSC}"
-
-# Optional: copy signed source artifacts into RESULTDIR for convenient dput from there
-# (The .changes references the files by basename; having them together is convenient.)
-cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*.dsc "${RESULTDIR}/" 2>/dev/null || true
-cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*_source.changes "${RESULTDIR}/" 2>/dev/null || true
-cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*.debian.tar.* "${RESULTDIR}/" 2>/dev/null || true
-cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*.orig.tar.* "${RESULTDIR}/" 2>/dev/null || true
+echo "Source package: ${DSC_SRC}"
+echo "Source changes: ${CHANGES_SRC}"
 
 # ---------------------------------------------------------------------------
-# Now build binaries inside cowbuilder (installs Build-Depends as needed)
+# Build binaries inside cowbuilder (installs Build-Depends as needed)
 # ---------------------------------------------------------------------------
 
 sudo cowbuilder build \
   --basepath "${BASE_COW}" \
   --buildresult "${RESULTDIR}" \
-  "${DSC}"
+  "${DSC_SRC}"
 
+# Make sure build results are user-owned
 sudo chown -R "$(id -u):$(id -g)" "${RESULTDIR}"
 
+# ---------------------------------------------------------------------------
+# Prepare upload set in RESULTDIR and SIGN ONLY ONCE (the exact file to be uploaded)
+# ---------------------------------------------------------------------------
+
+# Copy the source upload set next to the binaries for convenience
+cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*.dsc "${RESULTDIR}/"
+cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*_source.changes "${RESULTDIR}/"
+cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*.debian.tar.* "${RESULTDIR}/"
+cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*.orig.tar.* "${RESULTDIR}/"
+
+CHANGES_UP="${RESULTDIR}/$(basename "${CHANGES_SRC}")"
+DSC_UP="${RESULTDIR}/$(basename "${DSC_SRC}")"
+
+# Pick signing key (fingerprint) from the host user's keyring
+DEBSIGN_KEYID="$(sudo -u "${SIGN_USER}" bash -lc "$(declare -f pick_debsign_keyid); pick_debsign_keyid '${MAINT_EMAIL}'" )" || {
+  cat >&2 <<EOF
+ERROR: No suitable GPG secret key found for signing.
+- Ensure your secret key is available in ${SIGN_USER}'s keyring (~/.gnupg).
+- Or adjust MAINT_EMAIL (${MAINT_EMAIL}) to match your UID/email.
+EOF
+  exit 1
+}
+
+# Sign THE upload copy (in RESULTDIR), once.
+sudo -u "${SIGN_USER}" debsign -k"${DEBSIGN_KEYID}" "${CHANGES_UP}"
+
+# Sanity check: ensure the upload .changes is clearsigned
+grep -q "BEGIN PGP SIGNATURE" "${CHANGES_UP}" || {
+  echo "ERROR: ${CHANGES_UP} does not contain a PGP signature block after debsign." >&2
+  exit 1
+}
+
+# Optional: verify signatures (useful while iterating/debugging)
+sudo -u "${SIGN_USER}" gpg --verify "${CHANGES_UP}"
+sudo -u "${SIGN_USER}" gpg --verify "${DSC_UP}"
+
 echo "Done. Artifacts in: ${RESULTDIR}"
-echo "Upload with: dput mentors $(basename "${CHANGES}")  (from ${RESULTDIR} if you used the copy step)"
+echo "Upload with: dput mentors $(basename "${CHANGES_UP}")"
