@@ -13,137 +13,226 @@ RESULTDIR="${DEBDIR}/result"
 # Persist package downloads across runs
 APT_CACHE_DIR="${HOME}/pbuilder/aptcache"
 
-# Used only to auto-pick the signing key (fingerprint) from your local keyring
+# Optional: set this in your environment, e.g.
+#   export DEBSIGN_KEYID=0xYOURKEYID
 MAINT_EMAIL="christsc@gmx.de"
 
-# Prefer signing as the invoking user (not root), so ~/.gnupg is used.
-SIGN_USER="${SUDO_USER:-$USER}"
+# ---------------------------------------------------------------------------
+# Flags — pass any combination to force specific stages:
+#   --force-dist    re-run "make dist" even if tarball is up-to-date
+#   --force-source  rebuild the source package even if .dsc is up-to-date
+#   --force-binary  rebuild the binary packages even if .debs are up-to-date
+#   --force         force all three stages (full rebuild)
+#   --source-only   skip binary build (signing still runs at the end)
+# ---------------------------------------------------------------------------
+FORCE_DIST=0
+FORCE_SOURCE=0
+FORCE_BINARY=0
+SOURCE_ONLY=0
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --force-dist)   FORCE_DIST=1 ;;
+    --force-source) FORCE_SOURCE=1 ;;
+    --force-binary) FORCE_BINARY=1 ;;
+    --force)        FORCE_DIST=1; FORCE_SOURCE=1; FORCE_BINARY=1 ;;
+    --source-only)  SOURCE_ONLY=1 ;;
+    *) echo "Unknown option: $1"; exit 1 ;;
+  esac
+  shift
+done
+
+# Find the primary key fingerprint whose sec record is followed by a uid
+# matching the maintainer email.  The colon format emits records in this order:
+#   sec … (primary key)
+#   fpr … (primary key fingerprint)  ← field 10
+#   grp …
+#   uid … (one per identity)
+# We capture the most-recent fpr after a sec record and emit it when we see a
+# matching uid — this avoids accidentally picking up a subkey fingerprint, and
+# uses the full fingerprint as recommended by debsign.
+DEBSIGN_KEYID="$(
+  gpg --list-secret-keys --with-colons --fingerprint 2>/dev/null \
+  | awk -F: -v email="$MAINT_EMAIL" '
+      $1=="sec"              { fpr="" }
+      $1=="fpr" && fpr==""   { fpr=$10 }
+      $1=="uid" && $10 ~ email && fpr != "" { print fpr; exit }
+    '
+)"
+
+TARBALL="stimfit-${VERSION}.tar.gz"
+DEBIAN_DIST_DIR="${TOPDIR}/../../dist/debian"
 
 # ---------------------------------------------------------------------------
-# Helper: pick a signing key fingerprint for MAINT_EMAIL (or fall back to first secret key)
+# Stage 1: make dist — skip if tarball already exists (use --force-dist to redo)
 # ---------------------------------------------------------------------------
-pick_debsign_keyid() {
-  local email="$1"
 
-  # Try: secret key whose UID contains the email; take its fingerprint
-  local key
-  key="$(
-    gpg --list-secret-keys --with-colons --fingerprint 2>/dev/null \
-    | awk -F: -v email="$email" '
-        $1=="uid" && $10 ~ email { found=1 }
-        found && $1=="fpr" { print $10; exit }
-      '
-  )"
-  if [[ -n "${key}" ]]; then
-    printf '%s\n' "${key}"
-    return 0
-  fi
+if [[ $FORCE_DIST -eq 1 ]] || [[ ! -f "${TARBALL}" ]]; then
+  echo "==> Running make dist..."
+  make dist
+else
+  echo "==> Tarball ${TARBALL} exists; skipping make dist (use --force-dist to regenerate)."
+fi
 
-  # Fallback: first secret key fingerprint
-  key="$(
-    gpg --list-secret-keys --with-colons --fingerprint 2>/dev/null \
-    | awk -F: '/^fpr:/ { print $10; exit }'
-  )"
-  if [[ -n "${key}" ]]; then
-    printf '%s\n' "${key}"
-    return 0
-  fi
+# ---------------------------------------------------------------------------
+# Stage 2: Build the source package — skip when .dsc is already newer
+# than both the tarball and debian/control (use --force-source to redo)
+# ---------------------------------------------------------------------------
 
-  return 1
-}
-
-make dist
-
-mkdir -p "${DEBDIR}"
-rm -rf "${DEBDIR:?}/"*
 mkdir -p "${RESULTDIR}"
 
-# Prepare orig tarball
-cp -v "stimfit-${VERSION}.tar.gz" "${DEBDIR}/"
-cp -v "stimfit-${VERSION}.tar.gz" "${DEBDIR}/stimfit_${VERSION}.orig.tar.gz"
+EXISTING_DSC="$(ls -1t "${DEBDIR}"/stimfit_"${VERSION}"-*.dsc 2>/dev/null | head -n1 || true)"
+EXISTING_CHANGES="$(ls -1t "${DEBDIR}"/*_source.changes 2>/dev/null | head -n1 || true)"
 
-# Unpack + add debian/
-cd "${DEBDIR}"
-tar -xzf "stimfit_${VERSION}.orig.tar.gz"
-cd "stimfit-${VERSION}"
+SKIP_SOURCE=0
+if [[ $FORCE_SOURCE -eq 0 && -n "${EXISTING_DSC}" ]]; then
+  # Skip if the existing .dsc is newer than both the tarball and debian/control
+  if [[ "${EXISTING_DSC}" -nt "${TARBALL}" && "${EXISTING_DSC}" -nt "${DEBIAN_DIST_DIR}/control" ]]; then
+    echo "==> Source package ${EXISTING_DSC} is up-to-date; skipping source build."
+    echo "    (use --force-source to rebuild)"
+    SKIP_SOURCE=1
+    DSC="${EXISTING_DSC}"
+    CHANGES="${EXISTING_CHANGES}"
+    # Copy existing artifacts into RESULTDIR so signing always operates there.
+    cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*.dsc             "${RESULTDIR}/" 2>/dev/null || true
+    cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*_source.changes  "${RESULTDIR}/" 2>/dev/null || true
+    cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*_source.buildinfo "${RESULTDIR}/" 2>/dev/null || true
+    cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*.debian.tar.*    "${RESULTDIR}/" 2>/dev/null || true
+    cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*.orig.tar.*      "${RESULTDIR}/" 2>/dev/null || true
+  fi
+fi
 
-cp -rv "${TOPDIR}/../../dist/debian" ./
-test -d debian
+if [[ $SKIP_SOURCE -eq 0 ]]; then
+  echo "==> Building source package..."
+
+  # Clean the staging area but keep the result/ subdirectory
+  find "${DEBDIR}" -mindepth 1 -maxdepth 1 ! -name result -exec rm -rf {} +
+
+  # Prepare orig tarball
+  cp -v "${TARBALL}" "${DEBDIR}/"
+  cp -v "${TARBALL}" "${DEBDIR}/stimfit_${VERSION}.orig.tar.gz"
+
+  # Unpack + add debian/
+  cd "${DEBDIR}"
+  tar -xzf "stimfit_${VERSION}.orig.tar.gz"
+  cd "stimfit-${VERSION}"
+
+  cp -rv "${DEBIAN_DIST_DIR}" ./
+  test -d debian
+
+  # -------------------------------------------------------------------------
+  # Build the source package inside the sid cowbuilder chroot (UNSIGNED).
+  #
+  # NOTE: dpkg-buildpackage -S only packages source files — it never compiles
+  # anything and requires NO build-dependencies to be installed.  The previous
+  # apt-get update + apt-get build-dep calls here were entirely unnecessary.
+  # -------------------------------------------------------------------------
+
+  sudo cowbuilder execute \
+    --basepath "${BASE_COW}" \
+    --aptcache "${APT_CACHE_DIR}" \
+    --bindmounts "${DEBDIR}" \
+    -- /bin/bash -lc "
+      set -euo pipefail
+      cd '${DEBDIR}/stimfit-${VERSION}'
+      # Source-only build: no compilation, no build-deps needed.
+      dpkg-buildpackage -S -sa -us -uc -d -nc
+    "
+
+  # cowbuilder execute ran as root; artifacts may be root-owned on host.
+  sudo chown -R "$(id -u):$(id -g)" "${DEBDIR}" "${RESULTDIR}"
+
+  # Find the newly created source .changes / .dsc (should be in ${DEBDIR})
+  CHANGES="$(ls -1t "${DEBDIR}"/*_source.changes | head -n1)"
+  DSC="$(ls -1t "${DEBDIR}"/*.dsc | head -n1)"
+
+  echo "Source package: ${DSC}"
+  echo "Source changes: ${CHANGES}"
+
+  # Copy unsigned source artifacts into RESULTDIR
+  cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*.dsc             "${RESULTDIR}/" 2>/dev/null || true
+  cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*_source.changes  "${RESULTDIR}/" 2>/dev/null || true
+  cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*_source.buildinfo "${RESULTDIR}/" 2>/dev/null || true
+  cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*.debian.tar.*    "${RESULTDIR}/" 2>/dev/null || true
+  cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*.orig.tar.*      "${RESULTDIR}/" 2>/dev/null || true
+fi
 
 # ---------------------------------------------------------------------------
-# Build the source package inside the sid cowbuilder chroot (UNSIGNED)
+# Stage 3: Build binaries inside cowbuilder — skip when .debs are already
+# newer than the .dsc (use --force-binary to redo)
 # ---------------------------------------------------------------------------
 
-sudo cowbuilder execute \
-  --basepath "${BASE_COW}" \
-  --aptcache "${APT_CACHE_DIR}" \
-  --bindmounts "${DEBDIR}" \
-  -- /bin/bash -lc "
-    set -euo pipefail
-    apt-get update
-    apt-get -y build-dep '${DEBDIR}/stimfit-${VERSION}'
-    cd '${DEBDIR}/stimfit-${VERSION}'
-    # Build source package WITHOUT signing; we'll sign once on the host at the very end.
-    dpkg-buildpackage -S -sa -us -uc
-  "
+if [[ $SOURCE_ONLY -eq 0 ]]; then
+  EXISTING_DEB="$(ls -1t "${RESULTDIR}"/*.deb 2>/dev/null | head -n1 || true)"
 
-# cowbuilder execute ran as root inside chroot; artifacts may be root-owned on host.
-sudo chown -R "$(id -u):$(id -g)" "${DEBDIR}"
+  SKIP_BINARY=0
+  if [[ $FORCE_BINARY -eq 0 && -n "${EXISTING_DEB}" ]]; then
+    if [[ "${EXISTING_DEB}" -nt "${DSC}" ]]; then
+      echo "==> Binary packages in ${RESULTDIR} are up-to-date; skipping binary build."
+      echo "    (use --force-binary to rebuild)"
+      SKIP_BINARY=1
+    fi
+  fi
 
-# Find the newly created source artifacts (in ${DEBDIR})
-CHANGES_SRC="$(ls -1t "${DEBDIR}"/*_source.changes | head -n1)"
-DSC_SRC="$(ls -1t "${DEBDIR}"/*.dsc | head -n1)"
+  if [[ $SKIP_BINARY -eq 0 ]]; then
+    echo "==> Building binary packages..."
 
-echo "Source package: ${DSC_SRC}"
-echo "Source changes: ${CHANGES_SRC}"
+    # Use all available cores.
+    sudo cowbuilder build \
+      --basepath "${BASE_COW}" \
+      --buildresult "${RESULTDIR}" \
+      --debbuildopts "-j$(nproc)" \
+      "${DSC}"
 
-# ---------------------------------------------------------------------------
-# Build binaries inside cowbuilder (installs Build-Depends as needed)
-# ---------------------------------------------------------------------------
-
-sudo cowbuilder build \
-  --basepath "${BASE_COW}" \
-  --buildresult "${RESULTDIR}" \
-  "${DSC_SRC}"
-
-# Make sure build results are user-owned
-sudo chown -R "$(id -u):$(id -g)" "${RESULTDIR}"
+    sudo chown -R "$(id -u):$(id -g)" "${RESULTDIR}"
+  fi
+else
+  echo "==> --source-only requested; skipping binary build."
+fi
 
 # ---------------------------------------------------------------------------
-# Prepare upload set in RESULTDIR and SIGN ONLY ONCE (the exact file to be uploaded)
+# Stage 4: Sign all .changes files in deb/ and result/
 # ---------------------------------------------------------------------------
 
-# Copy the source upload set next to the binaries for convenience
-cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*.dsc "${RESULTDIR}/"
-cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*_source.changes "${RESULTDIR}/"
-cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*.debian.tar.* "${RESULTDIR}/"
-cp -v "${DEBDIR}/"stimfit_"${VERSION}"-*.orig.tar.* "${RESULTDIR}/"
-
-CHANGES_UP="${RESULTDIR}/$(basename "${CHANGES_SRC}")"
-DSC_UP="${RESULTDIR}/$(basename "${DSC_SRC}")"
-
-# Pick signing key (fingerprint) from the host user's keyring
-DEBSIGN_KEYID="$(sudo -u "${SIGN_USER}" bash -lc "$(declare -f pick_debsign_keyid); pick_debsign_keyid '${MAINT_EMAIL}'" )" || {
-  cat >&2 <<EOF
-ERROR: No suitable GPG secret key found for signing.
-- Ensure your secret key is available in ${SIGN_USER}'s keyring (~/.gnupg).
-- Or adjust MAINT_EMAIL (${MAINT_EMAIL}) to match your UID/email.
-EOF
+if [[ -z "${DEBSIGN_KEYID}" ]]; then
+  echo "ERROR: Could not find a GPG secret key for ${MAINT_EMAIL}" >&2
   exit 1
-}
+fi
 
-# Sign THE upload copy (in RESULTDIR), once.
-sudo -u "${SIGN_USER}" debsign -k"${DEBSIGN_KEYID}" "${CHANGES_UP}"
+echo "==> Signing all .changes files in ${DEBDIR} and ${RESULTDIR}..."
 
-# Sanity check: ensure the upload .changes is clearsigned
-grep -q "BEGIN PGP SIGNATURE" "${CHANGES_UP}" || {
-  echo "ERROR: ${CHANGES_UP} does not contain a PGP signature block after debsign." >&2
+# Collect .changes from both directories (deduplicated by absolute path).
+# RESULTDIR is a subdirectory of DEBDIR, so list them separately.
+mapfile -t ALL_CHANGES < <(
+  { ls -1 "${DEBDIR}"/*.changes 2>/dev/null || true
+    ls -1 "${RESULTDIR}"/*.changes 2>/dev/null || true
+  } | sort -u
+)
+
+if [[ ${#ALL_CHANGES[@]} -eq 0 ]]; then
+  echo "ERROR: No .changes files found in ${DEBDIR} or ${RESULTDIR}" >&2
   exit 1
-}
+fi
 
-# Optional: verify signatures (useful while iterating/debugging)
-sudo -u "${SIGN_USER}" gpg --verify "${CHANGES_UP}"
-sudo -u "${SIGN_USER}" gpg --verify "${DSC_UP}"
+for CHANGES_FILE in "${ALL_CHANGES[@]}"; do
+  [[ -f "${CHANGES_FILE}" ]] || continue
+  echo "==> Signing: ${CHANGES_FILE}"
+  debsign -k"${DEBSIGN_KEYID}" "${CHANGES_FILE}"
+  # Verify the signature was actually applied — debsign can exit 0 even on
+  # certain failures, so we check explicitly.
+  if ! gpg --batch --status-fd 1 --verify "${CHANGES_FILE}" 2>/dev/null \
+       | grep -q '\[GNUPG:\] GOODSIG'; then
+    echo "ERROR: Signature verification failed for ${CHANGES_FILE}" >&2
+    echo "       Run 'gpg --verify ${CHANGES_FILE}' for details." >&2
+    exit 1
+  fi
+  echo "    Signed and verified OK: $(basename "${CHANGES_FILE}")"
+done
+
+echo "==> All .changes files signed and verified OK."
+
+# Update CHANGES to the most-recent source .changes in RESULTDIR for the upload hint.
+CHANGES="$(ls -1t "${RESULTDIR}"/*_source.changes 2>/dev/null | head -n1 || echo "")"
 
 echo "Done. Artifacts in: ${RESULTDIR}"
-echo "Upload with: dput mentors $(basename "${CHANGES_UP}")"
+echo "Upload with: dput mentors $(basename "${CHANGES}")  (from ${RESULTDIR})"
