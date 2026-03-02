@@ -1,0 +1,7 @@
+# exit() calls are in the bundled third-party levmar library (GPL-2+ numeric optimizer)
+stimfit: exit-in-shared-library
+
+# Desktop entry and manual page are intentionally maintained in the Debian
+# packaging because upstream does not ship them.
+stimfit: maintainer-desktop-entry
+stimfit: maintainer-manual-page

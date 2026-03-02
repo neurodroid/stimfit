@@ -4,6 +4,7 @@
 # the dh command; only overrides are required for custom build steps.
 
 export DH_VERBOSE=1
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
 DEBPREFIX=$(CURDIR)/debian/tmp/usr
 PYVER   := $(shell py3versions -vd)
@@ -22,11 +23,11 @@ endif
 
 # default dh sequencer target
 %:
-	dh $@ --with python3
+	dh $@ --with python3,numpy3
 
 override_dh_auto_clean:
-	dh_testdir
-	dh_testroot
+	dh_auto_clean
+	# extra cleanup for artefacts automake doesn't know about
 	rm -f build-stamp a.out config.status libtool config.log stimfittest.log
 	rm -rf src/pystfio/.libs src/stimfit/.libs src/stimfit/py/.libs
 	rm -rf ./.libs ./_libs ./.deps ./.stimfit
@@ -37,7 +38,6 @@ override_dh_auto_clean:
 	find -name '*.la' | xargs -r rm -f
 	find -name '*.so' | xargs -r rm -f
 	rm -f $(CURDIR)/test.h5
-	dh_clean
 
 override_dh_auto_configure:
 	# first build: python-enabled
@@ -75,3 +75,12 @@ override_dh_auto_install:
 	mkdir -p $(CURDIR)/man && cp ./debian/stimfit.1 ./man/stimfit.1
 
 	dh_installdirs
+
+override_dh_strip:
+	# first strip debug symbols for python3-stfio's shared objects explicitly
+	# this places them in python3-stfio-dbgsym and avoids polluting stimfit-dbgsym
+	dh_strip -ppython3-stfio
+	# run a second pass for the remaining binaries, but skip the python module
+	# files so they are not pulled into stimfit-dbgsym as well
+	dh_strip \
+		--exclude=usr/lib/python*/*-packages/stfio/_*.so

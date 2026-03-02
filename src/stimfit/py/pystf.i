@@ -439,7 +439,7 @@ the global matrix. Do not use directly.
 Arguments:
 invec --   The NumPy array to be used.
 channel -- The channel index within the global matrix.
-section -- The seciton index within the global matrix.
+section -- The section index within the global matrix.
 ") _gMatrix_at;
 void _gMatrix_at( double* invec, int size, int channel, int section );
 //--------------------------------------------------------------------

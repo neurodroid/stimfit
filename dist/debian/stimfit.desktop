@@ -9,3 +9,4 @@ Exec=stimfit %F
 Icon=stimfit
 MimeType=application/x-foo;
 Categories=Science;
+Keywords=electrophysiology;neuroscience;patch clamp;signal;data analysis;

@@ -1,5 +1,7 @@
 Name: Stimfit
-Homepage: http://www.stimfit.org
+Repository: https://github.com/neurodroid/stimfit.git
+Repository-Browse: https://github.com/neurodroid/stimfit
+Bug-Database: https://github.com/neurodroid/stimfit/issues
 Reference:
  - Author: Segundo J. Guzman and Alois Schlögl and Christoph Schmidt-Hieber
    Title: "Stimfit: quantifying electrophysiological data with Python"
