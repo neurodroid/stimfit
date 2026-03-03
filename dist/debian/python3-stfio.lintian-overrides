@@ -1,3 +1,0 @@
-python3-stfio: custom-library-search-path
-# exit() calls are in the bundled third-party levmar library (GPL-2+ numeric optimizer)
-python3-stfio: exit-in-shared-library
