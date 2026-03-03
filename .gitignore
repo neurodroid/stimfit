@@ -151,3 +151,4 @@ compile
 stimfittest
 
 Portfile
+/debian/mkdeb.sh
