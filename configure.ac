@@ -16,7 +16,7 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_MKDIR_P
 AC_PROG_CXX
-AC_PROG_LIBTOOL
+LT_INIT
 
 # BUILDDATE=`date`
 
@@ -25,8 +25,13 @@ AC_ARG_ENABLE([module], AS_HELP_STRING([--enable-module],[build a standalone pyt
 AM_CONDITIONAL(BUILD_MODULE, test "$enable_module" = "yes")
 
 # pbuilder debian package build
-AC_ARG_ENABLE([debian], AS_HELP_STRING([--enable-debian],[special build for pbuilder]),[])
-AM_CONDITIONAL(BUILD_DEBIAN, test "$enable_debian" = "yes")
+AC_ARG_ENABLE([debian],
+  AS_HELP_STRING([--enable-debian], [special build for pbuilder]),
+  [enable_debian=$enableval],
+  [enable_debian=no]
+)
+
+AM_CONDITIONAL([BUILD_DEBIAN], [test "x$enable_debian" = "xyes"])
 
 AC_MSG_CHECKING(for kernel)
 case `uname` in
@@ -377,12 +382,23 @@ AC_SUBST(GT_LDFLAGS)
 CXXFLAGS="${CXXFLAGS} -Wall"
 
 AC_CONFIG_HEADERS([stfconf.h])
-
-AC_CONFIG_FILES([Makefile src/Makefile src/libstfio/Makefile src/libstfnum/Makefile src/libbiosiglite/Makefile src/pystfio/Makefile src/stimfit/Makefile src/stimfit/py/Makefile
-dist/macosx/stimfit.plist dist/macosx/macports/insert_checksums.sh dist/macosx/scripts/mkimage.sh 
-dist/debian/mkdeb.sh dist/debian/mkquick.sh
-setup.py dist/conda/py-stfio-debug/meta.yaml dist/conda/py-stfio/meta.yaml 
-doc/Doxyfile doc/sphinx/conf.py
+AC_CONFIG_FILES([
+Makefile
+src/Makefile
+src/libstfio/Makefile
+src/libstfnum/Makefile
+src/libbiosiglite/Makefile
+src/pystfio/Makefile
+src/stimfit/Makefile
+src/stimfit/py/Makefile
+dist/macosx/stimfit.plist
+dist/macosx/macports/insert_checksums.sh
+dist/macosx/scripts/mkimage.sh
+setup.py
+dist/conda/py-stfio-debug/meta.yaml
+dist/conda/py-stfio/meta.yaml
+doc/Doxyfile
+doc/sphinx/conf.py
 Makefile.static
 ])
 
