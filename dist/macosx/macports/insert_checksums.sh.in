@@ -37,17 +37,10 @@ ${GSED} -i 's/STFVERSION/'${STFVERSION}'/g' ${MPDIR}/python/py-stfio/Portfile
 ${GSED} -i 's/SIZE/'${SIZE}'/g' ${MPDIR}/python/py-stfio/Portfile
 
 sudo portindex
-sudo port uninstall stimfit
-sudo port clean --all stimfit
-sudo port uninstall py-stfio
-sudo port clean --all py-stfio
-sudo port uninstall py38-stfio
-sudo port clean --all py38-stfio
-sudo port uninstall py39-stfio
-sudo port clean --all py39-stfio
-sudo port uninstall py310-stfio
-sudo port clean --all py310-stfio
-sudo port uninstall py311-stfio
-sudo port clean --all py311-stfio
-sudo port uninstall py312-stfio
-sudo port clean --all py312-stfio
+
+for _port in stimfit py-stfio $(port installed | awk '/^ +py[0-9]+-stfio/ {print $1}'); do
+    if port installed "${_port}" | grep -q "${_port}"; then
+        sudo port uninstall "${_port}"
+        sudo port clean --all "${_port}"
+    fi
+done
