@@ -150,6 +150,7 @@ EXTRA_DIST+= ./Makefile.static
 EXTRA_DIST+= ./dist/macosx/scripts/conf_mac_release.sh
 EXTRA_DIST+= ./dist/macosx/scripts/change_deps_release.sh
 EXTRA_DIST+= ./dist/macosx/app.r
+EXTRA_DIST+= ./dist/macosx/copyright
 EXTRA_DIST+= ./dist/macosx/stimfit.icns
 EXTRA_DIST+= ./src/pystfio/__init__.py
 # EXTRA_DIST+= ./src/pystfio/stfioswig_wrap.cxx 
@@ -161,23 +162,25 @@ EXTRA_DIST+= ./src/pystfio/stfio_neo.py
 EXTRA_DIST+= ./src/pystfio/unittest_stfio.py
 # EXTRA_DIST+= ./src/pystfio/test.h5
 EXTRA_DIST+= ./src/pystfio/pystfio.h 
-EXTRA_DIST+= ./dist/debian/changelog
-EXTRA_DIST+= ./dist/debian/control
-EXTRA_DIST+= ./dist/debian/copyright
-EXTRA_DIST+= ./dist/debian/docs
-EXTRA_DIST+= ./dist/debian/mkdeb.sh.in
-EXTRA_DIST+= ./dist/debian/python3-stfio.files
-EXTRA_DIST+= ./dist/debian/python3-stfio.install
-EXTRA_DIST+= ./dist/debian/python3-stfio.lintian-overrides
-EXTRA_DIST+= ./dist/debian/rules
-EXTRA_DIST+= ./dist/debian/stimfit.1
-EXTRA_DIST+= ./dist/debian/stimfit.desktop
-EXTRA_DIST+= ./dist/debian/stimfit.files
-EXTRA_DIST+= ./dist/debian/stimfit.install
-EXTRA_DIST+= ./dist/debian/not-installed
-EXTRA_DIST+= ./dist/debian/stimfit-dbgsym.lintian-overrides
-EXTRA_DIST+= ./dist/debian/stimfit.lintian-overrides
-EXTRA_DIST+= ./dist/debian/stimfit.manpages
+if BUILD_DEBIAN
+EXTRA_DIST+= ./debian/changelog
+EXTRA_DIST+= ./debian/control
+EXTRA_DIST+= ./debian/copyright
+EXTRA_DIST+= ./debian/docs
+EXTRA_DIST+= ./debian/mkdeb.sh.in
+EXTRA_DIST+= ./debian/python3-stfio.files
+EXTRA_DIST+= ./debian/python3-stfio.install
+EXTRA_DIST+= ./debian/python3-stfio.lintian-overrides
+EXTRA_DIST+= ./debian/rules
+EXTRA_DIST+= ./debian/stimfit.1
+EXTRA_DIST+= ./debian/stimfit.desktop
+EXTRA_DIST+= ./debian/stimfit.files
+EXTRA_DIST+= ./debian/stimfit.install
+EXTRA_DIST+= ./debian/not-installed
+EXTRA_DIST+= ./debian/stimfit-dbgsym.lintian-overrides
+EXTRA_DIST+= ./debian/stimfit.lintian-overrides
+EXTRA_DIST+= ./debian/stimfit.manpages
+endif
 EXTRA_DIST+= ./src/test/gtest/CHANGES
 EXTRA_DIST+= ./src/test/gtest/CONTRIBUTORS
 EXTRA_DIST+= ./src/test/gtest/COPYING
@@ -236,7 +239,7 @@ if WITH_BIOSIGLITE
 endif
 endif
 	install -d $(prefix)/share/applications
-	install -m 644 $(top_srcdir)/dist/debian/stimfit.desktop $(prefix)/share/applications/
+	install -m 644 $(top_srcdir)/debian/stimfit.desktop $(prefix)/share/applications/
 	for size in 16 32 48 128 256 512; do \
 		install -d $(prefix)/share/icons/hicolor/$${size}x$${size}/apps; \
 		install -m 644 $(top_srcdir)/src/stimfit/res/stimfit_$${size}.png $(prefix)/share/icons/hicolor/$${size}x$${size}/apps/stimfit.png; \

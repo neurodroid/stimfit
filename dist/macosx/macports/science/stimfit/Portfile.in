@@ -5,7 +5,6 @@ PortGroup           wxWidgets 1.0
 
 name                stimfit
 version             STFVERSION
-revision            1
 checksums           rmd160  RMD160 \
                     sha256  SHA256 \
                     size    SIZE
@@ -113,6 +112,6 @@ destroot.destdir    DESTDIR=${destroot}${applications_dir}
 post-destroot {
     set docdir ${destroot}${prefix}/share/doc/${name}
     xinstall -d ${docdir}
-    xinstall -m 644 ${worksrcpath}/dist/debian/copyright \
+    xinstall -m 644 ${worksrcpath}/dist/macosx/copyright \
         ${worksrcpath}/COPYING ${docdir}
 }
