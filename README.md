@@ -108,3 +108,8 @@ With the most recent version of Windows10 (build: 10.0.19045.2546 ), Stimfit for
 |./src/stimfit/py | stf module that gets imported into the embedded Python shell |
 
 libstfio is a private library that won't be installed system-wide. You may therefore end up with two copies of libstfio.so: One in the private stimfit library directory (/usr/lib/stimfit/ or similar), the other one in the Python site packages path for pystfio. libstfio may turn into a system-wide library in the future.
+
+## Build system migration status
+
+An initial CMake bootstrap layer is available to support migration from Autotools.
+See [`CMAKE_MIGRATION.md`](CMAKE_MIGRATION.md) for details.
