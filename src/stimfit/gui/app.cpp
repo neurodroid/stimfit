@@ -1074,8 +1074,10 @@ void wxStfApp::OnNewfromselected( wxCommandEvent& WXUNUSED(event) ) {
 
     // Set channel names:
     for (std::size_t n_c=0;n_c<n_channels;++n_c) {
-        std::ostringstream channel_name;
-        channel_name << channel_names[n_c][0];
+        std::string channel_name;
+        if (!channel_names[n_c].empty()) {
+            channel_name = channel_names[n_c][0];
+        }
         for (std::size_t n_n=1;n_n<channel_names[n_c].size();++n_n) {
             // add channel name if it hasn't been used yet:
             bool used=false;
@@ -1085,10 +1087,13 @@ void wxStfApp::OnNewfromselected( wxCommandEvent& WXUNUSED(event) ) {
                 used = ( channel_names[n_c][n_n].compare( channel_names[n_c][n_used] ) == 0 );
             }
             if (!used) {
-                channel_name << wxT(", ") << channel_names[n_c][n_n];
+                if (!channel_name.empty()) {
+                    channel_name += ", ";
+                }
+                channel_name += channel_names[n_c][n_n];
             }
         }
-        Selected.get()[n_c].SetChannelName(channel_name.str());
+        Selected.get()[n_c].SetChannelName(channel_name);
     }
     // Copy some variables from the last document's recording
     // to the new recording:
@@ -1156,8 +1161,10 @@ void wxStfApp::OnNewfromall( wxCommandEvent& WXUNUSED(event) ) {
 
     // Set channel names:
     for (std::size_t n_c=0;n_c<n_channels;++n_c) {
-        std::ostringstream channel_name;
-        channel_name << channel_names[n_c][0];
+        std::string channel_name;
+        if (!channel_names[n_c].empty()) {
+            channel_name = channel_names[n_c][0];
+        }
         for (std::size_t n_n=1;n_n<channel_names[n_c].size();++n_n) {
             // add channel name if it hasn't been used yet:
             bool used=false;
@@ -1167,10 +1174,13 @@ void wxStfApp::OnNewfromall( wxCommandEvent& WXUNUSED(event) ) {
                 used = ( channel_names[n_c][n_n].compare( channel_names[n_c][n_used] ) == 0 );
             }
             if (!used) {
-                channel_name << wxT(", ") << channel_names[n_c][n_n];
+                if (!channel_name.empty()) {
+                    channel_name += ", ";
+                }
+                channel_name += channel_names[n_c][n_n];
             }
         }
-        Selected.get()[n_c].SetChannelName(channel_name.str());
+        Selected.get()[n_c].SetChannelName(channel_name);
     }
 
     // Copy some variables from the last document's recording

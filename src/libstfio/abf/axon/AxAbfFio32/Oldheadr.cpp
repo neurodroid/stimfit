@@ -257,18 +257,7 @@ static void CorrectDACScaling(ABFFileHeader *pFH)
       DWORD dwMaxEpi = 0;
       int hFile;
 
-#if defined(_MSC_VER)
-      int fnsize = 0;
-      std::wstring wfName;
-      while (szFilename[fnsize++] != '\0') {
-          wfName += wchar_t(szFilename[fnsize-1]);
-      }
-      wfName += wchar_t('\0');
-
-      if (!ABF_ReadOpen(wfName.c_str(), &hFile, ABF_DATAFILE,
-#else
       if (!ABF_ReadOpen(szFilename, &hFile, ABF_DATAFILE,
-#endif
                         // if (!ABF_ReadOpen(wca.cMB2WX(szFilename), &hFile, ABF_DATAFILE, 
                         &DH, &uMaxSamples, &dwMaxEpi, NULL))
          return;

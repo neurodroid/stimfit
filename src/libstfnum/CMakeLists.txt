@@ -13,10 +13,15 @@ add_library(
   measure.cpp
 )
 
+if(MSVC)
+  target_compile_definitions(stfnum PRIVATE STFNUMDLL)
+endif()
+
 target_link_libraries(
   stfnum
   PUBLIC
     stimfit_config
+    stfio
     stimfit::fftw3
     stimfit::lapack
 )

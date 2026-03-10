@@ -2,7 +2,7 @@ include_guard(GLOBAL)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -44,11 +44,16 @@ if(HAVE_STRPTIME_H)
 endif()
 
 add_library(stimfit_config INTERFACE)
-target_include_directories(stimfit_config INTERFACE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(stimfit_config INTERFACE
+  ${CMAKE_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/src
+  ${CMAKE_BINARY_DIR}
+)
 target_compile_options(stimfit_config INTERFACE
-  $<$<COMPILE_LANGUAGE:CXX>:-Wall>
-  $<$<CONFIG:Debug>:-O0 -g3>
-  $<$<NOT:$<CONFIG:Debug>>:-O2 -g>
+  $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/W4 /Zc:__cplusplus>
+  $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-Wall>
+  $<$<AND:$<CONFIG:Debug>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-O0 -g3>
+  $<$<AND:$<NOT:$<CONFIG:Debug>>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-O2 -g>
 )
 
 if(STF_BUILD_DEBIAN)

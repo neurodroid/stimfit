@@ -75,10 +75,16 @@
     #include <wx/progdlg.h>
     //! child frame type; depends on whether aui is used for the doc/view interface
     // typedef wxDocChildFrameAny<wxAuiMDIChildFrame, wxAuiMDIParentFrame> wxStfChildType;
-    typedef wxDocMDIChildFrame wxStfChildType;
+    #ifdef STF_TEST
+        typedef int wxStfChildType;
+        //! parent frame type; not needed for non-GUI test builds
+        typedef int wxStfParentType;
+    #else
+        typedef wxDocMDIChildFrame wxStfChildType;
 
-    //! parent frame type; depends on whether aui is used for the doc/view interface
-    typedef wxDocMDIParentFrame wxStfParentType;
+        //! parent frame type; depends on whether aui is used for the doc/view interface
+        typedef wxDocMDIParentFrame wxStfParentType;
+    #endif
 #else
     typedef std::string wxString;
     typedef int wxWindow;

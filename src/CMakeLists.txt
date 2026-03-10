@@ -1,5 +1,20 @@
 include_guard(DIRECTORY)
 
+if(STF_WITH_BIOSIG AND NOT STF_WITH_BIOSIGLITE AND STF_BIOSIG_USE_SUBMODULE)
+  add_subdirectory(biosig/biosig4c++)
+  if(TARGET biosig2static)
+    target_include_directories(biosig2static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/biosig/biosig4c++)
+  endif()
+  if(TARGET biosigstatic)
+    target_include_directories(biosigstatic PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/biosig/biosig4c++)
+  endif()
+  if(TARGET biosig2static)
+    add_library(stimfit::biosig ALIAS biosig2static)
+  elseif(TARGET biosigstatic)
+    add_library(stimfit::biosig ALIAS biosigstatic)
+  endif()
+endif()
+
 add_subdirectory(libstfio)
 add_subdirectory(libstfnum)
 

@@ -1,0 +1,54 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "vs2022-vcpkg-wx-hdf5",
+      "displayName": "VS2022 x64 (vcpkg + wxWidgets + HDF5)",
+      "description": "Stimfit non-Python build using local wxWidgets and HDF5 dependencies.",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/../stimfit-out/${presetName}",
+      "architecture": {
+        "value": "x64",
+        "strategy": "set"
+      },
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/../stimfit-out/install/vs2022-release",
+        "BUILD_SHARED_LIBS": "ON",
+        "STF_BUILD_MODULE": "OFF",
+        "STF_ENABLE_PYTHON": "OFF",
+        "STF_WITH_BIOSIG": "ON",
+        "CMAKE_LIBRARY_PATH": "C:/Users/C02380/libs/fftw3/lib;C:/Users/C02380/libs/fftw3",
+        "CMAKE_INCLUDE_PATH": "C:/Users/C02380/libs/fftw3/include",
+        "STF_HDF5_PREFIX": "C:/Users/C02380/libs/hdf5",
+        "wxWidgets_ROOT_DIR": "C:/Users/C02380/libs/Phoenix/ext/wxWidgets",
+        "wxWidgets_LIB_DIR": "C:/Users/C02380/libs/Phoenix/ext/wxWidgets/lib/vc140_x64_dll"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "vs2022-release-all",
+      "displayName": "Build ALL_BUILD (Release)",
+      "configurePreset": "vs2022-vcpkg-wx-hdf5",
+      "configuration": "Release",
+      "targets": [
+        "ALL_BUILD"
+      ]
+    },
+    {
+      "name": "vs2022-release-stimfit",
+      "displayName": "Build stimfit (Release)",
+      "configurePreset": "vs2022-vcpkg-wx-hdf5",
+      "configuration": "Release",
+      "targets": [
+        "stimfit"
+      ]
+    }
+  ]
+}

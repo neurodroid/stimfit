@@ -53,6 +53,10 @@ endif()
 
 add_library(stfio ${STF_STFIO_SOURCES})
 
+if(MSVC)
+  target_compile_definitions(stfio PRIVATE STFIODLL)
+endif()
+
 target_link_libraries(stfio PUBLIC stimfit_config stimfit::hdf5)
 
 if(TARGET stimfit::biosig)

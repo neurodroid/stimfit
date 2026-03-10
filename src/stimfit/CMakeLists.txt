@@ -23,6 +23,12 @@ add_library(
   gui/usrdlg/usrdlg.cpp
 )
 
+if(MSVC)
+  target_compile_definitions(stimfit_core PRIVATE STFDLL)
+endif()
+
+target_compile_definitions(stimfit_core PRIVATE NOPCH)
+
 target_link_libraries(
   stimfit_core
   PUBLIC
