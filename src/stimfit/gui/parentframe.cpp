@@ -271,20 +271,25 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     SetMouseQual( stf::measure_cursor );
 
 #ifdef WITH_PYTHON
+#if defined(STF_PY_SHELL_BACKEND_LEGACY)
+#define STF_PY_SHELL_MODULE wxT("embedded_stf")
+#else
+#define STF_PY_SHELL_MODULE wxT("embedded_shell_modern")
+#endif
     python_code2 << wxT("import sys\n")
                  << wxT("sys.path.append('.')\n")
                  << wxT("sys.path.append('/usr/local/lib/stimfit')\n")
 #ifdef IPYTHON
                  << wxT("import embedded_ipython\n")
 #else
-                 << wxT("import embedded_stf\n")
+                 << wxT("import ") << STF_PY_SHELL_MODULE << wxT("\n")
 #endif
                  << wxT("\n")
                  << wxT("def makeWindow(parent, figsize=(8,6)):\n")
 #ifdef IPYTHON
                  << wxT("    win = embedded_ipython.MyPanel(parent)\n")
 #else
-                 << wxT("    win = embedded_stf.MyPanel(parent)\n")
+                 << wxT("    win = ") << STF_PY_SHELL_MODULE << wxT(".MyPanel(parent)\n")
 #endif
                  << wxT("    return win\n")
                  << wxT("\n")

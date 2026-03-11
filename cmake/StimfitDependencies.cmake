@@ -148,20 +148,135 @@ if(STF_ENABLE_PYTHON)
   target_include_directories(stimfit::python INTERFACE ${Python3_INCLUDE_DIRS})
   target_link_libraries(stimfit::python INTERFACE ${Python3_LIBRARIES})
 
+  set(_stf_python_bootstrap "")
+  if(WIN32)
+    set(_stf_python_extra_paths "${STF_WINDOWS_PYTHON_EXTRA_PATHS}")
+    list(FILTER _stf_python_extra_paths EXCLUDE REGEX "^$")
+    if(_stf_python_extra_paths)
+      foreach(_stf_path IN LISTS _stf_python_extra_paths)
+        string(REPLACE "\\" "\\\\" _stf_path_escaped "${_stf_path}")
+        set(_stf_python_bootstrap "${_stf_python_bootstrap}import sys; sys.path.insert(0, r'${_stf_path_escaped}'); ")
+      endforeach()
+    endif()
+  endif()
+
   if(Python3_Interpreter_FOUND)
     execute_process(
-      COMMAND ${Python3_EXECUTABLE} -c "import sysconfig; print(sysconfig.get_paths()['platlib'])"
+      COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}import sysconfig; print(sysconfig.get_paths()['platlib'])"
       OUTPUT_VARIABLE STF_PYTHON_PLATLIB
       OUTPUT_STRIP_TRAILING_WHITESPACE
     )
+    file(TO_CMAKE_PATH "${STF_PYTHON_PLATLIB}" STF_PYTHON_PLATLIB)
     execute_process(
-      COMMAND ${Python3_EXECUTABLE} -c "import numpy; print(numpy.get_include())"
+      COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}import sysconfig; print(sysconfig.get_paths()['purelib'])"
+      OUTPUT_VARIABLE STF_PYTHON_PURELIB
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    file(TO_CMAKE_PATH "${STF_PYTHON_PURELIB}" STF_PYTHON_PURELIB)
+    execute_process(
+      COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}import sysconfig; print(sysconfig.get_path('stdlib'))"
+      OUTPUT_VARIABLE STF_PYTHON_STDLIB
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    file(TO_CMAKE_PATH "${STF_PYTHON_STDLIB}" STF_PYTHON_STDLIB)
+    execute_process(
+      COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}import pathlib, sys; print((pathlib.Path(sys.base_prefix) / 'DLLs').as_posix())"
+      OUTPUT_VARIABLE STF_PYTHON_DLLS_DIR
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_QUIET
+    )
+    file(TO_CMAKE_PATH "${STF_PYTHON_DLLS_DIR}" STF_PYTHON_DLLS_DIR)
+    execute_process(
+      COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}import pathlib, sys; dll = pathlib.Path(sys.base_prefix) / ('python%d%d.dll' % (sys.version_info[0], sys.version_info[1])); print(dll.as_posix())"
+      OUTPUT_VARIABLE STF_PYTHON_RUNTIME_DLL
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_QUIET
+    )
+    file(TO_CMAKE_PATH "${STF_PYTHON_RUNTIME_DLL}" STF_PYTHON_RUNTIME_DLL)
+    execute_process(
+      COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}import numpy; print(numpy.get_include())"
       OUTPUT_VARIABLE STF_NUMPY_INCLUDE
       OUTPUT_STRIP_TRAILING_WHITESPACE
       ERROR_QUIET
     )
+
+    execute_process(
+      COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}import wx, pathlib; print(pathlib.Path(wx.__file__).resolve().parent.as_posix())"
+      OUTPUT_VARIABLE STF_WXPYTHON_DIR
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_VARIABLE _stf_wxpy_err
+      RESULT_VARIABLE _stf_wxpy_status
+    )
+    file(TO_CMAKE_PATH "${STF_WXPYTHON_DIR}" STF_WXPYTHON_DIR)
+
+    set(_stf_wxpython_include_dir "${STF_WXPYTHON_INCLUDE_DIR}")
+    if(_stf_wxpython_include_dir)
+      if(NOT EXISTS "${_stf_wxpython_include_dir}/wxPython/wxpy_api.h")
+        message(FATAL_ERROR "STF_WXPYTHON_INCLUDE_DIR='${_stf_wxpython_include_dir}' does not contain wxPython/wxpy_api.h")
+      endif()
+    else()
+      set(_stf_wxpython_include_hints "")
+      if(STF_WINDOWS_PYTHON_EXTRA_PATHS)
+        list(APPEND _stf_wxpython_include_hints ${STF_WINDOWS_PYTHON_EXTRA_PATHS})
+      endif()
+      if(STF_WXPYTHON_DIR)
+        list(APPEND _stf_wxpython_include_hints "${STF_WXPYTHON_DIR}")
+      endif()
+      if(STF_PYTHON_PLATLIB)
+        list(APPEND _stf_wxpython_include_hints "${STF_PYTHON_PLATLIB}")
+      endif()
+      if(STF_PYTHON_PURELIB)
+        list(APPEND _stf_wxpython_include_hints "${STF_PYTHON_PURELIB}")
+      endif()
+
+      find_path(_stf_wxpython_include_dir
+        NAMES wxPython/wxpy_api.h
+        HINTS ${_stf_wxpython_include_hints}
+        PATH_SUFFIXES wx/include include
+      )
+    endif()
+
+    if(_stf_wxpython_include_dir)
+      set(STF_WXPYTHON_INCLUDE_DIR "${_stf_wxpython_include_dir}" CACHE PATH "Path containing wxPython/wxpy_api.h (e.g. <Phoenix>/wx/include)" FORCE)
+      target_include_directories(stimfit::python INTERFACE "${STF_WXPYTHON_INCLUDE_DIR}")
+    else()
+      message(FATAL_ERROR "Could not locate wxPython/wxpy_api.h. Set STF_WXPYTHON_INCLUDE_DIR (for Phoenix, typically <Phoenix>/wx/include).")
+    endif()
+
+    if(STF_PY_SHELL_BACKEND STREQUAL "LEGACY")
+      execute_process(
+        COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}from wx.py import shell"
+        RESULT_VARIABLE _stf_legacy_shell_status
+        ERROR_QUIET
+      )
+      if(NOT _stf_legacy_shell_status EQUAL 0)
+        message(FATAL_ERROR "STF_PY_SHELL_BACKEND=LEGACY requires 'wx.py.shell', which is not available in this Python environment.")
+      endif()
+    else()
+      if(NOT _stf_wxpy_status EQUAL 0)
+        string(STRIP "${_stf_wxpy_err}" _stf_wxpy_err)
+        message(FATAL_ERROR "STF_PY_SHELL_BACKEND=MODERN requires wxPython to be importable from Python3_EXECUTABLE. ${_stf_wxpy_err}")
+      endif()
+    endif()
+
+    if(STF_NUMPY_INCLUDE STREQUAL "")
+      message(FATAL_ERROR "NumPy headers were not detected. Install numpy into the selected Python environment.")
+    endif()
+
+    message(STATUS "Stimfit Python shell backend: ${STF_PY_SHELL_BACKEND}")
+    message(STATUS "Stimfit Python interpreter: ${Python3_EXECUTABLE}")
+    message(STATUS "Stimfit Python platlib: ${STF_PYTHON_PLATLIB}")
+    if(WIN32 AND NOT "${STF_WINDOWS_PYTHON_EXTRA_PATHS}" STREQUAL "")
+      message(STATUS "Stimfit Python extra paths: ${STF_WINDOWS_PYTHON_EXTRA_PATHS}")
+    endif()
   endif()
 
   find_package(SWIG QUIET)
+  unset(_stf_python_bootstrap)
+  unset(_stf_wxpython_include_dir)
+  unset(_stf_wxpython_include_hints)
+  unset(_stf_python_extra_paths)
+  unset(_stf_path_escaped)
+  unset(_stf_path)
 endif()
 

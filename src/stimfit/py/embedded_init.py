@@ -14,6 +14,7 @@
 #=========================================================================
 
 import numpy as np
+import wx
 import stf
 from stf import *
 
