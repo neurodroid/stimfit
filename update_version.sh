@@ -1,12 +1,25 @@
 #! /bin/bash
 
-GSED=`which gsed`
-if [ "${GSED}" = "" ]
-then
-    GSED=`which sed`
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <new-version>"
+    echo "Example: $0 0.16.12"
+    exit 1
 fi
 
-CMD="find . -type f  \( -name stfconf.h -o -name index.xml -o -name configure.ac -o -name conf.py -o -name installer.nsi -o -name Home.html -o -name stimfit.plist.in -o -name mkdeb.sh -o -name update-deb.sh -o -name mkquick.sh -o -name mkimage.sh -o -name stimfit.1 -o -name Doxyfile -o -name insert_checksums.sh -o -name setup.py -o -path */py-stfio*/meta.yaml \) -exec $GSED -i 's/$1/$2/' {} +"
-# echo ${CMD}
-echo "Change 1st line in configure.ac and re-run ./autogen.sh - autoconf is supposed to update the version number in all occurrences."
-# eval ${CMD}
+NEW_VERSION="$1"
+VERSION_FILE="VERSION"
+
+if [ ! -f "${VERSION_FILE}" ]; then
+    echo "Error: ${VERSION_FILE} not found"
+    exit 1
+fi
+
+OLD_VERSION="$(tr -d '\r\n' < "${VERSION_FILE}")"
+printf '%s\n' "${NEW_VERSION}" > "${VERSION_FILE}"
+
+echo "Updated ${VERSION_FILE}: ${OLD_VERSION} -> ${NEW_VERSION}"
+echo "Next steps:"
+echo "  1. Re-run ./autogen.sh before using Autoconf artifacts"
+echo "  2. Re-run CMake configure so PROJECT_VERSION is refreshed"
