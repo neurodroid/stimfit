@@ -21,6 +21,9 @@ add_custom_command(
 
 add_library(_stfio MODULE pystfio.cxx ${STF_PYSTFIO_WRAP})
 set_target_properties(_stfio PROPERTIES PREFIX "" OUTPUT_NAME "_stfio")
+if(WIN32)
+  set_target_properties(_stfio PROPERTIES SUFFIX ".pyd")
+endif()
 
 target_include_directories(
   _stfio
@@ -45,13 +48,17 @@ else()
   set(_stfio_install_dir ${CMAKE_INSTALL_LIBDIR}/python-stfio/stfio)
 endif()
 
-install(TARGETS _stfio LIBRARY DESTINATION ${_stfio_install_dir} RUNTIME DESTINATION ${_stfio_install_dir})
+install(TARGETS _stfio
+  LIBRARY DESTINATION ${_stfio_install_dir} COMPONENT ${STF_COMPONENT_PYTHON}
+  RUNTIME DESTINATION ${_stfio_install_dir} COMPONENT ${STF_COMPONENT_PYTHON}
+)
 install(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/__init__.py
   ${CMAKE_CURRENT_SOURCE_DIR}/stfio_plot.py
   ${CMAKE_CURRENT_SOURCE_DIR}/stfio_neo.py
   ${STF_PYSTFIO_PY}
   DESTINATION ${_stfio_install_dir}
+  COMPONENT ${STF_COMPONENT_PYTHON}
 )
 
 if(BUILD_TESTING)

@@ -20,12 +20,16 @@ add_custom_command(
 )
 
 add_library(pystf MODULE pystf.cxx ${STF_PYSTF_WRAP})
-set_target_properties(pystf PROPERTIES PREFIX "" OUTPUT_NAME "pystf")
+set_target_properties(pystf PROPERTIES PREFIX "" OUTPUT_NAME "_stf")
+if(WIN32)
+  set_target_properties(pystf PROPERTIES SUFFIX ".pyd")
+endif()
 
 target_include_directories(
   pystf
   PRIVATE
     ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${Python3_INCLUDE_DIRS}
 )
 
@@ -48,7 +52,10 @@ if(TARGET biosiglite)
 endif()
 
 set(_pystf_install_dir ${CMAKE_INSTALL_LIBDIR}/stimfit)
-install(TARGETS pystf LIBRARY DESTINATION ${_pystf_install_dir} RUNTIME DESTINATION ${_pystf_install_dir})
+install(TARGETS pystf
+  LIBRARY DESTINATION ${_pystf_install_dir} COMPONENT ${STF_COMPONENT_PYTHON}
+  RUNTIME DESTINATION ${_pystf_install_dir} COMPONENT ${STF_COMPONENT_PYTHON}
+)
 install(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/ivtools.py
   ${CMAKE_CURRENT_SOURCE_DIR}/mintools.py
@@ -61,10 +68,12 @@ install(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/tdms.py
   ${CMAKE_CURRENT_SOURCE_DIR}/embedded_init.py
   ${CMAKE_CURRENT_SOURCE_DIR}/embedded_stf.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/embedded_shell_modern.py
   ${CMAKE_CURRENT_SOURCE_DIR}/embedded_mpl.py
   ${CMAKE_CURRENT_SOURCE_DIR}/heka.py
   ${CMAKE_CURRENT_SOURCE_DIR}/extensions.py
   ${CMAKE_SOURCE_DIR}/src/pystfio/stfio_plot.py
   DESTINATION ${_pystf_install_dir}
+  COMPONENT ${STF_COMPONENT_PYTHON}
 )
 

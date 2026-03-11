@@ -44,6 +44,25 @@
         "BIOSIG_INCLUDE_DIR": "${sourceDir}/build/biosig-msvc-src/biosig4c++",
         "BIOSIG_LIBRARY": "${sourceDir}/build/biosig-msvc-build/Release/biosig2.lib"
       }
+    },
+    {
+      "name": "vs2022-vcpkg-wx-hdf5-python314-biosig-patched",
+      "displayName": "VS2022 x64 (Python 3.14 + modern shell + patched biosig)",
+      "description": "Build Stimfit with embedded Python enabled for Python 3.14 workflows.",
+      "inherits": [
+        "vs2022-vcpkg-wx-hdf5-biosig-patched"
+      ],
+      "cacheVariables": {
+        "STF_ENABLE_PYTHON": "ON",
+        "STF_PY_SHELL_BACKEND": "MODERN",
+        "STF_WINDOWS_COPY_PYTHON_RUNTIME": "ON",
+        "STF_WINDOWS_COPY_PYTHON_SITE_PACKAGES": "ON",
+        "STF_WINDOWS_PYTHON_SITE_PACKAGES": "numpy;wx",
+        "STF_WINDOWS_PYTHON_EXTRA_PATHS": "C:/Users/C02380/libs/Phoenix",
+        "STF_WXPYTHON_INCLUDE_DIR": "C:/Users/C02380/libs/Phoenix/wx/include",
+        "SWIG_EXECUTABLE": "C:/Users/C02380/AppData/Local/Microsoft/WinGet/Packages/SWIG.SWIG_Microsoft.Winget.Source_8wekyb3d8bbwe/swigwin-4.4.1/swig.exe",
+        "Python3_ROOT_DIR": "C:/Program Files/Python314"
+      }
     }
   ],
   "buildPresets": [
@@ -72,6 +91,66 @@
       "configuration": "Release",
       "targets": [
         "stimfit"
+      ]
+    },
+    {
+      "name": "vs2022-release-stimfit-python314-biosig-patched",
+      "displayName": "Build stimfit (Release, Python 3.14, patched biosig)",
+      "configurePreset": "vs2022-vcpkg-wx-hdf5-python314-biosig-patched",
+      "configuration": "Release",
+      "targets": [
+        "stimfit"
+      ]
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "vs2022-release-package-inno-python314-biosig-patched",
+      "displayName": "Package INNOSETUP (Release, Python 3.14, patched biosig)",
+      "description": "Generate the Windows Inno Setup installer via CPack.",
+      "configurePreset": "vs2022-vcpkg-wx-hdf5-python314-biosig-patched",
+      "configurations": [
+        "Release"
+      ],
+      "generators": [
+        "INNOSETUP"
+      ]
+    },
+    {
+      "name": "vs2022-release-package-zip-python314-biosig-patched",
+      "displayName": "Package ZIP (Release, Python 3.14, patched biosig)",
+      "description": "Generate the Windows ZIP fallback package via CPack.",
+      "configurePreset": "vs2022-vcpkg-wx-hdf5-python314-biosig-patched",
+      "configurations": [
+        "Release"
+      ],
+      "generators": [
+        "ZIP"
+      ]
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "vs2022-release-package-all-python314-biosig-patched",
+      "displayName": "Configure + Build + Package (INNOSETUP + ZIP)",
+      "description": "One-command workflow for Windows packaging with embedded Python.",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "vs2022-vcpkg-wx-hdf5-python314-biosig-patched"
+        },
+        {
+          "type": "build",
+          "name": "vs2022-release-stimfit-python314-biosig-patched"
+        },
+        {
+          "type": "package",
+          "name": "vs2022-release-package-inno-python314-biosig-patched"
+        },
+        {
+          "type": "package",
+          "name": "vs2022-release-package-zip-python314-biosig-patched"
+        }
       ]
     }
   ]
