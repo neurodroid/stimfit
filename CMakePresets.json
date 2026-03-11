@@ -29,6 +29,21 @@
         "wxWidgets_ROOT_DIR": "C:/Users/C02380/libs/Phoenix/ext/wxWidgets",
         "wxWidgets_LIB_DIR": "C:/Users/C02380/libs/Phoenix/ext/wxWidgets/lib/vc140_x64_dll"
       }
+    },
+    {
+      "name": "vs2022-vcpkg-wx-hdf5-biosig-patched",
+      "displayName": "VS2022 x64 (external patched biosig)",
+      "description": "Build Stimfit against biosig prepared by cmake/PrepareBiosigMSVC.cmake.",
+      "inherits": [
+        "vs2022-vcpkg-wx-hdf5"
+      ],
+      "cacheVariables": {
+        "STF_USE_BIOSIG_SUBMODULE": "OFF",
+        "STF_WITH_BIOSIG": "ON",
+        "STF_WITH_BIOSIGLITE": "OFF",
+        "BIOSIG_INCLUDE_DIR": "${sourceDir}/build/biosig-msvc-src/biosig4c++",
+        "BIOSIG_LIBRARY": "${sourceDir}/build/biosig-msvc-build/Release/biosig2.lib"
+      }
     }
   ],
   "buildPresets": [
@@ -45,6 +60,15 @@
       "name": "vs2022-release-stimfit",
       "displayName": "Build stimfit (Release)",
       "configurePreset": "vs2022-vcpkg-wx-hdf5",
+      "configuration": "Release",
+      "targets": [
+        "stimfit"
+      ]
+    },
+    {
+      "name": "vs2022-release-stimfit-biosig-patched",
+      "displayName": "Build stimfit (Release, patched biosig)",
+      "configurePreset": "vs2022-vcpkg-wx-hdf5-biosig-patched",
       "configuration": "Release",
       "targets": [
         "stimfit"
