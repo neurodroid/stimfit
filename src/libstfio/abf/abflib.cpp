@@ -49,7 +49,6 @@ void stfio::importABFFile(const std::string &fName, Recording &ReturnData, Progr
     FILE* fh = fopen( fName.c_str(), "r" );
     if (!fh) {
         std::string errorMsg("Exception while calling importABFFile():\nCouldn't open file");
-        fclose(fh);
         throw std::runtime_error(errorMsg);
     }
 
