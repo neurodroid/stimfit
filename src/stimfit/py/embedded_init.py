@@ -13,10 +13,56 @@
 #
 #=========================================================================
 
+import importlib
+import os
+import sys
+
 import numpy as np
 import wx
-import stf
-from stf import *
+
+
+_stf_module = None
+_stf_import_error = None
+
+
+def _load_stf_module():
+    """Load the stf module once and cache the result."""
+    global _stf_module
+    global _stf_import_error
+
+    if _stf_module is not None:
+        return _stf_module
+
+    if _stf_import_error is not None:
+        return None
+
+    try:
+        _stf_module = importlib.import_module("stf")
+    except ImportError as exc:
+        _stf_import_error = exc
+        print("Stimfit embedded shell: unable to import 'stf': %s" % (exc,), file=sys.stderr)
+        return None
+
+    return _stf_module
+
+
+class _LazyStfProxy:
+    """Proxy that imports stf on first attribute access."""
+
+    def __getattr__(self, name):
+        module = _load_stf_module()
+        if module is None:
+            raise AttributeError("stf module is unavailable")
+        return getattr(module, name)
+
+
+# Embedded shell startup should stay resilient: avoid eager SWIG loading there.
+if os.environ.get("STF_EMBEDDED_SHELL") == "1":
+    stf = _LazyStfProxy()
+else:
+    stf = _load_stf_module()
+    if stf is not None:
+        from stf import *
 
 from os.path import basename
 
@@ -40,7 +86,13 @@ def intro_msg():
     from numpy.version import version as numpy_version
 
 
-    version_s = 'NumPy %s, wxPython %s' % (numpy_version, wx_version()) 
-    intro = '%s, using %s' % (stf.get_versionstring(), version_s)
+    version_s = 'NumPy %s, wxPython %s' % (numpy_version, wx_version())
+
+    # Do not force importing stf during embedded shell startup, as this can
+    # trigger duplicate wx RTTI registration in mixed build/install layouts.
+    if _stf_module is not None:
+        intro = '%s, using %s' % (_stf_module.get_versionstring(), version_s)
+    else:
+        intro = 'Stimfit Python shell, using %s' % (version_s,)
 
     return intro
