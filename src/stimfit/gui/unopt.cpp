@@ -179,6 +179,13 @@ PyObject*  wxPyMake_wxObject(wxObject* source, bool setThisOwn) {
 
 bool wxStfApp::Init_wxPython()
 {
+#if defined(__WXMAC__) || defined(__WXGTK__)
+    // Prevent external interactive startup hooks (e.g. editor extensions)
+    // from injecting control-sequence output into the embedded wx shell.
+    unsetenv("PYTHONSTARTUP");
+    unsetenv("PYTHONINSPECT");
+#endif
+
     // Initialize the Python interpreter
     if (!Py_IsInitialized()) {
         Py_Initialize();

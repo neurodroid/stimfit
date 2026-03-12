@@ -303,6 +303,22 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     stfNestedBuildPyPath.Normalize(wxPATH_NORM_DOTS);
     const wxString stfNestedBuildPyDir = stfNestedBuildPyPath.GetPath();
 
+    wxFileName stfInstallPyPath(stfExeDir, wxEmptyString);
+    stfInstallPyPath.AppendDir(wxT(".."));
+    stfInstallPyPath.AppendDir(wxT("lib"));
+    stfInstallPyPath.AppendDir(wxT("stimfit"));
+    stfInstallPyPath.Normalize(wxPATH_NORM_DOTS);
+    const wxString stfInstallPyDir = stfInstallPyPath.GetPath();
+
+    wxFileName stfBundleInstallPyPath(stfExeDir, wxEmptyString);
+    stfBundleInstallPyPath.AppendDir(wxT(".."));
+    stfBundleInstallPyPath.AppendDir(wxT(".."));
+    stfBundleInstallPyPath.AppendDir(wxT(".."));
+    stfBundleInstallPyPath.AppendDir(wxT("lib"));
+    stfBundleInstallPyPath.AppendDir(wxT("stimfit"));
+    stfBundleInstallPyPath.Normalize(wxPATH_NORM_DOTS);
+    const wxString stfBundleInstallPyDir = stfBundleInstallPyPath.GetPath();
+
     auto stfPyEscape = [](const wxString& path) {
         wxString escaped(path);
         escaped.Replace(wxT("\\"), wxT("\\\\"));
@@ -313,14 +329,20 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     const wxString stfExeDirEscaped = stfPyEscape(stfExeDir);
     const wxString stfSourcePyDirEscaped = stfPyEscape(stfSourcePyDir);
     const wxString stfNestedBuildPyDirEscaped = stfPyEscape(stfNestedBuildPyDir);
+    const wxString stfInstallPyDirEscaped = stfPyEscape(stfInstallPyDir);
+    const wxString stfBundleInstallPyDirEscaped = stfPyEscape(stfBundleInstallPyDir);
 
     python_code2 << wxT("import os\n")
                  << wxT("os.environ['STF_EMBEDDED_SHELL']='1'\n")
+                 << wxT("os.environ.pop('PYTHONSTARTUP', None)\n")
+                 << wxT("os.environ.pop('PYTHONINSPECT', None)\n")
                  << wxT("import sys\n")
                  << wxT("sys.path.append('.')\n")
                  << wxT("sys.path.append('") << stfExeDirEscaped << wxT("')\n")
                  << wxT("sys.path.append('") << stfSourcePyDirEscaped << wxT("')\n")
                  << wxT("sys.path.append('") << stfNestedBuildPyDirEscaped << wxT("')\n")
+                 << wxT("sys.path.append('") << stfInstallPyDirEscaped << wxT("')\n")
+                 << wxT("sys.path.append('") << stfBundleInstallPyDirEscaped << wxT("')\n")
                  << wxT("sys.path.append('/usr/local/lib/stimfit')\n")
 #ifdef IPYTHON
                  << wxT("import embedded_ipython\n")
