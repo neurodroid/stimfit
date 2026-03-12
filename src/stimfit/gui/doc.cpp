@@ -1279,10 +1279,12 @@ void wxStfDoc::LFit(wxCommandEvent& WXUNUSED(event)) {
     wxStfView* pView=(wxStfView*)GetFirstView();
     if (pView!=NULL && pView->GetGraph()!=NULL)
         pView->GetGraph()->Refresh();
-    std::ostringstream fitInfoStr;
-    fitInfoStr << wxT("slope = ") << params[0] << wxT("\n1/slope = ") << 1.0/params[0]
-            << wxT("\ny-intercept = ") << params[1];
-    fitInfo += fitInfoStr.str();
+    fitInfo += "slope = " + std::to_string(params[0]);
+    if (params[0] != 0.0)
+        fitInfo += "\n1/slope = " + std::to_string(1.0 / params[0]);
+    else
+        fitInfo += "\n1/slope = undefined (slope = 0)";
+    fitInfo += "\ny-intercept = " + std::to_string(params[1]);
     wxStfFitInfoDlg InfoDialog(GetDocumentWindow(), stf::std2wx(fitInfo));
     InfoDialog.ShowModal();
     wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();

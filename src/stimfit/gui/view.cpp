@@ -73,13 +73,11 @@ bool wxStfView::OnCreate(wxDocument *doc, long WXUNUSED(flags) )
     childFrame->GetMgr()->Update();
 
     // childFrame->ActivateGraph();
-#if defined(__X__) || defined(__WXMAC__)
-    // X seems to require a forced resize
-    // childFrame->SetClientSize(800,600);
-#endif
-    //#ifndef __WXMAC__
+    // Some X11/X-forwarded setups do not honor the initial maximize style.
+    // Force a size/layout pass so the center pane fills the available frame.
+    childFrame->Maximize(true);
+    childFrame->SendSizeEvent();
     childFrame->Show(true);
-    //#endif
     Activate(true);
     return true;
 }

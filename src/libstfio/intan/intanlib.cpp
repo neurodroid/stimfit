@@ -26,8 +26,8 @@ as of 2016-11-05
 
 #include <vector>
 
-#include "intanlib.h"
-#include "streams.h"
+#include "./intanlib.h"
+#include "./streams.h"
 #include "../recording.h"
 
 Segment read_segment(BinaryReader& binreader) {
@@ -240,11 +240,7 @@ std::vector<std::vector<float> > read_aux_data(BinaryReader& binreader, uint16_t
 void stfio::importIntanFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
     unique_ptr<FileInStream> fs(new FileInStream());
 
-#ifdef _WINDOWS
-    std::wstring wfName(fName.begin(), fName.end());
-#else
     std::string wfName(fName);
-#endif
 
     fs->open(wfName);
 

@@ -30,6 +30,17 @@
 #pragma warning( disable : 4251 )  // Disable warning messages
 #endif
 
+//! Defines dll export or import functions for libstfnum on Windows
+#if defined(_WINDOWS) && !defined(__MINGW32__)
+    #ifdef STFNUMDLL
+        #define StfnumDll __declspec( dllexport )
+    #else
+        #define StfnumDll __declspec( dllimport )
+    #endif
+#else
+    #define StfnumDll
+#endif
+
 #include <vector>
 #include <complex>
 #include <deque>
@@ -136,7 +147,7 @@ struct parInfo {
 //! A table used for printing information.
 /*! Members will throw std::out_of_range if out of range.
  */
-class StfioDll Table {
+class StfnumDll Table {
 public:
     //! Constructor
     /*! \param nRows Initial number of rows.
@@ -254,7 +265,7 @@ typedef std::function<void(const Vector_double&, double, double, double, double,
  *  jacobian (jac), information about the function's parameters 
  *  (pInfo) and a function to initialize the parameters (init).
  */
-struct StfioDll storedFunc {
+struct StfnumDll storedFunc {
 
     //! Constructor
     /*! \param name_ Plain function name.
@@ -313,7 +324,7 @@ T SQR (T a);
  *  \param inverse true if (1- \e func) should be used as the filter function, false otherwise
  *  \return The convolved data set.
  */
-StfioDll Vector_double
+StfnumDll Vector_double
 filter(
         const Vector_double& toFilter,
         std::size_t filter_start,
@@ -340,7 +351,7 @@ histogram(const Vector_double& data, int nbins=-1);
  *  \param lopass Lowpass filter cutoff frequency in kHz
  *  \return The result of the deconvolution
  */
-StfioDll Vector_double
+StfnumDll Vector_double
 deconvolve(const Vector_double& data, const Vector_double& templ,
            int SR, double hipass, double lopass, stfio::ProgressInfo& progDlg);
 
@@ -373,7 +384,7 @@ std::vector<T> diff(const std::vector<T>& input, T x_scale);
  *  \param x_scale Sampling interval.
  *  \return The integral of \e input between \e a and \e b.
 */
-StfioDll
+StfnumDll
 double integrate_simpson(
         const Vector_double& input,
         std::size_t a,
@@ -388,7 +399,7 @@ double integrate_simpson(
  *  \param x_scale Sampling interval.
  *  \return The integral of \e input between \e a and \e b.
 */
-StfioDll
+StfnumDll
 double integrate_trapezium(
         const Vector_double& input,
         std::size_t a,
@@ -424,7 +435,7 @@ linsolv(
  *  \param end End of interval to be used
  *  \return Parameters of quadratic equation
  */
-StfioDll Vector_double
+StfnumDll Vector_double
 quad(const Vector_double& data, std::size_t begin, std::size_t end);
  
 
@@ -433,7 +444,7 @@ quad(const Vector_double& data, std::size_t begin, std::size_t end);
  *  \param templ A template waveform that is used for event detection.
  *  \return The detection criterion for every value of \e data.
  */
-StfioDll Vector_double
+StfnumDll Vector_double
 detectionCriterion(
         const Vector_double& data,
         const Vector_double& templ,
@@ -447,14 +458,14 @@ detectionCriterion(
  *  \param minDistance Minimal distance between subsequent peaks.
  *  \return A vector of indices where peaks have occurred in \e data.
  */
-StfioDll std::vector<int> peakIndices(const Vector_double& data, double threshold, int minDistance);
+StfnumDll std::vector<int> peakIndices(const Vector_double& data, double threshold, int minDistance);
 
 //! Computes the linear correlation between two arrays.
 /*! \param va1 First array.
  *  \param va2 Second array.
  *  \return The linear correlation between the two arrays for each data point of \e va1.
  */
-StfioDll Vector_double linCorr(const Vector_double& va1, const Vector_double& va2, stfio::ProgressInfo& progDlg); 
+StfnumDll Vector_double linCorr(const Vector_double& va1, const Vector_double& va2, stfio::ProgressInfo& progDlg); 
 
 //! Computes a Gaussian that can be used as a filter kernel.
 /*! \f[
@@ -465,7 +476,7 @@ StfioDll Vector_double linCorr(const Vector_double& va1, const Vector_double& va
  *         \e p[0] is the corner frequency (-3 dB according to Colquhoun)
  *  \return The evaluated function.
  */
-StfioDll
+StfnumDll
 double fgaussColqu(double x, const Vector_double& p);
 
 //! Computes a Boltzmann function.
@@ -498,7 +509,7 @@ double fbessel(double x, int n);
  *         \e p[0] is the corner frequency (-3 dB attenuation)
  *  \return The evaluated function.
  */
-StfioDll
+StfnumDll
 double fbessel4(double x, const Vector_double& p);
 
 //! Computes the faculty of an integer.

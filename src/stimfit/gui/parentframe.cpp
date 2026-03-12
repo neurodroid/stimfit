@@ -26,6 +26,7 @@
 #include <wx/printdlg.h>
 #include <wx/file.h>
 #include <wx/filename.h>
+#include <wx/stdpaths.h>
 #include <wx/progdlg.h>
 #include <wx/splitter.h>
 #include <wx/choicdlg.h>
@@ -271,20 +272,61 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     SetMouseQual( stf::measure_cursor );
 
 #ifdef WITH_PYTHON
-    python_code2 << wxT("import sys\n")
+#if defined(STF_PY_SHELL_BACKEND_LEGACY)
+#define STF_PY_SHELL_MODULE wxT("embedded_stf")
+#else
+#define STF_PY_SHELL_MODULE wxT("embedded_shell_modern")
+#endif
+    wxFileName stfExePath(wxStandardPaths::Get().GetExecutablePath());
+    const wxString stfExeDir = stfExePath.GetPath();
+    wxFileName stfSourcePyPath(stfExeDir, wxEmptyString);
+    stfSourcePyPath.AppendDir(wxT(".."));
+    stfSourcePyPath.AppendDir(wxT("src"));
+    stfSourcePyPath.AppendDir(wxT("stimfit"));
+    stfSourcePyPath.AppendDir(wxT("py"));
+    stfSourcePyPath.Normalize(wxPATH_NORM_DOTS);
+    const wxString stfSourcePyDir = stfSourcePyPath.GetPath();
+
+    wxFileName stfNestedBuildPyPath(stfExeDir, wxEmptyString);
+    stfNestedBuildPyPath.AppendDir(wxT(".."));
+    stfNestedBuildPyPath.AppendDir(wxT(".."));
+    stfNestedBuildPyPath.AppendDir(wxT(".."));
+    stfNestedBuildPyPath.AppendDir(wxT("src"));
+    stfNestedBuildPyPath.AppendDir(wxT("stimfit"));
+    stfNestedBuildPyPath.AppendDir(wxT("py"));
+    stfNestedBuildPyPath.Normalize(wxPATH_NORM_DOTS);
+    const wxString stfNestedBuildPyDir = stfNestedBuildPyPath.GetPath();
+
+    auto stfPyEscape = [](const wxString& path) {
+        wxString escaped(path);
+        escaped.Replace(wxT("\\"), wxT("\\\\"));
+        escaped.Replace(wxT("'"), wxT("\\'"));
+        return escaped;
+    };
+
+    const wxString stfExeDirEscaped = stfPyEscape(stfExeDir);
+    const wxString stfSourcePyDirEscaped = stfPyEscape(stfSourcePyDir);
+    const wxString stfNestedBuildPyDirEscaped = stfPyEscape(stfNestedBuildPyDir);
+
+    python_code2 << wxT("import os\n")
+                 << wxT("os.environ['STF_EMBEDDED_SHELL']='1'\n")
+                 << wxT("import sys\n")
                  << wxT("sys.path.append('.')\n")
+                 << wxT("sys.path.append('") << stfExeDirEscaped << wxT("')\n")
+                 << wxT("sys.path.append('") << stfSourcePyDirEscaped << wxT("')\n")
+                 << wxT("sys.path.append('") << stfNestedBuildPyDirEscaped << wxT("')\n")
                  << wxT("sys.path.append('/usr/local/lib/stimfit')\n")
 #ifdef IPYTHON
                  << wxT("import embedded_ipython\n")
 #else
-                 << wxT("import embedded_stf\n")
+                 << wxT("import ") << STF_PY_SHELL_MODULE << wxT("\n")
 #endif
                  << wxT("\n")
                  << wxT("def makeWindow(parent, figsize=(8,6)):\n")
 #ifdef IPYTHON
                  << wxT("    win = embedded_ipython.MyPanel(parent)\n")
 #else
-                 << wxT("    win = embedded_stf.MyPanel(parent)\n")
+                 << wxT("    win = ") << STF_PY_SHELL_MODULE << wxT(".MyPanel(parent)\n")
 #endif
                  << wxT("    return win\n")
                  << wxT("\n")

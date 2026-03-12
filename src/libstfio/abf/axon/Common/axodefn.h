@@ -145,12 +145,12 @@
       #define _WINDOWS
    #endif
    #ifndef __MINGW32__
-      #include "..\common\win32.h"
+      #include "unix.h"
    #endif    
 #endif
 #elif defined(_DOS)
    #define PLATFORM "DOS"
-   #include "..\common\msdos.h"
+   #include "..\Common\msdos.h"
 #elif defined(_WINDOWS)
    #error "ERROR: WIN16 is not supported any more."
 #elif defined(__linux__)

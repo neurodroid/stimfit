@@ -1,0 +1,16 @@
+include_guard(GLOBAL)
+
+function(stf_print_configuration_summary)
+  message(STATUS "")
+  message(STATUS "Stimfit CMake migration configuration")
+  message(STATUS "  STF_BUILD_MODULE    : ${STF_BUILD_MODULE}")
+  message(STATUS "  STF_ENABLE_PYTHON   : ${STF_ENABLE_PYTHON}")
+  message(STATUS "  STF_ENABLE_IPYTHON  : ${STF_ENABLE_IPYTHON}")
+  message(STATUS "  STF_ENABLE_PSLOPE   : ${STF_ENABLE_PSLOPE}")
+  message(STATUS "  STF_ENABLE_AUI      : ${STF_ENABLE_AUI}")
+  message(STATUS "  STF_BUILD_DEBIAN    : ${STF_BUILD_DEBIAN}")
+  message(STATUS "  STF_WITH_BIOSIG     : ${STF_WITH_BIOSIG}")
+  message(STATUS "  STF_WITH_BIOSIGLITE : ${STF_WITH_BIOSIGLITE}")
+  message(STATUS "")
+endfunction()
+

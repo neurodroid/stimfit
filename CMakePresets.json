@@ -1,0 +1,157 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "vs2022-vcpkg-wx-hdf5",
+      "displayName": "VS2022 x64 (vcpkg + wxWidgets + HDF5)",
+      "description": "Stimfit non-Python build using local wxWidgets and HDF5 dependencies.",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/../stimfit-out/${presetName}",
+      "architecture": {
+        "value": "x64",
+        "strategy": "set"
+      },
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/../stimfit-out/install/vs2022-release",
+        "BUILD_SHARED_LIBS": "ON",
+        "STF_BUILD_MODULE": "OFF",
+        "STF_ENABLE_PYTHON": "OFF",
+        "STF_WITH_BIOSIG": "ON",
+        "CMAKE_LIBRARY_PATH": "C:/Users/C02380/libs/fftw3/lib;C:/Users/C02380/libs/fftw3",
+        "CMAKE_INCLUDE_PATH": "C:/Users/C02380/libs/fftw3/include",
+        "STF_HDF5_PREFIX": "C:/Users/C02380/libs/hdf5",
+        "wxWidgets_ROOT_DIR": "C:/Users/C02380/libs/Phoenix/ext/wxWidgets",
+        "wxWidgets_LIB_DIR": "C:/Users/C02380/libs/Phoenix/ext/wxWidgets/lib/vc140_x64_dll"
+      }
+    },
+    {
+      "name": "vs2022-vcpkg-wx-hdf5-biosig-patched",
+      "displayName": "VS2022 x64 (external patched biosig)",
+      "description": "Build Stimfit against biosig prepared by cmake/PrepareBiosigMSVC.cmake.",
+      "inherits": [
+        "vs2022-vcpkg-wx-hdf5"
+      ],
+      "cacheVariables": {
+        "STF_USE_BIOSIG_SUBMODULE": "OFF",
+        "STF_WITH_BIOSIG": "ON",
+        "STF_WITH_BIOSIGLITE": "OFF",
+        "BIOSIG_INCLUDE_DIR": "${sourceDir}/build/biosig-msvc-src/biosig4c++",
+        "BIOSIG_LIBRARY": "${sourceDir}/build/biosig-msvc-build/Release/biosig2.lib"
+      }
+    },
+    {
+      "name": "vs2022-vcpkg-wx-hdf5-python314-biosig-patched",
+      "displayName": "VS2022 x64 (Python 3.14 + modern shell + patched biosig)",
+      "description": "Build Stimfit with embedded Python enabled for Python 3.14 workflows.",
+      "inherits": [
+        "vs2022-vcpkg-wx-hdf5-biosig-patched"
+      ],
+      "cacheVariables": {
+        "STF_ENABLE_PYTHON": "ON",
+        "STF_PY_SHELL_BACKEND": "MODERN",
+        "STF_WINDOWS_COPY_PYTHON_RUNTIME": "ON",
+        "STF_WINDOWS_COPY_PYTHON_SITE_PACKAGES": "ON",
+        "STF_WINDOWS_PYTHON_SITE_PACKAGES": "numpy;wx",
+        "STF_WINDOWS_PYTHON_EXTRA_PATHS": "C:/Users/C02380/libs/Phoenix",
+        "STF_WXPYTHON_INCLUDE_DIR": "C:/Users/C02380/libs/Phoenix/wx/include",
+        "SWIG_EXECUTABLE": "C:/Users/C02380/AppData/Local/Microsoft/WinGet/Packages/SWIG.SWIG_Microsoft.Winget.Source_8wekyb3d8bbwe/swigwin-4.4.1/swig.exe",
+        "Python3_ROOT_DIR": "C:/Program Files/Python314"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "vs2022-release-all",
+      "displayName": "Build ALL_BUILD (Release)",
+      "configurePreset": "vs2022-vcpkg-wx-hdf5",
+      "configuration": "Release",
+      "targets": [
+        "ALL_BUILD"
+      ]
+    },
+    {
+      "name": "vs2022-release-stimfit",
+      "displayName": "Build stimfit (Release)",
+      "configurePreset": "vs2022-vcpkg-wx-hdf5",
+      "configuration": "Release",
+      "targets": [
+        "stimfit"
+      ]
+    },
+    {
+      "name": "vs2022-release-stimfit-biosig-patched",
+      "displayName": "Build stimfit (Release, patched biosig)",
+      "configurePreset": "vs2022-vcpkg-wx-hdf5-biosig-patched",
+      "configuration": "Release",
+      "targets": [
+        "stimfit"
+      ]
+    },
+    {
+      "name": "vs2022-release-stimfit-python314-biosig-patched",
+      "displayName": "Build stimfit (Release, Python 3.14, patched biosig)",
+      "configurePreset": "vs2022-vcpkg-wx-hdf5-python314-biosig-patched",
+      "configuration": "Release",
+      "targets": [
+        "stimfit"
+      ]
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "vs2022-release-package-inno-python314-biosig-patched",
+      "displayName": "Package INNOSETUP (Release, Python 3.14, patched biosig)",
+      "description": "Generate the Windows Inno Setup installer via CPack.",
+      "configurePreset": "vs2022-vcpkg-wx-hdf5-python314-biosig-patched",
+      "configurations": [
+        "Release"
+      ],
+      "generators": [
+        "INNOSETUP"
+      ]
+    },
+    {
+      "name": "vs2022-release-package-zip-python314-biosig-patched",
+      "displayName": "Package ZIP (Release, Python 3.14, patched biosig)",
+      "description": "Generate the Windows ZIP fallback package via CPack.",
+      "configurePreset": "vs2022-vcpkg-wx-hdf5-python314-biosig-patched",
+      "configurations": [
+        "Release"
+      ],
+      "generators": [
+        "ZIP"
+      ]
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "vs2022-release-package-all-python314-biosig-patched",
+      "displayName": "Configure + Build + Package (INNOSETUP + ZIP)",
+      "description": "One-command workflow for Windows packaging with embedded Python.",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "vs2022-vcpkg-wx-hdf5-python314-biosig-patched"
+        },
+        {
+          "type": "build",
+          "name": "vs2022-release-stimfit-python314-biosig-patched"
+        },
+        {
+          "type": "package",
+          "name": "vs2022-release-package-inno-python314-biosig-patched"
+        },
+        {
+          "type": "package",
+          "name": "vs2022-release-package-zip-python314-biosig-patched"
+        }
+      ]
+    }
+  ]
+}

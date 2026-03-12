@@ -1,0 +1,1705 @@
+From e028ef47a273cf2f062b4dfdfaa2994804cc485c Mon Sep 17 00:00:00 2001
+From: Christoph Schmidt-Hieber <christoph.schmidthieber@googlemail.com>
+Date: Tue, 10 Mar 2026 16:47:43 +0100
+Subject: [PATCH] [b4c][msvc] enable Visual Studio 2022 builds
+
+Make biosig4c++ build and link under MSVC for both static and shared targets.
+
+- Rework generated-file and AWK handling in CMake for VS generators
+
+- Add Windows-specific runtime/link fixes (including ws2_32 and extern path handling)
+
+- Replace GCC-only constructs used by MSVC-unfriendly code paths (typeof, attributes, pointer arithmetic)
+
+- Add win32 getline/getdelim/getlogin compatibility updates
+
+- Include MSVC fallback stubs for optional readers to unblock shared linking
+
+- Apply biosig2 API portability fixes required by shared builds
+---
+ biosig4c++/CMakeLists.txt            | 117 +++++++++++++----
+ biosig4c++/XMLParser/tinyxml.cpp     |   4 +
+ biosig4c++/biosig-dev.h              |  18 +++
+ biosig4c++/biosig.c                  | 183 ++++++++++++++++++---------
+ biosig4c++/biosig2.c                 |  48 +++----
+ biosig4c++/igor/IgorBin.h            |   8 ++
+ biosig4c++/physicalunits.c           |  10 +-
+ biosig4c++/t210/scp-decode.cpp       |  12 ++
+ biosig4c++/t210/sopen_abf_read.c     |   2 +-
+ biosig4c++/t210/sopen_acqbiopac.c    |   4 +
+ biosig4c++/t210/sopen_alpha_read.c   |   6 +-
+ biosig4c++/t210/sopen_axg_read.c     |  14 +-
+ biosig4c++/t210/sopen_cfs_read.c     |  20 +--
+ biosig4c++/t210/sopen_heka_read.c    |   6 +
+ biosig4c++/t210/sopen_igor.c         |  25 ++--
+ biosig4c++/t210/sopen_msvc_stubs.c   |  46 +++++++
+ biosig4c++/t210/sopen_nicolet.c      |   4 +
+ biosig4c++/t210/sopen_rhd2000_read.c |   4 +
+ biosig4c++/t210/sopen_scp_read.c     |  26 +++-
+ biosig4c++/t220/sopen_scp_write.c    |   7 +-
+ biosig4c++/t230/sopen_hl7aecg.cpp    |   9 +-
+ biosig4c++/win32/getdelim.c          |   5 +
+ biosig4c++/win32/getline.c           |   7 +
+ biosig4c++/win32/getlogin.c          |   4 +-
+ 24 files changed, 439 insertions(+), 150 deletions(-)
+ create mode 100644 biosig4c++/t210/sopen_msvc_stubs.c
+
+diff --git a/biosig4c++/CMakeLists.txt b/biosig4c++/CMakeLists.txt
+index 2dcba9f7..48f4c38b 100644
+--- a/biosig4c++/CMakeLists.txt
++++ b/biosig4c++/CMakeLists.txt
+@@ -9,26 +9,77 @@ set (libbiosig_VERSION_MAJOR 1)
+ set (libbiosig_VERSION_MINOR 8)
+ set (libbiosig_VERSION_PATCH 4)
+ 
+-find_program (GAWK NAMES gawk)
++find_program (GAWK
++  NAMES gawk awk
++  PATHS
++    "C:/Program Files/Git/usr/bin"
++    "C:/msys64/usr/bin"
++    "C:/msys32/usr/bin"
++  REQUIRED
++)
++
++set (_eventcodes_i ${CMAKE_CURRENT_BINARY_DIR}/eventcodes.i)
++set (_eventcodegroups_i ${CMAKE_CURRENT_BINARY_DIR}/eventcodegroups.i)
++set (_units_i ${CMAKE_CURRENT_BINARY_DIR}/units.i)
++set (_annexb_i ${CMAKE_CURRENT_BINARY_DIR}/11073-10102-AnnexB.i)
++
++set (_extern_dir ${CMAKE_CURRENT_SOURCE_DIR}/extern)
++if (NOT IS_DIRECTORY ${_extern_dir})
++  file (READ ${_extern_dir} _extern_relpath)
++  string (STRIP ${_extern_relpath} _extern_relpath)
++  set (_extern_dir ${CMAKE_CURRENT_SOURCE_DIR}/${_extern_relpath})
++endif ()
++
++set (_awk_to_file_script ${CMAKE_CURRENT_BINARY_DIR}/run_awk_to_file.cmake)
++file (WRITE ${_awk_to_file_script}
++"if (NOT DEFINED GAWK OR NOT DEFINED AWK_SCRIPT OR NOT DEFINED AWK_INPUT OR NOT DEFINED AWK_OUTPUT)\n"
++"  message (FATAL_ERROR \"Missing awk command arguments\")\n"
++"endif ()\n"
++"execute_process (\n"
++"  COMMAND \"\${GAWK}\" -f \"\${AWK_SCRIPT}\" \"\${AWK_INPUT}\"\n"
++"  OUTPUT_FILE \"\${AWK_OUTPUT}\"\n"
++"  RESULT_VARIABLE _awk_result\n"
++")\n"
++"if (NOT \${_awk_result} EQUAL 0)\n"
++"  message (FATAL_ERROR \"awk failed with exit code \${_awk_result}\")\n"
++"endif ()\n"
++)
++
++add_custom_command (
++  OUTPUT ${_eventcodes_i} ${_eventcodegroups_i}
++  COMMAND ${GAWK} -f ${CMAKE_CURRENT_SOURCE_DIR}/eventcodes.awk ${_extern_dir}/eventcodes.txt
++  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
++  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/eventcodes.awk ${_extern_dir}/eventcodes.txt
++)
+ 
+-add_custom_target (eventcodes
+-  COMMAND ${GAWK} -f eventcodes.awk extern/eventcodes.txt
+-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+-  DEPENDS eventcodes.awk extern/eventcodes.txt
++add_custom_command (
++  OUTPUT ${_units_i}
++  COMMAND ${CMAKE_COMMAND}
++    "-DGAWK=${GAWK}"
++    "-DAWK_SCRIPT=${CMAKE_CURRENT_SOURCE_DIR}/units.awk"
++    "-DAWK_INPUT=${_extern_dir}/units.csv"
++    "-DAWK_OUTPUT=${_units_i}"
++    -P ${_awk_to_file_script}
++  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/units.awk ${_extern_dir}/units.csv ${_awk_to_file_script}
+ )
+ 
+-add_custom_target (units
+-  COMMAND ${GAWK} -f units.awk extern/units.csv > "units.i"
+-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+-  DEPENDS units.awk extern/units.csv
++add_custom_command (
++  OUTPUT ${_annexb_i}
++  COMMAND ${CMAKE_COMMAND}
++    "-DGAWK=${GAWK}"
++    "-DAWK_SCRIPT=${CMAKE_CURRENT_SOURCE_DIR}/annotatedECG.awk"
++    "-DAWK_INPUT=${_extern_dir}/11073-10102-AnnexB.txt"
++    "-DAWK_OUTPUT=${_annexb_i}"
++    -P ${_awk_to_file_script}
++  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/annotatedECG.awk ${_extern_dir}/11073-10102-AnnexB.txt ${_awk_to_file_script}
+ )
+ 
+-add_custom_target (annexb
+-  COMMAND ${GAWK} -f annotatedECG.awk extern/11073-10102-AnnexB.txt > "11073-10102-AnnexB.i"
+-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+-  DEPENDS annotatedECG.awk extern/11073-10102-AnnexB.txt
++add_custom_target (biosig_generated
++  DEPENDS ${_eventcodes_i} ${_eventcodegroups_i} ${_units_i} ${_annexb_i}
+ )
+ 
++include_directories (${CMAKE_CURRENT_BINARY_DIR})
++
+ set (headers
+   t210/abfheadr.h
+   XMLParser/tinyxml.h
+@@ -70,6 +121,10 @@ if (WIN32)
+   )
+ endif ()
+ 
++if (MSVC)
++  list (APPEND sources t210/sopen_msvc_stubs.c)
++endif ()
++
+ if (APPLE)
+   list (APPEND sources
+     win32/getdelim.c
+@@ -119,20 +174,30 @@ if (APPLE)
+      )
+ endif ()
+ 
+-add_dependencies (biosigstatic eventcodes units annexb)
+-add_dependencies (biosigshared eventcodes units annexb)
+-add_dependencies (biosig2static eventcodes units annexb)
+-add_dependencies (biosig2shared eventcodes units annexb)
++if (WIN32)
++  set_target_properties (biosigshared biosig2shared PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
++  target_link_libraries (biosigstatic ws2_32)
++  target_link_libraries (biosigshared ws2_32)
++  target_link_libraries (biosig2static ws2_32)
++  target_link_libraries (biosig2shared ws2_32)
++endif ()
++
++add_dependencies (biosigstatic biosig_generated)
++add_dependencies (biosigshared biosig_generated)
++add_dependencies (biosig2static biosig_generated)
++add_dependencies (biosig2shared biosig_generated)
+ 
+-FIND_LIBRARY( ICONV_LIBRARY NAMES iconv )
++FIND_LIBRARY( ICONV_LIBRARY NAMES iconv libiconv )
+ MARK_AS_ADVANCED( ICONV_LIBRARY )
+-target_link_libraries( biosigstatic ${ICONV_LIBRARY} )
+-target_link_libraries( biosigshared ${ICONV_LIBRARY} )
+-target_link_libraries( biosig2static ${ICONV_LIBRARY} )
+-target_link_libraries( biosig2shared ${ICONV_LIBRARY} )
++if (ICONV_LIBRARY)
++  target_link_libraries( biosigstatic ${ICONV_LIBRARY} )
++  target_link_libraries( biosigshared ${ICONV_LIBRARY} )
++  target_link_libraries( biosig2static ${ICONV_LIBRARY} )
++  target_link_libraries( biosig2shared ${ICONV_LIBRARY} )
++endif ()
+ 
+ if (USE_ZLIB)
+-  add_definitions (-D=WITH_ZLIB)
++  add_definitions (-DWITH_ZLIB)
+   find_package( ZLIB REQUIRED )
+     if ( ZLIB_FOUND )
+       include_directories( ${ZLIB_INCLUDE_DIRS} )
+@@ -144,7 +209,7 @@ if (USE_ZLIB)
+ endif ()
+ 
+ if (USE_SUITESPARSE)
+-  add_definitions (-D=WITH_CHOLMOD)
++  add_definitions (-DWITH_CHOLMOD)
+   FIND_LIBRARY( CHOLMOD_LIBRARY NAMES cholmod )
+   MARK_AS_ADVANCED( CHOLMOD_LIBRARY )
+   target_link_libraries( biosigstatic ${CHOLMOD_LIBRARY} )
+@@ -153,7 +218,9 @@ if (USE_SUITESPARSE)
+   target_link_libraries( biosig2shared ${CHOLMOD_LIBRARY} )
+ endif ()
+ 
+-add_definitions (-D=WITHOUT_NETWORK)
++if (MSVC)
++  add_definitions (-DWITHOUT_NETWORK)
++endif ()
+ 
+ install (TARGETS biosigstatic DESTINATION lib)
+ install (TARGETS biosigshared DESTINATION lib)
+diff --git a/biosig4c++/XMLParser/tinyxml.cpp b/biosig4c++/XMLParser/tinyxml.cpp
+index 86672687..f79a0aa1 100644
+--- a/biosig4c++/XMLParser/tinyxml.cpp
++++ b/biosig4c++/XMLParser/tinyxml.cpp
+@@ -38,7 +38,11 @@ add support for zlib-compressed (gzipped) XML data
+ */
+ 
+ #include <ctype.h>
++#if defined(__has_include)
++#if __has_include(<iconv.h>)
+ #include <iconv.h>
++#endif
++#endif
+ 
+ #ifdef TIXML_USE_STL
+ #include <sstream>
+diff --git a/biosig4c++/biosig-dev.h b/biosig4c++/biosig-dev.h
+index d96e17d9..444e6941 100644
+--- a/biosig4c++/biosig-dev.h
++++ b/biosig4c++/biosig-dev.h
+@@ -40,6 +40,18 @@
+ extern "C" {
+ #endif
+ 
++#if defined(_WIN32) && !defined(__WIN32__)
++	#define __WIN32__ 1
++#endif
++
++#if defined(_MSC_VER) && (_MSC_VER >= 1600)
++	#include <BaseTsd.h>
++	#ifndef _SSIZE_T_DEFINED
++		typedef SSIZE_T ssize_t;
++		#define _SSIZE_T_DEFINED
++	#endif
++#endif
++
+ #ifdef NDEBUG
+ #define VERBOSE_LEVEL 0 	// turn off debugging information, but its only used without NDEBUG
+ #else
+@@ -135,6 +147,12 @@ char *getlogin (void);
+ 
+ #include "gdftime.h"
+ 
++#ifndef __GNUC__
++	#ifndef __attribute__
++		#define __attribute__(x)
++	#endif
++#endif
++
+ /*
+  * pack structures to fulfil following requirements:
+  * (1) Matlab v7.3+ requires 8 byte alignment
+diff --git a/biosig4c++/biosig.c b/biosig4c++/biosig.c
+index 7d34feae..e4b1f42d 100644
+--- a/biosig4c++/biosig.c
++++ b/biosig4c++/biosig.c
+@@ -83,10 +83,32 @@ int __cdecl stat(const char *_Filename,struct stat *_Stat);
+ #  include <curl/curl.h>
+ #endif
+ 
++#ifndef __GNUC__
++#ifndef __attribute__
++#define __attribute__(x)
++#endif
++#endif
++
++#ifdef _WIN32
++#include <stdlib.h>
++#include <malloc.h>
++#define strcasecmp _stricmp
++#define strncasecmp _strnicmp
++#define timezone _timezone
++#define __builtin_bswap16 _byteswap_ushort
++#define __builtin_bswap32 _byteswap_ulong
++#define __builtin_bswap64 _byteswap_uint64
++#define _builtin_bswap64 _byteswap_uint64
++#define strtok_r strtok_s
++#define alloca _alloca
++#endif
++
+ int VERBOSE_LEVEL __attribute__ ((visibility ("default") )) = 0;	// this variable is always available, but only used without NDEBUG
+ 
+ #include "biosig.h"
++#ifndef WITHOUT_NETWORK
+ #include "biosig-network.h"
++#endif
+ 
+ 
+ #ifdef _WIN32
+@@ -628,6 +650,24 @@ ssize_t iftell(HDRTYPE* hdr) {
+ }
+ 
+ int ifsetpos(HDRTYPE* hdr, size_t *pos) {
++#ifdef _WIN32
++#ifdef ZLIB_H
++	if (hdr->FILE.COMPRESSION) {
++		gzseek(hdr->FILE.gzFID,*pos,SEEK_SET);
++		size_t pos1 = *pos;
++		*pos = gztell(hdr->FILE.gzFID);
++		return(*pos - pos1);
++	}
++	else
++#endif
++	{
++		int c = _fseeki64(hdr->FILE.FID, (__int64)(*pos), SEEK_SET);
++		if (c == 0) {
++			*pos = (size_t)_ftelli64(hdr->FILE.FID);
++		}
++		return c;
++	}
++#else
+ #if __gnu_linux__
+ 	// gnu linux on sparc needs this
+ 	fpos_t p;
+@@ -660,9 +700,27 @@ int ifsetpos(HDRTYPE* hdr, size_t *pos) {
+ #endif
+ 	return(c);
+ 	}
++#endif
+ }
+ 
+ int ifgetpos(HDRTYPE* hdr, size_t *pos) {
++#ifdef _WIN32
++#ifdef ZLIB_H
++	if (hdr->FILE.COMPRESSION) {
++		z_off_t p = gztell(hdr->FILE.gzFID);
++		if (p<0) return(-1);
++		*pos = (size_t)p;
++		return(0);
++	}
++	else
++#endif
++	{
++		__int64 p = _ftelli64(hdr->FILE.FID);
++		if (p < 0) return(-1);
++		*pos = (size_t)p;
++		return(0);
++	}
++#else
+ #ifdef ZLIB_H
+ 	if (hdr->FILE.COMPRESSION) {
+ 		z_off_t p = gztell(hdr->FILE.gzFID);
+@@ -686,6 +744,7 @@ int ifgetpos(HDRTYPE* hdr, size_t *pos) {
+ #endif
+ 		return(c);
+ 	}
++#endif
+ }
+ 
+ int ifeof(HDRTYPE* hdr) {
+@@ -823,12 +882,12 @@ void convert2to4_eventtable(HDRTYPE *hdr) {
+ 	sort_eventtable(hdr);
+ 
+ 	if (hdr->EVENT.DUR == NULL)
+-		hdr->EVENT.DUR = (typeof(hdr->EVENT.DUR)) calloc(N,sizeof(*hdr->EVENT.DUR));
++		hdr->EVENT.DUR = calloc(N,sizeof(*hdr->EVENT.DUR));
+ 	if (hdr->EVENT.CHN == NULL)
+-		hdr->EVENT.CHN = (typeof(hdr->EVENT.CHN)) calloc(N,sizeof(*hdr->EVENT.CHN));
++		hdr->EVENT.CHN = calloc(N,sizeof(*hdr->EVENT.CHN));
+ 
+ 	for (k1=0; k1<N; k1++) {
+-		typeof(*hdr->EVENT.TYP) typ =  hdr->EVENT.TYP[k1];
++		uint16_t typ =  hdr->EVENT.TYP[k1];
+ 		if ((typ < 0x8000) && (typ>0)  && !hdr->EVENT.DUR[k1])
+ 		for (k2 = k1+1; k2<N; k2++) {
+ 			if ((typ|0x8000) == hdr->EVENT.TYP[k2]) {
+@@ -863,8 +922,8 @@ void convert4to2_eventtable(HDRTYPE *hdr) {
+ 	for (k1=0; k1<N; k1++)
+ 		if (hdr->EVENT.CHN[k1]) return;
+ 
+-	hdr->EVENT.TYP = (typeof(hdr->EVENT.TYP)) realloc(hdr->EVENT.TYP,2*N*sizeof(*hdr->EVENT.TYP));
+-	hdr->EVENT.POS = (typeof(hdr->EVENT.POS)) realloc(hdr->EVENT.POS,2*N*sizeof(*hdr->EVENT.POS));
++	hdr->EVENT.TYP = realloc(hdr->EVENT.TYP,2*N*sizeof(*hdr->EVENT.TYP));
++	hdr->EVENT.POS = realloc(hdr->EVENT.POS,2*N*sizeof(*hdr->EVENT.POS));
+ #if (BIOSIG_VERSION >= 10500)
+ 	hdr->EVENT.TimeStamp = (gdf_time*) realloc(hdr->EVENT.TimeStamp,2*N*sizeof(gdf_time));
+ #endif
+@@ -971,7 +1030,7 @@ void FreeTextEvent(HDRTYPE* hdr,size_t N_EVENT, const char* annotation) {
+ 	int flag;
+ //	static int LengthCodeDesc = 0;
+ 	if (hdr->EVENT.CodeDesc == NULL) {
+-		hdr->EVENT.CodeDesc = (typeof(hdr->EVENT.CodeDesc)) realloc(hdr->EVENT.CodeDesc,257*sizeof(*hdr->EVENT.CodeDesc));
++		hdr->EVENT.CodeDesc = realloc(hdr->EVENT.CodeDesc,257*sizeof(*hdr->EVENT.CodeDesc));
+ 		hdr->EVENT.CodeDesc[0] = "";	// typ==0, is always empty
+ 		hdr->EVENT.LenCodeDesc = 1;
+ 	}
+@@ -1093,7 +1152,7 @@ double dur2val(uint32_t DUR, uint16_t gdftyp) {
+ 	the header of the time channel is in hdr->CHANNEL[getTimeChannelNumber(hdr)-1]
+   ------------------------------------------------------------------------*/
+ int getTimeChannelNumber(HDRTYPE* hdr) {
+-	typeof(hdr->NS) k;
++	uint16_t k;
+ 
+ 	for (k=0; k<hdr->NS; k++)
+ 		if (hdr->CHANNEL[k].OnOff==2)
+@@ -2333,7 +2392,7 @@ void struct2gdfbin(HDRTYPE *hdr)
+ 	uint32_t Dur[2];
+ 
+ 	// NS number of channels selected for writing
+-     	typeof(hdr->NS)  NS = 0;
++     	uint16_t NS = 0;
+ 	for (k=0; k<hdr->NS; k++) {
+ 		CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+ 		if (hc->OnOff) NS++;
+@@ -2633,7 +2692,7 @@ void struct2gdfbin(HDRTYPE *hdr)
+ 	     	this requires checking the arguments in the fields of the struct HDR.CHANNEL
+ 	     	and filling in the bytes in HDR.Header2.
+ 	     	*/
+-		typeof(k) k2=0;
++		uint16_t k2=0;
+ 		for (k=0; k<hdr->NS; k++)
+ 		if (hdr->CHANNEL[k].OnOff)
+ 		{
+@@ -3147,7 +3206,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"#%2i: <%s> %i %i\n",k,hc->Label,(int)len,(i
+ if (VERBOSE_LEVEL>6) fprintf(stdout,"user-specific events defined\n");
+ 					hdr->AS.auxBUF = (uint8_t*) realloc(hdr->AS.auxBUF,len);
+ 					memcpy(hdr->AS.auxBUF, Header2+pos+4, len);
+-					hdr->EVENT.CodeDesc = (typeof(hdr->EVENT.CodeDesc)) realloc(hdr->EVENT.CodeDesc,257*sizeof(*hdr->EVENT.CodeDesc));
++					hdr->EVENT.CodeDesc = realloc(hdr->EVENT.CodeDesc,257*sizeof(*hdr->EVENT.CodeDesc));
+ 					hdr->EVENT.CodeDesc[0] = "";	// typ==0, is always empty
+ 					hdr->EVENT.LenCodeDesc = 1;
+ 					k = 1;
+@@ -4063,7 +4122,7 @@ else if (!strncmp(MODE,"r",1)) {
+                         return(hdr);
+                 }
+ 
+-		typeof(hdr->NS)	StatusChannel = 0;
++		uint16_t StatusChannel = 0;
+ 		int annotStartBi=-1;
+ 		int annotEndBi=-1;
+ 		int annotNumBytesPerBlock=0;
+@@ -5113,13 +5172,13 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ event\n\ts1:\t<%s>\n\ts2:\t<%s>\n\ts3:
+ 					if (i>0xffff)
+ 						fprintf(stdout,"Warning: Type %i of event %i does not fit in 16bit\n",i,hdr->EVENT.N);
+ 					else
+-						hdr->EVENT.TYP[hdr->EVENT.N] = (typeof(hdr->EVENT.TYP[0]))i;
++						hdr->EVENT.TYP[hdr->EVENT.N] = (uint16_t)i;
+ 
+ 					double d;
+ 					val = strchr(val,'\t')+1;
+ 					sscanf(val,"%lf",&d);
+ 
+-					hdr->EVENT.POS[hdr->EVENT.N] = (typeof(*hdr->EVENT.POS))round(d*hdr->EVENT.SampleRate);  // 0-based indexing
++					hdr->EVENT.POS[hdr->EVENT.N] = (uint32_t)round(d*hdr->EVENT.SampleRate);  // 0-based indexing
+ #if (BIOSIG_VERSION >= 10500)
+ 					hdr->EVENT.TimeStamp[hdr->EVENT.N] = 0;
+ #endif
+@@ -5127,7 +5186,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ event\n\ts1:\t<%s>\n\ts2:\t<%s>\n\ts3:
+ 					val = strchr(val,'\t')+1;
+ 					if (val[0]!='\t') {
+ 						sscanf(val,"%lf",&d);
+-						hdr->EVENT.DUR[hdr->EVENT.N] = (typeof(*hdr->EVENT.POS))round(d*hdr->EVENT.SampleRate);
++						hdr->EVENT.DUR[hdr->EVENT.N] = (uint32_t)round(d*hdr->EVENT.SampleRate);
+ 					}
+ 					else
+ 						hdr->EVENT.DUR[hdr->EVENT.N] = 0;
+@@ -5167,7 +5226,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ event\n\ts1:\t<%s>\n\ts2:\t<%s>\n\ts3:
+ 			biosigERROR(hdr, B4C_FORMAT_UNKNOWN, "not a BCI2000 format");
+ 		else {
+ 			/* read whole header */
+-			hdr->HeadLen = (typeof(hdr->HeadLen)) strtod(ptr+10,&ptr);
++			hdr->HeadLen = (uint32_t) strtod(ptr+10,&ptr);
+ 			if (count <= hdr->HeadLen) {
+ 				hdr->AS.Header = (uint8_t*)realloc(hdr->AS.Header, hdr->HeadLen+1);
+ 				count   += ifread(hdr->AS.Header+count,1,hdr->HeadLen-count,hdr);
+@@ -5185,7 +5244,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"EDF+ event\n\ts1:\t<%s>\n\ts2:\t<%s>\n\ts3:
+ 		if (ptr==NULL)
+ 			biosigERROR(hdr, B4C_FORMAT_UNKNOWN, "not a BCI2000 format");
+ 		else
+-			hdr->NS = (typeof(hdr->NS)) strtod(ptr+9,&ptr);
++			hdr->NS = (uint16_t) strtod(ptr+9,&ptr);
+ 
+ 		/* decode length of state vector */
+ 		ptr = strstr(t1,"StatevectorLen=");
+@@ -6934,7 +6993,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
+                 	return(hdr);
+                 }
+ 
+-		typeof(hdr->NS) k;
++		uint16_t k;
+ 		for (k = 0; k < hdr->NS; k++) {
+ 			CHANNEL_TYPE *hc = hdr->CHANNEL + k;
+ 			hc->GDFTYP = 3; 	// int16
+@@ -7063,8 +7122,8 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
+ 					sscanf((char*)(h3+5),"%02u%02u%02u",&tm_time.tm_hour,&tm_time.tm_min,&tm_time.tm_sec);
+ 				}
+ 
+-				typeof(hdr->NS) NS = h3[38];
+-				typeof(hdr->SampleRate) SampleRate = leu16p(h3+26) & 0x3fff;
++				uint16_t NS = h3[38];
++				double SampleRate = leu16p(h3+26) & 0x3fff;
+ 				nrec_t NRec = (nrec_t)(leu32p(h3+28) * SampleRate * 0.1);
+ 				size_t HeadLen = pos2 + 39 + 10*NS;
+ 
+@@ -7367,7 +7426,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
+ 
+ 		/* read event code description */
+ 		hdr->AS.auxBUF = (uint8_t*) realloc(hdr->AS.auxBUF,5*NEC);
+-		hdr->EVENT.CodeDesc = (typeof(hdr->EVENT.CodeDesc)) realloc(hdr->EVENT.CodeDesc,257*sizeof(*hdr->EVENT.CodeDesc));
++		hdr->EVENT.CodeDesc = realloc(hdr->EVENT.CodeDesc,257*sizeof(*hdr->EVENT.CodeDesc));
+ 		hdr->EVENT.CodeDesc[0] = "";	// typ==0, is always empty
+ 		hdr->EVENT.LenCodeDesc = NEC+1;
+ 		for (k=0; k < NEC; k++) {
+@@ -7425,7 +7484,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
+ 
+ 			size_t skip	= hdr->AS.bpb - NEC * sz;
+ 			ifseek(hdr, hdr->HeadLen + skip, SEEK_SET);
+-			typeof(NEC) k1;
++			uint16_t k1;
+ 			nrec_t k;
+ 			for (k=0; (k < hdr->NRec*hdr->SPR) && !ifeof(hdr); k++) {
+ 				ifread(buf, sz,   NEC, hdr);
+@@ -7771,7 +7830,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
+ 		}
+ 		if (fid != NULL) {
+ 			size_t N_EVENTS = 0;
+-			const int sz = 69;
++			enum { sz = 69 };
+ 			char buf[sz+1];
+ 			hdr->EVENT.SampleRate = hdr->SampleRate;
+ 			while (!feof(fid)) {
+@@ -8065,7 +8124,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
+ 				if (hdr->EVENT.LenCodeDesc==0) {
+ 					// allocate memory
+ 					hdr->EVENT.LenCodeDesc = 257;
+-					hdr->EVENT.CodeDesc = (typeof(hdr->EVENT.CodeDesc)) realloc(hdr->EVENT.CodeDesc,257*sizeof(*hdr->EVENT.CodeDesc));
++					hdr->EVENT.CodeDesc = realloc(hdr->EVENT.CodeDesc,257*sizeof(*hdr->EVENT.CodeDesc));
+ 					hdr->EVENT.CodeDesc[0] = "";	// typ==0, is always empty
+ 					for (k=0; k<=256; k++)
+ 						hdr->EVENT.CodeDesc[k] = NULL;
+@@ -8503,11 +8562,11 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
+ 		if (flagANN) {
+ 			hdr->NRec=0;
+ 			hdr->EVENT.N = (hdr->FILE.size - hdr->HeadLen)/4;
+-			hdr->EVENT.TYP = (typeof(hdr->EVENT.TYP)) realloc(hdr->EVENT.TYP, hdr->EVENT.N * sizeof(*hdr->EVENT.TYP));
+-			hdr->EVENT.POS = (typeof(hdr->EVENT.POS)) realloc(hdr->EVENT.POS, hdr->EVENT.N * sizeof(*hdr->EVENT.POS));
++			hdr->EVENT.TYP = realloc(hdr->EVENT.TYP, hdr->EVENT.N * sizeof(*hdr->EVENT.TYP));
++			hdr->EVENT.POS = realloc(hdr->EVENT.POS, hdr->EVENT.N * sizeof(*hdr->EVENT.POS));
+ 
+                         /* define user specified events according to ECG Annotation format of http://thew-project.org/THEWFileFormat.htm */
+-			hdr->EVENT.CodeDesc = (typeof(hdr->EVENT.CodeDesc)) realloc(hdr->EVENT.CodeDesc,10*sizeof(*hdr->EVENT.CodeDesc));
++			hdr->EVENT.CodeDesc = realloc(hdr->EVENT.CodeDesc,10*sizeof(*hdr->EVENT.CodeDesc));
+ 			hdr->EVENT.CodeDesc[0]="";
+ 			hdr->EVENT.CodeDesc[1]="Normal beat";
+ 			hdr->EVENT.CodeDesc[2]="Premature ventricular contraction";
+@@ -9357,7 +9416,7 @@ if (VERBOSE_LEVEL>2)
+ 			NumberOfSegments = atol(strchr(line,'/')+1);
+ 			biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "MIT/HEA/PhysioBank: multi-segment records are not supported");
+ 		}
+-		hdr->NS = (typeof(hdr->NS))strtod(ptr+1,&ptr);		// number of channels
++		hdr->NS = (uint16_t)strtod(ptr+1,&ptr);		// number of channels
+ 
+ 		if (VERBOSE_LEVEL>7)
+ 			fprintf(stdout,"%s (line %i) %s(...): NS=%i %p\n",__FILE__,__LINE__,__func__, hdr->NS, ptr);
+@@ -9430,7 +9489,7 @@ if (VERBOSE_LEVEL>2)
+ 			else if (strcmp(DatFiles[nDatFiles-1],line))
+ 				DatFiles[nDatFiles++]=line;
+ 
+-			fmt = (typeof(fmt))strtod(ptr+1,&ptr);
++			fmt = (enum FileFormat)strtod(ptr+1,&ptr);
+ 			if (k==0) FMT = fmt;
+ 			else if (FMT != fmt) {
+ 				biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "MIT/HEA/PhysioBank: different formats within a single data set is not supported");
+@@ -9637,7 +9696,7 @@ if (VERBOSE_LEVEL>2)
+                         Marker[count]=0;
+ 
+                         /* define user specified events according to http://www.physionet.org/physiotools/wfdb/lib/ecgcodes.h */
+-                        hdr->EVENT.CodeDesc = (typeof(hdr->EVENT.CodeDesc)) realloc(hdr->EVENT.CodeDesc,257*sizeof(*hdr->EVENT.CodeDesc));
++                        hdr->EVENT.CodeDesc = realloc(hdr->EVENT.CodeDesc,257*sizeof(*hdr->EVENT.CodeDesc));
+                         hdr->EVENT.CodeDesc[0] = "";
+                         for (k=0; strlen(MIT_EVENT_DESC[k])>0; k++) {
+ 				if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) %s(...) [MIT 182]:  %i\n",__FILE__,__LINE__,__func__, (int)k);
+@@ -9651,9 +9710,9 @@ if (VERBOSE_LEVEL>2)
+ 
+ 			/* decode ATR annotation information */
+ 			size_t N = count;
+-			hdr->EVENT.TYP = (typeof(hdr->EVENT.TYP)) realloc(hdr->EVENT.TYP,N*sizeof(*hdr->EVENT.TYP));
+-			hdr->EVENT.POS = (typeof(hdr->EVENT.POS)) realloc(hdr->EVENT.POS,N*sizeof(*hdr->EVENT.POS));
+-			hdr->EVENT.CHN = (typeof(hdr->EVENT.CHN)) realloc(hdr->EVENT.CHN,N*sizeof(*hdr->EVENT.CHN));
++			hdr->EVENT.TYP = realloc(hdr->EVENT.TYP,N*sizeof(*hdr->EVENT.TYP));
++			hdr->EVENT.POS = realloc(hdr->EVENT.POS,N*sizeof(*hdr->EVENT.POS));
++			hdr->EVENT.CHN = realloc(hdr->EVENT.CHN,N*sizeof(*hdr->EVENT.CHN));
+ 
+ 			hdr->EVENT.N   = 0;
+ 			hdr->EVENT.SampleRate = hdr->SampleRate;
+@@ -9693,7 +9752,7 @@ if (VERBOSE_LEVEL>2)
+ 				}
+ 			}
+ 			if (flag_chn)
+-				hdr->EVENT.DUR = (typeof(hdr->EVENT.DUR)) realloc(hdr->EVENT.DUR,N*sizeof(*hdr->EVENT.DUR));
++				hdr->EVENT.DUR = realloc(hdr->EVENT.DUR,N*sizeof(*hdr->EVENT.DUR));
+ 			else {
+ 				free(hdr->EVENT.CHN);
+ 				hdr->EVENT.CHN = NULL;
+@@ -10379,7 +10438,7 @@ if (VERBOSE_LEVEL>2)
+ 		}
+ 		hdr->AS.bpb = hdr->NS*GDFTYP_BITS[gdftyp]>>3;
+ 		hdr->CHANNEL = (CHANNEL_TYPE*)realloc(hdr->CHANNEL,hdr->NS*sizeof(CHANNEL_TYPE));
+-		typeof (hdr->NS) k;
++		uint16_t k;
+ 		for (k=0; k<hdr->NS; k++) {
+ 			CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+ 			hc->Transducer[0] = 0;
+@@ -10844,7 +10903,7 @@ if (VERBOSE_LEVEL>2)
+ 		size_t pos = leu32p(hdr->AS.Header+28);
+ 		uint8_t len;
+ 
+-		typeof(hdr->NS) k;
++		uint16_t k;
+ 		for (k=0; k<5; k++) {
+ #define line ((char*)(hdr->AS.Header+pos))
+ 			len = strcspn(line,"\x0a\x0d");
+@@ -10978,9 +11037,9 @@ if (VERBOSE_LEVEL>2)
+ 			hc->XYZ[2] = lei32p(hdr->AS.Header+pos+166);
+ 	  	}
+ #undef line
+-		hdr->SPR = (typeof(hdr->SPR))round(hdr->SampleRate/minFs);
++		hdr->SPR = (uint32_t)round(hdr->SampleRate/minFs);
+ 		for (k=0,hdr->AS.bpb=0; k<hdr->NS; k++) {
+-			hdr->CHANNEL[k].SPR = (typeof(hdr->SPR))round(fs[k]/minFs);
++			hdr->CHANNEL[k].SPR = (uint32_t)round(fs[k]/minFs);
+ 		      	hdr->CHANNEL[k].bi = hdr->AS.bpb;
+ 		      	hdr->AS.bpb += hdr->CHANNEL[k].SPR*2;
+ 		}
+@@ -11299,7 +11358,7 @@ if (VERBOSE_LEVEL>2)
+ 				}
+ 				else {
+ 					// hdr->FLAG.SWAP = 0; 	// no swaping required
+-					typeof(hdr->NS) k2;
++					uint16_t k2;
+ 					size_t k;
+ 					hdr->FILE.LittleEndian = (__BYTE_ORDER == __LITTLE_ENDIAN);
+ 					size_t sz = (size_t)hdr->NS * hdr->SPR * hdr->NRec * GDFTYP_BITS[gdftyp]>>3;
+@@ -11473,8 +11532,8 @@ if (VERBOSE_LEVEL>2)
+ 
+ 				if (N+1 >= hdr->EVENT.N) {
+ 					hdr->EVENT.N   += max(4096,hdr->EVENT.N);
+-			 		hdr->EVENT.POS = (typeof(hdr->EVENT.POS)) realloc(hdr->EVENT.POS, hdr->EVENT.N*sizeof(*hdr->EVENT.POS) );
+-					hdr->EVENT.TYP = (typeof(hdr->EVENT.TYP)) realloc(hdr->EVENT.TYP, hdr->EVENT.N*sizeof(*hdr->EVENT.TYP) );
++			 		hdr->EVENT.POS = realloc(hdr->EVENT.POS, hdr->EVENT.N*sizeof(*hdr->EVENT.POS) );
++					hdr->EVENT.TYP = realloc(hdr->EVENT.TYP, hdr->EVENT.N*sizeof(*hdr->EVENT.TYP) );
+ 				}
+ 				if (N==0) {
+ 					hdr->T0 = (gdf_time)(tm_time2gdf_time(&t) + ldexp((ms-rri)/(24*3600*1e3),32));
+@@ -11636,7 +11695,7 @@ if (VERBOSE_LEVEL>2)
+ 		stat(hdr->FileName,&FileBuf);
+ 
+ 		hdr->SPR  = 1;
+-		typeof (hdr->NS) k;
++		uint16_t k;
+ 		size_t bpb8=0;
+ 		for (k = 0; k < hdr->NS; k++) {
+ 			CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+@@ -11778,9 +11837,9 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
+ #endif
+ 
+ 	// NS number of channels selected for writing
+-     	typeof(hdr->NS) NS = 0;
++     	uint16_t NS = 0;
+      	{
+-     		typeof(hdr->NS) k;
++     		uint16_t k;
+ 		for (k=0; k<hdr->NS; k++)
+ 			if (hdr->CHANNEL[k].OnOff) NS++;
+ 	}
+@@ -11913,7 +11972,7 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
+ 
+ 			fprintf(fid,"\n0x%04x\t%f\t",hdr->EVENT.TYP[k],hdr->EVENT.POS[k]/hdr->EVENT.SampleRate);   // EVENT.POS uses 0-based indexing
+ 			if (hdr->EVENT.DUR != NULL) {
+-				typeof(*hdr->EVENT.DUR) DUR;
++				uint32_t DUR;
+ 				DUR = (hdr->EVENT.TYP[k]==0x7fff) ? 0 : hdr->EVENT.DUR[k];
+ 				fprintf(fid,"%f\t%d\t", DUR/hdr->EVENT.SampleRate, hdr->EVENT.CHN[k]);
+ 			}
+@@ -11921,7 +11980,7 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
+ 				fprintf(fid,"\t\t");
+ 
+ 			if (hdr->EVENT.TYP[k] == 0x7fff) {
+-				typeof(hdr->NS) chan = hdr->EVENT.CHN[k] - 1;
++				uint16_t chan = hdr->EVENT.CHN[k] - 1;
+ 				double val = dur2val(hdr->EVENT.DUR[k], hdr->CHANNEL[chan].GDFTYP);
+ 
+ 				val *= hdr->CHANNEL[chan].Cal;
+@@ -11945,7 +12004,7 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
+ 		hdr->FILE.POS = 0;
+ 		hdr->FILE.FID = fopen(hdr->FileName, "w");
+ 
+-		typeof(hdr->NS) k, NS = 1;
++		uint16_t k, NS = 1;
+ 		for (k = 0; k < hdr->NS; k++) {
+ 			NS += (hdr->CHANNEL[k].OnOff > 0);
+ 		}
+@@ -11997,7 +12056,7 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
+ 
+     		fprintf(fid,"[Binary Infos]\r\nBinaryFormat=");
+ 		uint16_t gdftyp = 0;
+-		typeof(hdr->NS) k;
++		uint16_t k;
+     		for (k=0; k<hdr->NS; k++)
+     			if (gdftyp < hdr->CHANNEL[k].GDFTYP)
+     				gdftyp = hdr->CHANNEL[k].GDFTYP;
+@@ -12122,7 +12181,7 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
+ 	    	lei32a(0, hdr->AS.Header+60);	// 1: time channel
+ 
+ 	    	int32_t gdftyp = 3; // 1:double, 2:float, 3: int16; see CFWB_GDFTYP too.
+-		typeof(hdr->NS) k,k2;
++		uint16_t k,k2;
+ 		for (k=0; k<hdr->NS; k++)
+ 		if (hdr->CHANNEL[k].OnOff)
+ 		{
+@@ -12172,7 +12231,7 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
+ 		struct2gdfbin(hdr);
+ 
+ 		size_t bpb8 = 0;
+-		typeof(hdr->NS) k;
++		uint16_t k;
+ 		for (k=0, hdr->AS.bpb=0; k<hdr->NS; k++) {
+ 			CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+ 			hc->bi8 = bpb8;
+@@ -12257,7 +12316,7 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
+ 		if (len>4) fprintf(stderr,"Warning: NS is (%s) too long (%i>4).\n",tmp,(int)len);
+ 	     	memcpy(Header1+252, tmp, len);
+ 
+-		typeof(hdr->NS) k,k2;
++		uint16_t k,k2;
+ 		for (k=0,k2=0; k<hdr->NS; k++)
+ 		if (hdr->CHANNEL[k].OnOff)
+ 		{
+@@ -12639,7 +12698,7 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
+ #endif //ONLYGDF
+ 		hdr->AS.bpb = 0;
+ 
+-	typeof(hdr->NS) k;
++	uint16_t k;
+ 	for (k=0, hdr->SPR = 1; k < hdr->NS; k++) {
+ 		hdr->CHANNEL[k].bi  = bpb8>>3;
+ 		hdr->CHANNEL[k].bi8 = bpb8;
+@@ -12669,7 +12728,7 @@ else if (!strncmp(MODE,"w",1))	 /* --- WRITE --- */
+ 		fprintf(stdout,"Debugging Information: (Format=%d) %s FILE.POS=%d is not zero.\n",hdr->TYPE,hdr->FileName,(int)hdr->FILE.POS);
+ 
+ 	fprintf(stderr,"%s line %d: %s(...) NS=%d\n",__FILE__,__LINE__,__func__,hdr->NS);
+-	typeof(hdr->NS) k;
++	uint16_t k;
+ 	for (k=0; k<hdr->NS; k++)
+ 		if (hdr->CHANNEL[k].GDFTYP * sizeof(GDFTYP_BITS[0]) >= sizeof(GDFTYP_BITS))
+ 			fprintf(stderr,"%s line %d: %s(...) #%d  gdftyp invalid (%d>%d)\n",__FILE__,__LINE__,__func__,k,hdr->CHANNEL[k].GDFTYP,sizeof(GDFTYP_BITS)/sizeof(GDFTYP_BITS[0]) );
+@@ -12705,7 +12764,7 @@ size_t bpb8_collapsed_rawdata(HDRTYPE *hdr)
+ {
+ 	size_t bpb8=0;
+ 	CHANNEL_TYPE *CHptr;
+-	typeof(hdr->NS) k;
++	uint16_t k;
+ 	for (k=0; k<hdr->NS; k++) {
+ 		CHptr 	= hdr->CHANNEL+k;
+ 		if (CHptr->OnOff) bpb8 += (size_t)CHptr->SPR*GDFTYP_BITS[CHptr->GDFTYP];
+@@ -12781,8 +12840,8 @@ void collapse_rawdata(HDRTYPE *hdr, void *buf, size_t count) {
+ 	}
+ 
+ 	for (k4 = 0; k4 < count; k4++) {
+-		void *src  = buf + k4*hdr->AS.bpb;
+-		void *dest = buf + k4*bpb;
++		uint8_t *src  = (uint8_t*)buf + k4*hdr->AS.bpb;
++		uint8_t *dest = (uint8_t*)buf + k4*bpb;
+ 		for (k1=0; k1 < num3Segments; k1+=3)
+ 			if ((dest + idxList[k1]) != (src + idxList[k1+1]))
+ 				memcpy(dest + idxList[k1], src + idxList[k1+1], idxList[k1+2]);
+@@ -13585,7 +13644,7 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
+ 		nrec_t nr = hdr->data.size[(int)hdr->FLAG.ROW_BASED_CHANNELS];        // if collapsed data, use k2, otherwise use k1
+ 		assert(nr == hdr->NRec * hdr->SPR);
+ 
+-		typeof(hdr->NS) k,k2;
++		uint16_t k,k2;
+ 		nrec_t c = 0;
+ 
+ 		unsigned timeChan = getTimeChannelNumber(hdr);
+@@ -13641,7 +13700,7 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
+ 
+ 	if ((hdr->NRec*bpb8>0) && (hdr->TYPE != SCP_ECG)) {
+ 	// memory allocation for SCP is done in SOPEN_SCP_WRITE Section 6
+-		ptr = (typeof(ptr))realloc(hdr->AS.rawdata, (hdr->NRec*bpb8>>3)+1);
++		ptr = (uint8_t*)realloc(hdr->AS.rawdata, (hdr->NRec*bpb8>>3)+1);
+ 		if (ptr==NULL) {
+ 			biosigERROR(hdr, B4C_INSUFFICIENT_MEMORY, "SWRITE: memory allocation failed.");
+ 			return(0);
+@@ -13906,7 +13965,7 @@ size_t swrite(const biosig_data_type *data, size_t nelem, HDRTYPE* hdr) {
+ 			ifopen(&H1,"wb");
+ 
+ 			if (hdr->TYPE == ASCII) {
+-				typeof(hdr->SPR) SPR;
++				uint32_t SPR;
+ 				if (CHptr->SPR>0) {
+ 					DIV = hdr->SPR/CHptr->SPR;
+ 					SPR = CHptr->SPR;
+@@ -14453,7 +14512,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout, "asprintf_hdr2json: count=%i\n", (int)c);
+ 
+ 		if (hdr->EVENT.TYP[k] == 0x7fff) {
+ 			// c += sprintf(STR, ",\n\t\t\"Description\"\t: \"[sparse sample]\"");
+-			typeof(hdr->NS) chan = hdr->EVENT.CHN[k] - 1;
++			uint16_t chan = hdr->EVENT.CHN[k] - 1;
+ 
+ 			double val = dur2val(hdr->EVENT.DUR[k], hdr->CHANNEL[chan].GDFTYP);
+ 
+@@ -14634,7 +14693,7 @@ int fprintf_hdr2json(FILE *fid, HDRTYPE* hdr)
+ 			//fprintf(fid,"\t\t\"Description\"\t: [neds]\n");        // no comma at the end because its the last element
+ 
+ 			//fprintf(fid,",\n\t\t\"Description\"\t: \"[sparse sample]\"");
+-			typeof(hdr->NS) chan = hdr->EVENT.CHN[k] - 1;
++			uint16_t chan = hdr->EVENT.CHN[k] - 1;
+ 
+ 			double val = dur2val(hdr->EVENT.DUR[k], hdr->CHANNEL[chan].GDFTYP);
+ 
+@@ -14774,7 +14833,7 @@ int hdr2ascii(HDRTYPE* hdr, FILE *fid, int VERBOSE)
+ 		fprintf(fid,"\nNo  LeadId Label\tFs[Hz]\tSPR\tGDFTYP\tCal\tOff\tPhysDim\tPhysMax \tPhysMin \tDigMax  \tDigMin  \tHighPass\tLowPass \tNotch   \tdelay [s]\tX\tY\tZ");
+ 		size_t k;
+ #ifdef CHOLMOD_H
+-                typeof(hdr->NS) NS = hdr->NS;
++                uint16_t NS = hdr->NS;
+                 if (hdr->Calib) NS += hdr->Calib->ncol;
+ 		for (k=0; k<NS; k++) {
+ 		        if (k<hdr->NS)
+@@ -14826,7 +14885,7 @@ int hdr2ascii(HDRTYPE* hdr, FILE *fid, int VERBOSE)
+ 				fprintf(fid,"\t%d\t%5d",hdr->EVENT.CHN[k],hdr->EVENT.DUR[k]);
+ 
+ 			if ((hdr->EVENT.TYP[k] == 0x7fff) && (hdr->TYPE==GDF)) {
+-				typeof(hdr->NS) chan = hdr->EVENT.CHN[k]-1;
++				uint16_t chan = hdr->EVENT.CHN[k]-1;
+ 
+ 				double val = dur2val(hdr->EVENT.DUR[k], hdr->CHANNEL[chan].GDFTYP);
+ 
+diff --git a/biosig4c++/biosig2.c b/biosig4c++/biosig2.c
+index 3357c7e3..3c91ab15 100644
+--- a/biosig4c++/biosig2.c
++++ b/biosig4c++/biosig2.c
+@@ -40,7 +40,7 @@ int biosig_set_filetype(HDRTYPE *hdr, enum FileFormat format) {
+ 	if (hdr==NULL) return -1;
+ 	hdr->TYPE=format;
+ 	if (format==GDF)
+-	    hdr->VERSION = 1.0/0.0; // use latest version
++	    hdr->VERSION = INFINITY; // use latest version
+ 	return 0;
+ }
+ 
+@@ -487,7 +487,7 @@ int biosig_set_application_specific_information(HDRTYPE *hdr, const char* appinf
+ // returns M-th channel, M is 0-based
+ CHANNEL_TYPE* biosig_get_channel(HDRTYPE *hdr, int M) {
+ 	if (hdr==NULL) return NULL;
+-	typeof(hdr->NS) k,m;
++	size_t k,m;
+ 	for (k=0,m=0; k<hdr->NS; k++)
+ 		if (hdr->CHANNEL[k].OnOff==1) {
+ 			if (M==m) return hdr->CHANNEL+k;
+@@ -701,7 +701,7 @@ struct hdrlist_t hdrlist[hdrlistlen];
+ CHANNEL_TYPE *getChannelHeader(HDRTYPE *hdr, uint16_t channel) {
+ 	// returns channel header - skip Off-channels
+ 	CHANNEL_TYPE *hc = hdr->CHANNEL;
+-	typeof(hdr->NS) chan = 0; 
++	size_t chan = 0; 
+ 	while (1) {
+ 		if (hc->OnOff==1) {
+ 			if (chan==channel) return hc;
+@@ -902,7 +902,7 @@ double biosig_get_samplefrequency(int handle, int biosig_signal) {
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(NAN);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(NAN);
+ 
+ 	return (hdr->SampleRate*hdr->CHANNEL[biosig_signal].SPR/hdr->SPR);
+@@ -912,7 +912,7 @@ int biosig_set_samplefrequency(int handle, int biosig_signal, double samplefrequ
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = 0;
++	size_t ns = 0;
+ 	int ch;
+         for (ch = 0; ch < hdr->NS; ch++) {
+                 if (hdr->CHANNEL[ch].OnOff==1) {
+@@ -937,7 +937,7 @@ double biosig_get_physical_maximum(int handle, int biosig_signal) {
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(NAN);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(NAN);
+ 
+ 	return (hdr->CHANNEL[biosig_signal].PhysMax);
+@@ -947,7 +947,7 @@ int biosig_set_physical_maximum(int handle, int biosig_signal, double phys_max)
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(-1);
+ 
+ 	hdr->CHANNEL[biosig_signal].PhysMax = phys_max;
+@@ -958,7 +958,7 @@ double biosig_get_physical_minimum(int handle, int biosig_signal) {
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(NAN);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(NAN);
+ 
+ 	return (hdr->CHANNEL[biosig_signal].PhysMin);
+@@ -968,7 +968,7 @@ int biosig_set_physical_minimum(int handle, int biosig_signal, double phys_min)
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(-1);
+ 
+ 	hdr->CHANNEL[biosig_signal].PhysMin = phys_min;
+@@ -979,7 +979,7 @@ double biosig_get_digital_maximum(int handle, int biosig_signal) {
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(NAN);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(NAN);
+ 
+ 	return (hdr->CHANNEL[biosig_signal].DigMax);
+@@ -989,7 +989,7 @@ int biosig_set_digital_maximum(int handle, int biosig_signal, double dig_max) {
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(-1);
+ 
+ 	hdr->CHANNEL[biosig_signal].DigMax = dig_max;
+@@ -1000,7 +1000,7 @@ double biosig_get_digital_minimum(int handle, int biosig_signal) {
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(NAN);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(NAN);
+ 
+ 	return (hdr->CHANNEL[biosig_signal].DigMin);
+@@ -1010,7 +1010,7 @@ int biosig_set_digital_minimum(int handle, int biosig_signal, double dig_min) {
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(-1);
+ 
+ 	hdr->CHANNEL[biosig_signal].DigMin = dig_min;
+@@ -1021,7 +1021,7 @@ const char *biosig_get_label(int handle, int biosig_signal) {
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(NULL);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(NULL);
+ 
+ 	return (hdr->CHANNEL[biosig_signal].Label);
+@@ -1031,7 +1031,7 @@ int biosig_set_label(int handle, int biosig_signal, const char *label) {
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(-1);
+ 
+ 	strncpy(hdr->CHANNEL[biosig_signal].Label, label, MAX_LENGTH_LABEL);
+@@ -1048,7 +1048,7 @@ int biosig_set_highpassfilter(int handle, int biosig_signal, double frequency) {
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(-1);
+ 
+ 	hdr->CHANNEL[biosig_signal].HighPass = frequency;
+@@ -1060,7 +1060,7 @@ int biosig_set_lowpassfilter(int handle, int biosig_signal, double frequency) {
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(-1);
+ 
+ 	hdr->CHANNEL[biosig_signal].LowPass = frequency;
+@@ -1072,7 +1072,7 @@ int biosig_set_notchfilter(int handle, int biosig_signal, double frequency) {
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(-1);
+ 
+ 	hdr->CHANNEL[biosig_signal].Notch = frequency;
+@@ -1085,7 +1085,7 @@ const char *biosig_get_transducer(int handle, int biosig_signal) {
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(NULL);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(NULL);
+ 
+ 	return (hdr->CHANNEL[biosig_signal].Transducer);
+@@ -1095,7 +1095,7 @@ int biosig_set_transducer(int handle, int biosig_signal, const char *transducer)
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(-1);
+ 
+ 	strncpy(hdr->CHANNEL[biosig_signal].Transducer, transducer, MAX_LENGTH_TRANSDUCER+1);
+@@ -1108,7 +1108,7 @@ const char *biosig_physical_dimension(int handle, int biosig_signal) {
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(NULL);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(NULL);
+ 
+ 	return (PhysDim3(hdr->CHANNEL[biosig_signal].PhysDimCode));
+@@ -1118,7 +1118,7 @@ int biosig_set_physical_dimension(int handle, int biosig_signal, const char *phy
+ 
+ 	if (handle<0 || handle >= hdrlistlen || hdrlist[handle].hdr==NULL) return(-1);
+ 	HDRTYPE *hdr = hdrlist[handle].hdr;
+-	typeof(hdr->NS) ns = hdr->NS;
++	size_t ns = hdr->NS;
+ 	if (biosig_signal >= ns) return(-1);
+ 
+ 	hdr->CHANNEL[biosig_signal].PhysDimCode = PhysDimCode(phys_dim);
+@@ -1321,7 +1321,7 @@ HDRTYPE* biosig_unserialize(void *mem, size_t len, size_t start, size_t length,
+ 	// get data block
+ 	biosig_set_flag(hdr, flags);
+ 	if (data != NULL) {
+-		hdr->AS.rawdata = mem+hdr->HeadLen;
++		hdr->AS.rawdata = (uint8_t*)mem + hdr->HeadLen;
+ 		size_t L = sread(*data, start, length, hdr);
+ 		*data    = hdr->data.block;
+ 		hdr->data.block = NULL;
+@@ -1331,7 +1331,7 @@ HDRTYPE* biosig_unserialize(void *mem, size_t len, size_t start, size_t length,
+ 	fprintf(stdout,"%s (line %i) %s:\n",__FILE__,__LINE__,__func__);
+ 
+ 	// read eventtable
+-	hdr->AS.rawEventData = (hdr->NRec != -1) ? mem + hdr->HeadLen + hdr->NRec*hdr->AS.bpb : NULL;
++	hdr->AS.rawEventData = (hdr->NRec != -1) ? (uint8_t*)mem + hdr->HeadLen + hdr->NRec*hdr->AS.bpb : NULL;
+ 	rawEVT2hdrEVT(hdr, len - hdr->HeadLen - hdr->NRec*hdr->AS.bpb);
+ 
+ 	// in case of success, memory is managed by its own pointer *mem
+diff --git a/biosig4c++/igor/IgorBin.h b/biosig4c++/igor/IgorBin.h
+index 35bb94a3..c2fa2a1c 100644
+--- a/biosig4c++/igor/IgorBin.h
++++ b/biosig4c++/igor/IgorBin.h
+@@ -42,6 +42,10 @@ extern "C" {
+ 	*/
+ 	#define ptr_t uint32_t
+ 	#define Handle uint32_t
++#elif defined(_MSC_VER)
++	#pragma pack(push,2)
++	#define ptr_t uint32_t
++	#define Handle uint32_t
+ #elif GENERATINGPOWERPC
+ 	#pragma options align=mac68k
+ #endif
+@@ -218,6 +222,10 @@ typedef WavePtr5 *WaveHandle5;
+ 	#pragma pack(pop)
+ 	#undef ptr_t
+ 	#undef Handle
++#elif defined(_MSC_VER)
++	#pragma pack(pop)
++	#undef ptr_t
++	#undef Handle
+ #elif GENERATINGPOWERPC
+ 	#pragma options align=reset
+ #endif
+diff --git a/biosig4c++/physicalunits.c b/biosig4c++/physicalunits.c
+index 76f3c7f0..a4607bee 100644
+--- a/biosig4c++/physicalunits.c
++++ b/biosig4c++/physicalunits.c
+@@ -26,6 +26,12 @@
+ #include <string.h>
+ #include "physicalunits.h"
+ 
++#ifndef __GNUC__
++	#ifndef __attribute__
++		#define __attribute__(x)
++	#endif
++#endif
++
+ #ifdef HAVE_PTHREAD
+ // This is optional, because so far there are no multi-threaded applications for libbiosig.
+ #include <pthread.h>
+@@ -71,7 +77,7 @@ const char* PhysDimFactor[] = {
+ 	"E","Z","Y","#","#","#","#","#",	//  8..15
+ 	"d","c","m","u","n","p","f","a",	// 16..23
+ 	"z","y","#","#","#","#","#","#",	// 24..31
+-	"\xB5"	//hack for "µ" = "u"		// 32
++	"\xB5"	//hack for "ï¿½" = "u"		// 32
+ 	};
+ 
+ 
+@@ -87,7 +93,7 @@ double PhysDimScale(uint16_t PhysDimCode)
+ 	  1e+18,1e+21,1e+24,NAN,  NAN,  NAN,   NAN,   NAN, 	//  8..15
+ 	  1e-1, 1e-2, 1e-3, 1e-6, 1e-9, 1e-12, 1e-15, 1e-18, 	// 16..23
+ 	  1e-21,1e-24,NAN,  NAN,  NAN,  NAN,   NAN,   NAN,	// 24..31
+-	  1e-6	// hack for "µ" = "u" 				// 32
++	  1e-6	// hack for "ï¿½" = "u" 				// 32
+ 	  };
+ 
+ 	return (scale[PhysDimCode & 0x001f]);
+diff --git a/biosig4c++/t210/scp-decode.cpp b/biosig4c++/t210/scp-decode.cpp
+index 89f6a8db..ed433bee 100644
+--- a/biosig4c++/t210/scp-decode.cpp
++++ b/biosig4c++/t210/scp-decode.cpp
+@@ -105,6 +105,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ #include <stdlib.h>
+ using namespace std;
+ 
++#ifndef __GNUC__
++#ifndef __attribute__
++#define __attribute__(x)
++#endif
++#endif
++
+ /*
+    error handling should use error variables local to each HDR
+    otherwise, sopen() etc. is not re-entrant.
+@@ -114,8 +120,14 @@ using namespace std;
+    serror2(hdr), hdr->AS.B4C_ERRNUM, hdr->AS.B4C_ERRMSG for error handling.
+ 
+  */
++#ifdef __cplusplus
++extern "C" {
++#endif
+ __attribute__ ((deprecated)) extern int B4C_ERRNUM;
+ __attribute__ ((deprecated)) extern const char *B4C_ERRMSG;
++#ifdef __cplusplus
++}
++#endif
+ 
+ 
+ //______________________________________________________________________________
+diff --git a/biosig4c++/t210/sopen_abf_read.c b/biosig4c++/t210/sopen_abf_read.c
+index 9dff7db6..fbe2d8c4 100644
+--- a/biosig4c++/t210/sopen_abf_read.c
++++ b/biosig4c++/t210/sopen_abf_read.c
+@@ -47,7 +47,7 @@ EXTERN_C void sopen_atf_read(HDRTYPE* hdr) {
+ 		size_t ll  = 0;
+ 		char *line = NULL;
+ 		ssize_t nc;
+-		typeof (hdr->NS) k;
++		uint16_t k;
+ 
+ 		// first line - skip: contains "ATF\t1.0" or alike
+ 		nc = getline(&line, &ll, hdr->FILE.FID);
+diff --git a/biosig4c++/t210/sopen_acqbiopac.c b/biosig4c++/t210/sopen_acqbiopac.c
+index 04b6769a..e4216cc9 100644
+--- a/biosig4c++/t210/sopen_acqbiopac.c
++++ b/biosig4c++/t210/sopen_acqbiopac.c
+@@ -32,7 +32,11 @@ This implementation is based on the following references:
+ #include <assert.h>
+ #include <ctype.h>
+ #include <errno.h>
++#if defined(__has_include)
++#if __has_include(<iconv.h>)
+ #include <iconv.h>
++#endif
++#endif
+ #include <stdlib.h>
+ #include <string.h>
+ 
+diff --git a/biosig4c++/t210/sopen_alpha_read.c b/biosig4c++/t210/sopen_alpha_read.c
+index 0e9bcf52..394a2f51 100644
+--- a/biosig4c++/t210/sopen_alpha_read.c
++++ b/biosig4c++/t210/sopen_alpha_read.c
+@@ -51,7 +51,7 @@ EXTERN_C void sopen_alpha_read(HDRTYPE* hdr) {
+ 		char* fn = (char*)malloc(strlen(hdr->FileName)+15);
+ 		strcpy(fn,hdr->FileName); 	// Flawfinder: ignore
+ 		
+-		const size_t bufsiz = 4096; 
++		enum { bufsiz = 4096 };
+ 		char buf[bufsiz]; 
+ 
+ 		// alpha.alp  cal_res digin  digvidtc  eog  marker  measure  mkdef  montage  rawdata  rawhead  report.txt  r_info  sleep
+@@ -367,8 +367,8 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"<%6.2f> %i- %s | %s\n",hdr->VERSION, STATUS
+ 				
+ 				if (n+1 >= N) {
+ 					const size_t sz = 100;
+-					hdr->EVENT.TYP = (typeof(hdr->EVENT.TYP)) realloc(hdr->EVENT.TYP,(N+sz)*sizeof(*hdr->EVENT.TYP));
+-					hdr->EVENT.POS = (typeof(hdr->EVENT.POS)) realloc(hdr->EVENT.POS,(N+sz)*sizeof(*hdr->EVENT.POS));
++					hdr->EVENT.TYP = realloc(hdr->EVENT.TYP,(N+sz)*sizeof(*hdr->EVENT.TYP));
++					hdr->EVENT.POS = realloc(hdr->EVENT.POS,(N+sz)*sizeof(*hdr->EVENT.POS));
+ 					N += sz; 
+ 				}	
+ 
+diff --git a/biosig4c++/t210/sopen_axg_read.c b/biosig4c++/t210/sopen_axg_read.c
+index 34c84a67..3bc2ef20 100644
+--- a/biosig4c++/t210/sopen_axg_read.c
++++ b/biosig4c++/t210/sopen_axg_read.c
+@@ -26,7 +26,19 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <sys/stat.h>
++#if defined(__has_include)
++#if __has_include(<iconv.h>)
+ #include <iconv.h>
++#define STF_HAVE_ICONV 1
++#endif
++#endif
++
++#ifndef STF_HAVE_ICONV
++#define iconv_t void*
++#define iconv_open(a,b) ((void*)-1)
++#define iconv(cd,inbuf,inbytesleft,outbuf,outbytesleft) ((size_t)-1)
++#define iconv_close(cd) ((void)0)
++#endif
+ 
+ #if !defined(__APPLE__) && defined (_LIBICONV_H)
+  #define iconv		libiconv
+@@ -409,7 +421,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"%s (line %i) NS=%i nCol=%i\n", __FILE__,
+ 				*outbuf=0;
+ #else
+ 				++inbuf;
+-				int i = min(MAX_LENGTH_LABEL, titleLen/2);
++				int i = min(MAX_LENGTH_LABEL, (int)(inlen/2));
+ 				for (; i>0 ; i-- ) {
+ 					*outbuf= *inbuf;
+ 					inbuf += 2;
+diff --git a/biosig4c++/t210/sopen_cfs_read.c b/biosig4c++/t210/sopen_cfs_read.c
+index 59d29823..2f074509 100644
+--- a/biosig4c++/t210/sopen_cfs_read.c
++++ b/biosig4c++/t210/sopen_cfs_read.c
+@@ -156,9 +156,9 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"%s:%i sopen_cfs_read started [%s]\n",__FILE
+ 		}
+ 
+ 		if (NumberOfDataSections) {
+-			hdr->EVENT.TYP = (typeof(hdr->EVENT.TYP)) realloc(hdr->EVENT.TYP, (hdr->EVENT.N + 2*NumberOfDataSections - 1) * sizeof(*hdr->EVENT.TYP));
+-			hdr->EVENT.POS = (typeof(hdr->EVENT.POS)) realloc(hdr->EVENT.POS, (hdr->EVENT.N + 2*NumberOfDataSections - 1) * sizeof(*hdr->EVENT.POS));
+-			hdr->EVENT.TimeStamp = (typeof(hdr->EVENT.TimeStamp)) realloc(hdr->EVENT.TimeStamp, (hdr->EVENT.N + 2*NumberOfDataSections - 1) * sizeof(*hdr->EVENT.TimeStamp));
++			hdr->EVENT.TYP = realloc(hdr->EVENT.TYP, (hdr->EVENT.N + 2*NumberOfDataSections - 1) * sizeof(*hdr->EVENT.TYP));
++			hdr->EVENT.POS = realloc(hdr->EVENT.POS, (hdr->EVENT.N + 2*NumberOfDataSections - 1) * sizeof(*hdr->EVENT.POS));
++			hdr->EVENT.TimeStamp = realloc(hdr->EVENT.TimeStamp, (hdr->EVENT.N + 2*NumberOfDataSections - 1) * sizeof(*hdr->EVENT.TimeStamp));
+ 		}
+ 
+ if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) CFS - %d,%d,%d,0x%x,0x%x,0x%x,%d,0x%x\n",__FILE__,__LINE__,hdr->NS,n,d,FileHeaderSize,DataHeaderSize,LastDataSectionHeaderOffset,NumberOfDataSections,leu32p(hdr->AS.Header+0x86));
+@@ -168,7 +168,7 @@ if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i) CFS - %d,%d,%d,0x%x,0x%x,0x%x,
+ #define H2LEN (22+10+10+1+1+2+2)
+  		char* H2 = (char*)(hdr->AS.Header + H1LEN);
+ 		double xPhysDimScale[100];		// CFS is limited to 99 channels
+-		typeof(hdr->NS) NS = hdr->NS;
++		uint16_t NS = hdr->NS;
+ 		uint8_t k;
+ 		uint32_t bpb=0;
+ 		for (k = 0; k < hdr->NS; k++) {
+@@ -387,7 +387,7 @@ if (VERBOSE_LEVEL>7) 		{
+ 				}
+ 			}
+ 
+-			typeof (hdr->T0) TS = tmp_event_pos ? (hdr->T0 + ldexp(tmp_event_pos/(24.0*3600.0),32)) : 0;
++			gdf_time TS = tmp_event_pos ? (hdr->T0 + ldexp(tmp_event_pos/(24.0*3600.0),32)) : 0;
+ 			if (m>0) {
+ 				hdr->EVENT.TYP[hdr->EVENT.N] = 0x7ffe;
+ 				hdr->EVENT.POS[hdr->EVENT.N] = SPR;
+@@ -655,8 +655,8 @@ if (VERBOSE_LEVEL>7) 		{
+ 							// matrix data might contain time markers.
+ 
+ 							// memory allocation for additional events - more efficient implementation would be nice
+-							hdr->EVENT.TYP = (typeof(hdr->EVENT.TYP)) realloc(hdr->EVENT.TYP, (hdr->EVENT.N + NumberOfDataSections) * sizeof(*hdr->EVENT.TYP));
+-							hdr->EVENT.POS = (typeof(hdr->EVENT.POS)) realloc(hdr->EVENT.POS, (hdr->EVENT.N + NumberOfDataSections) * sizeof(*hdr->EVENT.POS));
++							hdr->EVENT.TYP = realloc(hdr->EVENT.TYP, (hdr->EVENT.N + NumberOfDataSections) * sizeof(*hdr->EVENT.TYP));
++							hdr->EVENT.POS = realloc(hdr->EVENT.POS, (hdr->EVENT.N + NumberOfDataSections) * sizeof(*hdr->EVENT.POS));
+ 
+ 							/*
+ 							char Desc[2]; Desc[0] = srcaddr[hdr->CHANNEL[next].bi + k2*stride]; Desc[1] = 0;
+@@ -726,8 +726,8 @@ if (VERBOSE_LEVEL>7) 		{
+ 							// matrix data might contain time markers.
+ 
+ 							// memory allocation for additional events - more efficient implementation would be nice
+-							hdr->EVENT.TYP = (typeof(hdr->EVENT.TYP)) realloc(hdr->EVENT.TYP, (hdr->EVENT.N + NumberOfDataSections) * sizeof(*hdr->EVENT.TYP));
+-							hdr->EVENT.POS = (typeof(hdr->EVENT.POS)) realloc(hdr->EVENT.POS, (hdr->EVENT.N + NumberOfDataSections) * sizeof(*hdr->EVENT.POS));
++							hdr->EVENT.TYP = realloc(hdr->EVENT.TYP, (hdr->EVENT.N + NumberOfDataSections) * sizeof(*hdr->EVENT.TYP));
++							hdr->EVENT.POS = realloc(hdr->EVENT.POS, (hdr->EVENT.N + NumberOfDataSections) * sizeof(*hdr->EVENT.POS));
+ 
+ 							/*
+ 							char Desc[2]; Desc[0] = srcaddr[hdr->CHANNEL[next].bi + k2*stride]; Desc[1] = 0;
+@@ -1015,7 +1015,7 @@ EXTERN_C void sopen_smr_read(HDRTYPE* hdr) {
+  	 *********************************************/
+ 	hdr->CHANNEL = (CHANNEL_TYPE*)realloc(hdr->CHANNEL, hdr->NS * sizeof(CHANNEL_TYPE));
+ 
+-	typeof(hdr->NS) k;
++	uint16_t k;
+ 	size_t bpb = 0;
+ 	for (k = 0; k < hdr->NS; k++) {
+ 		uint32_t off = 512 + k*140;
+diff --git a/biosig4c++/t210/sopen_heka_read.c b/biosig4c++/t210/sopen_heka_read.c
+index 3d5d2912..73ad7e3a 100644
+--- a/biosig4c++/t210/sopen_heka_read.c
++++ b/biosig4c++/t210/sopen_heka_read.c
+@@ -26,6 +26,12 @@
+ #include <string.h>
+ #include <math.h>
+ #ifdef _WIN32
++#include <stdlib.h>
++#define __builtin_bswap16 _byteswap_ushort
++#define __builtin_bswap32 _byteswap_ulong
++#define __builtin_bswap64 _byteswap_uint64
++#endif
++#ifdef _WIN32
+ // Can't include sys/stat.h or sopen is declared twice.
+ #include <sys/types.h>
+ struct stat {
+diff --git a/biosig4c++/t210/sopen_igor.c b/biosig4c++/t210/sopen_igor.c
+index 787e5819..91da458b 100644
+--- a/biosig4c++/t210/sopen_igor.c
++++ b/biosig4c++/t210/sopen_igor.c
+@@ -29,9 +29,16 @@
+ #include <stddef.h>
+ */
+ #include <ctype.h>
++#include <float.h>
+ #include <math.h>      // define macro isnan()
+ #include <stdlib.h>
+ #include <string.h>
++#ifdef _MSC_VER
++#include <stdlib.h>
++#define __builtin_bswap16 _byteswap_ushort
++#define __builtin_bswap32 _byteswap_ulong
++#define __builtin_bswap64 _byteswap_uint64
++#endif
+ #include "../biosig-dev.h"
+ #include "../igor/IgorBin.h"
+ 
+@@ -393,7 +400,7 @@ void sopen_ibw_read (HDRTYPE* hdr) {
+ 		case 3:
+ 			{
+ 				WaveHeader2* w2;
+-				w2 = (WaveHeader2*)(buffer+binHeaderSize);
++				w2 = (WaveHeader2*)((uint8_t*)buffer+binHeaderSize);
+ 				type = w2->type;
+ 				strncpy(hdr->CHANNEL[0].Label, w2->bname, MAX_LENGTH_LABEL);
+ 				hdr->CHANNEL[0].PhysDimCode = PhysDimCode(w2->dataUnits);
+@@ -424,7 +431,7 @@ void sopen_ibw_read (HDRTYPE* hdr) {
+ 		case 5:
+ 			{
+ 				WaveHeader5* w5;
+-				w5 = (WaveHeader5*)(buffer+binHeaderSize);
++				w5 = (WaveHeader5*)((uint8_t*)buffer+binHeaderSize);
+ 				type = w5->type;
+ 
+ 				int k;
+@@ -529,14 +536,14 @@ void sopen_ibw_read (HDRTYPE* hdr) {
+ 		case NT_FP32:
+ 			gdftyp = 16;
+ 			hdr->AS.bpb = 4;		// float
+-			digmin = -__FLT_MAX__;
+-			digmax = __FLT_MAX__;
++			digmin = -FLT_MAX;
++			digmax = FLT_MAX;
+ 			break;
+ 		case NT_FP64:
+ 			gdftyp = 17;
+ 			hdr->AS.bpb = 8;		// double
+-			digmin = -__DBL_MAX__;
+-			digmax = __DBL_MAX__;
++			digmin = -DBL_MAX;
++			digmax = DBL_MAX;
+ 			break;
+ 		case 0: 				// text waves
+ 			biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Igor/IBW: text waves not supported");
+@@ -558,7 +565,7 @@ void sopen_ibw_read (HDRTYPE* hdr) {
+ 		hdr->CHANNEL[1].SPR = hdr->SPR;
+ 	}
+ 
+-	typeof (hdr->NS) k;
++	uint16_t k;
+ 	size_t bpb=0;
+ 	for (k = 0; k < hdr->NS; k++) {
+ 		CHANNEL_TYPE *hc = hdr->CHANNEL+k;
+@@ -746,8 +753,8 @@ void sopen_itx_read (HDRTYPE* hdr) {
+ 	        if (VERBOSE_LEVEL>7)
+                         fprintf(stdout,"%s (line %i) start reading %s,v%4.2f format (%i)\n",__FILE__,__LINE__,GetFileTypeString(hdr->TYPE),hdr->VERSION,ifeof(hdr));
+ 
+-		typeof(hdr->SPR) SPR = 0, spr = 0;
+-		typeof(hdr->NS)  ns  = 0;
++		uint32_t SPR = 0, spr = 0;
++		uint16_t ns  = 0;
+ 		int chanNo=0, sweepNo=0;
+ 		hdr->SPR = 0;
+ 		hdr->NRec= 0;
+diff --git a/biosig4c++/t210/sopen_msvc_stubs.c b/biosig4c++/t210/sopen_msvc_stubs.c
+new file mode 100644
+index 00000000..e6756708
+--- /dev/null
++++ b/biosig4c++/t210/sopen_msvc_stubs.c
+@@ -0,0 +1,46 @@
++#include "../biosig.h"
++
++static int biosig_unsupported(HDRTYPE *hdr, const char *feature) {
++    biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, feature);
++    return -1;
++}
++
++void sopen_acqbiopac_read(HDRTYPE *hdr) {
++    biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "SOPEN(ACQ): unsupported in this MSVC build");
++}
++
++void sopen_biosigdump_read(HDRTYPE *hdr) {
++    biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "SOPEN(BIOSIGDUMP): unsupported in this MSVC build");
++}
++
++int sopen_fiff_read(HDRTYPE *hdr) {
++    return biosig_unsupported(hdr, "SOPEN(FIFF): unsupported in this MSVC build");
++}
++
++int sopen_nicoletE_read(HDRTYPE *hdr) {
++    return biosig_unsupported(hdr, "SOPEN(NICOLET): unsupported in this MSVC build");
++}
++
++int sopen_rhd2000_read(HDRTYPE *hdr) {
++    return biosig_unsupported(hdr, "SOPEN(RHD2000): unsupported in this MSVC build");
++}
++
++int sopen_rhs2000_read(HDRTYPE *hdr) {
++    return biosig_unsupported(hdr, "SOPEN(RHS2000): unsupported in this MSVC build");
++}
++
++int sopen_intan_clp_read(HDRTYPE *hdr) {
++    return biosig_unsupported(hdr, "SOPEN(INTAN CLP): unsupported in this MSVC build");
++}
++
++int sopen_hdf5(HDRTYPE *hdr) {
++    return biosig_unsupported(hdr, "SOPEN(HDF5): unsupported in this MSVC build");
++}
++
++int sopen_matlab(HDRTYPE *hdr) {
++    return biosig_unsupported(hdr, "SOPEN(MATLAB): unsupported in this MSVC build");
++}
++
++int sopen_sqlite(HDRTYPE *hdr) {
++    return biosig_unsupported(hdr, "SOPEN(SQLITE): unsupported in this MSVC build");
++}
+diff --git a/biosig4c++/t210/sopen_nicolet.c b/biosig4c++/t210/sopen_nicolet.c
+index bd12c43a..d15bcef9 100644
+--- a/biosig4c++/t210/sopen_nicolet.c
++++ b/biosig4c++/t210/sopen_nicolet.c
+@@ -26,7 +26,11 @@
+ #include <assert.h>
+ #include <ctype.h>
+ #include <errno.h>
++#if defined(__has_include)
++#if __has_include(<iconv.h>)
+ #include <iconv.h>
++#endif
++#endif
+ #include <stdlib.h>
+ #include <string.h>
+ 
+diff --git a/biosig4c++/t210/sopen_rhd2000_read.c b/biosig4c++/t210/sopen_rhd2000_read.c
+index 6e52e660..ba0b0d80 100644
+--- a/biosig4c++/t210/sopen_rhd2000_read.c
++++ b/biosig4c++/t210/sopen_rhd2000_read.c
+@@ -22,7 +22,11 @@ References:
+ #include <ctype.h>
+ #include <stdlib.h>
+ #include <string.h>
++#if defined(__has_include)
++#if __has_include(<iconv.h>)
+ #include <iconv.h>
++#endif
++#endif
+ #include <errno.h>
+ #include <sys/stat.h>
+ 
+diff --git a/biosig4c++/t210/sopen_scp_read.c b/biosig4c++/t210/sopen_scp_read.c
+index e377fd68..bd5a29fb 100644
+--- a/biosig4c++/t210/sopen_scp_read.c
++++ b/biosig4c++/t210/sopen_scp_read.c
+@@ -29,7 +29,18 @@
+ #include <ctype.h>
+ #include <stdlib.h>
+ #include <string.h>
++#if defined(__has_include)
++#if __has_include(<iconv.h>)
+ #include <iconv.h>
++#define STF_HAVE_ICONV 1
++#endif
++#endif
++#ifndef STF_HAVE_ICONV
++#define iconv_t void*
++#define iconv_open(a,b) ((void*)-1)
++#define iconv(cd,inbuf,inbytesleft,outbuf,outbytesleft) ((size_t)-1)
++#define iconv_close(cd) ((void)0)
++#endif
+ #include <errno.h>
+ 
+ #if !defined(__APPLE__) && defined (_LIBICONV_H)
+@@ -43,7 +54,7 @@
+ #define min(a,b)        (((a) < (b)) ? (a) : (b))
+ 
+ #include "structures.h"
+-static const uint8_t _NUM_SECTION = 20;	   //consider first 19 sections of SCP
++enum { _NUM_SECTION = 20 };	   //consider first 19 sections of SCP
+ static bool add_filter = true;             // additional filtering gives better shape, but use with care
+ 
+ #ifdef __cplusplus
+@@ -149,6 +160,7 @@ typedef struct en1064_t {
+ 		} Tag14, Tag15;
+ 	} Section1;
+ 	struct {
++		uint8_t reserved;
+ 	} Section2;
+ 	struct {
+ 		uint8_t NS, flags;
+@@ -364,6 +376,7 @@ int decode_scp_text(HDRTYPE *hdr, size_t inbytesleft, char *input, size_t outbyt
+ 		output[outbytesleft]=0;
+ 		return(exitcode);
+ 	}
++	uint8_t LanguageSupportCode = (*(struct aecg*)(hdr->aECG)).Section1.Tag14.LANG_SUPP_CODE;
+ 
+ #if  defined(_ICONV_H) || defined (_LIBICONV_H) || defined(_ICONV_H_)
+ /*
+@@ -371,7 +384,6 @@ int decode_scp_text(HDRTYPE *hdr, size_t inbytesleft, char *input, size_t outbyt
+ 	The table of language support code as defined in
+ 	CEN Standard EN1064:2005+A1:2007, p.30.
+ */
+-	uint8_t LanguageSupportCode = (*(struct aecg*)(hdr->aECG)).Section1.Tag14.LANG_SUPP_CODE;
+ 	iconv_t cd;
+ 	if ((LanguageSupportCode & 0x01) == 0)
+ 		cd = iconv_open ("UTF-8", "ASCII");
+@@ -1074,7 +1086,7 @@ int sopen_SCP_read(HDRTYPE* hdr) {
+ 				for (k2=0; k2<NHT; k2++) {
+ 					Huffman[k2].NCT   = leu16p(PtrCurSect+curSectPos);
+ 					curSectPos += 2;
+-					Huffman[k2].Table = (typeof(Huffman[k2].Table))malloc(Huffman[k2].NCT * sizeof(*Huffman[k2].Table));
++					Huffman[k2].Table = malloc(Huffman[k2].NCT * sizeof(*Huffman[k2].Table));
+ 					HTrees      = (htree_t**)malloc(Huffman[k2].NCT*sizeof(htree_t*));
+ 					for (k1=0; k1<Huffman[k2].NCT; k1++) {
+ 						Huffman[k2].Table[k1].PrefixLength = *(PtrCurSect+curSectPos);
+@@ -1119,7 +1131,7 @@ int sopen_SCP_read(HDRTYPE* hdr) {
+ 
+ 			curSectPos += 2;
+ 			hdr->CHANNEL = (CHANNEL_TYPE *) realloc(hdr->CHANNEL,hdr->NS* sizeof(CHANNEL_TYPE));
+-			en1064.Section3.lead = (typeof(en1064.Section3.lead))malloc(hdr->NS*sizeof(*en1064.Section3.lead));
++			en1064.Section3.lead = malloc(hdr->NS*sizeof(*en1064.Section3.lead));
+ 
+ 			uint32_t startindex0; 
+ 			startindex0 = leu32p(PtrCurSect+curSectPos);
+@@ -1163,7 +1175,7 @@ int sopen_SCP_read(HDRTYPE* hdr) {
+ 			en1064.Section4.N	= leu16p(PtrCurSect+curSectPos+4);		// ### TODO: SCPECGv3 ###
+ 			en1064.Section4.SPR	= hdr->SPR/4;
+ 
+-			en1064.Section4.beat	= (typeof(en1064.Section4.beat))malloc(en1064.Section4.N*sizeof(*en1064.Section4.beat));
++			en1064.Section4.beat	= malloc(en1064.Section4.N*sizeof(*en1064.Section4.beat));
+ 
+ 			curSectPos += 6;
+ 			for (i=0; i < en1064.Section4.N; i++) {
+@@ -1191,7 +1203,7 @@ int sopen_SCP_read(HDRTYPE* hdr) {
+ 			en1064.Section5.dT_us	= leu16p(PtrCurSect+curSectPos+2);
+ 			en1064.Section5.DIFF 	= *(PtrCurSect+curSectPos+4);
+ 			en1064.Section5.Length  = (1000L * en1064.Section4.len_ms) / en1064.Section5.dT_us; // hdr->SPR;
+-			en1064.Section5.inlen	= (typeof(en1064.Section5.inlen))malloc(hdr->NS*2);
++			en1064.Section5.inlen	= malloc(hdr->NS*2);
+ 			for (i=0; i < hdr->NS; i++) {
+ 				en1064.Section5.inlen[i] = leu16p(PtrCurSect+curSectPos+6+2*i);	// ### TODO: SCPECGv3 ###
+ 				if (!section[4].length && (en1064.Section5.Length < en1064.Section5.inlen[i]))
+@@ -1279,7 +1291,7 @@ int sopen_SCP_read(HDRTYPE* hdr) {
+ 				dT_us = en1064.Section6.dT_us;
+ 			hdr->SampleRate	= 1e6/dT_us;
+ 
+-			typeof(hdr->SPR) SPR  = ( en1064.FLAG.BIMODAL ? en1064.Section4.SPR : hdr->SPR);
++			uint32_t SPR  = ( en1064.FLAG.BIMODAL ? en1064.Section4.SPR : hdr->SPR);
+ 
+ 	if (VERBOSE_LEVEL>7) fprintf(stdout,"%s (line %i): %i %i %i\n", __func__ ,__LINE__, dT_us, Cal5, Cal6);
+ 
+diff --git a/biosig4c++/t220/sopen_scp_write.c b/biosig4c++/t220/sopen_scp_write.c
+index 3cd0a989..96292579 100644
+--- a/biosig4c++/t220/sopen_scp_write.c
++++ b/biosig4c++/t220/sopen_scp_write.c
+@@ -19,6 +19,9 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#ifdef _WIN32
++#define timezone _timezone
++#endif
+ #include "../biosig-dev.h"
+ 
+ #define min(a,b)        (((a) < (b)) ? (a) : (b))
+@@ -119,7 +122,7 @@ int sopen_SCP_write(HDRTYPE* hdr) {
+ 		disable channels with physical units other than Voltage.
+ 		The number of channels for conversion is stored in NS.
+ 	*/
+-	typeof(hdr->NS) NS = 0, k;
++	uint16_t NS = 0, k;
+ 	for (k=0; k < hdr->NS; k++) {
+ 		CHANNEL_TYPE *CH=hdr->CHANNEL+k;
+ 
+@@ -533,7 +536,7 @@ int sopen_SCP_write(HDRTYPE* hdr) {
+ 		    {
+ 			uint16_t GDFTYP = 3;
+ 			size_t SZ = GDFTYP_BITS[GDFTYP]>>3;
+-			typeof(hdr->NS) i=0;
++			uint16_t i=0;
+ 			for (i = 0; i < hdr->NS; i++) {
+ 				CHANNEL_TYPE *hc=hdr->CHANNEL+i;
+ 				if (hc->OnOff != 1) continue;
+diff --git a/biosig4c++/t230/sopen_hl7aecg.cpp b/biosig4c++/t230/sopen_hl7aecg.cpp
+index 95122da1..d6764b94 100644
+--- a/biosig4c++/t230/sopen_hl7aecg.cpp
++++ b/biosig4c++/t230/sopen_hl7aecg.cpp
+@@ -20,7 +20,12 @@
+ 
+ #include <stdio.h>	// system includes
+ #include <stdlib.h>	// for strtod(3)
++#ifdef _WIN32
++#define strcasecmp _stricmp
++#define strncasecmp _strnicmp
++#else
+ #include <strings.h>
++#endif
+ 
+ #include "../biosig.h"
+ #if defined(WITH_LIBTINYXML)
+@@ -771,8 +776,8 @@ EXTERN_C int sopen_HL7aECG_read(HDRTYPE* hdr) {
+ 
+                                 if ((N+3) > N_Event) {
+                                 	N_Event = max(16,2*(N+2));
+-                                	hdr->EVENT.TYP = (typeof(hdr->EVENT.TYP)) realloc(hdr->EVENT.TYP,N_Event*sizeof(*hdr->EVENT.TYP));
+-                                	hdr->EVENT.POS = (typeof(hdr->EVENT.POS)) realloc(hdr->EVENT.POS,N_Event*sizeof(*hdr->EVENT.POS));
++	                                	hdr->EVENT.TYP = realloc(hdr->EVENT.TYP,N_Event*sizeof(*hdr->EVENT.TYP));
++	                                	hdr->EVENT.POS = realloc(hdr->EVENT.POS,N_Event*sizeof(*hdr->EVENT.POS));
+                                 }
+ 
+         		        TiXmlHandle Boundary = Annotation.FirstChild("support").FirstChild("supportingROI").FirstChild("component").FirstChild("boundary").FirstChild("value");
+diff --git a/biosig4c++/win32/getdelim.c b/biosig4c++/win32/getdelim.c
+index 65323c89..de340e08 100644
+--- a/biosig4c++/win32/getdelim.c
++++ b/biosig4c++/win32/getdelim.c
+@@ -30,6 +30,11 @@
+ #include <stdlib.h>
+ #include <errno.h>
+ 
++#if defined(_MSC_VER)
++# include <BaseTsd.h>
++typedef SSIZE_T ssize_t;
++#endif
++
+ #ifndef SSIZE_MAX
+ # define SSIZE_MAX ((ssize_t) (SIZE_MAX / 2))
+ #endif
+diff --git a/biosig4c++/win32/getline.c b/biosig4c++/win32/getline.c
+index 35cacb01..25b0cc2b 100644
+--- a/biosig4c++/win32/getline.c
++++ b/biosig4c++/win32/getline.c
+@@ -20,6 +20,13 @@
+ 
+ #include <stdio.h>
+ 
++#if defined(_MSC_VER)
++# include <BaseTsd.h>
++typedef SSIZE_T ssize_t;
++#endif
++
++ssize_t getdelim (char **lineptr, size_t *n, int delimiter, FILE *fp);
++
+ ssize_t
+ getline (char **lineptr, size_t *n, FILE *stream)
+ {
+diff --git a/biosig4c++/win32/getlogin.c b/biosig4c++/win32/getlogin.c
+index cc8fee40..3a1a8864 100644
+--- a/biosig4c++/win32/getlogin.c
++++ b/biosig4c++/win32/getlogin.c
+@@ -20,14 +20,14 @@
+ // #include <config.h>
+ 
+ /* Specification.  */
+-#include <unistd.h>
+-
+ #if defined _WIN32 && ! defined __CYGWIN__
+ # define WIN32_LEAN_AND_MEAN
+ # include <windows.h>
+ /* Don't assume that UNICODE is not defined.  */
+ # undef GetUserName
+ # define GetUserName GetUserNameA
++#else
++# include <unistd.h>
+ #endif
+ 
+ char *
+-- 
+2.53.0.windows.1
+

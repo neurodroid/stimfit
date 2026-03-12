@@ -19,11 +19,9 @@
 #include <vector>
 #include <sstream>
 
-#if !defined(_MSC_VER) || defined(__STF__)
 #include "./axon/Common/axodefn.h"
 #include "./axon/AxAbfFio32/abffiles.h"
 #include "./axon2/ProtocolReaderABF2.hpp"
-#endif
 
 #include "./abflib.h"
 #include "../recording.h"
@@ -51,7 +49,6 @@ void stfio::importABFFile(const std::string &fName, Recording &ReturnData, Progr
     FILE* fh = fopen( fName.c_str(), "r" );
     if (!fh) {
         std::string errorMsg("Exception while calling importABFFile():\nCouldn't open file");
-        fclose(fh);
         throw std::runtime_error(errorMsg);
     }
 
@@ -70,9 +67,7 @@ void stfio::importABFFile(const std::string &fName, Recording &ReturnData, Progr
     }
     fclose(fh);
 #else
-    std::wstringstream fNameS;
-    fNameS << fName.c_str();
-    HANDLE hFile = CreateFile(fNameS.str().c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
+    HANDLE hFile = CreateFileA(fName.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL,
                               OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
  
     if (hFile == INVALID_HANDLE_VALUE) { 
@@ -110,18 +105,7 @@ void stfio::importABFFile(const std::string &fName, Recording &ReturnData, Progr
 void stfio::importABF2File(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
 
     CABF2ProtocolReader abf2;
-    std::wstring wfName;
-    wfName.resize(fName.size());
-    std::copy(fName.begin(), fName.end(), wfName.begin());
-    // for(std::string::size_type i=0; i<fName.size(); ++i) {
-    //     wfName[i] = (wchar_t)fName[i];
-    // }
-
-#if !defined(_MSC_VER)
     if (!abf2.Open( fName.c_str() )) {
-#else
-    if (!abf2.Open( &wfName[0] )) {
-#endif
         std::string errorMsg("Exception while calling importABF2File():\nCouldn't open file");
         throw std::runtime_error(errorMsg);
         abf2.Close();
@@ -350,18 +334,8 @@ void stfio::importABF1File(const std::string &fName, Recording &ReturnData, Prog
     DWORD dwMaxEpi = 0;
     int nError = 0;
 
-    std::wstring wfName;
-
-    for(std::string::size_type i=0; i<fName.size(); ++i) {
-        wfName += wchar_t(fName[i]);
-    }
-#if !defined(_MSC_VER)
     if (!ABF_ReadOpen(fName.c_str(), &hFile, ABF_DATAFILE, &FH,
                       &uMaxSamples, &dwMaxEpi, &nError))
-#else
-    if (!ABF_ReadOpen(wfName.c_str(), &hFile, ABF_DATAFILE, &FH,
-                      &uMaxSamples, &dwMaxEpi, &nError))
-#endif
     {
         std::string errorMsg("Exception while calling ABF_ReadOpen():\n");
         errorMsg+=ABF1Error(fName,nError);

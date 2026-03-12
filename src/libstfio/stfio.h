@@ -64,7 +64,6 @@ typedef std::vector<float > Vector_float;
     #ifndef INFINITY
         #define INFINITY (DBL_MAX+DBL_MAX)
     #endif
-    StfioDll long int lround(double x);
     #define snprintf _snprintf
 #endif
 

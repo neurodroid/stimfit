@@ -14,7 +14,7 @@
 filehandle OpenFile( const char *fileName )
 {
 #if defined(_WINDOWS) && !defined(__MINGW32__)
-	std::wstringstream fileNameS;
+	std::stringstream fileNameS;
 	fileNameS << fileName;
     HANDLE file = CreateFile(fileNameS.str().c_str(), GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     return file;

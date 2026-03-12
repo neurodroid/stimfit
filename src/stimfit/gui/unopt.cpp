@@ -224,12 +224,16 @@ bool wxStfApp::Init_wxPython()
 #ifdef _WINDOWS
     // Add the cwd to the present path:
     wxString app_path = GetExecutablePath().BeforeFirst( wxUniChar('\0') );
-	cwd << wxT("cwd = \"") << app_path
-		<< wxT("\\wx-3.0-msw\"\nimport sys\nsys.path.insert(0,cwd)\n");
-	cwd << wxT("cwd = \"") << app_path
-		<< wxT("\\stf-site-packages\"\nsys.path.insert(0,cwd)\n");
-	cwd << wxT("cwd = \"") << app_path
-		<< wxT("\"\nsys.path.insert(0,cwd)\n");
+    cwd << wxT("import os\nimport sys\n");
+    cwd << wxT("cwd = \"") << app_path << wxT("\"\n");
+    cwd << wxT("paths = [\n");
+    cwd << wxT("    cwd,\n");
+    cwd << wxT("    os.path.join(cwd, 'stf-site-packages'),\n");
+    cwd << wxT("    os.path.join(cwd, '..', 'lib', 'stimfit'),\n");
+    cwd << wxT("]\n");
+    cwd << wxT("for p in paths:\n");
+    cwd << wxT("    if os.path.isdir(p) and p not in sys.path:\n");
+    cwd << wxT("        sys.path.insert(0, p)\n");
 #endif
 
     int cwd_result = PyRun_SimpleString(cwd.utf8_str());

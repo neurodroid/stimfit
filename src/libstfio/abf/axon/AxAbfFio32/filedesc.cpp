@@ -84,7 +84,11 @@ BOOL CFileDescriptor::Open(LPCTSTR szFileName, BOOL bReadOnly)
    m_uFlags = bReadOnly ? FI_READONLY : FI_WRITEONLY;
 
 #if defined(_MSC_VER)
+#if defined(UNICODE) || defined(_UNICODE)
    wcsncpy(m_szFileName, szFileName, _MAX_PATH-1);
+#else
+   strncpy(m_szFileName, szFileName, _MAX_PATH-1);
+#endif
    m_szFileName[_MAX_PATH-1] = '\0';
 #endif
 

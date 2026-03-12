@@ -89,6 +89,32 @@ With the most recent version of Windows10 (build: 10.0.19045.2546 ), Stimfit for
 
 * [Cross-compiling Stimfit with MXE on GNU/Linux for Windows](https://github.com/schloegl/mxe)
 
+#### Windows installer packaging (CMake + CPack)
+
+The CMake build can produce a distributable Windows installer with CPack.
+
+Prerequisites:
+
+* Inno Setup 6 installed (for the `INNOSETUP` CPack generator)
+* Visual Studio 2022 build tools
+* Python environment matching the selected configure preset when embedded Python is enabled
+
+Example workflow for a Python-enabled Windows release build:
+
+```powershell
+cmake --preset vs2022-vcpkg-wx-hdf5-python314-biosig-patched
+cmake --build --preset vs2022-release-stimfit-python314-biosig-patched
+cmake --install ../stimfit-out/vs2022-vcpkg-wx-hdf5-python314-biosig-patched --config Release
+cd ../stimfit-out/vs2022-vcpkg-wx-hdf5-python314-biosig-patched
+cpack -C Release -G INNOSETUP
+cpack -C Release -G ZIP
+```
+
+The resulting artifacts are written into the build directory and include:
+
+* an Inno Setup installer executable
+* a ZIP fallback package from the same install tree
+
 
 ## Important links
 
@@ -108,3 +134,8 @@ With the most recent version of Windows10 (build: 10.0.19045.2546 ), Stimfit for
 |./src/stimfit/py | stf module that gets imported into the embedded Python shell |
 
 libstfio is a private library that won't be installed system-wide. You may therefore end up with two copies of libstfio.so: One in the private stimfit library directory (/usr/lib/stimfit/ or similar), the other one in the Python site packages path for pystfio. libstfio may turn into a system-wide library in the future.
+
+## Build system migration status
+
+An initial CMake bootstrap layer is available to support migration from Autotools.
+See [`CMAKE_MIGRATION.md`](CMAKE_MIGRATION.md) for details.

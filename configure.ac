@@ -1,4 +1,5 @@
-AC_INIT([stimfit],[0.16.11])
+m4_define([STF_VERSION],[m4_esyscmd_s([tr -d '\r\n' < VERSION])])
+AC_INIT([stimfit],[STF_VERSION])
 AC_CONFIG_SRCDIR(src/stimfit/gui/main.cpp)
 AM_INIT_AUTOMAKE([1.11])
 AM_SILENT_RULES([yes])

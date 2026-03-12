@@ -27,6 +27,10 @@ config.status
 .deps/*
 .externalToolBuilders/*
 build/*
+/build*/
+/_install/
+/vcpkg_installed/
+.vscode/
 dist/debian/build
 dist/debian/build/*
 osc

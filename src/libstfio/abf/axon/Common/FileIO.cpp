@@ -121,7 +121,11 @@ BOOL CFileIO::CreateEx(LPCTSTR szFileName, DWORD dwDesiredAccess, DWORD dwShareM
       
 #if defined(_MSC_VER)
  // TRACE1("Create(%s)\n", szFileName);
+#if defined(UNICODE) || defined(_UNICODE)
    wcsncpy(m_szFileName, szFileName, _MAX_PATH-1);
+#else
+   strncpy(m_szFileName, szFileName, _MAX_PATH-1);
+#endif
    m_szFileName[_MAX_PATH-1] = '\0';
 #endif
    return TRUE;
