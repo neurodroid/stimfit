@@ -112,23 +112,29 @@ unset(_fftw3_inc)
 unset(_fftw3_include_candidates)
 unset(_fftw3_lib_dir)
 
-find_package(BLAS QUIET)
-find_package(LAPACK QUIET)
-if(LAPACK_FOUND)
-  add_library(stimfit::lapack INTERFACE IMPORTED)
-  target_link_libraries(stimfit::lapack INTERFACE ${LAPACK_LIBRARIES})
-elseif(BLAS_FOUND)
-  add_library(stimfit::lapack INTERFACE IMPORTED)
-  target_link_libraries(stimfit::lapack INTERFACE ${BLAS_LIBRARIES})
+find_library(OPENBLAS_LIBRARY NAMES openblas)
+if(OPENBLAS_LIBRARY)
+  add_library(stimfit::lapack UNKNOWN IMPORTED)
+  set_target_properties(stimfit::lapack PROPERTIES IMPORTED_LOCATION "${OPENBLAS_LIBRARY}")
+  target_compile_definitions(stimfit::lapack INTERFACE WITH_OPENBLAS HAVE_LAPACK)
 else()
-  find_library(OPENBLAS_LIBRARY NAMES openblas)
-  if(OPENBLAS_LIBRARY)
-    add_library(stimfit::lapack UNKNOWN IMPORTED)
-    set_target_properties(stimfit::lapack PROPERTIES IMPORTED_LOCATION "${OPENBLAS_LIBRARY}")
+  find_package(LAPACK QUIET)
+  if(LAPACK_FOUND)
+    add_library(stimfit::lapack INTERFACE IMPORTED)
+    target_link_libraries(stimfit::lapack INTERFACE ${LAPACK_LIBRARIES})
+    target_compile_definitions(stimfit::lapack INTERFACE HAVE_LAPACK)
   else()
-    find_library(LAPACK_LIBRARY NAMES lapack lapack3 lapack-3 REQUIRED)
-    add_library(stimfit::lapack UNKNOWN IMPORTED)
-    set_target_properties(stimfit::lapack PROPERTIES IMPORTED_LOCATION "${LAPACK_LIBRARY}")
+    find_package(BLAS QUIET)
+    if(BLAS_FOUND)
+      add_library(stimfit::lapack INTERFACE IMPORTED)
+      target_link_libraries(stimfit::lapack INTERFACE ${BLAS_LIBRARIES})
+      target_compile_definitions(stimfit::lapack INTERFACE HAVE_LAPACK)
+    else()
+      find_library(LAPACK_LIBRARY NAMES lapack lapack3 lapack-3 REQUIRED)
+      add_library(stimfit::lapack UNKNOWN IMPORTED)
+      set_target_properties(stimfit::lapack PROPERTIES IMPORTED_LOCATION "${LAPACK_LIBRARY}")
+      target_compile_definitions(stimfit::lapack INTERFACE HAVE_LAPACK)
+    endif()
   endif()
 endif()
 
@@ -200,62 +206,85 @@ if(STF_ENABLE_PYTHON)
       ERROR_QUIET
     )
 
-    execute_process(
-      COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}import wx, pathlib; print(pathlib.Path(wx.__file__).resolve().parent.as_posix())"
-      OUTPUT_VARIABLE STF_WXPYTHON_DIR
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-      ERROR_VARIABLE _stf_wxpy_err
-      RESULT_VARIABLE _stf_wxpy_status
-    )
-    file(TO_CMAKE_PATH "${STF_WXPYTHON_DIR}" STF_WXPYTHON_DIR)
-
-    set(_stf_wxpython_include_dir "${STF_WXPYTHON_INCLUDE_DIR}")
-    if(_stf_wxpython_include_dir)
-      if(NOT EXISTS "${_stf_wxpython_include_dir}/wxPython/wxpy_api.h")
-        message(FATAL_ERROR "STF_WXPYTHON_INCLUDE_DIR='${_stf_wxpython_include_dir}' does not contain wxPython/wxpy_api.h")
-      endif()
-    else()
-      set(_stf_wxpython_include_hints "")
-      if(STF_WINDOWS_PYTHON_EXTRA_PATHS)
-        list(APPEND _stf_wxpython_include_hints ${STF_WINDOWS_PYTHON_EXTRA_PATHS})
-      endif()
-      if(STF_WXPYTHON_DIR)
-        list(APPEND _stf_wxpython_include_hints "${STF_WXPYTHON_DIR}")
-      endif()
-      if(STF_PYTHON_PLATLIB)
-        list(APPEND _stf_wxpython_include_hints "${STF_PYTHON_PLATLIB}")
-      endif()
-      if(STF_PYTHON_PURELIB)
-        list(APPEND _stf_wxpython_include_hints "${STF_PYTHON_PURELIB}")
-      endif()
-
-      find_path(_stf_wxpython_include_dir
-        NAMES wxPython/wxpy_api.h
-        HINTS ${_stf_wxpython_include_hints}
-        PATH_SUFFIXES wx/include include
-      )
-    endif()
-
-    if(_stf_wxpython_include_dir)
-      set(STF_WXPYTHON_INCLUDE_DIR "${_stf_wxpython_include_dir}" CACHE PATH "Path containing wxPython/wxpy_api.h (e.g. <Phoenix>/wx/include)" FORCE)
-      target_include_directories(stimfit::python INTERFACE "${STF_WXPYTHON_INCLUDE_DIR}")
-    else()
-      message(FATAL_ERROR "Could not locate wxPython/wxpy_api.h. Set STF_WXPYTHON_INCLUDE_DIR (for Phoenix, typically <Phoenix>/wx/include).")
-    endif()
-
-    if(STF_PY_SHELL_BACKEND STREQUAL "LEGACY")
+    if(NOT STF_BUILD_MODULE)
       execute_process(
-        COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}from wx.py import shell"
-        RESULT_VARIABLE _stf_legacy_shell_status
+        COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}import wx, pathlib; print(pathlib.Path(wx.__file__).resolve().parent.as_posix())"
+        OUTPUT_VARIABLE STF_WXPYTHON_DIR
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_VARIABLE _stf_wxpy_err
+        RESULT_VARIABLE _stf_wxpy_status
+      )
+      file(TO_CMAKE_PATH "${STF_WXPYTHON_DIR}" STF_WXPYTHON_DIR)
+
+      execute_process(
+        COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}import os, sys, wx; sys.stdout.write(os.path.join(os.path.dirname(wx.__spec__.origin), 'include'))"
+        OUTPUT_VARIABLE STF_WXPYTHON_INCLUDE_FROM_WX
+        OUTPUT_STRIP_TRAILING_WHITESPACE
         ERROR_QUIET
       )
-      if(NOT _stf_legacy_shell_status EQUAL 0)
-        message(FATAL_ERROR "STF_PY_SHELL_BACKEND=LEGACY requires 'wx.py.shell', which is not available in this Python environment.")
+      file(TO_CMAKE_PATH "${STF_WXPYTHON_INCLUDE_FROM_WX}" STF_WXPYTHON_INCLUDE_FROM_WX)
+
+      set(_stf_wxpython_include_dir "${STF_WXPYTHON_INCLUDE_DIR}")
+      if(_stf_wxpython_include_dir)
+        if(NOT EXISTS "${_stf_wxpython_include_dir}/wxPython/wxpy_api.h")
+          message(FATAL_ERROR "STF_WXPYTHON_INCLUDE_DIR='${_stf_wxpython_include_dir}' does not contain wxPython/wxpy_api.h")
+        endif()
+      else()
+        set(_stf_wxpython_include_hints "")
+        if(STF_WXPYTHON_INCLUDE_FROM_WX)
+          list(APPEND _stf_wxpython_include_hints "${STF_WXPYTHON_INCLUDE_FROM_WX}")
+        endif()
+        if(STF_WINDOWS_PYTHON_EXTRA_PATHS)
+          list(APPEND _stf_wxpython_include_hints ${STF_WINDOWS_PYTHON_EXTRA_PATHS})
+        endif()
+        if(STF_WXPYTHON_DIR)
+          list(APPEND _stf_wxpython_include_hints "${STF_WXPYTHON_DIR}")
+        endif()
+        if(STF_PYTHON_PLATLIB)
+          list(APPEND _stf_wxpython_include_hints "${STF_PYTHON_PLATLIB}")
+        endif()
+        if(STF_PYTHON_PURELIB)
+          list(APPEND _stf_wxpython_include_hints "${STF_PYTHON_PURELIB}")
+        endif()
+
+        foreach(_stf_wx_hint IN LISTS _stf_wxpython_include_hints)
+          if(EXISTS "${_stf_wx_hint}/wxPython/wxpy_api.h")
+            set(_stf_wxpython_include_dir "${_stf_wx_hint}")
+            break()
+          endif()
+        endforeach()
+        unset(_stf_wx_hint)
+
+        if(NOT _stf_wxpython_include_dir)
+          find_path(_stf_wxpython_include_dir
+            NAMES wxPython/wxpy_api.h
+            HINTS ${_stf_wxpython_include_hints}
+            PATH_SUFFIXES wx/include include
+          )
+        endif()
       endif()
-    else()
-      if(NOT _stf_wxpy_status EQUAL 0)
-        string(STRIP "${_stf_wxpy_err}" _stf_wxpy_err)
-        message(FATAL_ERROR "STF_PY_SHELL_BACKEND=MODERN requires wxPython to be importable from Python3_EXECUTABLE. ${_stf_wxpy_err}")
+
+      if(_stf_wxpython_include_dir)
+        set(STF_WXPYTHON_INCLUDE_DIR "${_stf_wxpython_include_dir}" CACHE PATH "Path containing wxPython/wxpy_api.h (e.g. <Phoenix>/wx/include)" FORCE)
+        target_include_directories(stimfit::python INTERFACE "${STF_WXPYTHON_INCLUDE_DIR}")
+      else()
+        message(FATAL_ERROR "Could not locate wxPython/wxpy_api.h. Set STF_WXPYTHON_INCLUDE_DIR (for Phoenix, typically <Phoenix>/wx/include).")
+      endif()
+
+      if(STF_PY_SHELL_BACKEND STREQUAL "LEGACY")
+        execute_process(
+          COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}from wx.py import shell"
+          RESULT_VARIABLE _stf_legacy_shell_status
+          ERROR_QUIET
+        )
+        if(NOT _stf_legacy_shell_status EQUAL 0)
+          message(FATAL_ERROR "STF_PY_SHELL_BACKEND=LEGACY requires 'wx.py.shell', which is not available in this Python environment.")
+        endif()
+      else()
+        if(NOT _stf_wxpy_status EQUAL 0)
+          string(STRIP "${_stf_wxpy_err}" _stf_wxpy_err)
+          message(FATAL_ERROR "STF_PY_SHELL_BACKEND=MODERN requires wxPython to be importable from Python3_EXECUTABLE. ${_stf_wxpy_err}")
+        endif()
       endif()
     endif()
 
@@ -275,8 +304,8 @@ if(STF_ENABLE_PYTHON)
   unset(_stf_python_bootstrap)
   unset(_stf_wxpython_include_dir)
   unset(_stf_wxpython_include_hints)
+  unset(STF_WXPYTHON_INCLUDE_FROM_WX)
   unset(_stf_python_extra_paths)
   unset(_stf_path_escaped)
   unset(_stf_path)
 endif()
-

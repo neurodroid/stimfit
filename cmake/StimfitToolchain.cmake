@@ -2,12 +2,10 @@ include_guard(GLOBAL)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  add_compile_definitions(_STFDEBUG)
-endif()
+add_compile_definitions($<$<CONFIG:Debug>:_STFDEBUG>)
 
 if(STF_ENABLE_PYTHON)
   add_compile_definitions(WITH_PYTHON)
@@ -51,12 +49,22 @@ if(HAVE_STRPTIME_H)
   add_compile_definitions(HAVE_STRPTIME_H=1)
 endif()
 
+add_compile_definitions(PACKAGE_VERSION=\"${PROJECT_VERSION}\")
+
 add_library(stimfit_config INTERFACE)
 target_include_directories(stimfit_config INTERFACE
   ${CMAKE_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_BINARY_DIR}
 )
+
+if(NOT MSVC)
+  target_compile_options(stimfit_config INTERFACE
+    $<$<COMPILE_LANGUAGE:C>:-fPIC>
+    $<$<COMPILE_LANGUAGE:CXX>:-fPIC>
+  )
+endif()
+
 target_compile_options(stimfit_config INTERFACE
   $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/W4 /Zc:__cplusplus>
   $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-Wall>
@@ -82,4 +90,3 @@ if(STF_BUILD_DEBIAN)
     target_link_options(stimfit_config INTERFACE ${_debian_ldflags})
   endif()
 endif()
-

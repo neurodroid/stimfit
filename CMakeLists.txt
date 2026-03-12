@@ -28,11 +28,11 @@ include(StimfitDependencies)
 include(StimfitToolchain)
 include(StimfitMigration)
 
-if(WIN32)
-  set(STF_COMPONENT_CORE "core")
-  set(STF_COMPONENT_PYTHON "python")
-  set(STF_COMPONENT_TESTS "tests")
+set(STF_COMPONENT_CORE "core")
+set(STF_COMPONENT_PYTHON "python")
+set(STF_COMPONENT_TESTS "tests")
 
+if(WIN32)
   set(STF_RUNTIME_DEPENDENCY_DIRS
     "${CMAKE_BINARY_DIR}/src/stimfit/$<CONFIG>"
     "${CMAKE_BINARY_DIR}/src/libstfio/$<CONFIG>"
@@ -80,7 +80,18 @@ else()
   set(STF_INSTALL_RUNTIME_DEPENDENCY_ARGS)
 endif()
 
-configure_file(cmake/stfconf.h.in stfconf.h @ONLY)
+if(UNIX AND NOT APPLE AND NOT STF_BUILD_MODULE)
+  if(STF_BUILD_DEBIAN)
+    set(STF_LINUX_INSTALL_RPATH "/usr/lib/stimfit")
+  else()
+    set(STF_LINUX_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/stimfit")
+  endif()
+
+  set(CMAKE_INSTALL_RPATH "${STF_LINUX_INSTALL_RPATH}")
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
+endif()
+
+configure_file(stfconf.h.in stfconf.h)
 
 stf_print_configuration_summary()
 
@@ -112,6 +123,30 @@ if(NOT STF_BUILD_MODULE)
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     COMPONENT ${STF_COMPONENT_CORE}
   )
+
+  if(UNIX AND NOT APPLE)
+    if(EXISTS "${CMAKE_SOURCE_DIR}/debian/stimfit.desktop")
+      install(
+        FILES "${CMAKE_SOURCE_DIR}/debian/stimfit.desktop"
+        DESTINATION "${CMAKE_INSTALL_DATADIR}/applications"
+        COMPONENT ${STF_COMPONENT_CORE}
+      )
+    endif()
+
+    foreach(_stf_icon_size 16 32 48 128 256 512)
+      set(_stf_icon_src "${CMAKE_SOURCE_DIR}/src/stimfit/res/stimfit_${_stf_icon_size}.png")
+      if(EXISTS "${_stf_icon_src}")
+        install(
+          FILES "${_stf_icon_src}"
+          DESTINATION "${CMAKE_INSTALL_DATADIR}/icons/hicolor/${_stf_icon_size}x${_stf_icon_size}/apps"
+          RENAME "stimfit.png"
+          COMPONENT ${STF_COMPONENT_CORE}
+        )
+      endif()
+      unset(_stf_icon_src)
+    endforeach()
+    unset(_stf_icon_size)
+  endif()
 
   if(WIN32 AND DEFINED wxWidgets_LIB_DIR AND EXISTS "${wxWidgets_LIB_DIR}")
     install(
@@ -442,4 +477,3 @@ else()
 endif()
 
 include(CPack)
-
