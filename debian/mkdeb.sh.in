@@ -7,6 +7,7 @@ VERSION=@PACKAGE_VERSION@
 BASE_COW="${HOME}/pbuilder/sid-base.cow"
 
 TOPDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "${TOPDIR}/.." && pwd)"
 DEBDIR="${TOPDIR}/../deb"
 RESULTDIR="${DEBDIR}/result"
 
@@ -16,6 +17,17 @@ APT_CACHE_DIR="${HOME}/pbuilder/aptcache"
 # Optional: set this in your environment, e.g.
 #   export DEBSIGN_KEYID=0xYOURKEYID
 MAINT_EMAIL="christsc@gmx.de"
+
+# Prefer upstream version from debian/changelog when available, so the orig
+# tarball name matches the Debian source package version.
+DEB_CHANGELOG_VERSION="$({ dpkg-parsechangelog -l "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/changelog" -SVersion 2>/dev/null || true; } | tr -d '\r\n')"
+if [[ -n "${DEB_CHANGELOG_VERSION}" ]]; then
+  DEB_UPSTREAM_VERSION="${DEB_CHANGELOG_VERSION%%-*}"
+  if [[ -n "${DEB_UPSTREAM_VERSION}" && "${DEB_UPSTREAM_VERSION}" != "${VERSION}" ]]; then
+    echo "==> Using upstream version ${DEB_UPSTREAM_VERSION} from debian/changelog (template version: ${VERSION})."
+    VERSION="${DEB_UPSTREAM_VERSION}"
+  fi
+fi
 
 # ---------------------------------------------------------------------------
 # Flags — pass any combination to force specific stages:
@@ -29,6 +41,7 @@ FORCE_DIST=0
 FORCE_SOURCE=0
 FORCE_BINARY=0
 SOURCE_ONLY=0
+NO_SIGN=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -37,10 +50,25 @@ while [[ $# -gt 0 ]]; do
     --force-binary) FORCE_BINARY=1 ;;
     --force)        FORCE_DIST=1; FORCE_SOURCE=1; FORCE_BINARY=1 ;;
     --source-only)  SOURCE_ONLY=1 ;;
+    --no-sign)      NO_SIGN=1 ;;
     *) echo "Unknown option: $1"; exit 1 ;;
   esac
   shift
 done
+
+have_passwordless_sudo() {
+  sudo -n true >/dev/null 2>&1
+}
+
+run_with_optional_sudo() {
+  if [[ ${EUID} -eq 0 ]]; then
+    "$@"
+  elif have_passwordless_sudo; then
+    sudo "$@"
+  else
+    return 1
+  fi
+}
 
 # Find the primary key fingerprint whose sec record is followed by a uid
 # matching the maintainer email.  The colon format emits records in this order:
@@ -60,7 +88,7 @@ DEBSIGN_KEYID="$(
     '
 )"
 
-TARBALL="stimfit-${VERSION}.tar.gz"
+TARBALL="${PROJECT_ROOT}/stimfit-${VERSION}.tar.gz"
 # Debian packaging now lives in-tree under debian/ (not dist/debian).
 DEBIAN_DIST_DIR="${TOPDIR}"
 
@@ -70,9 +98,32 @@ DEBIAN_DIST_DIR="${TOPDIR}"
 
 if [[ $FORCE_DIST -eq 1 ]] || [[ ! -f "${TARBALL}" ]]; then
   echo "==> Running make dist..."
-  make dist
+  make -C "${PROJECT_ROOT}" dist
+
+  if [[ ! -f "${TARBALL}" ]]; then
+    echo "==> make dist did not produce ${TARBALL}; creating tarball from current working tree."
+    (
+      cd "${PROJECT_ROOT}"
+      tar \
+        --warning=no-file-changed \
+        --exclude-vcs \
+        --exclude='./deb' \
+        --exclude='./build' \
+        --exclude='./build-fresh' \
+        --exclude='./obj-*' \
+        --exclude='./stimfit-*.tar.gz' \
+        -czf "${TARBALL}" \
+        --transform "s,^,stimfit-${VERSION}/," \
+        .
+    )
+  fi
 else
   echo "==> Tarball ${TARBALL} exists; skipping make dist (use --force-dist to regenerate)."
+fi
+
+if [[ ! -f "${TARBALL}" ]]; then
+  echo "ERROR: Missing source tarball: ${TARBALL}" >&2
+  exit 1
 fi
 
 # ---------------------------------------------------------------------------
@@ -81,6 +132,18 @@ fi
 # ---------------------------------------------------------------------------
 
 mkdir -p "${RESULTDIR}"
+
+USE_COWBUILDER=1
+if ! command -v cowbuilder >/dev/null 2>&1; then
+  echo "==> cowbuilder not found; using local dpkg-buildpackage fallback."
+  USE_COWBUILDER=0
+elif [[ ! -d "${BASE_COW}" ]]; then
+  echo "==> cowbuilder base COW ${BASE_COW} missing; using local dpkg-buildpackage fallback."
+  USE_COWBUILDER=0
+elif [[ ${EUID} -ne 0 ]] && ! have_passwordless_sudo; then
+  echo "==> sudo requires a password in this environment; using local dpkg-buildpackage fallback."
+  USE_COWBUILDER=0
+fi
 
 EXISTING_DSC="$(ls -1t "${DEBDIR}"/stimfit_"${VERSION}"-*.dsc 2>/dev/null | head -n1 || true)"
 EXISTING_CHANGES="$(ls -1t "${DEBDIR}"/*_source.changes 2>/dev/null | head -n1 || true)"
@@ -129,19 +192,23 @@ if [[ $SKIP_SOURCE -eq 0 ]]; then
   # apt-get update + apt-get build-dep calls here were entirely unnecessary.
   # -------------------------------------------------------------------------
 
-  sudo cowbuilder execute \
-    --basepath "${BASE_COW}" \
-    --aptcache "${APT_CACHE_DIR}" \
-    --bindmounts "${DEBDIR}" \
-    -- /bin/bash -lc "
-      set -euo pipefail
-      cd '${DEBDIR}/stimfit-${VERSION}'
-      # Source-only build: no compilation, no build-deps needed.
-      dpkg-buildpackage -S -sa -us -uc -d -nc
-    "
+  if [[ ${USE_COWBUILDER} -eq 1 ]]; then
+    run_with_optional_sudo cowbuilder execute \
+      --basepath "${BASE_COW}" \
+      --aptcache "${APT_CACHE_DIR}" \
+      --bindmounts "${DEBDIR}" \
+      -- /bin/bash -lc "
+        set -euo pipefail
+        cd '${DEBDIR}/stimfit-${VERSION}'
+        # Source-only build: no compilation, no build-deps needed.
+        dpkg-buildpackage -S -sa -us -uc -d -nc
+      "
 
-  # cowbuilder execute ran as root; artifacts may be root-owned on host.
-  sudo chown -R "$(id -u):$(id -g)" "${DEBDIR}" "${RESULTDIR}"
+    # cowbuilder execute ran as root; artifacts may be root-owned on host.
+    run_with_optional_sudo chown -R "$(id -u):$(id -g)" "${DEBDIR}" "${RESULTDIR}" || true
+  else
+    dpkg-buildpackage -S -sa -us -uc -d -nc
+  fi
 
   # Find the newly created source .changes / .dsc (should be in ${DEBDIR})
   CHANGES="$(ls -1t "${DEBDIR}"/*_source.changes | head -n1)"
@@ -179,13 +246,20 @@ if [[ $SOURCE_ONLY -eq 0 ]]; then
     echo "==> Building binary packages..."
 
     # Use all available cores.
-    sudo cowbuilder build \
-      --basepath "${BASE_COW}" \
-      --buildresult "${RESULTDIR}" \
-      --debbuildopts "-j$(nproc)" \
-      "${DSC}"
+    if [[ ${USE_COWBUILDER} -eq 1 ]]; then
+      run_with_optional_sudo cowbuilder build \
+        --basepath "${BASE_COW}" \
+        --buildresult "${RESULTDIR}" \
+        --debbuildopts "-j$(nproc)" \
+        "${DSC}"
 
-    sudo chown -R "$(id -u):$(id -g)" "${RESULTDIR}"
+      run_with_optional_sudo chown -R "$(id -u):$(id -g)" "${RESULTDIR}" || true
+    else
+      cd "${DEBDIR}/stimfit-${VERSION}"
+      dpkg-buildpackage -b -us -uc -d -nc -j"$(nproc)"
+      cd "${DEBDIR}"
+      cp -v ./*.deb ./*.buildinfo ./*.changes "${RESULTDIR}/" 2>/dev/null || true
+    fi
   fi
 else
   echo "==> --source-only requested; skipping binary build."
@@ -195,8 +269,15 @@ fi
 # Stage 4: Sign all .changes files in deb/ and result/
 # ---------------------------------------------------------------------------
 
+if [[ ${NO_SIGN} -eq 1 ]]; then
+  echo "==> --no-sign requested; skipping signing stage."
+  echo "Done. Artifacts in: ${RESULTDIR}"
+  exit 0
+fi
+
 if [[ -z "${DEBSIGN_KEYID}" ]]; then
   echo "ERROR: Could not find a GPG secret key for ${MAINT_EMAIL}" >&2
+  echo "       Re-run with --no-sign to skip signing for local test builds." >&2
   exit 1
 fi
 
