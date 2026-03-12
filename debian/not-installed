@@ -1,1 +1,5 @@
 usr/lib/python*/*-packages/stfio/__pycache__/*
+usr/bin/stimfittest
+usr/lib/*/stimfit/libstfio.a
+usr/lib/*/stimfit/libstfnum.a
+usr/lib/*/stimfit/libstimfit.a

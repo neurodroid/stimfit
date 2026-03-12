@@ -48,6 +48,12 @@
 #endif
 
 #include "stfconf.h"
+#if !defined(PACKAGE_VERSION) && defined(VERSION)
+#define PACKAGE_VERSION VERSION
+#endif
+#ifndef PACKAGE_VERSION
+#define PACKAGE_VERSION "unknown"
+#endif
 #include "./app.h"
 #include "./doc.h"
 #include "./view.h"

@@ -1,6 +1,4 @@
 usr/bin/stimfit
-usr/lib/stimfit/*.py
-usr/lib/stimfit/*.so
 usr/share/applications/stimfit.desktop
 usr/share/icons/hicolor/128x128/apps/stimfit.png
 usr/share/icons/hicolor/16x16/apps/stimfit.png

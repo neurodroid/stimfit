@@ -1,2 +1,2 @@
-usr/lib/python*/*-packages/stfio/*.py
-usr/lib/python*/*-packages/stfio/*.so
+usr/lib/*/stimfit/*.py
+usr/lib/*/stimfit/_stf.so
