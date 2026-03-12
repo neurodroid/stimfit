@@ -104,6 +104,17 @@ dist/macosx/scripts/mkimage.sh
 dist/debian/mkdeb.sh
 dist/debian/mkquick.sh
 
+# Local Debian packaging/build artifacts
+/deb/
+*.deb
+*.ddeb
+*.buildinfo
+*.changes
+*.dsc
+*.debian.tar.*
+*.orig.tar.*
+/stimfit-*.tar.gz
+
 
 # build files
 
