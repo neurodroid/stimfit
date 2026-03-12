@@ -1,0 +1,8 @@
+Tests: python3-stfio-import
+Depends: @, python3
+Restrictions: superficial
+
+Tests: stimfit-help
+Depends: @
+Restrictions: superficial
+

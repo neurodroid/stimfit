@@ -1,3 +1,13 @@
+stimfit (0.16.11-3) UNRELEASED; urgency=medium
+
+  * Switch Debian package build from autotools to dh with cmake+ninja.
+  * Add cmake and ninja-build to Build-Depends.
+  * Enable autopkgtest metadata and add basic package smoke tests:
+    - python3-stfio import check
+    - stimfit command availability check
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Thu, 12 Mar 2026 08:30:00 +0000
+
 stimfit (0.16.11-2) unstable; urgency=medium
 
   * Packaging tidy and dh improvements

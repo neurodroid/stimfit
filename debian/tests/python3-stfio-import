@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+
+python3 -c 'import stfio; print(stfio.__name__)'
+

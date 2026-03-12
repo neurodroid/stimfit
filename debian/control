@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Christoph Schmidt-Hieber <christsc@gmx.de>
 Uploaders: Yaroslav Halchenko <debian@onerussian.com>
 Build-Depends: chrpath,
+               cmake,
                debhelper-compat (= 13),
                dh-python,
                help2man,
@@ -12,6 +13,7 @@ Build-Depends: chrpath,
                libhdf5-dev,
                liblapack-dev,
                libwxgtk3.2-dev,
+               ninja-build,
                pkgconf,
                python3-dev,
                python3-numpy,
@@ -23,6 +25,7 @@ Build-Depends: chrpath,
                zlib1g-dev
 Standards-Version: 4.7.3
 Rules-Requires-Root: no
+Testsuite: autopkgtest
 Vcs-Git: https://github.com/neurodroid/stimfit.git -b debian/sid
 Vcs-Browser: https://github.com/neurodroid/stimfit/tree/debian/sid
 Homepage: http://www.stimfit.org

@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+
+command -v stimfit >/dev/null
+stimfit --help >/dev/null || true
+

@@ -1,0 +1,57 @@
+Stimfit Debian maintenance workflow (CMake toolchain)
+=====================================================
+
+Branch model
+------------
+
+- Upstream code branch (current CMake transition): `pr/msvc-toolchain-compat`
+- Debian packaging branch: `debian/sid`
+- Pristine tar branch: `pristine-tar`
+
+Once CMake lands on `master`, switch the upstream branch reference back to
+`master` in `.gbp.conf` and continue the same workflow.
+
+`gbp` defaults are configured in `.gbp.conf`.
+
+
+Typical maintainer flow
+-----------------------
+
+1) Sync packaging branch with upstream:
+
+   - Merge or rebase `pr/msvc-toolchain-compat` into `debian/sid`.
+
+2) Build source + binary packages with git-buildpackage:
+
+   - `gbp buildpackage --git-pristine-tar --git-builder=sbuild`
+
+3) Optional local cowbuilder flow (legacy helper):
+
+   - `debian/mkdeb.sh --force`
+
+4) Run lintian on resulting `.changes`:
+
+   - `lintian ../*.changes`
+
+5) Run autopkgtest against produced binaries:
+
+   - `autopkgtest ../*.changes -- null`
+   - or with a VM backend if available.
+
+
+Build system notes
+------------------
+
+- Debian rules now use `dh` with `cmake+ninja`.
+- Debian-specific build flags are enabled via `-DSTF_BUILD_DEBIAN=ON`.
+- Hardening remains controlled by `DEB_BUILD_MAINT_OPTIONS=hardening=+all`.
+
+
+Release choreography
+--------------------
+
+1) Finalize `debian/changelog` entry.
+2) Build and validate (sbuild + lintian + autopkgtest).
+3) Tag upstream version as `upstream/<version>`.
+4) Tag Debian upload as `debian/<version>`.
+5) Upload signed `.changes`.
