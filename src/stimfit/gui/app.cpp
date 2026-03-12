@@ -140,6 +140,14 @@ bool wxStfApp::OnInit(void)
 #ifndef _STFDEBUG
     wxLog::SetLogLevel(wxLOG_FatalError);
 #endif
+
+#if defined(__WXMAC__) || defined(__WXGTK__)
+    // Embedded Python can load extension modules that also reference wx RTTI
+    // classes in the same process. Avoid surfacing repeated assert dialogs
+    // from wx debug checks in end-user builds.
+    wxDisableAsserts();
+#endif
+
     if (!wxApp::OnInit()) {
         std::cerr << "Could not start application" << std::endl;
         return false;
