@@ -53,7 +53,6 @@ add_compile_definitions(PACKAGE_VERSION=\"${PROJECT_VERSION}\")
 
 add_library(stimfit_config INTERFACE)
 target_include_directories(stimfit_config INTERFACE
-  ${CMAKE_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_BINARY_DIR}
 )
