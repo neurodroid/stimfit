@@ -2479,8 +2479,11 @@ void wxStfDoc::OnRemoveAnnotation( wxCommandEvent& WXUNUSED(event) ) {
         int cursorPos = pGraph->get_eventPos();
         int minDist = INT_MAX;
         std::vector<Annotation> annotationsList = this->at(GetCurChIndex())[GetCurSecIndex()].GetAnnotationList();
+        if (annotationsList.empty()) {
+            return;
+        }
         int distFromCursor;
-        std::size_t indexOfMinDist;
+        std::size_t indexOfMinDist = 0;
 
         for (std::size_t i = 0; i < annotationsList.size(); ++i) {
             distFromCursor = abs((int)(annotationsList.at(i).GetAnnotationPosition()) - cursorPos);

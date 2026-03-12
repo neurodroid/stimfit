@@ -26,7 +26,7 @@ void WINAPI ABF2H_Initialize( ABF2FileHeader *pFH )
    int i;
 
    // Zero fill all to start with.
-   memset(pFH, '\0', sizeof(*pFH));
+   *pFH = ABF2FileHeader{};
    
    // Blank fill all strings.
    ABF_BLANK_FILL(pFH->sADCChannelName);
@@ -73,8 +73,8 @@ void WINAPI ABF2H_Initialize( ABF2FileHeader *pFH )
    {
       char szName[13];      
       snprintf(szName, sizeof(szName), "AI #%-8d", i);
-      strncpy(pFH->sADCChannelName[i], szName, ABF2_ADCNAMELEN);
-      strncpy(pFH->sADCUnits[i], "pA        ", ABF2_ADCUNITLEN);
+      memcpy(pFH->sADCChannelName[i], szName, ABF2_ADCNAMELEN);
+      memcpy(pFH->sADCUnits[i], "pA        ", ABF2_ADCUNITLEN);
       
       pFH->nADCPtoLChannelMap[i]       = short(i);
       pFH->nADCSamplingSeq[i]          = ABF2_UNUSED_CHANNEL;
@@ -95,8 +95,8 @@ void WINAPI ABF2H_Initialize( ABF2FileHeader *pFH )
    {
       char szName[13];
       snprintf(szName, sizeof(szName), "AO #%-8d", i);
-      strncpy(pFH->sDACChannelName[i], szName, ABF2_DACNAMELEN);
-      strncpy(pFH->sDACChannelUnits[i], "mV        ", ABF2_ADCUNITLEN);
+      memcpy(pFH->sDACChannelName[i], szName, ABF2_DACNAMELEN);
+      memcpy(pFH->sDACChannelUnits[i], "mV        ", ABF2_ADCUNITLEN);
       pFH->fDACScaleFactor[i] = 20.0F;
    }
    

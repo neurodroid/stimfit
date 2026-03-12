@@ -1,6 +1,6 @@
 include_guard(GLOBAL)
 
-include(CheckIncludeFile)
+include(CheckSymbolExists)
 
 find_package(Threads REQUIRED)
 
@@ -51,7 +51,7 @@ else()
   endif()
 endif()
 
-check_include_file(strptime.h HAVE_STRPTIME_H)
+check_symbol_exists(strptime "time.h" HAVE_STRPTIME_H)
 
 if(STF_WITH_BIOSIG AND NOT STF_WITH_BIOSIGLITE)
   set(STF_BIOSIG_USE_SUBMODULE OFF)
