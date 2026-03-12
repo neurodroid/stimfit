@@ -52,6 +52,7 @@ if(STF_WITH_BIOSIG OR STF_WITH_BIOSIGLITE)
 endif()
 
 add_library(stfio ${STF_STFIO_SOURCES})
+stf_apply_macos_runtime_policy(stfio)
 
 if(MSVC)
   target_compile_definitions(stfio PRIVATE STFIODLL)
@@ -70,4 +71,3 @@ install(TARGETS stfio
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit COMPONENT ${STF_COMPONENT_CORE}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit COMPONENT ${STF_COMPONENT_CORE}
 )
-

@@ -26,6 +26,7 @@ include(CTest)
 include(StimfitOptions)
 include(StimfitDependencies)
 include(StimfitToolchain)
+include(StimfitMacOS)
 include(StimfitMigration)
 
 set(STF_COMPONENT_CORE "core")
@@ -92,6 +93,14 @@ if(UNIX AND NOT APPLE AND NOT STF_BUILD_MODULE)
 endif()
 
 configure_file(stfconf.h.in stfconf.h)
+if(APPLE AND STF_MACOS_APP_BUNDLE)
+  set(PACKAGE_VERSION "${PROJECT_VERSION}")
+  configure_file(
+    ${CMAKE_SOURCE_DIR}/dist/macosx/stimfit.plist.in
+    ${CMAKE_CURRENT_BINARY_DIR}/stimfit.Info.plist
+    @ONLY
+  )
+endif()
 
 stf_print_configuration_summary()
 
@@ -100,8 +109,21 @@ add_subdirectory(src)
 if(NOT STF_BUILD_MODULE)
   if(WIN32)
     add_executable(stimfit WIN32 src/stimfit/gui/main.cpp)
+  elseif(APPLE AND STF_MACOS_APP_BUNDLE)
+    add_executable(stimfit MACOSX_BUNDLE src/stimfit/gui/main.cpp)
   else()
     add_executable(stimfit src/stimfit/gui/main.cpp)
+  endif()
+
+  if(APPLE AND STF_MACOS_APP_BUNDLE)
+    set_target_properties(stimfit PROPERTIES
+      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/stimfit.Info.plist"
+      MACOSX_BUNDLE_ICON_FILE "stimfit.icns"
+    )
+    target_sources(stimfit PRIVATE ${CMAKE_SOURCE_DIR}/dist/macosx/stimfit.icns)
+    set_source_files_properties(${CMAKE_SOURCE_DIR}/dist/macosx/stimfit.icns PROPERTIES
+      MACOSX_PACKAGE_LOCATION "Resources"
+    )
   endif()
   target_link_libraries(
     stimfit
@@ -114,15 +136,24 @@ if(NOT STF_BUILD_MODULE)
       stimfit::fftw3
       stimfit::lapack
   )
+  stf_apply_macos_runtime_policy(stimfit)
   if(TARGET biosiglite)
     target_link_libraries(stimfit PRIVATE biosiglite)
   endif()
-  install(
-    TARGETS stimfit
-    ${STF_INSTALL_RUNTIME_DEPENDENCY_ARGS}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    COMPONENT ${STF_COMPONENT_CORE}
-  )
+  if(APPLE AND STF_MACOS_APP_BUNDLE)
+    install(
+      TARGETS stimfit
+      BUNDLE DESTINATION .
+      COMPONENT ${STF_COMPONENT_CORE}
+    )
+  else()
+    install(
+      TARGETS stimfit
+      ${STF_INSTALL_RUNTIME_DEPENDENCY_ARGS}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      COMPONENT ${STF_COMPONENT_CORE}
+    )
+  endif()
 
   if(UNIX AND NOT APPLE)
     if(EXISTS "${CMAKE_SOURCE_DIR}/debian/stimfit.desktop")
@@ -419,6 +450,7 @@ if(NOT STF_BUILD_MODULE)
         stimfit::lapack
         Threads::Threads
     )
+    stf_apply_macos_runtime_policy(stimfittest)
     if(TARGET biosiglite)
       target_link_libraries(stimfittest PRIVATE biosiglite)
     endif()

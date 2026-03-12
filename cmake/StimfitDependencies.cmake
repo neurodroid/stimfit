@@ -139,6 +139,28 @@ else()
 endif()
 
 if(NOT STF_BUILD_MODULE)
+  if(APPLE AND (
+      NOT DEFINED wxWidgets_CONFIG_EXECUTABLE
+      OR "${wxWidgets_CONFIG_EXECUTABLE}" STREQUAL ""
+      OR "${wxWidgets_CONFIG_EXECUTABLE}" MATCHES "-NOTFOUND$"
+    ))
+    find_program(_stf_wx_config_candidate
+      NAMES wx-config
+      HINTS
+        "/opt/local/bin"
+        "/opt/local/Library/Frameworks/Python.framework/Versions/3.14/bin"
+        "/opt/local/Library/Frameworks/Python.framework/Versions/3.13/bin"
+        "/opt/local/Library/Frameworks/Python.framework/Versions/3.12/bin"
+        "/opt/local/Library/Frameworks/Python.framework/Versions/3.11/bin"
+        "/opt/local/Library/Frameworks/Python.framework/Versions/3.10/bin"
+      NO_DEFAULT_PATH
+    )
+    if(_stf_wx_config_candidate)
+      set(wxWidgets_CONFIG_EXECUTABLE "${_stf_wx_config_candidate}" CACHE FILEPATH "Path to wx-config executable" FORCE)
+    endif()
+    unset(_stf_wx_config_candidate)
+  endif()
+
   find_package(wxWidgets REQUIRED COMPONENTS base core adv aui net)
   add_library(stimfit::wx INTERFACE IMPORTED)
   target_include_directories(stimfit::wx INTERFACE ${wxWidgets_INCLUDE_DIRS})

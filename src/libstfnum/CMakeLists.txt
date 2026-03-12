@@ -12,6 +12,7 @@ add_library(
   stfnum.cpp
   measure.cpp
 )
+stf_apply_macos_runtime_policy(stfnum)
 
 if(MSVC)
   target_compile_definitions(stfnum PRIVATE STFNUMDLL)
@@ -33,4 +34,3 @@ install(TARGETS stfnum
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit COMPONENT ${STF_COMPONENT_CORE}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit COMPONENT ${STF_COMPONENT_CORE}
 )
-

@@ -48,11 +48,14 @@ add_custom_target(biosiglite_generated
 add_library(
   biosiglite
   ../biosig/biosig4c++/t210/sopen_abf_read.c
+  ../biosig/biosig4c++/t210/sopen_acqbiopac.c
   ../biosig/biosig4c++/t210/sopen_alpha_read.c
   ../biosig/biosig4c++/t210/sopen_axg_read.c
   ../biosig/biosig4c++/t210/sopen_cfs_read.c
+  ../biosig/biosig4c++/t210/sopen_fiff.c
   ../biosig/biosig4c++/t210/sopen_heka_read.c
   ../biosig/biosig4c++/t210/sopen_igor.c
+  ../biosig/biosig4c++/t210/sopen_nicolet.c
   ../biosig/biosig4c++/t210/sopen_rhd2000_read.c
   ../biosig/biosig4c++/t210/sopen_scp_read.c
   ../biosig/biosig4c++/t210/sopen_matio.c
@@ -71,6 +74,7 @@ add_library(
   ../biosig/biosig4c++/mdc_ecg_codes.c
   ../biosig/biosig4c++/physicalunits.c
 )
+stf_apply_macos_runtime_policy(biosiglite)
 
 add_dependencies(biosiglite biosiglite_generated)
 
@@ -85,6 +89,9 @@ target_include_directories(
 
 find_library(STF_ZLIB_LIBRARY NAMES z zlib REQUIRED)
 target_link_libraries(biosiglite PUBLIC stimfit_config ${STF_ZLIB_LIBRARY})
+if(APPLE)
+  target_link_libraries(biosiglite PUBLIC "-liconv")
+endif()
 
 set_target_properties(biosiglite PROPERTIES OUTPUT_NAME biosiglite)
 
@@ -93,4 +100,3 @@ install(TARGETS biosiglite
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit
 )
-

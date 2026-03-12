@@ -20,6 +20,7 @@ add_custom_command(
 )
 
 add_library(_stfio MODULE pystfio.cxx ${STF_PYSTFIO_WRAP})
+stf_apply_macos_runtime_policy(_stfio)
 set_target_properties(_stfio PROPERTIES PREFIX "" OUTPUT_NAME "_stfio")
 if(WIN32)
   set_target_properties(_stfio PROPERTIES SUFFIX ".pyd")
@@ -67,4 +68,3 @@ if(BUILD_TESTING)
     ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}"
   )
 endif()
-

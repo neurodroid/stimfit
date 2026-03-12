@@ -22,6 +22,7 @@ add_library(
   gui/dlgs/smalldlgs.cpp
   gui/usrdlg/usrdlg.cpp
 )
+stf_apply_macos_runtime_policy(stimfit_core)
 
 if(MSVC)
   target_compile_definitions(stimfit_core PRIVATE STFDLL)
@@ -56,4 +57,3 @@ install(TARGETS stimfit_core
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit COMPONENT ${STF_COMPONENT_CORE}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit COMPONENT ${STF_COMPONENT_CORE}
 )
-

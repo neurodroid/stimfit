@@ -20,6 +20,7 @@ add_custom_command(
 )
 
 add_library(pystf MODULE pystf.cxx ${STF_PYSTF_WRAP})
+stf_apply_macos_runtime_policy(pystf)
 set_target_properties(pystf PROPERTIES PREFIX "" OUTPUT_NAME "_stf")
 if(WIN32)
   set_target_properties(pystf PROPERTIES SUFFIX ".pyd")
@@ -76,4 +77,3 @@ install(FILES
   DESTINATION ${_pystf_install_dir}
   COMPONENT ${STF_COMPONENT_PYTHON}
 )
-
