@@ -61,7 +61,8 @@ DEBSIGN_KEYID="$(
 )"
 
 TARBALL="stimfit-${VERSION}.tar.gz"
-DEBIAN_DIST_DIR="${TOPDIR}/../../dist/debian"
+# Debian packaging now lives in-tree under debian/ (not dist/debian).
+DEBIAN_DIST_DIR="${TOPDIR}"
 
 # ---------------------------------------------------------------------------
 # Stage 1: make dist — skip if tarball already exists (use --force-dist to redo)
