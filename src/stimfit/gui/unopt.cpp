@@ -410,7 +410,25 @@ bool wxStfApp::Exit_wxPython()
 
 {
     wxPyEndAllowThreads(m_mainTState);
+
+    if (!Py_IsInitialized()) {
+        return true;
+    }
+
+#if defined(__WXMAC__) && (PY_VERSION_HEX >= 0x030d0000)
+    // Workaround for a reproducible crash on interpreter teardown with
+    // embedded wxPython + NumPy on macOS/Python 3.13+.
+    //
+    // Crash signature:
+    //   _Py_Finalize -> _PyGC_Collect -> _PyObject_ClearFreeLists
+    //   EXC_BAD_ACCESS at process exit
+    //
+    // In the embedded-app case, letting the OS reclaim process resources at
+    // termination is safer than calling into CPython finalization here.
+    return true;
+#else
     Py_Finalize();
+#endif
     return true;
 }
 
