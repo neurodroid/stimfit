@@ -2584,7 +2584,7 @@ void wxStfDoc::OnExpertDetectEvents(wxCommandEvent &WXUNUSED)
             if (positions.size() == 0)  throw std::out_of_range("No scoring was set by the expert!");
 
             wxStfView* pView = (wxStfView*)GetFirstView();
-            wxStfGraph* pGraph = pView->GetGraph();
+            (void)pView;
 
             double rangeStart = cursec().GetFirstAnnotationPosition();
             double rangeEnd = cursec().GetLastAnnotationPosition();
@@ -3846,7 +3846,7 @@ std::pair<std::size_t, double> wxStfDoc::CalcMaxKappa(std::vector<double> &sorte
     std::vector<double> kap(ACC.size());
 
     double maxKappa = -1.0;
-    std::size_t maxKappaIndex;
+    std::size_t maxKappaIndex = 0;
 
     for(std::size_t i = 0 ; i < kap.size(); i ++)
     {
