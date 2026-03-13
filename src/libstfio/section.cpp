@@ -88,13 +88,13 @@ std::vector<Annotation> Section::GetAnnotationList()
 
 std::size_t Section::GetFirstAnnotationPosition()
 {
-    if(firstAnnotationPos == -1) return 0;
+    if(firstAnnotationPos < 0) return 0;
     return firstAnnotationPos;
 }
 
 std::size_t Section::GetLastAnnotationPosition()
 {   
-    if (lastAnnotationPos == -1) return GetSectionSize() - 1;
+    if (lastAnnotationPos < 0) return GetSectionSize() - 1;
     return lastAnnotationPos;
 }
 
