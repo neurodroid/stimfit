@@ -278,7 +278,6 @@ double stfnum::risetime2(const std::vector<double>& data, double base, double am
         return NAN;
     }
 
-#define NDEBUG
 #ifndef NDEBUG
 	fprintf(stdout,"%s %i:RISETIME2\n",__FILE__,__LINE__);
 #endif
