@@ -1981,6 +1981,10 @@ double plot_y2max() {
     return pGraph->get_plot_y2max();
 }
 
+PyObject* mpl_panel() {
+    return mpl_panel(std::vector<double>(_figsize, _figsize + 2));
+}
+
 PyObject* mpl_panel(const std::vector<double>& figsize) {
     if ( !check_doc() ) return NULL;
 

@@ -14,6 +14,7 @@
 
 // Copyright 2012,2013,2017 Alois Schloegl, IST Austria
 
+#include <cstring>
 #include <sstream>
 
 #include "../stfio.h"
@@ -402,8 +403,9 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             else
                 flag &= (POS == pos);
         }
+        const size_t biosigChannelCount = static_cast<size_t>(biosig_get_number_of_channels(hdr));
         for (m=0; flag && (m < Data[(size_t)0].size()); ++m) {
-            for (k=0; k < biosig_get_number_of_channels(hdr); ++k) {
+            for (k=0; k < biosigChannelCount; ++k) {
                 pos = Data[k][m].size() * lround(Data[k][m].GetXScale()/Data.GetXScale());
                 if (k==0)
                     POS = pos;
@@ -467,15 +469,14 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             for (n=0; n < Data[k][m].size(); ++n) {
                 uint64_t val;
                 double d = Data[k][m][n];
+                std::memcpy(&val, &d, sizeof(val));
 #if !defined(__MINGW32__) && !defined(_MSC_VER) && !defined(__APPLE__)
-                val = htole64(*(uint64_t*)&d);
-#else
-                val = *(uint64_t*)&d;
+                val = htole64(val);
 #endif
                 size_t p, spr = (len + n*div) / SPR;
 
                 for (p=0; p < div2; p++)
-                   *(uint64_t*)(rawdata + bi + bpb * spr + p*8) = val;
+                   std::memcpy(rawdata + bi + bpb * spr + p*8, &val, sizeof(val));
             }
             len += div*Data[k][m].size();
         }
@@ -508,4 +509,3 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 #endif
     return true;
 }
-

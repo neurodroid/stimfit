@@ -131,6 +131,9 @@ void WINAPI ABFU_GetABFString(LPSTR psDest, int nMaxDest, LPCSTR psSrce, int nMa
 //   ARRAYASSERT(psDest, nMaxDest);
 //   ARRAYASSERT(psSrce, nMaxSrce);
 
+   if (nMaxDest <= 0)
+      return;
+
    // Skip any leading blank spaces.
    while (nMaxSrce > 0)
    {
@@ -142,7 +145,8 @@ void WINAPI ABFU_GetABFString(LPSTR psDest, int nMaxDest, LPCSTR psSrce, int nMa
 
    // copy to the limit of the destination or the source, whichever comes first.
    int l = min(nMaxDest-1, nMaxSrce);
-   strncpy(psDest, psSrce, l);
+   if (l > 0)
+      memcpy(psDest, psSrce, (size_t)l);
    psDest[l] = '\0';
 
    // Zero out any trailing spaces.
