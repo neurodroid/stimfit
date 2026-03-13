@@ -26,7 +26,7 @@
 // only compile once, even if included more often:
 #ifndef _SECTION_H
 #define _SECTION_H
-#include "../stimfit/Annotation.h"
+#include "./annotation.h"
 /*! \addtogroup stfgen
  *  @{
  */
@@ -75,7 +75,7 @@ public:
     // Public member functions------------------------------------------------
 
     //! Range-checked access. Returns a copy.
-    /*! Throws std::out_of_range if+#include "../stimfit/Annotation.h" out of range.
+    /*! Throws std::out_of_range if+#include "./annotation.h" out of range.
      *  \param at_ Data point index.
      *  \return Copy of the data point at index at_
      */

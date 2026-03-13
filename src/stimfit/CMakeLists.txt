@@ -3,7 +3,6 @@ include_guard(DIRECTORY)
 add_library(
   stimfit_core
   stf.cpp
-  Annotation.cpp
   gui/app.cpp
   gui/unopt.cpp
   gui/doc.cpp

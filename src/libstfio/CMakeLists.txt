@@ -5,7 +5,7 @@ set(STF_STFIO_SOURCES
   section.cpp
   recording.cpp
   stfio.cpp
-  ../stimfit/Annotation.cpp
+  annotation.cpp
   cfs/cfslib.cpp
   cfs/cfs.c
   hdf5/hdf5lib.cpp
