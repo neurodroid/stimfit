@@ -79,8 +79,11 @@ cmake_args=(
   -S .
   -B "$BUILD_DIR"
   -G "$GENERATOR"
+  -USTF_WITH_BIOSIGLITE
+  -USTF_USE_BIOSIG_SUBMODULE
   -DSTF_MACOS_APP_BUNDLE=ON
-  -DSTF_WITH_BIOSIGLITE=ON
+  -DSTF_WITH_BIOSIG=ON
+  -DSTF_BIOSIG_PROVIDER=SUBMODULE
 )
 
 if [[ "$WITH_PYTHON" -eq 1 ]]; then
@@ -96,6 +99,18 @@ if [[ "$WITH_PYTHON" -eq 1 ]]; then
   if [[ ! -x "${PYTHON_EXECUTABLE_GUESS}" ]]; then
     echo "ERROR: Python executable not found or not executable: ${PYTHON_EXECUTABLE_GUESS}" >&2
     exit 1
+  fi
+
+  PYTHON_BIN_DIR="$(dirname "${PYTHON_EXECUTABLE_GUESS}")"
+  WX_CONFIG_CANDIDATE="${PYTHON_BIN_DIR}/wx-config"
+  if [[ ! -x "${WX_CONFIG_CANDIDATE}" ]]; then
+    PYTHON_FRAMEWORK_WX_CONFIG="$(${PYTHON_EXECUTABLE_GUESS} -c 'import pathlib, sys; print((pathlib.Path(sys.base_prefix) / "bin" / "wx-config").as_posix())')"
+    if [[ -x "${PYTHON_FRAMEWORK_WX_CONFIG}" ]]; then
+      WX_CONFIG_CANDIDATE="${PYTHON_FRAMEWORK_WX_CONFIG}"
+    fi
+  fi
+  if [[ -x "${WX_CONFIG_CANDIDATE}" ]]; then
+    cmake_args+=( "-DwxWidgets_CONFIG_EXECUTABLE=${WX_CONFIG_CANDIDATE}" )
   fi
 
   echo "==> Python executable: ${PYTHON_EXECUTABLE_GUESS}"
