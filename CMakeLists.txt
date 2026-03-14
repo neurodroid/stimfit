@@ -92,7 +92,7 @@ if(UNIX AND NOT APPLE AND NOT STF_BUILD_MODULE)
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 endif()
 
-configure_file(stfconf.h.in stfconf.h)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/stfconf.h.in stfconf.h)
 if(APPLE AND STF_MACOS_APP_BUNDLE)
   set(PACKAGE_VERSION "${PROJECT_VERSION}")
   configure_file(

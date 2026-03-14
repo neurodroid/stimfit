@@ -1,8 +1,23 @@
 include_guard(DIRECTORY)
 
-find_program(STF_AWK_EXECUTABLE NAMES gawk awk REQUIRED)
+set(_stf_awk_hints)
+if(WIN32)
+  list(APPEND _stf_awk_hints
+    "C:/Program Files/Git/usr/bin"
+    "C:/Program Files (x86)/Git/usr/bin"
+    "$ENV{LocalAppData}/Programs/Git/usr/bin"
+  )
+endif()
+
+find_program(STF_AWK_EXECUTABLE
+  NAMES gawk awk
+  HINTS ${_stf_awk_hints}
+  REQUIRED
+)
+unset(_stf_awk_hints)
 
 set(STF_BIOSIG4CPP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../biosig/biosig4c++)
+set(STF_BIOSIG_EXTERN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../biosig/biosig4matlab/doc)
 set(_stf_biosig_binary_dir ${CMAKE_CURRENT_BINARY_DIR})
 
 set(_stf_biosig_generated_eventcodes ${_stf_biosig_binary_dir}/eventcodes.i)
@@ -12,28 +27,38 @@ set(_stf_biosig_generated_annexb ${_stf_biosig_binary_dir}/11073-10102-AnnexB.i)
 
 add_custom_command(
   OUTPUT ${_stf_biosig_generated_eventcodes} ${_stf_biosig_generated_eventcodegroups}
-  COMMAND ${STF_AWK_EXECUTABLE} -f ${STF_BIOSIG4CPP_DIR}/eventcodes.awk ${STF_BIOSIG4CPP_DIR}/extern/eventcodes.txt
+  COMMAND ${STF_AWK_EXECUTABLE} -f ${STF_BIOSIG4CPP_DIR}/eventcodes.awk ${STF_BIOSIG_EXTERN_DIR}/eventcodes.txt
   DEPENDS
     ${STF_BIOSIG4CPP_DIR}/eventcodes.awk
-    ${STF_BIOSIG4CPP_DIR}/extern/eventcodes.txt
+    ${STF_BIOSIG_EXTERN_DIR}/eventcodes.txt
   WORKING_DIRECTORY ${_stf_biosig_binary_dir}
 )
 
 add_custom_command(
   OUTPUT ${_stf_biosig_generated_units}
-  COMMAND ${STF_AWK_EXECUTABLE} -f ${STF_BIOSIG4CPP_DIR}/units.awk ${STF_BIOSIG4CPP_DIR}/extern/units.csv > ${_stf_biosig_generated_units}
+  COMMAND
+    ${CMAKE_COMMAND} -E rm -f ${_stf_biosig_generated_units}
+  COMMAND
+    ${CMAKE_COMMAND} -E env
+    cmd /C
+    "\"${STF_AWK_EXECUTABLE}\" -f \"${STF_BIOSIG4CPP_DIR}/units.awk\" \"${STF_BIOSIG_EXTERN_DIR}/units.csv\" > \"${_stf_biosig_generated_units}\""
   DEPENDS
     ${STF_BIOSIG4CPP_DIR}/units.awk
-    ${STF_BIOSIG4CPP_DIR}/extern/units.csv
+    ${STF_BIOSIG_EXTERN_DIR}/units.csv
   WORKING_DIRECTORY ${_stf_biosig_binary_dir}
 )
 
 add_custom_command(
   OUTPUT ${_stf_biosig_generated_annexb}
-  COMMAND ${STF_AWK_EXECUTABLE} -f ${STF_BIOSIG4CPP_DIR}/annotatedECG.awk ${STF_BIOSIG4CPP_DIR}/extern/11073-10102-AnnexB.txt > ${_stf_biosig_generated_annexb}
+  COMMAND
+    ${CMAKE_COMMAND} -E rm -f ${_stf_biosig_generated_annexb}
+  COMMAND
+    ${CMAKE_COMMAND} -E env
+    cmd /C
+    "\"${STF_AWK_EXECUTABLE}\" -f \"${STF_BIOSIG4CPP_DIR}/annotatedECG.awk\" \"${STF_BIOSIG_EXTERN_DIR}/11073-10102-AnnexB.txt\" > \"${_stf_biosig_generated_annexb}\""
   DEPENDS
     ${STF_BIOSIG4CPP_DIR}/annotatedECG.awk
-    ${STF_BIOSIG4CPP_DIR}/extern/11073-10102-AnnexB.txt
+    ${STF_BIOSIG_EXTERN_DIR}/11073-10102-AnnexB.txt
   WORKING_DIRECTORY ${_stf_biosig_binary_dir}
 )
 
@@ -105,8 +130,8 @@ target_include_directories(
 )
 target_link_libraries(stimfit_biosig PUBLIC stimfit_config)
 
-find_library(STF_ZLIB_LIBRARY NAMES z zlib REQUIRED)
-target_link_libraries(stimfit_biosig PUBLIC ${STF_ZLIB_LIBRARY})
+find_package(ZLIB REQUIRED)
+target_link_libraries(stimfit_biosig PUBLIC ZLIB::ZLIB)
 
 if(APPLE)
   target_link_libraries(stimfit_biosig PUBLIC "-liconv")
