@@ -20,20 +20,17 @@ function(stf_apply_macos_runtime_policy target_name)
     return()
   endif()
 
-  set(_stf_install_rpath
-    "@loader_path"
-    "@loader_path/../lib/stimfit"
-  )
+  set(_stf_install_rpath "@loader_path")
 
   if(_stf_target_type STREQUAL "EXECUTABLE")
     get_target_property(_stf_is_macos_bundle ${target_name} MACOSX_BUNDLE)
     if(_stf_is_macos_bundle)
-      list(APPEND _stf_install_rpath "@loader_path/../../../../lib/stimfit")
+      list(APPEND _stf_install_rpath "@loader_path/../lib/stimfit")
+    else()
+      list(APPEND _stf_install_rpath "@loader_path/../lib/stimfit")
     endif()
-  endif()
-
-  if(DEFINED CMAKE_INSTALL_PREFIX AND NOT "${CMAKE_INSTALL_PREFIX}" STREQUAL "")
-    list(APPEND _stf_install_rpath "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/stimfit")
+  else()
+    list(APPEND _stf_install_rpath "@loader_path/../lib/stimfit")
   endif()
 
   if(ARGN)
@@ -45,7 +42,12 @@ function(stf_apply_macos_runtime_policy target_name)
   endif()
   list(REMOVE_DUPLICATES _stf_install_rpath)
 
-  set_property(TARGET ${target_name} PROPERTY BUILD_WITH_INSTALL_RPATH OFF)
+  # On macOS, CMake otherwise emits install-time `install_name_tool -add_rpath`
+  # commands for these targets. Re-running `cmake --install` against an existing
+  # prefix then fails once the installed binary already carries the same LC_RPATH
+  # entries. Building with the final install rpath avoids that extra install-time
+  # mutation and makes installs idempotent.
+  set_property(TARGET ${target_name} PROPERTY BUILD_WITH_INSTALL_RPATH ON)
   set_property(TARGET ${target_name} PROPERTY INSTALL_RPATH "${_stf_install_rpath}")
 
   if(_stf_target_type STREQUAL "SHARED_LIBRARY" OR _stf_target_type STREQUAL "MODULE_LIBRARY")

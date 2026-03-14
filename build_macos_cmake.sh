@@ -124,6 +124,11 @@ cmake "${cmake_args[@]}"
 echo "==> Building"
 cmake --build "$BUILD_DIR"
 
+if [[ -e "$INSTALL_PREFIX" ]]; then
+  echo "==> Removing existing install prefix: $INSTALL_PREFIX"
+  rm -rf "$INSTALL_PREFIX"
+fi
+
 echo "==> Installing"
 cmake --install "$BUILD_DIR" --prefix "$INSTALL_PREFIX"
 
