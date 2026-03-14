@@ -39,10 +39,6 @@ endif()
 
 target_link_libraries(_stfio PRIVATE stimfit_config stfio stfnum stimfit::python)
 
-if(TARGET biosiglite)
-  target_link_libraries(_stfio PRIVATE biosiglite)
-endif()
-
 if(DEFINED STF_PYTHON_PLATLIB AND NOT "${STF_PYTHON_PLATLIB}" STREQUAL "")
   set(_stfio_install_dir ${STF_PYTHON_PLATLIB}/stfio)
 else()

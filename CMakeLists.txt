@@ -137,9 +137,6 @@ if(NOT STF_BUILD_MODULE)
       stimfit::lapack
   )
   stf_apply_macos_runtime_policy(stimfit)
-  if(TARGET biosiglite)
-    target_link_libraries(stimfit PRIVATE biosiglite)
-  endif()
   if(APPLE AND STF_MACOS_APP_BUNDLE)
     install(
       TARGETS stimfit
@@ -451,9 +448,6 @@ if(NOT STF_BUILD_MODULE)
         Threads::Threads
     )
     stf_apply_macos_runtime_policy(stimfittest)
-    if(TARGET biosiglite)
-      target_link_libraries(stimfittest PRIVATE biosiglite)
-    endif()
     add_test(NAME stimfittest COMMAND stimfittest)
     install(
       TARGETS stimfittest

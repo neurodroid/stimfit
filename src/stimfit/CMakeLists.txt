@@ -38,10 +38,6 @@ target_link_libraries(
     stimfit::wx
 )
 
-if(TARGET biosiglite)
-  target_link_libraries(stimfit_core PUBLIC biosiglite)
-endif()
-
 if(STF_ENABLE_PYTHON)
   target_link_libraries(stimfit_core PUBLIC stimfit::python)
   if(DEFINED STF_NUMPY_INCLUDE AND NOT "${STF_NUMPY_INCLUDE}" STREQUAL "")

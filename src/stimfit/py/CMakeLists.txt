@@ -48,10 +48,6 @@ target_link_libraries(
     stimfit::python
 )
 
-if(TARGET biosiglite)
-  target_link_libraries(pystf PRIVATE biosiglite)
-endif()
-
 set(_pystf_install_dir ${CMAKE_INSTALL_LIBDIR}/stimfit)
 install(TARGETS pystf
   LIBRARY DESTINATION ${_pystf_install_dir} COMPONENT ${STF_COMPONENT_PYTHON}

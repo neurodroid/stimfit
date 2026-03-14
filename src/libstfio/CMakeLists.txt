@@ -47,7 +47,7 @@ if(NOT STF_WITH_BIOSIG)
   )
 endif()
 
-if(STF_WITH_BIOSIG OR STF_WITH_BIOSIGLITE)
+if(STF_WITH_BIOSIG)
   list(APPEND STF_STFIO_SOURCES biosig/biosiglib.cpp)
 endif()
 

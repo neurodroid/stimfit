@@ -19,9 +19,9 @@ option(STF_ENABLE_PSLOPE "Enable slope cursor measurements (like --enable-pslope
 option(STF_ENABLE_AUI "Enable experimental AUI doc/view mode (like --enable-aui)" OFF)
 option(STF_BUILD_DEBIAN "Enable Debian-oriented build flags/paths (like --enable-debian)" OFF)
 
-option(STF_WITH_BIOSIG "Use external libbiosig if available" ON)
-option(STF_WITH_BIOSIGLITE "Use bundled biosiglite implementation" OFF)
-option(STF_USE_BIOSIG_SUBMODULE "Use src/biosig submodule as the default BIOSIG provider" ON)
+option(STF_WITH_BIOSIG "Enable BIOSIG support" ON)
+set(STF_BIOSIG_PROVIDER "AUTO" CACHE STRING "BIOSIG provider (AUTO, SYSTEM, or SUBMODULE)")
+set_property(CACHE STF_BIOSIG_PROVIDER PROPERTY STRINGS AUTO SYSTEM SUBMODULE)
 
 set(STF_HDF5_PREFIX "" CACHE PATH "Optional HDF5 installation prefix (like --with-hdf5-prefix)")
 
@@ -34,6 +34,30 @@ if(NOT STF_PY_SHELL_BACKEND STREQUAL "MODERN" AND NOT STF_PY_SHELL_BACKEND STREQ
   message(FATAL_ERROR "STF_PY_SHELL_BACKEND must be either MODERN or LEGACY")
 endif()
 
-if(STF_WITH_BIOSIGLITE)
-  set(STF_WITH_BIOSIG OFF CACHE BOOL "Use external libbiosig if available" FORCE)
+string(TOUPPER "${STF_BIOSIG_PROVIDER}" STF_BIOSIG_PROVIDER)
+if(NOT STF_BIOSIG_PROVIDER STREQUAL "AUTO"
+   AND NOT STF_BIOSIG_PROVIDER STREQUAL "SYSTEM"
+   AND NOT STF_BIOSIG_PROVIDER STREQUAL "SUBMODULE")
+  message(FATAL_ERROR "STF_BIOSIG_PROVIDER must be AUTO, SYSTEM, or SUBMODULE")
+endif()
+
+if(DEFINED STF_WITH_BIOSIGLITE)
+  if(STF_WITH_BIOSIGLITE)
+    message(DEPRECATION "STF_WITH_BIOSIGLITE is deprecated; use STF_WITH_BIOSIG=ON and STF_BIOSIG_PROVIDER=SUBMODULE instead")
+    set(STF_WITH_BIOSIG ON CACHE BOOL "Enable BIOSIG support" FORCE)
+    set(STF_BIOSIG_PROVIDER "SUBMODULE" CACHE STRING "BIOSIG provider (AUTO, SYSTEM, or SUBMODULE)" FORCE)
+  else()
+    message(DEPRECATION "STF_WITH_BIOSIGLITE is deprecated; use STF_WITH_BIOSIG and STF_BIOSIG_PROVIDER instead")
+  endif()
+endif()
+
+if(DEFINED STF_USE_BIOSIG_SUBMODULE)
+  message(DEPRECATION "STF_USE_BIOSIG_SUBMODULE is deprecated; use STF_BIOSIG_PROVIDER instead")
+  if(STF_BIOSIG_PROVIDER STREQUAL "AUTO")
+    if(STF_USE_BIOSIG_SUBMODULE)
+      set(STF_BIOSIG_PROVIDER "SUBMODULE" CACHE STRING "BIOSIG provider (AUTO, SYSTEM, or SUBMODULE)" FORCE)
+    else()
+      set(STF_BIOSIG_PROVIDER "SYSTEM" CACHE STRING "BIOSIG provider (AUTO, SYSTEM, or SUBMODULE)" FORCE)
+    endif()
+  endif()
 endif()

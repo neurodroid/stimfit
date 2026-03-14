@@ -38,9 +38,8 @@
         "vs2022-vcpkg-wx-hdf5"
       ],
       "cacheVariables": {
-        "STF_USE_BIOSIG_SUBMODULE": "OFF",
         "STF_WITH_BIOSIG": "ON",
-        "STF_WITH_BIOSIGLITE": "OFF",
+        "STF_BIOSIG_PROVIDER": "SUBMODULE",
         "BIOSIG_INCLUDE_DIR": "${sourceDir}/build/biosig-msvc-src/biosig4c++",
         "BIOSIG_LIBRARY": "${sourceDir}/build/biosig-msvc-build/Release/biosig2.lib"
       }

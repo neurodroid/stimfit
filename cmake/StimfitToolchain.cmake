@@ -36,12 +36,8 @@ if(STF_BUILD_MODULE)
   add_compile_definitions(MODULE_ONLY)
 endif()
 
-if(STF_WITH_BIOSIG OR STF_WITH_BIOSIGLITE)
+if(STF_WITH_BIOSIG)
   add_compile_definitions(WITH_BIOSIG)
-endif()
-
-if(STF_WITH_BIOSIGLITE)
-  add_compile_definitions(WITH_BIOSIGLITE)
 endif()
 
 add_compile_definitions(H5_USE_16_API)
