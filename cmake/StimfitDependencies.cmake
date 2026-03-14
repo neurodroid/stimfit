@@ -2,6 +2,53 @@ include_guard(GLOBAL)
 
 include(CheckSymbolExists)
 
+function(stf_get_python_bootstrap out_var)
+  set(_stf_python_bootstrap "")
+
+  if(WIN32)
+    set(_stf_python_extra_paths ${STF_WINDOWS_PYTHON_EXTRA_PATHS})
+    list(FILTER _stf_python_extra_paths EXCLUDE REGEX "^$")
+    foreach(_stf_path IN LISTS _stf_python_extra_paths)
+      string(REPLACE "\\" "\\\\" _stf_path_escaped "${_stf_path}")
+      string(APPEND _stf_python_bootstrap "import sys; sys.path.insert(0, r'${_stf_path_escaped}'); ")
+    endforeach()
+  endif()
+
+  set(${out_var} "${_stf_python_bootstrap}" PARENT_SCOPE)
+endfunction()
+
+function(stf_find_macos_wx_config out_var)
+  set(_stf_wx_config_candidate "")
+
+  if(APPLE)
+    find_program(_stf_wx_config_candidate
+      NAMES wx-config
+      HINTS "/opt/local/bin"
+      NO_DEFAULT_PATH
+    )
+
+    if(NOT _stf_wx_config_candidate)
+      file(GLOB _stf_macports_python_bins LIST_DIRECTORIES FALSE "/opt/local/Library/Frameworks/Python.framework/Versions/*/bin")
+      foreach(_stf_python_bin IN LISTS _stf_macports_python_bins)
+        find_program(_stf_wx_config_from_python
+          NAMES wx-config
+          HINTS "${_stf_python_bin}"
+          NO_DEFAULT_PATH
+        )
+        if(_stf_wx_config_from_python)
+          set(_stf_wx_config_candidate "${_stf_wx_config_from_python}")
+          break()
+        endif()
+      endforeach()
+      unset(_stf_wx_config_from_python)
+      unset(_stf_python_bin)
+      unset(_stf_macports_python_bins)
+    endif()
+  endif()
+
+  set(${out_var} "${_stf_wx_config_candidate}" PARENT_SCOPE)
+endfunction()
+
 find_package(Threads REQUIRED)
 
 find_package(PkgConfig QUIET)
@@ -144,17 +191,7 @@ if(NOT STF_BUILD_MODULE)
       OR "${wxWidgets_CONFIG_EXECUTABLE}" STREQUAL ""
       OR "${wxWidgets_CONFIG_EXECUTABLE}" MATCHES "-NOTFOUND$"
     ))
-    find_program(_stf_wx_config_candidate
-      NAMES wx-config
-      HINTS
-        "/opt/local/bin"
-        "/opt/local/Library/Frameworks/Python.framework/Versions/3.14/bin"
-        "/opt/local/Library/Frameworks/Python.framework/Versions/3.13/bin"
-        "/opt/local/Library/Frameworks/Python.framework/Versions/3.12/bin"
-        "/opt/local/Library/Frameworks/Python.framework/Versions/3.11/bin"
-        "/opt/local/Library/Frameworks/Python.framework/Versions/3.10/bin"
-      NO_DEFAULT_PATH
-    )
+    stf_find_macos_wx_config(_stf_wx_config_candidate)
     if(_stf_wx_config_candidate)
       set(wxWidgets_CONFIG_EXECUTABLE "${_stf_wx_config_candidate}" CACHE FILEPATH "Path to wx-config executable" FORCE)
     endif()
@@ -176,17 +213,7 @@ if(STF_ENABLE_PYTHON)
   target_include_directories(stimfit::python INTERFACE ${Python3_INCLUDE_DIRS})
   target_link_libraries(stimfit::python INTERFACE ${Python3_LIBRARIES})
 
-  set(_stf_python_bootstrap "")
-  if(WIN32)
-    set(_stf_python_extra_paths "${STF_WINDOWS_PYTHON_EXTRA_PATHS}")
-    list(FILTER _stf_python_extra_paths EXCLUDE REGEX "^$")
-    if(_stf_python_extra_paths)
-      foreach(_stf_path IN LISTS _stf_python_extra_paths)
-        string(REPLACE "\\" "\\\\" _stf_path_escaped "${_stf_path}")
-        set(_stf_python_bootstrap "${_stf_python_bootstrap}import sys; sys.path.insert(0, r'${_stf_path_escaped}'); ")
-      endforeach()
-    endif()
-  endif()
+  stf_get_python_bootstrap(_stf_python_bootstrap)
 
   if(Python3_Interpreter_FOUND)
     execute_process(
@@ -238,61 +265,6 @@ if(STF_ENABLE_PYTHON)
       )
       file(TO_CMAKE_PATH "${STF_WXPYTHON_DIR}" STF_WXPYTHON_DIR)
 
-      execute_process(
-        COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}import os, sys, wx; sys.stdout.write(os.path.join(os.path.dirname(wx.__spec__.origin), 'include'))"
-        OUTPUT_VARIABLE STF_WXPYTHON_INCLUDE_FROM_WX
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        ERROR_QUIET
-      )
-      file(TO_CMAKE_PATH "${STF_WXPYTHON_INCLUDE_FROM_WX}" STF_WXPYTHON_INCLUDE_FROM_WX)
-
-      set(_stf_wxpython_include_dir "${STF_WXPYTHON_INCLUDE_DIR}")
-      if(_stf_wxpython_include_dir)
-        if(NOT EXISTS "${_stf_wxpython_include_dir}/wxPython/wxpy_api.h")
-          message(FATAL_ERROR "STF_WXPYTHON_INCLUDE_DIR='${_stf_wxpython_include_dir}' does not contain wxPython/wxpy_api.h")
-        endif()
-      else()
-        set(_stf_wxpython_include_hints "")
-        if(STF_WXPYTHON_INCLUDE_FROM_WX)
-          list(APPEND _stf_wxpython_include_hints "${STF_WXPYTHON_INCLUDE_FROM_WX}")
-        endif()
-        if(STF_WINDOWS_PYTHON_EXTRA_PATHS)
-          list(APPEND _stf_wxpython_include_hints ${STF_WINDOWS_PYTHON_EXTRA_PATHS})
-        endif()
-        if(STF_WXPYTHON_DIR)
-          list(APPEND _stf_wxpython_include_hints "${STF_WXPYTHON_DIR}")
-        endif()
-        if(STF_PYTHON_PLATLIB)
-          list(APPEND _stf_wxpython_include_hints "${STF_PYTHON_PLATLIB}")
-        endif()
-        if(STF_PYTHON_PURELIB)
-          list(APPEND _stf_wxpython_include_hints "${STF_PYTHON_PURELIB}")
-        endif()
-
-        foreach(_stf_wx_hint IN LISTS _stf_wxpython_include_hints)
-          if(EXISTS "${_stf_wx_hint}/wxPython/wxpy_api.h")
-            set(_stf_wxpython_include_dir "${_stf_wx_hint}")
-            break()
-          endif()
-        endforeach()
-        unset(_stf_wx_hint)
-
-        if(NOT _stf_wxpython_include_dir)
-          find_path(_stf_wxpython_include_dir
-            NAMES wxPython/wxpy_api.h
-            HINTS ${_stf_wxpython_include_hints}
-            PATH_SUFFIXES wx/include include
-          )
-        endif()
-      endif()
-
-      if(_stf_wxpython_include_dir)
-        set(STF_WXPYTHON_INCLUDE_DIR "${_stf_wxpython_include_dir}" CACHE PATH "Path containing wxPython/wxpy_api.h (e.g. <Phoenix>/wx/include)" FORCE)
-        target_include_directories(stimfit::python INTERFACE "${STF_WXPYTHON_INCLUDE_DIR}")
-      else()
-        message(FATAL_ERROR "Could not locate wxPython/wxpy_api.h. Set STF_WXPYTHON_INCLUDE_DIR (for Phoenix, typically <Phoenix>/wx/include).")
-      endif()
-
       if(STF_PY_SHELL_BACKEND STREQUAL "LEGACY")
         execute_process(
           COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}from wx.py import shell"
@@ -324,10 +296,4 @@ if(STF_ENABLE_PYTHON)
 
   find_package(SWIG QUIET)
   unset(_stf_python_bootstrap)
-  unset(_stf_wxpython_include_dir)
-  unset(_stf_wxpython_include_hints)
-  unset(STF_WXPYTHON_INCLUDE_FROM_WX)
-  unset(_stf_python_extra_paths)
-  unset(_stf_path_escaped)
-  unset(_stf_path)
 endif()

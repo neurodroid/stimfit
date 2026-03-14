@@ -11,7 +11,6 @@ set -euo pipefail
 #
 # Optional environment overrides:
 #   PYTHON_EXECUTABLE=/opt/local/bin/python3.14
-#   WXPYTHON_INCLUDE_DIR=/opt/local/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/site-packages/wx/include
 
 BUILD_DIR="build/macos-app"
 INSTALL_PREFIX="build/macos-app/install"
@@ -99,18 +98,7 @@ if [[ "$WITH_PYTHON" -eq 1 ]]; then
     exit 1
   fi
 
-  if [[ -n "${WXPYTHON_INCLUDE_DIR:-}" ]]; then
-    WXPYTHON_INCLUDE_GUESS="${WXPYTHON_INCLUDE_DIR}"
-  else
-    # Match legacy toolchain behavior from m4/acsite.m4:
-    # derive include dir from wx module location: dirname(wx.__spec__.origin)/include
-    WXPYTHON_INCLUDE_GUESS="$(${PYTHON_EXECUTABLE_GUESS} -c "import os, wx; print(os.path.join(os.path.dirname(wx.__spec__.origin), 'include'))")"
-  fi
-
-  cmake_args+=( "-DSTF_WXPYTHON_INCLUDE_DIR=${WXPYTHON_INCLUDE_GUESS}" )
-
   echo "==> Python executable: ${PYTHON_EXECUTABLE_GUESS}"
-  echo "==> wxPython include dir: ${WXPYTHON_INCLUDE_GUESS}"
 else
   cmake_args+=( -DSTF_ENABLE_PYTHON=OFF )
 fi
