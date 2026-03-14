@@ -39,7 +39,9 @@ endif()
 
 target_link_libraries(_stfio PRIVATE stimfit_config stfio stfnum stimfit::python)
 
-if(DEFINED STF_PYTHON_PLATLIB AND NOT "${STF_PYTHON_PLATLIB}" STREQUAL "")
+if(APPLE AND STF_MACOS_APP_BUNDLE)
+  set(_stfio_install_dir stimfit.app/Contents/lib/stimfit/stfio)
+elseif(DEFINED STF_PYTHON_PLATLIB AND NOT "${STF_PYTHON_PLATLIB}" STREQUAL "")
   set(_stfio_install_dir ${STF_PYTHON_PLATLIB}/stfio)
 else()
   set(_stfio_install_dir ${CMAKE_INSTALL_LIBDIR}/python-stfio/stfio)

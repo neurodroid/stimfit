@@ -29,8 +29,14 @@ target_link_libraries(
 
 set_target_properties(stfnum PROPERTIES OUTPUT_NAME stfnum)
 
+if(APPLE AND STF_MACOS_APP_BUNDLE)
+  set(_stf_stfnum_install_libdir "stimfit.app/Contents/lib/stimfit")
+else()
+  set(_stf_stfnum_install_libdir "${CMAKE_INSTALL_LIBDIR}/stimfit")
+endif()
+
 install(TARGETS stfnum
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit COMPONENT ${STF_COMPONENT_CORE}
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit COMPONENT ${STF_COMPONENT_CORE}
+  LIBRARY DESTINATION ${_stf_stfnum_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
+  ARCHIVE DESTINATION ${_stf_stfnum_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
 )

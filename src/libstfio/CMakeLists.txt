@@ -66,8 +66,14 @@ endif()
 
 set_target_properties(stfio PROPERTIES OUTPUT_NAME stfio)
 
+if(APPLE AND STF_MACOS_APP_BUNDLE)
+  set(_stf_stfio_install_libdir "stimfit.app/Contents/lib/stimfit")
+else()
+  set(_stf_stfio_install_libdir "${CMAKE_INSTALL_LIBDIR}/stimfit")
+endif()
+
 install(TARGETS stfio
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit COMPONENT ${STF_COMPONENT_CORE}
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit COMPONENT ${STF_COMPONENT_CORE}
+  LIBRARY DESTINATION ${_stf_stfio_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
+  ARCHIVE DESTINATION ${_stf_stfio_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
 )

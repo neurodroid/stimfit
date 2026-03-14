@@ -343,7 +343,6 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
                  << wxT("sys.path.append('") << stfNestedBuildPyDirEscaped << wxT("')\n")
                  << wxT("sys.path.append('") << stfInstallPyDirEscaped << wxT("')\n")
                  << wxT("sys.path.append('") << stfBundleInstallPyDirEscaped << wxT("')\n")
-                 << wxT("sys.path.append('/usr/local/lib/stimfit')\n")
 #ifdef IPYTHON
                  << wxT("import embedded_ipython\n")
 #else

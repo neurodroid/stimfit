@@ -48,7 +48,11 @@ target_link_libraries(
     stimfit::python
 )
 
-set(_pystf_install_dir ${CMAKE_INSTALL_LIBDIR}/stimfit)
+if(APPLE AND STF_MACOS_APP_BUNDLE)
+  set(_pystf_install_dir stimfit.app/Contents/lib/stimfit)
+else()
+  set(_pystf_install_dir ${CMAKE_INSTALL_LIBDIR}/stimfit)
+endif()
 install(TARGETS pystf
   LIBRARY DESTINATION ${_pystf_install_dir} COMPONENT ${STF_COMPONENT_PYTHON}
   RUNTIME DESTINATION ${_pystf_install_dir} COMPONENT ${STF_COMPONENT_PYTHON}

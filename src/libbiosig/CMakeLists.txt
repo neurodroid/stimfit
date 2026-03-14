@@ -114,8 +114,14 @@ endif()
 
 set_target_properties(stimfit_biosig PROPERTIES OUTPUT_NAME biosig2)
 
+if(APPLE AND STF_MACOS_APP_BUNDLE)
+  set(_stf_biosig_install_libdir "stimfit.app/Contents/lib/stimfit")
+else()
+  set(_stf_biosig_install_libdir "${CMAKE_INSTALL_LIBDIR}/stimfit")
+endif()
+
 install(TARGETS stimfit_biosig
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit
+  LIBRARY DESTINATION ${_stf_biosig_install_libdir}
+  ARCHIVE DESTINATION ${_stf_biosig_install_libdir}
 )
