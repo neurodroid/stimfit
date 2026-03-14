@@ -9,6 +9,7 @@ public:
     ~Annotation();
 
     std::size_t GetAnnotationPosition();
+    std::size_t GetAnnotationDuration();
 private:
     std::size_t position;
     std::size_t duration;

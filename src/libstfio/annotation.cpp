@@ -13,3 +13,8 @@ std::size_t Annotation::GetAnnotationPosition()
 {
     return this->position;
 }
+
+std::size_t Annotation::GetAnnotationDuration()
+{
+    return this->duration;
+}
