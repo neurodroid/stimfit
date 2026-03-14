@@ -56,6 +56,9 @@ stf_apply_macos_runtime_policy(stfio)
 
 if(MSVC)
   target_compile_definitions(stfio PRIVATE STFIODLL)
+  if(BUILD_SHARED_LIBS)
+    set_target_properties(stfio PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+  endif()
 endif()
 
 target_link_libraries(stfio PUBLIC stimfit_config stimfit::hdf5)

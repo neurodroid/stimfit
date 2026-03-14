@@ -550,7 +550,7 @@ void wxStfGraph::PlotAnnotations(wxDC& dc) {
         wxPoint endPoint(x, y);
         dc.DrawLine(startPoint, endPoint);
 
-        AnnotationLine line = {.start = startPoint, .end = endPoint};
+        AnnotationLine line{startPoint, endPoint};
         annotationLines.push_back(line);
     }
 }
