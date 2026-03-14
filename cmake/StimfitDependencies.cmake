@@ -58,7 +58,47 @@ function(stf_import_biosig_target)
   set(_stf_biosig_library "${BIOSIG_LIBRARY}")
 
   if(NOT _stf_biosig_library)
-    find_library(_stf_biosig_library NAMES biosig biosig2)
+    find_library(_stf_biosig_library
+      NAMES biosig biosig2
+      HINTS
+        /lib
+        /lib64
+        /usr/lib
+        /usr/lib64
+        /lib/${CMAKE_LIBRARY_ARCHITECTURE}
+        /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}
+    )
+  endif()
+
+  if(NOT _stf_biosig_library)
+    set(_stf_biosig_library_candidates
+      "/lib/${CMAKE_LIBRARY_ARCHITECTURE}/libbiosig.so"
+      "/lib/${CMAKE_LIBRARY_ARCHITECTURE}/libbiosig.so.3"
+      "/lib/${CMAKE_LIBRARY_ARCHITECTURE}/libbiosig.a"
+      "/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/libbiosig.so"
+      "/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/libbiosig.so.3"
+      "/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/libbiosig.a"
+      "/lib/x86_64-linux-gnu/libbiosig.so"
+      "/lib/x86_64-linux-gnu/libbiosig.so.3"
+      "/lib/x86_64-linux-gnu/libbiosig.a"
+      "/usr/lib/x86_64-linux-gnu/libbiosig.so"
+      "/usr/lib/x86_64-linux-gnu/libbiosig.so.3"
+      "/usr/lib/x86_64-linux-gnu/libbiosig.a"
+      "/lib/aarch64-linux-gnu/libbiosig.so"
+      "/lib/aarch64-linux-gnu/libbiosig.so.3"
+      "/lib/aarch64-linux-gnu/libbiosig.a"
+      "/usr/lib/aarch64-linux-gnu/libbiosig.so"
+      "/usr/lib/aarch64-linux-gnu/libbiosig.so.3"
+      "/usr/lib/aarch64-linux-gnu/libbiosig.a"
+    )
+    foreach(_stf_biosig_candidate IN LISTS _stf_biosig_library_candidates)
+      if(EXISTS "${_stf_biosig_candidate}")
+        set(_stf_biosig_library "${_stf_biosig_candidate}")
+        break()
+      endif()
+    endforeach()
+    unset(_stf_biosig_candidate)
+    unset(_stf_biosig_library_candidates)
   endif()
 
   if(_stf_biosig_library AND NOT _stf_biosig_include_dir)
@@ -80,7 +120,22 @@ function(stf_import_biosig_target)
   endif()
 
   if(NOT _stf_biosig_include_dir)
-    find_path(_stf_biosig_include_dir NAMES biosig.h)
+    find_path(_stf_biosig_include_dir
+      NAMES biosig.h
+      HINTS
+        /usr/include
+        /usr/local/include
+    )
+  endif()
+
+  if(NOT _stf_biosig_include_dir)
+    foreach(_stf_biosig_inc_candidate IN ITEMS /usr/include /usr/local/include)
+      if(EXISTS "${_stf_biosig_inc_candidate}/biosig.h")
+        set(_stf_biosig_include_dir "${_stf_biosig_inc_candidate}")
+        break()
+      endif()
+    endforeach()
+    unset(_stf_biosig_inc_candidate)
   endif()
 
   if(_stf_biosig_library)
@@ -179,8 +234,12 @@ if(STF_WITH_BIOSIG)
   endforeach()
 
   if(STF_BIOSIG_SELECTED_PROVIDER STREQUAL "DISABLED")
-    message(WARNING "STF_WITH_BIOSIG is ON but the requested BIOSIG provider was unavailable; turning BIOSIG support OFF")
-    set(STF_WITH_BIOSIG OFF CACHE BOOL "Enable BIOSIG support" FORCE)
+    if(STF_BIOSIG_PROVIDER STREQUAL "AUTO")
+      message(WARNING "STF_WITH_BIOSIG is ON but the requested BIOSIG provider was unavailable; turning BIOSIG support OFF")
+      set(STF_WITH_BIOSIG OFF CACHE BOOL "Enable BIOSIG support" FORCE)
+    else()
+      message(FATAL_ERROR "STF_WITH_BIOSIG is ON but STF_BIOSIG_PROVIDER='${STF_BIOSIG_PROVIDER}' could not be resolved. Install system BIOSIG development files or choose STF_BIOSIG_PROVIDER=SUBMODULE.")
+    endif()
   endif()
 
   unset(_stf_biosig_provider)
