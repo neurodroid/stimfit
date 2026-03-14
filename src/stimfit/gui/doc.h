@@ -47,7 +47,7 @@ private:
         return (check >= cursec().size());
     }
     void Focus();
-    void OnNewfromselectedThisMenu( wxCommandEvent& event ) { OnNewfromselectedThis( ); }
+    void OnNewfromselectedThisMenu( wxCommandEvent& ) { OnNewfromselectedThis( ); }
     void Selectsome(wxCommandEvent& event);
     void Unselectsome(wxCommandEvent& event);
     void SelectTracesOfType(wxCommandEvent& event);
@@ -58,7 +58,7 @@ private:
     void OnAnalysisDifferentiate( wxCommandEvent& event );
     //void OnSwapChannels( wxCommandEvent& event );
     void Multiply(wxCommandEvent& event);
-    void SubtractBaseMenu( wxCommandEvent& event ) { SubtractBase( ); }
+    void SubtractBaseMenu( wxCommandEvent& ) { SubtractBase( ); }
     void LFit(wxCommandEvent& event);
     void LnTransform(wxCommandEvent& event);
     void Filter(wxCommandEvent& event);
@@ -1055,7 +1055,7 @@ public:
      */
     void SetIsFitted( std::size_t nchannel, std::size_t nsection,
                       const Vector_double& bestFitP_, stfnum::storedFunc* fitFunc_,
-                      double chisqr, std::size_t fitBeg, std::size_t fitEnd );
+                      double chisqr, std::size_t fitBeg_, std::size_t fitEnd_ );
 
 
     //! Determines whether an integral has been calculated in this section.
@@ -1077,7 +1077,7 @@ public:
     double CalcAreaUnderCurve(std::vector<double> d, std::vector<int> c);
     std::pair<std::size_t, double> CalcMaxKappa(std::vector<double> &sortedRawDetectionTrace, std::vector<int> &sortedScoringTrace);
     std::vector<double> SortScoringTraceByRawDetection(std::vector<double> &rawDetectionTrace, std::vector<int> &scoringTrace);
-    std::vector<stf::Event> DetectEvents(double threshold, std::vector<double> &rawDetectionTrace);
+    std::vector<stf::Event> DetectEvents(double threshold_, std::vector<double> &rawDetectionTrace);
     void OnCalculatedThresholdExpertDetectEvents(double threshold, std::size_t filterOrder);
 
     DECLARE_EVENT_TABLE()

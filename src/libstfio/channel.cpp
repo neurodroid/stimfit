@@ -67,4 +67,4 @@ Section& Channel::at(std::size_t at_) {
 
 void Channel::resize(std::size_t newSize) { SectionArray.resize(newSize); }
 
-void Channel::reserve(std::size_t resSize) { /* SectionArray.reserve(resSize); */ }
+void Channel::reserve(std::size_t) { /* SectionArray.reserve(resSize); */ }

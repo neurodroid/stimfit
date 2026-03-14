@@ -269,7 +269,7 @@ void wxStfGraph::OnDraw( wxDC& DC )
             DrawIntegral(&DC);
         }
     }
-    catch (const std::out_of_range& e) {
+    catch (const std::out_of_range&) {
         /* Do nothing for now */
     }
 
@@ -526,7 +526,7 @@ void wxStfGraph::PlotGimmicks(wxDC& DC) {
             }
         }
     }
-    catch (const std::out_of_range& e) {
+    catch (const std::out_of_range&) {
         /* Do nothing for now */
     }
 
@@ -563,7 +563,7 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
     try {
         sec_attr = Doc()->GetCurrentSectionAttributes();
     }
-    catch (const std::out_of_range& e) {
+    catch (const std::out_of_range&) {
         return;
     }
     DC.SetPen(eventPen);
@@ -618,7 +618,7 @@ void wxStfGraph::ClearEvents() {
     try {
         sec_attr = Doc()->GetCurrentSectionAttributes();
     }
-    catch (const std::out_of_range& e) {
+    catch (const std::out_of_range&) {
         return;
     }
     for (event_it it2 = sec_attr.eventList.begin(); it2 != sec_attr.eventList.end(); ++it2) {
@@ -724,7 +724,7 @@ void wxStfGraph::PlotTrace( wxDC* pDC, const Vector_double& trace, plottype pt, 
     DoPlot(pDC, trace, start, end, 1, pt, bgno);
 }
 
-void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int end, int step, plottype pt, int bgno) {
+void wxStfGraph::DoPlot( wxDC* pDC, const Vector_double& trace, int start, int end, int, plottype pt, int bgno) {
 #if (__cplusplus < 201103)
     boost::function<int(double)> yFormatFunc;
 #else
@@ -985,7 +985,7 @@ void wxStfGraph::DrawFit(wxDC* pDC) {
                 if ( sec_attr.isFitted && pFrame->ShowSelected() ) {
                     PlotFit( pDC, stf::SectionPointer( &((*Doc())[Doc()->GetCurChIndex()][sel_index]), sec_attr ) );
                 }
-            } catch (const std::out_of_range& e) {
+            } catch (const std::out_of_range&) {
                 /* Do nothing */
             }
         }
@@ -1001,7 +1001,7 @@ void wxStfGraph::DrawFit(wxDC* pDC) {
                                                sec_attr) );
         }
     }
-    catch (const std::out_of_range& e) {
+    catch (const std::out_of_range&) {
         
     }
 }
@@ -1060,7 +1060,7 @@ void wxStfGraph::DrawIntegral(wxDC* pDC) {
     try {
         sec_attr = Doc()->GetCurrentSectionAttributes();
     }
-    catch (const std::out_of_range& e) {
+    catch (const std::out_of_range&) {
         return;
     }
     
@@ -1313,7 +1313,7 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
             } else {
                 wxGetApp().ErrorMsg(wxT("No events have been detected yet"));
             }
-        } catch (const std::out_of_range& e) {
+        } catch (const std::out_of_range&) {
 
         }
         break;
@@ -1321,7 +1321,7 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
         try{
             eventPos = stf::round( ((double)point.x - (double)SPX())/XZ() );
             PopupMenu(m_annotationContext.get());
-        }catch(const std::out_of_range& e){
+        }catch(const std::out_of_range&){
 
         }
         break;
@@ -1873,14 +1873,14 @@ void wxStfGraph::CreateScale(wxDC* pDC)
             // Get y-value of bottomDist:
             double y2Bottom=(SPY2()-(WindowRect.height-bottomDist))/YZ2();
             // Find next-higher integer multiple of barLengthY:
-            int nextTickMult=(int)(y2Bottom/yScaled2);
+            int nextTickMult2=(int)(y2Bottom/yScaled2);
             // nextTickMult is truncated; hence, negative and positive values
             // have to be treated separately:
             if (y2Bottom>0) {
-                nextTickMult++;
+                nextTickMult2++;
             }
             // pixel position of this tick:
-            double y2First=nextTickMult*yScaled2;
+            double y2First=nextTickMult2*yScaled2;
             int y2FirstTick=yFormat2(y2First);
             // How many times does the y-scale bar fit into the window?
             int y2ScaleInWindow = 1;
@@ -1938,14 +1938,14 @@ void wxStfGraph::CreateScale(wxDC* pDC)
             // Get x-value of leftDist:
             double xLeft=(leftDist-SPX())/XZ()*Doc()->GetXScale();
             // Find next-higher integer multiple of barLengthX:
-            int nextTickMult=(int)(xLeft/timeScaled);
+            int nextTickMultX=(int)(xLeft/timeScaled);
             // nextTickMult is truncated; hence, negative and positive values
             // have to be treated separately:
             if (xLeft>0) {
-                nextTickMult++;
+                nextTickMultX++;
             }
             // pixel position of this tick:
-            xFirst=nextTickMult*timeScaled;
+            xFirst=nextTickMultX*timeScaled;
             double xFirstSamplingPoint=xFirst/Doc()->GetXScale(); // units of sampling points
             xFirstTick=xFormat(xFirstSamplingPoint);
         }
@@ -1958,7 +1958,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                     xFirstTick+n_tick_x*barLength,
                     WindowRect.height-bottomDist);
             // Create a rectangle:
-            wxRect TextFrame(
+            wxRect xLabelFrame(
                     wxPoint(
                             xFirstTick+n_tick_x*barLength-(int)(40*printScale),
                             WindowRect.height-bottomDist+tickLength
@@ -1972,7 +1972,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
             int x=(int)(timeScaled*n_tick_x+xFirst);
             wxString xLabel;
             xLabel << x;
-            pDC->DrawLabel(xLabel,TextFrame,wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL);
+            pDC->DrawLabel(xLabel,xLabelFrame,wxALIGN_CENTER | wxALIGN_CENTER_VERTICAL);
         }
         // Draw x-units:
         // Length of x-axis:
@@ -2269,14 +2269,14 @@ void wxStfGraph::ChanScroll(int direction) {
     */
     
     // Pointer to wxStfChildFrame to access Channel selection combo
-    wxStfChildFrame* pFrame = (wxStfChildFrame*)Doc()->GetDocumentWindow();
-    if (!pFrame) {
+    wxStfChildFrame* childFrame = (wxStfChildFrame*)Doc()->GetDocumentWindow();
+    if (!childFrame) {
         return;
     }
     // set the channel selection combo 
     //pFrame->SetChannels( actDoc()->GetCurChIndex(), actDoc()->GetSecChIndex()); 
-    pFrame->SetChannels(new_chan, ref_chan); 
-    pFrame->UpdateChannels(); // update according to the combo
+    childFrame->SetChannels(new_chan, ref_chan); 
+    childFrame->UpdateChannels(); // update according to the combo
     Refresh();
 }
 

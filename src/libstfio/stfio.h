@@ -113,7 +113,7 @@ namespace stfio {
       *  \param maximum Maximum value for the progress meter
       *  \param verbose Whether or not to emit a lot of noise
       */
-     ProgressInfo(const std::string& title, const std::string& message, int maximum, bool verbose) {};
+     ProgressInfo(const std::string&, const std::string&, int, bool) {};
 
      //! Updates the progress info
      /*! \param value New value of the progress meter

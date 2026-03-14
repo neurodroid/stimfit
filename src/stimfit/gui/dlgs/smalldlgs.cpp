@@ -410,7 +410,7 @@ wxStfFitInfoDlg::wxStfFitInfoDlg(wxWindow* parent, const wxString& info, int id,
 BEGIN_EVENT_TABLE( wxStfBatchDlg, wxDialog )
 END_EVENT_TABLE()
 
-wxStfBatchDlg::wxStfBatchDlg(wxWindow* parent, int id, wxString title, wxPoint pos,
+wxStfBatchDlg::wxStfBatchDlg(wxWindow* parent, int id, wxString, wxPoint pos,
         wxSize size, int style)
 : wxDialog( parent, id, wxT("Choose values"), pos, size, style ), batchOptions( 0 )
 {

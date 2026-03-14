@@ -3532,7 +3532,7 @@ void wxStfDoc::InsertChannel(Channel& c_Channel, std::size_t pos) {
 
 void wxStfDoc::SetIsFitted( std::size_t nchannel, std::size_t nsection,
                             const Vector_double& bestFitP_, stfnum::storedFunc* fitFunc_,
-                            double chisqr, std::size_t fitBeg, std::size_t fitEnd )
+                            double chisqr, std::size_t fitBeg_, std::size_t fitEnd_ )
 {
     if (nchannel >= sec_attr.size() || nsection >= sec_attr[nchannel].size()) {
         throw std::out_of_range("Index out of range in wxStfDoc::SetIsFitted");
@@ -3551,8 +3551,8 @@ void wxStfDoc::SetIsFitted( std::size_t nchannel, std::size_t nsection,
     sec_attr[nchannel][nsection].bestFit =
         sec_attr[nchannel][nsection].fitFunc->output(sec_attr[nchannel][nsection].bestFitP,
                                                      sec_attr[nchannel][nsection].fitFunc->pInfo, chisqr );
-    sec_attr[nchannel][nsection].storeFitBeg = fitBeg;
-    sec_attr[nchannel][nsection].storeFitEnd = fitEnd;
+    sec_attr[nchannel][nsection].storeFitBeg = fitBeg_;
+    sec_attr[nchannel][nsection].storeFitEnd = fitEnd_;
     sec_attr[nchannel][nsection].isFitted = true;
 }
 
@@ -3710,7 +3710,7 @@ std::vector<double> wxStfDoc::SortScoringTraceByRawDetection(  std::vector<doubl
     return sortedRawDetectionTrace;
 }
 
-std::vector<stf::Event> wxStfDoc::DetectEvents(double threshold, std::vector<double> &rawDetectionTrace)
+std::vector<stf::Event> wxStfDoc::DetectEvents(double threshold_, std::vector<double> &rawDetectionTrace)
 {
     
     std::size_t eventRange = GetSR() * 1000 * 0.001;
@@ -3726,7 +3726,7 @@ std::vector<stf::Event> wxStfDoc::DetectEvents(double threshold, std::vector<dou
     for (std::size_t k = 0; k < rawDetectionTrace.size() - 1; k++) {
 
         // detect threshold crossing (upward)
-        if (rawDetectionTrace[k] < threshold && rawDetectionTrace[k + 1] >= threshold) {
+        if (rawDetectionTrace[k] < threshold_ && rawDetectionTrace[k + 1] >= threshold_) {
             if (prevCross > 0 && (k + 1 - prevCross) > eventRange && hasPeak) {
                 // register completed event
 

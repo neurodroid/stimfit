@@ -22,15 +22,15 @@
 // within the constructor, see [1]248 and [2]28
 
 Section::Section(void)
-    : section_description(), x_scale(1.0), data(0), firstAnnotationPos(-1), lastAnnotationPos(-1), AnnotationsList()
+    : section_description(), x_scale(1.0), data(0), firstAnnotationPos(static_cast<std::size_t>(-1)), lastAnnotationPos(static_cast<std::size_t>(-1)), AnnotationsList()
 {}
 
 Section::Section( const Vector_double& valA, const std::string& label )
-    : section_description(label), x_scale(1.0), data(valA), firstAnnotationPos(-1), lastAnnotationPos(-1), AnnotationsList()
+    : section_description(label), x_scale(1.0), data(valA), firstAnnotationPos(static_cast<std::size_t>(-1)), lastAnnotationPos(static_cast<std::size_t>(-1)), AnnotationsList()
 {}
 
 Section::Section(std::size_t size, const std::string& label)
-    : section_description(label), x_scale(1.0), data(size), firstAnnotationPos(-1), lastAnnotationPos(-1), AnnotationsList()
+    : section_description(label), x_scale(1.0), data(size), firstAnnotationPos(static_cast<std::size_t>(-1)), lastAnnotationPos(static_cast<std::size_t>(-1)), AnnotationsList()
 {}
 
 Section::~Section(void) {

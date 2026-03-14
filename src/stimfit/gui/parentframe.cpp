@@ -1134,10 +1134,10 @@ void wxStfParentFrame::OnToolCh2(wxCommandEvent& WXUNUSED(event)) {
     m_scaleToolBar->Refresh();
 }
 
-void wxStfParentFrame::OnToolFitdecay(wxCommandEvent& event) {
+void wxStfParentFrame::OnToolFitdecay(wxCommandEvent& toolEvent) {
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pDoc!=NULL) {
-        pDoc->FitDecay(event);
+        pDoc->FitDecay(toolEvent);
     }
 }
 

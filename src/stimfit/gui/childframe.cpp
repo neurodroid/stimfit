@@ -409,15 +409,15 @@ void wxStfChildFrame::OnZeroIndex( wxCommandEvent& event) {
     event.Skip();
     
     wxSpinCtrl* pTraceCtrl = (wxSpinCtrl*)FindWindow(ID_SPINCTRLTRACES);
-    wxCheckBox* pZeroIndex = (wxCheckBox*)FindWindow(ID_ZERO_INDEX);
+    wxCheckBox* zeroIndexCheckBox = (wxCheckBox*)FindWindow(ID_ZERO_INDEX);
 
-    if (pZeroIndex == NULL || pTraceCtrl == NULL){
+    if (zeroIndexCheckBox == NULL || pTraceCtrl == NULL){
         wxGetApp().ErrorMsg(wxT("Null pointer in wxStfChildFrame::OnZeroIndex"));
         return;
     }
     
     // If  Zero-index is ON (selected) 
-    if (pZeroIndex->GetValue()){
+    if (zeroIndexCheckBox->GetValue()){
         wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("Zeroindex"), 1); // write config
         if (pTraceCtrl->GetValue()==1){
             sizemax--;
