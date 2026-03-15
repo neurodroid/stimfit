@@ -1739,10 +1739,14 @@ PyObject* leastsq( int fselect, bool refresh ) {
     // Dictionaries apparently grow as needed; no initial size is required.
     PyObject* retDict = PyDict_New( );
     for ( std::size_t n_dict = 0; n_dict < params.size(); ++n_dict ) {
+         PyObject* pyValue = PyFloat_FromDouble( params[n_dict] );
          PyDict_SetItemString( retDict, wxGetApp().GetFuncLib()[fselect].pInfo.at(n_dict).desc.c_str(),
-                PyFloat_FromDouble( params[n_dict] ) );
+                pyValue );
+         Py_DECREF(pyValue);
     }
-    PyDict_SetItemString( retDict, "SSE", PyFloat_FromDouble( chisqr ) );
+    PyObject* pyChisqr = PyFloat_FromDouble( chisqr );
+    PyDict_SetItemString( retDict, "SSE", pyChisqr );
+    Py_DECREF(pyChisqr);
 
     return retDict;
 }
@@ -1768,6 +1772,7 @@ PyObject* get_fit( int trace, int channel ) {
         return NULL;
     }
     if (!sec_attr.isFitted) {
+        Py_INCREF(Py_None);
         return Py_None;
     }
 
