@@ -792,8 +792,8 @@ Recording wxStfDoc::ReorderChannels() {
         channelOrder=orderDlg.GetChannelOrder();
     } else {
         int n_c = 0;
-        for (int_it it = channelOrder.begin(); it != channelOrder.end(); it++) {
-            *it = n_c++;
+        for (int_it orderIt = channelOrder.begin(); orderIt != channelOrder.end(); ++orderIt) {
+            *orderIt = n_c++;
         }
     }
 
@@ -1121,8 +1121,8 @@ void wxStfDoc::CreateAverage(
         }
         //now that max and min indices are known, calculate the number of
         //points that need to be shifted:
-        for (int_it it = shift.begin(); it != shift.end(); it++) {
-            (*it) -= (int)min_index;
+        for (int_it shiftIt = shift.begin(); shiftIt != shift.end(); ++shiftIt) {
+            (*shiftIt) -= (int)min_index;
         }
         //restore section and channel settings:
         SetSection(section_old);
@@ -1512,7 +1512,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
     if (SaveYtDialog.PrintThr()) {
         colTitles.push_back("# of thr. crossings");
     }
-    double threshold=0.0;
+    double crossingThreshold=0.0;
     if (SaveYtDialog.PrintThr()) {
         // Get threshold from user:
         std::ostringstream thrS;
@@ -1523,7 +1523,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         if (myDlg.ShowModal()!=wxID_OK) {
             return;
         }
-        threshold=myDlg.readInput()[0];
+        crossingThreshold=myDlg.readInput()[0];
     }
     wxProgressDialog progDlg( wxT("Batch analysis in progress"), wxT("Starting batch analysis"),
             100, GetDocumentWindow(), wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
@@ -1613,7 +1613,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         // count number of threshold crossings if needed:
         std::size_t n_crossings=0;
         if (SaveYtDialog.PrintThr()) {
-            n_crossings= stfnum::peakIndices( cursec().get(), threshold, 0 ).size();
+            n_crossings= stfnum::peakIndices( cursec().get(), crossingThreshold, 0 ).size();
         }
         std::size_t nCol=0;
         //Write the variables of the current channel in a string
@@ -2500,14 +2500,14 @@ void wxStfDoc::OnRemoveAnnotation( wxCommandEvent& WXUNUSED(event) ) {
     }
 }
 
-void wxStfDoc::OnEraseAllAnnotations(wxCommandEvent &WXUNUSED)
+void wxStfDoc::OnEraseAllAnnotations(wxCommandEvent&)
 {
     this->at(GetCurChIndex())[GetCurSecIndex()].EraseAllAnnotations();
     eventThreshold = INT32_MAX;
 
 }
 
-void wxStfDoc::OnExportAnnotations(wxCommandEvent &WXUNUSED)
+void wxStfDoc::OnExportAnnotations(wxCommandEvent&)
 {
     try{
         wxStfView* pView = (wxStfView*)GetFirstView();
@@ -2541,12 +2541,12 @@ void wxStfDoc::OnExportAnnotations(wxCommandEvent &WXUNUSED)
                 for (std::size_t sectionIndex = 0; sectionIndex < this->at(channelIndex).size(); sectionIndex++){
                     std::vector<Annotation> annotationsList = this->at(channelIndex)[sectionIndex].GetAnnotationList();
                     for (std::size_t annotationIndex = 0; annotationIndex < annotationsList.size(); annotationIndex++){
-                        std::stringstream ss;
-                        ss << channelIndex << "\t"
+                        std::stringstream annotationStream;
+                        annotationStream << channelIndex << "\t"
                         << relativePositionBase + annotationsList.at(annotationIndex).GetAnnotationPosition() << "\n";
 
-                        wxString line(ss.str());
-                        asc_file.Write(line);
+                        wxString annotationLine(annotationStream.str());
+                        asc_file.Write(annotationLine);
 
                     }
                     relativePositionBase += this->at(channelIndex)[sectionIndex].GetSectionSize();
@@ -2565,14 +2565,14 @@ void wxStfDoc::OnExportAnnotations(wxCommandEvent &WXUNUSED)
     }
 }
 
-void wxStfDoc::OnCalculatedThresholdExpertDetectEvents(double threshold, std::size_t filterOrder)
+void wxStfDoc::OnCalculatedThresholdExpertDetectEvents(double calculatedThreshold, std::size_t filterOrder)
 {
     std::vector<double> fullRawDetectionTrace = CalcRawDetectionTrace(filterOrder, 0, cursec().GetSectionSize() - 1);
-    std::vector<stf::Event> detectedEvents = DetectEvents(threshold, fullRawDetectionTrace);
+    std::vector<stf::Event> detectedEvents = DetectEvents(calculatedThreshold, fullRawDetectionTrace);
 
 }
 
-void wxStfDoc::OnExpertDetectEvents(wxCommandEvent &WXUNUSED)
+void wxStfDoc::OnExpertDetectEvents(wxCommandEvent&)
 {   
     try{
 
@@ -2612,17 +2612,17 @@ void wxStfDoc::OnExpertDetectEvents(wxCommandEvent &WXUNUSED)
 
             std::pair<std::size_t, double> kappa = CalcMaxKappa(sortedRawDetectionTrace, sortedScoringTrace);
 
-            double threshold = sortedRawDetectionTrace[kappa.first];
+            double calculatedThreshold = sortedRawDetectionTrace[kappa.first];
             double maxKappa = kappa.second;
 
             
             std::vector<double> fullRawDetectionTrace = CalcRawDetectionTrace(filterOrder, 0, cursec().GetSectionSize() - 1);
             ClearEvents(GetCurChIndex(), GetCurSecIndex());
-            std::vector<stf::Event> detectedEvents = DetectEvents(threshold, fullRawDetectionTrace);
-            eventThreshold = threshold;
+            std::vector<stf::Event> detectedEvents = DetectEvents(calculatedThreshold, fullRawDetectionTrace);
+            eventThreshold = calculatedThreshold;
             wxString msg;
             msg.Printf("AUC: %g\nKAPPA: %g\nfilterlength: %zu\nThreshold: %g\nDelay: %g",
-                    area, maxKappa, filterOrder, threshold, delay);
+                    area, maxKappa, filterOrder, calculatedThreshold, delay);
 
                     
             wxMessageBox(msg, "Metadata", wxOK | wxICON_INFORMATION, nullptr);
@@ -2642,7 +2642,7 @@ void wxStfDoc::OnExpertDetectEvents(wxCommandEvent &WXUNUSED)
 }
 
 
-void wxStfDoc::OnImportAnnotations(wxCommandEvent &WXUNUSED)
+void wxStfDoc::OnImportAnnotations(wxCommandEvent&)
 {
     try{
         wxStfView* pView = (wxStfView*)GetFirstView();
@@ -2753,7 +2753,7 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
 
 void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
     // get threshold from user input:
-    Vector_double threshold(0);
+    Vector_double thresholdValues(0);
     std::ostringstream thrS;
     thrS << "Threshold (" << at(GetCurChIndex()).GetYUnits() << ")";
     stf::UserInput Input( std::vector<std::string>(1, thrS.str()),
@@ -2762,10 +2762,10 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
     if (myDlg.ShowModal()!=wxID_OK) {
         return;
     }
-    threshold=myDlg.readInput();
+    thresholdValues=myDlg.readInput();
 
     std::vector<int> startIndices(
-            stfnum::peakIndices( cursec().get(), threshold[0], 0 )
+            stfnum::peakIndices( cursec().get(), thresholdValues[0], 0 )
     );
     if (startIndices.empty()) {
         wxGetApp().ErrorMsg(
@@ -2939,7 +2939,7 @@ void wxStfDoc::Measure( )
         // during the first 100 sampling points.
         // const int endResting=100;
         const int searchRange=100;
-        double APBase=0.0, APVar=0.0;
+        double APVar=0.0;
         try {
             // in 2012-11-02: use baseline cursors and not arbitrarily 100 points
             //APBase=stfnum::base(APVar,secsec().get(),0,endResting);
