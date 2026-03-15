@@ -1,11 +1,7 @@
 include_guard(DIRECTORY)
 
 set(STF_STFIO_SOURCES
-  channel.cpp
-  section.cpp
-  recording.cpp
   stfio.cpp
-  annotation.cpp
   cfs/cfslib.cpp
   cfs/cfs.c
   hdf5/hdf5lib.cpp
@@ -36,6 +32,19 @@ set(STF_STFIO_SOURCES
   intan/streams.cpp
 )
 
+add_library(
+  stfio_containers
+  annotation.cpp
+  section.cpp
+  channel.cpp
+  recording.cpp
+)
+stf_apply_macos_runtime_policy(stfio_containers)
+
+target_link_libraries(stfio_containers PUBLIC stimfit_config)
+
+set_target_properties(stfio_containers PROPERTIES OUTPUT_NAME stfio_containers)
+
 if(NOT STF_WITH_BIOSIG)
   list(APPEND STF_STFIO_SOURCES
     axg/axglib.cpp
@@ -55,13 +64,14 @@ add_library(stfio ${STF_STFIO_SOURCES})
 stf_apply_macos_runtime_policy(stfio)
 
 if(MSVC)
+  target_compile_definitions(stfio_containers PRIVATE STFIODLL)
   target_compile_definitions(stfio PRIVATE STFIODLL)
   if(BUILD_SHARED_LIBS)
     set_target_properties(stfio PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
   endif()
 endif()
 
-target_link_libraries(stfio PUBLIC stimfit_config stimfit::hdf5)
+target_link_libraries(stfio PUBLIC stimfit_config stfio_containers stimfit::hdf5)
 
 if(TARGET stimfit::biosig)
   target_link_libraries(stfio PUBLIC stimfit::biosig)
@@ -76,6 +86,12 @@ else()
 endif()
 
 install(TARGETS stfio
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
+  LIBRARY DESTINATION ${_stf_stfio_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
+  ARCHIVE DESTINATION ${_stf_stfio_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
+)
+
+install(TARGETS stfio_containers
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
   LIBRARY DESTINATION ${_stf_stfio_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
   ARCHIVE DESTINATION ${_stf_stfio_install_libdir} COMPONENT ${STF_COMPONENT_CORE}

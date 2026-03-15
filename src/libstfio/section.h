@@ -26,6 +26,7 @@
 // only compile once, even if included more often:
 #ifndef _SECTION_H
 #define _SECTION_H
+#include "./core.h"
 #include "./annotation.h"
 /*! \addtogroup stfgen
  *  @{

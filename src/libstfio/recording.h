@@ -25,7 +25,10 @@
  *  @{
  */
 
+#include <ctime>
+#include <string>
 #include <string.h>	// declaration of memcpy
+#include <vector>
 
 #include "./channel.h"
 // #include "./section.h"

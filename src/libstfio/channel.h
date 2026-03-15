@@ -25,6 +25,9 @@
  *  @{
  */
 
+#include <deque>
+#include <string>
+
 #include "section.h"
 
 //! A Channel contains several data \link #Section Sections \endlink representing observations of the same physical quantity.

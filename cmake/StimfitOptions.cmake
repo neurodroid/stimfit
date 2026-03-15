@@ -2,6 +2,7 @@ include_guard(GLOBAL)
 
 option(STF_BUILD_MODULE "Build standalone Python module (like --enable-module)" OFF)
 option(STF_BUILD_TESTS "Build gtest-based stimfittest target" OFF)
+option(STF_BUILD_NUMERIC_TESTS "Build stfnum-based gtest suites in addition to minimal container tests" OFF)
 option(STF_ENABLE_PYTHON "Enable Python integration (like --enable-python)" ON)
 option(STF_MACOS_APP_BUNDLE "Build and install stimfit as a macOS .app bundle" OFF)
 option(STF_ENABLE_IPYTHON "Enable IPython shell integration (like --enable-ipython)" OFF)

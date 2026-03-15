@@ -417,44 +417,66 @@ if(NOT STF_BUILD_MODULE)
   endif()
 
   if(STF_BUILD_TESTS)
-    add_executable(
-      stimfittest
-      src/test/section.cpp
-      src/test/channel.cpp
-      src/test/recording.cpp
-      src/test/fit.cpp
-      src/test/measure.cpp
+    add_library(
+      stimfit_gtest_main
+      STATIC
       src/test/gtest/src/gtest-all.cc
       src/test/gtest/src/gtest_main.cc
     )
     target_include_directories(
-      stimfittest
-      PRIVATE
+      stimfit_gtest_main
+      PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/test/gtest
         ${CMAKE_CURRENT_SOURCE_DIR}/src/test/gtest/include
         ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
-    target_compile_definitions(stimfittest PRIVATE STF_TEST)
+    target_link_libraries(stimfit_gtest_main PUBLIC Threads::Threads)
+    stf_apply_macos_runtime_policy(stimfit_gtest_main)
+
+    add_executable(
+      stimfit_containers_test
+      src/test/section.cpp
+      src/test/channel.cpp
+      src/test/recording.cpp
+    )
     target_link_libraries(
-      stimfittest
+      stimfit_containers_test
       PRIVATE
         stimfit_config
-        stimfit_core
-        stfio
-        stfnum
-        stimfit::wx
-        stimfit::fftw3
-        stimfit::lapack
-        Threads::Threads
+        stimfit_gtest_main
+        stfio_containers
     )
-    stf_apply_macos_runtime_policy(stimfittest)
-    add_test(NAME stimfittest COMMAND stimfittest)
+    stf_apply_macos_runtime_policy(stimfit_containers_test)
+    add_test(NAME stimfit_containers_test COMMAND stimfit_containers_test)
     install(
-      TARGETS stimfittest
+      TARGETS stimfit_containers_test
       ${STF_INSTALL_RUNTIME_DEPENDENCY_ARGS}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
       COMPONENT ${STF_COMPONENT_TESTS}
     )
+
+    if(STF_BUILD_NUMERIC_TESTS)
+      add_executable(
+        stimfit_numeric_test
+        src/test/fit.cpp
+        src/test/measure.cpp
+      )
+      target_link_libraries(
+        stimfit_numeric_test
+        PRIVATE
+          stimfit_config
+          stimfit_gtest_main
+          stfnum
+      )
+      stf_apply_macos_runtime_policy(stimfit_numeric_test)
+      add_test(NAME stimfit_numeric_test COMMAND stimfit_numeric_test)
+      install(
+        TARGETS stimfit_numeric_test
+        ${STF_INSTALL_RUNTIME_DEPENDENCY_ARGS}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT ${STF_COMPONENT_TESTS}
+      )
+    endif()
   endif()
 endif()
 

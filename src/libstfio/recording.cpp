@@ -13,7 +13,6 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-#include "./stfio.h"
 #include "./recording.h"
 
 #include <stdio.h>
@@ -161,7 +160,7 @@ void Recording::InsertChannel(Channel& c_Channel, std::size_t pos) {
         }
         // Resize sections if necessary:
         std::size_t n_sec = 0;
-        for ( sec_it sit = c_Channel.get().begin(); sit != c_Channel.get().end(); ++sit ) {
+        for ( std::deque<Section>::const_iterator sit = c_Channel.get().begin(); sit != c_Channel.get().end(); ++sit ) {
             if ( ChannelArray.at(pos).at(n_sec).size() <= sit->size() ) {
                 ChannelArray.at(pos).at(n_sec).get_w().resize( sit->size() );
             }
@@ -282,8 +281,8 @@ bool Recording::UnselectTrace(std::size_t sectionToUnselect) {
 
 void Recording::SetXScale(double value) {
     dt=value;
-    for (ch_it it1 = ChannelArray.begin(); it1 != ChannelArray.end(); it1++) {
-        for (sec_it it2 = it1->get().begin(); it2 != it1->get().end(); it2++) {
+    for (std::deque<Channel>::iterator it1 = ChannelArray.begin(); it1 != ChannelArray.end(); it1++) {
+        for (std::deque<Section>::iterator it2 = it1->get().begin(); it2 != it1->get().end(); it2++) {
             it2->SetXScale(value);
         }
     }

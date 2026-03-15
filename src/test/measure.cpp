@@ -1,4 +1,3 @@
-#include "../stimfit/stf.h"
 #include "../libstfnum/measure.h"
 #include <gtest/gtest.h>
 #include <cmath>
