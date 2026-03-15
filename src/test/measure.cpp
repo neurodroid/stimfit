@@ -208,10 +208,10 @@ TEST(measlib_test, baseline_out_of_range_exceptions) {
     double var;
 
     /* Out of range: after last point */
-    EXPECT_TRUE(isnan(stfnum::base(stfnum::mean_sd, var, data, 0, data.size())));
+    EXPECT_TRUE(std::isnan(stfnum::base(stfnum::mean_sd, var, data, 0, data.size())));
 
     /* Out of range: before first point */
-    EXPECT_TRUE(isnan(stfnum::base(stfnum::mean_sd, var, data, -1, data.size()-1)));
+    EXPECT_TRUE(std::isnan(stfnum::base(stfnum::mean_sd, var, data, -1, data.size()-1)));
 
 }
 
@@ -250,11 +250,11 @@ TEST(measlib_test, peak_out_of_range_exceptions) {
     double maxT;
 
     /* Out of range: before first point */
-    EXPECT_TRUE(isnan(stfnum::peak(data, 0.0, 0, data.size(), 
+    EXPECT_TRUE(std::isnan(stfnum::peak(data, 0.0, 0, data.size(), 
         1, stfnum::both, maxT)));
 
     /* Out of range: before first point */
-    EXPECT_TRUE(isnan(stfnum::peak(data, 0.0, -1, data.size()-1, 
+    EXPECT_TRUE(std::isnan(stfnum::peak(data, 0.0, -1, data.size()-1, 
         1, stfnum::both, maxT)));
 }
 
@@ -354,17 +354,17 @@ TEST(measlib_test, threshold_windowLength_exceptions){
     
     /* Right peak cursor must be larger than windowLength
     long myRightPeakCursor = mywindowLength-1;
-    EXPECT_TRUE(isnan(stfnum::threshold(data, 0, myRightPeakCursor, 
+    EXPECT_TRUE(std::isnan(stfnum::threshold(data, 0, myRightPeakCursor, 
         slope*dt, thrT, mywindowLength))); */
 
     /* Left peak cursor must be smaller than data.size()-windowLength */
     long myLeftPeakCursor = data.size()-mywindowLength; 
-    EXPECT_TRUE(isnan(stfnum::threshold(data, myLeftPeakCursor, data.size()-1, 
+    EXPECT_TRUE(std::isnan(stfnum::threshold(data, myLeftPeakCursor, data.size()-1, 
         slope*dt, thrT, mywindowLength)));
 
     /* Data size itself must be smaller than windowLength */
     mywindowLength = data.size()+1;
-    EXPECT_TRUE(isnan(stfnum::threshold(data, 0, data.size()-1, \
+    EXPECT_TRUE(std::isnan(stfnum::threshold(data, 0, data.size()-1, \
         slope*dt, thrT, mywindowLength)));
 
 }
@@ -380,14 +380,14 @@ TEST(measlib_test, threshold_out_of_range){
     int windowLength = 1;
     
     /* Out of range: after last point*/
-    EXPECT_TRUE(isnan(stfnum::threshold(mywave, 1, mywave.size(), 
+    EXPECT_TRUE(std::isnan(stfnum::threshold(mywave, 1, mywave.size(), 
         slope*dt, thrT, windowLength)));
-    EXPECT_TRUE(isnan(thrT)); 
+    EXPECT_TRUE(std::isnan(thrT)); 
 
     /* Out of range: before first point*/
-    EXPECT_TRUE(isnan(stfnum::threshold(mywave, -1, mywave.size()-1, 
+    EXPECT_TRUE(std::isnan(stfnum::threshold(mywave, -1, mywave.size()-1, 
         slope*dt, thrT, windowLength)));
-    EXPECT_TRUE(isnan(thrT));
+    EXPECT_TRUE(std::isnan(thrT));
     
 }
 
@@ -455,12 +455,12 @@ TEST(measlib_test, half_duration_out_of_range_exceptions){
     double center = -1.0; /* index of the peak */ 
     
     /* Out of range: if center <0 */
-    EXPECT_TRUE(isnan( stfnum::t_half(mywave, 0.0, 1.0, 1,
+    EXPECT_TRUE(std::isnan( stfnum::t_half(mywave, 0.0, 1.0, 1,
         long(PI/dt)-1, center, t50LeftId, t50RigthId, t50Real)));
 
     /* Out of range: if center > recording length */
     center = mywave.size();
-    EXPECT_TRUE(isnan( stfnum::t_half(mywave, 0.0, 1.0, 1,
+    EXPECT_TRUE(std::isnan( stfnum::t_half(mywave, 0.0, 1.0, 1,
         long(PI/dt)-1, center, t50LeftId, t50RigthId, t50Real)));
 
 }
@@ -491,11 +491,11 @@ TEST(measlib_test, maxrise_out_of_range_exceptions) {
     double maxRiseT, maxRiseY;
     
     /* Out of range: peak cursor after last point */
-    EXPECT_TRUE(isnan(stfnum::maxRise(data, 0, data.size(), \
+    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, 0, data.size(), \
         maxRiseT, maxRiseY, 1)));
 
     /* Out of range: peak cursor before first point
-    EXPECT_TRUE(isnan(stfnum::maxRise(data, -1, data.size()-1, \
+    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, -1, data.size()-1, \
     maxRiseT, maxRiseY, 1)));*/
 
 }
@@ -512,17 +512,17 @@ TEST(measlib_test, maxrise_windowLength_exceptions){
     /* Right peak cursor must be larger than windowLength
     mywindowLength = 10;
     long myRightPeakCursor = mywindowLength-1;
-    EXPECT_TRUE(isnan(stfnum::maxRise(data, 0, myRightPeakCursor, \
+    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, 0, myRightPeakCursor, \
     maxRiseT, maxRiseY, mywindowLength)));*/
 
     /* Left peak cursor must be smaller than data.size()-windowLength
     long myLeftPeakCursor = data.size()-mywindowLength; 
-    EXPECT_TRUE(isnan(stfnum::maxRise(data, myLeftPeakCursor, data.size()-1 , \
+    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, myLeftPeakCursor, data.size()-1 , \
         maxRiseT, maxRiseY, mywindowLength))); */
 
     /* Data size itself must be smaller than windowLength */
     mywindowLength = data.size()+1;
-    EXPECT_TRUE(isnan(stfnum::maxRise(data, 0, data.size()-1, \
+    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, 0, data.size()-1, \
         maxRiseT, maxRiseY, mywindowLength)));
 
 }
@@ -573,11 +573,11 @@ TEST(measlib_test, maxdecay_out_of_range_exceptions) {
     double maxDecayT, maxDecayY;
 
     /* Out of range: peak cursor after last point */
-    EXPECT_TRUE(isnan(stfnum::maxRise(data, 0, data.size(), \
+    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, 0, data.size(), \
         maxDecayT, maxDecayY, 1)));
 
     /* Out of range: peak cursor before first point
-    EXPECT_TRUE(isnan(stfnum::maxRise(data, -1, data.size()-1, \
+    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, -1, data.size()-1, \
     maxDecayT, maxDecayY, 1))); */
 
 }
@@ -594,17 +594,17 @@ TEST(measlib_test, maxdecay_windowLength_exceptions) {
     /* Right peak cursor must be larger than windowLength
     mywindowLength = 10;
     long myRightPeakCursor = mywindowLength-1;
-    EXPECT_TRUE(isnan(stfnum::maxDecay(data, 0, myRightPeakCursor, \
+    EXPECT_TRUE(std::isnan(stfnum::maxDecay(data, 0, myRightPeakCursor, \
     maxDecayT, maxDecayY, mywindowLength))); */
 
     /* Left peak cursor must be smaller than data.size()-windowLength
     long myLeftPeakCursor = data.size()-mywindowLength; 
-    EXPECT_TRUE(isnan(stfnum::maxRise(data, myLeftPeakCursor, data.size()-1 , \
+    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, myLeftPeakCursor, data.size()-1 , \
     maxDecayT, maxDecayY, mywindowLength)));*/
 
     /* Data size itself must be smaller than windowLength */
     mywindowLength = data.size()+1;
-    EXPECT_TRUE(isnan(stfnum::maxRise(data, 0, data.size()-1, \
+    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, 0, data.size()-1, \
         maxDecayT, maxDecayY, mywindowLength)));
 }
 
