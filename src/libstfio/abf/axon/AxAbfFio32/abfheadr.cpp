@@ -1155,7 +1155,7 @@ BOOL WINAPI ABFH_GetErrorText( int nError, char *sTxtBuf, UINT uMaxLen)
       snprintf(szErrorMsg, sizeof(szErrorMsg), szTemplate, nError);
 //      ERRORMSG(szErrorMsg);
 
-      strncpy_s(sTxtBuf, uMaxLen, szErrorMsg, uMaxLen-1);
+      strncpy(sTxtBuf, szErrorMsg, uMaxLen-1);
       sTxtBuf[uMaxLen-1] = '\0';
       rval = FALSE;
    }
@@ -1400,7 +1400,8 @@ void WINAPI ABFH_PromoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
    pOut->fDACFileOffset[uDAC]     = pIn->_fDACFileOffset;
    pOut->lDACFileEpisodeNum[uDAC] = pIn->_nDACFileEpisodeNum;
    pOut->nDACFileADCNum[uDAC]     = pIn->_nDACFileADCNum;
-    strncpy_s( pOut->sDACFilePath[uDAC], ABF_DACFILEPATHLEN, pIn->_sDACFilePath, _TRUNCATE );
+    strncpy( pOut->sDACFilePath[uDAC], pIn->_sDACFilePath, ABF_DACFILEPATHLEN - 1 );
+    pOut->sDACFilePath[uDAC][ABF_DACFILEPATHLEN - 1] = '\0';
 
    // If this is a valid header, then check the presweep trains.
    if( (pIn->lFileSignature == ABF_NATIVESIGNATURE) &&
@@ -1435,7 +1436,8 @@ void WINAPI ABFH_PromoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
       // User list parameters.
       pOut->nULEnable[uDAC]        = pIn->_nListEnable;
       pOut->nULParamToVary[uDAC]   = pIn->_nParamToVary;
-      strncpy_s( pOut->sULParamValueList[uDAC], ABF_VARPARAMLISTLEN, pIn->_sParamValueList, _TRUNCATE );
+      strncpy( pOut->sULParamValueList[uDAC], pIn->_sParamValueList, ABF_VARPARAMLISTLEN - 1 );
+      pOut->sULParamValueList[uDAC][ABF_VARPARAMLISTLEN - 1] = '\0';
    }
 
    // DAC Calibration Factors.
@@ -1446,7 +1448,8 @@ void WINAPI ABFH_PromoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
    }
 
    // File Comment.
-    strncpy_s( pOut->sFileComment, ABF_OLDFILECOMMENTLEN, pIn->_sFileComment, _TRUNCATE );
+    strncpy( pOut->sFileComment, pIn->_sFileComment, ABF_OLDFILECOMMENTLEN - 1 );
+    pOut->sFileComment[ABF_OLDFILECOMMENTLEN - 1] = '\0';
 
    // Extra 'enable' fields.
    pOut->nCommentsEnable = (pOut->nManualInfoStrategy != ABF_ENV_DONOTWRITE);
