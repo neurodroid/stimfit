@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  ubuntu-tests:
+    name: Ubuntu test targets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake \
+            ninja-build \
+            g++ \
+            pkg-config \
+            libfftw3-dev \
+            libhdf5-dev \
+            libwxgtk3.2-dev \
+            liblapack-dev \
+            libblas-dev \
+            libopenblas-dev
+
+      - name: Configure CMake
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DSTF_BUILD_TESTS=ON \
+            -DSTF_BUILD_NUMERIC_TESTS=ON \
+            -DSTF_ENABLE_PYTHON=OFF \
+            -DSTF_WITH_BIOSIG=OFF
+
+      - name: Build test targets
+        run: |
+          cmake --build build --parallel --target \
+            stimfit_containers_test \
+            stimfit_numeric_test
+
+      - name: Run CTest
+        run: |
+          ctest --test-dir build --output-on-failure --tests-regex 'stimfit_(containers|numeric)_test'
