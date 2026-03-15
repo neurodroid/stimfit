@@ -2,7 +2,11 @@ name: CI
 
 on:
   push:
+    branches:
+      - pr/msvc-toolchain-compat
   pull_request:
+    branches:
+      - pr/msvc-toolchain-compat
 
 jobs:
   ubuntu-tests:
