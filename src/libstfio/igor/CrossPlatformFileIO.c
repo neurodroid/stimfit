@@ -131,7 +131,11 @@ CPDeleteFile(const char* fullFilePath)
 int
 CPOpenFile(const char* fullFilePath, int readOrWrite, CP_FILE_REF* fileRefPtr)
 {
+#if defined(_MSC_VER) && !defined(__MINGW32__)
+    fopen_s(fileRefPtr, fullFilePath, readOrWrite ? "wb" : "rb");
+#else
 	*fileRefPtr = fopen(fullFilePath, readOrWrite ? "wb" : "rb");
+#endif
 	if (*fileRefPtr == NULL)
 		return CP_FILE_OPEN_ERROR;
 	return 0;
