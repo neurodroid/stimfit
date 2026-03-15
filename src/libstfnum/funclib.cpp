@@ -150,7 +150,7 @@ Vector_double stfnum::fexp_jac(double x, const Vector_double& p) {
     return jac;
 }
 
-void stfnum::fexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+void stfnum::fexp_init(const Vector_double& data, double base, double, double, double, double dt, Vector_double& pInit ) {
     // Find out direction:
     bool increasing = data[0] < data[data.size()-1];
     Vector_double::const_iterator max_el = std::max_element(data.begin(), data.end());
@@ -196,7 +196,7 @@ void stfnum::fexp_init(const Vector_double& data, double base, double peak, doub
 
 }
 
-void stfnum::fexp_init2(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+void stfnum::fexp_init2(const Vector_double& data, double base, double peak, double, double, double dt, Vector_double& pInit ) {
     int n_exp=(int)pInit.size()/2;
     for (std::size_t n_p=0;n_p<pInit.size()-1;n_p+=2) {
         // use inverse amplitude for last term:
@@ -210,27 +210,27 @@ void stfnum::fexp_init2(const Vector_double& data, double base, double peak, dou
     pInit[pInit.size()-1]=peak;
 }
 
-double stfnum::xscale(double param, double xscale, double xoff, double yscale, double yoff) {
+double stfnum::xscale(double param, double xscale, double, double, double) {
     return param*xscale; // + xoff;
 }
 
-double stfnum::xunscale(double param, double xscale, double xoff, double yscale, double yoff) {
+double stfnum::xunscale(double param, double xscale, double, double, double) {
     return param/xscale; //(param-xoff)/xscale;
 }
 
-double stfnum::yscale(double param, double xscale, double xoff, double yscale, double yoff) {
+double stfnum::yscale(double param, double, double, double yscale, double) {
     return param*yscale;
 }
 
-double stfnum::yscaleoffset(double param, double xscale, double xoff, double yscale, double yoff) {
+double stfnum::yscaleoffset(double param, double, double, double yscale, double yoff) {
     return param*yscale - yoff;
 }
 
-double stfnum::yunscale(double param, double xscale, double xoff, double yscale, double yoff) {
+double stfnum::yunscale(double param, double, double, double yscale, double) {
     return param/yscale;
 }
 
-double stfnum::yunscaleoffset(double param, double xscale, double xoff, double yscale, double yoff) {
+double stfnum::yunscaleoffset(double param, double, double, double yscale, double yoff) {
     return (param+yoff)/yscale;
 }
 
@@ -446,7 +446,7 @@ Vector_double stfnum::fgauss_jac(double x, const Vector_double& pars) {
     return jac;
 }
 
-void stfnum::fgauss_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+void stfnum::fgauss_init(const Vector_double& data, double, double peak, double, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT = stfnum::whereis( data, peak ) * dt;
     int npars=static_cast<int>(pInit.size());
@@ -457,9 +457,9 @@ void stfnum::fgauss_init(const Vector_double& data, double base, double peak, do
     }
 }
 
-void stfnum::fHH_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+void stfnum::fHH_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double, Vector_double& pInit ) {
     // Find the peak position in data:
-    double maxT = stfnum::whereis( data, peak );
+    double maxT = static_cast<double>(stfnum::whereis( data, peak ));
     
     if ( maxT == 0 ) maxT = data.size() * 0.05;
 
@@ -488,9 +488,9 @@ Vector_double stfnum::fgnabiexp_jac(double x, const Vector_double& p) {
     return jac;
 }
 
-void stfnum::fgnabiexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
+void stfnum::fgnabiexp_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double, Vector_double& pInit ) {
     // Find the peak position in data:
-    double maxT = stfnum::whereis( data, peak );
+    double maxT = static_cast<double>(stfnum::whereis( data, peak ));
     
     if ( maxT == 0 ) maxT = data.size() * 0.05;
     // p[0]: gprime_na

@@ -66,7 +66,7 @@ void stfnum::saveJac(stfnum::Jac jac) {
     jac_lour=jac;
 }
 
-void stfnum::c_func_lour(double *p, double* hx, int m, int n, void *adata) {
+void stfnum::c_func_lour(double *p, double* hx, int, int n, void *adata) {
     // m: the number of parameters that are to be fitted
     // adata: pointer to a struct that (1) specifies which parameters are to be fitted
     //		  and (2) contains the constant parameters
@@ -90,7 +90,7 @@ void stfnum::c_func_lour(double *p, double* hx, int m, int n, void *adata) {
     }	
 }
 
-void stfnum::c_jac_lour(double *p, double *jac, int m, int n, void *adata) {
+void stfnum::c_jac_lour(double *p, double *jac, int, int n, void *adata) {
     // m: the number of parameters that are to be fitted
     // adata: pointer to a struct that (1) specifies which parameters are to be fitted
     //		  and (2) contains the constant parameters
@@ -406,8 +406,8 @@ double stfnum::lmFit( const Vector_double& data, double dt,
 double stfnum::flin(double x, const Vector_double& p) { return p[0]*x + p[1]; }
 
 //! Dummy function to be passed to stfnum::storedFunc for linear functions.
-void stfnum::flin_init(const Vector_double& data, double base, double peak,
-        double RTLoHI, double HalfWidth, double dt, Vector_double& pInit )
+void stfnum::flin_init(const Vector_double&, double, double,
+        double, double, double, Vector_double& )
 { }
 
 stfnum::storedFunc stfnum::initLinFunc() {
