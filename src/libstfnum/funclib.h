@@ -41,7 +41,7 @@ namespace stfnum {
      *         \e i denotes the <em>i</em> -th exponential term (running from 0 to <em>n</em>-1).
      *  \return The evaluated function.
      */
-    double fexp(double x, const Vector_double& p);
+    StfnumDll double fexp(double x, const Vector_double& p);
     
     //! Computes the Jacobian of stfnum::fexp().
     /*! \f{eqnarray*}
@@ -104,7 +104,7 @@ namespace stfnum {
      *         \e p[3] is the delay.
      *  \return The evaluated function.
      */
-    double fexpde(double x, const Vector_double& p);
+    StfnumDll double fexpde(double x, const Vector_double& p);
 
 #if 0
     //! Computes the Jacobian of stfnum::fexpde().
@@ -173,7 +173,7 @@ namespace stfnum {
      *         \e p[4] is the earlier (faster) time constant, \n
      *  \return The evaluated function.
      */
-    double fexpbde(double x, const Vector_double& p);
+    StfnumDll double fexpbde(double x, const Vector_double& p);
 
     //! Triexponential function with delay. 
     /*! \f{eqnarray*}
@@ -264,7 +264,7 @@ namespace stfnum {
      *         \e p[2] is the offset.
      *  \return The evaluated function.
      */
-    double falpha(double x, const Vector_double& p);
+    StfnumDll double falpha(double x, const Vector_double& p);
     
     //! Computes the Jacobian of stfnum::falpha().
     /*! \f{eqnarray*}
@@ -295,7 +295,7 @@ namespace stfnum {
      *         \e p[3] is the offset. \n
      *  \return The evaluated function.
      */
-    double fHH(double x, const Vector_double& p);
+    StfnumDll double fHH(double x, const Vector_double& p);
 
     //! Computes the sum of an arbitrary number of Gaussians.
     /*! \f[
@@ -310,7 +310,7 @@ namespace stfnum {
      *         \e i is the 0-based index of the i-th Gaussian.
      *  \return The evaluated function.
      */
-	StfioDll
+	StfnumDll
     double fgauss(double x, const Vector_double& p);
 
     //! Computes the Jacobian of a sum of Gaussians.
@@ -326,7 +326,7 @@ namespace stfnum {
      *         \e p[3] is the offset. \n
      *  \return The evaluated function.
      */
-    double fgnabiexp(double x, const Vector_double& p);
+    StfnumDll double fgnabiexp(double x, const Vector_double& p);
 
     //! Computes the Jacobian of stfnum::fgnabiexp().
     /*! \f{eqnarray*}
@@ -478,7 +478,7 @@ namespace stfnum {
     //! Returns the library of functions for non-linear regression.
     /*! \return A vector of non-linear regression functions.
      */
-	StfioDll
+	StfnumDll
     std::vector<stfnum::storedFunc> GetFuncLib();
 
     /*@}*/

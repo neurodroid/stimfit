@@ -430,7 +430,12 @@ if(NOT STF_BUILD_MODULE)
         ${CMAKE_CURRENT_SOURCE_DIR}/src/test/gtest/include
         ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
-    target_link_libraries(stimfit_gtest_main PUBLIC Threads::Threads)
+    target_link_libraries(
+      stimfit_gtest_main
+      PUBLIC
+        Threads::Threads
+        stimfit_config
+    )
     stf_apply_macos_runtime_policy(stimfit_gtest_main)
 
     add_executable(
