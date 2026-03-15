@@ -10,7 +10,7 @@ This repository now includes a **functional CMake toolchain baseline** mirroring
   - [`cmake/StimfitDependencies.cmake`](cmake/StimfitDependencies.cmake)
   - [`cmake/StimfitToolchain.cmake`](cmake/StimfitToolchain.cmake)
   - [`cmake/StimfitMigration.cmake`](cmake/StimfitMigration.cmake)
-- Generated config header template [`cmake/stfconf.h.in`](cmake/stfconf.h.in)
+- Generated config header template [`stfconf.h.in`](stfconf.h.in)
 - Source tree entrypoint [`src/CMakeLists.txt`](src/CMakeLists.txt)
 - Per-component scaffold `CMakeLists.txt` files:
   - [`src/libstfio/CMakeLists.txt`](src/libstfio/CMakeLists.txt)
