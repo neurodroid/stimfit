@@ -40,7 +40,9 @@ if(WIN32)
     "${CMAKE_BINARY_DIR}/src/libstfnum/$<CONFIG>"
     "$ENV{SystemRoot}/System32"
   )
-  if(DEFINED BIOSIG_LIBRARY AND EXISTS "${BIOSIG_LIBRARY}")
+  if(DEFINED STF_BIOSIG_RUNTIME_DIR AND EXISTS "${STF_BIOSIG_RUNTIME_DIR}")
+    list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${STF_BIOSIG_RUNTIME_DIR}")
+  elseif(DEFINED BIOSIG_LIBRARY AND EXISTS "${BIOSIG_LIBRARY}")
     get_filename_component(_stf_biosig_lib_dir "${BIOSIG_LIBRARY}" DIRECTORY)
     list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${_stf_biosig_lib_dir}")
     unset(_stf_biosig_lib_dir)
@@ -225,7 +227,17 @@ if(NOT STF_BUILD_MODULE)
     unset(_fftw3_lib_dir)
   endif()
 
-  if(WIN32 AND DEFINED BIOSIG_LIBRARY AND EXISTS "${BIOSIG_LIBRARY}")
+  if(WIN32 AND DEFINED STF_BIOSIG_RUNTIME_DIR AND EXISTS "${STF_BIOSIG_RUNTIME_DIR}")
+    set(_biosig_lib_dir "${STF_BIOSIG_RUNTIME_DIR}")
+    install(
+      DIRECTORY "${_biosig_lib_dir}/"
+      DESTINATION ${CMAKE_INSTALL_BINDIR}
+      COMPONENT ${STF_COMPONENT_CORE}
+      FILES_MATCHING
+        PATTERN "biosig*.dll"
+    )
+    unset(_biosig_lib_dir)
+  elseif(WIN32 AND DEFINED BIOSIG_LIBRARY AND EXISTS "${BIOSIG_LIBRARY}")
     get_filename_component(_biosig_lib_dir "${BIOSIG_LIBRARY}" DIRECTORY)
     install(
       DIRECTORY "${_biosig_lib_dir}/"

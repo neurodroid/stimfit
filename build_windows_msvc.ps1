@@ -1,6 +1,5 @@
 param(
     [switch]$WithPython = $true,
-    [switch]$SkipPrepare,
     [string]$ConfigurePreset,
     [string]$BuildPreset,
     [string]$PackageGenerator,
@@ -23,7 +22,6 @@ biosig workflow.
 .USAGE
 ./build_windows_msvc.ps1
 ./build_windows_msvc.ps1 -WithPython:$false
-./build_windows_msvc.ps1 -SkipPrepare
 ./build_windows_msvc.ps1 -InstallPrefix ..\stimfit-out\install\custom-python
 ./build_windows_msvc.ps1 -PackageGenerator INNOSETUP
 ./build_windows_msvc.ps1 -PackageGenerator ZIP
@@ -70,10 +68,6 @@ try {
     $resolvedBuildDir = $BuildDir
     if ([string]::IsNullOrWhiteSpace($resolvedBuildDir)) {
         $resolvedBuildDir = Join-Path "..\stimfit-out" $selectedConfigurePreset
-    }
-
-    if (-not $SkipPrepare) {
-        Invoke-Step -Name "Prepare patched biosig" -Command @("cmake", "-P", "cmake/PrepareBiosigMSVC.cmake")
     }
 
     Invoke-Step -Name "Configure" -Command @("cmake", "--preset", $selectedConfigurePreset)
