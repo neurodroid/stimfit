@@ -205,7 +205,7 @@ BOOL CABF2ProtocolReader::Read( int* pnError )
     // Set header variable for the number of episodes in the file.
     if( m_pFH->nOperationMode == ABF2_GAPFREEFILE ) {
         double fdiv = (double)m_pFH->lActualAcqLength / m_pFH->lNumSamplesPerEpisode;
-        DWORD dwMaxEpi = ceil(fdiv);
+        DWORD dwMaxEpi = static_cast<DWORD>(ceil(fdiv));
 #ifdef _STFDEBUG
         std::cout << "Total number of samples " << m_pFH->lActualAcqLength << std::endl;
 #endif
@@ -244,7 +244,7 @@ BOOL CABF2ProtocolReader::GetString( UINT uIndex, LPSTR pszText, UINT uBufSize )
     LPCSTR pszString = m_Strings.Get( uIndex - 1 );
     if( pszString )
     {
-        UINT uLen = strlen( pszString );
+        UINT uLen = static_cast<UINT>(strlen( pszString ));
         if( uLen > uBufSize )
             return FALSE;
 

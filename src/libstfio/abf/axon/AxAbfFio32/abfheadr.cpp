@@ -792,9 +792,6 @@ void WINAPI ABFH_GetDACtoUUFactors( const ABFFileHeader *pFH, int nChannel,
    ABFH_PromoteHeader( &NewFH, pFH );
    {
       // Prevent accidental use of pFH.
-      int pFH = 0;
-      (void)pFH;
-
       float fScaleFactor       = NewFH.fDACScaleFactor[nChannel];
       float fCalibrationFactor = NewFH.fDACCalibrationFactor[nChannel];
       float fCalibrationOffset = NewFH.fDACCalibrationOffset[nChannel];
@@ -1158,7 +1155,7 @@ BOOL WINAPI ABFH_GetErrorText( int nError, char *sTxtBuf, UINT uMaxLen)
       snprintf(szErrorMsg, sizeof(szErrorMsg), szTemplate, nError);
 //      ERRORMSG(szErrorMsg);
 
-      strncpy(sTxtBuf, szErrorMsg, uMaxLen-1);
+      strncpy_s(sTxtBuf, uMaxLen, szErrorMsg, uMaxLen-1);
       sTxtBuf[uMaxLen-1] = '\0';
       rval = FALSE;
    }
@@ -1403,7 +1400,7 @@ void WINAPI ABFH_PromoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
    pOut->fDACFileOffset[uDAC]     = pIn->_fDACFileOffset;
    pOut->lDACFileEpisodeNum[uDAC] = pIn->_nDACFileEpisodeNum;
    pOut->nDACFileADCNum[uDAC]     = pIn->_nDACFileADCNum;
-   strncpy( pOut->sDACFilePath[uDAC], pIn->_sDACFilePath, ABF_DACFILEPATHLEN );
+    strncpy_s( pOut->sDACFilePath[uDAC], ABF_DACFILEPATHLEN, pIn->_sDACFilePath, _TRUNCATE );
 
    // If this is a valid header, then check the presweep trains.
    if( (pIn->lFileSignature == ABF_NATIVESIGNATURE) &&
@@ -1438,7 +1435,7 @@ void WINAPI ABFH_PromoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
       // User list parameters.
       pOut->nULEnable[uDAC]        = pIn->_nListEnable;
       pOut->nULParamToVary[uDAC]   = pIn->_nParamToVary;
-      strncpy( pOut->sULParamValueList[uDAC], pIn->_sParamValueList, ABF_VARPARAMLISTLEN );
+      strncpy_s( pOut->sULParamValueList[uDAC], ABF_VARPARAMLISTLEN, pIn->_sParamValueList, _TRUNCATE );
    }
 
    // DAC Calibration Factors.
@@ -1449,7 +1446,7 @@ void WINAPI ABFH_PromoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
    }
 
    // File Comment.
-   strncpy( pOut->sFileComment, pIn->_sFileComment, ABF_OLDFILECOMMENTLEN );
+    strncpy_s( pOut->sFileComment, ABF_OLDFILECOMMENTLEN, pIn->_sFileComment, _TRUNCATE );
 
    // Extra 'enable' fields.
    pOut->nCommentsEnable = (pOut->nManualInfoStrategy != ABF_ENV_DONOTWRITE);

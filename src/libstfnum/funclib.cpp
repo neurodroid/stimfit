@@ -263,7 +263,7 @@ Vector_double stfnum::fexpde_jac(double x, const Vector_double& p) {
 }
 #endif 
 
-void stfnum::fexpde_init(const Vector_double& data, double base, double peak, double RTLoHI, double HalfWidth, double dt, Vector_double& pInit ) {
+void stfnum::fexpde_init(const Vector_double& data, double base, double peak, double /*RTLoHI*/, double /*HalfWidth*/, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
     double maxT;
     stfnum::peak( data, base, 0, data.size()-1, 1, stfnum::both, maxT );
@@ -327,7 +327,7 @@ Vector_double stfnum::fexpbde_jac(double x, const Vector_double& p) {
 
 void stfnum::fexpbde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
-    double maxT = stfnum::whereis( data, peak );
+    double maxT = static_cast<double>(stfnum::whereis( data, peak ));
 
     if ( maxT == 0 ) maxT = data.size() * 0.05;
 
@@ -348,7 +348,7 @@ void stfnum::fexpbde_init(const Vector_double& data, double base, double peak, d
 
 void stfnum::fexptde_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
     // Find the peak position in data:
-    double maxT = stfnum::whereis( data, peak );
+    double maxT = static_cast<double>(stfnum::whereis( data, peak ));
 
     if ( maxT == 0 ) maxT = data.size() * 0.05;
 
@@ -388,8 +388,8 @@ Vector_double stfnum::falpha_jac(double x, const Vector_double& p) {
     return jac;
 }
 
-void stfnum::falpha_init(const Vector_double& data, double base, double peak, double RTLoHi, double HalfWidth, double dt, Vector_double& pInit ) {
-        double maxT = stfnum::whereis( data, peak )*dt;
+void stfnum::falpha_init(const Vector_double& data, double base, double peak, double /*RTLoHi*/, double /*HalfWidth*/, double dt, Vector_double& pInit ) {
+        double maxT = static_cast<double>(stfnum::whereis( data, peak ))*dt;
 
         pInit[0] = peak;
         pInit[1] = maxT;// time of the peak correspond to time constant

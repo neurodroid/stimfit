@@ -94,7 +94,7 @@ int LEVMAR_DER(
                       * Set to NULL if not needed
                       */
 {
-register int i, j, k, l;
+register int i, j, k, l=0;
 int worksz, freework=0, issolved;
 /* temp work arrays */
 LM_REAL *e,          /* nx1 */
@@ -215,7 +215,7 @@ int (*linsolver)(LM_REAL *A, LM_REAL *B, LM_REAL *x, int m)=NULL;
        */
 
       /* looping downwards saves a few computations */
-      register int l;
+      register int lmidx;
       register LM_REAL alpha, *jaclm, *jacTjacim;
 
       for(i=m*m; i-->0; )
@@ -223,16 +223,16 @@ int (*linsolver)(LM_REAL *A, LM_REAL *B, LM_REAL *x, int m)=NULL;
       for(i=m; i-->0; )
         jacTe[i]=0.0;
 
-      for(l=n; l-->0; ){
-        jaclm=jac+l*m;
+      for(lmidx=n; lmidx-->0; ){
+        jaclm=jac+lmidx*m;
         for(i=m; i-->0; ){
           jacTjacim=jacTjac+i*m;
-          alpha=jaclm[i]; //jac[l*m+i];
+          alpha=jaclm[i]; //jac[lmidx*m+i];
           for(j=i+1; j-->0; ) /* j<=i computes lower triangular part only */
             jacTjacim[j]+=jaclm[j]*alpha; //jacTjac[i*m+j]+=jac[l*m+j]*alpha
 
           /* J^T e */
-          jacTe[i]+=alpha*e[l];
+          jacTe[i]+=alpha*e[lmidx];
         }
       }
 
@@ -470,7 +470,7 @@ int LEVMAR_DIF(
                       * Set to NULL if not needed
                       */
 {
-register int i, j, k, l;
+register int i, j, k, l=0;
 int worksz, freework=0, issolved;
 /* temp work arrays */
 LM_REAL *e,          /* nx1 */
@@ -610,7 +610,7 @@ int (*linsolver)(LM_REAL *A, LM_REAL *B, LM_REAL *x, int m)=NULL;
          * Note that the non-blocking algorithm is faster on small
          * problems since in this case it avoids the overheads of blocking. 
          */
-        register int l;
+        register int lmidx;
         register LM_REAL alpha, *jaclm, *jacTjacim;
 
         /* looping downwards saves a few computations */
@@ -619,16 +619,16 @@ int (*linsolver)(LM_REAL *A, LM_REAL *B, LM_REAL *x, int m)=NULL;
         for(i=m; i-->0; )
           jacTe[i]=0.0;
 
-        for(l=n; l-->0; ){
-          jaclm=jac+l*m;
+        for(lmidx=n; lmidx-->0; ){
+          jaclm=jac+lmidx*m;
           for(i=m; i-->0; ){
             jacTjacim=jacTjac+i*m;
-            alpha=jaclm[i]; //jac[l*m+i];
+            alpha=jaclm[i]; //jac[lmidx*m+i];
             for(j=i+1; j-->0; ) /* j<=i computes lower triangular part only */
               jacTjacim[j]+=jaclm[j]*alpha; //jacTjac[i*m+j]+=jac[l*m+j]*alpha
 
             /* J^T e */
-            jacTe[i]+=alpha*e[l];
+            jacTe[i]+=alpha*e[lmidx];
           }
         }
 
