@@ -50,6 +50,25 @@ static BOOL ErrorReturn(int *pnError, int nErrorNum)
    return FALSE;
 }
 
+static void CopyCStringTruncated(char *dest, size_t destSize, const char *src, size_t srcMaxLen)
+{
+   if ((dest == NULL) || (destSize == 0))
+      return;
+
+   if (src == NULL)
+   {
+      dest[0] = '\0';
+      return;
+   }
+
+   size_t copyLen = strnlen(src, srcMaxLen);
+   if (copyLen >= destSize)
+      copyLen = destSize - 1;
+
+   memcpy(dest, src, copyLen);
+   dest[copyLen] = '\0';
+}
+
 //===============================================================================================
 // FUNCTION: ABFH_Initialize
 // PURPOSE:  Initialize an ABFFileHeader structure to a consistent set of parameters
@@ -1155,8 +1174,7 @@ BOOL WINAPI ABFH_GetErrorText( int nError, char *sTxtBuf, UINT uMaxLen)
       snprintf(szErrorMsg, sizeof(szErrorMsg), szTemplate, nError);
 //      ERRORMSG(szErrorMsg);
 
-      strncpy(sTxtBuf, szErrorMsg, uMaxLen-1);
-      sTxtBuf[uMaxLen-1] = '\0';
+      CopyCStringTruncated(sTxtBuf, uMaxLen, szErrorMsg, sizeof(szErrorMsg));
       rval = FALSE;
    }
    return rval;
@@ -1400,8 +1418,7 @@ void WINAPI ABFH_PromoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
    pOut->fDACFileOffset[uDAC]     = pIn->_fDACFileOffset;
    pOut->lDACFileEpisodeNum[uDAC] = pIn->_nDACFileEpisodeNum;
    pOut->nDACFileADCNum[uDAC]     = pIn->_nDACFileADCNum;
-    strncpy( pOut->sDACFilePath[uDAC], pIn->_sDACFilePath, ABF_DACFILEPATHLEN - 1 );
-    pOut->sDACFilePath[uDAC][ABF_DACFILEPATHLEN - 1] = '\0';
+   CopyCStringTruncated( pOut->sDACFilePath[uDAC], ABF_DACFILEPATHLEN, pIn->_sDACFilePath, ABF_DACFILEPATHLEN );
 
    // If this is a valid header, then check the presweep trains.
    if( (pIn->lFileSignature == ABF_NATIVESIGNATURE) &&
@@ -1436,8 +1453,7 @@ void WINAPI ABFH_PromoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
       // User list parameters.
       pOut->nULEnable[uDAC]        = pIn->_nListEnable;
       pOut->nULParamToVary[uDAC]   = pIn->_nParamToVary;
-      strncpy( pOut->sULParamValueList[uDAC], pIn->_sParamValueList, ABF_VARPARAMLISTLEN - 1 );
-      pOut->sULParamValueList[uDAC][ABF_VARPARAMLISTLEN - 1] = '\0';
+      CopyCStringTruncated( pOut->sULParamValueList[uDAC], ABF_VARPARAMLISTLEN, pIn->_sParamValueList, ABF_VARPARAMLISTLEN );
    }
 
    // DAC Calibration Factors.
@@ -1448,8 +1464,7 @@ void WINAPI ABFH_PromoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
    }
 
    // File Comment.
-    strncpy( pOut->sFileComment, pIn->_sFileComment, ABF_OLDFILECOMMENTLEN - 1 );
-    pOut->sFileComment[ABF_OLDFILECOMMENTLEN - 1] = '\0';
+   CopyCStringTruncated( pOut->sFileComment, ABF_OLDFILECOMMENTLEN, pIn->_sFileComment, ABF_OLDFILECOMMENTLEN );
 
    // Extra 'enable' fields.
    pOut->nCommentsEnable = (pOut->nManualInfoStrategy != ABF_ENV_DONOTWRITE);
