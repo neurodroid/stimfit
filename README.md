@@ -6,6 +6,17 @@ Documentation is available [here](https://neurodroid.github.io/stimfit).
 
 Stimfit is a free, fast and simple program for viewing and analyzing electrophysiological data. It's currently available for GNU/Linux, Mac OS X and Windows. The standard version of Stimfit features an embedded Python shell that allows you to extend the program functionality by using numerical libraries such as [NumPy](http://numpy.scipy.org) and [SciPy](http://www.scipy.org). A standalone Python module for file i/o that doesn't depend on the graphical user interface is also available. The "lite" version of Stimfit comes without an embedded Python shell. Stimfit-lite is more lite-weight, easier to build and install. Stimfit is using the Import filters of [Biosig](https://biosig.sourceforge.net/) which supports reading of over 50 different dataformats.
 
+## Branch model
+
+The repository uses two upstream lines and two Debian packaging lines:
+
+- `master`: primary development branch for the modern CMake-based toolchain
+- `0.16`: legacy-maintenance branch for the historical 0.16/autotools line
+- `debian/sid`: Debian unstable packaging branch tracking `master`
+- `debian/sid-0.16`: Debian packaging branch tracking `0.16`
+
+Contributor and maintainer workflow details are documented in [BRANCHES.md](BRANCHES.md).
+
 
 ## List of references 
 

@@ -3,10 +3,10 @@ name: CI
 on:
   push:
     branches:
-      - pr/msvc-toolchain-compat
+      - master
   pull_request:
     branches:
-      - pr/msvc-toolchain-compat
+      - master
 
 jobs:
   ubuntu-tests:
