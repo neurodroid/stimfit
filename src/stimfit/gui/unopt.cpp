@@ -738,7 +738,6 @@ void wxStfApp::OnUserdef(wxCommandEvent& event) {
 bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
     // Grab the Global Interpreter Lock.
     wxPyBlock_t blocked = wxPyBeginBlockThreads();
-    bool success = false;
 
     PyObject* stf_mod = PyImport_ImportModule("tdms");
     if (!stf_mod) {
@@ -755,27 +754,38 @@ bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
     PyObject* stf_tdms_args = NULL;
     PyObject* stf_tdms_res = NULL;
 
+    const auto finish_tdms_load = [&](bool result) {
+        Py_XDECREF(stf_tdms_res);
+        Py_XDECREF(stf_tdms_args);
+        Py_XDECREF(stf_tdms_f);
+        Py_XDECREF(py_fn);
+        Py_XDECREF(stf_mod);
+        wxPyEndBlockThreads(blocked);
+
+        return result;
+    };
+
     if (stf_tdms_f && PyCallable_Check(stf_tdms_f)) {
         stf_tdms_args = PyTuple_Pack(1, py_fn);
         stf_tdms_res = PyObject_CallObject(stf_tdms_f, stf_tdms_args);
         PyErr_Print();
     } else {
-        goto tdms_cleanup;
+        return finish_tdms_load(false);
     }
 
     if (stf_tdms_res == Py_None) {
         wxGetApp().ErrorMsg( wxT("nptdms module unavailable. Cannot read tdms files."));
-        goto tdms_cleanup;
+        return finish_tdms_load(false);
     }
 
     if (!PyTuple_Check(stf_tdms_res)) {
         wxGetApp().ErrorMsg(wxT("Return value of tdms_open is not a tuple. Aborting now."));
-        goto tdms_cleanup;
+        return finish_tdms_load(false);
     }
 
     if (PyTuple_Size(stf_tdms_res) != 2) {
         wxGetApp().ErrorMsg( wxT("Return value of tdms_open is not a 2-tuple. Aborting now."));
-        goto tdms_cleanup;
+        return finish_tdms_load(false);
     }
 
     PyObject* data_list = PyTuple_GetItem(stf_tdms_res, 0);
@@ -795,7 +805,7 @@ bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
                 PyObject* list_item = PyList_GetItem(section_list, ns);
                 if (!PyArray_Check(list_item)) {
                     wxGetApp().ErrorMsg( wxT("Expected a numpy array"));
-                    goto tdms_cleanup;
+                    return finish_tdms_load(false);
                 }
                 PyArrayObject* np_array = (PyArrayObject*)list_item;
                 npy_intp* arr_shape = PyArray_DIMS(np_array);
@@ -815,17 +825,8 @@ bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
     // Py_DECREF(stf_tdms_res);
     ReturnData.resize(nchannels_nonempty);
     ReturnData.SetXScale(tdmsDt);
-    success = true;
 
-tdms_cleanup:
-    Py_XDECREF(stf_tdms_res);
-    Py_XDECREF(stf_tdms_args);
-    Py_XDECREF(stf_tdms_f);
-    Py_XDECREF(py_fn);
-    Py_XDECREF(stf_mod);
-    wxPyEndBlockThreads(blocked);
-
-    return success;
+    return finish_tdms_load(true);
 }
 
 #endif // WITH_PYTHON

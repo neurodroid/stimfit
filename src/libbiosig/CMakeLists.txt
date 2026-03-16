@@ -20,6 +20,14 @@ set(STF_BIOSIG4CPP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../biosig/biosig4c++)
 set(STF_BIOSIG_EXTERN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../biosig/biosig4matlab/doc)
 set(_stf_biosig_binary_dir ${CMAKE_CURRENT_BINARY_DIR})
 
+if(WIN32)
+  set(_stf_shell_executable cmd)
+  set(_stf_shell_flag /C)
+else()
+  set(_stf_shell_executable /bin/sh)
+  set(_stf_shell_flag -c)
+endif()
+
 set(_stf_biosig_generated_eventcodes ${_stf_biosig_binary_dir}/eventcodes.i)
 set(_stf_biosig_generated_eventcodegroups ${_stf_biosig_binary_dir}/eventcodegroups.i)
 set(_stf_biosig_generated_units ${_stf_biosig_binary_dir}/units.i)
@@ -39,13 +47,13 @@ add_custom_command(
   COMMAND
     ${CMAKE_COMMAND} -E rm -f ${_stf_biosig_generated_units}
   COMMAND
-    ${CMAKE_COMMAND} -E env
-    cmd /C
+    ${_stf_shell_executable} ${_stf_shell_flag}
     "\"${STF_AWK_EXECUTABLE}\" -f \"${STF_BIOSIG4CPP_DIR}/units.awk\" \"${STF_BIOSIG_EXTERN_DIR}/units.csv\" > \"${_stf_biosig_generated_units}\""
   DEPENDS
     ${STF_BIOSIG4CPP_DIR}/units.awk
     ${STF_BIOSIG_EXTERN_DIR}/units.csv
   WORKING_DIRECTORY ${_stf_biosig_binary_dir}
+  VERBATIM
 )
 
 add_custom_command(
@@ -53,13 +61,13 @@ add_custom_command(
   COMMAND
     ${CMAKE_COMMAND} -E rm -f ${_stf_biosig_generated_annexb}
   COMMAND
-    ${CMAKE_COMMAND} -E env
-    cmd /C
+    ${_stf_shell_executable} ${_stf_shell_flag}
     "\"${STF_AWK_EXECUTABLE}\" -f \"${STF_BIOSIG4CPP_DIR}/annotatedECG.awk\" \"${STF_BIOSIG_EXTERN_DIR}/11073-10102-AnnexB.txt\" > \"${_stf_biosig_generated_annexb}\""
   DEPENDS
     ${STF_BIOSIG4CPP_DIR}/annotatedECG.awk
     ${STF_BIOSIG_EXTERN_DIR}/11073-10102-AnnexB.txt
   WORKING_DIRECTORY ${_stf_biosig_binary_dir}
+  VERBATIM
 )
 
 add_custom_target(stimfit_biosig_generated
@@ -134,7 +142,8 @@ find_package(ZLIB REQUIRED)
 target_link_libraries(stimfit_biosig PUBLIC ZLIB::ZLIB)
 
 if(APPLE)
-  target_link_libraries(stimfit_biosig PUBLIC "-liconv")
+  find_package(Iconv REQUIRED)
+  target_link_libraries(stimfit_biosig PUBLIC Iconv::Iconv)
 endif()
 
 set_target_properties(stimfit_biosig PROPERTIES OUTPUT_NAME biosig2)
