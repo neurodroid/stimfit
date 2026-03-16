@@ -127,13 +127,20 @@ jobs:
             -DSTF_ENABLE_PYTHON=OFF \
             -DSTF_WITH_BIOSIG=OFF \
             -DSTF_BUILD_MODULE=OFF \
-            -DSTF_BUILD_TESTS=OFF \
-            -DSTF_BUILD_NUMERIC_TESTS=OFF \
+            -DSTF_BUILD_TESTS=ON \
+            -DSTF_BUILD_NUMERIC_TESTS=ON \
             -DSTF_MACOS_APP_BUNDLE=ON
 
-      - name: Build Stimfit
+      - name: Build Stimfit and test targets
         run: |
-          cmake --build build-macos-macports --parallel
+          cmake --build build-macos-macports --parallel --target \
+            stimfit \
+            stimfit_containers_test \
+            stimfit_numeric_test
+
+      - name: Run MacPorts CTest
+        run: |
+          ctest --test-dir build-macos-macports --output-on-failure --tests-regex 'stimfit_(containers|numeric)_test'
 
       - name: Install Stimfit into staging
         run: |
