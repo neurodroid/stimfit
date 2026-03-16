@@ -79,13 +79,15 @@ if(_stf_refresh_stage)
   _stf_run_checked(${STF_GIT_EXECUTABLE} clone --local --no-hardlinks "${STF_BIOSIG_SOURCE_DIR}" "${STF_BIOSIG_STAGE_DIR}")
 endif()
 
+_stf_run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_STAGE_DIR}" config core.autocrlf false)
+_stf_run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_STAGE_DIR}" config core.eol lf)
 _stf_run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_STAGE_DIR}" checkout --force HEAD)
 _stf_run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_STAGE_DIR}" reset --hard)
 _stf_run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_STAGE_DIR}" clean -fdx)
 
 foreach(_stf_patch IN LISTS _stf_biosig_patch_files)
   execute_process(
-    COMMAND ${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_STAGE_DIR}" apply --3way --whitespace=nowarn "${_stf_patch}"
+    COMMAND ${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_STAGE_DIR}" apply --3way --ignore-space-change --ignore-whitespace --whitespace=nowarn "${_stf_patch}"
     RESULT_VARIABLE _stf_patch_result
   )
   if(NOT _stf_patch_result EQUAL 0)

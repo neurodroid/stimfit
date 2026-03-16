@@ -54,13 +54,15 @@ if(NOT EXISTS "${STF_BIOSIG_WORK_DIR}/.git")
 	_run_checked(${STF_GIT_EXECUTABLE} clone --local --no-hardlinks "${STF_BIOSIG_SOURCE_DIR}" "${STF_BIOSIG_WORK_DIR}")
 endif()
 
+_run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_WORK_DIR}" config core.autocrlf false)
+_run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_WORK_DIR}" config core.eol lf)
 _run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_WORK_DIR}" checkout --force "${STF_BIOSIG_BASE_REF}")
 _run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_WORK_DIR}" reset --hard)
 _run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_WORK_DIR}" clean -fdx)
 
 foreach(_patch IN LISTS _biosig_patch_files)
 	execute_process(
-		COMMAND ${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_WORK_DIR}" apply --3way --whitespace=nowarn "${_patch}"
+		COMMAND ${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_WORK_DIR}" apply --3way --ignore-space-change --ignore-whitespace --whitespace=nowarn "${_patch}"
 		RESULT_VARIABLE _patch_result
 	)
 	if(NOT _patch_result EQUAL 0)
