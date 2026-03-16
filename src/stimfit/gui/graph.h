@@ -370,7 +370,7 @@ private:
     void PlotAnnotations(wxDC& DC);
     void DrawCrosshair( wxDC& DC, const wxPen& pen, const wxPen& printPen, int crosshairSize, double xch, double ych);
     void PlotTrace( wxDC* pDC, const Vector_double& trace, plottype pt=active, int bgno=0 );
-    void DoPlot( wxDC* pDC, const Vector_double& trace, int start, int end, int step, plottype pt=active, int bgno=0 );
+    void DoPlot( wxDC* pDC, const Vector_double& trace, int start, int end, int, plottype pt=active, int bgno=0 );
     void PrintScale(wxRect& WindowRect);
     void PrintTrace( wxDC* pDC, const Vector_double& trace, plottype ptype=active);
     void DoPrint( wxDC* pDC, const Vector_double& trace, int start, int end, plottype ptype=active);

@@ -628,6 +628,7 @@ CFSLONG CLSeek(fDef handle,                              /* DOS handle of file *
 
     DWORD       dwMode;
 
+    dwMode = FILE_BEGIN;
     switch (mode)
     {
         case 0 : dwMode = FILE_BEGIN;                  /* start of file */
@@ -2275,7 +2276,6 @@ CFSAPI(void) SetVarVal(short   handle,               /* program file handle */
 #else
     TFileInfo *pfileInfo;
 #endif
-    CFSLONG*   pLong = (CFSLONG*)varADS;
 
     ASSERT(handle >= 0);
     ASSERT(handle < g_maxCfsFiles);
@@ -2803,8 +2803,15 @@ CFSAPI(short) OpenCFSFile(TpCStr  fname,   /* C string containing file name */
             }
         }
 
-        loop = RecoverTable(handle,&tblSz,&fileHP->tablePos,&fileHP->dataSecs,
-                                                             &fileHP->fileSz);
+        {
+            CFSLONG tablePos = fileHP->tablePos;
+            WORD dataSecs = fileHP->dataSecs;
+            CFSLONG fileSz = fileHP->fileSz;
+            loop = RecoverTable(handle, &tblSz, &tablePos, &dataSecs, &fileSz);
+            fileHP->tablePos = tablePos;
+            fileHP->dataSecs = dataSecs;
+            fileHP->fileSz = fileSz;
+        }
        /* if loop is zero the table will be recovered ie.added to the CFS file
                                        and the file header variable updated */
         if (loop < 0)
@@ -3969,10 +3976,8 @@ CFSAPI(short) FileError(TpShort handleNo,        /* to return handle number */
 CFSAPI(short) CommitCFSFile(short handle)
 {                                        
     short       proc      = 16;                          /* function number */
-    short       err       = 0;
     short       retCode   = 0;
     short       restore   = 0;
-    int         hand      = 0;
     CFSLONG        gtPlace   = 0;
     CFSLONG        endPtr    = 0;
     CFSLONG        oldDataSz = 0;
@@ -4088,7 +4093,7 @@ short FindUnusedHandle(void)
             g_fileInfo[search].allowed = nothing;   /* Initialise file info */
     }
 
-    search = g_maxCfsFiles - 1;               /* Start index for the search */
+    search = (short)(g_maxCfsFiles - 1);      /* Start index for the search */
     while ((search >= 0) && (g_fileInfo[search].allowed != nothing))
         search--;
 
@@ -4106,11 +4111,11 @@ short FindUnusedHandle(void)
         {
             for (search = 0; search < num; search++)   /* Initialise memory */
                 pNew[search].allowed = nothing;        /* and copy the data */
-            memcpy(pNew, g_fileInfo, sizeof(TFileInfo) * g_maxCfsFiles);
+            memcpy(pNew, g_fileInfo, sizeof(TFileInfo) * (size_t)g_maxCfsFiles);
             CFreeAllcn(g_fileInfo);              /* Discard old memory area */
             g_fileInfo = pNew;            /* and save new pointer and count */
             g_maxCfsFiles = num;
-            search = num - 1;         /* and finally, return the last index */
+            search = (short)(num - 1); /* and finally, return the last index */
         }
     }
 
@@ -4640,7 +4645,6 @@ short RecoverTable(short    handle,                  /* program file handle */
 #endif
     TpFHead     fileHP;
     short       retval;
-    THandle     pHandle = 0;
     
     pfileInfo = &g_fileInfo[handle];     /* point to this files information */
     fileHP    = pfileInfo->fileHeadP;

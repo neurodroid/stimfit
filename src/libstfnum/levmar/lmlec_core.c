@@ -159,10 +159,10 @@ register int i, j, k;
   /* the upper triangular part of a now contains the upper triangle of the unpermuted R */
 
   if(eps<0.0){
-    LM_REAL aux;
+    LM_REAL machineEpsAux;
 
     /* compute machine epsilon. DBL_EPSILON should do also */
-    for(eps=LM_CNST(1.0); aux=eps+LM_CNST(1.0), aux-LM_CNST(1.0)>0.0; eps*=LM_CNST(0.5))
+    for(eps=LM_CNST(1.0); machineEpsAux=eps+LM_CNST(1.0), machineEpsAux-LM_CNST(1.0)>0.0; eps*=LM_CNST(0.5))
                               ;
     eps*=LM_CNST(2.0);
   }

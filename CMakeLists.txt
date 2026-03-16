@@ -26,6 +26,7 @@ include(CTest)
 include(StimfitOptions)
 include(StimfitDependencies)
 include(StimfitToolchain)
+include(StimfitMacOS)
 include(StimfitMigration)
 
 set(STF_COMPONENT_CORE "core")
@@ -39,7 +40,9 @@ if(WIN32)
     "${CMAKE_BINARY_DIR}/src/libstfnum/$<CONFIG>"
     "$ENV{SystemRoot}/System32"
   )
-  if(DEFINED BIOSIG_LIBRARY AND EXISTS "${BIOSIG_LIBRARY}")
+  if(DEFINED STF_BIOSIG_RUNTIME_DIR AND EXISTS "${STF_BIOSIG_RUNTIME_DIR}")
+    list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${STF_BIOSIG_RUNTIME_DIR}")
+  elseif(DEFINED BIOSIG_LIBRARY AND EXISTS "${BIOSIG_LIBRARY}")
     get_filename_component(_stf_biosig_lib_dir "${BIOSIG_LIBRARY}" DIRECTORY)
     list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${_stf_biosig_lib_dir}")
     unset(_stf_biosig_lib_dir)
@@ -91,7 +94,20 @@ if(UNIX AND NOT APPLE AND NOT STF_BUILD_MODULE)
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 endif()
 
-configure_file(stfconf.h.in stfconf.h)
+set(STF_CONFIG_HEADER_TEMPLATE "${CMAKE_SOURCE_DIR}/stfconf.h.in")
+if(NOT EXISTS "${STF_CONFIG_HEADER_TEMPLATE}")
+  message(FATAL_ERROR "Could not find stfconf.h.in in ${CMAKE_SOURCE_DIR}")
+endif()
+configure_file("${STF_CONFIG_HEADER_TEMPLATE}" stfconf.h)
+unset(STF_CONFIG_HEADER_TEMPLATE)
+if(APPLE AND STF_MACOS_APP_BUNDLE)
+  set(PACKAGE_VERSION "${PROJECT_VERSION}")
+  configure_file(
+    ${CMAKE_SOURCE_DIR}/dist/macosx/stimfit.plist.in
+    ${CMAKE_CURRENT_BINARY_DIR}/stimfit.Info.plist
+    @ONLY
+  )
+endif()
 
 stf_print_configuration_summary()
 
@@ -100,8 +116,21 @@ add_subdirectory(src)
 if(NOT STF_BUILD_MODULE)
   if(WIN32)
     add_executable(stimfit WIN32 src/stimfit/gui/main.cpp)
+  elseif(APPLE AND STF_MACOS_APP_BUNDLE)
+    add_executable(stimfit MACOSX_BUNDLE src/stimfit/gui/main.cpp)
   else()
     add_executable(stimfit src/stimfit/gui/main.cpp)
+  endif()
+
+  if(APPLE AND STF_MACOS_APP_BUNDLE)
+    set_target_properties(stimfit PROPERTIES
+      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/stimfit.Info.plist"
+      MACOSX_BUNDLE_ICON_FILE "stimfit.icns"
+    )
+    target_sources(stimfit PRIVATE ${CMAKE_SOURCE_DIR}/dist/macosx/stimfit.icns)
+    set_source_files_properties(${CMAKE_SOURCE_DIR}/dist/macosx/stimfit.icns PROPERTIES
+      MACOSX_PACKAGE_LOCATION "Resources"
+    )
   endif()
   target_link_libraries(
     stimfit
@@ -114,15 +143,21 @@ if(NOT STF_BUILD_MODULE)
       stimfit::fftw3
       stimfit::lapack
   )
-  if(TARGET biosiglite)
-    target_link_libraries(stimfit PRIVATE biosiglite)
+  stf_apply_macos_runtime_policy(stimfit)
+  if(APPLE AND STF_MACOS_APP_BUNDLE)
+    install(
+      TARGETS stimfit
+      BUNDLE DESTINATION .
+      COMPONENT ${STF_COMPONENT_CORE}
+    )
+  else()
+    install(
+      TARGETS stimfit
+      ${STF_INSTALL_RUNTIME_DEPENDENCY_ARGS}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      COMPONENT ${STF_COMPONENT_CORE}
+    )
   endif()
-  install(
-    TARGETS stimfit
-    ${STF_INSTALL_RUNTIME_DEPENDENCY_ARGS}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    COMPONENT ${STF_COMPONENT_CORE}
-  )
 
   if(UNIX AND NOT APPLE)
     if(EXISTS "${CMAKE_SOURCE_DIR}/debian/stimfit.desktop")
@@ -192,7 +227,17 @@ if(NOT STF_BUILD_MODULE)
     unset(_fftw3_lib_dir)
   endif()
 
-  if(WIN32 AND DEFINED BIOSIG_LIBRARY AND EXISTS "${BIOSIG_LIBRARY}")
+  if(WIN32 AND DEFINED STF_BIOSIG_RUNTIME_DIR AND EXISTS "${STF_BIOSIG_RUNTIME_DIR}")
+    set(_biosig_lib_dir "${STF_BIOSIG_RUNTIME_DIR}")
+    install(
+      DIRECTORY "${_biosig_lib_dir}/"
+      DESTINATION ${CMAKE_INSTALL_BINDIR}
+      COMPONENT ${STF_COMPONENT_CORE}
+      FILES_MATCHING
+        PATTERN "biosig*.dll"
+    )
+    unset(_biosig_lib_dir)
+  elseif(WIN32 AND DEFINED BIOSIG_LIBRARY AND EXISTS "${BIOSIG_LIBRARY}")
     get_filename_component(_biosig_lib_dir "${BIOSIG_LIBRARY}" DIRECTORY)
     install(
       DIRECTORY "${_biosig_lib_dir}/"
@@ -389,46 +434,71 @@ if(NOT STF_BUILD_MODULE)
   endif()
 
   if(STF_BUILD_TESTS)
-    add_executable(
-      stimfittest
-      src/test/section.cpp
-      src/test/channel.cpp
-      src/test/recording.cpp
-      src/test/fit.cpp
-      src/test/measure.cpp
+    add_library(
+      stimfit_gtest_main
+      STATIC
       src/test/gtest/src/gtest-all.cc
       src/test/gtest/src/gtest_main.cc
     )
     target_include_directories(
-      stimfittest
-      PRIVATE
+      stimfit_gtest_main
+      PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/test/gtest
         ${CMAKE_CURRENT_SOURCE_DIR}/src/test/gtest/include
         ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
-    target_compile_definitions(stimfittest PRIVATE STF_TEST)
     target_link_libraries(
-      stimfittest
+      stimfit_gtest_main
+      PUBLIC
+        Threads::Threads
+        stimfit_config
+    )
+    stf_apply_macos_runtime_policy(stimfit_gtest_main)
+
+    add_executable(
+      stimfit_containers_test
+      src/test/section.cpp
+      src/test/channel.cpp
+      src/test/recording.cpp
+    )
+    target_link_libraries(
+      stimfit_containers_test
       PRIVATE
         stimfit_config
-        stimfit_core
-        stfio
-        stfnum
-        stimfit::wx
-        stimfit::fftw3
-        stimfit::lapack
-        Threads::Threads
+        stimfit_gtest_main
+        stfio_containers
     )
-    if(TARGET biosiglite)
-      target_link_libraries(stimfittest PRIVATE biosiglite)
-    endif()
-    add_test(NAME stimfittest COMMAND stimfittest)
+    stf_apply_macos_runtime_policy(stimfit_containers_test)
+    add_test(NAME stimfit_containers_test COMMAND stimfit_containers_test)
     install(
-      TARGETS stimfittest
+      TARGETS stimfit_containers_test
       ${STF_INSTALL_RUNTIME_DEPENDENCY_ARGS}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
       COMPONENT ${STF_COMPONENT_TESTS}
     )
+
+    if(STF_BUILD_NUMERIC_TESTS)
+      add_executable(
+        stimfit_numeric_test
+        src/test/fit.cpp
+        src/test/measure.cpp
+      )
+      target_link_libraries(
+        stimfit_numeric_test
+        PRIVATE
+          stimfit_config
+          stimfit_gtest_main
+          stfnum
+      )
+      stf_apply_macos_runtime_policy(stimfit_numeric_test)
+      add_test(NAME stimfit_numeric_test COMMAND stimfit_numeric_test)
+      install(
+        TARGETS stimfit_numeric_test
+        ${STF_INSTALL_RUNTIME_DEPENDENCY_ARGS}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT ${STF_COMPONENT_TESTS}
+      )
+    endif()
   endif()
 endif()
 

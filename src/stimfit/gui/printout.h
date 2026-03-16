@@ -65,7 +65,7 @@ public:
     void DrawPageOne();
 
 private:
-    void PrintHeader(wxDC* pDC,double scale);
+    void PrintHeader(wxDC* pDC,double);
     bool store_noGimmicks;
 
     wxStfDoc* Doc() const {return wxGetApp().GetActiveDoc();}

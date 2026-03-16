@@ -199,8 +199,8 @@ std::vector<std::vector<float> > read_data(BinaryReader& binreader, const IntanH
         binreader >> applied[idata]; 
         binreader >> channels[1][idata];
         binreader >> channels[0][idata];
-        float vfactor = 1e3; // V -> mV
-        float ifactor = 1e12; // A -> pA
+        constexpr float vfactor = 1e3f; // V -> mV
+        constexpr float ifactor = 1e12f; // A -> pA
         if (hIntan.Settings.isVoltageClamp) {
             channels[0][idata] *= ifactor;
             channels[1][idata] *= vfactor;
@@ -230,14 +230,14 @@ std::vector<std::vector<float> > read_aux_data(BinaryReader& binreader, uint16_t
         for (unsigned int iadc = 0; iadc < numADCs; ++iadc) {
             uint16_t tmpui;
             binreader >> tmpui;
-            adc[iadc][idata] = tmpui*0.0003125 - (1<<15);
+            adc[iadc][idata] = static_cast<float>(tmpui * 0.0003125 - (1 << 15));
         }
     }
 
     return adc;
 }
 
-void stfio::importIntanFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
+void stfio::importIntanFile(const std::string &fName, Recording &ReturnData, ProgressInfo& /*progDlg*/) {
     unique_ptr<FileInStream> fs(new FileInStream());
 
     std::string wfName(fName);

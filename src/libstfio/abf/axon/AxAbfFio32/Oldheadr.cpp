@@ -657,7 +657,7 @@ void OLDH_CorrectScopeConfig(ABFFileHeader *pFH, ABFScopeConfig *pCfg)
 //   
 static void GetOldDACUnits(char *Label, char *DACLabel)
 {
-   strncpy(DACLabel, Label+ABF_OLDUNITLEN, ABF_DACUNITLEN);
+   memcpy(DACLabel, Label+ABF_OLDUNITLEN, ABF_DACUNITLEN);
 }
 
 //===============================================================================================
@@ -667,11 +667,11 @@ static void GetOldDACUnits(char *Label, char *DACLabel)
 //   
 static void GetOldADCUnits(char *Label, char *ADCLabel)
 {
-   strncpy(ADCLabel, Label+3*ABF_OLDUNITLEN, ABF_ADCUNITLEN);
-   strncpy(ADCLabel+(ABF_ADCCOUNT-2)*ABF_ADCUNITLEN, Label+3*ABF_OLDUNITLEN, ABF_ADCUNITLEN);
+   memcpy(ADCLabel, Label+3*ABF_OLDUNITLEN, ABF_ADCUNITLEN);
+   memcpy(ADCLabel+(ABF_ADCCOUNT-2)*ABF_ADCUNITLEN, Label+3*ABF_OLDUNITLEN, ABF_ADCUNITLEN);
 
-   strncpy(ADCLabel+8, Label+4*ABF_OLDUNITLEN, ABF_ADCUNITLEN);
-   strncpy(ADCLabel+(ABF_ADCCOUNT-1)*ABF_ADCUNITLEN, Label+4*ABF_OLDUNITLEN, ABF_ADCUNITLEN);
+   memcpy(ADCLabel+8, Label+4*ABF_OLDUNITLEN, ABF_ADCUNITLEN);
+   memcpy(ADCLabel+(ABF_ADCCOUNT-1)*ABF_ADCUNITLEN, Label+4*ABF_OLDUNITLEN, ABF_ADCUNITLEN);
 }
 
 //===============================================================================================
@@ -993,7 +993,7 @@ static void FetchexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
    pFH->_nPNPolarity              = ABF_PN_SAME_POLARITY; // CLAMPEX only
    pFH->nStatsSmoothing = 1;
 
-   strncpy(pFH->_sFileComment, Comment, ABF_OLDFILECOMMENTLEN);
+   memcpy(pFH->_sFileComment, Comment, ABF_OLDFILECOMMENTLEN);
 
    // Set up the channel mapping
 
@@ -1074,7 +1074,7 @@ static void FetchexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
          pFH->fADCDisplayOffset[n] /= pFH->_fAutosampleAdditGain;
    }
 
-   strncpy(pFH->sDACChannelUnits[0], DACLabel, ABF_DACUNITLEN);
+   memcpy(pFH->sDACChannelUnits[0], DACLabel, ABF_DACUNITLEN);
    for (i=0; i < ABF_DACCOUNT; i++)
    {
       pFH->fDACScaleFactor[i] = Param[F53_GAINDACTOCELL];
@@ -1587,7 +1587,7 @@ static void ClampexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
    pFH->lAverageCount            = (ABFLONG)(Param[C52_RUNSPERFILE]);
    pFH->fStatisticsPeriod        = pFH->lCalculationPeriod * pFH->fADCSampleInterval / 1E3F;
 
-   strncpy(pFH->_sFileComment, Comment, ABF_OLDFILECOMMENTLEN);
+   memcpy(pFH->_sFileComment, Comment, ABF_OLDFILECOMMENTLEN);
 
    // Set up the channel mapping
    // Channel numbers are always ascending for old CLAMPEX files
@@ -1646,7 +1646,7 @@ static void ClampexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
          pFH->fADCDisplayOffset[i] /= pFH->_fAutosampleAdditGain;
    }
 
-   strncpy(pFH->sDACChannelUnits[0], DACLabel, ABF_DACUNITLEN);
+   memcpy(pFH->sDACChannelUnits[0], DACLabel, ABF_DACUNITLEN);
    for (i=0; i<ABF_DACCOUNT; i++)
    {
       pFH->fDACScaleFactor[i] = Param[C52_GAINDACTOCELL];
@@ -1818,7 +1818,7 @@ static void ClampexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
    pFH->fArithmeticK4            = 0.0F;
    pFH->fArithmeticK5            = 0.0F;
    pFH->fArithmeticK6            = 0.0F;
-   strncpy(pFH->sArithmeticOperator, "+ ", ABF_ARITHMETICOPLEN);
+   memcpy(pFH->sArithmeticOperator, "+ ", ABF_ARITHMETICOPLEN);
    pFH->nArithmeticExpression    = ABF_SIMPLE_EXPRESSION;
 
    // GROUP #13 (20 bytes) - On-line subtraction.

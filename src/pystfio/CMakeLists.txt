@@ -20,6 +20,7 @@ add_custom_command(
 )
 
 add_library(_stfio MODULE pystfio.cxx ${STF_PYSTFIO_WRAP})
+stf_apply_macos_runtime_policy(_stfio)
 set_target_properties(_stfio PROPERTIES PREFIX "" OUTPUT_NAME "_stfio")
 if(WIN32)
   set_target_properties(_stfio PROPERTIES SUFFIX ".pyd")
@@ -38,11 +39,9 @@ endif()
 
 target_link_libraries(_stfio PRIVATE stimfit_config stfio stfnum stimfit::python)
 
-if(TARGET biosiglite)
-  target_link_libraries(_stfio PRIVATE biosiglite)
-endif()
-
-if(DEFINED STF_PYTHON_PLATLIB AND NOT "${STF_PYTHON_PLATLIB}" STREQUAL "")
+if(APPLE AND STF_MACOS_APP_BUNDLE)
+  set(_stfio_install_dir stimfit.app/Contents/lib/stimfit/stfio)
+elseif(DEFINED STF_PYTHON_PLATLIB AND NOT "${STF_PYTHON_PLATLIB}" STREQUAL "")
   set(_stfio_install_dir ${STF_PYTHON_PLATLIB}/stfio)
 else()
   set(_stfio_install_dir ${CMAKE_INSTALL_LIBDIR}/python-stfio/stfio)
@@ -67,4 +66,3 @@ if(BUILD_TESTING)
     ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}"
   )
 endif()
-

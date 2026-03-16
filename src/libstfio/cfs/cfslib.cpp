@@ -232,7 +232,6 @@ bool stfio::exportCFSFile(const std::string& fName, const Recording& WData, stfi
     CFS_OFile CFSFile(fName, WData.GetComment(), WData.size());
 
     if (CFSFile.myHandle<0) {
-        std::string errorMsg;
         CFSError(errorMsg);
         throw std::runtime_error(errorMsg);
     }
@@ -443,10 +442,10 @@ int stfio::importCFSFile(const std::string& fName, Recording& ReturnData, Progre
             //Begin loop: n_sections
             //Get the channel information for a data section or a file
             //- see manual of CFS file system
-            CFSLONG startOffset;
-            float yScale, yOffset, xOffset;
-            GetDSChan(CFSFile.myHandle,(short)n_channel,(WORD)n_section+1,&startOffset,
-                &points[n_section],&yScale,&yOffset,&xScale,&xOffset);
+            CFSLONG sectionStartOffset;
+            float sectionYScale, sectionYOffset, sectionXOffset;
+            GetDSChan(CFSFile.myHandle,(short)n_channel,(WORD)n_section+1,&sectionStartOffset,
+                &points[n_section],&sectionYScale,&sectionYOffset,&xScale,&sectionXOffset);
             if (CFSError(errorMsg))	throw std::runtime_error(errorMsg);
             std::ostringstream label;
             label << fName << ", Section # " << n_section+1;

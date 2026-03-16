@@ -2,6 +2,7 @@
 
 PortSystem          1.0
 PortGroup           wxWidgets 1.0
+PortGroup           cmake 1.1
 
 name                stimfit
 version             STFVERSION
@@ -28,11 +29,20 @@ depends_lib         port:fftw-3 \
 compiler.cxx_standard \
                     2017
 
-configure.args      --disable-dependency-tracking \
-                    --disable-silent-rules \
-                    --disable-python \
-                    --with-biosiglite \
-                    --with-wx-config=${wxWidgets.wxconfig}
+configure.args      -DSTF_ENABLE_PYTHON=OFF \
+                    -DSTF_WITH_BIOSIG=OFF \
+                    -DSTF_WITH_BIOSIGLITE=ON \
+                    -DSTF_BUILD_MODULE=OFF \
+                    -DSTF_BUILD_TESTS=OFF \
+                    -DSTF_MACOS_APP_BUNDLE=ON \
+                    -DwxWidgets_CONFIG_EXECUTABLE=${wxWidgets.wxconfig}
+
+configure.pre_args  -S ${worksrcpath} -B ${workpath}/build
+build.cmd           ${configure.cmd}
+build.target        --build ${workpath}/build
+destroot.cmd        ${configure.cmd}
+destroot.target     --install ${workpath}/build
+destroot.destdir    DESTDIR=${destroot}
 
 set python_branches {3.10 3.11 3.12 3.13 3.14}
 
@@ -83,16 +93,16 @@ foreach python_branch ${python_branches} {
             port:py${python_version}-numpy \
             port:py${python_version}-matplotlib
 
-        configure.python \
-            ${prefix}/bin/python${python_branch}
+        configure.args-replace \
+            -DSTF_ENABLE_PYTHON=OFF \
+            -DSTF_ENABLE_PYTHON=ON
 
         configure.args-replace \
-            --disable-python \
-            --enable-python
+            -DwxWidgets_CONFIG_EXECUTABLE=${wxWidgets.wxconfig} \
+            -DwxWidgets_CONFIG_EXECUTABLE=${frameworks_dir}/Python.framework/Versions/${python_branch}/bin/wx-config
 
-        configure.args-replace \
-            --with-wx-config=${wxWidgets.wxconfig} \
-            --with-wx-config=${frameworks_dir}/Python.framework/Versions/${python_branch}/bin/wx-config
+        configure.args-append \
+            -DPython3_EXECUTABLE=${prefix}/bin/python${python_branch}
     }
 }
 
@@ -101,13 +111,11 @@ variant atlas description {Use MacPorts ATLAS libraries} {
         port:atlas
 
     configure.args-append \
-        --with-lapack-lib=${prefix}/lib/libatlas.a
+        -DBLA_VENDOR=ATLAS
 }
 
 configure.ldflags-append \
                     -headerpad_max_install_names
-
-destroot.destdir    DESTDIR=${destroot}${applications_dir}
 
 post-destroot {
     set docdir ${destroot}${prefix}/share/doc/${name}

@@ -140,7 +140,9 @@
 
 #if defined(_WIN32)
 #ifndef __STF__
+#ifndef PLATFORM
    #define PLATFORM "Win32"
+#endif
    #ifndef _WINDOWS
       #define _WINDOWS
    #endif
@@ -149,17 +151,25 @@
    #endif    
 #endif
 #elif defined(_DOS)
+#ifndef PLATFORM
    #define PLATFORM "DOS"
+#endif
    #include "..\Common\msdos.h"
 #elif defined(_WINDOWS)
    #error "ERROR: WIN16 is not supported any more."
 #elif defined(__linux__)
+#ifndef PLATFORM
    #define PLATFORM "Unix"
+#endif
 #elif defined(__APPLE__) 
+#ifndef PLATFORM
    #define PLATFORM "Mac"
+#endif
 #else
        // Treat everything else as Unix
+#ifndef PLATFORM
    #define PLATFORM "Unix"
+#endif
 #endif
 
 //=======================================================================================

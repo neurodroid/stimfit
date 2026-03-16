@@ -1,6 +1,154 @@
 include_guard(GLOBAL)
 
-include(CheckIncludeFile)
+include(CheckSymbolExists)
+include(StimfitBiosigExternal)
+
+function(stf_get_python_bootstrap out_var)
+  set(_stf_python_bootstrap "")
+
+  if(WIN32)
+    set(_stf_python_extra_paths ${STF_WINDOWS_PYTHON_EXTRA_PATHS})
+    list(FILTER _stf_python_extra_paths EXCLUDE REGEX "^$")
+    foreach(_stf_path IN LISTS _stf_python_extra_paths)
+      string(REPLACE "\\" "\\\\" _stf_path_escaped "${_stf_path}")
+      string(APPEND _stf_python_bootstrap "import sys; sys.path.insert(0, r'${_stf_path_escaped}'); ")
+    endforeach()
+  endif()
+
+  set(${out_var} "${_stf_python_bootstrap}" PARENT_SCOPE)
+endfunction()
+
+function(stf_find_macos_wx_config out_var)
+  set(_stf_wx_config_candidate "")
+
+  if(APPLE)
+    find_program(_stf_wx_config_candidate
+      NAMES wx-config
+      HINTS "/opt/local/bin"
+      NO_DEFAULT_PATH
+    )
+
+    if(NOT _stf_wx_config_candidate)
+      file(GLOB _stf_macports_python_bins LIST_DIRECTORIES FALSE "/opt/local/Library/Frameworks/Python.framework/Versions/*/bin")
+      foreach(_stf_python_bin IN LISTS _stf_macports_python_bins)
+        find_program(_stf_wx_config_from_python
+          NAMES wx-config
+          HINTS "${_stf_python_bin}"
+          NO_DEFAULT_PATH
+        )
+        if(_stf_wx_config_from_python)
+          set(_stf_wx_config_candidate "${_stf_wx_config_from_python}")
+          break()
+        endif()
+      endforeach()
+      unset(_stf_wx_config_from_python)
+      unset(_stf_python_bin)
+      unset(_stf_macports_python_bins)
+    endif()
+  endif()
+
+  set(${out_var} "${_stf_wx_config_candidate}" PARENT_SCOPE)
+endfunction()
+
+function(stf_import_biosig_target)
+  if(TARGET stimfit::biosig)
+    return()
+  endif()
+
+  set(_stf_biosig_include_dir "${BIOSIG_INCLUDE_DIR}")
+  set(_stf_biosig_library "${BIOSIG_LIBRARY}")
+
+  if(NOT _stf_biosig_library)
+    find_library(_stf_biosig_library
+      NAMES biosig biosig2
+      HINTS
+        /lib
+        /lib64
+        /usr/lib
+        /usr/lib64
+        /lib/${CMAKE_LIBRARY_ARCHITECTURE}
+        /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}
+    )
+  endif()
+
+  if(NOT _stf_biosig_library)
+    set(_stf_biosig_library_candidates
+      "/lib/${CMAKE_LIBRARY_ARCHITECTURE}/libbiosig.so"
+      "/lib/${CMAKE_LIBRARY_ARCHITECTURE}/libbiosig.so.3"
+      "/lib/${CMAKE_LIBRARY_ARCHITECTURE}/libbiosig.a"
+      "/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/libbiosig.so"
+      "/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/libbiosig.so.3"
+      "/usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}/libbiosig.a"
+      "/lib/x86_64-linux-gnu/libbiosig.so"
+      "/lib/x86_64-linux-gnu/libbiosig.so.3"
+      "/lib/x86_64-linux-gnu/libbiosig.a"
+      "/usr/lib/x86_64-linux-gnu/libbiosig.so"
+      "/usr/lib/x86_64-linux-gnu/libbiosig.so.3"
+      "/usr/lib/x86_64-linux-gnu/libbiosig.a"
+      "/lib/aarch64-linux-gnu/libbiosig.so"
+      "/lib/aarch64-linux-gnu/libbiosig.so.3"
+      "/lib/aarch64-linux-gnu/libbiosig.a"
+      "/usr/lib/aarch64-linux-gnu/libbiosig.so"
+      "/usr/lib/aarch64-linux-gnu/libbiosig.so.3"
+      "/usr/lib/aarch64-linux-gnu/libbiosig.a"
+    )
+    foreach(_stf_biosig_candidate IN LISTS _stf_biosig_library_candidates)
+      if(EXISTS "${_stf_biosig_candidate}")
+        set(_stf_biosig_library "${_stf_biosig_candidate}")
+        break()
+      endif()
+    endforeach()
+    unset(_stf_biosig_candidate)
+    unset(_stf_biosig_library_candidates)
+  endif()
+
+  if(_stf_biosig_library AND NOT _stf_biosig_include_dir)
+    get_filename_component(_stf_biosig_lib_dir "${_stf_biosig_library}" DIRECTORY)
+    set(_stf_biosig_include_candidates
+      "${_stf_biosig_lib_dir}"
+      "${_stf_biosig_lib_dir}/include"
+      "${_stf_biosig_lib_dir}/../include"
+    )
+    foreach(_stf_biosig_inc IN LISTS _stf_biosig_include_candidates)
+      if(EXISTS "${_stf_biosig_inc}/biosig.h")
+        set(_stf_biosig_include_dir "${_stf_biosig_inc}")
+        break()
+      endif()
+    endforeach()
+    unset(_stf_biosig_inc)
+    unset(_stf_biosig_include_candidates)
+    unset(_stf_biosig_lib_dir)
+  endif()
+
+  if(NOT _stf_biosig_include_dir)
+    find_path(_stf_biosig_include_dir
+      NAMES biosig.h
+      HINTS
+        /usr/include
+        /usr/local/include
+    )
+  endif()
+
+  if(NOT _stf_biosig_include_dir)
+    foreach(_stf_biosig_inc_candidate IN ITEMS /usr/include /usr/local/include)
+      if(EXISTS "${_stf_biosig_inc_candidate}/biosig.h")
+        set(_stf_biosig_include_dir "${_stf_biosig_inc_candidate}")
+        break()
+      endif()
+    endforeach()
+    unset(_stf_biosig_inc_candidate)
+  endif()
+
+  if(_stf_biosig_library)
+    add_library(stimfit::biosig UNKNOWN IMPORTED)
+    set_target_properties(stimfit::biosig PROPERTIES IMPORTED_LOCATION "${_stf_biosig_library}")
+    if(_stf_biosig_include_dir)
+      target_include_directories(stimfit::biosig INTERFACE "${_stf_biosig_include_dir}")
+    endif()
+    set(BIOSIG_LIBRARY "${_stf_biosig_library}" PARENT_SCOPE)
+    set(BIOSIG_INCLUDE_DIR "${_stf_biosig_include_dir}" PARENT_SCOPE)
+  endif()
+endfunction()
 
 find_package(Threads REQUIRED)
 
@@ -51,44 +199,64 @@ else()
   endif()
 endif()
 
-check_include_file(strptime.h HAVE_STRPTIME_H)
+check_symbol_exists(strptime "time.h" HAVE_STRPTIME_H)
 
-if(STF_WITH_BIOSIG AND NOT STF_WITH_BIOSIGLITE)
-  set(STF_BIOSIG_USE_SUBMODULE OFF)
-  if(STF_USE_BIOSIG_SUBMODULE AND EXISTS "${CMAKE_SOURCE_DIR}/src/biosig/biosig4c++/CMakeLists.txt")
-    set(STF_BIOSIG_USE_SUBMODULE ON)
+set(STF_BIOSIG_USE_SUBMODULE OFF)
+set(STF_BIOSIG_SELECTED_PROVIDER "DISABLED")
+
+if(STF_WITH_BIOSIG)
+  set(_stf_biosig_provider_candidates)
+  if(STF_BIOSIG_PROVIDER STREQUAL "AUTO")
+    if(WIN32)
+      list(APPEND _stf_biosig_provider_candidates PATCHED_SUBMODULE SYSTEM SUBMODULE)
+    else()
+      list(APPEND _stf_biosig_provider_candidates SUBMODULE SYSTEM)
+    endif()
+  else()
+    list(APPEND _stf_biosig_provider_candidates "${STF_BIOSIG_PROVIDER}")
   endif()
 
-  if(NOT STF_BIOSIG_USE_SUBMODULE)
-    find_path(BIOSIG_INCLUDE_DIR NAMES biosig.h)
-    find_library(BIOSIG_LIBRARY NAMES biosig)
-    if(BIOSIG_LIBRARY)
-      add_library(stimfit::biosig UNKNOWN IMPORTED)
-      set_target_properties(stimfit::biosig PROPERTIES IMPORTED_LOCATION "${BIOSIG_LIBRARY}")
-      if(BIOSIG_INCLUDE_DIR)
-        target_include_directories(stimfit::biosig INTERFACE "${BIOSIG_INCLUDE_DIR}")
-      else()
-        get_filename_component(_biosig_lib_dir "${BIOSIG_LIBRARY}" DIRECTORY)
-        set(_biosig_include_candidates
-          "${_biosig_lib_dir}"
-          "${_biosig_lib_dir}/include"
-          "${_biosig_lib_dir}/../include"
-        )
-        foreach(_biosig_inc IN LISTS _biosig_include_candidates)
-          if(EXISTS "${_biosig_inc}/biosig.h")
-            target_include_directories(stimfit::biosig INTERFACE "${_biosig_inc}")
-            break()
-          endif()
-        endforeach()
-        unset(_biosig_inc)
-        unset(_biosig_include_candidates)
-        unset(_biosig_lib_dir)
+  foreach(_stf_biosig_provider IN LISTS _stf_biosig_provider_candidates)
+    if(_stf_biosig_provider STREQUAL "PATCHED_SUBMODULE")
+      if(WIN32 AND EXISTS "${CMAKE_SOURCE_DIR}/src/biosig/biosig4c++/CMakeLists.txt")
+        stf_configure_windows_patched_biosig()
+        if(TARGET stimfit::biosig)
+          set(STF_BIOSIG_SELECTED_PROVIDER "PATCHED_SUBMODULE")
+          break()
+        endif()
       endif()
+    elseif(_stf_biosig_provider STREQUAL "SUBMODULE")
+      if(DEFINED BIOSIG_LIBRARY AND NOT "${BIOSIG_LIBRARY}" STREQUAL "")
+        stf_import_biosig_target()
+        if(TARGET stimfit::biosig)
+          set(STF_BIOSIG_SELECTED_PROVIDER "SUBMODULE")
+          break()
+        endif()
+      elseif(EXISTS "${CMAKE_SOURCE_DIR}/src/biosig/biosig4c++/CMakeLists.txt")
+        set(STF_BIOSIG_USE_SUBMODULE ON)
+        set(STF_BIOSIG_SELECTED_PROVIDER "SUBMODULE")
+        break()
+      endif()
+    elseif(_stf_biosig_provider STREQUAL "SYSTEM")
+      stf_import_biosig_target()
+      if(TARGET stimfit::biosig)
+        set(STF_BIOSIG_SELECTED_PROVIDER "SYSTEM")
+        break()
+      endif()
+    endif()
+  endforeach()
+
+  if(STF_BIOSIG_SELECTED_PROVIDER STREQUAL "DISABLED")
+    if(STF_BIOSIG_PROVIDER STREQUAL "AUTO")
+      message(WARNING "STF_WITH_BIOSIG is ON but the requested BIOSIG provider was unavailable; turning BIOSIG support OFF")
+      set(STF_WITH_BIOSIG OFF CACHE BOOL "Enable BIOSIG support" FORCE)
     else()
-      message(WARNING "STF_WITH_BIOSIG is ON but src/biosig was unavailable and external libbiosig was not found; turning it OFF")
-      set(STF_WITH_BIOSIG OFF CACHE BOOL "Use external libbiosig if available" FORCE)
+      message(FATAL_ERROR "STF_WITH_BIOSIG is ON but STF_BIOSIG_PROVIDER='${STF_BIOSIG_PROVIDER}' could not be resolved. Install system BIOSIG development files or choose STF_BIOSIG_PROVIDER=PATCHED_SUBMODULE or SUBMODULE.")
     endif()
   endif()
+
+  unset(_stf_biosig_provider)
+  unset(_stf_biosig_provider_candidates)
 endif()
 
 find_library(FFTW3_LIBRARY NAMES fftw3 libfftw3-3 fftw3-3 REQUIRED)
@@ -112,23 +280,29 @@ unset(_fftw3_inc)
 unset(_fftw3_include_candidates)
 unset(_fftw3_lib_dir)
 
-find_library(OPENBLAS_LIBRARY NAMES openblas)
-if(OPENBLAS_LIBRARY)
-  add_library(stimfit::lapack UNKNOWN IMPORTED)
-  set_target_properties(stimfit::lapack PROPERTIES IMPORTED_LOCATION "${OPENBLAS_LIBRARY}")
-  target_compile_definitions(stimfit::lapack INTERFACE WITH_OPENBLAS HAVE_LAPACK)
+find_package(LAPACK QUIET)
+if(LAPACK_FOUND)
+  add_library(stimfit::lapack INTERFACE IMPORTED)
+  target_link_libraries(stimfit::lapack INTERFACE ${LAPACK_LIBRARIES})
+  target_compile_definitions(stimfit::lapack INTERFACE HAVE_LAPACK)
+  if(LAPACK_LIBRARIES MATCHES "openblas")
+    target_compile_definitions(stimfit::lapack INTERFACE WITH_OPENBLAS)
+  endif()
 else()
-  find_package(LAPACK QUIET)
-  if(LAPACK_FOUND)
+  find_package(BLAS QUIET)
+  if(BLAS_FOUND)
     add_library(stimfit::lapack INTERFACE IMPORTED)
-    target_link_libraries(stimfit::lapack INTERFACE ${LAPACK_LIBRARIES})
+    target_link_libraries(stimfit::lapack INTERFACE ${BLAS_LIBRARIES})
     target_compile_definitions(stimfit::lapack INTERFACE HAVE_LAPACK)
+    if(BLAS_LIBRARIES MATCHES "openblas")
+      target_compile_definitions(stimfit::lapack INTERFACE WITH_OPENBLAS)
+    endif()
   else()
-    find_package(BLAS QUIET)
-    if(BLAS_FOUND)
-      add_library(stimfit::lapack INTERFACE IMPORTED)
-      target_link_libraries(stimfit::lapack INTERFACE ${BLAS_LIBRARIES})
-      target_compile_definitions(stimfit::lapack INTERFACE HAVE_LAPACK)
+    find_library(OPENBLAS_LIBRARY NAMES openblas)
+    if(OPENBLAS_LIBRARY)
+      add_library(stimfit::lapack UNKNOWN IMPORTED)
+      set_target_properties(stimfit::lapack PROPERTIES IMPORTED_LOCATION "${OPENBLAS_LIBRARY}")
+      target_compile_definitions(stimfit::lapack INTERFACE WITH_OPENBLAS HAVE_LAPACK)
     else()
       find_library(LAPACK_LIBRARY NAMES lapack lapack3 lapack-3 REQUIRED)
       add_library(stimfit::lapack UNKNOWN IMPORTED)
@@ -139,6 +313,18 @@ else()
 endif()
 
 if(NOT STF_BUILD_MODULE)
+  if(APPLE AND (
+      NOT DEFINED wxWidgets_CONFIG_EXECUTABLE
+      OR "${wxWidgets_CONFIG_EXECUTABLE}" STREQUAL ""
+      OR "${wxWidgets_CONFIG_EXECUTABLE}" MATCHES "-NOTFOUND$"
+    ))
+    stf_find_macos_wx_config(_stf_wx_config_candidate)
+    if(_stf_wx_config_candidate)
+      set(wxWidgets_CONFIG_EXECUTABLE "${_stf_wx_config_candidate}" CACHE FILEPATH "Path to wx-config executable" FORCE)
+    endif()
+    unset(_stf_wx_config_candidate)
+  endif()
+
   find_package(wxWidgets REQUIRED COMPONENTS base core adv aui net)
   add_library(stimfit::wx INTERFACE IMPORTED)
   target_include_directories(stimfit::wx INTERFACE ${wxWidgets_INCLUDE_DIRS})
@@ -154,17 +340,7 @@ if(STF_ENABLE_PYTHON)
   target_include_directories(stimfit::python INTERFACE ${Python3_INCLUDE_DIRS})
   target_link_libraries(stimfit::python INTERFACE ${Python3_LIBRARIES})
 
-  set(_stf_python_bootstrap "")
-  if(WIN32)
-    set(_stf_python_extra_paths "${STF_WINDOWS_PYTHON_EXTRA_PATHS}")
-    list(FILTER _stf_python_extra_paths EXCLUDE REGEX "^$")
-    if(_stf_python_extra_paths)
-      foreach(_stf_path IN LISTS _stf_python_extra_paths)
-        string(REPLACE "\\" "\\\\" _stf_path_escaped "${_stf_path}")
-        set(_stf_python_bootstrap "${_stf_python_bootstrap}import sys; sys.path.insert(0, r'${_stf_path_escaped}'); ")
-      endforeach()
-    endif()
-  endif()
+  stf_get_python_bootstrap(_stf_python_bootstrap)
 
   if(Python3_Interpreter_FOUND)
     execute_process(
@@ -216,61 +392,6 @@ if(STF_ENABLE_PYTHON)
       )
       file(TO_CMAKE_PATH "${STF_WXPYTHON_DIR}" STF_WXPYTHON_DIR)
 
-      execute_process(
-        COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}import os, sys, wx; sys.stdout.write(os.path.join(os.path.dirname(wx.__spec__.origin), 'include'))"
-        OUTPUT_VARIABLE STF_WXPYTHON_INCLUDE_FROM_WX
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        ERROR_QUIET
-      )
-      file(TO_CMAKE_PATH "${STF_WXPYTHON_INCLUDE_FROM_WX}" STF_WXPYTHON_INCLUDE_FROM_WX)
-
-      set(_stf_wxpython_include_dir "${STF_WXPYTHON_INCLUDE_DIR}")
-      if(_stf_wxpython_include_dir)
-        if(NOT EXISTS "${_stf_wxpython_include_dir}/wxPython/wxpy_api.h")
-          message(FATAL_ERROR "STF_WXPYTHON_INCLUDE_DIR='${_stf_wxpython_include_dir}' does not contain wxPython/wxpy_api.h")
-        endif()
-      else()
-        set(_stf_wxpython_include_hints "")
-        if(STF_WXPYTHON_INCLUDE_FROM_WX)
-          list(APPEND _stf_wxpython_include_hints "${STF_WXPYTHON_INCLUDE_FROM_WX}")
-        endif()
-        if(STF_WINDOWS_PYTHON_EXTRA_PATHS)
-          list(APPEND _stf_wxpython_include_hints ${STF_WINDOWS_PYTHON_EXTRA_PATHS})
-        endif()
-        if(STF_WXPYTHON_DIR)
-          list(APPEND _stf_wxpython_include_hints "${STF_WXPYTHON_DIR}")
-        endif()
-        if(STF_PYTHON_PLATLIB)
-          list(APPEND _stf_wxpython_include_hints "${STF_PYTHON_PLATLIB}")
-        endif()
-        if(STF_PYTHON_PURELIB)
-          list(APPEND _stf_wxpython_include_hints "${STF_PYTHON_PURELIB}")
-        endif()
-
-        foreach(_stf_wx_hint IN LISTS _stf_wxpython_include_hints)
-          if(EXISTS "${_stf_wx_hint}/wxPython/wxpy_api.h")
-            set(_stf_wxpython_include_dir "${_stf_wx_hint}")
-            break()
-          endif()
-        endforeach()
-        unset(_stf_wx_hint)
-
-        if(NOT _stf_wxpython_include_dir)
-          find_path(_stf_wxpython_include_dir
-            NAMES wxPython/wxpy_api.h
-            HINTS ${_stf_wxpython_include_hints}
-            PATH_SUFFIXES wx/include include
-          )
-        endif()
-      endif()
-
-      if(_stf_wxpython_include_dir)
-        set(STF_WXPYTHON_INCLUDE_DIR "${_stf_wxpython_include_dir}" CACHE PATH "Path containing wxPython/wxpy_api.h (e.g. <Phoenix>/wx/include)" FORCE)
-        target_include_directories(stimfit::python INTERFACE "${STF_WXPYTHON_INCLUDE_DIR}")
-      else()
-        message(FATAL_ERROR "Could not locate wxPython/wxpy_api.h. Set STF_WXPYTHON_INCLUDE_DIR (for Phoenix, typically <Phoenix>/wx/include).")
-      endif()
-
       if(STF_PY_SHELL_BACKEND STREQUAL "LEGACY")
         execute_process(
           COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}from wx.py import shell"
@@ -302,10 +423,4 @@ if(STF_ENABLE_PYTHON)
 
   find_package(SWIG QUIET)
   unset(_stf_python_bootstrap)
-  unset(_stf_wxpython_include_dir)
-  unset(_stf_wxpython_include_hints)
-  unset(STF_WXPYTHON_INCLUDE_FROM_WX)
-  unset(_stf_python_extra_paths)
-  unset(_stf_path_escaped)
-  unset(_stf_path)
 endif()

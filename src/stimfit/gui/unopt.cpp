@@ -179,6 +179,13 @@ PyObject*  wxPyMake_wxObject(wxObject* source, bool setThisOwn) {
 
 bool wxStfApp::Init_wxPython()
 {
+#if defined(__WXMAC__) || defined(__WXGTK__)
+    // Prevent external interactive startup hooks (e.g. editor extensions)
+    // from injecting control-sequence output into the embedded wx shell.
+    unsetenv("PYTHONSTARTUP");
+    unsetenv("PYTHONINSPECT");
+#endif
+
     // Initialize the Python interpreter
     if (!Py_IsInitialized()) {
         Py_Initialize();
@@ -260,6 +267,7 @@ bool wxStfApp::Init_wxPython()
     PyObject* wxselect = PyObject_GetAttrString(wxversion, "select");
     Py_DECREF(wxversion);
     if (!PyCallable_Check(wxselect)) {
+        Py_XDECREF(wxselect);
         PyErr_Print();
         ErrorMsg( wxT("Couldn't select correct version of wx") );
         Py_Finalize();
@@ -275,6 +283,7 @@ bool wxStfApp::Init_wxPython()
     PyObject* ver_string = Py_BuildValue("ss","2.8","");
 #endif
     PyObject* result = PyEval_CallObject(wxselect, ver_string);
+    Py_DECREF(wxselect);
     Py_DECREF(ver_string);
     if (result == NULL) {
         PyErr_Print();
@@ -402,8 +411,32 @@ void wxStfApp::ImportPython(const wxString &modulelocation) {
 bool wxStfApp::Exit_wxPython()
 
 {
+    for (std::size_t i = 0; i < extensionLib.size(); ++i) {
+        Py_XDECREF((PyObject*)extensionLib[i].pyFunc);
+        extensionLib[i].pyFunc = NULL;
+    }
+    extensionLib.clear();
+
     wxPyEndAllowThreads(m_mainTState);
+
+    if (!Py_IsInitialized()) {
+        return true;
+    }
+
+#if defined(__WXMAC__) && (PY_VERSION_HEX >= 0x030d0000)
+    // Workaround for a reproducible crash on interpreter teardown with
+    // embedded wxPython + NumPy on macOS/Python 3.13+.
+    //
+    // Crash signature:
+    //   _Py_Finalize -> _PyGC_Collect -> _PyObject_ClearFreeLists
+    //   EXC_BAD_ACCESS at process exit
+    //
+    // In the embedded-app case, letting the OS reclaim process resources at
+    // termination is safer than calling into CPython finalization here.
+    return true;
+#else
     Py_Finalize();
+#endif
     return true;
 }
 
@@ -450,6 +483,11 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     // executed.  Put a reference to the builtins module in it.  (Yes, the
     // names are supposed to be different, I don't know why...)
     PyObject* globals = PyDict_New();
+    PyObject* arg = NULL;
+    PyObject* py_mpl_width = NULL;
+    PyObject* py_mpl_height = NULL;
+    PyObject* figsize = NULL;
+    PyObject* argtuple = NULL;
 #if PY_MAJOR_VERSION >= 3
     PyObject* builtins = PyImport_ImportModule("builtins");
 #else
@@ -464,6 +502,7 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     if (! result) {
         PyErr_Print();
         wxGetApp().ErrorMsg(wxT("Couldn't initialize python shell"));
+        Py_DECREF(globals);
         wxPyEndBlockThreads(blocked);
         return NULL;
     }
@@ -476,6 +515,7 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     if (!PyCallable_Check(func)) {
         PyErr_Print();
         wxGetApp().ErrorMsg(wxT("Couldn't initialize window for the python shell"));
+        Py_DECREF(globals);
         wxPyEndBlockThreads(blocked);
         return NULL;
     }
@@ -483,28 +523,31 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     // Now build an argument tuple and call the Python function.  Notice the
     // use of another wxPython API to take a wxWindows object and build a
     // wxPython object that wraps it.
-    PyObject* arg = wxPyMake_wxObject(this, false);
+    arg = wxPyMake_wxObject(this, false);
     wxASSERT(arg != NULL);
-    PyObject* py_mpl_width = PyFloat_FromDouble(mpl_width);
+    py_mpl_width = PyFloat_FromDouble(mpl_width);
     wxASSERT(py_mpl_width != NULL);
-    PyObject* py_mpl_height = PyFloat_FromDouble(mpl_height);
+    py_mpl_height = PyFloat_FromDouble(mpl_height);
     wxASSERT(py_mpl_height != NULL);
-    PyObject* figsize = PyTuple_New(2);
+    figsize = PyTuple_New(2);
     PyTuple_SET_ITEM(figsize, 0, py_mpl_width);
     PyTuple_SET_ITEM(figsize, 1, py_mpl_height);
-    PyObject* argtuple = PyTuple_New(2);
+    argtuple = PyTuple_New(2);
     PyTuple_SET_ITEM(argtuple, 0, arg);
     PyTuple_SET_ITEM(argtuple, 1, figsize);
+    arg = NULL;
+    py_mpl_width = NULL;
+    py_mpl_height = NULL;
+    figsize = NULL;
     result = PyObject_CallObject(func, argtuple);
     Py_DECREF(argtuple);
-    Py_DECREF(py_mpl_width);
-    Py_DECREF(py_mpl_height);
-    Py_DECREF(figsize);
+    argtuple = NULL;
 
     // Was there an exception?
     if (! result) {
         PyErr_Print();
         wxGetApp().ErrorMsg(wxT("Couldn't create window for the python shell"));
+        Py_DECREF(globals);
         wxPyEndBlockThreads(blocked);
         return NULL;
     }
@@ -518,6 +561,8 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
 #endif
             PyErr_Print();
             wxGetApp().ErrorMsg(wxT("Returned object was not a wxWindow!"));
+            Py_DECREF(result);
+            Py_DECREF(globals);
             wxPyEndBlockThreads(blocked);
             return NULL;
         }
@@ -626,6 +671,7 @@ std::vector<stf::Extension> wxStfApp::LoadExtensions() {
                     std::string description(PyString_AsString(pDescription));
                     bool requiresFile = (pRequiresFile==Py_True);
                     extList.push_back(stf::Extension(menuEntry, (void*)pPyFunc, description, requiresFile));
+                    pPyFunc = NULL;
                 }
                 Py_XDECREF(pMenuEntry);
                 Py_XDECREF(pPyFunc);
@@ -705,43 +751,46 @@ bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
 
     PyObject* py_fn = PyString_FromString(filename.c_str());
     PyObject* stf_tdms_f = PyObject_GetAttrString(stf_mod, "tdms_open");
+    PyObject* stf_tdms_args = NULL;
     PyObject* stf_tdms_res = NULL;
 
-    if (PyCallable_Check(stf_tdms_f)) {
-        PyObject* stf_tdms_args = PyTuple_Pack(1, py_fn);
+    const auto finish_tdms_load = [&](bool result) {
+        Py_XDECREF(stf_tdms_res);
+        Py_XDECREF(stf_tdms_args);
+        Py_XDECREF(stf_tdms_f);
+        Py_XDECREF(py_fn);
+        Py_XDECREF(stf_mod);
+        wxPyEndBlockThreads(blocked);
+
+        return result;
+    };
+
+    if (stf_tdms_f && PyCallable_Check(stf_tdms_f)) {
+        stf_tdms_args = PyTuple_Pack(1, py_fn);
         stf_tdms_res = PyObject_CallObject(stf_tdms_f, stf_tdms_args);
         PyErr_Print();
-        Py_DECREF(stf_mod);
-        Py_DECREF(py_fn);
-        Py_DECREF(stf_tdms_args);
     } else {
-        Py_DECREF(stf_mod);
-        Py_DECREF(py_fn);
-
-        return false;
+        return finish_tdms_load(false);
     }
 
     if (stf_tdms_res == Py_None) {
         wxGetApp().ErrorMsg( wxT("nptdms module unavailable. Cannot read tdms files."));
-        Py_DECREF(stf_tdms_res);
-        return false;
+        return finish_tdms_load(false);
     }
 
     if (!PyTuple_Check(stf_tdms_res)) {
         wxGetApp().ErrorMsg(wxT("Return value of tdms_open is not a tuple. Aborting now."));
-        Py_DECREF(stf_tdms_res);
-        return false;
+        return finish_tdms_load(false);
     }
 
     if (PyTuple_Size(stf_tdms_res) != 2) {
         wxGetApp().ErrorMsg( wxT("Return value of tdms_open is not a 2-tuple. Aborting now."));
-        Py_DECREF(stf_tdms_res);
-        return false;
+        return finish_tdms_load(false);
     }
 
     PyObject* data_list = PyTuple_GetItem(stf_tdms_res, 0);
     PyObject* py_dt = PyTuple_GetItem(stf_tdms_res, 1);
-    double dt = PyFloat_AsDouble(py_dt);
+    double tdmsDt = PyFloat_AsDouble(py_dt);
     // Py_DECREF(py_dt);
 
     Py_ssize_t nchannels = PyList_Size(data_list);
@@ -756,7 +805,7 @@ bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
                 PyObject* list_item = PyList_GetItem(section_list, ns);
                 if (!PyArray_Check(list_item)) {
                     wxGetApp().ErrorMsg( wxT("Expected a numpy array"));
-                    return false;
+                    return finish_tdms_load(false);
                 }
                 PyArrayObject* np_array = (PyArrayObject*)list_item;
                 npy_intp* arr_shape = PyArray_DIMS(np_array);
@@ -775,10 +824,9 @@ bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
     // Py_DECREF(data_list);
     // Py_DECREF(stf_tdms_res);
     ReturnData.resize(nchannels_nonempty);
-    ReturnData.SetXScale(dt);
-    wxPyEndBlockThreads(blocked);
+    ReturnData.SetXScale(tdmsDt);
 
-    return true;
+    return finish_tdms_load(true);
 }
 
 #endif // WITH_PYTHON

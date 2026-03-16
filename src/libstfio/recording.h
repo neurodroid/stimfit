@@ -25,7 +25,10 @@
  *  @{
  */
 
+#include <ctime>
+#include <string>
 #include <string.h>	// declaration of memcpy
+#include <vector>
 
 #include "./channel.h"
 // #include "./section.h"
@@ -335,7 +338,7 @@ class StfioDll Recording {
      *  \param base_start Start index for baseline
      *  \param base_end End index for baseline
      */
-    void SelectTrace(std::size_t sectionToSelect, std::size_t base_start, std::size_t base_end);
+    void SelectTrace(std::size_t sectionToSelect, std::ptrdiff_t base_start, std::ptrdiff_t base_end);
 
     //! Unselects a section if it was selected before
     /*! \param sectionToUnselect The index of the section to be unselected.

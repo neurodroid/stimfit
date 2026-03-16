@@ -1,4 +1,4 @@
-#include "Annotation.h"
+#include "annotation.h"
 
 Annotation::Annotation(std::size_t onset, size_t duration) :
     position(onset), duration(duration)
@@ -12,4 +12,9 @@ Annotation::~Annotation()
 std::size_t Annotation::GetAnnotationPosition()
 {
     return this->position;
+}
+
+std::size_t Annotation::GetAnnotationDuration()
+{
+    return this->duration;
 }

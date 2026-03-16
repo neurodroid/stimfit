@@ -139,7 +139,7 @@ void wxStfFitSelDlg::EndModal(int retCode) {
      case wxID_CANCEL:
          try {
              pDoc->DeleteFit(pDoc->GetCurChIndex(), pDoc->GetCurSecIndex());
-         } catch (const std::out_of_range& e) {
+         } catch (const std::out_of_range&) {
 
          }
         break;
@@ -268,7 +268,7 @@ void wxStfFitSelDlg::OnButtonClick( wxCommandEvent& event ) {
         pDoc->SetIsFitted(pDoc->GetCurChIndex(), pDoc->GetCurSecIndex(), init_p,
                           wxGetApp().GetFuncLibPtr(m_fselect), 0,
                           pDoc->GetFitBeg(), pDoc->GetFitEnd() );
-    } catch (const std::out_of_range& e) {
+    } catch (const std::out_of_range&) {
         
     }
     // tell the view to draw the fit:

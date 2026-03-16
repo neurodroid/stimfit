@@ -161,7 +161,7 @@ void stfio::importATFFile(const std::string &fName, Recording &ReturnData, Progr
     ReturnData.resize(1);
     Channel TempChannel(nColumns-timeInFirstColumn);
     for (int n_c=timeInFirstColumn;n_c<nColumns;++n_c) {
-        int progbar = (double)100.0*(n_c+1-timeInFirstColumn)/(double)(nColumns-timeInFirstColumn);
+        int progbar = static_cast<int>((100.0 * (n_c + 1 - timeInFirstColumn)) / static_cast<double>(nColumns - timeInFirstColumn));
 
         std::ostringstream progStr;
         progStr << "Section #" << n_c+1-timeInFirstColumn << " of " << nColumns-timeInFirstColumn;

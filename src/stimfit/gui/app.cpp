@@ -140,6 +140,14 @@ bool wxStfApp::OnInit(void)
 #ifndef _STFDEBUG
     wxLog::SetLogLevel(wxLOG_FatalError);
 #endif
+
+#if defined(__WXMAC__) || defined(__WXGTK__)
+    // Embedded Python can load extension modules that also reference wx RTTI
+    // classes in the same process. Avoid surfacing repeated assert dialogs
+    // from wx debug checks in end-user builds.
+    wxDisableAsserts();
+#endif
+
     if (!wxApp::OnInit()) {
         std::cerr << "Could not start application" << std::endl;
         return false;
@@ -1321,8 +1329,8 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
             // add this file to the series recording:
             Recording singleRec;
             try {
-                stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
-                stfio::importFile(stf::wx2std(fNameArray[n_opened++]),type,singleRec,txtImport, progDlg);
+                stf::wxProgressInfo importProgress("Reading file", "Opening file", 100);
+                stfio::importFile(stf::wx2std(fNameArray[n_opened++]),type,singleRec,txtImport, importProgress);
                 if (n_opened==1) {
                     seriesRec.resize(singleRec.size());
                     // reserve memory to avoid allocations:
@@ -1380,7 +1388,7 @@ bool wxStfApp::OpenFilePy(const wxString& filename) {
 }
 #endif //WITH_PYTHON
 
-void wxStfApp::CleanupDocument(wxStfDoc* pDoc) {
+void wxStfApp::CleanupDocument(wxStfDoc*) {
     // count open docs:
     if (GetDocManager() && GetDocManager()->GetDocuments().GetCount()==1) {
         // Clean up if this was the last document:

@@ -25,47 +25,8 @@
 #define _STFIO_H_
 
 #include <iostream>
-#if (__cplusplus < 201103)
-#  include <boost/function.hpp>
-#else
-#  include <algorithm>
-#  include <functional>
-#endif
-#include <vector>
-#include <deque>
-#include <map>
-#include <string>
-#include <cmath>
 
-#ifdef _MSC_VER
-#pragma warning( disable : 4251 )  // Disable warning messages
-#pragma warning( disable : 4996 )  // Disable warning messages
-#endif
-
-//! Defines dll export or import functions for Windows
-#if defined(_WINDOWS) && !defined(__MINGW32__)
-    #ifdef STFIODLL
-        #define StfioDll __declspec( dllexport )
-    #else
-        #define StfioDll __declspec( dllimport )
-    #endif
-#else
-    #define StfioDll
-#endif
-
-typedef std::vector<double > Vector_double;
-typedef std::vector<float > Vector_float;
-
-#ifdef _MSC_VER
-    #ifndef NAN
-        static const unsigned long __nan[2] = {0xffffffff, 0x7fffffff};
-        #define NAN (*(const float *) __nan)
-    #endif
-    #ifndef INFINITY
-        #define INFINITY (DBL_MAX+DBL_MAX)
-    #endif
-    #define snprintf _snprintf
-#endif
+#include "./core.h"
 
 #include "./recording.h"
 #include "./channel.h"
@@ -113,7 +74,7 @@ namespace stfio {
       *  \param maximum Maximum value for the progress meter
       *  \param verbose Whether or not to emit a lot of noise
       */
-     ProgressInfo(const std::string& title, const std::string& message, int maximum, bool verbose) {};
+     ProgressInfo(const std::string&, const std::string&, int, bool) {};
 
      //! Updates the progress info
      /*! \param value New value of the progress meter

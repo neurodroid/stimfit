@@ -10,7 +10,7 @@ This repository now includes a **functional CMake toolchain baseline** mirroring
   - [`cmake/StimfitDependencies.cmake`](cmake/StimfitDependencies.cmake)
   - [`cmake/StimfitToolchain.cmake`](cmake/StimfitToolchain.cmake)
   - [`cmake/StimfitMigration.cmake`](cmake/StimfitMigration.cmake)
-- Generated config header template [`cmake/stfconf.h.in`](cmake/stfconf.h.in)
+- Generated config header template [`stfconf.h.in`](stfconf.h.in)
 - Source tree entrypoint [`src/CMakeLists.txt`](src/CMakeLists.txt)
 - Per-component scaffold `CMakeLists.txt` files:
   - [`src/libstfio/CMakeLists.txt`](src/libstfio/CMakeLists.txt)
@@ -35,6 +35,42 @@ The CMake tree now defines real targets for the main migration path:
 - Python modules (when enabled):
   - `_stfio` from [`src/pystfio/CMakeLists.txt`](src/pystfio/CMakeLists.txt)
   - `pystf` from [`src/stimfit/py/CMakeLists.txt`](src/stimfit/py/CMakeLists.txt)
+
+## macOS parity updates (build + install)
+
+The CMake migration now includes a dedicated macOS runtime policy module:
+
+- [`cmake/StimfitMacOS.cmake`](cmake/StimfitMacOS.cmake)
+
+This adds a single helper, `stf_apply_macos_runtime_policy(<target>)`, and applies it to installable libraries/modules/executables so loader-path behavior is managed in CMake instead of legacy post-install shell rewriting.
+
+Applied targets include:
+
+- `stfio` in [`src/libstfio/CMakeLists.txt`](src/libstfio/CMakeLists.txt)
+- `stfnum` in [`src/libstfnum/CMakeLists.txt`](src/libstfnum/CMakeLists.txt)
+- `biosiglite` in [`src/libbiosiglite/CMakeLists.txt`](src/libbiosiglite/CMakeLists.txt)
+- `stimfit_core` in [`src/stimfit/CMakeLists.txt`](src/stimfit/CMakeLists.txt)
+- `pystf` in [`src/stimfit/py/CMakeLists.txt`](src/stimfit/py/CMakeLists.txt)
+- `_stfio` in [`src/pystfio/CMakeLists.txt`](src/pystfio/CMakeLists.txt)
+- `stimfit` and `stimfittest` in [`CMakeLists.txt`](CMakeLists.txt)
+
+Additionally, macOS wx detection now auto-probes common MacPorts wx-config locations when `wxWidgets_CONFIG_EXECUTABLE` is not already set (including stale `-NOTFOUND` cache values), in [`cmake/StimfitDependencies.cmake`](cmake/StimfitDependencies.cmake).
+
+## MacPorts Stimfit port migration to CMake backend
+
+The active Stimfit MacPorts port files were migrated from Autotools-style `configure.args` to CMake-driven build/install flow:
+
+- [`dist/macosx/macports/science/stimfit/Portfile.in`](dist/macosx/macports/science/stimfit/Portfile.in)
+- [`dist/macosx/macports/science/stimfit/Portfile`](dist/macosx/macports/science/stimfit/Portfile)
+
+Key changes:
+
+- Add `PortGroup cmake 1.1`
+- Configure with CMake cache variables (`STF_ENABLE_PYTHON`, `STF_WITH_BIOSIG`, `STF_WITH_BIOSIGLITE`, `STF_BUILD_MODULE`, `STF_BUILD_TESTS`)
+- Set `configure.pre_args` to `-S <source> -B <build>`
+- Use CMake for build (`cmake --build`) and destroot install (`cmake --install`)
+- Map Python variants to `-DPython3_EXECUTABLE=...`
+- Map `atlas` variant to `-DBLA_VENDOR=ATLAS`
 
 ## Option mapping from Autotools
 
@@ -81,8 +117,7 @@ The CMake chain follows Autotools behavior and expects development libraries for
 
 ## Next migration steps
 
-1. Add missing install/post-install parity (`chrpath`, desktop/icons handling, macOS bundle behavior).
-2. Tighten dependency mapping (wx variants, Python/wxPython nuances, optional fallbacks).
-3. Complete full feature parity for all platform-specific options and packaging scripts.
+1. Validate macOS install-name/runtime behavior with full build+install+`otool -L` checks for GUI and Python-enabled variants.
+2. Verify MacPorts CMake backend behavior in a real port build (`port -v destroot stimfit`) and refine option mapping if needed.
+3. Tighten dependency mapping (wx variants, Python/wxPython nuances, optional fallbacks).
 4. Keep Autotools active until all required CI/build workflows pass under CMake.
-

@@ -59,7 +59,9 @@
 #include <fftw3.h>
 
 #ifdef _MSC_VER
+#ifndef INFINITY
 #define INFINITY (DBL_MAX+DBL_MAX)
+#endif
 #ifndef NAN
         static const unsigned long __nan[2] = {0xffffffff, 0x7fffffff};
         #define NAN (*(const float *) __nan)
@@ -131,7 +133,7 @@ struct parInfo {
   parInfo( const std::string& desc_, bool toFit_, bool constrained_ = false, 
              double constr_lb_ = 0, double constr_ub_ = 0, Scale scale_ = noscale, Scale unscale_ = noscale)
     : desc(desc_),toFit(toFit_),
-        constrained(false), constr_lb(constr_lb_), constr_ub(constr_ub_),
+        constrained(constrained_), constr_lb(constr_lb_), constr_ub(constr_ub_),
         scale(scale_), unscale(unscale_)
     {}
 

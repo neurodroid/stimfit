@@ -208,8 +208,7 @@ static LPSTR strncpyz(LPSTR pszDest, LPCSTR pszSrce, UINT uBufSize)
 #if 0
    LPSZASSERT(pszSrce);
 #endif
-   strncpy(pszDest, pszSrce, uBufSize-1);
-   pszDest[uBufSize-1] = '\0';
+   strncpy_s(pszDest, uBufSize, pszSrce, uBufSize-1);
    return pszDest;
 }
 
@@ -731,7 +730,7 @@ static BOOL WriteHeaderInfo(ATF_FILEINFO *pATF, int nColumns, int *pnError)
 
    // Write the special marker string and the file version number
    char *pszIOBuffer = pATF->pszIOBuffer;
-   snprintf(pszIOBuffer, sizeof(pszIOBuffer), "%s%s%.1f%s", ATF_FILE_ID, pATF->szSeparator, ATF_CURRENTVERSION, s_szEndOfLine);
+   snprintf(pszIOBuffer, pATF->nIOBufferSize, "%s%s%.1f%s", ATF_FILE_ID, pATF->szSeparator, ATF_CURRENTVERSION, s_szEndOfLine);
    if (!putsBuf(pATF, pszIOBuffer))
       ERRORRETURN(pnError, ATF_ERROR_IOERROR);
 
@@ -740,7 +739,7 @@ static BOOL WriteHeaderInfo(ATF_FILEINFO *pATF, int nColumns, int *pnError)
 
    // Write the number of headers and columns that will be written, leaving
    // enough trailing spaces for 4 digits of headers (more than enough)
-   snprintf(pszIOBuffer, sizeof(pszIOBuffer), "0%s%d     %s", pATF->szSeparator, nColumns, s_szEndOfLine);
+   snprintf(pszIOBuffer, pATF->nIOBufferSize, "0%s%d     %s", pATF->szSeparator, nColumns, s_szEndOfLine);
    if (!putsBuf(pATF, pszIOBuffer))
       ERRORRETURN(pnError, ATF_ERROR_IOERROR);
 
@@ -764,10 +763,10 @@ static BOOL _FormatNumber(double dNum, int nDigits, char *pszString, UINT uSize)
    ARRAYASSERT(pszString, uSize);
 
 #if !defined(_WINDOWS) || defined(__MINGW32__)
-   snprintf(pszString, sizeof(pszString), "%.*g", nDigits, dNum);
+   snprintf(pszString, uSize, "%.*g", nDigits, dNum);
    // char* res = gcvt(dNum, nDigits, pszString);
 #else
-   _gcvt(dNum, nDigits, pszString);
+   _gcvt_s(pszString, uSize, dNum, nDigits);
 #endif
    int l = (int)strlen(pszString);
    if ((l > 0) && (pszString[l-1]=='.'))
@@ -950,7 +949,7 @@ static BOOL UpdateHeaders(ATF_FILEINFO *pATF, int *pnError)
 
    // Create the string for the number of header records
    {
-      snprintf(pszIOBuffer, sizeof(pszIOBuffer), "%d%s%d", pATF->nHeaders, pATF->szSeparator, pATF->nColumns);
+      snprintf(pszIOBuffer, pATF->nIOBufferSize, "%d%s%d", pATF->nHeaders, pATF->szSeparator, pATF->nColumns);
       if (!putsBuf(pATF, pszIOBuffer))
          ERRORRETURN(pnError, ATF_ERROR_IOERROR);
    }
@@ -963,26 +962,26 @@ static BOOL UpdateHeaders(ATF_FILEINFO *pATF, int *pnError)
    {
       // Start with separator if not the first column
       if (i > 0)
-         strcpy(pszIOBuffer, pATF->szSeparator);
+         strcpy_s(pszIOBuffer, pATF->nIOBufferSize, pATF->szSeparator);
       else 
          pszIOBuffer[0] = '\0';
 
       // Add next title string
-      strcat(pszIOBuffer, "\"");
+       strcat_s(pszIOBuffer, pATF->nIOBufferSize, "\"");
       if (pATF->apszFileColTitles[i] != NULL)
       {
-         strcat(pszIOBuffer, pATF->apszFileColTitles[i]);
+         strcat_s(pszIOBuffer, pATF->nIOBufferSize, pATF->apszFileColTitles[i]);
          if (HasUnits(pATF->apszFileColUnits[i]))
-            strcat(pszIOBuffer, " ");
+            strcat_s(pszIOBuffer, pATF->nIOBufferSize, " ");
       }
 
       if (HasUnits(pATF->apszFileColUnits[i]))
       {
-         strcat(pszIOBuffer, "(");
-         strcat(pszIOBuffer, pATF->apszFileColUnits[i]);
-         strcat(pszIOBuffer, ")");
+          strcat_s(pszIOBuffer, pATF->nIOBufferSize, "(");
+          strcat_s(pszIOBuffer, pATF->nIOBufferSize, pATF->apszFileColUnits[i]);
+          strcat_s(pszIOBuffer, pATF->nIOBufferSize, ")");
       }
-      strcat(pszIOBuffer, "\"");
+       strcat_s(pszIOBuffer, pATF->nIOBufferSize, "\"");
       if (!putsBuf(pATF, pszIOBuffer))
          ERRORRETURN(pnError, ATF_ERROR_IOERROR);
    }
@@ -1140,13 +1139,13 @@ BOOL WINAPI ATF_WriteHeaderRecord(int nFile, LPCSTR pszText, int *pnError)
 
    // Write out the header record
    if (pATF->bDataOnLine)
-      strcpy(pszIOBuffer, pATF->szSeparator);
+      strcpy_s(pszIOBuffer, pATF->nIOBufferSize, pATF->szSeparator);
    else
       pszIOBuffer[0] = '\0';
 
-   strcat(pszIOBuffer, "\"");
-   strcat(pszIOBuffer, pszText);
-   strcat(pszIOBuffer, "\"");
+   strcat_s(pszIOBuffer, pATF->nIOBufferSize, "\"");
+   strcat_s(pszIOBuffer, pATF->nIOBufferSize, pszText);
+   strcat_s(pszIOBuffer, pATF->nIOBufferSize, "\"");
    if (!putsBuf(pATF, pszIOBuffer))
       ERRORRETURN(pnError, ATF_ERROR_IOERROR);
 
@@ -1300,7 +1299,7 @@ BOOL WINAPI ATF_WriteDataComment(int nFile, LPCSTR pszText, int *pnError)
 #endif
    char buf[128];
 #if defined(_WINDOWS) && !defined(__MINGW32__)
-   _snprintf(buf, sizeof(buf), "\"%s\"", pszText);
+   _snprintf_s(buf, sizeof(buf), _TRUNCATE, "\"%s\"", pszText);
 #else
    snprintf(buf, sizeof(buf), "\"%s\"", pszText);
 #endif
@@ -1340,21 +1339,22 @@ BOOL WINAPI ATF_WriteDataRecordArray(int nFile, int nCount, double *pdVals, int 
    if (nCount > 0)
    {
       if (pATF->bDataOnLine)
-         strcpy(ps++, pATF->szSeparator);
+         *ps++ = pATF->szSeparator[0];
+         *ps = '\0';
 
       if (!_FormatNumber(*pdVals++, ATF_DBL_SIG_DIGITS, psTemp, ATF_DBL_STR_LEN))
          ERRORRETURN(pnError, ATF_ERROR_BADFLTCNV);
-      strcpy(ps, psTemp);
+      strcpy_s(ps, pATF->nIOBufferSize - (ps - pszIOBuffer), psTemp);
       ps += strlen(psTemp);
    }
 
    for (int i=1; i<nCount; i++)
    {
-      strcpy(ps, pATF->szSeparator);
+      strcpy_s(ps, pATF->nIOBufferSize - (ps - pszIOBuffer), pATF->szSeparator);
       ps += strlen(pATF->szSeparator);
       if (!_FormatNumber(*pdVals++, ATF_DBL_SIG_DIGITS, psTemp, ATF_DBL_STR_LEN))
          ERRORRETURN(pnError, ATF_ERROR_BADFLTCNV);
-      strcpy(ps, psTemp);
+      strcpy_s(ps, pATF->nIOBufferSize - (ps - pszIOBuffer), psTemp);
       ps += strlen(psTemp);
    }
 
@@ -1400,21 +1400,22 @@ BOOL WINAPI ATF_WriteDataRecordArrayFloat(int nFile, int nCount, float *pfVals, 
    if (nCount > 0)
    {
       if (pATF->bDataOnLine)
-         strcpy(ps++, pATF->szSeparator);
+         *ps++ = pATF->szSeparator[0];
+         *ps = '\0';
 
       if (!_FormatNumber((double)*pfVals++, ATF_FLT_SIG_DIGITS, psTemp, ATF_FLT_STR_LEN))
          ERRORRETURN(pnError, ATF_ERROR_BADFLTCNV);
-      strcpy(ps, psTemp);
+      strcpy_s(ps, pATF->nIOBufferSize - (ps - pszIOBuffer), psTemp);
       ps += strlen(psTemp);
    }
 
    for (int i=1; i<nCount; i++)
    {
-      strcpy(ps, pATF->szSeparator);
+      strcpy_s(ps, pATF->nIOBufferSize - (ps - pszIOBuffer), pATF->szSeparator);
       ps += strlen(pATF->szSeparator);
       if (!_FormatNumber((double)*pfVals++, ATF_FLT_SIG_DIGITS, psTemp, ATF_FLT_STR_LEN))
          ERRORRETURN(pnError, ATF_ERROR_BADFLTCNV);
-      strcpy(ps, psTemp);
+      strcpy_s(ps, pATF->nIOBufferSize - (ps - pszIOBuffer), psTemp);
       ps += strlen(psTemp);
    }
 
@@ -1735,7 +1736,7 @@ BOOL WINAPI ATF_BuildErrorText(int nErrorNum, LPCSTR szFileName, char *sTxtBuf, 
    if (!LoadStringA(g_hInstance, nErrorNum, szTemplate, sizeof(szTemplate)))
    {
       LoadStringA(g_hInstance, ATF_ERROR_NOMESSAGESTR, szTemplate, sizeof(szTemplate));
-      _snprintf(sTxtBuf, nMaxLen, szTemplate, nErrorNum);
+      _snprintf_s(sTxtBuf, nMaxLen, _TRUNCATE, szTemplate, nErrorNum);
 #else
    if (!c_LoadString(g_hInstance, nErrorNum, szTemplate, sizeof(szTemplate)))
    {
@@ -1746,7 +1747,7 @@ BOOL WINAPI ATF_BuildErrorText(int nErrorNum, LPCSTR szFileName, char *sTxtBuf, 
       return FALSE;
    }
 #if defined(_WINDOWS) && !defined(__MINGW32__)
-   _snprintf(sTxtBuf, nMaxLen, szTemplate, szFileName);
+   _snprintf_s(sTxtBuf, nMaxLen, _TRUNCATE, szTemplate, szFileName);
 #else
    snprintf(sTxtBuf, nMaxLen, szTemplate, szFileName);
 #endif

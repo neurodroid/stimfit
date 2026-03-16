@@ -166,7 +166,7 @@ void wxStfPrintout::DrawPageOne()
     pGraph->set_isPrinted(false);
 }
 
-void wxStfPrintout::PrintHeader(wxDC* pDC, double scale) {
+void wxStfPrintout::PrintHeader(wxDC* pDC, double) {
     int ppiX,ppiY;
     GetPPIPrinter(&ppiX,&ppiY);
     double resScale = ppiX / 72.0;
@@ -224,7 +224,7 @@ void wxStfPrintout::PrintHeader(wxDC* pDC, double scale) {
                 yPos+=increment;
             }
         }
-    } catch (const std::out_of_range& e) {
+    } catch (const std::out_of_range&) {
         
     }
 }

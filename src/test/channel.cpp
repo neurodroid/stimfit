@@ -1,4 +1,4 @@
-#include "../libstfio/stfio.h"
+#include "../libstfio/channel.h"
 #include <gtest/gtest.h>
 
 TEST(Channel_test, constructors)

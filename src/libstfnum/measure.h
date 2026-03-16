@@ -31,6 +31,7 @@
 
 #include <vector>
 
+#include "stfnum.h"
 #include "../libstfio/stfio.h"
 
 namespace stfnum {
@@ -49,7 +50,7 @@ namespace stfnum {
  *  \param ulp Upper limit of the peak window (see stfnum::peak()). 
  *  \return The baseline value - either the mean or the median depending on method.
  */
-StfioDll
+StfnumDll
 double base(enum stfnum::baseline_method method, double& var, const std::vector<double>& data, std::size_t llb, std::size_t ulb);
 
 
@@ -70,7 +71,7 @@ double base(enum stfnum::baseline_method method, double& var, const std::vector<
  *  \param maxT On exit, the index of the peak value. May be interpolated if \e pM > 1.
  *  \return The peak value, measured from 0.
  */
-StfioDll
+StfnumDll
 double peak( const std::vector<double>& data, double base, std::size_t llp, std::size_t ulp,
         int pM, stfnum::direction, double& maxT);
  
@@ -85,7 +86,7 @@ double peak( const std::vector<double>& data, double base, std::size_t llp, std:
                 the default value is 1.
  *  \return The interpolated threshold value.
  */
-StfioDll
+StfnumDll
 double threshold( const std::vector<double>& data, std::size_t llp, std::size_t ulp, double slope, double& thrT, std::size_t windowLength );
 
 //! Find 20 to 80% rise time of an event in \e data.
@@ -104,7 +105,7 @@ double threshold( const std::vector<double>& data, std::size_t llp, std::size_t 
 
  *  \return The rise time.
  */
-StfioDll
+StfnumDll
 double risetime(const std::vector<double>& data, double base, double ampl,
                 double left, double right, double frac, std::size_t& tLoId, std::size_t& tHiId,
                 double& tLoReal);
@@ -128,7 +129,7 @@ double risetime(const std::vector<double>& data, double base, double ampl,
 
  *  \return The inner rise time.
  */
-StfioDll
+StfnumDll
 double risetime2(const std::vector<double>& data, double base, double ampl,
                 double left, double right, double frac,
                 double& innerTLoReal, double& innerTHiReal, double& outerTLoReal, double& outerTHiReal );
@@ -150,7 +151,7 @@ double risetime2(const std::vector<double>& data, double base, double ampl,
  *         units of sampling points.
  *  \return The full width at half-maximal amplitude.
  */
-StfioDll
+StfnumDll
 double t_half( const std::vector<double>& data, double base, double ampl, double left, double right,
                double center, std::size_t& t50LeftId, std::size_t& t50RightId, double& t50LeftReal );
 
@@ -165,7 +166,7 @@ double t_half( const std::vector<double>& data, double base, double ampl, double
            the slope, the default value is 1.
  *  \return The maximal slope during the rising phase.
  */
-StfioDll
+StfnumDll
 double  maxRise( const std::vector<double>& data, double left, double right, double& maxRiseT,
                  double& maxRiseY, std::size_t windowLength);
 
@@ -180,7 +181,7 @@ double  maxRise( const std::vector<double>& data, double left, double right, dou
            the slope, the default value is 1.
  *  \return The maximal slope during the decaying phase.
  */
-StfioDll
+StfnumDll
 double  maxDecay( const std::vector<double>& data, double left, double right, double& maxDecayT,
                   double& maxDecayY, std::size_t windowLength);
 

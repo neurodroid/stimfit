@@ -162,7 +162,7 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
         if (gapfree) {
             grandsize = pFH->lActualAcqLength / numberChannels;
             Vector_double test_size(0);
-            ABFLONG maxsize = test_size.max_size()
+            ABFLONG maxsize = static_cast<ABFLONG>(test_size.max_size())
 #if defined(_MSC_VER)
                 // doesn't seem to return the correct size on Windows.
                 ;
@@ -183,7 +183,7 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
         Channel TempChannel(finalSections, grandsize);
         Section TempSectionGrand(grandsize, label.str());
         for (int nEpisode=1; nEpisode<=numberSections;++nEpisode) {
-            int progbar =
+            int episodeProgbar =
                 // Channel contribution:
                 (int)(((double)nChannel/(double)numberChannels)*100.0+
                       // Section contribution:
@@ -191,7 +191,7 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
             std::ostringstream progStr;
             progStr << "Reading channel #" << nChannel + 1 << " of " << numberChannels
                     << ", Section #" << nEpisode << " of " << numberSections;
-            progDlg.Update(progbar, progStr.str());
+            progDlg.Update(episodeProgbar, progStr.str());
             
             UINT uNumSamples = 0;
             if (gapfree) {
@@ -235,11 +235,11 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
                     throw std::runtime_error("Exception while calling ABF2_ReadChannel()");
                 }
                 if (!gapfree) {
-                    std::ostringstream label;
-                    label
+                    std::ostringstream sectionLabel;
+                    sectionLabel
                         << fName
                         << ", Section # " << nEpisode;
-                    Section TempSectionT(TempSection.size(),label.str());
+                    Section TempSectionT(TempSection.size(),sectionLabel.str());
                     std::copy(TempSection.begin(),TempSection.end(),&TempSectionT[0]);
                     try {
                         TempChannel.InsertSection(TempSectionT,nEpisode-1);

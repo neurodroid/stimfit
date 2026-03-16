@@ -1,4 +1,3 @@
-#include "../stimfit/stf.h"
 #include "../libstfnum/fit.h"
 #include "../libstfnum/funclib.h"
 #include <gtest/gtest.h>

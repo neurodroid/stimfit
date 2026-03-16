@@ -12,7 +12,7 @@ endif
 pkglib_LTLIBRARIES = libstfio.la
 
 libstfio_la_SOURCES =  ./channel.cpp ./section.cpp ./recording.cpp ./stfio.cpp \
-    ../stimfit/Annotation.cpp \
+    annotation.cpp \
 	./cfs/cfslib.cpp ./cfs/cfs.c \
 	./hdf5/hdf5lib.cpp \
 	./abf/abflib.cpp \

@@ -268,7 +268,7 @@ FILEHANDLE WINAPI c_CreateFile( LPCSTR filename, DWORD access, DWORD sharing,
      default: omode = (char*)"r";
          break;
     }
-    strncpy(fname, filename, 1024);              /* Get filename in near var */
+    snprintf(fname, sizeof(fname), "%s", filename);   /* Get filename in near var */
     return fopen(fname,omode);
 }
 #endif

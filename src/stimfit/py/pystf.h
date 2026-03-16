@@ -152,7 +152,8 @@ bool _new_window_gMatrix( );
 
 extern double _figsize[];
 #ifdef WITH_PYTHON
-PyObject* mpl_panel(const std::vector<double>& figsize = std::vector<double>(_figsize, _figsize+2));
+PyObject* mpl_panel();
+PyObject* mpl_panel(const std::vector<double>& figsize);
 
 #endif
  

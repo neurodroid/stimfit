@@ -39,9 +39,8 @@ static BOOL _GetRootDir(LPCSTR pszFileName, LPSTR pszRoot, UINT uRootLen)
    if (!isalpha(szFullPath[0]))
       return FALSE;
 
-   sprintf(szRootDir, "%c:\\", szFullPath[0]);   
-   strncpy(pszRoot, szRootDir, uRootLen-1);
-   pszRoot[uRootLen-1] = '\0';
+   snprintf(szRootDir, sizeof(szRootDir), "%c:\\", szFullPath[0]);
+   strncpy_s(pszRoot, uRootLen, szRootDir, uRootLen-1);
    return TRUE;
 }  
 #endif
@@ -496,11 +495,11 @@ static int getsUnBuf(ATF_FILEINFO *pATF, LPSTR pszString, DWORD dwBufSize)
          *pszTerm++ = '\0';
 
          // Set the count of bytes to back up in the file.
-         int nCount = (pszThisRead + dwBytesRead) - pszTerm;
+          ptrdiff_t nCount = (pszThisRead + dwBytesRead) - pszTerm;
 
          // adjust file position if we find a line terminator before the end of the buffer we have just read;
          if (nCount < 0)
-            SetFilePointerBuf(pATF, nCount, NULL, FILE_CURRENT);   
+            SetFilePointerBuf(pATF, static_cast<long>(nCount), NULL, FILE_CURRENT);
    
          break;
       }
@@ -510,7 +509,7 @@ static int getsUnBuf(ATF_FILEINFO *pATF, LPSTR pszString, DWORD dwBufSize)
 
    // Take out the last character if it is '\r'.
    // (present if \r\n pairs terminate lines)
-   int l = strlen(pszThisRead);
+    size_t l = strlen(pszThisRead);
    if (l && (pszThisRead[l-1]=='\r'))
    {
       --l;
@@ -587,14 +586,14 @@ int getsBuf(ATF_FILEINFO *pATF, LPSTR pszString, DWORD dwBufSize)
          if (pszTerm && (pszTerm < pszStart+lMoveSize))
          {
             *pszTerm = '\0';
-            lMoveSize = pszTerm - pszStart + 1;
+            lMoveSize = static_cast<DWORD>(pszTerm - pszStart + 1);
 
             // When the counter gets decremented below, the loop will terminate.
             dwToRead = lMoveSize;
          }
 
          // Copy the data into the return buffer.
-         strncpy(pszReturnBuf, pszStart, lMoveSize);
+         strncpy_s(pszReturnBuf, dwToRead + 1, pszStart, lMoveSize);
          pszReturnBuf[lMoveSize] = '\0';
 
          // Advance the buffer position
@@ -638,7 +637,7 @@ int getsBuf(ATF_FILEINFO *pATF, LPSTR pszString, DWORD dwBufSize)
 
    // Take out the last character if it is '\r'.
    // (present if \r\n pairs terminate lines)
-   int l = strlen(pszString);
+    size_t l = strlen(pszString);
    if (l && (pszString[l-1]=='\r'))
    {
       l--;
@@ -660,7 +659,7 @@ int putsBuf(ATF_FILEINFO *pATF, LPCSTR pszString)
 {
    WPTRASSERT(pATF);
 
-   DWORD    dwBytes = strlen(pszString);
+   DWORD    dwBytes = static_cast<DWORD>(strlen(pszString));
    DWORD    dwBytesWritten;
 
    // perform write if buffer size is 0:

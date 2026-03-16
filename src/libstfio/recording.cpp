@@ -13,7 +13,6 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
-#include "./stfio.h"
 #include "./recording.h"
 
 #include <stdio.h>
@@ -161,7 +160,7 @@ void Recording::InsertChannel(Channel& c_Channel, std::size_t pos) {
         }
         // Resize sections if necessary:
         std::size_t n_sec = 0;
-        for ( sec_it sit = c_Channel.get().begin(); sit != c_Channel.get().end(); ++sit ) {
+        for ( std::deque<Section>::const_iterator sit = c_Channel.get().begin(); sit != c_Channel.get().end(); ++sit ) {
             if ( ChannelArray.at(pos).at(n_sec).size() <= sit->size() ) {
                 ChannelArray.at(pos).at(n_sec).get_w().resize( sit->size() );
             }
@@ -222,7 +221,7 @@ void Recording::SetCurSecIndex( size_t value ) {
     cs=value;
 }
 
-void Recording::SelectTrace(std::size_t sectionToSelect, std::size_t base_start, std::size_t base_end) {
+void Recording::SelectTrace(std::size_t sectionToSelect, std::ptrdiff_t base_start, std::ptrdiff_t base_end) {
     // Check range so that sectionToSelect can be used
     // without checking again:
     if (sectionToSelect>=curch().size()) {
@@ -234,21 +233,20 @@ void Recording::SelectTrace(std::size_t sectionToSelect, std::size_t base_start,
     if (curch()[sectionToSelect].size()==0) {
         selectBase.push_back(0);
     } else {
-        int start = base_start;
-        int end = base_end;
-        if (start > (int)curch()[sectionToSelect].size()-1)
-            start = curch()[sectionToSelect].size()-1;
-        if (start < 0) start = 0;
-        if (end > (int)curch()[sectionToSelect].size()-1)
-            end = curch()[sectionToSelect].size()-1;
-        if (end < 0) end = 0;
+        const std::size_t last = curch()[sectionToSelect].size() - 1;
+        std::size_t start = base_start < 0 ? 0 : static_cast<std::size_t>(base_start);
+        std::size_t end = base_end < 0 ? 0 : static_cast<std::size_t>(base_end);
+        if (start > last)
+            start = last;
+        if (end > last)
+            end = last;
 #ifdef _OPENMP
 #pragma omp parallel for reduction(+:sumY)
 #endif
-        for (int i=start; i<=end; i++) {
+        for (std::size_t i = start; i <= end; ++i) {
             sumY += curch()[sectionToSelect][i];
         }
-        int n=(int)(end-start+1);
+        const double n = static_cast<double>(end - start + 1);
         selectBase.push_back(sumY/n);
     }
 }
@@ -283,8 +281,8 @@ bool Recording::UnselectTrace(std::size_t sectionToUnselect) {
 
 void Recording::SetXScale(double value) {
     dt=value;
-    for (ch_it it1 = ChannelArray.begin(); it1 != ChannelArray.end(); it1++) {
-        for (sec_it it2 = it1->get().begin(); it2 != it1->get().end(); it2++) {
+    for (std::deque<Channel>::iterator it1 = ChannelArray.begin(); it1 != ChannelArray.end(); it1++) {
+        for (std::deque<Section>::iterator it2 = it1->get().begin(); it2 != it1->get().end(); it2++) {
             it2->SetXScale(value);
         }
     }
@@ -300,11 +298,11 @@ void Recording::MakeAverage(Section& AverageReturn,
     if (channel >= ChannelArray.size()) {
         throw std::out_of_range("Channel number out of range in Recording::MakeAverage");
     }
-    unsigned int n_sections = section_index.size();
+    std::size_t n_sections = section_index.size();
     if (shift.size() != n_sections) {
         throw std::out_of_range("Shift out of range in Recording::MakeAverage");
     }
-    for (unsigned int l = 0; l < n_sections; ++l) {
+    for (std::size_t l = 0; l < n_sections; ++l) {
         if (section_index[l] >= ChannelArray[channel].size()) {
             throw std::out_of_range("Section number out of range in Recording::MakeAverage");
         }

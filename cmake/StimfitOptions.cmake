@@ -2,7 +2,9 @@ include_guard(GLOBAL)
 
 option(STF_BUILD_MODULE "Build standalone Python module (like --enable-module)" OFF)
 option(STF_BUILD_TESTS "Build gtest-based stimfittest target" OFF)
+option(STF_BUILD_NUMERIC_TESTS "Build stfnum-based gtest suites in addition to minimal container tests" OFF)
 option(STF_ENABLE_PYTHON "Enable Python integration (like --enable-python)" ON)
+option(STF_MACOS_APP_BUNDLE "Build and install stimfit as a macOS .app bundle" OFF)
 option(STF_ENABLE_IPYTHON "Enable IPython shell integration (like --enable-ipython)" OFF)
 set(STF_PY_SHELL_BACKEND "MODERN" CACHE STRING "Embedded Python shell backend (MODERN or LEGACY)")
 set_property(CACHE STF_PY_SHELL_BACKEND PROPERTY STRINGS MODERN LEGACY)
@@ -18,9 +20,9 @@ option(STF_ENABLE_PSLOPE "Enable slope cursor measurements (like --enable-pslope
 option(STF_ENABLE_AUI "Enable experimental AUI doc/view mode (like --enable-aui)" OFF)
 option(STF_BUILD_DEBIAN "Enable Debian-oriented build flags/paths (like --enable-debian)" OFF)
 
-option(STF_WITH_BIOSIG "Use external libbiosig if available" ON)
-option(STF_WITH_BIOSIGLITE "Use bundled biosiglite implementation" OFF)
-option(STF_USE_BIOSIG_SUBMODULE "Use src/biosig submodule as the default BIOSIG provider" ON)
+option(STF_WITH_BIOSIG "Enable BIOSIG support" ON)
+set(STF_BIOSIG_PROVIDER "AUTO" CACHE STRING "BIOSIG provider (AUTO, SYSTEM, SUBMODULE, or PATCHED_SUBMODULE)")
+set_property(CACHE STF_BIOSIG_PROVIDER PROPERTY STRINGS AUTO SYSTEM SUBMODULE PATCHED_SUBMODULE)
 
 set(STF_HDF5_PREFIX "" CACHE PATH "Optional HDF5 installation prefix (like --with-hdf5-prefix)")
 
@@ -33,7 +35,50 @@ if(NOT STF_PY_SHELL_BACKEND STREQUAL "MODERN" AND NOT STF_PY_SHELL_BACKEND STREQ
   message(FATAL_ERROR "STF_PY_SHELL_BACKEND must be either MODERN or LEGACY")
 endif()
 
-if(STF_WITH_BIOSIGLITE)
-  set(STF_WITH_BIOSIG OFF CACHE BOOL "Use external libbiosig if available" FORCE)
+string(TOUPPER "${STF_BIOSIG_PROVIDER}" STF_BIOSIG_PROVIDER)
+if(NOT STF_BIOSIG_PROVIDER STREQUAL "AUTO"
+   AND NOT STF_BIOSIG_PROVIDER STREQUAL "SYSTEM"
+   AND NOT STF_BIOSIG_PROVIDER STREQUAL "SUBMODULE"
+   AND NOT STF_BIOSIG_PROVIDER STREQUAL "PATCHED_SUBMODULE")
+  message(FATAL_ERROR "STF_BIOSIG_PROVIDER must be AUTO, SYSTEM, SUBMODULE, or PATCHED_SUBMODULE")
 endif()
 
+if(DEFINED STF_WITH_BIOSIGLITE)
+  set(_STF_WITH_BIOSIGLITE_VALUE "${STF_WITH_BIOSIGLITE}")
+  unset(STF_WITH_BIOSIGLITE CACHE)
+  unset(STF_WITH_BIOSIGLITE)
+
+  if(_STF_WITH_BIOSIGLITE_VALUE)
+    message(DEPRECATION "STF_WITH_BIOSIGLITE is deprecated; use STF_WITH_BIOSIG=ON and STF_BIOSIG_PROVIDER=PATCHED_SUBMODULE on Windows or SUBMODULE elsewhere instead")
+    set(STF_WITH_BIOSIG ON CACHE BOOL "Enable BIOSIG support" FORCE)
+    if(WIN32)
+      set(STF_BIOSIG_PROVIDER "PATCHED_SUBMODULE" CACHE STRING "BIOSIG provider (AUTO, SYSTEM, SUBMODULE, or PATCHED_SUBMODULE)" FORCE)
+    else()
+      set(STF_BIOSIG_PROVIDER "SUBMODULE" CACHE STRING "BIOSIG provider (AUTO, SYSTEM, SUBMODULE, or PATCHED_SUBMODULE)" FORCE)
+    endif()
+  endif()
+endif()
+
+if(DEFINED STF_USE_BIOSIG_SUBMODULE)
+  set(_STF_USE_BIOSIG_SUBMODULE_VALUE "${STF_USE_BIOSIG_SUBMODULE}")
+  unset(STF_USE_BIOSIG_SUBMODULE CACHE)
+  unset(STF_USE_BIOSIG_SUBMODULE)
+
+  if(_STF_USE_BIOSIG_SUBMODULE_VALUE)
+    message(DEPRECATION "STF_USE_BIOSIG_SUBMODULE is deprecated; use STF_BIOSIG_PROVIDER=PATCHED_SUBMODULE on Windows or SUBMODULE elsewhere instead")
+    if(WIN32)
+      set(STF_BIOSIG_PROVIDER "PATCHED_SUBMODULE" CACHE STRING "BIOSIG provider (AUTO, SYSTEM, SUBMODULE, or PATCHED_SUBMODULE)" FORCE)
+    else()
+      set(STF_BIOSIG_PROVIDER "SUBMODULE" CACHE STRING "BIOSIG provider (AUTO, SYSTEM, SUBMODULE, or PATCHED_SUBMODULE)" FORCE)
+    endif()
+  else()
+    message(DEPRECATION "STF_USE_BIOSIG_SUBMODULE is deprecated; use STF_BIOSIG_PROVIDER=SYSTEM instead")
+    if(STF_BIOSIG_PROVIDER STREQUAL "AUTO")
+      set(STF_BIOSIG_PROVIDER "SYSTEM" CACHE STRING "BIOSIG provider (AUTO, SYSTEM, SUBMODULE, or PATCHED_SUBMODULE)" FORCE)
+    endif()
+  endif()
+
+  unset(_STF_USE_BIOSIG_SUBMODULE_VALUE)
+endif()
+
+unset(_STF_WITH_BIOSIGLITE_VALUE)

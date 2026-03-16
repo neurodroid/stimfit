@@ -3,7 +3,6 @@ include_guard(DIRECTORY)
 add_library(
   stimfit_core
   stf.cpp
-  Annotation.cpp
   gui/app.cpp
   gui/unopt.cpp
   gui/doc.cpp
@@ -22,6 +21,7 @@ add_library(
   gui/dlgs/smalldlgs.cpp
   gui/usrdlg/usrdlg.cpp
 )
+stf_apply_macos_runtime_policy(stimfit_core)
 
 if(MSVC)
   target_compile_definitions(stimfit_core PRIVATE STFDLL)
@@ -38,10 +38,6 @@ target_link_libraries(
     stimfit::wx
 )
 
-if(TARGET biosiglite)
-  target_link_libraries(stimfit_core PUBLIC biosiglite)
-endif()
-
 if(STF_ENABLE_PYTHON)
   target_link_libraries(stimfit_core PUBLIC stimfit::python)
   if(DEFINED STF_NUMPY_INCLUDE AND NOT "${STF_NUMPY_INCLUDE}" STREQUAL "")
@@ -51,9 +47,14 @@ endif()
 
 set_target_properties(stimfit_core PROPERTIES OUTPUT_NAME stimfit)
 
+if(APPLE AND STF_MACOS_APP_BUNDLE)
+  set(_stf_core_install_libdir "stimfit.app/Contents/lib/stimfit")
+else()
+  set(_stf_core_install_libdir "${CMAKE_INSTALL_LIBDIR}/stimfit")
+endif()
+
 install(TARGETS stimfit_core
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit COMPONENT ${STF_COMPONENT_CORE}
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/stimfit COMPONENT ${STF_COMPONENT_CORE}
+  LIBRARY DESTINATION ${_stf_core_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
+  ARCHIVE DESTINATION ${_stf_core_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
 )
-

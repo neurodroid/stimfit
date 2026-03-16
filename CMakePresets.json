@@ -32,17 +32,14 @@
     },
     {
       "name": "vs2022-vcpkg-wx-hdf5-biosig-patched",
-      "displayName": "VS2022 x64 (external patched biosig)",
-      "description": "Build Stimfit against biosig prepared by cmake/PrepareBiosigMSVC.cmake.",
+      "displayName": "VS2022 x64 (CMake-managed patched biosig)",
+      "description": "Build Stimfit with biosig patched and built incrementally through the CMake build graph.",
       "inherits": [
         "vs2022-vcpkg-wx-hdf5"
       ],
       "cacheVariables": {
-        "STF_USE_BIOSIG_SUBMODULE": "OFF",
         "STF_WITH_BIOSIG": "ON",
-        "STF_WITH_BIOSIGLITE": "OFF",
-        "BIOSIG_INCLUDE_DIR": "${sourceDir}/build/biosig-msvc-src/biosig4c++",
-        "BIOSIG_LIBRARY": "${sourceDir}/build/biosig-msvc-build/Release/biosig2.lib"
+        "STF_BIOSIG_PROVIDER": "PATCHED_SUBMODULE"
       }
     },
     {
