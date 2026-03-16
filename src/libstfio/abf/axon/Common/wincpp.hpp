@@ -32,8 +32,6 @@
 #define _TRUNCATE ((size_t)-1)
 #endif
 
-
-#endif
 static inline int strcpy_s(char *dest, size_t destsz, const char *src)
 {
     if (!dest || destsz == 0)
@@ -84,5 +82,7 @@ static inline int strcat_s(char *dest, size_t destsz, const char *src)
 
     return strncpy_s(dest + dest_len, destsz - dest_len, src, _TRUNCATE);
 }
+#endif
+
 #endif
 

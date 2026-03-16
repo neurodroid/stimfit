@@ -74,7 +74,10 @@ wstring toWString(const string& s) {
 
 string toString(const wstring& ws) {
     string s;
-    s.insert(s.begin(), ws.begin(), ws.end());
+    s.reserve(ws.size());
+    for (wstring::const_iterator it = ws.begin(); it != ws.end(); ++it) {
+        s.push_back(static_cast<char>(*it));
+    }
     return s;
 }
 
