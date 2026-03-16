@@ -52,3 +52,100 @@ jobs:
       - name: Run CTest
         run: |
           ctest --test-dir build --output-on-failure --tests-regex 'stimfit_(containers|numeric)_test'
+
+  macos-macports-smoke:
+    name: macOS MacPorts smoke
+    runs-on: macos-14
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Bootstrap MacPorts
+        env:
+          MACPORTS_PKG_URL: https://github.com/macports/macports-base/releases/download/v2.10.5/MacPorts-2.10.5-14-Sonoma.pkg
+        run: |
+          curl -L "$MACPORTS_PKG_URL" -o MacPorts.pkg
+          sudo installer -pkg MacPorts.pkg -target /
+          /opt/local/bin/port version
+
+          {
+            echo "/opt/local/bin"
+            echo "/opt/local/sbin"
+          } >> "$GITHUB_PATH"
+
+      - name: Install MacPorts dependencies
+        run: |
+          sudo port -N selfupdate
+          sudo port -N install \
+            cmake \
+            ninja \
+            pkgconfig \
+            fftw-3 \
+            hdf5 \
+            wxWidgets-3.2
+
+          sudo port select --set wxWidgets wxWidgets-3.2 || true
+
+          if [[ -x /opt/local/bin/wx-config ]]; then
+            WX_CONFIG=/opt/local/bin/wx-config
+          else
+            WX_CONFIG="$(port contents wxWidgets-3.2 | awk '/\/wx-config$/ { print $1; exit }')"
+          fi
+
+          if [[ -z "${WX_CONFIG}" || ! -x "${WX_CONFIG}" ]]; then
+            echo "Failed to locate wx-config from MacPorts" >&2
+            port contents wxWidgets-3.2
+            port select --summary || true
+            exit 1
+          fi
+
+          echo "WX_CONFIG=${WX_CONFIG}" >> "$GITHUB_ENV"
+          port select --summary || true
+          "${WX_CONFIG}" --version
+          "${WX_CONFIG}" --selected-config || true
+          "${WX_CONFIG}" --list || true
+          "${WX_CONFIG}" --cxxflags || true
+          "${WX_CONFIG}" --libs std,aui || true
+
+      - name: Configure CMake with MacPorts
+        run: |
+          WX_CONFIG_OPTIONS="--toolkit=osx_cocoa --unicode=yes --version=3.2"
+
+          cmake -S . -B build-macos-macports -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH=/opt/local \
+            -DCMAKE_FIND_ROOT_PATH=/opt/local \
+            -DCMAKE_FRAMEWORK_PATH=/opt/local/Library/Frameworks \
+            -DCMAKE_FIND_FRAMEWORK=FIRST \
+            -DCMAKE_FIND_APPBUNDLE=LAST \
+            -DwxWidgets_CONFIG_EXECUTABLE="${WX_CONFIG}" \
+            -DwxWidgets_CONFIG_OPTIONS="${WX_CONFIG_OPTIONS}" \
+            -DSTF_ENABLE_PYTHON=OFF \
+            -DSTF_WITH_BIOSIG=OFF \
+            -DSTF_BUILD_MODULE=OFF \
+            -DSTF_BUILD_TESTS=OFF \
+            -DSTF_BUILD_NUMERIC_TESTS=OFF \
+            -DSTF_MACOS_APP_BUNDLE=ON
+
+      - name: Build Stimfit
+        run: |
+          cmake --build build-macos-macports --parallel
+
+      - name: Install Stimfit into staging
+        run: |
+          cmake --install build-macos-macports --prefix "$PWD/build-macos-macports/install"
+          find "$PWD/build-macos-macports/install" -maxdepth 4 -print | sort > "$PWD/build-macos-macports/install-manifest.txt"
+
+      - name: Upload minimal staging artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-macports-staging
+          path: |
+            build-macos-macports/CMakeCache.txt
+            build-macos-macports/install-manifest.txt
+            build-macos-macports/install/stimfit.app
+          if-no-files-found: warn
