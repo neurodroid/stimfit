@@ -1338,9 +1338,10 @@ BOOL WINAPI ATF_WriteDataRecordArray(int nFile, int nCount, double *pdVals, int 
 
    if (nCount > 0)
    {
-      if (pATF->bDataOnLine)
+      if (pATF->bDataOnLine) {
          *ps++ = pATF->szSeparator[0];
          *ps = '\0';
+      }
 
       if (!_FormatNumber(*pdVals++, ATF_DBL_SIG_DIGITS, psTemp, ATF_DBL_STR_LEN))
          ERRORRETURN(pnError, ATF_ERROR_BADFLTCNV);
@@ -1400,8 +1401,10 @@ BOOL WINAPI ATF_WriteDataRecordArrayFloat(int nFile, int nCount, float *pfVals, 
    if (nCount > 0)
    {
       if (pATF->bDataOnLine)
+      {
          *ps++ = pATF->szSeparator[0];
          *ps = '\0';
+      }
 
       if (!_FormatNumber((double)*pfVals++, ATF_FLT_SIG_DIGITS, psTemp, ATF_FLT_STR_LEN))
          ERRORRETURN(pnError, ATF_ERROR_BADFLTCNV);
