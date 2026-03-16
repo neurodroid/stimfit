@@ -36,7 +36,7 @@ class StfDll wxStfDoc: public wxDocument, public Recording
 #ifndef FROM_PYTHON
     DECLARE_DYNAMIC_CLASS(wxStfDoc)
 #endif
-private:
+private:    
     bool peakAtEnd, startFitAtPeak, initialized, progress;
     Recording Average;
     int InitCursors();
@@ -74,7 +74,6 @@ private:
     Recording ReorderChannels();
 
     wxMenu* doc_file_menu;
-
 
     stf::latency_mode latencyStartMode, latencyEndMode;
     stf::latency_window_mode latencyWindowMode;
@@ -118,7 +117,6 @@ private:
     std::vector<YZoom> yzoom;
 
     std::vector< std::vector<stf::SectionAttributes> > sec_attr;
-    
 public:
 
     //! Constructor.
@@ -304,6 +302,11 @@ public:
     /*! \param event The menu event that made the call.
      */
     void OnImportAnnotations( wxCommandEvent& WXUNUSED(event) );
+    
+    //! detects events based on the expert scoring using simple filter
+    /*! \param event The menu event that made the call.
+     */
+    void OnExpertDetectEvents( wxCommandEvent& WXUNUSED(event) );
 
 
     //! Subtracts the baseline of all selected traces.
@@ -1068,7 +1071,17 @@ public:
     void correctRangeR(std::size_t& value);
     bool LoadTDMS(const std::string& filename, Recording& ReturnData);
     
+    // calculates the Raw Detection Trace d(t) = d(t-1) + y(t) - 2 y(t-10) + y(t-20)
+    std::vector<double> CalcRawDetectionTrace(std::size_t filterOrder, std::size_t startPoint, std::size_t endPoint);
+    std::vector<int> CalcScoringTrace(std::vector<Annotation> expertAnnotations, std::size_t startPoint, std::size_t endPoint);
+    double CalcAreaUnderCurve(std::vector<double> d, std::vector<int> c);
+    std::pair<std::size_t, double> CalcMaxKappa(std::vector<double> &sortedRawDetectionTrace, std::vector<int> &sortedScoringTrace);
+    std::vector<double> SortScoringTraceByRawDetection(std::vector<double> &rawDetectionTrace, std::vector<int> &scoringTrace);
+    std::vector<stf::Event> DetectEvents(double threshold, std::vector<double> &rawDetectionTrace);
+    void OnCalculatedThresholdExpertDetectEvents(double threshold, std::size_t filterOrder);
+
     DECLARE_EVENT_TABLE()
+
 };
 
 /*@}*/

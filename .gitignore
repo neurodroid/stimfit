@@ -152,3 +152,19 @@ stimfittest
 
 Portfile
 /debian/mkdeb.sh
+
+# IDE settings
+.vscode/
+
+# modern build artefacts
+cmake-build-*/
+build-*/
+CMakeFiles/
+CMakeCache.txt
+compile_commands.json
+Testing/
+install_manifest.txt
+.ninja_deps
+.ninja_log
+build.ninja
+out/
