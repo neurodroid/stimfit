@@ -9,6 +9,65 @@ on:
       - master
 
 jobs:
+  windows-msvc-smoke:
+    name: Windows MSVC smoke
+    runs-on: windows-latest
+    timeout-minutes: 45
+    env:
+      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgDirectory: ${{ env.VCPKG_ROOT }}
+
+      - name: Restore vcpkg cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.VCPKG_ROOT }}/installed
+            ${{ env.VCPKG_ROOT }}/packages
+            ${{ env.VCPKG_ROOT }}/downloads
+          key: windows-vcpkg-x64-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
+          restore-keys: |
+            windows-vcpkg-x64-
+
+      - name: Install Windows build dependencies (vcpkg)
+        shell: pwsh
+        run: |
+          vcpkg install --triplet x64-windows wxwidgets hdf5 fftw3 openblas lapack-reference
+
+      - name: Configure CMake (Windows smoke)
+        shell: pwsh
+        run: |
+          cmake --preset ci-windows-msvc-smoke
+
+      - name: Build container test target
+        shell: pwsh
+        run: |
+          cmake --build --preset ci-windows-msvc-smoke-release --parallel
+
+      - name: Run Windows smoke test
+        shell: pwsh
+        run: |
+          ctest --test-dir build/ci-windows-msvc-smoke -C Release --output-on-failure --tests-regex stimfit_containers_test
+
+      - name: Upload Windows smoke staging artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-msvc-smoke-staging
+          path: |
+            build/ci-windows-msvc-smoke/CMakeCache.txt
+            build/ci-windows-msvc-smoke/Testing/Temporary/LastTest.log
+            build/ci-windows-msvc-smoke/src/test/Release/stimfit_containers_test.exe
+          if-no-files-found: warn
+
   ubuntu-tests:
     name: Ubuntu test targets
     runs-on: ubuntu-latest

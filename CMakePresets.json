@@ -60,6 +60,28 @@
         "SWIG_EXECUTABLE": "C:/Users/C02380/AppData/Local/Microsoft/WinGet/Packages/SWIG.SWIG_Microsoft.Winget.Source_8wekyb3d8bbwe/swigwin-4.4.1/swig.exe",
         "Python3_ROOT_DIR": "C:/Program Files/Python314"
       }
+    },
+    {
+      "name": "ci-windows-msvc-smoke",
+      "displayName": "CI Windows MSVC smoke",
+      "description": "GitHub Actions Windows smoke configuration using vcpkg-installed dependencies.",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "architecture": {
+        "value": "x64",
+        "strategy": "set"
+      },
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
+        "BUILD_SHARED_LIBS": "ON",
+        "STF_BUILD_MODULE": "OFF",
+        "STF_ENABLE_PYTHON": "OFF",
+        "STF_WITH_BIOSIG": "OFF",
+        "STF_BUILD_TESTS": "ON",
+        "STF_BUILD_NUMERIC_TESTS": "OFF"
+      }
     }
   ],
   "buildPresets": [
@@ -97,6 +119,15 @@
       "configuration": "Release",
       "targets": [
         "stimfit"
+      ]
+    },
+    {
+      "name": "ci-windows-msvc-smoke-release",
+      "displayName": "CI smoke target build (Release)",
+      "configurePreset": "ci-windows-msvc-smoke",
+      "configuration": "Release",
+      "targets": [
+        "stimfit_containers_test"
       ]
     }
   ],
