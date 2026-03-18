@@ -12,9 +12,13 @@ jobs:
   windows-msvc-smoke:
     name: Windows MSVC smoke
     runs-on: windows-latest
-    timeout-minutes: 45
+    timeout-minutes: 75
     env:
       VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+      VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
+      VCPKG_BINARY_CACHE_DIR: ${{ github.workspace }}/vcpkg-binary-cache
+      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/vcpkg-binary-cache
+      VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg-binary-cache,readwrite
 
     steps:
       - name: Checkout repository
@@ -31,17 +35,59 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ${{ env.VCPKG_ROOT }}/installed
+            ${{ env.VCPKG_INSTALLED_DIR }}
+            ${{ env.VCPKG_BINARY_CACHE_DIR }}
             ${{ env.VCPKG_ROOT }}/packages
             ${{ env.VCPKG_ROOT }}/downloads
-          key: windows-vcpkg-x64-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
+          key: windows-vcpkg-x64-ci-release-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json', 'cmake/triplets/x64-windows-ci-release.cmake') }}
           restore-keys: |
-            windows-vcpkg-x64-
+            windows-vcpkg-x64-ci-release-
 
       - name: Install Windows build dependencies (vcpkg)
         shell: pwsh
         run: |
-          vcpkg install --triplet x64-windows wxwidgets hdf5 fftw3 openblas lapack-reference
+          vcpkg install `
+            --overlay-triplets "$env:GITHUB_WORKSPACE/cmake/triplets" `
+            --triplet x64-windows-ci-release `
+            --x-install-root "$env:VCPKG_INSTALLED_DIR"
+
+      - name: Verify vcpkg dependency layout
+        shell: pwsh
+        run: |
+          $hdf5Share = "$env:VCPKG_INSTALLED_DIR/x64-windows-ci-release/share/hdf5"
+          $hdf5Config = Join-Path $hdf5Share "hdf5-config.cmake"
+          $hdf5Lib = "$env:VCPKG_INSTALLED_DIR/x64-windows-ci-release/lib/hdf5.lib"
+
+          Write-Host "VCPKG_ROOT=$env:VCPKG_ROOT"
+          Write-Host "VCPKG_INSTALLED_DIR=$env:VCPKG_INSTALLED_DIR"
+          Write-Host "Checking $hdf5Config"
+          Write-Host "Checking $hdf5Lib"
+
+          if (-not (Test-Path $hdf5Config)) {
+            throw "Missing HDF5 config file at $hdf5Config"
+          }
+          if (-not (Test-Path $hdf5Lib)) {
+            throw "Missing HDF5 library at $hdf5Lib"
+          }
+
+      - name: Normalize wx include layout (release-only triplet)
+        shell: pwsh
+        run: |
+          $wxRoot = "$env:VCPKG_INSTALLED_DIR/x64-windows-ci-release/lib"
+          $wxReleaseSetup = Join-Path $wxRoot "mswu/wx/setup.h"
+          $wxDebugSetupDir = Join-Path $wxRoot "mswud/wx"
+          $wxDebugSetup = Join-Path $wxDebugSetupDir "setup.h"
+
+          if (-not (Test-Path $wxReleaseSetup)) {
+            throw "Missing wxWidgets release setup header at $wxReleaseSetup"
+          }
+
+          if (-not (Test-Path $wxDebugSetupDir)) {
+            New-Item -ItemType Directory -Path $wxDebugSetupDir -Force | Out-Null
+          }
+
+          Copy-Item -Path $wxReleaseSetup -Destination $wxDebugSetup -Force
+          Write-Host "Created release-only wx compatibility header at $wxDebugSetup"
 
       - name: Configure CMake (Windows smoke)
         shell: pwsh
@@ -56,6 +102,20 @@ jobs:
       - name: Run Windows smoke test
         shell: pwsh
         run: |
+          $buildRoot = "$env:GITHUB_WORKSPACE/build/ci-windows-msvc-smoke"
+          $runtimePaths = @(
+            "$buildRoot/src/stimfit/Release",
+            "$buildRoot/src/libstfio/Release",
+            "$buildRoot/src/libstfnum/Release",
+            "$env:VCPKG_INSTALLED_DIR/x64-windows-ci-release/bin"
+          ) | Where-Object { Test-Path $_ }
+
+          if ($runtimePaths.Count -gt 0) {
+            $env:PATH = ($runtimePaths -join ';') + ';' + $env:PATH
+            Write-Host "Prepended runtime PATH entries:"
+            $runtimePaths | ForEach-Object { Write-Host "  $_" }
+          }
+
           ctest --test-dir build/ci-windows-msvc-smoke -C Release --output-on-failure --tests-regex stimfit_containers_test
 
       - name: Upload Windows smoke staging artifact
