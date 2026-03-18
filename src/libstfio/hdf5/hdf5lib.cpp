@@ -13,10 +13,17 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "hdf5.h"
-#if H5_VERS_MINOR > 6
-  #include "hdf5_hl.h"
+#if defined(__has_include)
+    #if __has_include("hdf5_hl.h")
+        #include "hdf5_hl.h"
+    #elif __has_include("H5LTpublic.h") && __has_include("H5TBpublic.h")
+        #include "H5LTpublic.h"
+        #include "H5TBpublic.h"
+    #else
+        #include "H5TA.h"
+    #endif
 #else
-  #include "H5TA.h"
+    #include "hdf5_hl.h"
 #endif
 #include <cmath>
 #include <sstream>

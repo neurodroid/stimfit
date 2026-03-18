@@ -48,7 +48,17 @@ if(WIN32)
     unset(_stf_biosig_lib_dir)
   endif()
   if(DEFINED wxWidgets_LIB_DIR AND NOT "${wxWidgets_LIB_DIR}" STREQUAL "")
-    list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${wxWidgets_LIB_DIR}")
+    file(TO_CMAKE_PATH "${wxWidgets_LIB_DIR}" _stf_wx_lib_dir)
+    list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${_stf_wx_lib_dir}")
+    get_filename_component(_stf_wx_lib_parent "${_stf_wx_lib_dir}" DIRECTORY)
+    if(EXISTS "${_stf_wx_lib_parent}/bin")
+      list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${_stf_wx_lib_parent}/bin")
+    endif()
+    if(EXISTS "${_stf_wx_lib_parent}/tools/wxwidgets")
+      list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${_stf_wx_lib_parent}/tools/wxwidgets")
+    endif()
+    unset(_stf_wx_lib_dir)
+    unset(_stf_wx_lib_parent)
   endif()
   if(MSVC)
     file(GLOB STF_MSVC_REDIST_DIRS
@@ -184,34 +194,38 @@ if(NOT STF_BUILD_MODULE)
   endif()
 
   if(WIN32 AND DEFINED wxWidgets_LIB_DIR AND EXISTS "${wxWidgets_LIB_DIR}")
+    file(TO_CMAKE_PATH "${wxWidgets_LIB_DIR}" _stf_wx_lib_dir_install)
     install(
-      DIRECTORY "${wxWidgets_LIB_DIR}/"
+      DIRECTORY "${_stf_wx_lib_dir_install}/"
       DESTINATION ${CMAKE_INSTALL_BINDIR}
       COMPONENT ${STF_COMPONENT_CORE}
       FILES_MATCHING
         PATTERN "wx*.dll"
     )
+    unset(_stf_wx_lib_dir_install)
   endif()
 
   if(WIN32 AND DEFINED STF_HDF5_PREFIX)
-    if(EXISTS "${STF_HDF5_PREFIX}/bin")
+    file(TO_CMAKE_PATH "${STF_HDF5_PREFIX}" _stf_hdf5_prefix_install)
+    if(EXISTS "${_stf_hdf5_prefix_install}/bin")
       install(
-        DIRECTORY "${STF_HDF5_PREFIX}/bin/"
+        DIRECTORY "${_stf_hdf5_prefix_install}/bin/"
         DESTINATION ${CMAKE_INSTALL_BINDIR}
         COMPONENT ${STF_COMPONENT_CORE}
         FILES_MATCHING
           PATTERN "hdf*.dll"
       )
     endif()
-    if(EXISTS "${STF_HDF5_PREFIX}/lib")
+    if(EXISTS "${_stf_hdf5_prefix_install}/lib")
       install(
-        DIRECTORY "${STF_HDF5_PREFIX}/lib/"
+        DIRECTORY "${_stf_hdf5_prefix_install}/lib/"
         DESTINATION ${CMAKE_INSTALL_BINDIR}
         COMPONENT ${STF_COMPONENT_CORE}
         FILES_MATCHING
           PATTERN "hdf*.dll"
       )
     endif()
+    unset(_stf_hdf5_prefix_install)
   endif()
 
   if(WIN32 AND DEFINED FFTW3_LIBRARY AND EXISTS "${FFTW3_LIBRARY}")
