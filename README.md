@@ -113,6 +113,17 @@ Prerequisites:
 Example workflow for a Python-enabled Windows release build:
 
 ```powershell
+# CI-like local dependency setup (release-only triplet)
+$env:VCPKG_ROOT = "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg"
+$env:VCPKG_INSTALLED_DIR = "$PWD/vcpkg_installed"
+$env:VCPKG_BINARY_CACHE_DIR = "$PWD/build/vcpkg-binary-cache"
+$env:VCPKG_DEFAULT_BINARY_CACHE = $env:VCPKG_BINARY_CACHE_DIR
+$env:VCPKG_BINARY_SOURCES = "clear;files,$env:VCPKG_BINARY_CACHE_DIR,readwrite"
+vcpkg install `
+  --overlay-triplets "$PWD/cmake/triplets" `
+  --triplet x64-windows-ci-release `
+  --x-install-root "$env:VCPKG_INSTALLED_DIR"
+
 cmake --preset vs2022-vcpkg-wx-hdf5-python314-biosig-patched
 cmake --build --preset vs2022-release-stimfit-python314-biosig-patched
 cmake --install ../stimfit-out/vs2022-vcpkg-wx-hdf5-python314-biosig-patched --config Release
@@ -120,6 +131,12 @@ cd ../stimfit-out/vs2022-vcpkg-wx-hdf5-python314-biosig-patched
 cpack -C Release -G INNOSETUP
 cpack -C Release -G ZIP
 ```
+
+For local development with CI-like defaults, `build_windows_msvc.ps1` now:
+
+* defaults to the non-Python preset (`-WithPython` enables Python mode)
+* uses `VCPKG_ROOT`/`VCPKG_INSTALLED_DIR` environment variables
+* runs the same release-only vcpkg install strategy used by Windows CI before configure
 
 The resulting artifacts are written into the build directory and include:
 

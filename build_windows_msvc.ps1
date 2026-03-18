@@ -1,5 +1,5 @@
 param(
-    [switch]$WithPython = $true,
+    [switch]$WithPython = $false,
     [string]$ConfigurePreset,
     [string]$BuildPreset,
     [string]$PackageGenerator,
@@ -16,12 +16,12 @@ Configure, build, install, and optionally package Stimfit on Windows/MSVC using 
 
 .DESCRIPTION
 Analogous to build_macos_cmake.sh, but tailored for the Visual Studio 2022 / MSVC preset-based
-Windows workflow. By default this script builds the Python-enabled preset that uses the patched
-biosig workflow.
+Windows workflow. By default this script builds the non-Python patched-biosig preset using
+vcpkg dependencies configured through environment variables.
 
 .USAGE
 ./build_windows_msvc.ps1
-./build_windows_msvc.ps1 -WithPython:$false
+./build_windows_msvc.ps1 -WithPython
 ./build_windows_msvc.ps1 -InstallPrefix ..\stimfit-out\install\custom-python
 ./build_windows_msvc.ps1 -PackageGenerator INNOSETUP
 ./build_windows_msvc.ps1 -PackageGenerator ZIP
@@ -51,6 +51,67 @@ $repoRoot = Resolve-Path $PSScriptRoot
 Push-Location $repoRoot
 
 try {
+    if ([string]::IsNullOrWhiteSpace($env:VCPKG_ROOT)) {
+        $defaultVsVcpkg = "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\vcpkg"
+        if (Test-Path (Join-Path $defaultVsVcpkg "scripts\buildsystems\vcpkg.cmake")) {
+            $env:VCPKG_ROOT = $defaultVsVcpkg
+        }
+        else {
+            throw "VCPKG_ROOT is not set and no bundled Visual Studio vcpkg was found. Set VCPKG_ROOT to your vcpkg checkout."
+        }
+    }
+
+    if ([string]::IsNullOrWhiteSpace($env:VCPKG_INSTALLED_DIR)) {
+        $env:VCPKG_INSTALLED_DIR = Join-Path $repoRoot "vcpkg_installed"
+    }
+
+    if ([string]::IsNullOrWhiteSpace($env:VCPKG_BINARY_CACHE_DIR)) {
+        $env:VCPKG_BINARY_CACHE_DIR = Join-Path $repoRoot "build\vcpkg-binary-cache"
+    }
+    if (-not (Test-Path $env:VCPKG_BINARY_CACHE_DIR)) {
+        New-Item -ItemType Directory -Path $env:VCPKG_BINARY_CACHE_DIR -Force | Out-Null
+    }
+
+    if ([string]::IsNullOrWhiteSpace($env:VCPKG_DEFAULT_BINARY_CACHE)) {
+        $env:VCPKG_DEFAULT_BINARY_CACHE = $env:VCPKG_BINARY_CACHE_DIR
+    }
+
+    if ([string]::IsNullOrWhiteSpace($env:VCPKG_BINARY_SOURCES)) {
+        $env:VCPKG_BINARY_SOURCES = "clear;files,$($env:VCPKG_BINARY_CACHE_DIR),readwrite"
+    }
+
+    Write-Host "Using VCPKG_ROOT=$env:VCPKG_ROOT"
+    Write-Host "Using VCPKG_INSTALLED_DIR=$env:VCPKG_INSTALLED_DIR"
+    Write-Host "Using VCPKG_BINARY_CACHE_DIR=$env:VCPKG_BINARY_CACHE_DIR"
+    Write-Host "Using VCPKG_BINARY_SOURCES=$env:VCPKG_BINARY_SOURCES"
+
+    $vcpkgExe = Join-Path $env:VCPKG_ROOT "vcpkg.exe"
+    if (-not (Test-Path $vcpkgExe)) {
+        throw "Could not find vcpkg executable at '$vcpkgExe'."
+    }
+
+    $tripletOverlay = Join-Path $repoRoot "cmake\triplets"
+    Invoke-Step -Name "Install vcpkg dependencies" -Command @(
+        $vcpkgExe,
+        "install",
+        "--overlay-triplets", $tripletOverlay,
+        "--triplet", "x64-windows-ci-release",
+        "--x-install-root", $env:VCPKG_INSTALLED_DIR
+    )
+
+    $wxRoot = Join-Path $env:VCPKG_INSTALLED_DIR "x64-windows-ci-release\lib"
+    $wxReleaseSetup = Join-Path $wxRoot "mswu\wx\setup.h"
+    $wxDebugSetupDir = Join-Path $wxRoot "mswud\wx"
+    $wxDebugSetup = Join-Path $wxDebugSetupDir "setup.h"
+
+    if (Test-Path $wxReleaseSetup) {
+        if (-not (Test-Path $wxDebugSetupDir)) {
+            New-Item -ItemType Directory -Path $wxDebugSetupDir -Force | Out-Null
+        }
+        Copy-Item -Path $wxReleaseSetup -Destination $wxDebugSetup -Force
+        Write-Host "Normalized wx include layout at $wxDebugSetup"
+    }
+
     $selectedConfigurePreset = $ConfigurePreset
     $selectedBuildPreset = $BuildPreset
 
