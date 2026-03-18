@@ -78,7 +78,11 @@
         "STF_WINDOWS_PYTHON_EXTRA_PATHS": "C:/Users/C02380/libs/Phoenix",
         "STF_WXPYTHON_INCLUDE_DIR": "C:/Users/C02380/libs/Phoenix/wx/include",
         "SWIG_EXECUTABLE": "C:/Users/C02380/AppData/Local/Microsoft/WinGet/Packages/SWIG.SWIG_Microsoft.Winget.Source_8wekyb3d8bbwe/swigwin-4.4.1/swig.exe",
-        "Python3_ROOT_DIR": "C:/Program Files/Python314"
+        "Python3_ROOT_DIR": "C:/Program Files/Python314",
+        "STF_WX_PREFER_MODULE_FIND": "ON",
+        "wxWidgets_DIR": "",
+        "wxWidgets_ROOT_DIR": "C:/Users/C02380/libs/Phoenix/ext/wxWidgets",
+        "wxWidgets_LIB_DIR": "C:/Users/C02380/libs/Phoenix/ext/wxWidgets/lib/vc140_x64_dll"
       }
     },
     {

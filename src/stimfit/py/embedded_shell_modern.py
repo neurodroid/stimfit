@@ -97,7 +97,7 @@ class MyPanel(wx.Panel):
     """Modern embedded shell panel with wx.py.shell fallback support."""
 
     def __init__(self, parent):
-        super(MyPanel, self).__init__(parent, wx.ID_ANY, style=wx.BORDER_NONE | wx.MAXIMIZE)
+        super(MyPanel, self).__init__(parent, wx.ID_ANY, style=wx.BORDER_NONE)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 

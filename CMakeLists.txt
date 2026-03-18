@@ -202,7 +202,28 @@ if(NOT STF_BUILD_MODULE)
       FILES_MATCHING
         PATTERN "wx*.dll"
     )
+    # vcpkg places wx DLLs in <prefix>/bin and <prefix>/tools/wxwidgets, not lib/.
+    get_filename_component(_stf_wx_install_parent "${_stf_wx_lib_dir_install}" DIRECTORY)
+    if(EXISTS "${_stf_wx_install_parent}/bin")
+      install(
+        DIRECTORY "${_stf_wx_install_parent}/bin/"
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT ${STF_COMPONENT_CORE}
+        FILES_MATCHING
+          PATTERN "wx*.dll"
+      )
+    endif()
+    if(EXISTS "${_stf_wx_install_parent}/tools/wxwidgets")
+      install(
+        DIRECTORY "${_stf_wx_install_parent}/tools/wxwidgets/"
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT ${STF_COMPONENT_CORE}
+        FILES_MATCHING
+          PATTERN "wx*.dll"
+      )
+    endif()
     unset(_stf_wx_lib_dir_install)
+    unset(_stf_wx_install_parent)
   endif()
 
   if(WIN32 AND DEFINED STF_HDF5_PREFIX)
@@ -214,6 +235,8 @@ if(NOT STF_BUILD_MODULE)
         COMPONENT ${STF_COMPONENT_CORE}
         FILES_MATCHING
           PATTERN "hdf*.dll"
+          PATTERN "szip.dll"    # HDF5 Szip filter codec
+          PATTERN "aec.dll"     # libaec (Adaptive Entropy Coding, Szip replacement)
       )
     endif()
     if(EXISTS "${_stf_hdf5_prefix_install}/lib")
@@ -223,34 +246,70 @@ if(NOT STF_BUILD_MODULE)
         COMPONENT ${STF_COMPONENT_CORE}
         FILES_MATCHING
           PATTERN "hdf*.dll"
+          PATTERN "szip.dll"
+          PATTERN "aec.dll"
       )
     endif()
     unset(_stf_hdf5_prefix_install)
   endif()
 
-  if(WIN32 AND DEFINED FFTW3_LIBRARY AND EXISTS "${FFTW3_LIBRARY}")
-    get_filename_component(_fftw3_lib_dir "${FFTW3_LIBRARY}" DIRECTORY)
-    install(
-      DIRECTORY "${_fftw3_lib_dir}/"
-      DESTINATION ${CMAKE_INSTALL_BINDIR}
-      COMPONENT ${STF_COMPONENT_CORE}
-      FILES_MATCHING
-        PATTERN "libfftw3*.dll"
-        PATTERN "fftw3*.dll"
-    )
-    unset(_fftw3_lib_dir)
+  # ZLIB_LIBRARY_RELEASE is a CMake cache variable populated by find_package(ZLIB)
+  # from any subdirectory; ZLIB_LIBRARIES is a local variable that doesn't
+  # propagate to the parent scope, so we use the cache variable instead.
+  if(WIN32 AND DEFINED ZLIB_LIBRARY_RELEASE AND EXISTS "${ZLIB_LIBRARY_RELEASE}")
+    get_filename_component(_stf_zlib_lib_dir "${ZLIB_LIBRARY_RELEASE}" DIRECTORY)
+    get_filename_component(_stf_zlib_prefix "${_stf_zlib_lib_dir}" DIRECTORY)
+    foreach(_stf_zlib_search_dir IN ITEMS "${_stf_zlib_lib_dir}" "${_stf_zlib_prefix}/bin")
+      if(EXISTS "${_stf_zlib_search_dir}")
+        install(
+          DIRECTORY "${_stf_zlib_search_dir}/"
+          DESTINATION ${CMAKE_INSTALL_BINDIR}
+          COMPONENT ${STF_COMPONENT_CORE}
+          FILES_MATCHING
+            PATTERN "zlib*.dll"
+            PATTERN "zlib1.dll"
+        )
+      endif()
+    endforeach()
+    unset(_stf_zlib_search_dir)
+    unset(_stf_zlib_lib_dir)
+    unset(_stf_zlib_prefix)
   endif()
 
-  if(WIN32 AND DEFINED STF_BIOSIG_RUNTIME_DIR AND EXISTS "${STF_BIOSIG_RUNTIME_DIR}")
-    set(_biosig_lib_dir "${STF_BIOSIG_RUNTIME_DIR}")
+  if(WIN32 AND DEFINED FFTW3_LIBRARY AND EXISTS "${FFTW3_LIBRARY}")
+    get_filename_component(_fftw3_lib_dir "${FFTW3_LIBRARY}" DIRECTORY)
+    get_filename_component(_fftw3_prefix "${_fftw3_lib_dir}" DIRECTORY)
+    # Search both the lib dir (legacy layouts) and the sibling bin dir (vcpkg layout).
+    foreach(_fftw3_search_dir IN ITEMS "${_fftw3_lib_dir}" "${_fftw3_prefix}/bin")
+      if(EXISTS "${_fftw3_search_dir}")
+        install(
+          DIRECTORY "${_fftw3_search_dir}/"
+          DESTINATION ${CMAKE_INSTALL_BINDIR}
+          COMPONENT ${STF_COMPONENT_CORE}
+          FILES_MATCHING
+            PATTERN "libfftw3*.dll"
+            PATTERN "fftw3*.dll"
+        )
+      endif()
+    endforeach()
+    unset(_fftw3_lib_dir)
+    unset(_fftw3_prefix)
+    unset(_fftw3_search_dir)
+  endif()
+
+  # biosig2.dll is produced by the patched-biosig ExternalProject, so
+  # STF_BIOSIG_RUNTIME_DIR may not exist yet at configure time on a fresh build.
+  # Drop the EXISTS guard here; cmake --install runs after the build step and
+  # the directory will be present by then.  install(DIRECTORY ...) silently
+  # skips non-existent source directories, so this is safe.
+  if(WIN32 AND DEFINED STF_BIOSIG_RUNTIME_DIR)
     install(
-      DIRECTORY "${_biosig_lib_dir}/"
+      DIRECTORY "${STF_BIOSIG_RUNTIME_DIR}/"
       DESTINATION ${CMAKE_INSTALL_BINDIR}
       COMPONENT ${STF_COMPONENT_CORE}
       FILES_MATCHING
         PATTERN "biosig*.dll"
     )
-    unset(_biosig_lib_dir)
   elseif(WIN32 AND DEFINED BIOSIG_LIBRARY AND EXISTS "${BIOSIG_LIBRARY}")
     get_filename_component(_biosig_lib_dir "${BIOSIG_LIBRARY}" DIRECTORY)
     install(
@@ -421,12 +480,33 @@ if(NOT STF_BUILD_MODULE)
   endif()
 
   if(WIN32)
+    # Derive DLL search dirs from the resolved LAPACK/BLAS library paths.
+    # FindLAPACK resolves to the vcpkg lib/ dir; the actual DLLs live in the
+    # sibling bin/ dir (vcpkg layout) or in the same dir (MinGW/MSYS layout).
+    set(_stf_lapack_lib_candidates)
+    if(DEFINED LAPACK_LIBRARIES)
+      list(APPEND _stf_lapack_lib_candidates ${LAPACK_LIBRARIES})
+    endif()
+    if(DEFINED BLAS_LIBRARIES)
+      list(APPEND _stf_lapack_lib_candidates ${BLAS_LIBRARIES})
+    endif()
+    if(DEFINED OPENBLAS_LIBRARY AND EXISTS "${OPENBLAS_LIBRARY}")
+      list(APPEND _stf_lapack_lib_candidates "${OPENBLAS_LIBRARY}")
+    endif()
     set(_stf_lapack_runtime_dirs)
-    list(APPEND _stf_lapack_runtime_dirs
-      "${CMAKE_BINARY_DIR}/src/libstfnum/$<CONFIG>"
-      "${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/bin"
-      "${CMAKE_SOURCE_DIR}/vcpkg_installed/x64-windows/bin"
-    )
+    foreach(_stf_lapack_lib IN LISTS _stf_lapack_lib_candidates)
+      if(EXISTS "${_stf_lapack_lib}")
+        get_filename_component(_stf_lapack_lib_dir "${_stf_lapack_lib}" DIRECTORY)
+        list(APPEND _stf_lapack_runtime_dirs "${_stf_lapack_lib_dir}")
+        get_filename_component(_stf_lapack_prefix "${_stf_lapack_lib_dir}" DIRECTORY)
+        list(APPEND _stf_lapack_runtime_dirs "${_stf_lapack_prefix}/bin")
+      endif()
+    endforeach()
+    list(REMOVE_DUPLICATES _stf_lapack_runtime_dirs)
+    unset(_stf_lapack_lib_candidates)
+    unset(_stf_lapack_lib)
+    unset(_stf_lapack_lib_dir)
+    unset(_stf_lapack_prefix)
     foreach(_stf_lapack_dir IN LISTS _stf_lapack_runtime_dirs)
       if(EXISTS "${_stf_lapack_dir}")
         install(

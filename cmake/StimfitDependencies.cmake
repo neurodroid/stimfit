@@ -348,31 +348,114 @@ else()
   endif()
 endif()
 
+# When linking against an embedded-Python-capable build (wxPython), the C++
+# wxWidgets runtime MUST match the version that wxPython was built against.
+# wxPython Phoenix 4.x ships bundled wx 3.2.x DLLs; if stimfit links against
+# a different wx (e.g. vcpkg wx 3.3.x) the two runtimes coexist in the same
+# process with incompatible ABIs, causing wxPyConvertWrappedPtr to return NULL
+# ("Pointer is zero" at startup).  Set STF_WX_PREFER_MODULE_FIND=ON together
+# with wxWidgets_ROOT_DIR and wxWidgets_LIB_DIR pointing to the wxPython wx
+# tree to compile and link against that exact wx build.
+#
+# NOTE: vcpkg installs a vcpkg-cmake-wrapper.cmake for wxWidgets that forcibly
+# resets wxWidgets_ROOT_DIR / wxWidgets_LIB_DIR with CACHE INTERNAL before
+# FindwxWidgets runs, defeating preset values.  When STF_WX_PREFER_MODULE_FIND
+# is ON we therefore bypass find_package(wxWidgets) entirely and build the
+# interface target directly from the caller-supplied paths.
+option(STF_WX_PREFER_MODULE_FIND
+  "Bypass find_package(wxWidgets) and build the interface directly from wxWidgets_ROOT_DIR/wxWidgets_LIB_DIR. Required when the C++ wx must match the wxPython wheel's bundled wx (e.g. Phoenix 4.x ships wx 3.2)."
+  OFF)
+
 if(NOT STF_BUILD_MODULE)
   add_library(stimfit::wx INTERFACE IMPORTED)
   set(_stf_wx_resolved FALSE)
 
-  # Prefer config packages (vcpkg) before legacy FindwxWidgets module.
-  find_package(wxWidgets CONFIG QUIET)
-  if(TARGET wx::base AND TARGET wx::core AND TARGET wx::adv AND TARGET wx::aui AND TARGET wx::net)
-    target_link_libraries(stimfit::wx INTERFACE wx::base wx::core wx::adv wx::aui wx::net)
+  if(STF_WX_PREFER_MODULE_FIND)
+    # Bypass find_package entirely to prevent vcpkg's cmake wrapper from
+    # overriding wxWidgets_ROOT_DIR / wxWidgets_LIB_DIR with CACHE INTERNAL.
+    if(NOT wxWidgets_ROOT_DIR)
+      message(FATAL_ERROR
+        "STF_WX_PREFER_MODULE_FIND=ON requires wxWidgets_ROOT_DIR "
+        "(e.g. C:/path/to/Phoenix/ext/wxWidgets)")
+    endif()
+    if(NOT wxWidgets_LIB_DIR)
+      message(FATAL_ERROR
+        "STF_WX_PREFER_MODULE_FIND=ON requires wxWidgets_LIB_DIR "
+        "(e.g. C:/path/to/Phoenix/ext/wxWidgets/lib/vc140_x64_dll)")
+    endif()
+
+    # vcpkg installs all package headers into a single flat include/ directory.
+    # Other vcpkg packages (HDF5, FFTW3, ...) add that directory to the include
+    # path as transitive interface includes from their imported targets.  Because
+    # transitive interface includes are appended after the target's own include
+    # directories, we use include_directories(BEFORE ...) at directory scope to
+    # ensure Phoenix wx 3.2.x headers appear before vcpkg's wx 3.3.x headers in
+    # every target's compile command.
+    include_directories(BEFORE
+      "${wxWidgets_ROOT_DIR}/include"
+      "${wxWidgets_LIB_DIR}/mswu"
+    )
+
+    # Include dirs: root/include + lib-dir/mswu (MSVC unicode DLL setup.h)
+    target_include_directories(stimfit::wx INTERFACE
+      "${wxWidgets_ROOT_DIR}/include"
+      "${wxWidgets_LIB_DIR}/mswu"
+    )
+
+    # Locate import libs for the required components by glob so that the
+    # version number embedded in the filename (e.g. 32u vs 33u) is agnostic.
+    # Note: 'base' and 'net' live in the wxbase library; the GUI components
+    # live in the wxmsw library.
+    foreach(_stf_wx_comp IN ITEMS base core adv aui net)
+      if(_stf_wx_comp STREQUAL "base")
+        file(GLOB _stf_wx_lib LIST_DIRECTORIES false
+          "${wxWidgets_LIB_DIR}/wxbase3*u.lib")
+      elseif(_stf_wx_comp STREQUAL "net")
+        file(GLOB _stf_wx_lib LIST_DIRECTORIES false
+          "${wxWidgets_LIB_DIR}/wxbase3*u_net.lib")
+      else()
+        file(GLOB _stf_wx_lib LIST_DIRECTORIES false
+          "${wxWidgets_LIB_DIR}/wxmsw3*u_${_stf_wx_comp}.lib")
+      endif()
+      if(NOT _stf_wx_lib)
+        message(FATAL_ERROR
+          "Could not find wx import lib for component '${_stf_wx_comp}' in "
+          "${wxWidgets_LIB_DIR}. Verify wxWidgets_LIB_DIR is correct.")
+      endif()
+      list(APPEND _stf_wx_libs ${_stf_wx_lib})
+      unset(_stf_wx_lib)
+    endforeach()
+    target_link_libraries(stimfit::wx INTERFACE ${_stf_wx_libs})
+    unset(_stf_wx_libs)
+
+    # Standard definitions for a unicode wxWidgets DLL build on Windows
+    target_compile_definitions(stimfit::wx INTERFACE WXUSINGDLL _UNICODE UNICODE)
     set(_stf_wx_resolved TRUE)
   endif()
 
+  # Prefer config packages (vcpkg) before legacy FindwxWidgets module.
   if(NOT _stf_wx_resolved)
-  if(APPLE AND (
-      NOT DEFINED wxWidgets_CONFIG_EXECUTABLE
-      OR "${wxWidgets_CONFIG_EXECUTABLE}" STREQUAL ""
-      OR "${wxWidgets_CONFIG_EXECUTABLE}" MATCHES "-NOTFOUND$"
-    ))
-    stf_find_macos_wx_config(_stf_wx_config_candidate)
-    if(_stf_wx_config_candidate)
-      set(wxWidgets_CONFIG_EXECUTABLE "${_stf_wx_config_candidate}" CACHE FILEPATH "Path to wx-config executable" FORCE)
+    find_package(wxWidgets CONFIG QUIET)
+    if(TARGET wx::base AND TARGET wx::core AND TARGET wx::adv AND TARGET wx::aui AND TARGET wx::net)
+      target_link_libraries(stimfit::wx INTERFACE wx::base wx::core wx::adv wx::aui wx::net)
+      set(_stf_wx_resolved TRUE)
     endif()
-    unset(_stf_wx_config_candidate)
   endif()
 
-    find_package(wxWidgets REQUIRED COMPONENTS base core adv aui net)
+  if(NOT _stf_wx_resolved)
+    if(APPLE AND (
+        NOT DEFINED wxWidgets_CONFIG_EXECUTABLE
+        OR "${wxWidgets_CONFIG_EXECUTABLE}" STREQUAL ""
+        OR "${wxWidgets_CONFIG_EXECUTABLE}" MATCHES "-NOTFOUND$"
+      ))
+      stf_find_macos_wx_config(_stf_wx_config_candidate)
+      if(_stf_wx_config_candidate)
+        set(wxWidgets_CONFIG_EXECUTABLE "${_stf_wx_config_candidate}" CACHE FILEPATH "Path to wx-config executable" FORCE)
+      endif()
+      unset(_stf_wx_config_candidate)
+    endif()
+
+    find_package(wxWidgets MODULE REQUIRED COMPONENTS base core adv aui net)
     target_include_directories(stimfit::wx INTERFACE ${wxWidgets_INCLUDE_DIRS})
     target_link_libraries(stimfit::wx INTERFACE ${wxWidgets_LIBRARIES})
     target_compile_definitions(stimfit::wx INTERFACE ${wxWidgets_DEFINITIONS})
