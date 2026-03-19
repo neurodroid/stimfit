@@ -18,7 +18,7 @@ Autotools macOS behavior comes from [`configure.ac`](configure.ac) and [`Makefil
 
 Current CMake baseline in [`CMakeLists.txt`](CMakeLists.txt) and per-component files already covers:
 
-- Core targets: `stfio`, `stfnum`, optional `biosiglite`, `stimfit_core`, `stimfit`, optional `pystf`, optional `_stfio`.
+- Core targets: `stfio`, `stfnum`, optional BioSig support, `stimfit_core`, `stimfit`, optional `pystf`, optional `_stfio`.
 - Linux RPATH handling via [`CMakeLists.txt`](CMakeLists.txt:83).
 - Windows runtime collection and packaging logic via [`CMakeLists.txt`](CMakeLists.txt:35).
 
@@ -60,7 +60,7 @@ In these files, call `stf_apply_macos_runtime_policy()` after target creation:
 
 - [`src/libstfio/CMakeLists.txt`](src/libstfio/CMakeLists.txt)
 - [`src/libstfnum/CMakeLists.txt`](src/libstfnum/CMakeLists.txt)
-- [`src/libbiosiglite/CMakeLists.txt`](src/libbiosiglite/CMakeLists.txt)
+- the BIOSIG integration component CMake file
 - [`src/stimfit/CMakeLists.txt`](src/stimfit/CMakeLists.txt)
 - [`src/pystfio/CMakeLists.txt`](src/pystfio/CMakeLists.txt)
 - [`src/stimfit/py/CMakeLists.txt`](src/stimfit/py/CMakeLists.txt)
@@ -71,7 +71,7 @@ In these files, call `stf_apply_macos_runtime_policy()` after target creation:
 
 For `pystf` and `_stfio` module targets:
 
-- Ensure install name and rpath allow resolving `libstimfit`, `libstfio`, `libstfnum`, and optional `libbiosiglite` from installed tree.
+- Ensure install name and rpath allow resolving `libstimfit`, `libstfio`, `libstfnum`, and optional BioSig support libraries from installed tree.
 - Keep current install destinations unchanged to avoid Linux and Windows churn.
 
 ### 5. Migrate active MacPorts Stimfit port to CMake immediately
@@ -89,8 +89,7 @@ Planned MacPorts migration details:
   - `destroot.cmd` as CMake install invocation
 - Pass equivalent options from variants into CMake cache arguments, including:
   - `-DSTF_ENABLE_PYTHON` toggled by Python variants
-  - `-DSTF_WITH_BIOSIGLITE=ON` default behavior
-  - `-DSTF_WITH_BIOSIG=OFF` unless explicit biosig variant is selected
+  - `-DSTF_WITH_BIOSIG=ON` with `-DSTF_BIOSIG_PROVIDER=SUBMODULE` as the default behavior
   - `-DSTF_BUILD_MODULE=OFF` for stimfit application port
 - Keep wx integration by forwarding selected `wx-config` path or equivalent include/link hints to CMake through explicit cache variables where needed.
 - Preserve existing MacPorts dependency model and Python variant logic while changing only build backend semantics.
@@ -112,7 +111,7 @@ Out-of-scope remains unchanged:
 ### macOS
 
 1. Configure non-module:
-   - `cmake -S . -B build/macos -G Ninja -DSTF_WITH_BIOSIGLITE=ON`
+   - `cmake -S . -B build/macos -G Ninja -DSTF_WITH_BIOSIG=ON -DSTF_BIOSIG_PROVIDER=SUBMODULE`
 2. Build:
    - `cmake --build build/macos`
 3. Install to staging prefix:

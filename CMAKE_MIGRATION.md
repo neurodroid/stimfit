@@ -15,7 +15,7 @@ This repository now includes the active CMake build toolchain for Stimfit. For e
 - Per-component scaffold `CMakeLists.txt` files:
   - [`src/libstfio/CMakeLists.txt`](src/libstfio/CMakeLists.txt)
   - [`src/libstfnum/CMakeLists.txt`](src/libstfnum/CMakeLists.txt)
-  - [`src/libbiosiglite/CMakeLists.txt`](src/libbiosiglite/CMakeLists.txt)
+  - BIOSIG integration component CMake file
   - [`src/pystfio/CMakeLists.txt`](src/pystfio/CMakeLists.txt)
   - [`src/stimfit/CMakeLists.txt`](src/stimfit/CMakeLists.txt)
   - [`src/stimfit/py/CMakeLists.txt`](src/stimfit/py/CMakeLists.txt)
@@ -27,7 +27,7 @@ The CMake tree now defines real targets for the main migration path:
 - Libraries:
   - `stfnum` from [`src/libstfnum/CMakeLists.txt`](src/libstfnum/CMakeLists.txt)
   - `stfio` from [`src/libstfio/CMakeLists.txt`](src/libstfio/CMakeLists.txt)
-  - `biosiglite` from [`src/libbiosiglite/CMakeLists.txt`](src/libbiosiglite/CMakeLists.txt) (when enabled)
+  - BioSig support from the selected provider (when enabled)
   - `stimfit_core` from [`src/stimfit/CMakeLists.txt`](src/stimfit/CMakeLists.txt)
 - Executables:
   - `stimfit`
@@ -48,7 +48,7 @@ Applied targets include:
 
 - `stfio` in [`src/libstfio/CMakeLists.txt`](src/libstfio/CMakeLists.txt)
 - `stfnum` in [`src/libstfnum/CMakeLists.txt`](src/libstfnum/CMakeLists.txt)
-- `biosiglite` in [`src/libbiosiglite/CMakeLists.txt`](src/libbiosiglite/CMakeLists.txt)
+- BioSig support target(s) from the selected provider configuration
 - `stimfit_core` in [`src/stimfit/CMakeLists.txt`](src/stimfit/CMakeLists.txt)
 - `pystf` in [`src/stimfit/py/CMakeLists.txt`](src/stimfit/py/CMakeLists.txt)
 - `_stfio` in [`src/pystfio/CMakeLists.txt`](src/pystfio/CMakeLists.txt)
@@ -66,7 +66,7 @@ The active Stimfit MacPorts port files were migrated from Autotools-style `confi
 Key changes:
 
 - Add `PortGroup cmake 1.1`
-- Configure with CMake cache variables (`STF_ENABLE_PYTHON`, `STF_WITH_BIOSIG`, `STF_WITH_BIOSIGLITE`, `STF_BUILD_MODULE`, `STF_BUILD_TESTS`)
+- Configure with CMake cache variables (`STF_ENABLE_PYTHON`, `STF_WITH_BIOSIG`, `STF_BIOSIG_PROVIDER`, `STF_BUILD_MODULE`, `STF_BUILD_TESTS`)
 - Set `configure.pre_args` to `-S <source> -B <build>`
 - Use CMake for build (`cmake --build`) and destroot install (`cmake --install`)
 - Map Python variants to `-DPython3_EXECUTABLE=...`
@@ -82,13 +82,13 @@ The following CMake options preserve the intent of the former high-level Autotoo
 - `STF_ENABLE_PSLOPE` ⇔ `--enable-pslope`
 - `STF_ENABLE_AUI` ⇔ `--enable-aui`
 - `STF_BUILD_DEBIAN` ⇔ `--enable-debian`
-- `STF_WITH_BIOSIG` / `STF_WITH_BIOSIGLITE` ⇔ biosig selection flags
+- `STF_WITH_BIOSIG` plus `STF_BIOSIG_PROVIDER` ⇔ biosig selection flags
 - `STF_HDF5_PREFIX` ⇔ `--with-hdf5-prefix`
 
 Compatibility behavior already included:
 
 - Enabling `STF_BUILD_MODULE` forces `STF_ENABLE_PYTHON=ON`
-- Enabling `STF_WITH_BIOSIGLITE` disables external `STF_WITH_BIOSIG`
+- Selecting `STF_BIOSIG_PROVIDER=SUBMODULE` or `PATCHED_SUBMODULE` chooses the bundled BioSig source
 
 ## How to configure
 

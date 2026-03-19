@@ -38,11 +38,11 @@ Now you can configure. I strongly recommend building in a separate directory.
     $ cd module
     $ ../../configure --enable-module
 
-We recommend to use BioSig to read extra biomedical fileformats (see :ref:`BioSigBuild`) :
+We recommend using the BioSig submodule or another supported BioSig source to read extra biomedical file formats (see :ref:`BioSigBuild`) :
 
 ::
 
-    $ ../../configure --enable-module --with-biosiglite
+    $ cmake -S ../.. -B . -DSTF_BUILD_MODULE=ON -DSTF_WITH_BIOSIG=ON -DSTF_BIOSIG_PROVIDER=SUBMODULE
 
 ===================================================
 Building stfio for non-default Python distributions

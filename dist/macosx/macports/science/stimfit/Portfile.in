@@ -30,8 +30,8 @@ compiler.cxx_standard \
                     2017
 
 configure.args      -DSTF_ENABLE_PYTHON=OFF \
-                    -DSTF_WITH_BIOSIG=OFF \
-                    -DSTF_WITH_BIOSIGLITE=ON \
+                    -DSTF_WITH_BIOSIG=ON \
+                    -DSTF_BIOSIG_PROVIDER=SUBMODULE \
                     -DSTF_BUILD_MODULE=OFF \
                     -DSTF_BUILD_TESTS=OFF \
                     -DSTF_MACOS_APP_BUNDLE=ON \
