@@ -28,7 +28,6 @@ This repository intentionally maintains two upstream development lines.
 
 ## Documentation and helper scripts
 
-- [update_doc.sh](update_doc.sh) assumes the documentation source branch is `master` by default, but this can be overridden with `DOC_SOURCE_BRANCH`
 - [dist/macosx/macports/mk_diff.sh](dist/macosx/macports/mk_diff.sh) assumes the upstream comparison branch is `master` by default, but this can be overridden with `UPSTREAM_BRANCH`
 - [.gbp.conf](.gbp.conf) should keep `master` as the primary upstream branch and `debian/sid` as the Debian unstable packaging branch
 

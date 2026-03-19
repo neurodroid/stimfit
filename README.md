@@ -24,115 +24,29 @@ In [this link](https://neurodroid.github.io/stimfit/references/index.html) you c
 
 Guzman SJ, Schlögl A, Schmidt-Hieber C (2014) Stimfit: quantifying electrophysiological data with Python. *Front Neuroinform* [doi: 10.3389/fninf.2014.00016](http://www.frontiersin.org/Journal/10.3389/fninf.2014.00016/abstract)
 
-## Installation
+## Installation and source builds
 
-For current source builds from this repository, use the CMake-based platform scripts documented in [`BUILDING.md`](BUILDING.md).
+For current source builds from this repository, use the CMake-based helper
+scripts documented in [`BUILDING.md`](BUILDING.md).
 
-### GNU/Linux
+### Binary packages
 
-#### Debian-based systems (incl Ubuntu, and on WSL2)
- you can get Stimfit and the stfio module from the standard repositories:
+- Debian-based systems may provide `stimfit` and `python-stfio` packages through their repositories.
+- Release artifacts for supported platforms are published on [GitHub Releases](https://github.com/neurodroid/stimfit/releases).
 
-```
-$ sudo apt-get install stimfit python-stfio
-```
+### Source builds
 
-This approach works also on WSL2 of the most recent version of Windows10 (build: 10.0.19045.2546 ). Stimfit is also available through a number of [distros](https://repology.org/project/stimfit/packages)
+- GNU/Linux build guide: <https://neurodroid.github.io/stimfit/linux_install_guide/index.html>
+- macOS build guide: <https://neurodroid.github.io/stimfit/osx_install_guide/index.html>
+- Windows build guide: <https://neurodroid.github.io/stimfit/win_install_guide/index.html>
 
-### MacOSX:
+The supported repository entry points are:
 
-#### MacPorts
-* Stimfit for OS X is available through [MacPorts](http://www.macports.org). After [installation of MacPorts](https://www.macports.org/install.php), run
+- [`build_linux_cmake.sh`](build_linux_cmake.sh)
+- [`build_macos_cmake.sh`](build_macos_cmake.sh)
+- [`build_windows_msvc.ps1`](build_windows_msvc.ps1)
 
-```
-$ sudo port install stimfit py27-stfio
-```
-#### Homebrew: stimfit (lite, no embedded Python)
-* Stimfit-lite (w/o python)  can be also installed through [HomeBrew](https://brew.sh). Afer installing homebrew, run
-
-```
-$ brew install schloegl/biosig/stimfit
-```
-
-### MS-Windows:
-
-
-There are several options to install Stimfit on Windows. Each has its own  advantages (+) and disadvantages (-):
-
-#### The traditional version of [Stimfit v0.17.0](https://github.com/neurodroid/stimfit/releases/download/v0.17.0windows/Stimfit-0.17.0-win64.exe) is available from [releases](https://github.com/neurodroid/stimfit/releases/). 
-
-```
- + works with all versions of Windows7 and later.
-```
-
-#### [Stimfit lite v0.16.2](https://github.com/neurodroid/stimfit/releases/tag/v0.16.2macports)
-
-The lite-version of Stimfit (w/o embedded Python) is available as part of the Biosig-tools. Download, unzip and copy ../bin/stimfit.exe to your desktop.
-
-```
- + import filters are up-to-date (chances are this would address the issues: 93, 95, 97 [3]).
- - no embedded python (CLI, printing not available)
- - warning from windows defender (issue 98 [3])
- + works with all versions of Windows7 and later.
-```
-
-
-#### Stimfit through WSL2
-With the most recent version of Windows10 (build: 10.0.19045.2546 ), Stimfit for Linux can be installed through WSL2. e.g. when using Ubuntu in WSL2 (see GNU/Linux above).
-
-
-
-#### From Source
-* [Build guide for GNU/Linux](https://neurodroid.github.io/stimfit/linux_install_guide/index.html)
-
-* [Build guides for MacOSX](https://neurodroid.github.io/stimfit/osx_install_guide/index.html)
-
-* [Build guides for Windows](https://neurodroid.github.io/stimfit/win_install_guide/index.html)
-
-* [Cross-compiling Stimfit with MXE on GNU/Linux for Windows](https://github.com/schloegl/mxe)
-
-#### Windows installer packaging (CMake + CPack)
-
-The CMake build can produce a distributable Windows installer with CPack.
-
-Prerequisites:
-
-* Inno Setup 6 installed (for the `INNOSETUP` CPack generator)
-* Visual Studio 2022 build tools
-* Python environment matching the selected configure preset when embedded Python is enabled
-
-Example workflow for a Python-enabled Windows release build:
-
-```powershell
-# CI-like local dependency setup (release-only triplet)
-$env:VCPKG_ROOT = "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg"
-$env:VCPKG_INSTALLED_DIR = "$PWD/vcpkg_installed"
-$env:VCPKG_BINARY_CACHE_DIR = "$PWD/build/vcpkg-binary-cache"
-$env:VCPKG_DEFAULT_BINARY_CACHE = $env:VCPKG_BINARY_CACHE_DIR
-$env:VCPKG_BINARY_SOURCES = "clear;files,$env:VCPKG_BINARY_CACHE_DIR,readwrite"
-vcpkg install `
-  --overlay-triplets "$PWD/cmake/triplets" `
-  --triplet x64-windows-ci-release `
-  --x-install-root "$env:VCPKG_INSTALLED_DIR"
-
-cmake --preset vs2022-vcpkg-wx-hdf5-python314-biosig-patched
-cmake --build --preset vs2022-release-stimfit-python314-biosig-patched
-cmake --install ../stimfit-out/vs2022-vcpkg-wx-hdf5-python314-biosig-patched --config Release
-cd ../stimfit-out/vs2022-vcpkg-wx-hdf5-python314-biosig-patched
-cpack -C Release -G INNOSETUP
-cpack -C Release -G ZIP
-```
-
-For local development with CI-like defaults, `build_windows_msvc.ps1` now:
-
-* defaults to the non-Python preset (`-WithPython` enables Python mode)
-* uses `VCPKG_ROOT`/`VCPKG_INSTALLED_DIR` environment variables
-* runs the same release-only vcpkg install strategy used by Windows CI before configure
-
-The resulting artifacts are written into the build directory and include:
-
-* an Inno Setup installer executable
-* a ZIP fallback package from the same install tree
+Windows packaging is performed with CMake and CPack through [`build_windows_msvc.ps1`](build_windows_msvc.ps1) as described in [`BUILDING.md`](BUILDING.md).
 
 
 ## Important links

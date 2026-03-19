@@ -16,11 +16,11 @@ Bring the maintained documentation sources under [`doc/`](doc/) and the publishe
 
 - [`doc/sphinx/conf.py.in`](doc/sphinx/conf.py.in) still reflects a very old Sphinx layout and compatibility model.
 - [`doc/sphinx/Makefile.sphinx`](doc/sphinx/Makefile.sphinx) is an old hand-written build wrapper and does not define a modern publish-oriented build contract.
-- [`doc/sphinx/upload.sh`](doc/sphinx/upload.sh) still targets a former external hosting setup instead of GitHub Pages.
+- The repository previously shipped an external-host upload helper under [`doc/sphinx/`](doc/sphinx/) that targeted a former non-GitHub hosting setup.
 
 ### The `gh-pages` publishing flow is obsolete
 
-- [`update_doc.sh`](update_doc.sh:1) assumes a maintainer checks out [`gh-pages`](gh-pages), merges [`master`](README.md:13), builds docs in place, copies generated HTML to the repository root, and pushes.
+- The repository previously shipped a local `gh-pages` publication helper that checked out [`gh-pages`](gh-pages), merged [`master`](README.md:13), built docs in place, copied generated HTML to the repository root, and pushed.
 - That model mixes source and generated content, depends on local state, and is not appropriate for the current GitHub-hosted documentation target linked from [`README.md`](README.md:3).
 - The repository already has GitHub Actions in [`ci.yml`](.github/workflows/ci.yml), so documentation publication should be automated there rather than maintained manually.
 
@@ -96,7 +96,7 @@ Bring the maintained documentation sources under [`doc/`](doc/) and the publishe
 
 ### Phase 5: Replace the publish pipeline
 
-1. Retire [`update_doc.sh`](update_doc.sh:1) as the primary publication mechanism.
+1. Retire the old local `gh-pages` publication helper as the primary publication mechanism.
 2. Add a GitHub Actions workflow dedicated to docs publication, separate from or layered onto [`ci.yml`](.github/workflows/ci.yml).
 3. The workflow should:
    - check out submodules as needed
