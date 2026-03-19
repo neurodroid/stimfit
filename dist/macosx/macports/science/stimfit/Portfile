@@ -21,7 +21,7 @@ worksrcdir          Stimfit-${version}-Source
 
 wxWidgets.use       wxWidgets-3.2
 
-depends_build       port:cmake \
+depends_build-append \
                     port:gawk
 
 depends_lib         port:fftw-3 \
