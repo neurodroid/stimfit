@@ -6,9 +6,9 @@ PortGroup           cmake 1.1
 
 name                stimfit
 version             0.17.1
-checksums           rmd160  8a029be45b361352fcbfc5a8c52814f14422ceb7 \
-                    sha256  487f59c21e97bc357ba62afd01f36da87f80f00d3c4f55558331c0db39289293 \
-                    size    123675677
+checksums           rmd160  c07ad51c7dddb533aaa1edb544386c2c8875b4b5 \
+                    sha256  c6a5761644d9fb6504a097b9232197a0e65cc6f19afb9162c2e20a39e2efcf84 \
+                    size    20174648
 
 categories          science
 license             GPL-2
