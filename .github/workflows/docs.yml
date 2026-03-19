@@ -55,6 +55,7 @@ jobs:
           mkdir -p site/api
           cp -R doc/sphinx/.build/html/. site/
           cp -R doc/doxygen/html/. site/api/
+          cp site/contents.html site/index.html
 
       - name: Upload assembled site artifact
         uses: actions/upload-artifact@v4
