@@ -85,3 +85,40 @@ jobs:
           publish_dir: site
           force_orphan: false
           keep_files: false
+
+  publish-wiki:
+    name: Sync wiki landing page
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ secrets.STIMFIT_WIKI_PUSH_TOKEN != '' }}
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Clone wiki repository
+        env:
+          WIKI_TOKEN: ${{ secrets.STIMFIT_WIKI_PUSH_TOKEN }}
+        run: |
+          git clone "https://x-access-token:${WIKI_TOKEN}@github.com/neurodroid/stimfit.wiki.git" wiki
+
+      - name: Update wiki landing page content
+        run: |
+          cp doc/wiki/Stimfit.md wiki/Stimfit.md
+
+      - name: Commit and push wiki updates
+        env:
+          WIKI_TOKEN: ${{ secrets.STIMFIT_WIKI_PUSH_TOKEN }}
+        run: |
+          cd wiki
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- Stimfit.md; then
+            echo "No wiki changes to publish"
+            exit 0
+          fi
+          git add Stimfit.md
+          git commit -m "Sync Stimfit wiki landing page from docs workflow"
+          git push origin HEAD:master
