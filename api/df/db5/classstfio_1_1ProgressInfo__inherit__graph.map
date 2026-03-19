@@ -1,0 +1,7 @@
+<map id="stfio::ProgressInfo" name="stfio::ProgressInfo">
+<area shape="rect" id="Node000001" title="ProgressInfo class." alt="" coords="103,5,241,31"/>
+<area shape="rect" id="Node000002" href="$da/da8/classstf_1_1wxProgressInfo.html" title="Progress Info interface adapter; maps to wxProgressDialog." alt="" coords="5,79,152,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="148,41,96,81,92,76,145,37"/>
+<area shape="rect" id="Node000003" href="$d5/d48/classstfio_1_1StdoutProgressInfo.html" title="StdoutProgressInfo class." alt="" coords="176,79,357,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="200,37,253,76,250,81,197,41"/>
+</map>

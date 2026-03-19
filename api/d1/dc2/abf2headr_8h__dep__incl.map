@@ -1,0 +1,14 @@
+<map id="src/libstfio/abf/axon2/abf2headr.h" name="src/libstfio/abf/axon2/abf2headr.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="313,5,470,45"/>
+<area shape="rect" id="Node000002" href="$dd/d64/abffiles_8h.html" title=" " alt="" coords="249,93,413,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="372,58,347,95,342,92,368,55"/>
+<area shape="rect" id="Node000005" href="$d0/dfa/ProtocolReaderABF2_8hpp.html" title=" " alt="" coords="186,357,373,397"/>
+<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="412,56,436,108,457,174,462,209,462,245,456,279,440,311,427,327,410,340,373,360,371,355,407,336,423,323,436,308,451,277,457,244,457,210,452,175,431,110,407,58"/>
+<area shape="rect" id="Node000003" href="$d2/dd8/FileIO_8hpp.html" title=" " alt="" coords="242,181,397,221"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="329,147,325,181,319,181,324,147"/>
+<area shape="rect" id="Node000004" href="$d7/d96/filedesc_8hpp.html" title=" " alt="" coords="5,269,188,309"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="259,229,146,272,144,267,257,224"/>
+<area shape="rect" id="Node000006" href="$d7/d32/FileReadCache_8hpp.html" title=" " alt="" coords="213,269,426,309"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="322,235,322,269,317,269,317,235"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="150,313,240,355,238,360,148,318"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="wxStfGraph" name="wxStfGraph">
+<area shape="rect" id="Node000001" title="Handles drawing of traces and keyboard or mouse input." alt="" coords="50,168,149,193"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,80,151,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="87,118,99,167,94,168,82,119"/>
+<area shape="rect" id="Node000003" href="$dd/d88/classwxStfView.html" title="The view class, derived from wxView." alt="" coords="175,80,266,105"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="194,116,117,170,114,166,191,111"/>
+<area shape="rect" id="Node000004" href="$da/dd0/classwxView.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxview.html (wxWidgets documentation)" alt="" coords="184,5,257,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="223,45,223,80,218,80,218,45"/>
+</map>

@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['varads_0',['varADS',['../d7/d0b/cfs_8h.html#a0848cc798a7737cf96019616159c4f9b',1,'cfs.h']]],
+  ['vardesc_1',['varDesc',['../dc/d04/structTVarDesc.html#a3da07e1ca3baf3676b8cd4f130d2b9e3',1,'TVarDesc']]],
+  ['varkind_2',['varKind',['../d7/d0b/cfs_8h.html#a208650a9cd56b886844e211f79be004b',1,'cfs.h']]],
+  ['varno_3',['varNo',['../d7/d0b/cfs_8h.html#ae6da5fd10a8f48ca3684bcb0628d9607',1,'cfs.h']]],
+  ['varsize_4',['varSize',['../d7/d0b/cfs_8h.html#a40bbe796cf7b62040fa45d4b14768dfa',1,'cfs.h']]],
+  ['vartype_5',['varType',['../d7/d0b/cfs_8h.html#a777965c8d96371ca426c2a5afc99a0d0',1,'cfs.h']]],
+  ['varunits_6',['varUnits',['../dc/d04/structTVarDesc.html#a70a98f2553b6318566a519196da90519',1,'TVarDesc']]],
+  ['vclampx2mode_7',['vClampX2Mode',['../de/d99/structHeaderSettings.html#a2d6a90f42474f054110ab84897ac7497',1,'HeaderSettings']]],
+  ['vcsettings_8',['vcSettings',['../de/d99/structHeaderSettings.html#afbfb1a566e233b540f4ab1a2c774b75b',1,'HeaderSettings']]],
+  ['version_9',['version',['../db/dd0/structBinHeader5.html#afb8d4fd4a0f99563884bacbeade28cba',1,'BinHeader5::version'],['../d4/d8e/structBinHeader3.html#acea742b7e0fa0322824836c9873455d3',1,'BinHeader3::version'],['../d6/d48/structBinHeader2.html#a6706cb824d01d3f62f5a56ae6bde8a25',1,'BinHeader2::version'],['../d5/d3b/structBinHeader1.html#acb3ed0c645b470ff5870ccef7681c3f5',1,'BinHeader1::version']]],
+  ['version_5fmajor_10',['version_major',['../d6/d8e/structIntanHeader.html#a8b629daa57035fa54b53b93907a5e980',1,'IntanHeader']]],
+  ['version_5fminor_11',['version_minor',['../d6/d8e/structIntanHeader.html#ae797996eb7a05a318900a99d8e305f9f',1,'IntanHeader']]],
+  ['view_12',['view',['../d7/d1a/group__wxstf.html#gaec59dd5424523ad7c8cf42bee83f95d6',1,'wxStfGraph']]],
+  ['voicetagsection_13',['VoiceTagSection',['../d3/df3/structABF2__FileInfo.html#a2c11e092954bd6131770396cdc9e1cb0',1,'ABF2_FileInfo']]],
+  ['voltageampresidual_14',['voltageAmpResidual',['../da/dce/structChannelHeader.html#a97b3c1979b03a9897a28f2da2b793a12',1,'ChannelHeader']]],
+  ['vsize_15',['vSize',['../dc/d04/structTVarDesc.html#adb4a0deddc26b1e3b7419769faa05d12',1,'TVarDesc']]],
+  ['vtype_16',['vType',['../dc/d04/structTVarDesc.html#ae0fe267b8bfc7a8497d617f06173039c',1,'TVarDesc']]]
+];

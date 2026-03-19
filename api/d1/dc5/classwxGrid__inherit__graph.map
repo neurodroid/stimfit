@@ -1,0 +1,5 @@
+<map id="wxGrid" name="wxGrid">
+<area shape="rect" id="Node000001" title="See http://www.wxwidgets.org/manuals/stable/wx_wxgrid.html (wxWidgets documentation)" alt="" coords="15,5,83,31"/>
+<area shape="rect" id="Node000002" href="$db/d5c/classwxStfGrid.html" title="Derived from wxGrid. Allows to copy cells to the clipboard." alt="" coords="5,79,92,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="51,44,51,79,46,79,46,44"/>
+</map>

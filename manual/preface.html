@@ -1,25 +1,25 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Preface &#8212; Stimfit 0.16.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Preface &#8212; Stimfit dev documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=2bf1fcf8" />
     
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
+    <script src="../_static/documentation_options.js?v=81f007b9"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Getting started" href="getting_started.html" />
     <link rel="prev" title="Stimfit manual" href="index.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -50,19 +50,19 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="preface">
-<h1>Preface<a class="headerlink" href="#preface" title="Permalink to this headline">¶</a></h1>
+  <section id="preface">
+<h1>Preface<a class="headerlink" href="#preface" title="Link to this heading">¶</a></h1>
 <dl class="field-list simple">
-<dt class="field-odd">Author</dt>
+<dt class="field-odd">Author<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Christoph Schmidt-Hieber (christsc at gmx.de)</p>
 </dd>
-<dt class="field-even">Date</dt>
-<dd class="field-even"><p>19 August, 2021</p>
+<dt class="field-even">Date<span class="colon">:</span></dt>
+<dd class="field-even"><p>19 March, 2026</p>
 </dd>
 </dl>
 <p><a class="reference external" href="http://www.stimfit.org">Stimfit</a> was originally written by Peter Jonas, University of Freiburg,
 in the early 1990s. It was primarily designed to analyze the kinetics of
-evoked excitatory postsynaptic potentials (EPSCs; Jonas et al., 1993 <a class="footnote-reference brackets" href="#jonas1993" id="id1">1</a>).
+evoked excitatory postsynaptic potentials (EPSCs; Jonas et al., 1993 <a class="footnote-reference brackets" href="#jonas1993" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>).
 The name <a class="reference external" href="http://www.stimfit.org">Stimfit</a> was chosen because the program allowed to <em>fit</em>
 exponential functions to the decay of EPSCs evoked by extracellular
 <em>stim</em>-ulation. The program was written in Borland Pascal, running under
@@ -73,18 +73,22 @@ and curve fitting. This allowed to analyze data with surprising
 efficiency once the keyboard shortcuts were mastered. However, the
 Borland Pascal compiler imposed some significant restrictions which
 became apparent with increasing data size and computing power: for
-instance, arrays were not allowed to be longer than <img class="math" src="../_images/math/a05287623e9e8cd5bff53f79bea79f6a80633cb2.png" alt="10^{4}"/>  elements, and
+instance, arrays were not allowed to be longer than <span class="math notranslate nohighlight">\(10^{4}\)</span>  elements, and
 faster processors had to be artificially slowed down to avoid runtime
 errors.</p>
 <blockquote>
-<div><div class="figure align-center" id="id4">
+<div><figure class="align-center" id="id4">
 <img alt="The actual platform-independent Stimfit" src="../_images/test.png" />
-<p class="caption"><span class="caption-text">Stimfit running on GNU/Linux</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
-</div>
-<div class="figure align-center" id="id5">
+<figcaption>
+<p><span class="caption-text">Stimfit running on GNU/Linux</span><a class="headerlink" href="#id4" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id5">
 <img alt="The original Stimfit for DOS" src="../_images/stimfit_dos.png" />
-<p class="caption"><span class="caption-text">The original Stimfit for MS-DOS.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-text">The original Stimfit for MS-DOS.</span><a class="headerlink" href="#id5" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
 </div></blockquote>
 <p>When I converted the original Pascal program to C/C++, I rewrote the
 code almost entirely from scratch. Only the algorithms to calculate
@@ -103,71 +107,80 @@ with his free program <a class="reference external" href="http://www.winltp.com"
 reports were filed by Emmanuel Eggermann and Daniel Boischer. The
 <a class="reference external" href="http://www.ics.forth.gr/~lourakis/levmar">Levenberg-Marquardt algorithm</a>  used for curve fitting was implemented
 by Manolis Lourakis.</p>
-<dl class="footnote brackets">
-<dt class="label" id="jonas1993"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
-<dd><p>Jonas P, Major G, Sakman B. (1993) Quantal components of unitary EPSCs at the mossy fibre synapse on CA3 pyramidal cells of rat hippocampus. J Physiol. 472, 615-63.</p>
-</dd>
-</dl>
-</div>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="jonas1993" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Jonas P, Major G, Sakman B. (1993) Quantal components of unitary EPSCs at the mossy fibre synapse on CA3 pyramidal cells of rat hippocampus. J Physiol. 472, 615-63.</p>
+</aside>
+</aside>
+</section>
 
 
             <div class="clearer"></div>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../contents.html">
-              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo of Stimfit"/>
             </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Stimfit manual</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="getting_started.html"
-                        title="next chapter">Getting started</a></p>
-<div id="searchbox" style="display: none" role="search">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter">Stimfit manual</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="getting_started.html"
+                          title="next chapter">Getting started</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../contents.html">
-              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo of Stimfit"/>
             </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Stimfit manual</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="getting_started.html"
-                        title="next chapter">Getting started</a></p>
-<div id="searchbox" style="display: none" role="search">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter">Stimfit manual</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="getting_started.html"
+                          title="next chapter">Getting started</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Christoph Schmidt-Hieber.
-      Last updated on 19 August, 2021.
+    &#169; Copyright 2026, Stimfit contributors.
+      Last updated on 19 March, 2026.
     </div>
   </body>
 </html>

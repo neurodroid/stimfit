@@ -1,0 +1,13 @@
+<map id="src/libstfio/son/Son.h" name="src/libstfio/son/Son.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="128,5,284,31"/>
+<area shape="rect" id="Node000002" href="$da/d8f/machine_8h.html" title=" " alt="" coords="161,79,251,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="209,31,209,65,203,65,203,31"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,152,76,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="180,106,81,149,79,144,178,102"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="101,152,197,177"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="199,106,169,143,165,139,194,103"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="221,152,306,177"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="218,103,247,139,243,143,213,106"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="331,152,393,177"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="232,102,325,144,323,149,230,106"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="wxStfDoc" name="wxStfDoc">
+<area shape="rect" id="Node000001" title="The document class, derived from both wxDocument and Recording." alt="" coords="77,79,161,104"/>
+<area shape="rect" id="Node000002" href="$d6/d0c/classwxDocument.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxdocument.html (wxWidgets documentation)" alt="" coords="5,5,113,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="80,40,112,77,108,80,76,43"/>
+<area shape="rect" id="Node000003" href="$d6/d1c/classRecording.html" title="Represents the data within a file." alt="" coords="137,5,224,31"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="164,43,131,80,127,77,160,40"/>
+</map>

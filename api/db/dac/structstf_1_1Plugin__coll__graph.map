@@ -1,0 +1,16 @@
+<map id="stf::Plugin" name="stf::Plugin">
+<area shape="rect" id="Node000001" title="User&#45;defined plugin." alt="" coords="93,359,179,384"/>
+<area shape="rect" id="Node000002" href="$d5/d66/classwxString.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxstring.html (wxWidgets documentation)" alt="" coords="43,271,122,296"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="85,309,92,333,102,346,115,356,112,360,98,350,87,336,80,311"/>
+<area shape="rect" id="Node000003" href="$dd/d78/structstf_1_1UserInput.html" title="Represents user input from dialogs that can be used in plugins." alt="" coords="147,271,256,296"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="187,309,167,336,148,360,144,357,163,333,183,306"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="108,183,295,208"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="204,222,204,270,199,270,199,222"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="31,95,118,120"/>
+<area shape="poly" id="edge7_Node000003_Node000005" title=" " alt="" coords="67,134,60,170,61,189,68,207,85,228,108,245,157,268,155,273,105,250,81,232,63,209,56,190,55,170,62,132"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="105,126,186,180,183,185,102,130"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="5,5,144,45"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="77,59,77,94,72,94,72,59"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="319,183,484,208"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="363,216,230,273,227,268,361,211"/>
+</map>

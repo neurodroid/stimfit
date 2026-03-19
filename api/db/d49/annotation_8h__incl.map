@@ -1,0 +1,24 @@
+<map id="src/libstfio/annotation.h" name="src/libstfio/annotation.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="124,5,299,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,152,76,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="199,33,67,145,63,141,196,29"/>
+<area shape="rect" id="Node000003" href="$d5/dc4/core_8h.html" title="Lightweight core definitions shared by libstfio model classes." alt="" coords="307,79,377,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="234,28,310,70,308,74,231,33"/>
+<area shape="poly" id="edge5_Node000003_Node000002" title=" " alt="" coords="307,103,90,154,89,149,306,98"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="100,152,163,177"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="309,107,176,151,175,146,307,101"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="187,152,246,177"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="323,106,250,147,248,143,321,102"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="271,152,333,177"/>
+<area shape="poly" id="edge6_Node000003_Node000006" title=" " alt="" coords="338,106,318,141,313,139,333,103"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="358,152,409,177"/>
+<area shape="poly" id="edge7_Node000003_Node000007" title=" " alt="" coords="351,103,372,139,367,141,347,106"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="433,152,520,177"/>
+<area shape="poly" id="edge8_Node000003_Node000008" title=" " alt="" coords="365,102,444,143,441,148,362,106"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="545,152,603,177"/>
+<area shape="poly" id="edge9_Node000003_Node000009" title=" " alt="" coords="379,101,532,148,531,153,377,106"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="628,152,691,177"/>
+<area shape="poly" id="edge10_Node000003_Node000010" title=" " alt="" coords="378,97,615,149,614,155,377,103"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="715,152,857,177"/>
+<area shape="poly" id="edge11_Node000003_Node000011" title=" " alt="" coords="378,96,702,147,701,152,377,101"/>
+</map>

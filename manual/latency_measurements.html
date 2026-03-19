@@ -1,25 +1,25 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Latency measurements &#8212; Stimfit 0.16.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Latency measurements &#8212; Stimfit dev documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=2bf1fcf8" />
     
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
+    <script src="../_static/documentation_options.js?v=81f007b9"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Event extraction by template matching" href="event_extraction.html" />
     <link rel="prev" title="The Python shell" href="python.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -50,48 +50,52 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="latency-measurements">
-<h1>Latency measurements<a class="headerlink" href="#latency-measurements" title="Permalink to this headline">¶</a></h1>
+  <section id="latency-measurements">
+<h1>Latency measurements<a class="headerlink" href="#latency-measurements" title="Link to this heading">¶</a></h1>
 <dl class="field-list simple">
-<dt class="field-odd">Author</dt>
+<dt class="field-odd">Author<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Christoph Schmidt-Hieber (christsc at gmx.de)</p>
 </dd>
-<dt class="field-even">Date</dt>
-<dd class="field-even"><p>19 August, 2021</p>
+<dt class="field-even">Date<span class="colon">:</span></dt>
+<dd class="field-even"><p>19 March, 2026</p>
 </dd>
 </dl>
-<div class="section" id="measurement-of-synaptic-delay">
-<h2>Measurement of synaptic delay<a class="headerlink" href="#measurement-of-synaptic-delay" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="http://www.stimfit.org">Stimfit</a> measures latencies between two events. It is frequently used to measure the delay between a synaptic signal and a post-synaptic response. Classically, the synaptic delay or latency is defined as “the time interval between the peak of the inward current through the synaptic membrane and commencement of inward current through the postsynaptic membrane” (Katz and Miledi, 1965 <a class="footnote-reference brackets" href="#katzmiledi1965" id="id1">1</a>). Neglecting cable properties of neurons for a while, the maximal inward current during an action potential is expected to flow at the time of maximal slope during the rising phase (Jack et al., 1983 <a class="footnote-reference brackets" href="#jack1983" id="id2">2</a>), since</p>
-<div class="math">
-<p><img src="../_images/math/c4bcf913b93b12338f926ab7f73f6b4b1649c57c.png" alt="I_{\text{m}}=I_{\text{cap}}+I_{\text{ionic}} = C_\text{m}\frac{\text{d}V_\text{m}}{\text{d}t} + I_{\text{ionic}} = 0, \mbox{and hence}
-
-
-I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{d}t}"/></p>
-</div><p>The commencement (sometimes called “foot”) of the postsynaptic current can robustly be estimated from the extrapolated intersection of the baseline with a line through the two points of time when the current is 20 and 80% of the peak current (Jonas et al., 1993 <a class="footnote-reference brackets" href="#jonas1993" id="id3">4</a>, Bartos et al., 2001 <a class="footnote-reference brackets" href="#bartos2001" id="id4">3</a>).</p>
+<section id="measurement-of-synaptic-delay">
+<h2>Measurement of synaptic delay<a class="headerlink" href="#measurement-of-synaptic-delay" title="Link to this heading">¶</a></h2>
+<p><a class="reference external" href="http://www.stimfit.org">Stimfit</a> measures latencies between two events. It is frequently used to measure the delay between a synaptic signal and a post-synaptic response. Classically, the synaptic delay or latency is defined as “the time interval between the peak of the inward current through the synaptic membrane and commencement of inward current through the postsynaptic membrane” (Katz and Miledi, 1965 <a class="footnote-reference brackets" href="#katzmiledi1965" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>). Neglecting cable properties of neurons for a while, the maximal inward current during an action potential is expected to flow at the time of maximal slope during the rising phase (Jack et al., 1983 <a class="footnote-reference brackets" href="#jack1983" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>), since</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}I_{\text{m}}=I_{\text{cap}}+I_{\text{ionic}} = C_\text{m}\frac{\text{d}V_\text{m}}{\text{d}t} + I_{\text{ionic}} = 0, \mbox{and hence}\\
+I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{d}t}\end{aligned}\end{align} \]</div>
+<p>The commencement (sometimes called “foot”) of the postsynaptic current can robustly be estimated from the extrapolated intersection of the baseline with a line through the two points of time when the current is 20 and 80% of the peak current (Jonas et al., 1993 <a class="footnote-reference brackets" href="#jonas1993" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>, Bartos et al., 2001 <a class="footnote-reference brackets" href="#bartos2001" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>).</p>
 <blockquote>
-<div><div class="figure align-center" id="id6">
+<div><figure class="align-center" id="id6">
 <img alt="../_images/foot.png" src="../_images/foot.png" />
-<p class="caption"><span class="caption-text"><strong>Fig. 18:</strong> Foot of an EPSC (red circle), estimated from the extrapolated intersection of the baseline with a line through the two points of time when the current is 20 and 80% of the peak current (black open circles).</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-text"><strong>Fig. 18:</strong> Foot of an EPSC (red circle), estimated from the extrapolated intersection of the baseline with a line through the two points of time when the current is 20 and 80% of the peak current (black open circles).</span><a class="headerlink" href="#id6" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
 </div></blockquote>
 <p>The method described above yields reliable results when both the pre- and the postsynaptic whole-cell recording with little noise and few artifacts. However, it may sometimes be favorable to use other estimates for the pre- and postsynaptic signals. For example, when extracellular stimulation is used or when there are a lot o failures in the postsynaptic response, latencies can be adjusted manually or fixed to predetermined measures (e.g the peak or the half-width of the reference channel). The following sections will explain how this is done in practice.</p>
-</div>
-<div class="section" id="setting-the-latency-cursors">
-<h2>Setting the latency cursors<a class="headerlink" href="#setting-the-latency-cursors" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="setting-the-latency-cursors">
+<h2>Setting the latency cursors<a class="headerlink" href="#setting-the-latency-cursors" title="Link to this heading">¶</a></h2>
 <p>Two latency cursors exist in <a class="reference external" href="http://www.stimfit.org">Stimfit</a> that are plotted as dotted vertical blue lines. Latency is computed as the time interval between the first and the second latency cursor. You can set the cursors manually by pressing the key <strong>L</strong> or the latency button on the toolbar (Fig. 19A).</p>
 <blockquote>
-<div><div class="figure align-center" id="id7">
+<div><figure class="align-center" id="id7">
 <img alt="../_images/latency.png" src="../_images/latency.png" />
-<p class="caption"><span class="caption-text"><strong>Fig. 19A:</strong> Activate latency mode.</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-text"><strong>Fig. 19A:</strong> Activate latency mode.</span><a class="headerlink" href="#id7" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
 </div></blockquote>
 <p>In addition, latency cursors can be adjusted to some predefined measurements using the Cursors settings menu with “Edit-&gt;Cursors Settings” (Fig. 19B). In the reference channel (red), Peak, Maximal slope and Half-width can be choosen as the first latency cursor. In the active channel (black), Peak, Maximal Slope, Half-width and Beginning of event can be used as second latency cursor. The resulting latency will now be computed from the measurement in the reference channel to the measurement in the active channel.</p>
 <blockquote>
-<div><div class="figure align-center" id="id8">
+<div><figure class="align-center" id="id8">
 <img alt="../_images/latency_menu.png" src="../_images/latency_menu.png" />
-<p class="caption"><span class="caption-text"><strong>Fig. 19B:</strong> Cursors settings for latency.</span><a class="headerlink" href="#id8" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-text"><strong>Fig. 19B:</strong> Cursors settings for latency.</span><a class="headerlink" href="#id8" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
 </div></blockquote>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -99,14 +103,16 @@ I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{
 </div>
 <p>Then, if options other than manual are selected, the latencies will be computed based on the updated measurements from the reference and active channels (Fig. 20). The latency will be indicated as a double-headed arrow connecting the two latency cursors.</p>
 <blockquote>
-<div><div class="figure align-center" id="id9">
+<div><figure class="align-center" id="id9">
 <img alt="../_images/latencytraces.png" src="../_images/latencytraces.png" />
-<p class="caption"><span class="caption-text"><strong>Fig. 20:</strong> The first latency cursor is set to meet the slope of rise of an action potential (in the reference channel, red) and the second latency cursor was selected to match the beginning of event (in the active channel, in black). The latency is indicated by a horizontal double-headed arrow.</span><a class="headerlink" href="#id9" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-text"><strong>Fig. 20:</strong> The first latency cursor is set to meet the slope of rise of an action potential (in the reference channel, red) and the second latency cursor was selected to match the beginning of event (in the active channel, in black). The latency is indicated by a horizontal double-headed arrow.</span><a class="headerlink" href="#id9" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
 </div></blockquote>
-</div>
-<div class="section" id="trace-alignment">
-<h2>Trace alignment<a class="headerlink" href="#trace-alignment" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="trace-alignment">
+<h2>Trace alignment<a class="headerlink" href="#trace-alignment" title="Link to this heading">¶</a></h2>
 <p>It may sometimes be useful to align traces before measuring the latency, either for visualization purposes or to create an average without temporal jitter. Although an aligned average can be created using a tool-bar button, the recommended way to align traces is to use the Python shell.</p>
 <ul class="simple">
 <li><p><strong>align_selected(alignment, active=False)</strong></p></li>
@@ -134,10 +140,10 @@ I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{
 <p><a class="reference internal" href="../stf_reference/stf.html#stf.t50right_index" title="stf.t50right_index"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.t50right_index()</span></code></a> returns the zero-based index of he right half-maximal amplitude in units of sampling points (see Fig. 13), or a negative value upon failure. The return value will be interpolated between sampling points.</p>
 <p>The following code can be used to align all traces within a file to the maximal slope of rise in the inactive channel.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># import the Stimfit core module:</span>
-<span class="kn">import</span> <span class="nn">stf</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">stf</span>
 
-<span class="k">def</span> <span class="nf">align_maxrise</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Aligns all traces to the maximal slope of rise \</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">align_maxrise</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aligns all traces to the maximal slope of rise \</span>
 <span class="sd">    of the inactive channel. Baseline and peak cursors \</span>
 <span class="sd">     have to be set appropriately before using this function.</span>
 <span class="sd">    Return value:</span>
@@ -155,35 +161,40 @@ I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{
     <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 </div>
-<dl class="footnote brackets">
-<dt class="label" id="katzmiledi1965"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
-<dd><p>Katz B, Miledi R. (1965) The measurement of synaptic delay, and the time course of acetylcholine release at the neuromuscular junction. Proc R Soc Lond B Biol Sci. 161:483-495.</p>
-</dd>
-<dt class="label" id="jack1983"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
-<dd><p>Jack JB, Noble D, Tsien RW (1983) Electric current flow in excitable cells. Oxford University Press, Oxford, UK.</p>
-</dd>
-<dt class="label" id="bartos2001"><span class="brackets"><a class="fn-backref" href="#id4">3</a></span></dt>
-<dd><p>Bartos M, Vida I, Frotscher M, Geiger JRP, Jonas P (2001) Rapid signaling at inhibitory synapses in a dentate gyrus interneuron network. J Neurosci 21:2687–2698.</p>
-</dd>
-<dt class="label" id="jonas1993"><span class="brackets"><a class="fn-backref" href="#id3">4</a></span></dt>
-<dd><p>Jonas P, Major G, Sakman B. (1993) Quantal components of unitary EPSCs at the mossy fibre synapse on CA3 pyramidal cells of rat hippocampus. J Physiol. 472, 615-663.</p>
-</dd>
-</dl>
-</div>
-</div>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="katzmiledi1965" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Katz B, Miledi R. (1965) The measurement of synaptic delay, and the time course of acetylcholine release at the neuromuscular junction. Proc R Soc Lond B Biol Sci. 161:483-495.</p>
+</aside>
+<aside class="footnote brackets" id="jack1983" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Jack JB, Noble D, Tsien RW (1983) Electric current flow in excitable cells. Oxford University Press, Oxford, UK.</p>
+</aside>
+<aside class="footnote brackets" id="bartos2001" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">3</a><span class="fn-bracket">]</span></span>
+<p>Bartos M, Vida I, Frotscher M, Geiger JRP, Jonas P (2001) Rapid signaling at inhibitory synapses in a dentate gyrus interneuron network. J Neurosci 21:2687–2698.</p>
+</aside>
+<aside class="footnote brackets" id="jonas1993" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">4</a><span class="fn-bracket">]</span></span>
+<p>Jonas P, Major G, Sakman B. (1993) Quantal components of unitary EPSCs at the mossy fibre synapse on CA3 pyramidal cells of rat hippocampus. J Physiol. 472, 615-663.</p>
+</aside>
+</aside>
+</section>
+</section>
 
 
             <div class="clearer"></div>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../contents.html">
-              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo of Stimfit"/>
             </a></p>
-  <h3><a href="../contents.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="../contents.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">Latency measurements</a><ul>
 <li><a class="reference internal" href="#measurement-of-synaptic-delay">Measurement of synaptic delay</a></li>
 <li><a class="reference internal" href="#setting-the-latency-cursors">Setting the latency cursors</a></li>
@@ -192,34 +203,40 @@ I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="python.html"
-                        title="previous chapter">The Python shell</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="event_extraction.html"
-                        title="next chapter">Event extraction by template matching</a></p>
-<div id="searchbox" style="display: none" role="search">
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="python.html"
+                          title="previous chapter">The Python shell</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="event_extraction.html"
+                          title="next chapter">Event extraction by template matching</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../contents.html">
-              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo of Stimfit"/>
             </a></p>
-  <h3><a href="../contents.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="../contents.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">Latency measurements</a><ul>
 <li><a class="reference internal" href="#measurement-of-synaptic-delay">Measurement of synaptic delay</a></li>
 <li><a class="reference internal" href="#setting-the-latency-cursors">Setting the latency cursors</a></li>
@@ -228,28 +245,33 @@ I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="python.html"
-                        title="previous chapter">The Python shell</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="event_extraction.html"
-                        title="next chapter">Event extraction by template matching</a></p>
-<div id="searchbox" style="display: none" role="search">
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="python.html"
+                          title="previous chapter">The Python shell</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="event_extraction.html"
+                          title="next chapter">Event extraction by template matching</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Christoph Schmidt-Hieber.
-      Last updated on 19 August, 2021.
+    &#169; Copyright 2026, Stimfit contributors.
+      Last updated on 19 March, 2026.
     </div>
   </body>
 </html>

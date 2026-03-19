@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['abf2_5ffileinfo_0',['ABF2_FileInfo',['../d3/df3/structABF2__FileInfo.html',1,'']]],
+  ['abf2fileheader_1',['ABF2FileHeader',['../dd/d6a/structABF2FileHeader.html',1,'']]],
+  ['abf2synch_2',['ABF2Synch',['../de/db0/structABF2Synch.html',1,'']]],
+  ['abf_5fadcinfo_3',['ABF_ADCInfo',['../dc/d35/structABF__ADCInfo.html',1,'']]],
+  ['abf_5fdacinfo_4',['ABF_DACInfo',['../d7/d93/structABF__DACInfo.html',1,'']]],
+  ['abf_5fepochinfo_5',['ABF_EpochInfo',['../d1/d07/structABF__EpochInfo.html',1,'']]],
+  ['abf_5fepochinfoperdac_6',['ABF_EpochInfoPerDAC',['../d5/d7c/structABF__EpochInfoPerDAC.html',1,'']]],
+  ['abf_5fmathinfo_7',['ABF_MathInfo',['../d4/db2/structABF__MathInfo.html',1,'']]],
+  ['abf_5fprotocolinfo_8',['ABF_ProtocolInfo',['../de/d18/structABF__ProtocolInfo.html',1,'']]],
+  ['abf_5fsection_9',['ABF_Section',['../da/d43/structABF__Section.html',1,'']]],
+  ['abf_5fstatsregioninfo_10',['ABF_StatsRegionInfo',['../d2/d2a/structABF__StatsRegionInfo.html',1,'']]],
+  ['abf_5fuserlistinfo_11',['ABF_UserListInfo',['../de/d27/structABF__UserListInfo.html',1,'']]],
+  ['abfdelta_12',['ABFDelta',['../d4/d09/structABFDelta.html',1,'']]],
+  ['abffileheader_13',['ABFFileHeader',['../d7/d12/structABFFileHeader.html',1,'']]],
+  ['abflogfont_14',['ABFLogFont',['../d2/dd5/structABFLogFont.html',1,'']]],
+  ['abfscopeconfig_15',['ABFScopeConfig',['../db/d4d/structABFScopeConfig.html',1,'']]],
+  ['abfsignal_16',['ABFSignal',['../dd/df5/structABFSignal.html',1,'']]],
+  ['abfsynch_17',['ABFSynch',['../dc/d3f/structABFSynch.html',1,'']]],
+  ['abftag_18',['ABFTag',['../d3/d9c/structABFTag.html',1,'']]],
+  ['abfvoicetaginfo_19',['ABFVoiceTagInfo',['../dd/deb/structABFVoiceTagInfo.html',1,'']]],
+  ['annotation_20',['Annotation',['../d6/dab/classAnnotation.html',1,'']]],
+  ['atf_5ffileinfo_21',['ATF_FILEINFO',['../d5/d77/structATF__FILEINFO.html',1,'']]],
+  ['axographxcolumnheader_22',['AxoGraphXColumnHeader',['../df/df5/structAxoGraphXColumnHeader.html',1,'']]],
+  ['axographxtraceheader_23',['AxoGraphXTraceHeader',['../d6/de9/structAxoGraphXTraceHeader.html',1,'']]]
+];

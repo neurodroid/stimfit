@@ -1,0 +1,12 @@
+<map id="stfnum::storedFunc" name="stfnum::storedFunc">
+<area shape="rect" id="Node000001" title="Function used for least&#45;squares fitting." alt="" coords="5,373,152,399"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="35,95,122,120"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="81,134,81,373,76,373,76,134"/>
+<area shape="rect" id="Node000005" href="$d5/dfa/structstfnum_1_1parInfo.html" title="Information about parameters used in storedFunc." alt="" coords="99,183,221,208"/>
+<area shape="poly" id="edge5_Node000005_Node000002" title=" " alt="" coords="101,128,151,180,147,184,97,132"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="9,5,148,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="81,59,81,94,76,94,76,59"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="95,271,247,311"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="144,322,92,375,88,371,140,319"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="166,221,171,270,166,271,160,222"/>
+</map>

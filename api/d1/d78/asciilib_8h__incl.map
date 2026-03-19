@@ -1,0 +1,49 @@
+<map id="src/libstfio/ascii/asciilib.h" name="src/libstfio/ascii/asciilib.h">
+<area shape="rect" id="Node000001" title="Import and export plain text files." alt="" coords="547,5,670,45"/>
+<area shape="rect" id="Node000002" href="$d9/df7/stfio_8h.html" title="header file for libstfio" alt="" coords="534,93,609,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="602,47,585,82,580,80,597,44"/>
+<area shape="rect" id="Node000014" href="$de/d81/recording_8h.html" title="Declares the Recording class." alt="" coords="649,167,752,192"/>
+<area shape="poly" id="edge28_Node000001_Node000014" title=" " alt="" coords="623,44,689,153,684,156,618,47"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="271,167,351,192"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="534,120,365,166,364,161,533,115"/>
+<area shape="rect" id="Node000004" href="$d5/dc4/core_8h.html" title="Lightweight core definitions shared by libstfio model classes." alt="" coords="407,460,477,485"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="535,121,490,139,443,166,422,184,406,204,395,226,391,252,391,327,395,361,405,394,430,447,425,450,400,395,390,362,386,327,386,251,390,225,402,201,419,180,440,162,488,134,533,116"/>
+<area shape="poly" id="edge13_Node000002_Node000014" title=" " alt="" coords="593,116,668,157,666,162,591,121"/>
+<area shape="rect" id="Node000017" href="$d5/d7b/channel_8h.html" title="Declares the Channel class." alt="" coords="570,240,663,265"/>
+<area shape="poly" id="edge26_Node000002_Node000017" title=" " alt="" coords="578,118,611,226,606,228,572,120"/>
+<area shape="rect" id="Node000018" href="$d1/d2a/section_8h.html" title="Declares the Section class." alt="" coords="511,313,592,339"/>
+<area shape="poly" id="edge27_Node000002_Node000018" title=" " alt="" coords="573,119,561,240,556,300,551,299,555,240,567,118"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="100,533,163,559"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="407,484,177,536,176,531,406,479"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="187,533,246,559"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="407,488,260,534,258,529,405,483"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="5,533,76,559"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="407,482,272,503,90,536,89,530,271,497,406,476"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="623,533,685,559"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="477,483,611,527,609,532,475,488"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="270,533,321,559"/>
+<area shape="poly" id="edge8_Node000004_Node000009" title=" " alt="" coords="420,488,333,530,330,525,417,483"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="345,533,432,559"/>
+<area shape="poly" id="edge9_Node000004_Node000010" title=" " alt="" coords="435,487,408,524,403,521,431,484"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="710,533,769,559"/>
+<area shape="poly" id="edge10_Node000004_Node000011" title=" " alt="" coords="478,479,697,530,696,536,477,484"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="793,533,856,559"/>
+<area shape="poly" id="edge11_Node000004_Node000012" title=" " alt="" coords="478,477,607,498,780,531,779,536,606,503,477,482"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="456,533,599,559"/>
+<area shape="poly" id="edge12_Node000004_Node000013" title=" " alt="" coords="457,483,505,522,501,527,454,487"/>
+<area shape="poly" id="edge15_Node000014_Node000011" title=" " alt="" coords="703,192,703,325,703,401,706,433,713,466,731,520,726,521,708,467,701,434,698,401,698,325,698,192"/>
+<area shape="poly" id="edge17_Node000014_Node000012" title=" " alt="" coords="718,190,744,212,772,243,795,281,802,302,805,325,805,401,810,465,821,519,816,520,805,466,799,401,799,325,797,304,790,283,768,246,740,216,715,194"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="839,240,898,265"/>
+<area shape="poly" id="edge14_Node000014_Node000015" title=" " alt="" coords="729,190,830,232,828,237,727,194"/>
+<area shape="rect" id="Node000016" title=" " alt="" coords="923,240,993,265"/>
+<area shape="poly" id="edge16_Node000014_Node000016" title=" " alt="" coords="743,189,910,235,909,241,741,195"/>
+<area shape="poly" id="edge18_Node000014_Node000017" title=" " alt="" coords="689,194,643,233,639,229,685,190"/>
+<area shape="poly" id="edge19_Node000017_Node000008" title=" " alt="" coords="621,265,653,519,648,520,615,266"/>
+<area shape="poly" id="edge20_Node000017_Node000011" title=" " alt="" coords="626,264,670,344,698,400,722,459,738,519,732,520,717,461,693,402,665,347,621,267"/>
+<area shape="poly" id="edge21_Node000017_Node000018" title=" " alt="" coords="608,267,573,305,569,301,604,264"/>
+<area shape="poly" id="edge22_Node000018_Node000004" title=" " alt="" coords="557,338,562,373,560,394,552,413,540,429,525,442,492,460,489,455,522,437,536,425,548,411,555,393,556,373,552,339"/>
+<area shape="rect" id="Node000019" href="$df/dc5/annotation_8h.html" title=" " alt="" coords="426,387,538,412"/>
+<area shape="poly" id="edge23_Node000018_Node000019" title=" " alt="" coords="542,341,505,379,501,375,538,337"/>
+<area shape="poly" id="edge25_Node000019_Node000004" title=" " alt="" coords="478,414,458,449,453,447,473,411"/>
+<area shape="poly" id="edge24_Node000019_Node000007" title=" " alt="" coords="448,415,89,532,88,526,446,410"/>
+</map>

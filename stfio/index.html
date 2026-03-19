@@ -1,25 +1,24 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The stfio module &#8212; Stimfit 0.16.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>The stfio module &#8212; Stimfit dev documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=2bf1fcf8" />
     
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
+    <script src="../_static/documentation_options.js?v=81f007b9"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Links" href="../links/index.html" />
     <link rel="prev" title="References" href="../references/index.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -49,31 +48,27 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="the-stfio-module">
-<h1>The stfio module<a class="headerlink" href="#the-stfio-module" title="Permalink to this headline">¶</a></h1>
+  <section id="the-stfio-module">
+<h1>The stfio module<a class="headerlink" href="#the-stfio-module" title="Link to this heading">¶</a></h1>
 <dl class="field-list simple">
-<dt class="field-odd">Author</dt>
+<dt class="field-odd">Author<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Christoph Schmidt-Hieber</p>
 </dd>
-<dt class="field-even">Date</dt>
-<dd class="field-even"><p>19 August, 2021</p>
+<dt class="field-even">Date<span class="colon">:</span></dt>
+<dd class="field-even"><p>19 March, 2026</p>
 </dd>
 </dl>
 <p>The stfio Python module allows to read and write data in common electrophysiology formats without running Stimfit. Build instructions for GNU/Linux can be found in <a class="reference internal" href="../linux_install_guide/moduleonly.html"><span class="doc">Building the Python module only</span></a>.</p>
 <p>The central object in the stfio module is called a <em>Recording</em>. There are two ways to construct a <em>Recording</em>: You can either read it in from a file, or you can build it up from scratch using NumPy arrays.</p>
-<div class="section" id="reading-files">
-<h2>Reading files<a class="headerlink" href="#reading-files" title="Permalink to this headline">¶</a></h2>
+<section id="reading-files">
+<h2>Reading files<a class="headerlink" href="#reading-files" title="Link to this heading">¶</a></h2>
 <p>Files can be opened using the <em>read</em> function that returns a <em>Recording</em> object:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">stfio</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">stfio</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rec</span> <span class="o">=</span> <span class="n">stfio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;/home/cs/data/test.abf&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><em>read</em> takes a filename and optionally a file type (as a string) as an argument. At present, the following types are supported:</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 25%" />
-<col style="width: 75%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>ftype</p></th>
 <th class="head"><p>Description</p></th>
@@ -151,12 +146,12 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="n">res</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">asarray</span><span class="p">()</span> <span class="o">+</span> <span class="mf">2.0</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="constructing-recordings-from-scratch">
-<h2>Constructing Recordings from scratch<a class="headerlink" href="#constructing-recordings-from-scratch" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="constructing-recordings-from-scratch">
+<h2>Constructing Recordings from scratch<a class="headerlink" href="#constructing-recordings-from-scratch" title="Link to this heading">¶</a></h2>
 <p><em>Recording</em>s can be assembled from NumPy arrays. Here’s a particularly stupid example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">stfio</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">stfio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">500</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
 
@@ -175,31 +170,32 @@
 <span class="n">rec</span><span class="o">.</span><span class="n">xunits</span> <span class="o">=</span> <span class="s2">&quot;ms&quot;</span> <span class="c1"># set time units</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="writing-files">
-<h2>Writing files<a class="headerlink" href="#writing-files" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="writing-files">
+<h2>Writing files<a class="headerlink" href="#writing-files" title="Link to this heading">¶</a></h2>
 <p><em>Recording</em>s can be stored to files using the <em>write</em> method:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">stfio</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">stfio</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rec</span> <span class="o">=</span> <span class="n">stfio</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;/home/cs/data/test.abf&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rec</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;/home/cs/data/out.h5&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>At present, <em>write</em> only supports hdf5 files.</p>
-</div>
-</div>
+</section>
+</section>
 
 
             <div class="clearer"></div>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../contents.html">
-              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo of Stimfit"/>
             </a></p>
-  <h3><a href="../contents.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="../contents.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">The stfio module</a><ul>
 <li><a class="reference internal" href="#reading-files">Reading files</a></li>
 <li><a class="reference internal" href="#constructing-recordings-from-scratch">Constructing Recordings from scratch</a></li>
@@ -208,34 +204,40 @@
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="../references/index.html"
-                        title="previous chapter">References</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="../links/index.html"
-                        title="next chapter">Links</a></p>
-<div id="searchbox" style="display: none" role="search">
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../references/index.html"
+                          title="previous chapter">References</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../links/index.html"
+                          title="next chapter">Links</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../contents.html">
-              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo of Stimfit"/>
             </a></p>
-  <h3><a href="../contents.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="../contents.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">The stfio module</a><ul>
 <li><a class="reference internal" href="#reading-files">Reading files</a></li>
 <li><a class="reference internal" href="#constructing-recordings-from-scratch">Constructing Recordings from scratch</a></li>
@@ -244,28 +246,33 @@
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="../references/index.html"
-                        title="previous chapter">References</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="../links/index.html"
-                        title="next chapter">Links</a></p>
-<div id="searchbox" style="display: none" role="search">
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../references/index.html"
+                          title="previous chapter">References</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../links/index.html"
+                          title="next chapter">Links</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Christoph Schmidt-Hieber.
-      Last updated on 19 August, 2021.
+    &#169; Copyright 2026, Stimfit contributors.
+      Last updated on 19 March, 2026.
     </div>
   </body>
 </html>

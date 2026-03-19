@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['capcompensationmagnitude_0',['capCompensationMagnitude',['../de/d99/structHeaderSettings.html#a6d1edcfa823471a6c329b5736d87df6a',1,'HeaderSettings']]],
+  ['ccsettings_1',['ccSettings',['../de/d99/structHeaderSettings.html#af139b927825c936fe5fb8ff2ee01a8be',1,'HeaderSettings']]],
+  ['cellcm_2',['cellCm',['../de/d99/structHeaderSettings.html#a9ceec25216bc15e84aafc8e896daf67c',1,'HeaderSettings']]],
+  ['cellrm_3',['cellRm',['../de/d99/structHeaderSettings.html#a5b960c8292953daed79b19959936d9f1',1,'HeaderSettings']]],
+  ['cellrs_4',['cellRs',['../de/d99/structHeaderSettings.html#a7a4e832bc7defa4d4c48de40863ee862',1,'HeaderSettings']]],
+  ['chan_5',['chan',['../dd/d60/Son_8h.html#aeb88265da16d261f97bf2ad016ce9e03',1,'Son.h']]],
+  ['channel_6',['channel',['../d7/d0b/cfs_8h.html#a58a672eda5e6d495217f2352685cec10',1,'cfs.h']]],
+  ['channel_5fcount_5facquired_7',['channel_count_acquired',['../d7/d12/structABFFileHeader.html#a3959e31a138e3cbee90f2eadb0f63d35',1,'ABFFileHeader']]],
+  ['channelname_8',['channelName',['../d7/d0b/cfs_8h.html#a9d2522cc4cca3578dd2056b4a59511d1',1,'cfs.h']]],
+  ['channels_9',['channels',['../d9/da3/structChipHeader.html#a950bd12eae1d90a7ce14df671a4fd0e7',1,'ChipHeader::channels'],['../d7/d0b/cfs_8h.html#a1826632400812d90534c28120dfd0b63',1,'channels:&#160;cfs.h']]],
+  ['checksum_10',['checksum',['../d5/d3b/structBinHeader1.html#a26e44730b6de60043bf3281c1bc666dd',1,'BinHeader1::checksum'],['../d6/d48/structBinHeader2.html#aac6771016ba26e4217460104b64a26cd',1,'BinHeader2::checksum'],['../d4/d8e/structBinHeader3.html#ab4267d2192be9ba905b78cb91769e2a6',1,'BinHeader3::checksum'],['../db/dd0/structBinHeader5.html#a90705c549ddc8e7f024863ed9c556da3',1,'BinHeader5::checksum']]],
+  ['chipregisters_11',['chipRegisters',['../d9/da3/structChipHeader.html#a0131ca99b2b50643c34ea8d268292bf9',1,'ChipHeader']]],
+  ['chips_12',['Chips',['../d6/d8e/structIntanHeader.html#ad31dfacd3f404584b4be88f24b11843a',1,'IntanHeader']]],
+  ['clineterm_13',['cLineTerm',['../d5/d77/structATF__FILEINFO.html#aba846e3c3e425fc304bb7c6cfba2bd58',1,'ATF_FILEINFO']]],
+  ['coarse_14',['coarse',['../d6/de7/structCalibration.html#aa53b7bc0de6c79b40ac3ba1c1d05a553',1,'Calibration']]],
+  ['comment_15',['comment',['../d7/d0b/cfs_8h.html#aa01d356441d401b50f4eccc8e8d94bef',1,'cfs.h']]],
+  ['constr_5flb_16',['constr_lb',['../d3/d1b/group__stfgen.html#gab9973d80e1dae75a8cb6a616fac43982',1,'stfnum::parInfo']]],
+  ['constr_5fub_17',['constr_ub',['../d3/d1b/group__stfgen.html#ga8f8efee269119977a7ddda7b90ad5635',1,'stfnum::parInfo']]],
+  ['constrained_18',['constrained',['../d3/d1b/group__stfgen.html#ga20ab5c918f94fe1022eb688f9b667f7d',1,'stfnum::parInfo']]],
+  ['count_19',['count',['../dd/d60/Son_8h.html#a3386c8331589b2bf3d442d93e587c2c7',1,'Son.h']]],
+  ['cpitchandfamily_20',['cPitchAndFamily',['../d2/dd5/structABFLogFont.html#a8846b92b89b081c1a7d073dbb8fa6b45',1,'ABFLogFont']]],
+  ['cppwindow_21',['cppWindow',['../d7/d1a/group__wxstf.html#gaa494bfaeb83b3f0386625473e5461f9d',1,'new_wxwindow']]],
+  ['creationdate_22',['creationdate',['../df/d37/structWaveHeader2.html#ab6e3be3e6069cf3e9b1cdfb6abf7b8cb',1,'WaveHeader2::creationDate'],['../d5/da8/structWaveHeader5.html#af1789dc24e77f83ce9a2b98f50d31b28',1,'WaveHeader5::creationDate']]],
+  ['currentstepsize_23',['currentStepSize',['../de/d29/structCurrentClampSettings.html#ab9677778144845603f2623c7776431ee',1,'CurrentClampSettings']]]
+];

@@ -1,25 +1,24 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Stimfit book of spells &#8212; Stimfit 0.16.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>The Stimfit book of spells &#8212; Stimfit dev documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=2bf1fcf8" />
     
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
+    <script src="../_static/documentation_options.js?v=81f007b9"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Resistance Calculation" href="resistances.html" />
     <link rel="prev" title="Building Stimfit" href="../win_install_guide/building.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -49,23 +48,23 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="the-stimfit-book-of-spells">
-<h1>The Stimfit book of spells<a class="headerlink" href="#the-stimfit-book-of-spells" title="Permalink to this headline">¶</a></h1>
+  <section id="the-stimfit-book-of-spells">
+<h1>The Stimfit book of spells<a class="headerlink" href="#the-stimfit-book-of-spells" title="Link to this heading">¶</a></h1>
 <dl class="field-list simple">
-<dt class="field-odd">Author</dt>
+<dt class="field-odd">Author<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Jose Guzman</p>
 </dd>
-<dt class="field-even">Release</dt>
-<dd class="field-even"><p>0.16.0</p>
+<dt class="field-even">Release<span class="colon">:</span></dt>
+<dd class="field-even"><p>dev</p>
 </dd>
-<dt class="field-odd">Date</dt>
-<dd class="field-odd"><p>19 August, 2021</p>
+<dt class="field-odd">Date<span class="colon">:</span></dt>
+<dd class="field-odd"><p>19 March, 2026</p>
 </dd>
 </dl>
 <p>This document collects answers to some questions like “How do I make … in <a class="reference external" href="http://www.stimfit.org">Stimfit</a> with python?”. Though much of the material can be easily found in the <a class="reference internal" href="../manual/index.html"><span class="doc">Stimfit manual</span></a>, the examples provided here are a good way for the casual user to start using Python in <a class="reference external" href="http://www.stimfit.org">Stimfit</a>.</p>
 <p>It assumes a basic knowledge of the embedded Python shell of <a class="reference external" href="http://www.stimfit.org">Stimfit</a>. Some Python knowledge and a substantial proficiency in <a class="reference external" href="http://www.stimfit.org">Stimfit</a> are recommendable. Please note that this is not a Python manual, but a way to use Python for some basic analysis tasks provided with <a class="reference external" href="http://www.stimfit.org">Stimfit</a>. For a detailed Python manual, we encourage the user to visit the official Python documentation on the <a class="reference internal" href="../manual/python.html#python-website" id="id5"><span>[Python-website]</span></a> and to read carefully the <a class="reference internal" href="../manual/index.html"><span class="doc">Stimfit manual</span></a>.</p>
 <p>The functions described along this document are available in your current <a class="reference external" href="http://www.stimfit.org">Stimfit</a> version. To make use of them you have to type the following line in the <a class="reference external" href="http://www.stimfit.org">Stimfit</a> embedded Python shell:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">spells</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">spells</span>
 </pre></div>
 </div>
 <p>After that, functions can be called with the dot notation (i.e just typing <strong>spells</strong> before the function) For example, if we want to call the function rmean() we  would do it in this way:</p>
@@ -131,66 +130,74 @@
 </li>
 </ul>
 </div>
-</div>
+</section>
 
 
             <div class="clearer"></div>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../contents.html">
-              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo of Stimfit"/>
             </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="../win_install_guide/building.html"
-                        title="previous chapter">Building Stimfit</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="resistances.html"
-                        title="next chapter">Resistance Calculation</a></p>
-<div id="searchbox" style="display: none" role="search">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../win_install_guide/building.html"
+                          title="previous chapter">Building Stimfit</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="resistances.html"
+                          title="next chapter">Resistance Calculation</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../contents.html">
-              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo of Stimfit"/>
             </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="../win_install_guide/building.html"
-                        title="previous chapter">Building Stimfit</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="resistances.html"
-                        title="next chapter">Resistance Calculation</a></p>
-<div id="searchbox" style="display: none" role="search">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../win_install_guide/building.html"
+                          title="previous chapter">Building Stimfit</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="resistances.html"
+                          title="next chapter">Resistance Calculation</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Christoph Schmidt-Hieber.
-      Last updated on 19 August, 2021.
+    &#169; Copyright 2026, Stimfit contributors.
+      Last updated on 19 March, 2026.
     </div>
   </body>
 </html>

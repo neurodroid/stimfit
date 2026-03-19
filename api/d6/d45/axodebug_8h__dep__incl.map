@@ -1,0 +1,24 @@
+<map id="src/libstfio/abf/axon/Common/axodebug.h" name="src/libstfio/abf/axon/Common/axodebug.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="373,5,537,45"/>
+<area shape="rect" id="Node000002" href="$d4/d2b/csynch_8hpp.html" title=" " alt="" coords="172,93,349,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="401,53,304,96,302,91,399,48"/>
+<area shape="rect" id="Node000007" href="$d4/d00/wincpp_8hpp.html" title=" " alt="" coords="374,93,537,133"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="458,59,458,93,453,93,453,59"/>
+<area shape="rect" id="Node000010" href="$d0/d89/ProtocolStructs_8h.html" title=" " alt="" coords="569,181,726,221"/>
+<area shape="poly" id="edge11_Node000001_Node000010" title=" " alt="" coords="498,51,550,91,597,138,634,179,630,183,593,141,547,95,494,55"/>
+<area shape="rect" id="Node000003" href="$d7/d96/filedesc_8hpp.html" title=" " alt="" coords="5,269,188,309"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="223,143,176,183,138,229,110,271,106,268,134,226,172,179,219,139"/>
+<area shape="rect" id="Node000005" href="$d2/dd8/FileIO_8hpp.html" title=" " alt="" coords="186,181,341,221"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="264,147,265,181,260,181,259,147"/>
+<area shape="rect" id="Node000004" href="$d0/dfa/ProtocolReaderABF2_8hpp.html" title=" " alt="" coords="278,357,465,397"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="171,311,312,355,310,360,169,316"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="216,230,134,272,132,267,214,225"/>
+<area shape="rect" id="Node000006" href="$d7/d32/FileReadCache_8hpp.html" title=" " alt="" coords="213,269,426,309"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="285,232,309,268,305,271,281,234"/>
+<area shape="poly" id="edge10_Node000007_Node000005" title=" " alt="" coords="402,141,306,184,304,179,400,137"/>
+<area shape="rect" id="Node000008" href="$db/d73/axatffio32_8h.html" title=" " alt="" coords="366,181,545,221"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="458,147,458,181,453,181,453,147"/>
+<area shape="rect" id="Node000009" href="$dc/d61/atflib_8h.html" title="Import and export Axon text files." alt="" coords="450,277,610,302"/>
+<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="483,230,522,274,518,278,479,234"/>
+<area shape="poly" id="edge12_Node000010_Node000004" title=" " alt="" coords="651,236,644,274,636,294,624,311,589,338,549,357,507,370,466,376,465,371,506,364,547,352,586,334,620,307,632,292,639,273,645,235"/>
+</map>

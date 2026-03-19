@@ -1,0 +1,11 @@
+<map id="HeaderSettings" name="HeaderSettings">
+<area shape="rect" id="Node000001" title=" " alt="" coords="218,181,341,207"/>
+<area shape="rect" id="Node000002" href="$d5/dac/structVoltageClampSettings.html" title=" " alt="" coords="5,93,172,119"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="128,122,255,179,252,184,126,127"/>
+<area shape="rect" id="Node000003" href="$de/d29/structCurrentClampSettings.html" title=" " alt="" coords="197,93,362,119"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="282,133,282,181,277,181,277,133"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="386,93,565,119"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="438,127,307,184,305,179,436,122"/>
+<area shape="rect" id="Node000005" href="$db/d67/structSegment.html" title=" " alt="" coords="435,5,515,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="478,45,478,93,473,93,473,45"/>
+</map>

@@ -1,4 +1,0 @@
-#if defined(__WXMAC__) || defined(__WXGTK__)
-  #pragma GCC diagnostic ignored "-Wuninitialized"
-  #pragma GCC diagnostic ignored "-Wstrict-aliasing"
-#endif

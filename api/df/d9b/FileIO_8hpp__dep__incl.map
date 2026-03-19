@@ -1,0 +1,9 @@
+<map id="src/libstfio/abf/axon/Common/FileIO.hpp" name="src/libstfio/abf/axon/Common/FileIO.hpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="132,5,287,45"/>
+<area shape="rect" id="Node000002" href="$d7/d96/filedesc_8hpp.html" title=" " alt="" coords="7,93,190,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="175,56,125,95,122,91,172,52"/>
+<area shape="rect" id="Node000004" href="$d7/d32/FileReadCache_8hpp.html" title=" " alt="" coords="215,93,428,133"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="247,52,298,91,295,95,244,56"/>
+<area shape="rect" id="Node000003" href="$d0/dfa/ProtocolReaderABF2_8hpp.html" title=" " alt="" coords="5,181,192,221"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="101,147,101,181,96,181,96,147"/>
+</map>

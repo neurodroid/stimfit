@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['idc_5fprogress_0',['IDC_PROGRESS',['../d8/d01/resource_8h.html#a6ecd6bb810e195919fc03f2e459b1db2',1,'resource.h']]],
+  ['idc_5ftagnumber_1',['IDC_TAGNUMBER',['../d8/d01/resource_8h.html#a7178dea7003293e9f511eb6589ea6ddd',1,'resource.h']]],
+  ['idd_5fvoicetagcleanup_2',['IDD_VOICETAGCLEANUP',['../d8/d01/resource_8h.html#a45000af1563dd6bf654f758ea35ee593',1,'resource.h']]],
+  ['ids_5fcannotload_3',['IDS_CANNOTLOAD',['../d8/d01/resource_8h.html#a64a5180b03be5ab7c610697a049b4719',1,'resource.h']]],
+  ['ids_5fconttagheadings_4',['IDS_CONTTAGHEADINGS',['../d8/d01/resource_8h.html#aacd7790a02fe767dc481346606ef61ea',1,'resource.h']]],
+  ['ids_5fenomessagestr_5',['ids_enomessagestr',['../d8/d01/resource_8h.html#a8f7a85f90841cd0fe1e8a3a4f87ab565',1,'IDS_ENOMESSAGESTR:&#160;resource.h'],['../d6/dea/unix_8h.html#a8f7a85f90841cd0fe1e8a3a4f87ab565',1,'IDS_ENOMESSAGESTR:&#160;unix.h']]],
+  ['ids_5fepitagheadings_6',['IDS_EPITAGHEADINGS',['../d8/d01/resource_8h.html#ad3ea52e3afe491f44fd3b2e56701dbf4',1,'resource.h']]],
+  ['ids_5fmathchannel_7',['IDS_MATHCHANNEL',['../d8/d01/resource_8h.html#a7b485524e71197d4cf7e0ee929299b65',1,'resource.h']]],
+  ['ids_5fnone_8',['IDS_NONE',['../d8/d01/resource_8h.html#ab9fcabfea613f6326f463649ea4db6fe',1,'resource.h']]],
+  ['igorlong_9',['igorlong',['../d8/d3c/CrossPlatformFileIO_8h.html#af344ed871793e31a7568ccf26fda06b0',1,'IGORLONG:&#160;CrossPlatformFileIO.h'],['../de/d3e/IgorBin_8h.html#af344ed871793e31a7568ccf26fda06b0',1,'IGORLONG:&#160;IgorBin.h']]],
+  ['inline_10',['inline',['../d4/dd1/compiler_8h.html#a00d24c7231be28dbaf71f5408f30e44c',1,'compiler.h']]],
+  ['int1_11',['INT1',['../d7/d0b/cfs_8h.html#ae4728496f2ab826d5fc6a63da6cb600b',1,'cfs.h']]],
+  ['int2_12',['INT2',['../d7/d0b/cfs_8h.html#ab254a5a335276357f63779cda0b8e44f',1,'cfs.h']]],
+  ['int4_13',['INT4',['../d7/d0b/cfs_8h.html#a8b84d22df59c17997702b358682feae8',1,'cfs.h']]],
+  ['invalid_5fhandle_5fvalue_14',['INVALID_HANDLE_VALUE',['../d6/dea/unix_8h.html#a5fdc7facea201bfce4ad308105f88d0c',1,'unix.h']]],
+  ['invalid_5fseek_5fvalue_15',['INVALID_SEEK_VALUE',['../d6/dea/unix_8h.html#a6bd43161491e2ffaa5e63c7a99d05e42',1,'unix.h']]],
+  ['isbadarray_16',['IsBadArray',['../d7/dc8/axodebug_8h.html#a42203e76b7676341fd3a09142fec9308',1,'axodebug.h']]],
+  ['isbadptr_17',['IsBadPtr',['../d7/dc8/axodebug_8h.html#a0b76f27735dbcb9768e34a92ed6eb907',1,'axodebug.h']]]
+];

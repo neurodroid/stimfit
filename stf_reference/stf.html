@@ -1,25 +1,24 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>stf &#8212; Stimfit 0.16.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>stf &#8212; Stimfit dev documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=2bf1fcf8" />
     
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
+    <script src="../_static/documentation_options.js?v=81f007b9"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="References" href="../references/index.html" />
     <link rel="prev" title="Loading custom text files" href="../howto/ascii.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -49,23 +48,23 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="stf">
-<h1><a class="reference internal" href="#module-stf" title="stf: The stf module allows to access a running stimfit application from the embedded python shell."><code class="xref py py-mod docutils literal notranslate"><span class="pre">stf</span></code></a><a class="headerlink" href="#stf" title="Permalink to this headline">¶</a></h1>
+  <section id="stf">
+<h1><a class="reference internal" href="#module-stf" title="stf: The stf module allows to access a running stimfit application from the embedded python shell."><code class="xref py py-mod docutils literal notranslate"><span class="pre">stf</span></code></a><a class="headerlink" href="#stf" title="Link to this heading">¶</a></h1>
 <dl class="field-list simple">
-<dt class="field-odd">Author</dt>
+<dt class="field-odd">Author<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Christoph Schmidt-Hieber (christsc at gmx.de)</p>
 </dd>
-<dt class="field-even">Release</dt>
-<dd class="field-even"><p>0.16.0</p>
+<dt class="field-even">Release<span class="colon">:</span></dt>
+<dd class="field-even"><p>dev</p>
 </dd>
-<dt class="field-odd">Date</dt>
-<dd class="field-odd"><p>19 August, 2021</p>
+<dt class="field-odd">Date<span class="colon">:</span></dt>
+<dd class="field-odd"><p>19 March, 2026</p>
 </dd>
 </dl>
-<span class="target" id="module-stf"></span><p>The <a class="reference internal" href="#module-stf" title="stf: The stf module allows to access a running stimfit application from the embedded python shell."><code class="xref py py-mod docutils literal notranslate"><span class="pre">stf</span></code></a> module defines the following functions:</p>
+<p id="module-stf">The <a class="reference internal" href="#module-stf" title="stf: The stf module allows to access a running stimfit application from the embedded python shell."><code class="xref py py-mod docutils literal notranslate"><span class="pre">stf</span></code></a> module defines the following functions:</p>
 <dl class="py function">
-<dt id="stf.align_selected">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">align_selected</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">alignment</span></em>, <em class="sig-param"><span class="n">active</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.align_selected" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.align_selected">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">align_selected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alignment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.align_selected" title="Link to this definition">¶</a></dt>
 <dd><p>Aligns the selected traces to the index that is returned by the alignment function, and then creates a new window showing the aligned traces. This function requires to select the traces of interest and the presence of a second (i.e reference) channel.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -77,8 +76,8 @@ Accepts any function returning a valid index within a trace. These are some pred
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.check_doc">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">check_doc</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.check_doc" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.check_doc">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">check_doc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.check_doc" title="Link to this definition">¶</a></dt>
 <dd><p>Checks whether a file is open.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -87,8 +86,8 @@ Accepts any function returning a valid index within a trace. These are some pred
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.close_all">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">close_all</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.close_all" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.close_all">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">close_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.close_all" title="Link to this definition">¶</a></dt>
 <dd><p>Closes all open files.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -97,8 +96,8 @@ Accepts any function returning a valid index within a trace. These are some pred
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.close_this">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">close_this</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.close_this" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.close_this">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">close_this</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.close_this" title="Link to this definition">¶</a></dt>
 <dd><p>Closes the currently active file.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -107,8 +106,8 @@ Accepts any function returning a valid index within a trace. These are some pred
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.cut_traces">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">cut_traces</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pt</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.cut_traces" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.cut_traces">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">cut_traces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.cut_traces" title="Link to this definition">¶</a></dt>
 <dd><p>Cuts the selected traces at the sampling points in pt_list and shows the cut traces in a new window.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -117,8 +116,8 @@ Accepts any function returning a valid index within a trace. These are some pred
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.cut_traces_multi">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">cut_traces_multi</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pt_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.cut_traces_multi" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.cut_traces_multi">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">cut_traces_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pt_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.cut_traces_multi" title="Link to this definition">¶</a></dt>
 <dd><p>Cuts the selected traces at the sampling points in pt_list and show the cut traces in a new window.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -127,18 +126,18 @@ Accepts any function returning a valid index within a trace. These are some pred
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.erase_markers">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">erase_markers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.erase_markers" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.erase_markers">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">erase_markers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.erase_markers" title="Link to this definition">¶</a></dt>
 <dd><p>Delete the markes created with <a class="reference internal" href="#stf.set_marker" title="stf.set_marker"><code class="xref py py-func docutils literal notranslate"><span class="pre">set_marker()</span></code></a></p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.file_open">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">file_open</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.file_open" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.file_open">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">file_open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.file_open" title="Link to this definition">¶</a></dt>
 <dd><p>Opens a file.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>filename</em> – The file to be opened. On Windows, use double back-slashes (“\”) between directories to avoid conversion to special characters such as “t” or “n”.
+<p><em>filename</em> – The file to be opened. On Windows, use double back-slashes (”\”) between directories to avoid conversion to special characters such as “t” or “n”.
 Example usage in Windows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_open</span><span class="p">(</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">datafile.dat&quot;</span><span class="p">)</span><span class="o">.</span>
 </pre></div>
@@ -154,12 +153,12 @@ Example usage in Windows:</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.file_save">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">file_save</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.file_save" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.file_save">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">file_save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.file_save" title="Link to this definition">¶</a></dt>
 <dd><p>Saves a file.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
-<p><em>filename</em> – The file to be saved. On Windows, use double back-slashes (“\”) between directories to avoid con-version to special characters such as “t” or “n”.</p>
+<p><em>filename</em> – The file to be saved. On Windows, use double back-slashes (”\”) between directories to avoid con-version to special characters such as “t” or “n”.</p>
 <p>Example usage in Windows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_save</span><span class="p">(</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">datafile.dat&quot;</span><span class="p">)</span>
 </pre></div>
@@ -175,8 +174,8 @@ Example usage in Windows:</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.foot_index">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">foot_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">active</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.foot_index" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.foot_index">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">foot_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.foot_index" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the zero-based index of the foot of an event in the active channel. The foot is the intersection of an interpolated line through the points of 20 and 80% rise with the baseline. Uses the currently measured values, i.e. does not update measurements if the peak or base window cursors have changed.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -187,8 +186,8 @@ Example usage in Windows:</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_base">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_base</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_base" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_base">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_base" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the current baseline value. Uses the currently measured values, i.e. does not update measurements if the peak or base window cursors have changed.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -197,8 +196,8 @@ Example usage in Windows:</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_base_SD">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_base_SD</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_base_SD" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_base_SD">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_base_SD</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_base_SD" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the standard deviation of the baseline in the current (active) channel. Uses the currently measured values, i.e. does not update measurements if the baseline cursors have changed.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -207,8 +206,8 @@ Example usage in Windows:</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_baseline_method">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_baseline_method</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_baseline_method" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_baseline_method">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_baseline_method</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_baseline_method" title="Link to this definition">¶</a></dt>
 <dd><p>Gets the method used to compute the baseline.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -217,8 +216,8 @@ Example usage in Windows:</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_base_end">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_base_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">is_time</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_base_end" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_base_end">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_base_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_base_end" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the zero-based index or the time point of the base end cursor.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -227,8 +226,8 @@ Example usage in Windows:</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_base_start">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_base_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">is_time</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_base_start" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_base_start">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_base_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_base_start" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the zero-based index or the time point of the base start cursor.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -237,8 +236,8 @@ Example usage in Windows:</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_channel_index">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_channel_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">active</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_channel_index" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_channel_index">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_channel_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_channel_index" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the ZERO-BASED index of the specified channel.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -247,8 +246,8 @@ Example usage in Windows:</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_channel_name">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_channel_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">index</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_channel_name" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_channel_name">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_channel_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_channel_name" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the name of the channel with the specified index.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -259,14 +258,14 @@ Example usage in Windows:</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_filename">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_filename</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_filename" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_filename">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_filename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_filename" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the name of the current file.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_fit">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trace</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">channel</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_fit" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_fit">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_fit" title="Link to this definition">¶</a></dt>
 <dd><p>Get the waveform resulted from the fitting, if available.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -278,8 +277,8 @@ Example usage in Windows:</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_fit_end">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_fit_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">is_time</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_fit_end" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_fit_end">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_fit_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_fit_end" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the zero-based index or the time point of the fit end cursor.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -288,8 +287,8 @@ Example usage in Windows:</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_fit_start">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_fit_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">is_time</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_fit_start" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_fit_start">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_fit_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_fit_start" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the zero-based index or the time point of the fit start cursor.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -298,8 +297,8 @@ Example usage in Windows:</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_halfwidth">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_halfwidth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">active</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_halfwidth" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_halfwidth">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_halfwidth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_halfwidth" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the half-maximal amplitude of an event in the specified channel.Uses the currently measured values, i.e. does not update measurements if thepeak or base window cursors have changed. Only implemented for the active channel.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -310,51 +309,51 @@ Example usage in Windows:</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_latency">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_latency</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_latency" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_latency">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_latency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_latency" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the latency value (in x-units) determined by the latency cursors set in the cursors settings menu. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter to update the cursors.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_latency_end_mode">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_latency_end_mode</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_latency_end_mode" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_latency_end_mode">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_latency_end_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_latency_end_mode" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a string specifying the latency end mode. Can be one of “manual”, “peak”, “rise”, “foot” or “half”.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_latency_start_mode">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_latency_start_mode</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_latency_start_mode" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_latency_start_mode">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_latency_start_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_latency_start_mode" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a string specifying the latency start mode. Can be one of “manual”, “peak”, “rise”, or “half”.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_maxdecay">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_maxdecay</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_maxdecay" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_maxdecay">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_maxdecay</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_maxdecay" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the the maximal slope of the decay between the peak cursors. Returns -1.0 upon error. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter to update the value.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_maxrise">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_maxrise</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_maxrise" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_maxrise">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_maxrise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_maxrise" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the the maximal slope of the rise between the peak cursors. Returns -1.0 upon error. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter to update the value.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_risetime">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_risetime</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_risetime" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_risetime">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_risetime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_risetime" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the 20-80% rise time (in x-units) by calculation of the interpolated adjacent sampling points at 20% and 80% of the peak amplitude. Returns -1.0 upon failure. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter to update the value.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_risetime_factor">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_risetime_factor</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_risetime_factor" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_risetime_factor">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_risetime_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_risetime_factor" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the lower proportion factor used to calculate the rise time (e.g 0.2 if
 we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_slope">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_slope</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_slope" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_slope">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_slope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_slope" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the slope value using the cursors described in the cursors setting dialog.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -363,8 +362,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_peak">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_peak</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_peak" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_peak">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_peak</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_peak" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the current peak value, measured from zero (!). Uses the currently measured values, i.e. does not update measurements if the peak or base window cursors have changed.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -373,8 +372,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_peak_end">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_peak_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">is_time</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_peak_end" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_peak_end">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_peak_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_peak_end" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the zero-based index or the time point jof the peak end cursor.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -383,8 +382,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_peak_start">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_peak_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">is_time</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_peak_start" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_peak_start">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_peak_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_peak_start" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the zero-based index or the time point of the peak start cursor.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -393,38 +392,38 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_recording_comment">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_recording_comment</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_recording_comment" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_recording_comment">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_recording_comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_recording_comment" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a comment about the recording.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_recording_date">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_recording_date</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_recording_date" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_recording_date">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_recording_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_recording_date" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the date at which the recording was started as a string.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_recording_time">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_recording_time</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_recording_time" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_recording_time">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_recording_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_recording_time" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the time at which the recording was started as a string.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_sampling_interval">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_sampling_interval</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_sampling_interval" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_sampling_interval">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_sampling_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_sampling_interval" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the sampling interval.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_selected_indices">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_selected_indices</code><span class="sig-paren">(</span><em class="sig-param">...</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_selected_indices" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_selected_indices">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_selected_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">...</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_selected_indices" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a tuple with the indices (ZERO-BASED) of the selected traces.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_size_channel">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_size_channel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">channel</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_size_channel" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_size_channel">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_size_channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_size_channel" title="Link to this definition">¶</a></dt>
 <dd><p>Retrieves the number of traces in a channel.Note that at present, stimfit only supports equal-sized channels, i.e. all channels within a file need to have the same number of traces. The channel argument is only for future extensions.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -435,8 +434,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_size_recording">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_size_recording</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_size_recording" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_size_recording">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_size_recording</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_size_recording" title="Link to this definition">¶</a></dt>
 <dd><p>Retrieves the number of channels in a recording.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -445,8 +444,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_size_trace">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_size_trace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trace</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">channel</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_size_trace" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_size_trace">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_size_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_size_trace" title="Link to this definition">¶</a></dt>
 <dd><p>Retrieves the number of sample points of a trace.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -458,8 +457,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_trace">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_trace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trace</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">channel</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_trace" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_trace">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_trace" title="Link to this definition">¶</a></dt>
 <dd><p>Returns a trace as a 1-dimensional NumPy array.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -471,14 +470,14 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_trace_index">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_trace_index</code><span class="sig-paren">(</span><em class="sig-param">...</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_trace_index" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_trace_index">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_trace_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">...</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_trace_index" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the ZERO-BASED index of the currently displayed trace (this is one less than what is shown in the combo box).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_trace_name">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_trace_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trace</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">channel</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_trace_name" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_trace_name">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_trace_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_trace_name" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the name of the trace with the specified index.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -490,8 +489,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_threshold_time">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_threshold_time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">is_time</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_threshold_time" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_threshold_time">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_threshold_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_threshold_time" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the crossing value of the threshold slope. Note that this value is not update after changing the AP threshold. Call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter in the main window to update the cursors.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -502,8 +501,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_threshold_value">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_threshold_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_threshold_value" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_threshold_value">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_threshold_value</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_threshold_value" title="Link to this definition">¶</a></dt>
 <dd><p>Returns value found at the threshold slope. Note that this value is not update after changing the AP threshold. Calle <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter in the main window to update the cursors.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -512,8 +511,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_xunits">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_xunits</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trace</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">channel</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_xunits" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_xunits">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_xunits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_xunits" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the x units of the specified section. X units are not allowed to change between sections at present, and they are hard-coded to “ms”. This function is for future extension.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -525,8 +524,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_yunits">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_yunits</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trace</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">channel</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_yunits" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_yunits">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_yunits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_yunits" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the y units of the specified trace. Y units are not allowed to change between traces at present.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -538,8 +537,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.leastsq">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">leastsq</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fselect</span></em>, <em class="sig-param"><span class="n">refresh</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.leastsq" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.leastsq">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">leastsq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fselect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refresh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.leastsq" title="Link to this definition">¶</a></dt>
 <dd><p>Fits a function to the data between the current fit cursors.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -551,8 +550,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.leastsq_param_size">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">leastsq_param_size</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fselect</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.leastsq_param_size" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.leastsq_param_size">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">leastsq_param_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fselect</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.leastsq_param_size" title="Link to this definition">¶</a></dt>
 <dd><p>Retrieves the number of parameters for a function.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -563,8 +562,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.maxrise_index">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">maxrise_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">active</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.maxrise_index" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.maxrise_index">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">maxrise_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.maxrise_index" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the zero-based index of the maximal slope of rise in the specified channel. Uses the currently measured values, i.e. does not update measurements if the peak window cursors have changed.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -575,8 +574,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.maxdecay_index">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">maxdecay_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.maxdecay_index" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.maxdecay_index">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">maxdecay_index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.maxdecay_index" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the zero-based index of the maximal slope of decay in the current channel. Uses the currently measured values, i.e. does not update measurements if the peak window cursors have changed. Note that in contrast to <a class="reference internal" href="#stf.maxrise_index" title="stf.maxrise_index"><code class="xref py py-func docutils literal notranslate"><span class="pre">maxrise_index()</span></code></a>, this function only works on the active channel.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -585,8 +584,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.measure">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">measure</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.measure" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.measure">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">measure</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.measure" title="Link to this definition">¶</a></dt>
 <dd><p>Updates all measurements (e.g. peak, baseline, latency) according to the current cursor settings. As if you had pressed <strong>Enter</strong> in the main window.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -595,8 +594,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.new_window">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">new_window</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.new_window" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.new_window">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">new_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.new_window" title="Link to this definition">¶</a></dt>
 <dd><p>Creates a new window showing a 1D NumPy array.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -605,8 +604,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.new_window_list">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">new_window_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">array_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.new_window_list" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.new_window_list">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">new_window_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.new_window_list" title="Link to this definition">¶</a></dt>
 <dd><p>Creates a new window showing a sequence of 1D NumPy arrays, or a sequence of a sequence of 1D NumPy arrays. As opposed to <a class="reference internal" href="#stf.new_window_matrix" title="stf.new_window_matrix"><code class="xref py py-func docutils literal notranslate"><span class="pre">new_window_matrix()</span></code></a>, this has the advantage that the arrays need not have equal sizes.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -615,8 +614,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.new_window_matrix">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">new_window_matrix</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.new_window_matrix" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.new_window_matrix">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">new_window_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.new_window_matrix" title="Link to this definition">¶</a></dt>
 <dd><p>Creates a new window showing a 2D NumPy array.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -625,8 +624,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.new_window_selected_all">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">new_window_selected_all</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.new_window_selected_all" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.new_window_selected_all">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">new_window_selected_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.new_window_selected_all" title="Link to this definition">¶</a></dt>
 <dd><p>Creates a new window showing the selected traces of all open files.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -635,8 +634,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.new_window_selected_this">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">new_window_selected_this</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.new_window_selected_this" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.new_window_selected_this">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">new_window_selected_this</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.new_window_selected_this" title="Link to this definition">¶</a></dt>
 <dd><p>Creates a new window showing the selected traces of the current file.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -645,8 +644,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.peak_index">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">peak_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">active</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.peak_index" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.peak_index">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">peak_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.peak_index" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the zero-based index of the current peak position in the specified channel. Uses the currently measured values, i.e. does not update measurements if the peak window cursors have changed.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -657,14 +656,14 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.select_all">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">select_all</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.select_all" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.select_all">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">select_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.select_all" title="Link to this definition">¶</a></dt>
 <dd><p>Selects all traces in the current file. Stores the baseline along with the trace index.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.select_trace">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">select_trace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trace</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.select_trace" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.select_trace">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">select_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.select_trace" title="Link to this definition">¶</a></dt>
 <dd><p>Selects a trace. Checks for out-of-range indices and stores the baseline along with the trace index.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -675,8 +674,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_baseline_method">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_baseline_method</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">method</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_baseline_method" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_baseline_method">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_baseline_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_baseline_method" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the method to compute the baseline.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -687,8 +686,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_base_end">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_base_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">is_time</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_base_end" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_base_end">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_base_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_base_end" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the base end cursor to a new position.This will NOT update the baseline calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -700,8 +699,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_base_start">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_base_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">is_time</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_base_start" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_base_start">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_base_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_base_start" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the base start cursor to a new position.This will NOT update the baseline calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -713,8 +712,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_channel">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_channel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">channel</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_channel" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_channel">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_channel" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the currently displayed channel to a new index. Subsequently updatges all measurements (e.g. peak, base, latency, i.e. you do not have to call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> yourself.)</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -725,8 +724,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_channel_name">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_channel_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">index</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_channel_name" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_channel_name">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_channel_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_channel_name" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the name of the channel with the specified index.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -738,8 +737,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_latency_end">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_latency_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">is_time</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_latency_end" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_latency_end">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_latency_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_latency_end" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the second latency cursor to a new position and the mode of the cursor to Manual.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -751,8 +750,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_latency_end_mode">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_latency_end_mode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mode</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_latency_end_mode" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_latency_end_mode">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_latency_end_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_latency_end_mode" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the mode of the latency end cursor</p>
 <p><strong>Arguments:</strong></p>
 <p><em>mode</em> – A string specifying the mode for the latency start cursor. Can be one of “manual”, “peak”, “rise”, “foot” or “half”.</p>
@@ -761,8 +760,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_latency_start">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_latency_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">is_time</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_latency_start" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_latency_start">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_latency_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_latency_start" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the first latency cursor to a new position and the mode of the cursor to Manual.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -774,8 +773,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_latency_start_mode">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_latency_start_mode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mode</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_latency_start_mode" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_latency_start_mode">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_latency_start_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_latency_start_mode" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the mode of the latency start cursor</p>
 <p><strong>Arguments:</strong></p>
 <p><em>mode</em> – A string specifying the mode for the latency start cursor. Can be one of “manual”, “peak”, “rise” or “half”.</p>
@@ -784,8 +783,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_fit_end">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_fit_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">is_time</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_fit_end" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_fit_end">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_fit_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_fit_end" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the fit end cursor to a new position.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -797,8 +796,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_fit_start">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_fit_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">is_time</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_fit_start" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_fit_start">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_fit_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_fit_start" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the fit start cursor to a new position.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -810,8 +809,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_marker">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_marker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_marker" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_marker">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_marker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_marker" title="Link to this definition">¶</a></dt>
 <dd><p>Sets a marker to the specified position in the current trace.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -823,8 +822,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_peak_direction">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_peak_direction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">direction</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_peak_direction" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_peak_direction">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_peak_direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_peak_direction" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the direction of the peak detection.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -835,8 +834,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_peak_end">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_peak_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">is_time</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_peak_end" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_peak_end">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_peak_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_peak_end" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the peak end cursor to a new position. This will NOT update the peak calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -848,8 +847,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_peak_mean">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_peak_mean</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pts</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_peak_mean" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_peak_mean">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_peak_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pts</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_peak_mean" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the number of points used for the peak calculation.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -860,8 +859,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_peak_direction">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_peak_direction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_peak_direction" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_peak_direction">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_peak_direction</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_peak_direction" title="Link to this definition">¶</a></dt>
 <dd><p>Gets the direction of the peak detection.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -870,8 +869,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.get_peak_mean">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">get_peak_mean</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_peak_mean" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.get_peak_mean">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">get_peak_mean</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stf.get_peak_mean" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the number of sampling points used for peak calculation.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -880,8 +879,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_peak_start">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_peak_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span></em>, <em class="sig-param"><span class="n">is_time</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_peak_start" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_peak_start">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_peak_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_peak_start" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the peak start cursor to a new position. This will NOT update the peak calculation. You have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter in the main window to achieve that.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -893,8 +892,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_recording_comment">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_recording_comment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">comment</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_recording_comment" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_recording_comment">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_recording_comment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">comment</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_recording_comment" title="Link to this definition">¶</a></dt>
 <dd><p>Sets a comment about the recording.</p>
 <blockquote>
 <div><p><strong>Argument:</strong></p>
@@ -905,8 +904,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_recording_date">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_recording_date</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_recording_date" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_recording_date">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_recording_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_recording_date" title="Link to this definition">¶</a></dt>
 <dd><p>Sets a date about the recording.</p>
 <blockquote>
 <div><p><strong>Argument:</strong></p>
@@ -917,8 +916,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_recording_time">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_recording_time</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_recording_time" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_recording_time">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_recording_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_recording_time" title="Link to this definition">¶</a></dt>
 <dd><p>Sets a time about the recording.</p>
 <blockquote>
 <div><p><strong>Argument:</strong></p>
@@ -929,8 +928,8 @@ we calculate the 20–80% rise time).</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_risetime_factor">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_risetime_factor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factor</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_risetime_factor" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_risetime_factor">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_risetime_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_risetime_factor" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the lower proportion factor to calculate the rise time (e.g 0.2 if
 we want to calculate the 20–80% rise time). It will update the risetime
 measurement.</p>
@@ -943,8 +942,8 @@ measurement.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_sampling_interval">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_sampling_interval</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">si</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_sampling_interval" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_sampling_interval">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_sampling_interval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">si</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_sampling_interval" title="Link to this definition">¶</a></dt>
 <dd><p>Sets a new sampling interval.</p>
 <blockquote>
 <div><p><strong>Argument:</strong></p>
@@ -955,8 +954,8 @@ measurement.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_slope">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_slope</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">slope</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_slope" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_slope">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_slope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slope</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_slope" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the AP threshold to the value given by the slope and takes it as reference for AP kinetic measurements. Note that you have to either call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> or hit enter to update calculations.</p>
 <blockquote>
 <div><p><strong>Argument:</strong></p>
@@ -967,8 +966,8 @@ measurement.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_trace">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_trace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trace</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_trace" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_trace">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_trace" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the currently displayed trace to a new index. Subsequently updates all measurements (e.g. peak, base, latency, i.e. you don’t need to call <a class="reference internal" href="#stf.measure" title="stf.measure"><code class="xref py py-func docutils literal notranslate"><span class="pre">measure()</span></code></a> yourself.)</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -979,8 +978,8 @@ measurement.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_xunits">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_xunits</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">units</span></em>, <em class="sig-param"><span class="n">trace</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">channel</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_xunits" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_xunits">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_xunits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">units</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_xunits" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the x unit string of the specified section. X units are not allowed to change between sections at present, and they are hard-coded to “ms”. This function is for future extension.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -993,8 +992,8 @@ measurement.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.set_yunits">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">set_yunits</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">units</span></em>, <em class="sig-param"><span class="n">trace</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">channel</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_yunits" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.set_yunits">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">set_yunits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">units</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.set_yunits" title="Link to this definition">¶</a></dt>
 <dd><p>Sets the y unit string of the specified trace. Y units are not allowed to change between traces at present.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -1007,8 +1006,8 @@ measurement.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.show_table">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">show_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dict</span></em>, <em class="sig-param"><span class="n">caption</span><span class="o">=</span><span class="default_value">'Python table'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.show_table" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.show_table">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">show_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Python</span> <span class="pre">table'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.show_table" title="Link to this definition">¶</a></dt>
 <dd><p>Shows a python dictionary in a results table. The dictionary has to have the form “string”.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -1020,8 +1019,8 @@ measurement.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.show_table_dictlist">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">show_table_dictlist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dict</span></em>, <em class="sig-param"><span class="n">caption</span><span class="o">=</span><span class="default_value">'Python table'</span></em>, <em class="sig-param"><span class="n">reverse</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.show_table_dictlist" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.show_table_dictlist">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">show_table_dictlist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Python</span> <span class="pre">table'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.show_table_dictlist" title="Link to this definition">¶</a></dt>
 <dd><p>Shows a python dictionary in a results table. The dictionary has to have the form “string” : list.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -1034,8 +1033,8 @@ measurement.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.subtract_base">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">subtract_base</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.subtract_base" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.subtract_base">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">subtract_base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.subtract_base" title="Link to this definition">¶</a></dt>
 <dd><p>Subtracts the baseline from the selected traces of the current file, then displays the subtracted traces in a new window.</p>
 <blockquote>
 <div><p><strong>Returns:</strong></p>
@@ -1044,8 +1043,8 @@ measurement.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.t50left_index">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">t50left_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">active</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.t50left_index" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.t50left_index">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">t50left_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.t50left_index" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the zero-based index of the left half-maximal amplitude of an event in the specified channel. Uses the currently measured values, i.e. does not update measurements if the peak or base window cursors have changed.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -1056,8 +1055,8 @@ measurement.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.t50right_index">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">t50right_index</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">active</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.t50right_index" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.t50right_index">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">t50right_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">active</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.t50right_index" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the zero-based index of the right half-maximal amplitude of an event in the active channel. Uses the currently measured values, i.e. does not update measurements if the peak or base window cursors have changed.</p>
 <blockquote>
 <div><p><strong>Arguments:</strong></p>
@@ -1068,71 +1067,285 @@ measurement.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="stf.unselect_all">
-<code class="sig-prename descclassname">stf.</code><code class="sig-name descname">unselect_all</code><span class="sig-paren">(</span><em class="sig-param">\*args</em><span class="sig-paren">)</span><a class="headerlink" href="#stf.unselect_all" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="stf.unselect_all">
+<span class="sig-prename descclassname"><span class="pre">stf.</span></span><span class="sig-name descname"><span class="pre">unselect_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">\*args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#stf.unselect_all" title="Link to this definition">¶</a></dt>
 <dd><p>Unselects all previously selected traces in the current file.</p>
 </dd></dl>
 
-</div>
+</section>
 
 
             <div class="clearer"></div>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../contents.html">
-              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo of Stimfit"/>
             </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="../howto/ascii.html"
-                        title="previous chapter">Loading custom text files</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="../references/index.html"
-                        title="next chapter">References</a></p>
-<div id="searchbox" style="display: none" role="search">
+  <div>
+    <h3><a href="../contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stf</span></code></a><ul>
+<li><a class="reference internal" href="#stf.align_selected"><code class="docutils literal notranslate"><span class="pre">align_selected()</span></code></a></li>
+<li><a class="reference internal" href="#stf.check_doc"><code class="docutils literal notranslate"><span class="pre">check_doc()</span></code></a></li>
+<li><a class="reference internal" href="#stf.close_all"><code class="docutils literal notranslate"><span class="pre">close_all()</span></code></a></li>
+<li><a class="reference internal" href="#stf.close_this"><code class="docutils literal notranslate"><span class="pre">close_this()</span></code></a></li>
+<li><a class="reference internal" href="#stf.cut_traces"><code class="docutils literal notranslate"><span class="pre">cut_traces()</span></code></a></li>
+<li><a class="reference internal" href="#stf.cut_traces_multi"><code class="docutils literal notranslate"><span class="pre">cut_traces_multi()</span></code></a></li>
+<li><a class="reference internal" href="#stf.erase_markers"><code class="docutils literal notranslate"><span class="pre">erase_markers()</span></code></a></li>
+<li><a class="reference internal" href="#stf.file_open"><code class="docutils literal notranslate"><span class="pre">file_open()</span></code></a></li>
+<li><a class="reference internal" href="#stf.file_save"><code class="docutils literal notranslate"><span class="pre">file_save()</span></code></a></li>
+<li><a class="reference internal" href="#stf.foot_index"><code class="docutils literal notranslate"><span class="pre">foot_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_base"><code class="docutils literal notranslate"><span class="pre">get_base()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_base_SD"><code class="docutils literal notranslate"><span class="pre">get_base_SD()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_baseline_method"><code class="docutils literal notranslate"><span class="pre">get_baseline_method()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_base_end"><code class="docutils literal notranslate"><span class="pre">get_base_end()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_base_start"><code class="docutils literal notranslate"><span class="pre">get_base_start()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_channel_index"><code class="docutils literal notranslate"><span class="pre">get_channel_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_channel_name"><code class="docutils literal notranslate"><span class="pre">get_channel_name()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_filename"><code class="docutils literal notranslate"><span class="pre">get_filename()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_fit"><code class="docutils literal notranslate"><span class="pre">get_fit()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_fit_end"><code class="docutils literal notranslate"><span class="pre">get_fit_end()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_fit_start"><code class="docutils literal notranslate"><span class="pre">get_fit_start()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_halfwidth"><code class="docutils literal notranslate"><span class="pre">get_halfwidth()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_latency"><code class="docutils literal notranslate"><span class="pre">get_latency()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_latency_end_mode"><code class="docutils literal notranslate"><span class="pre">get_latency_end_mode()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_latency_start_mode"><code class="docutils literal notranslate"><span class="pre">get_latency_start_mode()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_maxdecay"><code class="docutils literal notranslate"><span class="pre">get_maxdecay()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_maxrise"><code class="docutils literal notranslate"><span class="pre">get_maxrise()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_risetime"><code class="docutils literal notranslate"><span class="pre">get_risetime()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_risetime_factor"><code class="docutils literal notranslate"><span class="pre">get_risetime_factor()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_slope"><code class="docutils literal notranslate"><span class="pre">get_slope()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_peak"><code class="docutils literal notranslate"><span class="pre">get_peak()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_peak_end"><code class="docutils literal notranslate"><span class="pre">get_peak_end()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_peak_start"><code class="docutils literal notranslate"><span class="pre">get_peak_start()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_recording_comment"><code class="docutils literal notranslate"><span class="pre">get_recording_comment()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_recording_date"><code class="docutils literal notranslate"><span class="pre">get_recording_date()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_recording_time"><code class="docutils literal notranslate"><span class="pre">get_recording_time()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_sampling_interval"><code class="docutils literal notranslate"><span class="pre">get_sampling_interval()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_selected_indices"><code class="docutils literal notranslate"><span class="pre">get_selected_indices()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_size_channel"><code class="docutils literal notranslate"><span class="pre">get_size_channel()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_size_recording"><code class="docutils literal notranslate"><span class="pre">get_size_recording()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_size_trace"><code class="docutils literal notranslate"><span class="pre">get_size_trace()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_trace"><code class="docutils literal notranslate"><span class="pre">get_trace()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_trace_index"><code class="docutils literal notranslate"><span class="pre">get_trace_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_trace_name"><code class="docutils literal notranslate"><span class="pre">get_trace_name()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_threshold_time"><code class="docutils literal notranslate"><span class="pre">get_threshold_time()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_threshold_value"><code class="docutils literal notranslate"><span class="pre">get_threshold_value()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_xunits"><code class="docutils literal notranslate"><span class="pre">get_xunits()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_yunits"><code class="docutils literal notranslate"><span class="pre">get_yunits()</span></code></a></li>
+<li><a class="reference internal" href="#stf.leastsq"><code class="docutils literal notranslate"><span class="pre">leastsq()</span></code></a></li>
+<li><a class="reference internal" href="#stf.leastsq_param_size"><code class="docutils literal notranslate"><span class="pre">leastsq_param_size()</span></code></a></li>
+<li><a class="reference internal" href="#stf.maxrise_index"><code class="docutils literal notranslate"><span class="pre">maxrise_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.maxdecay_index"><code class="docutils literal notranslate"><span class="pre">maxdecay_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.measure"><code class="docutils literal notranslate"><span class="pre">measure()</span></code></a></li>
+<li><a class="reference internal" href="#stf.new_window"><code class="docutils literal notranslate"><span class="pre">new_window()</span></code></a></li>
+<li><a class="reference internal" href="#stf.new_window_list"><code class="docutils literal notranslate"><span class="pre">new_window_list()</span></code></a></li>
+<li><a class="reference internal" href="#stf.new_window_matrix"><code class="docutils literal notranslate"><span class="pre">new_window_matrix()</span></code></a></li>
+<li><a class="reference internal" href="#stf.new_window_selected_all"><code class="docutils literal notranslate"><span class="pre">new_window_selected_all()</span></code></a></li>
+<li><a class="reference internal" href="#stf.new_window_selected_this"><code class="docutils literal notranslate"><span class="pre">new_window_selected_this()</span></code></a></li>
+<li><a class="reference internal" href="#stf.peak_index"><code class="docutils literal notranslate"><span class="pre">peak_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.select_all"><code class="docutils literal notranslate"><span class="pre">select_all()</span></code></a></li>
+<li><a class="reference internal" href="#stf.select_trace"><code class="docutils literal notranslate"><span class="pre">select_trace()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_baseline_method"><code class="docutils literal notranslate"><span class="pre">set_baseline_method()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_base_end"><code class="docutils literal notranslate"><span class="pre">set_base_end()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_base_start"><code class="docutils literal notranslate"><span class="pre">set_base_start()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_channel"><code class="docutils literal notranslate"><span class="pre">set_channel()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_channel_name"><code class="docutils literal notranslate"><span class="pre">set_channel_name()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_latency_end"><code class="docutils literal notranslate"><span class="pre">set_latency_end()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_latency_end_mode"><code class="docutils literal notranslate"><span class="pre">set_latency_end_mode()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_latency_start"><code class="docutils literal notranslate"><span class="pre">set_latency_start()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_latency_start_mode"><code class="docutils literal notranslate"><span class="pre">set_latency_start_mode()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_fit_end"><code class="docutils literal notranslate"><span class="pre">set_fit_end()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_fit_start"><code class="docutils literal notranslate"><span class="pre">set_fit_start()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_marker"><code class="docutils literal notranslate"><span class="pre">set_marker()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_peak_direction"><code class="docutils literal notranslate"><span class="pre">set_peak_direction()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_peak_end"><code class="docutils literal notranslate"><span class="pre">set_peak_end()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_peak_mean"><code class="docutils literal notranslate"><span class="pre">set_peak_mean()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_peak_direction"><code class="docutils literal notranslate"><span class="pre">get_peak_direction()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_peak_mean"><code class="docutils literal notranslate"><span class="pre">get_peak_mean()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_peak_start"><code class="docutils literal notranslate"><span class="pre">set_peak_start()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_recording_comment"><code class="docutils literal notranslate"><span class="pre">set_recording_comment()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_recording_date"><code class="docutils literal notranslate"><span class="pre">set_recording_date()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_recording_time"><code class="docutils literal notranslate"><span class="pre">set_recording_time()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_risetime_factor"><code class="docutils literal notranslate"><span class="pre">set_risetime_factor()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_sampling_interval"><code class="docutils literal notranslate"><span class="pre">set_sampling_interval()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_slope"><code class="docutils literal notranslate"><span class="pre">set_slope()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_trace"><code class="docutils literal notranslate"><span class="pre">set_trace()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_xunits"><code class="docutils literal notranslate"><span class="pre">set_xunits()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_yunits"><code class="docutils literal notranslate"><span class="pre">set_yunits()</span></code></a></li>
+<li><a class="reference internal" href="#stf.show_table"><code class="docutils literal notranslate"><span class="pre">show_table()</span></code></a></li>
+<li><a class="reference internal" href="#stf.show_table_dictlist"><code class="docutils literal notranslate"><span class="pre">show_table_dictlist()</span></code></a></li>
+<li><a class="reference internal" href="#stf.subtract_base"><code class="docutils literal notranslate"><span class="pre">subtract_base()</span></code></a></li>
+<li><a class="reference internal" href="#stf.t50left_index"><code class="docutils literal notranslate"><span class="pre">t50left_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.t50right_index"><code class="docutils literal notranslate"><span class="pre">t50right_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.unselect_all"><code class="docutils literal notranslate"><span class="pre">unselect_all()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../howto/ascii.html"
+                          title="previous chapter">Loading custom text files</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../references/index.html"
+                          title="next chapter">References</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../contents.html">
-              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo of Stimfit"/>
             </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="../howto/ascii.html"
-                        title="previous chapter">Loading custom text files</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="../references/index.html"
-                        title="next chapter">References</a></p>
-<div id="searchbox" style="display: none" role="search">
+  <div>
+    <h3><a href="../contents.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">stf</span></code></a><ul>
+<li><a class="reference internal" href="#stf.align_selected"><code class="docutils literal notranslate"><span class="pre">align_selected()</span></code></a></li>
+<li><a class="reference internal" href="#stf.check_doc"><code class="docutils literal notranslate"><span class="pre">check_doc()</span></code></a></li>
+<li><a class="reference internal" href="#stf.close_all"><code class="docutils literal notranslate"><span class="pre">close_all()</span></code></a></li>
+<li><a class="reference internal" href="#stf.close_this"><code class="docutils literal notranslate"><span class="pre">close_this()</span></code></a></li>
+<li><a class="reference internal" href="#stf.cut_traces"><code class="docutils literal notranslate"><span class="pre">cut_traces()</span></code></a></li>
+<li><a class="reference internal" href="#stf.cut_traces_multi"><code class="docutils literal notranslate"><span class="pre">cut_traces_multi()</span></code></a></li>
+<li><a class="reference internal" href="#stf.erase_markers"><code class="docutils literal notranslate"><span class="pre">erase_markers()</span></code></a></li>
+<li><a class="reference internal" href="#stf.file_open"><code class="docutils literal notranslate"><span class="pre">file_open()</span></code></a></li>
+<li><a class="reference internal" href="#stf.file_save"><code class="docutils literal notranslate"><span class="pre">file_save()</span></code></a></li>
+<li><a class="reference internal" href="#stf.foot_index"><code class="docutils literal notranslate"><span class="pre">foot_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_base"><code class="docutils literal notranslate"><span class="pre">get_base()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_base_SD"><code class="docutils literal notranslate"><span class="pre">get_base_SD()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_baseline_method"><code class="docutils literal notranslate"><span class="pre">get_baseline_method()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_base_end"><code class="docutils literal notranslate"><span class="pre">get_base_end()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_base_start"><code class="docutils literal notranslate"><span class="pre">get_base_start()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_channel_index"><code class="docutils literal notranslate"><span class="pre">get_channel_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_channel_name"><code class="docutils literal notranslate"><span class="pre">get_channel_name()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_filename"><code class="docutils literal notranslate"><span class="pre">get_filename()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_fit"><code class="docutils literal notranslate"><span class="pre">get_fit()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_fit_end"><code class="docutils literal notranslate"><span class="pre">get_fit_end()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_fit_start"><code class="docutils literal notranslate"><span class="pre">get_fit_start()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_halfwidth"><code class="docutils literal notranslate"><span class="pre">get_halfwidth()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_latency"><code class="docutils literal notranslate"><span class="pre">get_latency()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_latency_end_mode"><code class="docutils literal notranslate"><span class="pre">get_latency_end_mode()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_latency_start_mode"><code class="docutils literal notranslate"><span class="pre">get_latency_start_mode()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_maxdecay"><code class="docutils literal notranslate"><span class="pre">get_maxdecay()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_maxrise"><code class="docutils literal notranslate"><span class="pre">get_maxrise()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_risetime"><code class="docutils literal notranslate"><span class="pre">get_risetime()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_risetime_factor"><code class="docutils literal notranslate"><span class="pre">get_risetime_factor()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_slope"><code class="docutils literal notranslate"><span class="pre">get_slope()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_peak"><code class="docutils literal notranslate"><span class="pre">get_peak()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_peak_end"><code class="docutils literal notranslate"><span class="pre">get_peak_end()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_peak_start"><code class="docutils literal notranslate"><span class="pre">get_peak_start()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_recording_comment"><code class="docutils literal notranslate"><span class="pre">get_recording_comment()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_recording_date"><code class="docutils literal notranslate"><span class="pre">get_recording_date()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_recording_time"><code class="docutils literal notranslate"><span class="pre">get_recording_time()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_sampling_interval"><code class="docutils literal notranslate"><span class="pre">get_sampling_interval()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_selected_indices"><code class="docutils literal notranslate"><span class="pre">get_selected_indices()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_size_channel"><code class="docutils literal notranslate"><span class="pre">get_size_channel()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_size_recording"><code class="docutils literal notranslate"><span class="pre">get_size_recording()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_size_trace"><code class="docutils literal notranslate"><span class="pre">get_size_trace()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_trace"><code class="docutils literal notranslate"><span class="pre">get_trace()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_trace_index"><code class="docutils literal notranslate"><span class="pre">get_trace_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_trace_name"><code class="docutils literal notranslate"><span class="pre">get_trace_name()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_threshold_time"><code class="docutils literal notranslate"><span class="pre">get_threshold_time()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_threshold_value"><code class="docutils literal notranslate"><span class="pre">get_threshold_value()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_xunits"><code class="docutils literal notranslate"><span class="pre">get_xunits()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_yunits"><code class="docutils literal notranslate"><span class="pre">get_yunits()</span></code></a></li>
+<li><a class="reference internal" href="#stf.leastsq"><code class="docutils literal notranslate"><span class="pre">leastsq()</span></code></a></li>
+<li><a class="reference internal" href="#stf.leastsq_param_size"><code class="docutils literal notranslate"><span class="pre">leastsq_param_size()</span></code></a></li>
+<li><a class="reference internal" href="#stf.maxrise_index"><code class="docutils literal notranslate"><span class="pre">maxrise_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.maxdecay_index"><code class="docutils literal notranslate"><span class="pre">maxdecay_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.measure"><code class="docutils literal notranslate"><span class="pre">measure()</span></code></a></li>
+<li><a class="reference internal" href="#stf.new_window"><code class="docutils literal notranslate"><span class="pre">new_window()</span></code></a></li>
+<li><a class="reference internal" href="#stf.new_window_list"><code class="docutils literal notranslate"><span class="pre">new_window_list()</span></code></a></li>
+<li><a class="reference internal" href="#stf.new_window_matrix"><code class="docutils literal notranslate"><span class="pre">new_window_matrix()</span></code></a></li>
+<li><a class="reference internal" href="#stf.new_window_selected_all"><code class="docutils literal notranslate"><span class="pre">new_window_selected_all()</span></code></a></li>
+<li><a class="reference internal" href="#stf.new_window_selected_this"><code class="docutils literal notranslate"><span class="pre">new_window_selected_this()</span></code></a></li>
+<li><a class="reference internal" href="#stf.peak_index"><code class="docutils literal notranslate"><span class="pre">peak_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.select_all"><code class="docutils literal notranslate"><span class="pre">select_all()</span></code></a></li>
+<li><a class="reference internal" href="#stf.select_trace"><code class="docutils literal notranslate"><span class="pre">select_trace()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_baseline_method"><code class="docutils literal notranslate"><span class="pre">set_baseline_method()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_base_end"><code class="docutils literal notranslate"><span class="pre">set_base_end()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_base_start"><code class="docutils literal notranslate"><span class="pre">set_base_start()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_channel"><code class="docutils literal notranslate"><span class="pre">set_channel()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_channel_name"><code class="docutils literal notranslate"><span class="pre">set_channel_name()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_latency_end"><code class="docutils literal notranslate"><span class="pre">set_latency_end()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_latency_end_mode"><code class="docutils literal notranslate"><span class="pre">set_latency_end_mode()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_latency_start"><code class="docutils literal notranslate"><span class="pre">set_latency_start()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_latency_start_mode"><code class="docutils literal notranslate"><span class="pre">set_latency_start_mode()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_fit_end"><code class="docutils literal notranslate"><span class="pre">set_fit_end()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_fit_start"><code class="docutils literal notranslate"><span class="pre">set_fit_start()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_marker"><code class="docutils literal notranslate"><span class="pre">set_marker()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_peak_direction"><code class="docutils literal notranslate"><span class="pre">set_peak_direction()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_peak_end"><code class="docutils literal notranslate"><span class="pre">set_peak_end()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_peak_mean"><code class="docutils literal notranslate"><span class="pre">set_peak_mean()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_peak_direction"><code class="docutils literal notranslate"><span class="pre">get_peak_direction()</span></code></a></li>
+<li><a class="reference internal" href="#stf.get_peak_mean"><code class="docutils literal notranslate"><span class="pre">get_peak_mean()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_peak_start"><code class="docutils literal notranslate"><span class="pre">set_peak_start()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_recording_comment"><code class="docutils literal notranslate"><span class="pre">set_recording_comment()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_recording_date"><code class="docutils literal notranslate"><span class="pre">set_recording_date()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_recording_time"><code class="docutils literal notranslate"><span class="pre">set_recording_time()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_risetime_factor"><code class="docutils literal notranslate"><span class="pre">set_risetime_factor()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_sampling_interval"><code class="docutils literal notranslate"><span class="pre">set_sampling_interval()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_slope"><code class="docutils literal notranslate"><span class="pre">set_slope()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_trace"><code class="docutils literal notranslate"><span class="pre">set_trace()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_xunits"><code class="docutils literal notranslate"><span class="pre">set_xunits()</span></code></a></li>
+<li><a class="reference internal" href="#stf.set_yunits"><code class="docutils literal notranslate"><span class="pre">set_yunits()</span></code></a></li>
+<li><a class="reference internal" href="#stf.show_table"><code class="docutils literal notranslate"><span class="pre">show_table()</span></code></a></li>
+<li><a class="reference internal" href="#stf.show_table_dictlist"><code class="docutils literal notranslate"><span class="pre">show_table_dictlist()</span></code></a></li>
+<li><a class="reference internal" href="#stf.subtract_base"><code class="docutils literal notranslate"><span class="pre">subtract_base()</span></code></a></li>
+<li><a class="reference internal" href="#stf.t50left_index"><code class="docutils literal notranslate"><span class="pre">t50left_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.t50right_index"><code class="docutils literal notranslate"><span class="pre">t50right_index()</span></code></a></li>
+<li><a class="reference internal" href="#stf.unselect_all"><code class="docutils literal notranslate"><span class="pre">unselect_all()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../howto/ascii.html"
+                          title="previous chapter">Loading custom text files</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../references/index.html"
+                          title="next chapter">References</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Christoph Schmidt-Hieber.
-      Last updated on 19 August, 2021.
+    &#169; Copyright 2026, Stimfit contributors.
+      Last updated on 19 March, 2026.
     </div>
   </body>
 </html>

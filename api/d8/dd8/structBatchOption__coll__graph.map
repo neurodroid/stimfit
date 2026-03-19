@@ -1,0 +1,5 @@
+<map id="BatchOption" name="BatchOption">
+<area shape="rect" id="Node000001" title="small struct representing a batch dialog option" alt="" coords="5,93,108,119"/>
+<area shape="rect" id="Node000002" href="$d5/d66/classwxString.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxstring.html (wxWidgets documentation)" alt="" coords="17,5,96,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="59,45,59,93,54,93,54,45"/>
+</map>

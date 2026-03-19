@@ -1,0 +1,27 @@
+<map id="src/stimfit/gui/zoom.h" name="src/stimfit/gui/zoom.h">
+<area shape="rect" id="Node000001" title="Declares the Zoom struct." alt="" coords="726,5,889,31"/>
+<area shape="rect" id="Node000002" href="$d6/df3/graph_8h.html" title="Declares wxStfGraph." alt="" coords="643,79,807,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="785,42,740,80,736,76,782,38"/>
+<area shape="rect" id="Node000003" href="$dc/da2/stf_8h.html" title=" " alt="" coords="831,79,949,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="833,38,878,76,875,80,829,42"/>
+<area shape="rect" id="Node000004" href="$d2/d39/app_8h.html" title="Declares wxStfApp." alt="" coords="5,159,156,185"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="817,107,634,122,490,128,349,135,169,155,129,162,128,157,168,149,348,129,490,122,633,117,817,101"/>
+<area shape="rect" id="Node000005" href="$dc/d44/childframe_8h.html" title="Declares wxStfChildFrame." alt="" coords="181,159,378,185"/>
+<area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="817,107,602,130,390,155,343,162,343,157,390,149,601,125,817,101"/>
+<area shape="rect" id="Node000006" href="$d1/d0c/convertdlg_8h.html" title="Batch conversion of files." alt="" coords="403,152,545,192"/>
+<area shape="poly" id="edge5_Node000003_Node000006" title=" " alt="" coords="817,107,557,155,546,157,545,152,556,149,816,102"/>
+<area shape="rect" id="Node000007" href="$d1/d4b/cursorsdlg_8h.html" title="Declares wxStfCursorsDlg." alt="" coords="569,152,712,192"/>
+<area shape="poly" id="edge6_Node000003_Node000007" title=" " alt="" coords="842,111,701,154,700,149,840,106"/>
+<area shape="rect" id="Node000008" href="$d5/d2b/fitseldlg_8h.html" title="Declares wxStfFitSelDlg." alt="" coords="736,152,879,192"/>
+<area shape="poly" id="edge7_Node000003_Node000008" title=" " alt="" coords="870,115,829,154,825,150,866,111"/>
+<area shape="rect" id="Node000009" href="$dd/de9/smalldlgs_8h.html" title="Declares several small dialogs." alt="" coords="903,152,1045,192"/>
+<area shape="poly" id="edge8_Node000003_Node000009" title=" " alt="" coords="914,111,956,150,952,154,910,115"/>
+<area shape="rect" id="Node000010" href="$d0/d42/doc_8h.html" title="Declares wxStfDoc." alt="" coords="1069,159,1220,185"/>
+<area shape="poly" id="edge9_Node000003_Node000010" title=" " alt="" coords="941,105,1108,157,1107,162,939,111"/>
+<area shape="rect" id="Node000011" href="$d9/d36/parentframe_8h.html" title="Declares wxStfParentFrame." alt="" coords="1245,159,1453,185"/>
+<area shape="poly" id="edge10_Node000003_Node000011" title=" " alt="" coords="964,102,1282,157,1281,162,963,108"/>
+<area shape="rect" id="Node000012" href="$dd/d98/table_8h.html" title="Declares wxStfTable. Derived from wxGridTableBase." alt="" coords="1477,159,1637,185"/>
+<area shape="poly" id="edge11_Node000003_Node000012" title=" " alt="" coords="963,95,1188,115,1465,149,1506,157,1505,162,1464,155,1187,120,963,101"/>
+<area shape="rect" id="Node000013" href="$d7/d26/usrdlg_8h.html" title="Declares wxStfUsrDlg." alt="" coords="1661,152,1815,192"/>
+<area shape="poly" id="edge12_Node000003_Node000013" title=" " alt="" coords="963,93,1263,110,1455,126,1649,149,1661,151,1660,157,1648,155,1455,131,1263,115,963,98"/>
+</map>

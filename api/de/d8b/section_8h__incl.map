@@ -1,0 +1,27 @@
+<map id="src/libstfio/section.h" name="src/libstfio/section.h">
+<area shape="rect" id="Node000001" title="Declares the Section class." alt="" coords="219,5,371,31"/>
+<area shape="rect" id="Node000002" href="$d5/dc4/core_8h.html" title="Lightweight core definitions shared by libstfio model classes." alt="" coords="307,152,377,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="302,30,319,78,338,138,332,139,314,80,297,32"/>
+<area shape="rect" id="Node000012" href="$df/dc5/annotation_8h.html" title=" " alt="" coords="193,79,305,104"/>
+<area shape="poly" id="edge11_Node000001_Node000012" title=" " alt="" coords="290,32,266,69,262,66,285,30"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="100,225,163,251"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="309,180,176,224,175,219,307,175"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="187,225,246,251"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="323,180,250,221,248,216,321,175"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="5,225,76,251"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="307,177,90,227,89,222,306,172"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="271,225,333,251"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="338,179,318,215,313,212,333,176"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="358,225,409,251"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="351,176,372,212,367,215,347,179"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="433,225,520,251"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="365,175,444,216,441,221,362,180"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="545,225,603,251"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="379,174,532,221,531,226,377,179"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="628,225,691,251"/>
+<area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="378,171,615,223,614,228,377,176"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="715,225,857,251"/>
+<area shape="poly" id="edge10_Node000002_Node000011" title=" " alt="" coords="378,169,702,221,701,226,377,174"/>
+<area shape="poly" id="edge13_Node000012_Node000002" title=" " alt="" coords="265,102,318,141,314,146,262,106"/>
+<area shape="poly" id="edge12_Node000012_Node000005" title=" " alt="" coords="234,106,70,219,67,215,230,102"/>
+</map>

@@ -1,0 +1,13 @@
+<map id="src/libstfio/axg/longdef.h" name="src/libstfio/axg/longdef.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="104,5,285,31"/>
+<area shape="rect" id="Node000002" href="$de/d99/AxoGraph__ReadWrite_8h.html" title=" " alt="" coords="35,225,219,265"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="92,34,50,51,33,64,18,80,9,99,9,119,16,139,28,158,63,194,99,223,96,227,59,198,24,161,11,141,4,120,4,98,14,77,29,60,48,47,89,29"/>
+<area shape="rect" id="Node000003" href="$db/dc9/byteswap_8h.html" title=" " alt="" coords="29,79,225,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="176,42,139,80,136,77,172,39"/>
+<area shape="rect" id="Node000004" href="$da/dd1/fileUtils_8h.html" title=" " alt="" coords="171,152,354,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="215,40,238,77,254,118,263,151,258,153,249,119,233,80,210,43"/>
+<area shape="rect" id="Node000005" href="$dd/dc3/stringUtils_8h.html" title=" " alt="" coords="300,79,500,104"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="241,33,367,76,366,81,239,38"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="232,187,161,227,158,223,229,182"/>
+<area shape="poly" id="edge6_Node000005_Node000004" title=" " alt="" coords="367,113,286,154,284,149,365,108"/>
+</map>

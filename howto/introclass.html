@@ -1,25 +1,24 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Object oriented programming with Stimfit &#8212; Stimfit 0.16.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Object oriented programming with Stimfit &#8212; Stimfit dev documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=2bf1fcf8" />
     
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
+    <script src="../_static/documentation_options.js?v=81f007b9"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Calculating latencies" href="latencies.html" />
     <link rel="prev" title="Event counting" href="apcounting.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -50,14 +49,14 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="object-oriented-programming-with-stimfit">
-<h1>Object oriented programming with Stimfit<a class="headerlink" href="#object-oriented-programming-with-stimfit" title="Permalink to this headline">¶</a></h1>
+  <section id="object-oriented-programming-with-stimfit">
+<h1>Object oriented programming with Stimfit<a class="headerlink" href="#object-oriented-programming-with-stimfit" title="Link to this heading">¶</a></h1>
 <dl class="field-list simple">
-<dt class="field-odd">Authors</dt>
+<dt class="field-odd">Authors<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Jose Guzman</p>
 </dd>
-<dt class="field-even">Updated</dt>
-<dd class="field-even"><p>19 August, 2021</p>
+<dt class="field-even">Updated<span class="colon">:</span></dt>
+<dd class="field-even"><p>19 March, 2026</p>
 </dd>
 </dl>
 <p>Object-oriented programming (OOP) is a software philosophy where the problems are solved with objects rather than with simple functions. These objects  behave similarly to objects in the physical world. For example, image you may want to travel from Freiburg (Germany) to London (UK). For that, you will need to use a transport (e.g car, airplane, etc…) which certain properties (e.g airplanes are much faster than cars, whereas cars are more flexible in terms of schedule). The key concept here is that an object has distinct attributes (associated variables) and methods (associated functions). Interestingly, object attributes are extremely dynamic. They may change as they are involved in different tasks. Because object <em>have an state</em> they provide much more versatility to solve problems than static function alone. Thus, in OOP the design of the code is near to the question, and much more far away from the machine and the hardware details.</p>
@@ -72,18 +71,18 @@
 <li><p><strong>Encapsulation</strong> because objects are exposed to the user, attributes and functions may be easily modified without permission. In order to prevent accidental overwriting,  some attributes and methods may be hidden to the user, and this is called encapsulation.</p></li>
 <li><p><strong>Inheritance</strong> a common mistake when creating classes is to define a class for every object that we want to use. To avoid extreme redundancy, classes may inherit properties from other classes, providing thereby a way of creating more complex objects without having to re-write all the known instructions of a class inside another class.</p></li>
 </ul>
-<div class="section" id="classes-and-objects">
-<h2>Classes and  objects<a class="headerlink" href="#classes-and-objects" title="Permalink to this headline">¶</a></h2>
+<section id="classes-and-objects">
+<h2>Classes and  objects<a class="headerlink" href="#classes-and-objects" title="Link to this heading">¶</a></h2>
 <p>We will start with a basic example to start using objects in the embedded Python shell. We will use an object to collect the sampling interval and trace index in our recording. For that, we will create a class, which defines an object that collects this information at once for us. To create that class we can use this code:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">stf</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">stf</span>
 
-<span class="k">class</span> <span class="nc">Trace</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Trace</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class to generate a Trace object with contains attributes</span>
 <span class="sd">    of the current trace.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        create instance with dt and trace index and as attributes.</span>
 <span class="sd">        Arguments:</span>
 <span class="sd">        type    -- string containing the name of the user</span>
@@ -99,9 +98,9 @@
 </pre></div>
 </div>
 <p>myTrace is now my particular object. It was created with the instructions given in the class Trace. This is commonly refereed as <em>myTrace is an instance of the class Trace</em>.</p>
-</div>
-<div class="section" id="object-attributes">
-<h2>Object attributes<a class="headerlink" href="#object-attributes" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="object-attributes">
+<h2>Object attributes<a class="headerlink" href="#object-attributes" title="Link to this heading">¶</a></h2>
 <p>Object attributes can be accessed with the dot notation. To test the attributes of “myTrace” we type:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myTrace</span><span class="o">.</span><span class="n">dt</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="mf">0.05000000074505806</span>
@@ -112,9 +111,9 @@
 </pre></div>
 </div>
 <p>This tells us that the trace 8 has a sampling rate of 0.05 msec. The owner was set at construction, and it is a user called root.</p>
-</div>
-<div class="section" id="encapsulation">
-<h2>Encapsulation<a class="headerlink" href="#encapsulation" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="encapsulation">
+<h2>Encapsulation<a class="headerlink" href="#encapsulation" title="Link to this heading">¶</a></h2>
 <p>As you can see bellow, nothing would prevent us to assign a new value to any of the current object attributes. For example, if we now type:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">myTrace</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="mi">3</span>
 </pre></div>
@@ -125,15 +124,15 @@
 <p>Python strongly relies on convention rather than on enforcement. For example, encapsulated attributes are not really private (i.e user can overwrite them if necessary), but the underscore notation is used to indicate internal use only. If you find a good reason to overwrite them, Python is not going to stop you. However, it is a good programming practice to keep the Python conventions if you want to share your programs with other users.</p>
 </div>
 <p>Additionally, we could give the user the opportunity to retrieve these values without the dot notation by creating some functions available to this object. These would be the object methods. For example, we can create 2 functions called get_sampling_interval() and get_trace_index() inside the class. These are the methods of the object.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">stf</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">stf</span>
 
-<span class="k">class</span> <span class="nc">Trace</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Trace</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class to generate a Trace object which contains attributes</span>
 <span class="sd">    of the current trace.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        create instance with dt and trace as attributes.</span>
 <span class="sd">        Arguments:</span>
 <span class="sd">        type    -- string containing the name of the user</span>
@@ -144,12 +143,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace_index</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">owner</span> <span class="o">=</span> <span class="n">owner</span>
 
-    <span class="k">def</span> <span class="nf">get_sampling_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; get sampling interval &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sampling_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; get sampling interval &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span>
 
-    <span class="k">def</span> <span class="nf">get_trace_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; get trace index&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_trace_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; get trace index&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span>
 </pre></div>
 </div>
@@ -170,19 +169,19 @@
 <p class="admonition-title">Note</p>
 <p>do not confuse methods/attributes that start and end with two underscores with those which only start with a single underscores. The firsts are special methods and customize the standard python behavior (like __init__), whereas the lasts are encapsulated methods.</p>
 </div>
-</div>
-<div class="section" id="dynamic-nature-of-objects">
-<h2>Dynamic nature of objects<a class="headerlink" href="#dynamic-nature-of-objects" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="dynamic-nature-of-objects">
+<h2>Dynamic nature of objects<a class="headerlink" href="#dynamic-nature-of-objects" title="Link to this heading">¶</a></h2>
 <p>As soon as we move through the recording, the trace index may change. However, if we call the methods get_trace_index() or get_sampling_interval() of the object they will return the object attributes in the old status. We need a new method to update the object attributes every time that we change the trace. This is where the dynamic nature of the objects come handy.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">stf</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">stf</span>
 
-<span class="k">class</span> <span class="nc">Trace</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Trace</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class to generate a Trace object which contains attributes</span>
 <span class="sd">    of the current trace.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        create instance with dt and trace as attributes.</span>
 <span class="sd">        Arguments:</span>
 <span class="sd">        type    -- string containing the name of the user</span>
@@ -190,20 +189,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">owner</span> <span class="o">=</span> <span class="n">owner</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        update dt and  trace according to the current position</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace_index</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_sampling_interval</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">get_sampling_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; get sampling interval &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sampling_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; get sampling interval &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dt</span>
 
-    <span class="k">def</span> <span class="nf">get_trace_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; get trace index &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_trace_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; get trace index &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span>
 </pre></div>
 </div>
@@ -219,30 +218,30 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="mi">3</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="class-inheritance">
-<h2>Class inheritance<a class="headerlink" href="#class-inheritance" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="class-inheritance">
+<h2>Class inheritance<a class="headerlink" href="#class-inheritance" title="Link to this heading">¶</a></h2>
 <p>Object-oriented languages like Python support class inheritance. This means that we can inherit attributes and methods from a pre-existing class. Thus, we do not need to rewrite again this code. We can inherit from another class (called mother class).
 To inherit code from another class, we have to add the name of the mother class in the class headline. For example:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Channel</span><span class="p">(</span><span class="n">Trace</span><span class="p">):</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span><span class="w"> </span><span class="nc">Channel</span><span class="p">(</span><span class="n">Trace</span><span class="p">):</span>
 </pre></div>
 </div>
 <p>The class Channel will automatically inherit the code from the class Trace.  We say that the class Channel is a subclass of the superclass Trace. If we want to extend the functionality of our now class, we can add new methods and/or attributes, or even overwrite the existing inherited methods. We can create a new Channel class in the same file like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Channel</span><span class="p">(</span><span class="n">Trace</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Channel</span><span class="p">(</span><span class="n">Trace</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class derived from Trace class</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">owner</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">owner</span><span class="p">):</span>
         <span class="n">Trace</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="p">)</span> <span class="c1"># let Trace to get owner</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_channel_index</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; update dt, trace and channel index &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; update dt, trace and channel index &quot;&quot;&quot;</span>
         <span class="n">Trace</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="c1"># update dt and trace</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_channel_index</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">get_channel_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; get channel index &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_channel_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; get channel index &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel</span>
 </pre></div>
 </div>
@@ -288,21 +287,22 @@ To inherit code from another class, we have to add the name of the mother class 
 <span class="gp">&gt;&gt;&gt; </span><span class="s1">&#39;Channel&#39;</span>
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
             <div class="clearer"></div>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../contents.html">
-              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo of Stimfit"/>
             </a></p>
-  <h3><a href="../contents.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="../contents.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">Object oriented programming with Stimfit</a><ul>
 <li><a class="reference internal" href="#classes-and-objects">Classes and  objects</a></li>
 <li><a class="reference internal" href="#object-attributes">Object attributes</a></li>
@@ -313,34 +313,40 @@ To inherit code from another class, we have to add the name of the mother class 
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="apcounting.html"
-                        title="previous chapter">Event counting</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="latencies.html"
-                        title="next chapter">Calculating latencies</a></p>
-<div id="searchbox" style="display: none" role="search">
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="apcounting.html"
+                          title="previous chapter">Event counting</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="latencies.html"
+                          title="next chapter">Calculating latencies</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../contents.html">
-              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo of Stimfit"/>
             </a></p>
-  <h3><a href="../contents.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="../contents.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">Object oriented programming with Stimfit</a><ul>
 <li><a class="reference internal" href="#classes-and-objects">Classes and  objects</a></li>
 <li><a class="reference internal" href="#object-attributes">Object attributes</a></li>
@@ -351,28 +357,33 @@ To inherit code from another class, we have to add the name of the mother class 
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="apcounting.html"
-                        title="previous chapter">Event counting</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="latencies.html"
-                        title="next chapter">Calculating latencies</a></p>
-<div id="searchbox" style="display: none" role="search">
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="apcounting.html"
+                          title="previous chapter">Event counting</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="latencies.html"
+                          title="next chapter">Calculating latencies</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Christoph Schmidt-Hieber.
-      Last updated on 19 August, 2021.
+    &#169; Copyright 2026, Stimfit contributors.
+      Last updated on 19 March, 2026.
     </div>
   </body>
 </html>

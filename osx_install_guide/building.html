@@ -1,25 +1,24 @@
-
 <!DOCTYPE html>
 
-<html>
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Building Stimfit &#8212; Stimfit 0.16.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Building Stimfit &#8212; Stimfit dev documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/classic.css?v=2bf1fcf8" />
     
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
+    <script src="../_static/documentation_options.js?v=81f007b9"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Building the stfio Python Module Only" href="moduleonly.html" />
     <link rel="prev" title="OS X Build Guide" href="index.html" /> 
   </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
+    <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
@@ -50,138 +49,150 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="building-stimfit">
-<h1>Building Stimfit<a class="headerlink" href="#building-stimfit" title="Permalink to this headline">¶</a></h1>
+  <section id="building-stimfit">
+<h1>Building Stimfit<a class="headerlink" href="#building-stimfit" title="Link to this heading">¶</a></h1>
 <dl class="field-list simple">
-<dt class="field-odd">Author</dt>
+<dt class="field-odd">Author<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Christoph Schmidt-Hieber</p>
 </dd>
-<dt class="field-even">Date</dt>
-<dd class="field-even"><p>24 August, 2021</p>
+<dt class="field-even">Date<span class="colon">:</span></dt>
+<dd class="field-even"><p>19 March, 2026</p>
 </dd>
 </dl>
-<div class="section" id="installing-with-macports">
-<h2>Installing with MacPorts<a class="headerlink" href="#installing-with-macports" title="Permalink to this headline">¶</a></h2>
-<p>Download and install MacPorts from <a class="reference external" href="http://www.macports.org">here</a>.</p>
-<p>If you just want to install Stimfit and/or the stfio module, do</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">port</span> <span class="n">install</span> <span class="n">stimfit</span> <span class="n">py27</span><span class="o">-</span><span class="n">stfio</span> <span class="n">py34</span><span class="o">-</span><span class="n">stfio</span>
+<p>Current macOS source builds use the repository helper script
+[<cite>build_macos_cmake.sh</cite>](build_macos_cmake.sh), which drives the CMake app
+bundle workflow used by current development.</p>
+<section id="building-with-macports-tools">
+<h2>Building with MacPorts tools<a class="headerlink" href="#building-with-macports-tools" title="Link to this heading">¶</a></h2>
+<p>Install MacPorts from <a class="reference external" href="https://www.macports.org">macports.org</a>, then install
+the build tools and libraries used by the current CMake path:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">port</span> <span class="o">-</span><span class="n">N</span> <span class="n">selfupdate</span>
+<span class="n">sudo</span> <span class="n">port</span> <span class="o">-</span><span class="n">N</span> <span class="n">install</span> <span class="n">cmake</span> <span class="n">ninja</span> <span class="n">pkgconfig</span> <span class="n">fftw</span><span class="o">-</span><span class="mi">3</span> <span class="n">hdf5</span> <span class="n">wxWidgets</span><span class="o">-</span><span class="mf">3.2</span> <span class="n">git</span>
+<span class="n">sudo</span> <span class="n">port</span> <span class="n">select</span> <span class="o">--</span><span class="nb">set</span> <span class="n">wxWidgets</span> <span class="n">wxWidgets</span><span class="o">-</span><span class="mf">3.2</span>
 </pre></div>
 </div>
-<p>If you want to build stimfit from source, you’ll first need to install git:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">port</span> <span class="n">install</span> <span class="n">git</span><span class="o">-</span><span class="n">core</span>
+<p>If you want the embedded Python build, also install a supported Python variant
+and its matching wxPython package. The active MacPorts port definitions in
+[<cite>dist/macosx/macports/science/stimfit/Portfile.in</cite>](dist/macosx/macports/science/stimfit/Portfile.in)
+currently support Python 3.10 through 3.14, with Python 3.13 as the default
+variant.</p>
+<p>Clone the repository and build from the repository root:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">neurodroid</span><span class="o">/</span><span class="n">stimfit</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">stimfit</span>
+<span class="o">./</span><span class="n">build_macos_cmake</span><span class="o">.</span><span class="n">sh</span>
 </pre></div>
 </div>
-<p>Get the <a class="reference external" href="http://www.stimfit.org">Stimfit</a> source from the git repository</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">code</span><span class="o">.</span><span class="n">google</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">p</span><span class="o">/</span><span class="n">stimfit</span><span class="o">/</span>
+<p>For a Python-enabled bundle build:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">build_macos_cmake</span><span class="o">.</span><span class="n">sh</span> <span class="o">--</span><span class="k">with</span><span class="o">-</span><span class="n">python</span>
 </pre></div>
 </div>
-<p>Edit the MacPorts sources configuration file (/opt/local/etc/macports/sources.conf) and place the following line before the one that reads</p>
-<p><code class="docutils literal notranslate"><span class="pre">rsync://rsync.macports.org/release/tarballs/ports.tar</span> <span class="pre">[default]</span></code></p>
-<p>(change the path to the <a class="reference external" href="http://www.stimfit.org">Stimfit</a> directory accordingly).</p>
-<p><code class="docutils literal notranslate"><span class="pre">file:///${STIMFITDIR}/stimfit/macosx/macports</span></code></p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>using the root of your account as opposed to a subdirectory (ie, Documents or Downloads folders) may prevent permissions access errors when building.</p>
-</div>
-<p>Next, go to the <a class="reference external" href="http://www.stimfit.org">Stimfit</a> macports directory</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cd ${STIMFITDIR}/macosx/macports
-</pre></div>
-</div>
-<p>Add the local ports file to MacPorts by running the following command at this location</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">portindex</span>
-</pre></div>
-</div>
-<p>When finished, you can now build <a class="reference external" href="http://www.stimfit.org">Stimfit</a> in MacPorts</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">port</span> <span class="n">install</span> <span class="n">stimfit</span>
-</pre></div>
-</div>
-<p>MacPorts will download and install various dependencies, and then attempt to build <a class="reference external" href="http://www.stimfit.org">Stimfit</a> from source.</p>
-</div>
-<div class="section" id="installing-with-homebrew">
-<h2>Installing with <a class="reference external" href="http://brew.sh">Homebrew</a><a class="headerlink" href="#installing-with-homebrew" title="Permalink to this headline">¶</a></h2>
-<p>This is very experimental; currently it will most likely not install a full version of Stimfit.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">brew</span> <span class="n">install</span> <span class="n">schloegl</span><span class="o">/</span><span class="n">biosig</span><span class="o">/</span><span class="n">stimfit</span>
-</pre></div>
-</div>
-</div>
-</div>
+<p>The script configures a dedicated CMake build tree, installs the app bundle into
+<cite>build/macos-app*/install</cite>, and verifies that <cite>stimfit.app</cite> was produced.</p>
+</section>
+<section id="macports-packages">
+<h2>MacPorts packages<a class="headerlink" href="#macports-packages" title="Link to this heading">¶</a></h2>
+<p>Maintainers updating MacPorts packages should use the active port sources under
+[<cite>dist/macosx/macports/</cite>](dist/macosx/macports/) rather than the historical
+instructions that modified <cite>sources.conf</cite> manually. The CMake-based Stimfit port
+is defined in [<cite>dist/macosx/macports/science/stimfit/Portfile.in</cite>](dist/macosx/macports/science/stimfit/Portfile.in).</p>
+</section>
+<section id="homebrew-status-note">
+<h2>Homebrew status note<a class="headerlink" href="#homebrew-status-note" title="Link to this heading">¶</a></h2>
+<p>The old Homebrew tap instructions are no longer maintained here. For current
+source work on macOS, prefer MacPorts plus [<cite>build_macos_cmake.sh</cite>](build_macos_cmake.sh).</p>
+</section>
+</section>
 
 
             <div class="clearer"></div>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../contents.html">
-              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo of Stimfit"/>
             </a></p>
-  <h3><a href="../contents.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="../contents.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">Building Stimfit</a><ul>
-<li><a class="reference internal" href="#installing-with-macports">Installing with MacPorts</a></li>
-<li><a class="reference internal" href="#installing-with-homebrew">Installing with Homebrew</a></li>
+<li><a class="reference internal" href="#building-with-macports-tools">Building with MacPorts tools</a></li>
+<li><a class="reference internal" href="#macports-packages">MacPorts packages</a></li>
+<li><a class="reference internal" href="#homebrew-status-note">Homebrew status note</a></li>
 </ul>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">OS X Build Guide</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="moduleonly.html"
-                        title="next chapter">Building the stfio Python Module Only</a></p>
-<div id="searchbox" style="display: none" role="search">
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter">OS X Build Guide</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="moduleonly.html"
+                          title="next chapter">Building the stfio Python Module Only</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
     </div>
     
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../contents.html">
-              <img class="logo" src="../_static/stimfit_128.png" alt="Logo"/>
+              <img class="logo" src="../_static/stimfit_128.png" alt="Logo of Stimfit"/>
             </a></p>
-  <h3><a href="../contents.html">Table of Contents</a></h3>
-  <ul>
+  <div>
+    <h3><a href="../contents.html">Table of Contents</a></h3>
+    <ul>
 <li><a class="reference internal" href="#">Building Stimfit</a><ul>
-<li><a class="reference internal" href="#installing-with-macports">Installing with MacPorts</a></li>
-<li><a class="reference internal" href="#installing-with-homebrew">Installing with Homebrew</a></li>
+<li><a class="reference internal" href="#building-with-macports-tools">Building with MacPorts tools</a></li>
+<li><a class="reference internal" href="#macports-packages">MacPorts packages</a></li>
+<li><a class="reference internal" href="#homebrew-status-note">Homebrew status note</a></li>
 </ul>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">OS X Build Guide</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="moduleonly.html"
-                        title="next chapter">Building the stfio Python Module Only</a></p>
-<div id="searchbox" style="display: none" role="search">
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="index.html"
+                          title="previous chapter">OS X Build Guide</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="moduleonly.html"
+                          title="next chapter">Building the stfio Python Module Only</a></p>
+  </div>
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
     
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Christoph Schmidt-Hieber.
-      Last updated on 24 August, 2021.
+    &#169; Copyright 2026, Stimfit contributors.
+      Last updated on 19 March, 2026.
     </div>
   </body>
 </html>
