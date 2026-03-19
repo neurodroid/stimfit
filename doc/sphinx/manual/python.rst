@@ -280,7 +280,7 @@ Define your own functions
 -------------------------
 By defining your own functions, you can apply identical complex analysis to different traces and files. The following steps are required to make use of your own Python files:
  
-1. Create a Python file in a directory that the Python interpreter will find. If you do not know where that is , use the Stimfit program directory (typically, this will be C:\\Program Files\\Stimfit in Windows or /usr/lib/phython2.5/site-packages/Stimfit in GNU/Linux, assuming that python 2.5 is your current python environment). You will find some example files in that directory that you can use as a template, but you should not touch stf.py which is the core Stimfit module.
+1. Create a Python file in a directory that the active Python 3 interpreter can import from. In a current source build, the simplest approach is usually to keep your helper module in a normal project or user directory that is already on ``sys.path``, or to add its parent directory explicitly before importing it. Avoid editing the installed core module files directly.
 2. Import the Stimfit module in your file:
 
 ::
@@ -293,11 +293,12 @@ By defining your own functions, you can apply identical complex analysis to diff
 
     >>> import myFile
 
-4. If you have applied changes to your file, there is no need to restart Stimfit. Just do:
+4. If you have applied changes to your file, there is no need to restart Stimfit. With current Python 3 builds, reload it with:
 
 ::
 
-    >>> reload(myFile)
+    >>> import importlib
+    >>> importlib.reload(myFile)
 
 To give you an example, this program shows a function that returns the sum of the squared amplitude values across all selected traces of a file.
 

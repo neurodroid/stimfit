@@ -157,16 +157,22 @@ Install libbiosig-dev through the package manager of your distribution:
 
     sudo apt-get install libbiosig-dev
 
-Alternatively, get the full version of biosig and its build requirements: you can obtain the latest BioSig version in `BioSig downloads <http://biosig.sourceforge.net/download.html>`_ . Choose BioSig for C/C++, libbiosig (2.3.1 or higher is recommended because of improved support for ABF2, ATF, and AXG format).
+Alternatively, use the in-tree BioSig provider managed by the current CMake
+toolchain. This is the preferred fallback when your distribution package is too
+old or unavailable:
 
 ::
 
-	./configure
-	make
-	sudo make install
+    $ cd $HOME/stimfit
+    $ cmake -S . -B build/linux-biosig-submodule -G Ninja \
+              -DCMAKE_BUILD_TYPE=Release \
+              -DSTF_WITH_BIOSIG=ON \
+              -DSTF_BIOSIG_PROVIDER=SUBMODULE
+    $ cmake --build build/linux-biosig-submodule --parallel
 
 
-Alternatively, you can obtain the latest developmental version from the git repository:
+Alternatively, if you are maintaining BioSig itself and need a separate local
+checkout from its git repository:
 
 ::
 
@@ -174,10 +180,10 @@ Alternatively, you can obtain the latest developmental version from the git repo
 
     git clone https://git.code.sf.net/p/biosig/code biosig-code
     cd biosig-code
-    autoconf # needed first time after getting repository
-    ./configure
-    make
-    sudo make install
+
+Then build that checkout using the current BioSig project's own documented build
+instructions, install it into your desired prefix, and point Stimfit's CMake
+configure step at that installation through the appropriate provider settings.
 
 After that you can configure Stimfit with `-DSTF_WITH_BIOSIG=ON` and, when
 needed, select the desired provider through `-DSTF_BIOSIG_PROVIDER=...`.

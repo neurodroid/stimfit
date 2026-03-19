@@ -6,8 +6,8 @@ Windows Build Guide
 :Date:    |today|
 
 Current Windows builds use Visual Studio, CMake presets, `vcpkg`, and CPack.
-The legacy Visual C++ Express 2008 and handwritten solution flow is retained
-here only until the remaining pages are fully rewritten.
+The supported path is the modern CMake workflow; the historical Visual C++
+Express material is no longer part of the primary build guide.
 
 Contents
 --------
@@ -16,5 +16,4 @@ Contents
    :maxdepth: 2
 
    prerequisites
-   VCExpress64bitsetup
    building

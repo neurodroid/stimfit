@@ -2,6 +2,17 @@
 Instructions for setting up Visual C++ Express 2008 to compile 64-bit targets
 *****************************************************************************
 
+.. important::
+
+   This page is retained only as historical reference material for the legacy
+   Visual C++ Express 2008 workflow. It is not part of the supported build path
+   for current [`master`](README.md:1).
+
+   For current Windows development and release packaging, use
+   [`build_windows_msvc.ps1`](build_windows_msvc.ps1) together with the CMake
+   presets, `vcpkg`, and CPack flow documented in [`BUILDING.md`](BUILDING.md)
+   and [`doc/sphinx/win_install_guide/building.rst`](doc/sphinx/win_install_guide/building.rst).
+
 Visual C++ Express 2008 will not build 64-bit targets out of the box. However, this capability can be added by installing the Windows SDK and making some registry edits. Follow the instructions below to do this. Note that if you have the full rather than express version of Visual C++, this should not be necessary.
 
 These instructions have been adapted from the following sources:
