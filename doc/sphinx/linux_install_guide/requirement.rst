@@ -7,6 +7,12 @@ Building Stimfit
 
 This document describes how to install `Stimfit <http://www.stimfit.org>`_ |version| under GNU/Linux. The installation was tested on Debian 10 (Buster) and 11 (Bullseye) with support for Python 3.*. It should work on other Debian-based systems (e.g. Ubuntu) as with newer version of Stimfit as well. I assume that you have the GNU C compiler (gcc) and the GNU C++ compiler (g++) and that both versions match.
 
+.. important::
+
+   The historical autotools build described in older Stimfit documentation is
+   no longer the supported path for current [`master`](README.md:13). Use the
+   CMake workflow from [`BUILDING.md`](BUILDING.md) or the commands below.
+
 ============================
 What we need before we start
 ============================
@@ -74,7 +80,7 @@ This will get you, amongst others:
 * [HDF5]_: Hierarchical Data Format 5 (HDF5) to manage large amount of data.
 * [Matplotlib]_: Plotting library for Python (use version >= 1.5.1)
 
-In addition, you can install doxygen, python-sphinx (with graphviz and Latex) if you want to build the documentation.
+In addition, install Sphinx and Doxygen if you want to build the documentation.
 
 =======================
 Optional: PyEMF
@@ -110,44 +116,32 @@ This will grab all the required files into $HOME/stimfit. If you'd like to updat
 Build Stimfit
 =============
 
-Go to the stimfit directory (in our example $HOME/stimfit) and type:
+Go to the stimfit directory (in our example $HOME/stimfit) and configure a
+dedicated CMake build directory:
 
 ::
 
     $ cd $HOME/stimfit
-    $ ./autogen.sh
-
-to generate the configure script. Remember that we need Autoconf, Automake and LibTool to use autogen. After that, you can call it with
-
-::
-    $ ./configure PYTHON_VERSION=3
-
-The **--enable-python** option is activated as a default.
-
-
-Finally, after running configure, you can type
-
-::
-
-    $ make -j[N]
-
-where [N] is the number of parallel builds you want to start. And finally:
-
-::
-
-    $ sudo make install
-    $ sudo /sbin/ldconfig
+    $ cmake -S . -B build/linux -G Ninja \
+              -DCMAKE_BUILD_TYPE=Release \
+              -DSTF_ENABLE_PYTHON=ON \
+              -DSTF_WITH_BIOSIG=ON
+    $ cmake --build build/linux --parallel
+    $ sudo cmake --install build/linux
 
 .. note::
 
-    If you want to install Stimfit as local user (e.g in ~/.local) with a local version of Python (e.g ~/.local/lib/python3.9) you have to add the following argument to configure
-    script:
+    If you want to install Stimfit as a local user into `~/.local` or target a
+    specific Python interpreter, add the relevant CMake cache entries during
+    configure, for example:
 
 ::
 
-    $ PYTHON=$HOME/.local/lib/python3.9 ./configure --prefix=$HOME/.local
+    $ cmake -S . -B build/linux-local -G Ninja \
+              -DCMAKE_INSTALL_PREFIX=$HOME/.local \
+              -DPython3_EXECUTABLE=$HOME/.local/bin/python3
 
-and after that call **make** and **make install** as normal user. The Stimfit executable will be now in $HOME/.local
+    Then run `cmake --build` and `cmake --install` as your normal user.
 
 .. _BioSigBuild:
 
@@ -185,27 +179,31 @@ Alternatively, you can obtain the latest developmental version from the git repo
     make
     sudo make install
 
-After that you can enter the option --with-biosig in the configure script of `Stimfit <http://www.stimfit.org>`_ and compile as usual.
+After that you can configure Stimfit with `-DSTF_WITH_BIOSIG=ON` and, when
+needed, select the desired provider through `-DSTF_BIOSIG_PROVIDER=...`.
 
 ======================
 Building documentation
 ======================
 
-The manual of `Stimfit <http://www.stimfit.org>`_ including the documentation is accessible on-line in http://www.stimfit.org/doc/sphix/. To have your local copy, you will need to install sphinx version 1.7 or older:
+The manual of `Stimfit <http://www.stimfit.org>`_ is published at
+https://neurodroid.github.io/stimfit/. For a local build, install Sphinx and
+related helpers in a Python 3 environment:
 
 ::
 
-    sudo apt-get install python-sphinx
+    python3 -m pip install -r doc/sphinx/requirements.txt sphinx
 
 To build a local copy call:
 
 ::
 
-    sphinx-build $HOME/Stimfit/doc/sphinx/ <destination> # destination folder could be $HOME/tmp/stf/doc/
+    sphinx-build -b html doc/sphinx doc/sphinx/.build/html
 
-The html documentation will be located in <destination>/index.html
+The HTML documentation will be written to `doc/sphinx/.build/html/index.html`.
 
-Additionally, the source code is documented with [Doxygen]_ and is also accessible on-line in http://www.stimfit.org/doc/doxygen/html/. If you want to have a local copy of the documentation, you will need to install the doxygen and gravphvix:
+Additionally, the source code can be documented with [Doxygen]_. Install Doxygen
+and Graphviz first:
 
 ::
 
@@ -216,9 +214,9 @@ Enter a directory called **doc** inside Stimfit (e.g $HOME/stimfit/doc) and type
 ::
 
     cd $HOME/stimfit/doc
-    doxygen Doxyfile
+    doxygen Doxyfile.in
 
-The local documentation of the source code will be in $HOME/stimfit/doc/doxygen/html
+The local documentation of the source code will be in `$HOME/stimfit/doc/doxygen/html`.
 
 .. [wxWidgets] http://www.wxwidgets.org
 .. [wxPython] http://www.wxpython.org

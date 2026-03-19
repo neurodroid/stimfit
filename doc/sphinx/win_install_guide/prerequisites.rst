@@ -7,6 +7,24 @@ Prerequisites
 
 This document describes how to build a 64-bit version of `Stimfit <http://www.stimfit.org>`_ on Windows. I strongly recommend sticking to the suggested directory names. If for any reason you'd like to use different target directories, you'll have to update all the property sheets (Config.vsprops) in the Visual Studio solution.
 
+.. important::
+
+   The Visual C++ Express 2008 and Python 2.7 workflow described below is
+   legacy material. Current Windows builds on [`master`](README.md:13) use
+   Visual Studio 2022, CMake presets, `vcpkg`, and CPack as described in
+   [`README.md`](README.md:105).
+
+For current work, prefer this modern toolchain:
+
+* Visual Studio 2022 build tools
+* PowerShell
+* `vcpkg`
+* optional Inno Setup 6 for installer generation
+
+The repository helper script [`build_windows_msvc.ps1`](build_windows_msvc.ps1)
+drives the supported Windows flow and mirrors the active CI setup in
+[`ci.yml`](.github/workflows/ci.yml).
+
 Getting all the prerequisites takes about an hour, but only needs to be completed once. Building the full solution takes about 3 minutes.
 
 =======================

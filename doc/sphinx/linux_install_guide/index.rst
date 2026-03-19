@@ -1,8 +1,3 @@
-.. test documentation master file, created by
-   sphinx-quick start on Tue May 12 19:47:15 2009.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 GNU/Linux Build Guide
 =====================
 
@@ -10,7 +5,13 @@ GNU/Linux Build Guide
 :Release: |version|
 :Date:    |today|
 
-Contents:
+Stimfit on GNU/Linux is now built from source through the CMake-based workflow
+documented in [`BUILDING.md`](BUILDING.md). The pages in this section focus on
+Linux-specific package requirements and the standalone [`stfio`](doc/sphinx/stfio/index.rst)
+module build path.
+
+Contents
+--------
 
 .. toctree::
    :maxdepth: 2
