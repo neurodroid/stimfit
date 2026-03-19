@@ -18,6 +18,10 @@ This protocol captures the exact workflow for preparing a Stimfit MacPorts relea
 - The checksum regeneration flow is documented by [`dist/macosx/macports/insert_checksums.sh.in`](dist/macosx/macports/insert_checksums.sh.in:3) through [`dist/macosx/macports/insert_checksums.sh.in`](dist/macosx/macports/insert_checksums.sh.in:39).
 - Historical MacPorts release tags follow the `v<version>macports` pattern, as seen in [`.git/packed-refs`](.git/packed-refs).
 - Local helper [`dist/macosx/macports/mk_diff.sh`](dist/macosx/macports/mk_diff.sh) compares the generated local Portfile against a MacPorts checkout under `~/macports/dports`.
+- The active CMake path requires the [`src/biosig`](src/biosig) submodule to be initialized before packaging because the MacPorts port builds with [`-DSTF_BIOSIG_PROVIDER=SUBMODULE`](dist/macosx/macports/science/stimfit/Portfile.in:35).
+- The generated source archive extracts to `Stimfit-<version>-Source`, so [`worksrcdir`](dist/macosx/macports/science/stimfit/Portfile.in:20) must stay aligned with that name.
+- The MacPorts [`cmake` PortGroup](dist/macosx/macports/science/stimfit/Portfile.in:5) must control the build and destroot phases; custom [`build.cmd`](dist/macosx/macports/science/stimfit/Portfile.in) or [`destroot.cmd`](dist/macosx/macports/science/stimfit/Portfile.in) overrides break MacPorts’ wrapper invocation.
+- For app-bundle installs, [`-DCMAKE_INSTALL_PREFIX=${applications_dir}`](dist/macosx/macports/science/stimfit/Portfile.in:33) is required so the bundle lands under `/Applications/MacPorts/stimfit.app` rather than `/usr/local` or `/Applications/MacPorts/MacPorts`.
 
 ## Release workflow
 
@@ -34,23 +38,38 @@ This protocol captures the exact workflow for preparing a Stimfit MacPorts relea
 
 Follow the logic embedded in [`dist/macosx/macports/insert_checksums.sh.in`](dist/macosx/macports/insert_checksums.sh.in):
 
-1. Re-run project generation if needed.
-2. Configure the release build using [`dist/macosx/scripts/conf_macports_release.sh`](dist/macosx/scripts/conf_macports_release.sh:22).
-3. Build the source tarball with the equivalent of `make dist` in the release build directory.
-4. Compute:
+1. Initialize the BioSig submodule with `git submodule update --init src/biosig`.
+2. Configure the release build with explicit MacPorts wx/Python tool paths. The updated [`dist/macosx/macports/insert_checksums.sh.in`](dist/macosx/macports/insert_checksums.sh.in) now does this directly instead of relying on a legacy `make dist` flow.
+3. Generate the source archive with `COPYFILE_DISABLE=1 cpack --config build-macports-release/CPackSourceConfig.cmake -G TGZ`.
+4. Copy `Stimfit-<version>-Source.tar.gz` to the uploaded filename `stimfit-<version>.tar.gz`.
+5. Upload the renamed tarball using [`dist/macosx/macports/upload_stimfit.in`](dist/macosx/macports/upload_stimfit.in).
+6. Compute:
    - `rmd160`
    - `sha256`
    - archive `size`
-5. Regenerate [`dist/macosx/macports/science/stimfit/Portfile`](dist/macosx/macports/science/stimfit/Portfile) from [`dist/macosx/macports/science/stimfit/Portfile.in`](dist/macosx/macports/science/stimfit/Portfile.in) by replacing the placeholders.
+7. Regenerate [`dist/macosx/macports/science/stimfit/Portfile`](dist/macosx/macports/science/stimfit/Portfile) from [`dist/macosx/macports/science/stimfit/Portfile.in`](dist/macosx/macports/science/stimfit/Portfile.in) by replacing the placeholders.
+
+Critical packaging guardrails:
+
+- Ensure the source archive contains [`src/biosig`](src/biosig) before uploading.
+- Ensure the source archive does **not** contain `build/release`, otherwise the tarball can recursively include itself and grow to many gigabytes.
+- Keep [`CPACK_SOURCE_IGNORE_FILES`](CMakeLists.txt:606) in [`CMakeLists.txt`](CMakeLists.txt) so build artifacts are excluded from the source archive.
 
 ### 3. Validate the new Portfile
 
 1. Confirm the generated [`dist/macosx/macports/science/stimfit/Portfile`](dist/macosx/macports/science/stimfit/Portfile) contains:
    - `version 0.17.1`
    - updated `checksums`
+   - [`worksrcdir          Stimfit-${version}-Source`](dist/macosx/macports/science/stimfit/Portfile.in:20)
+   - [`-DCMAKE_INSTALL_PREFIX=${applications_dir}`](dist/macosx/macports/science/stimfit/Portfile.in:33)
    - unchanged variant logic unless intentionally revised
 2. If a local MacPorts checkout exists at `~/macports/dports`, run the comparison flow described by [`dist/macosx/macports/mk_diff.sh`](dist/macosx/macports/mk_diff.sh).
 3. Validate that the resulting Portfile remains ready for submission under `science/stimfit` in `macports-ports`.
+4. Local acceptance sequence for the overlay port should include:
+   - `sudo port checksum stimfit`
+   - `sudo port -v build stimfit`
+   - `sudo port -v install stimfit`
+5. Confirm the bundle lands at `/Applications/MacPorts/stimfit.app` only.
 
 ### 4. Prepare git history for upstream release tracking
 

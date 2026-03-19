@@ -1,5 +1,7 @@
 #! /bin/bash
 
+set -euo pipefail
+
 STFVERSION="@PACKAGE_VERSION@"
 MPDIR=`pwd`
 GSED=`which gsed`
@@ -8,12 +10,35 @@ then
     GSED=`which sed`
 fi
 
+PREFIX="/opt/local"
+PYVER="3.13"
+WX_CONF="${PREFIX}/Library/Frameworks/Python.framework/Versions/${PYVER}/bin/wx-config"
+MYCFLAGS=`${WX_CONF} --cflags`
+MYCFLAGS="${MYCFLAGS} -I${PREFIX}/include"
+MYCXXFLAGS=`${WX_CONF} --cxxflags`
+MYCXXFLAGS="${MYCXXFLAGS} -I${PREFIX}/include"
+MYLDFLAGS=`${WX_CONF} --libs all`
+MYLDFLAGS="${MYLDFLAGS} -headerpad_max_install_names -L${PREFIX}/lib"
+
 
 if [ "$1" != "" ]; then
-    cd ../../../ && ./autogen.sh
+    cd ../../../
+    git submodule update --init src/biosig
     cd build/release
-    ./../../dist/macosx/scripts/conf_macports_release.sh
-    make dist
+    rm -rf build-macports-release Stimfit-${STFVERSION}-Source.tar.gz stimfit-${STFVERSION}.tar.gz
+    cmake -S ../.. \
+          -B build-macports-release \
+          -DCMAKE_C_COMPILER="$(xcrun -find clang)" \
+          -DCMAKE_CXX_COMPILER="$(xcrun -find clang++)" \
+          -DCMAKE_C_FLAGS="${MYCFLAGS}" \
+          -DCMAKE_CXX_FLAGS="${MYCXXFLAGS}" \
+          -DCMAKE_EXE_LINKER_FLAGS="${MYLDFLAGS}" \
+          -DSTF_WITH_BIOSIG=ON \
+          -DSTF_BIOSIG_PROVIDER=SUBMODULE \
+          -DwxWidgets_CONFIG_EXECUTABLE="${WX_CONF}" \
+          -DPython3_EXECUTABLE="${PREFIX}/bin/python${PYVER}"
+    COPYFILE_DISABLE=1 cpack --config build-macports-release/CPackSourceConfig.cmake -G TGZ
+    cp Stimfit-${STFVERSION}-Source.tar.gz stimfit-${STFVERSION}.tar.gz
     ${GSED} 's/STFVERSION/'${STFVERSION}'/g' ${MPDIR}/upload_stimfit.in > ${MPDIR}/upload_stimfit
     sftp -b ${MPDIR}/upload_stimfit p8210991@ftp.schmidt-hieber.de
     cd ${MPDIR}
@@ -21,7 +46,7 @@ fi
 
 RMD160=`openssl rmd160 -r ../../../build/release/stimfit-${STFVERSION}.tar.gz | awk '{print $1;}'`
 SHA256=`openssl sha256 -r ../../../build/release/stimfit-${STFVERSION}.tar.gz | awk '{print $1;}'`
-SIZE=`wc -c <  ../../../build/release/stimfit-${STFVERSION}.tar.gz | awk '{print $1;}'`
+SIZE=`wc -c < ../../../build/release/stimfit-${STFVERSION}.tar.gz | awk '{print $1;}'`
 
 echo "rmd160:" ${RMD160}
 echo "sha256:" ${SHA256}
@@ -31,10 +56,6 @@ ${GSED} 's/RMD160/'${RMD160}'/g' ${MPDIR}/science/stimfit/Portfile.in > ${MPDIR}
 ${GSED} -i 's/SHA256/'${SHA256}'/g' ${MPDIR}/science/stimfit/Portfile
 ${GSED} -i 's/SIZE/'${SIZE}'/g' ${MPDIR}/science/stimfit/Portfile
 ${GSED} -i 's/STFVERSION/'${STFVERSION}'/g' ${MPDIR}/science/stimfit/Portfile
-${GSED} 's/RMD160/'${RMD160}'/g' ${MPDIR}/python/py-stfio/Portfile.in > ${MPDIR}/python/py-stfio/Portfile
-${GSED} -i 's/SHA256/'${SHA256}'/g' ${MPDIR}/python/py-stfio/Portfile
-${GSED} -i 's/STFVERSION/'${STFVERSION}'/g' ${MPDIR}/python/py-stfio/Portfile
-${GSED} -i 's/SIZE/'${SIZE}'/g' ${MPDIR}/python/py-stfio/Portfile
 
 sudo portindex
 
