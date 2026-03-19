@@ -90,7 +90,6 @@ jobs:
     name: Sync wiki landing page
     needs: build
     runs-on: ubuntu-latest
-    if: ${{ secrets.STIMFIT_WIKI_PUSH_TOKEN != '' }}
     permissions:
       contents: read
 
@@ -102,6 +101,10 @@ jobs:
         env:
           WIKI_TOKEN: ${{ secrets.STIMFIT_WIKI_PUSH_TOKEN }}
         run: |
+          if [ -z "${WIKI_TOKEN}" ]; then
+            echo "STIMFIT_WIKI_PUSH_TOKEN is not configured; skipping wiki sync"
+            exit 0
+          fi
           git clone "https://x-access-token:${WIKI_TOKEN}@github.com/neurodroid/stimfit.wiki.git" wiki
 
       - name: Update wiki landing page content
