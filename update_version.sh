@@ -21,5 +21,5 @@ printf '%s\n' "${NEW_VERSION}" > "${VERSION_FILE}"
 
 echo "Updated ${VERSION_FILE}: ${OLD_VERSION} -> ${NEW_VERSION}"
 echo "Next steps:"
-echo "  1. Re-run ./autogen.sh before using Autoconf artifacts"
+echo "  1. Review BUILDING.md if any source-build instructions need to mention the new version"
 echo "  2. Re-run CMake configure so PROJECT_VERSION is refreshed"

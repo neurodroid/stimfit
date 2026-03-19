@@ -26,6 +26,8 @@ Guzman SJ, Schlögl A, Schmidt-Hieber C (2014) Stimfit: quantifying electrophysi
 
 ## Installation
 
+For current source builds from this repository, use the CMake-based platform scripts documented in [`BUILDING.md`](BUILDING.md).
+
 ### GNU/Linux
 
 #### Debian-based systems (incl Ubuntu, and on WSL2)

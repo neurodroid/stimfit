@@ -1,4 +1,4 @@
-/* stfconf.h.in.  Generated from configure.ac by autoheader.  */
+/* stfconf.h.in.  CMake configure template for generated stfconf.h. */
 
 /* define if the compiler supports basic C++17 syntax */
 #undef HAVE_CXX17

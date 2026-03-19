@@ -1,6 +1,6 @@
 # CMake Migration Bootstrap
 
-This repository now includes a **functional CMake toolchain baseline** mirroring the Autotools chain in [`configure.ac`](configure.ac) and the core [`Makefile.am`](Makefile.am) files.
+This repository now includes the active CMake build toolchain for Stimfit. For end-user source-build entry points, see [`BUILDING.md`](BUILDING.md).
 
 ## What was added
 
@@ -72,9 +72,9 @@ Key changes:
 - Map Python variants to `-DPython3_EXECUTABLE=...`
 - Map `atlas` variant to `-DBLA_VENDOR=ATLAS`
 
-## Option mapping from Autotools
+## Option mapping from legacy Autotools
 
-The following CMake options mirror high-level Autotools switches from [`configure.ac`](configure.ac):
+The following CMake options preserve the intent of the former high-level Autotools switches:
 
 - `STF_BUILD_MODULE` ⇔ `--enable-module`
 - `STF_ENABLE_PYTHON` ⇔ `--enable-python`
@@ -120,4 +120,4 @@ The CMake chain follows Autotools behavior and expects development libraries for
 1. Validate macOS install-name/runtime behavior with full build+install+`otool -L` checks for GUI and Python-enabled variants.
 2. Verify MacPorts CMake backend behavior in a real port build (`port -v destroot stimfit`) and refine option mapping if needed.
 3. Tighten dependency mapping (wx variants, Python/wxPython nuances, optional fallbacks).
-4. Keep Autotools active until all required CI/build workflows pass under CMake.
+4. Continue simplifying legacy migration notes as the CMake-only workflow becomes the sole maintained build path.
