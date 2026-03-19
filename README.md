@@ -59,14 +59,9 @@ $ brew install schloegl/biosig/stimfit
 
 There are several options to install Stimfit on Windows. Each has its own  advantages (+) and disadvantages (-):
 
-#### The traditional version of [Stimfit v0.15.8-beta1](https://github.com/neurodroid/stimfit/releases/download/v0.15.8windows/Stimfit-x64-0.15.8BETA1-bundle.exe)
-including the python-stfio module, is available from [releases](https://github.com/neurodroid/stimfit/releases/). It is quite dated, there are a number of known issues with import filters.
+#### The traditional version of [Stimfit v0.17.0](https://github.com/neurodroid/stimfit/releases/download/v0.17.0windows/Stimfit-0.17.0-win64.exe) is available from [releases](https://github.com/neurodroid/stimfit/releases/). 
 
 ```
- - import filter not up-to-date [issues: 93, 95, 97]
-   affected formats: ABF2, ATF, AXG, CNT, EDF+, HEKA, IBW, MFER, RHD/RDS
- - python2 only, python2 has reached end-of-live, (issue 88)
- - warning from windows defender (issue 98 [3])
  + works with all versions of Windows7 and later.
 ```
 
@@ -85,12 +80,6 @@ The lite-version of Stimfit (w/o embedded Python) is available as part of the Bi
 #### Stimfit through WSL2
 With the most recent version of Windows10 (build: 10.0.19045.2546 ), Stimfit for Linux can be installed through WSL2. e.g. when using Ubuntu in WSL2 (see GNU/Linux above).
 
-```
- + import filters are up-to-date
- + python3 embedded
- + no warnings from windows defender, checksum of download is checked by "apt"
- - requires most recent Windows10 (version 10.0.19045.2546) with WSL2; certain functionality (e.g. copy/paste, file access) might require a non-standard workflow.
-```
 
 
 #### From Source
