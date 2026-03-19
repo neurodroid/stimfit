@@ -39,11 +39,6 @@ configure.args      -DSTF_ENABLE_PYTHON=OFF \
                     -DwxWidgets_CONFIG_EXECUTABLE=${wxWidgets.wxconfig}
 
 configure.pre_args  -S ${worksrcpath} -B ${workpath}/build
-build.cmd           ${configure.cmd}
-build.target        --build ${workpath}/build
-destroot.cmd        ${configure.cmd}
-destroot.target     --install ${workpath}/build
-destroot.destdir    DESTDIR=${destroot}
 
 set python_branches {3.10 3.11 3.12 3.13 3.14}
 
