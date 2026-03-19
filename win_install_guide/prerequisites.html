@@ -15,7 +15,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Instructions for setting up Visual C++ Express 2008 to compile 64-bit targets" href="VCExpress64bitsetup.html" />
+    <link rel="next" title="Building Stimfit" href="building.html" />
     <link rel="prev" title="Windows Build Guide" href="index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="Related">
@@ -28,7 +28,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="VCExpress64bitsetup.html" title="Instructions for setting up Visual C++ Express 2008 to compile 64-bit targets"
+          <a href="building.html" title="Building Stimfit"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Windows Build Guide"
@@ -59,13 +59,13 @@
 <dd class="field-even"><p>19 March, 2026</p>
 </dd>
 </dl>
-<p>This document describes how to build a 64-bit version of <a class="reference external" href="http://www.stimfit.org">Stimfit</a> on Windows. I strongly recommend sticking to the suggested directory names. If for any reason you’d like to use different target directories, you’ll have to update all the property sheets (Config.vsprops) in the Visual Studio solution.</p>
+<p>This document describes the prerequisites for current 64-bit Windows builds of <a class="reference external" href="http://www.stimfit.org">Stimfit</a> using Visual Studio, CMake presets, <cite>vcpkg</cite>, and optional CPack packaging.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>The Visual C++ Express 2008 and Python 2.7 workflow described below is
-legacy material. Current Windows builds on [<cite>master</cite>](README.md:13) use
-Visual Studio 2022, CMake presets, <cite>vcpkg</cite>, and CPack as described in
-[<cite>README.md</cite>](README.md:105).</p>
+<p>The Visual C++ Express 2008 and Python 2.7 workflow described in older
+Stimfit documentation is legacy material. Current Windows builds on
+[<cite>master</cite>](README.md:13) use Visual Studio 2022, CMake presets, <cite>vcpkg</cite>, and
+CPack as described in [<cite>README.md</cite>](README.md:105).</p>
 </div>
 <p>For current work, prefer this modern toolchain:</p>
 <ul class="simple">
@@ -77,81 +77,41 @@ Visual Studio 2022, CMake presets, <cite>vcpkg</cite>, and CPack as described in
 <p>The repository helper script [<cite>build_windows_msvc.ps1</cite>](build_windows_msvc.ps1)
 drives the supported Windows flow and mirrors the active CI setup in
 [<cite>ci.yml</cite>](.github/workflows/ci.yml).</p>
-<p>Getting all the prerequisites takes about an hour, but only needs to be completed once. Building the full solution takes about 3 minutes.</p>
-<section id="visual-c-express-2008">
-<h2>Visual C++ Express 2008<a class="headerlink" href="#visual-c-express-2008" title="Link to this heading">¶</a></h2>
-<p>The official Windows version of Python 2.7 was built with Visual Studio 2008. We therefore have to use Visual C++ 2008 so that we link against the same C runtime library. Luckily, there’s a free version called Visual C++ 2008 Express that you can get directly from <a class="reference external" href="http://go.microsoft.com/?linkid=7729279">here</a></p>
-<section id="bit">
-<h3>64-bit<a class="headerlink" href="#bit" title="Link to this heading">¶</a></h3>
-<p>Visual C++ Express 2008 will not build 64-bit targets out of the box. This capability has to be added by installing the Windows SDK and making some registry edits. Follow the instructions here to do this: <a class="reference internal" href="VCExpress64bitsetup.html"><span class="doc">Instructions for setting up Visual C++ Express 2008 to compile 64-bit targets</span></a>. Note that if you have the full rather than express version of Visual C++, this should not be necessary.</p>
-<p>You also need 64-bit versions of all the required libraries.</p>
-<p>We have dropped support for 32-bit with version 0.14.</p>
-</section>
+<p>Getting all the prerequisites takes some time, but only needs to be completed once per machine.</p>
+<section id="visual-studio-and-packaging-tools">
+<h2>Visual Studio and packaging tools<a class="headerlink" href="#visual-studio-and-packaging-tools" title="Link to this heading">¶</a></h2>
+<p>Install Visual Studio 2022 build tools or a full Visual Studio 2022 release
+with C++ support. If you want to generate installer packages, also install
+Inno Setup 6 for the <cite>INNOSETUP</cite> CPack generator used by the current workflow.</p>
 </section>
 <section id="libraries">
 <h2>Libraries<a class="headerlink" href="#libraries" title="Link to this heading">¶</a></h2>
-<section id="hdf5">
-<h3>HDF5<a class="headerlink" href="#hdf5" title="Link to this heading">¶</a></h3>
-<p>Get the HDF5 libraries from <a class="reference external" href="http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.13/bin/windows/">here</a>. Use hdf5-1.8.13-win64-VS2008-shared.zip. Extract the zip file, and then install to a folder called “hdf5” in your home directory (e.g. C:\Users\username) using the extracted executable.</p>
-</section>
-<section id="boost">
-<h3>Boost<a class="headerlink" href="#boost" title="Link to this heading">¶</a></h3>
-<p>Get the <a class="reference external" href="http://www.boost.org">Boost C++ libraries</a>. Move the extracted folder to your home directory and rename to “boost”. If you used the zip file, you might have to move the first folder (called something like boost_1_54_0, or whatever the current version is) one directory up and rename it to “boost”. At any rate, you should check that you have the boost header files (*.hpp) sitting in C:\Users\username\boost\boost\*.hpp.</p>
-</section>
-<section id="python">
-<h3>Python<a class="headerlink" href="#python" title="Link to this heading">¶</a></h3>
-<p>Download and install the 64-bit version of <a class="reference external" href="http://www.python.org">Python 2.7</a>. Make sure to install it for all users so that it ends up in C:\Python27</p>
-</section>
-<section id="pyemf">
-<h3>PyEMF<a class="headerlink" href="#pyemf" title="Link to this heading">¶</a></h3>
-<p>Get PyEMF 2.0.0 from <a class="reference external" href="http://sourceforge.net/projects/pyemf/files/latest/download?source=files">here</a>. Install to your home directory(_not_ to C:\Python27\*!) to pyemf_2.0.0. Rename the folder to “pyemf-2.0.0”.</p>
-</section>
-<section id="numpy">
-<h3>NumPy<a class="headerlink" href="#numpy" title="Link to this heading">¶</a></h3>
-<p>Install NumPy from <a class="reference external" href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy">Chris Gohlke’s repository</a>. Use the win64 (amd64) wheel for Python 2.7. Install by executing <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">*.whl</span></code>.</p>
-</section>
-<section id="matplotlib">
-<h3>Matplotlib<a class="headerlink" href="#matplotlib" title="Link to this heading">¶</a></h3>
-<p>Install matplotlib from <a class="reference external" href="http://www.lfd.uci.edu/~gohlke/pythonlibs/#matplotlib">Chris Gohlke’s repository</a>. Use the win64 (amd64) wheel for Python 2.7. Install by executing <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">*.whl</span></code>.</p>
-</section>
-<section id="wxwidgets">
-<h3>wxWidgets<a class="headerlink" href="#wxwidgets" title="Link to this heading">¶</a></h3>
-<p>Get the prebuilt wxWidgets 3.0 libraries from the wxPython site <a class="reference external" href="http://www.wxpython.org/download.php#unstable">here</a>. Choose the “64-bit binaries for MSVC 9” in the “Windows Development Files” section. Install to your home directory. Rename the folder to “wx”.</p>
-</section>
-<section id="wxpython">
-<h3>wxPython<a class="headerlink" href="#wxpython" title="Link to this heading">¶</a></h3>
-<p>Get wxPython 3.0 from <a class="reference external" href="http://www.wxpython.org/download.php#unstable">here</a>. Choose the 64-bit version for Python 2.7 in the “Windows Binaries” section. Install to your home directory(_not_ to C:\Python27\*!). Rename the folder to “wxPython”.</p>
-</section>
-<section id="fftw">
-<h3>FFTW<a class="headerlink" href="#fftw" title="Link to this heading">¶</a></h3>
-<p>The latest fftw development files are avaible <a class="reference external" href="http://www.stimfit.org/libs">here</a>. Download the zip file and extract to a folder called “fftw” in your home directory. Make sure that the files are at the top level of this fftw folder. These development files were prepared from the latest 64-bit fftw dlls from <a class="reference external" href="http://fftw.org/install/windows.html">here</a>.</p>
-</section>
-<section id="blas-lapack">
-<h3>BLAS/LAPACK<a class="headerlink" href="#blas-lapack" title="Link to this heading">¶</a></h3>
-<p>Get the precompiled 64-bit BLAS/LAPACK libraries from <a class="reference external" href="http://www.stimfit.org/libs">here</a>. They will be moved into a library folder within the stimfit tree later. They were obtained <a class="reference external" href="http://www.netlib.org/clapack/LIB_WINDOWS/prebuilt_libraries_windows.html">from the official LAPACK site</a> using the “nowrap” versions.</p>
-</section>
-<section id="libbiosig">
-<h3>libbiosig<a class="headerlink" href="#libbiosig" title="Link to this heading">¶</a></h3>
-<p>Get the 64-bit biosig development files from <a class="reference external" href="http://www.stimfit.org/libs">here</a>. They were prepared using <a class="reference external" href="http://mxe.cc/">mxe</a> and converted with Visual Studio’s lib tool. Extract to a folder called “biosig” in your home directory. Make sure that the files and folders are directly in the top-level biosig folder.</p>
-</section>
-<section id="python-modules">
-<h3>Python modules<a class="headerlink" href="#python-modules" title="Link to this heading">¶</a></h3>
-<p>A package with all Python modules that Stimfit requires to run (numpy, matplotlib and their dependencies) is available <a class="reference external" href="http://www.stimfit.org/libs">here</a>. They were compiled by <a class="reference external" href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">Christoph Gohlke</a>. Unzip them to a folder “stf-site-packages” in your home directory. They will be required to produce an installer with nsis.</p>
-</section>
+<p>Current third-party C and C++ dependencies are resolved through <cite>vcpkg</cite> by
+[<cite>build_windows_msvc.ps1</cite>](build_windows_msvc.ps1) and the repository’s CMake
+presets. You do not need to download the old hand-curated dependency ZIP files
+used by the Visual Studio 2008 workflow.</p>
+<p>If you are building with embedded Python enabled, install a matching Python 3
+interpreter and ensure it is discoverable when running
+[<cite>build_windows_msvc.ps1</cite>](build_windows_msvc.ps1).</p>
 </section>
 <section id="build-tools">
 <h2>Build Tools<a class="headerlink" href="#build-tools" title="Link to this heading">¶</a></h2>
 <section id="swig">
 <h3>SWIG<a class="headerlink" href="#swig" title="Link to this heading">¶</a></h3>
-<p><a class="reference external" href="http://www.cygwin.com">Cygwin</a> has SWIG in its repositories. Some users have reported issues with Cygwin’s SWIG, so you might be better off downloading the precompiled Windows binary from <a class="reference external" href="http://www.swig.org">here</a>. At any rate, make sure that the binary is located in C:\cygwin64\bin\swig.exe.</p>
+<p>If you are building outside the helper script, install a current SWIG binary for
+Windows and make sure it is available on <cite>PATH</cite>. The repository helper script
+and CI workflow assume a standard command-line installation rather than the old
+Cygwin-specific layout.</p>
 </section>
 <section id="git">
 <h3>git<a class="headerlink" href="#git" title="Link to this heading">¶</a></h3>
-<p><a class="reference external" href="http://www.cygwin.com">Cygwin</a> has git in its repositories. Otherwise, you can download it from <a class="reference external" href="http://www.git-scm.org">here</a>.</p>
+<p>Install a current Git for Windows release from <a class="reference external" href="https://git-scm.com">git-scm.com</a>.</p>
 </section>
 <section id="nsis">
 <h3>nsis<a class="headerlink" href="#nsis" title="Link to this heading">¶</a></h3>
-<p>Get nsis from <a class="reference external" href="http://nsis.sourceforge.net/Download">here</a>.</p>
+<p>The legacy NSIS packaging path is no longer the supported release route.
+Prefer Inno Setup 6 with the <cite>INNOSETUP</cite> CPack generator used by the current
+Windows workflow.</p>
 </section>
 </section>
 </section>
@@ -170,25 +130,8 @@ drives the supported Windows flow and mirrors the active CI setup in
     <h3><a href="../contents.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Prerequisites</a><ul>
-<li><a class="reference internal" href="#visual-c-express-2008">Visual C++ Express 2008</a><ul>
-<li><a class="reference internal" href="#bit">64-bit</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#libraries">Libraries</a><ul>
-<li><a class="reference internal" href="#hdf5">HDF5</a></li>
-<li><a class="reference internal" href="#boost">Boost</a></li>
-<li><a class="reference internal" href="#python">Python</a></li>
-<li><a class="reference internal" href="#pyemf">PyEMF</a></li>
-<li><a class="reference internal" href="#numpy">NumPy</a></li>
-<li><a class="reference internal" href="#matplotlib">Matplotlib</a></li>
-<li><a class="reference internal" href="#wxwidgets">wxWidgets</a></li>
-<li><a class="reference internal" href="#wxpython">wxPython</a></li>
-<li><a class="reference internal" href="#fftw">FFTW</a></li>
-<li><a class="reference internal" href="#blas-lapack">BLAS/LAPACK</a></li>
-<li><a class="reference internal" href="#libbiosig">libbiosig</a></li>
-<li><a class="reference internal" href="#python-modules">Python modules</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#visual-studio-and-packaging-tools">Visual Studio and packaging tools</a></li>
+<li><a class="reference internal" href="#libraries">Libraries</a></li>
 <li><a class="reference internal" href="#build-tools">Build Tools</a><ul>
 <li><a class="reference internal" href="#swig">SWIG</a></li>
 <li><a class="reference internal" href="#git">git</a></li>
@@ -207,8 +150,8 @@ drives the supported Windows flow and mirrors the active CI setup in
   </div>
   <div>
     <h4>Next topic</h4>
-    <p class="topless"><a href="VCExpress64bitsetup.html"
-                          title="next chapter">Instructions for setting up Visual C++ Express 2008 to compile 64-bit targets</a></p>
+    <p class="topless"><a href="building.html"
+                          title="next chapter">Building Stimfit</a></p>
   </div>
 <search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
@@ -234,25 +177,8 @@ drives the supported Windows flow and mirrors the active CI setup in
     <h3><a href="../contents.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Prerequisites</a><ul>
-<li><a class="reference internal" href="#visual-c-express-2008">Visual C++ Express 2008</a><ul>
-<li><a class="reference internal" href="#bit">64-bit</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#libraries">Libraries</a><ul>
-<li><a class="reference internal" href="#hdf5">HDF5</a></li>
-<li><a class="reference internal" href="#boost">Boost</a></li>
-<li><a class="reference internal" href="#python">Python</a></li>
-<li><a class="reference internal" href="#pyemf">PyEMF</a></li>
-<li><a class="reference internal" href="#numpy">NumPy</a></li>
-<li><a class="reference internal" href="#matplotlib">Matplotlib</a></li>
-<li><a class="reference internal" href="#wxwidgets">wxWidgets</a></li>
-<li><a class="reference internal" href="#wxpython">wxPython</a></li>
-<li><a class="reference internal" href="#fftw">FFTW</a></li>
-<li><a class="reference internal" href="#blas-lapack">BLAS/LAPACK</a></li>
-<li><a class="reference internal" href="#libbiosig">libbiosig</a></li>
-<li><a class="reference internal" href="#python-modules">Python modules</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#visual-studio-and-packaging-tools">Visual Studio and packaging tools</a></li>
+<li><a class="reference internal" href="#libraries">Libraries</a></li>
 <li><a class="reference internal" href="#build-tools">Build Tools</a><ul>
 <li><a class="reference internal" href="#swig">SWIG</a></li>
 <li><a class="reference internal" href="#git">git</a></li>
@@ -271,8 +197,8 @@ drives the supported Windows flow and mirrors the active CI setup in
   </div>
   <div>
     <h4>Next topic</h4>
-    <p class="topless"><a href="VCExpress64bitsetup.html"
-                          title="next chapter">Instructions for setting up Visual C++ Express 2008 to compile 64-bit targets</a></p>
+    <p class="topless"><a href="building.html"
+                          title="next chapter">Building Stimfit</a></p>
   </div>
 <search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>

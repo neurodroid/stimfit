@@ -14,9 +14,7 @@
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Building Stimfit" href="building.html" />
-    <link rel="prev" title="Prerequisites" href="prerequisites.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
@@ -27,19 +25,12 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="building.html" title="Building Stimfit"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="prerequisites.html" title="Prerequisites"
-             accesskey="P">previous</a> |</li>
     <li><a href="http://github.com/neurodroid/stimfit/wiki/Stimfit">Stimfit Homepage</a> | &nbsp; </li>
     <li><a href="http://github.com/neurodroid/stimfit" }}>Developer (Github)</a> | &nbsp; </li>
     <li><a href=../index.html>Documentation Home</a> | &nbsp; </li>
 
     
 
-          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Windows Build Guide</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Instructions for setting up Visual C++ Express 2008 to compile 64-bit targets</a></li> 
       </ul>
     </div>  
@@ -51,6 +42,16 @@
             
   <section id="instructions-for-setting-up-visual-c-express-2008-to-compile-64-bit-targets">
 <h1>Instructions for setting up Visual C++ Express 2008 to compile 64-bit targets<a class="headerlink" href="#instructions-for-setting-up-visual-c-express-2008-to-compile-64-bit-targets" title="Link to this heading">¶</a></h1>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This page is retained only as historical reference material for the legacy
+Visual C++ Express 2008 workflow. It is not part of the supported build path
+for current [<cite>master</cite>](README.md:1).</p>
+<p>For current Windows development and release packaging, use
+[<cite>build_windows_msvc.ps1</cite>](build_windows_msvc.ps1) together with the CMake
+presets, <cite>vcpkg</cite>, and CPack flow documented in [<cite>BUILDING.md</cite>](BUILDING.md)
+and [<cite>doc/sphinx/win_install_guide/building.rst</cite>](doc/sphinx/win_install_guide/building.rst).</p>
+</div>
 <p>Visual C++ Express 2008 will not build 64-bit targets out of the box. However, this capability can be added by installing the Windows SDK and making some registry edits. Follow the instructions below to do this. Note that if you have the full rather than express version of Visual C++, this should not be necessary.</p>
 <p>These instructions have been adapted from the following sources:</p>
 <p><a class="reference external" href="http://jenshuebel.wordpress.com/2009/02/12/visual-c-2008-express-edition-and-64-bit-targets/">http://jenshuebel.wordpress.com/2009/02/12/visual-c-2008-express-edition-and-64-bit-targets/</a></p>
@@ -139,16 +140,6 @@
 </ul>
 
   </div>
-  <div>
-    <h4>Previous topic</h4>
-    <p class="topless"><a href="prerequisites.html"
-                          title="previous chapter">Prerequisites</a></p>
-  </div>
-  <div>
-    <h4>Next topic</h4>
-    <p class="topless"><a href="building.html"
-                          title="next chapter">Building Stimfit</a></p>
-  </div>
 <search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
@@ -184,16 +175,6 @@
 </li>
 </ul>
 
-  </div>
-  <div>
-    <h4>Previous topic</h4>
-    <p class="topless"><a href="prerequisites.html"
-                          title="previous chapter">Prerequisites</a></p>
-  </div>
-  <div>
-    <h4>Next topic</h4>
-    <p class="topless"><a href="building.html"
-                          title="next chapter">Building Stimfit</a></p>
   </div>
 <search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>

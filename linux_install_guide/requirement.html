@@ -182,23 +182,28 @@ Then run `cmake --build` and `cmake --install` as your normal user.
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">libbiosig</span><span class="o">-</span><span class="n">dev</span>
 </pre></div>
 </div>
-<p>Alternatively, get the full version of biosig and its build requirements: you can obtain the latest BioSig version in <a class="reference external" href="http://biosig.sourceforge.net/download.html">BioSig downloads</a> . Choose BioSig for C/C++, libbiosig (2.3.1 or higher is recommended because of improved support for ABF2, ATF, and AXG format).</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">configure</span>
-<span class="n">make</span>
-<span class="n">sudo</span> <span class="n">make</span> <span class="n">install</span>
+<p>Alternatively, use the in-tree BioSig provider managed by the current CMake
+toolchain. This is the preferred fallback when your distribution package is too
+old or unavailable:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd $HOME/stimfit
+$ cmake -S . -B build/linux-biosig-submodule -G Ninja \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DSTF_WITH_BIOSIG=ON \
+          -DSTF_BIOSIG_PROVIDER=SUBMODULE
+$ cmake --build build/linux-biosig-submodule --parallel
 </pre></div>
 </div>
-<p>Alternatively, you can obtain the latest developmental version from the git repository:</p>
+<p>Alternatively, if you are maintaining BioSig itself and need a separate local
+checkout from its git repository:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">libsuitesparse</span><span class="o">-</span><span class="n">dev</span> <span class="n">libz</span><span class="o">-</span><span class="n">dev</span> <span class="n">gawk</span> <span class="n">libdcmtk</span><span class="o">-</span><span class="n">dev</span>
 
 <span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">sf</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">p</span><span class="o">/</span><span class="n">biosig</span><span class="o">/</span><span class="n">code</span> <span class="n">biosig</span><span class="o">-</span><span class="n">code</span>
 <span class="n">cd</span> <span class="n">biosig</span><span class="o">-</span><span class="n">code</span>
-<span class="n">autoconf</span> <span class="c1"># needed first time after getting repository</span>
-<span class="o">./</span><span class="n">configure</span>
-<span class="n">make</span>
-<span class="n">sudo</span> <span class="n">make</span> <span class="n">install</span>
 </pre></div>
 </div>
+<p>Then build that checkout using the current BioSig project’s own documented build
+instructions, install it into your desired prefix, and point Stimfit’s CMake
+configure step at that installation through the appropriate provider settings.</p>
 <p>After that you can configure Stimfit with <cite>-DSTF_WITH_BIOSIG=ON</cite> and, when
 needed, select the desired provider through <cite>-DSTF_BIOSIG_PROVIDER=…</cite>.</p>
 </section>
