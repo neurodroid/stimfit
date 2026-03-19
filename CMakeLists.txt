@@ -604,6 +604,15 @@ set(CPACK_PACKAGE_CONTACT "https://github.com/neurodroid/stimfit")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/gpl-2.0.txt")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "Stimfit")
 set(CPACK_MONOLITHIC_INSTALL OFF)
+set(CPACK_SOURCE_IGNORE_FILES
+  "/[.]git/"
+  "/[.]github/"
+  "/[.]pytest_cache/"
+  "/build/"
+  "/_CPack_Packages/"
+  "~$"
+  "/[.]_"
+)
 
 if(WIN32)
   set(CPACK_GENERATOR "INNOSETUP;ZIP")
