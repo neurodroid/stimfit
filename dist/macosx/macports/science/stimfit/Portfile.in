@@ -54,7 +54,7 @@ foreach python_branch ${python_branches} {
 }
 
 if {$none_selected} {
-    default_variants +python313
+    default_variants +python314
 }
 
 foreach python_branch ${python_branches} {
