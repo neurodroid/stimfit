@@ -170,6 +170,7 @@ enum {
     ID_COMBOACTCHANNEL,
     ID_COMBOINACTCHANNEL,
 #ifdef WITH_PYTHON
+    ID_PY_SHELL_BACKEND,
     ID_USERDEF, // this should be the last ID event
 #endif
 };

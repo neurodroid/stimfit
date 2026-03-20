@@ -5,7 +5,7 @@ option(STF_BUILD_TESTS "Build gtest-based stimfittest target" OFF)
 option(STF_BUILD_NUMERIC_TESTS "Build stfnum-based gtest suites in addition to minimal container tests" OFF)
 option(STF_ENABLE_PYTHON "Enable Python integration (like --enable-python)" ON)
 option(STF_MACOS_APP_BUNDLE "Build and install stimfit as a macOS .app bundle" OFF)
-set(STF_PY_SHELL_BACKEND "MODERN" CACHE STRING "Embedded Python shell backend (MODERN, LEGACY, or JUPYTER)")
+set(STF_PY_SHELL_BACKEND "JUPYTER" CACHE STRING "Default embedded Python shell backend selection (MODERN, LEGACY, or JUPYTER)")
 set_property(CACHE STF_PY_SHELL_BACKEND PROPERTY STRINGS MODERN LEGACY JUPYTER)
 
 option(STF_WINDOWS_COPY_PYTHON_RUNTIME "Copy Python runtime DLL to install/bin on Windows" ON)

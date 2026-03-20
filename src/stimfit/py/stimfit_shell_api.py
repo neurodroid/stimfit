@@ -3,6 +3,7 @@ import sys
 
 
 _SHELL = None
+_SHELL_BACKEND_SETTER = None
 
 
 def register_shell(shell):
@@ -20,6 +21,18 @@ def get_shell_namespace():
     if shell is not None and hasattr(shell, "user_ns"):
         return shell.user_ns
     return None
+
+
+def register_shell_backend_setter(setter):
+    global _SHELL_BACKEND_SETTER
+    _SHELL_BACKEND_SETTER = setter
+
+
+def set_shell_backend(backend_name):
+    if _SHELL_BACKEND_SETTER is None:
+        return False
+    _SHELL_BACKEND_SETTER(backend_name)
+    return True
 
 
 def bootstrap_namespace(namespace):

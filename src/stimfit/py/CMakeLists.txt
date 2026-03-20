@@ -72,6 +72,7 @@ install(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/embedded_stf.py
   ${CMAKE_CURRENT_SOURCE_DIR}/embedded_shell_modern.py
   ${CMAKE_CURRENT_SOURCE_DIR}/embedded_shell_ipython.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/embedded_shell_selector.py
   ${CMAKE_CURRENT_SOURCE_DIR}/embedded_mpl.py
   ${CMAKE_CURRENT_SOURCE_DIR}/heka.py
   ${CMAKE_CURRENT_SOURCE_DIR}/extensions.py

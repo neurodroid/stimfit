@@ -177,6 +177,7 @@ EVT_MENU( ID_LOADPERSPECTIVE, wxStfParentFrame::OnLoadperspective )
 EVT_MENU( ID_RESTOREPERSPECTIVE, wxStfParentFrame::OnRestoreperspective )
 #ifdef WITH_PYTHON
 EVT_MENU( ID_VIEW_SHELL, wxStfParentFrame::OnViewshell )
+EVT_CHOICE( ID_PY_SHELL_BACKEND, wxStfParentFrame::OnShellBackendChoice )
 #endif
 #if 0
 EVT_MENU( ID_LATENCYSTART_MAXSLOPE, wxStfParentFrame::OnLStartMaxslope )
@@ -194,7 +195,11 @@ END_EVENT_TABLE()
 
 wxStfParentFrame::wxStfParentFrame(wxDocManager *manager, wxFrame *frame, const wxString& title,
                  const wxPoint& pos, const wxSize& size, long type):
-wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame")), mpl_figno(0)
+wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
+#ifdef WITH_PYTHON
+, m_shellBackendChoice(NULL)
+#endif
+, mpl_figno(0)
 {
     // ::wxInitAllImageHandlers();
 
@@ -278,12 +283,16 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     SetMouseQual( stf::measure_cursor );
 
 #ifdef WITH_PYTHON
+#if PY_MAJOR_VERSION >= 3
+#define STF_PY_SHELL_MODULE wxT("embedded_shell_selector")
+#else
 #if defined(STF_PY_SHELL_BACKEND_LEGACY)
 #define STF_PY_SHELL_MODULE wxT("embedded_stf")
 #elif defined(STF_PY_SHELL_BACKEND_JUPYTER)
 #define STF_PY_SHELL_MODULE wxT("embedded_shell_ipython")
 #else
 #define STF_PY_SHELL_MODULE wxT("embedded_shell_modern")
+#endif
 #endif
     wxFileName stfExePath(wxStandardPaths::Get().GetExecutablePath());
     const wxString stfExeDir = stfExePath.GetPath();
@@ -333,9 +342,23 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     const wxString stfNestedBuildPyDirEscaped = stfPyEscape(stfNestedBuildPyDir);
     const wxString stfInstallPyDirEscaped = stfPyEscape(stfInstallPyDir);
     const wxString stfBundleInstallPyDirEscaped = stfPyEscape(stfBundleInstallPyDir);
+    int stfShellBackendSelection = wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("PyShellBackend"), 2);
+    if (stfShellBackendSelection < 0 || stfShellBackendSelection > 2) {
+        stfShellBackendSelection = 2;
+    }
+    wxString stfDefaultShellKey = wxT("ipython");
+    if (stfShellBackendSelection == 0) {
+        stfDefaultShellKey = wxT("legacy");
+    } else if (stfShellBackendSelection == 1) {
+        stfDefaultShellKey = wxT("modern");
+    }
 
     python_code2 << wxT("import os\n")
                  << wxT("os.environ['STF_EMBEDDED_SHELL']='1'\n")
+#if PY_MAJOR_VERSION >= 3
+                 << wxT("os.environ['STF_PY_SHELL_DEFAULT']='") << stfDefaultShellKey << wxT("'\n")
+                 << wxT("os.environ['STF_PY_SHELL_HIDE_INTERNAL_SELECTOR']='1'\n")
+#endif
                  << wxT("os.environ.pop('PYTHONSTARTUP', None)\n")
                  << wxT("os.environ.pop('PYTHONINSPECT', None)\n")
                  << wxT("import sys\n")
@@ -430,6 +453,20 @@ wxStfToolBar* wxStfParentFrame::CreateStdTb() {
                   wxArtProvider::GetBitmap( wxART_PRINT, wxART_TOOLBAR, wxSize(16,16) ),
                   wxT("Print traces"),
                   wxITEM_NORMAL );
+#if PY_MAJOR_VERSION >= 3
+    tb1->AddStretchSpacer(1);
+    wxArrayString shellChoices;
+    shellChoices.Add(wxT("Legacy"));
+    shellChoices.Add(wxT("Modern"));
+    shellChoices.Add(wxT("IPython"));
+    m_shellBackendChoice = new wxChoice(tb1, ID_PY_SHELL_BACKEND, wxDefaultPosition, wxDefaultSize, shellChoices);
+    int selectedShell = wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("PyShellBackend"), 2);
+    if (selectedShell < 0 || selectedShell > 2) {
+        selectedShell = 2;
+    }
+    m_shellBackendChoice->SetSelection(selectedShell);
+    tb1->AddControl(m_shellBackendChoice, wxT("Python shell backend"));
+#endif
     return tb1;
 }
 
@@ -1304,6 +1341,27 @@ void wxStfParentFrame::OnViewshell(wxCommandEvent& WXUNUSED(event)) {
     m_mgr.GetPane(wxT("pythonShell")).Show( !old_state );
     wxGetApp().wxWriteProfileInt( wxT("Settings"),wxT("ViewShell"), int(!old_state) );
     m_mgr.Update();
+}
+
+void wxStfParentFrame::OnShellBackendChoice(wxCommandEvent& WXUNUSED(event)) {
+    if (m_shellBackendChoice == NULL) {
+        return;
+    }
+
+    const int selection = m_shellBackendChoice->GetSelection();
+    if (selection == wxNOT_FOUND) {
+        return;
+    }
+
+    wxString backend = wxT("ipython");
+    if (selection == 0) {
+        backend = wxT("legacy");
+    } else if (selection == 1) {
+        backend = wxT("modern");
+    }
+
+    wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("PyShellBackend"), selection);
+    SelectEmbeddedShellBackend(backend);
 }
 #endif
 

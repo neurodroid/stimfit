@@ -36,6 +36,7 @@ class wxStfTable;
 class wxStfGrid;
 class wxStfFileDrop;
 class wxProgressDialog;
+class wxChoice;
     
 typedef wxAuiToolBar wxStfToolBar;
 
@@ -155,7 +156,9 @@ private:
     wxStfFileDrop* m_drop;
 #ifdef WITH_PYTHON
     wxString python_code2; // python import code
+    wxChoice* m_shellBackendChoice;
     void RedirectStdio();
+    bool SelectEmbeddedShellBackend(const wxString& backend);
 #endif
 
 #if (__cplusplus < 201103)
@@ -241,6 +244,7 @@ private:
     void OnRestoreperspective(wxCommandEvent& event);
 #ifdef WITH_PYTHON
     void OnViewshell(wxCommandEvent& event);
+    void OnShellBackendChoice(wxCommandEvent& event);
     void OnUserdef(wxCommandEvent& event);
 #endif
     void OnLStartMaxslope(wxCommandEvent& event);

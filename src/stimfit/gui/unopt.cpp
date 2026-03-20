@@ -427,6 +427,28 @@ void wxStfParentFrame::RedirectStdio()
     wxPyEndBlockThreads(blocked);
 }
 
+bool wxStfParentFrame::SelectEmbeddedShellBackend(const wxString& backend) {
+#if PY_MAJOR_VERSION >= 3
+    wxPyBlock_t blocked = wxPyBeginBlockThreads();
+
+    wxString python_cmd;
+    python_cmd << wxT("import stimfit_shell_api\n");
+    python_cmd << wxT("stimfit_shell_api.set_shell_backend('") << backend << wxT("')\n");
+
+#if ((wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY)) && !defined(__WXMAC__))
+    int status = PyRun_SimpleString(python_cmd);
+#else
+    int status = PyRun_SimpleString(python_cmd.char_str());
+#endif
+
+    wxPyEndBlockThreads(blocked);
+    return status == 0;
+#else
+    (void)backend;
+    return false;
+#endif
+}
+
 new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, const std::string& mgr_name, const std::string& caption, bool show,
                                                 bool full, bool isfloat, int width, int height, double mpl_width, double mpl_height) {
     // More complex embedded situations will require passing C++ objects to
