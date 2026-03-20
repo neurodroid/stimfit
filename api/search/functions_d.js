@@ -51,7 +51,7 @@ var searchData=
   ['onyenllo_48',['OnYenllo',['../d7/d1a/group__wxstf.html#ga1eff713a08c34e8a0b3d80ae9ec99454',1,'wxStfGraph']]],
   ['onyshrinkhi_49',['OnYshrinkhi',['../d7/d1a/group__wxstf.html#ga99cddff62f64fe497b268d8360ad7ed0',1,'wxStfGraph']]],
   ['onyshrinklo_50',['OnYshrinklo',['../d7/d1a/group__wxstf.html#gae799f0c3a1160c46f31b311b6b9151ff',1,'wxStfGraph']]],
-  ['open_51',['open',['../dd/de7/classFileInStream.html#a7c19d72e673d8937c2fc6540ab8f269a',1,'FileInStream::open()'],['../dd/dff/classCFileDescriptor.html#af987738adb7dd158712c431c315fdd18',1,'CFileDescriptor::Open()'],['../d2/dc9/classCABF2ProtocolReader.html#af1da8e8e2de93ddd32f417f1000428e8',1,'CABF2ProtocolReader::Open()']]],
+  ['open_51',['open',['../dd/dff/classCFileDescriptor.html#af987738adb7dd158712c431c315fdd18',1,'CFileDescriptor::Open()'],['../d2/dc9/classCABF2ProtocolReader.html#af1da8e8e2de93ddd32f417f1000428e8',1,'CABF2ProtocolReader::Open()'],['../dd/de7/classFileInStream.html#a7c19d72e673d8937c2fc6540ab8f269a',1,'FileInStream::open()']]],
   ['openfile_52',['openfile',['../d0/d96/classCSynch.html#aa63d648df941adb5cc017303f5432087',1,'CSynch::OpenFile()'],['../da/dd1/fileUtils_8h.html#a5afcad6a033ae4146bbdb254b6e6f999',1,'OpenFile():&#160;fileUtils.h']]],
   ['openfilepy_53',['OpenFilePy',['../d7/d1a/group__wxstf.html#gad8c1479a2b4e101482005d2cbae660bf',1,'wxStfApp']]],
   ['openfileseries_54',['OpenFileSeries',['../d7/d1a/group__wxstf.html#gae091bc0de048b5386379f934a71f3d20',1,'wxStfApp']]],

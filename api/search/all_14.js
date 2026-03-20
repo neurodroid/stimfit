@@ -34,7 +34,7 @@ var searchData=
   ['tofit_31',['toFit',['../d3/d1b/group__stfgen.html#ga9e0595fb55ceb3ba0b7556ef832ad908',1,'stfnum::parInfo']]],
   ['toggleselect_32',['ToggleSelect',['../d7/d1a/group__wxstf.html#gafa3040015e9534a75d28693f847507b2',1,'wxStfDoc']]],
   ['topfullscale_33',['topfullscale',['../d5/da8/structWaveHeader5.html#a8b5431397c6c68c8371bd6456875ec05',1,'WaveHeader5::topFullScale'],['../df/d37/structWaveHeader2.html#a5235722d7d73e55888a38d88b8450dd8',1,'WaveHeader2::topFullScale']]],
-  ['tosection_34',['tosection',['../d6/dfb/group__stfio.html#gaf1ce760a1f1bae14e9bb1cd99b20d441',1,'stfio::txtImportSettings::toSection'],['../d7/d1a/group__wxstf.html#gac72baff88041748737b0c9e7b6098743',1,'wxStfTextImportDlg::ToSection()']]],
+  ['tosection_34',['tosection',['../d7/d1a/group__wxstf.html#gac72baff88041748737b0c9e7b6098743',1,'wxStfTextImportDlg::ToSection()'],['../d6/dfb/group__stfio.html#gaf1ce760a1f1bae14e9bb1cd99b20d441',1,'stfio::txtImportSettings::toSection']]],
   ['tostring_35',['toString',['../dc/d54/common_8h.html#a9703f4e5f001f32fe397293c9bf4a539',1,'common.h']]],
   ['towstring_36',['toWString',['../dc/d54/common_8h.html#a7c1a84d0429befef2d6a233552cfda56',1,'common.h']]],
   ['tpadc_37',['TpAdc',['../dd/d60/Son_8h.html#a3b4d904fa87ac8a4f6ec02ec1b3170ac',1,'Son.h']]],

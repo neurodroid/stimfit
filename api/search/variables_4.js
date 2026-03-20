@@ -11,7 +11,7 @@ var searchData=
   ['datakind_8',['dataKind',['../d7/d0b/cfs_8h.html#a89f348a9d7e199a8642da6dd8246bbaf',1,'cfs.h']]],
   ['datasection_9',['datasection',['../d3/df3/structABF2__FileInfo.html#a268c18a9bfaa711749d7eb7b1da70c64',1,'ABF2_FileInfo::DataSection'],['../d7/d0b/cfs_8h.html#a2bf970c85bde28e07f08d78713904d8a',1,'dataSection:&#160;cfs.h']]],
   ['datasections_10',['dataSections',['../d7/d0b/cfs_8h.html#a4aff516b68d3a9e313ba8fa7e055eb82',1,'cfs.h']]],
-  ['datatype_11',['datatype',['../d7/d0b/cfs_8h.html#ac1abc9776e81dded5b407b0e0ad9f358',1,'dataType:&#160;cfs.h'],['../d6/d8e/structIntanHeader.html#a7e05de82b892a4fc31a89d0bafd8a964',1,'IntanHeader::datatype'],['../df/df5/structAxoGraphXColumnHeader.html#a35ab09c35622851580e84e7a44d61852',1,'AxoGraphXColumnHeader::dataType']]],
+  ['datatype_11',['datatype',['../d7/d0b/cfs_8h.html#ac1abc9776e81dded5b407b0e0ad9f358',1,'dataType:&#160;cfs.h'],['../df/df5/structAxoGraphXColumnHeader.html#a35ab09c35622851580e84e7a44d61852',1,'AxoGraphXColumnHeader::dataType'],['../d6/d8e/structIntanHeader.html#a7e05de82b892a4fc31a89d0bafd8a964',1,'IntanHeader::datatype']]],
   ['dataunits_12',['dataunits',['../df/d37/structWaveHeader2.html#a9271c550a5f6ddff681969c9309611b4',1,'WaveHeader2::dataUnits'],['../d5/da8/structWaveHeader5.html#ad4cc5be9c478980a345d7fa532fcb1b5',1,'WaveHeader5::dataUnits']]],
   ['date_13',['date',['../d7/d0b/cfs_8h.html#a0cfce6650caf1852c9ef82e761225b80',1,'cfs.h']]],
   ['date_5fday_14',['date_Day',['../d6/d8e/structIntanHeader.html#a8421fc9dd0cf23100e84f70e93303397',1,'IntanHeader']]],
