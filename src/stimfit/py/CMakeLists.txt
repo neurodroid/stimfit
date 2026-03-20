@@ -68,8 +68,10 @@ install(FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/spells.py
   ${CMAKE_CURRENT_SOURCE_DIR}/tdms.py
   ${CMAKE_CURRENT_SOURCE_DIR}/embedded_init.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/stimfit_shell_api.py
   ${CMAKE_CURRENT_SOURCE_DIR}/embedded_stf.py
   ${CMAKE_CURRENT_SOURCE_DIR}/embedded_shell_modern.py
+  ${CMAKE_CURRENT_SOURCE_DIR}/embedded_shell_ipython.py
   ${CMAKE_CURRENT_SOURCE_DIR}/embedded_mpl.py
   ${CMAKE_CURRENT_SOURCE_DIR}/heka.py
   ${CMAKE_CURRENT_SOURCE_DIR}/extensions.py

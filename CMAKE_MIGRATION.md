@@ -78,7 +78,6 @@ The following CMake options preserve the intent of the former high-level Autotoo
 
 - `STF_BUILD_MODULE` ⇔ `--enable-module`
 - `STF_ENABLE_PYTHON` ⇔ `--enable-python`
-- `STF_ENABLE_IPYTHON` ⇔ `--enable-ipython`
 - `STF_ENABLE_PSLOPE` ⇔ `--enable-pslope`
 - `STF_ENABLE_AUI` ⇔ `--enable-aui`
 - `STF_BUILD_DEBIAN` ⇔ `--enable-debian`

@@ -87,6 +87,7 @@ cmake_args=(
 
 if [[ "$WITH_PYTHON" -eq 1 ]]; then
   cmake_args+=( -DSTF_ENABLE_PYTHON=ON )
+  cmake_args+=( -DSTF_PY_SHELL_BACKEND=JUPYTER )
 
   PYTHON_EXECUTABLE_GUESS="${PYTHON_EXECUTABLE:-$DEFAULT_MACPORTS_PYTHON}"
   PYTHON_EXECUTABLE_GUESS="$(pick_python_for_cmake "$PYTHON_EXECUTABLE_GUESS")" || {

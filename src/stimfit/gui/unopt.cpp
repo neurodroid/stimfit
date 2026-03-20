@@ -345,14 +345,6 @@ bool wxStfApp::Init_wxPython()
     // Global Interpreter Lock.
     m_mainTState = wxPyBeginAllowThreads();
 
-#ifdef IPYTHON
-    // Set a dummy sys.argv for IPython
-    wxPyBlock_t blocked = wxPyBeginBlockThreads();
-    char* argv = (char *)"\0";
-    PySys_SetArgv(1, &argv);
-    wxPyEndBlockThreads(blocked);
-#endif
-
     return true;
 }
 
@@ -366,36 +358,9 @@ void wxStfApp::ImportPython(const wxString &modulelocation) {
     wxPyBlock_t blocked = wxPyBeginBlockThreads();
 
     wxString python_import;
-#ifdef IPYTHON
-    // the ip object is created to access the interactive IPython session
-    python_import << wxT("import IPython.ipapi\n");
-    python_import << wxT("ip = IPython.ipapi.get()\n");
-    python_import << wxT("import sys\n");
-    python_import << wxT("sys.path.append(\"") << python_path << wxT("\")\n");
-#if (PY_VERSION_HEX < 0x03000000)
-    python_import << wxT("if not sys.modules.has_key(\"") << python_file << wxT("\"):");
-#else
-    python_import << wxT("if '") << python_file << wxT("' not in sys.modules:");
-#endif
-    python_import << wxT("ip.ex(\"import ") << python_file << wxT("\")\n");
-    python_import << wxT("else:") << wxT("ip.ex(\"reload(") << python_file << wxT(")") << wxT("\")\n");
-    python_import << wxT("sys.path.remove(\"") << python_path << wxT("\")\n");
-
-#else
-    // Python code to import a module with PyCrust
-    python_import << wxT("import sys\n");
-    python_import << wxT("sys.path.append(\"") << python_path << wxT("\")\n");
-#if (PY_VERSION_HEX < 0x03000000)
-    python_import << wxT("if not sys.modules.has_key(\"") << python_file << wxT("\"):");
-#else
-    python_import << wxT("if '") << python_file << wxT("' not in sys.modules:");
-#endif
-    python_import << wxT("import ") << python_file << wxT("\n");
-    python_import << wxT("else:") << wxT("reload(") << python_file << wxT(")") << wxT("\n");
-    python_import << wxT("sys.path.remove(\"") << python_path << wxT("\")\n");
-    python_import << wxT("del sys\n");
-
-#endif
+    python_import << wxT("import stimfit_shell_api\n");
+    python_import << wxT("stimfit_shell_api.import_module_from_path(r'''") << python_path
+                  << wxT("''', r'''") << python_file << wxT("''')\n");
 
 #if ((wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY)) && !defined(__WXMAC__))
     PyRun_SimpleString(python_import);

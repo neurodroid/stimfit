@@ -8,7 +8,7 @@
 # 2010.06.12
 # Major stf classes were added (Recording, Channel, Section)
 #
-# It is used by embedded_stf.py and embedded_ipython.py 
+# It is used by the embedded Stimfit shell backends.
 # Please, do not modify this file unless you know what you are doing
 #
 #=========================================================================
@@ -50,10 +50,11 @@ class _LazyStfProxy:
     """Proxy that imports stf on first attribute access."""
 
     def __dir__(self):
-        # Do not trigger a SWIG import during shell autocompletion.
-        if _stf_module is not None:
-            return sorted(set(dir(_stf_module)))
-        return []
+        # Enable member completion (e.g. stf.<TAB>) by loading stf on demand.
+        module = _load_stf_module()
+        if module is None:
+            return []
+        return sorted(set(dir(module)))
 
     def __getattr__(self, name):
         module = _load_stf_module()

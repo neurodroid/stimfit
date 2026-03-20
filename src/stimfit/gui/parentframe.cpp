@@ -280,6 +280,8 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 #ifdef WITH_PYTHON
 #if defined(STF_PY_SHELL_BACKEND_LEGACY)
 #define STF_PY_SHELL_MODULE wxT("embedded_stf")
+#elif defined(STF_PY_SHELL_BACKEND_JUPYTER)
+#define STF_PY_SHELL_MODULE wxT("embedded_shell_ipython")
 #else
 #define STF_PY_SHELL_MODULE wxT("embedded_shell_modern")
 #endif
@@ -343,18 +345,10 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
                  << wxT("sys.path.append('") << stfNestedBuildPyDirEscaped << wxT("')\n")
                  << wxT("sys.path.append('") << stfInstallPyDirEscaped << wxT("')\n")
                  << wxT("sys.path.append('") << stfBundleInstallPyDirEscaped << wxT("')\n")
-#ifdef IPYTHON
-                 << wxT("import embedded_ipython\n")
-#else
                  << wxT("import ") << STF_PY_SHELL_MODULE << wxT("\n")
-#endif
                  << wxT("\n")
                  << wxT("def makeWindow(parent, figsize=(8,6)):\n")
-#ifdef IPYTHON
-                 << wxT("    win = embedded_ipython.MyPanel(parent)\n")
-#else
                  << wxT("    win = ") << STF_PY_SHELL_MODULE << wxT(".MyPanel(parent)\n")
-#endif
                  << wxT("    return win\n")
                  << wxT("\n")
 #if PY_MAJOR_VERSION < 3

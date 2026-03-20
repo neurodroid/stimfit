@@ -80,7 +80,8 @@ foreach python_branch ${python_branches} {
     if {[variant_isset python${python_version}]} {
         depends_build-append \
             port:swig-python \
-            port:py${python_version}-setuptools
+            port:py${python_version}-setuptools \
+            port:py${python_version}-ipython
 
         depends_lib-replace \
             port:${wxWidgets.port} \
@@ -89,7 +90,8 @@ foreach python_branch ${python_branches} {
         depends_lib-append \
             port:python${python_version} \
             port:py${python_version}-numpy \
-            port:py${python_version}-matplotlib
+            port:py${python_version}-matplotlib \
+            port:py${python_version}-ipython
 
         configure.args-replace \
             -DSTF_ENABLE_PYTHON=OFF \

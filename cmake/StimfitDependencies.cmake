@@ -534,6 +534,20 @@ if(STF_ENABLE_PYTHON)
         if(NOT _stf_legacy_shell_status EQUAL 0)
           message(FATAL_ERROR "STF_PY_SHELL_BACKEND=LEGACY requires 'wx.py.shell', which is not available in this Python environment.")
         endif()
+      elseif(STF_PY_SHELL_BACKEND STREQUAL "JUPYTER")
+        if(NOT _stf_wxpy_status EQUAL 0)
+          string(STRIP "${_stf_wxpy_err}" _stf_wxpy_err)
+          message(FATAL_ERROR "STF_PY_SHELL_BACKEND=JUPYTER requires wxPython to be importable from Python3_EXECUTABLE. ${_stf_wxpy_err}")
+        endif()
+        execute_process(
+          COMMAND ${Python3_EXECUTABLE} -c "${_stf_python_bootstrap}import IPython"
+          RESULT_VARIABLE _stf_ipython_status
+          ERROR_VARIABLE _stf_ipython_err
+        )
+        if(NOT _stf_ipython_status EQUAL 0)
+          string(STRIP "${_stf_ipython_err}" _stf_ipython_err)
+          message(FATAL_ERROR "STF_PY_SHELL_BACKEND=JUPYTER requires IPython to be importable from Python3_EXECUTABLE. ${_stf_ipython_err}")
+        endif()
       else()
         if(NOT _stf_wxpy_status EQUAL 0)
           string(STRIP "${_stf_wxpy_err}" _stf_wxpy_err)
