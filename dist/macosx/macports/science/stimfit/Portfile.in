@@ -35,6 +35,7 @@ configure.args      -DCMAKE_INSTALL_PREFIX=${applications_dir} \
                     -DSTF_ENABLE_PYTHON=OFF \
                     -DSTF_WITH_BIOSIG=ON \
                     -DSTF_BIOSIG_PROVIDER=SUBMODULE \
+                    -DSTF_LAPACK_PROVIDER=AUTO \
                     -DSTF_BUILD_MODULE=OFF \
                     -DSTF_BUILD_TESTS=OFF \
                     -DSTF_MACOS_APP_BUNDLE=ON \
@@ -55,6 +56,18 @@ foreach python_branch ${python_branches} {
 
 if {$none_selected} {
     default_variants +python314
+}
+
+set lapack_none_selected 1
+foreach lapack_variant {accelerate openblas atlas} {
+    if {[variant_isset ${lapack_variant}]} {
+        set lapack_none_selected 0
+        break
+    }
+}
+
+if {$lapack_none_selected} {
+    default_variants +accelerate
 }
 
 foreach python_branch ${python_branches} {
@@ -106,11 +119,25 @@ foreach python_branch ${python_branches} {
     }
 }
 
-variant atlas description {Use MacPorts ATLAS libraries} {
+variant accelerate description {Use Apple Accelerate framework for BLAS/LAPACK} conflicts openblas atlas {
+    configure.args-append \
+        -DSTF_LAPACK_PROVIDER=ACCELERATE
+}
+
+variant openblas description {Use MacPorts OpenBLAS libraries} conflicts accelerate atlas {
+    depends_lib-append \
+        port:openblas
+
+    configure.args-append \
+        -DSTF_LAPACK_PROVIDER=OPENBLAS
+}
+
+variant atlas description {Use MacPorts ATLAS libraries (legacy provider)} conflicts accelerate openblas {
     depends_lib-append \
         port:atlas
 
     configure.args-append \
+        -DSTF_LAPACK_PROVIDER=LEGACY \
         -DBLA_VENDOR=ATLAS
 }
 
