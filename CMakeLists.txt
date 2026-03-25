@@ -191,6 +191,14 @@ if(NOT STF_BUILD_MODULE)
       unset(_stf_icon_src)
     endforeach()
     unset(_stf_icon_size)
+
+    if(EXISTS "${CMAKE_SOURCE_DIR}/src/stimfit/res/toolbar")
+      install(
+        DIRECTORY "${CMAKE_SOURCE_DIR}/src/stimfit/res/toolbar/"
+        DESTINATION "${CMAKE_INSTALL_DATADIR}/stimfit/toolbar"
+        COMPONENT ${STF_COMPONENT_CORE}
+      )
+    endif()
   endif()
 
   if(WIN32 AND DEFINED wxWidgets_LIB_DIR AND EXISTS "${wxWidgets_LIB_DIR}")
