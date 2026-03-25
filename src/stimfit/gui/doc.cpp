@@ -2314,12 +2314,11 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
         };
 
         // Compute template polarity from the unnormalized template waveform.
-        const std::size_t nTemplateBase = std::max<std::size_t>(1, rawTemplateWave.size() / 10);
-        double templateBaseline = 0.0;
-        for (std::size_t i = 0; i < nTemplateBase; ++i) {
-            templateBaseline += rawTemplateWave[i];
-        }
-        templateBaseline /= static_cast<double>(nTemplateBase);
+        // Use the average of the first and last point as baseline surrogate:
+        // this is robust for fitted template snippets that may not contain much
+        // pre-event baseline at the beginning.
+        const double templateBaseline =
+            0.5 * (rawTemplateWave.front() + rawTemplateWave.back());
         const int templatePolarity = classifyPolarity(rawTemplateWave, 0,
                                                       rawTemplateWave.size()-1,
                                                       templateBaseline, 0.0);
