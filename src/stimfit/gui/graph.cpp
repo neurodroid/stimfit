@@ -1689,6 +1689,20 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         barLengthY2=(int)((yScaled2/realDistanceY2) * pixelDistanceY2);
     }	//End creation y-scale of the 2nd Channel
 
+    wxColour defaultScaleTextColour(*wxBLACK);
+    if (!isPrinted) {
+        const wxColour backgroundColour = GetBackgroundColour();
+        if (backgroundColour.IsOk()) {
+            // Use a simple luminance estimate to keep labels readable on dark mode themes.
+            const int luminance =
+                (299 * backgroundColour.Red() +
+                 587 * backgroundColour.Green() +
+                 114 * backgroundColour.Blue()) / 1000;
+            defaultScaleTextColour = luminance < 128 ? *wxWHITE : *wxBLACK;
+        }
+    }
+    pDC->SetTextForeground(defaultScaleTextColour);
+
     if (wxGetApp().get_isBars()) {
         // Use scale bars
         std::vector<wxPoint> Scale(5);
@@ -1772,7 +1786,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                 pLatexDC->DrawLabelLatex(scaleYString2,TextFrameY2,wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 #endif
             }
-            pDC->SetTextForeground(*wxBLACK);
+            pDC->SetTextForeground(defaultScaleTextColour);
         }
         //Set PenStyle
         if (!isPrinted)
@@ -1906,7 +1920,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                 y2Label << y2;
                 pDC->SetTextForeground(*wxRED);
                 pDC->DrawLabel(y2Label,TextFrame2,wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL);
-                pDC->SetTextForeground(*wxBLACK);
+                pDC->SetTextForeground(defaultScaleTextColour);
             }
             // Write y units:
             // Length of y-axis:
@@ -1927,7 +1941,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                     TextFrame2,
                     wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL
             );
-            pDC->SetTextForeground(*wxBLACK);
+            pDC->SetTextForeground(defaultScaleTextColour);
         }
         // x-Axis ticks:
         // if x axis starts with the beginning of the trace, find first tick:
