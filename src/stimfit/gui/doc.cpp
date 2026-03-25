@@ -27,6 +27,8 @@
 #include <algorithm>
 #include <functional>
 #include <queue>
+#include <cmath>
+#include <limits>
 
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
@@ -2256,14 +2258,87 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
         return;
     }
     int nTemplate=MiniDialog.GetTemplate();
+    stf::event_polarity_mode polarityMode = MiniDialog.GetPolarityMode();
     try {
-        Vector_double templateWave(
+        Vector_double rawTemplateWave(
                 sectionList.at(nTemplate).sec_attr.storeFitEnd -
                 sectionList.at(nTemplate).sec_attr.storeFitBeg);
-        for ( std::size_t n_p=0; n_p < templateWave.size(); n_p++ ) {
-            templateWave[n_p] = sectionList.at(nTemplate).sec_attr.fitFunc->func(
+        for ( std::size_t n_p=0; n_p < rawTemplateWave.size(); n_p++ ) {
+            rawTemplateWave[n_p] = sectionList.at(nTemplate).sec_attr.fitFunc->func(
                     n_p*GetXScale(), sectionList.at(nTemplate).sec_attr.bestFitP);
         }
+
+        if (rawTemplateWave.empty()) {
+            wxGetApp().ErrorMsg(wxT("Error: Template waveform is empty."));
+            return;
+        }
+
+        auto classifyPolarity = [](const std::vector<double>& data,
+                                   std::size_t left,
+                                   std::size_t right,
+                                   double baselineMean,
+                                   double ambiguityBand) -> int {
+            if (data.empty()) {
+                return 0;
+            }
+            if (left >= data.size()) {
+                left = data.size()-1;
+            }
+            if (right >= data.size()) {
+                right = data.size()-1;
+            }
+            if (right < left) {
+                return 0;
+            }
+
+            double maxDelta = -std::numeric_limits<double>::max();
+            double minDelta = std::numeric_limits<double>::max();
+            for (std::size_t i = left; i <= right; ++i) {
+                const double delta = data[i] - baselineMean;
+                if (delta > maxDelta) maxDelta = delta;
+                if (delta < minDelta) minDelta = delta;
+            }
+
+            const double absMax = fabs(maxDelta);
+            const double absMin = fabs(minDelta);
+            double dominantDelta = 0.0;
+            if (absMax > absMin)
+                dominantDelta = maxDelta;
+            else if (absMin > absMax)
+                dominantDelta = minDelta;
+
+            if (fabs(dominantDelta) <= ambiguityBand) {
+                return 0;
+            }
+            return dominantDelta > 0.0 ? 1 : -1;
+        };
+
+        // Compute template polarity from the unnormalized template waveform.
+        const std::size_t nTemplateBase = std::max<std::size_t>(1, rawTemplateWave.size() / 10);
+        double templateBaseline = 0.0;
+        for (std::size_t i = 0; i < nTemplateBase; ++i) {
+            templateBaseline += rawTemplateWave[i];
+        }
+        templateBaseline /= static_cast<double>(nTemplateBase);
+        const int templatePolarity = classifyPolarity(rawTemplateWave, 0,
+                                                      rawTemplateWave.size()-1,
+                                                      templateBaseline, 0.0);
+
+        auto polarityMatchesSelection = [&](int eventPolarity) -> bool {
+            switch (polarityMode) {
+            case stf::polarity_positive_only:
+                return eventPolarity >= 0;
+            case stf::polarity_negative_only:
+                return eventPolarity <= 0;
+            case stf::polarity_same_as_template:
+                return (eventPolarity == 0 || templatePolarity == 0 || eventPolarity == templatePolarity);
+            case stf::polarity_both:
+            default:
+                return true;
+            }
+        };
+
+        Vector_double templateWave(rawTemplateWave);
         wxBusyCursor wc;
 #undef min
 #undef max
@@ -2314,12 +2389,11 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
         wxStfView* pView = (wxStfView*)GetFirstView();
         wxStfGraph* pGraph = pView->GetGraph();
 
+        std::size_t nKept = 0;
         for (c_int_it cit = startIndices.begin(); cit != startIndices.end(); ++cit ) {
-            sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.push_back(
-                stf::Event( *cit, 0, templateWave.size(), new wxCheckBox(
-                    pGraph, -1, wxEmptyString) ) );
             // Find peak in this event:
             double baselineMean=0;
+            int baselineCount = 0;
             for ( int n_mean = *cit-baseline;
                   n_mean < *cit;
                   ++n_mean )
@@ -2329,13 +2403,49 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
                 } else {
                     baselineMean += cursec().at(n_mean);
                 }
+                ++baselineCount;
             }
-            baselineMean /= baseline;
+            baselineMean /= (baselineCount > 0 ? baselineCount : 1);
+
+            double baselineVar = 0.0;
+            if (baselineCount > 1) {
+                for ( int n_mean = *cit-baseline;
+                      n_mean < *cit;
+                      ++n_mean )
+                {
+                    const double baselinePoint = (n_mean < 0) ? cursec().at(0) : cursec().at(n_mean);
+                    const double diff = baselinePoint - baselineMean;
+                    baselineVar += diff*diff;
+                }
+                baselineVar /= static_cast<double>(baselineCount - 1);
+            }
+            const double baselineSd = sqrt(std::max(0.0, baselineVar));
+
             double peakIndex=0;
             size_t eventl = templateWave.size();
             if (*cit + eventl >= cursec().get().size()) {
                 eventl = cursec().get().size()-1- (*cit);
             }
+
+            if (eventl == 0) {
+                continue;
+            }
+
+            const int eventPolarity = classifyPolarity(
+                cursec().get(),
+                static_cast<std::size_t>(*cit),
+                static_cast<std::size_t>(*cit) + eventl,
+                baselineMean,
+                baselineSd
+            );
+
+            if (!polarityMatchesSelection(eventPolarity)) {
+                continue;
+            }
+
+            sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.push_back(
+                stf::Event( *cit, 0, templateWave.size(), new wxCheckBox(
+                    pGraph, -1, wxEmptyString) ) );
             stfnum::peak( cursec().get(), baselineMean, *cit, *cit + eventl,
                           1, stfnum::both, peakIndex );
             if (peakIndex != peakIndex || peakIndex < 0 || peakIndex >= cursec().get().size()) {
@@ -2343,6 +2453,11 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             }
             // set peak index of this event:
             sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.back().SetEventPeakIndex((int)peakIndex);
+            ++nKept;
+        }
+
+        if (nKept == 0) {
+            wxGetApp().ErrorMsg(wxT("No events were found that match the selected polarity."));
         }
 
         if (pGraph != NULL) {

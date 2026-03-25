@@ -427,6 +427,14 @@ enum extraction_mode {
     deconvolution               /*!< Pernia-Andrade et al. deconvolution. */
 };
 
+//! Polarity filtering for event detection
+enum event_polarity_mode {
+    polarity_both,             /*!< Keep positive- and negative-going events. */
+    polarity_positive_only,    /*!< Keep only positive-going events. */
+    polarity_negative_only,    /*!< Keep only negative-going events. */
+    polarity_same_as_template  /*!< Keep only events with template-matching polarity. */
+};
+
 /*@}*/
 
 } // end of namespace

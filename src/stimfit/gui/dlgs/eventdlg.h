@@ -37,6 +37,7 @@ class wxStfEventDlg : public wxDialog
 private:
     double m_threshold;
     stf::extraction_mode m_mode;
+    stf::event_polarity_mode m_polarityMode;
     bool isExtract;
     int m_minDistance;
     int m_template;
@@ -44,6 +45,7 @@ private:
     wxTextCtrl *m_textCtrlThr, *m_textCtrlDist;
     wxStaticBoxSizer* m_radioBox;
     wxComboBox* m_comboBoxTemplates;
+    wxChoice* m_choicePolarity;
 
     void OnClements( wxCommandEvent & event );
     void OnJonas( wxCommandEvent & event );
@@ -97,6 +99,11 @@ public:
     /*! \return The index of the template fit to be used for event detection.
      */
     int GetTemplate() const {return m_template;}
+
+    //! Get the event polarity filtering mode.
+    /*! \return The selected event polarity filtering mode.
+     */
+    stf::event_polarity_mode GetPolarityMode() const { return m_polarityMode; }
     
     //! Called upon ending a modal dialog.
     /*! \param retCode The dialog button id that ended the dialog
