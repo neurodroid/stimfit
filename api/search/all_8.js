@@ -1,7 +1,7 @@
 var searchData=
 [
   ['halfmode_0',['halfMode',['../d3/d1b/group__stfgen.html#gga738f9934a45a9d2d81cb0a3de0375c99ae23bd76db1d3f2fd5ee275c5dc004283',1,'stf']]],
-  ['handle_1',['handle',['../de/d3e/IgorBin_8h.html#ae3087004cfc63a66515c90858885d600',1,'Handle:&#160;IgorBin.h'],['../d6/dea/unix_8h.html#aa8c0374618b33785ccb02f74bcfebc46',1,'HANDLE:&#160;unix.h']]],
+  ['handle_1',['handle',['../d6/dea/unix_8h.html#aa8c0374618b33785ccb02f74bcfebc46',1,'HANDLE:&#160;unix.h'],['../de/d3e/IgorBin_8h.html#ae3087004cfc63a66515c90858885d600',1,'Handle:&#160;IgorBin.h']]],
   ['hasjac_2',['hasJac',['../d3/d1b/group__stfgen.html#gaaba0b20794a19f59b8a938785b7356ad',1,'stfnum::storedFunc']]],
   ['haspage_3',['HasPage',['../d7/d1a/group__wxstf.html#ga48bea6b4373bad58aced765267565e93',1,'wxStfPrintout']]],
   ['have_5flapack_4',['HAVE_LAPACK',['../de/d00/levmar_8h.html#a0c84d3b456f7e3dae8c3ae5ae22a2bee',1,'levmar.h']]],
