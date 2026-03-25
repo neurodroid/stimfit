@@ -5,73 +5,59 @@ Building Stimfit
 :Author: Christoph Schmidt-Hieber
 :Date:  |today|
 
-========================
-Installing with MacPorts
-========================
+Current macOS source builds use the repository helper script
+[`build_macos_cmake.sh`](build_macos_cmake.sh), which drives the CMake app
+bundle workflow used by current development.
 
-Download and install MacPorts from `here <http://www.macports.org>`_.
+=============================
+Building with MacPorts tools
+=============================
 
-If you just want to install Stimfit and/or the stfio module, do
-
-::
-
-    sudo port install stimfit py27-stfio py34-stfio
-
-If you want to build stimfit from source, you'll first need to install git:
+Install MacPorts from `macports.org <https://www.macports.org>`_, then install
+the build tools and libraries used by the current CMake path:
 
 ::
 
-    sudo port install git-core
+    sudo port -N selfupdate
+    sudo port -N install cmake ninja pkgconfig fftw-3 hdf5 wxWidgets-3.2 git
+    sudo port select --set wxWidgets wxWidgets-3.2
 
-Get the `Stimfit <http://www.stimfit.org>`_ source from the git repository
+If you want the embedded Python build, also install a supported Python variant
+and its matching wxPython package. The active MacPorts port definitions in
+[`dist/macosx/macports/science/stimfit/Portfile.in`](dist/macosx/macports/science/stimfit/Portfile.in)
+currently support Python 3.10 through 3.14, with Python 3.13 as the default
+variant.
 
-::
-
-    git clone https://code.google.com/p/stimfit/
-
-Edit the MacPorts sources configuration file (/opt/local/etc/macports/sources.conf) and place the following line before the one that reads
-
-``rsync://rsync.macports.org/release/tarballs/ports.tar [default]``
-
-(change the path to the `Stimfit <http://www.stimfit.org>`_ directory accordingly).
-
-``file:///${STIMFITDIR}/stimfit/macosx/macports``
-
-.. note::
-
-    using the root of your account as opposed to a subdirectory (ie, Documents or Downloads folders) may prevent permissions access errors when building.
-
-
-Next, go to the `Stimfit <http://www.stimfit.org>`_ macports directory
+Clone the repository and build from the repository root:
 
 ::
 
-    cd ${STIMFITDIR}/macosx/macports
+    git clone https://github.com/neurodroid/stimfit.git
+    cd stimfit
+    ./build_macos_cmake.sh
 
-Add the local ports file to MacPorts by running the following command at this location
-
-::
-
-    sudo portindex
-
-
-When finished, you can now build `Stimfit <http://www.stimfit.org>`_ in MacPorts
+For a Python-enabled bundle build:
 
 ::
 
-    sudo port install stimfit
+    ./build_macos_cmake.sh --with-python
 
-MacPorts will download and install various dependencies, and then attempt to build `Stimfit <http://www.stimfit.org>`_ from source.
+The script configures a dedicated CMake build tree, installs the app bundle into
+`build/macos-app*/install`, and verifies that `stimfit.app` was produced.
 
+=================
+MacPorts packages
+=================
 
-========================
-Installing with `Homebrew <http://brew.sh>`_
-========================
+Maintainers updating MacPorts packages should use the active port sources under
+[`dist/macosx/macports/`](dist/macosx/macports/) rather than the historical
+instructions that modified `sources.conf` manually. The CMake-based Stimfit port
+is defined in [`dist/macosx/macports/science/stimfit/Portfile.in`](dist/macosx/macports/science/stimfit/Portfile.in).
 
-This is very experimental; currently it will most likely not install a full version of Stimfit.
+====================
+Homebrew status note
+====================
 
-::
-
-    brew install schloegl/biosig/stimfit
-
+The old Homebrew tap instructions are no longer maintained here. For current
+source work on macOS, prefer MacPorts plus [`build_macos_cmake.sh`](build_macos_cmake.sh).
 

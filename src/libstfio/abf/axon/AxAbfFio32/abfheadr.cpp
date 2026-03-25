@@ -17,6 +17,7 @@
 #include "abfheadr.h"                  // header definition & constants
 #include "oldheadr.h"                  // old header conversion prototypes
 #include "abfutil.h"                   // Large memory allocation/free
+#include <algorithm>
 /*
 #include "StringResource.h"            // Access to string resources.
 */
@@ -49,6 +50,25 @@ static BOOL ErrorReturn(int *pnError, int nErrorNum)
    return FALSE;
 }
 
+static void CopyCStringTruncated(char *dest, size_t destSize, const char *src, size_t srcMaxLen)
+{
+   if ((dest == NULL) || (destSize == 0))
+      return;
+
+   if (src == NULL)
+   {
+      dest[0] = '\0';
+      return;
+   }
+
+   size_t copyLen = strnlen(src, srcMaxLen);
+   if (copyLen >= destSize)
+      copyLen = destSize - 1;
+
+   memcpy(dest, src, copyLen);
+   dest[copyLen] = '\0';
+}
+
 //===============================================================================================
 // FUNCTION: ABFH_Initialize
 // PURPOSE:  Initialize an ABFFileHeader structure to a consistent set of parameters
@@ -58,11 +78,8 @@ void WINAPI ABFH_Initialize( ABFFileHeader *pFH )
 //   ABFH_WASSERT(pFH);
    int i;
    
-   ABFFileHeader NewFH;
+   ABFFileHeader NewFH{};
    ABFH_PromoteHeader( &NewFH, pFH );
-
-   // Zero fill all to start with.
-   memset(&NewFH, '\0', sizeof(NewFH));
    
    // Blank fill all strings.
    ABF_BLANK_FILL(NewFH._sParamValueList);
@@ -116,8 +133,8 @@ void WINAPI ABFH_Initialize( ABFFileHeader *pFH )
    {
       char szName[13];      
       snprintf(szName, sizeof(szName), "AI #%-8d", i);
-      strncpy(NewFH.sADCChannelName[i], szName, ABF_ADCNAMELEN);
-      strncpy(NewFH.sADCUnits[i], "pA        ", ABF_ADCUNITLEN);
+      memcpy(NewFH.sADCChannelName[i], szName, ABF_ADCNAMELEN);
+      memcpy(NewFH.sADCUnits[i], "pA        ", ABF_ADCUNITLEN);
       
       NewFH.nADCPtoLChannelMap[i]       = short(i);
       NewFH.nADCSamplingSeq[i]          = ABF_UNUSED_CHANNEL;
@@ -138,8 +155,8 @@ void WINAPI ABFH_Initialize( ABFFileHeader *pFH )
    {
       char szName[13];
       snprintf(szName, sizeof(szName), "AO #%-8d", i);
-      strncpy(NewFH.sDACChannelName[i], szName, ABF_DACNAMELEN);
-      strncpy(NewFH.sDACChannelUnits[i], "mV        ", ABF_ADCUNITLEN);
+      memcpy(NewFH.sDACChannelName[i], szName, ABF_DACNAMELEN);
+      memcpy(NewFH.sDACChannelUnits[i], "mV        ", ABF_ADCUNITLEN);
       NewFH.fDACScaleFactor[i] = 20.0F;
    }
    
@@ -794,9 +811,6 @@ void WINAPI ABFH_GetDACtoUUFactors( const ABFFileHeader *pFH, int nChannel,
    ABFH_PromoteHeader( &NewFH, pFH );
    {
       // Prevent accidental use of pFH.
-      int pFH = 0;
-      (void)pFH;
-
       float fScaleFactor       = NewFH.fDACScaleFactor[nChannel];
       float fCalibrationFactor = NewFH.fDACCalibrationFactor[nChannel];
       float fCalibrationOffset = NewFH.fDACCalibrationOffset[nChannel];
@@ -1160,8 +1174,7 @@ BOOL WINAPI ABFH_GetErrorText( int nError, char *sTxtBuf, UINT uMaxLen)
       snprintf(szErrorMsg, sizeof(szErrorMsg), szTemplate, nError);
 //      ERRORMSG(szErrorMsg);
 
-      strncpy(sTxtBuf, szErrorMsg, uMaxLen-1);
-      sTxtBuf[uMaxLen-1] = '\0';
+      CopyCStringTruncated(sTxtBuf, uMaxLen, szErrorMsg, sizeof(szErrorMsg));
       rval = FALSE;
    }
    return rval;
@@ -1237,7 +1250,9 @@ void WINAPI ABFH_DemoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
       // We are copying from a new header to an old header.
 
       // Copy the first 2k and demote to ABF v1.5
-      memcpy( pOut, pIn, ABF_OLDHEADERSIZE );
+      std::copy_n(reinterpret_cast<const unsigned char *>(pIn),
+                  ABF_OLDHEADERSIZE,
+                  reinterpret_cast<unsigned char *>(pOut));
    
       // Demote the file version.
       pOut->fFileVersionNumber   = ABF_PREVIOUSVERSION;
@@ -1287,7 +1302,7 @@ void WINAPI ABFH_DemoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
    pOut->_fDACFileOffset     = pIn->fDACFileOffset[uDAC];
    pOut->_nDACFileEpisodeNum = ClipToShort( pIn->lDACFileEpisodeNum[uDAC] );
    pOut->_nDACFileADCNum     = pIn->nDACFileADCNum[uDAC];
-   strncpy( pOut->_sDACFilePath, pIn->sDACFilePath[uDAC], ABF_DACFILEPATHLEN );
+   memcpy( pOut->_sDACFilePath, pIn->sDACFilePath[uDAC], ABF_DACFILEPATHLEN );
 
    // Presweep Trains (formerly called Conditioning Train)
    ASSERT( pOut->_nConditChannel >= 0 );
@@ -1311,7 +1326,7 @@ void WINAPI ABFH_DemoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
    // User list parameters.
    pOut->_nListEnable      = pIn->nULEnable[uDAC];
    pOut->_nParamToVary     = pIn->nULParamToVary[uDAC];
-   strncpy( pOut->_sParamValueList, pIn->sULParamValueList[uDAC], ABF_VARPARAMLISTLEN );
+   memcpy( pOut->_sParamValueList, pIn->sULParamValueList[uDAC], ABF_VARPARAMLISTLEN );
 
    // FIX FIX FIX PRC DEBUG Telegraph changes - check !
    // Telegraph information.
@@ -1322,7 +1337,7 @@ void WINAPI ABFH_DemoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
    pOut->_fAutosampleMembraneCap = pIn->fTelegraphMembraneCap[pOut->_nAutosampleADCNum];
    
    // File Comment.
-   strncpy( pOut->_sFileComment, pIn->sFileComment, ABF_OLDFILECOMMENTLEN );
+   memcpy( pOut->_sFileComment, pIn->sFileComment, ABF_OLDFILECOMMENTLEN );
    
    // Demoting the statistics regions
    pOut->_nAutopeakEnable       = pIn->nStatsEnable;
@@ -1371,8 +1386,10 @@ void WINAPI ABFH_PromoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
 
    // We are copying from an old header to a new header.
    // Copy the first 2k and clear the rest.
-   memset( pOut, 0, ABF_HEADERSIZE);
-   memcpy( pOut, pIn, ABF_OLDHEADERSIZE );
+   *pOut = ABFFileHeader{};
+   std::copy_n(reinterpret_cast<const unsigned char *>(pIn),
+               ABF_OLDHEADERSIZE,
+               reinterpret_cast<unsigned char *>(pOut));
 
    // Promote ABF header parameters.
    UINT uDAC = (UINT)pIn->nActiveDACChannel;
@@ -1401,7 +1418,7 @@ void WINAPI ABFH_PromoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
    pOut->fDACFileOffset[uDAC]     = pIn->_fDACFileOffset;
    pOut->lDACFileEpisodeNum[uDAC] = pIn->_nDACFileEpisodeNum;
    pOut->nDACFileADCNum[uDAC]     = pIn->_nDACFileADCNum;
-   strncpy( pOut->sDACFilePath[uDAC], pIn->_sDACFilePath, ABF_DACFILEPATHLEN );
+   CopyCStringTruncated( pOut->sDACFilePath[uDAC], ABF_DACFILEPATHLEN, pIn->_sDACFilePath, ABF_DACFILEPATHLEN );
 
    // If this is a valid header, then check the presweep trains.
    if( (pIn->lFileSignature == ABF_NATIVESIGNATURE) &&
@@ -1436,7 +1453,7 @@ void WINAPI ABFH_PromoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
       // User list parameters.
       pOut->nULEnable[uDAC]        = pIn->_nListEnable;
       pOut->nULParamToVary[uDAC]   = pIn->_nParamToVary;
-      strncpy( pOut->sULParamValueList[uDAC], pIn->_sParamValueList, ABF_VARPARAMLISTLEN );
+      CopyCStringTruncated( pOut->sULParamValueList[uDAC], ABF_VARPARAMLISTLEN, pIn->_sParamValueList, ABF_VARPARAMLISTLEN );
    }
 
    // DAC Calibration Factors.
@@ -1447,7 +1464,7 @@ void WINAPI ABFH_PromoteHeader(ABFFileHeader *pOut, const ABFFileHeader *pIn )
    }
 
    // File Comment.
-   strncpy( pOut->sFileComment, pIn->_sFileComment, ABF_OLDFILECOMMENTLEN );
+   CopyCStringTruncated( pOut->sFileComment, ABF_OLDFILECOMMENTLEN, pIn->_sFileComment, ABF_OLDFILECOMMENTLEN );
 
    // Extra 'enable' fields.
    pOut->nCommentsEnable = (pOut->nManualInfoStrategy != ABF_ENV_DONOTWRITE);

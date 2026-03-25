@@ -1,6 +1,6 @@
 # CMake Migration Bootstrap
 
-This repository now includes a **functional CMake toolchain baseline** mirroring the Autotools chain in [`configure.ac`](configure.ac) and the core [`Makefile.am`](Makefile.am) files.
+This repository now includes the active CMake build toolchain for Stimfit. For end-user source-build entry points, see [`BUILDING.md`](BUILDING.md).
 
 ## What was added
 
@@ -10,12 +10,12 @@ This repository now includes a **functional CMake toolchain baseline** mirroring
   - [`cmake/StimfitDependencies.cmake`](cmake/StimfitDependencies.cmake)
   - [`cmake/StimfitToolchain.cmake`](cmake/StimfitToolchain.cmake)
   - [`cmake/StimfitMigration.cmake`](cmake/StimfitMigration.cmake)
-- Generated config header template [`cmake/stfconf.h.in`](cmake/stfconf.h.in)
+- Generated config header template [`stfconf.h.in`](stfconf.h.in)
 - Source tree entrypoint [`src/CMakeLists.txt`](src/CMakeLists.txt)
 - Per-component scaffold `CMakeLists.txt` files:
   - [`src/libstfio/CMakeLists.txt`](src/libstfio/CMakeLists.txt)
   - [`src/libstfnum/CMakeLists.txt`](src/libstfnum/CMakeLists.txt)
-  - [`src/libbiosiglite/CMakeLists.txt`](src/libbiosiglite/CMakeLists.txt)
+  - BIOSIG integration component CMake file
   - [`src/pystfio/CMakeLists.txt`](src/pystfio/CMakeLists.txt)
   - [`src/stimfit/CMakeLists.txt`](src/stimfit/CMakeLists.txt)
   - [`src/stimfit/py/CMakeLists.txt`](src/stimfit/py/CMakeLists.txt)
@@ -27,7 +27,7 @@ The CMake tree now defines real targets for the main migration path:
 - Libraries:
   - `stfnum` from [`src/libstfnum/CMakeLists.txt`](src/libstfnum/CMakeLists.txt)
   - `stfio` from [`src/libstfio/CMakeLists.txt`](src/libstfio/CMakeLists.txt)
-  - `biosiglite` from [`src/libbiosiglite/CMakeLists.txt`](src/libbiosiglite/CMakeLists.txt) (when enabled)
+  - BioSig support from the selected provider (when enabled)
   - `stimfit_core` from [`src/stimfit/CMakeLists.txt`](src/stimfit/CMakeLists.txt)
 - Executables:
   - `stimfit`
@@ -36,23 +36,58 @@ The CMake tree now defines real targets for the main migration path:
   - `_stfio` from [`src/pystfio/CMakeLists.txt`](src/pystfio/CMakeLists.txt)
   - `pystf` from [`src/stimfit/py/CMakeLists.txt`](src/stimfit/py/CMakeLists.txt)
 
-## Option mapping from Autotools
+## macOS parity updates (build + install)
 
-The following CMake options mirror high-level Autotools switches from [`configure.ac`](configure.ac):
+The CMake migration now includes a dedicated macOS runtime policy module:
+
+- [`cmake/StimfitMacOS.cmake`](cmake/StimfitMacOS.cmake)
+
+This adds a single helper, `stf_apply_macos_runtime_policy(<target>)`, and applies it to installable libraries/modules/executables so loader-path behavior is managed in CMake instead of legacy post-install shell rewriting.
+
+Applied targets include:
+
+- `stfio` in [`src/libstfio/CMakeLists.txt`](src/libstfio/CMakeLists.txt)
+- `stfnum` in [`src/libstfnum/CMakeLists.txt`](src/libstfnum/CMakeLists.txt)
+- BioSig support target(s) from the selected provider configuration
+- `stimfit_core` in [`src/stimfit/CMakeLists.txt`](src/stimfit/CMakeLists.txt)
+- `pystf` in [`src/stimfit/py/CMakeLists.txt`](src/stimfit/py/CMakeLists.txt)
+- `_stfio` in [`src/pystfio/CMakeLists.txt`](src/pystfio/CMakeLists.txt)
+- `stimfit` and `stimfittest` in [`CMakeLists.txt`](CMakeLists.txt)
+
+Additionally, macOS wx detection now auto-probes common MacPorts wx-config locations when `wxWidgets_CONFIG_EXECUTABLE` is not already set (including stale `-NOTFOUND` cache values), in [`cmake/StimfitDependencies.cmake`](cmake/StimfitDependencies.cmake).
+
+## MacPorts Stimfit port migration to CMake backend
+
+The active Stimfit MacPorts port files were migrated from Autotools-style `configure.args` to CMake-driven build/install flow:
+
+- [`dist/macosx/macports/science/stimfit/Portfile.in`](dist/macosx/macports/science/stimfit/Portfile.in)
+- [`dist/macosx/macports/science/stimfit/Portfile`](dist/macosx/macports/science/stimfit/Portfile)
+
+Key changes:
+
+- Add `PortGroup cmake 1.1`
+- Configure with CMake cache variables (`STF_ENABLE_PYTHON`, `STF_WITH_BIOSIG`, `STF_BIOSIG_PROVIDER`, `STF_BUILD_MODULE`, `STF_BUILD_TESTS`)
+- Set `configure.pre_args` to `-S <source> -B <build>`
+- Use CMake for build (`cmake --build`) and destroot install (`cmake --install`)
+- Map Python variants to `-DPython3_EXECUTABLE=...`
+- Map `atlas` variant to `-DBLA_VENDOR=ATLAS`
+
+## Option mapping from legacy Autotools
+
+The following CMake options preserve the intent of the former high-level Autotools switches:
 
 - `STF_BUILD_MODULE` ⇔ `--enable-module`
 - `STF_ENABLE_PYTHON` ⇔ `--enable-python`
-- `STF_ENABLE_IPYTHON` ⇔ `--enable-ipython`
 - `STF_ENABLE_PSLOPE` ⇔ `--enable-pslope`
 - `STF_ENABLE_AUI` ⇔ `--enable-aui`
 - `STF_BUILD_DEBIAN` ⇔ `--enable-debian`
-- `STF_WITH_BIOSIG` / `STF_WITH_BIOSIGLITE` ⇔ biosig selection flags
+- `STF_WITH_BIOSIG` plus `STF_BIOSIG_PROVIDER` ⇔ biosig selection flags
 - `STF_HDF5_PREFIX` ⇔ `--with-hdf5-prefix`
 
 Compatibility behavior already included:
 
 - Enabling `STF_BUILD_MODULE` forces `STF_ENABLE_PYTHON=ON`
-- Enabling `STF_WITH_BIOSIGLITE` disables external `STF_WITH_BIOSIG`
+- Selecting `STF_BIOSIG_PROVIDER=SUBMODULE` or `PATCHED_SUBMODULE` chooses the bundled BioSig source
 
 ## How to configure
 
@@ -81,8 +116,7 @@ The CMake chain follows Autotools behavior and expects development libraries for
 
 ## Next migration steps
 
-1. Add missing install/post-install parity (`chrpath`, desktop/icons handling, macOS bundle behavior).
-2. Tighten dependency mapping (wx variants, Python/wxPython nuances, optional fallbacks).
-3. Complete full feature parity for all platform-specific options and packaging scripts.
-4. Keep Autotools active until all required CI/build workflows pass under CMake.
-
+1. Validate macOS install-name/runtime behavior with full build+install+`otool -L` checks for GUI and Python-enabled variants.
+2. Verify MacPorts CMake backend behavior in a real port build (`port -v destroot stimfit`) and refine option mapping if needed.
+3. Tighten dependency mapping (wx variants, Python/wxPython nuances, optional fallbacks).
+4. Continue simplifying legacy migration notes as the CMake-only workflow becomes the sole maintained build path.

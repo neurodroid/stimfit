@@ -23,6 +23,10 @@
 #ifdef __BORLANDC__
 #pragma hdrstop
 #endif
+#include <numeric>
+#include <algorithm>
+#include <functional>
+#include <queue>
 
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
@@ -31,7 +35,7 @@
 #if !wxUSE_DOC_VIEW_ARCHITECTURE
 #error You must set wxUSE_DOC_VIEW_ARCHITECTURE to 1 in setup.h!
 #endif
-#include "../Annotation.h"
+#include "../../libstfio/annotation.h"
 #include "./app.h"
 #include "./view.h"
 #include "./parentframe.h"
@@ -52,6 +56,7 @@
 #include "./usrdlg/usrdlg.h"
 #include "./doc.h"
 #include "./graph.h"
+#include "doc.h"
 
 IMPLEMENT_DYNAMIC_CLASS(wxStfDoc, wxDocument)
 
@@ -93,13 +98,16 @@ EVT_MENU( ID_ANNOTATION_REMOVEANNOTATION, wxStfDoc::OnRemoveAnnotation )
 EVT_MENU( ID_ANNOTATION_ERASEALLANNOTATIONS, wxStfDoc::OnEraseAllAnnotations )
 EVT_MENU( ID_ANNOTATION_EXPORTANNOTATIONS, wxStfDoc::OnExportAnnotations )
 EVT_MENU( ID_ANNOTATION_IMPORTANNOTATIONS, wxStfDoc::OnImportAnnotations )
-END_EVENT_TABLE()
+EVT_MENU( ID_ANNOTATION_DetectEvents, wxStfDoc::OnExpertDetectEvents )
 
+
+
+END_EVENT_TABLE()
+double eventThreshold = INT32_MAX; 
 static const int baseline=100;
 // static const double rtfrac = 0.2; // now expressed in percentage, see RTFactor
-
 wxStfDoc::wxStfDoc() :
-    Recording(),peakAtEnd(false), startFitAtPeak(false), initialized(false),progress(true), Average(0),
+    Recording(), peakAtEnd(false), startFitAtPeak(false), initialized(false),progress(true), Average(0),
     latencyStartMode(stf::riseMode),
     latencyEndMode(stf::footMode),
     latencyWindowMode(stf::defaultMode),
@@ -784,8 +792,8 @@ Recording wxStfDoc::ReorderChannels() {
         channelOrder=orderDlg.GetChannelOrder();
     } else {
         int n_c = 0;
-        for (int_it it = channelOrder.begin(); it != channelOrder.end(); it++) {
-            *it = n_c++;
+        for (int_it orderIt = channelOrder.begin(); orderIt != channelOrder.end(); ++orderIt) {
+            *orderIt = n_c++;
         }
     }
 
@@ -1113,8 +1121,8 @@ void wxStfDoc::CreateAverage(
         }
         //now that max and min indices are known, calculate the number of
         //points that need to be shifted:
-        for (int_it it = shift.begin(); it != shift.end(); it++) {
-            (*it) -= (int)min_index;
+        for (int_it shiftIt = shift.begin(); shiftIt != shift.end(); ++shiftIt) {
+            (*shiftIt) -= (int)min_index;
         }
         //restore section and channel settings:
         SetSection(section_old);
@@ -1504,7 +1512,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
     if (SaveYtDialog.PrintThr()) {
         colTitles.push_back("# of thr. crossings");
     }
-    double threshold=0.0;
+    double crossingThreshold=0.0;
     if (SaveYtDialog.PrintThr()) {
         // Get threshold from user:
         std::ostringstream thrS;
@@ -1515,7 +1523,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         if (myDlg.ShowModal()!=wxID_OK) {
             return;
         }
-        threshold=myDlg.readInput()[0];
+        crossingThreshold=myDlg.readInput()[0];
     }
     wxProgressDialog progDlg( wxT("Batch analysis in progress"), wxT("Starting batch analysis"),
             100, GetDocumentWindow(), wxPD_SMOOTH | wxPD_AUTO_HIDE | wxPD_APP_MODAL );
@@ -1605,7 +1613,7 @@ void wxStfDoc::OnAnalysisBatch(wxCommandEvent &WXUNUSED(event)) {
         // count number of threshold crossings if needed:
         std::size_t n_crossings=0;
         if (SaveYtDialog.PrintThr()) {
-            n_crossings= stfnum::peakIndices( cursec().get(), threshold, 0 ).size();
+            n_crossings= stfnum::peakIndices( cursec().get(), crossingThreshold, 0 ).size();
         }
         std::size_t nCol=0;
         //Write the variables of the current channel in a string
@@ -2446,21 +2454,8 @@ void wxStfDoc::OnAddAnnotation( wxCommandEvent& WXUNUSED(event) ) {
         int newStartPos = pGraph->get_eventPos();
         Annotation newAnnotation(newStartPos, 0);
 
-        // find the position in the current annotations list where the new
-        // annotation should be inserted:
-        bool found = false;
-        std::vector<Annotation> annotationsList = this->at(GetCurChIndex())[GetCurSecIndex()].GetAnnotationList();
-        for (std::size_t i = 0; i < annotationsList.size(); ++i) {
-            if ((int)(annotationsList.at(i).GetAnnotationPosition()) > newStartPos ) {
-                // insert new annotation before this annotation, then break:
-                this->at(GetCurChIndex())[GetCurSecIndex()].AddAnnotation(i, newAnnotation);
-                found = true;
-                break;
-            }
-        }
-        // if we are at the end of the list, append the annotation:
-        if (!found)
-        this->at(GetCurChIndex())[GetCurSecIndex()].AddAnnotation(-1, newAnnotation);
+        this->at(GetCurChIndex())[GetCurSecIndex()].AddAnnotation(newAnnotation);
+        eventThreshold = INT32_MAX;
     }
     catch (const std::runtime_error& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -2479,8 +2474,11 @@ void wxStfDoc::OnRemoveAnnotation( wxCommandEvent& WXUNUSED(event) ) {
         int cursorPos = pGraph->get_eventPos();
         int minDist = INT_MAX;
         std::vector<Annotation> annotationsList = this->at(GetCurChIndex())[GetCurSecIndex()].GetAnnotationList();
+        if (annotationsList.empty()) {
+            return;
+        }
         int distFromCursor;
-        std::size_t indexOfMinDist;
+        std::size_t indexOfMinDist = 0;
 
         for (std::size_t i = 0; i < annotationsList.size(); ++i) {
             distFromCursor = abs((int)(annotationsList.at(i).GetAnnotationPosition()) - cursorPos);
@@ -2491,6 +2489,8 @@ void wxStfDoc::OnRemoveAnnotation( wxCommandEvent& WXUNUSED(event) ) {
         }
 
         this->at(GetCurChIndex())[GetCurSecIndex()].RemoveAnnotation(indexOfMinDist);
+        eventThreshold = INT32_MAX;
+
     }
     catch (const std::runtime_error& e) {
         wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
@@ -2500,13 +2500,14 @@ void wxStfDoc::OnRemoveAnnotation( wxCommandEvent& WXUNUSED(event) ) {
     }
 }
 
-void wxStfDoc::OnEraseAllAnnotations(wxCommandEvent &WXUNUSED)
+void wxStfDoc::OnEraseAllAnnotations(wxCommandEvent&)
 {
     this->at(GetCurChIndex())[GetCurSecIndex()].EraseAllAnnotations();
+    eventThreshold = INT32_MAX;
 
 }
 
-void wxStfDoc::OnExportAnnotations(wxCommandEvent &WXUNUSED)
+void wxStfDoc::OnExportAnnotations(wxCommandEvent&)
 {
     try{
         wxStfView* pView = (wxStfView*)GetFirstView();
@@ -2530,7 +2531,7 @@ void wxStfDoc::OnExportAnnotations(wxCommandEvent &WXUNUSED)
             std::stringstream ss;
             ss << "#STIMFITv0.16.9" << "\n"
             << "#generated from file " << fn.GetFullName() << "\n"
-            << "#SampleRate " << GetSR() << "Hz" << "\n";
+            << "#SampleRate " << GetSR() << "KHz" << "\n";
 
             wxString line(ss.str());
             asc_file.Write(line);
@@ -2540,12 +2541,12 @@ void wxStfDoc::OnExportAnnotations(wxCommandEvent &WXUNUSED)
                 for (std::size_t sectionIndex = 0; sectionIndex < this->at(channelIndex).size(); sectionIndex++){
                     std::vector<Annotation> annotationsList = this->at(channelIndex)[sectionIndex].GetAnnotationList();
                     for (std::size_t annotationIndex = 0; annotationIndex < annotationsList.size(); annotationIndex++){
-                        std::stringstream ss;
-                        ss << channelIndex << "\t"
+                        std::stringstream annotationStream;
+                        annotationStream << channelIndex << "\t"
                         << relativePositionBase + annotationsList.at(annotationIndex).GetAnnotationPosition() << "\n";
 
-                        wxString line(ss.str());
-                        asc_file.Write(line);
+                        wxString annotationLine(annotationStream.str());
+                        asc_file.Write(annotationLine);
 
                     }
                     relativePositionBase += this->at(channelIndex)[sectionIndex].GetSectionSize();
@@ -2564,7 +2565,84 @@ void wxStfDoc::OnExportAnnotations(wxCommandEvent &WXUNUSED)
     }
 }
 
-void wxStfDoc::OnImportAnnotations(wxCommandEvent &WXUNUSED)
+void wxStfDoc::OnCalculatedThresholdExpertDetectEvents(double calculatedThreshold, std::size_t filterOrder)
+{
+    std::vector<double> fullRawDetectionTrace = CalcRawDetectionTrace(filterOrder, 0, cursec().GetSectionSize() - 1);
+    std::vector<stf::Event> detectedEvents = DetectEvents(calculatedThreshold, fullRawDetectionTrace);
+
+}
+
+void wxStfDoc::OnExpertDetectEvents(wxCommandEvent&)
+{   
+    try{
+
+        std::size_t filterOrder = round(0.004 * 1000  * GetSR());
+        
+        if (eventThreshold == INT32_MAX){
+            
+            std::vector<Annotation> positions = cursec().GetAnnotationList();
+            if (positions.size() == 0)  throw std::out_of_range("No scoring was set by the expert!");
+
+            wxStfView* pView = (wxStfView*)GetFirstView();
+            (void)pView;
+
+            double rangeStart = cursec().GetFirstAnnotationPosition();
+            double rangeEnd = cursec().GetLastAnnotationPosition();
+
+            double avgEventInterval = (rangeEnd - rangeStart) / (2 * (positions.size() - 1));
+
+            rangeStart -= avgEventInterval;
+            rangeEnd += avgEventInterval;
+            
+            std::vector<int> idx(rangeEnd - rangeStart + 1);
+
+            std::iota(idx.begin(), idx.end(), rangeStart); 
+
+            double delay = 0; // reconsider type
+
+            std::size_t startPoint = cursec().GetFirstAnnotationPosition();
+            std::size_t endPoint = cursec().GetLastAnnotationPosition();
+
+            std::vector<int> c = CalcScoringTrace(positions, startPoint, endPoint);
+            std::vector<double> d = CalcRawDetectionTrace(filterOrder, startPoint, endPoint); 
+            double area = CalcAreaUnderCurve(d, c);
+
+            std::vector<double> sortedRawDetectionTrace = SortScoringTraceByRawDetection(d, c); 
+            std::vector<int> sortedScoringTrace = std::move(c);
+
+            std::pair<std::size_t, double> kappa = CalcMaxKappa(sortedRawDetectionTrace, sortedScoringTrace);
+
+            double calculatedThreshold = sortedRawDetectionTrace[kappa.first];
+            double maxKappa = kappa.second;
+
+            
+            std::vector<double> fullRawDetectionTrace = CalcRawDetectionTrace(filterOrder, 0, cursec().GetSectionSize() - 1);
+            ClearEvents(GetCurChIndex(), GetCurSecIndex());
+            std::vector<stf::Event> detectedEvents = DetectEvents(calculatedThreshold, fullRawDetectionTrace);
+            eventThreshold = calculatedThreshold;
+            wxString msg;
+            msg.Printf("AUC: %g\nKAPPA: %g\nfilterlength: %zu\nThreshold: %g\nDelay: %g",
+                    area, maxKappa, filterOrder, calculatedThreshold, delay);
+
+                    
+            wxMessageBox(msg, "Metadata", wxOK | wxICON_INFORMATION, nullptr);
+
+        }else{ // no new calculation needed
+            ClearEvents(GetCurChIndex(), GetCurSecIndex());
+            OnCalculatedThresholdExpertDetectEvents(eventThreshold, filterOrder);
+        }
+    }
+    catch (const std::runtime_error& e) {
+        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+    }
+    catch (const std::exception& e) {
+        wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal ));
+    }    
+
+}
+
+
+void wxStfDoc::OnImportAnnotations(wxCommandEvent&)
 {
     try{
         wxStfView* pView = (wxStfView*)GetFirstView();
@@ -2605,7 +2683,9 @@ void wxStfDoc::OnImportAnnotations(wxCommandEvent &WXUNUSED)
                 std::size_t sectionIndex = ceil(relativePosition / sectionSize);
                 
                 Annotation annotation(relativePosition % sectionSize, 0);
-                this->at(channelIndex)[sectionIndex].AddAnnotation(-1, annotation);
+                this->at(channelIndex)[sectionIndex].AddAnnotation(annotation);
+                eventThreshold = INT32_MAX;
+
             }
         }
     }
@@ -2673,7 +2753,7 @@ void wxStfDoc::AddEvent( wxCommandEvent& WXUNUSED(event) ) {
 
 void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
     // get threshold from user input:
-    Vector_double threshold(0);
+    Vector_double thresholdValues(0);
     std::ostringstream thrS;
     thrS << "Threshold (" << at(GetCurChIndex()).GetYUnits() << ")";
     stf::UserInput Input( std::vector<std::string>(1, thrS.str()),
@@ -2682,10 +2762,10 @@ void wxStfDoc::Threshold(wxCommandEvent& WXUNUSED(event)) {
     if (myDlg.ShowModal()!=wxID_OK) {
         return;
     }
-    threshold=myDlg.readInput();
+    thresholdValues=myDlg.readInput();
 
     std::vector<int> startIndices(
-            stfnum::peakIndices( cursec().get(), threshold[0], 0 )
+            stfnum::peakIndices( cursec().get(), thresholdValues[0], 0 )
     );
     if (startIndices.empty()) {
         wxGetApp().ErrorMsg(
@@ -2859,7 +2939,7 @@ void wxStfDoc::Measure( )
         // during the first 100 sampling points.
         // const int endResting=100;
         const int searchRange=100;
-        double APBase=0.0, APVar=0.0;
+        double APVar=0.0;
         try {
             // in 2012-11-02: use baseline cursors and not arbitrarily 100 points
             //APBase=stfnum::base(APVar,secsec().get(),0,endResting);
@@ -3452,7 +3532,7 @@ void wxStfDoc::InsertChannel(Channel& c_Channel, std::size_t pos) {
 
 void wxStfDoc::SetIsFitted( std::size_t nchannel, std::size_t nsection,
                             const Vector_double& bestFitP_, stfnum::storedFunc* fitFunc_,
-                            double chisqr, std::size_t fitBeg, std::size_t fitEnd )
+                            double chisqr, std::size_t fitBeg_, std::size_t fitEnd_ )
 {
     if (nchannel >= sec_attr.size() || nsection >= sec_attr[nchannel].size()) {
         throw std::out_of_range("Index out of range in wxStfDoc::SetIsFitted");
@@ -3471,8 +3551,8 @@ void wxStfDoc::SetIsFitted( std::size_t nchannel, std::size_t nsection,
     sec_attr[nchannel][nsection].bestFit =
         sec_attr[nchannel][nsection].fitFunc->output(sec_attr[nchannel][nsection].bestFitP,
                                                      sec_attr[nchannel][nsection].fitFunc->pInfo, chisqr );
-    sec_attr[nchannel][nsection].storeFitBeg = fitBeg;
-    sec_attr[nchannel][nsection].storeFitEnd = fitEnd;
+    sec_attr[nchannel][nsection].storeFitBeg = fitBeg_;
+    sec_attr[nchannel][nsection].storeFitEnd = fitEnd_;
     sec_attr[nchannel][nsection].isFitted = true;
 }
 
@@ -3551,6 +3631,233 @@ stf::SectionAttributes& wxStfDoc::GetCurrentSectionAttributesW() {
     catch(const std::out_of_range& e) {
         throw e;
     }
+}
+
+double wxStfDoc::CalcAreaUnderCurve(std::vector<double> d, std::vector<int> c)
+{
+    std::vector<std::size_t> index(d.size());
+
+    std::iota(index.begin(), index.end(), 0);
+    std::sort(index.begin(), index.end(),  [&](std::size_t a, std::size_t b) { return d[a] < d[b]; });  
+    
+
+    std::vector<int> x(c.size());
+    for(std::size_t i = 0; i < x.size(); i++)
+    {
+        x[i] = c[index[i]];
+    }
+
+    std::vector<double> FN(x.size()), TN(x.size());
+    
+    FN[0] = x[0];
+    for(std::size_t i = 1; i < x.size(); i++)
+    {
+        FN[i] = FN[i - 1] + x[i];
+    }
+
+    for(std::size_t i = 0; i < TN.size(); i++)
+    {
+        TN[i] = i + 1 - FN[i];
+    }
+
+    for(std::size_t i = 0; i < TN.size(); i++)
+    {
+        FN[i] /= FN[FN.size() - 1];
+        TN[i] /= TN[TN.size() - 1];
+    }
+
+    std::vector<double> diff(FN.size() - 1); 
+
+    for(std::size_t i = 0; i < diff.size(); i++)
+    {
+        diff[i] = FN[i + 1] - FN[i];
+    }
+
+    
+    double area = 0.0;
+
+    for(std::size_t i = 0; i < diff.size(); i++)
+    {
+        area += diff[i] * (TN[i] + TN[i + 1]) / 2; 
+    }
+    
+    return area;
+}
+
+
+std::vector<double> wxStfDoc::SortScoringTraceByRawDetection(  std::vector<double> &rawDetectionTrace, 
+                                                            std::vector<int> &scoringTrace)
+{   
+
+    if (scoringTrace.size() != rawDetectionTrace.size())   throw std::runtime_error("scoring trace hasn't same size as raw detection trace in wxStfDoc::SortScoringTraceByRawDetection");
+    
+    std::vector<std::size_t> idx(scoringTrace.size());
+    std::iota(idx.begin(), idx.end(), 0);
+    std::sort(idx.begin(), idx.end(),  [&](std::size_t a, std::size_t b) { return rawDetectionTrace[a] < rawDetectionTrace[b]; });  
+        
+    
+    std::vector<double> sortedRawDetectionTrace(rawDetectionTrace.size());
+    std::vector<int> sortedScoringTrace(scoringTrace.size());
+
+    for(std::size_t i = 0; i < idx.size(); i++)
+    {
+        sortedRawDetectionTrace[i] = rawDetectionTrace[idx[i]];
+        sortedScoringTrace[i] = scoringTrace[idx[i]];    
+    }
+
+    scoringTrace = std::move(sortedScoringTrace);
+
+    return sortedRawDetectionTrace;
+}
+
+std::vector<stf::Event> wxStfDoc::DetectEvents(double threshold_, std::vector<double> &rawDetectionTrace)
+{
+    
+    std::size_t eventRange = GetSR() * 1000 * 0.001;
+    wxStfView* pView = (wxStfView*)GetFirstView();
+    wxStfGraph* pGraph = pView->GetGraph();
+
+    int prevCross = 0; 
+    std::size_t eventMaxPeakIndex = 0;
+    bool hasPeak = false;
+
+    std::vector<stf::Event> detectedEvents;
+
+    for (std::size_t k = 0; k < rawDetectionTrace.size() - 1; k++) {
+
+        // detect threshold crossing (upward)
+        if (rawDetectionTrace[k] < threshold_ && rawDetectionTrace[k + 1] >= threshold_) {
+            if (prevCross > 0 && (k + 1 - prevCross) > eventRange && hasPeak) {
+                // register completed event
+
+                stf::Event evt(eventMaxPeakIndex, eventMaxPeakIndex, 0, new wxCheckBox(pGraph, -1, wxEmptyString));
+                detectedEvents.push_back(evt);
+
+                // insert into sec_attr eventList at correct position
+                auto &eventList = sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList;
+
+                eventList.push_back(evt);
+
+                // reset for next event
+                eventMaxPeakIndex = k + 1;
+                hasPeak = false;
+            }
+            prevCross = k + 1;
+        }
+
+        // update peak
+        if (!hasPeak || cursec()[k + 1] > cursec()[eventMaxPeakIndex]) {
+            eventMaxPeakIndex = k + 1;
+            hasPeak = true;
+        }
+    }
+
+    // final event (only if valid)
+    if (prevCross > 0 && hasPeak) {
+
+        stf::Event evt(eventMaxPeakIndex, eventMaxPeakIndex, 0, new wxCheckBox(pGraph, -1, wxEmptyString));
+        detectedEvents.push_back(evt);
+        auto &eventList = sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList;
+        eventList.push_back(evt);
+
+    }
+
+    return detectedEvents;    
+}
+
+std::vector<int> wxStfDoc::CalcScoringTrace(std::vector<Annotation> expertAnnotations, 
+                                            std::size_t startPoint, 
+                                            std::size_t endPoint)
+{
+    std::vector<int> scoringTrace(endPoint - startPoint + 1, 0);
+
+    for(std::size_t i = 0; i < expertAnnotations.size(); i++){
+        scoringTrace[expertAnnotations.at(i).GetAnnotationPosition() - startPoint] = 1;
+    }
+
+    return scoringTrace;
+}
+
+
+
+std::vector<double> wxStfDoc::CalcRawDetectionTrace(std::size_t filterOrder, std::size_t startPoint, std::size_t endPoint)
+{
+    std::vector<double> rawDetectionTrace(endPoint - startPoint + 1, 0);
+    for(std::size_t t = 0; t < rawDetectionTrace.size(); t++){
+        if (t - 1 < 0 || (t + startPoint) - filterOrder < 0 || (t + startPoint)  - (2 * filterOrder) < 0) continue;
+        rawDetectionTrace[t] = rawDetectionTrace[t - 1] +  cursec()[t + startPoint] - (2 * cursec()[(t + startPoint) - filterOrder]) + cursec()[(t + startPoint) - (2 * filterOrder)];  
+    }
+    
+    return rawDetectionTrace;
+}
+
+
+std::pair<std::size_t, double> wxStfDoc::CalcMaxKappa(std::vector<double> &sortedRawDetectionTrace, std::vector<int> &sortedScoringTrace)
+{
+    std::size_t scoringTraceSize = sortedScoringTrace.size();
+    std::vector<double> FN(scoringTraceSize + 1), TP(scoringTraceSize + 1), TN(scoringTraceSize + 1), FP(scoringTraceSize + 1);
+
+    FN[0] = 0;
+    TN[0] = 0;
+    for(std::size_t i = 1; i < FN.size(); i++)
+    {
+        FN[i] = FN[i - 1] + sortedScoringTrace[i - 1];  
+        TN[i] = i - FN[i];  
+    }
+
+    for(std::size_t i = 0; i < TP.size(); i ++)
+    {
+        TP[i] = FN[FN.size() - 1] - FN[i];
+        FP[i] = TN[TN.size() - 1] - TN[i];
+    }
+
+    std::vector<double> ACC(TP.size());
+
+    for(std::size_t i = 0; i < ACC.size(); i++)
+    {
+        ACC[i] = (TP[i] + TN[i]) / (TP[i] + TN[i] + FP[i] + FN[i]);
+    }
+
+    //Compute Cohen's Kappa coefficient
+    double n = sortedRawDetectionTrace.size(); 
+
+    // H =  TN FN
+    //      FP TP 
+    std::vector<double> p_i(2 * TP.size()), pi_(2 * TP.size());
+    for(std::size_t i = 0; i < TP.size(); i++)
+    {
+        p_i[i] = TP[i] + FP[i];
+        p_i[i + TP.size()] = FN[i] + TN[i];
+
+        pi_[i] = TP[i] + FN[i];
+        pi_[i + TP.size()] = FP[i] + TN[i];
+    }
+
+    //pe define and compute 
+    std::vector<double> pe(TP.size(), 0.0);
+
+    
+    for(std::size_t i = 0; i < pe.size(); i++)
+    {
+        pe[i] = ((p_i[i] * pi_[i]) + (p_i[i + TP.size()] * pi_[i + TP.size()])) / (n * n);
+    }
+
+        
+    std::vector<double> kap(ACC.size());
+
+    double maxKappa = -1.0;
+    std::size_t maxKappaIndex = 0;
+
+    for(std::size_t i = 0 ; i < kap.size(); i ++)
+    {
+        kap[i] = (ACC[i] - pe[i]) / (1 - pe[i]);
+    
+        if (kap[i] > maxKappa) {
+            maxKappa = kap[i];
+            maxKappaIndex = i;
+        }
+    }  
+    return std::pair<std::size_t, double>(maxKappaIndex, maxKappa);
 }
 
 #if 0

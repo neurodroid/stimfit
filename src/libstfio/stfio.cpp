@@ -343,7 +343,7 @@ stfio::multiply(const Recording& src, const std::vector<std::size_t>& sections,
         try {
             TempChannel.InsertSection(TempSection, n);
         }
-        catch (const std::out_of_range& e) {
+        catch (const std::out_of_range&) {
             throw;
         }
         n++;

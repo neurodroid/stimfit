@@ -5,32 +5,50 @@ Building Stimfit
 :Author: Christoph Schmidt-Hieber
 :Date:  |today|
 
+Current Windows source builds use the CMake-based MSVC workflow rather than the
+historical Visual Studio 2008 solution files.
+
 ===================
 Get the source code
 ===================
 
-Clone the latest source code into your home directory (on cygwin, this will be something like /cygdrive/c/Users/username/)
+Clone the repository into a local working directory:
 
 ::
 
-    $ cd /cygdrive/c/Users/username
-    $ git clone https://github.com/neurodroid/stimfit.git
+    PS C:\> git clone https://github.com/neurodroid/stimfit.git
+    PS C:\> cd stimfit
 
 =============
 Build Stimfit
 =============
 
-Move the BLAS/LAPACK libraries that you've previously downloaded into a folder "stimfit/dist/windows/libs". Make sure that the *.lib files are at the top level of this libs folder.
-
-Open the solution in stimfit/dist/windows/VS2008/Stimfit/Stimfit.sln with Visual C++ Express 2008. Build the solution by clicking "Build" -> "Build Solution". Alternatively, open the Visual Studio Command Prompt:
+Run the supported helper script from PowerShell:
 
 ::
 
-    C:\> cd C:\Users\username\stimfit\dist\windows\VS2008\Stimfit
-    C:\Users\username\stimfit\dist\windows\VS2008\Stimfit> msbuild Stimfit.sln /p:Configuration=Release
+    PS C:\stimfit> .\build_windows_msvc.ps1
 
-===================
+For a Python-enabled build:
+
+::
+
+    PS C:\stimfit> .\build_windows_msvc.ps1 -WithPython
+
+The script prepares the current `vcpkg` dependency layout, selects the matching
+CMake preset, and runs configure, build, and install steps.
+
+==================
 Create an installer
-===================
+==================
 
-Use nsis to compile the installer script in stimfit/dist/windows/nsis/installer.nsi.
+The CMake build can also generate distributable packages with CPack. Use one of
+the packaging modes below after installing Inno Setup 6 when you want a native
+installer:
+
+::
+
+    PS C:\stimfit> .\build_windows_msvc.ps1 -PackageGenerator INNOSETUP
+    PS C:\stimfit> .\build_windows_msvc.ps1 -PackageGenerator ZIP
+
+This replaces the old NSIS-based packaging instructions for current releases.

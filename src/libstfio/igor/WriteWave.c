@@ -97,9 +97,9 @@ WriteVersion2NumericWave(CP_FILE_REF fr, WaveHeader2* whp, const void* data, con
 		data as the first 16 bytes of the actual wave data. This is necessary
 		to get the correct checksum.
 	*/
-	cksum = Checksum((short *)&bh, 0, sizeof(struct BinHeader2));
-	cksum = Checksum((short *)whp, cksum, sizeof(struct WaveHeader2));
-	bh.checksum = -cksum;
+	cksum = (short)Checksum((short *)&bh, 0, sizeof(struct BinHeader2));
+	cksum = (short)Checksum((short *)whp, cksum, sizeof(struct WaveHeader2));
+	bh.checksum = (short)(-cksum);
 
 	do {
 		// Write the BinHeader.
@@ -194,12 +194,12 @@ WriteVersion5NumericWave(CP_FILE_REF fr, WaveHeader5* whp, const void* data, con
 	/*	The checksum is over the BinHeader5 structure and the WaveHeader5 structure,
 		excluding the wData field.
 	*/
-	cksum = Checksum((short *)&bh, 0, sizeof(BinHeader5));
+	cksum = (short)Checksum((short *)&bh, 0, sizeof(BinHeader5));
 #ifdef _STFDEBUG
         printf("%d\n", cksum);
 #endif        
-	cksum = Checksum((short *)whp, cksum, offsetof(WaveHeader5, wData));
-	bh.checksum = -cksum;
+	cksum = (short)Checksum((short *)whp, cksum, offsetof(WaveHeader5, wData));
+	bh.checksum = (short)(-cksum);
 #ifdef _STFDEBUG
         printf("%d\n", cksum);
         printf("%d\n", bh.checksum);

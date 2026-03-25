@@ -8,6 +8,8 @@ import contextlib
 import io
 import traceback
 
+import re
+
 import wx
 try:
     from wx.py import shell as wx_py_shell
@@ -95,13 +97,31 @@ class MyPanel(wx.Panel):
     """Modern embedded shell panel with wx.py.shell fallback support."""
 
     def __init__(self, parent):
-        super(MyPanel, self).__init__(parent, wx.ID_ANY, style=wx.BORDER_NONE | wx.MAXIMIZE)
+        super(MyPanel, self).__init__(parent, wx.ID_ANY, style=wx.BORDER_NONE)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
         if wx_py_shell is not None:
             # Prefer the wx shell when available: it supports calltips and tab completion.
             self.pycrust = wx_py_shell.Shell(self, -1, introText=intro_msg() + LOADED)
+            # Suppress terminal control-sequence writes from prompt-toolkit integration
+            # in non-terminal embedded wx shell widgets.
+            try:
+                if hasattr(self.pycrust, "interp") and hasattr(self.pycrust.interp, "write"):
+                    _orig_write = self.pycrust.interp.write
+
+                    def _filtered_write(text):
+                        if not text:
+                            return
+                        # Strip C0 control chars (except newline/tab) and CSI escapes.
+                        text = re.sub(r"\x1B\[[0-?]*[ -/]*[@-~]", "", text)
+                        text = re.sub(r"[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]", "", text)
+                        if text:
+                            _orig_write(text)
+
+                    self.pycrust.interp.write = _filtered_write
+            except Exception:
+                pass
             self.pycrust.push("from embedded_init import *", silent=True)
             sizer.Add(self.pycrust, 1, wx.EXPAND | wx.BOTTOM | wx.LEFT | wx.RIGHT, 10)
         else:

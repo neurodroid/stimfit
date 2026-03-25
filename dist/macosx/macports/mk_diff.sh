@@ -1,8 +1,9 @@
 #! /bin/sh
 
 CURDIR=`pwd`
+UPSTREAM_BRANCH="${UPSTREAM_BRANCH:-master}"
 cd ~/macports/dports
-git pull origin master
+git pull origin "$UPSTREAM_BRANCH"
 cd $CURDIR
 
 declare -a arr=("python/py-stfio" "science/stimfit")

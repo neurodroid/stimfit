@@ -62,7 +62,7 @@ T linFit(
  *  \param warning A warning code on return.
  *  \return The sum of squred errors between \e data and the best-fit function.
  */
-double StfioDll lmFit(const Vector_double& data, double dt,
+double StfnumDll lmFit(const Vector_double& data, double dt,
                       const stfnum::storedFunc& fitFunc, const Vector_double& opts,
                       bool use_scaling, Vector_double& p, std::string& info, int& warning );
 
@@ -82,7 +82,7 @@ void flin_init(const Vector_double& data, double base, double peak,
 
 //! initializes a linear function
 /*! \return An stfnum::storedFunc that can be used to store a linear function after a fit */
-StfioDll
+StfnumDll
 stfnum::storedFunc initLinFunc();
 
 //! Compute and perform normalisation
@@ -99,7 +99,7 @@ stfnum::storedFunc initLinFunc();
 //! Return default LM options
 /*! \return Default LM options
  */
-Vector_double LM_default_opts();
+StfnumDll Vector_double LM_default_opts();
 
 }
 

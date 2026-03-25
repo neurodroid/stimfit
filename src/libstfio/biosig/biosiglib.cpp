@@ -14,11 +14,12 @@
 
 // Copyright 2012,2013,2017 Alois Schloegl, IST Austria
 
+#include <cstring>
 #include <sstream>
 
 #include "../stfio.h"
 
-    #if defined(WITH_BIOSIGLITE)
+    #if defined(WITH_BIOSIG2)
         #include "../../biosig/biosig4c++/biosig2.h"
     #else
         #include <biosig.h>
@@ -279,7 +280,7 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     //
     // =====================================================================================================================
 
-bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, stfio::ProgressInfo& progDlg) {
+bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, stfio::ProgressInfo& /*progDlg*/) {
 /*
     converts the internal data structure to libbiosig's internal structure
     and saves the file as gdf file.
@@ -291,7 +292,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 #ifdef __LIBBIOSIG2_H__
 
     size_t numberOfChannels = Data.size();
-    HDRTYPE* hdr = constructHDR(numberOfChannels, 0);
+    HDRTYPE* hdr = constructHDR(static_cast<uint32_t>(numberOfChannels), 0);
 
 	/* Initialize all header parameters */
     biosig_set_filetype(hdr, GDF);
@@ -321,7 +322,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 	size_t *chanSPR = (size_t*)malloc(numberOfChannels*sizeof(size_t));
 #endif
     for (k = 0; k < numberOfChannels; ++k) {
-        CHANNEL_TYPE *hc = biosig_get_channel(hdr, k);
+        CHANNEL_TYPE *hc = biosig_get_channel(hdr, static_cast<uint16_t>(k));
 
 		biosig_channel_set_datatype_to_double(hc);
 		biosig_channel_set_scaling(hc, 1e9, -1e9, 1e9, -1e9);
@@ -337,13 +338,13 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         // each segment gets one marker, roughly
         numberOfEvents += Data[k].size();
 
-        size_t m,len = 0;
-        for (len=0, m = 0; m < Data[k].size(); ++m) {
-            unsigned div = lround(Data[k][m].GetXScale()/Data.GetXScale());
-            chSPR = lcm(chSPR,div);  // sampling interval of m-th segment in k-th channel
-            len += div*Data[k][m].size();
+        size_t segmentIndex, len = 0;
+        for (len=0, segmentIndex = 0; segmentIndex < Data[k].size(); ++segmentIndex) {
+            unsigned div = static_cast<unsigned>(lround(Data[k][segmentIndex].GetXScale()/Data.GetXScale()));
+            chSPR = lcm(static_cast<uint32_t>(chSPR), static_cast<uint32_t>(div));  // sampling interval of m-th segment in k-th channel
+            len += div * Data[k][segmentIndex].size();
         }
-        SPR = lcm(SPR, chSPR);
+        SPR = lcm(static_cast<uint32_t>(SPR), static_cast<uint32_t>(chSPR));
 
         /*
             hc->SPR (i.e. chSPR) is 'abused' to store final hdr->SPR/hc->SPR, this is corrected in the loop below
@@ -370,7 +371,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     biosig_set_number_of_samples(hdr, NRec, SPR);
     size_t bpb = 0;
     for (k = 0; k < numberOfChannels; ++k) {
-        CHANNEL_TYPE *hc = biosig_get_channel(hdr, k);
+        CHANNEL_TYPE *hc = biosig_get_channel(hdr, static_cast<uint16_t>(k));
         // the 'abuse' of hc->SPR described above is corrected
 #ifdef DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
         size_t spr = biosig_channel_get_samples_per_record(hc);
@@ -394,7 +395,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
     /* check whether all segments have same size */
     {
         char flag = (numberOfChannels > 0);
-        size_t m, POS, pos;
+        size_t sectionIndex, POS = 0, pos;
         for (k=0; k < numberOfChannels; ++k) {
             pos = Data[k].size();
             if (k==0)
@@ -402,9 +403,10 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
             else
                 flag &= (POS == pos);
         }
-        for (m=0; flag && (m < Data[(size_t)0].size()); ++m) {
-            for (k=0; k < biosig_get_number_of_channels(hdr); ++k) {
-                pos = Data[k][m].size() * lround(Data[k][m].GetXScale()/Data.GetXScale());
+        const size_t biosigChannelCount = static_cast<size_t>(biosig_get_number_of_channels(hdr));
+        for (sectionIndex = 0; flag && (sectionIndex < Data[(size_t)0].size()); ++sectionIndex) {
+            for (k=0; k < biosigChannelCount; ++k) {
+                pos = Data[k][sectionIndex].size() * static_cast<size_t>(lround(Data[k][sectionIndex].GetXScale()/Data.GetXScale()));
                 if (k==0)
                     POS = pos;
                 else
@@ -427,7 +429,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
         for (m=0; m < (Data[k].size()); ++m) {
             if (pos > 0) {
                 uint16_t typ=0x7ffe;
-                uint32_t pos32=pos;
+                uint32_t pos32 = static_cast<uint32_t>(pos);
                 uint16_t chn=0;
                 uint32_t dur=0;
                 // set break marker
@@ -439,7 +441,7 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
                     biosig_set_nth_event(hdr, N++, NULL, &pos32, &chn, &dur, NULL, Desc);   // TODO
                 */
             }
-            pos += Data[k][m].size() * lround(Data[k][m].GetXScale()/Data.GetXScale());
+            pos += Data[k][m].size() * static_cast<size_t>(lround(Data[k][m].GetXScale()/Data.GetXScale()));
         }
 
         biosig_set_number_of_events(hdr, N);
@@ -451,35 +453,34 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 
         size_t bi=0;
 	for (k=0; k < numberOfChannels; ++k) {
-        CHANNEL_TYPE *hc = biosig_get_channel(hdr, k);
+        CHANNEL_TYPE *hc = biosig_get_channel(hdr, static_cast<uint16_t>(k));
 #ifdef DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
-        size_t chSPR = biosig_channel_get_samples_per_record(hc);
+        size_t channelSPR = biosig_channel_get_samples_per_record(hc);
 #else
-        size_t chSPR = chanSPR[k];
+        size_t channelSPR = chanSPR[k];
 #endif
-        size_t m,n,len=0;
-        for (m=0; m < Data[k].size(); ++m) {
+        size_t sectionIndex,n,len=0;
+        for (sectionIndex = 0; sectionIndex < Data[k].size(); ++sectionIndex) {
 
-            size_t div = lround(Data[k][m].GetXScale()/Data.GetXScale());
+            size_t div = static_cast<size_t>(lround(Data[k][sectionIndex].GetXScale()/Data.GetXScale()));
             size_t div2 = SPR/div;		  // TODO: avoid using hdr->SPR
 
-            // fprintf(stdout,"k,m,div,div2: %i,%i,%i,%i\n",(int)k,(int)m,(int)div,(int)div2);  //
-            for (n=0; n < Data[k][m].size(); ++n) {
+            // fprintf(stdout,"k,m,div,div2: %i,%i,%i,%i\n",(int)k,(int)sectionIndex,(int)div,(int)div2);  //
+            for (n=0; n < Data[k][sectionIndex].size(); ++n) {
                 uint64_t val;
-                double d = Data[k][m][n];
+                double d = Data[k][sectionIndex][n];
+                std::memcpy(&val, &d, sizeof(val));
 #if !defined(__MINGW32__) && !defined(_MSC_VER) && !defined(__APPLE__)
-                val = htole64(*(uint64_t*)&d);
-#else
-                val = *(uint64_t*)&d;
+                val = htole64(val);
 #endif
                 size_t p, spr = (len + n*div) / SPR;
 
                 for (p=0; p < div2; p++)
-                   *(uint64_t*)(rawdata + bi + bpb * spr + p*8) = val;
+                   std::memcpy(rawdata + bi + bpb * spr + p*8, &val, sizeof(val));
             }
-            len += div*Data[k][m].size();
+            len += div * Data[k][sectionIndex].size();
         }
-		bi += chSPR*8;
+		bi += channelSPR*8;
     }
 
 #ifndef DONOTUSE_DYNAMIC_ALLOCATION_FOR_CHANSPR
@@ -508,4 +509,3 @@ bool stfio::exportBiosigFile(const std::string& fName, const Recording& Data, st
 #endif
     return true;
 }
-

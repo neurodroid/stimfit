@@ -7,8 +7,16 @@ MYCC=/usr/bin/clang
 MYCXX=/usr/bin/clang++
 MYLD=ld
 
-config_args="--disable-dependency-tracking \
-             --enable-module \
-             --with-biosiglite"
+cmake_args="-S ../.. \
+            -B build-macports-module \
+            -DSTF_BUILD_MODULE=ON \
+            -DSTF_WITH_BIOSIG=ON \
+            -DSTF_BIOSIG_PROVIDER=SUBMODULE \
+            -DCMAKE_C_COMPILER=${MYCC} \
+            -DCMAKE_CXX_COMPILER=${MYCXX} \
+            -DCMAKE_LINKER=${MYLD} \
+            -DCMAKE_C_FLAGS=-I${prefix}/include \
+            -DCMAKE_CXX_FLAGS=-I${prefix}/include \
+            -DCMAKE_EXE_LINKER_FLAGS=-headerpad_max_install_names\ -L${prefix}/lib"
 
-../../configure ${config_args} CC="${MYCC} -I${prefix}/include" CXX="${MYCXX} -I${prefix}/include" LD="${MYLD}" LDFLAGS="-headerpad_max_install_names -L${prefix}/lib" PYTHON="${prefix}/bin/python${PYVER}"
+cmake ${cmake_args} -DPython3_EXECUTABLE="${prefix}/bin/python${PYVER}"

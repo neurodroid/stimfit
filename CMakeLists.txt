@@ -26,6 +26,7 @@ include(CTest)
 include(StimfitOptions)
 include(StimfitDependencies)
 include(StimfitToolchain)
+include(StimfitMacOS)
 include(StimfitMigration)
 
 set(STF_COMPONENT_CORE "core")
@@ -39,13 +40,25 @@ if(WIN32)
     "${CMAKE_BINARY_DIR}/src/libstfnum/$<CONFIG>"
     "$ENV{SystemRoot}/System32"
   )
-  if(DEFINED BIOSIG_LIBRARY AND EXISTS "${BIOSIG_LIBRARY}")
+  if(DEFINED STF_BIOSIG_RUNTIME_DIR AND EXISTS "${STF_BIOSIG_RUNTIME_DIR}")
+    list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${STF_BIOSIG_RUNTIME_DIR}")
+  elseif(DEFINED BIOSIG_LIBRARY AND EXISTS "${BIOSIG_LIBRARY}")
     get_filename_component(_stf_biosig_lib_dir "${BIOSIG_LIBRARY}" DIRECTORY)
     list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${_stf_biosig_lib_dir}")
     unset(_stf_biosig_lib_dir)
   endif()
   if(DEFINED wxWidgets_LIB_DIR AND NOT "${wxWidgets_LIB_DIR}" STREQUAL "")
-    list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${wxWidgets_LIB_DIR}")
+    file(TO_CMAKE_PATH "${wxWidgets_LIB_DIR}" _stf_wx_lib_dir)
+    list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${_stf_wx_lib_dir}")
+    get_filename_component(_stf_wx_lib_parent "${_stf_wx_lib_dir}" DIRECTORY)
+    if(EXISTS "${_stf_wx_lib_parent}/bin")
+      list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${_stf_wx_lib_parent}/bin")
+    endif()
+    if(EXISTS "${_stf_wx_lib_parent}/tools/wxwidgets")
+      list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${_stf_wx_lib_parent}/tools/wxwidgets")
+    endif()
+    unset(_stf_wx_lib_dir)
+    unset(_stf_wx_lib_parent)
   endif()
   if(MSVC)
     file(GLOB STF_MSVC_REDIST_DIRS
@@ -91,7 +104,20 @@ if(UNIX AND NOT APPLE AND NOT STF_BUILD_MODULE)
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 endif()
 
-configure_file(stfconf.h.in stfconf.h)
+set(STF_CONFIG_HEADER_TEMPLATE "${CMAKE_SOURCE_DIR}/stfconf.h.in")
+if(NOT EXISTS "${STF_CONFIG_HEADER_TEMPLATE}")
+  message(FATAL_ERROR "Could not find stfconf.h.in in ${CMAKE_SOURCE_DIR}")
+endif()
+configure_file("${STF_CONFIG_HEADER_TEMPLATE}" stfconf.h)
+unset(STF_CONFIG_HEADER_TEMPLATE)
+if(APPLE AND STF_MACOS_APP_BUNDLE)
+  set(PACKAGE_VERSION "${PROJECT_VERSION}")
+  configure_file(
+    ${CMAKE_SOURCE_DIR}/dist/macosx/stimfit.plist.in
+    ${CMAKE_CURRENT_BINARY_DIR}/stimfit.Info.plist
+    @ONLY
+  )
+endif()
 
 stf_print_configuration_summary()
 
@@ -100,8 +126,21 @@ add_subdirectory(src)
 if(NOT STF_BUILD_MODULE)
   if(WIN32)
     add_executable(stimfit WIN32 src/stimfit/gui/main.cpp)
+  elseif(APPLE AND STF_MACOS_APP_BUNDLE)
+    add_executable(stimfit MACOSX_BUNDLE src/stimfit/gui/main.cpp)
   else()
     add_executable(stimfit src/stimfit/gui/main.cpp)
+  endif()
+
+  if(APPLE AND STF_MACOS_APP_BUNDLE)
+    set_target_properties(stimfit PROPERTIES
+      MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/stimfit.Info.plist"
+      MACOSX_BUNDLE_ICON_FILE "stimfit.icns"
+    )
+    target_sources(stimfit PRIVATE ${CMAKE_SOURCE_DIR}/dist/macosx/stimfit.icns)
+    set_source_files_properties(${CMAKE_SOURCE_DIR}/dist/macosx/stimfit.icns PROPERTIES
+      MACOSX_PACKAGE_LOCATION "Resources"
+    )
   endif()
   target_link_libraries(
     stimfit
@@ -114,15 +153,21 @@ if(NOT STF_BUILD_MODULE)
       stimfit::fftw3
       stimfit::lapack
   )
-  if(TARGET biosiglite)
-    target_link_libraries(stimfit PRIVATE biosiglite)
+  stf_apply_macos_runtime_policy(stimfit)
+  if(APPLE AND STF_MACOS_APP_BUNDLE)
+    install(
+      TARGETS stimfit
+      BUNDLE DESTINATION .
+      COMPONENT ${STF_COMPONENT_CORE}
+    )
+  else()
+    install(
+      TARGETS stimfit
+      ${STF_INSTALL_RUNTIME_DEPENDENCY_ARGS}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      COMPONENT ${STF_COMPONENT_CORE}
+    )
   endif()
-  install(
-    TARGETS stimfit
-    ${STF_INSTALL_RUNTIME_DEPENDENCY_ARGS}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    COMPONENT ${STF_COMPONENT_CORE}
-  )
 
   if(UNIX AND NOT APPLE)
     if(EXISTS "${CMAKE_SOURCE_DIR}/debian/stimfit.desktop")
@@ -146,53 +191,134 @@ if(NOT STF_BUILD_MODULE)
       unset(_stf_icon_src)
     endforeach()
     unset(_stf_icon_size)
+
+    if(EXISTS "${CMAKE_SOURCE_DIR}/src/stimfit/res/toolbar")
+      install(
+        DIRECTORY "${CMAKE_SOURCE_DIR}/src/stimfit/res/toolbar/"
+        DESTINATION "${CMAKE_INSTALL_DATADIR}/stimfit/toolbar"
+        COMPONENT ${STF_COMPONENT_CORE}
+      )
+    endif()
   endif()
 
   if(WIN32 AND DEFINED wxWidgets_LIB_DIR AND EXISTS "${wxWidgets_LIB_DIR}")
+    file(TO_CMAKE_PATH "${wxWidgets_LIB_DIR}" _stf_wx_lib_dir_install)
     install(
-      DIRECTORY "${wxWidgets_LIB_DIR}/"
+      DIRECTORY "${_stf_wx_lib_dir_install}/"
       DESTINATION ${CMAKE_INSTALL_BINDIR}
       COMPONENT ${STF_COMPONENT_CORE}
       FILES_MATCHING
         PATTERN "wx*.dll"
     )
+    # vcpkg places wx DLLs in <prefix>/bin and <prefix>/tools/wxwidgets, not lib/.
+    get_filename_component(_stf_wx_install_parent "${_stf_wx_lib_dir_install}" DIRECTORY)
+    if(EXISTS "${_stf_wx_install_parent}/bin")
+      install(
+        DIRECTORY "${_stf_wx_install_parent}/bin/"
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT ${STF_COMPONENT_CORE}
+        FILES_MATCHING
+          PATTERN "wx*.dll"
+      )
+    endif()
+    if(EXISTS "${_stf_wx_install_parent}/tools/wxwidgets")
+      install(
+        DIRECTORY "${_stf_wx_install_parent}/tools/wxwidgets/"
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT ${STF_COMPONENT_CORE}
+        FILES_MATCHING
+          PATTERN "wx*.dll"
+      )
+    endif()
+    unset(_stf_wx_lib_dir_install)
+    unset(_stf_wx_install_parent)
   endif()
 
   if(WIN32 AND DEFINED STF_HDF5_PREFIX)
-    if(EXISTS "${STF_HDF5_PREFIX}/bin")
+    file(TO_CMAKE_PATH "${STF_HDF5_PREFIX}" _stf_hdf5_prefix_install)
+    if(EXISTS "${_stf_hdf5_prefix_install}/bin")
       install(
-        DIRECTORY "${STF_HDF5_PREFIX}/bin/"
+        DIRECTORY "${_stf_hdf5_prefix_install}/bin/"
         DESTINATION ${CMAKE_INSTALL_BINDIR}
         COMPONENT ${STF_COMPONENT_CORE}
         FILES_MATCHING
           PATTERN "hdf*.dll"
+          PATTERN "szip.dll"    # HDF5 Szip filter codec
+          PATTERN "aec.dll"     # libaec (Adaptive Entropy Coding, Szip replacement)
       )
     endif()
-    if(EXISTS "${STF_HDF5_PREFIX}/lib")
+    if(EXISTS "${_stf_hdf5_prefix_install}/lib")
       install(
-        DIRECTORY "${STF_HDF5_PREFIX}/lib/"
+        DIRECTORY "${_stf_hdf5_prefix_install}/lib/"
         DESTINATION ${CMAKE_INSTALL_BINDIR}
         COMPONENT ${STF_COMPONENT_CORE}
         FILES_MATCHING
           PATTERN "hdf*.dll"
+          PATTERN "szip.dll"
+          PATTERN "aec.dll"
       )
     endif()
+    unset(_stf_hdf5_prefix_install)
+  endif()
+
+  # ZLIB_LIBRARY_RELEASE is a CMake cache variable populated by find_package(ZLIB)
+  # from any subdirectory; ZLIB_LIBRARIES is a local variable that doesn't
+  # propagate to the parent scope, so we use the cache variable instead.
+  if(WIN32 AND DEFINED ZLIB_LIBRARY_RELEASE AND EXISTS "${ZLIB_LIBRARY_RELEASE}")
+    get_filename_component(_stf_zlib_lib_dir "${ZLIB_LIBRARY_RELEASE}" DIRECTORY)
+    get_filename_component(_stf_zlib_prefix "${_stf_zlib_lib_dir}" DIRECTORY)
+    foreach(_stf_zlib_search_dir IN ITEMS "${_stf_zlib_lib_dir}" "${_stf_zlib_prefix}/bin")
+      if(EXISTS "${_stf_zlib_search_dir}")
+        install(
+          DIRECTORY "${_stf_zlib_search_dir}/"
+          DESTINATION ${CMAKE_INSTALL_BINDIR}
+          COMPONENT ${STF_COMPONENT_CORE}
+          FILES_MATCHING
+            PATTERN "zlib*.dll"
+            PATTERN "zlib1.dll"
+        )
+      endif()
+    endforeach()
+    unset(_stf_zlib_search_dir)
+    unset(_stf_zlib_lib_dir)
+    unset(_stf_zlib_prefix)
   endif()
 
   if(WIN32 AND DEFINED FFTW3_LIBRARY AND EXISTS "${FFTW3_LIBRARY}")
     get_filename_component(_fftw3_lib_dir "${FFTW3_LIBRARY}" DIRECTORY)
+    get_filename_component(_fftw3_prefix "${_fftw3_lib_dir}" DIRECTORY)
+    # Search both the lib dir (legacy layouts) and the sibling bin dir (vcpkg layout).
+    foreach(_fftw3_search_dir IN ITEMS "${_fftw3_lib_dir}" "${_fftw3_prefix}/bin")
+      if(EXISTS "${_fftw3_search_dir}")
+        install(
+          DIRECTORY "${_fftw3_search_dir}/"
+          DESTINATION ${CMAKE_INSTALL_BINDIR}
+          COMPONENT ${STF_COMPONENT_CORE}
+          FILES_MATCHING
+            PATTERN "libfftw3*.dll"
+            PATTERN "fftw3*.dll"
+        )
+      endif()
+    endforeach()
+    unset(_fftw3_lib_dir)
+    unset(_fftw3_prefix)
+    unset(_fftw3_search_dir)
+  endif()
+
+  # biosig2.dll is produced by the patched-biosig ExternalProject, so
+  # STF_BIOSIG_RUNTIME_DIR may not exist yet at configure time on a fresh build.
+  # Drop the EXISTS guard here; cmake --install runs after the build step and
+  # the directory will be present by then.  install(DIRECTORY ...) silently
+  # skips non-existent source directories, so this is safe.
+  if(WIN32 AND DEFINED STF_BIOSIG_RUNTIME_DIR)
     install(
-      DIRECTORY "${_fftw3_lib_dir}/"
+      DIRECTORY "${STF_BIOSIG_RUNTIME_DIR}/"
       DESTINATION ${CMAKE_INSTALL_BINDIR}
       COMPONENT ${STF_COMPONENT_CORE}
       FILES_MATCHING
-        PATTERN "libfftw3*.dll"
-        PATTERN "fftw3*.dll"
+        PATTERN "biosig*.dll"
     )
-    unset(_fftw3_lib_dir)
-  endif()
-
-  if(WIN32 AND DEFINED BIOSIG_LIBRARY AND EXISTS "${BIOSIG_LIBRARY}")
+  elseif(WIN32 AND DEFINED BIOSIG_LIBRARY AND EXISTS "${BIOSIG_LIBRARY}")
     get_filename_component(_biosig_lib_dir "${BIOSIG_LIBRARY}" DIRECTORY)
     install(
       DIRECTORY "${_biosig_lib_dir}/"
@@ -362,12 +488,33 @@ if(NOT STF_BUILD_MODULE)
   endif()
 
   if(WIN32)
+    # Derive DLL search dirs from the resolved LAPACK/BLAS library paths.
+    # FindLAPACK resolves to the vcpkg lib/ dir; the actual DLLs live in the
+    # sibling bin/ dir (vcpkg layout) or in the same dir (MinGW/MSYS layout).
+    set(_stf_lapack_lib_candidates)
+    if(DEFINED LAPACK_LIBRARIES)
+      list(APPEND _stf_lapack_lib_candidates ${LAPACK_LIBRARIES})
+    endif()
+    if(DEFINED BLAS_LIBRARIES)
+      list(APPEND _stf_lapack_lib_candidates ${BLAS_LIBRARIES})
+    endif()
+    if(DEFINED OPENBLAS_LIBRARY AND EXISTS "${OPENBLAS_LIBRARY}")
+      list(APPEND _stf_lapack_lib_candidates "${OPENBLAS_LIBRARY}")
+    endif()
     set(_stf_lapack_runtime_dirs)
-    list(APPEND _stf_lapack_runtime_dirs
-      "${CMAKE_BINARY_DIR}/src/libstfnum/$<CONFIG>"
-      "${CMAKE_BINARY_DIR}/vcpkg_installed/x64-windows/bin"
-      "${CMAKE_SOURCE_DIR}/vcpkg_installed/x64-windows/bin"
-    )
+    foreach(_stf_lapack_lib IN LISTS _stf_lapack_lib_candidates)
+      if(EXISTS "${_stf_lapack_lib}")
+        get_filename_component(_stf_lapack_lib_dir "${_stf_lapack_lib}" DIRECTORY)
+        list(APPEND _stf_lapack_runtime_dirs "${_stf_lapack_lib_dir}")
+        get_filename_component(_stf_lapack_prefix "${_stf_lapack_lib_dir}" DIRECTORY)
+        list(APPEND _stf_lapack_runtime_dirs "${_stf_lapack_prefix}/bin")
+      endif()
+    endforeach()
+    list(REMOVE_DUPLICATES _stf_lapack_runtime_dirs)
+    unset(_stf_lapack_lib_candidates)
+    unset(_stf_lapack_lib)
+    unset(_stf_lapack_lib_dir)
+    unset(_stf_lapack_prefix)
     foreach(_stf_lapack_dir IN LISTS _stf_lapack_runtime_dirs)
       if(EXISTS "${_stf_lapack_dir}")
         install(
@@ -389,46 +536,71 @@ if(NOT STF_BUILD_MODULE)
   endif()
 
   if(STF_BUILD_TESTS)
-    add_executable(
-      stimfittest
-      src/test/section.cpp
-      src/test/channel.cpp
-      src/test/recording.cpp
-      src/test/fit.cpp
-      src/test/measure.cpp
+    add_library(
+      stimfit_gtest_main
+      STATIC
       src/test/gtest/src/gtest-all.cc
       src/test/gtest/src/gtest_main.cc
     )
     target_include_directories(
-      stimfittest
-      PRIVATE
+      stimfit_gtest_main
+      PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/test/gtest
         ${CMAKE_CURRENT_SOURCE_DIR}/src/test/gtest/include
         ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
-    target_compile_definitions(stimfittest PRIVATE STF_TEST)
     target_link_libraries(
-      stimfittest
+      stimfit_gtest_main
+      PUBLIC
+        Threads::Threads
+        stimfit_config
+    )
+    stf_apply_macos_runtime_policy(stimfit_gtest_main)
+
+    add_executable(
+      stimfit_containers_test
+      src/test/section.cpp
+      src/test/channel.cpp
+      src/test/recording.cpp
+    )
+    target_link_libraries(
+      stimfit_containers_test
       PRIVATE
         stimfit_config
-        stimfit_core
-        stfio
-        stfnum
-        stimfit::wx
-        stimfit::fftw3
-        stimfit::lapack
-        Threads::Threads
+        stimfit_gtest_main
+        stfio_containers
     )
-    if(TARGET biosiglite)
-      target_link_libraries(stimfittest PRIVATE biosiglite)
-    endif()
-    add_test(NAME stimfittest COMMAND stimfittest)
+    stf_apply_macos_runtime_policy(stimfit_containers_test)
+    add_test(NAME stimfit_containers_test COMMAND stimfit_containers_test)
     install(
-      TARGETS stimfittest
+      TARGETS stimfit_containers_test
       ${STF_INSTALL_RUNTIME_DEPENDENCY_ARGS}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
       COMPONENT ${STF_COMPONENT_TESTS}
     )
+
+    if(STF_BUILD_NUMERIC_TESTS)
+      add_executable(
+        stimfit_numeric_test
+        src/test/fit.cpp
+        src/test/measure.cpp
+      )
+      target_link_libraries(
+        stimfit_numeric_test
+        PRIVATE
+          stimfit_config
+          stimfit_gtest_main
+          stfnum
+      )
+      stf_apply_macos_runtime_policy(stimfit_numeric_test)
+      add_test(NAME stimfit_numeric_test COMMAND stimfit_numeric_test)
+      install(
+        TARGETS stimfit_numeric_test
+        ${STF_INSTALL_RUNTIME_DEPENDENCY_ARGS}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT ${STF_COMPONENT_TESTS}
+      )
+    endif()
   endif()
 endif()
 
@@ -440,6 +612,15 @@ set(CPACK_PACKAGE_CONTACT "https://github.com/neurodroid/stimfit")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/gpl-2.0.txt")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "Stimfit")
 set(CPACK_MONOLITHIC_INSTALL OFF)
+set(CPACK_SOURCE_IGNORE_FILES
+  "/[.]git/"
+  "/[.]github/"
+  "/[.]pytest_cache/"
+  "/build/"
+  "/_CPack_Packages/"
+  "~$"
+  "/[.]_"
+)
 
 if(WIN32)
   set(CPACK_GENERATOR "INNOSETUP;ZIP")

@@ -90,7 +90,7 @@ inline CArrayPtr<ITEM>::CArrayPtr/*CSH<ITEM>*/(ITEM *pItem)
 {
 //   MEMBERASSERT();
    ASSERT_NOTONSTACK(pItem);
-   m_pArray = pItem;
+   m_pArray = std::shared_ptr<ITEM>(pItem, std::default_delete<ITEM[]>());
 }
 
 //================================================================================================
@@ -101,7 +101,7 @@ template <class ITEM>
 inline CArrayPtr<ITEM>::CArrayPtr/*CSH<ITEM>*/(UINT uCount)
 {
 //   MEMBERASSERT();
-    m_pArray.reset((ITEM*)0);
+    m_pArray.reset();
     Alloc(uCount);
 }
 
@@ -134,8 +134,8 @@ inline BOOL CArrayPtr<ITEM>::Alloc(UINT uCount)
       return TRUE;
 
    // Allocate the new array.
-   m_pArray.reset(new ITEM[uCount]);
-   return (m_pArray!=NULL);
+   m_pArray = std::shared_ptr<ITEM>(new ITEM[uCount], std::default_delete<ITEM[]>());
+   return static_cast<bool>(m_pArray);
 }
 /*
 //================================================================================================
@@ -204,7 +204,7 @@ template <class ITEM>
 inline void CArrayPtr<ITEM>::Free()
 {
 //   MEMBERASSERT();
-    m_pArray.reset((ITEM*)0);
+    m_pArray.reset();
 }
 
 //================================================================================================

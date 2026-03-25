@@ -1,8 +1,3 @@
-.. test documentation master file, created by
-   sphinx-quick start on Tue May 12 19:47:15 2009.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 OS X Build Guide
 ================
 
@@ -10,15 +5,13 @@ OS X Build Guide
 :Release: |version|
 :Date:    |today|
 
-If you just want to install Stimfit and/or the stfio module, download and install MacPorts from `here <http://www.macports.org>`_, then type into a terminal:
+Current macOS source builds use the CMake-based app-bundle workflow from
+[`build_macos_cmake.sh`](build_macos_cmake.sh). This section focuses on
+macOS-specific prerequisites, current MacPorts-based dependencies, and the
+standalone [`stfio`](doc/sphinx/stfio/index.rst) module guidance.
 
-::
-
-    sudo port install stimfit py27-stfio py34-stfio
-
-Building `Stimfit <http://www.stimfit.org>`_ from scratch requires you to install `Xcode <http://developer.apple.com/tools/xcode/>`_, `MacPorts <http://www.macports.org/>`_ and a couple of libraries. Note that this may take several hours. There is experimental support for Stimfit in `Homebrew <http://brew.sh>`_, but currently it does not install a full version of Stimfit.
-
-Contents:
+Contents
+--------
 
 .. toctree::
    :maxdepth: 2

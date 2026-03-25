@@ -1,8 +1,3 @@
-.. test documentation master file, created by
-   sphinx-quick start on Tue May 12 19:47:15 2009.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Windows Build Guide
 ===================
 
@@ -10,11 +5,15 @@ Windows Build Guide
 :Release: |version|
 :Date:    |today|
 
-Contents:
+Current Windows builds use Visual Studio, CMake presets, `vcpkg`, and CPack.
+The supported path is the modern CMake workflow; the historical Visual C++
+Express material is no longer part of the primary build guide.
+
+Contents
+--------
 
 .. toctree::
    :maxdepth: 2
 
    prerequisites
-   VCExpress64bitsetup
    building

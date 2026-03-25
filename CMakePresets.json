@@ -7,9 +7,10 @@
   },
   "configurePresets": [
     {
-      "name": "vs2022-vcpkg-wx-hdf5",
-      "displayName": "VS2022 x64 (vcpkg + wxWidgets + HDF5)",
-      "description": "Stimfit non-Python build using local wxWidgets and HDF5 dependencies.",
+      "name": "vs2022-vcpkg-ci-like-base",
+      "displayName": "VS2022 x64 (CI-like vcpkg base)",
+      "description": "Shared Windows preset using environment-driven vcpkg dependencies, aligned with CI layout.",
+      "hidden": true,
       "generator": "Visual Studio 17 2022",
       "binaryDir": "${sourceDir}/../stimfit-out/${presetName}",
       "architecture": {
@@ -17,32 +18,48 @@
         "strategy": "set"
       },
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/cmake/triplets",
+        "VCPKG_TARGET_TRIPLET": "x64-windows-ci-release",
+        "VCPKG_MANIFEST_INSTALL": "OFF",
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/../stimfit-out/install/vs2022-release",
+        "CMAKE_PREFIX_PATH": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release",
+        "CMAKE_LIBRARY_PATH": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release/lib",
+        "CMAKE_INCLUDE_PATH": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release/include",
+        "HDF5_DIR": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release/share/hdf5",
+        "hdf5_DIR": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release/share/hdf5",
+        "wxWidgets_DIR": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release/share/wxwidgets",
+        "STF_HDF5_PREFIX": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release",
+        "wxWidgets_ROOT_DIR": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release",
+        "wxWidgets_LIB_DIR": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release/lib",
         "BUILD_SHARED_LIBS": "ON",
         "STF_BUILD_MODULE": "OFF",
         "STF_ENABLE_PYTHON": "OFF",
-        "STF_WITH_BIOSIG": "ON",
-        "CMAKE_LIBRARY_PATH": "C:/Users/C02380/libs/fftw3/lib;C:/Users/C02380/libs/fftw3",
-        "CMAKE_INCLUDE_PATH": "C:/Users/C02380/libs/fftw3/include",
-        "STF_HDF5_PREFIX": "C:/Users/C02380/libs/hdf5",
-        "wxWidgets_ROOT_DIR": "C:/Users/C02380/libs/Phoenix/ext/wxWidgets",
-        "wxWidgets_LIB_DIR": "C:/Users/C02380/libs/Phoenix/ext/wxWidgets/lib/vc140_x64_dll"
+        "STF_WITH_BIOSIG": "ON"
+      }
+    },
+    {
+      "name": "vs2022-vcpkg-wx-hdf5",
+      "displayName": "VS2022 x64 (vcpkg + wxWidgets + HDF5)",
+      "description": "Stimfit non-Python build using vcpkg-provided dependencies.",
+      "inherits": [
+        "vs2022-vcpkg-ci-like-base"
+      ],
+      "cacheVariables": {
+        "STF_ENABLE_PYTHON": "OFF",
+        "STF_WITH_BIOSIG": "ON"
       }
     },
     {
       "name": "vs2022-vcpkg-wx-hdf5-biosig-patched",
-      "displayName": "VS2022 x64 (external patched biosig)",
-      "description": "Build Stimfit against biosig prepared by cmake/PrepareBiosigMSVC.cmake.",
+      "displayName": "VS2022 x64 (CMake-managed patched biosig)",
+      "description": "Build Stimfit with biosig patched and built incrementally through the CMake build graph.",
       "inherits": [
         "vs2022-vcpkg-wx-hdf5"
       ],
       "cacheVariables": {
-        "STF_USE_BIOSIG_SUBMODULE": "OFF",
         "STF_WITH_BIOSIG": "ON",
-        "STF_WITH_BIOSIGLITE": "OFF",
-        "BIOSIG_INCLUDE_DIR": "${sourceDir}/build/biosig-msvc-src/biosig4c++",
-        "BIOSIG_LIBRARY": "${sourceDir}/build/biosig-msvc-build/Release/biosig2.lib"
+        "STF_BIOSIG_PROVIDER": "PATCHED_SUBMODULE"
       }
     },
     {
@@ -61,7 +78,43 @@
         "STF_WINDOWS_PYTHON_EXTRA_PATHS": "C:/Users/C02380/libs/Phoenix",
         "STF_WXPYTHON_INCLUDE_DIR": "C:/Users/C02380/libs/Phoenix/wx/include",
         "SWIG_EXECUTABLE": "C:/Users/C02380/AppData/Local/Microsoft/WinGet/Packages/SWIG.SWIG_Microsoft.Winget.Source_8wekyb3d8bbwe/swigwin-4.4.1/swig.exe",
-        "Python3_ROOT_DIR": "C:/Program Files/Python314"
+        "Python3_ROOT_DIR": "C:/Program Files/Python314",
+        "STF_WX_PREFER_MODULE_FIND": "ON",
+        "wxWidgets_DIR": "",
+        "wxWidgets_ROOT_DIR": "C:/Users/C02380/libs/Phoenix/ext/wxWidgets",
+        "wxWidgets_LIB_DIR": "C:/Users/C02380/libs/Phoenix/ext/wxWidgets/lib/vc140_x64_dll"
+      }
+    },
+    {
+      "name": "ci-windows-msvc-smoke",
+      "displayName": "CI Windows MSVC smoke",
+      "description": "GitHub Actions Windows smoke configuration using vcpkg-installed dependencies.",
+      "generator": "Visual Studio 17 2022",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "architecture": {
+        "value": "x64",
+        "strategy": "set"
+      },
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-windows-ci-release",
+        "VCPKG_MANIFEST_INSTALL": "OFF",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install/${presetName}",
+        "CMAKE_PREFIX_PATH": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release",
+        "CMAKE_LIBRARY_PATH": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release/lib",
+        "CMAKE_INCLUDE_PATH": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release/include",
+        "HDF5_DIR": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release/share/hdf5",
+        "hdf5_DIR": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release/share/hdf5",
+        "wxWidgets_DIR": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release/share/wxwidgets",
+        "STF_HDF5_PREFIX": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release",
+        "wxWidgets_ROOT_DIR": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release",
+        "wxWidgets_LIB_DIR": "$env{VCPKG_INSTALLED_DIR}/x64-windows-ci-release/lib",
+        "BUILD_SHARED_LIBS": "ON",
+        "STF_BUILD_MODULE": "OFF",
+        "STF_ENABLE_PYTHON": "OFF",
+        "STF_WITH_BIOSIG": "OFF",
+        "STF_BUILD_TESTS": "ON",
+        "STF_BUILD_NUMERIC_TESTS": "OFF"
       }
     }
   ],
@@ -100,6 +153,15 @@
       "configuration": "Release",
       "targets": [
         "stimfit"
+      ]
+    },
+    {
+      "name": "ci-windows-msvc-smoke-release",
+      "displayName": "CI smoke target build (Release)",
+      "configurePreset": "ci-windows-msvc-smoke",
+      "configuration": "Release",
+      "targets": [
+        "stimfit_containers_test"
       ]
     }
   ],

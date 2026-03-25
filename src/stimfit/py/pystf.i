@@ -1510,10 +1510,10 @@ double plot_y2max();
 
 //--------------------------------------------------------------------
 %feature("autodoc", 0) mpl_panel;
-%feature("kwargs") mpl_panel;
 %feature("docstring", "Returns a pointer to the parent window")
 mpl_panel;
-PyObject* mpl_panel(const std::vector<double>& figsize = std::vector<double>(_figsize, _figsize+2));
+PyObject* mpl_panel();
+PyObject* mpl_panel(const std::vector<double>& figsize);
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------

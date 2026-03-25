@@ -610,19 +610,20 @@ Vector_double stfnum::quad(const Vector_double& data, std::size_t begin, std::si
     Vector_double quad_p(n_intervals*3);
     
     int n_q=0;
-    if (begin-end>1) {
-        for (int n=begin; n<(int)end-1; n+=2) {
+    if (end > begin + 2) {
+        for (std::size_t n = begin; n + 2 < end; n += 2) {
             Vector_double A(9);
             Vector_double B(3);
     
             // solve linear equation system:
             // use column-major order (Fortran)
-            A[0]=(double)n*(double)n;
-            A[1]=((double)n+1.0)*((double)n+1.0);
-            A[2]=((double)n+2.0)*((double)n+2.0);
-            A[3]=(double)n;
-            A[4]=(double)n+1.0;
-            A[5]=(double)n+2.0;
+            const double nd = static_cast<double>(n);
+            A[0]=nd*nd;
+            A[1]=(nd+1.0)*(nd+1.0);
+            A[2]=(nd+2.0)*(nd+2.0);
+            A[3]=nd;
+            A[4]=nd+1.0;
+            A[5]=nd+2.0;
             A[6]=1.0;
             A[7]=1.0;
             A[8]=1.0;
@@ -643,11 +644,11 @@ Vector_double stfnum::quad(const Vector_double& data, std::size_t begin, std::si
     return quad_p;
 }
 
-Vector_double stfnum::nojac(double x, const Vector_double& p) {
+Vector_double stfnum::nojac(double /*x*/, const Vector_double& /*p*/) {
     return Vector_double(0);
 }
 
-double stfnum::noscale(double param, double xscale, double oldx, double yscale, double yoff) {
+double stfnum::noscale(double param, double /*xscale*/, double /*oldx*/, double /*yscale*/, double /*yoff*/) {
     return param;
 }
 

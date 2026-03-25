@@ -1,0 +1,277 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  windows-msvc-smoke:
+    name: Windows MSVC smoke
+    runs-on: windows-latest
+    timeout-minutes: 75
+    env:
+      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+      VCPKG_INSTALLED_DIR: ${{ github.workspace }}/vcpkg_installed
+      VCPKG_BINARY_CACHE_DIR: ${{ github.workspace }}/vcpkg-binary-cache
+      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}/vcpkg-binary-cache
+      VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/vcpkg-binary-cache,readwrite
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgDirectory: ${{ env.VCPKG_ROOT }}
+
+      - name: Restore vcpkg cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.VCPKG_INSTALLED_DIR }}
+            ${{ env.VCPKG_BINARY_CACHE_DIR }}
+            ${{ env.VCPKG_ROOT }}/packages
+            ${{ env.VCPKG_ROOT }}/downloads
+          key: windows-vcpkg-x64-ci-release-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json', 'cmake/triplets/x64-windows-ci-release.cmake') }}
+          restore-keys: |
+            windows-vcpkg-x64-ci-release-
+
+      - name: Install Windows build dependencies (vcpkg)
+        shell: pwsh
+        run: |
+          vcpkg install `
+            --overlay-triplets "$env:GITHUB_WORKSPACE/cmake/triplets" `
+            --triplet x64-windows-ci-release `
+            --x-install-root "$env:VCPKG_INSTALLED_DIR"
+
+      - name: Verify vcpkg dependency layout
+        shell: pwsh
+        run: |
+          $hdf5Share = "$env:VCPKG_INSTALLED_DIR/x64-windows-ci-release/share/hdf5"
+          $hdf5Config = Join-Path $hdf5Share "hdf5-config.cmake"
+          $hdf5Lib = "$env:VCPKG_INSTALLED_DIR/x64-windows-ci-release/lib/hdf5.lib"
+
+          Write-Host "VCPKG_ROOT=$env:VCPKG_ROOT"
+          Write-Host "VCPKG_INSTALLED_DIR=$env:VCPKG_INSTALLED_DIR"
+          Write-Host "Checking $hdf5Config"
+          Write-Host "Checking $hdf5Lib"
+
+          if (-not (Test-Path $hdf5Config)) {
+            throw "Missing HDF5 config file at $hdf5Config"
+          }
+          if (-not (Test-Path $hdf5Lib)) {
+            throw "Missing HDF5 library at $hdf5Lib"
+          }
+
+      - name: Normalize wx include layout (release-only triplet)
+        shell: pwsh
+        run: |
+          $wxRoot = "$env:VCPKG_INSTALLED_DIR/x64-windows-ci-release/lib"
+          $wxReleaseSetup = Join-Path $wxRoot "mswu/wx/setup.h"
+          $wxDebugSetupDir = Join-Path $wxRoot "mswud/wx"
+          $wxDebugSetup = Join-Path $wxDebugSetupDir "setup.h"
+
+          if (-not (Test-Path $wxReleaseSetup)) {
+            throw "Missing wxWidgets release setup header at $wxReleaseSetup"
+          }
+
+          if (-not (Test-Path $wxDebugSetupDir)) {
+            New-Item -ItemType Directory -Path $wxDebugSetupDir -Force | Out-Null
+          }
+
+          Copy-Item -Path $wxReleaseSetup -Destination $wxDebugSetup -Force
+          Write-Host "Created release-only wx compatibility header at $wxDebugSetup"
+
+      - name: Configure CMake (Windows smoke)
+        shell: pwsh
+        run: |
+          cmake --preset ci-windows-msvc-smoke
+
+      - name: Build container test target
+        shell: pwsh
+        run: |
+          cmake --build --preset ci-windows-msvc-smoke-release --parallel
+
+      - name: Run Windows smoke test
+        shell: pwsh
+        run: |
+          $buildRoot = "$env:GITHUB_WORKSPACE/build/ci-windows-msvc-smoke"
+          $runtimePaths = @(
+            "$buildRoot/src/stimfit/Release",
+            "$buildRoot/src/libstfio/Release",
+            "$buildRoot/src/libstfnum/Release",
+            "$env:VCPKG_INSTALLED_DIR/x64-windows-ci-release/bin"
+          ) | Where-Object { Test-Path $_ }
+
+          if ($runtimePaths.Count -gt 0) {
+            $env:PATH = ($runtimePaths -join ';') + ';' + $env:PATH
+            Write-Host "Prepended runtime PATH entries:"
+            $runtimePaths | ForEach-Object { Write-Host "  $_" }
+          }
+
+          ctest --test-dir build/ci-windows-msvc-smoke -C Release --output-on-failure --tests-regex stimfit_containers_test
+
+      - name: Upload Windows smoke staging artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-msvc-smoke-staging
+          path: |
+            build/ci-windows-msvc-smoke/CMakeCache.txt
+            build/ci-windows-msvc-smoke/Testing/Temporary/LastTest.log
+            build/ci-windows-msvc-smoke/src/test/Release/stimfit_containers_test.exe
+          if-no-files-found: warn
+
+  ubuntu-tests:
+    name: Ubuntu test targets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake \
+            ninja-build \
+            g++ \
+            pkg-config \
+            libfftw3-dev \
+            libhdf5-dev \
+            libwxgtk3.2-dev \
+            liblapack-dev \
+            libblas-dev \
+            libopenblas-dev
+
+      - name: Configure CMake
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DSTF_BUILD_TESTS=ON \
+            -DSTF_BUILD_NUMERIC_TESTS=ON \
+            -DSTF_ENABLE_PYTHON=OFF \
+            -DSTF_WITH_BIOSIG=OFF
+
+      - name: Build test targets
+        run: |
+          cmake --build build --parallel --target \
+            stimfit_containers_test \
+            stimfit_numeric_test
+
+      - name: Run CTest
+        run: |
+          ctest --test-dir build --output-on-failure --tests-regex 'stimfit_(containers|numeric)_test'
+
+  macos-macports-smoke:
+    name: macOS MacPorts smoke
+    runs-on: macos-14
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Bootstrap MacPorts
+        env:
+          MACPORTS_PKG_URL: https://github.com/macports/macports-base/releases/download/v2.10.5/MacPorts-2.10.5-14-Sonoma.pkg
+        run: |
+          curl -L "$MACPORTS_PKG_URL" -o MacPorts.pkg
+          sudo installer -pkg MacPorts.pkg -target /
+          /opt/local/bin/port version
+
+          {
+            echo "/opt/local/bin"
+            echo "/opt/local/sbin"
+          } >> "$GITHUB_PATH"
+
+      - name: Install MacPorts dependencies
+        run: |
+          sudo port -N selfupdate
+          sudo port -N install \
+            cmake \
+            ninja \
+            pkgconfig \
+            fftw-3 \
+            hdf5 \
+            wxWidgets-3.2
+
+          sudo port select --set wxWidgets wxWidgets-3.2 || true
+
+          if [[ -x /opt/local/bin/wx-config ]]; then
+            WX_CONFIG=/opt/local/bin/wx-config
+          else
+            WX_CONFIG="$(port contents wxWidgets-3.2 | awk '/\/wx-config$/ { print $1; exit }')"
+          fi
+
+          if [[ -z "${WX_CONFIG}" || ! -x "${WX_CONFIG}" ]]; then
+            echo "Failed to locate wx-config from MacPorts" >&2
+            port contents wxWidgets-3.2
+            port select --summary || true
+            exit 1
+          fi
+
+          echo "WX_CONFIG=${WX_CONFIG}" >> "$GITHUB_ENV"
+          port select --summary || true
+          "${WX_CONFIG}" --version
+          "${WX_CONFIG}" --selected-config || true
+          "${WX_CONFIG}" --list || true
+          "${WX_CONFIG}" --cxxflags || true
+          "${WX_CONFIG}" --libs std,aui || true
+
+      - name: Configure CMake with MacPorts
+        run: |
+          WX_CONFIG_OPTIONS="--toolkit=osx_cocoa --unicode=yes --version=3.2"
+
+          cmake -S . -B build-macos-macports -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH=/opt/local \
+            -DCMAKE_FIND_ROOT_PATH=/opt/local \
+            -DCMAKE_FRAMEWORK_PATH=/opt/local/Library/Frameworks \
+            -DCMAKE_FIND_FRAMEWORK=FIRST \
+            -DCMAKE_FIND_APPBUNDLE=LAST \
+            -DwxWidgets_CONFIG_EXECUTABLE="${WX_CONFIG}" \
+            -DwxWidgets_CONFIG_OPTIONS="${WX_CONFIG_OPTIONS}" \
+            -DSTF_ENABLE_PYTHON=OFF \
+            -DSTF_WITH_BIOSIG=OFF \
+            -DSTF_BUILD_MODULE=OFF \
+            -DSTF_BUILD_TESTS=ON \
+            -DSTF_BUILD_NUMERIC_TESTS=ON \
+            -DSTF_MACOS_APP_BUNDLE=ON
+
+      - name: Build Stimfit and test targets
+        run: |
+          cmake --build build-macos-macports --parallel --target \
+            stimfit \
+            stimfit_containers_test \
+            stimfit_numeric_test
+
+      - name: Run MacPorts CTest
+        run: |
+          ctest --test-dir build-macos-macports --output-on-failure --tests-regex 'stimfit_(containers|numeric)_test'
+
+      - name: Install Stimfit into staging
+        run: |
+          cmake --install build-macos-macports --prefix "$PWD/build-macos-macports/install"
+          find "$PWD/build-macos-macports/install" -maxdepth 4 -print | sort > "$PWD/build-macos-macports/install-manifest.txt"
+
+      - name: Upload minimal staging artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-macports-staging
+          path: |
+            build-macos-macports/CMakeCache.txt
+            build-macos-macports/install-manifest.txt
+            build-macos-macports/install/stimfit.app
+          if-no-files-found: warn

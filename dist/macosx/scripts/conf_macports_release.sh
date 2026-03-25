@@ -19,11 +19,13 @@ MYLDFLAGS=`${WX_CONF} --libs all`
 # MYLDFLAGS="${MYLDFLAGS} -framework Accelerate"
 # MYLDFLAGS="-L${prefix}/Library/Frameworks/Python.framework/Versions/${PYVER}/lib/python${PYVER}/site-packages/wx/   -framework IOKit -framework Carbon -framework Cocoa -framework AudioToolbox -framework System -framework OpenGL -lwx_baseu-3.1  -lwx_osx_cocoau_core-3.1 -lwx_osx_cocoau_aui-3.1"
 MYLDFLAGS="${MYLDFLAGS} -headerpad_max_install_names -L${prefix}/lib"
-config_args="--with-wx-config=${WX_CONF} \
-             --disable-dependency-tracking \
-             --with-biosiglite"
+config_args="-S ../.. \
+             -B build-macports-release \
+             -DSTF_WITH_BIOSIG=ON \
+             -DSTF_BIOSIG_PROVIDER=SUBMODULE \
+             -DwxWidgets_CONFIG_EXECUTABLE=${WX_CONF}"
 #              --enable-debug"
 #             --with-lapack-lib="
 #              --enable-debug \
 
-../../configure ${config_args} CC="${MYCC}" CFLAGS="${MYCFLAGS}" CXX="${MYCXX}" CXXFLAGS="${MYCXXFLAGS}" LD="${MYLD}" LDFLAGS="${MYLDFLAGS}" PYTHON="${prefix}/bin/python${PYVER}"
+cmake ${config_args} -DCMAKE_C_COMPILER="${MYCC}" -DCMAKE_C_FLAGS="${MYCFLAGS}" -DCMAKE_CXX_COMPILER="${MYCXX}" -DCMAKE_CXX_FLAGS="${MYCXXFLAGS}" -DCMAKE_LINKER="${MYLD}" -DCMAKE_EXE_LINKER_FLAGS="${MYLDFLAGS}" -DPython3_EXECUTABLE="${prefix}/bin/python${PYVER}"

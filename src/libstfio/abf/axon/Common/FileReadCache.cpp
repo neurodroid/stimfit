@@ -32,7 +32,7 @@ CFileReadCache::CFileReadCache()
    m_uCacheSize   = 0;
    m_uCacheStart  = 0;
    m_uCacheCount  = 0;
-   m_pItemCache.reset((BYTE*)0);
+   m_pItemCache.reset();
 }
 
 //===============================================================================================
@@ -64,8 +64,8 @@ BOOL CFileReadCache::Initialize(UINT uItemSize, UINT uCacheSize, FILEHANDLE hFil
    m_uCacheSize   = uCacheSize;
    m_uCacheStart  = 0;
    m_uCacheCount  = 0;
-   m_pItemCache.reset(new BYTE[uItemSize * uCacheSize]);
-   return (m_pItemCache.get() != NULL);
+   m_pItemCache = std::shared_ptr<BYTE>(new BYTE[uItemSize * uCacheSize], std::default_delete<BYTE[]>());
+   return static_cast<bool>(m_pItemCache);
 }
 
 //===============================================================================================

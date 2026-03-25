@@ -1021,7 +1021,6 @@ bool wxStfCursorsDlg::SaveCursorConf(const wxString& mypath ){
     // Read cursor configuration from active document!
     if (actDoc == NULL){
         throw std::runtime_error("No active document found");
-        return false;
     }
     
     wxDateTime now = wxDateTime::Now();
@@ -1341,7 +1340,7 @@ void wxStfCursorsDlg::SetRTFactor(int RTFactor) {
     pRTSlider->SetValue(RTFactor);
     wxString label(wxT("Rise time "));
     label << pRTSlider->GetValue() << wxT("-");
-    label << 100-pRTSlider->GetValue() << wxT("\%");
+    label << 100-pRTSlider->GetValue() << wxT("%");
     pRTLabel->SetLabel(label);
 }
 
@@ -1793,7 +1792,7 @@ void wxStfCursorsDlg::OnRTSlider( wxScrollEvent& event ) {
     }
     wxString label(wxT("Rise time "));
     label << pRTSlider->GetValue() << wxT("-");
-    label << 100-pRTSlider->GetValue() << wxT("\%");
+    label << 100-pRTSlider->GetValue() << wxT("%");
     pRTLabel->SetLabel(label);
 }
 

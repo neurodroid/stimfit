@@ -124,7 +124,8 @@ UINT CSimpleStringCache::Add(LPCSTR psz)
 
    m_Cache.push_back( pszText );
 
-   m_uMaxSize = max( m_uMaxSize, uLen );
+   if (uLen > m_uMaxSize)
+      m_uMaxSize = static_cast<UINT>(uLen);
 
    return GetNumStrings();
 }

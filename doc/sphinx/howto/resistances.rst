@@ -20,7 +20,7 @@ The resistance function
 .. note::
 
 
-    You can find different routines to calculate the resistance in the file **charlie.py**. This file can be found in the Stimfit program directory (C:\\Program Files\\Stimfit in Windows or /usr/lib/python2.5/site-packages/Stimfit in GNU/Linux, assuming python2.5 is your current python environment). The name **charlie.py** is in acknowledgment to Charlie, for her contribution to the development of the given routines. 
+    You can find different routines to calculate the resistance in the file **charlie.py**. In current builds, keep helper scripts in a normal Python 3 import location or add their parent directory to ``sys.path`` from the embedded shell rather than relying on old Python 2 site-packages paths. The name **charlie.py** is in acknowledgment to Charlie, for her contribution to the development of the given routines.
 
 Note that this function assumes that current is recorded in pA. It sets the stf cursors (peak and baseline) to calculate the current deviation in response to the voltage difference. Finally, the voltage **amplitude** should be entered in mV. 
 

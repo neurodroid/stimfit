@@ -12,7 +12,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "./stfio.h"
 #include "./section.h"
 
 // Definitions------------------------------------------------------------
@@ -21,15 +20,15 @@
 // within the constructor, see [1]248 and [2]28
 
 Section::Section(void)
-    : section_description(), x_scale(1.0), data(0), AnnotationsList()
+    : section_description(), x_scale(1.0), data(0), firstAnnotationPos(static_cast<std::size_t>(-1)), lastAnnotationPos(static_cast<std::size_t>(-1)), AnnotationsList()
 {}
 
 Section::Section( const Vector_double& valA, const std::string& label )
-    : section_description(label), x_scale(1.0), data(valA), AnnotationsList()
+    : section_description(label), x_scale(1.0), data(valA), firstAnnotationPos(static_cast<std::size_t>(-1)), lastAnnotationPos(static_cast<std::size_t>(-1)), AnnotationsList()
 {}
 
 Section::Section(std::size_t size, const std::string& label)
-    : section_description(label), x_scale(1.0), data(size), AnnotationsList()
+    : section_description(label), x_scale(1.0), data(size), firstAnnotationPos(static_cast<std::size_t>(-1)), lastAnnotationPos(static_cast<std::size_t>(-1)), AnnotationsList()
 {}
 
 Section::~Section(void) {
@@ -59,14 +58,13 @@ void Section::SetXScale( double value ) {
         throw std::runtime_error( "Attempt to set x-scale <= 0" );
 }
 
-void Section::AddAnnotation(int position, Annotation annotation)
+void Section::AddAnnotation(Annotation annotation)
 {
-    if (position == -1) {
-        this->AnnotationsList.push_back(annotation);
-    }
-    else{
-        this->AnnotationsList.insert(AnnotationsList.begin() + position, annotation);
-    }
+    std::size_t annotationPosition = annotation.GetAnnotationPosition();
+    this->AnnotationsList.push_back(annotation);
+
+    if (annotationPosition < firstAnnotationPos) firstAnnotationPos = annotationPosition;
+    if (annotationPosition > lastAnnotationPos) lastAnnotationPos = annotationPosition;
 }
 
 void Section::RemoveAnnotation(size_t index)
@@ -84,6 +82,18 @@ void Section::EraseAllAnnotations()
 std::vector<Annotation> Section::GetAnnotationList()
 {
     return this->AnnotationsList;
+}
+
+std::size_t Section::GetFirstAnnotationPosition()
+{
+    if(firstAnnotationPos < 0) return 0;
+    return firstAnnotationPos;
+}
+
+std::size_t Section::GetLastAnnotationPosition()
+{   
+    if (lastAnnotationPos < 0) return GetSectionSize() - 1;
+    return lastAnnotationPos;
 }
 
 std::size_t Section::GetSectionSize()

@@ -5,72 +5,81 @@ Building the Python module only
 :Author: Christoph Schmidt-Hieber
 :Date:    |today|
 
-Building only the standalone Python file i/o module is fairly straightforward. First, you need a couple of libraries:
+The standalone [`stfio`](doc/sphinx/stfio/index.rst) module is built from the
+same CMake source tree as the full application, but without the GUI target.
+The old autotools path is no longer supported on current [`master`](README.md:13).
+
+On Debian-based systems, install the core build requirements first:
 
 ::
 
-    $ sudo apt-get install build-essential git libboost-dev python-dev python-numpy libhdf5-serial-dev swig
+    $ sudo apt-get install build-essential cmake ninja-build git \
+                           python3-dev python3-numpy swig \
+                           libhdf5-dev libfftw3-dev liblapack-dev
 
-Then, you need the `Stimfit <http://www.stimfit.org>`_ source code:
+If you want BioSig-backed import support in [`stfio`](doc/sphinx/stfio/index.rst),
+also install the distribution package:
+
+::
+
+    $ sudo apt-get install libbiosig-dev
+
+Then clone the repository:
 
 ::
 
     $ cd $HOME
     $ git clone https://github.com/neurodroid/stimfit.git
 
-It will download the code to a directory called *stimfit*.
-
-Next, you need to generate the build system:
-
-::
-
-    $ cd $HOME/stimfit
-    $ ./autogen.sh
-
-Now you can configure. I strongly recommend building in a separate directory.
+That will create a directory called *stimfit*. Configure a dedicated module
+build directory from the repository root:
 
 ::
 
     $ cd $HOME/stimfit
-    $ mkdir build
-    $ cd build
-    $ mkdir module
-    $ cd module
-    $ ../../configure --enable-module
+    $ cmake -S . -B build/module -G Ninja \
+              -DSTF_BUILD_MODULE=ON \
+              -DSTF_ENABLE_PYTHON=ON \
+              -DSTF_BUILD_TESTS=OFF \
+              -DSTF_BUILD_NUMERIC_TESTS=OFF \
+              -DSTF_WITH_BIOSIG=ON
 
-We recommend to use BioSig to read extra biomedical fileformats (see :ref:`BioSigBuild`) :
+If your system already provides `libbiosig-dev`, the default provider selection
+is usually sufficient. If you need to force the in-tree BioSig source on a
+non-packaged platform, you can additionally pass `-DSTF_BIOSIG_PROVIDER=SUBMODULE`.
+
+Build the module:
 
 ::
 
-    $ ../../configure --enable-module --with-biosiglite
+    $ cmake --build build/module
+
+To stage an install into a local prefix for inspection:
+
+::
+
+    $ cmake --install build/module --prefix $HOME/.local
 
 ===================================================
 Building stfio for non-default Python distributions
 ===================================================
 
-To install the *stfio* module in distributions such as **Anaconda Python**, use the argument *--prefix=* to specify the path where the Python distribution is installed. For example, to install *stfio* for Anaconda Python 2.7 use:
+To target a non-default Python 3 interpreter, point CMake at the interpreter
+you want it to use during configuration. For example, with a virtual
+environment:
 
 ::
 
-    $ ../../configure --enable-module --prefix=$HOME/anaconda/
+    $ cmake -S . -B build/module-venv -G Ninja \
+              -DSTF_BUILD_MODULE=ON \
+              -DSTF_ENABLE_PYTHON=ON \
+              -DPython3_EXECUTABLE=$HOME/venvs/stimfit/bin/python
 
-If using virtual environment, try something like this:
-
-::
-
-    $ ../../configure --enable-module --prefix=$HOME/anaconda/envs/py36
-
-Other Python versions are also possible. For example, to install the module in your local Python version, you could use:
+Then build and install into that environment or another target prefix:
 
 ::
 
-    $ ../../configure --enable-module --prefix=$HOME/.local/lib/python2.7
-
-Then, build and install:
-
-::
-
-    $ make -j 4 # where 4 refers to the number of parallel build processes
-    $ sudo make install
+    $ cmake --build build/module-venv
+    $ cmake --install build/module-venv --prefix $HOME/.local
 
 Finally, run python to test the module, as described in :doc:`/stfio/index`.

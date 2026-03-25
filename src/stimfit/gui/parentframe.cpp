@@ -34,6 +34,7 @@
 #include <wx/protocol/http.h>
 #include <wx/sstream.h>
 #include <wx/progdlg.h>
+#include <wx/settings.h>
 
 
 #ifdef __BORLANDC__
@@ -78,44 +79,140 @@
 #include "./parentframe.h"
 #include "./../../libstfnum/levmar/levmar.h"
 
-#include "./../res/16-em-down.xpm"
-#include "./../res/16-em-open.xpm"
-#include "./../res/accept.xpm"
-#include "./../res/arrow_down.xpm"
-#include "./../res/arrow_left.xpm"
-#include "./../res/arrow_out.xpm"
-#include "./../res/arrow_right.xpm"
-#include "./../res/arrow_up.xpm"
-#include "./../res/camera.xpm"
-
-#include "./../res/camera_ps.xpm"
-
-#include "./../res/ch1.xpm"
-#include "./../res/ch2.xpm"
-#include "./../res/cursor.xpm"
-#include "./../res/event.xpm"
-#include "./../res/annotation.xpm"
-#include "./../res/fit.xpm"
-#include "./../res/fit_lim.xpm"
-#include "./../res/latency_lim.xpm"
-#include "./../res/resultset_first.xpm"
-#include "./../res/resultset_last.xpm"
-#include "./../res/resultset_next.xpm"
-#include "./../res/resultset_previous.xpm"
-#include "./../res/sum_new.xpm"
-#include "./../res/sum_new_aligned.xpm"
-#include "./../res/table.xpm"
-#include "./../res/zoom.xpm"
-#include "./../res/zoom_in.xpm"
-#include "./../res/zoom_out.xpm"
-
-#ifdef WITH_PSLOPE 
-#include "./../res/slope.xpm"
-#endif
-
 #ifndef wxS_DIR_DEFAULT
 #define wxS_DIR_DEFAULT 0777
 #endif
+
+namespace {
+
+wxSize GetToolbarBitmapSize(const wxWindow& window)
+{
+    const wxSize logicalSize(20, 20);
+#if wxCHECK_VERSION(3, 1, 0)
+    return window.FromDIP(logicalSize);
+#else
+    return logicalSize;
+#endif
+}
+
+int GetToolbarIconPixelSize(const wxWindow& window)
+{
+    const wxSize iconSize = GetToolbarBitmapSize(window);
+    return wxMax(iconSize.GetWidth(), iconSize.GetHeight());
+}
+
+int SelectToolbarIconBucket(const wxWindow& window)
+{
+    const int px = GetToolbarIconPixelSize(window);
+    if (px >= 50) {
+        return 60;
+    }
+    if (px >= 30) {
+        return 40;
+    }
+    return 20;
+}
+
+wxString ResolveToolbarIconBaseDir()
+{
+    static wxString cached;
+    if (!cached.IsEmpty()) {
+        return cached;
+    }
+
+    wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
+    const wxString exeDir = exePath.GetPath();
+
+    wxArrayString candidates;
+
+    wxFileName sourceLike(exeDir, wxEmptyString);
+    sourceLike.AppendDir(wxT(".."));
+    sourceLike.AppendDir(wxT("src"));
+    sourceLike.AppendDir(wxT("stimfit"));
+    sourceLike.AppendDir(wxT("res"));
+    sourceLike.AppendDir(wxT("toolbar"));
+    sourceLike.Normalize(wxPATH_NORM_DOTS);
+    candidates.Add(sourceLike.GetPath());
+
+    wxFileName nestedBuild(exeDir, wxEmptyString);
+    nestedBuild.AppendDir(wxT(".."));
+    nestedBuild.AppendDir(wxT(".."));
+    nestedBuild.AppendDir(wxT(".."));
+    nestedBuild.AppendDir(wxT("src"));
+    nestedBuild.AppendDir(wxT("stimfit"));
+    nestedBuild.AppendDir(wxT("res"));
+    nestedBuild.AppendDir(wxT("toolbar"));
+    nestedBuild.Normalize(wxPATH_NORM_DOTS);
+    candidates.Add(nestedBuild.GetPath());
+
+    wxFileName installed(exeDir, wxEmptyString);
+    installed.AppendDir(wxT(".."));
+    installed.AppendDir(wxT("share"));
+    installed.AppendDir(wxT("stimfit"));
+    installed.AppendDir(wxT("toolbar"));
+    installed.Normalize(wxPATH_NORM_DOTS);
+    candidates.Add(installed.GetPath());
+
+#ifdef __WXMAC__
+    wxFileName bundleResources(exeDir, wxEmptyString);
+    bundleResources.AppendDir(wxT(".."));
+    bundleResources.AppendDir(wxT("Resources"));
+    bundleResources.AppendDir(wxT("toolbar"));
+    bundleResources.Normalize(wxPATH_NORM_DOTS);
+    candidates.Add(bundleResources.GetPath());
+#endif
+
+    wxFileName cwdSource(wxGetCwd(), wxEmptyString);
+    cwdSource.AppendDir(wxT("src"));
+    cwdSource.AppendDir(wxT("stimfit"));
+    cwdSource.AppendDir(wxT("res"));
+    cwdSource.AppendDir(wxT("toolbar"));
+    cwdSource.Normalize(wxPATH_NORM_DOTS);
+    candidates.Add(cwdSource.GetPath());
+
+    for (size_t i = 0; i < candidates.GetCount(); ++i) {
+        wxFileName probe(candidates[i], wxEmptyString);
+        probe.AppendDir(wxT("20"));
+        probe.SetFullName(wxT("open.png"));
+        if (probe.FileExists()) {
+            cached = candidates[i];
+            return cached;
+        }
+    }
+
+    return wxEmptyString;
+}
+
+wxBitmap TbBitmap(const wxWindow& window, const wxString& iconName, const wxArtID& fallbackArt)
+{
+    const wxString baseDir = ResolveToolbarIconBaseDir();
+    if (!baseDir.IsEmpty()) {
+        const int bucket = SelectToolbarIconBucket(window);
+        wxFileName iconPath(baseDir, wxEmptyString);
+        iconPath.AppendDir(wxString::Format(wxT("%d"), bucket));
+        iconPath.SetFullName(iconName + wxT(".png"));
+        if (iconPath.FileExists()) {
+            wxBitmap loaded(iconPath.GetFullPath(), wxBITMAP_TYPE_PNG);
+            if (loaded.IsOk()) {
+                return loaded;
+            }
+        }
+
+        wxFileName fallback20(baseDir, wxEmptyString);
+        fallback20.AppendDir(wxT("20"));
+        fallback20.SetFullName(iconName + wxT(".png"));
+        if (fallback20.FileExists()) {
+            wxBitmap loaded(fallback20.GetFullPath(), wxBITMAP_TYPE_PNG);
+            if (loaded.IsOk()) {
+                return loaded;
+            }
+        }
+    }
+
+    return wxArtProvider::GetBitmap(fallbackArt, wxART_TOOLBAR, GetToolbarBitmapSize(window));
+}
+
+} // namespace
 
 IMPLEMENT_CLASS(wxStfParentFrame, wxStfParentType)
 BEGIN_EVENT_TABLE(wxStfParentFrame, wxStfParentType)
@@ -177,6 +274,7 @@ EVT_MENU( ID_LOADPERSPECTIVE, wxStfParentFrame::OnLoadperspective )
 EVT_MENU( ID_RESTOREPERSPECTIVE, wxStfParentFrame::OnRestoreperspective )
 #ifdef WITH_PYTHON
 EVT_MENU( ID_VIEW_SHELL, wxStfParentFrame::OnViewshell )
+EVT_CHOICE( ID_PY_SHELL_BACKEND, wxStfParentFrame::OnShellBackendChoice )
 #endif
 #if 0
 EVT_MENU( ID_LATENCYSTART_MAXSLOPE, wxStfParentFrame::OnLStartMaxslope )
@@ -194,7 +292,11 @@ END_EVENT_TABLE()
 
 wxStfParentFrame::wxStfParentFrame(wxDocManager *manager, wxFrame *frame, const wxString& title,
                  const wxPoint& pos, const wxSize& size, long type):
-wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame")), mpl_figno(0)
+wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
+#ifdef WITH_PYTHON
+, m_shellBackendChoice(NULL)
+#endif
+, mpl_figno(0)
 {
     // ::wxInitAllImageHandlers();
 
@@ -278,10 +380,16 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     SetMouseQual( stf::measure_cursor );
 
 #ifdef WITH_PYTHON
+#if PY_MAJOR_VERSION >= 3
+#define STF_PY_SHELL_MODULE wxT("embedded_shell_selector")
+#else
 #if defined(STF_PY_SHELL_BACKEND_LEGACY)
 #define STF_PY_SHELL_MODULE wxT("embedded_stf")
+#elif defined(STF_PY_SHELL_BACKEND_JUPYTER)
+#define STF_PY_SHELL_MODULE wxT("embedded_shell_ipython")
 #else
 #define STF_PY_SHELL_MODULE wxT("embedded_shell_modern")
+#endif
 #endif
     wxFileName stfExePath(wxStandardPaths::Get().GetExecutablePath());
     const wxString stfExeDir = stfExePath.GetPath();
@@ -303,6 +411,22 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     stfNestedBuildPyPath.Normalize(wxPATH_NORM_DOTS);
     const wxString stfNestedBuildPyDir = stfNestedBuildPyPath.GetPath();
 
+    wxFileName stfInstallPyPath(stfExeDir, wxEmptyString);
+    stfInstallPyPath.AppendDir(wxT(".."));
+    stfInstallPyPath.AppendDir(wxT("lib"));
+    stfInstallPyPath.AppendDir(wxT("stimfit"));
+    stfInstallPyPath.Normalize(wxPATH_NORM_DOTS);
+    const wxString stfInstallPyDir = stfInstallPyPath.GetPath();
+
+    wxFileName stfBundleInstallPyPath(stfExeDir, wxEmptyString);
+    stfBundleInstallPyPath.AppendDir(wxT(".."));
+    stfBundleInstallPyPath.AppendDir(wxT(".."));
+    stfBundleInstallPyPath.AppendDir(wxT(".."));
+    stfBundleInstallPyPath.AppendDir(wxT("lib"));
+    stfBundleInstallPyPath.AppendDir(wxT("stimfit"));
+    stfBundleInstallPyPath.Normalize(wxPATH_NORM_DOTS);
+    const wxString stfBundleInstallPyDir = stfBundleInstallPyPath.GetPath();
+
     auto stfPyEscape = [](const wxString& path) {
         wxString escaped(path);
         escaped.Replace(wxT("\\"), wxT("\\\\"));
@@ -313,27 +437,38 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     const wxString stfExeDirEscaped = stfPyEscape(stfExeDir);
     const wxString stfSourcePyDirEscaped = stfPyEscape(stfSourcePyDir);
     const wxString stfNestedBuildPyDirEscaped = stfPyEscape(stfNestedBuildPyDir);
+    const wxString stfInstallPyDirEscaped = stfPyEscape(stfInstallPyDir);
+    const wxString stfBundleInstallPyDirEscaped = stfPyEscape(stfBundleInstallPyDir);
+    int stfShellBackendSelection = wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("PyShellBackend"), 2);
+    if (stfShellBackendSelection < 0 || stfShellBackendSelection > 2) {
+        stfShellBackendSelection = 2;
+    }
+    wxString stfDefaultShellKey = wxT("ipython");
+    if (stfShellBackendSelection == 0) {
+        stfDefaultShellKey = wxT("legacy");
+    } else if (stfShellBackendSelection == 1) {
+        stfDefaultShellKey = wxT("modern");
+    }
 
     python_code2 << wxT("import os\n")
                  << wxT("os.environ['STF_EMBEDDED_SHELL']='1'\n")
+#if PY_MAJOR_VERSION >= 3
+                 << wxT("os.environ['STF_PY_SHELL_DEFAULT']='") << stfDefaultShellKey << wxT("'\n")
+                 << wxT("os.environ['STF_PY_SHELL_HIDE_INTERNAL_SELECTOR']='1'\n")
+#endif
+                 << wxT("os.environ.pop('PYTHONSTARTUP', None)\n")
+                 << wxT("os.environ.pop('PYTHONINSPECT', None)\n")
                  << wxT("import sys\n")
                  << wxT("sys.path.append('.')\n")
                  << wxT("sys.path.append('") << stfExeDirEscaped << wxT("')\n")
                  << wxT("sys.path.append('") << stfSourcePyDirEscaped << wxT("')\n")
                  << wxT("sys.path.append('") << stfNestedBuildPyDirEscaped << wxT("')\n")
-                 << wxT("sys.path.append('/usr/local/lib/stimfit')\n")
-#ifdef IPYTHON
-                 << wxT("import embedded_ipython\n")
-#else
+                 << wxT("sys.path.append('") << stfInstallPyDirEscaped << wxT("')\n")
+                 << wxT("sys.path.append('") << stfBundleInstallPyDirEscaped << wxT("')\n")
                  << wxT("import ") << STF_PY_SHELL_MODULE << wxT("\n")
-#endif
                  << wxT("\n")
                  << wxT("def makeWindow(parent, figsize=(8,6)):\n")
-#ifdef IPYTHON
-                 << wxT("    win = embedded_ipython.MyPanel(parent)\n")
-#else
                  << wxT("    win = ") << STF_PY_SHELL_MODULE << wxT(".MyPanel(parent)\n")
-#endif
                  << wxT("    return win\n")
                  << wxT("\n")
 #if PY_MAJOR_VERSION < 3
@@ -399,104 +534,119 @@ wxStfParentFrame::~wxStfParentFrame() {
 wxStfToolBar* wxStfParentFrame::CreateStdTb() {
     wxStfToolBar* tb1=new wxStfToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                         wxAUI_TB_DEFAULT_STYLE );
-    tb1->SetToolBitmapSize(wxSize(20,20));
+    const wxSize iconSize = GetToolbarBitmapSize(*this);
+    tb1->SetToolBitmapSize(iconSize);
     tb1->AddTool( wxID_OPEN,
                   wxT("Open"),
-                  wxArtProvider::GetBitmap( wxART_FILE_OPEN, wxART_TOOLBAR, wxSize(16,16) ),
+                  TbBitmap(*this, wxT("open"), wxART_FILE_OPEN),
                   wxT("Open file"),
                   wxITEM_NORMAL );
     tb1->AddTool( wxID_SAVEAS,
                   wxT("Save"),
-                  wxArtProvider::GetBitmap( wxART_FILE_SAVE_AS, wxART_TOOLBAR, wxSize(16,16) ),
+                  TbBitmap(*this, wxT("save"), wxART_FILE_SAVE_AS),
                   wxT("Save traces"),
                   wxITEM_NORMAL );
     tb1->AddTool( ID_PRINT_PRINT,
                   wxT("Print"),
-                  wxArtProvider::GetBitmap( wxART_PRINT, wxART_TOOLBAR, wxSize(16,16) ),
+                  TbBitmap(*this, wxT("print"), wxART_PRINT),
                   wxT("Print traces"),
                   wxITEM_NORMAL );
+#if PY_MAJOR_VERSION >= 3
+    tb1->AddStretchSpacer(1);
+    wxArrayString shellChoices;
+    shellChoices.Add(wxT("Legacy"));
+    shellChoices.Add(wxT("Modern"));
+    shellChoices.Add(wxT("IPython"));
+    m_shellBackendChoice = new wxChoice(tb1, ID_PY_SHELL_BACKEND, wxDefaultPosition, wxDefaultSize, shellChoices);
+    int selectedShell = wxGetApp().wxGetProfileInt(wxT("Settings"), wxT("PyShellBackend"), 2);
+    if (selectedShell < 0 || selectedShell > 2) {
+        selectedShell = 2;
+    }
+    m_shellBackendChoice->SetSelection(selectedShell);
+    tb1->AddControl(m_shellBackendChoice, wxT("Python shell backend"));
+#endif
     return tb1;
 }
 
 wxStfToolBar* wxStfParentFrame::CreateScaleTb() {
     wxStfToolBar* scaleToolBar =
         new wxStfToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_DEFAULT_STYLE );
-    scaleToolBar->SetToolBitmapSize(wxSize(20,20));
+    scaleToolBar->SetToolBitmapSize(GetToolbarBitmapSize(*this));
     scaleToolBar->AddTool( ID_TOOL_FIRST,
                            wxT("First"),
-                           wxBitmap(resultset_first),
+                           TbBitmap(*this, wxT("first"), wxART_GOTO_FIRST),
                            wxT("Go to first trace"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_PREVIOUS,
                            wxT("Prev."),
-                           wxBitmap(resultset_previous),
+                           TbBitmap(*this, wxT("previous"), wxART_GO_BACK),
                            wxT("Go to previous trace (left cursor)"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_NEXT,
                            wxT("Next"),
-                           wxBitmap(resultset_next),
+                           TbBitmap(*this, wxT("next"), wxART_GO_FORWARD),
                            wxT("Go to next trace (right cursor)"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_LAST,
                            wxT("Last"),
-                           wxBitmap(resultset_last),
+                           TbBitmap(*this, wxT("last"), wxART_GOTO_LAST),
                            wxT("Go to last trace"),
                            wxITEM_NORMAL );
     scaleToolBar->AddSeparator();
     scaleToolBar->AddTool( ID_TOOL_LEFT,
                            wxT("Left"),
-                           wxBitmap(arrow_left),
+                           TbBitmap(*this, wxT("left"), wxART_GO_BACK),
                            wxT("Move traces left (CTRL+left cursor)"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_RIGHT,
                            wxT("Right"),
-                           wxBitmap(arrow_right),
+                           TbBitmap(*this, wxT("right"), wxART_GO_FORWARD),
                            wxT("Move traces right (CTRL+right cursor)"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_FIT,
                            wxT("Fit"),
-                           wxBitmap(arrow_out),
+                           TbBitmap(*this, wxT("fit"), wxART_GO_HOME),
                            wxT("Fit traces to window (\"F\")"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_UP,
                            wxT("Up"),
-                           wxBitmap(arrow_up),
+                           TbBitmap(*this, wxT("up"), wxART_GO_UP),
                            wxT("Move traces up (up cursor)"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_DOWN,
                            wxT("Down"),
-                           wxBitmap(arrow_down),
+                           TbBitmap(*this, wxT("down"), wxART_GO_DOWN),
                            wxT("Move traces down (down cursor)"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_XENL,
                            wxT("Zoom X"),
-                           wxBitmap(zoom_in),
+                           TbBitmap(*this, wxT("zoom_in_x"), wxART_GO_UP),
                            wxT("Enlarge x-scale (CTRL + \"+\")"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_XSHRINK,
                            wxT("Shrink X"),
-                           wxBitmap(zoom_out),
+                           TbBitmap(*this, wxT("zoom_out_x"), wxART_GO_DOWN),
                            wxT("Shrink x-scale (CTRL + \"-\")"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_YENL,
                            wxT("Zoom Y"),
-                           wxBitmap(zoom_in),
+                           TbBitmap(*this, wxT("zoom_in_y"), wxART_GO_UP),
                            wxT("Enlarge y-scale (\"+\")"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_YSHRINK,
                            wxT("Shrink Y"),
-                           wxBitmap(zoom_out),
+                           TbBitmap(*this, wxT("zoom_out_y"), wxART_GO_DOWN),
                            wxT("Shrink y-scale (\"-\")"),
                            wxITEM_NORMAL );
     scaleToolBar->AddSeparator();
     scaleToolBar->AddTool( ID_TOOL_CH1,
                            wxT("Ch 1"),
-                           wxBitmap(ch_),
+                           TbBitmap(*this, wxT("ch1"), wxART_INFORMATION),
                            wxT("Scaling applies to active (black) channel (\"1\")"),
                            wxITEM_CHECK );
     scaleToolBar->AddTool( ID_TOOL_CH2,
                            wxT("Ch 2"),
-                           wxBitmap(ch2_),
+                           TbBitmap(*this, wxT("ch2"), wxART_HELP),
                            wxT("Scaling applies to reference (red) channel (\"2\")"),
                            wxITEM_CHECK );
     return scaleToolBar;
@@ -505,25 +655,25 @@ wxStfToolBar* wxStfParentFrame::CreateScaleTb() {
 wxStfToolBar* wxStfParentFrame::CreateEditTb() {
     wxStfToolBar* tb4= new wxStfToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                          wxAUI_TB_DEFAULT_STYLE );
-    tb4->SetToolBitmapSize(wxSize(20,20));
+    tb4->SetToolBitmapSize(GetToolbarBitmapSize(*this));
     tb4->AddTool( ID_AVERAGE,
                   wxT("Mean"),
-                  wxBitmap(sum_new),
+                  TbBitmap(*this, wxT("mean"), wxART_LIST_VIEW),
                   wxT("Average of selected traces"),
                   wxITEM_NORMAL );
     tb4->AddTool( ID_ALIGNEDAVERAGE,
                   wxT("Aligned"),
-                  wxBitmap(sum_new_aligned),
+                  TbBitmap(*this, wxT("aligned"), wxART_TICK_MARK),
                   wxT("Aligned average of selected traces"),
                   wxITEM_NORMAL );
     tb4->AddTool( ID_TOOL_FITDECAY,
                   wxT("Fit"),
-                  wxBitmap(fit),//chart_line),
+                  TbBitmap(*this, wxT("fitdecay"), wxART_FIND),
                   wxT("Fit function to data"),
                   wxITEM_NORMAL );
     tb4->AddTool( ID_VIEWTABLE,
                   wxT("Table"),
-                  wxBitmap(table),
+                  TbBitmap(*this, wxT("table"), wxART_REPORT_VIEW),
                   wxT("View current trace as a table"),
                   wxITEM_NORMAL );
     return tb4;
@@ -532,10 +682,10 @@ wxStfToolBar* wxStfParentFrame::CreateEditTb() {
 wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
     wxStfToolBar* cursorToolBar = new wxStfToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                                     wxAUI_TB_DEFAULT_STYLE );
-    cursorToolBar->SetToolBitmapSize(wxSize(20,20));
+    cursorToolBar->SetToolBitmapSize(GetToolbarBitmapSize(*this));
     cursorToolBar->AddTool( ID_TOOL_SELECT,
                             wxT("Select"),
-                            wxBitmap( acceptbmp ),
+                            TbBitmap(*this, wxT("select"), wxART_TICK_MARK),
                             wxT("Select or unselect this trace (\"S\" / \"R\")"),
                             wxITEM_CHECK );
     // cursorToolBar->AddTool( ID_TOOL_REMOVE,
@@ -546,62 +696,62 @@ wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
     cursorToolBar->AddSeparator();
     cursorToolBar->AddTool( ID_MPL,
                             wxT("Snapshot"),
-                            wxBitmap(camera),
+                            TbBitmap(*this, wxT("snapshot"), wxART_FILE_SAVE),
                             wxT("Create snapshot with matplotlib"),
                             wxITEM_NORMAL );
 
     cursorToolBar->AddTool( ID_TOOL_SNAPSHOT_WMF,
                             wxT("WMF Snapshot"),
-                            wxBitmap(camera_ps),
+                            TbBitmap(*this, wxT("wmf_snapshot"), wxART_COPY),
                             wxT("Copy vectorized image to clipboard"),
                             wxITEM_NORMAL );
 
     cursorToolBar->AddSeparator();
     cursorToolBar->AddTool( ID_TOOL_MEASURE,
                             _T("Measure"),
-                            wxBitmap(cursor),
+                            TbBitmap(*this, wxT("measure"), wxART_CROSS_MARK),
                             wxT("Mouse selects measurement (crosshair) cursor (\"M\")"),
                             wxITEM_CHECK );
     cursorToolBar->AddTool( ID_TOOL_PEAK,
                             _T("Peak"),
-                            wxBitmap(___em_open),
+                            TbBitmap(*this, wxT("peak"), wxART_GO_UP),
                             wxT("Mouse selects peak cursors (\"P\")"),
                             wxITEM_CHECK );
     cursorToolBar->AddTool( ID_TOOL_BASE,
                             _T("Base"),
-                            wxBitmap(___em_down),
+                            TbBitmap(*this, wxT("base"), wxART_GO_DOWN),
                             wxT("Mouse selects base cursors (\"B\")"),
                             wxITEM_CHECK );
     cursorToolBar->AddTool( ID_TOOL_DECAY,
                             _T("Fit"),
-                            wxBitmap(fit_lim),//chart_curve),
+                            TbBitmap(*this, wxT("decay"), wxART_FIND),
                             wxT("Mouse selects fit cursors (\"D\")"),
                             wxITEM_CHECK );
     cursorToolBar->AddTool( ID_TOOL_LATENCY,
                             _T("Latency"),
-                            wxBitmap(latency_lim),//chart_curve),
+                            TbBitmap(*this, wxT("latency"), wxART_QUESTION),
                             wxT("Mouse selects latency cursors (\"L\")"),
                             wxITEM_CHECK );
 #ifdef WITH_PSLOPE
     cursorToolBar->AddTool( ID_TOOL_PSLOPE,
                             _T("Slope"),
-                            wxBitmap(slope),
+                            TbBitmap(*this, wxT("pslope"), wxART_GO_FORWARD),
                             wxT("Mouse selects slope cursors (\"O\")"),
                             wxITEM_CHECK );
 #endif
     cursorToolBar->AddTool( ID_TOOL_ZOOM,
                             _T("Zoom"),
-                            wxBitmap(zoom),
+                            TbBitmap(*this, wxT("zoom"), wxART_FIND),
                             wxT("Draw a zoom window with left mouse button (\"Z\")"),
                             wxITEM_CHECK );
         cursorToolBar->AddTool( ID_TOOL_EVENT,
                                 _T("Events"),
-                                wxBitmap(event),
+                                TbBitmap(*this, wxT("event"), wxART_WARNING),
                                 wxT( "Add, erase or extract events manually with right mouse button (\"E\")" ),
                                 wxITEM_CHECK );
         cursorToolBar->AddTool( ID_TOOL_ANNOTATION,
                                 _T("Annotations"),
-                                wxBitmap(annotation),
+                                TbBitmap(*this, wxT("annotation"), wxART_INFORMATION),
                                 wxT( "Add, remove, erase or export/import annotations manually with right mouse button (\"N\")" ),
                                 wxITEM_CHECK );
     return cursorToolBar;
@@ -1113,10 +1263,10 @@ void wxStfParentFrame::OnToolCh2(wxCommandEvent& WXUNUSED(event)) {
     m_scaleToolBar->Refresh();
 }
 
-void wxStfParentFrame::OnToolFitdecay(wxCommandEvent& event) {
+void wxStfParentFrame::OnToolFitdecay(wxCommandEvent& toolEvent) {
     wxStfDoc* pDoc=wxGetApp().GetActiveDoc();
     if (pDoc!=NULL) {
-        pDoc->FitDecay(event);
+        pDoc->FitDecay(toolEvent);
     }
 }
 
@@ -1289,6 +1439,27 @@ void wxStfParentFrame::OnViewshell(wxCommandEvent& WXUNUSED(event)) {
     m_mgr.GetPane(wxT("pythonShell")).Show( !old_state );
     wxGetApp().wxWriteProfileInt( wxT("Settings"),wxT("ViewShell"), int(!old_state) );
     m_mgr.Update();
+}
+
+void wxStfParentFrame::OnShellBackendChoice(wxCommandEvent& WXUNUSED(event)) {
+    if (m_shellBackendChoice == NULL) {
+        return;
+    }
+
+    const int selection = m_shellBackendChoice->GetSelection();
+    if (selection == wxNOT_FOUND) {
+        return;
+    }
+
+    wxString backend = wxT("ipython");
+    if (selection == 0) {
+        backend = wxT("legacy");
+    } else if (selection == 1) {
+        backend = wxT("modern");
+    }
+
+    wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("PyShellBackend"), selection);
+    SelectEmbeddedShellBackend(backend);
 }
 #endif
 

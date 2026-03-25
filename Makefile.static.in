@@ -9,11 +9,13 @@
 # should be available.
 #
 # Usage:
-#   cd ~/src/stimfit/         # change into stimfit's root directory
-#   ./autogen.sh
-#   ./configure --with-biosig --disable-python
+#   cd /path/to/stimfit/             # change into stimfit's root directory
 #   make -f Makefile.static          # build stimfit(-lite) i.e. w/o python support
 #   make -f Makefile.static install  # install stimfit into bindir
+#
+# This file is retained as a standalone make-based build path, but the
+# supported primary build instructions for the repository are documented
+# in BUILDING.md.
 #
 #   WXCONF=/usr/bin/wx-config make -f Makefile.static
 #                             # build built with non-default WX
@@ -59,7 +61,7 @@ vpath %.cpp ./src/stimfit:./src/stimfit/gui:./src/stimfit/gui/dlgs:./src/stimfit
 vpath %.c ./src/libstfnum/levmar/:./src/libstfio/igor/:./src/libstfio/cfs/
 vpath %.cpp ./src/libstfnum/:./src/libstfnum/levmar/:./src/stimfit/gui/:./src/stimfit/gui/dlgs/:./src/libstfio/:./src/libstfio/biosig/:./src/libstfio/igor/:./src/libstfio/cfs/
 
-SOURCES = ./src/stimfit/Annotation.cpp \
+SOURCES = ./src/libstfio/annotation.cpp \
 	./src/stimfit/stf.cpp \
 	./src/libstfnum/stfnum.cpp \
 	./src/libstfnum/funclib.cpp \
@@ -265,4 +267,3 @@ install: $(TARGET)
 
 uninstall:
 	rm $(bindir)/stimfit
-

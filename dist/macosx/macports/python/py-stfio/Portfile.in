@@ -50,7 +50,7 @@ if { ${name} ne ${subport} } {
             ${worksrcpath}/COPYING ${docdir}
     }
 
-    variant biosig conflicts biosiglite description {Use external biosig library for file I/O.} {
+    variant biosig_external description {Use external biosig library for file I/O.} {
         depends_lib-append \
             port:libbiosig
 
@@ -59,11 +59,7 @@ if { ${name} ne ${subport} } {
             --with-biosig2
     }
 
-    variant biosiglite conflicts biosig description {Use internal biosiglite library for file I/O.} {
-        configure.args-replace \
-            --without-biosig \
-            --with-biosiglite
-    }
-
-    default_variants    +biosiglite
+    # This legacy py-stfio port predates the current CMake provider model.
+    # Prefer the active Stimfit CMake port in dist/macosx/macports/science/stimfit.
+    default_variants    +biosig_external
 }

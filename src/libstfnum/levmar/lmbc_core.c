@@ -55,6 +55,11 @@
 #define AX_EQ_B_PLASMA_CHOL LM_ADD_PREFIX(Ax_eq_b_PLASMA_Chol)
 #endif
 
+#ifdef HAVE_LAPACK
+#define NRM2 LM_MK_BLAS_NAME(nrm2)
+extern LM_REAL NRM2(int *n, LM_REAL *dx, int *incx);
+#endif
+
 /* find the median of 3 numbers */
 #define __MEDIAN3(a, b, c) ( ((a) >= (b))?\
         ( ((c) >= (a))? (a) : ( ((c) <= (b))? (b) : (c) ) ) : \
@@ -146,12 +151,9 @@ register int i;
 static LM_REAL VECNORM(LM_REAL *x, int n)
 {
 #ifdef HAVE_LAPACK
-#define NRM2 LM_MK_BLAS_NAME(nrm2)
-extern LM_REAL NRM2(int *n, LM_REAL *dx, int *incx);
 int one=1;
 
   return NRM2(&n, x, &one);
-#undef NRM2
 #else // no LAPACK, use the simple method described by Blue in TOMS78
 register int i;
 LM_REAL max, sum, tmp;
@@ -589,7 +591,7 @@ int (*linsolver)(LM_REAL *A, LM_REAL *B, LM_REAL *x, int m)=NULL;
        * Note that the non-blocking algorithm is faster on small
        * problems since in this case it avoids the overheads of blocking. 
        */
-      register LM_REAL alpha, *jaclm, *jacTjacim;
+      register LM_REAL alphaVal, *jaclm, *jacTjacim;
 
       /* looping downwards saves a few computations */
       for(i=m*m; i-->0; )
@@ -601,12 +603,12 @@ int (*linsolver)(LM_REAL *A, LM_REAL *B, LM_REAL *x, int m)=NULL;
         jaclm=jac+l*m;
         for(i=m; i-->0; ){
           jacTjacim=jacTjac+i*m;
-          alpha=jaclm[i]; //jac[l*m+i];
+          alphaVal=jaclm[i]; //jac[l*m+i];
           for(j=i+1; j-->0; ) /* j<=i computes lower triangular part only */
-            jacTjacim[j]+=jaclm[j]*alpha; //jacTjac[i*m+j]+=jac[l*m+j]*alpha
+            jacTjacim[j]+=jaclm[j]*alphaVal; //jacTjac[i*m+j]+=jac[l*m+j]*alpha
 
           /* J^T e */
-          jacTe[i]+=alpha*e[l];
+          jacTe[i]+=alphaVal*e[l];
         }
       }
 

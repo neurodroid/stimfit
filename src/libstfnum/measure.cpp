@@ -125,13 +125,12 @@ double stfnum::peak(const std::vector<double>& data, double base, std::size_t ll
             //Calculate peak as the average over pM points around the point i
             peak=0.0;
             div_t Div1=div((int)pM-1, 2);
-            int counter = 0;
-            int start = i-Div1.quot;
-            if (start < 0)
-                start = 0;
-            for (counter=start; counter <= start+pM-1 && counter < (int)data.size(); counter++)
+            std::size_t counter = 0;
+            const std::size_t halfWindow = static_cast<std::size_t>(Div1.quot);
+            std::size_t start = (i > halfWindow) ? (i - halfWindow) : 0;
+            for (counter = start; counter <= start + static_cast<std::size_t>(pM) - 1 && counter < data.size(); ++counter)
                 peak+=data[counter];
-            peak /= (counter-start);
+            peak /= static_cast<double>(counter-start);
             
             //Set peak for BOTH
             if (dir == stfnum::both && fabs(peak-base) > fabs (max-base))
@@ -278,7 +277,6 @@ double stfnum::risetime2(const std::vector<double>& data, double base, double am
         return NAN;
     }
 
-#define NDEBUG
 #ifndef NDEBUG
 	fprintf(stdout,"%s %i:RISETIME2\n",__FILE__,__LINE__);
 #endif
@@ -419,7 +417,7 @@ double   stfnum::t_half(const std::vector<double>& data,
             t50LeftId > left);
     //Right side half duration
     if ((std::size_t)center <= data.size()-2) {
-        t50RightId = center;
+        t50RightId = static_cast<std::size_t>(center);
     } else {
         t50RightId = data.size() >= 2? data.size()-2 : 0;
     }
