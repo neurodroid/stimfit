@@ -88,6 +88,7 @@ BEGIN_EVENT_TABLE(wxStfGraph, wxWindow)
 EVT_MENU(ID_ZOOMHV,wxStfGraph::OnZoomHV)
 EVT_MENU(ID_ZOOMH,wxStfGraph::OnZoomH)
 EVT_MENU(ID_ZOOMV,wxStfGraph::OnZoomV)
+EVT_CHECKBOX(wxID_ANY, wxStfGraph::OnEventCheckBox)
 EVT_MOUSE_EVENTS(wxStfGraph::OnMouseEvent)
 EVT_KEY_DOWN( wxStfGraph::OnKeyDown )
 #if defined __WXMAC__ && !(wxCHECK_VERSION(2, 9, 0))
@@ -597,6 +598,7 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
             if (xFormat(it2->GetEventStartIndex()) < right &&
                 xFormat(it2->GetEventStartIndex()) > 0)
             {
+                it2->SyncCheckBoxFromState();
                 it2->GetCheckBox()->Move(wxPoint(xFormat(it2->GetEventStartIndex()), 0));
                 it2->GetCheckBox()->Show(true);
             } else {
@@ -1181,6 +1183,34 @@ void wxStfGraph::OnMouseEvent(wxMouseEvent& event) {
     if (event.RightDown()) RButtonDown(event);
     if (event.LeftUp()) LButtonUp(event);
 
+}
+
+void wxStfGraph::OnEventCheckBox(wxCommandEvent& event) {
+    if (!view) {
+        event.Skip();
+        return;
+    }
+
+    wxCheckBox* eventCheckBox = dynamic_cast<wxCheckBox*>(event.GetEventObject());
+    if (eventCheckBox == NULL) {
+        event.Skip();
+        return;
+    }
+
+    try {
+        std::vector<stf::Event>& events = Doc()->GetCurrentSectionAttributesW().eventList;
+        for (event_it it = events.begin(); it != events.end(); ++it) {
+            if (it->GetCheckBox() == eventCheckBox) {
+                it->SetChecked(eventCheckBox->GetValue());
+                break;
+            }
+        }
+    }
+    catch (const std::out_of_range&) {
+        // ignore invalid section state
+    }
+
+    event.Skip();
 }
 
 void wxStfGraph::LButtonDown(wxMouseEvent& event) {

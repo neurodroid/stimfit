@@ -411,6 +411,7 @@ private:
     void LButtonDown(wxMouseEvent& event);
     void RButtonDown(wxMouseEvent& event);
     void LButtonUp(wxMouseEvent& event);
+    void OnEventCheckBox(wxCommandEvent& event);
 
     // shorthand:
     wxStfDoc* Doc() {
