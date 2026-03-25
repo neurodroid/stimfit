@@ -225,6 +225,13 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:gabd3cce7d3ea046e8115febaae99010da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deconvolution.  <a href="../../d3/d1b/group__stfgen.html#gabd3cce7d3ea046e8115febaae99010da">More...</a><br /></td></tr>
 <tr class="separator:gabd3cce7d3ea046e8115febaae99010da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6a2c42e3bd1ebf30c3cc33a5da91f474" id="r_ga6a2c42e3bd1ebf30c3cc33a5da91f474"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d1b/group__stfgen.html#ga6a2c42e3bd1ebf30c3cc33a5da91f474">stf::event_polarity_mode</a> { <a class="el" href="../../d3/d1b/group__stfgen.html#gga6a2c42e3bd1ebf30c3cc33a5da91f474a7b6758f85a7027f948c208a1b92a22f1">stf::polarity_both</a>
+, <a class="el" href="../../d3/d1b/group__stfgen.html#gga6a2c42e3bd1ebf30c3cc33a5da91f474aa202c851f4596786b87b3e88079eb2d1">stf::polarity_positive_only</a>
+, <a class="el" href="../../d3/d1b/group__stfgen.html#gga6a2c42e3bd1ebf30c3cc33a5da91f474adf85408ca7ebadca6df853500d584bdf">stf::polarity_negative_only</a>
+, <a class="el" href="../../d3/d1b/group__stfgen.html#gga6a2c42e3bd1ebf30c3cc33a5da91f474a07126879e71fd36299b9a0c2edff7cdc">stf::polarity_same_as_template</a>
+ }</td></tr>
+<tr class="memdesc:ga6a2c42e3bd1ebf30c3cc33a5da91f474"><td class="mdescLeft">&#160;</td><td class="mdescRight">Polarity filtering for event detection.  <a href="../../d3/d1b/group__stfgen.html#ga6a2c42e3bd1ebf30c3cc33a5da91f474">More...</a><br /></td></tr>
+<tr class="separator:ga6a2c42e3bd1ebf30c3cc33a5da91f474"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -855,9 +862,21 @@ Functions</h2></td></tr>
 <tr class="memitem:ga140f78fa6bd8541b913f89ffae929614" id="r_ga140f78fa6bd8541b913f89ffae929614"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d1b/group__stfgen.html#ga140f78fa6bd8541b913f89ffae929614">stf::Event::GetDiscard</a> () const</td></tr>
 <tr class="memdesc:ga140f78fa6bd8541b913f89ffae929614"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates whether an event should be discarded.  <br /></td></tr>
 <tr class="separator:ga140f78fa6bd8541b913f89ffae929614"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab94a9b85a2ac7cda92d74bd43342565a" id="r_gab94a9b85a2ac7cda92d74bd43342565a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d1b/group__stfgen.html#gab94a9b85a2ac7cda92d74bd43342565a">stf::Event::IsChecked</a> () const</td></tr>
+<tr class="memdesc:gab94a9b85a2ac7cda92d74bd43342565a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates whether an event is currently selected for keeping.  <br /></td></tr>
+<tr class="separator:gab94a9b85a2ac7cda92d74bd43342565a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gadc7489b88cd8d71f72abe426613e0688" id="r_gadc7489b88cd8d71f72abe426613e0688"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d22/classwxCheckBox.html">wxCheckBox</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d1b/group__stfgen.html#gadc7489b88cd8d71f72abe426613e0688">stf::Event::GetCheckBox</a> ()</td></tr>
 <tr class="memdesc:gadc7489b88cd8d71f72abe426613e0688"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the check box associated with this event.  <br /></td></tr>
 <tr class="separator:gadc7489b88cd8d71f72abe426613e0688"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad2d7ffa1d15eb96610a27fcd30c7ffd3" id="r_gad2d7ffa1d15eb96610a27fcd30c7ffd3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d1b/group__stfgen.html#gad2d7ffa1d15eb96610a27fcd30c7ffd3">stf::Event::SetChecked</a> (bool value)</td></tr>
+<tr class="memdesc:gad2d7ffa1d15eb96610a27fcd30c7ffd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistently set whether this event is selected/kept.  <br /></td></tr>
+<tr class="separator:gad2d7ffa1d15eb96610a27fcd30c7ffd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa0e50e60348a1be8e669c484f309d654" id="r_gaa0e50e60348a1be8e669c484f309d654"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d1b/group__stfgen.html#gaa0e50e60348a1be8e669c484f309d654">stf::Event::SyncCheckBoxFromState</a> ()</td></tr>
+<tr class="memdesc:gaa0e50e60348a1be8e669c484f309d654"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronize UI control from persistent state.  <br /></td></tr>
+<tr class="separator:gaa0e50e60348a1be8e669c484f309d654"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga02110e4830ffd5f1612680e2ab20f2c5" id="r_ga02110e4830ffd5f1612680e2ab20f2c5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d1b/group__stfgen.html#ga02110e4830ffd5f1612680e2ab20f2c5">stf::Event::SyncStateFromCheckBox</a> ()</td></tr>
+<tr class="memdesc:ga02110e4830ffd5f1612680e2ab20f2c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronize persistent state from UI control.  <br /></td></tr>
+<tr class="separator:ga02110e4830ffd5f1612680e2ab20f2c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga751e0e4136119571080c234251420457" id="r_ga751e0e4136119571080c234251420457"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d1b/group__stfgen.html#ga751e0e4136119571080c234251420457">stf::Event::SetEventStartIndex</a> (std::size_t value)</td></tr>
 <tr class="memdesc:ga751e0e4136119571080c234251420457"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the start index of an event.  <br /></td></tr>
 <tr class="separator:ga751e0e4136119571080c234251420457"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1148,7 +1167,7 @@ Variables</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00364">364</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00390">390</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -1180,6 +1199,34 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="ga6a2c42e3bd1ebf30c3cc33a5da91f474" name="ga6a2c42e3bd1ebf30c3cc33a5da91f474"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6a2c42e3bd1ebf30c3cc33a5da91f474">&#9670;&#160;</a></span>event_polarity_mode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="../../d3/d1b/group__stfgen.html#ga6a2c42e3bd1ebf30c3cc33a5da91f474">stf::event_polarity_mode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Polarity filtering for event detection. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="gga6a2c42e3bd1ebf30c3cc33a5da91f474a7b6758f85a7027f948c208a1b92a22f1" name="gga6a2c42e3bd1ebf30c3cc33a5da91f474a7b6758f85a7027f948c208a1b92a22f1"></a>polarity_both&#160;</td><td class="fielddoc"><p>Keep positive- and negative-going events. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga6a2c42e3bd1ebf30c3cc33a5da91f474aa202c851f4596786b87b3e88079eb2d1" name="gga6a2c42e3bd1ebf30c3cc33a5da91f474aa202c851f4596786b87b3e88079eb2d1"></a>polarity_positive_only&#160;</td><td class="fielddoc"><p>Keep only positive-going events. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga6a2c42e3bd1ebf30c3cc33a5da91f474adf85408ca7ebadca6df853500d584bdf" name="gga6a2c42e3bd1ebf30c3cc33a5da91f474adf85408ca7ebadca6df853500d584bdf"></a>polarity_negative_only&#160;</td><td class="fielddoc"><p>Keep only negative-going events. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="gga6a2c42e3bd1ebf30c3cc33a5da91f474a07126879e71fd36299b9a0c2edff7cdc" name="gga6a2c42e3bd1ebf30c3cc33a5da91f474a07126879e71fd36299b9a0c2edff7cdc"></a>polarity_same_as_template&#160;</td><td class="fielddoc"><p>Keep only events with template-matching polarity. </p>
+</td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00457">457</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+
+</div>
+</div>
 <a id="gabd3cce7d3ea046e8115febaae99010da" name="gabd3cce7d3ea046e8115febaae99010da"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gabd3cce7d3ea046e8115febaae99010da">&#9670;&#160;</a></span>extraction_mode</h2>
 
@@ -1202,7 +1249,7 @@ Variables</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00424">424</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00450">450</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -1234,7 +1281,7 @@ Variables</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00387">387</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00413">413</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -1258,7 +1305,7 @@ Variables</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00397">397</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00423">423</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -1284,7 +1331,7 @@ Variables</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00380">380</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00406">406</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -4251,7 +4298,7 @@ p_0 \frac{ x \left(1 -\mathrm{e}^{\frac{-x}{p_1}}\right) \mathrm{e}^{\frac{-x}{p
 <dl class="section return"><dt>Returns</dt><dd>The <a class="el" href="../../d6/d22/classwxCheckBox.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxcheckbox.html (wxWidgets documentation)">wxCheckBox</a> associated with this event <br  />
  </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00291">291</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00294">294</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -5414,6 +5461,35 @@ A size_t describing this section's data size. </dd></dl>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The integral of <em>input</em> between <em>a</em> and <em>b</em>. </dd></dl>
+
+</div>
+</div>
+<a id="gab94a9b85a2ac7cda92d74bd43342565a" name="gab94a9b85a2ac7cda92d74bd43342565a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab94a9b85a2ac7cda92d74bd43342565a">&#9670;&#160;</a></span>IsChecked()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool stf::Event::IsChecked </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Indicates whether an event is currently selected for keeping. </p>
+
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00290">290</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -6774,7 +6850,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00328">328</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00354">354</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -7324,7 +7400,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The rounded integer. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00434">434</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00468">468</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -7654,6 +7730,36 @@ template&lt;typename T &gt; </div>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="../../d5/d7b/channel_8h_source.html#l00126">126</a> of file <a class="el" href="../../d5/d7b/channel_8h_source.html">channel.h</a>.</p>
+
+</div>
+</div>
+<a id="gad2d7ffa1d15eb96610a27fcd30c7ffd3" name="gad2d7ffa1d15eb96610a27fcd30c7ffd3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad2d7ffa1d15eb96610a27fcd30c7ffd3">&#9670;&#160;</a></span>SetChecked()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void stf::Event::SetChecked </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Persistently set whether this event is selected/kept. </p>
+
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00297">297</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -8039,7 +8145,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00299">299</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00324">324</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -8075,7 +8181,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00303">303</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00328">328</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -8111,7 +8217,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00295">295</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00320">320</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -8800,6 +8906,64 @@ template&lt;typename T &gt; </div>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="../../d9/d4f/stfnum_8h_source.html#l00281">281</a> of file <a class="el" href="../../d9/d4f/stfnum_8h_source.html">stfnum.h</a>.</p>
+
+</div>
+</div>
+<a id="gaa0e50e60348a1be8e669c484f309d654" name="gaa0e50e60348a1be8e669c484f309d654"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa0e50e60348a1be8e669c484f309d654">&#9670;&#160;</a></span>SyncCheckBoxFromState()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void stf::Event::SyncCheckBoxFromState </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Synchronize UI control from persistent state. </p>
+
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00305">305</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+
+</div>
+</div>
+<a id="ga02110e4830ffd5f1612680e2ab20f2c5" name="ga02110e4830ffd5f1612680e2ab20f2c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga02110e4830ffd5f1612680e2ab20f2c5">&#9670;&#160;</a></span>SyncStateFromCheckBox()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void stf::Event::SyncStateFromCheckBox </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Synchronize persistent state from UI control. </p>
+
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00312">312</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -9850,7 +10014,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00345">345</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00371">371</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -9866,7 +10030,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00339">339</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00365">365</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -9986,7 +10150,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00335">335</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00361">361</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -10002,7 +10166,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00338">338</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00364">364</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -10120,7 +10284,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00337">337</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00363">363</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -10136,7 +10300,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00337">337</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00363">363</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -10352,7 +10516,7 @@ template&lt;typename T &gt; </div>
 
 <p>Add decimals if you are not satisfied. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00355">355</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00381">381</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -10402,7 +10566,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00350">350</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00376">376</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -10435,7 +10599,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00336">336</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00362">362</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -10451,7 +10615,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00340">340</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00366">366</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -10501,7 +10665,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00351">351</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00377">377</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -10517,7 +10681,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00341">341</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00367">367</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -10533,7 +10697,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00342">342</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00368">368</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -10549,7 +10713,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00343">343</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00369">369</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -10565,7 +10729,7 @@ template&lt;typename T &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00344">344</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00370">370</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -10633,7 +10797,7 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <p>x-coordinate in units of sampling points </p>
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00329">329</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00355">355</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>
@@ -10650,7 +10814,7 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <p>y-coordinate in trace units (e.g. mV) </p>
 
-<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00330">330</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/da2/stf_8h_source.html#l00356">356</a> of file <a class="el" href="../../dc/da2/stf_8h_source.html">stf.h</a>.</p>
 
 </div>
 </div>

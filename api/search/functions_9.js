@@ -22,8 +22,9 @@ var searchData=
   ['integrate_5fsimpson_19',['integrate_simpson',['../d3/d1b/group__stfgen.html#ga2d7c59ac48b0b6c843b0642b3e0d66cd',1,'stfnum']]],
   ['integrate_5ftrapezium_20',['integrate_trapezium',['../d3/d1b/group__stfgen.html#ga7a46bec173f703d526d6ad0b8961103e',1,'stfnum']]],
   ['interactiveeraseevents_21',['InteractiveEraseEvents',['../d7/d1a/group__wxstf.html#gacc791db92f09e0e2884b8d577e500431',1,'wxStfDoc']]],
-  ['isempty_22',['IsEmpty',['../d3/d1b/group__stfgen.html#ga352c5d031a1926c9c3cd238e86d29bab',1,'stfnum::Table']]],
-  ['isemptycell_23',['IsEmptyCell',['../d7/d1a/group__wxstf.html#ga72cc04a488294853caf3286524b26e66',1,'wxStfTable']]],
-  ['isinitialized_24',['IsInitialized',['../d7/d1a/group__wxstf.html#ga3564a978b8c05a92b72c91c881cb832f',1,'wxStfDoc']]],
-  ['isok_25',['IsOK',['../dd/dff/classCFileDescriptor.html#a262d265ecea9da86cbf773beada22065',1,'CFileDescriptor']]]
+  ['ischecked_22',['IsChecked',['../d3/d1b/group__stfgen.html#gab94a9b85a2ac7cda92d74bd43342565a',1,'stf::Event']]],
+  ['isempty_23',['IsEmpty',['../d3/d1b/group__stfgen.html#ga352c5d031a1926c9c3cd238e86d29bab',1,'stfnum::Table']]],
+  ['isemptycell_24',['IsEmptyCell',['../d7/d1a/group__wxstf.html#ga72cc04a488294853caf3286524b26e66',1,'wxStfTable']]],
+  ['isinitialized_25',['IsInitialized',['../d7/d1a/group__wxstf.html#ga3564a978b8c05a92b72c91c881cb832f',1,'wxStfDoc']]],
+  ['isok_26',['IsOK',['../dd/dff/classCFileDescriptor.html#a262d265ecea9da86cbf773beada22065',1,'CFileDescriptor']]]
 ];

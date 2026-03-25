@@ -31,7 +31,7 @@ var searchData=
   ['nchan_28',['nChan',['../dd/d60/Son_8h.html#acc4c14c211bae62916b7dd2431a4ab2a',1,'Son.h']]],
   ['nchannels_29',['nChannels',['../dd/d60/Son_8h.html#a8726d5725412b7e1b16285b9f4037938',1,'Son.h']]],
   ['nchannelstatsstrategy_30',['nchannelstatsstrategy',['../d7/d12/structABFFileHeader.html#aca3ca931e3bd7f51421a54834c71b3b7',1,'ABFFileHeader::nChannelStatsStrategy'],['../dd/d6a/structABF2FileHeader.html#aeedf63b2769657b2649bf8fd56d07f0f',1,'ABF2FileHeader::nChannelStatsStrategy'],['../de/d18/structABF__ProtocolInfo.html#a2d0711cd6991b454892afc398aa54783',1,'ABF_ProtocolInfo::nChannelStatsStrategy']]],
-  ['ncolumns_31',['ncolumns',['../d5/d77/structATF__FILEINFO.html#a955861376bbe313226b0f5092f450903',1,'ATF_FILEINFO::nColumns'],['../d6/dfb/group__stfio.html#ga50f2fa3a0c163e3c7df69cde60f824cc',1,'stfio::txtImportSettings::ncolumns']]],
+  ['ncolumns_31',['ncolumns',['../d6/dfb/group__stfio.html#ga50f2fa3a0c163e3c7df69cde60f824cc',1,'stfio::txtImportSettings::ncolumns'],['../d5/d77/structATF__FILEINFO.html#a955861376bbe313226b0f5092f450903',1,'ATF_FILEINFO::nColumns']]],
   ['ncolumnx_32',['nColumnX',['../d6/de9/structAxoGraphXTraceHeader.html#a70e9f3d59f7912b28ad85b75751c760d',1,'AxoGraphXTraceHeader']]],
   ['ncolumny_33',['nColumnY',['../d6/de9/structAxoGraphXTraceHeader.html#a53378b68d3fd416c914650155fa14c14',1,'AxoGraphXTraceHeader']]],
   ['ncommentsenable_34',['ncommentsenable',['../d7/d12/structABFFileHeader.html#a8fbff55600fb5afa0507cadfe3121ac9',1,'ABFFileHeader::nCommentsEnable'],['../dd/d6a/structABF2FileHeader.html#a8c7114b5a34e5bc5658052376d9875d6',1,'ABF2FileHeader::nCommentsEnable'],['../de/d18/structABF__ProtocolInfo.html#aba55999b434f4b795ff22f02df16c2dc',1,'ABF_ProtocolInfo::nCommentsEnable']]],
