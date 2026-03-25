@@ -263,6 +263,7 @@ EVT_MENU( ID_CH2POS, wxStfParentFrame::OnCh2pos )
 EVT_MENU( ID_CH2ZOOM, wxStfParentFrame::OnCh2zoom )
 EVT_MENU( ID_CH2BASEZOOM, wxStfParentFrame::OnCh2basezoom )
 EVT_MENU( ID_SCALE, wxStfParentFrame::OnScale )
+EVT_MENU( ID_VIEW_DARK_TRACE, wxStfParentFrame::OnDarkTraceDisplay )
 
 EVT_MENU( ID_PRINT_PRINT, wxStfParentFrame::OnPrint)
 
@@ -1384,6 +1385,27 @@ void wxStfParentFrame::OnScale(wxCommandEvent& WXUNUSED(event)) {
         }
         if (pView->GetGraph() != NULL)
             pView->GetGraph()->Refresh();
+    }
+}
+
+void wxStfParentFrame::OnDarkTraceDisplay(wxCommandEvent& WXUNUSED(event)) {
+    wxStfView* pView = wxGetApp().GetActiveView();
+    if (pView != NULL) {
+        const bool useDarkTraceDisplay =
+            GetActiveChild()->GetMenuBar() &&
+            GetActiveChild()->GetMenuBar()->GetMenu(2)->IsChecked(ID_VIEW_DARK_TRACE);
+
+        wxGetApp().wxWriteProfileInt(
+            wxT("Settings"),
+            wxT("ViewDarkTraceDisplay"),
+            useDarkTraceDisplay ? 1 : 0
+        );
+        wxGetApp().set_isDarkTraceDisplay(useDarkTraceDisplay);
+
+        if (pView->GetGraph() != NULL) {
+            pView->GetGraph()->ApplyTraceDisplayTheme(useDarkTraceDisplay);
+            pView->GetGraph()->Refresh();
+        }
     }
 }
 

@@ -83,6 +83,9 @@ public:
      */
     void OnKeyDown(wxKeyEvent& event);
 
+    //! Apply dark/light trace display palette for on-screen rendering.
+    void ApplyTraceDisplayTheme(bool darkMode);
+
     //! Change trace
     /*! Takes care of refreshing everything when a new trace is shown
      *  \param trace Index of next trace to be displayed
@@ -346,6 +349,10 @@ private:
         slopePrintPen, resultsPrintPen, latencyPrintPen, PSlopePrintPen;
 
     wxBrush baseBrush, zeroBrush;
+    wxPen annotationPen;
+    wxColour defaultScaleTextColour;
+    wxColour secondaryScaleTextColour;
+    bool isDarkTheme;
 
     wxPoint lastLDown;
 
@@ -382,6 +389,7 @@ private:
     void PlotFit( wxDC* pDC, const stf::SectionPointer& Sec );
     void DrawIntegral(wxDC* pDC);
     void CreateScale(wxDC* pDC);
+    void UpdateDisplayPalette();
 
     // Function receives the x-coordinate of a point and returns
     // its formatted value according to the current Zoom settings

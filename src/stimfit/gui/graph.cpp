@@ -170,6 +170,10 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     PSlopePrintPen(wxColour(30,144,255), printSizePen1, wxPENSTYLE_DOT), // Dotted bright blue line
     baseBrush(*wxLIGHT_GREY,wxBRUSHSTYLE_BDIAGONAL_HATCH),
     zeroBrush(*wxLIGHT_GREY,wxBRUSHSTYLE_FDIAGONAL_HATCH),
+    annotationPen(*wxRED, 1, wxPENSTYLE_SOLID),
+    defaultScaleTextColour(*wxBLACK),
+    secondaryScaleTextColour(*wxRED),
+    isDarkTheme(false),
     lastLDown(0,0),
     yzoombg(),
     m_zoomContext( new wxMenu ),
@@ -191,8 +195,8 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     m_annotationContext->Append( ID_ANNOTATION_IMPORTANNOTATIONS, wxT("Import all annotations") );
     m_annotationContext->Append( ID_ANNOTATION_DetectEvents, wxT("Detect events based on expert data") );
 
-    SetBackgroundColour(*wxWHITE);
     view = (wxStfView*)v;
+    ApplyTraceDisplayTheme(wxGetApp().get_isDarkTraceDisplay());
     wxString perspective=wxGetApp().wxGetProfileString(wxT("Settings"),wxT("Windows"),wxT(""));
 /*    if (perspective != wxT("")) {
         // load the stored perspective:
@@ -208,12 +212,112 @@ wxStfParentFrame* wxStfGraph::ParentFrame() {
     return (wxStfParentFrame*)wxGetApp().GetTopWindow();
 }
 
+void wxStfGraph::UpdateDisplayPalette() {
+    if (isDarkTheme) {
+        // Display palette for dark background (on-screen only)
+        const wxColour bg(12, 12, 16);
+        SetBackgroundColour(bg);
+
+        standardPen = wxPen(wxColour(232, 236, 244), 1, wxPENSTYLE_SOLID);
+        standardPen2 = wxPen(wxColour(255, 132, 132), 1, wxPENSTYLE_SOLID);
+        standardPen3 = wxPen(wxColour(138, 96, 132), 1, wxPENSTYLE_SOLID);
+
+        scalePen = wxPen(wxColour(232, 236, 244), 2, wxPENSTYLE_SOLID);
+        scalePen2 = wxPen(wxColour(255, 132, 132), 2, wxPENSTYLE_SOLID);
+
+        peakPen = wxPen(wxColour(255, 144, 144), 1, wxPENSTYLE_SHORT_DASH);
+        peakLimitPen = wxPen(wxColour(255, 176, 176), 1, wxPENSTYLE_DOT);
+        basePen = wxPen(wxColour(110, 228, 170), 1, wxPENSTYLE_SHORT_DASH);
+        baseLimitPen = wxPen(wxColour(110, 228, 170), 1, wxPENSTYLE_DOT);
+        decayLimitPen = wxPen(wxColour(156, 162, 176), 1, wxPENSTYLE_DOT);
+        ZoomRectPen = wxPen(wxColour(198, 204, 214), 1, wxPENSTYLE_DOT);
+
+        fitPen = wxPen(wxColour(196, 206, 218), 4, wxPENSTYLE_SOLID);
+        fitSelectedPen = wxPen(wxColour(148, 160, 176), 2, wxPENSTYLE_SOLID);
+        selectPen = wxPen(wxColour(104, 110, 124), 1, wxPENSTYLE_SOLID);
+        averagePen = wxPen(wxColour(120, 190, 255), 1, wxPENSTYLE_SOLID);
+
+        rtPen = wxPen(wxColour(110, 228, 170), 2, wxPENSTYLE_SOLID);
+        hdPen = wxPen(wxColour(96, 216, 255), 2, wxPENSTYLE_SOLID);
+        rdPen = wxPen(wxColour(255, 144, 144), 2, wxPENSTYLE_SOLID);
+#ifdef WITH_PSLOPE
+        slopePen = wxPen(wxColour(120, 190, 255), 2, wxPENSTYLE_SOLID);
+#endif
+        latencyPen = wxPen(wxColour(120, 190, 255), 1, wxPENSTYLE_DOT);
+        alignPen = wxPen(wxColour(120, 190, 255), 1, wxPENSTYLE_SHORT_DASH);
+        measPen = wxPen(wxColour(210, 214, 224), 1, wxPENSTYLE_DOT);
+        eventPen = wxPen(wxColour(120, 190, 255), 2, wxPENSTYLE_SOLID);
+#ifdef WITH_PSLOPE
+        PSlopePen = wxPen(wxColour(94, 188, 255), 1, wxPENSTYLE_DOT);
+#endif
+
+        baseBrush = wxBrush(wxColour(90, 124, 118), wxBRUSHSTYLE_BDIAGONAL_HATCH);
+        zeroBrush = wxBrush(wxColour(118, 118, 118), wxBRUSHSTYLE_FDIAGONAL_HATCH);
+
+        annotationPen = wxPen(wxColour(255, 172, 108), 1, wxPENSTYLE_SOLID);
+        defaultScaleTextColour = wxColour(232, 236, 244);
+        secondaryScaleTextColour = wxColour(255, 132, 132);
+    } else {
+        // Existing light palette (on-screen only)
+        SetBackgroundColour(*wxWHITE);
+
+        standardPen = wxPen(*wxBLACK, 1, wxPENSTYLE_SOLID);
+        standardPen2 = wxPen(*wxRED, 1, wxPENSTYLE_SOLID);
+        standardPen3 = wxPen(wxColour(255,192,192), 1, wxPENSTYLE_SOLID);
+
+        scalePen = wxPen(*wxBLACK, 2, wxPENSTYLE_SOLID);
+        scalePen2 = wxPen(*wxRED, 2, wxPENSTYLE_SOLID);
+
+        peakPen = wxPen(*wxRED, 1, wxPENSTYLE_SHORT_DASH);
+        peakLimitPen = wxPen(*wxRED, 1, wxPENSTYLE_DOT);
+        basePen = wxPen(*wxGREEN, 1, wxPENSTYLE_SHORT_DASH);
+        baseLimitPen = wxPen(*wxGREEN, 1, wxPENSTYLE_DOT);
+        decayLimitPen = wxPen(wxColour(127,127,127), 1, wxPENSTYLE_DOT);
+        ZoomRectPen = wxPen(*wxLIGHT_GREY, 1, wxPENSTYLE_DOT);
+
+        fitPen = wxPen(wxColour(127,127,127), 4, wxPENSTYLE_SOLID);
+        fitSelectedPen = wxPen(wxColour(192,192,192), 2, wxPENSTYLE_SOLID);
+        selectPen = wxPen(wxColour(127,127,127), 1, wxPENSTYLE_SOLID);
+        averagePen = wxPen(*wxBLUE, 1, wxPENSTYLE_SOLID);
+
+        rtPen = wxPen(*wxGREEN, 2, wxPENSTYLE_SOLID);
+        hdPen = wxPen(*wxCYAN, 2, wxPENSTYLE_SOLID);
+        rdPen = wxPen(*wxRED, 2, wxPENSTYLE_SOLID);
+#ifdef WITH_PSLOPE
+        slopePen = wxPen(*wxBLUE, 2, wxPENSTYLE_SOLID);
+#endif
+        latencyPen = wxPen(*wxBLUE, 1, wxPENSTYLE_DOT);
+        alignPen = wxPen(*wxBLUE, 1, wxPENSTYLE_SHORT_DASH);
+        measPen = wxPen(*wxBLACK, 1, wxPENSTYLE_DOT);
+        eventPen = wxPen(*wxBLUE, 2, wxPENSTYLE_SOLID);
+#ifdef WITH_PSLOPE
+        PSlopePen = wxPen(wxColour(30,144,255), 1, wxPENSTYLE_DOT);
+#endif
+
+        baseBrush = wxBrush(*wxLIGHT_GREY, wxBRUSHSTYLE_BDIAGONAL_HATCH);
+        zeroBrush = wxBrush(*wxLIGHT_GREY, wxBRUSHSTYLE_FDIAGONAL_HATCH);
+
+        annotationPen = wxPen(*wxRED, 1, wxPENSTYLE_SOLID);
+        defaultScaleTextColour = *wxBLACK;
+        secondaryScaleTextColour = *wxRED;
+    }
+}
+
+void wxStfGraph::ApplyTraceDisplayTheme(bool darkMode) {
+    isDarkTheme = darkMode;
+    UpdateDisplayPalette();
+}
+
 // Defines the repainting behaviour
 void wxStfGraph::OnDraw( wxDC& DC )
 {
 
     if ( !view || Doc()->get().empty() || !Doc()->IsInitialized() )
         return;
+
+    if (isDarkTheme != wxGetApp().get_isDarkTraceDisplay()) {
+        ApplyTraceDisplayTheme(wxGetApp().get_isDarkTraceDisplay());
+    }
 
     // ugly hack to force active document update:
 #if defined(__WXGTK__) || defined(__WXMAC__)
@@ -346,6 +450,11 @@ void wxStfGraph::InitPlot() {
         wxGetApp().set_isBars(false);
     }
 
+    if (pFrame->GetMenuBar() && pFrame->GetMenuBar()->GetMenu(2)) {
+        pFrame->GetMenuBar()->GetMenu(2)->Check(ID_VIEW_DARK_TRACE, wxGetApp().get_isDarkTraceDisplay());
+    }
+    ApplyTraceDisplayTheme(wxGetApp().get_isDarkTraceDisplay());
+
     if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewSyncx"),1)) {
         isSyncx=true;
     } else {
@@ -422,6 +531,8 @@ void wxStfGraph::PlotAverage(wxDC& DC) {
 
 void wxStfGraph::DrawZoomRect(wxDC& DC) {
     DC.SetPen(ZoomRectPen);
+    const wxBrush oldBrush = DC.GetBrush();
+    DC.SetBrush(*wxTRANSPARENT_BRUSH);
     wxPoint ZoomPoints[4];
     wxPoint Ul_Corner((int)llz_x, (int)llz_y);
     wxPoint Ur_Corner((int)ulz_x, (int)llz_y);
@@ -432,6 +543,7 @@ void wxStfGraph::DrawZoomRect(wxDC& DC) {
     ZoomPoints[2]=Lr_Corner;
     ZoomPoints[3]=Ll_Corner;
     DC.DrawPolygon(4,ZoomPoints);
+    DC.SetBrush(oldBrush);
 }
 
 void wxStfGraph::PlotGimmicks(wxDC& DC) {
@@ -546,7 +658,7 @@ void wxStfGraph::PlotAnnotations(wxDC& dc) {
         int y = GetClientSize().y;
 
         // Draw a marker
-        dc.SetPen(*wxRED_PEN);
+        dc.SetPen(annotationPen);
         wxPoint startPoint(x, 0);
         wxPoint endPoint(x, y);
         dc.DrawLine(startPoint, endPoint);
@@ -639,6 +751,12 @@ void wxStfGraph::DrawCrosshair( wxDC& DC, const wxPen& pen, const wxPen& printPe
         crosshairSize=(int)(crosshairSize*printScale);
     }
     DC.SetPen(chpen);
+    const bool useTransparentCircleFill = isDarkTheme && !isPrinted;
+    wxBrush oldBrush;
+    if (useTransparentCircleFill) {
+        oldBrush = DC.GetBrush();
+        DC.SetBrush(*wxTRANSPARENT_BRUSH);
+    }
     try {
         // circle:
         wxRect frame(wxPoint( xFormat(xch)-crosshairSize,
@@ -668,6 +786,10 @@ void wxStfGraph::DrawCrosshair( wxDC& DC, const wxPen& pen, const wxPen& printPe
     catch (const std::out_of_range& e) {
         wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
         return;
+    }
+
+    if (useTransparentCircleFill) {
+        DC.SetBrush(oldBrush);
     }
 
 }
@@ -926,7 +1048,16 @@ void wxStfGraph::DrawCircle(wxDC* pDC, double x, double y, const wxPen& pen, con
             wxPoint(xFormat(x)-boebbel,yFormat(y)-boebbel),
             wxPoint(xFormat(x)+boebbel,yFormat(y)+boebbel)
     );
+    const bool useTransparentCircleFill = isDarkTheme && !isPrinted;
+    wxBrush oldBrush;
+    if (useTransparentCircleFill) {
+        oldBrush = pDC->GetBrush();
+        pDC->SetBrush(*wxTRANSPARENT_BRUSH);
+    }
     pDC->DrawEllipse(Frame);
+    if (useTransparentCircleFill) {
+        pDC->SetBrush(oldBrush);
+    }
 }
 
 void wxStfGraph::DrawVLine(wxDC* pDC, double x, const wxPen& pen, const wxPen& printPen) {
@@ -1719,19 +1850,9 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         barLengthY2=(int)((yScaled2/realDistanceY2) * pixelDistanceY2);
     }	//End creation y-scale of the 2nd Channel
 
-    wxColour defaultScaleTextColour(*wxBLACK);
-    if (!isPrinted) {
-        const wxColour backgroundColour = GetBackgroundColour();
-        if (backgroundColour.IsOk()) {
-            // Use a simple luminance estimate to keep labels readable on dark mode themes.
-            const int luminance =
-                (299 * backgroundColour.Red() +
-                 587 * backgroundColour.Green() +
-                 114 * backgroundColour.Blue()) / 1000;
-            defaultScaleTextColour = luminance < 128 ? *wxWHITE : *wxBLACK;
-        }
-    }
-    pDC->SetTextForeground(defaultScaleTextColour);
+    const wxColour primaryScaleTextColour = isPrinted ? wxColour(*wxBLACK) : defaultScaleTextColour;
+    const wxColour accentScaleTextColour = isPrinted ? wxColour(*wxRED) : secondaryScaleTextColour;
+    pDC->SetTextForeground(primaryScaleTextColour);
 
     if (wxGetApp().get_isBars()) {
         // Use scale bars
@@ -1807,7 +1928,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                     wxPoint(WindowRect.width-rightDist/2+(int)(5*printScale),y2Center-(int)(10*printScale)),
                     wxPoint(WindowRect.width,y2Center+(int)(10*printScale))
             );
-            pDC->SetTextForeground(*wxRED);
+            pDC->SetTextForeground(accentScaleTextColour);
             if (!isLatex) {
                 pDC->DrawLabel(scaleYString2,TextFrameY2,wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
             } else {
@@ -1816,7 +1937,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                 pLatexDC->DrawLabelLatex(scaleYString2,TextFrameY2,wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 #endif
             }
-            pDC->SetTextForeground(defaultScaleTextColour);
+            pDC->SetTextForeground(primaryScaleTextColour);
         }
         //Set PenStyle
         if (!isPrinted)
@@ -1948,9 +2069,9 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                 int y2=(int)(yScaled2*n_tick_y+y2First);
                 wxString y2Label;
                 y2Label << y2;
-                pDC->SetTextForeground(*wxRED);
+                pDC->SetTextForeground(accentScaleTextColour);
                 pDC->DrawLabel(y2Label,TextFrame2,wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL);
-                pDC->SetTextForeground(defaultScaleTextColour);
+                pDC->SetTextForeground(primaryScaleTextColour);
             }
             // Write y units:
             // Length of y-axis:
@@ -1961,7 +2082,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                     wxPoint(2+leftDist,v2Center-(int)(10*printScale)),
                     wxPoint(leftDist*2-tickLength-1,v2Center+(int)(10*printScale))
             );
-            pDC->SetTextForeground(*wxRED);
+            pDC->SetTextForeground(accentScaleTextColour);
             pDC->DrawLabel(
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
                            Doc()->at(Doc()->GetSecChIndex()).GetYUnits(),
@@ -1971,7 +2092,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                     TextFrame2,
                     wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL
             );
-            pDC->SetTextForeground(defaultScaleTextColour);
+            pDC->SetTextForeground(primaryScaleTextColour);
         }
         // x-Axis ticks:
         // if x axis starts with the beginning of the trace, find first tick:

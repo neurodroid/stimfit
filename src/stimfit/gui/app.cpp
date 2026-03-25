@@ -89,7 +89,7 @@ EVT_MENU_RANGE(ID_USERDEF, ID_USERDEF+32, wxStfApp::OnUserdef)
 #endif 
 END_EVENT_TABLE()
 
-wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), txtImport(), funcLib(),
+wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isDarkTraceDisplay(true), txtImport(), funcLib(),
 #ifdef WITH_PYTHON
 extensionLib(),
 #endif 
@@ -173,6 +173,7 @@ bool wxStfApp::OnInit(void)
 #endif //WITH_PTYHON
     // Config:
     config.reset(new wxFileConfig(wxT("Stimfit")));
+    set_isDarkTraceDisplay(wxGetProfileInt(wxT("Settings"), wxT("ViewDarkTraceDisplay"), 1) == 1);
 
     //// Create a document manager
     wxDocManager* docManager = new wxDocManager;
@@ -743,6 +744,12 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
                                  wxT("&View scale bars"),
                                  wxT("If checked, use scale bars rather than coordinates")
                                  );
+    m_view_menu->AppendCheckItem(
+                                 ID_VIEW_DARK_TRACE,
+                                 wxT("&Dark trace display"),
+                                 wxT("If checked, traces are shown on a dark background")
+                                 );
+    m_view_menu->Check(ID_VIEW_DARK_TRACE, get_isDarkTraceDisplay());
     m_view_menu->AppendSeparator();
     m_view_menu->Append(ID_SAVEPERSPECTIVE,wxT("&Save window positions"));
     m_view_menu->Append(ID_LOADPERSPECTIVE,wxT("&Load window positions"));

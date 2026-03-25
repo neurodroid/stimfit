@@ -106,6 +106,7 @@ enum {
     ID_CH2BASEZOOM,
     ID_SWAPCHANNELS,
     ID_SCALE,
+    ID_VIEW_DARK_TRACE,
     ID_ZOOMHV,
     ID_ZOOMH,
     ID_ZOOMV,
@@ -470,6 +471,16 @@ public:
      */
     bool get_isBars() const { return isBars; }
 
+    //! Determine whether trace display uses dark theme rendering.
+    /*! \param value Set to true for dark background rendering.
+     */
+    void set_isDarkTraceDisplay(bool value) { isDarkTraceDisplay = value; }
+
+    //! Indicates whether trace display uses dark theme rendering.
+    /*! \return true for dark background rendering.
+     */
+    bool get_isDarkTraceDisplay() const { return isDarkTraceDisplay; }
+
     //! Get a formatted version string.
     /*! \return A version string (stimfit x.y.z, release/debug build, date).
      */
@@ -530,7 +541,7 @@ private:
 #pragma optimize( "", on )
 #endif
 
-    bool directTxtImport,isBars;
+    bool directTxtImport,isBars,isDarkTraceDisplay;
     stfio::txtImportSettings txtImport;
     // Registry:
 #if (__cplusplus < 201103)
