@@ -965,6 +965,13 @@ wxStfDoc* wxStfApp::GetActiveDoc() const {
 
 wxStfGraph* wxStfApp::GetFocusedGraph() const {
     wxWindow* focused = wxWindow::FindFocus();
+    if (focused == NULL) {
+        wxStfView* activeView = GetActiveView();
+        if (activeView != NULL)
+            return activeView->GetGraph();
+        return NULL;
+    }
+
     while (focused != NULL) {
         wxStfGraph* focusGraph = wxDynamicCast(focused, wxStfGraph);
         if (focusGraph != NULL)
@@ -980,10 +987,6 @@ wxStfGraph* wxStfApp::GetFocusedGraph() const {
 
         focused = focused->GetParent();
     }
-
-    wxStfView* activeView = GetActiveView();
-    if (activeView != NULL)
-        return activeView->GetGraph();
 
     return NULL;
 }
