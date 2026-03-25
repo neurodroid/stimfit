@@ -233,6 +233,7 @@ enum {
 class wxDocManager;
 class wxStfDoc;
 class wxStfView;
+class wxStfGraph;
 class wxStfCursorsDlg;
 class wxStfParentFrame;
 class wxStfChildFrame;
@@ -285,6 +286,14 @@ public:
     /*! \return A pointer to the currently active view.
      */
     wxStfView* GetActiveView() const;
+
+    //! Retrieves the graph belonging to the currently focused window.
+    /*! This resolves keyboard shortcut dispatch based on focus ownership
+     *  (e.g. results grid in a child frame), with a fallback to the
+     *  active view graph.
+     *  \return A pointer to the graph that should receive key events, or NULL.
+     */
+    wxStfGraph* GetFocusedGraph() const;
 
     //! Displays a message box when an error has occured.
     /*! You can use this function from almost anywhere using

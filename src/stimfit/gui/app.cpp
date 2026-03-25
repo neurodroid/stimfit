@@ -963,20 +963,36 @@ wxStfDoc* wxStfApp::GetActiveDoc() const {
     return pDoc;
 }
 
+wxStfGraph* wxStfApp::GetFocusedGraph() const {
+    wxWindow* focused = wxWindow::FindFocus();
+    while (focused != NULL) {
+        wxStfGraph* focusGraph = wxDynamicCast(focused, wxStfGraph);
+        if (focusGraph != NULL)
+            return focusGraph;
+
+        wxStfChildFrame* focusChild = wxDynamicCast(focused, wxStfChildFrame);
+        if (focusChild != NULL) {
+            wxStfView* focusView = wxDynamicCast(focusChild->GetView(), wxStfView);
+            if (focusView != NULL && focusView->GetGraph() != NULL)
+                return focusView->GetGraph();
+            break;
+        }
+
+        focused = focused->GetParent();
+    }
+
+    wxStfView* activeView = GetActiveView();
+    if (activeView != NULL)
+        return activeView->GetGraph();
+
+    return NULL;
+}
+
 void wxStfApp::OnKeyDown( wxKeyEvent& event ) {
     event.Skip();
-    wxStfDoc* actDoc = GetActiveDoc();
-    if (!actDoc)
-        return;
-    
-    // wxStfView* actView = (wxStfView*)actDoc->GetFirstView();
-    wxStfView* actView = GetActiveView();
-    if (actView) {
-        wxStfGraph* pGraph = actView->GetGraph();
-        wxStfChildFrame* pChild=(wxStfChildFrame*)actView->GetFrame();
-        if (pGraph && pChild && pChild->IsActive())
-            pGraph->OnKeyDown(event);
-    }
+    wxStfGraph* pGraph = GetFocusedGraph();
+    if (pGraph != NULL)
+        pGraph->OnKeyDown(event);
 }
 
 void wxStfApp::OnCursorSettings( wxCommandEvent& WXUNUSED(event) ) {

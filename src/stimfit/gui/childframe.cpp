@@ -67,6 +67,7 @@
 IMPLEMENT_CLASS(wxStfChildFrame, wxStfChildType)
 
 BEGIN_EVENT_TABLE(wxStfChildFrame, wxStfChildType)
+EVT_ACTIVATE( wxStfChildFrame::OnActivate )
 EVT_SPINCTRL( ID_SPINCTRLTRACES, wxStfChildFrame::OnSpinCtrlTraces )
 EVT_COMBOBOX( ID_COMBOACTCHANNEL, wxStfChildFrame::OnComboActChannel )
 EVT_COMBOBOX( ID_COMBOINACTCHANNEL, wxStfChildFrame::OnComboInactChannel )
@@ -328,7 +329,8 @@ void wxStfChildFrame::OnSpinCtrlTraces( wxSpinEvent& event ){
 void wxStfChildFrame::OnActivate(wxActivateEvent &event) {
     wxStfView* pView=(wxStfView*)GetView();
     if (pView)
-        pView->Activate(true);
+        pView->Activate(event.GetActive());
+    event.Skip();
 }
 
 void wxStfChildFrame::OnComboActChannel(wxCommandEvent& WXUNUSED(event)) {
