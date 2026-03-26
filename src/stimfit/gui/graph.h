@@ -21,6 +21,8 @@
 #ifndef _GRAPH_H
 #define _GRAPH_H
 
+#include <vector>
+
 /*! \addtogroup wxstf
  *  @{
  */
@@ -295,6 +297,11 @@ public:
     double get_plot_y2max() const;
 
 private:
+    struct AnnotationLine {
+        wxPoint start;
+        wxPoint end;
+    };
+
     wxStfChildFrame* pFrame;
     bool isZoomRect; //True if zoom window is set
     bool no_gimmicks; //True if no extra rulers/lines and circles shall be displayed
@@ -355,6 +362,7 @@ private:
     bool isDarkTheme;
 
     wxPoint lastLDown;
+    std::vector<AnnotationLine> annotationLines;
 
     YZoom yzoombg;
 
@@ -390,6 +398,17 @@ private:
     void DrawIntegral(wxDC* pDC);
     void CreateScale(wxDC* pDC);
     void UpdateDisplayPalette();
+    bool CanDraw() const;
+    void SyncDisplayTheme();
+    void ActivateViewAndFocusForPaint();
+    void InitializePlotIfNeeded();
+    void DrawPrimaryOverlays(wxDC& dc);
+    void DrawVisibleSecondaryChannels(wxDC& dc);
+    void DrawCurrentTrace(wxDC& dc);
+    void RestoreScalingAfterPrint(wxRect& windowRect);
+    double LogicalXFromPixel(int x) const;
+    void ActivateViewAndFocusForInput();
+    void RefreshCursorDialogIfVisible();
 
     // Function receives the x-coordinate of a point and returns
     // its formatted value according to the current Zoom settings

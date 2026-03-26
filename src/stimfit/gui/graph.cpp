@@ -96,13 +96,6 @@ EVT_PAINT( wxStfGraph::OnPaint )
 #endif
 END_EVENT_TABLE()
 
-struct AnnotationLine {
-    wxPoint start;
-    wxPoint end;
-};
-
-std::vector<AnnotationLine> annotationLines;
-
 // Define a constructor for my canvas
 wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, const wxSize& size, long style):
     wxScrolledWindow(frame, wxID_ANY, pos, size, style),pFrame(frame),
@@ -308,17 +301,17 @@ void wxStfGraph::ApplyTraceDisplayTheme(bool darkMode) {
     UpdateDisplayPalette();
 }
 
-// Defines the repainting behaviour
-void wxStfGraph::OnDraw( wxDC& DC )
-{
+bool wxStfGraph::CanDraw() const {
+    return view && !DocC()->get().empty() && DocC()->IsInitialized();
+}
 
-    if ( !view || Doc()->get().empty() || !Doc()->IsInitialized() )
-        return;
-
+void wxStfGraph::SyncDisplayTheme() {
     if (isDarkTheme != wxGetApp().get_isDarkTraceDisplay()) {
         ApplyTraceDisplayTheme(wxGetApp().get_isDarkTraceDisplay());
     }
+}
 
+void wxStfGraph::ActivateViewAndFocusForPaint() {
     // ugly hack to force active document update:
 #if defined(__WXGTK__) || defined(__WXMAC__)
     view->Activate(true);
@@ -329,109 +322,137 @@ void wxStfGraph::OnDraw( wxDC& DC )
 #endif
         SetFocus();
 #endif
-    wxRect WindowRect(GetRect());
+}
 
-    if (isPrinted) {
-        PrintScale(WindowRect);
-    }
-
+void wxStfGraph::InitializePlotIfNeeded() {
     if (firstPass) {
         firstPass = false;
         InitPlot();
     }
-    
-    //Creates scale bars and labelings for display or print out
-    //Calculate scale bars and labelings
-    CreateScale(&DC);
+}
 
-    //Create additional rulers/lines and circles on display
-    if (!no_gimmicks) 	{
-        PlotGimmicks(DC);
+void wxStfGraph::DrawPrimaryOverlays(wxDC& dc) {
+    // Creates scale bars and labelings for display or print out
+    CreateScale(&dc);
+
+    // Create additional rulers/lines and circles on display
+    if (!no_gimmicks) {
+        PlotGimmicks(dc);
     }
 
-    //Plot all selected traces and fitted functions if at least one trace ist selected
-    //and 'is selected' is selected in the trace navigator/control box
-    //Polyline() is used for printing to avoid separation of traces
-    //in postscript files
-    //LineTo()is used for display for performance reasons
-
-    //Plot fit curves (including current trace)
-    DrawFit(&DC);
+    DrawFit(&dc);
 
     if (!Doc()->GetSelectedSections().empty() && pFrame->ShowSelected()) {
-        PlotSelected(DC);
-    }	//End plot all selected traces
+        PlotSelected(dc);
+    }
 
-    //Plot average
     if (Doc()->GetIsAverage()) {
-        PlotAverage(DC);
-    }	//End plot average
+        PlotAverage(dc);
+    }
 
-
-    // Plot integral boundaries
     try {
         if (Doc()->GetCurrentSectionAttributes().isIntegrated) {
-            DrawIntegral(&DC);
+            DrawIntegral(&dc);
         }
     }
     catch (const std::out_of_range&) {
         /* Do nothing for now */
     }
 
-    //Zoom window is displayed (see OnLeftButtonUp())
     if (isZoomRect) {
-        DrawZoomRect(DC);
+        DrawZoomRect(dc);
     }
-    //End zoom
+}
 
-    //Plot of the second channel
-    //Trace one when displayed first time
+void wxStfGraph::DrawVisibleSecondaryChannels(wxDC& dc) {
+    // Plot of the second channel
     if ((Doc()->size()>1) && pFrame->ShowSecond()) {
         if (!isPrinted) {
-            //Draw current trace on display
-            //For display use point to point drawing
-            DC.SetPen(standardPen2);
-            PlotTrace(&DC,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(), reference);
-        } else {	//Draw second channel for print out
-            //For print out use polyline tool
-            DC.SetPen(standardPrintPen2);
-            PrintTrace(&DC,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(), reference);
-        }	// End display or print out
-    }		//End plot of the second channel
+            dc.SetPen(standardPen2);
+            PlotTrace(&dc,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(), reference);
+        } else {
+            dc.SetPen(standardPrintPen2);
+            PrintTrace(&dc,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(), reference);
+        }
+    }
 
     if ((Doc()->size()>1) && pFrame->ShowAll()) {
         for (std::size_t n=0; n < Doc()->size(); ++n) {
             if (!isPrinted) {
-                //Draw current trace on display
-                //For display use point to point drawing
-                DC.SetPen(standardPen3);
-                PlotTrace(&DC,Doc()->get()[n][Doc()->GetCurSecIndex()].get(), background, n);
+                dc.SetPen(standardPen3);
+                PlotTrace(&dc,Doc()->get()[n][Doc()->GetCurSecIndex()].get(), background, n);
             }
         }
-    }		//End plot of the second channel
-    
-    //Standard plot of the current trace
-    //Trace one when displayed first time
-    if (!isPrinted) {
-	//Draw current trace on display
-        //For display use point to point drawing
-        DC.SetPen(standardPen);
-        PlotTrace(&DC,Doc()->get()[Doc()->GetCurChIndex()][Doc()->GetCurSecIndex()].get());
-    } else {
-        //For print out use polyline tool
-        DC.SetPen(standardPrintPen);
-        PrintTrace(&DC,Doc()->get()[Doc()->GetCurChIndex()][Doc()->GetCurSecIndex()].get());
-    }	// End display or print out
-    //End plot of the current trace
+    }
+}
 
-    //Ensure old scaling after print out
-    if(isPrinted) {
-        for (std::size_t n=0; n < Doc()->size(); ++n) {
-            Doc()->GetYZoomW(n) = Doc()->GetYZoomW(n) * (1.0/printScale);
+void wxStfGraph::DrawCurrentTrace(wxDC& dc) {
+    if (!isPrinted) {
+        dc.SetPen(standardPen);
+        PlotTrace(&dc,Doc()->get()[Doc()->GetCurChIndex()][Doc()->GetCurSecIndex()].get());
+    } else {
+        dc.SetPen(standardPrintPen);
+        PrintTrace(&dc,Doc()->get()[Doc()->GetCurChIndex()][Doc()->GetCurSecIndex()].get());
+    }
+}
+
+void wxStfGraph::RestoreScalingAfterPrint(wxRect& windowRect) {
+    if (!isPrinted) {
+        return;
+    }
+
+    for (std::size_t n=0; n < Doc()->size(); ++n) {
+        Doc()->GetYZoomW(n) = Doc()->GetYZoomW(n) * (1.0/printScale);
+    }
+    Doc()->GetXZoomW() = Doc()->GetXZoomW() * (1.0/printScale);
+    windowRect = printRect;
+}
+
+double wxStfGraph::LogicalXFromPixel(int x) const {
+    return (static_cast<double>(x) - static_cast<double>(SPX())) / XZ();
+}
+
+void wxStfGraph::ActivateViewAndFocusForInput() {
+    view->Activate(true);
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
+    if (!HasFocus())
+#else
+    if (wxWindow::FindFocus()!=(wxWindow*)this)
+#endif
+        SetFocusIgnoringChildren();
+}
+
+void wxStfGraph::RefreshCursorDialogIfVisible() {
+    if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
+        try {
+            wxGetApp().GetCursorsDialog()->UpdateCursors();
         }
-        Doc()->GetXZoomW() = Doc()->GetXZoomW() * (1.0/printScale);
-        WindowRect=printRect;
-    }	//End ensure old scaling after print out
+        catch (const std::runtime_error& e) {
+            wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal) );
+        }
+    }
+}
+
+// Defines the repainting behaviour
+void wxStfGraph::OnDraw( wxDC& DC )
+{
+    if (!CanDraw()) {
+        return;
+    }
+
+    SyncDisplayTheme();
+    ActivateViewAndFocusForPaint();
+    wxRect WindowRect(GetRect());
+
+    if (isPrinted) {
+        PrintScale(WindowRect);
+    }
+
+    InitializePlotIfNeeded();
+    DrawPrimaryOverlays(DC);
+    DrawVisibleSecondaryChannels(DC);
+    DrawCurrentTrace(DC);
+    RestoreScalingAfterPrint(WindowRect);
 
     view->OnDraw(& DC);
 }
@@ -1347,13 +1368,7 @@ void wxStfGraph::OnEventCheckBox(wxCommandEvent& event) {
 void wxStfGraph::LButtonDown(wxMouseEvent& event) {
     // event.Skip();
     if (!view) return;
-    view->Activate(true);
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-    if (!HasFocus())
-#else
-    if (wxWindow::FindFocus()!=(wxWindow*)this)
-#endif
-        SetFocusIgnoringChildren();
+    ActivateViewAndFocusForInput();
 
     wxClientDC dc(this);
     PrepareDC(dc);
@@ -1363,18 +1378,18 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
     //in the (trace navigator) control box
     case stf::measure_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetMeasCursor( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
+        Doc()->SetMeasCursor( stf::round(LogicalXFromPixel(lastLDown.x)) );
         // in this case, update results string without waiting for "Return":
         pFrame->UpdateResults();
         break;
     case stf::peak_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetPeakBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
+        Doc()->SetPeakBeg( stf::round(LogicalXFromPixel(lastLDown.x)) );
         //Set x-value as lower limit of the peak calculation dialog box
         break;
     case stf::base_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetBaseBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
+        Doc()->SetBaseBeg( stf::round(LogicalXFromPixel(lastLDown.x)) );
         break;
     case stf::decay_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
@@ -1384,7 +1399,7 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
             );
             break;
         }
-        Doc()->SetFitBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
+        Doc()->SetFitBeg( stf::round(LogicalXFromPixel(lastLDown.x)) );
         break;
     case stf::latency_cursor:
         if (Doc()->GetLatencyStartMode() != stf::manualMode) {
@@ -1393,7 +1408,7 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
                     wxT("The first latency cursor is set to manual mode")
             );
         }
-        Doc()->SetLatencyBeg(((double)lastLDown.x-(double)SPX())/XZ());
+        Doc()->SetLatencyBeg(LogicalXFromPixel(lastLDown.x));
         Refresh();
         break;
     case stf::zoom_cursor:
@@ -1405,32 +1420,19 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
     case stf::pslope_cursor:
         Doc()->SetPSlopeBegMode(stf::psBeg_manualMode); // set left cursor to manual
         // conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetPSlopeBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); // second 'double' added
+        Doc()->SetPSlopeBeg( stf::round(LogicalXFromPixel(lastLDown.x)) );
         break;
 #endif
     default: break;
     }	//End switch TraceNav->GetMouseQual()
-    if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
-        try {
-            wxGetApp().GetCursorsDialog()->UpdateCursors();
-        }
-        catch (const std::runtime_error& e) {
-            wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal) );
-        }
-    }
+    RefreshCursorDialogIfVisible();
 }
 
 void wxStfGraph::RButtonDown(wxMouseEvent& event) {
     // event.Skip();
 
     if (!view) return;
-    view->Activate(true);
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-    if (!HasFocus())
-#else
-    if (wxWindow::FindFocus()!=(wxWindow*)this)
-#endif
-        SetFocusIgnoringChildren();
+    ActivateViewAndFocusForInput();
 
     wxClientDC dc(this);
     PrepareDC(dc);
@@ -1438,15 +1440,15 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
     switch (ParentFrame()->GetMouseQual()) {
     case stf::peak_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetPeakEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetPeakEnd( stf::round(LogicalXFromPixel(point.x)) );
         break;
     case stf::base_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetBaseEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetBaseEnd( stf::round(LogicalXFromPixel(point.x)) );
         break;
     case stf::decay_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetFitEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetFitEnd( stf::round(LogicalXFromPixel(point.x)) );
         break;
     case stf::latency_cursor:
         if (Doc()->GetLatencyEndMode() != stf::manualMode) {
@@ -1455,7 +1457,7 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
                 wxT("The second latency cursor is set to manual mode")
             );
         }
-        Doc()->SetLatencyEnd(((double)point.x-(double)SPX())/XZ());
+        Doc()->SetLatencyEnd(LogicalXFromPixel(point.x));
         Refresh();
         break;
     case stf::zoom_cursor:
@@ -1469,7 +1471,7 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
         try {
             if (!Doc()->GetCurrentSectionAttributes().eventList.empty()) {
             // store the position that has been clicked:
-            eventPos = stf::round( ((double)point.x - (double)SPX())/XZ() );
+            eventPos = stf::round(LogicalXFromPixel(point.x));
             PopupMenu(m_eventContext.get());
             } else {
                 wxGetApp().ErrorMsg(wxT("No events have been detected yet"));
@@ -1480,7 +1482,7 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
         break;
     case stf::annotation_cursor:
         try{
-            eventPos = stf::round( ((double)point.x - (double)SPX())/XZ() );
+            eventPos = stf::round(LogicalXFromPixel(point.x));
             PopupMenu(m_annotationContext.get());
         }catch(const std::out_of_range&){
 
@@ -1489,19 +1491,12 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
 #ifdef WITH_PSLOPE
     case stf::pslope_cursor:
         Doc()->SetPSlopeEndMode(stf::psEnd_manualMode); // set right cursor to manual mode
-        Doc()->SetPSlopeEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetPSlopeEnd( stf::round(LogicalXFromPixel(point.x)) );
         break;
 #endif
     default: ;
     }	//End switch TraceNav->GetMouseQual()
-    if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
-        try {
-            wxGetApp().GetCursorsDialog()->UpdateCursors();
-        }
-        catch (const std::runtime_error& e) {
-            wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal) );
-        }
-    }
+    RefreshCursorDialogIfVisible();
     Refresh();
 }
 
@@ -1517,20 +1512,20 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
     switch (ParentFrame()->GetMouseQual()) {
     case stf::peak_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetPeakEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetPeakEnd( stf::round(LogicalXFromPixel(point.x)) );
         break;
     case stf::base_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetBaseEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetBaseEnd( stf::round(LogicalXFromPixel(point.x)) );
         break;
     case stf::decay_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetFitEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetFitEnd( stf::round(LogicalXFromPixel(point.x)) );
         break;
 #ifdef WITH_PSLOPE
     case stf::pslope_cursor:
         // conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetPSlopeEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetPSlopeEnd( stf::round(LogicalXFromPixel(point.x)) );
 #endif
     case stf::latency_cursor:
         if (Doc()->GetLatencyEndMode() != stf::manualMode) {
@@ -1540,7 +1535,7 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
             );
             break;
         }
-        Doc()->SetLatencyEnd(((double)point.x-(double)SPX())/XZ());
+        Doc()->SetLatencyEnd(LogicalXFromPixel(point.x));
         break;
     case stf::zoom_cursor:
         ulz_x=(double)point.x;
@@ -2046,11 +2041,9 @@ void wxStfGraph::CreateScale(wxDC* pDC)
             double y2First=nextTickMult2*yScaled2;
             int y2FirstTick=yFormat2(y2First);
             // How many times does the y-scale bar fit into the window?
-            int y2ScaleInWindow = 1;
+            int y2ScaleInWindow = 0;
             if (barLengthY2 > 0) {
                 y2ScaleInWindow = (y2FirstTick-topDist)/barLengthY2;
-            } else {
-                y2ScaleInWindow = (y2FirstTick-topDist)/1e-15;
             }
             // y-Axis ticks:
             for (int n_tick_y=0;n_tick_y<=y2ScaleInWindow;++n_tick_y) {
