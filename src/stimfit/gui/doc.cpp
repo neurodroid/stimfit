@@ -381,7 +381,7 @@ void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const w
     }
 
     wxStfParentFrame* pFrame = wxGetApp().GetMainFrame();
-    if (pFrame == NULL) {
+    if (pFrame == nullptr) {
         throw std::runtime_error("pFrame is 0 in wxStfDoc::SetData");
     }
     pFrame->SetSingleChannel( size() <= 1 );
@@ -554,7 +554,7 @@ int wxStfDoc::InitCursors() {
 
 void wxStfDoc::PostInit() {
     wxStfChildFrame *pFrame = (wxStfChildFrame*)GetDocumentWindow();
-    if ( pFrame == NULL ) {
+    if ( pFrame == nullptr ) {
         wxGetApp().ErrorMsg( wxT("Zero pointer in wxStfDoc::PostInit") );
         return;
     }
@@ -632,9 +632,9 @@ void wxStfDoc::PostInit() {
         parentFrame->SetFocus();
     }
     wxStfView* pView=(wxStfView*)GetFirstView();
-    if (pView != NULL) {
+    if (pView != nullptr) {
         wxStfGraph* pGraph = pView->GetGraph();
-        if (pGraph != NULL) {
+        if (pGraph != nullptr) {
             pGraph->Refresh();
             pGraph->Enable();
             // Set the focus:
@@ -925,7 +925,7 @@ void wxStfDoc::OnSwapChannels(wxCommandEvent& WXUNUSED(event)) {
     if ( size() > 1) {
         // Update combo boxes:
         wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
-        if ( pFrame == NULL ) {
+        if ( pFrame == nullptr ) {
             wxGetApp().ErrorMsg( wxT("Frame is zero in wxStfDoc::SwapChannels"));
             return;
         }
@@ -1956,7 +1956,7 @@ void wxStfDoc::Focus() {
 
     // refresh the view once we are through:
     wxStfView* pView=(wxStfView*)GetFirstView();
-    if (pView != NULL && pView->GetGraph() != NULL) {
+    if (pView != nullptr && pView->GetGraph() != nullptr) {
         pView->GetGraph()->Enable();
         pView->GetGraph()->SetFocus();
     }
@@ -2462,7 +2462,7 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             wxGetApp().ErrorMsg(wxT("No events were found that match the selected polarity."));
         }
 
-        if (pGraph != NULL) {
+        if (pGraph != nullptr) {
             pGraph->Refresh();
         }
     }
@@ -2531,9 +2531,9 @@ void wxStfDoc::Extract( wxCommandEvent& WXUNUSED(event) ) {
 
             wxStfDoc* pDoc=wxGetApp().NewChild( Minis, this,
                     GetTitle()+wxT(", extracted events") );
-            if (pDoc != NULL) {
+            if (pDoc != nullptr) {
                 wxStfChildFrame* pChild=(wxStfChildFrame*)pDoc->GetDocumentWindow();
-                if (pChild!=NULL) {
+                if (pChild != nullptr) {
                     pChild->ShowTable(events,wxT("Extracted events"));
                 }
             }
@@ -3713,9 +3713,9 @@ void wxStfDoc::SetIsIntegrated(std::size_t nchannel, std::size_t nsection, bool 
 
 void wxStfDoc::ClearEvents(std::size_t nchannel, std::size_t nsection) {
     wxStfView* pView=(wxStfView*)GetFirstView();
-    if (pView!=NULL) {
+    if (pView != nullptr) {
         wxStfGraph* pGraph = pView->GetGraph();
-        if (pGraph != NULL) {
+        if (pGraph != nullptr) {
             pGraph->ClearEvents();
         }
     }
