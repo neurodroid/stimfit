@@ -1792,11 +1792,9 @@ void wxStfGraph::CreateScale(wxDC* pDC)
     if (fabs(YZ())>1e15)
         YZW()=1.0;
 
-    if (!isPrinted) {
-        wxFont font((int)(8*printScale), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL,
-                    wxFONTWEIGHT_NORMAL);
-        pDC->SetFont(font);
-    }
+    // Use the DC/window default font for on-screen rendering so label text
+    // follows OS/UI scaling (HiDPI and accessibility settings).
+    // Printing keeps its existing geometry and pen scaling behavior.
 
     //Copy main window coordinates to 'WindowRect'
     wxRect WindowRect(GetRect());
