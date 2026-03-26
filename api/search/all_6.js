@@ -175,7 +175,7 @@ var searchData=
   ['finstrumentscalefactor_172',['finstrumentscalefactor',['../d7/d12/structABFFileHeader.html#a09524d213d6f0feec28abf61875031ba',1,'ABFFileHeader::fInstrumentScaleFactor'],['../dd/d6a/structABF2FileHeader.html#a2df7c6b813ed5aa37890c623d14beac6',1,'ABF2FileHeader::fInstrumentScaleFactor'],['../dc/d35/structABF__ADCInfo.html#ac4550a60c27cb35debe0e018c902b9f9',1,'ABF_ADCInfo::fInstrumentScaleFactor']]],
   ['fir_173',['fIR',['../dd/d60/Son_8h.html#af32391471108ff91c59953c31139f74c',1,'Son.h']]],
   ['firstelement_174',['firstElement',['../d7/d0b/cfs_8h.html#a9180dbda2c37bdc44b8dac2013230f26',1,'cfs.h']]],
-  ['firstistime_175',['firstistime',['../d7/d1a/group__wxstf.html#ga8d2a9c91c060ffc492ae1b8fee777551',1,'wxStfTextImportDlg::FirstIsTime()'],['../d6/dfb/group__stfio.html#ga50f5cdd5b7d5767c52bc0816d7861fdc',1,'stfio::txtImportSettings::firstIsTime']]],
+  ['firstistime_175',['firstistime',['../d6/dfb/group__stfio.html#ga50f5cdd5b7d5767c52bc0816d7861fdc',1,'stfio::txtImportSettings::firstIsTime'],['../d7/d1a/group__wxstf.html#ga8d2a9c91c060ffc492ae1b8fee777551',1,'wxStfTextImportDlg::FirstIsTime()']]],
   ['firstpoint_176',['firstPoint',['../da/d25/structDigitizedFirstColumnHeader.html#af07e3e385ee00593a05e0e4986f11079',1,'DigitizedFirstColumnHeader']]],
   ['firstvalue_177',['firstValue',['../d9/d92/structSeriesArray.html#a58ee79a58e7379b12d1780ed6e331a7c',1,'SeriesArray']]],
   ['fit_2eh_178',['fit.h',['../d5/d71/fit_8h.html',1,'']]],
