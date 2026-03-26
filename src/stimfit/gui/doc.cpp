@@ -58,7 +58,6 @@
 #include "./usrdlg/usrdlg.h"
 #include "./doc.h"
 #include "./graph.h"
-#include "doc.h"
 
 IMPLEMENT_DYNAMIC_CLASS(wxStfDoc, wxDocument)
 
@@ -222,6 +221,85 @@ bool wxStfDoc::OnOpenPyDocument(const wxString& filename) {
 }
 
 bool wxStfDoc::OnOpenDocument(const wxString& filename) {
+    const auto importFromFileType = [&](stfio::filetype type) -> bool {
+        if (type == stfio::tdms) {
+#ifdef WITH_PYTHON
+            if (!LoadTDMS(stf::wx2std(filename), *this)) {
+                wxGetApp().ExceptMsg(wxT("Error opening file\n"));
+                get().clear();
+                return false;
+            }
+#else
+            wxGetApp().ExceptMsg(wxT("Error opening file - TDMS requires python \n"));
+            get().clear();
+            return false;
+#endif
+            return true;
+        }
+
+        try {
+            if (progress) {
+                stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
+                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+            } else {
+                stfio::StdoutProgressInfo progDlg("Reading file", "Opening file", 100, true);
+                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+            }
+        }
+        catch (const std::exception& e) {
+            wxString errorMsg(wxT("Error opening file\n"));
+            errorMsg += wxString(e.what(), wxConvLocal);
+            wxGetApp().ExceptMsg(errorMsg);
+            get().clear();
+            return false;
+        }
+        catch (...) {
+            wxGetApp().ExceptMsg(wxT("Error opening file\n"));
+            get().clear();
+            return false;
+        }
+
+        return true;
+    };
+
+    const auto hasNonEmptyData = [&]() -> bool {
+        return !get().empty() && !get()[0].get().empty() && !get()[0][0].get().empty();
+    };
+
+    const auto initializePostOpenState = [&]() -> bool {
+        wxStfParentFrame* pFrame = wxGetApp().GetMainFrame();
+        if (pFrame == nullptr) {
+            throw std::runtime_error("pFrame is 0 in wxStfDoc::OnOpenDocument");
+        }
+
+        pFrame->SetSingleChannel( size() <= 1 );
+
+        if (InitCursors()!=wxID_OK) {
+            get().clear();
+            wxGetApp().ErrorMsg(wxT( "Couldn't initialize cursors\n" ));
+            return false;
+        }
+
+        if (get().size()>1) {
+            try {
+                if (!ChannelSelDlg()) {
+                    wxGetApp().ErrorMsg(wxT( "File is probably empty\n" ));
+                    get().clear();
+                    return false;
+                }
+            }
+            catch (const std::out_of_range& e) {
+                wxString msg(wxT( "Channel could not be selected:" ));
+                msg += wxString( e.what(), wxConvLocal );
+                wxGetApp().ExceptMsg(msg);
+                get().clear();
+                return false;
+            }
+        }
+
+        return true;
+    };
+
     // Check whether the file exists:
     if ( !wxFileName::FileExists( filename ) ) {
         wxString msg;
@@ -229,11 +307,10 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
         wxGetApp().ErrorMsg( msg );
         return false;
     }
-    // Store directory: 
+    // Store directory:
     wxFileName wxfFilename( filename );
     wxGetApp().wxWriteProfileString( wxT("Settings"), wxT("Last directory"), wxfFilename.GetPath() );
     if (wxDocument::OnOpenDocument(filename)) { //calls base class function
-
         wxString filter(wxT("*.") + wxfFilename.GetExt());
         stfio::filetype type = stfio::findType(stf::wx2std(filter));
 
@@ -251,92 +328,18 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
             }
         }
 #endif
-        if (type == stfio::tdms) {
-#ifdef WITH_PYTHON
-            if (!LoadTDMS(stf::wx2std(filename), *this)) {
-                wxString errorMsg(wxT("Error opening file\n"));
-#else
-            {
-                wxString errorMsg(wxT("Error opening file - TDMS requires python \n"));
-#endif
-                wxGetApp().ExceptMsg(errorMsg);
-                get().clear();
-                return false;
-            }
-        } else {
-            try {
-                if (progress) {
-                    stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
-                    stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
-                } else {
-                    stfio::StdoutProgressInfo progDlg("Reading file", "Opening file", 100, true);
-                    stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
-                }
-            }
-            catch (const std::runtime_error& e) {
-                wxString errorMsg(wxT("Error opening file\n"));
-                errorMsg += wxString( e.what(),wxConvLocal );
-                wxGetApp().ExceptMsg(errorMsg);
-                get().clear();
-                return false;
-            }
-            catch (const std::exception& e) {
-                wxString errorMsg(wxT("Error opening file\n"));
-                errorMsg += wxString( e.what(), wxConvLocal );
-                wxGetApp().ExceptMsg(errorMsg);
-                get().clear();
-                return false;
-            }
-            catch (...) {
-                wxString errorMsg(wxT("Error opening file\n"));
-                wxGetApp().ExceptMsg(errorMsg);
-                get().clear();
-                return false;
-            }
-        }
-        if (get().empty()) {
-            wxGetApp().ErrorMsg(wxT("File is probably empty\n"));
-            get().clear();
+        if (!importFromFileType(type)) {
             return false;
         }
-        if (get()[0].get().empty()) {
-            wxGetApp().ErrorMsg(wxT("File is probably empty\n"));
-            get().clear();
-            return false;
-        }
-        if (get()[0][0].get().empty()) {
-            wxGetApp().ErrorMsg(wxT("File is probably empty\n"));
-            get().clear();
-            return false;
-        }
-        wxStfParentFrame* pFrame = wxGetApp().GetMainFrame();
-        if (pFrame == NULL) {
-            throw std::runtime_error("pFrame is 0 in wxStfDoc::OnOpenDocument");
-        }
-        
-        pFrame->SetSingleChannel( size() <= 1 );
 
-        if (InitCursors()!=wxID_OK) {
+        if (!hasNonEmptyData()) {
+            wxGetApp().ErrorMsg(wxT("File is probably empty\n"));
             get().clear();
-            wxGetApp().ErrorMsg(wxT( "Couldn't initialize cursors\n" ));
             return false;
         }
-        //Select active channel to be displayed
-        if (get().size()>1) {
-            try {
-                if (ChannelSelDlg() != true) {
-                    wxGetApp().ErrorMsg(wxT( "File is probably empty\n" ));
-                    get().clear();
-                    return false;
-                }
-            }
-            catch (const std::out_of_range& e) {
-                wxString msg(wxT( "Channel could not be selected:" ));
-                msg += wxString( e.what(), wxConvLocal );
-                wxGetApp().ExceptMsg(msg);
-                get().clear();
-                return false;
-            }
+
+        if (!initializePostOpenState()) {
+            return false;
         }
     } else {
         wxGetApp().ErrorMsg(wxT( "Failure in wxDocument::OnOpenDocument\n" ));
