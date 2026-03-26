@@ -3422,209 +3422,213 @@ stfnum::Table wxStfDoc::CurAsTable() const {
 }
 
 stfnum::Table wxStfDoc::CurResultsTable() {
-    // resize table:
-    std::size_t n_cols=0;
-    if (viewCrosshair) n_cols++;
-    if (viewBaseline) n_cols++;
-    if (viewBaseSD) n_cols++;
-    if (viewThreshold) n_cols++;
-    if (viewPeakzero) n_cols++;
-    if (viewPeakbase) n_cols++;
-    if (viewPeakthreshold) n_cols++;
-    if (viewRTLoHi) n_cols++;
-    if (viewInnerRiseTime) n_cols++;
-    if (viewOuterRiseTime) n_cols++;
-    if (viewT50) n_cols++;
-    if (viewRD) n_cols++;
-    if (viewSloperise) n_cols++;
-    if (viewSlopedecay) n_cols++;
-    if (viewLatency) n_cols++;
+    struct ResultColumnSpec {
+        bool enabled;
+        std::string label;
+        std::function<double()> value;
+        std::function<void(stfnum::Table&, int)> fillCursorRows;
+    };
+
+    const bool useMedian = GetBaselineMethod() != stfnum::mean_sd;
+    const bool withCursors = viewCursors;
+    std::vector<ResultColumnSpec> specs;
+    specs.reserve(16);
+
+    auto addSpec = [&](bool enabled,
+                       const std::string& label,
+                       const std::function<double()>& value,
+                       const std::function<void(stfnum::Table&, int)>& fillCursorRows) {
+        specs.push_back(ResultColumnSpec{enabled, label, value, fillCursorRows});
+    };
+
+    addSpec(viewCrosshair, "Crosshair",
+            [this]() { return GetMeasValue(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetMeasCursor() * GetXScale();
+                table.SetEmpty(2, nCol, true);
+            });
+
+    addSpec(viewBaseline, std::string("Baseline ") + (useMedian ? "Median" : "Mean"),
+            [this]() { return GetBase(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetBaseBeg() * GetXScale();
+                table.at(2, nCol) = GetBaseEnd() * GetXScale();
+            });
+
+    addSpec(viewBaseSD, std::string("Base ") + (useMedian ? "IQR" : "SD"),
+            [this]() { return GetBaseSD(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetBaseBeg() * GetXScale();
+                table.at(2, nCol) = GetBaseEnd() * GetXScale();
+            });
+
+    addSpec(viewThreshold, "Threshold",
+            [this]() { return GetThreshold(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetPeakBeg() * GetXScale();
+                table.at(2, nCol) = GetPeakEnd() * GetXScale();
+            });
+
+    addSpec(viewPeakzero, "Peak (from 0)",
+            [this]() { return GetPeak(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetPeakBeg() * GetXScale();
+                table.at(2, nCol) = GetPeakEnd() * GetXScale();
+            });
+
+    addSpec(viewPeakbase, "Peak (from base)",
+            [this]() { return GetPeak() - GetBase(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetPeakBeg() * GetXScale();
+                table.at(2, nCol) = GetPeakEnd() * GetXScale();
+            });
+
+    addSpec(viewPeakthreshold, "Peak (from threshold)",
+            [this]() { return (thrT >= 0) ? (GetPeak() - GetThreshold()) : 0.0; },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetPeakBeg() * GetXScale();
+                table.at(2, nCol) = GetPeakEnd() * GetXScale();
+            });
+
+    addSpec(viewRTLoHi, "RT (Lo-Hi%)",
+            [this]() { return GetRTLoHi(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetTLoReal() * GetXScale();
+                table.at(2, nCol) = GetTHiReal() * GetXScale();
+            });
+
+    addSpec(viewInnerRiseTime, "inner rise time",
+            [this]() { return GetInnerRiseTime(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetInnerLoRT();
+                table.at(2, nCol) = GetInnerHiRT();
+            });
+
+    addSpec(viewOuterRiseTime, "outer rise time",
+            [this]() { return GetOuterRiseTime(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetOuterLoRT();
+                table.at(2, nCol) = GetOuterHiRT();
+            });
+
+    addSpec(viewT50, "t50",
+            [this]() { return GetHalfDuration(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetT50LeftReal() * GetXScale();
+                table.at(2, nCol) = GetT50RightReal() * GetXScale();
+            });
+
+    addSpec(viewRD, "Rise/Decay",
+            [this]() { return GetSlopeRatio(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetMaxRiseT() * GetXScale();
+                table.at(2, nCol) = GetMaxDecayT() * GetXScale();
+            });
+
+    addSpec(viewSloperise, "Max slope (rise)",
+            [this]() { return GetMaxRise(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetMaxRiseT() * GetXScale();
+                table.SetEmpty(2, nCol, true);
+            });
+
+    addSpec(viewSlopedecay, "Max slope (decay)",
+            [this]() { return GetMaxDecay(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetMaxDecayT() * GetXScale();
+                table.SetEmpty(2, nCol, true);
+            });
+
+    addSpec(viewLatency, "Latency",
+            [this]() { return GetLatency() * GetXScale(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetLatencyBeg() * GetXScale();
+                table.at(2, nCol) = GetLatencyEnd() * GetXScale();
+            });
+
 #ifdef WITH_PSLOPE
-    if (viewPSlope) n_cols++;
-#endif
+    addSpec(viewPSlope, "PSlope",
+            [this]() { return GetPSlope(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetPSlopeBeg() * GetXScale();
+                table.at(2, nCol) = GetPSlopeEnd() * GetXScale();
+            });
+#endif // WITH_PSLOPE
 
-    std::size_t n_rows=(viewCursors? 3:1);
-    stfnum::Table table(n_rows,n_cols);
+    std::size_t nCols = 0;
+    for (std::size_t i = 0; i < specs.size(); ++i) {
+        if (specs[i].enabled) {
+            ++nCols;
+        }
+    }
 
-    // Labels
+    const std::size_t nRows = withCursors ? 3 : 1;
+    stfnum::Table table(nRows, nCols);
     table.SetRowLabel(0, "Value");
-    if (viewCursors) {
+    if (withCursors) {
         table.SetRowLabel(1, "Cursor 1");
         table.SetRowLabel(2, "Cursor 2");
     }
-    int nCol=0;
-    if (viewCrosshair) table.SetColLabel(nCol++, "Crosshair");
-    if (viewBaseline) table.SetColLabel(nCol++, std::string("Baseline ") + (GetBaselineMethod() ? "Median" : "Mean") );
-    if (viewBaseSD) table.SetColLabel(nCol++, std::string("Base ") + (GetBaselineMethod() ? "IQR" : "SD"));
-    if (viewThreshold) table.SetColLabel(nCol++,"Threshold");
-    if (viewPeakzero) table.SetColLabel(nCol++,"Peak (from 0)");
-    if (viewPeakbase) table.SetColLabel(nCol++,"Peak (from base)");
-    if (viewPeakthreshold) table.SetColLabel(nCol++,"Peak (from threshold)");
-    if (viewRTLoHi) table.SetColLabel(nCol++,"RT (Lo-Hi%)");
-    if (viewInnerRiseTime) table.SetColLabel(nCol++,"inner rise time");
-    if (viewOuterRiseTime) table.SetColLabel(nCol++,"outer rise time");
-    if (viewT50) table.SetColLabel(nCol++,"t50");
-    if (viewRD) table.SetColLabel(nCol++,"Rise/Decay");
-    if (viewSloperise) table.SetColLabel(nCol++,"Max slope (rise)");
-    if (viewSlopedecay) table.SetColLabel(nCol++,"Max slope (decay)");
-    if (viewLatency) table.SetColLabel(nCol++,"Latency");
-#ifdef WITH_PSLOPE
-    if (viewPSlope) table.SetColLabel(nCol++,"PSlope");
-#endif
 
-    // Values
-    nCol=0;
-    // measurement cursor
-    if (viewCrosshair) {
-        table.at(0,nCol)=GetMeasValue();
-        if (viewCursors) {
-            table.at(1,nCol)=GetMeasCursor()*GetXScale();
-            table.SetEmpty(2,nCol,true);
+    int nCol = 0;
+    for (std::size_t i = 0; i < specs.size(); ++i) {
+        if (!specs[i].enabled) {
+            continue;
         }
-        nCol++;
+        table.SetColLabel(nCol, specs[i].label);
+        table.at(0, nCol) = specs[i].value();
+        specs[i].fillCursorRows(table, nCol);
+        ++nCol;
     }
 
-    // baseline
-    if (viewBaseline) {
-        table.at(0,nCol)=GetBase();
-        if (viewCursors) {
-            table.at(1,nCol)=GetBaseBeg()*GetXScale();
-            table.at(2,nCol)=GetBaseEnd()*GetXScale();
-        }
-        nCol++;
-    }
-
-    // base SD
-    if (viewBaseSD) {
-        table.at(0,nCol)=GetBaseSD();
-        if (viewCursors) {
-            table.at(1,nCol)=GetBaseBeg()*GetXScale();
-            table.at(2,nCol)=GetBaseEnd()*GetXScale();
-        }
-        nCol++;
-    }
-
-    // threshold
-    if (viewThreshold) {
-        table.at(0,nCol)=GetThreshold();
-        if (viewCursors) {
-            table.at(1,nCol)=GetPeakBeg()*GetXScale();
-            table.at(2,nCol)=GetPeakEnd()*GetXScale();
-        }
-        nCol++;
-    }
-    
-    // peak
-    if (viewPeakzero) {
-        table.at(0,nCol)=GetPeak();
-        if (viewCursors) {
-            table.at(1,nCol)=GetPeakBeg()*GetXScale();
-            table.at(2,nCol)=GetPeakEnd()*GetXScale();
-        }
-        nCol++;
-    }
-
-    if (viewPeakbase) {
-        table.at(0,nCol)=GetPeak()-GetBase();
-        if (viewCursors) {
-            table.at(1,nCol)=GetPeakBeg()*GetXScale();
-            table.at(2,nCol)=GetPeakEnd()*GetXScale();
-        }
-        nCol++;
-    }
-    if (viewPeakthreshold) {
-        if (thrT >= 0) {
-            table.at(0,nCol) = GetPeak()-GetThreshold();
-        } else {
-            table.at(0,nCol) = 0;
-        }
-        if (viewCursors) {
-            table.at(1,nCol)=GetPeakBeg()*GetXScale();
-            table.at(2,nCol)=GetPeakEnd()*GetXScale();
-        }
-        nCol++;
-    }
-
-    // RT (Lo-Hi%)
-    if (viewRTLoHi) {table.at(0,nCol)=GetRTLoHi();
-        if (viewCursors) {
-            table.at(1,nCol)=GetTLoReal()*GetXScale();
-            table.at(2,nCol)=GetTHiReal()*GetXScale();
-        }
-        nCol++;
-    }
-
-    if (viewInnerRiseTime) { table.at(0,nCol)=GetInnerRiseTime();
-        if (viewCursors) {
-            table.at(1,nCol)=GetInnerLoRT();
-            table.at(2,nCol)=GetInnerHiRT();
-        }
-        nCol++;
-    }
-
-    if (viewOuterRiseTime) { table.at(0,nCol)=GetOuterRiseTime();
-        if (viewCursors) {
-            table.at(1,nCol)=GetOuterLoRT();
-            table.at(2,nCol)=GetOuterHiRT();
-        }
-        nCol++;
-    }
-
-    // Half duration
-    if (viewT50) {table.at(0,nCol)=GetHalfDuration();
-        if (viewCursors) {
-            table.at(1,nCol)=GetT50LeftReal()*GetXScale();
-            table.at(2,nCol)=GetT50RightReal()*GetXScale();
-        }
-        nCol++;
-    }
-
-    // Rise/decay
-    if (viewRD) {table.at(0,nCol)=GetSlopeRatio();
-        if (viewCursors) {
-            table.at(1,nCol)=GetMaxRiseT()*GetXScale();
-            table.at(2,nCol)=GetMaxDecayT()*GetXScale();
-        }
-        nCol++;
-    }
-
-    // Max rise
-    if (viewSloperise) {table.at(0,nCol)=GetMaxRise();
-        if (viewCursors) {
-            table.at(1,nCol)=GetMaxRiseT()*GetXScale();
-            table.SetEmpty(2,nCol,true);
-        }
-        nCol++;
-    }
-
-    // Max decay
-    if (viewSlopedecay) {table.at(0,nCol)=GetMaxDecay();
-        if (viewCursors) {
-            table.at(1,nCol)=GetMaxDecayT()*GetXScale();
-            table.SetEmpty(2,nCol,true);
-        }
-        nCol++;
-    }
-
-    // Latency
-    if (viewLatency) {table.at(0,nCol)=GetLatency()*GetXScale();
-        if (viewCursors) {
-            table.at(1,nCol)=GetLatencyBeg()*GetXScale();
-            table.at(2,nCol)=GetLatencyEnd()*GetXScale();
-        }
-        nCol++;
-    }
-
-#ifdef WITH_PSLOPE
-    // PSlope
-    if (viewPSlope) {table.at(0,nCol)=GetPSlope();
-        if (viewCursors) {
-            table.at(1,nCol)=GetPSlopeBeg()*GetXScale();
-            table.at(2,nCol)=GetPSlopeEnd()*GetXScale();
-        }
-        nCol++;
-    }
-#endif // WITH_PSLOPE
     return table;
 }
 
