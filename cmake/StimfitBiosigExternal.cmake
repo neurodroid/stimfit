@@ -13,6 +13,7 @@ function(stf_configure_windows_patched_biosig)
 
   set(_stf_biosig_source_dir "${CMAKE_SOURCE_DIR}/src/biosig")
   set(_stf_biosig_patch_dir "${CMAKE_SOURCE_DIR}/cmake/patches/biosig-msvc")
+  set(STF_BIOSIG_EXPECTED_TAG "v3.9.3" CACHE STRING "Expected biosig tag for Windows patched-submodule provider")
 
   if(NOT EXISTS "${_stf_biosig_source_dir}/biosig4c++/CMakeLists.txt")
     message(FATAL_ERROR "Patched biosig provider requires the biosig submodule under ${_stf_biosig_source_dir}")
@@ -34,6 +35,24 @@ function(stf_configure_windows_patched_biosig)
   )
   if(NOT _stf_biosig_rev_parse_result EQUAL 0)
     message(FATAL_ERROR "Failed to determine biosig submodule HEAD from ${_stf_biosig_source_dir}")
+  endif()
+
+  execute_process(
+    COMMAND ${STF_GIT_EXECUTABLE} -C "${_stf_biosig_source_dir}" rev-parse --verify --quiet "refs/tags/${STF_BIOSIG_EXPECTED_TAG}^{commit}"
+    RESULT_VARIABLE _stf_biosig_expected_tag_result
+    OUTPUT_VARIABLE _stf_biosig_expected_commit
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  if(NOT _stf_biosig_expected_tag_result EQUAL 0)
+    message(FATAL_ERROR "Expected biosig tag '${STF_BIOSIG_EXPECTED_TAG}' was not found in ${_stf_biosig_source_dir}")
+  endif()
+
+  if(NOT _stf_biosig_head STREQUAL _stf_biosig_expected_commit)
+    message(FATAL_ERROR
+      "biosig submodule mismatch: expected tag '${STF_BIOSIG_EXPECTED_TAG}' -> ${_stf_biosig_expected_commit}, "
+      "but src/biosig HEAD is ${_stf_biosig_head}. "
+      "Update src/biosig to tag '${STF_BIOSIG_EXPECTED_TAG}' and reconfigure."
+    )
   endif()
 
   execute_process(
@@ -73,6 +92,8 @@ function(stf_configure_windows_patched_biosig)
   file(MAKE_DIRECTORY "${_stf_biosig_tmp_dir}")
 
   set(_stf_biosig_signature
+    "biosig-expected-tag=${STF_BIOSIG_EXPECTED_TAG}\n"
+    "biosig-expected-commit=${_stf_biosig_expected_commit}\n"
     "biosig-head=${_stf_biosig_head}\n"
     "biosig-status=${_stf_biosig_status}\n"
     "generator=${CMAKE_GENERATOR}\n"
@@ -93,6 +114,8 @@ function(stf_configure_windows_patched_biosig)
       -DSTF_BIOSIG_STAGE_DIR=${_stf_biosig_stage_dir}
       -DSTF_BIOSIG_PATCH_DIR=${_stf_biosig_patch_dir}
       -DSTF_BIOSIG_SIGNATURE_FILE=${_stf_biosig_signature_file}
+      -DSTF_BIOSIG_EXPECTED_TAG=${STF_BIOSIG_EXPECTED_TAG}
+      -DSTF_BIOSIG_EXPECTED_COMMIT=${_stf_biosig_expected_commit}
       -P "${CMAKE_SOURCE_DIR}/cmake/StagePatchedBiosig.cmake"
     COMMAND "${CMAKE_COMMAND}" -E touch "${_stf_biosig_stage_stamp}"
     DEPENDS

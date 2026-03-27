@@ -95,6 +95,10 @@ What the script does:
 
 This script mirrors the repository's active Windows CI-oriented workflow more closely than invoking raw commands manually.
 
+For the patched-submodule biosig provider on Windows, Stimfit now requires
+`src/biosig` to match the pinned upstream tag `v3.9.3` exactly. Configure fails
+fast when the submodule HEAD differs from that tag's commit.
+
 ### Windows Python refresh behavior
 
 For Python-enabled Windows installs, the CMake cache option `STF_WINDOWS_PYTHON_FULL_REFRESH` controls how stdlib and `stf-site-packages` are synchronized:

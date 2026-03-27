@@ -10,7 +10,7 @@ set(STF_BIOSIG_SOURCE_DIR "${_repo_root}/src/biosig" CACHE PATH "Path to biosig 
 set(STF_BIOSIG_WORK_DIR "${_repo_root}/build/biosig-msvc-src" CACHE PATH "Path to working copy for patched biosig sources")
 set(STF_BIOSIG_BUILD_DIR "${_repo_root}/build/biosig-msvc-build" CACHE PATH "Path to out-of-tree biosig build directory")
 set(STF_BIOSIG_PATCH_DIR "${CMAKE_CURRENT_LIST_DIR}/patches/biosig-msvc" CACHE PATH "Path to patch queue directory (*.patch)")
-set(STF_BIOSIG_BASE_REF "master" CACHE STRING "Base ref in biosig repo to apply the patch queue on")
+set(STF_BIOSIG_EXPECTED_TAG "v3.9.3" CACHE STRING "Expected biosig tag used as patch baseline")
 set(STF_BIOSIG_GENERATOR "Visual Studio 17 2022" CACHE STRING "CMake generator for biosig build")
 set(STF_BIOSIG_ARCH "x64" CACHE STRING "Architecture used with Visual Studio generator")
 set(STF_BIOSIG_CONFIG "Release" CACHE STRING "Configuration to build")
@@ -32,6 +32,34 @@ if(NOT _biosig_patch_files)
 endif()
 
 find_program(STF_GIT_EXECUTABLE NAMES git REQUIRED)
+
+execute_process(
+	COMMAND ${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_SOURCE_DIR}" rev-parse --verify --quiet "refs/tags/${STF_BIOSIG_EXPECTED_TAG}^{commit}"
+	RESULT_VARIABLE _biosig_expected_tag_result
+	OUTPUT_VARIABLE _biosig_expected_commit
+	OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if(NOT _biosig_expected_tag_result EQUAL 0)
+	message(FATAL_ERROR "Expected biosig tag '${STF_BIOSIG_EXPECTED_TAG}' was not found in ${STF_BIOSIG_SOURCE_DIR}")
+endif()
+
+execute_process(
+	COMMAND ${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_SOURCE_DIR}" rev-parse HEAD
+	RESULT_VARIABLE _biosig_head_result
+	OUTPUT_VARIABLE _biosig_source_head
+	OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if(NOT _biosig_head_result EQUAL 0)
+	message(FATAL_ERROR "Failed to determine biosig HEAD from ${STF_BIOSIG_SOURCE_DIR}")
+endif()
+
+if(NOT _biosig_source_head STREQUAL _biosig_expected_commit)
+	message(FATAL_ERROR
+		"biosig submodule mismatch: expected tag '${STF_BIOSIG_EXPECTED_TAG}' -> ${_biosig_expected_commit}, "
+		"but src/biosig is at ${_biosig_source_head}. "
+		"Update src/biosig to tag '${STF_BIOSIG_EXPECTED_TAG}' before running PrepareBiosigMSVC.cmake."
+	)
+endif()
 
 function(_run_checked)
 	execute_process(
@@ -56,7 +84,7 @@ endif()
 
 _run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_WORK_DIR}" config core.autocrlf false)
 _run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_WORK_DIR}" config core.eol lf)
-_run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_WORK_DIR}" checkout --force "${STF_BIOSIG_BASE_REF}")
+_run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_WORK_DIR}" checkout --force "${_biosig_expected_commit}")
 _run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_WORK_DIR}" reset --hard)
 _run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_WORK_DIR}" clean -fdx)
 
