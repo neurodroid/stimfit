@@ -409,6 +409,22 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     stfSourcePyPath.Normalize(wxPATH_NORM_DOTS);
     const wxString stfSourcePyDir = stfSourcePyPath.GetPath();
 
+    wxFileName stfBuildPyPath(stfExeDir, wxEmptyString);
+    stfBuildPyPath.AppendDir(wxT("src"));
+    stfBuildPyPath.AppendDir(wxT("stimfit"));
+    stfBuildPyPath.AppendDir(wxT("py"));
+    stfBuildPyPath.Normalize(wxPATH_NORM_DOTS);
+    const wxString stfBuildPyDir = stfBuildPyPath.GetPath();
+
+    wxFileName stfWorkspacePyPath(stfExeDir, wxEmptyString);
+    stfWorkspacePyPath.AppendDir(wxT(".."));
+    stfWorkspacePyPath.AppendDir(wxT(".."));
+    stfWorkspacePyPath.AppendDir(wxT("src"));
+    stfWorkspacePyPath.AppendDir(wxT("stimfit"));
+    stfWorkspacePyPath.AppendDir(wxT("py"));
+    stfWorkspacePyPath.Normalize(wxPATH_NORM_DOTS);
+    const wxString stfWorkspacePyDir = stfWorkspacePyPath.GetPath();
+
     wxFileName stfNestedBuildPyPath(stfExeDir, wxEmptyString);
     stfNestedBuildPyPath.AppendDir(wxT(".."));
     stfNestedBuildPyPath.AppendDir(wxT(".."));
@@ -444,6 +460,8 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 
     const wxString stfExeDirEscaped = stfPyEscape(stfExeDir);
     const wxString stfSourcePyDirEscaped = stfPyEscape(stfSourcePyDir);
+    const wxString stfBuildPyDirEscaped = stfPyEscape(stfBuildPyDir);
+    const wxString stfWorkspacePyDirEscaped = stfPyEscape(stfWorkspacePyDir);
     const wxString stfNestedBuildPyDirEscaped = stfPyEscape(stfNestedBuildPyDir);
     const wxString stfInstallPyDirEscaped = stfPyEscape(stfInstallPyDir);
     const wxString stfBundleInstallPyDirEscaped = stfPyEscape(stfBundleInstallPyDir);
@@ -470,6 +488,8 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
                  << wxT("sys.path.append('.')\n")
                  << wxT("sys.path.append('") << stfExeDirEscaped << wxT("')\n")
                  << wxT("sys.path.append('") << stfSourcePyDirEscaped << wxT("')\n")
+                 << wxT("sys.path.append('") << stfBuildPyDirEscaped << wxT("')\n")
+                 << wxT("sys.path.append('") << stfWorkspacePyDirEscaped << wxT("')\n")
                  << wxT("sys.path.append('") << stfNestedBuildPyDirEscaped << wxT("')\n")
                  << wxT("sys.path.append('") << stfInstallPyDirEscaped << wxT("')\n")
                  << wxT("sys.path.append('") << stfBundleInstallPyDirEscaped << wxT("')\n")
