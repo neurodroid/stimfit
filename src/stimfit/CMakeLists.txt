@@ -28,6 +28,7 @@ if(MSVC)
 endif()
 
 target_compile_definitions(stimfit_core PRIVATE NOPCH)
+target_compile_definitions(stimfit_core PRIVATE STF_TOOLBAR_SOURCE_DIR="${CMAKE_SOURCE_DIR}/src/stimfit/res/toolbar")
 
 target_link_libraries(
   stimfit_core

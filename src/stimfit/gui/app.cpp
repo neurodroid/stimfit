@@ -153,6 +153,10 @@ bool wxStfApp::OnInit(void)
         return false;
     }
 
+    // Toolbar icons are loaded from external PNG files at runtime.
+    // Ensure bitmap handlers are registered on all platforms.
+    ::wxInitAllImageHandlers();
+
 #ifdef WITH_PYTHON
     if ( !Init_wxPython() ) {
         // don't start the app if we can't initialize wxPython.

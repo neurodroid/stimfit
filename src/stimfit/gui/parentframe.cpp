@@ -121,46 +121,53 @@ wxString ResolveToolbarIconBaseDir()
     }
 
     wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
-    const wxString exeDir = exePath.GetPath();
+    wxFileName climb(exePath.GetPath(), wxEmptyString);
 
     wxArrayString candidates;
 
-    wxFileName sourceLike(exeDir, wxEmptyString);
-    sourceLike.AppendDir(wxT(".."));
-    sourceLike.AppendDir(wxT("src"));
-    sourceLike.AppendDir(wxT("stimfit"));
-    sourceLike.AppendDir(wxT("res"));
-    sourceLike.AppendDir(wxT("toolbar"));
-    sourceLike.Normalize(wxPATH_NORM_DOTS);
-    candidates.Add(sourceLike.GetPath());
-
-    wxFileName nestedBuild(exeDir, wxEmptyString);
-    nestedBuild.AppendDir(wxT(".."));
-    nestedBuild.AppendDir(wxT(".."));
-    nestedBuild.AppendDir(wxT(".."));
-    nestedBuild.AppendDir(wxT("src"));
-    nestedBuild.AppendDir(wxT("stimfit"));
-    nestedBuild.AppendDir(wxT("res"));
-    nestedBuild.AppendDir(wxT("toolbar"));
-    nestedBuild.Normalize(wxPATH_NORM_DOTS);
-    candidates.Add(nestedBuild.GetPath());
-
-    wxFileName installed(exeDir, wxEmptyString);
-    installed.AppendDir(wxT(".."));
-    installed.AppendDir(wxT("share"));
-    installed.AppendDir(wxT("stimfit"));
-    installed.AppendDir(wxT("toolbar"));
-    installed.Normalize(wxPATH_NORM_DOTS);
-    candidates.Add(installed.GetPath());
-
-#ifdef __WXMAC__
-    wxFileName bundleResources(exeDir, wxEmptyString);
-    bundleResources.AppendDir(wxT(".."));
-    bundleResources.AppendDir(wxT("Resources"));
-    bundleResources.AppendDir(wxT("toolbar"));
-    bundleResources.Normalize(wxPATH_NORM_DOTS);
-    candidates.Add(bundleResources.GetPath());
+#ifdef STF_TOOLBAR_SOURCE_DIR
+    {
+        wxFileName sourceCompileTime(wxString::FromUTF8(STF_TOOLBAR_SOURCE_DIR), wxEmptyString);
+        sourceCompileTime.Normalize(wxPATH_NORM_DOTS);
+        candidates.Add(sourceCompileTime.GetPath());
+    }
 #endif
+
+    auto addCandidate = [&candidates](const wxFileName& anchor, const wxArrayString& dirs) {
+        wxFileName path(anchor);
+        for (size_t i = 0; i < dirs.GetCount(); ++i) {
+            path.AppendDir(dirs[i]);
+        }
+        path.Normalize(wxPATH_NORM_DOTS);
+        candidates.Add(path.GetPath());
+    };
+
+    // Probe several ancestor levels because Windows multi-config generators
+    // place the executable under an extra config directory (e.g. Debug/Release).
+    for (int depth = 0; depth <= 6; ++depth) {
+        wxArrayString sourceDirs;
+        sourceDirs.Add(wxT("src"));
+        sourceDirs.Add(wxT("stimfit"));
+        sourceDirs.Add(wxT("res"));
+        sourceDirs.Add(wxT("toolbar"));
+        addCandidate(climb, sourceDirs);
+
+        wxArrayString installDirs;
+        installDirs.Add(wxT("share"));
+        installDirs.Add(wxT("stimfit"));
+        installDirs.Add(wxT("toolbar"));
+        addCandidate(climb, installDirs);
+#ifdef __WXMAC__
+        wxArrayString bundleDirs;
+        bundleDirs.Add(wxT("Resources"));
+        bundleDirs.Add(wxT("toolbar"));
+        addCandidate(climb, bundleDirs);
+#endif
+        if (climb.GetDirCount() == 0) {
+            break;
+        }
+        climb.RemoveLastDir();
+    }
 
     wxFileName cwdSource(wxGetCwd(), wxEmptyString);
     cwdSource.AppendDir(wxT("src"));
