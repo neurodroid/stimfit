@@ -141,6 +141,33 @@ if(NOT STF_BUILD_MODULE)
     set_source_files_properties(${CMAKE_SOURCE_DIR}/dist/macosx/stimfit.icns PROPERTIES
       MACOSX_PACKAGE_LOCATION "Resources"
     )
+
+    file(GLOB_RECURSE _stf_macos_toolbar_pngs CONFIGURE_DEPENDS
+      "${CMAKE_SOURCE_DIR}/src/stimfit/res/toolbar/*.png"
+    )
+    if(_stf_macos_toolbar_pngs)
+      target_sources(stimfit PRIVATE ${_stf_macos_toolbar_pngs})
+      foreach(_stf_toolbar_png IN LISTS _stf_macos_toolbar_pngs)
+        file(RELATIVE_PATH _stf_toolbar_rel_dir
+          "${CMAKE_SOURCE_DIR}/src/stimfit/res/toolbar"
+          "${_stf_toolbar_png}"
+        )
+        get_filename_component(_stf_toolbar_rel_dir "${_stf_toolbar_rel_dir}" DIRECTORY)
+
+        set(_stf_toolbar_package_location "Resources/toolbar")
+        if(NOT _stf_toolbar_rel_dir STREQUAL "")
+          string(APPEND _stf_toolbar_package_location "/${_stf_toolbar_rel_dir}")
+        endif()
+
+        set_source_files_properties("${_stf_toolbar_png}" PROPERTIES
+          MACOSX_PACKAGE_LOCATION "${_stf_toolbar_package_location}"
+        )
+      endforeach()
+      unset(_stf_toolbar_png)
+      unset(_stf_toolbar_rel_dir)
+      unset(_stf_toolbar_package_location)
+    endif()
+    unset(_stf_macos_toolbar_pngs)
   endif()
   target_link_libraries(
     stimfit
