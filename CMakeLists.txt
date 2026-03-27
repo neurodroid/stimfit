@@ -394,14 +394,46 @@ if(NOT STF_BUILD_MODULE)
 
     if(STF_WINDOWS_COPY_PYTHON_STDLIB)
       if(DEFINED STF_PYTHON_STDLIB AND EXISTS "${STF_PYTHON_STDLIB}")
-        install(
-          DIRECTORY "${STF_PYTHON_STDLIB}/"
-          DESTINATION "${CMAKE_INSTALL_BINDIR}/Lib"
-          COMPONENT ${STF_COMPONENT_PYTHON}
-          PATTERN "site-packages" EXCLUDE
-          PATTERN "dist-packages" EXCLUDE
-          PATTERN "__pycache__" EXCLUDE
-        )
+        if(STF_WINDOWS_PYTHON_FULL_REFRESH)
+          install(
+            DIRECTORY "${STF_PYTHON_STDLIB}/"
+            DESTINATION "${CMAKE_INSTALL_BINDIR}/Lib"
+            COMPONENT ${STF_COMPONENT_PYTHON}
+            PATTERN "site-packages" EXCLUDE
+            PATTERN "dist-packages" EXCLUDE
+            PATTERN "__pycache__" EXCLUDE
+          )
+        else()
+          set(_stf_stdlib_signature "${STF_PYTHON_STDLIB}")
+          install(
+            CODE
+              "set(_stf_src \"${STF_PYTHON_STDLIB}\")\n"
+              "set(_stf_dst \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/Lib\")\n"
+              "set(_stf_marker \"${CMAKE_INSTALL_BINDIR}/.stf-python-stdlib-signature\")\n"
+              "set(_stf_marker_abs \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/\${_stf_marker}\")\n"
+              "set(_stf_sig \"${_stf_stdlib_signature}\")\n"
+              "set(_stf_needs_copy TRUE)\n"
+              "if(EXISTS \"\${_stf_marker_abs}\" AND EXISTS \"\${_stf_dst}\")\n"
+              "  file(READ \"\${_stf_marker_abs}\" _stf_prev_sig)\n"
+              "  string(STRIP \"\${_stf_prev_sig}\" _stf_prev_sig)\n"
+              "  if(_stf_prev_sig STREQUAL _stf_sig)\n"
+              "    set(_stf_needs_copy FALSE)\n"
+              "  endif()\n"
+              "endif()\n"
+              "if(_stf_needs_copy)\n"
+              "  message(STATUS \"Refreshing embedded Python stdlib (fast mode).\")\n"
+              "  file(MAKE_DIRECTORY \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}\")\n"
+              "  file(REMOVE_RECURSE \"\${_stf_dst}\")\n"
+              "  file(COPY \"\${_stf_src}/\" DESTINATION \"\${_stf_dst}\")\n"
+              "  file(REMOVE_RECURSE \"\${_stf_dst}/site-packages\" \"\${_stf_dst}/dist-packages\" \"\${_stf_dst}/__pycache__\")\n"
+              "  file(WRITE \"\${_stf_marker_abs}\" \"\${_stf_sig}\\n\")\n"
+              "else()\n"
+              "  message(STATUS \"Skipping embedded Python stdlib refresh (signature unchanged).\")\n"
+              "endif()"
+            COMPONENT ${STF_COMPONENT_PYTHON}
+          )
+          unset(_stf_stdlib_signature)
+        endif()
       else()
         message(WARNING "STF_WINDOWS_COPY_PYTHON_STDLIB is ON but STF_PYTHON_STDLIB was not found.")
       endif()
@@ -422,52 +454,86 @@ if(NOT STF_BUILD_MODULE)
 
     if(STF_WINDOWS_COPY_PYTHON_SITE_PACKAGES)
       set(_stf_site_packages_root "${CMAKE_INSTALL_BINDIR}/stf-site-packages")
+      set(_stf_site_copy_sources "")
+
       foreach(_stf_pkg IN LISTS STF_WINDOWS_PYTHON_SITE_PACKAGES)
         set(_stf_pkg_copied OFF)
 
         if(DEFINED STF_PYTHON_PURELIB AND EXISTS "${STF_PYTHON_PURELIB}/${_stf_pkg}")
-          install(DIRECTORY "${STF_PYTHON_PURELIB}/${_stf_pkg}" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+          if(STF_WINDOWS_PYTHON_FULL_REFRESH)
+            install(DIRECTORY "${STF_PYTHON_PURELIB}/${_stf_pkg}" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+          else()
+            list(APPEND _stf_site_copy_sources "${STF_PYTHON_PURELIB}/${_stf_pkg}")
+          endif()
           set(_stf_pkg_copied ON)
         endif()
 
         if(DEFINED STF_PYTHON_PURELIB AND EXISTS "${STF_PYTHON_PURELIB}/${_stf_pkg}.libs")
-          install(DIRECTORY "${STF_PYTHON_PURELIB}/${_stf_pkg}.libs" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+          if(STF_WINDOWS_PYTHON_FULL_REFRESH)
+            install(DIRECTORY "${STF_PYTHON_PURELIB}/${_stf_pkg}.libs" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+          else()
+            list(APPEND _stf_site_copy_sources "${STF_PYTHON_PURELIB}/${_stf_pkg}.libs")
+          endif()
           set(_stf_pkg_copied ON)
         endif()
 
         if(DEFINED STF_PYTHON_PURELIB AND EXISTS "${STF_PYTHON_PURELIB}/${_stf_pkg}.py")
-          install(FILES "${STF_PYTHON_PURELIB}/${_stf_pkg}.py" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+          if(STF_WINDOWS_PYTHON_FULL_REFRESH)
+            install(FILES "${STF_PYTHON_PURELIB}/${_stf_pkg}.py" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+          else()
+            list(APPEND _stf_site_copy_sources "${STF_PYTHON_PURELIB}/${_stf_pkg}.py")
+          endif()
           set(_stf_pkg_copied ON)
         endif()
 
         if(DEFINED STF_PYTHON_PURELIB)
           file(GLOB _stf_pkg_purelib_pyds "${STF_PYTHON_PURELIB}/${_stf_pkg}*.pyd")
           if(_stf_pkg_purelib_pyds)
-            install(FILES ${_stf_pkg_purelib_pyds} DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+            if(STF_WINDOWS_PYTHON_FULL_REFRESH)
+              install(FILES ${_stf_pkg_purelib_pyds} DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+            else()
+              list(APPEND _stf_site_copy_sources ${_stf_pkg_purelib_pyds})
+            endif()
             set(_stf_pkg_copied ON)
           endif()
           unset(_stf_pkg_purelib_pyds)
         endif()
 
         if(DEFINED STF_PYTHON_PLATLIB AND EXISTS "${STF_PYTHON_PLATLIB}/${_stf_pkg}")
-          install(DIRECTORY "${STF_PYTHON_PLATLIB}/${_stf_pkg}" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+          if(STF_WINDOWS_PYTHON_FULL_REFRESH)
+            install(DIRECTORY "${STF_PYTHON_PLATLIB}/${_stf_pkg}" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+          else()
+            list(APPEND _stf_site_copy_sources "${STF_PYTHON_PLATLIB}/${_stf_pkg}")
+          endif()
           set(_stf_pkg_copied ON)
         endif()
 
         if(DEFINED STF_PYTHON_PLATLIB AND EXISTS "${STF_PYTHON_PLATLIB}/${_stf_pkg}.libs")
-          install(DIRECTORY "${STF_PYTHON_PLATLIB}/${_stf_pkg}.libs" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+          if(STF_WINDOWS_PYTHON_FULL_REFRESH)
+            install(DIRECTORY "${STF_PYTHON_PLATLIB}/${_stf_pkg}.libs" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+          else()
+            list(APPEND _stf_site_copy_sources "${STF_PYTHON_PLATLIB}/${_stf_pkg}.libs")
+          endif()
           set(_stf_pkg_copied ON)
         endif()
 
         if(DEFINED STF_PYTHON_PLATLIB AND EXISTS "${STF_PYTHON_PLATLIB}/${_stf_pkg}.pyd")
-          install(FILES "${STF_PYTHON_PLATLIB}/${_stf_pkg}.pyd" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+          if(STF_WINDOWS_PYTHON_FULL_REFRESH)
+            install(FILES "${STF_PYTHON_PLATLIB}/${_stf_pkg}.pyd" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+          else()
+            list(APPEND _stf_site_copy_sources "${STF_PYTHON_PLATLIB}/${_stf_pkg}.pyd")
+          endif()
           set(_stf_pkg_copied ON)
         endif()
 
         if(DEFINED STF_PYTHON_PLATLIB)
           file(GLOB _stf_pkg_platlib_pyds "${STF_PYTHON_PLATLIB}/${_stf_pkg}*.pyd")
           if(_stf_pkg_platlib_pyds)
-            install(FILES ${_stf_pkg_platlib_pyds} DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+            if(STF_WINDOWS_PYTHON_FULL_REFRESH)
+              install(FILES ${_stf_pkg_platlib_pyds} DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+            else()
+              list(APPEND _stf_site_copy_sources ${_stf_pkg_platlib_pyds})
+            endif()
             set(_stf_pkg_copied ON)
           endif()
           unset(_stf_pkg_platlib_pyds)
@@ -476,22 +542,38 @@ if(NOT STF_BUILD_MODULE)
         if(NOT _stf_pkg_copied AND DEFINED STF_WINDOWS_PYTHON_EXTRA_PATHS)
           foreach(_stf_extra_py IN LISTS STF_WINDOWS_PYTHON_EXTRA_PATHS)
             if(EXISTS "${_stf_extra_py}/${_stf_pkg}")
-              install(DIRECTORY "${_stf_extra_py}/${_stf_pkg}" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+              if(STF_WINDOWS_PYTHON_FULL_REFRESH)
+                install(DIRECTORY "${_stf_extra_py}/${_stf_pkg}" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+              else()
+                list(APPEND _stf_site_copy_sources "${_stf_extra_py}/${_stf_pkg}")
+              endif()
               set(_stf_pkg_copied ON)
               break()
             endif()
             if(EXISTS "${_stf_extra_py}/${_stf_pkg}.libs")
-              install(DIRECTORY "${_stf_extra_py}/${_stf_pkg}.libs" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+              if(STF_WINDOWS_PYTHON_FULL_REFRESH)
+                install(DIRECTORY "${_stf_extra_py}/${_stf_pkg}.libs" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+              else()
+                list(APPEND _stf_site_copy_sources "${_stf_extra_py}/${_stf_pkg}.libs")
+              endif()
               set(_stf_pkg_copied ON)
             endif()
             if(EXISTS "${_stf_extra_py}/${_stf_pkg}.py")
-              install(FILES "${_stf_extra_py}/${_stf_pkg}.py" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+              if(STF_WINDOWS_PYTHON_FULL_REFRESH)
+                install(FILES "${_stf_extra_py}/${_stf_pkg}.py" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+              else()
+                list(APPEND _stf_site_copy_sources "${_stf_extra_py}/${_stf_pkg}.py")
+              endif()
               set(_stf_pkg_copied ON)
               break()
             endif()
             file(GLOB _stf_pkg_extra_pyds "${_stf_extra_py}/${_stf_pkg}*.pyd")
             if(_stf_pkg_extra_pyds)
-              install(FILES ${_stf_pkg_extra_pyds} DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+              if(STF_WINDOWS_PYTHON_FULL_REFRESH)
+                install(FILES ${_stf_pkg_extra_pyds} DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+              else()
+                list(APPEND _stf_site_copy_sources ${_stf_pkg_extra_pyds})
+              endif()
               set(_stf_pkg_copied ON)
             endif()
             unset(_stf_pkg_extra_pyds)
@@ -504,9 +586,48 @@ if(NOT STF_BUILD_MODULE)
       endforeach()
 
       if(DEFINED STF_PYTHON_PURELIB AND EXISTS "${STF_PYTHON_PURELIB}/site.py")
-        install(FILES "${STF_PYTHON_PURELIB}/site.py" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+        if(STF_WINDOWS_PYTHON_FULL_REFRESH)
+          install(FILES "${STF_PYTHON_PURELIB}/site.py" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+        else()
+          list(APPEND _stf_site_copy_sources "${STF_PYTHON_PURELIB}/site.py")
+        endif()
       endif()
 
+      if(NOT STF_WINDOWS_PYTHON_FULL_REFRESH)
+        set(_stf_site_signature "${STF_PYTHON_PURELIB}|${STF_PYTHON_PLATLIB}|${STF_WINDOWS_PYTHON_EXTRA_PATHS}|${STF_WINDOWS_PYTHON_SITE_PACKAGES}|${_stf_site_copy_sources}")
+        install(
+          CODE
+            "set(_stf_sources \"${_stf_site_copy_sources}\")\n"
+            "set(_stf_dst \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_stf_site_packages_root}\")\n"
+            "set(_stf_marker \"${CMAKE_INSTALL_BINDIR}/.stf-site-packages-signature\")\n"
+            "set(_stf_marker_abs \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/\${_stf_marker}\")\n"
+            "set(_stf_sig \"${_stf_site_signature}\")\n"
+            "set(_stf_needs_copy TRUE)\n"
+            "if(EXISTS \"\${_stf_marker_abs}\" AND EXISTS \"\${_stf_dst}\")\n"
+            "  file(READ \"\${_stf_marker_abs}\" _stf_prev_sig)\n"
+            "  string(STRIP \"\${_stf_prev_sig}\" _stf_prev_sig)\n"
+            "  if(_stf_prev_sig STREQUAL _stf_sig)\n"
+            "    set(_stf_needs_copy FALSE)\n"
+            "  endif()\n"
+            "endif()\n"
+            "if(_stf_needs_copy)\n"
+            "  message(STATUS \"Refreshing embedded Python site-packages (fast mode).\")\n"
+            "  file(MAKE_DIRECTORY \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}\")\n"
+            "  file(REMOVE_RECURSE \"\${_stf_dst}\")\n"
+            "  file(MAKE_DIRECTORY \"\${_stf_dst}\")\n"
+            "  foreach(_stf_src IN LISTS _stf_sources)\n"
+            "    file(COPY \"\${_stf_src}\" DESTINATION \"\${_stf_dst}\")\n"
+            "  endforeach()\n"
+            "  file(WRITE \"\${_stf_marker_abs}\" \"\${_stf_sig}\\n\")\n"
+            "else()\n"
+            "  message(STATUS \"Skipping embedded Python site-packages refresh (signature unchanged).\")\n"
+            "endif()"
+          COMPONENT ${STF_COMPONENT_PYTHON}
+        )
+        unset(_stf_site_signature)
+      endif()
+
+      unset(_stf_site_copy_sources)
       unset(_stf_site_packages_root)
       unset(_stf_pkg)
       unset(_stf_pkg_copied)

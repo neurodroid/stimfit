@@ -95,6 +95,25 @@ What the script does:
 
 This script mirrors the repository's active Windows CI-oriented workflow more closely than invoking raw commands manually.
 
+### Windows Python refresh behavior
+
+For Python-enabled Windows installs, the CMake cache option `STF_WINDOWS_PYTHON_FULL_REFRESH` controls how stdlib and `stf-site-packages` are synchronized:
+
+- `OFF` (default): fast mode. Install skips repeated deep per-file up-to-date checks by using a signature marker and only refreshes when relevant source roots/package selection change.
+- `ON`: full refresh mode. Restores the traditional per-file CMake install behavior for stdlib and selected site-packages.
+
+Examples:
+
+```powershell
+# Default (fast mode)
+cmake --preset vs2022-vcpkg-wx-hdf5-python314-biosig-patched
+
+# Opt-in full refresh/check mode
+cmake --preset vs2022-vcpkg-wx-hdf5-python314-biosig-patched -DSTF_WINDOWS_PYTHON_FULL_REFRESH=ON
+```
+
+Python runtime DLL handling is unchanged by this option.
+
 ## Manual CMake usage
 
 If you need a custom local workflow, you can invoke CMake directly. The repository root is still the source directory:
