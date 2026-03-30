@@ -31,6 +31,7 @@
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 #include <wx/stockitem.h>
+#include <wx/accel.h>
 
 #ifdef _WINDOWS
 #include <winreg.h>
@@ -69,6 +70,27 @@
 #include "./dlgs/smalldlgs.h"
 #include "./../../libstfnum/funclib.h"
 #include "./../../libstfnum/fit.h"
+
+namespace {
+
+void InstallCloseDocumentAccelerator(wxWindow* window) {
+    if (window == NULL)
+        return;
+
+    // wxACCEL_CMD maps to Ctrl on Windows/Linux and Cmd on macOS.
+    // Bind Cmd/Ctrl+W explicitly to close the active document.
+    wxAcceleratorEntry accelEntries[] = {
+        wxAcceleratorEntry(wxACCEL_CMD, (int)'W', wxID_CLOSE)
+    };
+
+    wxAcceleratorTable accelTable(
+        static_cast<int>(sizeof(accelEntries) / sizeof(accelEntries[0])),
+        accelEntries
+    );
+    window->SetAcceleratorTable(accelTable);
+}
+
+} // namespace
 
 #if defined(__WXGTK__) || defined(__WXMAC__) 
 #if !defined(__MINGW32__)
@@ -696,7 +718,11 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     wxMenu *file_menu = new wxMenu;
 
     file_menu->Append(wxID_OPEN);
-    file_menu->Append(wxID_CLOSE);
+#ifdef __WXMAC__
+    file_menu->Append(wxID_CLOSE, wxT("&Close\tCmd+W"));
+#else
+    file_menu->Append(wxID_CLOSE, wxT("&Close\tCtrl+W"));
+#endif
     //	file_menu->Append(wxID_SAVE, wxT("&Save"));
     file_menu->Append(wxID_SAVEAS);
 
@@ -974,6 +1000,8 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     subframe->SetMenuBar(menu_bar);
 
 #endif // __WXGTK__
+
+    InstallCloseDocumentAccelerator(subframe);
     
     return subframe;
 }
