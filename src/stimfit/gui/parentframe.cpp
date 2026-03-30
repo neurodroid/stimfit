@@ -219,6 +219,74 @@ wxBitmap TbBitmap(const wxWindow& window, const wxString& iconName, const wxArtI
     return wxArtProvider::GetBitmap(fallbackArt, wxART_TOOLBAR, GetToolbarBitmapSize(window));
 }
 
+#ifdef WITH_PYTHON
+#if PY_MAJOR_VERSION >= 3
+PyObject* wxPyMake_wxObject(wxObject* source, bool setThisOwn)
+{
+    bool checkEvtHandler = true;
+    PyObject* target = NULL;
+    bool isEvtHandler = false;
+    bool isSizer = false;
+
+    if (source) {
+        // If it's derived from wxEvtHandler then there may
+        // already be a pointer to a Python object that we can use
+        // in the OOR data.
+        if (checkEvtHandler && wxIsKindOf(source, wxEvtHandler)) {
+            isEvtHandler = true;
+            wxEvtHandler* eh = (wxEvtHandler*)source;
+            wxPyClientData* data = (wxPyClientData*)eh->GetClientObject();
+            if (data) {
+                target = data->GetData();
+            }
+        }
+
+        // Also check for wxSizer
+        if (!target && wxIsKindOf(source, wxSizer)) {
+            isSizer = true;
+            wxSizer* sz = (wxSizer*)source;
+            wxPyClientData* data = (wxPyClientData*)sz->GetClientObject();
+            if (data) {
+                target = data->GetData();
+            }
+        }
+        if (!target) {
+            // Otherwise make it the old fashioned way by making a new shadow
+            // object and putting this pointer in it.  Look up the class
+            // heirarchy until we find a class name that is located in the
+            // python module.
+            const wxClassInfo* info = source->GetClassInfo();
+            wxString name = info->GetClassName();
+            wxString childname = name.Clone();
+            if (info) {
+                target = wxPyConstructObject((void*)source, name.c_str(), setThisOwn);
+                while (target == NULL) {
+                    info = info->GetBaseClass1();
+                    name = info->GetClassName();
+                    if (name == childname)
+                        break;
+                    childname = name.Clone();
+                    target = wxPyConstructObject((void*)source, name.c_str(), setThisOwn);
+                }
+                if (target && isEvtHandler)
+                    ((wxEvtHandler*)source)->SetClientObject(new wxPyClientData(target));
+                if (target && isSizer)
+                    ((wxSizer*)source)->SetClientObject(new wxPyClientData(target));
+            } else {
+                wxString msg(wxT("wxPython class not found for "));
+                msg += source->GetClassInfo()->GetClassName();
+                PyErr_SetString(PyExc_NameError, msg.mbc_str());
+                target = NULL;
+            }
+        }
+    } else {  // source was NULL so return None.
+        Py_INCREF(Py_None); target = Py_None;
+    }
+    return target;
+}
+#endif
+#endif
+
 } // namespace
 
 IMPLEMENT_CLASS(wxStfParentFrame, wxStfParentType)
@@ -1509,6 +1577,187 @@ void wxStfParentFrame::OnShellBackendChoice(wxCommandEvent& WXUNUSED(event)) {
 
     wxGetApp().wxWriteProfileInt(wxT("Settings"), wxT("PyShellBackend"), selection);
     SelectEmbeddedShellBackend(backend);
+}
+
+void wxStfParentFrame::RedirectStdio()
+{
+    // This is a helpful little tidbit to help debugging and such.  It
+    // redirects Python's stdout and stderr to a window that will popup
+    // only on demand when something is printed, like a traceback.
+
+    wxString python_redirect;
+    python_redirect = wxT("import sys, wx\n");
+    python_redirect << wxT("output = wx.PyOnDemandOutputWindow()\n");
+    python_redirect << wxT("sys.stdin = sys.stderr = output\n");
+    python_redirect << wxT("del sys, wx\n");
+
+    wxPyBlock_t blocked = wxPyBeginBlockThreads();
+#if ((wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY)) && !defined(__WXMAC__))
+    PyRun_SimpleString(python_redirect);
+#else
+    PyRun_SimpleString(python_redirect.char_str());
+#endif
+
+    wxPyEndBlockThreads(blocked);
+}
+
+bool wxStfParentFrame::SelectEmbeddedShellBackend(const wxString& backend)
+{
+#if PY_MAJOR_VERSION >= 3
+    wxPyBlock_t blocked = wxPyBeginBlockThreads();
+
+    wxString python_cmd;
+    python_cmd << wxT("import stimfit_shell_api\n");
+    python_cmd << wxT("stimfit_shell_api.set_shell_backend('") << backend << wxT("')\n");
+
+#if ((wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY)) && !defined(__WXMAC__))
+    int status = PyRun_SimpleString(python_cmd);
+#else
+    int status = PyRun_SimpleString(python_cmd.char_str());
+#endif
+
+    wxPyEndBlockThreads(blocked);
+    return status == 0;
+#else
+    (void)backend;
+    return false;
+#endif
+}
+
+new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, const std::string& mgr_name, const std::string& caption, bool show,
+                                                bool full, bool isfloat, int width, int height, double mpl_width, double mpl_height)
+{
+    // More complex embedded situations will require passing C++ objects to
+    // Python and/or returning objects from Python to be used in C++.  This
+    // sample shows one way to do it.  NOTE: The above code could just have
+    // easily come from a file, or the whole thing could be in the Python
+    // module that is imported and manipulated directly in this C++ code.  See
+    // the Python API for more details.
+
+    wxWindow* window = NULL;
+    PyObject* result;
+
+    // As always, first grab the GIL
+    wxPyBlock_t blocked = wxPyBeginBlockThreads();
+
+    RedirectStdio();
+
+    // Now make a dictionary to serve as the global namespace when the code is
+    // executed.  Put a reference to the builtins module in it.  (Yes, the
+    // names are supposed to be different, I don't know why...)
+    PyObject* globals = PyDict_New();
+    PyObject* arg = NULL;
+    PyObject* py_mpl_width = NULL;
+    PyObject* py_mpl_height = NULL;
+    PyObject* figsize = NULL;
+    PyObject* argtuple = NULL;
+#if PY_MAJOR_VERSION >= 3
+    PyObject* builtins = PyImport_ImportModule("builtins");
+#else
+    PyObject* builtins = PyImport_ImportModule("__builtin__");
+#endif
+    PyDict_SetItemString(globals, "__builtins__", builtins);
+    Py_DECREF(builtins);
+
+    // Execute the code to make the makeWindow function
+    result = PyRun_String(python_code2.c_str(), Py_file_input, globals, globals);
+    // Was there an exception?
+    if (!result) {
+        PyErr_Print();
+        wxGetApp().ErrorMsg(wxT("Couldn't initialize python shell"));
+        Py_DECREF(globals);
+        wxPyEndBlockThreads(blocked);
+        return NULL;
+    }
+    Py_DECREF(result);
+
+    // Now there should be an object named 'makeWindow' in the dictionary that
+    // we can grab a pointer to:
+    PyObject* func = NULL;
+    func = PyDict_GetItemString(globals, windowFunc.c_str());
+    if (!PyCallable_Check(func)) {
+        PyErr_Print();
+        wxGetApp().ErrorMsg(wxT("Couldn't initialize window for the python shell"));
+        Py_DECREF(globals);
+        wxPyEndBlockThreads(blocked);
+        return NULL;
+    }
+
+    // Now build an argument tuple and call the Python function.  Notice the
+    // use of another wxPython API to take a wxWindows object and build a
+    // wxPython object that wraps it.
+    arg = wxPyMake_wxObject(this, false);
+    wxASSERT(arg != NULL);
+    py_mpl_width = PyFloat_FromDouble(mpl_width);
+    wxASSERT(py_mpl_width != NULL);
+    py_mpl_height = PyFloat_FromDouble(mpl_height);
+    wxASSERT(py_mpl_height != NULL);
+    figsize = PyTuple_New(2);
+    PyTuple_SET_ITEM(figsize, 0, py_mpl_width);
+    PyTuple_SET_ITEM(figsize, 1, py_mpl_height);
+    argtuple = PyTuple_New(2);
+    PyTuple_SET_ITEM(argtuple, 0, arg);
+    PyTuple_SET_ITEM(argtuple, 1, figsize);
+    arg = NULL;
+    py_mpl_width = NULL;
+    py_mpl_height = NULL;
+    figsize = NULL;
+    result = PyObject_CallObject(func, argtuple);
+    Py_DECREF(argtuple);
+    argtuple = NULL;
+
+    // Was there an exception?
+    if (!result) {
+        PyErr_Print();
+        wxGetApp().ErrorMsg(wxT("Couldn't create window for the python shell"));
+        Py_DECREF(globals);
+        wxPyEndBlockThreads(blocked);
+        return NULL;
+    }
+    else {
+        // Otherwise, get the returned window out of Python-land and
+        // into C++-ville...
+#if PY_MAJOR_VERSION >= 3
+        if (!wxPyConvertWrappedPtr(result, (void**)&window, _T("wxWindow"))) {
+#else
+        if (!wxPyConvertSwigPtr(result, (void**)&window, _T("wxWindow"))) {
+#endif
+            PyErr_Print();
+            wxGetApp().ErrorMsg(wxT("Returned object was not a wxWindow!"));
+            Py_DECREF(result);
+            Py_DECREF(globals);
+            wxPyEndBlockThreads(blocked);
+            return NULL;
+        }
+        Py_DECREF(result);
+    }
+
+    // Release the python objects we still have
+    Py_DECREF(globals);
+
+    // Finally, after all Python stuff is done, release the GIL
+    wxPyEndBlockThreads(blocked);
+
+    if (!full) {
+        if (isfloat) {
+            m_mgr.AddPane(window, wxAuiPaneInfo().Name(stf::std2wx(mgr_name)).
+                          CloseButton(true).
+                          Show(show).Caption(stf::std2wx(caption)).Float().
+                          BestSize(width, height));
+        } else {
+            m_mgr.AddPane(window, wxAuiPaneInfo().Name(stf::std2wx(mgr_name)).
+                          CloseButton(true).
+                          Show(show).Caption(stf::std2wx(caption)).Dockable(true).Bottom().
+                          BestSize(width, height));
+        }
+    } else {
+        m_mgr.AddPane(window, wxAuiPaneInfo().Name(stf::std2wx(mgr_name)).
+                      Floatable(false).CaptionVisible(false).
+                      BestSize(GetClientSize().GetWidth(), GetClientSize().GetHeight()).Fixed());
+    }
+    m_mgr.Update();
+
+    return new_wxwindow(window, result);
 }
 #endif
 

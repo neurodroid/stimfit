@@ -53,6 +53,28 @@
 #include "./../../libstfio/stfio.h"
 #ifdef WITH_PYTHON
 #include "./../../pystfio/pystfio.h"
+
+#if PY_MAJOR_VERSION >= 3
+#ifndef PyString_Check
+#define PyString_Check PyUnicode_Check
+#endif
+#ifndef PyString_AsString
+#define PyString_AsString PyUnicode_AsUTF8
+#endif
+#ifndef PyString_FromString
+#define PyString_FromString PyUnicode_FromString
+#endif
+#endif
+
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#endif
+#include <numpy/arrayobject.h>
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 #endif
 
 #include "./usrdlg/usrdlg.h"
@@ -219,6 +241,97 @@ bool wxStfDoc::OnOpenPyDocument(const wxString& filename) {
     progress = true;
     return success;
 }
+
+#ifdef WITH_PYTHON
+bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
+    // Grab the Global Interpreter Lock.
+    wxPyBlock_t blocked = wxPyBeginBlockThreads();
+
+    PyObject* stf_mod = PyImport_ImportModule("tdms");
+    if (!stf_mod) {
+        PyErr_Print();
+#ifdef _STFDEBUG
+        wxGetApp().ErrorMsg(wxT("Couldn't load tdms.py"));
+#endif
+        wxPyEndBlockThreads(blocked);
+        return false;
+    }
+
+    PyObject* py_fn = PyString_FromString(filename.c_str());
+    PyObject* stf_tdms_f = PyObject_GetAttrString(stf_mod, "tdms_open");
+    PyObject* stf_tdms_args = NULL;
+    PyObject* stf_tdms_res = NULL;
+
+    const auto finish_tdms_load = [&](bool result) {
+        Py_XDECREF(stf_tdms_res);
+        Py_XDECREF(stf_tdms_args);
+        Py_XDECREF(stf_tdms_f);
+        Py_XDECREF(py_fn);
+        Py_XDECREF(stf_mod);
+        wxPyEndBlockThreads(blocked);
+
+        return result;
+    };
+
+    if (stf_tdms_f && PyCallable_Check(stf_tdms_f)) {
+        stf_tdms_args = PyTuple_Pack(1, py_fn);
+        stf_tdms_res = PyObject_CallObject(stf_tdms_f, stf_tdms_args);
+        PyErr_Print();
+    } else {
+        return finish_tdms_load(false);
+    }
+
+    if (stf_tdms_res == Py_None) {
+        wxGetApp().ErrorMsg( wxT("nptdms module unavailable. Cannot read tdms files."));
+        return finish_tdms_load(false);
+    }
+
+    if (!PyTuple_Check(stf_tdms_res)) {
+        wxGetApp().ErrorMsg(wxT("Return value of tdms_open is not a tuple. Aborting now."));
+        return finish_tdms_load(false);
+    }
+
+    if (PyTuple_Size(stf_tdms_res) != 2) {
+        wxGetApp().ErrorMsg( wxT("Return value of tdms_open is not a 2-tuple. Aborting now."));
+        return finish_tdms_load(false);
+    }
+
+    PyObject* data_list = PyTuple_GetItem(stf_tdms_res, 0);
+    PyObject* py_dt = PyTuple_GetItem(stf_tdms_res, 1);
+    double tdmsDt = PyFloat_AsDouble(py_dt);
+
+    Py_ssize_t nchannels = PyList_Size(data_list);
+    ReturnData.resize(nchannels);
+    int nchannels_nonempty = 0;
+    for (int nc = 0; nc < nchannels; ++nc) {
+        PyObject* section_list = PyList_GetItem(data_list, nc);
+        Py_ssize_t nsections = PyList_Size(section_list);
+        if (nsections != 0) {
+            Channel ch(nsections);
+            for (int ns = 0; ns < nsections; ++ns) {
+                PyObject* list_item = PyList_GetItem(section_list, ns);
+                if (!PyArray_Check(list_item)) {
+                    wxGetApp().ErrorMsg( wxT("Expected a numpy array"));
+                    return finish_tdms_load(false);
+                }
+                PyArrayObject* np_array = (PyArrayObject*)list_item;
+                npy_intp* arr_shape = PyArray_DIMS(np_array);
+                int nsamples = arr_shape[0];
+                Section sec(nsamples);
+                double* data = (double*)PyArray_DATA(np_array);
+                std::copy(&data[0], &data[nsamples], &sec.get_w()[0]);
+                ch.InsertSection(sec, ns);
+            }
+            ReturnData.InsertChannel(ch, nc);
+            nchannels_nonempty++;
+        }
+    }
+    ReturnData.resize(nchannels_nonempty);
+    ReturnData.SetXScale(tdmsDt);
+
+    return finish_tdms_load(true);
+}
+#endif // WITH_PYTHON
 
 bool wxStfDoc::OnOpenDocument(const wxString& filename) {
     const auto importFromFileType = [&](stfio::filetype type) -> bool {

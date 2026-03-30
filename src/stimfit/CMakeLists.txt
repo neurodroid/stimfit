@@ -4,7 +4,6 @@ add_library(
   stimfit_core
   stf.cpp
   gui/app.cpp
-  gui/unopt.cpp
   gui/doc.cpp
   gui/copygrid.cpp
   gui/graph.cpp
