@@ -7,10 +7,15 @@ set -euo pipefail
 # Usage:
 #   ./build_macos_cmake.sh
 #   ./build_macos_cmake.sh --with-python
+#   ./build_macos_cmake.sh --without-python
 #   ./build_macos_cmake.sh --with-python --install-prefix build/macos-app-py/install
 #
 # Optional environment overrides:
 #   PYTHON_EXECUTABLE=/opt/local/bin/python3.14
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=cmake/StimfitPresetHelpers.sh
+source "${SCRIPT_DIR}/cmake/StimfitPresetHelpers.sh"
 
 BUILD_DIR="build/macos-app"
 INSTALL_PREFIX="build/macos-app/install"
@@ -52,6 +57,12 @@ while [[ $# -gt 0 ]]; do
       INSTALL_PREFIX="build/macos-app-py/install"
       shift
       ;;
+    --without-python)
+      WITH_PYTHON=0
+      BUILD_DIR="build/macos-app-nopython"
+      INSTALL_PREFIX="build/macos-app-nopython/install"
+      shift
+      ;;
     --build-dir)
       BUILD_DIR="$2"
       shift 2
@@ -75,26 +86,36 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-cmake_args=(
-  -S .
+stf_select_presets \
+  "$WITH_PYTHON" \
+  "macos-ninja-app-python" \
+  "macos-ninja-app" \
+  "macos-ninja-app-python-stimfit" \
+  "macos-ninja-app-stimfit"
+
+CONFIGURE_PRESET="$STF_CONFIGURE_PRESET"
+BUILD_PRESET="$STF_BUILD_PRESET"
+
+if [[ "$WITH_PYTHON" -eq 1 ]]; then
+  PRESET_BUILD_DIR="build/macos-app"
+else
+  PRESET_BUILD_DIR="build/macos-app-nopython"
+fi
+
+cmake_configure_args=(
+  --preset "$CONFIGURE_PRESET"
   -B "$BUILD_DIR"
   -G "$GENERATOR"
   -USTF_USE_BIOSIG_SUBMODULE
-  -DSTF_MACOS_APP_BUNDLE=ON
-  -DSTF_WITH_BIOSIG=ON
-  -DSTF_BIOSIG_PROVIDER=SUBMODULE
+  "-DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}"
 )
 
 if [[ "$WITH_PYTHON" -eq 1 ]]; then
-  cmake_args+=( -DSTF_ENABLE_PYTHON=ON )
-  cmake_args+=( -DSTF_PY_SHELL_BACKEND=JUPYTER )
-
   PYTHON_EXECUTABLE_GUESS="${PYTHON_EXECUTABLE:-$DEFAULT_MACPORTS_PYTHON}"
   PYTHON_EXECUTABLE_GUESS="$(pick_python_for_cmake "$PYTHON_EXECUTABLE_GUESS")" || {
     echo "ERROR: Could not find a usable MacPorts Python with development files (tried 3.14..3.10)." >&2
     exit 1
   }
-  cmake_args+=( "-DPython3_EXECUTABLE=${PYTHON_EXECUTABLE_GUESS}" )
 
   if [[ ! -x "${PYTHON_EXECUTABLE_GUESS}" ]]; then
     echo "ERROR: Python executable not found or not executable: ${PYTHON_EXECUTABLE_GUESS}" >&2
@@ -110,19 +131,21 @@ if [[ "$WITH_PYTHON" -eq 1 ]]; then
     fi
   fi
   if [[ -x "${WX_CONFIG_CANDIDATE}" ]]; then
-    cmake_args+=( "-DwxWidgets_CONFIG_EXECUTABLE=${WX_CONFIG_CANDIDATE}" )
+    cmake_configure_args+=( "-DwxWidgets_CONFIG_EXECUTABLE=${WX_CONFIG_CANDIDATE}" )
   fi
 
+  cmake_configure_args+=( "-DPython3_EXECUTABLE=${PYTHON_EXECUTABLE_GUESS}" )
+
   echo "==> Python executable: ${PYTHON_EXECUTABLE_GUESS}"
-else
-  cmake_args+=( -DSTF_ENABLE_PYTHON=OFF )
 fi
 
+stf_print_preset_selection "$BUILD_DIR"
+
 echo "==> Configuring"
-cmake "${cmake_args[@]}"
+cmake "${cmake_configure_args[@]}"
 
 echo "==> Building"
-cmake --build "$BUILD_DIR"
+stf_build_with_optional_preset "$BUILD_DIR" "$PRESET_BUILD_DIR" "$BUILD_PRESET"
 
 if [[ -e "$INSTALL_PREFIX" ]]; then
   echo "==> Removing existing install prefix: $INSTALL_PREFIX"

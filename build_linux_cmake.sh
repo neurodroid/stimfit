@@ -13,6 +13,10 @@ set -euo pipefail
 # Optional environment overrides:
 #   PYTHON_EXECUTABLE=/usr/bin/python3.12
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=cmake/StimfitPresetHelpers.sh
+source "${SCRIPT_DIR}/cmake/StimfitPresetHelpers.sh"
+
 BUILD_DIR="build/linux-default"
 INSTALL_PREFIX="build/linux-default/install"
 GENERATOR="Ninja"
@@ -106,19 +110,32 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-cmake_args=(
-  -S .
+stf_select_presets \
+  "$WITH_PYTHON" \
+  "linux-ninja-python" \
+  "linux-ninja" \
+  "linux-ninja-python-build" \
+  "linux-ninja-build"
+
+CONFIGURE_PRESET="$STF_CONFIGURE_PRESET"
+BUILD_PRESET="$STF_BUILD_PRESET"
+
+if [[ "$WITH_PYTHON" -eq 1 ]]; then
+  PRESET_BUILD_DIR="build/linux-default"
+else
+  PRESET_BUILD_DIR="build/linux-lite"
+fi
+
+cmake_configure_args=(
+  --preset "$CONFIGURE_PRESET"
   -B "$BUILD_DIR"
   -G "$GENERATOR"
-  -DCMAKE_BUILD_TYPE="$BUILD_TYPE"
   -USTF_USE_BIOSIG_SUBMODULE
-  -DSTF_WITH_BIOSIG=ON
-  -DSTF_BIOSIG_PROVIDER=SYSTEM
+  "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}"
+  "-DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}"
 )
 
 if [[ "$WITH_PYTHON" -eq 1 ]]; then
-  cmake_args+=( -DSTF_ENABLE_PYTHON=ON )
-
   PYTHON_EXECUTABLE_GUESS="${PYTHON_EXECUTABLE:-$DEFAULT_SYSTEM_PYTHON}"
   PYTHON_EXECUTABLE_GUESS="$(pick_python_for_cmake "$PYTHON_EXECUTABLE_GUESS")" || {
     echo "ERROR: Could not find a usable Python with development files (tried 3.14..3.10 and python3)." >&2
@@ -130,17 +147,17 @@ if [[ "$WITH_PYTHON" -eq 1 ]]; then
     exit 1
   fi
 
-  cmake_args+=( "-DPython3_EXECUTABLE=${PYTHON_EXECUTABLE_GUESS}" )
+  cmake_configure_args+=( "-DPython3_EXECUTABLE=${PYTHON_EXECUTABLE_GUESS}" )
   echo "==> Python executable: ${PYTHON_EXECUTABLE_GUESS}"
-else
-  cmake_args+=( -DSTF_ENABLE_PYTHON=OFF )
 fi
 
+stf_print_preset_selection "$BUILD_DIR"
+
 echo "==> Configuring"
-cmake "${cmake_args[@]}"
+cmake "${cmake_configure_args[@]}"
 
 echo "==> Building"
-cmake --build "$BUILD_DIR"
+stf_build_with_optional_preset "$BUILD_DIR" "$PRESET_BUILD_DIR" "$BUILD_PRESET"
 
 if [[ "$DO_INSTALL" -eq 1 ]]; then
   if [[ -e "$INSTALL_PREFIX" ]]; then
