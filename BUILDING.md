@@ -20,6 +20,20 @@ Run [`build_linux_cmake.sh`](build_linux_cmake.sh) from the repository root:
 ./build_linux_cmake.sh
 ```
 
+Direct CMake preset entry points:
+
+```bash
+cmake --preset linux-ninja-python
+cmake --build --preset linux-ninja-python-build
+```
+
+No-Python variant:
+
+```bash
+cmake --preset linux-ninja
+cmake --build --preset linux-ninja-build
+```
+
 Useful variants:
 
 ```bash
@@ -47,6 +61,20 @@ Run [`build_macos_cmake.sh`](build_macos_cmake.sh) from the repository root:
 ./build_macos_cmake.sh
 ```
 
+Direct CMake preset entry points:
+
+```bash
+cmake --preset macos-ninja-app-python
+cmake --build --preset macos-ninja-app-python-stimfit
+```
+
+No-Python variant:
+
+```bash
+cmake --preset macos-ninja-app
+cmake --build --preset macos-ninja-app-stimfit
+```
+
 Python-enabled app bundle build:
 
 ```bash
@@ -70,6 +98,13 @@ Run [`build_windows_msvc.ps1`](build_windows_msvc.ps1) from a PowerShell session
 
 ```powershell
 ./build_windows_msvc.ps1
+```
+
+Direct CMake preset entry points:
+
+```powershell
+cmake --preset vs2022-vcpkg-wx-hdf5-biosig-patched
+cmake --build --preset vs2022-release-all-biosig-patched
 ```
 
 Python-enabled build:
