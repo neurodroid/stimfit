@@ -1633,6 +1633,15 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
      case 112:
          ParentFrame()->SetMouseQual(stf::peak_cursor);
          return;
+     case 'W':
+     case 'w':
+         // Close active document (Ctrl+W on Windows/Linux, Cmd+W on macOS).
+         if (event.CmdDown()) {
+             wxCommandEvent closeEvent(wxEVT_MENU, wxID_CLOSE);
+             pFrame->ProcessWindowEvent(closeEvent);
+             return;
+         }
+         break;
      case 65: // 'a'
      case 97:
          // Select all traces:
