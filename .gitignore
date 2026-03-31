@@ -37,6 +37,7 @@ osc
 osc/*
 
 test.h5
+!src/pystfio/test.h5
 
 README
 INSTALL

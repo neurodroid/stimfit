@@ -22,6 +22,11 @@ class DataListTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        if not TEST_DATA.exists():
+            raise unittest.SkipTest(
+                f"Missing test fixture: {TEST_DATA}. "
+                "The stfio Python tests require src/pystfio/test.h5."
+            )
         cls.rec = stfio.read(TEST_DATA)
 
     def test_read_h5(self):
