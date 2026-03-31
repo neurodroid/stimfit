@@ -1,0 +1,62 @@
+[build-system]
+requires = [
+  "scikit-build-core>=0.10",
+  "swig>=4.0",
+  "numpy>=1.23",
+]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "stfio"
+version = "0.17.1"
+description = "Stimfit standalone Python module for electrophysiology file I/O"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "GPL-2.0-or-later" }
+authors = [
+  { name = "Stimfit contributors" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: C++",
+  "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+  "numpy>=1.23",
+]
+
+[project.optional-dependencies]
+plot = ["matplotlib>=3.5"]
+neo = ["neo>=0.12"]
+
+[project.urls]
+Homepage = "https://github.com/neurodroid/stimfit"
+Documentation = "https://neurodroid.github.io/stimfit"
+Repository = "https://github.com/neurodroid/stimfit"
+
+[tool.scikit-build]
+minimum-version = "0.10"
+build-dir = "build/{wheel_tag}"
+cmake.version = ">=3.21"
+cmake.build-type = "Release"
+wheel.packages = []
+sdist.include = [
+  "VERSION",
+  "cmake/**",
+  "src/**",
+  "README.md",
+  "COPYING",
+]
+
+[tool.scikit-build.cmake.define]
+STF_BUILD_MODULE = "ON"
+STF_ENABLE_PYTHON = "ON"
+STF_PYTHON_PACKAGE_INSTALL = "ON"
+Python3_FIND_STRATEGY = "LOCATION"

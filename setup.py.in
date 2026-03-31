@@ -1,3 +1,9 @@
+raise RuntimeError(
+    "setup.py.in is a legacy distutils-era template and is no longer the supported "
+    "packaging entry point. Use pyproject.toml-based builds for the standalone "
+    "stfio module and the CMake helper scripts for the full Stimfit application."
+)
+
 import distutils
 from distutils.core import setup, Extension
 

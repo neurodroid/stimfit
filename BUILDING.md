@@ -12,6 +12,23 @@ Use the platform helper script that matches your environment:
 
 These scripts are thin wrappers around CMake presets and cache options. They standardize the repository's preferred configure, build, install, and packaging steps so local builds follow the same structure as current CI and migration work.
 
+## Python package builds (`stfio`)
+
+The standalone `stfio` module can now be targeted through [`pyproject.toml`](pyproject.toml) using a CMake-backed `pip` build flow. This is intended for the Stimfit-independent file I/O module only, not the full Stimfit GUI application.
+
+Example local build commands:
+
+```bash
+python -m pip install .
+python -m pip wheel .
+```
+
+Use a Python interpreter that provides development headers for CMake discovery. On macOS, the system or Xcode-provided Python may be insufficient for native builds; a framework or package-manager Python is typically required.
+
+This packaging path forces [`STF_BUILD_MODULE`](cmake/StimfitOptions.cmake:3) and uses a wheel-oriented install layout for the contents of [`src/pystfio`](src/pystfio).
+
+Full Stimfit application builds should still follow the platform-specific CMake helper scripts described below.
+
 ## GNU/Linux
 
 Run [`build_linux_cmake.sh`](build_linux_cmake.sh) from the repository root:

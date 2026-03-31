@@ -16,6 +16,7 @@ option(STF_WINDOWS_PYTHON_FULL_REFRESH "Force full per-file refresh/check for st
 set(STF_WINDOWS_PYTHON_SITE_PACKAGES "numpy;wx" CACHE STRING "Semicolon-separated Python packages copied to install/stf-site-packages on Windows")
 set(STF_WINDOWS_PYTHON_EXTRA_PATHS "" CACHE STRING "Semicolon-separated extra Python import paths (e.g. local Phoenix checkout root)")
 set(STF_WXPYTHON_INCLUDE_DIR "" CACHE PATH "Path containing wxPython/wxpy_api.h (e.g. <Phoenix>/wx/include)")
+option(STF_PYTHON_PACKAGE_INSTALL "Install Python artifacts into a wheel-friendly package layout" OFF)
 option(STF_ENABLE_PSLOPE "Enable slope cursor measurements (like --enable-pslope)" OFF)
 option(STF_ENABLE_AUI "Enable experimental AUI doc/view mode (like --enable-aui)" OFF)
 option(STF_BUILD_DEBIAN "Enable Debian-oriented build flags/paths (like --enable-debian)" OFF)
