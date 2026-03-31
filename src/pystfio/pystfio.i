@@ -15,16 +15,16 @@ common electrophysiology file formats"
 #include <numpy/arrayobject.h>
 #include <datetime.h>
 
-#include "./../libstfio/stfio.h"
-#include "./../libstfio/recording.h"
-#include "./../libstfio/channel.h"
-#include "./../libstfio/section.h"
+#include "libstfio/stfio.h"
+#include "libstfio/recording.h"
+#include "libstfio/channel.h"
+#include "libstfio/section.h"
 
 #include "pystfio.h"
 
 static int myErr = 0; // flag to save error state
 %}
-%include "../stimfit/py/numpy.i"
+%include "numpy.i"
 %include "std_string.i"
 %include "exception.i"
 %init %{
@@ -216,9 +216,12 @@ class Section {
 	struct tm dt = r->GetDateTime();
         // Use strftime to format the time into the buffer.
         if (strftime(buffer, sizeof(buffer), "%H:%M:%S", &dt) == 0) {
-            return "na";
+            static const std::string unavailable_time("na");
+            return unavailable_time;
         }
-        return std::string(buffer);
+        static std::string formatted_time;
+        formatted_time = buffer;
+        return formatted_time;
     }
     void Recording_time_set(Recording *r, const std::string& val) {
         r->SetTime(val);
@@ -226,11 +229,14 @@ class Section {
     const std::string& Recording_date_get(Recording *r) {
         static char buffer[11];
         struct tm dt = r->GetDateTime();
-	// Use strftime to format the time into the buffer.
+        // Use strftime to format the time into the buffer.
         if (strftime(buffer, sizeof(buffer), "%Y:%m:%d", &dt) == 0) {
-            return "";
+            static const std::string unavailable_date("");
+            return unavailable_date;
         }
-        return std::string(buffer);
+        static std::string formatted_date;
+        formatted_date = buffer;
+        return formatted_date;
     }
     void Recording_date_set(Recording *r, const std::string& val) {
         r->SetDate(val);
@@ -363,9 +369,9 @@ class Section {
     int __len__() { return $self->size(); }
 
     %feature("autodoc", "Returns the section as a numpy array.") asarray;
-    PyArrayObject* asarray() {
-        npy_intp dims[1] = {$self->size()};
-        PyArrayObject* np_array = (PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+    PyObject* asarray() {
+        npy_intp dims[1] = {static_cast<npy_intp>($self->size())};
+        PyObject* np_array = PyArray_SimpleNew(1, dims, NPY_DOUBLE);
         double* gDataP = (double*)array_data(np_array);
 
         std::copy( $self->get().begin(),
@@ -437,6 +443,25 @@ class StfIOException(Exception):
     def __str__(self):
         return repr(self.msg)
 
+
+class RecordingHandle(object):
+    """Context manager wrapper for opening recordings with `with` syntax."""
+
+    def __init__(self, fname, ftype=None, verbose=False):
+        self._fname = os.fspath(fname)
+        self._ftype = ftype
+        self._verbose = verbose
+        self._recording = None
+
+    def __enter__(self):
+        self._recording = read(self._fname, ftype=self._ftype, verbose=self._verbose)
+        return self._recording
+
+    def __exit__(self, exc_type, exc, tb):
+        self._recording = None
+        return False
+
+
 filetype = {
     '.dat':'cfs',
     '.h5':'hdf5',
@@ -445,6 +470,12 @@ filetype = {
     '.axgd':'axg',
     '.axgx':'axg',
     '.clp':'intan'}
+
+
+def open(fname, ftype=None, verbose=False):
+    """Open a recording for use with `with ... as ...` syntax."""
+    return RecordingHandle(fname, ftype=ftype, verbose=verbose)
+
 
 def read(fname, ftype=None, verbose=False):
     """Reads a file and returns a Recording object.
@@ -473,6 +504,7 @@ def read(fname, ftype=None, verbose=False):
     Returns:
     A Recording object.
     """
+    fname = os.fspath(fname)
     if not os.path.exists(fname):
         raise StfIOException('File %s does not exist' % fname)
 
