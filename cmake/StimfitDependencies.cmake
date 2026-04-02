@@ -353,26 +353,79 @@ if(STF_WITH_BIOSIG)
   unset(_stf_biosig_provider_candidates)
 endif()
 
-find_library(FFTW3_LIBRARY NAMES fftw3 libfftw3-3 fftw3-3 REQUIRED)
+set(_stf_fftw3_include_dir "")
+set(_stf_fftw3_link_libraries "")
+
+if(PkgConfig_FOUND)
+  pkg_check_modules(PC_FFTW3 QUIET fftw3)
+  if(PC_FFTW3_FOUND)
+    foreach(_stf_fftw3_pkg_lib IN LISTS PC_FFTW3_LINK_LIBRARIES)
+      if(IS_ABSOLUTE "${_stf_fftw3_pkg_lib}" AND EXISTS "${_stf_fftw3_pkg_lib}")
+        set(FFTW3_LIBRARY "${_stf_fftw3_pkg_lib}")
+        break()
+      endif()
+    endforeach()
+    unset(_stf_fftw3_pkg_lib)
+
+    if(NOT FFTW3_LIBRARY)
+      find_library(FFTW3_LIBRARY
+        NAMES fftw3 libfftw3-3 fftw3-3
+        HINTS ${PC_FFTW3_LIBRARY_DIRS}
+      )
+    endif()
+
+    foreach(_stf_fftw3_inc IN LISTS PC_FFTW3_INCLUDE_DIRS PC_FFTW3_INCLUDEDIR)
+      if(EXISTS "${_stf_fftw3_inc}/fftw3.h")
+        set(_stf_fftw3_include_dir "${_stf_fftw3_inc}")
+        break()
+      endif()
+    endforeach()
+    unset(_stf_fftw3_inc)
+
+    if(PC_FFTW3_LINK_LIBRARIES)
+      set(_stf_fftw3_link_libraries ${PC_FFTW3_LINK_LIBRARIES})
+    elseif(PC_FFTW3_LIBRARIES)
+      set(_stf_fftw3_link_libraries ${PC_FFTW3_LIBRARIES})
+    endif()
+  endif()
+endif()
+
+if(NOT FFTW3_LIBRARY)
+  find_library(FFTW3_LIBRARY NAMES fftw3 libfftw3-3 fftw3-3 REQUIRED)
+endif()
+
 add_library(stimfit::fftw3 UNKNOWN IMPORTED)
 set_target_properties(stimfit::fftw3 PROPERTIES IMPORTED_LOCATION "${FFTW3_LIBRARY}")
 
-# Try to locate fftw3.h for custom/local installs (e.g. ~/libs/fftw3).
-get_filename_component(_fftw3_lib_dir "${FFTW3_LIBRARY}" DIRECTORY)
-set(_fftw3_include_candidates
-  "${_fftw3_lib_dir}"
-  "${_fftw3_lib_dir}/include"
-  "${_fftw3_lib_dir}/../include"
-)
-foreach(_fftw3_inc IN LISTS _fftw3_include_candidates)
-  if(EXISTS "${_fftw3_inc}/fftw3.h")
-    target_include_directories(stimfit::fftw3 INTERFACE "${_fftw3_inc}")
-    break()
-  endif()
-endforeach()
-unset(_fftw3_inc)
-unset(_fftw3_include_candidates)
-unset(_fftw3_lib_dir)
+if(NOT _stf_fftw3_include_dir)
+  # Try to locate fftw3.h for custom/local installs (e.g. ~/libs/fftw3).
+  get_filename_component(_fftw3_lib_dir "${FFTW3_LIBRARY}" DIRECTORY)
+  set(_fftw3_include_candidates
+    "${_fftw3_lib_dir}"
+    "${_fftw3_lib_dir}/include"
+    "${_fftw3_lib_dir}/../include"
+  )
+  foreach(_fftw3_inc IN LISTS _fftw3_include_candidates)
+    if(EXISTS "${_fftw3_inc}/fftw3.h")
+      set(_stf_fftw3_include_dir "${_fftw3_inc}")
+      break()
+    endif()
+  endforeach()
+  unset(_fftw3_inc)
+  unset(_fftw3_include_candidates)
+  unset(_fftw3_lib_dir)
+endif()
+
+if(_stf_fftw3_include_dir)
+  target_include_directories(stimfit::fftw3 INTERFACE "${_stf_fftw3_include_dir}")
+endif()
+
+if(_stf_fftw3_link_libraries)
+  target_link_libraries(stimfit::fftw3 INTERFACE ${_stf_fftw3_link_libraries})
+endif()
+
+unset(_stf_fftw3_include_dir)
+unset(_stf_fftw3_link_libraries)
 
 macro(_stf_reset_lapack_blas_find_state)
   unset(LAPACK_FOUND)
