@@ -31,6 +31,31 @@ Full Stimfit application builds should still follow the platform-specific CMake 
 
 ## GNU/Linux
 
+For a full Debian/Ubuntu GUI build with the current CMake flow, install at least:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y \
+  cmake \
+  ninja-build \
+  g++ \
+  pkg-config \
+  swig \
+  libbiosig-dev \
+  libfftw3-dev \
+  libhdf5-dev \
+  libwxgtk3.2-dev \
+  liblapack-dev \
+  libblas-dev \
+  libopenblas-dev \
+  python3-dev \
+  python3-numpy
+```
+
+If you want embedded Python support in the GUI build, make sure the selected `python3`
+interpreter also provides development headers and that the environment includes the
+required runtime Python packages such as `wxPython`, `IPython`, and `numpy`.
+
 Run [`build_linux_cmake.sh`](build_linux_cmake.sh) from the repository root:
 
 ```bash
@@ -59,16 +84,26 @@ Useful variants:
 ./build_linux_cmake.sh --package-generator TGZ
 ```
 
+Explicit no-Python, no-Biosig fallback build:
+
+```bash
+cmake -S . -B build/linux-fallback -G Ninja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DSTF_ENABLE_PYTHON=OFF \
+  -DSTF_WITH_BIOSIG=OFF
+cmake --build build/linux-fallback
+```
+
 What the script does:
 
 - configures a CMake build tree under `build/linux-*`
 - enables or disables embedded Python support
-- prefers the system Biosig integration (`STF_WITH_BIOSIG=ON`)
+- prefers the system Biosig integration (`STF_WITH_BIOSIG=ON`, `STF_BIOSIG_PROVIDER=SYSTEM`)
 - builds with [`cmake`](CMakeLists.txt)
 - optionally installs into a local prefix under `build/linux-*/install`
 - optionally runs `cpack` to create distributable artifacts
 
-The script also tries to locate a usable Python interpreter with development headers before enabling Python support.
+The script also tries to locate a usable Python interpreter with development headers before enabling Python support. On Debian/Ubuntu, system Biosig detection now checks `pkg-config` first (`libbiosig`/`biosig`) and falls back to direct library/header probing if no pkg-config metadata is available.
 
 ## macOS
 
