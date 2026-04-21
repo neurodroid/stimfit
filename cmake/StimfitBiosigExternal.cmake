@@ -13,7 +13,7 @@ function(stf_configure_windows_patched_biosig)
 
   set(_stf_biosig_source_dir "${CMAKE_SOURCE_DIR}/src/biosig")
   set(_stf_biosig_patch_dir "${CMAKE_SOURCE_DIR}/cmake/patches/biosig-msvc")
-  set(STF_BIOSIG_EXPECTED_TAG "v3.9.3" CACHE STRING "Expected biosig tag for Windows patched-submodule provider")
+  set(STF_BIOSIG_EXPECTED_TAG "v3.9.5" CACHE STRING "Expected biosig tag for Windows patched-submodule provider")
 
   if(NOT EXISTS "${_stf_biosig_source_dir}/biosig4c++/CMakeLists.txt")
     message(FATAL_ERROR "Patched biosig provider requires the biosig submodule under ${_stf_biosig_source_dir}")
