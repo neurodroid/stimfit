@@ -167,3 +167,10 @@ stimfittest
 
 Portfile
 /debian/mkdeb.sh
+
+# Kilo Code
+.kilo/*
+!.kilo/command/
+!.kilo/command/*.md
+!.kilo/agent/
+!.kilo/agent/*.md

@@ -10,7 +10,7 @@ set(STF_BIOSIG_SOURCE_DIR "${_repo_root}/src/biosig" CACHE PATH "Path to biosig 
 set(STF_BIOSIG_WORK_DIR "${_repo_root}/build/biosig-msvc-src" CACHE PATH "Path to working copy for patched biosig sources")
 set(STF_BIOSIG_BUILD_DIR "${_repo_root}/build/biosig-msvc-build" CACHE PATH "Path to out-of-tree biosig build directory")
 set(STF_BIOSIG_PATCH_DIR "${CMAKE_CURRENT_LIST_DIR}/patches/biosig-msvc" CACHE PATH "Path to patch queue directory (*.patch)")
-set(STF_BIOSIG_EXPECTED_TAG "v3.9.3" CACHE STRING "Expected biosig tag used as patch baseline")
+set(STF_BIOSIG_EXPECTED_TAG "v3.9.5" CACHE STRING "Expected biosig tag used as patch baseline")
 set(STF_BIOSIG_GENERATOR "Visual Studio 17 2022" CACHE STRING "CMake generator for biosig build")
 set(STF_BIOSIG_ARCH "x64" CACHE STRING "Architecture used with Visual Studio generator")
 set(STF_BIOSIG_CONFIG "Release" CACHE STRING "Configuration to build")
