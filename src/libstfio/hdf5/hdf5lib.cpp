@@ -13,7 +13,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "hdf5.h"
-#if H5_VERS_MINOR > 6
+#if H5_VERS_MAJOR > 1 || H5_VERS_MINOR > 6
   #include "hdf5_hl.h"
 #else
   #include "H5TA.h"
@@ -524,5 +524,4 @@ void stfio::importHDF5File(const std::string& fName, Recording& ReturnData, Prog
     }
     
 }
-
 
