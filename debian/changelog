@@ -2,7 +2,6 @@ stimfit (0.16.11-3) unstable; urgency=medium
 
   * Fix FTBFS with HDF5 2.x. Thanks to Gilles Filippini for the patch.
     (Closes: #1139613)
-  * Install README.md instead of the obsolete README path.
 
  -- Christoph Schmidt-Hieber <christsc@gmx.de>  Wed, 10 Jun 2026 11:06:16 +0000
 
