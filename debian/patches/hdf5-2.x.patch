@@ -1,0 +1,18 @@
+Description: Fix HDF5 high-level header selection for HDF5 2.x
+ HDF5 2.1.0 has a lower minor version than HDF5 1.14.x, so checking
+ only H5_VERS_MINOR incorrectly selects the legacy HDF5 1.6 header path.
+Author: Gilles Filippini <pini@debian.org>
+Forwarded: not-needed
+Last-Update: 2026-06-10
+
+--- a/src/libstfio/hdf5/hdf5lib.cpp
++++ b/src/libstfio/hdf5/hdf5lib.cpp
+@@ -13,7 +13,7 @@
+ // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ 
+ #include "hdf5.h"
+-#if H5_VERS_MINOR > 6
++#if H5_VERS_MAJOR > 1 || H5_VERS_MINOR > 6
+   #include "hdf5_hl.h"
+ #else
+   #include "H5TA.h"
