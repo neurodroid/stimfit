@@ -116,14 +116,6 @@ dist/debian/mkquick.sh
 *.orig.tar.*
 /stimfit-*.tar.gz
 
-# Local Kilo plugin/dependency artifacts. Do not ignore the whole .kilo/
-# tree: project commands, agents, skills, and run/setup scripts may be shared.
-/.kilo/node_modules/
-/.kilo/package.json
-/.kilo/package-lock.json
-/.kilo/bun.lock
-/.kilo/.gitignore
-
 
 # build files
 

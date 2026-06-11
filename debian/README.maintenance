@@ -8,7 +8,7 @@ Branch model
 - Debian packaging branch: `debian/sid`
 - Pristine tar branch: `pristine-tar`
 
-`gbp` defaults are configured in `.gbp.conf`.
+`gbp` defaults are configured in `debian/gbp.conf`.
 
 
 Typical maintainer flow
