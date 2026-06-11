@@ -24,7 +24,6 @@ Build-Depends: chrpath,
                zlib1g-dev
 Standards-Version: 4.7.3
 Rules-Requires-Root: no
-Testsuite: autopkgtest
 Vcs-Git: https://github.com/neurodroid/stimfit.git -b debian/sid
 Vcs-Browser: https://github.com/neurodroid/stimfit/tree/debian/sid
 Homepage: http://www.stimfit.org
