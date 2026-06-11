@@ -9,7 +9,7 @@ DEB_CMAKE_EXTRA_FLAGS = \
 	-DSTF_ENABLE_PYTHON=ON \
 	-DSTF_ENABLE_IPYTHON=OFF \
 	-DSTF_WITH_BIOSIG=ON \
-	-DSTF_WITH_BIOSIGLITE=OFF \
+	-DSTF_BIOSIG_PROVIDER=SYSTEM \
 	-DSTF_BUILD_TESTS=ON
 
 ifneq ($(wildcard /usr/lib/$(DEB_HOST_MULTIARCH)/hdf5/serial/libhdf5.so),)
@@ -60,10 +60,4 @@ override_dh_auto_install:
 	dh_auto_install --buildsystem=cmake+ninja --destdir=$(CURDIR)/debian/tmp
 
 override_dh_strip:
-	# first strip debug symbols for python3-stfio's shared objects explicitly
-	# this places them in python3-stfio-dbgsym and avoids polluting stimfit-dbgsym
-	dh_strip -ppython3-stfio
-	# run a second pass for the remaining binaries, but skip the python module
-	# files so they are not pulled into stimfit-dbgsym as well
-	dh_strip \
-		--exclude=usr/lib/python*/*-packages/stfio/_*.so
+	dh_strip

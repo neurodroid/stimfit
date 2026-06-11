@@ -4,12 +4,9 @@ Stimfit Debian maintenance workflow (CMake toolchain)
 Branch model
 ------------
 
-- Upstream code branch (current CMake transition): `pr/msvc-toolchain-compat`
+- Upstream code branch (current CMake line): `master`
 - Debian packaging branch: `debian/sid`
 - Pristine tar branch: `pristine-tar`
-
-Once CMake lands on `master`, switch the upstream branch reference back to
-`master` in `.gbp.conf` and continue the same workflow.
 
 `gbp` defaults are configured in `.gbp.conf`.
 
@@ -19,7 +16,7 @@ Typical maintainer flow
 
 1) Sync packaging branch with upstream:
 
-   - Merge or rebase `pr/msvc-toolchain-compat` into `debian/sid`.
+   - Merge or rebase `master` into `debian/sid`.
 
 2) Build source + binary packages with git-buildpackage:
 
