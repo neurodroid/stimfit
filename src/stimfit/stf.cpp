@@ -90,10 +90,12 @@ stf::SectionPointer::SectionPointer(Section* pSec, const stf::SectionAttributes&
 {}
 
 stf::Event::Event(std::size_t start, std::size_t peak, std::size_t size, wxCheckBox* cb) :
-    eventStartIndex(start), eventPeakIndex(peak), eventSize(size), checkBox(cb)
+    eventStartIndex(start), eventPeakIndex(peak), eventSize(size), checkBox(cb), keepEvent(true)
 {
-    checkBox->Show(true);
-    checkBox->SetValue(true);
+    if (checkBox != NULL) {
+        checkBox->Show(true);
+        checkBox->SetValue(keepEvent);
+    }
 }
 
 stf::Event::~Event()

@@ -37,6 +37,7 @@ osc
 osc/*
 
 test.h5
+!src/pystfio/test.h5
 
 README
 INSTALL
@@ -174,3 +175,10 @@ stimfittest
 
 Portfile
 /debian/mkdeb.sh
+
+# Kilo Code
+.kilo/*
+!.kilo/command/
+!.kilo/command/*.md
+!.kilo/agent/
+!.kilo/agent/*.md

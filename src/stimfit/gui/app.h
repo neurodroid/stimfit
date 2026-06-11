@@ -106,6 +106,7 @@ enum {
     ID_CH2BASEZOOM,
     ID_SWAPCHANNELS,
     ID_SCALE,
+    ID_VIEW_DARK_TRACE,
     ID_ZOOMHV,
     ID_ZOOMH,
     ID_ZOOMV,
@@ -233,6 +234,7 @@ enum {
 class wxDocManager;
 class wxStfDoc;
 class wxStfView;
+class wxStfGraph;
 class wxStfCursorsDlg;
 class wxStfParentFrame;
 class wxStfChildFrame;
@@ -285,6 +287,14 @@ public:
     /*! \return A pointer to the currently active view.
      */
     wxStfView* GetActiveView() const;
+
+    //! Retrieves the graph belonging to the currently focused window.
+    /*! This resolves keyboard shortcut dispatch based on focus ownership
+     *  (e.g. results grid in a child frame), with a fallback to the
+     *  active view graph.
+     *  \return A pointer to the graph that should receive key events, or NULL.
+     */
+    wxStfGraph* GetFocusedGraph() const;
 
     //! Displays a message box when an error has occured.
     /*! You can use this function from almost anywhere using
@@ -461,6 +471,16 @@ public:
      */
     bool get_isBars() const { return isBars; }
 
+    //! Determine whether trace display uses dark theme rendering.
+    /*! \param value Set to true for dark background rendering.
+     */
+    void set_isDarkTraceDisplay(bool value) { isDarkTraceDisplay = value; }
+
+    //! Indicates whether trace display uses dark theme rendering.
+    /*! \return true for dark background rendering.
+     */
+    bool get_isDarkTraceDisplay() const { return isDarkTraceDisplay; }
+
     //! Get a formatted version string.
     /*! \return A version string (stimfit x.y.z, release/debug build, date).
      */
@@ -521,7 +541,7 @@ private:
 #pragma optimize( "", on )
 #endif
 
-    bool directTxtImport,isBars;
+    bool directTxtImport,isBars,isDarkTraceDisplay;
     stfio::txtImportSettings txtImport;
     // Registry:
 #if (__cplusplus < 201103)

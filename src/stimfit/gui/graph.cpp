@@ -88,19 +88,13 @@ BEGIN_EVENT_TABLE(wxStfGraph, wxWindow)
 EVT_MENU(ID_ZOOMHV,wxStfGraph::OnZoomHV)
 EVT_MENU(ID_ZOOMH,wxStfGraph::OnZoomH)
 EVT_MENU(ID_ZOOMV,wxStfGraph::OnZoomV)
+EVT_CHECKBOX(wxID_ANY, wxStfGraph::OnEventCheckBox)
 EVT_MOUSE_EVENTS(wxStfGraph::OnMouseEvent)
 EVT_KEY_DOWN( wxStfGraph::OnKeyDown )
 #if defined __WXMAC__ && !(wxCHECK_VERSION(2, 9, 0))
 EVT_PAINT( wxStfGraph::OnPaint )
 #endif
 END_EVENT_TABLE()
-
-struct AnnotationLine {
-    wxPoint start;
-    wxPoint end;
-};
-
-std::vector<AnnotationLine> annotationLines;
 
 // Define a constructor for my canvas
 wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, const wxSize& size, long style):
@@ -169,6 +163,10 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     PSlopePrintPen(wxColour(30,144,255), printSizePen1, wxPENSTYLE_DOT), // Dotted bright blue line
     baseBrush(*wxLIGHT_GREY,wxBRUSHSTYLE_BDIAGONAL_HATCH),
     zeroBrush(*wxLIGHT_GREY,wxBRUSHSTYLE_FDIAGONAL_HATCH),
+    annotationPen(*wxRED, 1, wxPENSTYLE_SOLID),
+    defaultScaleTextColour(*wxBLACK),
+    secondaryScaleTextColour(*wxRED),
+    isDarkTheme(false),
     lastLDown(0,0),
     yzoombg(),
     m_zoomContext( new wxMenu ),
@@ -190,8 +188,8 @@ wxStfGraph::wxStfGraph(wxView *v, wxStfChildFrame *frame, const wxPoint& pos, co
     m_annotationContext->Append( ID_ANNOTATION_IMPORTANNOTATIONS, wxT("Import all annotations") );
     m_annotationContext->Append( ID_ANNOTATION_DetectEvents, wxT("Detect events based on expert data") );
 
-    SetBackgroundColour(*wxWHITE);
     view = (wxStfView*)v;
+    ApplyTraceDisplayTheme(wxGetApp().get_isDarkTraceDisplay());
     wxString perspective=wxGetApp().wxGetProfileString(wxT("Settings"),wxT("Windows"),wxT(""));
 /*    if (perspective != wxT("")) {
         // load the stored perspective:
@@ -207,13 +205,113 @@ wxStfParentFrame* wxStfGraph::ParentFrame() {
     return (wxStfParentFrame*)wxGetApp().GetTopWindow();
 }
 
-// Defines the repainting behaviour
-void wxStfGraph::OnDraw( wxDC& DC )
-{
+void wxStfGraph::UpdateDisplayPalette() {
+    if (isDarkTheme) {
+        // Display palette for dark background (on-screen only)
+        const wxColour bg(12, 12, 16);
+        SetBackgroundColour(bg);
 
-    if ( !view || Doc()->get().empty() || !Doc()->IsInitialized() )
-        return;
+        standardPen = wxPen(wxColour(232, 236, 244), 1, wxPENSTYLE_SOLID);
+        standardPen2 = wxPen(wxColour(255, 132, 132), 1, wxPENSTYLE_SOLID);
+        standardPen3 = wxPen(wxColour(138, 96, 132), 1, wxPENSTYLE_SOLID);
 
+        scalePen = wxPen(wxColour(232, 236, 244), 2, wxPENSTYLE_SOLID);
+        scalePen2 = wxPen(wxColour(255, 132, 132), 2, wxPENSTYLE_SOLID);
+
+        peakPen = wxPen(wxColour(255, 144, 144), 1, wxPENSTYLE_SHORT_DASH);
+        peakLimitPen = wxPen(wxColour(255, 176, 176), 1, wxPENSTYLE_DOT);
+        basePen = wxPen(wxColour(110, 228, 170), 1, wxPENSTYLE_SHORT_DASH);
+        baseLimitPen = wxPen(wxColour(110, 228, 170), 1, wxPENSTYLE_DOT);
+        decayLimitPen = wxPen(wxColour(156, 162, 176), 1, wxPENSTYLE_DOT);
+        ZoomRectPen = wxPen(wxColour(198, 204, 214), 1, wxPENSTYLE_DOT);
+
+        fitPen = wxPen(wxColour(196, 206, 218), 4, wxPENSTYLE_SOLID);
+        fitSelectedPen = wxPen(wxColour(148, 160, 176), 2, wxPENSTYLE_SOLID);
+        selectPen = wxPen(wxColour(104, 110, 124), 1, wxPENSTYLE_SOLID);
+        averagePen = wxPen(wxColour(120, 190, 255), 1, wxPENSTYLE_SOLID);
+
+        rtPen = wxPen(wxColour(110, 228, 170), 2, wxPENSTYLE_SOLID);
+        hdPen = wxPen(wxColour(96, 216, 255), 2, wxPENSTYLE_SOLID);
+        rdPen = wxPen(wxColour(255, 144, 144), 2, wxPENSTYLE_SOLID);
+#ifdef WITH_PSLOPE
+        slopePen = wxPen(wxColour(120, 190, 255), 2, wxPENSTYLE_SOLID);
+#endif
+        latencyPen = wxPen(wxColour(120, 190, 255), 1, wxPENSTYLE_DOT);
+        alignPen = wxPen(wxColour(120, 190, 255), 1, wxPENSTYLE_SHORT_DASH);
+        measPen = wxPen(wxColour(210, 214, 224), 1, wxPENSTYLE_DOT);
+        eventPen = wxPen(wxColour(120, 190, 255), 2, wxPENSTYLE_SOLID);
+#ifdef WITH_PSLOPE
+        PSlopePen = wxPen(wxColour(94, 188, 255), 1, wxPENSTYLE_DOT);
+#endif
+
+        baseBrush = wxBrush(wxColour(90, 124, 118), wxBRUSHSTYLE_BDIAGONAL_HATCH);
+        zeroBrush = wxBrush(wxColour(118, 118, 118), wxBRUSHSTYLE_FDIAGONAL_HATCH);
+
+        annotationPen = wxPen(wxColour(255, 172, 108), 1, wxPENSTYLE_SOLID);
+        defaultScaleTextColour = wxColour(232, 236, 244);
+        secondaryScaleTextColour = wxColour(255, 132, 132);
+    } else {
+        // Existing light palette (on-screen only)
+        SetBackgroundColour(*wxWHITE);
+
+        standardPen = wxPen(*wxBLACK, 1, wxPENSTYLE_SOLID);
+        standardPen2 = wxPen(*wxRED, 1, wxPENSTYLE_SOLID);
+        standardPen3 = wxPen(wxColour(255,192,192), 1, wxPENSTYLE_SOLID);
+
+        scalePen = wxPen(*wxBLACK, 2, wxPENSTYLE_SOLID);
+        scalePen2 = wxPen(*wxRED, 2, wxPENSTYLE_SOLID);
+
+        peakPen = wxPen(*wxRED, 1, wxPENSTYLE_SHORT_DASH);
+        peakLimitPen = wxPen(*wxRED, 1, wxPENSTYLE_DOT);
+        basePen = wxPen(*wxGREEN, 1, wxPENSTYLE_SHORT_DASH);
+        baseLimitPen = wxPen(*wxGREEN, 1, wxPENSTYLE_DOT);
+        decayLimitPen = wxPen(wxColour(127,127,127), 1, wxPENSTYLE_DOT);
+        ZoomRectPen = wxPen(*wxLIGHT_GREY, 1, wxPENSTYLE_DOT);
+
+        fitPen = wxPen(wxColour(127,127,127), 4, wxPENSTYLE_SOLID);
+        fitSelectedPen = wxPen(wxColour(192,192,192), 2, wxPENSTYLE_SOLID);
+        selectPen = wxPen(wxColour(127,127,127), 1, wxPENSTYLE_SOLID);
+        averagePen = wxPen(*wxBLUE, 1, wxPENSTYLE_SOLID);
+
+        rtPen = wxPen(*wxGREEN, 2, wxPENSTYLE_SOLID);
+        hdPen = wxPen(*wxCYAN, 2, wxPENSTYLE_SOLID);
+        rdPen = wxPen(*wxRED, 2, wxPENSTYLE_SOLID);
+#ifdef WITH_PSLOPE
+        slopePen = wxPen(*wxBLUE, 2, wxPENSTYLE_SOLID);
+#endif
+        latencyPen = wxPen(*wxBLUE, 1, wxPENSTYLE_DOT);
+        alignPen = wxPen(*wxBLUE, 1, wxPENSTYLE_SHORT_DASH);
+        measPen = wxPen(*wxBLACK, 1, wxPENSTYLE_DOT);
+        eventPen = wxPen(*wxBLUE, 2, wxPENSTYLE_SOLID);
+#ifdef WITH_PSLOPE
+        PSlopePen = wxPen(wxColour(30,144,255), 1, wxPENSTYLE_DOT);
+#endif
+
+        baseBrush = wxBrush(*wxLIGHT_GREY, wxBRUSHSTYLE_BDIAGONAL_HATCH);
+        zeroBrush = wxBrush(*wxLIGHT_GREY, wxBRUSHSTYLE_FDIAGONAL_HATCH);
+
+        annotationPen = wxPen(*wxRED, 1, wxPENSTYLE_SOLID);
+        defaultScaleTextColour = *wxBLACK;
+        secondaryScaleTextColour = *wxRED;
+    }
+}
+
+void wxStfGraph::ApplyTraceDisplayTheme(bool darkMode) {
+    isDarkTheme = darkMode;
+    UpdateDisplayPalette();
+}
+
+bool wxStfGraph::CanDraw() const {
+    return view && !DocC()->get().empty() && DocC()->IsInitialized();
+}
+
+void wxStfGraph::SyncDisplayTheme() {
+    if (isDarkTheme != wxGetApp().get_isDarkTraceDisplay()) {
+        ApplyTraceDisplayTheme(wxGetApp().get_isDarkTraceDisplay());
+    }
+}
+
+void wxStfGraph::ActivateViewAndFocusForPaint() {
     // ugly hack to force active document update:
 #if defined(__WXGTK__) || defined(__WXMAC__)
     view->Activate(true);
@@ -224,109 +322,137 @@ void wxStfGraph::OnDraw( wxDC& DC )
 #endif
         SetFocus();
 #endif
-    wxRect WindowRect(GetRect());
+}
 
-    if (isPrinted) {
-        PrintScale(WindowRect);
-    }
-
+void wxStfGraph::InitializePlotIfNeeded() {
     if (firstPass) {
         firstPass = false;
         InitPlot();
     }
-    
-    //Creates scale bars and labelings for display or print out
-    //Calculate scale bars and labelings
-    CreateScale(&DC);
+}
 
-    //Create additional rulers/lines and circles on display
-    if (!no_gimmicks) 	{
-        PlotGimmicks(DC);
+void wxStfGraph::DrawPrimaryOverlays(wxDC& dc) {
+    // Creates scale bars and labelings for display or print out
+    CreateScale(&dc);
+
+    // Create additional rulers/lines and circles on display
+    if (!no_gimmicks) {
+        PlotGimmicks(dc);
     }
 
-    //Plot all selected traces and fitted functions if at least one trace ist selected
-    //and 'is selected' is selected in the trace navigator/control box
-    //Polyline() is used for printing to avoid separation of traces
-    //in postscript files
-    //LineTo()is used for display for performance reasons
-
-    //Plot fit curves (including current trace)
-    DrawFit(&DC);
+    DrawFit(&dc);
 
     if (!Doc()->GetSelectedSections().empty() && pFrame->ShowSelected()) {
-        PlotSelected(DC);
-    }	//End plot all selected traces
+        PlotSelected(dc);
+    }
 
-    //Plot average
     if (Doc()->GetIsAverage()) {
-        PlotAverage(DC);
-    }	//End plot average
+        PlotAverage(dc);
+    }
 
-
-    // Plot integral boundaries
     try {
         if (Doc()->GetCurrentSectionAttributes().isIntegrated) {
-            DrawIntegral(&DC);
+            DrawIntegral(&dc);
         }
     }
     catch (const std::out_of_range&) {
         /* Do nothing for now */
     }
 
-    //Zoom window is displayed (see OnLeftButtonUp())
     if (isZoomRect) {
-        DrawZoomRect(DC);
+        DrawZoomRect(dc);
     }
-    //End zoom
+}
 
-    //Plot of the second channel
-    //Trace one when displayed first time
+void wxStfGraph::DrawVisibleSecondaryChannels(wxDC& dc) {
+    // Plot of the second channel
     if ((Doc()->size()>1) && pFrame->ShowSecond()) {
         if (!isPrinted) {
-            //Draw current trace on display
-            //For display use point to point drawing
-            DC.SetPen(standardPen2);
-            PlotTrace(&DC,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(), reference);
-        } else {	//Draw second channel for print out
-            //For print out use polyline tool
-            DC.SetPen(standardPrintPen2);
-            PrintTrace(&DC,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(), reference);
-        }	// End display or print out
-    }		//End plot of the second channel
+            dc.SetPen(standardPen2);
+            PlotTrace(&dc,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(), reference);
+        } else {
+            dc.SetPen(standardPrintPen2);
+            PrintTrace(&dc,Doc()->get()[Doc()->GetSecChIndex()][Doc()->GetCurSecIndex()].get(), reference);
+        }
+    }
 
     if ((Doc()->size()>1) && pFrame->ShowAll()) {
         for (std::size_t n=0; n < Doc()->size(); ++n) {
             if (!isPrinted) {
-                //Draw current trace on display
-                //For display use point to point drawing
-                DC.SetPen(standardPen3);
-                PlotTrace(&DC,Doc()->get()[n][Doc()->GetCurSecIndex()].get(), background, n);
+                dc.SetPen(standardPen3);
+                PlotTrace(&dc,Doc()->get()[n][Doc()->GetCurSecIndex()].get(), background, n);
             }
         }
-    }		//End plot of the second channel
-    
-    //Standard plot of the current trace
-    //Trace one when displayed first time
-    if (!isPrinted) {
-	//Draw current trace on display
-        //For display use point to point drawing
-        DC.SetPen(standardPen);
-        PlotTrace(&DC,Doc()->get()[Doc()->GetCurChIndex()][Doc()->GetCurSecIndex()].get());
-    } else {
-        //For print out use polyline tool
-        DC.SetPen(standardPrintPen);
-        PrintTrace(&DC,Doc()->get()[Doc()->GetCurChIndex()][Doc()->GetCurSecIndex()].get());
-    }	// End display or print out
-    //End plot of the current trace
+    }
+}
 
-    //Ensure old scaling after print out
-    if(isPrinted) {
-        for (std::size_t n=0; n < Doc()->size(); ++n) {
-            Doc()->GetYZoomW(n) = Doc()->GetYZoomW(n) * (1.0/printScale);
+void wxStfGraph::DrawCurrentTrace(wxDC& dc) {
+    if (!isPrinted) {
+        dc.SetPen(standardPen);
+        PlotTrace(&dc,Doc()->get()[Doc()->GetCurChIndex()][Doc()->GetCurSecIndex()].get());
+    } else {
+        dc.SetPen(standardPrintPen);
+        PrintTrace(&dc,Doc()->get()[Doc()->GetCurChIndex()][Doc()->GetCurSecIndex()].get());
+    }
+}
+
+void wxStfGraph::RestoreScalingAfterPrint(wxRect& windowRect) {
+    if (!isPrinted) {
+        return;
+    }
+
+    for (std::size_t n=0; n < Doc()->size(); ++n) {
+        Doc()->GetYZoomW(n) = Doc()->GetYZoomW(n) * (1.0/printScale);
+    }
+    Doc()->GetXZoomW() = Doc()->GetXZoomW() * (1.0/printScale);
+    windowRect = printRect;
+}
+
+double wxStfGraph::LogicalXFromPixel(int x) const {
+    return (static_cast<double>(x) - static_cast<double>(SPX())) / XZ();
+}
+
+void wxStfGraph::ActivateViewAndFocusForInput() {
+    view->Activate(true);
+#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
+    if (!HasFocus())
+#else
+    if (wxWindow::FindFocus()!=(wxWindow*)this)
+#endif
+        SetFocusIgnoringChildren();
+}
+
+void wxStfGraph::RefreshCursorDialogIfVisible() {
+    if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
+        try {
+            wxGetApp().GetCursorsDialog()->UpdateCursors();
         }
-        Doc()->GetXZoomW() = Doc()->GetXZoomW() * (1.0/printScale);
-        WindowRect=printRect;
-    }	//End ensure old scaling after print out
+        catch (const std::runtime_error& e) {
+            wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal) );
+        }
+    }
+}
+
+// Defines the repainting behaviour
+void wxStfGraph::OnDraw( wxDC& DC )
+{
+    if (!CanDraw()) {
+        return;
+    }
+
+    SyncDisplayTheme();
+    ActivateViewAndFocusForPaint();
+    wxRect WindowRect(GetRect());
+
+    if (isPrinted) {
+        PrintScale(WindowRect);
+    }
+
+    InitializePlotIfNeeded();
+    DrawPrimaryOverlays(DC);
+    DrawVisibleSecondaryChannels(DC);
+    DrawCurrentTrace(DC);
+    RestoreScalingAfterPrint(WindowRect);
 
     view->OnDraw(& DC);
 }
@@ -344,6 +470,11 @@ void wxStfGraph::InitPlot() {
         }
         wxGetApp().set_isBars(false);
     }
+
+    if (pFrame->GetMenuBar() && pFrame->GetMenuBar()->GetMenu(2)) {
+        pFrame->GetMenuBar()->GetMenu(2)->Check(ID_VIEW_DARK_TRACE, wxGetApp().get_isDarkTraceDisplay());
+    }
+    ApplyTraceDisplayTheme(wxGetApp().get_isDarkTraceDisplay());
 
     if (wxGetApp().wxGetProfileInt(wxT("Settings"),wxT("ViewSyncx"),1)) {
         isSyncx=true;
@@ -421,6 +552,8 @@ void wxStfGraph::PlotAverage(wxDC& DC) {
 
 void wxStfGraph::DrawZoomRect(wxDC& DC) {
     DC.SetPen(ZoomRectPen);
+    const wxBrush oldBrush = DC.GetBrush();
+    DC.SetBrush(*wxTRANSPARENT_BRUSH);
     wxPoint ZoomPoints[4];
     wxPoint Ul_Corner((int)llz_x, (int)llz_y);
     wxPoint Ur_Corner((int)ulz_x, (int)llz_y);
@@ -431,6 +564,7 @@ void wxStfGraph::DrawZoomRect(wxDC& DC) {
     ZoomPoints[2]=Lr_Corner;
     ZoomPoints[3]=Ll_Corner;
     DC.DrawPolygon(4,ZoomPoints);
+    DC.SetBrush(oldBrush);
 }
 
 void wxStfGraph::PlotGimmicks(wxDC& DC) {
@@ -545,7 +679,7 @@ void wxStfGraph::PlotAnnotations(wxDC& dc) {
         int y = GetClientSize().y;
 
         // Draw a marker
-        dc.SetPen(*wxRED_PEN);
+        dc.SetPen(annotationPen);
         wxPoint startPoint(x, 0);
         wxPoint endPoint(x, y);
         dc.DrawLine(startPoint, endPoint);
@@ -597,6 +731,7 @@ void wxStfGraph::PlotEvents(wxDC& DC) {
             if (xFormat(it2->GetEventStartIndex()) < right &&
                 xFormat(it2->GetEventStartIndex()) > 0)
             {
+                it2->SyncCheckBoxFromState();
                 it2->GetCheckBox()->Move(wxPoint(xFormat(it2->GetEventStartIndex()), 0));
                 it2->GetCheckBox()->Show(true);
             } else {
@@ -637,6 +772,12 @@ void wxStfGraph::DrawCrosshair( wxDC& DC, const wxPen& pen, const wxPen& printPe
         crosshairSize=(int)(crosshairSize*printScale);
     }
     DC.SetPen(chpen);
+    const bool useTransparentCircleFill = isDarkTheme && !isPrinted;
+    wxBrush oldBrush;
+    if (useTransparentCircleFill) {
+        oldBrush = DC.GetBrush();
+        DC.SetBrush(*wxTRANSPARENT_BRUSH);
+    }
     try {
         // circle:
         wxRect frame(wxPoint( xFormat(xch)-crosshairSize,
@@ -666,6 +807,10 @@ void wxStfGraph::DrawCrosshair( wxDC& DC, const wxPen& pen, const wxPen& printPe
     catch (const std::out_of_range& e) {
         wxGetApp().ExceptMsg( wxString( e.what(), wxConvLocal ) );
         return;
+    }
+
+    if (useTransparentCircleFill) {
+        DC.SetBrush(oldBrush);
     }
 
 }
@@ -924,7 +1069,16 @@ void wxStfGraph::DrawCircle(wxDC* pDC, double x, double y, const wxPen& pen, con
             wxPoint(xFormat(x)-boebbel,yFormat(y)-boebbel),
             wxPoint(xFormat(x)+boebbel,yFormat(y)+boebbel)
     );
+    const bool useTransparentCircleFill = isDarkTheme && !isPrinted;
+    wxBrush oldBrush;
+    if (useTransparentCircleFill) {
+        oldBrush = pDC->GetBrush();
+        pDC->SetBrush(*wxTRANSPARENT_BRUSH);
+    }
     pDC->DrawEllipse(Frame);
+    if (useTransparentCircleFill) {
+        pDC->SetBrush(oldBrush);
+    }
 }
 
 void wxStfGraph::DrawVLine(wxDC* pDC, double x, const wxPen& pen, const wxPen& printPen) {
@@ -1183,16 +1337,38 @@ void wxStfGraph::OnMouseEvent(wxMouseEvent& event) {
 
 }
 
+void wxStfGraph::OnEventCheckBox(wxCommandEvent& event) {
+    if (!view) {
+        event.Skip();
+        return;
+    }
+
+    wxCheckBox* eventCheckBox = dynamic_cast<wxCheckBox*>(event.GetEventObject());
+    if (eventCheckBox == NULL) {
+        event.Skip();
+        return;
+    }
+
+    try {
+        std::vector<stf::Event>& events = Doc()->GetCurrentSectionAttributesW().eventList;
+        for (event_it it = events.begin(); it != events.end(); ++it) {
+            if (it->GetCheckBox() == eventCheckBox) {
+                it->SetChecked(eventCheckBox->GetValue());
+                break;
+            }
+        }
+    }
+    catch (const std::out_of_range&) {
+        // ignore invalid section state
+    }
+
+    event.Skip();
+}
+
 void wxStfGraph::LButtonDown(wxMouseEvent& event) {
     // event.Skip();
     if (!view) return;
-    view->Activate(true);
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-    if (!HasFocus())
-#else
-    if (wxWindow::FindFocus()!=(wxWindow*)this)
-#endif
-        SetFocusIgnoringChildren();
+    ActivateViewAndFocusForInput();
 
     wxClientDC dc(this);
     PrepareDC(dc);
@@ -1202,18 +1378,18 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
     //in the (trace navigator) control box
     case stf::measure_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetMeasCursor( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
+        Doc()->SetMeasCursor( stf::round(LogicalXFromPixel(lastLDown.x)) );
         // in this case, update results string without waiting for "Return":
         pFrame->UpdateResults();
         break;
     case stf::peak_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetPeakBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
+        Doc()->SetPeakBeg( stf::round(LogicalXFromPixel(lastLDown.x)) );
         //Set x-value as lower limit of the peak calculation dialog box
         break;
     case stf::base_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetBaseBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
+        Doc()->SetBaseBeg( stf::round(LogicalXFromPixel(lastLDown.x)) );
         break;
     case stf::decay_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
@@ -1223,7 +1399,7 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
             );
             break;
         }
-        Doc()->SetFitBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); //second 'double' added
+        Doc()->SetFitBeg( stf::round(LogicalXFromPixel(lastLDown.x)) );
         break;
     case stf::latency_cursor:
         if (Doc()->GetLatencyStartMode() != stf::manualMode) {
@@ -1232,7 +1408,7 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
                     wxT("The first latency cursor is set to manual mode")
             );
         }
-        Doc()->SetLatencyBeg(((double)lastLDown.x-(double)SPX())/XZ());
+        Doc()->SetLatencyBeg(LogicalXFromPixel(lastLDown.x));
         Refresh();
         break;
     case stf::zoom_cursor:
@@ -1244,32 +1420,19 @@ void wxStfGraph::LButtonDown(wxMouseEvent& event) {
     case stf::pslope_cursor:
         Doc()->SetPSlopeBegMode(stf::psBeg_manualMode); // set left cursor to manual
         // conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetPSlopeBeg( stf::round( ((double)lastLDown.x - (double)SPX())/XZ() ) ); // second 'double' added
+        Doc()->SetPSlopeBeg( stf::round(LogicalXFromPixel(lastLDown.x)) );
         break;
 #endif
     default: break;
     }	//End switch TraceNav->GetMouseQual()
-    if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
-        try {
-            wxGetApp().GetCursorsDialog()->UpdateCursors();
-        }
-        catch (const std::runtime_error& e) {
-            wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal) );
-        }
-    }
+    RefreshCursorDialogIfVisible();
 }
 
 void wxStfGraph::RButtonDown(wxMouseEvent& event) {
     // event.Skip();
 
     if (!view) return;
-    view->Activate(true);
-#if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
-    if (!HasFocus())
-#else
-    if (wxWindow::FindFocus()!=(wxWindow*)this)
-#endif
-        SetFocusIgnoringChildren();
+    ActivateViewAndFocusForInput();
 
     wxClientDC dc(this);
     PrepareDC(dc);
@@ -1277,15 +1440,15 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
     switch (ParentFrame()->GetMouseQual()) {
     case stf::peak_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetPeakEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetPeakEnd( stf::round(LogicalXFromPixel(point.x)) );
         break;
     case stf::base_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetBaseEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetBaseEnd( stf::round(LogicalXFromPixel(point.x)) );
         break;
     case stf::decay_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetFitEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetFitEnd( stf::round(LogicalXFromPixel(point.x)) );
         break;
     case stf::latency_cursor:
         if (Doc()->GetLatencyEndMode() != stf::manualMode) {
@@ -1294,7 +1457,7 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
                 wxT("The second latency cursor is set to manual mode")
             );
         }
-        Doc()->SetLatencyEnd(((double)point.x-(double)SPX())/XZ());
+        Doc()->SetLatencyEnd(LogicalXFromPixel(point.x));
         Refresh();
         break;
     case stf::zoom_cursor:
@@ -1308,7 +1471,7 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
         try {
             if (!Doc()->GetCurrentSectionAttributes().eventList.empty()) {
             // store the position that has been clicked:
-            eventPos = stf::round( ((double)point.x - (double)SPX())/XZ() );
+            eventPos = stf::round(LogicalXFromPixel(point.x));
             PopupMenu(m_eventContext.get());
             } else {
                 wxGetApp().ErrorMsg(wxT("No events have been detected yet"));
@@ -1319,7 +1482,7 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
         break;
     case stf::annotation_cursor:
         try{
-            eventPos = stf::round( ((double)point.x - (double)SPX())/XZ() );
+            eventPos = stf::round(LogicalXFromPixel(point.x));
             PopupMenu(m_annotationContext.get());
         }catch(const std::out_of_range&){
 
@@ -1328,19 +1491,12 @@ void wxStfGraph::RButtonDown(wxMouseEvent& event) {
 #ifdef WITH_PSLOPE
     case stf::pslope_cursor:
         Doc()->SetPSlopeEndMode(stf::psEnd_manualMode); // set right cursor to manual mode
-        Doc()->SetPSlopeEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetPSlopeEnd( stf::round(LogicalXFromPixel(point.x)) );
         break;
 #endif
     default: ;
     }	//End switch TraceNav->GetMouseQual()
-    if (wxGetApp().GetCursorsDialog()!=NULL && wxGetApp().GetCursorsDialog()->IsShown()) {
-        try {
-            wxGetApp().GetCursorsDialog()->UpdateCursors();
-        }
-        catch (const std::runtime_error& e) {
-            wxGetApp().ExceptMsg(wxString( e.what(), wxConvLocal) );
-        }
-    }
+    RefreshCursorDialogIfVisible();
     Refresh();
 }
 
@@ -1356,20 +1512,20 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
     switch (ParentFrame()->GetMouseQual()) {
     case stf::peak_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetPeakEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetPeakEnd( stf::round(LogicalXFromPixel(point.x)) );
         break;
     case stf::base_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetBaseEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetBaseEnd( stf::round(LogicalXFromPixel(point.x)) );
         break;
     case stf::decay_cursor:
         //conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetFitEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetFitEnd( stf::round(LogicalXFromPixel(point.x)) );
         break;
 #ifdef WITH_PSLOPE
     case stf::pslope_cursor:
         // conversion of pixel on screen to time (inversion of xFormat())
-        Doc()->SetPSlopeEnd( stf::round( ((double)point.x - (double)SPX())/XZ() ) );
+        Doc()->SetPSlopeEnd( stf::round(LogicalXFromPixel(point.x)) );
 #endif
     case stf::latency_cursor:
         if (Doc()->GetLatencyEndMode() != stf::manualMode) {
@@ -1379,7 +1535,7 @@ void wxStfGraph::LButtonUp(wxMouseEvent& event) {
             );
             break;
         }
-        Doc()->SetLatencyEnd(((double)point.x-(double)SPX())/XZ());
+        Doc()->SetLatencyEnd(LogicalXFromPixel(point.x));
         break;
     case stf::zoom_cursor:
         ulz_x=(double)point.x;
@@ -1477,6 +1633,15 @@ void wxStfGraph::OnKeyDown(wxKeyEvent& event) {
      case 112:
          ParentFrame()->SetMouseQual(stf::peak_cursor);
          return;
+     case 'W':
+     case 'w':
+         // Close active document (Ctrl+W on Windows/Linux, Cmd+W on macOS).
+         if (event.CmdDown()) {
+             wxCommandEvent closeEvent(wxEVT_MENU, wxID_CLOSE);
+             pFrame->ProcessWindowEvent(closeEvent);
+             return;
+         }
+         break;
      case 65: // 'a'
      case 97:
          // Select all traces:
@@ -1631,11 +1796,9 @@ void wxStfGraph::CreateScale(wxDC* pDC)
     if (fabs(YZ())>1e15)
         YZW()=1.0;
 
-    if (!isPrinted) {
-        wxFont font((int)(8*printScale), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL,
-                    wxFONTWEIGHT_NORMAL);
-        pDC->SetFont(font);
-    }
+    // Use the DC/window default font for on-screen rendering so label text
+    // follows OS/UI scaling (HiDPI and accessibility settings).
+    // Printing keeps its existing geometry and pen scaling behavior.
 
     //Copy main window coordinates to 'WindowRect'
     wxRect WindowRect(GetRect());
@@ -1688,6 +1851,10 @@ void wxStfGraph::CreateScale(wxDC* pDC)
         yScaled2 = prettyNumber(realDistanceY2, pixelDistanceY2, limit);
         barLengthY2=(int)((yScaled2/realDistanceY2) * pixelDistanceY2);
     }	//End creation y-scale of the 2nd Channel
+
+    const wxColour primaryScaleTextColour = isPrinted ? wxColour(*wxBLACK) : defaultScaleTextColour;
+    const wxColour accentScaleTextColour = isPrinted ? wxColour(*wxRED) : secondaryScaleTextColour;
+    pDC->SetTextForeground(primaryScaleTextColour);
 
     if (wxGetApp().get_isBars()) {
         // Use scale bars
@@ -1763,7 +1930,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                     wxPoint(WindowRect.width-rightDist/2+(int)(5*printScale),y2Center-(int)(10*printScale)),
                     wxPoint(WindowRect.width,y2Center+(int)(10*printScale))
             );
-            pDC->SetTextForeground(*wxRED);
+            pDC->SetTextForeground(accentScaleTextColour);
             if (!isLatex) {
                 pDC->DrawLabel(scaleYString2,TextFrameY2,wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
             } else {
@@ -1772,7 +1939,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                 pLatexDC->DrawLabelLatex(scaleYString2,TextFrameY2,wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 #endif
             }
-            pDC->SetTextForeground(*wxBLACK);
+            pDC->SetTextForeground(primaryScaleTextColour);
         }
         //Set PenStyle
         if (!isPrinted)
@@ -1883,11 +2050,9 @@ void wxStfGraph::CreateScale(wxDC* pDC)
             double y2First=nextTickMult2*yScaled2;
             int y2FirstTick=yFormat2(y2First);
             // How many times does the y-scale bar fit into the window?
-            int y2ScaleInWindow = 1;
+            int y2ScaleInWindow = 0;
             if (barLengthY2 > 0) {
                 y2ScaleInWindow = (y2FirstTick-topDist)/barLengthY2;
-            } else {
-                y2ScaleInWindow = (y2FirstTick-topDist)/1e-15;
             }
             // y-Axis ticks:
             for (int n_tick_y=0;n_tick_y<=y2ScaleInWindow;++n_tick_y) {
@@ -1904,9 +2069,9 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                 int y2=(int)(yScaled2*n_tick_y+y2First);
                 wxString y2Label;
                 y2Label << y2;
-                pDC->SetTextForeground(*wxRED);
+                pDC->SetTextForeground(accentScaleTextColour);
                 pDC->DrawLabel(y2Label,TextFrame2,wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL);
-                pDC->SetTextForeground(*wxBLACK);
+                pDC->SetTextForeground(primaryScaleTextColour);
             }
             // Write y units:
             // Length of y-axis:
@@ -1917,7 +2082,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                     wxPoint(2+leftDist,v2Center-(int)(10*printScale)),
                     wxPoint(leftDist*2-tickLength-1,v2Center+(int)(10*printScale))
             );
-            pDC->SetTextForeground(*wxRED);
+            pDC->SetTextForeground(accentScaleTextColour);
             pDC->DrawLabel(
 #if (wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY))
                            Doc()->at(Doc()->GetSecChIndex()).GetYUnits(),
@@ -1927,7 +2092,7 @@ void wxStfGraph::CreateScale(wxDC* pDC)
                     TextFrame2,
                     wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL
             );
-            pDC->SetTextForeground(*wxBLACK);
+            pDC->SetTextForeground(primaryScaleTextColour);
         }
         // x-Axis ticks:
         // if x axis starts with the beginning of the trace, find first tick:

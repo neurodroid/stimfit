@@ -27,6 +27,8 @@
 #include <algorithm>
 #include <functional>
 #include <queue>
+#include <cmath>
+#include <limits>
 
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
@@ -51,12 +53,33 @@
 #include "./../../libstfio/stfio.h"
 #ifdef WITH_PYTHON
 #include "./../../pystfio/pystfio.h"
+
+#if PY_MAJOR_VERSION >= 3
+#ifndef PyString_Check
+#define PyString_Check PyUnicode_Check
+#endif
+#ifndef PyString_AsString
+#define PyString_AsString PyUnicode_AsUTF8
+#endif
+#ifndef PyString_FromString
+#define PyString_FromString PyUnicode_FromString
+#endif
+#endif
+
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-function"
+#endif
+#include <numpy/arrayobject.h>
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 #endif
 
 #include "./usrdlg/usrdlg.h"
 #include "./doc.h"
 #include "./graph.h"
-#include "doc.h"
 
 IMPLEMENT_DYNAMIC_CLASS(wxStfDoc, wxDocument)
 
@@ -219,7 +242,177 @@ bool wxStfDoc::OnOpenPyDocument(const wxString& filename) {
     return success;
 }
 
+#ifdef WITH_PYTHON
+bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
+    // Grab the Global Interpreter Lock.
+    wxPyBlock_t blocked = wxPyBeginBlockThreads();
+
+    PyObject* stf_mod = PyImport_ImportModule("tdms");
+    if (!stf_mod) {
+        PyErr_Print();
+#ifdef _STFDEBUG
+        wxGetApp().ErrorMsg(wxT("Couldn't load tdms.py"));
+#endif
+        wxPyEndBlockThreads(blocked);
+        return false;
+    }
+
+    PyObject* py_fn = PyString_FromString(filename.c_str());
+    PyObject* stf_tdms_f = PyObject_GetAttrString(stf_mod, "tdms_open");
+    PyObject* stf_tdms_args = NULL;
+    PyObject* stf_tdms_res = NULL;
+
+    const auto finish_tdms_load = [&](bool result) {
+        Py_XDECREF(stf_tdms_res);
+        Py_XDECREF(stf_tdms_args);
+        Py_XDECREF(stf_tdms_f);
+        Py_XDECREF(py_fn);
+        Py_XDECREF(stf_mod);
+        wxPyEndBlockThreads(blocked);
+
+        return result;
+    };
+
+    if (stf_tdms_f && PyCallable_Check(stf_tdms_f)) {
+        stf_tdms_args = PyTuple_Pack(1, py_fn);
+        stf_tdms_res = PyObject_CallObject(stf_tdms_f, stf_tdms_args);
+        PyErr_Print();
+    } else {
+        return finish_tdms_load(false);
+    }
+
+    if (stf_tdms_res == Py_None) {
+        wxGetApp().ErrorMsg( wxT("nptdms module unavailable. Cannot read tdms files."));
+        return finish_tdms_load(false);
+    }
+
+    if (!PyTuple_Check(stf_tdms_res)) {
+        wxGetApp().ErrorMsg(wxT("Return value of tdms_open is not a tuple. Aborting now."));
+        return finish_tdms_load(false);
+    }
+
+    if (PyTuple_Size(stf_tdms_res) != 2) {
+        wxGetApp().ErrorMsg( wxT("Return value of tdms_open is not a 2-tuple. Aborting now."));
+        return finish_tdms_load(false);
+    }
+
+    PyObject* data_list = PyTuple_GetItem(stf_tdms_res, 0);
+    PyObject* py_dt = PyTuple_GetItem(stf_tdms_res, 1);
+    double tdmsDt = PyFloat_AsDouble(py_dt);
+
+    Py_ssize_t nchannels = PyList_Size(data_list);
+    ReturnData.resize(nchannels);
+    int nchannels_nonempty = 0;
+    for (int nc = 0; nc < nchannels; ++nc) {
+        PyObject* section_list = PyList_GetItem(data_list, nc);
+        Py_ssize_t nsections = PyList_Size(section_list);
+        if (nsections != 0) {
+            Channel ch(nsections);
+            for (int ns = 0; ns < nsections; ++ns) {
+                PyObject* list_item = PyList_GetItem(section_list, ns);
+                if (!PyArray_Check(list_item)) {
+                    wxGetApp().ErrorMsg( wxT("Expected a numpy array"));
+                    return finish_tdms_load(false);
+                }
+                PyArrayObject* np_array = (PyArrayObject*)list_item;
+                npy_intp* arr_shape = PyArray_DIMS(np_array);
+                int nsamples = arr_shape[0];
+                Section sec(nsamples);
+                double* data = (double*)PyArray_DATA(np_array);
+                std::copy(&data[0], &data[nsamples], &sec.get_w()[0]);
+                ch.InsertSection(sec, ns);
+            }
+            ReturnData.InsertChannel(ch, nc);
+            nchannels_nonempty++;
+        }
+    }
+    ReturnData.resize(nchannels_nonempty);
+    ReturnData.SetXScale(tdmsDt);
+
+    return finish_tdms_load(true);
+}
+#endif // WITH_PYTHON
+
 bool wxStfDoc::OnOpenDocument(const wxString& filename) {
+    const auto importFromFileType = [&](stfio::filetype type) -> bool {
+        if (type == stfio::tdms) {
+#ifdef WITH_PYTHON
+            if (!LoadTDMS(stf::wx2std(filename), *this)) {
+                wxGetApp().ExceptMsg(wxT("Error opening file\n"));
+                get().clear();
+                return false;
+            }
+#else
+            wxGetApp().ExceptMsg(wxT("Error opening file - TDMS requires python \n"));
+            get().clear();
+            return false;
+#endif
+            return true;
+        }
+
+        try {
+            if (progress) {
+                stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
+                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+            } else {
+                stfio::StdoutProgressInfo progDlg("Reading file", "Opening file", 100, true);
+                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+            }
+        }
+        catch (const std::exception& e) {
+            wxString errorMsg(wxT("Error opening file\n"));
+            errorMsg += wxString(e.what(), wxConvLocal);
+            wxGetApp().ExceptMsg(errorMsg);
+            get().clear();
+            return false;
+        }
+        catch (...) {
+            wxGetApp().ExceptMsg(wxT("Error opening file\n"));
+            get().clear();
+            return false;
+        }
+
+        return true;
+    };
+
+    const auto hasNonEmptyData = [&]() -> bool {
+        return !get().empty() && !get()[0].get().empty() && !get()[0][0].get().empty();
+    };
+
+    const auto initializePostOpenState = [&]() -> bool {
+        wxStfParentFrame* pFrame = wxGetApp().GetMainFrame();
+        if (pFrame == nullptr) {
+            throw std::runtime_error("pFrame is 0 in wxStfDoc::OnOpenDocument");
+        }
+
+        pFrame->SetSingleChannel( size() <= 1 );
+
+        if (InitCursors()!=wxID_OK) {
+            get().clear();
+            wxGetApp().ErrorMsg(wxT( "Couldn't initialize cursors\n" ));
+            return false;
+        }
+
+        if (get().size()>1) {
+            try {
+                if (!ChannelSelDlg()) {
+                    wxGetApp().ErrorMsg(wxT( "File is probably empty\n" ));
+                    get().clear();
+                    return false;
+                }
+            }
+            catch (const std::out_of_range& e) {
+                wxString msg(wxT( "Channel could not be selected:" ));
+                msg += wxString( e.what(), wxConvLocal );
+                wxGetApp().ExceptMsg(msg);
+                get().clear();
+                return false;
+            }
+        }
+
+        return true;
+    };
+
     // Check whether the file exists:
     if ( !wxFileName::FileExists( filename ) ) {
         wxString msg;
@@ -227,11 +420,10 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
         wxGetApp().ErrorMsg( msg );
         return false;
     }
-    // Store directory: 
+    // Store directory:
     wxFileName wxfFilename( filename );
     wxGetApp().wxWriteProfileString( wxT("Settings"), wxT("Last directory"), wxfFilename.GetPath() );
     if (wxDocument::OnOpenDocument(filename)) { //calls base class function
-
         wxString filter(wxT("*.") + wxfFilename.GetExt());
         stfio::filetype type = stfio::findType(stf::wx2std(filter));
 
@@ -249,92 +441,18 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
             }
         }
 #endif
-        if (type == stfio::tdms) {
-#ifdef WITH_PYTHON
-            if (!LoadTDMS(stf::wx2std(filename), *this)) {
-                wxString errorMsg(wxT("Error opening file\n"));
-#else
-            {
-                wxString errorMsg(wxT("Error opening file - TDMS requires python \n"));
-#endif
-                wxGetApp().ExceptMsg(errorMsg);
-                get().clear();
-                return false;
-            }
-        } else {
-            try {
-                if (progress) {
-                    stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
-                    stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
-                } else {
-                    stfio::StdoutProgressInfo progDlg("Reading file", "Opening file", 100, true);
-                    stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
-                }
-            }
-            catch (const std::runtime_error& e) {
-                wxString errorMsg(wxT("Error opening file\n"));
-                errorMsg += wxString( e.what(),wxConvLocal );
-                wxGetApp().ExceptMsg(errorMsg);
-                get().clear();
-                return false;
-            }
-            catch (const std::exception& e) {
-                wxString errorMsg(wxT("Error opening file\n"));
-                errorMsg += wxString( e.what(), wxConvLocal );
-                wxGetApp().ExceptMsg(errorMsg);
-                get().clear();
-                return false;
-            }
-            catch (...) {
-                wxString errorMsg(wxT("Error opening file\n"));
-                wxGetApp().ExceptMsg(errorMsg);
-                get().clear();
-                return false;
-            }
-        }
-        if (get().empty()) {
-            wxGetApp().ErrorMsg(wxT("File is probably empty\n"));
-            get().clear();
+        if (!importFromFileType(type)) {
             return false;
         }
-        if (get()[0].get().empty()) {
-            wxGetApp().ErrorMsg(wxT("File is probably empty\n"));
-            get().clear();
-            return false;
-        }
-        if (get()[0][0].get().empty()) {
-            wxGetApp().ErrorMsg(wxT("File is probably empty\n"));
-            get().clear();
-            return false;
-        }
-        wxStfParentFrame* pFrame = wxGetApp().GetMainFrame();
-        if (pFrame == NULL) {
-            throw std::runtime_error("pFrame is 0 in wxStfDoc::OnOpenDocument");
-        }
-        
-        pFrame->SetSingleChannel( size() <= 1 );
 
-        if (InitCursors()!=wxID_OK) {
+        if (!hasNonEmptyData()) {
+            wxGetApp().ErrorMsg(wxT("File is probably empty\n"));
             get().clear();
-            wxGetApp().ErrorMsg(wxT( "Couldn't initialize cursors\n" ));
             return false;
         }
-        //Select active channel to be displayed
-        if (get().size()>1) {
-            try {
-                if (ChannelSelDlg() != true) {
-                    wxGetApp().ErrorMsg(wxT( "File is probably empty\n" ));
-                    get().clear();
-                    return false;
-                }
-            }
-            catch (const std::out_of_range& e) {
-                wxString msg(wxT( "Channel could not be selected:" ));
-                msg += wxString( e.what(), wxConvLocal );
-                wxGetApp().ExceptMsg(msg);
-                get().clear();
-                return false;
-            }
+
+        if (!initializePostOpenState()) {
+            return false;
         }
     } else {
         wxGetApp().ErrorMsg(wxT( "Failure in wxDocument::OnOpenDocument\n" ));
@@ -376,7 +494,7 @@ void wxStfDoc::SetData( const Recording& c_Data, const wxStfDoc* Sender, const w
     }
 
     wxStfParentFrame* pFrame = wxGetApp().GetMainFrame();
-    if (pFrame == NULL) {
+    if (pFrame == nullptr) {
         throw std::runtime_error("pFrame is 0 in wxStfDoc::SetData");
     }
     pFrame->SetSingleChannel( size() <= 1 );
@@ -549,7 +667,7 @@ int wxStfDoc::InitCursors() {
 
 void wxStfDoc::PostInit() {
     wxStfChildFrame *pFrame = (wxStfChildFrame*)GetDocumentWindow();
-    if ( pFrame == NULL ) {
+    if ( pFrame == nullptr ) {
         wxGetApp().ErrorMsg( wxT("Zero pointer in wxStfDoc::PostInit") );
         return;
     }
@@ -627,9 +745,9 @@ void wxStfDoc::PostInit() {
         parentFrame->SetFocus();
     }
     wxStfView* pView=(wxStfView*)GetFirstView();
-    if (pView != NULL) {
+    if (pView != nullptr) {
         wxStfGraph* pGraph = pView->GetGraph();
-        if (pGraph != NULL) {
+        if (pGraph != nullptr) {
             pGraph->Refresh();
             pGraph->Enable();
             // Set the focus:
@@ -920,7 +1038,7 @@ void wxStfDoc::OnSwapChannels(wxCommandEvent& WXUNUSED(event)) {
     if ( size() > 1) {
         // Update combo boxes:
         wxStfChildFrame* pFrame=(wxStfChildFrame*)GetDocumentWindow();
-        if ( pFrame == NULL ) {
+        if ( pFrame == nullptr ) {
             wxGetApp().ErrorMsg( wxT("Frame is zero in wxStfDoc::SwapChannels"));
             return;
         }
@@ -1951,7 +2069,7 @@ void wxStfDoc::Focus() {
 
     // refresh the view once we are through:
     wxStfView* pView=(wxStfView*)GetFirstView();
-    if (pView != NULL && pView->GetGraph() != NULL) {
+    if (pView != nullptr && pView->GetGraph() != nullptr) {
         pView->GetGraph()->Enable();
         pView->GetGraph()->SetFocus();
     }
@@ -2256,14 +2374,86 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
         return;
     }
     int nTemplate=MiniDialog.GetTemplate();
+    stf::event_polarity_mode polarityMode = MiniDialog.GetPolarityMode();
     try {
-        Vector_double templateWave(
+        Vector_double rawTemplateWave(
                 sectionList.at(nTemplate).sec_attr.storeFitEnd -
                 sectionList.at(nTemplate).sec_attr.storeFitBeg);
-        for ( std::size_t n_p=0; n_p < templateWave.size(); n_p++ ) {
-            templateWave[n_p] = sectionList.at(nTemplate).sec_attr.fitFunc->func(
+        for ( std::size_t n_p=0; n_p < rawTemplateWave.size(); n_p++ ) {
+            rawTemplateWave[n_p] = sectionList.at(nTemplate).sec_attr.fitFunc->func(
                     n_p*GetXScale(), sectionList.at(nTemplate).sec_attr.bestFitP);
         }
+
+        if (rawTemplateWave.empty()) {
+            wxGetApp().ErrorMsg(wxT("Error: Template waveform is empty."));
+            return;
+        }
+
+        auto classifyPolarity = [](const std::vector<double>& data,
+                                   std::size_t left,
+                                   std::size_t right,
+                                   double baselineMean,
+                                   double ambiguityBand) -> int {
+            if (data.empty()) {
+                return 0;
+            }
+            if (left >= data.size()) {
+                left = data.size()-1;
+            }
+            if (right >= data.size()) {
+                right = data.size()-1;
+            }
+            if (right < left) {
+                return 0;
+            }
+
+            double maxDelta = -std::numeric_limits<double>::max();
+            double minDelta = std::numeric_limits<double>::max();
+            for (std::size_t i = left; i <= right; ++i) {
+                const double delta = data[i] - baselineMean;
+                if (delta > maxDelta) maxDelta = delta;
+                if (delta < minDelta) minDelta = delta;
+            }
+
+            const double absMax = fabs(maxDelta);
+            const double absMin = fabs(minDelta);
+            double dominantDelta = 0.0;
+            if (absMax > absMin)
+                dominantDelta = maxDelta;
+            else if (absMin > absMax)
+                dominantDelta = minDelta;
+
+            if (fabs(dominantDelta) <= ambiguityBand) {
+                return 0;
+            }
+            return dominantDelta > 0.0 ? 1 : -1;
+        };
+
+        // Compute template polarity from the unnormalized template waveform.
+        // Use the average of the first and last point as baseline surrogate:
+        // this is robust for fitted template snippets that may not contain much
+        // pre-event baseline at the beginning.
+        const double templateBaseline =
+            0.5 * (rawTemplateWave.front() + rawTemplateWave.back());
+        const int templatePolarity = classifyPolarity(rawTemplateWave, 0,
+                                                      rawTemplateWave.size()-1,
+                                                      templateBaseline, 0.0);
+
+        auto polarityMatchesSelection = [&](int eventPolarity) -> bool {
+            switch (polarityMode) {
+            case stf::polarity_positive_only:
+                return eventPolarity >= 0;
+            case stf::polarity_negative_only:
+                return eventPolarity <= 0;
+            case stf::polarity_same_as_template:
+                return (eventPolarity == 0 || templatePolarity == 0 || eventPolarity == templatePolarity);
+            case stf::polarity_both:
+            default:
+                return true;
+            }
+        };
+
+        Vector_double templateWave(rawTemplateWave);
         wxBusyCursor wc;
 #undef min
 #undef max
@@ -2314,12 +2504,11 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
         wxStfView* pView = (wxStfView*)GetFirstView();
         wxStfGraph* pGraph = pView->GetGraph();
 
+        std::size_t nKept = 0;
         for (c_int_it cit = startIndices.begin(); cit != startIndices.end(); ++cit ) {
-            sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.push_back(
-                stf::Event( *cit, 0, templateWave.size(), new wxCheckBox(
-                    pGraph, -1, wxEmptyString) ) );
             // Find peak in this event:
             double baselineMean=0;
+            int baselineCount = 0;
             for ( int n_mean = *cit-baseline;
                   n_mean < *cit;
                   ++n_mean )
@@ -2329,13 +2518,49 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
                 } else {
                     baselineMean += cursec().at(n_mean);
                 }
+                ++baselineCount;
             }
-            baselineMean /= baseline;
+            baselineMean /= (baselineCount > 0 ? baselineCount : 1);
+
+            double baselineVar = 0.0;
+            if (baselineCount > 1) {
+                for ( int n_mean = *cit-baseline;
+                      n_mean < *cit;
+                      ++n_mean )
+                {
+                    const double baselinePoint = (n_mean < 0) ? cursec().at(0) : cursec().at(n_mean);
+                    const double diff = baselinePoint - baselineMean;
+                    baselineVar += diff*diff;
+                }
+                baselineVar /= static_cast<double>(baselineCount - 1);
+            }
+            const double baselineSd = sqrt(std::max(0.0, baselineVar));
+
             double peakIndex=0;
             size_t eventl = templateWave.size();
             if (*cit + eventl >= cursec().get().size()) {
                 eventl = cursec().get().size()-1- (*cit);
             }
+
+            if (eventl == 0) {
+                continue;
+            }
+
+            const int eventPolarity = classifyPolarity(
+                cursec().get(),
+                static_cast<std::size_t>(*cit),
+                static_cast<std::size_t>(*cit) + eventl,
+                baselineMean,
+                baselineSd
+            );
+
+            if (!polarityMatchesSelection(eventPolarity)) {
+                continue;
+            }
+
+            sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.push_back(
+                stf::Event( *cit, 0, templateWave.size(), new wxCheckBox(
+                    pGraph, -1, wxEmptyString) ) );
             stfnum::peak( cursec().get(), baselineMean, *cit, *cit + eventl,
                           1, stfnum::both, peakIndex );
             if (peakIndex != peakIndex || peakIndex < 0 || peakIndex >= cursec().get().size()) {
@@ -2343,9 +2568,14 @@ void wxStfDoc::MarkEvents(wxCommandEvent& WXUNUSED(event)) {
             }
             // set peak index of this event:
             sec_attr.at(GetCurChIndex()).at(GetCurSecIndex()).eventList.back().SetEventPeakIndex((int)peakIndex);
+            ++nKept;
         }
 
-        if (pGraph != NULL) {
+        if (nKept == 0) {
+            wxGetApp().ErrorMsg(wxT("No events were found that match the selected polarity."));
+        }
+
+        if (pGraph != nullptr) {
             pGraph->Refresh();
         }
     }
@@ -2414,9 +2644,9 @@ void wxStfDoc::Extract( wxCommandEvent& WXUNUSED(event) ) {
 
             wxStfDoc* pDoc=wxGetApp().NewChild( Minis, this,
                     GetTitle()+wxT(", extracted events") );
-            if (pDoc != NULL) {
+            if (pDoc != nullptr) {
                 wxStfChildFrame* pChild=(wxStfChildFrame*)pDoc->GetDocumentWindow();
-                if (pChild!=NULL) {
+                if (pChild != nullptr) {
                     pChild->ShowTable(events,wxT("Extracted events"));
                 }
             }
@@ -3305,209 +3535,213 @@ stfnum::Table wxStfDoc::CurAsTable() const {
 }
 
 stfnum::Table wxStfDoc::CurResultsTable() {
-    // resize table:
-    std::size_t n_cols=0;
-    if (viewCrosshair) n_cols++;
-    if (viewBaseline) n_cols++;
-    if (viewBaseSD) n_cols++;
-    if (viewThreshold) n_cols++;
-    if (viewPeakzero) n_cols++;
-    if (viewPeakbase) n_cols++;
-    if (viewPeakthreshold) n_cols++;
-    if (viewRTLoHi) n_cols++;
-    if (viewInnerRiseTime) n_cols++;
-    if (viewOuterRiseTime) n_cols++;
-    if (viewT50) n_cols++;
-    if (viewRD) n_cols++;
-    if (viewSloperise) n_cols++;
-    if (viewSlopedecay) n_cols++;
-    if (viewLatency) n_cols++;
+    struct ResultColumnSpec {
+        bool enabled;
+        std::string label;
+        std::function<double()> value;
+        std::function<void(stfnum::Table&, int)> fillCursorRows;
+    };
+
+    const bool useMedian = GetBaselineMethod() != stfnum::mean_sd;
+    const bool withCursors = viewCursors;
+    std::vector<ResultColumnSpec> specs;
+    specs.reserve(16);
+
+    auto addSpec = [&](bool enabled,
+                       const std::string& label,
+                       const std::function<double()>& value,
+                       const std::function<void(stfnum::Table&, int)>& fillCursorRows) {
+        specs.push_back(ResultColumnSpec{enabled, label, value, fillCursorRows});
+    };
+
+    addSpec(viewCrosshair, "Crosshair",
+            [this]() { return GetMeasValue(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetMeasCursor() * GetXScale();
+                table.SetEmpty(2, nCol, true);
+            });
+
+    addSpec(viewBaseline, std::string("Baseline ") + (useMedian ? "Median" : "Mean"),
+            [this]() { return GetBase(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetBaseBeg() * GetXScale();
+                table.at(2, nCol) = GetBaseEnd() * GetXScale();
+            });
+
+    addSpec(viewBaseSD, std::string("Base ") + (useMedian ? "IQR" : "SD"),
+            [this]() { return GetBaseSD(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetBaseBeg() * GetXScale();
+                table.at(2, nCol) = GetBaseEnd() * GetXScale();
+            });
+
+    addSpec(viewThreshold, "Threshold",
+            [this]() { return GetThreshold(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetPeakBeg() * GetXScale();
+                table.at(2, nCol) = GetPeakEnd() * GetXScale();
+            });
+
+    addSpec(viewPeakzero, "Peak (from 0)",
+            [this]() { return GetPeak(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetPeakBeg() * GetXScale();
+                table.at(2, nCol) = GetPeakEnd() * GetXScale();
+            });
+
+    addSpec(viewPeakbase, "Peak (from base)",
+            [this]() { return GetPeak() - GetBase(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetPeakBeg() * GetXScale();
+                table.at(2, nCol) = GetPeakEnd() * GetXScale();
+            });
+
+    addSpec(viewPeakthreshold, "Peak (from threshold)",
+            [this]() { return (thrT >= 0) ? (GetPeak() - GetThreshold()) : 0.0; },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetPeakBeg() * GetXScale();
+                table.at(2, nCol) = GetPeakEnd() * GetXScale();
+            });
+
+    addSpec(viewRTLoHi, "RT (Lo-Hi%)",
+            [this]() { return GetRTLoHi(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetTLoReal() * GetXScale();
+                table.at(2, nCol) = GetTHiReal() * GetXScale();
+            });
+
+    addSpec(viewInnerRiseTime, "inner rise time",
+            [this]() { return GetInnerRiseTime(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetInnerLoRT();
+                table.at(2, nCol) = GetInnerHiRT();
+            });
+
+    addSpec(viewOuterRiseTime, "outer rise time",
+            [this]() { return GetOuterRiseTime(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetOuterLoRT();
+                table.at(2, nCol) = GetOuterHiRT();
+            });
+
+    addSpec(viewT50, "t50",
+            [this]() { return GetHalfDuration(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetT50LeftReal() * GetXScale();
+                table.at(2, nCol) = GetT50RightReal() * GetXScale();
+            });
+
+    addSpec(viewRD, "Rise/Decay",
+            [this]() { return GetSlopeRatio(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetMaxRiseT() * GetXScale();
+                table.at(2, nCol) = GetMaxDecayT() * GetXScale();
+            });
+
+    addSpec(viewSloperise, "Max slope (rise)",
+            [this]() { return GetMaxRise(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetMaxRiseT() * GetXScale();
+                table.SetEmpty(2, nCol, true);
+            });
+
+    addSpec(viewSlopedecay, "Max slope (decay)",
+            [this]() { return GetMaxDecay(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetMaxDecayT() * GetXScale();
+                table.SetEmpty(2, nCol, true);
+            });
+
+    addSpec(viewLatency, "Latency",
+            [this]() { return GetLatency() * GetXScale(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetLatencyBeg() * GetXScale();
+                table.at(2, nCol) = GetLatencyEnd() * GetXScale();
+            });
+
 #ifdef WITH_PSLOPE
-    if (viewPSlope) n_cols++;
-#endif
+    addSpec(viewPSlope, "PSlope",
+            [this]() { return GetPSlope(); },
+            [this, withCursors](stfnum::Table& table, int nCol) {
+                if (!withCursors) {
+                    return;
+                }
+                table.at(1, nCol) = GetPSlopeBeg() * GetXScale();
+                table.at(2, nCol) = GetPSlopeEnd() * GetXScale();
+            });
+#endif // WITH_PSLOPE
 
-    std::size_t n_rows=(viewCursors? 3:1);
-    stfnum::Table table(n_rows,n_cols);
+    std::size_t nCols = 0;
+    for (std::size_t i = 0; i < specs.size(); ++i) {
+        if (specs[i].enabled) {
+            ++nCols;
+        }
+    }
 
-    // Labels
+    const std::size_t nRows = withCursors ? 3 : 1;
+    stfnum::Table table(nRows, nCols);
     table.SetRowLabel(0, "Value");
-    if (viewCursors) {
+    if (withCursors) {
         table.SetRowLabel(1, "Cursor 1");
         table.SetRowLabel(2, "Cursor 2");
     }
-    int nCol=0;
-    if (viewCrosshair) table.SetColLabel(nCol++, "Crosshair");
-    if (viewBaseline) table.SetColLabel(nCol++, std::string("Baseline ") + (GetBaselineMethod() ? "Median" : "Mean") );
-    if (viewBaseSD) table.SetColLabel(nCol++, std::string("Base ") + (GetBaselineMethod() ? "IQR" : "SD"));
-    if (viewThreshold) table.SetColLabel(nCol++,"Threshold");
-    if (viewPeakzero) table.SetColLabel(nCol++,"Peak (from 0)");
-    if (viewPeakbase) table.SetColLabel(nCol++,"Peak (from base)");
-    if (viewPeakthreshold) table.SetColLabel(nCol++,"Peak (from threshold)");
-    if (viewRTLoHi) table.SetColLabel(nCol++,"RT (Lo-Hi%)");
-    if (viewInnerRiseTime) table.SetColLabel(nCol++,"inner rise time");
-    if (viewOuterRiseTime) table.SetColLabel(nCol++,"outer rise time");
-    if (viewT50) table.SetColLabel(nCol++,"t50");
-    if (viewRD) table.SetColLabel(nCol++,"Rise/Decay");
-    if (viewSloperise) table.SetColLabel(nCol++,"Max slope (rise)");
-    if (viewSlopedecay) table.SetColLabel(nCol++,"Max slope (decay)");
-    if (viewLatency) table.SetColLabel(nCol++,"Latency");
-#ifdef WITH_PSLOPE
-    if (viewPSlope) table.SetColLabel(nCol++,"PSlope");
-#endif
 
-    // Values
-    nCol=0;
-    // measurement cursor
-    if (viewCrosshair) {
-        table.at(0,nCol)=GetMeasValue();
-        if (viewCursors) {
-            table.at(1,nCol)=GetMeasCursor()*GetXScale();
-            table.SetEmpty(2,nCol,true);
+    int nCol = 0;
+    for (std::size_t i = 0; i < specs.size(); ++i) {
+        if (!specs[i].enabled) {
+            continue;
         }
-        nCol++;
+        table.SetColLabel(nCol, specs[i].label);
+        table.at(0, nCol) = specs[i].value();
+        specs[i].fillCursorRows(table, nCol);
+        ++nCol;
     }
 
-    // baseline
-    if (viewBaseline) {
-        table.at(0,nCol)=GetBase();
-        if (viewCursors) {
-            table.at(1,nCol)=GetBaseBeg()*GetXScale();
-            table.at(2,nCol)=GetBaseEnd()*GetXScale();
-        }
-        nCol++;
-    }
-
-    // base SD
-    if (viewBaseSD) {
-        table.at(0,nCol)=GetBaseSD();
-        if (viewCursors) {
-            table.at(1,nCol)=GetBaseBeg()*GetXScale();
-            table.at(2,nCol)=GetBaseEnd()*GetXScale();
-        }
-        nCol++;
-    }
-
-    // threshold
-    if (viewThreshold) {
-        table.at(0,nCol)=GetThreshold();
-        if (viewCursors) {
-            table.at(1,nCol)=GetPeakBeg()*GetXScale();
-            table.at(2,nCol)=GetPeakEnd()*GetXScale();
-        }
-        nCol++;
-    }
-    
-    // peak
-    if (viewPeakzero) {
-        table.at(0,nCol)=GetPeak();
-        if (viewCursors) {
-            table.at(1,nCol)=GetPeakBeg()*GetXScale();
-            table.at(2,nCol)=GetPeakEnd()*GetXScale();
-        }
-        nCol++;
-    }
-
-    if (viewPeakbase) {
-        table.at(0,nCol)=GetPeak()-GetBase();
-        if (viewCursors) {
-            table.at(1,nCol)=GetPeakBeg()*GetXScale();
-            table.at(2,nCol)=GetPeakEnd()*GetXScale();
-        }
-        nCol++;
-    }
-    if (viewPeakthreshold) {
-        if (thrT >= 0) {
-            table.at(0,nCol) = GetPeak()-GetThreshold();
-        } else {
-            table.at(0,nCol) = 0;
-        }
-        if (viewCursors) {
-            table.at(1,nCol)=GetPeakBeg()*GetXScale();
-            table.at(2,nCol)=GetPeakEnd()*GetXScale();
-        }
-        nCol++;
-    }
-
-    // RT (Lo-Hi%)
-    if (viewRTLoHi) {table.at(0,nCol)=GetRTLoHi();
-        if (viewCursors) {
-            table.at(1,nCol)=GetTLoReal()*GetXScale();
-            table.at(2,nCol)=GetTHiReal()*GetXScale();
-        }
-        nCol++;
-    }
-
-    if (viewInnerRiseTime) { table.at(0,nCol)=GetInnerRiseTime();
-        if (viewCursors) {
-            table.at(1,nCol)=GetInnerLoRT();
-            table.at(2,nCol)=GetInnerHiRT();
-        }
-        nCol++;
-    }
-
-    if (viewOuterRiseTime) { table.at(0,nCol)=GetOuterRiseTime();
-        if (viewCursors) {
-            table.at(1,nCol)=GetOuterLoRT();
-            table.at(2,nCol)=GetOuterHiRT();
-        }
-        nCol++;
-    }
-
-    // Half duration
-    if (viewT50) {table.at(0,nCol)=GetHalfDuration();
-        if (viewCursors) {
-            table.at(1,nCol)=GetT50LeftReal()*GetXScale();
-            table.at(2,nCol)=GetT50RightReal()*GetXScale();
-        }
-        nCol++;
-    }
-
-    // Rise/decay
-    if (viewRD) {table.at(0,nCol)=GetSlopeRatio();
-        if (viewCursors) {
-            table.at(1,nCol)=GetMaxRiseT()*GetXScale();
-            table.at(2,nCol)=GetMaxDecayT()*GetXScale();
-        }
-        nCol++;
-    }
-
-    // Max rise
-    if (viewSloperise) {table.at(0,nCol)=GetMaxRise();
-        if (viewCursors) {
-            table.at(1,nCol)=GetMaxRiseT()*GetXScale();
-            table.SetEmpty(2,nCol,true);
-        }
-        nCol++;
-    }
-
-    // Max decay
-    if (viewSlopedecay) {table.at(0,nCol)=GetMaxDecay();
-        if (viewCursors) {
-            table.at(1,nCol)=GetMaxDecayT()*GetXScale();
-            table.SetEmpty(2,nCol,true);
-        }
-        nCol++;
-    }
-
-    // Latency
-    if (viewLatency) {table.at(0,nCol)=GetLatency()*GetXScale();
-        if (viewCursors) {
-            table.at(1,nCol)=GetLatencyBeg()*GetXScale();
-            table.at(2,nCol)=GetLatencyEnd()*GetXScale();
-        }
-        nCol++;
-    }
-
-#ifdef WITH_PSLOPE
-    // PSlope
-    if (viewPSlope) {table.at(0,nCol)=GetPSlope();
-        if (viewCursors) {
-            table.at(1,nCol)=GetPSlopeBeg()*GetXScale();
-            table.at(2,nCol)=GetPSlopeEnd()*GetXScale();
-        }
-        nCol++;
-    }
-#endif // WITH_PSLOPE
     return table;
 }
 
@@ -3592,9 +3826,9 @@ void wxStfDoc::SetIsIntegrated(std::size_t nchannel, std::size_t nsection, bool 
 
 void wxStfDoc::ClearEvents(std::size_t nchannel, std::size_t nsection) {
     wxStfView* pView=(wxStfView*)GetFirstView();
-    if (pView!=NULL) {
+    if (pView != nullptr) {
         wxStfGraph* pGraph = pView->GetGraph();
-        if (pGraph != NULL) {
+        if (pGraph != nullptr) {
             pGraph->ClearEvents();
         }
     }

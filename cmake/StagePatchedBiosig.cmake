@@ -8,6 +8,8 @@ set(STF_BIOSIG_SOURCE_DIR "" CACHE PATH "Path to the pristine biosig checkout")
 set(STF_BIOSIG_STAGE_DIR "" CACHE PATH "Path to the staged patched biosig working tree")
 set(STF_BIOSIG_PATCH_DIR "" CACHE PATH "Path to biosig patch files")
 set(STF_BIOSIG_SIGNATURE_FILE "" CACHE FILEPATH "Path to the generated biosig signature file")
+set(STF_BIOSIG_EXPECTED_TAG "" CACHE STRING "Expected biosig tag for staged patching")
+set(STF_BIOSIG_EXPECTED_COMMIT "" CACHE STRING "Expected biosig commit resolved from the expected tag")
 set(STF_BIOSIG_FORCE_REFRESH OFF CACHE BOOL "Force recreation of the staged biosig tree")
 
 if(STF_BIOSIG_SOURCE_DIR STREQUAL "")
@@ -24,6 +26,14 @@ endif()
 
 if(STF_BIOSIG_SIGNATURE_FILE STREQUAL "")
   message(FATAL_ERROR "STF_BIOSIG_SIGNATURE_FILE must be provided")
+endif()
+
+if(STF_BIOSIG_EXPECTED_TAG STREQUAL "")
+  message(FATAL_ERROR "STF_BIOSIG_EXPECTED_TAG must be provided")
+endif()
+
+if(STF_BIOSIG_EXPECTED_COMMIT STREQUAL "")
+  message(FATAL_ERROR "STF_BIOSIG_EXPECTED_COMMIT must be provided")
 endif()
 
 if(NOT EXISTS "${STF_BIOSIG_SOURCE_DIR}/biosig4c++/CMakeLists.txt")
@@ -84,6 +94,24 @@ _stf_run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_STAGE_DIR}" config core.
 _stf_run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_STAGE_DIR}" checkout --force HEAD)
 _stf_run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_STAGE_DIR}" reset --hard)
 _stf_run_checked(${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_STAGE_DIR}" clean -fdx)
+
+execute_process(
+  COMMAND ${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_STAGE_DIR}" rev-parse HEAD
+  RESULT_VARIABLE _stf_stage_head_result
+  OUTPUT_VARIABLE _stf_stage_head
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if(NOT _stf_stage_head_result EQUAL 0)
+  message(FATAL_ERROR "Failed to determine staged biosig HEAD from ${STF_BIOSIG_STAGE_DIR}")
+endif()
+
+if(NOT _stf_stage_head STREQUAL "${STF_BIOSIG_EXPECTED_COMMIT}")
+  message(FATAL_ERROR
+    "biosig staged source mismatch: expected tag '${STF_BIOSIG_EXPECTED_TAG}' -> ${STF_BIOSIG_EXPECTED_COMMIT}, "
+    "but staged HEAD is ${_stf_stage_head}. "
+    "Update src/biosig to tag '${STF_BIOSIG_EXPECTED_TAG}' and reconfigure."
+  )
+endif()
 
 foreach(_stf_patch IN LISTS _stf_biosig_patch_files)
   execute_process(

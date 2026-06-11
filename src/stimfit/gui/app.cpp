@@ -29,7 +29,13 @@
 #include <wx/init.h>
 #include <wx/datetime.h>
 #include <wx/filename.h>
+#include <wx/stdpaths.h>
 #include <wx/stockitem.h>
+#include <wx/accel.h>
+
+#ifdef _WINDOWS
+#include <winreg.h>
+#endif
 
 #ifdef __BORLANDC__
 #pragma hdrstop
@@ -65,6 +71,27 @@
 #include "./../../libstfnum/funclib.h"
 #include "./../../libstfnum/fit.h"
 
+namespace {
+
+void InstallCloseDocumentAccelerator(wxWindow* window) {
+    if (window == NULL)
+        return;
+
+    // wxACCEL_CMD maps to Ctrl on Windows/Linux and Cmd on macOS.
+    // Bind Cmd/Ctrl+W explicitly to close the active document.
+    wxAcceleratorEntry accelEntries[] = {
+        wxAcceleratorEntry(wxACCEL_CMD, (int)'W', wxID_CLOSE)
+    };
+
+    wxAcceleratorTable accelTable(
+        static_cast<int>(sizeof(accelEntries) / sizeof(accelEntries[0])),
+        accelEntries
+    );
+    window->SetAcceleratorTable(accelTable);
+}
+
+} // namespace
+
 #if defined(__WXGTK__) || defined(__WXMAC__) 
 #if !defined(__MINGW32__)
 #include "./../../libstfio/abf/axon/Common/axodefn.h"
@@ -72,8 +99,68 @@
 #endif
 #endif
 
+#ifdef WITH_PYTHON
+#if PY_MAJOR_VERSION >= 3
+#ifndef PyString_Check
+#define PyString_Check PyUnicode_Check
+#endif
+#ifndef PyString_AsString
+#define PyString_AsString PyUnicode_AsUTF8
+#endif
+#ifndef PyString_FromString
+#define PyString_FromString PyUnicode_FromString
+#endif
+#endif
+#endif
+
 extern wxStfApp& wxGetApp();
 wxStfApp& wxGetApp() { return *static_cast<wxStfApp*>(wxApp::GetInstance()); }
+
+#ifdef WITH_PYTHON
+int stf::Extension::n_extensions = 0;
+
+#if defined(__WXMAC__) || defined(__WXGTK__)
+static wxString GetExecutablePath()
+{
+    return wxStandardPaths::Get().GetExecutablePath();
+}
+#endif // __WXMAC__ || __WXGTK__
+
+#ifdef _WINDOWS
+static wxString GetExecutablePath()
+{
+    HKEY keyHandle;
+
+    if (RegOpenKeyEx(HKEY_CURRENT_USER, wxT("Software\\Stimfit 0.14"), 0,
+                     KEY_QUERY_VALUE, &keyHandle) == ERROR_SUCCESS)
+    {
+        DWORD BufferSize = 8192;
+        DWORD cbData = BufferSize;
+
+        wxCharTypeBuffer<wxChar> data(BufferSize);
+        DWORD dwRet = RegQueryValueEx(keyHandle, TEXT("InstallLocation"),
+                                      NULL, NULL, (LPBYTE)data.data(), &cbData);
+        while (dwRet == ERROR_MORE_DATA)
+        {
+            BufferSize += 4096;
+            data.extend(BufferSize);
+            cbData = BufferSize;
+
+            dwRet = RegQueryValueEx(keyHandle, TEXT("InstallLocation"),
+                                    NULL, NULL, (LPBYTE)data.data(), &cbData);
+        }
+        if (dwRet == ERROR_SUCCESS) {
+            RegCloseKey(keyHandle);
+            return wxString(data);
+        }
+
+        return wxT("");
+    }
+
+    return wxT("");
+}
+#endif // _WINDOWS
+#endif // WITH_PYTHON
 
 BEGIN_EVENT_TABLE( wxStfApp, wxApp )
 EVT_KEY_DOWN( wxStfApp::OnKeyDown )
@@ -89,7 +176,7 @@ EVT_MENU_RANGE(ID_USERDEF, ID_USERDEF+32, wxStfApp::OnUserdef)
 #endif 
 END_EVENT_TABLE()
 
-wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), txtImport(), funcLib(),
+wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isDarkTraceDisplay(true), txtImport(), funcLib(),
 #ifdef WITH_PYTHON
 extensionLib(),
 #endif 
@@ -153,6 +240,10 @@ bool wxStfApp::OnInit(void)
         return false;
     }
 
+    // Toolbar icons are loaded from external PNG files at runtime.
+    // Ensure bitmap handlers are registered on all platforms.
+    ::wxInitAllImageHandlers();
+
 #ifdef WITH_PYTHON
     if ( !Init_wxPython() ) {
         // don't start the app if we can't initialize wxPython.
@@ -173,6 +264,7 @@ bool wxStfApp::OnInit(void)
 #endif //WITH_PTYHON
     // Config:
     config.reset(new wxFileConfig(wxT("Stimfit")));
+    set_isDarkTraceDisplay(wxGetProfileInt(wxT("Settings"), wxT("ViewDarkTraceDisplay"), 1) == 1);
 
     //// Create a document manager
     wxDocManager* docManager = new wxDocManager;
@@ -626,7 +718,11 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     wxMenu *file_menu = new wxMenu;
 
     file_menu->Append(wxID_OPEN);
-    file_menu->Append(wxID_CLOSE);
+#ifdef __WXMAC__
+    file_menu->Append(wxID_CLOSE, wxT("&Close\tCmd+W"));
+#else
+    file_menu->Append(wxID_CLOSE, wxT("&Close\tCtrl+W"));
+#endif
     //	file_menu->Append(wxID_SAVE, wxT("&Save"));
     file_menu->Append(wxID_SAVEAS);
 
@@ -743,6 +839,12 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
                                  wxT("&View scale bars"),
                                  wxT("If checked, use scale bars rather than coordinates")
                                  );
+    m_view_menu->AppendCheckItem(
+                                 ID_VIEW_DARK_TRACE,
+                                 wxT("&Dark trace display"),
+                                 wxT("If checked, traces are shown on a dark background")
+                                 );
+    m_view_menu->Check(ID_VIEW_DARK_TRACE, get_isDarkTraceDisplay());
     m_view_menu->AppendSeparator();
     m_view_menu->Append(ID_SAVEPERSPECTIVE,wxT("&Save window positions"));
     m_view_menu->Append(ID_LOADPERSPECTIVE,wxT("&Load window positions"));
@@ -898,6 +1000,8 @@ wxStfChildFrame *wxStfApp::CreateChildFrame(wxDocument *doc, wxView *view)
     subframe->SetMenuBar(menu_bar);
 
 #endif // __WXGTK__
+
+    InstallCloseDocumentAccelerator(subframe);
     
     return subframe;
 }
@@ -963,20 +1067,39 @@ wxStfDoc* wxStfApp::GetActiveDoc() const {
     return pDoc;
 }
 
+wxStfGraph* wxStfApp::GetFocusedGraph() const {
+    wxWindow* focused = wxWindow::FindFocus();
+    if (focused == NULL) {
+        wxStfView* activeView = GetActiveView();
+        if (activeView != NULL)
+            return activeView->GetGraph();
+        return NULL;
+    }
+
+    while (focused != NULL) {
+        wxStfGraph* focusGraph = wxDynamicCast(focused, wxStfGraph);
+        if (focusGraph != NULL)
+            return focusGraph;
+
+        wxStfChildFrame* focusChild = wxDynamicCast(focused, wxStfChildFrame);
+        if (focusChild != NULL) {
+            wxStfView* focusView = wxDynamicCast(focusChild->GetView(), wxStfView);
+            if (focusView != NULL && focusView->GetGraph() != NULL)
+                return focusView->GetGraph();
+            break;
+        }
+
+        focused = focused->GetParent();
+    }
+
+    return NULL;
+}
+
 void wxStfApp::OnKeyDown( wxKeyEvent& event ) {
     event.Skip();
-    wxStfDoc* actDoc = GetActiveDoc();
-    if (!actDoc)
-        return;
-    
-    // wxStfView* actView = (wxStfView*)actDoc->GetFirstView();
-    wxStfView* actView = GetActiveView();
-    if (actView) {
-        wxStfGraph* pGraph = actView->GetGraph();
-        wxStfChildFrame* pChild=(wxStfChildFrame*)actView->GetFrame();
-        if (pGraph && pChild && pChild->IsActive())
-            pGraph->OnKeyDown(event);
-    }
+    wxStfGraph* pGraph = GetFocusedGraph();
+    if (pGraph != NULL)
+        pGraph->OnKeyDown(event);
 }
 
 void wxStfApp::OnCursorSettings( wxCommandEvent& WXUNUSED(event) ) {
@@ -1367,6 +1490,359 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
 }
 
 #ifdef WITH_PYTHON
+bool wxStfApp::Init_wxPython()
+{
+#if defined(__WXMAC__) || defined(__WXGTK__)
+    // Prevent external interactive startup hooks (e.g. editor extensions)
+    // from injecting control-sequence output into the embedded wx shell.
+    unsetenv("PYTHONSTARTUP");
+    unsetenv("PYTHONINSPECT");
+#endif
+
+    // Initialize the Python interpreter
+    if (!Py_IsInitialized()) {
+        Py_Initialize();
+    }
+
+#if PY_MAJOR_VERSION < 3 || (PY_MAJOR_VERSION == 3 && PY_MINOR_VERSION < 7)
+    PyEval_InitThreads();
+#endif
+
+    wxString cwd;
+#ifdef __WXMAC__
+    // Add the cwd to the present path:
+    wxString app_path = wxFileName(GetExecutablePath()).GetPath();
+    cwd << wxT("import os\n");
+    cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks\"\n");
+    cwd << wxT("import sys\n");
+    cwd << wxT("sys.path.append(cwd)\n");
+    cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks/stimfit\"\n");
+    cwd << wxT("sys.path.append(cwd)\n");
+    // cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks/numpy\"\n");
+    // cwd << wxT("sys.path.insert(0,cwd)\n");
+#ifdef _STFDEBUG
+    cwd << wxT("print(sys.path)\n");
+    cwd << wxT("import numpy\n");
+    cwd << wxT("print(numpy.version.version)\n");
+#endif // _STFDEBUG
+#endif // __WXMAC__
+
+#ifdef __WXGTK__
+    // Add the cwd to the present path:
+    wxString app_path = wxFileName(GetExecutablePath()).GetPath();
+    cwd << wxT("import os\n");
+    cwd << wxT("cwd=\"") << app_path << wxT("/../lib/stimfit\"\n");
+    cwd << wxT("import sys\n");
+    cwd << wxT("sys.path.append(cwd)\n");
+#ifdef _STFDEBUG
+    cwd << wxT("print(sys.path)\n");
+    cwd << wxT("import numpy\n");
+    cwd << wxT("print(numpy.version.version)\n");
+#endif // _STFDEBUG
+#endif // __WXGTK__
+
+#ifdef _WINDOWS
+    // Add the cwd to the present path:
+    wxString app_path = GetExecutablePath().BeforeFirst(wxUniChar('\0'));
+    cwd << wxT("import os\nimport sys\n");
+    cwd << wxT("cwd = \"") << app_path << wxT("\"\n");
+    cwd << wxT("paths = [\n");
+    cwd << wxT("    cwd,\n");
+    cwd << wxT("    os.path.join(cwd, 'stf-site-packages'),\n");
+    cwd << wxT("    os.path.join(cwd, '..', 'lib', 'stimfit'),\n");
+    cwd << wxT("]\n");
+    cwd << wxT("for p in paths:\n");
+    cwd << wxT("    if os.path.isdir(p) and p not in sys.path:\n");
+    cwd << wxT("        sys.path.insert(0, p)\n");
+#endif
+
+    int cwd_result = PyRun_SimpleString(cwd.utf8_str());
+    if (cwd_result != 0) {
+        PyErr_Print();
+        ErrorMsg(wxT("Couldn't modify Python path"));
+        Py_Finalize();
+        return false;
+    }
+
+    // Load the wxPython core API.  Imports the wx._core_ module and sets a
+    // local pointer to a function table located there.  The pointer is used
+    // internally by the rest of the API functions.
+
+#if PY_MAJOR_VERSION < 3
+    // Specify version of the wx module to be imported
+    PyObject* wxversion = PyImport_ImportModule("wxversion");
+    if (wxversion == NULL) {
+        PyErr_Print();
+        ErrorMsg(wxT("Couldn't import wxversion"));
+        Py_Finalize();
+        return false;
+    }
+    PyObject* wxselect = PyObject_GetAttrString(wxversion, "select");
+    Py_DECREF(wxversion);
+    if (!PyCallable_Check(wxselect)) {
+        Py_XDECREF(wxselect);
+        PyErr_Print();
+        ErrorMsg(wxT("Couldn't select correct version of wx"));
+        Py_Finalize();
+        return false;
+    }
+#if wxCHECK_VERSION(3, 1, 0)
+    PyObject* ver_string = Py_BuildValue("ss", "3.1", "");
+#elif wxCHECK_VERSION(3, 0, 0)
+    PyObject* ver_string = Py_BuildValue("ss", "3.0", "");
+#elif wxCHECK_VERSION(2, 9, 0)
+    PyObject* ver_string = Py_BuildValue("ss", "2.9", "");
+#else
+    PyObject* ver_string = Py_BuildValue("ss", "2.8", "");
+#endif
+    PyObject* result = PyEval_CallObject(wxselect, ver_string);
+    Py_DECREF(wxselect);
+    Py_DECREF(ver_string);
+    if (result == NULL) {
+        PyErr_Print();
+        ErrorMsg(wxT("Couldn't call wxversion.select"));
+        Py_Finalize();
+        return false;
+    }
+#endif // < python 3
+
+#if PY_MAJOR_VERSION >= 3
+    if (wxPyGetAPIPtr() == NULL) {
+#else
+    if (!wxPyCoreAPI_IMPORT()) {
+#endif
+        PyErr_Print();
+        wxString errormsg;
+        errormsg << wxT("Couldn't load wxPython core API.\n");
+
+#ifdef _WINDOWS
+        errormsg << wxT("Try the following steps:\n");
+        errormsg << wxT("1.\tUninstall a previous Stimfit installation\n");
+        errormsg << wxT("\t(Control Panel->Software)\n");
+        errormsg << wxT("2.\tUninstall a previous wxPython installation\n");
+        errormsg << wxT("\t(Control Panel->Software)\n");
+        errormsg << wxT("3.\tUninstall a previous Python 2.5 installation\n");
+        errormsg << wxT("\t(Control Panel->Software)\n");
+        errormsg << wxT("4.\tSet the current working directory\n");
+        errormsg << wxT("\tto the program directory so that all shared\n");
+        errormsg << wxT("\tlibraries can be found.\n");
+        errormsg << wxT("\tIf you used a shortcut, right-click on it,\n");
+        errormsg << wxT("\tchoose \"Properties\", select the \"Shortcut\"\n");
+        errormsg << wxT("\ttab, then set \"Run in...\" to the stimfit program\n");
+        errormsg << wxT("\tdirectory (typically C:\\Program Files\\Stimfit).\n");
+        errormsg << wxT("\tIf you started stimfit from the command line, you\n");
+        errormsg << wxT("\thave to set the current working directory using the\n");
+        errormsg << wxT("\t\"/d\" option (e.g. /d=C:\\Program Files\\Stimfit)\n");
+#endif // _WINDOWS
+
+        ErrorMsg(errormsg);
+        Py_Finalize();
+#if PY_MAJOR_VERSION < 3
+        Py_DECREF(result);
+#endif
+        return false;
+    }
+
+    // Save the current Python thread state and release the
+    // Global Interpreter Lock.
+    m_mainTState = wxPyBeginAllowThreads();
+
+    return true;
+}
+
+void wxStfApp::ImportPython(const wxString& modulelocation)
+{
+    // Get path and filename from modulelocation
+    wxString python_path = wxFileName(modulelocation).GetPath();
+    wxString python_file = wxFileName(modulelocation).GetName();
+
+    // Grab the Global Interpreter Lock.
+    wxPyBlock_t blocked = wxPyBeginBlockThreads();
+
+    wxString python_import;
+    python_import << wxT("import stimfit_shell_api\n");
+    python_import << wxT("stimfit_shell_api.import_module_from_path(r'''") << python_path
+                  << wxT("''', r'''") << python_file << wxT("''')\n");
+
+#if ((wxCHECK_VERSION(2, 9, 0) || defined(MODULE_ONLY)) && !defined(__WXMAC__))
+    PyRun_SimpleString(python_import);
+#else
+    PyRun_SimpleString(python_import.char_str());
+#endif
+
+    // Release the Global Interpreter Lock
+    wxPyEndBlockThreads(blocked);
+}
+
+bool wxStfApp::Exit_wxPython()
+{
+    for (std::size_t i = 0; i < extensionLib.size(); ++i) {
+        Py_XDECREF((PyObject*)extensionLib[i].pyFunc);
+        extensionLib[i].pyFunc = NULL;
+    }
+    extensionLib.clear();
+
+    wxPyEndAllowThreads(m_mainTState);
+
+    if (!Py_IsInitialized()) {
+        return true;
+    }
+
+#if defined(__WXMAC__) && (PY_VERSION_HEX >= 0x030d0000)
+    // Workaround for a reproducible crash on interpreter teardown with
+    // embedded wxPython + NumPy on macOS/Python 3.13+.
+    //
+    // Crash signature:
+    //   _Py_Finalize -> _PyGC_Collect -> _PyObject_ClearFreeLists
+    //   EXC_BAD_ACCESS at process exit
+    //
+    // In the embedded-app case, letting the OS reclaim process resources at
+    // termination is safer than calling into CPython finalization here.
+    return true;
+#else
+    Py_Finalize();
+#endif
+    return true;
+}
+
+std::vector<stf::Extension> wxStfApp::LoadExtensions()
+{
+    std::vector<stf::Extension> extList;
+
+    // As always, first grab the GIL
+    wxPyBlock_t blocked = wxPyBeginBlockThreads();
+
+    // import extensions.py:
+    PyObject* pModule = PyImport_ImportModule("extensions");
+    if (!pModule) {
+        PyErr_Print();
+#ifdef _STFDEBUG
+        wxGetApp().ErrorMsg(wxT("Couldn't load extensions.py"));
+#endif
+        wxPyEndBlockThreads(blocked);
+        return extList;
+    }
+
+    PyObject* pExtList = PyObject_GetAttrString(pModule, "extensionList");
+    if (!pExtList) {
+        PyErr_Print();
+        wxGetApp().ErrorMsg(wxT("Couldn't find extensionList in extensions.py"));
+        wxPyEndBlockThreads(blocked);
+        Py_DECREF(pModule);
+        return extList;
+    }
+
+    if (!PyList_Check(pExtList)) {
+        PyErr_Print();
+        wxGetApp().ErrorMsg(wxT("extensionList is not a Python list in extensions.py"));
+        wxPyEndBlockThreads(blocked);
+        Py_DECREF(pExtList);
+        Py_DECREF(pModule);
+        return extList;
+    }
+
+    // retrieve values from list:
+    for (int i = 0; i < PyList_Size(pExtList); ++i) {
+        PyObject* pExt = PyList_GetItem(pExtList, i);
+        if (!pExt) {
+            PyErr_Print();
+            wxString missingStr;
+            missingStr << wxT("Could not retrieve item #") << i
+                       << wxT(" in extensionList");
+            wxGetApp().ErrorMsg(missingStr);
+        } else {
+            if (!PyObject_HasAttrString(pExt, "menuEntryString") ||
+                !PyObject_HasAttrString(pExt, "pyFunc") ||
+                !PyObject_HasAttrString(pExt, "description") ||
+                !PyObject_HasAttrString(pExt, "requiresFile"))
+            {
+                wxString attrStr;
+                attrStr << wxT("Item #") << i
+                        << wxT(" in extensionList misses an attribute");
+                wxGetApp().ErrorMsg(attrStr);
+            } else {
+                PyObject* pMenuEntry = PyObject_GetAttrString(pExt, "menuEntryString");
+                PyObject* pPyFunc = PyObject_GetAttrString(pExt, "pyFunc");
+                PyObject* pDescription = PyObject_GetAttrString(pExt, "description");
+                PyObject* pRequiresFile = PyObject_GetAttrString(pExt, "requiresFile");
+                if (!pMenuEntry || !pPyFunc || !pDescription || !pRequiresFile ||
+                    !PyString_Check(pMenuEntry) || !PyFunction_Check(pPyFunc) ||
+                    !PyCallable_Check(pPyFunc) ||
+                    !PyString_Check(pDescription) || !PyBool_Check(pRequiresFile))
+                {
+                    wxString typeStr;
+                    typeStr << wxT("One of the attributes in item #") << i
+                            << wxT(" of extensionList misses an attribute");
+                    wxGetApp().ErrorMsg(typeStr);
+                } else {
+                    std::string menuEntry(PyString_AsString(pMenuEntry));
+                    std::string description(PyString_AsString(pDescription));
+                    bool requiresFile = (pRequiresFile == Py_True);
+                    extList.push_back(stf::Extension(menuEntry, (void*)pPyFunc, description, requiresFile));
+                    pPyFunc = NULL;
+                }
+                Py_XDECREF(pMenuEntry);
+                Py_XDECREF(pPyFunc);
+                Py_XDECREF(pDescription);
+                Py_XDECREF(pRequiresFile);
+            }
+        }
+    }
+
+    Py_DECREF(pExtList);
+    Py_DECREF(pModule);
+
+    // Finally, after all Python stuff is done, release the GIL
+    wxPyEndBlockThreads(blocked);
+
+    return extList;
+}
+
+void wxStfApp::OnUserdef(wxCommandEvent& event)
+{
+    int id = event.GetId() - ID_USERDEF;
+
+    if (id >= (int)GetExtensionLib().size() || id < 0) {
+        wxString msg(wxT("Couldn't find extension function"));
+        ErrorMsg(msg);
+        return;
+    }
+
+    // As always, first grab the GIL
+    wxPyBlock_t blocked = wxPyBeginBlockThreads();
+
+    // retrieve function
+    PyObject* pPyFunc = (PyObject*)(GetExtensionLib()[id].pyFunc);
+    // retrieve function name
+    wxString FuncName = stf::std2wx(GetExtensionLib()[id].menuEntry);
+    if (!pPyFunc || !PyCallable_Check(pPyFunc)) {
+        wxString msg(FuncName << wxT(" Couldn't call extension function "));
+        ErrorMsg(msg);
+        wxPyEndBlockThreads(blocked);
+        return;
+    }
+
+    // call function
+    PyObject* res = PyObject_CallObject(pPyFunc, NULL);
+    if (!res) {
+        PyErr_Print();
+        wxString msg(FuncName << wxT(" call failed"));
+        ErrorMsg(msg);
+        wxPyEndBlockThreads(blocked);
+        return;
+    }
+
+    if (res == Py_False) {
+        wxString msg(FuncName << wxT(" returned False"));
+        ErrorMsg(msg);
+    }
+
+    Py_XDECREF(res);
+
+    // Finally, after all Python stuff is done, release the GIL
+    wxPyEndBlockThreads(blocked);
+}
+
 bool wxStfApp::OpenFilePy(const wxString& filename) {
     wxDocTemplate* templ = GetDocManager()->FindTemplateForPath( filename );
     if ( templ == NULL ) {
@@ -1467,7 +1943,7 @@ void wxStfApp::OnPythonImport(wxCommandEvent& WXUNUSED(event)) {
 
     if (LoadModuleDialog.ShowModal() == wxID_OK) {
         wxString modulelocation = LoadModuleDialog.GetPath();
-        ImportPython(modulelocation); // see in /src/app/unopt.cpp L196
+        ImportPython(modulelocation);
     }
 
     else {

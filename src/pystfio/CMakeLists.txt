@@ -30,6 +30,8 @@ target_include_directories(
   _stfio
   PRIVATE
     ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
     ${Python3_INCLUDE_DIRS}
 )
 
@@ -39,7 +41,9 @@ endif()
 
 target_link_libraries(_stfio PRIVATE stimfit_config stfio stfnum stimfit::python)
 
-if(APPLE AND STF_MACOS_APP_BUNDLE)
+if(STF_PYTHON_PACKAGE_INSTALL)
+  set(_stfio_install_dir stfio)
+elseif(APPLE AND STF_MACOS_APP_BUNDLE)
   set(_stfio_install_dir stimfit.app/Contents/lib/stimfit/stfio)
 elseif(DEFINED STF_PYTHON_PLATLIB AND NOT "${STF_PYTHON_PLATLIB}" STREQUAL "")
   set(_stfio_install_dir ${STF_PYTHON_PLATLIB}/stfio)

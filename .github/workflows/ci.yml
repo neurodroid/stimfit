@@ -9,6 +9,50 @@ on:
       - master
 
 jobs:
+  ubuntu-stfio-pip:
+    name: Ubuntu stfio pip build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake \
+            ninja-build \
+            g++ \
+            swig \
+            pkg-config \
+            libfftw3-dev \
+            libhdf5-dev \
+            liblapack-dev \
+            libblas-dev \
+            libopenblas-dev
+
+      - name: Install stfio via pip
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install .
+
+      - name: Build wheel artifact
+        run: |
+          python -m pip wheel . --wheel-dir dist
+
+      - name: Run stfio Python unit test
+        run: |
+          cd /tmp
+          python "$GITHUB_WORKSPACE/src/pystfio/unittest_stfio.py"
+
   windows-msvc-smoke:
     name: Windows MSVC smoke
     runs-on: windows-latest
@@ -171,6 +215,49 @@ jobs:
       - name: Run CTest
         run: |
           ctest --test-dir build --output-on-failure --tests-regex 'stimfit_(containers|numeric)_test'
+
+  ubuntu-system-biosig:
+    name: Ubuntu system biosig smoke
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake \
+            ninja-build \
+            g++ \
+            pkg-config \
+            libbiosig-dev \
+            libfftw3-dev \
+            libhdf5-dev \
+            libwxgtk3.2-dev \
+            liblapack-dev \
+            libblas-dev \
+            libopenblas-dev
+
+      - name: Verify pkg-config biosig metadata
+        run: |
+          pkg-config --modversion libbiosig || pkg-config --modversion biosig
+          pkg-config --cflags --libs libbiosig || pkg-config --cflags --libs biosig
+
+      - name: Configure CMake with system biosig
+        run: |
+          cmake -S . -B build-biosig -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DSTF_ENABLE_PYTHON=OFF \
+            -DSTF_WITH_BIOSIG=ON \
+            -DSTF_BIOSIG_PROVIDER=SYSTEM
+
+      - name: Build Stimfit with system biosig
+        run: |
+          cmake --build build-biosig --parallel --target stimfit
 
   macos-macports-smoke:
     name: macOS MacPorts smoke

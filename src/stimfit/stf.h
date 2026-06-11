@@ -284,11 +284,36 @@ public:
 
     //! Indicates whether an event should be discarded.
     /*! \return true if it should be discarded, false otherwise. */
-    bool GetDiscard() const { return !checkBox->GetValue(); }
+    bool GetDiscard() const { return !keepEvent; }
+
+    //! Indicates whether an event is currently selected for keeping.
+    bool IsChecked() const { return keepEvent; }
 
     //! Get the check box associated with this event
     /*! \return The wxCheckBox associated with this event  */
     wxCheckBox* GetCheckBox() {return checkBox;}
+
+    //! Persistently set whether this event is selected/kept.
+    void SetChecked(bool value) {
+        keepEvent = value;
+        if (checkBox != NULL) {
+            checkBox->SetValue(value);
+        }
+    }
+
+    //! Synchronize UI control from persistent state.
+    void SyncCheckBoxFromState() {
+        if (checkBox != NULL) {
+            checkBox->SetValue(keepEvent);
+        }
+    }
+
+    //! Synchronize persistent state from UI control.
+    void SyncStateFromCheckBox() {
+        if (checkBox != NULL) {
+            keepEvent = checkBox->GetValue();
+        }
+    }
 
     //! Sets the start index of an event.
     /*! \param value The start index of an event within a section. */
@@ -314,6 +339,7 @@ private:
     std::size_t eventPeakIndex;
     std::size_t eventSize;
     wxCheckBox* checkBox;
+    bool keepEvent;
 
 };
 
@@ -425,6 +451,14 @@ enum extraction_mode {
     criterion,                 /*!< Clements & Bekkers criterion. */
     correlation,               /*!< Jonas et al. correlation coefficient. */
     deconvolution               /*!< Pernia-Andrade et al. deconvolution. */
+};
+
+//! Polarity filtering for event detection
+enum event_polarity_mode {
+    polarity_both,             /*!< Keep positive- and negative-going events. */
+    polarity_positive_only,    /*!< Keep only positive-going events. */
+    polarity_negative_only,    /*!< Keep only negative-going events. */
+    polarity_same_as_template  /*!< Keep only events with template-matching polarity. */
 };
 
 /*@}*/

@@ -1,7 +1,7 @@
 #ifndef _PYSTFIO_H
 #define _PYSTFIO_H
 
-#include "../libstfio/stfio.h"
+#include "libstfio/stfio.h"
 
 
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION

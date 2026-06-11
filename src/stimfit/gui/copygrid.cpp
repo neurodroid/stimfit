@@ -183,9 +183,12 @@ void wxStfGrid::OnKeyDown(wxKeyEvent& event) {
          break;
      }
      default:
-         // pipe everything else to the graph
-         if (wxGetApp().GetActiveView()!=NULL && wxGetApp().GetActiveView()->GetGraph()!=NULL)
-             wxGetApp().GetActiveView()->GetGraph()->OnKeyDown(event);
+          // pipe everything else to the graph
+          {
+              wxStfGraph* focusedGraph = wxGetApp().GetFocusedGraph();
+              if (focusedGraph != NULL)
+                  focusedGraph->OnKeyDown(event);
+          }
     }
 }
 

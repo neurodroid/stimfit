@@ -154,8 +154,15 @@ else()
   set(_stf_biosig_install_libdir "${CMAKE_INSTALL_LIBDIR}/stimfit")
 endif()
 
-install(TARGETS stimfit_biosig
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  LIBRARY DESTINATION ${_stf_biosig_install_libdir}
-  ARCHIVE DESTINATION ${_stf_biosig_install_libdir}
-)
+if(APPLE AND STF_MACOS_APP_BUNDLE)
+  install(TARGETS stimfit_biosig
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${_stf_biosig_install_libdir}
+  )
+else()
+  install(TARGETS stimfit_biosig
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${_stf_biosig_install_libdir}
+    ARCHIVE DESTINATION ${_stf_biosig_install_libdir}
+  )
+endif()

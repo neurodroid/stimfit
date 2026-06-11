@@ -34,6 +34,12 @@ scripts documented in [`BUILDING.md`](BUILDING.md).
 - Debian-based systems may provide `stimfit` and `python-stfio` packages through their repositories.
 - Release artifacts for supported platforms are published on [GitHub Releases](https://github.com/neurodroid/stimfit/releases).
 
+### Python package status
+
+- A modern [`pyproject.toml`](pyproject.toml) based `pip` build path is being introduced for the standalone `stfio` Python module.
+- This targets use inside a user's own Python environment and is separate from the full Stimfit GUI application.
+- `pip install stimfit` for the full GUI application is not yet a supported distribution path.
+
 ### Source builds
 
 - GNU/Linux build guide: <https://neurodroid.github.io/stimfit/linux_install_guide/index.html>
@@ -67,6 +73,8 @@ Windows packaging is performed with CMake and CPack through [`build_windows_msvc
 |./src/stimfit/py | stf module that gets imported into the embedded Python shell |
 
 libstfio is a private library that won't be installed system-wide. You may therefore end up with two copies of libstfio.so: One in the private stimfit library directory (/usr/lib/stimfit/ or similar), the other one in the Python site packages path for pystfio. libstfio may turn into a system-wide library in the future.
+
+The historical [`setup.py.in`](setup.py.in) is retained only as legacy reference material and is not the supported packaging entry point for current releases.
 
 ## Build system migration status
 

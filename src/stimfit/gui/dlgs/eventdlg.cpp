@@ -12,6 +12,7 @@
 enum {
     wxID_COMBOTEMPLATES,
     wxID_CRITERIA,
+    wxID_POLARITY,
     wxDETECTIONCLEMENTS,
     wxDETECTIONJONAS,
     wxDETECTIONPERNIA
@@ -26,7 +27,7 @@ END_EVENT_TABLE()
 wxStfEventDlg::wxStfEventDlg(wxWindow* parent, const std::vector<stf::SectionPointer>& templateSections,
                              bool isExtract_, int id, wxString title, wxPoint pos, wxSize size, int style) :
 wxDialog( parent, id, title, pos, size, style ), m_threshold(4.0), m_mode(stf::criterion),
-    isExtract(isExtract_), m_minDistance(150), m_template(-1)
+    m_polarityMode(stf::polarity_both), isExtract(isExtract_), m_minDistance(150), m_template(-1)
 {
     wxBoxSizer* topSizer;
     topSizer = new wxBoxSizer( wxVERTICAL );
@@ -64,7 +65,7 @@ wxDialog( parent, id, title, pos, size, style ), m_threshold(4.0), m_mode(stf::c
 
     if (isExtract) {
         wxFlexGridSizer* gridSizer;
-        gridSizer=new wxFlexGridSizer(2,2,0,0);
+        gridSizer=new wxFlexGridSizer(3,2,0,0);
 
         wxStaticText* staticTextThr;
         staticTextThr =
@@ -84,6 +85,20 @@ wxDialog( parent, id, title, pos, size, style ), m_threshold(4.0), m_mode(stf::c
         m_textCtrlDist =
             new wxTextCtrl( this, wxID_ANY, def2, wxDefaultPosition, wxSize(40,20), wxTE_RIGHT );
         gridSizer->Add( m_textCtrlDist, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+
+        wxStaticText* staticTextPolarity =
+            new wxStaticText( this, wxID_POLARITY, wxT("Event polarity:"),
+                wxDefaultPosition, wxDefaultSize, 0 );
+        gridSizer->Add( staticTextPolarity, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
+
+        wxArrayString polarityChoices;
+        polarityChoices.Add(wxT("Both positive- and negative-going events"));
+        polarityChoices.Add(wxT("Only positive-going events"));
+        polarityChoices.Add(wxT("Only negative-going events"));
+        polarityChoices.Add(wxT("Same polarity as template"));
+        m_choicePolarity = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, polarityChoices);
+        m_choicePolarity->SetSelection(0);
+        gridSizer->Add( m_choicePolarity, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL | wxALL, 2 );
 
         topSizer->Add( gridSizer, 0, wxALIGN_CENTER | wxALL, 5 );
 
@@ -173,6 +188,23 @@ bool wxStfEventDlg::OnOK() {
             m_mode = stf::deconvolution;
         else
             return false;
+
+        int polaritySelection = m_choicePolarity != NULL ? m_choicePolarity->GetSelection() : 0;
+        switch (polaritySelection) {
+        case 1:
+            m_polarityMode = stf::polarity_positive_only;
+            break;
+        case 2:
+            m_polarityMode = stf::polarity_negative_only;
+            break;
+        case 3:
+            m_polarityMode = stf::polarity_same_as_template;
+            break;
+        case 0:
+        default:
+            m_polarityMode = stf::polarity_both;
+            break;
+        }
 
         
         /*switch (m_radioBox->GetSelection()) {

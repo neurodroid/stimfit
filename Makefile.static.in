@@ -85,7 +85,6 @@ SOURCES = ./src/libstfio/annotation.cpp \
 	./src/stimfit/gui/copygrid.cpp \
 	./src/stimfit/gui/usrdlg/usrdlg.cpp \
 	./src/stimfit/gui/graph.cpp \
-	./src/stimfit/gui/unopt.cpp \
 	./src/stimfit/gui/view.cpp \
 	./src/stimfit/gui/table.cpp \
 	./src/stimfit/gui/printout.cpp \

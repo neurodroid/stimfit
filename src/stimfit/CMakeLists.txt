@@ -4,7 +4,6 @@ add_library(
   stimfit_core
   stf.cpp
   gui/app.cpp
-  gui/unopt.cpp
   gui/doc.cpp
   gui/copygrid.cpp
   gui/graph.cpp
@@ -28,6 +27,7 @@ if(MSVC)
 endif()
 
 target_compile_definitions(stimfit_core PRIVATE NOPCH)
+target_compile_definitions(stimfit_core PRIVATE STF_TOOLBAR_SOURCE_DIR="${CMAKE_SOURCE_DIR}/src/stimfit/res/toolbar")
 
 target_link_libraries(
   stimfit_core
@@ -53,8 +53,15 @@ else()
   set(_stf_core_install_libdir "${CMAKE_INSTALL_LIBDIR}/stimfit")
 endif()
 
-install(TARGETS stimfit_core
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
-  LIBRARY DESTINATION ${_stf_core_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
-  ARCHIVE DESTINATION ${_stf_core_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
-)
+if(APPLE AND STF_MACOS_APP_BUNDLE)
+  install(TARGETS stimfit_core
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
+    LIBRARY DESTINATION ${_stf_core_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
+  )
+else()
+  install(TARGETS stimfit_core
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
+    LIBRARY DESTINATION ${_stf_core_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
+    ARCHIVE DESTINATION ${_stf_core_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
+  )
+endif()

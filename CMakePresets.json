@@ -7,6 +7,96 @@
   },
   "configurePresets": [
     {
+      "name": "linux-ninja-base",
+      "displayName": "Linux Ninja (base)",
+      "description": "Shared GNU/Linux preset for local Ninja builds.",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/linux-default",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/linux-default/install",
+        "STF_WITH_BIOSIG": "ON",
+        "STF_BIOSIG_PROVIDER": "SYSTEM"
+      }
+    },
+    {
+      "name": "linux-ninja-python",
+      "displayName": "Linux Ninja (Python)",
+      "description": "Preferred GNU/Linux preset with embedded Python enabled.",
+      "inherits": [
+        "linux-ninja-base"
+      ],
+      "cacheVariables": {
+        "STF_ENABLE_PYTHON": "ON"
+      }
+    },
+    {
+      "name": "linux-ninja",
+      "displayName": "Linux Ninja (no Python)",
+      "description": "GNU/Linux preset without embedded Python.",
+      "inherits": [
+        "linux-ninja-base"
+      ],
+      "binaryDir": "${sourceDir}/build/linux-lite",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/linux-lite/install",
+        "STF_ENABLE_PYTHON": "OFF"
+      }
+    },
+    {
+      "name": "macos-ninja-app-base",
+      "displayName": "macOS app bundle (Ninja base)",
+      "description": "Shared macOS preset for app-bundle builds with compile_commands.json output.",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/macos-app",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/macos-app/install",
+        "STF_MACOS_APP_BUNDLE": "ON",
+        "STF_WITH_BIOSIG": "ON",
+        "STF_BIOSIG_PROVIDER": "SUBMODULE"
+      }
+    },
+    {
+      "name": "macos-ninja-app-python",
+      "displayName": "macOS app bundle (Ninja + Python)",
+      "description": "Preferred macOS app-bundle preset matching the repository's MacPorts Python and wxWidgets setup.",
+      "inherits": [
+        "macos-ninja-app-base"
+      ],
+      "cacheVariables": {
+        "STF_ENABLE_PYTHON": "ON",
+        "STF_PY_SHELL_BACKEND": "JUPYTER",
+        "Python3_EXECUTABLE": "/opt/local/bin/python3.14",
+        "wxWidgets_CONFIG_EXECUTABLE": "/opt/local/Library/Frameworks/Python.framework/Versions/3.14/bin/wx-config"
+      }
+    },
+    {
+      "name": "macos-ninja-app",
+      "displayName": "macOS app bundle (Ninja, no Python)",
+      "description": "macOS app-bundle preset without embedded Python for environments that only need the native application.",
+      "inherits": [
+        "macos-ninja-app-base"
+      ],
+      "binaryDir": "${sourceDir}/build/macos-app-nopython",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/macos-app-nopython/install",
+        "STF_ENABLE_PYTHON": "OFF"
+      }
+    },
+    {
       "name": "vs2022-vcpkg-ci-like-base",
       "displayName": "VS2022 x64 (CI-like vcpkg base)",
       "description": "Shared Windows preset using environment-driven vcpkg dependencies, aligned with CI layout.",
@@ -120,6 +210,32 @@
   ],
   "buildPresets": [
     {
+      "name": "linux-ninja-python-build",
+      "displayName": "Build Linux default target (Python)",
+      "configurePreset": "linux-ninja-python"
+    },
+    {
+      "name": "linux-ninja-build",
+      "displayName": "Build Linux default target (no Python)",
+      "configurePreset": "linux-ninja"
+    },
+    {
+      "name": "macos-ninja-app-python-stimfit",
+      "displayName": "Build stimfit.app (macOS, Python)",
+      "configurePreset": "macos-ninja-app-python",
+      "targets": [
+        "stimfit"
+      ]
+    },
+    {
+      "name": "macos-ninja-app-stimfit",
+      "displayName": "Build stimfit.app (macOS, no Python)",
+      "configurePreset": "macos-ninja-app",
+      "targets": [
+        "stimfit"
+      ]
+    },
+    {
       "name": "vs2022-release-all",
       "displayName": "Build ALL_BUILD (Release)",
       "configurePreset": "vs2022-vcpkg-wx-hdf5",
@@ -156,6 +272,24 @@
       ]
     },
     {
+      "name": "vs2022-release-all-biosig-patched",
+      "displayName": "Build ALL_BUILD (Release, patched biosig)",
+      "configurePreset": "vs2022-vcpkg-wx-hdf5-biosig-patched",
+      "configuration": "Release",
+      "targets": [
+        "ALL_BUILD"
+      ]
+    },
+    {
+      "name": "vs2022-release-all-python314-biosig-patched",
+      "displayName": "Build ALL_BUILD (Release, Python 3.14, patched biosig)",
+      "configurePreset": "vs2022-vcpkg-wx-hdf5-python314-biosig-patched",
+      "configuration": "Release",
+      "targets": [
+        "ALL_BUILD"
+      ]
+    },
+    {
       "name": "ci-windows-msvc-smoke-release",
       "displayName": "CI smoke target build (Release)",
       "configurePreset": "ci-windows-msvc-smoke",
@@ -166,6 +300,24 @@
     }
   ],
   "packagePresets": [
+    {
+      "name": "linux-ninja-python-package-tgz",
+      "displayName": "Package TGZ (Linux, Python)",
+      "description": "Generate the TGZ package for the GNU/Linux Python-enabled preset.",
+      "configurePreset": "linux-ninja-python",
+      "generators": [
+        "TGZ"
+      ]
+    },
+    {
+      "name": "linux-ninja-package-tgz",
+      "displayName": "Package TGZ (Linux, no Python)",
+      "description": "Generate the TGZ package for the GNU/Linux no-Python preset.",
+      "configurePreset": "linux-ninja",
+      "generators": [
+        "TGZ"
+      ]
+    },
     {
       "name": "vs2022-release-package-inno-python314-biosig-patched",
       "displayName": "Package INNOSETUP (Release, Python 3.14, patched biosig)",
@@ -192,6 +344,66 @@
     }
   ],
   "workflowPresets": [
+    {
+      "name": "linux-ninja-python-workflow",
+      "displayName": "Configure + Build Linux (Python)",
+      "description": "Configure and build the preferred GNU/Linux preset with embedded Python enabled.",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "linux-ninja-python"
+        },
+        {
+          "type": "build",
+          "name": "linux-ninja-python-build"
+        }
+      ]
+    },
+    {
+      "name": "linux-ninja-workflow",
+      "displayName": "Configure + Build Linux (no Python)",
+      "description": "Configure and build the GNU/Linux preset without embedded Python.",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "linux-ninja"
+        },
+        {
+          "type": "build",
+          "name": "linux-ninja-build"
+        }
+      ]
+    },
+    {
+      "name": "macos-ninja-app-python-workflow",
+      "displayName": "Configure + Build macOS app bundle (Python)",
+      "description": "Configure and build the preferred macOS app-bundle preset with embedded Python enabled.",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "macos-ninja-app-python"
+        },
+        {
+          "type": "build",
+          "name": "macos-ninja-app-python-stimfit"
+        }
+      ]
+    },
+    {
+      "name": "macos-ninja-app-workflow",
+      "displayName": "Configure + Build macOS app bundle (no Python)",
+      "description": "Configure and build the macOS app-bundle preset without embedded Python.",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "macos-ninja-app"
+        },
+        {
+          "type": "build",
+          "name": "macos-ninja-app-stimfit"
+        }
+      ]
+    },
     {
       "name": "vs2022-release-package-all-python314-biosig-patched",
       "displayName": "Configure + Build + Package (INNOSETUP + ZIP)",

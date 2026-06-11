@@ -124,16 +124,27 @@ try {
         }
     }
 
-    $useBuildPreset = -not [string]::IsNullOrWhiteSpace($selectedBuildPreset)
+    if ([string]::IsNullOrWhiteSpace($selectedBuildPreset)) {
+        if ($WithPython) {
+            $selectedBuildPreset = "vs2022-release-all-python314-biosig-patched"
+        }
+        else {
+            $selectedBuildPreset = "vs2022-release-all-biosig-patched"
+        }
+    }
 
     $resolvedBuildDir = $BuildDir
     if ([string]::IsNullOrWhiteSpace($resolvedBuildDir)) {
         $resolvedBuildDir = Join-Path "..\stimfit-out" $selectedConfigurePreset
     }
 
-    Invoke-Step -Name "Configure" -Command @("cmake", "--preset", $selectedConfigurePreset)
+    $configureCommand = @("cmake", "--preset", $selectedConfigurePreset)
+    if (-not [string]::IsNullOrWhiteSpace($BuildDir)) {
+        $configureCommand += @("-B", $resolvedBuildDir)
+    }
+    Invoke-Step -Name "Configure" -Command $configureCommand
 
-    if ($useBuildPreset) {
+    if ([string]::IsNullOrWhiteSpace($BuildDir)) {
         Invoke-Step -Name "Build" -Command @("cmake", "--build", "--preset", $selectedBuildPreset)
     }
     else {
