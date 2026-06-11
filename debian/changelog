@@ -5,8 +5,10 @@ stimfit (0.17.1-1) unstable; urgency=medium
   * Force the Debian build to use the system Biosig provider.
   * Refresh CMake install manifests, including embedded Stimfit Python files
     and toolbar assets.
-  * Stop building the standalone python3-stfio binary package for this upload.
-  * Keep autopkgtest coverage focused on the packaged stimfit application.
+  * Keep building the standalone python3-stfio binary package from the
+    modern CMake pystfio module path.
+  * Restore the python3-stfio import autopkgtest alongside the stimfit smoke
+    test.
 
  -- Christoph Schmidt-Hieber <christsc@gmx.de>  Thu, 11 Jun 2026 06:51:37 +0000
 

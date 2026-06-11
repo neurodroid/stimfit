@@ -12,6 +12,15 @@ DEB_CMAKE_EXTRA_FLAGS = \
 	-DSTF_BIOSIG_PROVIDER=SYSTEM \
 	-DSTF_BUILD_TESTS=ON
 
+DEB_PYSTFIO_CMAKE_FLAGS = \
+	-DSTF_BUILD_DEBIAN=ON \
+	-DSTF_BUILD_MODULE=ON \
+	-DSTF_ENABLE_PYTHON=ON \
+	-DSTF_PYTHON_PACKAGE_INSTALL=OFF \
+	-DSTF_WITH_BIOSIG=ON \
+	-DSTF_BIOSIG_PROVIDER=SYSTEM \
+	-DSTF_BUILD_TESTS=ON
+
 ifneq ($(wildcard /usr/lib/$(DEB_HOST_MULTIARCH)/hdf5/serial/libhdf5.so),)
   export DEB_CPPFLAGS_MAINT_APPEND := -I/usr/include/hdf5/serial
   export DEB_LDFLAGS_MAINT_APPEND := -Wl,-L/usr/lib/$(DEB_HOST_MULTIARCH)/hdf5/serial
@@ -30,6 +39,7 @@ override_dh_autoreconf:
 
 override_dh_auto_clean:
 	dh_auto_clean --buildsystem=cmake+ninja
+	rm -rf build-pystfio
 	# Clean up stale autotools artefacts from previous packaging generations.
 	rm -f build-stamp a.out config.status libtool config.log stimfittest.log
 	rm -rf src/pystfio/.libs src/stimfit/.libs src/stimfit/py/.libs
@@ -48,6 +58,11 @@ override_dh_auto_configure:
 
 override_dh_auto_build:
 	dh_auto_build --buildsystem=cmake+ninja
+	cmake -S . -B build-pystfio -G Ninja \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		$(DEB_PYSTFIO_CMAKE_FLAGS)
+	cmake --build build-pystfio --parallel
 
 override_dh_auto_test:
 	if [ -n "$(filter nocheck,$(DEB_BUILD_OPTIONS))" ]; then \
@@ -58,6 +73,13 @@ override_dh_auto_test:
 
 override_dh_auto_install:
 	dh_auto_install --buildsystem=cmake+ninja --destdir=$(CURDIR)/debian/tmp
+	DESTDIR=$(CURDIR)/debian/tmp cmake --install build-pystfio
+	install -d $(CURDIR)/debian/tmp/usr/lib/python3/dist-packages
+	if ls $(CURDIR)/debian/tmp/usr/local/lib/python*/dist-packages/stfio >/dev/null 2>&1; then \
+		mv $(CURDIR)/debian/tmp/usr/local/lib/python*/dist-packages/stfio \
+			$(CURDIR)/debian/tmp/usr/lib/python3/dist-packages/; \
+	fi
+	rm -rf $(CURDIR)/debian/tmp/usr/local
 
 override_dh_strip:
 	dh_strip
