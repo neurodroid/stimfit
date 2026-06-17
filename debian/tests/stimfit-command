@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+
+# stimfit is a wx/GTK GUI application. Starting it in Debian CI without a
+# display fails before any useful command-line smoke test can run, so keep this
+# autopkgtest limited to verifying that the package installed the executable.
+stimfit_path=$(command -v stimfit)
+test -x "$stimfit_path"
