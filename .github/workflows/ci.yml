@@ -55,7 +55,7 @@ jobs:
 
   windows-msvc-smoke:
     name: Windows MSVC smoke
-    runs-on: windows-latest
+    runs-on: windows-2022
     timeout-minutes: 75
     env:
       VCPKG_ROOT: ${{ github.workspace }}/vcpkg
