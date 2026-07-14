@@ -1,3 +1,11 @@
+stimfit (0.17.2-1) UNRELEASED; urgency=medium
+
+  * Fix command-line help to print usage and exit successfully.
+  * Exercise command-line help under Xvfb in autopkgtest without masking
+    failures. (Closes: #1140597)
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Tue, 14 Jul 2026 07:48:04 +0000
+
 stimfit (0.17.1-2) unstable; urgency=medium
 
   * Make the stimfit autopkgtest headless-safe by checking the installed

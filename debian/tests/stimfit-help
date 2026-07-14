@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+
+output=$(mktemp)
+trap 'rm -f "$output"' EXIT
+
+xvfb-run -a stimfit -h >"$output" 2>&1
+grep -q '^Usage:' "$output"
