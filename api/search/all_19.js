@@ -10,5 +10,5 @@ var searchData=
   ['yunitsch2_7',['yUnitsCh2',['../d6/dfb/group__stfio.html#gadef700b2bebba5ddb6819987ef78f732',1,'stfio::txtImportSettings']]],
   ['yunscale_8',['yunscale',['../d3/d1b/group__stfgen.html#ga15508f8c111fba1c27824aa59ec8bdc8',1,'stfnum']]],
   ['yunscaleoffset_9',['yunscaleoffset',['../d3/d1b/group__stfgen.html#ga9f1d47f467d07edf7ca41f682f55f3a4',1,'stfnum']]],
-  ['yzoom_10',['yzoom',['../dc/de8/classYZoom.html',1,'YZoom'],['../dc/de8/classYZoom.html#aef0ee9dd37904976f52992b58cb90e3f',1,'YZoom::YZoom()'],['../dc/de8/classYZoom.html#aa9c0e96acaca8e128421df7f5fb80e52',1,'YZoom::YZoom(long spy1, double yz1, bool lsy=false)'],['../dc/de8/classYZoom.html#aa271e5b2fe2e341750e8382a520ee5ec',1,'YZoom::yZoom']]]
+  ['yzoom_10',['yzoom',['../dc/de8/classYZoom.html',1,'YZoom'],['../dc/de8/classYZoom.html#aa271e5b2fe2e341750e8382a520ee5ec',1,'YZoom::yZoom'],['../dc/de8/classYZoom.html#aef0ee9dd37904976f52992b58cb90e3f',1,'YZoom::YZoom()'],['../dc/de8/classYZoom.html#aa9c0e96acaca8e128421df7f5fb80e52',1,'YZoom::YZoom(long spy1, double yz1, bool lsy=false)']]]
 ];
