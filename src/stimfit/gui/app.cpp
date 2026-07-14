@@ -176,7 +176,7 @@ EVT_MENU_RANGE(ID_USERDEF, ID_USERDEF+32, wxStfApp::OnUserdef)
 #endif 
 END_EVENT_TABLE()
 
-wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isDarkTraceDisplay(true), txtImport(), funcLib(),
+wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isDarkTraceDisplay(true), m_exitAfterHelp(false), txtImport(), funcLib(),
 #ifdef WITH_PYTHON
 extensionLib(),
 #endif 
@@ -190,6 +190,13 @@ void wxStfApp::OnInitCmdLine(wxCmdLineParser& parser)
                      wxT("Working directory to change to"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
     parser.AddParam(wxT("File to open"),
                     wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL );
+}
+
+bool wxStfApp::OnCmdLineHelp(wxCmdLineParser& parser)
+{
+    parser.Usage();
+    m_exitAfterHelp = true;
+    return true;
 }
 
 bool wxStfApp::OnCmdLineParsed(wxCmdLineParser& parser)
@@ -238,6 +245,10 @@ bool wxStfApp::OnInit(void)
     if (!wxApp::OnInit()) {
         std::cerr << "Could not start application" << std::endl;
         return false;
+    }
+
+    if (m_exitAfterHelp) {
+        return true;
     }
 
     // Toolbar icons are loaded from external PNG files at runtime.
@@ -454,8 +465,21 @@ bool wxStfApp::OnInit(void)
     return true;
 }
 
+int wxStfApp::OnRun()
+{
+    if (m_exitAfterHelp) {
+        return 0;
+    }
+
+    return wxApp::OnRun();
+}
+
 int wxStfApp::OnExit()
 {
+    if (m_exitAfterHelp) {
+        return wxApp::OnExit();
+    }
+
 #if wxUSE_CONFIG
     GetDocManager()->FileHistorySave(*config);
 #endif // wxUSE_CONFIG

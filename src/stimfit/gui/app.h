@@ -262,6 +262,9 @@ public:
      */
     virtual bool OnInit();
 
+    //! Run the application event loop, or exit successfully after help.
+    virtual int OnRun();
+
     //! Exit the application
     /*! Does nothing but calling the base class's wxApp::OnExit().
      *  \return The return value of wxApp::OnExit().
@@ -499,6 +502,7 @@ public:
     wxStfParentFrame* GetMainFrame() {return (wxStfParentFrame*)GetTopWindow();}
 
     virtual void OnInitCmdLine(wxCmdLineParser& parser);
+    virtual bool OnCmdLineHelp(wxCmdLineParser& parser);
     virtual bool OnCmdLineParsed(wxCmdLineParser& parser);
 
 #ifdef WITH_PYTHON
@@ -541,7 +545,7 @@ private:
 #pragma optimize( "", on )
 #endif
 
-    bool directTxtImport,isBars,isDarkTraceDisplay;
+    bool directTxtImport,isBars,isDarkTraceDisplay,m_exitAfterHelp;
     stfio::txtImportSettings txtImport;
     // Registry:
 #if (__cplusplus < 201103)
