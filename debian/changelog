@@ -1,10 +1,13 @@
-stimfit (0.17.2-1) UNRELEASED; urgency=medium
+stimfit (0.17.2-1) unstable; urgency=medium
 
+  * New upstream release
   * Fix command-line help to print usage and exit successfully.
   * Exercise command-line help under Xvfb in autopkgtest without masking
     failures. (Closes: #1140597)
+  * Fix FTBFS with HDF5 2.1 by accepting the unnamespaced CMake targets
+    exported by libhdf5-dev. (Closes: #1139613)
 
- -- Christoph Schmidt-Hieber <christsc@gmx.de>  Tue, 14 Jul 2026 07:48:04 +0000
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Tue, 11 Aug 2026 11:03:52 +0000
 
 stimfit (0.17.1-2) unstable; urgency=medium
 
