@@ -83,7 +83,7 @@ jobs:
             ${{ env.VCPKG_BINARY_CACHE_DIR }}
             ${{ env.VCPKG_ROOT }}/packages
             ${{ env.VCPKG_ROOT }}/downloads
-          key: windows-vcpkg-x64-ci-release-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json', 'cmake/triplets/x64-windows-ci-release.cmake') }}
+          key: windows-vcpkg-x64-ci-release-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json', 'cmake/triplets/x64-windows-ci-release.cmake', 'cmake/ports/**') }}
           restore-keys: |
             windows-vcpkg-x64-ci-release-
 
@@ -91,6 +91,7 @@ jobs:
         shell: pwsh
         run: |
           vcpkg install `
+            --overlay-ports "$env:GITHUB_WORKSPACE/cmake/ports" `
             --overlay-triplets "$env:GITHUB_WORKSPACE/cmake/triplets" `
             --triplet x64-windows-ci-release `
             --x-install-root "$env:VCPKG_INSTALLED_DIR"
