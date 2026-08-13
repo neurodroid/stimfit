@@ -83,15 +83,21 @@ else()
 endif()
 
 if(APPLE AND STF_MACOS_APP_BUNDLE)
-  install(TARGETS stfio
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
-    LIBRARY DESTINATION ${_stf_stfio_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
-  )
+  get_target_property(_stf_stfio_type stfio TYPE)
+  if(NOT _stf_stfio_type STREQUAL "STATIC_LIBRARY")
+    install(TARGETS stfio
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
+      LIBRARY DESTINATION ${_stf_stfio_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
+    )
+  endif()
 
-  install(TARGETS stfio_containers
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
-    LIBRARY DESTINATION ${_stf_stfio_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
-  )
+  get_target_property(_stf_stfio_containers_type stfio_containers TYPE)
+  if(NOT _stf_stfio_containers_type STREQUAL "STATIC_LIBRARY")
+    install(TARGETS stfio_containers
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
+      LIBRARY DESTINATION ${_stf_stfio_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
+    )
+  endif()
 else()
   install(TARGETS stfio
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
@@ -105,3 +111,6 @@ else()
     ARCHIVE DESTINATION ${_stf_stfio_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
   )
 endif()
+
+unset(_stf_stfio_type)
+unset(_stf_stfio_containers_type)

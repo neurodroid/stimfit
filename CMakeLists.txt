@@ -762,8 +762,10 @@ set(CPACK_PACKAGE_INSTALL_DIRECTORY "Stimfit")
 set(CPACK_MONOLITHIC_INSTALL OFF)
 set(CPACK_SOURCE_IGNORE_FILES
   "/[.]git/"
+  "/[.]git$"
   "/[.]github/"
   "/[.]pytest_cache/"
+  "/__pycache__/"
   "/build/"
   "/_CPack_Packages/"
   "~$"
