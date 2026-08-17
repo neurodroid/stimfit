@@ -56,7 +56,7 @@
 <dd class="field-odd"><p>Jose Guzman</p>
 </dd>
 <dt class="field-even">Updated<span class="colon">:</span></dt>
-<dd class="field-even"><p>14 August, 2026</p>
+<dd class="field-even"><p>17 August, 2026</p>
 </dd>
 </dl>
 <p>Very often we want to analyze data in <a class="reference external" href="http://stimfit.org">Stimfit</a> that is generated from a simulation or stored in non-stardard formats, like for example fluorescence. While <a class="reference external" href="http://stimfit.org">Stimfit</a> supports a huge variety of file formats, data from more exotic sources can be copied to a text file loaded in with a very simple Python script.</p>
@@ -67,12 +67,12 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">stf</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">loadnrn</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Loads a NEURON datafile and opens a new Stimfit window</span>
 <span class="sd">    with a trace with the default units (e.g ms and mV)</span>
 
 <span class="sd">    file    -- (string) file to read</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">time</span><span class="p">,</span> <span class="n">trace</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">fname</span> <span class="o">=</span> <span class="n">file</span><span class="p">,</span> <span class="n">skiprows</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">unpack</span><span class="o">=</span> <span class="kc">True</span> <span class="p">)</span>
 
@@ -96,28 +96,28 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">stf</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">loadtxt</span><span class="p">(</span> <span class="n">freq</span><span class="o">=</span><span class="mi">400</span> <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Loads and ASCII file with extension *.GoR.</span>
 <span class="sd">    This file contains ratiometric fluorescent measurementes</span>
 <span class="sd">    (i.e Green over Red fluorescence)</span>
 <span class="sd">    saved in one column. This function opens a new Stimfit window and</span>
-<span class="sd">    sets the x-units to ms and y-units &quot;Delta G over R&quot;.</span>
+<span class="sd">    sets the x-units to ms and y-units "Delta G over R".</span>
 <span class="sd">    Arguments:</span>
 
 <span class="sd">    freq -- (float) the sampling rate (in Hz) for the acquistion.</span>
 <span class="sd">            the default value is 400 Hz.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># wx Widgets to create a file selection window</span>
-    <span class="n">fname</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">FileSelector</span><span class="p">(</span><span class="s2">&quot;Import Ca transients&quot;</span> <span class="p">,</span>
-        <span class="n">default_extension</span> <span class="o">=</span> <span class="s2">&quot;Ratiometric&quot;</span> <span class="p">,</span>
-        <span class="n">default_path</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span> <span class="p">,</span>
-        <span class="n">wildcard</span> <span class="o">=</span> <span class="s2">&quot;Ratiometric fluorescence (*.GoR)|*.GoR&quot;</span> <span class="p">,</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">FileSelector</span><span class="p">(</span><span class="s2">"Import Ca transients"</span> <span class="p">,</span>
+        <span class="n">default_extension</span> <span class="o">=</span> <span class="s2">"Ratiometric"</span> <span class="p">,</span>
+        <span class="n">default_path</span> <span class="o">=</span> <span class="s2">"."</span> <span class="p">,</span>
+        <span class="n">wildcard</span> <span class="o">=</span> <span class="s2">"Ratiometric fluorescence (*.GoR)|*.GoR"</span> <span class="p">,</span>
         <span class="n">flags</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">OPEN</span> <span class="o">|</span> <span class="n">wx</span><span class="o">.</span><span class="n">FILE_MUST_EXIST</span><span class="p">)</span>
 
     <span class="n">stf</span><span class="o">.</span><span class="n">new_window</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span> <span class="n">fname</span> <span class="p">)</span> <span class="p">)</span>
-    <span class="n">stf</span><span class="o">.</span><span class="n">set_xunits</span><span class="p">(</span><span class="s1">&#39;ms&#39;</span><span class="p">)</span>
-    <span class="n">stf</span><span class="o">.</span><span class="n">set_yunits</span><span class="p">(</span><span class="s1">&#39;Delta G/R&#39;</span><span class="p">)</span>
+    <span class="n">stf</span><span class="o">.</span><span class="n">set_xunits</span><span class="p">(</span><span class="s1">'ms'</span><span class="p">)</span>
+    <span class="n">stf</span><span class="o">.</span><span class="n">set_yunits</span><span class="p">(</span><span class="s1">'Delta G/R'</span><span class="p">)</span>
 
     <span class="n">stf</span><span class="o">.</span><span class="n">set_sampling_interval</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">freq</span><span class="o">*</span><span class="mi">1000</span><span class="p">)</span> <span class="c1"># acquision in ms</span>
 </pre></div>
@@ -135,7 +135,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">spells</span>
 
 <span class="c1"># to load the file in a give location</span>
-<span class="n">spells</span><span class="o">.</span><span class="n">loadnrn</span><span class="p">(</span> <span class="s2">&quot;/home/myuser/myDownloads/EPSP.dat&quot;</span> <span class="p">)</span>
+<span class="n">spells</span><span class="o">.</span><span class="n">loadnrn</span><span class="p">(</span> <span class="s2">"/home/myuser/myDownloads/EPSP.dat"</span> <span class="p">)</span>
 
 <span class="c1"># to select a file containing fluorescence with a selection menue</span>
 <span class="n">spells</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">()</span>
@@ -235,7 +235,7 @@
     
     <div class="footer" role="contentinfo">
     &#169; Copyright 2026, Stimfit contributors.
-      Last updated on 14 August, 2026.
+      Last updated on 17 August, 2026.
     </div>
   </body>
 </html>

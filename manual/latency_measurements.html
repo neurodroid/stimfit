@@ -57,7 +57,7 @@
 <dd class="field-odd"><p>Christoph Schmidt-Hieber (christsc at gmx.de)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>14 August, 2026</p>
+<dd class="field-even"><p>17 August, 2026</p>
 </dd>
 </dl>
 <section id="measurement-of-synaptic-delay">
@@ -143,17 +143,17 @@ I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{
 <span class="kn">import</span><span class="w"> </span><span class="nn">stf</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">align_maxrise</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Aligns all traces to the maximal slope of rise \</span>
+<span class="w">    </span><span class="sd">"""Aligns all traces to the maximal slope of rise \</span>
 <span class="sd">    of the inactive channel. Baseline and peak cursors \</span>
 <span class="sd">     have to be set appropriately before using this function.</span>
 <span class="sd">    Return value:</span>
-<span class="sd">    True upon success. False otherwise.&quot;&quot;&quot;</span>
+<span class="sd">    True upon success. False otherwise."""</span>
 
     <span class="n">stf</span><span class="o">.</span><span class="n">select_all</span><span class="p">()</span>
 
     <span class="c1"># check whether there is an inactive channel at all:</span>
     <span class="k">if</span> <span class="p">(</span> <span class="n">stf</span><span class="o">.</span><span class="n">maxrise_index</span><span class="p">(</span> <span class="kc">False</span> <span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">):</span>
-        <span class="nb">print</span> <span class="s2">&quot;File not open, or no second channel; aborting now&quot;</span>
+        <span class="nb">print</span> <span class="s2">"File not open, or no second channel; aborting now"</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="n">stf</span><span class="o">.</span><span class="n">align_selected</span><span class="p">(</span> <span class="n">stf</span><span class="o">.</span><span class="n">maxrise_index</span><span class="p">,</span> <span class="kc">False</span> <span class="p">)</span>
@@ -271,7 +271,7 @@ I_{\text{ionic}}=-I_{\text{cap}}=-C_{\text{m}}\frac{\text{d}V_{\text{m}}}{\text{
     
     <div class="footer" role="contentinfo">
     &#169; Copyright 2026, Stimfit contributors.
-      Last updated on 14 August, 2026.
+      Last updated on 17 August, 2026.
     </div>
   </body>
 </html>

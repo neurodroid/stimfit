@@ -56,7 +56,7 @@
 <dd class="field-odd"><p>Christoph Schmidt-Hieber (christsc at gmx.de)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>14 August, 2026</p>
+<dd class="field-even"><p>17 August, 2026</p>
 </dd>
 </dl>
 <section id="why-use-python">
@@ -132,7 +132,7 @@ has the index 0.</p>
 <p>Python will check for indices that are out of range. For example,</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">a</span><span class="p">[</span><span class="mf">1e9</span><span class="p">]</span>
 <span class="gt">Traceback (most recent call last):</span>
-  File <span class="nb">&quot;&lt;input&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+  File <span class="nb">"&lt;input&gt;"</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
 <span class="gr">IndexError</span>: <span class="n">index out of bounds</span>
 </pre></div>
 </div>
@@ -163,7 +163,7 @@ of course). Remember that indices are zero-based!</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">get_trace</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">get_trace</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">b</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">a</span><span class="p">[</span><span class="mi">234</span><span class="p">],</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span><span class="n">b</span><span class="p">[</span><span class="mi">234</span><span class="p">],</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="n">c</span><span class="p">[</span><span class="mi">234</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">a</span><span class="p">[</span><span class="mi">234</span><span class="p">],</span> <span class="s2">"*"</span><span class="p">,</span><span class="n">b</span><span class="p">[</span><span class="mi">234</span><span class="p">],</span> <span class="s2">"="</span><span class="p">,</span> <span class="n">c</span><span class="p">[</span><span class="mi">234</span><span class="p">]</span>
 <span class="go">-27.0385742188 * -23.7731933594 = 642.793253064</span>
 </pre></div>
 </div>
@@ -210,17 +210,17 @@ of course). Remember that indices are zero-based!</p>
 <li><p><strong>set_[xy]_start(pos, is_time = False)</strong> and <strong>set_[xy]_end(pos, is_time = False)</strong> take one or two arguments. <code class="docutils literal notranslate"><span class="pre">pos</span></code> specifies the new cursor position. <code class="docutils literal notranslate"><span class="pre">is_time</span></code> indicates whether <code class="docutils literal notranslate"><span class="pre">pos</span></code> is an index, i.e. in units of sampling points (False, default), or in units of time (True), with the trace starting at t=0 ms. If there was an error, such as an out-of-bounds-index, these functions will return False.</p></li>
 <li><p><strong>get_[xy]_start(pos, is_time = False)</strong> and <strong>get_[xy]_end(pos, is_time = False)</strong> optionally take a single argument that indicates whether the return value should be in units of sampling points (<code class="docutils literal notranslate"><span class="pre">is_time</span> <span class="pre">=</span> <span class="pre">False</span></code>,default) or in units of time (<code class="docutils literal notranslate"><span class="pre">is_time</span> <span class="pre">=</span> <span class="pre">True</span></code>). Again, traces start at t=0 ms. These functions will return -1 if no file is opened at the time of the function call. Indices can be converted into time values by multiplying with <a class="reference internal" href="../stf_reference/stf.html#stf.get_sampling_interval" title="stf.get_sampling_interval"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.get_sampling_interval()</span></code></a>. For example:</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s2">&quot;Peak start cursor index:&quot;</span><span class="p">,</span> <span class="n">get_peak_start</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s2">"Peak start cursor index:"</span><span class="p">,</span> <span class="n">get_peak_start</span><span class="p">()</span>
 <span class="go">Peak start cursor index: 254</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s2">&quot;corresponds to t =&quot;</span><span class="p">,</span> <span class="n">get_peak_start</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span> <span class="s2">&quot;ms&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s2">"corresponds to t ="</span><span class="p">,</span> <span class="n">get_peak_start</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span> <span class="s2">"ms"</span>
 <span class="go">corresponds to t = 2.54 ms</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="n">get_peak_start</span><span class="p">()</span><span class="o">*</span><span class="n">get_sampling_interval</span><span class="p">(),</span> <span class="s2">&quot;ms&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s2">"="</span><span class="p">,</span> <span class="n">get_peak_start</span><span class="p">()</span><span class="o">*</span><span class="n">get_sampling_interval</span><span class="p">(),</span> <span class="s2">"ms"</span>
 <span class="go">= 2.54 ms</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">set_peak_start</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 <span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s2">&quot;new cursor position:&quot;</span><span class="p">,</span> <span class="n">get_peak_start</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s2">"new cursor position:"</span><span class="p">,</span> <span class="n">get_peak_start</span><span class="p">()</span>
 <span class="go">new cursor position: 1000.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s2">&quot;at t =&quot;</span><span class="p">,</span> <span class="n">get_peak_start</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span> <span class="s2">&quot;ms&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="s2">"at t ="</span><span class="p">,</span> <span class="n">get_peak_start</span><span class="p">(</span><span class="kc">True</span><span class="p">),</span> <span class="s2">"ms"</span>
 <span class="go">at t = 10 ms</span>
 </pre></div>
 </div>
@@ -254,7 +254,7 @@ of course). Remember that indices are zero-based!</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">get_selected_indices</span><span class="p">()</span>
 <span class="go">(0, 5)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">get_selected_indices</span><span class="p">():</span>
-<span class="gp">... </span>    <span class="nb">print</span> <span class="s2">&quot;Length of trace&quot;</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">get_size_trace</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span> <span class="s2">"Length of trace"</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="s2">":"</span><span class="p">,</span> <span class="n">get_size_trace</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="go">Length of trace 0 : 13050</span>
 <span class="go">Length of trace 1 : 13050</span>
@@ -275,11 +275,11 @@ of course). Remember that indices are zero-based!</p>
 <li><p><strong>file_open(filename)</strong> and <strong>file_save(filename)</strong></p></li>
 </ul>
 <p>will open or save a file specified by <code class="docutils literal notranslate"><span class="pre">filename</span></code>. On windows, use double backslashes (\\) between directories to avoid conversion to special characters, such as \t or \n; for example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_save</span><span class="p">(</span><span class="s2">&quot;C:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">datafile.dat&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_save</span><span class="p">(</span><span class="s2">"C:</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">datafile.dat"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>in Windows or</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_save</span><span class="p">(</span><span class="s2">&quot;/home/cs/data/datafile.dat&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">file_save</span><span class="p">(</span><span class="s2">"/home/cs/data/datafile.dat"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>in GNU/Linux.</p>
@@ -320,14 +320,14 @@ of course). Remember that indices are zero-based!</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">stf</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">get_amp</span><span class="p">():</span>
-<span class="w">   </span><span class="sd">&quot;&quot;&quot; Returns the amplitude (peak-base)&quot;&quot;&quot;</span>
+<span class="w">   </span><span class="sd">""" Returns the amplitude (peak-base)"""</span>
    <span class="k">return</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_peak</span><span class="p">()</span><span class="o">-</span><span class="n">stf</span><span class="o">.</span><span class="n">get_base</span><span class="p">()</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">sqr_amp</span><span class="p">():</span>
-<span class="w">   </span><span class="sd">&quot;&quot;&quot; Returns the sum of squared amplitudes of all</span>
+<span class="w">   </span><span class="sd">""" Returns the sum of squared amplitudes of all</span>
 <span class="sd">   selected traces, or -1 if there was an error. Uses</span>
 <span class="sd">   the current settings for the peak direction and</span>
-<span class="sd">   cursor positions.&quot;&quot;&quot;</span>
+<span class="sd">   cursor positions."""</span>
 
    <span class="c1"># store the current trace index:</span>
    <span class="n">old_index</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace_index</span><span class="p">()</span>
@@ -364,7 +364,7 @@ of course). Remember that indices are zero-based!</p>
 </pre></div>
 </div>
 <p>To create a submenu we have first to define it as Extension. In <code class="docutils literal notranslate"><span class="pre">extensions.py</span></code> we should add:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">myAPCounter</span> <span class="o">=</span> <span class="n">Extension</span><span class="p">(</span><span class="s2">&quot;Count APs&quot;</span><span class="p">,</span> <span class="n">spells</span><span class="o">.</span><span class="n">count_aps</span><span class="p">,</span> <span class="s2">&quot;Counts APs in selected traces&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">myAPCounter</span> <span class="o">=</span> <span class="n">Extension</span><span class="p">(</span><span class="s2">"Count APs"</span><span class="p">,</span> <span class="n">spells</span><span class="o">.</span><span class="n">count_aps</span><span class="p">,</span> <span class="s2">"Counts APs in selected traces"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>this command creates the extension called myAPCounter, which has the name “Counts APs” and executes the function spells.count_aps. If we add the extension <em>myAPCounter</em> to the extensionList, we will see now that a submenu appear within the Extension menu.</p>
@@ -401,13 +401,13 @@ of course). Remember that indices are zero-based!</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">cut_traces</span><span class="p">(</span> <span class="n">pt</span> <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Cuts the selected traces at the sampling point pt,</span>
+<span class="w">    </span><span class="sd">"""Cuts the selected traces at the sampling point pt,</span>
 <span class="sd">    and shows the cut traces in a new window.</span>
-<span class="sd">    Returns True upon success, False upon failure.&quot;&quot;&quot;</span>
+<span class="sd">    Returns True upon success, False upon failure."""</span>
 
     <span class="c1"># Check whether anything has been selected:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_selected_indices</span><span class="p">():</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trace is not selected!&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Trace is not selected!"</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="n">new_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
@@ -421,9 +421,9 @@ of course). Remember that indices are zero-based!</p>
         <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace</span><span class="p">()[</span><span class="n">pt</span><span class="p">:]</span> <span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span> <span class="s2">&quot;Cutting point&quot;</span><span class="p">,</span> <span class="n">pt</span><span class="p">,</span> <span class="s2">&quot;is out of range&quot;</span>
+        <span class="nb">print</span> <span class="s2">"Cutting point"</span><span class="p">,</span> <span class="n">pt</span><span class="p">,</span> <span class="s2">"is out of range"</span>
 
-    <span class="c1"># Don&#39;t create a new window if everything was out of range</span>
+    <span class="c1"># Don't create a new window if everything was out of range</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">stf</span><span class="o">.</span><span class="n">new_window_list</span><span class="p">(</span> <span class="n">new_list</span> <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -577,7 +577,7 @@ of course). Remember that indices are zero-based!</p>
     
     <div class="footer" role="contentinfo">
     &#169; Copyright 2026, Stimfit contributors.
-      Last updated on 14 August, 2026.
+      Last updated on 17 August, 2026.
     </div>
   </body>
 </html>

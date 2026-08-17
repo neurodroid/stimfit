@@ -57,7 +57,7 @@
 <dd class="field-odd"><p>Jose Guzman</p>
 </dd>
 <dt class="field-even">Updated<span class="colon">:</span></dt>
-<dd class="field-even"><p>14 August, 2026</p>
+<dd class="field-even"><p>17 August, 2026</p>
 </dd>
 </dl>
 <p>The resistance can be calculated using Ohm’s law. Currents passing through the pipette will be proportional to the applied voltage difference. This proportional factor is the resistance.</p>
@@ -77,7 +77,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">stf</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">resistance</span><span class="p">(</span> <span class="n">base_start</span><span class="p">,</span> <span class="n">base_end</span><span class="p">,</span> <span class="n">peak_start</span><span class="p">,</span> <span class="n">peak_end</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates the resistance from a series of voltage clamp traces.</span>
+<span class="w">    </span><span class="sd">"""Calculates the resistance from a series of voltage clamp traces.</span>
 
 <span class="sd">    Keyword arguments:</span>
 <span class="sd">    base_start -- Starting index (zero-based) of the baseline cursors.</span>
@@ -88,10 +88,10 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">    The resistance.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">stf</span><span class="o">.</span><span class="n">check_doc</span><span class="p">():</span>
-        <span class="nb">print</span> <span class="s2">&quot;Couldn&#39;t find an open file; aborting now.&quot;</span>
+        <span class="nb">print</span> <span class="s2">"Couldn't find an open file; aborting now."</span>
         <span class="k">return</span> <span class="mi">0</span>
 
     <span class="c1">#A temporary array to calculate the average:</span>
@@ -246,7 +246,7 @@
     
     <div class="footer" role="contentinfo">
     &#169; Copyright 2026, Stimfit contributors.
-      Last updated on 14 August, 2026.
+      Last updated on 17 August, 2026.
     </div>
   </body>
 </html>

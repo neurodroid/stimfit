@@ -56,7 +56,7 @@
 <dd class="field-odd"><p>Jose Guzman</p>
 </dd>
 <dt class="field-even">Updated<span class="colon">:</span></dt>
-<dd class="field-even"><p>14 August, 2026</p>
+<dd class="field-even"><p>17 August, 2026</p>
 </dd>
 </dl>
 <p>A widely used feature of <a class="reference external" href="http://www.stimfit.org">Stimfit</a> is the selection of some traces of interest within a file to make some calculations on them (average, peaks, amplitudes, etc.). The batch-analysis of <a class="reference external" href="http://www.stimfit.org">Stimfit</a> does precisely that. However, in some cases we can enhance its possibilities writing our custom functions in Python for the selected traces.</p>
@@ -75,7 +75,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">stf</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">get_amplitude</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">peak</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">trace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Calculates the amplitude deviation (peak-base) in units of the Y-axis</span>
+<span class="w">    </span><span class="sd">""" Calculates the amplitude deviation (peak-base) in units of the Y-axis</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">    base        -- Starting point (in ms) of the baseline cursor.</span>
@@ -91,14 +91,14 @@
 <span class="sd">    Example:</span>
 <span class="sd">    get_amplitude(980,1005,10,i) returns the variation of the Y unit of the trace i between</span>
 <span class="sd">    peak value (10050+10) msec and baseline (980+10) msec</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="c1"># sets the current trace or the one given in trace</span>
     <span class="k">if</span> <span class="n">trace</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">sweep</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace_index</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">typ</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">:</span>
-            <span class="nb">print</span> <span class="s2">&quot;trace argument admits only intergers&quot;</span>
+            <span class="nb">print</span> <span class="s2">"trace argument admits only intergers"</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="n">sweep</span> <span class="o">=</span> <span class="n">trace</span>
 
@@ -127,7 +127,7 @@
     <span class="n">sweep</span> <span class="o">=</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_trace_index</span><span class="p">()</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span> <span class="o">!=</span><span class="nb">int</span><span class="p">:</span>
-        <span class="nb">print</span> <span class="s2">&quot;trace argument admits only integers&quot;</span>
+        <span class="nb">print</span> <span class="s2">"trace argument admits only integers"</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="n">sweep</span> <span class="o">=</span> <span class="n">trace</span>
 </pre></div>
@@ -156,7 +156,7 @@
 <p>In this way the tuple of selected indices is passed by the for loop to the function. Next, everything is wrapped in a Python list called amplitudes_list.</p>
 <p>For further analysis in spreadsheet programs (Calc, Gnumeric, Excel or similar), the values can be printed into a table that allows to copy and paste the contents. <a class="reference internal" href="../stf_reference/stf.html#stf.show_table" title="stf.show_table"><code class="xref py py-func docutils literal notranslate"><span class="pre">stf.show_table()</span></code></a> takes a dictionary as its first argument. The dictionary has to be composed of strings as keys and numbers as values. You could use it as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mytable</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_selected_indices</span><span class="p">():</span> <span class="n">mytable</span><span class="p">[</span><span class="s2">&quot;Trace </span><span class="si">%.3d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">amplitudes_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">stf</span><span class="o">.</span><span class="n">get_selected_indices</span><span class="p">():</span> <span class="n">mytable</span><span class="p">[</span><span class="s2">"Trace </span><span class="si">%.3d</span><span class="s2">"</span> <span class="o">%</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">amplitudes_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">stf</span><span class="o">.</span><span class="n">show_table</span><span class="p">(</span><span class="n">mytable</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -253,7 +253,7 @@
     
     <div class="footer" role="contentinfo">
     &#169; Copyright 2026, Stimfit contributors.
-      Last updated on 14 August, 2026.
+      Last updated on 17 August, 2026.
     </div>
   </body>
 </html>
