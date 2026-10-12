@@ -127,15 +127,6 @@ for Debian13/bookworm (and probably Ubuntu 24.xx) and later</p>
 </ul>
 <p>In addition, install Sphinx and Doxygen if you want to build the documentation.</p>
 </section>
-<section id="optional-pyemf">
-<h2>Optional: PyEMF<a class="headerlink" href="#optional-pyemf" title="Link to this heading">¶</a></h2>
-<p><a class="reference internal" href="#pyemf" id="id11"><span>[PyEMF]</span></a> is needed to export figures to the windows meta file format (WMF/EMF). EMF is a vector graphics format and can be imported in different Office software including LibreOffice. To install it, do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ wget http://sourceforge.net/projects/pyemf/files/pyemf/2.0.0/pyemf-2.0.0.tar.gz/download -O pyemf-2.0.0.tar.gz
-$ tar xvf pyemf-2.0.0.tar.gz &amp;&amp; cd pyemf-2.0.0
-$ sudo python setup.py install
-</pre></div>
-</div>
-</section>
 <section id="download-the-stimfit-source-code">
 <h2>Download the Stimfit source code<a class="headerlink" href="#download-the-stimfit-source-code" title="Link to this heading">¶</a></h2>
 <p>You can download the latest development code for <a class="reference external" href="http://www.stimfit.org">Stimfit</a> from the <a class="reference external" href="https://github.com/neurodroid/stimfit/">Github code repository</a>. For that, type from your current $HOME directory:</p>
@@ -220,7 +211,7 @@ related helpers in a Python 3 environment:</p>
 </pre></div>
 </div>
 <p>The HTML documentation will be written to <cite>doc/sphinx/.build/html/index.html</cite>.</p>
-<p>Additionally, the source code can be documented with <a class="reference internal" href="#doxygen" id="id15"><span>[Doxygen]</span></a>. Install Doxygen
+<p>Additionally, the source code can be documented with <a class="reference internal" href="#doxygen" id="id14"><span>[Doxygen]</span></a>. Install Doxygen
 and Graphviz first:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">doxygen</span> <span class="n">graphviz</span>
 </pre></div>
@@ -260,16 +251,12 @@ doxygen Doxyfile.in
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">NumPy</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="http://www.numpy.org">http://www.numpy.org</a></p>
 </div>
-<div class="citation" id="pyemf" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id11">PyEMF</a><span class="fn-bracket">]</span></span>
-<p><a class="reference external" href="http://pyemf.sourceforge.net">http://pyemf.sourceforge.net</a></p>
-</div>
 <div class="citation" id="fftw" role="doc-biblioentry">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id7">fftw</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="http://www.fftw.org">http://www.fftw.org</a></p>
 </div>
 <div class="citation" id="doxygen" role="doc-biblioentry">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id15">Doxygen</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">Doxygen</a><span class="fn-bracket">]</span></span>
 <p><a class="reference external" href="http://www.doxygen.org">http://www.doxygen.org</a></p>
 </div>
 <div class="citation" id="matplotlib" role="doc-biblioentry">
@@ -295,7 +282,6 @@ doxygen Doxyfile.in
     <ul>
 <li><a class="reference internal" href="#">Building Stimfit</a><ul>
 <li><a class="reference internal" href="#what-we-need-before-we-start">What we need before we start</a></li>
-<li><a class="reference internal" href="#optional-pyemf">Optional: PyEMF</a></li>
 <li><a class="reference internal" href="#download-the-stimfit-source-code">Download the Stimfit source code</a></li>
 <li><a class="reference internal" href="#build-stimfit">Build Stimfit</a></li>
 <li><a class="reference internal" href="#building-stimfit-with-biosig-import-filter">Building Stimfit with BioSig import filter</a></li>
@@ -340,7 +326,6 @@ doxygen Doxyfile.in
     <ul>
 <li><a class="reference internal" href="#">Building Stimfit</a><ul>
 <li><a class="reference internal" href="#what-we-need-before-we-start">What we need before we start</a></li>
-<li><a class="reference internal" href="#optional-pyemf">Optional: PyEMF</a></li>
 <li><a class="reference internal" href="#download-the-stimfit-source-code">Download the Stimfit source code</a></li>
 <li><a class="reference internal" href="#build-stimfit">Build Stimfit</a></li>
 <li><a class="reference internal" href="#building-stimfit-with-biosig-import-filter">Building Stimfit with BioSig import filter</a></li>
