@@ -11,9 +11,15 @@ function(stf_configure_windows_patched_biosig)
     message(FATAL_ERROR "stf_configure_windows_patched_biosig() is only valid on Windows")
   endif()
 
+  find_package(Iconv REQUIRED)
+  get_filename_component(_stf_iconv_lib_dir "${Iconv_LIBRARY}" DIRECTORY)
+  get_filename_component(_stf_iconv_prefix "${_stf_iconv_lib_dir}" DIRECTORY)
+  set(STF_BIOSIG_ICONV_RUNTIME_DIRS "${_stf_iconv_lib_dir};${_stf_iconv_prefix}/bin" PARENT_SCOPE)
+
   set(_stf_biosig_source_dir "${CMAKE_SOURCE_DIR}/src/biosig")
   set(_stf_biosig_patch_dir "${CMAKE_SOURCE_DIR}/cmake/patches/biosig-msvc")
-  set(STF_BIOSIG_EXPECTED_TAG "v3.9.5" CACHE STRING "Expected biosig tag for Windows patched-submodule provider")
+  # BioSig 3.9.8 has no upstream Git tag; pin its release commit instead.
+  set(STF_BIOSIG_EXPECTED_TAG "1563ee153331954f217b30bf3fd520e123d563da" CACHE STRING "Expected biosig tag or commit for Windows patched-submodule provider")
 
   if(NOT EXISTS "${_stf_biosig_source_dir}/biosig4c++/CMakeLists.txt")
     message(FATAL_ERROR "Patched biosig provider requires the biosig submodule under ${_stf_biosig_source_dir}")
@@ -38,20 +44,20 @@ function(stf_configure_windows_patched_biosig)
   endif()
 
   execute_process(
-    COMMAND ${STF_GIT_EXECUTABLE} -C "${_stf_biosig_source_dir}" rev-parse --verify --quiet "refs/tags/${STF_BIOSIG_EXPECTED_TAG}^{commit}"
+    COMMAND ${STF_GIT_EXECUTABLE} -C "${_stf_biosig_source_dir}" rev-parse --verify --quiet "${STF_BIOSIG_EXPECTED_TAG}^{commit}"
     RESULT_VARIABLE _stf_biosig_expected_tag_result
     OUTPUT_VARIABLE _stf_biosig_expected_commit
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
   if(NOT _stf_biosig_expected_tag_result EQUAL 0)
-    message(FATAL_ERROR "Expected biosig tag '${STF_BIOSIG_EXPECTED_TAG}' was not found in ${_stf_biosig_source_dir}")
+    message(FATAL_ERROR "Expected biosig revision '${STF_BIOSIG_EXPECTED_TAG}' was not found in ${_stf_biosig_source_dir}")
   endif()
 
   if(NOT _stf_biosig_head STREQUAL _stf_biosig_expected_commit)
     message(FATAL_ERROR
-      "biosig submodule mismatch: expected tag '${STF_BIOSIG_EXPECTED_TAG}' -> ${_stf_biosig_expected_commit}, "
+      "biosig submodule mismatch: expected revision '${STF_BIOSIG_EXPECTED_TAG}' -> ${_stf_biosig_expected_commit}, "
       "but src/biosig HEAD is ${_stf_biosig_head}. "
-      "Update src/biosig to tag '${STF_BIOSIG_EXPECTED_TAG}' and reconfigure."
+      "Update src/biosig to revision '${STF_BIOSIG_EXPECTED_TAG}' and reconfigure."
     )
   endif()
 
@@ -128,6 +134,8 @@ function(stf_configure_windows_patched_biosig)
 
   add_custom_target(stimfit_biosig_stage DEPENDS "${_stf_biosig_stage_stamp}")
 
+  string(REPLACE ";" "|" _stf_biosig_prefix_path "${CMAKE_PREFIX_PATH}")
+
   set(_stf_biosig_library_dir "${_stf_biosig_build_dir}/$<CONFIG>")
   set(_stf_biosig_import_library "${_stf_biosig_library_dir}/biosig2.lib")
   set(_stf_biosig_runtime_library "${_stf_biosig_library_dir}/biosig2.dll")
@@ -154,6 +162,8 @@ function(stf_configure_windows_patched_biosig)
     DEPENDS stimfit_biosig_stage
     CMAKE_GENERATOR "${CMAKE_GENERATOR}"
     CMAKE_GENERATOR_PLATFORM "${_stf_biosig_platform}"
+    LIST_SEPARATOR "|"
+    CMAKE_ARGS "-DCMAKE_PREFIX_PATH:STRING=${_stf_biosig_prefix_path}"
     BUILD_COMMAND
       "${CMAKE_COMMAND}" --build "${_stf_biosig_build_dir}" --config $<CONFIG> --target ${STF_BIOSIG_PATCHED_TARGETS}
     BUILD_BYPRODUCTS

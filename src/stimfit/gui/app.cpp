@@ -129,35 +129,7 @@ static wxString GetExecutablePath()
 #ifdef _WINDOWS
 static wxString GetExecutablePath()
 {
-    HKEY keyHandle;
-
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, wxT("Software\\Stimfit 0.14"), 0,
-                     KEY_QUERY_VALUE, &keyHandle) == ERROR_SUCCESS)
-    {
-        DWORD BufferSize = 8192;
-        DWORD cbData = BufferSize;
-
-        wxCharTypeBuffer<wxChar> data(BufferSize);
-        DWORD dwRet = RegQueryValueEx(keyHandle, TEXT("InstallLocation"),
-                                      NULL, NULL, (LPBYTE)data.data(), &cbData);
-        while (dwRet == ERROR_MORE_DATA)
-        {
-            BufferSize += 4096;
-            data.extend(BufferSize);
-            cbData = BufferSize;
-
-            dwRet = RegQueryValueEx(keyHandle, TEXT("InstallLocation"),
-                                    NULL, NULL, (LPBYTE)data.data(), &cbData);
-        }
-        if (dwRet == ERROR_SUCCESS) {
-            RegCloseKey(keyHandle);
-            return wxString(data);
-        }
-
-        return wxT("");
-    }
-
-    return wxT("");
+    return wxFileName(wxStandardPaths::Get().GetExecutablePath()).GetPath();
 }
 #endif // _WINDOWS
 #endif // WITH_PYTHON
@@ -1569,7 +1541,7 @@ bool wxStfApp::Init_wxPython()
     // Add the cwd to the present path:
     wxString app_path = GetExecutablePath().BeforeFirst(wxUniChar('\0'));
     cwd << wxT("import os\nimport sys\n");
-    cwd << wxT("cwd = \"") << app_path << wxT("\"\n");
+    cwd << wxT("cwd = r\"") << app_path << wxT("\"\n");
     cwd << wxT("paths = [\n");
     cwd << wxT("    cwd,\n");
     cwd << wxT("    os.path.join(cwd, 'stf-site-packages'),\n");

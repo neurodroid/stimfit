@@ -1,4 +1,5 @@
 #include "../libstfio/recording.h"
+#include <cstddef>
 #include <gtest/gtest.h>
 
 TEST(Recording_test, constructors)
@@ -32,8 +33,8 @@ TEST(Recording_test, data_access)
     Channel ch(sec_list);
 
     Recording rec1(ch);
-    int chsize = rec1[0].size();
-    int secsize = rec1[0][rec1[0].size()-1].size();
+    std::size_t chsize = rec1[0].size();
+    std::size_t secsize = rec1[0][rec1[0].size()-1].size();
     EXPECT_EQ( rec1[0][chsize-1][secsize-1], 0 );
     EXPECT_THROW( rec1.at(1), std::out_of_range );
     EXPECT_THROW( rec1[0].at(chsize), std::out_of_range );
@@ -41,7 +42,7 @@ TEST(Recording_test, data_access)
 
     std::deque<Channel> ch_list(4, Channel(16, 32768));
     Recording rec2(ch_list);
-    int recsize = rec2.size();
+    std::size_t recsize = rec2.size();
     chsize = rec2[recsize-1].size();
     secsize = rec2[recsize-1][rec2[recsize-1].size()-1].size();
     EXPECT_EQ( rec2[recsize-1][chsize-1][secsize-1], 0 );

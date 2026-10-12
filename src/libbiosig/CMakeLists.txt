@@ -88,6 +88,7 @@ set(_stf_biosig_sources
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_fiff.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_heka_read.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_igor.c
+  ${STF_BIOSIG4CPP_DIR}/t210/sopen_medilog.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_nicolet.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_rhd2000_read.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_scp_read.c
@@ -109,6 +110,7 @@ set(_stf_biosig_sources
   ${STF_BIOSIG4CPP_DIR}/gdftime.c
   ${STF_BIOSIG4CPP_DIR}/mdc_ecg_codes.c
   ${STF_BIOSIG4CPP_DIR}/physicalunits.c
+  ${STF_BIOSIG4CPP_DIR}/string_isutf8.c
 )
 
 if(WIN32)

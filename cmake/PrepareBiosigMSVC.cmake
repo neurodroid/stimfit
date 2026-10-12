@@ -6,11 +6,20 @@ endif()
 
 set(_repo_root "${CMAKE_CURRENT_LIST_DIR}/..")
 
+if(NOT CMAKE_PREFIX_PATH)
+	if(DEFINED ENV{VCPKG_INSTALLED_DIR})
+		set(CMAKE_PREFIX_PATH "$ENV{VCPKG_INSTALLED_DIR}/x64-windows-ci-release")
+	else()
+		set(CMAKE_PREFIX_PATH "${_repo_root}/vcpkg_installed/x64-windows-ci-release")
+	endif()
+endif()
+
 set(STF_BIOSIG_SOURCE_DIR "${_repo_root}/src/biosig" CACHE PATH "Path to biosig submodule checkout")
 set(STF_BIOSIG_WORK_DIR "${_repo_root}/build/biosig-msvc-src" CACHE PATH "Path to working copy for patched biosig sources")
 set(STF_BIOSIG_BUILD_DIR "${_repo_root}/build/biosig-msvc-build" CACHE PATH "Path to out-of-tree biosig build directory")
 set(STF_BIOSIG_PATCH_DIR "${CMAKE_CURRENT_LIST_DIR}/patches/biosig-msvc" CACHE PATH "Path to patch queue directory (*.patch)")
-set(STF_BIOSIG_EXPECTED_TAG "v3.9.5" CACHE STRING "Expected biosig tag used as patch baseline")
+# BioSig 3.9.8 has no upstream Git tag; pin its release commit instead.
+set(STF_BIOSIG_EXPECTED_TAG "1563ee153331954f217b30bf3fd520e123d563da" CACHE STRING "Expected biosig tag or commit used as patch baseline")
 set(STF_BIOSIG_GENERATOR "Visual Studio 17 2022" CACHE STRING "CMake generator for biosig build")
 set(STF_BIOSIG_ARCH "x64" CACHE STRING "Architecture used with Visual Studio generator")
 set(STF_BIOSIG_CONFIG "Release" CACHE STRING "Configuration to build")
@@ -34,13 +43,13 @@ endif()
 find_program(STF_GIT_EXECUTABLE NAMES git REQUIRED)
 
 execute_process(
-	COMMAND ${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_SOURCE_DIR}" rev-parse --verify --quiet "refs/tags/${STF_BIOSIG_EXPECTED_TAG}^{commit}"
+	COMMAND ${STF_GIT_EXECUTABLE} -C "${STF_BIOSIG_SOURCE_DIR}" rev-parse --verify --quiet "${STF_BIOSIG_EXPECTED_TAG}^{commit}"
 	RESULT_VARIABLE _biosig_expected_tag_result
 	OUTPUT_VARIABLE _biosig_expected_commit
 	OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 if(NOT _biosig_expected_tag_result EQUAL 0)
-	message(FATAL_ERROR "Expected biosig tag '${STF_BIOSIG_EXPECTED_TAG}' was not found in ${STF_BIOSIG_SOURCE_DIR}")
+	message(FATAL_ERROR "Expected biosig revision '${STF_BIOSIG_EXPECTED_TAG}' was not found in ${STF_BIOSIG_SOURCE_DIR}")
 endif()
 
 execute_process(
@@ -55,9 +64,9 @@ endif()
 
 if(NOT _biosig_source_head STREQUAL _biosig_expected_commit)
 	message(FATAL_ERROR
-		"biosig submodule mismatch: expected tag '${STF_BIOSIG_EXPECTED_TAG}' -> ${_biosig_expected_commit}, "
+		"biosig submodule mismatch: expected revision '${STF_BIOSIG_EXPECTED_TAG}' -> ${_biosig_expected_commit}, "
 		"but src/biosig is at ${_biosig_source_head}. "
-		"Update src/biosig to tag '${STF_BIOSIG_EXPECTED_TAG}' before running PrepareBiosigMSVC.cmake."
+		"Update src/biosig to revision '${STF_BIOSIG_EXPECTED_TAG}' before running PrepareBiosigMSVC.cmake."
 	)
 endif()
 
@@ -106,6 +115,7 @@ _run_checked(
 	-B "${STF_BIOSIG_BUILD_DIR}"
 	-G "${STF_BIOSIG_GENERATOR}"
 	-A "${STF_BIOSIG_ARCH}"
+	"-DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}"
 )
 
 set(_build_targets)
