@@ -43,8 +43,9 @@ pick_python_for_cmake() {
   for py in "${candidates[@]}"; do
     [[ -x "$py" ]] || continue
     if "$py" - <<'PY' >/dev/null 2>&1
+import sys
 import sysconfig
-ok = bool(sysconfig.get_config_var('INCLUDEPY')) and bool(sysconfig.get_config_var('LIBDIR'))
+ok = sys.version_info[0] >= 3 and bool(sysconfig.get_config_var('INCLUDEPY')) and bool(sysconfig.get_config_var('LIBDIR'))
 raise SystemExit(0 if ok else 1)
 PY
     then
@@ -142,7 +143,7 @@ cmake_configure_args=(
 if [[ "$WITH_PYTHON" -eq 1 ]]; then
   PYTHON_EXECUTABLE_GUESS="${PYTHON_EXECUTABLE:-$DEFAULT_MACPORTS_PYTHON}"
   PYTHON_EXECUTABLE_GUESS="$(pick_python_for_cmake "$PYTHON_EXECUTABLE_GUESS")" || {
-    echo "ERROR: Could not find a usable MacPorts Python with development files (tried 3.14..3.10)." >&2
+    echo "ERROR: Could not find a usable MacPorts Python 3 with development files (tried 3.14..3.10)." >&2
     exit 1
   }
 

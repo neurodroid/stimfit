@@ -220,7 +220,6 @@ wxBitmap TbBitmap(const wxWindow& window, const wxString& iconName, const wxArtI
 }
 
 #ifdef WITH_PYTHON
-#if PY_MAJOR_VERSION >= 3
 PyObject* wxPyMake_wxObject(wxObject* source, bool setThisOwn)
 {
     bool checkEvtHandler = true;
@@ -284,7 +283,6 @@ PyObject* wxPyMake_wxObject(wxObject* source, bool setThisOwn)
     }
     return target;
 }
-#endif
 #endif
 
 } // namespace
@@ -456,17 +454,7 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
     SetMouseQual( stf::measure_cursor );
 
 #ifdef WITH_PYTHON
-#if PY_MAJOR_VERSION >= 3
 #define STF_PY_SHELL_MODULE wxT("embedded_shell_selector")
-#else
-#if defined(STF_PY_SHELL_BACKEND_LEGACY)
-#define STF_PY_SHELL_MODULE wxT("embedded_stf")
-#elif defined(STF_PY_SHELL_BACKEND_JUPYTER)
-#define STF_PY_SHELL_MODULE wxT("embedded_shell_ipython")
-#else
-#define STF_PY_SHELL_MODULE wxT("embedded_shell_modern")
-#endif
-#endif
     wxFileName stfExePath(wxStandardPaths::Get().GetExecutablePath());
     const wxString stfExeDir = stfExePath.GetPath();
     wxFileName stfSourcePyPath(stfExeDir, wxEmptyString);
@@ -546,10 +534,8 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
 
     python_code2 << wxT("import os\n")
                  << wxT("os.environ['STF_EMBEDDED_SHELL']='1'\n")
-#if PY_MAJOR_VERSION >= 3
                  << wxT("os.environ['STF_PY_SHELL_DEFAULT']='") << stfDefaultShellKey << wxT("'\n")
                  << wxT("os.environ['STF_PY_SHELL_HIDE_INTERNAL_SELECTOR']='1'\n")
-#endif
                  << wxT("os.environ.pop('PYTHONSTARTUP', None)\n")
                  << wxT("os.environ.pop('PYTHONINSPECT', None)\n")
                  << wxT("import sys\n")
@@ -567,22 +553,6 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
                  << wxT("    win = ") << STF_PY_SHELL_MODULE << wxT(".MyPanel(parent)\n")
                  << wxT("    return win\n")
                  << wxT("\n")
-#if PY_MAJOR_VERSION < 3
-                 << wxT("import embedded_mpl\n")
-                 << wxT("def plotWindowMpl(parent, figsize=(8,6)):\n")
-                 << wxT("    win = embedded_mpl.MplPanel(parent, figsize)\n")
-                 << wxT("    win.plot_screen()\n")
-                 << wxT("    return win\n")
-                 << wxT("\n")
-                 << wxT("def spectrumWindowMpl(parent, figsize=(8,6)):\n")
-                 << wxT("    win = embedded_mpl.MplPanel(parent, figsize)\n")
-                 << wxT("    win.plot_spectrum()\n")
-                 << wxT("    return win\n")
-                 << wxT("\n")
-                 << wxT("def makeWindowMpl(parent, figsize=(8,6)):\n")
-                 << wxT("    win = embedded_mpl.MplPanel(parent, figsize)\n")
-                 << wxT("    return win\n")
-#endif
     ;
     /*  The window remains open after the main application has been closed; deactivated for the time being.
      *  RedirectStdio();
@@ -647,7 +617,7 @@ wxStfToolBar* wxStfParentFrame::CreateStdTb() {
                   TbBitmap(*this, wxT("print"), wxART_PRINT),
                   wxT("Print traces"),
                   wxITEM_NORMAL );
-#if PY_MAJOR_VERSION >= 3
+#ifdef WITH_PYTHON
     tb1->AddStretchSpacer(1);
     wxArrayString shellChoices;
     shellChoices.Add(wxT("Legacy"));
@@ -1603,7 +1573,6 @@ void wxStfParentFrame::RedirectStdio()
 
 bool wxStfParentFrame::SelectEmbeddedShellBackend(const wxString& backend)
 {
-#if PY_MAJOR_VERSION >= 3
     wxPyBlock_t blocked = wxPyBeginBlockThreads();
 
     wxString python_cmd;
@@ -1618,10 +1587,6 @@ bool wxStfParentFrame::SelectEmbeddedShellBackend(const wxString& backend)
 
     wxPyEndBlockThreads(blocked);
     return status == 0;
-#else
-    (void)backend;
-    return false;
-#endif
 }
 
 new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, const std::string& mgr_name, const std::string& caption, bool show,
@@ -1651,11 +1616,7 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     PyObject* py_mpl_height = NULL;
     PyObject* figsize = NULL;
     PyObject* argtuple = NULL;
-#if PY_MAJOR_VERSION >= 3
     PyObject* builtins = PyImport_ImportModule("builtins");
-#else
-    PyObject* builtins = PyImport_ImportModule("__builtin__");
-#endif
     PyDict_SetItemString(globals, "__builtins__", builtins);
     Py_DECREF(builtins);
 
@@ -1717,11 +1678,7 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     else {
         // Otherwise, get the returned window out of Python-land and
         // into C++-ville...
-#if PY_MAJOR_VERSION >= 3
         if (!wxPyConvertWrappedPtr(result, (void**)&window, _T("wxWindow"))) {
-#else
-        if (!wxPyConvertSwigPtr(result, (void**)&window, _T("wxWindow"))) {
-#endif
             PyErr_Print();
             wxGetApp().ErrorMsg(wxT("Returned object was not a wxWindow!"));
             Py_DECREF(result);

@@ -137,7 +137,7 @@ The menu-driven import path in [`ImportPython`](../src/stimfit/gui/unopt.cpp:359
 
 ### Build and packaging seam
 
-The Python install list in [`src/stimfit/py/CMakeLists.txt`](../src/stimfit/py/CMakeLists.txt:60) should eventually ship the new shell bootstrap and any helper modules. Packaging should stop referencing missing files such as [`embedded_ipython.py`](../dist/windows/nsis/installer.nsi.in:234).
+The Python install list in [`src/stimfit/py/CMakeLists.txt`](../src/stimfit/py/CMakeLists.txt:60) should eventually ship the new shell bootstrap and any helper modules. Packaging should stop referencing missing files such as `embedded_ipython.py` (retired NSIS installer).
 
 ## Migration strategy
 
@@ -148,7 +148,7 @@ Remove or deprecate immediately:
 - [`STF_ENABLE_IPYTHON`](../cmake/StimfitOptions.cmake:8) because it encodes a dead implementation path rather than a meaningful product choice
 - compile definition wiring in [`StimfitToolchain.cmake`](../cmake/StimfitToolchain.cmake:15)
 - dead legacy branches in [`parentframe.cpp`](../src/stimfit/gui/parentframe.cpp:346) and [`unopt.cpp`](../src/stimfit/gui/unopt.cpp:369)
-- stale packaging entry for [`embedded_ipython.py`](../dist/windows/nsis/installer.nsi.in:234)
+- stale packaging entry for `embedded_ipython.py` (retired NSIS installer)
 - stale summary output for [`STF_ENABLE_IPYTHON`](../cmake/StimfitMigration.cmake:9)
 - stale comments in [`embedded_init.py`](../src/stimfit/py/embedded_init.py:11)
 
@@ -181,7 +181,7 @@ Once validated across supported platforms, decide whether [`embedded_stf.py`](..
 4. Implement a kernel host abstraction with lifecycle and namespace management.
 5. Implement a frontend transport adapter and embedded widget.
 6. Rework [`ImportPython`](../src/stimfit/gui/unopt.cpp:359) to call a Python facade instead of generating shell-specific source code.
-7. Update packaging in [`src/stimfit/py/CMakeLists.txt`](../src/stimfit/py/CMakeLists.txt:60) and [`installer.nsi.in`](../dist/windows/nsis/installer.nsi.in:220).
+7. Update packaging in [`src/stimfit/py/CMakeLists.txt`](../src/stimfit/py/CMakeLists.txt:60) and `installer.nsi.in` (retired NSIS installer).
 8. Keep [`embedded_shell_modern.py`](../src/stimfit/py/embedded_shell_modern.py:1) as a migration fallback until the new backend is proven.
 
 ## Design constraints and risks
@@ -210,7 +210,7 @@ The product should keep a minimal shell path available while the new architectur
 
 The new architecture should not be considered complete until all of the following are true:
 
-- Stimfit no longer references [`embedded_ipython.py`](../dist/windows/nsis/installer.nsi.in:234) or [`IPython.ipapi`](../src/stimfit/gui/unopt.cpp:371)
+- Stimfit no longer references `embedded_ipython.py` (retired NSIS installer) or [`IPython.ipapi`](../src/stimfit/gui/unopt.cpp:371)
 - shell creation in [`parentframe.cpp`](../src/stimfit/gui/parentframe.cpp:281) selects backends without the obsolete [`IPYTHON`](../cmake/StimfitToolchain.cmake:15) macro
 - module import and reload from the GUI work through one backend-agnostic service instead of separate legacy and non-legacy paths
 - the embedded shell widget supports command execution completion inspection history and rich traceback behavior
