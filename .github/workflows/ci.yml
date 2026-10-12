@@ -15,12 +15,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
 
@@ -66,7 +66,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
@@ -77,7 +77,7 @@ jobs:
           vcpkgJsonGlob: vcpkg.json
 
       - name: Restore vcpkg cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ${{ env.VCPKG_INSTALLED_DIR }}
@@ -165,13 +165,13 @@ jobs:
           ctest --test-dir build/ci-windows-msvc-smoke -C Release --output-on-failure --tests-regex stimfit_containers_test
 
       - name: Upload Windows smoke staging artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-msvc-smoke-staging
           path: |
             build/ci-windows-msvc-smoke/CMakeCache.txt
             build/ci-windows-msvc-smoke/Testing/Temporary/LastTest.log
-            build/ci-windows-msvc-smoke/src/test/Release/stimfit_containers_test.exe
+            build/ci-windows-msvc-smoke/Release/stimfit_containers_test.exe
           if-no-files-found: warn
 
   ubuntu-tests:
@@ -180,7 +180,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
@@ -224,7 +224,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
@@ -268,7 +268,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
@@ -356,7 +356,7 @@ jobs:
           find "$PWD/build-macos-macports/install" -maxdepth 4 -print | sort > "$PWD/build-macos-macports/install-manifest.txt"
 
       - name: Upload minimal staging artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: macos-macports-staging
           path: |
