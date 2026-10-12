@@ -105,19 +105,10 @@ wxStfApp& wxGetApp() { return *static_cast<wxStfApp*>(wxApp::GetInstance()); }
 #ifdef WITH_PYTHON
 int stf::Extension::n_extensions = 0;
 
-#if defined(__WXMAC__) || defined(__WXGTK__)
-static wxString GetExecutablePath()
-{
-    return wxStandardPaths::Get().GetExecutablePath();
-}
-#endif // __WXMAC__ || __WXGTK__
-
-#ifdef _WINDOWS
-static wxString GetExecutablePath()
+static wxString GetExecutableDirectory()
 {
     return wxFileName(wxStandardPaths::Get().GetExecutablePath()).GetPath();
 }
-#endif // _WINDOWS
 #endif // WITH_PYTHON
 
 BEGIN_EVENT_TABLE( wxStfApp, wxApp )
@@ -1484,7 +1475,7 @@ bool wxStfApp::Init_wxPython()
     wxString cwd;
 #ifdef __WXMAC__
     // Add the cwd to the present path:
-    wxString app_path = wxFileName(GetExecutablePath()).GetPath();
+    wxString app_path = GetExecutableDirectory();
     cwd << wxT("import os\n");
     cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks\"\n");
     cwd << wxT("import sys\n");
@@ -1502,7 +1493,7 @@ bool wxStfApp::Init_wxPython()
 
 #ifdef __WXGTK__
     // Add the cwd to the present path:
-    wxString app_path = wxFileName(GetExecutablePath()).GetPath();
+    wxString app_path = GetExecutableDirectory();
     cwd << wxT("import os\n");
     cwd << wxT("cwd=\"") << app_path << wxT("/../lib/stimfit\"\n");
     cwd << wxT("import sys\n");
@@ -1516,7 +1507,7 @@ bool wxStfApp::Init_wxPython()
 
 #ifdef _WINDOWS
     // Add the cwd to the present path:
-    wxString app_path = GetExecutablePath().BeforeFirst(wxUniChar('\0'));
+    wxString app_path = GetExecutableDirectory().BeforeFirst(wxUniChar('\0'));
     cwd << wxT("import os\nimport sys\n");
     cwd << wxT("cwd = r\"") << app_path << wxT("\"\n");
     cwd << wxT("paths = [\n");
