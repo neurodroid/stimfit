@@ -144,6 +144,13 @@ What the script does:
 
 This is the preferred path for modern macOS builds because it centralizes bundle layout and runtime-path handling in the CMake toolchain.
 
+The macOS helper prefers Ninja when it is available on `PATH` and falls back to
+Unix Makefiles otherwise. Makefiles builds use a separate default build directory
+with a `-makefiles` suffix (for example, `build/macos-app-makefiles`) and install
+under that directory. You can also select Makefiles explicitly with
+`./build_macos_cmake.sh --generator "Unix Makefiles"`. An explicit `--build-dir`
+must use the same generator as any existing CMake cache in that directory.
+
 ## Windows (MSVC)
 
 Run [`build_windows_msvc.ps1`](build_windows_msvc.ps1) from a PowerShell session:
