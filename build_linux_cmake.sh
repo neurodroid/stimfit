@@ -41,11 +41,12 @@ pick_python_for_cmake() {
   for py in "${candidates[@]}"; do
     [[ -x "$py" ]] || continue
     if "$py" - <<'PY' >/dev/null 2>&1
+import sys
 import sysconfig
 include_dir = sysconfig.get_config_var('INCLUDEPY')
 lib_dir = sysconfig.get_config_var('LIBDIR')
 ld_library = sysconfig.get_config_var('LDLIBRARY')
-ok = bool(include_dir) and (bool(lib_dir) or bool(ld_library))
+ok = sys.version_info[0] >= 3 and bool(include_dir) and (bool(lib_dir) or bool(ld_library))
 raise SystemExit(0 if ok else 1)
 PY
     then
@@ -139,7 +140,7 @@ cmake_configure_args=(
 if [[ "$WITH_PYTHON" -eq 1 ]]; then
   PYTHON_EXECUTABLE_GUESS="${PYTHON_EXECUTABLE:-$DEFAULT_SYSTEM_PYTHON}"
   PYTHON_EXECUTABLE_GUESS="$(pick_python_for_cmake "$PYTHON_EXECUTABLE_GUESS")" || {
-    echo "ERROR: Could not find a usable Python with development files (tried 3.14..3.10 and python3)." >&2
+    echo "ERROR: Could not find a usable Python 3 with development files (tried 3.14..3.10 and python3)." >&2
     exit 1
   }
 

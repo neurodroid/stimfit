@@ -9,6 +9,10 @@ set -euo pipefail
 #   ./build_macos_cmake.sh --with-python
 #   ./build_macos_cmake.sh --without-python
 #   ./build_macos_cmake.sh --with-python --install-prefix build/macos-app-py/install
+#   ./build_macos_cmake.sh --generator "Unix Makefiles"
+#
+# Prefer Ninja when available; otherwise use Unix Makefiles in a separate
+# build directory with a -makefiles suffix.
 #
 # Optional environment overrides:
 #   PYTHON_EXECUTABLE=/opt/local/bin/python3.14
@@ -20,6 +24,9 @@ source "${SCRIPT_DIR}/cmake/StimfitPresetHelpers.sh"
 BUILD_DIR="build/macos-app"
 INSTALL_PREFIX="build/macos-app/install"
 GENERATOR="Ninja"
+GENERATOR_EXPLICIT=0
+BUILD_DIR_EXPLICIT=0
+INSTALL_PREFIX_EXPLICIT=0
 WITH_PYTHON=1
 DEFAULT_MACPORTS_PYTHON="/opt/local/bin/python3.14"
 
@@ -36,8 +43,9 @@ pick_python_for_cmake() {
   for py in "${candidates[@]}"; do
     [[ -x "$py" ]] || continue
     if "$py" - <<'PY' >/dev/null 2>&1
+import sys
 import sysconfig
-ok = bool(sysconfig.get_config_var('INCLUDEPY')) and bool(sysconfig.get_config_var('LIBDIR'))
+ok = sys.version_info[0] >= 3 and bool(sysconfig.get_config_var('INCLUDEPY')) and bool(sysconfig.get_config_var('LIBDIR'))
 raise SystemExit(0 if ok else 1)
 PY
     then
@@ -65,14 +73,17 @@ while [[ $# -gt 0 ]]; do
       ;;
     --build-dir)
       BUILD_DIR="$2"
+      BUILD_DIR_EXPLICIT=1
       shift 2
       ;;
     --install-prefix)
       INSTALL_PREFIX="$2"
+      INSTALL_PREFIX_EXPLICIT=1
       shift 2
       ;;
     --generator)
       GENERATOR="$2"
+      GENERATOR_EXPLICIT=1
       shift 2
       ;;
     -h|--help)
@@ -85,6 +96,24 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+if [[ "$GENERATOR" == "Ninja" ]] && ! command -v ninja >/dev/null 2>&1; then
+  if [[ "$GENERATOR_EXPLICIT" -eq 1 ]]; then
+    echo 'ERROR: Ninja is not available on PATH. Install Ninja or use --generator "Unix Makefiles".' >&2
+    exit 1
+  fi
+  echo "==> Ninja is not available; using Unix Makefiles"
+  GENERATOR="Unix Makefiles"
+fi
+
+# CMake cannot change generators in an existing build tree. Keep the default
+# Makefiles tree separate from the Ninja presets, preserving previous builds.
+if [[ "$GENERATOR" == "Unix Makefiles" && "$BUILD_DIR_EXPLICIT" -eq 0 ]]; then
+  BUILD_DIR="${BUILD_DIR}-makefiles"
+  if [[ "$INSTALL_PREFIX_EXPLICIT" -eq 0 ]]; then
+    INSTALL_PREFIX="${BUILD_DIR}/install"
+  fi
+fi
 
 stf_select_presets \
   "$WITH_PYTHON" \
@@ -106,6 +135,7 @@ cmake_configure_args=(
   --preset "$CONFIGURE_PRESET"
   -B "$BUILD_DIR"
   -G "$GENERATOR"
+  -UCMAKE_MAKE_PROGRAM
   -USTF_USE_BIOSIG_SUBMODULE
   "-DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}"
 )
@@ -113,7 +143,7 @@ cmake_configure_args=(
 if [[ "$WITH_PYTHON" -eq 1 ]]; then
   PYTHON_EXECUTABLE_GUESS="${PYTHON_EXECUTABLE:-$DEFAULT_MACPORTS_PYTHON}"
   PYTHON_EXECUTABLE_GUESS="$(pick_python_for_cmake "$PYTHON_EXECUTABLE_GUESS")" || {
-    echo "ERROR: Could not find a usable MacPorts Python with development files (tried 3.14..3.10)." >&2
+    echo "ERROR: Could not find a usable MacPorts Python 3 with development files (tried 3.14..3.10)." >&2
     exit 1
   }
 
@@ -140,6 +170,7 @@ if [[ "$WITH_PYTHON" -eq 1 ]]; then
 fi
 
 stf_print_preset_selection "$BUILD_DIR"
+echo "==> Generator: ${GENERATOR}"
 
 echo "==> Configuring"
 cmake "${cmake_configure_args[@]}"

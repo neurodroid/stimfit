@@ -88,6 +88,7 @@ set(_stf_biosig_sources
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_fiff.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_heka_read.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_igor.c
+  ${STF_BIOSIG4CPP_DIR}/t210/sopen_medilog.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_nicolet.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_rhd2000_read.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_scp_read.c
@@ -109,7 +110,17 @@ set(_stf_biosig_sources
   ${STF_BIOSIG4CPP_DIR}/gdftime.c
   ${STF_BIOSIG4CPP_DIR}/mdc_ecg_codes.c
   ${STF_BIOSIG4CPP_DIR}/physicalunits.c
+  ${STF_BIOSIG4CPP_DIR}/string_isutf8.c
 )
+
+# BioSig's decoder uses a non-static inline definition without an external
+# definition. C11 leaves decode unresolved when optimization does not inline it;
+# GNU inline semantics emit the definition, including in unoptimized builds.
+if(CMAKE_C_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang)$")
+  set_property(SOURCE ${STF_BIOSIG4CPP_DIR}/string_isutf8.c APPEND PROPERTY
+    COMPILE_OPTIONS -fgnu89-inline
+  )
+endif()
 
 if(WIN32)
   list(APPEND _stf_biosig_sources
@@ -154,12 +165,7 @@ else()
   set(_stf_biosig_install_libdir "${CMAKE_INSTALL_LIBDIR}/stimfit")
 endif()
 
-if(APPLE AND STF_MACOS_APP_BUNDLE)
-  install(TARGETS stimfit_biosig
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    LIBRARY DESTINATION ${_stf_biosig_install_libdir}
-  )
-else()
+if(NOT APPLE OR NOT STF_MACOS_APP_BUNDLE)
   install(TARGETS stimfit_biosig
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${_stf_biosig_install_libdir}

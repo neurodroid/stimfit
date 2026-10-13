@@ -99,67 +99,16 @@ void InstallCloseDocumentAccelerator(wxWindow* window) {
 #endif
 #endif
 
-#ifdef WITH_PYTHON
-#if PY_MAJOR_VERSION >= 3
-#ifndef PyString_Check
-#define PyString_Check PyUnicode_Check
-#endif
-#ifndef PyString_AsString
-#define PyString_AsString PyUnicode_AsUTF8
-#endif
-#ifndef PyString_FromString
-#define PyString_FromString PyUnicode_FromString
-#endif
-#endif
-#endif
-
 extern wxStfApp& wxGetApp();
 wxStfApp& wxGetApp() { return *static_cast<wxStfApp*>(wxApp::GetInstance()); }
 
 #ifdef WITH_PYTHON
 int stf::Extension::n_extensions = 0;
 
-#if defined(__WXMAC__) || defined(__WXGTK__)
-static wxString GetExecutablePath()
+static wxString GetExecutableDirectory()
 {
-    return wxStandardPaths::Get().GetExecutablePath();
+    return wxFileName(wxStandardPaths::Get().GetExecutablePath()).GetPath();
 }
-#endif // __WXMAC__ || __WXGTK__
-
-#ifdef _WINDOWS
-static wxString GetExecutablePath()
-{
-    HKEY keyHandle;
-
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, wxT("Software\\Stimfit 0.14"), 0,
-                     KEY_QUERY_VALUE, &keyHandle) == ERROR_SUCCESS)
-    {
-        DWORD BufferSize = 8192;
-        DWORD cbData = BufferSize;
-
-        wxCharTypeBuffer<wxChar> data(BufferSize);
-        DWORD dwRet = RegQueryValueEx(keyHandle, TEXT("InstallLocation"),
-                                      NULL, NULL, (LPBYTE)data.data(), &cbData);
-        while (dwRet == ERROR_MORE_DATA)
-        {
-            BufferSize += 4096;
-            data.extend(BufferSize);
-            cbData = BufferSize;
-
-            dwRet = RegQueryValueEx(keyHandle, TEXT("InstallLocation"),
-                                    NULL, NULL, (LPBYTE)data.data(), &cbData);
-        }
-        if (dwRet == ERROR_SUCCESS) {
-            RegCloseKey(keyHandle);
-            return wxString(data);
-        }
-
-        return wxT("");
-    }
-
-    return wxT("");
-}
-#endif // _WINDOWS
 #endif // WITH_PYTHON
 
 BEGIN_EVENT_TABLE( wxStfApp, wxApp )
@@ -263,16 +212,7 @@ bool wxStfApp::OnInit(void)
         ErrorMsg( msg );
         return false;
     }
-    
-// Load Python extensions before creation of wxMenuBar ( see later CreateUnifiedMenuBar() )
-#if PY_MAJOR_VERSION < 3
-    
-    extensionLib = LoadExtensions();
-    #ifdef _STFDEBUG
-    std::cout << (int) GetExtensionLib().size() << " Python extension/s loaded"<< std::endl;
-    #endif
-#endif
-#endif //WITH_PTYHON
+#endif // WITH_PYTHON
     // Config:
     config.reset(new wxFileConfig(wxT("Stimfit")));
     set_isDarkTraceDisplay(wxGetProfileInt(wxT("Settings"), wxT("ViewDarkTraceDisplay"), 1) == 1);
@@ -1528,14 +1468,14 @@ bool wxStfApp::Init_wxPython()
         Py_Initialize();
     }
 
-#if PY_MAJOR_VERSION < 3 || (PY_MAJOR_VERSION == 3 && PY_MINOR_VERSION < 7)
+#if PY_VERSION_HEX < 0x03070000
     PyEval_InitThreads();
 #endif
 
     wxString cwd;
 #ifdef __WXMAC__
     // Add the cwd to the present path:
-    wxString app_path = wxFileName(GetExecutablePath()).GetPath();
+    wxString app_path = GetExecutableDirectory();
     cwd << wxT("import os\n");
     cwd << wxT("cwd=\"") << app_path << wxT("/../Frameworks\"\n");
     cwd << wxT("import sys\n");
@@ -1553,7 +1493,7 @@ bool wxStfApp::Init_wxPython()
 
 #ifdef __WXGTK__
     // Add the cwd to the present path:
-    wxString app_path = wxFileName(GetExecutablePath()).GetPath();
+    wxString app_path = GetExecutableDirectory();
     cwd << wxT("import os\n");
     cwd << wxT("cwd=\"") << app_path << wxT("/../lib/stimfit\"\n");
     cwd << wxT("import sys\n");
@@ -1567,9 +1507,9 @@ bool wxStfApp::Init_wxPython()
 
 #ifdef _WINDOWS
     // Add the cwd to the present path:
-    wxString app_path = GetExecutablePath().BeforeFirst(wxUniChar('\0'));
+    wxString app_path = GetExecutableDirectory().BeforeFirst(wxUniChar('\0'));
     cwd << wxT("import os\nimport sys\n");
-    cwd << wxT("cwd = \"") << app_path << wxT("\"\n");
+    cwd << wxT("cwd = r\"") << app_path << wxT("\"\n");
     cwd << wxT("paths = [\n");
     cwd << wxT("    cwd,\n");
     cwd << wxT("    os.path.join(cwd, 'stf-site-packages'),\n");
@@ -1592,49 +1532,7 @@ bool wxStfApp::Init_wxPython()
     // local pointer to a function table located there.  The pointer is used
     // internally by the rest of the API functions.
 
-#if PY_MAJOR_VERSION < 3
-    // Specify version of the wx module to be imported
-    PyObject* wxversion = PyImport_ImportModule("wxversion");
-    if (wxversion == NULL) {
-        PyErr_Print();
-        ErrorMsg(wxT("Couldn't import wxversion"));
-        Py_Finalize();
-        return false;
-    }
-    PyObject* wxselect = PyObject_GetAttrString(wxversion, "select");
-    Py_DECREF(wxversion);
-    if (!PyCallable_Check(wxselect)) {
-        Py_XDECREF(wxselect);
-        PyErr_Print();
-        ErrorMsg(wxT("Couldn't select correct version of wx"));
-        Py_Finalize();
-        return false;
-    }
-#if wxCHECK_VERSION(3, 1, 0)
-    PyObject* ver_string = Py_BuildValue("ss", "3.1", "");
-#elif wxCHECK_VERSION(3, 0, 0)
-    PyObject* ver_string = Py_BuildValue("ss", "3.0", "");
-#elif wxCHECK_VERSION(2, 9, 0)
-    PyObject* ver_string = Py_BuildValue("ss", "2.9", "");
-#else
-    PyObject* ver_string = Py_BuildValue("ss", "2.8", "");
-#endif
-    PyObject* result = PyEval_CallObject(wxselect, ver_string);
-    Py_DECREF(wxselect);
-    Py_DECREF(ver_string);
-    if (result == NULL) {
-        PyErr_Print();
-        ErrorMsg(wxT("Couldn't call wxversion.select"));
-        Py_Finalize();
-        return false;
-    }
-#endif // < python 3
-
-#if PY_MAJOR_VERSION >= 3
     if (wxPyGetAPIPtr() == NULL) {
-#else
-    if (!wxPyCoreAPI_IMPORT()) {
-#endif
         PyErr_Print();
         wxString errormsg;
         errormsg << wxT("Couldn't load wxPython core API.\n");
@@ -1645,9 +1543,7 @@ bool wxStfApp::Init_wxPython()
         errormsg << wxT("\t(Control Panel->Software)\n");
         errormsg << wxT("2.\tUninstall a previous wxPython installation\n");
         errormsg << wxT("\t(Control Panel->Software)\n");
-        errormsg << wxT("3.\tUninstall a previous Python 2.5 installation\n");
-        errormsg << wxT("\t(Control Panel->Software)\n");
-        errormsg << wxT("4.\tSet the current working directory\n");
+        errormsg << wxT("3.\tSet the current working directory\n");
         errormsg << wxT("\tto the program directory so that all shared\n");
         errormsg << wxT("\tlibraries can be found.\n");
         errormsg << wxT("\tIf you used a shortcut, right-click on it,\n");
@@ -1661,9 +1557,6 @@ bool wxStfApp::Init_wxPython()
 
         ErrorMsg(errormsg);
         Py_Finalize();
-#if PY_MAJOR_VERSION < 3
-        Py_DECREF(result);
-#endif
         return false;
     }
 
@@ -1790,17 +1683,17 @@ std::vector<stf::Extension> wxStfApp::LoadExtensions()
                 PyObject* pDescription = PyObject_GetAttrString(pExt, "description");
                 PyObject* pRequiresFile = PyObject_GetAttrString(pExt, "requiresFile");
                 if (!pMenuEntry || !pPyFunc || !pDescription || !pRequiresFile ||
-                    !PyString_Check(pMenuEntry) || !PyFunction_Check(pPyFunc) ||
+                    !PyUnicode_Check(pMenuEntry) || !PyFunction_Check(pPyFunc) ||
                     !PyCallable_Check(pPyFunc) ||
-                    !PyString_Check(pDescription) || !PyBool_Check(pRequiresFile))
+                    !PyUnicode_Check(pDescription) || !PyBool_Check(pRequiresFile))
                 {
                     wxString typeStr;
                     typeStr << wxT("One of the attributes in item #") << i
                             << wxT(" of extensionList misses an attribute");
                     wxGetApp().ErrorMsg(typeStr);
                 } else {
-                    std::string menuEntry(PyString_AsString(pMenuEntry));
-                    std::string description(PyString_AsString(pDescription));
+                    std::string menuEntry(PyUnicode_AsUTF8(pMenuEntry));
+                    std::string description(PyUnicode_AsUTF8(pDescription));
                     bool requiresFile = (pRequiresFile == Py_True);
                     extList.push_back(stf::Extension(menuEntry, (void*)pPyFunc, description, requiresFile));
                     pPyFunc = NULL;

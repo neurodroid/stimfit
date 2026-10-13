@@ -15,12 +15,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
 
@@ -66,7 +66,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
@@ -74,16 +74,17 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgDirectory: ${{ env.VCPKG_ROOT }}
+          vcpkgJsonGlob: vcpkg.json
 
       - name: Restore vcpkg cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ${{ env.VCPKG_INSTALLED_DIR }}
             ${{ env.VCPKG_BINARY_CACHE_DIR }}
             ${{ env.VCPKG_ROOT }}/packages
             ${{ env.VCPKG_ROOT }}/downloads
-          key: windows-vcpkg-x64-ci-release-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json', 'cmake/triplets/x64-windows-ci-release.cmake') }}
+          key: windows-vcpkg-x64-ci-release-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json', 'cmake/triplets/x64-windows-ci-release.cmake', 'cmake/ports/**') }}
           restore-keys: |
             windows-vcpkg-x64-ci-release-
 
@@ -91,6 +92,7 @@ jobs:
         shell: pwsh
         run: |
           vcpkg install `
+            --overlay-ports "$env:GITHUB_WORKSPACE/cmake/ports" `
             --overlay-triplets "$env:GITHUB_WORKSPACE/cmake/triplets" `
             --triplet x64-windows-ci-release `
             --x-install-root "$env:VCPKG_INSTALLED_DIR"
@@ -138,7 +140,7 @@ jobs:
         run: |
           cmake --preset ci-windows-msvc-smoke
 
-      - name: Build container test target
+      - name: Build container and numeric test targets
         shell: pwsh
         run: |
           cmake --build --preset ci-windows-msvc-smoke-release --parallel
@@ -160,16 +162,17 @@ jobs:
             $runtimePaths | ForEach-Object { Write-Host "  $_" }
           }
 
-          ctest --test-dir build/ci-windows-msvc-smoke -C Release --output-on-failure --tests-regex stimfit_containers_test
+          ctest --test-dir build/ci-windows-msvc-smoke -C Release --output-on-failure --no-tests=error --tests-regex 'stimfit_(containers|numeric)_test'
 
       - name: Upload Windows smoke staging artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: windows-msvc-smoke-staging
           path: |
             build/ci-windows-msvc-smoke/CMakeCache.txt
             build/ci-windows-msvc-smoke/Testing/Temporary/LastTest.log
-            build/ci-windows-msvc-smoke/src/test/Release/stimfit_containers_test.exe
+            build/ci-windows-msvc-smoke/Release/stimfit_containers_test.exe
+            build/ci-windows-msvc-smoke/Release/stimfit_numeric_test.exe
           if-no-files-found: warn
 
   ubuntu-tests:
@@ -178,7 +181,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
@@ -203,6 +206,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release \
             -DSTF_BUILD_TESTS=ON \
             -DSTF_BUILD_NUMERIC_TESTS=ON \
+            -DSTF_TEST_WARNINGS_AS_ERRORS=ON \
             -DSTF_ENABLE_PYTHON=OFF \
             -DSTF_WITH_BIOSIG=OFF
 
@@ -214,7 +218,7 @@ jobs:
 
       - name: Run CTest
         run: |
-          ctest --test-dir build --output-on-failure --tests-regex 'stimfit_(containers|numeric)_test'
+          ctest --test-dir build --output-on-failure --no-tests=error --tests-regex 'stimfit_(containers|numeric)_test'
 
   ubuntu-system-biosig:
     name: Ubuntu system biosig smoke
@@ -222,7 +226,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
@@ -266,7 +270,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
@@ -335,6 +339,7 @@ jobs:
             -DSTF_BUILD_MODULE=OFF \
             -DSTF_BUILD_TESTS=ON \
             -DSTF_BUILD_NUMERIC_TESTS=ON \
+            -DSTF_TEST_WARNINGS_AS_ERRORS=ON \
             -DSTF_MACOS_APP_BUNDLE=ON
 
       - name: Build Stimfit and test targets
@@ -346,7 +351,7 @@ jobs:
 
       - name: Run MacPorts CTest
         run: |
-          ctest --test-dir build-macos-macports --output-on-failure --tests-regex 'stimfit_(containers|numeric)_test'
+          ctest --test-dir build-macos-macports --output-on-failure --no-tests=error --tests-regex 'stimfit_(containers|numeric)_test'
 
       - name: Install Stimfit into staging
         run: |
@@ -354,7 +359,7 @@ jobs:
           find "$PWD/build-macos-macports/install" -maxdepth 4 -print | sort > "$PWD/build-macos-macports/install-manifest.txt"
 
       - name: Upload minimal staging artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: macos-macports-staging
           path: |

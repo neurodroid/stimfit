@@ -152,7 +152,7 @@ def glu_iv( pulses = 13, subtract_base=True ):
         # Create an empty list:
         tempdict_entry = []
         row = 0
-        for k, v in p_dict.iteritems():
+        for k, v in p_dict.items():
             if ( firstpass == True ):
                 dict_keys.append( k )
             dict_values[row][n] = v 

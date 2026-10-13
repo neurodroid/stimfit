@@ -82,4 +82,4 @@ Then build and install into that environment or another target prefix:
     $ cmake --build build/module-venv
     $ cmake --install build/module-venv --prefix $HOME/.local
 
-Finally, run python to test the module, as described in :doc:`/stfio/index`.
+Finally, run Python 3 to test the module, as described in :doc:`/stfio/index`.

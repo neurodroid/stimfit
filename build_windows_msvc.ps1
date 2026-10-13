@@ -95,6 +95,7 @@ try {
         $vcpkgExe,
         "install",
         "--overlay-triplets", $tripletOverlay,
+        "--overlay-ports", (Join-Path $repoRoot "cmake\ports"),
         "--triplet", "x64-windows-ci-release",
         "--x-install-root", $env:VCPKG_INSTALLED_DIR
     )

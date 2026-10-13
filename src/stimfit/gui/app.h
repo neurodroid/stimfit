@@ -213,12 +213,8 @@ enum {
   #pragma GCC diagnostic ignored "-Wwrite-strings"
 #endif
 #ifdef WITH_PYTHON
-#if PY_MAJOR_VERSION >= 3
   #include "../sip.h"
   #include <wxPython/wxpy_api.h>
-#else
-  #include <wx/wxPython/wxPython.h>
-#endif
 #endif
 // revert to previous behaviour
 #if defined(__WXMAC__) || defined(__WXGTK__)

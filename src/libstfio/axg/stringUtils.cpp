@@ -29,7 +29,7 @@ void CToPascalString( axgchar *string )
 		string[j+1] = string[j];
 	
 	// Insert length byte
-	string[0] = stringLength;
+	string[0] = static_cast<axgchar>(stringLength);
 }
 
 

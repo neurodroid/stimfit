@@ -1051,8 +1051,9 @@ static void FetchexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
       n = pFH->nADCPtoLChannelMap[i];
       if (n == -1)
          break;
-      strncpy(pFH->sADCChannelName[n], ChannelName+ABF_ADCNAMELEN*i, ABF_ADCNAMELEN);
-      strncpy(pFH->sADCUnits[n], ADCLabel+ABF_ADCUNITLEN*i, ABF_ADCUNITLEN);
+      // Copy complete fixed-width fields between separate buffers; no NUL is added.
+      memcpy(pFH->sADCChannelName[n], ChannelName+ABF_ADCNAMELEN*i, sizeof pFH->sADCChannelName[n]);
+      memcpy(pFH->sADCUnits[n], ADCLabel+ABF_ADCUNITLEN*i, sizeof pFH->sADCUnits[n]);
       pFH->fInstrumentOffset[n] = Param[F53_INSTOFFSET + i];
 
       // protect against divide by zero errors from bad gains.
@@ -1626,7 +1627,8 @@ static void ClampexToABF1_x( float *Param, char *ADCLabel, char *DACLabel,
       // no physical to logical mapping necessary as CLAMPEX never supported
       // the TL2
 
-      strncpy(pFH->sADCUnits[i], ADCLabel+ABF_ADCUNITLEN*i, ABF_ADCUNITLEN);
+      // Copy the complete fixed-width field from the separate ADC label buffer.
+      memcpy(pFH->sADCUnits[i], ADCLabel+ABF_ADCUNITLEN*i, sizeof pFH->sADCUnits[i]);
 
       // protect against divide by zero errors from bad gains.
 

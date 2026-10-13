@@ -82,19 +82,6 @@ This will get you, amongst others:
 
 In addition, install Sphinx and Doxygen if you want to build the documentation.
 
-=======================
-Optional: PyEMF
-=======================
-
-[PyEMF]_ is needed to export figures to the windows meta file format (WMF/EMF). EMF is a vector graphics format and can be imported in different Office software including LibreOffice. To install it, do:
-
-::
-
-     $ wget http://sourceforge.net/projects/pyemf/files/pyemf/2.0.0/pyemf-2.0.0.tar.gz/download -O pyemf-2.0.0.tar.gz
-     $ tar xvf pyemf-2.0.0.tar.gz && cd pyemf-2.0.0
-     $ sudo python setup.py install
-
-
 ================================
 Download the Stimfit source code
 ================================
@@ -231,7 +218,6 @@ The local documentation of the source code will be in `$HOME/stimfit/doc/doxygen
 .. [Lapack] http://www.netlib.org/lapack/
 .. [HDF5] http://www.hdfgroup.org/HDF5/
 .. [NumPy] http://www.numpy.org
-.. [PyEMF] http://pyemf.sourceforge.net
 .. [fftw] http://www.fftw.org
 .. [Doxygen] http://www.doxygen.org
 .. [Matplotlib] https://matplotlib.org

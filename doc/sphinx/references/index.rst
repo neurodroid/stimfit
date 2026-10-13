@@ -15,6 +15,16 @@ References
 2026
 ====
 
+    * `Lupori L, Heindorf M, Kouvaros S, Schildkamp A, et al. (2026) <https://doi.org/10.64898/2026.03.27.714783>`_ A single dose of the antipsychotic drug clozapine has long-term behavioral and functional effects in mice. *bioRxiv (Cold Spring Harbor Laboratory) [preprint]*.
+
+    * `Pisanò CA, Aaltonen AA, Spanu V, Tamaki A, et al. (2026) <https://doi.org/10.64898/2026.05.01.722248>`_ DARPP-32 in motor cortex regulates structural and synaptic plasticity in corticothalamic neurons and enables motor learning. *bioRxiv (Cold Spring Harbor Laboratory) [preprint]*.
+
+    * `Vargas‐Barroso V, Watson JF, Navas-Olivé A, Schlögl A, et al. (2026) <https://doi.org/10.1038/s41467-026-71914-x>`_ Developmental emergence of sparse and structured synaptic connectivity in the hippocampal CA3 memory circuit. *Nature Communications*.
+
+    * `Schottmann NM, Eberhardt M, Wehmeyer S, Medala VK, et al. (2026) <https://doi.org/10.1097/j.pain.0000000000004078>`_ Functional impact of the TRPA1 H560D variant on neuropathic pain. *Pain*.
+
+    * `Stancu M, Rajaram E, Kroeger J, Grothe B, et al. (2026) <https://doi.org/10.1113/jp289987>`_ Noise‐induced reduction and early recovery of superior paraolivary nucleus sound‐offset responses. *The Journal of Physiology*.
+
     * `Engel D, Nguyen L (2026) <https://doi.org/10.1016/j.xpro.2026.104470>`_ Protocol for whole-cell patch-clamp recording and post hoc identification of hippocampal CA2 pyramidal neurons in adult mouse brain slices. *STAR Protocols* 7(2):104470.
 
     * `Meftah S, Wilson MA, Elliott J, et al. (2026) <https://doi.org/10.1523/ENEURO.0099-23.2025>`_ GABAB receptor signaling in CA1 pyramidal cells is not regulated by aging in the APP/PS1 mouse model of amyloid pathology. *eNeuro* 13(2):ENEURO.0099-23.2025.
@@ -61,6 +71,8 @@ References
 ====
 2024
 ====
+
+    * `Guinet A, Grosser S, Özbay D, Behr J, et al. (2024) <https://doi.org/10.3389/fncel.2024.1368627>`_ Cell-type specific inhibitory plasticity in subicular pyramidal cells. *Frontiers in Cellular Neuroscience*.
 
     * `Watson JF, Vargas-Barroso V, Morse-Mora RJ, et al. (2024) <https://doi.org/10.1016/j.cell.2024.11.022>`_ Human hippocampal CA3 uses specific functional connectivity rules for efficient associative memory. *Cell* 187(24):6848-6864.e24.
 

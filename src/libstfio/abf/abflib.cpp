@@ -14,6 +14,7 @@
 
 
 
+#include <algorithm>
 #include <string>
 #include <iomanip>
 #include <vector>
@@ -25,6 +26,16 @@
 
 #include "./abflib.h"
 #include "../recording.h"
+
+namespace {
+
+template <std::size_t N>
+std::string ReadABFString(const char (&field)[N]) {
+    // ABF fields may fill the entire array without a NUL terminator.
+    return std::string(field, std::find(field, field + N, '\0'));
+}
+
+}
 
 namespace stfio {
 
@@ -287,13 +298,13 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
         progbar = (int)(((double)(nChannel+1)/(double)numberChannels)*100.0);
         progDlg.Update(progbar, "Completing channel reading\n");
 
-        std::string channel_name( pFH->sADCChannelName[pFH->nADCSamplingSeq[nChannel]] );
+        std::string channel_name = ReadABFString(pFH->sADCChannelName[pFH->nADCSamplingSeq[nChannel]]);
         if (channel_name.find("  ")<channel_name.size()) {
             channel_name.erase(channel_name.begin()+channel_name.find("  "),channel_name.end());
         }
         ReturnData[nChannel].SetChannelName(channel_name);
 
-        std::string channel_units( pFH->sADCUnits[pFH->nADCSamplingSeq[nChannel]] );
+        std::string channel_units = ReadABFString(pFH->sADCUnits[pFH->nADCSamplingSeq[nChannel]]);
         if (channel_units.find("  ") < channel_units.size()) {
             channel_units.erase(channel_units.begin() + channel_units.find("  "),channel_units.end());
         }
@@ -310,7 +321,7 @@ void stfio::importABF2File(const std::string &fName, Recording &ReturnData, Prog
     ReturnData.SetXScale((double)(pFH->fADCSequenceInterval/1000.0));
     
     std::string comment("Created with ");
-    comment += std::string( pFH->sCreatorInfo );
+    comment += ReadABFString(pFH->sCreatorInfo);
     ReturnData.SetComment(comment);
 
     ldiv_t year=ldiv(pFH->uFileStartDate,(ABFLONG)10000);
@@ -425,13 +436,13 @@ void stfio::importABF1File(const std::string &fName, Recording &ReturnData, Prog
             throw;
         }
 
-        std::string channel_name( FH.sADCChannelName[FH.nADCSamplingSeq[nChannel]] );
+        std::string channel_name = ReadABFString(FH.sADCChannelName[FH.nADCSamplingSeq[nChannel]]);
         if (channel_name.find("  ")<channel_name.size()) {
             channel_name.erase(channel_name.begin()+channel_name.find("  "),channel_name.end());
         }
         ReturnData[nChannel].SetChannelName(channel_name);
 
-        std::string channel_units( FH.sADCUnits[FH.nADCSamplingSeq[nChannel]] );
+        std::string channel_units = ReadABFString(FH.sADCUnits[FH.nADCSamplingSeq[nChannel]]);
         if (channel_units.find("  ") < channel_units.size()) {
             channel_units.erase(channel_units.begin() + channel_units.find("  "),channel_units.end());
         }
@@ -449,9 +460,7 @@ void stfio::importABF1File(const std::string &fName, Recording &ReturnData, Prog
     // Dominique Engel for noticing.
     ReturnData.SetXScale((double)(FH.fADCSampleInterval/1000.0)*(double)numberChannels);
     std::string comment("Created with ");
-    FH.sCreatorInfo[ABF_CREATORINFOLEN-1]=0;  // make sure string is 0-terminated
-    FH._sFileComment[ABF_OLDFILECOMMENTLEN-1]=0;  // make sure string is 0-terminated
-    comment += std::string( FH.sCreatorInfo );
+    comment += ReadABFString(FH.sCreatorInfo);
     ReturnData.SetComment(comment);
 
     ldiv_t year=ldiv(FH.lFileStartDate,(ABFLONG)10000);

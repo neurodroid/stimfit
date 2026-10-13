@@ -54,18 +54,6 @@
 #ifdef WITH_PYTHON
 #include "./../../pystfio/pystfio.h"
 
-#if PY_MAJOR_VERSION >= 3
-#ifndef PyString_Check
-#define PyString_Check PyUnicode_Check
-#endif
-#ifndef PyString_AsString
-#define PyString_AsString PyUnicode_AsUTF8
-#endif
-#ifndef PyString_FromString
-#define PyString_FromString PyUnicode_FromString
-#endif
-#endif
-
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #ifdef __GNUC__
 #pragma GCC diagnostic push
@@ -257,7 +245,7 @@ bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
         return false;
     }
 
-    PyObject* py_fn = PyString_FromString(filename.c_str());
+    PyObject* py_fn = PyUnicode_FromString(filename.c_str());
     PyObject* stf_tdms_f = PyObject_GetAttrString(stf_mod, "tdms_open");
     PyObject* stf_tdms_args = NULL;
     PyObject* stf_tdms_res = NULL;

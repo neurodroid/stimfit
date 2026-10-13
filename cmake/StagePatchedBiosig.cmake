@@ -107,9 +107,9 @@ endif()
 
 if(NOT _stf_stage_head STREQUAL "${STF_BIOSIG_EXPECTED_COMMIT}")
   message(FATAL_ERROR
-    "biosig staged source mismatch: expected tag '${STF_BIOSIG_EXPECTED_TAG}' -> ${STF_BIOSIG_EXPECTED_COMMIT}, "
+    "biosig staged source mismatch: expected revision '${STF_BIOSIG_EXPECTED_TAG}' -> ${STF_BIOSIG_EXPECTED_COMMIT}, "
     "but staged HEAD is ${_stf_stage_head}. "
-    "Update src/biosig to tag '${STF_BIOSIG_EXPECTED_TAG}' and reconfigure."
+    "Update src/biosig to revision '${STF_BIOSIG_EXPECTED_TAG}' and reconfigure."
   )
 endif()
 

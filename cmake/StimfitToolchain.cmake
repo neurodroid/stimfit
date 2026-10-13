@@ -64,12 +64,17 @@ if(STF_BUILD_DEBIAN)
     target_compile_options(stimfit_config INTERFACE ${_debian_cppflags})
   endif()
   if(DEFINED ENV{CFLAGS})
+    # Debian may add C-only diagnostics; do not pass them to C++ targets.
     separate_arguments(_debian_cflags NATIVE_COMMAND "$ENV{CFLAGS}")
-    target_compile_options(stimfit_config INTERFACE ${_debian_cflags})
+    target_compile_options(stimfit_config INTERFACE
+      "$<$<COMPILE_LANGUAGE:C>:${_debian_cflags}>"
+    )
   endif()
   if(DEFINED ENV{CXXFLAGS})
     separate_arguments(_debian_cxxflags NATIVE_COMMAND "$ENV{CXXFLAGS}")
-    target_compile_options(stimfit_config INTERFACE ${_debian_cxxflags})
+    target_compile_options(stimfit_config INTERFACE
+      "$<$<COMPILE_LANGUAGE:CXX>:${_debian_cxxflags}>"
+    )
   endif()
   if(DEFINED ENV{LDFLAGS})
     separate_arguments(_debian_ldflags NATIVE_COMMAND "$ENV{LDFLAGS}")
