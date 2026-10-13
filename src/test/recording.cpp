@@ -5,26 +5,26 @@
 TEST(Recording_test, constructors)
 {
     Recording rec0;
-    EXPECT_EQ( rec0.size(), 0 );
+    EXPECT_EQ( rec0.size(), std::size_t{0} );
 
     std::deque<Section> sec_list(16, Section(32768));
     Channel ch(sec_list);
 
     Recording rec1(ch);
-    EXPECT_EQ( rec1.size(), 1 );
-    EXPECT_EQ( rec1[0].size(), 16 );
-    EXPECT_EQ( rec1[0][0].size(), 32768 );
+    EXPECT_EQ( rec1.size(), std::size_t{1} );
+    EXPECT_EQ( rec1[0].size(), std::size_t{16} );
+    EXPECT_EQ( rec1[0][0].size(), std::size_t{32768} );
 
     std::deque<Channel> ch_list(4, Channel(16, 32768));
     Recording rec2(ch_list);
-    EXPECT_EQ( rec2.size(), 4 );
-    EXPECT_EQ( rec2[rec2.size()-1].size(), 16 );
-    EXPECT_EQ( rec2[rec2.size()-1][rec2[rec2.size()-1].size()-1].size(), 32768 );
+    EXPECT_EQ( rec2.size(), std::size_t{4} );
+    EXPECT_EQ( rec2[rec2.size()-1].size(), std::size_t{16} );
+    EXPECT_EQ( rec2[rec2.size()-1][rec2[rec2.size()-1].size()-1].size(), std::size_t{32768} );
 
     Recording rec3(4, 16, 32768);
-    EXPECT_EQ( rec3.size(), 4 );
-    EXPECT_EQ( rec3[rec3.size()-1].size(), 16 );
-    EXPECT_EQ( rec3[rec3.size()-1][rec3[rec3.size()-1].size()-1].size(), 32768 );
+    EXPECT_EQ( rec3.size(), std::size_t{4} );
+    EXPECT_EQ( rec3[rec3.size()-1].size(), std::size_t{16} );
+    EXPECT_EQ( rec3[rec3.size()-1][rec3[rec3.size()-1].size()-1].size(), std::size_t{32768} );
 }
 
 TEST(Recording_test, data_access)

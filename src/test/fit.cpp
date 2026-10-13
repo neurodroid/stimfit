@@ -2,14 +2,15 @@
 #include "../libstfnum/funclib.h"
 #include <gtest/gtest.h>
 #include <cmath>
+#include <cstddef>
 #include <fstream>
 
 
 /* global variables to define our data */
 const static int tmax = 100;   /* length of data in ms */
-const static float dt = 1/100.0; /* sampling interval of data in ms */
+const static double dt = 1/100.0; /* sampling interval of data in ms */
 //const static double tol = 0.001; /* param-relative tolerance value */
-const static float tol = dt; /* 1 sampling interval */
+const static double tol = dt; /* 1 sampling interval */
 
 /* list of available fitting functions, see /src/stimfit/math/funclib.cpp */
 const static std::vector< stfnum::storedFunc > funcLib = stfnum::GetFuncLib();
@@ -26,13 +27,13 @@ const Vector_double opts = stfnum::LM_default_opts();
 // param[2] is the end (offset)
 //=========================================================================
 Vector_double fexp_simple(const Vector_double &param){
-    Vector_double mydata (int (tmax/dt));
+    Vector_double mydata (static_cast<std::size_t>(tmax/dt));
     double amp  = param[0];
     double tau  = param[1];
     double end =  param[2]; 
     
-    for (std::vector<int>::size_type n=0; n != mydata.size() ; ++n){
-        mydata[n] =   amp*exp(-(n*dt)/tau) + end; 
+    for (std::size_t n=0; n != mydata.size() ; ++n){
+        mydata[n] =   amp*exp(-(static_cast<double>(n)*dt)/tau) + end;
     }
     return mydata;
 }
@@ -47,10 +48,10 @@ Vector_double fexp_simple(const Vector_double &param){
 // param[3] is the amplitude
 //=========================================================================
 Vector_double fexpde(const Vector_double &param){
-    Vector_double mydata (int (tmax/dt));
+    Vector_double mydata (static_cast<std::size_t>(tmax/dt));
 
-    for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
-        mydata[n] = stfnum::fexpde(n*dt, param);
+    for (std::size_t n=0; n != mydata.size(); ++n){
+        mydata[n] = stfnum::fexpde(static_cast<double>(n)*dt, param);
     }
    
     return mydata;
@@ -67,10 +68,10 @@ Vector_double fexpde(const Vector_double &param){
 // param[last] is the offset
 //=========================================================================
 Vector_double fexp(const Vector_double &param){
-    Vector_double mydata (int (tmax/dt));
+    Vector_double mydata (static_cast<std::size_t>(tmax/dt));
 
-    for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
-        mydata[n] = stfnum::fexp(n*dt, param);
+    for (std::size_t n=0; n != mydata.size(); ++n){
+        mydata[n] = stfnum::fexp(static_cast<double>(n)*dt, param);
     }
     
     return mydata;
@@ -87,10 +88,10 @@ Vector_double fexp(const Vector_double &param){
 // param[4] is the fast time constant (e.g tau_m, tau_1)
 //=========================================================================
 Vector_double fexpbde(const Vector_double &param){
-    Vector_double mydata (int(tmax/dt));
-    
-    for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
-        mydata[n] = stfnum::fexpbde(n*dt, param);
+    Vector_double mydata (static_cast<std::size_t>(tmax/dt));
+
+    for (std::size_t n=0; n != mydata.size(); ++n){
+        mydata[n] = stfnum::fexpbde(static_cast<double>(n)*dt, param);
     }
     
     return mydata;
@@ -105,10 +106,10 @@ Vector_double fexpbde(const Vector_double &param){
 // param[2] is the offset 
 //=========================================================================
 Vector_double falpha(const Vector_double &param){
-    Vector_double mydata (int(tmax/dt));
-    
-    for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
-        mydata[n] = stfnum::falpha(n*dt, param);
+    Vector_double mydata (static_cast<std::size_t>(tmax/dt));
+
+    for (std::size_t n=0; n != mydata.size(); ++n){
+        mydata[n] = stfnum::falpha(static_cast<double>(n)*dt, param);
     }
     
     return mydata;
@@ -126,10 +127,10 @@ Vector_double falpha(const Vector_double &param){
 //=========================================================================
 Vector_double fHH(const Vector_double &param){
 
-    Vector_double mydata (int(tmax/dt));
-    
-    for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
-        mydata[n] = stfnum::fHH(n*dt, param);
+    Vector_double mydata (static_cast<std::size_t>(tmax/dt));
+
+    for (std::size_t n=0; n != mydata.size(); ++n){
+        mydata[n] = stfnum::fHH(static_cast<double>(n)*dt, param);
     }
     
     return mydata;
@@ -147,10 +148,10 @@ Vector_double fHH(const Vector_double &param){
 //=========================================================================
 Vector_double fgnabiexp(const Vector_double &param){
 
-    Vector_double mydata (int(tmax/dt));
-    
-    for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
-        mydata[n] = stfnum::fgnabiexp(n*dt, param);
+    Vector_double mydata (static_cast<std::size_t>(tmax/dt));
+
+    for (std::size_t n=0; n != mydata.size(); ++n){
+        mydata[n] = stfnum::fgnabiexp(static_cast<double>(n)*dt, param);
     }
     
     return mydata;
@@ -167,10 +168,10 @@ Vector_double fgnabiexp(const Vector_double &param){
 //=========================================================================
 Vector_double fgauss(const Vector_double &param){
 
-    Vector_double mydata (int(tmax/dt));
-    
-    for (std::vector<int>::size_type n=0; n != mydata.size(); ++n){
-        mydata[n] = stfnum::fgauss(n*dt, param);
+    Vector_double mydata (static_cast<std::size_t>(tmax/dt));
+
+    for (std::size_t n=0; n != mydata.size(); ++n){
+        mydata[n] = stfnum::fgauss(static_cast<double>(n)*dt, param);
     }
     
     return mydata;
@@ -201,7 +202,7 @@ void debug_stdout(double chisqr, const std::string& info, int warning,
     std::cout << "chisqr = " << chisqr << std::endl;
     std::cout << "info = " << info << std::endl;
     std::cout << "warning = " << warning << std::endl;
-    for (std::vector<int>::size_type n = 0; n != pars.size(); ++n) {
+    for (std::size_t n = 0; n != pars.size(); ++n) {
         std::cout << "Pars[" << n << "] = " << pars[n] << std::endl;
     }
     close(fd);
@@ -220,8 +221,8 @@ TEST(fitlib_test, monoexponential) {
     double tau = 3000.0;
 
     Vector_double data(32768);
-    for (int n = 0; n < data.size(); ++n) {
-        data[n] = 1.0-exp(-n/tau);
+    for (std::size_t n = 0; n < data.size(); ++n) {
+        data[n] = 1.0-exp(-static_cast<double>(n)/tau);
     }
 
     // Respectively the scale factor for initial \mu,
@@ -241,6 +242,8 @@ TEST(fitlib_test, monoexponential) {
         true, /*use_scaling*/
         pars, info, warning );
 
+    EXPECT_TRUE(std::isfinite(chisqr));
+    EXPECT_GE(chisqr, 0.0);
     EXPECT_EQ(warning, 0);
     par_test(pars[0], -1.0, tol); /* Amplitude */
     par_test(pars[1], tau, tol);  /* Time constant */
@@ -291,6 +294,8 @@ TEST(fitlib_test, id_00_monoexponential){
         true, /* use_scaling */
         pars, info, warning );
 
+    EXPECT_TRUE(std::isfinite(chisqr));
+    EXPECT_GE(chisqr, 0.0);
     EXPECT_EQ(warning, 0);
     par_test(pars[0], mypars[0], tol);  /* Amp_0  */
     par_test(pars[1], mypars[1], tol);  /* Tau_0  */
@@ -338,10 +343,12 @@ TEST(fitlib_test, id_01_monoexponential_offsetfixed){
         true, /* use_scaling */
         pars, info, warning );
 
+    EXPECT_TRUE(std::isfinite(chisqr));
+    EXPECT_GE(chisqr, 0.0);
     EXPECT_EQ(warning, 0);
     par_test(pars[0], mypars[0], tol);  /* Amp_0  */
     par_test(pars[1], mypars[1], tol);  /* Tau_0  */
-    EXPECT_EQ(pars[2], mypars[2]);      /* Offset to baseline */
+    EXPECT_DOUBLE_EQ(pars[2], mypars[2]);      /* Offset to baseline */
 
 #if 0
     debug_stdout(chisqr, info, warning, pars);
@@ -385,6 +392,8 @@ TEST(fitlib_test, id_02_monoexponential_with_delay){
         false, /*use_scaling*/
         pars, info, warning );
 
+    EXPECT_TRUE(std::isfinite(chisqr));
+    EXPECT_GE(chisqr, 0.0);
     EXPECT_EQ(warning, 0);
     par_test(pars[0], mypars[0], tol); /* baseline */
     par_test(pars[1], mypars[1], tol); /* delay */
@@ -434,6 +443,8 @@ TEST(fitlib_test, id_03_biexponential){
         true, /*use_scaling*/
         pars, info, warning );
 
+    EXPECT_TRUE(std::isfinite(chisqr));
+    EXPECT_GE(chisqr, 0.0);
     EXPECT_EQ(warning, 0);
     par_test(pars[0], mypars[0], tol);  /* Amp_0  */
     par_test(pars[1], mypars[1], tol);  /* Tau_0  */
@@ -487,12 +498,14 @@ TEST(fitlib_test, id_04_biexponential_offsetfixed){
         true, /*use_scaling*/
         pars, info, warning );
 
+    EXPECT_TRUE(std::isfinite(chisqr));
+    EXPECT_GE(chisqr, 0.0);
     EXPECT_EQ(warning, 0);
     par_test(pars[0], mypars[0], tol);  /* Amp_0  */
     par_test(pars[1], mypars[1], tol);  /* Tau_0  */
     par_test(pars[2], mypars[2], tol);  /* Amp_1  */
     par_test(pars[3], mypars[3], tol);  /* Tau_1  */
-    EXPECT_EQ(pars[4], mypars[4]);      /* Offset */
+    EXPECT_DOUBLE_EQ(pars[4], mypars[4]);      /* Offset */
 
 
 #if 0
@@ -536,8 +549,10 @@ TEST(fitlib_test, id_05_biexponential_with_delay_offsetfixed){
         true, /*use_scaling*/
         pars, info, warning );
 
+    EXPECT_TRUE(std::isfinite(chisqr));
+    EXPECT_GE(chisqr, 0.0);
     EXPECT_EQ(warning, 0);
-    EXPECT_EQ(pars[0], mypars[0]);      /* Offset fixed to baseline */
+    EXPECT_DOUBLE_EQ(pars[0], mypars[0]);      /* Offset fixed to baseline */
     par_test(pars[1], mypars[1], tol);  /* delay */
     par_test(pars[2], mypars[2], tol);  /* short time constant */
     par_test(pars[3], mypars[3], tol);  /* Factor != amplitude */
@@ -593,6 +608,8 @@ TEST(fitlib_test, id_06_triexponential){
         true, /*use_scaling*/
         pars, info, warning );
 
+    EXPECT_TRUE(std::isfinite(chisqr));
+    EXPECT_GE(chisqr, 0.0);
     EXPECT_EQ(warning, 0);
     par_test(pars[0], mypars[0], tol);  /* Amp_0  */
     par_test(pars[1], mypars[1], tol);  /* Tau_0  */
@@ -653,6 +670,8 @@ TEST(fitlib_test, id_07_triexponential_free){
         true, /*use_scaling*/
         pars, info, warning );
 
+    EXPECT_TRUE(std::isfinite(chisqr));
+    EXPECT_GE(chisqr, 0.0);
     EXPECT_EQ(warning, 0);
     par_test(pars[0], mypars[0], tol);  /* Amp_0  */
     par_test(pars[1], mypars[1], tol);  /* Tau_0  */
@@ -712,6 +731,8 @@ TEST(fitlib_test, id_08_triexponential_offsetfixed){
         true, /*use_scaling*/
         pars, info, warning );
 
+    EXPECT_TRUE(std::isfinite(chisqr));
+    EXPECT_GE(chisqr, 0.0);
     EXPECT_EQ(warning, 0);
     par_test(pars[0], mypars[0], tol);  /* Amp_0  */
     par_test(pars[1], mypars[1], tol);  /* Tau_0  */
@@ -719,7 +740,7 @@ TEST(fitlib_test, id_08_triexponential_offsetfixed){
     par_test(pars[3], mypars[3], tol);  /* Tau_1  */
     par_test(pars[4], mypars[4], tol);  /* Amp_2  */
     par_test(pars[5], mypars[5], tol);  /* Tau_2  */
-    EXPECT_EQ(pars[6], mypars[6]);      /* Offset */
+    EXPECT_DOUBLE_EQ(pars[6], mypars[6]);      /* Offset */
 
 
 #if 0
@@ -765,6 +786,8 @@ TEST(fitlib_test, id_09_alpha){
         false, /*use_scaling*/
         pars, info, warning );
 
+    EXPECT_TRUE(std::isfinite(chisqr));
+    EXPECT_GE(chisqr, 0.0);
     EXPECT_EQ(warning, 0);
     par_test(pars[0], mypars[0], tol);  /* amplitude */
     par_test(pars[1], mypars[1], tol);  /* rate      */
@@ -814,11 +837,13 @@ TEST(fitlib_test, id_10_HH_gNa_offsetfixed){
 	false, /* use_scaling */
         pars, info, warning );
 
+    EXPECT_TRUE(std::isfinite(chisqr));
+    EXPECT_GE(chisqr, 0.0);
     EXPECT_EQ(warning, 0);
     par_test(pars[0], mypars[0], tol);  /* gprime_na                  */
     par_test(pars[1], mypars[1], tol);  /* tau_m                      */
     par_test(pars[2], mypars[2], tol);  /* tau_h                      */
-    EXPECT_EQ(pars[3], mypars[3]);      /* offset fixed to baseline   */
+    EXPECT_DOUBLE_EQ(pars[3], mypars[3]);      /* offset fixed to baseline   */
 
 #if 0
     debug_stdout(chisqr, info, warning, pars);
@@ -863,11 +888,13 @@ TEST(fitlib_test, id_11_HH_gNa_biexpoffsetfixed){
         false, /*use_scaling*/
         pars, info, warning );
 
+    EXPECT_TRUE(std::isfinite(chisqr));
+    EXPECT_GE(chisqr, 0.0);
     EXPECT_EQ(warning, 0);
     par_test(pars[0], mypars[0], tol);  /* gprime_na */
     par_test(pars[1], mypars[1], tol);  /* tau_m     */
     par_test(pars[2], mypars[2], tol);  /* tau_h     */
-    EXPECT_EQ(pars[3], mypars[3]);      /* offset fixed to baseline */
+    EXPECT_DOUBLE_EQ(pars[3], mypars[3]);      /* offset fixed to baseline */
 
 #if 0
     debug_stdout(chisqr, info, warning, pars);
@@ -910,6 +937,8 @@ TEST(fitlib_test, id_12_fgaussian){
         true, /*use_scaling*/
         pars, info, warning );
 
+    EXPECT_TRUE(std::isfinite(chisqr));
+    EXPECT_GE(chisqr, 0.0);
     EXPECT_EQ(warning, 0);
     par_test(pars[0], mypars[0], tol);  /* amplitude */
     par_test(pars[1], mypars[1], tol);  /* peak     */

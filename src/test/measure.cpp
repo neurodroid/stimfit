@@ -1,13 +1,10 @@
 #include "../libstfnum/measure.h"
 #include <gtest/gtest.h>
 #include <cmath>
+#include <cstddef>
 #include <fstream>
-#if (__cplusplus < 201103)
-    #include <boost/random.hpp>
-    #include <boost/random/normal_distribution.hpp>
-#else
-    #include <random>
-#endif
+#include <limits>
+#include <random>
 
 #define PI  3.14159265f
 #define N_MAX 1000
@@ -18,6 +15,8 @@ the tolerance can be, for that reason these values
 must change accordingly */
 const static double dt = 1/100.0; /* sampling interval */
 const static double tol = dt; /* 1 sampling interval */
+// The index APIs take size_t; this is the wrapped value of the legacy -1 case.
+constexpr std::size_t invalid_index = std::numeric_limits<std::size_t>::max();
 
 
 void save_txt(const char *fname, Vector_double &mydata){
@@ -58,8 +57,8 @@ void pass_test(double measurement, double expected, double tolerance){
 std::vector<double> sinwave(long length){
     std::vector<double> mydata(length);
 
-    for(std::vector<int>::size_type x=0; x != mydata.size() ; ++x){
-        mydata[x] = sin( x*dt ); /* see sampling interval */
+    for(std::size_t x=0; x != mydata.size() ; ++x){
+        mydata[x] = sin( static_cast<double>(x)*dt ); /* see sampling interval */
     }
 
     return mydata;
@@ -71,8 +70,8 @@ std::vector<double> sinwave(long length){
 std::vector<double> sinwave(double amp, double lambda, long length){
     std::vector<double> mydata(length);
 
-    for(std::vector<int>::size_type x=0; x != mydata.size() ; ++x){
-        mydata[x] = amp*sin( 2*PI*x*dt/lambda ); /* see sampling interval */
+    for(std::size_t x=0; x != mydata.size() ; ++x){
+        mydata[x] = amp*sin( 2*PI*static_cast<double>(x)*dt/lambda ); /* see sampling interval */
     }
 
     return mydata;
@@ -90,8 +89,8 @@ std::vector<double> sinwave(double amp, double lambda, long length){
 std::vector<double> expwave(long length){
     std::vector<double> mydata(length);
 
-    for(std::vector<int>::size_type x=0; x != mydata.size() ; ++x){
-        mydata[x] = exp( x*dt ); /* see sampling interval */
+    for(std::size_t x=0; x != mydata.size() ; ++x){
+        mydata[x] = exp( static_cast<double>(x)*dt ); /* see sampling interval */
     }
 
     return mydata;
@@ -101,8 +100,8 @@ std::vector<double> expwave(double tau, long length){
     
     std::vector<double> mydata(length);
 
-    for(std::vector<int>::size_type x=0; x != mydata.size() ; ++x){
-        mydata[x] = exp( x*dt/tau ); /* see sampling interval */
+    for(std::size_t x=0; x != mydata.size() ; ++x){
+        mydata[x] = exp( static_cast<double>(x)*dt/tau ); /* see sampling interval */
     }
 
     return mydata;
@@ -111,13 +110,13 @@ std::vector<double> expwave(double tau, long length){
 // A vector with random numbers between 0 and 1
 //=========================================================================
 std::vector<double> rand(long size){
-    /* seed the random number generator */
-    int seed = time(NULL);
-    srand(seed);
+    // Fixed seeds keep statistical tests reproducible across CI runs.
+    std::mt19937 rng(0);
+    std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
     std::vector<double> myrand(size);
-    for (int i=0; i<size;i++){
-        myrand[i] = (double) rand()/(double) RAND_MAX;
+    for (double& sample : myrand){
+        sample = distribution(rng);
     }
     return myrand;
     
@@ -128,13 +127,12 @@ std::vector<double> rand(long size){
 // A vector with an uniform distribution between 0 and value 
 //=========================================================================
 std::vector<double> uniform(double value, long size){
-    /* seed the random number generator */
-    int seed = time(NULL);
-    srand(seed);
+    std::mt19937 rng(0);
+    std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
     std::vector<double> myrand(size);
-    for (int i=0; i<size;i++){
-        myrand[i] = value * (double) rand()/(double) RAND_MAX;
+    for (double& sample : myrand){
+        sample = value * distribution(rng);
     }
     return myrand;
     
@@ -146,22 +144,11 @@ std::vector<double> norm(double mean, double stddev){
 
     std::vector<double> myrand(N_MAX);
 
-#if (__cplusplus < 201103)
-    boost::mt19937 rng; /* seed? */
-    boost::normal_distribution<> norm(mean, stddev);
-    boost::variate_generator<boost::mt19937&,
-        boost::normal_distribution<> > rand_val(rng, norm);
-    for (int i=0; i < myrand.size(); ++i){
-        myrand[i] = rand_val();
-    }
-#else
-    std::random_device rd;
-    std::mt19937 rng(rd()); /* seed? */
+    std::mt19937 rng(0);
     std::normal_distribution<> norm(mean, stddev);
-    for (int i=0; i < myrand.size(); ++i){
-        myrand[i] = norm(rng);
+    for (double& sample : myrand){
+        sample = norm(rng);
     }
-#endif
     
     return myrand;
     
@@ -211,7 +198,7 @@ TEST(measlib_test, baseline_out_of_range_exceptions) {
     EXPECT_TRUE(std::isnan(stfnum::base(stfnum::mean_sd, var, data, 0, data.size())));
 
     /* Out of range: before first point */
-    EXPECT_TRUE(std::isnan(stfnum::base(stfnum::mean_sd, var, data, -1, data.size()-1)));
+    EXPECT_TRUE(std::isnan(stfnum::base(stfnum::mean_sd, var, data, invalid_index, data.size()-1)));
 
 }
 
@@ -254,7 +241,7 @@ TEST(measlib_test, peak_out_of_range_exceptions) {
         1, stfnum::both, maxT)));
 
     /* Out of range: before first point */
-    EXPECT_TRUE(std::isnan(stfnum::peak(data, 0.0, -1, data.size()-1, 
+    EXPECT_TRUE(std::isnan(stfnum::peak(data, 0.0, invalid_index, data.size()-1,
         1, stfnum::both, maxT)));
 }
 
@@ -324,7 +311,7 @@ TEST(measlib_test, peak_random) {
 TEST(measlib_test, threshold){
     
     /* exp wave between 0 and 1 */
-    std::vector<double> mywave = expwave(1/dt);
+    std::vector<double> mywave = expwave(static_cast<long>(1/dt));
 
     double thrT;
     double slope = 1.2; /* y-units/sample, choose always >= 1 */
@@ -346,11 +333,11 @@ TEST(measlib_test, threshold){
 //=========================================================================
 TEST(measlib_test, threshold_windowLength_exceptions){
     
-    std::vector<double> data = expwave(1/dt);
+    std::vector<double> data = expwave(static_cast<long>(1/dt));
 
     double thrT;
     double slope = 1.2; /* y-units/sample, choose always >= 1 */
-    int mywindowLength = 10;
+    std::size_t mywindowLength = 10;
     
     /* Right peak cursor must be larger than windowLength
     long myRightPeakCursor = mywindowLength-1;
@@ -358,7 +345,7 @@ TEST(measlib_test, threshold_windowLength_exceptions){
         slope*dt, thrT, mywindowLength))); */
 
     /* Left peak cursor must be smaller than data.size()-windowLength */
-    long myLeftPeakCursor = data.size()-mywindowLength; 
+    std::size_t myLeftPeakCursor = data.size()-mywindowLength;
     EXPECT_TRUE(std::isnan(stfnum::threshold(data, myLeftPeakCursor, data.size()-1, 
         slope*dt, thrT, mywindowLength)));
 
@@ -373,7 +360,7 @@ TEST(measlib_test, threshold_windowLength_exceptions){
 //=========================================================================
 TEST(measlib_test, threshold_out_of_range){
    
-    std::vector<double> mywave = expwave(1/dt); 
+    std::vector<double> mywave = expwave(static_cast<long>(1/dt));
 
     double thrT;
     double slope = 0.2; /* y-units/sample, choose always >= 1 */
@@ -385,7 +372,7 @@ TEST(measlib_test, threshold_out_of_range){
     EXPECT_TRUE(std::isnan(thrT)); 
 
     /* Out of range: before first point*/
-    EXPECT_TRUE(std::isnan(stfnum::threshold(mywave, -1, mywave.size()-1, 
+    EXPECT_TRUE(std::isnan(stfnum::threshold(mywave, invalid_index, mywave.size()-1,
         slope*dt, thrT, windowLength)));
     EXPECT_TRUE(std::isnan(thrT));
     
@@ -407,8 +394,8 @@ TEST(measlib_test, risetime_values){
         long((PI/2)/dt)-1, 0.2, t20, t80, t20Real);
 
     /* t20 and t80 correspond to 0.2 and 0.8 respectively */
-    EXPECT_NEAR( std::sin(t20*dt), 0.2, 0.02 ); /* sin(t20) = 0.2 */
-    EXPECT_NEAR( std::sin(t80*dt), 0.8, 0.08 ); /* sin(t80) = 0.8 */
+    EXPECT_NEAR( std::sin(static_cast<double>(t20)*dt), 0.2, 0.02 ); /* sin(t20) = 0.2 */
+    EXPECT_NEAR( std::sin(static_cast<double>(t80)*dt), 0.8, 0.08 ); /* sin(t80) = 0.8 */
 
     /* the risetime is the arcsin(t80)-arcsin(t20) */
     double risetime_xpted = std::asin(0.8) - std::asin(0.2); 
@@ -432,8 +419,8 @@ TEST(measlib_test, half_duration){
         long(PI/dt)-1, long((PI/2)/dt),t50LeftId, t50RightId, t50Real);
 
     /* t50Left and t50Right correspond to 0.5 */
-    EXPECT_NEAR( std::sin(t50LeftId*dt),  0.5, 0.05); /* sin(t50) = 0.5 */
-    EXPECT_NEAR( std::sin(t50RightId*dt), 0.5, 0.05);
+    EXPECT_NEAR( std::sin(static_cast<double>(t50LeftId)*dt),  0.5, 0.05); /* sin(t50) = 0.5 */
+    EXPECT_NEAR( std::sin(static_cast<double>(t50RightId)*dt), 0.5, 0.05);
 
     /* half-duration is arcsin(0.5)+ arcsin(1) */
     double half_dur_xpted = std::asin(0.5)+std::asin(1.0);
@@ -459,7 +446,7 @@ TEST(measlib_test, half_duration_out_of_range_exceptions){
         long(PI/dt)-1, center, t50LeftId, t50RigthId, t50Real)));
 
     /* Out of range: if center > recording length */
-    center = mywave.size();
+    center = static_cast<double>(mywave.size());
     EXPECT_TRUE(std::isnan( stfnum::t_half(mywave, 0.0, 1.0, 1,
         long(PI/dt)-1, center, t50LeftId, t50RigthId, t50Real)));
 
@@ -474,7 +461,7 @@ TEST(measlib_test, maxrise_basic) {
     data[16385] = 1.0;
 
     double maxRiseT, maxRiseY;
-    double maxrise = stfnum::maxRise(data, 1, data.size()-1, \
+    double maxrise = stfnum::maxRise(data, 1, static_cast<double>(data.size()-1), \
         maxRiseT, maxRiseY, 1);
     EXPECT_EQ(maxrise, 1.0);
     EXPECT_EQ(maxRiseT, 16384.5);
@@ -491,11 +478,11 @@ TEST(measlib_test, maxrise_out_of_range_exceptions) {
     double maxRiseT, maxRiseY;
     
     /* Out of range: peak cursor after last point */
-    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, 0, data.size(), \
+    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, 0, static_cast<double>(data.size()), \
         maxRiseT, maxRiseY, 1)));
 
     /* Out of range: peak cursor before first point
-    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, -1, data.size()-1, \
+    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, invalid_index, data.size()-1, \
     maxRiseT, maxRiseY, 1)));*/
 
 }
@@ -507,7 +494,7 @@ TEST(measlib_test, maxrise_windowLength_exceptions){
 
     std::vector<double> data(32768);
     double maxRiseT, maxRiseY;
-    long mywindowLength; /* fixed time interval (in sampling points) */
+    std::size_t mywindowLength; /* fixed time interval (in sampling points) */
 
     /* Right peak cursor must be larger than windowLength
     mywindowLength = 10;
@@ -516,13 +503,13 @@ TEST(measlib_test, maxrise_windowLength_exceptions){
     maxRiseT, maxRiseY, mywindowLength)));*/
 
     /* Left peak cursor must be smaller than data.size()-windowLength
-    long myLeftPeakCursor = data.size()-mywindowLength; 
+    std::size_t myLeftPeakCursor = data.size()-mywindowLength;
     EXPECT_TRUE(std::isnan(stfnum::maxRise(data, myLeftPeakCursor, data.size()-1 , \
         maxRiseT, maxRiseY, mywindowLength))); */
 
     /* Data size itself must be smaller than windowLength */
     mywindowLength = data.size()+1;
-    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, 0, data.size()-1, \
+    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, 0, static_cast<double>(data.size()-1), \
         maxRiseT, maxRiseY, mywindowLength)));
 
 }
@@ -556,7 +543,7 @@ TEST(measlib_test, maxdecay_basic) {
     data[16385] = 1.0;
 
     double maxDecayT, maxDecayY;
-    double maxdecay = stfnum::maxDecay(data, 16385, data.size()-1, \
+    double maxdecay = stfnum::maxDecay(data, 16385, static_cast<double>(data.size()-1), \
         maxDecayT, maxDecayY, 1);
     EXPECT_EQ(maxdecay, 1.0);
     EXPECT_EQ(maxDecayT, 16385.5);
@@ -573,11 +560,11 @@ TEST(measlib_test, maxdecay_out_of_range_exceptions) {
     double maxDecayT, maxDecayY;
 
     /* Out of range: peak cursor after last point */
-    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, 0, data.size(), \
+    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, 0, static_cast<double>(data.size()), \
         maxDecayT, maxDecayY, 1)));
 
     /* Out of range: peak cursor before first point
-    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, -1, data.size()-1, \
+    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, invalid_index, data.size()-1, \
     maxDecayT, maxDecayY, 1))); */
 
 }
@@ -589,7 +576,7 @@ TEST(measlib_test, maxdecay_windowLength_exceptions) {
     
     std::vector<double> data(32768);
     double maxDecayT, maxDecayY;
-    long mywindowLength; /* fixed time interval (in sampling points) */
+    std::size_t mywindowLength; /* fixed time interval (in sampling points) */
 
     /* Right peak cursor must be larger than windowLength
     mywindowLength = 10;
@@ -598,13 +585,13 @@ TEST(measlib_test, maxdecay_windowLength_exceptions) {
     maxDecayT, maxDecayY, mywindowLength))); */
 
     /* Left peak cursor must be smaller than data.size()-windowLength
-    long myLeftPeakCursor = data.size()-mywindowLength; 
+    std::size_t myLeftPeakCursor = data.size()-mywindowLength;
     EXPECT_TRUE(std::isnan(stfnum::maxRise(data, myLeftPeakCursor, data.size()-1 , \
     maxDecayT, maxDecayY, mywindowLength)));*/
 
     /* Data size itself must be smaller than windowLength */
     mywindowLength = data.size()+1;
-    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, 0, data.size()-1, \
+    EXPECT_TRUE(std::isnan(stfnum::maxRise(data, 0, static_cast<double>(data.size()-1), \
         maxDecayT, maxDecayY, mywindowLength)));
 }
 
@@ -619,8 +606,8 @@ TEST(measlib_test, maxdecay_values){
     
     int windowLength = 1; 
     /* compute max slope of decay between 0 and 3*PI/2 */
-    long endCursor = (3*PI/2)/dt ;
-    stfnum::maxDecay(mywave, 1, endCursor, \
+    long endCursor = static_cast<long>((3*PI/2)/dt);
+    stfnum::maxDecay(mywave, 1, static_cast<double>(endCursor), \
         maxDecayT, maxDecayY, windowLength);
 
     /* Max slope of decay should be in PI and give value 0 */
@@ -658,7 +645,7 @@ TEST(measlib_validation, baseline) {
         EXPECT_NEAR(var, var_xpted, var_xpted*tol );
     }
 
-    //save_txt("/tmp/base.val", mybase);
+    //save_txt("base.val", mybase);
 }
 
 //=========================================================================
@@ -684,8 +671,8 @@ TEST(measlib_validation, peak) {
         EXPECT_NEAR(mypeak[i], myrand[i], fabs(myrand[i]*tol));
     }
 
-    save_txt("/tmp/peak_stf.val", mypeak);
-    save_txt("/tmp/peak_real.val", myrand);
+    save_txt("peak_stf.val", mypeak);
+    save_txt("peak_real.val", myrand);
 }
 
 //=========================================================================
@@ -715,7 +702,7 @@ TEST(measlib_validation, risetime) {
         myrisetime[i] *=dt; /* to save real values in a file */
     }
 
-    save_txt("/tmp/risetime.val", myrisetime);
+    save_txt("risetime.val", myrisetime);
 }
 
 //=========================================================================
@@ -745,7 +732,7 @@ TEST(measlib_validation, risetime1090) {
         //myrisetime[i] *=dt; /* to save real values in a file */
     }
 
-    //save_txt("/tmp/risetime.val", myrisetime);
+    //save_txt("risetime.val", myrisetime);
 }
 
 
@@ -768,7 +755,7 @@ TEST(measlib_validation, half_duration) {
         std::vector<double> mytrace = sinwave(1.0, lambda, long(lambda/dt));
         /* calculate half width starting form start and entering peak (lambda/4) */
         myhalf_width[i] = stfnum::t_half(mytrace, 0.0, 1.0, 1, 
-            long(lambda/dt)-2, long((lambda/4)/dt), t50LeftId, t50RightId, t50Real);
+            static_cast<double>(long(lambda/dt)-2), long((lambda/4)/dt), t50LeftId, t50RightId, t50Real);
         double l = 2*PI/lambda;
         double half_width_xpted = 2*(std::asin(1.)-std::asin(.5))/l;
         EXPECT_NEAR(myhalf_width[i]*dt, half_width_xpted, 
@@ -776,7 +763,7 @@ TEST(measlib_validation, half_duration) {
         myhalf_width[i] *=dt; /* to save real values in a file */
     }
 
-    save_txt("/tmp/half_width.val", myhalf_width);
+    save_txt("half_width.val", myhalf_width);
 }
 
 //=========================================================================
@@ -799,14 +786,14 @@ TEST(measlib_validation, maxrise) {
         /* calculate maxrise in the second sine peak */
         /* locate the first cursor later that 1st peak at ~(lambda/4) 
             to avoid that this value becomes the max of the rise */
-            mymaxrise[i] = stfnum::maxRise(mytrace, long(0.75*lambda/dt)+1, 
-                mytrace.size()-1, maxRiseT, maxRiseY, 1);
+            mymaxrise[i] = stfnum::maxRise(mytrace, static_cast<double>(long(0.75*lambda/dt)+1),
+                static_cast<double>(mytrace.size()-1), maxRiseT, maxRiseY, 1);
         double maxRiseT_xpted = lambda;
         EXPECT_NEAR(maxRiseT*dt, maxRiseT_xpted, fabs(maxRiseT_xpted*tol));
         mymaxrise[i] *=dt; /* to save real values in a file */
     }
 
-    save_txt("/tmp/max_rise.val", mymaxrise);
+    save_txt("max_rise.val", mymaxrise);
 }
 
 //=========================================================================
@@ -832,7 +819,7 @@ TEST(measlib_validation, maxdecay) {
         mymaxdecay[i] *=dt; /* to save real values in a file */
     }
 
-        save_txt("/tmp/max_decay.val", mymaxdecay);
+        save_txt("max_decay.val", mymaxdecay);
 }
 //=========================================================================
 // test threshold N_MAX random traces
@@ -869,7 +856,7 @@ TEST(measlib_validation, threshold) {
         EXPECT_NEAR(myslope, slope_xpted, fabs(slope_xpted*tol)); 
     }
 
-    save_txt("/tmp/threshold.val", mythreshold);
-    
+    save_txt("threshold.val", mythreshold);
+
 
 }

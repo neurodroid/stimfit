@@ -1,15 +1,16 @@
 #include "../libstfio/section.h"
+#include <cstddef>
 #include <gtest/gtest.h>
 
 TEST(Section_test, constructors) {
     Section sec0;
-    EXPECT_EQ( sec0.size(), 0 );
+    EXPECT_EQ( sec0.size(), std::size_t{0} );
 
     Section sec1(Vector_double(32768, 0), "Test section");
-    EXPECT_EQ( sec1.size(), 32768 );
+    EXPECT_EQ( sec1.size(), std::size_t{32768} );
 
     Section sec2(32768, "Test section");
-    EXPECT_EQ( sec2.size(), 32768 );
+    EXPECT_EQ( sec2.size(), std::size_t{32768} );
 }
 
 TEST(Section_test, data_access) {

@@ -703,6 +703,8 @@ if(NOT STF_BUILD_MODULE)
   endif()
 
   if(STF_BUILD_TESTS)
+    # Compile the vendored release with Stimfit's toolchain so GoogleTest uses
+    # the same MSVC runtime, C++ standard, and macOS settings as its callers.
     add_library(
       stimfit_gtest_main
       STATIC
@@ -711,11 +713,12 @@ if(NOT STF_BUILD_MODULE)
     )
     target_include_directories(
       stimfit_gtest_main
-      PUBLIC
+      PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/test/gtest
+      PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/test/gtest/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
+    target_compile_features(stimfit_gtest_main PUBLIC cxx_std_17)
     target_link_libraries(
       stimfit_gtest_main
       PUBLIC
@@ -768,6 +771,28 @@ if(NOT STF_BUILD_MODULE)
         COMPONENT ${STF_COMPONENT_TESTS}
       )
     endif()
+
+    set(_stf_test_targets stimfit_gtest_main stimfit_containers_test)
+    if(TARGET stimfit_numeric_test)
+      list(APPEND _stf_test_targets stimfit_numeric_test)
+    endif()
+    foreach(_stf_test_target IN LISTS _stf_test_targets)
+      if(MSVC)
+        # /W4 is provided by stimfit_config; clang-cl also accepts /WX.
+        # GoogleTest sources contain UTF-8 text; do not depend on the host locale.
+        target_compile_options(${_stf_test_target} PRIVATE /utf-8)
+        if(STF_TEST_WARNINGS_AS_ERRORS)
+          target_compile_options(${_stf_test_target} PRIVATE /WX)
+        endif()
+      else()
+        target_compile_options(${_stf_test_target} PRIVATE -Wextra)
+        if(STF_TEST_WARNINGS_AS_ERRORS)
+          target_compile_options(${_stf_test_target} PRIVATE -Werror)
+        endif()
+      endif()
+    endforeach()
+    unset(_stf_test_target)
+    unset(_stf_test_targets)
   endif()
 endif()
 
