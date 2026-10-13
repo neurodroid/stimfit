@@ -228,7 +228,7 @@ TEST(fitlib_test, monoexponential) {
     // Respectively the scale factor for initial \mu,
     // stopping thresholds for ||J^T e||_inf, ||Dp||_2 and ||e||_2,
     // maxIter, maxPass
-    Vector_double opts = stfnum::LM_default_opts();
+    const Vector_double fit_options = stfnum::LM_default_opts();
 
     /* Initial parameter guesses */
     Vector_double pars(3);
@@ -238,7 +238,7 @@ TEST(fitlib_test, monoexponential) {
 
     std::string info;
     int warning;
-    double chisqr = stfnum::lmFit(data, 1.0, funcLib[0], opts, 
+    double chisqr = stfnum::lmFit(data, 1.0, funcLib[0], fit_options,
         true, /*use_scaling*/
         pars, info, warning );
 

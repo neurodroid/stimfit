@@ -624,7 +624,7 @@ TEST(measlib_test, maxdecay_values){
 //=========================================================================
 TEST(measlib_validation, baseline) {
     double var;
-    double tol = 0.1; /* for this case only, to account for the variance */
+    const double baseline_tolerance = 0.1; /* account for the variance */
 
     /* measurement results for base */
     std::vector<double> mybase(N_MAX);
@@ -639,10 +639,10 @@ TEST(measlib_validation, baseline) {
         /* calculate base between start and end */
         mybase[i] = stfnum::base(stfnum::mean_sd, var, mytrace, 0, mytrace.size()-1);
         double mean_xpted = myrand[i]/2.0; /* 1/2*(a+b) */
-        EXPECT_NEAR(mybase[i], mean_xpted, fabs(mean_xpted*tol));
+        EXPECT_NEAR(mybase[i], mean_xpted, fabs(mean_xpted*baseline_tolerance));
         /* sanity check for variance */
         double var_xpted = fabs(myrand[i]*myrand[i]/12.); /* 1/12*(a+b)^2 */
-        EXPECT_NEAR(var, var_xpted, var_xpted*tol );
+        EXPECT_NEAR(var, var_xpted, var_xpted*baseline_tolerance );
     }
 
     //save_txt("base.val", mybase);

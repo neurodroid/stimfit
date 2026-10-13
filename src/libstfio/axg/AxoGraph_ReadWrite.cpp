@@ -11,6 +11,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sstream>
+#include <algorithm>
 
 #include "stringUtils.h"
 #include "byteswap.h"
@@ -353,8 +354,8 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
               case SeriesArrayType:
                   {
                       SeriesArray seriesParameters;
-                      AXGLONG bytes = sizeof( SeriesArray );
-                      result = ReadFromFile( refNum, &bytes, &seriesParameters );
+                      AXGLONG seriesBytes = sizeof( SeriesArray );
+                      result = ReadFromFile( refNum, &seriesBytes, &seriesParameters );
 
 #ifdef __LITTLE_ENDIAN__
                       ByteSwapDouble( &seriesParameters.firstValue );
@@ -368,9 +369,9 @@ int AG_ReadColumn( filehandle refNum, const int fileFormat, const int columnNumb
               case ScaledShortArrayType:
                   {
                       double scale, offset;
-                      AXGLONG bytes = sizeof( double );
-                      result = ReadFromFile( refNum, &bytes, &scale );
-                      result = ReadFromFile( refNum, &bytes, &offset );
+                      AXGLONG scalarBytes = sizeof( double );
+                      result = ReadFromFile( refNum, &scalarBytes, &scale );
+                      result = ReadFromFile( refNum, &scalarBytes, &offset );
 #ifdef __LITTLE_ENDIAN__
                       ByteSwapDouble( &scale );
                       ByteSwapDouble( &offset );
@@ -495,8 +496,8 @@ std::string AG_ReadTraceHeaders( filehandle refNum ) {
 
     for (AXGLONG nh=0; nh<num_headers; ++nh) {
         AxoGraphXTraceHeader trace_header;
-        AXGLONG bytes = sizeof(AxoGraphXTraceHeader);
-        result = ReadFromFile( refNum, &bytes, &trace_header );
+        AXGLONG traceHeaderBytes = sizeof(AxoGraphXTraceHeader);
+        result = ReadFromFile( refNum, &traceHeaderBytes, &trace_header );
         if ( result ) {
             return headers;
         }
@@ -525,7 +526,8 @@ int AG_ReadFloatColumn( filehandle refNum, const int fileFormat, const int colum
          {
              // Convert in the column data
              columnData->floatArray.resize( columnData->intArray.size() );
-             std::copy( columnData->intArray.begin(), columnData->intArray.end(), columnData->floatArray.begin() );
+             std::transform( columnData->intArray.begin(), columnData->intArray.end(), columnData->floatArray.begin(),
+                             [](int value) { return static_cast<float>(value); } );
              columnData->intArray.resize(0);
              columnData->type = FloatArrayType;
              return result;
@@ -539,7 +541,8 @@ int AG_ReadFloatColumn( filehandle refNum, const int fileFormat, const int colum
          {
              // Convert in the column data
              columnData->floatArray.resize( columnData->doubleArray.size() );
-             std::copy( columnData->doubleArray.begin(), columnData->doubleArray.end(), columnData->floatArray.begin() );
+             std::transform( columnData->doubleArray.begin(), columnData->doubleArray.end(), columnData->floatArray.begin(),
+                             [](double value) { return static_cast<float>(value); } );
              columnData->doubleArray.resize(0);
              columnData->type = FloatArrayType;
              return result;

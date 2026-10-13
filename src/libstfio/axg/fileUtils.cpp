@@ -50,7 +50,7 @@ int ReadFromFile( filehandle dataRefNum, AXGLONG *count, void *dataToRead )
 {
 #if defined(_WINDOWS) && !defined(__MINGW32__)
     DWORD dwRead;
-    short res = ReadFile(dataRefNum, dataToRead, *count, &dwRead, NULL);
+    BOOL res = ReadFile(dataRefNum, dataToRead, *count, &dwRead, NULL);
     if (res)
         return 0;
     else
