@@ -1,3 +1,24 @@
+stimfit (0.17.2-2) UNRELEASED; urgency=medium
+
+  * Merge recent upstream changes from master:
+    - Upgrade vendored GoogleTest from 1.7.0 to 1.18.0 and treat compiler
+      warnings in test targets as errors by default.
+    - Make randomized test inputs reproducible, fix compiler warnings in
+      tests, and run both container and numeric suites in Windows CI.
+    - Fix compiler warnings in the AxoGraph and HEKA file readers.
+    - Bound reads and copies of fixed-width ABF metadata fields.
+    - Drop Python 2 support and retire obsolete packaging assets.
+    - Simplify executable directory lookup across platforms and improve
+      macOS dependency discovery and builds without Ninja.
+    - Update Windows BioSig 3.9.8 build and runtime packaging support.
+  * Scope Debian CFLAGS to C sources and CXXFLAGS to C++ sources, preventing
+    C-only diagnostic options from breaking strict C++ test builds.
+  * Validate a fresh Debian sid package build: all six packaging-enabled
+    container test cases and all 49 cases with numeric tests enabled pass.
+    Lintian reports no issues and both installed-package smoke tests pass.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Tue, 13 Oct 2026 16:59:22 +0200
+
 stimfit (0.17.2-1) unstable; urgency=medium
 
   * New upstream release
