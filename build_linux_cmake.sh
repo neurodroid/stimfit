@@ -149,7 +149,9 @@ if [[ "$WITH_PYTHON" -eq 1 ]]; then
     exit 1
   fi
 
-  cmake_configure_args+=( "-DPython3_EXECUTABLE=${PYTHON_EXECUTABLE_GUESS}" )
+  # Refresh FindPython3's cached metadata: the system interpreter can be
+  # upgraded in place while its /usr/bin/python3 path stays the same.
+  cmake_configure_args+=( "-U_Python3_*" "-DPython3_EXECUTABLE=${PYTHON_EXECUTABLE_GUESS}" )
   echo "==> Python executable: ${PYTHON_EXECUTABLE_GUESS}"
 fi
 
