@@ -4,26 +4,35 @@ Find new Stimfit publications using the same strategy used for reference curatio
 
 1) OpenAlex: papers citing the original Stimfit paper (10.3389/fninf.2014.00016)
 2) Europe PMC: full-text search for "stimfit" + "patch-clamp" (methods-like signal)
-3) Merge, de-duplicate, screen confounders, compare against index.rst
-4) Emit JSON report and optional RST snippet for copy/paste
+3) Prefer journal versions using curated DOI pairs, Crossref and bioRxiv/medRxiv
+4) Merge, de-duplicate, screen confounders, compare against index.rst
+5) Emit JSON report and optional RST snippet for copy/paste
+
+publication_versions.json preserves manually verified preprint/journal DOI pairs
+when public metadata is incomplete. Unpublished preprints remain eligible; those
+whose publication status cannot be checked are withheld with a warning.
 """
 
 from __future__ import annotations
 
 import argparse
-import datetime as dt
 import html
 import json
 import re
 import sys
+import unicodedata
+import urllib.error
 import urllib.parse
 import urllib.request
 from collections import defaultdict
 from dataclasses import dataclass, asdict
+from functools import cache
+from pathlib import Path
 from typing import Dict, List, Set
 
 
 ORIGINAL_STIMFIT_DOI = "10.3389/fninf.2014.00016"
+PUBLICATION_VERSIONS_PATH = Path(__file__).with_name("publication_versions.json")
 
 
 @dataclass
@@ -39,7 +48,8 @@ class Record:
 
 
 def http_json(url: str, timeout: int = 60):
-    with urllib.request.urlopen(url, timeout=timeout) as r:
+    request = urllib.request.Request(url, headers={"User-Agent": "Stimfit-publication-finder/1.0"})
+    with urllib.request.urlopen(request, timeout=timeout) as r:
         return json.load(r)
 
 
@@ -50,9 +60,23 @@ def norm_ws(s: str) -> str:
 def norm_title(s: str) -> str:
     s = html.unescape(s or "")
     s = re.sub(r"<[^>]+>", "", s)
-    s = s.lower()
+    s = "".join(c for c in unicodedata.normalize("NFKD", s.lower()) if not unicodedata.combining(c))
     s = re.sub(r"[^a-z0-9\s\-\+αβγδ]+", " ", s)
     return norm_ws(s)
+
+
+def norm_doi(value: str) -> str:
+    value = urllib.parse.unquote(value or "").strip().lower()
+    value = re.sub(r"^(?:https?://(?:dx\.)?doi\.org/|doi:\s*)", "", value)
+    return value if re.fullmatch(r"10\.\d{4,9}/\S+", value) else ""
+
+
+def is_preprint(doi: str, venue: str = "", work_type: str = "") -> bool:
+    return (
+        work_type in {"preprint", "posted-content"}
+        or bool(re.match(r"10\.(?:1101|64898)/\d|10\.21203/rs\.|10\.2139/ssrn\.", norm_doi(doi)))
+        or any(name in venue.lower() for name in ("preprint", "biorxiv", "medrxiv", "research square", "ssrn", "arxiv"))
+    )
 
 
 def initials_from_name(name: str) -> str:
@@ -79,17 +103,192 @@ def format_author_last_initials(full_name: str) -> str:
 
 
 def parse_existing_rst(rst_path: str):
-    text = open(rst_path, "r", encoding="utf-8").read()
-    dois = {d.lower() for d in re.findall(r"https?://doi.org/([^>\s]+)", text, re.I)}
+    """Return existing DOIs and journal titles, allowing upgrades of preprints."""
+    text = Path(rst_path).read_text(encoding="utf-8")
+    dois = set()
     titles = set()
-    for m in re.finditer(r"`_\s*(.*?)\s*\.\s*\*", text):
-        titles.add(norm_title(m.group(1)))
+    for line in text.splitlines():
+        for doi in re.findall(r"https?://(?:dx\.)?doi.org/([^>\s]+)", line, re.I):
+            dois.add(norm_doi(doi))
+        m = re.search(r"<([^>]+)>`_\s*(.*?)\s*\.\s*\*([^*]+)\*", line)
+        if m and not is_preprint(m.group(1), line):
+            titles.add(norm_title(m.group(2)))
     return dois, titles
 
 
+@cache
 def openalex_work_from_doi(doi: str):
     url = "https://api.openalex.org/works/https://doi.org/" + urllib.parse.quote(doi, safe="/:")
     return http_json(url)
+
+
+def record_from_openalex(w: dict, source_tags: Set[str]) -> Record:
+    doi = norm_doi(w.get("doi"))
+    venue = ((w.get("primary_location") or {}).get("source") or {}).get("display_name", "")
+    return Record(
+        doi=doi,
+        title=norm_ws(html.unescape(w.get("display_name") or "")),
+        year=int(w.get("publication_year") or 0),
+        authors=[
+            format_author_last_initials(a["author"]["display_name"])
+            for a in (w.get("authorships") or [])
+            if (a.get("author") or {}).get("display_name")
+        ],
+        venue=venue,
+        url=f"https://doi.org/{doi}",
+        is_preprint=is_preprint(doi, venue, w.get("type", "")),
+        source_tags=set(source_tags),
+    )
+
+
+@cache
+def crossref_work_from_doi(doi: str) -> dict:
+    url = "https://api.crossref.org/works/" + urllib.parse.quote(doi, safe="/")
+    try:
+        return http_json(url)["message"]
+    except urllib.error.HTTPError as exc:
+        if exc.code == 404:
+            return {}
+        raise
+
+
+def record_from_crossref(w: dict, source_tags: Set[str]) -> Record:
+    doi = norm_doi(w.get("DOI"))
+    title = norm_ws(html.unescape(re.sub(r"<[^>]+>", "", (w.get("title") or [""])[0])))
+    if w.get("type") != "journal-article" or not doi or not title:
+        raise ValueError("Linked publication is not a journal article with a DOI and title")
+    date = w.get("published") or w.get("issued") or {}
+    return Record(
+        doi=doi,
+        title=title,
+        year=int((date.get("date-parts") or [[0]])[0][0]),
+        authors=[
+            norm_ws(f"{a['family']} {initials_from_name(a.get('given', ''))}")
+            if a.get("family") else a.get("name", "")
+            for a in (w.get("author") or [])
+        ],
+        venue=(w.get("container-title") or [""])[0],
+        url=f"https://doi.org/{doi}",
+        is_preprint=False,
+        source_tags=set(source_tags),
+    )
+
+
+def matching_journal_dois(rec: Record) -> Set[str]:
+    """Conservatively cover missing links using an exact title and first author."""
+    if not rec.authors or len(norm_title(rec.title)) < 25:
+        return set()
+    params = {"query.bibliographic": f"{rec.title} {rec.authors[0]}", "filter": "type:journal-article", "rows": "5"}
+    data = http_json("https://api.crossref.org/works?" + urllib.parse.urlencode(params))
+    matches = set()
+    family = norm_title(rec.authors[0].rsplit(" ", 1)[0])
+    for work in data["message"]["items"]:
+        authors = work.get("author") or []
+        if not authors or norm_title(authors[0].get("family", "")) != family:
+            continue
+        try:
+            journal = record_from_crossref(work, set())
+        except (ValueError, KeyError):
+            continue
+        # Earlier conference abstracts can have the same title and authors and
+        # Crossref type journal-article; they do not supersede the preprint.
+        if norm_title(journal.title) == norm_title(rec.title) and journal.year >= rec.year:
+            matches.add(journal.doi)
+    if len(matches) > 1:
+        raise RuntimeError(f"Ambiguous journal title matches for {rec.doi}: {', '.join(sorted(matches))}")
+    return matches
+
+
+def published_dois(rec: Record) -> Set[str]:
+    """Use explicit version links and exact bibliographic matches, never fuzzy titles.
+
+    API documentation: https://api.biorxiv.org/ and
+    https://www.crossref.org/documentation/retrieve-metadata/rest-api/rest-api-filters/
+    """
+    dois = set()
+    checked = False
+    errors = []
+    try:
+        work = crossref_work_from_doi(rec.doi)
+        checked = True
+        for link in (work.get("relation") or {}).get("is-preprint-of", []):
+            if link.get("id-type", "").lower() == "doi":
+                dois.add(norm_doi(link.get("id")))
+    except (OSError, ValueError, KeyError) as exc:
+        errors.append(f"Crossref: {exc}")
+
+    if re.match(r"10\.(?:1101|64898)/\d", rec.doi) or any(
+        server in rec.venue.lower() for server in ("biorxiv", "medrxiv")
+    ):
+        server = "medrxiv" if "medrxiv" in rec.venue.lower() else "biorxiv"
+        try:
+            url = f"https://api.biorxiv.org/pubs/{server}/{urllib.parse.quote(rec.doi, safe='/')}/na/json"
+            data = http_json(url)
+            statuses = [message.get("status", "").lower() for message in data.get("messages", [])]
+            if not any(status == "ok" or status.startswith("no articles found") for status in statuses):
+                raise ValueError("Unrecognized publication-status response")
+            checked = True
+            for entry in data.get("collection", []):
+                if norm_doi(entry.get("biorxiv_doi")) == rec.doi:
+                    dois.add(norm_doi(entry.get("published_doi")))
+        except (OSError, ValueError, KeyError) as exc:
+            errors.append(f"{server}: {exc}")
+    if not dois and rec.authors and len(norm_title(rec.title)) >= 25:
+        try:
+            dois.update(matching_journal_dois(rec))
+            checked = True
+        except (OSError, ValueError, KeyError) as exc:
+            errors.append(f"Crossref title search: {exc}")
+    if not checked and not dois:
+        raise RuntimeError("; ".join(errors))
+    for error in errors:
+        print(f"Warning: {rec.doi}: {error}", file=sys.stderr)
+    return {doi for doi in dois if doi and doi != rec.doi and not is_preprint(doi)}
+
+
+def prefer_journal_versions(
+    records: Dict[str, Record], existing_dois: Set[str], existing_titles: Set[str],
+    known_versions: Dict[str, str],
+) -> Dict[str, Record]:
+    out = {doi: rec for doi, rec in records.items() if not rec.is_preprint}
+    journal_titles = existing_titles | {norm_title(rec.title) for rec in out.values()}
+    for rec in records.values():
+        if not rec.is_preprint:
+            continue
+        # Curated pairs also cover servers without version links in their metadata.
+        try:
+            versions = {known_versions[rec.doi]} if rec.doi in known_versions else published_dois(rec)
+        except RuntimeError as exc:
+            print(f"Warning: withholding unchecked preprint {rec.doi}: {exc}", file=sys.stderr)
+            continue
+        if not versions:
+            if norm_title(rec.title) not in journal_titles:
+                out[rec.doi] = rec
+            continue
+        for doi in sorted(versions):
+            if doi in existing_dois:
+                continue
+            tags = rec.source_tags | {"journal_version"}
+            if doi in out:
+                out[doi].source_tags.update(tags)
+                continue
+            try:
+                try:
+                    journal = record_from_crossref(crossref_work_from_doi(doi), tags)
+                except (OSError, ValueError, KeyError):
+                    work = openalex_work_from_doi(doi)
+                    location = work.get("primary_location") or {}
+                    if (location.get("source") or {}).get("type") != "journal":
+                        raise ValueError("Linked publication has no journal metadata")
+                    journal = record_from_openalex(work, tags)
+                if journal.is_preprint or journal.doi != doi or not journal.title or not journal.year:
+                    raise ValueError("Incomplete or inconsistent journal metadata")
+                out[doi] = journal
+                journal_titles.add(norm_title(journal.title))
+            except (OSError, ValueError, KeyError) as exc:
+                print(f"Warning: withholding published preprint {rec.doi}; cannot load {doi}: {exc}", file=sys.stderr)
+    # A later preprint may have resolved to a journal matching an earlier one.
+    return {doi: rec for doi, rec in out.items() if not rec.is_preprint or norm_title(rec.title) not in journal_titles}
 
 
 def openalex_citing_records(since_year: int) -> Dict[str, Record]:
@@ -109,26 +308,9 @@ def openalex_citing_records(since_year: int) -> Dict[str, Record]:
     data = http_json(url)
     out: Dict[str, Record] = {}
     for w in data.get("results", []):
-        doi = (w.get("doi") or "").replace("https://doi.org/", "").strip().lower()
-        if not doi:
-            continue
-        venue = ((w.get("primary_location") or {}).get("source") or {}).get("display_name", "")
-        authors = [
-            format_author_last_initials(a.get("author", {}).get("display_name", ""))
-            for a in (w.get("authorships") or [])
-            if a.get("author", {}).get("display_name")
-        ]
-        rec = Record(
-            doi=doi,
-            title=norm_ws(html.unescape(w.get("display_name", ""))),
-            year=int(w.get("publication_year") or 0),
-            authors=authors,
-            venue=venue,
-            url=f"https://doi.org/{doi}",
-            is_preprint=(w.get("type") == "preprint" or "biorxiv" in venue.lower() or "research square" in venue.lower()),
-            source_tags={"openalex_cites"},
-        )
-        out[doi] = rec
+        rec = record_from_openalex(w, {"openalex_cites"})
+        if rec.doi:
+            out[rec.doi] = rec
     return out
 
 
@@ -175,6 +357,8 @@ def main():
     args = ap.parse_args()
 
     existing_dois, existing_titles = parse_existing_rst(args.rst_path)
+    with PUBLICATION_VERSIONS_PATH.open(encoding="utf-8") as f:
+        known_versions = {norm_doi(preprint): norm_doi(journal) for preprint, journal in json.load(f).items()}
 
     cited = openalex_citing_records(args.since_year)
     method_dois = europepmc_method_dois(args.since_year)
@@ -193,26 +377,15 @@ def main():
         year = int(w.get("publication_year") or 0)
         if year < args.since_year:
             continue
-        venue = ((w.get("primary_location") or {}).get("source") or {}).get("display_name", "")
-        authors = [
-            format_author_last_initials(a.get("author", {}).get("display_name", ""))
-            for a in (w.get("authorships") or [])
-            if a.get("author", {}).get("display_name")
-        ]
-        merged[doi] = Record(
-            doi=doi,
-            title=norm_ws(html.unescape(w.get("display_name", ""))),
-            year=year,
-            authors=authors,
-            venue=venue,
-            url=f"https://doi.org/{doi}",
-            is_preprint=(w.get("type") == "preprint" or "biorxiv" in venue.lower() or "research square" in venue.lower()),
-            source_tags={"europepmc_methods"},
-        )
+        merged[doi] = record_from_openalex(w, {"europepmc_methods"})
+
+    # Resolve versions before novelty checks: even an existing preprint may now
+    # have a new journal version, with a different DOI, title, authors and year.
+    preferred = prefer_journal_versions(merged, existing_dois, existing_titles, known_versions)
 
     # Screen + novelty check
     candidates: List[Record] = []
-    for rec in merged.values():
+    for rec in preferred.values():
         if likely_confounder(rec.title, rec.venue):
             continue
         if rec.doi.lower() in existing_dois:

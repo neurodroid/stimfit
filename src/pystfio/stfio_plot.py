@@ -147,16 +147,13 @@ class Timeseries(object):
 
         return self.copy_attributes(result)
 
-    def __div__(self, other):
+    def __truediv__(self, other):
         if isinstance(other, Timeseries):
             result = self.data / other.data
         else:
             result = self.data / other
 
         return self.copy_attributes(result)
-
-    def __truediv__(self, other):
-        return self.__div__(other)
 
     def copy_attributes(self, data):
         return Timeseries(

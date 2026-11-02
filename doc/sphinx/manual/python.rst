@@ -5,6 +5,8 @@ The Python shell
 :Author: Christoph Schmidt-Hieber (christsc at gmx.de)
 :Date: |today|
 
+The embedded shell requires Python 3 and wxPython Phoenix.
+
 Why use Python?
 ===============
 Why would you want to use Python (or more specifically [SciPy]_ ) to analyse neuroscientific data? Here are a couple of reasons:

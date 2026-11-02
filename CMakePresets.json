@@ -204,7 +204,8 @@
         "STF_ENABLE_PYTHON": "OFF",
         "STF_WITH_BIOSIG": "OFF",
         "STF_BUILD_TESTS": "ON",
-        "STF_BUILD_NUMERIC_TESTS": "OFF"
+        "STF_BUILD_NUMERIC_TESTS": "ON",
+        "STF_TEST_WARNINGS_AS_ERRORS": "ON"
       }
     }
   ],
@@ -295,7 +296,8 @@
       "configurePreset": "ci-windows-msvc-smoke",
       "configuration": "Release",
       "targets": [
-        "stimfit_containers_test"
+        "stimfit_containers_test",
+        "stimfit_numeric_test"
       ]
     }
   ],

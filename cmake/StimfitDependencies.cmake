@@ -775,7 +775,7 @@ else()
 endif()
 
 if(STF_ENABLE_PYTHON)
-  find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+  find_package(Python3 3 COMPONENTS Interpreter Development REQUIRED)
   add_library(stimfit::python INTERFACE IMPORTED)
   target_include_directories(stimfit::python INTERFACE ${Python3_INCLUDE_DIRS})
   target_link_libraries(stimfit::python INTERFACE ${Python3_LIBRARIES})

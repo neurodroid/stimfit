@@ -12,6 +12,10 @@ Use the platform helper script that matches your environment:
 
 These scripts are thin wrappers around CMake presets and cache options. They standardize the repository's preferred configure, build, install, and packaging steps so local builds follow the same structure as current CI and migration work.
 
+Python integration requires Python 3 and wxPython Phoenix. Python 2 build and
+packaging workflows have been removed. The standalone `stfio` package requires
+Python 3.9 or newer, as specified in `pyproject.toml`.
+
 ## Python package builds (`stfio`)
 
 The standalone `stfio` module can now be targeted through [`pyproject.toml`](pyproject.toml) using a CMake-backed `pip` build flow. This is intended for the Stimfit-independent file I/O module only, not the full Stimfit GUI application.
@@ -19,8 +23,8 @@ The standalone `stfio` module can now be targeted through [`pyproject.toml`](pyp
 Example local build commands:
 
 ```bash
-python -m pip install .
-python -m pip wheel .
+python3 -m pip install .
+python3 -m pip wheel .
 ```
 
 Use a Python interpreter that provides development headers for CMake discovery. On macOS, the system or Xcode-provided Python may be insufficient for native builds; a framework or package-manager Python is typically required.
@@ -143,6 +147,13 @@ What the script does:
 - verifies that `stimfit.app` was produced successfully
 
 This is the preferred path for modern macOS builds because it centralizes bundle layout and runtime-path handling in the CMake toolchain.
+
+The macOS helper prefers Ninja when it is available on `PATH` and falls back to
+Unix Makefiles otherwise. Makefiles builds use a separate default build directory
+with a `-makefiles` suffix (for example, `build/macos-app-makefiles`) and install
+under that directory. You can also select Makefiles explicitly with
+`./build_macos_cmake.sh --generator "Unix Makefiles"`. An explicit `--build-dir`
+must use the same generator as any existing CMake cache in that directory.
 
 ## Windows (MSVC)
 

@@ -41,14 +41,8 @@
 #endif
 
 #ifdef WITH_PYTHON
-    #if PY_MAJOR_VERSION >= 3
-        #include "../sip.h"
-        #include <wxPython/wxpy_api.h>
-        #define PyInt_FromLong PyLong_FromLong
-        #define PyString_AsString PyBytes_AsString
-    #else
-        #include <wx/wxPython/wxPython.h>
-    #endif
+    #include "../sip.h"
+    #include <wxPython/wxpy_api.h>
 #endif
 
 // revert to previous behaviour
@@ -95,20 +89,12 @@ std::vector< std::vector< Vector_double > > gMatrix;
 std::vector< std::string > gNames;
 double _figsize[] = {8.0,6.0};
 
-#if PY_MAJOR_VERSION >= 3
 int wrap_array() {
 #ifdef WITH_PYTHON
     import_array1(-1);
 #endif
     return 0;
 }
-#else
-void wrap_array() {
-#ifdef WITH_PYTHON
-    import_array();
-#endif
-}
-#endif
 
 void ShowExcept(const std::exception& e) {
     wxString msg;
@@ -512,7 +498,7 @@ PyObject* get_selected_indices() {
     c_st_it cit;
     int n=0;
     for ( cit = actDoc()->GetSelectedSections().begin(); cit != actDoc()->GetSelectedSections().end(); ++cit ) {
-        PyTuple_SetItem(retObj, n++, PyInt_FromLong( (long)*cit ) );
+        PyTuple_SetItem(retObj, n++, PyLong_FromLong( (long)*cit ) );
     }
 
     // The main program apparently takes the ownership of the tuple;
@@ -1810,7 +1796,12 @@ bool show_table( PyObject* dict, const char* caption ) {
             ShowError( wxT("Couldn't read from dictionary in ShowTable().") );
             return false;
         }
-        std::string key = PyString_AsString( pkey );
+        const char* key = PyUnicode_AsUTF8( pkey );
+        if ( !key ) {
+            PyErr_Clear();
+            ShowError( wxT("Dictionary keys in show_table() must be Python strings.") );
+            return false;
+        }
         double value = PyFloat_AsDouble( pvalue );
         pyMap[key] = value;
     }
@@ -1847,7 +1838,13 @@ bool show_table_dictlist( PyObject* dict, const char* caption, bool reverse ) {
             ShowError( wxT("Couldn't read from dictionary in ShowTable().") );
             return false;
         }
-        pyStrings.push_back(PyString_AsString( pkey ));
+        const char* key = PyUnicode_AsUTF8( pkey );
+        if ( !key ) {
+            PyErr_Clear();
+            ShowError( wxT("Dictionary keys in show_table_dictlist() must be Python strings.") );
+            return false;
+        }
+        pyStrings.push_back(key);
         if ( !PyList_Check( pvalue ) ) {
             ShowError( wxT("Dictionary values are not (consistently) lists.") );
             return false;

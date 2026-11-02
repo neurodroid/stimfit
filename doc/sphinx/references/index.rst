@@ -33,16 +33,18 @@ References
 
     * `Gutmann N, Häussler U, Mersi A, et al. (2026) <https://doi.org/10.3389/fncel.2026.1714586>`_ Increased dendritic inhibition of dentate gyrus granule cells in a mouse model of Down syndrome. *Front Cell Neurosci* 20:1714586.
 
-    * `Aaltonen A, Razquin Lizarraga J, Oyrer J, et al. (2026) <https://doi.org/10.64898/2026.03.04.709616>`_ Altered striatal long-term potentiation in the eIF4E-TG ASD mouse model. *bioRxiv* [preprint].
-
     * `García-Baena I, Sanz-Rubio D, Belmonte C, et al. (2026) <https://doi.org/10.1371/journal.pone.0339890>`_ A novel methodology to characterize beat-to-beat alternations in whole-cell calcium currents. *PLoS One* 21(1):e0339890.
     * `Guinet A, Behr J, Vida I, Grosser S (2026) <https://doi.org/10.1002/hipo.70081>`_ Spatial Organization of Morpho‐Electric Subtypes of Pyramidal Neuron in the Subiculum. *Hippocampus*.
     * `Wilson MA, Sumera A, Berk E, Booker SA (2026) <https://doi.org/10.3389/fphar.2025.1640921>`_ Elevated somatostatin interneuron long-term potentiation minimally regulates temporoammonic plasticity in a mouse model of Fragile X Syndrome. *Frontiers in Pharmacology*.
+
+    * `Aaltonen A, Razquin J, Garton DR, Oyrer J, et al. (2026) <https://doi.org/10.1016/j.isci.2026.117278>`_ Altered striatal long-term potentiation in the eIF4E-TG mouse model of autism spectrum disorder. *iScience*.
 
 
 ====
 2025
 ====
+
+    * `Watson JF, Vargas-Barroso V, Jonas P (2025) <https://doi.org/10.1016/j.celrep.2025.116080>`_ Cell-specific wiring routes information flow through hippocampal CA3. *Cell Rep* 44(8):116080.
 
     * `Wilson MA, Sumera A, Taylor LW, et al. (2025) <https://doi.org/10.1038/s41467-025-59262-8>`_ Phylogenetic divergence of GABAB receptor signaling in neocortical networks over adult life. *Nat Comm* 16:59262.
 
@@ -55,10 +57,6 @@ References
     * `Potts Y, Daykin H, Van Den Bossche M, et al. (2025) <https://doi.org/10.1177/13872877251393515>`_ Characterization of locus coeruleus neuronal properties with aging in two mouse models of tauopathy. *J Alzheimers Dis* 105(1):325-342.
 
     * `Quadir SG, Zaidi S, Cone MG, et al. (2025) <https://doi.org/10.1016/j.addicn.2025.100237>`_ Alcohol withdrawal alters the inhibitory landscape of the prelimbic cortex in an interneuron- and sex-specific manner. *Addict Neurosci* 8:100237.
-
-    * `Aaltonen A, Tamaki A, Peris Ramon A, et al. (2025) <https://doi.org/10.1101/2025.01.18.633694>`_ Postnatal reduction of eIF4E overexpression in D1-SPNs ameliorates KCNQ dysfunction, hyperexcitability and ASD-like behaviours. *bioRxiv* [preprint].
-
-    * `Wang FC, Bouquiaux O, Lievens I, et al. (2025) <https://doi.org/10.21203/rs.3.rs-6382511/v1>`_ Analysis of a rare pathogenic variant of the SCN4A gene (c.4307T>C, L1436P): from clinic to patch-clamp. *Research Square* [preprint].
 
     * `Katsanevaki D, Dupuy N, Booker SA, et al. (2025) <https://doi.org/10.1101/2025.04.09.647923>`_ Noradrenergic-dependent restoration of visual discrimination in a mouse model of SYNGAP1-related disorder. *bioRxiv* [preprint].
     * `Knops MJ, Meftah S, Wilson MA, Taylor LW, et al. (2025) <https://doi.org/10.1101/2025.10.14.682273>`_ FMRP regulates adult human cortical neuron excitability via cyclic-AMP signalling. *bioRxiv* [preprint].
@@ -101,12 +99,6 @@ References
 
     * `Lawal OO, Ulloa Severino FP, Wang S, et al. (2024) <https://doi.org/10.1101/2024.03.01.582935>`_ Astrocytic thrombospondins 1 and 2 are required for cortical synapse development controlling instrumental performance. *bioRxiv* [preprint].
 
-
-    * `Watson JF, Vargas-Barroso V, Jónás P (2024) <https://doi.org/10.1101/2024.06.24.600436>`_ Cell-specific wiring routes information flow through hippocampal CA3. *bioRxiv* [preprint].
-
-    * `Wilson MA, Taylor LW, Meftah S, et al. (2024) <https://doi.org/10.1101/2024.06.04.597285>`_ Phylogenetic divergence of GABA B receptor signalling in neocortical networks over adult life. *bioRxiv* [preprint].
-
-
     * `Jehasse K, Jouhanneau JS, Wetz S, Schwedt A, et al. (2024) <https://doi.org/10.1038/s41598-024-51837-7>`_ Immediate reuse of patch-clamp pipettes after ultrasonic cleaning. *Scientific Reports*.
     * `Irala D, Wang S, Sakers K, Nagendren L, et al. (2024) <https://doi.org/10.1016/j.neuron.2024.03.007>`_ Astrocyte-secreted neurocan controls inhibitory synapse formation and function. *Neuron*.
     * `Winchester G, Steele OG, Liu S, Chagas AM, et al. (2024) <https://doi.org/10.3389/fninf.2024.1427642>`_ Reproducible supervised learning-assisted classification of spontaneous synaptic waveforms with Eventer. *Front Neuroinform*.
@@ -132,8 +124,6 @@ References
 
     * `Velicky P, Miguel E, Michalska JM, Lyudchik J, et al. (2023) <https://doi.org/10.1038/s41592-023-01936-6>`_ Dense 4D nanoscale reconstruction of living brain tissue. *Nature Methods*.
 
-    * `Guarina L, Le J, Griffith TN, Santana LF, et al. (2023) <https://doi.org/10.1101/2023.05.06.539660>`_ SanPy: A whole-cell electrophysiology analysis pipeline. *bioRxiv* [preprint].
-
     * `Buchholz MO, Guilabert AG, Ehret B, Schuhknecht GFP (2023) <https://doi.org/10.1371/journal.pcbi.1011046>`_ How synaptic strength, short-term plasticity, and input synchrony contribute to neuronal spike output. *PLoS Computational Biology*.
 
     * `Vyleta NP, Snyder JS (2023) <https://doi.org/10.1038/s42003-023-04678-5>`_ Enhanced excitability but mature action potential waveforms at mossy fiber terminals of young, adult-born hippocampal neurons in mice. *Communications Biology*.
@@ -153,8 +143,6 @@ References
 
     * `Asiminas A, Booker SA, Dando O, Kozić Z, et al. (2022) <https://doi.org/10.1186/s13229-022-00528-z>`_ Experience-dependent changes in hippocampal spatial activity and hippocampal circuit function are disrupted in a rat model of Fragile X Syndrome. *Molecular Autism*.
 
-    * `Traunmüller L, Schulz JM, Ortiz R, Feng H, et al. (2022) <https://doi.org/10.1101/2022.12.07.519444>`_ Trans-cellular control of synapse properties by a cell type-specific splicing regulator. *bioRxiv* [preprint].
-
     * `Hüwel JD, Gresch A, Berns F, Koch R, et al. (2022) <https://doi.org/10.1109/dsaa54385.2022.10032339>`_ Tracing Patterns in Electrophysiological Time Series Data. *2022 IEEE 9th International Conference on Data Science and Advanced Analytics (DSAA)*.
 
     * `Hu M, Jiang X (2022) <https://doi.org/10.21105/joss.04706>`_ PatchView: A Python Package for Patch-clamp DataAnalysis and Visualization. *The Journal of Open Source Software*.
@@ -162,8 +150,6 @@ References
     * `Wang Y, Chiola S, Yang G, Russell C, et al. (2022) <https://doi.org/10.1038/s41467-022-33364-z>`_ Modeling human telencephalic development and autism-associated SHANK3 deficiency using organoids generated from single neural rosettes. *Nat Comm*.
 
     * `Chowdhury A, Luchetti A, Fernandes G, Filho DA, et al. (2022) <https://doi.org/10.1016/j.neuron.2022.08.001>`_ A locus coeruleus-dorsal CA1 dopaminergic circuit modulates memory linking. *Neuron*.
-
-    * `de Oliveira LS, O’Leary H, Nawaz M, Loureiro R, et al. (2022) <https://doi.org/10.21203/rs.3.rs-1907296/v1>`_ Enhanced hippocampal LTP but typical NMDA receptor and AMPA receptor function in a novel rat model of CDKL5 deficiency disorder. *Research Square* [preprint].
 
     * `Ben‐Simon Y, Kaefer K, Velicky P, Csicsvari J, et al. (2022) <https://doi.org/10.1038/s41467-022-32559-8>`_ A direct excitatory projection from entorhinal layer 6b neurons to the hippocampus contributes to spatial coding and memory. *Nat Comm*.
 
@@ -181,15 +167,12 @@ References
 
     * `Voss L, Bartos M, Elgueta C, Sauer J (2022) <https://doi.org/10.1038/s41598-022-09003-4>`_ Interneuron function and cognitive behavior are preserved upon postnatal removal of Lhx6. *Scientific Reports*.
 
-    * `Velicky P, Miguel E, Michalska JM, Wei D, et al. (2022) <https://doi.org/10.1101/2022.03.16.484431>`_ Saturated reconstruction of living brain tissue. *bioRxiv* [preprint].
-
     * `Balmer TS, Trussell LO (2022) <https://doi.org/10.1523/jneurosci.1190-21.2022>`_ Descending Axonal Projections from the Inferior Colliculus Target Nearly All Excitatory and Inhibitory Cell Types of the Dorsal Cochlear Nucleus. *J Neurosci*.
 
     * `Elmasri M, Hunter D, Winchester G, Bates EE, et al. (2022) <https://doi.org/10.1038/s42003-022-03115-3>`_ Common synaptic phenotypes arising from diverse mutations in the human NMDA receptor subunit GluN2A. *Communications Biology*.
 
     * `Degro CE, Bolduan F, Vida I, Booker SA (2022) <https://doi.org/10.1002/hipo.23408>`_ Interneuron diversity in the rat dentate gyrus: An unbiased in vitro classification. *Hippocampus*.
 
-    * `Ben‐Simon Y, Kaefer K, Velicky P, Csicsvari J, et al. (2022) <https://doi.org/10.1101/2022.01.26.477814>`_ Entorhinal layer 6b subplate neurons govern spatial learning and memory. *bioRxiv* [preprint].
     * `Li S, Damonte VM, Chen C, Wang G, et al. (2022) <https://doi.org/10.1126/science.abh3021>`_ Hyperexcitable arousal circuits drive sleep instability during aging. *Science*.
     * `Sabaté‐Soler S, Nickels S, Saraiva C, Berger E, et al. (2022) <https://doi.org/10.1002/glia.24167>`_ Microglia integration into human midbrain organoids leads to increased neuronal maturation and functionality. *Glia*.
 
@@ -214,8 +197,6 @@ References
 
     * `Kim YG, Shin JJ, Kim SJ (2021) <https://doi.org/10.1186/s13041-021-00847-x>`_ Minhee Analysis Package: an integrated software package for detection and management of spontaneous synaptic events. *Molecular Brain*.
 
-    * `Fleming W, Lee J, Briones BA, Bolkan SS, et al. (2021) <https://doi.org/10.1101/2021.08.29.458113>`_ Cholinergic interneurons mediate cocaine extinction through similar plasticity across medium spiny neuron subtypes. *bioRxiv* [preprint].
-
     * `Kim S, Guzman SJ, Jo DH, Cho CS, et al. (2021) <https://doi.org/10.1007/s00424-021-02612-4>`_ Giant Y79 retinoblastoma cells contain functionally active T-type calcium channels. *Pflügers Archiv - European Journal of Physiology*.
 
     * `Rupprecht P, Carta S, Hoffmann A, Echizen M, et al. (2021) <https://doi.org/10.1038/s41593-021-00895-5>`_ A database and deep learning toolbox for noise-optimized, generalized spike inference from calcium imaging. *Nature Neuroscience*.
@@ -231,17 +212,11 @@ References
 
     * `de Oliveira LS, Sumera A, Booker SA (2021) <https://doi.org/10.1016/j.xpro.2021.100336>`_ Repeated whole-cell patch-clamp recording from CA1 pyramidal cells in rodent hippocampal slices followed by axon initial segment labeling. *STAR Protocols*.
 
-    * `Wang Y, Chiola S, Yang G, Russell C, et al. (2021) <https://doi.org/10.1101/2021.01.25.428022>`_ Modeling autism-associated SHANK3 deficiency using human cortico-striatal organoids generated from single neural rosettes. *bioRxiv* [preprint].
-
     * `Zoupi L, Booker SA, Eigel D, Werner C, et al. (2021) <https://doi.org/10.1007/s00401-020-02258-z>`_ Selective vulnerability of inhibitory networks in multiple sclerosis. *Acta Neuropathologica*.
 
     * `Holler S, Köstinger G, Martin KA, Schuhknecht GFP, et al. (2021) <https://doi.org/10.1038/s41586-020-03134-2>`_ Structure and function of a neocortical synapse. *Nature*.
 
-    * `Courtney CD, Sobieski C, Ramakrishnan C, Ingram RJ, et al. (2021) <https://doi.org/10.1101/2021.01.06.425606>`_ Evaluating the efficacy of Optoα1AR activation in astrocytes in modulating basal hippocampal synaptic excitation and inhibition. *bioRxiv* [preprint].
-
-    * `Sammons RP, Tzilivaki A, Schmitz D (2021) <https://doi.org/10.1093/cercor/bhab195>`_ OUP accepted manuscript. *Cerebral Cortex*.
-
-    * `Chowdhury A, Luchetti A, Fernandes G, Filho DA, et al. (2021) <https://doi.org/10.2139/ssrn.3985190>`_ A Locus Coeruleus- Dorsal CA1 Dopaminergic Circuit Modulates Memory Linking. *SSRN Electronic Journal*.
+    * `Sammons RP, Tzilivaki A, Schmitz D (2021) <https://doi.org/10.1093/cercor/bhab195>`_ Local Microcircuitry of PaS Shows Distinct and Common Features of Excitatory and Inhibitory Connectivity. *Cerebral Cortex* 32(1):76-92.
 
 ====
 2020
@@ -249,24 +224,12 @@ References
 
     * `McCabe MP, Shore AN, Frankel WN, Weston MC (2020) <https://doi.org/10.1523/eneuro.0269-20.2020>`_ Altered Fast Synaptic Transmission in a Mouse Model of DNM1-Associated Developmental Epileptic Encephalopathy. *eNeuro*.
 
-    * `Sammons RP, Tzilivaki A, Schmitz D (2020) <https://doi.org/10.1101/2020.12.18.423400>`_ Local microcircuitry of parasubiculum shows distinct and common features of excitatory and inhibitory connectivity. *bioRxiv* [preprint].
-
     * `Yasuda H, Yamamoto H, Hanamura K, Mehruba M, et al. (2020) <https://doi.org/10.1038/s42003-020-01435-w>`_ PKN1 promotes synapse maturation by inhibiting mGluR-dependent silencing through neuronal glutamate transporter activation. *Communications Biology*.
-
-    * `Vandael D, Okamoto Y, Jónás P (2020) <https://doi.org/10.1101/2020.10.25.353953>`_ Transsynaptic modulation of presynaptic short-term plasticity induction in hippocampal mossy fiber synapses. *bioRxiv* [preprint].
-
-    * `Zoupi L, Booker SA, Eigel D, Werner C, et al. (2020) <https://doi.org/10.1101/2020.09.17.302042>`_ Demyelination induces selective vulnerability of inhibitory networks in multiple sclerosis. *bioRxiv* [preprint].
-
-    * `Rupprecht P, Carta S, Hoffmann A, Echizen M, et al. (2020) <https://doi.org/10.1101/2020.08.31.272450>`_ Database and deep learning toolbox for noise-optimized, generalized spike inference from calcium imaging. *bioRxiv* [preprint].
-
-    * `Anstey N, Kapgal V, Tiwari S, Watson TC, et al. (2020) <https://doi.org/10.1101/2020.08.27.267880>`_ Imbalance of flight-freeze responses and their cellular correlates in the Nlgn3 -/y rat model of autism. *bioRxiv* [preprint].
 
     * `Zhang X, Schlögl A, Jónás P (2020) <https://doi.org/10.1016/j.neuron.2020.07.006>`_ Selective Routing of Spatial Information Flow from Input to Output in Hippocampal Granule Cells. *Neuron*.
 
 
     * `Booker SA, de Oliveira LS, Anstey N, Kozić Z, et al. (2020) <https://doi.org/10.1016/j.celrep.2020.107988>`_ Input-Output Relationship of CA1 Pyramidal Neurons Reveals Intact Homeostatic Mechanisms in a Mouse Model of Fragile X Syndrome. *Cell Rep*.
-
-    * `Lodge M, Hernandez M, Schulz JM, Bischofberger J (2020) <https://doi.org/10.1101/2020.07.22.216200>`_ Sparsification of AP firing in adult-born hippocampal granule cells via voltage-dependent α5-GABA A receptors. *bioRxiv* [preprint].
 
     * `Rajaram E, Pagella S, Grothe B, Kopp‐Scheinpflug C (2020) <https://doi.org/10.1152/jn.00053.2020>`_ Physiological and anatomical development of glycinergic inhibition in the mouse superior paraolivary nucleus following hearing onset. *Journal of Neurophysiology*.
 
@@ -292,11 +255,7 @@ References
 
     * `Peng Y, Mittermaier FX, Planert H, Schneider UC, et al. (2019) <https://doi.org/10.7554/elife.48178>`_ High-throughput microcircuit analysis of individual human brains through next-generation multineuron patch-clamp. *eLife*.
 
-    * `Eguchi K, Velicky P, Hollergschwandtner E, Itakura M, et al. (2019) <https://doi.org/10.1101/845461>`_ Advantages of acute brain slices prepared at physiological temperature in characterization of synaptic functions. *bioRxiv* [preprint].
-
     * `Brebner LS, Ziminski JJ, Margetts‐Smith G, Sieburg MC, et al. (2019) <https://doi.org/10.1523/jneurosci.1496-19.2019>`_ The Emergence of a Stable Neuronal Ensemble from a Wider Pool of Activated Neurons in the Dorsal Medial Prefrontal Cortex during Appetitive Learning in Mice. *J Neurosci*.
-
-    * `Blockus H, Rolotti SV, Szoboszlay M, Ming T, et al. (2019) <https://doi.org/10.1101/840710>`_ Synaptogenic activity of the axon guidance molecule Robo2 is critical for hippocampal circuit function. *bioRxiv* [preprint].
 
     * `Sieburg MC, Ziminski JJ, Margetts‐Smith G, Reeve HM, et al. (2019) <https://doi.org/10.1523/eneuro.0338-19.2019>`_ Reward Devaluation Attenuates Cue-Evoked Sucrose Seeking and Is Associated with the Elimination of Excitability Differences between Ensemble and Non-ensemble Neurons in the Nucleus Accumbens. *eNeuro*.
 

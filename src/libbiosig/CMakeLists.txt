@@ -113,6 +113,15 @@ set(_stf_biosig_sources
   ${STF_BIOSIG4CPP_DIR}/string_isutf8.c
 )
 
+# BioSig's decoder uses a non-static inline definition without an external
+# definition. C11 leaves decode unresolved when optimization does not inline it;
+# GNU inline semantics emit the definition, including in unoptimized builds.
+if(CMAKE_C_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang)$")
+  set_property(SOURCE ${STF_BIOSIG4CPP_DIR}/string_isutf8.c APPEND PROPERTY
+    COMPILE_OPTIONS -fgnu89-inline
+  )
+endif()
+
 if(WIN32)
   list(APPEND _stf_biosig_sources
     ${STF_BIOSIG4CPP_DIR}/win32/getdelim.c

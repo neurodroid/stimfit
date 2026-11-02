@@ -43,16 +43,10 @@
 
 #include "pystfio.h"
 
-#if PY_MAJOR_VERSION >= 3
 int wrap_array() {
     import_array();
     return 0;
 }
-#else
-void wrap_array() {
-    import_array();
-}
-#endif
 
 stfio::filetype gettype(const std::string& ftype) {
     stfio::filetype stftype = stfio::none;

@@ -18,12 +18,7 @@
 
 #define array_data(a)          PyArray_DATA((PyArrayObject*)a)
 
-#if PY_MAJOR_VERSION >= 3
-int
-#else
-void
-#endif
-wrap_array();
+int wrap_array();
 
 stfio::filetype gettype(const std::string& ftype);
 bool _read(const std::string& filename, const std::string& ftype, bool verbose, Recording& Data);

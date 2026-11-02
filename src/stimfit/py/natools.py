@@ -4,7 +4,6 @@ Batch analysis of Na IVs
 """
 
 import numpy as np
-from scipy.io import write_array
 
 def dens_batch( nFunc = 0 ):
     """Fits activation and inactivation of 15 iv pulses
@@ -72,7 +71,7 @@ def dens_batch( nFunc = 0 ):
     # Create an empty list:
     tempdict_entry = []
     row = 0
-    for k, v in p_dict.iteritems():
+    for k, v in p_dict.items():
         dict_keys.append( k )
         dict_values[row][0] = v 
         row = row+1
@@ -189,7 +188,7 @@ def act_batch( nFunc = 5, filename="", lat=60 ):
         # Create an empty list:
         tempdict_entry = []
         row = 0
-        for k, v in p_dict.iteritems():
+        for k, v in p_dict.items():
             if ( firstpass == True ):
                 dict_keys.append( k )
             dict_values[row][n] = v 
@@ -203,7 +202,7 @@ def act_batch( nFunc = 5, filename="", lat=60 ):
     
     
     if not filename=="":
-        write_array(file(filename,'w'), ls_file, precision=15)
+        np.savetxt(filename, ls_file, fmt='%.15g')
 
     retDict = dict()
     # Create the dictionary for the table:
@@ -356,7 +355,7 @@ def deact_batch( filename="" ):
         # Create an empty list:
         tempdict_entry = []
         row = 0
-        for k, v in p_dict.iteritems():
+        for k, v in p_dict.items():
             if ( firstpass == True ):
                 mono_keys.append( k )
             mono_values[row][n] = v 
@@ -411,7 +410,7 @@ def deact_batch( filename="" ):
         # Create an empty list:
         tempdict_entry = []
         row = 0
-        for k, v in p_dict.iteritems():
+        for k, v in p_dict.items():
             if ( firstpass == True ):
                 bi_keys.append( k )
             bi_values[row][n-gNMono] = v 
@@ -428,7 +427,7 @@ def deact_batch( filename="" ):
         entry = entry+1
 
     if not filename=="":
-        write_array(file(filename,'w'), ls_file, precision=15)
+        np.savetxt(filename, ls_file, fmt='%.15g')
    
     if ( not(stf.show_table_dictlist( biDict )) ):
         return False
