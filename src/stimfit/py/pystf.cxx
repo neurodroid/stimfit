@@ -2011,5 +2011,8 @@ PyObject* mpl_panel(const std::vector<double>& figsize) {
     PyObject* result = parent->MakePythonWindow("makeWindowMpl", mpl_name.str(), "Matplotlib",
                                                 true, false, true, width, height, figsize[0], figsize[1]).pyWindow;
 
+    // MakePythonWindow retains only the window's reference; Python callers
+    // need their own reference to the returned panel.
+    Py_XINCREF(result);
     return result;
 }
