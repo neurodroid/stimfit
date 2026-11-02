@@ -283,6 +283,18 @@ def check_snapshot():
                 tool = scale_toolbar.FindToolByIndex(index)
                 if tool.GetLabel() in ("Ch 1", "Ch 2"):
                     scale_toolbar.ToggleTool(tool.GetId(), tool.GetLabel() == "Ch 1" or channels > 1)
+            # The first graph paint restores saved zoom settings. Finish it
+            # before Fit so initialization cannot overwrite the fitted bounds.
+            active_child = main_window.GetActiveChild()
+            assert active_child is not None, "Opened EDF has no active child frame"
+            active_child.Layout()
+            graphs = [window for window in descendants(active_child)
+                      if isinstance(window, wx.ScrolledWindow)]
+            assert graphs, "Active child has no recording graph"
+            for graph in graphs:
+                graph.Refresh()
+                graph.Update()
+            wx.YieldIfNeeded()
             fit_command = wx.CommandEvent(wx.wxEVT_TOOL, fit_id)
             fit_command.SetEventObject(scale_toolbar)
             assert main_window.GetEventHandler().ProcessEvent(fit_command), "Fit command was not handled"
