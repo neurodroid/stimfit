@@ -77,7 +77,7 @@ class MplPanel(wx.Panel):
             tsl2 = [stfio_plot.Timeseries(stf.get_trace(trace=-1, channel=stf.get_channel_index(False)),
                                           stf.get_sampling_interval(),
                                           yunits = stf.get_yunits(trace=-1, channel=stf.get_channel_index(False)),
-                                          color='r', linestyle='-r')]
+                                          color='r', linestyle='-')]
             stfio_plot.plot_traces(tsl, traces2=tsl2, ax=self.axes, textcolor2 = 'r',
                                    xmin=stf.plot_xmin(), xmax=stf.plot_xmax(),
                                    ymin=stf.plot_ymin(), ymax=stf.plot_ymax(), 

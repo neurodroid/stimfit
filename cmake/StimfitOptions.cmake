@@ -12,9 +12,11 @@ set_property(CACHE STF_PY_SHELL_BACKEND PROPERTY STRINGS MODERN LEGACY JUPYTER)
 option(STF_WINDOWS_COPY_PYTHON_RUNTIME "Copy Python runtime DLL to install/bin on Windows" ON)
 option(STF_WINDOWS_COPY_PYTHON_STDLIB "Copy Python standard library to install/bin/Lib on Windows" ON)
 option(STF_WINDOWS_COPY_PYTHON_DLLS "Copy Python DLLs directory to install/bin/DLLs on Windows" ON)
-option(STF_WINDOWS_COPY_PYTHON_SITE_PACKAGES "Copy selected Python site-packages into install/stf-site-packages on Windows" ON)
+option(STF_WINDOWS_COPY_PYTHON_SITE_PACKAGES "Copy selected Python site-packages into install/bin/stf-site-packages on Windows" ON)
 option(STF_WINDOWS_PYTHON_FULL_REFRESH "Force full per-file refresh/check for stdlib and stf-site-packages on install (slower, but picks up source changes)" OFF)
-set(STF_WINDOWS_PYTHON_SITE_PACKAGES "numpy;wx" CACHE STRING "Semicolon-separated Python packages copied to install/stf-site-packages on Windows")
+# Include the snapshot backend and all of Matplotlib's runtime dependencies.
+# These are import names (for example PIL is provided by the Pillow wheel).
+set(STF_WINDOWS_PYTHON_SITE_PACKAGES "numpy;wx;matplotlib;contourpy;cycler;dateutil;fontTools;kiwisolver;packaging;PIL;pyparsing;six" CACHE STRING "Semicolon-separated required Python modules copied to install/bin/stf-site-packages on Windows")
 set(STF_WINDOWS_PYTHON_EXTRA_PATHS "" CACHE STRING "Semicolon-separated extra Python import paths (e.g. local Phoenix checkout root)")
 set(STF_WXPYTHON_INCLUDE_DIR "" CACHE PATH "Path containing wxPython/wxpy_api.h (e.g. <Phoenix>/wx/include)")
 option(STF_PYTHON_PACKAGE_INSTALL "Install Python artifacts into a wheel-friendly package layout" OFF)

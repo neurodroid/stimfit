@@ -199,6 +199,26 @@ fast when the submodule HEAD differs from that tag's commit.
 
 ### Windows Python refresh behavior
 
+The Python-enabled Windows preset bundles `numpy`, `wxPython`, and Matplotlib
+with its runtime dependencies so the snapshot toolbar button works on a clean
+computer. Install Matplotlib into the Python interpreter used for the build
+before configuring:
+
+```powershell
+& 'C:/Program Files/Python314/python.exe' -m pip install matplotlib 'python-dateutil<3'
+```
+
+The bundled module selection supports the python-dateutil 2.x dependency
+set, including `six`; retain the version constraint when installing wheels.
+Alternatively, install those wheels into a separate directory with
+`pip install --target <directory> matplotlib 'python-dateutil<3'` and append that directory to
+`STF_WINDOWS_PYTHON_EXTRA_PATHS`, preserving any Phoenix checkout path needed by
+the build. `STF_WINDOWS_PYTHON_SITE_PACKAGES` contains Python import names;
+`PIL`, `dateutil`, and `fontTools` are provided by the Pillow, python-dateutil,
+and fonttools distributions. Configuration fails if a selected module is
+missing. Each module's companion DLL directories and distribution metadata
+(including wheel licenses) are copied from the same source directory.
+
 For Python-enabled Windows installs, the CMake cache option `STF_WINDOWS_PYTHON_FULL_REFRESH` controls how stdlib and `stf-site-packages` are synchronized:
 
 - `OFF` (default): fast mode. Install skips repeated deep per-file up-to-date checks by using a signature marker and only refreshes when relevant source roots/package selection change.
@@ -215,6 +235,24 @@ cmake --preset vs2022-vcpkg-wx-hdf5-python314-biosig-patched -DSTF_WINDOWS_PYTHO
 ```
 
 Python runtime DLL handling is unchanged by this option.
+
+The package-selection regression can also run without building Stimfit:
+
+```powershell
+cmake -P cmake/tests/python_packages.cmake
+```
+
+After installing a Python-enabled Windows build, check the snapshot toolbar
+against the installed runtime:
+
+```powershell
+./cmake/tests/check-windows-snapshot.ps1 -InstallRoot <install-directory> -CheckDirectory <results-directory> -ExpectedVersion (Get-Content VERSION)
+```
+
+This opens the installed application with external Python paths cleared,
+creates snapshots of calibrated one- and two-channel recordings through the
+toolbar, and checks the rendered PNGs. The test restores the startup hook and
+environment after closing its application instance.
 
 ## Manual CMake usage
 

@@ -164,7 +164,7 @@
         "STF_PY_SHELL_BACKEND": "MODERN",
         "STF_WINDOWS_COPY_PYTHON_RUNTIME": "ON",
         "STF_WINDOWS_COPY_PYTHON_SITE_PACKAGES": "ON",
-        "STF_WINDOWS_PYTHON_SITE_PACKAGES": "numpy;wx",
+        "STF_WINDOWS_PYTHON_SITE_PACKAGES": "numpy;wx;matplotlib;contourpy;cycler;dateutil;fontTools;kiwisolver;packaging;PIL;pyparsing;six",
         "STF_WINDOWS_PYTHON_EXTRA_PATHS": "C:/Users/C02380/libs/Phoenix",
         "STF_WXPYTHON_INCLUDE_DIR": "C:/Users/C02380/libs/Phoenix/wx/include",
         "SWIG_EXECUTABLE": "C:/Users/C02380/AppData/Local/Microsoft/WinGet/Packages/SWIG.SWIG_Microsoft.Winget.Source_8wekyb3d8bbwe/swigwin-4.4.1/swig.exe",

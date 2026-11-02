@@ -553,6 +553,22 @@ wxStfParentType(manager, frame, wxID_ANY, title, pos, size, type, _T("myFrame"))
                  << wxT("    win = ") << STF_PY_SHELL_MODULE << wxT(".MyPanel(parent)\n")
                  << wxT("    return win\n")
                  << wxT("\n")
+                 << wxT("def plotWindowMpl(parent, figsize=(8,6)):\n")
+                 << wxT("    import embedded_mpl\n")
+                 << wxT("    win = embedded_mpl.MplPanel(parent, figsize)\n")
+                 << wxT("    win.plot_screen()\n")
+                 << wxT("    return win\n")
+                 << wxT("\n")
+                 << wxT("def spectrumWindowMpl(parent, figsize=(8,6)):\n")
+                 << wxT("    import embedded_mpl\n")
+                 << wxT("    win = embedded_mpl.MplPanel(parent, figsize)\n")
+                 << wxT("    win.plot_spectrum()\n")
+                 << wxT("    return win\n")
+                 << wxT("\n")
+                 << wxT("def makeWindowMpl(parent, figsize=(8,6)):\n")
+                 << wxT("    import embedded_mpl\n")
+                 << wxT("    win = embedded_mpl.MplPanel(parent, figsize)\n")
+                 << wxT("    return win\n")
     ;
     /*  The window remains open after the main application has been closed; deactivated for the time being.
      *  RedirectStdio();
@@ -1636,7 +1652,7 @@ new_wxwindow wxStfParentFrame::MakePythonWindow(const std::string& windowFunc, c
     // we can grab a pointer to:
     PyObject* func = NULL;
     func = PyDict_GetItemString(globals, windowFunc.c_str());
-    if (!PyCallable_Check(func)) {
+    if (func == NULL || !PyCallable_Check(func)) {
         PyErr_Print();
         wxGetApp().ErrorMsg(wxT("Couldn't initialize window for the python shell"));
         Py_DECREF(globals);
