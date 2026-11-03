@@ -634,6 +634,17 @@ if(NOT STF_BUILD_MODULE)
       COMPONENT ${STF_COMPONENT_TESTS}
     )
 
+    add_executable(stimfit_io_test src/test/abf.cpp)
+    target_link_libraries(stimfit_io_test PRIVATE stimfit_config stimfit_gtest_main stfio)
+    stf_apply_macos_runtime_policy(stimfit_io_test)
+    add_test(NAME stimfit_io_test COMMAND stimfit_io_test)
+    install(
+      TARGETS stimfit_io_test
+      ${STF_INSTALL_RUNTIME_DEPENDENCY_ARGS}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      COMPONENT ${STF_COMPONENT_TESTS}
+    )
+
     if(STF_BUILD_NUMERIC_TESTS)
       add_executable(
         stimfit_numeric_test
@@ -657,7 +668,7 @@ if(NOT STF_BUILD_MODULE)
       )
     endif()
 
-    set(_stf_test_targets stimfit_gtest_main stimfit_containers_test)
+    set(_stf_test_targets stimfit_gtest_main stimfit_containers_test stimfit_io_test)
     if(TARGET stimfit_numeric_test)
       list(APPEND _stf_test_targets stimfit_numeric_test)
     endif()

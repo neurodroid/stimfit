@@ -25,6 +25,9 @@
 
 
 #include <sstream>
+#include <fstream>
+#include <algorithm>
+#include <cctype>
 
 #include "stfio.h"
 
@@ -119,70 +122,120 @@ stfio::findExtension(stfio::filetype ftype) {
     }
 }
 
+namespace {
+
+stfio::filetype NativeFileType(const std::string& filename, stfio::filetype hint) {
+    char signature[8] = {};
+    std::ifstream file(filename, std::ios::binary);
+    if (!file) throw std::runtime_error("Could not open file: " + filename);
+    file.read(signature, sizeof(signature));
+    if (std::string(signature, 4) == "ABF2" || std::string(signature, 4) == "ABF ")
+        return stfio::abf;
+    if (std::string(signature, 3) == "ATF") return stfio::atf;
+    if (std::string(signature, 7) == "CEDFILE") return stfio::cfs;
+    if (std::string(signature, 8) == std::string("\211HDF\r\n\032\n", 8)) return stfio::hdf5;
+    if (hint != stfio::none && hint != stfio::biosig) return hint;
+    const auto dot = filename.find_last_of('.');
+    if (dot != std::string::npos) {
+        std::string extension = filename.substr(dot);
+        std::transform(extension.begin(), extension.end(), extension.begin(),
+                       [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
+#ifndef TEST_MINIMAL
+        const auto type = stfio::findType("*" + extension);
+        if (type != stfio::none) return type;
+#endif
+    }
+    return hint;
+}
+
+void ImportNative(const std::string& filename, stfio::filetype type,
+                  Recording& data, stfio::ProgressInfo& progress) {
+    switch (type) {
+    case stfio::abf: stfio::importABFFile(filename, data, progress); break;
+    case stfio::atf: stfio::importATFFile(filename, data, progress); break;
+    case stfio::hdf5: stfio::importHDF5File(filename, data, progress); break;
+    case stfio::cfs: stfio::importCFSFile(filename, data, progress); break;
+    case stfio::intan: stfio::importIntanFile(filename, data, progress); break;
+#if !defined(WITH_BIOSIG)
+    case stfio::axg: stfio::importAXGFile(filename, data, progress); break;
+    case stfio::heka: stfio::importHEKAFile(filename, data, progress); break;
+#endif
+    default: throw std::runtime_error("No native reader is available for this file format.");
+    }
+}
+
+} // namespace
+
+bool stfio::hasNativeReader(filetype type) {
+    switch (type) {
+    case abf: case atf: case hdf5: case cfs: case intan:
+#if !defined(WITH_BIOSIG)
+    case axg: case heka:
+#endif
+        return true;
+    default: return false;
+    }
+}
+
+stfio::fileReader stfio::parseReader(const std::string& name) {
+    if (name == "auto" || name == "automatic") return fileReader::automatic;
+    if (name == "biosig") return fileReader::biosig;
+    if (name == "native") return fileReader::native;
+    throw std::invalid_argument("Reader must be 'auto', 'biosig' or 'native'.");
+}
+
+stfio::ReaderInfo stfio::getReaderInfo(const std::string& filename, filetype hint) {
+    ReaderInfo info;
+    info.type = NativeFileType(filename, hint);
+#if defined(WITH_BIOSIG)
+    inspectBiosigFile(filename, info);
+#endif
+    info.nativeAvailable = hasNativeReader(info.type);
+    if (!info.biosigAvailable || (info.recommended == fileReader::native && info.nativeAvailable)) {
+        info.recommended = fileReader::native;
+    } else {
+        info.recommended = fileReader::biosig;
+    }
+    return info;
+}
+
 bool stfio::importFile(
         const std::string& fName,
         stfio::filetype type,
         Recording& ReturnData,
         const stfio::txtImportSettings& txtImport,
-        ProgressInfo& progDlg
+        ProgressInfo& progDlg,
+        fileReader reader,
+        fileReader* usedReader
 ) {
-    try {
-
+    (void)txtImport;
+    ReaderInfo info;
+    if (reader == fileReader::native) {
+        // An explicit native choice bypasses BioSig completely.
+        info.type = NativeFileType(fName, type);
+        info.nativeAvailable = hasNativeReader(info.type);
+    } else if (reader == fileReader::automatic) {
+        info = getReaderInfo(fName, type);
+    }
+    const auto selected = reader == fileReader::automatic ? info.recommended : reader;
+    if (selected == fileReader::biosig) {
 #if defined(WITH_BIOSIG)
-       // make use of automated file type identification
-
         try {
-            stfio::filetype type1 = stfio::importBiosigFile(fName, ReturnData, progDlg);
-            switch (type1) {
-            case stfio::biosig:
-                return true;    // succeeded
-            case stfio::none:
-                break;          // do nothing, use input argument for deciding on type
-            default:
-                type = type1;   // filetype is recognized and should be used below
-            }
+            if (importBiosigFile(fName, ReturnData, progDlg, true) != stfio::biosig
+                || ReturnData.size() == 0 || ReturnData[0].size() == 0)
+                throw std::runtime_error("BioSig could not read this file. Choose Automatic or Native.");
+            if (usedReader) *usedReader = fileReader::biosig;
+            return true;
+        } catch (const std::exception&) {
+            if (reader != fileReader::automatic || !info.nativeAvailable) throw;
+            ReturnData.resize(0);
         }
-        catch (...) {
-                // this should never occur, importBiosigFile should always return without exception
-                std::cout << "importBiosigFile failed with an exception - this is a bug";
-        }
+#else
+        throw std::runtime_error("This build does not include the BioSig reader.");
 #endif
-
-        switch (type) {
-        case stfio::hdf5: {
-            stfio::importHDF5File(fName, ReturnData, progDlg);
-            break;
-        }
-#if !defined(WITH_BIOSIG)
-        case stfio::abf: {
-            stfio::importABFFile(fName, ReturnData, progDlg);
-            break;
-        }
-        case stfio::atf: {
-            stfio::importATFFile(fName, ReturnData, progDlg);
-            break;
-        }
-        case stfio::axg: {
-            stfio::importAXGFile(fName, ReturnData, progDlg);
-            break;
-        }
-#endif
-        case stfio::intan: {
-            stfio::importIntanFile(fName, ReturnData, progDlg);
-            break;
-        }
-        case stfio::cfs: {
-            stfio::importCFSFile(fName, ReturnData, progDlg);
-            break;
-           }
-        default:
-            throw std::runtime_error("Unknown or unsupported file type");
-	}
-
     }
-    catch (...) {
-        throw;
-    }
+    ImportNative(fName, info.type, ReturnData, progDlg);
+    if (usedReader) *usedReader = fileReader::native;
     return true;
 }
 

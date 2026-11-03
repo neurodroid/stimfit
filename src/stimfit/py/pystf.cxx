@@ -642,9 +642,14 @@ bool subtract_base( ) {
     return actDoc()->SubtractBase();
 }
 
-bool file_open( const char* filename ) {
+bool file_open( const char* filename, const char* reader ) {
     wxString wxFilename( filename, wxConvLocal );
-    return wxGetApp().OpenFilePy( wxFilename );
+    try {
+        return wxGetApp().OpenFilePy(wxFilename, stfio::parseReader(reader));
+    } catch (const std::exception& error) {
+        wxGetApp().ExceptMsg(wxString::FromUTF8(error.what()));
+        return false;
+    }
 }
 
 bool file_save( const char* filename ) {

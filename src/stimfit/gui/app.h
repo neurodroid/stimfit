@@ -83,6 +83,7 @@ enum {
     ID_VIEW_CURSORS,
     ID_VIEW_SHELL,
     ID_FILEINFO,
+    ID_OPEN_WITH_READER,
     ID_EXPORTIMAGE,
     ID_EXPORTPS,
     ID_EXPORTLATEX,
@@ -454,6 +455,10 @@ public:
      *  \return true upon successful opening of all files, false otherwise.
      */
     bool OpenFileSeries(const wxArrayString& fNameArray);
+    void OnOpenWithReader(wxCommandEvent& event);
+    bool OpenFileWithReader(const wxString& filename, stfio::fileReader reader, bool remember = false);
+    stfio::fileReader GetFileReaderPreference(const wxString& filename) const;
+    void SetFileReaderPreference(const wxString& filename, stfio::fileReader reader) const;
 
     //! Returns the number of currently opened documents.
     /*! \return The number of currently opened documents.
@@ -506,7 +511,7 @@ public:
     /*! \param fNameArray An array of file names to be opened.
      *  \return true upon successful opening, false otherwise.
      */
-    bool OpenFilePy(const wxString& fNameArray);
+    bool OpenFilePy(const wxString& fNameArray, stfio::fileReader reader = stfio::fileReader::automatic);
 
     //! Opens a dialog to import a Python module
     /*! \param event The associated menu event

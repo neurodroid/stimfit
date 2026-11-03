@@ -18,6 +18,7 @@ add_library(
   gui/dlgs/eventdlg.cpp
   gui/dlgs/fitseldlg.cpp
   gui/dlgs/smalldlgs.cpp
+  gui/dlgs/readerdlg.cpp
   gui/usrdlg/usrdlg.cpp
 )
 stf_apply_macos_runtime_policy(stimfit_core)

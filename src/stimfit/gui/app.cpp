@@ -32,6 +32,7 @@
 #include <wx/stdpaths.h>
 #include <wx/stockitem.h>
 #include <wx/accel.h>
+#include <wx/base64.h>
 
 #ifdef _WINDOWS
 #include <winreg.h>
@@ -68,6 +69,7 @@
 #include "./graph.h"
 #include "./dlgs/cursorsdlg.h"
 #include "./dlgs/smalldlgs.h"
+#include "./dlgs/readerdlg.h"
 #include "./../../libstfnum/funclib.h"
 #include "./../../libstfnum/fit.h"
 
@@ -118,6 +120,7 @@ EVT_MENU( ID_CURSORS, wxStfApp::OnCursorSettings )
 EVT_MENU( ID_NEWFROMSELECTED, wxStfApp::OnNewfromselected )
 EVT_MENU( ID_NEWFROMALL, wxStfApp::OnNewfromall )
 EVT_MENU( ID_APPLYTOALL, wxStfApp::OnApplytoall )
+EVT_MENU( ID_OPEN_WITH_READER, wxStfApp::OnOpenWithReader )
 
 #ifdef WITH_PYTHON
 EVT_MENU( ID_IMPORTPYTHON, wxStfApp::OnPythonImport )
@@ -309,6 +312,7 @@ bool wxStfApp::OnInit(void)
     //	wxMenu *edit_menu = (wxMenu *) NULL;
 
     m_file_menu->Append(wxID_OPEN);
+    m_file_menu->Append(ID_OPEN_WITH_READER, wxT("Open with &reader...\tCtrl+Shift+O"));
     
     m_file_menu->AppendSeparator();
     m_file_menu->Append(ID_CONVERT, wxT("Convert file series..."));
@@ -682,6 +686,7 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     wxMenu *file_menu = new wxMenu;
 
     file_menu->Append(wxID_OPEN);
+    file_menu->Append(ID_OPEN_WITH_READER, wxT("Open with &reader...\tCtrl+Shift+O"));
 #ifdef __WXMAC__
     file_menu->Append(wxID_CLOSE, wxT("&Close\tCmd+W"));
 #else
@@ -1350,6 +1355,85 @@ void wxStfApp::OnApplytoall( wxCommandEvent& WXUNUSED(event) ) {
     }
 }
 
+namespace {
+
+wxString FileReaderKey(const wxString& filename) {
+    wxFileName path(filename);
+    path.Normalize(wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_CASE);
+    const wxString normalized = path.GetFullPath();
+    const auto bytes = normalized.utf8_str();
+    wxString key = wxBase64Encode(bytes.data(), bytes.length());
+    key.Replace(wxT("/"), wxT("_"));
+    key.Replace(wxT("+"), wxT("-"));
+    return key;
+}
+
+} // namespace
+
+stfio::fileReader wxStfApp::GetFileReaderPreference(const wxString& filename) const {
+    const int value = wxGetProfileInt(wxT("FileReaders"), FileReaderKey(filename), 0);
+    if (value == static_cast<int>(stfio::fileReader::native)) return stfio::fileReader::native;
+#ifdef WITH_BIOSIG
+    if (value == static_cast<int>(stfio::fileReader::biosig)) return stfio::fileReader::biosig;
+#endif
+    return stfio::fileReader::automatic;
+}
+
+void wxStfApp::SetFileReaderPreference(const wxString& filename, stfio::fileReader reader) const {
+    const wxString key = FileReaderKey(filename);
+    if (reader == stfio::fileReader::automatic) {
+        config->DeleteEntry(wxT("/FileReaders/") + key);
+        config->Flush();
+    } else {
+        wxWriteProfileInt(wxT("FileReaders"), key, static_cast<int>(reader));
+    }
+}
+
+bool wxStfApp::OpenFileWithReader(const wxString& filename, stfio::fileReader reader, bool remember) {
+    auto* templ = GetDocManager()->FindTemplateForPath(filename);
+    if (!templ) return false;
+    auto* doc = static_cast<wxStfDoc*>(templ->CreateDocument(filename, wxDOC_NEW));
+    if (!doc) return false;
+    doc->SetDocumentTemplate(templ);
+    doc->SetImportReader(reader);
+    if (!doc->OnOpenDocument(filename)) {
+        GetDocManager()->CloseDocument(doc);
+        return false;
+    }
+    if (remember) SetFileReaderPreference(filename, reader);
+    GetDocManager()->AddFileToHistory(filename);
+    return true;
+}
+
+void wxStfApp::OnOpenWithReader(wxCommandEvent&) {
+    std::vector<wxDocTemplate*> templates;
+    for (auto node = GetDocManager()->GetTemplates().GetFirst(); node; node = node->GetNext()) {
+        auto* templ = static_cast<wxDocTemplate*>(node->GetData());
+        if (templ->IsVisible()) templates.push_back(templ);
+    }
+    wxString filename;
+    if (templates.empty() || !GetDocManager()->SelectDocumentPath(templates.data(),
+            static_cast<int>(templates.size()), filename, 0)) return;
+    try {
+        auto info = stfio::getReaderInfo(stf::wx2std(filename));
+#ifdef WITH_PYTHON
+        if (info.type == stfio::tdms) {
+            info.nativeAvailable = true;
+            info.recommended = stfio::fileReader::native;
+        }
+#endif
+        if (!info.biosigAvailable && !info.nativeAvailable) {
+            ErrorMsg(wxT("No file reader is available for this format."));
+            return;
+        }
+        wxStfReaderDlg dialog(GetMainFrame(), filename, info, GetFileReaderPreference(filename));
+        if (dialog.ShowModal() == wxID_OK)
+            OpenFileWithReader(filename, dialog.GetReader(), dialog.RememberChoice());
+    } catch (const std::exception& error) {
+        ExceptMsg(wxString::FromUTF8(error.what()));
+    }
+}
+
 bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
     int nFiles=(int)fNameArray.GetCount();
     if (nFiles==0) return false;
@@ -1417,7 +1501,9 @@ bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
             Recording singleRec;
             try {
                 stf::wxProgressInfo importProgress("Reading file", "Opening file", 100);
-                stfio::importFile(stf::wx2std(fNameArray[n_opened++]),type,singleRec,txtImport, importProgress);
+                const wxString filename = fNameArray[n_opened++];
+                stfio::importFile(stf::wx2std(filename), type, singleRec, txtImport, importProgress,
+                                  GetFileReaderPreference(filename));
                 if (n_opened==1) {
                     seriesRec.resize(singleRec.size());
                     // reserve memory to avoid allocations:
@@ -1760,7 +1846,7 @@ void wxStfApp::OnUserdef(wxCommandEvent& event)
     wxPyEndBlockThreads(blocked);
 }
 
-bool wxStfApp::OpenFilePy(const wxString& filename) {
+bool wxStfApp::OpenFilePy(const wxString& filename, stfio::fileReader reader) {
     wxDocTemplate* templ = GetDocManager()->FindTemplateForPath( filename );
     if ( templ == NULL ) {
         ErrorMsg(wxT("Couldn't open file, aborting file import"));
@@ -1772,6 +1858,7 @@ bool wxStfApp::OpenFilePy(const wxString& filename) {
         return false;
     }
     NewDoc->SetDocumentTemplate(templ);
+    if (reader != stfio::fileReader::automatic) NewDoc->SetImportReader(reader);
     if (!NewDoc->OnOpenPyDocument(filename)) {
         ErrorMsg(wxT("Couldn't open file, aborting file import"));
         GetDocManager()->CloseDocument(NewDoc);

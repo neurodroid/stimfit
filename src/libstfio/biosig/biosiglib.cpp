@@ -16,6 +16,7 @@
 
 #include <cstring>
 #include <sstream>
+#include <memory>
 
 #include "../stfio.h"
 
@@ -43,6 +44,7 @@ extern "C" uint32_t lcm(uint32_t A, uint32_t B);
 
 
 #include "./biosiglib.h"
+#include "../abf/abflib.h"
 
 stfio::filetype stfio_file_type(HDRTYPE* hdr) {
         switch (biosig_get_filetype(hdr)) {
@@ -66,7 +68,48 @@ bool stfio::check_biosig_version(int a, int b, int c) {
 }
 #endif
 
-stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg) {
+void stfio::inspectBiosigFile(const std::string& filename, ReaderInfo& info) {
+    std::unique_ptr<HDRTYPE, decltype(&destructHDR)> hdr(sopen(filename.c_str(), "r", NULL), destructHDR);
+    if (!hdr) return;
+    const auto type = stfio_file_type(hdr.get());
+    if (type != stfio::none) info.type = type;
+    if (biosig_check_error(hdr.get())) {
+        info.reason = "BioSig could not read this file's header.";
+        return;
+    }
+    const auto format = biosig_get_filetype(hdr.get());
+    info.biosigAvailable = format != HDF
+        && !(format == ATF && get_biosig_version() < 0x030001)
+        && !(format == ABF2 && get_biosig_version() < 0x030002);
+    if (!info.biosigAvailable) return;
+    info.recommended = fileReader::biosig;
+
+    if (format == ABF2) {
+        ABF2Info native;
+        if (getABF2Info(filename, native)) {
+            if (native.names.size() != static_cast<std::size_t>(biosig_get_number_of_channels(hdr.get()))
+                || native.samplesPerChannel != biosig_get_number_of_samples(hdr.get())) {
+                info.recommended = fileReader::native;
+                info.reason = "BioSig reports a channel or sample count that differs from the ABF header.";
+            } else {
+                for (std::size_t n = 0; n < native.names.size(); ++n) {
+                    auto* channel = biosig_get_channel(hdr.get(), static_cast<int>(n));
+                    const char* label = biosig_channel_get_label(channel);
+                    const auto units = PhysDimCode(native.units[n].c_str());
+                    if ((!native.names[n].empty() && (!label || !*label))
+                        || (units && (units & 0xffe0) != (biosig_channel_get_physdimcode(channel) & 0xffe0))) {
+                        info.recommended = fileReader::native;
+                        info.reason = "BioSig loses channel names or units recorded in the ABF header.";
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+
+stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &ReturnData, ProgressInfo& progDlg,
+                                     bool force) {
 
     std::string errorMsg("Exception while calling std::importBSFile():\n");
     std::string yunits;
@@ -77,7 +120,7 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     // importBiosig opens file with libbiosig
     //	- performs an automated identification of the file format
     //  - and decides whether the data is imported through importBiosig (currently CFS, HEKA, ABF1, GDF, and others)
-    //  - or handed back to other import*File functions (currently ABF2, AXG, HDF5)
+    //  - or handed back to other import*File functions (including ABF2 and HDF5)
     //
     // =====================================================================================================================
 
@@ -98,11 +141,9 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
     }
     enum FileFormat biosig_filetype=biosig_get_filetype(hdr);
     if ( (biosig_filetype==ATF  && get_biosig_version() < 0x030001) \
-      || (biosig_filetype==ABF2 && get_biosig_version() < 0x030002) \
+      || (biosig_filetype==ABF2 && !force && get_biosig_version() < 0x030002) \
       ||  biosig_filetype==HDF ) {
-        // ATF, ABF2 HDF5 support should be handled by importATF, and importABF, and importHDF5 not importBiosig
-        // with libbiosig v3.0.1 (release 2.3.1) and later, ATF, ABF should be handled by Biosig
-        // with libbiosig v3.0.2 (release 2.5.1) and later, ABF2 should be handled by Biosig
+        // Formats unavailable in this BioSig version are handled by a native reader.
         ReturnData.resize(0);
         destructHDR(hdr);
         return type;
@@ -182,6 +223,10 @@ stfio::filetype stfio::importBiosigFile(const std::string &fName, Recording &Ret
         read bulk data
      *************************************************************************/
     biosig_data_type *data = biosig_get_data(hdr, 0);
+    if (!data || biosig_check_error(hdr)) {
+        destructHDR(hdr);
+        throw std::runtime_error("BioSig could not read the sample data.");
+    }
 
 #ifdef _STFDEBUG
     std::cout << "Number of events: " << numberOfEvents << std::endl;

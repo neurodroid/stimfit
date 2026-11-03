@@ -39,10 +39,27 @@ class DataListTest(unittest.TestCase):
         rec = stfio.read(TEST_DATA)
         self.assertIsInstance(rec, stfio.Recording)
 
+    def test_read_accepts_native_reader(self):
+        rec = stfio.read(TEST_DATA, reader="native")
+        self.assertEqual(4, len(rec))
+        self.assertEqual('Amp1', rec[0].name)
+
+    def test_read_rejects_unknown_reader(self):
+        with self.assertRaises(ValueError):
+            stfio.read(TEST_DATA, reader="unknown")
+
+    def test_explicit_biosig_does_not_fall_back_to_native(self):
+        with self.assertRaises(stfio.StfIOException):
+            stfio.read(TEST_DATA, reader="biosig")
+
     def test_open_supports_context_manager(self):
         """`open()` supports modern `with ... as ...` usage."""
         with stfio.open(TEST_DATA) as rec:
             self.assertIsInstance(rec, stfio.Recording)
+            self.assertEqual(4, len(rec))
+
+    def test_open_passes_reader_to_context_manager(self):
+        with stfio.open(TEST_DATA, reader="native") as rec:
             self.assertEqual(4, len(rec))
 
     def test_read_unsupported_file_raises(self):

@@ -26,6 +26,15 @@ class Recording;
 
 namespace stfio {
 
+struct ABF2Info {
+    std::size_t samplesPerChannel = 0;
+    std::vector<std::string> names;
+    std::vector<std::string> units;
+};
+
+//! Read ABF2 acquisition metadata for checking another reader's interpretation.
+bool getABF2Info(const std::string& filename, ABF2Info& info);
+
 //! Open an ABF file and store its contents to a Recording object. Attempts to identify the ABF version.
 /*! \param fName The full path to the file to be opened.
  *  \param ReturnData On entry, an empty Recording object. On exit,

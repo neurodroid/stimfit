@@ -146,12 +146,30 @@ findType(const std::string& ext);
 StfioDll std::string
 findExtension(stfio::filetype ftype);
 
+//! Reader selection is independent of the file format.
+enum class fileReader { automatic, biosig, native };
+
+struct StfioDll ReaderInfo {
+    filetype type = none;
+    bool biosigAvailable = false;
+    bool nativeAvailable = false;
+    fileReader recommended = fileReader::native;
+    std::string reason;
+};
+
+//! Inspect file headers to recommend a reader without loading the samples.
+StfioDll ReaderInfo getReaderInfo(const std::string& filename, filetype hint = none);
+StfioDll bool hasNativeReader(filetype type);
+StfioDll fileReader parseReader(const std::string& name);
+
 //! Generic file import.
 /*! \param fName The full path name of the file. 
  *  \param type The file type. 
  *  \param ReturnData Will contain the file data on return.
  *  \param txtImport The text import filter settings.
  *  \param ProgressInfo Progress indicator
+ *  \param reader Automatic selection or an explicit reader override.
+ *  \param usedReader Optional output identifying the reader that succeeded.
  *  \return true if the file has successfully been read, false otherwise.
  */
 StfioDll bool 
@@ -160,7 +178,9 @@ importFile(
         stfio::filetype type,
         Recording& ReturnData,
         const stfio::txtImportSettings& txtImport,
-        stfio::ProgressInfo& progDlg
+        stfio::ProgressInfo& progDlg,
+        fileReader reader = fileReader::automatic,
+        fileReader* usedReader = nullptr
 );
 
 //! Generic file export.

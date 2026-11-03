@@ -38,6 +38,9 @@ class StfDll wxStfDoc: public wxDocument, public Recording
 #endif
 private:    
     bool peakAtEnd, startFitAtPeak, initialized, progress;
+    stfio::fileReader importReader = stfio::fileReader::automatic;
+    stfio::fileReader usedReader = stfio::fileReader::automatic;
+    bool hasReaderOverride = false;
     Recording Average;
     int InitCursors();
     void PostInit();
@@ -137,6 +140,8 @@ public:
      *  \return true if successfully opened, false otherwise.
      */
     virtual bool OnOpenDocument(const wxString& filename);
+    void SetImportReader(stfio::fileReader reader) { importReader = reader; hasReaderOverride = true; }
+    stfio::fileReader GetImportReader() const { return usedReader; }
 
     //! Open document without progress dialog.
     /*! Attempts to identify the file type from the filter extension (such as "*.dat")

@@ -322,8 +322,9 @@ bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
 #endif // WITH_PYTHON
 
 bool wxStfDoc::OnOpenDocument(const wxString& filename) {
+    const auto reader = hasReaderOverride ? importReader : wxGetApp().GetFileReaderPreference(filename);
     const auto importFromFileType = [&](stfio::filetype type) -> bool {
-        if (type == stfio::tdms) {
+        if (type == stfio::tdms && reader != stfio::fileReader::biosig) {
 #ifdef WITH_PYTHON
             if (!LoadTDMS(stf::wx2std(filename), *this)) {
                 wxGetApp().ExceptMsg(wxT("Error opening file\n"));
@@ -335,16 +336,17 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
             get().clear();
             return false;
 #endif
+            usedReader = stfio::fileReader::native;
             return true;
         }
 
         try {
             if (progress) {
                 stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
-                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg, reader, &usedReader);
             } else {
                 stfio::StdoutProgressInfo progDlg("Reading file", "Opening file", 100, true);
-                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg, reader, &usedReader);
             }
         }
         catch (const std::exception& e) {
@@ -811,6 +813,8 @@ void wxStfDoc::Fileinfo(wxCommandEvent& WXUNUSED(event)) {
     std::string general = buf
         + oss1.str() + "\n" + oss2.str() + "\n"
         + "Comment:\n" + GetComment();
+    if (usedReader != stfio::fileReader::automatic)
+        general += usedReader == stfio::fileReader::biosig ? "\nReader: BioSig" : "\nReader: Native (Stimfit)";
     wxStfFileInfoDlg dlg( GetDocumentWindow(), general, GetFileDescription(),
             GetGlobalSectionDescription() );
     dlg.ShowModal();

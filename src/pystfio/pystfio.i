@@ -396,7 +396,8 @@ verbose  -- Show info while reading
 
 Returns:
 A recording object.") _read;
-bool _read(const std::string& filename, const std::string& ftype, bool verbose, Recording& Data);
+bool _read(const std::string& filename, const std::string& ftype, bool verbose, Recording& Data,
+           const std::string& reader = "auto");
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------
@@ -447,14 +448,15 @@ class StfIOException(Exception):
 class RecordingHandle(object):
     """Context manager wrapper for opening recordings with `with` syntax."""
 
-    def __init__(self, fname, ftype=None, verbose=False):
+    def __init__(self, fname, ftype=None, verbose=False, reader="auto"):
         self._fname = os.fspath(fname)
         self._ftype = ftype
         self._verbose = verbose
+        self._reader = reader
         self._recording = None
 
     def __enter__(self):
-        self._recording = read(self._fname, ftype=self._ftype, verbose=self._verbose)
+        self._recording = read(self._fname, ftype=self._ftype, verbose=self._verbose, reader=self._reader)
         return self._recording
 
     def __exit__(self, exc_type, exc, tb):
@@ -472,12 +474,12 @@ filetype = {
     '.clp':'intan'}
 
 
-def open(fname, ftype=None, verbose=False):
+def open(fname, ftype=None, verbose=False, reader="auto"):
     """Open a recording for use with `with ... as ...` syntax."""
-    return RecordingHandle(fname, ftype=ftype, verbose=verbose)
+    return RecordingHandle(fname, ftype=ftype, verbose=verbose, reader=reader)
 
 
-def read(fname, ftype=None, verbose=False):
+def read(fname, ftype=None, verbose=False, reader="auto"):
     """Reads a file and returns a Recording object.
 
     Arguments:
@@ -500,10 +502,14 @@ def read(fname, ftype=None, verbose=False):
               parameter become obsolete; eventually it will be removed.
 #endif // TEST_MINIMAL
     verbose-- Show info while reading file
+    reader -- "auto" (default), "biosig", or "native". Automatic prefers BioSig
+              and selects native for detected import problems.
 
     Returns:
     A Recording object.
     """
+    if reader not in ("auto", "biosig", "native"):
+        raise ValueError("reader must be 'auto', 'biosig' or 'native'")
     fname = os.fspath(fname)
     if not os.path.exists(fname):
         raise StfIOException('File %s does not exist' % fname)
@@ -518,7 +524,7 @@ def read(fname, ftype=None, verbose=False):
 #endif // TEST_MINIMAL
 
     rec = Recording()
-    if not _read(fname, ftype, verbose, rec):
+    if not _read(fname, ftype, verbose, rec, reader):
         raise StfIOException('Error reading file')
 
     if verbose:

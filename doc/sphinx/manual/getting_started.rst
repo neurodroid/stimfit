@@ -18,6 +18,34 @@ file to fitting functions to data.
 
 * The file will be opened in a new child window, and the first trace will be displayed.
 
+Choosing a file reader
+======================
+
+Normal **File -> Open** uses automatic reader selection. BioSig is preferred
+when it can read the file correctly. Stimfit checks ABF2 channel counts, sample
+counts, names and units against the file header, and recommends its native
+reader when BioSig's interpretation is inconsistent. Automatic import also
+tries an available native reader if BioSig fails.
+
+Use **File -> Open with reader...** (**Ctrl+Shift+O**) to select **Automatic**,
+**BioSig**, or **Native (Stimfit)**. The dialog shows the automatic recommendation
+and its reason, and offers the readers available for that file. Explicit choices
+take precedence over the recommendation. Each import opens a new window, so
+different readers can be compared.
+
+Select **Remember this choice for this file** to use your selection on future
+opens, including recent files and drag and drop. To restore the automatic
+default, select **Automatic** with the same checkbox enabled. The reader used
+for an imported recording is shown in **File -> File information...**.
+
+The Python interfaces also accept a reader choice::
+
+    stf.file_open("recording.abf", "native")
+    recording = stfio.read("recording.abf", reader="biosig")
+
+The default is ``"auto"``. In the embedded ``stf`` interface, this also respects
+any saved choice for the file.
+
 ======================
 Opening multiple files
 ======================
