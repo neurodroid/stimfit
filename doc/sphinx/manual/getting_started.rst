@@ -27,13 +27,15 @@ counts, names and units against the file header, and recommends its native
 reader when BioSig's interpretation is inconsistent. Automatic import also
 tries an available native reader if BioSig fails.
 
-Use **File -> Open with reader...** (**Ctrl+Shift+O**) to select **Automatic**,
-**BioSig**, or **Native (Stimfit)**. The dialog shows the automatic recommendation
-and its reason, and offers the readers available for that file. Explicit choices
-take precedence over the recommendation. Each import opens a new window, so
-different readers can be compared.
+Use **File -> Open...** (**Ctrl+O**) to choose a recording. The **File reader**
+panel on the right updates when a file is selected. For files supported by
+multiple readers, choose **Automatic**, **BioSig**, or **Native (Stimfit)**.
+The panel shows the automatic recommendation and its reason. Reader controls
+are disabled for files supported by a single reader and while browsing folders.
+Explicit choices take precedence over the recommendation. Each import opens
+a new window, so different readers can be compared.
 
-Select **Remember this choice for this file** to use your selection on future
+Select **Remember for this file** to use your selection on future
 opens, including recent files and drag and drop. To restore the automatic
 default, select **Automatic** with the same checkbox enabled. The reader used
 for an imported recording is shown in **File -> File information...**.

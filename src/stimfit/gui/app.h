@@ -83,7 +83,6 @@ enum {
     ID_VIEW_CURSORS,
     ID_VIEW_SHELL,
     ID_FILEINFO,
-    ID_OPEN_WITH_READER,
     ID_EXPORTIMAGE,
     ID_EXPORTPS,
     ID_EXPORTLATEX,
@@ -455,7 +454,6 @@ public:
      *  \return true upon successful opening of all files, false otherwise.
      */
     bool OpenFileSeries(const wxArrayString& fNameArray);
-    void OnOpenWithReader(wxCommandEvent& event);
     bool OpenFileWithReader(const wxString& filename, stfio::fileReader reader, bool remember = false);
     stfio::fileReader GetFileReaderPreference(const wxString& filename) const;
     void SetFileReaderPreference(const wxString& filename, stfio::fileReader reader) const;

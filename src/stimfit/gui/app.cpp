@@ -69,7 +69,7 @@
 #include "./graph.h"
 #include "./dlgs/cursorsdlg.h"
 #include "./dlgs/smalldlgs.h"
-#include "./dlgs/readerdlg.h"
+#include "./dlgs/opendlg.h"
 #include "./../../libstfnum/funclib.h"
 #include "./../../libstfnum/fit.h"
 
@@ -104,6 +104,31 @@ void InstallCloseDocumentAccelerator(wxWindow* window) {
 extern wxStfApp& wxGetApp();
 wxStfApp& wxGetApp() { return *static_cast<wxStfApp*>(wxApp::GetInstance()); }
 
+namespace {
+
+class wxStfDocManager : public wxDocManager {
+public:
+    wxDocument* CreateDocument(const wxString& path, long flags = 0) override {
+        if (!path.empty() || (flags & (wxDOC_NEW | wxDOC_SILENT)))
+            return wxDocManager::CreateDocument(path, flags);
+        wxString wildcard = wxT("All files (*.*)|*.*");
+        for (auto node = GetTemplates().GetFirst(); node; node = node->GetNext()) {
+            auto* templ = static_cast<wxDocTemplate*>(node->GetData());
+            if (templ->IsVisible() && templ->GetFileFilter() != wxT("*.*"))
+                wildcard += wxT("|") + templ->GetDescription() + wxT(" (")
+                    + templ->GetFileFilter() + wxT(")|") + templ->GetFileFilter();
+        }
+        wxStfOpenDlg dialog(wxGetApp().GetMainFrame(), GetLastDirectory(), wildcard);
+        if (dialog.ShowModal() != wxID_OK) return nullptr;
+        SetLastDirectory(wxFileName(dialog.GetPath()).GetPath());
+        if (!wxGetApp().OpenFileWithReader(dialog.GetPath(), dialog.GetReader(), dialog.RememberChoice()))
+            return nullptr;
+        return wxGetApp().GetActiveDoc();
+    }
+};
+
+} // namespace
+
 #ifdef WITH_PYTHON
 int stf::Extension::n_extensions = 0;
 
@@ -120,7 +145,6 @@ EVT_MENU( ID_CURSORS, wxStfApp::OnCursorSettings )
 EVT_MENU( ID_NEWFROMSELECTED, wxStfApp::OnNewfromselected )
 EVT_MENU( ID_NEWFROMALL, wxStfApp::OnNewfromall )
 EVT_MENU( ID_APPLYTOALL, wxStfApp::OnApplytoall )
-EVT_MENU( ID_OPEN_WITH_READER, wxStfApp::OnOpenWithReader )
 
 #ifdef WITH_PYTHON
 EVT_MENU( ID_IMPORTPYTHON, wxStfApp::OnPythonImport )
@@ -221,7 +245,7 @@ bool wxStfApp::OnInit(void)
     set_isDarkTraceDisplay(wxGetProfileInt(wxT("Settings"), wxT("ViewDarkTraceDisplay"), 1) == 1);
 
     //// Create a document manager
-    wxDocManager* docManager = new wxDocManager;
+    wxDocManager* docManager = new wxStfDocManager;
     //// Create a template relating drawing documents to their views
 #if defined(WITH_BIOSIG)
     m_biosigTemplate=new wxDocTemplate( docManager,
@@ -312,7 +336,6 @@ bool wxStfApp::OnInit(void)
     //	wxMenu *edit_menu = (wxMenu *) NULL;
 
     m_file_menu->Append(wxID_OPEN);
-    m_file_menu->Append(ID_OPEN_WITH_READER, wxT("Open with &reader...\tCtrl+Shift+O"));
     
     m_file_menu->AppendSeparator();
     m_file_menu->Append(ID_CONVERT, wxT("Convert file series..."));
@@ -686,7 +709,6 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
     wxMenu *file_menu = new wxMenu;
 
     file_menu->Append(wxID_OPEN);
-    file_menu->Append(ID_OPEN_WITH_READER, wxT("Open with &reader...\tCtrl+Shift+O"));
 #ifdef __WXMAC__
     file_menu->Append(wxID_CLOSE, wxT("&Close\tCmd+W"));
 #else
@@ -1403,35 +1425,6 @@ bool wxStfApp::OpenFileWithReader(const wxString& filename, stfio::fileReader re
     if (remember) SetFileReaderPreference(filename, reader);
     GetDocManager()->AddFileToHistory(filename);
     return true;
-}
-
-void wxStfApp::OnOpenWithReader(wxCommandEvent&) {
-    std::vector<wxDocTemplate*> templates;
-    for (auto node = GetDocManager()->GetTemplates().GetFirst(); node; node = node->GetNext()) {
-        auto* templ = static_cast<wxDocTemplate*>(node->GetData());
-        if (templ->IsVisible()) templates.push_back(templ);
-    }
-    wxString filename;
-    if (templates.empty() || !GetDocManager()->SelectDocumentPath(templates.data(),
-            static_cast<int>(templates.size()), filename, 0)) return;
-    try {
-        auto info = stfio::getReaderInfo(stf::wx2std(filename));
-#ifdef WITH_PYTHON
-        if (info.type == stfio::tdms) {
-            info.nativeAvailable = true;
-            info.recommended = stfio::fileReader::native;
-        }
-#endif
-        if (!info.biosigAvailable && !info.nativeAvailable) {
-            ErrorMsg(wxT("No file reader is available for this format."));
-            return;
-        }
-        wxStfReaderDlg dialog(GetMainFrame(), filename, info, GetFileReaderPreference(filename));
-        if (dialog.ShowModal() == wxID_OK)
-            OpenFileWithReader(filename, dialog.GetReader(), dialog.RememberChoice());
-    } catch (const std::exception& error) {
-        ExceptMsg(wxString::FromUTF8(error.what()));
-    }
 }
 
 bool wxStfApp::OpenFileSeries(const wxArrayString& fNameArray) {
