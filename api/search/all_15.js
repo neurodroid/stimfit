@@ -31,7 +31,7 @@ var searchData=
   ['undefinedmode_28',['undefinedMode',['../d3/d1b/group__stfgen.html#gga738f9934a45a9d2d81cb0a3de0375c99a871047aafad5c561dbf5a77e80a7b174',1,'stf']]],
   ['unicodetocstring_29',['UnicodeToCString',['../dd/dc3/stringUtils_8h.html#a3e56bbd0c66b8c5f12ad57962cde9c1c',1,'stringUtils.h']]],
   ['unitchars_30',['UNITCHARS',['../d7/d0b/cfs_8h.html#a595ba60609c9e609e6228ae04d1a8a16',1,'cfs.h']]],
-  ['units_31',['units',['../d7/d0b/cfs_8h.html#af042b9ffcc6bf979c03f819c65b281d4',1,'cfs.h']]],
+  ['units_31',['units',['../d7/d0b/cfs_8h.html#af042b9ffcc6bf979c03f819c65b281d4',1,'units:&#160;cfs.h'],['../de/d60/structstfio_1_1ABF2Info.html#a11c7ed00d3b371e9f4f687fc8b6d3be4',1,'stfio::ABF2Info::units']]],
   ['unix_2eh_32',['unix.h',['../d6/dea/unix_8h.html',1,'']]],
   ['unscale_33',['unscale',['../d3/d1b/group__stfgen.html#ga626808e0925a0592e7cfa69d2cf14ba5',1,'stfnum::parInfo']]],
   ['unselecttrace_34',['UnselectTrace',['../d3/d1b/group__stfgen.html#gad70a4aeb0cdfd6be596abd0558cad1dd',1,'Recording']]],

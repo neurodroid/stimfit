@@ -22,7 +22,7 @@ var searchData=
   ['tfiltermask_19',['TFilterMask',['../da/d2c/structTFilterMask.html',1,'']]],
   ['thandle_20',['THandle',['../da/d8f/machine_8h.html#a6a661ada09eb829e16fec0782678df3b',1,'machine.h']]],
   ['threshold_21',['threshold',['../d3/d1b/group__stfgen.html#ga7bda95fea6342f6224167afd4c42979f',1,'stfnum']]],
-  ['time_22',['time',['../d7/d0b/cfs_8h.html#a3b20c92834e7723fa0be7aa6ae226795',1,'time:&#160;cfs.h'],['../dd/d60/Son_8h.html#a397f6133afc29ff5fa95b3ed0db04257',1,'time:&#160;Son.h']]],
+  ['time_22',['time',['../dd/d60/Son_8h.html#a397f6133afc29ff5fa95b3ed0db04257',1,'time:&#160;Son.h'],['../d7/d0b/cfs_8h.html#a3b20c92834e7723fa0be7aa6ae226795',1,'time:&#160;cfs.h']]],
   ['timeperadc_23',['timePerADC',['../dd/d60/Son_8h.html#a2fea1fac571e720cf7bfff0b57c2e3e7',1,'Son.h']]],
   ['title_24',['title',['../d9/d62/structColumnHeader.html#a88b545882524c85c6bcd1869e00ea940',1,'ColumnHeader::title'],['../da/d25/structDigitizedFirstColumnHeader.html#ad3224d134ce4c12f67bdc2eb6e3f45cb',1,'DigitizedFirstColumnHeader::title'],['../de/dec/structDigitizedColumnHeader.html#acc3cb4251204c7a0a9b1f2a8e151d4f6',1,'DigitizedColumnHeader::title'],['../d7/da6/structColumnData.html#aa7bba19eb87882a606022dcc066b5589',1,'ColumnData::title'],['../d3/d1b/group__stfgen.html#gabaae883a7067175ac27205bdfdc92d3f',1,'stf::UserInput::title']]],
   ['titlelength_25',['titlelength',['../df/df5/structAxoGraphXColumnHeader.html#a6228d17790a9e92b972db2d8f9c7725b',1,'AxoGraphXColumnHeader::titleLength'],['../d7/da6/structColumnData.html#abaa7b5226cd0796d891a338e79e22d9e',1,'ColumnData::titleLength']]],
@@ -30,10 +30,10 @@ var searchData=
   ['tmarkbytes_27',['TMarkBytes',['../dd/d60/Son_8h.html#aa96d41b1b147dea7b76617f5b4cd49a8',1,'Son.h']]],
   ['tmarker_28',['TMarker',['../dc/df1/structTMarker.html',1,'']]],
   ['toffset_29',['tOffset',['../db/d67/structSegment.html#afe8221864a85b42c98f8ac36adb3eea5',1,'Segment']]],
-  ['tofilename_30',['tofilename',['../db/d8e/streams_8h.html#aa2dba118547e077f1e90a367bbea1a37',1,'toFileName(const std::string &amp;s):&#160;streams.h'],['../db/d8e/streams_8h.html#a91f93dff26772148b9030d7469bc35dd',1,'toFileName(const std::wstring &amp;ws):&#160;streams.h']]],
+  ['tofilename_30',['tofilename',['../db/d8e/streams_8h.html#a91f93dff26772148b9030d7469bc35dd',1,'toFileName(const std::wstring &amp;ws):&#160;streams.h'],['../db/d8e/streams_8h.html#aa2dba118547e077f1e90a367bbea1a37',1,'toFileName(const std::string &amp;s):&#160;streams.h']]],
   ['tofit_31',['toFit',['../d3/d1b/group__stfgen.html#ga9e0595fb55ceb3ba0b7556ef832ad908',1,'stfnum::parInfo']]],
   ['toggleselect_32',['ToggleSelect',['../d7/d1a/group__wxstf.html#gafa3040015e9534a75d28693f847507b2',1,'wxStfDoc']]],
-  ['topfullscale_33',['topfullscale',['../d5/da8/structWaveHeader5.html#a8b5431397c6c68c8371bd6456875ec05',1,'WaveHeader5::topFullScale'],['../df/d37/structWaveHeader2.html#a5235722d7d73e55888a38d88b8450dd8',1,'WaveHeader2::topFullScale']]],
+  ['topfullscale_33',['topfullscale',['../df/d37/structWaveHeader2.html#a5235722d7d73e55888a38d88b8450dd8',1,'WaveHeader2::topFullScale'],['../d5/da8/structWaveHeader5.html#a8b5431397c6c68c8371bd6456875ec05',1,'WaveHeader5::topFullScale']]],
   ['tosection_34',['tosection',['../d7/d1a/group__wxstf.html#gac72baff88041748737b0c9e7b6098743',1,'wxStfTextImportDlg::ToSection()'],['../d6/dfb/group__stfio.html#gaf1ce760a1f1bae14e9bb1cd99b20d441',1,'stfio::txtImportSettings::toSection']]],
   ['tostring_35',['toString',['../dc/d54/common_8h.html#a9703f4e5f001f32fe397293c9bf4a539',1,'common.h']]],
   ['towstring_36',['toWString',['../dc/d54/common_8h.html#a7c1a84d0429befef2d6a233552cfda56',1,'common.h']]],
@@ -59,7 +59,7 @@ var searchData=
   ['tptextmark_56',['TpTextMark',['../dd/d60/Son_8h.html#a824d338319112ae15f32dd420f77303d',1,'Son.h']]],
   ['tpushort_57',['TpUShort',['../d7/d0b/cfs_8h.html#a854e7f0b7a6e32662ccb1c1caa68f6a9',1,'cfs.h']]],
   ['tpvdesc_58',['TpVDesc',['../d7/d0b/cfs_8h.html#a4b4fabda6a8944cd95e687dc1ae7f856',1,'cfs.h']]],
-  ['tpvoid_59',['tpvoid',['../d7/d0b/cfs_8h.html#a80374be9f973f53e79d4fa778457a023',1,'TpVoid:&#160;cfs.h'],['../dd/d60/Son_8h.html#aad0c24945153a4742ce935fba993d4fe',1,'TpVoid:&#160;Son.h']]],
+  ['tpvoid_59',['tpvoid',['../dd/d60/Son_8h.html#aad0c24945153a4742ce935fba993d4fe',1,'TpVoid:&#160;Son.h'],['../d7/d0b/cfs_8h.html#a80374be9f973f53e79d4fa778457a023',1,'TpVoid:&#160;cfs.h']]],
   ['tpword_60',['TpWORD',['../dd/d60/Son_8h.html#a8319375004e873cf4a663e255e03b48b',1,'Son.h']]],
   ['trace_61',['TRACE',['../d7/dc8/axodebug_8h.html#a1fd53f2c857d3d8789999d9b61879c8e',1,'axodebug.h']]],
   ['trace1_62',['TRACE1',['../d7/dc8/axodebug_8h.html#afc12a76780902459c86a8c2fed6ece32',1,'axodebug.h']]],
@@ -83,5 +83,5 @@ var searchData=
   ['tunits_80',['TUnits',['../d7/d0b/cfs_8h.html#a9b3f519b8a8768eb4486181522fc1aed',1,'cfs.h']]],
   ['tvardesc_81',['TVarDesc',['../dc/d04/structTVarDesc.html',1,'']]],
   ['txtimportsettings_82',['txtimportsettings',['../d6/dfb/group__stfio.html#ga09726b87534280180b338d3802e2324f',1,'stfio::txtImportSettings::txtImportSettings()'],['../dc/db2/structstfio_1_1txtImportSettings.html',1,'stfio::txtImportSettings']]],
-  ['type_83',['type',['../d7/da6/structColumnData.html#a2283e1a5ad818976c8100544e745cc72',1,'ColumnData::type'],['../df/d37/structWaveHeader2.html#aae45669c388197889dd61cc79e2f877f',1,'WaveHeader2::type'],['../d5/da8/structWaveHeader5.html#a32c566d922721e471418b22d404428e1',1,'WaveHeader5::type']]]
+  ['type_83',['type',['../d7/da6/structColumnData.html#a2283e1a5ad818976c8100544e745cc72',1,'ColumnData::type'],['../df/d37/structWaveHeader2.html#aae45669c388197889dd61cc79e2f877f',1,'WaveHeader2::type'],['../d5/da8/structWaveHeader5.html#a32c566d922721e471418b22d404428e1',1,'WaveHeader5::type'],['../d6/dfb/group__stfio.html#ga61ee1a26a5d01521dae4e693b8acba37',1,'stfio::ReaderInfo::type']]]
 ];

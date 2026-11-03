@@ -97,6 +97,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/db2/structstfio_1_1txtImportSettings.html">stfio::txtImportSettings</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Text file import filter settings.  <a href="../../dc/db2/structstfio_1_1txtImportSettings.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d1/d57/structstfio_1_1ReaderInfo.html">stfio::ReaderInfo</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -121,6 +123,12 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:ga02075993eeebe3c1378924b7de90f8fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">File types.  <a href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">More...</a><br /></td></tr>
 <tr class="separator:ga02075993eeebe3c1378924b7de90f8fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf7b5914494125b231ce2fc80dc8edebb" id="r_gaf7b5914494125b231ce2fc80dc8edebb"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">stfio::fileReader</a> { <a class="el" href="../../d6/dfb/group__stfio.html#ggaf7b5914494125b231ce2fc80dc8edebba2bd9c0ed00116be1258e0cc66617d7c8">stfio::fileReader::automatic</a>
+, <a class="el" href="../../d6/dfb/group__stfio.html#ggaf7b5914494125b231ce2fc80dc8edebbabd1d3ae444b23610ea133278cea3c6be">stfio::fileReader::biosig</a>
+, <a class="el" href="../../d6/dfb/group__stfio.html#ggaf7b5914494125b231ce2fc80dc8edebba8e5f3adee38c8fccc13c1f3be0143796">stfio::fileReader::native</a>
+ }</td></tr>
+<tr class="memdesc:gaf7b5914494125b231ce2fc80dc8edebb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reader selection is independent of the file format.  <a href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">More...</a><br /></td></tr>
+<tr class="separator:gaf7b5914494125b231ce2fc80dc8edebb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -159,9 +167,16 @@ Functions</h2></td></tr>
 <tr class="memitem:ga2198b94af2b3838fab18f8f2d5b6202a" id="r_ga2198b94af2b3838fab18f8f2d5b6202a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga2198b94af2b3838fab18f8f2d5b6202a">stfio::findExtension</a> (<a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">stfio::filetype</a> ftype)</td></tr>
 <tr class="memdesc:ga2198b94af2b3838fab18f8f2d5b6202a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns file extension for a file type.  <br /></td></tr>
 <tr class="separator:ga2198b94af2b3838fab18f8f2d5b6202a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7ec9c8922e09f6577b559b0d53884664" id="r_ga7ec9c8922e09f6577b559b0d53884664"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga7ec9c8922e09f6577b559b0d53884664">stfio::importFile</a> (const std::string &amp;fName, <a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">stfio::filetype</a> type, <a class="el" href="../../d6/d1c/classRecording.html">Recording</a> &amp;ReturnData, const <a class="el" href="../../dc/db2/structstfio_1_1txtImportSettings.html">stfio::txtImportSettings</a> &amp;txtImport, <a class="el" href="../../dc/d60/classstfio_1_1ProgressInfo.html">stfio::ProgressInfo</a> &amp;progDlg)</td></tr>
-<tr class="memdesc:ga7ec9c8922e09f6577b559b0d53884664"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic file import.  <br /></td></tr>
-<tr class="separator:ga7ec9c8922e09f6577b559b0d53884664"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga012fd490b2bab603a91ef598331ee46f" id="r_ga012fd490b2bab603a91ef598331ee46f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> <a class="el" href="../../d1/d57/structstfio_1_1ReaderInfo.html">ReaderInfo</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga012fd490b2bab603a91ef598331ee46f">stfio::getReaderInfo</a> (const std::string &amp;filename, <a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">filetype</a> hint=<a class="el" href="../../d6/dfb/group__stfio.html#gga02075993eeebe3c1378924b7de90f8fca3787368d00529ff9e2116d1f91104473">none</a>)</td></tr>
+<tr class="memdesc:ga012fd490b2bab603a91ef598331ee46f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inspect file headers to recommend a reader without loading the samples.  <br /></td></tr>
+<tr class="separator:ga012fd490b2bab603a91ef598331ee46f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa6a506f4ef725001b3e5ffee0e0d2588" id="r_gaa6a506f4ef725001b3e5ffee0e0d2588"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#gaa6a506f4ef725001b3e5ffee0e0d2588">stfio::hasNativeReader</a> (<a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">filetype</a> type)</td></tr>
+<tr class="separator:gaa6a506f4ef725001b3e5ffee0e0d2588"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6ddad45f7e9ec99f5c5a3f444cd3afba" id="r_ga6ddad45f7e9ec99f5c5a3f444cd3afba"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> <a class="el" href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">fileReader</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga6ddad45f7e9ec99f5c5a3f444cd3afba">stfio::parseReader</a> (const std::string &amp;name)</td></tr>
+<tr class="separator:ga6ddad45f7e9ec99f5c5a3f444cd3afba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa31b5be020461bd8302e3621a6ffa480" id="r_gaa31b5be020461bd8302e3621a6ffa480"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#gaa31b5be020461bd8302e3621a6ffa480">stfio::importFile</a> (const std::string &amp;fName, <a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">stfio::filetype</a> type, <a class="el" href="../../d6/d1c/classRecording.html">Recording</a> &amp;ReturnData, const <a class="el" href="../../dc/db2/structstfio_1_1txtImportSettings.html">stfio::txtImportSettings</a> &amp;txtImport, <a class="el" href="../../dc/d60/classstfio_1_1ProgressInfo.html">stfio::ProgressInfo</a> &amp;progDlg, <a class="el" href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">fileReader</a> reader=<a class="el" href="../../d6/dfb/group__stfio.html#ggaf7b5914494125b231ce2fc80dc8edebba2bd9c0ed00116be1258e0cc66617d7c8">fileReader::automatic</a>, <a class="el" href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">fileReader</a> *usedReader=<a class="el" href="../../db/d8e/streams_8h.html#ab979d9d4b4923f7c54d6caa6e1a61936">nullptr</a>)</td></tr>
+<tr class="memdesc:gaa31b5be020461bd8302e3621a6ffa480"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic file import.  <br /></td></tr>
+<tr class="separator:gaa31b5be020461bd8302e3621a6ffa480"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga29b7fe9b57936b47143372c5970bf088" id="r_ga29b7fe9b57936b47143372c5970bf088"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga29b7fe9b57936b47143372c5970bf088">stfio::exportFile</a> (const std::string &amp;fName, <a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">stfio::filetype</a> type, const <a class="el" href="../../d6/d1c/classRecording.html">Recording</a> &amp;Data, <a class="el" href="../../dc/d60/classstfio_1_1ProgressInfo.html">ProgressInfo</a> &amp;progDlg)</td></tr>
 <tr class="memdesc:ga29b7fe9b57936b47143372c5970bf088"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic file export.  <br /></td></tr>
 <tr class="separator:ga29b7fe9b57936b47143372c5970bf088"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -190,9 +205,50 @@ Variables</h2></td></tr>
 <tr class="separator:gadef700b2bebba5ddb6819987ef78f732"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9b5913151a63eca7bcadda45351b4249" id="r_ga9b5913151a63eca7bcadda45351b4249"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga9b5913151a63eca7bcadda45351b4249">stfio::txtImportSettings::xUnits</a></td></tr>
 <tr class="separator:ga9b5913151a63eca7bcadda45351b4249"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga61ee1a26a5d01521dae4e693b8acba37" id="r_ga61ee1a26a5d01521dae4e693b8acba37"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">filetype</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga61ee1a26a5d01521dae4e693b8acba37">stfio::ReaderInfo::type</a> = <a class="el" href="../../d6/dfb/group__stfio.html#gga02075993eeebe3c1378924b7de90f8fca3787368d00529ff9e2116d1f91104473">none</a></td></tr>
+<tr class="separator:ga61ee1a26a5d01521dae4e693b8acba37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga85dd35f901c97cd141226afe7f7db3da" id="r_ga85dd35f901c97cd141226afe7f7db3da"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga85dd35f901c97cd141226afe7f7db3da">stfio::ReaderInfo::biosigAvailable</a> = false</td></tr>
+<tr class="separator:ga85dd35f901c97cd141226afe7f7db3da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2a3f62fcb64c8a1b76cb80cc2c0fad5a" id="r_ga2a3f62fcb64c8a1b76cb80cc2c0fad5a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga2a3f62fcb64c8a1b76cb80cc2c0fad5a">stfio::ReaderInfo::nativeAvailable</a> = false</td></tr>
+<tr class="separator:ga2a3f62fcb64c8a1b76cb80cc2c0fad5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga77133e8b9dcb18a0cdfd4d0bd7a628ef" id="r_ga77133e8b9dcb18a0cdfd4d0bd7a628ef"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">fileReader</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga77133e8b9dcb18a0cdfd4d0bd7a628ef">stfio::ReaderInfo::recommended</a> = <a class="el" href="../../d6/dfb/group__stfio.html#ggaf7b5914494125b231ce2fc80dc8edebba8e5f3adee38c8fccc13c1f3be0143796">fileReader::native</a></td></tr>
+<tr class="separator:ga77133e8b9dcb18a0cdfd4d0bd7a628ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga397679dd1ab08dfddab83f3698ab2cfe" id="r_ga397679dd1ab08dfddab83f3698ab2cfe"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga397679dd1ab08dfddab83f3698ab2cfe">stfio::ReaderInfo::reason</a></td></tr>
+<tr class="separator:ga397679dd1ab08dfddab83f3698ab2cfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="gaf7b5914494125b231ce2fc80dc8edebb" name="gaf7b5914494125b231ce2fc80dc8edebb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf7b5914494125b231ce2fc80dc8edebb">&#9670;&#160;</a></span>fileReader</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">stfio::fileReader</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Reader selection is independent of the file format. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggaf7b5914494125b231ce2fc80dc8edebba2bd9c0ed00116be1258e0cc66617d7c8" name="ggaf7b5914494125b231ce2fc80dc8edebba2bd9c0ed00116be1258e0cc66617d7c8"></a>automatic&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ggaf7b5914494125b231ce2fc80dc8edebbabd1d3ae444b23610ea133278cea3c6be" name="ggaf7b5914494125b231ce2fc80dc8edebbabd1d3ae444b23610ea133278cea3c6be"></a>biosig&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ggaf7b5914494125b231ce2fc80dc8edebba8e5f3adee38c8fccc13c1f3be0143796" name="ggaf7b5914494125b231ce2fc80dc8edebba8e5f3adee38c8fccc13c1f3be0143796"></a>native&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="../../d9/df7/stfio_8h_source.html#l00150">150</a> of file <a class="el" href="../../d9/df7/stfio_8h_source.html">stfio.h</a>.</p>
+
+</div>
+</div>
 <a id="ga02075993eeebe3c1378924b7de90f8fc" name="ga02075993eeebe3c1378924b7de90f8fc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga02075993eeebe3c1378924b7de90f8fc">&#9670;&#160;</a></span>filetype</h2>
 
@@ -391,8 +447,56 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="ga7ec9c8922e09f6577b559b0d53884664" name="ga7ec9c8922e09f6577b559b0d53884664"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga7ec9c8922e09f6577b559b0d53884664">&#9670;&#160;</a></span>importFile()</h2>
+<a id="ga012fd490b2bab603a91ef598331ee46f" name="ga012fd490b2bab603a91ef598331ee46f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga012fd490b2bab603a91ef598331ee46f">&#9670;&#160;</a></span>getReaderInfo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> <a class="el" href="../../d1/d57/structstfio_1_1ReaderInfo.html">ReaderInfo</a> stfio::getReaderInfo </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>filename</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">filetype</a>&#160;</td>
+          <td class="paramname"><em>hint</em> = <code><a class="el" href="../../d6/dfb/group__stfio.html#gga02075993eeebe3c1378924b7de90f8fca3787368d00529ff9e2116d1f91104473">none</a></code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Inspect file headers to recommend a reader without loading the samples. </p>
+
+</div>
+</div>
+<a id="gaa6a506f4ef725001b3e5ffee0e0d2588" name="gaa6a506f4ef725001b3e5ffee0e0d2588"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa6a506f4ef725001b3e5ffee0e0d2588">&#9670;&#160;</a></span>hasNativeReader()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> bool stfio::hasNativeReader </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">filetype</a>&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="gaa31b5be020461bd8302e3621a6ffa480" name="gaa31b5be020461bd8302e3621a6ffa480"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa31b5be020461bd8302e3621a6ffa480">&#9670;&#160;</a></span>importFile()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -425,7 +529,19 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="../../dc/d60/classstfio_1_1ProgressInfo.html">stfio::ProgressInfo</a> &amp;&#160;</td>
-          <td class="paramname"><em>progDlg</em>&#160;</td>
+          <td class="paramname"><em>progDlg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">fileReader</a>&#160;</td>
+          <td class="paramname"><em>reader</em> = <code><a class="el" href="../../d6/dfb/group__stfio.html#ggaf7b5914494125b231ce2fc80dc8edebba2bd9c0ed00116be1258e0cc66617d7c8">fileReader::automatic</a></code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">fileReader</a> *&#160;</td>
+          <td class="paramname"><em>usedReader</em> = <code><a class="el" href="../../db/d8e/streams_8h.html#ab979d9d4b4923f7c54d6caa6e1a61936">nullptr</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -443,6 +559,8 @@ Variables</h2></td></tr>
     <tr><td class="paramname">ReturnData</td><td>Will contain the file data on return. </td></tr>
     <tr><td class="paramname">txtImport</td><td>The text import filter settings. </td></tr>
     <tr><td class="paramname"><a class="el" href="../../dc/d60/classstfio_1_1ProgressInfo.html" title="ProgressInfo class.">ProgressInfo</a></td><td>Progress indicator </td></tr>
+    <tr><td class="paramname">reader</td><td>Automatic selection or an explicit reader override. </td></tr>
+    <tr><td class="paramname">usedReader</td><td>Optional output identifying the reader that succeeded. </td></tr>
   </table>
   </dd>
 </dl>
@@ -499,6 +617,24 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>New recording with multiplied selected sections </dd></dl>
+
+</div>
+</div>
+<a id="ga6ddad45f7e9ec99f5c5a3f444cd3afba" name="ga6ddad45f7e9ec99f5c5a3f444cd3afba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6ddad45f7e9ec99f5c5a3f444cd3afba">&#9670;&#160;</a></span>parseReader()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> <a class="el" href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">fileReader</a> stfio::parseReader </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -965,6 +1101,22 @@ Variables</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
+<a id="ga85dd35f901c97cd141226afe7f7db3da" name="ga85dd35f901c97cd141226afe7f7db3da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga85dd35f901c97cd141226afe7f7db3da">&#9670;&#160;</a></span>biosigAvailable</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool stfio::ReaderInfo::biosigAvailable = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d9/df7/stfio_8h_source.html#l00154">154</a> of file <a class="el" href="../../d9/df7/stfio_8h_source.html">stfio.h</a>.</p>
+
+</div>
+</div>
 <a id="ga50f5cdd5b7d5767c52bc0816d7861fdc" name="ga50f5cdd5b7d5767c52bc0816d7861fdc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga50f5cdd5b7d5767c52bc0816d7861fdc">&#9670;&#160;</a></span>firstIsTime</h2>
 
@@ -999,6 +1151,22 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="ga2a3f62fcb64c8a1b76cb80cc2c0fad5a" name="ga2a3f62fcb64c8a1b76cb80cc2c0fad5a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga2a3f62fcb64c8a1b76cb80cc2c0fad5a">&#9670;&#160;</a></span>nativeAvailable</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool stfio::ReaderInfo::nativeAvailable = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d9/df7/stfio_8h_source.html#l00155">155</a> of file <a class="el" href="../../d9/df7/stfio_8h_source.html">stfio.h</a>.</p>
+
+</div>
+</div>
 <a id="ga50f2fa3a0c163e3c7df69cde60f824cc" name="ga50f2fa3a0c163e3c7df69cde60f824cc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga50f2fa3a0c163e3c7df69cde60f824cc">&#9670;&#160;</a></span>ncolumns</h2>
 
@@ -1013,6 +1181,38 @@ Variables</h2></td></tr>
 <p>Number of columns. </p>
 
 <p class="definition">Definition at line <a class="el" href="../../d9/df7/stfio_8h_source.html#l00108">108</a> of file <a class="el" href="../../d9/df7/stfio_8h_source.html">stfio.h</a>.</p>
+
+</div>
+</div>
+<a id="ga397679dd1ab08dfddab83f3698ab2cfe" name="ga397679dd1ab08dfddab83f3698ab2cfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga397679dd1ab08dfddab83f3698ab2cfe">&#9670;&#160;</a></span>reason</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string stfio::ReaderInfo::reason</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d9/df7/stfio_8h_source.html#l00157">157</a> of file <a class="el" href="../../d9/df7/stfio_8h_source.html">stfio.h</a>.</p>
+
+</div>
+</div>
+<a id="ga77133e8b9dcb18a0cdfd4d0bd7a628ef" name="ga77133e8b9dcb18a0cdfd4d0bd7a628ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga77133e8b9dcb18a0cdfd4d0bd7a628ef">&#9670;&#160;</a></span>recommended</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">fileReader</a> stfio::ReaderInfo::recommended = <a class="el" href="../../d6/dfb/group__stfio.html#ggaf7b5914494125b231ce2fc80dc8edebba8e5f3adee38c8fccc13c1f3be0143796">fileReader::native</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d9/df7/stfio_8h_source.html#l00156">156</a> of file <a class="el" href="../../d9/df7/stfio_8h_source.html">stfio.h</a>.</p>
 
 </div>
 </div>
@@ -1047,6 +1247,22 @@ Variables</h2></td></tr>
 <p>Import columns into separate sections rather than separate channels. </p>
 
 <p class="definition">Definition at line <a class="el" href="../../d9/df7/stfio_8h_source.html#l00106">106</a> of file <a class="el" href="../../d9/df7/stfio_8h_source.html">stfio.h</a>.</p>
+
+</div>
+</div>
+<a id="ga61ee1a26a5d01521dae4e693b8acba37" name="ga61ee1a26a5d01521dae4e693b8acba37"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga61ee1a26a5d01521dae4e693b8acba37">&#9670;&#160;</a></span>type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">filetype</a> stfio::ReaderInfo::type = <a class="el" href="../../d6/dfb/group__stfio.html#gga02075993eeebe3c1378924b7de90f8fca3787368d00529ff9e2116d1f91104473">none</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d9/df7/stfio_8h_source.html#l00153">153</a> of file <a class="el" href="../../d9/df7/stfio_8h_source.html">stfio.h</a>.</p>
 
 </div>
 </div>

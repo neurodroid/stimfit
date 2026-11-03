@@ -89,8 +89,12 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d60/structstfio_1_1ABF2Info.html">ABF2Info</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d60/classstfio_1_1ProgressInfo.html">ProgressInfo</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="../../dc/d60/classstfio_1_1ProgressInfo.html" title="ProgressInfo class.">ProgressInfo</a> class.  <a href="../../dc/d60/classstfio_1_1ProgressInfo.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d1/d57/structstfio_1_1ReaderInfo.html">ReaderInfo</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d48/classstfio_1_1StdoutProgressInfo.html">StdoutProgressInfo</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="../../d5/d48/classstfio_1_1StdoutProgressInfo.html" title="StdoutProgressInfo class.">StdoutProgressInfo</a> class.  <a href="../../d5/d48/classstfio_1_1StdoutProgressInfo.html#details">More...</a><br /></td></tr>
@@ -122,9 +126,18 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:ga02075993eeebe3c1378924b7de90f8fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">File types.  <a href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">More...</a><br /></td></tr>
 <tr class="separator:ga02075993eeebe3c1378924b7de90f8fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf7b5914494125b231ce2fc80dc8edebb" id="r_gaf7b5914494125b231ce2fc80dc8edebb"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">fileReader</a> { <a class="el" href="../../d6/dfb/group__stfio.html#ggaf7b5914494125b231ce2fc80dc8edebba2bd9c0ed00116be1258e0cc66617d7c8">fileReader::automatic</a>
+, <a class="el" href="../../d6/dfb/group__stfio.html#ggaf7b5914494125b231ce2fc80dc8edebbabd1d3ae444b23610ea133278cea3c6be">fileReader::biosig</a>
+, <a class="el" href="../../d6/dfb/group__stfio.html#ggaf7b5914494125b231ce2fc80dc8edebba8e5f3adee38c8fccc13c1f3be0143796">fileReader::native</a>
+ }</td></tr>
+<tr class="memdesc:gaf7b5914494125b231ce2fc80dc8edebb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reader selection is independent of the file format.  <a href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">More...</a><br /></td></tr>
+<tr class="separator:gaf7b5914494125b231ce2fc80dc8edebb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a4980ba8e0a05359fe610c7372efab374" id="r_a4980ba8e0a05359fe610c7372efab374"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d5d/namespacestfio.html#a4980ba8e0a05359fe610c7372efab374">getABF2Info</a> (const std::string &amp;filename, <a class="el" href="../../de/d60/structstfio_1_1ABF2Info.html">ABF2Info</a> &amp;info)</td></tr>
+<tr class="memdesc:a4980ba8e0a05359fe610c7372efab374"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read ABF2 acquisition metadata for checking another reader's interpretation.  <br /></td></tr>
+<tr class="separator:a4980ba8e0a05359fe610c7372efab374"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3477a97bc435c3c5a951d61c4bb7024c" id="r_a3477a97bc435c3c5a951d61c4bb7024c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d5d/namespacestfio.html#a3477a97bc435c3c5a951d61c4bb7024c">importABFFile</a> (const std::string &amp;fName, <a class="el" href="../../d6/d1c/classRecording.html">Recording</a> &amp;ReturnData, <a class="el" href="../../dc/d60/classstfio_1_1ProgressInfo.html">ProgressInfo</a> &amp;progDlg)</td></tr>
 <tr class="memdesc:a3477a97bc435c3c5a951d61c4bb7024c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open an ABF file and store its contents to a <a class="el" href="../../d6/d1c/classRecording.html" title="Represents the data within a file.">Recording</a> object. Attempts to identify the ABF version.  <br /></td></tr>
 <tr class="separator:a3477a97bc435c3c5a951d61c4bb7024c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -195,9 +208,16 @@ Functions</h2></td></tr>
 <tr class="memitem:ga2198b94af2b3838fab18f8f2d5b6202a" id="r_ga2198b94af2b3838fab18f8f2d5b6202a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga2198b94af2b3838fab18f8f2d5b6202a">findExtension</a> (<a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">stfio::filetype</a> ftype)</td></tr>
 <tr class="memdesc:ga2198b94af2b3838fab18f8f2d5b6202a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns file extension for a file type.  <br /></td></tr>
 <tr class="separator:ga2198b94af2b3838fab18f8f2d5b6202a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7ec9c8922e09f6577b559b0d53884664" id="r_ga7ec9c8922e09f6577b559b0d53884664"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga7ec9c8922e09f6577b559b0d53884664">importFile</a> (const std::string &amp;fName, <a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">stfio::filetype</a> type, <a class="el" href="../../d6/d1c/classRecording.html">Recording</a> &amp;ReturnData, const <a class="el" href="../../dc/db2/structstfio_1_1txtImportSettings.html">stfio::txtImportSettings</a> &amp;txtImport, <a class="el" href="../../dc/d60/classstfio_1_1ProgressInfo.html">stfio::ProgressInfo</a> &amp;progDlg)</td></tr>
-<tr class="memdesc:ga7ec9c8922e09f6577b559b0d53884664"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic file import.  <br /></td></tr>
-<tr class="separator:ga7ec9c8922e09f6577b559b0d53884664"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga012fd490b2bab603a91ef598331ee46f" id="r_ga012fd490b2bab603a91ef598331ee46f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> <a class="el" href="../../d1/d57/structstfio_1_1ReaderInfo.html">ReaderInfo</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga012fd490b2bab603a91ef598331ee46f">getReaderInfo</a> (const std::string &amp;filename, <a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">filetype</a> hint=<a class="el" href="../../d6/dfb/group__stfio.html#gga02075993eeebe3c1378924b7de90f8fca3787368d00529ff9e2116d1f91104473">none</a>)</td></tr>
+<tr class="memdesc:ga012fd490b2bab603a91ef598331ee46f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inspect file headers to recommend a reader without loading the samples.  <br /></td></tr>
+<tr class="separator:ga012fd490b2bab603a91ef598331ee46f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa6a506f4ef725001b3e5ffee0e0d2588" id="r_gaa6a506f4ef725001b3e5ffee0e0d2588"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#gaa6a506f4ef725001b3e5ffee0e0d2588">hasNativeReader</a> (<a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">filetype</a> type)</td></tr>
+<tr class="separator:gaa6a506f4ef725001b3e5ffee0e0d2588"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6ddad45f7e9ec99f5c5a3f444cd3afba" id="r_ga6ddad45f7e9ec99f5c5a3f444cd3afba"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> <a class="el" href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">fileReader</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga6ddad45f7e9ec99f5c5a3f444cd3afba">parseReader</a> (const std::string &amp;name)</td></tr>
+<tr class="separator:ga6ddad45f7e9ec99f5c5a3f444cd3afba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa31b5be020461bd8302e3621a6ffa480" id="r_gaa31b5be020461bd8302e3621a6ffa480"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#gaa31b5be020461bd8302e3621a6ffa480">importFile</a> (const std::string &amp;fName, <a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">stfio::filetype</a> type, <a class="el" href="../../d6/d1c/classRecording.html">Recording</a> &amp;ReturnData, const <a class="el" href="../../dc/db2/structstfio_1_1txtImportSettings.html">stfio::txtImportSettings</a> &amp;txtImport, <a class="el" href="../../dc/d60/classstfio_1_1ProgressInfo.html">stfio::ProgressInfo</a> &amp;progDlg, <a class="el" href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">fileReader</a> reader=<a class="el" href="../../d6/dfb/group__stfio.html#ggaf7b5914494125b231ce2fc80dc8edebba2bd9c0ed00116be1258e0cc66617d7c8">fileReader::automatic</a>, <a class="el" href="../../d6/dfb/group__stfio.html#gaf7b5914494125b231ce2fc80dc8edebb">fileReader</a> *usedReader=<a class="el" href="../../db/d8e/streams_8h.html#ab979d9d4b4923f7c54d6caa6e1a61936">nullptr</a>)</td></tr>
+<tr class="memdesc:gaa31b5be020461bd8302e3621a6ffa480"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic file import.  <br /></td></tr>
+<tr class="separator:gaa31b5be020461bd8302e3621a6ffa480"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga29b7fe9b57936b47143372c5970bf088" id="r_ga29b7fe9b57936b47143372c5970bf088"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/dc4/core_8h.html#abcf8bc71808c6e0c0d5c3a0b16820e7c">StfioDll</a> bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dfb/group__stfio.html#ga29b7fe9b57936b47143372c5970bf088">exportFile</a> (const std::string &amp;fName, <a class="el" href="../../d6/dfb/group__stfio.html#ga02075993eeebe3c1378924b7de90f8fc">stfio::filetype</a> type, const <a class="el" href="../../d6/d1c/classRecording.html">Recording</a> &amp;Data, <a class="el" href="../../dc/d60/classstfio_1_1ProgressInfo.html">ProgressInfo</a> &amp;progDlg)</td></tr>
 <tr class="memdesc:ga29b7fe9b57936b47143372c5970bf088"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic file export.  <br /></td></tr>
 <tr class="separator:ga29b7fe9b57936b47143372c5970bf088"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -454,6 +474,36 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>At present, always returns 0. </dd></dl>
+
+</div>
+</div>
+<a id="a4980ba8e0a05359fe610c7372efab374" name="a4980ba8e0a05359fe610c7372efab374"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4980ba8e0a05359fe610c7372efab374">&#9670;&#160;</a></span>getABF2Info()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool stfio::getABF2Info </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>filename</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../de/d60/structstfio_1_1ABF2Info.html">ABF2Info</a> &amp;&#160;</td>
+          <td class="paramname"><em>info</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read ABF2 acquisition metadata for checking another reader's interpretation. </p>
 
 </div>
 </div>

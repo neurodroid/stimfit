@@ -7,5 +7,6 @@ var searchData=
   ['annotation_5fcursor_4',['annotation_cursor',['../d3/d1b/group__stfgen.html#ggad2d1acb3ac0c16ee32b5f4d3a1ab4abfa15477c808c6071c63724ae9192b339bb',1,'stf']]],
   ['ascii_5',['ascii',['../d6/dfb/group__stfio.html#gga02075993eeebe3c1378924b7de90f8fca4655324a4318eb5d2acc4b5c6ecf8880',1,'stfio']]],
   ['atf_6',['atf',['../d6/dfb/group__stfio.html#gga02075993eeebe3c1378924b7de90f8fcaba60b6e63d8bb157504e6f2334aeff0e',1,'stfio']]],
-  ['axg_7',['axg',['../d6/dfb/group__stfio.html#gga02075993eeebe3c1378924b7de90f8fcaa0f334febf0efba1ec685c6037c78d32',1,'stfio']]]
+  ['automatic_7',['automatic',['../d6/dfb/group__stfio.html#ggaf7b5914494125b231ce2fc80dc8edebba2bd9c0ed00116be1258e0cc66617d7c8',1,'stfio']]],
+  ['axg_8',['axg',['../d6/dfb/group__stfio.html#gga02075993eeebe3c1378924b7de90f8fcaa0f334febf0efba1ec685c6037c78d32',1,'stfio']]]
 ];

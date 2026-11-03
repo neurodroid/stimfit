@@ -29,11 +29,12 @@ var searchData=
   ['wxstfparentframe_26',['wxStfParentFrame',['../d7/d1a/group__wxstf.html#gab056026ad9666ef70a5e88619c38afca',1,'wxStfParentFrame']]],
   ['wxstfpreprintdlg_27',['wxStfPreprintDlg',['../d7/d1a/group__wxstf.html#gad8b20d892a33caeeb3a253f0f7c18d9c',1,'wxStfPreprintDlg']]],
   ['wxstfprintout_28',['wxStfPrintout',['../d7/d1a/group__wxstf.html#ga00bdf488a1c7168a300f4000a7466e86',1,'wxStfPrintout']]],
-  ['wxstftable_29',['wxStfTable',['../d7/d1a/group__wxstf.html#ga1be2217daa8bb98fdb00cc65c74368e5',1,'wxStfTable']]],
-  ['wxstftextimportdlg_30',['wxStfTextImportDlg',['../d7/d1a/group__wxstf.html#ga3149a7952c4c97ed5224b6baf8b7b203',1,'wxStfTextImportDlg']]],
-  ['wxstftransformdlg_31',['wxStfTransformDlg',['../d7/d1a/group__wxstf.html#ga7d1964c0dc81f54b3020d0948cd6ab37',1,'wxStfTransformDlg']]],
-  ['wxstfusrdlg_32',['wxStfUsrDlg',['../d5/da8/classwxStfUsrDlg.html#a5306c9bb0fd621aef6ae8fa7b0303c47',1,'wxStfUsrDlg']]],
-  ['wxstfview_33',['wxStfView',['../d7/d1a/group__wxstf.html#ga6dc01863526872b6421facc8d7e80757',1,'wxStfView']]],
-  ['wxwriteprofileint_34',['wxWriteProfileInt',['../d7/d1a/group__wxstf.html#ga42db647384a18e332779c72793a3cdc9',1,'wxStfApp']]],
-  ['wxwriteprofilestring_35',['wxWriteProfileString',['../d7/d1a/group__wxstf.html#ga51f758f8c5ae70447bdfb2dfbcfd06af',1,'wxStfApp']]]
+  ['wxstfreaderdlg_29',['wxStfReaderDlg',['../da/d90/classwxStfReaderDlg.html#a19e9352c58afa70d4480c5148137319e',1,'wxStfReaderDlg']]],
+  ['wxstftable_30',['wxStfTable',['../d7/d1a/group__wxstf.html#ga1be2217daa8bb98fdb00cc65c74368e5',1,'wxStfTable']]],
+  ['wxstftextimportdlg_31',['wxStfTextImportDlg',['../d7/d1a/group__wxstf.html#ga3149a7952c4c97ed5224b6baf8b7b203',1,'wxStfTextImportDlg']]],
+  ['wxstftransformdlg_32',['wxStfTransformDlg',['../d7/d1a/group__wxstf.html#ga7d1964c0dc81f54b3020d0948cd6ab37',1,'wxStfTransformDlg']]],
+  ['wxstfusrdlg_33',['wxStfUsrDlg',['../d5/da8/classwxStfUsrDlg.html#a5306c9bb0fd621aef6ae8fa7b0303c47',1,'wxStfUsrDlg']]],
+  ['wxstfview_34',['wxStfView',['../d7/d1a/group__wxstf.html#ga6dc01863526872b6421facc8d7e80757',1,'wxStfView']]],
+  ['wxwriteprofileint_35',['wxWriteProfileInt',['../d7/d1a/group__wxstf.html#ga42db647384a18e332779c72793a3cdc9',1,'wxStfApp']]],
+  ['wxwriteprofilestring_36',['wxWriteProfileString',['../d7/d1a/group__wxstf.html#ga51f758f8c5ae70447bdfb2dfbcfd06af',1,'wxStfApp']]]
 ];

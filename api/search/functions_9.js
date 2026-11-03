@@ -8,7 +8,7 @@ var searchData=
   ['importatffile_5',['importATFFile',['../d6/d5d/namespacestfio.html#a2021d6305f995a46fe40c82f3834a57f',1,'stfio']]],
   ['importaxgfile_6',['importAXGFile',['../d6/d5d/namespacestfio.html#aad6659a374304aeb9557205fbd57d17e',1,'stfio']]],
   ['importcfsfile_7',['importCFSFile',['../d6/d5d/namespacestfio.html#ab20090f4a550f5770324ecea1a07f8de',1,'stfio']]],
-  ['importfile_8',['importFile',['../d6/dfb/group__stfio.html#ga7ec9c8922e09f6577b559b0d53884664',1,'stfio']]],
+  ['importfile_8',['importFile',['../d6/dfb/group__stfio.html#gaa31b5be020461bd8302e3621a6ffa480',1,'stfio']]],
   ['importhdf5file_9',['importHDF5File',['../d6/d5d/namespacestfio.html#a28f6627105763938709909e6143f777f',1,'stfio']]],
   ['importhekafile_10',['importHEKAFile',['../d6/d5d/namespacestfio.html#a21941ddca8c25860c1b9a4bbc5da823b',1,'stfio']]],
   ['importintanfile_11',['importIntanFile',['../d6/d5d/namespacestfio.html#adc5b374cce540d54fb3f22db32c92e78',1,'stfio']]],
