@@ -6,7 +6,7 @@ var searchData=
   ['readinput_3',['readInput',['../d5/da8/classwxStfUsrDlg.html#a476d0df0d3644eeadecbdd2be166b35d',1,'wxStfUsrDlg']]],
   ['recording_4',['recording',['../d3/d1b/group__stfgen.html#ga270f855f9547078427135d75854cd7c6',1,'Recording::Recording()'],['../d3/d1b/group__stfgen.html#gac1219247e33bfd916d32d00d4fc86051',1,'Recording::Recording(const Channel &amp;c_Channel)'],['../d3/d1b/group__stfgen.html#ga4d55d05a1b89f7867c91ff109e94f0d9',1,'Recording::Recording(const std::deque&lt; Channel &gt; &amp;ChannelList)'],['../d3/d1b/group__stfgen.html#ga35b98e700d186598e8a1aa6c34b47352',1,'Recording::Recording(std::size_t c_n_channels, std::size_t c_n_sections=0, std::size_t c_n_points=0)']]],
   ['release_5',['Release',['../d7/d10/classCFileIO.html#a4d33093fb8350ff0b75ef35fb814a798',1,'CFileIO']]],
-  ['rememberchoice_6',['RememberChoice',['../da/d90/classwxStfReaderDlg.html#a63f86b0f0689e56b2d4496a5d1adf973',1,'wxStfReaderDlg']]],
+  ['rememberchoice_6',['RememberChoice',['../db/dc8/classwxStfOpenDlg.html#aed3769e3871b07248006e428da303bcb',1,'wxStfOpenDlg']]],
   ['remove_7',['Remove',['../d7/d1a/group__wxstf.html#gaba7a580a21ff332dd87b43ddc383c0fe',1,'wxStfDoc']]],
   ['removeannotation_8',['RemoveAnnotation',['../d3/d1b/group__stfgen.html#gaec2ffb6912e09f47f63adcccf574db1d',1,'Section']]],
   ['reserve_9',['reserve',['../d3/d1b/group__stfgen.html#ga904d1019726e0fb75d7422874c941e13',1,'Channel']]],

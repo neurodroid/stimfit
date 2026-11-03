@@ -927,7 +927,7 @@ var searchData=
   ['axodbg_5fassert_924',['AXODBG_assert',['../d7/dc8/axodebug_8h.html#a8d3578029f58515317acf25ab7f5087c',1,'axodebug.h']]],
   ['axodbg_5fbreak_5fon_5fassert_925',['AXODBG_BREAK_ON_ASSERT',['../d7/dc8/axodebug_8h.html#afc254150966ffc7fd968ed905bbb89fb',1,'axodebug.h']]],
   ['axodbg_5fclear_5fdebug_5ffield_926',['AXODBG_CLEAR_DEBUG_FIELD',['../d7/dc8/axodebug_8h.html#aad86ddea60dd0454d7bdee6b90737edc',1,'axodebug.h']]],
-  ['axodbg_5fdebugbreak_927',['axodbg_debugbreak',['../d7/dc8/axodebug_8h.html#ae7bdeb34c1c64887f55e27a5d83a4e7b',1,'AXODBG_DEBUGBREAK:&#160;axodebug.h'],['../d7/dc8/axodebug_8h.html#a24f550c42f776478bc833e77063c5100',1,'AXODBG_DebugBreak(void):&#160;axodebug.h']]],
+  ['axodbg_5fdebugbreak_927',['axodbg_debugbreak',['../d7/dc8/axodebug_8h.html#a24f550c42f776478bc833e77063c5100',1,'AXODBG_DebugBreak(void):&#160;axodebug.h'],['../d7/dc8/axodebug_8h.html#ae7bdeb34c1c64887f55e27a5d83a4e7b',1,'AXODBG_DEBUGBREAK:&#160;axodebug.h']]],
   ['axodbg_5ferrormsg_928',['AXODBG_ErrorMsg',['../d7/dc8/axodebug_8h.html#a8cf2929c03e81e628f2847851932d960',1,'axodebug.h']]],
   ['axodbg_5fgetsystemerrortext_929',['AXODBG_GetSystemErrorText',['../d7/dc8/axodebug_8h.html#ae5fa84118cfeb25c368b2d5d2e376136',1,'axodebug.h']]],
   ['axodbg_5finitialize_930',['AXODBG_Initialize',['../d7/dc8/axodebug_8h.html#a1c4c57be7029cb320e5ee1ec7d078c16',1,'axodebug.h']]],

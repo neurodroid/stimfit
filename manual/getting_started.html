@@ -77,12 +77,14 @@ when it can read the file correctly. Stimfit checks ABF2 channel counts, sample
 counts, names and units against the file header, and recommends its native
 reader when BioSig’s interpretation is inconsistent. Automatic import also
 tries an available native reader if BioSig fails.</p>
-<p>Use <strong>File -&gt; Open with reader…</strong> (<strong>Ctrl+Shift+O</strong>) to select <strong>Automatic</strong>,
-<strong>BioSig</strong>, or <strong>Native (Stimfit)</strong>. The dialog shows the automatic recommendation
-and its reason, and offers the readers available for that file. Explicit choices
-take precedence over the recommendation. Each import opens a new window, so
-different readers can be compared.</p>
-<p>Select <strong>Remember this choice for this file</strong> to use your selection on future
+<p>Use <strong>File -&gt; Open…</strong> (<strong>Ctrl+O</strong>) to choose a recording. The <strong>File reader</strong>
+panel on the right updates when a file is selected. For files supported by
+multiple readers, choose <strong>Automatic</strong>, <strong>BioSig</strong>, or <strong>Native (Stimfit)</strong>.
+The panel shows the automatic recommendation and its reason. Reader controls
+are disabled for files supported by a single reader and while browsing folders.
+Explicit choices take precedence over the recommendation. Each import opens
+a new window, so different readers can be compared.</p>
+<p>Select <strong>Remember for this file</strong> to use your selection on future
 opens, including recent files and drag and drop. To restore the automatic
 default, select <strong>Automatic</strong> with the same checkbox enabled. The reader used
 for an imported recording is shown in <strong>File -&gt; File information…</strong>.</p>
