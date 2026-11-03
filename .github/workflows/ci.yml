@@ -344,14 +344,12 @@ jobs:
 
       - name: Build Stimfit and test targets
         run: |
-          cmake --build build-macos-macports --parallel --target \
-            stimfit \
-            stimfit_containers_test \
-            stimfit_numeric_test
+          # Build all configured targets required by the full staging install.
+          cmake --build build-macos-macports --parallel
 
       - name: Run MacPorts CTest
         run: |
-          ctest --test-dir build-macos-macports --output-on-failure --no-tests=error --tests-regex 'stimfit_(containers|numeric)_test'
+          ctest --test-dir build-macos-macports --output-on-failure --no-tests=error --tests-regex 'stimfit_(containers|io|numeric)_test'
 
       - name: Install Stimfit into staging
         run: |
