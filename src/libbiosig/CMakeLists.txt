@@ -78,8 +78,13 @@ add_custom_target(stimfit_biosig_generated
     ${_stf_biosig_generated_annexb}
 )
 
+include(StimfitBiosigABF)
+set(_stf_biosig_abf_source "${CMAKE_CURRENT_BINARY_DIR}/sopen_abf_read.c")
+stf_patch_biosig_abf("${STF_BIOSIG4CPP_DIR}/t210/sopen_abf_read.c" "${_stf_biosig_abf_source}")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${STF_BIOSIG4CPP_DIR}/t210/sopen_abf_read.c")
+
 set(_stf_biosig_sources
-  ${STF_BIOSIG4CPP_DIR}/t210/sopen_abf_read.c
+  ${_stf_biosig_abf_source}
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_acqbiopac.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_alpha_read.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_axg_read.c
@@ -125,13 +130,11 @@ endif()
 if(WIN32)
   list(APPEND _stf_biosig_sources
     ${STF_BIOSIG4CPP_DIR}/win32/getdelim.c
-    ${STF_BIOSIG4CPP_DIR}/win32/getline.c
     ${STF_BIOSIG4CPP_DIR}/win32/getlogin.c
   )
 elseif(APPLE)
   list(APPEND _stf_biosig_sources
     ${STF_BIOSIG4CPP_DIR}/win32/getdelim.c
-    ${STF_BIOSIG4CPP_DIR}/win32/getline.c
   )
 endif()
 

@@ -10,6 +10,21 @@ Use the platform helper script that matches your environment:
 - macOS: [`build_macos_cmake.sh`](build_macos_cmake.sh)
 - Windows with Visual Studio/MSVC: [`build_windows_msvc.ps1`](build_windows_msvc.ps1)
 
+All platform helpers include the embedded Python shell by default. On Windows, use
+`-WithoutPython` to opt out; on Linux and macOS, use `--without-python`.
+
+Windows and macOS use the Biosig submodule pinned to upstream release **4.0.0**
+(`v4.0.0`). Linux prefers system Biosig, without imposing the submodule release
+version on installed libraries. Explicit Linux submodule builds use the same pin:
+`./build_linux_cmake.sh --biosig-provider SUBMODULE`.
+
+The shared pin is maintained in `cmake/StimfitBiosigVersion.cmake` and the
+`src/biosig` submodule. Use upstream release tags when updating it; the library
+API/ABI version and the old upstream CMake version fields are separate values.
+Submodule builds apply a shared compatibility fix for the 4.0.0 ABF2 string cache,
+which can otherwise index past the string table when directory and SSCH counts differ. Generated/staged
+sources receive this fix; the upstream release checkout stays pristine.
+
 These scripts are thin wrappers around CMake presets and cache options. They standardize the repository's preferred configure, build, install, and packaging steps so local builds follow the same structure as current CI and migration work.
 
 Python integration requires Python 3 and wxPython Phoenix. Python 2 build and
@@ -102,7 +117,7 @@ What the script does:
 
 - configures a CMake build tree under `build/linux-*`
 - enables or disables embedded Python support
-- prefers the system Biosig integration (`STF_WITH_BIOSIG=ON`, `STF_BIOSIG_PROVIDER=SYSTEM`)
+- prefers system Biosig (`STF_WITH_BIOSIG=ON`, `STF_BIOSIG_PROVIDER=SYSTEM`); use `--biosig-provider SUBMODULE` to build the pinned release explicitly
 - builds with [`cmake`](CMakeLists.txt)
 - optionally installs into a local prefix under `build/linux-*/install`
 - optionally runs `cpack` to create distributable artifacts
@@ -166,14 +181,14 @@ Run [`build_windows_msvc.ps1`](build_windows_msvc.ps1) from a PowerShell session
 Direct CMake preset entry points:
 
 ```powershell
-cmake --preset vs2022-vcpkg-wx-hdf5-biosig-patched
-cmake --build --preset vs2022-release-all-biosig-patched
+cmake --preset vs2022-vcpkg-wx-hdf5-python314-biosig-patched
+cmake --build --preset vs2022-release-all-python314-biosig-patched
 ```
 
-Python-enabled build:
+The default build includes the embedded Python shell. Explicit no-Python build:
 
 ```powershell
-./build_windows_msvc.ps1 -WithPython
+./build_windows_msvc.ps1 -WithoutPython
 ```
 
 Packaging examples:
@@ -193,9 +208,10 @@ What the script does:
 
 This script mirrors the repository's active Windows CI-oriented workflow more closely than invoking raw commands manually.
 
-For the patched-submodule biosig provider on Windows, Stimfit now requires
-`src/biosig` to match the pinned upstream tag `v3.9.3` exactly. Configure fails
-fast when the submodule HEAD differs from that tag's commit.
+The submodule providers validate the Biosig release on all platforms and check
+the upstream release tag when available. Old `STF_BIOSIG_EXPECTED_TAG` CMake cache
+entries are superseded by the shared release pin. Initialize the submodule with
+`git submodule update --init --recursive` before configuring.
 
 ### Windows Python refresh behavior
 

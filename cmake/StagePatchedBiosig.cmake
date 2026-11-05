@@ -123,6 +123,10 @@ foreach(_stf_patch IN LISTS _stf_biosig_patch_files)
   endif()
 endforeach()
 
+include("${CMAKE_CURRENT_LIST_DIR}/StimfitBiosigABF.cmake")
+stf_patch_biosig_abf("${STF_BIOSIG_STAGE_DIR}/biosig4c++/t210/sopen_abf_read.c"
+  "${STF_BIOSIG_STAGE_DIR}/biosig4c++/t210/sopen_abf_read.c")
+
 file(WRITE "${_stf_existing_signature_file}" "${_stf_requested_signature}")
 
 message(STATUS "Staged patched biosig source tree: ${STF_BIOSIG_STAGE_DIR}")

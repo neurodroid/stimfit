@@ -584,6 +584,12 @@ if(NOT STF_BUILD_MODULE)
   endif()
 
   if(STF_BUILD_TESTS)
+    if(STF_WITH_BIOSIG AND NOT STF_BIOSIG_SELECTED_PROVIDER STREQUAL "SYSTEM")
+      add_test(NAME stimfit_biosig_release_test
+        COMMAND ${CMAKE_COMMAND}
+          "-DSTF_TEST_ROOT=${CMAKE_CURRENT_BINARY_DIR}/biosig-release-test"
+          -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/tests/biosig_release.cmake")
+    endif()
     add_test(NAME stimfit_python_packages_test
       COMMAND ${CMAKE_COMMAND}
         "-DSTF_TEST_ROOT=${CMAKE_CURRENT_BINARY_DIR}/python-packages-test"

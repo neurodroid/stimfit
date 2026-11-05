@@ -55,7 +55,7 @@ StfioDll bool check_biosig_version(int a, int b, int c);
  *    if the filetype is not recognized or not supported. stfio::none is returned.
  */
 void inspectBiosigFile(const std::string& filename, ReaderInfo& info);
-stfio::filetype importBiosigFile(const std::string& fName, Recording& ReturnData, ProgressInfo& progDlg,
+StfioDll stfio::filetype importBiosigFile(const std::string& fName, Recording& ReturnData, ProgressInfo& progDlg,
                                bool force = false);
 
 //! Export a Recording to a GDF file using biosig.

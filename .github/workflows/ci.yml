@@ -221,8 +221,11 @@ jobs:
           ctest --test-dir build --output-on-failure --no-tests=error --tests-regex 'stimfit_(containers|numeric)_test'
 
   ubuntu-system-biosig:
-    name: Ubuntu system biosig smoke
+    name: Ubuntu Biosig (${{ matrix.biosig-provider }})
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        biosig-provider: [SYSTEM, SUBMODULE]
 
     steps:
       - name: Checkout repository
@@ -247,19 +250,23 @@ jobs:
             libopenblas-dev
 
       - name: Verify pkg-config biosig metadata
+        if: matrix.biosig-provider == 'SYSTEM'
         run: |
           pkg-config --modversion libbiosig || pkg-config --modversion biosig
           pkg-config --cflags --libs libbiosig || pkg-config --cflags --libs biosig
 
-      - name: Configure CMake with system biosig
+      - name: Verify pinned Biosig release
+        run: cmake -P cmake/tests/biosig_release.cmake
+
+      - name: Configure CMake with selected biosig provider
         run: |
           cmake -S . -B build-biosig -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DSTF_ENABLE_PYTHON=OFF \
             -DSTF_WITH_BIOSIG=ON \
-            -DSTF_BIOSIG_PROVIDER=SYSTEM
+            -DSTF_BIOSIG_PROVIDER=${{ matrix.biosig-provider }}
 
-      - name: Build Stimfit with system biosig
+      - name: Build Stimfit with selected biosig provider
         run: |
           cmake --build build-biosig --parallel --target stimfit
 
@@ -335,7 +342,8 @@ jobs:
             -DwxWidgets_CONFIG_EXECUTABLE="${WX_CONFIG}" \
             -DwxWidgets_CONFIG_OPTIONS="${WX_CONFIG_OPTIONS}" \
             -DSTF_ENABLE_PYTHON=OFF \
-            -DSTF_WITH_BIOSIG=OFF \
+            -DSTF_WITH_BIOSIG=ON \
+            -DSTF_BIOSIG_PROVIDER=SUBMODULE \
             -DSTF_BUILD_MODULE=OFF \
             -DSTF_BUILD_TESTS=ON \
             -DSTF_BUILD_NUMERIC_TESTS=ON \

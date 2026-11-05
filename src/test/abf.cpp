@@ -270,13 +270,13 @@ TEST(ReaderSelection, PrefersBioSigForOrdinaryFiles) {
 }
 #endif
 
-INSTANTIATE_TEST_SUITE_P(ABF2, ABF2ImportTest, testing::Combine(
-    testing::Values(1, 2), testing::Bool(),
+// Keep preprocessor directives outside GoogleTest's macro arguments for MSVC.
 #ifdef WITH_BIOSIG
-    testing::Values(stfio::abf, stfio::none)
+const auto abfFileTypes = testing::Values(stfio::abf, stfio::none);
 #else
-    testing::Values(stfio::abf)
+const auto abfFileTypes = testing::Values(stfio::abf);
 #endif
-));
+INSTANTIATE_TEST_SUITE_P(ABF2, ABF2ImportTest, testing::Combine(
+    testing::Values(1, 2), testing::Bool(), abfFileTypes));
 
 } // namespace

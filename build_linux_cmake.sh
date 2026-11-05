@@ -6,6 +6,7 @@ set -euo pipefail
 # Usage:
 #   ./build_linux_cmake.sh
 #   ./build_linux_cmake.sh --without-python
+#   ./build_linux_cmake.sh --biosig-provider SUBMODULE
 #   ./build_linux_cmake.sh --with-python --install-prefix build/linux-python/install
 #   ./build_linux_cmake.sh --install
 #   ./build_linux_cmake.sh --package-generator TGZ
@@ -22,6 +23,7 @@ INSTALL_PREFIX="build/linux-default/install"
 GENERATOR="Ninja"
 BUILD_TYPE="Release"
 WITH_PYTHON=1
+BIOSIG_PROVIDER="SYSTEM"
 DO_INSTALL=0
 PACKAGE_GENERATOR=""
 DEFAULT_SYSTEM_PYTHON="/usr/bin/python3"
@@ -71,6 +73,10 @@ while [[ $# -gt 0 ]]; do
       BUILD_DIR="build/linux-lite"
       INSTALL_PREFIX="build/linux-lite/install"
       shift
+      ;;
+    --biosig-provider)
+      BIOSIG_PROVIDER="$2"
+      shift 2
       ;;
     --build-dir)
       BUILD_DIR="$2"
@@ -134,7 +140,7 @@ cmake_configure_args=(
   -USTF_USE_BIOSIG_SUBMODULE
   "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}"
   "-DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}"
-  "-DSTF_BIOSIG_PROVIDER=SYSTEM"
+  "-DSTF_BIOSIG_PROVIDER=${BIOSIG_PROVIDER}"
 )
 
 if [[ "$WITH_PYTHON" -eq 1 ]]; then

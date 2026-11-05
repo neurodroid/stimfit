@@ -1,5 +1,6 @@
 param(
-    [switch]$WithPython = $false,
+    [switch]$WithPython = $true,
+    [switch]$WithoutPython,
     [string]$ConfigurePreset,
     [string]$BuildPreset,
     [string]$PackageGenerator,
@@ -16,12 +17,13 @@ Configure, build, install, and optionally package Stimfit on Windows/MSVC using 
 
 .DESCRIPTION
 Analogous to build_macos_cmake.sh, but tailored for the Visual Studio 2022 / MSVC preset-based
-Windows workflow. By default this script builds the non-Python patched-biosig preset using
+Windows workflow. By default this script includes the embedded Python shell using the patched-biosig preset and
 vcpkg dependencies configured through environment variables.
 
 .USAGE
 ./build_windows_msvc.ps1
 ./build_windows_msvc.ps1 -WithPython
+./build_windows_msvc.ps1 -WithoutPython
 ./build_windows_msvc.ps1 -InstallPrefix ..\stimfit-out\install\custom-python
 ./build_windows_msvc.ps1 -PackageGenerator INNOSETUP
 ./build_windows_msvc.ps1 -PackageGenerator ZIP
@@ -48,6 +50,9 @@ function Invoke-Step {
 }
 
 $repoRoot = Resolve-Path $PSScriptRoot
+if ($WithoutPython) {
+    $WithPython = $false
+}
 Push-Location $repoRoot
 
 try {
