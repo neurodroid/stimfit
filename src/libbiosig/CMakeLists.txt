@@ -19,7 +19,7 @@ unset(_stf_awk_hints)
 # BioSig's event-code generator uses GNU awk's strtonum(), which Apple's awk
 # does not implement. Diagnose this during configuration instead of codegen.
 execute_process(
-  COMMAND "${STF_AWK_EXECUTABLE}" "BEGIN { exit (strtonum(\"0x10\") != 16) }"
+  COMMAND "${STF_AWK_EXECUTABLE}" "BEGIN { exit (strtonum(16) != 16) }"
   RESULT_VARIABLE _stf_awk_result
   ERROR_VARIABLE _stf_awk_error
 )
