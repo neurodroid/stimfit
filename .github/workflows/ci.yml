@@ -285,7 +285,8 @@ jobs:
         env:
           MACPORTS_PKG_URL: https://github.com/macports/macports-base/releases/download/v2.10.5/MacPorts-2.10.5-14-Sonoma.pkg
         run: |
-          curl -L "$MACPORTS_PKG_URL" -o MacPorts.pkg
+          curl --fail --location --retry 3 --retry-all-errors \
+            --connect-timeout 30 --max-time 300 "$MACPORTS_PKG_URL" -o MacPorts.pkg
           sudo installer -pkg MacPorts.pkg -target /
           /opt/local/bin/port version
 
@@ -301,6 +302,7 @@ jobs:
             cmake \
             ninja \
             pkgconfig \
+            gawk \
             fftw-3 \
             hdf5 \
             wxWidgets-3.2

@@ -4,12 +4,16 @@ This repository keeps MSVC compatibility for biosig as a downstream patch queue.
 Upstream biosig does not accept MSVC support, so patches are applied only to a
 throwaway working copy outside the submodule tree.
 
-Windows patching is pinned to BioSig 3.9.8, upstream release commit
-`1563ee153331954f217b30bf3fd520e123d563da` (there is no upstream 3.9.8 tag).
-Configuration fails fast when `src/biosig` is not exactly at that commit.
+Submodule builds are pinned to the upstream release **4.0.0**, tag `v4.0.0`,
+through `cmake/StimfitBiosigVersion.cmake` and the recorded `src/biosig` commit.
+The release version is independent of the library API/ABI version. Validation
+supersedes obsolete `STF_BIOSIG_EXPECTED_TAG` cache entries automatically.
 The Windows vcpkg manifest includes libiconv for channel-label decoding.
-After changing the pin, use a fresh build directory or clear the previous pin
-with `cmake --preset vs2022-vcpkg-wx-hdf5-biosig-patched -U STF_BIOSIG_EXPECTED_TAG`.
+
+Use the top-level `build_windows_msvc.ps1` for the standard Windows build;
+it includes the embedded Python shell by default. The lower-level helper below
+is intended for maintaining the patch queue. GNU awk (`gawk`) is required for
+BioSig code generation on every platform; on macOS install it through MacPorts.
 
 ## Files involved
 
@@ -55,12 +59,12 @@ The helper script prints and writes the resolved paths to:
 When updating the pinned biosig version, refresh patches from your local biosig
 branch that contains MSVC fixes.
 
-1. Checkout/update `src/biosig` to the pinned release commit (currently `1563ee153331954f217b30bf3fd520e123d563da`).
+1. Checkout/update `src/biosig` to the pinned release tag (currently `v4.0.0`).
 2. Rebase/update your biosig patch branch against that same tag/commit.
 3. Export patch queue into this repository:
 
 ```powershell
-git -C src/biosig format-patch 1563ee153331954f217b30bf3fd520e123d563da..feature/msvc2022-libbiosig -o cmake/patches/biosig-msvc
+git -C src/biosig format-patch v4.0.0..feature/msvc2022-libbiosig -o cmake/patches/biosig-msvc
 ```
 
 4. Re-run helper script to verify patches still apply and build:
@@ -80,7 +84,6 @@ The helper script accepts cache variables when invoked with `-D`:
 - `STF_BIOSIG_WORK_DIR`: patched working copy path
 - `STF_BIOSIG_BUILD_DIR`: out-of-tree build path
 - `STF_BIOSIG_PATCH_DIR`: patch queue directory
-- `STF_BIOSIG_EXPECTED_TAG`: required biosig tag or commit for patching (default `1563ee153331954f217b30bf3fd520e123d563da`, BioSig 3.9.8)
 - `CMAKE_PREFIX_PATH`: dependency prefix containing libiconv
 - `STF_BIOSIG_GENERATOR`: CMake generator (default VS 2022)
 - `STF_BIOSIG_ARCH`: architecture (default `x64`)

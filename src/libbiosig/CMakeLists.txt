@@ -16,6 +16,19 @@ find_program(STF_AWK_EXECUTABLE
 )
 unset(_stf_awk_hints)
 
+# BioSig's event-code generator uses GNU awk's strtonum(), which Apple's awk
+# does not implement. Diagnose this during configuration instead of codegen.
+execute_process(
+  COMMAND "${STF_AWK_EXECUTABLE}" "BEGIN { exit (strtonum(\"0x10\") != 16) }"
+  RESULT_VARIABLE _stf_awk_result
+  ERROR_VARIABLE _stf_awk_error
+)
+if(NOT _stf_awk_result EQUAL 0)
+  message(FATAL_ERROR "BioSig requires GNU awk (gawk) with strtonum(). Install gawk or set STF_AWK_EXECUTABLE. ${_stf_awk_error}")
+endif()
+unset(_stf_awk_result)
+unset(_stf_awk_error)
+
 set(STF_BIOSIG4CPP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../biosig/biosig4c++)
 set(STF_BIOSIG_EXTERN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../biosig/biosig4matlab/doc)
 set(_stf_biosig_binary_dir ${CMAKE_CURRENT_BINARY_DIR})
