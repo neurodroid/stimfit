@@ -170,6 +170,11 @@ under that directory. You can also select Makefiles explicitly with
 `./build_macos_cmake.sh --generator "Unix Makefiles"`. An explicit `--build-dir`
 must use the same generator as any existing CMake cache in that directory.
 
+After an Xcode update, the helper checks whether the SDK path in an existing
+CMake cache still exists. If it is missing, the helper stops with an explanation
+and recovery arguments. Use a fresh build and install directory, or move the
+existing build directory aside and rerun the helper.
+
 ## Windows (MSVC)
 
 Run [`build_windows_msvc.ps1`](build_windows_msvc.ps1) from a PowerShell session:

@@ -115,6 +115,26 @@ if [[ "$GENERATOR" == "Unix Makefiles" && "$BUILD_DIR_EXPLICIT" -eq 0 ]]; then
   fi
 fi
 
+# An Xcode update can remove the SDK recorded by an earlier configure. Check
+# before CMake clears the stale sysroot and reports a misleading compiler error.
+if [[ -f "${BUILD_DIR}/CMakeCache.txt" ]]; then
+  CACHED_MACOS_SDK="$(sed -n 's/^CMAKE_OSX_SYSROOT:[^=]*=//p' "${BUILD_DIR}/CMakeCache.txt")"
+  # Empty values and SDK names such as "macosx" are resolved by CMake.
+  if [[ "$CACHED_MACOS_SDK" == /* && ! -d "$CACHED_MACOS_SDK" ]]; then
+    {
+      printf 'ERROR: The CMake cache in %s refers to a macOS SDK that no longer exists:\n  %s\n' \
+        "${BUILD_DIR}/CMakeCache.txt" "$CACHED_MACOS_SDK"
+      echo "This usually happens after an Xcode update and can cause the compiler check"
+      echo "to fail with: ld: library 'System' not found"
+      echo "Move the existing build directory aside and rerun this script, or select"
+      echo "a fresh build and install directory with:"
+      printf '  --build-dir %q --install-prefix %q\n' \
+        "${BUILD_DIR}-fresh" "${BUILD_DIR}-fresh/install"
+    } >&2
+    exit 1
+  fi
+fi
+
 stf_select_presets \
   "$WITH_PYTHON" \
   "macos-ninja-app-python" \
