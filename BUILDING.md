@@ -186,11 +186,14 @@ Run [`build_windows_msvc.ps1`](build_windows_msvc.ps1) from a PowerShell session
 Direct CMake preset entry points:
 
 ```powershell
+./prepare_wxpython_windows.ps1
 cmake --preset vs2022-vcpkg-wx-hdf5-python314-biosig-patched
 cmake --build --preset vs2022-release-all-python314-biosig-patched
 ```
 
-The default build includes the embedded Python shell. Explicit no-Python build:
+The default build includes the embedded Python shell with wxPython 4.3.2 and
+wxWidgets 3.3.4. The helper prepares missing wxPython dependencies automatically.
+Explicit no-Python build:
 
 ```powershell
 ./build_windows_msvc.ps1 -WithoutPython
@@ -207,6 +210,7 @@ What the script does:
 
 - prepares `vcpkg` dependency locations from environment variables or Visual Studio defaults
 - installs the repository's required Windows dependencies through the custom triplet in [`cmake/triplets/x64-windows-ci-release.cmake`](cmake/triplets/x64-windows-ci-release.cmake)
+- prepares wxPython 4.3.2 and its matching native libraries if they are missing, using the same Python 3.14 interpreter as CMake
 - selects the appropriate Visual Studio configure preset from [`CMakePresets.json`](CMakePresets.json)
 - runs CMake configure, build, and install steps for the chosen preset
 - optionally runs `cpack` to generate either an Inno Setup installer or a ZIP package
@@ -218,6 +222,54 @@ the upstream release tag when available. Old `STF_BIOSIG_EXPECTED_TAG` CMake cac
 entries are superseded by the shared release pin. Initialize the submodule with
 `git submodule update --init --recursive` before configuring.
 
+### Default Windows wxPython setup
+
+The default Python-enabled Windows preset uses wxPython 4.3.2 and its bundled
+wxWidgets 3.3.4 with 64-bit Python 3.14. Matching native development libraries
+and the Python wheel live in the repository's ignored `build/wxpython-4.3.2/`
+directory. The normal build helper prepares them automatically on the first
+build. To prepare them in advance, run `./prepare_wxpython_windows.ps1`.
+
+The versioned `vs2022-python314-wxpython432` preset uses the same dependencies
+with separate build and install directories:
+
+```powershell
+./prepare_wxpython_windows.ps1
+cmake --preset vs2022-python314-wxpython432
+cmake --build --preset vs2022-python314-wxpython432-release --parallel 4
+cmake --install build/windows-wxpython432 --config Release
+./cmake/tests/check-windows-snapshot.ps1 -InstallRoot build/windows-wxpython432/install -CheckDirectory build/windows-wxpython432/checks -ExpectedVersion (Get-Content VERSION) -ExpectedWxPythonVersion 4.3.2
+```
+
+Use the same `VCPKG_ROOT` and `VCPKG_INSTALLED_DIR` environment variables as
+the normal Windows build. The preparation script discovers Python through
+`py -3.14`; pass `-PythonExecutable <path>` to choose it explicitly, and pass
+the same path as `-DPython3_EXECUTABLE=<path>` when configuring if necessary.
+The selected interpreter must already contain the other runtime packages
+listed below and `setuptools` for native compiler discovery.
+
+Preparation checks the source archive's SHA-256 against PyPI metadata,
+installs the wheel with `pip --target`, and builds only wxWidgets from that
+same wxPython release. It then copies the wheel's wxWidgets DLLs into the
+native library directory, so both installed DLL locations use identical
+binaries. Stimfit's native headers, import libraries, wxPython C API headers,
+and runtime packages must move together; updating only the Python wheel can
+break the embedded shell.
+
+The embedded interpreter leaves wxWidgets cleanup to the native application.
+On Windows with wxWidgets 3.3+, Python finalization runs after native cleanup
+has released its Python callbacks. This also avoids wxPython's Python-exit
+hook tearing down the application inside wxWidgets' shutdown sequence.
+
+The native build uses nmake by default. For a parallel build, download
+[Qt's jom](https://download.qt.io/official_releases/jom/) and pass
+`-JomExecutable <path-to-jom.exe> -Jobs 8`. The script handles the shared PDB
+and precompiled-header conflicts in the upstream parallel makefile.
+
+wxPython 4.3.x tracks the API/ABI-unstable wxWidgets 3.3.x series, so the Windows
+presets pin wxPython 4.3.2 and use its matching native libraries.
+See the [wxPython release notes](https://wxpython.org/pages/changes/).
+
 ### Windows Python refresh behavior
 
 The Python-enabled Windows preset bundles `numpy`, `wxPython`, and Matplotlib
@@ -226,15 +278,15 @@ computer. Install Matplotlib into the Python interpreter used for the build
 before configuring:
 
 ```powershell
-& 'C:/Program Files/Python314/python.exe' -m pip install matplotlib 'python-dateutil<3'
+py -3.14 -m pip install matplotlib 'python-dateutil<3'
 ```
 
 The bundled module selection supports the python-dateutil 2.x dependency
 set, including `six`; retain the version constraint when installing wheels.
 Alternatively, install those wheels into a separate directory with
 `pip install --target <directory> matplotlib 'python-dateutil<3'` and append that directory to
-`STF_WINDOWS_PYTHON_EXTRA_PATHS`, preserving any Phoenix checkout path needed by
-the build. `STF_WINDOWS_PYTHON_SITE_PACKAGES` contains Python import names;
+`STF_WINDOWS_PYTHON_EXTRA_PATHS`, preserving the prepared wxPython wheel directory
+used by the preset. `STF_WINDOWS_PYTHON_SITE_PACKAGES` contains Python import names;
 `PIL`, `dateutil`, and `fontTools` are provided by the Pillow, python-dateutil,
 and fonttools distributions. Configuration fails if a selected module is
 missing. Each module's companion DLL directories and distribution metadata

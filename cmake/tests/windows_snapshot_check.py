@@ -88,6 +88,18 @@ def check_snapshot():
         from PIL import Image
 
         report["stimfit"] = stf.get_versionstring()
+        report["wxpython"] = wx.__version__
+        report["wxwidgets"] = wx.version()
+        expected_wxpython = os.environ.get("STF_SNAPSHOT_EXPECTED_WXPYTHON_VERSION", "")
+        if expected_wxpython:
+            assert wx.__version__ == expected_wxpython, wx.version()
+            from wx.py.shell import Shell
+            shell = next((window for window in descendants(main_window)
+                          if isinstance(window, Shell)), None)
+            assert shell is not None, "Embedded Python shell was not created"
+            shell.push("_stf_upgrade_probe = stf.get_versionstring()", silent=True)
+            assert shell.interp.locals.pop("_stf_upgrade_probe") == report["stimfit"]
+            report["shell_checked"] = True
         expected_version = os.environ.get("STF_SNAPSHOT_EXPECTED_VERSION", "")
         if expected_version:
             assert expected_version in report["stimfit"], report["stimfit"]

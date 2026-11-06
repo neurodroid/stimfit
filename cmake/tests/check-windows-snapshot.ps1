@@ -2,7 +2,8 @@ param(
     [Parameter(Mandatory = $true)][string]$InstallRoot,
     [Parameter(Mandatory = $true)][string]$CheckDirectory,
     [string]$ExpectedVersion = '',
-    [int]$TimeoutSeconds = 120
+    [int]$TimeoutSeconds = 120,
+    [string]$ExpectedWxPythonVersion = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -24,7 +25,8 @@ if ($hadHook) {
 $savedEnvironment = @{}
 $environmentNames = @('PATH', 'PYTHONHOME', 'PYTHONPATH', 'PYTHONNOUSERSITE',
                       'MPLCONFIGDIR', 'STF_SNAPSHOT_CHECK_DIR',
-                      'STF_SNAPSHOT_INSTALL_ROOT', 'STF_SNAPSHOT_EXPECTED_VERSION')
+                      'STF_SNAPSHOT_INSTALL_ROOT', 'STF_SNAPSHOT_EXPECTED_VERSION',
+                      'STF_SNAPSHOT_EXPECTED_WXPYTHON_VERSION')
 foreach ($name in $environmentNames) {
     $savedEnvironment[$name] = [Environment]::GetEnvironmentVariable($name, 'Process')
 }
@@ -39,6 +41,7 @@ try {
     $env:STF_SNAPSHOT_CHECK_DIR = $checkPath
     $env:STF_SNAPSHOT_INSTALL_ROOT = $installPath
     $env:STF_SNAPSHOT_EXPECTED_VERSION = $ExpectedVersion
+    $env:STF_SNAPSHOT_EXPECTED_WXPYTHON_VERSION = $ExpectedWxPythonVersion
     if (-not ('StimfitSnapshotWindowApi' -as [type])) {
         Add-Type -TypeDefinition @'
 using System;
@@ -79,9 +82,12 @@ public static class StimfitSnapshotWindowApi {
         throw 'Cannot read the application exit code'
     }
     $report | Add-Member -NotePropertyName exit_code -NotePropertyValue $applicationExitCode
+    if ($applicationExitCode -ne 0) {
+        $report.passed = $false
+        $report | Add-Member -NotePropertyName error -NotePropertyValue "Application exited with code $applicationExitCode" -Force
+    }
     $report | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $reportPath -Encoding UTF8
     if (-not $report.passed) { throw $report.error }
-    if ($applicationExitCode -ne 0) { throw "Application exited with code $applicationExitCode" }
     Write-Output ($report | ConvertTo-Json -Depth 6)
 } finally {
     if ($appProcess -and -not $appProcess.HasExited) {

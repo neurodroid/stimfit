@@ -17,8 +17,9 @@ Configure, build, install, and optionally package Stimfit on Windows/MSVC using 
 
 .DESCRIPTION
 Analogous to build_macos_cmake.sh, but tailored for the Visual Studio 2022 / MSVC preset-based
-Windows workflow. By default this script includes the embedded Python shell using the patched-biosig preset and
-vcpkg dependencies configured through environment variables.
+Windows workflow. By default this script includes the embedded Python shell using wxPython 4.3.2,
+its matching wxWidgets libraries, the patched-biosig preset, and vcpkg dependencies configured
+through environment variables. Missing wxPython build dependencies are prepared automatically.
 
 .USAGE
 ./build_windows_msvc.ps1
@@ -43,6 +44,8 @@ function Invoke-Step {
     Write-Host "==> $Name" -ForegroundColor Cyan
     Write-Host "    $($Command -join ' ')"
 
+    # Native tools can write warnings to stderr; use their exit status to fail.
+    $ErrorActionPreference = "Continue"
     & $Command[0] $Command[1..($Command.Length - 1)]
     if ($LASTEXITCODE -ne 0) {
         throw "Step failed ($Name) with exit code $LASTEXITCODE"
@@ -139,12 +142,47 @@ try {
         }
     }
 
+    $defaultPythonExecutable = $null
+    if ($WithPython -and $selectedConfigurePreset -in @(
+            "vs2022-vcpkg-wx-hdf5-python314-biosig-patched",
+            "vs2022-python314-wxpython432")) {
+        $defaultPythonExecutable = & py -3.14 -c 'import sys; print(sys.executable)'
+        if ($LASTEXITCODE -ne 0) { throw "The default Windows build requires 64-bit Python 3.14." }
+
+        $wxPythonRoot = Join-Path $repoRoot "build/wxpython-4.3.2"
+        $wxLibRelativePath = "wxpython-4.3.2/ext/wxWidgets/lib/vc140_x64_dll"
+        $requiredWxPythonFiles = @(
+            "site-packages/wx/_core.cp314-win_amd64.pyd",
+            "site-packages/wx/include/wxPython/wxpy_api.h",
+            "$wxLibRelativePath/mswu/wx/setup.h",
+            "$wxLibRelativePath/wxbase33u.lib",
+            "$wxLibRelativePath/wxbase33u_net.lib",
+            "$wxLibRelativePath/wxmsw33u_core.lib",
+            "$wxLibRelativePath/wxmsw33u_adv.lib",
+            "$wxLibRelativePath/wxmsw33u_aui.lib",
+            "$wxLibRelativePath/wxbase334u_vc140_x64.dll"
+        )
+        $missingWxPythonFiles = @($requiredWxPythonFiles | Where-Object {
+            -not (Test-Path -LiteralPath (Join-Path $wxPythonRoot $_) -PathType Leaf)
+        })
+        if ($missingWxPythonFiles.Count -gt 0) {
+            & (Join-Path $repoRoot "prepare_wxpython_windows.ps1") -PythonExecutable $defaultPythonExecutable
+            if (-not $?) { throw "Preparing wxPython 4.3.2 failed." }
+        }
+    }
+
     $resolvedBuildDir = $BuildDir
     if ([string]::IsNullOrWhiteSpace($resolvedBuildDir)) {
         $resolvedBuildDir = Join-Path "..\stimfit-out" $selectedConfigurePreset
     }
 
     $configureCommand = @("cmake", "--preset", $selectedConfigurePreset)
+    if ($defaultPythonExecutable) {
+        $configureCommand += @(
+            "-DPython3_EXECUTABLE=$defaultPythonExecutable",
+            "-DPython3_ROOT_DIR=$(Split-Path -Parent $defaultPythonExecutable)"
+        )
+    }
     if (-not [string]::IsNullOrWhiteSpace($BuildDir)) {
         $configureCommand += @("-B", $resolvedBuildDir)
     }

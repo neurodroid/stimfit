@@ -661,8 +661,8 @@ unset(LAPACK_LIBRARY)
 
 # When linking against an embedded-Python-capable build (wxPython), the C++
 # wxWidgets runtime MUST match the version that wxPython was built against.
-# wxPython Phoenix 4.x ships bundled wx 3.2.x DLLs; if stimfit links against
-# a different wx (e.g. vcpkg wx 3.3.x) the two runtimes coexist in the same
+# wxPython 4.2.x uses wx 3.2.x; wxPython 4.3.x uses wx 3.3.x. If Stimfit links
+# against a different wx build, the two runtimes coexist in the same
 # process with incompatible ABIs, causing wxPyConvertWrappedPtr to return NULL
 # ("Pointer is zero" at startup).  Set STF_WX_PREFER_MODULE_FIND=ON together
 # with wxWidgets_ROOT_DIR and wxWidgets_LIB_DIR pointing to the wxPython wx
@@ -674,7 +674,7 @@ unset(LAPACK_LIBRARY)
 # is ON we therefore bypass find_package(wxWidgets) entirely and build the
 # interface target directly from the caller-supplied paths.
 option(STF_WX_PREFER_MODULE_FIND
-  "Bypass find_package(wxWidgets) and build the interface directly from wxWidgets_ROOT_DIR/wxWidgets_LIB_DIR. Required when the C++ wx must match the wxPython wheel's bundled wx (e.g. Phoenix 4.x ships wx 3.2)."
+  "Bypass find_package(wxWidgets) and build the interface directly from wxWidgets_ROOT_DIR/wxWidgets_LIB_DIR. Required when the C++ wx must match wxPython's bundled wxWidgets build."
   OFF)
 
 if(NOT STF_BUILD_MODULE)
@@ -700,7 +700,7 @@ if(NOT STF_BUILD_MODULE)
     # path as transitive interface includes from their imported targets.  Because
     # transitive interface includes are appended after the target's own include
     # directories, we use include_directories(BEFORE ...) at directory scope to
-    # ensure Phoenix wx 3.2.x headers appear before vcpkg's wx 3.3.x headers in
+    # ensure the selected wxPython headers appear before vcpkg's wx headers in
     # every target's compile command.
     include_directories(BEFORE
       "${wxWidgets_ROOT_DIR}/include"

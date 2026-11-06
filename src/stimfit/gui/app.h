@@ -267,6 +267,11 @@ public:
      */
     virtual int OnExit();
 
+#if defined(WITH_PYTHON) && defined(__WXMSW__) && wxCHECK_VERSION(3, 3, 0)
+    //! Finalize the embedded interpreter after wxEntry has destroyed wxApp.
+    static int FinalizePython();
+#endif
+
     //! Creates a new child frame
     /*! This is called from view.cpp whenever a child frame is created. If you
      *  want to pop up a new frame showing a new document, use NewChild() instead; this

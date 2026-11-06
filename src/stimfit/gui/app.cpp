@@ -1639,6 +1639,23 @@ bool wxStfApp::Init_wxPython()
         return false;
     }
 
+#if defined(__WXMSW__) && wxCHECK_VERSION(3, 3, 0)
+    // The native wxEntry owns wxWidgets cleanup. wxPython registers its own
+    // atexit hook, which would destroy this wxApp inside Py_Finalize() before
+    // wxWidgets has finished CallOnExit() (including its post-OnExit cleanup
+    // in wx 3.3). WinMain finalizes Python after wxEntry has destroyed the
+    // native event handlers that still hold Python callbacks.
+    if (PyRun_SimpleString(
+            "import atexit as _stf_atexit\n"
+            "import wx._core as _stf_wx_core\n"
+            "_stf_atexit.unregister(_stf_wx_core._wxPyCleanup)\n"
+            "del _stf_atexit, _stf_wx_core\n") != 0) {
+        PyErr_Print();
+        ErrorMsg(wxT("Couldn't configure embedded wxPython cleanup"));
+        return false;
+    }
+#endif
+
     // Save the current Python thread state and release the
     // Global Interpreter Lock.
     m_mainTState = wxPyBeginAllowThreads();
@@ -1684,7 +1701,11 @@ bool wxStfApp::Exit_wxPython()
         return true;
     }
 
-#if defined(__WXMAC__) && (PY_VERSION_HEX >= 0x030d0000)
+#if defined(__WXMSW__) && wxCHECK_VERSION(3, 3, 0)
+    // wxEntry must destroy its Python-backed event handlers while the
+    // interpreter is still alive. WinMain finalizes it after wxEntry returns.
+    return true;
+#elif defined(__WXMAC__) && (PY_VERSION_HEX >= 0x030d0000)
     // Workaround for a reproducible crash on interpreter teardown with
     // embedded wxPython + NumPy on macOS/Python 3.13+.
     //
@@ -1700,6 +1721,13 @@ bool wxStfApp::Exit_wxPython()
 #endif
     return true;
 }
+
+#if defined(__WXMSW__) && wxCHECK_VERSION(3, 3, 0)
+int wxStfApp::FinalizePython()
+{
+    return Py_IsInitialized() ? Py_FinalizeEx() : 0;
+}
+#endif
 
 std::vector<stf::Extension> wxStfApp::LoadExtensions()
 {
