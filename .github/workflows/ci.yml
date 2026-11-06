@@ -272,7 +272,7 @@ jobs:
 
   macos-macports-smoke:
     name: macOS MacPorts smoke
-    runs-on: macos-15
+    runs-on: macos-latest
     timeout-minutes: 45
 
     steps:
@@ -283,10 +283,18 @@ jobs:
 
       - name: Bootstrap MacPorts
         env:
-          MACPORTS_PKG_URL: https://github.com/macports/macports-base/releases/download/v2.12.7/MacPorts-2.12.7-15-Sequoia.pkg
+          GH_TOKEN: ${{ github.token }}
         run: |
+          macos_major="$(sw_vers -productVersion | cut -d. -f1)"
+          macports_pkg_url="$(gh api repos/macports/macports-base/releases/latest \
+            --jq ".assets[] | select(.name | contains(\"-${macos_major}-\") and endswith(\".pkg\")) | .browser_download_url")"
+          if [[ -z "$macports_pkg_url" || "$macports_pkg_url" == *$'\n'* ]]; then
+            echo "Expected one MacPorts installer for macOS $macos_major" >&2
+            exit 1
+          fi
+          echo "Bootstrapping MacPorts for macOS $macos_major: $macports_pkg_url"
           curl --fail --location --retry 3 --retry-all-errors \
-            --connect-timeout 30 --max-time 300 "$MACPORTS_PKG_URL" -o MacPorts.pkg
+            --connect-timeout 30 --max-time 300 "$macports_pkg_url" -o MacPorts.pkg
           sudo installer -pkg MacPorts.pkg -target /
           /opt/local/bin/port version
 
