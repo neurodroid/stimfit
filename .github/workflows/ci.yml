@@ -272,7 +272,7 @@ jobs:
 
   macos-macports-smoke:
     name: macOS MacPorts smoke
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 45
 
     steps:
@@ -283,7 +283,7 @@ jobs:
 
       - name: Bootstrap MacPorts
         env:
-          MACPORTS_PKG_URL: https://github.com/macports/macports-base/releases/download/v2.10.5/MacPorts-2.10.5-14-Sonoma.pkg
+          MACPORTS_PKG_URL: https://github.com/macports/macports-base/releases/download/v2.12.7/MacPorts-2.12.7-15-Sequoia.pkg
         run: |
           curl --fail --location --retry 3 --retry-all-errors \
             --connect-timeout 30 --max-time 300 "$MACPORTS_PKG_URL" -o MacPorts.pkg
