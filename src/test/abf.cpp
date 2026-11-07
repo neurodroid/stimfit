@@ -50,6 +50,9 @@ std::vector<std::uint8_t> MakeABF2(int channels, bool floatingPoint) {
     integer(64, 1, 4);         // creator name string index
     section(0, 1, 512, 1);     // protocol
     section(1, 2, 128, channels);
+    // The native reader validates the record size even for an empty DAC
+    // section. Keep this fixture valid in builds with assertions enabled.
+    section(2, 0, 256, 0);
     section(10, 4, sampleSize, 2 * sweepSamples);
     section(15, 5, 8, 2);      // sweep synchronization array
 
