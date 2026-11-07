@@ -1,4 +1,8 @@
 #!/bin/sh
 set -eu
 
+cache=$(mktemp -d)
+trap 'rm -rf "$cache"' EXIT
+export MPLCONFIGDIR="$cache"
+
 python3 -c 'import stfio; print(stfio.__name__)'

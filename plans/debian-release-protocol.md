@@ -24,14 +24,17 @@ The running staging directory is `/tmp/stimfit-debian-release`.
 | CTest | All 3 suites passed in both build environments |
 | Installed stfio unit tests | 17 tests passed in each HDF5 environment, no skips |
 | Installed package autopkgtest | Both tests passed in both fresh testbeds |
-| Source build after binary build and clean | Passed in the HDF5 2.1 environment |
+| Current Debian unstable | Build, upgrade from 0.17.2-1, removal and reinstallation passed |
+| Source build after binary build and clean | Passed with HDF5 2.1 and current unstable HDF5 2.2 |
 | Clean upstream tree | All 614 orig archive files match after clean |
 | Lintian | Passed for source and both binary sets; no warnings outside sandbox |
 | Git publication | Release changes and merged histories published on `origin/debian/sid` |
-| Signing and package upload | Pending; no upload or release tags |
+| Release tags | `upstream/0.17.4` pins `0ea89fe9`; `debian/0.17.4-1` includes the final import test fix |
+| Signing and package upload | Awaiting local GPG signing; mentors upload pending |
 
-The build environments use dated Debian unstable snapshots, rather than the
-current archive. Record that scope when reporting results.
+The HDF5 1.14 and 2.1 compatibility builds use dated Debian snapshots. A
+subsequent build and installed-package checks against current unstable on
+2026-11-07 use HDF5 2.2. Record those environments separately.
 
 ## 1. Review branches and Debian reports
 
@@ -118,6 +121,7 @@ available chroots for this preparation are:
 | --- | --- | --- |
 | `unstable-hdf5-1-amd64-sbuild` | `20260804T051924Z` | `1.14.6+repack-2+b1` |
 | `unstable-hdf5-2-amd64-sbuild` | `20260807T000000Z` | `2.1.0+repack-1` |
+| `unstable-amd64-sbuild` | Current archive, 2026-11-07 | `2.2.0+repack-6` |
 
 The host defaults sbuild to unshare mode; explicitly select schroot mode for
 these existing directory chroots. They share `/build` through
@@ -279,3 +283,70 @@ Debian archive. Do not publish both HDF5 binary variants as one upload.
   detailed validation results here rather than in the user-facing changelog.
   Regenerated the unsigned source upload and checksums and reran source
   lintian; application code and the previous build/test results are unchanged.
+
+- Continued release preparation against current Debian unstable using
+  `unstable-amd64-sbuild`, `--apt-update --apt-distupgrade`, and the distinct
+  build path `/build/stimfit-release-current-sid`. Preserve results under
+  `deb/0.17.4-1/current-sid/`; do not substitute the older snapshot results for
+  this check. Debian's Python is used in the testbed because the host's default
+  virtual environment is unavailable there and the package must match the
+  distribution ABI.
+- Checked the package tracker on 2026-11-07: unstable and testing still list
+  `0.17.2-1`. The tracker reports an autoremoval date of 2026-12-06 due to
+  transitive dependency bugs in libiodbc2 (#1102465) and petsc (#1152614).
+  Those are external migration risks, not Stimfit build-test failures.
+- The current unstable build passed all three CTest suites with HDF5
+  `2.2.0+repack-6`. Source rebuilding after cleanup also passed. Explicitly
+  unapplied quilt patches with `dpkg-source --after-build --unapply-patches .`
+  before comparing all 614 upstream files; none differed from the orig archive.
+- Current-unstable upgrade testing exposed an import-test environment issue:
+  Matplotlib emitted a cache warning because the schroot user's home directory
+  did not exist. The import itself succeeded, but strict stderr checking
+  correctly failed the test. Updated `python3-stfio-import` to use a private
+  temporary `MPLCONFIGDIR`, removed on exit; do not add `allow-stderr`.
+- Recorded the orig archive in pristine-tar commit `032c7720` using tools
+  extracted under `/tmp/stimfit-release-tools` without modifying host packages.
+  Regenerated the archive from Git and verified byte-for-byte equality.
+
+- Current unstable upgrade validation passed: the installed packages upgraded
+  from `0.17.2-1` to `0.17.4-1`; the help test, all 17 stfio unit tests, and
+  removal/reinstallation checks passed. The initial import smoke-test failure
+  is retained in `current-sid/autopkgtest/`; the corrected test passes with
+  strict stderr checking in `current-sid/autopkgtest-import-fixed/` (exit 8
+  because that single test is superficial). No application code changed.
+- Regenerated the final source package in the validated current Debian build
+  environment with the private Matplotlib cache test fix. Source and binary
+  lintian pass. The final source upload is at the artifact directory root;
+  older binary compatibility builds and their metadata remain in subdirectories.
+- The maintainer key `37D2370A9F7AC0CC` is available. Unattended signing with
+  the GPG agent returned `No pinentry`, so local key interaction is needed.
+  The source upload remains unsigned until the maintainer runs:
+
+  ```sh
+  debsign -k37D2370A9F7AC0CC /home/c02380/stimfit/deb/0.17.4-1/stimfit_0.17.4-1_source.changes
+  ```
+
+  Never request or transmit the passphrase in chat. Once signing succeeds,
+  verify the signatures and referenced checksums, refresh `SHA256SUMS`, and
+  upload through the prepared HTTPS configuration:
+
+  ```sh
+  source /home/c02380/virtualenv-3.14/bin/activate
+  PYTHONPATH=/usr/lib/python3/dist-packages python /usr/bin/dput \
+    -c deb/0.17.4-1/dput-mentors.cf -o mentors \
+    deb/0.17.4-1/stimfit_0.17.4-1_source.changes
+  PYTHONPATH=/usr/lib/python3/dist-packages python /usr/bin/dput \
+    -c deb/0.17.4-1/dput-mentors.cf mentors \
+    deb/0.17.4-1/stimfit_0.17.4-1_source.changes
+  ```
+
+  `-o` performs local checks without uploading. The host default virtual
+  environment lacks python-debian, so exposing the system dist-packages keeps
+  that interpreter usable for autopkgtest and dput. Testbed Python remains the
+  Debian interpreter. The draft `sponsorship-request.txt` is prepared for review;
+  sending it requires an explicit instruction and has not been done.
+- Published the final import-test fix and current-unstable validation record
+  on `debian/sid`, together with the pristine-tar data and annotated release
+  tags. `upstream/0.17.4` points to the frozen upstream source `0ea89fe9`;
+  `debian/0.17.4-1` marks the matching Debian packaging and this procedure.
+  These Git updates do not upload the package to Debian or mentors.
