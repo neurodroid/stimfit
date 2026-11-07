@@ -11,7 +11,8 @@ unsigned artifacts; signing, tags, pushes, and uploads are publication steps.
 The target is **0.17.4-1**, prepared on 2026-11-07. `VERSION` already contains
 `0.17.4`. The upstream source commit is
 `0ea89fe9` (`Update MacPorts package to 0.17.4`); the previous Debian release is
-`0.17.2-1` at `dedb4269`. Upstream has been merged into `debian/sid`.
+`0.17.2-1` at `dedb4269`. That upstream source has been merged into
+`debian/sid`.
 
 Artifacts are retained under [`deb/0.17.4-1`](../deb/0.17.4-1/) (Git ignored).
 The running staging directory is `/tmp/stimfit-debian-release`.
@@ -217,6 +218,28 @@ after maintainer approval should the appropriate upstream and Debian tags be
 created, commits pushed, and signed source changes uploaded to mentors or the
 Debian archive. Do not publish both HDF5 binary variants as one upload.
 
+## 7. Carry shared changes back to master
+
+Keep `debian/` on `debian/sid`. Carry general source fixes and reusable release
+procedures to `master` as focused commits; merging the entire packaging branch
+would reintroduce Debian packaging into the upstream tree. Share documentation
+commits back to `debian/sid` without importing unrelated upstream changes.
+
+After a source upload is frozen, preserve the orig archive, signed source set,
+and published release tags. An upstream fix corresponding to a quilt patch can
+be committed to `master` for the next release while the current Debian release
+keeps that patch against its frozen orig archive. When preparing the next
+upstream release, remove any patch already incorporated upstream before
+importing the updated source. Do not merge such fixes into a frozen packaging
+checkout in a way that applies the same correction twice.
+
+For 0.17.4-1, the generic ABF2 fixture fix is carried directly in
+`src/test/abf.cpp` on `master`, and the current release retains
+`debian/patches/abf2-fixture-dac-size.patch`. The shared procedure lives in
+`plans/` on both branches. The existing `upstream/0.17.4` and `debian/0.17.4-1`
+tags remain at their original commits; later upstream and documentation work
+does not create another release of the same version.
+
 ## Preparation record for 0.17.4-1
 
 - Merged upstream `0ea89fe9` into the current `debian/sid` packaging branch.
@@ -380,3 +403,14 @@ Debian archive. Do not publish both HDF5 binary variants as one upload.
   upload receipt. The package page was not yet populated immediately after
   transfer, so mentors processing/acceptance remains unconfirmed. No sponsor
   email has been sent; `sponsorship-request.txt` remains a draft for review.
+
+- Carried the generic ABF2 fixture correction upstream on `master` as
+  `4fecc616` and shared this procedure between `master` and `debian/sid`.
+  Verified `stimfit_io_test` in a fresh Debug build with assertions enabled,
+  system BioSig, and Python disabled for this focused C++ check. The test
+  passed. Debian's full Python-enabled release validation remains recorded above.
+- Preserved the uploaded source set and the existing release tags. The Debian
+  branch retains its quilt patch against upstream `0ea89fe9`; the direct source
+  fix on `master` is for subsequent upstream releases. Only the procedure is
+  shared back to the frozen packaging branch, so the correction is not applied
+  twice. No full merge of `debian/` into `master` is appropriate.
