@@ -10,9 +10,6 @@ starting code to embed wxPython into the stf application.
 
 """
 import sys
-if 'win' in sys.platform and sys.platform != 'darwin':
-    import wxversion
-    wxversion.select('3.0-msw')
 import wx
 wx.CallAfter = lambda x, y : (x, y)
 from wx.py import shell
@@ -33,9 +30,7 @@ else:
 class MyPanel(wx.Panel):
     """ The wxPython shell application """
     def __init__(self, parent):
-        # super makes the same as wx.Panel.__init__(self, parent, etc..)
-        # but prepares for Python 3.0 among other things...
-        super(MyPanel, self).__init__(parent, -1, \
+        super().__init__(parent, -1, \
             style = wx.BORDER_NONE | wx.MAXIMIZE)
 
         # the Pycrust shell object

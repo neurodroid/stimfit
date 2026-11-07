@@ -9,8 +9,8 @@ This document describes the prerequisites for current 64-bit Windows builds of `
 
 .. important::
 
-   The Visual C++ Express 2008 and Python 2.7 workflow described in older
-   Stimfit documentation is legacy material. Current Windows builds on
+   The Visual C++ Express 2008 workflow has been removed. Python-enabled
+   builds require Python 3 and wxPython Phoenix. Current Windows builds on
    [`master`](README.md:13) use Visual Studio 2022, CMake presets, `vcpkg`, and
    CPack as described in [`README.md`](README.md:105).
 

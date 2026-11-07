@@ -482,8 +482,10 @@ filename -- The file to be opened. On Windows, use double back-
             Haven't figured out the reason yet.
 
 Returns:
-True if the file could be opened, False otherwise.") file_open;
-bool file_open( const char* filename );
+True if the file could be opened, False otherwise.
+
+reader -- auto (default, uses any saved file preference), biosig, or native.") file_open;
+bool file_open( const char* filename, const char* reader = "auto" );
 //--------------------------------------------------------------------
 
 //--------------------------------------------------------------------

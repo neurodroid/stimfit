@@ -10,20 +10,11 @@ starting code to embed a matplotlib wx figure into the stf application.
 
 """
 
-import sys
-if 'linux' in sys.platform:
-    import wxversion
-    try:
-        wxversion.select('2.8')
-    except:
-        pass
 import wx
-import matplotlib
-if sys.version_info[0] < 3:
-    matplotlib.use('WXAgg')
-    from matplotlib.backends.backend_wxagg import \
-        FigureCanvasWxAgg as FigCanvas, \
-        NavigationToolbar2WxAgg as NavigationToolbar
+from matplotlib.backends.backend_wxagg import (
+    FigureCanvasWxAgg as FigCanvas,
+    NavigationToolbar2WxAgg as NavigationToolbar,
+)
 from matplotlib.figure import Figure
 import matplotlib.mlab as mlab
 import numpy as np
@@ -36,7 +27,7 @@ except:
 class MplPanel(wx.Panel):
     """The matplotlib figure"""
     def __init__(self, parent, figsize=(8.0, 6.0)):
-        super(MplPanel, self).__init__(parent, -1)
+        super().__init__(parent, -1)
         self.fig = Figure(figsize, dpi=72)
         self.canvas = FigCanvas(self, -1, self.fig)
 
@@ -86,7 +77,7 @@ class MplPanel(wx.Panel):
             tsl2 = [stfio_plot.Timeseries(stf.get_trace(trace=-1, channel=stf.get_channel_index(False)),
                                           stf.get_sampling_interval(),
                                           yunits = stf.get_yunits(trace=-1, channel=stf.get_channel_index(False)),
-                                          color='r', linestyle='-r')]
+                                          color='r', linestyle='-')]
             stfio_plot.plot_traces(tsl, traces2=tsl2, ax=self.axes, textcolor2 = 'r',
                                    xmin=stf.plot_xmin(), xmax=stf.plot_xmax(),
                                    ymin=stf.plot_ymin(), ymax=stf.plot_ymax(), 

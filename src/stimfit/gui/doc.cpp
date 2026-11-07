@@ -54,18 +54,6 @@
 #ifdef WITH_PYTHON
 #include "./../../pystfio/pystfio.h"
 
-#if PY_MAJOR_VERSION >= 3
-#ifndef PyString_Check
-#define PyString_Check PyUnicode_Check
-#endif
-#ifndef PyString_AsString
-#define PyString_AsString PyUnicode_AsUTF8
-#endif
-#ifndef PyString_FromString
-#define PyString_FromString PyUnicode_FromString
-#endif
-#endif
-
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #ifdef __GNUC__
 #pragma GCC diagnostic push
@@ -257,7 +245,7 @@ bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
         return false;
     }
 
-    PyObject* py_fn = PyString_FromString(filename.c_str());
+    PyObject* py_fn = PyUnicode_FromString(filename.c_str());
     PyObject* stf_tdms_f = PyObject_GetAttrString(stf_mod, "tdms_open");
     PyObject* stf_tdms_args = NULL;
     PyObject* stf_tdms_res = NULL;
@@ -334,8 +322,9 @@ bool wxStfDoc::LoadTDMS(const std::string& filename, Recording& ReturnData) {
 #endif // WITH_PYTHON
 
 bool wxStfDoc::OnOpenDocument(const wxString& filename) {
+    const auto reader = hasReaderOverride ? importReader : wxGetApp().GetFileReaderPreference(filename);
     const auto importFromFileType = [&](stfio::filetype type) -> bool {
-        if (type == stfio::tdms) {
+        if (type == stfio::tdms && reader != stfio::fileReader::biosig) {
 #ifdef WITH_PYTHON
             if (!LoadTDMS(stf::wx2std(filename), *this)) {
                 wxGetApp().ExceptMsg(wxT("Error opening file\n"));
@@ -347,16 +336,17 @@ bool wxStfDoc::OnOpenDocument(const wxString& filename) {
             get().clear();
             return false;
 #endif
+            usedReader = stfio::fileReader::native;
             return true;
         }
 
         try {
             if (progress) {
                 stf::wxProgressInfo progDlg("Reading file", "Opening file", 100);
-                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg, reader, &usedReader);
             } else {
                 stfio::StdoutProgressInfo progDlg("Reading file", "Opening file", 100, true);
-                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg);
+                stfio::importFile(stf::wx2std(filename), type, *this, wxGetApp().GetTxtImport(), progDlg, reader, &usedReader);
             }
         }
         catch (const std::exception& e) {
@@ -823,6 +813,8 @@ void wxStfDoc::Fileinfo(wxCommandEvent& WXUNUSED(event)) {
     std::string general = buf
         + oss1.str() + "\n" + oss2.str() + "\n"
         + "Comment:\n" + GetComment();
+    if (usedReader != stfio::fileReader::automatic)
+        general += usedReader == stfio::fileReader::biosig ? "\nReader: BioSig" : "\nReader: Native (Stimfit)";
     wxStfFileInfoDlg dlg( GetDocumentWindow(), general, GetFileDescription(),
             GetGlobalSectionDescription() );
     dlg.ShowModal();

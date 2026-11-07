@@ -107,9 +107,9 @@ endif()
 
 if(NOT _stf_stage_head STREQUAL "${STF_BIOSIG_EXPECTED_COMMIT}")
   message(FATAL_ERROR
-    "biosig staged source mismatch: expected tag '${STF_BIOSIG_EXPECTED_TAG}' -> ${STF_BIOSIG_EXPECTED_COMMIT}, "
+    "biosig staged source mismatch: expected revision '${STF_BIOSIG_EXPECTED_TAG}' -> ${STF_BIOSIG_EXPECTED_COMMIT}, "
     "but staged HEAD is ${_stf_stage_head}. "
-    "Update src/biosig to tag '${STF_BIOSIG_EXPECTED_TAG}' and reconfigure."
+    "Update src/biosig to revision '${STF_BIOSIG_EXPECTED_TAG}' and reconfigure."
   )
 endif()
 
@@ -122,6 +122,10 @@ foreach(_stf_patch IN LISTS _stf_biosig_patch_files)
     message(FATAL_ERROR "Failed to apply patch: ${_stf_patch}")
   endif()
 endforeach()
+
+include("${CMAKE_CURRENT_LIST_DIR}/StimfitBiosigABF.cmake")
+stf_patch_biosig_abf("${STF_BIOSIG_STAGE_DIR}/biosig4c++/t210/sopen_abf_read.c"
+  "${STF_BIOSIG_STAGE_DIR}/biosig4c++/t210/sopen_abf_read.c")
 
 file(WRITE "${_stf_existing_signature_file}" "${_stf_requested_signature}")
 

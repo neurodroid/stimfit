@@ -7306,7 +7306,7 @@ if test "$wxUSE_STC" = "yes"; then
    SAMPLES_SUBDIRS="$SAMPLES_SUBDIRS stc"
 
    dnl python is used to update src/stc.h (see build/bakefiles/scintilla.bkl)
-   AC_PATH_PROG(PYTHON, python)
+   AC_PATH_PROG(PYTHON, python3)
    if test "x$PYTHON" = "x"; then
      COND_PYTHON="#"
    fi

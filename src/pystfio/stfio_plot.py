@@ -147,16 +147,13 @@ class Timeseries(object):
 
         return self.copy_attributes(result)
 
-    def __div__(self, other):
+    def __truediv__(self, other):
         if isinstance(other, Timeseries):
             result = self.data / other.data
         else:
             result = self.data / other
 
         return self.copy_attributes(result)
-
-    def __truediv__(self, other):
-        return self.__div__(other)
 
     def copy_attributes(self, data):
         return Timeseries(
@@ -351,7 +348,8 @@ def plot_scalebars(ax, div=3.0, labels=True,
                    rotate_yslabel=False,
                    linestyle="-k", linewidth=4.0,
                    textcolor='k', textweight='normal',
-                   xmin=None, xmax=None, ymin=None, ymax=None):
+                   xmin=None, xmax=None, ymin=None, ymax=None,
+                   linecolor=None):
 
     # print dir(ax.dataLim)
     if xmin is None:
@@ -389,8 +387,9 @@ def plot_scalebars(ax, div=3.0, labels=True,
     scalebarsx.append(yend_x+xoff)
     scalebarsy.append(yend_y-yoff)
 
+    line_options = {} if linecolor is None else {"color": linecolor}
     ax.plot(scalebarsx, scalebarsy, linestyle, linewidth=linewidth,
-            solid_joinstyle='miter')
+            solid_joinstyle='miter', **line_options)
 
     if labels:
         # if textcolor is not None:
@@ -635,6 +634,7 @@ def plot_traces(traces, traces2=None, ax=None, Fig=None, pulses=None,
         if traces2 is not None:
             plot_scalebars(
                 copy_ax, linestyle=traces2[0].linestyle,
+                linecolor=traces2[0].color,
                 xunits=traces2[0].xunits, yunits=traces2[0].yunits,
                 textweight=textweight, textcolor=textcolor2, xmin=xmin,
                 xmax=xmax, ymin=y2min, ymax=y2max,

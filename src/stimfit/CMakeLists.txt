@@ -18,6 +18,7 @@ add_library(
   gui/dlgs/eventdlg.cpp
   gui/dlgs/fitseldlg.cpp
   gui/dlgs/smalldlgs.cpp
+  gui/dlgs/opendlg.cpp
   gui/usrdlg/usrdlg.cpp
 )
 stf_apply_macos_runtime_policy(stimfit_core)
@@ -54,10 +55,13 @@ else()
 endif()
 
 if(APPLE AND STF_MACOS_APP_BUNDLE)
-  install(TARGETS stimfit_core
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
-    LIBRARY DESTINATION ${_stf_core_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
-  )
+  get_target_property(_stf_core_type stimfit_core TYPE)
+  if(NOT _stf_core_type STREQUAL "STATIC_LIBRARY")
+    install(TARGETS stimfit_core
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
+      LIBRARY DESTINATION ${_stf_core_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
+    )
+  endif()
 else()
   install(TARGETS stimfit_core
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT ${STF_COMPONENT_CORE}
@@ -65,3 +69,5 @@ else()
     ARCHIVE DESTINATION ${_stf_core_install_libdir} COMPONENT ${STF_COMPONENT_CORE}
   )
 endif()
+
+unset(_stf_core_type)

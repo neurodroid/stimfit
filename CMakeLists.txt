@@ -47,6 +47,9 @@ if(WIN32)
     list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${_stf_biosig_lib_dir}")
     unset(_stf_biosig_lib_dir)
   endif()
+  if(DEFINED STF_BIOSIG_ICONV_RUNTIME_DIRS)
+    list(APPEND STF_RUNTIME_DEPENDENCY_DIRS ${STF_BIOSIG_ICONV_RUNTIME_DIRS})
+  endif()
   if(DEFINED wxWidgets_LIB_DIR AND NOT "${wxWidgets_LIB_DIR}" STREQUAL "")
     file(TO_CMAKE_PATH "${wxWidgets_LIB_DIR}" _stf_wx_lib_dir)
     list(APPEND STF_RUNTIME_DEPENDENCY_DIRS "${_stf_wx_lib_dir}")
@@ -130,6 +133,13 @@ if(NOT STF_BUILD_MODULE)
     add_executable(stimfit MACOSX_BUNDLE src/stimfit/gui/main.cpp)
   else()
     add_executable(stimfit src/stimfit/gui/main.cpp)
+  endif()
+
+  if(STF_ENABLE_PYTHON)
+    # The embedded shell loads this module at runtime, so linking stimfit does
+    # not create a dependency. Target-only builds must still produce _stf and
+    # the SWIG-generated stf.py before the application can be installed.
+    add_dependencies(stimfit pystf)
   endif()
 
   if(APPLE AND STF_MACOS_APP_BUNDLE)
@@ -366,6 +376,20 @@ if(NOT STF_BUILD_MODULE)
     endif()
   endif()
 
+  if(WIN32 AND DEFINED STF_BIOSIG_ICONV_RUNTIME_DIRS)
+    foreach(_stf_iconv_runtime_dir IN LISTS STF_BIOSIG_ICONV_RUNTIME_DIRS)
+      install(
+        DIRECTORY "${_stf_iconv_runtime_dir}/"
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT ${STF_COMPONENT_CORE}
+        FILES_MATCHING
+          PATTERN "*iconv*.dll"
+          PATTERN "*charset*.dll"
+      )
+    endforeach()
+    unset(_stf_iconv_runtime_dir)
+  endif()
+
   if(WIN32 AND DEFINED STF_MSVC_REDIST_DIRS)
     foreach(_stf_msvc_redist_dir IN LISTS STF_MSVC_REDIST_DIRS)
       if(EXISTS "${_stf_msvc_redist_dir}")
@@ -405,12 +429,11 @@ if(NOT STF_BUILD_MODULE)
           )
         else()
           set(_stf_stdlib_signature "${STF_PYTHON_STDLIB}")
-          install(
-            CODE
+          string(CONCAT _stf_stdlib_install_code
               "set(_stf_src \"${STF_PYTHON_STDLIB}\")\n"
-              "set(_stf_dst \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/Lib\")\n"
+              "set(_stf_dst \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/Lib\")\n"
               "set(_stf_marker \"${CMAKE_INSTALL_BINDIR}/.stf-python-stdlib-signature\")\n"
-              "set(_stf_marker_abs \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/\${_stf_marker}\")\n"
+              "set(_stf_marker_abs \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/\${_stf_marker}\")\n"
               "set(_stf_sig \"${_stf_stdlib_signature}\")\n"
               "set(_stf_needs_copy TRUE)\n"
               "if(EXISTS \"\${_stf_marker_abs}\" AND EXISTS \"\${_stf_dst}\")\n"
@@ -422,16 +445,17 @@ if(NOT STF_BUILD_MODULE)
               "endif()\n"
               "if(_stf_needs_copy)\n"
               "  message(STATUS \"Refreshing embedded Python stdlib (fast mode).\")\n"
-              "  file(MAKE_DIRECTORY \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}\")\n"
+              "  file(MAKE_DIRECTORY \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}\")\n"
               "  file(REMOVE_RECURSE \"\${_stf_dst}\")\n"
-              "  file(COPY \"\${_stf_src}/\" DESTINATION \"\${_stf_dst}\")\n"
+              "  file(COPY \"\${_stf_src}/\" DESTINATION \"\${_stf_dst}\" PATTERN \"site-packages\" EXCLUDE PATTERN \"dist-packages\" EXCLUDE PATTERN \"__pycache__\" EXCLUDE)\n"
               "  file(REMOVE_RECURSE \"\${_stf_dst}/site-packages\" \"\${_stf_dst}/dist-packages\" \"\${_stf_dst}/__pycache__\")\n"
-              "  file(WRITE \"\${_stf_marker_abs}\" \"\${_stf_sig}\\n\")\n"
+              "  file(WRITE \"\${_stf_marker_abs}\" \"\${_stf_sig}\")\n"
               "else()\n"
               "  message(STATUS \"Skipping embedded Python stdlib refresh (signature unchanged).\")\n"
               "endif()"
-            COMPONENT ${STF_COMPONENT_PYTHON}
           )
+          install(CODE "${_stf_stdlib_install_code}" COMPONENT ${STF_COMPONENT_PYTHON})
+          unset(_stf_stdlib_install_code)
           unset(_stf_stdlib_signature)
         endif()
       else()
@@ -454,136 +478,20 @@ if(NOT STF_BUILD_MODULE)
 
     if(STF_WINDOWS_COPY_PYTHON_SITE_PACKAGES)
       set(_stf_site_packages_root "${CMAKE_INSTALL_BINDIR}/stf-site-packages")
-      set(_stf_site_copy_sources "")
-
-      foreach(_stf_pkg IN LISTS STF_WINDOWS_PYTHON_SITE_PACKAGES)
-        set(_stf_pkg_copied OFF)
-
-        if(DEFINED STF_PYTHON_PURELIB AND EXISTS "${STF_PYTHON_PURELIB}/${_stf_pkg}")
-          if(STF_WINDOWS_PYTHON_FULL_REFRESH)
-            install(DIRECTORY "${STF_PYTHON_PURELIB}/${_stf_pkg}" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
+      include(StimfitPythonPackages)
+      stf_collect_python_package_sources(_stf_site_copy_sources
+        PACKAGES ${STF_WINDOWS_PYTHON_SITE_PACKAGES}
+        ROOTS "${STF_PYTHON_PURELIB}" "${STF_PYTHON_PLATLIB}" ${STF_WINDOWS_PYTHON_EXTRA_PATHS})
+      if(STF_WINDOWS_PYTHON_FULL_REFRESH)
+        foreach(_stf_source IN LISTS _stf_site_copy_sources)
+          if(IS_DIRECTORY "${_stf_source}")
+            install(DIRECTORY "${_stf_source}" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
           else()
-            list(APPEND _stf_site_copy_sources "${STF_PYTHON_PURELIB}/${_stf_pkg}")
+            install(FILES "${_stf_source}" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
           endif()
-          set(_stf_pkg_copied ON)
-        endif()
-
-        if(DEFINED STF_PYTHON_PURELIB AND EXISTS "${STF_PYTHON_PURELIB}/${_stf_pkg}.libs")
-          if(STF_WINDOWS_PYTHON_FULL_REFRESH)
-            install(DIRECTORY "${STF_PYTHON_PURELIB}/${_stf_pkg}.libs" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
-          else()
-            list(APPEND _stf_site_copy_sources "${STF_PYTHON_PURELIB}/${_stf_pkg}.libs")
-          endif()
-          set(_stf_pkg_copied ON)
-        endif()
-
-        if(DEFINED STF_PYTHON_PURELIB AND EXISTS "${STF_PYTHON_PURELIB}/${_stf_pkg}.py")
-          if(STF_WINDOWS_PYTHON_FULL_REFRESH)
-            install(FILES "${STF_PYTHON_PURELIB}/${_stf_pkg}.py" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
-          else()
-            list(APPEND _stf_site_copy_sources "${STF_PYTHON_PURELIB}/${_stf_pkg}.py")
-          endif()
-          set(_stf_pkg_copied ON)
-        endif()
-
-        if(DEFINED STF_PYTHON_PURELIB)
-          file(GLOB _stf_pkg_purelib_pyds "${STF_PYTHON_PURELIB}/${_stf_pkg}*.pyd")
-          if(_stf_pkg_purelib_pyds)
-            if(STF_WINDOWS_PYTHON_FULL_REFRESH)
-              install(FILES ${_stf_pkg_purelib_pyds} DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
-            else()
-              list(APPEND _stf_site_copy_sources ${_stf_pkg_purelib_pyds})
-            endif()
-            set(_stf_pkg_copied ON)
-          endif()
-          unset(_stf_pkg_purelib_pyds)
-        endif()
-
-        if(DEFINED STF_PYTHON_PLATLIB AND EXISTS "${STF_PYTHON_PLATLIB}/${_stf_pkg}")
-          if(STF_WINDOWS_PYTHON_FULL_REFRESH)
-            install(DIRECTORY "${STF_PYTHON_PLATLIB}/${_stf_pkg}" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
-          else()
-            list(APPEND _stf_site_copy_sources "${STF_PYTHON_PLATLIB}/${_stf_pkg}")
-          endif()
-          set(_stf_pkg_copied ON)
-        endif()
-
-        if(DEFINED STF_PYTHON_PLATLIB AND EXISTS "${STF_PYTHON_PLATLIB}/${_stf_pkg}.libs")
-          if(STF_WINDOWS_PYTHON_FULL_REFRESH)
-            install(DIRECTORY "${STF_PYTHON_PLATLIB}/${_stf_pkg}.libs" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
-          else()
-            list(APPEND _stf_site_copy_sources "${STF_PYTHON_PLATLIB}/${_stf_pkg}.libs")
-          endif()
-          set(_stf_pkg_copied ON)
-        endif()
-
-        if(DEFINED STF_PYTHON_PLATLIB AND EXISTS "${STF_PYTHON_PLATLIB}/${_stf_pkg}.pyd")
-          if(STF_WINDOWS_PYTHON_FULL_REFRESH)
-            install(FILES "${STF_PYTHON_PLATLIB}/${_stf_pkg}.pyd" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
-          else()
-            list(APPEND _stf_site_copy_sources "${STF_PYTHON_PLATLIB}/${_stf_pkg}.pyd")
-          endif()
-          set(_stf_pkg_copied ON)
-        endif()
-
-        if(DEFINED STF_PYTHON_PLATLIB)
-          file(GLOB _stf_pkg_platlib_pyds "${STF_PYTHON_PLATLIB}/${_stf_pkg}*.pyd")
-          if(_stf_pkg_platlib_pyds)
-            if(STF_WINDOWS_PYTHON_FULL_REFRESH)
-              install(FILES ${_stf_pkg_platlib_pyds} DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
-            else()
-              list(APPEND _stf_site_copy_sources ${_stf_pkg_platlib_pyds})
-            endif()
-            set(_stf_pkg_copied ON)
-          endif()
-          unset(_stf_pkg_platlib_pyds)
-        endif()
-
-        if(NOT _stf_pkg_copied AND DEFINED STF_WINDOWS_PYTHON_EXTRA_PATHS)
-          foreach(_stf_extra_py IN LISTS STF_WINDOWS_PYTHON_EXTRA_PATHS)
-            if(EXISTS "${_stf_extra_py}/${_stf_pkg}")
-              if(STF_WINDOWS_PYTHON_FULL_REFRESH)
-                install(DIRECTORY "${_stf_extra_py}/${_stf_pkg}" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
-              else()
-                list(APPEND _stf_site_copy_sources "${_stf_extra_py}/${_stf_pkg}")
-              endif()
-              set(_stf_pkg_copied ON)
-              break()
-            endif()
-            if(EXISTS "${_stf_extra_py}/${_stf_pkg}.libs")
-              if(STF_WINDOWS_PYTHON_FULL_REFRESH)
-                install(DIRECTORY "${_stf_extra_py}/${_stf_pkg}.libs" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
-              else()
-                list(APPEND _stf_site_copy_sources "${_stf_extra_py}/${_stf_pkg}.libs")
-              endif()
-              set(_stf_pkg_copied ON)
-            endif()
-            if(EXISTS "${_stf_extra_py}/${_stf_pkg}.py")
-              if(STF_WINDOWS_PYTHON_FULL_REFRESH)
-                install(FILES "${_stf_extra_py}/${_stf_pkg}.py" DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
-              else()
-                list(APPEND _stf_site_copy_sources "${_stf_extra_py}/${_stf_pkg}.py")
-              endif()
-              set(_stf_pkg_copied ON)
-              break()
-            endif()
-            file(GLOB _stf_pkg_extra_pyds "${_stf_extra_py}/${_stf_pkg}*.pyd")
-            if(_stf_pkg_extra_pyds)
-              if(STF_WINDOWS_PYTHON_FULL_REFRESH)
-                install(FILES ${_stf_pkg_extra_pyds} DESTINATION "${_stf_site_packages_root}" COMPONENT ${STF_COMPONENT_PYTHON})
-              else()
-                list(APPEND _stf_site_copy_sources ${_stf_pkg_extra_pyds})
-              endif()
-              set(_stf_pkg_copied ON)
-            endif()
-            unset(_stf_pkg_extra_pyds)
-          endforeach()
-        endif()
-
-        if(NOT _stf_pkg_copied)
-          message(WARNING "Requested Python package '${_stf_pkg}' was not found in purelib/platlib and was not copied.")
-        endif()
-      endforeach()
+        endforeach()
+        unset(_stf_source)
+      endif()
 
       if(DEFINED STF_PYTHON_PURELIB AND EXISTS "${STF_PYTHON_PURELIB}/site.py")
         if(STF_WINDOWS_PYTHON_FULL_REFRESH)
@@ -594,13 +502,13 @@ if(NOT STF_BUILD_MODULE)
       endif()
 
       if(NOT STF_WINDOWS_PYTHON_FULL_REFRESH)
+        list(REMOVE_DUPLICATES _stf_site_copy_sources)
         set(_stf_site_signature "${STF_PYTHON_PURELIB}|${STF_PYTHON_PLATLIB}|${STF_WINDOWS_PYTHON_EXTRA_PATHS}|${STF_WINDOWS_PYTHON_SITE_PACKAGES}|${_stf_site_copy_sources}")
-        install(
-          CODE
+        string(CONCAT _stf_site_install_code
             "set(_stf_sources \"${_stf_site_copy_sources}\")\n"
-            "set(_stf_dst \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${_stf_site_packages_root}\")\n"
+            "set(_stf_dst \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${_stf_site_packages_root}\")\n"
             "set(_stf_marker \"${CMAKE_INSTALL_BINDIR}/.stf-site-packages-signature\")\n"
-            "set(_stf_marker_abs \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/\${_stf_marker}\")\n"
+            "set(_stf_marker_abs \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/\${_stf_marker}\")\n"
             "set(_stf_sig \"${_stf_site_signature}\")\n"
             "set(_stf_needs_copy TRUE)\n"
             "if(EXISTS \"\${_stf_marker_abs}\" AND EXISTS \"\${_stf_dst}\")\n"
@@ -612,26 +520,25 @@ if(NOT STF_BUILD_MODULE)
             "endif()\n"
             "if(_stf_needs_copy)\n"
             "  message(STATUS \"Refreshing embedded Python site-packages (fast mode).\")\n"
-            "  file(MAKE_DIRECTORY \"$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}\")\n"
-            "  file(REMOVE_RECURSE \"\${_stf_dst}\")\n"
+            "  file(MAKE_DIRECTORY \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}\")\n"
             "  file(MAKE_DIRECTORY \"\${_stf_dst}\")\n"
             "  foreach(_stf_src IN LISTS _stf_sources)\n"
+            "    get_filename_component(_stf_item_name \"\${_stf_src}\" NAME)\n"
+            "    file(REMOVE_RECURSE \"\${_stf_dst}/\${_stf_item_name}\")\n"
             "    file(COPY \"\${_stf_src}\" DESTINATION \"\${_stf_dst}\")\n"
             "  endforeach()\n"
-            "  file(WRITE \"\${_stf_marker_abs}\" \"\${_stf_sig}\\n\")\n"
+            "  file(WRITE \"\${_stf_marker_abs}\" \"\${_stf_sig}\")\n"
             "else()\n"
             "  message(STATUS \"Skipping embedded Python site-packages refresh (signature unchanged).\")\n"
             "endif()"
-          COMPONENT ${STF_COMPONENT_PYTHON}
         )
+        install(CODE "${_stf_site_install_code}" COMPONENT ${STF_COMPONENT_PYTHON})
+        unset(_stf_site_install_code)
         unset(_stf_site_signature)
       endif()
 
       unset(_stf_site_copy_sources)
       unset(_stf_site_packages_root)
-      unset(_stf_pkg)
-      unset(_stf_pkg_copied)
-      unset(_stf_extra_py)
     endif()
   endif()
 
@@ -684,6 +591,18 @@ if(NOT STF_BUILD_MODULE)
   endif()
 
   if(STF_BUILD_TESTS)
+    if(STF_WITH_BIOSIG AND NOT STF_BIOSIG_SELECTED_PROVIDER STREQUAL "SYSTEM")
+      add_test(NAME stimfit_biosig_release_test
+        COMMAND ${CMAKE_COMMAND}
+          "-DSTF_TEST_ROOT=${CMAKE_CURRENT_BINARY_DIR}/biosig-release-test"
+          -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/tests/biosig_release.cmake")
+    endif()
+    add_test(NAME stimfit_python_packages_test
+      COMMAND ${CMAKE_COMMAND}
+        "-DSTF_TEST_ROOT=${CMAKE_CURRENT_BINARY_DIR}/python-packages-test"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/tests/python_packages.cmake")
+    # Compile the vendored release with Stimfit's toolchain so GoogleTest uses
+    # the same MSVC runtime, C++ standard, and macOS settings as its callers.
     add_library(
       stimfit_gtest_main
       STATIC
@@ -692,11 +611,12 @@ if(NOT STF_BUILD_MODULE)
     )
     target_include_directories(
       stimfit_gtest_main
-      PUBLIC
+      PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/test/gtest
+      PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/test/gtest/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
+    target_compile_features(stimfit_gtest_main PUBLIC cxx_std_17)
     target_link_libraries(
       stimfit_gtest_main
       PUBLIC
@@ -727,6 +647,17 @@ if(NOT STF_BUILD_MODULE)
       COMPONENT ${STF_COMPONENT_TESTS}
     )
 
+    add_executable(stimfit_io_test src/test/abf.cpp)
+    target_link_libraries(stimfit_io_test PRIVATE stimfit_config stimfit_gtest_main stfio)
+    stf_apply_macos_runtime_policy(stimfit_io_test)
+    add_test(NAME stimfit_io_test COMMAND stimfit_io_test)
+    install(
+      TARGETS stimfit_io_test
+      ${STF_INSTALL_RUNTIME_DEPENDENCY_ARGS}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      COMPONENT ${STF_COMPONENT_TESTS}
+    )
+
     if(STF_BUILD_NUMERIC_TESTS)
       add_executable(
         stimfit_numeric_test
@@ -749,6 +680,28 @@ if(NOT STF_BUILD_MODULE)
         COMPONENT ${STF_COMPONENT_TESTS}
       )
     endif()
+
+    set(_stf_test_targets stimfit_gtest_main stimfit_containers_test stimfit_io_test)
+    if(TARGET stimfit_numeric_test)
+      list(APPEND _stf_test_targets stimfit_numeric_test)
+    endif()
+    foreach(_stf_test_target IN LISTS _stf_test_targets)
+      if(MSVC)
+        # /W4 is provided by stimfit_config; clang-cl also accepts /WX.
+        # GoogleTest sources contain UTF-8 text; do not depend on the host locale.
+        target_compile_options(${_stf_test_target} PRIVATE /utf-8)
+        if(STF_TEST_WARNINGS_AS_ERRORS)
+          target_compile_options(${_stf_test_target} PRIVATE /WX)
+        endif()
+      else()
+        target_compile_options(${_stf_test_target} PRIVATE -Wextra -Wshadow)
+        if(STF_TEST_WARNINGS_AS_ERRORS)
+          target_compile_options(${_stf_test_target} PRIVATE -Werror)
+        endif()
+      endif()
+    endforeach()
+    unset(_stf_test_target)
+    unset(_stf_test_targets)
   endif()
 endif()
 
@@ -762,8 +715,10 @@ set(CPACK_PACKAGE_INSTALL_DIRECTORY "Stimfit")
 set(CPACK_MONOLITHIC_INSTALL OFF)
 set(CPACK_SOURCE_IGNORE_FILES
   "/[.]git/"
+  "/[.]git$"
   "/[.]github/"
   "/[.]pytest_cache/"
+  "/__pycache__/"
   "/build/"
   "/_CPack_Packages/"
   "~$"
@@ -784,6 +739,8 @@ if(WIN32)
   set(CPACK_INNOSETUP_ARCHITECTURE x64)
   set(CPACK_INNOSETUP_USE_MODERN_WIZARD ON)
   set(CPACK_INNOSETUP_ALLOW_NO_ICONS ON)
+  set(CPACK_INNOSETUP_SETUP_AppId "Stimfit")
+  set(CPACK_INNOSETUP_SETUP_PrivilegesRequiredOverridesAllowed "commandline")
   set(CPACK_PACKAGE_EXECUTABLES "stimfit;Stimfit")
   set(CPACK_COMPONENTS_ALL ${STF_COMPONENT_CORE})
   if(STF_ENABLE_PYTHON)
@@ -795,8 +752,10 @@ if(WIN32)
 
   set(CPACK_COMPONENT_CORE_DISPLAY_NAME "Stimfit Application")
   set(CPACK_COMPONENT_CORE_DESCRIPTION "Stimfit executable and required runtime dependencies")
+  set(CPACK_COMPONENT_CORE_REQUIRED ON)
   set(CPACK_COMPONENT_PYTHON_DISPLAY_NAME "Embedded Python Runtime")
   set(CPACK_COMPONENT_PYTHON_DESCRIPTION "Bundled Python runtime, stdlib, DLLs, and selected site-packages")
+  set(CPACK_COMPONENT_PYTHON_REQUIRED ON)
   set(CPACK_COMPONENT_TESTS_DISPLAY_NAME "Stimfit Tests")
   set(CPACK_COMPONENT_TESTS_DESCRIPTION "Stimfit test executable")
   set(CPACK_COMPONENT_PYTHON_DEPENDS ${STF_COMPONENT_CORE})

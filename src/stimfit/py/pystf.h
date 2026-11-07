@@ -72,7 +72,7 @@ PyObject* get_fit( int trace = -1, int channel = -1 );
 
 bool check_doc( bool show_dialog = true );
 std::string get_filename( );
-bool file_open( const char* filename );
+bool file_open( const char* filename, const char* reader = "auto" );
 bool file_save( const char* filename );
 bool close_all( );
 bool close_this( );

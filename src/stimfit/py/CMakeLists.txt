@@ -53,6 +53,15 @@ if(APPLE AND STF_MACOS_APP_BUNDLE)
 else()
   set(_pystf_install_dir ${CMAKE_INSTALL_LIBDIR}/stimfit)
 endif()
+install(CODE "
+  if(NOT EXISTS \"$<TARGET_FILE:pystf>\" OR NOT EXISTS \"${STF_STF_PY}\")
+    message(FATAL_ERROR
+      \"The embedded Python module (_stf) or its generated stf.py is missing. \"
+      \"Build the Python-enabled application before installing:\\n\"
+      \"  \\\"${CMAKE_COMMAND}\\\" --build \\\"${CMAKE_BINARY_DIR}\\\" --config \\\"$<CONFIG>\\\" --target stimfit\\n\"
+      \"Then rerun the install command. cmake --install does not build missing targets.\")
+  endif()
+" COMPONENT ${STF_COMPONENT_PYTHON})
 install(TARGETS pystf
   LIBRARY DESTINATION ${_pystf_install_dir} COMPONENT ${STF_COMPONENT_PYTHON}
   RUNTIME DESTINATION ${_pystf_install_dir} COMPONENT ${STF_COMPONENT_PYTHON}

@@ -11,7 +11,7 @@ then
 fi
 
 PREFIX="/opt/local"
-PYVER="3.13"
+PYVER="3.14"
 WX_CONF="${PREFIX}/Library/Frameworks/Python.framework/Versions/${PYVER}/bin/wx-config"
 MYCFLAGS=`${WX_CONF} --cflags`
 MYCFLAGS="${MYCFLAGS} -I${PREFIX}/include"

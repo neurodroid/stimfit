@@ -75,4 +75,4 @@ For example:
             -DSTF_ENABLE_PYTHON=ON \
             -DPython3_EXECUTABLE=$HOME/venvs/stimfit/bin/python
 
-Finally, run python to test the module, as described in :doc:`/stfio/index`.
+Finally, run Python 3 to test the module, as described in :doc:`/stfio/index`.

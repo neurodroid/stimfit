@@ -7,9 +7,6 @@ Based on exampleio.py and axonio.py from neo.io
 
 """
 
-# needed for python 3 compatibility
-from __future__ import absolute_import
-
 import sys
 
 import numpy as np

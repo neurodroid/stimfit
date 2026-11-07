@@ -1,6 +1,7 @@
 include_guard(GLOBAL)
 
 include(ExternalProject)
+include(StimfitBiosigVersion)
 
 function(stf_configure_windows_patched_biosig)
   if(TARGET stimfit::biosig)
@@ -11,9 +12,13 @@ function(stf_configure_windows_patched_biosig)
     message(FATAL_ERROR "stf_configure_windows_patched_biosig() is only valid on Windows")
   endif()
 
+  find_package(Iconv REQUIRED)
+  get_filename_component(_stf_iconv_lib_dir "${Iconv_LIBRARY}" DIRECTORY)
+  get_filename_component(_stf_iconv_prefix "${_stf_iconv_lib_dir}" DIRECTORY)
+  set(STF_BIOSIG_ICONV_RUNTIME_DIRS "${_stf_iconv_lib_dir};${_stf_iconv_prefix}/bin" PARENT_SCOPE)
+
   set(_stf_biosig_source_dir "${CMAKE_SOURCE_DIR}/src/biosig")
   set(_stf_biosig_patch_dir "${CMAKE_SOURCE_DIR}/cmake/patches/biosig-msvc")
-  set(STF_BIOSIG_EXPECTED_TAG "v3.9.5" CACHE STRING "Expected biosig tag for Windows patched-submodule provider")
 
   if(NOT EXISTS "${_stf_biosig_source_dir}/biosig4c++/CMakeLists.txt")
     message(FATAL_ERROR "Patched biosig provider requires the biosig submodule under ${_stf_biosig_source_dir}")
@@ -27,33 +32,8 @@ function(stf_configure_windows_patched_biosig)
 
   find_program(STF_GIT_EXECUTABLE NAMES git REQUIRED)
 
-  execute_process(
-    COMMAND ${STF_GIT_EXECUTABLE} -C "${_stf_biosig_source_dir}" rev-parse HEAD
-    RESULT_VARIABLE _stf_biosig_rev_parse_result
-    OUTPUT_VARIABLE _stf_biosig_head
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-  if(NOT _stf_biosig_rev_parse_result EQUAL 0)
-    message(FATAL_ERROR "Failed to determine biosig submodule HEAD from ${_stf_biosig_source_dir}")
-  endif()
-
-  execute_process(
-    COMMAND ${STF_GIT_EXECUTABLE} -C "${_stf_biosig_source_dir}" rev-parse --verify --quiet "refs/tags/${STF_BIOSIG_EXPECTED_TAG}^{commit}"
-    RESULT_VARIABLE _stf_biosig_expected_tag_result
-    OUTPUT_VARIABLE _stf_biosig_expected_commit
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-  if(NOT _stf_biosig_expected_tag_result EQUAL 0)
-    message(FATAL_ERROR "Expected biosig tag '${STF_BIOSIG_EXPECTED_TAG}' was not found in ${_stf_biosig_source_dir}")
-  endif()
-
-  if(NOT _stf_biosig_head STREQUAL _stf_biosig_expected_commit)
-    message(FATAL_ERROR
-      "biosig submodule mismatch: expected tag '${STF_BIOSIG_EXPECTED_TAG}' -> ${_stf_biosig_expected_commit}, "
-      "but src/biosig HEAD is ${_stf_biosig_head}. "
-      "Update src/biosig to tag '${STF_BIOSIG_EXPECTED_TAG}' and reconfigure."
-    )
-  endif()
+  stf_validate_biosig_source("${_stf_biosig_source_dir}" _stf_biosig_expected_commit)
+  set(_stf_biosig_head "${_stf_biosig_expected_commit}")
 
   execute_process(
     COMMAND ${STF_GIT_EXECUTABLE} -C "${_stf_biosig_source_dir}" status --porcelain --untracked-files=all
@@ -65,7 +45,8 @@ function(stf_configure_windows_patched_biosig)
     message(FATAL_ERROR "Failed to determine biosig submodule working tree status from ${_stf_biosig_source_dir}")
   endif()
 
-  set(_stf_patch_manifest "")
+  file(SHA256 "${CMAKE_SOURCE_DIR}/cmake/StimfitBiosigABF.cmake" _stf_abf_patch_hash)
+  set(_stf_patch_manifest "abf-compatibility=${_stf_abf_patch_hash}\n")
   foreach(_stf_patch IN LISTS _stf_biosig_patch_files)
     file(SHA256 "${_stf_patch}" _stf_patch_hash)
     string(APPEND _stf_patch_manifest "${_stf_patch}=${_stf_patch_hash}\n")
@@ -122,11 +103,15 @@ function(stf_configure_windows_patched_biosig)
       "${_stf_biosig_source_dir}/biosig4c++/CMakeLists.txt"
       ${_stf_biosig_patch_files}
       "${CMAKE_SOURCE_DIR}/cmake/StagePatchedBiosig.cmake"
+      "${CMAKE_SOURCE_DIR}/cmake/StimfitBiosigVersion.cmake"
+      "${CMAKE_SOURCE_DIR}/cmake/StimfitBiosigABF.cmake"
     COMMENT "Staging patched biosig working tree"
     VERBATIM
   )
 
   add_custom_target(stimfit_biosig_stage DEPENDS "${_stf_biosig_stage_stamp}")
+
+  string(REPLACE ";" "|" _stf_biosig_prefix_path "${CMAKE_PREFIX_PATH}")
 
   set(_stf_biosig_library_dir "${_stf_biosig_build_dir}/$<CONFIG>")
   set(_stf_biosig_import_library "${_stf_biosig_library_dir}/biosig2.lib")
@@ -151,9 +136,12 @@ function(stf_configure_windows_patched_biosig)
     PATCH_COMMAND ""
     INSTALL_COMMAND ""
     CONFIGURE_HANDLED_BY_BUILD ON
+    BUILD_ALWAYS TRUE
     DEPENDS stimfit_biosig_stage
     CMAKE_GENERATOR "${CMAKE_GENERATOR}"
     CMAKE_GENERATOR_PLATFORM "${_stf_biosig_platform}"
+    LIST_SEPARATOR "|"
+    CMAKE_ARGS "-DCMAKE_PREFIX_PATH:STRING=${_stf_biosig_prefix_path}"
     BUILD_COMMAND
       "${CMAKE_COMMAND}" --build "${_stf_biosig_build_dir}" --config $<CONFIG> --target ${STF_BIOSIG_PATCHED_TARGETS}
     BUILD_BYPRODUCTS

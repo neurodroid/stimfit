@@ -154,8 +154,8 @@
     },
     {
       "name": "vs2022-vcpkg-wx-hdf5-python314-biosig-patched",
-      "displayName": "VS2022 x64 (Python 3.14 + modern shell + patched biosig)",
-      "description": "Build Stimfit with embedded Python enabled for Python 3.14 workflows.",
+      "displayName": "VS2022 x64 (Python 3.14 + wxPython 4.3.2 + patched biosig)",
+      "description": "Default Windows Python build with wxPython 4.3.2 and its matching wxWidgets 3.3.4 libraries.",
       "inherits": [
         "vs2022-vcpkg-wx-hdf5-biosig-patched"
       ],
@@ -164,15 +164,31 @@
         "STF_PY_SHELL_BACKEND": "MODERN",
         "STF_WINDOWS_COPY_PYTHON_RUNTIME": "ON",
         "STF_WINDOWS_COPY_PYTHON_SITE_PACKAGES": "ON",
-        "STF_WINDOWS_PYTHON_SITE_PACKAGES": "numpy;wx",
-        "STF_WINDOWS_PYTHON_EXTRA_PATHS": "C:/Users/C02380/libs/Phoenix",
-        "STF_WXPYTHON_INCLUDE_DIR": "C:/Users/C02380/libs/Phoenix/wx/include",
+        "STF_WINDOWS_PYTHON_SITE_PACKAGES": "numpy;wx;matplotlib;contourpy;cycler;dateutil;fontTools;kiwisolver;packaging;PIL;pyparsing;six",
+        "STF_WINDOWS_PYTHON_EXTRA_PATHS": "${sourceDir}/build/wxpython-4.3.2/site-packages",
+        "STF_WXPYTHON_INCLUDE_DIR": "${sourceDir}/build/wxpython-4.3.2/site-packages/wx/include",
         "SWIG_EXECUTABLE": "C:/Users/C02380/AppData/Local/Microsoft/WinGet/Packages/SWIG.SWIG_Microsoft.Winget.Source_8wekyb3d8bbwe/swigwin-4.4.1/swig.exe",
         "Python3_ROOT_DIR": "C:/Program Files/Python314",
         "STF_WX_PREFER_MODULE_FIND": "ON",
         "wxWidgets_DIR": "",
-        "wxWidgets_ROOT_DIR": "C:/Users/C02380/libs/Phoenix/ext/wxWidgets",
-        "wxWidgets_LIB_DIR": "C:/Users/C02380/libs/Phoenix/ext/wxWidgets/lib/vc140_x64_dll"
+        "wxWidgets_ROOT_DIR": "${sourceDir}/build/wxpython-4.3.2/wxpython-4.3.2/ext/wxWidgets",
+        "wxWidgets_LIB_DIR": "${sourceDir}/build/wxpython-4.3.2/wxpython-4.3.2/ext/wxWidgets/lib/vc140_x64_dll"
+      }
+    },
+    {
+      "name": "vs2022-python314-wxpython432",
+      "displayName": "VS2022 x64 (Python 3.14 + wxPython 4.3.2)",
+      "description": "Versioned wxPython 4.3.2 build with separate build and install directories.",
+      "inherits": [
+        "vs2022-vcpkg-wx-hdf5-python314-biosig-patched"
+      ],
+      "binaryDir": "${sourceDir}/build/windows-wxpython432",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/windows-wxpython432/install",
+        "STF_WINDOWS_PYTHON_EXTRA_PATHS": "${sourceDir}/build/wxpython-4.3.2/site-packages",
+        "STF_WXPYTHON_INCLUDE_DIR": "${sourceDir}/build/wxpython-4.3.2/site-packages/wx/include",
+        "wxWidgets_ROOT_DIR": "${sourceDir}/build/wxpython-4.3.2/wxpython-4.3.2/ext/wxWidgets",
+        "wxWidgets_LIB_DIR": "${sourceDir}/build/wxpython-4.3.2/wxpython-4.3.2/ext/wxWidgets/lib/vc140_x64_dll"
       }
     },
     {
@@ -204,7 +220,8 @@
         "STF_ENABLE_PYTHON": "OFF",
         "STF_WITH_BIOSIG": "OFF",
         "STF_BUILD_TESTS": "ON",
-        "STF_BUILD_NUMERIC_TESTS": "OFF"
+        "STF_BUILD_NUMERIC_TESTS": "ON",
+        "STF_TEST_WARNINGS_AS_ERRORS": "ON"
       }
     }
   ],
@@ -290,12 +307,22 @@
       ]
     },
     {
+      "name": "vs2022-python314-wxpython432-release",
+      "displayName": "Build ALL_BUILD (Release, wxPython 4.3.2)",
+      "configurePreset": "vs2022-python314-wxpython432",
+      "configuration": "Release",
+      "targets": [
+        "ALL_BUILD"
+      ]
+    },
+    {
       "name": "ci-windows-msvc-smoke-release",
       "displayName": "CI smoke target build (Release)",
       "configurePreset": "ci-windows-msvc-smoke",
       "configuration": "Release",
       "targets": [
-        "stimfit_containers_test"
+        "stimfit_containers_test",
+        "stimfit_numeric_test"
       ]
     }
   ],

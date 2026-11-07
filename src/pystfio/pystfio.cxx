@@ -43,16 +43,10 @@
 
 #include "pystfio.h"
 
-#if PY_MAJOR_VERSION >= 3
 int wrap_array() {
     import_array();
     return 0;
 }
-#else
-void wrap_array() {
-    import_array();
-}
-#endif
 
 stfio::filetype gettype(const std::string& ftype) {
     stfio::filetype stftype = stfio::none;
@@ -84,7 +78,8 @@ stfio::filetype gettype(const std::string& ftype) {
     return stftype;
 }
 
-bool _read(const std::string& filename, const std::string& ftype, bool verbose, Recording& Data) {
+bool _read(const std::string& filename, const std::string& ftype, bool verbose, Recording& Data,
+           const std::string& reader) {
 
 #ifndef TEST_MINIMAL
     stfio::filetype stftype = gettype(ftype);
@@ -96,7 +91,7 @@ bool _read(const std::string& filename, const std::string& ftype, bool verbose, 
     stfio::StdoutProgressInfo progDlg("File import", "Starting file import", 100, verbose);
     
     try {
-        if (!stfio::importFile(filename, stftype, Data, tis, progDlg)) {
+        if (!stfio::importFile(filename, stftype, Data, tis, progDlg, stfio::parseReader(reader))) {
             std::cerr << "Error importing file\n";
             return false;
         }

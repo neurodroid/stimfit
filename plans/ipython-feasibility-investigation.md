@@ -21,10 +21,10 @@ The most likely outcome of a full implementation attempt would be one of these:
 
 - Build option [`STF_ENABLE_IPYTHON`](../cmake/StimfitOptions.cmake) still exists and is described as equivalent to legacy [`--enable-ipython`](../CMAKE_MIGRATION.md)
 - Toolchain logic still converts that option into compile definition [`IPYTHON`](../cmake/StimfitToolchain.cmake:15)
-- Historical Autotools support also still shows the old [`--enable-ipython`](../dist/macosx/scripts/configure.10.4.in:81) flag
+- Historical Autotools support also still shows the old `--enable-ipython` (retired Autotools template) flag
 - Window creation in [`parentframe.cpp`](../src/stimfit/gui/parentframe.cpp) still branches on [`#ifdef IPYTHON`](../src/stimfit/gui/parentframe.cpp:346) and tries to import [`embedded_ipython`](../src/stimfit/gui/parentframe.cpp:347)
 - Import-module handling in [`unopt.cpp`](../src/stimfit/gui/unopt.cpp) still branches on [`#ifdef IPYTHON`](../src/stimfit/gui/unopt.cpp:369)
-- Windows packaging still tries to ship [`embedded_ipython.py`](../dist/windows/nsis/installer.nsi.in:234)
+- Windows packaging still tries to ship `embedded_ipython.py` (retired NSIS installer)
 - Comments in [`embedded_init.py`](../src/stimfit/py/embedded_init.py:11) still mention [`embedded_ipython.py`](../src/stimfit/py/embedded_init.py:11)
 - Historical references in [`ChangeLog.old`](../ChangeLog.old) show that IPython support was once an active feature
 
@@ -84,7 +84,7 @@ By contrast, the currently supported path uses [`wx.py.shell`](../src/stimfit/py
 
 ### Packaging blockers
 
-The stale Windows installer entry for [`embedded_ipython.py`](../dist/windows/nsis/installer.nsi.in:234) shows that packaging metadata has already drifted away from reality. Reintroducing modern IPython would likely add substantially more runtime complexity across macOS, Windows, and Linux than the current shell backends require.
+The stale Windows installer entry for `embedded_ipython.py` (retired NSIS installer) shows that packaging metadata has already drifted away from reality. Reintroducing modern IPython would likely add substantially more runtime complexity across macOS, Windows, and Linux than the current shell backends require.
 
 ### Maintenance blockers
 
@@ -100,7 +100,7 @@ No-go for direct revival of the historical IPython integration.
 
 - missing source file [`embedded_ipython.py`](../src/stimfit/py/CMakeLists.txt)
 - obsolete API dependency on [`IPython.ipapi.get()`](../src/stimfit/gui/unopt.cpp:372)
-- stale packaging reference in [`installer.nsi.in`](../dist/windows/nsis/installer.nsi.in:234)
+- stale packaging reference in `installer.nsi.in` (retired NSIS installer)
 - current supported architecture already solved the embedded-shell problem without IPython through [`embedded_shell_modern.py`](../src/stimfit/py/embedded_shell_modern.py)
 
 ## Recommended next actions
@@ -110,7 +110,7 @@ No-go for direct revival of the historical IPython integration.
    - [`STF_ENABLE_IPYTHON`](../cmake/StimfitOptions.cmake)
    - compile definition wiring in [`StimfitToolchain.cmake`](../cmake/StimfitToolchain.cmake:15)
    - dead guarded branches in [`parentframe.cpp`](../src/stimfit/gui/parentframe.cpp:346) and [`unopt.cpp`](../src/stimfit/gui/unopt.cpp:369)
-   - stale packaging entry in [`installer.nsi.in`](../dist/windows/nsis/installer.nsi.in:234)
+   - stale packaging entry in `installer.nsi.in` (retired NSIS installer)
    - stale comments mentioning [`embedded_ipython.py`](../src/stimfit/py/embedded_init.py:11)
 3. Keep the supported embedded shell strategy centered on [`embedded_shell_modern.py`](../src/stimfit/py/embedded_shell_modern.py)
 

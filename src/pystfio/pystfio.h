@@ -18,15 +18,11 @@
 
 #define array_data(a)          PyArray_DATA((PyArrayObject*)a)
 
-#if PY_MAJOR_VERSION >= 3
-int
-#else
-void
-#endif
-wrap_array();
+int wrap_array();
 
 stfio::filetype gettype(const std::string& ftype);
-bool _read(const std::string& filename, const std::string& ftype, bool verbose, Recording& Data);
+bool _read(const std::string& filename, const std::string& ftype, bool verbose, Recording& Data,
+           const std::string& reader = "auto");
 PyObject* detect_events(double* data, int size_data, double* templ, int size_templ, double dt,
                         const std::string& mode="criterion",
                         bool norm=true, double lowpass=0.5, double highpass=0.0001);

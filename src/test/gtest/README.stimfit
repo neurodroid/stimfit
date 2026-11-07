@@ -1,0 +1,23 @@
+Vendored GoogleTest for Stimfit
+
+Release: v1.18.0
+Upstream: https://github.com/google/googletest
+Release archive: https://github.com/google/googletest/archive/refs/tags/v1.18.0.tar.gz
+Commit: 063de7e9578f82b369302001269680b4b1553359
+Archive SHA-256: 6e3191c1455468b3fc35a417fb565c1c5071aee1b7e7f85e30cf48a98d37d8b5
+License: BSD-3-Clause (upstream LICENSE is retained as COPYING)
+
+The complete googletest/include and googletest/src directories and upstream
+CONTRIBUTORS are copied verbatim from the release archive. GoogleMock, upstream
+tests, samples, and build scripts are omitted. No local source patches are applied.
+
+Stimfit builds src/gtest-all.cc and src/gtest_main.cc as one static library using
+its own CMake configuration. This preserves the parent project's C++17 setting,
+MSVC runtime selection, thread linkage, and macOS runtime policy. Building tests
+requires no network download and no installed GoogleTest, Abseil, or RE2 package.
+
+To update, replace the entire include/ and src/ trees from a tagged release,
+refresh COPYING and CONTRIBUTORS, and update the release, commit, and archive
+checksum above. Remove files absent from the new release; do not mix versions.
+Validate the container and numeric test targets with STF_TEST_WARNINGS_AS_ERRORS
+on Linux, Windows/MSVC, and macOS.

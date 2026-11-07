@@ -6,6 +6,7 @@ set -euo pipefail
 # Usage:
 #   ./build_linux_cmake.sh
 #   ./build_linux_cmake.sh --without-python
+#   ./build_linux_cmake.sh --biosig-provider SUBMODULE
 #   ./build_linux_cmake.sh --with-python --install-prefix build/linux-python/install
 #   ./build_linux_cmake.sh --install
 #   ./build_linux_cmake.sh --package-generator TGZ
@@ -22,6 +23,7 @@ INSTALL_PREFIX="build/linux-default/install"
 GENERATOR="Ninja"
 BUILD_TYPE="Release"
 WITH_PYTHON=1
+BIOSIG_PROVIDER="SYSTEM"
 DO_INSTALL=0
 PACKAGE_GENERATOR=""
 DEFAULT_SYSTEM_PYTHON="/usr/bin/python3"
@@ -41,11 +43,12 @@ pick_python_for_cmake() {
   for py in "${candidates[@]}"; do
     [[ -x "$py" ]] || continue
     if "$py" - <<'PY' >/dev/null 2>&1
+import sys
 import sysconfig
 include_dir = sysconfig.get_config_var('INCLUDEPY')
 lib_dir = sysconfig.get_config_var('LIBDIR')
 ld_library = sysconfig.get_config_var('LDLIBRARY')
-ok = bool(include_dir) and (bool(lib_dir) or bool(ld_library))
+ok = sys.version_info[0] >= 3 and bool(include_dir) and (bool(lib_dir) or bool(ld_library))
 raise SystemExit(0 if ok else 1)
 PY
     then
@@ -70,6 +73,10 @@ while [[ $# -gt 0 ]]; do
       BUILD_DIR="build/linux-lite"
       INSTALL_PREFIX="build/linux-lite/install"
       shift
+      ;;
+    --biosig-provider)
+      BIOSIG_PROVIDER="$2"
+      shift 2
       ;;
     --build-dir)
       BUILD_DIR="$2"
@@ -133,13 +140,13 @@ cmake_configure_args=(
   -USTF_USE_BIOSIG_SUBMODULE
   "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}"
   "-DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX}"
-  "-DSTF_BIOSIG_PROVIDER=SYSTEM"
+  "-DSTF_BIOSIG_PROVIDER=${BIOSIG_PROVIDER}"
 )
 
 if [[ "$WITH_PYTHON" -eq 1 ]]; then
   PYTHON_EXECUTABLE_GUESS="${PYTHON_EXECUTABLE:-$DEFAULT_SYSTEM_PYTHON}"
   PYTHON_EXECUTABLE_GUESS="$(pick_python_for_cmake "$PYTHON_EXECUTABLE_GUESS")" || {
-    echo "ERROR: Could not find a usable Python with development files (tried 3.14..3.10 and python3)." >&2
+    echo "ERROR: Could not find a usable Python 3 with development files (tried 3.14..3.10 and python3)." >&2
     exit 1
   }
 
@@ -148,7 +155,9 @@ if [[ "$WITH_PYTHON" -eq 1 ]]; then
     exit 1
   fi
 
-  cmake_configure_args+=( "-DPython3_EXECUTABLE=${PYTHON_EXECUTABLE_GUESS}" )
+  # Refresh FindPython3's cached metadata: the system interpreter can be
+  # upgraded in place while its /usr/bin/python3 path stays the same.
+  cmake_configure_args+=( "-U_Python3_*" "-DPython3_EXECUTABLE=${PYTHON_EXECUTABLE_GUESS}" )
   echo "==> Python executable: ${PYTHON_EXECUTABLE_GUESS}"
 fi
 

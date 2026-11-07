@@ -16,6 +16,19 @@ find_program(STF_AWK_EXECUTABLE
 )
 unset(_stf_awk_hints)
 
+# BioSig's event-code generator uses GNU awk's strtonum(), which Apple's awk
+# does not implement. Diagnose this during configuration instead of codegen.
+execute_process(
+  COMMAND "${STF_AWK_EXECUTABLE}" "BEGIN { exit (strtonum(16) != 16) }"
+  RESULT_VARIABLE _stf_awk_result
+  ERROR_VARIABLE _stf_awk_error
+)
+if(NOT _stf_awk_result EQUAL 0)
+  message(FATAL_ERROR "BioSig requires GNU awk (gawk) with strtonum(). Install gawk or set STF_AWK_EXECUTABLE. ${_stf_awk_error}")
+endif()
+unset(_stf_awk_result)
+unset(_stf_awk_error)
+
 set(STF_BIOSIG4CPP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../biosig/biosig4c++)
 set(STF_BIOSIG_EXTERN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../biosig/biosig4matlab/doc)
 set(_stf_biosig_binary_dir ${CMAKE_CURRENT_BINARY_DIR})
@@ -78,8 +91,13 @@ add_custom_target(stimfit_biosig_generated
     ${_stf_biosig_generated_annexb}
 )
 
+include(StimfitBiosigABF)
+set(_stf_biosig_abf_source "${CMAKE_CURRENT_BINARY_DIR}/sopen_abf_read.c")
+stf_patch_biosig_abf("${STF_BIOSIG4CPP_DIR}/t210/sopen_abf_read.c" "${_stf_biosig_abf_source}")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${STF_BIOSIG4CPP_DIR}/t210/sopen_abf_read.c")
+
 set(_stf_biosig_sources
-  ${STF_BIOSIG4CPP_DIR}/t210/sopen_abf_read.c
+  ${_stf_biosig_abf_source}
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_acqbiopac.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_alpha_read.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_axg_read.c
@@ -88,6 +106,7 @@ set(_stf_biosig_sources
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_fiff.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_heka_read.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_igor.c
+  ${STF_BIOSIG4CPP_DIR}/t210/sopen_medilog.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_nicolet.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_rhd2000_read.c
   ${STF_BIOSIG4CPP_DIR}/t210/sopen_scp_read.c
@@ -109,18 +128,26 @@ set(_stf_biosig_sources
   ${STF_BIOSIG4CPP_DIR}/gdftime.c
   ${STF_BIOSIG4CPP_DIR}/mdc_ecg_codes.c
   ${STF_BIOSIG4CPP_DIR}/physicalunits.c
+  ${STF_BIOSIG4CPP_DIR}/string_isutf8.c
 )
+
+# BioSig's decoder uses a non-static inline definition without an external
+# definition. C11 leaves decode unresolved when optimization does not inline it;
+# GNU inline semantics emit the definition, including in unoptimized builds.
+if(CMAKE_C_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang)$")
+  set_property(SOURCE ${STF_BIOSIG4CPP_DIR}/string_isutf8.c APPEND PROPERTY
+    COMPILE_OPTIONS -fgnu89-inline
+  )
+endif()
 
 if(WIN32)
   list(APPEND _stf_biosig_sources
     ${STF_BIOSIG4CPP_DIR}/win32/getdelim.c
-    ${STF_BIOSIG4CPP_DIR}/win32/getline.c
     ${STF_BIOSIG4CPP_DIR}/win32/getlogin.c
   )
 elseif(APPLE)
   list(APPEND _stf_biosig_sources
     ${STF_BIOSIG4CPP_DIR}/win32/getdelim.c
-    ${STF_BIOSIG4CPP_DIR}/win32/getline.c
   )
 endif()
 
@@ -154,12 +181,7 @@ else()
   set(_stf_biosig_install_libdir "${CMAKE_INSTALL_LIBDIR}/stimfit")
 endif()
 
-if(APPLE AND STF_MACOS_APP_BUNDLE)
-  install(TARGETS stimfit_biosig
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    LIBRARY DESTINATION ${_stf_biosig_install_libdir}
-  )
-else()
+if(NOT APPLE OR NOT STF_MACOS_APP_BUNDLE)
   install(TARGETS stimfit_biosig
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${_stf_biosig_install_libdir}
