@@ -65,6 +65,9 @@ recent archived reports. For this release the important reports are:
 
 Do not repeat `Closes` entries for bugs already closed by an earlier upload.
 Keep the new changelog limited to changes actually present in the package.
+Fold relevant notes from earlier UNRELEASED entries into the release being
+prepared and remove the superseded entries; Git history retains the development
+record. Omit platform-specific changes that do not affect the Debian package.
 Lead the changelog with user-facing changes: file opening, import reliability,
 plotting, and Python features. Summarize test and packaging maintenance in one
 sentence; keep the detailed fixes and validation results in this procedure.
@@ -254,7 +257,8 @@ Debian archive. Do not publish both HDF5 binary variants as one upload.
   changes. Fetching `origin` found two additional `debian/sid` commits through
   `dcafd0d1`, including an older `0.17.2-2` UNRELEASED changelog entry.
   Committed the reviewed release preparation as `adbd7d7c` and merged the
-  remote history, retaining both changelog entries with `0.17.4-1` first.
+  remote history. Follow-up maintainer review consolidated the never-released
+  `0.17.2-2` notes into `0.17.4-1` and removed the separate draft stanza.
   Upstream `master` at `0ea89fe9` is already an ancestor of the packaging
   branch; keep the Debian packaging on `debian/sid`.
 - Removed trailing whitespace from the quilt patch context and verified that
@@ -267,3 +271,11 @@ Debian archive. Do not publish both HDF5 binary variants as one upload.
   Application sources are unchanged by the remote integration. Source lintian
   and upload checksum verification passed again after regenerating metadata.
   Package signing, release tags, and the Debian or mentors upload remain pending.
+
+- Folded the unpublished `0.17.2-2` changelog into `0.17.4-1`: retained the
+  Python 2 support removal and summarized compiler-flag and test maintenance
+  in one sentence. ABF metadata handling was already covered. Omitted Windows
+  and macOS packaging changes that do not affect the Debian package and kept
+  detailed validation results here rather than in the user-facing changelog.
+  Regenerated the unsigned source upload and checksums and reran source
+  lintian; application code and the previous build/test results are unchanged.
