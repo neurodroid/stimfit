@@ -1,0 +1,18 @@
+Description: Set the DAC record size in the synthetic ABF2 fixture
+ The native ABF2 reader checks the DAC section record size even when
+ the section contains no entries. Debian builds keep assertions enabled,
+ so leaving the size zero aborts stimfit_io_test before exercising reads.
+Forwarded: no
+Last-Update: 2026-11-07
+
+--- a/src/test/abf.cpp
++++ b/src/test/abf.cpp
+@@ -50,5 +50,8 @@
+     integer(64, 1, 4);         // creator name string index
+     section(0, 1, 512, 1);     // protocol
+     section(1, 2, 128, channels);
++    // The native reader validates the record size even for an empty DAC
++    // section. Keep this fixture valid in builds with assertions enabled.
++    section(2, 0, 256, 0);
+     section(10, 4, sampleSize, 2 * sweepSamples);
+     section(15, 5, 8, 2);      // sweep synchronization array

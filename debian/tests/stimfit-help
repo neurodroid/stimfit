@@ -4,5 +4,14 @@ set -eu
 output=$(mktemp)
 trap 'rm -f "$output"' EXIT
 
-xvfb-run -a stimfit -h >"$output" 2>&1
-grep -q '^Usage:' "$output"
+for option in -h --help; do
+    xvfb-run -a stimfit "$option" >"$output" 2>&1
+    grep -q '^Usage:' "$output"
+done
+
+if xvfb-run -a stimfit --stimfit-invalid-option >"$output" 2>&1; then
+    cat "$output"
+    echo "stimfit unexpectedly accepted an invalid option" >&2
+    exit 1
+fi
+grep -qi 'unknown.*option' "$output"

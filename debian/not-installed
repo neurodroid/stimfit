@@ -4,3 +4,4 @@ usr/lib/*/stimfit/libstfio_containers.a
 usr/lib/*/stimfit/libstfio.a
 usr/lib/*/stimfit/libstfnum.a
 usr/lib/*/stimfit/libstimfit.a
+usr/bin/stimfit_io_test

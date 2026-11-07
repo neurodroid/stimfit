@@ -32,8 +32,10 @@ Typical maintainer flow
 
 5) Run autopkgtest against produced binaries:
 
-   - `autopkgtest ../*.changes -- null`
-   - or with a VM backend if available.
+   - Use a clean Debian testbed, for example:
+     `autopkgtest ../stimfit_VERSION_amd64.changes -- schroot unstable-amd64-sbuild`
+   - Do not use the null backend on a development host: it tests and may
+     modify the host rather than a clean Debian installation.
 
 
 Build system notes
@@ -52,3 +54,32 @@ Release choreography
 3) Tag upstream version as `upstream/<version>`.
 4) Tag Debian upload as `debian/<version>`.
 5) Upload signed `.changes`.
+
+Regression checks before upload
+-------------------------------
+
+- Read the current source-package bugs at
+  https://bugs.debian.org/src:stimfit, including archived regressions.
+- #1139613 (https://bugs.debian.org/1139613) originally concerned HDF5
+  header detection, but was reopened after the CMake migration because
+  Debian HDF5 2.1 exports unnamespaced targets. Build the actual source
+  package in clean Debian environments with HDF5 1.14 and 2.1; a build
+  against only the host's HDF5 is insufficient. Preserve the config-target
+  handling in cmake/StimfitDependencies.cmake and header feature detection
+  in src/libstfio/hdf5/hdf5lib.cpp.
+- #1140597 (https://bugs.debian.org/1140597) exposed GTK initialization
+  without DISPLAY and a help command that returned failure. Run installed
+  binaries under Xvfb. Both -h and --help must return zero and print Usage;
+  an invalid option must fail with an option diagnostic. Keep xvfb and
+  xauth test dependencies and never hide help failures with `|| true`.
+- Check both binary packages, including the installed stfio import and the
+  embedded _stf extension and generated stf.py in the stimfit package.
+- Run lintian on source and binary .changes. Check dh_missing whenever
+  upstream adds install targets; test binaries belong in not-installed.
+- Check a second source build after a successful binary build and clean
+  (see #1047146), using an extracted source package rather than the working
+  checkout. Compare the resulting upstream tree with the orig tarball.
+- Record exact dependency versions, commands, results, and remaining
+  warnings with the release artifacts. Do not claim a bug is fixed based
+  only on a changelog entry. Bugs already closed by an earlier upload do
+  not need another Closes entry.

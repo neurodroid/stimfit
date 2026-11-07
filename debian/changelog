@@ -1,3 +1,17 @@
+stimfit (0.17.4-1) unstable; urgency=medium
+
+  * New upstream release.
+    - Choose BioSig or native readers in the Open dialog, with remembered
+      per-file preferences, and select readers from Python scripts.
+    - Prefer BioSig for supported files and fall back to a native reader
+      when automatic import fails or detects inconsistent ABF2 metadata.
+    - Restore Matplotlib snapshot and spectrum windows with Python 3.
+    - Handle full-length ABF channel names, units and creator information
+      safely.
+  * Update Debian test fixtures, test-binary exclusions and help checks.
+
+ -- Christoph Schmidt-Hieber <christsc@gmx.de>  Sat, 07 Nov 2026 19:28:17 +0000
+
 stimfit (0.17.2-1) unstable; urgency=medium
 
   * New upstream release
