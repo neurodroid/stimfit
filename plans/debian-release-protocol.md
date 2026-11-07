@@ -27,7 +27,7 @@ The running staging directory is `/tmp/stimfit-debian-release`.
 | Source build after binary build and clean | Passed in the HDF5 2.1 environment |
 | Clean upstream tree | All 614 orig archive files match after clean |
 | Lintian | Passed for source and both binary sets; no warnings outside sandbox |
-| Git publication | Authorized by the maintainer; remote history integrated; push pending |
+| Git publication | Release changes and merged histories published on `origin/debian/sid` |
 | Signing and package upload | Pending; no upload or release tags |
 
 The build environments use dated Debian unstable snapshots, rather than the
@@ -260,3 +260,10 @@ Debian archive. Do not publish both HDF5 binary variants as one upload.
 - Removed trailing whitespace from the quilt patch context and verified that
   it applies without fuzz. Refreshed source metadata after the changelog merge;
   the applied source correction is unchanged.
+- Published the release preparation commit `adbd7d7c` and remote integration
+  merge `d7d6b3ee` on `origin/debian/sid` through a normal fast-forward push.
+  Verified that the complete upstream `master` history is included and that
+  differences from upstream are confined to `debian/` and this procedure.
+  Application sources are unchanged by the remote integration. Source lintian
+  and upload checksum verification passed again after regenerating metadata.
+  Package signing, release tags, and the Debian or mentors upload remain pending.
