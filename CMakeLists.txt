@@ -135,6 +135,13 @@ if(NOT STF_BUILD_MODULE)
     add_executable(stimfit src/stimfit/gui/main.cpp)
   endif()
 
+  if(STF_ENABLE_PYTHON)
+    # The embedded shell loads this module at runtime, so linking stimfit does
+    # not create a dependency. Target-only builds must still produce _stf and
+    # the SWIG-generated stf.py before the application can be installed.
+    add_dependencies(stimfit pystf)
+  endif()
+
   if(APPLE AND STF_MACOS_APP_BUNDLE)
     set_target_properties(stimfit PROPERTIES
       MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/stimfit.Info.plist"

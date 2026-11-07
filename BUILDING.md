@@ -139,6 +139,11 @@ cmake --preset macos-ninja-app-python
 cmake --build --preset macos-ninja-app-python-stimfit
 ```
 
+The Python-enabled `stimfit` target also builds the embedded `_stf` module and
+its generated `stf.py`, including after deleting the build directory. If an
+install reports that either is missing, build `stimfit` first and retry the
+install; `cmake --install` does not build targets.
+
 No-Python variant:
 
 ```bash
