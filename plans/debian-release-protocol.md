@@ -30,7 +30,7 @@ The running staging directory is `/tmp/stimfit-debian-release`.
 | Lintian | Passed for source and both binary sets; no warnings outside sandbox |
 | Git publication | Release changes and merged histories published on `origin/debian/sid` |
 | Release tags | `upstream/0.17.4` pins `0ea89fe9`; `debian/0.17.4-1` includes the final import test fix |
-| Signing and package upload | Awaiting local GPG signing; mentors upload pending |
+| Signing and package upload | Signed and verified; HTTPS transfer to mentors completed, processing unconfirmed |
 
 The HDF5 1.14 and 2.1 compatibility builds use dated Debian snapshots. A
 subsequent build and installed-package checks against current unstable on
@@ -207,6 +207,8 @@ Save the orig tarball, `.dsc`, `.debian.tar.xz`, source `.changes` and
 checksums under `deb/<version>/`. Keep HDF5 1 and 2 binary results in separate
 subdirectories because their filenames are identical. Record the final source
 commit, packaging changes, dependency versions, and all remaining warnings.
+A successful dput transfer confirms delivery only; confirm the version on the
+mentors package page or in its processing email before claiming acceptance.
 
 Keep the release changes reviewable on `debian/sid`. Ensure the repository
 matches the packaged `debian/` directory. Refresh source artifacts and repeat
@@ -312,15 +314,15 @@ Debian archive. Do not publish both HDF5 binary variants as one upload.
   from `0.17.2-1` to `0.17.4-1`; the help test, all 17 stfio unit tests, and
   removal/reinstallation checks passed. The initial import smoke-test failure
   is retained in `current-sid/autopkgtest/`; the corrected test passes with
-  strict stderr checking in `current-sid/autopkgtest-import-fixed/` (exit 8
-  because that single test is superficial). No application code changed.
+  strict stderr checking in `current-sid/autopkgtest-import-fixed/`. The final runner invocation is
+  recorded separately below. No application code changed.
 - Regenerated the final source package in the validated current Debian build
   environment with the private Matplotlib cache test fix. Source and binary
   lintian pass. The final source upload is at the artifact directory root;
   older binary compatibility builds and their metadata remain in subdirectories.
 - The maintainer key `37D2370A9F7AC0CC` is available. Unattended signing with
   the GPG agent returned `No pinentry`, so local key interaction is needed.
-  The source upload remains unsigned until the maintainer runs:
+  The maintainer resolved this by signing locally with:
 
   ```sh
   debsign -k37D2370A9F7AC0CC /home/c02380/stimfit/deb/0.17.4-1/stimfit_0.17.4-1_source.changes
@@ -350,3 +352,31 @@ Debian archive. Do not publish both HDF5 binary variants as one upload.
   tags. `upstream/0.17.4` points to the frozen upstream source `0ea89fe9`;
   `debian/0.17.4-1` marks the matching Debian packaging and this procedure.
   These Git updates do not upload the package to Debian or mentors.
+
+- Corrected the host runner invocation to preserve autopkgtest's shebang flag:
+  use `python -u /usr/bin/autopkgtest`, not `python /usr/bin/autopkgtest`.
+  Omitting `-u` left buffered output when autopkgtest closed its logging file
+  descriptors, producing exit 120 during Python shutdown even after the test
+  summary was written. Retained those logs and reran the corrected import
+  test in `current-sid/autopkgtest-import-final/` with unbuffered output.
+  No package change or release-tag replacement is required for this runner fix.
+
+- The maintainer signed the final source upload locally. Verified good signatures
+  on the `.dsc`, source `.buildinfo`, and source `.changes` using the existing
+  maintainer key. Verified the signed upload's SHA256 references and refreshed
+  `SHA256SUMS`; `dput -o` passed its local signature and package checks.
+
+- The final unbuffered import check passed with exit status 8, the expected
+  result for a run containing only a superficial test. Source parsing, the
+  upgrade path, and strict stderr checks all succeeded. The earlier exit-120
+  runner logs remain available; they are not represented as successful process
+  exits. The retained build session was closed after saving its artifacts.
+- Published release packaging commit `e0760007`, pristine-tar commit `032c7720`,
+  and annotated tags `upstream/0.17.4` and `debian/0.17.4-1`. Later procedure-only
+  updates do not move the release tags or alter the signed source upload.
+- Uploaded the signed source set over HTTPS using the prepared mentors target;
+  dput returned success for the `.dsc`, orig archive, Debian archive, source
+  `.buildinfo`, and source `.changes`. Saved `mentors-upload.log` and the dput
+  upload receipt. The package page was not yet populated immediately after
+  transfer, so mentors processing/acceptance remains unconfirmed. No sponsor
+  email has been sent; `sponsorship-request.txt` remains a draft for review.
