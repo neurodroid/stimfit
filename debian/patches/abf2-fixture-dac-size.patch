@@ -7,8 +7,7 @@ Last-Update: 2026-11-07
 
 --- a/src/test/abf.cpp
 +++ b/src/test/abf.cpp
-@@ -50,5 +50,8 @@
-     integer(64, 1, 4);         // creator name string index
+@@ -51,4 +51,7 @@
      section(0, 1, 512, 1);     // protocol
      section(1, 2, 128, channels);
 +    // The native reader validates the record size even for an empty DAC
