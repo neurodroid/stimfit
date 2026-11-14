@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['parinfo_0',['parinfo',['../d3/d1b/group__stfgen.html#ga7f1f9e9618e80ad5a19aa18c9507bf09',1,'stfnum::parInfo::parInfo(const std::string &amp;desc_, bool toFit_, bool constrained_=false, double constr_lb_=0, double constr_ub_=0, Scale scale_=noscale, Scale unscale_=noscale)'],['../d3/d1b/group__stfgen.html#ga6183227fe7381410cf37407392aaa1f2',1,'stfnum::parInfo::parInfo()']]],
+  ['parinfo_0',['parInfo',['../d3/d1b/group__stfgen.html#ga6183227fe7381410cf37407392aaa1f2',1,'stfnum::parInfo::parInfo()'],['../d3/d1b/group__stfgen.html#ga7f1f9e9618e80ad5a19aa18c9507bf09',1,'stfnum::parInfo::parInfo(const std::string &amp;desc_, bool toFit_, bool constrained_=false, double constr_lb_=0, double constr_ub_=0, Scale scale_=noscale, Scale unscale_=noscale)']]],
   ['parsereader_1',['parseReader',['../d6/dfb/group__stfio.html#ga6ddad45f7e9ec99f5c5a3f444cd3afba',1,'stfio']]],
   ['pascaltocstring_2',['PascalToCString',['../dd/dc3/stringUtils_8h.html#aa9e75fb5add2850348b3461061a6053a',1,'stringUtils.h']]],
   ['peak_3',['peak',['../d3/d1b/group__stfgen.html#gac390cc74590957c519f585a838d7bb3c',1,'stfnum']]],

@@ -22,6 +22,6 @@ var searchData=
   ['count_19',['count',['../dd/d60/Son_8h.html#a3386c8331589b2bf3d442d93e587c2c7',1,'Son.h']]],
   ['cpitchandfamily_20',['cPitchAndFamily',['../d2/dd5/structABFLogFont.html#a8846b92b89b081c1a7d073dbb8fa6b45',1,'ABFLogFont']]],
   ['cppwindow_21',['cppWindow',['../d7/d1a/group__wxstf.html#gaa494bfaeb83b3f0386625473e5461f9d',1,'new_wxwindow']]],
-  ['creationdate_22',['creationdate',['../df/d37/structWaveHeader2.html#ab6e3be3e6069cf3e9b1cdfb6abf7b8cb',1,'WaveHeader2::creationDate'],['../d5/da8/structWaveHeader5.html#af1789dc24e77f83ce9a2b98f50d31b28',1,'WaveHeader5::creationDate']]],
+  ['creationdate_22',['creationDate',['../df/d37/structWaveHeader2.html#ab6e3be3e6069cf3e9b1cdfb6abf7b8cb',1,'WaveHeader2::creationDate'],['../d5/da8/structWaveHeader5.html#af1789dc24e77f83ce9a2b98f50d31b28',1,'WaveHeader5::creationDate']]],
   ['currentstepsize_23',['currentStepSize',['../de/d29/structCurrentClampSettings.html#ab9677778144845603f2623c7776431ee',1,'CurrentClampSettings']]]
 ];

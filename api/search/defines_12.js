@@ -9,6 +9,6 @@ var searchData=
   ['trace_5ffloat_6',['TRACE_FLOAT',['../d7/dc8/axodebug_8h.html#adeaf095c48bcbe316b9f9a75483fc837',1,'axodebug.h']]],
   ['trace_5fint_7',['TRACE_INT',['../d7/dc8/axodebug_8h.html#ac6e2f226f541023923a1525ad7b7d95a',1,'axodebug.h']]],
   ['trace_5fstring_8',['TRACE_STRING',['../d7/dc8/axodebug_8h.html#a7680d831ad18e5e239c745b3ffd1200e',1,'axodebug.h']]],
-  ['true_9',['true',['../d6/dea/unix_8h.html#aa8cecfc5c5c054d2875c03e77b7be15d',1,'TRUE:&#160;unix.h'],['../da/d8f/machine_8h.html#aa8cecfc5c5c054d2875c03e77b7be15d',1,'TRUE:&#160;machine.h']]],
+  ['true_9',['TRUE',['../d6/dea/unix_8h.html#aa8cecfc5c5c054d2875c03e77b7be15d',1,'TRUE:&#160;unix.h'],['../da/d8f/machine_8h.html#aa8cecfc5c5c054d2875c03e77b7be15d',1,'TRUE:&#160;machine.h']]],
   ['tstime_5fmax_10',['TSTIME_MAX',['../dd/d60/Son_8h.html#ad3032410736df3a698710bf6a198e88e',1,'Son.h']]]
 ];

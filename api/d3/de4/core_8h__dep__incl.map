@@ -1,85 +1,85 @@
 <map id="src/libstfio/core.h" name="src/libstfio/core.h">
-<area shape="rect" id="Node000001" title="Lightweight core definitions shared by libstfio model classes." alt="" coords="1235,5,1368,31"/>
-<area shape="rect" id="Node000002" href="$df/dc5/annotation_8h.html" title=" " alt="" coords="1089,79,1263,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1271,40,1198,81,1195,76,1268,35"/>
-<area shape="rect" id="Node000003" href="$d1/d2a/section_8h.html" title="Declares the Section class." alt="" coords="1136,152,1288,177"/>
-<area shape="poly" id="edge44_Node000001_Node000003" title=" " alt="" coords="1300,45,1291,75,1277,105,1254,133,1230,154,1226,150,1250,129,1272,103,1286,73,1294,44"/>
-<area shape="rect" id="Node000007" href="$d9/df7/stfio_8h.html" title="header file for libstfio" alt="" coords="1235,372,1368,397"/>
-<area shape="poly" id="edge45_Node000001_Node000007" title=" " alt="" coords="1317,42,1342,96,1351,129,1355,163,1355,239,1350,279,1338,317,1311,373,1306,371,1333,315,1345,278,1349,239,1349,163,1346,130,1337,98,1313,44"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="1190,115,1209,151,1204,153,1186,117"/>
-<area shape="rect" id="Node000004" href="$d5/d7b/channel_8h.html" title="Declares the Channel class." alt="" coords="1107,225,1263,251"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="1205,191,1192,226,1187,224,1200,189"/>
-<area shape="poly" id="edge43_Node000003_Node000007" title=" " alt="" coords="1242,184,1261,202,1277,224,1293,265,1301,307,1304,372,1299,372,1296,307,1288,266,1272,227,1257,205,1238,188"/>
-<area shape="rect" id="Node000005" href="$de/d81/recording_8h.html" title="Declares the Recording class." alt="" coords="1046,299,1213,324"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="1170,263,1140,300,1136,297,1165,260"/>
-<area shape="poly" id="edge42_Node000004_Node000007" title=" " alt="" coords="1205,260,1294,370,1290,373,1201,263"/>
-<area shape="rect" id="Node000006" href="$d7/dc3/asciilib_8h.html" title="Import and export plain text files." alt="" coords="5,445,128,485"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="1032,325,641,369,391,405,140,448,129,450,128,445,140,443,391,399,640,364,1032,319"/>
-<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="1170,327,1274,369,1272,374,1168,332"/>
-<area shape="poly" id="edge13_Node000007_Node000006" title=" " alt="" coords="1221,391,674,410,365,427,237,437,140,448,129,450,128,445,140,443,237,431,365,421,673,404,1221,385"/>
-<area shape="rect" id="Node000008" href="$dc/d28/abflib_8h.html" title="Import axon binary files." alt="" coords="153,453,319,478"/>
-<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="1221,390,1058,395,837,404,585,422,331,448,288,455,287,450,330,443,585,416,836,399,1058,389,1221,385"/>
-<area shape="rect" id="Node000009" href="$dd/d64/abffiles_8h.html" title=" " alt="" coords="343,445,507,485"/>
-<area shape="poly" id="edge8_Node000007_Node000009" title=" " alt="" coords="1221,392,913,409,717,425,520,448,508,450,507,444,520,443,717,420,912,404,1220,386"/>
-<area shape="rect" id="Node000014" href="$dc/d61/atflib_8h.html" title="Import and export Axon text files." alt="" coords="532,453,692,478"/>
-<area shape="poly" id="edge14_Node000007_Node000014" title=" " alt="" coords="1221,394,988,414,846,429,704,448,664,455,663,450,704,443,846,424,988,408,1221,389"/>
-<area shape="rect" id="Node000015" href="$de/d99/AxoGraph__ReadWrite_8h.html" title=" " alt="" coords="716,445,900,485"/>
-<area shape="poly" id="edge15_Node000007_Node000015" title=" " alt="" coords="1222,400,912,448,901,450,900,445,912,443,1221,395"/>
-<area shape="rect" id="Node000016" href="$de/d5b/axglib_8h.html" title="Import Axograph X binary files." alt="" coords="924,453,1097,478"/>
-<area shape="poly" id="edge16_Node000007_Node000016" title=" " alt="" coords="1247,403,1054,455,1052,450,1245,398"/>
-<area shape="rect" id="Node000017" href="$d2/d1a/cfslib_8h.html" title="Import from and export to the CED filing system." alt="" coords="1121,453,1284,478"/>
-<area shape="poly" id="edge17_Node000007_Node000017" title=" " alt="" coords="1278,408,1219,455,1216,450,1274,404"/>
-<area shape="rect" id="Node000018" href="$d6/daf/hdf5lib_8h.html" title="Import from and export to hdf5." alt="" coords="1309,453,1491,478"/>
-<area shape="poly" id="edge18_Node000007_Node000018" title=" " alt="" coords="1328,404,1387,450,1384,455,1325,408"/>
-<area shape="rect" id="Node000019" href="$de/df6/hekalib_8h.html" title="Import HEKA files." alt="" coords="1516,453,1703,478"/>
-<area shape="poly" id="edge19_Node000007_Node000019" title=" " alt="" coords="1360,398,1565,450,1564,455,1358,403"/>
-<area shape="rect" id="Node000020" href="$dc/dac/igorlib_8h.html" title="Export Igor binary waves." alt="" coords="1727,453,1902,478"/>
-<area shape="poly" id="edge20_Node000007_Node000020" title=" " alt="" coords="1382,394,1715,443,1757,450,1756,455,1714,448,1381,399"/>
-<area shape="rect" id="Node000021" href="$d7/d4c/intanlib_8h.html" title="Reads Intan Technologies CLAMP data file generated by controller GUI." alt="" coords="1926,445,2053,485"/>
-<area shape="poly" id="edge21_Node000007_Node000021" title=" " alt="" coords="1382,387,1621,405,1768,421,1915,443,1926,445,1925,450,1914,448,1768,426,1621,411,1381,393"/>
-<area shape="rect" id="Node000023" href="$d1/d9c/measure_8h.html" title="Functions for measuring kinetics of events within waveforms." alt="" coords="1853,541,2033,566"/>
-<area shape="poly" id="edge23_Node000007_Node000023" title=" " alt="" coords="1382,384,1561,386,1777,395,1878,403,1966,413,2031,426,2053,434,2067,444,2076,459,2075,475,2067,489,2052,502,2015,526,1975,543,1973,538,2012,521,2049,498,2062,486,2070,473,2071,460,2063,447,2051,439,2030,431,1965,418,1878,408,1776,400,1561,392,1382,389"/>
-<area shape="rect" id="Node000024" href="$d9/d4f/stfnum_8h.html" title="Math functions." alt="" coords="2129,453,2298,478"/>
-<area shape="poly" id="edge24_Node000007_Node000024" title=" " alt="" coords="1382,386,1701,404,1904,421,2110,443,2157,450,2156,455,2109,448,1904,426,1700,410,1381,392"/>
-<area shape="rect" id="Node000028" href="$dc/da2/stf_8h.html" title=" " alt="" coords="2461,541,2579,566"/>
-<area shape="poly" id="edge41_Node000007_Node000028" title=" " alt="" coords="1382,385,1898,404,2161,421,2256,431,2312,443,2328,452,2339,462,2364,483,2428,515,2487,538,2485,543,2426,520,2361,488,2336,466,2325,456,2310,448,2255,437,2161,426,1898,410,1382,391"/>
-<area shape="rect" id="Node000038" href="$d1/d64/opendlg_8h.html" title=" " alt="" coords="2374,445,2517,485"/>
-<area shape="poly" id="edge40_Node000007_Node000038" title=" " alt="" coords="1382,384,1558,387,1800,396,2076,414,2355,443,2374,446,2373,451,2354,448,2075,419,1799,402,1558,393,1382,389"/>
-<area shape="rect" id="Node000010" href="$d2/dd8/FileIO_8hpp.html" title=" " alt="" coords="348,533,503,573"/>
-<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="428,499,428,533,423,533,423,499"/>
-<area shape="rect" id="Node000011" href="$d7/d96/filedesc_8hpp.html" title=" " alt="" coords="223,621,406,661"/>
-<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="391,584,341,623,338,619,388,580"/>
-<area shape="rect" id="Node000013" href="$d7/d32/FileReadCache_8hpp.html" title=" " alt="" coords="431,621,644,661"/>
-<area shape="poly" id="edge12_Node000010_Node000013" title=" " alt="" coords="463,580,514,619,511,623,460,584"/>
-<area shape="rect" id="Node000012" href="$d0/dfa/ProtocolReaderABF2_8hpp.html" title=" " alt="" coords="221,709,408,749"/>
-<area shape="poly" id="edge11_Node000011_Node000012" title=" " alt="" coords="317,675,317,709,312,709,312,675"/>
-<area shape="rect" id="Node000022" href="$db/d8e/streams_8h.html" title=" " alt="" coords="1702,533,1829,573"/>
-<area shape="poly" id="edge22_Node000021_Node000022" title=" " alt="" coords="1928,493,1815,536,1813,531,1927,488"/>
-<area shape="poly" id="edge27_Node000024_Node000023" title=" " alt="" coords="2165,485,1980,543,1978,538,2163,480"/>
-<area shape="rect" id="Node000025" href="$d5/d71/fit_8h.html" title="Functions for linear and non&#45;linear regression." alt="" coords="2057,541,2193,566"/>
-<area shape="poly" id="edge25_Node000024_Node000025" title=" " alt="" coords="2194,489,2139,542,2136,538,2190,486"/>
-<area shape="rect" id="Node000026" href="$d6/d74/funclib_8h.html" title="User&#45;defined functions for the Levenberg&#45;Marquardt non&#45;linear regression." alt="" coords="2218,541,2385,566"/>
-<area shape="poly" id="edge26_Node000024_Node000026" title=" " alt="" coords="2237,486,2291,538,2287,542,2233,489"/>
-<area shape="rect" id="Node000027" href="$d2/d39/app_8h.html" title="Declares wxStfApp." alt="" coords="1718,629,1869,654"/>
-<area shape="poly" id="edge28_Node000024_Node000027" title=" " alt="" coords="2286,479,2338,494,2383,515,2399,527,2409,542,2409,558,2399,575,2387,583,2367,590,2309,600,2146,613,1981,619,1882,624,1843,631,1842,626,1881,619,1980,614,2146,607,2308,595,2366,585,2385,578,2395,571,2404,557,2404,543,2395,531,2380,519,2336,499,2284,484"/>
-<area shape="poly" id="edge29_Node000024_Node000028" title=" " alt="" coords="2268,479,2480,538,2478,543,2267,484"/>
-<area shape="poly" id="edge30_Node000028_Node000027" title=" " alt="" coords="2464,572,2442,576,2285,595,2162,601,2039,607,1882,624,1842,631,1841,626,1881,619,2038,601,2161,596,2284,590,2441,571,2463,566"/>
-<area shape="rect" id="Node000029" href="$dc/d44/childframe_8h.html" title="Declares wxStfChildFrame." alt="" coords="1893,629,2091,654"/>
-<area shape="poly" id="edge31_Node000028_Node000029" title=" " alt="" coords="2463,572,2442,576,2273,602,2104,624,2059,631,2058,626,2104,619,2273,597,2441,571,2461,566"/>
-<area shape="rect" id="Node000030" href="$d1/d0c/convertdlg_8h.html" title="Batch conversion of files." alt="" coords="2115,621,2258,661"/>
-<area shape="poly" id="edge32_Node000028_Node000030" title=" " alt="" coords="2463,572,2259,624,2258,619,2462,567"/>
-<area shape="rect" id="Node000031" href="$d1/d4b/cursorsdlg_8h.html" title="Declares wxStfCursorsDlg." alt="" coords="2282,621,2425,661"/>
-<area shape="poly" id="edge33_Node000028_Node000031" title=" " alt="" coords="2487,575,2391,624,2389,619,2484,570"/>
-<area shape="rect" id="Node000032" href="$d5/d2b/fitseldlg_8h.html" title="Declares wxStfFitSelDlg." alt="" coords="2449,621,2591,661"/>
-<area shape="poly" id="edge34_Node000028_Node000032" title=" " alt="" coords="2523,580,2523,621,2517,621,2517,580"/>
-<area shape="rect" id="Node000033" href="$dd/de9/smalldlgs_8h.html" title="Declares several small dialogs." alt="" coords="2615,621,2758,661"/>
-<area shape="poly" id="edge35_Node000028_Node000033" title=" " alt="" coords="2556,570,2651,619,2649,624,2553,575"/>
-<area shape="rect" id="Node000034" href="$d0/d42/doc_8h.html" title="Declares wxStfDoc." alt="" coords="2782,629,2933,654"/>
-<area shape="poly" id="edge36_Node000028_Node000034" title=" " alt="" coords="2579,567,2813,626,2812,631,2578,572"/>
-<area shape="rect" id="Node000035" href="$d9/d36/parentframe_8h.html" title="Declares wxStfParentFrame." alt="" coords="2957,629,3165,654"/>
-<area shape="poly" id="edge37_Node000028_Node000035" title=" " alt="" coords="2594,563,2946,619,2991,626,2990,631,2945,624,2593,569"/>
-<area shape="rect" id="Node000036" href="$dd/d98/table_8h.html" title="Declares wxStfTable. Derived from wxGridTableBase." alt="" coords="3189,629,3349,654"/>
-<area shape="poly" id="edge38_Node000028_Node000036" title=" " alt="" coords="2593,557,2852,579,3014,597,3178,619,3218,626,3217,631,3177,624,3014,602,2851,585,2593,562"/>
-<area shape="rect" id="Node000037" href="$d7/d26/usrdlg_8h.html" title="Declares wxStfUsrDlg." alt="" coords="3373,621,3528,661"/>
-<area shape="poly" id="edge39_Node000028_Node000037" title=" " alt="" coords="2593,555,2926,574,3143,592,3362,619,3374,621,3373,626,3361,624,3142,598,2926,579,2593,560"/>
+<area shape="rect" id="Node000001" title="Lightweight core definitions shared by libstfio model classes." alt="" coords="1228,5,1361,33"/>
+<area shape="rect" id="Node000002" href="$df/dc5/annotation_8h.html" title=" " alt="" coords="1083,81,1258,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1257,43,1194,83,1191,78,1261,40"/>
+<area shape="rect" id="Node000003" href="$d1/d2a/section_8h.html" title="Declares the Section class." alt="" coords="1130,157,1281,184"/>
+<area shape="poly" id="edge44_Node000001_Node000003" title=" " alt="" coords="1292,46,1285,79,1271,110,1249,137,1225,158,1222,154,1245,134,1267,107,1280,77,1289,50"/>
+<area shape="rect" id="Node000007" href="$d9/df7/stfio_8h.html" title="header file for libstfio" alt="" coords="1228,384,1361,411"/>
+<area shape="poly" id="edge45_Node000001_Node000007" title=" " alt="" coords="1310,44,1335,101,1344,135,1348,169,1348,248,1343,288,1331,327,1304,385,1300,381,1327,325,1338,287,1343,247,1343,169,1339,136,1330,103,1308,49"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="1184,120,1202,157,1196,155,1182,125"/>
+<area shape="rect" id="Node000004" href="$d5/d7b/channel_8h.html" title="Declares the Channel class." alt="" coords="1102,232,1258,260"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="1198,197,1186,234,1182,230,1194,201"/>
+<area shape="poly" id="edge43_Node000003_Node000007" title=" " alt="" coords="1237,191,1256,210,1272,231,1287,273,1295,316,1297,385,1293,382,1290,316,1282,274,1267,234,1252,213,1236,197"/>
+<area shape="rect" id="Node000005" href="$de/d81/recording_8h.html" title="Declares the Recording class." alt="" coords="1041,308,1206,336"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="1163,271,1135,310,1132,305,1159,274"/>
+<area shape="poly" id="edge42_Node000004_Node000007" title=" " alt="" coords="1200,270,1287,384,1282,383,1198,275"/>
+<area shape="rect" id="Node000006" href="$d7/dc3/asciilib_8h.html" title="Import and export plain text files." alt="" coords="5,459,128,504"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="1023,333,858,352,637,379,389,416,140,462,130,464,126,460,139,457,388,411,636,374,857,347,1028,331"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="1169,340,1267,383,1262,383,1168,345"/>
+<area shape="poly" id="edge13_Node000007_Node000006" title=" " alt="" coords="1211,402,669,422,363,439,236,450,140,462,130,464,127,459,139,457,236,444,363,434,668,416,1215,399"/>
+<area shape="rect" id="Node000008" href="$dc/d28/abflib_8h.html" title="Import axon binary files." alt="" coords="152,468,317,496"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="1210,400,1050,406,831,416,581,434,330,462,288,470,286,465,329,457,581,428,830,411,1050,401,1216,399"/>
+<area shape="rect" id="Node000009" href="$dd/d64/abffiles_8h.html" title=" " alt="" coords="341,459,504,504"/>
+<area shape="poly" id="edge8_Node000007_Node000009" title=" " alt="" coords="1210,402,906,421,711,438,516,462,506,464,504,459,515,457,711,432,905,415,1215,401"/>
+<area shape="rect" id="Node000014" href="$dc/d61/atflib_8h.html" title="Import and export Axon text files." alt="" coords="528,468,688,496"/>
+<area shape="poly" id="edge14_Node000007_Node000014" title=" " alt="" coords="1210,405,981,426,841,442,700,462,661,470,659,465,699,457,840,437,981,421,1215,403"/>
+<area shape="rect" id="Node000015" href="$de/d99/AxoGraph__ReadWrite_8h.html" title=" " alt="" coords="712,459,896,504"/>
+<area shape="poly" id="edge15_Node000007_Node000015" title=" " alt="" coords="1210,411,907,462,897,464,895,459,906,457,1215,410"/>
+<area shape="rect" id="Node000016" href="$de/d5b/axglib_8h.html" title="Import Axograph X binary files." alt="" coords="919,468,1091,496"/>
+<area shape="poly" id="edge16_Node000007_Node000016" title=" " alt="" coords="1231,417,1052,470,1051,465,1236,415"/>
+<area shape="rect" id="Node000017" href="$d2/d1a/cfslib_8h.html" title="Import from and export to the CED filing system." alt="" coords="1116,468,1278,496"/>
+<area shape="poly" id="edge17_Node000007_Node000017" title=" " alt="" coords="1270,420,1214,470,1211,465,1265,423"/>
+<area shape="rect" id="Node000018" href="$d6/daf/hdf5lib_8h.html" title="Import from and export to hdf5." alt="" coords="1302,468,1484,496"/>
+<area shape="poly" id="edge18_Node000007_Node000018" title=" " alt="" coords="1323,419,1380,468,1375,467,1321,424"/>
+<area shape="rect" id="Node000019" href="$de/df6/hekalib_8h.html" title="Import HEKA files." alt="" coords="1508,468,1694,496"/>
+<area shape="poly" id="edge19_Node000007_Node000019" title=" " alt="" coords="1359,413,1555,467,1549,467,1358,419"/>
+<area shape="rect" id="Node000020" href="$dc/dac/igorlib_8h.html" title="Export Igor binary waves." alt="" coords="1718,468,1892,496"/>
+<area shape="poly" id="edge20_Node000007_Node000020" title=" " alt="" coords="1376,407,1530,428,1707,457,1749,467,1744,467,1706,462,1529,433,1376,412"/>
+<area shape="rect" id="Node000021" href="$d7/d4c/intanlib_8h.html" title="Reads Intan Technologies CLAMP data file generated by controller GUI." alt="" coords="1916,459,2041,504"/>
+<area shape="poly" id="edge21_Node000007_Node000021" title=" " alt="" coords="1376,400,1615,417,1760,434,1904,457,1918,462,1913,462,1903,462,1759,439,1614,423,1377,405"/>
+<area shape="rect" id="Node000023" href="$d1/d9c/measure_8h.html" title="Functions for measuring kinetics of events within waveforms." alt="" coords="1841,560,2020,588"/>
+<area shape="poly" id="edge23_Node000007_Node000023" title=" " alt="" coords="1376,397,1554,400,1768,409,1868,417,1955,427,2019,440,2041,448,2055,457,2063,469,2065,481,2055,505,2040,525,2021,541,1978,562,1976,557,2018,536,2036,521,2051,503,2059,480,2058,471,2051,461,2039,453,2018,445,1954,432,1868,422,1767,414,1554,405,1376,402"/>
+<area shape="rect" id="Node000024" href="$d9/d4f/stfnum_8h.html" title="Math functions." alt="" coords="2116,468,2284,496"/>
+<area shape="poly" id="edge24_Node000007_Node000024" title=" " alt="" coords="1376,399,1693,416,1895,433,2098,457,2145,467,2140,467,2097,462,1894,438,1693,422,1376,404"/>
+<area shape="rect" id="Node000028" href="$dc/da2/stf_8h.html" title=" " alt="" coords="2443,560,2562,588"/>
+<area shape="poly" id="edge41_Node000007_Node000028" title=" " alt="" coords="1376,398,1603,405,1889,416,2148,434,2242,444,2297,457,2314,467,2324,478,2334,490,2348,502,2408,534,2467,560,2462,560,2406,539,2345,506,2330,494,2320,482,2310,471,2295,462,2241,450,2148,439,1888,422,1602,410,1376,403"/>
+<area shape="rect" id="Node000038" href="$d1/d64/opendlg_8h.html" title=" " alt="" coords="2358,459,2500,504"/>
+<area shape="poly" id="edge40_Node000007_Node000038" title=" " alt="" coords="1376,396,1551,399,1791,407,2064,425,2204,439,2340,457,2361,463,2356,462,2339,462,2203,445,2064,431,1791,413,1551,404,1377,401"/>
+<area shape="rect" id="Node000010" href="$d2/dd8/FileIO_8hpp.html" title=" " alt="" coords="346,552,499,597"/>
+<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="424,517,425,553,420,551,421,522"/>
+<area shape="rect" id="Node000011" href="$d7/d96/filedesc_8hpp.html" title=" " alt="" coords="221,645,402,689"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="387,605,340,646,337,642,382,608"/>
+<area shape="rect" id="Node000013" href="$d7/d32/FileReadCache_8hpp.html" title=" " alt="" coords="427,645,639,689"/>
+<area shape="poly" id="edge12_Node000010_Node000013" title=" " alt="" coords="461,604,509,644,504,644,460,609"/>
+<area shape="rect" id="Node000012" href="$d0/dfa/ProtocolReaderABF2_8hpp.html" title=" " alt="" coords="219,737,405,782"/>
+<area shape="poly" id="edge11_Node000011_Node000012" title=" " alt="" coords="314,703,314,739,310,736,310,707"/>
+<area shape="rect" id="Node000022" href="$db/d8e/streams_8h.html" title=" " alt="" coords="1692,552,1817,597"/>
+<area shape="poly" id="edge22_Node000021_Node000022" title=" " alt="" coords="1913,510,1809,554,1807,549,1908,511"/>
+<area shape="poly" id="edge27_Node000024_Node000023" title=" " alt="" coords="2149,500,1970,562,1969,557,2144,501"/>
+<area shape="rect" id="Node000025" href="$d5/d71/fit_8h.html" title="Functions for linear and non&#45;linear regression." alt="" coords="2044,560,2180,588"/>
+<area shape="poly" id="edge25_Node000024_Node000025" title=" " alt="" coords="2179,506,2126,563,2123,558,2174,508"/>
+<area shape="rect" id="Node000026" href="$d6/d74/funclib_8h.html" title="User&#45;defined functions for the Levenberg&#45;Marquardt non&#45;linear regression." alt="" coords="2203,560,2370,588"/>
+<area shape="poly" id="edge26_Node000024_Node000026" title=" " alt="" coords="2224,504,2277,561,2272,559,2222,509"/>
+<area shape="rect" id="Node000027" href="$d2/d39/app_8h.html" title="Declares wxStfApp." alt="" coords="1706,653,1856,681"/>
+<area shape="poly" id="edge28_Node000024_Node000027" title=" " alt="" coords="2273,497,2325,514,2369,537,2384,550,2393,565,2393,581,2383,599,2371,606,2351,613,2293,623,2131,636,1967,642,1868,647,1830,655,1830,650,1867,642,1966,636,2131,630,2292,618,2350,608,2369,602,2379,595,2388,580,2388,566,2380,553,2366,541,2323,519,2273,503"/>
+<area shape="poly" id="edge29_Node000024_Node000028" title=" " alt="" coords="2259,498,2461,560,2456,560,2258,503"/>
+<area shape="poly" id="edge30_Node000028_Node000027" title=" " alt="" coords="2448,592,2426,599,2341,612,2270,620,2147,625,2024,629,1952,636,1868,647,1830,655,1829,650,1867,642,1952,630,2024,624,2147,619,2269,614,2341,607,2425,594,2442,593"/>
+<area shape="rect" id="Node000029" href="$dc/d44/childframe_8h.html" title="Declares wxStfChildFrame." alt="" coords="1880,653,2077,681"/>
+<area shape="poly" id="edge31_Node000028_Node000029" title=" " alt="" coords="2446,592,2426,599,2332,616,2258,625,2184,634,2090,647,2045,655,2045,650,2089,642,2183,628,2257,620,2331,611,2425,594,2440,593"/>
+<area shape="rect" id="Node000030" href="$d1/d0c/convertdlg_8h.html" title="Batch conversion of files." alt="" coords="2101,645,2242,689"/>
+<area shape="poly" id="edge32_Node000028_Node000030" title=" " alt="" coords="2442,592,2244,649,2243,644,2437,593"/>
+<area shape="rect" id="Node000031" href="$d1/d4b/cursorsdlg_8h.html" title="Declares wxStfCursorsDlg." alt="" coords="2266,645,2408,689"/>
+<area shape="poly" id="edge33_Node000028_Node000031" title=" " alt="" coords="2468,595,2377,647,2376,642,2463,597"/>
+<area shape="rect" id="Node000032" href="$d5/d2b/fitseldlg_8h.html" title="Declares wxStfFitSelDlg." alt="" coords="2432,645,2573,689"/>
+<area shape="poly" id="edge34_Node000028_Node000032" title=" " alt="" coords="2504,602,2504,646,2501,642,2501,605"/>
+<area shape="rect" id="Node000033" href="$dd/de9/smalldlgs_8h.html" title="Declares several small dialogs." alt="" coords="2597,645,2738,689"/>
+<area shape="poly" id="edge35_Node000028_Node000033" title=" " alt="" coords="2540,593,2631,645,2626,644,2539,599"/>
+<area shape="rect" id="Node000034" href="$d0/d42/doc_8h.html" title="Declares wxStfDoc." alt="" coords="2762,653,2912,681"/>
+<area shape="poly" id="edge36_Node000028_Node000034" title=" " alt="" coords="2566,590,2791,653,2786,652,2565,595"/>
+<area shape="rect" id="Node000035" href="$d9/d36/parentframe_8h.html" title="Declares wxStfParentFrame." alt="" coords="2936,653,3144,681"/>
+<area shape="poly" id="edge37_Node000028_Node000035" title=" " alt="" coords="2577,585,2924,642,2971,653,2966,652,2923,647,2577,590"/>
+<area shape="rect" id="Node000036" href="$dd/d98/table_8h.html" title="Declares wxStfTable. Derived from wxGridTableBase." alt="" coords="3168,653,3328,681"/>
+<area shape="poly" id="edge38_Node000028_Node000036" title=" " alt="" coords="2578,578,2835,600,2995,619,3156,642,3198,653,3193,652,3155,647,2995,624,2834,606,2578,583"/>
+<area shape="rect" id="Node000037" href="$d7/d26/usrdlg_8h.html" title="Declares wxStfUsrDlg." alt="" coords="3352,645,3506,689"/>
+<area shape="poly" id="edge39_Node000028_Node000037" title=" " alt="" coords="2578,575,2909,594,3124,614,3340,642,3354,647,3349,646,3339,647,3123,619,2909,600,2578,581"/>
 </map>

@@ -7,6 +7,6 @@ var searchData=
   ['requiresfile_4',['requiresFile',['../d3/d1b/group__stfgen.html#gabaef4f6bdc9af533d706344c40ae4cf4',1,'stf::Extension']]],
   ['resistance_5',['resistance',['../d5/dac/structVoltageClampSettings.html#a1b0b5b3a063ee57326912fdcf3812a82',1,'VoltageClampSettings']]],
   ['rfeedback_6',['rFeedback',['../da/dce/structChannelHeader.html#aad565e67727da9d722e8791160a09763',1,'ChannelHeader']]],
-  ['rgbcolor_7',['rgbcolor',['../dd/df5/structABFSignal.html#a6c17211c28004a7f1dd7d166e7ed99ba',1,'ABFSignal::rgbColor'],['../db/d4d/structABFScopeConfig.html#ac73fe7e9436b97f5e8f191cd7dd71651',1,'ABFScopeConfig::rgbColor']]],
+  ['rgbcolor_7',['rgbColor',['../dd/df5/structABFSignal.html#a6c17211c28004a7f1dd7d166e7ed99ba',1,'ABFSignal::rgbColor'],['../db/d4d/structABFScopeConfig.html#ac73fe7e9436b97f5e8f191cd7dd71651',1,'ABFScopeConfig::rgbColor']]],
   ['rgbcolorex_8',['rgbColorEx',['../db/d4d/structABFScopeConfig.html#a37630481deb3f5597db579a6817ee341',1,'ABFScopeConfig']]]
 ];

@@ -1,7 +1,7 @@
 <map id="src/libstfio/abf/axon/Common/ArrayPtr.hpp" name="src/libstfio/abf/axon/Common/ArrayPtr.hpp">
-<area shape="rect" id="Node000001" title=" " alt="" coords="29,5,199,45"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,93,76,119"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="98,47,63,85,59,81,94,44"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="101,93,274,119"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="134,44,169,81,165,85,130,47"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="28,5,196,50"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,98,75,126"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,49,63,88,60,84,91,52"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="99,98,272,126"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="132,48,166,86,161,86,130,53"/>
 </map>

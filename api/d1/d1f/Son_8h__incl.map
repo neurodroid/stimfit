@@ -1,13 +1,13 @@
 <map id="src/libstfio/son/Son.h" name="src/libstfio/son/Son.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="128,5,284,31"/>
-<area shape="rect" id="Node000002" href="$da/d8f/machine_8h.html" title=" " alt="" coords="161,79,251,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="209,31,209,65,203,65,203,31"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="5,152,76,177"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="180,106,81,149,79,144,178,102"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="101,152,197,177"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="199,106,169,143,165,139,194,103"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="221,152,306,177"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="218,103,247,139,243,143,213,106"/>
-<area shape="rect" id="Node000006" title=" " alt="" coords="331,152,393,177"/>
-<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="232,102,325,144,323,149,230,106"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="126,5,281,33"/>
+<area shape="rect" id="Node000002" href="$da/d8f/machine_8h.html" title=" " alt="" coords="158,81,248,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="205,31,206,66,201,64,202,36"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,157,76,184"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="175,112,84,153,82,148,173,107"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="100,157,195,184"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="196,108,168,146,164,142,191,110"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="218,157,303,184"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="215,107,244,145,238,144,212,112"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="327,157,389,184"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="231,107,319,149,314,150,230,112"/>
 </map>

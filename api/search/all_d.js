@@ -36,13 +36,13 @@ var searchData=
   ['memberassert_33',['MEMBERASSERT',['../d7/dc8/axodebug_8h.html#ae1b0555afa6dcff3dafbc4d1151477b8',1,'axodebug.h']]],
   ['memorytable_34',['memoryTable',['../d7/d0b/cfs_8h.html#aa89aeebb2a5133aac8c98c119119a16d',1,'cfs.h']]],
   ['memset_5fctor_35',['MEMSET_CTOR',['../d0/d89/ProtocolStructs_8h.html#a8eabd4314098ee73bbaac668ed19e5fd',1,'ProtocolStructs.h']]],
-  ['menuentry_36',['menuentry',['../d3/d1b/group__stfgen.html#ga6e83222a3ed4de95ed36b143a6ee1913',1,'stf::Extension::menuEntry'],['../d3/d1b/group__stfgen.html#ga9e7060c1a895ba6ea04250c2c1313272',1,'stf::Plugin::menuEntry']]],
+  ['menuentry_36',['menuEntry',['../d3/d1b/group__stfgen.html#ga9e7060c1a895ba6ea04250c2c1313272',1,'stf::Plugin::menuEntry'],['../d3/d1b/group__stfgen.html#ga6e83222a3ed4de95ed36b143a6ee1913',1,'stf::Extension::menuEntry']]],
   ['min_37',['min',['../d4/dfb/ArrayPtr_8hpp.html#ac6afabdc09a49a433ee19d8a9486056d',1,'min:&#160;ArrayPtr.hpp'],['../dd/d60/Son_8h.html#a4a3eb3a3d0e5fd19026c0bff4bb38a81',1,'min:&#160;Son.h']]],
   ['misc_2eh_38',['misc.h',['../d4/d08/misc_8h.html',1,'']]],
-  ['moddate_39',['moddate',['../d5/da8/structWaveHeader5.html#a0f0ef4d65c24ec720ef62b0b9c6b6b6f',1,'WaveHeader5::modDate'],['../df/d37/structWaveHeader2.html#af09f7229fe1d964e4543a899ca649736',1,'WaveHeader2::modDate']]],
+  ['moddate_39',['modDate',['../df/d37/structWaveHeader2.html#af09f7229fe1d964e4543a899ca649736',1,'WaveHeader2::modDate'],['../d5/da8/structWaveHeader5.html#a0f0ef4d65c24ec720ef62b0b9c6b6b6f',1,'WaveHeader5::modDate']]],
   ['moveannotation_40',['MoveAnnotation',['../d3/d1b/group__stfgen.html#ga20dfdcff0406e76ebc8fabe8714ccede',1,'Section']]],
   ['msbincvt_2eh_41',['msbincvt.h',['../d1/d91/msbincvt_8h.html',1,'']]],
   ['multiply_42',['multiply',['../d6/dfb/group__stfio.html#ga446a87d78df6298c0904074c1f4fdf39',1,'stfio']]],
   ['mvals_43',['mvals',['../dc/df1/structTMarker.html#a679d8edc204932c9e219250c54c34d3e',1,'TMarker']]],
-  ['mystream_44',['mystream',['../d3/d1b/group__stfgen.html#ga9dd17bbd6aadc32a2d70a05bafd5c75e',1,'stf::ofstreamMan::myStream'],['../d3/d1b/group__stfgen.html#ga383b301d80c1582e2a41f41b2cdf132b',1,'stf::ifstreamMan::myStream']]]
+  ['mystream_44',['myStream',['../d3/d1b/group__stfgen.html#ga383b301d80c1582e2a41f41b2cdf132b',1,'stf::ifstreamMan::myStream'],['../d3/d1b/group__stfgen.html#ga9dd17bbd6aadc32a2d70a05bafd5c75e',1,'stf::ofstreamMan::myStream']]]
 ];

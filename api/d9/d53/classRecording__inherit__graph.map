@@ -1,5 +1,5 @@
 <map id="Recording" name="Recording">
-<area shape="rect" id="Node000001" title="Represents the data within a file." alt="" coords="5,5,92,31"/>
-<area shape="rect" id="Node000002" href="$df/dbc/classwxStfDoc.html" title="The document class, derived from both wxDocument and Recording." alt="" coords="7,79,91,104"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="51,44,51,79,46,79,46,44"/>
+<area shape="rect" id="Node000001" title="Represents the data within a file." alt="" coords="5,5,92,33"/>
+<area shape="rect" id="Node000002" href="$df/dbc/classwxStfDoc.html" title="The document class, derived from both wxDocument and Recording." alt="" coords="7,81,90,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="50,47,51,81,46,80,47,51"/>
 </map>

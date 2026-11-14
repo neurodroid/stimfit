@@ -10,5 +10,5 @@ var searchData=
   ['errormsg3_7',['ERRORMSG3',['../d7/dc8/axodebug_8h.html#a535733b4c2cb7e05a9ccece7f56cf567',1,'axodebug.h']]],
   ['errormsg4_8',['ERRORMSG4',['../d7/dc8/axodebug_8h.html#aba041931e05b31077d85170644fff94d',1,'axodebug.h']]],
   ['errormsg5_9',['ERRORMSG5',['../d7/dc8/axodebug_8h.html#a10d7c88703d22d360df018c44a269ab0',1,'axodebug.h']]],
-  ['errorreturn_10',['errorreturn',['../dd/d64/abffiles_8h.html#a6f4a21479ea4a0d5666bf8d448760c0d',1,'ERRORRETURN:&#160;abffiles.h'],['../dd/d42/atfintl_8h.html#a6f4a21479ea4a0d5666bf8d448760c0d',1,'ERRORRETURN:&#160;atfintl.h']]]
+  ['errorreturn_10',['ERRORRETURN',['../dd/d64/abffiles_8h.html#a6f4a21479ea4a0d5666bf8d448760c0d',1,'ERRORRETURN:&#160;abffiles.h'],['../dd/d42/atfintl_8h.html#a6f4a21479ea4a0d5666bf8d448760c0d',1,'ERRORRETURN:&#160;atfintl.h']]]
 ];

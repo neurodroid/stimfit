@@ -1,23 +1,23 @@
 <map id="IntanHeader" name="IntanHeader">
-<area shape="rect" id="Node000001" title=" " alt="" coords="238,445,341,471"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="99,357,296,383"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="222,390,278,443,275,447,218,394"/>
-<area shape="rect" id="Node000003" href="$d9/da3/structChipHeader.html" title=" " alt="" coords="67,269,165,295"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="138,303,188,355,184,359,134,307"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="5,181,227,207"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="119,221,119,269,113,269,113,221"/>
-<area shape="rect" id="Node000005" href="$da/dce/structChannelHeader.html" title=" " alt="" coords="55,93,177,119"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="119,133,119,181,113,181,113,133"/>
-<area shape="rect" id="Node000006" href="$d6/de7/structCalibration.html" title=" " alt="" coords="69,5,163,31"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="119,45,119,93,113,93,113,45"/>
-<area shape="rect" id="Node000007" href="$de/d99/structHeaderSettings.html" title=" " alt="" coords="361,357,484,383"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="395,392,309,447,306,443,392,388"/>
-<area shape="rect" id="Node000008" href="$d5/dac/structVoltageClampSettings.html" title=" " alt="" coords="190,269,357,295"/>
-<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="306,299,404,355,401,359,304,304"/>
-<area shape="rect" id="Node000009" href="$de/d29/structCurrentClampSettings.html" title=" " alt="" coords="381,269,547,295"/>
-<area shape="poly" id="edge8_Node000007_Node000009" title=" " alt="" coords="455,308,431,358,426,356,450,306"/>
-<area shape="rect" id="Node000010" title=" " alt="" coords="571,269,749,295"/>
-<area shape="poly" id="edge9_Node000007_Node000010" title=" " alt="" coords="617,302,525,336,457,360,455,355,523,331,616,297"/>
-<area shape="rect" id="Node000011" href="$db/d67/structSegment.html" title=" " alt="" coords="620,181,700,207"/>
-<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="663,221,663,269,657,269,657,221"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="237,509,338,536"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="99,408,295,436"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="220,444,278,508,273,508,218,449"/>
+<area shape="rect" id="Node000003" href="$d9/da3/structChipHeader.html" title=" " alt="" coords="67,307,164,335"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="136,344,189,407,183,408,135,349"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,207,226,234"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="116,247,118,307,113,306,115,253"/>
+<area shape="rect" id="Node000005" href="$da/dce/structChannelHeader.html" title=" " alt="" coords="55,106,176,134"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="116,147,118,206,113,206,115,152"/>
+<area shape="rect" id="Node000006" href="$d6/de7/structCalibration.html" title=" " alt="" coords="69,5,162,33"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="116,46,118,106,113,105,115,51"/>
+<area shape="rect" id="Node000007" href="$de/d99/structHeaderSettings.html" title=" " alt="" coords="359,408,480,436"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="393,444,306,510,304,506,388,446"/>
+<area shape="rect" id="Node000008" href="$d5/dac/structVoltageClampSettings.html" title=" " alt="" coords="189,307,354,335"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="300,342,356,382,397,407,392,407,353,386,299,347"/>
+<area shape="rect" id="Node000009" href="$de/d29/structCurrentClampSettings.html" title=" " alt="" coords="379,307,543,335"/>
+<area shape="poly" id="edge8_Node000007_Node000009" title=" " alt="" coords="452,347,427,409,423,406,448,351"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="568,307,746,335"/>
+<area shape="poly" id="edge9_Node000007_Node000010" title=" " alt="" coords="620,341,526,386,461,410,460,405,524,382,615,343"/>
+<area shape="rect" id="Node000011" href="$db/d67/structSegment.html" title=" " alt="" coords="617,207,696,234"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="658,248,659,308,655,305,655,252"/>
 </map>

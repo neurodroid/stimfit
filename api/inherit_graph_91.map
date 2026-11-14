@@ -1,37 +1,37 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$d8/d93/classwxDialog.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxdialog.html (wxWidgets documentation)" alt="" coords="5,400,88,425"/>
-<area shape="rect" id="Node000001" href="$d5/d59/classwxStfAlignDlg.html" title="Dialog for selecting alignment mode." alt="" coords="167,5,282,31"/>
-<area shape="poly" id="edge8_Node000000_Node000001" title=" " alt="" coords="48,386,58,307,76,203,101,105,116,67,134,40,149,29,166,22,168,26,152,33,138,44,121,69,106,107,81,205,64,307,53,386"/>
-<area shape="rect" id="Node000002" href="$d6/d87/classwxStfBatchDlg.html" title="Dialog for batch analysis settings." alt="" coords="165,55,284,80"/>
-<area shape="poly" id="edge9_Node000000_Node000002" title=" " alt="" coords="44,386,46,325,58,246,69,204,85,162,106,124,134,89,148,79,164,72,166,77,151,83,138,93,111,127,90,165,74,205,63,247,52,326,50,386"/>
-<area shape="rect" id="Node000003" href="$dc/dc7/classwxStfChannelSelDlg.html" title="Dialog for selecting channels." alt="" coords="147,104,302,129"/>
-<area shape="poly" id="edge10_Node000000_Node000003" title=" " alt="" coords="46,386,51,334,64,268,76,233,91,199,110,167,134,139,151,127,154,132,138,143,114,170,95,201,81,234,70,269,56,335,51,386"/>
-<area shape="rect" id="Node000004" href="$d4/de4/classwxStfConvertDlg.html" title="Dialog for batch conversion of files.from cfs to atf." alt="" coords="159,153,291,179"/>
-<area shape="poly" id="edge11_Node000000_Node000004" title=" " alt="" coords="48,386,56,343,71,289,97,235,114,210,134,188,157,174,160,179,138,192,118,213,101,238,76,291,61,344,53,387"/>
-<area shape="rect" id="Node000005" href="$df/d34/classwxStfCursorsDlg.html" title="Cursor settings non&#45;modal dialog." alt="" coords="159,203,290,228"/>
-<area shape="poly" id="edge12_Node000000_Node000005" title=" " alt="" coords="52,386,62,352,79,312,103,272,134,237,158,224,161,229,138,241,107,275,84,314,67,354,57,387"/>
-<area shape="rect" id="Node000006" href="$d4/d95/classwxStfEventDlg.html" title="Dialog for event&#45;detection settings." alt="" coords="165,252,284,277"/>
-<area shape="poly" id="edge13_Node000000_Node000006" title=" " alt="" coords="57,386,87,336,109,309,135,286,164,272,166,277,137,291,113,313,91,339,62,389"/>
-<area shape="rect" id="Node000007" href="$d2/dc3/classwxStfFileInfoDlg.html" title="Dialog showing file information." alt="" coords="160,301,289,327"/>
-<area shape="poly" id="edge14_Node000000_Node000007" title=" " alt="" coords="68,388,98,360,135,336,162,324,164,329,137,340,101,365,71,392"/>
-<area shape="rect" id="Node000008" href="$db/dc5/classwxStfFilterSelDlg.html" title="Dialog for selecting a filter function." alt="" coords="157,351,292,376"/>
-<area shape="poly" id="edge15_Node000000_Node000008" title=" " alt="" coords="101,395,135,385,176,373,177,379,137,390,102,400"/>
-<area shape="rect" id="Node000009" href="$d3/d43/classwxStfFitInfoDlg.html" title="Dialog showing information about a fit." alt="" coords="163,400,286,425"/>
-<area shape="poly" id="edge16_Node000000_Node000009" title=" " alt="" coords="102,410,163,410,163,415,102,415"/>
-<area shape="rect" id="Node000010" href="$d8/de2/classwxStfFitSelDlg.html" title="Non&#45;linear regression settings dialog." alt="" coords="166,449,283,475"/>
-<area shape="poly" id="edge17_Node000000_Node000010" title=" " alt="" coords="102,425,178,447,177,452,101,430"/>
-<area shape="rect" id="Node000011" href="$d3/d40/classwxStfGaussianDlg.html" title="Dialog for setting the parameters of a Gaussian function." alt="" coords="154,499,295,524"/>
-<area shape="poly" id="edge18_Node000000_Node000011" title=" " alt="" coords="71,433,101,460,137,484,168,496,166,501,135,488,98,464,68,437"/>
-<area shape="rect" id="Node000012" href="$db/dc8/classwxStfOpenDlg.html" title="File browser with reader options for the selected recording." alt="" coords="167,548,282,573"/>
-<area shape="poly" id="edge19_Node000000_Node000012" title=" " alt="" coords="62,436,92,486,113,512,137,533,168,548,166,553,135,538,109,515,88,489,57,439"/>
-<area shape="rect" id="Node000013" href="$d1/d1e/classwxStfOrderChannelsDlg.html" title="Dialog for re&#45;ordering channels before saving to file." alt="" coords="136,597,313,623"/>
-<area shape="poly" id="edge20_Node000000_Node000013" title=" " alt="" coords="57,438,67,471,84,510,107,549,138,583,158,595,156,599,134,587,103,553,79,513,62,473,52,440"/>
-<area shape="rect" id="Node000014" href="$de/dda/classwxStfPreprintDlg.html" title="Dialog for setting printout options." alt="" coords="159,647,291,672"/>
-<area shape="poly" id="edge21_Node000000_Node000014" title=" " alt="" coords="54,439,62,481,77,533,101,586,118,611,138,632,160,646,157,650,134,636,114,614,97,589,72,535,56,482,48,439"/>
-<area shape="rect" id="Node000015" href="$dd/dc8/classwxStfTextImportDlg.html" title="Dialog for text import filter settings." alt="" coords="149,696,300,721"/>
-<area shape="poly" id="edge22_Node000000_Node000015" title=" " alt="" coords="51,439,57,490,70,555,81,590,96,623,115,654,138,681,156,694,153,698,134,685,110,657,91,626,76,592,65,557,51,491,46,439"/>
-<area shape="rect" id="Node000016" href="$df/d84/classwxStfTransformDlg.html" title="Dialog for selecting a transform function." alt="" coords="151,745,298,771"/>
-<area shape="poly" id="edge23_Node000000_Node000016" title=" " alt="" coords="50,439,52,499,64,577,75,619,90,659,111,697,138,731,155,743,152,747,134,735,107,700,85,662,70,620,58,578,47,499,45,439"/>
-<area shape="rect" id="Node000017" href="$d5/da8/classwxStfUsrDlg.html" title="A user&#45;defined dialog for entering floating&#45;point numbers." alt="" coords="173,795,276,820"/>
-<area shape="poly" id="edge24_Node000000_Node000017" title=" " alt="" coords="54,439,64,517,81,620,106,717,121,755,138,780,154,792,174,800,172,805,152,797,134,784,117,757,101,719,76,621,59,518,48,440"/>
+<area shape="rect" id="Node000000" href="$d8/d93/classwxDialog.html" title="See http://www.wxwidgets.org/manuals/stable/wx_wxdialog.html (wxWidgets documentation)." alt="" coords="5,421,88,449"/>
+<area shape="rect" id="Node000001" href="$d5/d59/classwxStfAlignDlg.html" title="Dialog for selecting alignment mode." alt="" coords="167,5,280,33"/>
+<area shape="poly" id="edge8_Node000000_Node000001" title=" " alt="" coords="48,405,58,322,75,215,100,112,116,72,134,44,149,32,168,25,165,29,151,37,138,48,121,74,105,114,81,216,63,323,53,406"/>
+<area shape="rect" id="Node000002" href="$d6/d87/classwxStfBatchDlg.html" title="Dialog for batch analysis settings." alt="" coords="165,57,282,85"/>
+<area shape="poly" id="edge9_Node000000_Node000002" title=" " alt="" coords="49,405,61,332,79,240,103,154,118,120,134,96,148,85,166,78,163,82,150,90,138,100,123,122,108,155,84,242,66,333,54,406"/>
+<area shape="rect" id="Node000003" href="$dc/dc7/classwxStfChannelSelDlg.html" title="Dialog for selecting channels." alt="" coords="147,109,300,137"/>
+<area shape="poly" id="edge10_Node000000_Node000003" title=" " alt="" coords="46,406,50,351,64,282,75,246,90,211,109,177,134,148,154,135,151,140,137,152,114,180,95,213,80,248,69,284,56,352,51,406"/>
+<area shape="rect" id="Node000004" href="$d4/de4/classwxStfConvertDlg.html" title="Dialog for batch conversion of files.from cfs to atf." alt="" coords="158,161,290,189"/>
+<area shape="poly" id="edge11_Node000000_Node000004" title=" " alt="" coords="48,405,56,360,71,305,96,249,113,223,134,200,159,185,156,190,137,204,117,226,101,251,76,307,61,361,53,406"/>
+<area shape="rect" id="Node000005" href="$df/d34/classwxStfCursorsDlg.html" title="Cursor settings non&#45;modal dialog." alt="" coords="159,213,288,241"/>
+<area shape="poly" id="edge12_Node000000_Node000005" title=" " alt="" coords="51,406,62,371,79,329,102,288,134,252,160,238,157,242,137,256,107,291,83,332,67,372,57,407"/>
+<area shape="rect" id="Node000006" href="$d4/d95/classwxStfEventDlg.html" title="Dialog for event&#45;detection settings." alt="" coords="165,265,282,293"/>
+<area shape="poly" id="edge13_Node000000_Node000006" title=" " alt="" coords="57,406,87,354,109,327,134,304,166,289,163,293,137,308,113,330,92,357,62,408"/>
+<area shape="rect" id="Node000007" href="$d2/dc3/classwxStfFileInfoDlg.html" title="Dialog showing file information." alt="" coords="160,317,288,345"/>
+<area shape="poly" id="edge14_Node000000_Node000007" title=" " alt="" coords="68,409,98,381,134,356,165,343,162,348,137,360,102,385,73,412"/>
+<area shape="rect" id="Node000008" href="$db/dc5/classwxStfFilterSelDlg.html" title="Dialog for selecting a filter function." alt="" coords="157,369,290,397"/>
+<area shape="poly" id="edge15_Node000000_Node000008" title=" " alt="" coords="101,417,176,396,172,400,104,421"/>
+<area shape="rect" id="Node000009" href="$d3/d43/classwxStfFitInfoDlg.html" title="Dialog showing information about a fit." alt="" coords="163,421,284,449"/>
+<area shape="poly" id="edge16_Node000000_Node000009" title=" " alt="" coords="102,433,165,433,161,437,105,437"/>
+<area shape="rect" id="Node000010" href="$d8/de2/classwxStfFitSelDlg.html" title="Non&#45;linear regression settings dialog." alt="" coords="166,473,282,501"/>
+<area shape="poly" id="edge17_Node000000_Node000010" title=" " alt="" coords="101,449,176,471,172,474,103,454"/>
+<area shape="rect" id="Node000011" href="$d3/d40/classwxStfGaussianDlg.html" title="Dialog for setting the parameters of a Gaussian function." alt="" coords="154,525,294,553"/>
+<area shape="poly" id="edge18_Node000000_Node000011" title=" " alt="" coords="70,457,102,485,137,510,166,524,161,526,134,515,98,489,71,463"/>
+<area shape="rect" id="Node000012" href="$db/dc8/classwxStfOpenDlg.html" title="File browser with reader options for the selected recording." alt="" coords="167,577,281,605"/>
+<area shape="poly" id="edge19_Node000000_Node000012" title=" " alt="" coords="60,461,92,514,113,540,137,562,169,579,164,581,134,567,109,544,87,517,60,466"/>
+<area shape="rect" id="Node000013" href="$d1/d1e/classwxStfOrderChannelsDlg.html" title="Dialog for re&#45;ordering channels before saving to file." alt="" coords="136,629,312,657"/>
+<area shape="poly" id="edge20_Node000000_Node000013" title=" " alt="" coords="54,461,67,498,83,539,107,580,137,614,158,628,153,630,134,619,102,583,79,541,62,500,54,467"/>
+<area shape="rect" id="Node000014" href="$de/dda/classwxStfPreprintDlg.html" title="Dialog for setting printout options." alt="" coords="158,681,290,709"/>
+<area shape="poly" id="edge21_Node000000_Node000014" title=" " alt="" coords="51,462,61,509,76,563,101,619,117,644,137,666,160,682,155,683,134,671,113,647,96,622,71,565,56,510,51,468"/>
+<area shape="rect" id="Node000015" href="$dd/dc8/classwxStfTextImportDlg.html" title="Dialog for text import filter settings." alt="" coords="149,733,299,761"/>
+<area shape="poly" id="edge22_Node000000_Node000015" title=" " alt="" coords="48,462,56,518,69,587,80,622,95,657,114,690,137,719,155,732,150,733,134,722,109,693,90,660,75,624,64,588,50,519,48,467"/>
+<area shape="rect" id="Node000016" href="$df/d84/classwxStfTransformDlg.html" title="Dialog for selecting a transform function." alt="" coords="151,785,296,813"/>
+<area shape="poly" id="edge23_Node000000_Node000016" title=" " alt="" coords="52,462,66,537,84,629,108,715,123,748,138,771,155,785,149,785,134,774,118,751,103,717,79,630,61,538,52,467"/>
+<area shape="rect" id="Node000017" href="$d5/da8/classwxStfUsrDlg.html" title="A user&#45;defined dialog for entering floating&#45;point numbers." alt="" coords="173,837,275,865"/>
+<area shape="poly" id="edge24_Node000000_Node000017" title=" " alt="" coords="51,462,63,548,81,655,105,757,121,796,138,823,154,835,175,845,169,845,151,839,134,826,116,798,100,758,75,656,58,548,50,467"/>
 </map>

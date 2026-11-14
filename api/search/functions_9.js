@@ -17,7 +17,7 @@ var searchData=
   ['initialize_14',['Initialize',['../d9/dd4/classCFileReadCache.html#abb9279a1e55d0649cbbfda61133d28c4',1,'CFileReadCache']]],
   ['initlinfunc_15',['initLinFunc',['../d3/d1b/group__stfgen.html#ga780c9fe33d252e5cc5660c9a4fd557e0',1,'stfnum']]],
   ['initsectionmarkerlist_16',['InitSectionMarkerList',['../d3/d1b/group__stfgen.html#ga0f802922520850cf88b48191c036d3c9',1,'Recording']]],
-  ['insertchannel_17',['insertchannel',['../d7/d1a/group__wxstf.html#ga2197d940b59c837bb1e4dd4c110285f2',1,'wxStfDoc::InsertChannel()'],['../d3/d1b/group__stfgen.html#gaa665649260febfbb7475f4e230faeb2f',1,'Recording::InsertChannel()']]],
+  ['insertchannel_17',['InsertChannel',['../d3/d1b/group__stfgen.html#gaa665649260febfbb7475f4e230faeb2f',1,'Recording::InsertChannel()'],['../d7/d1a/group__wxstf.html#ga2197d940b59c837bb1e4dd4c110285f2',1,'wxStfDoc::InsertChannel()']]],
   ['insertsection_18',['InsertSection',['../d3/d1b/group__stfgen.html#gae60ae41702c7ee29ecfc6f4e602266e7',1,'Channel']]],
   ['integrate_5fsimpson_19',['integrate_simpson',['../d3/d1b/group__stfgen.html#ga2d7c59ac48b0b6c843b0642b3e0d66cd',1,'stfnum']]],
   ['integrate_5ftrapezium_20',['integrate_trapezium',['../d3/d1b/group__stfgen.html#ga7a46bec173f703d526d6ad0b8961103e',1,'stfnum']]],

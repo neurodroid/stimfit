@@ -1,9 +1,9 @@
 <map id="ChipHeader" name="ChipHeader">
-<area shape="rect" id="Node000001" title=" " alt="" coords="67,269,165,295"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,181,227,207"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,221,119,269,113,269,113,221"/>
-<area shape="rect" id="Node000003" href="$da/dce/structChannelHeader.html" title=" " alt="" coords="55,93,177,119"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="119,133,119,181,113,181,113,133"/>
-<area shape="rect" id="Node000004" href="$d6/de7/structCalibration.html" title=" " alt="" coords="69,5,163,31"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="119,45,119,93,113,93,113,45"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="67,307,164,335"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,207,226,234"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="118,248,118,308,113,306,113,252"/>
+<area shape="rect" id="Node000003" href="$da/dce/structChannelHeader.html" title=" " alt="" coords="55,106,176,134"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="117,147,118,207,113,205,114,152"/>
+<area shape="rect" id="Node000004" href="$d6/de7/structCalibration.html" title=" " alt="" coords="69,5,162,33"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="116,46,118,106,113,105,115,51"/>
 </map>
