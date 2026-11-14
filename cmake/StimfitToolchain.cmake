@@ -52,11 +52,15 @@ target_include_directories(stimfit_config INTERFACE
   ${CMAKE_BINARY_DIR}
 )
 
+# Evaluate this on the consuming target so upstream warning settings stay local.
+set(_stf_project_warnings "$<NOT:$<BOOL:$<TARGET_PROPERTY:STF_USE_UPSTREAM_WARNINGS>>>")
 target_compile_options(stimfit_config INTERFACE
-  $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/W4 /Zc:__cplusplus>
-  $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-Wall>
+  $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>,${_stf_project_warnings}>:/W4>
+  $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/Zc:__cplusplus>
+  $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<CXX_COMPILER_ID:MSVC>>,${_stf_project_warnings}>:-Wall>
   $<$<AND:$<CONFIG:Debug>,$<NOT:$<CXX_COMPILER_ID:MSVC>>>:-O0 -g3>
 )
+unset(_stf_project_warnings)
 
 if(STF_BUILD_DEBIAN)
   if(DEFINED ENV{CPPFLAGS})

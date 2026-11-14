@@ -155,6 +155,13 @@ add_library(stimfit_biosig STATIC ${_stf_biosig_sources})
 add_dependencies(stimfit_biosig stimfit_biosig_generated)
 stf_apply_macos_runtime_policy(stimfit_biosig)
 
+# Match upstream biosig4c++/Makefile.in without changing Stimfit's warnings.
+set_target_properties(stimfit_biosig PROPERTIES STF_USE_UPSTREAM_WARNINGS ON)
+target_compile_options(stimfit_biosig PRIVATE
+  $<$<COMPILE_LANG_AND_ID:C,GNU,Clang,AppleClang>:-Wno-unused-result -Wno-deprecated>
+  $<$<COMPILE_LANG_AND_ID:CXX,GNU,Clang,AppleClang>:-Wno-unused-result -Wno-deprecated>
+)
+
 target_compile_definitions(stimfit_biosig PUBLIC WITH_BIOSIG WITH_ZLIB WITHOUT_NETWORK)
 target_include_directories(
   stimfit_biosig
