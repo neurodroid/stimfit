@@ -28,6 +28,7 @@
 #include <functional>
 #include <queue>
 #include <cmath>
+#include <cstdint>
 #include <limits>
 
 #ifndef WX_PRECOMP
