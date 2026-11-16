@@ -322,7 +322,9 @@
       "configuration": "Release",
       "targets": [
         "stimfit_containers_test",
-        "stimfit_numeric_test"
+        "stimfit_numeric_test",
+        "stimfit_toolbar_icons_test",
+        "stimfit_toolbar_png_test"
       ]
     }
   ],
