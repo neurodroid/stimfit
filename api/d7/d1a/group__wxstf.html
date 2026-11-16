@@ -305,9 +305,11 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="#gga48dfdcc62b59a0e7fb90b92573cc155da12cbe38cb8af9acc86683506e695dac5">ID_ZERO_INDEX</a>
 , <a class="el" href="#gga48dfdcc62b59a0e7fb90b92573cc155dad546c8b80a0bb995046881124f18772f">ID_COMBOACTCHANNEL</a>
 , <a class="el" href="#gga48dfdcc62b59a0e7fb90b92573cc155da39c5ccee39c25769b5444cfa90a217e2">ID_COMBOINACTCHANNEL</a>
-, <a class="el" href="#gga48dfdcc62b59a0e7fb90b92573cc155dafd97f0ef55db5c6eacfb5b27a042f1d9">ID_PY_SHELL_BACKEND</a>
+, <a class="el" href="#gga48dfdcc62b59a0e7fb90b92573cc155dad561517c26209d642c89e5845c9270e9">ID_TOOLBAR_ICONS_MODERN</a>
 , <br />
-&#160;&#160;<a class="el" href="#gga48dfdcc62b59a0e7fb90b92573cc155dacb936dcd861936a30dcf4f31af2746a1">ID_USERDEF</a>
+&#160;&#160;<a class="el" href="#gga48dfdcc62b59a0e7fb90b92573cc155da87077c54bc86db5985b98cc86dc73162">ID_TOOLBAR_ICONS_LEGACY</a>
+, <a class="el" href="#gga48dfdcc62b59a0e7fb90b92573cc155dafd97f0ef55db5c6eacfb5b27a042f1d9">ID_PY_SHELL_BACKEND</a>
+, <a class="el" href="#gga48dfdcc62b59a0e7fb90b92573cc155dacb936dcd861936a30dcf4f31af2746a1">ID_USERDEF</a>
 <br />
  }</td></tr>
 <tr class="memdesc:ga48dfdcc62b59a0e7fb90b92573cc155d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Event ids.  <a href="#ga48dfdcc62b59a0e7fb90b92573cc155d">More...</a><br /></td></tr>
@@ -393,6 +395,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga96c253ef08f7a0e1f2154cb4219e4aec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine whether trace display uses dark theme rendering.  <br /></td></tr>
 <tr class="memitem:ga148a44a9bdcb740a32484571f1890114" id="r_ga148a44a9bdcb740a32484571f1890114"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga148a44a9bdcb740a32484571f1890114">wxStfApp::get_isDarkTraceDisplay</a> () const</td></tr>
 <tr class="memdesc:ga148a44a9bdcb740a32484571f1890114"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates whether trace display uses dark theme rendering.  <br /></td></tr>
+<tr class="memitem:gad888b309c76134978dc7ac622d73cfa4" id="r_gad888b309c76134978dc7ac622d73cfa4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gad888b309c76134978dc7ac622d73cfa4">wxStfApp::UseLegacyToolbarIcons</a> () const</td></tr>
+<tr class="memdesc:gad888b309c76134978dc7ac622d73cfa4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates whether toolbars use the legacy 0.16.x icon theme.  <br /></td></tr>
+<tr class="memitem:gaa7df6a8bcb00551b8555fc3b35a21a15" id="r_gaa7df6a8bcb00551b8555fc3b35a21a15"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaa7df6a8bcb00551b8555fc3b35a21a15">wxStfApp::SetLegacyToolbarIcons</a> (bool useLegacy)</td></tr>
+<tr class="memdesc:gaa7df6a8bcb00551b8555fc3b35a21a15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Selects the toolbar icon theme and saves it for the next session.  <br /></td></tr>
 <tr class="memitem:ga495ea6c9f1755dc7ca0bdb0377a06fc5" id="r_ga495ea6c9f1755dc7ca0bdb0377a06fc5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/d66/classwxString.html">wxString</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga495ea6c9f1755dc7ca0bdb0377a06fc5">wxStfApp::GetVersionString</a> () const</td></tr>
 <tr class="memdesc:ga495ea6c9f1755dc7ca0bdb0377a06fc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a formatted version string.  <br /></td></tr>
 <tr class="memitem:gad84ab3a7bc030ba2b1a03924f8e90386" id="r_gad84ab3a7bc030ba2b1a03924f8e90386"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gad84ab3a7bc030ba2b1a03924f8e90386">wxStfApp::OnNewfromselected</a> (<a class="el" href="../../da/d15/classwxCommandEvent.html">wxCommandEvent</a> &amp;event)</td></tr>
@@ -1142,6 +1148,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:gab056026ad9666ef70a5e88619c38afca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
 <tr class="memitem:gaef3536f2ef30bed918e16b294ccd6cb2" id="r_gaef3536f2ef30bed918e16b294ccd6cb2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaef3536f2ef30bed918e16b294ccd6cb2">wxStfParentFrame::~wxStfParentFrame</a> ()</td></tr>
 <tr class="memdesc:gaef3536f2ef30bed918e16b294ccd6cb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <br /></td></tr>
+<tr class="memitem:gae11077a86551036b1f797e65d4abbc27" id="r_gae11077a86551036b1f797e65d4abbc27"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gae11077a86551036b1f797e65d4abbc27">wxStfParentFrame::UpdateToolbarIcons</a> ()</td></tr>
+<tr class="memdesc:gae11077a86551036b1f797e65d4abbc27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the selected icon theme without recreating the toolbars.  <br /></td></tr>
 <tr class="memitem:gaeccc590cb629c04dcb324dc5489ab9d6" id="r_gaeccc590cb629c04dcb324dc5489ab9d6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaeccc590cb629c04dcb324dc5489ab9d6">wxStfParentFrame::OnAbout</a> (<a class="el" href="../../da/d15/classwxCommandEvent.html">wxCommandEvent</a> &amp;event)</td></tr>
 <tr class="memdesc:gaeccc590cb629c04dcb324dc5489ab9d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shows the "About" dialog.  <br /></td></tr>
 <tr class="memitem:gac728ff2f52bf8094deab76d6a830dca5" id="r_gac728ff2f52bf8094deab76d6a830dca5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d1/d63/classwxStfGraph.html">wxStfGraph</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gac728ff2f52bf8094deab76d6a830dca5">wxStfParentFrame::CreateGraph</a> (<a class="el" href="../../da/dd0/classwxView.html">wxView</a> *view, <a class="el" href="../../dd/d66/classwxStfChildFrame.html">wxStfChildFrame</a> *parent)</td></tr>
@@ -1389,6 +1397,8 @@ Variables</h2></td></tr>
 <tr><td class="fieldname"><a id="gga48dfdcc62b59a0e7fb90b92573cc155da12cbe38cb8af9acc86683506e695dac5" name="gga48dfdcc62b59a0e7fb90b92573cc155da12cbe38cb8af9acc86683506e695dac5"></a>ID_ZERO_INDEX&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="gga48dfdcc62b59a0e7fb90b92573cc155dad546c8b80a0bb995046881124f18772f" name="gga48dfdcc62b59a0e7fb90b92573cc155dad546c8b80a0bb995046881124f18772f"></a>ID_COMBOACTCHANNEL&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="gga48dfdcc62b59a0e7fb90b92573cc155da39c5ccee39c25769b5444cfa90a217e2" name="gga48dfdcc62b59a0e7fb90b92573cc155da39c5ccee39c25769b5444cfa90a217e2"></a>ID_COMBOINACTCHANNEL&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="gga48dfdcc62b59a0e7fb90b92573cc155dad561517c26209d642c89e5845c9270e9" name="gga48dfdcc62b59a0e7fb90b92573cc155dad561517c26209d642c89e5845c9270e9"></a>ID_TOOLBAR_ICONS_MODERN&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="gga48dfdcc62b59a0e7fb90b92573cc155da87077c54bc86db5985b98cc86dc73162" name="gga48dfdcc62b59a0e7fb90b92573cc155da87077c54bc86db5985b98cc86dc73162"></a>ID_TOOLBAR_ICONS_LEGACY&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="gga48dfdcc62b59a0e7fb90b92573cc155dafd97f0ef55db5c6eacfb5b27a042f1d9" name="gga48dfdcc62b59a0e7fb90b92573cc155dafd97f0ef55db5c6eacfb5b27a042f1d9"></a>ID_PY_SHELL_BACKEND&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="gga48dfdcc62b59a0e7fb90b92573cc155dacb936dcd861936a30dcf4f31af2746a1" name="gga48dfdcc62b59a0e7fb90b92573cc155dacb936dcd861936a30dcf4f31af2746a1"></a>ID_USERDEF&#160;</td><td class="fielddoc"></td></tr>
 </table>
@@ -2030,9 +2040,9 @@ Variables</h2></td></tr>
 
 <p>Closes all documents. </p>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00455">455</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00457">457</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d2/d39/app_8h_source.html#l00504">GetDocManager()</a>.</p>
+<p class="reference">References <a class="el" href="../../d2/d39/app_8h_source.html#l00512">GetDocManager()</a>.</p>
 
 </div>
 </div>
@@ -2919,7 +2929,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00308">308</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00310">310</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -2954,7 +2964,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00317">317</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00319">319</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -3089,7 +3099,7 @@ Variables</h2></td></tr>
 <p>Indicates whether text files should be imported directly without showing an import settings dialog. </p>
 <dl class="section return"><dt>Returns</dt><dd>true if text files should be imported directly, false otherwise. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00333">333</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00335">335</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -3149,7 +3159,7 @@ Variables</h2></td></tr>
 <p>Indicates whether scale bars or coordinates are shown. </p>
 <dl class="section return"><dt>Returns</dt><dd>true for scale bars, false for coordinates. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00479">479</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00481">481</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -3179,7 +3189,7 @@ Variables</h2></td></tr>
 <p>Indicates whether trace display uses dark theme rendering. </p>
 <dl class="section return"><dt>Returns</dt><dd>true for dark background rendering. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00489">489</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00491">491</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -4078,7 +4088,7 @@ Variables</h2></td></tr>
 <p>Retrieves the cursor settings dialog. </p>
 <dl class="section return"><dt>Returns</dt><dd>A pointer to the cursor settings dialog. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00383">383</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00385">385</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -4258,9 +4268,9 @@ Variables</h2></td></tr>
 <p>Returns the number of currently opened documents. </p>
 <dl class="section return"><dt>Returns</dt><dd>The number of currently opened documents. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00469">469</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00471">471</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
-<p class="reference">References <a class="el" href="../../d2/d39/app_8h_source.html#l00504">GetDocManager()</a>.</p>
+<p class="reference">References <a class="el" href="../../d2/d39/app_8h_source.html#l00512">GetDocManager()</a>.</p>
 
 </div>
 </div>
@@ -4290,9 +4300,9 @@ Variables</h2></td></tr>
 <p>Access the document manager. </p>
 <dl class="section return"><dt>Returns</dt><dd>A pointer to the document manager. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00504">504</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00512">512</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="../../d2/d39/app_8h_source.html#l00455">CloseAll()</a>, and <a class="el" href="../../d2/d39/app_8h_source.html#l00469">GetDocCount()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="../../d2/d39/app_8h_source.html#l00457">CloseAll()</a>, and <a class="el" href="../../d2/d39/app_8h_source.html#l00471">GetDocCount()</a>.</p>
 
 </div>
 </div>
@@ -4352,7 +4362,7 @@ Variables</h2></td></tr>
 <p>Retrieves the user-defined extension functions. </p>
 <dl class="section return"><dt>Returns</dt><dd>A vector containing the user-defined functions. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00377">377</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00379">379</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -4619,7 +4629,7 @@ Variables</h2></td></tr>
 <p>Retrieves the functions that are available for least-squares minimisation. </p>
 <dl class="section return"><dt>Returns</dt><dd>A vector containing the available functions. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00359">359</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00361">361</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -4649,7 +4659,7 @@ Variables</h2></td></tr>
 <p>Retrieves a pointer to a function for least-squares minimisation. </p>
 <dl class="section return"><dt>Returns</dt><dd>A vector containing the available functions. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00365">365</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00367">367</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -5196,7 +5206,7 @@ Variables</h2></td></tr>
 <p>Retrieves a pointer to a function for least-squares minimisation. </p>
 <dl class="section return"><dt>Returns</dt><dd>A vector containing the available functions. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00371">371</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00373">373</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -5223,7 +5233,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00506">506</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00514">514</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -5606,7 +5616,7 @@ Variables</h2></td></tr>
 <p>Retrieve the wxAuiManager. </p>
 <dl class="section return"><dt>Returns</dt><dd>A reference to the wxAuiManager. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d36/parentframe_8h_source.html#l00139">139</a> of file <a class="el" href="../../d9/d36/parentframe_8h_source.html">parentframe.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d36/parentframe_8h_source.html#l00142">142</a> of file <a class="el" href="../../d9/d36/parentframe_8h_source.html">parentframe.h</a>.</p>
 
 </div>
 </div>
@@ -5713,7 +5723,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d36/parentframe_8h_source.html#l00152">152</a> of file <a class="el" href="../../d9/d36/parentframe_8h_source.html">parentframe.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d36/parentframe_8h_source.html#l00155">155</a> of file <a class="el" href="../../d9/d36/parentframe_8h_source.html">parentframe.h</a>.</p>
 
 </div>
 </div>
@@ -5995,7 +6005,7 @@ Variables</h2></td></tr>
 <p>Retrieves the page setup. </p>
 <dl class="section return"><dt>Returns</dt><dd>Pointer to the page setup data. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d36/parentframe_8h_source.html#l00134">134</a> of file <a class="el" href="../../d9/d36/parentframe_8h_source.html">parentframe.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d36/parentframe_8h_source.html#l00137">137</a> of file <a class="el" href="../../d9/d36/parentframe_8h_source.html">parentframe.h</a>.</p>
 
 </div>
 </div>
@@ -6275,7 +6285,7 @@ Variables</h2></td></tr>
 <p>Retrieves the print data. </p>
 <dl class="section return"><dt>Returns</dt><dd>Pointer to the stored print data. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d9/d36/parentframe_8h_source.html#l00129">129</a> of file <a class="el" href="../../d9/d36/parentframe_8h_source.html">parentframe.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d9/d36/parentframe_8h_source.html#l00132">132</a> of file <a class="el" href="../../d9/d36/parentframe_8h_source.html">parentframe.h</a>.</p>
 
 </div>
 </div>
@@ -7142,7 +7152,7 @@ Variables</h2></td></tr>
 <p>Retrieves the text import filter settings. </p>
 <dl class="section return"><dt>Returns</dt><dd>A struct with the current text import filter settings. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00345">345</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00347">347</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -7992,7 +8002,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00326">326</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00328">328</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -10453,7 +10463,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00338">338</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00340">340</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -10523,7 +10533,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00474">474</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00476">476</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -10558,7 +10568,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00484">484</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00486">486</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -10723,7 +10733,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00352">352</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00354">354</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -11655,6 +11665,25 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="gaa7df6a8bcb00551b8555fc3b35a21a15" name="gaa7df6a8bcb00551b8555fc3b35a21a15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaa7df6a8bcb00551b8555fc3b35a21a15">&#9670;&#160;</a></span>SetLegacyToolbarIcons()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void wxStfApp::SetLegacyToolbarIcons </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>useLegacy</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Selects the toolbar icon theme and saves it for the next session. </p>
+
+</div>
+</div>
 <a id="ga8bae4e84970316d4282f46f232aa2b5e" name="ga8bae4e84970316d4282f46f232aa2b5e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga8bae4e84970316d4282f46f232aa2b5e">&#9670;&#160;</a></span>SetMeasCursor()</h2>
 
@@ -11771,7 +11800,7 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00446">446</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00448">448</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>
@@ -13253,6 +13282,54 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Updates the status of the selection button. </p>
+
+</div>
+</div>
+<a id="gae11077a86551036b1f797e65d4abbc27" name="gae11077a86551036b1f797e65d4abbc27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae11077a86551036b1f797e65d4abbc27">&#9670;&#160;</a></span>UpdateToolbarIcons()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void wxStfParentFrame::UpdateToolbarIcons </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Applies the selected icon theme without recreating the toolbars. </p>
+
+</div>
+</div>
+<a id="gad888b309c76134978dc7ac622d73cfa4" name="gad888b309c76134978dc7ac622d73cfa4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gad888b309c76134978dc7ac622d73cfa4">&#9670;&#160;</a></span>UseLegacyToolbarIcons()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool wxStfApp::UseLegacyToolbarIcons </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Indicates whether toolbars use the legacy 0.16.x icon theme. </p>
+
+<p class="definition">Definition at line <a class="el" href="../../d2/d39/app_8h_source.html#l00494">494</a> of file <a class="el" href="../../d2/d39/app_8h_source.html">app.h</a>.</p>
 
 </div>
 </div>

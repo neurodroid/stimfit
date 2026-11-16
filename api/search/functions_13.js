@@ -7,7 +7,9 @@ var searchData=
   ['updatecursors_4',['UpdateCursors',['../d7/d1a/group__wxstf.html#ga299bb15e4c37376c620e71dac269d6a5',1,'wxStfCursorsDlg']]],
   ['updateresults_5',['UpdateResults',['../d7/d1a/group__wxstf.html#gaa74cf4d2706de49d7e62c6ce7bffa2e6',1,'wxStfChildFrame']]],
   ['updateselectedbutton_6',['UpdateSelectedButton',['../d7/d1a/group__wxstf.html#gab1fb4e6a7c9e727e2f6051552e595c8c',1,'wxStfDoc']]],
-  ['usereference_7',['UseReference',['../d7/d1a/group__wxstf.html#ga98e3574a8e2db3e9104d0d90b89aa18d',1,'wxStfAlignDlg']]],
-  ['userinput_8',['UserInput',['../d3/d1b/group__stfgen.html#ga879bc7b16a632a1079679fb0c42bb46e',1,'stf::UserInput']]],
-  ['usescaling_9',['UseScaling',['../d7/d1a/group__wxstf.html#ga37e99aff4fd641907f058e653410e26c',1,'wxStfFitSelDlg']]]
+  ['updatetoolbaricons_7',['UpdateToolbarIcons',['../d7/d1a/group__wxstf.html#gae11077a86551036b1f797e65d4abbc27',1,'wxStfParentFrame']]],
+  ['uselegacytoolbaricons_8',['UseLegacyToolbarIcons',['../d7/d1a/group__wxstf.html#gad888b309c76134978dc7ac622d73cfa4',1,'wxStfApp']]],
+  ['usereference_9',['UseReference',['../d7/d1a/group__wxstf.html#ga98e3574a8e2db3e9104d0d90b89aa18d',1,'wxStfAlignDlg']]],
+  ['userinput_10',['UserInput',['../d3/d1b/group__stfgen.html#ga879bc7b16a632a1079679fb0c42bb46e',1,'stf::UserInput']]],
+  ['usescaling_11',['UseScaling',['../d7/d1a/group__wxstf.html#ga37e99aff4fd641907f058e653410e26c',1,'wxStfFitSelDlg']]]
 ];
