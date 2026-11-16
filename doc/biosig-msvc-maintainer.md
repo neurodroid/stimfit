@@ -10,6 +10,13 @@ The release version is independent of the library API/ABI version. Validation
 supersedes obsolete `STF_BIOSIG_EXPECTED_TAG` cache entries automatically.
 The Windows vcpkg manifest includes libiconv for channel-label decoding.
 
+The MSVC build requires **Visual Studio 2022 17.9 or newer** (`cl.exe`
+19.39.33428 or newer). The patch enables `/std:clatest` for C sources so that
+upstream `typeof` declarations and allocation casts can remain unchanged.
+These options are set per source because the Visual Studio generator cannot
+represent separate target-wide flags for mixed C/C++ targets. The corresponding
+C++ allocation casts use `decltype`.
+
 Use the top-level `build_windows_msvc.ps1` for the standard Windows build;
 it includes the embedded Python shell by default. The lower-level helper below
 is intended for maintaining the patch queue. GNU awk (`gawk`) is required for
