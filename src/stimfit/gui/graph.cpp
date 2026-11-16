@@ -2223,6 +2223,9 @@ void wxStfGraph::FittorectY(YZoom& yzoom, const wxRect& rect, double min, double
 
 void wxStfGraph::Fittowindow(bool refresh)
 {
+    // Fit may be requested before the first paint (e.g. through Python).
+    // Load saved settings first so a later paint cannot overwrite this fit.
+    InitializePlotIfNeeded();
     const double screen_part=0.5; //part of the window to be filled
     std::size_t points=Doc()->cursec().size();
     if (points==0) {
