@@ -170,6 +170,8 @@ enum {
     ID_ZERO_INDEX,
     ID_COMBOACTCHANNEL,
     ID_COMBOINACTCHANNEL,
+    ID_TOOLBAR_ICONS_MODERN,
+    ID_TOOLBAR_ICONS_LEGACY,
 #ifdef WITH_PYTHON
     ID_PY_SHELL_BACKEND,
     ID_USERDEF, // this should be the last ID event
@@ -488,6 +490,12 @@ public:
      */
     bool get_isDarkTraceDisplay() const { return isDarkTraceDisplay; }
 
+    //! Indicates whether toolbars use the legacy 0.16.x icon theme.
+    bool UseLegacyToolbarIcons() const { return m_legacyToolbarIcons; }
+
+    //! Selects the toolbar icon theme and saves it for the next session.
+    void SetLegacyToolbarIcons(bool useLegacy);
+
     //! Get a formatted version string.
     /*! \return A version string (stimfit x.y.z, release/debug build, date).
      */
@@ -549,7 +557,7 @@ private:
 #pragma optimize( "", on )
 #endif
 
-    bool directTxtImport,isBars,isDarkTraceDisplay,m_exitAfterHelp;
+    bool directTxtImport,isBars,isDarkTraceDisplay,m_legacyToolbarIcons,m_exitAfterHelp;
     stfio::txtImportSettings txtImport;
     // Registry:
 #if (__cplusplus < 201103)

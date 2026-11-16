@@ -162,7 +162,7 @@ jobs:
             $runtimePaths | ForEach-Object { Write-Host "  $_" }
           }
 
-          ctest --test-dir build/ci-windows-msvc-smoke -C Release --output-on-failure --no-tests=error --tests-regex 'stimfit_(containers|numeric)_test'
+          ctest --test-dir build/ci-windows-msvc-smoke -C Release --output-on-failure --no-tests=error --tests-regex 'stimfit_(containers|numeric|toolbar_icons|toolbar_png)_test'
 
       - name: Upload Windows smoke staging artifact
         uses: actions/upload-artifact@v7
@@ -214,11 +214,13 @@ jobs:
         run: |
           cmake --build build --parallel --target \
             stimfit_containers_test \
-            stimfit_numeric_test
+            stimfit_numeric_test \
+            stimfit_toolbar_icons_test \
+            stimfit_toolbar_png_test
 
       - name: Run CTest
         run: |
-          ctest --test-dir build --output-on-failure --no-tests=error --tests-regex 'stimfit_(containers|numeric)_test'
+          ctest --test-dir build --output-on-failure --no-tests=error --tests-regex 'stimfit_(containers|numeric|toolbar_icons|toolbar_png)_test'
 
   ubuntu-system-biosig:
     name: Ubuntu Biosig (${{ matrix.biosig-provider }})
@@ -367,7 +369,7 @@ jobs:
 
       - name: Run MacPorts CTest
         run: |
-          ctest --test-dir build-macos-macports --output-on-failure --no-tests=error --tests-regex 'stimfit_(containers|io|numeric)_test'
+          ctest --test-dir build-macos-macports --output-on-failure --no-tests=error --tests-regex 'stimfit_(containers|io|numeric|toolbar_icons|toolbar_png)_test'
 
       - name: Install Stimfit into staging
         run: |

@@ -77,6 +77,7 @@
 
 #include "./childframe.h"
 #include "./parentframe.h"
+#include "./toolbaricons.h"
 #include "./../../libstfnum/levmar/levmar.h"
 
 #ifndef wxS_DIR_DEFAULT
@@ -95,128 +96,72 @@ wxSize GetToolbarBitmapSize(const wxWindow& window)
 #endif
 }
 
-int GetToolbarIconPixelSize(const wxWindow& window)
-{
-    const wxSize iconSize = GetToolbarBitmapSize(window);
-    return wxMax(iconSize.GetWidth(), iconSize.GetHeight());
-}
+struct ToolbarToolIcon {
+    int toolId;
+    wxString name;
+    wxArtID fallbackArt;
+};
 
-int SelectToolbarIconBucket(const wxWindow& window)
-{
-    const int px = GetToolbarIconPixelSize(window);
-    if (px >= 50) {
-        return 60;
-    }
-    if (px >= 30) {
-        return 40;
-    }
-    return 20;
-}
-
-wxString ResolveToolbarIconBaseDir()
-{
-    static wxString cached;
-    if (!cached.IsEmpty()) {
-        return cached;
-    }
-
-    wxFileName exePath(wxStandardPaths::Get().GetExecutablePath());
-    wxFileName climb(exePath.GetPath(), wxEmptyString);
-
-    wxArrayString candidates;
-
-#ifdef STF_TOOLBAR_SOURCE_DIR
-    {
-        wxFileName sourceCompileTime(wxString::FromUTF8(STF_TOOLBAR_SOURCE_DIR), wxEmptyString);
-        sourceCompileTime.Normalize(wxPATH_NORM_DOTS);
-        candidates.Add(sourceCompileTime.GetPath());
-    }
+const ToolbarToolIcon toolbarToolIcons[] = {
+    {wxID_OPEN, wxT("open"), wxART_FILE_OPEN},
+    {wxID_SAVEAS, wxT("save"), wxART_FILE_SAVE_AS},
+    {ID_PRINT_PRINT, wxT("print"), wxART_PRINT},
+    {ID_TOOL_FIRST, wxT("first"), wxART_GOTO_FIRST},
+    {ID_TOOL_PREVIOUS, wxT("previous"), wxART_GO_BACK},
+    {ID_TOOL_NEXT, wxT("next"), wxART_GO_FORWARD},
+    {ID_TOOL_LAST, wxT("last"), wxART_GOTO_LAST},
+    {ID_TOOL_LEFT, wxT("left"), wxART_GO_BACK},
+    {ID_TOOL_RIGHT, wxT("right"), wxART_GO_FORWARD},
+    {ID_TOOL_FIT, wxT("fit"), wxART_GO_HOME},
+    {ID_TOOL_UP, wxT("up"), wxART_GO_UP},
+    {ID_TOOL_DOWN, wxT("down"), wxART_GO_DOWN},
+    {ID_TOOL_XENL, wxT("zoom_in_x"), wxART_GO_UP},
+    {ID_TOOL_XSHRINK, wxT("zoom_out_x"), wxART_GO_DOWN},
+    {ID_TOOL_YENL, wxT("zoom_in_y"), wxART_GO_UP},
+    {ID_TOOL_YSHRINK, wxT("zoom_out_y"), wxART_GO_DOWN},
+    {ID_TOOL_CH1, wxT("ch1"), wxART_INFORMATION},
+    {ID_TOOL_CH2, wxT("ch2"), wxART_HELP},
+    {ID_AVERAGE, wxT("mean"), wxART_LIST_VIEW},
+    {ID_ALIGNEDAVERAGE, wxT("aligned"), wxART_TICK_MARK},
+    {ID_TOOL_FITDECAY, wxT("fitdecay"), wxART_FIND},
+    {ID_VIEWTABLE, wxT("table"), wxART_REPORT_VIEW},
+    {ID_TOOL_SELECT, wxT("select"), wxART_TICK_MARK},
+    {ID_MPL, wxT("snapshot"), wxART_FILE_SAVE},
+    {ID_TOOL_SNAPSHOT_WMF, wxT("wmf_snapshot"), wxART_COPY},
+    {ID_TOOL_MEASURE, wxT("measure"), wxART_CROSS_MARK},
+    {ID_TOOL_PEAK, wxT("peak"), wxART_GO_UP},
+    {ID_TOOL_BASE, wxT("base"), wxART_GO_DOWN},
+    {ID_TOOL_DECAY, wxT("decay"), wxART_FIND},
+    {ID_TOOL_LATENCY, wxT("latency"), wxART_QUESTION},
+#ifdef WITH_PSLOPE
+    {ID_TOOL_PSLOPE, wxT("pslope"), wxART_GO_FORWARD},
 #endif
+    {ID_TOOL_ZOOM, wxT("zoom"), wxART_FIND},
+    {ID_TOOL_EVENT, wxT("event"), wxART_WARNING},
+    {ID_TOOL_ANNOTATION, wxT("annotation"), wxART_INFORMATION},
+};
 
-    auto addCandidate = [&candidates](const wxFileName& anchor, const wxArrayString& dirs) {
-        wxFileName path(anchor);
-        for (size_t i = 0; i < dirs.GetCount(); ++i) {
-            path.AppendDir(dirs[i]);
-        }
-        path.Normalize(wxPATH_NORM_DOTS);
-        candidates.Add(path.GetPath());
-    };
-
-    // Probe several ancestor levels because Windows multi-config generators
-    // place the executable under an extra config directory (e.g. Debug/Release).
-    for (int depth = 0; depth <= 6; ++depth) {
-        wxArrayString sourceDirs;
-        sourceDirs.Add(wxT("src"));
-        sourceDirs.Add(wxT("stimfit"));
-        sourceDirs.Add(wxT("res"));
-        sourceDirs.Add(wxT("toolbar"));
-        addCandidate(climb, sourceDirs);
-
-        wxArrayString installDirs;
-        installDirs.Add(wxT("share"));
-        installDirs.Add(wxT("stimfit"));
-        installDirs.Add(wxT("toolbar"));
-        addCandidate(climb, installDirs);
-#ifdef __WXMAC__
-        wxArrayString bundleDirs;
-        bundleDirs.Add(wxT("Resources"));
-        bundleDirs.Add(wxT("toolbar"));
-        addCandidate(climb, bundleDirs);
-#endif
-        if (climb.GetDirCount() == 0) {
-            break;
-        }
-        climb.RemoveLastDir();
-    }
-
-    wxFileName cwdSource(wxGetCwd(), wxEmptyString);
-    cwdSource.AppendDir(wxT("src"));
-    cwdSource.AppendDir(wxT("stimfit"));
-    cwdSource.AppendDir(wxT("res"));
-    cwdSource.AppendDir(wxT("toolbar"));
-    cwdSource.Normalize(wxPATH_NORM_DOTS);
-    candidates.Add(cwdSource.GetPath());
-
-    for (size_t i = 0; i < candidates.GetCount(); ++i) {
-        wxFileName probe(candidates[i], wxEmptyString);
-        probe.AppendDir(wxT("20"));
-        probe.SetFullName(wxT("open.png"));
-        if (probe.FileExists()) {
-            cached = candidates[i];
-            return cached;
-        }
-    }
-
-    return wxEmptyString;
-}
-
-wxBitmap TbBitmap(const wxWindow& window, const wxString& iconName, const wxArtID& fallbackArt)
+stf::ToolbarBitmap TbBitmap(const wxWindow& window, int toolId)
 {
-    const wxString baseDir = ResolveToolbarIconBaseDir();
-    if (!baseDir.IsEmpty()) {
-        const int bucket = SelectToolbarIconBucket(window);
-        wxFileName iconPath(baseDir, wxEmptyString);
-        iconPath.AppendDir(wxString::Format(wxT("%d"), bucket));
-        iconPath.SetFullName(iconName + wxT(".png"));
-        if (iconPath.FileExists()) {
-            wxBitmap loaded(iconPath.GetFullPath(), wxBITMAP_TYPE_PNG);
-            if (loaded.IsOk()) {
-                return loaded;
-            }
+    for (size_t i = 0; i < WXSIZEOF(toolbarToolIcons); ++i) {
+        const ToolbarToolIcon& icon = toolbarToolIcons[i];
+        if (icon.toolId != toolId) {
+            continue;
         }
-
-        wxFileName fallback20(baseDir, wxEmptyString);
-        fallback20.AppendDir(wxT("20"));
-        fallback20.SetFullName(iconName + wxT(".png"));
-        if (fallback20.FileExists()) {
-            wxBitmap loaded(fallback20.GetFullPath(), wxBITMAP_TYPE_PNG);
-            if (loaded.IsOk()) {
-                return loaded;
-            }
+        const stf::ToolbarBitmap bitmap = stf::LoadToolbarIcon(
+            stf::ResolveToolbarIconBaseDir(), icon.name,
+            wxGetApp().UseLegacyToolbarIcons(), GetToolbarBitmapSize(window));
+        if (bitmap.IsOk()) {
+            return bitmap;
         }
+#if wxCHECK_VERSION(3, 1, 6)
+        return wxArtProvider::GetBitmapBundle(icon.fallbackArt, wxART_TOOLBAR, wxSize(20, 20));
+#else
+        return wxArtProvider::GetBitmap(icon.fallbackArt, wxART_TOOLBAR, GetToolbarBitmapSize(window));
+#endif
     }
-
-    return wxArtProvider::GetBitmap(fallbackArt, wxART_TOOLBAR, GetToolbarBitmapSize(window));
+    wxFAIL_MSG(wxT("Unknown toolbar icon"));
+    return stf::ToolbarBitmap();
 }
 
 #ifdef WITH_PYTHON
@@ -337,6 +282,8 @@ EVT_MENU( ID_CH2ZOOM, wxStfParentFrame::OnCh2zoom )
 EVT_MENU( ID_CH2BASEZOOM, wxStfParentFrame::OnCh2basezoom )
 EVT_MENU( ID_SCALE, wxStfParentFrame::OnScale )
 EVT_MENU( ID_VIEW_DARK_TRACE, wxStfParentFrame::OnDarkTraceDisplay )
+EVT_MENU_RANGE(ID_TOOLBAR_ICONS_MODERN, ID_TOOLBAR_ICONS_LEGACY, wxStfParentFrame::OnToolbarIconTheme)
+EVT_UPDATE_UI_RANGE(ID_TOOLBAR_ICONS_MODERN, ID_TOOLBAR_ICONS_LEGACY, wxStfParentFrame::OnUpdateToolbarIconTheme)
 
 EVT_MENU( ID_PRINT_PRINT, wxStfParentFrame::OnPrint)
 
@@ -613,6 +560,43 @@ wxStfParentFrame::~wxStfParentFrame() {
     m_mgr.UnInit();
 }
 
+void wxStfParentFrame::UpdateToolbarIcons()
+{
+    wxAuiPaneInfoArray& panes = m_mgr.GetAllPanes();
+    for (size_t i = 0; i < panes.GetCount(); ++i) {
+        wxStfToolBar* toolbar = wxDynamicCast(panes[i].window, wxStfToolBar);
+        if (!toolbar) {
+            continue;
+        }
+        for (size_t j = 0; j < WXSIZEOF(toolbarToolIcons); ++j) {
+            const int toolId = toolbarToolIcons[j].toolId;
+            if (toolbar->FindTool(toolId)) {
+                toolbar->SetToolBitmap(toolId, TbBitmap(*toolbar, toolId));
+            }
+        }
+        toolbar->Realize();
+        toolbar->Refresh();
+    }
+    m_mgr.Update();
+}
+
+void wxStfParentFrame::OnToolbarIconTheme(wxCommandEvent& event)
+{
+    wxGetApp().SetLegacyToolbarIcons(event.GetId() == ID_TOOLBAR_ICONS_LEGACY);
+    for (wxWindowList::compatibility_iterator node = wxTopLevelWindows.GetFirst();
+         node; node = node->GetNext()) {
+        wxStfParentFrame* frame = wxDynamicCast(node->GetData(), wxStfParentFrame);
+        if (frame) {
+            frame->UpdateToolbarIcons();
+        }
+    }
+}
+
+void wxStfParentFrame::OnUpdateToolbarIconTheme(wxUpdateUIEvent& event)
+{
+    event.Check(wxGetApp().UseLegacyToolbarIcons() == (event.GetId() == ID_TOOLBAR_ICONS_LEGACY));
+}
+
 wxStfToolBar* wxStfParentFrame::CreateStdTb() {
     wxStfToolBar* tb1=new wxStfToolBar( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                         wxAUI_TB_DEFAULT_STYLE );
@@ -620,17 +604,17 @@ wxStfToolBar* wxStfParentFrame::CreateStdTb() {
     tb1->SetToolBitmapSize(iconSize);
     tb1->AddTool( wxID_OPEN,
                   wxT("Open"),
-                  TbBitmap(*this, wxT("open"), wxART_FILE_OPEN),
+                  TbBitmap(*this, wxID_OPEN),
                   wxT("Open file"),
                   wxITEM_NORMAL );
     tb1->AddTool( wxID_SAVEAS,
                   wxT("Save"),
-                  TbBitmap(*this, wxT("save"), wxART_FILE_SAVE_AS),
+                  TbBitmap(*this, wxID_SAVEAS),
                   wxT("Save traces"),
                   wxITEM_NORMAL );
     tb1->AddTool( ID_PRINT_PRINT,
                   wxT("Print"),
-                  TbBitmap(*this, wxT("print"), wxART_PRINT),
+                  TbBitmap(*this, ID_PRINT_PRINT),
                   wxT("Print traces"),
                   wxITEM_NORMAL );
 #ifdef WITH_PYTHON
@@ -656,79 +640,79 @@ wxStfToolBar* wxStfParentFrame::CreateScaleTb() {
     scaleToolBar->SetToolBitmapSize(GetToolbarBitmapSize(*this));
     scaleToolBar->AddTool( ID_TOOL_FIRST,
                            wxT("First"),
-                           TbBitmap(*this, wxT("first"), wxART_GOTO_FIRST),
+                           TbBitmap(*this, ID_TOOL_FIRST),
                            wxT("Go to first trace"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_PREVIOUS,
                            wxT("Prev."),
-                           TbBitmap(*this, wxT("previous"), wxART_GO_BACK),
+                           TbBitmap(*this, ID_TOOL_PREVIOUS),
                            wxT("Go to previous trace (left cursor)"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_NEXT,
                            wxT("Next"),
-                           TbBitmap(*this, wxT("next"), wxART_GO_FORWARD),
+                           TbBitmap(*this, ID_TOOL_NEXT),
                            wxT("Go to next trace (right cursor)"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_LAST,
                            wxT("Last"),
-                           TbBitmap(*this, wxT("last"), wxART_GOTO_LAST),
+                           TbBitmap(*this, ID_TOOL_LAST),
                            wxT("Go to last trace"),
                            wxITEM_NORMAL );
     scaleToolBar->AddSeparator();
     scaleToolBar->AddTool( ID_TOOL_LEFT,
                            wxT("Left"),
-                           TbBitmap(*this, wxT("left"), wxART_GO_BACK),
+                           TbBitmap(*this, ID_TOOL_LEFT),
                            wxT("Move traces left (CTRL+left cursor)"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_RIGHT,
                            wxT("Right"),
-                           TbBitmap(*this, wxT("right"), wxART_GO_FORWARD),
+                           TbBitmap(*this, ID_TOOL_RIGHT),
                            wxT("Move traces right (CTRL+right cursor)"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_FIT,
                            wxT("Fit"),
-                           TbBitmap(*this, wxT("fit"), wxART_GO_HOME),
+                           TbBitmap(*this, ID_TOOL_FIT),
                            wxT("Fit traces to window (\"F\")"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_UP,
                            wxT("Up"),
-                           TbBitmap(*this, wxT("up"), wxART_GO_UP),
+                           TbBitmap(*this, ID_TOOL_UP),
                            wxT("Move traces up (up cursor)"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_DOWN,
                            wxT("Down"),
-                           TbBitmap(*this, wxT("down"), wxART_GO_DOWN),
+                           TbBitmap(*this, ID_TOOL_DOWN),
                            wxT("Move traces down (down cursor)"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_XENL,
                            wxT("Zoom X"),
-                           TbBitmap(*this, wxT("zoom_in_x"), wxART_GO_UP),
+                           TbBitmap(*this, ID_TOOL_XENL),
                            wxT("Enlarge x-scale (CTRL + \"+\")"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_XSHRINK,
                            wxT("Shrink X"),
-                           TbBitmap(*this, wxT("zoom_out_x"), wxART_GO_DOWN),
+                           TbBitmap(*this, ID_TOOL_XSHRINK),
                            wxT("Shrink x-scale (CTRL + \"-\")"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_YENL,
                            wxT("Zoom Y"),
-                           TbBitmap(*this, wxT("zoom_in_y"), wxART_GO_UP),
+                           TbBitmap(*this, ID_TOOL_YENL),
                            wxT("Enlarge y-scale (\"+\")"),
                            wxITEM_NORMAL );
     scaleToolBar->AddTool( ID_TOOL_YSHRINK,
                            wxT("Shrink Y"),
-                           TbBitmap(*this, wxT("zoom_out_y"), wxART_GO_DOWN),
+                           TbBitmap(*this, ID_TOOL_YSHRINK),
                            wxT("Shrink y-scale (\"-\")"),
                            wxITEM_NORMAL );
     scaleToolBar->AddSeparator();
     scaleToolBar->AddTool( ID_TOOL_CH1,
                            wxT("Ch 1"),
-                           TbBitmap(*this, wxT("ch1"), wxART_INFORMATION),
+                           TbBitmap(*this, ID_TOOL_CH1),
                            wxT("Scaling applies to active (black) channel (\"1\")"),
                            wxITEM_CHECK );
     scaleToolBar->AddTool( ID_TOOL_CH2,
                            wxT("Ch 2"),
-                           TbBitmap(*this, wxT("ch2"), wxART_HELP),
+                           TbBitmap(*this, ID_TOOL_CH2),
                            wxT("Scaling applies to reference (red) channel (\"2\")"),
                            wxITEM_CHECK );
     return scaleToolBar;
@@ -740,22 +724,22 @@ wxStfToolBar* wxStfParentFrame::CreateEditTb() {
     tb4->SetToolBitmapSize(GetToolbarBitmapSize(*this));
     tb4->AddTool( ID_AVERAGE,
                   wxT("Mean"),
-                  TbBitmap(*this, wxT("mean"), wxART_LIST_VIEW),
+                  TbBitmap(*this, ID_AVERAGE),
                   wxT("Average of selected traces"),
                   wxITEM_NORMAL );
     tb4->AddTool( ID_ALIGNEDAVERAGE,
                   wxT("Aligned"),
-                  TbBitmap(*this, wxT("aligned"), wxART_TICK_MARK),
+                  TbBitmap(*this, ID_ALIGNEDAVERAGE),
                   wxT("Aligned average of selected traces"),
                   wxITEM_NORMAL );
     tb4->AddTool( ID_TOOL_FITDECAY,
                   wxT("Fit"),
-                  TbBitmap(*this, wxT("fitdecay"), wxART_FIND),
+                  TbBitmap(*this, ID_TOOL_FITDECAY),
                   wxT("Fit function to data"),
                   wxITEM_NORMAL );
     tb4->AddTool( ID_VIEWTABLE,
                   wxT("Table"),
-                  TbBitmap(*this, wxT("table"), wxART_REPORT_VIEW),
+                  TbBitmap(*this, ID_VIEWTABLE),
                   wxT("View current trace as a table"),
                   wxITEM_NORMAL );
     return tb4;
@@ -767,7 +751,7 @@ wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
     cursorToolBar->SetToolBitmapSize(GetToolbarBitmapSize(*this));
     cursorToolBar->AddTool( ID_TOOL_SELECT,
                             wxT("Select"),
-                            TbBitmap(*this, wxT("select"), wxART_TICK_MARK),
+                            TbBitmap(*this, ID_TOOL_SELECT),
                             wxT("Select or unselect this trace (\"S\" / \"R\")"),
                             wxITEM_CHECK );
     // cursorToolBar->AddTool( ID_TOOL_REMOVE,
@@ -778,62 +762,62 @@ wxStfToolBar* wxStfParentFrame::CreateCursorTb() {
     cursorToolBar->AddSeparator();
     cursorToolBar->AddTool( ID_MPL,
                             wxT("Snapshot"),
-                            TbBitmap(*this, wxT("snapshot"), wxART_FILE_SAVE),
+                            TbBitmap(*this, ID_MPL),
                             wxT("Create snapshot with matplotlib"),
                             wxITEM_NORMAL );
 
     cursorToolBar->AddTool( ID_TOOL_SNAPSHOT_WMF,
                             wxT("WMF Snapshot"),
-                            TbBitmap(*this, wxT("wmf_snapshot"), wxART_COPY),
+                            TbBitmap(*this, ID_TOOL_SNAPSHOT_WMF),
                             wxT("Copy vectorized image to clipboard"),
                             wxITEM_NORMAL );
 
     cursorToolBar->AddSeparator();
     cursorToolBar->AddTool( ID_TOOL_MEASURE,
                             _T("Measure"),
-                            TbBitmap(*this, wxT("measure"), wxART_CROSS_MARK),
+                            TbBitmap(*this, ID_TOOL_MEASURE),
                             wxT("Mouse selects measurement (crosshair) cursor (\"M\")"),
                             wxITEM_CHECK );
     cursorToolBar->AddTool( ID_TOOL_PEAK,
                             _T("Peak"),
-                            TbBitmap(*this, wxT("peak"), wxART_GO_UP),
+                            TbBitmap(*this, ID_TOOL_PEAK),
                             wxT("Mouse selects peak cursors (\"P\")"),
                             wxITEM_CHECK );
     cursorToolBar->AddTool( ID_TOOL_BASE,
                             _T("Base"),
-                            TbBitmap(*this, wxT("base"), wxART_GO_DOWN),
+                            TbBitmap(*this, ID_TOOL_BASE),
                             wxT("Mouse selects base cursors (\"B\")"),
                             wxITEM_CHECK );
     cursorToolBar->AddTool( ID_TOOL_DECAY,
                             _T("Fit"),
-                            TbBitmap(*this, wxT("decay"), wxART_FIND),
+                            TbBitmap(*this, ID_TOOL_DECAY),
                             wxT("Mouse selects fit cursors (\"D\")"),
                             wxITEM_CHECK );
     cursorToolBar->AddTool( ID_TOOL_LATENCY,
                             _T("Latency"),
-                            TbBitmap(*this, wxT("latency"), wxART_QUESTION),
+                            TbBitmap(*this, ID_TOOL_LATENCY),
                             wxT("Mouse selects latency cursors (\"L\")"),
                             wxITEM_CHECK );
 #ifdef WITH_PSLOPE
     cursorToolBar->AddTool( ID_TOOL_PSLOPE,
                             _T("Slope"),
-                            TbBitmap(*this, wxT("pslope"), wxART_GO_FORWARD),
+                            TbBitmap(*this, ID_TOOL_PSLOPE),
                             wxT("Mouse selects slope cursors (\"O\")"),
                             wxITEM_CHECK );
 #endif
     cursorToolBar->AddTool( ID_TOOL_ZOOM,
                             _T("Zoom"),
-                            TbBitmap(*this, wxT("zoom"), wxART_FIND),
+                            TbBitmap(*this, ID_TOOL_ZOOM),
                             wxT("Draw a zoom window with left mouse button (\"Z\")"),
                             wxITEM_CHECK );
         cursorToolBar->AddTool( ID_TOOL_EVENT,
                                 _T("Events"),
-                                TbBitmap(*this, wxT("event"), wxART_WARNING),
+                                TbBitmap(*this, ID_TOOL_EVENT),
                                 wxT( "Add, erase or extract events manually with right mouse button (\"E\")" ),
                                 wxITEM_CHECK );
         cursorToolBar->AddTool( ID_TOOL_ANNOTATION,
                                 _T("Annotations"),
-                                TbBitmap(*this, wxT("annotation"), wxART_INFORMATION),
+                                TbBitmap(*this, ID_TOOL_ANNOTATION),
                                 wxT( "Add, remove, erase or export/import annotations manually with right mouse button (\"N\")" ),
                                 wxITEM_CHECK );
     return cursorToolBar;

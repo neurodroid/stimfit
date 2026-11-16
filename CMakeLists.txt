@@ -152,15 +152,16 @@ if(NOT STF_BUILD_MODULE)
       MACOSX_PACKAGE_LOCATION "Resources"
     )
 
-    file(GLOB_RECURSE _stf_macos_toolbar_pngs CONFIGURE_DEPENDS
+    file(GLOB_RECURSE _stf_macos_toolbar_assets CONFIGURE_DEPENDS
       "${CMAKE_SOURCE_DIR}/src/stimfit/res/toolbar/*.png"
+      "${CMAKE_SOURCE_DIR}/src/stimfit/res/toolbar/*.svg"
     )
-    if(_stf_macos_toolbar_pngs)
-      target_sources(stimfit PRIVATE ${_stf_macos_toolbar_pngs})
-      foreach(_stf_toolbar_png IN LISTS _stf_macos_toolbar_pngs)
+    if(_stf_macos_toolbar_assets)
+      target_sources(stimfit PRIVATE ${_stf_macos_toolbar_assets})
+      foreach(_stf_toolbar_asset IN LISTS _stf_macos_toolbar_assets)
         file(RELATIVE_PATH _stf_toolbar_rel_dir
           "${CMAKE_SOURCE_DIR}/src/stimfit/res/toolbar"
-          "${_stf_toolbar_png}"
+          "${_stf_toolbar_asset}"
         )
         get_filename_component(_stf_toolbar_rel_dir "${_stf_toolbar_rel_dir}" DIRECTORY)
 
@@ -169,15 +170,15 @@ if(NOT STF_BUILD_MODULE)
           string(APPEND _stf_toolbar_package_location "/${_stf_toolbar_rel_dir}")
         endif()
 
-        set_source_files_properties("${_stf_toolbar_png}" PROPERTIES
+        set_source_files_properties("${_stf_toolbar_asset}" PROPERTIES
           MACOSX_PACKAGE_LOCATION "${_stf_toolbar_package_location}"
         )
       endforeach()
-      unset(_stf_toolbar_png)
+      unset(_stf_toolbar_asset)
       unset(_stf_toolbar_rel_dir)
       unset(_stf_toolbar_package_location)
     endif()
-    unset(_stf_macos_toolbar_pngs)
+    unset(_stf_macos_toolbar_assets)
   endif()
   target_link_libraries(
     stimfit
@@ -228,14 +229,16 @@ if(NOT STF_BUILD_MODULE)
       unset(_stf_icon_src)
     endforeach()
     unset(_stf_icon_size)
+  endif()
 
-    if(EXISTS "${CMAKE_SOURCE_DIR}/src/stimfit/res/toolbar")
-      install(
-        DIRECTORY "${CMAKE_SOURCE_DIR}/src/stimfit/res/toolbar/"
-        DESTINATION "${CMAKE_INSTALL_DATADIR}/stimfit/toolbar"
-        COMPONENT ${STF_COMPONENT_CORE}
-      )
-    endif()
+  # App bundles carry their resources above. All other installs, including
+  # Windows and non-bundle macOS builds, need both themes next to the runtime.
+  if(NOT (APPLE AND STF_MACOS_APP_BUNDLE))
+    install(
+      DIRECTORY "${CMAKE_SOURCE_DIR}/src/stimfit/res/toolbar/"
+      DESTINATION "${CMAKE_INSTALL_DATADIR}/stimfit/toolbar"
+      COMPONENT ${STF_COMPONENT_CORE}
+    )
   endif()
 
   if(WIN32 AND DEFINED wxWidgets_LIB_DIR AND EXISTS "${wxWidgets_LIB_DIR}")
@@ -591,6 +594,22 @@ if(NOT STF_BUILD_MODULE)
   endif()
 
   if(STF_BUILD_TESTS)
+    foreach(_stf_toolbar_test IN ITEMS stimfit_toolbar_icons_test stimfit_toolbar_png_test)
+      add_executable(${_stf_toolbar_test}
+        src/test/toolbaricons.cpp
+        src/stimfit/gui/toolbaricons.cpp)
+      target_include_directories(${_stf_toolbar_test} PRIVATE src/stimfit/gui)
+      target_link_libraries(${_stf_toolbar_test} PRIVATE stimfit_config stimfit::wx)
+      stf_apply_macos_runtime_policy(${_stf_toolbar_test})
+      add_test(NAME ${_stf_toolbar_test}
+        COMMAND ${_stf_toolbar_test}
+          "${CMAKE_CURRENT_SOURCE_DIR}/src/stimfit/res/toolbar"
+          "${CMAKE_CURRENT_BINARY_DIR}/toolbar-test")
+      set_tests_properties(${_stf_toolbar_test} PROPERTIES SKIP_RETURN_CODE 77)
+    endforeach()
+    target_compile_definitions(stimfit_toolbar_png_test PRIVATE STF_TOOLBAR_DISABLE_SVG)
+    unset(_stf_toolbar_test)
+
     if(STF_WITH_BIOSIG AND NOT STF_BIOSIG_SELECTED_PROVIDER STREQUAL "SYSTEM")
       add_test(NAME stimfit_biosig_release_test
         COMMAND ${CMAKE_COMMAND}

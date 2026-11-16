@@ -75,6 +75,16 @@
 
 namespace {
 
+wxMenu* CreateToolbarIconThemeMenu(bool useLegacy) {
+    wxMenu* menu = new wxMenu;
+    menu->AppendRadioItem(ID_TOOLBAR_ICONS_MODERN, wxT("&Modern"),
+                          wxT("Use the modern toolbar icons"));
+    menu->AppendRadioItem(ID_TOOLBAR_ICONS_LEGACY, wxT("&Legacy"),
+                          wxT("Use the legacy toolbar icons"));
+    menu->Check(useLegacy ? ID_TOOLBAR_ICONS_LEGACY : ID_TOOLBAR_ICONS_MODERN, true);
+    return menu;
+}
+
 void InstallCloseDocumentAccelerator(wxWindow* window) {
     if (window == NULL)
         return;
@@ -152,7 +162,7 @@ EVT_MENU_RANGE(ID_USERDEF, ID_USERDEF+32, wxStfApp::OnUserdef)
 #endif 
 END_EVENT_TABLE()
 
-wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isDarkTraceDisplay(true), m_exitAfterHelp(false), txtImport(), funcLib(),
+wxStfApp::wxStfApp(void) : directTxtImport(false), isBars(true), isDarkTraceDisplay(true), m_legacyToolbarIcons(false), m_exitAfterHelp(false), txtImport(), funcLib(),
 #ifdef WITH_PYTHON
 extensionLib(),
 #endif 
@@ -227,7 +237,7 @@ bool wxStfApp::OnInit(void)
         return true;
     }
 
-    // Toolbar icons are loaded from external PNG files at runtime.
+    // Toolbar icons use SVG masters with external PNG fallbacks.
     // Ensure bitmap handlers are registered on all platforms.
     ::wxInitAllImageHandlers();
 
@@ -243,6 +253,8 @@ bool wxStfApp::OnInit(void)
     // Config:
     config.reset(new wxFileConfig(wxT("Stimfit")));
     set_isDarkTraceDisplay(wxGetProfileInt(wxT("Settings"), wxT("ViewDarkTraceDisplay"), 1) == 1);
+    m_legacyToolbarIcons = wxGetProfileString(
+        wxT("Settings"), wxT("ToolbarIconTheme"), wxT("modern")) == wxT("legacy");
 
     //// Create a document manager
     wxDocManager* docManager = new wxStfDocManager;
@@ -366,6 +378,8 @@ bool wxStfApp::OnInit(void)
     help_menu->Append(wxID_ABOUT);
 
     wxMenu *m_view_menu = new wxMenu;
+    m_view_menu->AppendSubMenu(CreateToolbarIconThemeMenu(UseLegacyToolbarIcons()),
+                               wxT("Toolbar &icons"));
 #ifdef WITH_PYTHON
     m_file_menu->AppendSeparator();
     m_view_menu->Append(ID_VIEW_SHELL, wxT("&Toggle Python shell"),
@@ -491,6 +505,12 @@ wxString wxStfApp::wxGetProfileString( const wxString& main, const wxString& sub
     return config->Read(path,default_);
 }
 
+
+void wxStfApp::SetLegacyToolbarIcons(bool useLegacy) {
+    m_legacyToolbarIcons = useLegacy;
+    wxWriteProfileString(wxT("Settings"), wxT("ToolbarIconTheme"),
+                         useLegacy ? wxT("legacy") : wxT("modern"));
+}
 
 void wxStfApp::OnPeakcalcexecMsg(wxStfDoc* actDoc) {
     if (actDoc==0) {
@@ -836,6 +856,8 @@ wxMenuBar *wxStfApp::CreateUnifiedMenuBar(wxStfDoc* doc) {
                                  wxT("If checked, traces are shown on a dark background")
                                  );
     m_view_menu->Check(ID_VIEW_DARK_TRACE, get_isDarkTraceDisplay());
+    m_view_menu->AppendSubMenu(CreateToolbarIconThemeMenu(UseLegacyToolbarIcons()),
+                               wxT("Toolbar &icons"));
     m_view_menu->AppendSeparator();
     m_view_menu->Append(ID_SAVEPERSPECTIVE,wxT("&Save window positions"));
     m_view_menu->Append(ID_LOADPERSPECTIVE,wxT("&Load window positions"));

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Faithful vector redraw of the corresponding Stimfit 0.16.x XPM icon. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <title>Legacy Fit</title>
+  <defs>
+    <linearGradient id="green" x1="0%" y1="0%" x2="60%" y2="100%">
+      <stop offset="0%" stop-color="#84d272"/>
+      <stop offset="45%" stop-color="#69bb5b"/>
+      <stop offset="100%" stop-color="#2f6b2d"/>
+    </linearGradient></defs>
+  <g transform="translate(2 2)"><g transform="rotate(0 8 8)">
+    <path d="M0.5 0.5 H5 V2 H3.3 L6.2 4.9 L4.9 6.2 L2 3.3 V5 H0.5 Z" fill="url(#green)"/>
+    <path d="M1.4 1.4 H4.3 V1.8 H2.1 L5.5 5.1 L5.1 5.5 L1.8 2.2 V4.3 H1.4 Z" fill="#b3e79f" opacity="0.45"/></g><g transform="rotate(90 8 8)">
+    <path d="M0.5 0.5 H5 V2 H3.3 L6.2 4.9 L4.9 6.2 L2 3.3 V5 H0.5 Z" fill="url(#green)"/>
+    <path d="M1.4 1.4 H4.3 V1.8 H2.1 L5.5 5.1 L5.1 5.5 L1.8 2.2 V4.3 H1.4 Z" fill="#b3e79f" opacity="0.45"/></g><g transform="rotate(180 8 8)">
+    <path d="M0.5 0.5 H5 V2 H3.3 L6.2 4.9 L4.9 6.2 L2 3.3 V5 H0.5 Z" fill="url(#green)"/>
+    <path d="M1.4 1.4 H4.3 V1.8 H2.1 L5.5 5.1 L5.1 5.5 L1.8 2.2 V4.3 H1.4 Z" fill="#b3e79f" opacity="0.45"/></g><g transform="rotate(270 8 8)">
+    <path d="M0.5 0.5 H5 V2 H3.3 L6.2 4.9 L4.9 6.2 L2 3.3 V5 H0.5 Z" fill="url(#green)"/>
+    <path d="M1.4 1.4 H4.3 V1.8 H2.1 L5.5 5.1 L5.1 5.5 L1.8 2.2 V4.3 H1.4 Z" fill="#b3e79f" opacity="0.45"/></g></g>
+</svg>

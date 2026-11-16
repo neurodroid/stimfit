@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <!-- Faithful vector reconstruction of the Stimfit 0.16.x toolbar artwork. -->
+  <g transform="translate(2 2)">
+    <path d="M.5 14H4.2V4.1C4.2 2.4 5.4 2.2 6.5 3.4L14.8 13.7" fill="none" stroke="#2a80d3" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M.5 14.4H4.6V4.1C4.6 3.1 5.2 3 6 3.9L14.8 14.2" fill="none" stroke="#5897d5" stroke-width=".6"/>
+  </g>
+</svg>

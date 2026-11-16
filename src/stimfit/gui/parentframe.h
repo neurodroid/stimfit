@@ -80,6 +80,9 @@ public:
     //! Destructor
     ~wxStfParentFrame();
 
+    //! Applies the selected icon theme without recreating the toolbars.
+    void UpdateToolbarIcons();
+
     //! Shows the "About" dialog.
     /*! \param event The menu event that made the call.
      */
@@ -236,6 +239,8 @@ private:
 
     void OnScale(wxCommandEvent& event);
     void OnDarkTraceDisplay(wxCommandEvent& event);
+    void OnToolbarIconTheme(wxCommandEvent& event);
+    void OnUpdateToolbarIconTheme(wxUpdateUIEvent& event);
     void OnMpl(wxCommandEvent& event);
     void OnMplSpectrum(wxCommandEvent& event);
     void OnPageSetup(wxCommandEvent& event);

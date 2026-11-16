@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <!-- Faithful vector reconstruction of the Stimfit 0.16.x toolbar artwork. -->
+  <defs><radialGradient id="green" cx="35%" cy="25%" r="90%"><stop offset="0" stop-color="#a8de8f"/><stop offset=".6" stop-color="#75be55"/><stop offset="1" stop-color="#3b9723"/></radialGradient></defs>
+  <g transform="translate(2 2)">
+    <circle cx="8" cy="8" r="6.7" fill="url(#green)" stroke="#42922a" stroke-width=".7"/>
+    <path d="M4.6 8L7 10.6 11.7 5.5" fill="none" stroke="#e8f8df" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="round"/>
+  </g>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <!-- Faithful vector reconstruction of the Stimfit 0.16.x toolbar artwork. -->
+  <defs><linearGradient id="arrow" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0" stop-color="#fafafa"/><stop offset="1" stop-color="#bfbfbf"/></linearGradient></defs>
+  <g transform="translate(2 2)">
+    <path d="M4 .9L12.8 9H9.4L9.3 10.9 11.3 14.3 8.7 15.4 6.9 11.8 4 13Z" fill="url(#arrow)" stroke="#9b9b9b" stroke-width=".8" stroke-linejoin="miter"/>
+    <path d="M4.8 2.4V10.8L6.9 9.6" fill="none" stroke="#f5f5f5" stroke-width=".65"/>
+  </g>
+</svg>

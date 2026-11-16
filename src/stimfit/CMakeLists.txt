@@ -9,6 +9,7 @@ add_library(
   gui/graph.cpp
   gui/printout.cpp
   gui/parentframe.cpp
+  gui/toolbaricons.cpp
   gui/childframe.cpp
   gui/view.cpp
   gui/table.cpp
@@ -29,6 +30,7 @@ endif()
 
 target_compile_definitions(stimfit_core PRIVATE NOPCH)
 target_compile_definitions(stimfit_core PRIVATE STF_TOOLBAR_SOURCE_DIR="${CMAKE_SOURCE_DIR}/src/stimfit/res/toolbar")
+target_compile_definitions(stimfit_core PRIVATE STF_TOOLBAR_INSTALL_DIR="${CMAKE_INSTALL_FULL_DATADIR}/stimfit/toolbar")
 
 target_link_libraries(
   stimfit_core

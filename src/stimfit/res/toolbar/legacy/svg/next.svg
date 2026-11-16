@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Faithful vector redraw of the corresponding Stimfit 0.16.x XPM icon. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <title>Legacy Next</title>
+  <defs>
+    <linearGradient id="blue" x1="0%" y1="0%" x2="70%" y2="100%">
+      <stop offset="0%" stop-color="#91b8ef"/>
+      <stop offset="47%" stop-color="#5899df"/>
+      <stop offset="78%" stop-color="#2769c4"/>
+      <stop offset="100%" stop-color="#143ab4"/>
+    </linearGradient></defs>
+  <g transform="translate(2 2)">
+    <path d="M3 2 L12.5 8 L3 14 Z" fill="url(#blue)"/>
+    <path d="M4 3.7 L10.6 8 L4 12.4 Z" fill="#9dc3ef" opacity="0.32"/>
+    <path d="M3 14 L12.5 8 L11 8 L3 12.6 Z" fill="#174bbd" opacity="0.65"/></g>
+</svg>

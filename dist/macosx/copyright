@@ -36,7 +36,11 @@ Files: src/test/gtest/*
 Copyright: 2008, Google Inc <wan@google.com>
 License: BSD-new
 
-Files: src/stimfit/res/toolbar/*
+Files: src/stimfit/res/toolbar/svg/*
+       src/stimfit/res/toolbar/20/*
+       src/stimfit/res/toolbar/40/*
+       src/stimfit/res/toolbar/60/*
+       src/stimfit/res/toolbar/TABLER_LICENSE.txt
 Copyright: 2020-2026, Paweł Kuna
 License: Expat
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Faithful vector redraw of the corresponding Stimfit 0.16.x XPM icon. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <title>Legacy Right</title>
+  <defs>
+    <linearGradient id="green" x1="0%" y1="0%" x2="60%" y2="100%">
+      <stop offset="0%" stop-color="#84d272"/>
+      <stop offset="45%" stop-color="#69bb5b"/>
+      <stop offset="100%" stop-color="#2f6b2d"/>
+    </linearGradient></defs>
+  <g transform="translate(2 2)"><g transform="translate(16 0) scale(-1 1)">
+    <path d="M0.8 8 L4.8 4 V6 H14.5 V10 H4.8 V12 Z" fill="url(#green)"/>
+    <path d="M1.8 8 L4.2 5.7 V6.9 H13.6 V8.4 H4.2 V10.4 Z" fill="#a5e291" opacity="0.45"/></g></g>
+</svg>
