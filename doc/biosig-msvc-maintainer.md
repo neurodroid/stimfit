@@ -4,11 +4,13 @@ This repository keeps MSVC compatibility for biosig as a downstream patch queue.
 Upstream biosig does not accept MSVC support, so patches are applied only to a
 throwaway working copy outside the submodule tree.
 
-Submodule builds are pinned to the upstream release **4.0.0**, tag `v4.0.0`,
+Submodule builds are pinned to tested upstream master revision **fb331df5**
+(`fb331df54d0a425e7f7fa67263537ff0852d263d`, BioSig 4.0.1),
 through `cmake/StimfitBiosigVersion.cmake` and the recorded `src/biosig` commit.
-The release version is independent of the library API/ABI version. Validation
-supersedes obsolete `STF_BIOSIG_EXPECTED_TAG` cache entries automatically.
-The Windows vcpkg manifest includes libiconv for channel-label decoding.
+The expected release metadata is 4.0.1 and is independent of the library
+API/ABI version. Validation requires the exact Git commit and supersedes obsolete
+revision/tag cache entries automatically. The Windows vcpkg manifest includes
+libiconv for channel-label decoding.
 
 The MSVC build requires **Visual Studio 2022 17.9 or newer** (`cl.exe`
 19.39.33428 or newer). The patch enables `/std:clatest` for C sources so that
@@ -66,12 +68,12 @@ The helper script prints and writes the resolved paths to:
 When updating the pinned biosig version, refresh patches from your local biosig
 branch that contains MSVC fixes.
 
-1. Checkout/update `src/biosig` to the pinned release tag (currently `v4.0.0`).
-2. Rebase/update your biosig patch branch against that same tag/commit.
+1. Checkout/update `src/biosig` to the pinned revision (currently `fb331df54d0a425e7f7fa67263537ff0852d263d`).
+2. Rebase/update your biosig patch branch against that commit.
 3. Export patch queue into this repository:
 
 ```powershell
-git -C src/biosig format-patch v4.0.0..feature/msvc2022-libbiosig -o cmake/patches/biosig-msvc
+git -C src/biosig format-patch fb331df54d0a425e7f7fa67263537ff0852d263d..feature/msvc2022-libbiosig -o cmake/patches/biosig-msvc
 ```
 
 4. Re-run helper script to verify patches still apply and build:

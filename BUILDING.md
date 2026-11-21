@@ -13,17 +13,15 @@ Use the platform helper script that matches your environment:
 All platform helpers include the embedded Python shell by default. On Windows, use
 `-WithoutPython` to opt out; on Linux and macOS, use `--without-python`.
 
-Windows and macOS use the Biosig submodule pinned to upstream release **4.0.0**
-(`v4.0.0`). Linux prefers system Biosig, without imposing the submodule release
-version on installed libraries. Explicit Linux submodule builds use the same pin:
+Windows and macOS use the Biosig submodule pinned to tested upstream commit
+`fb331df54d0a425e7f7fa67263537ff0852d263d` (BioSig 4.0.1).
+Linux prefers system Biosig, without imposing the submodule version on installed
+libraries. Explicit Linux submodule builds use the same pin:
 `./build_linux_cmake.sh --biosig-provider SUBMODULE`.
 
-The shared pin is maintained in `cmake/StimfitBiosigVersion.cmake` and the
-`src/biosig` submodule. Use upstream release tags when updating it; the library
-API/ABI version and the old upstream CMake version fields are separate values.
-Submodule builds apply a shared compatibility fix for the 4.0.0 ABF2 string cache,
-which can otherwise index past the string table when directory and SSCH counts differ. Generated/staged
-sources receive this fix; the upstream release checkout stays pristine.
+The shared revision and expected release metadata are maintained in
+`cmake/StimfitBiosigVersion.cmake` and the `src/biosig` submodule. The upstream
+release metadata is 4.0.1. The library API/ABI version is a separate value.
 
 These scripts are thin wrappers around CMake presets and cache options. They standardize the repository's preferred configure, build, install, and packaging steps so local builds follow the same structure as current CI and migration work.
 
@@ -222,9 +220,10 @@ What the script does:
 
 This script mirrors the repository's active Windows CI-oriented workflow more closely than invoking raw commands manually.
 
-The submodule providers validate the Biosig release on all platforms and check
-the upstream release tag when available. Old `STF_BIOSIG_EXPECTED_TAG` CMake cache
-entries are superseded by the shared release pin. Initialize the submodule with
+The submodule providers validate Biosig release metadata on all platforms and
+require the exact pinned commit in Git checkouts, including shallow checkouts
+without tags. Old `STF_BIOSIG_EXPECTED_TAG` and `STF_BIOSIG_REVISION` CMake cache
+entries are superseded by the shared pin. Initialize the submodule with
 `git submodule update --init --recursive` before configuring.
 
 ### Default Windows wxPython setup

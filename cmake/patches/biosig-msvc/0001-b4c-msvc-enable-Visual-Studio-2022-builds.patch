@@ -1,47 +1,37 @@
-From 273715fe366305009231d4018adc44b1f6f5c14e Mon Sep 17 00:00:00 2001
+From e92f3c050ffbcb14a4b44b90e38914b7b80fccd3 Mon Sep 17 00:00:00 2001
 From: Christoph Schmidt-Hieber <christoph.schmidthieber@googlemail.com>
 Date: Mon, 12 Oct 2026 14:49:35 +0200
 Subject: [PATCH] [b4c][msvc] enable Visual Studio 2022 builds
 
-Refresh the downstream MSVC compatibility patch for BioSig 4.0.0, including Medilog, UTF-8 validation, and libiconv channel-label decoding.
-
-Require Visual Studio 2022 17.9 or newer and enable C23 typeof for C
-sources, preserving upstream declarations and allocation casts. Use
-decltype for the corresponding C++ casts.
+Rebase the downstream MSVC fixes onto upstream master fb331df5.
+Keep the Windows runtime adaptations, reader coverage and structure packing.
+Enable C23 typeof in C sources and use decltype for the C++ casts.
 ---
- biosig4c++/CMakeLists.txt            | 143 +++++++++++++++++++++++++++--------
- biosig4c++/XMLParser/tinyxml.cpp     |   4 +
- biosig4c++/biosig-dev.h              |  18 +++++
- biosig4c++/biosig.c                  |  65 +++++++++++++++-
- biosig4c++/biosig2.c                 |   6 +-
- biosig4c++/igor/IgorBin.h            |   8 ++
- biosig4c++/physicalunits.c           |   6 ++
- biosig4c++/t210/scp-decode.cpp       |  12 +++
- biosig4c++/t210/sopen_acqbiopac.c    |   4 +
- biosig4c++/t210/sopen_alpha_read.c   |   2 +-
- biosig4c++/t210/sopen_axg_read.c     |  14 +++-
- biosig4c++/t210/sopen_heka_read.c    |   6 ++
- biosig4c++/t210/sopen_igor.c         |  19 +++--
- biosig4c++/t210/sopen_medilog.c      |   3 +-
- biosig4c++/t210/sopen_msvc_stubs.c   |  46 +++++++++++
- biosig4c++/t210/sopen_nicolet.c      |   4 +
- biosig4c++/t210/sopen_rhd2000_read.c |   4 +
- biosig4c++/t210/sopen_scp_read.c     |  16 +++-
- biosig4c++/t220/sopen_scp_write.c    |   3 +
- biosig4c++/t230/sopen_hl7aecg.cpp    |   9 ++-
- biosig4c++/win32/getdelim.c          |   5 ++
- biosig4c++/win32/getlogin.c          |   4 +-
- 22 files changed, 347 insertions(+), 54 deletions(-)
+ biosig4c++/CMakeLists.txt          | 59 ++++++++++++++++++++++-----
+ biosig4c++/biosig-dev.h            | 18 +++++++++
+ biosig4c++/biosig.c                | 65 ++++++++++++++++++++++++++++--
+ biosig4c++/biosig2.c               |  6 +--
+ biosig4c++/igor/IgorBin.h          |  8 ++++
+ biosig4c++/physicalunits.c         |  6 +++
+ biosig4c++/t210/sopen_alpha_read.c |  2 +-
+ biosig4c++/t210/sopen_axg_read.c   |  2 +-
+ biosig4c++/t210/sopen_heka_read.c  |  6 +++
+ biosig4c++/t210/sopen_igor.c       | 19 ++++++---
+ biosig4c++/t210/sopen_medilog.c    |  3 +-
+ biosig4c++/t210/sopen_msvc_stubs.c | 46 +++++++++++++++++++++
+ biosig4c++/t210/sopen_scp_read.c   |  5 ++-
+ biosig4c++/t220/sopen_scp_write.c  |  3 ++
+ biosig4c++/t230/sopen_hl7aecg.cpp  |  9 ++++-
+ biosig4c++/win32/getdelim.c        |  5 +++
+ biosig4c++/win32/getlogin.c        |  4 +-
+ 17 files changed, 236 insertions(+), 30 deletions(-)
+ create mode 100644 biosig4c++/t210/sopen_msvc_stubs.c
 
 diff --git a/biosig4c++/CMakeLists.txt b/biosig4c++/CMakeLists.txt
-index 2dcba9f7..3cd6d799 100644
+index 57dc45a4..2a0e73ab 100644
 --- a/biosig4c++/CMakeLists.txt
 +++ b/biosig4c++/CMakeLists.txt
-@@ -1,34 +1,87 @@
--cmake_minimum_required (VERSION 2.6)
-+cmake_minimum_required (VERSION 3.21)
- project (libbiosig)
-
+@@ -4,12 +4,26 @@ project (libbiosig)
  option (USE_ZLIB "Add support for compressed files." OFF)
  option (USE_SUITESPARSE "Add support for automatic re-referencing." OFF)
 
@@ -58,115 +48,57 @@ index 2dcba9f7..3cd6d799 100644
 +
 +find_program (GAWK
 +  NAMES gawk awk
-+  PATHS
-+    "C:/Program Files/Git/usr/bin"
-+    "C:/msys64/usr/bin"
-+    "C:/msys32/usr/bin"
++  PATHS "C:/Program Files/Git/usr/bin" "C:/msys64/usr/bin" "C:/msys32/usr/bin"
 +  REQUIRED
 +)
-+
-+set (_eventcodes_i ${CMAKE_CURRENT_BINARY_DIR}/eventcodes.i)
-+set (_eventcodegroups_i ${CMAKE_CURRENT_BINARY_DIR}/eventcodegroups.i)
-+set (_units_i ${CMAKE_CURRENT_BINARY_DIR}/units.i)
-+set (_annexb_i ${CMAKE_CURRENT_BINARY_DIR}/11073-10102-AnnexB.i)
-+
-+set (_extern_dir ${CMAKE_CURRENT_SOURCE_DIR}/extern)
-+if (NOT IS_DIRECTORY ${_extern_dir})
-+  file (READ ${_extern_dir} _extern_relpath)
-+  string (STRIP ${_extern_relpath} _extern_relpath)
-+  set (_extern_dir ${CMAKE_CURRENT_SOURCE_DIR}/${_extern_relpath})
+
+-find_program (GAWK NAMES gawk REQUIRED)
++# Git checkouts on Windows may represent this symlink as a text file.
++set (_extern_dir "${CMAKE_CURRENT_SOURCE_DIR}/extern")
++if (NOT IS_DIRECTORY "${_extern_dir}")
++  file (READ "${_extern_dir}" _extern_relpath)
++  string (STRIP "${_extern_relpath}" _extern_relpath)
++  set (_extern_dir "${CMAKE_CURRENT_SOURCE_DIR}/${_extern_relpath}")
 +endif ()
 
--find_program (GAWK NAMES gawk)
-+set (_awk_to_file_script ${CMAKE_CURRENT_BINARY_DIR}/run_awk_to_file.cmake)
-+file (WRITE ${_awk_to_file_script}
-+"if (NOT DEFINED GAWK OR NOT DEFINED AWK_SCRIPT OR NOT DEFINED AWK_INPUT OR NOT DEFINED AWK_OUTPUT)\n"
-+"  message (FATAL_ERROR \"Missing awk command arguments\")\n"
-+"endif ()\n"
-+"execute_process (\n"
-+"  COMMAND \"\${GAWK}\" -f \"\${AWK_SCRIPT}\" \"\${AWK_INPUT}\"\n"
-+"  OUTPUT_FILE \"\${AWK_OUTPUT}\"\n"
-+"  RESULT_VARIABLE _awk_result\n"
-+")\n"
-+"if (NOT \${_awk_result} EQUAL 0)\n"
-+"  message (FATAL_ERROR \"awk failed with exit code \${_awk_result}\")\n"
-+"endif ()\n"
-+)
-+
-+add_custom_command (
-+  OUTPUT ${_eventcodes_i} ${_eventcodegroups_i}
-+  COMMAND ${GAWK} -f ${CMAKE_CURRENT_SOURCE_DIR}/eventcodes.awk ${_extern_dir}/eventcodes.txt
-+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/eventcodes.awk ${_extern_dir}/eventcodes.txt
-+)
-
--add_custom_target (eventcodes
--  COMMAND ${GAWK} -f eventcodes.awk extern/eventcodes.txt
--  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+ set (generated_tables
+   "${CMAKE_CURRENT_BINARY_DIR}/eventcodes.i"
+@@ -22,9 +36,9 @@ add_custom_command (
+   OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/eventcodes.i"
+          "${CMAKE_CURRENT_BINARY_DIR}/eventcodegroups.i"
+   COMMAND "${GAWK}" -f "${CMAKE_CURRENT_SOURCE_DIR}/eventcodes.awk"
+-          "${CMAKE_CURRENT_SOURCE_DIR}/extern/eventcodes.txt"
++          "${_extern_dir}/eventcodes.txt"
+   WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
 -  DEPENDS eventcodes.awk extern/eventcodes.txt
-+add_custom_command (
-+  OUTPUT ${_units_i}
-+  COMMAND ${CMAKE_COMMAND}
-+    "-DGAWK=${GAWK}"
-+    "-DAWK_SCRIPT=${CMAKE_CURRENT_SOURCE_DIR}/units.awk"
-+    "-DAWK_INPUT=${_extern_dir}/units.csv"
-+    "-DAWK_OUTPUT=${_units_i}"
-+    -P ${_awk_to_file_script}
-+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/units.awk ${_extern_dir}/units.csv ${_awk_to_file_script}
++  DEPENDS eventcodes.awk "${_extern_dir}/eventcodes.txt"
+   VERBATIM
  )
 
--add_custom_target (units
--  COMMAND ${GAWK} -f units.awk extern/units.csv > "units.i"
--  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
--  DEPENDS units.awk extern/units.csv
-+add_custom_command (
-+  OUTPUT ${_annexb_i}
-+  COMMAND ${CMAKE_COMMAND}
-+    "-DGAWK=${GAWK}"
-+    "-DAWK_SCRIPT=${CMAKE_CURRENT_SOURCE_DIR}/annotatedECG.awk"
-+    "-DAWK_INPUT=${_extern_dir}/11073-10102-AnnexB.txt"
-+    "-DAWK_OUTPUT=${_annexb_i}"
-+    -P ${_awk_to_file_script}
-+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/annotatedECG.awk ${_extern_dir}/11073-10102-AnnexB.txt ${_awk_to_file_script}
- )
-
--add_custom_target (annexb
--  COMMAND ${GAWK} -f annotatedECG.awk extern/11073-10102-AnnexB.txt > "11073-10102-AnnexB.i"
--  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
--  DEPENDS annotatedECG.awk extern/11073-10102-AnnexB.txt
-+add_custom_target (biosig_generated
-+  DEPENDS ${_eventcodes_i} ${_eventcodegroups_i} ${_units_i} ${_annexb_i}
- )
-
-+include_directories (${CMAKE_CURRENT_BINARY_DIR})
-+
- set (headers
-   t210/abfheadr.h
-   XMLParser/tinyxml.h
-@@ -46,6 +99,7 @@ set (sources
-   t210/sopen_cfs_read.c
-   t210/sopen_heka_read.c
-   t210/sopen_igor.c
-+  t210/sopen_medilog.c
-   t210/sopen_scp_read.c
-   t210/scp-decode.cpp
-   t220/crc4scp.c
-@@ -60,20 +114,34 @@ set (sources
-   gdftime.c
-   mdc_ecg_codes.c
-   physicalunits.c
-+  string_isutf8.c
- )
-
- if (WIN32)
-   list (APPEND sources
-     win32/getdelim.c
--    win32/getline.c
-     win32/getlogin.c
+@@ -34,10 +48,10 @@ function (biosig_generate_table output script input)
+     COMMAND "${CMAKE_COMMAND}"
+       "-DGAWK=${GAWK}"
+       "-DAWK_SCRIPT=${CMAKE_CURRENT_SOURCE_DIR}/${script}"
+-      "-DAWK_INPUT=${CMAKE_CURRENT_SOURCE_DIR}/extern/${input}"
++      "-DAWK_INPUT=${_extern_dir}/${input}"
+       "-DAWK_OUTPUT=${CMAKE_CURRENT_BINARY_DIR}/${output}"
+       -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/RunAwk.cmake"
+-    DEPENDS ${script} extern/${input} cmake/RunAwk.cmake
++    DEPENDS ${script} "${_extern_dir}/${input}" cmake/RunAwk.cmake
+     VERBATIM
+   )
+ endfunction ()
+@@ -97,6 +111,26 @@ if (WIN32)
    )
  endif ()
 
 +if (MSVC)
++  # Keep the existing MSVC reader coverage; these readers still need porting.
++  list (REMOVE_ITEM sources
++    t210/sopen_acqbiopac.c t210/sopen_biosigdump_read.c
++    t210/sopen_fiff.c t210/sopen_hdf5.c t210/sopen_matio.c
++    t210/sopen_nicolet.c t210/sopen_rhd2000_read.c t210/sopen_sqlite.c
++  )
 +  list (APPEND sources t210/sopen_msvc_stubs.c)
 +endif ()
 +
@@ -174,7 +106,6 @@ index 2dcba9f7..3cd6d799 100644
 +  if (CMAKE_C_COMPILER_VERSION VERSION_LESS "19.39.33428")
 +    message (FATAL_ERROR "BioSig requires Visual Studio 2022 17.9 (MSVC 19.39.33428) or newer")
 +  endif ()
-+  # Keep upstream typeof declarations and casts using C23 support.
 +  # Visual Studio needs per-source options for mixed C/C++ targets.
 +  set (_biosig_c_sources ${sources} biosig2.c)
 +  list (FILTER _biosig_c_sources INCLUDE REGEX "[.]c$")
@@ -184,87 +115,29 @@ index 2dcba9f7..3cd6d799 100644
  if (APPLE)
    list (APPEND sources
      win32/getdelim.c
--    win32/getline.c
-   )
- endif ()
-
-@@ -119,20 +187,27 @@ if (APPLE)
+@@ -145,6 +179,10 @@ if (APPLE)
       )
  endif ()
 
--add_dependencies (biosigstatic eventcodes units annexb)
--add_dependencies (biosigshared eventcodes units annexb)
--add_dependencies (biosig2static eventcodes units annexb)
--add_dependencies (biosig2shared eventcodes units annexb)
 +if (WIN32)
 +  set_target_properties (biosigshared biosig2shared PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
-+  target_link_libraries (biosigstatic ws2_32)
-+  target_link_libraries (biosigshared ws2_32)
-+  target_link_libraries (biosig2static ws2_32)
-+  target_link_libraries (biosig2shared ws2_32)
 +endif ()
-
--FIND_LIBRARY( ICONV_LIBRARY NAMES iconv )
--MARK_AS_ADVANCED( ICONV_LIBRARY )
--target_link_libraries( biosigstatic ${ICONV_LIBRARY} )
--target_link_libraries( biosigshared ${ICONV_LIBRARY} )
--target_link_libraries( biosig2static ${ICONV_LIBRARY} )
--target_link_libraries( biosig2shared ${ICONV_LIBRARY} )
-+add_dependencies (biosigstatic biosig_generated)
-+add_dependencies (biosigshared biosig_generated)
-+add_dependencies (biosig2static biosig_generated)
-+add_dependencies (biosig2shared biosig_generated)
 +
-+find_package (Iconv REQUIRED)
-+target_link_libraries (biosigstatic Iconv::Iconv)
-+target_link_libraries (biosigshared Iconv::Iconv)
-+target_link_libraries (biosig2static Iconv::Iconv)
-+target_link_libraries (biosig2shared Iconv::Iconv)
+ find_package (Iconv REQUIRED)
 
  if (USE_ZLIB)
--  add_definitions (-D=WITH_ZLIB)
-+  add_definitions (-DWITH_ZLIB)
-   find_package( ZLIB REQUIRED )
-     if ( ZLIB_FOUND )
-       include_directories( ${ZLIB_INCLUDE_DIRS} )
-@@ -144,7 +219,7 @@ if (USE_ZLIB)
- endif ()
+@@ -164,6 +202,9 @@ foreach (target biosigstatic biosigshared biosig2static biosig2shared)
+   )
+   target_compile_definitions (${target} PRIVATE WITHOUT_NETWORK)
+   target_link_libraries (${target} PRIVATE Iconv::Iconv)
++  if (WIN32)
++    target_link_libraries (${target} PRIVATE ws2_32)
++  endif ()
 
- if (USE_SUITESPARSE)
--  add_definitions (-D=WITH_CHOLMOD)
-+  add_definitions (-DWITH_CHOLMOD)
-   FIND_LIBRARY( CHOLMOD_LIBRARY NAMES cholmod )
-   MARK_AS_ADVANCED( CHOLMOD_LIBRARY )
-   target_link_libraries( biosigstatic ${CHOLMOD_LIBRARY} )
-@@ -153,7 +228,9 @@ if (USE_SUITESPARSE)
-   target_link_libraries( biosig2shared ${CHOLMOD_LIBRARY} )
- endif ()
-
--add_definitions (-D=WITHOUT_NETWORK)
-+if (MSVC)
-+  add_definitions (-DWITHOUT_NETWORK)
-+endif ()
-
- install (TARGETS biosigstatic DESTINATION lib)
- install (TARGETS biosigshared DESTINATION lib)
-diff --git a/biosig4c++/XMLParser/tinyxml.cpp b/biosig4c++/XMLParser/tinyxml.cpp
-index 86672687..f79a0aa1 100644
---- a/biosig4c++/XMLParser/tinyxml.cpp
-+++ b/biosig4c++/XMLParser/tinyxml.cpp
-@@ -38,7 +38,11 @@ add support for zlib-compressed (gzipped) XML data
- */
-
- #include <ctype.h>
-+#if defined(__has_include)
-+#if __has_include(<iconv.h>)
- #include <iconv.h>
-+#endif
-+#endif
-
- #ifdef TIXML_USE_STL
- #include <sstream>
+   if (USE_ZLIB)
+     target_compile_definitions (${target} PUBLIC HAVE_ZLIB)
 diff --git a/biosig4c++/biosig-dev.h b/biosig4c++/biosig-dev.h
-index dd933acb..1178b9be 100644
+index e498a135..ce917444 100644
 --- a/biosig4c++/biosig-dev.h
 +++ b/biosig4c++/biosig-dev.h
 @@ -40,6 +40,18 @@
@@ -300,7 +173,7 @@ index dd933acb..1178b9be 100644
   * pack structures to fulfil following requirements:
   * (1) Matlab v7.3+ requires 8 byte alignment
 diff --git a/biosig4c++/biosig.c b/biosig4c++/biosig.c
-index 359ccec4..8866075e 100644
+index 5074ee85..52f7993c 100644
 --- a/biosig4c++/biosig.c
 +++ b/biosig4c++/biosig.c
 @@ -83,10 +83,32 @@ int __cdecl stat(const char *_Filename,struct stat *_Stat);
@@ -397,7 +270,7 @@ index 359ccec4..8866075e 100644
  }
 
  int ifeof(HDRTYPE* hdr) {
-@@ -7781,7 +7840,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
+@@ -7789,7 +7848,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"biosig/%s (line %d): #%d label <%s>\n", _
  		}
  		if (fid != NULL) {
  			size_t N_EVENTS = 0;
@@ -406,7 +279,7 @@ index 359ccec4..8866075e 100644
  			char buf[sz+1];
  			hdr->EVENT.SampleRate = hdr->SampleRate;
  			while (!feof(fid)) {
-@@ -12808,8 +12867,8 @@ void collapse_rawdata(HDRTYPE *hdr, void *buf, size_t count) {
+@@ -12816,8 +12875,8 @@ void collapse_rawdata(HDRTYPE *hdr, void *buf, size_t count) {
  	}
 
  	for (k4 = 0; k4 < count; k4++) {
@@ -491,54 +364,6 @@ index 98b5d57e..24a53156 100644
  #ifdef HAVE_PTHREAD
  // This is optional, because so far there are no multi-threaded applications for libbiosig.
  #include <pthread.h>
-diff --git a/biosig4c++/t210/scp-decode.cpp b/biosig4c++/t210/scp-decode.cpp
-index 89f6a8db..ed433bee 100644
---- a/biosig4c++/t210/scp-decode.cpp
-+++ b/biosig4c++/t210/scp-decode.cpp
-@@ -105,6 +105,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- #include <stdlib.h>
- using namespace std;
-
-+#ifndef __GNUC__
-+#ifndef __attribute__
-+#define __attribute__(x)
-+#endif
-+#endif
-+
- /*
-    error handling should use error variables local to each HDR
-    otherwise, sopen() etc. is not re-entrant.
-@@ -114,8 +120,14 @@ using namespace std;
-    serror2(hdr), hdr->AS.B4C_ERRNUM, hdr->AS.B4C_ERRMSG for error handling.
-
-  */
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
- __attribute__ ((deprecated)) extern int B4C_ERRNUM;
- __attribute__ ((deprecated)) extern const char *B4C_ERRMSG;
-+#ifdef __cplusplus
-+}
-+#endif
-
-
- //______________________________________________________________________________
-diff --git a/biosig4c++/t210/sopen_acqbiopac.c b/biosig4c++/t210/sopen_acqbiopac.c
-index 04b6769a..e4216cc9 100644
---- a/biosig4c++/t210/sopen_acqbiopac.c
-+++ b/biosig4c++/t210/sopen_acqbiopac.c
-@@ -32,7 +32,11 @@ This implementation is based on the following references:
- #include <assert.h>
- #include <ctype.h>
- #include <errno.h>
-+#if defined(__has_include)
-+#if __has_include(<iconv.h>)
- #include <iconv.h>
-+#endif
-+#endif
- #include <stdlib.h>
- #include <string.h>
-
 diff --git a/biosig4c++/t210/sopen_alpha_read.c b/biosig4c++/t210/sopen_alpha_read.c
 index 0e9bcf52..39f002f9 100644
 --- a/biosig4c++/t210/sopen_alpha_read.c
@@ -553,30 +378,10 @@ index 0e9bcf52..39f002f9 100644
 
  		// alpha.alp  cal_res digin  digvidtc  eog  marker  measure  mkdef  montage  rawdata  rawhead  report.txt  r_info  sleep
 diff --git a/biosig4c++/t210/sopen_axg_read.c b/biosig4c++/t210/sopen_axg_read.c
-index 34c84a67..3bc2ef20 100644
+index 34c84a67..963717b8 100644
 --- a/biosig4c++/t210/sopen_axg_read.c
 +++ b/biosig4c++/t210/sopen_axg_read.c
-@@ -26,7 +26,19 @@
- #include <stdlib.h>
- #include <string.h>
- #include <sys/stat.h>
-+#if defined(__has_include)
-+#if __has_include(<iconv.h>)
- #include <iconv.h>
-+#define STF_HAVE_ICONV 1
-+#endif
-+#endif
-+
-+#ifndef STF_HAVE_ICONV
-+#define iconv_t void*
-+#define iconv_open(a,b) ((void*)-1)
-+#define iconv(cd,inbuf,inbytesleft,outbuf,outbytesleft) ((size_t)-1)
-+#define iconv_close(cd) ((void)0)
-+#endif
-
- #if !defined(__APPLE__) && defined (_LIBICONV_H)
-  #define iconv		libiconv
-@@ -409,7 +421,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"%s (line %i) NS=%i nCol=%i\n", __FILE__,
+@@ -409,7 +409,7 @@ if (VERBOSE_LEVEL > 7) fprintf(stdout,"%s (line %i) NS=%i nCol=%i\n", __FILE__,
  				*outbuf=0;
  #else
  				++inbuf;
@@ -586,7 +391,7 @@ index 34c84a67..3bc2ef20 100644
  					*outbuf= *inbuf;
  					inbuf += 2;
 diff --git a/biosig4c++/t210/sopen_heka_read.c b/biosig4c++/t210/sopen_heka_read.c
-index 3d5d2912..73ad7e3a 100644
+index 8275a7c0..b107bc6d 100644
 --- a/biosig4c++/t210/sopen_heka_read.c
 +++ b/biosig4c++/t210/sopen_heka_read.c
 @@ -26,6 +26,12 @@
@@ -603,7 +408,7 @@ index 3d5d2912..73ad7e3a 100644
  #include <sys/types.h>
  struct stat {
 diff --git a/biosig4c++/t210/sopen_igor.c b/biosig4c++/t210/sopen_igor.c
-index 787e5819..33ee2d18 100644
+index 9e381b9a..3d41097d 100644
 --- a/biosig4c++/t210/sopen_igor.c
 +++ b/biosig4c++/t210/sopen_igor.c
 @@ -29,9 +29,16 @@
@@ -661,7 +466,7 @@ index 787e5819..33ee2d18 100644
  		case 0: 				// text waves
  			biosigERROR(hdr, B4C_FORMAT_UNSUPPORTED, "Igor/IBW: text waves not supported");
 diff --git a/biosig4c++/t210/sopen_medilog.c b/biosig4c++/t210/sopen_medilog.c
-index c2954710..b0937b52 100644
+index bd1f8f6d..bfd66ba6 100644
 --- a/biosig4c++/t210/sopen_medilog.c
 +++ b/biosig4c++/t210/sopen_medilog.c
 @@ -21,6 +21,7 @@
@@ -672,7 +477,7 @@ index c2954710..b0937b52 100644
  #include "../biosig-dev.h"
 
  #if defined(_WIN32)
-@@ -222,7 +223,7 @@ void sopen_medilog_read(HDRTYPE* hdr) {
+@@ -229,7 +230,7 @@ void sopen_medilog_read(HDRTYPE* hdr) {
  			CHANNEL_TYPE *hc = hdr->CHANNEL + ch;
  			hc->SPR = hdr->SPR;
  			hc->PhysDimCode = 4275;	// uV
@@ -733,62 +538,11 @@ index 00000000..e6756708
 +int sopen_sqlite(HDRTYPE *hdr) {
 +    return biosig_unsupported(hdr, "SOPEN(SQLITE): unsupported in this MSVC build");
 +}
-diff --git a/biosig4c++/t210/sopen_nicolet.c b/biosig4c++/t210/sopen_nicolet.c
-index bd12c43a..d15bcef9 100644
---- a/biosig4c++/t210/sopen_nicolet.c
-+++ b/biosig4c++/t210/sopen_nicolet.c
-@@ -26,7 +26,11 @@
- #include <assert.h>
- #include <ctype.h>
- #include <errno.h>
-+#if defined(__has_include)
-+#if __has_include(<iconv.h>)
- #include <iconv.h>
-+#endif
-+#endif
- #include <stdlib.h>
- #include <string.h>
-
-diff --git a/biosig4c++/t210/sopen_rhd2000_read.c b/biosig4c++/t210/sopen_rhd2000_read.c
-index 6e52e660..ba0b0d80 100644
---- a/biosig4c++/t210/sopen_rhd2000_read.c
-+++ b/biosig4c++/t210/sopen_rhd2000_read.c
-@@ -22,7 +22,11 @@ References:
- #include <ctype.h>
- #include <stdlib.h>
- #include <string.h>
-+#if defined(__has_include)
-+#if __has_include(<iconv.h>)
- #include <iconv.h>
-+#endif
-+#endif
- #include <errno.h>
- #include <sys/stat.h>
-
 diff --git a/biosig4c++/t210/sopen_scp_read.c b/biosig4c++/t210/sopen_scp_read.c
-index e377fd68..344786e3 100644
+index e377fd68..e90c1c7f 100644
 --- a/biosig4c++/t210/sopen_scp_read.c
 +++ b/biosig4c++/t210/sopen_scp_read.c
-@@ -29,7 +29,18 @@
- #include <ctype.h>
- #include <stdlib.h>
- #include <string.h>
-+#if defined(__has_include)
-+#if __has_include(<iconv.h>)
- #include <iconv.h>
-+#define STF_HAVE_ICONV 1
-+#endif
-+#endif
-+#ifndef STF_HAVE_ICONV
-+#define iconv_t void*
-+#define iconv_open(a,b) ((void*)-1)
-+#define iconv(cd,inbuf,inbytesleft,outbuf,outbytesleft) ((size_t)-1)
-+#define iconv_close(cd) ((void)0)
-+#endif
- #include <errno.h>
-
- #if !defined(__APPLE__) && defined (_LIBICONV_H)
-@@ -43,7 +54,7 @@
+@@ -43,7 +43,7 @@
  #define min(a,b)        (((a) < (b)) ? (a) : (b))
 
  #include "structures.h"
@@ -797,7 +551,7 @@ index e377fd68..344786e3 100644
  static bool add_filter = true;             // additional filtering gives better shape, but use with care
 
  #ifdef __cplusplus
-@@ -149,6 +160,7 @@ typedef struct en1064_t {
+@@ -149,6 +149,7 @@ typedef struct en1064_t {
  		} Tag14, Tag15;
  	} Section1;
  	struct {
@@ -805,7 +559,7 @@ index e377fd68..344786e3 100644
  	} Section2;
  	struct {
  		uint8_t NS, flags;
-@@ -364,6 +376,7 @@ int decode_scp_text(HDRTYPE *hdr, size_t inbytesleft, char *input, size_t outbyt
+@@ -364,6 +365,7 @@ int decode_scp_text(HDRTYPE *hdr, size_t inbytesleft, char *input, size_t outbyt
  		output[outbytesleft]=0;
  		return(exitcode);
  	}
@@ -813,7 +567,7 @@ index e377fd68..344786e3 100644
 
  #if  defined(_ICONV_H) || defined (_LIBICONV_H) || defined(_ICONV_H_)
  /*
-@@ -371,7 +384,6 @@ int decode_scp_text(HDRTYPE *hdr, size_t inbytesleft, char *input, size_t outbyt
+@@ -371,7 +373,6 @@ int decode_scp_text(HDRTYPE *hdr, size_t inbytesleft, char *input, size_t outbyt
  	The table of language support code as defined in
  	CEN Standard EN1064:2005+A1:2007, p.30.
  */
@@ -822,7 +576,7 @@ index e377fd68..344786e3 100644
  	if ((LanguageSupportCode & 0x01) == 0)
  		cd = iconv_open ("UTF-8", "ASCII");
 diff --git a/biosig4c++/t220/sopen_scp_write.c b/biosig4c++/t220/sopen_scp_write.c
-index 3cd0a989..88c2a546 100644
+index 5e79de20..d226fd00 100644
 --- a/biosig4c++/t220/sopen_scp_write.c
 +++ b/biosig4c++/t220/sopen_scp_write.c
 @@ -19,6 +19,9 @@
@@ -900,3 +654,5 @@ index cc8fee40..3a1a8864 100644
  #endif
 
  char *
+
+base-commit: fb331df54d0a425e7f7fa67263537ff0852d263d

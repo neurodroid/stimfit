@@ -17,7 +17,8 @@ namespace {
 
 // Write a small ABF2 file independently of either reader. Each sweep contains
 // eight samples per channel, with different gains, offsets, names and units.
-std::vector<std::uint8_t> MakeABF2(int channels, bool floatingPoint) {
+std::vector<std::uint8_t> MakeABF2(int channels, bool floatingPoint,
+    bool missingStringIndices = false) {
     std::vector<std::uint8_t> bytes(6 * 512, 0);
     const auto integer = [&](std::size_t offset, std::uint64_t value, int size) {
         for (int n = 0; n < size; ++n)
@@ -78,18 +79,23 @@ std::vector<std::uint8_t> MakeABF2(int channels, bool floatingPoint) {
         real(offset + 40, channel == 0 ? 0.125F : 0.015625F);
         real(offset + 44, channel == 0 ? 1.0F : -2.0F);
         real(offset + 48, 1.0F);   // signal gain
-        integer(offset + 74, 2 + 2 * channel, 4);
-        integer(offset + 78, 3 + 2 * channel, 4);
+        integer(offset + 74, missingStringIndices ? 0 : 2 + 2 * channel, 4);
+        integer(offset + 78, missingStringIndices ? 0 : 3 + 2 * channel, 4);
     }
 
     const char strings[] = "Clampex\0Vm_prime\0mV\0Im_sec\0pA\0";
-    section(9, 3, 44 + sizeof(strings) - 1, 1);
-    integer(1536, 0x48435353, 4);   // SSCH string cache
+    constexpr int stringCount = 5;
+    constexpr int cacheHeaderBytes = 44;
+    constexpr int stringBytes = sizeof(strings) - 1;
+    // The directory describes the entire cache, including its header and padding.
+    const int bytesPerEntry = (cacheHeaderBytes + stringBytes + stringCount - 1) / stringCount;
+    section(9, 3, bytesPerEntry, stringCount);
+    integer(1536, 0x48435353, 4);  // SSCH string cache
     integer(1536 + 4, 1, 4);
-    integer(1536 + 8, 5, 4);
+    integer(1536 + 8, stringCount, 4);
     integer(1536 + 12, 8, 4);
-    integer(1536 + 16, sizeof(strings) - 1, 4);
-    std::memcpy(bytes.data() + 1536 + 44, strings, sizeof(strings) - 1);
+    integer(1536 + 16, stringBytes, 4);
+    std::memcpy(bytes.data() + 1536 + cacheHeaderBytes, strings, stringBytes);
 
     std::size_t offset = 2048;
     for (int sweep = 0; sweep < 2; ++sweep) {
@@ -118,7 +124,11 @@ protected:
         const auto unique = std::chrono::steady_clock::now().time_since_epoch().count();
         path = std::filesystem::temp_directory_path()
             / ("stimfit-abf2-" + std::to_string(unique) + ".abf");
-        const auto bytes = MakeABF2(std::get<0>(GetParam()), std::get<1>(GetParam()));
+        WriteFixture();
+    }
+
+    void WriteFixture(bool missingStringIndices = false) {
+        const auto bytes = MakeABF2(std::get<0>(GetParam()), std::get<1>(GetParam()), missingStringIndices);
         std::ofstream file(path, std::ios::binary);
         file.write(reinterpret_cast<const char*>(bytes.data()), bytes.size());
         ASSERT_TRUE(file.good());
@@ -169,6 +179,16 @@ TEST_P(ABF2ImportTest, ExplicitNativeChoiceIsHonoured) {
 }
 
 #ifdef WITH_BIOSIG
+TEST_P(ABF2ImportTest, BioSigAcceptsMissingStringIndices) {
+    if (!stfio::check_biosig_version(3, 0, 4))
+        GTEST_SKIP() << "Missing ABF2 string indices require BioSig API version 3.0.4";
+    ASSERT_NO_FATAL_FAILURE(WriteFixture(true));
+    stfio::StdoutProgressInfo progress("ABF import", "", 100, false);
+    Recording recording;
+    ASSERT_EQ(stfio::importBiosigFile(path.string(), recording, progress, true), stfio::biosig);
+    EXPECT_EQ(recording.size(), static_cast<std::size_t>(std::get<0>(GetParam())));
+}
+
 TEST_P(ABF2ImportTest, ExplicitBioSigChoiceIsHonoured) {
     stfio::StdoutProgressInfo progress("ABF import", "", 100, false);
     Recording expected, recording;

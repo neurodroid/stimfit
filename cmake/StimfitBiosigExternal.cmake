@@ -45,8 +45,7 @@ function(stf_configure_windows_patched_biosig)
     message(FATAL_ERROR "Failed to determine biosig submodule working tree status from ${_stf_biosig_source_dir}")
   endif()
 
-  file(SHA256 "${CMAKE_SOURCE_DIR}/cmake/StimfitBiosigABF.cmake" _stf_abf_patch_hash)
-  set(_stf_patch_manifest "abf-compatibility=${_stf_abf_patch_hash}\n")
+  set(_stf_patch_manifest "")
   foreach(_stf_patch IN LISTS _stf_biosig_patch_files)
     file(SHA256 "${_stf_patch}" _stf_patch_hash)
     string(APPEND _stf_patch_manifest "${_stf_patch}=${_stf_patch_hash}\n")
@@ -73,7 +72,7 @@ function(stf_configure_windows_patched_biosig)
   file(MAKE_DIRECTORY "${_stf_biosig_tmp_dir}")
 
   set(_stf_biosig_signature
-    "biosig-expected-tag=${STF_BIOSIG_EXPECTED_TAG}\n"
+    "biosig-expected-revision=${STF_BIOSIG_REVISION}\n"
     "biosig-expected-commit=${_stf_biosig_expected_commit}\n"
     "biosig-head=${_stf_biosig_head}\n"
     "biosig-status=${_stf_biosig_status}\n"
@@ -104,7 +103,6 @@ function(stf_configure_windows_patched_biosig)
       ${_stf_biosig_patch_files}
       "${CMAKE_SOURCE_DIR}/cmake/StagePatchedBiosig.cmake"
       "${CMAKE_SOURCE_DIR}/cmake/StimfitBiosigVersion.cmake"
-      "${CMAKE_SOURCE_DIR}/cmake/StimfitBiosigABF.cmake"
     COMMENT "Staging patched biosig working tree"
     VERBATIM
   )

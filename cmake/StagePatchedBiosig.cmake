@@ -8,8 +8,8 @@ set(STF_BIOSIG_SOURCE_DIR "" CACHE PATH "Path to the pristine biosig checkout")
 set(STF_BIOSIG_STAGE_DIR "" CACHE PATH "Path to the staged patched biosig working tree")
 set(STF_BIOSIG_PATCH_DIR "" CACHE PATH "Path to biosig patch files")
 set(STF_BIOSIG_SIGNATURE_FILE "" CACHE FILEPATH "Path to the generated biosig signature file")
-set(STF_BIOSIG_EXPECTED_TAG "" CACHE STRING "Expected biosig tag for staged patching")
-set(STF_BIOSIG_EXPECTED_COMMIT "" CACHE STRING "Expected biosig commit resolved from the expected tag")
+set(STF_BIOSIG_EXPECTED_TAG "" CACHE STRING "Expected biosig revision for staged patching")
+set(STF_BIOSIG_EXPECTED_COMMIT "" CACHE STRING "Expected biosig commit for staged patching")
 set(STF_BIOSIG_FORCE_REFRESH OFF CACHE BOOL "Force recreation of the staged biosig tree")
 
 if(STF_BIOSIG_SOURCE_DIR STREQUAL "")
@@ -122,10 +122,6 @@ foreach(_stf_patch IN LISTS _stf_biosig_patch_files)
     message(FATAL_ERROR "Failed to apply patch: ${_stf_patch}")
   endif()
 endforeach()
-
-include("${CMAKE_CURRENT_LIST_DIR}/StimfitBiosigABF.cmake")
-stf_patch_biosig_abf("${STF_BIOSIG_STAGE_DIR}/biosig4c++/t210/sopen_abf_read.c"
-  "${STF_BIOSIG_STAGE_DIR}/biosig4c++/t210/sopen_abf_read.c")
 
 file(WRITE "${_stf_existing_signature_file}" "${_stf_requested_signature}")
 

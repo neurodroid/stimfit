@@ -80,10 +80,6 @@ foreach(_patch IN LISTS _biosig_patch_files)
 	endif()
 endforeach()
 
-include("${CMAKE_CURRENT_LIST_DIR}/StimfitBiosigABF.cmake")
-stf_patch_biosig_abf("${STF_BIOSIG_WORK_DIR}/biosig4c++/t210/sopen_abf_read.c"
-  "${STF_BIOSIG_WORK_DIR}/biosig4c++/t210/sopen_abf_read.c")
-
 file(MAKE_DIRECTORY "${STF_BIOSIG_BUILD_DIR}")
 
 _run_checked(
